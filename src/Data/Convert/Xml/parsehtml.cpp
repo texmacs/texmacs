@@ -42,6 +42,10 @@ get_mathjax (string s, int& i, string close) {
       if (close == "$$") return true;
       else expect= "$$";
     }
+    else if (read (s, i, "$")) {
+      if (close == "$") return true;
+      else expect= "$";
+    }
     else if (read (s, i, "\\(")) expect= "\\)";
     else if (read (s, i, "\\[")) expect= "\\]";
     else if (read (s, i, "\\begin{equation}")) expect= "\\end{equation}";
@@ -68,6 +72,15 @@ get_mathjax (string s, int& i, string close) {
   return false;
 }
 
+bool
+acceptable_mathjax (string s) {
+  if (!starts (s, "$") || starts (s, "$$")) return true;
+  if (occurs ("</", s)) return false;
+  if (occurs ("<span", s)) return false;
+  if (occurs ("<div ", s)) return false;
+  return true;
+}
+
 string
 process_mathjax (string s) {
   int i=0;
@@ -75,7 +88,7 @@ process_mathjax (string s) {
   while (i<N(s)) {
     int pos= i;
     if (s[i] == '\\' || s[i] == '$') {
-      if (get_mathjax (s, i, "")) {
+      if (get_mathjax (s, i, "") && acceptable_mathjax (s (pos, i))) {
         mathjax_strings (mathjax_serial)= s (pos, i);
         r << "<mathjax>" << as_string (mathjax_serial) << "</mathjax>";
         mathjax_serial++;

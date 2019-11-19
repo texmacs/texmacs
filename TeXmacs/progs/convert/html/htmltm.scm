@@ -364,7 +364,7 @@
              (s (tree->string t))
              (l (parse-latex s))
              (r (latex->texmacs l)))
-        (list r))
+        (list (tm->stree r)))
       (htmltm-drop env a c)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
