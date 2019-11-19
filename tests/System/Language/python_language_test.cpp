@@ -9,7 +9,7 @@
 ******************************************************************************/
 
 #include "number_parser_test.hpp"
-#include "parser.hpp"
+#include "number_parser.hpp"
 
 TEST (integer_literal, work) {
   number_parser_rep number_parser;

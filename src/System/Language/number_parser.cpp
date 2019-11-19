@@ -1,6 +1,7 @@
 
 /******************************************************************************
 * MODULE     : number_parser.cpp
+* DESCRIPTION: shared number parsing routines for various programming languages
 * COPYRIGHT  : (C) 2019  Darcy Shen
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
@@ -8,7 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "parser.hpp"
+#include "number_parser.hpp"
 #include "analyze.hpp"
 
 void

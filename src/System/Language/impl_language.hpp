@@ -11,7 +11,7 @@
 #ifndef IMPL_LANGUAGE_H
 #define IMPL_LANGUAGE_H
 #include "language.hpp"
-#include "parser.hpp"
+#include "number_parser.hpp"
 
 extern text_property_rep tp_normal_rep;
 extern text_property_rep tp_hyph_rep;

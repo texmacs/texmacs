@@ -1,15 +1,15 @@
 
 /******************************************************************************
- * MODULE     : cpp_language.cpp
- * DESCRIPTION: the "cpp" language
- * COPYRIGHT  : (C) 2008  Francis Jamet
- *              (C) 2019  Darcy Shen
- *******************************************************************************
- * This software falls under the GNU general public license and comes WITHOUT
- * ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
- * If you don't have this file, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- ******************************************************************************/
+* MODULE     : cpp_language.cpp
+* DESCRIPTION: the "cpp" language
+* COPYRIGHT  : (C) 2008  Francis Jamet
+*              (C) 2019  Darcy Shen
+*******************************************************************************
+* This software falls under the GNU general public license and comes WITHOUT
+* ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+* If you don't have this file, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+******************************************************************************/
 
 #include "analyze.hpp"
 #include "impl_language.hpp"
