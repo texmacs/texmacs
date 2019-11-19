@@ -10,7 +10,6 @@
 
 #include "gtest/gtest.h"
 
-#include "xml.hpp"
 #include "convert.hpp"
 #include "drd_std.hpp"
 

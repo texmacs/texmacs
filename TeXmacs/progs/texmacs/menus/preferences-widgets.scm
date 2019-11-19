@@ -564,10 +564,12 @@
   (aligned
     (meti
       (when (supports-inkscape?)
-        (hlist // (text "Prefer Inkscape for conversion from SVG")))
+        (hlist // (text "Use Inkscape for conversion from SVG")))
       (when (supports-inkscape?)
-        (toggle (set-boolean-preference "image->texmacs:svg-prefer-inkscape" answer)
-                (get-boolean-preference "image->texmacs:svg-prefer-inkscape"))))))
+        (toggle (set-boolean-preference
+                 "image->texmacs:svg-prefer-inkscape" answer)
+                (get-boolean-preference
+                 "image->texmacs:svg-prefer-inkscape"))))))
 
 ;; All converters ----------
 

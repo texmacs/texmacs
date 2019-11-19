@@ -1,6 +1,7 @@
 
 /******************************************************************************
 * MODULE     : queryxml.cpp
+* DESCRIPTION: extra utility functions for XML format
 * COPYRIGHT  : (C) 2019  Darcy Shen
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
@@ -8,7 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "xml.hpp"
+#include "convert.hpp"
 #include "analyze.hpp"
 
 tree find_first_element_by_name (tree t, string name) {

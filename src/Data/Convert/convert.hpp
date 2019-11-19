@@ -109,6 +109,10 @@ tree   tmml_upgrade (scheme_tree t);
 tree   upgrade_mathml (tree t);
 tree   retrieve_mathjax (int id);
 
+tree   find_first_element_by_name (tree t, string name);
+string get_attr_from_element (tree t, string name, string default_value);
+int    parse_xml_length (string length);
+
 /*** BibTeX ***/
 tree   parse_bib (string s);
 tree   conservative_bib_import (string olds, tree oldt, string news);

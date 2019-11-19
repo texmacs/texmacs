@@ -27,7 +27,6 @@
 ******************************************************************************/
 
 #include "file.hpp"
-#include "xml.hpp"
 #include "convert.hpp"
 #include "image_files.hpp"
 #include "web_files.hpp"
