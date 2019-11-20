@@ -113,6 +113,8 @@
 
 (tm-define (remove-annotations t)
   (cond ((tm-func? t 'doc-note-ref 4) (remove-annotations (tm-ref t 3)))
+        ((tm-func? t 'new-line) " ")
+        ((tm-func? t 'next-line) " ")
         ((tm-func? t 'concat)
          `(concat ,@(map remove-annotations (tm-children t))))
         (else t)))
