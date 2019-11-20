@@ -12,11 +12,11 @@
 #include "convert.hpp"
 #include "analyze.hpp"
 
-bool is_section (tree t); // from fromtex_post.cpp
-
 /******************************************************************************
-* Clean spaces
+* Predicates
 ******************************************************************************/
+
+bool is_section (tree t); // from fromtex_post.cpp
 
 static bool
 is_whitespace (tree t) {
@@ -24,8 +24,88 @@ is_whitespace (tree t) {
 }
 
 static bool
+is_item (tree t) {
+  return is_compound (t, "item") || is_compound (t, "item*");
+}
+
+static bool
+is_item_list (tree t) {
+  return 
+    is_compound (t, "itemize") ||
+    is_compound (t, "enumerate") ||
+    is_compound (t, "description");
+}
+
+/******************************************************************************
+* Downgrading bad block content
+******************************************************************************/
+
+static tree
+downgrade_block (tree t, bool compress= false) {
+  if (is_atomic (t)) return t;
+  else if (is_func (t, DOCUMENT, 0))
+    return "";
+  else if (is_func (t, DOCUMENT, 1))
+    return downgrade_block (t[0], compress);
+  else if (is_func (t, DOCUMENT) && compress && is_whitespace (t[0]))
+    return downgrade_block (t (1, N(t)));
+  else if (is_func (t, DOCUMENT) && compress && is_whitespace (t[N(t)-1]))
+    return downgrade_block (t (0, N(t)-1));
+  else if (is_func (t, DOCUMENT)) {
+    int i, n= N(t);
+    tree r (DOCUMENT);
+    for (i=0; i<n; i++) {
+      tree d= downgrade_block (t[i]);
+      if (is_func (d, DOCUMENT)) r << A(d);
+      else r << d;
+    }
+    return r;
+  }
+  else if (is_func (t, CONCAT)) {
+    int i, n= N(t);
+    tree d (DOCUMENT);
+    tree c (CONCAT);
+    for (i=0; i<n; i++) {
+      tree x= downgrade_block (t[i]);
+      if (is_func (x, DOCUMENT) || is_item_list (x)) {
+        if (N(c) == 1) d << c[0];
+        else if (N(c) > 1) d << c;
+        c= tree (CONCAT);
+        if (is_func (x, DOCUMENT)) d << A(x);
+        else d << x;
+      }
+      else c << x;
+    }
+    if (N(c) == 1) d << c[0];
+    else if (N(c) > 1) d << c;
+    if (N(d) == 0) return "";
+    else if (N(d) == 1) return d[0];
+    else return d;
+  }
+  else if (is_func (t, HLINK, 2))
+    return tree (HLINK, downgrade_block (t[0], true), t[1]);
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= downgrade_block (t[i]);
+    return r;
+  }
+}
+
+/******************************************************************************
+* Clean spaces
+******************************************************************************/
+
+static bool
+is_space_devouring (tree t) {
+  if (is_func (t, HLINK, 2)) return is_whitespace (t[0]);
+  return is_func (t, LABEL);
+}
+
+static bool
 is_space_eating (tree t) {
-  return is_func (t, LABEL) || is_section (t);
+  return is_space_devouring (t) || is_section (t);
 }
 
 static tree
@@ -50,10 +130,16 @@ clean_line (tree t) {
       return clean_line (t (0, n-2) *
                          tree (CONCAT, trim_spaces_right (t[n-2])) *
                          t (n-1, n));
-    if (is_func (t[0], LABEL))
+    if (is_space_devouring (t[0]))
       return t (0, 1) * clean_line (t (1, n));
-    else if (is_func (t[n-1], LABEL))
+    else if (is_space_devouring (t[n-1]))
       return clean_line (t (0, n-1)) * t (n-1, n);
+    for (int i=0; i+1<n; i++)
+      if (is_func (t[i], RSUP, 1) && is_func (t[i+1], RSUP, 1)) {
+        tree x= simplify_concat (tree (CONCAT, t[i][0], ",", t[i+1][0]));
+        tree c= t (0, i) * tree (CONCAT, tree (RSUP, x)) * t (i+2, N(t));
+        return clean_line (c);
+      }
   }
   return t;
 }
@@ -90,23 +176,36 @@ clean_spaces (tree t) {
 ******************************************************************************/
 
 static bool
-is_compressible (tree t) {
-  if (is_func (t, LABEL)) return true;
+is_compressible (tree t, bool item_flag) {
+  if (is_space_devouring (t)) return true;
   if (!is_concat (t)) return false;
-  for (int i=0; i<N(t); i++)
-    if (!is_compressible (t[i])) return false;
+  for (int i=0; i<N(t); i++) {
+    if (item_flag && is_item (t[i])) continue;
+    if (!is_compressible (t[i], item_flag)) return false;
+  }
   return true;
 }
 
 static bool
 is_accepting (tree t) {
+  if (is_func (t, HLINK, 2)) return is_accepting (t[0]);
   return is_atomic (t) || is_concat (t) || is_space_eating (t);
+}
+
+static bool
+is_item_line (tree t) {
+  if (is_item (t)) return true;
+  if (!is_concat (t)) return false;
+  for (int i=0; i<N(t); i++)
+    if (is_item_line (t[i])) return true;
+  return false;
 }
 
 static tree
 merge_lines (tree t, tree u) {
   if (t == "") return u;
   if (u == "") return t;
+  u= trim_spaces_left (u);
   if (!is_concat (t)) t= tree (CONCAT, t);
   if (!is_concat (u)) u= tree (CONCAT, u);
   return t * u;
@@ -127,15 +226,17 @@ compress_lines (tree t) {
     r= tree (DOCUMENT);
     for (i=0; i<n; i++) {
       tree c= t[i];
-      while (is_compressible (c) && i+1<n &&
-             (t[i+1] == "" || is_compressible (t[i+1]))) {
+      while (is_compressible (c, true) && i+1<n &&
+             (t[i+1] == "" || is_compressible (t[i+1], false))) {
         c= merge_lines (c, t[i+1]);
         i++;
       }
-      if (is_compressible (c) && i+1<n && is_accepting (t[i+1])) {
+      if (is_compressible (c, true) && i+1<n && is_accepting (t[i+1]) &&
+          !(is_item_line (c) && is_item_line (t[i+1]))) {
         r << merge_lines (c, t[i+1]);
         i++;
       }
+      else if (is_whitespace (c) && i+1<n && is_item_list (t[i+1]));
       else r << c;
     }
     return r;
@@ -236,6 +337,7 @@ clean_mathml (tree t) {
 
 tree
 clean_html (tree t) {
+  t= downgrade_block (t);
   t= clean_spaces (t);
   t= compress_lines (t);
   t= clean_mathml (t);
