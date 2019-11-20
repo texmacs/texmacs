@@ -14,6 +14,9 @@
 #include "converter.hpp"
 #include "parse_string.hpp"
 
+#define xml_quote scm_quote
+// FIXME: to be checked that this is the correct quoting style
+
 /******************************************************************************
 * The xml/html parser aims to parse a superset of the set of valid documents.
 * In other words, no attempts are made to signal error messages for
@@ -728,20 +731,20 @@ xml_html_parser::finalize_sxml (tree t) {
     if (is_tuple (t[i], "attr")) {
       tree attr;
       if (N(t[i]) == 2) attr= tuple (t[i][1]);
-      else attr= tuple (t[i][1]->label, raw_quote (t[i][2]->label));
+      else attr= tuple (t[i][1]->label, xml_quote (t[i][2]->label));
       attrs << attr;
     }
     else if (is_tuple (t[i], "tag"))
       content << finalize_sxml (t[i]);
     else if (is_atomic (t[i]))
-      content << raw_quote (t[i]->label);
+      content << xml_quote (t[i]->label);
     else if (is_tuple (t[i], "pi"))
-      content << tuple ("*PI*", t[i][1]->label, raw_quote (t[i][2]->label));
+      content << tuple ("*PI*", t[i][1]->label, xml_quote (t[i][2]->label));
     else if (is_tuple (t[i], "doctype"))
       // TODO: convert DTD declarations
-      content << tuple ("*DOCTYPE*", raw_quote (t[i][1]->label));
+      content << tuple ("*DOCTYPE*", xml_quote (t[i][1]->label));
     else if (is_tuple (t[i], "cdata"))
-      content << raw_quote (t[i][1]->label);
+      content << xml_quote (t[i][1]->label);
 
   if (N(attrs) > 1) tag << attrs;
   tag << A(content);
