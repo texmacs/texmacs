@@ -1121,7 +1121,7 @@
 ((SignPainter-HouseScript Regular) ((SignPainter.otf 0 163412)))
 ((Silom Regular) ((Silom.ttf 0 281848) (Silom.ttf 0 288864) (Silom.ttf 0 289492)))
 ((SimHei Regular) ((simhei.ttf 0 9751960)))
-((SimSun Regular) ((simsun.ttf 0 10499104)))
+((SimSun Regular) ((simsun.ttc 0 10499104)))
 ((Sinhala\ MN Bold) ((Sinhala\ MN.ttc 1 1466440) (Sinhala\ MN.ttc 1 1467868)))
 ((Sinhala\ MN Regular) ((Sinhala\ MN.ttc 0 1466440) (Sinhala\ MN.ttc 0 1467868)))
 ((Sinhala\ Sangam\ MN Bold) ((Sinhala\ Sangam\ MN.ttc 1 642408) (Sinhala\ Sangam\ MN.ttc 1 642756)))
