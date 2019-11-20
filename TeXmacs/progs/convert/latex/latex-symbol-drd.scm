@@ -72,7 +72,8 @@
   langle rangle backslash
 
   ;; Big delimiters
-  rmoustache lmoustache rgroup lgroup lbrace rbrace
+  rmoustache lmoustache rgroup lgroup
+  lbrack rbrack lbrace rbrace
   arrowvert Arrowvert bracevert)
 
 (logic-group latex-big-symbol%

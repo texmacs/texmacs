@@ -912,6 +912,8 @@ latex_symbol_to_tree (string s) {
       if (s == "hdots")         return "<ldots>";
       if (s == "arrowvert")     return "|";
       if (s == "Arrowvert")     return "<||>";
+      if (s == "lbrack")        return "[";
+      if (s == "rbrack")        return "]";
       if (s == "lbrace")        return "{";
       if (s == "rbrace")        return "}";
       if (s == "tmprecdot")     return "<precdot>";
