@@ -148,7 +148,7 @@
     </with>>
   </float>>>>
 
-  <assign|custom-note-ref|<macro|sym|sep|id|body|<style-with|src-compact|none|<with|locus-color|preserve|visited-color|preserve|<locus|<id|<merge|source-|<arg|id>>>|<arg|body>>><rsup|<locus|<id|<merge|source-abbr-|<arg|id>>>|<link|footnote-text|<id|<merge|source-abbr-|<arg|id>>>|<id|<merge|dest-|<arg|id>>>>|<arg|sep><arg|sym>>>>>>
+  <assign|custom-note-ref|<macro|sym|sep|id|body|<style-with|src-compact|none|<with|locus-color|preserve|visited-color|preserve|<locus|<id|<merge|source-|<arg|id>>>|<arg|body>>><math|><rsup|<locus|<id|<merge|source-abbr-|<arg|id>>>|<link|footnote-text|<id|<merge|source-abbr-|<arg|id>>>|<id|<merge|dest-|<arg|id>>>>|<arg|sep><arg|sym>>>>>>
 
   <\active*>
     <\src-comment>
