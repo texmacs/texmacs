@@ -119,15 +119,25 @@
           (dummy (begin ,@body)))
      return))
 
-(define-public (.. start end)
+(define (range-list start end delta)
   (if (< start end)
-      (cons start (.. (1+ start) end))
+      (cons start (range-list (+ start delta) end delta))
       '()))
 
-(define-public (... start end)
+(define (range-list* start end delta)
   (if (<= start end)
-      (cons start (... (1+ start) end))
+      (cons start (range-list* (+ start delta) end delta))
       '()))
+
+(define-public (.. start end . delta)
+  (if (null? delta)
+      (range-list start end 1)
+      (range-list start end (car delta))))
+
+(define-public (... start end . delta)
+  (if (null? delta)
+      (range-list* start end 1)
+      (range-list* start end (car delta))))
 
 (define-public-macro (for what . body)
   (let ((n (length what)))
