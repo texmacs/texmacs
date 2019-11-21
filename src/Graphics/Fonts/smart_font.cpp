@@ -442,8 +442,25 @@ main_family (string f) {
     if (N (trimmed_tokenize (a[i], "=")) <= 1)
       return a[i];
   if (N(a) == 0) return f;
-  a= trimmed_tokenize (f, "=");
+  a= trimmed_tokenize (a[0], "=");
+  if (N(a) <= 1) return f;
   return a[1];
+}
+
+string
+get_unicode_range (int code) {
+  if (code <= 0x7f) return "ascii";
+  else if (code >= 0x80 && code <= 0x37f) return "latin";
+  else if (code >= 0x380 && code <= 0x3ff) return "greek";
+  else if (code >= 0x400 && code <= 0x4ff) return "cyrillic";
+  else if (code >= 0x3000 && code <= 0x303f) return "cjk";
+  else if (code >= 0x4e00 && code <= 0x9fcc) return "cjk";
+  else if (code >= 0xff00 && code <= 0xffef) return "cjk";
+  else if (code >= 0xac00 && code <= 0xd7af) return "hangul";
+  else if (code >= 0x2000 && code <= 0x23ff) return "mathsymbols";
+  else if (code >= 0x2900 && code <= 0x2e7f) return "mathextra";
+  else if (code >= 0x1d400 && code <= 0x1d7ff) return "mathletters";
+  else return "";
 }
 
 string
@@ -452,20 +469,30 @@ get_unicode_range (string c) {
   if (N(uc) == 0) return "";
   int pos= 0;
   int code= decode_from_utf8 (uc, pos);
-  string range= "";
-  if (code <= 0x7f) range= "ascii";
-  else if (code >= 0x80 && code <= 0x37f) range= "latin";
-  else if (code >= 0x380 && code <= 0x3ff) range= "greek";
-  else if (code >= 0x400 && code <= 0x4ff) range= "cyrillic";
-  else if (code >= 0x3000 && code <= 0x303f) range= "cjk";
-  else if (code >= 0x4e00 && code <= 0x9fcc) range= "cjk";
-  else if (code >= 0xff00 && code <= 0xffef) range= "cjk";
-  else if (code >= 0xac00 && code <= 0xd7af) range= "hangul";
-  else if (code >= 0x2000 && code <= 0x23ff) range= "mathsymbols";
-  else if (code >= 0x2900 && code <= 0x2e7f) range= "mathextra";
-  else if (code >= 0x1d400 && code <= 0x1d7ff) range= "mathletters";
+  string range= get_unicode_range (code);
   if (pos == N(uc)) return range;
   return "";
+}
+
+bool
+in_unicode_range (string c, string range) {
+  string uc= strict_cork_to_utf8 (c);
+  if (N(uc) == 0) return "";
+  int pos= 0;
+  int code= decode_from_utf8 (uc, pos);
+  if (range == get_unicode_range (code)) return range != "";
+  if (range == "mathlarge" || range == "mathbigop")
+    return (code >= 0x220f && code <= 0x2211) ||
+           (code >= 0x222b && code <= 0x2233) ||
+           (code >= 0x22c0 && code <= 0x22c3) ||
+           (code >= 0x2a00 && code <= 0x2a1c);
+  if (range == "mathlarge" || range == "mathrubber")
+    return starts (c, "<wide-") ||
+           starts (c, "<large-") ||
+           starts (c, "<left-") ||
+           starts (c, "<mid-") ||
+           starts (c, "<right-");
+  return false;
 }
 
 /******************************************************************************
@@ -900,7 +927,7 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
         string wanted= locase_all (v[j]);
         if (wanted == "") ok= true;
         else if (contains (wanted, given)) ok= true;
-        else if (wanted == get_unicode_range (c)) ok= true;
+        else if (in_unicode_range (c, wanted)) ok= true;
         else if (wanted == substitute_math_letter (c, 2)) ok= true;
         else if (wanted == c) ok= true;
         else if (in_collection (c, wanted)) ok= true;
@@ -1080,7 +1107,7 @@ smart_font_rep::resolve_rubber (string c, string fam, int attempt) {
         goal == "<trbracket>" || goal == "<trfloor>" || goal == "<trceil>")
       goal= "]";
   }
-  int bnr= resolve (goal, fam, attempt);
+  int bnr= resolve (goal, main_family (fam), attempt);
   if (bnr >= 0 && bnr < N(fn) && !is_nil (fn[bnr])) {
     tree key= tuple ("rubber", as_string (bnr));
     int nr= sm->add_font (key, REWRITE_NONE);
