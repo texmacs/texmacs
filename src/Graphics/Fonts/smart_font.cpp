@@ -482,16 +482,19 @@ in_unicode_range (string c, string range) {
   int code= decode_from_utf8 (uc, pos);
   if (range == get_unicode_range (code)) return range != "";
   if (range == "mathlarge" || range == "mathbigop")
-    return (code >= 0x220f && code <= 0x2211) ||
-           (code >= 0x222b && code <= 0x2233) ||
-           (code >= 0x22c0 && code <= 0x22c3) ||
-           (code >= 0x2a00 && code <= 0x2a1c);
+    if (starts (c, "<big-") ||
+        (code >= 0x220f && code <= 0x2211) ||
+        (code >= 0x222b && code <= 0x2233) ||
+        (code >= 0x22c0 && code <= 0x22c3) ||
+        (code >= 0x2a00 && code <= 0x2a1c))
+      return true;
   if (range == "mathlarge" || range == "mathrubber")
-    return starts (c, "<wide-") ||
-           starts (c, "<large-") ||
-           starts (c, "<left-") ||
-           starts (c, "<mid-") ||
-           starts (c, "<right-");
+    if (starts (c, "<wide-") ||
+        starts (c, "<large-") ||
+        starts (c, "<left-") ||
+        starts (c, "<mid-") ||
+        starts (c, "<right-"))
+      return true;
   return false;
 }
 
@@ -1160,7 +1163,10 @@ smart_font_rep::resolve (string c) {
     }
     if (is_special (c) && (N(c) != 1 || !ends (variant, "-tt")) &&
         (!starts (c, "<big") ||
-         !starts (mfam, "TeX Gyre") || !ends (mfam, " Math"))) {
+         !starts (mfam, "TeX Gyre") || !ends (mfam, " Math")) &&
+        (!starts (c, "<big") ||
+         (!occurs ("mathlarge=", family) &&
+          !occurs ("mathbigop=", family)))) {
       //cout << "Found " << c << " in special\n";
       return sm->add_char (tuple ("special"), c);
     }

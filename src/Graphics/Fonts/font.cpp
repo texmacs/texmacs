@@ -534,6 +534,9 @@ static font
 make_rubber_font (font fn) {
   if (starts (fn->res_name, "stix-"))
     return rubber_stix_font (fn);
+  else if (occurs ("mathlarge=", fn->res_name) ||
+           occurs ("mathrubber=", fn->res_name))
+    return fn;
   else if (has_poor_rubber && fn->type == FONT_TYPE_UNICODE)
     return poor_rubber_font (fn);
   else if (fn->type == FONT_TYPE_UNICODE)
