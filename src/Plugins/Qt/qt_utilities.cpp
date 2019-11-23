@@ -108,29 +108,31 @@ qt_decode_length (string width, string height,
                   const QSize& ref, const QFontMetrics& fm) {
   QSize size= ref;
 
-  pair<double, string> w_unit= parse_length (width);
-  pair<double, string> h_unit= parse_length (height);
+  string w_unit, h_unit;
+  double w_len, h_len;
+  parse_length (width, w_len, w_unit);
+  parse_length (height, h_len, h_unit);
 
     // Width as a function of the default width
-  if (w_unit.x2 == "w") size.rwidth() *= w_unit.x1;
+  if (w_unit == "w") size.rwidth() *= w_len;
     // Width as a function of the default height
-  else if (w_unit.x2 == "h") size.rwidth() = w_unit.x1 * size.height();
+  else if (w_unit == "h") size.rwidth() = w_len * size.height();
     // Absolute EM units
-  else if (w_unit.x2 == "em") size.setWidth (w_unit.x1 * fm.width("M"));
+  else if (w_unit == "em") size.setWidth (w_len * fm.width("M"));
     // Absolute pixel units
-  else if (w_unit.x2 == "px") {
-    if (retina_zoom == 2) w_unit.x1 *= 1.5;
-    size.setWidth (w_unit.x1);
+  else if (w_unit == "px") {
+    if (retina_zoom == 2) w_len *= 1.5;
+    size.setWidth (w_len);
   }
 
     // Height as a function of the default width
-  if (h_unit.x2 == "w") size.rheight() = h_unit.x1 * size.width();
+  if (h_unit == "w") size.rheight() = h_len * size.width();
     // Height as a function of the default height
-  else if (h_unit.x2 == "h") size.rheight() *= h_unit.x1;
-  else if (h_unit.x2 == "em") size.setHeight (h_unit.x1 * fm.width("M"));
-  else if (h_unit.x2 == "px") {
-    if (retina_zoom == 2) h_unit.x1 *= 1.5;
-    size.setHeight (h_unit.x1);
+  else if (h_unit == "h") size.rheight() *= h_len;
+  else if (h_unit == "em") size.setHeight (h_len * fm.width("M"));
+  else if (h_unit == "px") {
+    if (retina_zoom == 2) h_len *= 1.5;
+    size.setHeight (h_len);
   }
   return size;
 }

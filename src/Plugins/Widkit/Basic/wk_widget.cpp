@@ -203,11 +203,13 @@ decode_length (string width, wk_widget wid, int style) {
   if (wid->win == NULL) gui_maximal_extents (ex, ey);
   else wid->win->get_size (ex, ey);
 
-  pair<double, string> w_unit= parse_length (width);
-  if (w_unit.x2 == "w") return (SI) (w_unit.x1 * ex);
-  else if (w_unit.x2 == "h") return (SI) (w_unit.x1 * ey);
-  else if (w_unit.x2 == "px") return (SI) (x * PIXEL);
-  else if (w_unit.x2 == "em") {
+  double w_len;
+  string w_unit;
+  parse_length (width, w_len, w_unit);
+  if (w_unit == "w") return (SI) (w_len * ex);
+  else if (w_unit == "h") return (SI) (w_len * ey);
+  else if (w_unit == "px") return (SI) (x * PIXEL);
+  else if (w_unit == "em") {
     font fn= get_default_styled_font (style);
     return (SI) ((x * fn->wquad) / SHRINK);
   }

@@ -175,6 +175,6 @@ array<string> strip_completions (array<string> a, string prefix);
 array<int> differences (string s1, string s2);
 int distance (string s1, string s2);
 
-pair<double, string> parse_length (string s);
+void parse_length (string s, double& len, string& unit);
 
 #endif // defined ANALYZE_H

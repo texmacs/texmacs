@@ -44,15 +44,15 @@ static int px2pt (double px) {
 }
 
 int parse_xml_length (string length) {
-  pair<double, string> len_unit= parse_length (length);
-  double len= len_unit.x1;
-  string unit= len_unit.x2;
+  double len;
+  string unit;
+  parse_length (length, len, unit);
 
   // default unit is px
   if (unit == "px" || is_empty (unit)) {
     return px2pt (len);
   } else if (unit == "pt") {
-    return (int) tm_round (len_unit.x1);
+    return (int) tm_round (len);
   } else {
     return 0;
   }

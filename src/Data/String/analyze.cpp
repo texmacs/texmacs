@@ -1623,16 +1623,18 @@ distance (string s1, string s2) {
 * Parse length
 ******************************************************************************/
 
-pair<double, string>
-parse_length (string s) {
+void
+parse_length (string s, double& len, string& unit) {
   int start= 0;
   int i, n= N(s);
   for (i=start; i<n && !is_locase (s[i]); i++) {}
   string s1= s (start, i);
   string s2= s (i, n);
   if (is_double (s1) && (is_locase_alpha (s2) || is_empty (s2))) {
-    return pair<double, string> (as_double (s1), s2);
+    len= as_double (s1);
+    unit= s2;
   } else {
-    return pair<double, string> (0, "error");
+    len= 0.0;
+    unit= "error";
   }
 }

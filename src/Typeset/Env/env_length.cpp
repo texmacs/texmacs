@@ -170,12 +170,13 @@ edit_env_rep::as_tmlen (tree t) {
     string s= t->label;
     int start= 0, i, n=N(s);
     while ((start+1<n) && (s[start]=='-') && (s[start+1]=='-')) start += 2;
-    pair<double, string> len_unit= parse_length (s (start, n));
-    if (len_unit.x2 == "error" || is_empty (len_unit.x2)) {
+    double len;
+    string unit;
+    parse_length (s (start, n), len, unit);
+    if (unit == "error" || is_empty (unit)) {
       return tree (TMLEN, "0");
     } else {
-      return tmlen_times (len_unit.x1,
-                          as_tmlen (exec (compound (len_unit.x2 * "-length"))));
+      return tmlen_times (len, as_tmlen (exec (compound (unit * "-length"))));
     }
   }
   else if (is_func (t, MACRO, 1))

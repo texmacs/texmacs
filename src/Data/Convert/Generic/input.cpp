@@ -363,15 +363,11 @@ void parse_url (string buf, string& path_file, string& w_unit,
     int pos = 0;
     if (starts (param, "width=")) {
       param= replace (param, "width=", "");
-      pair<double, string> len_unit= parse_length(param);
-      width= len_unit.x1;
-      w_unit= len_unit.x2;
+      parse_length (param, width, w_unit);
     }
     if (starts (param, "height=")) {
       param= replace (param, "height=", "");
-      pair<double, string> len_unit= parse_length(param);
-      height= len_unit.x1;
-      h_unit= len_unit.x2;
+      parse_length(param, height, h_unit);
     }
     i++;
   }

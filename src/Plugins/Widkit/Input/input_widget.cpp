@@ -156,18 +156,20 @@ void
 input_widget_rep::handle_get_size (get_size_event ev) {
   SI ww = decode_length (width, this, style);
   SI dww= (SI) ((2*dw) / SHRINK);
-  pair<double, string> w_unit= parse_length (width);
+  string w_unit;
+  double w_len;
+  parse_length (width, w_len, w_unit);
 
-  if (w_unit.x2 == "w") {
+  if (w_unit == "w") {
     font fn= get_default_styled_font (style);
     if (ev->mode == -1) ev->w= 0;
     else if (ev->mode == 0);
     else if (ev->mode == 1) ev->w= ww;
     ev->w= max (ev->w, (4*fn->wquad) / SHRINK + dww);
   }
-  else if (w_unit.x2 == "em")
+  else if (w_unit == "em")
     ev->w= ww + dww;
-  else if (w_unit.x2 == "px")
+  else if (w_unit == "px")
     ev->w= ww + dww;
   else if (ev->mode == 1)
     ev->w= ww;
