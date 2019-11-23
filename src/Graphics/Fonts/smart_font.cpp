@@ -1274,13 +1274,13 @@ smart_font_rep::initialize_font (int nr) {
   else if (a[0] == "tt")
     fn[nr]= smart_font_bis (family, "tt", series, "right", sz, hdpi, dpi);
   else if (a[0] == "ss")
-    fn[nr]= smart_font_bis (family, "tt", series, "right", sz, hdpi, dpi);
+    fn[nr]= smart_font_bis (family, "ss", series, "right", sz, hdpi, dpi);
   else if (a[0] == "bold-ss")
-    fn[nr]= smart_font_bis (family, "tt", "bold", "right", sz, hdpi, dpi);
+    fn[nr]= smart_font_bis (family, "ss", "bold", "right", sz, hdpi, dpi);
   else if (a[0] == "italic-ss")
-    fn[nr]= smart_font_bis (family, "tt", series, "italic", sz, hdpi, dpi);
+    fn[nr]= smart_font_bis (family, "ss", series, "italic", sz, hdpi, dpi);
   else if (a[0] == "bold-italic-ss")
-    fn[nr]= smart_font_bis (family, "tt", "bold", "italic", sz, hdpi, dpi);
+    fn[nr]= smart_font_bis (family, "ss", "bold", "italic", sz, hdpi, dpi);
   else if (a[0] == "cal" && N(a) == 1)
     fn[nr]= smart_font_bis (family, "calligraphic", series, "italic", sz,
                             hdpi, dpi);
