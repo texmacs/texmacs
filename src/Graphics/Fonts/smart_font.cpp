@@ -1123,12 +1123,24 @@ smart_font_rep::resolve_rubber (string c, string fam, int attempt) {
   return -1;
 }
 
+static bool
+use_italic_greek (array<string> a) {
+  // FIXME: this is a very hacky fix for fonts such as
+  // 'math basic-letters=Linux Libertine,math=TeX Gyre Termes,Linux Libertine'
+  // which get rewritten as follows in math mode:
+  // 'math basic-letters=Linux Libertine,TeX Gyre Termes,Linux Libertine'
+  int count= 0;
+  for (int i=0; i<N(a); i++)
+    if (!occurs ("=", a[i])) count++;
+  return count <= 1;
+}
+
 int
 smart_font_rep::resolve (string c) {
   //cout << "Resolving " << c
   //     << " for " << mfam << ", " << family << ", " << variant
   //     << ", " << series << ", " << shape << ", " << rshape
-  //     << "; " << fn[SUBFONT_MAIN]->res_name << "\n";
+  //     << "; " << fn[SUBFONT_MAIN]->res_name << "; " << math_kind << "\n";
   array<string> a= trimmed_tokenize (family, ",");
 
   if (math_kind != 0) {
@@ -1146,7 +1158,7 @@ smart_font_rep::resolve (string c) {
       initialize_font (nr);
       return sm->add_char (key, c);
     }
-    if (N(a) == 1 && is_greek (c)) {
+    if (is_greek (c) && use_italic_greek (a)) {
       string gc= substitute_italic_greek (c);
       if (gc != "" && fn[SUBFONT_MAIN]->supports (gc)) {
         tree key= tuple ("italic-greek");
