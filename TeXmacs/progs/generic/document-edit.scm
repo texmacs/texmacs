@@ -420,6 +420,38 @@
          (add-style-package "no-page-numbers"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Citing TeXmacs
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (acknowledge-texmacs)
+  (:synopsis "Acknowledge that a document has been written using TeXmacs")
+  (noop))
+
+(tm-define (mention-texmacs ref)
+  (:synopsis "Cite TeXmacs inside an acknowledgment")
+  (noop))
+
+(define (cited-in? ref t)
+  (cond ((tm-atomic? t) #f)
+        ((tm-in? t '(cite nocite))
+         (exists? (cut tm-equal? <> ref) (tm-children t)))
+        (else (exists? (cut cited-in? ref <>) (tm-children t)))))
+
+(define (has-been-cited? ref)
+  (cited-in? ref (buffer-tree)))
+
+(tm-define (cite-texmacs ref)
+  (:synopsis "Cite a paper or other work on TeXmacs")
+  (:check-mark "v" has-been-cited?)
+  (cond ((tree-in? (cursor-tree) '(cite nocite))
+         (tree-insert (cursor-tree) (tree-arity (cursor-tree)) (list ref)))
+        ((tree-in? (tree-up (cursor-tree)) '(cite nocite))
+         (with i (+ (tree-index (cursor-tree)) 1)
+           (tree-insert (tree-up (cursor-tree)) i (list ref))
+           (tree-go-to (tree-up (cursor-tree)) i :end)))
+        (else (insert `(cite ,ref)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document updates
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

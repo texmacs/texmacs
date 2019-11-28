@@ -136,8 +136,26 @@ contain_space (string s) {
   return false;
 }
 
+void
+complete_bib_file (url& bib_file, tree bib_t) {
+  if (as_string (tail (bib_file)) == "auto.bib") return;
+  if (!is_func (bib_t, DOCUMENT)) return;
+  for (int i=0; i<N(bib_t); i++)
+    if (is_atomic (bib_t[i]) && starts (bib_t[i]->label, "TeXmacs:")) {
+      if (suffix (bib_file) != "bib") bib_file= glue (bib_file, ".bib");
+      url rad= unglue (bib_file, 4);
+      url xbib_file= "$TEXMACS_PATH/misc/bib/texmacs.bib";
+      url mbib_file= head (bib_file) * glue (rad, "-extended.bib");
+      copy (bib_file, mbib_file);
+      append_to (xbib_file, mbib_file);
+      bib_file= mbib_file;
+      return;
+    }
+}
+
 tree
 bibtex_run (string bib, string style, url bib_file, tree bib_t) {
+  complete_bib_file (bib_file, bib_t);
   if (contain_space (style))
     return "Error: bibtex disallows spaces in style name";
   string bib_name= as_string (tail (bib_file));

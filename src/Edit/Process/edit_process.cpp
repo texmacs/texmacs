@@ -118,11 +118,13 @@ edit_process_rep::generate_bibliography (
   copy_bst_file (buf->buf->name, style);
   url bib_file= find_bib_file (buf->buf->name, fname);
   //cout << fname << " -> " << concretize (bib_file) << "\n";
+  url xbib_file= "$TEXMACS_PATH/misc/bib/texmacs.bib";
   if (is_none (bib_file)) {
     url bbl_file= find_bib_file (buf->buf->name, fname, ".bbl");
     if (is_none (bbl_file)) {
       if (supports_db ()) {
-        t= as_tree (call (string ("bib-compile"), bib, style, bib_t));
+        t= as_tree (call (string ("bib-compile"),
+                          bib, style, bib_t, xbib_file));
         call (string ("bib-attach"), bib, bib_t);
       }
       else {
@@ -149,12 +151,18 @@ edit_process_rep::generate_bibliography (
       bib_file= find_bib_file (buf->buf->name, fname, ".bib", true);
     if (supports_db ()) {
       //(void) call (string ("bib-import-bibtex"), bib_file);
-      t= as_tree (call (string ("bib-compile"), bib, style, bib_t, bib_file));
+      array<object> args;
+      args << object (bib) << object (style) << object (bib_t)
+           << object (bib_file) << object (xbib_file);
+      t= as_tree (call (string ("bib-compile"), args));
     }
     else if (starts (style, "tm-")) {
       string sbib;
       if (load_string (bib_file, sbib, false))
         std_error << "Could not load BibTeX file " << fname;
+      string xsbib;
+      if (!load_string (xbib_file, xsbib, false))
+        sbib << "\n" << xsbib;
       tree te= bib_entries (parse_bib (sbib), bib_t);
       object ot= tree_to_stree (te);
       eval ("(use-modules (bibtex " * style (3, N(style)) * "))");

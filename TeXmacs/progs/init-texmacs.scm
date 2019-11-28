@@ -173,7 +173,7 @@
            vertical-space-menu indentation-menu line-break-menu
            page-header-menu page-footer-menu page-numbering-menu
            page-break-menu)
-(lazy-menu (generic document-menu) document-menu
+(lazy-menu (generic document-menu) document-menu cite-texmacs-related-menu
            project-menu document-style-menu global-language-menu)
 (lazy-menu (generic document-part)
            preamble-menu document-part-menu project-manage-menu)

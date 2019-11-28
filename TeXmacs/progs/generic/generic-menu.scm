@@ -382,9 +382,12 @@
     (-> "Rendering"
         (dynamic (focus-theme-menu t))))
   ("Describe" (focus-help))
+  ("Delete" (remove-structure-upwards))
+  (assuming (tree-in? t '(cite nocite))
+    (-> "Cite TeXmacs"
+        (link cite-texmacs-related-menu)))
   (assuming (focus-can-search? t)
-    ("Search in database" (focus-open-search-tool t)))
-  ("Delete" (remove-structure-upwards)))
+    ("Search in database" (focus-open-search-tool t))))
 
 (tm-menu (focus-move-menu t)
   ("Previous similar" (traverse-previous))
@@ -507,6 +510,10 @@
         (dynamic (focus-theme-menu t))))
   ((balloon (icon "tm_focus_help.xpm") "Describe tag")
    (focus-help))
+  (assuming (tree-in? t '(cite nocite))
+    (=> (balloon (icon "tm_like.xpm") "Cite TeXmacs-related work")
+        (group "TeXmacs-related work")
+        (link cite-texmacs-related-menu)))
   (assuming (focus-can-search? t)
     ((balloon (icon "tm_focus_search.xpm") "Search in database")
      (focus-open-search-tool t))))
