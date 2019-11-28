@@ -900,24 +900,23 @@
 (tm-menu (focus-document-extra-menu t))
 (tm-menu (focus-style-extra-menu t))
 
+(menu-bind cite-texmacs-only-menu
+  ("TeXmacs website" (cite-texmacs "TeXmacs:website"))
+  ("TeXmacs manual" (cite-texmacs "TeXmacs:manual")))
+
 (menu-bind cite-texmacs-related-menu
-  ;;(-> "Main"
-      ("TeXmacs website" (cite-texmacs "TeXmacs:website"))
-      ("TeXmacs manual" (cite-texmacs "TeXmacs:manual"))
-      ;;)
-      ---
   (-> "Tutorials"
       ("GNU TeXmacs: a scientific editing platform"
        (cite-texmacs "TeXmacs:vdH2:2006"))
-      ("TeXmacs Quick-Start Guide"
-       (cite-texmacs "TeXmacs:Ratier:2005"))
       ("TeXmacs in 60 minutes"
-       (cite-texmacs "TeXmacs:Seidl:2005")))
+       (cite-texmacs "TeXmacs:Seidl:2003"))
+      ("TeXmacs Quick-Start Guide"
+       (cite-texmacs "TeXmacs:Ratier:2005")))
   (-> "Surveys"
       ("GNU TeXmacs (ASCM 2005)"
        (cite-texmacs "TeXmacs:vdH:2005"))
       ("GNU TeXmacs (Dagstuhl 2006)"
-       (cite-texmacs "TeXmacs:vdH:2006a"))
+       (cite-texmacs "TeXmacs:vdH1:2006"))
       ("GNU TeXmacs: a scientific editing platform"
        (cite-texmacs "TeXmacs:HGGLPR:2012"))
       ("GNU TeXmacs: Towards a Scientific Office Suite"
@@ -946,13 +945,18 @@
        (cite-texmacs "TeXmacs:MG:2006"))))
 
 (menu-bind cite-texmacs-menu
-  ;;(group "Acknowledge")
-  ;;("Written with TeXmacs" (acknowledge-texmacs))
-  ;;---
-  ;;("TeXmacs website" (mention-texmacs "TeXmacs:website"))
-  ;;("TeXmacs manual" (mention-texmacs "TeXmacs:manual"))
-  ;;---
-  ;;(group "Cite")
+  (group "Acknowledge")
+  ("Written with TeXmacs" (acknowledge-texmacs))
+  ---
+  (group "Cite")
+  (link cite-texmacs-only-menu)
+  ---
+  (group "Cite related")
+  (link cite-texmacs-related-menu))
+
+(menu-bind cite-texmacs-short-menu
+  (link cite-texmacs-only-menu)
+  ---
   (link cite-texmacs-related-menu))
 
 (tm-menu (focus-style-menu t)

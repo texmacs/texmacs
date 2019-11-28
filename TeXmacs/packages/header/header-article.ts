@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.99.11>
 
 <style|source>
 
@@ -13,11 +13,10 @@
     <src-copyright|1998--2004|Joris van der Hoeven>
 
     <\src-license>
-      This software falls under the <hlink|GNU general public
-      license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-      It comes WITHOUT ANY WARRANTY WHATSOEVER.
-      You should have received a copy of the license which the software.
-      If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+      This software falls under the <hlink|GNU general public license,
+      version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+      WARRANTY WHATSOEVER. You should have received a copy of the license
+      which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
     </src-license>
   </src-title>>
 
@@ -31,6 +30,13 @@
   <assign|header-secondary|<macro|name|nr|what|>>
 
   \;
+
+  <assign|cite-website|<macro|<localize|This article has been written using>
+  GNU <TeXmacs><if|<equal|<value|language>|french>| ; |; ><localize|see>
+  <hlink|<with|font-family|tt|www.texmacs.org>|http://www.texmacs.org>.>>
+
+  <assign|cite-TeXmacs|<xmacro|keys|<localize|This article has been written
+  using> GNU <TeXmacs><nbsp><map-args|identity|cite|keys>.>>
 </body>
 
 <\initial>

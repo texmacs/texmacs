@@ -27,6 +27,8 @@
 (define-public (nlist? x) (not (list? x)))
 (define-public (nnot x) (not (not x)))
 (define-public-macro (toggle! x) `(set! ,x (not ,x)))
+(define-public (safe-car l) (and (pair? l) (car l)))
+(define-public (safe-cdr l) (and (pair? l) (cdr l)))
 
 (define-public (list-1? x) (and (pair? x) (null? (cdr x))))
 (define-public (nlist-1? x) (not (list-1? x)))

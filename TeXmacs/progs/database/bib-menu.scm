@@ -128,5 +128,6 @@
     (open-bib-chooser
      (lambda (key)
        (when (and (tree->path u)
-		  (tree-in? (tree-up u) '(cite nocite cite-detail)))
+		  (tree-in? (tree-up u)
+                            '(cite nocite cite-detail cite-TeXmacs)))
 	 (tree-set! u key))))))

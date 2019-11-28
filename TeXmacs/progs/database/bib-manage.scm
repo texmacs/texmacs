@@ -334,7 +334,11 @@
   (when (and (tm? names) (tm-func? names 'document))
     (set! names (tm-children (tm->stree names))))
   ;;(display* "Compile " style ", " names ", " bib-files "\n")
-  (cond ((not (supports-db?)) (tree "Error: database tool not activated"))
+  (cond ((and (not (supports-db?))
+              (not (and (list-1? bib-files)
+                        (== (url->string (url-tail (car bib-files)))
+                            "texmacs.bib"))))
+         (tree "Error: database tool not activated"))
         ((not (and (list? names) (list-and (map string? names))))
          (tree "Error: invalid bibliographic key list"))
         (else

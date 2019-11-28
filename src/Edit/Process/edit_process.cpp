@@ -128,10 +128,15 @@ edit_process_rep::generate_bibliography (
         call (string ("bib-attach"), bib, bib_t);
       }
       else {
-        std_error << "Could not load BibTeX file " << fname;
-        set_message ("Could not find bibliography file",
-                     "compile bibliography");
-        return;
+        for (int i=0; i<N(bib_t); i++)
+          if (!is_atomic (bib_t[i]) || !starts (bib_t[i]->label, "TeXmacs:")) {
+            std_error << "Could not load BibTeX file " << fname << LF;
+            set_message ("Could not find bibliography file",
+                         "compile bibliography");
+            return;
+          }
+        t= as_tree (call (string ("bib-compile"),
+                          bib, style, bib_t, xbib_file));        
       }
     }
     else t= bibtex_load_bbl (bib, bbl_file);

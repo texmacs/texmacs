@@ -50,8 +50,6 @@
 ;; File hierarchy
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (safe-car l) (and (pair? l) (car l)))
-
 (define (search-file l . where)
   (if (null? l) where
       (let* ((q (if (null? where)

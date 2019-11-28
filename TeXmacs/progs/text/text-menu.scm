@@ -717,12 +717,10 @@
   ("Subtitle" (make-doc-data-element 'doc-subtitle))
   ("Author" (make-doc-data-element 'doc-author))
   ("Date" (make-doc-data-element 'doc-date))
-  ("Today"
-   (begin (make-doc-data-element 'doc-date) (make 'date 0)))
+  ("Today" (begin (make-doc-data-element 'doc-date) (make 'date 0)))
   ("Miscellanous" (make-doc-data-element 'doc-misc))
   ("Note" (make-doc-data-element 'doc-note))
-  ("TeXmacs notice" (begin (make-doc-data-element 'doc-note)
-                           (make 'with-TeXmacs-text))))
+  (-> "Cite TeXmacs" (link cite-texmacs-menu)))
 
 (tm-menu (focus-title-hidden-menu)
   ("Running title" (make-doc-data-element 'doc-running-title))
@@ -747,7 +745,9 @@
       (link focus-title-menu)
       (-> "Hidden" (link focus-title-hidden-menu)))
   (=> (balloon (icon "tm_focus_prefs.xpm") "Title presentation options")
-      (link focus-title-option-menu)))
+      (link focus-title-option-menu))
+  (=> (balloon (icon "tm_like.xpm") "Cite TeXmacs")
+      (link cite-texmacs-menu)))
 
 (tm-menu (focus-ancestor-menu t)
   (:require (doc-title-context? t))
