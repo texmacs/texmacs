@@ -233,7 +233,7 @@ unicode_font_rep::unicode_font_rep (string name,
     if (fnm->exists (0xfb03)) ligs += LIGATURE_FFI;
     if (fnm->exists (0xfb04)) ligs += LIGATURE_FFL;
     if (fnm->exists (0xfb05)) ligs += LIGATURE_FT;
-    if (fnm->exists (0xfb06)) ligs += LIGATURE_ST;
+    //if (fnm->exists (0xfb06)) ligs += LIGATURE_ST;
   }
   if (family == "Times New Roman")
     ligs= LIGATURE_FI + LIGATURE_FL;
