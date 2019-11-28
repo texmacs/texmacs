@@ -1,4 +1,4 @@
-<TeXmacs|1.99.10>
+<TeXmacs|1.99.11>
 
 <style|<tuple|source|english>>
 
@@ -98,6 +98,14 @@
   <assign|if-nref|<macro|lab|body|<with|warn-missing|false|<if|<equal|<get-binding|<arg|lab>>|<uninit>>|<arg|body>>>>>
 
   <assign|if-nref*|<macro|lab|body|<with|warn-missing|false|<if|<equal|<get-binding|<arg|lab>>|<uninit>>|<arg|body>|<greyed|<arg|body>>>>>>
+
+  <drd-props|if-ref|arity|3|identifier|0|accessible|1>
+
+  <drd-props|if-ref*|arity|3|identifier|0|accessible|1>
+
+  <drd-props|if-nref|arity|3|identifier|0|accessible|1>
+
+  <drd-props|if-nref*|arity|3|identifier|0|accessible|1>
 
   <assign|tmdoc-file|<macro|name|<or|<find-file|<arg|name>>|<find-file-upwards|<merge|<arg|name>|.|<language-suffix>|.tm>|doc|web|texmacs>|<find-file-upwards|<merge|<arg|name>|.en.tm>|doc|web|texmacs>|<arg|name>>>>
 
