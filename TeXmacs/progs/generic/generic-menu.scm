@@ -188,26 +188,49 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (parameter-test? l val mode)
-  (== (get-init-tree l) (string->tree val)))
+  (cond ((== mode :global)
+         (== (get-init-tree l) (string->tree val)))
+        ((== mode :local)
+         (== (get-env-tree l) (string->tree val)))
+        (else #f)))
 
 (tm-define (parameter-set l val mode)
-  (set-init-env l val))
+  (cond ((== mode :global)
+         (set-init-env l val))
+        ((== mode :local)
+         (tree-with-set (focus-tree) l val))))
 
 (tm-define (parameter-interactive-set l mode)
   (:interactive #t)
-  (init-interactive-env l))
+  (interactive (lambda (s) (parameter-set l s mode))
+    (list (or (logic-ref env-var-description% l) l) "string"
+          (parameter-get l mode))))
+
+(define (parameter-get* l mode)
+  (cond ((== mode :global)
+         (tm->stree (get-init-tree l)))
+        ((== mode :local)
+         (tm->stree (get-env-tree l)))
+        (else "")))
 
 (tm-define (parameter-get l mode)
-  (with t (get-init-tree l)
-    (cond ((and (tree-func? t 'macro 1) (tree-atomic? (tree-ref t 0)))
-           (tree->string (tree-ref t 0)))
-          (else (tm->stree t)))))
+  (with t (parameter-get* l mode)
+    (if (and (tm-func? t 'macro 1) (tm-atomic? (tm-ref t 0)))
+        (tm-ref t 0)
+        t)))
 
 (tm-define (parameter-default? l mode)
-  (not (init-has? l)))
+  (cond ((== mode :global)
+         (not (init-has? l)))
+        ((== mode :local)
+         (not (tree-with-get (focus-tree) l)))
+        (else #f)))
 
 (tm-define (parameter-reset l mode)
-  (init-default-one l))
+  (cond ((== mode :global)
+         (init-default-one l))
+        ((== mode :local)
+         (tree-with-reset (focus-tree) l))))
 
 (tm-define (parameter-enabled? l mode)
   (parameter-test? l "true" mode))
@@ -332,35 +355,50 @@
 (tm-define (parameter-show-in-menu? l)
   (not (member->theme l)))
 
-(tm-menu (focus-parameters-menu t)
-  (with ps (list-filter (search-tag-parameters t) parameter-show-in-menu?)
-    (if (nnull? ps)
-        (group "Style parameters")
-        (for (p ps)
-          (dynamic (focus-parameter-menu-item p :global)))
-        (if (tree-label-extension? (tree-label t))
-            ---))))
-
-(tm-menu (focus-theme-parameters-submenu th)
-  (with mems (theme->members th)
-    (for (mem mems)
-      (with var (string-append th "-" mem)
-        (dynamic (focus-parameter-menu-item var :global))))))
-
-(tm-menu (focus-theme-parameters-menu t)
-  (with ths (search-tag-themes t)
-    (if (nnull? ths)
-        (group "Theme parameters")
-        (for (th ths)
-          (-> (eval th)
-              (dynamic (focus-theme-parameters-submenu th))))
-        ---)))
-
 (tm-define (parameter-show-in-menu? l)
   (:require (in? l (list "the-label" "auto-nr" "current-part" "language"
                          "page-nr" "page-the-page" "prog-language"
                          "caption-summarized" "figure-width")))
   #f)
+
+(define (focus-parameters-list t mode)
+  (let* ((ls (list-filter (search-parameters (tree-label t))
+                          parameter-show-in-menu?))
+         (xs (if (== mode :global) (list)
+                 (map car (customizable-parameters-memo t)))))
+    (list-difference ls xs)))
+
+(define parameters-list-cache (make-ahash-table))
+
+(define (focus-parameters-list-memo t mode)
+  (with key (list (tree-label t) mode)
+    (when (not (ahash-ref parameters-list-cache key))
+      (ahash-set! parameters-list-cache key (focus-parameters-list t mode)))
+    (ahash-ref parameters-list-cache key)))
+
+(tm-menu (focus-parameters-menu t mode)
+  (with ps (focus-parameters-list t mode)
+    (if (nnull? ps)
+        (group "Style parameters")
+        (for (p ps)
+          (dynamic (focus-parameter-menu-item p mode)))
+        (if (tree-label-extension? (tree-label t))
+            ---))))
+
+(tm-menu (focus-theme-parameters-submenu th mode)
+  (with mems (theme->members th)
+    (for (mem mems)
+      (with var (string-append th "-" mem)
+        (dynamic (focus-parameter-menu-item var mode))))))
+
+(tm-menu (focus-theme-parameters-menu t mode)
+  (with ths (search-tag-themes t)
+    (if (nnull? ths)
+        (group "Theme parameters")
+        (for (th ths)
+          (-> (eval th)
+              (dynamic (focus-theme-parameters-submenu th mode))))
+        ---)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Focus menu
@@ -409,11 +447,13 @@
 
 (tm-menu (focus-preferences-menu t)
   (dynamic (focus-style-options-menu t))
-  (dynamic (focus-parameters-menu t))
-  (dynamic (focus-theme-parameters-menu t))
+  (dynamic (focus-parameters-menu t :global))
+  (dynamic (focus-theme-parameters-menu t :global))
   (dynamic (focus-tag-edit-menu (tree-label t))))
 
-(tm-menu (focus-theme-menu t))
+(tm-menu (focus-rendering-menu t)
+  (dynamic (focus-parameters-menu t :local))
+  (dynamic (focus-theme-parameters-menu t :local)))
 
 (tm-menu (focus-tag-menu t)
   (with l (focus-variants-of t)
@@ -429,9 +469,9 @@
   (assuming (focus-has-preferences? t)
     (-> "Preferences"
         (dynamic (focus-preferences-menu t))))
-  (assuming (focus-has-theme? t)
+  (assuming (focus-has-parameters? t)
     (-> "Rendering"
-        (dynamic (focus-theme-menu t))))
+        (dynamic (focus-rendering-menu t))))
   ("Describe" (focus-help))
   ("Delete" (remove-structure-upwards))
   (assuming (tree-in? t '(cite nocite cite-TeXmacs))
@@ -556,9 +596,9 @@
   (assuming (focus-has-preferences? t)
     (=> (balloon (icon "tm_focus_prefs.xpm") "Preferences for tag")
 	(dynamic (focus-preferences-menu t))))
-  (assuming (focus-has-theme? t)
+  (assuming (focus-has-parameters? t)
     (=> (balloon (icon "tm_theme.xpm") "Rendering options for tag")
-        (dynamic (focus-theme-menu t))))
+        (dynamic (focus-rendering-menu t))))
   ((balloon (icon "tm_focus_help.xpm") "Describe tag")
    (focus-help))
   (assuming (tree-in? t '(cite nocite cite-TeXmacs))
@@ -665,7 +705,7 @@
 (tm-menu (focus-extra-menu t)
   (:require (customizable-context? t))
   ---
-  (for (p (customizable-parameters t))
+  (for (p (customizable-parameters-memo t))
     (with (var name) p
       (with l (tree-label t)
         (with setter (lambda (val)
@@ -695,11 +735,11 @@
 
 (tm-menu (focus-extra-icons t)
   (:require (customizable-context? t))
-  (for (p (customizable-parameters t))
+  (for (p (customizable-parameters-memo t))
     (with (var name) p
       (with l (tree-label t)
         (with setter (lambda (val)
-                       (when (tree-is? (focus-tree) l)
+                       (when (and val (tree-is? (focus-tree) l))
                          (tree-with-set (focus-tree) var val)))
           (glue #f #f 3 0)
           (mini #t (group (eval (string-append name ":"))))

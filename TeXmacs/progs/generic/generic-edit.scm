@@ -281,8 +281,8 @@
   (:require (tree-in? t '(reference pageref eqref hlink locus ornament)))
   #t)
 
-(tm-define (focus-has-theme? t)
-  #f)
+(tm-define (focus-has-parameters? t)
+  (and #f (focus-has-preferences? t)))
 
 (tm-define (focus-can-search? t)
   #f)
