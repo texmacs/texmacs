@@ -139,7 +139,7 @@ texmacs_mm_deps += $(call make_mm_deps,$(cocoa_mm_src))
 texmacs_c_deps := $(call make_c_deps, $(call findc_in,System,Misc))
 texmacs_c_deps += $(call make_c_deps, $(pdf_c_src))
 
-deps += $(texmacs_cpp_deps) $(texmacs_m_deps) $(texmacs_mm_deps)
+#deps += $(texmacs_cpp_deps) $(texmacs_m_deps) $(texmacs_mm_deps)
 
 ###############################################################################
 # Include files
@@ -301,7 +301,14 @@ freetype_obj := $(call makeobj,$(freetype_src))
 %.o: %.cpp # Disable implicit compilation rule
 %.o: %.c # Disable implicit compilation rule
 
-cxx_flags    = $(strip $(CXX) $(1) -c $< -o $@)
+ifneq "@PREPROC@" "yes"
+cxx_flags = $(strip $(CXX) $(1) -c $< -o $@)
+else
+define cxx_flags
+$(strip $(CXX) $(1) -E $< -o $@.lst)
+$(strip $(CXX) $(1) -c $< -o $@)
+endef
+endif
 cxx_incl     = $(call cxx_flags,$(1) \
  $(CPPFLAGS) $(CXXFLAGS)) 
 objcxx_flags = $(strip $(OBJCXX) $(1) -c $< -o $@)
@@ -479,6 +486,7 @@ DISTR:
 
 CLEAN: DISTR
 	$(RM) Objects/*.o
+	$(RM) Objects/*.lst
 	$(RM) Plugins/Qt/moc_*.cpp
 
 clean: CLEAN

@@ -633,6 +633,7 @@ tmbin
 tmsrc
 tmdir
 tmorig
+PREPROC
 CONFIG_EXPERIMENTAL
 CONFIG_CHECKS
 DEBUG_RC
@@ -875,6 +876,7 @@ enable_assert
 enable_warnings
 enable_checks
 enable_experimental
+enable_preproc
 enable_optimize
 enable_sign
 '
@@ -1535,6 +1537,7 @@ if test -n "$ac_init_help"; then
   --enable-warnings       print warning messages during compilation
   --enable-checks         more extensive sanity checking
   --enable-experimental   support new style rewriting code
+  --enable-prepoc         generate preprocessing listing
   --enable-optimize[=ARG] compile with optimizations [guessed]
   --enable-sign[=ARG]     Code signing ID
 
@@ -26822,6 +26825,16 @@ $as_echo "disabling experimental style rewriting code" >&6; }
          as_fn_error $? "bad option --enable-experimental=$enable_experimental" "$LINENO" 5
          ;;
   esac
+
+  # Check whether --enable-preproc was given.
+if test "${enable_preproc+set}" = set; then :
+  enableval=$enable_preproc; PREPROC=$enableval
+
+else
+  PREPROC="NO"
+
+fi
+
 
 
 

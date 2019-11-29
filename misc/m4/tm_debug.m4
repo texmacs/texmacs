@@ -241,4 +241,8 @@ AC_DEFUN([TM_DEBUG],[
          ;;
   esac
   AC_SUBST(CONFIG_EXPERIMENTAL)
+  AC_ARG_ENABLE(preproc,
+  AS_HELP_STRING([--enable-prepoc],[generate preprocessing listing]),
+      [AC_SUBST(PREPROC,$enableval)], [AC_SUBST(PREPROC,"NO")])  
+  
 ])
