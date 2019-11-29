@@ -233,11 +233,49 @@
 (tm-define (customizable-parameters t)
   (list))
 
+(define customizable-cache (make-ahash-table))
+
+(tm-define (customizable-parameters-memo t)
+  (with key (tree-label t)
+    (when (not (ahash-ref customizable-cache key))
+      (ahash-set! customizable-cache key (customizable-parameters t)))
+    (ahash-ref customizable-cache key)))
+
 (tm-define (tree-with-set t . l)
   (focus-tree-modified t)
   (tree-set! t `(with ,@l ,t))
   (with-simplify t)
   (with-merge t))
+
+(tm-define (tree-with-get t var)
+  (and (tree? t)
+       (with hit #f
+         (when (tree-is? t 'with)
+           (for (i (.. 0 (- (tree-arity t) 1) 2))
+             (when (tm-equal? (tree-ref t i) var)
+               (set! hit i))))
+         (cond (hit (tree-ref t (+ hit 1)))
+               ((and (tree-up t) (tree-up (tree-up t)))
+                (tree-with-get (tree-up t) var))
+               (else #f)))))
+
+(define (tree-with-reset* t var)
+  (with hit #f
+    (when (tree-is? t 'with)
+      (for (i (.. 0 (- (tree-arity t) 1) 2))
+        (when (tm-equal? (tree-ref t i) var)
+          (set! hit i))))
+    (cond (hit
+           (tree-remove! t hit 2)
+           (when (== (tree-arity t) 1)
+             (tree-remove-node t 0)))
+          ((and (tree-up t) (tree-up (tree-up t)))
+           (tree-with-reset* (tree-up t) var)))))
+
+(tm-define (tree-with-reset t var)
+  (when (and (tree? t) (tree->path t))
+    (focus-tree-modified t)
+    (tree-with-reset* t var)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Spacing
