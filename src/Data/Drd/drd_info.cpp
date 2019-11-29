@@ -983,7 +983,7 @@ drd_info_rep::heuristic_init_parameter (string var, string val) {
   tag_info old_ti= copy (info[l]);
   set_arity (l, 0, 0, ARITY_NORMAL, CHILD_UNIFORM);
   set_var_type (l, VAR_PARAMETER);
-  if (ends (var, "-color")) set_type (l, TYPE_COLOR);
+  if (var == "color" || ends (var, "-color")) set_type (l, TYPE_COLOR);
   else if (ends (var, "-recolor")) set_type (l, TYPE_COLOR);
   else if (ends (var, "-length")) set_type (l, TYPE_LENGTH);
   else if (ends (var, "-width")) set_type (l, TYPE_LENGTH);
@@ -1001,10 +1001,10 @@ drd_info_rep::heuristic_init_parameter (string var, tree val) {
   tag_info old_ti= copy (info[l]);
   set_arity (l, 0, 0, ARITY_NORMAL, CHILD_UNIFORM);
   set_var_type (l, VAR_PARAMETER);
-  if (ends (var, "-color")) set_type (l, TYPE_COLOR);
+  if (var == "color" || ends (var, "-color")) set_type (l, TYPE_COLOR);
   else if (ends (var, "-length")) set_type (l, TYPE_LENGTH);
   else if (ends (var, "-width")) set_type (l, TYPE_LENGTH);
-  set_type (l, get_type (val));
+  else set_type (l, get_type (val));
   return (old_ti != info[l]);
 }
 
