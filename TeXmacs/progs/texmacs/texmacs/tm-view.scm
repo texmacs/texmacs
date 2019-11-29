@@ -125,7 +125,7 @@
 	(restore-zoom (get-init-page-rendering)))
       (begin
 	(save-zoom (get-init-page-rendering))
-        (set! saved-informative-flags (get-init-env "info-flag"))
+        (set! saved-informative-flags (get-init "info-flag"))
         (init-env "info-flag" "none")
         (full-screen-mode #t #f)
         (fit-to-screen))))

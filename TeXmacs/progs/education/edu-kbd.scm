@@ -19,7 +19,8 @@
   ("text c" (make-mc 'mc))
 
   (". . ." (make 'gap))
-  (". . . var" "...")
+  (". . . var" (make 'text-dots))
+  (". . . var var" "...")
   (". . . ." (make 'gap-wide))
   (". . . . var" "....")
   (". . . . ." (make 'gap-long))
