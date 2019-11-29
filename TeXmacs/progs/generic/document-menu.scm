@@ -1062,7 +1062,7 @@
   (with setter (lambda (col) (init-env-tree "bg-color" col))
     (assuming (not (is-background-picture? (get-init-tree "bg-color")))
       (dynamic (focus-customizable-icons-item
-                setter "bg-color" "Background color")))
+                "bg-color" "Background color" :global)))
     (assuming (is-background-picture? (get-init-tree "bg-color"))
       ((balloon (icon "tm_camera.xpm") "Select background picture")
        (with bg (tree->stree (get-init-tree "bg-color"))

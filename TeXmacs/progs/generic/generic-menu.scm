@@ -188,16 +188,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (parameter-test? l val mode)
-  (cond ((== mode :global)
+  (cond ((not (tm? val)) #f)
+        ((== mode :global)
          (== (get-init-tree l) (string->tree val)))
-        ((== mode :local)
-         (== (get-env-tree l) (string->tree val)))
+        ((and (func? mode :local) (tree-is? (focus-tree) (cadr mode)))
+         (== (tree-with-get (focus-tree) l) (string->tree val)))
         (else #f)))
 
 (tm-define (parameter-set l val mode)
-  (cond ((== mode :global)
+  (cond ((not (tm? val)) (noop))
+        ((== mode :global)
          (set-init-env l val))
-        ((== mode :local)
+        ((and (func? mode :local) (tree-is? (focus-tree) (cadr mode)))
          (tree-with-set (focus-tree) l val))))
 
 (tm-define (parameter-interactive-set l mode)
@@ -209,7 +211,7 @@
 (define (parameter-get* l mode)
   (cond ((== mode :global)
          (tm->stree (get-init-tree l)))
-        ((== mode :local)
+        ((func? mode :local)
          (tm->stree (get-env-tree l)))
         (else "")))
 
@@ -222,14 +224,14 @@
 (tm-define (parameter-default? l mode)
   (cond ((== mode :global)
          (not (init-has? l)))
-        ((== mode :local)
+        ((and (func? mode :local) (tree-is? (focus-tree) (cadr mode)))
          (not (tree-with-get (focus-tree) l)))
         (else #f)))
 
 (tm-define (parameter-reset l mode)
   (cond ((== mode :global)
          (init-default-one l))
-        ((== mode :local)
+        ((and (func? mode :local) (tree-is? (focus-tree) (cadr mode)))
          (tree-with-reset (focus-tree) l))))
 
 (tm-define (parameter-enabled? l mode)
@@ -452,8 +454,8 @@
   (dynamic (focus-tag-edit-menu (tree-label t))))
 
 (tm-menu (focus-rendering-menu t)
-  (dynamic (focus-parameters-menu t :local))
-  (dynamic (focus-theme-parameters-menu t :local)))
+  (dynamic (focus-parameters-menu t (list :local (tree-label t))))
+  (dynamic (focus-theme-parameters-menu t (list :local (tree-label t)))))
 
 (tm-menu (focus-tag-menu t)
   (with l (focus-variants-of t)
@@ -683,67 +685,67 @@
 ;; Focus menus for customizable environments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-menu (focus-customizable-menu-item setter var name)
-  ((eval name) (interactive setter (list name "string" (get-env var)))))
+(tm-menu (focus-customizable-menu-item var name mode)
+  (with setter (lambda (val) (parameter-set var val mode))
+    ((eval name)
+     (interactive setter (list name "string" (parameter-get var mode))))))
 
-(tm-menu (focus-customizable-menu-item setter var name)
+(tm-menu (focus-customizable-menu-item var name mode)
   (:require (parameter-choice-list var))
   (-> (eval name)
       (for (val (parameter-choice-list var))
-        ((eval val) (setter val)))))
+        ((eval val) (parameter-set var val mode)))))
 
-(tm-menu (focus-customizable-menu-item setter var name)
+(tm-menu (focus-customizable-menu-item var name mode)
   (:require (== (tree-label-type (string->symbol var)) "color"))
-  (-> (eval name)
-      (pick-background "" (setter answer))
-      ---
-      ("Palette" (interactive-color setter '()))
-      ("Pattern" (open-pattern-selector setter "1cm"))
-      ("Picture" (open-background-picture-selector setter))
-      ("Other" (interactive setter (list name "string" (get-env var))))))
+  (with setter (lambda (val) (parameter-set var val mode))
+    (-> (eval name)
+        (pick-background "" (parameter-set var answer mode))
+        ---
+        ("Palette" (interactive-color setter '()))
+        ("Pattern" (open-pattern-selector setter "1cm"))
+        ("Picture" (open-background-picture-selector setter))
+        ("Other" (interactive setter (list name "string" (get-env var)))))))
 
 (tm-menu (focus-extra-menu t)
   (:require (customizable-context? t))
   ---
   (for (p (customizable-parameters-memo t))
     (with (var name) p
-      (with l (tree-label t)
-        (with setter (lambda (val)
-                       (when (tree-is? (focus-tree) l)
-                         (tree-with-set (focus-tree) var val)))
-          (dynamic (focus-customizable-menu-item setter var name)))))))
+      (with mode (list :local (tree-label t))
+        (dynamic (focus-customizable-menu-item var name mode))))))
 
-(tm-menu (focus-customizable-icons-item setter var name)
-  (input (setter answer) "string" (list (get-env var)) "5em"))
+(tm-menu (focus-customizable-icons-item var name mode)
+  (input (parameter-set var answer mode) "string"
+         (list (parameter-get var mode)) "5em"))
 
-(tm-menu (focus-customizable-icons-item setter var name)
+(tm-menu (focus-customizable-icons-item var name mode)
   (:require (parameter-choice-list var))
   (mini #t
-    (=> (eval (get-env var))
+    (=> (eval (parameter-get var mode))
         (for (val (parameter-choice-list var))
-          ((eval val) (setter val))))))
+          ((eval val) (parameter-set var val mode))))))
 
-(tm-menu (focus-customizable-icons-item setter var name)
+(tm-menu (focus-customizable-icons-item var name mode)
   (:require (== (tree-label-type (string->symbol var)) "color"))
-  (=> (color (tree->stree (get-env-tree var)) #f #f 24 16)
-      (pick-background "" (setter answer))
-      ---
-      ("Palette" (interactive-color setter '()))
-      ("Pattern" (open-pattern-selector setter "1cm"))
-      ("Picture" (open-background-picture-selector setter))
-      ("Other" (interactive setter (list name "string" (get-env var))))))
+  (with setter (lambda (val) (parameter-set var val mode))
+    (=> (color (parameter-get var mode) #f #f 24 16)
+        (pick-background "" (parameter-set var answer mode))
+        ---
+        ("Palette" (interactive-color setter '()))
+        ("Pattern" (open-pattern-selector setter "1cm"))
+        ("Picture" (open-background-picture-selector setter))
+        ("Other" (interactive setter
+                   (list name "string" (parameter-get var mode)))))))
 
 (tm-menu (focus-extra-icons t)
   (:require (customizable-context? t))
   (for (p (customizable-parameters-memo t))
     (with (var name) p
-      (with l (tree-label t)
-        (with setter (lambda (val)
-                       (when (and val (tree-is? (focus-tree) l))
-                         (tree-with-set (focus-tree) var val)))
-          (glue #f #f 3 0)
-          (mini #t (group (eval (string-append name ":"))))
-          (dynamic (focus-customizable-icons-item setter var name)))))))
+      (with mode (list :local (tree-label t))
+        (glue #f #f 3 0)
+        (mini #t (group (eval (string-append name ":"))))
+        (dynamic (focus-customizable-icons-item var name mode))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Immediately load document-menu
