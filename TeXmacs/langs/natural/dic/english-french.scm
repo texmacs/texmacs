@@ -377,7 +377,7 @@
 ("cite" "citer")
 ("cite TeXmacs" "citer TeXmacs")
 ("cite TeXmacs-related work" "citer des travaux concernant TeXmacs")
-("cite related" "autres références")
+("cite related work" "citer des travaux connexes")
 ("class" "classe")
 ("classification" "classification")
 ("clean slate" "feuille vierge")

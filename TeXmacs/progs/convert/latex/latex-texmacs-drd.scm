@@ -93,11 +93,11 @@
 
 (logic-group latex-texmacs-0%
   tmunsc emdash tmhrule tmat tmbsl tmdummy
-  TeXmacs madebyTeXmacs withTeXmacstext tmmade
+  TeXmacs madebyTeXmacs withTeXmacstext citewebsite tmmade
   scheme tmsep tmSep pari qed textdots hrule)
 
 (logic-group latex-texmacs-1%
-  key tmrsub tmrsup keepcase
+  citetexmacs key tmrsub tmrsup keepcase
   tmtextrm tmtextsf tmtexttt tmtextmd tmtextbf
   tmtextup tmtextsl tmtextit tmtextsc tmmathbf tmmathmd
   tmverbatim tmop tmstrong tmem tmtt tmname tmsamp tmabbr

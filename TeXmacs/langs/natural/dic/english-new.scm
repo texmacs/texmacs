@@ -371,7 +371,7 @@
 ("cite" "")
 ("cite TeXmacs" "")
 ("cite TeXmacs-related work" "")
-("cite related" "")
+("cite related work" "")
 ("class" "")
 ("classification" "")
 ("clean slate" "")

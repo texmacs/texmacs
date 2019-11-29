@@ -134,6 +134,7 @@
   (let* ((b (tmfs-car name))
          (f (tmfs-string->url (tmfs-cdr name)))
 	 (l (biblio-entries f b)))
+    (if (null? l) (set! l (list "")))
     `(document
        (TeXmacs ,(texmacs-version))
        (style (tuple "database-bib"))

@@ -2548,6 +2548,9 @@
 (define (tmtex-nocite s l)
   (tex-apply 'nocite (tmtex-cite-list l)))
 
+(define (tmtex-cite-TeXmacs s l)
+  (tex-apply 'citetexmacs (tmtex-cite-list l)))
+
 (tm-define (tmtex-cite-detail s l)
   (tex-apply 'cite `(!option ,(tmtex (cadr l))) (tmtex (car l))))
 
@@ -2999,9 +3002,11 @@
   (menu (,tmtex-menu -1))
   (with-TeXmacs-text (,(tmtex-rename 'withTeXmacstext) 0))
   (made-by-TeXmacs (,(tmtex-rename 'madebyTeXmacs) 0))
+  (cite-website (,(tmtex-rename 'citewebsite) 0))
   (tm-made (,(tmtex-rename 'tmmade) 0))
   (cite (,tmtex-cite -1))
   (nocite (,tmtex-nocite -1))
+  (cite-TeXmacs (,tmtex-cite-TeXmacs -1))
   (cite-detail (,tmtex-cite-detail-hook 2))
   (cite-raw (,tmtex-cite-raw -1))
   (cite-raw* (,tmtex-cite-raw* -1))

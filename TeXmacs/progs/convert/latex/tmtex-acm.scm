@@ -30,9 +30,9 @@
 ;;; New ACM metadata presentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmtex-make-acm-art-title titles subtitles notes miscs tr)
+(define (tmtex-make-acm-art-title titles miscs tr)
   (let* ((titles (tmtex-concat-Sep (map cadr titles)))
-         (content `(,@titles ,@subtitles ,@notes ,@miscs)))
+         (content `(,@titles ,@miscs)))
     (if (null? content) '()
       `((title (!indent (!paragraph ,@content)))))))
 
@@ -51,7 +51,9 @@
                                 subtits-l dates-l miscs-l notes-l tr ar)
   (:mode acm-art-style?)
   `(!document
-     ,@(tmtex-make-acm-art-title titles subtitles notes miscs tr)
+     ,@(tmtex-make-acm-art-title titles miscs tr)
+     ,@subtitles
+     ,@notes
      ,@(tmtex-append-authors authors)
      ,@dates
      (maketitle)))

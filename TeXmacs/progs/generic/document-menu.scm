@@ -951,7 +951,7 @@
   (group "Cite")
   (link cite-texmacs-only-menu)
   ---
-  (group "Cite related")
+  (group "Cite related work")
   (link cite-texmacs-related-menu))
 
 (menu-bind cite-texmacs-short-menu

@@ -371,7 +371,7 @@
 ("cite" "citeer")
 ("cite TeXmacs" "TeXmacs citeren")
 ("cite TeXmacs-related work" "citeer werk omtrent TeXmacs")
-("cite related" "citeer verwant")
+("cite related work" "citeer gerelateerd werk")
 ("class" "klasse")
 ("classification" "classificatie")
 ("clean slate" "schone lei")

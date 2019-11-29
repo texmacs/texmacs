@@ -125,7 +125,7 @@ edit_process_rep::generate_bibliography (
       if (supports_db ()) {
         t= as_tree (call (string ("bib-compile"),
                           bib, style, bib_t, xbib_file));
-        call (string ("bib-attach"), bib, bib_t);
+        call (string ("bib-attach"), bib, bib_t, xbib_file);
       }
       else {
         for (int i=0; i<N(bib_t); i++)
@@ -177,7 +177,7 @@ edit_process_rep::generate_bibliography (
     else t= bibtex_run (bib, style, bib_file, bib_t);
     t= arrange_bib (t);
     if (supports_db ())
-      (void) call (string ("bib-attach"), bib, bib_t, bib_file);
+      (void) call (string ("bib-attach"), bib, bib_t, bib_file, xbib_file);
     if (uses_natbib (t) && !defined_at_init ("cite-author-year-package")) {
       tree st= get_style ();
       if (is_atomic (st)) st= tuple (st);
