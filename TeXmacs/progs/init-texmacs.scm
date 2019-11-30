@@ -247,9 +247,9 @@
 (lazy-define (source macro-edit) has-macro-source? edit-macro-source)
 (lazy-define (source macro-widgets) editable-macro? open-macros-editor
 	     open-macro-editor create-table-macro)
-(tm-property (open-macro-editor l) (:interactive #t))
-(tm-property (create-table-macro l) (:interactive #t))
-(tm-property (open-macros-editor) (:interactive #t))
+(tm-property (open-macro-editor l mode) (:interactive #t))
+(tm-property (create-table-macro l mode) (:interactive #t))
+(tm-property (open-macros-editor mode) (:interactive #t))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 

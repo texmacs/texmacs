@@ -142,10 +142,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind source-macros-menu
-  ("New macro" (open-macro-editor ""))
+  ("New macro" (open-macro-editor "" :global))
   (when (can-create-table-macro?)
-    ("Create table macro" (create-table-macro "")))
-  ("Edit macros" (open-macros-editor))
+    ("Create table macro" (create-table-macro "" :global)))
+  ("Edit macros" (open-macros-editor :global))
   ("Edit preamble" (toggle-source-mode))
   ("Extract style file" (extract-style-file #t))
   ("Extract style package" (extract-style-file #f)))

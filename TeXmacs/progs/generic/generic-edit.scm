@@ -282,7 +282,7 @@
   #t)
 
 (tm-define (focus-has-parameters? t)
-  (and #f (focus-has-preferences? t)))
+  (focus-has-preferences? t))
 
 (tm-define (focus-can-search? t)
   #f)

@@ -336,7 +336,7 @@
   (focus-tag-name (string->symbol (tree-name (list (string->symbol l))))))
 
 (tm-menu (focus-parameter-menu-item l mode)
-  ((eval (parameter-name l)) (open-macro-editor l)))
+  ((eval (parameter-name l)) (open-macro-editor l mode)))
 
 (tm-menu (focus-parameter-menu-item l mode)
   (:require (and (tree-label-parameter? (string->symbol l))
@@ -461,9 +461,14 @@
 (tm-menu (focus-tag-edit-menu l)
   (if (tree-label-extension? l)
       (when (editable-macro? l)
-        ("Edit macro" (open-macro-editor l)))
+        ("Edit macro" (open-macro-editor l :global)))
       (when (has-macro-source? l)
         ("Edit source" (edit-macro-source l)))))
+
+(tm-menu (focus-tag-customize-menu l)
+  (if (tree-label-extension? l)
+      (when (editable-macro? l)
+        ("Customize macro" (open-macro-editor l (list :local l))))))
 
 (tm-menu (focus-preferences-menu t)
   (dynamic (focus-style-options-menu t))
@@ -473,7 +478,8 @@
 
 (tm-menu (focus-rendering-menu t)
   (dynamic (focus-parameters-menu t (list :local (tree-label t))))
-  (dynamic (focus-theme-parameters-menu t (list :local (tree-label t)))))
+  (dynamic (focus-theme-parameters-menu t (list :local (tree-label t))))
+  (dynamic (focus-tag-customize-menu (tree-label t))))
 
 (tm-menu (focus-tag-menu t)
   (with l (focus-variants-of t)

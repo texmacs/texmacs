@@ -116,7 +116,7 @@
 (menu-bind table-special-menu
   ("Table breaking" (toggle-table-hyphen))
   ;;("Deactivate" (table-deactivate))
-  ("Create table macro" (create-table-macro "")))
+  ("Create table macro" (create-table-macro "" :global)))
 
 (menu-bind cell-mode-menu
   ("Cells" (set-cell-mode "cell"))
