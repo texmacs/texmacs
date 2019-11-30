@@ -155,6 +155,11 @@ complete_bib_file (url& bib_file, tree bib_t) {
 
 tree
 bibtex_run (string bib, string style, url bib_file, tree bib_t) {
+  if (!bibtex_present ()) {
+    string msg= "Error: could not launch bibtex program";
+    if (bibtex_command == "bibtex") return msg;
+    else return msg * " (" * bibtex_command * ")";
+  }
   complete_bib_file (bib_file, bib_t);
   if (contain_space (style))
     return "Error: bibtex disallows spaces in style name";
