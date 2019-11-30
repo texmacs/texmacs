@@ -229,7 +229,9 @@
     </padded>
   </macro>>
 
-  <drd-props|ornamented-titled|arity|2|accessible|all>
+  <drd-props|ornamented|arity|1|accessible|all|locals|<attrs>>
+
+  <drd-props|ornamented-titled|arity|2|accessible|all|locals|<attrs>>
 
   <assign|ornament-indent|<\macro|left|right|bottom|top|body>
     <\with|old-shape|<value|ornament-shape>|old-color|<value|ornament-color>|old-hpadding|<value|ornament-hpadding>|old-vpadding|<value|ornament-vpadding>|old-border|<value|ornament-border>|ornament-shape|classic|ornament-color|#fff0|ornament-hpadding|<tuple|<arg|left>|<arg|right>>|ornament-vpadding|<tuple|<arg|bottom>|<arg|top>>|ornament-border|0ln>
@@ -288,6 +290,14 @@
       </wide-normal>
     </ornament|<decorated-title|<arg|name>>>>>
   </macro>>
+
+  <drd-props|decorated|arity|1|accessible|all|locals|<attrs>>
+
+  <drd-props|decorated-block|arity|1|accessible|all|locals|<attrs>>
+
+  <drd-props|decorated-titled|arity|2|accessible|all|locals|<attrs>>
+
+  <drd-props|decorated-titled-block|arity|2|accessible|all|locals|<attrs>>
 
   <\active*>
     <\src-comment>
