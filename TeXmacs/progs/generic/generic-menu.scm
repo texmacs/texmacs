@@ -246,14 +246,8 @@
         (parameter-set l new mode)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Editing style parameters
+;; Submenus for editing various types of style parameters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (parameter-name l)
-  (focus-tag-name (string->symbol (tree-name (list (string->symbol l))))))
-
-(tm-menu (focus-parameter-menu-item l mode)
-  ((eval (parameter-name l)) (open-macro-editor l)))
 
 (tm-menu (parameter-choice-menu l cs mode)
   (with ss (list-filter cs string?)
@@ -269,6 +263,80 @@
         ---)
     (if (in? :other cs)
         ("Other" (parameter-interactive-set l mode)))))
+
+(tm-menu (parameter-submenu l mode)
+  (dynamic (parameter-choice-menu l (list :other) mode)))
+
+(tm-menu (parameter-submenu l mode)
+  (:require (== (tree-label-type (string->symbol l)) "color"))
+  (with setter (lambda (col) (parameter-set l col mode))
+    ((check "Default" "*" (parameter-default? l mode))
+     (parameter-reset l mode))
+    ---
+    (pick-background "" (setter answer))
+    ---
+    (if (in? l (list "locus-color" "visited-color"))
+        ((check "Preserve" "*" (parameter-test? l "preserve" mode))
+         (parameter-set l "preserve" mode)))
+    ("Palette" (interactive-color setter '()))
+    ("Pattern" (open-pattern-selector setter "1cm"))
+    ("Picture" (open-background-picture-selector setter))
+    ("Other" (parameter-interactive-set l mode))))
+
+(tm-menu (parameter-submenu l mode)
+  ;;(:require (== (tree-label-type (string->symbol l)) "font"))
+  (:require (string-ends? l "-font"))
+  ((check "Default" "*" (parameter-default? l mode))
+   (parameter-reset l mode))
+  ---
+  ((check "Roman" "*" (parameter-test? l "roman" mode))
+   (parameter-set l "roman" mode))
+  ((check "Stix" "*" (parameter-test? l "stix" mode))
+   (parameter-set l "stix" mode))
+  ((check "Bonum" "*" (parameter-test? l "bonum" mode))
+   (parameter-set l "bonum" mode))
+  ((check "Pagella" "*" (parameter-test? l "pagella" mode))
+   (parameter-set l "pagella" mode))
+  ((check "Schola" "*" (parameter-test? l "schola" mode))
+   (parameter-set l "schola" mode))
+  ((check "Termes" "*" (parameter-test? l "termes" mode))
+   (parameter-set l "termes" mode))
+  ---
+  (with prefix (string-drop-right l 4)
+    ("Other" (open-document-other-font-selector prefix))))
+
+(tm-menu (parameter-submenu l mode)
+  (:require (== (tree-label-type (string->symbol l)) "font-size"))
+  ((check "Default" "*" (parameter-default? l mode))
+   (parameter-reset l mode))
+  ---
+  ((check "Small" "*" (parameter-test? l "0.841" mode))
+   (parameter-set l "0.841" mode))
+  ((check "Normal" "*" (parameter-test? l "1" mode))
+   (parameter-set l "1" mode))
+  ((check "Large" "*" (parameter-test? l "1.189" mode))
+   (parameter-set l "1.189" mode))
+  ((check "Very large" "*" (parameter-test? l "1.414" mode))
+   (parameter-set l "1.414" mode))
+  ((check "Huge" "*" (parameter-test? l "1.682" mode))
+   (parameter-set l "1.682" mode))
+  ---
+  ("Other" (parameter-interactive-set l mode)))
+
+(tm-menu (parameter-submenu l mode)
+  (:require (parameter-choice-list l))
+  (with cs (parameter-choice-list l)
+    (dynamic (parameter-choice-menu l cs mode))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Editing style parameters
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (parameter-name l)
+  (focus-tag-name (string->symbol (tree-name (list (string->symbol l))))))
+
+(tm-menu (focus-parameter-menu-item l mode)
+  ((eval (parameter-name l)) (open-macro-editor l)))
 
 (tm-menu (focus-parameter-menu-item l mode)
   (:require (and (tree-label-parameter? (string->symbol l))
@@ -288,71 +356,17 @@
 
 (tm-menu (focus-parameter-menu-item l mode)
   (:require (and (tree-label-parameter? (string->symbol l))
-                 (== (tree-label-type (string->symbol l)) "color")))
+                 (or (== (tree-label-type (string->symbol l)) "color")
+                     ;;(== (tree-label-type (string->symbol l)) "font")
+                     (string-ends? l "-font")
+                     (== (tree-label-type (string->symbol l)) "font-size"))))
   (-> (eval (focus-tag-name (string->symbol l)))
-      (with setter (lambda (col) (parameter-set l col mode))
-        ((check "Default" "*" (parameter-default? l mode))
-         (parameter-reset l mode))
-        ---
-        (pick-background "" (setter answer))
-        ---
-        (if (in? l (list "locus-color" "visited-color"))
-            ((check "Preserve" "*" (parameter-test? l "preserve" mode))
-             (parameter-set l "preserve" mode)))
-        ("Palette" (interactive-color setter '()))
-        ("Pattern" (open-pattern-selector setter "1cm"))
-        ("Picture" (open-background-picture-selector setter))
-        ("Other" (parameter-interactive-set l mode)))))
-
-(tm-menu (focus-parameter-menu-item l mode)
-  (:require (and (tree-label-parameter? (string->symbol l))
-                 ;;(== (tree-label-type (string->symbol l)) "font")
-                 (string-ends? l "-font")))
-  (-> (eval (focus-tag-name (string->symbol l)))
-      ((check "Default" "*" (parameter-default? l mode))
-       (parameter-reset l mode))
-      ---
-      ((check "Roman" "*" (parameter-test? l "roman" mode))
-       (parameter-set l "roman" mode))
-      ((check "Stix" "*" (parameter-test? l "stix" mode))
-       (parameter-set l "stix" mode))
-      ((check "Bonum" "*" (parameter-test? l "bonum" mode))
-       (parameter-set l "bonum" mode))
-      ((check "Pagella" "*" (parameter-test? l "pagella" mode))
-       (parameter-set l "pagella" mode))
-      ((check "Schola" "*" (parameter-test? l "schola" mode))
-       (parameter-set l "schola" mode))
-      ((check "Termes" "*" (parameter-test? l "termes" mode))
-       (parameter-set l "termes" mode))
-      ---
-      (with prefix (string-drop-right l 4)
-        ("Other" (open-document-other-font-selector prefix)))))
-
-(tm-menu (focus-parameter-menu-item l mode)
-  (:require (and (tree-label-parameter? (string->symbol l))
-                 (== (tree-label-type (string->symbol l)) "font-size")))
-  (-> (eval (focus-tag-name (string->symbol l)))
-      ((check "Default" "*" (parameter-default? l mode))
-       (parameter-reset l mode))
-      ---
-      ((check "Small" "*" (parameter-test? l "0.841" mode))
-       (parameter-set l "0.841" mode))
-      ((check "Normal" "*" (parameter-test? l "1" mode))
-       (parameter-set l "1" mode))
-      ((check "Large" "*" (parameter-test? l "1.189" mode))
-       (parameter-set l "1.189" mode))
-      ((check "Very large" "*" (parameter-test? l "1.414" mode))
-       (parameter-set l "1.414" mode))
-      ((check "Huge" "*" (parameter-test? l "1.682" mode))
-       (parameter-set l "1.682" mode))
-      ---
-      ("Other" (parameter-interactive-set l mode))))
+      (dynamic (parameter-submenu l mode))))
 
 (tm-menu (focus-parameter-menu-item l mode)
   (:require (parameter-choice-list l))
-  (with cs (parameter-choice-list l)
-    (-> (eval (focus-tag-name (string->symbol l)))
-        (dynamic (parameter-choice-menu l cs mode)))))
+  (-> (eval (focus-tag-name (string->symbol l)))
+      (dynamic (parameter-submenu l mode))))
 
 (tm-define (parameter-show-in-menu? l)
   (not (member->theme l)))
@@ -692,20 +706,11 @@
 
 (tm-menu (focus-customizable-menu-item var name mode)
   (:require (parameter-choice-list var))
-  (-> (eval name)
-      (for (val (parameter-choice-list var))
-        ((eval val) (parameter-set var val mode)))))
+  (-> (eval name) (dynamic (parameter-submenu var mode))))
 
 (tm-menu (focus-customizable-menu-item var name mode)
   (:require (== (tree-label-type (string->symbol var)) "color"))
-  (with setter (lambda (val) (parameter-set var val mode))
-    (-> (eval name)
-        (pick-background "" (parameter-set var answer mode))
-        ---
-        ("Palette" (interactive-color setter '()))
-        ("Pattern" (open-pattern-selector setter "1cm"))
-        ("Picture" (open-background-picture-selector setter))
-        ("Other" (interactive setter (list name "string" (get-env var)))))))
+  (-> (eval name) (dynamic (parameter-submenu var mode))))
 
 (tm-menu (focus-extra-menu t)
   (:require (customizable-context? t))
@@ -723,20 +728,12 @@
   (:require (parameter-choice-list var))
   (mini #t
     (=> (eval (parameter-get var mode))
-        (for (val (parameter-choice-list var))
-          ((eval val) (parameter-set var val mode))))))
+        (dynamic (parameter-submenu var mode)))))
 
 (tm-menu (focus-customizable-icons-item var name mode)
   (:require (== (tree-label-type (string->symbol var)) "color"))
-  (with setter (lambda (val) (parameter-set var val mode))
-    (=> (color (parameter-get var mode) #f #f 24 16)
-        (pick-background "" (parameter-set var answer mode))
-        ---
-        ("Palette" (interactive-color setter '()))
-        ("Pattern" (open-pattern-selector setter "1cm"))
-        ("Picture" (open-background-picture-selector setter))
-        ("Other" (interactive setter
-                   (list name "string" (parameter-get var mode)))))))
+  (=> (color (parameter-get var mode) #f #f 24 16)
+      (dynamic (parameter-submenu var mode))))
 
 (tm-menu (focus-extra-icons t)
   (:require (customizable-context? t))
