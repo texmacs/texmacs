@@ -182,6 +182,7 @@
 (tm-define (editable-macro? l)
   (if (symbol? l) (set! l (symbol->string l)))
   (and (tree-label-extension? (string->symbol l))
+       (nin? l (list "edit-macro" "edit-tag"))
        (get-definition l)))
 
 (tm-define (open-macro-editor l mode)
