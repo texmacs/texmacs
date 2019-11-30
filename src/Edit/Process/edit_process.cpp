@@ -142,6 +142,23 @@ edit_process_rep::generate_bibliography (
     else t= bibtex_load_bbl (bib, bbl_file);
   }
   else {
+    if (!bibtex_present () || starts (style, "tm-"))
+      if (is_document (bib_t)) {
+        tree new_t (DOCUMENT);
+        for (int i=0; i<N(bib_t); i++)
+          if (bib_t[i] != "*") new_t << bib_t[i];
+          else {
+            string sbib;
+            if (load_string (bib_file, sbib, false))
+              std_error << "Could not load BibTeX file " << fname;
+            tree pt= parse_bib (sbib);
+            if (is_document (pt))
+              for (int j=0; j<N(pt); j++)
+                if (is_compound (pt[j], "bib-entry") && N(pt[j]) >= 2)
+                  new_t << pt[j][1];
+          }
+        bib_t= new_t;
+      }
     if (!bibtex_present () && !starts (style, "tm-")) {
       if (style == "abbrv") style= "tm-abbrv";
       else if (style == "acm") style= "tm-acm";
