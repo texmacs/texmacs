@@ -9695,6 +9695,15 @@ tmg_alt_window_search (tmscm arg1) {
 }
 
 tmscm
+tmg_supports_bibtexP () {
+  // TMSCM_DEFER_INTS;
+  bool out= bibtex_present ();
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_bibtex_run (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "bibtex-run");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "bibtex-run");
@@ -10603,6 +10612,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("alt-window-get-position",  tmg_alt_window_get_position, 1, 0, 0);
   tmscm_install_procedure ("alt-window-set-position",  tmg_alt_window_set_position, 3, 0, 0);
   tmscm_install_procedure ("alt-window-search",  tmg_alt_window_search, 1, 0, 0);
+  tmscm_install_procedure ("supports-bibtex?",  tmg_supports_bibtexP, 0, 0, 0);
   tmscm_install_procedure ("bibtex-run",  tmg_bibtex_run, 4, 0, 0);
   tmscm_install_procedure ("bib-add-period",  tmg_bib_add_period, 1, 0, 0);
   tmscm_install_procedure ("bib-locase-first",  tmg_bib_locase_first, 1, 0, 0);

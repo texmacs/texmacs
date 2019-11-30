@@ -800,6 +800,7 @@
   (alt-window-search window_search (path url))
 
   ;; routines for BibTeX
+  (supports-bibtex? bibtex_present (bool))
   (bibtex-run bibtex_run (tree string string url array_string))
   (bib-add-period bib_add_period (scheme_tree scheme_tree))
   (bib-locase-first bib_locase_first (scheme_tree scheme_tree))

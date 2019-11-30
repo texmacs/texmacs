@@ -736,6 +736,7 @@
 "alt-window-get-position"
 "alt-window-set-position"
 "alt-window-search"
+"supports-bibtex?"
 "bibtex-run"
 "bib-add-period"
 "bib-locase-first"

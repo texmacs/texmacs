@@ -5691,6 +5691,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(supports-bibtex?)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|bibtex_present> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
     <scm|(bibtex-run <scm-arg|string> <scm-arg|string> <scm-arg|url> <scm-arg|array_string>)>
 <explain-synopsis|no synopsis>
   <|explain>
