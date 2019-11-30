@@ -778,7 +778,7 @@
 "dialogue-end"
 "cpp-choose-file"
 "tm-interactive"
-"style-clear-cache"
+"cpp-style-clear-cache"
 "set-script-status"
 "set-printing-command"
 "set-printer-paper-type"

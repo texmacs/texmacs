@@ -48,7 +48,7 @@
   (cpp-choose-file choose_file (void object string string string url))
   (tm-interactive interactive (void object scheme_tree))
   
-  (style-clear-cache style_clear_cache (void))
+  (cpp-style-clear-cache style_clear_cache (void))
   (set-script-status set_script_status (void int))
   (set-printing-command set_printing_command (void string))
   (set-printer-paper-type set_printer_page_type (void string))

@@ -6027,7 +6027,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(style-clear-cache)>
+    <scm|(cpp-style-clear-cache)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|style_clear_cache> which returns

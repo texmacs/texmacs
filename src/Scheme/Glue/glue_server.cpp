@@ -380,7 +380,7 @@ tmg_tm_interactive (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
-tmg_style_clear_cache () {
+tmg_cpp_style_clear_cache () {
   // TMSCM_DEFER_INTS;
   get_server()->style_clear_cache ();
   // TMSCM_ALLOW_INTS;
@@ -595,7 +595,7 @@ initialize_glue_server () {
   tmscm_install_procedure ("dialogue-end",  tmg_dialogue_end, 0, 0, 0);
   tmscm_install_procedure ("cpp-choose-file",  tmg_cpp_choose_file, 5, 0, 0);
   tmscm_install_procedure ("tm-interactive",  tmg_tm_interactive, 2, 0, 0);
-  tmscm_install_procedure ("style-clear-cache",  tmg_style_clear_cache, 0, 0, 0);
+  tmscm_install_procedure ("cpp-style-clear-cache",  tmg_cpp_style_clear_cache, 0, 0, 0);
   tmscm_install_procedure ("set-script-status",  tmg_set_script_status, 1, 0, 0);
   tmscm_install_procedure ("set-printing-command",  tmg_set_printing_command, 1, 0, 0);
   tmscm_install_procedure ("set-printer-paper-type",  tmg_set_printer_paper_type, 1, 0, 0);

@@ -387,13 +387,17 @@
 (define parameters-list-cache (make-ahash-table))
 
 (define (focus-parameters-list-memo t mode)
-  (with key (list (tree-label t) mode)
+  (with key (list (tree-label t) mode (tree->stree (get-style-tree)))
     (when (not (ahash-ref parameters-list-cache key))
       (ahash-set! parameters-list-cache key (focus-parameters-list t mode)))
     (ahash-ref parameters-list-cache key)))
 
+(tm-define (style-clear-cache)
+  (former)
+  (set! parameters-list-cache (make-ahash-table)))
+
 (tm-menu (focus-parameters-menu t mode)
-  (with ps (focus-parameters-list t mode)
+  (with ps (focus-parameters-list-memo t mode)
     (if (nnull? ps)
         (group "Style parameters")
         (for (p ps)

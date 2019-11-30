@@ -88,3 +88,5 @@
 (tm-define (clipboard-paste cb) (cpp-clipboard-paste cb))
 
 (tm-define (nr-pages) (cpp-nr-pages))
+
+(tm-define (style-clear-cache) (cpp-style-clear-cache))
