@@ -142,6 +142,7 @@ edit_process_rep::generate_bibliography (
     else t= bibtex_load_bbl (bib, bbl_file);
   }
   else {
+    bool star= false;
     if (!bibtex_present () || starts (style, "tm-"))
       if (is_document (bib_t)) {
         tree new_t (DOCUMENT);
@@ -159,6 +160,8 @@ edit_process_rep::generate_bibliography (
           }
         bib_t= new_t;
       }
+    for (int i=0; i<N(bib_t); i++)
+      if (bib_t[i] == "*") star= true;
     if (!bibtex_present () && !starts (style, "tm-")) {
       if (style == "abbrv") style= "tm-abbrv";
       else if (style == "acm") style= "tm-acm";
@@ -174,8 +177,9 @@ edit_process_rep::generate_bibliography (
     if (supports_db ()) {
       //(void) call (string ("bib-import-bibtex"), bib_file);
       array<object> args;
-      args << object (bib) << object (style) << object (bib_t)
-           << object (bib_file) << object (xbib_file);
+      args << object (bib) << object (style)
+           << object (bib_t) << object (bib_file);
+      if (!star) args << object (xbib_file);
       t= as_tree (call (string ("bib-compile"), args));
     }
     else if (starts (style, "tm-")) {
