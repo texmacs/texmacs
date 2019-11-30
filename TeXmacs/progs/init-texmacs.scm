@@ -244,12 +244,16 @@
 (lazy-keyboard (source source-kbd) always?)
 (lazy-menu (source source-menu) source-macros-menu source-menu source-icons
            source-transformational-menu source-executable-menu)
-(lazy-define (source macro-edit) has-macro-source? edit-macro-source)
-(lazy-define (source macro-widgets) editable-macro? open-macros-editor
-	     open-macro-editor create-table-macro)
+(lazy-define (source macro-edit)
+             has-macro-source? edit-macro-source edit-focus-macro-source)
+(lazy-define (source macro-widgets)
+             editable-macro? open-macros-editor
+	     open-macro-editor create-table-macro
+             edit-focus-macro edit-previous-macro)
 (tm-property (open-macro-editor l mode) (:interactive #t))
 (tm-property (create-table-macro l mode) (:interactive #t))
 (tm-property (open-macros-editor mode) (:interactive #t))
+(tm-property (edit-focus-macro) (:interactive #t))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 

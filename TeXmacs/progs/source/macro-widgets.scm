@@ -22,10 +22,12 @@
 
 (tm-define macro-major-mode :global)
 (tm-define macro-major-focus #f)
+(tm-define macro-major-history (list))
 
 (define (initialize-macro-editor l mode)
   (terminate-macro-editor)
   (set! macro-major-mode mode)
+  (set! macro-major-history (list))
   (when (func? mode :local)
     (set! macro-major-focus (tree->tree-pointer (focus-tree)))))
 
@@ -74,6 +76,13 @@
            `(,(tm-label t) ,@(cDr (tm-children t)) ,(tree-ref t :last 0)))
           (else t))))
 
+(define (macro-retrieve-name u)
+  (and-with t (macro-retrieve u)
+    (tree->string (tm-ref t 0))))
+
+(define (get-macro-mode)
+  macro-current-mode)
+
 (define (set-macro-mode u mode)
   (set! macro-current-mode mode)
   (and-with t (macro-retrieve u)
@@ -81,8 +90,14 @@
       (cond ((== mode "Source")
              (tree-set t* :last `(inactive* ,(cAr (tm-children t)))))
             (else
-             (tree-set t* :last (cAr (tm-children t))))))))
+              (tree-set t* :last (cAr (tm-children t)))))
+      (refresh-now "macro-editor-mode"))))
 
+(tm-define (toggle-source-mode)
+  (:require (has-style-package? "macro-editor"))
+  (with mode (if (== (get-macro-mode) "Text") "Source" "Text")
+    (set-macro-mode (current-buffer) mode)))
+  
 (define (buffer-has-preamble? buf)
   (tree-in? (tree-ref buf 0)
             '(show-preamble hide-preamble)))
@@ -154,9 +169,10 @@
       (texmacs-input doc `(style (tuple ,@packs)) u))
     ===
     (hlist
-      (enum (set-macro-mode u answer)
-            '("Text" "Source")
-            mode "6em")
+      (refreshable "macro-editor-mode"
+        (enum (set-macro-mode u answer)
+              '("Text" "Source")
+              (get-macro-mode) "6em"))
       >>
       (explicit-buttons
         ("Apply" (macro-apply u))
@@ -165,12 +181,13 @@
 
 (tm-define (editable-macro? l)
   (if (symbol? l) (set! l (symbol->string l)))
-  (get-definition l))
+  (and (tree-label-extension? (string->symbol l))
+       (get-definition l)))
 
 (tm-define (open-macro-editor l mode)
   (:interactive #t)
-  (initialize-macro-editor l mode)
   (if (symbol? l) (set! l (symbol->string l)))
+  (initialize-macro-editor l mode)
   (let* ((b (current-buffer-url))
          (u (string->url (string-append "tmfs://aux/edit-" l)))
          (packs (get-style-list))
@@ -180,6 +197,22 @@
                        (lambda x (terminate-macro-editor))
                        "Macro editor" u)
       (buffer-set-master u b))))
+
+(tm-define (edit-focus-macro)
+  (:interactive #t)
+  (with l (symbol->string (macro-label (focus-tree)))
+    (when (editable-macro? l)
+      (if (has-style-package? "macro-editor")
+          (with old (macro-retrieve-name (current-buffer))
+            (macros-editor-select (current-buffer) l "")
+            (set! macro-major-history (cons old macro-major-history)))
+          (open-macro-editor l :global)))))
+
+(tm-define (edit-previous-macro)
+  (when (and (nnull? macro-major-history)
+             (has-style-package? "macro-editor"))
+    (macros-editor-select (current-buffer) (car macro-major-history) "")
+    (set! macro-major-history (cdr macro-major-history))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Table macros
@@ -285,9 +318,10 @@
           (glue #t #f 0 0))))
     ======
     (hlist
-      (enum (set-macro-mode u answer)
-            '("Text" "Source")
-            macro-current-mode "6em")
+      (refreshable "macro-editor-mode"
+        (enum (set-macro-mode u answer)
+              '("Text" "Source")
+              (get-macro-mode) "6em"))
       >>
       (explicit-buttons
         ("Apply" (macro-apply u))

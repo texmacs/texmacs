@@ -461,9 +461,9 @@
 (tm-menu (focus-tag-edit-menu l)
   (if (tree-label-extension? l)
       (when (editable-macro? l)
-        ("Edit macro" (open-macro-editor l :global)))
+        ("Edit macro" (edit-focus-macro)))
       (when (has-macro-source? l)
-        ("Edit source" (edit-macro-source l)))))
+        ("Edit source" (edit-focus-macro-source)))))
 
 (tm-menu (focus-tag-customize-menu l)
   (if (tree-label-extension? l)

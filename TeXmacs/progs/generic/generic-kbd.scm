@@ -166,8 +166,11 @@
   ("altcmd ? var var" (make 'pageref))
   ("altcmd P" (make 'pageref))
 
-  ("extra s" (toggle-source-mode))
+  ("extra e" (edit-focus-macro))
+  ("extra r" (edit-previous-macro))
+  ("extra m" (edit-focus-macro-source))
   ("extra p" (toggle-preamble-mode))
+  ("extra s" (toggle-source-mode))
 
   ("accent:hat" "^")
   ("accent:deadhat" "^")

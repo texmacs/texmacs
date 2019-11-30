@@ -147,3 +147,13 @@
   (if (symbol? l) (set! l (symbol->string l)))
   (or (edit-macro-in-preamble l)
       (edit-macro-in-style-file l)))
+
+(tm-define (macro-label t)
+  (cond ((tm-atomic? t) 'string)
+        ((and (tm-is? t 'compound) (tm-atomic? (tm-ref t 0)))
+         (string->symbol (tm->string (tm-ref t 0))))
+        ((tm-compound? t) (tm-label t))
+        (else #f)))
+
+(tm-define (edit-focus-macro-source)
+  (edit-macro-source (macro-label (focus-tree))))
