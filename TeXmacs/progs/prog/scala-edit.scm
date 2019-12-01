@@ -20,3 +20,10 @@
 (tm-define (program-compute-indentation doc row col)
   (:mode in-prog-scala?)
   (get-tabstop))
+
+(tm-define (kbd-paste)
+  (:mode in-prog-scala?)
+  ;; Note: if we use `(:mode in-prog?)` somewhere
+  ;; the current routine may be overrided
+  ;; (display "Using kbd-paste when in-prog-scala?")
+  (clipboard-paste-import "scala" "primary"))

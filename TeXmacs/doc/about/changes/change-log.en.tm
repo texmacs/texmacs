@@ -8,7 +8,7 @@
   <section|Changes from version 1.99.1 to 2.1>
 
   <\itemize>
-    <item>An option for better svg2pn conversion using Inkscape (2.1).
+    <item>An option for better svg2png conversion using Inkscape (2.1).
 
     <item>Interface for SymPy (2.1).
 

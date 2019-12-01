@@ -17,7 +17,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-format cpp
-  (:name "C++ source")
+  (:name "C++ Source Code")
   (:suffix "cpp" "cc" "hpp" "hh"))
 
 (define (texmacs->cpp x . opts)
@@ -48,7 +48,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-format scheme
-  (:name "Scheme source")
+  (:name "Scheme Source Code")
   (:suffix "scm"))
 
 (define (texmacs->scheme x . opts)
@@ -79,7 +79,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-format scala
-  (:name "Scala source")
+  (:name "Scala Source Code")
   (:suffix "scala"))
 
 (define (texmacs->scala x . opts)
@@ -109,7 +109,7 @@
 ;; Java source files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define-format java
-  (:name "Java source")
+  (:name "Java Source Code")
   (:suffix "java"))
 
 (define (texmacs->java x . opts)
@@ -139,7 +139,7 @@
 ;; Python source files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define-format python
-  (:name "Python source")
+  (:name "Python Source Code")
   (:suffix "py"))
 
 (define (texmacs->python x . opts)

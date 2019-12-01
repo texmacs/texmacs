@@ -188,3 +188,29 @@
   ("syntax:scheme:variable_identifier" "#204080" notify-scheme-syntax)
   ("syntax:scheme:declare_category" "#d030d0" notify-scheme-syntax))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Copy and Paste
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (textual? x)
+  (or (tm-atomic? x)
+    (and (tm-in? x '(concat document))
+      (forall? textual? (tm-children x)))))
+
+(tm-define (kbd-copy)
+  (:mode in-prog-scheme?)
+  (:require (textual? (selection-tree)))
+  (clipboard-copy-export "scheme" "primary"))
+
+(tm-define (kbd-cut)
+  (:mode in-prog-scheme?)
+  (:require (textual? (selection-tree)))
+  (clipboard-cut-export "scheme" "primary"))
+
+(tm-define (kbd-paste)
+  (:mode in-prog-scheme?)
+  ;; Note: if we use `(:mode in-prog?)` somewhere
+  ;; the current routine may be overrided
+  ;; (display "Using kbd-paste when in-prog-scheme?")
+  (:require (textual? (clipboard-get "primary")))
+  (clipboard-paste-import "scheme" "primary"))
