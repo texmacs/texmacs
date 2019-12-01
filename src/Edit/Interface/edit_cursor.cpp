@@ -431,7 +431,14 @@ edit_cursor_rep::go_to_here () {
     cu= eb->find_check_cursor (tp);
   }
   if (cu->valid) adjust_cursor ();
-  if (mv_status == DIRECT) mv= copy (cu);
+  if (mv_status == DIRECT) {
+    mv= copy (cu);
+    if (mv->slope > 0 &&
+        is_atomic (subtree (et, path_up (tp)))) {
+      mv->ox += (SI) round (mv->slope * min (mv->y1, -PIXEL));
+      mv->delta = 0;
+    }
+  }
   notify_change (THE_CURSOR);
   if (cu->valid) call ("notify-cursor-moved", object (DIRECT));
 }
@@ -446,6 +453,11 @@ edit_cursor_rep::go_to (path p) {
       cu= eb->find_check_cursor (tp);
       if (cu->valid) adjust_cursor ();
       mv= copy (cu);
+      if (mv->slope > 0 &&
+          is_atomic (subtree (et, path_up (tp)))) {
+        mv->ox += (SI) round (mv->slope * min (mv->y1, -PIXEL));
+        mv->delta = 0;
+      }
     }
     notify_change (THE_CURSOR);
     if (cu->valid) call ("notify-cursor-moved", object (DIRECT));

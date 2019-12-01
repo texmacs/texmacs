@@ -670,9 +670,10 @@ operator != (cursor cu1, cursor cu2) {
 
 tm_ostream&
 operator << (tm_ostream& out, cursor cu) {
-  out << "cursor (" << (cu->ox>>8) << ", " << (cu->oy>>8) << ": "
+  int sh= 8;
+  out << "cursor (" << (cu->ox>>sh) << ", " << (cu->oy>>sh) << ": "
       << cu->delta << ": "
-      << (cu->y1>>8) << ", " << (cu->y2>>8) << ": "
+      << (cu->y1>>sh) << ", " << (cu->y2>>sh) << ": "
       << cu->slope << ")";
   return out;
 }
