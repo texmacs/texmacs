@@ -263,13 +263,13 @@ clear_imgbox_cache(tree t){
 /******************************************************************************
 * Getting the original size of an image, using internal plug-ins if possible
 ******************************************************************************/
-void  image_size_sub (url image, int& w, int& h);
+void image_size_sub (url image, int& w, int& h);
 
 void
 image_size (url image, int& w, int& h) {
-/* Get original image size (in pt units) using cached result if possible,
-* otherwise actually fetch image size and cache it.
-* Caching is super important because the typesetter calls image_size */ 
+  /* Get original image size (in pt units) using cached result if possible,
+   * otherwise actually fetch image size and cache it.
+   * Caching is super important because the typesetter calls image_size */
   tree lookup= image->t;
   if (img_box->contains (lookup)) {
     imgbox box= img_box [lookup];
@@ -314,15 +314,15 @@ image_size_sub (url image, int& w, int& h) { // returns w,h in units of pt (1/72
       return;
     }
   }
-#ifdef QTTEXMACS
-  if (qt_supports (image)) { // native support by Qt : most bitmaps & svg  
-    qt_image_size (image, w, h); 
+#ifdef MACOSX_EXTENSIONS
+  if (mac_image_size (image, w, h) ) {
+    if (DEBUG_CONVERT) debug_convert << "image_size  mac  : " << w << " x " << h << "\n";
     return;
   }
 #endif
-#ifdef MACOSX_EXTENSIONS 
-  if (mac_image_size (image, w, h) ) {
-    if (DEBUG_CONVERT) debug_convert << "image_size  mac  : " << w << " x " << h << "\n";
+#ifdef QTTEXMACS
+  if (qt_supports (image)) { // native support by Qt : most bitmaps & svg
+    qt_image_size (image, w, h);
     return;
   }
 #endif
