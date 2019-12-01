@@ -630,6 +630,8 @@ wide_box_rep::wide_box_rep (
   dd= fn->sep;
   x1= m- hw- dx;
   x2= m+ hw- dx;
+  x1= min (x1, ref->x1);
+  x2= max (x2, ref->x2);
   if (!above) y1 += fn->sep - sep;
   finalize ();
 }
