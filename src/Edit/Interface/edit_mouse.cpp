@@ -526,14 +526,29 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
 * Event handlers
 ******************************************************************************/
 
+static tree
+relativize (tree t, url base) {
+  if (is_atomic (t)) return t;
+  else {
+    tree r (t, N(t));
+    for (int i=0; i<N(t); i++)
+      r[i]= relativize (t[i], base);
+    if (is_func (r, IMAGE) && N(r) >= 1 && is_atomic (r[0])) {
+      url name= url_system (r[0]->label);
+      if (descends (name, head (base)))
+        r[0]= as_string (delta (base, name));
+    }
+    return r;
+  }
+}
 
 static void
-call_drop_event (string kind, SI x, SI y, SI ticket, time_t t) {
+call_drop_event (string kind, SI x, SI y, SI ticket, time_t t, url base) {
 #ifdef QTTEXMACS
   extern hashmap<int, tree> payloads;
   tree doc = payloads [ticket];
   payloads->reset (ticket);
-  eval (list_object (symbol_object ("insert"), doc));
+  eval (list_object (symbol_object ("insert"), relativize (doc, base)));
   //array<object> args;
   //args << object (kind) << object (x) << object (y)
   //<< object (doc) << object ((double) t);
@@ -542,7 +557,6 @@ call_drop_event (string kind, SI x, SI y, SI ticket, time_t t) {
   (void) kind; (void) x; (void) y; (void) ticket; (void) t;
 #endif
 }
-
 
 static void
 call_mouse_event (string kind, SI x, SI y, SI m, time_t t) {
@@ -578,7 +592,7 @@ edit_interface_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t) {
     //     << " at " << t << "\n";
 
     if (kind == "drop")
-      call_drop_event (kind, x, y, m, t);
+      call_drop_event (kind, x, y, m, t, buf->buf->name);
     else {
       string rew= kind;
       SI dist= (SI) (5 * PIXEL / magf);
