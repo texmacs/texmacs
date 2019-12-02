@@ -209,8 +209,5 @@
 
 (tm-define (kbd-paste)
   (:mode in-prog-scheme?)
-  ;; Note: if we use `(:mode in-prog?)` somewhere
-  ;; the current routine may be overrided
-  ;; (display "Using kbd-paste when in-prog-scheme?")
   (:require (textual? (clipboard-get "primary")))
   (clipboard-paste-import "scheme" "primary"))
