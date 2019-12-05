@@ -2949,7 +2949,7 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
   VERSION_MAJOR="1"
   VERSION_MINOR="99"
-  VERSION_BUILD="11"
+  VERSION_BUILD="12"
 
   # the svn revision of this version
   DEVEL_REVISION="$Rev$:"
