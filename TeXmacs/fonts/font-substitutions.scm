@@ -13,6 +13,8 @@
 ((Sazanami\ Mincho sansserif) (Sazanami\ Gothic))
 ((SimSun bold) (SimHei))
 ((SimSun sansserif) (SimHei))
+((SimSun italic) (KaiTi_GB2312))
+((SimSun typewriter) (FangSong_GB2312))
 ((STSong bold) (STHeiti))
 ((STSong sansserif) (STHeiti))
 ((STSong italic) (STKaiti))
