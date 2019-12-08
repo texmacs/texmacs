@@ -25,9 +25,16 @@ from tmpy.completion import parse_complete_command, complete
 from tmpy.postscript import *
 from tmpy.capture import CaptureStdout
 
-from sympy.printing import latex
-from sympy import Basic, MatrixBase
-import sympy
+try:
+    from sympy.printing import latex
+    from sympy import Basic, MatrixBase
+    import sympy
+except ModuleNotFoundError:
+    flush_verbatim ("Please install sympy first, for example:\n")
+    flush_verbatim ("    pip install sympy")
+    flush_prompt ("dead] ")
+    sys.exit(0)
+
 import platform
 
 my_globals   = {}
