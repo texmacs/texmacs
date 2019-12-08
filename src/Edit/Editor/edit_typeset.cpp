@@ -625,6 +625,19 @@ edit_typeset_rep::exec_verbatim (tree t) {
   return exec_verbatim (t, rp * 0);
 }
 
+static tree
+search_doc_title (tree t) {
+  if (is_atomic (t)) return "";
+  else if (is_compound (t, "doc-title", 1)) return t[0];
+  else {
+    for (int i=0; i<N(t); i++) {
+      tree r= search_doc_title (t[i]);
+      if (r != "") return r;
+    }
+    return "";
+  }
+}
+
 tree
 edit_typeset_rep::exec_html (tree t, path p) {
   t= convert_OTS1_symbols_to_universal_encoding (t);
@@ -636,6 +649,9 @@ edit_typeset_rep::exec_html (tree t, path p) {
   H->join (P);
   prefix_specific (H, "tmhtml-");
   tree w (WITH);
+  tree doc_title= search_doc_title (t);
+  if (doc_title != "")
+    w << string ("html-doc-title") << doc_title;
   if (H->contains ("html-title"))
     w << string ("html-title") << H["html-title"];
   if (H->contains ("html-css"))

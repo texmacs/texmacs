@@ -48,9 +48,10 @@
 	     web-title tmdoc-title tmdoc-flag tmdoc-license
 	     tmdoc-title* tmdoc-title** tmdoc-copyright
 	     hlink action hyper-link mouse-over-balloon mouse-over-balloon*))
-    ,@(if (!= (get-preference "texmacs->html:mathjax") "on")
-          (list)
-          (map tmhtml-env-macro
-               '(binom tbinom dbinom choose ontop
-                 tfrac dfrac cfrac
-                 bmod pmod pod)))))
+    ;; FIXME: should apply 'filter_style' to the environment
+    ;; in an appropriate way to avoid adding the primitives below
+    ,@(map tmhtml-env-macro
+           '(shrink-inline
+             binom tbinom dbinom choose ontop
+             tfrac dfrac cfrac
+             bmod pmod pod))))

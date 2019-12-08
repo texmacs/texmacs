@@ -21,6 +21,7 @@
 #include "message.hpp"
 #include <setjmp.h>
 #include "image_files.hpp"
+#include "iterator.hpp"
 
 #ifdef EXPERIMENTAL
 #include "../../Style/Memorizer/clean_copy.hpp"
@@ -382,11 +383,15 @@ edit_main_rep::print_snippet (url name, tree t, bool conserve_preamble) {
   typeset_prepare ();
   int dpi= as_int (printing_dpi);
   tree old_dpi= env->read (DPI);
+  tree old_info_flag= env->read (INFO_FLAG);
   env->write (DPI, printing_dpi);
+  if (is_compound (old_info_flag) || !ends (old_info_flag->label, "paper"))
+    env->write (INFO_FLAG, "none");
   env->style_init_env ();
   env->update ();
   box b= typeset_as_box (env, t, path ());
   env->write (DPI, old_dpi);
+  env->write (INFO_FLAG, old_info_flag);
   env->style_init_env ();
   env->update ();
   

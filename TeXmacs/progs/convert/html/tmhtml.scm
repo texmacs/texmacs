@@ -205,7 +205,9 @@
           (with-extract doc "html-site-version"))
     (set! title
 	  (cond ((with-extract doc "html-title")
-		 (with-extract doc "html-title"))
+                 (with-extract doc "html-title"))
+		((and (not title) (with-extract doc "html-doc-title"))
+                 (with-extract doc "html-doc-title"))
 		((not title) "No title")
 		((or (in? "tmdoc" styles)
                      (in? "tmweb" styles) (in? "tmweb2" styles))
@@ -1196,7 +1198,9 @@
                    (attrs (if tmhtml-css?
                               `((src ,name-string) (style ,style) ,@l2)
                               `((src ,name-string) ,@l2)))
-                   (img `((h:img (@ ,@attrs)))))
+                   (img (if (url-exists? name-url)
+                            `((h:img (@ ,@attrs)))
+                            `())))
 	      ;;(display* x " -> " extents "\n")
 	      (set! cached img)
 	      (ahash-set! tmhtml-image-cache x cached)))
