@@ -12,6 +12,22 @@
 #include "number_parser.hpp"
 #include "analyze.hpp"
 
+number_parser_rep::number_parser_rep () {
+  long_suffix= false;
+  double_suffix= false;
+  float_suffix= false;
+  j_suffix= false;
+  ull_suffix= false;
+  locase_i_suffix= false;
+  scientific_notation= false;
+  prefix_0b= false;
+  prefix_0x= false;
+  prefix_0o= false;
+  no_suffix_with_box= false;
+  separator= false;
+  sep = '_';
+}
+
 void
 number_parser_rep::parse_binary (string s, int& pos) {
   while (pos<N(s) && (is_binary_digit (s[pos]) || is_separator (s[pos])))

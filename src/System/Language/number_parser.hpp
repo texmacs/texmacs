@@ -15,22 +15,22 @@
 
 class number_parser_rep {
 private:
-  bool long_suffix= false;
-  bool double_suffix= false;
-  bool float_suffix= false;
-  bool j_suffix= false;
-  bool ull_suffix= false;
-  bool locase_i_suffix= false;
-  bool scientific_notation= false;
-  bool prefix_0b= false;
-  bool prefix_0x= false;
-  bool prefix_0o= false;
-  bool no_suffix_with_box= false;
-  bool separator= false;
-  char sep = '_';
+  bool long_suffix;
+  bool double_suffix;
+  bool float_suffix;
+  bool j_suffix;
+  bool ull_suffix;
+  bool locase_i_suffix;
+  bool scientific_notation;
+  bool prefix_0b;
+  bool prefix_0x;
+  bool prefix_0o;
+  bool no_suffix_with_box;
+  bool separator;
+  char sep;
 
 public:
-  number_parser_rep () {};
+  number_parser_rep ();
   void parse (string s, int& pos);
   void parse_binary (string s, int& pos);
   void parse_hex (string s, int& pos);
