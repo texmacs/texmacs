@@ -1640,8 +1640,10 @@
   (surround tmhtml-surround)
   (concat tmhtml-concat)
   (rigid tmhtml-id)
+  (hgroup tmhtml-id)
   (hidden tmhtml-hidden)
-  (format tmhtml-noop)
+  (freeze tmhtml-id)
+  (unfreeze tmhtml-id)
   (hspace tmhtml-hspace)
   (vspace* tmhtml-vspace)
   (vspace tmhtml-vspace)
@@ -1649,15 +1651,17 @@
   (htab tmhtml-hspace)
   (split tmhtml-noop)
   (move tmhtml-move)
+  (shift tmhtml-move)
   (resize tmhtml-resize)
-  (float tmhtml-float)
+  (clipped tmhtml-resize)
   (repeat tmhtml-repeat)
+  (repeat* tmhtml-repeat)
+  (float tmhtml-float)
   (datoms tmhtml-datoms)
   (dlines tmhtml-datoms)
   (dpages tmhtml-datoms)
   (dbox tmhtml-datoms)
-  (locus tmhtml-datoms)
-
+  
   (with-limits tmhtml-noop)
   (line-break tmhtml-noop)
   (new-line tmhtml-new-line)
@@ -1733,22 +1737,30 @@
   (latex tmhtml-noop)
   (hybrid tmhtml-noop)
 
-  ((:or tuple collection associate) tmhtml-noop)
+  (locus tmhtml-datoms)
   (label tmhtml-label)
   (reference tmhtml-noop)
   (pageref tmhtml-noop)
-  (write tmhtml-noop)
-  (specific tmhtml-specific)
   (hlink tmhtml-hyperlink)
   (action tmhtml-action)
-  ((:or tag meaning) tmhtml-noop)
-  ((:or switch fold exclusive progressive superposed) tmhtml-noop)
+  (write tmhtml-noop)
+  
+  ((:or tuple collection associate) tmhtml-noop)
+  (specific tmhtml-specific)
+
   (graphics tmhtml-graphics)
   ((:or point line arc bezier) tmhtml-noop)
   (image tmhtml-image)
-  (ornament tmhtml-ornament)
-  ((:or mouse-over-balloon mouse-over-balloon*) tmhtml-balloon)
 
+  (ornament tmhtml-ornament)
+
+  (format tmhtml-noop)
+  ((:or tag meaning) tmhtml-noop)
+
+  (vgroup tmhtml-id)
+  ((:or switch fold exclusive progressive superposed) tmhtml-noop)
+  ((:or mouse-over-balloon mouse-over-balloon*) tmhtml-balloon)
+  
   (!file tmhtml-file))
 
 (logic-table tmhtml-stdmarkup%
