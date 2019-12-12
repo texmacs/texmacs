@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.12>
 
 <style|<tuple|source|std>>
 
@@ -299,6 +299,8 @@
       Miscellaneous effects
     </src-comment>
   </active*>
+
+  <assign|no-effect|<macro|body|<gr-effect|<arg|body>|0>>>
 
   <assign|burning|<macro|body|<gr-effect|<arg|body>|<eff-superpose|<eff-shadow|0|0.1ex|0.9ex|#f20|0.9ex>|<eff-shadow|0|-0.1ex|0.75ex|#f80|0.55ex>|<eff-shadow|0|0.2ex|0.5ex|#fd3|0.3ex>|<eff-shadow|0|0ex|0.25ex|#ff3|0.2ex>|<eff-shadow|0|0ex|0ex|#ccc|0.2ex>|0>>>>
 
