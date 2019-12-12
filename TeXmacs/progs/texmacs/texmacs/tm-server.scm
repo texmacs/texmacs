@@ -76,6 +76,7 @@
 (define-preferences
   ("profile" "beginner" (lambda args (noop)))
   ("look and feel" "default" notify-look-and-feel)
+  ("case sensitive shortcuts" "default" noop)
   ("detailed menus" "detailed" noop)
   ("buffer management" (get-default-buffer-management) notify-buffer-management)
   ("complex actions" "popups" noop)

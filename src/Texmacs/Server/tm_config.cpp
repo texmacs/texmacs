@@ -314,6 +314,7 @@ kbd_system_prevails (string s) {
 
 tree
 tm_config_rep::kbd_system_rewrite (string s) {
+  bool cs= (get_preference ("case sensitive shortcuts") == "on");
   system_kbd_initialize (system_kbd_decode);
   int start= 0, i;
   for (i=0; i <= N(s); i++)
@@ -333,7 +334,7 @@ tm_config_rep::kbd_system_rewrite (string s) {
       if (i < N(s) && s[i] == '-') i++;
       string ss= s (start, i);
       if (system_kbd_decode->contains (ss)) r << system_kbd_decode[ss];
-      else if (N(ss) == 1 && (use_macos_fonts () || gui_is_qt ())) {
+      else if (N(ss) == 1 && (use_macos_fonts () || gui_is_qt ()) && !cs) {
         if (is_locase (ss[0])) r << upcase_all (ss);
         else if (is_upcase (ss[0])) r << system_kbd_decode ("S-") << ss;
         else r << ss;
