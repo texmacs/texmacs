@@ -98,8 +98,19 @@
 ;; The TeXmacs popup menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(menu-bind presentation-popup-menu
+  ("Presentation mode" (toggle-full-screen-mode))
+  ("Show panorama" (toggle-panorama-mode))
+  ("Remote control" (toggle-remote-control-mode)))
+
 (menu-bind texmacs-popup-menu
   (link focus-menu))
+
+(tm-menu (texmacs-popup-menu)
+  (:require (full-screen?))
+  (link presentation-popup-menu)
+  ---
+  (former))
 
 (menu-bind texmacs-alternative-popup-menu
   (-> "File" (link file-menu))
@@ -135,6 +146,12 @@
   (if (nnull? (test-menu)) (-> "Test" (link test-menu)))
   ---
   (-> "Help" (link help-menu)))
+
+(tm-menu (texmacs-alternative-popup-menu)
+  (:require (full-screen?))
+  (link presentation-popup-menu)
+  ---
+  (former))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main icon bar

@@ -38,6 +38,7 @@
   ("S-F12" (dynamic-last))
   ("C-F9" (toggle-full-screen-mode))
   ("C-F10" (toggle-panorama-mode))
+  ("C-F11" (toggle-remote-control-mode))
   ("C-F12" (reset-buffer-players)))
 
 (kbd-map
