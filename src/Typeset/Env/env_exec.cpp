@@ -189,7 +189,7 @@ edit_env_rep::exec (tree t) {
   case CLIPPED: {
     int i, n= N(t);
     tree r (t, n);
-    r[0]= copy (t[0]);
+    r[0]= exec (t[0]);
     for (i=1; i<n; i++) r[i]= t[i];
     return r;
   }
