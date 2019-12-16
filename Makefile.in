@@ -430,7 +430,7 @@ SPARKLE_FRAMEWORK_PATH = @SPARKLE_FRAMEWORK_PATH@
 MACOS_PACKAGE_SRC = packages/macos
 MACOS_PACKAGE_DIR = ../distr/macos
 
-MACOS_PACKAGE_APP = ../distr/$(tm_devel)@REVISION@.app
+MACOS_PACKAGE_APP := $$(pwd)/../distr/TeXmacs.app
 MACOS_PACKAGE_DMG = ../distr/$(tm_devel)@REVISION@@MACOSX_TARGET@.dmg
 MACOS_PACKAGE_ZIP = ../distr/$(tm_devel).zip
 
@@ -481,7 +481,7 @@ MACOS_PACKAGE: MACOS_BUNDLE
 
 MACOS_RELEASE: MACOS_BUNDLE
 	$(RM) $(MACOS_PACKAGE_ZIP)
-	(cd ../distr; zip -r9Tq $(tm_devel).zip $(tm_devel).app)
+	(cd ../distr; zip -r9Tq $(tm_devel).zip $MACOS_PACKAGE_APP)
 	$(SIGN) $(MACOS_PACKAGE_ZIP) @SVNREV@ $(tm_devel_version)
 
 .PHONY: MACOS_BUNDLE MACOS_PACKAGE MACOS_RELEASE
