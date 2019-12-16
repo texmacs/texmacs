@@ -494,10 +494,16 @@ spell_check (string lan, string s) {
     }
   }
   else {
-    spell_start (lan);
-    tree r= spell_check (lan, s);
-    spell_done (lan);
-    return r;
+    if (spell_start (lan) == "ok"){
+      tree r= spell_check (lan, s);
+      spell_done (lan);
+      return r;
+    }
+    else {
+      spell_active= false;
+      spell_done (lan);
+      return "ok";  
+    }
   }
 }
 
