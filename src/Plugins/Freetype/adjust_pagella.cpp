@@ -575,7 +575,7 @@ above_adjust_pagella_italic (hashmap<string,double>& t) {
   adjust_pair (t, "B", -0.04);
   adjust_pair (t, "D", -0.04);
   adjust_pair (t, "F", -0.04);
-  adjust_pair (t, "H", -0.04);
+  adjust_pair (t, "H", -0.02);
   adjust_pair (t, "I", -0.04);
   adjust_pair (t, "J", -0.04);
   adjust_pair (t, "K", -0.02);
