@@ -924,7 +924,7 @@
   (-> "Research papers"
       ("GNU TeXmacs, a free, structured, wysiwyg and technical text editor"
        (cite-texmacs "TeXmacs:vdH:2001"))
-      ("Conservative conversion between LeaTeX and TeXmacs"
+      ("Conservative conversion between LaTeX and TeXmacs"
        (cite-texmacs "TeXmacs:HP:2014"))
       ("Towards semantic mathematical editing"
        (cite-texmacs "TeXmacs:vdH:2015"))
