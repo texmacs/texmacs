@@ -130,6 +130,20 @@
     0x10j, 0o10j, 0b10j
   </python-code>
 
+  <section|String>
+
+  <\python-code>
+    """
+
+    \\newline
+
+    \\\\ \\' \\"
+
+    \\a \\b \\f \\n \\r \\t \\v
+
+    """
+  </python-code>
+
   <section|References>
 
   <\itemize>
@@ -147,6 +161,7 @@
     <associate|auto-3|<tuple|1.2|?>>
     <associate|auto-4|<tuple|1.3|?>>
     <associate|auto-5|<tuple|2|?>>
+    <associate|auto-6|<tuple|3|?>>
   </collection>
 </references>
 

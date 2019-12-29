@@ -60,9 +60,10 @@ line_inc (tree t, int i) {
 static void parse_string (string s, int& pos);
 
 cpp_language_rep::cpp_language_rep (string name):
-  abstract_language_rep (name), colored ("")
+  abstract_language_rep (name)
 {
   number_parser.use_cpp_style ();
+  inline_comment_parser.set_starts (list<string> ("//"));
 }
 
 text_property
@@ -300,12 +301,6 @@ parse_comment_multi_lines (string s, int& pos) {
 }
 
 static void
-parse_comment_single_line (string s, int& pos) {
-  if (pos+1 < N(s) && s[pos] == '/' && s[pos+1] == '/')
-    pos = N(s);
-}
-
-static void
 parse_end_comment (string s, int& pos) {
   if (pos+1 < N(s) && s[pos] == '*' && s[pos+1] == '/')
     pos += 2;
@@ -469,8 +464,9 @@ cpp_language_rep::get_color (tree t, int start, int end) {
       do {
         opos= pos;
         type= none;
-        parse_blanks (s, pos);
-        if (opos < pos) break;
+        if (blanks_parser.parse (s, pos)) {
+          break;
+        }
         parse_diese (s, pos);
         if (opos < pos) {
           type= "preprocessor_directive";
@@ -493,16 +489,15 @@ cpp_language_rep::get_color (tree t, int start, int end) {
     type= none;
     do {
       opos= pos;
-      parse_blanks (s, pos);
-      if (opos < pos)
+      if (blanks_parser.parse (s, pos)) {
         break;
+      }
       parse_string (s, pos);
       if (opos < pos) {
         type= "constant_string";
         break;
       }
-      parse_comment_single_line (s, pos);
-      if (opos < pos) {
+      if (inline_comment_parser.parse (s, pos)) {
         type= "comment";
         break;
       }

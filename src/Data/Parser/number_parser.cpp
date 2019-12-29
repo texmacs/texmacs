@@ -84,8 +84,49 @@ number_parser_rep::parse_suffix (string s, int& pos) {
   }
 }
 
+bool
+number_parser_rep::can_parse_prefix_0b (string s, int pos) {
+  return prefix_0b
+    && pos+2 < N(s)
+    && s[pos] == '0'
+    && (s[pos+1] == 'b' || s[pos+1] == 'B');
+}
+
+bool
+number_parser_rep::can_parse_prefix_0o (string s, int pos) {
+  return prefix_0o
+    && pos+2 < N(s)
+    && s[pos] == '0'
+    && (s[pos+1] == 'o' || s[pos+1] == 'O');
+}
+
+bool
+number_parser_rep::can_parse_prefix_0x (string s, int pos) {
+  return prefix_0x
+    && pos+2 < N(s)
+    && s[pos] == '0'
+    && (s[pos+1] == 'x' || s[pos+1] == 'X');
+}
+
+bool
+number_parser_rep::can_parse (string s, int pos) {
+  // check on len >= 3
+  if (pos+2 < N(s)) {
+    if (can_parse_prefix_0b (s, pos)
+        || can_parse_prefix_0x (s, pos)
+        || can_parse_prefix_0o (s, pos))
+      return true;
+  }
+  // check on len >= 2
+  if (pos+1 < N(s)) {
+    if (s[pos] == '.') return true;
+  }
+  // finally, check on len >= 1
+  return pos<N(s) && is_digit (s[pos]);
+}
+
 void
-number_parser_rep::parse (string s, int& pos) {
+number_parser_rep::do_parse (string s, int& pos) {
   if (pos>=N(s)) return;
 
   if (!is_digit (s[pos]) &&
@@ -94,22 +135,20 @@ number_parser_rep::parse (string s, int& pos) {
 
   // Start with 0b, 0o, 0x
   bool start_with_box = false;
-  if (pos+2<N(s) && s[pos] == '0') {
-    if (prefix_0x && (s[pos+1] == 'x' || s[pos+1] == 'X')) {
-      pos+= 2;
-      parse_hex (s, pos);
-      if (no_suffix_with_box) return;
-    }
-    if (prefix_0o && (s[pos+1] == 'o' || s[pos+1] == 'O')) {
-      pos+= 2;
-      parse_octal (s, pos);
-      if (no_suffix_with_box) return;
-    }
-    if (prefix_0b && (s[pos+1] == 'b' || s[pos+1] == 'B')) {
+  if (can_parse_prefix_0b (s, pos)) {
       pos+= 2;
       parse_binary (s, pos);
       if (no_suffix_with_box) return;
-    }
+  }
+  if (can_parse_prefix_0o (s, pos)) {
+      pos+= 2;
+      parse_octal (s, pos);
+      if (no_suffix_with_box) return;
+  }
+  if (can_parse_prefix_0x (s, pos)) {
+      pos+= 2;
+      parse_hex (s, pos);
+      if (no_suffix_with_box) return;
   }
 
   parse_decimal (s, pos);

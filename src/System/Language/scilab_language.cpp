@@ -58,7 +58,7 @@ line_inc (tree t, int i) {
 static void parse_number (string s, int& pos);
 
 scilab_language_rep::scilab_language_rep (string name):
-  abstract_language_rep (name), colored ("") {}
+  abstract_language_rep (name) {}
 
 text_property
 scilab_language_rep::advance (tree t, int& pos) {
@@ -391,8 +391,7 @@ scilab_language_rep::get_color (tree t, int start, int end) {
           break;
         }
       }
-      parse_blanks (s, pos);
-      if (opos < pos){
+      if (blanks_parser.parse (s, pos)) {
         break;
       }
       parse_comment_single_line (s, pos);

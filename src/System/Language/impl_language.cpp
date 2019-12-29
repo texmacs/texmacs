@@ -55,8 +55,3 @@ abstract_language_rep::parse_constant (hashmap<string,string>& t, string s, int&
   if (t->contains (s (pos, i)))
     pos= i;
 }
-
-void
-abstract_language_rep::parse_blanks (string s, int& pos) {
-  while (pos<N(s) && (s[pos]==' ' || s[pos]=='\t')) pos++;
-}

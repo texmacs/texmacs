@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : python_language.cpp
 * DESCRIPTION: the python language
-* COPYRIGHT  : (C) 2014  François Poulain
+* COPYRIGHT  : (C) 2014-2019  François Poulain, Darcy Shen
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
 * ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
@@ -12,17 +12,27 @@
 
 #include "analyze.hpp"
 #include "impl_language.hpp"
-#include "scheme.hpp"
-
-static void parse_escaped_char (string s, int& pos);
 
 python_language_rep::python_language_rep (string name):
-  abstract_language_rep (name), colored ("") {
-    number_parser.use_python_style ();
+  abstract_language_rep (name)
+{
+  number_parser.use_python_style ();
+  inline_comment_parser.set_starts (list<string> ("#"));
+
+  list<char> escape_chars= list<char>()
+    * '\\' * '\'' * '\"'
+    * 'a' * 'b' * 'f' * 'n' * 'r' * 't' * 'v';
+  list<string> escape_strings= list<string>("newline");
+  escaped_char_parser.set_chars (escape_chars);
+  escaped_char_parser.support_hex_with_8_bits (true);
+  escaped_char_parser.support_hex_with_16_bits (true);
+  escaped_char_parser.support_hex_with_32_bits (true);
+  escaped_char_parser.support_octal_upto_3_digits (true);
 }
 
 text_property
 python_language_rep::advance (tree t, int& pos) {
+  int opos= pos;
   string s= t->label;
   if (pos==N(s))
     return &tp_normal_rep;
@@ -31,20 +41,10 @@ python_language_rep::advance (tree t, int& pos) {
     pos++;
     return &tp_space_rep;
   }
-  if (c == '\\') {
-    parse_escaped_char (s, pos);
+  if (escaped_char_parser.parse (s, pos)) {
     return &tp_normal_rep;
   }
-  if (pos+2 < N(s) && s[pos] == '0' &&
-       (s[pos+1] == 'x' || s[pos+1] == 'X' ||
-        s[pos+1] == 'o' || s[pos+1] == 'O' ||
-        s[pos+1] == 'b' || s[pos+1] == 'B')) {
-    number_parser.parse (s, pos);
-    return &tp_normal_rep;
-  }
-  if (is_digit (c) ||
-      (c == '.' && pos+1 < N(s) && is_digit (s[pos+1]))) {
-    number_parser.parse (s, pos);
+  if (number_parser.parse (s, pos)) {
     return &tp_normal_rep;
   }
   if (belongs_to_identifier (c)) {
@@ -52,6 +52,11 @@ python_language_rep::advance (tree t, int& pos) {
     return &tp_normal_rep;
   }
   tm_char_forwards (s, pos);
+  if (opos == pos) {
+    pos= pos + 1;
+    cerr << "Python syntax parsing failed to advance" << LF;
+    cerr << pos << ":" << s << LF;
+  }
   return &tp_normal_rep;
 }
 
@@ -351,29 +356,6 @@ python_color_setup_operator_field (hashmap<string, string> & t) {
   t (".")= "operator_field";
 }
 
-static void
-parse_escaped_char (string s, int& pos) {
-  int n= N(s), i= pos++;
-  if (i+2 >= n) return;
-  if (s[i] != '\\')
-    return;
-  i++;
-  if (test (s, i, "newline"))
-    pos+= 7;
-  else if (s[i] == '\\' || s[i] == '\'' || s[i] == '\"' ||
-           s[i] == 'a'  || s[i] == 'b'  || s[i] == 'f'  ||
-           s[i] == 'n'  || s[i] == 'r'  || s[i] == 't'  ||
-           s[i] == 'N'  || s[i] == 'v')
-    pos+= 1;
-  else if (s[i] == 'o'  || s[i] == 'x')
-    pos+= 3;
-  else if (s[i] == 'u')
-    pos+= 5;
-  else if (s[i] == 'U')
-    pos+= 9;
-  return;
-}
-
 static bool
 parse_string (string s, int& pos, bool force) {
   int n= N(s);
@@ -447,13 +429,6 @@ python_language_rep::parse_operators (hashmap<string,string>& t, string s, int& 
   return "";
 }
 
-static void
-parse_comment_single_line (string s, int& pos) {
-  if (pos>=N(s)) return;
-  if (s[pos]!='#') return;
-  pos=N(s);
-}
-
 string
 python_language_rep::get_color (tree t, int start, int end) {
   static bool setup_done= false;
@@ -505,21 +480,18 @@ python_language_rep::get_color (tree t, int start, int end) {
         }
       }
       else if (in_esc) {
-        parse_escaped_char (s, pos);
         in_esc= false;
         in_str= true;
-        if (opos < pos) {
+        if (escaped_char_parser.parse (s, pos)) {
           type= "constant_char";
           break;
         }
       }
       else {
-        parse_blanks (s, pos);
-        if (opos < pos){
+        if (blanks_parser.parse (s, pos)) {
           break;
         }
-        parse_comment_single_line (s, pos);
-        if (opos < pos) {
+        if (inline_comment_parser.parse (s, pos)) {
           type= "comment";
           break;
         }
@@ -528,8 +500,7 @@ python_language_rep::get_color (tree t, int start, int end) {
           type= "constant_string";
           break;
         }
-        number_parser.parse (s, pos);
-        if (opos < pos) {
+        if (number_parser.parse(s, pos)) {
           type= "constant_number";
           break;
         }
