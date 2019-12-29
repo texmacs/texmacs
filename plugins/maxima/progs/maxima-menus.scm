@@ -140,10 +140,16 @@
   (if (null? l) #f
       (car l)))
 
+(define (maxima-dirs)
+  (if (os-mingw?)
+      (map (lambda (x) (string-drop-right x 1))
+           (string-split (var-eval-system "maxima.bat -d") #\nl))
+      (string-split (var-eval-system "maxima -d") #\nl)))
+
 (define (maxima-htmldir)
   (map (lambda (x) (string-drop x (string-length "maxima-htmldir=")))
    (filter (lambda (x) (string-starts? x "maxima-htmldir="))
-           (string-split (var-eval-system "maxima -d") #\nl))))
+           (maxima-dirs))))
 
 (define (maxima-help) 
   (with htmldir (car-or-false (maxima-htmldir))
