@@ -129,7 +129,7 @@
       ---
       ("Other" (interactive other-zoom-factor)))
   ---
-  ("Header" (toggle-visible-header))
+  ("Header bars" (toggle-visible-header))
   (when (visible-header?)
         ("Main icon bar" (toggle-visible-icon-bar 0))
         ("Mode dependent icons" (toggle-visible-icon-bar 1))
