@@ -63,6 +63,16 @@ hashmap<string,double> lsup_bonum_table ();
 hashmap<string,double> rsub_bonum_table ();
 hashmap<string,double> rsup_bonum_table ();
 hashmap<string,double> above_bonum_table ();
+hashmap<string,double> lsub_libertine_table ();
+hashmap<string,double> lsup_libertine_table ();
+hashmap<string,double> rsub_libertine_table ();
+hashmap<string,double> rsup_libertine_table ();
+hashmap<string,double> above_libertine_table ();
+hashmap<string,double> lsub_biolinum_table ();
+hashmap<string,double> lsup_biolinum_table ();
+hashmap<string,double> rsub_biolinum_table ();
+hashmap<string,double> rsup_biolinum_table ();
+hashmap<string,double> above_biolinum_table ();
 
 hashmap<string,double> lsub_stix_italic_table ();
 hashmap<string,double> lsup_stix_italic_table ();
@@ -89,6 +99,16 @@ hashmap<string,double> lsup_bonum_italic_table ();
 hashmap<string,double> rsub_bonum_italic_table ();
 hashmap<string,double> rsup_bonum_italic_table ();
 hashmap<string,double> above_bonum_italic_table ();
+hashmap<string,double> lsub_libertine_italic_table ();
+hashmap<string,double> lsup_libertine_italic_table ();
+hashmap<string,double> rsub_libertine_italic_table ();
+hashmap<string,double> rsup_libertine_italic_table ();
+hashmap<string,double> above_libertine_italic_table ();
+hashmap<string,double> lsub_biolinum_italic_table ();
+hashmap<string,double> lsup_biolinum_italic_table ();
+hashmap<string,double> rsub_biolinum_italic_table ();
+hashmap<string,double> rsup_biolinum_italic_table ();
+hashmap<string,double> above_biolinum_italic_table ();
 
 /******************************************************************************
 * True Type fonts
@@ -344,6 +364,39 @@ unicode_font_rep::unicode_font_rep (string name,
     adjust_integral (lsup_correct, "2", -0.15);
     adjust_integral (rsub_correct, "1", 0.15);
     adjust_integral (rsub_correct, "2", 0.15);
+  }
+
+  else if (starts (family, "LinLibertine")) {
+    if (!ends (family, "I")) {
+      lsub_correct= lsub_libertine_table ();
+      lsup_correct= lsup_libertine_table ();
+      rsub_correct= rsub_libertine_table ();
+      rsup_correct= rsup_libertine_table ();
+      above_correct= above_libertine_table ();
+    }
+    else {
+      lsub_correct= lsub_libertine_italic_table ();
+      lsup_correct= lsup_libertine_italic_table ();
+      rsub_correct= rsub_libertine_italic_table ();
+      rsup_correct= rsup_libertine_italic_table ();
+      above_correct= above_libertine_italic_table ();
+    }
+  }
+  else if (starts (family, "LinBiolinum")) {
+    if (!ends (family, "I")) {
+      lsub_correct= lsub_biolinum_table ();
+      lsup_correct= lsup_biolinum_table ();
+      rsub_correct= rsub_biolinum_table ();
+      rsup_correct= rsup_biolinum_table ();
+      above_correct= above_biolinum_table ();
+    }
+    else {
+      lsub_correct= lsub_biolinum_italic_table ();
+      lsup_correct= lsup_biolinum_italic_table ();
+      rsub_correct= rsub_biolinum_italic_table ();
+      rsup_correct= rsup_biolinum_italic_table ();
+      above_correct= above_biolinum_italic_table ();
+    }
   }
 }
 
