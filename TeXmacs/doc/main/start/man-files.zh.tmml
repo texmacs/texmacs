@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
-<TeXmacs version="1.99.9">
-  <style><tuple><tm-arg>tmdoc</tm-arg><tm-arg>chinese</tm-arg><tm-arg>old-spacing</tm-arg></tuple></style>
+<TeXmacs version="1.99.12">
+  <style><tuple><tm-arg>tmdoc</tm-arg><tm-arg>chinese</tm-arg><tm-arg>old-spacing</tm-arg><tm-arg>old-dots</tm-arg></tuple></style>
   
   <body>
     <tm-par>
@@ -10,11 +10,12 @@
     
     <tm-par>
       不加任何命令行参数就启动<TeXmacs/>，编辑器会自动为你新建一个空白文档。你也可以用<menu><tm-arg>File</tm-arg><tm-arg>New</tm-arg></menu>自己新建一个文档。新建文档默认未命名。点击<menu><tm-arg>File</tm-arg><tm-arg>Save
-      as</tm-arg></menu>可以给文档命名。我们建议你新建文档后马上另存为该文档，这样可以避免你丢失该文档。
+      as</tm-arg></menu>可以给文档命名。我们建议你新建文档后立即使用<menu><tm-arg>File</tm-arg><tm-arg>Save
+      as...</tm-arg></menu>，这样可以有效避免丢失该文档。
     </tm-par>
     
     <tm-par>
-      必要时，建议你设定文档的全局设置，这些设置一般都在<menu>Document</menu>菜单中。首先，你可能需要在<menu><tm-arg>Document</tm-arg><tm-arg>Style</tm-arg></menu>中指定文档的样式比如article，book，seminar。如果你使用多种语言编辑文档，你可以在<menu><tm-arg>Document</tm-arg><tm-arg>Language</tm-arg></menu>中指定这个文档的默认语言。类似地，在<menu><tm-arg>Document</tm-arg><tm-arg>Page</tm-arg><tm-arg>Size</tm-arg></menu>中可指定页面的类型。
+      必要时，建议你设定文档的全局设置，这些设置一般都在<menu>Document</menu>菜单中。首先，你可能需要在<menu><tm-arg>Document</tm-arg><tm-arg>Style</tm-arg></menu>中指定文档的样式比如article，book，seminar。如果你使用多种语言编辑文档，你可以在<menu><tm-arg>Document</tm-arg><tm-arg>Language</tm-arg></menu>中指定该文档的默认语言。类似地，在<menu><tm-arg>Document</tm-arg><tm-arg>Page</tm-arg><tm-arg>Size</tm-arg></menu>中可指定页面的类型。
     </tm-par>
     
     <tm-par>
@@ -22,7 +23,7 @@
     </tm-par>
     
     <tm-par>
-      更改文档之后，点击<menu><tm-arg>File</tm-arg><tm-arg>Save</tm-arg></menu>保存文档。文档可以通过<menu><tm-arg>File</tm-arg><tm-arg>Load</tm-arg></menu>打开。注意，在<TeXmacs/>中你可以在同一个窗口下编辑多个文档<strong><tm-arg></tm-arg></strong>，我们把这样的每一个打开的文档叫做缓冲区，使用菜单<menu>Go</menu>可以在不同的缓冲区间切换。
+      修改文档之后，点击<menu><tm-arg>File</tm-arg><tm-arg>Save</tm-arg></menu>保存文档。文档可以通过<menu><tm-arg>File</tm-arg><tm-arg>Load</tm-arg></menu>打开。注意，在<TeXmacs/>中你可以在同一个窗口下编辑多个文档<strong><tm-arg></tm-arg></strong>，我们把每一个打开的文档叫做缓冲区，使用菜单<menu>Go</menu>可以在不同的<em>缓冲区</em>间切换。
     </tm-par>
     
     <tm-par>

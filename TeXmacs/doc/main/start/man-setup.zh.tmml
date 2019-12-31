@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
-<TeXmacs version="1.99.9">
-  <style><tuple><tm-arg>tmdoc</tm-arg><tm-arg>chinese</tm-arg><tm-arg>old-spacing</tm-arg></tuple></style>
+<TeXmacs version="1.99.12">
+  <style><tuple><tm-arg>tmdoc</tm-arg><tm-arg>chinese</tm-arg><tm-arg>old-spacing</tm-arg><tm-arg>old-dots</tm-arg></tuple></style>
   
   <body>
     <tm-par>
@@ -10,7 +10,7 @@
     
     <tm-par>
       第一次启动<TeXmacs/>时，程序将自动启用默认配置，一般来说，默认配置就已经够用了。<TeXmacs/>
-      会根据你的系统设置决定文档的语言和页面的类型。当然，有些时候，自动配置也会失灵，这个时候你可以自己配置。最简单的方式是，直接在<menu><tm-arg>Edit</tm-arg><tm-arg>Preferences</tm-arg></menu>中指定你的偏好。
+      会根据你的系统设置决定文档的语言和页面的类型。当然，有些时候，默认配置并不能满足你的需求，或者你想要做一些配置。最简单的方式是，直接在<menu><tm-arg>Edit</tm-arg><tm-arg>Preferences</tm-arg></menu>中指定你的偏好。
     </tm-par>
     
     <tm-par>

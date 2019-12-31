@@ -1,6 +1,6 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.99.12>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing|old-dots>>
 
 <\body>
   <tmdoc-title|Using the environments for floating objects>
@@ -33,7 +33,7 @@
     Produces a footnote.
   </explain>
 
-  The figure-like environments also admit \ unnumbered versions
+  The figure-like environments also admit unnumbered versions
   <markup|small-figure*>, <markup|big-figure*>, <abbr|etc.>, which are
   obtained using <shortcut|(numbered-toggle (focus-tree))>.
 
@@ -47,20 +47,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
