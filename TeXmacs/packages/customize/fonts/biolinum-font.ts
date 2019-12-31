@@ -22,6 +22,8 @@
 
   <assign|font|mathlarge=TeX Gyre Pagella,Linux Biolinum>
 
+  <assign|font-base-size|11>
+
   \;
 </body>
 
