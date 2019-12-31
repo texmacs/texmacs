@@ -99,12 +99,17 @@
       (init-multi* l)))
 
 (tm-define (test-init-font? val . opts)
-  (== (get-init "font") val))
+  (== (font-family-main (get-init "font")) val))
 
 (tm-define (remove-font-packages)
   (with l (get-style-list)
     (with f (list-filter l (lambda (p) (not (string-ends? p "-font"))))
       (set-style-list f))))
+
+(define (font-package-name val)
+  (cond ((== val "Linux Biolinum") "biolinum-font")
+        ((== val "Fira") "fira-font")
+        (else (string-append val "-font"))))
 
 (tm-define (init-font val . opts)
   (:check-mark "*" test-init-font?)
@@ -128,9 +133,11 @@
             (init-env "math-font" (car opts)))
           (init-env "font-family" "rm")
           (remove-font-packages)
-          (with pack (string-append val "-font")
+          (with pack (font-package-name val)
             (with dir "$TEXMACS_PATH/packages/customize/fonts"
               (when (url-exists? (url-append dir (string-append pack ".ts")))
+                (init-default "font")
+                (init-default "font-family")
                 (add-style-package pack)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

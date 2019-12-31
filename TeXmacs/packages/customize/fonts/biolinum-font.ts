@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package|bonum-font|1.0>
+    <src-package|biolinum-font|1.0>
 
     <\src-purpose>
-      Tweak various style parameters for the TeX Gyre Bonum font
+      Tweak style parameters for the Linux Biolinum font
     </src-purpose>
 
     <src-copyright|2019|Joris van der Hoeven>
@@ -20,11 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|texgyre-font>
-
-  <assign|font|bonum>
-
-  <assign|math-font|math-bonum>
+  <assign|font|mathlarge=TeX Gyre Pagella,Linux Biolinum>
 
   \;
 </body>

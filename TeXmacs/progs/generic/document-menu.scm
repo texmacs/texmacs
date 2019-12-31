@@ -298,7 +298,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (test-default-font?)
-  (test-default? "font"))
+  (with l (get-style-list)
+    (with f (list-filter l (lambda (p) (string-ends? p "-font")))
+      (and (test-default? "font") (null? f)))))
 
 (tm-define (init-default-font)
   (:check-mark "*" test-default-font?)
@@ -371,6 +373,7 @@
       (if (font-exists-in-tt? "texgyretermes-math")
           ("Termes" (init-font "termes" "math-termes"))))
   (if (or (font-exists-in-tt? "DejaVuSerif")
+          (font-exists-in-tt? "FiraSans-Regular")
           (font-exists-in-tt? "LinLibertine_R")
           (font-exists-in-tt? "Optima")
           (font-exists-in-tt? "Papyrus"))
@@ -393,6 +396,8 @@
           ("Didot" (init-font "Didot")))
       (if (font-exists-in-tt? "Essays1743")
           ("Essays1743" (init-font "Essays1743")))
+      (if (font-exists-in-tt? "FiraSans-Regular")
+          ("Fira" (init-font "Fira")))
       (if (font-exists-in-tt? "MarkerFelt")
           ("Marker Felt" (init-font "Marker Felt")))
       (if (font-exists-in-tt? "meyne_textur")

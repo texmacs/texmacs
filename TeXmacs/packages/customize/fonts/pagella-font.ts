@@ -1,4 +1,4 @@
-<TeXmacs|1.99.11>
+<TeXmacs|1.99.12>
 
 <style|source>
 
@@ -23,6 +23,8 @@
   <use-package|texgyre-font>
 
   <assign|font|pagella>
+
+  <assign|math-font|math-pagella>
 
   <assign|math-dots-post|<macro|<space|-0.03em|0em|0em>>>
 </body>

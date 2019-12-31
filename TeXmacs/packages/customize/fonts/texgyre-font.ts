@@ -1,4 +1,4 @@
-<TeXmacs|1.99.11>
+<TeXmacs|1.99.12>
 
 <style|source>
 
@@ -25,6 +25,10 @@
   <assign|par-hor-sep|0.2fn>
 
   <assign|par-ver-sep|0.1fn>
+
+  <assign|font-family|rm>
+
+  \;
 </body>
 
 <\initial>

@@ -1,4 +1,4 @@
-<TeXmacs|1.99.11>
+<TeXmacs|1.99.12>
 
 <style|source>
 
@@ -24,7 +24,7 @@
 
   <assign|font|termes>
 
-  \;
+  <assign|math-font|math-termes>
 
   \;
 </body>

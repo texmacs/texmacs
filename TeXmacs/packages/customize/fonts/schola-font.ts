@@ -1,4 +1,4 @@
-<TeXmacs|1.99.11>
+<TeXmacs|1.99.12>
 
 <style|source>
 
@@ -23,6 +23,10 @@
   <use-package|texgyre-font>
 
   <assign|font|schola>
+
+  <assign|math-font|math-schola>
+
+  \;
 
   \;
 
