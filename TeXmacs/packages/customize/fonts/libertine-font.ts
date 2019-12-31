@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package|biolinum-font|1.0>
+    <src-package|libertine-font|1.0>
 
     <\src-purpose>
-      Tweak style parameters for the Linux Biolinum font
+      Tweak style parameters for the Linux Libertine font
     </src-purpose>
 
     <src-copyright|2019|Joris van der Hoeven>
@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <assign|font|mathlarge=TeX Gyre Pagella,Linux Biolinum>
+  <assign|font|mathlarge=TeX Gyre Pagella,Linux Libertine>
 
   \;
 </body>

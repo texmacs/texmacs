@@ -107,8 +107,9 @@
       (set-style-list f))))
 
 (define (font-package-name val)
-  (cond ((== val "Linux Biolinum") "biolinum-font")
-        ((== val "Fira") "fira-font")
+  (cond ((== val "Fira") "fira-font")
+        ((== val "Linux Biolinum") "biolinum-font")
+        ((== val "Linux Libertine") "libertine-font")
         (else (string-append val "-font"))))
 
 (tm-define (init-font val . opts)
