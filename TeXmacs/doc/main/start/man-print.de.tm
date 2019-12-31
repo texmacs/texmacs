@@ -1,6 +1,6 @@
-<TeXmacs|1.0.5.3>
+<TeXmacs|1.99.12>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|german|old-spacing|old-dots>>
 
 <\body>
   <tmdoc-title|Dokumente drucken>
@@ -8,7 +8,7 @@
   Sie können das aktuelle Dokument mit <menu|File|Print|Print all> als Ganzes
   ausdrucken. vollständig. Die Drucker-Voreinstellung von <TeXmacs> sind
   600dpi Drucker für A4 Papier. Diese Einstellungen können im Menü
-  <menu|Edit|Preferences|Printer> angepasst werden. Sie können auch in eine
+  <menu|File|Page setup...> angepasst werden. Sie können auch in eine
   Postscript-Datei mit <menu|File|Print|Print all to file>. In diesem Fall
   werden die Drucker-Voreinstellungen für die Erstellung der Datei benutzt.
   Sie können alternativ auch <menu|File|Export|Postscript> benutzen, in
@@ -49,7 +49,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|german>
     <associate|page-medium|paper>
     <associate|preamble|false>
   </collection>

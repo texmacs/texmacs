@@ -1,14 +1,14 @@
-<TeXmacs|1.0.5.3>
+<TeXmacs|1.99.12>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing|old-dots>>
 
 <\body>
   <tmdoc-title|Printing documents>
 
   You can print the current file using <menu|File|Print|Print all>. By
   default, <TeXmacs> assumes that you have a 600dpi printer for a4 paper.
-  These default settings can be changed in <menu|Edit|Preferences|Printer>.
-  You can also print to a postscript file using <menu|File|Print|Print all to
+  These default settings can be changed in <menu|File|Page setup...> . You
+  can also print to a postscript file using <menu|File|Print|Print all to
   file> (in which case the default printer settings are used for creating the
   output) or <menu|File|Export|Postscript> (in which case the printer
   settings are ignored).
@@ -43,8 +43,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

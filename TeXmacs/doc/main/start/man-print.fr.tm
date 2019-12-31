@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.10>
+<TeXmacs|1.99.12>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|french|old-spacing|old-dots>>
 
 <\body>
   <tmdoc-title|Impression de documents>
@@ -8,7 +8,7 @@
   Vous pouvez imprimer le fichier actif avec <menu|File|Print|Print all>.
   L'imprimante définie par défaut dans <TeXmacs> a une résolution de 600 dpi
   et gère un format de papier A4. Vous pouvez changer ces réglages avec
-  <menu|Preferences|Printer>. Vous pouvez aussi générer un fichier PostScript
+  <menu|File|Page setup...> . Vous pouvez aussi générer un fichier PostScript
   avec <menu|File|Print|Print all to file> (dans ce cas, ce sont les réglages
   de l'imprimante par défaut qui sont utilisés pour créer le fichier
   résultant) ou <menu|File|Export|Postscript> (dans ce cas, les réglages de
@@ -49,7 +49,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|french>
     <associate|page-medium|paper>
   </collection>
 </initial>

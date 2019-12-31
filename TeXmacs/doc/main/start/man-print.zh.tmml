@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
-<TeXmacs version="1.99.9">
-  <style><tuple><tm-arg>tmdoc</tm-arg><tm-arg>chinese</tm-arg><tm-arg>old-spacing</tm-arg></tuple></style>
+<TeXmacs version="1.99.12">
+  <style><tuple><tm-arg>tmdoc</tm-arg><tm-arg>chinese</tm-arg><tm-arg>old-spacing</tm-arg><tm-arg>old-dots</tm-arg></tuple></style>
   
   <body>
     <tm-par>
@@ -10,9 +10,10 @@
     
     <tm-par>
       点击<menu><tm-arg>File</tm-arg><tm-arg>Print</tm-arg><tm-arg>Print
-      all</tm-arg></menu>打印当前文档。默认地，<TeXmacs/>假定你的打印机是600dpi，用的是A4纸。当然，在<menu><tm-arg>Edit</tm-arg><tm-arg>Preferences</tm-arg><tm-arg>Printer</tm-arg></menu>中你可以更改成你需要的设置。你也可以用<menu><tm-arg>File</tm-arg><tm-arg>Print</tm-arg><tm-arg>Print
+      all</tm-arg></menu>打印当前文档。默认地，<TeXmacs/>假定你的打印机是600dpi，用的是A4纸。当然，在<menu><tm-arg>File</tm-arg><tm-arg>Page
+      setup...</tm-arg></menu>中，你可以按需定制。你也可以用<menu><tm-arg>File</tm-arg><tm-arg>Print</tm-arg><tm-arg>Print
       all to
-      file</tm-arg></menu>或者<menu><tm-arg>File</tm-arg><tm-arg>Export</tm-arg><tm-arg>Postscript</tm-arg></menu>将文档导出成Postscript文档。两者的差别在于，前者使用前面提到的默认打印设置导出文档，后者则是直接忽略了打印设置。
+      file</tm-arg></menu>或者<menu><tm-arg>File</tm-arg><tm-arg>Export</tm-arg><tm-arg>Postscript</tm-arg></menu>将文档导出成Postscript文档。两者的区别在于，前者使用前面提到的默认打印设置导出文档，后者则是直接忽略了打印设置。
     </tm-par>
     
     <tm-par>

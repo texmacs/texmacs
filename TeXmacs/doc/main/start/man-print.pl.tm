@@ -1,17 +1,17 @@
-<TeXmacs|1.0.5.3>
+<TeXmacs|1.99.12>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|polish|old-spacing|old-dots>>
 
 <\body>
   <tmdoc-title|Drukowanie dokumentów>
 
   Bie»¡cy dokument mo»na wydrukowa¢ u»ywaj¡c <menu|File|Print|Print all>.
   Domy±lnie <TeXmacs> zakªada i» drukarka u»ywa papieru a4 i rozdzielczo±ci
-  600dpi. Te ustawienia mog¡ by¢ zmieniane poprzez
-  <menu|Edit|Preferences|Printer>. Mo»na te» wydrukowa¢ do pliku postscript
-  u»ywaj¡c <menu|File|Print|Print all to file> (w tym przypadku s¡ u»ywane
-  domy±lne ustawienia drukarki) lub <menu|File|Export|Postscript> (w tym
-  przypadku ustawienia drukarki s¡ ignorowane).
+  600dpi. Te ustawienia mog¡ by¢ zmieniane poprzez <menu|File|Page setup...>
+  . Mo»na te» wydrukowa¢ do pliku postscript u»ywaj¡c <menu|File|Print|Print
+  all to file> (w tym przypadku s¡ u»ywane domy±lne ustawienia drukarki) lub
+  <menu|File|Export|Postscript> (w tym przypadku ustawienia drukarki s¡
+  ignorowane).
 
   Mo»na eksportowa¢ do formatu <acronym|PDF> u»ywaj¡c <menu|File|Export|Pdf>.
   Nale»y ustawi¢ <menu|Edit|Preferences|Printer|Font type|Type 1> je±li
@@ -44,7 +44,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|polish>
     <associate|page-medium|paper>
   </collection>
 </initial>
