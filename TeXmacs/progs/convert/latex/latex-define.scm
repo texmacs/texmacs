@@ -672,6 +672,11 @@
   (mho
    (!append
     "\\renewcommand{\\mho}{\\mbox{\\rotatebox[origin=c]{180}{$\\omega$}}}"))
+  (invbreve
+   (!append
+    "\\usepackage[T3,T1]{fontenc}\n"
+    "\\DeclareSymbolFont{tipa}{T3}{cmr}{m}{n}\n"
+    "\\DeclareMathAccent{\\invbreve}{\\mathalpha}{tipa}{16}\n"))
   (custombinding
    (!append
     "\\newcounter{tmcounter}\n"
