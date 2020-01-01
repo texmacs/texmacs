@@ -73,6 +73,11 @@ hashmap<string,double> lsup_biolinum_table ();
 hashmap<string,double> rsub_biolinum_table ();
 hashmap<string,double> rsup_biolinum_table ();
 hashmap<string,double> above_biolinum_table ();
+hashmap<string,double> lsub_fira_table ();
+hashmap<string,double> lsup_fira_table ();
+hashmap<string,double> rsub_fira_table ();
+hashmap<string,double> rsup_fira_table ();
+hashmap<string,double> above_fira_table ();
 
 hashmap<string,double> lsub_stix_italic_table ();
 hashmap<string,double> lsup_stix_italic_table ();
@@ -109,6 +114,11 @@ hashmap<string,double> lsup_biolinum_italic_table ();
 hashmap<string,double> rsub_biolinum_italic_table ();
 hashmap<string,double> rsup_biolinum_italic_table ();
 hashmap<string,double> above_biolinum_italic_table ();
+hashmap<string,double> lsub_fira_italic_table ();
+hashmap<string,double> lsup_fira_italic_table ();
+hashmap<string,double> rsub_fira_italic_table ();
+hashmap<string,double> rsup_fira_italic_table ();
+hashmap<string,double> above_fira_italic_table ();
 
 /******************************************************************************
 * True Type fonts
@@ -396,6 +406,22 @@ unicode_font_rep::unicode_font_rep (string name,
       rsub_correct= rsub_biolinum_italic_table ();
       rsup_correct= rsup_biolinum_italic_table ();
       above_correct= above_biolinum_italic_table ();
+    }
+  }
+  else if (starts (family, "FiraSans")) {
+    if (!ends (family, "Italic")) {
+      lsub_correct= lsub_fira_table ();
+      lsup_correct= lsup_fira_table ();
+      rsub_correct= rsub_fira_table ();
+      rsup_correct= rsup_fira_table ();
+      above_correct= above_fira_table ();
+    }
+    else {
+      lsub_correct= lsub_fira_italic_table ();
+      lsup_correct= lsup_fira_italic_table ();
+      rsub_correct= rsub_fira_italic_table ();
+      rsup_correct= rsup_fira_italic_table ();
+      above_correct= above_fira_italic_table ();
     }
   }
 }

@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : adjust_biolinum.cpp
 * DESCRIPTION: Microtypography for the Linux Biolinum font
-* COPYRIGHT  : (C) 2017  Joris van der Hoeven
+* COPYRIGHT  : (C) 2019  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE

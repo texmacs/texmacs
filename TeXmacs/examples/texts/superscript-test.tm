@@ -1,6 +1,6 @@
 <TeXmacs|1.99.12>
 
-<style|<tuple|generic|old-spacing|old-dots>>
+<style|<tuple|generic|old-spacing|old-dots|fira-font>>
 
 <\body>
   <section*|Superscript <math|a>>
@@ -60,8 +60,6 @@
 
 <\initial>
   <\collection>
-    <associate|font|Linux Libertine>
-    <associate|font-family|rm>
     <associate|math-font|math-stix>
   </collection>
 </initial>
