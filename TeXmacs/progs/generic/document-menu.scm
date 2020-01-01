@@ -796,7 +796,8 @@
   (let* ((dummy (lazy-plugin-force))
          (l (scripts-list)))
     (for (name l)
-      ((eval (scripts-name name))
+      ((check (eval (scripts-name name)) "v"
+              (test-env? "prog-scripts" name))
        (noop) ;; NOTE: inhibit segfault due to property searching?
        (init-env "prog-scripts" name)))))
 
