@@ -205,15 +205,18 @@
 
 (logic-group latex-enunciation%
   begin-theorem begin-proposition begin-lemma begin-corollary begin-proof
-  begin-axiom begin-definition begin-notation begin-conjecture begin-remark
-  begin-note begin-example begin-exercise begin-problem begin-warning
-  begin-convention begin-quote-begin-env begin-quotation begin-verse
-  begin-solution begin-question begin-answer begin-acknowledgments
+  begin-axiom begin-definition begin-notation begin-conjecture
+  begin-remark begin-note begin-example begin-warning
+  begin-convention begin-acknowledgments
+  begin-exercise begin-problem
+  begin-solution begin-question begin-answer
+  begin-quote-env begin-quotation begin-verse
 
   begin-theorem* begin-proposition* begin-lemma* begin-corollary*
   begin-axiom* begin-definition* begin-notation* begin-conjecture*
   begin-remark* begin-note* begin-example* begin-warning*
-  begin-convention* begin-exercise* begin-problem*
+  begin-convention* begin-acknowledgments*
+  begin-exercise* begin-problem*
   begin-solution* begin-question* begin-answer*
 
   ;; guessed

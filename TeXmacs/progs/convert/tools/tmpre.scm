@@ -31,11 +31,12 @@
   paragraph* subparagraph*)
 
 (logic-group tmpre-theorem-env%
-  theorem proposition lemma corollary axiom definition notation conjecture
-  remark note example exercise warning convention acknowledgments
-  theorem* proposition* lemma* corollary* axiom* definition* notation*
-  conjecture* remark* note* example* exercise* warning*
-  convention* acknowledgments*)
+  theorem proposition lemma corollary axiom definition
+  notation conjecture remark note example
+  warning convention acknowledgments exercise
+  theorem* proposition* lemma* corollary* axiom* definition*
+  notation* conjecture* remark* note* example*
+  warning* convention* acknowledgments* exercise*)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preprocessing
