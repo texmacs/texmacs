@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : r_language.cpp
 * DESCRIPTION: the "r" language
-* COPYRIGHT  : (C) 2008  Francis Jamet
+* COPYRIGHT  : (C) 2008-2019  Francis Jamet, Darcy Shen
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -23,7 +23,7 @@ static bool is_number_start( char c ) ;
 static void advance_till( string s, int & pos, char c) ;
 
 r_language_rep::r_language_rep (string name):
-  abstract_language_rep (name), colored ("")
+  abstract_language_rep (name)
 { 
   eval ("(use-modules (utils misc tm-keywords))");
   list<string> l= as_list_string (eval ("(map symbol->string highlight-any)"));
@@ -46,12 +46,11 @@ r_language_rep::advance (tree t, int& pos) {
     pos++; return &tp_space_rep; 
   } 
 
-  if ( is_number_start(c) ) {
-    int opos =pos ;
-    number_parser.parse (s, pos); 
-    if( opos != pos )
-      return &tp_normal_rep; 
-  } 
+  if (is_number_start(c)) {
+    if (number_parser.parse (s, pos)) {
+      return &tp_normal_rep;
+    }
+  }
 
   if (is_alpha (c) || is_in_str (c, "_.")
       //|| (c == '$') // For some reason, when this is uncommented, TeXmacs gets stuck on entering $.
@@ -364,15 +363,6 @@ is_in_str( char c, const char *str ) {
   return false ;
 }
 
-
-static void
-parse_comment_single_line (string s, int& pos) {
-  if (pos>=N(s)) return;
-  if (s[pos]!='#') return;
-  pos=N(s);	
-}
-
-
 static void
 parse_parenthesized (string s, int& pos) {
   int i=pos;
@@ -447,10 +437,9 @@ r_language_rep::get_color (tree t, int start, int end) {
       parse_string (s, pos);
       if (opos<pos) break;
 
-      parse_comment_single_line (s, pos);
-      if (opos < pos) {
-	type= "comment";
-	break;
+      if (inline_comment_parser.parse (s, pos)) {
+        type= "comment";
+        break;
       }
 
       pos++;
@@ -468,8 +457,9 @@ r_language_rep::get_color (tree t, int start, int end) {
       possible_class= possible_future_class;
       opos= pos;
 
-      parse_blanks (s, pos);
-      if (opos<pos) break;
+      if (blanks_parser.parse (s, pos)) {
+        break;
+      }
 
       parse_string (s, pos);
       if (opos<pos) {
@@ -483,8 +473,7 @@ r_language_rep::get_color (tree t, int start, int end) {
         break;
       }
 
-      number_parser.parse (s, pos);
-      if (opos<pos) {
+      if (number_parser.parse (s, pos)) {
         type= "number";
         backquote= false;
         postfix= false;
@@ -493,8 +482,7 @@ r_language_rep::get_color (tree t, int start, int end) {
         break;
       }
 
-      parse_comment_single_line (s, pos);
-      if (opos<pos) {
+      if (inline_comment_parser.parse (s, pos)) {
         type= "comment";
         backquote= false;
         postfix= false;
@@ -666,20 +654,24 @@ r_language_rep::get_color (tree t, int start, int end) {
     do {
       do {
         opos=pos;
-        parse_blanks (s, pos);
-        if (opos<pos) break;
+        if (blanks_parser.parse (s, pos)) {
+          break;
+        }
 
         parse_identifier (colored, s, pos);
         if (opos<pos) { possible_function= true; break; }
 
-        number_parser.parse (s, pos);
-        if (opos<pos) { possible_function= true; break; }
+        if (number_parser.parse (s, pos)) {
+          possible_function= true;
+          break;
+        }
 
         parse_constant (colored, s, pos);
         if (opos<pos) { possible_function= true; break; }
 
-        parse_comment_single_line (s, pos);
-        if (opos<pos) break;
+        if (inline_comment_parser.parse (s, pos)) {
+          break;
+        }
 
         parse_parenthesized (s, pos);
         if (opos<pos) { possible_function= true; break; }
@@ -692,16 +684,18 @@ r_language_rep::get_color (tree t, int start, int end) {
     } else do {
       do {
         opos=pos;
-        parse_blanks (s, pos);
-        if (opos<pos) break;
+        if (blanks_parser.parse (s, pos)) {
+          break;
+        }
         parse_identifier (colored, s, pos);
         if (opos<pos) break;
         number_parser.parse (s, pos);
         if (opos<pos) break;
         parse_constant (colored, s, pos);
         if (opos<pos) break;
-        parse_comment_single_line(s, pos);
-        if (opos<pos) break;
+        if (inline_comment_parser.parse (s, pos)) {
+          break;
+        }
         parse_parenthesized (s, pos);
         if (opos<pos) break;
 
@@ -716,20 +710,23 @@ r_language_rep::get_color (tree t, int start, int end) {
     do {
       do {
         opos=pos;
-        parse_blanks (s, pos);
-        if (opos<pos) break;
+        if (blanks_parser.parse (s, pos)) {
+          break;
+        }
 
         parse_identifier (colored, s, pos);
         if (opos<pos) break;
 
-        number_parser.parse (s, pos);
-        if (opos<pos) break;
+        if (number_parser.parse (s, pos)) {
+          break;
+        }
 
         parse_constant (colored, s, pos);
         if (opos<pos) break;
 
-        parse_comment_single_line(s, pos);
-        if (opos<pos) break;
+        if (inline_comment_parser.parse (s, pos)) {
+          break;
+        }
 
         parse_parenthesized (s, pos);
         if (opos<pos) break;

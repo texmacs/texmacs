@@ -44,12 +44,18 @@ line_inc (tree t, int i) {
   return pt[p->item + i];
 }
 
-static void parse_escaped_char (string s, int& pos);
-
 java_language_rep::java_language_rep (string name):
-  abstract_language_rep (name), colored ("")
+  abstract_language_rep (name)
 {
   number_parser.use_java_style ();
+  inline_comment_parser.set_starts (list<string> ("//"));
+
+  list<char> escape_chars= list<char>()
+    * '\\' * '\'' * '\"'
+    * 'b' * 'f' * 'n' * 'r' * 't';
+  escaped_char_parser.set_chars (escape_chars);
+  escaped_char_parser.support_octal_upto_3_digits (true);
+  escaped_char_parser.support_hex_with_16_bits (true);
 }
 
 text_property
@@ -62,18 +68,10 @@ java_language_rep::advance (tree t, int& pos) {
     pos++;
     return &tp_space_rep;
   }
-  if (c == '\\') {
-    parse_escaped_char (s, pos);
+  if (escaped_char_parser.parse (s, pos)) {
     return &tp_normal_rep;
   }
-  if (pos+2 < N(s) && s[pos] == '0' &&
-       (s[pos+1] == 'x' || s[pos+1] == 'X' )) {
-    number_parser.parse (s, pos);
-    return &tp_normal_rep;
-  }
-  if (is_digit (c) ||
-      (c == '.' && pos+1 < N(s) && is_digit (s[pos+1]))) {
-    number_parser.parse (s, pos);
+  if (number_parser.parse (s, pos)) {
     return &tp_normal_rep;
   }
   if (belongs_to_identifier (c)) {
@@ -271,22 +269,6 @@ java_color_setup_operator_field (hashmap<string, string> & t) {
   t ("::")= c;
 }
 
-static void
-parse_escaped_char (string s, int& pos) {
-  int n= N(s), i= pos++;
-  if (i+2 >= n) return;
-  if (s[i] != '\\')
-    return;
-  i++;
-  if (s[i] == '\\' || s[i] == '\'' || s[i] == '\"' ||
-           s[i] == 'b'  || s[i] == 'f'  ||
-           s[i] == 'n'  || s[i] == 'r'  || s[i] == 't')
-    pos+= 1;
-  else if (s[i] == 'u')
-    pos+= 5;
-  return;
-}
-
 static bool
 parse_string (string s, int& pos, bool force) {
   int n= N(s);
@@ -450,13 +432,6 @@ java_language_rep::parse_operators (hashmap<string,string>& t, string s, int& po
   return "";
 }
 
-static void
-parse_comment_single_line (string s, int& pos) {
-  if (pos+1>=N(s)) return;
-  if (s[pos]!='/' || s[pos+1]!='/') return;
-  pos=N(s);
-}
-
 string
 java_language_rep::get_color (tree t, int start, int end) {
   static bool setup_done= false;
@@ -499,21 +474,18 @@ java_language_rep::get_color (tree t, int start, int end) {
         }
       }
       else if (in_esc) {
-        parse_escaped_char (s, pos);
         in_esc= false;
         in_str= true;
-        if (opos < pos) {
+        if (escaped_char_parser.parse (s, pos)) {
           type= "constant_char";
           break;
         }
       }
       else {
-        parse_blanks (s, pos);
-        if (opos < pos){
+        if (blanks_parser.parse (s, pos)) {
           break;
         }
-        parse_comment_single_line (s, pos);
-        if (opos < pos) {
+        if (inline_comment_parser.parse (s, pos)) {
           type= "comment";
           break;
         }
@@ -526,8 +498,7 @@ java_language_rep::get_color (tree t, int start, int end) {
         if (opos < pos) {
           break;
         }
-        number_parser.parse (s, pos);
-        if (opos < pos) {
+        if (number_parser.parse (s, pos)) {
           type= "constant_number";
           break;
         }

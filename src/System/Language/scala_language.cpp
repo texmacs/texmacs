@@ -2,8 +2,7 @@
 /******************************************************************************
 * MODULE     : scala_language.cpp
 * DESCRIPTION: the Scala language
-* COPYRIGHT  : (C) 2014  François Poulain
-*              (C) 2016  Darcy Shen
+* COPYRIGHT  : (C) 2014-2019  François Poulain, Darcy Shen
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
 * ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
@@ -46,12 +45,17 @@ line_inc (tree t, int i) {
   return pt[p->item + i];
 }
 
-static void parse_escaped_char (string s, int& pos);
-
 scala_language_rep::scala_language_rep (string name):
-  abstract_language_rep (name), colored ("")
+  abstract_language_rep (name)
 {
-    number_parser.use_scala_style ();
+  number_parser.use_scala_style ();
+  inline_comment_parser.set_starts (list<string> ("//"));
+
+  list<char> escape_chars= list<char>()
+    * '\\' * '\'' * '\"'
+    * 'b' * 'f' * 'n' * 'r' * 't';
+  escaped_char_parser.set_chars (escape_chars);
+  escaped_char_parser.support_hex_with_16_bits (true);
 }
 
 text_property
@@ -64,18 +68,10 @@ scala_language_rep::advance (tree t, int& pos) {
     pos++;
     return &tp_space_rep;
   }
-  if (c == '\\') {
-    parse_escaped_char (s, pos);
+  if (escaped_char_parser.parse (s, pos)) {
     return &tp_normal_rep;
   }
-  if (pos+2 < N(s) && s[pos] == '0' &&
-       (s[pos+1] == 'x' || s[pos+1] == 'X' )) {
-    number_parser.parse (s, pos);
-    return &tp_normal_rep;
-  }
-  if (is_digit (c) ||
-      (c == '.' && pos+1 < N(s) && is_digit (s[pos+1]))) {
-    number_parser.parse (s, pos);
+  if (number_parser.parse (s, pos)) {
     return &tp_normal_rep;
   }
   if (belongs_to_identifier (c)) {
@@ -307,22 +303,6 @@ scala_color_setup_operator_field (hashmap<string, string> & t) {
   t (".")= "operator_field";
 }
 
-static void
-parse_escaped_char (string s, int& pos) {
-  int n= N(s), i= pos++;
-  if (i+2 >= n) return;
-  if (s[i] != '\\')
-    return;
-  i++;
-  if (s[i] == '\\' || s[i] == '\'' || s[i] == '\"' ||
-           s[i] == 'b'  || s[i] == 'f'  ||
-           s[i] == 'n'  || s[i] == 'r'  || s[i] == 't')
-    pos+= 1;
-  else if (s[i] == 'u')
-    pos+= 5;
-  return;
-}
-
 static bool
 parse_string (string s, int& pos, bool force) {
   int n= N(s);
@@ -486,13 +466,6 @@ scala_language_rep::parse_operators (hashmap<string,string>& t, string s, int& p
   return "";
 }
 
-static void
-parse_comment_single_line (string s, int& pos) {
-  if (pos+1>=N(s)) return;
-  if (s[pos]!='/' || s[pos+1]!='/') return;
-  pos=N(s);
-}
-
 string
 scala_language_rep::get_color (tree t, int start, int end) {
   static bool setup_done= false;
@@ -535,21 +508,18 @@ scala_language_rep::get_color (tree t, int start, int end) {
         }
       }
       else if (in_esc) {
-        parse_escaped_char (s, pos);
         in_esc= false;
         in_str= true;
-        if (opos < pos) {
+        if (escaped_char_parser.parse (s, pos)) {
           type= "constant_char";
           break;
         }
       }
       else {
-        parse_blanks (s, pos);
-        if (opos < pos){
+        if (blanks_parser.parse (s, pos)) {
           break;
         }
-        parse_comment_single_line (s, pos);
-        if (opos < pos) {
+        if (inline_comment_parser.parse (s, pos)) {
           type= "comment";
           break;
         }
@@ -562,8 +532,7 @@ scala_language_rep::get_color (tree t, int start, int end) {
         if (opos < pos) {
           break;
         }
-        number_parser.parse (s, pos);
-        if (opos < pos) {
+        if (number_parser.parse (s, pos)) {
           type= "constant_number";
           break;
         }

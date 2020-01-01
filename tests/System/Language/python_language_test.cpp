@@ -10,11 +10,12 @@
 
 #include "number_parser_test.hpp"
 #include "number_parser.hpp"
+#include "impl_language.hpp"
+
 
 TEST (integer_literal, work) {
-  number_parser_rep number_parser;
-  number_parser.use_python_style ();
-
+  python_language_rep* python_lang= tm_new<python_language_rep> ("python");
+  number_parser_rep number_parser= python_lang->number_parser;
   // Decimal Literals
   assert_numbers (number_parser, list<string>()
     * string("10") * string("10j") * string("10J")
@@ -46,9 +47,8 @@ TEST (integer_literal, work) {
 }
 
 TEST (floating_point_literal, work) {
-  number_parser_rep number_parser;
-  number_parser.use_python_style ();
-
+  python_language_rep* python_lang= tm_new<python_language_rep> ("python");
+  number_parser_rep number_parser= python_lang->number_parser;
   assert_numbers (number_parser, list<string>()
     * string("3.14") * string("10.") * string(".001")
     * string("1e100") * string("3.14e-10") * string("0e0")
@@ -56,13 +56,19 @@ TEST (floating_point_literal, work) {
   );
 }
 
-TEST (imag_literal , work) {
-  number_parser_rep number_parser;
-  number_parser.use_python_style ();
-
+TEST (imag_literal, work) {
+  python_language_rep* python_lang= tm_new<python_language_rep> ("python");
+  number_parser_rep number_parser= python_lang->number_parser;
   assert_numbers (number_parser, list<string>()
     * string("3.14j") * string("10.j") * string("10j")
     * string(".001j") * string("1e100j") * string("3.14e-10j")
     * string("3.14_15_93j")
   );
+}
+
+TEST (inline_comment, work) {
+  python_language_rep* python_lang= tm_new<python_language_rep> ("python");
+  inline_comment_parser_rep inline_comment_parser= python_lang->inline_comment_parser;
+  ASSERT_TRUE (inline_comment_parser.can_parse("#", 0));
+  ASSERT_TRUE (inline_comment_parser.can_parse("# 123", 0));
 }

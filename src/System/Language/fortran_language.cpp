@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : fortran_language.cpp
 * DESCRIPTION: Fortran 2008 language
-* COPYRIGHT  : (C) 2019 Marduk Bolaños
+* COPYRIGHT  : (C) 2019  Marduk Bolaños, Darcy Shen
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
 * ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
@@ -15,9 +15,10 @@
 #include "scheme.hpp"
 
 fortran_language_rep::fortran_language_rep (string name):
-  abstract_language_rep (name), colored ("")
+  abstract_language_rep (name)
 {
   number_parser.use_fortran_style ();
+  inline_comment_parser.set_starts (list<string>("!"));
 }
 
 text_property
@@ -27,8 +28,9 @@ fortran_language_rep::advance (tree t, int& pos) {
   char c= s[pos];
   if (c == ' ') {
     pos++; return &tp_space_rep; }
-  if (is_digit (c)) {
-    number_parser.parse (s, pos); return &tp_normal_rep; }
+  if (number_parser.parse (s, pos)) {
+    return &tp_normal_rep;
+  }
   if (belongs_to_identifier (c)) {
     parse_alpha (s, pos); return &tp_normal_rep; }
   tm_char_forwards (s, pos);
@@ -457,12 +459,6 @@ fortran_language_rep::parse_operators (hashmap<string,string>& t, string s, int&
   return "";
 }
 
-static void
-parse_comment_single_line (string s, int& pos) {
-  if (pos>=N(s)) return;
-  if (pos+1<N(s) && s[pos]=='!') {pos=N(s);return;}
-}
-
 string
 fortran_language_rep::get_color (tree t, int start, int end) {
   static bool setup_done= false;
@@ -513,12 +509,10 @@ fortran_language_rep::get_color (tree t, int start, int end) {
           break;
         }
       }
-      parse_blanks (s, pos);
-      if (opos < pos){
+      if (blanks_parser.parse (s, pos)) {
         break;
       }
-      parse_comment_single_line (s, pos);
-      if (opos < pos) {
+      if (inline_comment_parser.parse (s, pos)) {
         type= "comment";
         break;
       }
@@ -537,8 +531,7 @@ fortran_language_rep::get_color (tree t, int start, int end) {
         if (opos < pos) {
           break;
         }
-        number_parser.parse (s, pos);
-        if (opos < pos) {
+        if (number_parser.parse (s, pos)) {
           type= "constant_number";
           break;
         }

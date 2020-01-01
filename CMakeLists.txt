@@ -366,6 +366,7 @@ set (TeXmacs_Include_Dirs
   ${TEXMACS_SOURCE_DIR}/src/Data/Drd
   ${TEXMACS_SOURCE_DIR}/src/Data/History
   ${TEXMACS_SOURCE_DIR}/src/Data/Observers
+  ${TEXMACS_SOURCE_DIR}/src/Data/Parser
   ${TEXMACS_SOURCE_DIR}/src/Data/String
   ${TEXMACS_SOURCE_DIR}/src/Data/Tree
   ${TEXMACS_SOURCE_DIR}/src/Edit
