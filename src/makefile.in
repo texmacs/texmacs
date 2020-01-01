@@ -151,7 +151,7 @@ system_incl   := $(call incl_flags,System System/Boot System/Classes \
   System/Files System/Link System/Misc System/Language Kernel/Abstractions \
   Kernel/Containers Kernel/Types Data/Convert Data/Drd Data/History \
   Data/Observers Data/Document Data/String Data/Tmfs Data/Tree \
-  Scheme \
+  Data/Parser Scheme \
   Graphics/Bitmap_fonts Graphics/Fonts Graphics/Gui Graphics/Mathematics \
   Graphics/Renderer Graphics/Handwriting Graphics/Types Graphics/Pictures \
   Graphics/Spacial Graphics/Colors Plugins Plugins/@CONFIG_OS_COMPAT@)
@@ -224,7 +224,7 @@ endif
 deps_incl = $(call incl_flags,System System/Boot System/Classes System/Files \
   System/Link System/Misc System/Language Kernel/Abstractions \
   Kernel/Containers Kernel/Types Data/Convert \
-  Data/Document Data/Drd Data/History \
+  Data/Document Data/Drd Data/History Data/Parser \
   Data/Observers Data/Document Data/String Data/Tmfs Data/Tree Graphics \
   Plugins Plugins/Pdf/LibAesgm Plugins/Qt \
   Style/Environment Style/Evaluate Style/Memorizer \
