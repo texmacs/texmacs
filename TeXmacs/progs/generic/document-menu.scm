@@ -951,9 +951,10 @@
        (cite-texmacs "TeXmacs:MG:2006"))))
 
 (menu-bind cite-texmacs-menu
-  (group "Acknowledge")
-  ("Written with TeXmacs" (acknowledge-texmacs))
-  ---
+  (assuming (or (in-beamer?) (in-seminar?) (in-browser?))
+    (group "Acknowledge")
+    ("Written with TeXmacs" (acknowledge-texmacs))
+    ---)
   (group "Cite")
   (link cite-texmacs-only-menu)
   ---

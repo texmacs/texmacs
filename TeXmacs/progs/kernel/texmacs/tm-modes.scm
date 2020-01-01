@@ -131,6 +131,12 @@
   (in-plugin-with-converters%
    (plugin-supports-math-input-ref (get-env "prog-language")))
   (in-screens% (inside? 'screens))
+  (in-article% (style-has? "header-article-package"))
+  (in-book% (style-has? "header-book-package"))
+  (in-letter% (style-has? "header-letter-package"))
+  (in-seminar% (style-has? "header-seminar-package"))
+  (in-generic% (style-has? "generic-style"))
+  (in-browser% (style-has? "browser-style"))
   (in-beamer% (style-has? "beamer-style"))
   (in-poster% (style-has? "poster-style"))
   (in-edu% (style-has? "std-edu-dtd"))
