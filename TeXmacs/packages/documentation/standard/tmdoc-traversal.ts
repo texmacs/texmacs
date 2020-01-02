@@ -1,4 +1,4 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.12>
 
 <style|<tuple|source|english>>
 
@@ -38,38 +38,45 @@
     </with>
   </cell>|<cell|<tmdoc-rgnu>>>>>>>>
 
+  <assign|tmdoc-bar|<macro|content|<with|color|dark
+  grey|<block|<tformat|<cwith|1|1|1|1|cell-background|broken
+  white>|<twith|table-width|1par>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<table|<row|<cell|<with|color|black|<arg|content>>>>>>>>>>
+
   <\active*>
     <\src-comment>
       Title bars.
     </src-comment>
   </active*>
 
-  <assign|tmdoc-title|<macro|title|<style-with|src-compact|none|<no-indent><with|font-series|bold|font-size|1.19|color|dark
-  grey|<block*|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|1|cell-lborder|0.5ln>|<cwith|1|-1|1|1|cell-rborder|0.5ln>|<cwith|1|-1|1|1|cell-bborder|0.5ln>|<cwith|1|-1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|1|1|cell-lsep|0fn>|<cwith|1|1|1|-1|cell-background|pastel
-  yellow>|<table|<row|<cell|<tmdoc-gnu-title|<with|color|black|<arg|title>>>>>>>>><vspace|1fn>>>>
+  <assign|tmdoc-underline|<\macro|body>
+    <tabular|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-tborder|0ln>|<cwith|1|1|1|1|cell-bborder|1ln>|<cwith|1|1|1|1|cell-lborder|0ln>|<cwith|1|1|1|1|cell-rborder|0ln>|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-bsep|2spc>|<cwith|1|1|1|1|cell-tsep|1spc>|<table|<row|<\cell>
+      <arg|body>
+    </cell>>>>>
+  </macro>>
 
-  <assign|tmdoc-title*|<macro|title|b|<style-with|src-compact|none|<no-indent><with|font-series|bold|font-size|1.19|color|dark
-  grey|<block*|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|1|cell-lborder|0.5ln>|<cwith|1|-1|1|1|cell-rborder|0.5ln>|<cwith|1|-1|1|1|cell-bborder|0.5ln>|<cwith|1|-1|1|1|cell-tborder|0.5ln>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|1|1|cell-lsep|0fn>|<cwith|2|2|1|-1|cell-background|pastel
-  orange>|<cwith|1|1|1|-1|cell-background|pastel
-  yellow>|<cwith|2|2|1|1|cell-hyphen|c>|<table|<row|<cell|<tmdoc-gnu-title|<with|color|black|<arg|title>>>>>|<row|<\cell>
-    <\with|par-mode|center>
-      <with|color|black|font-series|medium|font-size|0.84|[<arg|b>]>
-    </with>
-  </cell>>>>>><vspace|1fn>>>>
+  <assign|tmdoc-tmimage|<macro|<image|$TEXMACS_PATH/misc/images/TeXmacs-256.png|3em|3em||-0.3h>>>
 
-  <assign|tmdoc-title**|<macro|t|title|b|<style-with|src-compact|none|<no-indent><with|font-series|bold|font-size|1.19|color|dark
-  grey|<block*|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|1|cell-lborder|0.5ln>|<cwith|1|-1|1|1|cell-rborder|0.5ln>|<cwith|1|-1|1|1|cell-bborder|0.5ln>|<cwith|1|-1|1|1|cell-tborder|0.5ln>|<cwith|2|2|1|1|cell-rsep|0fn>|<cwith|2|2|1|1|cell-lsep|0fn>|<cwith|1|1|1|-1|cell-background|pastel
-  orange>|<cwith|3|3|1|-1|cell-background|pastel
-  orange>|<cwith|2|2|1|-1|cell-background|pastel
-  yellow>|<cwith|1|1|1|1|cell-hyphen|c>|<cwith|3|3|1|1|cell-hyphen|c>|<table|<row|<\cell>
-    <\with|par-mode|center>
-      <with|color|black|font-series|medium|font-size|0.84|[<arg|t>]>
-    </with>
-  </cell>>|<row|<cell|<tmdoc-gnu-title|<with|color|black|<arg|title>>>>>|<row|<\cell>
-    <\with|par-mode|center>
-      <with|color|black|font-series|medium|font-size|0.84|[<arg|b>]>
-    </with>
-  </cell>>>>>><vspace|1fn>>>>
+  <assign|tmdoc-title-font|<macro|title|<with|font|Fira|font-series|bold|font-shape|small-caps|font-size|1.6|<arg|title>>>>
+
+  <assign|tmdoc-title|<macro|title|<tmdoc-underline|<tmdoc-tmimage><space|1em><tmdoc-title-font|<arg|title>>><vspace|2fn>>>
+
+  <assign|tmdoc-title*|<\macro|title|b>
+    <tmdoc-underline|<tmdoc-tmimage><space|1em><tmdoc-title-font|<arg|title>>>
+
+    <tmdoc-underline|<arg|b>>
+
+    <vspace|2fn>
+  </macro>>
+
+  <assign|tmdoc-title**|<\macro|t|title|b>
+    <tmdoc-underline|<arg|t>>
+
+    <tmdoc-underline|<tmdoc-tmimage><space|1em><tmdoc-title-font|<arg|title>>>
+
+    <tmdoc-underline|<arg|b>>
+
+    <vspace|2fn>
+  </macro>>
 
   <\active*>
     <\src-comment>
@@ -99,13 +106,15 @@
     </src-comment>
   </active*>
 
-  <assign|tmdoc-bar|<macro|content|<with|color|dark
-  grey|<block|<tformat|<cwith|1|1|1|1|cell-background|broken
-  white>|<twith|table-width|1par>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-lborder|0.5ln>|<cwith|1|1|1|1|cell-rborder|0.5ln>|<cwith|1|1|1|1|cell-bborder|0.5ln>|<cwith|1|1|1|1|cell-tborder|0.5ln>|<table|<row|<cell|<with|color|black|<arg|content>>>>>>>>>>
+  <assign|tmdoc-overline|<\macro|body>
+    <tabular|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-tborder|1ln>|<cwith|1|1|1|1|cell-bborder|0ln>|<cwith|1|1|1|1|cell-lborder|0ln>|<cwith|1|1|1|1|cell-rborder|0ln>|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-bsep|1spc>|<cwith|1|1|1|1|cell-tsep|2spc>|<table|<row|<\cell>
+      <arg|body>
+    </cell>>>>>
+  </macro>>
 
   <assign|tmdoc-copyright-extra|<macro|name|, <arg|name>>>
 
-  <assign|tmdoc-copyright|<xmacro|x|<no-indent><vspace*|1fn><tmdoc-bar|<copyright><with|font-size|0.84|
+  <assign|tmdoc-copyright|<xmacro|x|<no-indent><vspace*|1fn><tmdoc-overline|<copyright><with|font-size|0.84|
   \ <arg|x|0> <localize|by> <arg|x|1><map-args|tmdoc-copyright-extra|concat|x|2>>>>>
 
   <assign|tmdoc-license|<macro|body|<with|color|grey|font-size|0.59|<with|language|english|<arg|body>>>>>
@@ -144,3 +153,6 @@
 
   \;
 </body>
+
+<initial|<\collection>
+</collection>>

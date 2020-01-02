@@ -4143,6 +4143,24 @@ rename_style (tree t, string old_name, string new_name) {
 }
 
 /******************************************************************************
+* Upgrade copyright dashes
+******************************************************************************/
+
+tree
+upgrade_copyright_dashes (tree t) {
+  if (is_atomic (t)) return t;
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_copyright_dashes (t[i]);
+    if (is_compound (r, "tmdoc-copyright") && N(r)>0 && is_atomic (r[0]))
+      r[0]= replace (r[0]->label, "--", "\25");
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -4351,6 +4369,8 @@ upgrade (tree t, string version) {
   if (version_inf_eq (version, "1.99.11"))
     if (is_non_style_document (t))
       t= preserve_dots (t);
+  if (version_inf_eq (version, "1.99.12"))
+    t= upgrade_copyright_dashes (t);
   
   if (is_non_style_document (t))
     t= automatic_correct (t, version);

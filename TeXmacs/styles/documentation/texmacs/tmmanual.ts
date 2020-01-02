@@ -1,4 +1,4 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.12>
 
 <style|<tuple|source|english>>
 
@@ -24,9 +24,13 @@
     </src-title>
   </active*>
 
-  <use-package|tmbook|doc>
+  <use-package|tmbook|doc|pagella-font>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Global style parameters.
+    </src-comment>
+  </active*>
 
   <assign|par-hyphen|professional>
 
@@ -40,7 +44,11 @@
 
   <assign|font-base-size|11>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Titles.
+    </src-comment>
+  </active*>
 
   <assign|doc-make-title|<\macro|name>
     <assign|page-this-header|><assign|page-this-footer|><vspace|0.33pag>
@@ -56,7 +64,53 @@
 
   <assign|title|<macro|name|<doc-make-title|<arg|name>>>>
 
+  <\active*>
+    <\src-comment>
+      Chapters.
+    </src-comment>
+  </active*>
+
+  <assign|chapter-font|<macro|name|<with|font|Fira|font-shape|small-caps|<very-large|<arg|name>>>>>
+
   \;
+
+  <assign|chapter-title|<macro|name|<style-with|src-compact|none|<new-dpage*><new-line><style-with|src-compact|none|<sectional-centered-bold|<vspace*|2fn><chapter-font|<arg|name>><vspace|3fn>>>>>>
+
+  <\active*>
+    <\src-comment>
+      Sections, subsections and subsubsections.
+    </src-comment>
+  </active*>
+
+  <assign|section-font|<macro|name|<with|font|Fira|<large|<arg|name>>>>>
+
+  <assign|subsection-font|<macro|name|<with|font|Fira|<arg|name>>>>
+
+  <assign|subsubsection-font|<macro|name|<with|font|Fira|<arg|name>>>>
+
+  \;
+
+  <assign|section-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|1.25fn><section-font|<arg|name>><vspace|0.5fn>>>>>
+
+  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|1fn><subsection-font|<arg|name>><vspace|0.5fn>>>>>
+
+  <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|0.5fn><subsubsection-font|<arg|name>><vspace|0.25fn>>>>>
+
+  <\active*>
+    <\src-comment>
+      Paragraphs and subparagraphs.
+    </src-comment>
+  </active*>
+
+  <assign|paragraph-font|<macro|name|<with|font|Fira|font-shape|italic|<arg|name>>>>
+
+  <assign|subparagraph-font|<macro|name|<with|font|Fira|font-shape|italic|<arg|name>>>>
+
+  \;
+
+  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<sectional-short|<vspace*|0.5fn><paragraph-font|<arg|name>>>>>>
+
+  <assign|subparagraph-title|<macro|name|<style-with|src-compact|none|<sectional-short|<vspace*|0.5fn><subparagraph-font|<arg|name>>>>>>
 </body>
 
 <\initial>
