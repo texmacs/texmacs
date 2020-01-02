@@ -269,7 +269,7 @@
 
 (tm-menu (parameter-submenu l mode)
   (:require (== (tree-label-type (string->symbol l)) "color"))
-  (with setter (lambda (col) (parameter-set l col mode))
+  (with setter (lambda (col) (delayed (:idle 250) (parameter-set l col mode)))
     ((check "Default" "*" (parameter-default? l mode))
      (parameter-reset l mode))
     ---

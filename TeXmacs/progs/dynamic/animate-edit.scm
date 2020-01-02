@@ -40,6 +40,13 @@
 ;; Parameters for various animation tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (parameter-choice-list var)
+  (:require (and (!= var "")
+                 (with s (string-drop-right var 1)
+                   (or (string-ends? s "-start-")
+                       (string-ends? s "-end-")))))
+  (list "-2" "-1" "-0.5" "0" "0.5" "1" "2" :other))
+
 (tm-define (customizable-parameters t)
   (:require (tree-is? t 'translate-in))
   (list (list "translate-start-x" "Start x")
@@ -82,6 +89,10 @@
         (list "progressive-end-r" "End right")
         (list "progressive-end-t" "End top")))
 
+(tm-define (parameter-choice-list var)
+  (:require (in? var (list "fade-start" "fade-end" "zoom-start" "zoom-end")))
+  (list "0" "0.2" "0.5" "0.8" "1" :other))
+
 (tm-define (customizable-parameters t)
   (:require (tree-is? t 'fade-in))
   (list (list "fade-start" "Start intensity")))
@@ -107,6 +118,12 @@
   (:require (tree-is? t 'zoom-smooth))
   (list (list "zoom-start" "Start magnification")
         (list "zoom-end" "End magnification")))
+
+(tm-define (parameter-choice-list var)
+  (:require (or (string-starts? var "emboss-start-")
+                (string-starts? var "emboss-end-")))
+  (list "-5ln" "-4ln" "-3ln" "-2ln" "-1ln" "0ln"
+        "1ln" "2ln" "3ln" "4ln" "5ln" :other))
 
 (tm-define (customizable-parameters t)
   (:require (tree-in? t '(shadowed-smooth emboss-smooth

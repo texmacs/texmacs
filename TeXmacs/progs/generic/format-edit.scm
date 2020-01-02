@@ -333,6 +333,10 @@
 ;; Font effects
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (parameter-choice-list var)
+  (:require (in? var (list "embold-strength" "embbb-strength")))
+  (list "1.5" "2" "2.5" "3" "4" "5" :other))
+
 (tm-define (customizable-parameters t)
   (:require (tree-is? t 'embold))
   (list (list "embold-strength" "Strength")))
@@ -341,9 +345,18 @@
   (:require (tree-is? t 'embbb))
   (list (list "embbb-strength" "Strength")))
 
+(tm-define (parameter-choice-list var)
+  (:require (in? var (list "slanted-slope")))
+  (list "-1" "-0.5" "-0.33" "-0.25" "-0.2" "-0.15" "-0.1"
+        "0.1" "0.15" "0.2" "0.25" "0.33" "0.5" "1" :other))
+
 (tm-define (customizable-parameters t)
   (:require (tree-is? t 'slanted))
   (list (list "slanted-slope" "Slope")))
+
+(tm-define (parameter-choice-list var)
+  (:require (string-ends? var "magnified-factor"))
+  (list "0.2" "0.5" "0.8" "0.9" "1.1" "1.2" "1.5" "2" "5" :other))
 
 (tm-define (customizable-parameters t)
   (:require (tree-is? t 'hmagnified))
@@ -353,18 +366,38 @@
   (:require (tree-is? t 'vmagnified))
   (list (list "vmagnified-factor" "Factor")))
 
+(tm-define (parameter-choice-list var)
+  (:require (== var "condensed-factor"))
+  (list "0.5" "0.75" "0.8" "0.85" "0.9" "0.95" :other))
+
 (tm-define (customizable-parameters t)
   (:require (tree-is? t 'condensed))
   (list (list "condensed-factor" "Factor")))
+
+(tm-define (parameter-choice-list var)
+  (:require (== var "extended-factor"))
+  (list "1.05" "1.1" "1.15" "1.2" "1.25" "1.5" "2" :other))
 
 (tm-define (customizable-parameters t)
   (:require (tree-is? t 'extended))
   (list (list "extended-factor" "Factor")))
 
+(tm-define (parameter-choice-list var)
+  (:require (== var "degraded-threshold"))
+  (list "0.5" "0.6" "0.667" "0.75" :other))
+
+(tm-define (parameter-choice-list var)
+  (:require (string-ends? var "-frequency"))
+  (list "0.5" "0.75" "1.0" "1.5" "2.0" :other))
+
 (tm-define (customizable-parameters t)
   (:require (tree-is? t 'degraded))
   (list (list "degraded-threshold" "Threshold")
         (list "degraded-frequency" "Frequency")))
+
+(tm-define (parameter-choice-list var)
+  (:require (in? var (list "distorted-strength" "gnawed-strength")))
+  (list "0.4" "0.5" "0.6" "0.8" "1.0" "1.5" :other))
 
 (tm-define (customizable-parameters t)
   (:require (tree-is? t 'distorted))
@@ -379,6 +412,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Effects
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (parameter-choice-list var)
+  (:require (or (string-ends? var "-pen-width")
+                (string-ends? var "-pen-height")
+                (string-ends? var "-pen-dx")
+                (string-ends? var "-pen-dy")
+                (string-ends? var "-blur-radius")))
+  (list "0.25ln" "0.5ln" "1ln" "1.5ln" "2ln" "2.5ln" "5ln" :other))
+
+(tm-define (parameter-choice-list var)
+  (:require (string-ends? var "-pen-angle"))
+  (list "-60" "-45" "-30" "0" "30" "45" "60" "90" :other))
 
 (tm-define (customizable-parameters t)
   (:require (tree-in? t '(blur gaussian-blur oval-blur rectangular-blur)))
@@ -426,6 +471,13 @@
   (list (list "erode-pen-dx" "Pen dx")
         (list "erode-pen-dy" "Pen dy")))
 
+(tm-define (parameter-choice-list var)
+  (:require (in? var (list "shadow-dx" "shadow-dy"
+                           "engrave-dx" "engrave-dy"
+                           "emboss-dx" "emboss-dy")))
+  (list "-2.5ln" "-2ln" "-1.5ln" "-1ln" "-0.5ln" "0ln"
+        "0.5ln" "1ln" "1.5ln" "2ln" "2.5ln" :other))
+
 (tm-define (customizable-parameters t)
   (:require (tree-in? t '(shadow shadowed-raise)))
   (list (list "shadow-dx" "Dx")
@@ -461,12 +513,30 @@
         (list "outline-pen-height" "Pen height")
         (list "outline-pen-angle" "Pen angle")))
 
+(tm-define (parameter-choice-list var)
+  (:require (or (string-ends? var "-wavelen-x")
+                (string-ends? var "-wavelen-y")))
+  (list "0.1fn" "0.15fn" "0.2fn" "0.25fn" "0.3fn" "0.4fn" "0.5fn" :other))
+
+(tm-define (parameter-choice-list var)
+  (:require (== var "degrade-threshold"))
+  (list "0.5" "0.6" "0.667" "0.75" :other))
+
+(tm-define (parameter-choice-list var)
+  (:require (== var "degrade-sharpness"))
+  (list "0.5" "0.75" "1.0" "1.5" "2.0" :other))
+
 (tm-define (customizable-parameters t)
   (:require (tree-in? t '(degrade)))
   (list (list "degrade-wavelen-x" "Wave length x")
         (list "degrade-wavelen-y" "Wave length y")
         (list "degrade-threshold" "Threshold")
         (list "degrade-sharpness" "Sharpness")))
+
+(tm-define (parameter-choice-list var)
+  (:require (in? var (list "distort-radius-x" "distort-radius-y"
+                           "gnaw-radius-x" "gnaw-radius-y")))
+  (list "0.05fn" "0.1fn" "0.15fn" "0.2fn" :other))
 
 (tm-define (customizable-parameters t)
   (:require (tree-in? t '(distort)))
