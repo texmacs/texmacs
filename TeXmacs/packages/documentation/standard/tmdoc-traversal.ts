@@ -56,7 +56,9 @@
 
   <assign|tmdoc-tmimage|<macro|<image|$TEXMACS_PATH/misc/images/TeXmacs-256.png|3em|3em||-0.3h>>>
 
-  <assign|tmdoc-title-font|<macro|title|<with|font|Fira|font-series|bold|font-shape|small-caps|font-size|1.6|<arg|title>>>>
+  <assign|fira-font|<macro|x|<with|TeXmacs|<macro|<active*|T<rsub|<space|-0.4spc><resize|<with|math-level|0|E>||||0.5fn>>X<rsub|<resize|M<space|0.2spc>AC<space|0.1spc>S||||0.5fn>>>>|font|Fira|<arg|x>>>>
+
+  <assign|tmdoc-title-font|<macro|title|<fira-font|<with|font-series|bold|font-shape|small-caps|font-size|1.6|<arg|title>>>>>
 
   <assign|tmdoc-title|<macro|title|<tmdoc-underline|<tmdoc-tmimage><space|1em><tmdoc-title-font|<arg|title>>><vspace|2fn>>>
 

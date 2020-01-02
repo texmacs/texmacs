@@ -62,11 +62,13 @@
 
   \;
 
-  <assign|section-font|<macro|name|<with|font|Fira|<large|<arg|name>>>>>
+  <assign|fira-font|<macro|x|<with|TeXmacs|<macro|<active*|T<rsub|<space|-0.4spc><resize|<with|math-level|0|E>||||0.5fn>>X<rsub|<resize|M<space|0.2spc>AC<space|0.1spc>S||||0.5fn>>>>|font|Fira|<arg|x>>>>
 
-  <assign|subsection-font|<macro|name|<with|font|Fira|<arg|name>>>>
+  <assign|section-font|<macro|name|<fira-font|<large|<arg|name>>>>>
 
-  <assign|subsubsection-font|<macro|name|<with|font|Fira|<arg|name>>>>
+  <assign|subsection-font|<macro|name|<fira-font|<arg|name>>>>
+
+  <assign|subsubsection-font|<macro|name|<fira-font|<arg|name>>>>
 
   \;
 
@@ -82,9 +84,9 @@
     </src-comment>
   </active*>
 
-  <assign|paragraph-font|<macro|name|<with|font|Fira|font-shape|italic|<arg|name>>>>
+  <assign|paragraph-font|<macro|name|<fira-font|<with|font-shape|italic|<arg|name>>>>>
 
-  <assign|subparagraph-font|<macro|name|<with|font|Fira|font-shape|italic|<arg|name>>>>
+  <assign|subparagraph-font|<macro|name|<fira-font|<with|font-shape|italic|<arg|name>>>>>
 
   \;
 
