@@ -18,6 +18,8 @@
     (if (!= lan "english") (set-document-language lan)))
   (with psz (get-printer-paper-type)
     (if (!= psz "a4") (init-page-type psz)))
+  (with type (get-preference "page medium")
+    (if (!= type "papyrus") (init-env "page-medium" type)))
   (when (!= (get-preference "scripting language") "none")
     (lazy-plugin-force)
     (init-env "prog-scripts" (get-preference "scripting language")))

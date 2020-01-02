@@ -320,6 +320,8 @@
 (define (test-page-rendering? s) (== (get-init-page-rendering) s))
 (tm-define (init-page-rendering s)
   (:check-mark "*" test-page-rendering?)
+  (when (in? s (list "paper" "papyrus"))
+    (set-preference "page medium" s))
   (save-zoom (get-init-page-rendering))
   (cond ((== s "book")
          (init-env "page-medium" "paper")
