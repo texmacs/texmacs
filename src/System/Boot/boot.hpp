@@ -25,6 +25,7 @@ void   init_upgrade ();
 void   init_texmacs ();
 void   init_plugins ();
 void   setup_texmacs ();
+void   release_boot_lock ();
 
 scheme_tree plugin_list ();
 

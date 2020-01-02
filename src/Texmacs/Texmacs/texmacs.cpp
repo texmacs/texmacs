@@ -487,6 +487,7 @@ TeXmacs_main (int argc, char** argv) {
   texmacs_started= true;
   if (!disable_error_recovery) signal (SIGSEGV, clean_exit_on_segfault);
   if (start_server_flag) server_start ();
+  release_boot_lock ();
   if (N(extra_init_cmd) > 0) exec_delayed (scheme_cmd (extra_init_cmd));
   gui_start_loop ();
 
