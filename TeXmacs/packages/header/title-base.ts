@@ -1,4 +1,4 @@
-<TeXmacs|1.99.11>
+<TeXmacs|1.99.12>
 
 <style|<tuple|source|std-pattern>>
 
@@ -182,7 +182,9 @@
     </cell>>>>>>
   </macro>>
 
-  <assign|author-by|<macro|body|<by-text> <arg|body>>>
+  <assign|skip-by-text|<macro|<or|<equal|<value|language>|croatian>|<equal|<value|language>|slovene>>>>
+
+  <assign|author-by|<macro|body|<if|<skip-by-text>||<by-text> ><arg|body>>>
 
   <assign|author-name|<macro|author|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<name|<author-by|<arg|author>>>>>>>
 
