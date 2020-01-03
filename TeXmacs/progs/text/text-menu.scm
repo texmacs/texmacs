@@ -718,7 +718,7 @@
   ("Author" (make-doc-data-element 'doc-author))
   ("Date" (make-doc-data-element 'doc-date))
   ("Today" (begin (make-doc-data-element 'doc-date) (make 'date 0)))
-  ("Miscellanous" (make-doc-data-element 'doc-misc))
+  ("Miscellaneous" (make-doc-data-element 'doc-misc))
   ("Note" (make-doc-data-element 'doc-note))
   (-> "Cite TeXmacs" (link cite-texmacs-menu)))
 
