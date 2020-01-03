@@ -1341,7 +1341,7 @@
 ("superscript above" "надпис вище")
 ("supported plug-ins" "підтримувані додатки")
 ("surface" "поверхня")
-("swell" "набряк")
+("inflate" "набряк")
 ("swiss" "швейцарський")
 ("switch to buffer" "перехід на буфер")
 ("symbol properties not found" "властивості символу не знайдено")

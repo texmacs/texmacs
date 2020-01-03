@@ -1185,7 +1185,7 @@
 ("superscript above" "上付き")
 ("supported plug-ins" "サポートされているプラ​​グイン")
 ("surface" "表面")
-("swell" "うねり")
+("inflate" "うねり")
 ("switch to buffer" "バッファに切り替え")
 ("symbol properties not found" "シンボルプロパティが見つかりません")
 ("symbols" "記号")

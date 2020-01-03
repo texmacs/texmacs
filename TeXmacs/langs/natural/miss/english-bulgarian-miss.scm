@@ -1328,7 +1328,7 @@
 ("superscript above" "суперскрипт по-горе")
 ("supported plug-ins" "поддържани приставки")
 ("surface" "повърхност")
-("swell" "набъбване")
+("inflate" "набъбване")
 ("swiss" "швейцарска")
 ("switch to buffer" "превключване към буфер")
 ("symbol properties not found" "свойства на символа не са намерени")

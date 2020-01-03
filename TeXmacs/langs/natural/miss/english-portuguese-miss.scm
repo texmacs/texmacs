@@ -1521,7 +1521,7 @@
 ("superscript above" "sobrescrito acima")
 ("supported plug-ins" "plug-ins suportados")
 ("surface" "superfície")
-("swell" "ondulação")
+("inflate" "ondulação")
 ("swiss" "suíço")
 ("switch" "interruptor")
 ("switch to buffer" "alternar para buffer")

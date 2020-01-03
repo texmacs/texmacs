@@ -1321,7 +1321,7 @@
 ("superscript above" "horní index")
 ("supported plug-ins" "podporovaných dopl¬k·")
 ("surface" "povrch")
-("swell" "bobtnat")
+("inflate" "bobtnat")
 ("swiss" "²výcarský")
 ("switch to buffer" "p°epnout do vyrovnávací pam¥ti")
 ("symbol properties not found" "nebyly nalezeny vlastnosti symbolu")

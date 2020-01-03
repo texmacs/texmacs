@@ -57,7 +57,7 @@
 
     <item*|Box modifiers>The tags <markup|move>, <markup|shift>,
     <markup|resize>, <markup|extend>, <markup|clipped>, <markup|smashed>,
-    <markup|swell> from the <menu|Format|Adjust> menu.
+    <markup|inflate> from the <menu|Format|Adjust> menu.
 
     <item*|Animations>The durations of animations can be modified using
     <shortcut|(geometry-left)> and <shortcut|(geometry-right)>.

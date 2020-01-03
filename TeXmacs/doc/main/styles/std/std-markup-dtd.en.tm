@@ -212,14 +212,14 @@
   </explain>
 
   <\explain>
-    <explain-macro|swell|body>
+    <explain-macro|inflate|body>
 
-    <explain-macro|swell-top|body>, <explain-macro|swell-bottom|body><explain-synopsis|increase
+    <explain-macro|inflate-top|body>, <explain-macro|inflate-bottom|body><explain-synopsis|increase
     vertical size to the largest character in font>
   <|explain>
     These macros can be used to increase the vertical extents of the
     <src-arg|body> to those of the largest character in the current font. In
-    the case of <markup|swell-top> and <markup|swell-bottom>, only the top
+    the case of <markup|inflate-top> and <markup|inflate-bottom>, only the top
     <abbr|resp.> bottom are changed. This kind of adjustments may for
     instance be used in order to ensure that <math|2\<times\>2><nbsp>matrices
     with simple textual contents always have the same size:

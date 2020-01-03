@@ -868,7 +868,7 @@
 ("summarized" "摘要")
 ("superscript above" "上方标")
 ("supported plug-ins" "受支持的插件")
-("swell" "膨胀")
+("inflate" "膨胀")
 ("switch to buffer" "切换到缓冲区")
 ("symbol properties not found" "未找到符号属性")
 ("symbols" "符号")

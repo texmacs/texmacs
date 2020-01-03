@@ -1504,7 +1504,7 @@
 ("superscript above" "apice sopra")
 ("supported plug-ins" "plug-in supportati")
 ("surface" "superficie")
-("swell" "rigonfiamento")
+("inflate" "rigonfiamento")
 ("swiss" "svizzero")
 ("switch to buffer" "passa al buffer")
 ("symbol browser" "browser dei simboli")

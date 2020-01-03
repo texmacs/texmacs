@@ -1329,7 +1329,7 @@
 ("superscript above" "superscript de mai sus")
 ("supported plug-ins" "plug-in-uri acceptate")
 ("surface" "suprafaµ ")
-("swell" "umfl tur ")
+("inflate" "umfl tur ")
 ("swiss" "suedez")
 ("switch to buffer" "treceµi la tampon")
 ("symbol properties not found" "propriet µi ale simbolului nu au fost g site")

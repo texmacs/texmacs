@@ -1364,7 +1364,7 @@
 ("superscript above" "superscript ovenfor")
 ("supported plug-ins" "understøttede plug-ins")
 ("surface" "overflade")
-("swell" "opsvulmet")
+("inflate" "opsvulmet")
 ("switch to buffer" "skift til buffer")
 ("symbol browser" "symbol browser")
 ("symbol properties not found" "symbolegenskaber ikke fundet")

@@ -1234,7 +1234,7 @@
 ("superscript above" "nadkript zgoraj")
 ("supported plug-ins" "podprti vti£niki")
 ("surface" "povr²ina")
-("swell" "nabrekne")
+("inflate" "nabrekne")
 ("swiss" "²vic")
 ("switch to buffer" "preklopite na medpomnilnik")
 ("symbol properties not found" "lastnosti simbolov ni mogo£e najti")

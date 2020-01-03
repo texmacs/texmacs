@@ -1045,7 +1045,7 @@
 ("summarized" "összefoglalva")
 ("superscript above" "felülíró fenti")
 ("supported plug-ins" "támogatott beépül® modul")
-("swell" "duzzanat")
+("inflate" "duzzanat")
 ("switch to buffer" "átváltás pufferre")
 ("symbol properties not found" "szimbólum tulajdonságok nem találhatók")
 ("symbols" "szimbólumok")

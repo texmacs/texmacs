@@ -1181,7 +1181,7 @@
 ("superscript above" "위의 첨자")
 ("supported plug-ins" "지원되는 플러그인")
 ("surface" "표면")
-("swell" "팽창")
+("inflate" "팽창")
 ("switch to buffer" "버퍼로 전환")
 ("symbol properties not found" "기호 속성을 찾을 수 없음")
 ("symbols" "기호")

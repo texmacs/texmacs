@@ -1216,7 +1216,7 @@
 ("superscript above" "верхний индекс выше")
 ("supported plug-ins" "поддерживаемые плагины")
 ("surface" "поверхность")
-("swell" "зыби")
+("inflate" "зыби")
 ("swiss" "швейцарский")
 ("switch to buffer" "переключиться в буфер")
 ("symbol properties not found" "Свойства символа не найдены")

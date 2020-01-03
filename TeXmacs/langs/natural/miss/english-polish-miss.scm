@@ -1290,7 +1290,7 @@
 ("superscript above" "indeks górny powy»ej")
 ("supported plug-ins" "obsªugiwane wtyczki")
 ("surface" "powierzchnia")
-("swell" "puchni¦cie")
+("inflate" "puchni¦cie")
 ("swiss" "szwajcarski")
 ("switch to buffer" "Przeª¡cz na bufor")
 ("symbol properties not found" "Nie znaleziono wªa±ciwo±ci symbolu")

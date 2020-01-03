@@ -1446,7 +1446,7 @@
 ("superscript above" "superíndice arriba")
 ("supported plug-ins" "complementos compatibles")
 ("surface" "superficie")
-("swell" "oleaje")
+("inflate" "oleaje")
 ("swiss" "suizo")
 ("switch to buffer" "cambiar a búfer")
 ("symbol browser" "navegador de símbolos")

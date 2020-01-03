@@ -72,7 +72,7 @@
   <math|j> of the second sum to <verbatim|0fn>. Alternatively, one may resize
   the bottoms of both the <math|i> and <math|j> subscripts to (say)
   <verbatim|-0.3fn>. For easier adjustments you may use
-  <menu|Format|Adjust|Smash> and <menu|Format|Adjust|Swell> to automatically
+  <menu|Format|Adjust|Smash> and <menu|Format|Adjust|Inflate> to automatically
   adjust the size of the contents to the height of the character \Px\Q and
   the largest one in the font respectively.
 

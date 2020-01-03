@@ -1518,7 +1518,7 @@
 ("superscript above" "yläindeksi yllä")
 ("supported plug-ins" "tuetut laajennukset")
 ("surface" "pinta")
-("swell" "turvota")
+("inflate" "turvota")
 ("swiss" "sveitsin")
 ("switch to buffer" "vaihtaa puskuriin")
 ("symbol browser" "symboliselain")

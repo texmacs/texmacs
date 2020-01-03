@@ -383,11 +383,11 @@
 
   <assign|extend-right|<macro|body|right|<resize|<arg|body>|||<maximum|1r|<arg|right>>|>>>
 
-  <assign|swell|<macro|body|<resize|<arg|body>||<minimum|1b|1fnbot>||<maximum|1t|1fntop>>>>
+  <assign|inflate|<macro|body|<resize|<arg|body>||<minimum|1b|1fnbot>||<maximum|1t|1fntop>>>>
 
-  <assign|swell-bottom|<macro|body|<resize|<arg|body>||<minimum|1b|1fnbot>||>>>
+  <assign|inflate-bottom|<macro|body|<resize|<arg|body>||<minimum|1b|1fnbot>||>>>
 
-  <assign|swell-top|<macro|body|<resize|<arg|body>||||<maximum|1t|1fntop>>>>
+  <assign|inflate-top|<macro|body|<resize|<arg|body>||||<maximum|1t|1fntop>>>>
 
   \;
 

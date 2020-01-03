@@ -4369,8 +4369,12 @@ upgrade (tree t, string version) {
   if (version_inf_eq (version, "1.99.11"))
     if (is_non_style_document (t))
       t= preserve_dots (t);
-  if (version_inf_eq (version, "1.99.12"))
+  if (version_inf_eq (version, "1.99.12")) {
     t= upgrade_copyright_dashes (t);
+    t= rename_primitive (t, "swell", "inflate");
+    t= rename_primitive (t, "swell-top", "inflate-top");
+    t= rename_primitive (t, "swell-bottom", "inflate-bottom");
+  }
   
   if (is_non_style_document (t))
     t= automatic_correct (t, version);

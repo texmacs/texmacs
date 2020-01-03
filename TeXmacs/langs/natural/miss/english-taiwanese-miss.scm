@@ -872,7 +872,7 @@
 ("summarized" "摘要")
 ("superscript above" "上方標")
 ("supported plug-ins" "個 受支持的插件")
-("swell" "膨脹")
+("inflate" "膨脹")
 ("switch to buffer" "切換到緩衝區")
 ("symbol properties not found" "未找到符號屬性")
 ("symbols" "個 符號")

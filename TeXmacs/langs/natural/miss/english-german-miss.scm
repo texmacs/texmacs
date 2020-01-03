@@ -1242,7 +1242,7 @@
 ("superscript above" "hochgestellt oben")
 ("supported plug-ins" "Unterstützte Plugins")
 ("surface" "Oberfläche")
-("swell" "Dünung")
+("inflate" "Dünung")
 ("swiss" "swiss")
 ("switch to buffer" "Umschalten auf Puffer")
 ("symbol properties not found" "Symboleigenschaften nicht gefunden")

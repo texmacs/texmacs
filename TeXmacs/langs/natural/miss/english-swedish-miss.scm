@@ -2020,7 +2020,7 @@
 ("superscript above" "superscript ovan")
 ("supported plug-ins" "stödd plug-ins")
 ("surface" "yta")
-("swell" "svälla")
+("inflate" "svälla")
 ("swiss" "schweizisk")
 ("switch" "switch")
 ("switch to buffer" "växla till buffert")

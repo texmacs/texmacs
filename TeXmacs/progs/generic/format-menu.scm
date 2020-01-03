@@ -101,7 +101,7 @@
     ---
     ("Smash" (make 'smash))
     ("Reduce" (make-reduce-by "0.5ex"))
-    ("Swell" (make 'swell))))
+    ("Inflate" (make 'inflate))))
 
 (menu-bind linear-transform-menu
   (when (not (selection-active-large?))

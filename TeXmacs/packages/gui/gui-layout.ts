@@ -40,13 +40,13 @@
     </src-comment>
   </active*>
 
-  <assign|short-highlight|<macro|bg|sunny|shadow|pad|body|<with|ornament-color|<arg|bg>|ornament-sunny-color|<arg|sunny>|ornament-shadow-color|<arg|shadow>|ornament-hpadding|<arg|pad>|ornament-vpadding|<arg|pad>|<style-with|src-compact|none|<ornament|<swell|<arg|body>>>>>>>
+  <assign|short-highlight|<macro|bg|sunny|shadow|pad|body|<with|ornament-color|<arg|bg>|ornament-sunny-color|<arg|sunny>|ornament-shadow-color|<arg|shadow>|ornament-hpadding|<arg|pad>|ornament-vpadding|<arg|pad>|<style-with|src-compact|none|<ornament|<inflate|<arg|body>>>>>>>
 
   <assign|wide-highlight|<\macro|bg|sunny|shadow|pad|body>
     <\with|ornament-color|<arg|bg>|ornament-sunny-color|<arg|sunny>|ornament-shadow-color|<arg|shadow>|ornament-hpadding|<arg|pad>|ornament-vpadding|<arg|pad>>
       <\ornament>
         <\wide-normal>
-          <swell|<arg|body>>
+          <inflate|<arg|body>>
         </wide-normal>
       </ornament>
     </with>

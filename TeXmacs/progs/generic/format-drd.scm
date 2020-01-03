@@ -17,13 +17,13 @@
 ;; General groups
 
 (define-group variant-tag
-  (move-tag) (resize-tag) (smash-tag) (swell-tag) (reduce-by-tag)
+  (move-tag) (resize-tag) (smash-tag) (inflate-tag) (reduce-by-tag)
   (font-effect-tag)
   (eff-tag) (basic-effect-tag) (gaussian-effect-tag) (oval-effect-tag)
   (rectangular-effect-tag) (motion-effect-tag))
 
 (define-group similar-tag
-  (move-tag) (resize-tag) (smash-tag) (swell-tag) (reduce-by-tag)
+  (move-tag) (resize-tag) (smash-tag) (inflate-tag) (reduce-by-tag)
   (font-effect-tag)
   (eff-tag) (basic-effect-tag) (gaussian-effect-tag) (oval-effect-tag)
   (rectangular-effect-tag) (motion-effect-tag))
@@ -39,8 +39,8 @@
 (define-group smash-tag
   smash smash-bottom smash-top)
 
-(define-group swell-tag
-  swell swell-bottom swell-top)
+(define-group inflate-tag
+  inflate inflate-bottom inflate-top)
 
 (define-group reduce-by-tag
   reduce-by reduce-bottom-by reduce-top-by)

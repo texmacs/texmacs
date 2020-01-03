@@ -2428,7 +2428,7 @@
 ("supported plug-ins" "subtenataj kromprogramoj")
 ("surface" "surfaco")
 ("swedish" "sveda")
-("swell" "ŝvelinta")
+("inflate" "ŝvelinta")
 ("swiss" "svisoj")
 ("switch" "ŝaltilo")
 ("switch to buffer" "ŝanĝi al bufro")
