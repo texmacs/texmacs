@@ -30,8 +30,8 @@
        (load-help-article (string-append name))))))
 
 (menu-bind help-menu
-  (when (url-exists-in-help? "about/welcome/welcome.en.tm")
-	("Welcome" (load-help-buffer "about/welcome/welcome"))
+  (when (url-exists-in-help? "about/welcome/new-welcome.en.tm")
+	("Welcome" (load-help-article "about/welcome/new-welcome"))
 	---)
   (if (detailed-menus?)
       (when (url-exists-in-help? "main/config/man-configuration.en.tm")
