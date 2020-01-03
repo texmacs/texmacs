@@ -893,8 +893,8 @@
         (link focus-section-menu))))
 
 (tm-define (child-proposals t i)
-  (:require (and (tree-in? t '(bibliography bibliography*)) (== i 1)))
-  (bib-standard-styles))
+  (:require (and (tree-in? t '(bibliography bibliography*)) (<= i 1)))
+  (if (== i 0) (list "bib" :other) (rcons (bib-standard-styles) :other)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Focus menu for lists

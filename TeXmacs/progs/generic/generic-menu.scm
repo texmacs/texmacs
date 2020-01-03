@@ -120,6 +120,15 @@
   (cond ((== type "length") (rich-length->tm s))
 	(else s)))
 
+(tm-menu (string-input-name t i)
+  (let* ((name (tree-child-name* t i))
+         (s (string-append (upcase-first name) ":")))
+    (assuming (== name "")
+      //)
+    (assuming (!= name "")
+      (glue #f #f 3 0)
+      (mini #t (group (eval s))))))    
+
 (tm-menu (string-input-icon t i)
   (let* ((name (tree-child-name* t i))
          (type (tree-child-type t i))
@@ -127,38 +136,51 @@
          (active? (inputter-active? (tree-ref t i) type))
          (props (child-proposals t i))
 	 (in (if active? (inputter-decode (tree-ref t i) type) "n.a."))
-         (in* (if active? in ""))
-         (ins (if props (cons in props) (list in)))
          (fm (type->format type))
          (w (type->width type))
          (setter (lambda (x)
                    (when x
                      (tree-set (focus-tree) i (inputter-encode x type))
                      (focus-tree-modified (focus-tree))))))
-    (assuming (== name "")
-      //)
-    (assuming (!= name "")
-      (glue #f #f 3 0)
+    (dynamic (string-input-name t i))
+    (assuming props
       (mini #t
-        (if (and (!= type "color") props)
-            (=> (eval s)
-                (for (prop props)
-                  ((eval prop) (setter prop)))))
-        (if (or (== type "color") (not props))
-            (group (eval s)))))
-    (if (!= type "color")
-        (when active?
-          (mini #t
-            (input (setter answer) fm ins w))))
-    (if (== type "color")
-        (=> (color (tree->stree (tree-ref t i)) #f #f 24 16)
-            (pick-background "" (setter answer))
-            ---
-            ("Palette" (interactive-color setter '()))
-            ("Pattern" (open-pattern-selector setter "1cm"))
-            ("Picture" (open-background-picture-selector setter))
-            ("Other" (interactive setter
-                       (list (upcase-first name) "color" in*)))))))
+        (=> (eval in)
+            (for (prop props)
+              (assuming (string? prop)
+                ((eval prop) (setter prop)))
+              (assuming (== prop :other)
+                ---
+                ("Other"
+                 (interactive setter (list (upcase-first name) fm in))))))))
+    (assuming (not props)
+      (when active?
+        (mini #t
+          (input (setter answer) fm (list in) w))))))
+
+(tm-menu (string-input-icon t i)
+  (:require (== (tree-child-type t i) "color"))
+  (let* ((name (tree-child-name* t i))
+         (s (string-append (upcase-first name) ":"))
+         (active? (inputter-active? (tree-ref t i) "color"))
+	 (in (if active? (inputter-decode (tree-ref t i) "color") ""))
+         (setter (lambda (x)
+                   (when x
+                     (tree-set (focus-tree) i (inputter-encode x "color"))
+                     (focus-tree-modified (focus-tree))))))
+    (dynamic (string-input-name t i))
+    (=> (color (tree->stree (tree-ref t i)) #f #f 24 16)
+        (pick-background "" (setter answer))
+        ---
+        ("Palette" (interactive-color setter '()))
+        ("Pattern" (open-pattern-selector setter "1cm"))
+        ("Picture" (open-background-picture-selector setter))
+        ("Other" (interactive setter
+                   (list (upcase-first name) "color" in))))))
+
+(tm-define (child-proposals t i)
+  (:require (== (tree-child-type t i) "duration"))
+  (list "0.25s" "0.5s" "1s" "1.5s" "2s" "2.5s" "3s" "4s" "5s" "10s" :other))
 
 (tm-menu (string-input-menu t i)
   (let* ((name (tree-child-long-name* t i))
