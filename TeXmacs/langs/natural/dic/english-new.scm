@@ -1500,8 +1500,6 @@
 ("large displayed" "")
 ("large displayed fraction" "")
 ("large opening bracket" "")
-("large padding above" "")
-("large padding below" "")
 ("large separator" "")
 ("large tables" "")
 ("last" "")
