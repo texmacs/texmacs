@@ -441,11 +441,20 @@
       (document-search-first 'cite-website)
       (document-search-first 'cite-TeXmacs)))
 
+(define (tail-document doc)
+  (when (and (tm-is? doc 'document)
+             (tm-is? (tm-ref doc :last) 'screens)
+             (tm-in? (tm-ref doc :last :last) '(shown hidden))
+             (tm-is? (tm-ref doc :last :last :last) 'document))
+    (set! doc (tm-ref doc :last :last :last)))
+  doc)
+
 (define (add-biblio)
   (with bib (document-search-first 'bibliography)
     (when (and (not bib) (tree-is? (buffer-tree) 'document))
-      (tree-insert (buffer-tree) (tree-arity (buffer-tree))
-                   `((bibliography "bib" "tm-plain" "" (document "")))))))
+      (with doc (tail-document (buffer-tree))
+        (tree-insert doc (tree-arity doc)
+                     `((bibliography "bib" "tm-plain" "" (document ""))))))))
 
 (define (update-biblio)
   (update-document "bibliography")
