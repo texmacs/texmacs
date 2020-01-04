@@ -58,10 +58,12 @@
 
 (define old-primitive-load primitive-load)
 (define (new-primitive-load filename)
-  ;; We explicitly circumvent guile's decision to set the current-reader
-  ;; to #f inside ice-9/boot-9.scm, try-module-autoload
-  (with-fluids ((current-reader read))
-               (old-primitive-load filename)))
+  (if (member (scheme-dialect) (list "guile-a" "guile-b"))
+      (old-primitive-load filename)
+      ;; We explicitly circumvent guile's decision to set the current-reader
+      ;; to #f inside ice-9/boot-9.scm, try-module-autoload
+      (with-fluids ((current-reader read))
+                   (old-primitive-load filename))))
 
 (if developer-mode?
     (begin
