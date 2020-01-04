@@ -12,6 +12,29 @@
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
+# Compiling Guile if shipped with TeXmacs
+#--------------------------------------------------------------------
+
+AC_DEFUN([LC_BUILD_GUILE],[
+  TEXMACS_SRC="$PWD"
+  GUILE_SRC="$PWD/guile"
+  if [[ -d "$GUILE_SRC" ]];
+  then
+    if [[ ! -d "$GUILE_SRC/build" ]];
+    then
+      mkdir $GUILE_SRC/build
+      #cd $GUILE_SRC; ./configure --disable-shared --enable-static --prefix=$GUILE_SRC/build
+      #cd $GUILE_SRC; ./configure --disable-shared --enable-static --disable-networking --disable-error-on-warning --disable-nls --prefix=$GUILE_SRC/build
+      cd $GUILE_SRC; ./configure --prefix=$GUILE_SRC/build
+      cd $GUILE_SRC; make
+      cd $GUILE_SRC; make install
+      cd $TEXMACS_SRC
+    fi
+    PATH="$GUILE_SRC/build/bin:$PATH"
+  fi
+])
+
+#--------------------------------------------------------------------
 # Various test programs definition
 #--------------------------------------------------------------------
 
