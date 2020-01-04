@@ -889,6 +889,7 @@
 (tm-menu (focus-extra-icons t)
   (:require (section-context? t))
   (mini #t
+    //
     (=> (eval (tm/section-get-title-string t))
         (link focus-section-menu))))
 
@@ -930,7 +931,8 @@
   (:require (dueto-supporting-context? t))
   //
   (when (not (dueto-added? t))
-    ("Due to" (dueto-add t))))
+    (mini #t
+      ("Due to" (dueto-add t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Focus menus for algorithms
