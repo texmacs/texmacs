@@ -521,8 +521,9 @@
 (tm-menu (focus-hidden-icons t)
   (:require (overlays-context? t))
   //
-  (=> (eval (get-overlays-menu-name "Overlay " t))
-      (dynamic (focus-overlays-menu t))))
+  (mini #t
+    (=> (eval (get-overlays-menu-name "Overlay " t))
+        (dynamic (focus-overlays-menu t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu customizations for overlay filters
@@ -543,8 +544,12 @@
 
 (tm-menu (focus-hidden-icons t)
   (:require (overlay-context? t))
+  (with p (tree-search-upwards t overlays-context?)
+    (assuming p
+      (dynamic (focus-hidden-icons p))))
   //
-  (dynamic (focus-overlay-icons t)))
+  (mini #t
+    (dynamic (focus-overlay-icons t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Overlays in graphics mode
