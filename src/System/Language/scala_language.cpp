@@ -516,9 +516,7 @@ scala_language_rep::get_color (tree t, int start, int end) {
         }
       }
       else {
-        if (blanks_parser.parse (s, pos)) {
-          break;
-        }
+        if (blanks_parser.parse (s, pos)) break;
         if (inline_comment_parser.parse (s, pos)) {
           type= "comment";
           break;

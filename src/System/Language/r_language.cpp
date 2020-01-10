@@ -457,9 +457,7 @@ r_language_rep::get_color (tree t, int start, int end) {
       possible_class= possible_future_class;
       opos= pos;
 
-      if (blanks_parser.parse (s, pos)) {
-        break;
-      }
+      if (blanks_parser.parse (s, pos)) break;
 
       parse_string (s, pos);
       if (opos<pos) {
@@ -654,9 +652,7 @@ r_language_rep::get_color (tree t, int start, int end) {
     do {
       do {
         opos=pos;
-        if (blanks_parser.parse (s, pos)) {
-          break;
-        }
+        if (blanks_parser.parse (s, pos)) break;
 
         parse_identifier (colored, s, pos);
         if (opos<pos) { possible_function= true; break; }
@@ -684,9 +680,7 @@ r_language_rep::get_color (tree t, int start, int end) {
     } else do {
       do {
         opos=pos;
-        if (blanks_parser.parse (s, pos)) {
-          break;
-        }
+        if (blanks_parser.parse (s, pos)) break;
         parse_identifier (colored, s, pos);
         if (opos<pos) break;
         number_parser.parse (s, pos);
@@ -710,9 +704,7 @@ r_language_rep::get_color (tree t, int start, int end) {
     do {
       do {
         opos=pos;
-        if (blanks_parser.parse (s, pos)) {
-          break;
-        }
+        if (blanks_parser.parse (s, pos)) break;
 
         parse_identifier (colored, s, pos);
         if (opos<pos) break;

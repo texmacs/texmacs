@@ -464,9 +464,7 @@ cpp_language_rep::get_color (tree t, int start, int end) {
       do {
         opos= pos;
         type= none;
-        if (blanks_parser.parse (s, pos)) {
-          break;
-        }
+        if (blanks_parser.parse (s, pos)) break;
         parse_diese (s, pos);
         if (opos < pos) {
           type= "preprocessor_directive";
@@ -489,9 +487,7 @@ cpp_language_rep::get_color (tree t, int start, int end) {
     type= none;
     do {
       opos= pos;
-      if (blanks_parser.parse (s, pos)) {
-        break;
-      }
+      if (blanks_parser.parse (s, pos)) break;
       parse_string (s, pos);
       if (opos < pos) {
         type= "constant_string";
