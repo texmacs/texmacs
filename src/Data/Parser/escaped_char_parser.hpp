@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : escaped_char_parser.hpp
 * DESCRIPTION: shared escaped characters parsing routines
-* COPYRIGHT  : (C) 2019  Darcy Shen
+* COPYRIGHT  : (C) 2019-2020  Darcy Shen
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -13,17 +13,17 @@
 #define ESCAPED_CHAR_PARSER_H
 
 #include "parser.hpp"
-#include "list.hpp"
+#include "array.hpp"
 
 class escaped_char_parser_rep : public parser_rep {
 public:
   escaped_char_parser_rep ();
-  string get_parser_name () { return "blanks_parser"; }
+  string get_parser_name () { return "escaped_char_parser"; }
   bool can_parse (string s, int pos);
 
-  void set_chars (list<char> p_chars);
+  void set_chars (array<char> p_chars);
   void set_escape (char p_escape);
-  void set_strings (list<string> p_strings);
+  void set_strings (array<string> p_strings);
 
   inline void support_hex_with_8_bits (bool param) { hex_with_8_bits= param; };
   inline void support_hex_with_16_bits (bool param) { hex_with_16_bits= param; };
@@ -31,8 +31,8 @@ public:
   inline void support_octal_upto_3_digits (bool param) { octal_upto_3_digits= param; };
 
 private:
-  list<char> m_chars;
-  list<string> m_strings;
+  array<char> m_chars;
+  array<string> m_strings;
   char m_escape;
 
   bool hex_with_8_bits;

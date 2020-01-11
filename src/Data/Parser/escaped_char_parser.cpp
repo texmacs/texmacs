@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : escaped_char_parser.cpp
 * DESCRIPTION: shared escaped characters parsing routines
-* COPYRIGHT  : (C) 2019  Darcy Shen
+* COPYRIGHT  : (C) 2019-2020  Darcy Shen
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -13,8 +13,8 @@
 #include "analyze.hpp"
 
 escaped_char_parser_rep::escaped_char_parser_rep () {
-  m_chars= list<char>();
-  m_strings= list<string>();
+  m_chars= array<char>();
+  m_strings= array<string>();
   m_escape= '\\';
 
   hex_with_8_bits= false;
@@ -24,12 +24,12 @@ escaped_char_parser_rep::escaped_char_parser_rep () {
 }
 
 void
-escaped_char_parser_rep::set_chars (list<char> p_chars) {
+escaped_char_parser_rep::set_chars (array<char> p_chars) {
   m_chars= p_chars;
 }
 
 void
-escaped_char_parser_rep::set_strings (list<string> p_strings) {
+escaped_char_parser_rep::set_strings (array<string> p_strings) {
   m_strings= p_strings;
 }
 
@@ -98,7 +98,7 @@ escaped_char_parser_rep::can_parse (string s, int pos) {
     string m_string= m_strings[i];
     if (test (s, pos+1, m_string)) return true;
   }
-  return contains (m_chars, s[pos+1]);
+  return contains (s[pos+1], m_chars);
 }
 
 void
@@ -137,6 +137,6 @@ escaped_char_parser_rep::do_parse (string s, int& pos) {
     }
   }
 
-  if (contains (m_chars, s[pos+1]))
+  if (contains (s[pos+1], m_chars))
     pos= pos+2;
 }

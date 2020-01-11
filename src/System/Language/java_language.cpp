@@ -48,12 +48,16 @@ java_language_rep::java_language_rep (string name):
   abstract_language_rep (name)
 {
   number_parser.use_java_style ();
-  inline_comment_parser.set_starts (list<string> ("//"));
 
-  list<char> escape_chars= list<char>()
-    * '\\' * '\'' * '\"'
-    * 'b' * 'f' * 'n' * 'r' * 't';
+  array<string> starts;
+  starts << string("//");
+  inline_comment_parser.set_starts (starts);
+
+  array<char> escape_chars;
+  escape_chars << '\\' << '\'' << '\"'
+    << 'b' << 'f' << 'n' << 'r' << 't';
   escaped_char_parser.set_chars (escape_chars);
+
   escaped_char_parser.support_octal_upto_3_digits (true);
   escaped_char_parser.support_hex_with_16_bits (true);
 }

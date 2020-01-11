@@ -3,7 +3,7 @@
 * MODULE     : cpp_language.cpp
 * DESCRIPTION: the "cpp" language
 * COPYRIGHT  : (C) 2008  Francis Jamet
-*              (C) 2019  Darcy Shen
+*              (C) 2019-2020  Darcy Shen
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
 * ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
@@ -63,7 +63,9 @@ cpp_language_rep::cpp_language_rep (string name):
   abstract_language_rep (name)
 {
   number_parser.use_cpp_style ();
-  inline_comment_parser.set_starts (list<string> ("//"));
+  array<string> starts;
+  starts << string ("//");
+  inline_comment_parser.set_starts (starts);
 }
 
 text_property

@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : fortran_language.cpp
 * DESCRIPTION: Fortran 2008 language
-* COPYRIGHT  : (C) 2019  Marduk Bolaños, Darcy Shen
+* COPYRIGHT  : (C) 2019-2020  Marduk Bolaños, Darcy Shen
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
 * ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
@@ -18,7 +18,9 @@ fortran_language_rep::fortran_language_rep (string name):
   abstract_language_rep (name)
 {
   number_parser.use_fortran_style ();
-  inline_comment_parser.set_starts (list<string>("!"));
+  array<string> starts;
+  starts << string ("!");
+  inline_comment_parser.set_starts (starts);
 }
 
 text_property

@@ -17,13 +17,20 @@ python_language_rep::python_language_rep (string name):
   abstract_language_rep (name)
 {
   number_parser.use_python_style ();
-  inline_comment_parser.set_starts (list<string> ("#"));
 
-  list<char> escape_chars= list<char>()
-    * '\\' * '\'' * '\"'
-    * 'a' * 'b' * 'f' * 'n' * 'r' * 't' * 'v';
-  list<string> escape_strings= list<string>("newline");
+  array<string> starts;
+  starts << string("#");
+  inline_comment_parser.set_starts (starts);
+
+  array<char> escape_chars;
+  escape_chars << '\\' << '\'' << '\"'
+    << 'a' << 'b' << 'f' << 'n' << 'r' << 't' << 'v';
   escaped_char_parser.set_chars (escape_chars);
+
+  array<string> escape_strings;
+  escape_strings << string("newline");
+  escaped_char_parser.set_strings (escape_strings);
+
   escaped_char_parser.support_hex_with_8_bits (true);
   escaped_char_parser.support_hex_with_16_bits (true);
   escaped_char_parser.support_hex_with_32_bits (true);

@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : inline_comment_parser.cpp
 * DESCRIPTION: shared inline comment parsing routines
-* COPYRIGHT  : (C) 2019  Darcy Shen
+* COPYRIGHT  : (C) 2019-2020  Darcy Shen
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -13,11 +13,11 @@
 #include "analyze.hpp"
 
 inline_comment_parser_rep::inline_comment_parser_rep () {
-  m_starts= list<string>();
+  m_starts= array<string>();
 }
 
 void
-inline_comment_parser_rep::set_starts(const list<string>& p_starts) {
+inline_comment_parser_rep::set_starts(const array<string>& p_starts) {
   m_starts= p_starts;
 }
 
