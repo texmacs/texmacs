@@ -15,11 +15,11 @@
 #include "drd_std.hpp"
 
 TEST (xml_html_parser, expand_xml_default_entity) {
+  // init_std_drd ();
+  // print_tree (parse_xml ("&quot;"));
   ASSERT_TRUE (parse_xml ("&amp;") == tuple(tree("*TOP*"), tree("\"&\"")));
   ASSERT_TRUE (parse_xml ("&lt;") == tuple(tree("*TOP*"), tree("\"<\"")));
   ASSERT_TRUE (parse_xml ("&gt;") == tuple(tree("*TOP*"), tree("\">\"")));
   ASSERT_TRUE (parse_xml ("&apos;") == tuple(tree("*TOP*"), tree("\"'\"")));
-  // init_std_drd ();
-  // print_tree (parse_xml ("&quot;"));
-  ASSERT_TRUE (parse_xml ("&quot;") == tuple(tree("*TOP*"), tree("\"\"\"")));
+  ASSERT_TRUE (parse_xml ("&quot;") == tuple(tree("*TOP*"), tree("\"\\\"\"")));
 }
