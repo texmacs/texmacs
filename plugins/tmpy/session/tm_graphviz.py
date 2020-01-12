@@ -51,13 +51,11 @@ flush_prompt (current.name + "] ")
 def unigraph(text):
     magic_lines = text.split("\n")
     magic_line = magic_lines[0]
-    code = '\n'.join(magic_lines[1:])
     command = magic_line.split(" ")[0].strip("%")
 
     if command in graph_names:
         graph = graphs[graph_names.index(command)]
-        graph.apply_magic(magic_line)
-        graph.eval(code)
+        graph.eval(text)
     else:
         flush_verbatim ("No such Graphs backend: " + command)
 
