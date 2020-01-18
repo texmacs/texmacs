@@ -13,7 +13,6 @@
 #define PARSER_H
 
 #include "string.hpp"
-#include "analyze.hpp"
 
 class parser_rep {
 public:
