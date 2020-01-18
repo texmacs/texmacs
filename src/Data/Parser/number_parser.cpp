@@ -119,7 +119,7 @@ number_parser_rep::can_parse (string s, int pos) {
   }
   // check on len >= 2
   if (pos+1 < N(s)) {
-    if (s[pos] == '.') return true;
+    if (s[pos] == '.' && is_digit (s[pos+1])) return true;
   }
   // finally, check on len >= 1
   return pos<N(s) && is_digit (s[pos]);
