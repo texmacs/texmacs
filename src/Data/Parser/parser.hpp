@@ -13,11 +13,12 @@
 #define PARSER_H
 
 #include "string.hpp"
+#include "analyze.hpp"
 
 class parser_rep {
 public:
   bool parse (string s, int& pos) {
-    if (!can_parse(s, pos)) {
+    if (!can_parse (s, pos)) {
       return false;
     }
 

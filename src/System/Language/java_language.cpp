@@ -12,6 +12,7 @@
 #include "analyze.hpp"
 #include "impl_language.hpp"
 #include "scheme.hpp"
+#include "iterator.hpp"
 
 extern tree the_et;
 
@@ -60,6 +61,9 @@ java_language_rep::java_language_rep (string name):
 
   escaped_char_parser.support_octal_upto_3_digits (true);
   escaped_char_parser.support_hex_with_16_bits (true);
+
+  keyword_parser.use_keywords_of_lang (name);
+  operator_parser.use_operators_of_lang (name);
 }
 
 text_property
@@ -105,172 +109,6 @@ java_language_rep::hyphenate (
 {
   left = s (0, after);
   right= s (after, N(s));
-}
-
-static void
-java_color_setup_operator_openclose (hashmap<string, string> & t) {
-  string c= "operator_openclose";
-  t ("{")= c;
-  t ("[")= c;
-  t ("(")= c;
-  t (")")= c;
-  t ("]")= c;
-  t ("}")= c;
-}
-
-static void
-java_color_setup_constants (hashmap<string, string> & t) {
-  string c= "constant";
-  t ("false")= c;
-  t ("true")= c;
-  t ("null")= c;
-  
-  // type
-  t ("boolean")= c;
-  t ("byte")= c;
-  t ("char")= c;
-  t ("const")= c;
-  t ("double")= c;
-  t ("final")= c;
-  t ("float")= c;
-  t ("int")= c;
-  t ("long")= c;
-  t ("short")= c;
-  t ("static")= c;
-  t ("void")= c;
-}
-
-static void
-java_color_setup_constant_exceptions (hashmap<string, string> & t) {
-  string c= "constant";
-  t ("IllegalArgumentException")= c;
-  t ("NullPointerException")= c;
-  t ("Exception")= c;
-  t ("RuntimeException")= c;
-}
-
-static void
-java_color_setup_declare_class (hashmap<string, string> & t) {
-  string c= "declare_type";
-  t ("class")= c;
-  t ("interface")= c;
-}
-
-static void
-java_color_setup_declare_function (hashmap<string, string> & t) {
-  string c= "declare_function";
-  t ("def")= c;
-}
-
-static void
-java_color_setup_keywords (hashmap<string, string> & t) {
-  string c= "keyword";
-  t ("abstract")= c;
-  t ("case")= c;
-  t ("default")= c;
-  t ("enum")= c;
-  t ("extends")= c;
-  t ("import")= c;
-  t ("implements")= c;
-  t ("instanceof")= c;
-  t ("native")= c;
-  t ("new")= c;
-  t ("override")= c;
-  t ("package")= c;
-  t ("private")= c;
-  t ("protected")= c;
-  t ("public")= c;
-  t ("super")= c;
-  t ("synchronized")= c;
-  t ("this")= c;
-  t ("transient")= c;
-  t ("with")= c;
-  t ("volatile")= c;
-}
-
-static void
-java_color_setup_keywords_conditional (hashmap<string, string> & t) {
-  string c= "keyword_conditional";
-  t ("do")= c;
-  t ("else")= c;
-  t ("for")= c;
-  t ("goto")= c;
-  t ("if")= c;
-  t ("switch")= c;
-  t ("while")= c;
-}
-
-static void
-java_color_setup_keywords_control (hashmap<string, string> & t) {
-  string c= "keyword_control";
-  t ("break")= c;
-  t ("continue")= c;
-  t ("catch")= c;
-  t ("final")= c;
-  t ("finally")= c;
-  t ("return")= c;
-  t ("throw")= c;
-  t ("throws")= c;
-  t ("try")= c;
-  t ("yield")= c;
-}
-
-static void
-java_color_setup_operator (hashmap<string, string>& t) {
-  string c= "operator";
-  t ("&&")= c;
-  t ("||")= c;
-  t ("!")= c;
-
-  t ("+")= c;
-  t ("-")= c;
-  t ("/")= c;
-  t ("*")= c;
-  t ("%")= c;
-  
-  t ("|")= c;
-  t ("&")= c;
-  t ("^")= c;
-  
-  t ("<less><less>")= c;
-  t ("<gtr><gtr>")= c;
-  t ("==")= c;
-  t ("!=")= c;
-  t ("<less>")= c;
-  t ("<gtr>")= c;
-  t ("<less>=")= c;
-  t ("<gtr>=")= c;
-
-  t ("=")= c;
-
-  t ("+=")= c;
-  t ("-=")= c;
-  t ("/=")= c;
-  t ("*=")= c;
-  t ("%=")= c;
-  t ("|=")= c;
-  t ("&=")= c;
-  t ("^=")= c;
-  t (":")= c;
-}
-
-static void
-java_color_setup_operator_special (hashmap<string, string> & t) {
-  string c= "operator_special";
-  t ("-<gtr>")= c;
-}
-
-static void
-java_color_setup_operator_decoration (hashmap<string, string> & t) {
-  string c= "operator_decoration";
-  t ("@")= c;
-}
-
-static void
-java_color_setup_operator_field (hashmap<string, string> & t) {
-  string c= "operator_field";
-  t (".")= c;
-  t ("::")= c;
 }
 
 static bool
@@ -391,70 +229,7 @@ in_comment (int pos, tree t) {
 }
 
 string
-java_language_rep::parse_keywords (hashmap<string,string>& t, string s, int& pos) {
-  int i= pos;
-  if (pos>=N(s)) return "";
-  if (is_digit (s[i])) return "";
-  while ((i<N(s)) && belongs_to_identifier (s[i])) i++;
-  string r= s (pos, i);
-  if (t->contains (r)) {
-    string tr= t(r);
-    if (tr == "keyword_conditional" ||
-        tr == "keyword_control"      ||
-        tr == "keyword"              ||
-        tr == "declare_type"         ||
-        tr == "declare_function"     ||
-        tr == "constant") {
-      pos=i;
-      return tr;
-    }
-  }
-  return "";
-}
-
-string
-java_language_rep::parse_operators (hashmap<string,string>& t, string s, int& pos) {
-  int i;
-  for (i=12; i>=1; i--) {
-    string r=s(pos,pos+i);
-    if (t->contains (r)) {
-      string tr= t(r);
-      if (tr == "operator"          ||
-          tr == "operator_field"    ||
-          tr == "operator_special"  ||
-          tr == "operator_openclose") {
-        pos=pos+i;
-        return tr;
-      }
-      else if (t(r) == "operator_decoration") {
-        pos=pos+i;
-        while ((pos<N(s)) && belongs_to_identifier (s[pos])) pos++;
-        return "operator_special";
-      }
-    }
-  }
-  return "";
-}
-
-string
 java_language_rep::get_color (tree t, int start, int end) {
-  static bool setup_done= false;
-  if (!setup_done) {
-    java_color_setup_constants (colored);
-    java_color_setup_constant_exceptions (colored);
-    java_color_setup_declare_class (colored);
-    java_color_setup_declare_function (colored);
-    java_color_setup_keywords (colored);
-    java_color_setup_keywords_conditional (colored);
-    java_color_setup_keywords_control (colored);
-    java_color_setup_operator (colored);
-    java_color_setup_operator_special (colored);
-    java_color_setup_operator_decoration (colored);
-    java_color_setup_operator_openclose (colored);
-    java_color_setup_operator_field (colored);
-    setup_done= true;
-  }
-
   static string none= "";
   if (start >= end) return none;
   if (in_comment (start, t))
@@ -496,16 +271,18 @@ java_language_rep::get_color (tree t, int start, int end) {
           type= "constant_string";
           break;
         }
-        type= parse_keywords (colored, s, pos);
-        if (opos < pos) {
+        if (keyword_parser.parse (s, pos)) {
+          string keyword= s(opos, pos);
+          type= keyword_parser.get (keyword);
           break;
         }
         if (number_parser.parse (s, pos)) {
           type= "constant_number";
           break;
         }
-        type= parse_operators (colored, s, pos);
-        if (opos < pos) {
+        if (operator_parser.parse (s, pos)) {
+          string oper= s(opos, pos);
+          type= operator_parser.get (oper);
           break;
         }
         parse_identifier (colored, s, pos);

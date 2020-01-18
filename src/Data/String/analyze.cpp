@@ -1055,6 +1055,16 @@ read_double (string s, int& i, double& result) {
 }
 
 bool
+read_word (string s, int& i, string& result) {
+  int opos= i;
+  while (i<N(s) && is_alpha (s[i])) {
+    i++;
+  }
+  result= s(opos, i);
+  return i>opos;
+}
+
+bool
 is_whitespace (string s) {
   for (int i=0; i<N(s); i++)
     if (s[i] != ' ' && s[i] != '\t' && s[i] != '\n') return false;
@@ -1176,6 +1186,9 @@ parse (string s, int& pos, SI*& a, int len) {
   a= tm_new_array<int> (len);
   for (i=0; i<len; i++) parse (s, pos, a[i]);
 }
+
+
+
 
 /******************************************************************************
 * Searching, replacing and pattern matching
