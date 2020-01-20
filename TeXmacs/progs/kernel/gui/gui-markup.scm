@@ -689,16 +689,16 @@
   `(cons 'cline ($list ,@l)))
 
 (tm-define-macro ($spline . l)
-  `(cons 'line ($list ,@l)))
+  `(cons 'spline ($list ,@l)))
 
 (tm-define-macro ($cspline . l)
-  `(cons 'cline ($list ,@l)))
+  `(cons 'cspline ($list ,@l)))
 
 (tm-define-macro ($arc . l)
-  `(cons 'line ($list ,@l)))
+  `(cons 'arc ($list ,@l)))
 
 (tm-define-macro ($carc . l)
-  `(cons 'cline ($list ,@l)))
+  `(cons 'carc ($list ,@l)))
 
 (tm-define-macro ($text-at p . l)
   ($quote `(text-at ($unquote ($inline ,@l)) ($unquote ($inline ,p)))))
