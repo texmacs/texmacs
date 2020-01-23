@@ -158,6 +158,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("literal_floating")= c;
   t ("literal_string")= c;
   t ("literal_constant")= c;
+  t ("literal_literal")= c;
   t ("locked")= c;
   t ("loop")= c;
   t ("macro")= c;
@@ -193,6 +194,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("stereotype")= e;
   t ("structure")= e;
   t ("supports?")= c;
+  t ("symbolic_lift")= c;
   t ("then")= c;
   t ("this")= c;
   t ("to")= c;
