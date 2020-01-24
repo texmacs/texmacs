@@ -547,6 +547,10 @@ if (TEXMACS_GUI MATCHES "Qt.*")
     )
     include (${QT_USE_FILE})
   else (TEXMACS_GUI STREQUAL "Qt4")
+    # Homebrew installs Qt5 in /usr/local/opt/qt5
+    if (APPLE AND EXISTS /usr/local/opt/qt5)
+      list (APPEND CMAKE_PREFIX_PATH "/usr/local/opt/qt5")
+    endif()
     find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport REQUIRED)
     set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport)
     set (TeXmacs_Include_Dirs
