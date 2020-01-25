@@ -38,9 +38,10 @@
      "BytesWarning" "DeprecationWarning" "FutureWarning" "ImportWarning" "PendingDeprecationWarning"
      "RuntimeWarning" "SyntaxWarning" "UnicodeWarning" "UserWarning" "Warning")
    `(declare_function "def" "lambda")
+   `(declare_module "import")
    `(declare_type "class")
    `(keyword
-     "as" "del" "from" "global" "import" "in" "is" "with")
+     "as" "del" "from" "global" "in" "is" "with")
    `(keyword_conditional
      "break" "continue" "elif" "else" "for" "if" "while")
    `(keyword_control
