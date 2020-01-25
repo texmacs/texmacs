@@ -2,6 +2,7 @@
 Here is a list of plugins implemented in Python:
 + Python
 + SageMath
++ SymPy
 + Graph
   + Xy-pic
   + Gnuplot

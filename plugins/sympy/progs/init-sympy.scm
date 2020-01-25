@@ -18,15 +18,15 @@
 
 (define (sympy-launcher)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
-      (string-append "python \""
+      (string-append "python3 \""
                      (getenv "TEXMACS_HOME_PATH")
                      "/plugins/tmpy/session/tm_sympy.py\"")
-      (string-append "python \""
+      (string-append "python3 \""
                      (getenv "TEXMACS_PATH")
                      "/plugins/tmpy/session/tm_sympy.py\"")))
 
 (plugin-configure sympy
-  (:require (url-exists-in-path? "python"))
+  (:require (url-exists-in-path? "python3"))
   (:launch ,(sympy-launcher))
   (:serializer ,sympy-serialize)
   (:tab-completion #t)
