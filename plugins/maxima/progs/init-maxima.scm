@@ -50,6 +50,7 @@
             '()))))
 
 (plugin-add-macos-path "Maxima*" "Contents/Resources/maxima/bin" #f)
+(plugin-add-macos-path "Maxima*" "Contents/Resources/opt/bin" #f)
 (plugin-add-windows-path "Maxima*" "bin" #f)
 
 (plugin-configure maxima
