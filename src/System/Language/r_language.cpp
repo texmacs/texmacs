@@ -18,7 +18,6 @@
 
 static void parse_string (string s, int& pos);
 static bool is_in_str( char c, const char *str )  ;
-static bool is_number_start( char c ) ;
 //static inline bool is_identifier_start( char c ) ;
 static void advance_till( string s, int & pos, char c) ;
 
@@ -46,10 +45,8 @@ r_language_rep::advance (tree t, int& pos) {
     pos++; return &tp_space_rep; 
   } 
 
-  if (is_number_start(c)) {
-    if (number_parser.parse (s, pos)) {
-      return &tp_normal_rep;
-    }
+  if (number_parser.parse (s, pos)) {
+    return &tp_normal_rep;
   }
 
   if (is_alpha (c) || is_in_str (c, "_.")
@@ -163,11 +160,6 @@ r_language_rep::belongs_to_identifier (char c) {
   return ( is_digit(c) ||
 	   is_alpha(c) ||
 	   is_in_str( c, "_." ) ) ;
-}
-
-static inline bool 
-is_number_start( char c ) {
-  return( is_digit(c) || is_in_str( c, "." ) ) ;
 }
 
 /*
