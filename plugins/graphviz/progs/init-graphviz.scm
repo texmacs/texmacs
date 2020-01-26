@@ -16,17 +16,29 @@
       (with s (texmacs->code (stree->tree u) "SourceCode")
         (string-append s "\n<EOF>\n"))))
 
+(define (python-launcher)
+  (if (url-exists-in-path? "python3")
+      "python3"
+      "python2"))
+
+(define (python-exists?)
+  (or (url-exists-in-path? "python3")
+      (url-exists-in-path? "python2")))
+
 (define (graphviz-launcher)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
-      (string-append "python \""
+      (string-append (python-launcher)
+                     " \""
                      (getenv "TEXMACS_HOME_PATH")
                      "/plugins/tmpy/session/tm_graphviz.py\"")
-      (string-append "python \""
+      (string-append (python-launcher)
+                     " \""
                      (getenv "TEXMACS_PATH")
                      "/plugins/tmpy/session/tm_graphviz.py\"")))
 
 (plugin-configure graphviz 
   (:require (url-exists-in-path? "dot"))
+  (:require (python-exists?))
   (:launch ,(graphviz-launcher))
   (:serializer ,graphviz-serialize)
   (:session "Graphviz"))
