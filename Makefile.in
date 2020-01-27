@@ -46,7 +46,7 @@ GZIP = gzip -f
 STRIP = @CONFIG_STRIP@
 TOUCH = touch
 SIGN = misc/admin/sign_update
-
+RGUILE = @MKGUILE@
 
 .NOTPARALLEL:
 
@@ -54,7 +54,7 @@ SIGN = misc/admin/sign_update
 # Main makes
 ###############################################################################
 
-TEXMACS: EMPTY_DIRS 
+TEXMACS: EMPTY_DIRS MKGUILE
 	if test "$(TEXMACS_DEPS)" != "no"; then \
 	  cd src; $(MAKE) -f makefile deps; \
 	fi
@@ -88,6 +88,9 @@ STATIC_TEXMACS: EMPTY_DIRS
 	@echo ----------------------------------------------------
 	@echo static TeXmacs has been successfully compiled
 
+MKGUILE: tm-guile168/build
+	cd @DIRGUILE@ && make && make install; cd -
+	
 DEPS: EMPTY_DIRS
 	cd src; $(MAKE) -f makefile deps
 
@@ -550,7 +553,7 @@ SCLEAN:
 
 CLEAN: SCLEAN RCLEAN CLEAN_PLUGINS
 
-DISTCLEAN: CLEAN
+DISTCLEAN: CLEAN CLNGUILE
 	$(RM) src/Objects/* 2>/dev/null || :
 	$(RM) misc/doxygen/Doxyfile
 	$(RM) misc/man/texmacs.1
@@ -578,6 +581,9 @@ SVN_CLEAN:
 DISTR_CLEAN: DISTCLEAN SVN_CLEAN
 
 .PHONY: CLEAN_DOC RDISTR DISTR RCLEAN SCLEAN DISTCLEAN SVN_CLEAN DISTR_CLEAN
+
+CLNGUILE:
+	cd @DIRGUILE@ && make uninstall && make distclean && cd -
 
 ###############################################################################
 # Miscellaneous targets

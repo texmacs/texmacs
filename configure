@@ -618,7 +618,9 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='LTLIBOBJS
+enable_option_checking=no
+ac_subst_vars='subdirs_extra
+LTLIBOBJS
 LIBOBJS
 SIGNID
 tm_windows_release
@@ -730,10 +732,11 @@ GUILE_LDFLAGS
 GUILE_CFLAGS
 GUILE_CPP
 GUILE_CXX
-CONFIG_GUILE_SERIAL
 GUILE_DATA_PATH
-GUILE_EXE
+DIRGUILE
 GUILE_CONFIG
+GUILE_STATIC
+MKGUILE
 CONFIG_CP
 CONFIG_ARCHS
 CONFIG_DATE
@@ -1545,7 +1548,8 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-tmrepo[=no]      absolute texmacs sdk path
-  --with-guile[=DIR]      where to find guile-config [system]
+  --with-guile[=sustem]   path to to find guile-config or [embedded] if any
+                          tm-guile package included
   --with-iconv[=DIR]      where to find iconv []
   --with-freetype[DIR=]   where to find freetype-config []
   --with-cairo[=ARG]      with cairo support [ARG=no]
@@ -7410,37 +7414,30 @@ $as_echo "$as_me: statically link main libraries for MacOS X" >&6;}
 #--------------------------------------------------------------------
 
 
-  TEXMACS_SRC="$PWD"
-  GUILE_SRC="$PWD/guile"
-  if [ -d "$GUILE_SRC" ];
-  then
-    if [ ! -d "$GUILE_SRC/build" ];
-    then
-      mkdir $GUILE_SRC/build
-      #cd $GUILE_SRC; ./configure --disable-shared --enable-static --prefix=$GUILE_SRC/build
-      #cd $GUILE_SRC; ./configure --disable-shared --enable-static --disable-networking --disable-error-on-warning --disable-nls --prefix=$GUILE_SRC/build
-      cd $GUILE_SRC; ./configure --prefix=$GUILE_SRC/build
-      cd $GUILE_SRC; make
-      cd $GUILE_SRC; make install
-      cd $TEXMACS_SRC
-    fi
-    PATH="$GUILE_SRC/build/bin:$PATH"
-  fi
 
 
 
 # Check whether --with-guile was given.
 if test "${with_guile+set}" = set; then :
-  withval=$with_guile;
+  withval=$with_guile; if test "$withval" == no; then :
+  as_fn_error $? "cannot work without Guile" "$LINENO" 5
+elif test "$withval" = yes; then :
+  unset withval
+fi
 else
   unset withval
 fi
 
-  if [[ "$withval" != no ]]
-  then
 
-  if test -z $withval
-  then
+
+	location=$withval
+
+
+
+  if test "$location" = "embedded"; then :
+  unset location
+elif test -z $location; then :
+
     # build the prefered guile version search line
 
     for ac_prog in guile18-config guile1.8-config guile16-config guile1.6-config guile1-config guile-config guile20-config guile2.0-config guile2-config
@@ -7485,15 +7482,26 @@ fi
   test -n "$GUILE_CONFIG" && break
 done
 
-  else GUILE_CONFIG=$withval
-  fi
-  GUILE_CONFIG=$(type -p $GUILE_CONFIG)
-  GUILE_EXE=${GUILE_CONFIG%-config}
 
+else
+  GUILE_CONFIG=$location
+fi
 
-  LC_WITH_GUILE_tmp1="$($GUILE_CONFIG link)" &&   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 $($GUILE_CONFIG compile)" &&   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 -I$($GUILE_CONFIG info includedir)" &&   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 -I$($GUILE_CONFIG info pkgincludedir)" &&   # get th version with guile-config or guile. keep the same naming with guile version
-  # ie: guile18-config -> guile18
-  { GUILE_VERSION=$($GUILE_CONFIG info guileversion) ||    GUILE_VERSION=$(${GUILE_CONFIG%%-*} -c '(display (version))'); } &&   GUILE_VERSION=${GUILE_VERSION:-0} &&   GUILE_VERSION_TAIL=${GUILE_VERSION#*.*.} &&   GUILE_VERSION=${GUILE_VERSION%.$GUILE_VERSION_TAIL} &&   GUILE_DATA_PATH=$($GUILE_CONFIG info pkgdatadir)/${GUILE_VERSION} ||   as_fn_error $? "cannot find guile-config; is Guile installed?" "$LINENO" 5
+  if test -n "$GUILE_CONFIG"; then :
+
+    GUILE_CONFIG=$(type -p $GUILE_CONFIG)
+    LC_WITH_GUILE_tmp1="$($GUILE_CONFIG link)"
+    LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 $($GUILE_CONFIG compile)"
+    LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 -I$($GUILE_CONFIG info includedir)"
+    LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 -I$($GUILE_CONFIG info pkgincludedir)"
+    # get th version with guile-config or guile. keep the same naming with guile version
+    # ie: guile18-config -> guile18
+    { GUILE_VERSION=$($GUILE_CONFIG info guileversion) ||     GUILE_VERSION=$(${GUILE_CONFIG%%-*} -c '(display (version))'); }
+    GUILE_VERSION=${GUILE_VERSION:-0}
+    GUILE_VERSION_TAIL=${GUILE_VERSION#*.*.}
+    GUILE_VERSION=${GUILE_VERSION%.$GUILE_VERSION_TAIL}
+    GUILE_DATA_PATH=$($GUILE_CONFIG info pkgdatadir)/${GUILE_VERSION}
+
 
 
   unset GUILE_CFLAGS;unset GUILE_CXXFLAGS;unset GUILE_CPPFLAGS;unset GUILE_LDFLAGS;unset GUILE_LIBS;
@@ -8002,7 +8010,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
   unset ${!LC_SCATTER_FLAGS_*}
 
 
-  # complete include path according the library name
+    # complete include path according the library name
 
     if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]]+)-I(=?|[[:space:]]*)(.*)$") ]]
     then LC_WITH_GUILE_tmp2=${BASH_REMATCH[3]%% -*}
@@ -8055,40 +8063,264 @@ $as_echo "$as_me: WARNING: Drop duplicate flag -I$LC_WITH_GUILE_tmp2/$GUILE_LIB"
 
 
 
-  unset LC_WITH_GUILE_tmp1 LC_WITH_GUILE_tmp2
+    unset LC_WITH_GUILE_tmp1 LC_WITH_GUILE_tmp2
+
+elif test -z "$location" -a -d tm-guile168; then :
+
+      { $as_echo "$as_me:${as_lineno-$LINENO}: use embedded guile" >&5
+$as_echo "$as_me: use embedded guile" >&6;}
+
+      DIRGUILE=tm-guile168
+
+      LC_WITH_GUILE_use_embedded_guile=1
 
 
-    # Check whether --enable-guile2 was given.
-if test "${enable_guile2+set}" = set; then :
-  enableval=$enable_guile2;
+  # Various preliminary checks.
+
+
+
+
+
+    ax_dir="tm-guile168"
+
+                    # Do not complain, so a configure script can configure whichever parts of a
+    # large source tree are present.
+    if test -d "$srcdir/$ax_dir"; then
+      ac_builddir=.
+
+case "$ax_dir" in
+.) ac_dir_suffix= ac_top_builddir_sub=. ac_top_build_prefix= ;;
+*)
+  ac_dir_suffix=/`$as_echo "$ax_dir" | sed 's|^\.[\\/]||'`
+  # A ".." for each directory in $ac_dir_suffix.
+  ac_top_builddir_sub=`$as_echo "$ac_dir_suffix" | sed 's|/[^\\/]*|/..|g;s|/||'`
+  case $ac_top_builddir_sub in
+  "") ac_top_builddir_sub=. ac_top_build_prefix= ;;
+  *)  ac_top_build_prefix=$ac_top_builddir_sub/ ;;
+  esac ;;
+esac
+ac_abs_top_builddir=$ac_pwd
+ac_abs_builddir=$ac_pwd$ac_dir_suffix
+# for backward compatibility:
+ac_top_builddir=$ac_top_build_prefix
+
+case $srcdir in
+  .)  # We are building in place.
+    ac_srcdir=.
+    ac_top_srcdir=$ac_top_builddir_sub
+    ac_abs_top_srcdir=$ac_pwd ;;
+  [\\/]* | ?:[\\/]* )  # Absolute name.
+    ac_srcdir=$srcdir$ac_dir_suffix;
+    ac_top_srcdir=$srcdir
+    ac_abs_top_srcdir=$srcdir ;;
+  *) # Relative name.
+    ac_srcdir=$ac_top_build_prefix$srcdir$ac_dir_suffix
+    ac_top_srcdir=$ac_top_build_prefix$srcdir
+    ac_abs_top_srcdir=$ac_pwd/$srcdir ;;
+esac
+ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
+
+      # Remove --cache-file, --srcdir, and --disable-option-checking arguments
+      # so they do not pile up.
+      ax_args=
+      ax_prev=
+      eval "set x $ac_configure_args"
+      shift
+      for ax_arg; do
+        if test -n "$ax_prev"; then
+          ax_prev=
+          continue
+        fi
+        case $ax_arg in
+          -cache-file | --cache-file | --cache-fil | --cache-fi | --cache-f \
+          | --cache- | --cache | --cach | --cac | --ca | --c)
+            ax_prev=cache_file ;;
+          -cache-file=* | --cache-file=* | --cache-fil=* | --cache-fi=* \
+          | --cache-f=* | --cache-=* | --cache=* | --cach=* | --cac=* | --ca=* \
+          | --c=*)
+            ;;
+          --config-cache | -C)
+            ;;
+          -srcdir | --srcdir | --srcdi | --srcd | --src | --sr)
+            ax_prev=srcdir ;;
+          -srcdir=* | --srcdir=* | --srcdi=* | --srcd=* | --src=* | --sr=*)
+            ;;
+          -prefix | --prefix | --prefi | --pref | --pre | --pr | --p)
+            ax_prev=prefix ;;
+          -prefix=* | --prefix=* | --prefi=* | --pref=* | --pre=* | --pr=* \
+          | --p=*)
+            ;;
+          --disable-option-checking)
+            ;;
+          *) case $ax_arg in
+              *\'*) ax_arg=$($as_echo "$ax_arg" | sed "s/'/'\\\\\\\\''/g");;
+            esac
+            as_fn_append ax_args " '$ax_arg'" ;;
+        esac
+      done
+      # Always prepend --disable-option-checking to silence warnings, since
+      # different subdirs can have different --enable and --with options.
+      ax_args="--disable-option-checking $ax_args"
+      # Options that must be added as they are provided.
+      as_fn_append ax_args " '--without-guile-readline'"
+
+      # New options that may need to be merged with existing options.
+      ax_candidate="--disable-shared"
+           ax_candidate_flag="${ax_candidate%%=*}"
+           ax_candidate_content="${ax_candidate#*=}"
+           if test "x$ax_candidate" != "x" -a "x$ax_candidate_flag" != "x"; then
+             if echo "$ax_args" | grep -- "${ax_candidate_flag}=" >/dev/null 2>&1; then
+               ax_args=$(echo $ax_args | sed "s,\(${ax_candidate_flag}=[^']*\),\1 ${ax_candidate_content},")
+             else
+               as_fn_append ax_args " '--disable-shared'"
+             fi
+           fi
+
+      # New options that must replace existing options.
+      ax_candidate="--prefix=$(pwd)/tm-guile168/build"
+           ax_candidate_flag="${ax_candidate%%=*}"
+           ax_candidate_content="${ax_candidate#*=}"
+           if test "x$ax_candidate" != "x" -a "x$ax_candidate_flag" != "x"; then
+             if echo "$ax_args" | grep -- "${ax_candidate_flag}=" >/dev/null 2>&1; then
+               ax_args=$(echo $ax_args | sed "s,${ax_candidate_flag}=[^']*,${ax_candidate},")
+             else
+               as_fn_append ax_args " '--prefix=$(pwd)/tm-guile168/build'"
+             fi
+           fi
+
+      # Options that must be removed.
+      ax_args=$(echo $ax_args | sed "s,'--with-tmrepo=',,")
+
+      as_fn_append ax_args " '--srcdir=$ac_srcdir'"
+
+      # Add the subdirectory to the list of target subdirectories.
+      ax_subconfigures="$ax_subconfigures $ax_dir"
+      # Save the argument list for this subdirectory.
+                              ax_var=$(printf "$ax_dir" | tr -c "0-9a-zA-Z_" "_")
+      eval "ax_sub_configure_args_$ax_var=\"$ax_args\""
+      eval "ax_sub_configure_$ax_var=\"yes\""
+    else
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: could not find source tree for $ax_dir" >&5
+$as_echo "$as_me: WARNING: could not find source tree for $ax_dir" >&2;}
+    fi
+
+
+
+
+      GUILE_STATIC="$(pwd)/tm-guile168/build/lib/libguile.a $(pwd)/tm-guile168/build/lib/libguile-ltdl.a -lm"
+
+
+  if [[ "-I$(pwd)/tm-guile168/build/include" =~ $(echo '^-Wl,') ]]
+  then GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile168/build/include"
+  elif [[ "-I$(pwd)/tm-guile168/build/include" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "-I$(pwd)/tm-guile168/build/include"
+  do  while [[ $GUILE_CPPFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$GUILE_CPPFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$GUILE_CPPFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then GUILE_CPPFLAGS=
+  else  while test "$GUILE_CPPFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$GUILE_CPPFLAGS"
+        GUILE_CPPFLAGS="${GUILE_CPPFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        GUILE_CPPFLAGS="${GUILE_CPPFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        GUILE_CPPFLAGS="${GUILE_CPPFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  GUILE_CPPFLAGS=$(echo $GUILE_CPPFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile168/build/include"
+  else
+    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])-I$(pwd)/tm-guile168/build/include($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I$(pwd)/tm-guile168/build/include" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag -I$(pwd)/tm-guile168/build/include" >&2;}
+    else GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile168/build/include"
+    fi
+  fi
+
+
+  if [[ "-I$(pwd)/tm-guile168/build/include/guile" =~ $(echo '^-Wl,') ]]
+  then GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile168/build/include/guile"
+  elif [[ "-I$(pwd)/tm-guile168/build/include/guile" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "-I$(pwd)/tm-guile168/build/include/guile"
+  do  while [[ $GUILE_CPPFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$GUILE_CPPFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$GUILE_CPPFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then GUILE_CPPFLAGS=
+  else  while test "$GUILE_CPPFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$GUILE_CPPFLAGS"
+        GUILE_CPPFLAGS="${GUILE_CPPFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        GUILE_CPPFLAGS="${GUILE_CPPFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        GUILE_CPPFLAGS="${GUILE_CPPFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  GUILE_CPPFLAGS=$(echo $GUILE_CPPFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile168/build/include/guile"
+  else
+    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])-I$(pwd)/tm-guile168/build/include/guile($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I$(pwd)/tm-guile168/build/include/guile" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag -I$(pwd)/tm-guile168/build/include/guile" >&2;}
+    else GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile168/build/include/guile"
+    fi
+  fi
+
+      GUILE_VERSION=1.6
+      GUILE_DATA_PATH=$(pwd)/tm-guile168/build/share/guile/${GUILE_VERSION}
+
 else
-  unset enableval
+  as_fn_error $? "cannot find guile-config; is Guile installed?" "$LINENO" 5
+
 fi
 
 
+
+  if test -n "$GUILE_VERSION"; then :
+
     { $as_echo "$as_me:${as_lineno-$LINENO}: Guile version $GUILE_VERSION" >&5
 $as_echo "$as_me: Guile version $GUILE_VERSION" >&6;}
-
     case "$GUILE_VERSION" in
-      1.0 | 1.1 | 1.2 | 1.3 | 1.4 | 1.5)
+      (1.0 | 1.1 | 1.2 | 1.3 | 1.4 | 1.5)
 $as_echo "#define GUILE_A 1" >>confdefs.h
  ;;
-      1.6 | 1.7)
+      (1.6 | 1.7)
 $as_echo "#define GUILE_B 1" >>confdefs.h
  ;;
-      1.8 | 1.9)
+      (1.8 | 1.9)
 $as_echo "#define GUILE_C 1" >>confdefs.h
  ;;
-      2.*)
+      (2.*)
 $as_echo "#define GUILE_D 1" >>confdefs.h
 
-        if test "$enableval" != "no"; then
-          as_fn_error $? "TeXmacs is incompatible with Guile 2.
-    If you know what you are doing, run configure with --enable-guile2" "$LINENO" 5
-        fi
+            # Check whether --enable-guile2 was given.
+if test "${enable_guile2+set}" = set; then :
+  enableval=$enable_guile2; if test "$enableval" != "yes"; then :
+  as_fn_error $? "Guile2 disabled" "$LINENO" 5
+fi
+else
+  as_fn_error $? "TeXmacs is incompatible with Guile 2. If you know what you are doing, run configure with --enable-guile2" "$LINENO" 5
+
+fi
+
         ;;
-      0) as_fn_error $? "Cannot determine Guile version." "$LINENO" 5 ;;
-      *) as_fn_error $? "Guile version unmanaged." "$LINENO" 5 ;;
+      (0) as_fn_error $? "Cannot determine Guile version." "$LINENO" 5 ;;
+      (*) as_fn_error $? "Guile version unmanaged." "$LINENO" 5 ;;
     esac
 
     { $as_echo "$as_me:${as_lineno-$LINENO}: Guile data path: $GUILE_DATA_PATH" >&5
@@ -8100,9 +8332,12 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
-  else
-    as_fn_error $? " cannot work without Guile" "$LINENO" 5
-  fi
+
+else
+  as_fn_error $? "Guile nor found" "$LINENO" 5
+fi
+
+  if test -z "LC_GUILE_use_embedded_guile"; then :
 
 
 
@@ -8324,25 +8559,25 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
 
 
-  unset g_success
-  ac_fn_cxx_check_header_mongrel "$LINENO" "gh.h" "ac_cv_header_gh_h" "$ac_includes_default"
+    unset g_success
+    ac_fn_cxx_check_header_mongrel "$LINENO" "gh.h" "ac_cv_header_gh_h" "$ac_includes_default"
 if test "x$ac_cv_header_gh_h" = xyes; then :
 
-    as_ac_Header=`$as_echo "ac_cv_header_lib$GUILE_LIB.h" | $as_tr_sh`
+      as_ac_Header=`$as_echo "ac_cv_header_lib$GUILE_LIB.h" | $as_tr_sh`
 ac_fn_cxx_check_header_mongrel "$LINENO" "lib$GUILE_LIB.h" "$as_ac_Header" "$ac_includes_default"
 if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
 
-      case lib$GUILE_LIB in
-        libguile) ;;
-        libguile16)
+        case lib$GUILE_LIB in
+          (libguile) ;;
+          (libguile16)
 $as_echo "#define GUILE_HEADER_16 1" >>confdefs.h
  ;;
-        libguile18)
+          (libguile18)
 $as_echo "#define GUILE_HEADER_18 1" >>confdefs.h
  ;;
-        *) { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Strange guile header name lib$GUILE_LIB.h" >&5
+          (*) { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Strange guile header name lib$GUILE_LIB.h" >&5
 $as_echo "$as_me: WARNING: Strange guile header name lib$GUILE_LIB.h" >&2;} ;;
-      esac
+        esac
 
   as_ac_Lib=`$as_echo "ac_cv_lib_${GUILE_LIB}''_gh_scm2newstr" | $as_tr_sh`
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -l${GUILE_LIB}" >&5
@@ -8384,7 +8619,7 @@ eval ac_res=\$$as_ac_Lib
 $as_echo "$ac_res" >&6; }
 if eval test \"x\$"$as_ac_Lib"\" = x"yes"; then :
 
-        g_success=1
+          g_success=1
 
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile DOTS linking" >&5
 $as_echo_n "checking Guile DOTS linking... " >&6; }
@@ -8434,9 +8669,9 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
   conftest.$ac_objext conftest.beam conftest.$ac_ext
 fi
 
-        { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile size type" >&5
+          { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile size type" >&5
 $as_echo_n "checking Guile size type... " >&6; }
-        if test "$cross_compiling" = yes; then :
+          if test "$cross_compiling" = yes; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "cannot run test program while cross compiling
@@ -8466,7 +8701,7 @@ if ac_fn_cxx_try_run "$LINENO"; then :
 
 $as_echo "#define guile_str_size_t int" >>confdefs.h
 
-          { $as_echo "$as_me:${as_lineno-$LINENO}: result: int" >&5
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: int" >&5
 $as_echo "int" >&6; }
 
 else
@@ -8474,7 +8709,7 @@ else
 
 $as_echo "#define guile_str_size_t size_t" >>confdefs.h
 
-          { $as_echo "$as_me:${as_lineno-$LINENO}: result: size_t" >&5
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: size_t" >&5
 $as_echo "size_t" >&6; }
 
 fi
@@ -8538,7 +8773,7 @@ if eval test \"x\$"$as_ac_Lib"\" = x"yes"; then :
       LIBS=$_LC_CHECK_LIB_libs
       LC_GUILE_extralibs="-lintl"
 
-        g_success=1
+          g_success=1
 
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile DOTS linking" >&5
 $as_echo_n "checking Guile DOTS linking... " >&6; }
@@ -8588,9 +8823,9 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
   conftest.$ac_objext conftest.beam conftest.$ac_ext
 fi
 
-        { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile size type" >&5
+          { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile size type" >&5
 $as_echo_n "checking Guile size type... " >&6; }
-        if test "$cross_compiling" = yes; then :
+          if test "$cross_compiling" = yes; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "cannot run test program while cross compiling
@@ -8620,7 +8855,7 @@ if ac_fn_cxx_try_run "$LINENO"; then :
 
 $as_echo "#define guile_str_size_t int" >>confdefs.h
 
-          { $as_echo "$as_me:${as_lineno-$LINENO}: result: int" >&5
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: int" >&5
 $as_echo "int" >&6; }
 
 else
@@ -8628,7 +8863,7 @@ else
 
 $as_echo "#define guile_str_size_t size_t" >>confdefs.h
 
-          { $as_echo "$as_me:${as_lineno-$LINENO}: result: size_t" >&5
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: size_t" >&5
 $as_echo "size_t" >&6; }
 
 fi
@@ -8694,7 +8929,7 @@ if eval test \"x\$"$as_ac_Lib"\" = x"yes"; then :
       LIBS=$_LC_CHECK_LIB_libs
       LC_GUILE_extralibs="-liconv"
 
-        g_success=1
+          g_success=1
 
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile DOTS linking" >&5
 $as_echo_n "checking Guile DOTS linking... " >&6; }
@@ -8744,9 +8979,9 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
   conftest.$ac_objext conftest.beam conftest.$ac_ext
 fi
 
-        { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile size type" >&5
+          { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile size type" >&5
 $as_echo_n "checking Guile size type... " >&6; }
-        if test "$cross_compiling" = yes; then :
+          if test "$cross_compiling" = yes; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "cannot run test program while cross compiling
@@ -8776,7 +9011,7 @@ if ac_fn_cxx_try_run "$LINENO"; then :
 
 $as_echo "#define guile_str_size_t int" >>confdefs.h
 
-          { $as_echo "$as_me:${as_lineno-$LINENO}: result: int" >&5
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: int" >&5
 $as_echo "int" >&6; }
 
 else
@@ -8784,7 +9019,7 @@ else
 
 $as_echo "#define guile_str_size_t size_t" >>confdefs.h
 
-          { $as_echo "$as_me:${as_lineno-$LINENO}: result: size_t" >&5
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: size_t" >&5
 $as_echo "size_t" >&6; }
 
 fi
@@ -8850,7 +9085,7 @@ if eval test \"x\$"$as_ac_Lib"\" = x"yes"; then :
       LIBS=$_LC_CHECK_LIB_libs
       LC_GUILE_extralibs="-ltre"
 
-        g_success=1
+          g_success=1
 
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile DOTS linking" >&5
 $as_echo_n "checking Guile DOTS linking... " >&6; }
@@ -8900,9 +9135,9 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
   conftest.$ac_objext conftest.beam conftest.$ac_ext
 fi
 
-        { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile size type" >&5
+          { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile size type" >&5
 $as_echo_n "checking Guile size type... " >&6; }
-        if test "$cross_compiling" = yes; then :
+          if test "$cross_compiling" = yes; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "cannot run test program while cross compiling
@@ -8932,7 +9167,7 @@ if ac_fn_cxx_try_run "$LINENO"; then :
 
 $as_echo "#define guile_str_size_t int" >>confdefs.h
 
-          { $as_echo "$as_me:${as_lineno-$LINENO}: result: int" >&5
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: int" >&5
 $as_echo "int" >&6; }
 
 else
@@ -8940,7 +9175,7 @@ else
 
 $as_echo "#define guile_str_size_t size_t" >>confdefs.h
 
-          { $as_echo "$as_me:${as_lineno-$LINENO}: result: size_t" >&5
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: size_t" >&5
 $as_echo "size_t" >&6; }
 
 fi
@@ -9006,7 +9241,7 @@ if eval test \"x\$"$as_ac_Lib"\" = x"yes"; then :
       LIBS=$_LC_CHECK_LIB_libs
       LC_GUILE_extralibs="-lintl -liconv"
 
-        g_success=1
+          g_success=1
 
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile DOTS linking" >&5
 $as_echo_n "checking Guile DOTS linking... " >&6; }
@@ -9056,9 +9291,9 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
   conftest.$ac_objext conftest.beam conftest.$ac_ext
 fi
 
-        { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile size type" >&5
+          { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile size type" >&5
 $as_echo_n "checking Guile size type... " >&6; }
-        if test "$cross_compiling" = yes; then :
+          if test "$cross_compiling" = yes; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "cannot run test program while cross compiling
@@ -9088,7 +9323,7 @@ if ac_fn_cxx_try_run "$LINENO"; then :
 
 $as_echo "#define guile_str_size_t int" >>confdefs.h
 
-          { $as_echo "$as_me:${as_lineno-$LINENO}: result: int" >&5
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: int" >&5
 $as_echo "int" >&6; }
 
 else
@@ -9096,7 +9331,7 @@ else
 
 $as_echo "#define guile_str_size_t size_t" >>confdefs.h
 
-          { $as_echo "$as_me:${as_lineno-$LINENO}: result: size_t" >&5
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: size_t" >&5
 $as_echo "size_t" >&6; }
 
 fi
@@ -9162,7 +9397,7 @@ if eval test \"x\$"$as_ac_Lib"\" = x"yes"; then :
       LIBS=$_LC_CHECK_LIB_libs
       LC_GUILE_extralibs="-lintl -ltre"
 
-        g_success=1
+          g_success=1
 
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile DOTS linking" >&5
 $as_echo_n "checking Guile DOTS linking... " >&6; }
@@ -9212,9 +9447,9 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
   conftest.$ac_objext conftest.beam conftest.$ac_ext
 fi
 
-        { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile size type" >&5
+          { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile size type" >&5
 $as_echo_n "checking Guile size type... " >&6; }
-        if test "$cross_compiling" = yes; then :
+          if test "$cross_compiling" = yes; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "cannot run test program while cross compiling
@@ -9244,7 +9479,7 @@ if ac_fn_cxx_try_run "$LINENO"; then :
 
 $as_echo "#define guile_str_size_t int" >>confdefs.h
 
-          { $as_echo "$as_me:${as_lineno-$LINENO}: result: int" >&5
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: int" >&5
 $as_echo "int" >&6; }
 
 else
@@ -9252,7 +9487,7 @@ else
 
 $as_echo "#define guile_str_size_t size_t" >>confdefs.h
 
-          { $as_echo "$as_me:${as_lineno-$LINENO}: result: size_t" >&5
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: size_t" >&5
 $as_echo "size_t" >&6; }
 
 fi
@@ -9318,7 +9553,7 @@ if eval test \"x\$"$as_ac_Lib"\" = x"yes"; then :
       LIBS=$_LC_CHECK_LIB_libs
       LC_GUILE_extralibs="-liconv -ltre"
 
-        g_success=1
+          g_success=1
 
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile DOTS linking" >&5
 $as_echo_n "checking Guile DOTS linking... " >&6; }
@@ -9368,9 +9603,9 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
   conftest.$ac_objext conftest.beam conftest.$ac_ext
 fi
 
-        { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile size type" >&5
+          { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile size type" >&5
 $as_echo_n "checking Guile size type... " >&6; }
-        if test "$cross_compiling" = yes; then :
+          if test "$cross_compiling" = yes; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "cannot run test program while cross compiling
@@ -9400,7 +9635,7 @@ if ac_fn_cxx_try_run "$LINENO"; then :
 
 $as_echo "#define guile_str_size_t int" >>confdefs.h
 
-          { $as_echo "$as_me:${as_lineno-$LINENO}: result: int" >&5
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: int" >&5
 $as_echo "int" >&6; }
 
 else
@@ -9408,7 +9643,7 @@ else
 
 $as_echo "#define guile_str_size_t size_t" >>confdefs.h
 
-          { $as_echo "$as_me:${as_lineno-$LINENO}: result: size_t" >&5
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: size_t" >&5
 $as_echo "size_t" >&6; }
 
 fi
@@ -9474,7 +9709,7 @@ if eval test \"x\$"$as_ac_Lib"\" = x"yes"; then :
       LIBS=$_LC_CHECK_LIB_libs
       LC_GUILE_extralibs="-lintl -liconv -ltre"
 
-        g_success=1
+          g_success=1
 
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile DOTS linking" >&5
 $as_echo_n "checking Guile DOTS linking... " >&6; }
@@ -9524,9 +9759,9 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
   conftest.$ac_objext conftest.beam conftest.$ac_ext
 fi
 
-        { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile size type" >&5
+          { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile size type" >&5
 $as_echo_n "checking Guile size type... " >&6; }
-        if test "$cross_compiling" = yes; then :
+          if test "$cross_compiling" = yes; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "cannot run test program while cross compiling
@@ -9556,7 +9791,7 @@ if ac_fn_cxx_try_run "$LINENO"; then :
 
 $as_echo "#define guile_str_size_t int" >>confdefs.h
 
-          { $as_echo "$as_me:${as_lineno-$LINENO}: result: int" >&5
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: int" >&5
 $as_echo "int" >&6; }
 
 else
@@ -9564,7 +9799,7 @@ else
 
 $as_echo "#define guile_str_size_t size_t" >>confdefs.h
 
-          { $as_echo "$as_me:${as_lineno-$LINENO}: result: size_t" >&5
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: size_t" >&5
 $as_echo "size_t" >&6; }
 
 fi
@@ -9635,17 +9870,13 @@ fi
 fi
 
 
-  # AC_CHECK_LIB might have completed LIBS we need to complete GUILE_LIBS
-  GUILE_LIBS+=${LC_GUILE_extralibs:+ ${LC_GUILE_extralibs}}
-  if [ ! $g_success ];then
-    as_fn_error $? "It seems that guile-config does not provide the right parameters.
-    Consult the config.log for error details and check your guile installation" "$LINENO" 5
-    unset g_success
-  fi
-
-  CONFIG_GUILE_SERIAL="X"
-
-
+    # AC_CHECK_LIB might have completed LIBS we need to complete GUILE_LIBS
+    GUILE_LIBS+=${LC_GUILE_extralibs:+ ${LC_GUILE_extralibs}}
+    if [ ! $g_success ];then
+      as_fn_error $? "It seems that guile-config does not provide the right parameters.
+      Consult the config.log for error details and check your guile installation" "$LINENO" 5
+      unset g_success
+    fi
 
   CFLAGS=$CFLAGS__ax_save_flags
 
@@ -9668,6 +9899,15 @@ fi
   OBJCXXFLAGS=$OBJCXXFLAGS__ax_save_flags
 
 
+
+
+else
+
+
+$as_echo "#define guile_str_size_t size_t" >>confdefs.h
+
+
+fi
 
 
 
@@ -27191,6 +27431,98 @@ LIBOBJS=$ac_libobjs
 
 LTLIBOBJS=$ac_ltlibobjs
 
+
+      ax_dir="tm-guile168"
+
+      # Convert the path to the subdirectory into a shell variable name.
+      ax_var=$(printf "$ax_dir" | tr -c "0-9a-zA-Z_" "_")
+      ax_configure_ax_var=$(eval "echo \"\$ax_sub_configure_$ax_var\"")
+      if test "$no_recursion" != "yes" -a "x$ax_configure_ax_var" = "xyes"; then
+        subdirs_extra="$subdirs_extra $ax_dir"
+
+        ax_msg="=== configuring in $ax_dir ($(pwd)/$ax_dir)"
+        $as_echo "$as_me:${as_lineno-$LINENO}: $ax_msg" >&5
+        $as_echo "$ax_msg" >&6
+        as_dir="$ax_dir"; as_fn_mkdir_p
+        ac_builddir=.
+
+case "$ax_dir" in
+.) ac_dir_suffix= ac_top_builddir_sub=. ac_top_build_prefix= ;;
+*)
+  ac_dir_suffix=/`$as_echo "$ax_dir" | sed 's|^\.[\\/]||'`
+  # A ".." for each directory in $ac_dir_suffix.
+  ac_top_builddir_sub=`$as_echo "$ac_dir_suffix" | sed 's|/[^\\/]*|/..|g;s|/||'`
+  case $ac_top_builddir_sub in
+  "") ac_top_builddir_sub=. ac_top_build_prefix= ;;
+  *)  ac_top_build_prefix=$ac_top_builddir_sub/ ;;
+  esac ;;
+esac
+ac_abs_top_builddir=$ac_pwd
+ac_abs_builddir=$ac_pwd$ac_dir_suffix
+# for backward compatibility:
+ac_top_builddir=$ac_top_build_prefix
+
+case $srcdir in
+  .)  # We are building in place.
+    ac_srcdir=.
+    ac_top_srcdir=$ac_top_builddir_sub
+    ac_abs_top_srcdir=$ac_pwd ;;
+  [\\/]* | ?:[\\/]* )  # Absolute name.
+    ac_srcdir=$srcdir$ac_dir_suffix;
+    ac_top_srcdir=$srcdir
+    ac_abs_top_srcdir=$srcdir ;;
+  *) # Relative name.
+    ac_srcdir=$ac_top_build_prefix$srcdir$ac_dir_suffix
+    ac_top_srcdir=$ac_top_build_prefix$srcdir
+    ac_abs_top_srcdir=$ac_pwd/$srcdir ;;
+esac
+ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
+
+
+        ax_popdir=$(pwd)
+        cd "$ax_dir"
+
+        # Check for guested configure; otherwise get Cygnus style configure.
+        if test -f "$ac_srcdir/configure.gnu"; then
+          ax_sub_configure=$ac_srcdir/configure.gnu
+        elif test -f "$ac_srcdir/configure"; then
+          ax_sub_configure=$ac_srcdir/configure
+        elif test -f "$ac_srcdir/configure.in"; then
+          # This should be Cygnus configure.
+          ax_sub_configure=$ac_aux_dir/configure
+        else
+          { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: no configuration information is in $ax_dir" >&5
+$as_echo "$as_me: WARNING: no configuration information is in $ax_dir" >&2;}
+          ax_sub_configure=
+        fi
+
+        if test -n "$ax_sub_configure"; then
+          # Get the configure arguments for the current configure.
+          eval "ax_sub_configure_args=\"\$ax_sub_configure_args_${ax_var}\""
+
+          case $ax_arg in
+            *\'*) ax_arg=$($as_echo "$ax_arg" | sed "s/'/'\\\\\\\\''/g");;
+          esac
+          ax_sub_configure_args="'$ax_arg' $ax_sub_configure_args"
+          if test "$silent" = yes; then
+            ax_sub_configure_args="--silent $ax_sub_configure_args"
+          fi
+          # Make the cache file name correct relative to the subdirectory.
+          case $cache_file in
+            [\\/]* | ?:[\\/]* )
+              ax_sub_cache_file=$cache_file ;;
+            *) # Relative name.
+              ax_sub_cache_file=$ac_top_build_prefix$cache_file ;;
+          esac
+
+          { $as_echo "$as_me:${as_lineno-$LINENO}: running $SHELL $ax_sub_configure $ax_sub_configure_args --cache-file=$ac_sub_cache_file" >&5
+$as_echo "$as_me: running $SHELL $ax_sub_configure $ax_sub_configure_args --cache-file=$ac_sub_cache_file" >&6;}
+          eval "\$SHELL \"$ax_sub_configure\" $ax_sub_configure_args --cache-file=\"$ax_sub_cache_file\"" \
+              || as_fn_error $? "$ax_sub_configure failed for $ax_dir" "$LINENO" 5
+        fi
+
+        cd "$ax_popdir"
+      fi
 
 
 : "${CONFIG_STATUS=./config.status}"

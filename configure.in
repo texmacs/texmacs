@@ -100,7 +100,6 @@ TM_STATIC
 # External libraries, functions and binaries
 #--------------------------------------------------------------------
 
-LC_BUILD_GUILE
 LC_GUILE
 LC_DLOPEN
 LC_ICONV
