@@ -43,7 +43,11 @@ class Asymptote(Graph):
         if (p.returncode == 0):
           flush_file (self.get_eps())
         else:
-          flush_verbatim (err.decode())
+          err_msg = err.decode()
+          flush_verbatim (err_msg)
+          # extra notification of missing semicolon
+          if "unexpected end of input" in err_msg or "does not exist" in err_msg:
+            flush_verbatim ("\nNote: This error might be related to your input, such as a missing semicolon.")
 
     def main_loop(self):
         # Main session loop.
