@@ -715,12 +715,13 @@ install (FILES ${TEXMACS_BINARY_DIR}/misc/script/texmacs
         DESTINATION bin
         PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
                     GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
-install (FILES  DESTINATION share/TeXmacs/bin
-  PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ)
 ### include/
-install (DIRECTORY TeXmacs/include DESTINATION ${CMAKE_INSTALL_PREFIX})
+install (DIRECTORY TeXmacs/include DESTINATION ${CMAKE_INSTALL_PREFIX}
+  FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
 ### share/
-install (DIRECTORY plugins DESTINATION share/TeXmacs PATTERN "bin" EXCLUDE)
+install (DIRECTORY plugins DESTINATION share/TeXmacs
+  FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+  PATTERN "bin" EXCLUDE)
 install (FILES TeXmacs/misc/mime/texmacs.desktop DESTINATION share/applications)
 install (FILES TeXmacs/misc/images/texmacs.svg DESTINATION share/icons/gnome/scalable/apps)
 install (FILES TeXmacs/misc/images/text-x-texmacs.svg DESTINATION share/icons/gnome/scalable/mimetypes)
