@@ -8136,13 +8136,14 @@ _ACEOF
 
 
 
-    CFLAGS="$BASE_CFLAGS $GUILE_CFLAGS"
 
-    CXXFLAGS="$BASE_CXXFLAGS $GUILE_CXXFLAGS"
+  	CFLAGS="$BASE_CFLAGS $GUILE_CFLAGS"
 
-    CPPFLAGS="$BASE_CPPFLAGS $GUILE_CPPFLAGS"
+  	CXXFLAGS="$BASE_CXXFLAGS $GUILE_CXXFLAGS"
 
-    LIBS="$BASE_LIBS $GUILE_LIBS"
+  	CPPFLAGS="$BASE_CPPFLAGS $GUILE_CPPFLAGS"
+
+  	LIBS="$BASE_LIBS $GUILE_LIBS"
 
 
   LC_MERGE_FLAGS_list="$GUILE_LDFLAGS"
@@ -9671,6 +9672,7 @@ fi
 
 
 
+
   LC_MERGE_FLAGS_list="$GUILE_LDFLAGS"
   if [[ "LDFLAGS" =~ $(echo "(^|_)LIBS") ]]
   then
@@ -10022,7 +10024,6 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
   unset ${!LC_MERGE_FLAGS_*}
 
 
-  unset ${!LC_COMBINE_FLAGS_*}
 
 
   GUILE_CXX=$GUILE_CXXFLAGS
@@ -11520,13 +11521,14 @@ fi
 
 
 
-    CFLAGS="$BASE_CFLAGS $ICONV_CFLAGS"
 
-    CXXFLAGS="$BASE_CXXFLAGS $ICONV_CXXFLAGS"
+  	CFLAGS="$BASE_CFLAGS $ICONV_CFLAGS"
 
-    CPPFLAGS="$BASE_CPPFLAGS $ICONV_CPPFLAGS"
+  	CXXFLAGS="$BASE_CXXFLAGS $ICONV_CXXFLAGS"
 
-    LIBS="$BASE_LIBS $ICONV_LIBS"
+  	CPPFLAGS="$BASE_CPPFLAGS $ICONV_CPPFLAGS"
+
+  	LIBS="$BASE_LIBS $ICONV_LIBS"
 
 
   LC_MERGE_FLAGS_list="$ICONV_LDFLAGS"
@@ -11749,6 +11751,7 @@ $as_echo "yes" >&6; }
 
 
   OBJCXXFLAGS=$OBJCXXFLAGS__ax_save_flags
+
 
 
 
@@ -12106,7 +12109,6 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
   unset ${!LC_MERGE_FLAGS_*}
 
 
-  unset ${!LC_COMBINE_FLAGS_*}
 
 
 $as_echo "#define USE_ICONV 1" >>confdefs.h
@@ -13416,13 +13418,14 @@ fi
 
 
 
-    CFLAGS="$BASE_CFLAGS $ICONV_CFLAGS"
 
-    CXXFLAGS="$BASE_CXXFLAGS $ICONV_CXXFLAGS"
+  	CFLAGS="$BASE_CFLAGS $ICONV_CFLAGS"
 
-    CPPFLAGS="$BASE_CPPFLAGS $ICONV_CPPFLAGS"
+  	CXXFLAGS="$BASE_CXXFLAGS $ICONV_CXXFLAGS"
 
-    LIBS="$BASE_LIBS $ICONV_LIBS"
+  	CPPFLAGS="$BASE_CPPFLAGS $ICONV_CPPFLAGS"
+
+  	LIBS="$BASE_LIBS $ICONV_LIBS"
 
 
   LC_MERGE_FLAGS_list="$ICONV_LDFLAGS"
@@ -13651,6 +13654,7 @@ $as_echo "yes" >&6; }
 
 
 
+
   LC_MERGE_FLAGS_list="$ICONV_LDFLAGS"
   if [[ "LDFLAGS" =~ $(echo "(^|_)LIBS") ]]
   then
@@ -14002,7 +14006,6 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
   unset ${!LC_MERGE_FLAGS_*}
 
 
-  unset ${!LC_COMBINE_FLAGS_*}
 
 
 $as_echo "#define USE_ICONV 1" >>confdefs.h
@@ -14063,6 +14066,7 @@ $as_echo "yes" >&6; }
 
 
 
+
   LC_MERGE_FLAGS_list="$ICONV_LDFLAGS"
   if [[ "LDFLAGS" =~ $(echo "(^|_)LIBS") ]]
   then
@@ -14414,7 +14418,6 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
   unset ${!LC_MERGE_FLAGS_*}
 
 
-  unset ${!LC_COMBINE_FLAGS_*}
 
 
 $as_echo "#define USE_ICONV 1" >>confdefs.h
@@ -15618,13 +15621,14 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
 
 
-    CFLAGS="$BASE_CFLAGS $FREETYPE_CFLAGS"
 
-    CXXFLAGS="$BASE_CXXFLAGS $FREETYPE_CXXFLAGS"
+  	CFLAGS="$BASE_CFLAGS $FREETYPE_CFLAGS"
 
-    CPPFLAGS="$BASE_CPPFLAGS $FREETYPE_CPPFLAGS"
+  	CXXFLAGS="$BASE_CXXFLAGS $FREETYPE_CXXFLAGS"
 
-    LIBS="$BASE_LIBS $FREETYPE_LIBS"
+  	CPPFLAGS="$BASE_CPPFLAGS $FREETYPE_CPPFLAGS"
+
+  	LIBS="$BASE_LIBS $FREETYPE_LIBS"
 
 
   LC_MERGE_FLAGS_list="$FREETYPE_LDFLAGS"
@@ -17313,6 +17317,7 @@ fi
 
 
 
+
   LC_MERGE_FLAGS_list="$FREETYPE_LDFLAGS"
   if [[ "LDFLAGS" =~ $(echo "(^|_)LIBS") ]]
   then
@@ -17664,7 +17669,6 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
   unset ${!LC_MERGE_FLAGS_*}
 
 
-  unset ${!LC_COMBINE_FLAGS_*}
 
 
 $as_echo "#define LINKED_FREETYPE 1" >>confdefs.h
@@ -18743,13 +18747,14 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
 
 
-    CFLAGS="$BASE_CFLAGS $SPARKLE_CFLAGS"
 
-    CXXFLAGS="$BASE_CXXFLAGS $SPARKLE_CXXFLAGS"
+  	CFLAGS="$BASE_CFLAGS $SPARKLE_CFLAGS"
 
-    CPPFLAGS="$BASE_CPPFLAGS $SPARKLE_CPPFLAGS"
+  	CXXFLAGS="$BASE_CXXFLAGS $SPARKLE_CXXFLAGS"
 
-    LIBS="$BASE_LIBS $SPARKLE_LIBS"
+  	CPPFLAGS="$BASE_CPPFLAGS $SPARKLE_CPPFLAGS"
+
+  	LIBS="$BASE_LIBS $SPARKLE_LIBS"
 
 
   LC_MERGE_FLAGS_list="$SPARKLE_LDFLAGS"
@@ -19479,13 +19484,14 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
 
 
-    CFLAGS="$BASE_CFLAGS $SPARKLE_CFLAGS"
 
-    CXXFLAGS="$BASE_CXXFLAGS $SPARKLE_CXXFLAGS"
+  	CFLAGS="$BASE_CFLAGS $SPARKLE_CFLAGS"
 
-    CPPFLAGS="$BASE_CPPFLAGS $SPARKLE_CPPFLAGS"
+  	CXXFLAGS="$BASE_CXXFLAGS $SPARKLE_CXXFLAGS"
 
-    LIBS="$BASE_LIBS $SPARKLE_LIBS"
+  	CPPFLAGS="$BASE_CPPFLAGS $SPARKLE_CPPFLAGS"
+
+  	LIBS="$BASE_LIBS $SPARKLE_LIBS"
 
 
   LC_MERGE_FLAGS_list="$SPARKLE_LDFLAGS"
@@ -23482,6 +23488,7 @@ fi
 
 
 
+
   LC_MERGE_FLAGS_list="$QT_LDFLAGS"
   if [[ "LDFLAGS" =~ $(echo "(^|_)LIBS") ]]
   then
@@ -23833,7 +23840,6 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
   unset ${!LC_MERGE_FLAGS_*}
 
 
-  unset ${!LC_COMBINE_FLAGS_*}
 
 
          if test x"$at_cv_qt_build" = xko; then
@@ -24677,6 +24683,7 @@ $as_echo "$as_me: X11_LDFLAGS:$X11_LDFLAGS" >&6;}
 
 
 
+
   LC_MERGE_FLAGS_list="$X11_LDFLAGS"
   if [[ "LDFLAGS" =~ $(echo "(^|_)LIBS") ]]
   then
@@ -25028,7 +25035,6 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
   unset ${!LC_MERGE_FLAGS_*}
 
 
-  unset ${!LC_COMBINE_FLAGS_*}
 
 
          { $as_echo "$as_me:${as_lineno-$LINENO}: checking for X" >&5
@@ -26119,6 +26125,7 @@ $as_echo "#define PDFHUMMUS_NO_DCT 1" >>confdefs.h
 
 
 
+
   LC_MERGE_FLAGS_list="$PDF_LDFLAGS"
   if [[ "LDFLAGS" =~ $(echo "(^|_)LIBS") ]]
   then
@@ -26470,7 +26477,6 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
   unset ${!LC_MERGE_FLAGS_*}
 
 
-  unset ${!LC_COMBINE_FLAGS_*}
 
 
   exec 6>&3
