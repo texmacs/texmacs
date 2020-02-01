@@ -135,6 +135,7 @@
   ("Magnify vertically" (make 'vmagnified))
   ("Condensed" (make 'condensed))
   ("Extended" (make 'extended))
+  ("Monospaced" (make 'monospaced))
   ---
   ("Degraded" (make 'degraded))
   ("Distorted" (make 'distorted))

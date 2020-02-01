@@ -171,6 +171,7 @@ font poor_italic_font (font base, double slant);
 font poor_stretched_font (font base, double zoomx, double zoomy);
 font poor_extended_font (font base, double factor, double lw);
 font poor_extended_font (font base, double factor);
+font poor_mono_font (font base, double lw, double phw);
 font poor_bold_font (font base, double lofat, double upfat);
 font poor_bold_font (font base);
 font poor_bbb_font (font base, double penw, double penh, double fatw);

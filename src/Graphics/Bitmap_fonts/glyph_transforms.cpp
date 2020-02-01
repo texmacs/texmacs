@@ -294,6 +294,98 @@ extended (font_glyphs fng, double xf, SI penw) {
 }
 
 /******************************************************************************
+* Font metrics for emulated monospaced fonts
+******************************************************************************/
+
+struct mono_font_metric_rep: public font_metric_rep {
+  font_metric fnm;
+  SI lw, phw;
+  hashmap<int,pointer> ms;
+  mono_font_metric_rep (string name, font_metric fnm2, SI lw2, SI phw2):
+    font_metric_rep (name), fnm (fnm2),
+    lw (lw2), phw (phw2), ms (error_metric) {}
+  bool exists (int c) { return fnm->exists (c); }
+  metric& get (int c) {
+    metric& m (fnm->get (c));
+    if (&m == &error_metric) return error_metric;
+    if (!ms->contains (c)) {
+      metric_struct* r= tm_new<metric_struct> ();
+      ms(c)= (pointer) r;
+      r->x1= 0;
+      r->x2= lw;
+      SI w= m->x2 - m->x1;
+      if (w <= phw) {
+        SI dx= (lw - w) >> 1;
+        r->x3= m->x3 + dx;
+        r->x4= m->x4 + dx;
+      }
+      else {
+        SI dx= (lw - phw) >> 1;
+        double f= ((double) phw) / ((double) w);
+        f= max (floor (f * 16.0) / 16.0, 0.01); // limit the number of factors
+        r->x3= ((SI) floor (f * m->x3)) + dx;
+        r->x4= ((SI) ceil  (f * m->x4)) + dx;
+      }
+      r->y1= m->y1;
+      r->y2= m->y2;
+      r->y3= m->y3;
+      r->y4= m->y4;
+    }
+    return *((metric*) ((void*) ms[c])); }
+};
+
+font_metric
+mono (font_metric fnm, SI lw, SI phw) {
+  string name= "mono[" * fnm->res_name * "," * as_string (lw);
+  if (phw != lw) name << "," << as_string (phw);
+  name << "]";
+  return make (font_metric, name,
+	       tm_new<mono_font_metric_rep> (name, fnm, lw, phw));
+}
+
+/******************************************************************************
+* Font glyphs for emulated monospaced fonts
+******************************************************************************/
+
+glyph
+mono (glyph gl, SI lw, SI phw) {
+  SI glw= gl->width * PIXEL;
+  if (glw <= phw) {
+    SI dx= (lw - glw) >> 1;
+    return move (gl, dx, 0);
+  }
+  else {
+    SI dx= (lw - phw) >> 1;
+    double f= ((double) phw) / ((double) glw);
+    f= max (floor (f * 16.0) / 16.0, 0.01); // limit the number of factors
+    return move (stretched (gl, f, 1.0), dx, 0);
+  }
+}
+
+struct mono_font_glyphs_rep: public font_glyphs_rep {
+  font_glyphs fng;
+  SI lw, phw;
+  hashmap<int,glyph> gs;
+  mono_font_glyphs_rep (string name, font_glyphs fng2, SI lw2, SI phw2):
+    font_glyphs_rep (name), fng (fng2),
+    lw (lw2), phw (phw2), gs (error_glyph) {}
+  glyph& get (int c) {
+    glyph& orig (fng->get (c));
+    if ((&orig != &error_glyph) && !gs->contains (c))
+      gs(c)= mono (orig, lw, phw);
+    return gs(c); }
+};
+
+font_glyphs
+mono (font_glyphs fng, SI lw, SI phw) {
+  string name= "mono[" * fng->res_name * "," * as_string (lw);
+  if (phw != lw) name << "," << as_string (phw);
+  name << "]";
+  return make (font_glyphs, name,
+               tm_new<mono_font_glyphs_rep> (name, fng, lw, phw));
+}
+
+/******************************************************************************
 * Boldening of font metrics
 ******************************************************************************/
 
@@ -390,8 +482,9 @@ struct bolden_font_glyphs_rep: public font_glyphs_rep {
 font_glyphs
 bolden (font_glyphs fng, SI dpen, SI dtot, SI dver) {
   string name= "bolden[" * fng->res_name * "," * as_string (dpen);
-  if (dtot != dpen) name << "," << as_string (dtot) << "]";
-  if (dver != 0) name << "," << as_string (dver) << "]";
+  if (dtot != dpen) name << "," << as_string (dtot);
+  if (dver != 0) name << "," << as_string (dver);
+  name << "]";
   return make (font_glyphs, name,
                tm_new<bolden_font_glyphs_rep> (name, fng, dpen, dtot, dver));
 }

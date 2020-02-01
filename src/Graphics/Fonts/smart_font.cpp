@@ -1821,6 +1821,12 @@ apply_effects (font fn, string effects) {
         fn= poor_vextended_font (fn, yf);
       }
       */
+      else if (b[0] == "mono" && is_double (b[1])) {
+        double Mmag= as_double (b[1]);
+        if (Mmag < 0.1) Mmag= 0.1;
+        if (Mmag > 10.0) Mmag= 10.0;
+        fn= poor_mono_font (fn, Mmag, Mmag);
+      }
       else if (b[0] == "degraded") {
         double threshold= get_double_parameter (b[1], 0, 0.666);
         double freq     = get_double_parameter (b[1], 1, 1.0);

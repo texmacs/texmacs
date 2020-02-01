@@ -383,6 +383,14 @@
   (list (list "extended-factor" "Factor")))
 
 (tm-define (parameter-choice-list var)
+  (:require (== var "monospaced-factor"))
+  (list "0.6" "0.65" "0.7" "0.75" "0.8" "0.85" "0.9" "0.95" "1" :other))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'extended))
+  (list (list "monospaced-factor" "Factor")))
+
+(tm-define (parameter-choice-list var)
   (:require (== var "degraded-threshold"))
   (list "0.5" "0.6" "0.667" "0.75" :other))
 

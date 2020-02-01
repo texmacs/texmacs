@@ -1,4 +1,4 @@
-<TeXmacs|1.99.11>
+<TeXmacs|1.99.12>
 
 <style|<tuple|source|std>>
 
@@ -578,6 +578,8 @@
 
   <assign|extended-factor|1.2>
 
+  <assign|monospaced-factor|0.75>
+
   <assign|degraded-threshold|0.667>
 
   <assign|degraded-frequency|1.0>
@@ -605,6 +607,8 @@
   <assign|condensed|<macro|body|<add-font-effect|hextended|<value|condensed-factor>|<arg|body>>>>
 
   <assign|extended|<macro|body|<add-font-effect|hextended|<value|extended-factor>|<arg|body>>>>
+
+  <assign|monospaced|<macro|body|<add-font-effect|mono|<value|monospaced-factor>|<arg|body>>>>
 
   <assign|degraded|<macro|body|<add-font-effect|degraded|<merge|<value|degraded-threshold>|;|<value|degraded-frequency>>|<arg|body>>>>
 
