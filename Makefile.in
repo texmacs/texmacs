@@ -46,7 +46,6 @@ GZIP = gzip -f
 STRIP = @CONFIG_STRIP@
 TOUCH = touch
 SIGN = misc/admin/sign_update
-RGUILE = @MKGUILE@
 
 .NOTPARALLEL:
 
@@ -54,7 +53,7 @@ RGUILE = @MKGUILE@
 # Main makes
 ###############################################################################
 
-TEXMACS: EMPTY_DIRS MKGUILE
+TEXMACS: EMPTY_DIRS @MKGUILE@
 	if test "$(TEXMACS_DEPS)" != "no"; then \
 	  cd src; $(MAKE) -f makefile deps; \
 	fi
@@ -88,7 +87,7 @@ STATIC_TEXMACS: EMPTY_DIRS
 	@echo ----------------------------------------------------
 	@echo static TeXmacs has been successfully compiled
 
-MKGUILE: tm-guile168/build
+EGUILE: tm-guile168/build
 	cd @DIRGUILE@ && make && make install; cd -
 	
 DEPS: EMPTY_DIRS

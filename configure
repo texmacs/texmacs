@@ -8069,6 +8069,7 @@ elif test -z "$location" -a -d tm-guile168; then :
 
       { $as_echo "$as_me:${as_lineno-$LINENO}: use embedded guile" >&5
 $as_echo "$as_me: use embedded guile" >&6;}
+      MKGUILE=EGUILE
 
       DIRGUILE=tm-guile168
 
