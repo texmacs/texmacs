@@ -1,6 +1,6 @@
-<TeXmacs|1.99.1>
+<TeXmacs|1.99.12>
 
-<style|<tuple|tmdoc|chinese>>
+<style|<tuple|tmdoc|chinese|old-spacing|old-dots>>
 
 <\body>
   <tmdoc-title|\<#63D2\>\<#5165\>\<#56FE\>\<#7247\>>
@@ -8,13 +8,8 @@
   \<#901A\>\<#8FC7\><menu|Insert|Image>\<#5728\>\<#6587\>\<#6863\>\<#4E2D\>\<#63D2\>\<#5165\>\<#56FE\>\<#7247\>\<#FF0C\><TeXmacs>\<#652F\>\<#6301\>\<#8FD9\>\<#4E9B\>\<#56FE\>\<#7247\>\<#683C\>\<#5F0F\>\<#FF1A\>
   <verbatim|ps>\<#FF0C\> <verbatim|eps>\<#FF0C\> <verbatim|tif>\<#FF0C\>
   <verbatim|pdf>\<#FF0C\> <verbatim|pdm>\<#FF0C\> <verbatim|gif>\<#FF0C\>
-  <verbatim|ppm>\<#FF0C\> <verbatim|xpm>\<#548C\><verbatim|fig>.
-  <TeXmacs>\<#4F7F\>\<#7528\><verbatim|gs>\<#5373\>ghostscript\<#6765\>\<#6E32\>\<#67D3\>postscript\<#56FE\>\<#50CF\>.\<#5982\>\<#679C\>\<#4F60\>\<#8FD8\>\<#6CA1\>\<#6709\>\<#5B89\>\<#88C5\>
-  ghostscript\<#FF0C\>\<#53EF\>\<#4ECE\>\<#8FD9\>\<#4E2A\>\<#9875\>\<#9762\>\<#4E0B\>\<#8F7D\>\<#FF1A\>\ 
-
-  <\verbatim>
-    \ \ \ \ www.cs.wisc.edu/~ghost/index.html
-  </verbatim>
+  <verbatim|ppm>\<#FF0C\> <verbatim|xpm>\<#548C\><verbatim|fig>\<#3002\>
+  <TeXmacs>\<#4F7F\>\<#7528\><verbatim|gs>\<#5373\><name|Ghostscript>\<#6765\>\<#6E32\>\<#67D3\>postscript\<#56FE\>\<#50CF\>\<#3002\>\<#5982\>\<#679C\>\<#4F60\>\<#8FD8\>\<#6CA1\>\<#6709\>\<#5B89\>\<#88C5\><name|Ghostscript>\<#FF0C\>\<#8BF7\>\<#5B89\>\<#88C5\>\<#8FD9\>\<#4E2A\>\<#8F6F\>\<#4EF6\>\<#FF0C\>\<#5E76\>\<#786E\>\<#8BA4\><shell|gs>\<#547D\>\<#4EE4\>\<#53EF\>\<#4EE5\>\<#76F4\>\<#63A5\>\<#5728\>\<#7EC8\>\<#7AEF\>\<#4F7F\>\<#7528\>\<#3002\>
 
   \<#76EE\>\<#524D\>\<#5176\>\<#4ED6\>\<#683C\>\<#5F0F\>\<#7684\>\<#6587\>\<#4EF6\>\<#662F\>\<#901A\>\<#8FC7\><verbatim|tiff2ps>\<#FF0C\>
   <verbatim|pdf2ps>\<#FF0C\> <verbatim|pnmtops>\<#FF0C\>
@@ -38,7 +33,7 @@
 
   \<#5173\>\<#4E8E\>\<#5982\>\<#4F55\>\<#7F16\>\<#8F91\>\<#4EE5\>\<#53CA\>\<#63D2\>\<#5165\>\<#5E26\>\<#6709\><LaTeX>\<#516C\>\<#5F0F\>\<#7684\>\<#56FE\>\<#7247\>\<#FF0C\>\<#8BF7\>\<#53C2\>\<#8003\>\<#672C\>\<#6587\>\<#6863\>\<#82F1\>\<#6587\><hlink|\<#539F\>\<#6587\>|man-images.en.tm>\<#7684\>\<#6700\>\<#540E\>\<#4E00\>\<#6BB5\>\<#3002\>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2020|Joris van der Hoeven|\<#6C88\>\<#8FBE\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -47,3 +42,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>
