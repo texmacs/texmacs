@@ -1,6 +1,6 @@
-<TeXmacs|1.99.7>
+<TeXmacs|1.99.12>
 
-<style|<tuple|tmdoc|old-spacing|chinese>>
+<style|<tuple|tmdoc|old-spacing|chinese|old-dots>>
 
 <\body>
   <tmdoc-title|\<#5E38\>\<#89C1\>\<#9519\>\<#8BEF\>\<#4E0E\>\<#8BED\>\<#6CD5\>\<#7EA0\>\<#6B63\>>
@@ -49,7 +49,7 @@
 
   \<#4FEE\>\<#6B63\>\<#8FC7\>\<#8BED\>\<#6CD5\>\<#4E4B\>\<#540E\>\<#FF0C\>\<#5269\>\<#4E0B\>\<#7684\>\<#9519\>\<#8BEF\>\<#5C31\>\<#662F\>\<#771F\>\<#6B63\>\<#7684\>\<#7B14\>\<#8BEF\>\<#6216\>\<#975E\>\<#6807\>\<#51C6\>\<#6216\>\<#4E0D\>\<#652F\>\<#6301\>\<#7684\>\<#7B26\>\<#53F7\>\<#4E86\>\<#3002\>\<#6211\>\<#4EEC\>\<#4E5F\>\<#4F1A\>\<#53D1\>\<#73B0\>\<#FF0C\>\P\<#6B63\>\<#786E\>\<#7684\>\Q\<#516C\>\<#5F0F\>\<#4E0D\>\<#4E00\>\<#5B9A\>\<#5C31\>\<#662F\>\<#8868\>\<#793A\>\<#60F3\>\<#8981\>\<#7684\>\<#610F\>\<#601D\>\<#3002\>\<#8981\>\<#60F3\>\<#68C0\>\<#67E5\>\<#662F\>\<#5426\>\<#771F\>\<#7684\>\<#8868\>\<#793A\>\<#60F3\>\<#8981\>\<#7684\>\<#542B\>\<#4E49\>\<#FF0C\>\<#5C31\>\<#53EA\>\<#80FD\>\<#5728\>\<#8F93\>\<#5165\>\<#516C\>\<#5F0F\>\<#7684\>\<#65F6\>\<#5019\>\<#6CE8\>\<#610F\>\<#4E00\>\<#4E0B\>\<#4E86\>\<#3002\>
 
-  <tmdoc-copyright|2018|Alexander Misel>
+  <tmdoc-copyright|2018|Joris van der Hoeven|Alexander Misel>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

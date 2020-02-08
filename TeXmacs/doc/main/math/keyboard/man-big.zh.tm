@@ -1,6 +1,6 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.12>
 
-<style|<tuple|tmdoc|chinese>>
+<style|<tuple|tmdoc|chinese|old-spacing|old-dots>>
 
 <\body>
   <tmdoc-title|\<#8F93\>\<#5165\>\<#5927\>\<#578B\>\<#7B97\>\<#7B26\>>
@@ -41,7 +41,7 @@
   I>\<#83B7\>\<#5F97\>\<#3002\>\<#7C7B\>\<#4F3C\>\<#5730\>\<#FF0C\>\<#4F7F\>\<#7528\>\<#5FEB\>\<#6377\>\<#952E\><key|symbol
   L O>\<#53EF\>\<#5F97\>\<#5230\><math|<big|oint>>\<#FF0C\>\<#5176\>\<#4E2D\>\<#4E0A\>\<#4E0B\>\<#6807\>\<#7684\>\<#4F4D\>\<#7F6E\>\<#662F\>\<#7B2C\>\<#4E8C\>\<#79CD\>\<#5F62\>\<#5F0F\>\<#3002\>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2020|Joris van der Hoeven|\<#6C88\>\<#8FBE\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

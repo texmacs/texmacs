@@ -1,6 +1,6 @@
-<TeXmacs|1.99.7>
+<TeXmacs|1.99.12>
 
-<style|<tuple|tmdoc|chinese|old-spacing>>
+<style|<tuple|tmdoc|chinese|old-spacing|old-dots>>
 
 <\body>
   <tmdoc-title|\<#6570\>\<#5B66\>\<#516C\>\<#5F0F\>>
@@ -32,7 +32,7 @@
     <branch|\<#5B9A\>\<#5236\>\<#6570\>\<#5B66\>\<#8BED\>\<#4E49\>|semantics/man-customized-semantics.zh.tm>
   </traverse>
 
-  <tmdoc-copyright|2018|Darcy Shen>
+  <tmdoc-copyright|2018\U2020|Joris van der Hoeven|\<#6C88\>\<#8FBE\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

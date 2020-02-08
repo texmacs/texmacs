@@ -1,6 +1,6 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.12>
 
-<style|<tuple|tmdoc|chinese>>
+<style|<tuple|tmdoc|chinese|old-spacing|old-dots>>
 
 <\body>
   <tmdoc-title|\<#4E3B\>\<#8981\>\<#7684\>\<#6570\>\<#5B66\>\<#7ED3\>\<#6784\>>
@@ -24,9 +24,9 @@
   l ^>>|<cell|\<#5DE6\>\<#4E0A\>\<#6807\>>|<cell|<math|<lsup|\<pi\>>x> or
   <math|<lsub|\<ast\>><lsup|\<ast\>>He<rsub|\<ast\>><rsup|\<ast\>>>>>>>>|\<#6487\>\<#3001\>\<#4E0A\>\<#4E0B\>\<#6807\>\<#7684\>\<#521B\>\<#5EFA\>>
 
-  \<#53E6\>\<#5916\>\<#4E00\>\<#4E9B\>\<#91CD\>\<#8981\>\<#7684\>\<#6570\>\<#5B66\>\<#7ED3\>\<#6784\>\<#5B9E\>\<#9645\>\<#4E0A\>\<#662F\>\<#5E7F\>\<#4E49\>\<#7684\>\<#8868\>\<#683C\>\<#FF0C\>\<#5982\>\<#77E9\>\<#9635\>\<#3001\>\<#884C\>\<#5217\>\<#5F0F\>\<#7B49\>\<#FF0C\>\<#8BE6\>\<#7EC6\>\<#8BF7\>\<#53C2\>\<#89C1\><hlink|\<#8868\>\<#683C\>\<#7ED3\>\<#6784\>|../../table/man-create-table.en.tm>\<#3002\>
+  \<#53E6\>\<#5916\>\<#4E00\>\<#4E9B\>\<#91CD\>\<#8981\>\<#7684\>\<#6570\>\<#5B66\>\<#7ED3\>\<#6784\>\<#5B9E\>\<#9645\>\<#4E0A\>\<#662F\>\<#5E7F\>\<#4E49\>\<#7684\>\<#8868\>\<#683C\>\<#FF0C\>\<#5982\>\<#77E9\>\<#9635\>\<#3001\>\<#884C\>\<#5217\>\<#5F0F\>\<#7B49\>\<#FF0C\>\<#8BE6\>\<#7EC6\>\<#8BF7\>\<#53C2\>\<#89C1\><hlink|\<#8868\>\<#683C\>\<#7ED3\>\<#6784\>|../../table/man-create-table.zh.tmml>\<#3002\>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2002|Joris van der Hoeven|\<#6C88\>\<#8FBE\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

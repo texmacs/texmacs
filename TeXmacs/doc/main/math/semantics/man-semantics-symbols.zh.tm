@@ -1,6 +1,6 @@
-<TeXmacs|1.99.7>
+<TeXmacs|1.99.12>
 
-<style|<tuple|tmdoc|old-spacing|chinese>>
+<style|<tuple|tmdoc|old-spacing|chinese|old-dots>>
 
 <\body>
   <tmdoc-title|\<#6570\>\<#5B66\>\<#7B26\>\<#53F7\>\<#7684\>\<#8BED\>\<#4E49\>>
@@ -53,7 +53,7 @@
   var var>>|<cell|<math|\\>>|<cell|<math|\<bbb-N\><rsup|\<gtr\>>=\<bbb-N\>\<setminus\><around*|{|0|}>>>|<cell|\<#96C6\>\<#5408\>\<#51CF\>\<#6CD5\>>>|<row|<cell|<key|&>>|<cell|<math|\<wedge\>>>|<cell|<math|1=1\<wedge\>2=2>>|<cell|\<#903B\>\<#8F91\>\<#4E0E\>>>|<row|<cell|<key|*
   &>>|<cell|<math|\<exterior\>>>|<cell|<math|\<mathd\>x\<exterior\>\<mathd\>y>>|<cell|\<#6954\>\<#79EF\>>>>>>|<label|homoglyph-table><TeXmacs>\<#652F\>\<#6301\>\<#7684\>\<#540C\>\<#5F62\>\<#5F02\>\<#4E49\>\<#5B57\>\<#7B26\>.>
 
-  <tmdoc-copyright|2018|Alexander Misel>
+  <tmdoc-copyright|2018|Joris van der Hoeven|Alexander Misel>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

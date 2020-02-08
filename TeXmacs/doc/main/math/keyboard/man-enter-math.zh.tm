@@ -1,6 +1,6 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.12>
 
-<style|<tuple|tmdoc|chinese>>
+<style|<tuple|tmdoc|chinese|old-spacing|old-dots>>
 
 <\body>
   <tmdoc-title|\<#5728\>\<#6587\>\<#6863\>\<#4E2D\>\<#8F93\>\<#5165\>\<#6570\>\<#5B66\>\<#516C\>\<#5F0F\>>
@@ -51,7 +51,7 @@
     \<#5728\>\<#8FD9\>\<#4E2A\>\<#4F8B\>\<#5B50\>\<#4E2D\>\<#FF0C\>\<#5927\>\<#591A\>\<#6570\>\<#884C\>\<#7684\>\<#7B2C\>\<#4E00\>\<#5217\>\<#662F\>\<#7A7A\>\<#7740\>\<#7684\>\<#3002\>
   </description>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2020|Joris van der Hoeven|\<#6C88\>\<#8FBE\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
