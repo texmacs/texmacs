@@ -939,6 +939,13 @@ bib_parse_fields (tree& t) {
   int nb= bib_get_fields (t, fields);
   array<tree> latex= bib_latex_array (
       latex_to_tree (parse_latex (cork_to_sourcecode (fields), false, false)));
+  if (N(latex) == nb-1 && ends (fields, "\\nextbib{}")) {
+    // FIXME: this dirty hack should not be necessary
+    fields << "{xyzyx}";
+    latex= bib_latex_array (
+      latex_to_tree (parse_latex (cork_to_sourcecode (fields), false, false)));
+    if (latex[N(latex)-1] == "xyzyx") latex[N(latex)-1]= "";
+  }
   //cout << "<<< " << t << LF;
   //cout << ">>> " << latex << LF;
   for (int k=0; k<N(latex); k++)
