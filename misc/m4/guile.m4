@@ -92,7 +92,7 @@ AC_DEFUN([LC_WITH_GUILE],[
     unset LC_WITH_GUILE_tmp1 LC_WITH_GUILE_tmp2
   ],test -z "$location" -a -d embedded_guile,[
       AC_MSG_NOTICE([use embedded guile])
-      AC_SUBST([MKGUILE],[EGUILE])
+      AC_SUBST([MKGUILE],[embedded_guile/build/lib/libguile.a])
       AC_SUBST([DIRGUILE],embedded_guile)
       $0_use_embedded_guile=1
       AX_SUBDIRS_CONFIGURE([embedded_guile],
