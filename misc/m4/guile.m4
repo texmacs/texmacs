@@ -116,7 +116,7 @@ AC_DEFUN([LC_WITH_GUILE],[
 
 AC_DEFUN([LC_GUILE],[
   AC_ARG_WITH(guile,
-    AS_HELP_STRING([--with-guile@<:@=sustem@:>@],[path to to find guile-config or [embedded] if any tm-guile package included]), 
+    AS_HELP_STRING([--with-guile@<:@=system@:>@],[path to to find guile-config or [embedded] if any tm-guile package included]), 
     [AS_IF(test "$withval" == no,[AC_MSG_ERROR([cannot work without Guile])],test "$withval" = yes,[unset withval])],[unset withval])
     
   LC_WITH_GUILE($withval)

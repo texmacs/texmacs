@@ -1548,7 +1548,7 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-tmrepo[=no]      absolute texmacs sdk path
-  --with-guile[=sustem]   path to to find guile-config or [embedded] if any
+  --with-guile[=system]   path to to find guile-config or [embedded] if any
                           tm-guile package included
   --with-iconv[=DIR]      where to find iconv []
   --with-freetype[DIR=]   where to find freetype-config []
