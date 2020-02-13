@@ -552,7 +552,7 @@ SCLEAN:
 
 CLEAN: SCLEAN RCLEAN CLEAN_PLUGINS
 
-DISTCLEAN: CLEAN CLNGUILE
+DISTCLEAN: CLEAN @CLNGUILE@
 	$(RM) src/Objects/* 2>/dev/null || :
 	$(RM) misc/doxygen/Doxyfile
 	$(RM) misc/man/texmacs.1
@@ -582,7 +582,9 @@ DISTR_CLEAN: DISTCLEAN SVN_CLEAN
 .PHONY: CLEAN_DOC RDISTR DISTR RCLEAN SCLEAN DISTCLEAN SVN_CLEAN DISTR_CLEAN
 
 CLNGUILE:
-	cd @DIRGUILE@ && make uninstall && make distclean && cd -
+	-cd @DIRGUILE@ && make uninstall
+	-cd @DIRGUILE@ && make distclean
+	-cd @DIRGUILE@ && rm -rf build
 
 ###############################################################################
 # Miscellaneous targets

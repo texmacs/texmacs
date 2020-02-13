@@ -736,6 +736,7 @@ GUILE_DATA_PATH
 DIRGUILE
 GUILE_CONFIG
 GUILE_STATIC
+CLNGUILE
 MKGUILE
 CONFIG_CP
 CONFIG_ARCHS
@@ -7434,6 +7435,7 @@ fi
 
 
 
+
   if test "$location" = "embedded"; then :
   unset location
 elif test -z $location; then :
@@ -8072,6 +8074,8 @@ $as_echo "$as_me: use embedded guile" >&6;}
       MKGUILE=tm-guile168/build/lib/libguile.a
 
       DIRGUILE=tm-guile168
+
+  		CLNGUILE=CLNGUILE
 
       LC_WITH_GUILE_use_embedded_guile=1
 
