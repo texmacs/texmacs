@@ -88,7 +88,7 @@ STATIC_TEXMACS: EMPTY_DIRS
 	@echo static TeXmacs has been successfully compiled
 
 @MKGUILE@: tm-guile168
-	cd @DIRGUILE@ && make && make install
+	cd @DIRGUILE@ && make -j1 && make -j1 install
 	
 DEPS: EMPTY_DIRS
 	cd src; $(MAKE) -f makefile deps
