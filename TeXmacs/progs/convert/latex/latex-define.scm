@@ -320,7 +320,7 @@
              (!translate "see") " "
              (url "http://www.texmacs.org") ")"))
   (citewebsite
-    (!append (!translate "This document has written using") " GNU "
+    (!append (!translate "This document has been written using") " GNU "
              (!group (!recurse (TeXmacs))) "; " (!translate "see") " "
              (url "http://www.texmacs.org") "."))
   (tmmade (!recurse (tikzframe (Backsigma))))
@@ -381,7 +381,7 @@
   (tmnote (thanks (!append (textit (!translate "Note:")) " " 1)))
   (tmmisc (thanks (!append (textit (!translate "Misc:")) " " 1)))
   (citetexmacs
-    (!append (!translate "This document has written using") " GNU "
+    (!append (!translate "This document has been written using") " GNU "
              (!group (!recurse (TeXmacs))) " " (cite 1) "."))
   (key (!append
          (fcolorbox "black" "gray!25!white"
