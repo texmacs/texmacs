@@ -48,8 +48,6 @@
     (if (and (style-has? "std-dtd") (in-math?))
         ---
         ("Matrix" (make 'matrix))
-        ("Plain Matrix" (make 'matrix*))
-        ("Bracketed Matrix" (make 'bmatrix))
         ("Determinant" (make 'det))
         ("Choice" (make 'choice))
         ("Stack" (make 'stack)))))
