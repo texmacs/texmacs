@@ -211,7 +211,19 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     sz = (pxm ? pxm->size() : QSize (16, 16));
     tweak_iconbar_size (sz);
     focusToolBar->setIconSize (sz);
-  }  
+  }
+
+  // Why we need fixed height:
+  // The height of the toolbar is actually determined by the font height.
+  // And the font height is not fixed. If the height of the toolbar is not
+  // fixed, the stretching of it will make the document area floating and
+  // triggers the re-rendering of the full document.
+  //
+  // NOTICE: setFixedHeight must be after setIconSize
+  // TODO: the size of the toolbar should be calculated dynamically
+  int toolbarHeight= 30;
+  modeToolBar->setFixedHeight (toolbarHeight);
+  focusToolBar->setFixedHeight (toolbarHeight);
   
   QWidget *cw= new QWidget();
   cw->setObjectName("central widget");  // this is important for styling toolbars.
