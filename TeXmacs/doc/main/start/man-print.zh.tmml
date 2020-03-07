@@ -10,20 +10,23 @@
     
     <tm-par>
       点击<menu><tm-arg>File</tm-arg><tm-arg>Print</tm-arg><tm-arg>Print
-      all</tm-arg></menu>打印当前文档。默认地，<TeXmacs/>假定你的打印机是600dpi，用的是A4纸。当然，在<menu><tm-arg>File</tm-arg><tm-arg>Page
+      buffer...</tm-arg></menu>打印当前文档。默认地，<TeXmacs/>假定你的打印机是600dpi，用的是A4纸。当然，在<menu><tm-arg>File</tm-arg><tm-arg>Page
       setup...</tm-arg></menu>中，你可以按需定制。你也可以用<menu><tm-arg>File</tm-arg><tm-arg>Print</tm-arg><tm-arg>Print
-      all to
-      file</tm-arg></menu>或者<menu><tm-arg>File</tm-arg><tm-arg>Export</tm-arg><tm-arg>Postscript</tm-arg></menu>将文档导出成Postscript文档。两者的区别在于，前者使用前面提到的默认打印设置导出文档，后者则是直接忽略了打印设置。
+      buffer to
+      file...</tm-arg></menu>或者<menu><tm-arg>File</tm-arg><tm-arg>Export</tm-arg><tm-arg>Postscript</tm-arg></menu>将文档导出成Postscript文档。两者的区别在于，前者使用前面提到的默认打印设置导出文档，后者则是直接忽略了打印设置。
     </tm-par>
     
     <tm-par>
-      当你配置好<TeXmacs/>之后，编辑器一定是所见即所得的——打印出来之后的结果和你在屏幕上看到的完全一样。特别地，为了完整的所见即所得支持，你应该选择<menu><tm-arg>Document</tm-arg><tm-arg>Page</tm-arg><tm-arg>Type</tm-arg><tm-arg>Paper</tm-arg></menu>和<menu><tm-arg>Document</tm-arg><tm-arg>Page</tm-arg><tm-arg>Screen
-      layout</tm-arg><tm-arg>Margins as on
-      paper</tm-arg></menu>。你还应该确认屏幕上的字符显示和你的打印机的每英寸所打印的点数是否相同。这种字符渲染精度可以在<menu><tm-arg>Document</tm-arg><tm-arg>Font</tm-arg><tm-arg>Dpi</tm-arg></menu>中调整。当前，改变dpi时排版上细微的改变也许会影响到文档中的行与页的分割。在未来的版本中，这个缺陷将不复存在。
+      当你配置好<TeXmacs/>之后，编辑器一定是所见即所得的——打印出来之后的结果和你在屏幕上看到的完全一样。特别地，为了完整的所见即所得支持，你应该在<menu><tm-arg>Document</tm-arg><tm-arg>Page</tm-arg><tm-arg>Format</tm-arg><tm-arg>Page
+      rendering</tm-arg></menu>选择paper并勾选<menu><tm-arg>Document</tm-arg><tm-arg>Page</tm-arg><tm-arg>Margins</tm-arg><tm-arg>Same
+      screen margins as on
+      paper</tm-arg></menu>。你还应该确认屏幕上的字符显示和你的打印机的每英寸所打印的点数是否相同。这种字符渲染精度可以在<menu><tm-arg>File</tm-arg><tm-arg>Page
+      setup...</tm-arg><tm-arg>Printer
+      dpi</tm-arg></menu>中调整。当前，改变dpi时排版上细微的改变也许会影响到文档中的行与页的分割。在未来的版本中，这个缺陷将不复存在。
     </tm-par>
     
     <tm-par>
-      <tmdoc-copyright><tm-arg>2013--2019</tm-arg><tm-arg>Joris van der
+      <tmdoc-copyright><tm-arg>2013--2020</tm-arg><tm-arg>Joris van der
       Hoeven</tm-arg><tm-arg>沈达</tm-arg></tmdoc-copyright>
     </tm-par>
     
