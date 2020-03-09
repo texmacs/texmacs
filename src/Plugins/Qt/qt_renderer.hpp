@@ -22,7 +22,7 @@
 // if QTMPIXMAPS is defined we use QPixmap for characters
 // otherwise we use QImage (which support alpha also under X11)
 
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
 #define QTMPIXMAPS
 #else
 #undef QTMPIXMAPS

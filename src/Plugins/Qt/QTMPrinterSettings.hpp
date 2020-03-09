@@ -120,7 +120,7 @@ protected:
   QHash<QString, QString> printerOptions;
 };
 
-#if defined(Q_WS_MAC) || defined (Q_WS_X11)
+#if defined(Q_OS_MAC) || defined (Q_OS_LINUX)
 
 /*!
  * Implementation specific to the CUPS driver under MacOS and Linux. This
@@ -142,7 +142,7 @@ protected:
 
 #endif  // defined(Q_WS_MAC) || defined (Q_WS_X11)
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
 
 /*!
  * A WinQTMPrinterSettings object sets the the default print command to be either

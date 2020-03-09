@@ -47,7 +47,7 @@ public:
                  const QString& directory = QString(),
                  const QString & filter = QString());
   QStringList selectedFiles () { return file->selectedFiles (); };
-#if (defined(Q_WS_MAC) && (QT_VERSION >= 0x040500))
+#if (defined(Q_OS_MAC) && (QT_VERSION >= 0x040500))
   void setOptions (QFileDialog::Options opts) { file->setOptions (opts); };
 #endif
   void setAcceptMode (QFileDialog::AcceptMode mode) { file->setAcceptMode(mode); }

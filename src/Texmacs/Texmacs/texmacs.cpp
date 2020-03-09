@@ -107,7 +107,7 @@ TeXmacs_init_paths (int& argc, char** argv) {
 
   string current_texmacs_path = get_env ("TEXMACS_PATH");
 
-#if (defined(QTTEXMACS) && defined(Q_WS_MAC)) 
+#ifdef Q_OS_MAC 
   // the following line can inibith external plugin loading
   // QCoreApplication::setLibraryPaths(QStringList());
   // ideally we would like to control the external plugins
@@ -133,7 +133,7 @@ TeXmacs_init_paths (int& argc, char** argv) {
   }
 #endif
 
-#if defined(AQUATEXMACS) ||(defined(QTTEXMACS) && defined(Q_WS_MAC)) || (defined(X11TEXMACS) && defined (MACOSX_EXTENSIONS))
+#if defined(AQUATEXMACS) || defined(Q_OS_MAC) || (defined(X11TEXMACS) && defined (MACOSX_EXTENSIONS))
   // Mac bundle environment initialization
   // We set some environment variables when the executable
   // is in a .app bundle on MacOSX

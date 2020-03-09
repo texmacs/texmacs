@@ -150,7 +150,7 @@ QTMPrinterSettings::getChoices(DriverChoices _which, int& _default) {
 }
 
 
-#if defined(Q_WS_MAC) || defined(Q_WS_X11)
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
 
 /*!
  * @todo Read the printing program from some configuration file/preference?
@@ -322,7 +322,7 @@ CupsQTMPrinterSettings::availablePrinters() {
 
 #endif
 
-#ifdef Q_WS_WIN 
+#ifdef Q_OS_WIN 
 
 /*!
  * 

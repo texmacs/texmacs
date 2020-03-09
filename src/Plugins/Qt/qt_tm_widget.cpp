@@ -132,7 +132,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   // which has been fixed in 4.6.2 (at least)
   // this is why we change dimension of icons
   
-#if (defined(Q_WS_MAC)&&(QT_VERSION>=QT_VERSION_CHECK(4,6,0))&&(QT_VERSION<QT_VERSION_CHECK(4,6,2)))
+#if (defined(Q_OS_MAC)&&(QT_VERSION>=QT_VERSION_CHECK(4,6,0))&&(QT_VERSION<QT_VERSION_CHECK(4,6,2)))
   mw->setIconSize (QSize (22, 30));  
 #else
   mw->setIconSize (QSize (17, 17));
@@ -163,7 +163,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   //    trying to figure this out :)
   
   bar->setMinimumWidth (2);
-#ifdef Q_WS_X11
+#ifdef Q_OS_LINUX
   int min_h= (int) floor (28 * retina_scale);
   bar->setMinimumHeight (min_h);
 #else
@@ -342,7 +342,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   sideTools->setVisible (false);
   bottomTools->setVisible (false);
   mainwindow()->statusBar()->setVisible (true);
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
   mainwindow()->menuBar()->setVisible (false);
 #endif  
 }
@@ -358,7 +358,7 @@ qt_tm_widget_rep::~qt_tm_widget_rep () {
 
 void
 qt_tm_widget_rep::tweak_iconbar_size (QSize& sz) {
-#ifdef Q_WS_X11
+#ifdef Q_OS_LINUX
   if (sz.height () >= 24) {
     sz.setWidth (sz.width () + 2);
     sz.setHeight (sz.height () + 8);
@@ -431,7 +431,7 @@ qt_tm_widget_rep::update_visibility () {
   if ( XOR(old_statusVisibility,  new_statusVisibility) )
     mainwindow()->statusBar()->setVisible (new_statusVisibility);
 
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
   bool old_menuVisibility = mainwindow()->menuBar()->isVisible();
   bool new_menuVisibility = visibility[0];
 

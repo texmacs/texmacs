@@ -139,7 +139,7 @@ qt_field_widget_rep::as_qwidget () {
  * qt_inputs_list_widget_rep
  ******************************************************************************/
 
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
 #include <QKeyEvent>
 
 /*! An event filter to circumvent a Qt Mac bug in QMessageBox.
@@ -301,7 +301,7 @@ qt_inputs_list_widget_rep::perform_dialog() {
     }
     msgBox.setWindowTitle (qt_translate ("Question"));
     msgBox.setIcon (QMessageBox::Question);
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
     QTMFilterHack filter (msgBox.buttons());
     msgBox.installEventFilter (&filter);
 #endif

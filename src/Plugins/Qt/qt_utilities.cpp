@@ -144,7 +144,7 @@ conv_sub (const string& ks) {
   r = replace (r, "S-", "Shift+");
   r = replace (r, "A-", "Alt+");
   //r = replace (r, "K-", "");
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
   r = replace (r, "C-", "Meta+");
   r = replace (r, "M-", "Ctrl+");
 #else
@@ -673,7 +673,7 @@ qt_apply_tm_style (QWidget* qwid, int style, color c) {
   + QString("color: rgba(%1, %2, %3, %4%);").arg(r).arg(g).arg(b).arg(a)
   + "} ";
 
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
     /* Disabled QLabels are not greyed out (at least in MacOS, since Qt 4.7.2), 
      see: https://bugreports.qt-project.org/browse/QTBUG-19008
      For consistency we set the disabled color for all widgets.

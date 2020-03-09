@@ -59,7 +59,7 @@ class qt_tm_widget_rep: public qt_window_widget_rep {
   QDockWidget*   sideTools;
   QDockWidget* bottomTools;
 
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
   QToolBar*      dumbToolBar;
   QAction* modeToolBarAction;
   QAction* mainToolBarAction;

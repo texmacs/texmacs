@@ -431,7 +431,7 @@ void aqua_tm_widget_rep::updateVisibility()
   contextToolBar->setVisible (visibility[2] && visibility[0]);
   userToolBar->setVisible (visibility[3] && visibility[0]);
   tm_mainwindow()->statusBar()->setVisible (visibility[4]);
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
   tm_mainwindow()->menuBar()->setVisible (visibility[0]);
 #endif
 #endif

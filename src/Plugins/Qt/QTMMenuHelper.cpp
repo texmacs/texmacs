@@ -524,7 +524,7 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
     }
     if (qtkeymap->contains (last_key)) key= qtkeymap[last_key];
     if ((ev->modifiers() & Qt::ShiftModifier) && N(key) > 1) key= "S-" * key;
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
     if (ev->modifiers() & Qt::ControlModifier) key= "C-" * key;
     if (ev->modifiers() & Qt::AltModifier) key= "none";
     if (ev->modifiers() & Qt::MetaModifier) key= "M-" * key;
