@@ -319,6 +319,7 @@ AC_DEFUN([LC_SCATTER_FLAGS],[
               LC_APPEND_FLAG([$[$0]_flag],[lc_libname([$2],[LDFLAGS])])
       ;;
       -Wl,-F*@:}@ LC_APPEND_FLAG([$[$0]_flag],[lc_libname([$2],[LDFLAGS])]);;
+      -Wl,-*@:}@ LC_APPEND_FLAG([$[$0]_flag],[lc_libname([$2],[LDFLAGS])]);;
       -Wl,*@:}@ AC_MSG_WARN(Flag $[$0]_flag dropped for lib $2);;
       -*@:}@ 
         AX_CHECK_COMPILE_FLAG($[$0]_flag,[

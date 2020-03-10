@@ -6312,6 +6312,42 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     fi
   fi
 ;;
+      -Wl,-*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then LDFLAGS=
+  else  while test "$LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$LDFLAGS"
+        LDFLAGS="${LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        LDFLAGS="${LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        LDFLAGS="${LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  LDFLAGS=$(echo $LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
       -Wl,*) { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib " >&5
 $as_echo "$as_me: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib " >&2;};;
       -*)
@@ -6781,6 +6817,42 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
 
       ;;
       -Wl,-F*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then LDFLAGS=
+  else  while test "$LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$LDFLAGS"
+        LDFLAGS="${LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        LDFLAGS="${LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        LDFLAGS="${LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  LDFLAGS=$(echo $LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -Wl,-*)
   if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
   then LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
@@ -7740,6 +7812,42 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
 
       ;;
       -Wl,-F*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $GUILE_LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$GUILE_LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$GUILE_LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then GUILE_LDFLAGS=
+  else  while test "$GUILE_LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$GUILE_LDFLAGS"
+        GUILE_LDFLAGS="${GUILE_LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        GUILE_LDFLAGS="${GUILE_LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        GUILE_LDFLAGS="${GUILE_LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  GUILE_LDFLAGS=$(echo $GUILE_LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$GUILE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -Wl,-*)
   if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
   then GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
@@ -10997,6 +11105,42 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     fi
   fi
 ;;
+      -Wl,-*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $ICONV_LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$ICONV_LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$ICONV_LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then ICONV_LDFLAGS=
+  else  while test "$ICONV_LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$ICONV_LDFLAGS"
+        ICONV_LDFLAGS="${ICONV_LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        ICONV_LDFLAGS="${ICONV_LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        ICONV_LDFLAGS="${ICONV_LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  ICONV_LDFLAGS=$(echo $ICONV_LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
       -Wl,*) { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib ICONV" >&5
 $as_echo "$as_me: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib ICONV" >&2;};;
       -*)
@@ -11467,6 +11611,42 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
 
       ;;
       -Wl,-F*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $ICONV_LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$ICONV_LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$ICONV_LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then ICONV_LDFLAGS=
+  else  while test "$ICONV_LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$ICONV_LDFLAGS"
+        ICONV_LDFLAGS="${ICONV_LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        ICONV_LDFLAGS="${ICONV_LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        ICONV_LDFLAGS="${ICONV_LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  ICONV_LDFLAGS=$(echo $ICONV_LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -Wl,-*)
   if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
   then ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
@@ -12894,6 +13074,42 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     fi
   fi
 ;;
+      -Wl,-*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $ICONV_LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$ICONV_LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$ICONV_LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then ICONV_LDFLAGS=
+  else  while test "$ICONV_LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$ICONV_LDFLAGS"
+        ICONV_LDFLAGS="${ICONV_LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        ICONV_LDFLAGS="${ICONV_LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        ICONV_LDFLAGS="${ICONV_LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  ICONV_LDFLAGS=$(echo $ICONV_LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
       -Wl,*) { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib ICONV" >&5
 $as_echo "$as_me: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib ICONV" >&2;};;
       -*)
@@ -13364,6 +13580,42 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
 
       ;;
       -Wl,-F*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $ICONV_LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$ICONV_LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$ICONV_LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then ICONV_LDFLAGS=
+  else  while test "$ICONV_LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$ICONV_LDFLAGS"
+        ICONV_LDFLAGS="${ICONV_LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        ICONV_LDFLAGS="${ICONV_LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        ICONV_LDFLAGS="${ICONV_LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  ICONV_LDFLAGS=$(echo $ICONV_LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -Wl,-*)
   if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
   then ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
@@ -15090,6 +15342,42 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     fi
   fi
 ;;
+      -Wl,-*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $FREETYPE_LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$FREETYPE_LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$FREETYPE_LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then FREETYPE_LDFLAGS=
+  else  while test "$FREETYPE_LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$FREETYPE_LDFLAGS"
+        FREETYPE_LDFLAGS="${FREETYPE_LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        FREETYPE_LDFLAGS="${FREETYPE_LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        FREETYPE_LDFLAGS="${FREETYPE_LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  FREETYPE_LDFLAGS=$(echo $FREETYPE_LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$FREETYPE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
       -Wl,*) { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib FREETYPE" >&5
 $as_echo "$as_me: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib FREETYPE" >&2;};;
       -*)
@@ -15560,6 +15848,42 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
 
       ;;
       -Wl,-F*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $FREETYPE_LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$FREETYPE_LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$FREETYPE_LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then FREETYPE_LDFLAGS=
+  else  while test "$FREETYPE_LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$FREETYPE_LDFLAGS"
+        FREETYPE_LDFLAGS="${FREETYPE_LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        FREETYPE_LDFLAGS="${FREETYPE_LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        FREETYPE_LDFLAGS="${FREETYPE_LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  FREETYPE_LDFLAGS=$(echo $FREETYPE_LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$FREETYPE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -Wl,-*)
   if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
   then FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
@@ -18754,6 +19078,42 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     fi
   fi
 ;;
+      -Wl,-*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $SPARKLE_LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$SPARKLE_LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$SPARKLE_LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then SPARKLE_LDFLAGS=
+  else  while test "$SPARKLE_LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$SPARKLE_LDFLAGS"
+        SPARKLE_LDFLAGS="${SPARKLE_LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        SPARKLE_LDFLAGS="${SPARKLE_LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        SPARKLE_LDFLAGS="${SPARKLE_LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  SPARKLE_LDFLAGS=$(echo $SPARKLE_LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$SPARKLE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
       -Wl,*) { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib SPARKLE" >&5
 $as_echo "$as_me: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib SPARKLE" >&2;};;
       -*)
@@ -19456,6 +19816,42 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
 
       ;;
       -Wl,-F*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $SPARKLE_LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$SPARKLE_LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$SPARKLE_LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then SPARKLE_LDFLAGS=
+  else  while test "$SPARKLE_LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$SPARKLE_LDFLAGS"
+        SPARKLE_LDFLAGS="${SPARKLE_LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        SPARKLE_LDFLAGS="${SPARKLE_LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        SPARKLE_LDFLAGS="${SPARKLE_LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  SPARKLE_LDFLAGS=$(echo $SPARKLE_LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$SPARKLE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -Wl,-*)
   if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
   then SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
@@ -21464,6 +21860,42 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     fi
   fi
 ;;
+      -Wl,-*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then LDFLAGS=
+  else  while test "$LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$LDFLAGS"
+        LDFLAGS="${LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        LDFLAGS="${LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        LDFLAGS="${LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  LDFLAGS=$(echo $LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
       -Wl,*) { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib " >&5
 $as_echo "$as_me: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib " >&2;};;
       -*)
@@ -21935,6 +22367,42 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
 
       ;;
       -Wl,-F*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then LDFLAGS=
+  else  while test "$LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$LDFLAGS"
+        LDFLAGS="${LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        LDFLAGS="${LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        LDFLAGS="${LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  LDFLAGS=$(echo $LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -Wl,-*)
   if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
   then LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
@@ -23476,6 +23944,42 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     fi
   fi
 ;;
+      -Wl,-*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then QT_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $QT_LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$QT_LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$QT_LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then QT_LDFLAGS=
+  else  while test "$QT_LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$QT_LDFLAGS"
+        QT_LDFLAGS="${QT_LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        QT_LDFLAGS="${QT_LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        QT_LDFLAGS="${QT_LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  QT_LDFLAGS=$(echo $QT_LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       QT_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$QT_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else QT_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
       -Wl,*) { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib QT" >&5
 $as_echo "$as_me: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib QT" >&2;};;
       -*)
@@ -23814,7 +24318,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag -std=c++11" >&2;}
     else unset CXXMACOSX_VERSION_MIN
     fi
 
-	if test -n $CXXMACOSX_VERSION_MIN; then :
+  if test -n $CXXMACOSX_VERSION_MIN; then :
 
 
     if [[ "$QT_CXXFLAGS" =~ $(echo "(^|[[:space:]]+)-mmacosx-version-min(=?|[[:space:]]*)(.*)$") ]]
@@ -23823,81 +24327,795 @@ $as_echo "$as_me: WARNING: Drop duplicate flag -std=c++11" >&2;}
     else unset QTMACOSX_VERSION_MIN
     fi
 
-		if test -n $QTMACOSX_VERSION_MIN; then :
+    if test -n $QTMACOSX_VERSION_MIN; then :
 
-			if cmp_dot_number $CXXMACOSX_VERSION_MIN $QTMACOSX_VERSION_MIN; then :
+      if cmp_dot_number $CXXMACOSX_VERSION_MIN $QTMACOSX_VERSION_MIN; then :
+
 
 
   unset STRIP_ARG_memo
-  if test "$QT_CXXFLAGS" = "-mmacosx-version-min"
+  if test "$QT_CXXFLAGS" = "-mmacosx-version-min=$QTMACOSX_VERSION_MIN"
   then QT_CXXFLAGS=
   else  while test "$QT_CXXFLAGS" != "$STRIP_ARG_memo"
       do STRIP_ARG_memo="$QT_CXXFLAGS"
-        QT_CXXFLAGS="${QT_CXXFLAGS/#-mmacosx-version-min[[:space:]]/}" # at the beginning
-        QT_CXXFLAGS="${QT_CXXFLAGS/%[[:space:]]-mmacosx-version-min/}"    # at the end
-        QT_CXXFLAGS="${QT_CXXFLAGS//[[:space:]]-mmacosx-version-min[[:space:]]/ }"  # all in the middle no consecutive
+        QT_CXXFLAGS="${QT_CXXFLAGS/#-mmacosx-version-min=$QTMACOSX_VERSION_MIN[[:space:]]/}" # at the beginning
+        QT_CXXFLAGS="${QT_CXXFLAGS/%[[:space:]]-mmacosx-version-min=$QTMACOSX_VERSION_MIN/}"    # at the end
+        QT_CXXFLAGS="${QT_CXXFLAGS//[[:space:]]-mmacosx-version-min=$QTMACOSX_VERSION_MIN[[:space:]]/ }"  # all in the middle no consecutive
       done
     fi
   QT_CXXFLAGS=$(echo $QT_CXXFLAGS)  # wipe extra blank if any
   unset ${!STRIP_ARG_*}
 
+
+
   unset STRIP_ARG_memo
-  if test "$QT_CPPFLAGS" = "-mmacosx-version-min"
+  if test "$QT_CPPFLAGS" = "-mmacosx-version-min=$QTMACOSX_VERSION_MIN"
   then QT_CPPFLAGS=
   else  while test "$QT_CPPFLAGS" != "$STRIP_ARG_memo"
       do STRIP_ARG_memo="$QT_CPPFLAGS"
-        QT_CPPFLAGS="${QT_CPPFLAGS/#-mmacosx-version-min[[:space:]]/}" # at the beginning
-        QT_CPPFLAGS="${QT_CPPFLAGS/%[[:space:]]-mmacosx-version-min/}"    # at the end
-        QT_CPPFLAGS="${QT_CPPFLAGS//[[:space:]]-mmacosx-version-min[[:space:]]/ }"  # all in the middle no consecutive
+        QT_CPPFLAGS="${QT_CPPFLAGS/#-mmacosx-version-min=$QTMACOSX_VERSION_MIN[[:space:]]/}" # at the beginning
+        QT_CPPFLAGS="${QT_CPPFLAGS/%[[:space:]]-mmacosx-version-min=$QTMACOSX_VERSION_MIN/}"    # at the end
+        QT_CPPFLAGS="${QT_CPPFLAGS//[[:space:]]-mmacosx-version-min=$QTMACOSX_VERSION_MIN[[:space:]]/ }"  # all in the middle no consecutive
       done
     fi
   QT_CPPFLAGS=$(echo $QT_CPPFLAGS)  # wipe extra blank if any
   unset ${!STRIP_ARG_*}
 
+
+
   unset STRIP_ARG_memo
-  if test "$QT_LDFLAGS" = "-mmacosx-version-min"
+  if test "$QT_LDFLAGS" = "-mmacosx-version-min=$QTMACOSX_VERSION_MIN"
   then QT_LDFLAGS=
   else  while test "$QT_LDFLAGS" != "$STRIP_ARG_memo"
       do STRIP_ARG_memo="$QT_LDFLAGS"
-        QT_LDFLAGS="${QT_LDFLAGS/#-mmacosx-version-min[[:space:]]/}" # at the beginning
-        QT_LDFLAGS="${QT_LDFLAGS/%[[:space:]]-mmacosx-version-min/}"    # at the end
-        QT_LDFLAGS="${QT_LDFLAGS//[[:space:]]-mmacosx-version-min[[:space:]]/ }"  # all in the middle no consecutive
+        QT_LDFLAGS="${QT_LDFLAGS/#-mmacosx-version-min=$QTMACOSX_VERSION_MIN[[:space:]]/}" # at the beginning
+        QT_LDFLAGS="${QT_LDFLAGS/%[[:space:]]-mmacosx-version-min=$QTMACOSX_VERSION_MIN/}"    # at the end
+        QT_LDFLAGS="${QT_LDFLAGS//[[:space:]]-mmacosx-version-min=$QTMACOSX_VERSION_MIN[[:space:]]/ }"  # all in the middle no consecutive
       done
     fi
   QT_LDFLAGS=$(echo $QT_LDFLAGS)  # wipe extra blank if any
   unset ${!STRIP_ARG_*}
 
 
+
 else
 
 
+
   unset STRIP_ARG_memo
-  if test "$CXXFLAGS" = "-mmacosx-version-min"
+  if test "$CXXFLAGS" = "-mmacosx-version-min=$CXXMACOSX_VERSION_MIN"
   then CXXFLAGS=
   else  while test "$CXXFLAGS" != "$STRIP_ARG_memo"
       do STRIP_ARG_memo="$CXXFLAGS"
-        CXXFLAGS="${CXXFLAGS/#-mmacosx-version-min[[:space:]]/}" # at the beginning
-        CXXFLAGS="${CXXFLAGS/%[[:space:]]-mmacosx-version-min/}"    # at the end
-        CXXFLAGS="${CXXFLAGS//[[:space:]]-mmacosx-version-min[[:space:]]/ }"  # all in the middle no consecutive
+        CXXFLAGS="${CXXFLAGS/#-mmacosx-version-min=$CXXMACOSX_VERSION_MIN[[:space:]]/}" # at the beginning
+        CXXFLAGS="${CXXFLAGS/%[[:space:]]-mmacosx-version-min=$CXXMACOSX_VERSION_MIN/}"    # at the end
+        CXXFLAGS="${CXXFLAGS//[[:space:]]-mmacosx-version-min=$CXXMACOSX_VERSION_MIN[[:space:]]/ }"  # all in the middle no consecutive
       done
     fi
   CXXFLAGS=$(echo $CXXFLAGS)  # wipe extra blank if any
   unset ${!STRIP_ARG_*}
 
+
+  LC_MERGE_FLAGS_list="-mmacosx-version-min=$QTMACOSX_VERSION_MIN"
+  if [[ "CFLAGS" =~ $(echo "(^|_)LIBS") ]]
+  then
+  LC_PREPEND_LIST_nlist="-mmacosx-version-min=$QTMACOSX_VERSION_MIN"
+  #pop the old list
+
+  LC_GETPOP_FLAG_sepa=-
+  LC_GETPOP_FLAG_1=" $(echo $CFLAGS)" # remove unnecessary spaces and add a heading space
+  CFLAGS=${LC_GETPOP_FLAG_1%% $LC_GETPOP_FLAG_sepa*} # get heading
+  if test "$CFLAGS" = "$LC_GETPOP_FLAG_1"
+  then CFLAGS=${CFLAGS#}; unset LC_PREPEND_LIST_flag     # flag not found
+  else
+    LC_GETPOP_FLAG_tail=${LC_GETPOP_FLAG_1#$CFLAGS } # strip heading
+    LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
+    if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
+    then CFLAGS=$(echo $CFLAGS)
+    else CFLAGS=$(echo $CFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    fi
+
+  LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}   # normalize path separator
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\'}   # remove quote
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+    if [ $LC_GETPOP_FLAG_sepa != - ]    # just return the value
+    then LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag#$LC_GETPOP_FLAG_sepa}
+    fi
+  fi
+
+  unset ${!LC_GETPOP_FLAG_*}
+
+  while [[ $LC_PREPEND_LIST_flag ]]
+  do
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
+  elif [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_PREPEND_LIST_flag"
+  do  while [[ $LC_PREPEND_LIST_nlist != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$LC_PREPEND_LIST_nlist
+
   unset STRIP_ARG_memo
-  if test "$CFLAGS" = "-mmacosx-version-min"
+  if test "$LC_PREPEND_LIST_nlist" = "$STRIP_ALL_ARGS_arg"
+  then LC_PREPEND_LIST_nlist=
+  else  while test "$LC_PREPEND_LIST_nlist" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$LC_PREPEND_LIST_nlist"
+        LC_PREPEND_LIST_nlist="${LC_PREPEND_LIST_nlist/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        LC_PREPEND_LIST_nlist="${LC_PREPEND_LIST_nlist/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        LC_PREPEND_LIST_nlist="${LC_PREPEND_LIST_nlist//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  LC_PREPEND_LIST_nlist=$(echo $LC_PREPEND_LIST_nlist)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
+  else
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
+    else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
+    fi
+  fi
+
+
+  LC_GETPOP_FLAG_sepa=-
+  LC_GETPOP_FLAG_1=" $(echo $CFLAGS)" # remove unnecessary spaces and add a heading space
+  CFLAGS=${LC_GETPOP_FLAG_1%% $LC_GETPOP_FLAG_sepa*} # get heading
+  if test "$CFLAGS" = "$LC_GETPOP_FLAG_1"
+  then CFLAGS=${CFLAGS#}; unset LC_PREPEND_LIST_flag     # flag not found
+  else
+    LC_GETPOP_FLAG_tail=${LC_GETPOP_FLAG_1#$CFLAGS } # strip heading
+    LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
+    if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
+    then CFLAGS=$(echo $CFLAGS)
+    else CFLAGS=$(echo $CFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    fi
+
+  LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}   # normalize path separator
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\'}   # remove quote
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+    if [ $LC_GETPOP_FLAG_sepa != - ]    # just return the value
+    then LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag#$LC_GETPOP_FLAG_sepa}
+    fi
+  fi
+
+  unset ${!LC_GETPOP_FLAG_*}
+
+
+  done
+  CFLAGS="$LC_PREPEND_LIST_nlist"
+  unset ${!LC_PREPEND_LIST_*}
+
+  else  while [ "$LC_MERGE_FLAGS_list" ]
+        do
+  LC_GETPOP_FLAG_sepa=-
+  LC_GETPOP_FLAG_1=" $(echo $LC_MERGE_FLAGS_list)" # remove unnecessary spaces and add a heading space
+  LC_MERGE_FLAGS_list=${LC_GETPOP_FLAG_1%% $LC_GETPOP_FLAG_sepa*} # get heading
+  if test "$LC_MERGE_FLAGS_list" = "$LC_GETPOP_FLAG_1"
+  then LC_MERGE_FLAGS_list=${LC_MERGE_FLAGS_list#}; unset LC_MERGE_FLAGS_flag     # flag not found
+  else
+    LC_GETPOP_FLAG_tail=${LC_GETPOP_FLAG_1#$LC_MERGE_FLAGS_list } # strip heading
+    LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
+    if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
+    then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    fi
+
+  LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
+  LC_MERGE_FLAGS_flag=${LC_MERGE_FLAGS_flag//\/\//\/}   # normalize path separator
+  LC_MERGE_FLAGS_flag=${LC_MERGE_FLAGS_flag//\'}   # remove quote
+
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_MERGE_FLAGS_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+    if [ $LC_GETPOP_FLAG_sepa != - ]    # just return the value
+    then LC_MERGE_FLAGS_flag=${LC_MERGE_FLAGS_flag#$LC_GETPOP_FLAG_sepa}
+    fi
+  fi
+
+  unset ${!LC_GETPOP_FLAG_*}
+
+
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then CFLAGS+=" $LC_MERGE_FLAGS_flag"
+  elif [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_MERGE_FLAGS_flag"
+  do  while [[ $CFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$CFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$CFLAGS" = "$STRIP_ALL_ARGS_arg"
   then CFLAGS=
   else  while test "$CFLAGS" != "$STRIP_ARG_memo"
       do STRIP_ARG_memo="$CFLAGS"
-        CFLAGS="${CFLAGS/#-mmacosx-version-min[[:space:]]/}" # at the beginning
-        CFLAGS="${CFLAGS/%[[:space:]]-mmacosx-version-min/}"    # at the end
-        CFLAGS="${CFLAGS//[[:space:]]-mmacosx-version-min[[:space:]]/ }"  # all in the middle no consecutive
+        CFLAGS="${CFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        CFLAGS="${CFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        CFLAGS="${CFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
       done
     fi
   CFLAGS=$(echo $CFLAGS)  # wipe extra blank if any
   unset ${!STRIP_ARG_*}
 
-				{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: mmacosx-version-min adjusted to $QTMACOSX_VERSION_MIN" >&5
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       CFLAGS+=" $LC_MERGE_FLAGS_flag"
+  else
+    if [[ "$CFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
+    else CFLAGS+=" $LC_MERGE_FLAGS_flag"
+    fi
+  fi
+
+        done
+  fi
+  unset ${!LC_MERGE_FLAGS_*}
+
+
+  LC_MERGE_FLAGS_list="-mmacosx-version-min=$QTMACOSX_VERSION_MIN"
+  if [[ "CXXFLAGS" =~ $(echo "(^|_)LIBS") ]]
+  then
+  LC_PREPEND_LIST_nlist="-mmacosx-version-min=$QTMACOSX_VERSION_MIN"
+  #pop the old list
+
+  LC_GETPOP_FLAG_sepa=-
+  LC_GETPOP_FLAG_1=" $(echo $CXXFLAGS)" # remove unnecessary spaces and add a heading space
+  CXXFLAGS=${LC_GETPOP_FLAG_1%% $LC_GETPOP_FLAG_sepa*} # get heading
+  if test "$CXXFLAGS" = "$LC_GETPOP_FLAG_1"
+  then CXXFLAGS=${CXXFLAGS#}; unset LC_PREPEND_LIST_flag     # flag not found
+  else
+    LC_GETPOP_FLAG_tail=${LC_GETPOP_FLAG_1#$CXXFLAGS } # strip heading
+    LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
+    if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
+    then CXXFLAGS=$(echo $CXXFLAGS)
+    else CXXFLAGS=$(echo $CXXFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    fi
+
+  LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}   # normalize path separator
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\'}   # remove quote
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+    if [ $LC_GETPOP_FLAG_sepa != - ]    # just return the value
+    then LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag#$LC_GETPOP_FLAG_sepa}
+    fi
+  fi
+
+  unset ${!LC_GETPOP_FLAG_*}
+
+  while [[ $LC_PREPEND_LIST_flag ]]
+  do
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
+  elif [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_PREPEND_LIST_flag"
+  do  while [[ $LC_PREPEND_LIST_nlist != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$LC_PREPEND_LIST_nlist
+
+  unset STRIP_ARG_memo
+  if test "$LC_PREPEND_LIST_nlist" = "$STRIP_ALL_ARGS_arg"
+  then LC_PREPEND_LIST_nlist=
+  else  while test "$LC_PREPEND_LIST_nlist" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$LC_PREPEND_LIST_nlist"
+        LC_PREPEND_LIST_nlist="${LC_PREPEND_LIST_nlist/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        LC_PREPEND_LIST_nlist="${LC_PREPEND_LIST_nlist/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        LC_PREPEND_LIST_nlist="${LC_PREPEND_LIST_nlist//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  LC_PREPEND_LIST_nlist=$(echo $LC_PREPEND_LIST_nlist)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
+  else
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
+    else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
+    fi
+  fi
+
+
+  LC_GETPOP_FLAG_sepa=-
+  LC_GETPOP_FLAG_1=" $(echo $CXXFLAGS)" # remove unnecessary spaces and add a heading space
+  CXXFLAGS=${LC_GETPOP_FLAG_1%% $LC_GETPOP_FLAG_sepa*} # get heading
+  if test "$CXXFLAGS" = "$LC_GETPOP_FLAG_1"
+  then CXXFLAGS=${CXXFLAGS#}; unset LC_PREPEND_LIST_flag     # flag not found
+  else
+    LC_GETPOP_FLAG_tail=${LC_GETPOP_FLAG_1#$CXXFLAGS } # strip heading
+    LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
+    if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
+    then CXXFLAGS=$(echo $CXXFLAGS)
+    else CXXFLAGS=$(echo $CXXFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    fi
+
+  LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}   # normalize path separator
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\'}   # remove quote
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+    if [ $LC_GETPOP_FLAG_sepa != - ]    # just return the value
+    then LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag#$LC_GETPOP_FLAG_sepa}
+    fi
+  fi
+
+  unset ${!LC_GETPOP_FLAG_*}
+
+
+  done
+  CXXFLAGS="$LC_PREPEND_LIST_nlist"
+  unset ${!LC_PREPEND_LIST_*}
+
+  else  while [ "$LC_MERGE_FLAGS_list" ]
+        do
+  LC_GETPOP_FLAG_sepa=-
+  LC_GETPOP_FLAG_1=" $(echo $LC_MERGE_FLAGS_list)" # remove unnecessary spaces and add a heading space
+  LC_MERGE_FLAGS_list=${LC_GETPOP_FLAG_1%% $LC_GETPOP_FLAG_sepa*} # get heading
+  if test "$LC_MERGE_FLAGS_list" = "$LC_GETPOP_FLAG_1"
+  then LC_MERGE_FLAGS_list=${LC_MERGE_FLAGS_list#}; unset LC_MERGE_FLAGS_flag     # flag not found
+  else
+    LC_GETPOP_FLAG_tail=${LC_GETPOP_FLAG_1#$LC_MERGE_FLAGS_list } # strip heading
+    LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
+    if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
+    then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    fi
+
+  LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
+  LC_MERGE_FLAGS_flag=${LC_MERGE_FLAGS_flag//\/\//\/}   # normalize path separator
+  LC_MERGE_FLAGS_flag=${LC_MERGE_FLAGS_flag//\'}   # remove quote
+
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_MERGE_FLAGS_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+    if [ $LC_GETPOP_FLAG_sepa != - ]    # just return the value
+    then LC_MERGE_FLAGS_flag=${LC_MERGE_FLAGS_flag#$LC_GETPOP_FLAG_sepa}
+    fi
+  fi
+
+  unset ${!LC_GETPOP_FLAG_*}
+
+
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then CXXFLAGS+=" $LC_MERGE_FLAGS_flag"
+  elif [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_MERGE_FLAGS_flag"
+  do  while [[ $CXXFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$CXXFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$CXXFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then CXXFLAGS=
+  else  while test "$CXXFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$CXXFLAGS"
+        CXXFLAGS="${CXXFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        CXXFLAGS="${CXXFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        CXXFLAGS="${CXXFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  CXXFLAGS=$(echo $CXXFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       CXXFLAGS+=" $LC_MERGE_FLAGS_flag"
+  else
+    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
+    else CXXFLAGS+=" $LC_MERGE_FLAGS_flag"
+    fi
+  fi
+
+        done
+  fi
+  unset ${!LC_MERGE_FLAGS_*}
+
+
+
+  unset STRIP_ARG_memo
+  if test "$CFLAGS" = "-mmacosx-version-min=$CXXMACOSX_VERSION_MIN"
+  then CFLAGS=
+  else  while test "$CFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$CFLAGS"
+        CFLAGS="${CFLAGS/#-mmacosx-version-min=$CXXMACOSX_VERSION_MIN[[:space:]]/}" # at the beginning
+        CFLAGS="${CFLAGS/%[[:space:]]-mmacosx-version-min=$CXXMACOSX_VERSION_MIN/}"    # at the end
+        CFLAGS="${CFLAGS//[[:space:]]-mmacosx-version-min=$CXXMACOSX_VERSION_MIN[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  CFLAGS=$(echo $CFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+
+  LC_MERGE_FLAGS_list="-mmacosx-version-min=$QTMACOSX_VERSION_MIN"
+  if [[ "CFLAGS" =~ $(echo "(^|_)LIBS") ]]
+  then
+  LC_PREPEND_LIST_nlist="-mmacosx-version-min=$QTMACOSX_VERSION_MIN"
+  #pop the old list
+
+  LC_GETPOP_FLAG_sepa=-
+  LC_GETPOP_FLAG_1=" $(echo $CFLAGS)" # remove unnecessary spaces and add a heading space
+  CFLAGS=${LC_GETPOP_FLAG_1%% $LC_GETPOP_FLAG_sepa*} # get heading
+  if test "$CFLAGS" = "$LC_GETPOP_FLAG_1"
+  then CFLAGS=${CFLAGS#}; unset LC_PREPEND_LIST_flag     # flag not found
+  else
+    LC_GETPOP_FLAG_tail=${LC_GETPOP_FLAG_1#$CFLAGS } # strip heading
+    LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
+    if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
+    then CFLAGS=$(echo $CFLAGS)
+    else CFLAGS=$(echo $CFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    fi
+
+  LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}   # normalize path separator
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\'}   # remove quote
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+    if [ $LC_GETPOP_FLAG_sepa != - ]    # just return the value
+    then LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag#$LC_GETPOP_FLAG_sepa}
+    fi
+  fi
+
+  unset ${!LC_GETPOP_FLAG_*}
+
+  while [[ $LC_PREPEND_LIST_flag ]]
+  do
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
+  elif [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_PREPEND_LIST_flag"
+  do  while [[ $LC_PREPEND_LIST_nlist != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$LC_PREPEND_LIST_nlist
+
+  unset STRIP_ARG_memo
+  if test "$LC_PREPEND_LIST_nlist" = "$STRIP_ALL_ARGS_arg"
+  then LC_PREPEND_LIST_nlist=
+  else  while test "$LC_PREPEND_LIST_nlist" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$LC_PREPEND_LIST_nlist"
+        LC_PREPEND_LIST_nlist="${LC_PREPEND_LIST_nlist/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        LC_PREPEND_LIST_nlist="${LC_PREPEND_LIST_nlist/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        LC_PREPEND_LIST_nlist="${LC_PREPEND_LIST_nlist//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  LC_PREPEND_LIST_nlist=$(echo $LC_PREPEND_LIST_nlist)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
+  else
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
+    else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
+    fi
+  fi
+
+
+  LC_GETPOP_FLAG_sepa=-
+  LC_GETPOP_FLAG_1=" $(echo $CFLAGS)" # remove unnecessary spaces and add a heading space
+  CFLAGS=${LC_GETPOP_FLAG_1%% $LC_GETPOP_FLAG_sepa*} # get heading
+  if test "$CFLAGS" = "$LC_GETPOP_FLAG_1"
+  then CFLAGS=${CFLAGS#}; unset LC_PREPEND_LIST_flag     # flag not found
+  else
+    LC_GETPOP_FLAG_tail=${LC_GETPOP_FLAG_1#$CFLAGS } # strip heading
+    LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
+    if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
+    then CFLAGS=$(echo $CFLAGS)
+    else CFLAGS=$(echo $CFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    fi
+
+  LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}   # normalize path separator
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\'}   # remove quote
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+    if [ $LC_GETPOP_FLAG_sepa != - ]    # just return the value
+    then LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag#$LC_GETPOP_FLAG_sepa}
+    fi
+  fi
+
+  unset ${!LC_GETPOP_FLAG_*}
+
+
+  done
+  CFLAGS="$LC_PREPEND_LIST_nlist"
+  unset ${!LC_PREPEND_LIST_*}
+
+  else  while [ "$LC_MERGE_FLAGS_list" ]
+        do
+  LC_GETPOP_FLAG_sepa=-
+  LC_GETPOP_FLAG_1=" $(echo $LC_MERGE_FLAGS_list)" # remove unnecessary spaces and add a heading space
+  LC_MERGE_FLAGS_list=${LC_GETPOP_FLAG_1%% $LC_GETPOP_FLAG_sepa*} # get heading
+  if test "$LC_MERGE_FLAGS_list" = "$LC_GETPOP_FLAG_1"
+  then LC_MERGE_FLAGS_list=${LC_MERGE_FLAGS_list#}; unset LC_MERGE_FLAGS_flag     # flag not found
+  else
+    LC_GETPOP_FLAG_tail=${LC_GETPOP_FLAG_1#$LC_MERGE_FLAGS_list } # strip heading
+    LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
+    if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
+    then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    fi
+
+  LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
+  LC_MERGE_FLAGS_flag=${LC_MERGE_FLAGS_flag//\/\//\/}   # normalize path separator
+  LC_MERGE_FLAGS_flag=${LC_MERGE_FLAGS_flag//\'}   # remove quote
+
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_MERGE_FLAGS_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+    if [ $LC_GETPOP_FLAG_sepa != - ]    # just return the value
+    then LC_MERGE_FLAGS_flag=${LC_MERGE_FLAGS_flag#$LC_GETPOP_FLAG_sepa}
+    fi
+  fi
+
+  unset ${!LC_GETPOP_FLAG_*}
+
+
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then CFLAGS+=" $LC_MERGE_FLAGS_flag"
+  elif [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_MERGE_FLAGS_flag"
+  do  while [[ $CFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$CFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$CFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then CFLAGS=
+  else  while test "$CFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$CFLAGS"
+        CFLAGS="${CFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        CFLAGS="${CFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        CFLAGS="${CFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  CFLAGS=$(echo $CFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       CFLAGS+=" $LC_MERGE_FLAGS_flag"
+  else
+    if [[ "$CFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
+    else CFLAGS+=" $LC_MERGE_FLAGS_flag"
+    fi
+  fi
+
+        done
+  fi
+  unset ${!LC_MERGE_FLAGS_*}
+
+
+  LC_MERGE_FLAGS_list="-mmacosx-version-min=$QTMACOSX_VERSION_MIN"
+  if [[ "CXXFLAGS" =~ $(echo "(^|_)LIBS") ]]
+  then
+  LC_PREPEND_LIST_nlist="-mmacosx-version-min=$QTMACOSX_VERSION_MIN"
+  #pop the old list
+
+  LC_GETPOP_FLAG_sepa=-
+  LC_GETPOP_FLAG_1=" $(echo $CXXFLAGS)" # remove unnecessary spaces and add a heading space
+  CXXFLAGS=${LC_GETPOP_FLAG_1%% $LC_GETPOP_FLAG_sepa*} # get heading
+  if test "$CXXFLAGS" = "$LC_GETPOP_FLAG_1"
+  then CXXFLAGS=${CXXFLAGS#}; unset LC_PREPEND_LIST_flag     # flag not found
+  else
+    LC_GETPOP_FLAG_tail=${LC_GETPOP_FLAG_1#$CXXFLAGS } # strip heading
+    LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
+    if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
+    then CXXFLAGS=$(echo $CXXFLAGS)
+    else CXXFLAGS=$(echo $CXXFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    fi
+
+  LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}   # normalize path separator
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\'}   # remove quote
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+    if [ $LC_GETPOP_FLAG_sepa != - ]    # just return the value
+    then LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag#$LC_GETPOP_FLAG_sepa}
+    fi
+  fi
+
+  unset ${!LC_GETPOP_FLAG_*}
+
+  while [[ $LC_PREPEND_LIST_flag ]]
+  do
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
+  elif [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_PREPEND_LIST_flag"
+  do  while [[ $LC_PREPEND_LIST_nlist != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$LC_PREPEND_LIST_nlist
+
+  unset STRIP_ARG_memo
+  if test "$LC_PREPEND_LIST_nlist" = "$STRIP_ALL_ARGS_arg"
+  then LC_PREPEND_LIST_nlist=
+  else  while test "$LC_PREPEND_LIST_nlist" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$LC_PREPEND_LIST_nlist"
+        LC_PREPEND_LIST_nlist="${LC_PREPEND_LIST_nlist/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        LC_PREPEND_LIST_nlist="${LC_PREPEND_LIST_nlist/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        LC_PREPEND_LIST_nlist="${LC_PREPEND_LIST_nlist//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  LC_PREPEND_LIST_nlist=$(echo $LC_PREPEND_LIST_nlist)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
+  else
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
+    else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
+    fi
+  fi
+
+
+  LC_GETPOP_FLAG_sepa=-
+  LC_GETPOP_FLAG_1=" $(echo $CXXFLAGS)" # remove unnecessary spaces and add a heading space
+  CXXFLAGS=${LC_GETPOP_FLAG_1%% $LC_GETPOP_FLAG_sepa*} # get heading
+  if test "$CXXFLAGS" = "$LC_GETPOP_FLAG_1"
+  then CXXFLAGS=${CXXFLAGS#}; unset LC_PREPEND_LIST_flag     # flag not found
+  else
+    LC_GETPOP_FLAG_tail=${LC_GETPOP_FLAG_1#$CXXFLAGS } # strip heading
+    LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
+    if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
+    then CXXFLAGS=$(echo $CXXFLAGS)
+    else CXXFLAGS=$(echo $CXXFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    fi
+
+  LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}   # normalize path separator
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\'}   # remove quote
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+    if [ $LC_GETPOP_FLAG_sepa != - ]    # just return the value
+    then LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag#$LC_GETPOP_FLAG_sepa}
+    fi
+  fi
+
+  unset ${!LC_GETPOP_FLAG_*}
+
+
+  done
+  CXXFLAGS="$LC_PREPEND_LIST_nlist"
+  unset ${!LC_PREPEND_LIST_*}
+
+  else  while [ "$LC_MERGE_FLAGS_list" ]
+        do
+  LC_GETPOP_FLAG_sepa=-
+  LC_GETPOP_FLAG_1=" $(echo $LC_MERGE_FLAGS_list)" # remove unnecessary spaces and add a heading space
+  LC_MERGE_FLAGS_list=${LC_GETPOP_FLAG_1%% $LC_GETPOP_FLAG_sepa*} # get heading
+  if test "$LC_MERGE_FLAGS_list" = "$LC_GETPOP_FLAG_1"
+  then LC_MERGE_FLAGS_list=${LC_MERGE_FLAGS_list#}; unset LC_MERGE_FLAGS_flag     # flag not found
+  else
+    LC_GETPOP_FLAG_tail=${LC_GETPOP_FLAG_1#$LC_MERGE_FLAGS_list } # strip heading
+    LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
+    if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
+    then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    fi
+
+  LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
+  LC_MERGE_FLAGS_flag=${LC_MERGE_FLAGS_flag//\/\//\/}   # normalize path separator
+  LC_MERGE_FLAGS_flag=${LC_MERGE_FLAGS_flag//\'}   # remove quote
+
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_MERGE_FLAGS_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+    if [ $LC_GETPOP_FLAG_sepa != - ]    # just return the value
+    then LC_MERGE_FLAGS_flag=${LC_MERGE_FLAGS_flag#$LC_GETPOP_FLAG_sepa}
+    fi
+  fi
+
+  unset ${!LC_GETPOP_FLAG_*}
+
+
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then CXXFLAGS+=" $LC_MERGE_FLAGS_flag"
+  elif [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_MERGE_FLAGS_flag"
+  do  while [[ $CXXFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$CXXFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$CXXFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then CXXFLAGS=
+  else  while test "$CXXFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$CXXFLAGS"
+        CXXFLAGS="${CXXFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        CXXFLAGS="${CXXFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        CXXFLAGS="${CXXFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  CXXFLAGS=$(echo $CXXFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       CXXFLAGS+=" $LC_MERGE_FLAGS_flag"
+  else
+    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
+    else CXXFLAGS+=" $LC_MERGE_FLAGS_flag"
+    fi
+  fi
+
+        done
+  fi
+  unset ${!LC_MERGE_FLAGS_*}
+
+
+        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: mmacosx-version-min adjusted to $QTMACOSX_VERSION_MIN" >&5
 $as_echo "$as_me: WARNING: mmacosx-version-min adjusted to $QTMACOSX_VERSION_MIN" >&2;}
 
 fi
@@ -24786,6 +26004,42 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
 
       ;;
       -Wl,-F*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then X11_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $X11_LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$X11_LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$X11_LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then X11_LDFLAGS=
+  else  while test "$X11_LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$X11_LDFLAGS"
+        X11_LDFLAGS="${X11_LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        X11_LDFLAGS="${X11_LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        X11_LDFLAGS="${X11_LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  X11_LDFLAGS=$(echo $X11_LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       X11_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$X11_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else X11_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -Wl,-*)
   if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
   then X11_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
