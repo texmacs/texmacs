@@ -3,6 +3,11 @@
 # This file is part of AutoTroll.
 # Copyright (C) 2006-2013  Benoit Sigoure <benoit.sigoure@lrde.epita.fr>
 #
+# 2020 Denis Raux LIX
+#   Remove platform definition for Darwin 
+#   Add merging of variables defined in makefile
+#
+#
 # AutoTroll is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation; either version 2
@@ -88,6 +93,15 @@
 # BUILT_SOURCES. If you name them properly (eg: .moc.cc, .qrc.cc, .ui.cc -- of
 # course you can use .cpp or .cxx or .C rather than .cc) AutoTroll will build
 # them automagically for you (using implicit rules defined in autotroll.mk).
+
+
+AC_DEFUN([DR_MERGE],[
+  [$0]_tmp1=$$1
+  [$0]_tmp1=${[$0]_tmp1//(/}
+  [$0]_tmp1=${[$0]_tmp1//)/}
+  eval [$1]=\"$[$0]_tmp1\"
+  unset ${![$0]_*}
+])
 
 m4_define([_AUTOTROLL_SERIAL], [m4_translit([
 # serial 10
@@ -227,7 +241,6 @@ dnl Memo: AC_ARG_WITH(package, help-string, [if-given], [if-not-given])
   case $host_os in
     darwin*)
       at_darwin=yes
-      at_qmake_args='-spec macx-g++'
       ;;
   esac
   AC_MSG_RESULT([$at_darwin])
@@ -494,24 +507,30 @@ instead" >&AS_MESSAGE_LOG_FD
   AC_CACHE_CHECK([for the CFLAGS to use with Qt], [at_cv_env_QT_CFLAGS],
   [at_cv_env_QT_CFLAGS=`sed "/^CFLAGS@<:@^A-Z=@:>@*=/!d;$qt_sed_filter" $at_mfile`])
   AC_SUBST([QT_CFLAGS], [$at_cv_env_QT_CFLAGS])
+  DR_MERGE([QT_CFLAGS])
 
   # Find the CXXFLAGS of Qt.
   AC_CACHE_CHECK([for the CXXFLAGS to use with Qt], [at_cv_env_QT_CXXFLAGS],
   [at_cv_env_QT_CXXFLAGS=`sed "/^CXXFLAGS@<:@^A-Z=@:>@*=/!d;$qt_sed_filter" $at_mfile`])
   AC_SUBST([QT_CXXFLAGS], [$at_cv_env_QT_CXXFLAGS])
+  DR_MERGE([QT_CXXFLAGS])
 
   # Find the INCPATH of Qt.
   AC_CACHE_CHECK([for the INCPATH to use with Qt], [at_cv_env_QT_INCPATH],
   [at_cv_env_QT_INCPATH=`sed "/^INCPATH@<:@^A-Z=@:>@*=/!d;$qt_sed_filter" $at_mfile`])
   AC_SUBST([QT_INCPATH], [$at_cv_env_QT_INCPATH])
+  DR_MERGE([QT_INCPATH])
 
   AC_SUBST([QT_CPPFLAGS], ["$at_cv_env_QT_DEFINES $at_cv_env_QT_INCPATH"])
+  DR_MERGE([QT_CPPFLAGS])
 
   # Find the LFLAGS of Qt (Should have been named LDFLAGS)
   AC_CACHE_CHECK([for the LDFLAGS to use with Qt], [at_cv_env_QT_LDFLAGS],
   [at_cv_env_QT_LDFLAGS=`sed "/^LFLAGS@<:@^A-Z=@:>@*=/!d;$qt_sed_filter" $at_mfile`])
   AC_SUBST([QT_LFLAGS], [$at_cv_env_QT_LDFLAGS])
   AC_SUBST([QT_LDFLAGS], [$at_cv_env_QT_LDFLAGS])
+  DR_MERGE([QT_LFLAGS])
+  DR_MERGE([QT_LDFLAGS])
 
   # Find the LIBS of Qt.
   AC_CACHE_CHECK([for the LIBS to use with Qt], [at_cv_env_QT_LIBS],
@@ -525,6 +544,7 @@ instead" >&AS_MESSAGE_LOG_FD
    fi
   ])
   AC_SUBST([QT_LIBS], [$at_cv_env_QT_LIBS])
+  DR_MERGE([QT_LIBS])
 
   cd .. && rm -rf conftest.dir
 
