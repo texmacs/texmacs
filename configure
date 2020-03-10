@@ -2944,6 +2944,22 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
 
+# compare dotted numbers
+# return true if the first is biggest
+function cmp_dot_number {
+  local -i n1 n2 i=0
+  n1=(${1//./ })
+  n2=(${2//./ })
+  while test -n "${n1[$i]}" -a -n "${n2[$i]}"
+  do ((${n1[$i]} > ${n2[$i]}))  && return 0
+     ((${n1[$i]} < ${n2[$i]}))  && return 1
+     i+=1
+  done
+  test -n ${n1[$i]} && return 0
+  return 1
+}
+
+
 #--------------------------------------------------------------------
 # Export version and package name
 #--------------------------------------------------------------------
@@ -8377,13 +8393,13 @@ fi
 
 
 
-  	CFLAGS="$BASE_CFLAGS $GUILE_CFLAGS"
+    CFLAGS="$BASE_CFLAGS $GUILE_CFLAGS"
 
-  	CXXFLAGS="$BASE_CXXFLAGS $GUILE_CXXFLAGS"
+    CXXFLAGS="$BASE_CXXFLAGS $GUILE_CXXFLAGS"
 
-  	CPPFLAGS="$BASE_CPPFLAGS $GUILE_CPPFLAGS"
+    CPPFLAGS="$BASE_CPPFLAGS $GUILE_CPPFLAGS"
 
-  	LIBS="$BASE_LIBS $GUILE_LIBS"
+    LIBS="$BASE_LIBS $GUILE_LIBS"
 
 
   LC_MERGE_FLAGS_list="$GUILE_LDFLAGS"
@@ -11767,13 +11783,13 @@ fi
 
 
 
-  	CFLAGS="$BASE_CFLAGS $ICONV_CFLAGS"
+    CFLAGS="$BASE_CFLAGS $ICONV_CFLAGS"
 
-  	CXXFLAGS="$BASE_CXXFLAGS $ICONV_CXXFLAGS"
+    CXXFLAGS="$BASE_CXXFLAGS $ICONV_CXXFLAGS"
 
-  	CPPFLAGS="$BASE_CPPFLAGS $ICONV_CPPFLAGS"
+    CPPFLAGS="$BASE_CPPFLAGS $ICONV_CPPFLAGS"
 
-  	LIBS="$BASE_LIBS $ICONV_LIBS"
+    LIBS="$BASE_LIBS $ICONV_LIBS"
 
 
   LC_MERGE_FLAGS_list="$ICONV_LDFLAGS"
@@ -13664,13 +13680,13 @@ fi
 
 
 
-  	CFLAGS="$BASE_CFLAGS $ICONV_CFLAGS"
+    CFLAGS="$BASE_CFLAGS $ICONV_CFLAGS"
 
-  	CXXFLAGS="$BASE_CXXFLAGS $ICONV_CXXFLAGS"
+    CXXFLAGS="$BASE_CXXFLAGS $ICONV_CXXFLAGS"
 
-  	CPPFLAGS="$BASE_CPPFLAGS $ICONV_CPPFLAGS"
+    CPPFLAGS="$BASE_CPPFLAGS $ICONV_CPPFLAGS"
 
-  	LIBS="$BASE_LIBS $ICONV_LIBS"
+    LIBS="$BASE_LIBS $ICONV_LIBS"
 
 
   LC_MERGE_FLAGS_list="$ICONV_LDFLAGS"
@@ -15867,13 +15883,13 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
 
 
-  	CFLAGS="$BASE_CFLAGS $FREETYPE_CFLAGS"
+    CFLAGS="$BASE_CFLAGS $FREETYPE_CFLAGS"
 
-  	CXXFLAGS="$BASE_CXXFLAGS $FREETYPE_CXXFLAGS"
+    CXXFLAGS="$BASE_CXXFLAGS $FREETYPE_CXXFLAGS"
 
-  	CPPFLAGS="$BASE_CPPFLAGS $FREETYPE_CPPFLAGS"
+    CPPFLAGS="$BASE_CPPFLAGS $FREETYPE_CPPFLAGS"
 
-  	LIBS="$BASE_LIBS $FREETYPE_LIBS"
+    LIBS="$BASE_LIBS $FREETYPE_LIBS"
 
 
   LC_MERGE_FLAGS_list="$FREETYPE_LDFLAGS"
@@ -18993,13 +19009,13 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
 
 
-  	CFLAGS="$BASE_CFLAGS $SPARKLE_CFLAGS"
+    CFLAGS="$BASE_CFLAGS $SPARKLE_CFLAGS"
 
-  	CXXFLAGS="$BASE_CXXFLAGS $SPARKLE_CXXFLAGS"
+    CXXFLAGS="$BASE_CXXFLAGS $SPARKLE_CXXFLAGS"
 
-  	CPPFLAGS="$BASE_CPPFLAGS $SPARKLE_CPPFLAGS"
+    CPPFLAGS="$BASE_CPPFLAGS $SPARKLE_CPPFLAGS"
 
-  	LIBS="$BASE_LIBS $SPARKLE_LIBS"
+    LIBS="$BASE_LIBS $SPARKLE_LIBS"
 
 
   LC_MERGE_FLAGS_list="$SPARKLE_LDFLAGS"
@@ -19730,13 +19746,13 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
 
 
-  	CFLAGS="$BASE_CFLAGS $SPARKLE_CFLAGS"
+    CFLAGS="$BASE_CFLAGS $SPARKLE_CFLAGS"
 
-  	CXXFLAGS="$BASE_CXXFLAGS $SPARKLE_CXXFLAGS"
+    CXXFLAGS="$BASE_CXXFLAGS $SPARKLE_CXXFLAGS"
 
-  	CPPFLAGS="$BASE_CPPFLAGS $SPARKLE_CPPFLAGS"
+    CPPFLAGS="$BASE_CPPFLAGS $SPARKLE_CPPFLAGS"
 
-  	LIBS="$BASE_LIBS $SPARKLE_LIBS"
+    LIBS="$BASE_LIBS $SPARKLE_LIBS"
 
 
   LC_MERGE_FLAGS_list="$SPARKLE_LDFLAGS"
@@ -22230,21 +22246,6 @@ fi
   case "$enable_qt" in
       yes)
 
-#QT has the install dir hard coded in library so we need to fix it manually for relocatable environment
-QT5_AVAILABLE="no"
-SAVE_LIBS="$LIBS"
-LIBS=""
-#     AX_HAVE_QT
-LIBS="$SAVE_LIBS"
-if test x"$have_qt" = xyes; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: Qt5 found" >&5
-$as_echo "Qt5 found" >&6; }
-  at_cv_qt_build=ok
-  QMAKE="qmake"
-  MOC="moc"
-  QT5_AVAILABLE="yes"
-else
-# AC_MSG_RESULT([Qt5 seems not present, trying Qt4...])
   typeset xtralibs
   case $CONFIG_OS in
     MINGW) xtralibs="+xml";;
@@ -22746,7 +22747,6 @@ $as_echo_n "checking whether host operating system is Darwin... " >&6; }
   case $host_os in
     darwin*)
       at_darwin=yes
-      at_qmake_args='-spec macx-g++'
       ;;
   esac
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $at_darwin" >&5
@@ -22837,10 +22837,10 @@ $at_mod"
   echo "$qt_conf" | sed 1d >>"$pro_file"
 
 
- # Tweak the value of QT in the .pro file for $xtralibs.
+ # Tweak the value of QT in the .pro file for $xtralibs +printsupport.
 
   qt_conf=''
-  for at_mod in $xtralibs; do
+  for at_mod in $xtralibs +printsupport; do
     at_mod=`echo "$at_mod" | sed 's/^-//; tough
                                   s/^+//; beef
                                   :ough
@@ -23096,6 +23096,13 @@ $as_echo "$at_cv_env_QT_CFLAGS" >&6; }
   QT_CFLAGS=$at_cv_env_QT_CFLAGS
 
 
+  DR_MERGE_tmp1=$QT_CFLAGS
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//(/}
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//)/}
+  eval QT_CFLAGS=\"$DR_MERGE_tmp1\"
+  unset ${!DR_MERGE_*}
+
+
   # Find the CXXFLAGS of Qt.
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for the CXXFLAGS to use with Qt" >&5
 $as_echo_n "checking for the CXXFLAGS to use with Qt... " >&6; }
@@ -23107,6 +23114,13 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $at_cv_env_QT_CXXFLAGS" >&5
 $as_echo "$at_cv_env_QT_CXXFLAGS" >&6; }
   QT_CXXFLAGS=$at_cv_env_QT_CXXFLAGS
+
+
+  DR_MERGE_tmp1=$QT_CXXFLAGS
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//(/}
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//)/}
+  eval QT_CXXFLAGS=\"$DR_MERGE_tmp1\"
+  unset ${!DR_MERGE_*}
 
 
   # Find the INCPATH of Qt.
@@ -23122,7 +23136,21 @@ $as_echo "$at_cv_env_QT_INCPATH" >&6; }
   QT_INCPATH=$at_cv_env_QT_INCPATH
 
 
+  DR_MERGE_tmp1=$QT_INCPATH
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//(/}
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//)/}
+  eval QT_INCPATH=\"$DR_MERGE_tmp1\"
+  unset ${!DR_MERGE_*}
+
+
   QT_CPPFLAGS="$at_cv_env_QT_DEFINES $at_cv_env_QT_INCPATH"
+
+
+  DR_MERGE_tmp1=$QT_CPPFLAGS
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//(/}
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//)/}
+  eval QT_CPPFLAGS=\"$DR_MERGE_tmp1\"
+  unset ${!DR_MERGE_*}
 
 
   # Find the LFLAGS of Qt (Should have been named LDFLAGS)
@@ -23138,6 +23166,20 @@ $as_echo "$at_cv_env_QT_LDFLAGS" >&6; }
   QT_LFLAGS=$at_cv_env_QT_LDFLAGS
 
   QT_LDFLAGS=$at_cv_env_QT_LDFLAGS
+
+
+  DR_MERGE_tmp1=$QT_LFLAGS
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//(/}
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//)/}
+  eval QT_LFLAGS=\"$DR_MERGE_tmp1\"
+  unset ${!DR_MERGE_*}
+
+
+  DR_MERGE_tmp1=$QT_LDFLAGS
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//(/}
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//)/}
+  eval QT_LDFLAGS=\"$DR_MERGE_tmp1\"
+  unset ${!DR_MERGE_*}
 
 
   # Find the LIBS of Qt.
@@ -23161,6 +23203,13 @@ $as_echo "$at_cv_env_QT_LIBS" >&6; }
   QT_LIBS=$at_cv_env_QT_LIBS
 
 
+  DR_MERGE_tmp1=$QT_LIBS
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//(/}
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//)/}
+  eval QT_LIBS=\"$DR_MERGE_tmp1\"
+  unset ${!DR_MERGE_*}
+
+
   cd .. && rm -rf conftest.dir
 
   # Run the user code
@@ -23168,8 +23217,8 @@ $as_echo "$at_cv_env_QT_LIBS" >&6; }
 
   done  # end hack (useless for to be able to use break)
 
-fi
-# clean and dispatch the collected flags
+
+  # clean and dispatch the collected flags
 
     TMP_CFLAGS="${QT_CFLAGS}";TMP_CXXFLAGS="${QT_CXXFLAGS}";TMP_CPPFLAGS="${QT_CPPFLAGS}";TMP_LDFLAGS="${QT_LDFLAGS}";TMP_LIBS="${QT_LIBS}";
 
@@ -23679,17 +23728,106 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
   unset ${!LC_SCATTER_FLAGS_*}
 
-QT_FRAMEWORKS_PATH=`$QMAKE -query QT_INSTALL_LIBS`
-QT_PLUGINS_PATH=`$QMAKE -query QT_INSTALL_PLUGINS`
+  QT_FRAMEWORKS_PATH=`$QMAKE -query QT_INSTALL_LIBS`
+  QT_PLUGINS_PATH=`$QMAKE -query QT_INSTALL_PLUGINS`
+  QT_INSTALL_LIBS=`$QMAKE -query QT_INSTALL_LIBS`
 
-    if [[ "$QT_CXXFLAGS" =~ $(echo "(^|[[:space:]]+)-mmacosx-version-min(=?|[[:space:]]*)(.*)$") ]]
-    then MACOSX_VERSION_MIN=${BASH_REMATCH[3]%% -*}
-         MACOSX_VERSION_MIN=${MACOSX_VERSION_MIN%% }  # strip tailing blanks
-    else unset MACOSX_VERSION_MIN
+  if [[ "-Wl,-rpath,$QT_INSTALL_LIBS" =~ $(echo '^-Wl,') ]]
+  then LDFLAGS+=" -Wl,-rpath,$QT_INSTALL_LIBS"
+  elif [[ "-Wl,-rpath,$QT_INSTALL_LIBS" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "-Wl,-rpath,$QT_INSTALL_LIBS"
+  do  while [[ $LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then LDFLAGS=
+  else  while test "$LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$LDFLAGS"
+        LDFLAGS="${LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        LDFLAGS="${LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        LDFLAGS="${LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  LDFLAGS=$(echo $LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       LDFLAGS+=" -Wl,-rpath,$QT_INSTALL_LIBS"
+  else
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-Wl,-rpath,$QT_INSTALL_LIBS($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -Wl" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
+    else LDFLAGS+=" -Wl,-rpath,$QT_INSTALL_LIBS"
+    fi
+  fi
+
+
+  QT_VERSION=`$QMAKE -query QT_VERSION`
+  QT_MAJOR=${QT_VERSION%%.*}
+  test $QT_MAJOR -eq 5 &&
+  if [[ "-std=c++11" =~ $(echo '^-Wl,') ]]
+  then QT_CXXFLAGS+=" -std=c++11"
+  elif [[ "-std=c++11" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "-std=c++11"
+  do  while [[ $QT_CXXFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$QT_CXXFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$QT_CXXFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then QT_CXXFLAGS=
+  else  while test "$QT_CXXFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$QT_CXXFLAGS"
+        QT_CXXFLAGS="${QT_CXXFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        QT_CXXFLAGS="${QT_CXXFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        QT_CXXFLAGS="${QT_CXXFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  QT_CXXFLAGS=$(echo $QT_CXXFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       QT_CXXFLAGS+=" -std=c++11"
+  else
+    if [[ "$QT_CXXFLAGS" =~ $(echo "(^|[[:space:]])-std=c++11($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -std=c++11" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag -std=c++11" >&2;}
+    else QT_CXXFLAGS+=" -std=c++11"
+    fi
+  fi
+
+
+
+    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]]+)-mmacosx-version-min(=?|[[:space:]]*)(.*)$") ]]
+    then CXXMACOSX_VERSION_MIN=${BASH_REMATCH[3]%% -*}
+         CXXMACOSX_VERSION_MIN=${CXXMACOSX_VERSION_MIN%% }  # strip tailing blanks
+    else unset CXXMACOSX_VERSION_MIN
     fi
 
-if [[ -n $MACOSX_VERSION_MIN ]]
-then
+	if test -n $CXXMACOSX_VERSION_MIN; then :
+
+
+    if [[ "$QT_CXXFLAGS" =~ $(echo "(^|[[:space:]]+)-mmacosx-version-min(=?|[[:space:]]*)(.*)$") ]]
+    then QTMACOSX_VERSION_MIN=${BASH_REMATCH[3]%% -*}
+         QTMACOSX_VERSION_MIN=${QTMACOSX_VERSION_MIN%% }  # strip tailing blanks
+    else unset QTMACOSX_VERSION_MIN
+    fi
+
+		if test -n $QTMACOSX_VERSION_MIN; then :
+
+			if cmp_dot_number $CXXMACOSX_VERSION_MIN $QTMACOSX_VERSION_MIN; then :
+
+
   unset STRIP_ARG_memo
   if test "$QT_CXXFLAGS" = "-mmacosx-version-min"
   then QT_CXXFLAGS=
@@ -23728,6 +23866,43 @@ then
     fi
   QT_LDFLAGS=$(echo $QT_LDFLAGS)  # wipe extra blank if any
   unset ${!STRIP_ARG_*}
+
+
+else
+
+
+  unset STRIP_ARG_memo
+  if test "$CXXFLAGS" = "-mmacosx-version-min"
+  then CXXFLAGS=
+  else  while test "$CXXFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$CXXFLAGS"
+        CXXFLAGS="${CXXFLAGS/#-mmacosx-version-min[[:space:]]/}" # at the beginning
+        CXXFLAGS="${CXXFLAGS/%[[:space:]]-mmacosx-version-min/}"    # at the end
+        CXXFLAGS="${CXXFLAGS//[[:space:]]-mmacosx-version-min[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  CXXFLAGS=$(echo $CXXFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+  unset STRIP_ARG_memo
+  if test "$CFLAGS" = "-mmacosx-version-min"
+  then CFLAGS=
+  else  while test "$CFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$CFLAGS"
+        CFLAGS="${CFLAGS/#-mmacosx-version-min[[:space:]]/}" # at the beginning
+        CFLAGS="${CFLAGS/%[[:space:]]-mmacosx-version-min/}"    # at the end
+        CFLAGS="${CFLAGS//[[:space:]]-mmacosx-version-min[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  CFLAGS=$(echo $CFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+				{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: mmacosx-version-min adjusted to $QTMACOSX_VERSION_MIN" >&5
+$as_echo "$as_me: WARNING: mmacosx-version-min adjusted to $QTMACOSX_VERSION_MIN" >&2;}
+
+fi
+
+fi
 
 fi
 
