@@ -3,7 +3,7 @@
 #
 # MODULE      : m4_lc_flag_utils.m4
 # DESCRIPTION : Various utilities for manipulating groups of flags
-# COPYRIGHT   : (C) 2016, 2017  Denis Raux
+# COPYRIGHT   : (C) 2016, 2020  Denis Raux
 #
 # This software falls under the GNU general public license version 3 or later.
 # It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -14,6 +14,26 @@
 # NOTE: due to compatibilty problem with regex in bash before 3.2,
 # always rely on 'echo' when using pattern strings
 
+------------------------------------------------------------------
+# Shell functions
+#-------------------------------------------------------------------
+#
+AC_DEFUN([LC_SHELL_FUNCTIONS],[
+# compare dotted numbers
+# return true if the first is biggest
+function cmp_dot_number {
+  local -i n1 n2 i=0
+  n1=(${1//./ })
+  n2=(${2//./ })
+  while test -n "${n1@<:@$i@:>@}" -a -n "${n2@<:@$i@:>@}"
+  do ((${n1@<:@$i@:>@} > ${n2@<:@$i@:>@}))  && return 0
+     ((${n1@<:@$i@:>@} < ${n2@<:@$i@:>@}))  && return 1
+     i+=1
+  done
+  test -n ${n1@<:@$i@:>@} && return 0
+  return 1
+}
+])
 ------------------------------------------------------------------
 # General functions
 #-------------------------------------------------------------------
@@ -217,7 +237,7 @@ m4_define([all_flags],[superseded_flags, merged_flags])
 # generic transfert flag $1 within the superseded list $2 and the merged list $3
 m4_define([_LC_TRANSFERT_FLAGS],[
   m4_foreach([_tmp1], [$2], [
-  	_tmp1="$BASE_[]_tmp1 $$1_[]_tmp1"
+    _tmp1="$BASE_[]_tmp1 $$1_[]_tmp1"
   ])
   m4_foreach([_tmp1], [$3], [LC_MERGE_FLAGS([$$1_[]_tmp1], [_tmp1])])
 ])

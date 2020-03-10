@@ -14,6 +14,7 @@
 AC_INIT
 AC_CONFIG_HEADERS([src/System/config.h:src/System/config.in])
 AC_CANONICAL_HOST
+LC_SHELL_FUNCTIONS
 
 #--------------------------------------------------------------------
 # Export version and package name 
