@@ -1,6 +1,6 @@
 #!/bin/bash -O extglob -O nocasematch -O nocaseglob -O nullglob
 #
-# denis RAUX  CNRS/LIX 2015-2019
+# denis RAUX  CNRS/LIX 2015-2020
 #
 # Copies frameworks and lib into the application bundle and rewrites the loading
 # information in the .dylib files.
@@ -11,70 +11,20 @@
 #
 # NOTE that all paths are relative to BASEDIR=TeXmacs.app/Contents/MacOS
 # Some assumptions to keep in mind :
-# - this script does not manage space in pathnames
 # - Framework is identified by name.framework in the pathname
 # - Qt expects plugins in Whatever.app/Contents/plugins
 # - id setting is silently ignored for non dll file
 #
 
-function set_rpath
-{ # $1 = returned value
-  local args rpath value cmdout file=$1  retval=$2
-  cmdout="$(otool -lX $file)" || return 42
-  while read rpath value
-  do
-    [[ $rpath == path ]] && args+=" -delete_rpath $value"
-  done <<< "$cmdout"
-  eval $retval+=$args
-}
-  
 function bundle_all_libs
 {
 # $1   executable  or library path (relative to Contents directory)
   local libdest="Resources/lib"
 
   echo "Bundling all libraries for [$1]"
-  bundle_all_libs_sub "$1"
+  bundle_lib "$1"
 }
   
-function bundle_all_libs_sub
-{
-# $file is library to process with path relative to Contents directory
-
-  local lib change cmdout libname file="$1" rpath="$2" d
-  [[ $(otool -DX "$file") == @executable_path/../$file ]] && return 0
-  echo "Process $file"
-    chmod +w "$file"  # Needed e.g. with homebrew (libraries are 622)
-  install_name_tool -id "@executable_path/../$file" "$file" || return 31
-  cmdout="$(otool -LX "$file")" || return 41
-  # Add local Libs and Force bundling of (system) libltdl (changed in OSX 10.8)
-  while read -r lib version
-  do
-    case $lib in
-    @executable_path/../$file) ;;
-    *:) ;;
-    /System*) ;;
-    /+(opt/local|sw|Users|usr/local)/*/lib*.dylib|/usr/lib/libltdl.*.dylib)
-    local blib="$(basename $lib)"
-    [ -f "$libdest/$blib" ] || cp "$lib" "$libdest" && chmod u+w "$libdest/$blib" || return 11
-    bundle_all_libs_sub "$libdest/$blib" || return $?
-    change="$change -change $lib  @executable_path/../Resources/lib/$blib"
-    ;; 
-    @rpath/*.framework/*)
-    local fwtail=${lib#*/};local fwname=${fwtail%%/*}
-    local fwloc="$HOME/Library/Frameworks/$fwname"; 
-    rsync -az $fwloc Frameworks/
-    [[ -d $fwloc ]] || return 32
-    change="$change -change $lib @executable_path/../Frameworks/$fwtail"
-    ;;
-    esac
-  done <<< "$cmdout"
-  set_rpath "$file" change || return $?
-  [ "$rpath" ] && change+=" -add_rpath $rpath"
-  [ -z "$change" ] && return 0
-  install_name_tool $change "$file" || return 33
-  return 0
-}
 
 
 function bundle_qt_plugins
@@ -100,8 +50,112 @@ function bundle_qt_plugins
   done
 }
 
+function bundle_lib
+# $1 lib to pack
+{
+  local file=$1
+  echo "bundle library $file"
+  
+  local -i state=0 step=0 setrpath=0
+  local -a tlibs trpath
+  local change
+
+  while read -r cmd arg
+  do
+    arg=${arg% (offset*)}
+    case $cmd in
+    Load) set $arg
+          test $1 == command -a $2 -ne $step && exit 11
+          step+=1
+          state=1;;
+    cmd)  test $state -ne 1 && continue
+          case  $arg in
+          LC_LOAD_DYLIB) state=2;;
+          LC_RPATH) state=3;;
+          *) state=0
+          esac;;
+    name) test $state -ne 2 && continue
+          tlibs+=("$arg")
+          state=0;;
+    path) test $state -ne 3 && continue
+          trpath+=("$arg")
+          state=0;;
+    esac 
+  done <<< "$(otool -lX $1)"
+
+  test ${#tlibs[*]} -eq 0 && exit 12
+  
+  for lib in "${tlibs[@]}"
+  do echo "process library $lib"
+    case $lib in
+    /System*) ;;
+    /Library*) ;;
+    /+(opt/local|sw|Users|usr/local)/*/lib*.dylib|/usr/lib/libltdl.*.dylib)
+    local blib="$(basename $lib)"
+    if ! test -f "$libdest/$blib"
+    then 
+      cp "$lib" "$libdest" && chmod u+w "$libdest/$blib" || return 11
+      bundle_lib "$libdest/$blib" || return $?
+      change="$change -change $lib  @executable_path/../Resources/lib/$blib"
+    fi
+    ;; 
+    @rpath/*.framework/*)
+    # we don't scan the framework lib they might be well built
+    # be carrefull with space in file names
+    for p in "${trpath[@]}"
+    do fullname=${lib/@rpath/$p}
+      if test -f "$fullname"
+      then 
+        local frwkroot="${fullname%.framework/*}.framework" frwkname="${fullname##*/}"
+        if test ! -d "Frameworks/$frwkname"
+        then rsync -az "$frwkroot" Frameworks/
+             bundle_lib "Frameworks/$frwkname${fullname#*$frwkname}"
+             setrpath=$(($setrpath|1))
+        fi
+        continue 2
+      fi
+    done
+    ;;
+    @rpath/*) #some extra libs
+    for p in "${rpath[@]}"
+    do fullname=${lib/@rpath\//$p}
+      if test -f "$fullname"
+      then 
+        local blib=$(basename $lib)
+        if test ! -f "$libdest/$blib"
+        then 
+          cp "$fullname" "$libdest" 
+          bundle_lib "$libdest/$blib" || return $?
+          setrpath=$(($setrpath|2))
+        fi
+        continue 2
+      fi
+    done
+    ;;
+    esac
+  done
+  #fix the rpath
+  for r in "${trpath[@]}"
+  do case "$r" in 
+      @executable_path/../Resources/lib) setrpath=$(($setrpath|2^2));;
+      @executable_path/../Frameworks) setrpath=$(($setrpath|1^1));;
+      @loader_path/*) ;;
+      *) change+=" -delete_rpath \"$r\""
+    esac
+  done
+  # adjust rpath in the library
+  test $(($setrpath&1)) -ne 0 && 
+    change+=" -add_rpath @executable_path/../Frameworks"
+  test $(($setrpath&2)) -ne 0 && 
+    change+=" -add_rpath @executable_path/../Resources/lib"
+  [ -z "$change" ] && return 0
+  eval install_name_tool $change "$file" || return 33
+}
+
 ###############################################################################
 
+
+test -f "$1" || exit 1
 cd "$(dirname $1)/.." || exit 10
 bundle_all_libs "MacOS/$(basename $1)"  || exit $?
 [ -z "$QT_PLUGINS_LIST" ] && exit 0
