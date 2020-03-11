@@ -137,10 +137,13 @@ function bundle_lib
   #fix the rpath
   for r in "${trpath[@]}"
   do case "$r" in 
-      @executable_path/../Resources/lib) setrpath=$(($setrpath|2^2));;
-      @executable_path/../Frameworks) setrpath=$(($setrpath|1^1));;
+      @executable_path/../Resources/lib) setrpath=$((($setrpath|2)^2));;
+      @executable_path/../Frameworks) setrpath=$((($setrpath|1)^1));;
       @loader_path/*) ;;
-      *) change+=" -delete_rpath \"$r\""
+      *) # install_name_tool doesn't support duplicate commands
+				 # my be dupliacte in the files
+				 install_name_tool -delete_rpath $r "$file"
+			
     esac
   done
   # adjust rpath in the library
