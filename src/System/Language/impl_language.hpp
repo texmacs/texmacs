@@ -37,7 +37,7 @@ extern text_property_rep tp_short_apply_rep;
 extern text_property_rep tp_apply_rep;
 
 struct abstract_language_rep: language_rep {
-  hashmap<string,string> colored= hashmap<string,string>();
+  hashmap<string,string> colored;
   blanks_parser_rep blanks_parser;
   inline_comment_parser_rep inline_comment_parser;
   number_parser_rep number_parser;
