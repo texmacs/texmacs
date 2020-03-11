@@ -41,7 +41,7 @@ protected:
    * @param s     the string to parse
    * @param[out]  the position to parse
    */
-  virtual void do_parse (string s, int& pos) {}
+  virtual void do_parse (string s, int& pos) { (void) s; (void) pos; }
 
   /** Test if a string is parsable at the position
    * @param s     the string to parse
