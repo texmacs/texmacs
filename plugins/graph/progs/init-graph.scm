@@ -15,17 +15,24 @@
       (with s (texmacs->code (stree->tree u) "SourceCode")
         (string-append  s  "\n<EOF>\n"))))
 
+(define (python-command)
+  (if (url-exists-in-path? "python3") "python3" "python2"))
+
+(define (python-exists?)
+  (or (url-exists-in-path? "python3")
+      (url-exists-in-path? "python2")))
+
 (define (graph-launcher)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
-      (string-append "python \""
+      (string-append (python-command) " \""
                      (getenv "TEXMACS_HOME_PATH")
                      "/plugins/tmpy/session/tm_graph.py\"")
-      (string-append "python \""
+      (string-append (python-command) " \""
                      (getenv "TEXMACS_PATH")
                      "/plugins/tmpy/session/tm_graph.py\"")))
 
 (plugin-configure graph
-  (:require (url-exists-in-path? "python"))
+  (:require (python-exists?))
   (:launch ,(graph-launcher))
   (:serializer ,graph-serialize)
   (:session "Graph"))

@@ -5,6 +5,7 @@
 ;; DESCRIPTION : Initialize python plugin
 ;; COPYRIGHT   : (C) 2004  Ero Carrera,
 ;;               (C) 2012  Adrian Soto
+;;               (C) 2020  Darcy Shen
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -18,30 +19,37 @@
 ;; Plugin configuration
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;Basically, the serializer makes the input preserve the newlines
-;;and adds the string character "\n<EOF>\n" by the end.
-;;I guess it could send "\x04" instead to signal a real EOF,
-;;but I would need to check if that does not kill the pipe...
-;;An alternative approach is to use the input-done? command
-;;from TeXmacs, but, at the time of this writing, it did not work.--A
+;; Basically, the serializer makes the input preserve the newlines
+;; and adds the string character "\n<EOF>\n" by the end.
+;; I guess it could send "\x04" instead to signal a real EOF,
+;; but I would need to check if that does not kill the pipe...
+;; An alternative approach is to use the input-done? command
+;; from TeXmacs, but, at the time of this writing, it did not work.--A
 
 (define (python-serialize lan t)
   (with u (pre-serialize lan t)
     (with s (texmacs->code (stree->tree u) "SourceCode")
       (string-append  s  "\n<EOF>\n"))))
 
+(define (python-command)
+  (if (url-exists-in-path? "python3") "python3" "python2"))
+
+(define (python-exists?)
+  (or (url-exists-in-path? "python3")
+      (url-exists-in-path? "python2")))
+
 (define (python-launcher)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
-      (string-append "python \""
+      (string-append (python-command) " \""
                      (getenv "TEXMACS_HOME_PATH")
                      "/plugins/tmpy/session/tm_python.py\"")
-      (string-append "python \""
+      (string-append (python-command) " \""
                      (getenv "TEXMACS_PATH")
                      "/plugins/tmpy/session/tm_python.py\"")))
 
 (plugin-configure python
-  (:winpath "Python2*" ".")
-  (:require (url-exists-in-path? "python"))
+  (:winpath "Python*" ".")
+  (:require (python-exists?))
   (:launch ,(python-launcher))
   (:tab-completion #t)
   (:serializer ,python-serialize)

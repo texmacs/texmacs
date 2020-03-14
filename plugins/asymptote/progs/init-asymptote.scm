@@ -11,6 +11,13 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (python-command)
+  (if (url-exists-in-path? "python3") "python3" "python2"))
+
+(define (python-exists?)
+  (or (url-exists-in-path? "python3")
+      (url-exists-in-path? "python2")))
+
 (define (asy-serialize lan t)
     (with u (pre-serialize lan t)
       (with s (texmacs->code (stree->tree u) "SourceCode")
@@ -18,15 +25,16 @@
 
 (define (asy-launcher)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
-      (string-append "python \""
+      (string-append (python-command) " \""
                      (getenv "TEXMACS_HOME_PATH")
                      "/plugins/tmpy/session/tm_asy.py\"")
-      (string-append "python \""
+      (string-append (python-command) " \""
                      (getenv "TEXMACS_PATH")
                      "/plugins/tmpy/session/tm_asy.py\"")))
 
 (plugin-configure asymptote
   (:require (url-exists-in-path? "asy"))
+  (:require (python-exists?))
   (:launch ,(asy-launcher))
   (:serializer ,asy-serialize)
   (:session "Asymptote")
