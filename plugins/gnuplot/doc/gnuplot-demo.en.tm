@@ -1,6 +1,6 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.12>
 
-<style|<tuple|tmdoc|maxima|english|old-spacing>>
+<style|<tuple|tmdoc|maxima|english|old-spacing|old-dots>>
 
 <\body>
   <\tmdoc-title>
@@ -84,7 +84,7 @@
     </input>
   </session>
 
-  <tmdoc-copyright|2003, 2014|Chu-Ching Huang|Miguel de Benito Delgado|Darcy
+  <tmdoc-copyright|2003\U2020|Chu-Ching Huang|Miguel de Benito Delgado|Darcy
   Shen>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this

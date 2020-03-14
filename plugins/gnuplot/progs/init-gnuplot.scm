@@ -36,7 +36,7 @@
 
 (plugin-configure gnuplot
   (:require (url-exists-in-path? "gnuplot"))
-  (:require (python-exists))
+  (:require (python-exists?))
   ,@(gnuplot-launcher)
   (:serializer ,gnuplot-serialize)
   (:session "Gnuplot")
