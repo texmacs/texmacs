@@ -72,17 +72,13 @@ text_property
 cpp_language_rep::advance (tree t, int& pos) {
   string s= t->label;
   if (pos == N(s)) return &tp_normal_rep;
-  char c= s[pos];
-  if (c == ' ') {
-    pos++;
+  if (blanks_parser.parse (s, pos)) {
     return &tp_space_rep;
   }
-  if (is_digit (c)) {
-    number_parser.parse (s, pos);
+  if (number_parser.parse (s, pos)) {
     return &tp_normal_rep;
   }
-  if (is_alpha (c) || c == '_') {
-    identifier_parser.parse (s, pos);
+  if (identifier_parser.parse (s, pos)) {
     return &tp_normal_rep;
   }
   tm_char_forwards (s, pos);
@@ -517,14 +513,14 @@ cpp_language_rep::get_color (tree t, int start, int end) {
         type= "constant";
         break;
       }
-      number_parser.parse (s, pos);
-      if (opos < pos) {
+      if (number_parser.parse (s, pos)) {
         type= "constant_number";
         break;
       }
-      parse_identifier (colored, s, pos);
-      if (opos < pos)
+      if (identifier_parser.parse (s, pos)) {
+        type= none;
         break;
+      }
       pos= opos + 1;
     } while (false);
   } while (pos <= start);

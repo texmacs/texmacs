@@ -519,7 +519,6 @@ python_language_rep::get_color (tree t, int start, int end) {
           break;
         }
         if (identifier_parser.parse (s, pos)) {
-          string identifier= s(opos, pos);
           type= none;
           break;
         }

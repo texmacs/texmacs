@@ -13,6 +13,7 @@
 #define IDENTIFIER_PARSER_H
 
 #include "parser.hpp"
+#include "array.hpp"
 
 class identifier_parser_rep : public parser_rep {
 public:
@@ -22,9 +23,11 @@ public:
 
   bool can_parse (string s, int pos);
 
+  void set_chars (array<char> p_chars);
+
 private:
   bool start_with_alpha;
-  bool start_with_underline;
+  array<char> m_chars;
   void do_parse (string s, int& pos);
 };
 

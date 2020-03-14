@@ -14,7 +14,12 @@
 
 identifier_parser_rep::identifier_parser_rep () {
   start_with_alpha= true;
-  start_with_underline= true;
+  m_chars << '_';
+}
+
+void
+identifier_parser_rep::set_chars (array<char> p_chars) {
+  m_chars= p_chars;
 }
 
 bool
@@ -22,17 +27,17 @@ identifier_parser_rep::can_parse (string s, int pos) {
   if (!parser_rep::can_parse (s, pos)) return false;
   
   if (start_with_alpha && is_alpha (s[pos])) return true;
-  if (start_with_underline && s[pos] == '_') return true;
+  if (contains (s[pos], m_chars)) return true;
   return false;
 }
 
-bool is_valid (char c) {
-  return is_digit (c) || is_alpha (c) ||  (c=='_');
+bool is_valid (char c, array<char> chars) {
+  return is_digit (c) || is_alpha (c) || contains (c, chars);
 }
 
 void
 identifier_parser_rep::do_parse (string s, int& pos) {
-  while (pos<N(s) && is_valid (s[pos])) {
+  while (pos<N(s) && is_valid (s[pos], m_chars)) {
     pos= pos+1;
   }
 }

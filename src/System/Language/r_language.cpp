@@ -31,30 +31,25 @@ r_language_rep::r_language_rep (string name):
     l= l->next;
   }
   number_parser.use_r_style ();
+
+  array<char> extra_start_chars;
+  // TODO: For some reason, TeXmacs gets stuck on entering $.
+  extra_start_chars << '_' << '.';
+  identifier_parser.set_chars (extra_start_chars);
+
 }
 
 text_property
 r_language_rep::advance (tree t, int& pos) {
   string s= t->label;
+  if (pos==N(s)) return &tp_normal_rep;
 
-  if (pos==N(s)) {  return &tp_normal_rep; }
-
-  char c= s[pos];
-
-  if (c == ' ') {
-    pos++; return &tp_space_rep; 
-  } 
-
-  if (number_parser.parse (s, pos)) {
+  if (blanks_parser.parse (s, pos))
+    return &tp_space_rep;
+  if (number_parser.parse (s, pos))
     return &tp_normal_rep;
-  }
-
-  if (is_alpha (c) || is_in_str (c, "_.")
-      //|| (c == '$') // For some reason, when this is uncommented, TeXmacs gets stuck on entering $.
-      ) {
-    identifier_parser.parse (s, pos);
+  if (identifier_parser.parse (s, pos))
     return &tp_normal_rep; 
-  } 
 
   tm_char_forwards (s, pos);
   return &tp_normal_rep;

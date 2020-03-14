@@ -26,22 +26,23 @@ mathemagix_language_rep::mathemagix_language_rep (string name):
     colored (l->item)= "blue";
     l= l->next;
   }
+
+  array<char> extra_start_chars;
+  extra_start_chars << '_' << '$' << '%';
+  identifier_parser.set_chars (extra_start_chars);
 }
 
 text_property
 mathemagix_language_rep::advance (tree t, int& pos) {
   string s= t->label;
   if (pos==N(s)) return &tp_normal_rep;
-  char c= s[pos];
-  if (c == ' ') {
-    pos++; return &tp_space_rep; }
-  if (is_digit (c)) {
-    parse_number (s, pos); return &tp_normal_rep; }
-  if (is_alpha (c) ||
-      (c == '_') || (c == '$') || (c == '%')) {
-    identifier_parser.parse (s, pos);
+
+  if (blanks_parser.parse (s, pos))
+    return &tp_space_rep;
+  if (number_parser.parse (s, pos))
+    return &tp_normal_rep;
+  if (identifier_parser.parse (s, pos))
     return &tp_normal_rep; 
-  }
   tm_char_forwards (s, pos);
   return &tp_normal_rep;
 }
