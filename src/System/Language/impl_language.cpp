@@ -24,12 +24,6 @@ abstract_language_rep::parse_identifier (hashmap<string, string>& t, string s, i
 }
 
 void
-abstract_language_rep::parse_alpha (string s, int& pos) {
-  static hashmap<string,string> empty;
-  parse_identifier (empty, s, pos);
-}
-
-void
 abstract_language_rep::parse_keyword (hashmap<string,string>& t, string s, int& pos) {
   int i= pos;
   if (pos >= N(s) || is_digit (s[i])) return;

@@ -41,6 +41,7 @@ text_property
 python_language_rep::advance (tree t, int& pos) {
   int opos= pos;
   string s= t->label;
+
   if (pos==N(s))
     return &tp_normal_rep;
   char c= s[pos];
@@ -54,8 +55,7 @@ python_language_rep::advance (tree t, int& pos) {
   if (number_parser.parse (s, pos)) {
     return &tp_normal_rep;
   }
-  if (belongs_to_identifier (c)) {
-    parse_alpha (s, pos);
+  if (identifier_parser.parse (s, pos)) {
     return &tp_normal_rep;
   }
   tm_char_forwards (s, pos);
@@ -469,6 +469,7 @@ python_language_rep::get_color (tree t, int start, int end) {
   static string none= "";
   if (start >= end) return none;
   string s= t->label;
+
   int pos= 0;
   int opos=0;
   string type;
@@ -517,8 +518,8 @@ python_language_rep::get_color (tree t, int start, int end) {
         if (opos < pos) {
           break;
         }
-        parse_identifier (colored, s, pos);
-        if (opos < pos) {
+        if (identifier_parser.parse (s, pos)) {
+          string identifier= s(opos, pos);
           type= none;
           break;
         }

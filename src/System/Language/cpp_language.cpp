@@ -82,7 +82,7 @@ cpp_language_rep::advance (tree t, int& pos) {
     return &tp_normal_rep;
   }
   if (is_alpha (c) || c == '_') {
-    parse_alpha (s, pos);
+    identifier_parser.parse (s, pos);
     return &tp_normal_rep;
   }
   tm_char_forwards (s, pos);

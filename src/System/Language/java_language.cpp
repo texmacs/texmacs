@@ -78,8 +78,7 @@ java_language_rep::advance (tree t, int& pos) {
   if (number_parser.parse (s, pos)) {
     return &tp_normal_rep;
   }
-  if (belongs_to_identifier (c)) {
-    parse_alpha (s, pos);
+  if (identifier_parser.parse (s, pos)) {
     return &tp_normal_rep;
   }
   tm_char_forwards (s, pos);
