@@ -11,6 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(use-modules (dynamic session-edit) (dynamic program-edit))
+
 (define (graphviz-serialize lan t)
     (with u (pre-serialize lan t)
       (with s (texmacs->code (stree->tree u) "SourceCode")
@@ -39,4 +41,5 @@
   (:require (python-exists?))
   (:launch ,(graphviz-launcher))
   (:serializer ,graphviz-serialize)
-  (:session "Graphviz"))
+  (:session "Graphviz")
+  (:scripts "Graphviz"))

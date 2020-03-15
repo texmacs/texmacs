@@ -1,4 +1,4 @@
-<TeXmacs|1.99.11>
+<TeXmacs|1.99.12>
 
 <style|<tuple|source|std>>
 
@@ -229,6 +229,12 @@
   <assign|cpp-code|<\macro|body>
     <\pseudo-code>
       <cpp|<arg|body>>
+    </pseudo-code>
+  </macro>>
+
+  <assign|dot-code|<\macro|body>
+    <\pseudo-code>
+      <with|mode|prog|prog-language|dot|font-family|rm|<arg|body>>
     </pseudo-code>
   </macro>>
 

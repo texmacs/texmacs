@@ -213,7 +213,7 @@
   python java scala scilab shell)
 
 (define-group block-code-tag
-  verbatim-code scm-code cpp-code mmx-code r-code fortran-code
+  verbatim-code scm-code cpp-code dot-code mmx-code r-code fortran-code
   python-code java-code scala-code scilab-code shell-code)
 
 ;; ornaments

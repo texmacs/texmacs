@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : impl_language.hpp
-* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+* COPYRIGHT  : (C) 1999-2020  Joris van der Hoeven, Darcy Shen
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -118,6 +118,14 @@ struct cpp_language_rep: abstract_language_rep {
   string get_color (tree t, int start, int end);
 
   void parse_preprocessing (string s, int & pos);
+};
+
+struct dot_language_rep: abstract_language_rep {
+  dot_language_rep (string name);
+  text_property advance (tree t, int& pos);
+  array<int> get_hyphens (string s);
+  void hyphenate (string s, int after, string& left, string& right);
+  string get_color (tree t, int start, int end);
 };
 
 struct scilab_language_rep: abstract_language_rep {

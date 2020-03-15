@@ -146,6 +146,8 @@
   (with-active-selection% (selection-active-normal?))
   (in-cpp% (== (get-env "prog-language") "cpp"))
   (in-prog-cpp% #t in-prog% in-cpp%)
+  (in-dot% (== (get-env "prog-language") "dot"))
+  (in-prog-dot% #t in-prog% in-dot%)
   (in-java% (== (get-env "prog-language") "java"))
   (in-prog-java% #t in-prog% in-java%)
   (in-fortran% (== (get-env "prog-language") "fortran"))
