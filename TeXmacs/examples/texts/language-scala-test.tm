@@ -1,4 +1,4 @@
-<TeXmacs|1.99.11>
+<TeXmacs|1.99.12>
 
 <style|<tuple|generic|british|old-dots>>
 
@@ -6,6 +6,92 @@
   <doc-data|<doc-title|The Scala Language>>
 
   <section|Syntax Highlight>
+
+  <subsection|Identifiers>
+
+  <\verbatim-code>
+    <code|<\code*>
+      op \ \ \ \ \ \ ::= \ opchar {opchar}
+
+      varid \ \ \ ::= \ lower idrest
+
+      boundvarid ::= \ varid
+
+      \ \ \ \ \ \ \ \ \ \ \ \ \ \| ``' varid ``'
+
+      plainid \ ::= \ upper idrest
+
+      \ \ \ \ \ \ \ \ \ \ \ \| \ varid
+
+      \ \ \ \ \ \ \ \ \ \ \ \| \ op
+
+      id \ \ \ \ \ \ ::= \ plainid
+
+      \ \ \ \ \ \ \ \ \ \ \ \| \ ``' { charNoBackQuoteOrNewline \| escapeSeq
+      } ``'
+
+      idrest \ \ ::= \ {letter \| digit} [`_' op]
+
+      escapeSeq \ \ \ \ ::= UnicodeEscape \| charEscapeSeq
+
+      UnicodeEscape ::= `\\' `u' {`u'} hexDigit hexDigit hexDigit hexDigit
+
+      hexDigit \ \ \ \ \ ::= `0' \| \<ldots\> \| `9' \| `A' \| \<ldots\> \|
+      `F' \| `a' \| \<ldots\> \| `f'
+    </code*>>
+  </verbatim-code>
+
+  <\scala-code>
+    // variable_identifier
+
+    x
+
+    maxIndex
+
+    p2p
+
+    empty_?
+
+    `yield`
+
+    \<alpha\>\<rho\>\<varepsilon\>\<tau\>\<eta\>
+
+    _y
+
+    dot_product_*
+
+    __system
+
+    _MAX_LEN_
+
+    \<ordfeminine\>pple
+
+    \<#2B0\>elper
+
+    \ \ 
+
+    // constant identifiers
+
+    +
+
+    Object
+
+    $reserved
+
+    \<#1C5\>ul
+
+    \<#1C2\>nûm
+
+    \<#2170\>_\<#2172\>
+
+    \<#2160\>_\<#2162\>
+
+    \<#2181\>elerious
+
+    \<#1C3\>qhàà
+
+    \<#2B9\>thatsaletter
+  </scala-code>
 
   <subsection|Literals>
 
@@ -170,15 +256,16 @@
 <\references>
   <\collection>
     <associate|auto-1|<tuple|1|?>>
-    <associate|auto-10|<tuple|2|?>>
+    <associate|auto-10|<tuple|7|?>>
+    <associate|auto-11|<tuple|2|?>>
     <associate|auto-2|<tuple|1.1|?>>
-    <associate|auto-3|<tuple|1|?>>
-    <associate|auto-4|<tuple|2|?>>
-    <associate|auto-5|<tuple|3|?>>
-    <associate|auto-6|<tuple|4|?>>
-    <associate|auto-7|<tuple|5|?>>
-    <associate|auto-8|<tuple|6|?>>
-    <associate|auto-9|<tuple|7|?>>
+    <associate|auto-3|<tuple|1.2|?>>
+    <associate|auto-4|<tuple|1|?>>
+    <associate|auto-5|<tuple|2|?>>
+    <associate|auto-6|<tuple|3|?>>
+    <associate|auto-7|<tuple|4|?>>
+    <associate|auto-8|<tuple|5|?>>
+    <associate|auto-9|<tuple|6|?>>
   </collection>
 </references>
 

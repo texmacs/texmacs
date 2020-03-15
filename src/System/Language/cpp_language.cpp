@@ -72,15 +72,14 @@ text_property
 cpp_language_rep::advance (tree t, int& pos) {
   string s= t->label;
   if (pos == N(s)) return &tp_normal_rep;
-  if (blanks_parser.parse (s, pos)) {
+
+  if (blanks_parser.parse (s, pos))
     return &tp_space_rep;
-  }
-  if (number_parser.parse (s, pos)) {
+  if (number_parser.parse (s, pos))
     return &tp_normal_rep;
-  }
-  if (identifier_parser.parse (s, pos)) {
+  if (identifier_parser.parse (s, pos))
     return &tp_normal_rep;
-  }
+
   tm_char_forwards (s, pos);
   return &tp_normal_rep;
 }

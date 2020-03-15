@@ -1,4 +1,4 @@
-<TeXmacs|1.99.11>
+<TeXmacs|1.99.12>
 
 <style|<tuple|generic|chinese|old-dots>>
 
@@ -7,7 +7,9 @@
 
   <section|Highlight>
 
-  <paragraph|number>
+  <subsection|<hlink|Identifiers|https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Identifiers>>
+
+  <subsection|Numbers>
 
   <\session|r|default>
     <\unfolded-io>
@@ -102,7 +104,7 @@
   <section|References>
 
   <\itemize>
-    <item><hlink|R Language Definition: Constants|<hlink|https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Literal-constants|https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Literal-constants>>
+    <item><hlink|R Language Definition: Constants|https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Literal-constants>
   </itemize>
 </body>
 
@@ -112,8 +114,10 @@
 <\references>
   <\collection>
     <associate|auto-1|<tuple|1|?>>
-    <associate|auto-2|<tuple|1|?>>
-    <associate|auto-3|<tuple|2|?>>
+    <associate|auto-2|<tuple|1.1|?>>
+    <associate|auto-3|<tuple|1.2|?>>
+    <associate|auto-4|<tuple|2|?>>
+    <associate|auto-5|<tuple|2|?>>
   </collection>
 </references>
 

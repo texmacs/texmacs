@@ -18,7 +18,6 @@
 
 static void parse_string (string s, int& pos);
 static bool is_in_str( char c, const char *str )  ;
-//static inline bool is_identifier_start( char c ) ;
 static void advance_till( string s, int & pos, char c) ;
 
 r_language_rep::r_language_rep (string name):
@@ -32,11 +31,11 @@ r_language_rep::r_language_rep (string name):
   }
   number_parser.use_r_style ();
 
-  array<char> extra_start_chars;
-  // TODO: For some reason, TeXmacs gets stuck on entering $.
-  extra_start_chars << '_' << '.';
-  identifier_parser.set_chars (extra_start_chars);
-
+  array<char> start_chars, extra_chars;
+  start_chars << '.';
+  extra_chars << '.' << '_';
+  identifier_parser.set_start_chars (start_chars);
+  identifier_parser.set_extra_chars (extra_chars);
 }
 
 text_property

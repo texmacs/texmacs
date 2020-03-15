@@ -27,9 +27,9 @@ mathemagix_language_rep::mathemagix_language_rep (string name):
     l= l->next;
   }
 
-  array<char> extra_start_chars;
-  extra_start_chars << '_' << '$' << '%';
-  identifier_parser.set_chars (extra_start_chars);
+  array<char> start_chars;
+  start_chars << '_' << '$' << '%';
+  identifier_parser.set_start_chars (start_chars);
 }
 
 text_property

@@ -1,4 +1,4 @@
-<TeXmacs|1.99.11>
+<TeXmacs|1.99.12>
 
 <style|<tuple|generic|chinese|old-dots>>
 
@@ -6,6 +6,10 @@
   <doc-data|<doc-title|The C++ Language>>
 
   <section|Syntax Highlight>
+
+  <subsection|<hlink|Identifiers|https://en.cppreference.com/w/cpp/language/identifiers>>
+
+  <subsection|Numbers>
 
   <\cpp-code>
     // decimal-literal integer-suffix(optional)
@@ -33,10 +37,10 @@
 
   <\itemize>
     <item><hlink|integer literal of the C++
-    Language|<hlink|https://en.cppreference.com/w/cpp/language/integer_literal|https://en.cppreference.com/w/cpp/language/integer_literal>>
+    Language|https://en.cppreference.com/w/cpp/language/integer_literal>
 
     <item><hlink|floating point literal of the C++
-    Language|<hlink|https://en.cppreference.com/w/cpp/language/floating_literal|https://en.cppreference.com/w/cpp/language/floating_literal>>
+    Language|https://en.cppreference.com/w/cpp/language/floating_literal>
   </itemize>
 </body>
 
@@ -46,7 +50,9 @@
 <\references>
   <\collection>
     <associate|auto-1|<tuple|1|?>>
-    <associate|auto-2|<tuple|2|?>>
+    <associate|auto-2|<tuple|1.1|?>>
+    <associate|auto-3|<tuple|1.2|?>>
+    <associate|auto-4|<tuple|2|?>>
   </collection>
 </references>
 

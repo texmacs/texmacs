@@ -44,20 +44,16 @@ python_language_rep::advance (tree t, int& pos) {
 
   if (pos==N(s))
     return &tp_normal_rep;
-  char c= s[pos];
-  if (c == ' ') {
-    pos++;
+
+  if (blanks_parser.parse (s, pos))
     return &tp_space_rep;
-  }
-  if (escaped_char_parser.parse (s, pos)) {
+  if (escaped_char_parser.parse (s, pos))
     return &tp_normal_rep;
-  }
-  if (number_parser.parse (s, pos)) {
+  if (number_parser.parse (s, pos))
     return &tp_normal_rep;
-  }
-  if (identifier_parser.parse (s, pos)) {
+  if (identifier_parser.parse (s, pos))
     return &tp_normal_rep;
-  }
+
   tm_char_forwards (s, pos);
   if (opos == pos) {
     pos= pos + 1;

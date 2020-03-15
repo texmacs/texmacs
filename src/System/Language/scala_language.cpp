@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : scala_language.cpp
 * DESCRIPTION: the Scala language
-* COPYRIGHT  : (C) 2014-2019  François Poulain, Darcy Shen
+* COPYRIGHT  : (C) 2014-2020  François Poulain, Darcy Shen
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
 * ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
@@ -60,6 +60,13 @@ scala_language_rep::scala_language_rep (string name):
   escaped_char_parser.set_chars (escape_chars);
 
   escaped_char_parser.support_hex_with_16_bits (true);
+
+  array<char> start_chars, extra_chars;
+  // The ‘$’ character is reserved for compiler-synthesized identifiers.
+  start_chars << '_' << '$';
+  extra_chars << '_';
+  identifier_parser.set_start_chars (start_chars);
+  identifier_parser.set_extra_chars (extra_chars);
 }
 
 text_property

@@ -23,11 +23,13 @@ public:
 
   bool can_parse (string s, int pos);
 
-  void set_chars (array<char> p_chars);
+  void set_start_chars (array<char> p_chars);
+  void set_extra_chars (array<char> p_chars);
 
 private:
   bool start_with_alpha;
-  array<char> m_chars;
+  array<char> start_chars;
+  array<char> extra_chars;
   void do_parse (string s, int& pos);
 };
 

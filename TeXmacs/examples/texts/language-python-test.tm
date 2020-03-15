@@ -1,4 +1,4 @@
-<TeXmacs|1.99.11>
+<TeXmacs|1.99.12>
 
 <style|<tuple|generic|british|old-dots>>
 
@@ -144,6 +144,18 @@
     """
   </python-code>
 
+  <section|<hlink|Identifier|https://docs.python.org/3.7/reference/lexical_analysis.html#identifiers>>
+
+  <\python-code>
+    a = 1
+
+    b1 = 2
+
+    1b = 3 # invalid
+
+    b_1 = 4
+  </python-code>
+
   <section|References>
 
   <\itemize>
@@ -162,6 +174,7 @@
     <associate|auto-4|<tuple|1.3|?>>
     <associate|auto-5|<tuple|2|?>>
     <associate|auto-6|<tuple|3|?>>
+    <associate|auto-7|<tuple|4|?>>
   </collection>
 </references>
 
@@ -184,9 +197,13 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-4>>
 
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|2<space|2spc>References>
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|2<space|2spc>String>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-5><vspace|0.5fn>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|3<space|2spc>References>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-6><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>
