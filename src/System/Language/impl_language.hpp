@@ -16,6 +16,8 @@
 #include "inline_comment_parser.hpp"
 #include "blanks_parser.hpp"
 #include "escaped_char_parser.hpp"
+#include "keyword_parser.hpp"
+#include "operator_parser.hpp"
 #include "identifier_parser.hpp"
 
 extern text_property_rep tp_normal_rep;
@@ -43,6 +45,8 @@ struct abstract_language_rep: language_rep {
   inline_comment_parser_rep inline_comment_parser;
   number_parser_rep number_parser;
   escaped_char_parser_rep escaped_char_parser;
+  keyword_parser_rep keyword_parser;
+  operator_parser_rep operator_parser;
   identifier_parser_rep identifier_parser;
 
   abstract_language_rep (string s): language_rep(s) {};

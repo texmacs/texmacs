@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : analyze_test.cpp
 * DESCRIPTION: Properties of characters and strings
-* COPYRIGHT  : (C) 2019 Darcy Shen
+* COPYRIGHT  : (C) 2019-2020  Darcy Shen
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -91,4 +91,18 @@ TEST (string, ends) {
   ASSERT_TRUE (ends ("abc_def", "def"));
   ASSERT_TRUE (ends ("abc_def", ""));
   ASSERT_FALSE (ends ("abc_def", "de"));
+}
+
+TEST (string, read_word) {
+  string word;
+  int i=0;
+  ASSERT_TRUE (read_word ("hello123", i, word));
+  ASSERT_STREQ (as_charp (word), "hello");
+  ASSERT_EQ (i, 5);
+
+  i=0;
+  word= "";
+  ASSERT_FALSE (read_word ("123", i, word));
+  ASSERT_TRUE (is_empty (word));
+  ASSERT_EQ (i, 0);
 }

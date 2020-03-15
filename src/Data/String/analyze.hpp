@@ -129,6 +129,7 @@ bool read (string s, string test);
 bool read_line (string s, int& i, string& result);
 bool read_int (string s, int& i, int& result);
 bool read_double (string s, int& i, double& result);
+bool read_word (string s, int& i, string& result);
 bool is_whitespace (string s);
 void skip_spaces (string s, int& i);
 void skip_whitespace (string s, int& i);
