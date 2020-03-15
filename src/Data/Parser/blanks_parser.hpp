@@ -25,7 +25,7 @@ public:
 
 private:
   void do_parse (string s, int& pos) {
-    while (pos<N(s) && (s[pos]==' ' || s[pos]=='\t')) pos++;
+    pos++;
   }
 };
 
