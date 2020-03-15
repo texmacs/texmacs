@@ -41,5 +41,4 @@
   (:require (python-exists?))
   (:launch ,(graphviz-launcher))
   (:serializer ,graphviz-serialize)
-  (:session "Graphviz")
-  (:scripts "Graphviz"))
+  (:session "Graphviz"))
