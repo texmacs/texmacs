@@ -1,6 +1,15 @@
-# CMake file for TeXmacs
-# created by Massimiliano Gubinelli 
-# maintained by Darcy Shen
+
+###############################################################################
+#
+# MODULE      : CMakeLists.txt
+# DESCRIPTION : CMake file for TeXmacs
+# COPYRIGHT   : (C) 2008-2009  Massimiliano Gubinelli
+#               (C) 2017-2020  Darcy Shen
+#
+# This software falls under the GNU general public license version 3 or later.
+# It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+# in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+
 
 # The name of our project is "TEXMACS". CMakeLists files in this project can 
 # refer to the root source directory of the project as ${TEXMACS_SOURCE_DIR} and 

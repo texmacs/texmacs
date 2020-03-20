@@ -23,11 +23,20 @@ public:
 
     int opos= pos;
     do_parse (s, pos);
+
     if (pos > opos) {
+      // Expressive logs for parser with start and end marked
+      // Commented by default for performance
+      // cout << get_parser_name() << " ended" << LF
+      //      << s << LF
+      //      << string(' ', opos) << "^" << LF
+      //      << string(' ', pos) << "^" << LF;
       return true;
     } else {
-      debug_packrat << "[" << get_parser_name() << "] "
-                    << pos << ":" << s << LF;
+      debug_packrat << "Illegal status for " << get_parser_name() << LF
+                    << s << LF
+                    << string(' ', opos) << "^" << LF
+                    << string(' ', pos) << "^" << LF;
       return false;
     }
   }

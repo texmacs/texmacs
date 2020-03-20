@@ -28,6 +28,12 @@ dot_language_rep::dot_language_rep (string name):
     << 'b' << 'f' << 'n' << 'r' << 't';
   escaped_char_parser.set_chars (escape_chars);
 
+  string_parser.set_escaped_char_parser (escaped_char_parser);
+  hashmap<string, string> pairs;
+  pairs("\"") = "\"";
+  pairs("\'")= "\'";
+  string_parser.set_pairs(pairs);
+
   keyword_parser.use_keywords_of_lang (name);
   operator_parser.use_operators_of_lang (name);
 }
@@ -225,26 +231,18 @@ dot_language_rep::get_color (tree t, int start, int end) {
   string s= t->label;
   int pos= 0;
   int opos=0;
-  bool in_str= false;
-  bool in_esc= false;
 
   do {
     type= none;
     do {
       opos= pos;
-      if (in_str) {
-        in_esc= parse_string (s, pos, true);
-        in_str= false;
-        if (opos < pos) {
-          type= "constant_string";
+      if (string_parser.unfinished ()) {
+        if (string_parser.escaped () && string_parser.parse_escaped (s, pos)) {
+          type= "constant_char";
           break;
         }
-      }
-      else if (in_esc) {
-        in_esc= false;
-        in_str= true;
-        if (escaped_char_parser.parse (s, pos)) {
-          type= "constant_char";
+        if (string_parser.parse (s, pos)) {
+          type= "constant_string";
           break;
         }
       }
@@ -254,8 +252,7 @@ dot_language_rep::get_color (tree t, int start, int end) {
           type= "comment";
           break;
         }
-        in_esc= parse_string (s, pos, false);
-        if (opos < pos) {
+        if (string_parser.parse (s, pos)) {
           type= "constant_string";
           break;
         }

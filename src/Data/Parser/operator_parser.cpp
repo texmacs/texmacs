@@ -30,6 +30,7 @@ operator_parser_rep::can_parse (string s, int pos) {
       return true;
     }
   }
+  return false;
 }
 
 void

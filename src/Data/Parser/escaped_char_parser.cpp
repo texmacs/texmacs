@@ -105,7 +105,7 @@ void
 escaped_char_parser_rep::do_parse (string s, int& pos) {
   int remaining= N(s) - pos;
   if (remaining <= 1) return;
-  if (s[pos != m_escape]) return;
+  if (s[pos] != m_escape) return;
 
   if (can_parse_hex_with_8_bits (s, pos+1)) {
     pos= pos+4;

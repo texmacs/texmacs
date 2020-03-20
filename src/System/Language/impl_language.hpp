@@ -19,6 +19,7 @@
 #include "keyword_parser.hpp"
 #include "operator_parser.hpp"
 #include "identifier_parser.hpp"
+#include "string_parser.hpp"
 
 extern text_property_rep tp_normal_rep;
 extern text_property_rep tp_hyph_rep;
@@ -48,6 +49,7 @@ struct abstract_language_rep: language_rep {
   keyword_parser_rep keyword_parser;
   operator_parser_rep operator_parser;
   identifier_parser_rep identifier_parser;
+  string_parser_rep string_parser;
 
   abstract_language_rep (string s): language_rep(s) {};
   virtual bool belongs_to_identifier (char c);
