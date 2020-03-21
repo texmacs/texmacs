@@ -191,6 +191,7 @@ QTMTreeModel::data (const QModelIndex& index, int role) const {
     default:
       return QVariant();
   }
+  return QVariant();
 }
 
 bool
