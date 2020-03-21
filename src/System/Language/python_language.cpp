@@ -492,33 +492,33 @@ python_language_rep::get_color (tree t, int start, int end) {
           break;
         }
       }
-      else {
-        if (blanks_parser.parse (s, pos)) break;
-        if (inline_comment_parser.parse (s, pos)) {
-          type= "comment";
-          break;
-        }
-        if (string_parser.parse (s, pos)) {
-          type= "constant_string";
-          break;
-        }
-        if (number_parser.parse(s, pos)) {
-          type= "constant_number";
-          break;
-        }
-        type= parse_keywords (colored, s, pos);
-        if (opos < pos) {
-          break;
-        }
-        type= parse_operators (colored, s, pos);
-        if (opos < pos) {
-          break;
-        }
-        if (identifier_parser.parse (s, pos)) {
-          type= none;
-          break;
-        }
+
+      if (blanks_parser.parse (s, pos)) break;
+      if (inline_comment_parser.parse (s, pos)) {
+        type= "comment";
+        break;
       }
+      if (string_parser.parse (s, pos)) {
+        type= "constant_string";
+        break;
+      }
+      if (number_parser.parse(s, pos)) {
+        type= "constant_number";
+        break;
+      }
+      type= parse_keywords (colored, s, pos);
+      if (opos < pos) {
+        break;
+      }
+      type= parse_operators (colored, s, pos);
+      if (opos < pos) {
+        break;
+      }
+      if (identifier_parser.parse (s, pos)) {
+        type= none;
+        break;
+      }
+      
       pos= opos;
       pos++;
     }

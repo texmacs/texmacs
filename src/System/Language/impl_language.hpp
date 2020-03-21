@@ -43,6 +43,7 @@ extern text_property_rep tp_apply_rep;
 int line_number (tree t);
 int number_of_lines (tree t);
 tree line_inc (tree t, int i);
+bool in_comment (int pos, tree t);
 
 struct abstract_language_rep: language_rep {
   hashmap<string,string> colored;

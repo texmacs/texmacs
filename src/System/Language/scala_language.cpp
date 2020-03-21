@@ -27,8 +27,14 @@ scala_language_rep::scala_language_rep (string name):
   escape_chars << '\\' << '\'' << '\"'
     << 'b' << 'f' << 'n' << 'r' << 't';
   escaped_char_parser.set_chars (escape_chars);
-
   escaped_char_parser.support_hex_with_16_bits (true);
+
+  string_parser.set_escaped_char_parser (escaped_char_parser);
+  hashmap<string, string> pairs;
+  pairs("\"") = "\"";
+  pairs("\"\"\"") = "\"\"\"";
+  pairs("\'")= "\'";
+  string_parser.set_pairs(pairs);
 
   array<char> start_chars, extra_chars;
   // The ‘$’ character is reserved for compiler-synthesized identifiers.
@@ -278,123 +284,6 @@ scala_color_setup_operator_field (hashmap<string, string> & t) {
   t (".")= "operator_field";
 }
 
-static bool
-parse_string (string s, int& pos, bool force) {
-  int n= N(s);
-  static string delim;
-  if (pos >= n) return false;
-  if (s[pos] == '\"' || s[pos] == '\'') {
-    delim= s(pos, pos+1);
-    pos+= N(delim);
-  }
-  else if (!force)
-    return false;
-  while (pos<n && !test (s, pos, delim)) {
-    if (s[pos] == '\\') {
-      return true;
-    }
-    else
-      pos++;
-  }
-  if (test (s, pos, delim))
-    pos+= N(delim);
-  return false;
-}
-
-static void
-parse_comment_multi_lines (string s, int& pos) {
-  if (pos+1 < N(s) && s[pos] == '/' && s[pos+1] == '*')
-    pos += 2;
-}
-
-static void
-parse_end_comment (string s, int& pos) {
-  if (pos+1 < N(s) && s[pos] == '*' && s[pos+1] == '/')
-    pos += 2;
-}
-
-static bool
-begin_comment (string s, int i) {
-  bool comment= false;
-  int opos, pos= 0;
-  do {
-    do {
-      opos= pos;
-      parse_string (s, pos, false);
-      if (opos < pos) break;
-      parse_comment_multi_lines (s, pos);
-      if (opos < pos) {
-        comment = true;
-        break;
-      }
-      pos++;
-    } while (false);
-  } while (pos <= i);
-  return comment;
-}
-
-static bool
-end_comment (string s, int i) {
-  int opos, pos= 0;
-  do {
-    do {
-      opos= pos;
-      parse_string (s, pos, false);
-      if (opos < pos) break;
-      parse_end_comment (s, pos);
-      if (opos < pos && pos>i) return true;
-      pos++;
-    } while (false);
-  } while (pos < N(s));
-  return false;
-}
-
-static int
-after_begin_comment (int i, tree t) {
-  tree   t2= t;
-  string s2= t->label;
-  int  line= line_number (t2);
-  do {
-    if (begin_comment (s2, i)) return line;
-    t2= line_inc (t2, -1);
-    --line;
-      // line_inc returns tree(ERROR) upon error
-    if (!is_atomic (t2)) return -1; // FIXME
-    s2= t2->label;
-    i = N(s2) - 1;
-  } while (line > -1);
-  return -1;
-}
-
-static int
-before_end_comment (int i, tree t) {
-  int   end= number_of_lines (t);
-  tree   t2= t;
-  string s2= t2->label;
-  int  line= line_number (t2);
-  do {
-    if (end_comment (s2, i)) return line;
-    t2= line_inc (t2, 1);
-    ++line;
-      // line_inc returns tree(ERROR) upon error
-    if (!is_atomic (t2)) return -1; // FIXME
-    s2= t2->label;
-    i = 0;
-  } while (line <= end);
-  return -1;
-}
-
-static bool
-in_comment (int pos, tree t) {
-  int beg= after_begin_comment (pos, t);
-  if (beg >= 0) {
-    int cur= line_number (t);
-    int end= before_end_comment (pos, line_inc (t, beg - cur));
-    return end >= beg && cur <= end;
-  }
-  return false;
-}
-
 string
 scala_language_rep::parse_keywords (hashmap<string,string>& t, string s, int& pos) {
   int i= pos;
@@ -464,67 +353,61 @@ scala_language_rep::get_color (tree t, int start, int end) {
   if (start >= end) return none;
   if (in_comment (start, t))
     return decode_color ("scala", encode_color ("comment"));
+
   string s= t->label;
   int pos= 0;
-  int opos=0;
+  int opos= 0;
   string type;
-  bool in_str= false;
-  bool in_esc= false;
+  string_parser.reset ();
+
   do {
     type= none;
     do {
       opos= pos;
-      if (in_str) {
-        in_esc= parse_string (s, pos, true);
-        in_str= false;
-        if (opos < pos) {
-          type= "constant_string";
-          break;
-        }
-      }
-      else if (in_esc) {
-        in_esc= false;
-        in_str= true;
-        if (escaped_char_parser.parse (s, pos)) {
+
+      if (string_parser.unfinished ()) {
+        if (string_parser.escaped () && string_parser.parse_escaped (s, pos)) {
           type= "constant_char";
           break;
         }
-      }
-      else {
-        if (blanks_parser.parse (s, pos)) break;
-        if (inline_comment_parser.parse (s, pos)) {
-          type= "comment";
-          break;
-        }
-        in_esc= parse_string (s, pos, false);
-        if (opos < pos) {
+        if (string_parser.parse (s, pos)) {
           type= "constant_string";
           break;
         }
-        type= parse_keywords (colored, s, pos);
-        if (opos < pos) {
-          break;
-        }
-        if (number_parser.parse (s, pos)) {
-          type= "constant_number";
-          break;
-        }
-        type= parse_operators (colored, s, pos);
-        if (opos < pos) {
-          break;
-        }
-        parse_identifier (colored, s, pos);
-        if (opos < pos) {
-          type= none;
-          break;
-        }
       }
+
+      if (blanks_parser.parse (s, pos)) break;
+      if (inline_comment_parser.parse (s, pos)) {
+        type= "comment";
+        break;
+      }
+      if (string_parser.parse (s, pos)) {
+        type= "constant_string";
+        break;
+      }
+      type= parse_keywords (colored, s, pos);
+      if (opos < pos) {
+        break;
+      }
+      if (number_parser.parse (s, pos)) {
+        type= "constant_number";
+        break;
+      }
+      type= parse_operators (colored, s, pos);
+      if (opos < pos) {
+        break;
+      }
+      parse_identifier (colored, s, pos);
+      if (opos < pos) {
+        type= none;
+        break;
+      }
+      
       pos= opos;
       pos++;
-    }
-    while (false);
-  }
-  while (pos <= start);
+    } while (false);
+  } while (pos <= start);
+
   if (type == none) return none;
   return decode_color ("scala", encode_color (type));
 }

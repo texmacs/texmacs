@@ -53,6 +53,122 @@ line_inc (tree t, int i) {
   return pt[p->item + i];
 }
 
+static void
+parse_comment_multi_lines (string s, int& pos) {
+  if (pos+1 < N(s) && s[pos] == '/' && s[pos+1] == '*')
+    pos += 2;
+}
+
+static bool
+parse_string (string s, int& pos, bool force) {
+  int n= N(s);
+  static string delim;
+  if (pos >= n) return false;
+  if (s[pos] == '\"' || s[pos] == '\'') {
+    delim= s(pos, pos+1);
+    pos+= N(delim);
+  }
+  else if (!force)
+    return false;
+  while (pos<n && !test (s, pos, delim)) {
+    if (s[pos] == '\\') {
+      return true;
+    }
+    else
+      pos++;
+  }
+  if (test (s, pos, delim))
+    pos+= N(delim);
+  return false;
+}
+
+static bool
+begin_comment (string s, int i) {
+  bool comment= false;
+  int opos, pos= 0;
+  do {
+    do {
+      opos= pos;
+      parse_string (s, pos, false);
+      if (opos < pos) break;
+      parse_comment_multi_lines (s, pos);
+      if (opos < pos) {
+        comment = true;
+        break;
+      }
+      pos++;
+    } while (false);
+  } while (pos <= i);
+  return comment;
+}
+
+static int
+after_begin_comment (int i, tree t) {
+  tree   t2= t;
+  string s2= t->label;
+  int  line= line_number (t2);
+  do {
+    if (begin_comment (s2, i)) return line;
+    t2= line_inc (t2, -1);
+    --line;
+      // line_inc returns tree(ERROR) upon error
+    if (!is_atomic (t2)) return -1; // FIXME
+    s2= t2->label;
+    i = N(s2) - 1;
+  } while (line > -1);
+  return -1;
+}
+
+static void
+parse_end_comment (string s, int& pos) {
+  if (pos+1 < N(s) && s[pos] == '*' && s[pos+1] == '/')
+    pos += 2;
+}
+
+static bool
+end_comment (string s, int i) {
+  int opos, pos= 0;
+  do {
+    do {
+      opos= pos;
+      parse_string (s, pos, false);
+      if (opos < pos) break;
+      parse_end_comment (s, pos);
+      if (opos < pos && pos>i) return true;
+      pos++;
+    } while (false);
+  } while (pos < N(s));
+  return false;
+}
+
+static int
+before_end_comment (int i, tree t) {
+  int   end= number_of_lines (t);
+  tree   t2= t;
+  string s2= t2->label;
+  int  line= line_number (t2);
+  do {
+    if (end_comment (s2, i)) return line;
+    t2= line_inc (t2, 1);
+    ++line;
+      // line_inc returns tree(ERROR) upon error
+    if (!is_atomic (t2)) return -1; // FIXME
+    s2= t2->label;
+    i = 0;
+  } while (line <= end);
+  return -1;
+}
+
+bool
+in_comment (int pos, tree t) {
+  int beg= after_begin_comment (pos, t);
+  if (beg >= 0) {
+    int cur= line_number (t);
+    int end= before_end_comment (pos, line_inc (t, beg - cur));
+    return end >= beg && cur <= end;
+  }
+  return false;
+}
 
 bool
 abstract_language_rep::belongs_to_identifier(char c) {
