@@ -65,6 +65,15 @@ get_editor_status_report () {
     return r;
   }
 
+  // If an error happens too early then there is no current view
+  // and get_current_editor() will raise an exception leading to
+  // an infinite loop. So we stop before.
+  
+  if (!has_current_view()) {
+    r << "TeXmacs has not a current view";
+    return r;
+  }
+  
   server sv= get_server ();
   r << "Editor status:\n";
   editor ed= get_current_editor ();
@@ -120,7 +129,7 @@ get_crash_report (const char* msg) {
   string r;
   r << "Error message:\n  " << msg << "\n"
     << "\n" << get_system_information ()
-    << "\n" << get_editor_status_report ()
+//<< "\n" << get_editor_status_report ()
     << "\n" << get_stacktrace ();
   return r;
 }
