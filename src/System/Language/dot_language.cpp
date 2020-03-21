@@ -232,7 +232,7 @@ dot_language_rep::get_color (tree t, int start, int end) {
   int opos= 0;
   string type= none;
   string s= t->label;
-  string_parser.reset();
+  string_parser.reset ();
 
   do {
     type= none;
