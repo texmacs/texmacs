@@ -21,7 +21,9 @@
 #include <util.h>
 #endif
 
+#if !defined(__HAIKU__)
 #include <utmp.h>
+#endif
 #endif
 #include <unistd.h>
 #include <termios.h>

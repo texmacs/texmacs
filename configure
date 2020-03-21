@@ -7153,6 +7153,16 @@ $as_echo "#define OS_DARWIN 1" >>confdefs.h
       CONFIG_SO="dylib"
       CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
     ;;
+    *haiku*)
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: a generic Haiku host" >&5
+$as_echo "a generic Haiku host" >&6; }
+
+$as_echo "#define OS_HAIKU 1" >>confdefs.h
+
+      CONFIG_OS="HAIKU"
+      CONFIG_QTPIPES="yes"
+      CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
+    ;;
     powerpc-*-linux*)
       { $as_echo "$as_me:${as_lineno-$LINENO}: result: a PowerPC/GNU-linux host" >&5
 $as_echo "a PowerPC/GNU-linux host" >&6; }

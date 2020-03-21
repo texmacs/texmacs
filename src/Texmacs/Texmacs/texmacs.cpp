@@ -173,6 +173,15 @@ TeXmacs_init_paths (int& argc, char** argv) {
   // system("set");
 #endif
 
+#ifdef OS_HAIKU
+  // Initialization inside the Haiku package management environment
+  // TEXMACS_PATH is set relative to the executable which is in $prefix/app
+  // to $prefix/data/TeXmacs
+
+  if (is_empty (current_texmacs_path))
+    set_env ("TEXMACS_PATH", as_string (exedir * "../data/TeXmacs"));
+#endif
+
   // check on the latest $TEXMACS_PATH
   current_texmacs_path = get_env ("TEXMACS_PATH");
   if (is_empty (current_texmacs_path) ||
@@ -555,6 +564,8 @@ immediate_options (int argc, char** argv) {
         set_env ("HOME", get_env("USERPROFILE"));
     set_env ("TEXMACS_HOME_PATH", get_env ("APPDATA") * "\\TeXmacs");
 	}
+#elif defined(OS_HAIKU)
+    set_env ("TEXMACS_HOME_PATH", get_env ("HOME") * "/config/settings/TeXmacs");
 #else
     set_env ("TEXMACS_HOME_PATH", get_env ("HOME") * "/.TeXmacs");
 #endif

@@ -142,6 +142,9 @@
 #undef OS_GNU_LINUX
 
 /* OS type */
+#undef OS_HAIKU
+
+/* OS type */
 #undef OS_IRIX
 
 /* OS type */

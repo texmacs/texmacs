@@ -140,6 +140,13 @@ AC_DEFUN([TM_PLATFORM],[
       CONFIG_SO="dylib"
       CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
     ;;
+    *haiku*)
+      AC_MSG_RESULT(a generic Haiku host)
+      AC_DEFINE([OS_HAIKU],[1],[OS type])
+      CONFIG_OS="HAIKU"
+      CONFIG_QTPIPES="yes"
+      CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
+    ;;    
     powerpc-*-linux*)
       AC_MSG_RESULT(a PowerPC/GNU-linux host)
       AC_DEFINE([OS_POWERPC_GNU_LINUX],[1],[OS type])
