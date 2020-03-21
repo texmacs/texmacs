@@ -15,48 +15,6 @@
 #include "impl_language.hpp"
 #include "scheme.hpp"
 
-extern tree the_et;
-
-/*
- static bool
- is_line (tree t) {
- path p= obtain_ip (t);
- if (is_nil (p) || last_item (p) < 0) return false;
- tree pt= subtree (the_et, reverse (p->next));
- if (!is_func (pt, DOCUMENT)) return false;
- return true;
- }
- */
-
-static int
-line_number (tree t) {
-  path p= obtain_ip (t);
-  if (is_nil (p) || last_item (p) < 0) return -1;
-  tree pt= subtree (the_et, reverse (p->next));
-  if (!is_func (pt, DOCUMENT)) return -1;
-  return p->item;
-}
-
-static int
-number_of_lines (tree t) {
-  path p= obtain_ip (t);
-  if (is_nil (p) || last_item (p) < 0) return -1;
-  tree pt= subtree (the_et, reverse (p->next));
-  if (!is_func (pt, DOCUMENT)) return -1;
-  return N(pt);
-}
-
-static tree
-line_inc (tree t, int i) {
-  if (i == 0) return t;
-  path p= obtain_ip (t);
-  if (is_nil (p) || last_item (p) < 0) return tree (ERROR);
-  tree pt= subtree (the_et, reverse (p->next));
-  if (!is_func (pt, DOCUMENT)) return tree (ERROR);
-  if ((p->item + i < 0) || (p->item + i >= N(pt))) return tree (ERROR);
-  return pt[p->item + i];
-}
-
 static void parse_string (string s, int& pos);
 
 cpp_language_rep::cpp_language_rep (string name):

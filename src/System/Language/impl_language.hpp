@@ -40,6 +40,10 @@ extern text_property_rep tp_operator_rep;
 extern text_property_rep tp_short_apply_rep;
 extern text_property_rep tp_apply_rep;
 
+int line_number (tree t);
+int number_of_lines (tree t);
+tree line_inc (tree t, int i);
+
 struct abstract_language_rep: language_rep {
   hashmap<string,string> colored;
   blanks_parser_rep blanks_parser;
