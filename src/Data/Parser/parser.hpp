@@ -27,7 +27,7 @@ public:
     if (pos > opos) {
       // Expressive logs for parser with start and end marked
       // Commented by default for performance
-      // cout << get_parser_name() << " ended" << LF
+      // cout << get_parser_name() << " debugging:" << LF
       //      << s << LF
       //      << string(' ', opos) << "^" << LF
       //      << string(' ', pos) << "^" << LF;

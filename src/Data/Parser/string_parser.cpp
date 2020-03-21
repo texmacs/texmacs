@@ -14,8 +14,13 @@
 #include "analyze.hpp"
 
 string_parser_rep::string_parser_rep () {
-  m_start_size= 0;
   use_esc_parser= false;
+  reset ();
+}
+
+void string_parser_rep::reset () {
+  do_finish ();
+  m_escaped= false;
 }
 
 bool

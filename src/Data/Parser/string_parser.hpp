@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : number_parser.hpp
+* MODULE     : string_parser.hpp
 * DESCRIPTION: shared string parsing routines for various programming languages
 * COPYRIGHT  : (C) 2020  Darcy Shen
 *******************************************************************************
@@ -22,8 +22,10 @@ public:
   string_parser_rep();
   bool can_parse (string s, int pos);
   string get_parser_name () { return "string_parser"; }
-  bool unfinished ();
   void set_pairs (hashmap<string, string> p_pairs);
+
+  bool unfinished ();
+  void reset();
 
   bool escaped ();
   void set_escaped_char_parser (escaped_char_parser_rep p_esc_parser);

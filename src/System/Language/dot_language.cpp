@@ -227,10 +227,12 @@ dot_language_rep::get_color (tree t, int start, int end) {
   if (start >= end) return none;
   if (in_comment (start, t))
     return decode_color ("dot", encode_color ("comment"));
+
+  int pos= 0;
+  int opos= 0;
   string type= none;
   string s= t->label;
-  int pos= 0;
-  int opos=0;
+  string_parser.reset();
 
   do {
     type= none;
