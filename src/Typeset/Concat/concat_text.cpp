@@ -173,7 +173,7 @@ concater_rep::typeset_prog_string (tree t, path ip, int pos, int end) {
     start= pos;
     text_property tp= env->lan->advance (t, pos);
     if (pos > end) pos= end;
-    if ((pos>start) && (s[start]==' ')) { // spaces
+    if ((pos-start == 1) && (s[start]==' ')) { // spaces
       if (start == 0) typeset_substring ("", ip, 0);
       penalty_min (tp->pen_after);
       PRINT_SPACE (tp->spc_before);
