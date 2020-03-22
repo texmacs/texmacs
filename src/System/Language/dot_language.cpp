@@ -38,16 +38,39 @@ dot_language_rep::dot_language_rep (string name):
 text_property
 dot_language_rep::advance (tree t, int& pos) {
   string s= t->label;
-  if (pos==N(s)) return &tp_normal_rep;
+  if (pos>=N(s)) return &tp_normal_rep;
 
-  if (blanks_parser.parse (s, pos))
+  if (string_parser.unfinished ()) {
+    if (string_parser.escaped () && string_parser.parse_escaped (s, pos)) {
+      current_parser= escaped_char_parser.get_parser_name ();
+      return &tp_normal_rep;
+    }
+    if (string_parser.parse (s, pos)) {
+      current_parser= string_parser.get_parser_name ();
+      return &tp_normal_rep;
+    }
+  }
+
+  if (blanks_parser.parse (s, pos)) {
+    current_parser= blanks_parser.get_parser_name ();
     return &tp_space_rep;
-  if (escaped_char_parser.parse (s, pos))
+  }
+  if (string_parser.parse (s, pos)) {
+    current_parser= string_parser.get_parser_name ();
     return &tp_normal_rep;
-  if (identifier_parser.parse (s, pos))
+  }
+  if (number_parser.parse (s, pos)) {
+    current_parser= number_parser.get_parser_name ();
     return &tp_normal_rep;
+  }
+  if (identifier_parser.parse (s, pos)) {
+    current_parser= identifier_parser.get_parser_name ();
+    return &tp_normal_rep;
+  }
 
   tm_char_forwards (s, pos);
+  current_parser= "";
+
   return &tp_normal_rep;
 }
 
@@ -76,60 +99,43 @@ string
 dot_language_rep::get_color (tree t, int start, int end) {
   static string none= "";
   if (start >= end) return none;
+
+
+  // Coloring as multi-line comment
   if (in_comment (start, t))
     return decode_color ("dot", encode_color ("comment"));
 
+  // Coloring as inline comment
   int pos= 0;
   int opos= 0;
   string type= none;
   string s= t->label;
-  string_parser.reset ();
+  while (pos <= start) {
+    if (inline_comment_parser.can_parse (s, pos)) {
+      return decode_color ("cpp", encode_color ("comment"));
+    }
+    pos ++;
+  }
 
-  do {
+  pos= start;
+  if (current_parser == "string_parser") {
+    type= "constant_string";
+  } else if (current_parser == "escaped_char_parser") {
+    type= "constant_char";
+  } else if (current_parser == "number_parser") {
+    type= "constant_number";
+  } else if (current_parser == "identifier_parser") {
+    if (keyword_parser.parse (s, pos)) {
+      string keyword= s(opos, pos);
+      type= keyword_parser.get (keyword);
+    }
+    if (operator_parser.parse (s, pos)) {
+      string oper= s(opos, pos);
+      type= operator_parser.get (oper);
+    }
+  } else {
     type= none;
-    do {
-      opos= pos;
-
-      if (string_parser.unfinished ()) {
-        if (string_parser.escaped () && string_parser.parse_escaped (s, pos)) {
-          type= "constant_char";
-          break;
-        }
-        if (string_parser.parse (s, pos)) {
-          type= "constant_string";
-          break;
-        }
-      }
-
-      if (blanks_parser.parse (s, pos)) break;
-      if (inline_comment_parser.parse (s, pos)) {
-        type= "comment";
-        break;
-      }
-      if (string_parser.parse (s, pos)) {
-        type= "constant_string";
-        break;
-      }
-      if (keyword_parser.parse (s, pos)) {
-        string keyword= s(opos, pos);
-        type= keyword_parser.get (keyword);
-        break;
-      }
-      if (operator_parser.parse (s, pos)) {
-        string oper= s(opos, pos);
-        type= operator_parser.get (oper);
-        break;
-      }
-      parse_identifier (colored, s, pos);
-      if (opos < pos) {
-        type= none;
-        break;
-      }
-      
-      pos= opos;
-      pos++;
-    } while (false);
-  } while (pos <= start);
+  }
 
   if (type == none) return none;
   return decode_color ("dot", encode_color (type));
