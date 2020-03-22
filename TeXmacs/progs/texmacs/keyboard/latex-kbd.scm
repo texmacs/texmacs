@@ -208,7 +208,7 @@
   ("abstract"  "Insert abstract" (make-abstract-data))
   ("maketitle" "Insert title"    (make-doc-data))
   ("tableofcontents" "Insert table of contents"
-   (make-aux "table-of-contents" "toc"))
+   (make-aux "table-of-contents" "toc-prefix" "toc"))
   ("appendix" "Insert appendix" (make-section 'appendix))
   ("chapter" "Insert chapter" (make-section 'chapter))
   ("section" "Insert section" (make-section 'section))

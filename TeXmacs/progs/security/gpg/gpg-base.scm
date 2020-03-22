@@ -166,9 +166,6 @@
 (define gpg-collected-public-keys-url
   (url-append (gpg-homedir) "collected-public-keys.scm"))
 
-(define (ahash-entries h)
-  (map first (ahash-table->list h)))
-
 (tm-define (gpg-collected-public-keys)
   (when (supports-gpg?)
     (with t (make-ahash-table)

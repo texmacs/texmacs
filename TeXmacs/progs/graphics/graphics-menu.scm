@@ -360,7 +360,7 @@
   (pick-color (graphics-set-grid-color 'units answer))
   ---
   ("Palette" (interactive-color
-              (lambda (c) (graphics-set-color 'units c)) '()))
+              (lambda (c) (graphics-set-grid-color 'units c)) '()))
   ("Other" (interactive
 	       (lambda (x) (graphics-set-grid-color 'units x)) "Color")))
 

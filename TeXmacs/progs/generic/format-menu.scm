@@ -77,7 +77,7 @@
     (if (not (allow-pattern-colors?))
         (pick-color (setter answer)))
     ---
-    ("Palette" (interactive-color setter) '())
+    ("Palette" (interactive-color setter '()))
     (if (allow-pattern-colors?)
         ("Pattern" (open-pattern-selector setter "1cm")))
     ("Other" (make-interactive-with "color"))))

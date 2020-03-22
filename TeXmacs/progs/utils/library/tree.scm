@@ -122,7 +122,7 @@
 			(mid  (list-ref tl (+ pos 1)))
 			(tail (list-tail tl (+ pos 2)))
 			(merged (append head tail)))
-		   (tree-set-diff! ref mid)
+                   (set! ref (tree-set-diff ref mid))
 		   (tree-insert-node! ref pos merged))))))))
 
 (tm-define-macro (tree-set-diff! ref t)

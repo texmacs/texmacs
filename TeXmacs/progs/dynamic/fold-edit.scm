@@ -1076,7 +1076,7 @@
 
 (define (slide-get-bg-color-bis t)
   (cond ((tree-is? t :up 'with)
-         (slide-set-bg-color-bis (tree-up t)))
+         (slide-get-bg-color-bis (tree-up t)))
         ((tree-is? t :up 'with-screen-color)
          (tree-ref t :up 0))
         (else "")))
