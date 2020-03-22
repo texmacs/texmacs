@@ -1,4 +1,4 @@
-<TeXmacs|1.99.11>
+<TeXmacs|1.99.12>
 
 <style|<tuple|tmdoc|english|old-spacing|old-dots>>
 
@@ -8,6 +8,18 @@
   <section|Changes from version 1.99.1 to 1.99.12>
 
   <\itemize>
+    <item>Plugins implemented in Python use Python 3 by default ().
+
+    <item>A Parser Framework for programming languages ().
+
+    <item>Improved Graphviz plugin with documentation in Chinese and syntax
+    highlight ().
+
+    <item>Improved Maxima plugin with documentation in Chinese and bug fixes
+    ().
+
+    <item>Improved Octave plugin on Windows for Octave 5.x ().
+
     <item>Many bug fixes (1.99.12).
 
     <item>Make it easier to cite work on <TeXmacs> (1.99.12).
