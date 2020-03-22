@@ -1049,7 +1049,6 @@
 	((== (car x) "cell-rsep") (length-attr "padding-right" (cadr x)))
 	((== (car x) "cell-tsep") (length-attr "padding-top" (cadr x)))
 	((== (car x) "cell-bsep") (length-attr "padding-bottom" (cadr x)))
-	((== (car x) "cell-bsep") (length-attr "padding-bottom" (cadr x)))
 	((== x '("cell-block" "no")) "white-space: nowrap")
 	((== x '("cell-block" "yes")) #f)
 	((== x '("cell-block" "auto"))
@@ -1090,11 +1089,11 @@
     (if (!= sum 0) (set! cellf (map (cut tmhtml-width-replace <> sum) cellf)))
     (tmhtml-make-cells-bis l cellf)))
 
-(define (tmhtml-make-row-attr x)
-  (tmhtml-make-cell-attr x))
+(define (tmhtml-make-row-attr x all)
+  (tmhtml-make-cell-attr x all))
 
 (define (tmhtml-make-row r rowf cellf)
-  `(h:tr ,@(html-css-attrs (map* tmhtml-make-row-attr rowf))
+  `(h:tr ,@(html-css-attrs (map* (cut tmhtml-make-row-attr <> rowf) rowf))
 	 ,@(tmhtml-make-cells (cdr r) cellf)))
 
 (define (tmhtml-make-rows l rowf cellf)
@@ -1102,11 +1101,11 @@
       (cons (tmhtml-make-row  (car l) (car rowf) (car cellf))
 	    (tmhtml-make-rows (cdr l) (cdr rowf) (cdr cellf)))))
 
-(define (tmhtml-make-column-attr x)
-  (tmhtml-make-cell-attr x))
+(define (tmhtml-make-column-attr x all)
+  (tmhtml-make-cell-attr x all))
 
 (define (tmhtml-make-col colf)
-  `(h:col ,@(html-css-attrs (map* tmhtml-make-column-attr colf))))
+  `(h:col ,@(html-css-attrs (map* (cut tmhtml-make-column-attr <> colf) colf))))
 
 (define (tmhtml-make-column-group colf)
   (if (list-every null? colf) '()
