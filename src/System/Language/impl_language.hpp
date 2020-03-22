@@ -47,6 +47,7 @@ bool in_comment (int pos, tree t);
 
 struct abstract_language_rep: language_rep {
   hashmap<string,string> colored;
+  string current_parser;
   blanks_parser_rep blanks_parser;
   inline_comment_parser_rep inline_comment_parser;
   number_parser_rep number_parser;
@@ -124,7 +125,8 @@ struct cpp_language_rep: abstract_language_rep {
   void hyphenate (string s, int after, string& left, string& right);
   string get_color (tree t, int start, int end);
 
-  void parse_preprocessing (string s, int & pos);
+  void parse_preprocessing (string s, int& pos);
+  string get_identifier_type (string s, int& pos);
 };
 
 struct dot_language_rep: abstract_language_rep {

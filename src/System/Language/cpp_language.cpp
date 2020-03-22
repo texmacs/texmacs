@@ -41,16 +41,41 @@ cpp_language_rep::cpp_language_rep (string name):
 text_property
 cpp_language_rep::advance (tree t, int& pos) {
   string s= t->label;
-  if (pos == N(s)) return &tp_normal_rep;
+  current_parser= "";
 
-  if (blanks_parser.parse (s, pos))
+  if (pos >= N(s)) return &tp_normal_rep;
+
+  if (string_parser.unfinished ()) {
+    if (string_parser.escaped () && string_parser.parse_escaped (s, pos)) {
+      current_parser= escaped_char_parser.get_parser_name ();
+      return &tp_normal_rep;
+    }
+    if (string_parser.parse (s, pos)) {
+      current_parser= string_parser.get_parser_name ();
+      return &tp_normal_rep;
+    }
+  }
+
+  if (blanks_parser.parse (s, pos)) {
+    current_parser= blanks_parser.get_parser_name ();
     return &tp_space_rep;
-  if (number_parser.parse (s, pos))
+  }
+  if (string_parser.parse (s, pos)) {
+    current_parser= string_parser.get_parser_name ();
     return &tp_normal_rep;
-  if (identifier_parser.parse (s, pos))
+  }
+  if (number_parser.parse (s, pos)) {
+    current_parser= number_parser.get_parser_name ();
     return &tp_normal_rep;
+  }
+  if (identifier_parser.parse (s, pos)) {
+    current_parser= identifier_parser.get_parser_name ();
+    return &tp_normal_rep;
+  }
 
   tm_char_forwards (s, pos);
+  current_parser= "";
+
   return &tp_normal_rep;
 }
 
@@ -290,6 +315,28 @@ static bool in_preprocessing (string s, tree t) {
 }
 
 string
+cpp_language_rep::get_identifier_type (string s, int& pos) {
+  int opos= pos;
+  parse_keyword (colored, s, pos);
+  if (opos < pos) {
+    return "keyword";
+  }
+  parse_type (colored, s, pos);
+  if (opos < pos) {
+    return "constant_type";
+  }
+  parse_other_lexeme (colored, s, pos);  //not left parenthesis
+  if (opos < pos) {
+    return "";
+  }
+  parse_constant (colored, s, pos);
+  if (opos < pos) {
+    return "constant";
+  }
+  return "";
+}
+
+string
 cpp_language_rep::get_color (tree t, int start, int end) {
   static bool setup_done= false;
   if (!setup_done) {
@@ -301,13 +348,18 @@ cpp_language_rep::get_color (tree t, int start, int end) {
   }
   
   static string none= "";
+  string type;
+
   if (start >= end) return none;
+
+  // Coloring as muliti-line comment
   if (in_comment (start, t))
     return decode_color ("cpp", encode_color ("comment"));
   string s= t->label;
+
+  // Coloring as preprocessor
   int  pos= 0;
   int opos= 0;
-  string type;
   if (in_preprocessing(s, t)) {
     do {
       do {
@@ -331,63 +383,28 @@ cpp_language_rep::get_color (tree t, int start, int end) {
       decode_color("cpp", encode_color (type));
     return decode_color("cpp", encode_color("preprocessor"));
   }
+
+  // Coloring as inline comment
   pos= 0;
-  string_parser.reset ();
+  while (pos <= start) {
+    if (inline_comment_parser.can_parse (s, pos)) {
+      return decode_color ("cpp", encode_color ("comment"));
+    }
+    pos ++;
+  }
 
-  do {
+  pos= start;
+  if (current_parser == "string_parser") {
+    type= "constant_string";
+  } else if (current_parser == "escaped_char_parser") {
+    type= "constant_char";
+  } else if (current_parser == "number_parser") {
+    type= "constant_number";
+  } else if (current_parser == "identifier_parser") {
+    type = get_identifier_type (s, pos);
+  } else {
     type= none;
-    do {
-      opos= pos;
+  }
 
-      if (string_parser.unfinished ()) {
-        if (string_parser.escaped () && string_parser.parse_escaped (s, pos)) {
-          type= "constant_char";
-          break;
-        }
-        if (string_parser.parse (s, pos)) {
-          type= "constant_string";
-          break;
-        }
-      }
-
-      if (blanks_parser.parse (s, pos)) break;
-      if (string_parser.parse (s, pos)) {
-        type= "constant_string";
-        break;
-      }
-      if (inline_comment_parser.parse (s, pos)) {
-        type= "comment";
-        break;
-      }
-      parse_keyword (colored, s, pos);
-      if (opos < pos) {
-        type= "keyword";
-        break;
-      }
-      parse_type (colored, s, pos);
-      if (opos < pos) {
-        type= "constant_type";
-        break;
-      }
-      parse_other_lexeme (colored, s, pos);  //not left parenthesis
-      if (opos < pos)
-        break;
-      parse_constant (colored, s, pos);
-      if (opos < pos) {
-        type= "constant";
-        break;
-      }
-      if (number_parser.parse (s, pos)) {
-        type= "constant_number";
-        break;
-      }
-      if (identifier_parser.parse (s, pos)) {
-        type= none;
-        break;
-      }
-      pos= opos + 1;
-    } while (false);
-  } while (pos <= start);
-  if (type == none) return none;
   return decode_color ("cpp", encode_color (type));
 }

@@ -21,12 +21,14 @@ string_parser_rep::string_parser_rep () {
 void string_parser_rep::reset () {
   do_finish ();
   m_escaped= false;
+  m_skip_escaped= false;
 }
 
 bool
 string_parser_rep::can_parse (string s, int pos) {
   if (parser_rep::can_parse (s, pos)) {
     if (unfinished ()) return true;
+
     iterator<string> iter= iterate (m_pairs);
     while (iter->busy ()) {
       m_start= iter->next ();
@@ -49,48 +51,54 @@ string_parser_rep::do_parse (string s, int& pos) {
     return;
   }
 
-  // Always use the longer matched m_start
-  iterator<string> iter= iterate (m_pairs);
-  while (iter->busy ()) {
-    string key= iter->next ();
-    int key_size= N(key);
-    if (m_start_size >= N(key)) continue;
-    if (starts (key, m_start) && test (s, pos, key)) {
-      m_start= key;
-      m_start_size= N(key);
+  if (!unfinished ()) {
+    // Always use the longer matched m_start
+    iterator<string> iter= iterate (m_pairs);
+    while (iter->busy ()) {
+      string key= iter->next ();
+      int key_size= N(key);
+      if (m_start_size >= N(key)) continue;
+      if (starts (key, m_start) && test (s, pos, key)) {
+        m_start= key;
+        m_start_size= N(key);
+      }
     }
+
+    // Advance over the opening
+    pos+= m_start_size;
   }
 
-  // Advance over the m_start
-  pos+= m_start_size;
-
-  // Advance until the end
-  string end= m_pairs (m_start);
-  while (pos<N(s) && !test (s, pos, end)) {
+  // Advance until the end or the escaped sequence
+  string closing= m_pairs (m_start);
+  while (pos<N(s) && !test (s, pos, closing)) {
     if (use_esc_parser && m_esc_parser.can_parse (s, pos)) {
-      m_escaped= true;
-      break;
+      if (m_skip_escaped) {
+        m_esc_parser.parse (s, pos);
+      } else {
+        m_escaped= true;
+        m_finished= false;
+        // Exit since we encountered a escaped sequence
+        return ;
+      }
     }
 
     pos++;
   }
 
-  if (m_escaped) {
-    return ;
-  } 
-
-  if (test (s, pos, end)) {
-    pos+= N(end);
+  // Advance over the closing
+  if (test (s, pos, closing)) {
+    pos+= N(closing);
     do_finish ();
   } 
 }
 
 bool string_parser_rep::unfinished () {
-  return m_start_size != 0;
+  return !m_finished;
 }
 
 void string_parser_rep::do_finish () {
   m_start_size= 0;
+  m_finished= true;
 }
 
 void string_parser_rep::set_pairs (hashmap<string, string> p_pairs) {
@@ -112,4 +120,8 @@ bool string_parser_rep::parse_escaped (string s, int& pos) {
     return true;
   }
   return false;
+}
+
+void string_parser_rep::skip_escaped (bool skip) {
+  m_skip_escaped= skip;
 }

@@ -19,7 +19,7 @@
 
 class string_parser_rep : public parser_rep {
 public:
-  string_parser_rep();
+  string_parser_rep ();
   bool can_parse (string s, int pos);
   string get_parser_name () { return "string_parser"; }
   void set_pairs (hashmap<string, string> p_pairs);
@@ -30,6 +30,7 @@ public:
   bool escaped ();
   void set_escaped_char_parser (escaped_char_parser_rep p_esc_parser);
   bool parse_escaped (string s, int& pos);
+  void skip_escaped (bool skip);
 
 private:
   /**
@@ -49,11 +50,13 @@ private:
    * Out of the string, m_start_size is reset to 0.
    */
   int m_start_size;
+  bool m_finished;
   void do_finish();
 
   escaped_char_parser_rep m_esc_parser;
   bool use_esc_parser;
   bool m_escaped;
+  bool m_skip_escaped;
 
   void do_parse (string s, int& pos);
 };
