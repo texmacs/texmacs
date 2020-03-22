@@ -47,6 +47,22 @@
          (and (pair? l) (string-append repo "/" (car l))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Unpack the context from the file name
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define-macro (with-remote-context rname . body)
+  `(let* ((path (tmfs->list ,rname))
+          (host (car path))
+          (head (if (pair? (cdr path)) (cadr path) ""))
+          (past? (string-starts? head "time="))
+          (tail (if past? (cddr path) (cdr path)))
+          (next (list->tmfs (cons host tail)))
+          (time (if past? (string-drop head 5) db-time)))
+     (with-global db-time time
+       (with-global ,rname next
+         ,@body))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; File hierarchy
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -174,25 +190,6 @@
               (let* ((info (map version-get-info vl))
                      (filt (list-filter info (readable-by? uid))))
                 (server-return envelope filt)))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Unpack the context from the file name
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (tmfs-car* f) (or (tmfs-car f) f))
-(define (tmfs-cdr* f) (or (tmfs-cdr f) ""))
-
-(tm-define-macro (with-remote-context rname . body)
-  `(let* ((path (tmfs->list ,rname))
-          (host (car path))
-          (head (if (pair? (cdr path)) (cadr path) ""))
-          (past? (string-starts? head "time="))
-          (tail (if past? (cddr path) (cdr path)))
-          (next (list->tmfs (cons host tail)))
-          (time (if past? (string-drop head 5) db-time)))
-     (with-global db-time time
-       (with-global ,rname next
-         ,@body))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote file manipulations

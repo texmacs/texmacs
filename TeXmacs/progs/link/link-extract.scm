@@ -58,11 +58,11 @@
 	 (l (append-map (cut tree-search (buffer-tree) <>) pred-l)))
     (with cont
 	(lambda ()
-	  (let* ((name (string-append (buffer-get-title (current-buffer))
-                                      " - " env))
+	  (let* ((base (current-buffer))
+                 (name (string-append (buffer-get-title base) " - " env))
                  (style `(tuple ,@(get-style-list)))
 		 (r (filter-map environment->locus l)))
-	    (delayed (:pause 25) (build-locus-page-sub name style r #f))))
+	    (delayed (:pause 25) (build-locus-page-sub base name style r #f))))
       (if (locified? l) (cont)
 	  (user-confirm "Locify environments?" #f 
 	    (lambda (answ) 
