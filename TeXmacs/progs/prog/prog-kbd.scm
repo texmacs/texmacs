@@ -16,6 +16,8 @@
         (utils edit selections)
         (prog scheme-tools) 
         (prog scheme-edit)
+        (prog dot-edit)
+        (prog java-edit)
         (prog scala-edit)
         (prog cpp-edit)
         (prog python-edit)
