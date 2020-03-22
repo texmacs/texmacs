@@ -196,6 +196,8 @@
 
   <assign|mmx|<macro|body|<with|mode|prog|prog-language|mathemagix|font-family|rm|<arg|body>>>>
 
+  <assign|dot-lang|<macro|body|<with|mode|prog|prog-language|dot|font-family|rm|<arg|body>>>>
+
   <\active*>
     <\src-comment>
       Blocks of code for standard languages
@@ -234,7 +236,7 @@
 
   <assign|dot-code|<\macro|body>
     <\pseudo-code>
-      <with|mode|prog|prog-language|dot|font-family|rm|<arg|body>>
+      <dot-lang|<arg|body>>
     </pseudo-code>
   </macro>>
 

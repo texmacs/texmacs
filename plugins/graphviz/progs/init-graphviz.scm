@@ -36,7 +36,7 @@
                      (getenv "TEXMACS_PATH")
                      "/plugins/tmpy/session/tm_graphviz.py\"")))
 
-(plugin-configure graphviz 
+(plugin-configure dot 
   (:require (url-exists-in-path? "dot"))
   (:require (python-exists?))
   (:launch ,(graphviz-launcher))
