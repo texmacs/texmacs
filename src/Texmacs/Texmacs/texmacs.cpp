@@ -180,6 +180,9 @@ TeXmacs_init_paths (int& argc, char** argv) {
 
   if (is_empty (current_texmacs_path))
     set_env ("TEXMACS_PATH", as_string (exedir * "../data/TeXmacs"));
+
+  set_env ("PATH", get_env("PATH") * ":" *
+           as_string (exedir * "/system/lib/TeXmacs/bin"));
 #endif
 
   // check on the latest $TEXMACS_PATH
