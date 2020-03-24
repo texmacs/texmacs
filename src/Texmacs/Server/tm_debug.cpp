@@ -70,7 +70,7 @@ get_editor_status_report () {
   // an infinite loop. So we stop before.
   
   if (!has_current_view()) {
-    r << "TeXmacs has not a current view";
+    r << "TeXmacs does not yet have a current view";
     return r;
   }
   
@@ -129,7 +129,7 @@ get_crash_report (const char* msg) {
   string r;
   r << "Error message:\n  " << msg << "\n"
     << "\n" << get_system_information ()
-//<< "\n" << get_editor_status_report ()
+    << "\n" << get_editor_status_report ()
     << "\n" << get_stacktrace ();
   return r;
 }
