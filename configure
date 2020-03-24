@@ -5200,7 +5200,7 @@ $as_echo "$as_me: WARNING: pkg-config not found : configuration may fail" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then CPPFLAGS=$(echo $CPPFLAGS)
-    else CPPFLAGS=$(echo $CPPFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else CPPFLAGS=$(echo $CPPFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -5266,7 +5266,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then CPPFLAGS=$(echo $CPPFLAGS)
-    else CPPFLAGS=$(echo $CPPFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else CPPFLAGS=$(echo $CPPFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -5301,7 +5301,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -5377,7 +5377,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -5443,7 +5443,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -5478,7 +5478,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -6074,7 +6074,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -6476,7 +6476,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -6509,7 +6509,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -6575,7 +6575,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -6614,7 +6614,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -7016,7 +7016,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -7049,7 +7049,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -7115,7 +7115,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -7619,7 +7619,7 @@ fi
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -8021,7 +8021,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -8054,7 +8054,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then GUILE_LIBS=$(echo $GUILE_LIBS)
-    else GUILE_LIBS=$(echo $GUILE_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else GUILE_LIBS=$(echo $GUILE_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -8120,7 +8120,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then GUILE_LIBS=$(echo $GUILE_LIBS)
-    else GUILE_LIBS=$(echo $GUILE_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else GUILE_LIBS=$(echo $GUILE_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -8536,7 +8536,7 @@ fi
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -8602,7 +8602,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -8637,7 +8637,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -10068,7 +10068,7 @@ fi
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -10134,7 +10134,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -10169,7 +10169,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -10243,7 +10243,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -10309,7 +10309,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -10344,7 +10344,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -10697,7 +10697,7 @@ $as_echo "$as_me: iconv found in default compiler location" >&6;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then ICONV_LIBS=$(echo $ICONV_LIBS)
-    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -10763,7 +10763,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then ICONV_LIBS=$(echo $ICONV_LIBS)
-    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -10798,7 +10798,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -10877,7 +10877,7 @@ then
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -11279,7 +11279,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -11312,7 +11312,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then ICONV_LIBS=$(echo $ICONV_LIBS)
-    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -11378,7 +11378,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then ICONV_LIBS=$(echo $ICONV_LIBS)
-    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -11418,7 +11418,7 @@ else
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -11820,7 +11820,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -11853,7 +11853,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then ICONV_LIBS=$(echo $ICONV_LIBS)
-    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -11919,7 +11919,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then ICONV_LIBS=$(echo $ICONV_LIBS)
-    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -11998,7 +11998,7 @@ fi
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -12064,7 +12064,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -12099,7 +12099,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -12225,7 +12225,7 @@ $as_echo "yes" >&6; }
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -12291,7 +12291,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -12326,7 +12326,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -12400,7 +12400,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -12466,7 +12466,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -12501,7 +12501,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -12666,7 +12666,7 @@ $as_echo "$as_me: iconv found in default compiler location" >&6;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then ICONV_LIBS=$(echo $ICONV_LIBS)
-    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -12732,7 +12732,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then ICONV_LIBS=$(echo $ICONV_LIBS)
-    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -12767,7 +12767,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -12846,7 +12846,7 @@ then
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -13248,7 +13248,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -13281,7 +13281,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then ICONV_LIBS=$(echo $ICONV_LIBS)
-    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -13347,7 +13347,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then ICONV_LIBS=$(echo $ICONV_LIBS)
-    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -13387,7 +13387,7 @@ else
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -13789,7 +13789,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -13822,7 +13822,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then ICONV_LIBS=$(echo $ICONV_LIBS)
-    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -13888,7 +13888,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then ICONV_LIBS=$(echo $ICONV_LIBS)
-    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else ICONV_LIBS=$(echo $ICONV_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -13967,7 +13967,7 @@ fi
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -14033,7 +14033,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -14068,7 +14068,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -14194,7 +14194,7 @@ $as_echo "yes" >&6; }
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -14260,7 +14260,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -14295,7 +14295,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -14369,7 +14369,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -14435,7 +14435,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -14470,7 +14470,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -14606,7 +14606,7 @@ $as_echo "yes" >&6; }
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -14672,7 +14672,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -14707,7 +14707,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -14781,7 +14781,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -14847,7 +14847,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -14882,7 +14882,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -15114,7 +15114,7 @@ fi
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -15516,7 +15516,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -15549,7 +15549,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then FREETYPE_LIBS=$(echo $FREETYPE_LIBS)
-    else FREETYPE_LIBS=$(echo $FREETYPE_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else FREETYPE_LIBS=$(echo $FREETYPE_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -15615,7 +15615,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then FREETYPE_LIBS=$(echo $FREETYPE_LIBS)
-    else FREETYPE_LIBS=$(echo $FREETYPE_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else FREETYPE_LIBS=$(echo $FREETYPE_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -15655,7 +15655,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -16057,7 +16057,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -16090,7 +16090,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then FREETYPE_LIBS=$(echo $FREETYPE_LIBS)
-    else FREETYPE_LIBS=$(echo $FREETYPE_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else FREETYPE_LIBS=$(echo $FREETYPE_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -16156,7 +16156,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then FREETYPE_LIBS=$(echo $FREETYPE_LIBS)
-    else FREETYPE_LIBS=$(echo $FREETYPE_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else FREETYPE_LIBS=$(echo $FREETYPE_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -16242,7 +16242,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -16308,7 +16308,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -16343,7 +16343,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -17929,7 +17929,7 @@ fi
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -17995,7 +17995,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -18030,7 +18030,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -18104,7 +18104,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -18170,7 +18170,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -18205,7 +18205,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -18850,7 +18850,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -19252,7 +19252,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -19285,7 +19285,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then SPARKLE_LIBS=$(echo $SPARKLE_LIBS)
-    else SPARKLE_LIBS=$(echo $SPARKLE_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else SPARKLE_LIBS=$(echo $SPARKLE_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -19351,7 +19351,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then SPARKLE_LIBS=$(echo $SPARKLE_LIBS)
-    else SPARKLE_LIBS=$(echo $SPARKLE_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else SPARKLE_LIBS=$(echo $SPARKLE_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -19404,7 +19404,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -19470,7 +19470,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -19505,7 +19505,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -19623,7 +19623,7 @@ ac_compiler_gnu=$ac_cv_objc_compiler_gnu
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -20025,7 +20025,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -20058,7 +20058,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then SPARKLE_LIBS=$(echo $SPARKLE_LIBS)
-    else SPARKLE_LIBS=$(echo $SPARKLE_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else SPARKLE_LIBS=$(echo $SPARKLE_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -20124,7 +20124,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then SPARKLE_LIBS=$(echo $SPARKLE_LIBS)
-    else SPARKLE_LIBS=$(echo $SPARKLE_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else SPARKLE_LIBS=$(echo $SPARKLE_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -20177,7 +20177,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -20243,7 +20243,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -20278,7 +20278,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -20549,7 +20549,7 @@ if test "${with_sdk+set}" = set; then :
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then CFLAGS=$(echo $CFLAGS)
-    else CFLAGS=$(echo $CFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else CFLAGS=$(echo $CFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -20615,7 +20615,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then CFLAGS=$(echo $CFLAGS)
-    else CFLAGS=$(echo $CFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else CFLAGS=$(echo $CFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -20650,7 +20650,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -20725,7 +20725,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then CXXFLAGS=$(echo $CXXFLAGS)
-    else CXXFLAGS=$(echo $CXXFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else CXXFLAGS=$(echo $CXXFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -20791,7 +20791,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then CXXFLAGS=$(echo $CXXFLAGS)
-    else CXXFLAGS=$(echo $CXXFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else CXXFLAGS=$(echo $CXXFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -20826,7 +20826,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -20901,7 +20901,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -20967,7 +20967,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -21002,7 +21002,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -21085,7 +21085,7 @@ if test "${with_osx+set}" = set; then :
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then CFLAGS=$(echo $CFLAGS)
-    else CFLAGS=$(echo $CFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else CFLAGS=$(echo $CFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -21151,7 +21151,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then CFLAGS=$(echo $CFLAGS)
-    else CFLAGS=$(echo $CFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else CFLAGS=$(echo $CFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -21186,7 +21186,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -21261,7 +21261,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then CXXFLAGS=$(echo $CXXFLAGS)
-    else CXXFLAGS=$(echo $CXXFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else CXXFLAGS=$(echo $CXXFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -21327,7 +21327,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then CXXFLAGS=$(echo $CXXFLAGS)
-    else CXXFLAGS=$(echo $CXXFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else CXXFLAGS=$(echo $CXXFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -21362,7 +21362,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -21437,7 +21437,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -21503,7 +21503,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -21538,7 +21538,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -21632,7 +21632,7 @@ $as_echo "enabling Windows console" >&6; }
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -22034,7 +22034,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -22067,7 +22067,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -22133,7 +22133,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -22174,7 +22174,7 @@ $as_echo "disabling Windows console" >&6; }
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -22576,7 +22576,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -22609,7 +22609,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -22675,7 +22675,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -23716,7 +23716,7 @@ $as_echo "$at_cv_env_QT_LIBS" >&6; }
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -24118,7 +24118,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -24151,7 +24151,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then QT_LIBS=$(echo $QT_LIBS)
-    else QT_LIBS=$(echo $QT_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else QT_LIBS=$(echo $QT_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -24217,7 +24217,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then QT_LIBS=$(echo $QT_LIBS)
-    else QT_LIBS=$(echo $QT_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else QT_LIBS=$(echo $QT_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -24422,7 +24422,7 @@ else
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then CFLAGS=$(echo $CFLAGS)
-    else CFLAGS=$(echo $CFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else CFLAGS=$(echo $CFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -24488,7 +24488,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then CFLAGS=$(echo $CFLAGS)
-    else CFLAGS=$(echo $CFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else CFLAGS=$(echo $CFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -24523,7 +24523,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -24598,7 +24598,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then CXXFLAGS=$(echo $CXXFLAGS)
-    else CXXFLAGS=$(echo $CXXFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else CXXFLAGS=$(echo $CXXFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -24664,7 +24664,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then CXXFLAGS=$(echo $CXXFLAGS)
-    else CXXFLAGS=$(echo $CXXFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else CXXFLAGS=$(echo $CXXFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -24699,7 +24699,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -24789,7 +24789,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then CFLAGS=$(echo $CFLAGS)
-    else CFLAGS=$(echo $CFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else CFLAGS=$(echo $CFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -24855,7 +24855,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then CFLAGS=$(echo $CFLAGS)
-    else CFLAGS=$(echo $CFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else CFLAGS=$(echo $CFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -24890,7 +24890,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -24965,7 +24965,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then CXXFLAGS=$(echo $CXXFLAGS)
-    else CXXFLAGS=$(echo $CXXFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else CXXFLAGS=$(echo $CXXFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -25031,7 +25031,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then CXXFLAGS=$(echo $CXXFLAGS)
-    else CXXFLAGS=$(echo $CXXFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else CXXFLAGS=$(echo $CXXFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -25066,7 +25066,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -25153,7 +25153,7 @@ fi
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -25219,7 +25219,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -25254,7 +25254,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -25328,7 +25328,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -25394,7 +25394,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -25429,7 +25429,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -25811,7 +25811,7 @@ done
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -26213,7 +26213,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
-    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
     fi
 
   LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
@@ -26246,7 +26246,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then X11_LIBS=$(echo $X11_LIBS)
-    else X11_LIBS=$(echo $X11_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else X11_LIBS=$(echo $X11_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -26312,7 +26312,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then X11_LIBS=$(echo $X11_LIBS)
-    else X11_LIBS=$(echo $X11_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else X11_LIBS=$(echo $X11_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -26384,7 +26384,7 @@ $as_echo "$as_me: X11_LDFLAGS:$X11_LDFLAGS" >&6;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -26450,7 +26450,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -26485,7 +26485,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -26559,7 +26559,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -26625,7 +26625,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -26660,7 +26660,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -27636,7 +27636,7 @@ if test "x$ac_cv_lib_png_png_set_read_fn" = xyes; then :
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then PDF_LIBS=$(echo $PDF_LIBS)
-    else PDF_LIBS=$(echo $PDF_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else PDF_LIBS=$(echo $PDF_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -27702,7 +27702,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then PDF_LIBS=$(echo $PDF_LIBS)
-    else PDF_LIBS=$(echo $PDF_LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else PDF_LIBS=$(echo $PDF_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -27737,7 +27737,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -27826,7 +27826,7 @@ $as_echo "#define PDFHUMMUS_NO_DCT 1" >>confdefs.h
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -27892,7 +27892,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LDFLAGS=$(echo $LDFLAGS)
-    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LDFLAGS=$(echo $LDFLAGS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -27927,7 +27927,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces
@@ -28001,7 +28001,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -28067,7 +28067,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LIBS=$(echo $LIBS)
-    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#$LC_PREPEND_LIST_flag})
+    else LIBS=$(echo $LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
     fi
 
   LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
@@ -28102,7 +28102,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     LC_MERGE_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
     if test "$LC_MERGE_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
     then LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list)
-    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_MERGE_FLAGS_flag})
+    else LC_MERGE_FLAGS_list=$(echo $LC_MERGE_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_MERGE_FLAGS_flag"})
     fi
 
   LC_MERGE_FLAGS_flag=$(echo $LC_MERGE_FLAGS_flag)    # normalize whitespaces

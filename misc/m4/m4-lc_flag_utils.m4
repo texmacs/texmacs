@@ -147,7 +147,7 @@ AC_DEFUN([LC_GETPOP_FLAG],[
     $2=${[$0]_tail%% -*}        # get flag and data
     if test "$$2" = "$[$0]_tail"  # is there someting after the flag
     then $1=$(echo $$1)
-    else $1=$(echo $$1${[$0]_tail@%:@$$2})
+    else $1=$(echo $$1${[$0]_tail@%:@"$$2"})
     fi
     LC_NORMALIZE_FLAG([$2])
     if [[ $$0_sepa != - ]]    # just return the value
