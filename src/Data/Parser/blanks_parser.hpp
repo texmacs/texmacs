@@ -25,6 +25,7 @@ public:
 
 private:
   void do_parse (string s, int& pos) {
+    (void) s;
     pos++;
   }
 };

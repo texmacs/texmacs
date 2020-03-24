@@ -366,6 +366,7 @@ python_color_setup_operator_field (hashmap<string, string> & t) {
   t (".")= "operator_field";
 }
 
+/*
 static bool
 parse_string (string s, int& pos, bool force) {
   int n= N(s);
@@ -392,7 +393,8 @@ parse_string (string s, int& pos, bool force) {
     pos+= N(delim);
   return false;
 }
- 
+*/ 
+
 string
 python_language_rep::parse_keywords (hashmap<string,string>& t, string s, int& pos) {
   int i= pos;

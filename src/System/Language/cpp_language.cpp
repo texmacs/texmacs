@@ -15,8 +15,6 @@
 #include "impl_language.hpp"
 #include "scheme.hpp"
 
-static void parse_string (string s, int& pos);
-
 cpp_language_rep::cpp_language_rep (string name):
   abstract_language_rep (name)
 {
