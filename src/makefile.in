@@ -385,7 +385,7 @@ link_bin = $(strip $(LD) $(LDFLAGS) -lstdc++ $(LDSHARED) $^ $(1) $(LIBS) -o $@)
 else ifeq "$(CONFIG_OS)" "FREEBSD"
 link_bin = $(strip $(LD) $(LDFLAGS) $(LDSHARED) $^ $(1) $(LIBS) -lthr -o $@)
 else
-link_bin = $(strip $(LD) $(LDFLAGS) $(LDSHARED) $^ $(1) $(LIBS) -o $@)
+link_bin = $(strip $(LD) $^ $(1) $(LDFLAGS) $(LDSHARED) $(LIBS) -o $@)
 endif
 endif
 ifeq "$(link)" "static"

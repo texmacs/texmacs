@@ -56,6 +56,13 @@
 #include "MacOS/mac_utilities.h"
 #endif
 
+#if (QT_VERSION >= 0x050000)
+#include <QtPlugin>
+#ifdef WIN32 
+Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
+#endif
+#endif
+
 qt_gui_rep* the_gui = NULL;
 int nr_windows = 0; // FIXME: fake variable, referenced in tm_server
 

@@ -27,6 +27,9 @@
 #include "Ghostscript/gs_utilities.hpp" // for gs_prefix
 #include "wencoding.hpp"
 
+#ifdef QT_CORE_LIB
+#include <QtCore>
+#endif
 #ifdef QTTEXMACS
 #include "Qt/qt_utilities.hpp"
 #include "Qt/qt_picture.hpp"
