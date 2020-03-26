@@ -1,18 +1,32 @@
-build
-CMakeLists.txt.user
-texmacs.1
-*.o
-*.kdev4
-.kdev4
-.vscode
-*~
-Testing
-.idea
-cmake-build-debug
-.DS_Store
+# binary files
+*.so
+*.[oa]
+*.exe
 *.pyc
-SVNREV
-*.log
-misc/benchmark/gbench
-tests/gtest
 bin/
+build
+.kdev4
+*.kdev4
+*.py[cod]
+*$py.class
+__pycache__/
+
+# editor files
+*.sln
+.idea
+.vscode
+
+# Mac OS
+.DS_Store
+*/.DS_Store
+
+# temp files
+*~
+*.log
+SVNREV
+Testing
+texmacs.1
+tests/gtest
+cmake-build-debug
+CMakeLists.txt.user
+misc/benchmark/gbench
