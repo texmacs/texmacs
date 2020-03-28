@@ -10,7 +10,9 @@ TeXmacs runs on all major Unix platforms and Windows. Documents can be saved in 
 ## Documentation
 GNU TeXmacs is self-documented. You may browse the manual in the `Help` menu or browse the online [one](http://www.texmacs.org/tmweb/manual/web-manual.en.html).
 
+For developer, see [this](./COMPILE) to compile the project.
+
 ## Contributing
 Please report any [new bugs](http://www.texmacs.org/tmweb/contact/bugs.en.html) and [suggestions](http://www.texmacs.org/tmweb/contact/wishes.en.html) to us. It is also possible to [subscribe](http://www.texmacs.org/tmweb/help/tmusers.en.html) to the <texmacs-users@texmacs.org> mailing list in order to get or give help from or to other TeXmacs users.
 
-You may contribute patches for TeXmacs using the [patch manager](http://savannah.gnu.org/patch/?group=texmacs) on Savannah or using the [pull request](https://github.com/texmacs/GNUTeXmacs/pulls) on Github. Since we are using SVN on Savannah, PRs won't be directly accepted on Github. We will `git apply` the patch into SVN repo if the PR is accepted. And we will close the PR and change the title to `[SVN] xxx` after applying the PR.
+You may contribute patches for TeXmacs using the [patch manager](http://savannah.gnu.org/patch/?group=texmacs) on Savannah or using the [pull request](https://github.com/texmacs/texmacs/pulls) on Github. Since we are using SVN on Savannah, PRs won't be directly accepted on Github. We will `git apply` the patch into SVN repo if the PR is accepted. And we will close the PR and change the title to `[SVN] xxx` after applying the PR.
