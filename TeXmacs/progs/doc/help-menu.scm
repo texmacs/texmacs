@@ -64,14 +64,14 @@
 	     (load-help-article "main/graphics/man-graphics"))
 	    ("Advanced layout features"
 	     (load-help-article "main/layout/man-layout"))
-            ---
+        ---
 	    ("Editing tools"
 	     (load-help-article "main/editing/man-editing-tools"))
 	    ("Laptop presentations"
 	     (load-help-article "main/beamer/man-beamer"))
 	    ("TeXmacs as an interface"
 	     (load-help-article "main/interface/man-itf"))
-            ---
+        ---
 	    ("Writing your own style files"
 	     (load-help-article "devel/style/style"))
 	    ("Customizing TeXmacs"
