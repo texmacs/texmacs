@@ -31,128 +31,128 @@
 
 (menu-bind help-menu
   (when (url-exists-in-help? "about/welcome/new-welcome.en.tm")
-	("Welcome" (load-help-article "about/welcome/new-welcome"))
-	---)
+    ("Welcome" (load-help-article "about/welcome/new-welcome"))
+    ---)
   (if (detailed-menus?)
       (when (url-exists-in-help? "main/config/man-configuration.en.tm")
-	(-> "Configuration"
-	    ("Browse" (load-help-buffer "main/config/man-configuration"))
-	    ---
-	    ("User preferences"
-	     (load-help-article "main/config/man-preferences"))
-	    ("Keyboard configuration"
-	     (load-help-article "main/config/man-config-keyboard"))
-	    ("Users of Cyrillic languages"
-	     (load-help-article "main/config/man-russian"))
-	    ("Users of oriental languages"
-	     (load-help-article "main/config/man-oriental")))))
-  (when (url-exists-in-help? "main/man-manual.en.tm")
-	(-> "Manual"
-	    ("Browse" (load-help-buffer "main/man-manual"))
-	    ---
-	    ("Getting started"
-	     (load-help-article "main/start/man-getting-started"))
-	    ("Typing simple texts"
-	     (load-help-article "main/text/man-text"))
-	    ("Mathematical formulas"
-	     (load-help-article "main/math/man-math"))
-	    ("Tabular material"
-	     (load-help-article "main/table/man-table"))
-	    ("Automatic content generation"
-	     (load-help-article "main/links/man-links"))
-	    ("Creating technical pictures"
-	     (load-help-article "main/graphics/man-graphics"))
-	    ("Advanced layout features"
-	     (load-help-article "main/layout/man-layout"))
+    (-> "Configuration"
+        ("Browse" (load-help-buffer "main/config/man-configuration"))
         ---
-	    ("Editing tools"
-	     (load-help-article "main/editing/man-editing-tools"))
-	    ("Laptop presentations"
-	     (load-help-article "main/beamer/man-beamer"))
-	    ("TeXmacs as an interface"
-	     (load-help-article "main/interface/man-itf"))
-        ---
-	    ("Writing your own style files"
-	     (load-help-article "devel/style/style"))
-	    ("Customizing TeXmacs"
-	     (load-help-article "main/scheme/man-scheme"))
-	    ("The TeXmacs plug-in system"
-	     (load-help-article "devel/plugin/plugins"))))
+        ("User preferences"
+         (load-help-article "main/config/man-preferences"))
+        ("Keyboard configuration"
+         (load-help-article "main/config/man-config-keyboard"))
+        ("Users of Cyrillic languages"
+         (load-help-article "main/config/man-russian"))
+        ("Users of oriental languages"
+         (load-help-article "main/config/man-oriental")))))
   (when (url-exists-in-help? "main/man-manual.en.tm")
-	(-> "Reference guide"
-	    ("Browse" (load-help-buffer "main/man-reference"))
-	    ---
-	    ("The TeXmacs format"
-	     (load-help-article "devel/format/basics/basics"))
-	    ("Standard environment variables"
-	     (load-help-article "devel/format/environment/environment"))
-	    ("TeXmacs primitives"
-	     (load-help-article "devel/format/regular/regular"))
-	    ("Stylesheet language"
-	     (load-help-article "devel/format/stylesheet/stylesheet"))
-	    ("Standard TeXmacs styles"
-	     (load-help-article "main/styles/styles"))
-	    ("Compatibility with other formats"
-	     (load-help-article "main/convert/man-convert"))))
+    (-> "Manual"
+        ("Browse" (load-help-buffer "main/man-manual"))
+        ---
+        ("Getting started"
+         (load-help-article "main/start/man-getting-started"))
+        ("Typing simple texts"
+         (load-help-article "main/text/man-text"))
+        ("Mathematical formulas"
+         (load-help-article "main/math/man-math"))
+        ("Tabular material"
+         (load-help-article "main/table/man-table"))
+        ("Automatic content generation"
+         (load-help-article "main/links/man-links"))
+        ("Creating technical pictures"
+         (load-help-article "main/graphics/man-graphics"))
+        ("Advanced layout features"
+         (load-help-article "main/layout/man-layout"))
+        ---
+        ("Editing tools"
+         (load-help-article "main/editing/man-editing-tools"))
+        ("Laptop presentations"
+         (load-help-article "main/beamer/man-beamer"))
+        ("TeXmacs as an interface"
+         (load-help-article "main/interface/man-itf"))
+        ---
+        ("Writing your own style files"
+         (load-help-article "devel/style/style"))
+        ("Customizing TeXmacs"
+         (load-help-article "main/scheme/man-scheme"))
+        ("The TeXmacs plug-in system"
+         (load-help-article "devel/plugin/plugins"))))
+  (when (url-exists-in-help? "main/man-manual.en.tm")
+    (-> "Reference guide"
+        ("Browse" (load-help-buffer "main/man-reference"))
+        ---
+        ("The TeXmacs format"
+         (load-help-article "devel/format/basics/basics"))
+        ("Standard environment variables"
+         (load-help-article "devel/format/environment/environment"))
+        ("TeXmacs primitives"
+         (load-help-article "devel/format/regular/regular"))
+        ("Stylesheet language"
+         (load-help-article "devel/format/stylesheet/stylesheet"))
+        ("Standard TeXmacs styles"
+         (load-help-article "main/styles/styles"))
+        ("Compatibility with other formats"
+         (load-help-article "main/convert/man-convert"))))
   (-> "Plug-ins"
       (link help-plugins-menu))
   (when (url-exists-in-help? "about/about.en.tm")
-	(-> "About"
-	    ("Browse" (load-help-buffer "about/about"))
-	    ---
-	    ("Summary"
-	     (load-help-article "about/about-summary"))
-	    ("License"
-	     (load-document "$TEXMACS_PATH/LICENSE"))
-	    ("Philosophy"
-	     (load-help-article "about/philosophy/philosophy"))
-	    ("The TeXmacs authors"
-	     (load-help-article "about/authors/authors"))
-	    ---
-	    (when (and (updater-supported?) (not (updater-running?)))
-		  ("Check for updates"
-		   (updater-check-foreground)))
-	    (when (url-exists-in-help? "about/changes/changes-recent")
-		  ("What is new"
-		   (load-help-article "about/changes/changes-recent")))
-	    ("Major changes"
-	     (load-help-article "about/changes/changes-main"))
-	    ("Change log"
-	     (load-help-article "about/changes/change-log"))
-	    ---
-	    ("Original welcome message"
-	     (load-help-article "about/welcome/first"))))
+    (-> "About"
+        ("Browse" (load-help-buffer "about/about"))
+        ---
+        ("Summary"
+         (load-help-article "about/about-summary"))
+        ("License"
+         (load-document "$TEXMACS_PATH/LICENSE"))
+        ("Philosophy"
+         (load-help-article "about/philosophy/philosophy"))
+        ("The TeXmacs authors"
+         (load-help-article "about/authors/authors"))
+        ---
+        (when (and (updater-supported?) (not (updater-running?)))
+          ("Check for updates"
+           (updater-check-foreground)))
+        (when (url-exists-in-help? "about/changes/changes-recent")
+          ("What is new"
+           (load-help-article "about/changes/changes-recent")))
+        ("Major changes"
+         (load-help-article "about/changes/changes-main"))
+        ("Change log"
+         (load-help-article "about/changes/change-log"))
+        ---
+        ("Original welcome message"
+         (load-help-article "about/welcome/first"))))
   (if (detailed-menus?)
       ---
       (when (url-exists-in-help? "about/contribute/contribute.en.tm")
-	(-> "Help us"
-	    ("Browse" (load-help-buffer "about/contribute/contribute"))
-	    ---
-	    ("Use TeXmacs"
-	     (load-help-article "about/contribute/using/using"))
-	    ("Making donations"
-	     (load-help-article "about/contribute/material/donations"))
-	    ("Documentation"
-	     (load-help-article
-	      "about/contribute/documentation/documentation"))
-	    ("Internationalization"
-	     (load-help-article "about/contribute/translate/translate"))
-	    ("Writing data converters"
-	     (load-help-article "about/contribute/converters/converters"))
-	    ("Porting TeXmacs to other platforms"
-	     (load-help-article "about/contribute/porting/porting"))
-	    ("Interfacing TeXmacs with other systems"
-	     (load-help-article "about/contribute/interfaces/interfaces"))
-	    ("Become a TeXmacs developer"
-	     (load-help-article "about/contribute/develop/develop"))))
+    (-> "Help us"
+        ("Browse" (load-help-buffer "about/contribute/contribute"))
+        ---
+        ("Use TeXmacs"
+         (load-help-article "about/contribute/using/using"))
+        ("Making donations"
+         (load-help-article "about/contribute/material/donations"))
+        ("Documentation"
+         (load-help-article
+          "about/contribute/documentation/documentation"))
+        ("Internationalization"
+         (load-help-article "about/contribute/translate/translate"))
+        ("Writing data converters"
+         (load-help-article "about/contribute/converters/converters"))
+        ("Porting TeXmacs to other platforms"
+         (load-help-article "about/contribute/porting/porting"))
+        ("Interfacing TeXmacs with other systems"
+         (load-help-article "about/contribute/interfaces/interfaces"))
+        ("Become a TeXmacs developer"
+         (load-help-article "about/contribute/develop/develop"))))
       (when (url-exists-in-help? "about/projects/projects.en.tm")
-	(-> "Projects"
-	    ("Browse" (load-help-buffer "about/projects/projects"))
-	    ---
-	    ("Improving the current implementation"
-	     (load-help-buffer "about/projects/improvements"))
-	    ("Plans for the future"
-	     (load-help-buffer "about/projects/future"))))
+    (-> "Projects"
+        ("Browse" (load-help-buffer "about/projects/projects"))
+        ---
+        ("Improving the current implementation"
+         (load-help-buffer "about/projects/improvements"))
+        ("Plans for the future"
+         (load-help-buffer "about/projects/future"))))
 ;;       (when (url-exists-in-help? "devel/format/format.en.tm")
 ;; 	(-> "Document format"
 ;; 	    ("Browse" (load-help-buffer "devel/format/format"))
@@ -168,33 +168,33 @@
 ;; 	    ("Planned changes"
 ;; 	     (load-help-article "devel/format/planned-changes"))))
       (when (url-exists-in-help? "devel/interface/interface.en.tm")
-	(-> "Interfacing"
-	    ("Browse" (load-help-buffer "devel/interface/interface"))
-	    ---
-	    ("Introduction"
-	     (load-help-article "devel/interface/interface-intro"))
-	    ("Basic communication using pipes"
-	     (load-help-article "devel/interface/interface-pipes"))
-	    ("Formatted and structured output"
-	     (load-help-article "devel/interface/interface-nested"))
-	    ("Prompts and default input"
-	     (load-help-article "devel/interface/interface-channels"))
-	    ("Sending commands to TeXmacs"
-	     (load-help-article "devel/interface/interface-commands"))
-	    ("Background evaluations"
-	     (load-help-article "devel/interface/interface-background"))
-	    ("Mathematical and customized input"
-	     (load-help-article "devel/interface/interface-input"))
-	    ("Tab-completion"
-	     (load-help-article "devel/interface/interface-tab"))
-	    ("Dynamic libraries"
-	     (load-help-article "devel/interface/interface-dynlibs"))
-	    ("Miscellaneous features"
-	     (load-help-article "devel/interface/interface-misc"))
-	    ("Writing documentation"
-	     (load-help-article "devel/interface/interface-documentation"))
-	    ("Plans for the future"
-	     (load-help-article "devel/interface/interface-plans"))))
+    (-> "Interfacing"
+        ("Browse" (load-help-buffer "devel/interface/interface"))
+        ---
+        ("Introduction"
+         (load-help-article "devel/interface/interface-intro"))
+        ("Basic communication using pipes"
+         (load-help-article "devel/interface/interface-pipes"))
+        ("Formatted and structured output"
+         (load-help-article "devel/interface/interface-nested"))
+        ("Prompts and default input"
+         (load-help-article "devel/interface/interface-channels"))
+        ("Sending commands to TeXmacs"
+         (load-help-article "devel/interface/interface-commands"))
+        ("Background evaluations"
+         (load-help-article "devel/interface/interface-background"))
+        ("Mathematical and customized input"
+         (load-help-article "devel/interface/interface-input"))
+        ("Tab-completion"
+         (load-help-article "devel/interface/interface-tab"))
+        ("Dynamic libraries"
+         (load-help-article "devel/interface/interface-dynlibs"))
+        ("Miscellaneous features"
+         (load-help-article "devel/interface/interface-misc"))
+        ("Writing documentation"
+         (load-help-article "devel/interface/interface-documentation"))
+        ("Plans for the future"
+         (load-help-article "devel/interface/interface-plans"))))
 ;;       (when (url-exists-in-help? "devel/source/source.en.tm")
 ;; 	(-> "Source code"
 ;; 	    ("Browse" (load-help-buffer "devel/source/source"))
@@ -214,24 +214,24 @@
 ;; 	    ("The boxes produced by the typesetter"
 ;; 	     (load-help-article "devel/source/boxes"))))
       (when (url-exists-in-help? "devel/scheme/scheme.en.tm")
-	(-> "Scheme extensions"
-	    ("Browse" (load-help-buffer "devel/scheme/scheme"))
-	    ---
-	    ("Overview of the scheme extension language"
-	     (load-help-article "devel/scheme/overview/scheme-overview"))
-	    ("TeXmacs extensions to scheme and utilities"
-	     (load-help-article "devel/scheme/utils/scheme-utils"))
-	    ("Programming routines for editing documents"
-	     (load-help-article "devel/scheme/edit/scheme-edit"))
-	    ("Program interface for buffer management"
-	     (load-help-article "devel/scheme/buffer/scheme-buffer"))
-	    ("Scheme interface for the graphical mode"
-	     (load-help-article "devel/scheme/graphics/scheme-graphics"))
+    (-> "Scheme extensions"
+        ("Browse" (load-help-buffer "devel/scheme/scheme"))
+        ---
+        ("Overview of the scheme extension language"
+         (load-help-article "devel/scheme/overview/scheme-overview"))
+        ("TeXmacs extensions to scheme and utilities"
+         (load-help-article "devel/scheme/utils/scheme-utils"))
+        ("Programming routines for editing documents"
+         (load-help-article "devel/scheme/edit/scheme-edit"))
+        ("Program interface for buffer management"
+         (load-help-article "devel/scheme/buffer/scheme-buffer"))
+        ("Scheme interface for the graphical mode"
+         (load-help-article "devel/scheme/graphics/scheme-graphics"))
             
             ("Customizing and extending the user interface"
              (load-help-article "devel/scheme/gui/scheme-gui"))
-	    ("Writing TeXmacs bibliography styles"
-	     (load-help-article "devel/scheme/bibliography/bibliography"))
+        ("Writing TeXmacs bibliography styles"
+         (load-help-article "devel/scheme/bibliography/bibliography"))
             ---
             ("Browse modules documentation" (apidoc-all-modules))
             ("Browse symbols documentation" (apidoc-all-symbols)))))
