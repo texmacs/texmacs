@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+
+# Download the patch from Github to /tmp/diff
+# and apply it
+
+import os
+from sys import argv
+
+def url_fix (url):
+    url_fixed= url.rstrip("/files")
+    url_diff= url_fixed + ".diff"
+    return url_diff
+
+def apply_the_patch (url):
+    download_cmd= "wget " + url_fix (url) + " -O /tmp/diff"
+    result= os.system (download_cmd)
+    if (result != 0):
+        print ("Failed to download the patch to /tmp/diff")
+        return result
+    
+    result= os.system ("git apply /tmp/diff")
+    if (result != 0):
+        print ("Failed to apply the patch")
+
+    return result
+
+script, url = argv
+apply_the_patch (url)
+
