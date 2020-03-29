@@ -80,7 +80,7 @@ def compile_help (text):
     except Exception as e:
         out["file"] = 'Unable to access the code for "%s": %s' % (text, e)
 
-    return dict (map (lambda k_v: (k_v[0], as_scm_string (k_v[1])), out.iteritems()))
+    return dict (map (lambda k_v: (k_v[0], as_scm_string (k_v[1])), out.items()))
 
 __version__ = '1.14'
 __author__ = 'Ero Carrera, Adrian Soto, Miguel de Benito Delgado'
