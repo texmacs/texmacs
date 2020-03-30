@@ -34,6 +34,11 @@ AC_DEFUN([TM_GUI],[
                # src/Plugins/MacOS    
                CONFIG_MACOS="MacOS"
             fi
+            # Qt Plugins list
+            if test $QT_MAJOR -eq 5 
+            then QT_PLUGINS_LIST="imageformats,platforms"
+            else QT_PLUGINS_LIST="accessible,imageformats"
+            fi
          fi
          ;;
       no)
@@ -49,12 +54,6 @@ AC_DEFUN([TM_GUI],[
          ;;
   esac
 
-  # Qt Plugins list
-  if test "$QT5_AVAILABLE" = yes; then
-    QT_PLUGINS_LIST="imageformats"
-  else
-    QT_PLUGINS_LIST="accessible,imageformats"
-  fi
 
   # Qt Pipes
   AC_ARG_ENABLE(qtpipes,

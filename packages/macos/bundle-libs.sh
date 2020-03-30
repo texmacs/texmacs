@@ -16,6 +16,8 @@
 # - id setting is silently ignored for non dll file
 #
 
+typeset absLibPath #if there is only relative path
+
 function bundle_all_libs
 {
 # $1   executable  or library path (relative to Contents directory)
@@ -34,18 +36,15 @@ function bundle_qt_plugins
   [ -z $1 ] && return 0
   local oplug dplug
   if [[ $1 =~ , ]]
-  then 
-    oplug="$(eval echo $2/{$1})"
-    dplug="$(eval echo Plugins/{$1}/*dylib)"
-  else
-    oplug="$2/$1"
-    dplug="Plugins/$1/*dylib"
+  then oplug="$(eval echo $2/{$1})"
+  else oplug="$2/$1"
   fi
   for d in $oplug
   do test -d $d && mkdir Plugins/$(basename $d) && \
     test -n "$(echo $d/*dylib)" && cp $d/*dylib Plugins/$(basename $d)/
   done
-  for p in $dplug
+  
+  for p in $(eval echo Plugins/*/*dylib)
   do bundle_all_libs $p || return $?
   done
 }
@@ -54,8 +53,6 @@ function bundle_lib
 # $1 lib to pack
 {
   local file=$1
-  echo "bundle library $file"
-  
   local -i state=0 step=0 setrpath=0
   local -a tlibs trpath
   local change
@@ -79,6 +76,7 @@ function bundle_lib
           state=0;;
     path) test $state -ne 3 && continue
           trpath+=("$arg")
+          [[ $arg =~ ^/ ]] && absLibPath="$arg"
           state=0;;
     esac 
   done <<< "$(otool -lX $1)"
@@ -86,7 +84,7 @@ function bundle_lib
   test ${#tlibs[*]} -eq 0 && exit 12
   
   for lib in "${tlibs[@]}"
-  do echo "process library $lib"
+  do 
     case $lib in
     /System*) ;;
     /Library*) ;;
@@ -102,7 +100,7 @@ function bundle_lib
     @rpath/*.framework/*)
     # we don't scan the framework lib they might be well built
     # be carrefull with space in file names
-    for p in "${trpath[@]}"
+    for p in "${trpath[@]}" $absLibPath
     do fullname=${lib/@rpath/$p}
       if test -f "$fullname"
       then 
@@ -141,9 +139,9 @@ function bundle_lib
       @executable_path/../Frameworks) setrpath=$((($setrpath|1)^1));;
       @loader_path/*) ;;
       *) # install_name_tool doesn't support duplicate commands
-				 # my be dupliacte in the files
-				 install_name_tool -delete_rpath $r "$file"
-			
+         # may be some duplicates in the files
+         install_name_tool -delete_rpath $r "$file"
+      
     esac
   done
   # adjust rpath in the library
