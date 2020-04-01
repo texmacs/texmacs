@@ -55,7 +55,7 @@ function bundle_lib
   local file=$1
   local -i state=0 step=0 setrpath=0
   local -a tlibs trpath
-  local change
+  local lib change
 
   while read -r cmd arg
   do
