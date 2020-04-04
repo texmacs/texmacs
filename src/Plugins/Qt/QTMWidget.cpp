@@ -337,6 +337,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
           (mods & Qt::AltModifier) == 0 &&
           (mods & Qt::MetaModifier) == 0)
         set_shift_preference (kc, (char) unic);
+
       if (unic < 32 && key < 128 && key > 0) {
         // NOTE: For some reason, the 'shift' modifier key is not applied
         // to 'key' when 'control' is pressed as well.  We perform some
@@ -350,6 +351,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
                  (mods & Qt::ShiftModifier) != 0 &&
                  (mods & Qt::ControlModifier) != 0)
           key= (int) (unsigned char) get_shift_preference (kc) [0];
+
         mods &=~ Qt::ShiftModifier;
         r= string ((char) key);
       }
@@ -384,9 +386,22 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
               r= tstr (1, len-1);
             else
               r= tstr;
+
             if (r == "less") r= "<";
             else if (r == "gtr") r= ">";
         }
+
+#ifdef OS_MINGW
+        if ((mods & Qt::ShiftModifier) &&
+            (mods & Qt::ControlModifier) &&
+            N(r) == 1 &&
+            (is_digit (r[0]) || r[0] == '-' || r[0] == '='))) {
+          // A hack fix for C-S-[0-9], C-S--, C-S-= on Windows
+          // See https://savannah.gnu.org/bugs/?57850
+          r= string ((char) key);
+        }
+#endif
+
 #ifdef Q_OS_MAC
           // Alt produces many symbols in Mac keyboards: []|{} etc.
         mods &= ~Qt::AltModifier; //unset Alt
