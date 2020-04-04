@@ -17,7 +17,25 @@
   (list
    `(declare_type "graph" "node" "edge" "digraph" "subgraph")
    `(keyword
-     "color" "rank")))
+     ;; Graph attributes
+     "center" "layers" "margin" "mclimit" "name" "nodesep" "nslimit"
+     "ordering" "page" "pagedir" "rank" "rankdir" "ranksep" "ratio"
+     "rotate" "size"
+     ;; Node attributes
+     "distortion" "fillcolor" "fontcolor" "fontname" "fontsize" "height"
+     "layer" "orientation" "peripheries" "regular" "shape" "shapefile"
+     "sides" "skew" "width"
+     ;; Edge attributes
+     "arrowhead" "arrowsize" "arrowtail" "constraint" "decorateP" "dir"
+     "headclip" "headlabel" "labelangel" "labeldistance" "labelfontcolor"
+     "labelfontname" "labelfontsize" "minlen" "port_label_distance"
+     "samehead" "sametail" "tailclip" "taillabel" "weight"
+     ;; Shared attributes (graphs, nodes, edges)
+     "color"
+     ;; Shared attributes (graphs and edges)
+     "bgcolor" "label" "URL"
+     ;; Shared attributes (graphs and edges)
+     "fontcolor" "fontname" "fontsize" "layer" "style")))
 
 (tm-define (dot-operators)
   (list
@@ -25,6 +43,5 @@
      "," ";" ":" "=")
    `(operator_special
      "-<gtr>" "--")
-   `(operator_decoration "@")
    `(operator_field ".")
    `(operator_openclose "{" "[" "(" ")" "]" "}")))
