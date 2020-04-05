@@ -208,10 +208,10 @@ decode_length (string width, wk_widget wid, int style) {
   parse_length (width, w_len, w_unit);
   if (w_unit == "w") return (SI) (w_len * ex);
   else if (w_unit == "h") return (SI) (w_len * ey);
-  else if (w_unit == "px") return (SI) (x * PIXEL);
+  else if (w_unit == "px") return (SI) (w_len * PIXEL);
   else if (w_unit == "em") {
     font fn= get_default_styled_font (style);
-    return (SI) ((x * fn->wquad) / SHRINK);
+    return (SI) ((w_len * fn->wquad) / SHRINK);
   }
   else return ex;
 }
