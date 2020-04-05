@@ -445,6 +445,7 @@ QTMLineEdit::QTMLineEdit (QWidget* parent, string _type, string _ww,
   // just to be sure we don't capture the wrong keys in keyPressEvent
   setCompleter (0);
 
+  setFocusPolicy (Qt::StrongFocus);
   qt_apply_tm_style (this, style);
 }
 
@@ -478,11 +479,12 @@ QTMLineEdit::continuous () {
  */
 bool
 QTMLineEdit::event (QEvent* ev) {
-  if (ev->type() == QEvent::KeyPress)  // Handle ALL keys
-    keyPressEvent (static_cast<QKeyEvent*> (ev));
-  else
-    return QWidget::event (ev);
-  return true;
+  if (ev->type() == QEvent::KeyPress) {
+    QKeyEvent *keyEvent= static_cast<QKeyEvent*> (ev);
+    keyPressEvent (keyEvent);
+    return true;
+  }
+  return QLineEdit::event (ev);
 }
 
 extern hashmap<int,string> qtkeymap;

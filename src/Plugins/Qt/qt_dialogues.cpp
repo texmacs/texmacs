@@ -412,8 +412,6 @@ qt_input_text_widget_rep::commit(bool flag) {
     done         = false;
     ok    = true;
     input = from_qstring (le->text());
-    // HACK: restore focus to the main editor widget
-    if (win) send_keyboard_focus(win);
   } else {
     le->setText (to_qstring (input));
   }
