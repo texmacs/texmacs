@@ -16,7 +16,7 @@
 
 (tm-define (get-tabstop)
   (:mode in-prog-dot?)
-  2)
+  4)
 
 (tm-define (program-compute-indentation doc row col)
   (:mode in-prog-dot?)

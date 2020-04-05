@@ -22,14 +22,14 @@
      "ordering" "page" "pagedir" "rank" "rankdir" "ranksep" "ratio"
      "rotate" "size"
      ;; Node attributes
-     "distortion" "fillcolor" "fontcolor" "fontname" "fontsize" "height"
-     "layer" "orientation" "peripheries" "regular" "shape" "shapefile"
-     "sides" "skew" "width"
+     "distortion" "fillcolor" "height" "layer" "orientation" "penwidth"
+     "peripheries" "regular" "shape" "shapefile" "sides" "skew" "width"
      ;; Edge attributes
      "arrowhead" "arrowsize" "arrowtail" "constraint" "decorateP" "dir"
      "headclip" "headlabel" "labelangel" "labeldistance" "labelfontcolor"
-     "labelfontname" "labelfontsize" "minlen" "port_label_distance"
-     "samehead" "sametail" "tailclip" "taillabel" "weight"
+     "labelfontname" "labelfontsize" "labeljust" "labeltooltip" "minlen"
+     "port_label_distance" "samehead" "sametail" "tailclip" "taillabel"
+     "weight"
      ;; Shared attributes (graphs, nodes, edges)
      "color"
      ;; Shared attributes (graphs and edges)
