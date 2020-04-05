@@ -392,12 +392,16 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
         }
 
 #ifdef OS_MINGW
+        // See https://savannah.gnu.org/bugs/?57850
+        array<char> keys;
+        keys << '-' << '=' << '\\' << "`"
+          << '[' << ']' << ';' << '\''
+          << ',' << '.' << '/';
+        
         if ((mods & Qt::ShiftModifier) &&
             (mods & Qt::ControlModifier) &&
             N(r) == 1 &&
-            (is_digit (r[0]) || r[0] == '-' || r[0] == '='))) {
-          // A hack fix for C-S-[0-9], C-S--, C-S-= on Windows
-          // See https://savannah.gnu.org/bugs/?57850
+            (is_digit (r[0]) || contains (r[0], keys))) {
           r= string ((char) key);
         }
 #endif
