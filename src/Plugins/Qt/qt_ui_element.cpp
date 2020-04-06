@@ -841,6 +841,7 @@ qt_ui_element_rep::as_qwidget () {
       qwid->setStyle (qtmstyle());
       qt_apply_tm_style (qwid, style);
       qwid->setEnabled (! (style & WIDGET_STYLE_INERT));
+      qwid->setFocusPolicy (Qt::StrongFocus);
     }
       break;
       
@@ -909,6 +910,8 @@ qt_ui_element_rep::as_qwidget () {
       QCheckBox* w  = new QCheckBox (NULL);  
       w->setCheckState (check ? Qt::Checked : Qt::Unchecked);
       qt_apply_tm_style (w, style);
+      w->setFocusPolicy (Qt::StrongFocus);
+
       
       command tcmd = tm_new<qt_toggle_command_rep> (w, cmd);
       QTMCommand* c = new QTMCommand (w, tcmd);
