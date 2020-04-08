@@ -52,6 +52,9 @@
          (for (i (reverse (.. 0 (quotient (tree-arity t) 2))))
            (when (== (tree-ref t (* 2 i)) var)
              (tree-remove! t (* 2 i) 2)))
+         (when (and (tree-func? (tm-ref t :last) 'document 1)
+                    (tree-func? (tm-ref t :last 0) 'with))
+           (tree-remove-node (tm-ref t :last) 0))
          (when (tree-func? t 'with 1)
            (tree-remove-node! t 0)))))
 
@@ -105,12 +108,19 @@
 
 (tm-define (make-multi-with l)
   (when (nnull? l)
-    (if (selection-active-table?)
-        (for-each cell-set-format (get-cars l) (get-cadrs l))
-        (with t (if (selection-active-any?) (selection-tree) "")
-          (if (selection-active-any?) (clipboard-cut "null"))
-          (insert-go-to (add-with l t) (cons (length l) (path-end t '())))
-          (with-simplify (cursor-tree))))))
+    (cond ((selection-active-table?)
+           (keep-table-selection
+            (for-each cell-set-format (get-cars l) (get-cadrs l))))
+          ((selection-active-any?)
+           (with t (selection-tree)
+             (clipboard-cut "null")
+             (insert-go-to (add-with l t) (cons (length l) (path-end t '())))
+             (with-simplify (cursor-tree))
+             (and-with w (tree-innermost 'with #t)
+               (tree-select w))))
+          (else
+            (insert-go-to (add-with l "") (cons (length l) (path-end t '())))
+            (with-simplify (cursor-tree))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Modifying paragraph properties
@@ -135,14 +145,20 @@
 
 (tm-define (make-multi-line-with l)
   (when (nnull? l)
-    (if (and (selection-active-table?) #f) ;; FIXME: does not work yet
-        (make-multi-with l)
-        (begin
-          (when (not (selection-active-normal?))
-            (select-line))
-          (make-multi-with l)
-          (insert-return)
-          (remove-text #f)))))
+    (cond ((selection-active-table?)
+           (make-multi-with l))
+          (else
+            (when (not (selection-active-normal?))
+              (select-line))
+            (make-multi-with l)
+            (insert-return)
+            (remove-text #f)
+            (and-with w (tree-innermost 'with #t)
+              (with-simplify w)
+              (and-with w* (tree-innermost 'with #t)
+                (with-merge w*)
+                (and-with w** (tree-innermost 'with #t)
+                  (tree-select w**))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting and toggling with-like tags

@@ -273,3 +273,17 @@
   (:argument what "Find text")
   (:argument by "Replace by")
   (replace-start what by #t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Selections
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define-macro (keep-table-selection . body)
+  `(with (sr1 sr2 sc1 sc2) (table-which-cells)
+     (with ktres (begin ,@body)
+       (if (or (!= sr2 sr1) (!= sc2 sc1))
+           ;; FIXME: find a robust way to keep the selection
+           (delayed
+             (:pause 10)
+             (table-select-cells sr1 sr2 sc1 sc2)))
+       ktres)))       
