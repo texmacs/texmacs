@@ -274,7 +274,8 @@ QTMMenuButton::paintEvent (QPaintEvent* e) {
 
   QPainter p (this);
   QStyleOptionToolButton option;
-  QRect r = rect();
+  QRect r = rect ();
+  option.initFrom (this);
   option.rect = r;
   option.state = QStyle::State_Enabled | (opt.state & QStyle::State_MouseOver
                                           ? QStyle::State_Selected
@@ -297,6 +298,7 @@ void
 QTMMenuWidget::paintEvent(QPaintEvent* e) {
   QPainter p (this);
   QStyleOptionMenuItem option;
+  option.initFrom (this);
   option.rect = rect();
   style()->drawControl (QStyle::CE_MenuEmptyArea, &option, &p, this);
   QWidget::paintEvent (e);
