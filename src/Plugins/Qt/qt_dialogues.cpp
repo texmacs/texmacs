@@ -9,16 +9,18 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "string.hpp"
+#include "scheme.hpp"
+#include "url.hpp"
+#include "analyze.hpp"
+#include "converter.hpp"
+
 #include "widget.hpp"
 #include "message.hpp"
 #include "qt_dialogues.hpp"
 #include "qt_utilities.hpp"
 #include "qt_tm_widget.hpp"
-#include "qt_chooser_widget.hpp"
-#include "qt_color_picker_widget.hpp"
-#include "url.hpp"
-#include "analyze.hpp"
-#include "converter.hpp"
+
 #include "QTMMenuHelper.hpp"
 #include "QTMGuiHelper.hpp"
 #include "QTMApplication.hpp"
@@ -35,8 +37,6 @@
 #include <QPushButton>
 #include <QDialogButtonBox>
 
-#include "string.hpp"
-#include "scheme.hpp"
 
 
 /******************************************************************************
@@ -423,4 +423,18 @@ qt_input_text_widget_rep::commit(bool flag) {
                               ? list_object (object (input))
                               : list_object (object (false)));
   }
+}
+
+
+/*******************************************************************************
+*  Interface
+******************************************************************************/
+
+widget inputs_list_widget (command call_back, array<string> prompts) {
+  return tm_new<qt_inputs_list_widget_rep> (call_back, prompts);
+}
+
+widget input_text_widget (command call_back, string type, array<string> def,
+                          int style, string width) {
+  return tm_new<qt_input_text_widget_rep> (call_back, type, def, style, width);
 }

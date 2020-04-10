@@ -1136,3 +1136,13 @@ QLayoutItem*
 qt_tm_embedded_widget_rep::as_qlayoutitem () {
   return new QWidgetItem(as_qwidget());
 }
+
+
+/*******************************************************************************
+*  Interface
+******************************************************************************/
+
+widget texmacs_widget (int mask, command quit) {
+  if (mask) return tm_new<qt_tm_widget_rep> (mask, quit);
+  else      return tm_new<qt_tm_embedded_widget_rep> (quit);
+}
