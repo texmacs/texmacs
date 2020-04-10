@@ -1677,7 +1677,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		4901F0E3128B4F7200CC54C6 /* qt_printer_widget.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_printer_widget.hpp; sourceTree = "<group>"; };
 		4901F0E4128B4F7200CC54C6 /* qt_printer_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_printer_widget.cpp; sourceTree = "<group>"; };
 		490536B7184A2C69008B9ECE /* QTMApplication.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMApplication.hpp; sourceTree = "<group>"; };
 		4906929A151B743F006645F4 /* new_view.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = new_view.cpp; sourceTree = "<group>"; };
@@ -2122,7 +2121,6 @@
 		9C060A9A10FC6D8B00C51583 /* tm_ostream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tm_ostream.cpp; sourceTree = "<group>"; };
 		9C060A9B10FC6D8B00C51583 /* tm_ostream.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tm_ostream.hpp; sourceTree = "<group>"; };
 		9C088F7312B1BAD000A18E04 /* qt_color_picker_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_color_picker_widget.cpp; sourceTree = "<group>"; };
-		9C088F7412B1BAD000A18E04 /* qt_color_picker_widget.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_color_picker_widget.hpp; sourceTree = "<group>"; };
 		9C0B09A614FF0A1C004ABDCE /* handwriting.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = handwriting.hpp; sourceTree = "<group>"; };
 		9C0B09A714FF0A1C004ABDCE /* learn_handwriting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = learn_handwriting.cpp; sourceTree = "<group>"; };
 		9C0B09A814FF0A1C004ABDCE /* poly_line.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = poly_line.cpp; sourceTree = "<group>"; };
@@ -2652,7 +2650,6 @@
 		9C21A02521C116820035B5B3 /* InputAsciiHexDecodeStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InputAsciiHexDecodeStream.cpp; sourceTree = "<group>"; };
 		9C21A02721C116C60035B5B3 /* SimpleStringTokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleStringTokenizer.cpp; sourceTree = "<group>"; };
 		9C225A63128B5EB00039258C /* qt_chooser_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_chooser_widget.cpp; sourceTree = "<group>"; };
-		9C225A64128B5EB00039258C /* qt_chooser_widget.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_chooser_widget.hpp; sourceTree = "<group>"; };
 		9C25EAB61D2A9ED400D7F2D5 /* columns_breaker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = columns_breaker.cpp; sourceTree = "<group>"; };
 		9C25EAB71D2A9ED400D7F2D5 /* new_breaker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = new_breaker.cpp; sourceTree = "<group>"; };
 		9C25EAB81D2A9ED400D7F2D5 /* new_breaker.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = new_breaker.hpp; sourceTree = "<group>"; };
@@ -4130,10 +4127,9 @@
 			isa = PBXGroup;
 			children = (
 				9C0B48A410A8CC100097A335 /* NOTES */,
+				4901F0E4128B4F7200CC54C6 /* qt_printer_widget.cpp */,
 				9C225A63128B5EB00039258C /* qt_chooser_widget.cpp */,
-				9C225A64128B5EB00039258C /* qt_chooser_widget.hpp */,
 				9C088F7312B1BAD000A18E04 /* qt_color_picker_widget.cpp */,
-				9C088F7412B1BAD000A18E04 /* qt_color_picker_widget.hpp */,
 				9C0B48A610A8CC100097A335 /* qt_dialogues.cpp */,
 				9C0B48A710A8CC100097A335 /* qt_dialogues.hpp */,
 				9C6632DC1676B208000D7974 /* qt_font.cpp */,
@@ -4145,8 +4141,6 @@
 				49DEED29170ACFDB00332D9F /* qt_picture.cpp */,
 				49DEED2A170ACFDB00332D9F /* qt_picture.hpp */,
 				9C1D126510D102B300232476 /* qt_pipe_link.cpp */,
-				4901F0E4128B4F7200CC54C6 /* qt_printer_widget.cpp */,
-				4901F0E3128B4F7200CC54C6 /* qt_printer_widget.hpp */,
 				9C0B48AD10A8CC100097A335 /* qt_renderer.cpp */,
 				9C0B48AE10A8CC100097A335 /* qt_renderer.hpp */,
 				49DEECC01289A694002ACC66 /* qt_simple_widget.cpp */,
