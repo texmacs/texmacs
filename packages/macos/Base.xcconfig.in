@@ -5,10 +5,11 @@ TM_CXXTEMPLATE = @CONFIG_CXXTEMPLATE@
 TM_CXXOPTIMIZE = @CONFIG_CXXOPTIMIZE@ @CONFIG_CXXDIALECT@
 TM_CXXDEBUG = @CONFIG_CXXDEBUG@
 TM_CXXPROFILE = @CONFIG_CXXPROFILE@
+TM_CFLAGS = @CFLAGS@
 TM_CXXFLAGS = $(TM_CXXWARNING) $(TM_CXXTEMPLATE) $(TM_CXXOPTIMIZE) $(TM_CXXDEBUG) $(TM_CXXPROFILE) @CONFIG_CXXFLAGS@ @CXXFLAGS@
-TM_CPPFLAGS = @CPPFLAGS@
+TM_CPPFLAGS = @CPPFLAGS@ @QT_CPPFLAGS@
 TM_QTCPPFLAGS = @QT_CPPFLAGS@
-TM_CXXX11 = @X11_CFLAGS@
+TM_CXXX11 = @X11_CXX@
 TM_CXXCOCOA = @COCOA_CFLAGS@
 TM_CXXQT = @QT_CXXFLAGS@
 TM_CXXGUI = $(TM_CXX@CONFIG_GUI@)
@@ -19,12 +20,12 @@ TM_CXXSQLITE3 = @SQLITE3_CXX@
 TM_CXXFREETYPE = @FREETYPE_CFLAGS@
 TM_CXXICONV = @ICONV_CXX@
 TM_CXXGUILE = @GUILE_CFLAGS@
-TM_CXXSPARKLE = @SPARKLE_CXX@
+TM_CXXSPARKLE = @SPARKLE_CXX@  @SPARKLE_CPP@
 TM_CXXPDF = @PDF_CFLAGS@
 
 TM_LD = @CXX@
-TM_LDFLAGS = -lstdc++ @LDFLAGS@ @CONFIG_BFLAGS@  $(TM_CXXPROFILE)
-TM_LIBS = @LIBS@
+TM_LDFLAGS =  @LDFLAGS@ @CONFIG_BFLAGS@  $(TM_CXXPROFILE)
+TM_LIBS =  @GUILE_STATIC@ @SPARKLE_LIBS@ @LIBS@
 TM_LDRT = @CONFIG_LDRT@
 TM_LDSTATIC = @CONFIG_BSTATIC@
 TM_LDSHARED = @CONFIG_BSHARED@
@@ -36,7 +37,6 @@ TM_LDGUI = $(TM_LD@CONFIG_GUI@)
 
 TM_MOC = @MOC@
 TM_MOCFLAGS = @QT_CPPFLAGS@
-
 
 TM_BASE = $(SRCROOT)/../..
 TM_HEADER_SEARCH_PATHS = $(TM_BASE)/src/System $(TM_BASE)/src/System/Boot $(TM_BASE)/src/System/Classes $(TM_BASE)/src/System/Files $(TM_BASE)/src/System/Link $(TM_BASE)/src/System/Misc $(TM_BASE)/src/System/Language $(TM_BASE)/src/Kernel/Abstractions $(TM_BASE)/src/Kernel/Containers $(TM_BASE)/src/Kernel/Types $(TM_BASE)/src/Data/Convert $(TM_BASE)/src/Data/Drd $(TM_BASE)/src/Data/History $(TM_BASE)/src/Data/Observers $(TM_BASE)/src/Data/String $(TM_BASE)/src/Data/Tmfs $(TM_BASE)/src/Data/Tree $(TM_BASE)/src/Scheme $(TM_BASE)/src/Graphics/Bitmap_fonts $(TM_BASE)/src/Graphics/Fonts $(TM_BASE)/src/Graphics/Gui $(TM_BASE)/src/Graphics/Mathematics $(TM_BASE)/src/Graphics/Renderer $(TM_BASE)/src/Plugins $(TM_BASE)/src/Edit $(TM_BASE)/src/Typeset $(TM_BASE)/src/Typeset/Bridge $(TM_BASE)/src/Typeset/Concat $(TM_BASE)/src/Typeset/Page $(TM_BASE)/src/Style/Memorizer $(TM_BASE)/src/Style/Environment $(TM_BASE)/src/Style/Evaluate $(TM_BASE)/TeXmacs/include $(TM_BASE)/src
