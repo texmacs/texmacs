@@ -78,40 +78,6 @@ protected:
   qt_field_widget_rep* field (int i);
 };
 
-
-/******************************************************************************
- * QTMInputTextWidgetHelper
- ******************************************************************************/
-
-QTMInputTextWidgetHelper::QTMInputTextWidgetHelper (qt_widget _wid)
-: QObject (), p_wid (_wid) {
-  QTMLineEdit* le = qobject_cast<QTMLineEdit*>(wid()->qwid);
-  setParent(le);
-  ASSERT (le != NULL, "QTMInputTextWidgetHelper: expecting valid QTMLineEdit");
-  QObject::connect (le, SIGNAL (returnPressed ()), this, SLOT (commit ()));
-  QObject::connect (le, SIGNAL (focusOut (Qt::FocusReason)),
-                    this, SLOT (leave (Qt::FocusReason)));
-}
-
-/*! Executed when the enter key is pressed. */
-void
-QTMInputTextWidgetHelper::commit () {
-BEGIN_SLOT
-  if (sender() != wid()->qwid) return;
-  wid()->commit(true);
-END_SLOT
-}
-
-/*! Executed after commit of the input field (enter) and when losing focus */
-void
-QTMInputTextWidgetHelper::leave (Qt::FocusReason reason) {
-BEGIN_SLOT
-  if (sender() != wid()->qwid) return;
-  wid()->commit((reason != Qt::OtherFocusReason &&
-                 get_preference ("gui:line-input:autocommit") == "#t"));
-END_SLOT
-}
-
 /******************************************************************************
 * qt_field_widget_rep
 ******************************************************************************/
@@ -473,6 +439,59 @@ qt_inputs_list_widget_rep::perform_dialog() {
 }
 
 
+
+/******************************************************************************
+ * QTMInputTextWidgetHelper
+ ******************************************************************************/
+enum itw_commit_status {
+  itw_return_pressed, itw_leaving, itw_reset
+} ;
+
+
+QTMInputTextWidgetHelper::QTMInputTextWidgetHelper (qt_widget _wid)
+: QObject (), p_wid (_wid) {
+  QTMLineEdit* le = qobject_cast<QTMLineEdit*>(wid()->qwid);
+  setParent(le);
+  ASSERT (le != NULL, "QTMInputTextWidgetHelper: expecting valid QTMLineEdit");
+  QObject::connect (le, SIGNAL (returnPressed ()), this, SLOT (commit ()));
+  QObject::connect (le, SIGNAL (focusOut (Qt::FocusReason)),
+                    this, SLOT (leave (Qt::FocusReason)));
+}
+
+/*! Executed when the enter key is pressed. */
+void
+QTMInputTextWidgetHelper::commit () {
+BEGIN_SLOT
+  QTMLineEdit* le = qobject_cast<QTMLineEdit*>(wid()->qwid);
+  if (sender() != le) return;
+  wid()->input= from_qstring (le->text ());
+  wid()->ok= true;
+  the_gui->process_command (wid()->cmd, list_object (object (wid()->input)));
+END_SLOT
+}
+
+/*! Executed after commit of the input field (enter) and when losing focus */
+void
+QTMInputTextWidgetHelper::leave (Qt::FocusReason reason) {
+BEGIN_SLOT
+  QTMLineEdit* le = qobject_cast<QTMLineEdit*>(wid()->qwid);
+  if (sender() != le) return;
+  
+  if ((reason != Qt::OtherFocusReason) &&
+      (reason != Qt::ActiveWindowFocusReason) &&
+      (get_preference ("gui:line-input:autocommit") == "#t")) {
+    if (from_qstring (le->text ()) != wid()->input) {
+      commit ();
+      return;
+    }
+  } else {
+    le->setText (to_qstring (wid()->input));
+  }
+  the_gui->process_command (wid()->cmd, list_object (object (false)));
+END_SLOT
+}
+
+
 /******************************************************************************
  * qt_input_text_widget_rep
  ******************************************************************************/
@@ -484,7 +503,7 @@ qt_input_text_widget_rep::qt_input_text_widget_rep (command _cmd,
                                                     string _width)
 : qt_widget_rep (input_widget), cmd (_cmd), type (_type),
   proposals (_proposals), input (""), style (_style), width (_width),
-  ok (false), done (false)
+  ok (false) //, done (false)
 {
   if (type == "password") proposals = array<string> (0);
   if (N(proposals) > 0) input = proposals[0];
@@ -499,6 +518,7 @@ qt_input_text_widget_rep::as_qaction () {
  Returns a QTMLineEdit with the proper completer and the helper object to
  keep it in sync with us.
  */
+
 QWidget*
 qt_input_text_widget_rep::as_qwidget () {
   QTMLineEdit* le = new QTMLineEdit (NULL, type, width, style, cmd);
@@ -523,29 +543,6 @@ qt_input_text_widget_rep::as_qwidget () {
   }
   return qwid;
 }
-
-void
-qt_input_text_widget_rep::commit(bool flag) {
-  QTMLineEdit* le = qobject_cast<QTMLineEdit*>(qwid);
-  widget_rep* win = qt_window_widget_rep::widget_from_qwidget (le);
-
-  if (flag) {
-    done         = false;
-    ok    = true;
-    input = from_qstring (le->text());
-  } else {
-    le->setText (to_qstring (input));
-  }
-  if (win) // This is 0 inside a dialog => no command
-  {
-    if (done) return;
-    done = true;
-    the_gui->process_command (cmd, ok
-                              ? list_object (object (input))
-                              : list_object (object (false)));
-  }
-}
-
 
 /*******************************************************************************
 *  Interface
