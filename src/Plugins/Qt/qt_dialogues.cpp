@@ -37,11 +37,107 @@
 #include <QPushButton>
 #include <QDialogButtonBox>
 
+class qt_field_widget_rep;
+class qt_inputs_list_widget_rep;
+
+/******************************************************************************
+ * qt_inputs_list_widget_rep
+ ******************************************************************************/
+
+/*! A dialog with a list of inputs and ok and cancel buttons.
+ 
+ In the general case each input is a qt_field_widget_rep which we lay out in a
+ vertical table. However, for simple yes/no/cancel questions we try to use a
+ system default dialog
+ 
+ TODO?
+ We try to use OS dialogs whenever possible, but this still needs improvement.
+ We should also use a custom Qt widget and then bundle it in a modal window if
+ required, so as to eventually be able to return something embeddable in
+ as_qwidget(), in case we want to reuse this.
+ */
+
+class qt_inputs_list_widget_rep: public qt_widget_rep {
+protected:
+  command cmd;
+  coord2 size, position;
+  string win_title;
+  int style;
+
+public:
+  qt_inputs_list_widget_rep (command, array<string>);
+
+  virtual void      send (slot s, blackbox val);
+  virtual blackbox query (slot s, int type_id);
+  virtual widget    read (slot s, blackbox index);
+  
+  virtual widget plain_window_widget (string s, command q);
+  
+protected:
+  void perform_dialog();
+  qt_field_widget_rep* field (int i);
+};
 
 
 /******************************************************************************
- * qt_field_widget_rep
+ * QTMInputTextWidgetHelper
  ******************************************************************************/
+
+QTMInputTextWidgetHelper::QTMInputTextWidgetHelper (qt_widget _wid)
+: QObject (), p_wid (_wid) {
+  QTMLineEdit* le = qobject_cast<QTMLineEdit*>(wid()->qwid);
+  setParent(le);
+  ASSERT (le != NULL, "QTMInputTextWidgetHelper: expecting valid QTMLineEdit");
+  QObject::connect (le, SIGNAL (returnPressed ()), this, SLOT (commit ()));
+  QObject::connect (le, SIGNAL (focusOut (Qt::FocusReason)),
+                    this, SLOT (leave (Qt::FocusReason)));
+}
+
+/*! Executed when the enter key is pressed. */
+void
+QTMInputTextWidgetHelper::commit () {
+BEGIN_SLOT
+  if (sender() != wid()->qwid) return;
+  wid()->commit(true);
+END_SLOT
+}
+
+/*! Executed after commit of the input field (enter) and when losing focus */
+void
+QTMInputTextWidgetHelper::leave (Qt::FocusReason reason) {
+BEGIN_SLOT
+  if (sender() != wid()->qwid) return;
+  wid()->commit((reason != Qt::OtherFocusReason &&
+                 get_preference ("gui:line-input:autocommit") == "#t"));
+END_SLOT
+}
+
+/******************************************************************************
+* qt_field_widget_rep
+******************************************************************************/
+
+/*! Each of the fields in a qt_inputs_list_widget_rep.
+ 
+ Each field is composed of a prompt (a label) and an input (a QTMComboBox).
+ */
+class qt_field_widget_rep: public qt_widget_rep {
+  string           prompt;
+  string            input;
+  string             type;
+  array<string> proposals;
+  qt_inputs_list_widget_rep* parent;
+
+public:
+  qt_field_widget_rep (qt_inputs_list_widget_rep* _parent, string _prompt);
+
+  virtual void      send (slot s, blackbox val);
+  virtual blackbox query (slot s, int type_id);
+
+  virtual QWidget* as_qwidget ();
+
+  friend class qt_inputs_list_widget_rep;
+  friend class QTMFieldWidgetHelper;
+};
 
 qt_field_widget_rep::qt_field_widget_rep (qt_inputs_list_widget_rep* _parent,
                                           string _prompt)
@@ -134,6 +230,31 @@ qt_field_widget_rep::as_qwidget () {
   return qwid;
 }
 
+
+/******************************************************************************
+ * QTMFieldWidgetHelper
+ ******************************************************************************/
+
+QTMFieldWidgetHelper::QTMFieldWidgetHelper (qt_widget _wid, QComboBox* cb)
+: QObject (cb), wid (_wid), done (false) {
+  ASSERT (cb != NULL, "QTMFieldWidgetHelper: expecting valid QComboBox");
+  QObject::connect (cb, SIGNAL (editTextChanged (const QString&)),
+                    this, SLOT (commit (const QString&)));
+}
+QTMFieldWidgetHelper::QTMFieldWidgetHelper (qt_widget _wid, QLineEdit* cb)
+: QObject (cb), wid (_wid), done (false) {
+  ASSERT (cb != NULL, "QTMFieldWidgetHelper: expecting valid QLineEdit");
+  QObject::connect (cb, SIGNAL (textChanged (const QString&)),
+                    this, SLOT (commit (const QString&)));
+}
+
+void
+QTMFieldWidgetHelper::commit (const QString& qst) {
+BEGIN_SLOT
+  static_cast<qt_field_widget_rep*> (wid.rep)->input =
+      scm_quote (from_qstring (qst));
+END_SLOT
+}
 
 /******************************************************************************
  * qt_inputs_list_widget_rep
