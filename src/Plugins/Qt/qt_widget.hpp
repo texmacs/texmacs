@@ -207,6 +207,8 @@ public:
   inline bool operator != (qt_widget w) { return rep != w.rep; }
 };
 
+void tm_delete (qt_widget_rep* ptr);
+
 // Automagically create definitions for the stuff declared inside qt_widget with
 // the macro ABSTRACT_NULL(). See src/Kernel/Abstractions/basic.hpp
 ABSTRACT_NULL_CODE(qt_widget);
@@ -222,6 +224,5 @@ inline qt_widget concrete (widget w) {
   return qt_widget (static_cast<qt_widget_rep*> (w.rep));
 }
 
-void tm_delete (qt_widget_rep* ptr);
 
 #endif // defined QT_WIDGET_HPP
