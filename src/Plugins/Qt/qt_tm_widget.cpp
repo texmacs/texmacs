@@ -37,7 +37,6 @@
 #include "QTMStyle.hpp"      // qtstyle()
 #include "QTMGuiHelper.hpp"  // needed to connect()
 #include "QTMInteractivePrompt.hpp"
-#include "QTMInteractiveInputHelper.hpp"
 
 int menu_count = 0;  // zero if no menu is currently being displayed
 list<qt_tm_widget_rep*> waiting_widgets;
@@ -82,26 +81,12 @@ replaceButtons (QToolBar* dest, QList<QAction*>* src) {
   dest->setUpdatesEnabled (true);
 }
 
-void
-QTMInteractiveInputHelper::commit (int result) {
-  if (wid && result == QDialog::Accepted) {
-    QString  item = "#f";
-    QComboBox* cb = sender()->findChild<QComboBox*> ("input");
-    if (cb)  item = cb->currentText();
-    static_cast<qt_input_text_widget_rep*>(wid->int_input.rep)->input =
-      from_qstring (item);
-    static_cast<qt_input_text_widget_rep*>(wid->int_input.rep)->cmd ();
-  }
-  sender()->deleteLater();
-}
-
-
 /******************************************************************************
 * qt_tm_widget_rep
 ******************************************************************************/
 
 qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
- : qt_window_widget_rep (new QTMWindow (0), "popup", _quit), helper (this),
+ : qt_window_widget_rep (new QTMWindow (0), "popup", _quit),
    prompt (NULL), full_screen (false)
 {
   type = texmacs_widget;

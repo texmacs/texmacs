@@ -35,7 +35,6 @@ public:
   virtual QWidget*  as_qwidget ();
   
   friend class QTMInputTextWidgetHelper;
-  friend class QTMInteractiveInputHelper;
   friend class qt_tm_widget_rep;
 };
 

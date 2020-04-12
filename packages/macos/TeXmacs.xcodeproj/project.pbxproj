@@ -1060,7 +1060,6 @@
 		9CACE32B242BD6C100D0B7CA /* dot_language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CACE32A242BD6C100D0B7CA /* dot_language.cpp */; };
 		9CACE32C242BD6C100D0B7CA /* dot_language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CACE32A242BD6C100D0B7CA /* dot_language.cpp */; };
 		9CACE32D242BD6C100D0B7CA /* dot_language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CACE32A242BD6C100D0B7CA /* dot_language.cpp */; };
-		9CC6149010A999460055F808 /* QTMInteractiveInputHelper.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48B510A8CC100097A335 /* QTMInteractiveInputHelper.hpp */; };
 		9CC6149110A999460055F808 /* QTMMenuHelper.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48B710A8CC100097A335 /* QTMMenuHelper.hpp */; };
 		9CC6149310A999460055F808 /* QTMWidget.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48BB10A8CC100097A335 /* QTMWidget.hpp */; };
 		9CC6149410A999460055F808 /* QTMWindow.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48BD10A8CC100097A335 /* QTMWindow.hpp */; };
@@ -6053,7 +6052,6 @@
 				4931F7B5127EDC4C007C92CC /* QTMInteractivePrompt.hpp in Sources */,
 				9C08C97610D19EB20070A0B7 /* QTMPipeLink.hpp in Sources */,
 				9C99F05710AD8C6100B2113D /* QTMScrollView.hpp in Sources */,
-				9CC6149010A999460055F808 /* QTMInteractiveInputHelper.hpp in Sources */,
 				9CC6149110A999460055F808 /* QTMMenuHelper.hpp in Sources */,
 				9CC6149310A999460055F808 /* QTMWidget.hpp in Sources */,
 				9CC6149410A999460055F808 /* QTMWindow.hpp in Sources */,
