@@ -222,10 +222,6 @@ inline qt_widget concrete (widget w) {
   return qt_widget (static_cast<qt_widget_rep*> (w.rep));
 }
 
-inline void tm_delete (qt_widget_rep* ptr) {
-  void *mem= ptr->derived_this ();
-  ptr -> ~qt_widget_rep ();
-  fast_delete (mem);
-}
+void tm_delete (qt_widget_rep* ptr);
 
 #endif // defined QT_WIDGET_HPP
