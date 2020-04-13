@@ -192,7 +192,9 @@ public:
   }
 };
 
-
+template <>
+void tm_delete<qt_widget_rep>(qt_widget_rep *);
+ 
 /*! Reference counting mechanism.
 
  Like elsewhere in TeXmacs, this is a wrapper around its corresponding 
