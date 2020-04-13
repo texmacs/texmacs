@@ -201,9 +201,6 @@ public:
 */
 class qt_widget {
 public:
-
-  void tm_delete (qt_widget_rep* ptr);
-
   ABSTRACT_NULL(qt_widget); // Automagically declared constructor, methods, etc.
 
   inline bool operator == (qt_widget w) { return rep == w.rep; }
