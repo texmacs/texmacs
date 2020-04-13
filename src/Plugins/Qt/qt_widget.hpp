@@ -201,13 +201,14 @@ public:
 */
 class qt_widget {
 public:
+
+  void tm_delete (qt_widget_rep* ptr);
+
   ABSTRACT_NULL(qt_widget); // Automagically declared constructor, methods, etc.
 
   inline bool operator == (qt_widget w) { return rep == w.rep; }
   inline bool operator != (qt_widget w) { return rep != w.rep; }
 };
-
-void tm_delete (qt_widget_rep* ptr);
 
 // Automagically create definitions for the stuff declared inside qt_widget with
 // the macro ABSTRACT_NULL(). See src/Kernel/Abstractions/basic.hpp
