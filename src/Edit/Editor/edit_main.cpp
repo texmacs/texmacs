@@ -74,8 +74,8 @@ new_editor (server_rep* sv, tm_buffer buf) {
   return tm_new<edit_main_rep> (sv, buf);
 }
 
-void
-tm_delete (editor_rep* ptr) {
+template<> void
+tm_delete<editor_rep> (editor_rep* ptr) {
   void *mem= ptr->derived_this ();
   ptr -> ~editor_rep ();
   fast_delete (mem);

@@ -596,6 +596,8 @@ public:
   friend void   focus_on_editor (editor ed);
 };
 
+template<> void tm_delete<editor_rep> (editor_rep* ptr);
+
 class editor {
 EXTEND_NULL(widget,editor);
 public:

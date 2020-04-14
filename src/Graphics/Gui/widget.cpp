@@ -241,8 +241,8 @@ get_widget_size (widget w) {
 bool use_unified_toolbar= true;
 
 
-void
-tm_delete (widget_rep* ptr) {
+template<> void
+tm_delete<widget_rep> (widget_rep* ptr) {
   void *mem= ptr->derived_this ();
   ptr -> ~widget_rep ();
   fast_delete (mem);

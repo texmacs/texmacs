@@ -27,8 +27,8 @@
  * qt_widget_rep: the base widget for the Qt port.
  ******************************************************************************/
 
-template<>
-void tm_delete<qt_widget_rep> (qt_widget_rep* ptr) {
+template<> void
+tm_delete<qt_widget_rep> (qt_widget_rep* ptr) {
   void *mem= ptr->derived_this ();
   ptr -> ~qt_widget_rep ();
   fast_delete (mem);

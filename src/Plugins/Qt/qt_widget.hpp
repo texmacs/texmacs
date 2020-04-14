@@ -192,8 +192,7 @@ public:
   }
 };
 
-template <>
-void tm_delete<qt_widget_rep>(qt_widget_rep *);
+template <> void tm_delete<qt_widget_rep>(qt_widget_rep *);
  
 /*! Reference counting mechanism.
 
