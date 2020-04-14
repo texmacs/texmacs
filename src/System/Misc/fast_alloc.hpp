@@ -69,9 +69,6 @@ inline void* operator new[] (size_t s, void* loc) { return loc; }
 class widget_rep;
 void tm_delete (widget_rep* ptr);
 
-class qt_widget_rep;
-void tm_delete (qt_widget_rep* ptr);
-
 class editor_rep;
 void tm_delete (editor_rep* ptr);
 
