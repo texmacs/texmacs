@@ -1,3 +1,13 @@
+Qt port
+
+BUGS
+
+* crash when using the footbar and opening a file with an autosave version
+  [seems the closing actions are called twice -- not supposed to happen]
+* investigate random crash when adding labels to equations
+  [this seems a problem with replaceButtons in the input fields in the focusbar
+   probabily some objects survive the deletion and crash when trying to do
+   some action on other already dead objects]
 
 TODO
 

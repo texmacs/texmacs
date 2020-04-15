@@ -1,6 +1,6 @@
 
-Port notes
-----------
+Qt port notes
+-------------
 
 * Image support is still partial. In particular System/Files/image_files.cpp 
   should be modified to allow the ue of Qt to gather informations on image sizes.
