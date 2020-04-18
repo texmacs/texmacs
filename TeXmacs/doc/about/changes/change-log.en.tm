@@ -8,6 +8,8 @@
   <section|Changes from version 1.99.1 to 1.99.12>
 
   <\itemize>
+    <item>Drop Python 2 support for Python Session ().
+
     <item>Plugins implemented in Python use Python 3 by default ().
 
     <item>A Parser Framework for programming languages ().
