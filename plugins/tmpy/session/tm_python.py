@@ -6,7 +6,7 @@
 # COPYRIGHT   : (C) 2004       Ero Carrera, ero@dkbza.org
 #               (C) 2012       Adrian Soto
 #               (C) 2014       Miguel de Benito Delgado, mdbenito@texmacs.org
-#               (C) 2018-2019  Darcy Shen
+#               (C) 2018-2020  Darcy Shen
 #
 # This software falls under the GNU general public license version 3 or later.
 # It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -22,27 +22,30 @@ else:
     sys.path.append(os.environ.get("TEXMACS_PATH") + "/plugins/")
 
 
+
 import traceback
 import string
 from inspect   import ismodule, getsource, getsourcefile
+from tmpy.compat import py_ver
 from tmpy.capture import CaptureStdout
 from tmpy.postscript import ps_out
 from tmpy.completion import parse_complete_command, complete
-from tmpy.compat     import *
 from tmpy.protocol   import *
+
+if py_ver == 2:
+    flush_err ("Python 2 is no longer supported, please use Python 3")
+    exit (-1)
 
 # import logging as log
 # log.basicConfig(filename='/tmp/tm_python.log',level=log.DEBUG)
-def compose_output(data):
+def compose_output (data):
     """Do some parsing on the output according to its type.
     
     Non printable characters in unicode strings are escaped
     and objects of type None are not printed (so that procedure calls,
     as opposed to function calls, don't produce any output)."""
 
-    if py_ver == 3: cl = str
-    else:           cl = unicode
-    if isinstance(data, cl):
+    if isinstance(data, str):
         data2 = r''
         for c in data:
             if c not in string.printable:
@@ -82,8 +85,8 @@ def compile_help (text):
 
     return dict (map (lambda k_v: (k_v[0], as_scm_string (k_v[1])), out.items()))
 
-__version__ = '1.14'
-__author__ = 'Ero Carrera, Adrian Soto, Miguel de Benito Delgado'
+__version__ = '3.0'
+__author__ = 'Ero Carrera, Adrian Soto, Miguel de Benito Delgado, Darcy Shen'
 my_globals   = {}
 
 # We insert into the session's namespace the 'ps_out' method.
@@ -96,17 +99,10 @@ e.g from files or from matplotlib.pyplot.
 A rudimentary help window is also implemented: type the name of an object
 with a question mark at the end to use it."""
 
-if py_ver == 3:
-    text = 'import builtins as __builtins__'
-else:
-    text = 'import __builtin__ as __builtins__'
+text = 'import builtins as __builtins__'
 CaptureStdout.capture (text, my_globals, "tm_python")
 
-if py_ver == 3:
-    sys.stdout = os.fdopen (sys.stdout.fileno(), 'w')
-else:
-    sys.stdout = os.fdopen (sys.stdout.fileno(), 'w', 0)
-
+sys.stdout = os.fdopen (sys.stdout.fileno(), 'w')
 
 ###############################################################################
 # Session start
@@ -119,7 +115,7 @@ flush_verbatim ("Python " + sys.version + "\n" +
                "Please see the documentation in Help -> Plugins -> Python")
 flush_prompt (">>> ")
 while True:
-    line = tm_input()
+    line = input ()
     if not line:
         continue
     if line[0] == DATA_COMMAND:
@@ -138,14 +134,13 @@ while True:
     else:
         lines = [line]
         while line != "<EOF>":
-            line = tm_input()
+            line = input ()
             if line == '': 
                 continue
-            lines.append(line)
-        text = '\n'.join(lines[:-1])
+            lines.append (line)
+        text = '\n'.join (lines[:-1])
         try: # Is it an expression?
-            result = eval(text, my_globals)
+            result = eval (text, my_globals)
         except:
-            result = CaptureStdout.capture(text, my_globals, "tm_python")
+            result = CaptureStdout.capture (text, my_globals, "tm_python")
         flush_verbatim (compose_output(result))
-

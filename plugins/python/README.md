@@ -29,11 +29,10 @@ If you have permissions for `$TEXMACS_PATH/plugins/python/progs/init-python.scm`
 Here is the detailed example of changing the python command:
 
 ``` scheme
-(define (python-command)
-  (if (url-exists-in-path? "python3") "python3" "python2"))
+(define (python-command) "python3")
 ```
 
-By default, we prefer `python3`. To use a specific python version, just change the return value of the `(python-commond)` function.
+By default, we use `python3`. To use a specific python version, just change the return value of the `(python-commond)` function.
 
 ``` scheme
 (define (python-command) "/path/to/python")
