@@ -1,6 +1,6 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.12>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing|old-dots>>
 
 <\body>
   <tmdoc-title|Limitations and things to do>
@@ -12,9 +12,6 @@
 
     <item>The (utterly useless) help window should be a help browser, with
     links, history, etc.
-
-    <item>Evaluation of multiple expressions should return (at least) the
-    value of the last one, as the <name|Python> <abbr|REPL> does.
   </itemize>
 
   <tmdoc-copyright|2004, 2014|Adrián Soto|Miguel de Benito Delgado>

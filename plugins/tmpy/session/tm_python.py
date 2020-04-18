@@ -25,10 +25,11 @@ else:
 
 import traceback
 import string
+import ast
 from inspect   import ismodule, getsource, getsourcefile
 from tmpy.compat import py_ver
 from tmpy.capture import CaptureStdout
-from tmpy.postscript import ps_out
+from tmpy.postscript import ps_out, PSOutDummy
 from tmpy.completion import parse_complete_command, complete
 from tmpy.protocol   import *
 
@@ -37,25 +38,23 @@ if py_ver == 2:
     exit (-1)
 
 # import logging as log
-# log.basicConfig(filename='/tmp/tm_python.log',level=log.DEBUG)
-def compose_output (data):
+# log.basicConfig(filename='/tmp/tm_python.log',level=log.INFO)
+
+def flush_output (data):
     """Do some parsing on the output according to its type.
     
     Non printable characters in unicode strings are escaped
     and objects of type None are not printed (so that procedure calls,
     as opposed to function calls, don't produce any output)."""
 
-    if isinstance(data, str):
-        data2 = r''
-        for c in data:
-            if c not in string.printable:
-                data2 += '\\x%x' % ord(c)
-            else:
-                data2 += c
-        data = data2
-    if data is None:
-        data = ''
-    return str(data).strip()
+    if (data is None):
+        flush_verbatim ("")
+        return
+
+    if isinstance (data, PSOutDummy):
+        flush_ps (data.content)
+    else:
+        flush_verbatim (str(data).strip())
 
 def as_scm_string (text):
     return '"%s"' % text.replace('\\', '\\\\').replace('"', '\\"')
@@ -84,6 +83,18 @@ def compile_help (text):
         out["file"] = 'Unable to access the code for "%s": %s' % (text, e)
 
     return dict (map (lambda k_v: (k_v[0], as_scm_string (k_v[1])), out.items()))
+
+
+def my_eval (code, p_globals):
+    '''Execute a script and return the value of the last expression'''
+
+    block = ast.parse(code, mode='exec')
+    if len(block.body) > 1 and isinstance(block.body[-1], ast.Expr):
+        last = ast.Expression(block.body.pop().value)
+        exec(compile(block, '<string>', mode='exec'), p_globals)
+        return eval(compile(last, '<string>', mode='eval'), p_globals)
+    else:
+        return eval(code, p_globals)
 
 __version__ = '3.0'
 __author__ = 'Ero Carrera, Adrian Soto, Miguel de Benito Delgado, Darcy Shen'
@@ -115,7 +126,7 @@ flush_verbatim ("Python " + sys.version + "\n" +
                "Please see the documentation in Help -> Plugins -> Python")
 flush_prompt (">>> ")
 while True:
-    line = input ()
+    line= input ()
     if not line:
         continue
     if line[0] == DATA_COMMAND:
@@ -125,22 +136,22 @@ while True:
         continue
     elif line.endswith('?') and not line.strip().startswith('#'):
         if len(line) > 1:
-            out = compile_help (line[:-1])
+            out= compile_help (line[:-1])
             flush_command ('(tmpy-open-help %s %s %s)' %
                            (out["help"], out["src"], out["file"]))
         else:
             flush_verbatim ('Type a name before the "?" to see the help')
         continue
     else:
-        lines = [line]
+        lines= [line]
         while line != "<EOF>":
-            line = input ()
+            line= input ()
             if line == '': 
                 continue
             lines.append (line)
         text = '\n'.join (lines[:-1])
         try: # Is it an expression?
-            result = eval (text, my_globals)
+            result= my_eval (text, my_globals)
         except:
-            result = CaptureStdout.capture (text, my_globals, "tm_python")
-        flush_verbatim (compose_output(result))
+            result= CaptureStdout.capture (text, my_globals, "tm_python")
+        flush_output (result)

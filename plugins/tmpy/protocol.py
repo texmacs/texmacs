@@ -32,7 +32,7 @@ def data_end():
     os.sys.stdout.flush()
 
 
-def texmacs_escape(data):
+def texmacs_escape (data):
     return data.replace(DATA_BEGIN.encode(), (DATA_ESCAPE + DATA_BEGIN).encode()) \
                .replace(DATA_END.encode(), (DATA_ESCAPE + DATA_END).encode())
 

@@ -21,6 +21,9 @@ class PSOutDummy:
     We return an instance of this class to avoid output after 
     evaluation in the TeXmacs plugin of ps_out."""
 
+    def __init__(self, data):
+        self.content = data
+
     def __str__(self):
         """Return an empty string for compose_output()"""
         return ''
@@ -29,7 +32,7 @@ class PSOutDummy:
         return 'PSOutDummy'
 
 
-def ps_out(out):
+def ps_out (out):
     """Outputs PostScript within TeXmacs.
 
     According the the type of the argument the following
@@ -77,5 +80,4 @@ def ps_out(out):
     elif 'read' in dir(out):
         data = out.read()
 
-    flush_ps(texmacs_escape(data).decode())
-    return PSOutDummy()
+    return PSOutDummy(texmacs_escape(data).decode())
