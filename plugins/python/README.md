@@ -24,31 +24,17 @@ To switch to a specific version, use `git checkout` or modify it manually.
 Install the Python plugin to `$TEXMACS_HOME_PATH/plugins` and then change
 the python launcher in `$TEXMACS_HOME_PATH/plugins/python/progs/init-python.scm`.
 
-If you have permissions for `$TEXMACS_PATH/plugins/python/progs/init-python.scm`, you may also
-change the system one.
+If you have permissions for `$TEXMACS_PATH/plugins/python/progs/init-python.scm`, you may also change the system one.
 
-Here is the detailed example of changing from python to python3:
+Here is the detailed example of changing the python command:
 
 ``` scheme
-(define (python-launcher)
-  (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
-      (string-append "python \""
-                     (getenv "TEXMACS_HOME_PATH")
-                     "/plugins/tmpy/session/tm_python.py\"")
-      (string-append "python \""
-                     (getenv "TEXMACS_PATH")
-                     "/plugins/tmpy/session/tm_python.py\"")))
+(define (python-command)
+  (if (url-exists-in-path? "python3") "python3" "python2"))
 ```
 
-To use python3, just replace the above code with:
+By default, we prefer `python3`. To use a specific python version, just change the return value of the `(python-commond)` function.
 
 ``` scheme
-(define (python-launcher)
-  (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
-      (string-append "python3 \""
-                     (getenv "TEXMACS_HOME_PATH")
-                     "/plugins/tmpy/session/tm_python.py\"")
-      (string-append "python3 \""
-                     (getenv "TEXMACS_PATH")
-                     "/plugins/tmpy/session/tm_python.py\"")))
+(define (python-command) "/path/to/python")
 ```
