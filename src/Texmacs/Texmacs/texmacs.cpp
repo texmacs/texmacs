@@ -430,7 +430,7 @@ TeXmacs_main (int argc, char** argv) {
   if (DEBUG_STD) debug_boot << "Opening display...\n";
   
 #if defined(X11TEXMACS) && defined(MACOSX_EXTENSIONS)
-  init_mac_application ();
+ // init_mac_application ();
 #endif
     
   gui_open (argc, argv);
@@ -438,12 +438,6 @@ TeXmacs_main (int argc, char** argv) {
   if (DEBUG_STD) debug_boot << "Starting server...\n";
   { // opening scope for server sv
   server sv;
-
-  // HACK:
-  // Qt and Guile want to change the locale. 
-  // We need to force it to C to parse correctly the configuration files
-  // (see as_double() in string.cpp)
-  setlocale(LC_NUMERIC, "C");    
     
   string where= "";
   for (i=1; i<argc; i++) {
