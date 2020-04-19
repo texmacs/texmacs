@@ -394,7 +394,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
 #ifdef OS_MINGW
         // See https://savannah.gnu.org/bugs/?57850
         array<char> keys;
-        keys << '-' << '=' << '\\' << "`"
+        keys << '-' << '=' << '\\' << '`'
           << '[' << ']' << ';' << '\''
           << ',' << '.' << '/';
         
