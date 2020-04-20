@@ -117,6 +117,11 @@
     ("[ \xfe" (make 'bmatrix))
     ("| \xfe" (make 'det))))
 
+(when (os-macos?)
+  (kbd-map
+    (:mode in-math-like-macos?)
+    ("math A-n" (make-wide "~"))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main keyboard shortcuts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2556,11 +2561,7 @@
     ("table N m" (make 'matrix))
     ("table N M" (make 'bmatrix))
     ("table N d" (make 'det))
-    ("table N s" (make 'stack)))
-
-  (kbd-map
-    (:mode in-math-like-macos?)
-    ("math A-n" (make-wide "~"))))
+    ("table N s" (make 'stack))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Textual operators
