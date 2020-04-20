@@ -78,7 +78,9 @@
 
   <new-counter|item>
 
-  <assign|last-item|0>
+  <assign|last-item|<active*|<with|mode|math|<with|font-series|bold|math-font-series|bold|<rigid|\<ast\>>>>>>
+
+  <assign|last-item-nr|<active*|<with|mode|math|<with|font-series|bold|math-font-series|bold|>>>0>
 
   <assign|current-item|<value|aligned-space-item>>
 
@@ -90,7 +92,7 @@
 
   <assign|item*|<macro|name|<render-item|<arg|name>><with|index-enabled|false|<set-binding|<arg|name>>>>>
 
-  <assign|item|<macro|<next-item><render-item|<the-item>>>>
+  <assign|item|<macro|<next-item><assign|last-item-nr|<value|item-nr>><render-item|<the-item>>>>
 
   <\active*>
     <\src-comment>
@@ -113,11 +115,13 @@
   </macro>>
 
   <assign|list*|<\macro|item-render|item-transform|body>
-    <style-with|src-compact|none|<list|<arg|item-render>|<quasiquote|<macro|name|<unquote|<value|last-item>>.<compound|<unquote|<arg|item-transform>>|<arg|name>>>>|<arg|body>>>
+    <\with|current-item|<arg|item-render>|transform-item|<quasiquote|<macro|name|<unquote|<value|last-item>>.<compound|<unquote|<arg|item-transform>>|<arg|name>>>>|item-nr|0|last-item-nr|0>
+      <render-list|<arg|body>>
+    </with>
   </macro>>
 
   <assign|list-continued|<\macro|item-render|item-transform|body>
-    <\with|current-item|<arg|item-render>|transform-item|<arg|item-transform>|item-nr|<value|last-item>>
+    <\with|current-item|<arg|item-render>|transform-item|<arg|item-transform>|item-nr|<value|last-item-nr>>
       <render-list|<arg|body>>
     </with>
   </macro>>
