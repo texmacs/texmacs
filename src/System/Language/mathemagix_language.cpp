@@ -116,6 +116,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("direct")= c;
   t ("disjunction")= c;
   t ("dispatch")= c;
+  t ("ditto")= c;
   t ("div")= c;
   t ("do")= c;
   t ("downto")= c;
@@ -179,6 +180,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("pattern")= c;
   t ("penalty")= c;
   t ("postfix")= "postfix";
+  t ("pragma")= d;
   t ("prefer")= c;
   t ("prefix")= c;
   t ("private")= c;
