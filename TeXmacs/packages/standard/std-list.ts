@@ -1,4 +1,4 @@
-<TeXmacs|1.99.10>
+<TeXmacs|1.99.12>
 
 <style|<tuple|source|std|english>>
 
@@ -78,7 +78,7 @@
 
   <new-counter|item>
 
-  <assign|last-item|<active*|<with|mode|math|<with|font-series|bold|math-font-series|bold|<rigid|\<ast\>>>>>>
+  <assign|last-item|0>
 
   <assign|current-item|<value|aligned-space-item>>
 
@@ -116,10 +116,18 @@
     <style-with|src-compact|none|<list|<arg|item-render>|<quasiquote|<macro|name|<unquote|<value|last-item>>.<compound|<unquote|<arg|item-transform>>|<arg|name>>>>|<arg|body>>>
   </macro>>
 
+  <assign|list-continued|<\macro|item-render|item-transform|body>
+    <\with|current-item|<arg|item-render>|transform-item|<arg|item-transform>|item-nr|<value|last-item>>
+      <render-list|<arg|body>>
+    </with>
+  </macro>>
+
   <assign|new-list|<macro|name|item-render|item-transform|<quasi|<style-with|src-compact|none|<assign|<arg|name>|<\macro|body>
     <list|<unquote|<arg|item-render>>|<unquote|<arg|item-transform>>|<arg|body>>
   </macro>><assign|<merge|<arg|name>|*>|<\macro|body>
     <list*|<unquote|<arg|item-render>>|<unquote|<arg|item-transform>>|<arg|body>>
+  </macro>><assign|<merge|<arg|name>|-continued>|<\macro|body>
+    <list-continued|<unquote|<arg|item-render>>|<unquote|<arg|item-transform>>|<arg|body>>
   </macro>>>>>>
 
   <\active*>
@@ -154,6 +162,12 @@
     </with>
   </macro>>
 
+  <assign|itemize-continued|<\macro|body>
+    <\with|itemize-level|<plus|<value|itemize-level>|1>>
+      <compound|<merge|itemize-|<itemize-reduce|<value|itemize-level>>|-continued>|<arg|body>>
+    </with>
+  </macro>>
+
   <\active*>
     <\src-comment>
       The standard enumerate environment with three levels.
@@ -183,6 +197,12 @@
   <assign|enumerate*|<\macro|body>
     <\with|enumerate-level|<plus|<value|enumerate-level>|1>>
       <compound|<merge|enumerate-|<enumerate-reduce|<value|enumerate-level>>|*>|<arg|body>>
+    </with>
+  </macro>>
+
+  <assign|enumerate-continued|<\macro|body>
+    <\with|enumerate-level|<plus|<value|enumerate-level>|1>>
+      <compound|<merge|enumerate-|<enumerate-reduce|<value|enumerate-level>>|-continued>|<arg|body>>
     </with>
   </macro>>
 
