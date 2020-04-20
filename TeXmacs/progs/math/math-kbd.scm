@@ -2556,7 +2556,11 @@
     ("table N m" (make 'matrix))
     ("table N M" (make 'bmatrix))
     ("table N d" (make 'det))
-    ("table N s" (make 'stack))))
+    ("table N s" (make 'stack)))
+
+  (kbd-map
+    (:mode in-math-like-macos?)
+    ("math A-n" (make-wide "~"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Textual operators

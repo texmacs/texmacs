@@ -261,7 +261,8 @@
   (remote-control-mode% (== remote-control-flag? #t))
   (in-cyrillic-jcuken% (cyrillic-input-method? "jcuken") in-cyrillic%)
   (in-cyrillic-translit% (cyrillic-input-method? "translit") in-cyrillic%)
-  (in-cyrillic-yawerty% (cyrillic-input-method? "yawerty") in-cyrillic%))
+  (in-cyrillic-yawerty% (cyrillic-input-method? "yawerty") in-cyrillic%)
+  (in-math-like-macos% #t in-math% like-macos%))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Lazy initializations

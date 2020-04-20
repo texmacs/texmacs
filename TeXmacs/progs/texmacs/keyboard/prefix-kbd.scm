@@ -283,6 +283,14 @@
   ("math:syntax" "math x" #t))
 
 (kbd-wildcards
+  ("S-C-" "C-S-" #t)
+  ("S-A-" "A-S-" #t)
+  ("S-M-" "M-S-" #t)
+  ("C-A-" "A-C-" #t)
+  ("C-M-" "M-C-" #t)
+  ("A-M-" "M-A-" #t))
+
+(kbd-wildcards
   ("tilde tilde" "tilde")
   ("hat hat" "hat")
   ("umlaut umlaut" "umlaut")
