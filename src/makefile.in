@@ -187,7 +187,7 @@ freetype_incl := $(system_incl)
 ifeq "@CONFIG_QT@" ""
 qt_moc := 
 else
-qt_moc := QTMStyle.hpp QTMGuiHelper.hpp \
+qt_moc := QTMStyle.hpp QTMGuiHelper.hpp QTMInteractiveInputHelper.hpp \
   QTMMenuHelper.hpp QTMWidget.hpp  QTMWindow.hpp QTMScrollView.hpp \
   QTMPipeLink.hpp QTMInteractivePrompt.hpp QTMFileDialog.hpp \
   QTMPrintDialog.hpp QTMPrinterSettings.hpp QTMApplication.hpp \

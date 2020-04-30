@@ -274,8 +274,7 @@ QTMMenuButton::paintEvent (QPaintEvent* e) {
 
   QPainter p (this);
   QStyleOptionToolButton option;
-  QRect r = rect ();
-  option.initFrom (this);
+  QRect r = rect();
   option.rect = r;
   option.state = QStyle::State_Enabled | (opt.state & QStyle::State_MouseOver
                                           ? QStyle::State_Selected
@@ -298,7 +297,6 @@ void
 QTMMenuWidget::paintEvent(QPaintEvent* e) {
   QPainter p (this);
   QStyleOptionMenuItem option;
-  option.initFrom (this);
   option.rect = rect();
   style()->drawControl (QStyle::CE_MenuEmptyArea, &option, &p, this);
   QWidget::paintEvent (e);
@@ -361,6 +359,64 @@ QTMLazyMenu::destroy (QObject* obj) {
 BEGIN_SLOT
   (void) obj;
   deleteLater();
+END_SLOT
+}
+
+/******************************************************************************
+ * QTMInputTextWidgetHelper
+ ******************************************************************************/
+
+QTMInputTextWidgetHelper::QTMInputTextWidgetHelper (qt_widget _wid)
+: QObject (), p_wid (_wid) {
+  QTMLineEdit* le = qobject_cast<QTMLineEdit*>(wid()->qwid);
+  setParent(le);
+  ASSERT (le != NULL, "QTMInputTextWidgetHelper: expecting valid QTMLineEdit");
+  QObject::connect (le, SIGNAL (returnPressed ()), this, SLOT (commit ()));
+  QObject::connect (le, SIGNAL (focusOut (Qt::FocusReason)),
+                    this, SLOT (leave (Qt::FocusReason)));
+}
+
+/*! Executed when the enter key is pressed. */
+void
+QTMInputTextWidgetHelper::commit () {
+BEGIN_SLOT
+  if (sender() != wid()->qwid) return;
+  wid()->commit(true);
+END_SLOT
+}
+
+/*! Executed after commit of the input field (enter) and when losing focus */
+void
+QTMInputTextWidgetHelper::leave (Qt::FocusReason reason) {
+BEGIN_SLOT
+  if (sender() != wid()->qwid) return;
+  wid()->commit((reason != Qt::OtherFocusReason &&
+                 get_preference ("gui:line-input:autocommit") == "#t"));
+END_SLOT
+}
+
+/******************************************************************************
+ * QTMFieldWidgetHelper
+ ******************************************************************************/
+
+QTMFieldWidgetHelper::QTMFieldWidgetHelper (qt_widget _wid, QComboBox* cb)
+: QObject (cb), wid (_wid), done (false) {
+  ASSERT (cb != NULL, "QTMFieldWidgetHelper: expecting valid QComboBox");
+  QObject::connect (cb, SIGNAL (editTextChanged (const QString&)),
+                    this, SLOT (commit (const QString&)));
+}
+QTMFieldWidgetHelper::QTMFieldWidgetHelper (qt_widget _wid, QLineEdit* cb)
+: QObject (cb), wid (_wid), done (false) {
+  ASSERT (cb != NULL, "QTMFieldWidgetHelper: expecting valid QLineEdit");
+  QObject::connect (cb, SIGNAL (textChanged (const QString&)),
+                    this, SLOT (commit (const QString&)));
+}
+
+void
+QTMFieldWidgetHelper::commit (const QString& qst) {
+BEGIN_SLOT
+  static_cast<qt_field_widget_rep*> (wid.rep)->input =
+      scm_quote (from_qstring (qst));
 END_SLOT
 }
 

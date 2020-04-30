@@ -500,7 +500,7 @@ gui_open (int& argc, char** argv) {
   // We reset it to have POSIX functions parse correctly the configuration files
   // (see as_double() in string.cpp)
 
-  setlocale(LC_NUMERIC, "C");
+  setlocale (LC_NUMERIC, "C");
 
   // From Qt docs:
   // On Unix/Linux Qt is configured to use the system locale settings by

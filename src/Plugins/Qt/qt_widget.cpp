@@ -13,7 +13,13 @@
 #include "qt_renderer.hpp"
 
 #include "qt_widget.hpp"
+#include "qt_ui_element.hpp"
+#include "qt_simple_widget.hpp"
+#include "qt_tm_widget.hpp"
 #include "qt_window_widget.hpp"
+#include "qt_chooser_widget.hpp"
+#include "qt_color_picker_widget.hpp"
+#include "qt_printer_widget.hpp"
 
 #include "window.hpp"
 
@@ -318,17 +324,216 @@ destroy_window_widget (widget w) {
  * See Graphics/Gui/widget.hpp for comments. 
  ******************************************************************************/
 
+widget horizontal_menu (array<widget> a) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::horizontal_menu, a);
+  wid->add_children (a);
+  return abstract (wid);
+}
+widget vertical_menu (array<widget> a)  {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::vertical_menu, a);
+  wid->add_children (a);
+  return abstract (wid);
+}
+widget horizontal_list (array<widget> a) { 
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::horizontal_list, a);
+  wid->add_children (a);
+  return abstract (wid);
+}
+widget vertical_list (array<widget> a) { 
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::vertical_list, a);
+  wid->add_children (a);
+  return abstract (wid);
+}
+widget aligned_widget (array<widget> lhs, array<widget> rhs, SI hsep, SI vsep,
+                       SI lpad, SI rpad) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::aligned_widget,
+                                    lhs, rhs, coord4 (hsep, vsep, lpad, rpad));
+  wid->add_children (lhs);
+  wid->add_children (rhs);
+  return abstract (wid);
+}
+widget tabs_widget (array<widget> tabs, array<widget> bodies) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::tabs_widget,
+                                             tabs, bodies);
+  wid->add_children (tabs);
+  wid->add_children (bodies);
+  return abstract (wid);
+}
+widget icon_tabs_widget (array<url> us, array<widget> ts, array<widget> bs) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::icon_tabs_widget,
+                                    us, ts, bs);
+  wid->add_children (ts);
+  wid->add_children (bs);
+  return abstract (wid);
+}
+widget wrapped_widget (widget w, command cmd) {
+  return tm_new<qt_wrapped_widget_rep> (w, cmd);
+}
+widget tile_menu (array<widget> a, int cols) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::tile_menu, a, cols);
+  wid->add_children (a);
+  return abstract (wid);
+}
+widget minibar_menu (array<widget> a) { 
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::minibar_menu, a);
+  wid->add_children (a);
+  return abstract (wid);
+}
+widget menu_separator (bool vertical) { 
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::menu_separator,
+                                             vertical);
+  return abstract (wid);
+}
+widget menu_group (string name, int style) { 
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::menu_group,
+                                             name, style);
+  return abstract (wid);
+}
+widget pulldown_button (widget w, promise<widget> pw) { 
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::pulldown_button,
+                                             w, pw);
+    // FIXME: the promise widget isn't added to the children when it's evaluated
+    //  wid->add_child (??);
+  return abstract(wid);
+}
+widget pullright_button (widget w, promise<widget> pw) { 
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::pullright_button,
+                                             w, pw);
+    // FIXME: the promise widget isn't added to the children when it's evaluated
+    //  wid->add_child (??);
+  return abstract(wid);
+}
+widget menu_button (widget w, command cmd, string pre, string ks, int style) { 
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::menu_button,
+                                             w, cmd, pre, ks, style);
+  wid->add_child (w);
+  return abstract (wid);
+}
+widget balloon_widget (widget w, widget help) { 
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::balloon_widget,
+                                             w, help);
+  wid->add_child (w);
+  return abstract (wid);
+}
+widget text_widget (string s, int style, color col, bool tsp) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::text_widget,
+                                             s, style, col, tsp);
+  return abstract (wid);
+}
+widget xpm_widget (url file_name) { 
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::xpm_widget,
+                                             file_name);
+  return abstract (wid);
+}
+widget toggle_widget (command cmd, bool on, int style) { 
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::toggle_widget,
+                                             cmd, on, style);
+  return abstract (wid);
+}
+widget enum_widget (command cmd, array<string> vals, string val, int style,
+                    string width) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::enum_widget,
+                                             cmd, vals, val, style, width);
+  return abstract (wid);
+}
+widget choice_widget (command cmd, array<string> vals, array<string> chosen) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::choice_widget,
+                                             cmd, vals, chosen, true);
+  return abstract (wid);
+}
+widget choice_widget (command cmd, array<string> vals, string cur) {
+  array<string> chosen (1);
+  chosen[0]= cur;
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::choice_widget,
+                                             cmd, vals, chosen, false);
+  return abstract (wid);
+}
+widget choice_widget (command cmd, array<string> vals, string cur, string filter) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::filtered_choice_widget,
+                                             cmd, vals, cur, filter);
+  return abstract (wid);
+}
+widget user_canvas_widget (widget w, int style) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::scrollable_widget,
+                                             w, style);
+  wid->add_child (w);
+  return abstract (wid);
+}
+widget resize_widget (widget w, int style, string w1, string h1,
+                      string w2, string h2, string w3, string h3,
+                      string hpos, string vpos) {
+  typedef triple<string, string, string> T1;
+  (void) hpos; (void) vpos;
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::resize_widget,
+                                             w, style, T1(w1, w2, w3),
+                                                       T1(h1, h2, h3));
+  wid->add_child (w);
+  return abstract (wid);
+}
+widget hsplit_widget (widget l, widget r) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::hsplit_widget, l, r);
+  wid->add_children (array<widget> (l, r));
+  return abstract (wid);
+}
+widget vsplit_widget (widget t, widget b) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::vsplit_widget, t, b);
+  wid->add_children (array<widget> (t, b));
+  return abstract (wid);
+}
+widget refresh_widget (string tmwid, string kind) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::refresh_widget,
+                                             tmwid, kind);
+    // FIXME: decide what to do with children in QTMRefresh::recompute()
+  return abstract (wid);
+}
+widget refreshable_widget (object promise, string kind) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::refreshable_widget,
+                                             promise, kind);
+    // FIXME: decide what to do with children in QTMRefreshable::recompute()
+  return abstract (wid);
+}
+widget glue_widget (bool hx, bool vx, SI w, SI h) {
+  qt_widget wid = qt_ui_element_rep::create (qt_ui_element_rep::glue_widget,
+                                             hx, vx, w/PIXEL, h/PIXEL);
+  return abstract (wid);
+}
+widget glue_widget (tree col, bool hx, bool vx, SI w, SI h) {
+  return tm_new<qt_glue_widget_rep> (col, hx, vx, w, h);
+}
+widget inputs_list_widget (command call_back, array<string> prompts) {
+  return tm_new<qt_inputs_list_widget_rep> (call_back, prompts);
+}
+widget input_text_widget (command call_back, string type, array<string> def,
+                          int style, string width) {
+  return tm_new<qt_input_text_widget_rep> (call_back, type, def, style, width);
+}
+widget color_picker_widget (command call_back, bool bg, array<tree> proposals) {
+  return tm_new<qt_color_picker_widget_rep> (call_back, bg, proposals);
+}
+widget file_chooser_widget (command cmd, string type, string prompt) {
+  return tm_new<qt_chooser_widget_rep> (cmd, type, prompt);
+}
+widget printer_widget (command cmd, url ps_pdf_file) {
+  return tm_new<qt_printer_widget_rep> (cmd, ps_pdf_file);
+}
+widget texmacs_widget (int mask, command quit) {
+  if (mask) return tm_new<qt_tm_widget_rep> (mask, quit);
+  else      return tm_new<qt_tm_embedded_widget_rep> (quit);
+}
 widget ink_widget (command cb) {
   NOT_IMPLEMENTED("Ink widget");
   (void) cb; return widget();
 }
+widget tree_view_widget (command cmd, tree data, tree actions) {
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::tree_view_widget,
+                                             cmd, data, actions);
+  return abstract (wid);
 
-//// Widgets which are not strictly required by TeXmacs have void implementations
+}
+  //// Widgets which are not strictly required by TeXmacs have void implementations
 
 widget empty_widget () { NOT_IMPLEMENTED("empty_widget"); return widget(); }
-
 widget extend (widget w, array<widget> a) { (void) a; return w; }
-
 widget wait_widget (SI width, SI height, string message) {
   (void) width; (void) height; (void) message; return widget();
 }

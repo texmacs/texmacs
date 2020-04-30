@@ -9,18 +9,16 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "string.hpp"
-#include "scheme.hpp"
-#include "url.hpp"
-#include "analyze.hpp"
-#include "converter.hpp"
-
 #include "widget.hpp"
 #include "message.hpp"
 #include "qt_dialogues.hpp"
 #include "qt_utilities.hpp"
 #include "qt_tm_widget.hpp"
-
+#include "qt_chooser_widget.hpp"
+#include "qt_color_picker_widget.hpp"
+#include "url.hpp"
+#include "analyze.hpp"
+#include "converter.hpp"
 #include "QTMMenuHelper.hpp"
 #include "QTMGuiHelper.hpp"
 #include "QTMApplication.hpp"
@@ -37,73 +35,13 @@
 #include <QPushButton>
 #include <QDialogButtonBox>
 
-class qt_field_widget_rep;
-class qt_inputs_list_widget_rep;
+#include "string.hpp"
+#include "scheme.hpp"
+
 
 /******************************************************************************
- * qt_inputs_list_widget_rep
+ * qt_field_widget_rep
  ******************************************************************************/
-
-/*! A dialog with a list of inputs and ok and cancel buttons.
- 
- In the general case each input is a qt_field_widget_rep which we lay out in a
- vertical table. However, for simple yes/no/cancel questions we try to use a
- system default dialog
- 
- TODO?
- We try to use OS dialogs whenever possible, but this still needs improvement.
- We should also use a custom Qt widget and then bundle it in a modal window if
- required, so as to eventually be able to return something embeddable in
- as_qwidget(), in case we want to reuse this.
- */
-
-class qt_inputs_list_widget_rep: public qt_widget_rep {
-protected:
-  command cmd;
-  coord2 size, position;
-  string win_title;
-  int style;
-
-public:
-  qt_inputs_list_widget_rep (command, array<string>);
-
-  virtual void      send (slot s, blackbox val);
-  virtual blackbox query (slot s, int type_id);
-  virtual widget    read (slot s, blackbox index);
-  
-  virtual widget plain_window_widget (string s, command q);
-  
-protected:
-  void perform_dialog();
-  qt_field_widget_rep* field (int i);
-};
-
-/******************************************************************************
-* qt_field_widget_rep
-******************************************************************************/
-
-/*! Each of the fields in a qt_inputs_list_widget_rep.
- 
- Each field is composed of a prompt (a label) and an input (a QTMComboBox).
- */
-class qt_field_widget_rep: public qt_widget_rep {
-  string           prompt;
-  string            input;
-  string             type;
-  array<string> proposals;
-  qt_inputs_list_widget_rep* parent;
-
-public:
-  qt_field_widget_rep (qt_inputs_list_widget_rep* _parent, string _prompt);
-
-  virtual void      send (slot s, blackbox val);
-  virtual blackbox query (slot s, int type_id);
-
-  virtual QWidget* as_qwidget ();
-
-  friend class qt_inputs_list_widget_rep;
-  friend class QTMFieldWidgetHelper;
-};
 
 qt_field_widget_rep::qt_field_widget_rep (qt_inputs_list_widget_rep* _parent,
                                           string _prompt)
@@ -196,31 +134,6 @@ qt_field_widget_rep::as_qwidget () {
   return qwid;
 }
 
-
-/******************************************************************************
- * QTMFieldWidgetHelper
- ******************************************************************************/
-
-QTMFieldWidgetHelper::QTMFieldWidgetHelper (qt_widget _wid, QComboBox* cb)
-: QObject (cb), wid (_wid), done (false) {
-  ASSERT (cb != NULL, "QTMFieldWidgetHelper: expecting valid QComboBox");
-  QObject::connect (cb, SIGNAL (editTextChanged (const QString&)),
-                    this, SLOT (commit (const QString&)));
-}
-QTMFieldWidgetHelper::QTMFieldWidgetHelper (qt_widget _wid, QLineEdit* cb)
-: QObject (cb), wid (_wid), done (false) {
-  ASSERT (cb != NULL, "QTMFieldWidgetHelper: expecting valid QLineEdit");
-  QObject::connect (cb, SIGNAL (textChanged (const QString&)),
-                    this, SLOT (commit (const QString&)));
-}
-
-void
-QTMFieldWidgetHelper::commit (const QString& qst) {
-BEGIN_SLOT
-  static_cast<qt_field_widget_rep*> (wid.rep)->input =
-      scm_quote (from_qstring (qst));
-END_SLOT
-}
 
 /******************************************************************************
  * qt_inputs_list_widget_rep
@@ -439,59 +352,6 @@ qt_inputs_list_widget_rep::perform_dialog() {
 }
 
 
-
-/******************************************************************************
- * QTMInputTextWidgetHelper
- ******************************************************************************/
-enum itw_commit_status {
-  itw_return_pressed, itw_leaving, itw_reset
-} ;
-
-
-QTMInputTextWidgetHelper::QTMInputTextWidgetHelper (qt_widget _wid)
-: QObject (), p_wid (_wid) {
-  QTMLineEdit* le = qobject_cast<QTMLineEdit*>(wid()->qwid);
-  setParent(le);
-  ASSERT (le != NULL, "QTMInputTextWidgetHelper: expecting valid QTMLineEdit");
-  QObject::connect (le, SIGNAL (returnPressed ()), this, SLOT (commit ()));
-  QObject::connect (le, SIGNAL (focusOut (Qt::FocusReason)),
-                    this, SLOT (leave (Qt::FocusReason)));
-}
-
-/*! Executed when the enter key is pressed. */
-void
-QTMInputTextWidgetHelper::commit () {
-BEGIN_SLOT
-  QTMLineEdit* le = qobject_cast<QTMLineEdit*>(wid()->qwid);
-  if (sender() != le) return;
-  wid()->input= from_qstring (le->text ());
-  wid()->ok= true;
-  the_gui->process_command (wid()->cmd, list_object (object (wid()->input)));
-END_SLOT
-}
-
-/*! Executed after commit of the input field (enter) and when losing focus */
-void
-QTMInputTextWidgetHelper::leave (Qt::FocusReason reason) {
-BEGIN_SLOT
-  QTMLineEdit* le = qobject_cast<QTMLineEdit*>(wid()->qwid);
-  if (sender() != le) return;
-  
-  if ((reason != Qt::OtherFocusReason) &&
-      (reason != Qt::ActiveWindowFocusReason) &&
-      (get_preference ("gui:line-input:autocommit") == "#t")) {
-    if (from_qstring (le->text ()) != wid()->input) {
-      commit ();
-      return;
-    }
-  } else {
-    le->setText (to_qstring (wid()->input));
-  }
-  the_gui->process_command (wid()->cmd, list_object (object (false)));
-END_SLOT
-}
-
-
 /******************************************************************************
  * qt_input_text_widget_rep
  ******************************************************************************/
@@ -503,7 +363,7 @@ qt_input_text_widget_rep::qt_input_text_widget_rep (command _cmd,
                                                     string _width)
 : qt_widget_rep (input_widget), cmd (_cmd), type (_type),
   proposals (_proposals), input (""), style (_style), width (_width),
-  ok (false) //, done (false)
+  ok (false), done (false)
 {
   if (type == "password") proposals = array<string> (0);
   if (N(proposals) > 0) input = proposals[0];
@@ -518,7 +378,6 @@ qt_input_text_widget_rep::as_qaction () {
  Returns a QTMLineEdit with the proper completer and the helper object to
  keep it in sync with us.
  */
-
 QWidget*
 qt_input_text_widget_rep::as_qwidget () {
   QTMLineEdit* le = new QTMLineEdit (NULL, type, width, style, cmd);
@@ -544,15 +403,24 @@ qt_input_text_widget_rep::as_qwidget () {
   return qwid;
 }
 
-/*******************************************************************************
-*  Interface
-******************************************************************************/
+void
+qt_input_text_widget_rep::commit(bool flag) {
+  QTMLineEdit* le = qobject_cast<QTMLineEdit*>(qwid);
+  widget_rep* win = qt_window_widget_rep::widget_from_qwidget (le);
 
-widget inputs_list_widget (command call_back, array<string> prompts) {
-  return tm_new<qt_inputs_list_widget_rep> (call_back, prompts);
-}
-
-widget input_text_widget (command call_back, string type, array<string> def,
-                          int style, string width) {
-  return tm_new<qt_input_text_widget_rep> (call_back, type, def, style, width);
+  if (flag) {
+    done         = false;
+    ok    = true;
+    input = from_qstring (le->text());
+  } else {
+    le->setText (to_qstring (input));
+  }
+  if (win) // This is 0 inside a dialog => no command
+  {
+    if (done) return;
+    done = true;
+    the_gui->process_command (cmd, ok
+                              ? list_object (object (input))
+                              : list_object (object (false)));
+  }
 }

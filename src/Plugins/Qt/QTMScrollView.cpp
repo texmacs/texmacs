@@ -56,27 +56,29 @@ protected:
  Don't try to disable double buffering even if we do our own: the flag 
  Qt::WA_PaintOnScreen is only supported on X11 and anyway makes things slower
  */
-QTMScrollView::QTMScrollView (QWidget *_parent)
-  : QAbstractScrollArea (_parent),
-    editor_flag (false),
-    p_extents (QRect(0,0,0,0))
+QTMScrollView::QTMScrollView (QWidget *_parent):
+  QAbstractScrollArea (_parent),
+  editor_flag (false),
+  p_extents (QRect(0,0,0,0))
 {
   QWidget *_viewport = QAbstractScrollArea::viewport();
-  _viewport->setBackgroundRole (QPalette::Mid);
-  _viewport->setAutoFillBackground (true);
-  setFrameShape (QFrame::NoFrame);
+  _viewport->setBackgroundRole(QPalette::Mid);
+  _viewport->setAutoFillBackground(true);
+  setFrameShape(QFrame::NoFrame);
 
   p_surface = new QTMSurface (_viewport, this);
-  p_surface->setAttribute (Qt::WA_StaticContents);
-  p_surface->setAttribute (Qt::WA_MacNoClickThrough);
-  p_surface->setAutoFillBackground (true);
-  p_surface->setBackgroundRole (QPalette::Mid);
-  p_surface->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
+  p_surface->setAttribute(Qt::WA_NoSystemBackground);
+  p_surface->setAttribute(Qt::WA_StaticContents); 
+  p_surface->setAttribute(Qt::WA_MacNoClickThrough);
+  p_surface->setAutoFillBackground(false);
+  p_surface->setBackgroundRole(QPalette::NoRole);
+  p_surface->setAttribute(Qt::WA_OpaquePaintEvent);
+  p_surface->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   
-  QHBoxLayout *layout = new QHBoxLayout ();
-  layout->addWidget (p_surface, 0, Qt::AlignHCenter | Qt::AlignVCenter);
-  layout->setContentsMargins (0,0,0,0);
-  _viewport->setLayout (layout);
+  QHBoxLayout *layout = new QHBoxLayout();
+  layout->addWidget(p_surface, 0, Qt::AlignHCenter | Qt::AlignVCenter);
+  layout->setContentsMargins(0,0,0,0);
+  _viewport->setLayout(layout);
 }
 
 void 
