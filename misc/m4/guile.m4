@@ -55,11 +55,12 @@ void print_string (SCM s) {
 #-------------------------------------------------------------------
 
 AC_DEFUN([LC_WITH_GUILE],[
-	location=$1
+  location=$1
   m4_define([embedded_guile],[tm-guile168])
   AC_SUBST([MKGUILE])
   AC_SUBST([CLNGUILE])
   AC_SUBST([GUILE_STATIC])
+  
   AS_IF(test "$location" = "embedded", [unset location], test -z $location,[
     # build the prefered guile version search line
     m4_define(configlist, m4_split(m4_combine([ ],[guile],[],[18],[1.8],[16],[1.6],[1],[],[20],[2.0],[2])))
@@ -95,7 +96,7 @@ AC_DEFUN([LC_WITH_GUILE],[
       AC_MSG_NOTICE([use embedded guile])
       AC_SUBST([MKGUILE],[embedded_guile/build/lib/libguile.a])
       AC_SUBST([DIRGUILE],embedded_guile)
-  		AC_SUBST([CLNGUILE],[CLNGUILE])
+      AC_SUBST([CLNGUILE],[CLNGUILE])
       $0_use_embedded_guile=1
       AX_SUBDIRS_CONFIGURE([embedded_guile],
         [[--without-guile-readline]],
@@ -109,7 +110,6 @@ AC_DEFUN([LC_WITH_GUILE],[
       GUILE_DATA_PATH=$(pwd)/embedded_guile/build/share/guile/${GUILE_VERSION}
     ],[AC_MSG_ERROR([cannot find guile-config; is Guile installed?])
   ])
-
 ])
 
 #-------------------------------------------------------------------
