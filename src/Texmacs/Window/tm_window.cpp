@@ -584,6 +584,7 @@ tm_window_rep::interactive (string name, string type, array<string> def,
 
 void
 tm_window_rep::interactive_return () {
+  if (text_ptr == NULL) return;
   *text_ptr= get_interactive_input (wid);
   text_ptr= NULL;
   set_interactive_mode (false);
