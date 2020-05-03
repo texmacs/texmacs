@@ -100,7 +100,14 @@
   (underset "amsmath")
   (operatorname "amsmath")
   (boldsymbol "amsmath")
+  (overleftrightarrow "amsmath")
+  (underleftarrow "amsmath")
+  (underrightarrow "amsmath")
+  (underleftrightarrow "amsmath")
 
+  (underaccent "accents")
+  (ring "accents")
+  
   (ifthenelse "ifthen")
   (captionof "capt-of")
   (widthof "calc")

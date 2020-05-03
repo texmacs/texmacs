@@ -65,7 +65,9 @@
   footnote overline underline <sub> <sup> not left middle right
   big Big bigg Bigg bigl Bigl biggl Biggl
   bigm Bigm biggm Biggm bigr Bigr biggr Biggr
-  bar Bar hat Hat tilde Tilde widehat widetilde vec Vec bm
+  bar Bar hat Hat tilde Tilde widehat widetilde vec Vec bm ring
+  overrightarrow overleftarrow overleftrightarrow
+  underrightarrow underleftarrow underleftrightarrow
   grave Grave acute Acute check Check breve Breve invbreve abovering mathring
   dot Dot ddot Ddot dddot ddddot mod pod pmod
   label ref pageref index hspace hspace* vspace vspace*
@@ -91,7 +93,7 @@
 
 (logic-group latex-command-2%
   binom tbinom dbinom cfrac tfrac equal href
-  sideset stackrel
+  sideset stackrel underaccent
   setcounter addtocounter setlength addtolength
   colorbox scalebox texorpdfstring raisebox foreignlanguage
   Call Function Procedure SetKw SetKwData SetKwFunction SetKwInOut

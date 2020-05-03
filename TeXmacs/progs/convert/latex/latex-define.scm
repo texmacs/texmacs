@@ -181,7 +181,7 @@
   (nsucccurlyeq (!annotate "\\mathrel{\\not\\succcurlyeq}" (succcurlyeq)))
   (nsucceqq (!annotate "\\mathrel{\\not\\succeqq}" (succeqq)))
   (nsuccsim (!annotate "\\mathrel{\\not\\succsim}" (succsim)))
-  
+
   ;; other extra symbols
   (oempty "\\circ")
   (exterior "\\wedge")
@@ -387,6 +387,21 @@
          (fcolorbox "black" "gray!25!white"
                     (raisebox "0pt" (!option "5pt") (!option "0pt") (texttt 1)))
          (hspace "0.5pt")))
+  (uhat (underaccent (hat) 1))
+  (uwidehat (underaccent (widehat (hphantom 1)) 1))
+  (utilde (underaccent (tilde) 1))
+  (uwidetilde (underaccent (widetilde (hphantom 1)) 1))
+  (uvec (underaccent (vec) 1))
+  (ubreve (underaccent (breve) 1))
+  (uinvbreve (underaccent (invbreve) 1))
+  (ucheck (underaccent (check) 1))
+  (uring (underaccent (ring) 1))
+  (uacute (underaccent (acute) 1))
+  (ugrave (underaccent (grave) 1))
+  (underdot (underaccent (dot) 1))
+  (uddot (underaccent (ddot) 1))
+  (udddot (underaccent (dddot (hphantom 1)) 1))
+  (uddddot (underaccent (ddddot (hphantom 1)) 1))
 
   ;; With options
   (tmcodeinline ((!option "") (!group (ttfamily) (!group 2))))

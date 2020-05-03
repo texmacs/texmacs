@@ -106,7 +106,10 @@
   tmsubtitle tmrunningtitle tmrunningauthor
   tmaffiliation tmemail tmhomepage
   tmfnaffiliation tmfnemail tmfnhomepage
-  tmacmhomepage tmacmmisc tmieeeemail tmnote tmmisc)
+  tmacmhomepage tmacmmisc tmieeeemail tmnote tmmisc
+  uhat uwidehat utilde uwidetilde
+  uvec ubreve uinvbreve ucheck uring uacute ugrave
+  underdot uddot udddot uddddot)
 
 (logic-group latex-texmacs-1*%
   tmcodeinline)
