@@ -55,6 +55,8 @@
   (!verbatim* "alltt")
   (begin-alltt "alltt")
 
+  (begin-tabularx "tabularx")
+
   (geometry "geometry")
   (epsfig "epsfig")
   (includegraphics "graphicx")
