@@ -570,6 +570,14 @@
    (!append (begingroup) "\\setlength{\\parskip}{" 1 "}"
             ---
             (endgroup)))
+  ("tmcompact"
+   ((!begin "tmparsep" "0em") ---))
+  ("tmcompressed"
+   ((!begin "tmparsep" "0.25em") ---))
+  ("tmamplified"
+   ((!begin "tmparsep" "0.75em") ---))
+  ("tmjumpin"
+   ((!begin "tmparmod" "1.5em" "0pt" "-1.5em") ---))
   ("tmindent"
    ((!begin "tmparmod" "1.5em" "0pt" "0pt") ---))
   ("tmlisting"

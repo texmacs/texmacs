@@ -171,6 +171,10 @@
   ("tmcode" 0)
   ("tmparmod" 3)
   ("tmparsep" 1)
+  ("tmcompact" 0)
+  ("tmcompressed" 0)
+  ("tmamplified" 0)
+  ("tmjumpin" 0)
   ("tmindent" 0)
   ("tmlisting" 0)
   ("elsequation" 0)
@@ -182,6 +186,7 @@
 
 (logic-group latex-texmacs-environment-0%
   begin-proof begin-leftaligned begin-rightaligned begin-quoteenv
+  begin-tmcompact begin-tmcompressed begin-tmamplified begin-tmjumpin
   begin-tmindent begin-tmlisting begin-elsequation begin-elsequation*)
 
 (logic-group latex-texmacs-environment-0*%

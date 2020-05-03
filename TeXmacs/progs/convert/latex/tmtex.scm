@@ -2231,8 +2231,20 @@
 (define (tmtex-padded-right-aligned s l)
   (list (list '!begin "flushright") (tmtex (car l))))
 
+(define (tmtex-compact s l)
+  (list (list '!begin "tmcompact") (tmtex (car l))))
+
+(define (tmtex-compressed s l)
+  (list (list '!begin "tmcompressed") (tmtex (car l))))
+
+(define (tmtex-amplified s l)
+  (list (list '!begin "tmamplified") (tmtex (car l))))
+
 (define (tmtex-indent s l)
   (list (list '!begin "tmindent") (tmtex (car l))))
+
+(define (tmtex-jump-in s l)
+  (list (list '!begin "tmjumpin") (tmtex (car l))))
 
 (define (tmtex-script-inout s l)
   (let ((name  (string->symbol (string-append "tm" (string-replace s "-" ""))))
@@ -2903,7 +2915,11 @@
   (padded-center (,tmtex-padded-center 1))
   (padded-left-aligned (,tmtex-padded-left-aligned 1))
   (padded-right-aligned (,tmtex-padded-right-aligned 1))
+  (compact (,tmtex-compact 1))
+  (compressed (,tmtex-compressed 1))
+  (amplified (,tmtex-amplified 1))
   (indent (,tmtex-indent 1))
+  (jump-in (,tmtex-jump-in 1))
   (algorithm-indent (,tmtex-indent 1))
   ((:or footnote wide-footnote) (,tmtex-footnote 1))
   (footnotemark (,tmtex-default 0))
