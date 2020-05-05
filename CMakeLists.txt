@@ -482,6 +482,7 @@ set (TeXmacs_Qt_Moc_HDRS
   ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMApplication.hpp
   ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMFileDialog.hpp
   ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMGuiHelper.hpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMInteractiveInputHelper.hpp
   ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMInteractivePrompt.hpp
   ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMMenuHelper.hpp
   ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMPipeLink.hpp
