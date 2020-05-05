@@ -61,7 +61,7 @@
     </input>
   </session>
 
-  <tmdoc-copyright|2021|Darcy Shen>
+  <tmdoc-copyright|2020|Darcy Shen>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

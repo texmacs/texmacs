@@ -3,7 +3,7 @@
 ##
 ## MODULE      : tm_tikz.py
 ## DESCRIPTION : Launcher for the TikZ plugin
-## COPYRIGHT   : (C) 2021  Darcy Shen
+## COPYRIGHT   : (C) 2020  Darcy Shen
 ##
 ## This software falls under the GNU general public license version 3 or later.
 ## It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -32,5 +32,8 @@ text = 'import builtins as __builtins__'
 CaptureStdout.capture (text, my_globals, "tm_tikz")
 
 current = TikZ()
+if not current.available():
+    flush_err ("Failed to launch the TikZ plugin, aborted!!!")
+    exit(-1)
 current.greet()
 current.main_loop()

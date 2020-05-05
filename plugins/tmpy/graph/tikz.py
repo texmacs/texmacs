@@ -29,6 +29,16 @@ class TikZ(LaTeX):
 """
         self.message = "TeXmacs interface to TikZ"
 
+    def available(self) -> bool:
+        if not super(TikZ, self).available():
+            return False
+        for sty in ("standalone", "tikz"):
+            if len (super(TikZ, self).kpsewhich(sty + ".sty")) <= 0:
+                flush_err ("Failed to find " + sty +".sty,"
+                           " please install the missing LaTeX packages\n")
+                return False
+        return True
+        
     def evaluate(self, code):
         if not (code.lstrip().startswith("\\documentclass")):
             if code.lstrip().startswith("\\usetikzlibrary"):

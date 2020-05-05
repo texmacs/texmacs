@@ -3,7 +3,7 @@
 ##
 ## MODULE      : latex.py
 ## DESCRIPTION : LaTeX graphics support
-## COPYRIGHT   : (C) 2019  Darcy Shen and Massimiliano Gubinelli
+## COPYRIGHT   : (C) 2019-2020  Darcy Shen and Massimiliano Gubinelli
 ##
 ## This software falls under the GNU general public license version 3 or later.
 ## It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -24,6 +24,15 @@ class LaTeX(Graph):
 
     def available(self):
         return all(list(map(lambda x: which(x) is not None, ["latex", "dvips"])))
+
+    def kpsewhich(self, name):
+        cmd = ["kpsewhich", name]
+        p = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        out, err = p.communicate()
+        if (p.returncode == 0):
+            return out
+        else:
+            return ""
 
     def evaluate(self, code):
 

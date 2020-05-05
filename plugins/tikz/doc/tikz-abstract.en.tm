@@ -1,6 +1,6 @@
 <TeXmacs|1.99.12>
 
-<style|<tuple|tmdoc|chinese|old-dots>>
+<style|<tuple|tmdoc|old-dots|british>>
 
 <\body>
   <tmdoc-title|Short description of <name|TikZ>>
