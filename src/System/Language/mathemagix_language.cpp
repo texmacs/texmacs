@@ -190,6 +190,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("quit")= c;
   t ("quo")= c;
   t ("raise")= c;
+  t ("recurse")= c;
   t ("rem")= c ;
   t ("require")= c;
   t ("return")= c ;
