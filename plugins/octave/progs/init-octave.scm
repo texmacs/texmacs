@@ -11,7 +11,13 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define octave-launcher (if (os-mingw?) "tm_octave.bat" "tm_octave"))
+(define (octave-source-path)
+  (if (url-exists? "$TEXMACS_HOME_PATH/plugins/octave")
+      (string-append (getenv "TEXMACS_HOME_PATH") "/plugins/octave/octave")
+      (string-append (getenv "TEXMACS_PATH") "/plugins/octave/octave")))
+
+(define octave-launcher
+  (string-append "octave -qi " (octave-source-path) "/tm-start.m"))
 
 (plugin-configure octave
   (:winpath "Octave*" "bin")

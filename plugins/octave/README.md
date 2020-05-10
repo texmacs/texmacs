@@ -1,4 +1,21 @@
-# Octave to TeXmacs interface
+# Octave
+[![Join the chat at https://gitter.im/texmacs/Lobby](https://badges.gitter.im/texmacs/Lobby.svg)](https://gitter.im/texmacs/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+## Installation
+It is a built-in plugin in TeXmacs. If you need to customize it, please install it
+under the `$TEXMACS_HOME_PATH`:
+
+```
+# For GNU/Linux or macOS
+git clone git@github.com:texmacs/octave.git $HOME/.TeXmacs/plugins/octave
+
+# For Windows
+git clone git@github.com:texmacs/maxima.git %APPDATA%\TeXmacs\plugins/octave
+```
+
+
+# The Original README
+## Octave to TeXmacs interface
 by Michael Graffam <mgraffam@mathlab.sunysb.edu>
 
 All materials in this archive are free as in freedom and are distributed
@@ -83,7 +100,7 @@ The files octave.scm and octave.ts need to be placed in the appropriate
 places in your TeXmacs directory. See the TeXmacs documentation on 
 interfacing to CAS's for more information. 
 
-## Using the TeXmacs interface
+### Using the TeXmacs interface
 
 After starting TeXmacs insert and Octave session into the document. This 
 will start Octave and give you an Octave prompt within the TeXmacs window.

@@ -1,9 +1,0 @@
-#!/bin/sh
-
-echo -ne "\002verbatim:"
-OV=$(octave -v) 
-echo "$OV"
-
-cd $TEXMACS_PATH/plugins/octave/octave
-exec octave -qi tm-start.m
-
