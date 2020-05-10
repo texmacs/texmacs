@@ -1,4 +1,4 @@
-Octave to TeXmacs interface
+# Octave to TeXmacs interface
 by Michael Graffam <mgraffam@mathlab.sunysb.edu>
 
 All materials in this archive are free as in freedom and are distributed
@@ -11,8 +11,9 @@ support TeXmacs coding and use of the PS1 and PS2 variables may become
 obsolete. However, the included m-files (the real meat) should work 
 with either interface. 
 
-In your ~/.octaverc file, or in your system-wide octaverc place the lines:
+In your `~/.octaverc` file, or in your system-wide octaverc place the lines:
 
+```
 if (length(getenv("TEXMACS_PATH")) > 0)
 	PS1="\\002channel:prompt\\005\s:\#> \\005";
 	PS2="\\002channel:prompt\\005> \\005";
@@ -20,16 +21,19 @@ if (length(getenv("TEXMACS_PATH")) > 0)
 	global TMCOLORS=["black"; "red"; "magenta"; "orange"; "green"; "blue";];
 	global TMCOLIDX=6;
 endif
+```
 
 This places the required TeXmacs coding into Octave's prompt strings and 
 sets some configuration variables. To launch Octave from TeXmacs simply 
 have TeXmacs call a script like the following (this script is included as 
 "tm_octave"):
 
+```
 #!/bin/bash
 echo -ne "\002verbatim:"
 octave -v
 exec octave -qi
+```
 
 [Note: TeXmacs 1.0.1 and later will detect Octave and set up the session 
 management, so this is not necessary ]
@@ -43,6 +47,7 @@ To use Octave within TeXmacs you'll need Octave code that is aimed at
 producing TeXmacs-compatible output and so forth. A few Octave m-files 
 are included for this:
 
+```
 tmdisp.m 	  Displays an Octave variable "pretty-printed" via TeXmacs
 		  Supports scalar, matrix, structure, list and string types
 
@@ -67,6 +72,7 @@ struct2scm.m	  Configurable interface to struct2bullet / struct2tree
 list2scm.m	  Converts an Octave list to a Scheme enumerated list
 obj2scm.m	  Top-level converter that will convert any of the above
 		  Octave types to a Scheme expression. 
+```
 
 As necessary (in tmdisp, for example) the TeXmacs interface is tested for, 
 and if not present the default Octave output is used. tmdisp may therefore 
@@ -77,8 +83,7 @@ The files octave.scm and octave.ts need to be placed in the appropriate
 places in your TeXmacs directory. See the TeXmacs documentation on 
 interfacing to CAS's for more information. 
 
----
-Using the TeXmacs interface
+## Using the TeXmacs interface
 
 After starting TeXmacs insert and Octave session into the document. This 
 will start Octave and give you an Octave prompt within the TeXmacs window.
