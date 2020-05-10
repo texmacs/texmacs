@@ -10,7 +10,7 @@ under the `$TEXMACS_HOME_PATH`:
 git clone git@github.com:texmacs/octave.git $HOME/.TeXmacs/plugins/octave
 
 # For Windows
-git clone git@github.com:texmacs/maxima.git %APPDATA%\TeXmacs\plugins/octave
+git clone git@github.com:texmacs/octave.git %APPDATA%\TeXmacs\plugins/octave
 ```
 
 
