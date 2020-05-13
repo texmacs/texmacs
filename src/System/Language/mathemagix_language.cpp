@@ -113,7 +113,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("convert")= c;
   t ("debugger")= c;
   t ("destructor")= c;
-  t ("direct")= c;
+  t ("direct")= d;
   t ("disjunction")= c;
   t ("dispatch")= c;
   t ("ditto")= c;
@@ -147,7 +147,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("import")= c;
   t ("in")= c;
   t ("include")= c;
-  t ("indirect")= c;
+  t ("indirect")= d;
   t ("infix")= c;
   t ("inherit")= c;
   t ("inline")= d;
