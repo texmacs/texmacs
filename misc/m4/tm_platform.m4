@@ -127,9 +127,11 @@ AC_DEFUN([TM_PLATFORM],[
       CONFIG_SO="dylib"
       CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
       LC_APPEND_FLAG([-Wl,-stack_size,0x1000000,-headerpad_max_install_names],[LDFLAGS])
-      test -d /sw && LC_SCATTER_FLAGS([-I/sw/include -L/sw/lib])
-      test -d /opt && LC_SCATTER_FLAGS([-I/opt/local/include -L/opt/local/lib])
-  ;;
+      test -z "$with_tmrepo" -a -d /sw/include -a -d /sw/lib && 
+        LC_SCATTER_FLAGS([-I/sw/include -L/sw/lib])
+      test -z "$with_tmrepo" -a -d /opt/local/include -a -d /opt/local/lib && 
+        LC_SCATTER_FLAGS([-I/opt/local/include -L/opt/local/lib])
+    ;;
     *darwin*)
       echo "$ac_t""for a generic Darwin host" 1>&6
       AC_DEFINE([OS_DARWIN],[1],[OS type])
