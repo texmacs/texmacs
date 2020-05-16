@@ -177,6 +177,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("or")= c;
   t ("outline")= d;
   t ("packed")= c;
+  t ("parallel")= c;
   t ("pattern")= c;
   t ("penalty")= c;
   t ("postfix")= "postfix";
@@ -195,6 +196,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("require")= c;
   t ("return")= c ;
   t ("sequel")= c;
+  t ("spawn")= c;
   t ("split")= c;
   t ("step")= c;
   t ("stereotype")= e;
