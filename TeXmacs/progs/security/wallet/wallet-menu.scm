@@ -281,7 +281,7 @@
 ;; Open wallet on demand
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define-macro (with-wallet . body)
+(tm-define (expand-with-wallet body)
   `(if (and (wallet-initialized?)
             (wallet-persistent-status-on?)
             (wallet-off?))
