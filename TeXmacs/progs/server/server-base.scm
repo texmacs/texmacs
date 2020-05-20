@@ -26,14 +26,15 @@
   (if (npair? proto) '(noop)
       (with (fun . args) proto
         `(begin
-           (tm-define (,fun envelope ,@args)
+           (tm-define (,(symbol-append 'service- fun) envelope ,@args)
              (with-database (server-database)
                (catch #t
                       (lambda () ,@body)
                       (lambda err
                         (display* "Server error: " err "\n")
                         (server-error envelope err)))))
-           (ahash-set! service-dispatch-table ',fun ,fun)))))
+           (ahash-set! service-dispatch-table
+                       ',fun ,(symbol-append 'service- fun))))))
 
 (tm-define (server-eval envelope cmd)
   ;; (display* "server-eval " envelope ", " cmd "\n")
