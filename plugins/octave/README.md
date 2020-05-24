@@ -70,8 +70,6 @@ tmdisp.m 	  Displays an Octave variable "pretty-printed" via TeXmacs
 
 tmpolyout.m	  Displays an Octave polynomial as a LaTeX formula
 
-scheme.m	  Executes a string as a Scheme expression through TeXmacs
-
 num2scm.m	  Converts a scalar to a Scheme expression
 
 mat2scm.m	  Converts a vector or matrix to a Scheme expression

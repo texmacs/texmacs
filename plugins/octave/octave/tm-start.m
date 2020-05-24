@@ -12,20 +12,13 @@ if (length(prefix) > 0)
     #   - ${TEXMACS_PATH}/plugins/octave/octave/tm
     #   - ${TEXMACS_PATH}/plugins/octave/octave/plot
     #   - ${TEXMACS_PATH}/plugins/octave/octave/polynomial
-    if (exist ("OCTAVE_VERSION") == 5)
-        # As of Octave version 3, "instead of setting the built-in variable
-        # LOADPATH, you must use addpath [...] to manipulate the function
-        # search path." [1]
-        addpath ([prefix,"tm"],         "-end");
-        addpath ([prefix,"plot"],       "-end");
-        addpath ([prefix,"polynomial"], "-end");
-        # NB: filesep() is used above for portability.
-    else
-        LOADPATH=[LOADPATH,                              
-                  [prefix,"tm:"],      
-                  [prefix,"plot:"],    
-                  [prefix,"polynomial:"]];
-    endif
+    #   - ${TEXMCSS_PATH}/plugins/octave/octave/convert
+    addpath ([prefix,"protocol"], "-end");
+    addpath ([prefix,"convert"], "-end");
+    addpath ([prefix,"tm"], "-end");
+    addpath ([prefix,"plot"], "-end");
+    addpath ([prefix,"polynomial"], "-end");
+    # NB: filesep() is used above for portability.
 
     # Customize the command-line prompt.
     if (exist ("OCTAVE_VERSION") == 5)

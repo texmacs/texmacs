@@ -5,8 +5,8 @@
 ## Convert an Octave string to a Scheme string
 ## Created: Sept 2002
 
-function tmp=str2scm(n)
-	global TMCOLORS;
-	global TMCOLIDX;
-	tmp=["(with \"color\" \"", deblank(TMCOLORS(TMCOLIDX,:)), "\" \"",n,"\")"];
+function ret= str2scm (n)
+  global TMCOLORS;
+  global TMCOLIDX;
+  ret= ["(with \"color\" \"", deblank(TMCOLORS(TMCOLIDX,:)), "\" \"",n,"\")"];
 endfunction

@@ -5,14 +5,14 @@
 ## Convert an Octave list to a Scheme expression
 ## Created: Sept 2002
 
-function tmp=list2scm(L,c)
-	if (nargin<2)
-		c=1;
-	endif	
-	tmp="(enumerate-numeric (document";
-	len=length(L);
-	for i=1:len
-		tmp=[tmp, " (concat (item) ", obj2scm(nth(L,i),c),")"];
-	endfor
-	tmp=[tmp,"))"];
+function ret= list2scm (L,c)
+  if (nargin<2)
+    c=1;
+  endif	
+  ret= "(enumerate-numeric (document";
+  len= length(L);
+  for i=1:len
+    ret= [ret, " (concat (item) ", obj2scm(nth(L,i),c),")"];
+  endfor
+  ret= [ret,"))"];
 endfunction
