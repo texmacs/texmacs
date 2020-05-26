@@ -26,9 +26,13 @@ function ret= obj2scm (n,c)
       ret= mat2scm (n);
     case ("char matrix")
       ret= mat2scm (n);
-    case ("scalar")
+    case ("int32 scalar")
+      ret= num2scm (n);
+    case ("int64 scalar")
       ret= num2scm (n);
     case ("complex scalar")
+      ret= num2scm (n);
+    case ("scalar")
       ret= num2scm (n);
     case ("bool")
       ret= num2scm (n);

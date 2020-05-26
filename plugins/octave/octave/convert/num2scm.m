@@ -1,24 +1,46 @@
-## Released under the GNU General Public License, see www.gnu.org
-## Copyright (C) 2002 by the Free Software Foundation
-## Written by Michael Graffam mikegraffam@yahoo.com
+
+###############################################################################
 ##
-## Convert a number to a Scheme string
-## Created: Sept 2002
+## MODULE      : with_mode_math.m
+## DESCRIPTION : with mode math
+## COPYRIGHT   : (C) 2002  Michael Graffam mikegraffam@yahoo.com
+##                   2020  Darcy Shen
+##
+## This software falls under the GNU general public license version 3 or later.
+## It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+## in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+
 
 function ret= num2scm (n)
-  ret= "(with \"mode\" \"math\" \"";
-  if (isreal (n))
-    ret= [ret, num2str(n), "\")"];
-  else
-    if (real(n) != 0)
-      if (imag(n)>=0)
+  switch (typeinfo (n))
+    case ("complex scalar")
+      real_str= num2str (real (n));
+      imag_str= num2str (abs (imag (n)));
+
+      if (imag (n) >= 0)
         op= "+";
       else
         op= "-";
       endif
-      ret= ["(with \"mode\" \"math\" \"", num2str(real(n)),op,num2str(abs(imag(n))),"<cdot><b-i>\")"];
-    else
-      ret= ["(with \"mode\" \"math\" \"", num2str(imag(n)),"<cdot><b-i>\")"];
-    endif
-  endif
+
+      if (real (n) != 0)
+        ret= with_mode_math ([real_str, op, imag_str, "<cdot><b-i>"]);
+      elseif (imag (n) < 0)
+        ret= with_mode_math ([op, imag_str, "<cdot><b-i>"]);
+      else
+        ret= with_mode_math ([imag_str, "<cdot><b-i>"]);
+      endif
+    case ("int32 scalar")
+      ret= with_mode_math (int2str (n));
+    case ("int64 scalar")
+      ret= with_mode_math (int2str (n));
+    case ("scalar")
+      if (isfloat (n) && n == 0.0)
+        ret= with_mode_math (dquote ("0.0"));
+      else
+        ret= with_mode_math (dquote (num2str (n)));
+      endif
+    otherwise
+      ret= "";
+  endswitch
 endfunction
