@@ -106,6 +106,8 @@ public:
                                          ObjectsContext* inObjectsContext,
                                          PDFHummus::DocumentContext* inDocumentContext)
     {
+        (void) inPageObject;
+        (void) inObjectsContext;
         return inDocumentContext->WriteFormForImage(mImagePath,mImageIndex,mObjectID,mPDFParsingOptions);
     }
     

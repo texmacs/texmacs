@@ -92,6 +92,7 @@ public:
 							   Byte** outCharString){
 	  (void) inCharStringStart;
 	  (void) inCharStringEnd;
+	  (void) outCharString;
 	  return PDFHummus::eFailure;}	
 
 	virtual PDFHummus::EStatusCode Type2InterpretNumber(const CharStringOperand& inOperand) {(void) inOperand; return PDFHummus::eSuccess;};
@@ -105,8 +106,8 @@ public:
 	virtual PDFHummus::EStatusCode Type2Return(const CharStringOperandList& inOperandList) {(void) inOperandList; return PDFHummus::eSuccess;}
 	virtual PDFHummus::EStatusCode Type2Endchar(const CharStringOperandList& inOperandList){(void) inOperandList; return PDFHummus::eSuccess;}
 	virtual PDFHummus::EStatusCode Type2Hstemhm(const CharStringOperandList& inOperandList){(void) inOperandList; return PDFHummus::eSuccess;}
-	virtual PDFHummus::EStatusCode Type2Hintmask(const CharStringOperandList& inOperandList,Byte* inProgramCounter){(void) inOperandList; (void) (void) inOperandList; return PDFHummus::eSuccess;}
-	virtual PDFHummus::EStatusCode Type2Cntrmask(const CharStringOperandList& inOperandList,Byte* inProgramCounter){return PDFHummus::eSuccess;}
+	virtual PDFHummus::EStatusCode Type2Hintmask(const CharStringOperandList& inOperandList,Byte* inProgramCounter){(void) inOperandList; (void) inProgramCounter; return PDFHummus::eSuccess;}
+	virtual PDFHummus::EStatusCode Type2Cntrmask(const CharStringOperandList& inOperandList,Byte* inProgramCounter){(void) inOperandList; (void) inProgramCounter; return PDFHummus::eSuccess;}
 	virtual PDFHummus::EStatusCode Type2Rmoveto(const CharStringOperandList& inOperandList){(void) inOperandList; return PDFHummus::eSuccess;}
 	virtual PDFHummus::EStatusCode Type2Hmoveto(const CharStringOperandList& inOperandList){(void) inOperandList; return PDFHummus::eSuccess;}
 	virtual PDFHummus::EStatusCode Type2Vstemhm(const CharStringOperandList& inOperandList){(void) inOperandList; return PDFHummus::eSuccess;}

@@ -225,37 +225,44 @@ EStatusCode CharStringType2Flattener::Type2Vstem(const CharStringOperandList& in
 
 EStatusCode CharStringType2Flattener::Type2Vmoveto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(4);
 }
 
 EStatusCode CharStringType2Flattener::Type2Rlineto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(5);
 }
 
 EStatusCode CharStringType2Flattener::Type2Hlineto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(6);
 }
 
 EStatusCode CharStringType2Flattener::Type2Vlineto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(7);
 }
 
 EStatusCode CharStringType2Flattener::Type2RRCurveto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(8);
 }
 
 EStatusCode CharStringType2Flattener::Type2Return(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	// ignore returns
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Flattener::Type2Endchar(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(14);
 }
 
@@ -285,6 +292,7 @@ EStatusCode CharStringType2Flattener::WriteStemMask(Byte* inProgramCounter)
 
 EStatusCode CharStringType2Flattener::Type2Cntrmask(const CharStringOperandList& inOperandList,Byte* inProgramCounter)
 {
+	(void) inOperandList;
 	if(WriteRegularOperator(20) != PDFHummus::eSuccess)
 		return PDFHummus::eFailure;
 
@@ -293,11 +301,13 @@ EStatusCode CharStringType2Flattener::Type2Cntrmask(const CharStringOperandList&
 
 EStatusCode CharStringType2Flattener::Type2Rmoveto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(21);
 }
 
 EStatusCode CharStringType2Flattener::Type2Hmoveto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(22);
 }
 
@@ -310,151 +320,181 @@ EStatusCode CharStringType2Flattener::Type2Vstemhm(const CharStringOperandList& 
 
 EStatusCode CharStringType2Flattener::Type2Rcurveline(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(24);
 }
 
 EStatusCode CharStringType2Flattener::Type2Rlinecurve(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(25);
 }
 
 EStatusCode CharStringType2Flattener::Type2Vvcurveto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(26);
 }
 
 EStatusCode CharStringType2Flattener::Type2Hvcurveto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(31);
 }
 
 EStatusCode CharStringType2Flattener::Type2Hhcurveto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(27);
 }
 
 EStatusCode CharStringType2Flattener::Type2Vhcurveto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(30);
 }
 
 EStatusCode CharStringType2Flattener::Type2Hflex(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c22);
 }
 
 EStatusCode CharStringType2Flattener::Type2Hflex1(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c24);
 }
 
 EStatusCode CharStringType2Flattener::Type2Flex(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c23);
 }
 
 EStatusCode CharStringType2Flattener::Type2Flex1(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c25);
 }
 
 EStatusCode CharStringType2Flattener::Type2And(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c03);
 }
 
 EStatusCode CharStringType2Flattener::Type2Or(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c04);
 }
 
 EStatusCode CharStringType2Flattener::Type2Not(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c05);
 }
 
 EStatusCode CharStringType2Flattener::Type2Abs(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c09);
 }
 
 EStatusCode CharStringType2Flattener::Type2Add(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c0a);
 }
 
 EStatusCode CharStringType2Flattener::Type2Sub(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c0b);
 }
 
 EStatusCode CharStringType2Flattener::Type2Div(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c0c);
 }
 
 EStatusCode CharStringType2Flattener::Type2Neg(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c0e);
 }
 
 EStatusCode CharStringType2Flattener::Type2Eq(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c0f);
 }
 
 EStatusCode CharStringType2Flattener::Type2Drop(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c12);
 }
 
 EStatusCode CharStringType2Flattener::Type2Put(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c14);
 }
 
 EStatusCode CharStringType2Flattener::Type2Get(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c15);
 }
 
 EStatusCode CharStringType2Flattener::Type2Ifelse(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c16);
 }
 
 EStatusCode CharStringType2Flattener::Type2Random(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c17);
 }
 
 EStatusCode CharStringType2Flattener::Type2Mul(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c18);
 }
 
 EStatusCode CharStringType2Flattener::Type2Sqrt(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c1a);
 }
 
 EStatusCode CharStringType2Flattener::Type2Dup(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c1b);
 }
 
 EStatusCode CharStringType2Flattener::Type2Exch(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c1c);
 }
 
 EStatusCode CharStringType2Flattener::Type2Index(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c1d);
 }
 
 EStatusCode CharStringType2Flattener::Type2Roll(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	return WriteRegularOperator(0x0c1e);
 }
 
@@ -468,6 +508,7 @@ CharString* CharStringType2Flattener::GetLocalSubr(long inSubrIndex)
 
 EStatusCode CharStringType2Flattener::WriteSubrOperator(unsigned short inOperatorCode)
 {
+	(void) inOperatorCode;
 	if(mOperandsToWrite.size() > 0)
 	{
 		EStatusCode status = PDFHummus::eSuccess;

@@ -1732,6 +1732,7 @@ ObjectReference DocumentContext::GetReferenceFromState(PDFDictionary* inDictiona
 
 void DocumentContext::ReadTrailerInfoState(PDFParser* inStateReader,PDFDictionary* inTrailerInfoState)
 {
+	(void) inStateReader;
 	PDFObjectCastPtr<PDFLiteralString> titleState(inTrailerInfoState->QueryDirectObject("Title"));
 	mTrailerInformation.GetInfo().Title = titleState->GetValue();
 
@@ -2203,6 +2204,9 @@ public:
             ObjectsContext* inPDFWriterObjectContext,
             PDFHummus::DocumentContext* inDocumentContext)
     {
+      (void) inCatalogInformation;
+      (void) inPDFWriterObjectContext;
+      (void) inDocumentContext;
 
 		// update version
 		if (mRequiresVersionUpdate) {

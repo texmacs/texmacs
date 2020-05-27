@@ -150,6 +150,7 @@ void WrittenFontCFF::RemoveFromFreeList(unsigned char inAllocatedPosition)
 
 unsigned char WrittenFontCFF::AllocateFromFreeList(unsigned int inGlyph)
 {
+	(void) inGlyph;
 	// just allocate the first available position
 	UCharAndUCharList::iterator it=mFreeList.begin();
 	unsigned char result = it->first;

@@ -802,6 +802,7 @@ void CFFEmbeddedFontWriter::DetermineFDArrayIndexes(const UIntVector& inSubsetGl
 
 EStatusCode CFFEmbeddedFontWriter::WriteFDArray(const UIntVector& inSubsetGlyphIDs,const FontDictInfoToByteMap& inNewFontDictsIndexes)
 {
+	(void) inSubsetGlyphIDs;
 	// loop the glyphs IDs, for each get their respective dictionary. put them in a set.
 	// now itereate them, and write each private dictionary [no need for index]. save the private dictionary position.
 	// now write the FDArray. remember it's an index, so first write into a separate, maintain the offsets and only then write the actual buffer.

@@ -1647,6 +1647,7 @@ EStatusCode CFFFileInput::ReadCFFFile(IByteReaderWithPosition* inCFFFile,const s
 
 unsigned short CFFFileInput::GetFontsCount(unsigned short inFontIndex)
 {
+	(void) inFontIndex;
 	return mFontsCount;
 }
 

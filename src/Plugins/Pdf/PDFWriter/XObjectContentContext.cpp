@@ -54,6 +54,8 @@ class FormImageWritingTask : public IFormEndWritingTask
                                         ObjectsContext* inObjectsContext,
                                         PDFHummus::DocumentContext* inDocumentContext)
      {
+         (void) inFormXObject;
+         (void) inObjectsContext;
          return inDocumentContext->WriteFormForImage(mImagePath,mImageIndex,mObjectID, mPDFParsingOptions);
      }
  

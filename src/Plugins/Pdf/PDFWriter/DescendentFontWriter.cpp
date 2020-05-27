@@ -254,6 +254,8 @@ void DescendentFontWriter::WriteCharSet(	DictionaryContext* inDescriptorContext,
 											FreeTypeFaceWrapper* inFontInfo,
 											const UIntAndGlyphEncodingInfoVector& inEncodedGlyphs)
 {
+	(void) inFontInfo;
+	(void) inEncodedGlyphs;
 	// use this hook to Write the CIDSet key, and later write the CIDSet stream. 
 	// ignoring input values for now, assuming they are the same as the ones 
 	// used in the font. 

@@ -295,8 +295,8 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
     pen (black), bgb (white), fgb (black),
     cfn (""), cfid (NULL),
     native_fonts (NULL),
-    destId(0),
     t3font_registry_id(-1),
+    destId(0),
     label_count(0),
     outlineId(0)
 {
@@ -1004,7 +1004,7 @@ pdf_hummus_renderer_rep::flush_glyphs ()
 void
 pdf_hummus_renderer_rep::draw_bitmap_glyph (int ch, font_glyphs fn, SI x, SI y)
 {
-  // use bitmap (to be improven)
+  // use bitmap (to be improved)
   string fontname = fn->res_name;
   string char_name (fontname * "-" * as_string ((int) ch));
   if (!pdf_glyphs->contains(char_name)) {
@@ -2170,6 +2170,9 @@ pdf_hummus_renderer_rep::on_catalog_write (CatalogInformation* inCatalogInformat
                                          ObjectsContext* inPDFWriterObjectContext,
                                          PDFHummus::DocumentContext* inDocumentContext)
 {
+  (void) inCatalogInformation;
+  (void) inPDFWriterObjectContext;
+  (void) inDocumentContext;
   if (destId) {
     inCatalogDictionaryContext->WriteKey("Dests");
     inCatalogDictionaryContext->WriteNewObjectReferenceValue(destId);
@@ -2193,6 +2196,7 @@ int pdf_hummus_renderer_rep::get_label_id(string label)
 void
 pdf_hummus_renderer_rep::anchor (string label, SI x1, SI y1, SI x2, SI y2)
 {
+  (void) x2; (void) y1;
   string l = prepare_text (label);
   dests << dest_data(l, page_num, to_x(x1), to_y(y2+20*pixel));
 }

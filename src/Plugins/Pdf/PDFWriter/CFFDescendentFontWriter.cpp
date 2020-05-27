@@ -112,6 +112,7 @@ void CFFDescendentFontWriter::WriteSubTypeValue(DictionaryContext* inDescendentF
 
 void CFFDescendentFontWriter::WriteAdditionalKeys(DictionaryContext* inDescendentFontContext)
 {
+	(void) inDescendentFontContext;
 	// do nothing
 }
 
@@ -119,6 +120,7 @@ static const std::string scFontFile3 = "FontFile3";
 void CFFDescendentFontWriter::WriteFontFileReference(DictionaryContext* inDescriptorContext,
 													ObjectsContext* inObjectsContext)
 {
+	(void) inObjectsContext;
 	// write font reference only if there's what to write....
 	if(mEmbeddedFontFileObjectID != 0)
 	{

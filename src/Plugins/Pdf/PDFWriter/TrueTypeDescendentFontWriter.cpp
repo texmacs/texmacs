@@ -91,6 +91,7 @@ void TrueTypeDescendentFontWriter::WriteFontFileReference(
 										DictionaryContext* inDescriptorContext,
 										ObjectsContext* inObjectsContext)
 {
+	(void) inObjectsContext;
 	// write font reference only if there's what to write....
 	if(mEmbeddedFontFileObjectID != 0)
 	{

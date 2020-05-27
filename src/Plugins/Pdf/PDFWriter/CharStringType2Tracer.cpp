@@ -105,42 +105,49 @@ EStatusCode CharStringType2Tracer::Type2Vstem(const CharStringOperandList& inOpe
 
 EStatusCode CharStringType2Tracer::Type2Vmoveto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("vstem");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Rlineto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("rlineto");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Hlineto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("hlineto");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Vlineto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("vlineto");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2RRCurveto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("rrcurveto");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Return(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("return");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Endchar(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	// no need to call the CFFFileInput endchar here. that call is used for dependencies check alone
 	// and provides for CFFFileInput own intepreter implementation.
 
@@ -182,6 +189,7 @@ void CharStringType2Tracer::WriteStemMask(Byte* inProgramCounter)
 
 EStatusCode CharStringType2Tracer::Type2Cntrmask(const CharStringOperandList& inOperandList,Byte* inProgramCounter)
 {
+	(void) inOperandList;
 	WriteStemMask(inProgramCounter);
 	mPrimitiveWriter.WriteKeyword("cntrmask");
 	return PDFHummus::eSuccess;
@@ -189,12 +197,14 @@ EStatusCode CharStringType2Tracer::Type2Cntrmask(const CharStringOperandList& in
 
 EStatusCode CharStringType2Tracer::Type2Rmoveto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("rmoveto");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Hmoveto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("hmoveto");
 	return PDFHummus::eSuccess;
 }
@@ -209,180 +219,210 @@ EStatusCode CharStringType2Tracer::Type2Vstemhm(const CharStringOperandList& inO
 
 EStatusCode CharStringType2Tracer::Type2Rcurveline(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("rcurveline");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Rlinecurve(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("rlinecurve");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Vvcurveto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("vvcurveto");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Hvcurveto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("hvcurveto");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Hhcurveto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("hhcurveto");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Vhcurveto(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("vhcurveto");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Hflex(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("hflex");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Hflex1(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("hflex1");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Flex(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("flex");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Flex1(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("flex1");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2And(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("and");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Or(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("or");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Not(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("not");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Abs(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("abs");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Add(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("add");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Sub(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("sub");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Div(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("div");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Neg(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("neg");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Eq(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("eq");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Drop(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("drop");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Put(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("put");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Get(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("get");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Ifelse(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("ifelse");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Random(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("random");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Mul(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("mul");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Sqrt(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("sqrt");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Dup(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("dup");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Exch(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("exch");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Index(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("index");
 	return PDFHummus::eSuccess;
 }
 
 EStatusCode CharStringType2Tracer::Type2Roll(const CharStringOperandList& inOperandList)
 {
+	(void) inOperandList;
 	mPrimitiveWriter.WriteKeyword("roll");
 	return PDFHummus::eSuccess;
 }

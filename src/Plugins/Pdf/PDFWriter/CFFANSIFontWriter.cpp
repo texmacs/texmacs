@@ -138,6 +138,7 @@ void CFFANSIFontWriter::WriteCharSet(	DictionaryContext* inDescriptorContext,
 										FreeTypeFaceWrapper* inFontInfo,
 										const UIntAndGlyphEncodingInfoVector& inEncodedGlyphs)
 {
+	(void) inObjectsContext;
 	// constructing glyph names in a string as names. only when done - submit to output
 	OutputStringBufferStream aStream;
 	PrimitiveObjectsWriter primitiveWriter(&aStream);
@@ -161,6 +162,7 @@ void CFFANSIFontWriter::WriteFontFileReference(
 										DictionaryContext* inDescriptorContext,
 										ObjectsContext* inObjectsContext)
 {
+	(void) inObjectsContext;
 	// write font reference only if there's what to write....
 	if(mEmbeddedFontFileObjectID != 0)
 	{

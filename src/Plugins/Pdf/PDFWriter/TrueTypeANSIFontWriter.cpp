@@ -102,6 +102,9 @@ void TrueTypeANSIFontWriter::WriteCharSet(	DictionaryContext* inDescriptorContex
 										FreeTypeFaceWrapper* inFontInfo,
 										const UIntAndGlyphEncodingInfoVector& inEncodedGlyphs)
 {
+	(void) inObjectsContext;
+	(void) inFontInfo;
+	(void) inEncodedGlyphs;
 	// do nothing. no charset writing for true types
 }
 
@@ -111,6 +114,7 @@ void TrueTypeANSIFontWriter::WriteFontFileReference(
 										DictionaryContext* inDescriptorContext,
 										ObjectsContext* inObjectsContext)
 {
+	(void) inObjectsContext;
 	// will be 0 in case embedding didn't occur due to font embedding restrictions
 	if(mEmbeddedFontFileObjectID != 0)
 	{

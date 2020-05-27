@@ -281,6 +281,7 @@ void HandlePngError(png_structp png_ptr, png_const_charp error_message) {
 }
 
 void HandlePngWarning(png_structp png_ptr, png_const_charp warning_message) {
+	(void) png_ptr;
 	if(warning_message)
 		TRACE_LOG1("LibPNG Warning: %s",warning_message);
 }

@@ -626,6 +626,9 @@ EStatusCode PDFDocumentHandler::OnResourcesWrite(
 						ObjectsContext* inPDFWriterObjectContext,
 						DocumentContext* inPDFWriterDocumentContext)
 {
+	(void) inResources;
+	(void) inPDFWriterObjectContext;
+	(void) inPDFWriterDocumentContext;
 	// Writing resources dictionary. simply loop internal elements and copy. nicely enough, i can use read methods, trusting
 	// that no new objects need be written
 	
@@ -2296,6 +2299,8 @@ public:
                               ObjectsContext* inObjectsContext,
                               PDFHummus::DocumentContext* inDocumentContext)
     {
+        (void) inObjectsContext;
+        (void) inDocumentContext;
         // write key
         inResoruceCategoryContext->WriteKey(mResourceName);
         
@@ -2427,6 +2432,9 @@ public:
                               ObjectsContext* inObjectsContext,
                               PDFHummus::DocumentContext* inDocumentContext)
     {
+        (void) inFormXObject;
+        (void) inObjectsContext;
+        (void) inDocumentContext;
         return mCopier->CopyNewObjectsForDirectObject(mObjectsToWrite);
     }
     

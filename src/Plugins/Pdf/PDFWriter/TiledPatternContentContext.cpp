@@ -54,7 +54,9 @@ virtual ~TiledPatternImageWritingTask(){}
                                         ObjectsContext* inObjectsContext,
                                         PDFHummus::DocumentContext* inDocumentContext)
      {
-         return inDocumentContext->WriteFormForImage(mImagePath,mImageIndex,mObjectID, mPDFParsingOptions);
+       (void) inFormXObject;
+       (void) inObjectsContext;
+       return inDocumentContext->WriteFormForImage(mImagePath,mImageIndex,mObjectID, mPDFParsingOptions);
      }
  
  private:

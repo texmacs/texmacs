@@ -252,12 +252,14 @@ bool FreeTypeOpenTypeWrapper::HasPrivateEncoding()
 
 unsigned int FreeTypeOpenTypeWrapper::GetGlyphForUnicodeChar(unsigned long inChar)
 {
+    (void) inChar;
     // emtpy implementation (always false at "GetPrivateEncoding")
     return 0;
 }
 
 std::string FreeTypeOpenTypeWrapper::GetPrivateGlyphName(unsigned int inGlyphIndex)
 {
+    (void) inGlyphIndex;
     // empty implementation (always false at "GetPrivateEncoding);
     return ".notdef";
 }

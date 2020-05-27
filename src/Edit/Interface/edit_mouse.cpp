@@ -553,6 +553,7 @@ relativize (tree t, url base) {
 static void
 call_drop_event (string kind, SI x, SI y, SI ticket, time_t t, url base) {
 #ifdef QTTEXMACS
+  (void) kind; (void) x; (void) y; (void) t;
   extern hashmap<int, tree> payloads;
   tree doc = payloads [ticket];
   payloads->reset (ticket);
