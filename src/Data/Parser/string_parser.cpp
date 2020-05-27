@@ -56,7 +56,6 @@ string_parser_rep::do_parse (string s, int& pos) {
     iterator<string> iter= iterate (m_pairs);
     while (iter->busy ()) {
       string key= iter->next ();
-      int key_size= N(key);
       if (m_start_size >= N(key)) continue;
       if (starts (key, m_start) && test (s, pos, key)) {
         m_start= key;

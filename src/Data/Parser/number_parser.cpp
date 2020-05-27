@@ -134,7 +134,6 @@ number_parser_rep::do_parse (string s, int& pos) {
     return;
 
   // Start with 0b, 0o, 0x
-  bool start_with_box = false;
   if (can_parse_prefix_0b (s, pos)) {
       pos+= 2;
       parse_binary (s, pos);

@@ -360,7 +360,6 @@ void parse_url (string buf, string& path_file, string& w_unit,
   int i= 0;
   while (i < N(param_toks)) {
     string param= param_toks[i];
-    int pos = 0;
     if (starts (param, "width=")) {
       param= replace (param, "width=", "");
       parse_length (param, width, w_unit);

@@ -168,7 +168,7 @@ edit_env_rep::as_tmlen (tree t) {
   }
   else if (is_atomic (t)) {
     string s= t->label;
-    int start= 0, i, n=N(s);
+    int start= 0, n=N(s);
     while ((start+1<n) && (s[start]=='-') && (s[start+1]=='-')) start += 2;
     double len;
     string unit;
