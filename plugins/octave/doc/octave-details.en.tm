@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.11>
+<TeXmacs|1.99.12>
 
-<style|<tuple|tmdoc|octave>>
+<style|<tuple|tmdoc|octave|english|old-spacing|old-dots>>
 
 <\body>
   <tmdoc-title|Further details on the <name|Octave> plug-in>
@@ -111,31 +111,52 @@
       \;
     </output>
 
-    <\input-math|octave\<gtr\> >
+    <\input-math>
+      octave\<gtr\>\ 
+    <|input-math>
       <with|color|blue|M.mat=<matrix|<tformat|<table|<row|<cell|1>|<cell|3>|<cell|5>>|<row|<cell|5>|<cell|8>|<cell|0>>>>>;
-      \ M.l=list<around|(|<around|[|1,2,3|]>,2,3|)>; M.branch.i=3;
-      M.branch.j=4;>
+      \ M.l=<around*|[|<around|[|1,2,3|]>,2,3|]>; M.branch.i=3; M.branch.j=4>
     </input-math>
 
-    <\unfolded-io-math|octave\<gtr\> >
+    <\unfolded-io-math>
+      octave\<gtr\>\ 
+    <|unfolded-io-math>
       <with|color|blue|tmdisp<around|(|M|)>;> <with|color|black|## M.mat has
       been <rprime|''>switched<rprime|''>>
     <|unfolded-io-math>
-      <tree|<with|color|red|<math|<big|triangleup>>>|<switch|<\hidden>
-        <with|color|red|mat>
-      </hidden>|<with|color|yellow|<math|<with|math-display|true|<with|color|blue|<matrix|<tformat|<table|<row|<cell|1>|<cell|3>|<cell|5>>|<row|<cell|5>|<cell|8>|<cell|0>>>>>>>>>>|<\switch>
-        <with|color|red|l>
-      </switch|<hidden|<with|color|yellow|<\enumerate-numeric>
-        <item><math|<with|math-display|true|<matrix|<tformat|<table|<row|<cell|1>|<cell|2>|<cell|3>>>>>>>
+      \ \ scalar structure containing the fields:
 
-        <item><math|2>
+      \;
 
-        <item><math|3>
-      </enumerate-numeric>>>>|<tree|<with|color|red|branch>|<\switch>
-        <with|color|red|i>
-      </switch|<hidden|<with|color|yellow|<math|3>>>>|<\switch>
-        <with|color|red|j>
-      </switch|<hidden|<with|color|yellow|<math|4>>>>>>
+      \ \ \ \ mat =
+
+      \;
+
+      \ \ \ \ \ \ \ 1 \ \ 3 \ \ 5
+
+      \ \ \ \ \ \ \ 5 \ \ 8 \ \ 0
+
+      \;
+
+      \ \ \ \ l =
+
+      \;
+
+      \ \ \ \ \ \ \ 1 \ \ 2 \ \ 3 \ \ 2 \ \ 3
+
+      \;
+
+      \ \ \ \ branch =
+
+      \;
+
+      \ \ \ \ \ \ scalar structure containing the fields:
+
+      \;
+
+      \ \ \ \ \ \ \ \ i = \ 3
+
+      \ \ \ \ \ \ \ \ j = \ 4
 
       \;
     </unfolded-io-math>
@@ -211,8 +232,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

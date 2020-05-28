@@ -16,32 +16,16 @@ function ret= obj2scm (n,c)
   	c= 0;
   endif
   switch (typeinfo (n))
-    case ("range")
+    case {"range", "matrix", "complex matrix", "bool matrix", "char matrix"}
       ret= mat2scm (n);
-    case ("matrix")
-      ret= mat2scm (n);
-    case ("complex matrix")
-      ret= mat2scm (n);
-    case ("bool matrix")
-      ret= mat2scm (n);
-    case ("char matrix")
-      ret= mat2scm (n);
-    case ("int32 scalar")
+    case {"int32 scalar", "int64 scalar", "complex scalar", "scalar", "bool"}
       ret= num2scm (n);
-    case ("int64 scalar")
-      ret= num2scm (n);
-    case ("complex scalar")
-      ret= num2scm (n);
-    case ("scalar")
-      ret= num2scm (n);
-    case ("bool")
-      ret= num2scm (n);
-    case ("struct")
-      ret= struct2scm (n,c+1,"(with \"mode\" \"math\" (big \"triangleup\"))");
+    case {"scalar struct", "struct"}
+      ret= struct2scm (n, c+1, with_mode_math ("(big \"triangleup\")"));
     case ("string")
       ret= str2scm (n);
     case ("list")
-      ret= list2scm (n,c);
+      ret= list2scm (n, c);
     otherwise
       ret= "";
   endswitch

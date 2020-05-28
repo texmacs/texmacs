@@ -1,9 +1,9 @@
 <TeXmacs|1.99.12>
 
-<style|<tuple|generic|british>>
+<style|<tuple|tmdoc|british>>
 
 <\body>
-  <doc-data|<doc-title|Tests on octave/convert>>
+  <tmdoc-title|Tests on octave/convert>
 
   <section|num2scm>
 
@@ -276,26 +276,62 @@
       \;
     </input>
   </session>
+
+  <section|str2scm>
+
+  <\session|octave|default>
+    <\unfolded-io>
+      octave\<gtr\>\ 
+    <|unfolded-io>
+      "Hello World"
+    <|unfolded-io>
+      ret = (with "color" "blue" "Hello World")
+
+      <with|color|blue|Hello World>
+    </unfolded-io>
+
+    <\input>
+      octave\<gtr\>\ 
+    <|input>
+      \;
+    </input>
+  </session>
+
+  <section|struct2scm>
+
+  <\session|octave|default>
+    <\input>
+      octave\<gtr\>\ 
+    <|input>
+      M.mat=[1, 3, 5; 5, 8, 0]; \ M.l=[1,2,3]; M.branch.i=3; M.branch.j=4;
+    </input>
+
+    <\unfolded-io>
+      octave\<gtr\>\ 
+    <|unfolded-io>
+      M
+    <|unfolded-io>
+      <tree|<with|color|black|<with|mode|math|<big|triangleup>>>|<with|color|blue|<with|mode|math|math-display|true|<matrix|<tformat|<table|<row|<cell|<with|mode|math|1>>|<cell|<with|mode|math|3>>|<cell|<with|mode|math|5>>>|<row|<cell|<with|mode|math|5>>|<cell|<with|mode|math|8>>|<cell|<with|mode|math|0.0>>>>>>>>|<with|color|blue|<with|mode|math|math-display|true|<matrix|<tformat|<table|<row|<cell|<with|mode|math|1>>|<cell|<with|mode|math|2>>|<cell|<with|mode|math|3>>>>>>>>|<tree|<with|color|black|branch>|<with|color|blue|<with|mode|math|3>>|<with|color|blue|<with|mode|math|4>>>>
+    </unfolded-io>
+
+    <\input>
+      octave\<gtr\>\ 
+    <|input>
+      \;
+    </input>
+  </session>
+
+  \;
+
+  <tmdoc-copyright|2020|Darcy Shen>
+
+  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
+  document under the terms of the GNU Free Documentation License, Version 1.1
+  or any later version published by the Free Software Foundation; with no
+  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+  Texts. A copy of the license is included in the section entitled "GNU Free
+  Documentation License".>
 </body>
 
 <initial|<\collection>
 </collection>>
-
-<\references>
-  <\collection>
-    <associate|auto-1|<tuple|1|?>>
-    <associate|auto-2|<tuple|1.1|?>>
-    <associate|auto-3|<tuple|1.2|?>>
-    <associate|auto-4|<tuple|2|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|toc>
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|1<space|2spc>num2scm>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-1><vspace|0.5fn>
-    </associate>
-  </collection>
-</auxiliary>
