@@ -29,7 +29,7 @@
 #  include "../Style/Memorizer/memorizer.hpp"
 #endif
 #include "new_data.hpp"
-#define TEXMACS_COPYRIGHT (string("(c) 1999-2019 by Joris van der Hoeven and others"))
+#define TEXMACS_COPYRIGHT (string("(c) 1999-2020 by Joris van der Hoeven and others"))
 
 #define THE_CURSOR 1
 #define THE_FOCUS 2
