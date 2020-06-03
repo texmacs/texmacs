@@ -49,7 +49,7 @@ case "$GXX" in
     AC_MSG_CHECKING(version of g++)
     AC_MSG_RESULT($GXX_VERSION)
     case "$GXX_VERSION" in
-      0* | 1* | 2*)
+      0.* | 1.* | 2.*)
         AC_MSG_NOTICE(old style GNU compiler)
         AC_DEFINE([OLD_GNU_COMPILER],[])
       ;;

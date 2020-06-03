@@ -4440,7 +4440,7 @@ $as_echo_n "checking version of g++... " >&6; }
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GXX_VERSION" >&5
 $as_echo "$GXX_VERSION" >&6; }
     case "$GXX_VERSION" in
-      0* | 1* | 2*)
+      0.* | 1.* | 2.*)
         { $as_echo "$as_me:${as_lineno-$LINENO}: old style GNU compiler" >&5
 $as_echo "$as_me: old style GNU compiler" >&6;}
         $as_echo "#define OLD_GNU_COMPILER /**/" >>confdefs.h
