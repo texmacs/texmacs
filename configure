@@ -19612,7 +19612,7 @@ ac_link='$OBJC -o conftest$ac_exeext $OBJCFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_
 ac_compiler_gnu=$ac_cv_objc_compiler_gnu
 
 
-  LC_SCATTER_FLAGS_list="-I$with_sparkle/Sparkle.framework/Headers -F$with_sparkle -framework Sparkle"
+  LC_SCATTER_FLAGS_list="-I$with_sparkle/Sparkle.framework/Headers -F$with_sparkle -framework Sparkle -Wl,-rpath,$with_sparkle"
 
 
   LC_GETPOP_FLAG_sepa=-

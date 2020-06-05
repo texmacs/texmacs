@@ -1,3 +1,16 @@
+
+#--------------------------------------------------------------------
+#
+# MODULE      : sparkle.m4
+# DESCRIPTION : Add Sparkle library if present (for Texmacs auto update)
+# COPYRIGHT   : (C) 2000, 2021 Joris van der Hoeven, Denis Raux
+#
+# This software falls under the GNU general public license version 3 or later.
+# It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+# in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+#
+#--------------------------------------------------------------------
+
 AC_DEFUN([LC_SPARKLE],[
   AC_ARG_WITH(sparkle,
   AS_HELP_STRING([--with-sparkle@<:@=ARG@:>@],
@@ -32,7 +45,7 @@ AC_DEFUN([LC_SPARKLE],[
       with_sparkle=$HOME/Library/Frameworks
       AC_MSG_CHECKING([whether we can use the Sparkle framework])
       AC_LANG_PUSH([Objective C])
-      LC_SCATTER_FLAGS([-I$with_sparkle/Sparkle.framework/Headers -F$with_sparkle -framework Sparkle],[SPARKLE])
+      LC_SCATTER_FLAGS([-I$with_sparkle/Sparkle.framework/Headers -F$with_sparkle -framework Sparkle -Wl,-rpath,$with_sparkle],[SPARKLE])
       LC_SET_FLAGS([SPARKLE])
       AC_TRY_LINK(
   [
