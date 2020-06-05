@@ -1,4 +1,4 @@
-<TeXmacs|1.99.10>
+<TeXmacs|1.99.13>
 
 <style|<tuple|source|std|english>>
 
@@ -87,7 +87,7 @@
   Linux|../download/linux.en.tm>|<hlink|MacOS|../download/macosx.en.tm>|<hlink|Windows|../download/windows.en.tm>|<hlink|Other|../download/other.en.tm>|<hlink|License|../about/license.en.tm>>>>>
 
   <assign|tmweb-learn-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|Learn>|<hlink|Videos|../home/videos.en.tm>|<hlink|Tutorials|../help/tutorial.en.tm>|<hlink|Manuals|../help/book.en.tm>|<hlink|FAQ|../help/faq.en.tm>|<hlink|Mailing
-  lists|../home/ml.en.tm>>>>>
+  lists|../home/ml.en.tm>|<hlink|Forum|http://forum.texmacs.cn/>>>>>
 
   <assign|tmweb-contribute-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|Contribute>|<obsolete|<hlink|Contribute|../contribute/contribute-old.en.tm>>|<obsolete|<hlink|Team|../contribute/team.en.tm>>|<hlink|Donate|../contribute/donations.en.tm>|<hlink|Develop|../contribute/develop.en.tm>|<hlink|Document|../contribute/documentation.en.tm>|<hlink|Translate|../contribute/translations.en.tm>|<hlink|Plug-ins|../contribute/plugins.en.tm>>>>>
 
