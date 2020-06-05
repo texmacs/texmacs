@@ -1,6 +1,6 @@
 #!/bin/bash -O extglob -O nocasematch -O nocaseglob -O nullglob
 #
-# denis RAUX  CNRS/LIX 2015-2020
+# denis RAUX  CNRS/LIX 2015-2021
 #
 # Copies frameworks and lib into the application bundle and rewrites the loading
 # information in the .dylib files.
@@ -18,8 +18,7 @@
 
 typeset absLibPath #if there is only relative path
 
-function bundle_all_libs
-{
+function bundle_all_libs {
 # $1   executable  or library path (relative to Contents directory)
   local libdest="Resources/lib"
 
@@ -29,8 +28,7 @@ function bundle_all_libs
   
 
 
-function bundle_qt_plugins
-{ 
+function bundle_qt_plugins { 
 # $2 Qt plugin path $1 subdir list
 # Plugins is the directory where we store them
   [ -z $1 ] && return 0
@@ -49,9 +47,12 @@ function bundle_qt_plugins
   done
 }
 
-function bundle_lib
+function bundle_lib {
 # $1 lib to pack
-{
+# for rpath location : 
+#  return 11 if framework not found
+#  return 12 if lib not found
+
   local file=$1
   local -i state=0 step=0 setrpath=0
   local -a tlibs trpath
@@ -107,12 +108,14 @@ function bundle_lib
         local frwkroot="${fullname%.framework/*}.framework" frwkname="${fullname##*/}"
         if test ! -d "Frameworks/$frwkname"
         then rsync -az "$frwkroot" Frameworks/
-             bundle_lib "Frameworks/$frwkname${fullname#*$frwkname}"
+             bundle_lib "Frameworks/$frwkname${fullname#*$frwkname}" || return $?
              setrpath=$(($setrpath|1))
         fi
         continue 2
       fi
     done
+    echo Framework $lib not found >&2
+    return 11
     ;;
     @rpath/*) #some extra libs
     for p in "${rpath[@]}"
@@ -129,6 +132,8 @@ function bundle_lib
         continue 2
       fi
     done
+    echo Library $lib not found >&2
+    return 12
     ;;
     esac
   done
@@ -151,6 +156,7 @@ function bundle_lib
     change+=" -add_rpath @executable_path/../Resources/lib"
   [ -z "$change" ] && return 0
   eval install_name_tool $change "$file" || return 33
+  return 0
 }
 
 ###############################################################################
