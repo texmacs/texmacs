@@ -210,6 +210,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("type")= c;
   t ("union")= e;
   t ("unpacked")= c;
+  t ("unroll")= c;
   t ("until")= c;
   t ("upgrade")= c;
   t ("use")= c;
