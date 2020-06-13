@@ -34,6 +34,10 @@ if (length (prefix) > 0)
   addpath ([prefix, "tm"], "-end");
   addpath ([prefix, "polynomial"], "-end");
 
+  flush_verbatim (["GNU Octave (", version, ") Session in GNU TeXmacs\n"])
+  flush_verbatim ("Welcome to star and fork it at https://github.com/texmacs/octave\n")
+  flush_prompt ("octave> ")
+
   # Define some global variables.
   global TMSTRUCT= 0;
   global TMCOLORS= ["black"; "red"; "magenta"; "orange"; "green"; "blue";];
@@ -50,10 +54,10 @@ if (length (prefix) > 0)
     fclose (fir);
     if (any (strcmpi (def_gtkit,available_graphics_toolkits))) # if the required graphics toolkit is available
       graphics_toolkit (def_gtkit); ## then use it
-      disp (["-- TeXmacs OctaveX plugin: default graphics toolkit selected [",def_gtkit,"]"]);
+      flush_verbatim (["-- TeXmacs OctaveX plugin: default graphics toolkit selected [",def_gtkit,"]"]);
       defgtkfalse= 0;
     else
-      disp (["-- TeXmacs OctaveX plugin: ERROR default graphics toolkit [",def_gtkit,"] not available"]);
+      flush_verbatim (["-- TeXmacs OctaveX plugin: ERROR default graphics toolkit [",def_gtkit,"] not available"]);
     endif
   endif		
   # ========== 2) no default gtoolkit, try to select 'qt' (Lorenzo added 1-9-2019)
@@ -61,7 +65,7 @@ if (length (prefix) > 0)
     if (any (strcmp ("qt", available_graphics_toolkits)))  
       graphics_toolkit ("qt"); ## then use it
     else
-      disp ("-- TeXmacs OctaveX plugin: Warning, qt graphics toolkit not available");
+      flush_verbatim ("-- TeXmacs OctaveX plugin: Warning, qt graphics toolkit not available");
     endif
   endif
   # 3) ========== if gtoolkit is 'qt', set some variables (Lorenzo added 1-9-2019)
@@ -70,11 +74,8 @@ if (length (prefix) > 0)
     h= gcf ();
     set (h, "visible", "off");
   endif
-  disp (["-- using ", graphics_toolkit, " graphics toolkit"]);
-  disp ("-- tmmod(\'n\'|\'i\') to change plotting mode");
-  disp ("-- tmdisp(a) to display variable 'a'");
   set (0, "defaultaxesfontsize", 18);
-  set(0, "defaultlinelinewidth", 1.5);
+  set (0, "defaultlinelinewidth", 1.5);
 endif
 
 tmrepl ()

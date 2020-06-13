@@ -11,9 +11,9 @@
 
 function ret= with_mode_math (content, math_display= false)
   if (math_display) 
-    ret= sprintf("(with \"mode\" \"math\" \"math-display\" \"true\" %s)", content);
+    ret= sprintf('(with "mode" "math" "math-display" "true" %s)', content);
   else
-    ret= sprintf("(with \"mode\" \"math\" %s)", content);
+    ret= sprintf('(with "mode" "math" %s)', content);
   endif
 endfunction
 

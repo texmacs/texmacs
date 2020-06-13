@@ -11,16 +11,16 @@
 ## It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
 ## in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 
-function L= isnewans (A)
+function ret= isnewans (A)
   # typeinfo (A) is not string/sq_string/dq_string
   if !strcmp(typeinfo (A), "string") && ...
      !strcmp(typeinfo (A), "sq_string") && ...
      !strcmp(typeinfo (A), "dq_string")
-    L= 1;
+    ret= true;
   # A is not an empty string
   elseif !strcmp(A, "")
-    L= 1;
+    ret= true;
   else
-    L= 0;
+    ret= false;
   endif
 endfunction

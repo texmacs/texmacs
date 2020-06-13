@@ -11,7 +11,7 @@
 ## in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 
-function tmdisp(M)
+function tmdisp (M)
   if (length (getenv ("TEXMACS_PATH")) > 0)
     tmp= obj2scm (M);
     if strcmp (tmp,"")

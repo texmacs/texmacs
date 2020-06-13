@@ -13,15 +13,13 @@
 
 
 function tmrepl()
-  prompt=sprintf("%cchannel:prompt%coctave> %c",2,5,5);
-  # flush_prompt ("octave> ")
-  while (1)
-    r= input (prompt, 's');
+  while (true)
+    r= input ("", "s");
 
     if r(length (r)) != ";"
-      disp_ans= 1;
+      disp_ans= true;
     else
-      disp_ans= 0;
+      disp_ans= false;
     endif
 
     trimed_r= strtrim (r);
@@ -36,12 +34,17 @@ function tmrepl()
 
     eval (r, "tmlasterr");
 
-    if (get (0,"currentfigure"))   ##  if there is a figure in octave
-      tmplot ();	## call TeXmacs plotting interface
+    if (get (0, "currentfigure"))   ##  if there is a figure in octave
+      plotted= tmplot ();	## call TeXmacs plotting interface
+      if plotted && disp_ans
+        disp_ans= false;
+      endif
     endif 
- 
+
     if disp_ans && isnewans (ans)
       tmdisp (ans);
+    else
+      flush_verbatim ("\n");
     endif
   endwhile
 endfunction

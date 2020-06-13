@@ -10,5 +10,5 @@
 ## in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 function ret= with_color (color, content)
-  ret= sprintf("(with \"color\" \"%s\" %s)", color, content);
+  ret= sprintf('(with "color" "%s" %s)', color, content);
 endfunction
