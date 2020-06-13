@@ -37,7 +37,7 @@ function tmrepl()
     eval (r, "tmlasterr");
 
     if (get (0,"currentfigure"))   ##  if there is a figure in octave
-      _tm_oct_();	## call TeXmacs plotting interface
+      tmplot ();	## call TeXmacs plotting interface
     endif 
  
     if disp_ans && isnewans (ans)

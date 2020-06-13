@@ -17,7 +17,7 @@
       (string-append (getenv "TEXMACS_PATH") "/plugins/octave/octave")))
 
 (define octave-launcher
-  (string-append "octave -qi " (octave-source-path) "/tm-start.m"))
+  (string-append "octave -qi " (octave-source-path) "/tmstart.m"))
 
 (plugin-configure octave
   (:winpath "Octave*" "bin")
