@@ -450,6 +450,22 @@
       (toggle (set-tmbib-conservative answer)
               (get-tmbib-conservative)))))
 
+;; Markdown ----------
+
+(tm-widget (markdown-preferences-widget)
+  ===
+  (bold (text "TeXmacs -> Markdown"))
+  ===
+  (aligned
+    (item (text "Paragraph Width:")
+      (enum (set-preference "texmacs->markdown:paragraph-width" answer)
+            '("30" "50" "79" "85" "100" "")
+            (get-preference "texmacs->markdown:paragraph-width")
+            "15em"))
+    (meti (hlist // (text "Hugo conversion extension"))
+      (toggle (set-boolean-preference "texmacs->markdown:hugo-extensions" answer)
+              (get-boolean-preference "texmacs->markdown:hugo-extensions")))))
+
 ;; Verbatim ----------
 
 (define-preference-names "texmacs->verbatim:encoding"
@@ -586,6 +602,9 @@
       (tab (text "BibTeX")
         (centered
           (dynamic (bibtex-preferences-widget))))
+      (tab (text "Markdown")
+        (centered
+          (dynamic (markdown-preferences-widget))))
       (tab (text "Verbatim")
         (centered
           (dynamic (verbatim-preferences-widget))))
