@@ -24,15 +24,7 @@ else
 endif
 
 if (length (prefix) > 0)
-  # Add the following directories to Octave's ``load path'':
-  #   - ${TEXMACS_PATH}/plugins/octave/octave/protocol
-  #   - ${TEXMCSS_PATH}/plugins/octave/octave/convert
-  #   - ${TEXMACS_PATH}/plugins/octave/octave/tm
-  #   - ${TEXMACS_PATH}/plugins/octave/octave/polynomial
-  addpath ([prefix, "protocol"], "-end");
-  addpath ([prefix, "convert"], "-end");
-  addpath ([prefix, "tm"], "-end");
-  addpath ([prefix, "polynomial"], "-end");
+  addpath (genpath (prefix))
 
   flush_verbatim (["GNU Octave (", version, ") Session in GNU TeXmacs\n"])
   flush_verbatim ("Welcome to star and fork it at https://github.com/texmacs/octave\n")
@@ -43,6 +35,7 @@ if (length (prefix) > 0)
   global TMCOLORS= ["black"; "red"; "magenta"; "orange"; "green"; "blue";];
   global TMCOLIDX= rows (TMCOLORS);
   global TEXMACS_OCTAVE_PLUGIN_CONTROL= 0;
+  global TM_OCTAVE_PLOT_DIGEST= 0;
 
   if (any (strcmp ("gnuplot", available_graphics_toolkits)))
     graphics_toolkit ("gnuplot"); ## then use it

@@ -43,20 +43,12 @@ function ret= tmplot ()
       pause (0.1);	 # this seems to be necessary on Linux
       refresh (h);
       refresh (h); # Cygwin: this seems to be necessary to update the image (the same behavior happens in octave)
-    endif
-
-  	if (bitget(TEXMACS_OCTAVE_PLUGIN_CONTROL,1)==0)   # check bit 1 state 	# normal mode, load the data in TeXmacs
+    else
       if (exist (TEXMACS_OCTAVE_TMP) == 2)
         delete (TEXMACS_OCTAVE_TMP);
       endif
       print (h, TEXMACS_OCTAVE_TMP, "-deps", "-color");
-      clf (h);
-      if (bitget (TEXMACS_OCTAVE_PLUGIN_CONTROL,2)==1) # if figures are visible
-        ##	close(h,"force");   # this function is missing in octave version before 4.2
-        ##	close("all","force");
-        close (h); # if mode is normal and figures are visible, then close them after printing 
-      endif
-      flush_file (TEXMACS_OCTAVE_TMP)
+      flush_file (TEXMACS_OCTAVE_TMP);
       ret= true;
     endif
   endif

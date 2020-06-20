@@ -40,6 +40,12 @@ function ret= num2scm (n)
       else
         ret= with_mode_math (dquote (num2str (n)));
       endif
+    case ("bool")
+      if (n)
+        ret= with_mode_math ("true");
+      else
+        ret= with_mode_math ("false");
+      endif
     otherwise
       ret= "";
   endswitch

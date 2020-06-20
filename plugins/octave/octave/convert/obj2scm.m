@@ -22,8 +22,6 @@ function ret= obj2scm (n,c)
       ret= num2scm (n);
     case {"scalar struct", "struct"}
       ret= struct2scm (n, c+1, with_mode_math ("(big \"triangleup\")"));
-    case ("string")
-      ret= str2scm (n);
     case ("list")
       ret= list2scm (n, c);
     otherwise

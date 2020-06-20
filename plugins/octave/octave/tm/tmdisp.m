@@ -12,14 +12,10 @@
 
 
 function tmdisp (M)
-  if (length (getenv ("TEXMACS_PATH")) > 0)
-    tmp= obj2scm (M);
-    if strcmp (tmp,"")
-      disp (M);
-    else
-      flush_scheme (tmp)
-    endif
+  scheme_to_flush= obj2scm (M);
+  if length (scheme_to_flush) == 0
+    flush_verbatim (M);
   else
-    disp (M);
+    flush_scheme (scheme_to_flush);
   endif
 endfunction

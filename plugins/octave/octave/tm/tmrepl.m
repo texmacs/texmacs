@@ -14,30 +14,37 @@
 
 function tmrepl()
   while (true)
-    r= input ("", "s");
+    __r= input ("", "s");
 
-    if r(length (r)) != ";"
+    if __r(length (__r)) != ";"
       disp_ans= true;
     else
       disp_ans= false;
     endif
 
-    trimed_r= strtrim (r);
+    trimed_r= strtrim (__r);
     if isvarname (trimed_r) && exist (trimed_r)
-      r= sprintf ("ans= %s;", r);
+      __r= sprintf ("ans= %s;", __r);
     else
-      # if ans is not changed, do not display it
-      # otherwise, display it
+      # Reset ans to empty string
       ans= "";
-      r= sprintf ("%s;", r);
+      # Suppress the output
+      __r= sprintf ("%s;", __r);
     endif
 
-    eval (r, "tmlasterr");
+    # NOTE: the evaled code will use the polluted env
+    eval (__r, "tmlasterr");
 
-    if (get (0, "currentfigure"))   ##  if there is a figure in octave
-      plotted= tmplot ();	## call TeXmacs plotting interface
-      if plotted && disp_ans
-        disp_ans= false;
+    if disp_ans
+      global TM_OCTAVE_PLOT_DIGEST;
+      
+      updated_digest= hash ("md5", serialize (get(gcf())));
+      if !strcmp (TM_OCTAVE_PLOT_DIGEST, updated_digest)
+        TM_OCTAVE_PLOT_DIGEST= updated_digest;
+        plotted= tmplot (); ## call TeXmacs plotting interface
+        if plotted
+          disp_ans= false;
+        endif
       endif
     endif 
 
@@ -46,5 +53,10 @@ function tmrepl()
     else
       flush_verbatim ("\n");
     endif
+
+    # Debugging Hints:
+    # fid= fopen ("/tmp/octave.log", "a");
+    # fprintf (fid, "command: %s\n", r);
+    # fclose (fid);
   endwhile
 endfunction
