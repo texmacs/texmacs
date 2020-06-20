@@ -89,11 +89,7 @@ prog_language (string s) {
     return make (language, s, tm_new<mathemagix_language_rep> (s));
   if (s == "cpp")
     return make (language, s, tm_new<cpp_language_rep> (s));
-  if (s == "dot")
-    return make (language, s, tm_new<common_language_rep> (s));
-  if (s == "java")
-    return make (language, s, tm_new<java_language_rep> (s));
-  if (s == "octave")
+  if (s == "dot" || s == "java" || s == "octave")
     return make (language, s, tm_new<common_language_rep> (s));
   if (s == "scilab")
     return make (language, s, tm_new<scilab_language_rep> (s));

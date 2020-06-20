@@ -48,3 +48,14 @@
    `(operator_decoration "@")
    `(operator_field "." "::")
    `(operator_openclose "{" "[" "(" ")" "]" "}")))
+
+(tm-define (java-inline-comment-starts)
+  (list "//"))
+
+(tm-define (java-escape-strings)
+  (list "\\" "\"" "'" "b" "f" "n" "r" "t"))
+
+;; TODO:
+;; escaped_char_parser.support_octal_upto_3_digits (true);
+;; escaped_char_parser.support_hex_with_16_bits (true);
+;; number_parser.use_java_style
