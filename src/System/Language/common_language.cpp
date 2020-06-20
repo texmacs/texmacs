@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : dot_language.cpp
+* MODULE     : common_language.cpp
 * DESCRIPTION: the DOT language
 * COPYRIGHT  : (C) 2020  Darcy Shen
 *******************************************************************************
@@ -12,31 +12,67 @@
 
 #include "analyze.hpp"
 #include "impl_language.hpp"
+#include "scheme.hpp"
+#include "tree.hpp"
+#include "iterator.hpp"
 
-dot_language_rep::dot_language_rep (string name):
+common_language_rep::common_language_rep (string name):
   abstract_language_rep (name)
 {
-  array<string> starts;
-  starts << string("//");
-  inline_comment_parser.set_starts (starts);
+  debug_packrat << "Building the " * name * " language parser" << LF;
 
-  array<char> escape_chars;
-  escape_chars << '\\' << '\'' << '\"'
-    << 'b' << 'f' << 'n' << 'r' << 't';
-  escaped_char_parser.set_chars (escape_chars);
+  string use_modules= "(use-modules (prog " * name * "-lang))";
+  eval (use_modules);
+
+  // Config keyword_parser
+  string get_list_of_keywords_tree= "(map tm->tree (" * name * "-keywords))";
+  list<tree> l= as_list_tree (eval (get_list_of_keywords_tree));
+  for (int i=0; i<N(l); i++) {
+    tree group_words= l[i];
+    string group= get_label (group_words);
+    for (int j=0; j<N(group_words); j++) {
+      string word= get_label (group_words[j]);
+      keyword_parser.put (word, group);
+    }
+  }
+
+  // Config operator_parser
+  string get_list_of_operators_tree= "(map tm->tree (" * name * "-operators))";
+  list<tree> l_oper= as_list_tree (eval (get_list_of_operators_tree));
+  for (int i=0; i<N(l_oper); i++) {
+    tree group_words= l_oper[i];
+    string group= get_label (group_words);
+    for (int j=0; j<N(group_words); j++) {
+      string word= get_label (group_words[j]);
+      operator_parser.put (word, group);
+    }
+  }
+
+  list<string> inline_comment_starts_list=
+    as_list_string (eval ("(" * name * "-inline-comment-starts)"));
+  array<string> inline_comment_starts;
+  for (int i=0; i<N(inline_comment_starts_list); i++) {
+    inline_comment_starts << inline_comment_starts_list[i];
+  }
+  inline_comment_parser.set_starts (inline_comment_starts);
+
+  list<string> escape_strings_list=
+    as_list_string (eval ("(" * name * "-escape-strings)"));
+  array<string> escape_strings;
+  for (int i=0; i<N(escape_strings_list); i++) {
+    escape_strings << escape_strings_list[i];
+  }
+  escaped_char_parser.set_strings (escape_strings);
 
   string_parser.set_escaped_char_parser (escaped_char_parser);
   hashmap<string, string> pairs;
   pairs("\"") = "\"";
   pairs("\'")= "\'";
   string_parser.set_pairs(pairs);
-
-  keyword_parser.use_keywords_of_lang (name);
-  operator_parser.use_operators_of_lang (name);
 }
 
 text_property
-dot_language_rep::advance (tree t, int& pos) {
+common_language_rep::advance (tree t, int& pos) {
   string s= t->label;
   if (pos>=N(s)) return &tp_normal_rep;
 
@@ -83,7 +119,7 @@ dot_language_rep::advance (tree t, int& pos) {
 }
 
 array<int>
-dot_language_rep::get_hyphens (string s) {
+common_language_rep::get_hyphens (string s) {
   int i;
   array<int> penalty (N(s)+1);
   penalty[0]= HYPH_INVALID;
@@ -96,7 +132,7 @@ dot_language_rep::get_hyphens (string s) {
 }
 
 void
-dot_language_rep::hyphenate (
+common_language_rep::hyphenate (
   string s, int after, string& left, string& right)
 {
   left = s (0, after);
@@ -104,7 +140,7 @@ dot_language_rep::hyphenate (
 }
 
 string
-dot_language_rep::get_color (tree t, int start, int end) {
+common_language_rep::get_color (tree t, int start, int end) {
   static string none= "";
   if (start >= end) return none;
 
@@ -144,3 +180,4 @@ dot_language_rep::get_color (tree t, int start, int end) {
   if (type == none) return none;
   return decode_color (lan_name, encode_color (type));
 }
+

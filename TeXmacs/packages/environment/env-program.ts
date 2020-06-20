@@ -1,4 +1,4 @@
-<TeXmacs|1.99.12>
+<TeXmacs|1.99.13>
 
 <style|<tuple|source|std>>
 
@@ -198,6 +198,8 @@
 
   <assign|dot-lang|<macro|body|<with|mode|prog|prog-language|dot|font-family|rm|<arg|body>>>>
 
+  <assign|octave-lang|<macro|body|<with|mode|prog|prog-language|octave|font-family|rm|<arg|body>>>>
+
   <\active*>
     <\src-comment>
       Blocks of code for standard languages
@@ -255,6 +257,12 @@
   <assign|fortran-code|<\macro|body>
     <\pseudo-code>
       <fortran|<arg|body>>
+    </pseudo-code>
+  </macro>>
+
+  <assign|octave-code|<\macro|body>
+    <\pseudo-code>
+      <octave-lang|<arg|body>>
     </pseudo-code>
   </macro>>
 

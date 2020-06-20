@@ -45,3 +45,9 @@
      "-<gtr>" "--")
    `(operator_field ".")
    `(operator_openclose "{" "[" "(" ")" "]" "}")))
+
+(tm-define (dot-inline-comment-starts)
+  (list "//"))
+
+(tm-define (dot-escape-strings)
+  (list "\\" "\"" "'" "b" "f" "n" "r" "t"))

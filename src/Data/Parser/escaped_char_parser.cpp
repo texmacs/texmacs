@@ -30,7 +30,14 @@ escaped_char_parser_rep::set_chars (array<char> p_chars) {
 
 void
 escaped_char_parser_rep::set_strings (array<string> p_strings) {
-  m_strings= p_strings;
+  for (int i=0; i<N(p_strings); i++) {
+    string str= p_strings[i];
+    if (N(str) == 1) {
+      m_chars << str[0];
+    } else {
+      m_strings << str;
+    }
+  }
 }
 
 void

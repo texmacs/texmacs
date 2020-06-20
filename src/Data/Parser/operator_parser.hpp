@@ -29,6 +29,13 @@ public:
     else return operator_group[oper];
   }
 
+  void put (string oper, string group) {
+    if (is_empty (oper)) return;
+
+    operator_group(oper)= group;
+  }
+
+
   void use_operators_of_lang (string lang_code);
 
 private:
