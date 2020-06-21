@@ -39,6 +39,8 @@
 
   ;; AMS commands
   dotsc dotsb dotsm dotsi dotso qed
+  ;; mathtools
+  coloneqq
   ;; temporarily
   hline hrulefill
   ;; rewritten
@@ -70,12 +72,13 @@
   underrightarrow underleftarrow underleftrightarrow
   grave Grave acute Acute check Check breve Breve invbreve abovering mathring
   dot Dot ddot Ddot dddot ddddot mod pod pmod
-  label ref pageref index hspace hspace* vspace vspace*
+  label ref pageref index hspace hspace* vspace vspace* mspace
   mbox hbox textnormal text not substack
   ,(string->symbol "'") ,(string->symbol "`") ,(string->symbol "\"")
   ^ over atop choose ~ = u v H t c d b k r textsuperscript textsubscript
   thispagestyle ensuremath
   mathord mathbin mathopen mathpunct mathop mathrel mathclose mathalpha
+  mathinner
   arabic alph Alph roman Roman fnsymbol displaylines cases underbrace overbrace
   phantom hphantom vphantom smash date terms
   newcounter stepcounter refstepcounter value
@@ -136,6 +139,7 @@
   title author thanks marginpar
   part chapter section subsection subsubsection paragraph subparagraph
   includegraphics includegraphics*
+  makebox
   subjclass declaretheorem footnotetext
   xleftarrow xrightarrow xleftrightarrow xminus
   xLeftarrow xRightarrow xLeftrightarrow xequal

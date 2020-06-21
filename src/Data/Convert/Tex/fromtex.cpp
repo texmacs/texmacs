@@ -882,6 +882,7 @@ latex_symbol_to_tree (string s) {
       if (s == "bgroup")     return "";
       if (s == "egroup")     return "";
       if (s == "colon")      return ":";
+      if (s == "coloneqq")   return "<assign>";
       if (s == "dotsc")      return "<ldots>";
       if (s == "dotsb")      return "<cdots>";
       if (s == "dotsm")      return "<cdots>";
@@ -2387,9 +2388,10 @@ latex_command_to_tree (tree t) {
     return tree (WIDE, l2e (t[1]), "<abovering>");
   if (is_tuple (t, "\\uring", 1))
     return tree (VAR_WIDE, l2e (t[1]), "<abovering>");
-  if (is_tuple (t, "\\hspace", 1) || is_tuple (t, "\\hspace*", 1)) {
+  if (is_tuple (t, "\\hspace", 1) || is_tuple (t, "\\hspace*", 1) ||
+      is_tuple (t, "\\mspace", 1)) {
     if (is_tuple (t[1], "\\tex-len", 3))
-          return tree (SPACE, l2e (t[1]));
+      return tree (SPACE, l2e (t[1]));
     else {
       tree r= t2e (t[1]);
       if (is_var_compound (r, "fill", 0)) return tree (HTAB, "1fn");
@@ -2499,14 +2501,18 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\enlargethispage")) return "";
   if (is_tuple (t, "\\mathop", 1)) return l2e (t[1]);
   if (is_tuple (t, "\\mathrel", 1)) return l2e (t[1]);
+  if (is_tuple (t, "\\mathinner", 1)) return l2e (t[1]);
   if (is_tuple (t, "\\overbrace", 1))
     return tree (WIDE, l2e (t[1]), "<wide-overbrace>");
   if (is_tuple (t, "\\underbrace", 1))
     return tree (VAR_WIDE, l2e (t[1]), "<wide-underbrace>");
 
   if (is_tuple (t, "\\text", 1) || is_tuple (t, "\\textnormal", 1) ||
-      is_tuple (t, "\\mbox", 1) || is_tuple (t, "\\hbox", 1))
+      is_tuple (t, "\\mbox", 1) || is_tuple (t, "\\hbox", 1) ||
+      is_tuple (t, "\\makebox", 1))
     return var_m2e (t, MODE, "text");
+  if (is_tuple (t, "\\makebox*", 2))
+    return var_m2e (tuple ("\\makebox", t[2]), MODE, "text");
   if (is_tuple (t, "\\mathchoice", 4))
     return compound ("math-choice",
         l2e (t[1]), l2e (t[2]), l2e (t[3]), l2e (t[4]));
