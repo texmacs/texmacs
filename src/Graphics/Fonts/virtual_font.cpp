@@ -150,6 +150,30 @@ virtual_font_rep::exec (scheme_tree t) {
     }
     return r;
   }
+  else if (is_tuple (t, "left", 1)) {
+    metric ex;
+    get_metric (t[1], ex);
+    double x= ((double) ex->x1) / hunit;
+    return as_string (x);
+  }
+  else if (is_tuple (t, "right", 1)) {
+    metric ex;
+    get_metric (t[1], ex);
+    double x= ((double) ex->x2) / hunit;
+    return as_string (x);
+  }
+  else if (is_tuple (t, "bottom", 1)) {
+    metric ex;
+    get_metric (t[1], ex);
+    double y= ((double) ex->y1) / vunit;
+    return as_string (y);
+  }
+  else if (is_tuple (t, "top", 1)) {
+    metric ex;
+    get_metric (t[1], ex);
+    double y= ((double) ex->y2) / vunit;
+    return as_string (y);
+  }
   else if (is_tuple (t, "width", 1)) {
     metric ex;
     get_metric (t[1], ex);
@@ -159,8 +183,8 @@ virtual_font_rep::exec (scheme_tree t) {
   else if (is_tuple (t, "height", 1)) {
     metric ex;
     get_metric (t[1], ex);
-    double w= ((double) (ex->y2 - ex->y1)) / hunit;
-    return as_string (w);
+    double h= ((double) (ex->y2 - ex->y1)) / vunit;
+    return as_string (h);
   }
   else if (is_tuple (t, "xpos", 2) || is_tuple (t, "ypos", 2) ||
            is_tuple (t, "xpos", 4) || is_tuple (t, "ypos", 4)) {

@@ -211,6 +211,17 @@
   (forall* (pretend (align* (ver-flip fA3) preall 0.5 0.5) preall))
   (forall forall*)
 
+  (imath
+    (with top2 (top i)
+      (with top1 (top x)
+        (with split (+ (* 0.75 top1) (* 0.25 top2))
+          (clip i * * * split)))))
+  (jmath
+    (with top2 (top j)
+      (with top1 (top x)
+        (with split (+ (* 0.75 top1) (* 0.25 top2))
+          (clip j * * * split)))))
+
   (mho (ver-flip (hor-flip omega)))
   (Backepsilon (ver-flip (hor-flip Epsilon)))
   (Backsigma (hor-flip Sigma))

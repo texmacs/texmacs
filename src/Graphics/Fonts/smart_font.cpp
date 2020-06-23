@@ -39,7 +39,8 @@ RESOURCE(smart_map);
 #define REWRITE_ITALIC_GREEK    7
 #define REWRITE_UPRIGHT_GREEK   8
 #define REWRITE_UPRIGHT         9
-#define REWRITE_IGNORE         10
+#define REWRITE_ITALIC         10
+#define REWRITE_IGNORE         11
 
 struct smart_map_rep: rep<smart_map> {
   int chv[256];
@@ -422,6 +423,13 @@ substitute_upright_greek (string c) {
 string
 substitute_upright (string c) {
   if (!starts (c, "<up-") || !ends (c, ">")) return "";
+  if (N(c) == 6) return c (4, 5);
+  return "<" * c (4, N(c));
+}
+
+string
+substitute_italic (string c) {
+  if (!starts (c, "<it-") || !ends (c, ">")) return "";
   if (N(c) == 6) return c (4, 5);
   return "<" * c (4, N(c));
 }
@@ -850,6 +858,8 @@ rewrite (string s, int kind) {
     return substitute_upright_greek (s);
   case REWRITE_UPRIGHT:
     return substitute_upright (s);
+  case REWRITE_ITALIC:
+    return substitute_italic (s);
   case REWRITE_IGNORE:
     return "";
   default:
@@ -954,7 +964,8 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
 
     if (math_kind != 0 && shape == "mathitalic" &&
         (get_unicode_range (c) == "greek" ||
-         (starts (c, "<b-") && ends (c, ">")))) {
+         (starts (c, "<b-") && ends (c, ">")) ||
+         c == "<imath>" || c == "<jmath>")) {
       font cfn= smart_font_bis (fam, variant, series, shape, sz, hdpi, dpi);
       if (cfn->supports (c)) {
         tree key= tuple ("subfont", fam);
@@ -1030,6 +1041,12 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
         initialize_font (nr);
         return sm->add_char (key, c);
       }
+    }
+    if (starts (c, "<it-") && ends (c, ">")) {
+      tree key= tuple ("it");
+      int nr= sm->add_font (key, REWRITE_ITALIC);
+      initialize_font (nr);
+      return sm->add_char (key, c);
     }
     if (fam == mfam && !is_italic_font (mfam)) {
       array<string> emu_names= emu_font_names ();
@@ -1169,6 +1186,10 @@ smart_font_rep::resolve (string c) {
       //cout << "Found " << c << " in greek\n";
       return sm->add_char (tuple ("italic-math"), c);
     }
+    if (c == "<imath>" || c == "<jmath>") {
+      //cout << "Found " << c << " in dotless\n";
+      return sm->add_char (tuple ("italic-math"), c);
+    }
     if (is_italic_prime (c)) {
       //cout << "Found " << c << " in italic prime\n";
       return sm->add_char (tuple ("italic-math"), c);      
@@ -1283,6 +1304,8 @@ smart_font_rep::initialize_font (int nr) {
     fn[nr]= fn[SUBFONT_MAIN];
   else if (a[0] == "up")
     fn[nr]= fn[SUBFONT_MAIN];
+  else if (a[0] == "it")
+    fn[nr]= smart_font_bis (family, variant, series, "italic", sz, hdpi, dpi);
   else if (a[0] == "tt")
     fn[nr]= smart_font_bis (family, "tt", series, "right", sz, hdpi, dpi);
   else if (a[0] == "ss")
