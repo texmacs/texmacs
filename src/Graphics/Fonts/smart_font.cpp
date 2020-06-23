@@ -965,7 +965,7 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
     if (math_kind != 0 && shape == "mathitalic" &&
         (get_unicode_range (c) == "greek" ||
          (starts (c, "<b-") && ends (c, ">")) ||
-         c == "<imath>" || c == "<jmath>")) {
+         c == "<imath>" || c == "<jmath>" || c == "<ell>")) {
       font cfn= smart_font_bis (fam, variant, series, shape, sz, hdpi, dpi);
       if (cfn->supports (c)) {
         tree key= tuple ("subfont", fam);
@@ -1186,7 +1186,7 @@ smart_font_rep::resolve (string c) {
       //cout << "Found " << c << " in greek\n";
       return sm->add_char (tuple ("italic-math"), c);
     }
-    if (c == "<imath>" || c == "<jmath>") {
+    if (c == "<imath>" || c == "<jmath>" || c == "<ell>") {
       //cout << "Found " << c << " in dotless\n";
       return sm->add_char (tuple ("italic-math"), c);
     }
