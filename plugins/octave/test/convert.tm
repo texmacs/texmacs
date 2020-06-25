@@ -321,7 +321,41 @@
     </input>
   </session>
 
-  \;
+  <section|cell2scm>
+
+  <\session|octave|default>
+    <\unfolded-io>
+      octave\<gtr\>\ 
+    <|unfolded-io>
+      {"a string", rand(2, 2)}
+    <|unfolded-io>
+      <\enumerate-numeric>
+        <item><with|color|blue|a string>
+
+        <item><with|mode|math|math-display|true|<matrix|<tformat|<table|<row|<cell|<with|mode|math|0.22969>>|<cell|<with|mode|math|0.26157>>>|<row|<cell|<with|mode|math|0.36714>>|<cell|<with|mode|math|0.68325>>>>>>>
+      </enumerate-numeric>
+    </unfolded-io>
+
+    <\unfolded-io>
+      octave\<gtr\>\ 
+    <|unfolded-io>
+      flush_scheme (cell2scm ({"a", 1, "Hello World"}))
+    <|unfolded-io>
+      <\enumerate-numeric>
+        <item><with|color|blue|a>
+
+        <item><with|mode|math|1>
+
+        <item><with|color|blue|Hello World>
+      </enumerate-numeric>
+    </unfolded-io>
+
+    <\input>
+      octave\<gtr\>\ 
+    <|input>
+      \;
+    </input>
+  </session>
 
   <tmdoc-copyright|2020|Darcy Shen>
 

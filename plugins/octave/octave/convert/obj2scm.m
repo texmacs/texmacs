@@ -24,6 +24,10 @@ function ret= obj2scm (n,c)
       ret= struct2scm (n, c+1, with_mode_math ("(big \"triangleup\")"));
     case ("list")
       ret= list2scm (n, c);
+    case ("cell")
+      ret= cell2scm (n);
+    case {"sq_string", "string"}
+      ret= str2scm (n);
     otherwise
       ret= "";
   endswitch
