@@ -26,6 +26,7 @@ import re
 import string
 import warnings
 warnings.simplefilter("ignore") # don't print warnings to stdout
+from tmpy.compat import py_ver
 from tmpy.protocol   import *
 from tmpy.postscript import ps_out
 from tmpy.completion import parse_complete_command, complete
@@ -87,14 +88,15 @@ def compose_output(data):
     if isinstance(data, float):
         return 'verbatim: %f' % data
   
-    if isinstance(data, unicode):
-        data2 = r''
-        for c in data:
-            if c not in string.printable:
-                data2 += '\\x%x' % ord(c)
-            else:
-                data2 += c
-        data = data2
+    if py_ver == 2:
+        if isinstance(data, unicode):
+            data2 = r''
+            for c in data:
+                if c not in string.printable:
+                    data2 += '\\x%x' % ord(c)
+                else:
+                    data2 += c
+            data = data2
 
     return 'verbatim: %s' % str(data)
 
