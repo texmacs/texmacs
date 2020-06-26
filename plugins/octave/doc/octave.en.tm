@@ -1,16 +1,18 @@
-<TeXmacs|1.0.7.11>
+<TeXmacs|1.99.13>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing|old-dots>>
 
 <\body>
   <tmdoc-title|The <name|Octave> plug-in>
 
   <\traverse>
-    <branch|Short description|octave-abstract.en.tm>
+    <\branch>
+      Short description
+    </branch|octave-abstract.en.tm>
+
+    <branch|Installation|octave-install.en.tm>
 
     <branch|Example session|octave-demo.en.tm>
-
-    <branch|Further information|octave-details.en.tm>
   </traverse>
 
   <tmdoc-copyright|2011|Joris van der Hoeven>
