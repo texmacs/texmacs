@@ -56,3 +56,25 @@
    `(operator_decoration "@")
    `(operator_field ".")
    `(operator_openclose "{" "[" "(" ")" "]" "}")))
+
+(tm-define (scala-numbers)
+  (list
+   `(bool_features
+     "prefix_0x" "prefix_0b"
+     "long_suffix" "double_suffix" "float_suffix"
+     "sci_notation")))
+
+(tm-define (scala-inline-comment-starts)
+  (list "//"))
+
+(tm-define (scala-escape-sequences)
+  (list
+   `(bool_features "")
+   `(sequences "\\" "\"" "'" "b" "f" "n" "r" "t")))
+
+;; array<char> start_chars, extra_chars;
+;; // The ‘$’ character is reserved for compiler-synthesized identifiers.
+;; start_chars << '_' << '$';
+;; extra_chars << '_';
+;; identifier_parser.set_start_chars (start_chars);
+;; identifier_parser.set_extra_chars (extra_chars);

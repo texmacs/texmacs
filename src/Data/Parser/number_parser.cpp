@@ -162,22 +162,6 @@ number_parser_rep::use_fortran_style () {
 }
 
 void
-number_parser_rep::use_java_style () {
-  support_prefix_0x (true);
-  support_prefix_0b (true);
-  support_scientific_notation (true);
-  support_separator ('_');
-  support_long_suffix (true);
-  support_double_suffix (true);
-  support_float_suffix (true);
-}
-
-void
-number_parser_rep::use_scala_style () {
-  use_java_style ();
-}
-
-void
 number_parser_rep::use_python_style () {
   support_j_suffix (true);
   support_scientific_notation (true);
