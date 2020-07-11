@@ -34,6 +34,13 @@
    `(operator_field ".")
    `(operator_openclose "{" "[" "(" ")" "]" "}")))
 
+(tm-define (octave-numbers)
+  (list
+   `(bool_features
+     "prefix_0x" "prefix_0b"
+     "long_suffix" "double_suffix" "float_suffix"
+     "sci_notation")))
+
 (tm-define (octave-inline-comment-starts)
   (list "#"))
 

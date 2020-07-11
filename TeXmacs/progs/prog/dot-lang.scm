@@ -46,6 +46,13 @@
    `(operator_field ".")
    `(operator_openclose "{" "[" "(" ")" "]" "}")))
 
+(tm-define (dot-numbers)
+  (list
+   `(bool_features
+     "prefix_0x" "prefix_0b"
+     "long_suffix" "double_suffix" "float_suffix"
+     "sci_notation")))
+
 (tm-define (dot-inline-comment-starts)
   (list "//"))
 

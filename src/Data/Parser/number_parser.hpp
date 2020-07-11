@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : number_parser.hpp
 * DESCRIPTION: shared number parsing routines for various programming languages
-* COPYRIGHT  : (C) 2019  Darcy Shen
+* COPYRIGHT  : (C) 2019-2020  Darcy Shen
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -13,6 +13,7 @@
 #define NUMBER_PARSER_H
 
 #include "parser.hpp"
+#include "hashset.hpp"
 
 class number_parser_rep : public parser_rep {
 public:
@@ -21,17 +22,96 @@ public:
   bool can_parse (string s, int pos);
   string get_parser_name () { return "number_parser"; }
 
-  inline void support_double_suffix (bool param) { double_suffix= param; }
-  inline void support_float_suffix (bool param) { float_suffix= param; }
-  inline void support_j_suffix (bool param) { j_suffix= param; }
-  inline void support_long_suffix (bool param) { long_suffix= param; }
-  inline void support_ull_suffix (bool param) { ull_suffix= param; }
-  inline void support_locase_i_suffix (bool param) { locase_i_suffix= param; }
-  inline void support_scientific_notation (bool param) { scientific_notation= param; }
-  inline void support_prefix_0x (bool param) { prefix_0x= param; }
-  inline void support_prefix_0b (bool param) { prefix_0b= param; }
-  inline void support_prefix_0o (bool param) { prefix_0o= param; }
-  inline void support_no_suffix_with_box (bool param) { no_suffix_with_box= param; }
+  string DOUBLE_SUFFIX= "double_suffix";
+  string FLOAT_SUFFIX= "float_suffix";
+  string J_SUFFIX= "j_suffix";
+  string LONG_SUFFIX= "long_suffix";
+  string ULL_SUFFIX= "ull_suffix";
+  string LOCASE_I_SUFFIX= "locase_i_suffix";
+
+  string PREFIX_0B= "prefix_0b";
+  string PREFIX_0O= "prefix_0o";
+  string PREFIX_0X= "prefix_0x";
+  string NO_SUFFIX_WITH_BOX= "no_suffix_with_box";
+
+  string SCIENTIFIC_NOTATION= "sci_notation";
+
+
+  inline void insert_bool_feature (string feature) {
+    bool_features->insert (feature);
+  }
+  inline void remove_bool_feature (string feature) {
+    bool_features->remove (feature);
+  }
+
+  inline bool double_suffix () { return bool_features->contains (DOUBLE_SUFFIX); }
+  inline void support_double_suffix (bool param) {
+    if (param) insert_bool_feature (DOUBLE_SUFFIX);
+    else       remove_bool_feature (DOUBLE_SUFFIX);
+  }
+
+  inline bool float_suffix () { return bool_features->contains (FLOAT_SUFFIX); }
+  inline void support_float_suffix (bool param) {
+    if (param) insert_bool_feature (FLOAT_SUFFIX);
+    else       remove_bool_feature (FLOAT_SUFFIX);
+  }
+
+  inline bool j_suffix () { return bool_features->contains (J_SUFFIX); }
+  inline void support_j_suffix (bool param) {
+    if (param) insert_bool_feature (J_SUFFIX);
+    else       remove_bool_feature (J_SUFFIX);
+  }
+  
+  inline bool long_suffix () { return bool_features->contains (LONG_SUFFIX); }
+  inline void support_long_suffix (bool param) { 
+    if (param) insert_bool_feature (LONG_SUFFIX);
+    else       remove_bool_feature (LONG_SUFFIX);
+  }
+
+  inline bool ull_suffix () { return bool_features->contains (ULL_SUFFIX); }
+  inline void support_ull_suffix (bool param) {
+    if (param) insert_bool_feature (ULL_SUFFIX);
+    else       remove_bool_feature (ULL_SUFFIX);
+  }
+
+  inline bool locase_i_suffix () { return bool_features->contains (LOCASE_I_SUFFIX); }
+  inline void support_locase_i_suffix (bool param) {
+    if (param) insert_bool_feature (LOCASE_I_SUFFIX);
+    else       remove_bool_feature (LOCASE_I_SUFFIX);
+  }
+
+  inline bool prefix_0b () { return bool_features->contains (PREFIX_0B); }
+  inline void support_prefix_0b (bool param) {
+    if (param) insert_bool_feature (PREFIX_0B);
+    else       remove_bool_feature (PREFIX_0B);
+  }
+
+  inline bool prefix_0o () { return bool_features->contains (PREFIX_0O); }
+  inline void support_prefix_0o (bool param) {
+    if (param) insert_bool_feature (PREFIX_0O);
+    else       remove_bool_feature (PREFIX_0O);
+  }
+
+  inline bool prefix_0x () { return bool_features->contains (PREFIX_0X); }
+  inline void support_prefix_0x (bool param) {
+    if (param) insert_bool_feature (PREFIX_0X);
+    else       remove_bool_feature (PREFIX_0X);
+  }
+
+  inline bool no_suffix_with_box () {
+    return bool_features->contains (NO_SUFFIX_WITH_BOX);
+  }
+  inline void support_no_suffix_with_box (bool param) {
+    if (param) insert_bool_feature (NO_SUFFIX_WITH_BOX);
+    else       remove_bool_feature (NO_SUFFIX_WITH_BOX);
+  }
+
+  inline bool scientific_notation () { return bool_features->contains (SCIENTIFIC_NOTATION); }
+  inline void support_scientific_notation (bool param) {
+    if (param) insert_bool_feature (SCIENTIFIC_NOTATION);
+    else       remove_bool_feature (SCIENTIFIC_NOTATION);
+  }
+
   inline void support_separator (char param) { sep= param; separator= true; }
   inline bool is_separator (char param) { return separator && sep == param; }
 
@@ -43,19 +123,9 @@ public:
   void use_r_style ();
 
 private:
-  bool long_suffix;
-  bool double_suffix;
-  bool float_suffix;
-  bool j_suffix;
-  bool ull_suffix;
-  bool locase_i_suffix;
-  bool scientific_notation;
-  bool prefix_0b;
-  bool prefix_0x;
-  bool prefix_0o;
-  bool no_suffix_with_box;
   bool separator;
   char sep;
+  hashset<string> bool_features;
 
   void do_parse (string s, int& pos);
 

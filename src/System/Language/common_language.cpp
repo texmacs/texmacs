@@ -24,7 +24,7 @@ common_language_rep::common_language_rep (string name):
   string use_modules= "(use-modules (prog " * name * "-lang))";
   eval (use_modules);
 
-  // Config keyword_parser
+  // Load (<name>-keywords)
   string get_list_of_keywords_tree= "(map tm->tree (" * name * "-keywords))";
   list<tree> l= as_list_tree (eval (get_list_of_keywords_tree));
   for (int i=0; i<N(l); i++) {
@@ -36,7 +36,7 @@ common_language_rep::common_language_rep (string name):
     }
   }
 
-  // Config operator_parser
+  // Load (<name>-operators)
   string get_list_of_operators_tree= "(map tm->tree (" * name * "-operators))";
   list<tree> l_oper= as_list_tree (eval (get_list_of_operators_tree));
   for (int i=0; i<N(l_oper); i++) {
@@ -48,6 +48,21 @@ common_language_rep::common_language_rep (string name):
     }
   }
 
+  // Load (<name>-numbers)
+  string get_list_of_numbers_tree= "(map tm->tree (" * name * "-numbers))";
+  list<tree> l_num= as_list_tree (eval (get_list_of_numbers_tree));
+  for (int i=0; i<N(l_num); i++) {
+    tree feature= l_num[i];
+    string name= get_label (feature);
+    if (name== "bool_features") {
+      for (int j=0; j<N(feature); j++) {
+        string key= get_label (feature[j]);
+        number_parser.insert_bool_feature (key);
+      }
+    }
+  }
+
+  // Load (<name>-inline-comment-starts)
   list<string> inline_comment_starts_list=
     as_list_string (eval ("(" * name * "-inline-comment-starts)"));
   array<string> inline_comment_starts;
@@ -56,6 +71,7 @@ common_language_rep::common_language_rep (string name):
   }
   inline_comment_parser.set_starts (inline_comment_starts);
 
+  // Load (<name>-escape-strings)
   list<string> escape_strings_list=
     as_list_string (eval ("(" * name * "-escape-strings)"));
   array<string> escape_strings;

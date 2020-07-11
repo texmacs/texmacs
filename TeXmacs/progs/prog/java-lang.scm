@@ -49,6 +49,13 @@
    `(operator_field "." "::")
    `(operator_openclose "{" "[" "(" ")" "]" "}")))
 
+(tm-define (java-numbers)
+  (list
+   `(bool_features
+     "prefix_0x" "prefix_0b"
+     "long_suffix" "double_suffix" "float_suffix"
+     "sci_notation")))
+
 (tm-define (java-inline-comment-starts)
   (list "//"))
 
@@ -58,4 +65,3 @@
 ;; TODO:
 ;; escaped_char_parser.support_octal_upto_3_digits (true);
 ;; escaped_char_parser.support_hex_with_16_bits (true);
-;; number_parser.use_java_style
