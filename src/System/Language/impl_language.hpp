@@ -149,39 +149,6 @@ struct scilab_language_rep: abstract_language_rep {
   string parse_operators (hashmap<string,string>& t, string s, int& pos);
 };
 
-struct python_language_rep: abstract_language_rep {
-  python_language_rep (string name);
-  text_property advance (tree t, int& pos);
-  array<int> get_hyphens (string s);
-  void hyphenate (string s, int after, string& left, string& right);
-  string get_color (tree t, int start, int end);
-
-  string parse_keywords (hashmap<string,string>& t, string s, int& pos);
-  string parse_operators (hashmap<string,string>& t, string s, int& pos);
-};
-
-struct java_language_rep: abstract_language_rep {
-  java_language_rep (string name);
-  text_property advance (tree t, int& pos);
-  array<int> get_hyphens (string s);
-  void hyphenate (string s, int after, string& left, string& right);
-  string get_color (tree t, int start, int end);
-
-  string parse_keywords (hashmap<string,string>& t, string s, int& pos);
-  string parse_operators (hashmap<string,string>& t, string s, int& pos);
-};
-
-struct scala_language_rep: abstract_language_rep {
-  scala_language_rep (string name);
-  text_property advance (tree t, int& pos);
-  array<int> get_hyphens (string s);
-  void hyphenate (string s, int after, string& left, string& right);
-  string get_color (tree t, int start, int end);
-
-  string parse_keywords (hashmap<string,string>& t, string s, int& pos);
-  string parse_operators (hashmap<string,string>& t, string s, int& pos);
-};
-
 struct fortran_language_rep: abstract_language_rep {
   fortran_language_rep (string name);
   text_property advance (tree t, int& pos);

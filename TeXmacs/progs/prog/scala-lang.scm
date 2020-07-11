@@ -69,7 +69,9 @@
 
 (tm-define (scala-escape-sequences)
   (list
-   `(bool_features "")
+   `(bool_features
+     "hex_with_8_bits" "hex_with_16_bits"
+     "hex_with_32_bits" "octal_upto_3_digits")
    `(sequences "\\" "\"" "'" "b" "f" "n" "r" "t")))
 
 ;; array<char> start_chars, extra_chars;

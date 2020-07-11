@@ -116,10 +116,7 @@ public:
   inline bool is_separator (char param) { return separator && sep == param; }
 
   void use_cpp_style ();
-  void use_python_style ();
   void use_fortran_style ();
-  void use_java_style ();
-  void use_scala_style ();
   void use_r_style ();
 
 private:
