@@ -71,14 +71,27 @@ common_language_rep::common_language_rep (string name):
   }
   inline_comment_parser.set_starts (inline_comment_starts);
 
-  // Load (<name>-escape-strings)
-  list<string> escape_strings_list=
-    as_list_string (eval ("(" * name * "-escape-strings)"));
-  array<string> escape_strings;
-  for (int i=0; i<N(escape_strings_list); i++) {
-    escape_strings << escape_strings_list[i];
+  // Load (<name>-escape-sequences)
+  list<string> get_list_of_escapes=
+    as_list_string (eval ("(" * name * "-escape-sequences)"));
+  list<tree> l_escape= as_list_tree (eval (get_list_of_numbers_tree));
+  for (int i=0; i<N(l_escape); i++) {
+    tree feature= l_escape[i];
+    string name= get_label (feature);
+    if (name == "bool_features") {
+      for (int j=0; j<N(feature); j++) {
+        string key= get_label (feature[j]);
+        escaped_char_parser.insert_bool_feature (key);
+      }
+    } else if (name == "sequences") {
+      array<string> escape_seq;
+      for (int j=0; j<N(feature); j++) {
+        string key= get_label (feature[j]);
+        escape_seq << key;
+      }
+      escaped_char_parser.set_sequences (escape_seq);
+    }
   }
-  escaped_char_parser.set_strings (escape_strings);
 
   string_parser.set_escaped_char_parser (escaped_char_parser);
   hashmap<string, string> pairs;

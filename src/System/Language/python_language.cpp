@@ -29,7 +29,7 @@ python_language_rep::python_language_rep (string name):
 
   array<string> escape_strings;
   escape_strings << string("newline");
-  escaped_char_parser.set_strings (escape_strings);
+  escaped_char_parser.set_sequences (escape_strings);
 
   escaped_char_parser.support_hex_with_8_bits (true);
   escaped_char_parser.support_hex_with_16_bits (true);
