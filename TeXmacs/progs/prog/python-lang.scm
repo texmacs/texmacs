@@ -3,7 +3,7 @@
 ;;
 ;; MODULE      : python-lang.scm
 ;; DESCRIPTION : Python Language
-;; COPYRIGHT   : (C) 2020  Darcy Shen
+;; COPYRIGHT   : (C) 2014-2020  François Poulain, Darcy Shen
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -80,5 +80,3 @@
      "hex_with_8_bits" "hex_with_16_bits"
      "hex_with_32_bits" "octal_upto_3_digits")
    `(sequences "\\" "\"" "'" "a" "b" "f" "n" "r" "t" "v" "newline")))
-
-;; number parser support_separator ('_');

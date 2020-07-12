@@ -38,12 +38,16 @@
   (list
    `(bool_features
      "prefix_0x" "prefix_0b"
-     "long_suffix" "double_suffix" "float_suffix"
+     "j_suffix"
      "sci_notation")
    `(separator "_")))
 
 (tm-define (octave-inline-comment-starts)
   (list "#"))
 
-(tm-define (octave-escape-strings)
-  (list "\\" "\"" "'" "a" "b" "f" "n" "r" "t" "v"))
+(tm-define (octave-escape-sequences)
+  (list
+   `(bool_features 
+     "hex_with_8_bits" "hex_with_16_bits"
+     "hex_with_32_bits" "octal_upto_3_digits")
+   `(sequences "\\" "\"" "'" "a" "b" "f" "n" "r" "t" "v")))
