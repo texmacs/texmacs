@@ -1,7 +1,7 @@
 
 /******************************************************************************
-* MODULE     : common_language.cpp
-* DESCRIPTION: the DOT language
+* MODULE     : prog_language.cpp
+* DESCRIPTION: Parser and syntax-highlighter for programming languages
 * COPYRIGHT  : (C) 2020  Darcy Shen
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
@@ -16,7 +16,7 @@
 #include "tree.hpp"
 #include "iterator.hpp"
 
-common_language_rep::common_language_rep (string name):
+prog_language_rep::prog_language_rep (string name):
   abstract_language_rep (name)
 {
   debug_packrat << "Building the " * name * " language parser" << LF;
@@ -104,7 +104,7 @@ common_language_rep::common_language_rep (string name):
 }
 
 text_property
-common_language_rep::advance (tree t, int& pos) {
+prog_language_rep::advance (tree t, int& pos) {
   string s= t->label;
   if (pos>=N(s)) return &tp_normal_rep;
 
@@ -151,7 +151,7 @@ common_language_rep::advance (tree t, int& pos) {
 }
 
 array<int>
-common_language_rep::get_hyphens (string s) {
+prog_language_rep::get_hyphens (string s) {
   int i;
   array<int> penalty (N(s)+1);
   penalty[0]= HYPH_INVALID;
@@ -164,7 +164,7 @@ common_language_rep::get_hyphens (string s) {
 }
 
 void
-common_language_rep::hyphenate (
+prog_language_rep::hyphenate (
   string s, int after, string& left, string& right)
 {
   left = s (0, after);
@@ -172,7 +172,7 @@ common_language_rep::hyphenate (
 }
 
 string
-common_language_rep::get_color (tree t, int start, int end) {
+prog_language_rep::get_color (tree t, int start, int end) {
   static string none= "";
   if (start >= end) return none;
 

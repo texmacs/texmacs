@@ -73,8 +73,8 @@ struct verb_language_rep: language_rep {
   string get_color (tree t, int start, int end);
 };
 
-struct common_language_rep: abstract_language_rep {
-  common_language_rep (string name);
+struct prog_language_rep: abstract_language_rep {
+  prog_language_rep (string name);
   text_property advance (tree t, int& pos);
   array<int> get_hyphens (string s);
   void hyphenate (string s, int after, string& left, string& right);
