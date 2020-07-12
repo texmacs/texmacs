@@ -117,6 +117,9 @@ public:
       separator= param[0];
     }
   }
+  inline void support_separator (char param) {
+    separator= param;
+  }
   inline bool is_separator (char param) { return separator != '\0' && separator == param; }
 
   void use_cpp_style ();
