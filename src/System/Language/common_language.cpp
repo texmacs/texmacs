@@ -54,11 +54,14 @@ common_language_rep::common_language_rep (string name):
   for (int i=0; i<N(l_num); i++) {
     tree feature= l_num[i];
     string name= get_label (feature);
-    if (name== "bool_features") {
+    if (name == "bool_features") {
       for (int j=0; j<N(feature); j++) {
         string key= get_label (feature[j]);
         number_parser.insert_bool_feature (key);
       }
+    } else if (name == "operator" && N(feature) == 1) {
+      string key= get_label (feature[0]);
+      number_parser.support_separator (key);
     }
   }
 

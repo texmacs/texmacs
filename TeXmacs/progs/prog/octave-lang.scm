@@ -39,7 +39,8 @@
    `(bool_features
      "prefix_0x" "prefix_0b"
      "long_suffix" "double_suffix" "float_suffix"
-     "sci_notation")))
+     "sci_notation")
+   `(separator "_")))
 
 (tm-define (octave-inline-comment-starts)
   (list "#"))

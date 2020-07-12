@@ -13,8 +13,7 @@
 #include "analyze.hpp"
 
 number_parser_rep::number_parser_rep () {
-  separator= false;
-  sep = '_';
+  separator= '\0';
 }
 
 void

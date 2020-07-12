@@ -68,7 +68,8 @@
    `(bool_features
      "prefix_0x" "prefix_0b" "prefix_0o" "no_suffix_with_box"
      "j_suffix" "locase_i_suffix"
-     "sci_notation")))
+     "sci_notation")
+   `(separator "_")))
 
 (tm-define (python-inline-comment-starts)
   (list "#"))

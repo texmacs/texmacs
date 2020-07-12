@@ -112,16 +112,19 @@ public:
     else       remove_bool_feature (SCIENTIFIC_NOTATION);
   }
 
-  inline void support_separator (char param) { sep= param; separator= true; }
-  inline bool is_separator (char param) { return separator && sep == param; }
+  inline void support_separator (string param) {
+    if (N(param) == 1) {
+      separator= param[0];
+    }
+  }
+  inline bool is_separator (char param) { return separator != '\0' && separator == param; }
 
   void use_cpp_style ();
   void use_fortran_style ();
   void use_r_style ();
 
 private:
-  bool separator;
-  char sep;
+  char separator;
   hashset<string> bool_features;
 
   void do_parse (string s, int& pos);
