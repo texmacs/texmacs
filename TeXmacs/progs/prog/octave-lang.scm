@@ -14,33 +14,35 @@
 (texmacs-module (prog octave-lang))
 
 (tm-define (octave-keywords)
-  (list
-   `(constant
-     "false" "true")
-   `(declare_type "function" "endfunction" "class")
-   `(declare_module "pkg")
-   `(keyword_conditional
-     "break" "continue" "do" "else" "for" "endfor" "if" "endif"
-     "while" "endwhile" "switch" "case")
-   `(keyword_control
-     "catch" "try")))
+  `(keywords
+    (constant
+      "false" "true")
+    (declare_type "function" "endfunction" "class")
+    (declare_module "pkg")
+    (keyword_conditional
+      "break" "continue" "do" "else" "for" "endfor" "if" "endif"
+      "while" "endwhile" "switch" "case")
+    (keyword_control
+      "catch" "try")))
 
 (tm-define (octave-operators)
-  (list
-   `(operator
-     "," ";" ":" "=")
-   `(operator_special
-     "@")
-   `(operator_field ".")
-   `(operator_openclose "{" "[" "(" ")" "]" "}")))
+  `(operators
+    (operator "," ";" ":" "=")
+    (operator_special "@")
+    (operator_field ".")
+    (operator_openclose "{" "[" "(" ")" "]" "}")))
+
+(define (octave-number-suffix)
+  `(suffix
+    (imaginary "j" "J")))
 
 (tm-define (octave-numbers)
-  (list
-   `(bool_features
+  `(numbers
+    (bool_features
      "prefix_0x" "prefix_0b"
-     "j_suffix"
      "sci_notation")
-   `(separator "_")))
+    (separator "_")
+    ,(octave-number-suffix)))
 
 (tm-define (octave-inline-comment-starts)
   (list "#"))
