@@ -25,14 +25,6 @@ public:
 
   inline keyword_parser_rep get_suffix_parser () { return suffix_parser; }
 
-  string DOUBLE_SUFFIX= "double_suffix";
-  string FLOAT_SUFFIX= "float_suffix";
-  string I_SUFFIX= "i_suffix";
-  string J_SUFFIX= "j_suffix";
-  string LONG_SUFFIX= "long_suffix";
-  string ULL_SUFFIX= "ull_suffix";
-  string LOCASE_I_SUFFIX= "locase_i_suffix";
-
   string PREFIX_0B= "prefix_0b";
   string PREFIX_0O= "prefix_0o";
   string PREFIX_0X= "prefix_0x";
@@ -46,48 +38,6 @@ public:
   }
   inline void remove_bool_feature (string feature) {
     bool_features->remove (feature);
-  }
-
-  inline bool double_suffix () { return bool_features->contains (DOUBLE_SUFFIX); }
-  inline void support_double_suffix (bool param) {
-    if (param) insert_bool_feature (DOUBLE_SUFFIX);
-    else       remove_bool_feature (DOUBLE_SUFFIX);
-  }
-
-  inline bool float_suffix () { return bool_features->contains (FLOAT_SUFFIX); }
-  inline void support_float_suffix (bool param) {
-    if (param) insert_bool_feature (FLOAT_SUFFIX);
-    else       remove_bool_feature (FLOAT_SUFFIX);
-  }
-
-  inline bool i_suffix () { return bool_features->contains (I_SUFFIX); }
-  inline void support_i_suffix (bool param) {
-    if (param) insert_bool_feature (I_SUFFIX);
-    else       remove_bool_feature (I_SUFFIX);
-  }
-
-  inline bool j_suffix () { return bool_features->contains (J_SUFFIX); }
-  inline void support_j_suffix (bool param) {
-    if (param) insert_bool_feature (J_SUFFIX);
-    else       remove_bool_feature (J_SUFFIX);
-  }
-  
-  inline bool long_suffix () { return bool_features->contains (LONG_SUFFIX); }
-  inline void support_long_suffix (bool param) { 
-    if (param) insert_bool_feature (LONG_SUFFIX);
-    else       remove_bool_feature (LONG_SUFFIX);
-  }
-
-  inline bool ull_suffix () { return bool_features->contains (ULL_SUFFIX); }
-  inline void support_ull_suffix (bool param) {
-    if (param) insert_bool_feature (ULL_SUFFIX);
-    else       remove_bool_feature (ULL_SUFFIX);
-  }
-
-  inline bool locase_i_suffix () { return bool_features->contains (LOCASE_I_SUFFIX); }
-  inline void support_locase_i_suffix (bool param) {
-    if (param) insert_bool_feature (LOCASE_I_SUFFIX);
-    else       remove_bool_feature (LOCASE_I_SUFFIX);
   }
 
   inline bool prefix_0b () { return bool_features->contains (PREFIX_0B); }
@@ -150,7 +100,6 @@ private:
   void parse_binary (string s, int& pos);
   void parse_hex (string s, int& pos);
   void parse_octal (string s, int& pos);
-  void parse_suffix (string s, int& pos);
   void parse_decimal (string s, int& pos);
 };
 

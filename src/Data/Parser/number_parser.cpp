@@ -41,41 +41,6 @@ number_parser_rep::parse_decimal (string s, int& pos) {
     pos++;
 }
 
-void
-number_parser_rep::parse_suffix (string s, int& pos) {
-  if (ull_suffix() && pos<N(s)) {
-    if (test (s, pos, "ull") || test (s, pos, "ULL")) { pos+= 3; return; }
-    if (test (s, pos, "ll") || test (s, pos, "ul")
-        || test(s, pos, "LL") || test (s, pos, "UL")) { pos+= 2; return; }
-    if (s[pos] == 'l' || s[pos] == 'u'
-        || s[pos] == 'L' || s[pos] == 'U') { pos+= 1; return; }
-  }
-  if (double_suffix() && pos<N(s) && (s[pos] == 'd' || s[pos] == 'D')) {
-    pos= pos+1;
-    return;
-  }
-  if (float_suffix() && pos<N(s) && (s[pos] == 'f' || s[pos] == 'F')) {
-    pos= pos+1;
-    return;
-  }
-  if (i_suffix() && pos<N(s) && (s[pos] == 'i') || s[pos] == 'I') {
-    pos= pos+1;
-    return;
-  }
-  if (j_suffix() && pos<N(s) && (s[pos] == 'j' || s[pos] == 'J')) {
-    pos= pos+1;
-    return;
-  }
-  if (long_suffix() && pos<N(s) && (s[pos] == 'l' || s[pos] == 'L')) {
-    pos= pos+1;
-    return;
-  }
-  if (locase_i_suffix() && pos<N(s) && s[pos] == 'i') {
-    pos= pos+1;
-    return;
-  }
-}
-
 bool
 number_parser_rep::can_parse_prefix_0b (string s, int pos) {
   return prefix_0b()
@@ -154,7 +119,7 @@ number_parser_rep::do_parse (string s, int& pos) {
 void
 number_parser_rep::use_cpp_style () {
   support_prefix_0x (true);
-  support_ull_suffix (true);
+  // support_ull_suffix (true);
   support_separator ('_');
   support_scientific_notation (true);
 }
@@ -166,8 +131,8 @@ number_parser_rep::use_fortran_style () {
 
 void
 number_parser_rep::use_r_style () {
-  support_long_suffix (true);
-  support_locase_i_suffix (true);
+  // support_long_suffix (true);
+  // support_locase_i_suffix (true);
   support_scientific_notation (true);
   support_prefix_0x (true);
 }
