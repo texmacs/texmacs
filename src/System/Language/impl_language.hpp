@@ -63,6 +63,9 @@ struct abstract_language_rep: language_rep {
   void parse_type (hashmap<string,string>& t, string s, int& pos);
   void parse_keyword (hashmap<string,string>& t, string s, int& pos);
   void parse_constant (hashmap<string,string>& t, string s, int& pos);
+  void customize_keyword (keyword_parser_rep keyword_parser, tree config);
+  void customize_operator (operator_parser_rep operator_parser, tree config);
+  void customize_number (number_parser_rep number_parser, tree config);
 };
 
 struct verb_language_rep: language_rep {

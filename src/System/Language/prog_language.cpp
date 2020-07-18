@@ -25,45 +25,19 @@ prog_language_rep::prog_language_rep (string name):
   eval (use_modules);
 
   // Load (<name>-keywords)
-  string get_list_of_keywords_tree= "(map tm->tree (" * name * "-keywords))";
-  list<tree> l= as_list_tree (eval (get_list_of_keywords_tree));
-  for (int i=0; i<N(l); i++) {
-    tree group_words= l[i];
-    string group= get_label (group_words);
-    for (int j=0; j<N(group_words); j++) {
-      string word= get_label (group_words[j]);
-      keyword_parser.put (word, group);
-    }
-  }
+  string get_the_keywords_tree= "(tm->tree (" * name * "-keywords))";
+  tree keyword_tree= as_tree (eval (get_the_keywords_tree));
+  customize_keyword (keyword_parser, keyword_tree);
 
   // Load (<name>-operators)
-  string get_list_of_operators_tree= "(map tm->tree (" * name * "-operators))";
-  list<tree> l_oper= as_list_tree (eval (get_list_of_operators_tree));
-  for (int i=0; i<N(l_oper); i++) {
-    tree group_words= l_oper[i];
-    string group= get_label (group_words);
-    for (int j=0; j<N(group_words); j++) {
-      string word= get_label (group_words[j]);
-      operator_parser.put (word, group);
-    }
-  }
+  string get_the_operators_tree= "(tm->tree (" * name * "-operators))";
+  tree operator_tree= as_tree (eval (get_the_operators_tree));
+  customize_operator (operator_parser, operator_tree);
 
   // Load (<name>-numbers)
-  string get_list_of_numbers_tree= "(map tm->tree (" * name * "-numbers))";
-  list<tree> l_num= as_list_tree (eval (get_list_of_numbers_tree));
-  for (int i=0; i<N(l_num); i++) {
-    tree feature= l_num[i];
-    string name= get_label (feature);
-    if (name == "bool_features") {
-      for (int j=0; j<N(feature); j++) {
-        string key= get_label (feature[j]);
-        number_parser.insert_bool_feature (key);
-      }
-    } else if (name == "separator" && N(feature) == 1) {
-      string key= get_label (feature[0]);
-      number_parser.support_separator (key);
-    }
-  }
+  string get_the_numbers_tree= "(tm->tree (" * name * "-numbers))";
+  tree number_tree= as_tree (eval (get_the_numbers_tree));
+  customize_number (number_parser, number_tree);
 
   // Load (<name>-inline-comment-starts)
   list<string> inline_comment_starts_list=
@@ -77,7 +51,7 @@ prog_language_rep::prog_language_rep (string name):
   // Load (<name>-escape-sequences)
   list<string> get_list_of_escapes=
     as_list_string (eval ("(" * name * "-escape-sequences)"));
-  list<tree> l_escape= as_list_tree (eval (get_list_of_numbers_tree));
+  list<tree> l_escape= as_list_tree (eval (get_list_of_escapes));
   for (int i=0; i<N(l_escape); i++) {
     tree feature= l_escape[i];
     string name= get_label (feature);

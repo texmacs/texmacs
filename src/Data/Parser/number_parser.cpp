@@ -58,6 +58,10 @@ number_parser_rep::parse_suffix (string s, int& pos) {
     pos= pos+1;
     return;
   }
+  if (i_suffix() && pos<N(s) && (s[pos] == 'i') || s[pos] == 'I') {
+    pos= pos+1;
+    return;
+  }
   if (j_suffix() && pos<N(s) && (s[pos] == 'j' || s[pos] == 'J')) {
     pos= pos+1;
     return;
@@ -144,7 +148,7 @@ number_parser_rep::do_parse (string s, int& pos) {
     if (pos<N(s) && s[pos] == '-') pos++;
     parse_decimal (s, pos);
   }
-  parse_suffix (s, pos);
+  suffix_parser.parse (s, pos);
 }
 
 void

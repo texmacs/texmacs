@@ -30,3 +30,5 @@ tests/gtest
 cmake-build-debug
 CMakeLists.txt.user
 misc/benchmark/gbench
+
+TeXmacs/progs/ice-9

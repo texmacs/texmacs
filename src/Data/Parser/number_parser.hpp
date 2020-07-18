@@ -13,6 +13,7 @@
 #define NUMBER_PARSER_H
 
 #include "parser.hpp"
+#include "keyword_parser.hpp"
 #include "hashset.hpp"
 
 class number_parser_rep : public parser_rep {
@@ -22,8 +23,11 @@ public:
   bool can_parse (string s, int pos);
   string get_parser_name () { return "number_parser"; }
 
+  inline keyword_parser_rep get_suffix_parser () { return suffix_parser; }
+
   string DOUBLE_SUFFIX= "double_suffix";
   string FLOAT_SUFFIX= "float_suffix";
+  string I_SUFFIX= "i_suffix";
   string J_SUFFIX= "j_suffix";
   string LONG_SUFFIX= "long_suffix";
   string ULL_SUFFIX= "ull_suffix";
@@ -54,6 +58,12 @@ public:
   inline void support_float_suffix (bool param) {
     if (param) insert_bool_feature (FLOAT_SUFFIX);
     else       remove_bool_feature (FLOAT_SUFFIX);
+  }
+
+  inline bool i_suffix () { return bool_features->contains (I_SUFFIX); }
+  inline void support_i_suffix (bool param) {
+    if (param) insert_bool_feature (I_SUFFIX);
+    else       remove_bool_feature (I_SUFFIX);
   }
 
   inline bool j_suffix () { return bool_features->contains (J_SUFFIX); }
@@ -129,6 +139,7 @@ public:
 private:
   char separator;
   hashset<string> bool_features;
+  keyword_parser_rep suffix_parser;
 
   void do_parse (string s, int& pos);
 
