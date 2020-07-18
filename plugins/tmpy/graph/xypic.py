@@ -25,6 +25,8 @@ class XYpic(LaTeX):
         self.pre_code = """
 \\documentclass{standalone}
 \\usepackage[all]{xy}
+\\usepackage{amsmath}
+\\usepackage{amssymb}
 \\begin{document}
 """
         self.post_code = "\end{document}"
