@@ -38,8 +38,6 @@
 
   <new-theorem|axiom|Axiom>
 
-  <new-theorem|definition|Definition>
-
   <new-theorem|notation|Notation>
 
   <new-theorem|conjecture|Conjecture>
@@ -49,6 +47,8 @@
   <new-remark|remark|Remark>
 
   <new-remark|example|Example>
+    
+  <new-remark|definition|Definition>
 
   <new-remark|note|Note>
 
