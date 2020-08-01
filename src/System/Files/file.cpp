@@ -123,9 +123,14 @@ load_string (url u, string& s, bool fatal) {
         cache_set (cache_type, name, s);
     // End caching
   }
-  if (err && fatal) {
-    failed_error << "File name= " << as_string (u) << "\n";
-    FAILED ("file not readable");
+  if (err) {
+    string err_msg = string("Failed to load file: ") * as_string (u);
+    if (fatal) {
+      failed_error << err_msg << LF;
+      FAILED ("file not readable");
+    } else {
+      debug_io << err_msg << LF;
+    }
   }
   return err;
 }

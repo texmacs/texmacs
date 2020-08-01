@@ -15,6 +15,12 @@
 #include "sys_utils.hpp"
 #include "analyze.hpp"
 
+/**
+ * Load the url to a string, and return a boolean indicator
+ * @param u the url to load
+ * @param s the loaded string
+ * @return If there are errors, return true, else, return false
+ */
 bool load_string (url file_name, string& s, bool fatal);
 bool save_string (url file_name, string s, bool fatal=false);
 bool append_string (url u, string s, bool fatal= false);

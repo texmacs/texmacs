@@ -527,9 +527,10 @@ init_texmacs () {
 
 void
 init_plugins () {
-  install_status= 0;
   url old_settings= "$TEXMACS_HOME_PATH/system/TEX_PATHS";
   url new_settings= "$TEXMACS_HOME_PATH/system/settings.scm";
+
+  install_status= 0;
   string s;
   if (load_string (new_settings, s, false)) {
     if (load_string (old_settings, s, false)) {
@@ -539,6 +540,7 @@ init_plugins () {
     else get_old_settings (s);
   }
   else texmacs_settings= block_to_scheme_tree (s);
+
   if (get_setting ("VERSION") != TEXMACS_VERSION) {
     init_upgrade ();
     url ch ("$TEXMACS_HOME_PATH/doc/about/changes/changes-recent.en.tm");
