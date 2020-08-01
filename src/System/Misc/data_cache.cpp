@@ -59,8 +59,9 @@ is_up_to_date (url dir) {
   if (is_cached ("validate_cache.scm", name_dir)) {
     int r= as_int (cache_get ("validate_cache.scm", name_dir) -> label);
     if (l == r) {
-      cache_valid (name_dir)= true;
-      return true;
+      bool ok= (l != (- (int) (((unsigned int) (-1)) >> 1)));
+      cache_valid (name_dir)= ok;
+      return ok;
     }
     //cout << name_dir << " no longer up to date " << r << " -> " << l << "\n";
   }
