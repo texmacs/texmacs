@@ -61,35 +61,9 @@
   (select-brackets-after-movement "([{" ")]}" "\\"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Preferences for syntax highlighting
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (notify-python-syntax var val)
-  (syntax-read-preferences "python"))
-
-(define-preferences
-  ("syntax:python:none" "red" notify-python-syntax)
-  ("syntax:python:comment" "brown" notify-python-syntax)
-  ("syntax:python:error" "dark red" notify-python-syntax)
-  ("syntax:python:constant" "#4040c0" notify-python-syntax)
-  ("syntax:python:constant_number" "#4040c0" notify-python-syntax)
-  ("syntax:python:constant_string" "dark grey" notify-python-syntax)
-  ("syntax:python:constant_char" "#333333" notify-python-syntax)
-  ("syntax:python:declare_function" "#0000c0" notify-python-syntax)
-  ("syntax:python:declare_type" "#0000c0" notify-python-syntax)
-  ("syntax:python:operator" "#8b008b" notify-python-syntax)
-  ("syntax:python:operator_openclose" "#B02020" notify-python-syntax)
-  ("syntax:python:operator_field" "#88888" notify-python-syntax)
-  ("syntax:python:operator_special" "orange" notify-python-syntax)
-  ("syntax:python:keyword" "#309090" notify-python-syntax)
-  ("syntax:python:keyword_conditional" "#309090" notify-python-syntax)
-  ("syntax:python:keyword_control" "#309090" notify-python-syntax))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Copy and Paste
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (kbd-paste)
   (:mode in-prog-python?)
   (clipboard-paste-import "python" "primary"))
-
