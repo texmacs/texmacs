@@ -117,14 +117,6 @@ number_parser_rep::do_parse (string s, int& pos) {
 }
 
 void
-number_parser_rep::use_cpp_style () {
-  support_prefix_0x (true);
-  // support_ull_suffix (true);
-  support_separator ('_');
-  support_scientific_notation (true);
-}
-
-void
 number_parser_rep::use_fortran_style () {
   support_scientific_notation (true);
 }

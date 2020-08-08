@@ -82,7 +82,6 @@ public:
   }
   inline bool is_separator (char param) { return separator != '\0' && separator == param; }
 
-  void use_cpp_style ();
   void use_fortran_style ();
   void use_r_style ();
 
