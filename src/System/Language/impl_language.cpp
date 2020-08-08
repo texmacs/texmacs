@@ -253,35 +253,3 @@ abstract_language_rep::customize_number (number_parser_rep number_parser, tree c
     }
   }
 }
-
-/******************************************************************************
-* Interface
-******************************************************************************/
-
-language
-prog_language (string s) {
-  hashset<string> prog_v1_langs= hashset<string>();
-  prog_v1_langs->insert ("cpp");
-  prog_v1_langs->insert ("dot");
-  prog_v1_langs->insert ("java");
-  prog_v1_langs->insert ("octave");
-  prog_v1_langs->insert ("python");
-  prog_v1_langs->insert ("scala");
-
-  if (language::instances -> contains (s)) return language (s);
-
-  if (prog_v1_langs->contains (s))
-    return make (language, s, tm_new<prog_language_rep> (s));
-
-  if (s == "scheme")
-    return make (language, s, tm_new<scheme_language_rep> (s));
-  if (s == "mathemagix" || s == "mmi" || s == "caas")
-    return make (language, s, tm_new<mathemagix_language_rep> (s));
-  if (s == "scilab")
-    return make (language, s, tm_new<scilab_language_rep> (s));
-  if (s == "r")
-    return make (language, s, tm_new<r_language_rep> (s));
-  if (s == "fortran")
-    return make (language, s, tm_new<fortran_language_rep> (s));
-  return make (language, s, tm_new<verb_language_rep> (s));
-}

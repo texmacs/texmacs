@@ -187,3 +187,32 @@ prog_language_rep::get_color (tree t, int start, int end) {
   return decode_color (lan_name, encode_color (type));
 }
 
+/******************************************************************************
+* Interface
+******************************************************************************/
+
+language
+prog_language (string s) {
+  if (language::instances -> contains (s)) return language (s);
+
+  hashset<string> prog_v1_langs= hashset<string>();
+  prog_v1_langs
+    << string("cpp")        << string("dot")    << string("java")
+    << string("javascript") << string("octave") << string("python")
+    << string("scala");
+
+  if (prog_v1_langs->contains (s))
+    return make (language, s, tm_new<prog_language_rep> (s));
+
+  if (s == "scheme")
+    return make (language, s, tm_new<scheme_language_rep> (s));
+  if (s == "mathemagix" || s == "mmi" || s == "caas")
+    return make (language, s, tm_new<mathemagix_language_rep> (s));
+  if (s == "scilab")
+    return make (language, s, tm_new<scilab_language_rep> (s));
+  if (s == "r")
+    return make (language, s, tm_new<r_language_rep> (s));
+  if (s == "fortran")
+    return make (language, s, tm_new<fortran_language_rep> (s));
+  return make (language, s, tm_new<verb_language_rep> (s));
+}

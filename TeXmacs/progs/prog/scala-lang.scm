@@ -49,7 +49,7 @@
       "<less>" "<gtr>" "<less>=" "<gtr>="
       "<gtr><gtr><gtr>" "<less><less>" "<gtr><gtr>"
       "+=" "-=" "/=" "*=" "%=" "|=" "&=" "^=" ;; Assignment
-      "=")
+      "=" ";")
     (operator_special
       ":" "=<gtr>" "::" ":::" "++"
       "+:" ":+" "++:" "/:" ":\\" "<less>-")

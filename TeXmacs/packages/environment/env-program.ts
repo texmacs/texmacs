@@ -10,7 +10,8 @@
       Some environments for typesetting algorithms.
     </src-purpose>
 
-    <src-copyright|1998--2012|Joris van der Hoeven, François Poulain>
+    <src-copyright|1998--2020|Joris van der Hoeven, François Poulain, Darcy
+    Shen>
 
     <\src-license>
       This software falls under the <hlink|GNU general public license,
@@ -198,6 +199,8 @@
 
   <assign|dot-lang|<macro|body|<with|mode|prog|prog-language|dot|font-family|rm|<arg|body>>>>
 
+  <assign|javascript-lang|<macro|body|<with|mode|prog|prog-language|javascript|font-family|rm|<arg|body>>>>
+
   <assign|octave-lang|<macro|body|<with|mode|prog|prog-language|octave|font-family|rm|<arg|body>>>>
 
   <\active*>
@@ -245,6 +248,12 @@
   <assign|java-code|<\macro|body>
     <\pseudo-code>
       <java|<arg|body>>
+    </pseudo-code>
+  </macro>>
+
+  <assign|javascript-code|<\macro|body>
+    <\pseudo-code>
+      <javascript-lang|<arg|body>>
     </pseudo-code>
   </macro>>
 

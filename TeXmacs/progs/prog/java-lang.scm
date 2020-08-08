@@ -43,7 +43,7 @@
       "<less>" "<gtr>" "<less>=" "<gtr>="
       "&&" "||" "!" "==" "!=" ;; Boolean
       "+=" "-=" "/=" "*=" "%=" "|=" "&=" "^=" ;; Assignment
-      "=" ":")
+      "=" ":" ";")
     (operator_special "-<gtr>")
     (operator_decoration "@")
     (operator_field "." "::")

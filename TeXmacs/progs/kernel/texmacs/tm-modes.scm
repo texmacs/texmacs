@@ -152,6 +152,8 @@
   (in-prog-octave% #t in-prog% in-octave%)
   (in-java% (== (get-env "prog-language") "java"))
   (in-prog-java% #t in-prog% in-java%)
+  (in-javascript% (== (get-env "prog-language") "javascript"))
+  (in-prog-javascript% #t in-prog% in-javascript%)
   (in-fortran% (== (get-env "prog-language") "fortran"))
   (in-prog-fortran% #t in-prog% in-fortran%)
   (in-scala% (== (get-env "prog-language") "scala"))

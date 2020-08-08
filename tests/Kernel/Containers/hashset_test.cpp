@@ -22,3 +22,11 @@ TEST (hashset, contains) {
   EXPECT_EQ (set->contains("Hello"), true);
   EXPECT_EQ (set->contains("hello"), false);
 }
+
+TEST (hashset, init) {
+  auto set= hashset<string>();
+  set << string("hello") << string("world");
+  EXPECT_EQ (set->contains("hello"), true);
+  EXPECT_EQ (set->contains("world"), true);
+  EXPECT_EQ (N(set), 2);
+}
