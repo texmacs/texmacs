@@ -36,8 +36,6 @@ public:
   }
 
 
-  void use_operators_of_lang (string lang_code);
-
 private:
   void do_parse (string s, int& pos);
   hashmap<string, string> operator_group;

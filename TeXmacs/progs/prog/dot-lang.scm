@@ -42,7 +42,7 @@
     (operator
       "," ";" ":" "=")
     (operator_special
-      "-<gtr>" "--")
+      "->" "--")
     (operator_field ".")
     (operator_openclose "{" "[" "(" ")" "]" "}")))
 

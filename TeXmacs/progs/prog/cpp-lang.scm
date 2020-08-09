@@ -44,13 +44,11 @@
     (operator
       "+" "-" "/" "*" "%" ;; Arith
       "|" "&" "^" ;; Bit
-      "&&" "||" "!"
-      "<less><less>" "<gtr><gtr>" "==" "!="
-      "<less>" "<gtr>" "<less>=" "<gtr>="
-      "&&" "||" "!" "==" "!=" ;; Boolean
+      "<<" ">>" 
+      "==" "!=" "<" ">" "<=" ">=" "&&" "||" "!" "==" ;; Boolean
       "+=" "-=" "/=" "*=" "%=" "|=" "&=" "^=" ;; Assignment
       "=" ":")
-    (operator_special "-<gtr>")
+    (operator_special "->")
     (operator_decoration "@")
     (operator_field "." "::")
     (operator_openclose "{" "[" "(" ")" "]" "}")))

@@ -34,23 +34,6 @@ operator_parser_rep::can_parse (string s, int pos) {
 }
 
 void
-operator_parser_rep::use_operators_of_lang (string lang_code) {
-  string use_modules= "(use-modules (prog " * lang_code * "-lang))";
-  eval (use_modules);
-  string get_list_of_operators_tree= "(map tm->tree (" * lang_code * "-operators))";
-  list<tree> l= as_list_tree (eval (get_list_of_operators_tree));
-  debug_packrat << "Keywords definition of [" << lang_code << "] loaded!\n";
-  for (int i=0; i<N(l); i++) {
-    tree group_words= l[i];
-    string group= get_label (group_words);
-    for (int j=0; j<N(group_words); j++) {
-      string word= get_label (group_words[j]);
-      operator_group (word)= group;
-    }
-  }
-}
-
-void
 operator_parser_rep::do_parse (string s, int& pos) {
   int current_oper_size= N(current_oper);
   if (current_oper_size <= 0) {

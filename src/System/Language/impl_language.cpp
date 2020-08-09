@@ -230,7 +230,7 @@ abstract_language_rep::customize_operator (operator_parser_rep operator_parser, 
     string group= get_label (group_of_opers);
     for (int j=0; j<N(group_of_opers); j++) {
       string word= get_label (group_of_opers[j]);
-      operator_parser.put (word, group);
+      operator_parser.put (tm_encode (word), group);
     }
   }
 }

@@ -40,18 +40,20 @@
       "**" ;; Exponentiation Operator
       "/" "*" "%" ;; Multiplicative Operators
       ;; Additive Operators (already in Unary Operators)
-      "<less><less>" "<gtr><gtr>" "<gtr><gtr><gtr>" ;; Bitwise Shift Operators
-      "<less>" "<gtr>" "<less>=" "<gtr>=" "instanceof" "in" ;; Relational Operators
+      "<<" ">>" ">>>" ;; Bitwise Shift Operators
+      "<" ">" "<=" ">=" "instanceof" "in" ;; Relational Operators
       ;; Assignment Operators
-      "=" "+=" "-=" "/=" "*=" "%=" "&=" "^=" "|=" "**="
-      "<less><less>=" "<gtr><gtr>=" "<gtr><gtr><gtr>="
+      "="
+      "+=" "-=" "/=" "*=" "%="  "**="
+      "&=" "^=" "|="
+      "<<=" ">>=" ">>>="
       "==" "!=" "===" "!==" ;; Equality Operators
       "|" "&" "^" ;; Binary Bitwise Operators
       "&&" "||" "!" ;; Binary Logical Operators
       "?" ":" ;; Conditional Operator
       "," ;; Comma Operator
       ";")
-    (operator_special "-<gtr>")
+    (operator_special "->")
     (operator_decoration "@")
     (operator_field "." "::")
     (operator_openclose "{" "[" "(" ")" "]" "}")))
