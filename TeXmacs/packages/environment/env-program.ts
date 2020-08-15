@@ -10,7 +10,7 @@
       Some environments for typesetting algorithms.
     </src-purpose>
 
-    <src-copyright|1998--2020|Joris van der Hoeven, François Poulain, Darcy
+    <src-copyright|1998--2020|Joris van der Hoeven, Franï¿½ois Poulain, Darcy
     Shen>
 
     <\src-license>
@@ -201,6 +201,8 @@
 
   <assign|javascript-lang|<macro|body|<with|mode|prog|prog-language|javascript|font-family|rm|<arg|body>>>>
 
+  <assign|json-lang|<macro|body|<with|mode|prog|prog-language|json|font-family|rm|<arg|body>>>>
+
   <assign|octave-lang|<macro|body|<with|mode|prog|prog-language|octave|font-family|rm|<arg|body>>>>
 
   <\active*>
@@ -254,6 +256,12 @@
   <assign|javascript-code|<\macro|body>
     <\pseudo-code>
       <javascript-lang|<arg|body>>
+    </pseudo-code>
+  </macro>>
+
+  <assign|json-code|<\macro|body>
+    <\pseudo-code>
+      <json-lang|<arg|body>>
     </pseudo-code>
   </macro>>
 

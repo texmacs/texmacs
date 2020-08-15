@@ -68,9 +68,9 @@
 (tm-define (javascript-inline-comment-starts)
   (list "//"))
 
-(tm-define (javascript-escape-sequences)
-  (list
-   `(bool_features
+(tm-define (javascript-string)
+  `(string
+    (bool_features
      "hex_with_8_bits" "hex_with_16_bits"
      "hex_with_32_bits" "octal_upto_3_digits")
-   `(sequences "\\" "\"" "'" "b" "f" "n" "r" "v" "t")))
+    (escape_sequences "\\" "\"" "'" "b" "f" "n" "r" "v" "t")))

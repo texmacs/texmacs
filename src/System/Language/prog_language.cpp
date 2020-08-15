@@ -274,8 +274,8 @@ prog_language (string s) {
   hashset<string> prog_v1_langs= hashset<string>();
   prog_v1_langs
     << string("cpp")        << string("dot")    << string("java")
-    << string("javascript") << string("octave") << string("python")
-    << string("scala");
+    << string("javascript") << string("json")   << string("octave")
+    << string("python")     << string("scala");
 
   if (prog_v1_langs->contains (s))
     return make (language, s, tm_new<prog_language_rep> (s));
