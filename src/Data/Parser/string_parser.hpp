@@ -22,6 +22,8 @@ public:
   string_parser_rep ();
   bool can_parse (string s, int pos);
   string get_parser_name () { return "string_parser"; }
+  string to_string ();
+
   void set_pairs (hashmap<string, string> p_pairs);
 
   bool unfinished ();

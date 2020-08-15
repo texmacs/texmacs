@@ -78,12 +78,12 @@
 (tm-define (python-inline-comment-starts)
   (list "#"))
 
-(tm-define (python-escape-sequences)
-  (list
-   `(bool_features 
+(tm-define (python-string)
+  `(string
+    (bool_features 
      "hex_with_8_bits" "hex_with_16_bits"
      "hex_with_32_bits" "octal_upto_3_digits")
-   `(sequences "\\" "\"" "'" "a" "b" "f" "n" "r" "t" "v" "newline")))
+    (escape_sequences "\\" "\"" "'" "a" "b" "f" "n" "r" "t" "v" "newline")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences for syntax highlighting

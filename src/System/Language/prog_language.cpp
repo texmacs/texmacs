@@ -32,12 +32,12 @@ prog_language_rep::prog_language_rep (string name):
   // Load (<name>-operators)
   string get_the_operators_tree= "(tm->tree (" * name * "-operators))";
   tree operator_tree= as_tree (eval (get_the_operators_tree));
-  customize_operator (operator_parser, operator_tree);
+  customize_operator (operator_tree);
 
   // Load (<name>-numbers)
   string get_the_numbers_tree= "(tm->tree (" * name * "-numbers))";
   tree number_tree= as_tree (eval (get_the_numbers_tree));
-  customize_number (number_parser, number_tree);
+  customize_number (number_tree);
 
   // Load (<name>-inline-comment-starts)
   list<string> inline_comment_starts_list=
@@ -48,19 +48,71 @@ prog_language_rep::prog_language_rep (string name):
   }
   inline_comment_parser.set_starts (inline_comment_starts);
 
-  // Load (<name>-escape-sequences)
-  list<string> get_list_of_escapes=
-    as_list_string (eval ("(" * name * "-escape-sequences)"));
-  list<tree> l_escape= as_list_tree (eval (get_list_of_escapes));
-  for (int i=0; i<N(l_escape); i++) {
-    tree feature= l_escape[i];
+  // Load (<name>-string)
+  string get_the_string_tree = "(tm->tree (" * name * "-string))";
+  tree string_tree= as_tree (eval (get_the_string_tree));
+  customize_string (string_tree);
+
+  // Load (<name>-preprocessors)
+  string get_the_preprocessor_tree = "(tm->tree (" * name * "-preprocessors))";
+  tree preprocessor_tree= as_tree (eval (get_the_preprocessor_tree));
+  customize_preprocessor (preprocessor_tree);
+}
+
+void
+prog_language_rep::customize_keyword (keyword_parser_rep p_keyword_parser, tree config) {
+  for (int i=0; i<N(config); i++) {
+    tree group_of_keywords= config[i];
+    string group= get_label (group_of_keywords);
+    for (int j=0; j<N(group_of_keywords); j++) {
+      string word= get_label (group_of_keywords[j]);
+      p_keyword_parser.put (word, group);
+    }
+  }
+}
+
+void
+prog_language_rep::customize_operator (tree config) {
+  for (int i=0; i<N(config); i++) {
+    tree group_of_opers= config[i];
+    string group= get_label (group_of_opers);
+    for (int j=0; j<N(group_of_opers); j++) {
+      string word= get_label (group_of_opers[j]);
+      operator_parser.put (tm_encode (word), group);
+    }
+  }
+}
+
+void
+prog_language_rep::customize_number (tree config) {
+  for (int i=0; i<N(config); i++) {
+    tree feature= config[i];
+    string name= get_label (feature);
+    if (name == "bool_features") {
+      for (int j=0; j<N(feature); j++) {
+        string key= get_label (feature[j]);
+        number_parser.insert_bool_feature (key);
+      }
+    } else if (name == "separator" && N(feature) == 1) {
+      string key= get_label (feature[0]);
+      number_parser.support_separator (key);
+    } else if (name == "suffix") {
+      customize_keyword (number_parser.get_suffix_parser(), feature);
+    }
+  }
+}
+
+void
+prog_language_rep::customize_string (tree config) {
+  for (int i=0; i<N(config); i++) {
+    tree feature= config[i];
     string name= get_label (feature);
     if (name == "bool_features") {
       for (int j=0; j<N(feature); j++) {
         string key= get_label (feature[j]);
         escaped_char_parser.insert_bool_feature (key);
       }
-    } else if (name == "sequences") {
+    } else if (name == "escape_sequences") {
       array<string> escape_seq;
       for (int j=0; j<N(feature); j++) {
         string key= get_label (feature[j]);
@@ -74,7 +126,25 @@ prog_language_rep::prog_language_rep (string name):
   hashmap<string, string> pairs;
   pairs("\"") = "\"";
   pairs("\'")= "\'";
-  string_parser.set_pairs(pairs);
+  string_parser.set_pairs (pairs);
+  debug_packrat << string_parser.to_string();
+}
+
+void
+prog_language_rep::customize_preprocessor (tree config) {
+  for (int i=0; i<N(config); i++) {
+    tree feature= config[i];
+    string name= get_label (feature);
+    if (name == "directives") {
+      array<string> directives;
+      for (int j=0; j<N(feature); j++) {
+        string key= get_label (feature[j]);
+        directives << key;
+      }
+      preprocessor_parser.set_directives (directives);
+    }
+  }
+  debug_packrat << preprocessor_parser.to_string();
 }
 
 text_property
@@ -96,6 +166,10 @@ prog_language_rep::advance (tree t, int& pos) {
   if (blanks_parser.parse (s, pos)) {
     current_parser= blanks_parser.get_parser_name ();
     return &tp_space_rep;
+  }
+  if (preprocessor_parser.parse (s, pos)) {
+    current_parser= preprocessor_parser.get_parser_name ();
+    return &tp_normal_rep;
   }
   if (string_parser.parse (s, pos)) {
     current_parser= string_parser.get_parser_name ();
@@ -179,6 +253,8 @@ prog_language_rep::get_color (tree t, int start, int end) {
   } else if (current_parser == "keyword_parser") {
     string keyword= s(start, end);
     type= keyword_parser.get (keyword);
+  } else if (current_parser == "preprocessor_parser") {
+    type= "preprocessor_directive";
   } else {
     type= none;
   }

@@ -62,7 +62,7 @@
 (tm-define (dot-inline-comment-starts)
   (list "//"))
 
-(tm-define (dot-escape-sequences)
-  (list
-   `(bool_features)
-   `(sequences "\\" "\"" "'" "b" "f" "n" "r" "t")))
+(tm-define (dot-string)
+  `(string
+    (bool_features)
+    (escape_sequences "\\" "\"" "'" "b" "f" "n" "r" "t")))

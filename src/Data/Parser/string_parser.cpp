@@ -124,3 +124,14 @@ bool string_parser_rep::parse_escaped (string s, int& pos) {
 void string_parser_rep::skip_escaped (bool skip) {
   m_skip_escaped= skip;
 }
+
+string string_parser_rep::to_string () {
+  string ret= parser_rep::to_string ();
+  ret << "  pair:" << "\n";
+  iterator<string> iter= iterate (m_pairs);
+  while (iter->busy ()) {
+    ret << "    - " << iter->next() << "\n";
+  }
+  ret << m_esc_parser.to_string ();
+  return ret;
+}

@@ -21,6 +21,7 @@ public:
   escaped_char_parser_rep ();
   string get_parser_name () { return "escaped_char_parser"; }
   bool can_parse (string s, int pos);
+  string to_string ();
 
   string HEX_WITH_8_BITS= "hex_with_8_bits";
   string HEX_WITH_16_BITS= "hex_with_16_bits";

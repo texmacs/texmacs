@@ -73,10 +73,19 @@
   (list "//"))
 
 
-(tm-define (cpp-escape-sequences)
-  (list
-   `(bool_features)
-   `(sequences "\\" "\"" "'" "b" "f" "n" "r" "t")))
+(tm-define (cpp-string)
+ `(string
+   (bool_features )
+   (escape_sequences "\\" "\"" "'" "b" "f" "n" "r" "t")))
+
+
+;; https://en.cppreference.com/w/cpp/preprocessor
+(tm-define (cpp-preprocessors)
+  `(preprocessor
+    (directives
+     "define" "undef" "include"
+     "if" "ifdef" "ifndef" "else" "elif" "endif"
+     "line" "error" "pragma")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences for syntax highlighting
@@ -90,8 +99,8 @@
   ("syntax:cpp:comment" "dark grey" notify-cpp-pref)
   ("syntax:cpp:keyword" "dark magenta" notify-cpp-pref)
   ("syntax:cpp:error" "dark red" notify-cpp-pref)
-  ("syntax:cpp:preprocessor" "dark green" notify-cpp-pref)
-  ("syntax:cpp:preprocessor_directive" "dark brown" notify-cpp-pref)
+  ("syntax:cpp:preprocessor" "dark brown" notify-cpp-pref)
+  ("syntax:cpp:preprocessor_directive" "dark green" notify-cpp-pref)
   ("syntax:cpp:constant_type" "#4040c0" notify-cpp-pref)
   ("syntax:cpp:constant_number" "#4040c0" notify-cpp-pref)
   ("syntax:cpp:constant_string" "dark red" notify-cpp-pref))
