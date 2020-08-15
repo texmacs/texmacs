@@ -235,7 +235,7 @@
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting programming modes\n")
-(lazy-format (prog prog-format) cpp scheme)
+(lazy-format (prog prog-format) cpp scheme scala java python)
 (lazy-keyboard (prog prog-kbd) in-prog?)
 (lazy-menu (prog prog-menu) prog-format-menu prog-format-icons
 	   prog-menu prog-icons)

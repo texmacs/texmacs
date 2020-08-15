@@ -14,6 +14,7 @@
 #include "widget.hpp"
 #include "message.hpp"
 #include "analyze.hpp"
+#include "convert.hpp"
 #include "converter.hpp"
 #include "scheme.hpp"
 #include "dictionary.hpp"
@@ -170,7 +171,7 @@ qt_chooser_widget_rep::set_type (const string& _type)
     return true;
   }
 
-  if (as_bool (call ("format?", _type))) {
+  if (format_exists (_type)) {
     nameFilter = to_qstring (translate
                              (as_string (call ("format-get-name", _type))
                               * " file"));

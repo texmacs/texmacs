@@ -450,6 +450,9 @@
             ((== fm "generic-file") (generic-file-post qry))
             ((== fm "scheme-file") (source-file-post qry))
             ((== fm "cpp-file") (source-file-post qry))
+            ((== fm "java-file") (source-file-post qry))
+            ((== fm "scala-file") (source-file-post qry))
+            ((== fm "python-file") (source-file-post qry))
             ((== fm "html-file") (html-file-post qry))
             (else
               (display* "Unhandled format for default queries: " fm "\n"))))))

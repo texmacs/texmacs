@@ -50,6 +50,11 @@ get_format (string s, string suffix) {
   return as_string (call ("format-determine", s, suffix));
 }
 
+bool
+format_exists (string format) {
+  return as_bool (call ("format?", format));
+}
+
 tree
 generic_to_tree (string s, string fm) {
   return as_tree (call ("generic->texmacs", s, fm));

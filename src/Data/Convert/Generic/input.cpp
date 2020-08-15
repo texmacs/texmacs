@@ -67,7 +67,7 @@ texmacs_input_rep::get_mode (string s) {
   if (s == "channel")  return MODE_CHANNEL;
   if (s == "command")  return MODE_COMMAND;
   if (s == "file") return MODE_FILE;
-  if (as_bool (call ("format?", s))) return MODE_XFORMAT;
+  if (format_exists (s)) return MODE_XFORMAT;
   return MODE_VERBATIM;
 }
 

@@ -25,6 +25,7 @@ url    get_file_focus ();
 /*** Generic ***/
 string suffix_to_format (string suffix);
 string format_to_suffix (string format);
+bool   format_exists (string format);
 string get_format (string s, string suffix);
 tree   generic_to_tree (string s, string format);
 string tree_to_generic (tree doc, string format);
