@@ -158,7 +158,12 @@
   ---
   ("Degrade" (make-inline 'degrade))
   ("Distort" (make-inline 'distort))
-  ("Gnaw" (make-inline 'gnaw)))
+  ("Gnaw" (make-inline 'gnaw))
+  ---
+  ("Make transparent" (make 'make-transparent))
+  ("Make opaque" (make 'make-opaque))
+  ("Recolor" (make 'recolor))
+  ("Skin" (make 'skin)))
 
 (menu-bind specific-menu
   (when (not (selection-active-large?))

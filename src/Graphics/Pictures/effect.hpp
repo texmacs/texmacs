@@ -79,7 +79,7 @@ effect mix (effect eff1, double a1, effect eff2, double a2);
 
 effect normalize (effect eff);
 effect color_matrix (effect eff, array<double> m);
-effect make_transparent (effect eff, color bgc);
+effect make_transparent (effect eff, color bgc, double t= 1.0);
 effect make_opaque (effect eff, color bgc);
 
 #endif // defined EFFECT_H

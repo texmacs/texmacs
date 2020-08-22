@@ -891,9 +891,10 @@ init_std_drd () {
         effect (0) -> name (0, "body") ->
         numeric (1));
   init (EFF_MAKE_TRANSPARENT, "eff-make-transparent",
-        fixed (2, 0, DETAILED) -> returns_effect () ->
+        options (2, 1, DETAILED) -> returns_effect () ->
         effect (0) -> name (0, "body") ->
-        color_type (1) -> name (1, "bg") -> long_name (1, "background color"));
+        color_type (1) -> name (1, "bg") -> long_name (1, "background color") ->
+        numeric (2) -> name (2, "threshold"));
   init (EFF_MAKE_OPAQUE, "eff-make-opaque",
         fixed (2, 0, DETAILED) -> returns_effect () ->
         effect (0) -> name (0, "body") ->

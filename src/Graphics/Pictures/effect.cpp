@@ -479,13 +479,14 @@ public:
 class make_transparent_effect_rep: public effect_rep {
   effect eff;
   color bgc;
+  double t;
 public:
-  make_transparent_effect_rep (effect eff2, color bgc2):
-    eff (eff2), bgc (bgc2) {}
+  make_transparent_effect_rep (effect eff2, color bgc2, double t2):
+    eff (eff2), bgc (bgc2), t (t2) {}
   rectangle get_extents (array<rectangle> rs) {
     return eff->get_extents (rs); }
   picture apply (array<picture> pics, SI pixel) {
-    return make_transparent (eff->apply (pics, pixel), bgc); }
+    return make_transparent (eff->apply (pics, pixel), bgc, t); }
 };
 
 class make_opaque_effect_rep: public effect_rep {
@@ -528,8 +529,8 @@ effect normalize (effect eff) {
   return tm_new<normalize_effect_rep> (eff); }
 effect color_matrix (effect eff, array<double> m) {
   return tm_new<color_matrix_effect_rep> (eff, m); }
-effect make_transparent (effect eff, color bgc) {
-  return tm_new<make_transparent_effect_rep> (eff, bgc); }
+effect make_transparent (effect eff, color bgc, double t) {
+  return tm_new<make_transparent_effect_rep> (eff, bgc, t); }
 effect make_opaque (effect eff, color bgc) {
   return tm_new<make_opaque_effect_rep> (eff, bgc); }
 effect recolor (effect eff, color col) {
@@ -789,7 +790,8 @@ build_effect (tree t) {
   else if (is_func (t, EFF_MAKE_TRANSPARENT)) {
     effect eff= build_effect (t[0]);
     color  bgc= named_color (as_string (t[1]));
-    return make_transparent (eff, bgc);
+    double thr= (N(t)<=2)? 1.0: as_double (t[2]);
+    return make_transparent (eff, bgc, thr);
   }
   else if (is_func (t, EFF_MAKE_OPAQUE)) {
     effect eff= build_effect (t[0]);

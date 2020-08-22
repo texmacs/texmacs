@@ -76,8 +76,10 @@ class make_transparent_function_rep:
   public unary_function_rep<true_color,true_color>
 {
   true_color b;
+  double t;
 public:
-  make_transparent_function_rep (const true_color& b2): b (b2) {}
+  make_transparent_function_rep (const true_color& b2, const double& t2):
+    b (b2), t (max (min (t2, 1.0), 0.0)) {}
   true_color eval (const true_color& c) {
     double mr= 0.0, mg= 0.0, mb= 0.0;
     if (c.r > b.r) mr= (c.r - b.r) / (1 - b.r);
@@ -87,6 +89,7 @@ public:
     if (c.b > b.b) mb= (c.b - b.b) / (1 - b.b);
     else if (c.b < b.b) mb= (b.b - c.b) / b.b;
     double a= max (mr, max (mg, mb));
+    if (a < t) a= a / t; else a= 1.0;
     if (a == 0) return true_color (c.r, c.g, c.b, 0);
     double nr= b.r + (c.r - b.r) / a;
     double ng= b.g + (c.g - b.g) / a;
@@ -96,8 +99,8 @@ public:
 };
 
 unary_function<true_color,true_color>
-make_transparent_function (const true_color& b) {
-  return tm_new<make_transparent_function_rep> (b); }
+make_transparent_function (const true_color& b, const double& t) {
+  return tm_new<make_transparent_function_rep> (b, t); }
 
 class make_opaque_function_rep:
   public unary_function_rep<true_color,true_color>

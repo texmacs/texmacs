@@ -1,4 +1,4 @@
-<TeXmacs|1.99.12>
+<TeXmacs|1.99.13>
 
 <style|<tuple|source|std>>
 
@@ -293,6 +293,36 @@
   <assign|gnaw-radius-y|0.1fn>
 
   <assign|gnaw|<macro|body|<gr-effect|<arg|body>|<eff-gnaw|0|<value|gnaw-wavelen-x>|<value|gnaw-wavelen-y>|<value|gnaw-radius-x>|<value|gnaw-radius-y>>>>>
+
+  <\active*>
+    <\src-comment>
+      Color effects
+    </src-comment>
+  </active*>
+
+  <assign|make-transparent-bg-color|white>
+
+  <assign|make-transparent-threshold|0.1>
+
+  <assign|make-transparent|<macro|body|<gr-effect|<arg|body>|<eff-make-transparent|0|<value|make-transparent-bg-color>|<value|make-transparent-threshold>>>>>
+
+  \;
+
+  <assign|make-opaque-bg-color|white>
+
+  <assign|make-opaque|<macro|body|<gr-effect|<arg|body>|<eff-make-opaque|0|<value|make-opaque-bg-color>>>>>
+
+  \;
+
+  <assign|recolor-color|black>
+
+  <assign|recolor|<macro|body|<gr-effect|<arg|body>|<eff-recolor|0|<value|recolor-color>>>>>
+
+  \;
+
+  <assign|skin-color|#0004>
+
+  <assign|skin|<macro|body|<gr-effect|<arg|body>|<eff-skin|0|<value|skin-color>>>>>
 
   <\active*>
     <\src-comment>

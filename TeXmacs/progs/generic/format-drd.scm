@@ -19,13 +19,15 @@
 (define-group variant-tag
   (move-tag) (resize-tag) (smash-tag) (inflate-tag) (reduce-by-tag)
   (font-effect-tag)
-  (eff-tag) (basic-effect-tag) (gaussian-effect-tag) (oval-effect-tag)
+  (eff-tag) (basic-effect-tag) (color-effect-tag)
+  (gaussian-effect-tag) (oval-effect-tag)
   (rectangular-effect-tag) (motion-effect-tag))
 
 (define-group similar-tag
   (move-tag) (resize-tag) (smash-tag) (inflate-tag) (reduce-by-tag)
   (font-effect-tag)
-  (eff-tag) (basic-effect-tag) (gaussian-effect-tag) (oval-effect-tag)
+  (eff-tag) (basic-effect-tag) (color-effect-tag)
+  (gaussian-effect-tag) (oval-effect-tag)
   (rectangular-effect-tag) (motion-effect-tag))
 
 ;; Various geometry adjustment tags
@@ -57,6 +59,9 @@
   shadow engrave emboss
   shadowed-raise outlined-engrave outlined-emboss
   degrade distort gnaw)
+
+(define-group color-effect-tag
+  make-transparent make-opaque recolor skin)
 
 (define-group pen-effect-tag
   blur outline thicken erode

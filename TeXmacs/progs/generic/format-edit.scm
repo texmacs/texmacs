@@ -576,6 +576,23 @@
         (list "gnaw-radius-x" "Radius x")
         (list "gnaw-radius-y" "Radius y")))
 
+(tm-define (customizable-parameters t)
+  (:require (tree-in? t '(make-transparent)))
+  (list (list "make-transparent-bg-color" "Background color")
+        (list "make-transparent-threshold" "Threshold")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-in? t '(make-opaque)))
+  (list (list "make-opaque-bg-color" "Background color")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-in? t '(recolor)))
+  (list (list "recolor-color" "New color")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-in? t '(skin)))
+  (list (list "skin-color" "Skin color")))
+
 (tm-define (pen-effect-context? t)
   (tree-in? t (pen-effect-tag-list)))
 

@@ -241,6 +241,9 @@ template<typename C, typename S> inline raster<C>
 copy_alpha (const raster<C>& r1, const raster<S>& r2) {
   return map<copy_alpha_op> (r1, r2); }
 template<typename C, typename S> inline raster<C>
+copy_alpha (const raster<C>& r, const S& a) {
+  return map_scalar<copy_alpha_op> (r, a); }
+template<typename C, typename S> inline raster<C>
 apply_alpha (const raster<C>& r1, const raster<S>& r2) {
   return map<apply_alpha_op> (r1, r2); }
 

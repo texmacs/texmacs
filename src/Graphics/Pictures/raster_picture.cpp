@@ -224,10 +224,10 @@ color_matrix (picture pic, array<double> m) {
 }
 
 picture
-make_transparent (picture pic, color bgc) {
+make_transparent (picture pic, color bgc, double t) {
   raster<true_color> ras= as_raster<true_color> (pic);
   true_color tbgc (bgc);
-  return raster_picture (map (make_transparent_function (tbgc), ras));
+  return raster_picture (map (make_transparent_function (tbgc, t), ras));
 }
 
 picture
@@ -248,6 +248,12 @@ copy_alpha (picture pic, picture alf) {
   raster<true_color> rpic= as_raster<true_color> (pic);
   raster<true_color> ralf= as_raster<true_color> (alf);
   return raster_picture (copy_alpha<true_color> (rpic, ralf));
+}
+
+picture
+copy_alpha (picture pic, double a) {
+  raster<true_color> rpic= as_raster<true_color> (pic);
+  return raster_picture (copy_alpha<true_color> (rpic, a));
 }
 
 picture

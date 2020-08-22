@@ -150,7 +150,7 @@ picture gnaw (picture pic, double wx, double wy, double rx, double ry);
 
 picture normalize (picture pic);
 picture color_matrix (picture pic, array<double> m);
-picture make_transparent (picture pic, color bgc);
+picture make_transparent (picture pic, color bgc, double t= 1.0);
 picture make_opaque (picture pic, color bgc);
 color   average_color (picture pic);
 picture recolor (picture pic, color col);

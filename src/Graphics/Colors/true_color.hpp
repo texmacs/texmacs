@@ -260,7 +260,7 @@ true_color mix (const true_color& c1, double a1,
 unary_function<true_color,true_color>
 color_matrix_function (const array<double>& a);
 unary_function<true_color,true_color>
-make_transparent_function (const true_color& bgc);
+make_transparent_function (const true_color& bgc, const double& t= 1.0);
 unary_function<true_color,true_color>
 make_opaque_function (const true_color& bgc);
 
