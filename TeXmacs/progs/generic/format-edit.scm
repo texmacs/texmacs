@@ -119,7 +119,7 @@
              (and-with w (tree-innermost 'with #t)
                (tree-select w))))
           (else
-            (insert-go-to (add-with l "") (cons (length l) (path-end t '())))
+            (insert-go-to (add-with l "") (list (length l) 0))
             (with-simplify (cursor-tree))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
