@@ -51,6 +51,7 @@
   ("-" "-")
   ("space" (kbd-space))
   ("tab" (kbd-tab))
+  ("enter" (kbd-return))
   ("return" (kbd-return))
   ("S-space" (kbd-shift-space))
   ("S-tab" (kbd-shift-tab))
