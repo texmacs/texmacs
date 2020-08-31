@@ -70,8 +70,6 @@
     </src-comment>
   </active*>
 
-  <assign|fira-font|<macro|x|<case|<equal|<value|language>|chinese>|<arg|x>|<with|TeXmacs|<macro|<active*|T<rsub|<space|-0.4spc><resize|<with|math-level|0|E>||||0.5fn>>X<rsub|<resize|M<space|0.2spc>AC<space|0.1spc>S||||0.5fn>>>>|font|Fira|<arg|x>>>>>
-
   <assign|chapter-font|<macro|name|<fira-font|<with|font-shape|small-caps|<very-large|<arg|name>>>>>>
 
   \;

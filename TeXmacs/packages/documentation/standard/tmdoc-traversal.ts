@@ -1,4 +1,4 @@
-<TeXmacs|1.99.12>
+<TeXmacs|1.99.13>
 
 <style|<tuple|source|english>>
 
@@ -56,7 +56,9 @@
 
   <assign|tmdoc-tmimage|<macro|<image|$TEXMACS_PATH/misc/images/texmacs-256.png|3em|3em||-0.3h>>>
 
-  <assign|fira-font|<macro|x|<with|TeXmacs|<macro|<active*|T<rsub|<space|-0.4spc><resize|<with|math-level|0|E>||||0.5fn>>X<rsub|<resize|M<space|0.2spc>AC<space|0.1spc>S||||0.5fn>>>>|font|Fira|<arg|x>>>>
+  <assign|fira-font|<macro|x|<case|<equal|<value|language>|chinese>|<arg|x>|<with|TeXmacs|<macro|<active*|T<rsub|<space|-0.4spc><resize|<with|math-level|0|E>||||0.5fn>>X<rsub|<resize|M<space|0.2spc>AC<space|0.1spc>S||||0.5fn>>>>|font|Fira|<arg|x>>>>>
+
+  <drd-props|fira-font|arity|1|accessible|all>
 
   <assign|tmdoc-title-font|<macro|title|<fira-font|<with|font-series|bold|font-shape|small-caps|font-size|1.6|<arg|title>>>>>
 
