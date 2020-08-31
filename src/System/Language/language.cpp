@@ -257,7 +257,7 @@ initialize_color_encodings () {
 
 void
 initialize_color_decodings (string lan_name) {
-  debug_packrat << "Initialize color decodings for " << lan_name << LF;
+  //debug_packrat << "Initialize color decodings for " << lan_name << LF;
 
   language lan= prog_language (lan_name);
   string pfx= "syntax:" * lan->lan_name * ":";

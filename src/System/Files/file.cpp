@@ -128,9 +128,8 @@ load_string (url u, string& s, bool fatal) {
     if (fatal) {
       failed_error << err_msg << LF;
       FAILED ("file not readable");
-    } else {
-      debug_io << err_msg << LF;
     }
+    //else debug_io << err_msg << LF;
   }
   return err;
 }
