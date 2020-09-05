@@ -1,6 +1,6 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.13>
 
-<style|<tuple|tmdoc|chinese>>
+<style|<tuple|tmdoc|chinese|old-spacing|old-dots>>
 
 <\body>
   <tmdoc-title|\<#5B57\>\<#4F53\>\<#9009\>\<#62E9\>\<#7CFB\>\<#7EDF\>>
@@ -24,7 +24,7 @@
   \<#6CE8\>\<#610F\>\<#FF0C\>\<#5728\><LaTeX>
   <math|2\<varepsilon\>>\<#7684\>\<#5B57\>\<#4F53\>\<#9009\>\<#62E9\>\<#7CFB\>\<#7EDF\>\<#4E2D\>\<#FF0C\>\<#6CA1\>\<#6709\>\<#7EC6\>\<#5206\>\<#5B57\>\<#4F53\>\<#540D\>\<#79F0\>\<#548C\>\<#5B57\>\<#65CF\>\<#3002\>\<#6CE8\>\<#610F\>\<#FF0C\>\<#57FA\>\<#51C6\>\<#5B57\>\<#4F53\>\<#5927\>\<#5C0F\>\<#662F\>\<#6574\>\<#4E2A\>\<#6587\>\<#6863\>\<#7684\>\<#5C5E\>\<#6027\>\<#FF0C\>\<#5728\><menu|Document|Font|Size>\<#4E2D\>\<#6307\>\<#5B9A\>\<#3002\>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2020|Joris van der Hoeven|\<#6C88\>\<#8FBE\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

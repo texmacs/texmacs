@@ -1,6 +1,6 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.13>
 
-<style|<tuple|tmdoc|chinese>>
+<style|<tuple|tmdoc|chinese|old-spacing|old-dots>>
 
 <\body>
   <tmdoc-title|\<#79FB\>\<#52A8\>\<#548C\>\<#7F29\>\<#653E\>\<#5BF9\>\<#8C61\>>
@@ -34,20 +34,20 @@
     <shortcut|(geometry-faster)>>\<#51CF\>\<#5C0F\>\<#6216\>\<#8005\>\<#589E\>\<#52A0\>\<#79FB\>\<#52A8\>\<#6216\>\<#8005\>\<#7F29\>\<#653E\>\<#7684\>\<#6B65\>\<#957F\>\<#3002\>
   </description>
 
-  \<#4E0B\>\<#9762\>\<#662F\>\<#4E00\>\<#4E9B\>\<#7279\>\<#5B9A\>\<#6807\>\<#7B7E\>\<#4E0B\>\<#7684\>\<#7279\>\<#5B9A\>\<#8BF4\>\<#660E\>:
+  \<#4E0B\>\<#9762\>\<#662F\>\<#4E00\>\<#4E9B\>\<#7279\>\<#5B9A\>\<#6807\>\<#8BB0\>\<#4E0B\>\<#7684\>\<#7279\>\<#5B9A\>\<#8BF4\>\<#660E\>:
 
   <\description>
-    <item*|\<#7A7A\>\<#683C\>>\<#7A7A\>\<#683C\>\<#6307\>\<#7684\>\<#662F\><menu|Format|Space>\<#4E2D\>\<#7684\>\<#6C34\>\<#5E73\>\<#6216\>\<#8005\>\<#7AD6\>\<#76F4\>\<#7A7A\>\<#683C\>\<#3002\>\<#82E5\>\<#8981\>\<#4F7F\>\<#7528\>\<#5FEB\>\<#6377\>\<#952E\>\<#FF0C\>\<#5FC5\>\<#987B\>\<#628A\>\<#5149\>\<#6807\>\<#7F6E\>\<#4E8E\>\<#7A7A\>\<#683C\>\<#6807\>\<#7B7E\>\<#4E4B\>\<#540E\>\<#3002\>
+    <item*|\<#7A7A\>\<#683C\>>\<#7A7A\>\<#683C\>\<#6307\>\<#7684\>\<#662F\><menu|Format|Space>\<#4E2D\>\<#7684\>\<#6C34\>\<#5E73\>\<#6216\>\<#8005\>\<#7AD6\>\<#76F4\>\<#7A7A\>\<#683C\>\<#3002\>\<#82E5\>\<#8981\>\<#4F7F\>\<#7528\>\<#5FEB\>\<#6377\>\<#952E\>\<#FF0C\>\<#5FC5\>\<#987B\>\<#628A\>\<#5149\>\<#6807\>\<#7F6E\>\<#4E8E\>\<#7A7A\>\<#683C\>\<#6807\>\<#8BB0\>\<#4E4B\>\<#540E\>\<#3002\>
 
     <item*|\<#76D2\>\<#4FEE\>\<#9970\>\<#5668\>><menu|Format|Transform>\<#83DC\>\<#5355\>\<#4E2D\>\<#7684\><markup|move>\<#FF0C\>
-    <markup|shift>\<#FF0C\> <markup|resize>\<#548C\><markup|clipped>\<#6807\>\<#7B7E\>
+    <markup|shift>\<#FF0C\> <markup|resize>\<#548C\><markup|clipped>\<#6807\>\<#8BB0\>
 
     <item*|\<#52A8\>\<#753B\>>\<#52A8\>\<#753B\>\<#7684\>\<#957F\>\<#5EA6\>\<#53EF\>\<#7528\><shortcut|(geometry-left)>\<#548C\><shortcut|(geometry-right)>\<#66F4\>\<#6539\>\<#3002\>
 
     <item*|\<#56FE\>\<#7247\>>\<#5176\>\<#5927\>\<#5C0F\>\<#548C\>\<#5BF9\>\<#9F50\>\<#53EF\>\<#4F9B\>\<#66F4\>\<#6539\>\<#3002\>
   </description>
 
-  <tmdoc-copyright|1998--2010|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2020|Joris van der Hoeven|\<#6C88\>\<#8FBE\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
