@@ -18,15 +18,16 @@
 
 class escaped_char_parser_rep : public parser_rep {
 public:
+  string HEX_WITH_8_BITS;
+  string HEX_WITH_16_BITS;
+  string HEX_WITH_32_BITS;
+  string OCTAL_UPTO_3_DIGITS;
+
   escaped_char_parser_rep ();
+
   string get_parser_name () { return "escaped_char_parser"; }
   bool can_parse (string s, int pos);
   string to_string ();
-
-  string HEX_WITH_8_BITS= "hex_with_8_bits";
-  string HEX_WITH_16_BITS= "hex_with_16_bits";
-  string HEX_WITH_32_BITS= "hex_with_32_bits";
-  string OCTAL_UPTO_3_DIGITS= "octal_upto_3_digits";
 
   inline void insert_bool_feature (string feature) {
     bool_features->insert (feature);

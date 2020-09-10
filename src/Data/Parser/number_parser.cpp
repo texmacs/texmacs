@@ -12,7 +12,13 @@
 #include "number_parser.hpp"
 #include "analyze.hpp"
 
-number_parser_rep::number_parser_rep () {
+number_parser_rep::number_parser_rep ():
+  PREFIX_0B ("prefix_0b"),
+  PREFIX_0O ("prefix_0o"),
+  PREFIX_0X ("prefix_0x"),
+  NO_SUFFIX_WITH_BOX ("no_suffix_with_box"),
+  SCIENTIFIC_NOTATION ("sci_notation")
+{
   separator= '\0';
 }
 

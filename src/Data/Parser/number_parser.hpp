@@ -18,20 +18,18 @@
 
 class number_parser_rep : public parser_rep {
 public:
+  string PREFIX_0B;
+  string PREFIX_0O;
+  string PREFIX_0X;
+  string NO_SUFFIX_WITH_BOX;
+  string SCIENTIFIC_NOTATION;
+
   number_parser_rep ();
 
   bool can_parse (string s, int pos);
   string get_parser_name () { return "number_parser"; }
 
   inline keyword_parser_rep get_suffix_parser () { return suffix_parser; }
-
-  string PREFIX_0B= "prefix_0b";
-  string PREFIX_0O= "prefix_0o";
-  string PREFIX_0X= "prefix_0x";
-  string NO_SUFFIX_WITH_BOX= "no_suffix_with_box";
-
-  string SCIENTIFIC_NOTATION= "sci_notation";
-
 
   inline void insert_bool_feature (string feature) {
     bool_features->insert (feature);

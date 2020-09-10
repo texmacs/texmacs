@@ -12,7 +12,12 @@
 #include "escaped_char_parser.hpp"
 #include "analyze.hpp"
 
-escaped_char_parser_rep::escaped_char_parser_rep () {
+escaped_char_parser_rep::escaped_char_parser_rep ():
+  HEX_WITH_8_BITS ("hex_with_8_bits"),
+  HEX_WITH_16_BITS ("hex_with_16_bits"),
+  HEX_WITH_32_BITS ("hex_with_32_bits"),
+  OCTAL_UPTO_3_DIGITS ("octal_upto_3_digits")
+{
   m_chars= array<char>();
   m_strings= array<string>();
   m_escape= '\\';
