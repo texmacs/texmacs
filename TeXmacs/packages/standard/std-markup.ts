@@ -1,4 +1,4 @@
-<TeXmacs|1.99.12>
+<TeXmacs|1.99.13>
 
 <style|<tuple|source|std>>
 
@@ -430,7 +430,7 @@
 
   <assign|stressed-distance|0.2fn>
 
-  <assign|stressed|<macro|body|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<value|stressed-color>|<repeat*|<with|color|<unquote|<value|color>>|<arg|x>>|<move|<resize|-|<plus|0.6667l|0.3333r>||<plus|0.3333l|0.6667r>|>||<minus|-0.5ex|<value|stressed-distance>>>>>>|<arg|body>>>>>>
+  <assign|stressed|<macro|body|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<unquote|<value|stressed-color>>|<repeat*|<with|color|<unquote|<value|color>>|<arg|x>>|<move|<resize|-|<plus|0.6667l|0.3333r>||<plus|0.3333l|0.6667r>|>||<minus|-0.5ex|<unquote|<value|stressed-distance>>>>>>>|<arg|body>>>>>>
 
   <drd-props|stressed|with-like|yes|arity|1|accessible|all>
 
@@ -474,19 +474,24 @@
 
   <assign|marked-padding|0.2fn>
 
-  <assign|marked|<macro|body|<style-with|src-compact|none|<datoms|<macro|x|<resize|<tabular|<tformat|<cwith|1|1|1|1|cell-background|<value|marked-color>>|<cwith|1|1|1|1|cell-lsep|<value|marked-padding>>|<cwith|1|1|1|1|cell-rsep|<value|marked-padding>>|<cwith|1|1|1|1|cell-bsep|<value|marked-padding>>|<cwith|1|1|1|1|cell-tsep|<value|marked-padding>>|<table|<row|<cell|<arg|x>>>>>>|<plus|1l|<value|marked-padding>>|<plus|1b|<value|marked-padding>>|<minus|1r|<value|marked-padding>>|<minus|1t|<value|marked-padding>>>>|<arg|body>>>>>
+  <assign|marked|<macro|body|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<resize|<tabular|<tformat|<cwith|1|1|1|1|cell-background|<unquote|<value|marked-color>>>|<cwith|1|1|1|1|cell-lsep|<unquote|<value|marked-padding>>>|<cwith|1|1|1|1|cell-rsep|<unquote|<value|marked-padding>>>|<cwith|1|1|1|1|cell-bsep|<unquote|<value|marked-padding>>>|<cwith|1|1|1|1|cell-tsep|<unquote|<value|marked-padding>>>|<table|<row|<cell|<arg|x>>>>>>|<plus|1l|<unquote|<value|marked-padding>>>|<plus|1b|<unquote|<value|marked-padding>>>|<minus|1r|<unquote|<value|marked-padding>>>|<minus|1t|<unquote|<value|marked-padding>>>>>|<arg|body>>>>>>
 
   <drd-props|marked|with-like|yes|arity|1|accessible|all>
 
   \;
 
-  <assign|todo|<macro|body|<with|color|dark
-  red|<style-with|src-compact|none|<datoms|<macro|x|<resize|<tabular|<tformat|<cwith|1|1|1|1|cell-background|pastel
-  red>|<cwith|1|1|1|1|cell-lsep|0fn>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|1|1|cell-bsep|<value|marked-padding>>|<cwith|1|1|1|1|cell-tsep|<value|marked-padding>>|<table|<row|<cell|<arg|x>>>>>>|<plus|1l|0fn>|<plus|1b|<value|marked-padding>>|<minus|1r|0fn>|<minus|1t|<value|marked-padding>>>>|[<arg|body>]>>>>>
+  <assign|todo-color|dark red>
 
-  <assign|todo*|<macro|body|<with|color|dark
-  orange|<style-with|src-compact|none|<datoms|<macro|x|<resize|<tabular|<tformat|<cwith|1|1|1|1|cell-background|pastel
-  orange>|<cwith|1|1|1|1|cell-lsep|0fn>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|1|1|cell-bsep|<value|marked-padding>>|<cwith|1|1|1|1|cell-tsep|<value|marked-padding>>|<table|<row|<cell|<arg|x>>>>>>|<plus|1l|0fn>|<plus|1b|<value|marked-padding>>|<minus|1r|0fn>|<minus|1t|<value|marked-padding>>>>|[<arg|body>]>>>>>
+  <assign|todo-bg-color|pastel red>
+
+  <assign|render-todo|<macro|fg|bg|body|<with|color|<arg|fg>|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<resize|<tabular|<tformat|<cwith|1|1|1|1|cell-background|<unquote|<arg|bg>>>|<cwith|1|1|1|1|cell-lsep|0fn>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|1|1|cell-bsep|<unquote|<value|marked-padding>>>|<cwith|1|1|1|1|cell-tsep|<unquote|<value|marked-padding>>>|<table|<row|<cell|<arg|x>>>>>>|<plus|1l|0fn>|<plus|1b|<unquote|<value|marked-padding>>>|<minus|1r|0fn>|<minus|1t|<unquote|<value|marked-padding>>>>>|[<arg|body>]>>>>>>
+
+  <assign|todo|<macro|body|<render-todo|<value|todo-color>|<value|todo-bg-color>|<arg|body>>>>
+
+  <assign|todo*|<macro|body|<render-todo|dark orange|pastel
+  orange|<arg|body>>>>
+
+  <drd-props|render-todo|arity|3|color|0|color|1|accessible|2>
 
   <\active*>
     <\src-comment>
