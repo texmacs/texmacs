@@ -199,6 +199,15 @@
   (longdownharpoonright (align (rot-right longrightharpoonup)
                                longrightarrow 0 0.5))
 
+  (larrow (hor-crop (part leftarrow * 0.6)))
+  (rarrow (unindent (hor-crop (part rightarrow 0.4 *))))
+  (Larrow (hor-crop (part Leftarrow * 0.6)))
+  (Rarrow (unindent (hor-crop (part Rightarrow 0.4 *))))
+  (uarrow (align (hor-flip (rot-left rarrow)) rarrow 0 0.5))
+  (darrow (align (hor-flip (rot-right rarrow)) rarrow 0 0.5))
+  (Uarrow (align (hor-flip (rot-left Rarrow)) rarrow 0 0.5))
+  (Darrow (align (hor-flip (rot-right Rarrow)) rarrow 0 0.5))
+
   (rubber-upminus-# (ver-extend upminus 0.5 # 0.1))
   (rubber-downminus-# (ver-extend downminus 0.5 # 0.1))
   (rubber-uparrow-# (ver-extend uparrow 0.25 # 0.1))
