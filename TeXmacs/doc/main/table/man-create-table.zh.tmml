@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
-<TeXmacs version="1.99.9">
-  <style><tuple><tm-arg>tmdoc</tm-arg><tm-arg>chinese</tm-arg><tm-arg>old-spacing</tm-arg></tuple></style>
+<TeXmacs version="1.99.13">
+  <style><tuple><tm-arg>tmdoc</tm-arg><tm-arg>chinese</tm-arg><tm-arg>old-spacing</tm-arg><tm-arg>old-dots</tm-arg></tuple></style>
   
   <body>
     <tm-par>
@@ -15,19 +15,19 @@
     <tm-par>
       <description>
         <tm-par>
-          <item_42_><key>Meta+T</key><key>Shift+N</key><key>t</key></item_42_>创建普通无框表格。
+          <item_42_><key>table N t</key></item_42_>创建普通无框表格。
         </tm-par>
         
         <tm-par>
-          <item_42_><key>Meta+T</key><key>N</key><key>T</key></item_42_>创建居中无框表格。
+          <item_42_><key>table N T</key></item_42_>创建居中无框表格。
         </tm-par>
         
         <tm-par>
-          <item_42_><key>Meta+T</key><key>N</key><key>b</key></item_42_>创建普通有框表格（block）。
+          <item_42_><key>table N b</key></item_42_>创建普通有框表格。
         </tm-par>
         
         <tm-par>
-          <item_42_><key>Meta+T</key><key>N</key><key>B</key></item_42_>创建居中有框表格。
+          <item_42_><key>table N B</key></item_42_>创建居中有框表格。
         </tm-par>
       </description>
     </tm-par>
@@ -39,15 +39,17 @@
     <tm-par>
       <description>
         <tm-par>
-          <item_42_><key>Meta+T</key><key>N</key><key>m</key></item_42_>创建一个矩阵<glossary-explain><tm-arg>矩阵</tm-arg><tm-arg>matrix</tm-arg></glossary-explain>。
+          <item_42_><key>table N
+          m</key></item_42_>创建一个矩阵<glossary-explain><tm-arg>矩阵</tm-arg><tm-arg>matrix</tm-arg></glossary-explain>。
         </tm-par>
         
         <tm-par>
-          <item_42_><key>Meta+T</key><key>N</key><key>d</key></item_42_>创建一个行列式。
+          <item_42_><key>table N d</key></item_42_>创建一个行列式。
         </tm-par>
         
         <tm-par>
-          <item_42_><key>Meta+T</key><key>N</key></item_42_>创建一个选择<glossary-explain><tm-arg>选择</tm-arg><tm-arg>choice
+          <item_42_><key>table N
+          c</key></item_42_>创建一个选择<glossary-explain><tm-arg>选择</tm-arg><tm-arg>choice
           list</tm-arg></glossary-explain>。
         </tm-par>
       </description>
@@ -102,8 +104,8 @@
     </tm-par>
     
     <tm-par>
-      <vspace>0.5fn</vspace>还有其他类似的类表格环境，除此之外新的环境也可以由用户自己创建。比如，通过<menu><tm-arg>插入</tm-arg><tm-arg>数学</tm-arg><tm-arg>多行公式</tm-arg></menu>或者
-      <key>Alt+&amp;</key>，你可以进入<markup>eqnarray<math><rsup>∗</rsup></math></markup>环境。在此环境下，关注数学排版的用户可以轻易地对齐一组等式。例如：
+      <vspace>0.5fn</vspace>还有其他类似的类表格环境，除此之外新的环境也可以由用户自己创建。比如，通过<menu><tm-arg>插入</tm-arg><tm-arg>数学</tm-arg><tm-arg>多行公式</tm-arg></menu>或者<key>math
+      &amp;</key>，你可以进入<markup>eqnarray<math><rsup>∗</rsup></math></markup>环境。在此环境下，关注数学排版的用户可以轻易地对齐一组等式。例如：
     </tm-par>
     
     <tm-par>
@@ -123,7 +125,7 @@
     
     <tm-par>
       新创建一个表格时，默认大小为最小（一般是1<math>×</math>1），且所有单元格都是空的。通过快捷键
-      <shortcut>(structured-insert-left)</shortcut>，<shortcut>(structured-insert-right)</shortcut>，<shortcut>(structured-insert-up)</shortcut>和<shortcut>(structured-insert-down)</shortcut>可以插入新列和新行。比如说，<shortcut>(structured-insert-right)</shortcut>在当前光标所在位置的右边插入新列，详情参见下图。你也可以用<key>Return</key>在当前光标所在位置的下面插入新行。
+      <shortcut>(structured-insert-left)</shortcut>，<shortcut>(structured-insert-right)</shortcut>，<shortcut>(structured-insert-up)</shortcut>和<shortcut>(structured-insert-down)</shortcut>可以插入新列和新行。比如说，<shortcut>(structured-insert-right)</shortcut>在当前光标所在位置的右边插入新列，详情参见下图。你也可以用<key>return</key>在当前光标所在位置的下面插入新行。
     </tm-par>
     
     <tm-par>
@@ -160,7 +162,7 @@
     </tm-par>
     
     <tm-par>
-      <tmdoc-copyright><tm-arg>2013–2019</tm-arg><tm-arg>Joris van der
+      <tmdoc-copyright><tm-arg>2013–2020</tm-arg><tm-arg>Joris van der
       Hoeven</tm-arg><tm-arg>沈达</tm-arg></tmdoc-copyright>
     </tm-par>
     
