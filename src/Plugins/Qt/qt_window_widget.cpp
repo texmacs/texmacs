@@ -57,6 +57,12 @@ qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, string name,
   
   if (DEBUG_QT)
     debug_qt << "Creating qt_window_widget " << id << "\n";
+
+  QPalette pal;
+  QColor winbg= pal.color (QPalette::Background);
+  if (winbg.red() + winbg.green() + winbg.blue () < 255)
+    pal.setColor (QPalette::Background, QColor (240, 240, 240));
+  _wid->setPalette (pal);
 }
 
 /*!
