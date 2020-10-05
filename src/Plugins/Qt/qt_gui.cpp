@@ -551,6 +551,18 @@ gui_refresh () {
   the_gui->refresh_language();
 }
 
+string
+gui_version () {
+#if (QT_VERSION >= 0x060000)
+  return "qt6";
+#else
+#if (QT_VERSION >= 0x050000)
+  return "qt5";
+#else
+  return "qt4";
+#endif
+#endif
+}
 
 /******************************************************************************
  * Queued processing

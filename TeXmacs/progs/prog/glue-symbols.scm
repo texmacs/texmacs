@@ -42,6 +42,7 @@
 "has-printing-cmd?"
 "x-gui?"
 "qt-gui?"
+"gui-version"
 "default-look-and-feel"
 "default-chinese-font"
 "default-japanese-font"

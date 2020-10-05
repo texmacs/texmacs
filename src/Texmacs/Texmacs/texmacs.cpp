@@ -420,7 +420,8 @@ TeXmacs_main (int argc, char** argv) {
   // End options via environment variables
 
   // Further user preferences
-  use_unified_toolbar= get_preference ("use unified toolbar", "on") == "on";
+  string unify= (gui_version () == "qt4"? string ("on"): string ("off"));
+  use_unified_toolbar= get_preference ("use unified toolbar", unify) == "on";
   // End user preferences
 
   if (DEBUG_STD) debug_boot << "Installing internal plug-ins...\n";

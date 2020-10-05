@@ -213,3 +213,10 @@
 
 (define-public (alt-windows-delete l)
   (for-each alt-window-delete l))
+
+(define-public (qt4-gui?) (== (gui-version) "qt4"))
+(define-public (qt4-or-later-gui?) (in? (gui-version) (list "qt4" "qt5" "qt6")))
+(define-public (qt5-gui?) (== (gui-version) "qt5"))
+(define-public (qt5-or-later-gui?) (in? (gui-version) (list "qt5" "qt6")))
+(define-public (qt6-gui?) (== (gui-version) "qt6"))
+(define-public (qt6-or-later-gui?) (in? (gui-version) (list "qt6")))

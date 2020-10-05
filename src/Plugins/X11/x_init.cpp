@@ -752,3 +752,8 @@ gui_refresh () {
       send_update (win->w);
   }
 }
+
+string
+gui_version () {
+  return "x11";
+}

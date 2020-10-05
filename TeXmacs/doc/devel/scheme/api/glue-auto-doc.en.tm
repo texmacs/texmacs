@@ -139,6 +139,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(gui-version)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|gui_version> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
     <scm|(default-look-and-feel)>
 <explain-synopsis|no synopsis>
   <|explain>
