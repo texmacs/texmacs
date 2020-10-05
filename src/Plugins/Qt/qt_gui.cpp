@@ -136,6 +136,7 @@ needing_update (false)
   if (!retina_manual) {
     retina_manual= true;
 #ifdef MACOSX_EXTENSIONS
+#if (QT_VERSION < 0x050000)
     double mac_hidpi = mac_screen_scale_factor();
     if (DEBUG_STD)
       debug_boot << "Mac Screen scaleFfactor: " << mac_hidpi <<  "\n";
@@ -151,6 +152,7 @@ needing_update (false)
         // retina_icons = 2;  // FIXME: why is this not better?
       }
     }
+#endif
 #else
     SI w, h;
     get_extents (w, h);
