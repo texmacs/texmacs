@@ -73,6 +73,9 @@
 (define (notify-new-page-breaking var val)
   (noop))
 
+(define (get-default-unified-toolbar)
+  (if (qt4-gui?) "on" "off"))
+
 (define-preferences
   ("profile" "beginner" (lambda args (noop)))
   ("look and feel" "default" notify-look-and-feel)
@@ -116,7 +119,8 @@
   ("bitmap effects" "on" notify-tool)
   ("new style page breaking" "on" notify-new-page-breaking)
   ("open console on errors" "on" noop)
-  ("open console on warnings" "on" noop))
+  ("open console on warnings" "on" noop)
+  ("use unified toolbar" (get-default-unified-toolbar) noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Properties of some built-in routines
