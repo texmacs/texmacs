@@ -61,6 +61,9 @@
 #ifdef WIN32 
 Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
 #endif
+#ifdef OS_MACOS
+Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin)
+#endif
 #endif
 
 qt_gui_rep* the_gui = NULL;
