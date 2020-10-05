@@ -345,6 +345,10 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 #ifndef Q_OS_MAC
   mainwindow()->menuBar()->setVisible (false);
 #endif  
+  QPalette pal;
+  QColor bgcol (160, 160, 160); // same as tm_background
+  pal.setColor (QPalette::Mid, bgcol);
+  mainwindow()->setPalette(pal);
 }
 
 qt_tm_widget_rep::~qt_tm_widget_rep () {
@@ -949,6 +953,8 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
     }
     else {
       QPalette pal;
+      QColor bgcol (160, 160, 160); // same as tm_background
+      pal.setColor (QPalette::Mid, bgcol);
       mainwindow()->setPalette(pal);
       bool cache = visibility[0];
       visibility[0] = false;

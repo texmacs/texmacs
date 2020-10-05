@@ -424,6 +424,7 @@ QTMStyle::drawControl (ControlElement element, const QStyleOption* option, QPain
       }
 #endif
 
+#if (QT_VERSION < 0x050000)
     case CE_ToolBar: {
 #ifdef UNIFIED_TOOLBAR
       if (use_unified_toolbar &&
@@ -463,6 +464,7 @@ QTMStyle::drawControl (ControlElement element, const QStyleOption* option, QPain
         }
 #endif // UNIFIED_TOOLBAR
     } break;
+#endif
       
     default:
       baseStyle()->drawControl (element, option, painter, widget);
