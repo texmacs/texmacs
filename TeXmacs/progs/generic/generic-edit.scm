@@ -810,25 +810,26 @@
       (cons (list-head l nr) (make-rows (list-tail l nr) nr))
       (list (fill-row l nr))))
 
-(define (make-thumbnails-sub l)
-  (define (mapper x)
-    `(image ,(url->delta-unix x) "0.22par" "" "" ""))
-  (let* ((l1 (map mapper l))
-         (l2 (make-rows l1 4))
+(define (make-thumbnails-sub l nr)
+  (let* ((w (string-append (number->string (- (/ 1.0 nr) 0.02)) "par"))
+         (mapper (lambda (x) `(image ,(url->delta-unix x) ,w "" "" "")))       
+         (l1 (map mapper l))
+         (l2 (make-rows l1 nr))
          (l3 (map (lambda (r) `(row ,@(map (lambda (c) `(cell ,c)) r))) l2)))
     (insert `(tabular* (tformat (twith "table-width" "1par")
                                 (twith "table-hyphen" "yes")
                                 (table ,@l3))))))
 
-(tm-define (make-thumbnails)
-  (:interactive #t)
+(tm-define (make-thumbnails nr)
+  (:argument nr "Number of pictures per row")
+  (if (string? nr) (set! nr (min (string->number nr) 32)))
   (user-url "Picture directory" "directory" 
    (lambda (dir) 
      (let* ((find (url-append dir (thumbnail-suffixes)))
                   (files (url->list (url-expand (url-complete find "r"))))
                   (base (buffer-master))
                   (rel-files (map (lambda (x) (url-delta base x)) files)))
-           (if (nnull? rel-files) (make-thumbnails-sub rel-files))))))
+           (if (nnull? rel-files) (make-thumbnails-sub rel-files nr))))))
    
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for floats
