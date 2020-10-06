@@ -466,10 +466,15 @@ QTMStyle::drawControl (ControlElement element, const QStyleOption* option, QPain
     } break;
 #else
   case CE_ToolBar:
-    if ((widget) && (widget->windowTitle() == "main toolbar"))
+    if (use_unified_toolbar &&
+        (widget) && (widget->windowTitle() == "main toolbar"))
+      break;
+    else if ((widget) && (widget->windowTitle() == "main toolbar"))
       painter->fillRect(option->rect, QColor (208, 208, 208));
+      //painter->fillRect(option->rect, QColor (192, 192, 192));
     else if ((widget) && (widget->windowTitle() == "mode toolbar"))
       painter->fillRect(option->rect, QColor (224, 224, 224));
+      //painter->fillRect(option->rect, QColor (216, 216, 216));
     else if ((widget) && (widget->windowTitle() == "focus toolbar"))
       painter->fillRect(option->rect, QColor (240, 240, 240));
     else 
