@@ -1,6 +1,6 @@
-<TeXmacs|1.99.5>
+<TeXmacs|1.99.13>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing|old-dots>>
 
 <\body>
   <tmdoc-title|Conventions for this manual>
@@ -39,20 +39,15 @@
       <name|Windows> or <name|Linux>/<name|Unix>
 
       \ with <name|Windows> keyboard
-    </cell>|<cell|<math|<block*|<tformat|<cwith|1|1|1|1|cell-tsep|2sep>|<cwith|1|1|1|1|cell-bsep|1pt>|<cwith|1|1|1|1|cell-background|pastel
-    grey>|<table|<row|<cell|<small|<with|font-family|ss|Ctrl>>>>>>>>>|<cell|left
-    <block*|<tformat|<cwith|1|1|1|1|cell-tsep|2sep>|<cwith|1|1|1|1|cell-bsep|1pt>|<cwith|1|1|1|1|cell-background|pastel
-    grey>|<table|<row|<cell|<small|<with|font-family|ss|Alt>>>>>>>
-    (<math|\<dag\>>)>|<cell|<math|<block*|<tformat|<cwith|1|1|1|1|cell-valign|B>|<cwith|1|1|1|1|cell-bsep|1sep>|<cwith|1|1|1|1|cell-tsep|1sep>|<cwith|1|1|1|1|cell-background|pastel
-    grey>|<table|<row|<cell|<shift|<draw-over|<phantom|ihj>|<with|gr-frame|<tuple|scale|1cm|<tuple|0.5gw|0.380011gh>>|gr-mode|<tuple|group-edit|move>|gr-fill-color|black|gr-color|white|gr-snap|<tuple|control
+    </cell>|<cell|<render-key|Ctrl>>|<cell|left <render-key|Alt>
+    (<math|\<dag\>>)>|<cell|<render-key|<math|<shift|<draw-over|<phantom|ihj>|<with|gr-frame|<tuple|scale|0.707111cm|<tuple|0.5gw|0.415159gh>>|gr-mode|<tuple|group-edit|move>|gr-fill-color|black|gr-color|white|gr-snap|<tuple|control
     point|grid point|grid curve point|curve-grid intersection|curve-curve
-    intersection|text border point|text border>|<graphics|<with|fill-color|black|<cline|<point|-0.190551|-0.0360167>|<point|0.149110332054505|-0.126306389734092>|<point|0.151690038364863|0.212495039026326>|<point|-0.190550998809366|0.148862283370816>>>|<with|color|white|fill-color|black|<with|color|white|fill-color|black|<line|<point|-0.193989980156105|0.049973520664109>|<point|0.145671135070777|0.0525532105172642>>>>|<with|color|white|fill-color|black|<line|<point|-0.0529667|0.176379>|<point|-0.0521067601534595|-0.072132557216563>>>>>|0cm>||2ln>>>>>>><math|>
-    (<math|\<dag\>>)>>|<row|<cell|<name|Apple>>|<cell|<block*|<tformat|<cwith|1|1|1|1|cell-tsep|2sep>|<cwith|1|1|1|1|cell-bsep|1pt>|<cwith|1|1|1|1|cell-background|pastel
-    grey>|<table|<row|<cell|<with|font-family|ss|<small|\<place of interest
-    sign\> Command>>>>>>>>|<cell|<block*|<tformat|<cwith|1|1|1|1|cell-tsep|2sep>|<cwith|1|1|1|1|cell-bsep|1pt>|<cwith|1|1|1|1|cell-background|pastel
-    grey>|<table|<row|<cell|\<option key\><small|<with|font-family|ss|
-    Option>>>>>>> (<math|\<dag\>>)>|<cell|<block*|<tformat|<cwith|1|1|1|1|cell-tsep|2sep>|<cwith|1|1|1|1|cell-bsep|1pt>|<cwith|1|1|1|1|cell-background|pastel
-    grey>|<table|<row|<cell|<small|<with|font-family|ss|Ctrl>>>>>>>>>|<row|<cell|fallback
+    intersection|text border point|text border>|magnify|0.707106780759852|<graphics|<with|fill-color|black|<cline|<point|-0.190551|-0.0360167>|<point|0.149110332054505|-0.126306389734092>|<point|0.151690038364863|0.212495039026326>|<point|-0.190550998809366|0.148862283370816>>>|<with|color|white|fill-color|black|<with|color|white|fill-color|black|<line|<point|-0.193989980156105|0.049973520664109>|<point|0.145671135070777|0.0525532105172642>>>>|<with|color|white|fill-color|black|<line|<point|-0.0529667|0.176379>|<point|-0.0521067601534595|-0.072132557216563>>>>>|0cm>||2ln>>><math|><math|>
+    (<math|\<dag\>>)>>|<row|<cell|<name|Apple>>|<cell|<render-key|<with|font-family|ss|^<small|<with|font-family|ss|
+    Control>>>> (<math|\<dag\>>)>|<cell|<render-key|<with|font-family|ss|\<option
+    key\><small|<with|font-family|ss| Option>>>>
+    (<math|\<dag\>>)>|<cell|<render-key|<with|font-family|ss|<small|\<place
+    of interest sign\> Command>>> (<math|\<dag\>>)>>|<row|<cell|fallback
     combination>|<cell|<key*|escape escape escape>>|<cell|<key*|escape
     escape>>|<cell|<key*|escape>>>>>>
   <|big-table>
@@ -114,7 +109,7 @@
     Special keys.
   </big-table>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2002|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
