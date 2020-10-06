@@ -57,6 +57,8 @@
     <false/>
     <key>LSMinimumSystemVersion</key>
     <string>@OSXVERMIN@</string>
+    <key>NSRequiresAquaSystemAppearance</key>
+    <string>true</string>
     <key>NSHumanReadableCopyright</key>
     <string>Copyright © 1998-2019 Joris van der Hoeven and others</string>
   </dict>

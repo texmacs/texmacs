@@ -167,10 +167,15 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   int min_h= (int) floor (28 * retina_scale);
   bar->setMinimumHeight (min_h);
 #else
+#if (QT_VERSION >= 0x050000)
+  int min_h= (int) floor (24 * retina_scale);
+  bar->setMinimumHeight (min_h);
+#else
   if (retina_scale > 1.0) {
     int min_h= (int) floor (20 * retina_scale);
     bar->setMinimumHeight (min_h);
   }
+#endif
 #endif
   mw->setStatusBar (bar);
  
@@ -222,8 +227,14 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   // NOTICE: setFixedHeight must be after setIconSize
   // TODO: the size of the toolbar should be calculated dynamically
   int toolbarHeight= 30;
+#if (QT_VERSION >= 0x050000)
+  mainToolBar->setFixedHeight (toolbarHeight + 8);
+  modeToolBar->setFixedHeight (toolbarHeight + 4);
+  focusToolBar->setFixedHeight (toolbarHeight);
+#else
   modeToolBar->setFixedHeight (toolbarHeight);
   focusToolBar->setFixedHeight (toolbarHeight);
+#endif
   
   QWidget *cw= new QWidget();
   cw->setObjectName("central widget");  // this is important for styling toolbars.
