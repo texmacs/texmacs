@@ -5,19 +5,23 @@
 <\body>
   <\hide-preamble>
     <assign|demo-text|<\macro>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus.
-      Suspendisse lectus tortor, dignissim sit amet, adipiscing nec,
-      ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula
-      massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci
-      nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit
-      amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat
-      in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero
-      pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo
-      in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue
-      blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus
-      et ultrices posuere cubilia Curae; Aliquam nibh. Mauris ac mauris sed
-      pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales
-      hendrerit.
+      Normal <strong|bold> <em|Italic> <strong|<em|Bold italic>> <samp|Sans
+      serif> <strong|<samp|Bold sans serif>> <em|<samp|Italic sans serif>>
+      <samp|<strong|<em|Bold italic sans serif>>> <verbatim|Typewriter>
+      <strong|<verbatim|Bold typewriter>> <em|<verbatim|Italic typewriter>>
+      <verbatim|<strong|<em|Bold italic typewriter>>> <name|Small capitals>
+      <strong|<name|Bold small capitals>> <name|<samp|Sans serif small
+      capitals>> <name|<samp|<strong|Bold sans serif small capitals>>>
+
+      <\equation*>
+        <big|sum><rsub|k=1><rsup|\<infty\>><frac|1|k<rsup|2>>=<frac|\<mathpi\><rsup|2>|6><space|2em><tabular*|<tformat|<table|<row|<cell|\<bbb-C\>>|<cell|\<bbb-F\>>|<cell|\<bbb-K\>>|<cell|\<bbb-N\>>|<cell|\<bbb-Q\>>|<cell|\<bbb-R\>>|<cell|\<bbb-S\>>|<cell|\<bbb-T\>>|<cell|\<bbb-Z\>>>|<row|<cell|\<cal-A\>>|<cell|\<cal-B\>>|<cell|\<cal-C\>>|<cell|\<cal-D\>>|<cell|\<cal-E\>>|<cell|\<cal-F\>>|<cell|\<cal-G\>>|<cell|\<cal-H\>>|<cell|\<cal-I\>>>|<row|<cell|\<Gamma\>>|<cell|\<Delta\>>|<cell|\<Theta\>>|<cell|\<Lambda\>>|<cell|\<Xi\>>|<cell|\<Sigma\>>|<cell|\<Phi\>>|<cell|\<Psi\>>|<cell|\<Omega\>>>|<row|<cell|\<frak-a\>>|<cell|\<frak-m\>>|<cell|\<frak-n\>>|<cell|\<frak-v\>>|<cell|\<frak-w\>>|<cell|\<frak-M\>>|<cell|\<frak-N\>>|<cell|\<frak-V\>>|<cell|\<frak-W\>>>|<row|<cell|\<alpha\>>|<cell|\<beta\>>|<cell|\<gamma\>>|<cell|\<delta\>>|<cell|\<varepsilon\>>|<cell|\<zeta\>>|<cell|\<eta\>>|<cell|\<theta\>>|<cell|\<iota\>>>>>>
+      </equation*>
+
+      <\strong>
+        <\equation*>
+          <big|sum><rsub|k=1><rsup|\<infty\>><frac|1|k<rsup|2>>=<frac|\<mathpi\><rsup|2>|6><space|2em><tabular*|<tformat|<table|<row|<cell|\<bbb-C\>>|<cell|\<bbb-F\>>|<cell|\<bbb-K\>>|<cell|\<bbb-N\>>|<cell|\<bbb-Q\>>|<cell|\<bbb-R\>>|<cell|\<bbb-S\>>|<cell|\<bbb-T\>>|<cell|\<bbb-Z\>>>|<row|<cell|\<cal-A\>>|<cell|\<cal-B\>>|<cell|\<cal-C\>>|<cell|\<cal-D\>>|<cell|\<cal-E\>>|<cell|\<cal-F\>>|<cell|\<cal-G\>>|<cell|\<cal-H\>>|<cell|\<cal-I\>>>|<row|<cell|\<Gamma\>>|<cell|\<Delta\>>|<cell|\<Theta\>>|<cell|\<Lambda\>>|<cell|\<Xi\>>|<cell|\<Sigma\>>|<cell|\<Phi\>>|<cell|\<Psi\>>|<cell|\<Omega\>>>|<row|<cell|\<frak-a\>>|<cell|\<frak-m\>>|<cell|\<frak-n\>>|<cell|\<frak-v\>>|<cell|\<frak-w\>>|<cell|\<frak-M\>>|<cell|\<frak-N\>>|<cell|\<frak-V\>>|<cell|\<frak-W\>>>|<row|<cell|\<alpha\>>|<cell|\<beta\>>|<cell|\<gamma\>>|<cell|\<delta\>>|<cell|\<varepsilon\>>|<cell|\<zeta\>>|<cell|\<eta\>>|<cell|\<theta\>>|<cell|\<iota\>>>>>>
+        </equation*>
+      </strong>
     </macro>>
   </hide-preamble>
 
