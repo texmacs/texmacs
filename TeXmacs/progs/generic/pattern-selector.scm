@@ -39,7 +39,9 @@
 
 (define (decode-pattern-name s)
   (let* ((name (unix->url s))
-         (base "$TEXMACS_PATH/misc/patterns/neutral-pattern.png")
+         (base1 "$TEXMACS_PATH/misc/patterns/neutral-pattern.png")
+         (base2 "$TEXMACS_PATH/misc/pictures/gradients/vertical-white-black.png")
+         (base (if global-gradient? base2 base1))
          (artw "$TEXMACS_PATH/misc/dummy"))
     (cond ((not (url-rooted? name))
            (url-relative base name))
@@ -56,6 +58,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define global-picture? #f)
+(define global-gradient? #f)
 (define global-pattern-color `(pattern "neutral-pattern.png" "1cm" "100@"))
 
 (define (set-color col)
@@ -166,6 +169,22 @@
     (and (tm-func? (car opts) 'eff-gaussian)
          (tm-ref (car opts) 0))))
 
+(define (set-gradient-foreground fg)
+  (with opts (or (get-effect 'eff-gradient) (list "black" "white"))
+    (set-effect 'eff-gradient #t fg (cadr opts))))
+
+(define (get-gradient-foreground)
+  (and-with opts (get-effect 'eff-gradient)
+    (car opts)))
+
+(define (set-gradient-background bg)
+  (with opts (or (get-effect 'eff-gradient) (list "black" "white"))
+    (set-effect 'eff-gradient #t (car opts) bg)))
+
+(define (get-gradient-background)
+  (and-with opts (get-effect 'eff-gradient)
+    (cadr opts)))
+
 (define (normalize-color col)
   (if (tm-func? col 'pattern)
       (apply tm-pattern (cdr col))
@@ -187,8 +206,10 @@
             (url->system name) "15em")
       // // //
       ((icon "tm_find.xpm")
-       (cond ((not global-picture?)
+       (cond ((and (not global-picture?) (not global-gradient?))
               (choose-file setter "Background pattern" "image" "" curr))
+             (global-gradient?
+              (choose-file setter "Background gradient" "image" "" curr))
              ((url-rooted? (unix->url (get-name)))
               (choose-file setter "Background picture" "image" "" curr))
              (else
@@ -245,6 +266,32 @@
               (nnot (get-blur)))
       >>)))
 
+(tm-widget (pattern-background-options)
+  (with bg (get-gradient-background)
+    (hlist
+      (enum (set-gradient-background answer)
+            (list (or bg "")
+                  "black" "white" "grey" "red" "green" "blue"
+                  "yellow" "cyan" "magenta" "orange" "brown" "")
+            (or bg "white") "15em")
+      // // //
+      ((icon "tm_color.xpm")
+       (interactive-color set-gradient-background (list (or bg "white"))))
+      >>)))
+
+(tm-widget (pattern-foreground-options)
+  (with fg (get-gradient-foreground)
+    (hlist
+      (enum (set-gradient-foreground answer)
+            (list (or fg "")
+                  "black" "white" "grey" "red" "green" "blue"
+                  "yellow" "cyan" "magenta" "orange" "brown" "")
+            (or fg "black") "15em")
+      // // //
+      ((icon "tm_color.xpm")
+       (interactive-color set-gradient-foreground (list (or fg "black"))))
+      >>)))
+
 (tm-widget ((pattern-selector u) cmd)
   (padded
     (hlist
@@ -265,7 +312,7 @@
       (explicit-buttons
         (vlist
           (refreshable "pattern-options"
-            (assuming (not global-picture?)
+            (assuming (and (not global-picture?) (not global-gradient?))
               (aligned
                 (item (text "Name:")
                   (link pattern-name-selector))
@@ -287,6 +334,25 @@
                 ;; one needs a blur that wraps around torically
                 ;;(item (text "Blur:")
                 ;;  (link pattern-blur-options))
+                ))
+            (assuming global-gradient?
+              (aligned
+                (item (text "Name:")
+                  (link pattern-name-selector))
+                (item (text "Width:")
+                  (hlist
+                    (enum (set-width answer)
+                          (list (get-width) "100%" "100@" "1cm" "")
+                          (get-width) "15em") >>))
+                (item (text "Height:")
+                  (hlist
+                    (enum (set-height answer)
+                          (list (get-height) "100%" "100@" "1cm" "")
+                          (get-height) "15em") >>))
+                (item (text "Foreground:")
+                  (link pattern-foreground-options))
+                (item (text "Background:")
+                  (link pattern-background-options))
                 ))
             (assuming global-picture?
               (aligned
@@ -316,16 +382,32 @@
 
 (tm-define (open-pattern-selector cmd w)
   (:interactive #t)
-  (when (or global-picture? (== (get-name) "neutral-pattern.png"))
+  (when (or global-picture? global-gradient?
+            (== (get-name) "neutral-pattern.png"))
     (set! global-picture? #f)
+    (set! global-gradient? #f)
     (set! global-pattern-color `(pattern "neutral-pattern.png" ,w "100@")))
   (with u (current-buffer)
     (dialogue-window (pattern-selector u) cmd "Pattern selector")))
 
+(tm-define (open-gradient-selector cmd . opt-old)
+  (:interactive #t)
+  (when (or global-picture? (not global-gradient?)
+            (== (get-name) "neutral-pattern.png"))
+    (set! global-picture? #f)
+    (set! global-gradient? #t)
+    (set! global-pattern-color `(pattern "vertical-white-black.png" "100%" "100%")))
+  (when (nnull? opt-old)
+    (set! global-pattern-color (car opt-old)))
+  (with u (current-buffer)
+    (dialogue-window (pattern-selector u) cmd "Gradient selector")))
+
 (tm-define (open-background-picture-selector cmd . opt-old)
   (:interactive #t)
-  (when (or (not global-picture?) (== (get-name) "neutral-pattern.png"))
+  (when (or (not global-picture?) global-gradient?
+            (== (get-name) "neutral-pattern.png"))
     (set! global-picture? #t)
+    (set! global-gradient? #f)
     (set! global-pattern-color `(pattern "neutral-pattern.png" "100%" "100%")))
   (when (nnull? opt-old)
     (set! global-pattern-color (car opt-old)))

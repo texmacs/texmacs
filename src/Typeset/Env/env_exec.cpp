@@ -374,6 +374,10 @@ edit_env_rep::exec (tree t) {
     return exec_greatereq (t);
   case BLEND:
     return exec_blend (t);
+  case RGB_COLOR:
+    return exec_rgb_color (t);
+  case RGB_ACCESS:
+    return exec_rgb_access (t);
 
   case CM_LENGTH:
     return exec_cm_length ();
@@ -1877,6 +1881,37 @@ edit_env_rep::exec_blend (tree t) {
 }
 
 tree
+edit_env_rep::exec_rgb_color (tree t) {
+  if (N(t)!=3 && N(t)!=4) return tree (ERROR, "bad rgb-color");
+  tree t1= exec (t[0]);
+  tree t2= exec (t[1]);
+  tree t3= exec (t[2]);
+  tree t4= (N(t)==4? tree ("255"): exec (t[3]));
+  if (!(is_int (t1) && is_int (t2) && is_int (t3) && is_int (t4)))
+    return tree (ERROR, "bad rgb-color");
+  color c= rgb_color (as_int (t1), as_int (t2), as_int (t3), as_int (t4));
+  return get_hex_color (c);
+}
+
+tree
+edit_env_rep::exec_rgb_access (tree t) {
+  if (N(t)!=2) return tree (ERROR, "bad rgb-access");
+  tree t1= exec (t[0]);
+  tree t2= exec (t[1]);
+  if (is_compound (t1) || is_compound (t2)) return tree (ERROR, "bad rgb-access");
+  string s1= t1->label;
+  if (!(is_color_name (s1))) return tree (ERROR, "bad rgb-access");
+  color c= named_color (s1);
+  int r, g, b, a;
+  get_rgb_color (c, r, g, b, a);
+  if (starts (t2->label, "r") || t2->label == "0") return as_string (r);
+  if (starts (t2->label, "g") || t2->label == "1") return as_string (g);
+  if (starts (t2->label, "b") || t2->label == "2") return as_string (b);
+  if (starts (t2->label, "a") || t2->label == "3") return as_string (a);
+  return tree (ERROR, "bad rgb-access");
+}
+
+tree
 edit_env_rep::exec_hard_id (tree t) {
   pointer ptr= (pointer) this;
   if (N(t) == 0)
@@ -2548,6 +2583,8 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case GREATER:
   case GREATEREQ:
   case BLEND:
+  case RGB_COLOR:
+  case RGB_ACCESS:
     (void) exec (t);
     return false;
   case STYLE_WITH:

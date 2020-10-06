@@ -580,6 +580,8 @@ concater_rep::typeset (tree t, path ip) {
   case GREATER:
   case GREATEREQ:
   case BLEND:
+  case RGB_COLOR:
+  case RGB_ACCESS:
   case BOX_INFO:
   case FRAME_DIRECT:
   case FRAME_INVERSE:
@@ -852,6 +854,7 @@ concater_rep::typeset (tree t, path ip) {
   case EFF_NORMALIZE:
   case EFF_MONOCHROME:
   case EFF_COLOR_MATRIX:
+  case EFF_GRADIENT:
   case EFF_MAKE_TRANSPARENT:
   case EFF_MAKE_OPAQUE:
   case EFF_RECOLOR:

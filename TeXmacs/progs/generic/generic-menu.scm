@@ -174,6 +174,7 @@
         ---
         ("Palette" (interactive-color setter '()))
         ("Pattern" (open-pattern-selector setter "1cm"))
+        ("Gradient" (open-gradient-selector setter))
         ("Picture" (open-background-picture-selector setter))
         ("Other" (interactive setter
                    (list (upcase-first name) "color" in))))))
@@ -302,6 +303,7 @@
          (parameter-set l "preserve" mode)))
     ("Palette" (interactive-color setter '()))
     ("Pattern" (open-pattern-selector setter "1cm"))
+    ("Gradient" (open-gradient-selector setter))
     ("Picture" (open-background-picture-selector setter))
     ("Other" (parameter-interactive-set l mode))))
 

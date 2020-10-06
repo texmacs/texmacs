@@ -754,6 +754,7 @@
   ---
   ("Palette" (interactive-background set-background '()))
   ("Pattern" (open-pattern-selector set-background "1cm"))
+  ("Gradient" (open-gradient-selector set-background))
   ("Picture" (open-background-picture-selector set-background))
   ("Other" (init-interactive-env "bg-color")))
 

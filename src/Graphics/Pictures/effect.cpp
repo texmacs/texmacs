@@ -787,6 +787,19 @@ build_effect (tree t) {
         v << m (i, j);
     return color_matrix (eff, v);
   }
+  else if (is_func (t, EFF_GRADIENT, 3)) {
+    effect eff= build_effect (t[0]);
+    color  fgc= named_color (as_string (t[1]));
+    color  bgc= named_color (as_string (t[2]));
+    true_color fg (fgc);
+    true_color bg (bgc);
+    array<double> v;
+    v << bg.r - fg.r << 0.0 << 0.0 << 0.0 << fg.r
+      << 0.0 << bg.g - fg.g << 0.0 << 0.0 << fg.g
+      << 0.0 << 0.0 << bg.b - fg.b << 0.0 << fg.b
+      << 0.0 << 0.0 << 0.0 << 1.0 << 0.0;
+    return color_matrix (eff, v);
+  }
   else if (is_func (t, EFF_MAKE_TRANSPARENT)) {
     effect eff= build_effect (t[0]);
     color  bgc= named_color (as_string (t[1]));

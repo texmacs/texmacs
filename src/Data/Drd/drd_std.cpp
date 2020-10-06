@@ -426,6 +426,11 @@ init_std_drd () {
         fixed (2) -> returns_boolean () -> regular (0) ->
         name ("greater or equal"));
   init (BLEND, "blend", fixed (2) -> returns_color () -> color_type (0));
+  init (RGB_COLOR, "rgb-color",
+        options (3, 1) -> returns_color () -> integer (0));
+  init (RGB_ACCESS, "rgb-access",
+        fixed (1, 1, BIFORM) -> returns_integer () ->
+        color_type (0) -> string_type (1));
 
   init (CM_LENGTH, "cm-length", fixed (0) -> returns_length ());
   init (MM_LENGTH, "mm-length", fixed (0) -> returns_length ());
@@ -890,6 +895,11 @@ init_std_drd () {
         fixed (1, 1, BIFORM) -> returns_effect () ->
         effect (0) -> name (0, "body") ->
         numeric (1));
+  init (EFF_GRADIENT, "eff-gradient",
+        fixed (3, 0, DETAILED) -> returns_effect () ->
+        effect (0) -> name (0, "body") ->
+        color_type (1) -> name (1, "foreground color") ->
+        color_type (2) -> name (2, "background color"));
   init (EFF_MAKE_TRANSPARENT, "eff-make-transparent",
         options (2, 1, DETAILED) -> returns_effect () ->
         effect (0) -> name (0, "body") ->

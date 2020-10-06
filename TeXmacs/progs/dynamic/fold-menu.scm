@@ -392,6 +392,7 @@
           (vlist
             ("Color" (interactive-color setter (list)))
             ("Pattern" (open-pattern-selector setter "1cm"))
+            ("Gradient" (open-gradient-selector setter))
             ("Picture" (open-background-picture-selector setter))
             (glue #f #t 0 0))))
       ======

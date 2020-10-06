@@ -193,8 +193,8 @@
 (lazy-define (generic spell-widgets) spell-toolbar
              open-spell toolbar-spell-start interactive-spell)
 (lazy-define (generic format-widgets) open-paragraph-format open-page-format)
-(lazy-define (generic pattern-selector)
-             open-pattern-selector open-background-picture-selector)
+(lazy-define (generic pattern-selector) open-pattern-selector
+             open-gradient-selector open-background-picture-selector)
 (lazy-define (generic document-widgets) open-source-tree-preferences
              open-document-paragraph-format open-document-page-format
              open-document-metadata open-document-colors)
@@ -209,6 +209,7 @@
 (tm-property (open-document-metadata) (:interactive #t))
 (tm-property (open-document-colors) (:interactive #t))
 (tm-property (open-pattern-selector cmd w) (:interactive #t))
+(tm-property (open-gradient-selector cmd) (:interactive #t))
 (tm-property (open-background-picture-selector cmd) (:interactive #t))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
