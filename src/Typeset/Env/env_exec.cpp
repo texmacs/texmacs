@@ -78,14 +78,15 @@ edit_env_rep::rewrite (tree t) {
       tree v= macro_arg->item [t[2]->label];
       if (is_atomic (v))
 	return tree (ERROR, "map arguments " * t[2]->label);
+      int start= 0, end= N(v);
+      if (N(t)>=4) start= as_int (exec (t[3]));
+      if (N(t)>=5) end  = as_int (exec (t[4]));
+
       list<hashmap<string,tree> > old_var= macro_arg;
       list<hashmap<string,path> > old_src= macro_src;
       if (!is_nil (macro_arg)) macro_arg= macro_arg->next;
       if (!is_nil (macro_src)) macro_src= macro_src->next;
 
-      int start= 0, end= N(v);
-      if (N(t)>=4) start= as_int (exec (t[3]));
-      if (N(t)>=5) end  = as_int (exec (t[4]));
       int i, n= max (0, end-start);
       tree r (make_tree_label (t[1]->label), n);
       if (t[0]->label == "identity")
@@ -96,6 +97,7 @@ edit_env_rep::rewrite (tree t) {
 	  r[i]= tree (make_tree_label (t[0]->label),
 		      tree (ARG, copy (t[2]), as_string (start+i)),
 		      as_string (start+i));
+
       macro_arg= old_var;
       macro_src= old_src;
       return r;
