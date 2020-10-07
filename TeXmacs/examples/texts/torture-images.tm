@@ -37,7 +37,7 @@
 
   <tabular*|<tformat|<twith|table-width|1par>|<twith|table-hyphen|yes>|<table|<row|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_b.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_b_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_b_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_l.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_l_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_l_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_lb.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_lb_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_lb_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_lr.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_lr_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_lr_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_lrb.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_lrb_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_lrb_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_lrt.png|0.0425par|||>>>|<row|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_lrt_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_lrt_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_lrtb.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_lrtb_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_lrtb_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_lt.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_lt_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_lt_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_ltb.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_ltb_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_ltb_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_none.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_none_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_none_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_r.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_r_x2.png|0.0425par|||>>>|<row|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_r_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_rb.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_rb_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_rb_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_rt.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_rt_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_rt_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_rtb.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_rtb_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_rtb_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_t.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_t_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_t_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_tb.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_tb_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_border_tb_x4.png|0.0425par|||>>>|<row|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_h_h_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_h_h_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_h_hv_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_h_hv_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_h_none_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_h_none_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_h_v_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_h_v_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_hv_h_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_hv_h_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_hv_hv_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_hv_hv_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_hv_none_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_hv_none_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_hv_v_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_hv_v_x4.png|0.0425par|||>>>|<row|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_none_h_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_none_h_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_none_hv_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_none_hv_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_none_none_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_none_none_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_none_v_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_none_v_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_v_h_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_v_h_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_v_hv_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_v_hv_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_v_none_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_v_none_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_v_v_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_borders_v_v_x4.png|0.0425par|||>>>|<row|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_both_h.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_both_h_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_both_h_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_both_hv.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_both_hv_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_both_hv_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_both_none.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_both_none_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_both_none_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_both_v.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_both_v_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_both_v_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_inner_h_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_inner_h_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_inner_hv_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_inner_hv_x4.png|0.0425par|||>>>|<row|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_inner_none_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_inner_none_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_inner_v_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/table/tm_inner_v_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/settings/tm_prefs_convert.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/settings/tm_prefs_convert_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/settings/tm_prefs_convert_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/settings/tm_prefs_general.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/settings/tm_prefs_general_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/settings/tm_prefs_general_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/settings/tm_prefs_keyboard.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/settings/tm_prefs_keyboard_right_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/settings/tm_prefs_keyboard_right_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/settings/tm_prefs_keyboard_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/settings/tm_prefs_keyboard_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/settings/tm_prefs_other.png|0.0425par|||>>>|<row|<cell|<image|../../misc/pixmaps/modern/32x32/settings/tm_prefs_other_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/settings/tm_prefs_other_x4.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/settings/tm_prefs_security.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/settings/tm_prefs_security_x2.png|0.0425par|||>>|<cell|<image|../../misc/pixmaps/modern/32x32/settings/tm_prefs_security_x4.png|0.0425par|||>>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>>>>>
 
-  <section|Artwork>
+  <section|Artwork frames>
 
   <manila-paper|Manilla paper><space|1em><rough-paper|Rough
   paper><space|1em><ridged-paper|Ridged paper><space|1em><pine|Pine><space|1em><granite|Granite><space|1em><metal|Metal>
@@ -70,6 +70,142 @@
   <quarter-bend-in-shadow|<ridged-paper|Quarter bend in
   shadow>><space|1em><drop-down|<ridged-paper|Drop
   down>><space|1em><half-bend-in-down|<ridged-paper|Half bend in down>>
+
+  <section|Artwork pictures>
+
+  <\wide-tabular>
+    <tformat|<cwith|1|-1|2|2|cell-halign|r>|<cwith|3|3|2|2|cell-halign|r>|<cwith|4|5|2|2|cell-halign|r>|<cwith|5|5|2|2|cell-halign|r>|<cwith|6|7|2|2|cell-halign|r>|<cwith|6|7|2|2|cell-halign|r>|<cwith|7|7|2|2|cell-halign|r>|<table|<row|<\cell>
+      <image|tmfs://artwork/pictures/blackboard/blackboard-pxhere.jpg|0.48par|||>
+    </cell>|<\cell>
+      <image|tmfs://artwork/pictures/cover/gold-landscape-book.jpg|0.48par|||>
+    </cell>>|<row|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>>|<row|<\cell>
+      <image|tmfs://artwork/pictures/wood/wood-table.jpg|0.48par|||>
+    </cell>|<\cell>
+      <image|tmfs://artwork/pictures/wood/wood-wallpaper.jpg|0.48par|||>
+    </cell>>|<row|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>>|<row|<\cell>
+      <image|tmfs://artwork/pictures/paper/paper-antique-beige.jpg|0.48par|||>
+    </cell>|<\cell>
+      <image|tmfs://artwork/pictures/paper/paper-antique-coffee.jpg|0.48par|||>
+    </cell>>|<row|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>>|<row|<\cell>
+      <image|tmfs://artwork/pictures/paper/paper-antique-latte.jpg|0.48par|||>
+    </cell>|<\cell>
+      <image|tmfs://artwork/pictures/paper/paper-antique-sand.jpg|0.48par|||>
+    </cell>>>>
+  </wide-tabular>
+
+  <section|Artwork patterns>
+
+  <\wide-tabular>
+    <tformat|<cwith|1|1|1|1|cell-background|<pattern|dots-hatches/dots-A-10.png|1cm|100@>>|<cwith|1|1|2|2|cell-background|<pattern|dots-hatches/dots-A-50.png|1cm|100@|<eff-recolor|0|blue>>>|<cwith|1|1|3|3|cell-background|<pattern|lines-artistic/lines-artistic-12-20.png|1cm|100@|<eff-recolor|0|#074524>>>|<cwith|1|1|4|4|cell-background|<pattern|lines-default/lines-default-123-25.png|1cm|100@|<eff-recolor|0|#ffb900>>>|<cwith|1|1|5|5|cell-background|<pattern|lines-basic/lines-basic-45-25.png|2cm|100@|<eff-recolor|0|#3a195f>>>|<cwith|1|1|6|6|cell-background|<pattern|dots-hatches/dots-B-30.png|1cm|100@|<eff-recolor|0|#00754e>>>|<cwith|2|2|1|1|cell-background|<pattern|floral/full-bloom.jpg|2cm|100@>>|<cwith|2|2|2|2|cell-background|<pattern|floral/greyfloral.png|2cm|100@|<eff-recolor|0|#ddffcf>>>|<cwith|2|2|3|3|cell-background|<pattern|floral/paisley.png|2cm|100@|<eff-recolor|0|#f9baff>>>|<cwith|2|2|4|4|cell-background|<pattern|floral/regal.png|1cm|100@|<eff-recolor|0|#cebdff>>>|<cwith|2|2|5|5|cell-background|<pattern|floral/wheat.png|1cm|100@>>|<cwith|2|2|6|6|cell-background|<pattern|floral/xv.png|1cm|100@|<eff-recolor|0|#fffbef>>>|<cwith|3|3|1|1|cell-background|<pattern|fashion/large_leather.jpg|4cm|100@|<eff-recolor|0|#543f2c>>>|<cwith|3|3|2|2|cell-background|<pattern|fashion/white_leather.jpg|4cm|100@|<eff-recolor|0|#a37153>>>|<cwith|3|3|3|3|cell-background|<pattern|geometric/asanoha-400px.png|4cm|100@|<eff-recolor|0|#e9ffe9>>>|<cwith|3|3|4|4|cell-background|<pattern|geometric/contemporary_china_2.png|3cm|100@|<eff-recolor|0|#eefffd>>>|<cwith|3|3|5|5|cell-background|<pattern|geometric/oriental.png|1cm|100@|<eff-recolor|0|#e0c8ac>>>|<cwith|3|3|6|6|cell-background|<pattern|geometric/contemporary_china.png|3cm|100@|<eff-recolor|0|#c8bab2>>>|<cwith|4|4|1|1|cell-background|<pattern|wood/wood-1.jpg|3cm|100@>>|<cwith|4|4|2|2|cell-background|<pattern|wood/wood-2.jpg|3cm|100@>>|<cwith|4|4|3|3|cell-background|<pattern|wood/wood-3.jpg|3cm|100@>>|<cwith|4|4|4|4|cell-background|<pattern|wood/wood-4.jpg|3cm|100@>>|<cwith|4|4|5|5|cell-background|<pattern|wood/wood-5.jpg|3cm|100@>>|<cwith|4|4|6|6|cell-background|<pattern|wood/wood-6.jpg|3cm|100@>>|<cwith|5|5|1|1|cell-background|<pattern|tmfs://artwork/textures/cover/cover-texture-brown.jpg|8cm|100@>>|<cwith|5|5|2|2|cell-background|<pattern|tmfs://artwork/textures/cover/cover-texture-green.jpg|8cm|100@>>|<cwith|5|5|3|3|cell-background|<pattern|tmfs://artwork/textures/cover/cover-texture-pink.jpg|8cm|100@>>|<cwith|5|5|4|4|cell-background|<pattern|tmfs://artwork/textures/cover/cover-texture-red.jpg|8cm|100@>>|<cwith|5|5|5|5|cell-background|<pattern|tmfs://artwork/textures/textile/fashion-jute-texture.jpg|8cm|100@>>|<cwith|5|5|6|6|cell-background|<pattern|tmfs://artwork/textures/wood/purty-wood-pattern.jpg|8cm|100@>>|<cwith|6|6|1|1|cell-background|<pattern|tmfs://artwork/textures/wood/retina-wood-pattern.jpg|8cm|100@>>|<cwith|6|6|2|2|cell-background|<pattern|tmfs://artwork/textures/wood/tileable-wood-pattern.jpg|8cm|100@>>|<cwith|6|6|3|3|cell-background|<pattern|tmfs://artwork/textures/wood/wood-pattern-6.jpg|8cm|100@>>|<table|<row|<\cell>
+      \;
+
+      \;
+
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>>|<row|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+
+      \;
+
+      \;
+    </cell>>|<row|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+
+      \;
+
+      \;
+    </cell>>|<row|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+
+      \;
+
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>>|<row|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+
+      \;
+
+      \;
+    </cell>>|<row|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+    </cell>|<\cell>
+      \;
+
+      \;
+
+      \;
+    </cell>>>>
+  </wide-tabular>
 </body>
 
 <\initial>
