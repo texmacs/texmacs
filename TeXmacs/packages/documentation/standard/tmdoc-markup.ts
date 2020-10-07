@@ -1,4 +1,4 @@
-<TeXmacs|1.99.11>
+<TeXmacs|1.99.13>
 
 <style|<tuple|source|english>>
 
@@ -114,6 +114,10 @@
   <assign|tmdoc-link|<macro|body|destination|<with|file|<tmdoc-file|<arg|destination>>|<if|<unequal|<value|file>|false>|<hlink|<arg|body>|<value|file>>|<arg|body>>>>>
 
   <assign|tmdoc-link*|<macro|body|destination|<with|file|<tmdoc-file|<arg|destination>>|<if|<unequal|<value|file>|false>|<hlink|<arg|body>|<value|file>>|<with|color|red|<arg|body>>>>>>
+
+  <assign|help-link|<macro|body|name|<hlink|<arg|body>|<merge|tmfs://help/article/tm/doc/|<arg|name>|.|<language-suffix>|.tm>>>>
+
+  <drd-props|help-link|arity|2|accessible|0|url|1>
 
   <assign|simple-link|<macro|destination|<hlink|<with|font-family|tt|<arg|destination>>|<arg|destination>>>>
 
