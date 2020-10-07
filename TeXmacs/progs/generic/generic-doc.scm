@@ -75,7 +75,7 @@
   ($let* ((lab (tree-label t))
           (l (focus-variants-of t)))
     ($para
-      "The " ($markup lab) " tag admits various "
+      "The " ($markup lab) " tag has several "
       ($tmdoc-link "main/editing/man-structured-variants"
         "structured variants")
       ": " ($markup (car l))
@@ -110,7 +110,7 @@
     ($para
       ($when (alternate-first? t)
         "The " ($markup lab) " environment is \x10folded\x11 "
-        "and admits an unfolded variant  " ($markup lab*) ". "
+        "and has an unfolded variant  " ($markup lab*) ". "
         "You may unfold the environment using the keyboard shortcut "
         ($shortcut (alternate-toggle (focus-tree))) ", the menu entry "
         ($menu "Focus" "Folded") ", or by pressing the "
@@ -118,7 +118,7 @@
         " icon on the focus toolbar. ")
       ($when (alternate-second? t)
         "The " ($markup lab) " environment is \x10unfolded\x11 "
-        "and admits a folded variant " ($markup lab*) ". "
+        "and has a folded variant " ($markup lab*) ". "
         "You may fold the environment using the keyboard shortcut "
         ($shortcut (alternate-toggle (focus-tree))) ", the menu entry "
         ($menu "Focus" (alternate-second-name t)) ", or by pressing the "
@@ -269,6 +269,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-generate (focus-doc-insert t)
+  ($with dummy (display* "t= " t "\n")
   ($with lab (tree-label t)
     ($para
       "The " ($markup lab) " tag has a variable number of arguments. "
@@ -280,12 +281,12 @@
             ($inline ($shortcut (structured-insert-left)) ", "
                      ($menu "Focus" "Insert left") ", "
                      ($tmdoc-icon "tm_insert_left.xpm"))
-          "Insert a new argument on the left-hand side of the cursor.")
+          "Insert a new argument at the left-hand side of the cursor.")
         ($describe-item
             ($inline ($shortcut (structured-insert-right)) ", "
                      ($menu "Focus" "Insert right") ", "
                      ($tmdoc-icon "tm_insert_right.xpm"))
-          "Insert a new argument on the right-hand side of the cursor."))
+          "Insert a new argument at the right-hand side of the cursor."))
       ($when (structured-vertical? t)
         ($describe-item
             ($inline ($shortcut (structured-insert-up)) ", "
@@ -305,7 +306,7 @@
             ($inline ($shortcut (structured-remove-left)) ", "
                      ($menu "Focus" "Remove left") ", "
                      ($tmdoc-icon "tm_delete_left.xpm"))
-          "Remove the argument on the left-hand side of the cursor.")
+          "Remove the argument at the left-hand side of the cursor.")
         ($describe-item
             ($inline ($shortcut (structured-remove-right)) ", "
                      ($menu "Focus" "Remove right") ", "
@@ -320,7 +321,7 @@
             ($inline ($menu "Focus" "Remove below") ", "
                      ($tmdoc-icon "tm_delete_down.xpm"))
           "Remove the current argument and move to the one below.")))))
-
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Hidden arguments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
