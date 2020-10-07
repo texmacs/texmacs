@@ -334,7 +334,7 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
       		buf << "/LC 0\r\n";
       		buf << "/LJ 0\r\n";
       		buf << "/ML 10.0\r\n";
-      		buf << "/D [[] 0]\r\n";
+      		//buf << "/D [[] 0]\r\n"; // useless
       		buf << "/RI /RelativeColorimetric\r\n";
       		buf << "/OP false\r\n";
       		buf << "/op false\r\n";
@@ -588,7 +588,9 @@ public:
   ~pdf_image_rep() {}
 
   bool flush_jpg (PDFWriter& pdfw, url image);
-  bool flush_raster (PDFWriter& pdfw, url image);
+#ifndef PDFHUMMUS_NO_PNG
+  bool flush_png (PDFWriter& pdfw, url image);
+#endif
   void flush (PDFWriter& pdfw);
 
   bool flush_for_pattern (PDFWriter& pdfw);
@@ -1718,7 +1720,10 @@ pdf_image_rep::flush (PDFWriter& pdfw)
   
     if ((s == "jpg") || (s == "jpeg")) 
       if (flush_jpg(pdfw, name)) return;
-          
+#ifndef PDFHUMMUS_NO_PNG
+    if (s == "png")
+      if (flush_png(pdfw, name)) return;
+#endif
     // other formats we generate a pdf (with available converters) that we'll embbed
     image_to_pdf (name, temp, w, h, 300);
     // the 300 dpi setting is the maximum dpi of raster images that will be generated:
@@ -1963,6 +1968,40 @@ pdf_image_rep::flush_jpg (PDFWriter& pdfw, url image) {
   delete imageXObject;
   return status == eSuccess;
 }
+
+#ifndef PDFHUMMUS_NO_PNG
+bool
+pdf_image_rep::flush_png (PDFWriter& pdfw, url image) {
+  c_string f (concretize (image));
+  PNGImageHandler pngHandler;
+  InputFile file;
+  if (file.OpenFile (std::string ((char*) f)) != PDFHummus::eSuccess) {
+    convert_error << "pdf_hummus, failed to include PNG file " << image << LF;
+    return false;
+  }
+  IByteReaderWithPosition* stream= file.GetInputStream ();
+  DoubleAndDoublePair dim= pngHandler.ReadImageDimensions (stream);
+  double iw= dim.first, ih= dim.second;
+
+  stream->SetPosition (0);
+  PDFFormXObject* formXObject= pdfw.CreateFormXObjectFromPNGStream (stream);
+  if ((void*) formXObject == NULL) { 
+    convert_error << "pdf_hummus, failed to create Form from PNG stream" << LF;
+    return false;
+  }
+  PDFFormXObject* xobjectForm= pdfw.StartFormXObject (PDFRectangle (0, 0, w, h), id); 
+  XObjectContentContext* xobjectContentContext = xobjectForm->GetContentContext ();
+  xobjectContentContext->q ();
+  xobjectContentContext->cm (w / iw, 0, 0, h / ih, 0, 0);
+  std::string pdfImageName = xobjectForm->GetResourcesDictionary ()
+    .AddFormXObjectMapping (formXObject->GetObjectID ());
+  xobjectContentContext->Do (pdfImageName);
+  xobjectContentContext->Q ();
+  EStatusCode status = pdfw.EndFormXObjectAndRelease (xobjectForm);
+  delete formXObject;
+  return status == eSuccess;
+}
+#endif
 
 void
 pdf_hummus_renderer_rep::flush_images ()
