@@ -31,6 +31,17 @@
 (define-group wide-table-tag
   wide-tabular wide-block)
 
+(tm-define (any-table-tag? l)
+  (with t (get-env-tree (if (symbol? l) (symbol->string l) l))
+    (and (tree-func? t 'macro 2)
+         (nnull?
+          (tree-search
+           (tree-ref t 1)
+           (lambda (st)
+             (and (tree-func? st 'tformat)
+                  (tree-func? (tm-ref st :last) 'arg)
+                  (tm-equal? (tm-ref st :last 0) (tm-ref t 0)))))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Supplementary routines for cetting cell and table formats
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
