@@ -146,6 +146,7 @@ edit_interface_rep::try_shortcut (string comb) {
 
 void
 edit_interface_rep::key_press (string gkey) {
+  if (gkey == "pre-edit:1:<#0>") gkey= "pre-edit:0:`";
   string zero= "a"; zero[0]= '\0';
   string key= replace (gkey, "<#0>", zero);
   if (pre_edit_mark != 0) {
