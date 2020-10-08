@@ -404,7 +404,12 @@
 ;; Public interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (focus-help)
+(tm-define (old-focus-help)
   (lazy-initialize-force)
   (cursor-history-add (cursor-path))
   (open-auxiliary "Contextual help" (focus-doc (focus-tree))))
+
+(tm-define (focus-help)
+  (if (tree-is-buffer? (focus-tree))
+      (auto-load-help "Contextual help" "top-help")
+      (auto-load-help "Contextual help" "tag-help")))
