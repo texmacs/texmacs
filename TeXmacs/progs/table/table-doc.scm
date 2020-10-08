@@ -31,12 +31,12 @@
             ($inline ($shortcut (structured-insert-left)) ", "
                      ($menu "Focus" "Insert left") ", "
                      ($tmdoc-icon "tm_insert_left.xpm"))
-          "Insert a new column on the left-hand side of the cursor.")
+          "Insert a new column at the left-hand side of the cursor.")
         ($describe-item
             ($inline ($shortcut (structured-insert-right)) ", "
                      ($menu "Focus" "Insert right") ", "
                      ($tmdoc-icon "tm_insert_right.xpm"))
-          "Insert a new column on the right-hand side of the cursor."))
+          "Insert a new column at the right-hand side of the cursor."))
       ($when (structured-vertical? t)
         ($describe-item
             ($inline ($shortcut (structured-insert-up)) ", "
@@ -56,7 +56,7 @@
             ($inline ($shortcut (structured-remove-left)) ", "
                      ($menu "Focus" "Remove left") ", "
                      ($tmdoc-icon "tm_delete_left.xpm"))
-          "Remove the column on the left-hand side of the cursor.")
+          "Remove the column at the left-hand side of the cursor.")
         ($describe-item
             ($inline ($shortcut (structured-remove-right)) ", "
                      ($menu "Focus" "Remove right") ", "

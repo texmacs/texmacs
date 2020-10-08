@@ -269,7 +269,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-generate (focus-doc-insert t)
-  ($with dummy (display* "t= " t "\n")
   ($with lab (tree-label t)
     ($para
       "The " ($markup lab) " tag has a variable number of arguments. "
@@ -321,7 +320,7 @@
             ($inline ($menu "Focus" "Remove below") ", "
                      ($tmdoc-icon "tm_delete_down.xpm"))
           "Remove the current argument and move to the one below.")))))
-)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Hidden arguments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
