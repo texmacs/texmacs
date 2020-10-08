@@ -27,7 +27,8 @@
       ---
       ("assign" (make-block-assign))
       ---
-      ("intersperse" (make-block-intersperse)))
+      ("intersperse" (make-block-intersperse))
+      ("tag" (make-block-tag)))
   (-> "Inline"
       ("if" (make-inline-if))
       ("if-else" (make-inline-if-else))
@@ -36,7 +37,8 @@
       ---
       ("assign" (make-inline-assign))
       ---
-      ("intersperse" (make-inline-intersperse)))
+      ("intersperse" (make-inline-intersperse))
+      ("tag" (make-inline-tag)))
   (-> "Output"
       ("String" (make-output-string))
       ("Inline content" (make-inline-output))

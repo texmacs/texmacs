@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-module|(auto-menu)>
+  <use-module|(utils automate auto-menu)>
 
   <\active*>
     <\src-comment>
