@@ -144,9 +144,24 @@ edit_interface_rep::try_shortcut (string comb) {
   return false;
 }
 
+static string
+std_accent (string s) {
+  string c= "x";
+  c[0]= '\0';
+  s= replace (s, c, "`");
+  c[0]= '\1';
+  s= replace (s, c, "'");
+  c[0]= '\2';
+  s= replace (s, c, "^");
+  c[0]= '\3';
+  s= replace (s, c, "~");
+  c[0]= '\4';
+  s= replace (s, c, "\"");
+  return s;
+}
+
 void
 edit_interface_rep::key_press (string gkey) {
-  if (gkey == "pre-edit:1:<#0>") gkey= "pre-edit:0:`";
   string zero= "a"; zero[0]= '\0';
   string key= replace (gkey, "<#0>", zero);
   if (pre_edit_mark != 0) {
@@ -167,12 +182,11 @@ edit_interface_rep::key_press (string gkey) {
           tm_char_forwards (s, pos);
         break;
       }
-    if (as_bool (call ("disable-pre-edit?", cork_to_utf8 (s)))) {
+    if (as_bool (call ("disable-pre-edit?", std_accent (s)))) {
       pre_edit_skip= false;
       if (s == "") return;
       pre_edit_skip= true;
-      key= s;
-      if (key == zero) key= "`";
+      key= std_accent (s);
     }
     else if (pre_edit_skip) {
       if (s == "") pre_edit_skip= false;

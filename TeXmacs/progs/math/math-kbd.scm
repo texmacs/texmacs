@@ -24,7 +24,7 @@
 
 (tm-define (disable-pre-edit? key)
   (:mode in-math?)
-  (in? key (list "^" "~" "`")))
+  (in? key (list "^" "~" "`" "'" "\"")))
 
 (tm-define (downgrade-pre-edit key)
   (:mode in-math?)
