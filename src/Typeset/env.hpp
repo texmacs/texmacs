@@ -160,6 +160,7 @@ public:
   double       zoomf;
   SI           pixel;
   double       magn;
+  double       magn_len;
   double       mgfy;
   double       flexibility;
   int          first_page;

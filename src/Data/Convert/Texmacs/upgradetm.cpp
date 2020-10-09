@@ -4161,6 +4161,22 @@ upgrade_copyright_dashes (tree t) {
 }
 
 /******************************************************************************
+* Preserve old length conventions
+******************************************************************************/
+
+tree
+preserve_lengths (tree t) {
+  if (!is_non_style_document (t)) return t;
+  tree style= copy (extract (t, "style"));
+  if (is_atomic (style)) style= tuple (style);
+  if (style == tree (TUPLE)) style= tuple ("generic");
+  for (int i=0; i<N(style); i++)
+    if (style[i] == "old-lengths") return t;
+  style << "old-lengths";
+  return change_doc_attr (t, "style", style);
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -4375,7 +4391,9 @@ upgrade (tree t, string version) {
     t= rename_primitive (t, "swell-top", "inflate-top");
     t= rename_primitive (t, "swell-bottom", "inflate-bottom");
   }
-  
+  if (version_inf_eq (version, "1.99.13"))
+    t= preserve_lengths (t);
+
   if (is_non_style_document (t))
     t= automatic_correct (t, version);
   return t;

@@ -55,6 +55,7 @@ initialize_default_env () {
   env (GLOBAL_TITLE)     = "";          // global document title
   env (GLOBAL_AUTHOR)    = "";          // global document author
   env (GLOBAL_SUBJECT)   = "";          // global document subject
+  env (LENGTH_MODE)      = "magnified"; // length units under magnification
 
   env (FONT)             = "roman";     // the font name in text mode
   env (FONT_FAMILY)      = "rm";        // the font family in text mode

@@ -1,4 +1,4 @@
-<TeXmacs|1.99.11>
+<TeXmacs|1.99.13>
 
 <style|<tuple|source|std>>
 
@@ -324,6 +324,26 @@
   </macro>>
 
   <assign|margin-first-other|<macro|head-indent|tail-indent|body|<with|par-left|<plus|<arg|tail-indent>|0em>|par-first|<minus|<arg|head-indent>|<arg|tail-indent>>|<surround|<yes-indent>||<arg|body>>>>>
+
+  <assign|page-length|<macro|x|<if|<equal|<value|length-mode>|fixed>|<arg|x>|<over|<arg|x>|<value|magnification>>>>>
+
+  <assign|no-left-margin|<\macro|body>
+    <\with|par-left|<minus|<page-length|<value|page-odd>>>>
+      <arg|body>
+    </with>
+  </macro>>
+
+  <assign|no-right-margin|<\macro|body>
+    <\with|par-right|<minus|<page-length|<value|page-right>>>>
+      <arg|body>
+    </with>
+  </macro>>
+
+  <assign|no-margins|<\macro|body>
+    <\with|par-left|<minus|<page-length|<value|page-odd>>>|par-right|<minus|<page-length|<value|page-right>>>>
+      <arg|body>
+    </with>
+  </macro>>
 
   <\active*>
     <\src-comment>

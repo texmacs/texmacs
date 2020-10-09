@@ -1,4 +1,4 @@
-<TeXmacs|1.99.11>
+<TeXmacs|1.99.13>
 
 <style|<tuple|source|std>>
 
@@ -136,11 +136,13 @@
 
   <assign|tit|<\macro|body>
     <\surround|<assign|page-this-top|0mm>|<assign|gpag-length|<macro|<minus|1pag|2.25fn>>><vspace|5mm>>
-      <\with|par-left|<minus|<value|page-odd>>|par-right|<minus|<value|page-right>>|color|<value|title-shadow-color>>
-        <with|<resize|<tabular*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|-1|cell-background|<title-bar-color>>|<cwith|1|1|1|1|cell-halign|c>|<cwith|1|1|1|1|cell-hyphen|t>|<twith|table-valign|T>|<cwith|1|1|1|1|cell-tborder|<value|title-border>>|<cwith|1|1|1|1|cell-bborder|<value|title-border>>|<cwith|1|1|1|1|cell-lborder|<value|title-border>>|<cwith|1|1|1|1|cell-rborder|<value|title-border>>|<table|<row|<\cell>
-          <with-tit-color|<title-left|<arg|body>><htab|5mm><arg|body><htab|5mm><title-right|<arg|body>>>
-        </cell>>>>>||0em||>>
-      </with>
+      <\no-margins>
+        <\with|color|<value|title-shadow-color>>
+          <resize|<tabular*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|-1|cell-background|<title-bar-color>>|<cwith|1|1|1|1|cell-halign|c>|<cwith|1|1|1|1|cell-hyphen|t>|<twith|table-valign|T>|<cwith|1|1|1|1|cell-tborder|<value|title-border>>|<cwith|1|1|1|1|cell-bborder|<value|title-border>>|<cwith|1|1|1|1|cell-lborder|<value|title-border>>|<cwith|1|1|1|1|cell-rborder|<value|title-border>>|<table|<row|<\cell>
+            <with-tit-color|<title-left|<arg|body>><htab|5mm><arg|body><htab|5mm><title-right|<arg|body>>>
+          </cell>>>>>||0em||>
+        </with>
+      </no-margins>
     </surround>
   </macro>>
 

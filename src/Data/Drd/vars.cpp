@@ -32,6 +32,7 @@ string WARN_MISSING ("warn-missing");
 string GLOBAL_TITLE ("global-title");
 string GLOBAL_AUTHOR ("global-author");
 string GLOBAL_SUBJECT ("global-subject");
+string LENGTH_MODE ("length-mode");
 
 /******************************************************************************
 * Text properties for tex, math and prog modes

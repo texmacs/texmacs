@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.13>
 
 <style|source>
 
@@ -27,15 +27,17 @@
   \;
 
   <assign|poster-title|<\macro|body|ldeco|rdeco>
-    <\with|par-columns|1|par-left|<minus|<value|page-odd>>|par-right|<minus|<value|page-right>>|deco-hook|<macro|body|<with|ornament-border|0em|ornament-hpadding|<value|title-hpadding>|ornament-vpadding|<value|title-vpadding>|<arg|body>>>>
-      <\surround||<vspace|<value|title-vsep>>>
-        <\title-block>
-          <\surround|<resize|<arg|ldeco>|||1l|><htab|5mm>|<htab|5mm><resize|<arg|rdeco>|1r|||>>
-            <arg|body>
-          </surround>
-        </title-block>
-      </surround>
-    </with>
+    <\no-margins>
+      <\with|par-columns|1|deco-hook|<macro|body|<with|ornament-border|0em|ornament-hpadding|<value|title-hpadding>|ornament-vpadding|<value|title-vpadding>|<arg|body>>>>
+        <\surround||<vspace|<value|title-vsep>>>
+          <\title-block>
+            <\surround|<resize|<arg|ldeco>|||1l|><htab|5mm>|<htab|5mm><resize|<arg|rdeco>|1r|||>>
+              <arg|body>
+            </surround>
+          </title-block>
+        </surround>
+      </with>
+    </no-margins>
   </macro>>
 </body>
 

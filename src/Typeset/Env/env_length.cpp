@@ -326,21 +326,21 @@ get_magnification (string s) {
 ******************************************************************************/
 
 tree edit_env_rep::exec_cm_length () {
-  return tree (TMLEN, as_string (inch/2.54)); }
+  return tree (TMLEN, as_string (magn_len*inch/2.54)); }
 tree edit_env_rep::exec_mm_length () {
-  return tree (TMLEN, as_string (inch/25.4)); }
+  return tree (TMLEN, as_string (magn_len*inch/25.4)); }
 tree edit_env_rep::exec_in_length () {
-  return tree (TMLEN, as_string (inch)); }
+  return tree (TMLEN, as_string (magn_len*inch)); }
 tree edit_env_rep::exec_pt_length () {
-  return tree (TMLEN, as_string (inch/72.27)); }
+  return tree (TMLEN, as_string (magn_len*inch/72.27)); }
 tree edit_env_rep::exec_bp_length () {
-  return tree (TMLEN, as_string (inch/72.0)); }
+  return tree (TMLEN, as_string (magn_len*inch/72.0)); }
 tree edit_env_rep::exec_dd_length () {
-  return tree (TMLEN, as_string (0.376*inch/25.4)); }
+  return tree (TMLEN, as_string (0.376*magn_len*inch/25.4)); }
 tree edit_env_rep::exec_pc_length () {
-  return tree (TMLEN, as_string (12.0*inch/72.27)); }
+  return tree (TMLEN, as_string (12.0*magn_len*inch/72.27)); }
 tree edit_env_rep::exec_cc_length () {
-  return tree (TMLEN, as_string (4.531*inch/25.4)); }
+  return tree (TMLEN, as_string (4.531*magn_len*inch/25.4)); }
 
 tree
 edit_env_rep::exec_fs_length () {

@@ -34,6 +34,7 @@ extern string WARN_MISSING;
 extern string GLOBAL_TITLE;
 extern string GLOBAL_AUTHOR;
 extern string GLOBAL_SUBJECT;
+extern string LENGTH_MODE;
 
 extern string FONT;
 extern string FONT_FAMILY;
