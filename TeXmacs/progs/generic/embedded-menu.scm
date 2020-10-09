@@ -19,19 +19,34 @@
 ;; Special menus for images
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(menu-bind embedded-save-menu
+  ("Save image as" (save-embedded-image-as))
+  ("Link image as" (link-embedded-image-as))
+  ("Link image and copies as" (link-embedded-image-copies-as))
+  ---
+  ("Save all embedded images" (save-all-embedded-images))
+  ("Link all embedded images" (link-all-embedded-images)))
+
+(menu-bind embedded-load-menu
+  ("Embed this image" (embed-this-image))
+  ---
+  ("Embed all linked images" (embed-all-images)))
+
 (tm-menu (focus-misc-menu t)
   (:require (embedded-image-context? t))
-  (-> "Save image"
-      ("Save image as" (save-embedded-image-as))
-      ("Link image as" (link-embedded-image-as))
-      ("Link image and copies as" (link-embedded-image-copies-as))
-      ---
-      ("Save all embedded images" (save-all-embedded-images))
-      ("Link all embedded images" (link-all-embedded-images))))
+  (-> "Save image" (link embedded-save-menu)))
 
 (tm-menu (focus-misc-menu t)
   (:require (linked-image-context? t))
-  (-> "Embed image"
-      ("Embed this image" (embed-this-image))
-      ---
-      ("Embed all linked images" (embed-all-images))))
+  (-> "Embed image" (link embedded-load-menu)))
+
+(tm-menu (focus-misc-icons t)
+  (:require (embedded-image-context? t))
+  (=> (balloon (icon "tm_focus_save.xpm") "Save image")
+      (link embedded-save-menu)))
+
+(tm-menu (focus-misc-icons t)
+  (:require (linked-image-context? t))
+  (=> (balloon (icon "tm_focus_load.xpm") "Embed image")
+      (link embedded-load-menu)))
+
