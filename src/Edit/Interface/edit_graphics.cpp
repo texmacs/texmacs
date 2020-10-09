@@ -514,6 +514,8 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t) {
       call ("graphics-dragging-right", sx, sy);
     else if (type == "end-drag-right")
       call ("graphics-end-drag-right", sx, sy);
+    else if (type == "drop-object")
+      call ("graphics-drop-object", sx, sy);
     invalidate_graphical_object ();
     notify_change (THE_CURSOR);
     return true;

@@ -33,5 +33,9 @@
   ;;(display* "mouse-event " key ", " x ", " y ", " mods ", " time "\n")
   (mouse-any key x y mods (+ time 0.0)))
 
+(tm-define (mouse-drop-event x y obj)
+  ;;(display* "mouse-drop-event " x ", " y ", " (tm->stree obj) "\n")
+  (insert obj))
+
 (tm-define (kbd-insert s)
   (insert s))

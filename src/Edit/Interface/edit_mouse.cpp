@@ -557,7 +557,10 @@ call_drop_event (string kind, SI x, SI y, SI ticket, time_t t, url base) {
   extern hashmap<int, tree> payloads;
   tree doc = payloads [ticket];
   payloads->reset (ticket);
-  eval (list_object (symbol_object ("insert"), relativize (doc, base)));
+  array<object> args;
+  args << object (x) << object (y) << object (relativize (doc, base));
+  call ("mouse-drop-event", args);
+  //eval (list_object (symbol_object ("insert"), relativize (doc, base)));
   //array<object> args;
   //args << object (kind) << object (x) << object (y)
   //<< object (doc) << object ((double) t);
@@ -601,8 +604,11 @@ edit_interface_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t) {
   //cout << kind << " (" << x << ", " << y << "; " << m << ")"
   //     << " at " << t << "\n";
 
-  if (kind == "drop")
+  if (kind == "drop") {
     call_drop_event (kind, x, y, m, t, buf->buf->name);
+    if (inside_graphics (true))
+      mouse_graphics ("drop-object", x, y, m, t);
+  }
   else {
     string rew= kind;
     SI dist= (SI) (5 * PIXEL / magf);

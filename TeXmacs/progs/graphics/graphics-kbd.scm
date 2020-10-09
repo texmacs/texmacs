@@ -166,6 +166,10 @@
   (cond ((string-occurs? "-" key) (key-press key))
         ((in? key graphics-keys) (key-press key))))
 
+(tm-define (mouse-drop-event x y obj)
+  (:mode in-active-graphics?)
+  (set! the-graphics-drop-object (tm->stree obj)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Overriding standard structured editing commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -222,7 +226,6 @@
 
 (tm-define (geometry-vertical t down?)
   (:require (graphical-text-context? t))
-  (display* t ", " (graphics-valign-var t) "\n")
   (let* ((valign-var (graphics-valign-var t))
          (old (graphical-get-attribute t valign-var))
          (new (if down?
