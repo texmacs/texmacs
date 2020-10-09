@@ -41,13 +41,14 @@
               (s (url-suffix f)))
          (if (== s "") f s))))
 
-(tm-define (embedded-propose t)
+(tm-define (embedded-propose t nr)
   (and (embedded-image-context? t)
        (let* ((f (tm->string (tm-ref t 0 1)))
               (s (url-suffix f))
               (c (current-buffer))
               (r (url->string (url-basename (url-tail c))))
-              (n (if (== s "") (string-append r "-image." f) f)))
+              (d (string-append r "-image-" (number->string nr) "." f))
+              (n (if (== s "") d f)))
          (url->string (url-relative c n)))))
 
 (tm-define (save-embedded-image t name)
@@ -75,7 +76,7 @@
   (:interactive #t)
   (let* ((t (tree-innermost embedded-image-context? #t))
          (s (embedded-suffix t))
-         (p (embedded-propose t)))
+         (p (embedded-propose t 1)))
     (choose-file embedded-saver "Save embedded image" s "Save" p)))
 
 (tm-define (embedded-linker name)
@@ -85,7 +86,7 @@
   (:interactive #t)
   (let* ((t (tree-innermost embedded-image-context? #t))
          (s (embedded-suffix t))
-         (p (embedded-propose t)))
+         (p (embedded-propose t 1)))
     (choose-file embedded-linker "Link embedded image" s "Save" p)))
 
 (tm-define (embedded-linker-copies name)
@@ -95,6 +96,65 @@
   (:interactive #t)
   (let* ((t (tree-innermost embedded-image-context? #t))
          (s (embedded-suffix t))
-         (p (embedded-propose t)))
+         (p (embedded-propose t 1)))
     (choose-file embedded-linker-copies "Link embedded image and copies"
                  s "Save" p)))
+
+(define (strip-suffix u)
+  (with suffix (url-suffix u)
+    (if (== suffix "") u
+        (with r (url-unglue u (+ (string-length suffix) 1))
+          (if (string? u) (url->string r) r)))))
+
+(define (url-number u nr)
+  (with num (string-append "-" (number->string nr))
+    (if (== (url-suffix u) "")
+        (url-glue u num)
+        (url-glue (strip-suffix u) (string-append num "." (url-suffix u))))))
+
+(define (url-free u nr)
+  (cond ((not (url-exists? u)) u)
+        ((not (url-exists? (url-number u nr))) (url-number u nr))
+        (else (url-free u (+ nr 1)))))
+
+(define (embedded-list t)
+  (let* ((tl (tree-search t embedded-image-context?))
+         (il (... 1 (length tl)))
+         (fl (map embedded-propose tl il)))
+    (map list tl fl)))
+
+(tm-define (save-all-embedded-images)
+  (for (p (embedded-list (buffer-tree)))
+    (with (t u) p
+      (save-embedded-image t (url-free u 2)))))
+
+(tm-define (link-all-embedded-images)
+  (for (p (embedded-list (buffer-tree)))
+    (with (t u) p
+      (link-embedded-image t (url-free u 2)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Manage linked images
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (embed-image t)
+  (when (and (linked-image-context? t) (tree-atomic? (tree-ref t 0)))
+    (let* ((f (tm->string (tm-ref t 0)))
+           (u (url-relative (current-buffer) f))
+           (s (url-suffix f)))
+      (when (url-exists? u)
+        (let* ((data (string-load u))
+               (raw `(tuple (raw-data ,data) ,(url->string (url-tail f)))))
+          (tree-set t 0 raw))))))
+
+(tm-define (embed-images t)
+  (cond ((tree-atomic? t) (noop))
+        ((linked-image-context? t) (embed-image t))
+        (else (for-each embed-images (tree-children t)))))
+
+(tm-define (embed-this-image)
+  (with t (tree-innermost linked-image-context? #t)
+    (embed-image t)))
+
+(tm-define (embed-all-images)
+  (embed-images (buffer-tree)))
