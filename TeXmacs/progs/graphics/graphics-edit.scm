@@ -19,7 +19,6 @@
         (graphics graphics-group)
         (graphics graphics-animate)))
 
-
 ;; TODO:
 ;;
 ;;   1. Chercher scrupuleusement a factoriser et simplifier le code.
@@ -190,6 +189,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define the-keyboard-modifiers 0)
+(tm-define the-graphics-drop-object #f)
 
 (tm-define (set-keyboard-modifiers mods)
   (set! the-keyboard-modifiers mods))
@@ -266,3 +266,17 @@
   (:state graphics-state)
   ;(display* "Graphics] Choose\n")
   (edit_tab-key (car (graphics-mode)) inc))
+
+(tm-define (graphics-drop-object x y)
+  (:state graphics-state)
+  (sketch-reset)
+  (and-with gp (graphics-graphics-path)
+    (let* ((gt (path->tree gp))
+           (n (- (tree-arity gt) 1))
+           (ha (graphics-get-property "gr-text-at-halign"))
+           (va (graphics-get-property "gr-text-at-valign"))
+           (obj `(text-at ,the-graphics-drop-object (point ,x ,y)))
+           (rich `(with "text-at-halign" ,ha "text-at-valign" ,va ,obj)))
+      (tree-insert gt n (list rich))
+      (tree-go-to gt n 0 :end)
+      (graphics-set-mode '(edit text-at)))))
