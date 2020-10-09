@@ -110,7 +110,7 @@
   ("Presentation mode" (toggle-full-screen-mode))
   ("Show panorama" (toggle-panorama-mode))
   ("Remote control" (toggle-remote-control-mode))
-  (assuming (and (os-macos?) (not (qt5-or-later-gui?)))
+  (assuming (os-macos?)
     ("Retina settings" (open-retina-settings)))
   (assuming (not (os-macos?))
     ("High resolution settings" (open-retina-settings)))
