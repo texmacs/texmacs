@@ -908,6 +908,7 @@
 (tm-menu (focus-style-extra-menu t))
 
 (menu-bind cite-texmacs-only-menu
+  ("The Jolly Writer" (cite-texmacs "TeXmacs:vdH:book"))
   ("TeXmacs website" (cite-texmacs "TeXmacs:website"))
   ("TeXmacs manual" (cite-texmacs "TeXmacs:manual")))
 
