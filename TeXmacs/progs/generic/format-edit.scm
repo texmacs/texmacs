@@ -48,7 +48,6 @@
         ((tree-func? t 'document 1)
          (with-simplify-sub (tree-up t) var))
         ((tree-func? t 'with)
-         (with-simplify-sub (tree-up t) var)
          (for (i (reverse (.. 0 (quotient (tree-arity t) 2))))
            (when (== (tree-ref t (* 2 i)) var)
              (tree-remove! t (* 2 i) 2)))
@@ -56,7 +55,9 @@
                     (tree-func? (tm-ref t :last 0) 'with))
            (tree-remove-node (tm-ref t :last) 0))
          (when (tree-func? t 'with 1)
-           (tree-remove-node! t 0)))))
+           (tree-remove-node! t 0))
+         (when (tree-up t)
+           (with-simplify-sub (tree-up t) var)))))
 
 (tm-define (with-simplify t)
   (when (and (not (tree-is-buffer? t)) (tree->path t))
@@ -98,6 +99,12 @@
         `(with ,@(cDr c) ,(add-with l (cAr c))))
       `(with ,@l ,t)))
 
+(define (add-with-path l t)
+  (if (tm-is? t 'with)
+      (with c (tm-children t)
+        (cons (length (cDr c)) (add-with-path l (cAr c))))
+      (cons (length l) (path-end t '()))))
+
 (define (get-cars l)
   (if (or (null? l) (null? (cdr l))) (list)
       (cons (car l) (get-cars (cddr l)))))
@@ -114,12 +121,12 @@
           ((selection-active-any?)
            (with t (selection-tree)
              (clipboard-cut "null")
-             (insert-go-to (add-with l t) (cons (length l) (path-end t '())))
+             (insert-go-to (add-with l t) (add-with-path l t))
              (with-simplify (cursor-tree))
              (and-with w (tree-innermost 'with #t)
                (tree-select w))))
           (else
-            (insert-go-to (add-with l "") (list (length l) 0))
+            (insert-go-to `(with ,@l "") (list (length l) 0))
             (with-simplify (cursor-tree))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
