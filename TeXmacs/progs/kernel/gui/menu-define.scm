@@ -535,7 +535,7 @@
 
 (tm-menu (my-pattern-menu cmd)
   (tile 8
-    (for (col (get-preferred-list "my patterns" 16))
+    (for (col (get-preferred-list "my patterns" 32))
       (with args (cons* (cadr col) "100%" "100@" (cddddr col))
         (with col2 (apply tm-pattern args)
           (explicit-buttons
@@ -590,7 +590,7 @@
      (dynamic (standard-pattern-menu (lambda (answer) ,@(cddr x))
                                      "$TEXMACS_PATH/misc/patterns/vintage"
                                      ,(cadr x)))
-     (when (nnull? (get-preferred-list "my patterns" 16))
+     (when (nnull? (get-preferred-list "my patterns" 32))
        ---
        (dynamic (my-pattern-menu (lambda (answer) ,@(cddr x)))))
      ;;(assuming (nnull? (clipart-list))
