@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.10>
+<TeXmacs|1.99.13>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|Environments>
@@ -41,7 +41,7 @@
   <markup|code>, <markup|quote>, <markup|quotation> and <markup|verse> can be
   used in order to enter multiparagraph text or code, quotations or poetry.
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2020|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -51,8 +51,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

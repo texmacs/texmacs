@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.11>
+<TeXmacs|1.99.13>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|Typing structured text>
@@ -25,7 +25,7 @@
   are theorem, proposition, remark and so on (see <menu|Insert|Enunciation>).
   Other examples are lists of items (see <menu|Insert|Itemize>) or numbered
   lists (see <menu|Insert|Enumerate>). Further examples of frequently used
-  tags are <markup|strong> (for writing ``important'' text), <markup|name>
+  tags are <markup|strong> (for writing \Pimportant\Q text), <markup|name>
   (for writing names of persons), etc.
 
   When you get more acquainted with <TeXmacs>, it is possible to add your own
@@ -50,7 +50,7 @@
 
     <\big-envbox>
       <\theorem>
-        <small-focus|<math|\<mathe\><rsup|\<mathpi\>*\<mathi\>>=\<um\>1<value|math-cursor>>>.
+        <small-focus|<math|\<mathe\><rsup|\<mathpi\>*\<mathi\>>=\<um\>1<math-cursor>>>.
       </theorem>
     </big-envbox>
   </quote-env>
@@ -76,7 +76,7 @@
 
         <\big-focus>
           <\equation*>
-            \<mathe\><rsup|\<mathpi\>*\<mathi\>>=\<um\>1<value|math-cursor>.
+            \<mathe\><rsup|\<mathpi\>*\<mathi\>>=\<um\>1<math-cursor>.
           </equation*>
         </big-focus>
       </theorem>
@@ -86,8 +86,8 @@
   Similarly, the arrow buttons on the left hand side of the focus toolbar
   allow you to jump to similar tags. In this case, they will allow you to
   quickly traverse all formulas and equations in your document. For more
-  information on ``<hlink|structured editing
-  operations|../editing/man-structured-editing.en.tm>'' we refer to the
+  information on \P<hlink|structured editing
+  operations|../editing/man-structured-editing.en.tm>\Q we refer to the
   chapter on <hlink|editing tools|../editing/man-editing-tools.en.tm>.
 
   A second important concept is the <em|current editing mode>. Currently,
@@ -99,7 +99,7 @@
   contents of the <menu|Insert> and <menu|Format> menus are also mode
   dependent.
 
-  <tmdoc-copyright|1998--2010|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2020|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -111,7 +111,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|english>
     <associate|preamble|false>
   </collection>
 </initial>

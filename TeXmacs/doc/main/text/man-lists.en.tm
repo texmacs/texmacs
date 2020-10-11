@@ -1,6 +1,6 @@
 <TeXmacs|1.99.13>
 
-<style|<tuple|tmdoc|english|old-spacing|old-dots>>
+<style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|Lists>
@@ -54,7 +54,7 @@
     <item*|Gnat>Only lives in a zoo.
   </description>
 
-  <tmdoc-copyright|1998\U2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2020|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

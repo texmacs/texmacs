@@ -1,6 +1,6 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.13>
 
-<style|<tuple|tmdoc|english|old-spacing>>
+<style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|General prefix rules>
@@ -16,8 +16,8 @@
   <\description>
     <item*|<prefix|std>>Standard shortcuts, which are similar to shortcuts
     used by other applications (for the selected look and feel). For
-    instance, <shortcut|(clipboard-paste "primary")> can be used for pasting
-    text on your system.
+    instance, <shortcut|(kbd-paste)> can be used for pasting text on your
+    system.
 
     <item*|<prefix|cmd>><TeXmacs> shortcuts, which often rely on the current
     editing mode. For instance, <key|text s> produces <strong|strong> text in
@@ -59,7 +59,7 @@
   For more information, we refer to the section on <hlink|keyboard
   configuration|../../config/man-config-keyboard.en.tm>.
 
-  <tmdoc-copyright|1998--2010|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2020|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

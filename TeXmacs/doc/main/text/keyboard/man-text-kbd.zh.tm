@@ -1,6 +1,6 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.13>
 
-<style|<tuple|tmdoc|chinese|old-spacing>>
+<style|<tuple|tmdoc|chinese|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|\<#6587\>\<#672C\>\<#6A21\>\<#5F0F\>\<#4E0B\>\<#7684\>\<#5FEB\>\<#6377\>\<#952E\>>
@@ -83,8 +83,8 @@
   \<#8BED\>\<#8A00\>\<#76F8\>\<#5173\>\<#7684\>\<#5FEB\>\<#6377\>\<#952E\>\<#4F1A\>\<#8986\>\<#76D6\>\<#66F4\>\<#52A0\>\<#4E00\>\<#822C\>\<#7684\>\<#5FEB\>\<#6377\>\<#952E\>\<#FF1A\>\<#6BD4\>\<#5982\>\<#FF0C\>\<#5728\>\<#5308\>\<#7259\>\<#5229\>\<#8BED\>\<#73AF\>\<#5883\>\<#4E0B\>\<#FF0C\>\<#4F60\>\<#65E0\>\<#6CD5\>\<#8F7B\>\<#6613\>\<#5730\>\<#8F93\>\<#5165\>\<#5B57\>\<#7B26\>
   \<#300C\><with|font|roman|ø>\<#300D\>\<#3002\>
 
-  <tmdoc-copyright|1998-2018|Joris van der Hoeven<tmdoc-copyright-extra|David
-  Allouche>, Darcy Shen>
+  <tmdoc-copyright|1998-2020|Joris van der Hoeven<tmdoc-copyright-extra|David
+  Allouche>, \<#6C88\>\<#8FBE\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
