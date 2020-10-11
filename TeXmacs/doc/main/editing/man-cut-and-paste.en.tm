@@ -1,18 +1,17 @@
-<TeXmacs|1.99.5>
+<TeXmacs|1.99.13>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing|old-dots>>
 
 <\body>
   <tmdoc-title|Cut and paste>
 
   You can select text and formulas by maintaining the left mouse button. In
   order to delete the selected region, use <menu|Edit|Cut> or
-  <shortcut|(clipboard-cut "primary")>. In order to copy the selected region,
-  first click on <menu|Edit|Copy> or hit<nbsp><shortcut|(clipboard-copy
-  "primary")>. Next, paste it as many times as you want to the location of
-  your cursor, using <menu|Edit|Paste> or<nbsp><shortcut|(clipboard-paste
-  "primary")>. Alternatively, you may copy a selected region using the middle
-  mouse button.
+  <shortcut|(kbd-cut)>. In order to copy the selected region, first click on
+  <menu|Edit|Copy> or hit <shortcut|(kbd-copy)>. Next, paste it as many times
+  as you want to the location of your cursor, using <menu|Edit|Paste> or
+  <shortcut|(kbd-paste)>. Alternatively, you may copy a selected region using
+  the middle mouse button.
 
   It is also possible to change the text properties of a selected region. For
   instance, in order to transform some black text in red, you select it using
@@ -36,8 +35,8 @@
   you to keep multiple selections in memory, ready to be pasted.
 
   There are two ways to make selections using the keyboard. When using the
-  cursor keys<nbsp><key|left>, <key|right>, <abbr|etc.> while holding down
-  the <prefix|S-> button, you may select text while moving around the cursor.
+  cursor keys <key|left>, <key|right>, <abbr|etc.> while holding down the
+  <prefix|S-> button, you may select text while moving around the cursor.
   Alternatively, you may press <shortcut|(kbd-select-enlarge)> once to fix a
   starting position. When moving around using the cursor keys, the text
   between the starting position and the current position keeps being
@@ -46,13 +45,13 @@
 
   Notice that the <shortcut|(kbd-select-enlarge)> shortcut also allows you to
   make <em|structured selections>. You may select the current word you are in
-  by pressing<nbsp><shortcut|(kbd-select-enlarge)> twice. Each additional
-  time you press <shortcut|(kbd-select-enlarge)> results in the selection of
-  the smallest structure that englobes the current selection. Ultimately,
-  when the entire document gets selected, pressing
-  <shortcut|(kbd-select-enlarge)> once more clears the selection.
+  by pressing <shortcut|(kbd-select-enlarge)> twice. Each additional time you
+  press <shortcut|(kbd-select-enlarge)> results in the selection of the
+  smallest structure that englobes the current selection. Ultimately, when
+  the entire document gets selected, pressing <shortcut|(kbd-select-enlarge)>
+  once more clears the selection.
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2020|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

@@ -1,6 +1,6 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.13>
 
-<style|<tuple|tmdoc|chinese>>
+<style|<tuple|tmdoc|chinese|old-spacing|old-dots>>
 
 <\body>
   <tmdoc-title|\<#7F16\>\<#8F91\>\<#5DE5\>\<#5177\>>
@@ -28,7 +28,7 @@
     <branch|\<#7248\>\<#672C\>\<#63A7\>\<#5236\>|man-versioning.zh.tm>
   </traverse>
 
-  <tmdoc-copyright|1998--2005|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2020|Joris van der Hoeven|\<#6C88\>\<#8FBE\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

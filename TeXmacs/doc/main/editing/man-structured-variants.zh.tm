@@ -34,7 +34,7 @@
   (focus-tree))>\<#548C\><shortcut|(variant-circulate (focus-tree)
   #t)>\<#7684\>\<#533A\>\<#522B\>\<#FF0C\>\<#524D\>\<#8005\>\<#663E\>\<#793A\>\<#548C\>\<#9690\>\<#85CF\>\<#7F16\>\<#53F7\>\<#FF0C\>\<#800C\>\<#540E\>\<#8005\>\<#662F\>\<#5728\>\<#4E00\>\<#7EC4\>\<#53EF\>\<#7528\>\<#73AF\>\<#5883\>\<#5982\>\<#5217\>\<#8868\>\<#9879\>\<#76EE\>(\<#5706\>\<#70B9\>\<#FF0C\>\<#77ED\>\<#7EBF\>\<#FF0C\>\<#7BAD\>\<#5934\>\<#7B49\>)\<#95F4\>\<#8F6E\>\<#6362\>\<#3002\>
 
-  <tmdoc-copyright|1998\U2005|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2020|Joris van der Hoeven|\<#6C88\>\<#8FBE\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

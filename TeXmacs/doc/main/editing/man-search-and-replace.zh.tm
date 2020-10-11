@@ -1,6 +1,6 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.13>
 
-<style|<tuple|tmdoc|chinese>>
+<style|<tuple|tmdoc|chinese|old-spacing|old-dots>>
 
 <\body>
   <tmdoc-title|\<#641C\>\<#7D22\>\<#548C\>\<#66FF\>\<#6362\>>
@@ -17,7 +17,7 @@
   to|Search>\<#FF0C\>\<#63A5\>\<#4E0B\>\<#6765\>\<#6309\><key|C-s>\<#4FBF\>\<#53EF\>\<#7528\>\<#9009\>\<#4E2D\>\<#7684\>\<#6587\>\<#672C\>\<#641C\>\<#7D22\>\<#3002\>\<#7C7B\>\<#4F3C\>\<#5730\>\<#FF0C\>\<#9009\>\<#4E2D\>\<#6587\>\<#672C\>\<#FF0C\>\<#70B9\>\<#51FB\>\<#83DC\>\<#5355\>\<#9879\><menu|Edit|Copy
   to|Replace>\<#FF0C\>\<#518D\>\<#6B21\>\<#9009\>\<#4E2D\>\<#53E6\>\<#4E00\>\<#4E2A\>\<#6587\>\<#672C\>\<#FF0C\>\<#63A5\>\<#4E0B\>\<#6765\>\<#6309\><key|C-=>\<#5C31\>\<#80FD\>\<#4EE5\>\<#524D\>\<#540E\>\<#4E24\>\<#6B21\>\<#9009\>\<#4E2D\>\<#7684\>\<#6587\>\<#672C\>\<#4E3A\>\<#53C2\>\<#6570\>\<#6267\>\<#884C\>\<#66FF\>\<#6362\>\<#64CD\>\<#4F5C\>\<#3002\>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2020|Joris van der Hoeven|\<#6C88\>\<#8FBE\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
