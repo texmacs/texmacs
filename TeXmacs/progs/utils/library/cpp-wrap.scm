@@ -62,9 +62,10 @@
       (make lab)))
 
 (tm-define (make-wrapped lab)
-  (clipboard-cut "wrapbuf")
-  (make lab)
-  (clipboard-paste "wrapbuf"))
+  (with sel? (selection-active-any?)
+    (clipboard-cut "wrapbuf")
+    (make lab)
+    (if sel? (clipboard-paste "wrapbuf"))))
 
 (tm-define (insert-go-to t p) (cpp-insert-go-to t p))
 (tm-define (make-hybrid) (cpp-make-hybrid))
