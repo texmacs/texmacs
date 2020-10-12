@@ -220,6 +220,7 @@ rubber_stix_font_rep::search_font_sub (string s, string& rew, string& ltype) {
   }
   if (starts (s, "<left-") && ends (s, "-0>")) {
     rew= s;
+    if (starts (s, "<left-sqrt-") && !reg) rew= "<" * s (6, N(s) - 3) * ">";
     return 0;
   }
   if (starts (s, "<left-sqrt-")) {
