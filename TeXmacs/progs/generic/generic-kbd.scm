@@ -671,6 +671,7 @@
 
   ;; standard Windows shortcuts
   ("windows F4" (close-document))
+  ("windows S-F4" (close-document*))
   ("windows left" (traverse-left))
   ("windows right" (traverse-right))
   ("windows home" (go-start))
@@ -699,6 +700,7 @@
   ("S-insert" (kbd-paste))
   ("C-insert" (kbd-copy))
   ("A-F4" (close-document))
+  ("A-S-F4" (close-document*))
   ("A-left" (cursor-history-backward))
   ("A-right" (cursor-history-forward))
 
