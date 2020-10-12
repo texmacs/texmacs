@@ -377,14 +377,14 @@
 
   (define Big-nolim-symbol
     (:type prefix)
-    (:penalty panic)
+    (:penalty invalid)
     (:spacing none big)
     "<big-int>" "<big-iint>" "<big-iiint>" "<big-iiiint>" "<big-idotsint>"
     "<big-oint>" "<big-oiint>" "<big-oiiint>")
 
   (define Big-lim-symbol
     (:type prefix)
-    (:penalty panic)
+    (:penalty invalid)
     (:spacing none big)
     (:limits display)
     "<big-sum>" "<big-prod>" "<big-amalg>"
@@ -408,13 +408,13 @@
 
   (define Other-postfix-symbol
     (:type postfix)
-    (:penalty panic)
+    (:penalty invalid)
     "!" "%" "<permil>"
     "<postup>" "<postdown>" "<postupdown>" "<postmapsup>" "<postmapsdown>")
 
   (define Prime-symbol
     (:type symbol)
-    (:penalty panic)
+    (:penalty invalid)
     "'" "`" "<dag>" "<ddag>" "<asterisk>" "<star>" "<kreuz>")
 
   (define Ponctuation-visible-symbol
