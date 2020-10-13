@@ -59,7 +59,7 @@ struct new_breaker_rep {
                    font fn, int fp);
 
   insertion make_insertion (lazy_vstream lvs, path p);
-  space compute_space (path b1, path b2);
+  space compute_space (path b1, path b2, bool wide_part= false);
   bool last_break (path b);
   void find_page_breaks (path i1);
   void find_page_breaks ();
@@ -69,7 +69,7 @@ struct new_breaker_rep {
   insertion make_insertion (int i1, int i2);
   bool here_floats (path p);
   void lengthen_previous (pagelet& pg, int pos, space done);
-  pagelet assemble (path start, path end);
+  pagelet assemble (path start, path end, bool wide_part= false);
   void assemble_skeleton (skeleton& sk, path end, int& offset);
 
   // Pages with multi-column content

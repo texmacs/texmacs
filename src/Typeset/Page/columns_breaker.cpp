@@ -307,7 +307,7 @@ new_breaker_rep::compute_space (path b1, path b2, vpenalty& pen) {
     array<path> sa= break_columns (sb1, sb2);
     int cols= N(sa) - 1;
     if (cols == 1)
-      spc += compute_space (sb1, sb2);
+      spc += compute_space (sb1, sb2, true);
     else {
       space sspc;
       vpenalty spen;
@@ -327,16 +327,18 @@ new_breaker_rep::compute_space (path b1, path b2, vpenalty& pen) {
   }
 
   int i1= b1->item, i2= b2->item;
-  if (i1 < i2 && wide_tot[i2-1] != (i1 == 0? space (0): wide_tot[i1-1])) {
+  if (i1 < i2 && wide_tot[i2-1] != (i1 == 0? space (0): wide_tot[i1-1]))
     spc += (wide_tot[i2-1] - (i1 == 0? space (0): wide_tot[i1]));
-    bool has_footnotes= false;
-    for (int i=i1; i<i2; i++)
-      for (int j=0; j<N(ins_list[i]); j++)
-        if (ins_list[i][j]->nr_cols == 1 && l[i]->nr_cols > 1)
-          if (is_tuple (ins_list[i][j]->type, "footnote"))
-            has_footnotes= true;
-    if (has_footnotes) spc += (fnote_sep - fn_sep);
-  }
+
+  bool has_footnotes= false;
+  for (int i=i1; i<i2; i++)
+    for (int j=0; j<N(ins_list[i]); j++)
+      if (ins_list[i][j]->nr_cols == 1)
+        if (is_tuple (ins_list[i][j]->type, "footnote")) {
+          has_footnotes= true;
+          if (l[i]->nr_cols == 1) spc += ins_list[i][j]->ht + fn_sep;
+        }
+  if (has_footnotes) spc += (fnote_sep - fn_sep);
 
   return spc;
 }
@@ -377,7 +379,7 @@ new_breaker_rep::make_multi_column (path b1, path b2) {
   int cols= N(a) - 1;
   if (cols == 1) {
     skeleton sk;
-    pagelet pg= assemble (b1, b2);
+    pagelet pg= assemble (b1, b2, true);
     if (N(pg->ins) != 0) sk << pg;
     return make_multi_column (sk, 1);
   }
@@ -421,7 +423,7 @@ new_breaker_rep::assemble_multi_columns (path b1, path b2) {
     pg << ins;
   }
 
-  if (wide_flag) {
+  if (wide_flag)
     for (int i=i1; i<i2; i++)
       for (int j=0; j<N(ins_list[i]); j++)
         if (ins_list[i][j]->nr_cols == 1 && l[i]->nr_cols > 1)
@@ -431,17 +433,16 @@ new_breaker_rep::assemble_multi_columns (path b1, path b2) {
               pg << fnote_sep;
             }
 
-    bool has_footnotes= false;
-    for (int i=i1; i<i2; i++)
-      for (int j=0; j<N(ins_list[i]); j++)
-        if (ins_list[i][j]->nr_cols == 1 && l[i]->nr_cols > 1)
-          if (is_tuple (ins_list[i][j]->type, "footnote")) {
-            pg << ins_list[i][j];
-            if (has_footnotes) pg << fn_sep;
-            else pg << fnote_sep;
-            has_footnotes= true;
-          }
-  }
+  bool has_footnotes= false;
+  for (int i=i1; i<i2; i++)
+    for (int j=0; j<N(ins_list[i]); j++)
+      if (ins_list[i][j]->nr_cols == 1)
+        if (is_tuple (ins_list[i][j]->type, "footnote")) {
+          pg << ins_list[i][j];
+          if (has_footnotes) pg << fn_sep;
+          else pg << fnote_sep;
+          has_footnotes= true;
+        }
   
   return pg;
 }
