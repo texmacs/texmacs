@@ -400,6 +400,7 @@ new_breaker_rep::assemble_multi_columns (path b1, path b2) {
   int i1= b1->item, i2= b2->item;
   bool wide_flag= (i1 < i2 && wide_tot[i2-1] !=
                    (i1 == 0? space (0): wide_tot[i1-1]));
+  //cout << "Multi-columns, wide= " << wide_flag << LF;
   
   if (wide_flag)
     for (int i=i1; i<i2; i++)

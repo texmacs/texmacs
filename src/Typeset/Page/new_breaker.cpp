@@ -568,7 +568,7 @@ new_breaker_rep::lengthen_previous (pagelet& pg, int pos, space done) {
 
 pagelet
 new_breaker_rep::assemble (path start, path end) {
-  //cout << "Assemble " << start << ", " << end << LF;
+  //cout << "Assemble " << start << ", " << end << INDENT << LF;
   // Position the floats
   path floats, avoid= end->next;
   for (int i=start->item; i<end->item; i++)
@@ -681,6 +681,7 @@ new_breaker_rep::assemble (path start, path end) {
             has_footnotes= true;
           }
         }
+  //cout << UNINDENT << "Assembled " << start << ", " << end << LF;
   return pg;
 }
 
@@ -697,7 +698,8 @@ new_breaker_rep::assemble_skeleton (skeleton& sk, path end, int& offset) {
         sk << pagelet (space (0));
     begin= path (begin->item + 1, begin->next);
   }
-  //cout << "Assemble page " << begin << ", " << end << "; " << offset << LF;
+  //cout << "Assemble page " << begin << ", " << end << "; " << offset
+  //     << INDENT << LF;
   if (has_columns (begin, end, 1)) {
     pagelet pg= assemble (begin, end);
     bool last_page= last_break (end);
@@ -713,6 +715,7 @@ new_breaker_rep::assemble_skeleton (skeleton& sk, path end, int& offset) {
   for (int i=begin->item; i<end->item; i++)
     if (is_tuple (l[i]->t, "env_page") && l[i]->t[1] == PAGE_NR)
       offset= as_int (l[i]->t[2]->label) - N(sk);
+  //cout << UNINDENT << "Assembled page " << begin << ", " << end << LF;
 }
 
 /******************************************************************************
