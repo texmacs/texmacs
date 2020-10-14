@@ -621,7 +621,10 @@
   (tmhtml (car l)))
 
 (define (tmhtml-float l)
-  (tmhtml (cAr l)))
+  (let* ((type (tmhtml-force-string (car l)))
+         (cl (if (== type "") "unknown-float" type))
+         (r (tmhtml (cAr l))))
+    `((div (@ (class ,cl)) ,@r))))
 
 (define (tmhtml-repeat l)
   (tmhtml (car l)))

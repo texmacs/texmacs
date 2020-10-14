@@ -1,4 +1,4 @@
-<TeXmacs|1.99.10>
+<TeXmacs|1.99.13>
 
 <style|source>
 
@@ -88,6 +88,18 @@
       Other customization.
     </src-comment>
   </active*>
+
+  <assign|tmhtml-render-enunciation|<\macro|which|body>
+    <\padded*>
+      <surround|<html-class|enunciation-name|<arg|which>>|<yes-indent*>|<arg|body>>
+    </padded*>
+  </macro>>
+
+  <assign|tmhtml-render-theorem|<\macro|which|body>
+    <\html-div-class|theorem>
+      <render-enunciation|<theorem-name|<arg|which><theorem-sep>>|<with|font-shape|italic|<arg|body>>>
+    </html-div-class>
+  </macro>>
 
   <assign|theorem-name|<macro|name|<with|font-shape|small-caps|<arg|name>>>>
 

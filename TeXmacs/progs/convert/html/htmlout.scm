@@ -129,6 +129,8 @@
 	 (output-lf))
 	((func? x '*DOCTYPE*)
 	 (htmlout-doctype (cdr x)))
+	((== x '(br))
+         (htmlout-text "<br />"))
 	((null? (cdr x))
 	 (htmlout-open (car x))
 	 (htmlout-close (car x)))
