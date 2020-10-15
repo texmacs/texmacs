@@ -58,6 +58,14 @@
 
 #if (QT_VERSION >= 0x050000)
 #include <QtPlugin>
+#define qt_static_plugin_qjpeg qt_static_plugin_QJpegPlugin
+#define qt_static_plugin_qgif qt_static_plugin_QGifPlugin
+#define qt_static_plugin_qico qt_static_plugin_QICOPlugin
+#define qt_static_plugin_qsvg qt_static_plugin_QSvgPlugin
+Q_IMPORT_PLUGIN(qjpeg)
+Q_IMPORT_PLUGIN(qgif)
+Q_IMPORT_PLUGIN(qico)
+Q_IMPORT_PLUGIN(qsvg)
 #ifdef WIN32 
 Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
 #endif

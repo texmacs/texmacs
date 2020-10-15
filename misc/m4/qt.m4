@@ -18,8 +18,18 @@ AC_DEFUN([LC_WITH_QT],[
   case $CONFIG_OS in
     MINGW) xtralibs="+xml";;
   esac
-  AT_WITH_QT([$xtralibs +printsupport],[+exceptions],[LIBS += $LDFLAGS],AC_MSG_ERROR([Cannot find a working Qt library]))
-
+  case $(qmake -query QT_VERSION 2>/dev/null) in
+  5.*)
+    AT_WITH_QT([$xtralibs +printsupport +svg],[+exceptions],[
+      LIBS += $LDFLAGS
+      QTPLUGIN = qjpeg qgif qico qsvg
+    ],AC_MSG_ERROR([Cannot find a working Qt library]))
+    ;;
+  4.*)
+    AT_WITH_QT([$xtralibs +printsupport +svg],[+exceptions],[LIBS += $LDFLAGS],AC_MSG_ERROR([Cannot find a working Qt library]))
+    ;;
+  *) AC_MSG_ERROR([Qt not found or Qt version not supported ]);;
+  esac
   # clean and dispatch the collected flags
   LC_COPY_FLAGS([QT],[TMP])
   LC_CLEAR_FLAGS([QT])
