@@ -35,12 +35,16 @@
         (if (!= (car l) "old-beamer") "bluish" "ridged-paper"))))
 
 (tm-define (style-category p)
-  (:require (in? p (beamer-themes)))
+  (:require (and (in-beamer?) (in? p (beamer-themes))))
   :beamer-theme)
 
 (tm-define (style-category p)
   (:require (in? p (list "title-bar" "framed-title")))
   :beamer-title-theme)
+
+(tm-define (style-category-precedes? x y)
+  (:require (and (== x "alt-colors") (== y :beamer-theme)))
+  #t)
 
 (tm-define (style-category-precedes? x y)
   (:require (and (== x :beamer-theme)

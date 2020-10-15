@@ -38,12 +38,16 @@
         "framed-poster-title")))
 
 (tm-define (style-category p)
-  (:require (in? p (poster-themes)))
+  (:require (and (in-beamer?) (in? p (poster-themes))))
   :poster-theme)
 
 (tm-define (style-category p)
   (:require (in? p (poster-title-styles)))
   :poster-title-style)
+
+(tm-define (style-category-precedes? x y)
+  (:require (and (== x "alt-colors") (== y :poster-theme)))
+  #t)
 
 (tm-define (style-category-precedes? x y)
   (:require (and (== x :poster-theme)

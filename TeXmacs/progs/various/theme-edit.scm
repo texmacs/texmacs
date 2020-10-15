@@ -38,8 +38,12 @@
       (toggle-style-package theme))))
 
 (tm-define (style-category p)
-  (:require (in? p (basic-themes)))
+  (:require (and (not (or (in-beamer?) (in-poster?))) (in? p (basic-themes))))
   :basic-theme)
+
+(tm-define (style-category-precedes? x y)
+  (:require (and (== x "alt-colors") (== y :basic-theme)))
+  #t)
 
 (tm-define (style-category-precedes? x y)
   (:require (and (== x :basic-theme)
