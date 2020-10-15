@@ -1,4 +1,4 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.13>
 
 <style|source>
 
@@ -154,9 +154,7 @@
 
   <assign|section-clean|<macro|<reset-subsection>>>
 
-  <style-with|src-compact|all|<assign|display-std-env|<\macro|nr>
-    <arg|nr>
-  </macro>>>
+  <assign|display-std-env|<macro|nr|<arg|nr>>>
 
   <assign|paragraph-display-numbers|<macro|true>>
 
