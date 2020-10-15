@@ -765,6 +765,9 @@ QTMWidget::dropEvent (QDropEvent *event)
 #endif
       string extension = suffix (name);
       if ((extension == "eps") || (extension == "ps")   ||
+#if (QT_VERSION >= 0x050000)
+          (extension == "svg") ||
+#endif
           (extension == "pdf") || (extension == "png")  ||
           (extension == "jpg") || (extension == "jpeg")) {
         string w, h;
