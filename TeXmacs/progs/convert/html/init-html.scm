@@ -65,4 +65,5 @@
   (:option "texmacs->html:css" "on")
   (:option "texmacs->html:mathjax" "off")
   (:option "texmacs->html:mathml" "off")
-  (:option "texmacs->html:images" "on"))
+  (:option "texmacs->html:images" "on")
+  (:option "texmacs->html:css-stylesheet" "---"))
