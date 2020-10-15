@@ -911,6 +911,7 @@
 ("phoenician" "fenicio")
 ("phonetic" "fonético")
 ("pink" "rosa")
+("plain" "natural")
 ("plain block" "bloque normal")
 ("plain tabular" "tabla normal")
 ("planned changes" "cambios planeados")

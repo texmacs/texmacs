@@ -113,7 +113,7 @@
 
   \;
 
-  <assign|algorithm-name|<macro|name|<with|font-series|bold|<arg|name>>>>
+  <assign|algorithm-name|<macro|name|<strong|<arg|name>>>>
 
   <\active*>
     <\src-comment>
@@ -313,11 +313,11 @@
     </src-comment>
   </active*>
 
-  <assign|named-algorithm-old|<macro|name|body|<surround|<vspace*|1fn>|<vspace|1fn><right-flush><yes-indent*>|<with|par-first|0cm|<surround|<with|font-series|bold|<translate|Algorithm|english|<language>>>
-  <tt|<arg|name>>||<with|item*|<macro|what|<with|font-series|bold|math-font-series|bold|<arg|what>
+  <assign|named-algorithm-old|<macro|name|body|<surround|<vspace*|1fn>|<vspace|1fn><right-flush><yes-indent*>|<with|par-first|0cm|<surround|<strong|<translate|Algorithm|english|<language>>>
+  <tt|<arg|name>>||<with|item*|<macro|what|<strong|<arg|what>
   >>|<arg|body>>>>>>>
 
-  <assign|algorithm-body|<macro|body|<surround|<vspace*|0.5fn>|<yes-indent*>|<with|item*|<macro|name|<vspace*|0.5fn><with|font-series|bold|math-font-series|bold|<arg|name>
+  <assign|algorithm-body|<macro|body|<surround|<vspace*|0.5fn>|<yes-indent*>|<with|item*|<macro|name|<vspace*|0.5fn><strong|<arg|name>
   >>|<arg|body>>>>>
 
   <assign|minimal|<macro|body|<with|mode|prog|prog-language|minimal|<arg|body>>>>

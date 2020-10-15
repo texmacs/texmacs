@@ -956,6 +956,7 @@
 ("phoenician" "phönizisch")
 ("phonetic" "phonetisch")
 ("pink" "rosa")
+("plain" "schlicht")
 ("plain block" "normaler Block")
 ("plain tabular" "normaler Tabulatormodus")
 ("planned changes" "Geplante Änderungen")

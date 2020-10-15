@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.13>
 
 <style|source>
 
@@ -39,6 +39,12 @@
   <assign|dark-scene-math-color|white>
 
   <assign|dark-scene-strong-color|white>
+
+  <assign|dark-scene-heading-color|#ffc080>
+
+  <assign|dark-scene-locus-color|#d0d0ff>
+
+  <assign|dark-scene-visited-color|#f0c0e8>
 
   \;
 </body>

@@ -72,6 +72,10 @@
 
 (menu-bind document-style-extra-menu)
 
+(menu-bind document-style-extra-menu
+  (:require (not (or (in-beamer?) (in-poster?))))
+  (-> "Theme" (link basic-theme-menu)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document -> Source submenus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -907,6 +911,12 @@
 (tm-menu (focus-document-extra-menu t))
 (tm-menu (focus-style-extra-menu t))
 
+(tm-menu (focus-style-extra-menu t)
+  (:require (not (or (in-beamer?) (in-poster?))))
+  (-> "Theme" (link basic-theme-menu))
+  (assuming (!= (current-basic-theme) "plain")
+    (-> "Background color" (link document-background-color-menu))))
+
 (menu-bind cite-texmacs-only-menu
   ("The Jolly Writer" (cite-texmacs "TeXmacs:vdH:book"))
   ("TeXmacs website" (cite-texmacs "TeXmacs:website"))
@@ -1033,6 +1043,13 @@
 
 (tm-menu (focus-document-extra-icons t))
 (tm-menu (focus-style-extra-icons t))
+
+(tm-menu (focus-style-extra-icons t)
+  (:require (not (or (in-beamer?) (in-poster?))))
+  (=> (balloon (eval (basic-theme-name (current-basic-theme))) "Web theme")
+      (link basic-theme-menu))
+  (assuming (!= (current-basic-theme) "plain")
+    (link focus-background-color-icons)))
 
 (tm-menu (focus-style-icons t)
   (minibar

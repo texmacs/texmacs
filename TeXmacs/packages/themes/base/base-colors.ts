@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.13>
 
 <style|source>
 
@@ -26,7 +26,7 @@
     </src-comment>
   </active*>
 
-  <new-theme|colors|bg-color|monochrome-bg-color|color|math-color|strong-color>
+  <new-theme|colors|bg-color|monochrome-bg-color|color|math-color|strong-color|heading-color|locus-color|visited-color>
 
   <\active*>
     <\src-comment>
@@ -34,7 +34,7 @@
     </src-comment>
   </active*>
 
-  <assign|make-uniform|<macro|theme|<quasi|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|theme>|-math-color>>|<value|<unquote|<merge|<arg|theme>|-color>>>><assign|<unquote|<merge|<arg|theme>|-strong-color>>|<value|<unquote|<merge|<arg|theme>|-color>>>>>>>>
+  <assign|make-uniform|<macro|theme|<quasi|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|theme>|-math-color>>|<value|<unquote|<merge|<arg|theme>|-color>>>><assign|<unquote|<merge|<arg|theme>|-strong-color>>|<value|<unquote|<merge|<arg|theme>|-color>>>><assign|<unquote|<merge|<arg|theme>|-heading-color>>|<value|<unquote|<merge|<arg|theme>|-color>>>><assign|<unquote|<merge|<arg|theme>|-locus-color>>|<value|<unquote|<merge|<arg|theme>|-color>>>><assign|<unquote|<merge|<arg|theme>|-visited-color>>|<value|<unquote|<merge|<arg|theme>|-color>>>>>>>>
 
   <assign|assign-uniform|<macro|theme|val|<quasi|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|theme>|-color>>|<unquote|<arg|val>>><make-uniform|<unquote|<arg|theme>>>>>>>
 </body>

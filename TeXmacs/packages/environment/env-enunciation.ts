@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.13>
 
 <style|source>
 
@@ -26,7 +26,7 @@
     </src-comment>
   </active*>
 
-  <assign|enunciation-name|<macro|name|<with|font-series|bold|<arg|name>>>>
+  <assign|enunciation-name|<macro|name|<strong|<arg|name>>>>
 
   <assign|enunciation-sep|<macro|. >>
 

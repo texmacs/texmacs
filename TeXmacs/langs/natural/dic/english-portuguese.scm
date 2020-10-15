@@ -860,6 +860,7 @@
 ("phoenician" "fenício")
 ("phonetic" "fonético")
 ("pink" "rosa")
+("plain" "natural")
 ("plain block" "bloco simples")
 ("plain tabular" "tabular simples")
 ("planned changes" "mudanças planejadas")

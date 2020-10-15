@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.13>
 
 <style|source>
 
@@ -36,19 +36,53 @@
     </src-comment>
   </active*>
 
-  <assign|enunciation-sep|>
+  <assign|theorem-padding-above|<value|large-padding-above>>
 
-  <assign|enunciation-name|<macro|which|<with|font-series|bold|<arg|which>>>>
+  <assign|theorem-padding-below|<value|large-padding-below>>
+
+  <if|<provides|beamer-style>|<assign|theorem-padding-above|0fn><assign|theorem-padding-below|0fn>>
+
+  \;
 
   <provide|unframed-render-enunciation|<value|render-enunciation>>
 
+  <provide|unframed-render-theorem|<value|render-theorem>>
+
+  <provide|unframed-render-remark|<value|render-remark>>
+
+  <provide|unframed-render-proof|<value|render-proof>>
+
+  \;
+
   <assign|render-enunciation|<\macro|which|body>
-    <\surround|<no-indent>|>
-      <\decorated>
-        <surround|<no-indent><resize|<with|ornament-color|<value|ornament-extra-color>|dummy|<value|hang-length>|<ornament|<ornament-render-title|<resize|<arg|which>||<minus|0ex|0.5hang>||<plus|1t|1hang>>>>>|<plus|1hang|<value|ornament-hpadding>|<value|ornament-border>>|<plus|1b|0.5hang>||<minus|<minus|1t|1hang>|<plus|<value|ornament-vpadding>|<value|ornament-border>>>>
-        |<right-flush>|<arg|body>>
-      </decorated>
-    </surround>
+    <\padded-normal|<value|theorem-padding-above>|<value|theorem-padding-below>>
+      <\with|enunciation-sep||enunciation-name|<value|strong>>
+        <\surround|<no-indent>|>
+          <\decorated>
+            <surround|<no-indent><resize|<with|ornament-color|<value|ornament-extra-color>|dummy|<value|hang-length>|<ornament|<ornament-render-title|<decorated-title|<with|strong-color|<value|color>|<resize|<arg|which>||<minus|0ex|0.5hang>||<plus|1t|1hang>>>>>>>|<plus|1hang|<value|ornament-hpadding>|<value|ornament-border>>|<plus|1b|0.5hang>||<minus|<minus|1t|1hang>|<plus|<value|ornament-vpadding>|<value|ornament-border>>>>
+            |<right-flush>|<arg|body>>
+          </decorated>
+        </surround>
+      </with>
+    </padded-normal>
+  </macro>>
+
+  \;
+
+  <assign|render-remark|<\macro|which|body>
+    <\with|render-enunciation|<value|unframed-render-enunciation>>
+      <\unframed-render-remark|<arg|which>>
+        <arg|body>
+      </unframed-render-remark>
+    </with>
+  </macro>>
+
+  <assign|render-proof|<\macro|which|body>
+    <\with|render-enunciation|<value|unframed-render-enunciation>>
+      <\unframed-render-proof|<arg|which>>
+        <arg|body>
+      </unframed-render-proof>
+    </with>
   </macro>>
 </body>
 
