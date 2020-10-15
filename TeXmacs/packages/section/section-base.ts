@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.13>
 
 <style|source>
 
@@ -183,15 +183,15 @@
 
   \;
 
-  <assign|chapter-clean|<macro|<reset-section>>>
+  <assign|chapter-clean|<macro|<reset-section><section-clean>>>
 
-  <assign|section-clean|<macro|<reset-subsection>>>
+  <assign|section-clean|<macro|<reset-subsection><subsection-clean>>>
 
-  <assign|subsection-clean|<macro|<reset-subsubsection>>>
+  <assign|subsection-clean|<macro|<reset-subsubsection><subsubsection-clean>>>
 
-  <assign|subsubsection-clean|<macro|<reset-paragraph>>>
+  <assign|subsubsection-clean|<macro|<reset-paragraph><paragraph-clean>>>
 
-  <assign|paragraph-clean|<macro|<reset-subparagraph>>>
+  <assign|paragraph-clean|<macro|<reset-subparagraph><subparagraph-clean>>>
 
   <\active*>
     <\src-comment>
