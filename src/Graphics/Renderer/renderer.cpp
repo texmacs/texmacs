@@ -389,16 +389,20 @@ renderer_rep::clear_pattern (SI mx1, SI my1, SI mx2, SI my2,
     w= ((w + pixel - 1) / pixel) * pixel;
     h= ((h + pixel - 1) / pixel) * pixel;
 
+    // NOTE: alternative correction of rounding errors for background images
+    SI dw= 0; if (pattern[1] == "100%") dw= pixel;
+    SI dh= 0; if (pattern[2] == "100%") dh= pixel;
+
     SI sx= -mx1;
     SI sy= -my2;
     tree eff= "";
     if (N(pattern) == 4 && is_compound (pattern[3])) eff= pattern[3];
-    scalable im= load_scalable_image (u, w, h, eff, pixel);
+    scalable im= load_scalable_image (u, w+dw, h+dh, eff, pixel);
     for (int i= ((x1+sx)/w) - 1; i <= ((x2+sx)/w) + 1; i++)
       for (int j= ((y1+sy)/h) - 1; j <= ((y2+sy)/h) + 1; j++) {
 	SI X1= i*w     - sx, Y1= j*h     - sy;
 	SI X2= (i+1)*w - sx, Y2= (j+1)*h - sy;
-	if (X1 < x2 && X2 > x1 && Y1 < y2 && Y2 > y1)
+	if (X1+dw < x2 && X2-dw > x1 && Y1+dh < y2 && Y2-dh > y1)
           if (X1 < cx2 && X2 > cx1 && Y1 < cy2 && Y2 > cy1)
             draw_scalable (im, X1, Y1, pattern_alpha);
       }
