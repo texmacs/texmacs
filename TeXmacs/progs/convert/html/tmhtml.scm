@@ -1050,9 +1050,11 @@
 	((== x '("cell-valign" "c")) "vertical-align: middle")
 	((== x '("cell-valign" "b")) "vertical-align: bottom")
 	((== x '("cell-valign" "B")) "vertical-align: baseline")
-	((== (car x) "cell-background")
+	((and (== (car x) "cell-background") tmhtml-css?)
          (string-append "background-color: "
                         (tmcolor->htmlcolor (cadr x))))
+	((== (car x) "cell-background")
+         `(bgcolor ,(tmcolor->htmlcolor (cadr x))))
 	((== (car x) "cell-lborder") (border-attr "border-left" (cadr x)))
 	((== (car x) "cell-rborder") (border-attr "border-right" (cadr x)))
 	((== (car x) "cell-tborder") (border-attr "border-top" (cadr x)))
@@ -1253,7 +1255,8 @@
           (let* ((s (tmhtml-image-name (cork->html (first l))))
                  (w (tmlength->htmllength (second l) #f))
                  (h (tmlength->htmllength (third l) #f)))
-            `((h:img (@ (src ,s)
+            `((h:img (@ (class "image")
+                        (src ,s)
                         ,@(if w `((width ,w)) '())
                         ,@(if h `((height ,h)) '()))))))))
 
