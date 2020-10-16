@@ -376,6 +376,11 @@
 		((null? r) h)
 		(else `(,@h (h:br) ,@r)))))))
 
+(define (tmhtml-removed-p para cont)
+  (with attrs (or (and para (sxml-attr-list para)) (list))
+    (if (null? attrs) cont
+        `((h:div (@ ,@attrs) ,@cont)))))
+
 (define (tmhtml-post-paragraphs l)
   ;; Post process a collection of h:p elements
   ;;
@@ -412,14 +417,14 @@
 	     (next (cons first (flush)) (give)))
 	    ((sxhtml-list? first)
 	     ;; texmacs editor ensures there is no trail after a list
-	     (next (append cont (flush)) #f))
+	     (next (append (tmhtml-removed-p para cont) (flush)) #f))
 	    ((== 'h:pre (sxml-name first))
 	     ;; handlers and editor ensure there is no trail after a h:pre
-	     (next (append cont (flush)) #f))
+	     (next (append (tmhtml-removed-p para cont) (flush)) #f))
 	    ((and (sxhtml-table? first) (null? (cdr cont)))
 	     ;; if table is not alone, we cannot help but produce bad html
 	     ;; if table is alone, drop the enclosing <h:p>
-	     (next (append cont (flush)) #f))
+	     (next (append (tmhtml-removed-p para cont) (flush)) #f))
 	    (else (next (cons (accept) out) #f))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

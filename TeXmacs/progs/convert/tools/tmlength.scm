@@ -19,7 +19,8 @@
 
 (define tmlength-value? number?)
 (define (tmlength-unit? x)
-  (and (symbol? x) (string-locase-alpha? (symbol->string x))))
+  (and (symbol? x) (or (string-locase-alpha? (symbol->string x))
+                       (in? (symbol->string x) (list "%" "@")))))
 
 (define (tmlength-check-value x)
   (if (not (tmlength-value? x))
