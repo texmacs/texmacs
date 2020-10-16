@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.13>
 
 <style|source>
 
@@ -43,6 +43,10 @@
   <assign|subparagraph-display-numbers|<macro|false>>
 
   <assign|appendix-display-numbers|<macro|false>>
+
+  \;
+
+  <assign|old-web-hook|true>
 </body>
 
 <\initial>

@@ -20,6 +20,12 @@
     </src-license>
   </src-title>>
 
+  <\active*>
+    <\src-comment>
+      Frequently used symbols.
+    </src-comment>
+  </active*>
+
   <style-only|<\with|mode|math>
     <assign|A|\<cal-A\>>
 
@@ -203,7 +209,11 @@
 
     <assign|ssZ|<math|<math-ss|Z>>>
 
-    \;
+    <\active*>
+      <\src-comment>
+        Further math macros.
+      </src-comment>
+    </active*>
 
     <assign|bpartial|<with|font-series|bold|math-font-series|bold|\<partial\>>>
 
@@ -265,7 +275,11 @@
   <assign|Big-imbr|<macro|ind|str|<math-ordinary|<below|<rigid|<shift|<with|magnification|<times|1.297|<value|magnification>>|-<space|-0.5spc><around*|<left|\<langle\>|1>||<right|.>>>||-0.1em>>|<shift|<arg|ind>||-0.1em>>
   <arg|str>>>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Other macros.
+    </src-comment>
+  </active*>
 
   <assign|bi-index|<macro|key|secondary|<style-with|src-compact|none|<flag|<localize|index>|dark
   green|key><subindex|<arg|key>|<arg|secondary>><subindex|<arg|secondary>|<arg|key>>>>>
@@ -306,18 +320,71 @@
 
   <assign|smart-qed|<macro|<htab|0.5fn|0><qed>>>
 
+  <\active*>
+    <\src-comment>
+      Old-style web pages.
+    </src-comment>
+  </active*>
+
+  <if|<provides|old-web-hook>|<assign|html-extra-css|<tuple|https://www.texmacs.org/css/theme-vdh.css>>>
+
+  <assign|joris-webpage|<macro|title|links|<block*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-lsep|2spc>|<cwith|1|1|1|1|cell-rsep|2spc>|<cwith|1|1|1|1|cell-bsep|2spc>|<cwith|1|1|1|1|cell-tsep|2spc>|<cwith|2|2|1|1|cell-lsep|1spc>|<cwith|2|2|1|1|cell-rsep|1spc>|<cwith|2|2|1|1|cell-bsep|1spc>|<cwith|2|2|1|1|cell-tsep|1spc>|<cwith|1|1|1|1|cell-background|#d0f0ff>|<cwith|1|1|1|1|cell-background|#00aaff30>|<cwith|2|2|1|1|cell-background|#e8f8ff>|<cwith|2|2|1|1|cell-background|#00aaff18>|<cwith|1|1|1|1|cell-lborder|1ln>|<cwith|1|1|1|1|cell-rborder|1ln>|<cwith|1|1|1|1|cell-bborder|1ln>|<cwith|1|1|1|1|cell-tborder|1ln>|<cwith|2|2|1|1|cell-lborder|1ln>|<cwith|2|2|1|1|cell-rborder|1ln>|<cwith|2|2|1|1|cell-bborder|1ln>|<cwith|2|2|1|1|cell-tborder|1ln>|<cwith|1|1|1|1|cell-block|no>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<cell|<with|par-mode|center|<very-large|<strong|<name|<arg|title>>>><hidden-title|<arg|title>>>>>|<row|<cell|<small|<strong|<arg|links>>>>>>>>>>
+
+  <assign|joris-section|<macro|body|<block*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-lsep|1spc>|<cwith|1|1|1|1|cell-rsep|1spc>|<cwith|1|1|1|1|cell-bsep|1spc>|<cwith|1|1|1|1|cell-tsep|1spc>|<cwith|1|1|1|1|cell-lborder|1ln>|<cwith|1|1|1|1|cell-rborder|1ln>|<cwith|1|1|1|1|cell-bborder|1ln>|<cwith|1|1|1|1|cell-tborder|1ln>|<cwith|1|1|1|1|cell-background|#00aaff30>|<table|<row|<cell|<large|<strong|<arg|body>>>>>>>>>>
+
+  <assign|joris-title|<\macro|title>
+    <joris-webpage|<arg|title>|[ <hlink|Homepage|../main/joris.tm> \|
+    <hlink|Publications|../main/publs.tm> \| <hlink|Talks|../main/talks.tm>
+    \| <hlink|<TeXmacs>|http://www.texmacs.org> \|
+    <hlink|Mathemagix|http://www.mathemagix.org> ]>
+  </macro>>
+
+  <assign|joris-title*|<\macro|title>
+    <joris-webpage|<arg|title>|[ <hlink|Homepage|../../main/joris.tm> \|
+    <hlink|Publications|../../main/publs.tm> \|
+    <hlink|Talks|../../main/talks.tm> \| <hlink|<TeXmacs>|http://www.texmacs.org>
+    \| <hlink|Mathemagix|http://www.mathemagix.org> ]>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
+      New-style web pages.
+    </src-comment>
+  </active*>
+
   \;
 
-  <assign|joris-title|<macro|title|<block*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-lsep|2spc>|<cwith|1|1|1|1|cell-rsep|2spc>|<cwith|1|1|1|1|cell-bsep|2spc>|<cwith|1|1|1|1|cell-tsep|2spc>|<cwith|2|2|1|1|cell-lsep|1spc>|<cwith|2|2|1|1|cell-rsep|1spc>|<cwith|2|2|1|1|cell-bsep|1spc>|<cwith|2|2|1|1|cell-tsep|1spc>|<cwith|1|1|1|1|cell-background|#d0f0ff>|<cwith|1|1|1|1|cell-background|#00aaff30>|<cwith|2|2|1|1|cell-background|#e8f8ff>|<cwith|2|2|1|1|cell-background|#00aaff18>|<cwith|1|1|1|1|cell-lborder|1ln>|<cwith|1|1|1|1|cell-rborder|1ln>|<cwith|1|1|1|1|cell-bborder|1ln>|<cwith|1|1|1|1|cell-tborder|1ln>|<cwith|2|2|1|1|cell-lborder|1ln>|<cwith|2|2|1|1|cell-rborder|1ln>|<cwith|2|2|1|1|cell-bborder|1ln>|<cwith|2|2|1|1|cell-tborder|1ln>|<cwith|1|1|1|1|cell-block|no>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<cell|<with|par-mode|center|<very-large|<strong|<name|<arg|title>>>><hidden-title|<arg|title>>>>>|<row|<cell|<small|<strong|[
-  <hlink|Homepage|../main/joris.tm> \| <hlink|Publications|../main/publs.tm>
-  \| <hlink|Talks|../main/talks.tm> \| <hlink|<TeXmacs>|http://www.texmacs.org>
-  \| <hlink|Mathemagix|http://www.mathemagix.org> ]>>>>>>>>>
+  <assign|joris-webpage|<\macro|title|links>
+    <\indent-both|-0.5tab|-0.5tab>
+      <\padded-normal|0em|3em>
+        <\surround|<assign|page-this-top|0em>|>
+          <\wide-tabular>
+            <tformat|<cwith|1|1|1|1|cell-background|<pattern|https://www.texmacs.org/Images/shelf.png|100%|100%>>|<cwith|1|-1|1|1|cell-halign|c>|<cwith|1|1|1|1|cell-bsep|2em>|<cwith|1|1|1|1|cell-tsep|2em>|<cwith|2|2|1|1|cell-background|#00608080>|<cwith|2|2|1|1|cell-bsep|0.5em>|<table|<row|<cell|<very-large|<strong|<name|<arg|title>>>><hidden-title|<arg|title>>>>|<row|<cell|<very-small|<strong|<arg|links>>>>>>>
+          </wide-tabular>
+        </surround>
+      </padded-normal>
+    </indent-both>
+  </macro>>
 
-  <assign|joris-title*|<macro|title|<block*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-lsep|2spc>|<cwith|1|1|1|1|cell-rsep|2spc>|<cwith|1|1|1|1|cell-bsep|2spc>|<cwith|1|1|1|1|cell-tsep|2spc>|<cwith|2|2|1|1|cell-lsep|1spc>|<cwith|2|2|1|1|cell-rsep|1spc>|<cwith|2|2|1|1|cell-bsep|1spc>|<cwith|2|2|1|1|cell-tsep|1spc>|<cwith|1|1|1|1|cell-background|#d0f0ff>|<cwith|1|1|1|1|cell-background|#00aaff30>|<cwith|2|2|1|1|cell-background|#e8f8ff>|<cwith|2|2|1|1|cell-background|#00aaff18>|<cwith|1|1|1|1|cell-lborder|1ln>|<cwith|1|1|1|1|cell-rborder|1ln>|<cwith|1|1|1|1|cell-bborder|1ln>|<cwith|1|1|1|1|cell-tborder|1ln>|<cwith|2|2|1|1|cell-lborder|1ln>|<cwith|2|2|1|1|cell-rborder|1ln>|<cwith|2|2|1|1|cell-bborder|1ln>|<cwith|2|2|1|1|cell-tborder|1ln>|<cwith|1|1|1|1|cell-block|no>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<cell|<with|par-mode|center|<very-large|<strong|<name|<arg|title>>>><hidden-title|<arg|title>>>>>|<row|<cell|<small|<strong|[
-  <hlink|Homepage|../../main/joris.tm> \|
-  <hlink|Publications|../../main/publs.tm> \|
-  <hlink|Talks|../../main/talks.tm> \| <hlink|<TeXmacs>|http://www.texmacs.org>
-  \| <hlink|Mathemagix|http://www.mathemagix.org> ]>>>>>>>>>
+  <assign|joris-section|<\macro|body>
+    <\indent-both|-0.5tab|-0.5tab>
+      <\padded-normal|2em|1em>
+        <\wide-tabular>
+          <tformat|<cwith|1|1|1|1|cell-background|<pattern|https://www.texmacs.org/Images/shelf.png|100%|100%>>|<cwith|1|1|1|1|cell-halign|c>|<cwith|1|1|1|1|cell-bsep|1em>|<cwith|1|1|1|1|cell-tsep|1em>|<table|<row|<\cell>
+            <large|<strong|<arg|body>>>
+          </cell>>>>
+        </wide-tabular>
+      </padded-normal>
+    </indent-both>
+  </macro>>
+
+  <assign|joris-title|<\macro|title>
+    <joris-webpage|<arg|title>|<hlink|Homepage|../main/joris.tm><space|2em><hlink|Publications|../main/publs.tm><space|2em><hlink|Talks|../main/talks.tm><space|2em><hlink|<TeXmacs>|http://www.texmacs.org><space|2em><hlink|Mathemagix|http://www.mathemagix.org>>
+  </macro>>
+
+  <assign|joris-title*|<\macro|title>
+    <joris-webpage|<arg|title>|<hlink|Homepage|../../main/joris.tm><space|2em><hlink|Publications|../../main/publs.tm><space|2em><hlink|Talks|../../main/talks.tm><space|2em><hlink|<TeXmacs>|http://www.texmacs.org><space|2em><hlink|Mathemagix|http://www.mathemagix.org>>
+  </macro>>
 
   <assign|joris-versions*|<macro|name|<hlink|Pdf|<merge|<arg|name>|.pdf>>,
   <hlink|Bib<TeX>|<merge|<arg|name>|.bib>>>>
@@ -328,8 +395,6 @@
   <assign|joris-versions|<macro|name|<hlink|Html|<merge|<arg|name>|.tm>>,
   <hlink|<TeXmacs>|<merge|<arg|name>|.texmacs>>,
   <joris-versions*|<arg|name>>>>
-
-  <assign|joris-section|<macro|body|<block*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-lsep|1spc>|<cwith|1|1|1|1|cell-rsep|1spc>|<cwith|1|1|1|1|cell-bsep|1spc>|<cwith|1|1|1|1|cell-tsep|1spc>|<cwith|1|1|1|1|cell-lborder|1ln>|<cwith|1|1|1|1|cell-rborder|1ln>|<cwith|1|1|1|1|cell-bborder|1ln>|<cwith|1|1|1|1|cell-tborder|1ln>|<cwith|1|1|1|1|cell-background|#00aaff30>|<table|<row|<cell|<large|<strong|<arg|body>>>>>>>>>>
 </body>
 
 <\initial>
