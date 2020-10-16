@@ -772,7 +772,9 @@
   ("par" . 16)
   ("pag" . 12)
   ("px" . 0.025)
-  ("ln" . 0.025))
+  ("ln" . 0.025)
+  ("%" . 1)
+  ("@" . 1))
 
 (define (make-exact x)
   (number->string (inexact->exact x)))
@@ -786,7 +788,8 @@
 
 (define (tmlength->htmllength len . css?)
   (if (list>0? css?) (set! css? (car css?)) (set! css? #t))
-  (and-let* ((len-str (tmhtml-force-string len))
+  (and-let* ((s (tmhtml-force-string len))
+             (len-str (if (string->number s) (string-append s "tmpt") s))
 	     (tmlen (string->tmlength len-str))
 	     (dummy2? (not (tmlength-null? tmlen)))
 	     (val (tmlength-value tmlen))
@@ -804,6 +807,7 @@
 	   (string-append (number->htmlstring (/ val 2)) "em"))
 	  ((and css? (== unit "ln"))
 	   (string-append (number->htmlstring val) "px"))
+	  ((and css? (== unit "@")) "auto")
 	  (css? len)
 	  (else (number->htmlstring (* cmpx val incm))))))
 
@@ -1035,8 +1039,8 @@
 
 (define (html-css-pattern x)
   (let* ((u (tmhtml-force-string (cadr x)))
-         (w (or (tmlength->htmllength (caddr x)) "100%"))
-         (h (or (tmlength->htmllength (cadddr x)) "100%"))
+         (w (or (tmlength->htmllength (caddr x) #t) "100%"))
+         (h (or (tmlength->htmllength (cadddr x) #t) "100%"))
          (im (string-append "background: url('" u "')"))
          (sz (string-append "background-size: " w " " h)))
     (string-append im "; " sz)))
