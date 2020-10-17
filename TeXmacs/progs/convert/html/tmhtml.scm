@@ -324,7 +324,7 @@
 		  (with l2 (string->tmlength s2)
 		    (if (== (tmlength-unit l1) (tmlength-unit l2))
 			(if (>= (tmlength-value l1) (tmlength-value l2)) s1 s2)
-			l1 ;; FIXME: do something more subtle here
+			s1 ;; FIXME: do something more subtle here
 			)))))))))
 
 (define (tmhtml-compute-vspace x after?)
