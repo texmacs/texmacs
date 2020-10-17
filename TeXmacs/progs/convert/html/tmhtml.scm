@@ -358,6 +358,13 @@
   (with body (tmhtml-document-elem x)
     `(h:p ,@body)))
 
+(define (tmhtml-simplify-p x)
+  (if (and (func? x 'h:p)
+           (forall? (lambda (p) (func? p 'h:p)) (cdr x))
+           (nnull? (cdr x)))
+      `(h:div ,@(cdr x))
+      x))
+
 (define (tmhtml-document l)
   (cond ((null? l) '())
 	((ahash-ref tmhtml-env :preformatted)
@@ -366,7 +373,8 @@
 	   ((cut list-intersperse <> '("\n"))
 	    (map tmhtml l)))))
 	(else
-	  (tmhtml-post-paragraphs (map tmhtml-document-p l)))))
+	  (map tmhtml-simplify-p
+               (tmhtml-post-paragraphs (map tmhtml-document-p l))))))
 
 (define (tmhtml-paragraph l)
   (let rec ((l l))
@@ -468,7 +476,10 @@
 		      (body `(document ,@(cDr (cddr r))))
 		      (tail (cAr r)))
 		 (serialize-paragraph (w head))
-		 (set! document-done (cons (w body) document-done))
+                 (for (x (cDr (cddr r)))
+                   (serialize-paragraph (w x)))
+                 ;;(when (nnull? (cdr body))
+                 ;;  (set! document-done (cons (w body) document-done)))
 		 (serialize-concat (w tail))))))
         ((func? x 'locus) (serialize-concat (cAr x)))
 	(else (serialize-print x))))
@@ -1277,6 +1288,12 @@
 (define (tmhtml-draw-under l)
   (tmhtml-png (cons 'draw-under l)))
 
+(define (tmhtml-image-suffix name)
+  (cond ((string? name) (url-suffix name))
+        ((and (func? name 'tuple 2) (string? (caddr name)))
+         (if (== (url-suffix (caddr name)) "") name (url-suffix (caddr name))))
+        (else "")))
+
 (define (tmhtml-image-name name)
   ;; FIXME: we should replace ~, environment variables, etc.
   (with u (url-relative current-save-target (unix->url name))
@@ -1292,11 +1309,12 @@
 (define (tmhtml-image l)
   ;; FIXME: Should also test that width and height are not magnifications.
   ;; Currently, magnifications make tmlength->htmllength return #f.
-  (cond ((and (func? (car l) 'tuple 2)
+  (cond ((in? (tmhtml-image-suffix (car l)) (list "ps" "eps" "pdf" "tif"))
+         (tmhtml-png (cons 'image l)))
+        ((and (func? (car l) 'tuple 2)
               (func? (cadar l) 'raw-data 1)
               (string? (cadr (cadar l)))
-              (string? (caddar l))
-              (not (in? (caddar l) '("ps" "eps" "pdf"))))
+              (string? (caddar l)))
 	  (receive (name-url name-string) (tmhtml-image-names (caddar l))
             (string-save (cadr (cadar l)) name-url)
             (tmhtml-image (cons name-string (cdr l)))))
