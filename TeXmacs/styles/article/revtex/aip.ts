@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.13>
 
 <style|source>
 
@@ -307,9 +307,11 @@
   </active*>
 
   <assign|bib-list|<\macro|largest|body>
-    <\with|par-left|1em|par-first|-1em|font-size|1|bibitem-nr|0>
-      <arg|body>
-    </with>
+    <\description>
+      <\with|par-left|1em|par-first|-1em|font-size|1|bibitem-nr|0>
+        <arg|body>
+      </with>
+    </description>
   </macro>>
 
   <assign|bibliography-text|<macro|<rule|9cm|1pt>>>

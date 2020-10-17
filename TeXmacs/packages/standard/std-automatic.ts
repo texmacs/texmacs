@@ -1,4 +1,4 @@
-<TeXmacs|1.99.12>
+<TeXmacs|1.99.13>
 
 <style|<tuple|source|std>>
 
@@ -89,6 +89,8 @@
   <assign|render-bibitem|<macro|text|<style-with|src-compact|none|<with|par-first|<minus|1tmpt|<value|bibitem-width>>|<yes-indent>><resize|<arg|text>|||<maximum|1r|<value|bibitem-width>>|>>>>
 
   <assign|tmhtml-render-bibitem|<macro|text|<arg|text> >>
+
+  <assign|tmhtml-render-bibitem|<macro|text|<item*|<arg|text>>>>
 
   <assign|bibitem|<macro|text|<style-with|src-compact|none|<bibitem*|<arg|text>><label|<merge|<value|bib-prefix>|-|<arg|text>>>>>>
 

@@ -237,9 +237,11 @@
   </macro>>
 
   <assign|bib-list|<\macro|largest|body>
-    <\with|par-left|2em|par-first|0em|font-size|1|bibitem-nr|0|xbibitem*|<value|elsart-bibitem*>>
-      <arg|body>
-    </with>
+    <\description>
+      <\with|par-left|2em|par-first|0em|font-size|1|bibitem-nr|0|xbibitem*|<value|elsart-bibitem*>>
+        <arg|body>
+      </with>
+    </description>
   </macro>>
 
   <active*|<\src-comment>
