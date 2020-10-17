@@ -725,6 +725,9 @@
 (define (tmhtml-neg l)
   `("not(" ,@(tmhtml (car l)) ")"))
 
+(define (tmhtml-tree l)
+  (tmhtml-png `(tree ,@l)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Shape conversions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -759,6 +762,32 @@
 	  ((== s "pastel orange") "#ffdfbf")
 	  ((== s "pastel brown") "#dfbfbf")
 	  (else s))))
+
+(define (tmbgcolor->htmlbgcolor x)
+  (with s (tmhtml-force-string x)
+    (cond ((== s "light grey") "#80808060")
+	  ((== s "pastel grey") "#80808040")
+	  ((== s "broken white") "#ffff0020")
+	  ((== s "pastel red") "#ff000020")
+	  ((== s "pastel green") "#00ff0020")
+	  ((== s "pastel blue") "#0000ff20")
+	  ((== s "pastel yellow") "#ffff0020")
+	  ((== s "pastel magenta") "#ff00ff20")
+	  ((== s "pastel cyan") "#00ffff20")
+	  ((== s "pastel orange") "#ff800040")
+	  ((== s "pastel brown") "#80000040")
+	  ((== s "#c0c0ff") "#8080ff80")
+	  ((== s "#c0ffc0") "#80ff8080")
+	  ((== s "#ffc0c0") "#ff808080")
+	  ((== s "#aaf") "#0000ff55")
+	  ((== s "#afa") "#00ff0055")
+	  ((== s "#faa") "#ff000055")
+	  ((== s "#ffa") "#ffff0055")
+	  ((== s "#faf") "#ff00ff55")
+	  ((== s "#aff") "#00ffff55")
+	  ((== s "#fa6") "#ff800099")
+          ((== s "") "#00000000")
+	  (else (tmcolor->htmlcolor x)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Length conversions
@@ -1073,7 +1102,7 @@
                 `(bgcolor ,(tmcolor->htmlcolor (cadr x))))
                ((tm-atomic? (cadr x))
                 (string-append "background-color: "
-                               (tmcolor->htmlcolor (cadr x))))
+                               (tmbgcolor->htmlbgcolor (cadr x))))
                ((tm-func? (cadr x) 'pattern 3)
                 (html-css-pattern (cadr x)))
                (else #f)))
@@ -1470,6 +1499,57 @@
         (else (tmhtml-mathjax-formula* x))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Equation arrays
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tm-concat-children t)
+  (if (tm-func? t 'concat)
+      (append-map tm-concat-children (tm-children t))
+      (list t)))
+
+(define (split-htab r)
+  (let* ((a (tm-concat-children r))
+         (f (list-find-index a (lambda (x) (tm-func? x 'htab))))
+         (al (if f (sublist a 0 f) a))
+         (ar (if f (sublist a (+ f 1) (length a)) (list)))
+         (rl (apply tmconcat al))
+         (rr (apply tmconcat ar)))
+    (list rl rr)))
+
+(define (rewrite-eqnarray* t)
+  (cond ((tm-atomic? t) t)
+        ((tm-func? t 'row 3)
+         (let* ((l (tm-ref t 0 0))
+                (c (tm-ref t 1 0))
+                (r (split-htab (tm-ref t 2 0))))
+           `(row (cell (big-math ,l))
+                 (cell (big-math ,c))
+                 (cell (big-math ,(car r)))
+                 (cell ,(cadr r)))))
+        (else (cons (tm-label t) (map rewrite-eqnarray* (tm-children t))))))
+
+(tm-define (ext-tmhtml-eqnarray* body)
+  (:secure #t)
+  (if (tm-func? body 'document 1)
+      `(document ,(ext-tmhtml-eqnarray* (tm-ref body 0)))
+      (cond ((null? (tm-search body (lambda (x) (tm-func? x 'htab))))
+             `(equation* (rcl-table ,body)))
+            ((and (tm-func? body 'tformat)
+                  (tm-func? (tm-ref body :last) 'table 1)
+                  (tm-func? (tm-ref body :last 0) 'row 3))
+             (let* ((row (tm-ref body :last 0))
+                    (l (tm-ref row 0 0))
+                    (c (tm-ref row 1 0))
+                    (r (split-htab (tm-ref row 2 0)))
+                    (row1 `(row (cell ,l) (cell ,c) (cell ,(car r))))
+                    (rcl `(rcl-table (tformat (table ,row1))))
+                    (row2 `(row (cell (big-math ,rcl)) (cell ,(cadr r))))
+                    (res `(cx-table (tformat (table ,row2)))))
+               res))
+            (else
+              `(rclx-table ,(rewrite-eqnarray* body))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tags for customized html generation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1737,7 +1817,8 @@
   (sqrt tmhtml-sqrt)
   (wide tmhtml-wide)
   (neg tmhtml-neg)
-  ((:or tree old-matrix old-table old-mosaic old-mosaic-item)
+  (tree tmhtml-tree)
+  ((:or old-matrix old-table old-mosaic old-mosaic-item)
    tmhtml-noop)
   (table tmhtml-table)
   (tformat tmhtml-tformat)

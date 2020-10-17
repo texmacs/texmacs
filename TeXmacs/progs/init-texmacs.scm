@@ -362,6 +362,8 @@
 (lazy-define (convert images tmimage)
              export-selection-as-graphics clipboard-copy-image)
 (lazy-define (convert rewrite init-rewrite) texmacs->code texmacs->verbatim)
+(lazy-define (convert html tmhtml) ext-tmhtml-eqnarray*)
+(define-secure-symbols ext-tmhtml-eqnarray*)
 (lazy-define (convert html tmhtml-expand) tmhtml-env-patch)
 (lazy-define (convert latex latex-drd) latex-arity latex-type)
 (lazy-define (convert latex tmtex) tmtex-env-patch)

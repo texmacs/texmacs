@@ -95,6 +95,10 @@
 
   <assign|qed|<macro|<math-ignore|<active*|<with|mode|math|\<box\>>>>>>
 
+  <assign|tab-qed|<macro|<htab|0.5fn|0><qed>>>
+
+  <assign|tmhtml-tab-qed|<macro|<space|1em><qed>>>
+
   \;
 
   <assign|proof-text|<macro|<localize|Proof>>>
@@ -106,7 +110,7 @@
   \;
 
   <assign|render-proof|<\macro|which|body>
-    <\surround||<if|<occurs-inside|<quote|<qed>>|body>||<htab|0.5fn|0><qed>>>
+    <\surround||<if|<occurs-inside|<quote|<qed>>|body>||<tab-qed>>>
       <\render-remark|<arg|which>>
         <arg|body>
       </render-remark>

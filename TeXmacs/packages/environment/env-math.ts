@@ -1,4 +1,4 @@
-<TeXmacs|1.99.12>
+<TeXmacs|1.99.13>
 
 <style|source>
 
@@ -114,11 +114,7 @@
     </equations-base>
   </macro>>
 
-  <assign|tmhtml-eqnarray*|<\macro|body>
-    <\equations-base>
-      <tformat|<twith|table-width|1par>|<twith|table-min-cols|3>|<twith|table-max-cols|3>|<cwith|1|-1|1|1|cell-lsep|0spc>|<cwith|1|-1|-1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0sep>|<cwith|1|-1|1|-1|cell-tsep|0sep>|<cwith|1|-2|1|-1|cell-bsep|<eqn-row-sep>>|<cwith|1|-1|1|1|cell-hpart|1>|<cwith|1|-1|-1|-1|cell-hpart|1>|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|1|1|cell-hyphen|b>|<cwith|1|-1|2|-2|cell-halign|c>|<cwith|1|-1|-1|-1|cell-halign|l>|<cwith|1|-1|-1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-block|no>|<arg|body>>
-    </equations-base>
-  </macro>>
+  <assign|rcl-table|<macro|body|<tformat|<cwith|1|-1|1|-1|cell-bsep|0sep>|<cwith|1|-1|1|-1|cell-tsep|0sep>|<cwith|1|-2|1|-1|cell-bsep|<eqn-row-sep>>|<cwith|1|-1|1|1|cell-hpart|1>|<cwith|1|-1|-1|-1|cell-hpart|1>|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|1|1|cell-hyphen|b>|<cwith|1|-1|2|-2|cell-halign|c>|<cwith|1|-1|-1|-1|cell-halign|l>|<cwith|1|-1|-1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-block|no>|<arg|body>>>>
 
   <assign|eqnarray|<\macro|body>
     <eqnarray*|<tformat|<arg|body>>>
@@ -209,6 +205,34 @@
   <assign|subequations|<\macro|body>
     <arg|body>
   </macro>>
+
+  <\active*>
+    <\src-comment>
+      Html export of equation arrays.
+    </src-comment>
+  </active*>
+
+  <assign|big-math|<macro|x|<math|<with|math-display|true|<arg|x>>>>>
+
+  <assign|rclx-base|<\macro|body>
+    <\with|par-first|0em>
+      <style-with|src-compact|none|<surround|<no-page-break*><vspace*|<eqn-long-above>>|<vspace|<eqn-long-below>><no-indent*>|<arg|body>>>
+    </with>
+  </macro>>
+
+  <assign|cx-table|<\macro|body>
+    <\rclx-base>
+      <tformat|<twith|table-width|1par>|<twith|table-min-cols|2>|<twith|table-max-cols|2>|<cwith|1|-1|1|1|cell-lsep|0spc>|<cwith|1|-1|-1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0sep>|<cwith|1|-1|1|-1|cell-tsep|0sep>|<cwith|1|-1|1|1|cell-hpart|1>|<cwith|1|-1|1|1|cell-halign|c>|<cwith|1|-1|-1|-1|cell-halign|r>|<cwith|1|-1|1|-1|cell-block|no>|<arg|body>>
+    </rclx-base>
+  </macro>>
+
+  <assign|rclx-table|<\macro|body>
+    <\rclx-base>
+      <tformat|<twith|table-width|1par>|<twith|table-min-cols|4>|<twith|table-max-cols|4>|<cwith|1|-1|1|1|cell-lsep|0spc>|<cwith|1|-1|-1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0sep>|<cwith|1|-1|1|-1|cell-tsep|0sep>|<cwith|1|-2|1|-1|cell-bsep|<eqn-row-sep>>|<cwith|1|-1|1|1|cell-hpart|1>|<cwith|1|-1|-2|-2|cell-hpart|2>|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|1|1|cell-hyphen|b>|<cwith|1|-1|2|-2|cell-halign|c>|<cwith|1|-1|-2|-2|cell-halign|l>|<cwith|1|-1|-2|-2|cell-hyphen|t>|<cwith|1|-1|-1|-1|cell-halign|r>|<cwith|1|-1|1|-1|cell-block|no>|<arg|body>>
+    </rclx-base>
+  </macro>>
+
+  <assign|tmhtml-eqnarray*|<macro|body|<extern|ext-tmhtml-eqnarray*|<arg|body>>>>
 
   \;
 </body>
