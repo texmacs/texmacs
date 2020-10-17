@@ -18,6 +18,7 @@
 #include <QStyleOptionMenuItem>
 #include <qdrawutil.h>
 #include <QPainter>
+#include <QPainterPath>
 #include <QMainWindow>
 
 int
