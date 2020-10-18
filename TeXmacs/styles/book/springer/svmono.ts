@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.13>
 
 <style|source>
 
@@ -153,6 +153,8 @@
 
   <assign|chapter-number-title|<macro|num|title|<style-with|src-compact|none|<new-dpage*><no-indent><new-line><no-indent><wide-std-underlined|<chap-style|<chap-size|<arg|num>>>><vspace|10pt><new-line><no-indent><chap-style|<chap-size|<arg|title>>><vspace|106pt><no-page-break><no-indent*><right-flush>>>>
 
+  <assign|tmhtml-chapter-number-title|<macro|num|title|<chapter-title|<arg|num><space|0.5em><arg|title>>>>
+
   <assign|chapter-title|<macro|title|<chapter-number-title||<arg|title>>>>
 
   <assign|chapter-numbered-title|<macro|title|<chapter-number-title|<the-chapter>|<arg|title>>>>
@@ -179,6 +181,8 @@
   <assign|between-number-space|<macro|5pt>>
 
   <assign|sectional-sep|<macro|<space|<between-number-space>>>>
+
+  <assign|tmhtml-sectional-sep|<macro|<space|0.5em>>>
 
   <assign|*part-sep|<macro|<macro|7pt>>>
 
