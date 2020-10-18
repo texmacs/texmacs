@@ -36,7 +36,7 @@
 	     enumerate enumerate-numeric enumerate-roman
 	     enumerate-Roman enumerate-alpha enumerate-Alpha
 	     description description-compact description-dash
-	     description-align description-long description-paragraphs item*
+	     description-aligned description-long description-paragraphs item*
 	     strong em dfn code* samp kbd var abbr acronym
 	     verbatim code tt
 	     hidden-title doc-title-block
