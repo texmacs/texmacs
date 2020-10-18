@@ -766,6 +766,9 @@
 (define (tmhtml-tree l)
   (tmhtml-png `(tree ,@l)))
 
+(define (tmhtml-syntax l)
+  (tmhtml (car l)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Shape conversions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1863,6 +1866,7 @@
   (wide tmhtml-wide)
   (neg tmhtml-neg)
   (tree tmhtml-tree)
+  (syntax tmhtml-syntax)
   ((:or old-matrix old-table old-mosaic old-mosaic-item)
    tmhtml-noop)
   (table tmhtml-table)

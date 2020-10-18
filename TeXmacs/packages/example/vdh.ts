@@ -320,6 +320,8 @@
 
   <assign|smart-qed|<macro|<htab|0.5fn|0><qed>>>
 
+  <assign|tmhtml-smart-qed|<macro|<space|1em><qed>>>
+
   <\active*>
     <\src-comment>
       Old-style web pages.
