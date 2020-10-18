@@ -338,27 +338,8 @@
 	;;((func? x 'surround) (tmhtml-compute-max-vspace (cdr x) after?))
 	(else #f)))
 
-(define (tmhtml-document-p x)
-  (let* ((body (tmhtml-document-elem x))
-	 (l1 (tmhtml-compute-vspace x #f))
-	 (l2 (tmhtml-compute-vspace x #t))
-	 (h1 (and l1 (tmlength->htmllength l1 #t)))
-	 (h2 (and l2 (tmlength->htmllength l2 #t)))
-	 (s1 (and h1 (string-append "margin-top: " h1)))
-	 (s2 (and h2 (string-append "margin-bottom: " h2)))
-	 (s (cond ((and s1 s2) (string-append s1 "; " s2))
-		  (s1 s2)
-		  (s2 s1)
-		  (else #f))))
-    ;;(display* "paragraph= " x "\n")
-    ;;(display* "style    = " s "\n")
-    (if s `(h:p (@ (style ,s)) ,@body) `(h:p ,@body))))
-
-(define (xtmhtml-document-p x)
-  (with body (tmhtml-document-elem x)
-    `(h:p ,@body)))
-
 (define (tmhtml-div-merged-attrs x1 x2)
+  ;; FIXME: we might improve the merging in presence of common attributes
   (let* ((c1 (sxml-attr x1 'class))
          (c2 (sxml-attr x2 'class))
          (c  (if (and c1 c2) (string-append c1 " " c2) (or c1 c2)))
@@ -381,16 +362,81 @@
                     `(h:div (@ ,@a) ,@l2)))))
       x))
 
-(define (tmhtml-p-like? x)
-  (or (func? x '@)
-      (func? x 'h:p)
-      (and (func? x 'h:div) (forall? tmhtml-p-like? (cdr x))))) 
+(define (xhtml-block? x)
+  (tm-in? x '(h:p h:div h:pre h:h1 h:h2 h:h3 h:h4 h:h5 h:h6
+              h:ol h:ul h:dl h:table)))
 
-(define (tmhtml-simplify-p x)
-  (if (and (func? x 'h:p) (forall? tmhtml-p-like? (cdr x)) (nnull? (cdr x)))
-      ;;`(h:div ,@(cdr x))
-      (tmhtml-simplify-div `(h:div ,@(cdr x)))
-      x))
+(define (mixed-block l)
+  (cond ((null? l) l)
+        ((xhtml-block? (car l)) (cons (car l) (mixed-block (cdr l))))
+        (else
+          (let* ((i (or (list-find-index l xhtml-block?) (length l)))
+                 (s (sublist l 0 i))
+                 (r (mixed-block (sublist l i (length l)))))
+            (cons `(h:div (@ (style "display: inline")) ,@s) r)))))
+
+(define (as-block x)
+  ;;(display* "--- " x "\n")
+  (cond ((func? x 'h:div) (tmhtml-simplify-div x))
+        ((and (func? x 'h:p)
+              (not (forall? (negate xhtml-block?) (sxml-content x)))
+              (not (forall? xhtml-block? (sxml-content x))))
+         (let* ((a (sxml-attr-list x))
+                (m (mixed-block (sxml-content x))))
+           (if (null? a) `(h:p ,@m) `(h:p (@ ,@a) ,@m))))
+        (else x)))
+
+(define (force-block? x)
+  (or (and (tm-in? x '(h:p h:div h:pre h:h1 h:h2 h:h3 h:h4
+                       h:ol h:ul h:dl h:table))
+           (not (and-with style (sxml-attr x 'style)
+                  (string-contains? style "display: inline"))))
+      (and (tm-in? x '(h:i h:b h:u h:var h:font h:class))
+           ;; FIXME: we should really restructure this kind of Html output
+           ;; such that these tags never contain block content
+           (exists? force-block? (sxml-content x)))))
+
+(define (as-blocks l)
+  (cond ((null? l) l)
+        ((and (func? (car l) 'h:p) (list-find (cdar l) force-block?))
+         (let* ((sl (cdar l))
+                (i  (list-find-index sl force-block?))
+                (l1 (sublist sl 0 i))
+                (x2 (list-ref sl i))
+                (l2 (sublist sl (+ i 1) (length sl)))
+                (h  (if (null? l1) (list x2) (list `(h:p ,@l1) x2)))
+                (t  (if (null? l2) (cdr l) (cons `(h:p ,@l2) (cdr l)))))
+           (append (map as-block h) (as-blocks t))))
+        (else (cons (as-block (car l))
+                    (as-blocks (cdr l))))))
+
+(define (add-style-attr x s1 s2)
+  (with s (or (and s1 s2 (string-append s1 "; " s2)) s1 s2)
+    (cond ((not s) x)
+          ((and (xhtml-block? x) (null? (sxml-attr-list x)))
+           `(,(car x) (@ (style ,s)) ,@(cdr x)))
+          ((and (xhtml-block? x) (not (sxml-attr x 'style)))
+           `(,(car x) (@ (style ,s) ,@(sxml-attr-list x)) ,@(sxml-content x)))
+          ((func? x 'h:p)
+           `(h:p (@ (style ,s)) (h:div ,(cdr x))))
+          (else `(h:div (@ (style ,s)) ,x)))))
+
+(define (tmhtml-p x)
+  (let* ((body (tmhtml-document-elem x))
+         (bl (as-blocks (list `(h:p ,@body))))
+	 (l1 (tmhtml-compute-vspace x #f))
+	 (l2 (tmhtml-compute-vspace x #t))
+	 (h1 (and l1 (tmlength->htmllength l1 #t)))
+	 (h2 (and l2 (tmlength->htmllength l2 #t)))
+	 (s1 (and h1 (string-append "margin-top: " h1)))
+	 (s2 (and h2 (string-append "margin-bottom: " h2))))
+    ;;(display* "  <<<<< " body "\n")
+    ;;(display* "  >>>>> " bl "\n")
+    (cond ((null? bl) bl)
+          ((null? (cdr bl)) (list (add-style-attr (car bl) s1 s2)))
+          (else (append (list (add-style-attr (car bl) s1 #f))
+                        (cdr (cDr bl))
+                        (list (add-style-attr (cAr bl) #f s2)))))))
 
 (define (tmhtml-document l)
   (cond ((null? l) '())
@@ -400,8 +446,10 @@
 	   ((cut list-intersperse <> '("\n"))
 	    (map tmhtml l)))))
 	(else
-	  (map tmhtml-simplify-p
-               (tmhtml-post-paragraphs (map tmhtml-document-p l))))))
+          (with pars (map tmhtml-p l)
+            ;;(display* "===== Got  " l "\n")
+            ;;(display* "----- Post " (apply append pars) "\n\n")
+            (apply append pars)))))
 
 (define (tmhtml-paragraph l)
   (let rec ((l l))
@@ -411,57 +459,6 @@
 	  (cond ((null? h) r)		; correct when r is null too
 		((null? r) h)
 		(else `(,@h (h:br) ,@r)))))))
-
-(define (tmhtml-removed-p para cont)
-  (with attrs (or (and para (sxml-attr-list para)) (list))
-    (if (null? attrs) cont
-        `((h:div (@ ,@attrs) ,@cont)))))
-
-(define (tmhtml-post-paragraphs l)
-  ;; Post process a collection of h:p elements
-  ;;
-  ;; If a h:p contains a h:hN, remove the h:p node and prepend the rest of the
-  ;; contents to the next h:p. If the next element, after post processing is
-  ;; not a h:p, create an intermediate h:p to hold the data.
-  ;;
-  ;; If a h:p contains a list element, remove the enclosing h:p. The TeXmacs
-  ;; editor ensures that an <item-list> or <desc-list> is the only element
-  ;; contained in its enclosing <doc-item>.
-  ;;
-  ;; If a h:p contains a h:pre element, remove the enclosing h:p. The VERBATIM
-  ;; handler ensures that block VERBATIM and CODE environment are alone in the
-  ;; paragraph.
-  ;;
-  ;; NOTE: assumes the heading is at the start of a paragraph. That is
-  ;; consistent with the fact that (as of 2003-02-04) the only converted
-  ;; invisible markup is <label> and correct usage requires it to be after the
-  ;; section title.
-  (let rec ((in l) (out '()) (trail #f))
-    (let* ((para (and (pair? in) (car in)))
-	   (cont (and para (sxml-content para)))
-	   (first (and cont (pair? cont) (car cont)))
-	   (next (lambda (o t) (rec (cdr in) o t)))
-	   (flush (lambda () (if trail `((h:p ,@trail) ,@out) out)))
-	   (accept (lambda () (if trail (sxml-prepend para trail) para)))
-	   (give (lambda () (and (pair? (cdr cont)) (cdr cont)))))
-      ;; invariant: (xor prev prev-trail)
-      (cond ((null? in) (reverse (flush)))
-	    ((or (null? cont) (string? first))
-	     (next (cons (accept) out) #f))
-	    ((sxhtml-heading? first)
-	     ;; tmhtml-post-heading should be called by concat handler
-	     (next (cons first (flush)) (give)))
-	    ((sxhtml-list? first)
-	     ;; texmacs editor ensures there is no trail after a list
-	     (next (append (tmhtml-removed-p para cont) (flush)) #f))
-	    ((== 'h:pre (sxml-name first))
-	     ;; handlers and editor ensure there is no trail after a h:pre
-	     (next (append (tmhtml-removed-p para cont) (flush)) #f))
-	    ((and (sxhtml-table? first) (null? (cdr cont)))
-	     ;; if table is not alone, we cannot help but produce bad html
-	     ;; if table is alone, drop the enclosing <h:p>
-	     (next (append (tmhtml-removed-p para cont) (flush)) #f))
-	    (else (next (cons (accept) out) #f))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Surrounding block structures
@@ -661,7 +658,7 @@
 (define (tmhtml-hspace l)
   (with len (tmlength->htmllength (if (list-1? l) (car l) (cadr l)) #t)
     (if (not len) '()
-	`((span (@ (style ,(string-append "margin-left: " len))))))))
+	`((h:span (@ (style ,(string-append "margin-left: " len))))))))
 
 (define (tmhtml-vspace l)
   '())
