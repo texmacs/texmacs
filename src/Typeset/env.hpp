@@ -521,6 +521,9 @@ public:
 
   void      get_length_unit (string l, SI& un, string& un_str);
   string    add_lengths (string l1, string l2);
+  string    sub_lengths (string l1, string l2);
+  string    max_lengths (string l1, string l2);
+  string    min_lengths (string l1, string l2);
   string    multiply_length (double x, string l);
   double    divide_lengths (string l1, string l2);
 

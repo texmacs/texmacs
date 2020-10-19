@@ -108,6 +108,9 @@
 
   (length-decode as_length (int string))
   (length-add add_lengths (string string string))
+  (length-sub sub_lengths (string string string))
+  (length-max max_lengths (string string string))
+  (length-min min_lengths (string string string))
   (length-mult multiply_length (string double string))
   (length? is_length (bool string))
   (length-divide divide_lengths (double string string))

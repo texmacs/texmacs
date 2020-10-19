@@ -50,6 +50,9 @@ public:
 
   SI       as_length (string l);
   string   add_lengths (string l1, string l2);
+  string   sub_lengths (string l1, string l2);
+  string   max_lengths (string l1, string l2);
+  string   min_lengths (string l1, string l2);
   string   multiply_length (double x, string l);
   bool     is_length (string s);
   double   divide_lengths (string l1, string l2);

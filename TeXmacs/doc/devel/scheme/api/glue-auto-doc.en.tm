@@ -6795,6 +6795,30 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(length-sub <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|sub_lengths> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
+    <scm|(length-max <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|max_lengths> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
+    <scm|(length-min <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|min_lengths> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
     <scm|(length-mult <scm-arg|double> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>

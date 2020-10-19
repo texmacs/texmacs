@@ -20,6 +20,7 @@
 	(convert tools old-tmtable)
 	(convert tools sxml)
 	(convert tools sxhtml)
+	(convert tools css)
 	(convert html htmlout)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -339,13 +340,12 @@
 	(else #f)))
 
 (define (tmhtml-div-merged-attrs x1 x2)
-  ;; FIXME: we might improve the merging in presence of common attributes
   (let* ((c1 (sxml-attr x1 'class))
          (c2 (sxml-attr x2 'class))
          (c  (if (and c1 c2) (string-append c1 " " c2) (or c1 c2)))
          (s1 (sxml-attr x1 'style))
          (s2 (sxml-attr x2 'style))
-         (s  (if (and s1 s2) (string-append s1 "; " s2) (or s1 s2)))
+         (s  (if (and s1 s2) (css-merge-styles s1 s2) (or s1 s2)))
          (o? (lambda (x) (or (npair? x) (nin? (car x) '(style class)))))
          (other (list-filter (append (sxml-attr-list x1) (sxml-attr-list x2)) o?)))
     (append (if c (list (list 'class c)) (list))
@@ -1261,6 +1261,11 @@
 	 (name-string (string-append tmhtml-image-root-string postfix)))
     (values name-url name-string)))
 
+(define (magic-png-number)
+  (let* ((css (get-preference "texmacs->html:css-stylesheet"))
+         (s (url->string (url-tail css))))
+    (if (string-starts? s "web-") 18000.0 20625.0)))
+
 (define (tmhtml-png y)
   (let* ((mag (ahash-ref tmhtml-env :mag))
 	 (x (if (or tmhtml-css? (nstring? mag) (== mag "1")) y
@@ -1273,8 +1278,8 @@
 	  (receive (name-url name-string) (tmhtml-image-names "png")
 	    ;;(display* x " -> " name-url ", " name-string "\n")
 	    (let* ((extents (print-snippet name-url x #t))
-                   (unit (/ 6000.0
-                            (* (ninth extents) (tenth extents) 20625.0)))
+                   (m (magic-png-number))
+                   (unit (/ 6000.0 (* (ninth extents) (tenth extents) m)))
 		   (x3 (* (first extents) unit))
 		   (y3 (* (second extents) unit))
 		   (x4 (* (third extents) unit))

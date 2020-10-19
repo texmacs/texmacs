@@ -129,6 +129,31 @@ edit_env_rep::add_lengths (string s1, string s2) {
 }
 
 string
+edit_env_rep::sub_lengths (string s1, string s2) {
+  SI l1= as_length (s1);
+  SI l2= as_length (s2);
+  SI un; string un_str;
+  get_length_unit (s1, un, un_str);
+  if (un==0) return "0tmpt";
+  double x= ((double) (l1-l2)) / ((double) un);
+  return as_string (x) * un_str;
+}
+
+string
+edit_env_rep::max_lengths (string s1, string s2) {
+  SI l1= as_length (s1);
+  SI l2= as_length (s2);
+  return (l1 >= l2? s1 : s2);
+}
+
+string
+edit_env_rep::min_lengths (string s1, string s2) {
+  SI l1= as_length (s1);
+  SI l2= as_length (s2);
+  return (l1 <= l2? s1 : s2);
+}
+
+string
 edit_env_rep::multiply_length (double x, string s) {
   SI l= as_length (s);
   SI un; string un_str;

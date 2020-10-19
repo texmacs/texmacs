@@ -139,6 +139,18 @@ edit_typeset_rep::add_lengths (string l1, string l2) {
   return env->add_lengths (l1, l2); }
 
 string
+edit_typeset_rep::sub_lengths (string l1, string l2) {
+  return env->sub_lengths (l1, l2); }
+
+string
+edit_typeset_rep::max_lengths (string l1, string l2) {
+  return env->max_lengths (l1, l2); }
+
+string
+edit_typeset_rep::min_lengths (string l1, string l2) {
+  return env->min_lengths (l1, l2); }
+
+string
 edit_typeset_rep::multiply_length (double x, string l) {
   return env->multiply_length (x, l); }
 

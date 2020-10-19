@@ -255,6 +255,9 @@ public:
   virtual void     get_data (new_data& data) = 0;
   virtual SI       as_length (string l) = 0;
   virtual string   add_lengths (string l1, string l2) = 0;
+  virtual string   sub_lengths (string l1, string l2) = 0;
+  virtual string   max_lengths (string l1, string l2) = 0;
+  virtual string   min_lengths (string l1, string l2) = 0;
   virtual string   multiply_length (double x, string l) = 0;
   virtual bool     is_length (string s) = 0;
   virtual double   divide_lengths (string l1, string l2) = 0;

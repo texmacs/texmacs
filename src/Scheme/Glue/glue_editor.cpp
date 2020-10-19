@@ -1000,6 +1000,51 @@ tmg_length_add (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_length_sub (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "length-sub");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "length-sub");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  string out= get_current_editor()->sub_lengths (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_length_max (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "length-max");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "length-max");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  string out= get_current_editor()->max_lengths (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_length_min (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "length-min");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "length-min");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  string out= get_current_editor()->min_lengths (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_length_mult (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_DOUBLE (arg1, TMSCM_ARG1, "length-mult");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "length-mult");
@@ -3386,6 +3431,9 @@ initialize_glue_editor () {
   tmscm_install_procedure ("make-image",  tmg_make_image, 6, 0, 0);
   tmscm_install_procedure ("length-decode",  tmg_length_decode, 1, 0, 0);
   tmscm_install_procedure ("length-add",  tmg_length_add, 2, 0, 0);
+  tmscm_install_procedure ("length-sub",  tmg_length_sub, 2, 0, 0);
+  tmscm_install_procedure ("length-max",  tmg_length_max, 2, 0, 0);
+  tmscm_install_procedure ("length-min",  tmg_length_min, 2, 0, 0);
   tmscm_install_procedure ("length-mult",  tmg_length_mult, 2, 0, 0);
   tmscm_install_procedure ("length?",  tmg_lengthP, 1, 0, 0);
   tmscm_install_procedure ("length-divide",  tmg_length_divide, 2, 0, 0);
