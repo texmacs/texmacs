@@ -1264,7 +1264,7 @@
 (define (magic-png-number)
   (let* ((css (get-preference "texmacs->html:css-stylesheet"))
          (s (url->string (url-tail css))))
-    (if (string-starts? s "web-") 18000.0 20625.0)))
+    (if (string-starts? s "web-") 19000.0 20625.0)))
 
 (define (tmhtml-png y)
   (let* ((mag (ahash-ref tmhtml-env :mag))
