@@ -1,13 +1,19 @@
-<TeXmacs|1.99.12>
+<TeXmacs|1.99.13>
 
-<style|<tuple|tmdoc|english|old-spacing|old-dots>>
+<style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.99.1 to 1.99.13>
+  <section|Changes from version 1.99.1 to 1.99.14>
 
   <\itemize>
+    <item>Many bug fixes (1.99.14).
+
+    <item>Improved Html export with better CSS stylability (1.99.14).
+
+    <item>Improved support for Qt5 (1.99.14).
+
     <item>Continued bug fixes (1.99.13).
 
     <item>Switch to Python 3 for plug-ins programmed in Python (1.99.13).
@@ -2008,7 +2014,7 @@
     <item>Implementation of symbol menus.
   </itemize>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2002|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
