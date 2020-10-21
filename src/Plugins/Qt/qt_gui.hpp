@@ -26,6 +26,12 @@
 #include "hashmap.hpp"
 #include "socket_notifier.hpp"
 
+#if (QT_VERSION >= 0x050000) && defined(OS_MACOS) && defined(CocoaPlugin)
+#ifndef QT_MAC_USE_COCOA
+#define QT_MAC_USE_COCOA 1
+#endif
+#endif
+
 typedef class qt_gui_rep* qt_gui;
 extern qt_gui the_gui;
 

@@ -30,6 +30,7 @@
 #include <QString>
 #include "Qt/QTMWidget.hpp"
 #include "Qt/qt_gui.hpp"
+#include "Qt/qt_utilities.hpp"
 #endif
 
 bool 
@@ -108,7 +109,7 @@ mac_handler_body (NSEvent *event) {
         if (nsmods &  NSAlternateKeyMask) str.append("Alt+");
         if (nsmods &  NSCommandKeyMask) str.append("Meta+");
         str.append("Tab");
-        cout << str.toAscii().constData() << LF;
+        cout << from_qstring (str) << LF;
 #endif      
         
         QKeyEvent *qe = new QKeyEvent(([event type] == NSKeyDown) ? 
