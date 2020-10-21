@@ -257,3 +257,12 @@
 
 /* Guile string size type */
 #undef guile_str_size_t
+
+/* If there if static plugin lib */
+#undef qt_static_plugin_qgif
+
+/* If there if static plugin lib */
+#undef qt_static_plugin_qico
+
+/* If there if static plugin lib */
+#undef qt_static_plugin_qsvg

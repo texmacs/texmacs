@@ -13,6 +13,38 @@
 
 m4_include([misc/autotroll/autotroll.m4])
 
+AC_DEFUN([LM_QT_JPG],[AC_LANG_PROGRAM([
+@%:@include <QtCore>
+@%:@include <QtPlugin>
+@%:@define qt_static_plugin_qjpeg qt_static_plugin_QJpegPlugin
+
+Q_IMPORT_PLUGIN(qjpeg)
+])])
+
+AC_DEFUN([LM_QT_GIF],[AC_LANG_PROGRAM([
+@%:@include <QtCore>
+@%:@include <QtPlugin>
+@%:@define qt_static_plugin_qgif qt_static_plugin_QGifPlugin
+
+Q_IMPORT_PLUGIN(qgif)
+])])
+
+AC_DEFUN([LM_QT_ICO],[AC_LANG_PROGRAM([
+@%:@include <QtCore>
+@%:@include <QtPlugin>
+@%:@define qt_static_plugin_qico qt_static_plugin_QICOPlugin
+
+Q_IMPORT_PLUGIN(qico)
+])])
+
+AC_DEFUN([LM_QT_SVG],[AC_LANG_PROGRAM([
+@%:@include <QtCore>
+@%:@include <QtPlugin>
+@%:@define qt_static_plugin_qsvg qt_static_plugin_QSvgPlugin
+
+Q_IMPORT_PLUGIN(qsvg)
+])])
+
 AC_DEFUN([LC_WITH_QT],[
   typeset xtralibs
   case $CONFIG_OS in
@@ -62,4 +94,15 @@ AC_DEFUN([LC_WITH_QT],[
     ])
   ])
   LC_COMBINE_FLAGS([QT])
+  AX_SAVE_FLAGS 
+  LC_SET_FLAGS([QT])
+  AC_RUN_IFELSE([LM_QT_JPG], [AC_DEFINE([qt_static_plugin_qsvg],[qt_static_plugin_QJpegPlugin],[If there if static plugin lib])],
+  	[AC_MSG_WARN([No static jpg plugin])])
+  AC_RUN_IFELSE([LM_QT_GIF], [AC_DEFINE([qt_static_plugin_qgif],[qt_static_plugin_QGifPlugin],[If there if static plugin lib])],
+  	[AC_MSG_WARN([No static gif plugin])])
+  AC_RUN_IFELSE([LM_QT_ICO], [AC_DEFINE([qt_static_plugin_qico],[qt_static_plugin_QICOPlugin],[If there if static plugin lib])],
+  	[AC_MSG_WARN([No static icon plugin])])
+  AC_RUN_IFELSE([LM_QT_SVG], [AC_DEFINE([qt_static_plugin_qsvg],[qt_static_plugin_QSvgPlugin],[If there if static plugin lib])],
+  	[AC_MSG_WARN([No static svg plugin])])
+  AX_RESTORE_FLAGS
 ])
