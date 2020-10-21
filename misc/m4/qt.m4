@@ -45,6 +45,13 @@ AC_DEFUN([LM_QT_SVG],[AC_LANG_PROGRAM([
 Q_IMPORT_PLUGIN(qsvg)
 ])])
 
+AC_DEFUN([LM_QT_COCOA],[AC_LANG_PROGRAM([
+@%:@include <QtCore>
+@%:@include <QtPlugin>
+
+Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin)
+])])
+
 AC_DEFUN([LC_WITH_QT],[
   typeset xtralibs
   case $CONFIG_OS in
@@ -96,13 +103,15 @@ AC_DEFUN([LC_WITH_QT],[
   LC_COMBINE_FLAGS([QT])
   AX_SAVE_FLAGS 
   LC_SET_FLAGS([QT])
-  AC_RUN_IFELSE([LM_QT_JPG], [AC_DEFINE([qt_static_plugin_qsvg],[qt_static_plugin_QJpegPlugin],[If there if static plugin lib])],
-  	[AC_MSG_WARN([No static jpg plugin])])
-  AC_RUN_IFELSE([LM_QT_GIF], [AC_DEFINE([qt_static_plugin_qgif],[qt_static_plugin_QGifPlugin],[If there if static plugin lib])],
-  	[AC_MSG_WARN([No static gif plugin])])
-  AC_RUN_IFELSE([LM_QT_ICO], [AC_DEFINE([qt_static_plugin_qico],[qt_static_plugin_QICOPlugin],[If there if static plugin lib])],
-  	[AC_MSG_WARN([No static icon plugin])])
-  AC_RUN_IFELSE([LM_QT_SVG], [AC_DEFINE([qt_static_plugin_qsvg],[qt_static_plugin_QSvgPlugin],[If there if static plugin lib])],
-  	[AC_MSG_WARN([No static svg plugin])])
+  AC_RUN_IFELSE([LM_QT_JPG], [AC_DEFINE([qt_static_plugin_qjpeg],[qt_static_plugin_QJpegPlugin],[If there is a static plugin qjpeg])],
+  	[AC_MSG_WARN([No static qjpeg plugin])])
+  AC_RUN_IFELSE([LM_QT_GIF], [AC_DEFINE([qt_static_plugin_qgif],[qt_static_plugin_QGifPlugin],[If there is a static plugin qgif])],
+  	[AC_MSG_WARN([No static qgif plugin])])
+  AC_RUN_IFELSE([LM_QT_ICO], [AC_DEFINE([qt_static_plugin_qico],[qt_static_plugin_QICOPlugin],[If there is a static plugin qico])],
+  	[AC_MSG_WARN([No static qico plugin])])
+  AC_RUN_IFELSE([LM_QT_SVG], [AC_DEFINE([qt_static_plugin_qsvg],[qt_static_plugin_QSvgPlugin],[If there is a static plugin qsvg])],
+  	[AC_MSG_WARN([No static qsvg plugin])])
+  AC_RUN_IFELSE([LM_QT_COCOA], [AC_DEFINE([CocoaPlugin],[1],[If there is a static plugin Cocoa])],
+  	[AC_MSG_WARN([No static Cocoa plugin])])
   AX_RESTORE_FLAGS
 ])

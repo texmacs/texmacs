@@ -74,7 +74,7 @@ Q_IMPORT_PLUGIN(qsvg)
 #ifdef WIN32 
 Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
 #endif
-#ifdef OS_MACOS
+#if defined(OS_MACOS) && defined(CocoaPlugin)
 Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin)
 #endif
 #endif

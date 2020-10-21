@@ -6,6 +6,9 @@
 /* Enable experimental Cocoa port */
 #undef AQUATEXMACS
 
+/* If there if static plugin Cocoa */
+#undef CocoaPlugin
+
 /* check assertions in code */
 #undef DEBUG_ASSERT
 
@@ -258,11 +261,14 @@
 /* Guile string size type */
 #undef guile_str_size_t
 
-/* If there if static plugin lib */
+/* If there if static plugin qgif */
 #undef qt_static_plugin_qgif
 
-/* If there if static plugin lib */
+/* If there if static plugin qico */
 #undef qt_static_plugin_qico
 
-/* If there if static plugin lib */
+/* If there if static plugin qjpeg */
+#undef qt_static_plugin_qjpeg
+
+/* If there if static plugin qsvg */
 #undef qt_static_plugin_qsvg
