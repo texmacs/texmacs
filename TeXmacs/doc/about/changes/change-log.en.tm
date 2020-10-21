@@ -8,6 +8,9 @@
   <section|Changes from version 1.99.1 to 1.99.14>
 
   <\itemize>
+    <item>Release of <hlink|\PThe Jolly Writer\Q|https://www.scypress.com/book_info.html>\VYour
+    Guide to GNU <TeXmacs> (1.99.14).
+
     <item>Many bug fixes (1.99.14).
 
     <item>Improved Html export with better CSS stylability (1.99.14).
