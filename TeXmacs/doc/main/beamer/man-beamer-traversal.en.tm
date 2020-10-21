@@ -26,7 +26,7 @@
   currently visible branch using <menu|Focus|Insert argument after> or
   <menu|Focus|Insert argument before>. Besides the <markup|screens> switch,
   you may use <menu|Insert|Fold|Switch|Standard> to insert paragraph-wide
-  switches, and <menu|Insert|Fold|Switch|Standard> to insert inline switches
+  switches, and <menu|Insert|Fold|Switch|Tiny> to insert inline switches
   (similarly to displayed and inline formulas).
 
   Another popular way to traverse is presentation is to progressively unroll
