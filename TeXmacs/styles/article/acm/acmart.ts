@@ -1,4 +1,4 @@
-<TeXmacs|1.99.11>
+<TeXmacs|1.99.13>
 
 <style|source>
 
@@ -24,7 +24,7 @@
     </src-title>
   </active*>
 
-  <use-package|std|env|title-generic|header-article|section-base|std-latex-base>
+  <use-package|std|env|title-generic|header-article|section-base|std-latex-base|html-font-size>
 
   <active*|<src-comment|Global layout parameters>>
 

@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.13>
 
 <style|<tuple|source|doc>>
 
@@ -24,7 +24,7 @@
     </src-title>
   </active*>
 
-  <use-package|std|env|title-generic|header-article|section-article|std-latex|two-columns>
+  <use-package|std|env|title-generic|header-article|section-article|std-latex|two-columns|html-font-size>
 
   <active*|<\src-comment>
     Conference information and copyrights

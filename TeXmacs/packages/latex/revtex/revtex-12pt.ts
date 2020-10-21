@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.99.13>
 
 <style|<tuple|source|std>>
 
@@ -38,17 +38,17 @@
 
   <assign|par-first|<macro|15pt>>
 
-  <assign|tiny|<macro|x|<with|font-size-base|6|par-sep|<minus|7ptpt|6pt>|<arg|x>>>>
+  <assign|tiny|<macro|x|<with|font-size-base|6|par-sep|<minus|7pt|6pt>|<arg|x>>>>
 
-  <assign|scriptsize|<macro|x|<with|font-size-base|8|par-sep|<minus|9.5ptpt|8pt>|<arg|x>>>>
+  <assign|scriptsize|<macro|x|<with|font-size-base|8|par-sep|<minus|9.5pt|8pt>|<arg|x>>>>
 
-  <assign|large|<macro|x|<with|font-size-base|14.4|par-sep|<minus|18ptpt|14.4pt>|<arg|x>>>>
+  <assign|large|<macro|x|<with|font-size-base|14.4|par-sep|<minus|18pt|14.4pt>|<arg|x>>>>
 
-  <assign|Large|<macro|x|<with|font-size-base|17.28|par-sep|<minus|22ptpt|17.28pt>|<arg|x>>>>
+  <assign|Large|<macro|x|<with|font-size-base|17.28|par-sep|<minus|22pt|17.28pt>|<arg|x>>>>
 
-  <assign|LARGE|<macro|x|<with|font-size-base|20.74|par-sep|<minus|25ptpt|20.74pt>|<arg|x>>>>
+  <assign|LARGE|<macro|x|<with|font-size-base|20.74|par-sep|<minus|25pt|20.74pt>|<arg|x>>>>
 
-  <assign|huge|<macro|x|<with|font-size-base|24.88|par-sep|<minus|30ptpt|24.88pt>|<arg|x>>>>
+  <assign|huge|<macro|x|<with|font-size-base|24.88|par-sep|<minus|30pt|24.88pt>|<arg|x>>>>
 </body>
 
 <\initial>

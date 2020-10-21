@@ -24,7 +24,7 @@
     </src-title>
   </active*>
 
-  <use-package|std|env-base|env-math|env-enunciation|env-float|env-program|header-book|title-base|section-book|std-latex>
+  <use-package|std|env-base|env-math|env-enunciation|env-float|env-program|header-book|title-base|section-book|std-latex|html-font-size>
 
   <assign|env-theorem-dtd|1.0>
 

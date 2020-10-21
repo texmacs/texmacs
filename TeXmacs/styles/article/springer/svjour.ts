@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.13>
 
 <style|source>
 
@@ -24,7 +24,7 @@
     </src-title>
   </active*>
 
-  <use-package|std|env-base|env-math|env-enunciation|env-float|env-program|header-article|title-base|section-article|std-latex>
+  <use-package|std|env-base|env-math|env-enunciation|env-float|env-program|header-article|title-base|section-article|std-latex|html-font-size>
 
   <assign|env-theorem-dtd|1.0>
 
