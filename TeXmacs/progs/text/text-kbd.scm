@@ -17,17 +17,6 @@
 	(text text-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Hacks to work around the problem that MacOS reserves Alt-based shortcuts
-;; for its own personal use
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(when (os-macos?)
-  (kbd-map
-    (:mode in-std-text?)
-    ("\x0f" (make-equation*)) ;; Alt-$
-    ("ddagger" (make-eqnarray*)))) ;; Alt-&
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Special symbols in text mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -271,31 +260,104 @@
   ("accent:ogonek e" "¦")
   ("accent:ogonek E" "†")
 
+  ("" "")
+  ("" "")
+  ("" "")
+  ("" "")
+  ("" "")
+  ("" "")
+  ("" "")
+  ("" "")
+  ("" "")
+
   ("exclamdown" "½")
-  ("cent" (make 'cent))
+  ("cent" "<#A2>")
   ("sterling" "¿")
-  ("currency" (make 'currency))
-  ("yen" (make 'yen))
+  ("currency" "<#A4>")
+  ("yen" "<#A5>")
   ("section" "Ÿ")
-  ("copyright" (make 'copyright))
+  ("copyright" "<#A9>")
   ("copyright var" (make 'copyleft))
+  ("ordfeminine" "<#AA>")
+  ("ordfeminine var" (make 'varordfeminine))
   ("guillemotleft" "")
-  ("registered" (make 'registered))
-  ("degree" (make 'degreesign))
-  ("twosuperior" (make 'twosuperior))
-  ("threesuperior" (make 'threesuperior))
-  ("paragraph" (make 'paragraphsign))
-  ("onesuperior" (make 'onesuperior))
-  ("guillemotright" "")
-  ("onequarter" (make 'onequarter))
-  ("onehalf" (make 'onehalf))
-  ("threequarters" (make 'threequarters))
-  ("questiondown" "¾")
-  ("euro" (make 'euro))
-  ("masculine" (make 'masculine))
-  ("ordfeminine" (make 'ordfeminine))
+  ("registered" "<#AE>")
+  ("circledR" "<#AE>")
+  ("degree" "<#B0>")
+  ("twosuperior" "<#B2>")
+  ("threesuperior" "<#B3>")
+  ("paragraph" "<#B6>")
+  ("onesuperior" "<#B9>")
+  ("masculine" "<#BA>")
   ("masculine var" (make 'varmasculine))
-  ("ordfeminine var" (make 'varordfeminine)))
+  ("guillemotright" "")
+  ("onequarter" "<#BC>")
+  ("onehalf" "<#BD>")
+  ("threequarters" "<#BE>")
+  ("questiondown" "¾")
+
+  ("trademark" "<#2122>")
+  ("infty" "<infty>")
+  ("bullet" "<bullet>")
+  ("neq" "<neq>")
+  ("big-sum" (insert '(big "sum")))
+  ("dagger" "<dag>")
+  ("partial" "<partial>")
+  ("neg" "<neg>")
+  ("ldots" "<ldots>")
+  ("approx" "<approx>")
+  ("sqrt" (insert '(sqrt "")))
+  ("big-int" (insert '(big "int")))
+  ("leq" "<leq>")
+  ("geq" "<geq>")
+  ("div" "<div>")
+
+  ("euro" "<#20AC>")
+  ("ddagger" "<ddag>")
+  ("centerdot" "<cdot>")
+  ("pm" "<pm>")
+  ("big-prod" (insert '(big "prod"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Font dependent shortcuts
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(kbd-map
+  (:mode in-text?)
+  (:require (== (get-env "font") "roman"))
+
+  ("copyright" (make 'copyright)) ;; "<#A9>"
+  ("ordfeminine" (make 'ordfeminine))
+  ("masculine" (make 'masculine))
+  ("<#20AC>" (make 'euro))
+  ("euro" (make 'euro)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Hacks to work around the problem that MacOS reserves Alt-based shortcuts
+;; for its own personal use
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(when (os-macos?)
+  (kbd-map
+    (:mode in-std-text?)
+    ("exclamdown" (make 'section))       ;; Alt-1
+    ("exclamdown var" "½")
+    ("½" (make 'section))             ;; Alt-1
+    ("½ var" "½")
+    ("trademark" (make 'subsection))     ;; Alt-2
+    ("trademark var" "<#2122>")
+    ("sterling" (make 'subsubsection))   ;; Alt-3
+    ("sterling var" "¿")
+    ("¿" (make 'subsubsection))       ;; Alt-3
+    ("¿ var" "¿")
+    ("cent" (make 'paragraph))           ;; Alt-4
+    ("cent var" "<#A2>")
+    ("infty" (make 'subparagraph))       ;; Alt-5
+    ("infty var" "<infty>")
+    ("" (make-equation*))              ;; Alt-$
+    (" var" "")
+    ("ddagger" (make-eqnarray*))         ;; Alt-&
+    ("ddagger var" "<ddag>")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language dependent shortcuts
