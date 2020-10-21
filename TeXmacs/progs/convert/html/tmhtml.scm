@@ -170,7 +170,8 @@
           ".balloon-body { } "
 	  ".ornament { border-width: 1px; border-style: solid;"
 	  " border-color: black; display: inline-block; padding: 0.2em; } "
-	  ".right-tab { float: right; position: relative; top: -1em } "))
+	  ".right-tab { float: right; position: relative; top: -1em; } "
+	  ".no-breaks { white-space: nowrap; } "))
 	(mathml "math { font-family: cmr, times, verdana } "))
     (if tmhtml-mathml? (string-append html mathml) html)))
 
@@ -267,6 +268,8 @@
             (in? "mmxdoc" styles) (in? "magix-web" styles)
             (in? "max-web" styles))
 	(set! body (tmhtml-tmdoc-post body)))
+    (if tmhtml-css?
+        (set! body (tmhtml-css-post body)))
     `(h:html
       (h:head
        (h:title ,@(tmhtml title))
@@ -1747,6 +1750,36 @@
 (define (tmhtml-tmdoc-post body)
   (with r (append-map tmhtml-tmdoc-post-sub body)
     `((h:div (@ (class "tmdoc-body")) ,@r))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Css finalization (breaking around images)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmhtml-breaks-post l)
+  (cond ((or (null? l) (null? (cdr l))) l)
+        ((and (func? (car l) 'h:img)
+              (string? (cadr l))
+              (not (string-starts? (cadr l) " ")))
+         (let* ((s (cadr l))
+                (i (string-index s #\space))
+                (s1 (if i (substring s 0 i) s))
+                (s2 (and i (substring s i (string-length s))))
+                (nb `(h:span (@ (class "no-breaks")) ,(car l) ,s1))
+                (t (if s2 (cons s2 (cddr l)) (cddr l))))
+           (cons nb (tmhtml-breaks-post t))))
+        (else (cons (car l) (tmhtml-breaks-post (cdr l))))))
+
+(define (tmhtml-breaks-post* l)
+  (let* ((n (length l))
+         (h (quotient n 2)))
+    (if (<= n 10000) (tmhtml-breaks-post l)
+        (append (tmhtml-breaks-post* (sublist l 0 h))
+                (tmhtml-breaks-post* (sublist l h n))))))
+
+(define (tmhtml-css-post body)
+  (if (pair? body)
+      `(,(car body) ,@(tmhtml-breaks-post* (map tmhtml-css-post (cdr body))))
+      body))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main conversion routines
