@@ -57,9 +57,9 @@ initkeymap () {
   fInit= true;
   if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "Initializing keymap\n";
   map (Qt::Key_Space     , "space");
-  map (Qt::Key_Return    , "return");
   map (Qt::Key_Tab       , "tab");
-  map (Qt::Key_Backspace , "backspace");
+  map (Qt::Key_Backtab   , "tab");
+  map (Qt::Key_Return    , "return");
   map (Qt::Key_Enter     , "enter");
   map (Qt::Key_Escape    , "escape");
   map (Qt::Key_Backspace , "backspace");
