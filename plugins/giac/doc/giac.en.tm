@@ -1,12 +1,14 @@
-<TeXmacs|1.0.7.11>
+<TeXmacs|1.99.12>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing|old-dots>>
 
 <\body>
   <tmdoc-title|The <name|Giac> plug-in>
 
   <\traverse>
     <branch|Short description|giac-abstract.en.tm>
+
+    <branch|Example session|giac-demo.en.tm>
   </traverse>
 
   <tmdoc-copyright|2011|Joris van der Hoeven>
