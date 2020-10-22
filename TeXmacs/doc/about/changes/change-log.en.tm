@@ -17,6 +17,8 @@
 
     <item>Improved support for Qt5 (1.99.14).
 
+    <item>Improved Octave plugin (1.99.14).
+
     <item>Continued bug fixes (1.99.13).
 
     <item>Switch to Python 3 for plug-ins programmed in Python (1.99.13).
@@ -2017,7 +2019,7 @@
     <item>Implementation of symbol menus.
   </itemize>
 
-  <tmdoc-copyright|1998\U2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2020|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
