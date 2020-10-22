@@ -479,6 +479,11 @@ static void setRoundedMask (QWidget *widget)
 }
 #endif
 
+void
+QTMWidget::kbdEvent (int key, Qt::KeyboardModifiers mods, const QString& s) {
+  QKeyEvent ev (QEvent::KeyPress, key, mods, s);
+  keyPressEvent (&ev);
+}
 
 #if 0 
 // OLD INPUT METHOD PREVIEW
@@ -574,19 +579,42 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
   QString const & commit_string = event->commitString();
   
   if (!commit_string.isEmpty()) {
-    if (DEBUG_QT)
-      debug_qt << "IM committing :" << commit_string.toUtf8().data() << LF;
-    
-    int key = 0;
-#if 1
-    for (int i = 0; i < commit_string.size(); ++i) {
-      QKeyEvent ev (QEvent::KeyPress, key, Qt::NoModifier, commit_string[i]);
-      keyPressEvent (&ev);
-    }
-#else
-    QKeyEvent ev (QEvent::KeyPress, key, Qt::NoModifier, commit_string);
-    keyPressEvent (&ev);
+    bool done= false;
+#ifdef OS_MACOS
+#if (QT_VERSION < 0x050000)
+    // NOTE: this hack is only needed for Qt4 under MacOS,
+    // but it only works for standard US keyboards
+    done= true;
+    string s= from_qstring (commit_string);
+    Qt::KeyboardModifiers SA= Qt::ShiftModifier | Qt::AltModifier;
+    if (s == "\17") kbdEvent (36, Qt::AltModifier, commit_string);
+    else if (s == "<ddagger>") kbdEvent (38, Qt::AltModifier, commit_string);
+    else if (s == "<leq>") kbdEvent (44, Qt::AltModifier, commit_string);
+    else if (s == "<geq>") kbdEvent (46, Qt::AltModifier, commit_string);
+    else if (s == "<trademark>") kbdEvent (50, Qt::AltModifier, commit_string);
+    else if (s == "<infty>") kbdEvent (53, Qt::AltModifier, commit_string);
+    else if (s == "<ldots>") kbdEvent (59, Qt::AltModifier, commit_string);
+    else if (s == "<#20AC>") kbdEvent (64, Qt::AltModifier, commit_string);
+    else if (s == "<partial>") kbdEvent (68, Qt::AltModifier, commit_string);
+    else if (s == "<#192>") kbdEvent (70, Qt::AltModifier, commit_string);
+    else if (s == "<sqrt>") kbdEvent (86, Qt::AltModifier, commit_string);
+    else if (s == "\35") kbdEvent (94, Qt::AltModifier, commit_string);
+    else if (s == "\31") kbdEvent (66, SA, commit_string);
+    else if (s == "<lozenge>") kbdEvent (89, SA, commit_string);
+    else done= false;
 #endif
+#endif
+    
+    if (!done) {
+      if (DEBUG_QT)
+        debug_qt << "IM committing: " << commit_string.toUtf8().data() << LF;
+#if 1
+      for (int i = 0; i < commit_string.size(); ++i)
+        kbdEvent (0, Qt::NoModifier, commit_string[i]);
+#else
+      kbdEvent (0, Qt::NoModifier, commit_string);
+#endif
+    }
   }
   
   if (DEBUG_QT)
