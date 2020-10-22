@@ -12,6 +12,10 @@
 #include "tm_config.hpp"
 #include "analyze.hpp"
 
+#ifdef Q_OS_MAC
+extern hashmap<int,string> qtcomposemap;
+#endif
+
 /******************************************************************************
 * Constructor and destructor
 ******************************************************************************/
@@ -156,6 +160,22 @@ tm_config_rep::get_keycomb (
   string orig= which;
   if (DEBUG_KEYBOARD) debug_keyboard << which;
   variant_simplification (which);
+#ifdef Q_OS_MAC
+  if (N(which) == 3 && starts (which, "A-") &&
+      N(orig) == 7 && (orig == which * " tab") &&
+      qtcomposemap->contains ((int) (unsigned char) which[2])) {
+    string compose= qtcomposemap[(int) (unsigned char) which[2]];
+    if (N(compose) > 1 &&
+        cork_to_utf8 ("<" * compose * ">") != ("<" * compose * ">"))
+      compose= "<" * compose * ">";
+    which = orig;
+    status= 2;
+    cmd   = command ();
+    shorth= copy (compose);
+    help  = copy (compose);
+    return;
+  }
+#endif
   if (DEBUG_KEYBOARD) debug_keyboard << " -> " << which;
   string rew= apply_wildcards (which, post_kbd_wildcards);
   bool no_var= false;

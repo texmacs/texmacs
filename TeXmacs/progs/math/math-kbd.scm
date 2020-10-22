@@ -63,66 +63,6 @@
         (else "")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Hacks to work around the problem that MacOS reserves Alt-based shortcuts
-;; for its own personal use
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(when (os-macos?)
-  (kbd-map
-    (:mode in-math?)
-    ("\xe5" (make-above)) ;; Alt-a
-    ("\xc5" (make-wide "<invbreve>")) ;; Alt-A
-    ("big-int" (make-below)) ;; Alt-b
-    ("\xc7" (make-wide "<check>")) ;; Alt-C
-    ("<#192>" (make-fraction)) ;; Alt-f
-    ("<#192> var" (make 'tfrac))
-    ("<#192> var var" (make 'dfrac))
-    ("<#192> var var var" (make 'frac*))
-    ("<#192> var var var var" (make 'cfrac))
-    ("\xd8" (make 'op)) ;; Alt-O
-    ("\xff" (make-sqrt)) ;; Alt-s
-    ("\xff var" (make-var-sqrt))
-    ("dagger" (make 'tabular*)) ;; Alt-t
-    ("dagger var" (make 'matrix))
-    ("dagger var var" (make 'det))
-    ("dagger var var var" (make 'bmatrix))
-    ("dagger var var var var" (make 'choice))
-    ("dagger var var var var var" (make 'stack))
-    ("\xfe" (make 'tabular*)) ;; Alt-t
-    ("\xfe var" (make 'matrix))
-    ("\xfe var var" (make 'det))
-    ("\xfe var var var" (make 'bmatrix))
-    ("\xfe var var var var" (make 'choice))
-    ("\xfe var var var var var" (make 'stack))
-    ("lozenge" (make-wide "<vect>")) ;; Alt-V
-
-    ("geq" (make-wide "<dot>")) ;; Alt-.
-    ("geq var" (make-wide "<ddot>"))
-    ("geq var var" (make-wide "<dddot>"))
-    ("geq var var var" (make-wide "<ddddot>"))
-    ("\xe6" (make-wide "<acute>")) ;; Alt-'
-    ("\xc6" (make-wide "<ddot>")) ;; Alt-"
-    ("\xc6 var" (make-wide "<dddot>"))
-    ("\xc6 var var" (make-wide "<ddddot>"))
-    ("\x1d" (make-wide "^")) ;; Alt-^
-    ("\x15" (make-wide "<wide-bar>")) ;; Alt--
-    ("\x16" (make-wide-under "<wide-bar>")) ;; Alt-_
-
-    ("{ dagger" (make 'choice)) ;; { Alt-t
-    ("( dagger" (make 'matrix))
-    ("[ dagger" (make 'bmatrix))
-    ("| dagger" (make 'det))
-    ("{ \xfe" (make 'choice)) ;; { Alt-t
-    ("( \xfe" (make 'matrix))
-    ("[ \xfe" (make 'bmatrix))
-    ("| \xfe" (make 'det))))
-
-(when (os-macos?)
-  (kbd-map
-    (:mode in-math-like-macos?)
-    ("math A-n" (make-wide "~"))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main keyboard shortcuts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -246,7 +186,7 @@
   ("math -" (make-wide "<wide-bar>"))
   ("math ." (make-wide "<dot>"))
   ("math . var" (make-wide "<ddot>"))
-  ("math . var var" (make-wide "<ddot>"))
+  ("math . var var" (make-wide "<dddot>"))
   ("math . var var var" (make-wide "<ddddot>"))
   ("math \"" (make-wide "<ddot>"))
   ("math \" var" (make-wide "<dddot>"))
@@ -280,7 +220,7 @@
   ("math:under . var var var" (make-wide-under "<ddddot>"))
   ("math:under \"" (make-wide-under "<ddot>"))
   ("math:under \" var" (make-wide-under "<dddot>"))
-  ("math:under \" var var" (make-wide-under "<dddot>"))
+  ("math:under \" var var" (make-wide-under "<ddddot>"))
   ("math:under @" (make-wide-under "<abovering>"))
   ("math:under {" (make-wide-under "<wide-overbrace*>"))
   ("math:under }" (make-wide-under "<wide-underbrace>"))

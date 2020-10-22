@@ -14,6 +14,10 @@
 #include "tm_buffer.hpp"
 #include "archiver.hpp"
 
+#ifdef Q_OS_MAC
+extern hashmap<int,string> qtcomposemap;
+#endif
+
 /******************************************************************************
 * Showing the keystrokes while typing
 ******************************************************************************/
@@ -232,6 +236,13 @@ edit_interface_rep::key_press (string gkey) {
     call ("kbd-insert", key);
     interrupt_shortcut ();    
   }
+#ifdef Q_OS_MAC
+  else if (N(key) == 3 && starts (key, "A-") &&
+           qtcomposemap->contains ((int) (unsigned char) key[2])) {
+    string compose_key= qtcomposemap[(int) (unsigned char) key[2]];
+    key_press (compose_key);
+  }
+#endif
   else if (!occurs (" ", key) && !occurs ("-", key) && N(key) > 1 &&
            cork_to_utf8 ("<" * key * ">") != ("<" * key * ">") &&
            !inside_active_graphics ()) {

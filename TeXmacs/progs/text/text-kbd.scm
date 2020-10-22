@@ -321,33 +321,6 @@
   ("euro" (make 'euro)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Hacks to work around the problem that MacOS reserves Alt-based shortcuts
-;; for its own personal use
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(when (os-macos?)
-  (kbd-map
-    (:mode in-std-text?)
-    ("exclamdown" (make 'section))       ;; Alt-1
-    ("exclamdown var" "½")
-    ("½" (make 'section))             ;; Alt-1
-    ("½ var" "½")
-    ("trademark" (make 'subsection))     ;; Alt-2
-    ("trademark var" "<#2122>")
-    ("sterling" (make 'subsubsection))   ;; Alt-3
-    ("sterling var" "¿")
-    ("¿" (make 'subsubsection))       ;; Alt-3
-    ("¿ var" "¿")
-    ("cent" (make 'paragraph))           ;; Alt-4
-    ("cent var" "<#A2>")
-    ("infty" (make 'subparagraph))       ;; Alt-5
-    ("infty var" "<infty>")
-    ("" (make-equation*))              ;; Alt-$
-    (" var" "")
-    ("ddagger" (make-eqnarray*))         ;; Alt-&
-    ("ddagger var" "<ddag>")))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language dependent shortcuts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

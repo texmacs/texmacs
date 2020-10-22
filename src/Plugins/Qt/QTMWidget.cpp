@@ -39,6 +39,7 @@
 
 hashmap<int,string> qtkeymap (0);
 hashmap<int,string> qtdeadmap (0);
+hashmap<int,string> qtcomposemap (0);
 
 inline void
 map (int code, string name) {
@@ -388,8 +389,20 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
             else if (r == "gtr") r= ">";
         }
 #ifdef Q_OS_MAC
+        if (mods & Qt::AltModifier) {
           // Alt produces many symbols in Mac keyboards: []|{} etc.
-        mods &= ~Qt::AltModifier; //unset Alt
+          if ((N(r) != 1 ||
+               ((int) (unsigned char) r[0]) < 32 ||
+               ((int) (unsigned char) r[0]) >= 128) &&
+              key >= 32 && key < 128 &&
+              ((mods & (Qt::MetaModifier + Qt::ControlModifier)) == 0)) {
+            if ((mods & Qt::ShiftModifier) == 0 && key >= 65 && key <= 90)
+              key += 32;
+            qtcomposemap (key)= r;
+            r= string ((char) key);
+          }
+          else mods &= ~Qt::AltModifier; //unset Alt
+        }
 #endif
         mods &= ~Qt::ShiftModifier;
       }
