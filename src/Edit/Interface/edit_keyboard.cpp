@@ -232,6 +232,13 @@ edit_interface_rep::key_press (string gkey) {
     call ("kbd-insert", key);
     interrupt_shortcut ();    
   }
+  else if (!occurs (" ", key) && !occurs ("-", key) && N(key) > 1 &&
+           cork_to_utf8 ("<" * key * ">") != ("<" * key * ">") &&
+           !inside_active_graphics ()) {
+    archive_state ();
+    call ("kbd-insert", "<" * key * ">");
+    interrupt_shortcut ();    
+  }
   else if (DEBUG_KEYBOARD)
     debug_keyboard
       << "unrecognized key " << key << ". "

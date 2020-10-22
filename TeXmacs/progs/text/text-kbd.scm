@@ -297,25 +297,13 @@
   ("questiondown" "¾")
 
   ("trademark" "<#2122>")
-  ("infty" "<infty>")
-  ("bullet" "<bullet>")
-  ("neq" "<neq>")
   ("big-sum" (insert '(big "sum")))
   ("dagger" "<dag>")
-  ("partial" "<partial>")
-  ("neg" "<neg>")
-  ("ldots" "<ldots>")
-  ("approx" "<approx>")
   ("sqrt" (insert '(sqrt "")))
   ("big-int" (insert '(big "int")))
-  ("leq" "<leq>")
-  ("geq" "<geq>")
-  ("div" "<div>")
-
   ("euro" "<#20AC>")
   ("ddagger" "<ddag>")
   ("centerdot" "<cdot>")
-  ("pm" "<pm>")
   ("big-prod" (insert '(big "prod"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
