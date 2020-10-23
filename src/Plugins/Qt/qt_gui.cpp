@@ -789,7 +789,7 @@ qt_gui_rep::update () {
   int std_delay= 1;
   tm_sleep ();
 #else
-  int std_delay= 400 / 6;
+  int std_delay= 90 / 6;
 #endif
 
   if (updating) {
@@ -808,7 +808,7 @@ qt_gui_rep::update () {
   
   time_t     now = texmacs_time();
   needing_update = false;
-  time_credit    = 40 / (waiting_events.size() + 1);
+  time_credit    = 9 / (waiting_events.size() + 1);
   
     // 1.
     // Check if a wait dialog is active and in that case remove it.
@@ -869,7 +869,7 @@ qt_gui_rep::update () {
   time_t delay = delayed_commands.lapse - texmacs_time();
   if (needing_update) delay = 0;
   else                delay = max (0, min (std_delay, delay));
-  if (postpone_treatment) delay= 40; // NOTE: force occasional display
+  if (postpone_treatment) delay= 9; // NOTE: force occasional display
  
   updatetimer->start (delay);
   updating = false;
