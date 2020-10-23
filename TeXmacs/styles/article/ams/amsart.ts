@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.13>
 
 <style|source>
 
@@ -70,6 +70,12 @@
   <assign|sectional-sep|<macro|.<space|2spc>>>
 
   <assign|sectional-post-sep|<macro|. >>
+
+  <assign|part-post-sep|<macro|>>
+
+  <assign|chapter-post-sep|<macro|>>
+
+  <assign|section-post-sep|<macro|>>
 
   <assign|enrich-subsection-long|false>
 
