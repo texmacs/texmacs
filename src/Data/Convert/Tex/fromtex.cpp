@@ -2411,10 +2411,11 @@ latex_command_to_tree (tree t) {
     return compound ("verbatim", v2e (t[1]));
   if (is_tuple (t, "\\tmcodeinline*", 2))
     return compound (string_arg (t[1]), v2e (t[2]));
-  if (is_tuple (t, "\\label", 1)) return tree (LABEL, t2e (t[1]));
-  if (is_tuple (t, "\\ref", 1)) return tree (REFERENCE, t2e (t[1]));
+  if (is_tuple (t, "\\label", 1)) return tree (LABEL, v2e (t[1]));
+  if (is_tuple (t, "\\ref", 1)) return tree (REFERENCE, v2e (t[1]));
   if (is_tuple (t, "\\cref", 1) || is_tuple (t, "\\Cref", 1))
     return latex_cref_to_tree (v2e (t[1]));
+  if (is_tuple (t, "\\eqref", 1)) return compound ("eqref", v2e (t[1]));
   if (is_tuple (t, "\\newcounter", 1))
     return compound ("new-counter", v2e (t[1]));
   if (is_tuple (t, "\\value", 1))
