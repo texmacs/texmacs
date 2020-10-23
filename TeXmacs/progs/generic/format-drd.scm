@@ -17,6 +17,7 @@
 ;; General groups
 
 (define-group variant-tag
+  (vspace-tag) (indent-tag) (new-page-tag) (page-break-tag)
   (move-tag) (resize-tag) (smash-tag) (inflate-tag) (reduce-by-tag)
   (font-effect-tag)
   (eff-tag) (basic-effect-tag) (color-effect-tag)
@@ -24,11 +25,26 @@
   (rectangular-effect-tag) (motion-effect-tag))
 
 (define-group similar-tag
+  (vspace-tag) (indent-tag) (new-page-tag) (page-break-tag)
   (move-tag) (resize-tag) (smash-tag) (inflate-tag) (reduce-by-tag)
   (font-effect-tag)
   (eff-tag) (basic-effect-tag) (color-effect-tag)
   (gaussian-effect-tag) (oval-effect-tag)
   (rectangular-effect-tag) (motion-effect-tag))
+
+;; Various formatting tags
+
+(define-group vspace-tag
+  vspace vspace*)
+
+(define-group indent-tag
+  no-indent no-indent* yes-indent yes-indent*)
+
+(define-group new-page-tag
+  new-page new-page* new-dpage new-dpage*)
+
+(define-group page-break-tag
+  page-break page-break* no-break-here no-break-here*)
 
 ;; Various geometry adjustment tags
 
