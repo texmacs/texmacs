@@ -258,8 +258,8 @@
                                      (defer "<implicit>")) ,code)
             (set! xhead (append xhead (list script))))))
     (if tmhtml-mathjax?
-	(let* ((site "http://cdn.mathjax.org/")
-               (loc "mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML")
+	(let* ((site "https://cdn.jsdelivr.net/")
+               (loc "npm/mathjax@3/es5/tex-mml-chtml.js")
                (src (string-append site loc))
 	       (script `(h:script (@ (language "javascript") (src ,src)))))
 	  (set! xhead (append xhead (list script)))))
