@@ -48,15 +48,37 @@
 
   <assign|par-first|<macro|12pt>>
 
+  <assign|page-fnote-barlen|6em>
+
   <\active*>
     <\src-comment>
       Titles.
     </src-comment>
   </active*>
 
+  <assign|doc-title-name|<macro|x|<strong|<change-case|<arg|x>|UPCASE>>>>
+
+  <assign|doc-title|<\macro|x>
+    \;
+
+    <\surround|<vspace*|<minus|<tex-len|42pt|5pc|5pc>|1bls>>|>
+      <doc-title-block|<doc-title-name|<arg|x>>>
+    </surround>
+  </macro>>
+
+  <assign|author-name|<macro|author|<surround|<vspace*|<minus|18pt|1em>>||<doc-author-block|<small|<change-case|<arg|author>|UPCASE>>>>>>
+
+  <assign|doc-data|<xmacro|args|<extern|doc-data|<quote-arg|args>|<tuple|ams-title>>>>
+
+  <\active*>
+    <\src-comment>
+      Abstracts.
+    </src-comment>
+  </active*>
+
   <assign|render-abstract|<\macro|body>
-    <\padded-normal|2fn|1fn>
-      <\with|par-left|15mm|par-right|15mm>
+    <\padded-normal|20pt|20pt>
+      <\with|par-left|3pc|par-right|3pc>
         <\small>
           <surround|<with|font-shape|small-caps|<abstract-text>>.
           ||<arg|body>>
@@ -65,9 +87,45 @@
     </padded-normal>
   </macro>>
 
-  <assign|doc-render-title|<macro|x|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<style-with|src-compact|none|<doc-title-block|<with|math-font-series|bold|font-series|bold|font-shape|small-caps|<large|<arg|x>>>>>>>>
+  \;
 
-  <assign|author-by|<macro|body|<arg|body>>>
+  <assign|AMS-class-text|<macro|<localize|Mathematics Subject
+  Classification>>>
+
+  <assign|keywords-text|<macro|<localize|Key words and phrases>>>
+
+  <assign|abstract-acm|<xmacro|args|<em|<ACM-class-text>>.
+  <concat-tuple|<quote-arg|args>|; >>>
+
+  <assign|abstract-arxiv|<xmacro|args|<em|<arXiv-class-text>>.
+  <concat-tuple|<map|arxiv-ref|<quote-arg|args>>|; >>>
+
+  <assign|abstract-msc|<xmacro|args|1991 <em|<AMS-class-text>>.
+  <concat-tuple|<map|msc-ref|<quote-arg|args>>|; >>>
+
+  <assign|abstract-pacs|<xmacro|args|<em|<PACS-class-text>>.
+  <concat-tuple|<quote-arg|args>|; >>>
+
+  <assign|abstract-keywords|<xmacro|args|<em|<keywords-text>>.
+  <concat-tuple|<quote-arg|args>|, >>>
+
+  \;
+
+  <assign|render-plain-footnote|<macro|body|<style-with|src-compact|none|<\float|footnote|>
+    <\style-with|src-compact|none>
+      <smaller|<with|par-mode|justify|par-left|0cm|par-right|0cm|font-shape|right|dummy|<value|page-fnote-sep>|dummy|<value|page-fnote-barlen>|<style-with|src-compact|none|<style-with|src-compact|none|<arg|body>>>>>
+    </style-with>
+  </float>>>>
+
+  <assign|render-abstract*|<\macro|body|note>
+    <\quasi>
+      <\render-abstract>
+        <\surround|<render-plain-footnote|<unquote|<quote-arg|note>>>|>
+          <unquote|<quote-arg|body>>
+        </surround>
+      </render-abstract>
+    </quasi>
+  </macro>>
 
   <\active*>
     <\src-comment>
