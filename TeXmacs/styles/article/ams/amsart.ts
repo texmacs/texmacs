@@ -24,7 +24,29 @@
     </src-title>
   </active*>
 
-  <use-package|std|env|title-generic|header-article|section-article>
+  <use-package|std|env|title-generic|header-article|section-article|std-latex>
+
+  <\active*>
+    <\src-comment>
+      Global style parameters.
+    </src-comment>
+  </active*>
+
+  <assign|tex-text-width|<macro|30pc>>
+
+  <assign|tex-head-height|<macro|8pt>>
+
+  <assign|tex-top-skip|<macro|10pt>>
+
+  <assign|tex-text-height|<macro|50.5pc>>
+
+  <assign|tex-foot-skip|<macro|12pt>>
+
+  <assign|tex-column-sep|<macro|10pt>>
+
+  <assign|tex-margin-par-width|<macro|90pt>>
+
+  <assign|par-first|<macro|12pt>>
 
   <\active*>
     <\src-comment>
@@ -83,15 +105,15 @@
 
   \;
 
-  <assign|section-title|<macro|name|<style-with|src-compact|none|<sectional-centered|<vspace*|1fn><with|font-shape|small-caps|<arg|name>><vspace|0.5fn>>>>>
+  <assign|sectional-normal|<macro|name|<wide-normal|<arg|name><no-page-break>>>>
 
-  <assign|var-section-title|<macro|name|<style-with|src-compact|none|<new-page><new-line><sectional-normal-bold|<vspace*|3fn><very-large|<arg|name>><vspace|2fn>>>>>
+  <assign|sectional-centered|<macro|name|<wide-centered|<arg|name><no-page-break>>>>
 
-  <assign|appendix-title|<macro|name|<style-with|src-compact|none|<var-section-title|<appendix-text>.
-  <arg|name>>>>>
+  <assign|part-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|<tmlen|1bls|1bls|2bls>><arg|name><vspace|0.5bls>>>>>
 
-  <assign|appendix-numbered-title|<macro|name|<style-with|src-compact|none|<var-section-title|<appendix-text>
-  <the-appendix>. <arg|name>>>>>
+  <assign|chapter-title|<macro|name|<style-with|src-compact|none|<sectional-centered-bold|<vspace*|<tmlen|1bls|1bls|2bls>><arg|name><vspace|0.5bls>>>>>
+
+  <assign|section-title|<macro|name|<style-with|src-compact|none|<sectional-centered|<vspace*|<tmlen|0.7bls|0.7bls|1.7bls>><with|font-shape|small-caps|<arg|name>><vspace|0.5bls>>>>>
 
   <\active*>
     <\src-comment>
@@ -99,9 +121,9 @@
     </src-comment>
   </active*>
 
-  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<sectional-short-bold|<vspace*|0.5fn><arg|name>>>>>
+  <assign|subsection-title|<macro|name|<with|sectional-prefixed|<macro|prefix|name|<prefixed-line|<with|font-series|medium|<arg|prefix>>|<arg|name>>>|<style-with|src-compact|none|<sectional-short-bold|<vspace*|<tmlen|0.5bls|0.5bls|1.2bls>><arg|name>>>>>>
 
-  <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<sectional-short-bold|<vspace*|0.5fn><arg|name>>>>>
+  <assign|subsubsection-title|<macro|name|<with|sectional-prefixed|<macro|prefix|name|<prefixed-line|<with|font-shape|right|<arg|prefix>>|<arg|name>>>|<style-with|src-compact|none|<sectional-short-italic|<vspace*|<tmlen|0.5bls|0.5bls|1.2bls>><arg|name>>>>>>
 
   <\active*>
     <\src-comment>
@@ -109,9 +131,9 @@
     </src-comment>
   </active*>
 
-  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<sectional-short-bold|<vspace*|0.5fn><arg|name>>>>>
+  <assign|paragraph-title|<macro|name|<sectional-short|<arg|name>>>>
 
-  <assign|subparagraph-title|<macro|name|<style-with|src-compact|none|<sectional-short-bold|<vspace*|0.5fn><arg|name>>>>>
+  <assign|subparagraph-title|<macro|name|<sectional-short|<arg|name>>>>
 
   \;
 </body>
