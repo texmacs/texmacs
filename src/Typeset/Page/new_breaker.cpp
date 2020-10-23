@@ -129,11 +129,11 @@ new_breaker_rep::new_breaker_rep (
     }
     ins_list  << ins_here;
     foot_ht   << foot_spc;
-    foot_tot  << (i==0? space(0): foot_tot[i-1] + foot_ht[i]);
+    foot_tot  << (i==0? space(0): foot_tot[i-1]) + foot_ht[i];
     float_ht  << float_spc;
-    float_tot << (i==0? space(0): float_tot[i-1] + float_ht[i]);
+    float_tot << (i==0? space(0): float_tot[i-1]) + float_ht[i];
     wide_ht   << wide_spc;
-    wide_tot  << (i==0? space(0): wide_tot[i-1] + wide_ht[i]);
+    wide_tot  << (i==0? space(0): wide_tot[i-1]) + wide_ht[i];
     break_ht  << break_spc;
 
     if (i>0 && l[i]->nr_cols != l[i-1]->nr_cols) same= i;
@@ -211,7 +211,7 @@ new_breaker_rep::make_insertion (lazy_vstream lvs, path p) {
 
 space
 new_breaker_rep::compute_space (path b1, path b2, bool wide_part) {
-  //cout << "    Compute space " << b1 << ", " << b2 << LF;
+  //cout << "    Compute space " << b1 << ", " << b2 << ", " << wide_part << LF;
   int i1= b1->item, i2= b2->item;
   if (!is_nil (b1->next)) {
     if (b2 == b1) return space (0);
