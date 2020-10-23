@@ -2165,6 +2165,11 @@ auto_vspace (tree t) {
   string s= as_string (L(t));
   if (starts (s, "equation") ||
       starts (s, "eqnarray") ||
+      starts (s, "gather") ||
+      starts (s, "multline") ||
+      starts (s, "align") ||
+      starts (s, "alignat") ||
+      starts (s, "flalign") ||
       starts (s, "itemize") ||
       starts (s, "enumerate") ||
       starts (s, "description") ||

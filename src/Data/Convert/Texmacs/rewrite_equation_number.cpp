@@ -90,10 +90,26 @@ rewrite_equation_number (tree t, tree from, tree to) {
   // FIXME: extend to amsmath environments
   if (is_atomic (t))
     return t;
-  else if (is_cmp (t, "eqnarray*") && !contains_subtree (t, from))
+  else if ((is_cmp (t, "eqnarray*") ||
+            is_cmp (t, "gather*") ||
+            is_cmp (t, "multline*") ||
+            is_cmp (t, "align*") ||
+            is_cmp (t, "alignat*") ||
+            is_cmp (t, "flalign*")) && !contains_subtree (t, from))
     return t;
-  else if (is_cmp (t, "eqnarray*") || is_cmp (t, "eqnarray")) {
-    tree r= cmp ("eqnarray");
+  else if (is_cmp (t, "eqnarray*") || is_cmp (t, "eqnarray") ||
+           is_cmp (t, "gather*") || is_cmp (t, "gather") ||
+           is_cmp (t, "multline*") || is_cmp (t, "multline") ||
+           is_cmp (t, "align*") || is_cmp (t, "align") ||
+           is_cmp (t, "alignat*") || is_cmp (t, "alignat") ||
+           is_cmp (t, "flalign*") || is_cmp (t, "flalign")) {
+    tree r (t, 0);
+    if (is_cmp (t, "eqnarray*")) r= cmp ("eqnarray");
+    if (is_cmp (t, "gather*")) r= cmp ("gather");
+    if (is_cmp (t, "multline*")) r= cmp ("multline");
+    if (is_cmp (t, "align*")) r= cmp ("align");
+    if (is_cmp (t, "alignat*")) r= cmp ("alignat");
+    if (is_cmp (t, "flalign*")) r= cmp ("flalign");
     for (int i=0; i<N(t); i++)
       r << rewrite_in_tables (t[i], from, to);
     return r;
