@@ -251,6 +251,8 @@ bib_change_first (tree& t, string (*change_fun) (string)) {
     return false;
   else if (is_func (t, WITH, 3) && t[0] == MATH_FONT)
     return false;
+  else if (is_compound (t, "math"))
+    return false;
   else {
     int pos= 0;
     if (L(t) == WITH) pos= N(t)-1;
