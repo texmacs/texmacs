@@ -594,6 +594,7 @@
   ("macos ," (interactive open-preferences))
   ("macos [" (cursor-history-backward))
   ("macos ]" (cursor-history-forward))
+  ("macos _" (make 'nbhyph))
   ("macos left" (kbd-start-line))
   ("macos right" (kbd-end-line))
   ("macos up" (go-start))
@@ -643,6 +644,8 @@
 
   ("altcmd x" (interactive footer-eval))
   ("altcmd X" (interactive exec-interactive-command))
+
+  ("A-space var" (make 'nbsp))
 
   ;("C-a" (kbd-start-line)) ; conflict with ("text a" (make 'abbr))
   ;("C-e" (kbd-end-line))   ; conflict with ("text e" (make-tmlist 'enumerate))
