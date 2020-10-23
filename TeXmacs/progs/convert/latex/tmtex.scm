@@ -275,6 +275,15 @@
   (("par-mode" "right") (!begin "flushright")))
 
 (logic-table tex-with-cmd-math%
+  (("font" "cal") mathcal)
+  (("font" "cal*") mathscr)
+  (("font" "cal**") EuScript)
+  (("font" "Euler") mathfrak)
+  (("font" "Bbb") mathbb)
+  (("font" "Bbb*") mathbbm)
+  (("font" "Bbb**") mathbbmss)
+  (("font" "Bbb***") mathbb)
+  (("font" "Bbb****") mathds)
   (("font-family" "rm") mathrm)
   (("font-family" "ss") mathsf)
   (("font-family" "tt") mathtt)
