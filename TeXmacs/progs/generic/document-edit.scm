@@ -162,7 +162,7 @@
 
 (tm-define (initial-get u var)
   (or (with-buffer u
-        (get-init var))
+        (get-init-env var))
       ""))
 
 (tm-define (initial-defined? u var)
