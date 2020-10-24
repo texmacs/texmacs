@@ -318,10 +318,10 @@ default_look_and_feel_impl () {
   if (occurs ("gnome", session))    return "gnome";
   if (occurs ("cinnamon", session)) return "gnome";
   if (occurs ("mate", session))     return "gnome";
-  if (occurs ("ubuntu", session))   return "unity";
+  //if (occurs ("ubuntu", session))   return "unity";
   if (occurs ("kde", session))      return "kde";
-  if (occurs ("xfce", session))     return "xfce";
-  if (occurs ("lxde", session))     return "lxde";
+  //if (occurs ("xfce", session))     return "xfce";
+  //if (occurs ("lxde", session))     return "lxde";
   //return "emacs";
   return "gnome"; // default UI (much more "standard" than emacs) 
 }
