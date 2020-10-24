@@ -108,7 +108,7 @@ edit_env_rep::rewrite (tree t) {
       url file_name= url_unix (exec_string (t[0]));
       url file_rel = relative (base_file_name, file_name);
       if (file_rel == base_file_name)
-        return tree (ERROR, "invalid auto-include");
+        return tree (ERROR, "invalid self include");
       //cout << "file_name= " << as_tree (file_name) << LF;
       return load_inclusion (file_rel);
     }
