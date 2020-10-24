@@ -106,8 +106,11 @@ edit_env_rep::rewrite (tree t) {
     {
       if (N(t) == 0) return tree (ERROR, "invalid include");
       url file_name= url_unix (exec_string (t[0]));
+      url file_rel = relative (base_file_name, file_name);
+      if (file_rel == base_file_name)
+        return tree (ERROR, "invalid auto-include");
       //cout << "file_name= " << as_tree (file_name) << LF;
-      return load_inclusion (relative (base_file_name, file_name));
+      return load_inclusion (file_rel);
     }
   case WITH_PACKAGE:
     {
