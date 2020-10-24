@@ -163,27 +163,74 @@
     ,(doc-data-hidden t)
     (document ,(doc-data-main t))))
 
+(tm-define (doc-data-impl t opts)
+  ;;(display* "t1= " t "\n")
+  (cond ((in? "abbreviate-authors" opts)
+         (set! t (abbreviate-authors t))))
+  (cond ((in? "cluster-all" opts)
+         (set! t (single-author-list t)))
+          ((in? "cluster-by-affiliation" opts)
+           (set! t (factor-affiliation t))))           
+  ;;(display* "t2= " t "\n")
+  (set! t (add-notes t))
+  ;;(display* "t3= " t "\n")
+  (cond ((in? "abbreviate-authors" opts)
+         (set! t (abbreviate-authors-bis t))))
+  ;;(display* "t4= " t "\n")
+  (set! t (doc-data-sub t))
+  ;;(display* "t5= " t "\n")
+  t)
+
 (tm-define (doc-data t xopts)
   (:secure #t)
   (let* ((opts1 (select t '(doc-title-options :%1)))
          (opts2 (select xopts '(:%1)))
          (opts  (map tree->stree (append opts1 opts2))))
-    ;;(display* "t1= " t "\n")
-    (cond ((in? "abbreviate-authors" opts)
-           (set! t (abbreviate-authors t))))
-    (cond ((in? "cluster-all" opts)
-           (set! t (single-author-list t)))
-          ((in? "cluster-by-affiliation" opts)
-           (set! t (factor-affiliation t))))           
-    ;;(display* "t2= " t "\n")
-    (set! t (add-notes t))
-    ;;(display* "t3= " t "\n")
-    (cond ((in? "abbreviate-authors" opts)
-           (set! t (abbreviate-authors-bis t))))
-    ;;(display* "t4= " t "\n")
-    (set! t (doc-data-sub t))
-    ;;(display* "t5= " t "\n")
-    t))
+    (doc-data-impl t opts)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; AMS style titles
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (plain-footnote t) `(render-plain-footnote ,t))
+
+(define (ams-author-data t)
+  `(render-plain-footnote
+    (document ,@(select t '(author-affiliation))
+              ,@(select t '(author-email))
+              ,@(select t '(author-homepage))
+              ,@(select t '(author-note))
+              ,@(select t '(author-misc)))))
+
+(define (ams-doc-data-hidden t)
+  `(concat
+     ,@(map plain-footnote (select t '(doc-date)))
+     ,@(map plain-footnote (select t '(doc-note)))
+     ,@(cdr (doc-data-hidden t))
+     ,@(map ams-author-data (select t '(doc-author author-data)))))
+
+(define (ams-doc-data-main t)
+  `(document
+     ,@(select t '(doc-title))
+     ,@(select t '(doc-subtitle))
+     ,@(with authors (select t '(doc-author author-data author-name))
+         (cond ((null? authors) `())
+               ((null? (cdr authors)) `((author-name ,@authors)))
+               ((null? (cddr authors))
+                `((author-name (concat ,(car authors) " " (localize "and")
+                                       " " ,(cadr authors)))))
+               (else
+                 (with l (list-intersperse authors ", ")
+                   `((author-name (concat ,@(cDr l) (localize "and")
+                                          " " ,(cAr l))))))))
+     ,@(select t '(doc-misc))
+     ,@(select t '(doc-inactive))))
+
+(tm-define (doc-data-impl t opts)
+  (:require (in? "ams-title" opts))
+  `(doc-make-rich-title
+    ,(ams-doc-data-hidden t)
+    ,(ams-doc-data-main t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Author data

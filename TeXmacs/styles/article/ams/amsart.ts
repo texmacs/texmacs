@@ -52,6 +52,18 @@
 
   <\active*>
     <\src-comment>
+      Footnotes for titles and abstracts.
+    </src-comment>
+  </active*>
+
+  <assign|render-plain-footnote|<macro|body|<style-with|src-compact|none|<\float|footnote|>
+    <\style-with|src-compact|none>
+      <smaller|<with|par-mode|justify|par-left|0cm|par-right|0cm|font-shape|right|dummy|<value|page-fnote-sep>|dummy|<value|page-fnote-barlen>|<style-with|src-compact|none|<style-with|src-compact|none|<arg|body>>>>>
+    </style-with>
+  </float>>>>
+
+  <\active*>
+    <\src-comment>
       Titles.
     </src-comment>
   </active*>
@@ -67,6 +79,39 @@
   </macro>>
 
   <assign|author-name|<macro|author|<surround|<vspace*|<minus|18pt|1em>>||<doc-author-block|<small|<change-case|<arg|author>|UPCASE>>>>>>
+
+  \;
+
+  <assign|date-text|<macro|<localize|Date>>>
+
+  <assign|note-text|<macro|<localize|Note>>>
+
+  <assign|email-text|<macro|<localize|E-mail address>>>
+
+  <assign|homepage-text|<macro|<localize|Homepage>>>
+
+  <assign|doc-date|<macro|x|<em|<date-text>><localize|:> <arg|x>>>
+
+  <assign|doc-note|<macro|x|<em|<note-text>><localize|:> <arg|x>>>
+
+  <assign|author-affiliation|<macro|x|<quasi|<concat-tuple|<unquote|<arg|x>>|,
+  >>>>
+
+  <assign|prepend-comma|<macro|x|, <arg|x>>>
+
+  <assign|author-affiliation|<macro|x|<name|<arg|x|0><map-args|prepend-comma|concat|x|1>>>>
+
+  <assign|author-email|<macro|x|<em|<email-text>><localize|:>
+  <verbatim|<arg|x>>>>
+
+  <assign|author-homepage|<macro|x|<em|<homepage-text>><localize|:>
+  <verbatim|<arg|x>>>>
+
+  <assign|author-note|<macro|x|<em|<note-text>><localize|:> <arg|x>>>
+
+  <assign|author-misc|<macro|x|<arg|x>>>
+
+  \;
 
   <assign|doc-data|<xmacro|args|<extern|doc-data|<quote-arg|args>|<tuple|ams-title>>>>
 
@@ -110,12 +155,6 @@
   <concat-tuple|<quote-arg|args>|, >>>
 
   \;
-
-  <assign|render-plain-footnote|<macro|body|<style-with|src-compact|none|<\float|footnote|>
-    <\style-with|src-compact|none>
-      <smaller|<with|par-mode|justify|par-left|0cm|par-right|0cm|font-shape|right|dummy|<value|page-fnote-sep>|dummy|<value|page-fnote-barlen>|<style-with|src-compact|none|<style-with|src-compact|none|<arg|body>>>>>
-    </style-with>
-  </float>>>>
 
   <assign|render-abstract*|<\macro|body|note>
     <\quasi>
@@ -192,6 +231,14 @@
   <assign|paragraph-title|<macro|name|<sectional-short|<arg|name>>>>
 
   <assign|subparagraph-title|<macro|name|<sectional-short|<arg|name>>>>
+
+  <\active*>
+    <\src-comment>
+      Bibliographies.
+    </src-comment>
+  </active*>
+
+  <assign|transform-bibitem|<macro|body|[<arg|body>] >>
 
   \;
 </body>
