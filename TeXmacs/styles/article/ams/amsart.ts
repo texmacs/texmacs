@@ -34,6 +34,10 @@
 
   <assign|tex-text-width|<macro|30pc>>
 
+  <assign|tex-odd-side-margin|<macro|<minus|<maximum|<over|<minus|1paw|<tex-text-width>>|2>|1.5in>|1in>>>
+
+  <assign|tex-even-side-margin|<value|tex-odd-side-margin>>
+
   <assign|tex-head-height|<macro|8pt>>
 
   <assign|tex-top-skip|<macro|10pt>>
@@ -99,7 +103,7 @@
 
   <assign|prepend-comma|<macro|x|, <arg|x>>>
 
-  <assign|author-affiliation|<macro|x|<name|<arg|x|0><map-args|prepend-comma|concat|x|1>>>>
+  <assign|author-affiliation|<macro|x|<with|font-shape|small-caps|<arg|x|0><map-args|prepend-comma|concat|x|1>>>>
 
   <assign|author-email|<macro|x|<em|<email-text>><localize|:>
   <verbatim|<arg|x>>>>
@@ -172,13 +176,15 @@
     </src-comment>
   </active*>
 
-  <assign|header-title|<macro|name|<style-with|src-compact|none|<simple-page><assign|page-even-header|<with|font-size|0.84|<style-with|src-compact|none|<no-indent><page-number><htab|5mm><with|font-shape|small-caps|<arg|name>><htab|0mm>>>>>>>
+  <assign|header-title|<macro|name|<style-with|src-compact|none|<simple-page><assign|page-odd-header|<with|font-size|0.707|<style-with|src-compact|none|<no-indent><htab|0mm><change-case|<arg|name>|UPCASE><htab|5mm><page-number>>>>>>>
 
-  <assign|header-author|<macro|name|<assign|page-odd-header|<with|font-size|0.84|<style-with|src-compact|none|<no-indent><htab|0mm><with|font-shape|small-caps|<arg|name>><htab|5mm><page-number>>>>>>
+  <assign|header-author|<macro|name|<assign|page-even-header|<with|font-size|0.707|<style-with|src-compact|none|<no-indent><page-number><htab|5mm><change-case|<arg|name>|UPCASE><htab|0mm>>>>>>
 
   <assign|header-primary|<macro|name|nr|what|>>
 
   <assign|header-secondary|<macro|name|nr|what|>>
+
+  <assign|simple-page|<macro|<style-with|src-compact|none|<assign|page-this-header|><assign|page-this-footer|<no-indent><htab|5mm><with|font-size|0.707|<page-number>><htab|5mm>>>>>
 
   <\active*>
     <\src-comment>
