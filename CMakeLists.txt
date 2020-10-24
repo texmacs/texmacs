@@ -20,7 +20,7 @@
 ### Basic settings (project independent)
 ### --------------------------------------------------------------------
 
-cmake_minimum_required (VERSION 3.5)
+cmake_minimum_required (VERSION 3.17)
 
 set (CMAKE_CXX_STANDARD 11)
 set (CMAKE_AUTOMOC ON)
@@ -100,8 +100,14 @@ option (PDFHUMMUS_NO_TIFF "Disable TIFF in PDF Hummus" ON)
 
 option (USE_GMP "use GMP" ON)
 if (USE_GMP)
-  find_package(GMP)
+  find_package (GMP)
 endif (USE_GMP)
+
+if (WIN32)
+  option (OS_MINGW "Using OS MINGW" ON)
+else (WIN32)
+  option (OS_MINGW "Using OS MINGW" OFF)
+endif (WIN32)
 
 if (APPLE)
   set (MACOSX_EXTENSIONS 1)
@@ -261,7 +267,6 @@ set (PACKAGE_VERSION 1)
 ###  Test for Libraries
 ### --------------------------------------------------------------------
 
-find_package (Guile REQUIRED)
 find_package (PNG)
 find_package (Iconv)
 find_package (ZLIB)
@@ -271,19 +276,25 @@ find_package (JPEG)
 ### --------------------------------------------------------------------
 ###  Some Guile related adjustements
 ### --------------------------------------------------------------------
+find_package (Guile REQUIRED)
+
 if (Guile_VERSION_STRING VERSION_LESS 1.6)
   set (CONFIG_GUILE_SERIAL "A")
-  set (GUILE_A 1)
+  option (GUILE_A "Using Guile < 1.6.x" ON)
+  message (STATUS "Using GUILE_A: " ${Guile_VERSION_STRING})
 elseif (Guile_VERSION_STRING VERSION_LESS 1.8)
   set (CONFIG_GUILE_SERIAL "B")
-  set (GUILE_B 1)
+  option (GUILE_B "Using Guile 1.6.x" ON)
+  message (STATUS "Using GUILE_B: " ${Guile_VERSION_STRING})
 elseif (Guile_VERSION_STRING VERSION_LESS 2.0)
   set (CONFIG_GUILE_SERIAL "C")
-  set (GUILE_C 1)
+  option (GUILE_C "Using Guile 1.8.x" ON)
+  message (STATUS "Using GUILE_C: " ${Guile_VERSION_STRING})
 elseif (Guile_VERSION_STRING VERSION_LESS 3.0)
   set (CONFIG_GUILE_SERIAL "D")
-  set (GUILE_D 1)
+  option (GUILE_D ON)
   set (SCM_SIZET size_t)
+  message (STATUS "Using GUILE_D > 1.8.x: " ${Guile_VERSION_STRING})
 else (Guile_VERSION_STRING VERSION_LESS 1.6)
   message (ERROR "Not Guile serial A,B,C or D???")
 endif (Guile_VERSION_STRING VERSION_LESS 1.6)
@@ -291,25 +302,7 @@ endif (Guile_VERSION_STRING VERSION_LESS 1.6)
 
 set (CMAKE_REQUIRED_FLAGS "-Werror ${Guile_CFLAGS}")
 set (CMAKE_REQUIRED_INCLUDES ${Guile_INCLUDE_DIRS})
-set (CMAKE_REQUIRED_LIBRARIES ${Guile_LIBRARIES})
-
-message (STATUS "Checking the size_t of guile strings")
-
-check_c_source_compiles ("
-#include <guile/gh.h>
-#include <libguile.h>
-void print_string (SCM s) {
-  int len_r;
-  char* r= gh_scm2newstr (s, &len_r);
-}
-int main() { return 0; }
-" _guile_str_size_test)
-
-if (_guile_str_size_test)
-  set (guile_str_size_t int)
-else (_guile_str_size_test)
-  set (guile_str_size_t size_t)
-endif (_guile_str_size_test)
+set (guile_str_size_t size_t)
 
 message (STATUS "Checking whether ... arguments behave correctly")
 
@@ -340,7 +333,12 @@ set (GUILE_NUM 1)
 set (PDF_RENDERER 1)
 set (SIZEOF_VOID_P 8)
 set (STDC_HEADERS 1)
-set (USE_STACK_TRACE 1)
+
+if (WIN32)
+  option (USE_STACK_TRACE "Use stack trace" OFF)
+else (WIN32)
+  option (USE_STACK_TRACE "Use stack trace" ON)
+endif (WIN32)
 
 set (CONFIG_STD_SETENV "#define STD_SETENV")
 set (tm_orig ${TEXMACS_SOURCE_DIR})
@@ -422,6 +420,14 @@ set (TeXmacs_Include_Dirs
   ${TEXMACS_BINARY_DIR}/src/System/ 
 )
 
+if (WIN32)
+  set (TeXmacs_Include_Dirs ${TeXmacs_Include_Dirs}
+    ${TEXMACS_SOURCE_DIR}/src/Plugins/Windows
+    ${TEXMACS_SOURCE_DIR}/src/Plugins/Windows/nowide
+  )
+else (WIN32)
+endif (WIN32)
+
 set (TeXmacs_Include_Dirs ${TeXmacs_Include_Dirs}
   ${Guile_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS} ${Cairo_INCLUDE_DIRS}
   ${IMLIB2_INCLUDE_DIR} ${GMP_INCLUDES}
@@ -459,7 +465,6 @@ file (GLOB_RECURSE TeXmacs_Std_Plugins_SRCS
   "${TEXMACS_SOURCE_DIR}/src/Plugins/LaTeX_Preview/*.cpp"
   "${TEXMACS_SOURCE_DIR}/src/Plugins/Mplayer/*.cpp"
   "${TEXMACS_SOURCE_DIR}/src/Plugins/Openssl/*.cpp"
-  "${TEXMACS_SOURCE_DIR}/src/Plugins/Unix/*.cpp"
   "${TEXMACS_SOURCE_DIR}/src/Plugins/Sqlite3/*.cpp"
   "${TEXMACS_SOURCE_DIR}/src/Plugins/Updater/*.cpp"
 )
@@ -641,6 +646,18 @@ if (APPLE AND USE_SPARKLE)
   )
 endif (APPLE AND USE_SPARKLE)
 
+### --------------------------------------------------------------------
+### OS System selection
+### --------------------------------------------------------------------
+
+if (WIN32)
+  file (GLOB_RECURSE TeXmacs_System_SRCS "${TEXMACS_SOURCE_DIR}/src/Plugins/Windows/*.cpp")
+else (WIN32)
+  file (GLOB_RECURSE TeXmacs_System_SRCS "${TEXMACS_SOURCE_DIR}/src/Plugins/Unix/*.cpp")
+endif (WIN32)
+
+set (TeXmacs_All_SRCS ${TeXmacs_All_SRCS} ${TeXmacs_System_SRCS})
+
 if (APPLE)
   set (TeXmacs_Libraries
     ${TeXmacs_Libraries}
@@ -767,3 +784,5 @@ configure_file (${TEXMACS_SOURCE_DIR}/misc/vscode/c_cpp_properties.json.in
   ${TEXMACS_SOURCE_DIR}/.vscode/c_cpp_properties.json
   @ONLY
 )
+
+message (STATUS "TeXmacs_Libraries" ${TeXmacs_Libraries})

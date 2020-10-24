@@ -20,15 +20,10 @@ endmacro (libfind_package)
 # to avoid those deprecated warnings. Here's a helper that does just that.
 # Works identically to pkg_check_modules, except that no checks are needed prior to use.
 macro (libfind_pkg_check_modules PREFIX PKGNAME)
-  if (${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 4)
-    include(UsePkgConfig)
-    pkgconfig(${PKGNAME} ${PREFIX}_INCLUDE_DIRS ${PREFIX}_LIBRARY_DIRS ${PREFIX}_LDFLAGS ${PREFIX}_CFLAGS)
-  else (${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 4)
-    find_package(PkgConfig)
-    if (PKG_CONFIG_FOUND)
-      pkg_check_modules(${PREFIX} ${PKGNAME})
-    endif (PKG_CONFIG_FOUND)
-  endif (${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 4)
+  find_package(PkgConfig)
+  if (PKG_CONFIG_FOUND)
+    pkg_check_modules(${PREFIX} ${PKGNAME})
+  endif (PKG_CONFIG_FOUND)
 endmacro (libfind_pkg_check_modules)
 
 # Do the final processing once the paths have been detected.
