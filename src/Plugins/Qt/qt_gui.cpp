@@ -359,8 +359,8 @@ qt_gui_rep::set_selection (string key, tree t,
         //selection = c_string (sh);
         //md->setHtml (selection);
         //tm_delete_array (selection);
-      
-      selection = c_string (sv);
+      if (!is_empty (sv))
+        selection = c_string (sv);
     }
     
     string enc = get_preference ("texmacs->verbatim:encoding");
