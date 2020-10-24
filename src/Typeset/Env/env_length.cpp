@@ -455,6 +455,13 @@ edit_env_rep::exec_par_length () {
 }
 
 tree
+edit_env_rep::exec_paw_length () {
+  SI width, d1, d2, d3, d4, d5, d6, d7;
+  get_page_pars (width, d1, d2, d3, d4, d5, d6, d7);
+  return tree (TMLEN, as_string (width));
+}
+
+tree
 edit_env_rep::exec_pag_length () {
   SI d1, height, d2, d3, d4, d5, d6, d7;
   get_page_pars (d1, height, d2, d3, d4, d5, d6, d7);

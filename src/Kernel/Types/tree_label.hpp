@@ -77,7 +77,7 @@ enum tree_label {
   FN_LENGTH, FNS_LENGTH, BLS_LENGTH,
   FNBOT_LENGTH, FNTOP_LENGTH,
   SPC_LENGTH, XSPC_LENGTH,                        // font specific & stretchy
-  PAR_LENGTH, PAG_LENGTH,                         // other
+  PAR_LENGTH, PAW_LENGTH, PAG_LENGTH,             // page dimensions
   GW_LENGTH, GH_LENGTH, GU_LENGTH,                // extents & unit of graphics
   TMPT_LENGTH, PX_LENGTH,                         // miscellaneous
   LCORNER_LENGTH, BCORNER_LENGTH,

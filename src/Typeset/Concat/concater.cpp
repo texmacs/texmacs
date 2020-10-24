@@ -609,6 +609,7 @@ concater_rep::typeset (tree t, path ip) {
   case SPC_LENGTH:
   case XSPC_LENGTH:
   case PAR_LENGTH:
+  case PAW_LENGTH:
   case PAG_LENGTH:
   case GW_LENGTH:
   case GH_LENGTH:

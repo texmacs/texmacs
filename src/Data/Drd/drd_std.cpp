@@ -455,6 +455,7 @@ init_std_drd () {
   init (SPC_LENGTH, "spc-length", fixed (0) -> returns_length ());
   init (XSPC_LENGTH, "xspc-length", fixed (0) -> returns_length ());
   init (PAR_LENGTH, "par-length", fixed (0) -> returns_length ());
+  init (PAW_LENGTH, "paw-length", fixed (0) -> returns_length ());
   init (PAG_LENGTH, "pag-length", fixed (0) -> returns_length ());
   init (GW_LENGTH, "gw-length", fixed (0) -> returns_length ());
   init (GH_LENGTH, "gh-length", fixed (0) -> returns_length ());

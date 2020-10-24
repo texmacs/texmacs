@@ -307,6 +307,16 @@ evaluate_par_length () {
 }
 
 tree
+evaluate_paw_length () {
+  /*
+  SI width, d1, d2, d3, d4, d5, d6, d7;
+  get_page_pars (width, d1, d2, d3, d4, d5, d6, d7);
+  return tree (TMLEN, as_string (width));
+  */
+  return tree (TMLEN, as_string (18 * std_inch() / 2.54)); // 15cm
+}
+
+tree
 evaluate_pag_length () {
   /*
   SI d1, height, d2, d3, d4, d5, d6, d7;

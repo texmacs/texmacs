@@ -350,6 +350,7 @@ private:
   tree exec_spc_length ();
   tree exec_xspc_length ();
   tree exec_par_length ();
+  tree exec_paw_length ();
   tree exec_pag_length ();
   tree exec_gw_length ();
   tree exec_gh_length ();

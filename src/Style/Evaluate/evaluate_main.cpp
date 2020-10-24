@@ -298,6 +298,8 @@ evaluate_impl (tree t) {
     return evaluate_xspc_length ();
   case PAR_LENGTH:
     return evaluate_par_length ();
+  case PAW_LENGTH:
+    return evaluate_paw_length ();
   case PAG_LENGTH:
     return evaluate_pag_length ();
   case GW_LENGTH:

@@ -131,6 +131,7 @@ tree evaluate_fntop_length ();
 tree evaluate_spc_length ();
 tree evaluate_xspc_length ();
 tree evaluate_par_length ();
+tree evaluate_paw_length ();
 tree evaluate_pag_length ();
 tree evaluate_gw_length ();
 tree evaluate_gh_length ();

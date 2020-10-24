@@ -427,6 +427,8 @@ edit_env_rep::exec (tree t) {
     return exec_xspc_length ();
   case PAR_LENGTH:
     return exec_par_length ();
+  case PAW_LENGTH:
+    return exec_paw_length ();
   case PAG_LENGTH:
     return exec_pag_length ();
   case GW_LENGTH:
