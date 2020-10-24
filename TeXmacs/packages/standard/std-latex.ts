@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.13>
 
 <style|<tuple|source|std>>
 
@@ -139,6 +139,24 @@
   <assign|eqn-row-sep|<macro|<plus|<value|par-sep>|<tex-jot>>>>
 
   <assign|eqn-ver-sep|<macro|<style-with|src-compact|none|<over|<style-with|src-compact|none|<minus|<tex-above-display-skip>|<tex-below-display-skip>|<plus|<tex-above-display-short-skip>|<tex-below-display-short-skip>>>>|2>>>>
+
+  <active*|<\src-comment>
+    Font modifiers which are sometimes poorly imported.
+  </src-comment>>
+
+  <assign|mathcal|<macro|x|<with|font|cal|font-shape|right|math-font-shape|right|<arg|x>>>>
+
+  <assign|mathfrak|<macro|x|<with|font|Euler|font-shape|right|math-font-shape|right|<arg|x>>>>
+
+  <assign|mathbb|<macro|x|<with|font|Bbb*|font-shape|right|math-font-shape|right|<arg|x>>>>
+
+  <active*|<\src-comment>
+    A few symbols for personal use.
+  </src-comment>>
+
+  <assign|der|<macro|x|<with|font|pagella|\<partial\>>>>
+
+  <assign|smallo|<macro|x|<with|magnification|<times|0.7|<value|magnification>>|\<cal-O\>>>>
 </body>
 
 <\initial>

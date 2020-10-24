@@ -2439,7 +2439,7 @@ latex_to_tree (tree t0) {
       the_style= compound ("style", tuple (style, "cite-author-year"));
     if (style != "acmart" && style != "acmsmall" && style != "acmlarge" &&
         style != "acmtog" && style != "sigconf" && style != "sigchi" &&
-        style != "sigplan")
+        style != "sigplan" && style != "amsart")
       the_style[0] << "std-latex";
     tree r= tree (DOCUMENT, the_version, the_style, the_body);
     if (N (initial) > 0) r << compound ("initial", initial);
