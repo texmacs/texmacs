@@ -597,6 +597,7 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     else if (s == "<#20AC>") kbdEvent (64, Qt::AltModifier, commit_string);
     else if (s == "<partial>") kbdEvent (68, Qt::AltModifier, commit_string);
     else if (s == "<#192>") kbdEvent (70, Qt::AltModifier, commit_string);
+    else if (s == "<dagger>") kbdEvent (84, Qt::AltModifier, commit_string);
     else if (s == "<sqrt>") kbdEvent (86, Qt::AltModifier, commit_string);
     else if (s == "\35") kbdEvent (94, Qt::AltModifier, commit_string);
     else if (s == "\31") kbdEvent (66, SA, commit_string);

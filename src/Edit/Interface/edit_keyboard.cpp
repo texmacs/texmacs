@@ -224,7 +224,7 @@ edit_interface_rep::key_press (string gkey) {
   string rew= sv->kbd_post_rewrite (key);
   if (N(rew) == 1) {
     int i ((unsigned char) rew[0]);
-    if ((i >= 32 && i <= 127) || (i >= 128 && i <= 255) || (i == 25))
+    if ((i >= 1 && i <= 127) || (i >= 128 && i <= 255) || (i == 25))
       if (!inside_active_graphics ()) {
         archive_state ();
         call ("kbd-insert", rew);
@@ -243,7 +243,7 @@ edit_interface_rep::key_press (string gkey) {
     key_press (compose_key);
   }
 #endif
-  else if (!occurs (" ", key) && !occurs ("-", key) && N(key) > 1 &&
+  else if (!occurs (" ", key) && N(key) > 1 && key[1] != '-' &&
            cork_to_utf8 ("<" * key * ">") != ("<" * key * ">") &&
            !inside_active_graphics ()) {
     archive_state ();

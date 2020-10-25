@@ -304,7 +304,8 @@
   ("euro" "<#20AC>")
   ("ddagger" "<ddag>")
   ("centerdot" "<cdot>")
-  ("big-prod" (insert '(big "prod"))))
+  ("big-prod" (insert '(big "prod")))
+  ("varspace" (insert '(nbsp))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Font dependent shortcuts
