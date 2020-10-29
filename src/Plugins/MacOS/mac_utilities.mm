@@ -121,13 +121,28 @@ mac_handler_body (NSEvent *event) {
         if (nsmods &  NSCommandKeyMask) str.append("Meta+");
         str.append("Tab");
         cout << from_qstring (str) << LF;
-#endif      
+#endif
         
         QKeyEvent *qe = new QKeyEvent(([event type] == NSKeyDown) ? 
                                       QEvent::KeyPress : QEvent::KeyRelease, 
                                       Qt::Key_Tab, modifs);
         QApplication::postEvent(qApp->focusWidget(), qe);
         return nil;
+      }
+      if (key == 0x0051 || key == 0x0071) {
+        NSUInteger nsmods = [event modifierFlags];
+        Qt::KeyboardModifiers modifs = 0;
+        if (key == NSBackTabCharacter) modifs |= Qt::ShiftModifier;
+        if (nsmods &  NSControlKeyMask) modifs |= Qt::MetaModifier;
+        if (nsmods &  NSAlternateKeyMask) modifs |= Qt::AltModifier;
+        if (nsmods &  NSCommandKeyMask) modifs |= Qt::ControlModifier;
+        if (nsmods & NSCommandKeyMask) {
+          QKeyEvent *qe = new QKeyEvent(([event type] == NSKeyDown) ? 
+                                        QEvent::KeyPress : QEvent::KeyRelease, 
+                                        Qt::Key_Q, modifs);
+          QApplication::postEvent(qApp->focusWidget(), qe);
+          return nil;
+        }
       }
     }
   }
