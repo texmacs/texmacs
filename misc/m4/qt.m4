@@ -57,21 +57,18 @@ AC_DEFUN([LC_WITH_QT],[
   case $CONFIG_OS in
     MINGW) xtralibs="+xml";;
   esac
-  if command -v qmake &> /dev/null
-  then
-    TM_QMAKE=qmake
-  else
-    TM_QMAKE=qmake-qt4
-  fi
-  TM_QT_VERSION=`$TM_QMAKE -query QT_VERSION 2>/dev/null`
-  case $TM_QT_VERSION in
-  5.*)
+
+  AC_PATH_PROGS([QMAKE], [qmake qmake-qt4 qmake-qt5], [echo]) 
+  case $($QMAKE -query QT_VERSION 2>/dev/null) in
+  5.*) 
+    AC_MSG_NOTICE([Qt5 found])
     AT_WITH_QT([$xtralibs +printsupport +svg],[+exceptions],[
       LIBS += $LDFLAGS
       QTPLUGIN = qjpeg qgif qico qsvg
     ],AC_MSG_ERROR([Cannot find a working Qt library]))
     ;;
-  4.*)
+  4.*)  
+    AC_MSG_NOTICE([Qt4 found])
     AT_WITH_QT([$xtralibs +printsupport +svg],[+exceptions],[LIBS += $LDFLAGS],AC_MSG_ERROR([Cannot find a working Qt library]))
     ;;
   *) AC_MSG_ERROR([Qt not found or Qt version not supported ]);;
@@ -111,14 +108,14 @@ AC_DEFUN([LC_WITH_QT],[
   AX_SAVE_FLAGS 
   LC_SET_FLAGS([QT])
   AC_RUN_IFELSE([LM_QT_JPG], [AC_DEFINE([qt_static_plugin_qjpeg],[qt_static_plugin_QJpegPlugin],[If there is a static plugin qjpeg])],
-  	[AC_MSG_WARN([No static qjpeg plugin])])
+    [AC_MSG_WARN([No static qjpeg plugin])])
   AC_RUN_IFELSE([LM_QT_GIF], [AC_DEFINE([qt_static_plugin_qgif],[qt_static_plugin_QGifPlugin],[If there is a static plugin qgif])],
-  	[AC_MSG_WARN([No static qgif plugin])])
+    [AC_MSG_WARN([No static qgif plugin])])
   AC_RUN_IFELSE([LM_QT_ICO], [AC_DEFINE([qt_static_plugin_qico],[qt_static_plugin_QICOPlugin],[If there is a static plugin qico])],
-  	[AC_MSG_WARN([No static qico plugin])])
+    [AC_MSG_WARN([No static qico plugin])])
   AC_RUN_IFELSE([LM_QT_SVG], [AC_DEFINE([qt_static_plugin_qsvg],[qt_static_plugin_QSvgPlugin],[If there is a static plugin qsvg])],
-  	[AC_MSG_WARN([No static qsvg plugin])])
+    [AC_MSG_WARN([No static qsvg plugin])])
   AC_RUN_IFELSE([LM_QT_COCOA], [AC_DEFINE([CocoaPlugin],[1],[If there is a static plugin Cocoa])],
-  	[AC_MSG_WARN([No static Cocoa plugin])])
+    [AC_MSG_WARN([No static Cocoa plugin])])
   AX_RESTORE_FLAGS
 ])

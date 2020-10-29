@@ -678,8 +678,8 @@ QT_VERSION_MAJOR
 RCC
 UIC
 MOC
-QMAKE
 QT_PATH
+QMAKE
 XTRA_CMD
 MACOSX_TARGET
 OSXVERMIN
@@ -23808,15 +23808,57 @@ fi
   case $CONFIG_OS in
     MINGW) xtralibs="+xml";;
   esac
-  if command -v qmake &> /dev/null
-  then
-    TM_QMAKE=qmake
-  else
-    TM_QMAKE=qmake-qt4
+
+  for ac_prog in qmake qmake-qt4 qmake-qt5
+do
+  # Extract the first word of "$ac_prog", so it can be a program name with args.
+set dummy $ac_prog; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_QMAKE+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $QMAKE in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_QMAKE="$QMAKE" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_QMAKE="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
   fi
-  TM_QT_VERSION=`$TM_QMAKE -query QT_VERSION 2>/dev/null`
-  case $TM_QT_VERSION in
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+QMAKE=$ac_cv_path_QMAKE
+if test -n "$QMAKE"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $QMAKE" >&5
+$as_echo "$QMAKE" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+  test -n "$QMAKE" && break
+done
+test -n "$QMAKE" || QMAKE="echo"
+
+  case $($QMAKE -query QT_VERSION 2>/dev/null) in
   5.*)
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Qt5 found" >&5
+$as_echo "$as_me: Qt5 found" >&6;}
     echo "$as_me: this is autotroll.m4 serial 10" >&5
 
   test x"$TROLL" != x && echo 'ViM rox emacs.'
@@ -24789,6 +24831,8 @@ $as_echo "$at_cv_env_QT_LIBS" >&6; }
 
     ;;
   4.*)
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Qt4 found" >&5
+$as_echo "$as_me: Qt4 found" >&6;}
     echo "$as_me: this is autotroll.m4 serial 10" >&5
 
   test x"$TROLL" != x && echo 'ViM rox emacs.'
