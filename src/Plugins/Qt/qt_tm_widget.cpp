@@ -232,8 +232,15 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   modeToolBar->setFixedHeight (toolbarHeight + 4);
   focusToolBar->setFixedHeight (toolbarHeight);
 #else
+#ifdef Q_OS_WIN
+  toolbarHeight *= retina_icons;
+  mainToolBar->setFixedHeight (toolbarHeight + 8);
+  modeToolBar->setFixedHeight (toolbarHeight + 4);
+  focusToolBar->setFixedHeight (toolbarHeight);  
+#else
   modeToolBar->setFixedHeight (toolbarHeight);
   focusToolBar->setFixedHeight (toolbarHeight);
+#endif
 #endif
   
   QWidget *cw= new QWidget();
