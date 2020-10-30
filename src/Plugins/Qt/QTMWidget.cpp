@@ -279,6 +279,8 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
       debug_qt << "key  : " << key << LF;
       debug_qt << "text : " << event->text().toLatin1().data() << LF;
       debug_qt << "count: " << event->text().count() << LF;
+      debug_qt << "unic : " << event->text().data()[0].unicode() << LF;
+
 #ifdef OS_MINGW
       debug_qt << "nativeScanCode: " << event->nativeScanCode() << LF; 
       debug_qt << "nativeVirtualKey: " << event->nativeVirtualKey() << LF;
@@ -338,7 +340,14 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
           (mods & Qt::AltModifier) == 0 &&
           (mods & Qt::MetaModifier) == 0)
         set_shift_preference (kc, (char) unic);
-      if (unic < 32 && key < 128 && key > 0) {
+#ifdef Q_OS_WIN
+      if ((unic < 32 && key > 0 && key < 128) ||
+          (key > 32 && unic < 128 &&
+           (mods & Qt::ShiftModifier) != 0 &&
+           (mods & Qt::ControlModifier) != 0)) {
+#else
+      if (unic < 32 && key > 0 && key < 128) {
+#endif
         // NOTE: For some reason, the 'shift' modifier key is not applied
         // to 'key' when 'control' is pressed as well.  We perform some
         // dirty hacking to figure out the right shifted variant of a key
