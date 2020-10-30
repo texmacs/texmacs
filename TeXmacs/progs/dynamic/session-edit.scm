@@ -42,8 +42,10 @@
 	 (ses (get-env "prog-session")))
     (cons lan ses)))
 
-(tm-define (session-math-input?)
-  (ahash-ref session-math-input (session-key)))
+(tm-define (session-math-input? . opts)
+  (with key (if (< (length opts) 2) (session-key)
+                (cons (car opts) (cadr opts)))
+    (ahash-ref session-math-input key)))
 
 (tm-define (toggle-session-math-input)
   (:synopsis "Toggle mathematical input in sessions.")
@@ -461,7 +463,7 @@
 
 (tm-define (make-session lan ses)
   (let* ((ban `(output (document "")))
-	 (l (if (session-math-input?) 'input-math 'input))
+	 (l (if (session-math-input? lan ses) 'input-math 'input))
 	 (p (plugin-prompt lan ses))
 	 (in `(,l (document ,p) (document "")))
 	 (s `(session ,lan ,ses (document ,ban ,in))))
