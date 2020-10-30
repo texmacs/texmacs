@@ -539,7 +539,7 @@
       (aligned (item (text "Pdf version number:")
         (enum (set-preference "texmacs->pdf:version" answer)
               '("default" "1.4" "1.5" "1.6" "1.7")
-              (get-preference "texmacs->pdf:version") "8em")))))
+              (get-preference "texmacs->pdf:version") "12em")))))
 
 ;; Images ----------
 
