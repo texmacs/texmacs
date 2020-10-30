@@ -111,6 +111,8 @@
   (with-buffer buf
     (let* ((styles (get-style-list))
            (init (get-all-inits))
+           (refl (list-references))
+           (refs (map get-reference refl))
            (body (tree-copy (buffer-get-body buf))))
       (view-new u) ; needed by buffer-focus, used in with-buffer
       (buffer-set-body u body) 
@@ -124,7 +126,8 @@
            (if (tree-func? t 'associate)
                (with (var val) (list (tree-ref t 0) (tree-ref t 1))
                  (init-env-tree (tree->string var) val))))
-         (tree-children init)))
+         (tree-children init))
+        (for-each set-reference refl refs))
       u)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

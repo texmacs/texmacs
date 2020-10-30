@@ -766,6 +766,106 @@ tmg_get_total_height (tmscm arg1) {
 }
 
 tmscm
+tmg_get_reference (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "get-reference");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree out= get_current_editor()->get_ref (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
+tmg_set_reference (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "set-reference");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "set-reference");
+
+  string in1= tmscm_to_string (arg1);
+  content in2= tmscm_to_content (arg2);
+
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->set_ref (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_reset_reference (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "reset-reference");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->reset_ref (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_list_references () {
+  // TMSCM_DEFER_INTS;
+  array_string out= get_current_editor()->list_refs ();
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
+tmg_get_auxiliary (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "get-auxiliary");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree out= get_current_editor()->get_aux (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
+tmg_set_auxiliary (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "set-auxiliary");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "set-auxiliary");
+
+  string in1= tmscm_to_string (arg1);
+  content in2= tmscm_to_content (arg2);
+
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->set_aux (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_reset_auxiliary (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "reset-auxiliary");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->reset_aux (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_list_auxiliaries () {
+  // TMSCM_DEFER_INTS;
+  array_string out= get_current_editor()->list_auxs ();
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
 tmg_get_attachment (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "get-attachment");
 
@@ -3415,6 +3515,14 @@ initialize_glue_editor () {
   tmscm_install_procedure ("get-page-height",  tmg_get_page_height, 1, 0, 0);
   tmscm_install_procedure ("get-total-width",  tmg_get_total_width, 1, 0, 0);
   tmscm_install_procedure ("get-total-height",  tmg_get_total_height, 1, 0, 0);
+  tmscm_install_procedure ("get-reference",  tmg_get_reference, 1, 0, 0);
+  tmscm_install_procedure ("set-reference",  tmg_set_reference, 2, 0, 0);
+  tmscm_install_procedure ("reset-reference",  tmg_reset_reference, 1, 0, 0);
+  tmscm_install_procedure ("list-references",  tmg_list_references, 0, 0, 0);
+  tmscm_install_procedure ("get-auxiliary",  tmg_get_auxiliary, 1, 0, 0);
+  tmscm_install_procedure ("set-auxiliary",  tmg_set_auxiliary, 2, 0, 0);
+  tmscm_install_procedure ("reset-auxiliary",  tmg_reset_auxiliary, 1, 0, 0);
+  tmscm_install_procedure ("list-auxiliaries",  tmg_list_auxiliaries, 0, 0, 0);
   tmscm_install_procedure ("get-attachment",  tmg_get_attachment, 1, 0, 0);
   tmscm_install_procedure ("set-attachment",  tmg_set_attachment, 2, 0, 0);
   tmscm_install_procedure ("reset-attachment",  tmg_reset_attachment, 1, 0, 0);

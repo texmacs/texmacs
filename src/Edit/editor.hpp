@@ -79,10 +79,14 @@ protected:
   virtual typesetter           get_typesetter () = 0;
   virtual hashmap<string,tree> get_init () = 0;
   virtual hashmap<string,tree> get_fin () = 0;
+  virtual hashmap<string,tree> get_ref () = 0;
+  virtual hashmap<string,tree> get_aux () = 0;
   virtual hashmap<string,tree> get_att () = 0;
   virtual void                 set_init (hashmap<string,tree> H= tree ("?"))=0;
   virtual void                 add_init (hashmap<string,tree> H) = 0;
   virtual void                 set_fin (hashmap<string,tree> H) = 0;
+  virtual void                 set_ref (hashmap<string,tree> H) = 0;
+  virtual void                 set_aux (hashmap<string,tree> H) = 0;
   virtual void                 set_att (hashmap<string,tree> H) = 0;
 
   /* exchanging property information */
@@ -306,9 +310,17 @@ public:
   virtual tree     get_init_all () = 0;
   virtual void     init_env (string var, tree by) = 0;
   virtual void     init_default (string var) = 0;
+  virtual tree     get_ref (string key) = 0;
+  virtual tree     get_aux (string key) = 0;
   virtual tree     get_att (string key) = 0;
+  virtual void     set_ref (string key, tree im) = 0;
+  virtual void     set_aux (string key, tree im) = 0;
   virtual void     set_att (string key, tree im) = 0;
+  virtual void     reset_ref (string key) = 0;
+  virtual void     reset_aux (string key) = 0;
   virtual void     reset_att (string key) = 0;
+  virtual array<string> list_refs () = 0;
+  virtual array<string> list_auxs () = 0;
   virtual array<string> list_atts () = 0;
   virtual void     typeset_forced () = 0;
   virtual void     typeset_invalidate (path p) = 0;

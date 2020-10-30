@@ -6667,6 +6667,70 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(get-reference <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_ref> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
+    <scm|(set-reference <scm-arg|string> <scm-arg|content>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|set_ref> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(reset-reference <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|reset_ref> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(list-references)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|list_refs> which returns
+    <scm|array_string>.
+  </explain>
+
+  <\explain>
+    <scm|(get-auxiliary <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_aux> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
+    <scm|(set-auxiliary <scm-arg|string> <scm-arg|content>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|set_aux> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(reset-auxiliary <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|reset_aux> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(list-auxiliaries)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|list_auxs> which returns
+    <scm|array_string>.
+  </explain>
+
+  <\explain>
     <scm|(get-attachment <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>

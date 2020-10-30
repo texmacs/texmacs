@@ -51,6 +51,8 @@ edit_typeset_rep::set_data (new_data data) {
   set_style (data->style);
   set_init  (data->init);
   set_fin   (data->fin);
+  set_ref   (data->ref);
+  set_aux   (data->aux);
   set_att   (data->att);
   notify_page_change ();
   add_init (data->init);
@@ -69,6 +71,8 @@ edit_typeset_rep::get_data (new_data& data) {
   data->style= get_style ();
   data->init = get_init ();
   data->fin  = get_fin ();
+  data->ref  = get_ref ();
+  data->aux  = get_aux ();
   data->att  = get_att ();
 }
 
@@ -77,9 +81,65 @@ tree edit_typeset_rep::get_style () { return the_style; }
 void edit_typeset_rep::set_style (tree t) { the_style= copy (t); }
 hashmap<string,tree> edit_typeset_rep::get_init () { return init; }
 hashmap<string,tree> edit_typeset_rep::get_fin () { return fin; }
+hashmap<string,tree> edit_typeset_rep::get_ref () { return buf->data->ref; }
+hashmap<string,tree> edit_typeset_rep::get_aux () { return buf->data->aux; }
 hashmap<string,tree> edit_typeset_rep::get_att () { return buf->data->att; }
 void edit_typeset_rep::set_fin (hashmap<string,tree> H) { fin= H; }
+void edit_typeset_rep::set_ref (hashmap<string,tree> H) { buf->data->ref= H; }
+void edit_typeset_rep::set_aux (hashmap<string,tree> H) { buf->data->aux= H; }
 void edit_typeset_rep::set_att (hashmap<string,tree> H) { buf->data->att= H; }
+
+tree
+edit_typeset_rep::get_ref (string key) {
+  return buf->data->ref[key];
+}
+
+void
+edit_typeset_rep::set_ref (string key, tree im) {
+  buf->data->ref (key)= im;
+}
+
+void
+edit_typeset_rep::reset_ref (string key) {
+  buf->data->ref->reset (key);
+}
+
+array<string>
+edit_typeset_rep::list_refs () {
+  tree a= (tree) buf->data->ref;
+  array<string> v;
+  int i, n= N(a);
+  for (i=0; i<n; i++)
+    v << a[i][0]->label;
+  merge_sort (v);
+  return v;
+}
+
+tree
+edit_typeset_rep::get_aux (string key) {
+  return buf->data->aux[key];
+}
+
+void
+edit_typeset_rep::set_aux (string key, tree im) {
+  buf->data->aux (key)= im;
+}
+
+void
+edit_typeset_rep::reset_aux (string key) {
+  buf->data->aux->reset (key);
+}
+
+array<string>
+edit_typeset_rep::list_auxs () {
+  tree a= (tree) buf->data->aux;
+  array<string> v;
+  int i, n= N(a);
+  for (i=0; i<n; i++)
+    v << a[i][0]->label;
+  merge_sort (v);
+  return v;
+}
 
 tree
 edit_typeset_rep::get_att (string key) {
