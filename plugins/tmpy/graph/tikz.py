@@ -29,7 +29,7 @@ class TikZ(LaTeX):
 """
         self.message = "TeXmacs interface to TikZ"
 
-    def available(self) -> bool:
+    def available(self):
         if not super(TikZ, self).available():
             return False
         for sty in ("standalone", "tikz"):
