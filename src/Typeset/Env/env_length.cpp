@@ -471,7 +471,12 @@ edit_env_rep::exec_pag_length () {
 tree edit_env_rep::exec_tmpt_length () {
   return tree (TMLEN, "1"); }
 tree edit_env_rep::exec_px_length () {
-  return tree (TMLEN, as_string (pixel)); }
+#ifdef OS_MINGW
+  return tree (TMLEN, as_string ((int) (retina_zoom * pixel)));
+#else
+  return tree (TMLEN, as_string (pixel));
+#endif
+}
 
 tree edit_env_rep::exec_lcorner_length () {
   ornament_parameters ps= get_ornament_parameters ();
