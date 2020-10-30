@@ -260,11 +260,11 @@ system_kbd_initialize (hashmap<string,tree>& h) {
     h ("<gtr>")= "<#3E>";
   }
   else if (gui_is_qt ()) {
-    h ("S-")= localize ("Shift", true);
-    h ("C-")= localize ("Ctrl", true);
-    h ("A-")= localize ("Alt", true);
-    h ("M-")= localize ("Meta", true);
-    h ("H-")= localize ("Hyper", true);
+    h ("S-")= localize ("Shift::keyboard", true);
+    h ("C-")= localize ("Ctrl::keyboard", true);
+    h ("A-")= localize ("Alt::keyboard", true);
+    h ("M-")= localize ("Meta::keyboard", true);
+    h ("H-")= localize ("Hyper::keyboard", true);
     h ("windows")= localize ("Windows");
     h ("capslock")= localize ("Capslock");
     h ("return")= localize ("Return");

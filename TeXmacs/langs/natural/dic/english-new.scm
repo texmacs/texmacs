@@ -2579,6 +2579,7 @@
 ("shift" "")
 ("shift-down" "")
 ("shift-right" "")
+("shift::keyboard" "")
 ("short" "")
 ("shortcut" "")
 ("show" "")
