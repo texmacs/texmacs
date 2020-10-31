@@ -685,8 +685,8 @@
   ("windows S-end" (kbd-select go-end))
   ("windows S-space" (make 'nbsp))
   ("windows _" (make 'nbhyph))
-  ("windows -" "--")
-  ("windows A--" (make 'emdash))
+  ("windows -" "")
+  ("windows A--" "")
   ("windows A-." "<ldots>")
   ("windows A-c" (make 'copyright))
   ("windows e" (make-wrapped 'footnote))
@@ -779,6 +779,8 @@
   ;; further shortcuts for Windows look and feel
   ("windows g" (selection-cancel))
   ("windows l" (refresh-window))
+  ("A-+" (zoom-in (sqrt (sqrt 2.0))))
+  ("A--" (zoom-out (sqrt (sqrt 2.0))))
 
   ("altcmd g" (kbd-cancel))
   ("altcmd q" (make 'symbol))
