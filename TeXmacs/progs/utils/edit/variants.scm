@@ -345,3 +345,6 @@
 
 (define-group reference-tag
   reference eqref pageref)
+
+(define-group mini-flow-tag
+  table graphics ornament ornamented tree)

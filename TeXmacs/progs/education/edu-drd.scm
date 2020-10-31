@@ -79,6 +79,7 @@
 (define-group gap-tag (gap-short-tag) (gap-wide-tag) (gap-long-tag))
 (define-group variant-tag (gap-short-tag) (gap-wide-tag) (gap-long-tag))
 (define-group similar-tag (gap-short-tag) (gap-wide-tag) (gap-long-tag))
+(define-group mini-flow-tag (gap-short-tag) (gap-wide-tag) (gap-long-tag))
 
 (tm-define-macro (define-gap gt gt-wide gt-long)
   `(begin

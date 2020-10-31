@@ -37,6 +37,10 @@
   (theorem-tag) (definition-tag) (remark-tag) (exercise-tag) (solution-tag)
   (figure-tag) (equation-tag))
 
+(define-group mini-flow-tag
+  (frame-tag) (frame-titled-tag)
+  (ornament-tag) (art-frame-tag) (shadow-tag))
+
 ;; Environments with titles
 
 (define-group titled-tag
