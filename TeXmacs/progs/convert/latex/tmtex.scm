@@ -636,7 +636,8 @@
          (t (tmtex-verb-list l))
          (r (tmtex-string-produce t)))
     (if (or tmtex-use-unicode? tmtex-use-ascii?)
-      (set! r (map (lambda (x) (string-convert* x "Cork" "UTF-8")) r)))
+        (set! r (map (lambda (x) (string-convert* x "Cork" "UTF-8")) r))
+        (set! r (map unescape-angles r)))
     (tex-concat r)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2157,11 +2158,18 @@
   (with lang (if (or (== s "verbatim") (== s "code")) '() `((!option ,s)))
     `((!begin* "tmcode" ,@lang) ,(tmtex-verbatim* "" l))))
 
+(define (tmtex-add-preview-packages x)
+  (cond ((list? x) (for-each tmtex-add-preview-packages x))
+        ((nstring? x) (noop))
+        ((string-occurs? "tikzpicture" x) (latex-add-extra "tikz"))))
+
 (define (tmtex-mixed s l)
   (if (func? (cadr l) 'text) (set! l `("" ,(cadadr l))))
-  (set! l (unescape-angles l))
+  ;; (set! l (unescape-angles l))
+  ;; NOTE: instead, we now unescape in tmtex-verb-string
   (tmtex-env-set "mode" "text")
   (with src (list '!verbatim* (tmtex-tt (cadr l)))
+    (tmtex-add-preview-packages src)
     (tmtex-env-reset "mode")
     (list '!unindent src)))
 
@@ -3296,6 +3304,7 @@
               (in? lan '("chinese" "taiwanese" "japanese" "korean")))
         (latex-set-style main-style)
         (latex-set-packages '())
+        (latex-set-extra '())
         (set! tmtex-style (car style))
         (set! tmtex-packages (cdr style))
         (set! tmtex-languages (list lan))

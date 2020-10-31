@@ -26,6 +26,7 @@
 (define latex-language "english")
 (define latex-style "generic")
 (define latex-packages '())
+(define latex-extra-packages '())
 (define latex-virtual-packages '())
 (define latex-all-packages '())
 (define latex-texmacs-style "generic")
@@ -54,6 +55,14 @@
   (set! latex-packages ps)
   (latex-set-dependencies))
 
+(tm-define (latex-set-extra ps)
+  (set! latex-extra-packages ps)
+  (latex-set-dependencies))
+
+(tm-define (latex-add-extra p)
+  (set! latex-extra-packages (cons p latex-extra-packages))
+  (latex-set-dependencies))
+
 (tm-define (latex-set-virtual-packages ps)
   (set! latex-virtual-packages ps)
   (latex-set-dependencies))
@@ -66,7 +75,9 @@
 
 (define (latex-set-dependencies)
   (set! latex-all-packages
-        (list-remove-duplicates (append latex-packages latex-virtual-packages)))
+        (list-remove-duplicates (append latex-packages
+                                        latex-extra-packages
+                                        latex-virtual-packages)))
   (set! latex-dependencies
         (latex-packages-dependencies (cons latex-style latex-all-packages))))
 

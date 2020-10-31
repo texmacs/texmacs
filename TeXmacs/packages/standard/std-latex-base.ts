@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.13>
 
 <style|<tuple|source|std>>
 
@@ -49,7 +49,9 @@
     <LaTeX> preview
   </src-comment>>
 
-  <assign|latex_preview|<macro|pic|src|<verbatim|<arg|src>>>>
+  <assign|latex_preview|<macro|pic|src|<block|<tformat|<cwith|1|1|1|1|cell-background|dark
+  grey>|<table|<row|<cell|<with|color|white|font-family|ss|<small|<LaTeX>
+  preview>>>>|<row|<cell|<verbatim|<arg|src>>>>>>>>>
 
   <\active*>
     <\src-comment>
