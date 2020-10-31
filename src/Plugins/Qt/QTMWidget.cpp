@@ -342,7 +342,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
         set_shift_preference (kc, (char) unic);
 #ifdef Q_OS_WIN
       if ((unic < 32 && key > 0 && key < 128) ||
-          (key > 32 && unic < 128 &&
+          (unic < 255 && key > 32 &&
            (mods & Qt::ShiftModifier) != 0 &&
            (mods & Qt::ControlModifier) != 0)) {
 #else
