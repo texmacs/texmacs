@@ -235,6 +235,15 @@ edit_env_rep::as_eff_length (tree t) {
   else return as_length (t);
 }
 
+SI
+edit_env_rep::as_real_length (tree t) {
+  double old= magn_len;
+  magn_len= 1.0;
+  SI r= as_length (t);
+  magn_len= old;
+  return r;
+}
+
 space
 edit_env_rep::as_hspace (tree t) {
   tree r= as_tmlen (t);

@@ -167,6 +167,8 @@ pager_rep::pages_format (pagelet pg) {
 
 box
 pager_rep::pages_make_page (pagelet pg) {
+  double old= env->magn_len;
+  env->magn_len= 1.0;
   box sb= pages_format (pg);
   box lb= move_box (ip, sb, 0, 0);
   int nr= N(pages) + 1 + page_offset;
@@ -189,6 +191,7 @@ pager_rep::pages_make_page (pagelet pg) {
   SI h= env->as_length (page_get_feature (sz, PAGE_HEIGHT, ls));
   SI lw= env->as_length ("0.2ln");
   SI ll= env->as_length ("1cm");
+  env->magn_len= old;
   return crop_marks_box (ip, page, w, h, lw, ll);
 }
 

@@ -260,7 +260,7 @@ edit_main_rep::print_doc (url name, bool conform, int first, int last) {
   string page_type = env->page_real_type;
   double w         = env->page_real_width;
   double h         = env->page_real_height;
-  double cm        = env->as_length (string ("1cm"));
+  double cm        = env->as_real_length (string ("1cm"));
   bool   landsc    = env->page_landscape;
   int    dpi       = as_int (printing_dpi);
   int    start     = max (0, first-1);
@@ -275,7 +275,7 @@ edit_main_rep::print_doc (url name, bool conform, int first, int last) {
     w= env->as_length (bws);
     h= env->as_length (bhs);
   }
-
+  
   // Print pages
   renderer ren= printer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
   
