@@ -340,19 +340,19 @@ oriental_language_rep::oriental_language_rep (string lan_name):
   punct ("<#FF1B>")= true;
   punct ("<#FF1F>")= true;
 
-  wide_punct ("<#3001>")= true;
-  wide_punct ("<#ff01>")= true;
-  wide_punct ("<#ff0c>")= true;
-  wide_punct ("<#ff0e>")= true;
-  wide_punct ("<#ff1a>")= true;
-  wide_punct ("<#ff1b>")= true;
-  wide_punct ("<#ff1f>")= true;
-  wide_punct ("<#FF01>")= true;
-  wide_punct ("<#FF0C>")= true;
-  wide_punct ("<#FF0E>")= true;
-  wide_punct ("<#FF1A>")= true;
-  wide_punct ("<#FF1B>")= true;
-  wide_punct ("<#FF1F>")= true;
+  //wide_punct ("<#3001>")= true;
+  //wide_punct ("<#ff01>")= true;
+  //wide_punct ("<#ff0c>")= true;
+  //wide_punct ("<#ff0e>")= true;
+  //wide_punct ("<#ff1a>")= true;
+  //wide_punct ("<#ff1b>")= true;
+  //wide_punct ("<#ff1f>")= true;
+  //wide_punct ("<#FF01>")= true;
+  //wide_punct ("<#FF0C>")= true;
+  //wide_punct ("<#FF0E>")= true;
+  //wide_punct ("<#FF1A>")= true;
+  //wide_punct ("<#FF1B>")= true;
+  //wide_punct ("<#FF1F>")= true;
 }
 
 text_property
