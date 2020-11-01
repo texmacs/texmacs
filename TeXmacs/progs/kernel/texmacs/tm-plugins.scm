@@ -400,7 +400,7 @@
    (url-expand
     (url-append (url-or (system->url "C:\\.")
                         (system->url "C:\\Program File*")
-                        (system->url "$PATH\AppData\Local")) u)) after?))
+                        (system->url "$PATH\\AppData\\Local")) u)) after?))
 
 (define (add-macos-program-path u after?)
   (add-to-path (url-append (system->url "/Applications") u) after?))
