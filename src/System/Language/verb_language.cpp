@@ -22,7 +22,7 @@ verb_language_rep::verb_language_rep (string name):
 
 inline static bool
 is_sep_char (char c) {
-  return c == '-' || c == '/' || c == ',' || c == '?';
+  return c == '-' || c == '/' || c == '\\' || c == ',' || c == '?';
 }
 
 text_property
