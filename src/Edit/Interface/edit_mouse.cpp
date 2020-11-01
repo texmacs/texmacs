@@ -591,6 +591,7 @@ delayed_call_mouse_event (string kind, SI x, SI y, SI m, time_t t) {
 
 void
 edit_interface_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t) {
+  if (is_nil (buf)) return;
   bool started= false;
 #ifdef USE_EXCEPTIONS
   try {

@@ -293,6 +293,7 @@ edit_interface_rep::kbd_shortcut (string cmd) {
 
 void
 edit_interface_rep::handle_keypress (string key, time_t t) {
+  if (is_nil (buf)) return;
   bool started= false;
 #ifdef USE_EXCEPTIONS
   try {
@@ -350,6 +351,7 @@ void drag_right_reset ();
 
 void
 edit_interface_rep::handle_keyboard_focus (bool has_focus, time_t t) {
+  if (is_nil (buf)) return;
   if (DEBUG_KEYBOARD) {
     if (has_focus) debug_keyboard << "Got focus at " << t << "\n";
     else debug_keyboard << "Lost focus at " << t << "\n";

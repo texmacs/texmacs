@@ -256,7 +256,7 @@ kill_buffer (url name) {
       url prev= get_recent_view (name, false, true, false, true);
       if (is_none (prev)) {
         prev= get_recent_view (name, false, true, false, false);
-        if (is_none (prev)) break;
+        if (is_none (prev)) continue;
         prev= get_new_view (view_to_buffer (prev));
       }
       window_set_view (view_to_window (vs[i]), prev, false);

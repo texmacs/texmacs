@@ -1033,6 +1033,7 @@ edit_interface_rep::handle_get_size_hint (SI& w, SI& h) {
 void
 edit_interface_rep::handle_notify_resize (SI w, SI h) {
   (void) w; (void) h;
+  if (is_nil (buf)) return;
   notify_change (THE_TREE);
 }
 

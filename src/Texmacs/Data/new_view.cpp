@@ -316,6 +316,7 @@ delete_view (url u) {
       buf->vws= a;
     }
   notify_delete_view (u);
+  vw->ed->buf= NULL;
   tm_delete (vw);
 }
 
