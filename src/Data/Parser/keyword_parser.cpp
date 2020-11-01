@@ -39,7 +39,8 @@ keyword_parser_rep::use_keywords_of_lang (string lang_code) {
   eval (use_modules);
   string get_list_of_keywords_tree= "(map tm->tree (" * lang_code * "-keywords))";
   list<tree> l= as_list_tree (eval (get_list_of_keywords_tree));
-  debug_packrat << "Keywords definition of [" << lang_code << "] loaded!\n";
+  if (DEBUG_PARSER)
+    debug_packrat << "Keywords definition of [" << lang_code << "] loaded!\n";
   for (int i=0; i<N(l); i++) {
     tree group_words= l[i];
     string group= get_label (group_words);

@@ -36,10 +36,11 @@ public:
       //      << string(' ', pos) << "^" << LF;
       return true;
     } else {
-      debug_packrat << "Illegal status for " << get_parser_name() << LF
-                    << s << LF
-                    << string(' ', opos) << "^" << LF
-                    << string(' ', pos) << "^" << LF;
+      if (DEBUG_PARSER)
+        debug_packrat << "Illegal status for " << get_parser_name() << LF
+                      << s << LF
+                      << string(' ', opos) << "^" << LF
+                      << string(' ', pos) << "^" << LF;
       return false;
     }
   }

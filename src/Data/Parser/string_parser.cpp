@@ -46,8 +46,9 @@ string_parser_rep::do_parse (string s, int& pos) {
   m_escaped= false;
 
   if (m_start_size <= 0) {
-    debug_packrat << "m_start is empty unexpectedly with "
-                  << pos << ":" << s << LF;
+    if (DEBUG_PARSER)
+      debug_packrat << "m_start is empty unexpectedly with "
+                    << pos << ":" << s << LF;
     return;
   }
 

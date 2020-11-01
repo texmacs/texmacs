@@ -64,6 +64,7 @@ debug_set (string s, bool on) {
   else if (s == "keyboard") debug_set (DEBUG_FLAG_KEYBOARD, on);
   else if (s == "packrat") debug_set (DEBUG_FLAG_PACKRAT, on);
   else if (s == "flatten") debug_set (DEBUG_FLAG_FLATTEN, on);
+  else if (s == "parser") debug_set (DEBUG_FLAG_PARSER, on);
   else if (s == "correct") debug_set (DEBUG_FLAG_CORRECT, on);
   else if (s == "convert") debug_set (DEBUG_FLAG_CONVERT, on);
 }

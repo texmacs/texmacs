@@ -19,7 +19,8 @@
 prog_language_rep::prog_language_rep (string name):
   abstract_language_rep (name)
 {
-  debug_packrat << "Building the " * name * " language parser" << LF;
+  if (DEBUG_PARSER)
+    debug_packrat << "Building the " * name * " language parser" << LF;
 
   string use_modules= "(use-modules (prog " * name * "-lang))";
   eval (use_modules);
@@ -127,7 +128,8 @@ prog_language_rep::customize_string (tree config) {
   pairs("\"") = "\"";
   pairs("\'")= "\'";
   string_parser.set_pairs (pairs);
-  debug_packrat << string_parser.to_string();
+  if (DEBUG_PARSER)
+    debug_packrat << string_parser.to_string();
 }
 
 void
@@ -144,7 +146,8 @@ prog_language_rep::customize_preprocessor (tree config) {
       preprocessor_parser.set_directives (directives);
     }
   }
-  debug_packrat << preprocessor_parser.to_string();
+  if (DEBUG_PARSER)
+    debug_packrat << preprocessor_parser.to_string();
 }
 
 text_property

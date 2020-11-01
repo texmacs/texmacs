@@ -37,8 +37,9 @@ void
 operator_parser_rep::do_parse (string s, int& pos) {
   int current_oper_size= N(current_oper);
   if (current_oper_size <= 0) {
-    debug_packrat << "current_oper is empty unexpectedly with "
-                  << pos << ":" << s << LF;
+    if (DEBUG_PARSER)
+      debug_packrat << "current_oper is empty unexpectedly with "
+                    << pos << ":" << s << LF;
     return;
   }
 
