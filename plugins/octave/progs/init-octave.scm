@@ -20,7 +20,10 @@
   (string-append "octave-cli -qi \"" (octave-source-path) "/tmstart.m\""))
 
 (plugin-configure octave
+  (:winpath "Octave*" ".")
   (:winpath "Octave*" "bin")
+  (:winpath "Octave/Octave*" ".")
+  (:winpath "Octave/Octave*" "bin")
   (:require (url-exists-in-path? "octave-cli"))
   (:launch ,octave-launcher)
   (:session "Octave"))

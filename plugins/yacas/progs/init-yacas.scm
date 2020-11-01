@@ -12,6 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (plugin-configure yacas
+  (:winpath "yacas*" "bin")
+  (:winpath "Yacas*" "bin")
   (:require (url-exists-in-path? "yacas"))
   (:launch "yacas --texmacs")
   (:session "Yacas"))

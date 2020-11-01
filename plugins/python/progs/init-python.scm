@@ -46,7 +46,9 @@
                      "/plugins/tmpy/session/tm_python.py\"")))
 
 (plugin-configure python
+  (:winpath "python*" ".")
   (:winpath "Python*" ".")
+  (:winpath "Windows" ".")
   (:require (python-exists?))
   (:launch ,(python-launcher))
   (:tab-completion #t)

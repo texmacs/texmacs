@@ -18,7 +18,8 @@
 	(string-append (escape-verbatim w) "\n")))))
 
 (plugin-configure caas
-  (:winpath "Caas" "bin")
+  (:winpath "caas*" "bin")
+  (:winpath "Caas*" "bin")
   (:require (url-exists-in-path? "caas"))
   (:serializer ,caas-serialize)
   (:launch "caas --texmacs")

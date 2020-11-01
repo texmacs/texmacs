@@ -19,8 +19,9 @@
 		 (char->string #\005) "\n"))
 
 (plugin-configure pari
-  (:macpath "PariGP*" "Contents/Resources/bin")
-  (:winpath "PARI" ".")
+  (:macpath "Pari*" "Contents/Resources/bin")
+  (:winpath "PARI*" ".")
+  (:winpath "Pari*" ".")
   (:require (url-exists-in-path? "gp"))
   (:launch "gp --texmacs")
   (:session "Pari")

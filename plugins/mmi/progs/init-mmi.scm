@@ -18,7 +18,8 @@
 	(string-append (escape-verbatim w) "\n")))))
 
 (plugin-configure mmi
-  (:winpath "Mmi" "bin")
+  (:winpath "mmi*" "bin")
+  (:winpath "Mmi*" "bin")
   (:require (url-exists-in-path? "mmi"))
   (:serializer ,mmi-serialize)
   (:launch "mmi --texmacs")

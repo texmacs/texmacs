@@ -18,7 +18,8 @@
 	(string-append (escape-verbatim w) "\n")))))
 
 (plugin-configure mathemagix
-  (:winpath "Mathemagix" "bin")
+  (:winpath "mathemagix*" "bin")
+  (:winpath "Mathemagix*" "bin")
   (:require (url-exists-in-path? "mmx-light"))
   (:serializer ,mathemagix-serialize)
   (:launch "mmx-light --texmacs")

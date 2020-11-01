@@ -24,6 +24,8 @@
   "tm_r")
 
 (plugin-configure r
+  (:winpath "R-*" "bin")
+  (:winpath "R/R*" "bin")
   (:require (url-exists-in-path? "R"))
   (:serializer ,r-serialize)
   (:launch ,(r-launcher))

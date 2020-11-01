@@ -22,6 +22,8 @@
                                  "/plugins/tmpy/session/tm_sage.py")))))
 
 (plugin-configure sage
+  (:winpath "Sage*" "bin")
+  (:winpath "Sage*/runtime" "bin")
   (:macpath "Sage*" "Contents/Resources/sage")
   (:require (url-exists-in-path? "sage"))
   ,@(sage-launchers)
