@@ -58,6 +58,18 @@ public:
       std_warning << "Could not find TeXmacs icon file: " << as_string (icon_url) << LF;
   }
 
+  /*
+  bool event(QEvent *event) {
+    if (event->type() == QEvent::TabletEnterProximity ||
+        event->type() == QEvent::TabletLeaveProximity) {
+      cout << "Set tablet device\n";
+      //tm_canvas->setTabletDevice(static_cast<QTabletEvent *>(event));
+      return true;
+    }
+    return QApplication::event(event);
+  }
+  */
+  
   virtual bool notify (QObject* receiver, QEvent* event)
   {
     try {

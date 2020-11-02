@@ -730,6 +730,30 @@ QTMWidget::mouseMoveEvent (QMouseEvent* event) {
   event->accept();
 }
 
+/*
+void
+QTMWidget::tabletEvent (QTabletEvent* event) {
+  if (is_nil (tmwid)) return;
+  cout << HRULE << LF;
+  cout << "globalX= " << event->globalX() << LF;
+  cout << "globalY= " << event->globalY() << LF;
+  cout << "hiResGlobalX= " << event->hiResGlobalX() << LF;
+  cout << "hiResGlobalY= " << event->hiResGlobalY() << LF;
+  cout << "globalX= " << event->globalX() << LF;
+  cout << "globalY= " << event->globalY() << LF;
+  cout << "x= " << event->x() << LF;
+  cout << "y= " << event->y() << LF;
+  cout << "z= " << event->z() << LF;
+  cout << "xTilt= " << event->xTilt() << LF;
+  cout << "yTilt= " << event->yTilt() << LF;
+  cout << "pressure= " << event->pressure() << LF;
+  cout << "rotation= " << event->rotation() << LF;
+  cout << "tangentialPressure= " << event->tangentialPressure() << LF;
+  cout << "pointerType= " << event->pointerType() << LF;
+  cout << "uniqueId= " << event->uniqueId() << LF;
+  event->accept();
+}
+*/
 
 bool
 QTMWidget::event (QEvent* event) {
