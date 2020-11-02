@@ -311,6 +311,9 @@ static void
 init_env_vars () {
   // Handle binary, library and guile paths for plugins
   url bin_path= get_env_path ("PATH") | plugin_path ("bin");
+#ifdef OS_MINGW
+  bin_path= bin_path | url ("$TEXMACS_PATH/bin");
+#endif
   set_env_path ("PATH", bin_path);
   url lib_path= get_env_path ("LD_LIBRARY_PATH") | plugin_path ("lib");
   set_env_path ("LD_LIBRARY_PATH", lib_path);
