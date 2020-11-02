@@ -1098,3 +1098,8 @@
 (tm-define (show-message msg title)
   (:interactive #t)
   (dialogue-window (message-widget msg) noop title))
+
+(tm-define (restart-message)
+  (:interactive #t)
+  (show-message "Restart TeXmacs in order to let changes take effect"
+                "Notification"))

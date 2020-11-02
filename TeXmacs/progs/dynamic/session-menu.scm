@@ -114,7 +114,9 @@
     ("Remote" (open-remote-plugin-selector
                "Start remote session"
                (lambda (x) (apply make-session x))))
-    ("Other" (interactive make-session))))
+    ("Other" (interactive make-session))
+    (assuming (or (os-mingw?) (os-win32?))
+      ("Manual path" (interactive set-manual-path)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Submenus of the Sessions menu

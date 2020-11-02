@@ -19,6 +19,20 @@
 	(dynamic fold-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Where to find plug-in binaries
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (set-manual-path p)
+  (:argument p "Path to plug-in binaries")
+  (:proposals p (if (cpp-has-preference? "manual path")
+                    (list (get-preference "manual path"))
+                    (list)))
+  (if (== p "")
+      (reset-preference "manual path")
+      (set-preference "manual path" p))
+  (restart-message))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Style package rules for sessions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
