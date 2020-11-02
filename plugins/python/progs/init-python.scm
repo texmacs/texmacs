@@ -38,7 +38,7 @@
 
 (define (python-exists?)
   (or (url-exists-in-path? "python3")
-      (url-exists-in-path? "python"))
+      (url-exists-in-path? "python")))
 
 (define (python-launcher)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
