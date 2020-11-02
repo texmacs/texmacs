@@ -393,14 +393,13 @@
          (u2 "$PATH")
          (u3 (if after? (url-or u2 u1) (url-or u1 u2)))
          (p  (url-expand u3)))
-    (setenv "PATH" (url->system p))))
+    (when (not (url-none? u1))
+      (setenv "PATH" (url->system p)))))
 
 (define (add-windows-program-path u after?)
-  (add-to-path
-   (url-expand
-    (url-append (url-or (system->url "C:\\.")
-                        (system->url "C:\\Program File*")
-                        (system->url "$PATH\\AppData\\Local")) u)) after?))
+  (add-to-path (url-append (system->url "C:\\.") u) after?)
+  (add-to-path (url-append (system->url "C:\\Program File*") u) after?)
+  (add-to-path (url-append (system->url "$HOME\\AppData\\Local") u) after?))
 
 (define (add-macos-program-path u after?)
   (add-to-path (url-append (system->url "/Applications") u) after?))

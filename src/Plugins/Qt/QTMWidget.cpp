@@ -341,8 +341,8 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
           (mods & Qt::MetaModifier) == 0)
         set_shift_preference (kc, (char) unic);
 #ifdef Q_OS_WIN
-      if ((unic < 32 && key > 0 && key < 128) ||
-          (unic < 255 && key > 32 &&
+      if ((unic > 0 && unic < 32 && key > 0 && key < 128) ||
+          (unic > 0 && unic < 255 && key > 32 &&
            (mods & Qt::ShiftModifier) != 0 &&
            (mods & Qt::ControlModifier) != 0)) {
 #else
@@ -358,8 +358,12 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
         }
         else if (has_shift_preference (kc) &&
                  (mods & Qt::ShiftModifier) != 0 &&
-                 (mods & Qt::ControlModifier) != 0)
-          key= (int) (unsigned char) get_shift_preference (kc) [0];
+                 (mods & Qt::ControlModifier) != 0) {
+          string pref= get_shift_preference (kc);
+          if (N(pref) > 0) key= (int) (unsigned char) pref [0];
+          if (DEBUG_QT && DEBUG_KEYBOARD)
+            debug_qt << "Control+Shift " << kc << " -> " << key << LF;
+        }
         mods &=~ Qt::ShiftModifier;
         r= string ((char) key);
       }
