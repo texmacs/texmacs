@@ -213,7 +213,7 @@ edit_interface_rep::get_window_width () {
   }
   if (sb) w -= scrollbar_width ();
 #if defined(QTTEXMACS) && !defined(Q_OS_MAC) && (QT_VERSION < 0x050000)
-  w= (SI) (w / retina_factor);
+  w= (SI) (w / retina_zoom);
 #endif
   return w;
 }
@@ -224,7 +224,7 @@ edit_interface_rep::get_window_height () {
   widget me= ::get_canvas (widget (cvw));
   ::get_size (me, w, h);
 #if defined(QTTEXMACS) && !defined(Q_OS_MAC) && (QT_VERSION < 0x050000)
-  h= (SI) (h / retina_factor);
+  h= (SI) (h / retina_zoom);
 #endif
   return h;
 }
