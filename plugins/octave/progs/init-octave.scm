@@ -25,8 +25,10 @@
 (plugin-configure octave
   (:winpath "Octave*" ".")
   (:winpath "Octave*" "bin")
+  (:winpath "Octave*" "mingw64/bin")
   (:winpath "Octave/Octave*" ".")
   (:winpath "Octave/Octave*" "bin")
+  (:winpath "Octave/Octave*" "mingw64/bin")
   (:macpath "Octave*" "Contents/Resources/usr/bin")
   (:require (or (url-exists-in-path? "octave-cli")
                 (url-exists-in-path? "octave-octave-app")))

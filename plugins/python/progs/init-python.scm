@@ -48,7 +48,7 @@
 (plugin-configure python
   (:winpath "python*" ".")
   (:winpath "Python*" ".")
-  (:winpath "Windows" ".")
+  (:winpath "Python/Python*" ".")
   (:require (python-exists?))
   (:launch ,(python-launcher))
   (:tab-completion #t)

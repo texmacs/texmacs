@@ -396,13 +396,18 @@
     (when (not (url-none? u1))
       (setenv "PATH" (url->system p)))))
 
+(define (add-to-path* prefix u after?)
+  (add-to-path (url-append (system->url prefix) u) after?))
+
 (define (add-windows-program-path u after?)
-  (add-to-path (url-append (system->url "C:\\.") u) after?)
-  (add-to-path (url-append (system->url "C:\\Program File*") u) after?)
-  (add-to-path (url-append (system->url "$HOME\\AppData\\Local") u) after?))
+  (add-to-path* "C:\\." u after?)
+  (add-to-path* "C:\\Program File*" u after?)
+  (add-to-path* "$HOME\\AppData\\Local" u after?)
+  (add-to-path* "$HOME\\AppData\\Local\\Programs" u after?))
 
 (define (add-macos-program-path u after?)
-  (add-to-path (url-append (system->url "/Applications") u) after?))
+  (add-to-path* "/Applications" u after?)
+  (add-to-path* "$HOME/Applications" u after?))
 
 (define-public (plugin-add-windows-path rad rel after?)
   (when (os-mingw?)
