@@ -94,7 +94,7 @@
   <assign|tmdoc-flag|<macro|flag| <with|color|black|<block|<tformat|<cwith|1|1|1|1|cell-lsep|0fn>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|1|1|cell-bsep|0fn>|<cwith|1|1|1|1|cell-tsep|0fn>|<cwith|1|1|1|1|cell-vcorrect|n>|<table|<row|<cell|<arg|flag>>>>>>>
   >>
 
-  <assign|tmdoc-translation|<macro|name|suffix|<if|<unequal|<find-file|<merge|<arg|name>|<merge|<arg|suffix>|.tm>>>|false>|<hlink|<compound|tmdoc-flag|<image|<merge|http://www.texmacs.org/Images/flag|<merge|<arg|suffix>|.png>>|0.5w|0.5h||>>|<merge|<arg|name>|<merge|<arg|suffix>|.tm>>>>>>
+  <assign|tmdoc-translation|<macro|name|suffix|<if|<unequal|<find-file|<merge|<arg|name>|<merge|<arg|suffix>|.tm>>>|false>|<hlink|<compound|tmdoc-flag|<image|<merge|https://www.texmacs.org/Images/flag|<merge|<arg|suffix>|.png>>|0.5w|0.5h||>>|<merge|<arg|name>|<merge|<arg|suffix>|.tm>>>>>>
 
   <assign|tmdoc-translations|<\macro|name>
     <\surround||<vspace|0.5fn>>

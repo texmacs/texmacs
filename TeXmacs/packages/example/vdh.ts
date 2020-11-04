@@ -337,14 +337,14 @@
   <assign|joris-title|<\macro|title>
     <joris-webpage|<arg|title>|[ <hlink|Homepage|../main/joris.tm> \|
     <hlink|Publications|../main/publs.tm> \| <hlink|Talks|../main/talks.tm>
-    \| <hlink|<TeXmacs>|http://www.texmacs.org> \|
+    \| <hlink|<TeXmacs>|https://www.texmacs.org> \|
     <hlink|Mathemagix|http://www.mathemagix.org> ]>
   </macro>>
 
   <assign|joris-title*|<\macro|title>
     <joris-webpage|<arg|title>|[ <hlink|Homepage|../../main/joris.tm> \|
     <hlink|Publications|../../main/publs.tm> \|
-    <hlink|Talks|../../main/talks.tm> \| <hlink|<TeXmacs>|http://www.texmacs.org>
+    <hlink|Talks|../../main/talks.tm> \| <hlink|<TeXmacs>|https://www.texmacs.org>
     \| <hlink|Mathemagix|http://www.mathemagix.org> ]>
   </macro>>
 
@@ -381,11 +381,11 @@
   </macro>>
 
   <assign|joris-title|<\macro|title>
-    <joris-webpage|<arg|title>|<hlink|Homepage|../main/joris.tm><space|2em><hlink|Publications|../main/publs.tm><space|2em><hlink|Talks|../main/talks.tm><space|2em><hlink|<TeXmacs>|http://www.texmacs.org><space|2em><hlink|Mathemagix|http://www.mathemagix.org>>
+    <joris-webpage|<arg|title>|<hlink|Homepage|../main/joris.tm><space|2em><hlink|Publications|../main/publs.tm><space|2em><hlink|Talks|../main/talks.tm><space|2em><hlink|<TeXmacs>|https://www.texmacs.org><space|2em><hlink|Mathemagix|http://www.mathemagix.org>>
   </macro>>
 
   <assign|joris-title*|<\macro|title>
-    <joris-webpage|<arg|title>|<hlink|Homepage|../../main/joris.tm><space|2em><hlink|Publications|../../main/publs.tm><space|2em><hlink|Talks|../../main/talks.tm><space|2em><hlink|<TeXmacs>|http://www.texmacs.org><space|2em><hlink|Mathemagix|http://www.mathemagix.org>>
+    <joris-webpage|<arg|title>|<hlink|Homepage|../../main/joris.tm><space|2em><hlink|Publications|../../main/publs.tm><space|2em><hlink|Talks|../../main/talks.tm><space|2em><hlink|<TeXmacs>|https://www.texmacs.org><space|2em><hlink|Mathemagix|http://www.mathemagix.org>>
   </macro>>
 
   <assign|joris-versions*|<macro|name|<hlink|Pdf|<merge|<arg|name>|.pdf>>,

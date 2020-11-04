@@ -26,9 +26,9 @@
 
   <provide|html-extra-javascript-src|<tuple>>
 
-  <assign|html-extra-css|<merge|<value|html-extra-css>|<tuple|http://www.texmacs.org/css/tmfold.css>>>
+  <assign|html-extra-css|<merge|<value|html-extra-css>|<tuple|https://www.texmacs.org/css/tmfold.css>>>
 
-  <assign|html-extra-javascript-src|<merge|<value|html-extra-javascript-src>|<tuple|http://www.texmacs.org/javascript/texmacs_fold.js>>>
+  <assign|html-extra-javascript-src|<merge|<value|html-extra-javascript-src>|<tuple|https://www.texmacs.org/javascript/texmacs_fold.js>>>
 
   <\active*>
     <\src-comment>

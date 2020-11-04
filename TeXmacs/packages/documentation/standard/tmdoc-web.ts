@@ -50,18 +50,18 @@
   <assign|tmweb-main-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Home|../home/welcome>|<specific|texmacs|<tmweb-link|Download|../download/download>><specific|html|<merge|\<less\>script
   language="javascript"\<gtr\>document.write (downloadButton
   ("|<translate|Download|english|<language>>|",
-  "|<if|<or|<equal|Download|<tmweb-main>>|<equal|Download|<tmweb-sub>>>|#008000|brown>|"));\<less\>/script\<gtr\>>>|<tmweb-link|Help|../help/help>|<tmweb-link|Contribute|../contribute/contribute>|<tmweb-link|Plug-ins|../plugins/plugins>|<tmweb-link|About|../about/authors>|<tmweb-link|Contact|../contact/contact>|<hlink|<with|color|brown|<localize|Search>>|http://www.texmacs.org/search>>>>>
+  "|<if|<or|<equal|Download|<tmweb-main>>|<equal|Download|<tmweb-sub>>>|#008000|brown>|"));\<less\>/script\<gtr\>>>|<tmweb-link|Help|../help/help>|<tmweb-link|Contribute|../contribute/contribute>|<tmweb-link|Plug-ins|../plugins/plugins>|<tmweb-link|About|../about/authors>|<tmweb-link|Contact|../contact/contact>|<hlink|<with|color|brown|<localize|Search>>|https://www.texmacs.org/search>>>>>
 
   <assign|tmweb-title|<macro|title|bar|<tmdoc-title**|<tmweb-main-links>|<arg|title>|<arg|bar>>>>
 
   <assign|tmweb-license|<\macro>
     <\tmdoc-license>
       <active*|<\with|color|dark grey|font-size|0.84>
-        This webpage is part of <hlink|GNU <TeXmacs>|http://www.texmacs.org>
+        This webpage is part of <hlink|GNU <TeXmacs>|https://www.texmacs.org>
         and the larger <hlink|GNU project|http://www.gnu.org>. Verbatim
         copying and distribution of it is permitted in any medium, provided
         this notice is preserved. For more information or questions, please
-        contact <hlink|Joris van der Hoeven|http://www.texmacs.org/Web/Mail.html>.
+        contact <hlink|Joris van der Hoeven|https://www.texmacs.org/Web/Mail.html>.
 
         <hlink|Free Software Foundation|http://www.fsf.org/fsf/fsf.html>,
         Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111, USA
@@ -108,7 +108,7 @@
     </src-comment>
   </active*>
 
-  <assign|tmweb-image|<macro|name|<image|<merge|http://www.texmacs.org/Samples/|<arg|name>>|0.666667w|||>>>
+  <assign|tmweb-image|<macro|name|<image|<merge|https://www.texmacs.org/Samples/|<arg|name>>|0.666667w|||>>>
 
   <assign|tmweb-email|<macro|name|domain|<active*|<with|font-family|tt|color|dark
   magenta|\<less\>>><with|font-family|tt|color|dark
