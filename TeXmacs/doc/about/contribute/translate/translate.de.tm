@@ -19,7 +19,7 @@
     ein. Sie möchten vielleicht Andrey Grozin's Wörterbuch-Werkzeug
 
     <\verbatim>
-      \ \ \ \ http://www.texmacs.org/Data/dictool.py.gz
+      \ \ \ \ https://www.texmacs.org/Data/dictool.py.gz
     </verbatim>
 
     benutzen. Dazu muss Python installiert sein. Laden sie die Datei

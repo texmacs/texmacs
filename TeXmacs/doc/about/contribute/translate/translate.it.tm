@@ -22,7 +22,7 @@
     reperibile all'indirizzo
 
     <\verbatim>
-      \ \ \ \ http://www.texmacs.org/Data/dictool.py.gz
+      \ \ \ \ https://www.texmacs.org/Data/dictool.py.gz
     </verbatim>
 
     Prima di utilizzare questo strumento assicurati che Python sia installato

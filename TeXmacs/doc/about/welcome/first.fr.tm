@@ -19,7 +19,7 @@
     les sites suivants :\ 
 
     <\verbatim>
-      \ \ \ \ http://www.texmacs.org<format|next line>
+      \ \ \ \ https://www.texmacs.org<format|next line>
       \ \ \ http://www.gnu.org/software/texmacs
     </verbatim>
 
@@ -32,7 +32,7 @@
     de diffusion <apply|TeXmacs> :
 
     <\verbatim>
-      \ \ \ \ http://www.texmacs.org/Web/Support.html<format|next line>
+      \ \ \ \ https://www.texmacs.org/Web/Support.html<format|next line>
       \ \ \ http://www.gnu.org/software/texmacs/Web/Support.html
     </verbatim>
 

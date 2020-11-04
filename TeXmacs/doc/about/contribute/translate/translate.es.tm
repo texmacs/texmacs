@@ -20,7 +20,7 @@
     herramienta de diccionario de Andrey Grozin en\ 
 
     <\verbatim>
-      \ \ \ \ http://www.texmacs.org/Data/dictool.py.gz
+      \ \ \ \ https://www.texmacs.org/Data/dictool.py.gz
     </verbatim>
 
     A fin de usarla, esté seguro de que Python está instalado en su sistema,

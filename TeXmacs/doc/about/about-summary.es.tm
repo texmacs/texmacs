@@ -11,7 +11,7 @@
   GNU/<name|Linux>>>|<row|<cell|Copyright>|<cell|<copyright> 1998--2002 por
   Joris van der Hoeven >>|<row|<cell|Licencia>|<cell|<hlink|Licencia Pública
   General GNU|$TEXMACS_PATH/LICENSE>>>|<row|<cell|Sitios
-  web>|<cell|<tabular|<tformat|<twith|table-valign|T>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<table|<row|<cell|<verbatim|http://www.texmacs.org>>>|<row|<cell|<verbatim|http://www.gnu.org/software/texmacs>>>>>>>>|<row|<cell|Contacto>|<cell|<verbatim|contact@texmacs.org>>>|<row|<cell|Correo
+  web>|<cell|<tabular|<tformat|<twith|table-valign|T>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<table|<row|<cell|<verbatim|https://www.texmacs.org>>>|<row|<cell|<verbatim|http://www.gnu.org/software/texmacs>>>>>>>>|<row|<cell|Contacto>|<cell|<verbatim|contact@texmacs.org>>>|<row|<cell|Correo
   regular>|<cell|<tabular|<tformat|<twith|table-valign|T>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<table|<row|<cell|<abbr|Dr.>
   Joris van der Hoeven>>|<row|<cell|<abbr|Dépt.> de Mathématiques
   (<abbr|Bât.> 425)>>|<row|<cell|Université Paris-Sud>>|<row|<cell|91405

@@ -11,7 +11,7 @@
   <\wide-tabular>
     <tformat|<cwith|1|1|1|1|cell-hyphen|n>|<cwith|6|6|1|1|cell-hyphen|n>|<cwith|3|3|1|1|cell-hyphen|n>|<cwith|4|4|1|1|cell-hyphen|n>|<cwith|1|-1|1|-1|cell-valign|t>|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|1|-1|cell-bsep|1em>|<cwith|6|6|1|-1|cell-bsep|0em>|<cwith|1|-1|1|1|cell-rsep|2spc>|<cwith|1|1|1|-1|cell-tsep|1em>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|2|cell-valign|t>|<cwith|2|2|1|1|cell-halign|r>|<cwith|2|2|1|2|cell-bsep|1em>|<cwith|2|2|1|1|cell-rsep|2spc>|<table|<row|<cell|<image|../../../misc/images/welcome-videos.png||2.2em||>>|<\cell>
       On our website <slink|https://www.texmacs.org>, you may find several
-      <hlink|videos|http://www.texmacs.org/tmweb/home/videos.en.html> to get
+      <hlink|videos|https://www.texmacs.org/tmweb/home/videos.en.html> to get
       you started: typing your first article, mathematical formulas,
       structured text editing, tables, laptop presentations, etc.
     </cell>>|<row|<cell|<image|../../../misc/images/The_Jolly_Writer.png||2.2em||>
@@ -23,9 +23,9 @@
     >|<\cell>
       The <TeXmacs> user manual can be browsed via the <menu|Help|Manual>
       menu or <hlink|downloaded in<nbsp><name|Pdf>
-      format|http://www.texmacs.org/tmweb/help/book.en.html> from our
+      format|https://www.texmacs.org/tmweb/help/book.en.html> from our
       website. Our website also offers several
-      <hlink|tutorials|http://www.texmacs.org/tmweb/help/tutorial.en.html>.
+      <hlink|tutorials|https://www.texmacs.org/tmweb/help/tutorial.en.html>.
     </cell>>|<row|<cell|<image|../../../misc/images/welcome-help.png||2.2em||>>|<\cell>
       You may use <shortcut|(interactive docgrep-in-doc)> to search for words
       in the integrated documentation. The <icon|tm_focus_help_x4.png> icon
@@ -34,7 +34,7 @@
       <image|../../../misc/images/welcome-email.png||2.2em||>
     </cell>|<\cell>
       Further questions? Do not hesitate to
-      <hlink|subscribe|http://www.texmacs.org/tmweb/home/ml.en.html#tmusers>
+      <hlink|subscribe|https://www.texmacs.org/tmweb/home/ml.en.html#tmusers>
       to the <verbatim|texmacs-users@texmacs.org> mailing list and post your
       questions there. You may also browse the <hlink|list
       archives|https://lists.texmacs.org/wws/arc/texmacs-users>.
@@ -42,8 +42,8 @@
     >|<\cell>
       If you like the program, then you can also help us! Please cite
       <TeXmacs> in your work using the <icon|tm_like_x4.png> icon on the
-      third toolbar. You may also <hlink|donate|http://www.texmacs.org/tmweb/contribute/donations.en.html>
-      money or <hlink|join|http://www.texmacs.org/tmweb/contribute/contribute.en.html>
+      third toolbar. You may also <hlink|donate|https://www.texmacs.org/tmweb/contribute/donations.en.html>
+      money or <hlink|join|https://www.texmacs.org/tmweb/contribute/contribute.en.html>
       the team of developers.
     </cell>>>>
   </wide-tabular>

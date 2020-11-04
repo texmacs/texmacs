@@ -143,6 +143,6 @@ not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .SH "SEE ALSO"
 The full documentation for GNU TeXmacs can be accessed through the help menu
 when starting up the editor. You may also access the online documentation
-from inside the editor. The TeXmacs website at <http://www.texmacs.org>
+from inside the editor. The TeXmacs website at <https://www.texmacs.org>
 can be consulted for additional information. The TeXmacs web pages are
 also available at <http://www.gnu.org/software/texmacs>.

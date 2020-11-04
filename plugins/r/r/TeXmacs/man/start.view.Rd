@@ -13,7 +13,7 @@ a remote system that has no X11 interface, for example.}
 }
 
 
-\references{\url{http://www.texmacs.org}, \url{http://www.texmacs.org/tmweb/plugins/statistics.en.html#r}}
+\references{\url{https://www.texmacs.org}, \url{https://www.texmacs.org/tmweb/plugins/statistics.en.html#r}}
 \author{Michael Lachmann Tamarlin}
 
 

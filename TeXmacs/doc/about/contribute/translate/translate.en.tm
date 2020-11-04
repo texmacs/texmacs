@@ -20,7 +20,7 @@
     Grozin's dictionary tool at
 
     <\verbatim>
-      \ \ \ \ http://www.texmacs.org/Data/dictool.py.gz
+      \ \ \ \ https://www.texmacs.org/Data/dictool.py.gz
     </verbatim>
 
     In order to use it, may sure that Python is installed on your system,

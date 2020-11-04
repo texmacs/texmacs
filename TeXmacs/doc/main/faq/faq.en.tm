@@ -119,7 +119,7 @@
 
       <item>lets you export your documents to PS and PDF and offers both
       import and export to HTML, <LaTeX>, Scheme, Verbatim and Xml. We would
-      very much appreciate your <hlink|help|http://www.texmacs.org/Web/Contribute.html>
+      very much appreciate your <hlink|help|https://www.texmacs.org/Web/Contribute.html>
       for writing and improving converters for <TeXmacs> documents.
     </itemize-dot>
   </answer*>

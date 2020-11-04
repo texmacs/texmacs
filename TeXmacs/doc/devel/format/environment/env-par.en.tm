@@ -58,13 +58,13 @@
       <\quote-env>
         <block|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-hyphen|t>|<table|<row|<\cell>
           For certain paragraphs with wide unbreakable pieces of text, such
-          as the hyperlink <rigid|<href|http://www.texmacs.org>> it is
+          as the hyperlink <rigid|<href|https://www.texmacs.org>> it is
           sometimes preferrable to switch from justified to left aligned text
           when the spacing between words becomes to wide.
         </cell>|<\cell>
           <\with|par-flexibility|2.0>
             For certain paragraphs with wide unbreakable pieces of text, such
-            as the hyperlink <rigid|<href|http://www.texmacs.org>> it is
+            as the hyperlink <rigid|<href|https://www.texmacs.org>> it is
             sometimes preferrable to switch from justified to left aligned
             text when the spacing between words becomes to wide.
           </with>

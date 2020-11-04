@@ -51,5 +51,5 @@ For GNU TeXmacs 1.99.12 on macOS, please add `/Applications/PariGP.app/Contents/
 
 ## How to contribute
 Documentation on how to interface TeXmacs with an extern application can be browsed
-in the `Help->Interfacing` menu or [online](http://www.texmacs.org/tmweb/manual/webman-write-itf.en.html).
+in the `Help->Interfacing` menu or [online](https://www.texmacs.org/tmweb/manual/webman-write-itf.en.html).
 

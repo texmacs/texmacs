@@ -10,7 +10,7 @@ DefaultGroupName=TeXmacs
 ;denis begin
 VersionInfoTextVersion=@DEVEL_VERSION@
 AppPublisher=MAGIX
-AppPublisherURL=http://www.texmacs.org/
+AppPublisherURL=https://www.texmacs.org/
 AppVersion=@DEVEL_VERSION@
 LicenseFile=..\..\..\distr\TeXmacs-Windows\LICENSE
 ;denis end

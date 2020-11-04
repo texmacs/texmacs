@@ -18,7 +18,7 @@
     <apply|menu|Help> menu. At either one of the websites\ 
 
     <\verbatim>
-      \ \ \ \ http://www.texmacs.org<format|next line>
+      \ \ \ \ https://www.texmacs.org<format|next line>
       \ \ \ http://www.gnu.org/software/texmacs
     </verbatim>
 
@@ -31,7 +31,7 @@
     <apply|TeXmacs> mailing lists: see\ 
 
     <\verbatim>
-      \ \ \ \ http://www.texmacs.org/Web/Support.html<format|next line>
+      \ \ \ \ https://www.texmacs.org/Web/Support.html<format|next line>
       \ \ \ http://www.gnu.org/software/texmacs/Web/Support.html
     </verbatim>
 

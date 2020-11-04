@@ -20,7 +20,7 @@
     Vous pouvez utiliser l'outil dictionnaire de Andrey Grozin :
 
     <\verbatim>
-      \ \ \ \ http://www.texmacs.org/Data/dictool.py.gz
+      \ \ \ \ https://www.texmacs.org/Data/dictool.py.gz
     </verbatim>
 
     Pour l'utiliser, vous devez vous assurer que Python est installé sur

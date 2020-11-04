@@ -9,7 +9,7 @@
   <verbatim|texmacs.org> using <name|SVN>. In order to contribute, you should
   first create an account as explained on
 
-  <verbatim| \ \ \ <hlink|http://www.texmacs.org/tmweb/download/svn.en.html|http://www.texmacs.org/tmweb/download/svn.en.html>>
+  <verbatim| \ \ \ <hlink|https://www.texmacs.org/tmweb/download/svn.en.html|https://www.texmacs.org/tmweb/download/svn.en.html>>
 
   In fact, SVN is not ideal for our documentation purpose, because it is not
   very dynamic. In the future, we plan to create a dedicated publication

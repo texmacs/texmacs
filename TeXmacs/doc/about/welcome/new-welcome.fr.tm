@@ -11,16 +11,16 @@
   <\wide-tabular>
     <tformat|<cwith|1|1|1|1|cell-hyphen|n>|<cwith|5|5|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|3|3|1|1|cell-hyphen|n>|<cwith|1|-1|1|-1|cell-valign|t>|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|1|-1|cell-bsep|1em>|<cwith|5|5|1|-1|cell-bsep|0em>|<cwith|1|-1|1|1|cell-rsep|2spc>|<cwith|1|1|1|-1|cell-tsep|1em>|<table|<row|<cell|<image|../../../misc/images/welcome-videos.png||2.2em||>>|<\cell>
       Sur notre site <slink|https://www.texmacs.org>, vous pouvez trouver
-      plusieurs <hlink|vidéos|http://www.texmacs.org/tmweb/home/videos.en.html><nbsp>:
+      plusieurs <hlink|vidéos|https://www.texmacs.org/tmweb/home/videos.en.html><nbsp>:
       comment taper votre premier article, des formules mathématiques, des
       documents structurés, des tableaux, des présentations sur ordinateur,
       etc.
     </cell>>|<row|<cell|<image|../../../misc/images/welcome-manual.png||2.2em||>
     >|<\cell>
       Le guide de l'utilisateur <TeXmacs> peut être parcouru via le menu
-      <menu|Help|Manual> ou <hlink|téléchargé|http://www.texmacs.org/tmweb/help/book.en.html>
+      <menu|Help|Manual> ou <hlink|téléchargé|https://www.texmacs.org/tmweb/help/book.en.html>
       sous forme de document<nbsp><name|Pdf> depuis notre site. Notre site
-      fournit aussi plusieurs <hlink|tutoriels|http://www.texmacs.org/tmweb/help/tutorial.en.html>.
+      fournit aussi plusieurs <hlink|tutoriels|https://www.texmacs.org/tmweb/help/tutorial.en.html>.
     </cell>>|<row|<cell|<image|../../../misc/images/welcome-help.png||2.2em||>>|<\cell>
       La touche <shortcut|(interactive docgrep-in-doc)> permet de chercher
       des mots clefs dans la documentation intégrée.
@@ -30,7 +30,7 @@
       <image|../../../misc/images/welcome-email.png||2.2em||>
     </cell>|<\cell>
       D'autres questions ? N'hésitez pas à vous
-      <hlink|abonner|http://www.texmacs.org/tmweb/home/ml.en.html#tmusers> à
+      <hlink|abonner|https://www.texmacs.org/tmweb/home/ml.en.html#tmusers> à
       notre liste de diffusion <verbatim|texmacs-users@texmacs.org> pour
       poser vos questions. Vous pouvez aussi parcourir les
       <hlink|archives|https://lists.texmacs.org/wws/arc/texmacs-users> de
@@ -40,8 +40,8 @@
       Si vous aimez le programme, alors vous pouvez nous aider ! Merci de
       toujours citer <TeXmacs> dans vos travaux utilisant l'icône
       <icon|tm_like_x4.png> sur la troisième barre d'outils. Il est aussi
-      possible de nous faire des <hlink|donations|http://www.texmacs.org/tmweb/contribute/donations.en.html>
-      ou de <hlink|joindre|http://www.texmacs.org/tmweb/contribute/contribute.en.html>
+      possible de nous faire des <hlink|donations|https://www.texmacs.org/tmweb/contribute/donations.en.html>
+      ou de <hlink|joindre|https://www.texmacs.org/tmweb/contribute/contribute.en.html>
       l'équipe des développeurs.
     </cell>>>>
   </wide-tabular>

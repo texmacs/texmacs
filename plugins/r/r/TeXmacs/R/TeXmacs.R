@@ -75,7 +75,7 @@ structure( function()
     
     options(texmacs=op)
 	##seealso<< \code{\link{v}},\code{\link{start.view}},\code{\link{postscript}}
-	##references<< \url{http://www.texmacs.org}, \url{http://www.texmacs.org/tmweb/plugins/statistics.en.html}
+	##references<< \url{https://www.texmacs.org}, \url{https://www.texmacs.org/tmweb/plugins/statistics.en.html}
   }	,ex=function() {
 		start.view()
 		plot(1:10,10:1)
@@ -117,7 +117,7 @@ structure( function()
   op$dev = dev.cur()
   options(texmacs=op)
 ##seealso<< \code{\link{v}},\code{\link{end.view}},\code{\link{postscript}}
-##references<< \url{http://www.texmacs.org}, \url{http://www.texmacs.org/tmweb/plugins/statistics.en.html#r}
+##references<< \url{https://www.texmacs.org}, \url{https://www.texmacs.org/tmweb/plugins/statistics.en.html#r}
 },ex=function() {
 	start.view()
 	plot(1:10,10:1)

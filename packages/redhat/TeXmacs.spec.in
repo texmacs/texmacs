@@ -2,7 +2,7 @@ Summary: A structured wysiwyg scientific text editor
 Name: @PACKAGE@
 Version: @DEVEL_VERSION@
 Release: @DEVEL_RELEASE@%{?dist}
-Url: http://www.texmacs.org
+Url: https://www.texmacs.org
 Source0: @tm_devel@.tar.gz
 License: GNU GPL 3.0
 Packager: Joris van der Hoeven <vdhoeven@texmacs.org>

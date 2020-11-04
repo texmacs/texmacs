@@ -7,7 +7,7 @@
 
   There are many things that we would like to integrate in <TeXmacs>. On
   <hlink|<name|Savannah>|http://savannah.gnu.org/projects/texmacs/>, we
-  maintain a<nbsp>wish list with <hlink|suggestions|http://www.texmacs.org/tmweb/contact/wishes.en.html>
+  maintain a<nbsp>wish list with <hlink|suggestions|https://www.texmacs.org/tmweb/contact/wishes.en.html>
   by users and other detailed wanted features. Here follows an incomplete
   list of more general directions for future development, as on may 31, 2019.
 

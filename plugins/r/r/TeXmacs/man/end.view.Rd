@@ -5,7 +5,7 @@
 \usage{\method{end}{view}()}
 
 
-\references{\url{http://www.texmacs.org}, \url{http://www.texmacs.org/tmweb/plugins/statistics.en.html}}
+\references{\url{https://www.texmacs.org}, \url{https://www.texmacs.org/tmweb/plugins/statistics.en.html}}
 \author{Michael Lachmann Tamarlin}
 
 
