@@ -318,11 +318,11 @@
     (!append (!translate "This document has been produced using the GNU") " "
              (!group (!recurse (TeXmacs))) " " (!translate "text editor") " ("
              (!translate "see") " "
-             (url "http://www.texmacs.org") ")"))
+             (url "https://www.texmacs.org") ")"))
   (citewebsite
     (!append (!translate "This document has been written using") " GNU "
              (!group (!recurse (TeXmacs))) "; " (!translate "see") " "
-             (url "http://www.texmacs.org") "."))
+             (url "https://www.texmacs.org") "."))
   (tmmade (!recurse (tikzframe (Backsigma))))
   (scheme "{\\sc Scheme}")
   (tmsep  ", ")

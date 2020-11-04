@@ -187,7 +187,7 @@
        (extra-latex-attrib
         `((xmlns:ns0 "http://www.iki.fi/pav/software/textext/")
           (ns0:text ,latex-code) (ns0:preamble "texmacs_latex.sty")))
-       (extra-tm-attrib `((xmlns:ns1 "http://www.texmacs.org/")
+       (extra-tm-attrib `((xmlns:ns1 "https://www.texmacs.org/")
                           (ns1:texmacscode ,tm-code) (ns1:texmacstyle ,tm-style)))
        ;; OK, the texmacs namespace maybe not correctly described at that url
        (old->new-labels (newids! idlist tm-code))

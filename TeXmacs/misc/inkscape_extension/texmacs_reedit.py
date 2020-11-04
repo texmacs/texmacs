@@ -12,7 +12,7 @@ this files goes into ~/.config/Inkscape/extensions
 
 This extension allows to (re-)edit mathematical equations in WYSIWYG 
 way with TeXmacs. It works with equations originally produced by 
-versions of TeXmacs <http://www.texmacs.org> dated after july 2012, 
+versions of TeXmacs <https://www.texmacs.org> dated after july 2012, 
 but also with those made by the Textext.ink Inkscape extension
 (http://www.iki.fi/pav/software/textext/).
 
@@ -57,7 +57,7 @@ if IS_WINDOWS :
 else : texmacs_path ='texmacs' #texmacs needs to be in the path!
 
 TEXTEXT_NS = u"http://www.iki.fi/pav/software/textext/"
-TEXMACS_NS = u"http://www.texmacs.org/"
+TEXMACS_NS = u"https://www.texmacs.org/"
 SVG_NS = u"http://www.w3.org/2000/svg"
 
 NSS = {
