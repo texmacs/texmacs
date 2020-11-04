@@ -571,8 +571,8 @@ edit_env_rep::exec (tree t) {
 tree
 edit_env_rep::exec_formatting (tree t, string v) {
   int i, n= N(t);
-  if (n < 1)
-    return tree (ERROR, "bad formatting");
+  if (is_func (t, TFORMAT, 0)) return t;
+  if (n < 1) return tree (ERROR, "bad formatting");
   tree r (t, n);
   for (i=0; i<n-1; i++) r[i]= exec (t[i]);
   tree oldv= read (v);
