@@ -119,7 +119,7 @@
     (if done?
 	'(document "")
 	(with t (tree->stree (tree-import cur "texmacs"))
-	  (if (string? t)
+	  (if (not (and (pair? t) (list? (cdr t)) (forall? pair? (cdr t))))
 	      (begin
 		(display* "TeXmacs] bad link or file " cur "\n")
 		'(document ""))
