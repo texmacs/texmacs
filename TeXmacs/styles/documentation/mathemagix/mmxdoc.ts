@@ -32,7 +32,7 @@
     </src-comment>
   </active*>
 
-  <assign|html-css|http://www.texmacs.org/css/mmxdoc.css>
+  <assign|html-css|https://www.texmacs.org/css/mmxdoc.css>
 
   <\active*>
     <\src-comment>

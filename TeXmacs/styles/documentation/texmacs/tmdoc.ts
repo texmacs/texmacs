@@ -48,9 +48,9 @@
 
   <assign|sectional-post-sep|<macro|<space|2spc>>>
 
-  <assign|html-css|http://www.texmacs.org/css/tmdoc.css>
+  <assign|html-css|https://www.texmacs.org/css/tmdoc.css>
 
-  <assign|html-head-javascript-src|http://www.texmacs.org/javascript/texmacs_functions.js>
+  <assign|html-head-javascript-src|https://www.texmacs.org/javascript/texmacs_functions.js>
 
   <\active*>
     <\src-comment>

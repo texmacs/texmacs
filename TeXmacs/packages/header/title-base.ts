@@ -47,13 +47,13 @@
   <assign|arXiv-class-text|<macro|<localize|ArXiv subject classification>>>
 
   <assign|with-TeXmacs-text|<macro|This document has been written using the
-  GNU <TeXmacs> text editor (see <hlink|<with|font-family|tt|www.texmacs.org>|http://www.texmacs.org>).>>
+  GNU <TeXmacs> text editor (see <hlink|<with|font-family|tt|www.texmacs.org>|https://www.texmacs.org>).>>
 
   <assign|noteref-sep|<macro|>>
 
   <assign|cite-website|<macro|<localize|This document has been written using>
   GNU <TeXmacs><if|<equal|<value|language>|french>| ; |; ><localize|see>
-  <hlink|<with|font-family|tt|www.texmacs.org>|http://www.texmacs.org>.>>
+  <hlink|<with|font-family|tt|www.texmacs.org>|https://www.texmacs.org>.>>
 
   <assign|cite-TeXmacs|<xmacro|keys|<localize|This document has been written
   using> GNU <TeXmacs><nbsp><map-args|identity|cite|keys>.>>
