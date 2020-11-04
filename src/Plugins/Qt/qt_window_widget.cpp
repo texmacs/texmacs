@@ -161,7 +161,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       if (qwid) {
         if (flag) {
           qwid->show();
-          // wid->activateWindow();
+          //qwid->activateWindow();
           //WEIRD: in Ubuntu uncommenting the above line causes the main window 
           //to be opened in the background.
           qwid->raise();

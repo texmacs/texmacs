@@ -98,6 +98,12 @@
   (and-with l (and-nnull? (search-label (buffer-tree) id))
     (label-preview (car l))))
 
+(define (preview-init? p)
+  (and-with x (and (pair? p) (car p))
+    (and (string? x)
+         (not (string-starts? x "page-"))
+         (nin? x (list "zoom-factor" "full-screen-mode")))))
+
 (tm-define (preview-reference body body*)
   (:secure #t)
   (and-with ref (tree-up body)
@@ -109,7 +115,10 @@
                  (zf (get-window-zoom-factor))
                  (sf (/ 4.0 zf))
                  (mag (number->string (/ zf 1.5)))
-                 (balloon* `(with "magnification" ,mag ,balloon))
+                 (inits* (map cdr (cdr (tm->stree (get-all-inits)))))
+                 (inits (list-filter inits* preview-init?))
+                 (env (apply append inits))
+                 (balloon* `(with ,@env "magnification" ,mag ,balloon))
                  (w (widget-texmacs-output
                      `(surround (hide-preamble ,pre) "" ,balloon*)
                      `(style (tuple ,@packs)))))

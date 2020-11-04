@@ -145,7 +145,7 @@
 (define (filter-on-event event)
   (lambda (item)
     ;;(display* "Filter: " item " on " event "\n")
-    (or (== event "click")
+    (or (and (== event "click") (!= (link-item-type item) "mouse-over"))
         (== (link-item-type item) event))))
 
 (define (filter-link-list l event)
