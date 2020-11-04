@@ -1,4 +1,4 @@
-<TeXmacs|1.99.11>
+<TeXmacs|1.99.14>
 
 <style|<tuple|source|std>>
 
@@ -606,6 +606,10 @@
   <assign|help-balloon-color|pastel yellow>
 
   <assign|help-balloon|<macro|x|y|halign|valign|<mouse-over-balloon*|<arg|x>|<colored-frame|<value|help-balloon-color>|<arg|y>>|<arg|halign>|<arg|valign>>>>
+
+  <assign|preview-balloon|<macro|body|<tabular|<tformat|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-background|#edc>|<twith|table-width|40em>|<twith|table-hmode|min>|<table|<row|<\cell>
+    <arg|body>
+  </cell>>>>>>>
 
   <\active*>
     <\src-comment>

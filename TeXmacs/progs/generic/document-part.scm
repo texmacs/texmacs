@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (generic document-part)
-  (:use (generic document-edit) (text text-structure)))
+  (:use (generic document-edit)
+        (text text-structure)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Flatten old-style projects into one file
@@ -172,6 +173,14 @@
 ;; Listing the document parts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (document-has-preamble? t)
+  (:synopsis "Does the document tree @t contain a preamble?")
+  (tree-in? (tree-ref t 0) '(show-preamble hide-preamble)))
+
+(tm-define (document-get-preamble t)
+  (:synopsis "Obtain the preamble of the document tree @t")
+  (if (document-has-preamble? t) (tree-ref t 0 0) `(document "")))
+
 (define (document-part-name t)
   (if (== (tree-ref t 1) (string->tree ""))
       (string->tree "no title")
@@ -190,8 +199,11 @@
 
 (tm-define (buffer-has-preamble?)
   (:synopsis "Does the current buffer contain a preamble?")
-  (with t (buffer-tree)
-    (tree-in? (tree-ref t 0) '(show-preamble hide-preamble))))
+  (document-has-preamble? (buffer-tree)))
+
+(tm-define (buffer-get-preamble)
+  (:synopsis "Obtain the preamble of the current buffer")
+  (document-get-preamble (buffer-tree)))
 
 (tm-define (buffer-parts-list all?)
   (:synopsis "Get the list of all document parts of the current buffer")

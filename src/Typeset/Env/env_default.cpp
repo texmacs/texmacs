@@ -206,7 +206,7 @@ initialize_default_env () {
   env (TABLE_MAX_COLS)   = "";          // suggested maximal number of columns
 
   env (CELL_DECORATION)  = "";          // decorating table of cell
-  env (CELL_FORMAT)      = TFORMAT;     // format of cell
+  env (CELL_FORMAT)      = tree(TFORMAT); // format of cell
   env (CELL_BACKGROUND)  = "";          // background color of cell
   env (CELL_ORIENTATION) = "portrait";  // orientation of cell  
   env (CELL_WIDTH)       = "";          // width of cell
@@ -349,6 +349,9 @@ initialize_default_env () {
   tree ln2 (LINK, "action", copy (src_id), copy (dest_script));
   tree ln3 (LINK, "hyperlink", copy (ref_id), copy (dest_ref));
   tree ln4 (LINK, "anchor", anchor);
+  //tree sc1 (SCRIPT, "preview-reference",
+  //          tree (QUOTE_ARG, "Id"), tree (ARG, "Id"));
+  //tree ln5 (LINK, "mouse-over", copy (ref_id), sc1);
   tree labflag (FLAG, tree (ARG, "Id"), "blue", "Id");
   tree labtxt (SET_BINDING, tree (ARG, "Id"), tree (VALUE, THE_LABEL));
   tree merged (MERGE, tree (VALUE, THE_TAGS), tuple (tree (ARG, "Id")));
@@ -372,9 +375,11 @@ initialize_default_env () {
 			   tree (SURROUND, tagflag, "",
                                  tree (ARG, "body"))));
   env ("reference")= tree (MACRO, "Id",
-			   tree (LOCUS, copy (ref_id), ln3, reftxt));
+			   tree (LOCUS, copy (ref_id), ln3,
+                                 /*ln5,*/ reftxt));
   env ("pageref")= tree (MACRO, "Id",
-			 tree (LOCUS, copy (ref_id), copy (ln3), preftxt));
+			 tree (LOCUS, copy (ref_id), copy (ln3),
+                               /*copy (ln5),*/ preftxt));
   env ("include")= tree (MACRO, "name",
 			 tree (VAR_INCLUDE, tree (ARG, "name")));
 

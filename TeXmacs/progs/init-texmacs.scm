@@ -429,6 +429,8 @@
              link-follow-ids)
 (lazy-define (link link-extern) get-constellation
              get-link-locations register-link-locations)
+;;(lazy-define (link ref-edit) preview-reference)
+;;(define-secure-symbols preview-reference)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 

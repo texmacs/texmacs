@@ -21,14 +21,14 @@
 * There are three main types of urls:
 *   - rootless urls, like a/b/c. These urls are mainly used in computations.
 *     For example, they can be appended to another url.
-*   - Standard rooted urls, like file:///usr or http://www.texmacs.org.
+*   - Standard rooted urls, like file:///usr or https://www.texmacs.org.
 *     These are the same as those used on the web.
 *   - System urls, characterized by a "default" root.
 *     These urls are similar to standard rooted urls, but they behave
 *     in a slightly different way with respect to concatenation.
-*     For instance http://www.texmacs.org/Web * file:///tmp would yield
-*     file:///tmp, where as http://www.texmacs.org/Web * /tmp yields
-*     http://www.texmacs.org/tmp
+*     For instance https://www.texmacs.org/Web * file:///tmp would yield
+*     file:///tmp, where as https://www.texmacs.org/Web * /tmp yields
+*     https://www.texmacs.org/tmp
 *******************************************************************************
 * There are several formats for parsing (and printing) urls:
 *   - System format: the usual format on your operating system.

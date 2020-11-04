@@ -14,7 +14,8 @@
 (texmacs-module (source macro-widgets)
   (:use (source macro-edit)
 	(version version-edit) ;; FIXME: for selection-trees
-	(generic format-edit)))
+	(generic format-edit)
+        (generic document-part)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Major operation mode
@@ -97,15 +98,6 @@
   (:require (has-style-package? "macro-editor"))
   (with mode (if (== (get-macro-mode) "Text") "Source" "Text")
     (set-macro-mode (current-buffer) mode)))
-  
-(define (buffer-has-preamble? buf)
-  (tree-in? (tree-ref buf 0)
-            '(show-preamble hide-preamble)))
-
-(define (buffer-get-preamble buf)
-  (if (buffer-has-preamble? buf)
-      (tree-ref buf 0 0)
-      `(document "")))
 
 (define (preamble-insert pre ass)
   (with m (list-find (reverse (tree-children pre))
@@ -125,9 +117,9 @@
     (cond ((or (not (buffer-exists? u)) (not (buffer-exists? b))) #f)
           ((and old (tree->path old)) (tree-set old 1 mac))
           (else
-            (when (not (buffer-has-preamble? buf))
+            (when (not (document-has-preamble? buf))
               (tree-insert! buf 0 '((hide-preamble (document "")))))
-            (when (buffer-has-preamble? buf)
+            (when (document-has-preamble? buf)
               (with pre (tree-ref buf 0 0)
                 (preamble-insert pre new)))
             (when (!= m b)
@@ -151,7 +143,7 @@
 		  `(edit-tag ,l ,(tm-ref def 1))))
          (mac* (if (!= macro-current-mode "Source") mac
                    `(,@(cDr mac) (inactive* ,(cAr mac)))))
-	 (pre (buffer-get-preamble (buffer-tree)))
+	 (pre (document-get-preamble (buffer-tree)))
 	 (doc `(document (hide-preamble ,pre) ,mac*)))
     doc))
 
