@@ -285,7 +285,7 @@
   (define xmlns-attrs
     '((xmlns "http://www.w3.org/1999/xhtml")
       (xmlns:m "http://www.w3.org/1998/Math/MathML")
-      (xmlns:x "http://www.texmacs.org/2002/extensions")))
+      (xmlns:x "https://www.texmacs.org/2002/extensions")))
   (define doctype-list
     (let ((html       "-//W3C//DTD XHTML 1.1//EN")
           (mathml     "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN")
@@ -350,7 +350,8 @@
          (s2 (sxml-attr x2 'style))
          (s  (if (and s1 s2) (css-merge-styles s1 s2) (or s1 s2)))
          (o? (lambda (x) (or (npair? x) (nin? (car x) '(style class)))))
-         (other (list-filter (append (sxml-attr-list x1) (sxml-attr-list x2)) o?)))
+         (other (list-filter (append (sxml-attr-list x1)
+                                     (sxml-attr-list x2)) o?)))
     (append (if c (list (list 'class c)) (list))
             (if s (list (list 'style s)) (list))
             other)))
@@ -361,8 +362,11 @@
              (and (== (length l1) 1)
                   (func? (car l1) 'h:div)
                   (let* ((l2 (or (sxml-content (car l1)) (list)))
-                         (a (tmhtml-div-merged-attrs x (car l1))))
-                    `(h:div (@ ,@a) ,@l2)))))
+                         (a  (tmhtml-div-merged-attrs x (car l1)))
+                         (c1 (sxml-attr x 'class))
+                         (c2 (sxml-attr (car l1) 'class)))
+                    (and (not (and c1 c2))
+                         `(h:div (@ ,@a) ,@l2))))))
       x))
 
 (define (xhtml-block? x)
@@ -393,7 +397,9 @@
   (or (and (tm-in? x '(h:p h:div h:pre h:h1 h:h2 h:h3 h:h4
                        h:ol h:ul h:dl h:table))
            (not (and-with style (sxml-attr x 'style)
-                  (string-contains? style "display: inline"))))
+                  (string-contains? style "display: inline")))
+           (not (and-with class (sxml-attr x 'class)
+                  (string-contains? class "-license"))))
       (and (tm-in? x '(h:i h:b h:u h:var h:font h:class))
            ;; FIXME: we should really restructure this kind of Html output
            ;; such that these tags never contain block content
@@ -1683,13 +1689,13 @@
 (define (tmhtml-make-block content)
   (let* ((l '(h:td
 	      (@ (align "left"))
-	      (h:img (@ (src "http://www.texmacs.org/Images/tm_gnu1b.png")))))
+	      (h:img (@ (src "https://www.texmacs.org/Images/tm_gnu1b.png")))))
 	 (c `(h:td
 	      (@ (align "center") (width "100%"))
 	      ,@(tmhtml content)))
 	 (r '(h:td
 	      (@ (align "right"))
-	      (h:img (@ (src "http://www.texmacs.org/Images/tm_gnu2b.png")))))
+	      (h:img (@ (src "https://www.texmacs.org/Images/tm_gnu2b.png")))))
 	 (row `(h:tr ,l ,c ,r)))
     `(h:table (@ (width "100%") (cellspacing "0") (cellpadding "3")) ,row)))
 
