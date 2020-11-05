@@ -16,6 +16,7 @@
 #include "QTMWindow.hpp"
 #include "QTMGuiHelper.hpp"
 #include "QTMMenuHelper.hpp"
+#include "QTMApplication.hpp"
 
 #include "message.hpp"
 #include "analyze.hpp"
@@ -160,11 +161,13 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       bool flag = open_box<bool> (val);
       if (qwid) {
         if (flag) {
+          //QWidget* master = QApplication::activeWindow ();
           qwid->show();
           //qwid->activateWindow();
           //WEIRD: in Ubuntu uncommenting the above line causes the main window 
           //to be opened in the background.
           qwid->raise();
+          //QApplication::setActiveWindow (master);
         }
         else qwid->hide();
       }

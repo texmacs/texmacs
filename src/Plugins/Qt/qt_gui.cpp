@@ -945,7 +945,7 @@ qt_gui_rep::show_help_balloon (widget wid, SI x, SI y) {
   // the texmacs-input widget whenever there is one)
   get_position (get_window (concrete_window()->win), winx, winy);
   set_position (_popup_wid, x+winx, y+winy);
-  popup_wid_time = texmacs_time() + 666;
+  popup_wid_time = texmacs_time() + 66;
     // update() will eventually show the widget
 }
 
