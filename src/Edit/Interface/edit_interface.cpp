@@ -780,10 +780,11 @@ edit_interface_rep::apply_changes () {
     int THE_CURSOR_BAK= env_change & THE_CURSOR;
     go_to_here ();
     env_change= (env_change & (~THE_CURSOR)) | THE_CURSOR_BAK;
-    if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS+THE_CURSOR))
+    if ((env_change & (THE_TREE+THE_ENVIRONMENT+THE_CURSOR)) != 0 &&
+        (env_change & THE_FREEZE) == 0)
       if (!inside_active_graphics ())
         cursor_visible ();
-    
+
     cursor cu= get_cursor();
     rectangle ocr (oc->ox+ ((SI) (oc->y1*oc->slope))- P3, oc->oy+ oc->y1- P3,
                    oc->ox+ ((SI) (oc->y2*oc->slope))+ P2, oc->oy+ oc->y2+ P3);
@@ -1034,7 +1035,7 @@ void
 edit_interface_rep::handle_notify_resize (SI w, SI h) {
   (void) w; (void) h;
   if (is_nil (buf)) return;
-  notify_change (THE_TREE);
+  notify_change (THE_TREE+THE_FREEZE);
 }
 
 void

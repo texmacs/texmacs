@@ -40,6 +40,7 @@
 #define THE_EXTENTS 64
 #define THE_LOCUS 128
 #define THE_MENUS 256
+#define THE_FREEZE 512
 
 class tm_buffer_rep;
 class tm_view_rep;

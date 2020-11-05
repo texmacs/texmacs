@@ -470,8 +470,13 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
     (type == "move" || type == "dragging-left" || type == "dragging-right");
   if ((!move_like) || (is_attached (this) && !check_event (MOTION_EVENT)))
     update_mouse_loci ();
-  if (!is_nil (mouse_ids) && type == "move")
+  if (!is_nil (mouse_ids) && type == "move") {
+    notify_change (THE_FREEZE);
+    // NOTE: this notification is needed to prevent the window to scroll to
+    // the current cursor position when hovering over the locus
+    // but a cleaner solution would be welcome
     call ("link-follow-ids", object (mouse_ids), object ("mouse-over"));
+  }
 
   if (type == "leave")
     set_pointer ("XC_top_left_arrow");
