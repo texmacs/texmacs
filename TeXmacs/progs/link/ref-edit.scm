@@ -131,17 +131,18 @@
         ((== dir :previous) (list-go-to-previous l))
         ((== dir :next) (list-go-to-next l))))
 
+(define current-id '(none))
+
 (tm-define (tie-id)
   (and-with t (tree-innermost tie-context? #t)
-    (and (tm-atomic? (tm-ref t 0))
-         (with key (tm->string (tm-ref t 0))
-           (if (string-starts? key "bib-") (string-drop key 4) key)))))
+    (or (and (exists? (cut tm-equal? <> current-id) (tm-children t))
+             current-id)
+        (and (tm-atomic? (tm-ref t 0))
+             (with key (tm->string (tm-ref t 0))
+               (if (string-starts? key "bib-") (string-drop key 4) key))))))
 
 (tm-define (same-ties)
-  (and-with t (tree-innermost tie-context? #t)
-    (and (tm-atomic? (tm-ref t 0))
-         (with key (tm->string (tm-ref t 0))
-           (and-nnull? (search-tie (buffer-tree) key))))))
+  (and-nnull? (search-tie (buffer-tree) (tie-id))))
 
 (tm-define (duplicate-labels)
   (and-nnull? (search-duplicate-labels (buffer-tree))))
@@ -154,6 +155,7 @@
 
 (tm-define (go-to-same-tie dir)
   (:applicable (same-ties))
+  (set! current-id (tie-id))
   (list-go-to (same-ties) dir))
 
 (tm-define (go-to-duplicate-label dir)
