@@ -82,6 +82,11 @@
     (for-each (lambda (x) (ahash-set! t (car x) (cdr x))) l)
     t))
 
+(define-public (list->frequencies l)
+  (let ((t (make-ahash-table)))
+    (for-each (lambda (x) (ahash-set! t x (+ 1 (or (ahash-ref t x) 0)))) l)
+    t))
+
 (define-public-macro (ahash-with t var val . body)
   (let ((old-val (gensym))
 	(ret-val (gensym)))

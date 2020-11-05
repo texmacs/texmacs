@@ -284,8 +284,8 @@
 (tm-define (focus-has-parameters? t)
   (focus-has-preferences? t))
 
-(tm-define (focus-can-search? t)
-  #f)
+(tm-define (focus-can-search? t) #f)
+(tm-define (focus-has-search-menu? t) #f)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tree traversal
@@ -529,6 +529,55 @@
   (geometry-incremental (focus-tree) #f))
 (tm-define (geometry-bottom)
   (geometry-incremental (focus-tree) #t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Special structured editing
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (special-navigate t direction)
+  (and-with p (tree-outer t)
+    (special-navigate p direction)))
+
+(tm-define (special-horizontal t forwards?)
+  (and-with p (tree-outer t)
+    (special-horizontal p forwards?)))
+
+(tm-define (special-vertical t down?)
+  (and-with p (tree-outer t)
+    (special-vertical p down?)))
+
+(tm-define (special-extremal t forwards?)
+  (and-with p (tree-outer t)
+    (special-extremal p forwards?)))
+
+(tm-define (special-incremental t down?)
+  (and-with p (tree-outer t)
+    (special-incremental p down?)))
+
+(tm-define (special-back)
+  (special-navigate (focus-tree) :previous))
+(tm-define (special-forward)
+  (special-navigate (focus-tree) :next))
+(tm-define (special-return)
+  (special-navigate (focus-tree) :first))
+(tm-define (special-shift-return)
+  (special-navigate (focus-tree) :last))
+(tm-define (special-left)
+  (special-horizontal (focus-tree) #f))
+(tm-define (special-right)
+  (special-horizontal (focus-tree) #t))
+(tm-define (special-up)
+  (special-vertical (focus-tree) #f))
+(tm-define (special-down)
+  (special-vertical (focus-tree) #t))
+(tm-define (special-first)
+  (special-extremal (focus-tree) #f))
+(tm-define (special-last)
+  (special-extremal (focus-tree) #t))
+(tm-define (special-previous)
+  (special-incremental (focus-tree) #f))
+(tm-define (special-next)
+  (special-incremental (focus-tree) #t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tree editing

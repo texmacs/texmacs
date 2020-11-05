@@ -325,6 +325,9 @@
   (argument-tag) (value-tag) (quote-tag)
   (binary-operation-tag) (binary-compare-tag))
 
+(define-group similar-tag
+  (label-tag) (reference-tag) (citation-tag))
+
 (define-group hidden-tag
   hidden hidden*)
 
@@ -343,8 +346,14 @@
 (define-group binary-compare-tag
   equal unequal less lesseq greater greatereq)
 
+(define-group label-tag
+  label)
+
 (define-group reference-tag
-  reference eqref pageref)
+  reference pageref eqref)
+
+(define-group citation-tag
+  cite nocite cite-TeXmacs cite-detail)
 
 (define-group mini-flow-tag
   table graphics ornament ornamented tree)

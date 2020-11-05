@@ -505,6 +505,9 @@
   (dynamic (focus-theme-parameters-menu t (list :local (tree-label t))))
   (dynamic (focus-tag-customize-menu (tree-label t))))
 
+(tm-menu (focus-search-menu t)
+  ("Search in database" (focus-open-search-tool t)))
+
 (tm-menu (focus-tag-menu t)
   (with l (focus-variants-of t)
     (assuming (<= (length l) 1)
@@ -527,6 +530,8 @@
   (assuming (tree-in? t '(cite nocite cite-TeXmacs))
     (-> "Cite TeXmacs"
         (link cite-texmacs-short-menu)))
+  (assuming (focus-has-search-menu? t)
+    (-> "Search" (dynamic (focus-search-menu t))))
   (assuming (focus-can-search? t)
     ("Search in database" (focus-open-search-tool t))))
 
@@ -656,6 +661,9 @@
         (group "TeXmacs-related work")
         ---
         (link cite-texmacs-short-menu)))
+  (assuming (focus-has-search-menu? t)
+    (=> (balloon (icon "tm_focus_search.xpm") "Search")
+        (dynamic (focus-search-menu t))))
   (assuming (focus-can-search? t)
     ((balloon (icon "tm_focus_search.xpm") "Search in database")
      (focus-open-search-tool t))))

@@ -51,6 +51,8 @@
   (-> "Web"
       ("Create web site" (tmweb-interactive-build))
       ("Update web site" (tmweb-interactive-update)))
+  (-> "References"
+      (link ref-menu))
   (if supports-email?
       (-> "Email"
           ("Open mailbox" (email-open-mailbox))

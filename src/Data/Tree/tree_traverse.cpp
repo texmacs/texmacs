@@ -466,15 +466,24 @@ tag_index (tree t, path p, hashset<int> labs) {
   return -1;
 }
 
+static bool
+tag_inside (tree t, path p, hashset<int> labs) {
+  return !labs->contains ((int) L (subtree (t, path_up (p))));
+}
+
 static path
 move_tag (tree t, path p, hashset<int> labs, bool forward, bool preserve) {
   path q= p;
   while (true) {
     path r= move_node (t, q, forward);
     if (r == q) return p;
+    if (!tag_inside (t, r, labs) && !tag_inside (t, p, labs) &&
+        last_item (r) == last_item (p))
+      return r;
     if (distinct_tag_or_argument (t, p, r, labs) &&
         acceptable_border (t, p, r, labs) &&
         acceptable_child (t, r, labs) &&
+        tag_inside (t, r, labs) == tag_inside (t, p, labs) &&
         (!preserve || tag_index (t, r, labs) == tag_index (t, p, labs)))
       return r;
     q= r;

@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (link ref-edit)
-  (:use (generic generic-edit)
+  (:use (utils edit variants)
+        (generic generic-edit)
         (generic document-part)
         (text text-drd)))
 
@@ -20,15 +21,26 @@
 ;; Finding all standard types of labels/references in a document
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (label-context? t)
-  (tree-in? t '(label)))
+(tm-define (label-context? t)
+  (tree-in? t (label-tag-list)))
 
-(define (reference-context? t)
-  (tree-in? t '(reference eqref pageref)))
+(tm-define (reference-context? t)
+  (tree-in? t (reference-tag-list)))
 
-(define ((named-context? pred? id) t)
+(tm-define (citation-context? t)
+  (tree-in? t (citation-tag-list)))
+
+(tm-define (tie-context? t)
+  (or (label-context? t) (reference-context? t) (citation-context? t)))
+
+(define ((named-context? pred? . ids) t)
   (and (pred? t)
-       (exists? (cut tm-equal? <> id) (tm-children t))))
+       (exists? (lambda (id)
+                  (exists? (cut tm-equal? <> id) (tm-children t)))
+                ids)))
+
+(define (and-nnull? l)
+  (and (nnull? l) l))
 
 (tm-define (search-labels t)
   (tree-search t label-context?))
@@ -42,8 +54,139 @@
 (tm-define (search-reference t id)
   (tree-search t (named-context? reference-context? id)))
 
-(define (and-nnull? l)
-  (and (nnull? l) l))
+(tm-define (search-citations t)
+  (tree-search t citation-context?))
+
+(tm-define (search-citation t id)
+  (tree-search t (named-context? citation-context? id)))
+
+(tm-define (search-tie t id)
+  (let* ((id1 (if (string-starts? id "bib-") (string-drop id 4) id))
+         (id2 (string-append "bib-" id1)))
+    (tree-search t (named-context? tie-context? id1 id2))))
+
+(tm-define (search-duplicate-labels t)
+  (let* ((labs (search-labels t))
+         (labl (map (lambda (lab) (tm->string (tm-ref lab 0))) labs))
+         (freq (list->frequencies labl))
+         (filt (lambda (lab)
+                 (with f (ahash-ref freq (tm->string (tm-ref lab 0)))
+                   (> (or f 0) 1)))))
+    (list-filter labs filt)))
+
+(define (tm-keys t)
+  (cond ((tm-in? t '(cite-detail)) (list (tm-ref t 0)))
+        (else (tm-children t))))
+
+(define ((tie-in? t) ref)
+  (with l (map tm->string (tm-keys ref))
+    (forall? (lambda (s) (ahash-ref t s)) l)))
+
+(tm-define (search-broken-references t)
+  (let* ((refs (search-references t))
+         (labs (search-labels t))
+         (labl (map (lambda (t) (tm->string (tm-ref t 0))) labs))
+         (labt (list->ahash-set labl)))
+    (list-filter refs (non (tie-in? labt)))))
+
+(define (strip-bib s)
+  (if (string-starts? s "bib-") (string-drop s 4) s))
+
+(tm-define (search-broken-citations t)
+  (let* ((refs (search-citations t))
+         (labs (search-labels t))
+         (labl (map (lambda (t) (strip-bib (tm->string (tm-ref t 0)))) labs))
+         (labt (list->ahash-set labl)))
+    (list-filter refs (non (tie-in? labt)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Navigation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (list-go-to-first l)
+  (tree-go-to (car l) :end))
+
+(tm-define (list-go-to-last l)
+  (tree-go-to (cAr l) :end))
+
+(define (list-go-to-previous* l)
+  (when (nnull? l)
+    (if (path-less? (tree->path (car l)) (tree->path (cursor-tree)))
+        (tree-go-to (car l) :end)
+        (list-go-to-previous* (cdr l)))))
+
+(tm-define (list-go-to-previous l)
+  (list-go-to-previous* (reverse l)))
+
+(tm-define (list-go-to-next l)
+  (when (nnull? l)
+    (if (path-less? (tree->path (cursor-tree)) (tree->path (car l)))
+        (tree-go-to (car l) :end)
+        (list-go-to-next (cdr l)))))
+
+(tm-define (list-go-to l dir)
+  (cond ((nlist? l) (noop))
+        ((== dir :first) (list-go-to-first l))
+        ((== dir :last) (list-go-to-last l))
+        ((== dir :previous) (list-go-to-previous l))
+        ((== dir :next) (list-go-to-next l))))
+
+(tm-define (tie-id)
+  (and-with t (tree-innermost tie-context? #t)
+    (and (tm-atomic? (tm-ref t 0))
+         (with key (tm->string (tm-ref t 0))
+           (if (string-starts? key "bib-") (string-drop key 4) key)))))
+
+(tm-define (same-ties)
+  (and-with t (tree-innermost tie-context? #t)
+    (and (tm-atomic? (tm-ref t 0))
+         (with key (tm->string (tm-ref t 0))
+           (and-nnull? (search-tie (buffer-tree) key))))))
+
+(tm-define (duplicate-labels)
+  (and-nnull? (search-duplicate-labels (buffer-tree))))
+
+(tm-define (broken-references)
+  (and-nnull? (search-broken-references (buffer-tree))))
+
+(tm-define (broken-citations)
+  (and-nnull? (search-broken-citations (buffer-tree))))
+
+(tm-define (go-to-same-tie dir)
+  (:applicable (same-ties))
+  (list-go-to (same-ties) dir))
+
+(tm-define (go-to-duplicate-label dir)
+  (:applicable (duplicate-labels))
+  (list-go-to (duplicate-labels) dir))
+
+(tm-define (go-to-broken-reference dir)
+  (:applicable (broken-references))
+  (list-go-to (broken-references) dir))
+
+(tm-define (go-to-broken-citation dir)
+  (:applicable (broken-citations))
+  (list-go-to (broken-citations) dir))
+
+(tm-define (special-extremal t forwards?)
+  (:require (tie-context? t))
+  (go-to-same-tie (if forwards? :last :first)))
+
+(tm-define (special-incremental t forwards?)
+  (:require (tie-context? t))
+  (go-to-same-tie (if forwards? :next :previous)))
+
+(tm-define (special-navigate t dir)
+  (:require (label-context? t))
+  (go-to-duplicate-label dir))
+
+(tm-define (special-navigate t dir)
+  (:require (reference-context? t))
+  (go-to-broken-reference dir))
+
+(tm-define (special-navigate t dir)
+  (:require (citation-context? t))
+  (go-to-broken-citation dir))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preview of the content that a reference points to

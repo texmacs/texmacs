@@ -141,6 +141,8 @@ qt_decode_length (string width, string height,
 static string
 conv_sub (const string& ks) {
   string r(ks);
+  r = replace (r, "pageup", "pgup");
+  r = replace (r, "pagedown", "pgdown");
   r = replace (r, "S-", "Shift+");
   r = replace (r, "A-", "Alt+");
   //r = replace (r, "K-", "");

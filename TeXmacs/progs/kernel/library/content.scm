@@ -57,7 +57,9 @@
 	(else (tree-arity x))))
 
 (define-public (tm->string x)
-  (if (string? x) x (tree->string x)))
+  (cond ((string? x) x)
+        ((and (tree? x) (tree-atomic? x)) (tree->string x))
+        (else #f)))
 
 (define-public (tm->list x)
   (if (list? x) x (tree->list x)))
