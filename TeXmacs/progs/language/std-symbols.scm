@@ -327,7 +327,7 @@
     (:type infix)
     (:penalty 40)
     (:spacing half half)
-    "/")
+    "/" "\\")
 
   (define Over-symbol
     Over-regular-symbol Over-condensed-symbol)
