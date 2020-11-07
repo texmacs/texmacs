@@ -4126,6 +4126,7 @@
 			isa = PBXGroup;
 			children = (
 				9C0B48A410A8CC100097A335 /* NOTES */,
+				9C0B48BE10A8CC100097A335 /* TODO */,
 				4901F0E4128B4F7200CC54C6 /* qt_printer_widget.cpp */,
 				9C225A63128B5EB00039258C /* qt_chooser_widget.cpp */,
 				9C088F7312B1BAD000A18E04 /* qt_color_picker_widget.cpp */,
@@ -4184,7 +4185,6 @@
 				9C0B48BB10A8CC100097A335 /* QTMWidget.hpp */,
 				9C0B48BC10A8CC100097A335 /* QTMWindow.cpp */,
 				9C0B48BD10A8CC100097A335 /* QTMWindow.hpp */,
-				9C0B48BE10A8CC100097A335 /* TODO */,
 			);
 			path = Qt;
 			sourceTree = "<group>";

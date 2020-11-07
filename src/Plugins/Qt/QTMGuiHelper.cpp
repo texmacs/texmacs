@@ -40,7 +40,8 @@ QTMGuiHelper::eventFilter (QObject *obj, QEvent *event) {
     const char* s = openEvent->file().toUtf8().constData();
       //qDebug ("File Open Event %s", s);
     const char *win= new_window_flag? ":new-window": ":current-window";
-    call ("load-buffer", object (url_system (s)), eval (win));
+    exec_delayed (scheme_cmd (list_object (symbol_object ("load-buffer"),
+                              object (url_system (s)), eval (win))));
     new_window_flag= true;
     return true;
   } else {
