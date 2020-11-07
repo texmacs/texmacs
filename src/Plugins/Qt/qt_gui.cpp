@@ -936,7 +936,6 @@ qt_gui_rep::refresh_language() {
  */
 void
 qt_gui_rep::show_help_balloon (widget wid, SI x, SI y) {
-  cout << "*"; cout.flush();
   if (popup_wid_time > 0) return;
   
   _popup_wid = popup_window_widget (wid, "Balloon");
