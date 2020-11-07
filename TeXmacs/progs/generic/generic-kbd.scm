@@ -245,6 +245,17 @@
   ("table N B" (make 'block*))
   ("table N W" (make-wrapped 'wide-block)))
 
+(kbd-map
+  (:mode in-hybrid?)
+  ("space" (hybrid-kbd-space))
+  ("{" (hybrid-kbd-curly-left))
+  ("}" (hybrid-kbd-curly-right))
+  ("\\" (hybrid-kbd-backslash))
+  ("_" (hybrid-kbd-sub))
+  ("_ var" "_")
+  ("^" (hybrid-kbd-sup))
+  ("^ var" "^"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Emacs keymap
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

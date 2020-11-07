@@ -262,48 +262,48 @@
   ("left)" "Insert large left )" (math-bracket-open ")" "(" #t))
   ("left[" "Insert large [" (math-bracket-open "[" "]" #t))
   ("left]" "Insert large left ]" (math-bracket-open "]" "[" #t))
-  ("left{" "Insert large {" (math-bracket-open "{" "}" #t))
-  ("left}" "Insert large left }" (math-bracket-open "}" "{" #t))
-  ("leftlfloor" "Insert large <lfloor>"
-   (math-bracket-open "lfloor" "rfloor" #t))
-  ("leftrfloor" "Insert large left <rfloor>"
-   (math-bracket-open "rfloor" "lfloor" #t))
-  ("leftlceil" "Insert large <lceil>"
-   (math-bracket-open "lceil" "rceil" #t))
-  ("leftrceil" "Insert large left <rceil>"
-   (math-bracket-open "rceil" "lceil" #t))
-  ("leftlangle" "Insert large <langle>"
-   (math-bracket-open "langle" "rangle" #t))
-  ("leftrangle" "Insert large left <rangle>"
-   (math-bracket-open "rangle" "langle" #t))
+  ("left\\{" "Insert large {" (math-bracket-open "{" "}" #t))
+  ("left\\}" "Insert large left }" (math-bracket-open "}" "{" #t))
+  ("left\\lfloor" "Insert large <lfloor>"
+   (math-bracket-open "<lfloor>" "<rfloor>" #t))
+  ("left\\rfloor" "Insert large left <rfloor>"
+   (math-bracket-open "<rfloor>" "<lfloor>" #t))
+  ("left\\lceil" "Insert large <lceil>"
+   (math-bracket-open "<lceil>" "<rceil>" #t))
+  ("left\\rceil" "Insert large left <rceil>"
+   (math-bracket-open "<rceil>" "<lceil>" #t))
+  ("left\\langle" "Insert large <langle>"
+   (math-bracket-open "<langle>" "<rangle>" #t))
+  ("left\\rangle" "Insert large left <rangle>"
+   (math-bracket-open "<rangle>" "<langle>" #t))
   ("left|" "Insert large left <mid>" (math-bracket-open "|" "|" #t))
   ("left||" "Insert large left <parallel>" (math-bracket-open "||" "||" #t))
   ("left/" "Insert large left /" (math-bracket-open "/" "\\" #t))
-  ("leftbackslash" "Insert large left \\" (math-bracket-open "\\" "/" #t))
+  ("left\\" "Insert large left \\" (math-bracket-open "\\" "/" #t))
   ("left." "Insert large left ." (math-bracket-open "." "." #t))
 
   ("right(" "Insert large right (" (math-bracket-close "(" ")" #t))
   ("right)" "Insert large )" (math-bracket-close ")" "(" #t))
   ("right[" "Insert large right [" (math-bracket-close "[" "]" #t))
   ("right]" "Insert large ]" (math-bracket-close "]" "[" #t))
-  ("right{" "Insert large right {" (math-bracket-close "{" "}" #t))
-  ("right}" "Insert large }" (math-bracket-close "}" "{" #t))
-  ("rightlfloor" "Insert large right <lfloor>"
-   (math-bracket-close "lfloor" "rfloor" #t))
-  ("rightrfloor" "Insert large <rfloor>"
-   (math-bracket-close "rfloor" "lfloor" #t))
-  ("rightlceil" "Insert large right <lceil>"
-   (math-bracket-close "lceil" "rceil" #t))
-  ("rightrceil" "Insert large <rceil>"
-   (math-bracket-close "rceil" "lceil" #t))
-  ("rightlangle" "Insert large right <langle>"
-   (math-bracket-close "langle" "rangle" #t))
-  ("rightrangle" "Insert large <rangle>"
-   (math-bracket-close "rangle" "langle" #t))
+  ("right\\{" "Insert large right {" (math-bracket-close "{" "}" #t))
+  ("right\\}" "Insert large }" (math-bracket-close "}" "{" #t))
+  ("right\\lfloor" "Insert large right <lfloor>"
+   (math-bracket-close "<lfloor>" "<rfloor>" #t))
+  ("right\\rfloor" "Insert large <rfloor>"
+   (math-bracket-close "<rfloor>" "<lfloor>" #t))
+  ("right\\lceil" "Insert large right <lceil>"
+   (math-bracket-close "<lceil>" "<rceil>" #t))
+  ("right\\rceil" "Insert large <rceil>"
+   (math-bracket-close "<rceil>" "<lceil>" #t))
+  ("right\\langle" "Insert large right <langle>"
+   (math-bracket-close "<langle>" "<rangle>" #t))
+  ("right\\rangle" "Insert large <rangle>"
+   (math-bracket-close "<rangle>" "<langle>" #t))
   ("right|" "Insert large right <mid>" (math-bracket-close "|" "|" #t))
   ("right||" "Insert large right <parallel>" (math-bracket-close "||" "||" #t))
   ("right/" "Insert large right /" (math-bracket-close "/" "\\" #t))
-  ("rightbackslash" "Insert large right \\" (math-bracket-close "\\" "/" #t))
+  ("right\\" "Insert large right \\" (math-bracket-close "\\" "/" #t))
   ("right." "Insert large right ." (math-bracket-close "." "." #t))
 
   ("rmfamily" "Use roman font family" (make-with "font-family" "rm"))

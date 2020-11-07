@@ -1046,6 +1046,56 @@
     "Width" "Height" "Length" "Repeat?"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Special keyboard behaviour when entering hybrid commands
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (hybrid-kbd-space)
+  (activate-hybrid #f)
+  (insert " "))
+
+(tm-define (hybrid-kbd-curly-left)
+  (with-innermost t 'hybrid
+    (with cmd (tm->string (tm-ref t 0))
+      (cond ((or (not cmd) (== cmd "begin"))
+             (insert "{"))
+            ((in? cmd '("left\\" "right\\"))
+             (insert "{")
+             (activate-hybrid #f))
+            (else
+             (activate-hybrid #f))))))
+
+(tm-define (hybrid-kbd-curly-right)
+  (with-innermost t 'hybrid
+    (with cmd (tm->string (tm-ref t 0))
+      (cond ((not cmd)
+             (activate-hybrid #f))
+            ((string-starts? (tm->string cmd) "begin{")
+             (tree-remove (tm-ref t 0) 0 6)
+             (activate-hybrid #f))
+            ((in? cmd '("left\\" "right\\"))
+             (insert "}")
+             (activate-hybrid #f))
+            (else
+             (activate-hybrid #f))))))
+
+(tm-define (hybrid-kbd-backslash)
+  (with-innermost t 'hybrid
+    (with cmd (tm->string (tm-ref t 0))
+      (cond ((in? cmd '("left" "right"))
+             (insert "\\"))
+            (else
+             (activate-hybrid #f)
+             (make-hybrid))))))
+
+(tm-define (hybrid-kbd-sub)
+  (activate-hybrid #f)
+  (make-script #f #t))
+
+(tm-define (hybrid-kbd-sup)
+  (activate-hybrid #f)
+  (make-script #t #t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search, replace, spell and tab-completion
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

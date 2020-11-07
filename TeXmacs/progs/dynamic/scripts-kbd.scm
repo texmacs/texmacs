@@ -23,4 +23,5 @@
   ("script l" (insert-go-to '(converter-eval "latex" "") '(1 0)))
   ("script L" (insert-go-to '(converter-input "latex" "" "") '(1 0)))
   ("script h" (insert-go-to '(converter-eval "html" "") '(1 0)))
-  ("script H" (insert-go-to '(converter-input "html" "" "") '(1 0))))
+  ("script H" (insert-go-to '(converter-input "html" "" "") '(1 0)))
+  ("std \\" (insert-go-to '(converter-eval "latex" "") '(1 0))))
