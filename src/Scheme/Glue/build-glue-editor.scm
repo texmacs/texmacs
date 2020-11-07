@@ -92,14 +92,17 @@
   (set-reference set_ref (void string content))
   (reset-reference reset_ref (void string))
   (list-references list_refs (array_string))
+  (list-references* list_refs (array_string bool))
   (get-auxiliary get_aux (tree string))
   (set-auxiliary set_aux (void string content))
   (reset-auxiliary reset_aux (void string))
   (list-auxiliaries list_auxs (array_string))
+  (list-auxiliaries* list_auxs (array_string bool))
   (get-attachment get_att (tree string))
   (set-attachment set_att (void string content))
   (reset-attachment reset_att (void string))
   (list-attachments list_atts (array_string))
+  (list-attachments* list_atts (array_string bool))
 
   ;; modify text
   (make-htab make_htab (void string))

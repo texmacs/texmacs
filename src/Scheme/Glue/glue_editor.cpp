@@ -816,6 +816,19 @@ tmg_list_references () {
 }
 
 tmscm
+tmg_list_references_dot (tmscm arg1) {
+  TMSCM_ASSERT_BOOL (arg1, TMSCM_ARG1, "list-references*");
+
+  bool in1= tmscm_to_bool (arg1);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= get_current_editor()->list_refs (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
 tmg_get_auxiliary (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "get-auxiliary");
 
@@ -866,6 +879,19 @@ tmg_list_auxiliaries () {
 }
 
 tmscm
+tmg_list_auxiliaries_dot (tmscm arg1) {
+  TMSCM_ASSERT_BOOL (arg1, TMSCM_ARG1, "list-auxiliaries*");
+
+  bool in1= tmscm_to_bool (arg1);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= get_current_editor()->list_auxs (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
 tmg_get_attachment (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "get-attachment");
 
@@ -910,6 +936,19 @@ tmscm
 tmg_list_attachments () {
   // TMSCM_DEFER_INTS;
   array_string out= get_current_editor()->list_atts ();
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
+tmg_list_attachments_dot (tmscm arg1) {
+  TMSCM_ASSERT_BOOL (arg1, TMSCM_ARG1, "list-attachments*");
+
+  bool in1= tmscm_to_bool (arg1);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= get_current_editor()->list_atts (in1);
   // TMSCM_ALLOW_INTS;
 
   return array_string_to_tmscm (out);
@@ -3519,14 +3558,17 @@ initialize_glue_editor () {
   tmscm_install_procedure ("set-reference",  tmg_set_reference, 2, 0, 0);
   tmscm_install_procedure ("reset-reference",  tmg_reset_reference, 1, 0, 0);
   tmscm_install_procedure ("list-references",  tmg_list_references, 0, 0, 0);
+  tmscm_install_procedure ("list-references*",  tmg_list_references_dot, 1, 0, 0);
   tmscm_install_procedure ("get-auxiliary",  tmg_get_auxiliary, 1, 0, 0);
   tmscm_install_procedure ("set-auxiliary",  tmg_set_auxiliary, 2, 0, 0);
   tmscm_install_procedure ("reset-auxiliary",  tmg_reset_auxiliary, 1, 0, 0);
   tmscm_install_procedure ("list-auxiliaries",  tmg_list_auxiliaries, 0, 0, 0);
+  tmscm_install_procedure ("list-auxiliaries*",  tmg_list_auxiliaries_dot, 1, 0, 0);
   tmscm_install_procedure ("get-attachment",  tmg_get_attachment, 1, 0, 0);
   tmscm_install_procedure ("set-attachment",  tmg_set_attachment, 2, 0, 0);
   tmscm_install_procedure ("reset-attachment",  tmg_reset_attachment, 1, 0, 0);
   tmscm_install_procedure ("list-attachments",  tmg_list_attachments, 0, 0, 0);
+  tmscm_install_procedure ("list-attachments*",  tmg_list_attachments_dot, 1, 0, 0);
   tmscm_install_procedure ("make-htab",  tmg_make_htab, 1, 0, 0);
   tmscm_install_procedure ("make-space",  tmg_make_space, 1, 0, 0);
   tmscm_install_procedure ("make-var-space",  tmg_make_var_space, 3, 0, 0);

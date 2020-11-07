@@ -82,21 +82,27 @@
   (with l (map tm->string (tm-keys ref))
     (forall? (lambda (s) (ahash-ref t s)) l)))
 
-(tm-define (search-broken-references t)
-  (let* ((refs (search-references t))
-         (labs (search-labels t))
-         (labl (map (lambda (t) (tm->string (tm-ref t 0))) labs))
-         (labt (list->ahash-set labl)))
-    (list-filter refs (non (tie-in? labt)))))
-
 (define (strip-bib s)
   (if (string-starts? s "bib-") (string-drop s 4) s))
 
-(tm-define (search-broken-citations t)
-  (let* ((refs (search-citations t))
-         (labs (search-labels t))
+(define (set-of-labels t)
+  (let* ((labs (search-labels t))
          (labl (map (lambda (t) (strip-bib (tm->string (tm-ref t 0)))) labs))
          (labt (list->ahash-set labl)))
+    (if (project-attached?)
+        (let* ((glob (list->ahash-set (map strip-bib (list-references* #t))))
+               (loc  (list->ahash-set (map strip-bib (list-references)))))
+          (ahash-table-append (ahash-table-difference glob loc) labt))
+        labt)))
+
+(tm-define (search-broken-references t)
+  (let* ((refs (search-references t))
+         (labt (set-of-labels t)))
+    (list-filter refs (non (tie-in? labt)))))
+
+(tm-define (search-broken-citations t)
+  (let* ((refs (search-citations t))
+         (labt (set-of-labels t)))
     (list-filter refs (non (tie-in? labt)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

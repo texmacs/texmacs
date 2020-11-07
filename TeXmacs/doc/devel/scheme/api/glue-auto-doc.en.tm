@@ -6699,6 +6699,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(list-references* <scm-arg|bool>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|list_refs> which returns
+    <scm|array_string>.
+  </explain>
+
+  <\explain>
     <scm|(get-auxiliary <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
@@ -6731,6 +6739,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(list-auxiliaries* <scm-arg|bool>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|list_auxs> which returns
+    <scm|array_string>.
+  </explain>
+
+  <\explain>
     <scm|(get-attachment <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
@@ -6756,6 +6772,14 @@ source code.
 
   <\explain>
     <scm|(list-attachments)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|list_atts> which returns
+    <scm|array_string>.
+  </explain>
+
+  <\explain>
+    <scm|(list-attachments* <scm-arg|bool>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|list_atts> which returns

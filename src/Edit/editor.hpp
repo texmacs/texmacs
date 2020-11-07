@@ -320,9 +320,9 @@ public:
   virtual void     reset_ref (string key) = 0;
   virtual void     reset_aux (string key) = 0;
   virtual void     reset_att (string key) = 0;
-  virtual array<string> list_refs () = 0;
-  virtual array<string> list_auxs () = 0;
-  virtual array<string> list_atts () = 0;
+  virtual array<string> list_refs (bool global= false) = 0;
+  virtual array<string> list_auxs (bool global= false) = 0;
+  virtual array<string> list_atts (bool global= false) = 0;
   virtual void     typeset_forced () = 0;
   virtual void     typeset_invalidate (path p) = 0;
   virtual void     typeset_invalidate_all () = 0;

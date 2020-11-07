@@ -105,8 +105,9 @@ edit_typeset_rep::reset_ref (string key) {
 }
 
 array<string>
-edit_typeset_rep::list_refs () {
+edit_typeset_rep::list_refs (bool global) {
   tree a= (tree) buf->data->ref;
+  if (global && buf->prj != NULL) a= buf->prj->data->ref;
   array<string> v;
   int i, n= N(a);
   for (i=0; i<n; i++)
@@ -131,8 +132,9 @@ edit_typeset_rep::reset_aux (string key) {
 }
 
 array<string>
-edit_typeset_rep::list_auxs () {
+edit_typeset_rep::list_auxs (bool global) {
   tree a= (tree) buf->data->aux;
+  if (global && buf->prj != NULL) a= buf->prj->data->aux;
   array<string> v;
   int i, n= N(a);
   for (i=0; i<n; i++)
@@ -157,8 +159,9 @@ edit_typeset_rep::reset_att (string key) {
 }
 
 array<string>
-edit_typeset_rep::list_atts () {
+edit_typeset_rep::list_atts (bool global) {
   tree a= (tree) buf->data->att;
+  if (global && buf->prj != NULL) a= buf->prj->data->att;
   array<string> v;
   int i, n= N(a);
   for (i=0; i<n; i++)

@@ -117,9 +117,9 @@ public:
   void     reset_ref (string key);
   void     reset_aux (string key);
   void     reset_att (string key);
-  array<string> list_refs ();
-  array<string> list_auxs ();
-  array<string> list_atts ();
+  array<string> list_refs (bool global);
+  array<string> list_auxs (bool global);
+  array<string> list_atts (bool global);
 
   void     typeset_style_use_cache (tree style);
   void     typeset_preamble ();
