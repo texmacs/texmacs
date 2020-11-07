@@ -369,7 +369,8 @@
   (if (== (get-cell-mode) "table") (group "Cells"))
   (link cell-menu)
   (dynamic (focus-extra-menu t))
-  (dynamic (focus-hidden-menu t)))
+  (dynamic (focus-hidden-menu t))
+  (dynamic (focus-label-menu t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Icons for manipulation of tables

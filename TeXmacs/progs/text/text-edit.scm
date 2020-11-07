@@ -318,6 +318,12 @@
   (tree-go-to t :end)
   (make 'label))
 
+(tm-define (focus-label t)
+  (:require (section-context? t))
+  (and-with p (tree-up t)
+    (and (tm-func? p 'concat)
+         (focus-search-label p))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for lists, enumerations and description
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -357,6 +363,13 @@
 (tm-define (kbd-enter t shift?)
   (:require (tree-is? t 'item*))
   (go-end-of 'item*))
+
+(tm-define (focus-label t)
+  (:require (or (list-context? t) (tree-is? t 'bib-list)))
+  (and-with doc (tree-down t)
+    (and (tree-is? doc 'document)
+         (and-with par (tree-down doc)
+           (focus-search-label par)))))
 
 (tm-define (numbered-context? t)
   (:require (or (itemize-context? t) (enumerate-context? t)))
@@ -399,7 +412,7 @@
     (insert ins)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Inserting formulas
+;; Formulas
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (make-equation)
@@ -416,6 +429,21 @@
   (:applicable (not (selection-active-non-small?)))
   (make 'eqnarray*)
   (temp-proof-fix))
+
+(tm-define (focus-label t)
+  (:require (tree-is? t 'equation))
+  (focus-list-search-label (tree-children t)))
+
+(define (down-to-row t)
+  (cond ((not (tree? t)) #f)
+        ((tree-is? t 'row) t)
+        ((tree-in? t '(document tformat table)) (down-to-row (tree-down t)))
+        (else #f)))
+
+(tm-define (focus-label t)
+  (:require (tree-in? t '(eqnarray eqnarray*)))
+  (and-with row (down-to-row (tree-down t))
+    (focus-search-label row)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Routines for inserting miscellaneous content
@@ -505,6 +533,11 @@
   (tree-go-to t :last :start)
   (make 'dueto))
 
+(tm-define (focus-label t)
+  (:require (tree-in? t (enunciation-tag-list)))
+  (and (== (tree-arity t) 1)
+       (focus-search-label (tree-ref t 0))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Editing algorithms
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -583,6 +616,10 @@
 		 (tree-assign-node! t (symbol-append 'specified- r '*))))
 	  (tree-insert! t (- (tree-arity t) 1) '((document "")))
 	  (tree-go-to t (- (tree-arity t) 2) :start)))))
+
+(tm-define (focus-label t)
+  (:require (algorithm-context? t))
+  (focus-list-search-label (tree-children t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Possible to use a custom note symbol
@@ -797,6 +834,9 @@
 (tm-define (footnote-context? t)
   (tree-in? t '(footnote wide-footnote)))
 
+(tm-define (figure-context? t)
+  (tree-in? t (figure-tag-list)))
+
 (tm-define (float-or-footnote-context? t)
   (tree-in? t '(float wide-float footnote wide-footnote)))
 
@@ -911,3 +951,7 @@
   (if (cursor-at-anchor?)
       (go-to-float)
       (go-to-anchor)))
+
+(tm-define (focus-label t)
+  (:require (or (footnote-context? t) (figure-context? t)))
+  (focus-list-search-label (tree-children t)))

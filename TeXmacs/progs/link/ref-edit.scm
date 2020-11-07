@@ -177,6 +177,18 @@
   (list-go-to (broken-citations) dir))
 
 (tm-define (special-extremal t forwards?)
+  (:require (focus-label t))
+  (with lab (focus-label t)
+    (tree-go-to lab :end)
+    (special-extremal lab forwards?)))
+
+(tm-define (special-incremental t forwards?)
+  (:require (focus-label t))
+  (with lab (focus-label t)
+    (tree-go-to lab :end)
+    (special-incremental lab forwards?)))
+
+(tm-define (special-extremal t forwards?)
   (:require (tie-context? t))
   (go-to-same-tie (if forwards? :last :first)))
 

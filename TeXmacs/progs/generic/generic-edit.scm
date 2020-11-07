@@ -1046,6 +1046,33 @@
     "Width" "Height" "Length" "Repeat?"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Labels attached to markup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (focus-label t) #f)
+
+(tm-define (focus-get-label t)
+  (and-with l (focus-label t)
+    (tm->string (tm-ref l 0))))
+
+(tm-define (focus-set-label t val)
+  (and-with l (focus-label t)
+    (tree-set l 0 val)))
+
+(tm-define (focus-list-search-label l)
+  (and (nnull? l)
+       (or (focus-search-label (car l))
+           (focus-list-search-label (cdr l)))))
+
+(tm-define (focus-search-label t)
+  (cond ((tm-func? t 'label 1) t)
+        ((tm-in? t '(document concat table row cell))
+         (focus-list-search-label (tm-children t)))
+        ((tm-in? t '(tformat with surround))
+         (focus-search-label (cAr (tm-children t))))
+        (else #f)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Special keyboard behaviour when entering hybrid commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
