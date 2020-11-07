@@ -464,7 +464,7 @@
      (alternate-toggle (focus-tree))))
   (assuming (!= (tree-children t) (tree-accessible-children t))
     ((check "Show hidden" "v" (tree-is? t :up 'inactive))
-     (inactive-toggle t))))
+     (inactive-toggle (focus-tree)))))
 
 (tm-menu (focus-float-menu t))
 (tm-menu (focus-animate-menu t))
@@ -629,7 +629,7 @@
   (assuming (!= (tree-children t) (tree-accessible-children t))
     ((check (balloon (icon "tm_show_hidden.xpm") "Show hidden") "v"
             (tree-is? t :up 'inactive))
-     (inactive-toggle t))))
+     (inactive-toggle (focus-tree)))))
 
 (tm-menu (focus-float-icons t))
 (tm-menu (focus-animate-icons t))
