@@ -245,7 +245,7 @@ qt_widget_rep::popup_window_widget (string s) {
 
 widget
 qt_widget_rep::tooltip_window_widget (string s) {
-  widget wid= tm_new<qt_popup_widget_rep> ((widget_rep*)this, command());
+  widget wid= make_popup_widget();
   ASSERT(concrete(wid) != this, "Loop in call to tooltip_window_widget()");
   return concrete(wid)->tooltip_window_widget(s);
 }
@@ -293,12 +293,9 @@ popup_window_widget (widget w, string s) {
   return concrete(w)->popup_window_widget (s);
 }
 
-static void no_op () {}
-
 widget
 tooltip_window_widget (widget w, string s) {
-  widget r= concrete(w)->plain_window_widget (s, command (no_op), 0);
-  return concrete(r)->tooltip_window_widget (s);
+  return concrete(w)->tooltip_window_widget (s);
 }
 
 /*! A factory for a popup widget container whose contents are to be unmapped as 

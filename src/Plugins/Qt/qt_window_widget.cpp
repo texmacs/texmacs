@@ -86,15 +86,6 @@ qt_window_widget_rep::popup_window_widget (string s)
   return this;
 }
 
-widget
-qt_window_widget_rep::tooltip_window_widget (string s)
-{
-  qwid->setWindowTitle (to_qstring (s));
-  qwid->setWindowModality (Qt::NonModal);
-  qwid->setWindowFlags (Qt::ToolTip);
-  return this;
-}
-
 /*! Looks among the widget's parents for the containing texmacs window
  */
 widget_rep* 
@@ -309,6 +300,16 @@ qt_popup_widget_rep::popup_window_widget(string s) {
 
   return this;
 }
+
+widget
+qt_popup_widget_rep::tooltip_window_widget (string s) {
+  qwid->setWindowTitle (to_qstring (s));
+  qwid->setWindowModality (Qt::NonModal);
+  qwid->setWindowFlags (Qt::ToolTip);
+  return this;
+}
+
+
 
 void
 qt_popup_widget_rep::send (slot s, blackbox val) {
