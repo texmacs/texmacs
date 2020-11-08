@@ -363,7 +363,7 @@
                      (wid (make-menu-widget scm 0)))
                 ;;(set! w wid)
                 (noop))
-              (preview-map (widget-vlist (list w))
+              (preview-map w
                            (+ wx x1)
                            (+ wy y1 -1280)
                            id
