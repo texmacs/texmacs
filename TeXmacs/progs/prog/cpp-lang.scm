@@ -12,10 +12,12 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (prog cpp-lang))
+(texmacs-module (prog cpp-lang)
+  (:use (prog default-lang)))
 
-(tm-define (cpp-keywords)
-  `(keywords
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "cpp") (== key "keyword")))
+  `(,(string->symbol key)
     (constant
       "false" "true" "cout" "cin" "cerr"
       "null" "NULL")
@@ -39,8 +41,9 @@
       "throw" "catch" "finally" "return" "try" "yield")))
 
 
-(tm-define (cpp-operators)
-  `(operators
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "cpp") (== key "operator")))
+  `(,(string->symbol key)
     (operator
       "+" "-" "/" "*" "%" ;; Arith
       "|" "&" "^" ;; Bit
@@ -60,28 +63,26 @@
     (double "d" "D")
     (float "f" "F")))
 
-(tm-define (cpp-numbers)
-  `(numbers
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "cpp") (== key "number")))
+  `(,(string->symbol key)
     (bool_features
      "prefix_0x"
      "sci_notation")
     ,(cpp-number-suffix)
     (separator "_")))
 
-
-(tm-define (cpp-inline-comment-starts)
-  (list "//"))
-
-
-(tm-define (cpp-string)
- `(string
-   (bool_features )
-   (escape_sequences "\\" "\"" "'" "b" "f" "n" "r" "t")))
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "cpp") (== key "string")))
+  `(,(string->symbol key)
+    (bool_features )
+    (escape_sequences "\\" "\"" "'" "b" "f" "n" "r" "t")))
 
 
 ;; https://en.cppreference.com/w/cpp/preprocessor
-(tm-define (cpp-preprocessors)
-  `(preprocessor
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "cpp") (== key "preprocessor")))
+  `(,(string->symbol key)
     (directives
      "define" "undef" "include"
      "if" "ifdef" "ifndef" "else" "elif" "endif"

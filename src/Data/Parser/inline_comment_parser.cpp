@@ -17,13 +17,15 @@ inline_comment_parser_rep::inline_comment_parser_rep () {
 }
 
 void
-inline_comment_parser_rep::set_starts(const array<string>& p_starts) {
+inline_comment_parser_rep::set_starts (const array<string>& p_starts) {
   m_starts= p_starts;
 }
 
 bool
 inline_comment_parser_rep::can_parse (string s, int pos) {
   if (pos >= N(s)) return false;
+  if (N(m_starts) == 0) return false;
+
   int i=0;
   while (i<N(m_starts)) {
     string m_start= m_starts[i];

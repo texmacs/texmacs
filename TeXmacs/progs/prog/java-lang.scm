@@ -11,10 +11,12 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (prog java-lang))
+(texmacs-module (prog java-lang)
+  (:use (prog default-lang)))
 
-(tm-define (java-keywords)
-  `(keywords
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "java") (== key "keyword")))
+  `(,(string->symbol key)
     (constant
       "false" "true" "null"
       "boolean" "byte" "char" "double" "float" "int" "long" "short" "void"
@@ -33,8 +35,9 @@
       "throw" "catch" "finally" "return" "try" "yield")))
 
 
-(tm-define (java-operators)
-  `(operators
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "java") (== key "operator")))
+  `(,(string->symbol key)
     (operator
       "+" "-" "/" "*" "%" ;; Arith
       "|" "&" "^" ;; Bit
@@ -53,18 +56,17 @@
     (double "d" "D")
     (float "f" "F")))
 
-(tm-define (java-numbers)
-  `(numbers
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "java") (== key "number")))
+  `(,(string->symbol key)
     (bool_features
       "prefix_0x" "prefix_0b"
       "sci_notation")
     ,(java-number-suffix)))
 
-(tm-define (java-inline-comment-starts)
-  (list "//"))
-
-(tm-define (java-string)
-  `(string
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "java") (== key "string")))
+  `(,(string->symbol key)
     (bool_features
      "hex_with_8_bits" "hex_with_16_bits"
      "hex_with_32_bits" "octal_upto_3_digits")

@@ -11,10 +11,12 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (prog octave-lang))
+(texmacs-module (prog octave-lang)
+  (:use (prog default-lang)))
 
-(tm-define (octave-keywords)
-  `(keywords
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "octave") (== key "keyword")))
+  `(,(string->symbol key)
     (constant
       "false" "true")
     (declare_type "function" "endfunction" "class")
@@ -25,8 +27,9 @@
     (keyword_control
       "catch" "try")))
 
-(tm-define (octave-operators)
-  `(operators
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "octave") (== key "operator")))
+  `(,(string->symbol key)
     (operator "," ";" ":" "=")
     (operator_special "@")
     (operator_field ".")
@@ -36,20 +39,24 @@
   `(suffix
     (imaginary "j" "J")))
 
-(tm-define (octave-numbers)
-  `(numbers
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "octave") (== key "number")))
+  `(,(string->symbol key)
     (bool_features
      "prefix_0x" "prefix_0b"
      "sci_notation")
     (separator "_")
     ,(octave-number-suffix)))
 
-(tm-define (octave-inline-comment-starts)
-  (list "#"))
-
-(tm-define (octave-string)
-  `(string
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "octave") (== key "string")))
+  `(,(string->symbol key)
     (bool_features 
      "hex_with_8_bits" "hex_with_16_bits"
      "hex_with_32_bits" "octal_upto_3_digits")
     (escape_sequences "\\" "\"" "'" "a" "b" "f" "n" "r" "t" "v")))
+
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "octave") (== key "comment")))
+  `(,(string->symbol key)
+    (inline "#")))

@@ -25,39 +25,29 @@ prog_language_rep::prog_language_rep (string name):
   string use_modules= "(use-modules (prog " * name * "-lang))";
   eval (use_modules);
 
-  // Load (<name>-keywords)
-  string get_the_keywords_tree= "(tm->tree (" * name * "-keywords))";
-  tree keyword_tree= as_tree (eval (get_the_keywords_tree));
-  customize_keyword (keyword_parser, keyword_tree);
+  tree keyword_config= get_parser_config (name, "keyword");
+  customize_keyword (keyword_parser, keyword_config);
 
-  // Load (<name>-operators)
-  string get_the_operators_tree= "(tm->tree (" * name * "-operators))";
-  tree operator_tree= as_tree (eval (get_the_operators_tree));
-  customize_operator (operator_tree);
+  tree operator_config= get_parser_config (name, "operator");
+  customize_operator (operator_config);
 
-  // Load (<name>-numbers)
-  string get_the_numbers_tree= "(tm->tree (" * name * "-numbers))";
-  tree number_tree= as_tree (eval (get_the_numbers_tree));
-  customize_number (number_tree);
+  tree number_config= get_parser_config (name, "number");
+  customize_number (number_config);
 
-  // Load (<name>-inline-comment-starts)
-  list<string> inline_comment_starts_list=
-    as_list_string (eval ("(" * name * "-inline-comment-starts)"));
-  array<string> inline_comment_starts;
-  for (int i=0; i<N(inline_comment_starts_list); i++) {
-    inline_comment_starts << inline_comment_starts_list[i];
-  }
-  inline_comment_parser.set_starts (inline_comment_starts);
+  tree string_config= get_parser_config (name, "string");
+  customize_string (string_config);
 
-  // Load (<name>-string)
-  string get_the_string_tree = "(tm->tree (" * name * "-string))";
-  tree string_tree= as_tree (eval (get_the_string_tree));
-  customize_string (string_tree);
+  tree comment_config= get_parser_config (name, "comment");
+  customize_comment (comment_config);
 
-  // Load (<name>-preprocessors)
-  string get_the_preprocessor_tree = "(tm->tree (" * name * "-preprocessors))";
-  tree preprocessor_tree= as_tree (eval (get_the_preprocessor_tree));
-  customize_preprocessor (preprocessor_tree);
+  tree preprocessor_config= get_parser_config (name, "preprocessor");
+  customize_preprocessor (preprocessor_config);
+}
+
+tree
+prog_language_rep::get_parser_config(string lan, string key) {
+  string cmd = "(tm->tree (parser-feature " * raw_quote (lan) * " " * raw_quote (key) * "))";
+  return as_tree (eval (cmd));
 }
 
 void
@@ -131,6 +121,22 @@ prog_language_rep::customize_string (tree config) {
   if (DEBUG_PARSER)
     debug_packrat << string_parser.to_string();
 }
+
+void
+prog_language_rep::customize_comment (tree config) {
+  for (int i=0; i<N(config); i++) {
+    tree feature= config[i];
+    string label= get_label (feature);
+    if (label == "inline") {
+      array<string> inline_comment_starts;
+      for (int i=0; i<N(feature); i++) {
+        inline_comment_starts << get_label (feature[i]);
+      }
+      inline_comment_parser.set_starts (inline_comment_starts);
+    }
+  }
+}
+
 
 void
 prog_language_rep::customize_preprocessor (tree config) {

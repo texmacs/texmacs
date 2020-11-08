@@ -11,10 +11,12 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (prog python-lang))
+(texmacs-module (prog python-lang)
+  (:use (prog default-lang)))
 
-(tm-define (python-keywords)
-  `(keywords
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "python") (== key "keyword")))
+  `(,(string->symbol key)
     (constant
       "Ellipsis" "False" "None" "NotImplemented" "True" "__debug__" "__import__" "abs"
       "all" "any" "apply" "ascii" "basestring" "bin" "bool" "buffer"
@@ -48,8 +50,9 @@
       "assert" "except" "exec" "finally" "pass" "print" "raise" "return"
       "try" "yield")))
 
-(tm-define (python-operators)
-  `(operators
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "python") (== key "operator")))
+  `(,(string->symbol key)
     (operator
       "and" "not" "or"
       "+" "-" "/" "*" "**" "//" "%" "|" "&" "^"
@@ -67,23 +70,27 @@
     (imaginary "j" "J")))
 
 ;; https://docs.python.org/3.8/reference/lexical_analysis.html#numeric-literals
-(tm-define (python-numbers)
- `(numbers
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "python") (== key "number")))
+  `(,(string->symbol key)
    (bool_features
      "prefix_0x" "prefix_0b" "prefix_0o" "no_suffix_with_box"
      "sci_notation")
    ,(python-number-suffix)
    (separator "_")))
 
-(tm-define (python-inline-comment-starts)
-  (list "#"))
-
-(tm-define (python-string)
-  `(string
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "python") (== key "string")))
+  `(,(string->symbol key)
     (bool_features 
      "hex_with_8_bits" "hex_with_16_bits"
      "hex_with_32_bits" "octal_upto_3_digits")
     (escape_sequences "\\" "\"" "'" "a" "b" "f" "n" "r" "t" "v" "newline")))
+
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "python") (== key "comment")))
+  `(,(string->symbol key)
+    (inline "#")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences for syntax highlighting

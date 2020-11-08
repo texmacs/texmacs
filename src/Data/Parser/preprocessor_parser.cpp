@@ -34,8 +34,11 @@ preprocessor_parser_rep::set_directives (array<string> directives) {
 bool
 preprocessor_parser_rep::can_parse (string s, int pos) {
   if (!parser_rep::can_parse (s, pos)) return false;
+
+  // A language with empty directives does not have preprocessors
+  if (N(m_directives) == 0) return false;
   
-  if (s[pos] != '#') return false;
+  if (s[pos] != m_start) return false;
   
   int first_non_blank_pos= 0;
   skip_spaces (s, first_non_blank_pos);
@@ -44,9 +47,6 @@ preprocessor_parser_rep::can_parse (string s, int pos) {
 
 void
 preprocessor_parser_rep::do_parse (string s, int& pos) {
-  // A language with empty directives does not have preprocessors
-  if (N(m_directives) == 0) return;
-  
   int opos= pos;
   
   if (s[pos] != m_start) return;

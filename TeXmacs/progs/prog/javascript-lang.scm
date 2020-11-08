@@ -11,10 +11,12 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (prog javascript-lang))
+(texmacs-module (prog javascript-lang)
+  (:use (prog default-lang)))
 
-(tm-define (javascript-keywords)
-  `(keywords
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "javascript") (== key "keyword")))
+  `(,(string->symbol key)
     (constant
       "false" "true" "null" "undefined" "NaN" "Infinity"
       "void" "Array" "Boolean" "BigInt" "Map" "Object" "String" "Set")
@@ -32,8 +34,9 @@
       "for" "finally" "return" "throw" "try" "while" "with")))
 
 ;; Ref: https://ecma-international.org/ecma-262/10.0/index.html#sec-update-expressions
-(tm-define (javascript-operators)
-  `(operators
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "javascript") (== key "operator")))
+  `(,(string->symbol key)
     (operator
       "++" "--" ;; Update Expressions
       "+" "-" "~" "!" ;; Unary Operators
@@ -59,17 +62,16 @@
     (operator_openclose "{" "[" "(" ")" "]" "}")))
 
 ;; Ref: https://ecma-international.org/ecma-262/10.0/index.html#sec-literals-numeric-literals
-(tm-define (javascript-numbers)
-  `(numbers
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "javascript") (== key "number")))
+  `(,(string->symbol key)
     (bool_features
       "prefix_0x" "prefix_0b" "prefix_0o"
       "sci_notation")))
 
-(tm-define (javascript-inline-comment-starts)
-  (list "//"))
-
-(tm-define (javascript-string)
-  `(string
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "javascript") (== key "string")))
+  `(,(string->symbol key)
     (bool_features
      "hex_with_8_bits" "hex_with_16_bits"
      "hex_with_32_bits" "octal_upto_3_digits")

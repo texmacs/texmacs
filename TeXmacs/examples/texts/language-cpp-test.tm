@@ -1,6 +1,6 @@
-<TeXmacs|1.99.12>
+<TeXmacs|1.99.14>
 
-<style|<tuple|generic|chinese|old-dots>>
+<style|<tuple|generic|chinese|old-dots|old-lengths>>
 
 <\body>
   <doc-data|<doc-title|The C++ Language>>
@@ -33,6 +33,14 @@
     0B10, 0B10l, 0B10ll, 0B10L, 0B10LL, 0B10ul, 0B10UL, 0B10ull, 0B10ULL
   </cpp-code>
 
+  <subsection|Preprocessor>
+
+  <\cpp-code>
+    #include \<less\>stdio.h\<gtr\>
+
+    #define PI 3.14
+  </cpp-code>
+
   <section|References>
 
   <\itemize>
@@ -52,7 +60,8 @@
     <associate|auto-1|<tuple|1|?>>
     <associate|auto-2|<tuple|1.1|?>>
     <associate|auto-3|<tuple|1.2|?>>
-    <associate|auto-4|<tuple|2|?>>
+    <associate|auto-4|<tuple|1.3|?>>
+    <associate|auto-5|<tuple|2|?>>
   </collection>
 </references>
 
@@ -63,9 +72,17 @@
       Highlight> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-1><vspace|0.5fn>
 
+      <with|par-left|<quote|1tab>|1.1<space|2spc><locus|<id|%31959D908-318D59A08>|<link|hyperlink|<id|%31959D908-318D59A08>|<url|https://en.cppreference.com/w/cpp/language/identifiers>>|Identifiers>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-2>>
+
+      <with|par-left|<quote|1tab>|1.2<space|2spc>Numbers
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-3>>
+
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|2<space|2spc>References>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-2><vspace|0.5fn>
+      <no-break><pageref|auto-4><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>

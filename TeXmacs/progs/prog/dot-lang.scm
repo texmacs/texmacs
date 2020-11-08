@@ -11,10 +11,12 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (prog dot-lang))
+(texmacs-module (prog dot-lang)
+  (:use (prog default-lang)))
 
-(tm-define (dot-keywords)
-  `(keywords
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "dot") (== key "keyword")))
+  `(,(string->symbol key)
     (declare_type "graph" "node" "edge" "digraph" "subgraph")
     (keyword
       ;; Graph attributes
@@ -37,8 +39,9 @@
       ;; Shared attributes (graphs and edges)
       "fontcolor" "fontname" "fontsize" "layer" "style")))
 
-(tm-define (dot-operators)
-  `(operators
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "dot") (== key "operator")))
+  `(,(string->symbol key)
     (operator
       "," ";" ":" "=")
     (operator_special
@@ -52,17 +55,16 @@
     (double "d" "D")
     (float "f" "F")))
 
-(tm-define (dot-numbers)
-  `(numbers
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "dot") (== key "number")))
+  `(,(string->symbol key)
     (bool_features
      "prefix_0x" "prefix_0b"
      "sci_notation")
     ,(dot-number-suffix)))
 
-(tm-define (dot-inline-comment-starts)
-  (list "//"))
-
-(tm-define (dot-string)
-  `(string
+(tm-define (parser-feature lan key)
+  (:require (and (== lan "dot") (== key "string")))
+  `(,(string->symbol key)
     (bool_features)
     (escape_sequences "\\" "\"" "'" "b" "f" "n" "r" "t")))
