@@ -431,7 +431,7 @@
              get-link-locations register-link-locations)
 (lazy-menu (link ref-menu) ref-menu)
 (lazy-define (link ref-edit) preview-reference)
-;;(define-secure-symbols preview-reference)
+(define-secure-symbols preview-reference)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
