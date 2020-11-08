@@ -828,8 +828,8 @@ edit_interface_rep::apply_changes () {
     int THE_CURSOR_BAK= env_change & THE_CURSOR;
     go_to_here ();
     env_change= (env_change & (~THE_CURSOR)) | THE_CURSOR_BAK;
-    if ((env_change & (THE_TREE+THE_ENVIRONMENT+THE_CURSOR)) != 0 &&
-        (env_change & THE_FREEZE) == 0)
+    if ((env_change & (THE_TREE+THE_FOCUS+THE_ENVIRONMENT+THE_CURSOR)) != 0 &&
+        ((env_change & THE_FREEZE) == 0 || (env_change & THE_FOCUS) != 0))
       if (!inside_active_graphics ())
         cursor_visible ();
 
