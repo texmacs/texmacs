@@ -154,6 +154,12 @@ public:
   virtual SI   get_visible_height () = 0;
   virtual SI   get_window_width () = 0;
   virtual SI   get_window_height () = 0;
+  virtual SI   get_window_x () = 0;
+  virtual SI   get_window_y () = 0;
+  virtual SI   get_canvas_x () = 0;
+  virtual SI   get_canvas_y () = 0;
+  virtual SI   get_scroll_x () = 0;
+  virtual SI   get_scroll_y () = 0;
   virtual void invalidate (SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void invalidate (rectangles rs) = 0;
   virtual void invalidate_all () = 0;

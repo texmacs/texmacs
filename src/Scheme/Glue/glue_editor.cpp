@@ -2995,6 +2995,60 @@ tmg_get_window_height () {
 }
 
 tmscm
+tmg_get_window_x () {
+  // TMSCM_DEFER_INTS;
+  int out= get_current_editor()->get_window_x ();
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_get_window_y () {
+  // TMSCM_DEFER_INTS;
+  int out= get_current_editor()->get_window_y ();
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_get_canvas_x () {
+  // TMSCM_DEFER_INTS;
+  int out= get_current_editor()->get_canvas_x ();
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_get_canvas_y () {
+  // TMSCM_DEFER_INTS;
+  int out= get_current_editor()->get_canvas_y ();
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_get_scroll_x () {
+  // TMSCM_DEFER_INTS;
+  int out= get_current_editor()->get_scroll_x ();
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_get_scroll_y () {
+  // TMSCM_DEFER_INTS;
+  int out= get_current_editor()->get_scroll_y ();
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
 tmg_clear_buffer () {
   // TMSCM_DEFER_INTS;
   get_current_editor()->clear_buffer ();
@@ -3747,6 +3801,12 @@ initialize_glue_editor () {
   tmscm_install_procedure ("view-get-property",  tmg_view_get_property, 1, 0, 0);
   tmscm_install_procedure ("get-window-width",  tmg_get_window_width, 0, 0, 0);
   tmscm_install_procedure ("get-window-height",  tmg_get_window_height, 0, 0, 0);
+  tmscm_install_procedure ("get-window-x",  tmg_get_window_x, 0, 0, 0);
+  tmscm_install_procedure ("get-window-y",  tmg_get_window_y, 0, 0, 0);
+  tmscm_install_procedure ("get-canvas-x",  tmg_get_canvas_x, 0, 0, 0);
+  tmscm_install_procedure ("get-canvas-y",  tmg_get_canvas_y, 0, 0, 0);
+  tmscm_install_procedure ("get-scroll-x",  tmg_get_scroll_x, 0, 0, 0);
+  tmscm_install_procedure ("get-scroll-y",  tmg_get_scroll_y, 0, 0, 0);
   tmscm_install_procedure ("clear-buffer",  tmg_clear_buffer, 0, 0, 0);
   tmscm_install_procedure ("tex-buffer",  tmg_tex_buffer, 0, 0, 0);
   tmscm_install_procedure ("clear-local-info",  tmg_clear_local_info, 0, 0, 0);

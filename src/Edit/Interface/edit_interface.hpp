@@ -93,6 +93,12 @@ public:
   SI   get_visible_height ();
   SI   get_window_width ();
   SI   get_window_height ();
+  SI   get_window_x ();
+  SI   get_window_y ();
+  SI   get_canvas_x ();
+  SI   get_canvas_y ();
+  SI   get_scroll_x ();
+  SI   get_scroll_y ();
   void set_zoom_factor (double zoom);
   void invalidate (SI x1, SI y1, SI x2, SI y2);
   void invalidate (rectangles rs);

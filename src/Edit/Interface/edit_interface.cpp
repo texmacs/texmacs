@@ -229,6 +229,54 @@ edit_interface_rep::get_window_height () {
   return h;
 }
 
+SI
+edit_interface_rep::get_window_x () {
+  SI wx, wy;
+  ::get_position (get_window (this), wx, wy);
+  return wx;
+}
+
+SI
+edit_interface_rep::get_window_y () {
+  SI wx, wy;
+  ::get_position (get_window (this), wx, wy);
+  return wy;
+}
+
+SI
+edit_interface_rep::get_canvas_x () {
+  SI ox, oy;
+  widget me= ::get_canvas (widget (cvw));
+  ::get_position (me, ox, oy);
+  return ox;
+}
+
+SI
+edit_interface_rep::get_canvas_y () {
+  SI ox, oy;
+  widget me= ::get_canvas (widget (cvw));
+  ::get_position (me, ox, oy);
+  return oy;
+}
+
+SI
+edit_interface_rep::get_scroll_x () {
+  SI scx, scy;
+  SERVER (scroll_where (scx, scy));
+  scx= (SI) (scx / magf);
+  scy= (SI) (scy / magf);
+  return scx;
+}
+
+SI
+edit_interface_rep::get_scroll_y () {
+  SI scx, scy;
+  SERVER (scroll_where (scx, scy));
+  scx= (SI) (scx / magf);
+  scy= (SI) (scy / magf);
+  return scy;
+}
+
 void
 edit_interface_rep::scroll_to (SI x, SI y) {
   stored_rects= rectangles ();
