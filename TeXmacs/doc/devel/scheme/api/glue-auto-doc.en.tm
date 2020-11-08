@@ -8211,6 +8211,54 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(get-window-x)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_window_x> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
+    <scm|(get-window-y)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_window_y> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
+    <scm|(get-canvas-x)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_canvas_x> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
+    <scm|(get-canvas-y)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_canvas_y> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
+    <scm|(get-scroll-x)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_scroll_x> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
+    <scm|(get-scroll-y)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_scroll_y> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
     <scm|(clear-buffer)>
 <explain-synopsis|no synopsis>
   <|explain>
