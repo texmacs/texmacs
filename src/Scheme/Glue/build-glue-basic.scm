@@ -789,8 +789,10 @@
 
   ;; transitional alternative windows; to be replaced by better solution
   (alt-window-handle window_handle (int))
-  (alt-window-create window_create (void int widget string bool))
   (alt-window-create-quit window_create (void int widget string command))
+  (alt-window-create-plain window_create_plain (void int widget string))
+  (alt-window-create-popup window_create_popup (void int widget string))
+  (alt-window-create-tooltip window_create_tooltip (void int widget string))
   (alt-window-delete window_delete (void int))
   (alt-window-show window_show (void int))
   (alt-window-hide window_hide (void int))

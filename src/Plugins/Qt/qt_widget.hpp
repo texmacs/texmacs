@@ -120,6 +120,7 @@ public:
   virtual widget plain_window_widget (string name, command quit);
   virtual widget make_popup_widget ();
   virtual widget popup_window_widget (string s);
+  virtual widget tooltip_window_widget (string s);
 
   void add_child (widget a);
   void add_children (array<widget> a);

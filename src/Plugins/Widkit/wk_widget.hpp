@@ -147,6 +147,7 @@ wk_widget refreshable_wk_widget (object promise, string kind);
 wk_widget texmacs_wk_widget (int mask, command quit);
 wk_widget plain_window_widget (wk_widget wid, string s, command q= command ());
 wk_widget popup_window_widget (wk_widget wid, string s);
+wk_widget tooltip_window_widget (wk_widget wid, string s);
 void      destroy_window_widget (wk_widget w);
 
 #endif // defined WK_WIDGET_H

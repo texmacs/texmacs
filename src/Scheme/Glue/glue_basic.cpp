@@ -9554,25 +9554,6 @@ tmg_alt_window_handle () {
 }
 
 tmscm
-tmg_alt_window_create (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
-  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "alt-window-create");
-  TMSCM_ASSERT_WIDGET (arg2, TMSCM_ARG2, "alt-window-create");
-  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "alt-window-create");
-  TMSCM_ASSERT_BOOL (arg4, TMSCM_ARG4, "alt-window-create");
-
-  int in1= tmscm_to_int (arg1);
-  widget in2= tmscm_to_widget (arg2);
-  string in3= tmscm_to_string (arg3);
-  bool in4= tmscm_to_bool (arg4);
-
-  // TMSCM_DEFER_INTS;
-  window_create (in1, in2, in3, in4);
-  // TMSCM_ALLOW_INTS;
-
-  return TMSCM_UNSPECIFIED;
-}
-
-tmscm
 tmg_alt_window_create_quit (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
   TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "alt-window-create-quit");
   TMSCM_ASSERT_WIDGET (arg2, TMSCM_ARG2, "alt-window-create-quit");
@@ -9586,6 +9567,57 @@ tmg_alt_window_create_quit (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
 
   // TMSCM_DEFER_INTS;
   window_create (in1, in2, in3, in4);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_alt_window_create_plain (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "alt-window-create-plain");
+  TMSCM_ASSERT_WIDGET (arg2, TMSCM_ARG2, "alt-window-create-plain");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "alt-window-create-plain");
+
+  int in1= tmscm_to_int (arg1);
+  widget in2= tmscm_to_widget (arg2);
+  string in3= tmscm_to_string (arg3);
+
+  // TMSCM_DEFER_INTS;
+  window_create_plain (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_alt_window_create_popup (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "alt-window-create-popup");
+  TMSCM_ASSERT_WIDGET (arg2, TMSCM_ARG2, "alt-window-create-popup");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "alt-window-create-popup");
+
+  int in1= tmscm_to_int (arg1);
+  widget in2= tmscm_to_widget (arg2);
+  string in3= tmscm_to_string (arg3);
+
+  // TMSCM_DEFER_INTS;
+  window_create_popup (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_alt_window_create_tooltip (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "alt-window-create-tooltip");
+  TMSCM_ASSERT_WIDGET (arg2, TMSCM_ARG2, "alt-window-create-tooltip");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "alt-window-create-tooltip");
+
+  int in1= tmscm_to_int (arg1);
+  widget in2= tmscm_to_widget (arg2);
+  string in3= tmscm_to_string (arg3);
+
+  // TMSCM_DEFER_INTS;
+  window_create_tooltip (in1, in2, in3);
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
@@ -10612,8 +10644,10 @@ initialize_glue_basic () {
   tmscm_install_procedure ("project-attached?",  tmg_project_attachedP, 0, 0, 0);
   tmscm_install_procedure ("project-get",  tmg_project_get, 0, 0, 0);
   tmscm_install_procedure ("alt-window-handle",  tmg_alt_window_handle, 0, 0, 0);
-  tmscm_install_procedure ("alt-window-create",  tmg_alt_window_create, 4, 0, 0);
   tmscm_install_procedure ("alt-window-create-quit",  tmg_alt_window_create_quit, 4, 0, 0);
+  tmscm_install_procedure ("alt-window-create-plain",  tmg_alt_window_create_plain, 3, 0, 0);
+  tmscm_install_procedure ("alt-window-create-popup",  tmg_alt_window_create_popup, 3, 0, 0);
+  tmscm_install_procedure ("alt-window-create-tooltip",  tmg_alt_window_create_tooltip, 3, 0, 0);
   tmscm_install_procedure ("alt-window-delete",  tmg_alt_window_delete, 1, 0, 0);
   tmscm_install_procedure ("alt-window-show",  tmg_alt_window_show, 1, 0, 0);
   tmscm_install_procedure ("alt-window-hide",  tmg_alt_window_hide, 1, 0, 0);

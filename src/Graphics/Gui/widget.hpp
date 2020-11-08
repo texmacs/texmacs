@@ -105,7 +105,9 @@ extern bool use_side_tools;
 widget plain_window_widget (widget w, string s, command quit= command ());
   // creates a decorated window with name s and contents w
 widget popup_window_widget (widget w, string s);
-  // creates an undecorated window with name s and contents w
+  // creates an undecorated popup window with name s and contents w
+widget tooltip_window_widget (widget w, string s);
+  // creates an undecorated tooltip window with name s and contents w
 void   destroy_window_widget (widget w);
   // destroys a window as created by the above routines
 

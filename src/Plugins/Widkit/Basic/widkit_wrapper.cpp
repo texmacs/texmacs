@@ -361,6 +361,11 @@ popup_window_widget (widget wid, string s) {
   return abstract (popup_window_widget (concrete (wid), s));
 }
 
+widget
+tooltip_window_widget (widget wid, string s) {
+  return abstract (popup_window_widget (concrete (wid), s));
+}
+
 void
 destroy_window_widget (widget w) {
   destroy_window_widget (concrete (w));

@@ -5619,7 +5619,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(alt-window-create <scm-arg|int> <scm-arg|widget> <scm-arg|string> <scm-arg|bool>)>
+    <scm|(alt-window-create-quit <scm-arg|int> <scm-arg|widget> <scm-arg|string> <scm-arg|command>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|window_create> which returns
@@ -5627,10 +5627,26 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(alt-window-create-quit <scm-arg|int> <scm-arg|widget> <scm-arg|string> <scm-arg|command>)>
+    <scm|(alt-window-create-plain <scm-arg|int> <scm-arg|widget> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
-    Calls the <c++> function <cpp|window_create> which returns
+    Calls the <c++> function <cpp|window_create_plain> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(alt-window-create-popup <scm-arg|int> <scm-arg|widget> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|window_create_popup> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(alt-window-create-tooltip <scm-arg|int> <scm-arg|widget> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|window_create_tooltip> which returns
     <scm|void>.
   </explain>
 

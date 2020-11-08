@@ -1023,7 +1023,7 @@
          (lbd (lambda x (apply cmd x) (alt-window-delete win)))
          (com (object->command (menu-protect lbd)))
          (wid (wid-promise com)))
-    (alt-window-create win wid (translate name) #t)
+    (alt-window-create-plain win wid (translate name))
     (alt-window-show win)))
 
 (tm-define (interactive-print done u)
