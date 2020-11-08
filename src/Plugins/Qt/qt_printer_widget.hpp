@@ -37,7 +37,7 @@ public:
   ~qt_printer_widget_rep () { };
   
   virtual void send (slot s, blackbox val);
-  virtual widget plain_window_widget (string s, command q);
+  virtual widget plain_window_widget (string s, command q, int b);
 
   void showDialog ();
 

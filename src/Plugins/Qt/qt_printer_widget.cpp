@@ -63,9 +63,8 @@ qt_printer_widget_rep::send (slot s, blackbox val) {
 
 /*! Return the widget as a top-level window to the eyes of TeXmacs. */
 widget
-qt_printer_widget_rep::plain_window_widget (string s, command q)
-{
-  (void) s;
+qt_printer_widget_rep::plain_window_widget (string s, command q, int b) {
+  (void) s; (void) b;
   commandAfterExecution = q;
 
   return this;

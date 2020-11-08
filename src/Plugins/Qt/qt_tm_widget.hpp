@@ -90,7 +90,7 @@ public:
   qt_tm_widget_rep (int mask, command _quit);
   ~qt_tm_widget_rep ();
   
-  virtual widget plain_window_widget (string name, command quit);
+  virtual widget plain_window_widget (string name, command quit, int b);
 
   virtual void      send (slot s, blackbox val);
   virtual blackbox query (slot s, int type_id);

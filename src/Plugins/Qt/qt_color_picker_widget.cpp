@@ -56,10 +56,9 @@ qt_color_picker_widget_rep::send (slot s, blackbox val) {
  identify it with the window title. This is not always the case.
  */
 widget
-qt_color_picker_widget_rep::plain_window_widget (string name, command q)
-{
+qt_color_picker_widget_rep::plain_window_widget (string name, command q, int b) {
+  (void) b; (void) q;
   _windowTitle = name;
-  (void) q;
   return this;
 }
 

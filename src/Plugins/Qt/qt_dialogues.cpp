@@ -185,8 +185,8 @@ qt_inputs_list_widget_rep::qt_inputs_list_widget_rep (command _cmd,
 }
 
 widget
-qt_inputs_list_widget_rep::plain_window_widget (string s, command q)
-{
+qt_inputs_list_widget_rep::plain_window_widget (string s, command q, int b) {
+  (void) b;
   (void) q; // The widget already has a command (dialogue_command)
   win_title = s;
   return this;

@@ -41,7 +41,7 @@ public:
   virtual void send (slot s, blackbox val);
   virtual blackbox query (slot s, int type_id);
   virtual widget read (slot s, blackbox index);
-  virtual widget plain_window_widget (string s, command q);
+  virtual widget plain_window_widget (string s, command q, int b);
   
   bool set_type (const string& _type);
   void perform_dialog();

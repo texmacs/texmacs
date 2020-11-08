@@ -409,7 +409,8 @@ qt_tm_widget_rep::tweak_iconbar_size (QSize& sz) {
  \param name A unique identifier for the window (e.g. "TeXmacs:3")
  */
 widget
-qt_tm_widget_rep::plain_window_widget (string name, command _quit) {
+qt_tm_widget_rep::plain_window_widget (string name, command _quit, int b) {
+  (void) b;
   (void) _quit; // The widget already has a command. Don't overwrite. 
   orig_name = name;
   return this;

@@ -152,8 +152,8 @@ qt_chooser_widget_rep::read (slot s, blackbox index) {
  identify it with the window title. This is not always the case.
  */
 widget
-qt_chooser_widget_rep::plain_window_widget (string s, command q)
-{
+qt_chooser_widget_rep::plain_window_widget (string s, command q, int b) {
+  (void) b;
   win_title = s;
   quit      = q;
   return this;

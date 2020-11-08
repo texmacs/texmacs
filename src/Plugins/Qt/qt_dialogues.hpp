@@ -75,7 +75,7 @@ public:
   virtual blackbox query (slot s, int type_id);
   virtual widget    read (slot s, blackbox index);
   
-  virtual widget plain_window_widget (string s, command q);
+  virtual widget plain_window_widget (string s, command q, int b);
   
 protected:
   void perform_dialog();
