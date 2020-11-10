@@ -59,7 +59,7 @@ public:
   qt_ui_element_rep (types _type, blackbox _load);
   virtual ~qt_ui_element_rep(); 
 
-  virtual widget make_popup_widget ();
+  virtual widget popup_window_widget (string s);
   
   virtual QAction*         as_qaction ();
   virtual QWidget*         as_qwidget ();

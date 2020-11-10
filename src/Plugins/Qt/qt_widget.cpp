@@ -222,30 +222,19 @@ qt_widget_rep::plain_window_widget (string name, command quit, int border) {
   return widget (wid);
 }
 
-/*! Instantiates and returns a new widget which will act as a popup widget.
-
- This is used by popup_window_widget: subclasses reimplement this method and
- return the appropriate widget, and qt_widget_rep::popup_window_widget()
- is the "interface".
- */
-widget
-qt_widget_rep::make_popup_widget () {
-  return tm_new<qt_popup_widget_rep> ((widget_rep*)this, command());
-}
-
 /*! Interface for the creation of popups.
  FIXME: the check below should be unnecessary, but current design is ugly.
  */
 widget
 qt_widget_rep::popup_window_widget (string s) {
-  widget wid= make_popup_widget();
+  widget wid= tm_new<qt_popup_widget_rep> ((widget_rep*)this, command());
   ASSERT(concrete(wid) != this, "Loop in call to popup_window_widget()");
   return concrete(wid)->popup_window_widget(s);
 }
 
 widget
 qt_widget_rep::tooltip_window_widget (string s) {
-  widget wid= make_popup_widget();
+  widget wid= tm_new<qt_popup_widget_rep> ((widget_rep*)this, command());
   ASSERT(concrete(wid) != this, "Loop in call to tooltip_window_widget()");
   return concrete(wid)->tooltip_window_widget(s);
 }
@@ -313,7 +302,10 @@ tooltip_window_widget (widget w, string s) {
  */
 widget
 popup_widget (widget w) {
-  return concrete(w)->make_popup_widget();
+  // Do nothing. In Qt all the action is taken care of by
+  // the enveloping popup window.
+  // It is the case that all the popup_widgets are inside popup_window_widgets
+  return w;
 }
 
 /*! Destroys a window as created via qt_window_widget.

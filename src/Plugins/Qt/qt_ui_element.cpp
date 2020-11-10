@@ -254,18 +254,20 @@ qt_ui_element_rep::get_payload (qt_widget qtw, types check_type) {
   }
 }
 
-/*! Returns the ui element as a popup widget.
- If the widget is of type vertical_menu, it is understood that the popup widget
+/*! Returns the ui element as a popup windo widget.
+ If the widget is of type vertical_menu, it is understood that the popup window widget
  must be of the standard OS dependent type implemented by qt_menu_rep using
  QMenu.
  */
-widget 
-qt_ui_element_rep::make_popup_widget () {
+
+widget
+qt_ui_element_rep::popup_window_widget (string s) {
   if (type == qt_widget_rep::vertical_menu)
-    return tm_new<qt_menu_rep> (this);
+    return tm_new<qt_menu_rep>(this)->popup_window_widget (s);
   else
-    return qt_widget_rep::make_popup_widget();
+    return qt_widget_rep::popup_window_widget (s);
 }
+
 
 QList<QAction*>*
 qt_ui_element_rep::get_qactionlist() {
