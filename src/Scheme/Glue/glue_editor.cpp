@@ -2041,6 +2041,19 @@ tmg_go_end_paragraph () {
 }
 
 tmscm
+tmg_label_2path (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "label->path");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  path out= get_current_editor()->search_label (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return path_to_tmscm (out);
+}
+
+tmscm
 tmg_go_to_label (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "go-to-label");
 
@@ -3713,6 +3726,7 @@ initialize_glue_editor () {
   tmscm_install_procedure ("go-page-down",  tmg_go_page_down, 0, 0, 0);
   tmscm_install_procedure ("go-start-paragraph",  tmg_go_start_paragraph, 0, 0, 0);
   tmscm_install_procedure ("go-end-paragraph",  tmg_go_end_paragraph, 0, 0, 0);
+  tmscm_install_procedure ("label->path",  tmg_label_2path, 1, 0, 0);
   tmscm_install_procedure ("go-to-label",  tmg_go_to_label, 1, 0, 0);
   tmscm_install_procedure ("cursor-accessible?",  tmg_cursor_accessibleP, 0, 0, 0);
   tmscm_install_procedure ("cursor-show-if-hidden",  tmg_cursor_show_if_hidden, 0, 0, 0);

@@ -258,8 +258,14 @@
       `(preview-balloon ,doc))))
 
 (tm-define (ref-preview id)
-  (and-with l (and-nnull? (search-label (buffer-tree) id))
-    (label-preview (car l))))
+  (and-with p (and-nnull? (label->path id))
+    (with t (path->tree (cDr p))
+      (cond ((label-context? t)
+             (label-preview t))
+            ((tree-in? t '(glossary glossary-explain glossary-dup
+                           index subindex subsubindex index-complex))
+             (label-preview t))
+            (else #f)))))
 
 (define (preview-init? p)
   (and-with x (and (pair? p) (car p))

@@ -206,6 +206,7 @@
   (go-page-down go_page_down (void))
   (go-start-paragraph go_start_paragraph (void))
   (go-end-paragraph go_end_paragraph (void))
+  (label->path search_label (path string))
   (go-to-label go_to_label (void string))
   (cursor-accessible? cursor_is_accessible (bool))
   (cursor-show-if-hidden show_cursor_if_hidden (void))

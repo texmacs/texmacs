@@ -965,6 +965,7 @@
 "go-page-down"
 "go-start-paragraph"
 "go-end-paragraph"
+"label->path"
 "go-to-label"
 "cursor-accessible?"
 "cursor-show-if-hidden"

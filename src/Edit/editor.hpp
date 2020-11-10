@@ -235,6 +235,7 @@ public:
   virtual void go_end_with (string var, string val) = 0;
   virtual void go_start_paragraph () = 0;
   virtual void go_end_paragraph () = 0;
+  virtual path search_label (string s) = 0;
   virtual void go_to_label (string s) = 0;
   virtual tree get_labels () = 0;
 

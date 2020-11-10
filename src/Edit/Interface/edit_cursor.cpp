@@ -585,21 +585,24 @@ edit_cursor_rep::show_cursor_if_hidden () {
   }
 }
 
-void
-edit_cursor_rep::go_to_label (string s) {
-  path p= search_label (subtree (et, rp), s);
-  if (!is_nil (p)) {
-    go_to (rp * p);
-    show_cursor_if_hidden ();
-    return;
-  }
+path
+edit_cursor_rep::search_label (string s) {
+  path p= ::search_label (subtree (et, rp), s);
+  if (!is_nil (p)) return (rp * p);
   if (!is_nil (eb)) {
     p= eb->find_tag (s);
-    if (!is_nil (p)) {
-      go_to (p);
-      show_cursor_if_hidden ();
-      return;
-    }
+    if (!is_nil (p)) return p;
+  }
+  return path ();
+}
+
+void
+edit_cursor_rep::go_to_label (string s) {
+  path p= search_label (s);
+  if (!is_nil (p)) {
+    go_to (p);
+    show_cursor_if_hidden ();
+    return;
   }
   tree val= (buf->prj==NULL? buf->data->ref[s]: buf->prj->data->ref[s]);
   if (is_func (val, TUPLE, 3) && is_atomic (val[2])) {

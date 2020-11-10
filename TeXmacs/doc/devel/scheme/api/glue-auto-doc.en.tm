@@ -7523,6 +7523,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(label-\<gtr\>path <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|search_label> which returns
+    <scm|path>.
+  </explain>
+
+  <\explain>
     <scm|(go-to-label <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>

@@ -72,6 +72,7 @@ public:
   void go_end_with (string var, string val);
 
   /* other cursor routines */
+  path search_label (string s);
   void go_to_label (string s);
   tree get_labels ();
 };
