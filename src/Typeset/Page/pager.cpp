@@ -28,6 +28,8 @@ pager_rep::pager_rep (path ip2, edit_env env2, array<page_item> l2):
   style (PAGE_THIS_FOOTER)  = "";
   style (PAGE_THIS_BG_COLOR)= "";
 
+  double magn_old= env->magn_len;
+  env->magn_len= 1.0;
   int nr_cols= env->get_int (PAR_COLUMNS);
   paper= (env->get_string (PAGE_MEDIUM) == "paper");
   string pbr= env->get_string (PAGE_BREAKING);
@@ -46,6 +48,7 @@ pager_rep::pager_rep (path ip2, edit_env env2, array<page_item> l2):
   mnote_sep = env->get_length (PAGE_MNOTE_SEP);
   show_hf   = env->get_bool (PAGE_SHOW_HF) && paper;
   if (nr_cols > 1) text_width = (text_width+col_sep+1) * nr_cols - col_sep;
+  env->magn_len= magn_old;
 
   page_offset= env->first_page - 1;
   cur_top= 0;

@@ -290,8 +290,11 @@ edit_env_rep::get_page_pars (SI& w, SI& h, SI& width, SI& height,
 
   int nr_cols= get_int (PAR_COLUMNS);
   if (nr_cols > 1) {
+    double magn_old= magn_len;
+    magn_len= 1.0;
     SI col_sep= get_length (PAR_COLUMNS_SEP);
     w= ((w+col_sep) / nr_cols) - col_sep;
+    magn_len= magn_old;
   }
 
   /*
