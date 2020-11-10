@@ -708,6 +708,7 @@
   (object->promise-widget as_promise_widget (promise_widget object))
   (tree-bounding-rectangle get_bounding_rectangle (array_int tree))
   (widget-size get_widget_size (array_int widget))
+  (texmacs-widget-size get_texmacs_widget_size (array_int widget))
   (show-balloon show_help_balloon (void widget int int))
   (get-style-menu get_style_menu (object))
   (hidden-package? hidden_package (bool string))

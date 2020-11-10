@@ -5035,6 +5035,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(texmacs-widget-size <scm-arg|widget>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_texmacs_widget_size> which returns
+    <scm|array_int>.
+  </explain>
+
+  <\explain>
     <scm|(show-balloon <scm-arg|widget> <scm-arg|int> <scm-arg|int>)>
 <explain-synopsis|no synopsis>
   <|explain>

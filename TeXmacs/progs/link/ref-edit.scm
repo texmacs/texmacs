@@ -370,12 +370,8 @@
                            `(with "project" ,master ,doc)
                            `(style (tuple ,@packs)))))
               ;;(display* "balloon= " balloon* "\n")
-              ;;(display* "size= " (widget-size w) "\n")
+              ;;(display* "size= " (texmacs-widget-size w) "\n")
               ;;(show-balloon w x1 (- y1 1280))
-              (let* ((scm `(vertical ("Test" (noop))))
-                     (wid (make-menu-widget scm 0)))
-                ;;(set! w wid)
-                (noop))
               (preview-map w
                            (+ wx x1)
                            (+ wy y1 -1280)

@@ -654,6 +654,7 @@
 "object->promise-widget"
 "tree-bounding-rectangle"
 "widget-size"
+"texmacs-widget-size"
 "show-balloon"
 "get-style-menu"
 "hidden-package?"
