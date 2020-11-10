@@ -38,7 +38,7 @@
         "framed-poster-title")))
 
 (tm-define (style-category p)
-  (:require (and (in-beamer?) (in? p (poster-themes))))
+  (:require (and (in-poster?) (in? p (poster-themes))))
   :poster-theme)
 
 (tm-define (style-category p)
