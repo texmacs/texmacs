@@ -5099,6 +5099,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(get-screen-size)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_screen_size> which returns
+    <scm|array_int>.
+  </explain>
+
+  <\explain>
     <scm|(buffer-list)>
 <explain-synopsis|no synopsis>
   <|explain>

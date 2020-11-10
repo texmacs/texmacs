@@ -716,6 +716,7 @@
   (get-remove-package-menu get_remove_package_menu (object))
   (get-toggle-package-menu get_toggle_package_menu (object))
   (refresh-now windows_refresh (void string))
+  (get-screen-size get_screen_size (array_int))
 
   ;; buffers
   (buffer-list get_all_buffers (array_url))

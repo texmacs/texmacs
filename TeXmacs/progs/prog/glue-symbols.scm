@@ -662,6 +662,7 @@
 "get-remove-package-menu"
 "get-toggle-package-menu"
 "refresh-now"
+"get-screen-size"
 "buffer-list"
 "current-buffer-url"
 "path-to-buffer"

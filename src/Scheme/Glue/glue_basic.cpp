@@ -8735,6 +8735,15 @@ tmg_refresh_now (tmscm arg1) {
 }
 
 tmscm
+tmg_get_screen_size () {
+  // TMSCM_DEFER_INTS;
+  array_int out= get_screen_size ();
+  // TMSCM_ALLOW_INTS;
+
+  return array_int_to_tmscm (out);
+}
+
+tmscm
 tmg_buffer_list () {
   // TMSCM_DEFER_INTS;
   array_url out= get_all_buffers ();
@@ -10592,6 +10601,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("get-remove-package-menu",  tmg_get_remove_package_menu, 0, 0, 0);
   tmscm_install_procedure ("get-toggle-package-menu",  tmg_get_toggle_package_menu, 0, 0, 0);
   tmscm_install_procedure ("refresh-now",  tmg_refresh_now, 1, 0, 0);
+  tmscm_install_procedure ("get-screen-size",  tmg_get_screen_size, 0, 0, 0);
   tmscm_install_procedure ("buffer-list",  tmg_buffer_list, 0, 0, 0);
   tmscm_install_procedure ("current-buffer-url",  tmg_current_buffer_url, 0, 0, 0);
   tmscm_install_procedure ("path-to-buffer",  tmg_path_to_buffer, 1, 0, 0);

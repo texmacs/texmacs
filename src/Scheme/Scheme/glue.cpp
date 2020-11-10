@@ -143,6 +143,15 @@ is_busy_versioning () {
   return busy_versioning;
 }
 
+array<SI>
+get_screen_size () {
+  array<SI> r;
+  SI w, h;
+  gui_root_extents (w, h);
+  r << w << h;
+  return r;
+}
+
 /******************************************************************************
 * Redirections
 ******************************************************************************/
