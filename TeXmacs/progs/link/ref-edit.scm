@@ -336,6 +336,45 @@
             (preview-unmap))))))
   (former key x y mods time))
 
+(define (preview-position-mouse wx wy bsz ssz mpos)
+  (with (bw bh) bsz
+    (with (sw sh) ssz
+      (with (mx my) mpos
+        (cond ((and (<= (+ wx mx bw) sw)
+                    (>= (+ wy my -5120) (- bh sh)))
+               (list (+ wx mx) (+ wy my -5120)))
+              ((and (>  (+ wx mx bw) sw)
+                    (>= (+ wy my -5120) (- sh)))
+               (list (- sw bw) (+ wy my -5120)))
+              ((and (<= (+ wx mx bw) sw)
+                    (<  (+ wy my -5120) (- bh sh)))
+               (list (+ wx mx) (+ wy my bh 1280)))
+              ((and (>  (+ wx mx bw) sw)
+                    (<  (+ wy my -5120) (- bh sh)))
+               (list (- sw bw) (+ wy my bh 1280))))))))
+
+(define (preview-position-rigid x1 y1 x2 y2 wx wy bsz ssz)
+  (with (bw bh) bsz
+    (with (sw sh) ssz
+      (cond ((and (<= (+ wx x1 bw) sw)
+                  (>= (+ wy y1 -1280) (- bh sh)))
+             (list (+ wx x1) (+ wy y1 -1280)))
+            ((and (>  (+ wx x1 bw) sw)
+                  (>= (+ wy y1 -1280) (- sh)))
+             (list (- sw bw) (+ wy y1 -1280)))
+            ((and (<= (+ wx x1 bw) sw)
+                  (<  (+ wy y1 -1280) (- bh sh)))
+             (list (+ wx x1) (+ wy y2 bh 1280)))
+            ((and (>  (+ wx x1 bw) sw)
+                  (<  (+ wy y1 -1280) (- bh sh)))
+             (list (- sw bw) (+ wy y2 bh 1280)))))))
+
+(define (preview-position x1 y1 x2 y2 wx wy bsz ssz mpos)
+  (with (bw bh) bsz
+    (if (or (< bw (- x2 x1)) (< bh (- y2 y1)))
+        (preview-position-mouse wx wy bsz ssz mpos)
+        (preview-position-rigid x1 y1 x2 y2 wx wy bsz ssz))))
+        
 (tm-define (preview-reference body body*)
   (:secure #t)
   (and-with ref (tree-up body)
@@ -368,12 +407,16 @@
                        (master (url->system (current-buffer)))
                        (w (widget-texmacs-output
                            `(with "project" ,master ,doc)
-                           `(style (tuple ,@packs)))))
+                           `(style (tuple ,@packs))))
+                       (bsz (texmacs-widget-size w))
+                       (ssz (get-screen-size))
+                       (mpos (get-mouse-position))
+                       (pos (preview-position x1 y1 x2 y2 wx wy bsz ssz mpos)))
               ;;(display* "balloon= " balloon* "\n")
               ;;(display* "size= " (texmacs-widget-size w) "\n")
               ;;(show-balloon w x1 (- y1 1280))
               (preview-map w
-                           (+ wx x1)
-                           (+ wy y1 -1280)
+                           (car pos)
+                           (cadr pos)
                            id
                            settings)))))))
