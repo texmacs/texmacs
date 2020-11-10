@@ -101,6 +101,7 @@ public:
   void format_paragraph ();
   lazy produce (lazy_type request, format fm);
   format query (lazy_type request, format fm);
+  void propagate ();
 };
 
 struct lazy_paragraph {

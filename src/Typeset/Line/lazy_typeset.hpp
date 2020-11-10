@@ -21,6 +21,7 @@ struct lazy_document_rep: public lazy_rep {
   inline operator tree () { return "Document"; }
   lazy produce (lazy_type request, format fm);
   format query (lazy_type request, format fm);
+  void propagate ();
 };
 
 struct lazy_document {
@@ -40,6 +41,7 @@ struct lazy_surround_rep: public lazy_rep {
   inline operator tree () { return "Surround"; }
   lazy produce (lazy_type request, format fm);
   format query (lazy_type request, format fm);
+  void propagate ();
 };
 
 struct lazy_surround {

@@ -81,6 +81,8 @@ struct lazy_rep: public abstract_struct {
   virtual format query (lazy_type request, format fm);
     // retrieve formatting information as a function of 'fm'
     // before production of a lazy structure of type 'request'
+  virtual void propagate ();
+    // hack to propagate environment properties such as 'no_indent_after'
 };
 
 struct lazy {

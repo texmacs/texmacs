@@ -89,6 +89,10 @@ lazy_rep::query (lazy_type request, format fm) {
 }
 
 void
+lazy_rep::propagate () {
+}
+
+void
 lazy_rep::append (lazy lz) {
   (void) lz;
   failed_error << "The lazy structure was " << ((tree) (*this)) << "\n";

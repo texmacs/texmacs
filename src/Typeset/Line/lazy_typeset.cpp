@@ -80,6 +80,7 @@ lazy_document_rep::produce (lazy_type request, format fm) {
       format tmp_fm= make_format_vstream (width,
         i==0  ? before: array<line_item> (),
 	i==n-1? after : array<line_item> ());
+      if (i > 0) par[i]->propagate ();
       lazy tmp= par[i]->produce (request, tmp_fm);
       lazy_vstream tmp_vs= (lazy_vstream) tmp;
       if (i == 0) {
@@ -91,6 +92,11 @@ lazy_document_rep::produce (lazy_type request, format fm) {
     return lazy_vstream (ip, "", l, sb);
   }
   return lazy_rep::produce (request, fm);
+}
+
+void
+lazy_document_rep::propagate () {
+  if (N(par) > 0) par[0]->propagate ();
 }
 
 /******************************************************************************
@@ -144,6 +150,11 @@ lazy_surround_rep::produce (lazy_type request, format fm) {
     return par->produce (request, ret_fm);
   }
   return lazy_rep::produce (request, fm);
+}
+
+void
+lazy_surround_rep::propagate () {
+  par->propagate ();
 }
 
 /******************************************************************************
