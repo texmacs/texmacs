@@ -897,6 +897,7 @@ lazy_paragraph_rep::produce (lazy_type request, format fm) {
       if (N (fs->before) != 0) a= join (fs->before, a);
       if (N (fs->after ) != 0) a= join (a, fs->after );
     }
+    style (PAR_NO_FIRST)= env->read (PAR_NO_FIRST);
     format_paragraph ();
     /* Hide line items of height 0 */
     int i, n= N(sss->l);
