@@ -364,8 +364,10 @@
                        (inits (list-filter inits* preview-init?))
                        (env (apply append inits))
                        (balloon* `(with ,@env "magnification" ,mag ,balloon))
+                       (doc `(surround (hide-preamble ,pre) "" ,balloon*))
+                       (master (url->system (current-buffer)))
                        (w (widget-texmacs-output
-                           `(surround (hide-preamble ,pre) "" ,balloon*)
+                           `(with "project" ,master ,doc)
                            `(style (tuple ,@packs)))))
               ;;(display* "balloon= " balloon* "\n")
               ;;(display* "size= " (widget-size w) "\n")
