@@ -597,11 +597,11 @@
 
   <assign|on-event|<xmacro|args|<style-with|src-compact|none|<locus|<id|<hard-id|<arg|args|1>>>|<link|<arg|args|0>|<id|<hard-id|<arg|args|1>>>|<map-args|identity|script|args|2>>|<arg|args|1>>>>>
 
-  <assign|mouse-over-balloon|<macro|x|y|halign|valign|<on-event|mouse-over|<arg|x>|display-balloon|<quote-arg|x>|<arg|y>|<arg|halign>|<arg|valign>|<box-info|<arg|y>|wh>>>>
+  <assign|mouse-over-balloon|<macro|x|y|halign|valign|<on-event|mouse-over|<arg|x>|display-balloon|<quote-arg|x>|<arg|y>|<arg|halign>|<arg|valign>|default>>>
 
-  <assign|mouse-over-balloon*|<macro|x|y|halign|valign|<on-event|mouse-over|<arg|x>|display-balloon*|<quote-arg|x>|<arg|y>|<arg|halign>|<arg|valign>|<box-info|<arg|y>|wh>>>>
+  <assign|mouse-over-balloon*|<macro|x|y|halign|valign|<on-event|mouse-over|<arg|x>|display-balloon|<quote-arg|x>|<arg|y>|<arg|halign>|<arg|valign>|mouse>>>
 
-  <assign|focus-balloon|<macro|x|y|halign|valign|<on-event|focus|<arg|x>|display-balloon|<quote-arg|x>|<arg|y>|<arg|halign>|<arg|valign>|<box-info|<arg|y>|wh>>>>
+  <assign|focus-balloon|<macro|x|y|halign|valign|<on-event|focus|<arg|x>|display-balloon|<quote-arg|x>|<arg|y>|<arg|halign>|<arg|valign>|keyboard>>>
 
   <assign|help-balloon-color|pastel yellow>
 
