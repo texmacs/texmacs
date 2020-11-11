@@ -52,6 +52,8 @@ protected:
   time_t        last_t;
   SI            start_x, start_y;
   SI            end_x, end_y;
+  int           tremble_count;
+  bool          tremble_right;
   bool          table_selection;
   int           mouse_adjusting;  // mask with active key modifiers upon click
   rectangles    selection_rects;

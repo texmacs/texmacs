@@ -64,6 +64,7 @@ edit_interface_rep::edit_interface_rep ():
   magf (zoomf / std_shrinkf),
   pixel ((SI) tm_round ((std_shrinkf * PIXEL) / zoomf)), copy_always (),
   last_x (0), last_y (0), last_t (0),
+  tremble_count (0), tremble_right (false),
   table_selection (false), mouse_adjusting (false),
   oc (0, 0), temp_invalid_cursor (false),
   shadow (NULL), stored (NULL),
@@ -669,6 +670,16 @@ edit_interface_rep::apply_changes () {
       keys_rects= rectangles ();
     }
   }
+
+  if (tremble_count > 0 &&
+      last_change-last_update > 0 &&
+      idle_time (INTERRUPTED_EVENT) >= 100) {
+    tremble_count--;
+    env_change = env_change | THE_CURSOR;
+    if (tremble_count > 0)
+      last_change= texmacs_time ();
+    //cout << "Tremble- " << tremble_count << LF;
+  }
   
   if (env_change == 0) {
     if (last_change-last_update > 0 &&
@@ -835,13 +846,19 @@ edit_interface_rep::apply_changes () {
       if (!inside_active_graphics ())
         cursor_visible ();
 
+    SI dw= 0;
+    if (tremble_count > 3) dw= (1 + min (tremble_count - 3, 25)) * 2 * pixel;
     cursor cu= get_cursor();
-    rectangle ocr (oc->ox+ ((SI) (oc->y1*oc->slope))- P3, oc->oy+ oc->y1- P3,
-                   oc->ox+ ((SI) (oc->y2*oc->slope))+ P2, oc->oy+ oc->y2+ P3);
+    rectangle ocr (oc->ox+ ((SI) ((oc->y1-dw)*oc->slope))- P3 - dw,
+                   oc->oy+ (oc->y1-dw)- P3,
+                   oc->ox+ ((SI) ((oc->y2+dw)*oc->slope))+ P2 + dw,
+                   oc->oy+ (oc->y2+dw)+ P3);
     copy_always= rectangles (ocr, copy_always);
     invalidate (ocr->x1, ocr->y1, ocr->x2, ocr->y2);
-    rectangle ncr (cu->ox+ ((SI) (cu->y1*cu->slope))- P3, cu->oy+ cu->y1- P3,
-                   cu->ox+ ((SI) (cu->y2*cu->slope))+ P2, cu->oy+ cu->y2+ P3);
+    rectangle ncr (cu->ox+ ((SI) ((cu->y1-dw)*cu->slope))- P3 - dw,
+                   cu->oy+ (cu->y1-dw)- P3,
+                   cu->ox+ ((SI) ((cu->y2+dw)*cu->slope))+ P2 + dw,
+                   cu->oy+ (cu->y2+dw)+ P3);
     invalidate (ncr->x1, ncr->y1, ncr->x2, ncr->y2);
     copy_always= rectangles (ncr, copy_always);
     oc= copy (cu);

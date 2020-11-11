@@ -465,6 +465,15 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
     //cout << "Ignored " << type << ", " << x << ", " << y << "; " << mods << ", " << t << "\n";
     return;
   }
+  if ((x > last_x && !tremble_right) || (x < last_x && tremble_right)) {
+    tremble_count++;
+    tremble_right= (x > last_x);
+    env_change = env_change | THE_CURSOR;
+    if (tremble_count > 1)
+      last_change= texmacs_time ();
+    tremble_count= min (tremble_count, 35);
+    //cout << "Tremble+ " << tremble_count << LF;
+  }
   last_x= x; last_y= y; last_t= t;
   bool move_like=
     (type == "move" || type == "dragging-left" || type == "dragging-right");
