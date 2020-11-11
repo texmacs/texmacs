@@ -116,8 +116,11 @@
                   (va1 (string-append "raw-" va*))
                   (va2 (string-append "raw-" vai)))
              (with y (tooltip-y y1 y2 wy bh sh my va1)
-               (if (and (>= y (- sh)) (<= y (- bh))) y
+               (if (and (>= y (- bh sh)) (<= y 0)) y
                    (tooltip-y y1 y2 wy bh sh my va2)))))
+          ((not (string-starts? va "raw-"))
+           (with y (tooltip-y y1 y2 wy bh sh my (string-append "raw-" va))
+             (max (- bh sh) (min 0 y))))
           ((== va "raw-Bottom") (+ wy y1 (- d)))
           ((== va "raw-bottom") (+ wy y1 bh))
           ((== va "raw-center") (+ wy (quotient (+ (+ y1 y2) bh) 2)))
@@ -130,19 +133,24 @@
           ((== va "raw-mouse-Top") (+ wy my bh))
           (else (+ wy y1 (- d))))))
 
-(define (tooltip-position x1 y1 x2 y2 wx wy bsz ssz mpos ha va)
+(define (tooltip-position x1 y1 x2 y2 wx wy bsz ssz mpos ha va type)
   (with (bw bh) bsz
     (with (sw sh) ssz
       (with (mx my) mpos
-        (cond ((or (!= ha "auto") (!= va "auto"))
+        (cond ((== type "mouse")
+               (tooltip-position x1 y1 x2 y2 wx wy bsz ssz mpos
+                                 (string-append "mouse-" ha)
+                                 (string-append "mouse-" va)
+                                 "default"))
+              ((or (!= ha "auto") (!= va "auto"))
                (list (tooltip-x x1 x2 wx bw sw mx ha)
                      (tooltip-y y1 y2 wy bh sh my va)))
               ((or (< bw (- x2 x1)) (< bh (- y2 y1)))
                (tooltip-position x1 y1 x2 y2 wx wy bsz ssz mpos
-                                 "mouse-right" "prefer-mouse-Bottom"))
+                                 "mouse-right" "prefer-mouse-Bottom" type))
               (else
                (tooltip-position x1 y1 x2 y2 wx wy bsz ssz mpos
-                                 "left" "prefer-Bottom")))))))
+                                 "left" "prefer-Bottom" type)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Master routine
@@ -156,40 +164,46 @@
 
 (tm-define (show-tooltip id ref tip ha va type magf)
   (with (x1 y1 x2 y2) (tree-bounding-rectangle ref)
-    (with settings (list (- x1 (get-canvas-x))
-                         (- y1 (get-canvas-y))
-                         (- x2 (get-canvas-x))
-                         (- y2 (get-canvas-y))
-                         (- (car  (get-mouse-position)) (get-canvas-x))
-                         (- (cadr (get-mouse-position)) (get-canvas-y))
-                         (get-scroll-x)
-                         (get-scroll-y)
-                         (get-window-zoom-factor)
-                         type)
-      (if (and tooltip-win id (== id tooltip-id))
-          (tooltip-confirm settings)
-          (and-let* ((wx (get-window-x))
-                     (wy (get-window-y))
-                     (packs (get-style-list))
-                     (pre (document-get-preamble (buffer-tree)))
-                     (zf (get-window-zoom-factor))
-                     (mag (number->string (* zf magf)))
-                     (inits* (map cdr (cdr (tm->stree (get-all-inits)))))
-                     (inits (list-filter inits* tooltip-init?))
-                     (env* (apply append inits))
-                     (env (append env* (list "magnification" mag)))
-                     (doc `(surround (hide-preamble ,pre) "" ,tip))
-                     (master (url->system (current-buffer)))
-                     (w (widget-texmacs-output
-                         `(with ,@env "project" ,master ,doc)
-                         `(style (tuple ,@packs))))
-                     (bsz (texmacs-widget-size w))
-                     (ssz (get-screen-size))
-                     (mpos (get-mouse-position))
-                     (pos (tooltip-position x1 y1 x2 y2 wx wy
-                                            bsz ssz mpos ha va)))
-            (tooltip-map w
-                         (car pos)
-                         (cadr pos)
-                         id
-                         settings))))))
+    (let* ((d (* 5 256))
+           (mpos (get-mouse-position))
+           (mx (car  mpos))
+           (my (cadr mpos))
+           (settings (list (- x1 (get-canvas-x))
+                           (- y1 (get-canvas-y))
+                           (- x2 (get-canvas-x))
+                           (- y2 (get-canvas-y))
+                           (- mx (get-canvas-x))
+                           (- my (get-canvas-y))
+                           (get-scroll-x)
+                           (get-scroll-y)
+                           (get-window-zoom-factor)
+                           type)))
+      (when (or (== type "keyboard")
+                (and (>= mx (- x1 d)) (<= mx (+ x2 d))
+                     (>= my (- y1 d)) (<= my (+ y2 d))))
+        (if (and tooltip-win id (== id tooltip-id))
+            (tooltip-confirm settings)
+            (and-let* ((wx (get-window-x))
+                       (wy (get-window-y))
+                       (packs (get-style-list))
+                       (pre (document-get-preamble (buffer-tree)))
+                       (zf (get-window-zoom-factor))
+                       (mag (number->string (* zf magf)))
+                       (inits* (map cdr (cdr (tm->stree (get-all-inits)))))
+                       (inits (list-filter inits* tooltip-init?))
+                       (env* (apply append inits))
+                       (env (append env* (list "magnification" mag)))
+                       (doc `(surround (hide-preamble ,pre) "" ,tip))
+                       (master (url->system (current-buffer)))
+                       (w (widget-texmacs-output
+                           `(with ,@env "project" ,master ,doc)
+                           `(style (tuple ,@packs))))
+                       (bsz (texmacs-widget-size w))
+                       (ssz (get-screen-size))
+                       (pos (tooltip-position x1 y1 x2 y2 wx wy
+                                              bsz ssz mpos ha va type)))
+              (tooltip-map w
+                           (car pos)
+                           (cadr pos)
+                           id
+                           settings)))))))
