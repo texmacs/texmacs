@@ -318,6 +318,14 @@
       (set! u (url-delta base u))))
   (url->unix u))
 
+(define-public (first-in-path . l)
+  (cond ((null? l) #f)
+        ((url-exists-in-path? (car l)) (car l))
+        (else (apply first-in-path (cdr l)))))
+
+(define-public (python-command)
+  (first-in-path "python3" "python" "python2"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

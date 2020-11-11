@@ -12,13 +12,6 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (python-command)
-  (if (url-exists-in-path? "python3") "python3" "python2"))
-
-(define (python-exists?)
-  (or (url-exists-in-path? "python3")
-      (url-exists-in-path? "python2")))
-
 (define (gnuplot-serialize lan t)
     (with u (pre-serialize lan t)
       (with s (texmacs->code (stree->tree u) "SourceCode")
@@ -36,7 +29,7 @@
 
 (plugin-configure gnuplot
   (:require (url-exists-in-path? "gnuplot"))
-  (:require (python-exists?))
+  (:require (python-command))
   ,@(gnuplot-launcher)
   (:serializer ,gnuplot-serialize)
   (:session "Gnuplot")

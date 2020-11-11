@@ -11,11 +11,6 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (python-command) "python3")
-
-(define (python-exists?)
-  (url-exists-in-path? "python3"))
-
 (define (tikz-serialize lan t)
     (with u (pre-serialize lan t)
       (with s (texmacs->code (stree->tree u) "SourceCode")
@@ -31,7 +26,7 @@
                      "/plugins/tmpy/session/tm_tikz.py\"")))
 
 (plugin-configure tikz
-  (:require (python-exists?))
+  (:require (python-command))
   (:require (url-exists-in-path? "latex"))
   (:launch ,(tikz-launcher))
   (:serializer ,tikz-serialize)

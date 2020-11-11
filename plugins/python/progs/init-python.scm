@@ -31,15 +31,6 @@
     (with s (texmacs->code (stree->tree u) "SourceCode")
       (string-append  s  "\n<EOF>\n"))))
 
-(define (python-command)
-  (if (url-exists-in-path? "python3")
-      "python3"
-      "python"))
-
-(define (python-exists?)
-  (or (url-exists-in-path? "python3")
-      (url-exists-in-path? "python")))
-
 (define (python-launcher)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
       (string-append (python-command) " \""
@@ -53,8 +44,8 @@
   (:winpath "python*" ".")
   (:winpath "Python*" ".")
   (:winpath "Python/Python*" ".")
-  (:require (python-exists?))
-  (:launch ,(python-launcher))
+  (:require (python-command))
+  (:launch ,(python-command))
   (:tab-completion #t)
   (:serializer ,python-serialize)
   (:session "Python")
