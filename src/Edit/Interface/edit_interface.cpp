@@ -675,9 +675,10 @@ edit_interface_rep::apply_changes () {
       last_change-last_update > 0 &&
       idle_time (INTERRUPTED_EVENT) >= 100) {
     tremble_count--;
-    env_change = env_change | THE_CURSOR;
-    if (tremble_count > 0)
+    if (tremble_count > 2) {
+      env_change = env_change | (THE_CURSOR + THE_FREEZE);
       last_change= texmacs_time ();
+    }
     //cout << "Tremble- " << tremble_count << LF;
   }
   
