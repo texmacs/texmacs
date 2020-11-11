@@ -146,6 +146,7 @@
   (lambda (item)
     ;;(display* "Filter: " item " on " event "\n")
     (or (and (== event "click") (!= (link-item-type item) "mouse-over"))
+        (== event "hover")
         (== (link-item-type item) event))))
 
 (define (filter-link-list l event)
@@ -165,7 +166,7 @@
   (with l (if (and filter? (not (navigation-external?)))
               (exact-link-list-local t)
               (exact-link-list-global t))
-    (if filter? (filter-link-list l "click") l)))
+    (if filter? (filter-link-list l "hover") l)))
 
 (tm-define (upward-link-list t filter?)
   (:synopsis "Build possibly filtered link list for @t and its ancestors.")
@@ -208,7 +209,7 @@
 
 (tm-define (link-active-ids l)
   (:synopsis "Return list of identifiers in @l which admit an active link.")
-  (with r (filter-link-list (ids->link-list l) "click")
+  (with r (filter-link-list (ids->link-list l) "hover")
     (list-remove-duplicates (map link-item-id r))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
