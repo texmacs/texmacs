@@ -55,6 +55,7 @@
   ("status bar" "on" notify-status-bar)
   ("side tools" "off" notify-side-tools)
   ("zoom factor" "1" notify-zoom-factor)
+  ("snap to pages" "off" noop)
   ("ir-up" "home" notify-remote-control)
   ("ir-down" "end" notify-remote-control)
   ("ir-left" "pageup" notify-remote-control)
@@ -249,3 +250,11 @@
          (dh (- (get-page-height #t) ph))
          (f (/ (- wh (* zf dh)) ph)))
     (change-zoom-factor (- f 0.0001))))
+
+(define (snap-to-pages?)
+  (get-boolean-preference "snap to pages"))
+
+(tm-define (toggle-snap-to-pages)
+  (:synopsis "Toggle page snapping.")
+  (:check-mark "v" snap-to-pages?)
+  (toggle-preference "snap to pages"))

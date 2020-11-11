@@ -128,6 +128,8 @@
       ("200%" (change-zoom-factor 2.0))
       ---
       ("Other" (interactive other-zoom-factor)))
+
+  ("Snap to pages" (toggle-snap-to-pages))
   ---
   ("Header bars" (toggle-visible-header))
   (when (visible-header?)
