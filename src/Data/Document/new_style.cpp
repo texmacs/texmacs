@@ -57,14 +57,17 @@ preprocess_style (tree st, url name) {
   if (is_rooted_tmfs (name)) return st;
   if (is_atomic (st)) st= tree (TUPLE, st);
   if (!is_tuple (st)) return st;
-  if (is_rooted_web (name)) return st;
+  //if (is_rooted_web (name)) return st;
+  bool remote= is_rooted_web (name);
   tree r (TUPLE, N(st));
   for (int i=0; i<N(st); i++) {
     r[i]= st[i];
     if (!is_atomic (st[i])) continue;
     string pack= st[i]->label * ".ts";
-    url stf= resolve (expand (head (name) * url_ancestor () * pack));
-    if (!is_none (stf)) r[i]= as_string (stf);
+    if (!remote || is_none (resolve (url ("$TEXMACS_STYLE_PATH") * pack))) {
+      url stf= resolve (expand (head (name) * url_ancestor () * pack));
+      if (!is_none (stf)) r[i]= as_string (stf);
+    }
   }
   //if (r != st) cout << "old: " << st << "\nnew: " << r << "\n";
   return r;
@@ -76,7 +79,13 @@ preprocess_style (tree st, url name) {
 
 static string
 cache_file_name (tree t) {
-  if (is_atomic (t)) return replace (t->label, "/", "%");
+  if (is_atomic (t)) {
+    string s= t->label;
+    if (ends (s, ".ts")) s= s (0, N(s) - 3);
+    s= replace (s, "/", "%");
+    s= replace (s, ":", "_");
+    return s;
+  }
   else {
     string s;
     int i, n= N(t);
