@@ -117,7 +117,7 @@
 
 (define (list-go-to-previous* l)
   (when (nnull? l)
-    (if (path-less? (tree->path (car l)) (tree->path (cursor-tree)))
+    (if (path-inf? (tree->path (car l)) (tree->path (cursor-tree)))
         (tree-go-to (car l) :end)
         (list-go-to-previous* (cdr l)))))
 
@@ -126,7 +126,7 @@
 
 (tm-define (list-go-to-next l)
   (when (nnull? l)
-    (if (path-less? (tree->path (cursor-tree)) (tree->path (car l)))
+    (if (path-inf? (tree->path (cursor-tree)) (tree->path (car l)))
         (tree-go-to (car l) :end)
         (list-go-to-next (cdr l)))))
 
