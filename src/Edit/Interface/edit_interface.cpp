@@ -673,7 +673,7 @@ edit_interface_rep::apply_changes () {
 
   if (tremble_count > 0 &&
       last_change-last_update > 0 &&
-      idle_time (INTERRUPTED_EVENT) >= 100) {
+      idle_time (INTERRUPTED_EVENT) >= 80) {
     tremble_count--;
     if (tremble_count > 2) {
       env_change = env_change | (THE_CURSOR + THE_FREEZE);

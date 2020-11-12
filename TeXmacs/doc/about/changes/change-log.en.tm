@@ -1,4 +1,4 @@
-<TeXmacs|1.99.14>
+<TeXmacs|1.99.15>
 
 <style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
@@ -13,6 +13,9 @@
 
     <item>Improved navigation and search tools for labels, references, and
     citations (1.99.15).
+
+    <item>Indicate the current cursor position by shaking the mouse
+    (1.99.15).
 
     <item>Various bug fixes (1.99.15).
 

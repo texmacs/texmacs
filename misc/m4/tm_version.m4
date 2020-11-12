@@ -3,7 +3,7 @@
 #
 # MODULE      : tm_version.m4
 # DESCRIPTION : Version management settings
-# COPYRIGHT   : (C) 2000, 2019  Joris van der Hoeven, Denis RAUX
+# COPYRIGHT   : (C) 2000-2020  Joris van der Hoeven, Denis RAUX
 #
 # This software falls under the GNU general public license version 3 or later.
 # It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -20,7 +20,7 @@ AC_DEFUN([TM_VERSION],[
 
   VERSION_MAJOR="1"
   VERSION_MINOR="99"
-  VERSION_BUILD="14"
+  VERSION_BUILD="15"
   
   # the svn revision of this version
   DEVEL_REVISION="$Rev$:"

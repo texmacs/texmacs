@@ -2970,7 +2970,7 @@ function cmp_dot_number {
 
   VERSION_MAJOR="1"
   VERSION_MINOR="99"
-  VERSION_BUILD="14"
+  VERSION_BUILD="15"
 
   # the svn revision of this version
   DEVEL_REVISION="$Rev$:"
