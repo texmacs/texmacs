@@ -1,6 +1,6 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.15>
 
-<style|<tuple|tmdoc|english|old-spacing>>
+<style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|Converters for <name|Html> and <name|MathML>>
@@ -52,6 +52,8 @@
 
     <item*|<src-var|html-head-javascript>>A <name|Javascript> script to be
     executed before the body.
+
+    <item*|<src-var|html-head-favicon>>A \Pfavicon\Q for your webpage.
   </description>
 
   You may also use the following macros:
@@ -115,7 +117,7 @@
 
   In the binary distributions, we have included <verbatim|wget>.
 
-  <tmdoc-copyright|1998--2019|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2019|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
