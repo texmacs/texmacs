@@ -135,6 +135,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind texmacs-insert-menu
+  (-> "Macro" (link insert-macro-menu))
   (if (not (in-text?))
       ("Text" (make 'text)))
   (if (not (in-math?))
@@ -160,6 +161,8 @@
 
 (menu-bind texmacs-insert-icons
   /
+  (=> (balloon (icon "tm_macro.xpm") "Insert a personal macro")
+      (link insert-macro-menu))
   (if (not (in-text?))
       ((balloon (icon "tm_textual.xpm") "Insert plain text")
        (make 'text)))

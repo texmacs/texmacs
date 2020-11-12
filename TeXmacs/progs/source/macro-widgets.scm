@@ -75,6 +75,8 @@
   (and-with t (macro-retrieve* u)
     (cond ((tm-is? (tree-ref t :last) 'inactive*)
            `(,(tm-label t) ,@(cDr (tm-children t)) ,(tree-ref t :last 0)))
+          ((tm-is? (tree-ref t :last) 'edit-math)
+           `(,(tm-label t) ,@(cDr (tm-children t)) ,(tree-ref t :last 0)))
           (else t))))
 
 (define (macro-retrieve-name u)
@@ -90,13 +92,15 @@
     (with t* (macro-retrieve* u)
       (cond ((== mode "Source")
              (tree-set t* :last `(inactive* ,(cAr (tm-children t)))))
+            ((== mode "Mathematics")
+             (tree-set t* :last `(edit-math ,(cAr (tm-children t)))))
             (else
               (tree-set t* :last (cAr (tm-children t)))))
       (refresh-now "macro-editor-mode"))))
 
 (tm-define (toggle-source-mode)
   (:require (has-style-package? "macro-editor"))
-  (with mode (if (== (get-macro-mode) "Text") "Source" "Text")
+  (with mode (if (!= (get-macro-mode) "Source") "Source" "Text")
     (set-macro-mode (current-buffer) mode)))
 
 (define (preamble-insert pre ass)
@@ -138,18 +142,26 @@
   (when (and (tm-func? def 'assign 2)
 	     (tm-equal? (tm-ref def 1) '(uninit)))
     (set! def `(assign ,(tm-ref def 0) (macro ""))))
+  (when (and (tm-func? def 'assign 2)
+             (tm-in? (tm-ref def 1) '(inactive* edit-math))
+             (tm-func? (tm-ref def 1 0) 'macro))
+    (set! def `(assign ,(tm-ref def 0) ,(tm-ref def 1 0))))
   (let* ((mac (if (tm-func? (tm-ref def 1) 'macro)
 		  `(edit-macro ,l ,@(tm-children (tm-ref def 1)))
 		  `(edit-tag ,l ,(tm-ref def 1))))
          (mac* (if (!= macro-current-mode "Source") mac
                    `(,@(cDr mac) (inactive* ,(cAr mac)))))
+         (mac** (if (!= macro-current-mode "Mathematics") mac*
+                    `(,@(cDr mac*) (edit-math ,(cAr mac*)))))
 	 (pre (document-get-preamble (buffer-tree)))
-	 (doc `(document (hide-preamble ,pre) ,mac*)))
+	 (doc `(document (hide-preamble ,pre) ,mac**)))
     doc))
 
 (define (build-macro-document l)
-  (and-with def (macro-editor-get l)
-    (build-macro-document* l def)))
+  (cond ((and (== l "") (selection-active-any?))
+         (build-macro-document* l `(assign ,l (macro ,(selection-tree)))))
+        (else (and-with def (macro-editor-get l)
+                (build-macro-document* l def)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Editing a single macro
@@ -163,8 +175,8 @@
     (hlist
       (refreshable "macro-editor-mode"
         (enum (set-macro-mode u answer)
-              '("Text" "Source")
-              (get-macro-mode) "6em"))
+              '("Text" "Source" "Mathematics")
+              (get-macro-mode) "9em"))
       >>
       (explicit-buttons
         ("Apply" (macro-apply u))
@@ -184,9 +196,11 @@
   (let* ((b (current-buffer-url))
          (u (string->url (string-append "tmfs://aux/edit-" l)))
          (packs (get-style-list))
-         (styps (list-remove-duplicates (append packs (list "macro-editor")))))
+         (styps (list-remove-duplicates (append packs (list "macro-editor"))))
+         (macro-mode (if (in-math?) "Mathematics" "Text")))
+    (set! macro-current-mode macro-mode)
     (and-with doc (build-macro-document l)
-      (dialogue-window (macro-editor u styps doc "Text")
+      (dialogue-window (macro-editor u styps doc macro-mode)
                        (lambda x (terminate-macro-editor))
                        "Macro editor" u)
       (buffer-set-master u b))))
@@ -206,6 +220,52 @@
              (has-style-package? "macro-editor"))
     (macros-editor-select (current-buffer) (car macro-major-history) "")
     (set! macro-major-history (cdr macro-major-history))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Contextual with-like macros
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (unary-tree? t)
+  (and (== (tree-arity t) 1)
+       (== (tree-minimal-arity t) 1)
+       (== (tree-maximal-arity t) 1)))
+
+(define (add-context t body)
+  (with p (tree-up t)
+    (cond ((tree-is-buffer? t) body)
+          ((and (tree-is? t 'document) (tree-is-buffer? p)) body)
+          ((tree-is? t 'document)
+           (add-context p `(document ,body)))
+          ((tree-is? t 'with)
+           (add-context p `(with ,@(cDr (tm-children t)) ,body)))
+          ((or (with-like? t) (unary-tree? t) (tree-is? t 'tformat))
+           (add-context p `(,(tm-label t) ,@(cDr (tm-children t)) ,body)))
+          ((tree-in? t '(table row cell))
+           (add-context p `(,(tm-label t) ,body)))
+          (else (add-context (tree-up t) body)))))
+
+(tm-define (can-create-context-macro?)
+  (and (not (selection-active-any?))
+       (with a `(arg "body")
+         (!= (add-context (tree-up (cursor-tree)) a) a))))
+
+(tm-define (create-context-macro l mode)
+  (:interactive #t)
+  (when (can-create-context-macro?)
+    (if (symbol? l) (set! l (symbol->string l)))
+    (let* ((b (current-buffer-url))
+	   (u (string-append "tmfs://aux/edit-" l))
+	   (packs (get-style-list))
+	   (styps (list-remove-duplicates
+		   (append packs (list "macro-editor"))))
+           (body (add-context (tree-up (cursor-tree)) `(arg "body")))
+	   (def `(assign ,l (inactive* (macro "body" ,body)))))
+      (set! macro-current-mode "Source")
+      (and-with doc (build-macro-document* l def)
+	(dialogue-window (macro-editor u styps doc "Source")
+			 (lambda x (noop))
+			 "Macro editor")
+	(buffer-set-master u b)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Table macros
@@ -257,6 +317,7 @@
 		       (tformat-subst-selection sel tf))
 		     tf))
 	   (def `(assign ,l (inactive* (macro "body" ,body)))))
+      (set! macro-current-mode "Source")
       (and-with doc (build-macro-document* l def)
 	(dialogue-window (macro-editor u styps doc "Source")
 			 (lambda x (noop))
@@ -313,8 +374,8 @@
     (hlist
       (refreshable "macro-editor-mode"
         (enum (set-macro-mode u answer)
-              '("Text" "Source")
-              (get-macro-mode) "6em"))
+              '("Text" "Source" "Mathematics")
+              (get-macro-mode) "9em"))
       >>
       (explicit-buttons
         ("Apply" (macro-apply u))
@@ -343,6 +404,7 @@
 	 (names (all-defined-macros))
          (packs (get-style-list))
          (styps (list-remove-duplicates (append packs (list "macro-editor")))))
+    (set! macro-current-mode "Text")
     (dialogue-window (macros-editor u styps names)
 		     (lambda x (terminate-macro-editor))
 		     "Macros editor" u)

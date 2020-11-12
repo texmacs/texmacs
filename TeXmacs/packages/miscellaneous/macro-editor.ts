@@ -1,4 +1,4 @@
-<TeXmacs|1.99.5>
+<TeXmacs|1.99.15>
 
 <style|source>
 
@@ -38,9 +38,13 @@
 
   <assign|edit-macro|<xmacro|macro-args|<extern|ext-edit-macro|<quote-arg|macro-args>>>>
 
+  <assign|edit-math|<macro|body|<math|<arg|body>>>>
+
   <drd-props|edit-tag|arity|2|accessible|all|border|no>
 
   <drd-props|edit-macro|arity|<tuple|repeat*|1|2>|accessible|all|border|no>
+
+  <drd-props|edit-math|arity|1|accessible|all|border|no>
 
   <\active*>
     <\src-comment>

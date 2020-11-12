@@ -252,6 +252,7 @@
            source-transformational-menu source-executable-menu)
 (lazy-define (source macro-edit)
              has-macro-source? edit-macro-source edit-focus-macro-source)
+(lazy-menu (source macro-menu) insert-macro-menu)
 (lazy-define (source macro-widgets)
              editable-macro? open-macros-editor
 	     open-macro-editor create-table-macro

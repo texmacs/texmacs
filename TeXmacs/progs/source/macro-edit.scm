@@ -73,6 +73,55 @@
          ,body*))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Listing the available macros
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tree-load-style* s)
+  (with f (if (string-ends? s ".ts") s (string-append s ".ts"))
+    (if (url-exists? (url-relative (current-buffer) f))
+        (tree-load-style (url->string (url-relative (current-buffer) f)))
+        (tree-load-style s))))
+
+(define (list-macros-in t)
+  (cond ((not (tree? t)) (list))
+        ((and (tree-func? t 'assign 2)
+              (tree-atomic? (tree-ref t 0))
+              (tm-in? (tree-ref t 1) '(macro xmacro)))
+         (list (tree->string (tree-ref t 0))))
+        ((tree-in? t '(document concat surround with))
+         (append-map list-macros-in (tree-children t)))
+        (else (list))))
+
+(tm-define (built-in-style? s)
+  (with d (url-complete (url-append "$TEXMACS_PATH/styles" (url-any)) "dr")
+    (with name (string-append s ".ts")
+      (with f (url-complete (url-append (url-expand d) name) "fr")
+        (nnull? (url->list (url-expand f)))))))
+
+(tm-define (get-public-style-list)
+  (with st (get-style-list)
+    (if (null? st) st
+        (with l (list-filter (cdr st) (negate hidden-package?))
+          (if (built-in-style? (car st)) l
+              (cons (car st) l))))))
+
+(tm-define (get-macro-list type . opts)
+  (cond ((and (nnull? opts) (== (car opts) :sort))
+         (sort (apply get-macro-list (cons type (cdr opts))) string<=?))
+        ((and (nnull? opts) (integer? (car opts)))
+         (with l (apply get-macro-list (cons type (cdr opts)))
+           (sublist l 0 (min (length l) (car opts)))))
+        ((== type :preamble)
+         (list-macros-in (document-get-preamble (buffer-tree))))
+        ((== type :packages)
+         (append-map get-macro-list (get-public-style-list)))
+        ((== type :all)
+         (append (get-macro-list :preamble) (get-macro-list :packages)))
+        ((string? type)
+         (list-macros-in (tree-load-style* type)))
+        (else (list))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Searching a definition in style files and packages
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -81,7 +130,7 @@
     (set! name (tree->string name)))
   (and (string? name)
        (not (in? name done))
-       (with t (tree-load-style name)
+       (with t (tree-load-style* name)
          (search-style-definition (cons name done) l t))))
 
 (define (search-style-definition-in-list done l packs)
