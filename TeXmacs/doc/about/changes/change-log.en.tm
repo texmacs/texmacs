@@ -1,13 +1,21 @@
-<TeXmacs|1.99.13>
+<TeXmacs|1.99.14>
 
 <style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.99.1 to 1.99.14>
+  <section|Changes from version 1.99.1 to 1.99.15>
 
   <\itemize>
+    <item>Improved help balloons and preview facility for references and
+    citations (1.99.15).
+
+    <item>Improved navigation and search tools for labels, references, and
+    citations (1.99.15).
+
+    <item>Various bug fixes (1.99.15).
+
     <item>Release of <hlink|\PThe Jolly Writer\Q|https://www.scypress.com/book_info.html>\VYour
     Guide to GNU <TeXmacs> (1.99.14).
 
