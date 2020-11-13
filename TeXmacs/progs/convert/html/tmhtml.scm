@@ -1361,7 +1361,6 @@
               (string? (cadr (cadar l)))
               (string? (caddar l)))
          (receive (name-url name-string) (tmhtml-image-names (caddar l))
-           (display* "suffix= " (url-suffix name-url) "\n")
            (when (in? (url-suffix name-url)
                       (list "ps" "eps" "pdf" "tif"))
              (set! name-string (url->string name-url)))
