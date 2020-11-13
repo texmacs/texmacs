@@ -256,6 +256,12 @@
   ("^" (hybrid-kbd-sup))
   ("^ var" "^"))
 
+(kbd-map
+  (:mode in-smart-ref?)
+  ("altcmd ?" (make 'smart-ref))
+  ("altcmd ? var" (make 'reference))
+  ("altcmd ? var var" (make 'pageref)))
+  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Emacs keymap
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -690,6 +696,13 @@
   ("C-S-tab" (kbd-shift-alternate-tab))
   ("C-space" (make-space "0.2spc"))
   ("C-S-space" (make-space "-0.2spc")))
+
+(kbd-map
+  (:profile macos)
+  (:mode in-smart-ref?)
+  ("C-?" (make 'smart-ref))
+  ("C-? var" (make 'reference))
+  ("C-? var var" (make 'pageref)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Windows keymap

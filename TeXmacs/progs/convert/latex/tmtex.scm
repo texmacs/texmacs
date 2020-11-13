@@ -1658,6 +1658,11 @@
 (define (tmtex-pageref l)
   (list 'pageref (force-string (car l))))
 
+(define (tmtex-smart-ref s l)
+  (let* ((ss (map force-string l))
+         (key (string-recompose ss ",")))
+    (list 'cref key)))
+
 (define (tmtex-specific l)
   (cond ((== (car l) "latex") (tmtex-tt (cadr l)))
 	((== (car l) "image") (tmtex-eps (cadr l)))
@@ -3066,6 +3071,7 @@
   (action (,tmtex-action -1))
   (href (,tmtex-href 1))
   (slink (,tmtex-href 1))
+  (smart-ref (,tmtex-smart-ref -1))
   (choose (,tmtex-choose 2))
   (tt (,tmtex-text-tt 1))
   ((:or strong em name samp abbr dfn kbd var acronym person)

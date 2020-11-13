@@ -130,6 +130,7 @@
   (in-manual% (not (url-rooted-tmfs? (current-buffer))) in-tmdoc%)
   (in-database% (style-has? "database-style"))
   (in-bib% (style-has? "database-bib-style") in-database%)
+  (in-smart-ref% (style-has? "smart-ref-package"))
   (in-plugin-with-converters%
    (plugin-supports-math-input-ref (get-env "prog-language")))
   (in-screens% (inside? 'screens))

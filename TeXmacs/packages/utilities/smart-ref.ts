@@ -32,7 +32,7 @@
 
   <assign|smart-ref|<xmacro|args|<extern|ext-smart-ref|<quote-arg|args>>>>
 
-  <drd-props|smart-ref|arity|<tuple|repeat|1|1>>
+  <drd-props|smart-ref|arity|<tuple|repeat|1|1>|accessible|none|identifier|all>
 
   <\active*>
     <\src-comment>
@@ -80,21 +80,49 @@
 
   <assign|definition-ref|<xmacro|args|<extern|ext-typed-ref|Definition|<quote-arg|args>>>>
 
+  <assign|not-ref|<xmacro|args|<extern|ext-typed-ref|Notation|<quote-arg|args>>>>
+
+  <assign|notation-ref|<xmacro|args|<extern|ext-typed-ref|Notation|<quote-arg|args>>>>
+
   <assign|ax-ref|<xmacro|args|<extern|ext-typed-ref|Axiom|<quote-arg|args>>>>
 
   <assign|axiom-ref|<xmacro|args|<extern|ext-typed-ref|Axiom|<quote-arg|args>>>>
+
+  <assign|conv-ref|<xmacro|args|<extern|ext-typed-ref|Convention|<quote-arg|args>>>>
+
+  <assign|convention-ref|<xmacro|args|<extern|ext-typed-ref|Convention|<quote-arg|args>>>>
 
   <assign|rem-ref|<xmacro|args|<extern|ext-typed-ref|Remark|<quote-arg|args>>>>
 
   <assign|remark-ref|<xmacro|args|<extern|ext-typed-ref|Remark|<quote-arg|args>>>>
 
+  <assign|note-ref|<xmacro|args|<extern|ext-typed-ref|Note|<quote-arg|args>>>>
+
+  <assign|war-ref|<xmacro|args|<extern|ext-typed-ref|Warning|<quote-arg|args>>>>
+
+  <assign|warning-ref|<xmacro|args|<extern|ext-typed-ref|Warning|<quote-arg|args>>>>
+
   <assign|ex-ref|<xmacro|args|<extern|ext-typed-ref|Example|<quote-arg|args>>>>
 
   <assign|example-ref|<xmacro|args|<extern|ext-typed-ref|Example|<quote-arg|args>>>>
 
+  <assign|exc-ref|<xmacro|args|<extern|ext-typed-ref|Exercise|<quote-arg|args>>>>
+
+  <assign|exe-ref|<xmacro|args|<extern|ext-typed-ref|Exercise|<quote-arg|args>>>>
+
   <assign|exer-ref|<xmacro|args|<extern|ext-typed-ref|Exercise|<quote-arg|args>>>>
 
   <assign|exercise-ref|<xmacro|args|<extern|ext-typed-ref|Exercise|<quote-arg|args>>>>
+
+  <assign|prb-ref|<xmacro|args|<extern|ext-typed-ref|Problem|<quote-arg|args>>>>
+
+  <assign|prob-ref|<xmacro|args|<extern|ext-typed-ref|Problem|<quote-arg|args>>>>
+
+  <assign|problem-ref|<xmacro|args|<extern|ext-typed-ref|Problem|<quote-arg|args>>>>
+
+  <assign|sol-ref|<xmacro|args|<extern|ext-typed-ref|Solution|<quote-arg|args>>>>
+
+  <assign|solution-ref|<xmacro|args|<extern|ext-typed-ref|Solution|<quote-arg|args>>>>
 
   <\active*>
     <\src-comment>
@@ -122,6 +150,10 @@
 
   <assign|ssec-ref|<xmacro|args|<extern|ext-typed-ref|Subsection|<quote-arg|args>>>>
 
+  <assign|subs-ref|<xmacro|args|<extern|ext-typed-ref|Subsection|<quote-arg|args>>>>
+
+  <assign|subsec-ref|<xmacro|args|<extern|ext-typed-ref|Subsection|<quote-arg|args>>>>
+
   <assign|subsection-ref|<xmacro|args|<extern|ext-typed-ref|Section|<quote-arg|args>>>>
 
   <assign|par-ref|<xmacro|args|<extern|ext-typed-ref|Paragraph|<quote-arg|args>>>>
@@ -145,6 +177,28 @@
   <assign|eqn-ref|<xmacro|args|<extern|ext-typed-ref*||add-brackets|<quote-arg|args>>>>
 
   <assign|equation-ref|<xmacro|args|<extern|ext-typed-ref*||add-brackets|<quote-arg|args>>>>
+
+  <\active*>
+    <\src-comment>
+      Figures, tables, and algorithms.
+    </src-comment>
+  </active*>
+
+  <assign|fig-ref|<xmacro|args|<extern|ext-typed-ref|Figure|<quote-arg|args>>>>
+
+  <assign|figure-ref|<xmacro|args|<extern|ext-typed-ref|Figure|<quote-arg|args>>>>
+
+  <assign|tab-ref|<xmacro|args|<extern|ext-typed-ref|Table|<quote-arg|args>>>>
+
+  <assign|table-ref|<xmacro|args|<extern|ext-typed-ref|Table|<quote-arg|args>>>>
+
+  <assign|alg-ref|<xmacro|args|<extern|ext-typed-ref|Algorithm|<quote-arg|args>>>>
+
+  <assign|algo-ref|<xmacro|args|<extern|ext-typed-ref|Algorithm|<quote-arg|args>>>>
+
+  <assign|algorithm-ref|<xmacro|args|<extern|ext-typed-ref|Algorithm|<quote-arg|args>>>>
+
+  \;
 </body>
 
 <\initial>

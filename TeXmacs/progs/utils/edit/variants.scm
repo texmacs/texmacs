@@ -350,7 +350,7 @@
   label)
 
 (define-group reference-tag
-  reference pageref eqref)
+  reference pageref eqref smart-ref)
 
 (define-group citation-tag
   cite nocite cite-TeXmacs cite-detail)

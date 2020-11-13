@@ -35,7 +35,8 @@
   ("euscript" 120)
   ("multicol" 130)
   ("hyperref" 140)
-  ("mathtools" 150))
+  ("mathtools" 150)
+  ("cleveref" 160))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dependencies between style files and packages
@@ -133,6 +134,8 @@
   (url "hyperref")
   (href "hyperref")
 
+  (cref "cleveref")
+  
   (citet "natbib")
   (citep "natbib")
   (citet* "natbib")

@@ -63,8 +63,9 @@ edit_interface_rep::complete_try () {
   string s= st->label, ss;
   int end= last_item (tp);
   array<string> a;
-  if (inside (LABEL) || inside (REFERENCE) ||
-      inside (PAGEREF) || inside (as_tree_label ("eqref"))) {
+  if (inside (LABEL) || inside (REFERENCE) || inside (PAGEREF) ||
+      inside (as_tree_label ("eqref")) ||
+      inside (as_tree_label ("smart-ref"))) {
     if (end != N(s)) return false;
     ss= copy (s);
     tree t= get_labels ();
