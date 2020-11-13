@@ -145,7 +145,8 @@
               ((or (!= ha "auto") (!= va "auto"))
                (list (tooltip-x x1 x2 wx bw sw mx ha)
                      (tooltip-y y1 y2 wy bh sh my va)))
-              ((or (< bw (- x2 x1)) (< bh (- y2 y1)))
+              ((and (!= type "keyboard")
+                    (or (< bw (- x2 x1)) (< bh (- y2 y1))))
                (tooltip-position x1 y1 x2 y2 wx wy bsz ssz mpos
                                  "mouse-right" "prefer-mouse-Bottom" type))
               (else
@@ -207,3 +208,7 @@
                            (cadr pos)
                            id
                            settings)))))))
+
+(tm-define (close-tooltip)
+  (when tooltip-win
+    (tooltip-unmap)))

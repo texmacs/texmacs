@@ -198,6 +198,8 @@
 
   <assign|algorithm-ref|<xmacro|args|<extern|ext-typed-ref|Algorithm|<quote-arg|args>>>>
 
+  <assign|step-ref|<xmacro|args|<extern|ext-typed-ref|Step|<quote-arg|args>>>>
+
   \;
 </body>
 

@@ -271,6 +271,10 @@
              (label-preview t))
             (else #f)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Previewing
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (tm-define (preview-reference body body*)
   (:secure #t)
   (and-with ref (tree-up body)
@@ -278,3 +282,24 @@
       (and-let* ((id (and (tree-atomic? body*) (tree->string body*)))
                  (tip (and id (ref-preview id))))
         (show-tooltip id ref tip "auto" "auto" "default" 0.6)))))
+
+(define (in-inactive-reference?)
+  (and (in-preview-ref?)
+       (tree-atomic? (cursor-tree))
+       (reference-context? (tree-up (cursor-tree)))
+       (tree-is? (tree-up (tree-up (cursor-tree))) 'inactive)))
+
+(tm-define (keyboard-press key time)
+  (with before? (in-inactive-reference?)
+    (former key time)
+    (with after? (in-inactive-reference?)
+      (when (or before? after?)
+        (delayed
+          (:idle 100)
+          (let* ((id (and (in-inactive-reference?)
+                          (tm->string (cursor-tree))))
+                 (tip (and id (ref-preview id))))
+            (if tip
+                (show-tooltip id (cursor-tree) tip
+                              "auto" "auto" "keyboard" 0.6)
+                (close-tooltip))))))))
