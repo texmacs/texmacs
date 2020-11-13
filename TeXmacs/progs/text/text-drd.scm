@@ -22,7 +22,7 @@
   (frame-tag) (frame-titled-tag)
   (textual-tag) (code-tag)
   (ornament-tag) (art-frame-tag) (shadow-tag)
-  (balloon-tag) (reference-tag))
+  (balloon-tag))
 
 (define-group similar-tag
   (section-tag) (list-tag) (figure-tag)

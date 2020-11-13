@@ -323,7 +323,8 @@
 
 (define-group variant-tag
   (argument-tag) (value-tag) (quote-tag)
-  (binary-operation-tag) (binary-compare-tag))
+  (binary-operation-tag) (binary-compare-tag)
+  (label-tag) (unary-reference-tag) (n-ary-citation-tag))
 
 (define-group similar-tag
   (label-tag) (reference-tag) (citation-tag))
@@ -349,8 +350,14 @@
 (define-group label-tag
   label)
 
+(define-group unary-reference-tag
+  reference pageref eqref)
+
 (define-group reference-tag
   reference pageref eqref smart-ref)
+
+(define-group n-ary-citation-tag
+  cite nocite cite-TeXmacs)
 
 (define-group citation-tag
   cite nocite cite-TeXmacs cite-detail)

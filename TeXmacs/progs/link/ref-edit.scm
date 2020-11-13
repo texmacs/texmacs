@@ -209,6 +209,155 @@
   (go-to-broken-citation dir))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Finding the label key from its number
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (number->labels num)
+  (list-filter (list-references)
+               (lambda (x)
+                 (and (not (string-starts? x "auto-"))
+                      (and-let* ((t (get-reference x))
+                                 (r (tm-ref t 0)))
+                        (tm-equal? r num))))))
+
+(define (abbr->type s)
+  (cond ((in? s '("t" "th" "thm")) "theorem")
+        ((in? s '("p" "pr" "prop")) "proposition")
+        ((in? s '("l" "le" "lm" "lem")) "lemma")
+        ((in? s '("co" "cor" "corr")) "corollary")
+        ((in? s '("def" "dfn" "defn")) "definition")
+        ((in? s '("not")) "notation")
+        ((in? s '("ax")) "axiom")
+        ((in? s '("conv")) "convention")
+        ((in? s '("conj")) "conjecture")
+        ((in? s '("rem")) "remark")
+        ((in? s '("war")) "warning")
+        ((in? s '("ex")) "example")
+        ((in? s '("exc" "exe" "exer")) "exercise")
+        ((in? s '("prb" "prob")) "problem")
+        ((in? s '("sol")) "solution")
+        ((in? s '("c" "ch" "chap")) "chapter")
+        ((in? s '("s" "sec")) "section")
+        ((in? s '("ss" "ssec" "subs" "subsec")) "subsection")
+        ((in? s '("par" "para")) "paragraph")
+        ((in? s '("e" "eq" "eqn" "equa")) "equation")
+        ((in? s '("fig")) "figure")
+        ((in? s '("tab")) "table")
+        ((in? s '("alg" "algo")) "algorithm")
+        (else s)))
+
+(define (type->types type)
+  (cond ((== type "section") (list "section" "subsection" "subsubsection"))
+        ((== type "subsection") (list "subsection" "subsubsection"))
+        ((== type "paragraph") (list "paragraph subparagraph"))
+        ((== type "figure") (list "big-figure" "small-figure"))
+        ((== type "table") (list "big-table" "small-table"))
+        ((== type "algorithm") (list "algorithm"
+                                     "specified-algorithm"
+                                     "named-algorithm"
+                                     "named-specified-algorithm"))
+        ((== type "equation") (list "equation" "eqnarray" "eqnarray*"))
+        (else (list type))))
+
+(define (abbr->types s)
+  (type->types (abbr->type s)))
+
+(define (previous-word t)
+  (cond ((not (and (tree? t) (tree-up t))) #f)
+        ((tree-is? (tree-up t) 'concat)
+         (and-let* ((p (tree-up t))
+                    (i (- (tree-index t) 1)))
+           (while (and (>= i 0) (not (tree-atomic? (tree-ref p i))))
+             (set! i (- i 1)))
+           (and (>= i 0)
+                (let* ((s (tm-string-trim-right (tree->string (tree-ref p i))))
+                       (j (string-search-backwards " " (string-length s) s)))
+                  (if (>= j 0) (substring s (+ j 1) (string-length s)) s)))))
+        ((or (tree-atomic? t) (reference-context? t) (tree-is? t 'inactive))
+         (previous-word (tree-up t)))
+        (else #f)))
+
+(define type-list
+  (with l (append (enunciation-tag-list) (section-tag-list)
+                  (equation-tag-list) (algorithm-tag-list))
+    (append (map symbol->string l) (list "figure" "table"))))
+
+(define (plural s)
+  (cond ((== s "") s)
+        ((string-ends? s "y")
+         (string-append (substring s 0 (- (string-length s) 1)) "ies"))
+        (else
+         (string-append s "s"))))
+
+(define (word-matches? w t)
+  (or (== w t)
+      (== w (plural t))
+      (== w (translate-from-to t "english" (get-init "language")))
+      (== w (translate-from-to (plural t) "english" (get-init "language")))))
+
+(define (word->type s*)
+  (with s (locase-all s*)
+    (with f (list-find type-list (cut word-matches? s <>))
+      (or f (cond ((== s "(") "equation")
+                  (else s))))))
+    
+(define (word->types s)
+  ;;(display* "word->types " s "\n")
+  (type->types (word->type s)))
+
+(define (label-matches-sub? t types)
+  ;;(display* "label-matches-sub? " (tree->path t) ", " types "\n")
+  (and (tree? t)
+       (or (tree-in? t (map string->symbol types))
+           (and (tree-is? t 'concat)
+                (or (in? "subsubsection" types) (in? "subparagraph" types))
+                (exists? (cut label-matches-sub? <> types)
+                         (tree-children t))))))
+
+(define (label-matches? id types)
+  ;;(display* "label-matches? " id ", " types "\n")
+  (and-with t (and-nnull? (search-label (buffer-tree) id))
+    (tree-search-upwards (car t) (cut label-matches-sub? <> types))))
+
+(tm-define (number->label t)
+  (and-let* ((s (tm->string t))
+             (types (or (with i (string-search-forwards ":" 0 s)
+                          (and (>= i 0) (abbr->types (substring s 0 i))))
+                        (and-with w (previous-word t)
+                          (word->types w))
+                        (list)))
+             (num (with i (string-search-forwards ":" 0 s)
+                    (if (>= i 0) (substring s (+ i 1) (string-length s)) s)))
+             (labs (and-nnull? (number->labels num))))
+    (if (null? (cdr labs)) (car labs)
+        (with f (list-filter labs (lambda (l) (label-matches? l types)))
+          (if (null? f) (car labs) (car f))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Activating references whose keys are inferred
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (in-inactive-reference?)
+  (and (in-preview-ref?)
+       (tree-atomic? (cursor-tree))
+       (reference-context? (tree-up (cursor-tree)))
+       (tree-is? (tree-up (tree-up (cursor-tree))) 'inactive)))
+
+(define (label-exists? s)
+  (with t (set-of-labels (buffer-tree))
+    (ahash-ref t s)))
+
+(tm-define (kbd-return)
+  (:require (in-inactive-reference?))
+  (with-innermost t reference-context?
+    (for (c (tree-children t))
+      (and-with s (tm->string c)
+        (when (not (label-exists? s))
+          (and-with id (number->label c)
+            (tree-assign c id)))))
+    (former)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Generate preview document of the content that a reference points to
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -283,12 +432,6 @@
                  (tip (and id (ref-preview id))))
         (show-tooltip id ref tip "auto" "auto" "default" 0.6)))))
 
-(define (in-inactive-reference?)
-  (and (in-preview-ref?)
-       (tree-atomic? (cursor-tree))
-       (reference-context? (tree-up (cursor-tree)))
-       (tree-is? (tree-up (tree-up (cursor-tree))) 'inactive)))
-
 (tm-define (keyboard-press key time)
   (with before? (in-inactive-reference?)
     (former key time)
@@ -296,10 +439,19 @@
       (when (or before? after?)
         (delayed
           (:idle 100)
-          (let* ((id (and (in-inactive-reference?)
-                          (tm->string (cursor-tree))))
-                 (tip (and id (ref-preview id))))
+          (let* ((id1 (and (in-inactive-reference?)
+                           (tm->string (cursor-tree))))
+                 (tip1 (and id1 (ref-preview id1)))
+                 (id2 (and id1 (not tip1)
+                           (number->label (cursor-tree))))
+                 (tip2 (and id2 (ref-preview id2)))
+                 (id (if tip1 id1 id2))
+                 (tip (or tip1 tip2)))
             (if tip
-                (show-tooltip id (cursor-tree) tip
-                              "auto" "auto" "keyboard" 0.6)
+                (begin
+                  (show-tooltip id (cursor-tree) tip
+                                "auto" "auto" "keyboard" 0.6)
+                  (when (not tip1)
+                    (set-message `(concat (verbatim ,id1) " -> "
+                                          (verbatim ,id2)) "")))
                 (close-tooltip))))))))

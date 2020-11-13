@@ -92,6 +92,10 @@
 
   <assign|convention-ref|<xmacro|args|<extern|ext-typed-ref|Convention|<quote-arg|args>>>>
 
+  <assign|conj-ref|<xmacro|args|<extern|ext-typed-ref|Conjecture|<quote-arg|args>>>>
+
+  <assign|conjecture-ref|<xmacro|args|<extern|ext-typed-ref|Conjecture|<quote-arg|args>>>>
+
   <assign|rem-ref|<xmacro|args|<extern|ext-typed-ref|Remark|<quote-arg|args>>>>
 
   <assign|remark-ref|<xmacro|args|<extern|ext-typed-ref|Remark|<quote-arg|args>>>>
@@ -175,6 +179,8 @@
   <assign|eq-ref|<xmacro|args|<extern|ext-typed-ref*||add-brackets|<quote-arg|args>>>>
 
   <assign|eqn-ref|<xmacro|args|<extern|ext-typed-ref*||add-brackets|<quote-arg|args>>>>
+
+  <assign|equa-ref|<xmacro|args|<extern|ext-typed-ref*||add-brackets|<quote-arg|args>>>>
 
   <assign|equation-ref|<xmacro|args|<extern|ext-typed-ref*||add-brackets|<quote-arg|args>>>>
 
