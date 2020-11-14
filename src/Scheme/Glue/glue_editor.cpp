@@ -807,6 +807,19 @@ tmg_reset_reference (tmscm arg1) {
 }
 
 tmscm
+tmg_find_references (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "find-references");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= get_current_editor()->find_refs (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
 tmg_list_references () {
   // TMSCM_DEFER_INTS;
   array_string out= get_current_editor()->list_refs ();
@@ -3624,6 +3637,7 @@ initialize_glue_editor () {
   tmscm_install_procedure ("get-reference",  tmg_get_reference, 1, 0, 0);
   tmscm_install_procedure ("set-reference",  tmg_set_reference, 2, 0, 0);
   tmscm_install_procedure ("reset-reference",  tmg_reset_reference, 1, 0, 0);
+  tmscm_install_procedure ("find-references",  tmg_find_references, 1, 0, 0);
   tmscm_install_procedure ("list-references",  tmg_list_references, 0, 0, 0);
   tmscm_install_procedure ("list-references*",  tmg_list_references_dot, 1, 0, 0);
   tmscm_install_procedure ("get-auxiliary",  tmg_get_auxiliary, 1, 0, 0);

@@ -117,6 +117,7 @@ public:
   void     reset_ref (string key);
   void     reset_aux (string key);
   void     reset_att (string key);
+  array<string> find_refs (string val, bool global);
   array<string> list_refs (bool global);
   array<string> list_auxs (bool global);
   array<string> list_atts (bool global);

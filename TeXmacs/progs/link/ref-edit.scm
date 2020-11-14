@@ -213,12 +213,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (number->labels num)
-  (list-filter (list-references)
+  (list-filter (find-references num)
                (lambda (x)
-                 (and (not (string-starts? x "auto-"))
-                      (and-let* ((t (get-reference x))
-                                 (r (tm-ref t 0)))
-                        (tm-equal? r num))))))
+                 (not (or (string-starts? x "auto-")
+                          (string-starts? x "bib-"))))))
 
 (define (abbr->type s)
   (cond ((in? s '("t" "th" "thm")) "theorem")

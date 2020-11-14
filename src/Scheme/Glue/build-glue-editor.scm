@@ -91,6 +91,7 @@
   (get-reference get_ref (tree string))
   (set-reference set_ref (void string content))
   (reset-reference reset_ref (void string))
+  (find-references find_refs (array_string string))
   (list-references list_refs (array_string))
   (list-references* list_refs (array_string bool))
   (get-auxiliary get_aux (tree string))

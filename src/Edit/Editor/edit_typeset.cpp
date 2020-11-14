@@ -104,6 +104,31 @@ edit_typeset_rep::reset_ref (string key) {
   buf->data->ref->reset (key);
 }
 
+static string
+concat_as_string (tree t) {
+  if (is_atomic (t)) return t->label;
+  else if (is_func (t, CONCAT)) {
+    string r;
+    for (int i=0; i<N(t); i++)
+      r << concat_as_string (t[i]);
+    return r;
+  }
+  else return "?";
+}
+
+array<string>
+edit_typeset_rep::find_refs (string val, bool global) {
+  tree a= (tree) buf->data->ref;
+  if (global && buf->prj != NULL) a= buf->prj->data->ref;
+  array<string> v;
+  int i, n= N(a);
+  for (i=0; i<n; i++)
+    if (N(a[i]) >= 2 && N(a[i][1]) >= 1 &&
+        concat_as_string (a[i][1][0]) == val)
+      v << a[i][0]->label;
+  return v;
+}
+
 array<string>
 edit_typeset_rep::list_refs (bool global) {
   tree a= (tree) buf->data->ref;

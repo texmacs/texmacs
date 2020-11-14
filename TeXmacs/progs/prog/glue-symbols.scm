@@ -865,6 +865,7 @@
 "get-reference"
 "set-reference"
 "reset-reference"
+"find-references"
 "list-references"
 "list-references*"
 "get-auxiliary"

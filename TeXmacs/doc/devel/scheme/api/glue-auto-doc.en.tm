@@ -6723,6 +6723,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(find-references <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|find_refs> which returns
+    <scm|array_string>.
+  </explain>
+
+  <\explain>
     <scm|(list-references)>
 <explain-synopsis|no synopsis>
   <|explain>
