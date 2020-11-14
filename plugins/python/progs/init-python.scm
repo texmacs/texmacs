@@ -45,7 +45,7 @@
   (:winpath "Python*" ".")
   (:winpath "Python/Python*" ".")
   (:require (python-command))
-  (:launch ,(python-command))
+  (:launch ,(python-launcher))
   (:tab-completion #t)
   (:serializer ,python-serialize)
   (:session "Python")
