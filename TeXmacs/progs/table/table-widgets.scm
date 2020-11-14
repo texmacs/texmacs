@@ -231,7 +231,7 @@
       (item (text "Vertical:")
         (enum (cell-set-format* "cell-valign" (encode-valign answer))
               '("Top" "Center" "Bottom" "Baseline")
-              (decode-valign (cell-get-format "cell-halign"))
+              (decode-valign (cell-get-format "cell-valign"))
               "7em")))))
 
 (tm-widget (cell-large-widget)
