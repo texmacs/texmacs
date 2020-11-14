@@ -2992,7 +2992,6 @@
 ("top table border" "")
 ("top table padding" "")
 ("topless title" "")
-("towards semantic mathematical editing" "")
 ("transform" "")
 ("transform cell into subtable" "")
 ("transformations" "")
