@@ -45,8 +45,8 @@
 (tm-define (search-labels t)
   (tree-search t label-context?))
 
-(tm-define (search-label t id)
-  (tree-search t (named-context? label-context? id)))
+(tm-define (search-label t . ids)
+  (tree-search t (apply named-context? (cons label-context? ids))))
 
 (tm-define (search-references t)
   (tree-search t reference-context?))
@@ -303,21 +303,27 @@
   ;;(display* "word->types " s "\n")
   (type->types (word->type s)))
 
-(define (label-matches-sub? t types)
-  ;;(display* "label-matches-sub? " (tree->path t) ", " types "\n")
+(define (label-matches? t types)
+  ;;(display* "label-matches? " (tree->path t) ", " types "\n")
   (and (tree? t)
        (or (tree-in? t (map string->symbol types))
            (and (tree-is? t 'concat)
                 (or (in? "subsubsection" types) (in? "subparagraph" types))
-                (exists? (cut label-matches-sub? <> types)
+                (exists? (cut label-matches? <> types)
                          (tree-children t))))))
 
-(define (label-matches? id types)
-  ;;(display* "label-matches? " id ", " types "\n")
-  (and-with t (and-nnull? (search-label (buffer-tree) id))
-    (tree-search-upwards (car t) (cut label-matches-sub? <> types))))
+(define (matching-labels ids types)
+  ;;(display* "matching-labels " ids ", " types "\n")
+  (with labs (apply search-label (cons (buffer-tree) ids))
+    (if (null? labs) (list)
+        (let* ((pred? (cut label-matches? <> types))
+               (test? (lambda (lab) (tree-search-upwards lab pred?)))
+               (hits (list-filter labs test?))
+               (text (lambda (lab) (tm->string (tm-ref lab 0)))))
+          (list-filter (map text hits) identity)))))
 
 (tm-define (number->label t)
+  ;;(display* "number->label " t "\n")
   (and-let* ((s (tm->string t))
              (types (or (with i (string-search-forwards ":" 0 s)
                           (and (>= i 0) (abbr->types (substring s 0 i))))
@@ -328,7 +334,7 @@
                     (if (>= i 0) (substring s (+ i 1) (string-length s)) s)))
              (labs (and-nnull? (number->labels num))))
     (if (null? (cdr labs)) (car labs)
-        (with f (list-filter labs (lambda (l) (label-matches? l types)))
+        (with f (matching-labels labs types)
           (if (null? f) (car labs) (car f))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -434,7 +440,7 @@
   (with before? (in-inactive-reference?)
     (former key time)
     (with after? (in-inactive-reference?)
-      (when (or before? after?)
+      (when (and (or before? after?) (in-preview-ref?))
         (delayed
           (:idle 100)
           (let* ((id1 (and (in-inactive-reference?)
@@ -450,6 +456,9 @@
                   (show-tooltip id (cursor-tree) tip
                                 "auto" "auto" "keyboard" 0.6)
                   (when (not tip1)
-                    (set-message `(concat (verbatim ,id1) " -> "
+                    (set-message `(concat (verbatim ,id1) " <rightarrow> "
                                           (verbatim ,id2)) "")))
-                (close-tooltip))))))))
+                (begin
+                  (close-tooltip)
+                  (set-message "" "")))))))))
+
