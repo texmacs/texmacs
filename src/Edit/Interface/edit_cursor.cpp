@@ -586,19 +586,34 @@ edit_cursor_rep::show_cursor_if_hidden () {
 }
 
 path
-edit_cursor_rep::search_label (string s) {
+edit_cursor_rep::search_label (string s, bool local) {
   path p= ::search_label (subtree (et, rp), s);
   if (!is_nil (p)) return (rp * p);
   if (!is_nil (eb)) {
     p= eb->find_tag (s);
-    if (!is_nil (p)) return p;
+    if (!is_nil (p) &&
+        !is_func (subtree (et, path_up (p)), INCLUDE))
+      return p;
+  }
+  tree val= (buf->prj == NULL? buf->data->ref[s]: buf->prj->data->ref[s]);
+  url u;
+  if (is_func (val, TUPLE, 3) && is_atomic (val[2]) &&
+      !starts (val[2]->label, "#"))
+    u= relative (buf->buf->name, url (val[2]->label));
+  else if (buf->prj != NULL)
+    u= buf->prj->buf->name;
+  if (local || is_none (u)) return path ();
+  if (u != buf->buf->name) {
+    url vw= get_passive_view (u);
+    if (is_none (vw)) return path ();
+    return view_to_editor (vw) -> search_label (s, true);
   }
   return path ();
 }
 
 void
 edit_cursor_rep::go_to_label (string s) {
-  path p= search_label (s);
+  path p= search_label (s, true);
   if (!is_nil (p)) {
     go_to (p);
     show_cursor_if_hidden ();
