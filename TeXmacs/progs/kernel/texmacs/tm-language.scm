@@ -16,6 +16,8 @@
 ;; Language definition
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define packrat-definition-table (make-ahash-table))
+
 (define (scheme->packrat x)
   (cond ((string? x) (string->tree x))
 	((symbol? x) (tree 'symbol (string->tree (symbol->string x))))
@@ -97,7 +99,8 @@
 	 (packrat-property lan sym "operator" "true")
 	 (define-rule-one lan sym (cdr l)))
 	(else
-	  ;;(display* "Define " sym " := " l "\n")
+          (ahash-set! packrat-definition-table (list lan sym) l)
+	  ;;(display* "Define " lan "::" sym " := " l "\n")
 	  ;;(display* "Packrat= " (scheme->packrat `(or ,@l)) "\n")
 	  (packrat-define lan sym (scheme->packrat `(or ,@l))))))
 
@@ -119,6 +122,9 @@
 
 (tm-define (define-language-impl lan gr)
   (for-each (lambda (x) (define-rule-impl lan x)) gr))
+
+(tm-define (get-packrat-definition lan sym)
+  (ahash-ref packrat-definition-table (list lan sym)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Lazy language definition

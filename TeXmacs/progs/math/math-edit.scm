@@ -16,7 +16,8 @@
 	(utils library cursor)
 	(utils edit auto-close)
 	(math math-drd)
-        (generic format-geometry-edit)))
+        (generic format-geometry-edit)
+        (convert tools tmconcat)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some drd properties, which should go into table-drd.scm later on
@@ -154,7 +155,7 @@
       ""))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Switching between different types of formulas
+;; Switching between inlined and displayed equations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-macro (concat-isolate! t)
@@ -235,6 +236,86 @@
   (with-innermost t '(math equation equation*)
     (when (tree-in? t '(math))
       (math->equation* t))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Switching between displayed equations and equation arrays
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (search-labels t)
+  (tree-search t (lambda (l) (tree-in? l (label-tag-list)))))
+
+(define (cut-all t w)
+  (cond ((tree-atomic? t) (noop))
+        ((tree-is? t w) (tree-cut t))
+        (else (for-each (cut cut-all <> w) (tree-children t)))))
+
+(define (check-border? l empty?)
+  (cond ((null? l) #t)
+        ((and (not empty?) (nnull? (car l)) (!= (caar l) "")) #f)
+        (else (check-border? (cdr l) (== (cAr (car l)) "")))))
+
+(define (convertible-eqnarray? t)
+  (let* ((rs (select (tm->stree t) '(:* row)))
+         (rcs (map (lambda (r) (select r '(:* cell 0))) rs)))
+    (check-border? rcs #t)))
+
+(tm-define (eqnarray->equation t)
+  (with labs (map tree-copy (search-labels t))
+    (when (and (<= (length labs) 1) (convertible-eqnarray? t))
+      (cut-all t 'label)
+      (cut-all t 'eq-number)
+      (let* ((l* (select t '(:* cell 0)))
+             (l (if (null? labs) l* (cons (car labs) l*)))
+             (c (apply tmconcat (map tree->stree l)))
+             (n (if (null? labs) `(equation* ,c) `(equation ,c))))
+        (tree-set! t n)
+        (tree-go-to t 0 :end)))))
+
+(define (binary-relations)
+  (or (get-packrat-definition "std-symbols" "Relation-nolim-symbol") (list)))
+
+(define (binary-relation? t)
+  (in? (tm->stree t) (binary-relations)))
+
+(define (atom-decompose t)
+  (if (tree-atomic? t)
+      (tmstring->list (tree->string t))
+      (list t)))
+
+(define (concat-decompose t)
+  (cond ((tree-atomic? t) (atom-decompose t))
+        ((tree-is? t 'concat)
+         (apply append (map atom-decompose (tree-children t))))
+        (else (list t))))
+
+(define (make-eqn-row-sub l)
+  (list "" (car l) (apply tmconcat (cdr l))))
+
+(define (finalize-row l)
+  `(row (cell ,(car l)) (cell ,(cadr l)) (cell ,(caddr l))))
+
+(tm-define (equation->eqnarray t)
+  (let* ((labs (map tm->stree (search-labels t)))
+         (c* (tree-ref t 0))
+         (c  (if (tree-func? c* 'document 1) (tree-ref c* 0) c*))
+         (l0 (concat-decompose c))
+         (l1 (list-filter l0 (lambda (x) (not (tm-is? x 'label)))))
+         (l2 (list-scatter l1 binary-relation? #t)))
+    (when (>= (length l2) 2)
+      (cut-all t 'label)
+      (let* ((l3 (cons (list (apply tmconcat (car l2))
+                             (caadr l2)
+                             (apply tmconcat (cdadr l2)))
+                       (map make-eqn-row-sub (cddr l2))))
+             (l4 (if (null? labs) l3
+                     (rcons (cDr l3)
+                            (rcons (cDr (cAr l3))
+                                   (tmconcat (cAr (cAr l3))
+                                             '(eq-number) (car labs))))))
+             (l5 (map finalize-row l4))
+             (r `(eqnarray* (document (tformat (table ,@l5))))))
+        (tree-set! t r)
+        (tree-go-to t 0 0 0 :last :last 0 :end)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured editing of roots

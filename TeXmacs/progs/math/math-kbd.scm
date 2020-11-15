@@ -2637,3 +2637,19 @@
   ("f u r space a l l e space" (make 'prefix-for-all))
   ("f u e r space a l l e" (make 'prefix-for-all))
   ("f u e r space a l l e space" (make 'prefix-for-all)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Special toggles
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(kbd-map
+  (:require (inside? 'equation*))
+  ("C-&" (equation->eqnarray (tree-innermost 'equation*))))
+
+(kbd-map
+  (:require (inside? 'equation))
+  ("C-&" (equation->eqnarray (tree-innermost 'equation))))
+
+(kbd-map
+  (:require (inside? 'eqnarray*))
+  ("C-&" (eqnarray->equation (tree-innermost 'eqnarray*))))
