@@ -33,7 +33,8 @@
            (ahash-set! call-back-dispatch-table ',fun ,fun)))))
 
 (tm-define (client-eval envelope cmd)
-  ;; (display* "client-eval " envelope ", " cmd "\n")
+  (when (debug-get "remote")
+    (display* "client-eval " envelope ", " cmd "\n"))
   (cond ((and (pair? cmd) (ahash-ref call-back-dispatch-table (car cmd)))
          (with (name . args) cmd
            (with fun (ahash-ref call-back-dispatch-table name)
@@ -54,7 +55,8 @@
 (tm-call-back (local-eval cmd)
   (when #f ;; only set to #t for debugging purposes
     (with ret (eval cmd)
-      ;; (display* "local-eval " cmd " -> " ret "\n")
+      (when (debug-get "remote")
+        (display* "local-eval " cmd " -> " ret "\n"))
       (client-return envelope ret))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -99,6 +101,8 @@
   (display-err* "Remote error: " msg "\n"))
 
 (tm-define (client-remote-eval server cmd cont . opt-err-handler)
+  (when (debug-get "remote")
+    (display* "client-remote-eval " (list server client-serial) ", " cmd "\n"))
   (with err-handler std-client-error
     (if (nnull? opt-err-handler) (set! err-handler (car opt-err-handler)))
     (ahash-set! client-continuations client-serial (list server cont))

@@ -21,15 +21,15 @@
 * debugging
 ******************************************************************************/
 
-static int debug_status= 0;
+static long int debug_status= 0;
 
 bool
 debug (int which, bool write_flag) {
   if (write_flag) {
-    debug_status= debug_status | (1 << which);
+    debug_status= debug_status | (((long int) 1) << which);
     return 0;
   }
-  else return (debug_status & (1 << which)) > 0;
+  else return (debug_status & (((long int) 1) << which)) > 0;
 }
 
 int
@@ -46,8 +46,8 @@ debug_on (int status) {
 
 static void
 debug_set (int which, bool on) {
-  if (on) debug_status= debug_status | (1 << which);
-  else debug_status= debug_status & (~(1 << which));
+  if (on) debug_status= debug_status | (((long int) 1) << which);
+  else debug_status= debug_status & (~(((long int) 1) << which));
 }
 
 void
@@ -67,11 +67,12 @@ debug_set (string s, bool on) {
   else if (s == "parser") debug_set (DEBUG_FLAG_PARSER, on);
   else if (s == "correct") debug_set (DEBUG_FLAG_CORRECT, on);
   else if (s == "convert") debug_set (DEBUG_FLAG_CONVERT, on);
+  else if (s == "remote") debug_set (DEBUG_FLAG_REMOTE, on);
 }
 
 static bool
 debug_get (int which) {
-  return (debug_status & (1 << which)) != 0;
+  return (debug_status & (((long int) 1) << which)) != 0;
 }
 
 bool
@@ -90,6 +91,7 @@ debug_get (string s) {
   else if (s == "flatten") return debug_get (DEBUG_FLAG_FLATTEN);
   else if (s == "correct") return debug_get (DEBUG_FLAG_CORRECT);
   else if (s == "convert") return debug_get (DEBUG_FLAG_CONVERT);
+  else if (s == "remote") return debug_get (DEBUG_FLAG_REMOTE);
   else return false;
 }
 

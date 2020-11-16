@@ -105,4 +105,5 @@
   ("flatten" (debug-toggle "flatten"))
   ("parser" (debug-toggle "parser"))
   ("correct" (debug-toggle "correct"))
-  ("convert" (debug-toggle "convert")))
+  ("convert" (debug-toggle "convert"))
+  ("remote" (debug-toggle "remote")))
