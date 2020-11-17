@@ -704,14 +704,14 @@ qt_ui_element_rep::as_qlayoutitem () {
         // Used only for non-colored glue widgets (skips qt_glue_widget_rep)
     {
       typedef quartet<bool, bool, SI, SI> T;
-      T x = open_box<T>(load);
-
+      T x = open_box<T> (load);
+      QSize sz = to_qsize (x.x3, x.x4);
       QSizePolicy::Policy hpolicy = x.x1 ? QSizePolicy::MinimumExpanding
                                          : QSizePolicy::Minimum;
       QSizePolicy::Policy vpolicy = x.x2 ? QSizePolicy::MinimumExpanding
                                          : QSizePolicy::Minimum;
 
-      return new QSpacerItem (x.x3, x.x4, hpolicy, vpolicy);
+      return new QSpacerItem (sz.width (), sz.height (), hpolicy, vpolicy);
     }
       break;
     default:
@@ -796,11 +796,27 @@ qt_ui_element_rep::as_qwidget () {
       
     case menu_separator: 
     case menu_group:
-    case glue_widget:
     {
       qwid = new QWidget();
     }
       break;
+      
+    case glue_widget:
+    // Used only for non-colored glue widgets (skips qt_glue_widget_rep)
+    {
+      typedef quartet<bool, bool, SI, SI> T;
+      T x = open_box<T>(load);
+      QSize sz = to_qsize (x.x3, x.x4);
+      QSizePolicy::Policy hpolicy = x.x1 ? QSizePolicy::MinimumExpanding
+                                         : QSizePolicy::Minimum;
+      QSizePolicy::Policy vpolicy = x.x2 ? QSizePolicy::MinimumExpanding
+                                         : QSizePolicy::Minimum;
+      qwid = new QWidget();
+      qwid->setMinimumSize (sz);
+      qwid->setSizePolicy (hpolicy, vpolicy);
+    }
+      break;
+
       
     case pulldown_button:
     case pullright_button:
