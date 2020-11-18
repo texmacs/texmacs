@@ -24,4 +24,7 @@ double mac_screen_scale_factor();
 void mac_fix_yosemite_bug();
 #endif
 
+void mac_begin_server ();
+void mac_end_server ();
+
 #endif // MAC_UTILITIES_H

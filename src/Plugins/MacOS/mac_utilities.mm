@@ -500,3 +500,25 @@ mac_fix_yosemite_bug() {
   }
 }
 #endif   // defined (MAC_OS_X_VERSION_10_10)
+
+
+static id background_activity= nil;
+
+void
+mac_begin_server () {
+  if (background_activity == nil) {
+    id background_activity = [[NSProcessInfo processInfo]
+                               beginActivityWithOptions: NSActivityBackground
+                              reason: @"TeXmacs server running"];
+    [background_activity retain];
+  }
+}
+
+void
+mac_end_server () {
+  if (background_activity) {
+    [[NSProcessInfo processInfo] endActivity: background_activity];
+    [background_activity release];
+  }
+}
+

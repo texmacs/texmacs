@@ -80,6 +80,7 @@
       (:while (ahash-ref server-client-active? client))
       (:pause ((lambda () (inexact->exact (round wait)))))
       (:do (set! wait (min (* 1.01 wait) 2500)))
+      ;;(display* "server-wait= " wait "\n")
       (with msg (server-read client)
         (when (!= msg "")
           (with (msg-id msg-cmd) (string->object msg)

@@ -17,6 +17,10 @@
 #ifdef QTTEXMACS
 #include "Qt/QTMSockets.hpp"
 
+#if defined(OS_MACOS)
+  #include "MacOS/mac_utilities.h"
+#endif
+
 static socket_server* the_server= NULL;
 //int socket_link::id= 0;
 
@@ -35,10 +39,16 @@ server_start () {
   }
   if (the_server->alive ())
     cout << "TeXmacs] Server started... \n";
+#if defined(OS_MACOS)
+  mac_begin_server ();
+#endif
 }
 
 void
 server_stop () {
+#if defined(OS_MACOS)
+  mac_end_server ();
+#endif
   if (the_server != NULL) {
     tm_delete (the_server);
     the_server= NULL;
