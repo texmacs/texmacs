@@ -617,6 +617,7 @@ public:
   friend void   tm_failure (const char* msg);
   friend void   set_buffer_tree (url name, tree doc);
   friend void   set_current_view (url u);
+  friend void   set_current_drd (url name);
   friend void   focus_on_editor (editor ed);
   friend void   delete_view (url u);
 };

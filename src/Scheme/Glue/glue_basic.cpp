@@ -9354,6 +9354,19 @@ tmg_switch_to_buffer (tmscm arg1) {
 }
 
 tmscm
+tmg_set_drd (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "set-drd");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  set_current_drd (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_window_list () {
   // TMSCM_DEFER_INTS;
   array_url out= windows_list ();
@@ -10648,6 +10661,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("view-delete",  tmg_view_delete, 1, 0, 0);
   tmscm_install_procedure ("window-set-view",  tmg_window_set_view, 3, 0, 0);
   tmscm_install_procedure ("switch-to-buffer",  tmg_switch_to_buffer, 1, 0, 0);
+  tmscm_install_procedure ("set-drd",  tmg_set_drd, 1, 0, 0);
   tmscm_install_procedure ("window-list",  tmg_window_list, 0, 0, 0);
   tmscm_install_procedure ("windows-number",  tmg_windows_number, 0, 0, 0);
   tmscm_install_procedure ("current-window",  tmg_current_window, 0, 0, 0);

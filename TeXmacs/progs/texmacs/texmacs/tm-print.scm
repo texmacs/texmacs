@@ -96,6 +96,7 @@
         (buffer-copy cur buf)
         (buffer-set-master buf cur)
         (switch-to-buffer buf)
+        (set-drd cur)
         (dynamic-make-slides)
         (print-to-file fname)
         (switch-to-buffer cur)

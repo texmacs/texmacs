@@ -766,6 +766,7 @@
   (view-delete delete_view (void url))
   (window-set-view window_set_view (void url url bool))
   (switch-to-buffer switch_to_buffer (void url))
+  (set-drd set_current_drd (void url))
 
   (window-list windows_list (array_url))
   (windows-number get_nr_windows (int))

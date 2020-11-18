@@ -709,6 +709,7 @@
 "view-delete"
 "window-set-view"
 "switch-to-buffer"
+"set-drd"
 "window-list"
 "windows-number"
 "current-window"

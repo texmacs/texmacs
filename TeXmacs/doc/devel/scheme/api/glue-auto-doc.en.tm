@@ -5475,6 +5475,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(set-drd <scm-arg|url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|set_current_drd> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(window-list)>
 <explain-synopsis|no synopsis>
   <|explain>

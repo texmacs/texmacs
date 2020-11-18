@@ -408,6 +408,13 @@ switch_to_buffer (url name) {
 }
 
 void
+set_current_drd (url name) {
+  url u= get_passive_view (name);
+  tm_view vw= concrete_view (u);
+  if (vw != NULL) the_drd = vw->ed->drd;
+}
+
+void
 focus_on_editor (editor ed) {
   array<url> bufs= get_all_buffers ();
   for (int i=0; i<N(bufs); i++) {
