@@ -13,14 +13,13 @@
 
 AC_DEFUN([TM_REPO],[
   AC_ARG_WITH(tmrepo,
-    AS_HELP_STRING([--with-tmrepo@<:@=no@:>@],[absolute texmacs sdk path]),[
-      [[ -d $withval ]] || AC_MSG_ERROR([tmrepo path not found])
-      TMREPO=${withval%%/}
-      AC_MSG_NOTICE([Using TeXmacs SDK at $TMREPO])
-    ],[])
+    AS_HELP_STRING([--with-tmrepo@<:@=no@:>@],[absolute texmacs sdk path]),
+    [TMREPO=${withval%%/}])
 
-  if test -n "$TMREPO"
+  if test -n "$TMREPO" -a "$TMREPO" != no
   then 
+    AS_IF([test -d "$TMREPO"],[AC_MSG_NOTICE([Using TeXmacs SDK at $TMREPO])],
+      [AC_MSG_ERROR([tmrepo path not found])])
     PATH=$TMREPO/bin:$PATH
 
     # memorize current pkgconfig location
@@ -32,7 +31,7 @@ AC_DEFUN([TM_REPO],[
       fi
     else AC_MSG_WARN([pkg-config not found : configuration may fail])
     fi
-	
+  
     export PKG_CONFIG_PATH="$TMREPO/lib/pkgconfig:$PKG_CONFIG_PATH:$oldpkgconfig"
     LC_MERGE_FLAGS([-I$TMREPO/include],[CPPFLAGS])
     # LC_SCATTER_FLAGS([-I$TMREPO/include],[BASE])
