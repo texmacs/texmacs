@@ -21,8 +21,11 @@ AC_DEFUN([TM_WINDOWS],[
     else  AC_MSG_RESULT([disabling Windows console])
           LC_SCATTER_FLAGS([-mwindows])
     fi
-    if test -n "$TMREPO"; then
-      AC_SUBST([XTRA_CMD],[$TMREPO/windows])
-    fi
+    AS_IF([test -n "$TMREPO"],[
+      AC_SUBST([XTRA_CMD],[$TMREPO/windows/bin])
+      AS_IF([test -d $TMREPO/windows/aspell],[
+        AC_SUBST([ASPELL_CMD],[$TMREPO/windows/aspell])
+        AC_DEFINE([ASPELL],["plugins/aspell"],[embedded aspell location])])
+    ])
   fi
 ])

@@ -680,6 +680,7 @@ UIC
 MOC
 QT_PATH
 QMAKE
+ASPELL_CMD
 XTRA_CMD
 MACOSX_TARGET
 OSXVERMIN
@@ -5158,17 +5159,18 @@ done
 
 # Check whether --with-tmrepo was given.
 if test "${with_tmrepo+set}" = set; then :
-  withval=$with_tmrepo;
-      [ -d $withval ] || as_fn_error $? "tmrepo path not found" "$LINENO" 5
-      TMREPO=${withval%%/}
-      { $as_echo "$as_me:${as_lineno-$LINENO}: Using TeXmacs SDK at $TMREPO" >&5
-$as_echo "$as_me: Using TeXmacs SDK at $TMREPO" >&6;}
-
+  withval=$with_tmrepo; TMREPO=${withval%%/}
 fi
 
 
-  if test -n "$TMREPO"
+  if test -n "$TMREPO" -a "$TMREPO" != no
   then
+    if test -d "$TMREPO"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Using TeXmacs SDK at $TMREPO" >&5
+$as_echo "$as_me: Using TeXmacs SDK at $TMREPO" >&6;}
+else
+  as_fn_error $? "tmrepo path not found" "$LINENO" 5
+fi
     PATH=$TMREPO/bin:$PATH
 
     # memorize current pkgconfig location
@@ -23781,10 +23783,20 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
   unset ${!LC_SCATTER_FLAGS_*}
 
     fi
-    if test -n "$TMREPO"; then
-      XTRA_CMD=$TMREPO/windows
+    if test -n "$TMREPO"; then :
 
-    fi
+      XTRA_CMD=$TMREPO/windows/bin
+
+      if test -d $TMREPO/windows/aspell; then :
+
+        ASPELL_CMD=$TMREPO/windows/aspell
+
+
+$as_echo "#define ASPELL \"plugins/aspell\"" >>confdefs.h
+
+fi
+
+fi
   fi
 
 

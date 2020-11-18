@@ -55,7 +55,7 @@ SIGN = misc/admin/sign_update
 
 TEXMACS: EMPTY_DIRS @MKGUILE@
 	if test "$(TEXMACS_DEPS)" != "no"; then \
-	  cd src; $(MAKE) -f makefile deps; \
+		cd src; $(MAKE) -f makefile deps; \
 	fi
 	cd src; $(MAKE) -r -f makefile link=shared
 	$(MAKE) -f Makefile PLUGINS
@@ -72,7 +72,7 @@ TEXMACS: EMPTY_DIRS @MKGUILE@
 
 STATIC_TEXMACS: EMPTY_DIRS 
 	if test "$(TEXMACS_DEPS)" != "no"; then \
-	  cd src; $(MAKE) -f makefile deps; \
+		cd src; $(MAKE) -f makefile deps; \
 	fi
 	cd src; $(MAKE) -r -f makefile link=static CFLAGS=-D__TMSTATIC__
 	$(MAKE) -f Makefile PLUGINS
@@ -286,8 +286,8 @@ STATIC_X11 = $(tm_devel)-x11-$(tm_suffix)
 GENERIC_PACKAGE: TEXMACS STRIP
 	$(MKDIR) $(GENERIC_PACKAGE_DIR)
 	-find @GUILE_DATA_PATH@ -type d -name ice-9 -exec $(CP) {} $(tmdir)/progs \; && \
-	   $(CP) $(tmdir) $(STATIC_QT) && \
-	   tar -czhf $(GENERIC_PACKAGE_DIR)/$(STATIC_QT)-@CONFIG_STYPE@.tar.gz $(STATIC_QT) --exclude .svn --mode go=rX
+		 $(CP) $(tmdir) $(STATIC_QT) && \
+		 tar -czhf $(GENERIC_PACKAGE_DIR)/$(STATIC_QT)-@CONFIG_STYPE@.tar.gz $(STATIC_QT) --exclude .svn --mode go=rX
 	$(RM) -r $(tmdir)/progs/ice-9 $(STATIC_QT)
 
 GENERIC_X11_PACKAGE: COPY_SOURCES COPY_GUILE
@@ -312,7 +312,7 @@ CENTOS_PACKAGE_DIR = ../distr/centos
 CENTOS_PACKAGE: COPY_SOURCES_TGZ
 	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 	if test ! -f ~/.rpmmacros; then \
-	  echo '%_topdir %(echo $$HOME)/rpmbuild' > ~/.rpmmacros; \
+		echo '%_topdir %(echo $$HOME)/rpmbuild' > ~/.rpmmacros; \
 	fi
 	$(CP) $(CENTOS_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
 	$(CP) $(BUILD_TGZ) $(HOME)/rpmbuild/SOURCES/.
@@ -370,7 +370,7 @@ MANDRIVA_PACKAGE_DIR = ../distr/mandriva
 MANDRIVA_PACKAGE: COPY_SOURCES_TGZ
 	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 	if test ! -f ~/.rpmmacros; then \
-	  echo '%_topdir %(echo $$HOME)/rpmbuild' > ~/.rpmmacros; \
+		echo '%_topdir %(echo $$HOME)/rpmbuild' > ~/.rpmmacros; \
 	fi
 	$(CP) $(MANDRIVA_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
 	$(CP) $(BUILD_TGZ) $(HOME)/rpmbuild/SOURCES/.
@@ -391,7 +391,7 @@ REDHAT_PACKAGE_DIR = ../distr/redhat
 REDHAT_PACKAGE: COPY_SOURCES_TGZ
 	mkdir -p $(HOME)/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 	if test ! -f ~/.rpmmacros; then \
-	  echo '%_topdir %(echo $$HOME)/rpmbuild' > ~/.rpmmacros; \
+		echo '%_topdir %(echo $$HOME)/rpmbuild' > ~/.rpmmacros; \
 	fi
 	$(CP) $(REDHAT_PACKAGE_SRC)/TeXmacs.spec $(HOME)/rpmbuild/SPECS/.
 	$(CP) $(BUILD_TGZ) $(HOME)/rpmbuild/SOURCES/.
@@ -453,7 +453,7 @@ MACOS_BUNDLE: TEXMACS
 	$(CP) TeXmacs/bin/texmacs.bin $(MACOS_PACKAGE_CONTENTS)/MacOS/TeXmacs
 	$(CP) $(MACOS_PACKAGE_SRC)/TeXmacs.icns $(MACOS_PACKAGE_RESOURCES)
 	$(CP) $(MACOS_PACKAGE_SRC)/TeXmacs-document.icns \
-	      $(MACOS_PACKAGE_RESOURCES)
+				$(MACOS_PACKAGE_RESOURCES)
 	$(CP) src/Plugins/Cocoa/English.lproj $(MACOS_PACKAGE_RESOURCES)
 	$(CP) misc/admin/texmacs_updates_dsa_pub.pem $(MACOS_PACKAGE_RESOURCES)
 	$(CP) TeXmacs $(MACOS_PACKAGE_RESOURCES)/share
@@ -466,7 +466,7 @@ MACOS_BUNDLE: TEXMACS
 	@echo Deploying libraries into application bundle.
 	QT_PLUGINS_PATH="$(QT_PLUGINS_PATH)" QT_PLUGINS_LIST="$(QT_PLUGINS_LIST)" \
 	QT_FRAMEWORKS_PATH="$(QT_FRAMEWORKS_PATH)" \
-	  $(MACOS_PACKAGE_SRC)/bundle-libs.sh $(MACOS_PACKAGE_CONTENTS)/MacOS/TeXmacs
+		$(MACOS_PACKAGE_SRC)/bundle-libs.sh $(MACOS_PACKAGE_CONTENTS)/MacOS/TeXmacs
 	@echo ----------------------------------------------------
 	@echo TeXmacs has been bundled in $(MACOS_PACKAGE_APP)
 	@if test -n "@SIGNID@";then \
@@ -510,7 +510,8 @@ WINDOWS_BUNDLE: TEXMACS
 	$(RM) $(WINDOWS_BUILD_BIN_DIR)/texmacs
 	$(MV) $(WINDOWS_BUILD_BIN_DIR)/texmacs.bin $(WINDOWS_BUILD_BIN_DIR)/texmacs.exe
 	if test -n "@SIGNID@"; then @SIGNID@ $(WINDOWS_BUILD_BIN_DIR)/texmacs.exe; fi
-	if test -n "@XTRA_CMD@"; then $(CP) -u "@XTRA_CMD@/"* $(WINDOWS_BUILD_BIN_DIR)/; fi
+	if test "@XTRA_CMD@" != @'XTRA_CMD'@; then $(CP) -u "@XTRA_CMD@/"* $(WINDOWS_BUILD_BIN_DIR)/; fi
+	if test "@ASPELL_CMD@" != @'ASPELL_CMD'@; then $(CP) -u "@ASPELL_CMD@" $(WINDOWS_BUILD_DIR)/plugins; fi
 	if test -x "@GS_EXE@"; then $(CP) @GS_EXE@ $(WINDOWS_BUILD_BIN_DIR)/;fi
 	for f in $(WINDOWS_BUILD_BIN_DIR)/*.exe;do $(WINDOWS_PACKAGE_SRC)/copydll.sh $$f;done
 	$(CP) misc/admin/texmacs_updates_dsa_pub.pem $(WINDOWS_BUILD_DIR)/bin
@@ -574,7 +575,7 @@ SVN_CLEAN:
 	$(RM) -r */*/*/*/.svn
 	$(RM) -r */*/*/*/*/.svn
 	$(RM) -r */*/*/*/*/*/.svn
-	$(RM) -r */*/*/*/*/*/*/.svn	
+	$(RM) -r */*/*/*/*/*/*/.svn 
 	$(RM) -r */*/*/*/*/*/*/*/.svn
 
 DISTR_CLEAN: DISTCLEAN SVN_CLEAN

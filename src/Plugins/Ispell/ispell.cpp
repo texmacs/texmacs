@@ -68,7 +68,7 @@ ispeller_rep::start () {
         cmd= "aspell";
         name = cmd;
         cmd = cmd * " -a --encoding=utf-8";
-        if (locale != "") cmd = cmd * " -l " * locale;
+        if (locale != "") cmd = cmd * " --language-tag=" * locale;
         testdic = connect_spellchecker(cmd);
       }
 #ifdef OS_MINGW
@@ -101,10 +101,28 @@ ispeller_rep::start () {
         cmd = as_string(u);
         name = "Aspell";
         cmd = "\"" * cmd * "\" -a --encoding=utf-8";
-        if (locale != "") cmd =  cmd * " -l " * locale;
+        if (locale != "") cmd =  cmd * " --language-tag=" * locale;
         testdic = connect_spellchecker(cmd);
       }
     }
+    #ifdef ASPELL
+      if ((name == "") || (!testdic)) {
+        u = url_system ("$TEXMACS_PATH\\" ASPELL "\\bin\\aspell.exe");
+        debug_io << u<<" #aspell\n";
+        std_error << u<<" #aspell\n";
+        testcmd = exists (u);
+        if (testcmd)  {
+          cmd = as_string(u);
+          name = "Aspell";
+          std_error << cmd<<" #cmd1\n";
+          cmd = "\"" * cmd * "\" -a --encoding=utf-8";
+          std_error << cmd<<" #cmd2\n";
+          if (locale != "") cmd =  cmd * " --language-tag=" * locale;
+          std_error << cmd<<" #cmd3\n";
+          testdic = connect_spellchecker(cmd);
+        }
+      }
+      #endif
 #endif
     if (name == "") {
         err = "Error: spellchecker not found in PATH (neither Aspell nor Hunspell) ";
@@ -149,10 +167,10 @@ ispeller_rep::retrieve () {
   string ret;
 #ifdef OS_MINGW
   while ((ret != "\r\n") && (!ends (ret, "\r\n\r\n")) &&
-	 ((!ends (ret, "\r\n")) || (!starts (ret, "@(#)"))))
+        ((!ends (ret, "\r\n")) || (!starts (ret, "@(#)"))))
 #else
   while ((ret != "\n") && (!ends (ret, "\n\n")) &&
-	 ((!ends (ret, "\n")) || (!starts (ret, "@(#)"))))
+        ((!ends (ret, "\n")) || (!starts (ret, "@(#)"))))
 #endif
     {
       ln->listen (10000);
@@ -160,8 +178,8 @@ ispeller_rep::retrieve () {
       string extra= ln->read (LINK_OUT);
       if (mess  != "") io_error << "Spellchecker error: " << mess << "\n";
       if (extra == "") {
-	ln->stop ();
-	return "Error: spellchecker does not respond";
+       ln->stop ();
+       return "Error: spellchecker does not respond";
       }
       ret << extra;
     }
@@ -207,8 +225,8 @@ parse_ispell (string s) {
     if (s[j]==':') flag= false;
     else if (((s[j]==' ') && (flag || (j==i) || (s[j-1]==':'))) || (s[j]==','))
       {
-	if (j>i) t << s (i, j);
-	i= j+1;
+       if (j>i) t << s (i, j);
+       i= j+1;
       }
   t << s (i, j);
 
