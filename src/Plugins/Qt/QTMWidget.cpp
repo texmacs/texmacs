@@ -177,7 +177,14 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_widget _tmwid)
   setAttribute (Qt::WA_InputMethodEnabled);
   surface ()->setMouseTracking (true);
   surface ()->setAcceptDrops (true);
-  
+
+#if (QT_VERSION >= 0x050000)
+  surface ()->setTabletTracking (true);
+  for (QWidget *parent = surface()->parentWidget();
+       parent != nullptr; parent = parent->parentWidget())
+    parent->setTabletTracking(true);
+#endif
+
   if (DEBUG_QT)
     debug_qt << "Creating " << from_qstring(objectName()) << " of widget "
              << (tm_widget() ? tm_widget()->type_as_string() : "NULL") << LF;
@@ -730,11 +737,41 @@ QTMWidget::mouseMoveEvent (QMouseEvent* event) {
   event->accept();
 }
 
-/*
+#if (QT_VERSION >= 0x050000)
+static unsigned int
+tablet_state (QTabletEvent* event, bool flag) {
+  unsigned int i= 0;
+  Qt::MouseButtons bstate= event->buttons ();
+  Qt::MouseButton  tstate= event->button ();
+  if (flag) bstate= bstate | tstate;
+  if ((bstate & Qt::LeftButton     ) != 0) i += 1;
+  if ((bstate & Qt::MidButton      ) != 0) i += 2;
+  if ((bstate & Qt::RightButton    ) != 0) i += 4;
+  if ((bstate & Qt::XButton1       ) != 0) i += 8;
+  if ((bstate & Qt::XButton2       ) != 0) i += 16;
+  return i;
+}
+
 void
 QTMWidget::tabletEvent (QTabletEvent* event) {
-  if (is_nil (tmwid)) return;
+  if (is_nil (tmwid)) return; 
+  unsigned int mstate = tablet_state (event, true);
+  string s= "move";
+  if (event->button() != 0) {
+    if (event->pressure () == 0) s= "release-" * mouse_decode (mstate);
+    else s= "press-" * mouse_decode (mstate);
+  }
+  if ((mstate & 4) == 0 || s == "press-right") {
+    QPoint point = event->pos() + origin() - surface()->pos();
+    double x= point.x() + event->hiResGlobalX() - event->globalX();
+    double y= point.y() + event->hiResGlobalY() - event->globalY();
+    coord2 pt= coord2 ((SI) (x * PIXEL), (SI) (-y * PIXEL));
+    the_gui->process_mouse (tm_widget(), s, pt.x1, pt.x2, 
+                            mstate, texmacs_time ());
+  }
+  /*
   cout << HRULE << LF;
+  cout << "button= " << event->button() << LF;
   cout << "globalX= " << event->globalX() << LF;
   cout << "globalY= " << event->globalY() << LF;
   cout << "hiResGlobalX= " << event->hiResGlobalX() << LF;
@@ -751,9 +788,10 @@ QTMWidget::tabletEvent (QTabletEvent* event) {
   cout << "tangentialPressure= " << event->tangentialPressure() << LF;
   cout << "pointerType= " << event->pointerType() << LF;
   cout << "uniqueId= " << event->uniqueId() << LF;
+  */
   event->accept();
 }
-*/
+#endif
 
 bool
 QTMWidget::event (QEvent* event) {
