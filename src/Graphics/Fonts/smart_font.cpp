@@ -603,7 +603,7 @@ tex_gyre_fix (string family, string series, string shape) {
         starts (family, "TeX Gyre Pagella") ||
         starts (family, "TeX Gyre Schola") ||
         starts (family, "TeX Gyre Termes")) {
-      if (shape == "mathitalic" && series == "medium") {
+      if (starts (shape, "math") && series == "medium") {
         if (!ends (family, " Math")) family= family * " Math";
       }
       else if (ends (family, " Math"))
@@ -617,7 +617,7 @@ string
 stix_fix (string family, string series, string shape) {
   if (family == "stix") family= "Stix";
   if (starts (family, "Stix")) {
-    if (shape == "mathitalic" && series == "medium") {
+    if (starts (shape, "math") && series == "medium") {
       if (!ends (family, " Math")) family= family * " Math";
     }
     else if (ends (family, " Math"))
@@ -770,6 +770,7 @@ smart_font_rep::smart_font_rep (
       (void) sm->add_font (tuple ("bold-ss"), REWRITE_LETTERS);
       (void) sm->add_font (tuple ("italic-ss"), REWRITE_LETTERS);
       (void) sm->add_font (tuple ("bold-italic-ss"), REWRITE_LETTERS);
+      (void) sm->add_font (tuple ("italic-roman"), REWRITE_NONE);
     }
   }
 }
@@ -1175,7 +1176,7 @@ smart_font_rep::resolve (string c) {
       initialize_font (nr);
       return sm->add_char (key, c);
     }
-    if (is_greek (c) && use_italic_greek (a)) {
+    if (is_greek (c) && use_italic_greek (a) && shape != "mathupright") {
       string gc= substitute_italic_greek (c);
       if (gc != "" && fn[SUBFONT_MAIN]->supports (gc)) {
         tree key= tuple ("italic-greek");
@@ -1214,6 +1215,10 @@ smart_font_rep::resolve (string c) {
       }
   }
 
+  if (mfam == "roman" && shape == "mathupright" && N(c) == 1 &&
+      (c[0] < 'A' || c[0] > 'Z') && (c[0] < 'a' || c[0] > 'z'))
+    return sm->add_char (tuple ("italic-roman"), c);
+
   for (int attempt= 1; attempt <= FONT_ATTEMPTS; attempt++) {
     if (attempt > 1 && substitute_math_letter (c, math_kind) != "") break;
     for (int i= 0; i < N(a); i++) {
@@ -1242,7 +1247,7 @@ smart_font_rep::resolve (string c) {
       }
     }
   }
-
+  
   string sf= substitute_math_letter (c, math_kind);
   if (sf != "") {
     //cout << "Found " << c << " in " << sf << " (math-letter)\n";
@@ -1296,6 +1301,9 @@ smart_font_rep::initialize_font (int nr) {
     fn[nr]= smart_font_bis (family, variant, series, "italic", sz, hdpi, dpi);
   else if (a[0] == "italic-math")
     fn[nr]= smart_font_bis (family, variant, series, "italic", sz, hdpi, dpi);
+  else if (a[0] == "italic-roman")
+    fn[nr]= smart_font_bis (family, variant, series, "mathitalic", sz,
+                            hdpi, dpi);
   else if (a[0] == "bold-italic-math")
     fn[nr]= smart_font_bis (family, variant, "bold", "italic", sz, hdpi, dpi);
   else if (a[0] == "italic-greek")

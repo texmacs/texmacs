@@ -1,4 +1,4 @@
-<TeXmacs|1.99.11>
+<TeXmacs|1.99.15>
 
 <style|<tuple|source|std>>
 
@@ -128,6 +128,8 @@
       Additional mathematical macros.
     </src-comment>
   </active*>
+
+  <assign|upright|<macro|x|<with|font-shape|right|math-font-shape|right|<arg|x>>>>
 
   <assign|shrink-inline|<macro|x|<style-with|src-compact|none|<if|<equal|<value|math-display>|false>|<with|math-level|<plus|<value|math-level>|1>|<arg|x>>|<with|math-display|false|<arg|x>>>>>>
 
