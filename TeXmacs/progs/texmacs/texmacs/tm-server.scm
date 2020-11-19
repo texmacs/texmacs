@@ -120,6 +120,7 @@
   ("new style page breaking" "on" notify-new-page-breaking)
   ("open console on errors" "on" noop)
   ("open console on warnings" "on" noop)
+  ("gui:line-input:autocommit" "on" noop)
   ("use unified toolbar" (get-default-unified-toolbar) noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

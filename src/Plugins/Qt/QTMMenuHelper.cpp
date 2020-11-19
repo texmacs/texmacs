@@ -391,7 +391,7 @@ QTMInputTextWidgetHelper::leave (Qt::FocusReason reason) {
 BEGIN_SLOT
   if (sender() != wid()->qwid) return;
   wid()->commit((reason != Qt::OtherFocusReason &&
-                 get_preference ("gui:line-input:autocommit") == "#t"));
+                 get_preference ("gui:line-input:autocommit") == "on"));
 END_SLOT
 }
 
