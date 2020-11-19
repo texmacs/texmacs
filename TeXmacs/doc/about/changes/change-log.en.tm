@@ -5,9 +5,23 @@
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.99.1 to 1.99.15>
+  <section|Changes from version 1.99.1 to 1.99.16>
 
   <\itemize>
+    <item>Further improvements for preview and help balloons (1.99.16).
+
+    <item>Possibility to find labels from their numeric value (1.99.16).
+
+    <item>Incorporation of a <verbatim|smart-ref> package for smart
+    references (1.99.16).
+
+    <item>Fix spell checking under Windows (1.99.16).
+
+    <item>Rudimentary support for Wacom-style pen tablets, Qt5 only
+    (1.99.16).
+
+    <item>Continued bug fixes (1.99.16).
+
     <item>Improved help balloons and preview facility for references and
     citations (1.99.15).
 
