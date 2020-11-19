@@ -314,7 +314,8 @@ system_kbd_initialize (hashmap<string,tree>& h) {
 static tree
 kbd_render (tree t) {
   if (use_macos_fonts ())
-    t= tree (WITH, "font", "apple-lucida", t);
+    t= tree (WITH, "font", "apple-lucida", "font-family", "rm",
+             tree (WITH, "font-size", "0.7", t));
   return compound ("render-key", t);
 }
 
