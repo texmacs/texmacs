@@ -92,6 +92,7 @@ edit_interface_rep::suspend () {
     set_message ("", "", false);
   }
   got_focus= false;
+  env_change= env_change & (~THE_FREEZE);
   notify_change (THE_FOCUS);
   if (shadow != NULL) tm_delete (shadow);
   if (stored != NULL) tm_delete (stored);
@@ -111,6 +112,7 @@ edit_interface_rep::resume () {
     { SERVER (side_tools (0, "(vertical (link texmacs-side-tools))")); }
   SERVER (bottom_tools (0, "(vertical (link texmacs-bottom-tools))"));
   cur_sb= 2;
+  env_change= env_change & (~THE_FREEZE);
   notify_change (THE_FOCUS + THE_EXTENTS);
   path new_tp= make_cursor_accessible (tp, true);
   if (new_tp != tp) {
@@ -842,9 +844,8 @@ edit_interface_rep::apply_changes () {
     int THE_CURSOR_BAK= env_change & THE_CURSOR;
     go_to_here ();
     env_change= (env_change & (~THE_CURSOR)) | THE_CURSOR_BAK;
-    if ((env_change & (THE_TREE+THE_FOCUS+THE_ENVIRONMENT+THE_CURSOR)) != 0 &&
-        ((env_change & THE_FREEZE) == 0 || (env_change & THE_FOCUS) != 0))
-      if (!inside_active_graphics ())
+    if ((env_change & (THE_TREE+THE_FOCUS+THE_ENVIRONMENT+THE_CURSOR)) != 0)
+      if (!inside_active_graphics () && ((env_change & THE_FREEZE) == 0))
         cursor_visible ();
 
     SI dw= 0;

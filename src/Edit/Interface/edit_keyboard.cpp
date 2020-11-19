@@ -361,6 +361,7 @@ edit_interface_rep::handle_keyboard_focus (bool has_focus, time_t t) {
     drag_right_reset ();
   }
   got_focus= has_focus; (void) t;
+  notify_change (THE_FREEZE);
   notify_change (THE_FOCUS);
   if (got_focus) {
     focus_on_this_editor ();
