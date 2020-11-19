@@ -17,6 +17,9 @@
 
     <item>Fix spell checking under Windows (1.99.16).
 
+    <item>Add <key|C-&> keyboard shortcut to toggle between equations and
+    equation arrays (1.99.16).
+
     <item>Rudimentary support for Wacom-style pen tablets, Qt5 only
     (1.99.16).
 
