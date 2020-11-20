@@ -314,7 +314,7 @@ init_env_vars () {
 #ifdef OS_MINGW
   bin_path= bin_path | url ("$TEXMACS_PATH/bin");
   if (has_user_preference ("manual path"))
-    bin_path= bin_path | url_system (get_user_preference ("manual path"));
+    bin_path= url_system (get_user_preference ("manual path")) | bin_path;
 #endif
   set_env_path ("PATH", bin_path);
   url lib_path= get_env_path ("LD_LIBRARY_PATH") | plugin_path ("lib");
