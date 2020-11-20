@@ -39,9 +39,11 @@
               (string-replace r "-" " "))))))
 
 (tm-menu (focus-variant-menu t)
-  (for (v (focus-variants-of t))
-    ((eval (focus-tag-name v))
-     (variant-set-keep-numbering (focus-tree) v))))
+  (push-focus t
+    (for (v (focus-variants-of t))
+      ((eval (focus-tag-name v))
+       (pull-focus t
+         (variant-set-keep-numbering t v))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for hidden fields
@@ -130,74 +132,80 @@
       (mini #t (group (eval s))))))    
 
 (tm-menu (string-input-icon t i)
-  (let* ((name (tree-child-name* t i))
-         (type (tree-child-type t i))
-         (s (string-append (upcase-first name) ":"))
-         (active? (inputter-active? (tree-ref t i) type))
-         (props (child-proposals t i))
-	 (in (if active? (inputter-decode (tree-ref t i) type) "n.a."))
-         (fm (type->format type))
-         (w (type->width type))
-         (setter (lambda (x)
-                   (when x
-                     (tree-set (focus-tree) i (inputter-encode x type))
-                     (focus-tree-modified (focus-tree))))))
-    (dynamic (string-input-name t i))
-    (assuming props
-      (mini #t
-        (=> (eval in)
-            (for (prop props)
-              (assuming (string? prop)
-                ((eval prop) (setter prop)))
-              (assuming (== prop :other)
-                ---
-                ("Other"
-                 (interactive setter (list (upcase-first name) fm in))))))))
-    (assuming (not props)
-      (when active?
+  (push-focus t
+    (let* ((name (tree-child-name* t i))
+           (type (tree-child-type t i))
+           (s (string-append (upcase-first name) ":"))
+           (active? (inputter-active? (tree-ref t i) type))
+           (props (child-proposals t i))
+           (in (if active? (inputter-decode (tree-ref t i) type) "n.a."))
+           (fm (type->format type))
+           (w (type->width type))
+           (setter (lambda (x)
+                     (pull-focus t
+                       (when x
+                         (tree-set t i (inputter-encode x type))
+                         (focus-tree-modified t))))))
+      (dynamic (string-input-name t i))
+      (assuming props
         (mini #t
-          (input (setter answer) fm (list in) w))))))
+          (=> (eval in)
+              (for (prop props)
+                (assuming (string? prop)
+                  ((eval prop) (setter prop)))
+                (assuming (== prop :other)
+                  ---
+                  ("Other"
+                   (interactive setter (list (upcase-first name) fm in))))))))
+      (assuming (not props)
+        (when active?
+          (mini #t
+            (input (setter answer) fm (list in) w)))))))
 
 (tm-menu (string-input-icon t i)
   (:require (== (tree-child-type t i) "color"))
-  (let* ((name (tree-child-name* t i))
-         (s (string-append (upcase-first name) ":"))
-         (active? (inputter-active? (tree-ref t i) "color"))
-	 (in (if active? (inputter-decode (tree-ref t i) "color") ""))
-         (setter (lambda (x)
-                   (when x
-                     (tree-set (focus-tree) i (inputter-encode x "color"))
-                     (focus-tree-modified (focus-tree))))))
-    (dynamic (string-input-name t i))
-    (=> (color (tree->stree (tree-ref t i)) #f #f 24 16)
-        (pick-background "" (setter answer))
-        ---
-        ("Palette" (interactive-color setter '()))
-        ("Pattern" (open-pattern-selector setter "1cm"))
-        ("Gradient" (open-gradient-selector setter))
-        ("Picture" (open-background-picture-selector setter))
-        ("Other" (interactive setter
-                   (list (upcase-first name) "color" in))))))
+  (push-focus t
+    (let* ((name (tree-child-name* t i))
+           (s (string-append (upcase-first name) ":"))
+           (active? (inputter-active? (tree-ref t i) "color"))
+           (in (if active? (inputter-decode (tree-ref t i) "color") ""))
+           (setter (lambda (x)
+                     (pull-focus t
+                       (when x
+                         (tree-set t i (inputter-encode x "color"))
+                         (focus-tree-modified t))))))
+      (dynamic (string-input-name t i))
+      (=> (color (tree->stree (tree-ref t i)) #f #f 24 16)
+          (pick-background "" (setter answer))
+          ---
+          ("Palette" (interactive-color setter '()))
+          ("Pattern" (open-pattern-selector setter "1cm"))
+          ("Gradient" (open-gradient-selector setter))
+          ("Picture" (open-background-picture-selector setter))
+          ("Other" (interactive setter
+                     (list (upcase-first name) "color" in)))))))
 
 (tm-define (child-proposals t i)
   (:require (== (tree-child-type t i) "duration"))
   (list "0.25s" "0.5s" "1s" "1.5s" "2s" "2.5s" "3s" "4s" "5s" "10s" :other))
 
 (tm-menu (string-input-menu t i)
-  (let* ((name (tree-child-long-name* t i))
-         (s `(concat "Set " ,name))
-         (prompt (upcase-first name))
-         (type (tree-child-type t i))
-         (fm (type->format type))
-         (setter (lambda (x)
-		   (when x
-		     (tree-set (focus-tree) i (inputter-encode x type))
-                     (focus-tree-modified (focus-tree))))))
-    (assuming (!= name "")
-      (when (inputter-active? (tree-ref t i) type)
-        ((eval s)
-         (interactive setter
-	   (list prompt fm (inputter-decode (tree-ref t i) type))))))))
+  (push-focus t
+    (let* ((name (tree-child-long-name* t i))
+           (s `(concat "Set " ,name))
+           (prompt (upcase-first name))
+           (type (tree-child-type t i))
+           (fm (type->format type))
+           (setter (lambda (x)
+                     (pull-focus t
+                       (when x
+                         (tree-set t i (inputter-encode x type))
+                         (focus-tree-modified t))))))
+      (assuming (!= name "")
+        (when (inputter-active? (tree-ref t i) type)
+          ((eval s)
+           (interactive setter
+             (list prompt fm (inputter-decode (tree-ref t i) type)))))))))
 
 (tm-menu (string-input-icon t i)
   (:require (string-variable-name? t i))
@@ -448,23 +456,21 @@
 ;; The main Focus menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; FIXME: when recovering focus-tree,
-;; double check that focus-tree still has the required form
-
 (tm-menu (focus-ancestor-menu t))
 
 (tm-menu (focus-toggle-menu t)
-  (assuming (numbered-context? t)
-    ;; FIXME: itemize, enumerate, eqnarray*
-    ((check "Numbered" "v" (numbered-numbered? (focus-tree)))
-     (numbered-toggle (focus-tree))))
-  (assuming (alternate-context? t)
-    ((check (eval (alternate-second-name t)) "v"
-            (alternate-second? (focus-tree)))
-     (alternate-toggle (focus-tree))))
-  (assuming (!= (tree-children t) (tree-accessible-children t))
-    ((check "Show hidden" "v" (tree-is? t :up 'inactive))
-     (inactive-toggle (focus-tree)))))
+  (push-focus t
+    (assuming (numbered-context? t)
+      ;; FIXME: itemize, enumerate, eqnarray*
+      ((check "Numbered" "v" (pull-focus t (numbered-numbered? t)))
+       (pull-focus t (numbered-toggle t))))
+    (assuming (alternate-context? t)
+      ((check (eval (alternate-second-name t)) "v"
+              (pull-focus t (alternate-second? t)))
+       (pull-focus t (alternate-toggle t))))
+    (assuming (!= (tree-children t) (tree-accessible-children t))
+      ((check "Show hidden" "v" (pull-focus t (tree-is? t :up 'inactive)))
+       (pull-focus t (inactive-toggle t))))))
 
 (tm-menu (focus-float-menu t))
 (tm-menu (focus-animate-menu t))
@@ -614,22 +620,23 @@
 (tm-menu (focus-ancestor-icons t))
 
 (tm-menu (focus-toggle-icons t)
-  (assuming (numbered-context? t)
-    ((check (balloon (icon "tm_numbered.xpm") "Toggle numbering") "v"
-            (numbered-numbered? (focus-tree)))
-     (numbered-toggle (focus-tree))))
-  (assuming (alternate-first? t)
-    ((check (balloon (icon (eval (alternate-first-icon t)))
-                     (eval (alternate-second-name t))) "v" #f)
-     (alternate-toggle (focus-tree))))
-  (assuming (alternate-second? t)
-    ((check (balloon (icon (eval (alternate-second-icon t)))
-                     (eval (alternate-second-name t))) "v" #t)
-     (alternate-toggle (focus-tree))))
-  (assuming (!= (tree-children t) (tree-accessible-children t))
-    ((check (balloon (icon "tm_show_hidden.xpm") "Show hidden") "v"
-            (tree-is? t :up 'inactive))
-     (inactive-toggle (focus-tree)))))
+  (push-focus t
+    (assuming (numbered-context? t)
+      ((check (balloon (icon "tm_numbered.xpm") "Toggle numbering") "v"
+              (pull-focus t (numbered-numbered? t)))
+       (pull-focus t (numbered-toggle t))))
+    (assuming (alternate-first? t)
+      ((check (balloon (icon (eval (alternate-first-icon t)))
+                       (eval (pull-focus t (alternate-second-name t)))) "v" #f)
+       (pull-focus t (alternate-toggle t))))
+    (assuming (alternate-second? t)
+      ((check (balloon (icon (eval (alternate-second-icon t)))
+                       (eval (pull-focus t (alternate-second-name t)))) "v" #t)
+       (pull-focus t (alternate-toggle t))))
+    (assuming (!= (tree-children t) (tree-accessible-children t))
+      ((check (balloon (icon "tm_show_hidden.xpm") "Show hidden") "v"
+              (pull-focus t (tree-is? t :up 'inactive)))
+       (pull-focus t (inactive-toggle t))))))
 
 (tm-menu (focus-float-icons t))
 (tm-menu (focus-animate-icons t))
@@ -728,12 +735,13 @@
   (:require (pure-alternate-context? t)))
 
 (tm-menu (focus-label-icons t)
-  (assuming (focus-label t)
-    (with s (focus-get-label t)
-      (glue #f #f 3 0)
-      (mini #t (group "Label:"))
-      (mini #t (input (focus-set-label (focus-tree) answer) "string"
-                      (list s) "12em")))))
+  (push-focus t
+    (assuming (focus-label t)
+      (with s (focus-get-label t)
+        (glue #f #f 3 0)
+        (mini #t (group "Label:"))
+        (mini #t (input (pull-focus t (focus-set-label t answer)) "string"
+                        (list s) "12em"))))))
 
 (tm-menu (standard-focus-icons t)
   (dynamic (focus-ancestor-icons t))

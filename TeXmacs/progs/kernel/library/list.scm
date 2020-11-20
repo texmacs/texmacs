@@ -370,6 +370,11 @@
   "Length of maximal common list on the right."
   (list-common-left (reverse l1) (reverse l2)))
 
+(define-public (list-common l1 l2)
+  "Largest common sublist of @l1 and @l2."
+  (if (or (npair? l1) (npair? l2) (!= (car l1) (car l2))) (list)
+      (cons (car l1) (list-common (cdr l1) (cdr l2)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Set operations on lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

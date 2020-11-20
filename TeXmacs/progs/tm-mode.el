@@ -65,7 +65,8 @@
     tmfs-load-handler tmfs-save-handler
     tmfs-autosave-handler tmfs-remove-handler tmfs-wrap-handler
     tmfs-date-handler tmfs-title-handler tmfs-permission-handler
-    tmfs-master-handler tmfs-format-handler))
+    tmfs-master-handler tmfs-format-handler
+    push-focus pull-focus))
 
 (setq unary-definitions
   '(define define-public define-macro define-public-macro

@@ -175,6 +175,26 @@
          (== (sublist p 0 (length q)) q)
          (sublist c (length q) (length c)))))
 
+(define-public (tree->fingerprint t)
+  (list (tree->path t) (tree-label t) (tree-arity t)
+        (list-common (tree->path t) (tree->path (focus-tree)))))
+
+(define-public (fingerprint->tree fp)
+  (with (p l n c) fp
+    (and-with t (path->tree p)
+      (and (== l (tree-label t))
+           (== n (tree-arity t))
+           (== c (list-common (tree->path t) (tree->path (focus-tree))))
+           t))))
+
+(define-public-macro (push-focus t . body)
+  `(with pushed-focus (tree->fingerprint t)
+     ,@body))
+
+(define-public-macro (pull-focus t . body)
+  `(and-with ,t (fingerprint->tree pushed-focus)
+     ,@body))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Other special trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

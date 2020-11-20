@@ -46,6 +46,11 @@
   (require-format x '(:%1 :%2 :*))
   `(,(car x) ,(cadr x) ,(caddr x) (menu-dynamic ,@(cdddr x))))
 
+(define (gui-make-push-focus x)
+  (require-format x '(push-focus :%1 :*))
+  `(with pushed-focus (tree->fingerprint ,(cadr x))
+     (menu-dynamic ,@(cddr x))))
+
 (define (gui-make-cond x)
   (require-format x '(cond :*))
   (with fun (lambda (x)
@@ -347,6 +352,7 @@
   (let ,gui-make-let)
   (let* ,gui-make-let)
   (with ,gui-make-with)
+  (push-focus ,gui-make-push-focus)
   (receive ,gui-make-with)
   (cond ,gui-make-cond)
   (loop ,gui-make-loop)
