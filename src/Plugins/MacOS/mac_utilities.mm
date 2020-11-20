@@ -506,19 +506,22 @@ static id background_activity= nil;
 
 void
 mac_begin_server () {
+#if defined (MAC_OS_X_VERSION_10_9)
   if (background_activity == nil) {
     id background_activity = [[NSProcessInfo processInfo]
                                beginActivityWithOptions: NSActivityBackground
                               reason: @"TeXmacs server running"];
     [background_activity retain];
   }
+#endif
 }
 
 void
 mac_end_server () {
+#if defined (MAC_OS_X_VERSION_10_9)
   if (background_activity) {
     [[NSProcessInfo processInfo] endActivity: background_activity];
     [background_activity release];
   }
+#endif
 }
-
