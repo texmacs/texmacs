@@ -80,7 +80,7 @@
 
   <assign|last-item|<active*|<with|mode|math|<with|font-series|bold|math-font-series|bold|<rigid|\<ast\>>>>>>
 
-  <assign|last-item-nr|<active*|<with|mode|math|<with|font-series|bold|math-font-series|bold|>>>0>
+  <assign|last-item-nr|0>
 
   <assign|current-item|<value|aligned-space-item>>
 
@@ -127,9 +127,9 @@
   </macro>>
 
   <assign|new-list|<macro|name|item-render|item-transform|<quasi|<style-with|src-compact|none|<assign|<merge|prefix-|<arg|name>>|false><assign|<arg|name>|<\macro|body>
-    <compound|<if|<and|<value|<merge|prefix-|<unquote|<arg|name>>>>|<unequal|<value|last-item>|<active*|<with|mode|math|<with|font-series|bold|math-font-series|bold|<rigid|\<ast\>>>>>>>|list*|list>|<unquote|<arg|item-render>>|<unquote|<arg|item-transform>>|<arg|body>>
+    <compound|<if|<and|<value|<merge|prefix-|<unquote|<arg|name>>>>|<unequal|<value|last-item-nr>|0>>|list*|list>|<unquote|<arg|item-render>>|<unquote|<arg|item-transform>>|<arg|body>>
   </macro>><assign|<merge|<arg|name>|*>|<\macro|body>
-    <list*|<unquote|<arg|item-render>>|<unquote|<arg|item-transform>>|<arg|body>>
+    <compound|<if|<and|<value|<merge|prefix-|<unquote|<arg|name>>>>|<unequal|<value|last-item-nr>|0>>|list|list*>|<unquote|<arg|item-render>>|<unquote|<arg|item-transform>>|<arg|body>>
   </macro>><assign|<merge|<arg|name>|-continued>|<\macro|body>
     <list-continued|<unquote|<arg|item-render>>|<unquote|<arg|item-transform>>|<arg|body>>
   </macro>>>>>>
