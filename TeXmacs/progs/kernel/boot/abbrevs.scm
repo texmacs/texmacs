@@ -179,6 +179,9 @@
 ;; Small rewritings on top of C++ interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-public (path->tree p)
+  (and (path-exists? p) (cpp-path->tree p)))
+
 (define-public selection-active? selection-active-any?)
 
 (define-public (selection-active-non-small?)

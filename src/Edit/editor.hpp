@@ -595,6 +595,7 @@ public:
   virtual tree the_line () = 0;
   virtual tree the_root () = 0;
   virtual tree the_buffer () = 0;
+  virtual bool test_subtree (path p) = 0;
   virtual tree the_subtree (path p) = 0;
   virtual path the_path () = 0;
   virtual path the_shifted_path () = 0;

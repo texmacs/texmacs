@@ -27,7 +27,8 @@
   (selection-tree selection_get (tree))
 
   ;; low-level modification routines
-  (path->tree the_subtree (tree path))
+  (path-exists? test_subtree (bool path))
+  (cpp-path->tree the_subtree (tree path))
   (path-correct-old correct (void path))
   (path-insert-with insert_with (void path string content))
   (path-remove-with remove_with (void path string))

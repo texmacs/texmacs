@@ -455,6 +455,11 @@ edit_main_rep::the_buffer () {
   return subtree (et, rp);
 }
 
+bool
+edit_main_rep::test_subtree (path p) {
+  return has_subtree (et, p);
+}
+
 tree
 edit_main_rep::the_subtree (path p) {
   return subtree (et, p);

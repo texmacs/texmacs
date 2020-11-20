@@ -76,6 +76,7 @@ public:
   tree the_line ();
   tree the_root ();
   tree the_buffer ();
+  bool test_subtree (path p);
   tree the_subtree (path p);
   path the_buffer_path ();
   path the_path ();
