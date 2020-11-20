@@ -6267,7 +6267,15 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(path-\<gtr\>tree <scm-arg|path>)>
+    <scm|(path-exists? <scm-arg|path>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|test_subtree> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
+    <scm|(cpp-path-\<gtr\>tree <scm-arg|path>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|the_subtree> which returns
