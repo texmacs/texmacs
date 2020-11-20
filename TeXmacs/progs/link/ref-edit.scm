@@ -95,8 +95,15 @@
           (ahash-table-append (ahash-table-difference glob loc) labt))
         labt)))
 
+(define (non-auto? t)
+  (not (and (tm-compound? t)
+            (forall? (lambda (l)
+                       (and-with s (tm->string l)
+                         (string-starts? s "auto-")))
+                     (tm-children t)))))
+
 (tm-define (search-broken-references t)
-  (let* ((refs (search-references t))
+  (let* ((refs (list-filter (search-references t) non-auto?))
          (labt (set-of-labels t)))
     (list-filter refs (non (tie-in? labt)))))
 
