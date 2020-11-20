@@ -1,4 +1,4 @@
-<TeXmacs|1.99.12>
+<TeXmacs|1.99.15>
 
 <style|<tuple|source|std|english>>
 
@@ -126,8 +126,8 @@
     </with>
   </macro>>
 
-  <assign|new-list|<macro|name|item-render|item-transform|<quasi|<style-with|src-compact|none|<assign|<arg|name>|<\macro|body>
-    <list|<unquote|<arg|item-render>>|<unquote|<arg|item-transform>>|<arg|body>>
+  <assign|new-list|<macro|name|item-render|item-transform|<quasi|<style-with|src-compact|none|<assign|<merge|prefix-|<arg|name>>|false><assign|<arg|name>|<\macro|body>
+    <compound|<if|<and|<value|<merge|prefix-|<unquote|<arg|name>>>>|<unequal|<value|last-item>|<active*|<with|mode|math|<with|font-series|bold|math-font-series|bold|<rigid|\<ast\>>>>>>>|list*|list>|<unquote|<arg|item-render>>|<unquote|<arg|item-transform>>|<arg|body>>
   </macro>><assign|<merge|<arg|name>|*>|<\macro|body>
     <list*|<unquote|<arg|item-render>>|<unquote|<arg|item-transform>>|<arg|body>>
   </macro>><assign|<merge|<arg|name>|-continued>|<\macro|body>
