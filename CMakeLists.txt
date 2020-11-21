@@ -357,7 +357,6 @@ set (exec_prefix ${prefix})
 set (datarootdir ${prefix}/share)
 set (datadir ${datarootdir})
 set (tmdata ${datarootdir}/TeXmacs)
-set (tmbin ${exec_prefix}/lib/texmacs/TeXmacs)
 
 configure_file (${TEXMACS_SOURCE_DIR}/src/System/config.h.cmake ${TEXMACS_BINARY_DIR}/src/System/config.h)
 configure_file (${TEXMACS_SOURCE_DIR}/src/System/tm_configure.hpp.cmake ${TEXMACS_BINARY_DIR}/src/System/tm_configure.hpp)
@@ -703,18 +702,6 @@ include_directories (${TeXmacs_Include_Dirs})
 ### Optimization options
 ### --------------------------------------------------------------------
 
-
-
-### --------------------------------------------------------------------
-### Set the executable target name and other stuff
-### --------------------------------------------------------------------
-
-if (APPLE)
-  set (TeXmacs_binary_name "TeXmacs")
-else (APPLE)
-  set (TeXmacs_binary_name "texmacs.bin")
-endif (APPLE)
-
 ### --------------------------------------------------------------------
 ### Compile sources
 ### --------------------------------------------------------------------
@@ -744,12 +731,22 @@ install (FILES ${TEXMACS_BINARY_DIR}/misc/script/texmacs
 ### include/
 install (DIRECTORY TeXmacs/include DESTINATION ${CMAKE_INSTALL_PREFIX}
   FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
+
 ### share/
-install (DIRECTORY plugins DESTINATION share/TeXmacs
-  FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-  PATTERN "bin" EXCLUDE
-  PATTERN "CMakeLists.txt" EXCLUDE
-  PATTERN ".gitignore" EXCLUDE)
+if (WIN32)
+  install (DIRECTORY plugins DESTINATION ${CMAKE_INSTALL_PREFIX}
+    FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+    PATTERN "bin" EXCLUDE
+    PATTERN "CMakeLists.txt" EXCLUDE
+    PATTERN ".gitignore" EXCLUDE)
+else (WIN32)
+  install (DIRECTORY plugins DESTINATION share/TeXmacs
+    FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+    PATTERN "bin" EXCLUDE
+    PATTERN "CMakeLists.txt" EXCLUDE
+    PATTERN ".gitignore" EXCLUDE)
+endif (WIN32)
+
 install (FILES TeXmacs/misc/mime/texmacs.desktop DESTINATION share/applications)
 install (FILES TeXmacs/misc/images/texmacs.svg DESTINATION share/icons/gnome/scalable/apps)
 install (FILES TeXmacs/misc/images/text-x-texmacs.svg DESTINATION share/icons/gnome/scalable/mimetypes)
