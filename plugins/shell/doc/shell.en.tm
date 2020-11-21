@@ -1,11 +1,15 @@
-<TeXmacs|1.0.7.11>
+<TeXmacs|1.99.16>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|The <name|Shell> plug-in>
 
-  <tmdoc-copyright|2011|Joris van der Hoeven>
+  <\traverse>
+    <branch|Example Session|shell-demo.en.tm>
+  </traverse>
+
+  <tmdoc-copyright|2011-2020|Joris van der Hoeven|Darcy Shen>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
