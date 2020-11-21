@@ -50,11 +50,17 @@ project (TEXMACS CXX C) # check for C/C++ compiler
 
 set (PACKAGE TeXmacs)
 set (CMAKE_MODULE_PATH ${TEXMACS_SOURCE_DIR}/cmake)
-set (DEVEL_VERSION "1.99.16")
+
+set (VERSION_MAJOR "1")
+set (VERSION_MINOR "99")
+set (VERSION_BUILD "16")
+set (TEXMACS_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BUILD})
+
+set (DEVEL_VERSION ${TEXMACS_VERSION})
 set (DEVEL_RELEASE "1")
-set (STABLE_VERSION "1.99.16")
+set (STABLE_VERSION ${TEXMACS_VERSION})
 set (STABLE_RELEASE "1")
-set (TEXMACS_REVISION "1.99.16")
+set (TEXMACS_REVISION ${TEXMACS_VERSION})
 
 
 ### --------------------------------------------------------------------

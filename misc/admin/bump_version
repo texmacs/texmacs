@@ -1,0 +1,27 @@
+#!/bin/bash
+
+CURRENT_VERSION_BUILD="16"
+NEXT_VERSION_BUILD="17"
+
+[[ -z $1 ]] && echo "Executing: misc/admin/bump_version 16 17"
+
+[[ -z $1 ]] || CURRENT_VERSION_BUILD=$1
+[[ -z $2 ]] || NEXT_VERSION_BUILD=$2
+
+
+if [ -L ${BASH_SOURCE-$0} ]; then
+  FWDIR=$(dirname $(readlink "${BASH_SOURCE-$0}"))
+else
+  FWDIR=$(dirname "${BASH_SOURCE-$0}")
+fi
+
+APP_HOME="$(cd "${FWDIR}/../.."; pwd)"
+
+BUMP_VERSION_SED_1="s/VERSION_BUILD=\"${CURRENT_VERSION_BUILD}\"/VERSION_BUILD=\"${NEXT_VERSION_BUILD}\"/"
+BUMP_VERSION_SED_2="s/VERSION_BUILD \"${CURRENT_VERSION_BUILD}\"/VERSION_BUILD \"${NEXT_VERSION_BUILD}\"/"
+
+set -x
+sed -i "${BUMP_VERSION_SED_1}" $APP_HOME/cmake/build_deb.sh
+sed -i "${BUMP_VERSION_SED_1}" $APP_HOME/configure
+sed -i "${BUMP_VERSION_SED_1}" $APP_HOME/misc/m4/tm_version.m4
+sed -i "${BUMP_VERSION_SED_2}" $APP_HOME/CMakeLists.txt
