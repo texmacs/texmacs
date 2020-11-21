@@ -357,6 +357,7 @@ set (exec_prefix ${prefix})
 set (datarootdir ${prefix}/share)
 set (datadir ${datarootdir})
 set (tmdata ${datarootdir}/TeXmacs)
+set (tmbin ${exec_prefix}/lib/texmacs/TeXmacs)
 
 configure_file (${TEXMACS_SOURCE_DIR}/src/System/config.h.cmake ${TEXMACS_BINARY_DIR}/src/System/config.h)
 configure_file (${TEXMACS_SOURCE_DIR}/src/System/tm_configure.hpp.cmake ${TEXMACS_BINARY_DIR}/src/System/tm_configure.hpp)

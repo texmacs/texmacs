@@ -34,6 +34,6 @@ if (APPLE)
 elseif (WIN32)
   install (TARGETS ${TeXmacs_binary_name} DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 else (APPLE)
-  install (TARGETS ${TeXmacs_binary_name} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/texmacs/TeXmacs/bin)
+  install (TARGETS ${TeXmacs_binary_name} DESTINATION ${tmbin}/bin)
 endif (APPLE)
 
