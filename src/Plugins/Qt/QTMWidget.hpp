@@ -31,9 +31,11 @@ class QTMWidget: public QTMScrollView {
   qt_widget    tmwid;
   QLabel*      imwidget;
   QPoint       cursor_pos;
-  
+  bool         preediting;
+
 public:
 
+  
   QTMWidget (QWidget* _parent=0, qt_widget _tmwid=0);
   virtual ~QTMWidget ();
   
@@ -42,6 +44,8 @@ public:
 
   void setCursorPos (QPoint pos) { cursor_pos = pos; }
   qt_simple_widget_rep* tm_widget () const;
+  
+  bool isPreediting () { return preediting; }
   
 protected:
 

@@ -883,11 +883,28 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     case SLOT_FOCUS_ICONS:
       check_type_void (index, s);
     {
-      focus_icons_widget = concrete (w);
-      QList<QAction*>* list = focus_icons_widget->get_qactionlist();
-      if (list) {
-        replaceButtons (focusToolBar, list);
-        update_visibility();
+      bool can_update = true;
+#if (QT_VERSION >= 0x050000)
+      // BUG:
+      // there is a problem with updateActions  which apparently
+      // reset a running input method in Qt5.
+      //
+      // This is (probably) also relate to
+      // bug #47338 [CJK] input disappears immediately
+      // see http://lists.gnu.org/archive/html/texmacs-dev/2017-09/msg00000.html
+      
+      // HACK: we just disable the focus bar updating while preediting.
+      // This seems enough since the other toolbars are not usually updated
+      // while performing an input method keyboard sequence
+      if (canvas()) can_update = !canvas()->isPreediting();
+#endif
+      if (can_update) {
+        focus_icons_widget = concrete (w);
+        QList<QAction*>* list = focus_icons_widget->get_qactionlist();
+        if (list) {
+          replaceButtons (focusToolBar, list);
+          update_visibility();
+        }
       }
     }
       break;

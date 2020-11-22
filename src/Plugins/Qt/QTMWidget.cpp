@@ -170,7 +170,8 @@ static long int QTMWcounter = 0; // debugging hack
   \param _tmwid the TeXmacs widget who owns this object.
  */
 QTMWidget::QTMWidget (QWidget* _parent, qt_widget _tmwid)
-: QTMScrollView (_parent), tmwid (_tmwid),  imwidget (NULL)
+: QTMScrollView (_parent), tmwid (_tmwid),  imwidget (NULL),
+  preediting (false)
 {
   setObjectName (to_qstring ("QTMWidget" * as_string (QTMWcounter++)));// What is this for? (maybe only debugging?)
   setFocusPolicy (Qt::StrongFocus);
@@ -574,12 +575,10 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     r = r * as_string (pos) * ":" * from_qstring (preedit_string);
   }
   
-#if (QT_VERSION < 0x050000)
-  // hack for fixing #47338 [CJK] input disappears immediately
-  // see http://lists.gnu.org/archive/html/texmacs-dev/2017-09/msg00000.html
-  if (!is_nil (tmwid))
+  if (!is_nil (tmwid)) {
+    preediting = !preedit_string.isEmpty();
     the_gui->process_keypress (tm_widget(), r, texmacs_time());
-#endif 
+  }
   
   event->accept();
 }  
