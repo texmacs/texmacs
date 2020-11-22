@@ -429,6 +429,9 @@ table_descend (tree& t, path& p, tree& fm) {
 
 void
 edit_typeset_rep::typeset_exec_until (path p) {
+  // FIXME: we should ensure that p is inside the document
+  // if (!(rp <= p)) p= correct_cursor (et, rp * 0);
+
   //time_t t1= texmacs_time ();
   if (has_changed (THE_TREE + THE_ENVIRONMENT))
     if (p != correct_cursor (et, rp * 0)) {

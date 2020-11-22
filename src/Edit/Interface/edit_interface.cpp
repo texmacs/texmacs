@@ -87,6 +87,7 @@ edit_interface_rep::operator tree () {
 
 void
 edit_interface_rep::suspend () {
+  //cout << "Suspend " << buf->buf->name << LF;
   if (got_focus) {
     interrupt_shortcut ();
     set_message ("", "", false);
@@ -102,6 +103,7 @@ edit_interface_rep::suspend () {
 
 void
 edit_interface_rep::resume () {
+  //cout << "Resume " << buf->buf->name << LF;
   got_focus= true;
   SERVER (menu_main ("(horizontal (link texmacs-menu))"));
   SERVER (menu_icons (0, "(horizontal (link texmacs-main-icons))"));
@@ -993,7 +995,7 @@ edit_interface_rep::apply_changes () {
   }
 
   // cout << "Graphics snapping\n";
-  if (inside_active_graphics ()) {
+  if (inside_active_graphics () && is_current_editor ()) {
     tree t= as_tree (call ("graphics-get-snap-mode"));
     set_snap_mode (t);
     string val= as_string (call ("graphics-get-snap-distance"));
