@@ -103,6 +103,7 @@
     (Pre Relation-infix)
     Relation-symbol
     Arrow-symbol
+    (:<not Relation-infix :>)
     (:<long-arrow :any :/ Expression :>)
     (:<long-arrow :any :/ Slot :/ Expression :>))
 
