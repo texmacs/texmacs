@@ -1,6 +1,6 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.16>
 
-<style|<tuple|tmweb|english|old-spacing>>
+<style|<tuple|tmweb|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|Frequently asked questions>
@@ -26,6 +26,13 @@
       <item><hlink|I have a question, where should I ask it|#general-5>?
 
       <item><hlink|Is it free Software|#general-6>?
+    </itemize-minus>
+
+    <item>Troubleshooting
+
+    <\itemize-minus>
+      <item><hlink|<TeXmacs> used to work, but suddenly refuses to be
+      launched. What should I do?|#trouble-1>
     </itemize-minus>
 
     <item>System Appearance and Behavior
@@ -193,6 +200,37 @@
   </question>
 
   <answer*|<TeXmacs> falls under the GNU public licence. >
+
+  <section*|Troubleshooting>
+
+  <\question>
+    <label|trouble-1><TeXmacs> used to work, but suddenly refuses to be
+    launched. What should I do?
+  </question>
+
+  <\answer*>
+    Something strange must have happened. You may try the following remedies,
+    in the given order:
+
+    <\enumerate>
+      <item>Try to open <TeXmacs> with the <verbatim|--setup> option:
+
+      <\shell-code>
+        texmacs --setup
+      </shell-code>
+
+      <item>Rename your <verbatim|~/.TeXmacs> directory (you may also delete
+      it, but that will irrevocably destroy all your preferences) and
+      relaunch the editor.
+
+      <item>Try reinstalling <TeXmacs>, preferably the latest version that
+      used to work for you. Old versions can be found at
+      <slink|ftp://ftp.texmacs.org/pub/TeXmacs/tmftp/>
+
+      <item>Submit a bug report, report the issue to one of our mailing
+      lists, or contact the authors.
+    </enumerate>
+  </answer*>
 
   <section*|System Appearance and Behavior>
 
@@ -411,7 +449,7 @@
     <LaTeX>.
   </answer*>
 
-  <tmdoc-copyright|1998--2011|Andreas Seidl|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2011|Andreas Seidl|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
