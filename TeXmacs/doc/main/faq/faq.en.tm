@@ -26,6 +26,9 @@
       <item><hlink|I have a question, where should I ask it|#general-5>?
 
       <item><hlink|Is it free Software|#general-6>?
+
+      <item><hlink|When will <TeXmacs> be based on Qt5 and Guile
+      2|#general-8>?
     </itemize-minus>
 
     <item>Troubleshooting
@@ -200,6 +203,26 @@
   </question>
 
   <answer*|<TeXmacs> falls under the GNU public licence. >
+
+  <\question>
+    <label|general-8>When will <TeXmacs> be based on Qt5 and Guile 2?
+  </question>
+
+  <\answer*>
+    <TeXmacs> already works quite well with Qt5, but several issues remain to
+    be fixed. <TeXmacs> 2.1 will still be based on Qt4, but <TeXmacs> 2.2
+    will be based on Qt5.
+
+    As to <name|Guile>, please be aware that <name|Guile> 1 and <name|Guile>
+    2 carry the same name, but that resemblances very much end there:
+    <name|Guile> 2 has a completely different design, which breaks the
+    interface with<nbsp><TeXmacs>. Porting our interface to <name|Guile> 2
+    requires a lot of work and it is possible that this will never be done.
+    Since <name|Guile> 1 is no longer supported by many standard <name|Linux>
+    distributions, recent versions of <TeXmacs> directly include <name|Guile>
+    1. We will continue to do so until we find time to switch to a more
+    recent version of <name|Guile> or to another <scheme> implementation.
+  </answer*>
 
   <section*|Troubleshooting>
 
