@@ -1,4 +1,4 @@
-<TeXmacs|1.99.15>
+<TeXmacs|1.99.16>
 
 <style|<tuple|source|std>>
 
@@ -121,9 +121,9 @@
 
   <assign|text|<macro|body|<with|mode|text|<arg|body>>>>
 
-  <assign|cite*|<macro|body|<with|font-shape|italic|<arg|body>>>>
+  <assign|cite*|<macro|body|<with|font-shape|<if|<equal|<value|font-shape>|italic>|right|italic>|<arg|body>>>>
 
-  <assign|dfn|<macro|body|<with|font-shape|italic|<arg|body>>>>
+  <assign|dfn|<macro|body|<with|font-shape|<if|<equal|<value|font-shape>|italic>|right|italic>|<arg|body>>>>
 
   <assign|code*|<macro|body|<with|font-family|tt|<arg|body>>>>
 
