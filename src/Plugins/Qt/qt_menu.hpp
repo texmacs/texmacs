@@ -48,6 +48,7 @@ public:
   virtual ~qt_menu_rep();
 
   virtual void send (slot s, blackbox val);
+  virtual widget make_popup_widget ();
   virtual widget popup_window_widget (string s);
 
 private:

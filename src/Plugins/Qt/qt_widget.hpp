@@ -118,6 +118,7 @@ public:
   virtual inline string get_nickname () { return "popup"; }
   
   virtual widget plain_window_widget (string name, command quit, int b= 3);
+  virtual widget make_popup_widget ();
   virtual widget popup_window_widget (string s);
   virtual widget tooltip_window_widget (string s);
 

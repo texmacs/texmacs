@@ -31,6 +31,16 @@ qt_menu_rep::get_qmenu() {
   return qact->menu();
 }
 
+/*!
+ This method is actually never called, but we reimplement it just in case: the
+ default implementation in qt_widget_rep creates an additional widget and is
+ not suitable for system default popups.
+ */
+widget
+qt_menu_rep::make_popup_widget () {
+  return this;
+}
+
 widget
 qt_menu_rep::popup_window_widget (string s) {
   (void) s;
