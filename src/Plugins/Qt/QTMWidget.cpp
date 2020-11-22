@@ -483,115 +483,12 @@ mouse_decode (unsigned int mstate) {
   return "unknown";
 }
 
-#if 0 // NOT USED
-static void setRoundedMask (QWidget *widget)
-{
-  QPixmap pixmap (widget->size());
-  QPainter painter (&pixmap);
-  painter.fillRect (pixmap.rect(), Qt::white);
-  painter.setBrush (Qt::black);
-#if (QT_VERSION >= 0x040400)
-  painter.drawRoundedRect (pixmap.rect(),8,8, Qt::AbsoluteSize);
-#else
-  painter.drawRect (pixmap.rect());
-#endif
-  widget->setMask (pixmap.createMaskFromColor (Qt::white));
-}
-#endif
-
 void
 QTMWidget::kbdEvent (int key, Qt::KeyboardModifiers mods, const QString& s) {
   QKeyEvent ev (QEvent::KeyPress, key, mods, s);
   keyPressEvent (&ev);
 }
 
-#if 0 
-// OLD INPUT METHOD PREVIEW
-void
-QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
-  if (! imwidget) {   
-    imwidget = new QLabel (this);
-    imwidget->setWindowFlags (Qt::Tool | Qt::FramelessWindowHint);
-  //  imwidget->setAttribute (Qt::WA_TranslucentBackground);
-//    imwidget->setAutoFillBackground (false);
-       imwidget->setAutoFillBackground (true);
-    imwidget->setWindowOpacity (0.5);
-    imwidget->setFocusPolicy (Qt::NoFocus);
-    QPalette pal = imwidget->palette();
-//    pal.setColor (QPalette::Window, QColor (0,0,255,80));
-    pal.setColor (QPalette::Window, QColor (0,0,255,255));
-    pal.setColor (QPalette::WindowText, Qt::white);
-    imwidget->setPalette (pal);
-    QFont f = imwidget->font();
-    f.setPointSize (qt_zoom (30));
-    imwidget->setFont (f);
-    imwidget->setMargin (5);
-  }
-
-  QString const & preedit_string = event->preeditString();
-  QString const & commit_string = event->commitString();
-
-  if (preedit_string.isEmpty()) {
-    imwidget->hide();
-  } else {
-    if (DEBUG_QT)
-      debug_qt << "IM preediting :" << preedit_string.toUtf8().data() << LF;
-    imwidget->setText (preedit_string);
-    imwidget->adjustSize();
-    QSize sz = size();
-    QRect g = imwidget->geometry();
-    QPoint c = mapToGlobal (cursor_pos);
-    c += QPoint (5,5);
-    // g.moveCenter (QPoint (sz.width()/2,sz.height()/2));
-    g.moveTopLeft (c);
-    if (DEBUG_QT)
-      debug_qt << "IM hotspot: " << cursor_pos.x() << "," << cursor_pos.y() << LF;
-    imwidget->setGeometry (g);
-    // setRoundedMask (imwidget);
-    imwidget->show();
-#ifdef QT_MAC_USE_COCOA
-    // HACK: we unexplicably loose the focus even when showing the small window,
-    // so we need to restore it manually.....
-    // The following fixes the problem (but I do not really understand why it 
-    // happens)
-    // Maybe this is a Qt/Cocoa bug.
-    this->window()->activateWindow();
-#endif    
-  }
-  
-  if (!commit_string.isEmpty()) {
-    if (DEBUG_QT)
-      debug_qt << "IM committing :" << commit_string.toUtf8().data() << LF;
-
-    int key = 0;
-#if 1
-    for (int i = 0; i < commit_string.size(); ++i) {
-      QKeyEvent ev (QEvent::KeyPress, key, Qt::NoModifier, commit_string[i]);
-      keyPressEvent (&ev);
-    }
-#else
-    QKeyEvent ev (QEvent::KeyPress, key, Qt::NoModifier, commit_string);
-    keyPressEvent (&ev);
-#endif
-  }
-  
-  event->accept();
-
-}  
-
-QVariant 
-QTMWidget::inputMethodQuery (Qt::InputMethodQuery query) const {
-  switch (query) {
-    case Qt::ImMicroFocus :
-      return QVariant (QRect (cursor_pos + QPoint (10,10),QSize (20,40)));
-    default:
-      return QVariant();
-  }
-}
-
-#else
-
-// NEW INPUT METHOD PREVIEW
 void
 QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
   
@@ -698,8 +595,6 @@ QTMWidget::inputMethodQuery (Qt::InputMethodQuery query) const {
       return QWidget::inputMethodQuery (query);
   }
 }
-
-#endif // input method variants
 
 void
 QTMWidget::mousePressEvent (QMouseEvent* event) {

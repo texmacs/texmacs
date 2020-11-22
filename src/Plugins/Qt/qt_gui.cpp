@@ -604,8 +604,8 @@ qt_gui_rep::process_queued_events (int max) {
     if (ev.x1 == qp_type::QP_NULL) break;
 #ifdef QT_CPU_FIX
     if (ev.x1 != qp_type::QP_NULL &&
-	ev.x1 != qp_type::QP_SOCKET_NOTIFICATION &&
-	ev.x1 != qp_type::QP_DELAYED_COMMANDS)
+        ev.x1 != qp_type::QP_SOCKET_NOTIFICATION &&
+        ev.x1 != qp_type::QP_DELAYED_COMMANDS)
       tm_wake_up ();
 #endif
     switch (ev.x1) {
