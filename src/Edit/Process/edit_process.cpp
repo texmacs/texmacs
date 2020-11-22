@@ -94,6 +94,8 @@ tree
 arrange_bib (tree t) {
   if (is_atomic (t))
     return replace (t->label, "--", "\25");
+  else if (is_func (t, DOCUMENT, 0))
+    return tree (DOCUMENT, "");
   else {
     int i, n= N(t);
     tree r (t, n);
@@ -140,6 +142,7 @@ edit_process_rep::generate_bibliography (
       }
     }
     else t= bibtex_load_bbl (bib, bbl_file);
+    t= arrange_bib (t);
   }
   else {
     bool star= false;
