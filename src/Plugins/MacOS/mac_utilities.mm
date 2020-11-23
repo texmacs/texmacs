@@ -467,8 +467,6 @@ mac_screen_scale_factor() {
 
 // end scale factor detection
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_9
-#if defined (MAC_OS_X_VERSION_10_10)
 /* A bug in OSX Yosemite inserts duplicate entries in the environment. This
  affects child processes: in particular, the PATH is not properly inherited
  unless we remove the duplicates and most plugins fail to start (since they are
@@ -478,6 +476,8 @@ mac_screen_scale_factor() {
  */
 void
 mac_fix_yosemite_bug() {
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_9
+#if defined (MAC_OS_X_VERSION_10_10)
   hashset<string> entries;
   hashset<string> duplicates;
   
@@ -499,9 +499,9 @@ mac_fix_yosemite_bug() {
       setenv (name, val, 0); // restore name=val
     }
   }
-}
 #endif   // defined (MAC_OS_X_VERSION_10_10)
 #endif
+}
 
 
 static id background_activity= nil;
