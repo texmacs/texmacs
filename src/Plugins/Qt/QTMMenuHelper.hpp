@@ -266,10 +266,11 @@ protected:
 class QTMInputTextWidgetHelper : public QObject {
   Q_OBJECT
   
-  qt_widget   p_wid;  //!< A pointer to a qt_input_text_widget_rep
-
+  qt_widget  p_wid;            //!< A pointer to a qt_input_text_widget_rep
+  bool       can_autocommit;
+  
 public:
-  QTMInputTextWidgetHelper (qt_widget _wid);
+  QTMInputTextWidgetHelper (qt_widget _wid, bool _cac);
   
 protected:
   qt_input_text_widget_rep* wid () { // useful cast
