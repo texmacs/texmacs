@@ -467,6 +467,7 @@ mac_screen_scale_factor() {
 
 // end scale factor detection
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_9
 #if defined (MAC_OS_X_VERSION_10_10)
 /* A bug in OSX Yosemite inserts duplicate entries in the environment. This
  affects child processes: in particular, the PATH is not properly inherited
@@ -500,12 +501,14 @@ mac_fix_yosemite_bug() {
   }
 }
 #endif   // defined (MAC_OS_X_VERSION_10_10)
+#endif
 
 
 static id background_activity= nil;
 
 void
 mac_begin_server () {
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_8
 #if defined (MAC_OS_X_VERSION_10_9)
   if (background_activity == nil) {
     id background_activity = [[NSProcessInfo processInfo]
@@ -514,14 +517,17 @@ mac_begin_server () {
     [background_activity retain];
   }
 #endif
+#endif
 }
 
 void
 mac_end_server () {
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_8
 #if defined (MAC_OS_X_VERSION_10_9)
   if (background_activity) {
     [[NSProcessInfo processInfo] endActivity: background_activity];
     [background_activity release];
   }
+#endif
 #endif
 }
