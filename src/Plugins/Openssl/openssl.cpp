@@ -13,6 +13,32 @@
 #include "file.hpp"
 
 /******************************************************************************
+* OpenSSL configuration
+******************************************************************************/
+
+static string openssl_cmd;
+
+string
+openssl (string args) {
+  if (openssl_cmd == "") openssl_cmd= get_env ("TM_OPENSSL");
+  if (openssl_cmd == "") openssl_cmd= "openssl";
+  //cout << "TeXmacs] " << (openssl_cmd * " " * args) << LF;
+  return eval_system (openssl_cmd * " " * args);
+}
+
+string
+openssl_rsa (string args) {
+  //return openssl ("rsautl " * args);
+  return openssl ("pkeyutl " * args);
+}
+
+string
+openssl_enc (string args) {
+  //return openssl ("aes-256-cbc " * args);
+  return openssl ("enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 " * args);
+}
+
+/******************************************************************************
 * RSA encryption and decryption
 ******************************************************************************/
 
@@ -23,10 +49,10 @@ rsa_initialize () {
   url pub = dir * "texmacs.public";
   if (!exists (dir)) mkdir (dir);
   if (!exists (priv))
-    system ("openssl genrsa -out " * as_string (priv) * " 2048 2> /dev/null");
+    openssl ("genrsa -out " * as_string (priv) * " 2048 2> /dev/null");
   if (!exists (pub))
-    system ("openssl rsa -in " * as_string (priv) *
-	    " -pubout -out " * as_string (pub) * " 2> /dev/null");
+    openssl ("rsa -in " * as_string (priv) *
+             " -pubout -out " * as_string (pub) * " 2> /dev/null");
 }
 
 string
@@ -55,7 +81,7 @@ rsa_encode (string msg, string key) {
   save_string (_msg, msg);
   url _key= url_temp ();
   save_string (_key, key);
-  string r= eval_system ("openssl rsautl -in " * as_string (_msg) *
+  string r= openssl_rsa ("-in " * as_string (_msg) *
 			 " -pubin -inkey " * as_string (_key) *
 			 " -encrypt");
   remove (_msg);
@@ -69,9 +95,9 @@ rsa_decode (string msg, string key) {
   save_string (_msg, msg);
   url _key= url_temp ();
   save_string (_key, key);
-  string r= eval_system ("openssl rsautl -in " * as_string (_msg) *
-			 " -inkey " * as_string (_key) *
-			 " -decrypt");
+  string r= openssl_rsa ("-in " * as_string (_msg) *
+                         " -inkey " * as_string (_key) *
+                         " -decrypt");
   remove (_msg);
   remove (_key);
   return r;
@@ -83,8 +109,8 @@ rsa_decode (string msg, string key) {
 
 string
 secret_generate (int len) {
-  //return eval_system ("openssl rand -base64 " * as_string (len));
-  return eval_system ("openssl rand " * as_string (len));
+  //return openssl ("rand -base64 " * as_string (len));
+  return openssl ("rand " * as_string (len));
 }
 
 string
@@ -93,8 +119,8 @@ secret_encode (string msg, string key) {
   save_string (_msg, msg);
   url _key= url_temp ();
   save_string (_key, key);
-  string r= eval_system ("openssl aes-256-cbc -nosalt -in " *
-			 as_string (_msg) * " -pass file:" * as_string (_key));
+  string r= openssl_enc ("-nosalt -in " * as_string (_msg) *
+                         " -pass file:" * as_string (_key));
   remove (_msg);
   remove (_key);
   return r;
@@ -106,8 +132,8 @@ secret_decode (string msg, string key) {
   save_string (_msg, msg);
   url _key= url_temp ();
   save_string (_key, key);
-  string r= eval_system ("openssl aes-256-cbc -nosalt -d -in " *
-			 as_string (_msg) * " -pass file:" * as_string (_key));
+  string r= openssl_enc ("-nosalt -d -in " * as_string (_msg) *
+                         " -pass file:" * as_string (_key));
   remove (_msg);
   remove (_key);
   return r;
