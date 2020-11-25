@@ -94,9 +94,9 @@
 (define (inherit-property? x)
   (nin? (car x) (inheritance-reserved-attributes)))
 
-(define (inherit-properties derived-rid base-rid)
+(define (copy-properties base-rid derived-rid pred?)
   (let* ((props1 (db-get-entry base-rid))
-         (props2 (list-filter props1 inherit-property?)))
+         (props2 (list-filter props1 pred?)))
     (for (prop props2)
       (db-set-field derived-rid (car prop) (cdr prop)))))
 
@@ -209,7 +209,7 @@
                                    ,@opt-msg))))
          (name (repository-add rid (url-suffix rname)))
          (fname (repository-get rid)))
-    (inherit-properties rid did)
+    (copy-properties did rid inherit-property?)
     (db-set-field rid "dir" (list did))
     (string-save doc fname)
     rid))
@@ -284,6 +284,7 @@
             (else
               (let* ((nr (version-next vid))
                      (rid (remote-create uid rname vid nr doc msg)))
+                (copy-properties fid rid inherit-property?)
                 (db-remove-entry fid)
                 ;;(display* "Versions " rname ": " (version-get-versions vid) "\n")
                 (list :created rid))))))
@@ -345,7 +346,7 @@
             (with rid (db-create-entry (list (list "type" "dir")
                                              (list "name" (cAr l))
                                              (list "owner" uid)))
-              (inherit-properties rid did)
+              (copy-properties did rid inherit-property?)
               (db-set-field rid "dir" (list did))
               (list :created rid))))))
 
