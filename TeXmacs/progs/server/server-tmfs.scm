@@ -33,7 +33,7 @@
         (with sub (number->string (random 10 repo-seed))
           (repository-add-into (string-append dir "/" sub) name)))))
 
-(define (repository-add rid suffix)
+(tm-define (repository-add rid suffix)
   (let* ((name (if (== suffix "") rid (string-append rid "." suffix)))
          (full (repository-add-into repo name))
          (tail (substring full (+ (string-length repo) 1)
@@ -41,7 +41,7 @@
     (db-set-field rid "location" (list tail))
     name))
 
-(define (repository-get rid)
+(tm-define (repository-get rid)
   (and rid
        (with l (db-get-field rid "location")
          (and (pair? l) (string-append repo "/" (car l))))))
