@@ -1,0 +1,34 @@
+/* XPM */
+static char *tm_cloud_file[] = {
+/* columns rows colors chars-per-pixel */
+"24 24 4 1 ",
+"  c None",
+". c #6D6D6D",
+"X c #727272",
+"o c #F9F9F9",
+/* pixels */
+"                        ",
+"                        ",
+"    .XXXXXXXXXXXXXX.    ",
+"    XooooooooooooooX    ",
+"    XooooooooooooooX    ",
+"    XooooooooooooooX    ",
+"    XooooooooooooooX    ",
+"    XooooooooooooooX    ",
+"    XooooooooooooooX    ",
+"    XooooooooooooooX    ",
+"    XooooooooooooooX    ",
+"    XooooooooooooooX    ",
+"    XooooooooooooooX    ",
+"    XooooooooooooooX    ",
+"    XooooooooooooooX    ",
+"    XooooooooooooooX    ",
+"    XooooooooooooooX    ",
+"    XooooooooooooooX    ",
+"    XooooooooooooooX    ",
+"    XooooooooooooooX    ",
+"    XooooooooooooooX    ",
+"    .XXXXXXXXXXXXXX.    ",
+"                        ",
+"                        "
+};
