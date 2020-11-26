@@ -16,6 +16,10 @@
         (client client-db)
         (client client-widgets)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Remote client submenus
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (menu-bind start-client-menu
   (with l (client-accounts)
     (if (null? l)
@@ -56,3 +60,51 @@
       (for (server l)
         (-> (eval (client-find-server-name server))
             (dynamic (remote-submenu server)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The main remote menus
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind remote-menu
+  (if (and (null? remote-client-list) (not (server-started?)))
+      (link start-client-menu)
+      ;;---
+      ;;(link start-server-menu)
+      )
+  (if (and (null? remote-client-list) (server-started?))
+      (link server-menu))
+  (if (nnull? remote-client-list)
+      (link client-menu)))
+
+(menu-bind remote-icons
+  (let* ((servers (client-active-servers))
+         (server (and (nnull? servers) (car servers))))
+    (if (and (null? remote-client-list) (not (server-started?)))
+        (=> (balloon (icon "tm_cloud.xpm") "Connect with server")
+            (link start-client-menu)))
+    (if (and (null? remote-client-list) (server-started?))
+        (=> (balloon (icon "tm_cloud.xpm") "Server menu")
+            (link server-menu)))
+    (if (nnull? remote-client-list)
+        (=> (balloon (icon "tm_cloud.xpm") "Connection with server")
+            ("Logout" (client-logout server)))
+        ((balloon (icon "tm_cloud_home.xpm") "Home directory on server")
+         (load-document (remote-home-directory server)))
+        (if (and (remote-file-name (current-buffer))
+                 (not (remote-home-directory? (current-buffer))))
+            (=> (balloon (icon "tm_cloud_file.xpm") "Remote file")
+                ("Rename" (remote-rename-interactive server))
+                ("Remove" (remote-remove-interactive server))
+                ("Permissions"
+                 (open-file-permissions-editor server (current-buffer)))))
+        (if (and (remote-file-name (current-buffer))
+                 (remote-home-directory? (current-buffer)))
+            (=> (balloon (icon "tm_cloud_dir.xpm") "Remote directory")
+                ("New remote file" (remote-create-file-interactive server))
+                ("New remote directory" (remote-create-dir-interactive server))
+                ("Remove" (remote-remove-interactive server))
+                ("Permissions"
+                 (open-file-permissions-editor server (current-buffer)))))
+        (=> (balloon (icon "tm_cloud_mail.xpm") "Messages")
+            ("Incoming messages" (noop))
+            ("Create chat room" (noop))))))
