@@ -26,16 +26,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="22.395604"
-     inkscape:cx="1.6386161"
-     inkscape:cy="11.154981"
+     inkscape:cx="11.328018"
+     inkscape:cy="3.8321153"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
      inkscape:document-units="px"
-     inkscape:window-width="1650"
+     inkscape:window-width="1942"
      inkscape:window-height="1211"
      inkscape:window-x="364"
-     inkscape:window-y="53"
+     inkscape:window-y="23"
      inkscape:window-maximized="0"
      inkscape:document-rotation="0">
     <inkscape:grid
@@ -58,7 +58,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -68,9 +68,14 @@
      inkscape:groupmode="layer">
     <path
        style="fill:#ffffff;fill-opacity:0.878431;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.502222"
-       d="m 4.5,2.5 h 15 v 19 H 4.5 V 8 Z"
+       d="m 6.5,3.5 h 11 v 13 H 6.5 V 8 Z"
        id="path5385"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc" />
+    <path
+       style="fill:#ffffff;fill-opacity:0.878431;stroke:#808080;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 6.5,14.5 v 2 h 11 V 14 c 0,0 2.965916,-0.105185 3.723258,0.633423 1.053484,1.02748 0.922663,1.862437 0.866046,2.446029 C 22,18 21.633955,18.374877 20.750736,18.740432 19.717689,19.167999 18,19 18,19 18,19 17.240922,21.089303 13.518647,21.321394 10.24733,21.525367 8.5,19.5 8.5,19.5 c 0,0 -0.7144259,1 -2.0666681,1.003898 C 5.3619879,20.506986 4,19.5 4,18 2.5,18 1.5,18 1.8125613,15.973012 2.0006799,14.753046 3.1978677,13.642922 4.1884359,13.581425 5.5,13.5 6.5,14.5 6.5,14.5 Z"
+       id="path5103"
+       sodipodi:nodetypes="ccccssscscscssc" />
   </g>
 </svg>
