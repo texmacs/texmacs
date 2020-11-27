@@ -20,6 +20,8 @@
     </src-license>
   </src-title>>
 
+  <use-package|std-shadow>
+
   <use-module|(client client-chat)>
 
   <\active*>

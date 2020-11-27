@@ -26,10 +26,10 @@
      (style (tuple "generic"))
      (body ,doc)))
 
-(tm-define (tm-empty-document)
+(define (empty-document)
   (generic-document '(document "")))
 
-(tm-define (buffer-set-stm u doc)
+(define (buffer-set-stm u doc)
   (let* ((s (object->tmstring doc))
          (t (tree-import-loaded s u "stm")))
     (buffer-set u t)))
@@ -148,7 +148,7 @@
   (interactive
       (lambda (name)
         (with fname (prepend-dir server name "remote-file")
-          (remote-create-file server fname (tm-empty-document))))
+          (remote-create-file server fname (empty-document))))
     (list "Name" "string" '())))
 
 (tmfs-permission-handler (remote-file name type)
@@ -203,7 +203,7 @@
             (lambda (err)
               (set-message err "load remote file")))
           (set-message "loading..." "load remote file")
-          (tm-empty-document)))))
+          (empty-document)))))
 
 (tmfs-save-handler (remote-file name doc)
   ;;(display* "SAVE ") (write doc) (display* "\n")
@@ -268,7 +268,7 @@
             (lambda (err)
               (set-message err "remote directory")))
           (set-message "loading..." "remote directory")
-          (tm-empty-document)))))
+          (empty-document)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Other operations on files and directories

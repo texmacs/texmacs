@@ -15,7 +15,8 @@
   (:use (server server-base)
         (server server-db)
         (server server-tmfs)
-        (server server-sync)))
+        (server server-sync)
+        (server server-chat)))
 
 (menu-bind start-server-menu
   ("Start server" (server-start)))

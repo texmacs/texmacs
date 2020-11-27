@@ -14,7 +14,8 @@
 (texmacs-module (client client-menu)
   (:use (client client-base)
         (client client-db)
-        (client client-widgets)))
+        (client client-widgets)
+        (client client-chat)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote client submenus
@@ -107,4 +108,5 @@
                  (open-file-permissions-editor server (current-buffer)))))
         (=> (balloon (icon "tm_cloud_mail.xpm") "Messages")
             ("Incoming messages" (noop))
-            ("Create chat room" (noop))))))
+            ("Create chat room" (chat-room-create-interactive server))
+            ("Join chat room" (chat-room-join-interactive server))))))
