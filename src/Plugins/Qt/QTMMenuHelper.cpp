@@ -697,6 +697,15 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
   }
 }
 
+void
+QTMLineEdit::inputMethodEvent (QInputMethodEvent* ev) {
+  QLineEdit::inputMethodEvent (ev);
+  if (!ev->commitString().isEmpty() && ev->preeditString().isEmpty()) {
+    string str = from_qstring(ev->commitString());
+    cmd (list_object (list_object (object (str), object (str))));
+  }
+}
+
 QSize
 QTMLineEdit::sizeHint () const {
   return qt_decode_length (ww, "", QLineEdit::sizeHint(), fontMetrics());

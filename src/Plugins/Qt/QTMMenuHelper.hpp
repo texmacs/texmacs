@@ -242,6 +242,7 @@ signals:
   
 protected:
   virtual void keyPressEvent (QKeyEvent* ev);
+  virtual void inputMethodEvent (QInputMethodEvent* ev);
   virtual void focusInEvent (QFocusEvent* ev);
   virtual void focusOutEvent (QFocusEvent* ev);
 };
