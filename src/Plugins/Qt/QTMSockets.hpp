@@ -44,7 +44,7 @@ typedef int  socklen_t;
 extern unsigned dbg_cnt;
 string debug_io_string (string s);
 #define DBG_IO(a) \
-  if (DEBUG_IO) debug_io << "TeXmacs" << dbg_cnt++<<"] " << a << "\n"
+  if (DEBUG_IO) debug_io << "TeXmacs-" << dbg_cnt++<<"] " << a << "\n"
 #define DBG_IOS(a,s) if(N(s)) DBG_IO (a << debug_io_string (s))
 
 enum state { ST_OK, ST_WSA, ST_SOCKET, ST_FCNTL, ST_BIND,
@@ -112,9 +112,9 @@ public:
   int srv_count() { return N(clts); }
 public slots:
   void connection (int);
-  void disconnection (class socket_link* clt);
+  void disconnection (socket_link* clt);
 private :
-  class socket_link* find_client (IdClt id);
-  hashset<class socket_link*> clts;
+  socket_link* find_client (IdClt id);
+  hashset<pointer> clts;
   QSocketNotifier *qsnc;
 };

@@ -263,7 +263,7 @@ socket_link::ready_to_send (int s) {
   if (sz) {
     char  *buf= as_charp (outbuf);
     int ret= WRITE (s, buf, sz);
-    DBG_IO ("Socket outcomming code=" << ret);
+    DBG_IO ("Socket outcoming code=" << ret);
     if (ret >0) {
       if (ret == sz) outbuf= ""; else outbuf= outbuf (ret,sz);
       sz -= ret;
@@ -348,9 +348,9 @@ socket_server::connection (int s) {
     clt= tm_new <socket_link> (sclt,  &cltadd);
     if (clt) {
       if (clt->alive ()) {
-        connect (clt, SIGNAL (disconnection(class socket_link*)), this,
-		 SLOT (disconnection (class socket_link*)));
-        clts->insert (clt);
+        connect (clt, SIGNAL (disconnection(socket_link*)), this,
+		 SLOT (disconnection (socket_link*)));
+        clts->insert ((pointer) clt);
         call ("server-add", object (clt->getid ()));
         DBG_IO ("Client Connected " << show_addr (cltadd.sin_addr.s_addr)
 		<< " id:" << clt->getid ());
@@ -366,9 +366,9 @@ socket_server::connection (int s) {
 }
 
 void 
-socket_server::disconnection(class socket_link* clt) {
+socket_server::disconnection(socket_link* clt) {
   call ("server-remove", object (clt->getid()));
-  clts->remove(clt);
+  clts->remove((pointer) clt);
   tm_delete(clt);
 }
 
@@ -389,19 +389,25 @@ socket_server::write (IdClt id, string s) {
 
 class socket_link *
 socket_server::find_client(IdClt id) {
-  iterator<class socket_link*> it= iterate (clts);
+  iterator<pointer> it= iterate (clts);
   while (it->busy ()) {
-    class socket_link* clt= it->next ();
+    socket_link* clt= (socket_link*) it->next ();
     if (clt->getid() == id) return clt;
   }
-  DBG_IO ("Client not found Id " << id);
+  array<IdClt> ids;
+  it= iterate (clts);
+  while (it->busy ()) {
+    socket_link* clt= (socket_link*) it->next ();
+    ids << clt->getid();
+  }
+  DBG_IO ("Client not found, Id = " << id << ", Among = " << ids);
   return NULL;
 }
 
 socket_server::~socket_server() {
-  iterator<class socket_link*> it= iterate (clts);
+  iterator<pointer> it= iterate (clts);
   while (it->busy ()) {
-    class socket_link* clt= it->next ();
+    socket_link* clt= (socket_link*) it->next ();
     disconnection (clt);
   }
 }
