@@ -232,7 +232,7 @@ socket_link::data_set_ready (int s) {
   qsnr->setEnabled(false);
  
   int lgdata = NMSPC (recv (s , data , sizeof(data) , 0));
-  DBG_IO ("Socket incomming code=" << lgdata);
+  DBG_IO ("Socket incoming code=" << lgdata);
   if (lgdata == 0)   {
     DBG_IO ("Client disconnected");   
     stop ();
