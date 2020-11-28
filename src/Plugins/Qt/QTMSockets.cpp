@@ -80,6 +80,7 @@ socket_basic::~socket_basic () {
 
 
 socket_link::socket_link (int s, struct SOCKADDR_IN *addr): id (++nr_ids) {
+  //cout << "Socket link [1] ~> " << id << LF;
   sock= s; qsnr= NULL; qsnw= NULL;
   if (st != ST_VOID) return;
   memcpy (&add, addr, sizeof(add));
@@ -95,10 +96,10 @@ socket_link::socket_link (int s, struct SOCKADDR_IN *addr): id (++nr_ids) {
   st= ST_OK;
 }
 
-socket_link::socket_link(string host, u_short port) {
-  ++id; qsnr= NULL; qsnw= NULL;
+socket_link::socket_link(string host, u_short port): id (++nr_ids) {
+  //cout << "Socket link [2] ~> " << id << LF;
+  qsnr= NULL; qsnw= NULL;
   if (st != ST_VOID) return;
-  id++;
 /* this original code used the deprecated function gethostbyname
   this was signaled in the tracker (#34182, #46726) 
   Below the functionality is implemented using getaddrinfo,
