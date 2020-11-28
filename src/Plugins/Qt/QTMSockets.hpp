@@ -91,7 +91,8 @@ public slots:
 signals:
   void disconnection (class socket_link * clt);
 private :
-  static IdClt id;
+  static IdClt nr_ids;
+  IdClt  id;
   string inbuf;
   string outbuf;
   QSocketNotifier *qsnr,*qsnw;

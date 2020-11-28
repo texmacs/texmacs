@@ -44,7 +44,7 @@
 #endif
 
 unsigned dbg_cnt;
-int socket_link::id= 0;
+int socket_link::nr_ids= 0;
 int socket_basic::count= 0;
 #ifdef OS_MINGW
 wsoc::WSADATA socket_basic::wsadata;
@@ -79,8 +79,8 @@ socket_basic::~socket_basic () {
 };
 
 
-socket_link::socket_link (int s, struct SOCKADDR_IN *addr) {
-  id++; sock= s; qsnr= NULL; qsnw= NULL;
+socket_link::socket_link (int s, struct SOCKADDR_IN *addr): id (++nr_ids) {
+  sock= s; qsnr= NULL; qsnw= NULL;
   if (st != ST_VOID) return;
   memcpy (&add, addr, sizeof(add));
   qsnr= tm_new <QSocketNotifier> (s, QSocketNotifier::Read);
