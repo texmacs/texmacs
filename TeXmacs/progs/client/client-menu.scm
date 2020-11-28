@@ -14,8 +14,7 @@
 (texmacs-module (client client-menu)
   (:use (client client-base)
         (client client-db)
-        (client client-widgets)
-        (client client-chat)))
+        (client client-widgets)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote client submenus
@@ -34,7 +33,8 @@
     ("New account" (open-remote-account-creator))))
 
 (tm-menu (remote-submenu server)
-  ("Home" (load-document (remote-home-directory server)))
+  (when (remote-home-directory server)
+    ("Home" (load-document (remote-home-directory server))))
   ---
   (when (remote-file-name (current-buffer))
     ("New remote file" (remote-create-file-interactive server))
@@ -89,8 +89,9 @@
     (if (nnull? remote-client-list)
         (=> (balloon (icon "tm_cloud.xpm") "Connection with server")
             ("Logout" (client-logout server)))
-        ((balloon (icon "tm_cloud_home.xpm") "Home directory on server")
-         (load-document (remote-home-directory server)))
+        (when (remote-home-directory server)
+          ((balloon (icon "tm_cloud_home.xpm") "Home directory on server")
+           (load-document (remote-home-directory server))))
         (if (and (remote-file-name (current-buffer))
                  (not (remote-home-directory? (current-buffer))))
             (=> (balloon (icon "tm_cloud_file.xpm") "Remote file")
@@ -107,6 +108,8 @@
                 ("Permissions"
                  (open-file-permissions-editor server (current-buffer)))))
         (=> (balloon (icon "tm_cloud_mail.xpm") "Messages")
-            ("Incoming messages" (noop))
+            ("Incoming messages" (mail-box-open server))
+            ("Send message" (open-message-editor server))
+            ---
             ("Create chat room" (chat-room-create-interactive server))
             ("Join chat room" (chat-room-join-interactive server))))))

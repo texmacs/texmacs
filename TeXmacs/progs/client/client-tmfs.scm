@@ -119,17 +119,17 @@
 (define remote-commit-message #f)
 
 (tm-define (remote-home-directory server)
-  (let* ((sname (client-find-server-name server))
-         (spseudo (client-find-server-pseudo server)))
+  (and-let* ((sname (client-find-server-name server))
+             (spseudo (client-find-server-pseudo server)))
     (string-append "tmfs://remote-dir/" sname "/~" spseudo)))
 
 (define (prepend-dir server name type)
   (with dir (url->string (current-buffer))
     (when (not (string-starts? dir "tmfs://remote-dir/"))
       (set! dir (remote-home-directory server)))
-    (string-append "tmfs://" type "/"
-                   (substring dir 18 (string-length dir))
-                   "/" name)))
+    (and dir (string-append "tmfs://" type "/"
+                            (substring dir 18 (string-length dir))
+                            "/" name))))
 
 (tm-define (remote-create-file server fname doc)
   ;;(display* "remote-create-file " server ", " fname ", " doc "\n")
@@ -147,7 +147,7 @@
   (:interactive #t)
   (interactive
       (lambda (name)
-        (with fname (prepend-dir server name "remote-file")
+        (and-with fname (prepend-dir server name "remote-file")
           (remote-create-file server fname (empty-document))))
     (list "Name" "string" '())))
 
@@ -238,7 +238,7 @@
   (:interactive #t)
   (interactive
       (lambda (name)
-        (with fname (prepend-dir server name "remote-dir")
+        (and-with fname (prepend-dir server name "remote-dir")
           (remote-create-dir server fname)))
     (list "Name" "string" '())))
 

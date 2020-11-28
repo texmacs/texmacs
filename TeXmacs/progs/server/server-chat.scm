@@ -69,14 +69,30 @@
   ;;(display* "remote-chat-room-open " name "\n")
   (with (client msg-id) envelope
     (with crid (chat-room-id name)
-      (if (not crid)
-          (server-error envelope "Error: unknown chat room")
-          (begin
-            (chat-room-initialize crid)
-            (with l (ahash-ref chat-room-present crid)
-              (when (nin? client l)
-                (ahash-set! chat-room-present crid (cons client l))))
-            (server-return envelope (ahash-ref chat-room-messages crid)))))))
+      (cond ((not crid)
+             (server-error envelope "Error: unknown chat room"))
+            ((string-starts? name "mail-")
+             (served-error envelope "Error: invalid name of chat room"))
+            (else
+             (chat-room-initialize crid)
+             (with l (ahash-ref chat-room-present crid)
+               (when (nin? client l)
+                 (ahash-set! chat-room-present crid (cons client l))))
+             (server-return envelope (ahash-ref chat-room-messages crid)))))))
+
+(tm-service (remote-mail-open)
+  ;; Open mail while creating mail box (a chat room) if necessary
+  ;;(display* "remote-chat-room-create " name "\n")
+  (with (client msg-id) envelope
+    (let* ((uid (server-get-user envelope))
+           (pseudo (or (user->pseudo uid) uid))
+           (name (string-append "mail-" pseudo))
+           (crid (or (chat-room-id name) (chat-room-create uid name))))
+      (chat-room-initialize crid)
+      (with l (ahash-ref chat-room-present crid)
+        (when (nin? client l)
+          (ahash-set! chat-room-present crid (cons client l))))
+      (server-return envelope (ahash-ref chat-room-messages crid)))))
 
 (define (chat-room-notify mid)
   ;; Notify the arrival of a new message to all participants
@@ -121,10 +137,15 @@
                                         ("message" ,msg)))
              (chat-room-notify mid))))
         ((chat-room-id dest)
-         (remote-send uid (chat-room-id dest) action msg))))
+         (remote-send uid (chat-room-id dest) action msg))
+        ((string-starts? dest "mail-")
+         (let* ((pseudo (string-drop dest 5))
+                (user (or (pseudo->user pseudo) pseudo))
+                (crid (chat-room-create user dest)))
+           (remote-send uid crid action msg)))))
 
 (tm-service (remote-send-message dest action msg)
   ;;(display* "remote-send-message " dest ", " action ", " msg "\n")
   (with uid (server-get-user envelope)
     (remote-send uid dest action msg)
-    #t))
+    (server-return envelope #t)))

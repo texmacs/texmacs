@@ -38,11 +38,12 @@
   (with (action pseudo full-name date doc) msg
     `(chat-output ,full-name ,pseudo "" ,date ,doc)))
 
-(define (messages->document msgs)
+(define (messages->document msgs name)
   `(document
      (section* "Messages")
      ,@(map message->document msgs)
-     (chat-input "")))
+     ,@(if (string-starts? name "mail-") (list)
+           (list `(chat-input "")))))
 
 (define (chat-document doc)
   `(document
@@ -58,17 +59,20 @@
   (noop))
 
 (define (chat-room-set fname msgs)
-  (with doc (messages->document msgs)
+  (with doc (messages->document msgs (chat-room-name fname))
     (buffer-set fname (chat-document doc))
     (chat-room-modified fname)))
 
 (define (chat-room-insert fname msg)
   (and-let* ((doc (and (buffer-exists? fname) (buffer-get-body fname)))
+             (outl (tree-search doc (cut tree-is? <> 'chat-output)))
              (inl (tree-search doc (cut tree-is? <> 'chat-input)))
-             (in (and (nnull? inl) (car inl)))
-             (p (tree-up in))
+             (pos (cond ((nnull? inl) (tree-index (car inl)))
+                        ((nnull? outl) (+ (tree-index (cAr outl)) 1))
+                        (else #f)))
+             (p (if (nnull? inl) (tree-up (car inl)) (tree-up (cAr outl))))
              (ok? (tree-is? p 'document)))
-    (tree-insert p (tree-index in) (list (message->document msg)))))
+    (tree-insert p pos (list (message->document msg)))))
 
 (tm-call-back (chat-room-receive name msg)
   (with (server msg-id) envelope
@@ -126,6 +130,12 @@
         (chat-room-join server name))
     (list "Join chat room" "string" '())))
 
+(tm-define (mail-box-open server)
+  ;;(display* "remote-mail-box-open " server "\n")
+  (and-let* ((pseudo (client-find-server-pseudo server))
+             (mbox (string-append "mail-" pseudo)))
+    (chat-room-join server mbox)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Chat rooms as files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -143,15 +153,24 @@
   (let* ((fname (string-append "tmfs://chat/" name))
          (server (chat-room-server fname))
          (room (chat-room-name fname)))
-    (if (not server)
-        ;; FIXME: better error handling
-        (texmacs-error "chat" "invalid server")
-        (begin
-          (client-remote-eval server `(remote-chat-room-open ,room)
-            (lambda (msgs)
-              (chat-room-set fname msgs)
-              (set-message "retrieved contents" "join chat room"))
-            (lambda (err)
-              (set-message err "join chat room")))
-          (set-message "loading..." "joining chat room")
-          (empty-document)))))
+    (cond ((not server)
+           ;; FIXME: better error handling
+           (texmacs-error "chat" "invalid server"))
+          ((not (string-starts? room "mail-"))
+           (client-remote-eval server `(remote-chat-room-open ,room)
+             (lambda (msgs)
+               (chat-room-set fname msgs)
+               (set-message "retrieved contents" "join chat room"))
+             (lambda (err)
+               (set-message err "join chat room")))
+           (set-message "loading..." "joining chat room")
+           (empty-document))
+          ((string-starts? room "mail-")
+           (client-remote-eval server `(remote-mail-open)
+             (lambda (msgs)
+               (chat-room-set fname msgs)
+               (set-message "retrieved contents" "open mail box"))
+             (lambda (err)
+               (set-message err "join chat room")))
+           (set-message "loading..." "opening mail box")
+           (empty-document)))))
