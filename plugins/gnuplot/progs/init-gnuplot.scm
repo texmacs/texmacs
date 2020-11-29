@@ -28,6 +28,7 @@
 
 
 (plugin-configure gnuplot
+  (:winpath "gnuplot" "bin")
   (:require (url-exists-in-path? "gnuplot"))
   (:require (python-command))
   ,@(gnuplot-launcher)
