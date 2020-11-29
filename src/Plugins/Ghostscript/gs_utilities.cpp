@@ -21,8 +21,8 @@
 string
 gs_system () {
 #ifdef OS_MINGW
-	url gs= url_system ("C:\\") * url_wildcard ("Program Files*") * url_system ("gs") * url_wildcard ("gs*")* url_system ("bin") * url_wildcard ("gswin*c.exe");
-	return materialize (gs);
+  url gs= url_system ("C:\\") * url_wildcard ("Program Files*") * url_system ("gs") * url_wildcard ("gs*")* url_system ("bin") * url_wildcard ("gswin*c.exe");
+  return materialize (gs);
 #else
    return "gs";
 #endif
@@ -39,7 +39,7 @@ gs_embedded () {
   if (exists (gs)) {
     cmd= concretize (gs);
   } else {
-		cmd= gs_system ();
+    cmd= gs_system ();
   }
   return cmd;
 }
@@ -49,7 +49,7 @@ static string
 gs_executable () {
 #ifdef GS_EXE
   static string cmd;
-	if(N (cmd) == 0) cmd= gs_embedded (); // init had to be postponed because of TEXMACS_PATH initialization
+  if(N (cmd) == 0) cmd= gs_embedded (); // init had to be postponed because of TEXMACS_PATH initialization
 #else
   static string cmd= gs_system ();
 #endif
@@ -92,7 +92,7 @@ gs_supports (url image) {
 void
 gs_image_size (url image, int& w_pt, int& h_pt) {
   bool ok;
-  if (suffix (image) == "pdf") 
+  if (suffix (image) == "pdf")
     ok= gs_PDFimage_size (image, w_pt, h_pt);
   else {
     if (DEBUG_CONVERT) debug_convert << "gs eps image size :"<<LF;
@@ -111,14 +111,14 @@ gs_image_size (url image, int& w_pt, int& h_pt) {
         // real eps pages with proper bounding boxes have been recognized before this and will have their BoundingBox respected
         cmd << sys_concretize (image);
         buf= eval_system (cmd);
-        if (DEBUG_CONVERT) debug_convert << "gs cmd :"<<cmd<<LF
-          <<"answer :"<< buf ;
+        if (DEBUG_CONVERT) debug_convert << "gs cmd :" << cmd << LF
+          << "answer :" << buf ;
         ok= ps_read_bbox (buf, x1, y1, x2, y2);
       }
       if (ok) {
         w_pt= x2-x1;
         h_pt= y2-y1;
-        set_imgbox_cache(image->t, w_pt, h_pt, x1, y1);
+        set_imgbox_cache (image->t, w_pt, h_pt, x1, y1);
       }
     }
   }
@@ -148,12 +148,12 @@ gs_fix_bbox (url eps, int x1, int y1, int x2, int y2) {
         << " " << as_string(x2) << " " << as_string(y2) << "\n";
       skip_line (buf, pos);
       if (read (buf, pos, "%%HiResBoundingBox:")) skip_line (buf, pos);
-      outbuf << buf(pos, N(buf));
+      outbuf << buf (pos, N(buf));
       save_string (eps, outbuf, true);
       if (DEBUG_CONVERT) 
         debug_convert<< "restored bbox : " << ps_read_bbox (outbuf, x1, y1, x2, y2 )<<LF;
     }  
-    set_imgbox_cache(eps->t, x2-x1, y2-y1, x1, y1);
+    set_imgbox_cache (eps->t, x2-x1, y2-y1, x1, y1);
   } 
 }
 
@@ -182,7 +182,7 @@ pdf_version (url image) {
   int pos= 5;
   while (n > pos && is_numeric (buf[pos])) pos++;
   string v= buf(5,pos);
-  if (!is_double(v)) {
+  if (!is_double (v)) {
     std_error << "Cannot determine PDF version of \"" << image << "\"." << LF;
     return default_pdf_version ();;
   }
@@ -199,16 +199,16 @@ gs_PDFimage_size (url image, int& w_pt, int& h_pt) {
   cmd << sys_concretize (image);
   cmd <<" "<<sys_concretize ("$TEXMACS_PATH/misc/convert/pdf_info.ps");
   buf= eval_system (cmd);
-  if (DEBUG_CONVERT) debug_convert << "gs cmd :"<<cmd<<LF
-    <<"answer :"<< buf ;
+  if (DEBUG_CONVERT) debug_convert << "gs cmd :" << cmd << LF
+    << "answer :" << buf ;
   //if CropBox is defined, then use it, else Mediabox
-  string type="CropBox";
+  string type= "CropBox";
   int pos= search_forwards ("CropBox: [", buf);
   if (pos < 0) {
     type="MediaBox";
     pos= search_forwards ("MediaBox: [", buf);
       if (pos < 0) {
-      if (DEBUG_CONVERT) debug_convert << "CropBox|MediaBox not found"<<LF;
+      if (DEBUG_CONVERT) debug_convert << "CropBox|MediaBox not found" << LF;
         return false;
     } 
   }
@@ -243,7 +243,7 @@ gs_PDFimage_size (url image, int& w_pt, int& h_pt) {
       rot = rot%360;
       if (rot < 0) rot +=360;
       if ((rot % 180) == 90 ) {//the image is rotated : swap axes lengths
-        if (DEBUG_CONVERT) debug_convert << "Rotate ="<<rot<<LF;
+        if (DEBUG_CONVERT) debug_convert << "Rotate =" << rot << LF;
         h_pt= x2-x1;
         w_pt= y2-y1;
       }
@@ -296,7 +296,7 @@ gs_to_png (url image, url png, int w, int h) { //Achtung! w,h in pixels
   int bbw, bbh;
   int rw, rh;
   int bx1, by1, bx2, by2;
-  if (suffix(image) == "pdf") 
+  if (suffix (image) == "pdf") 
     image_size (image, bbw, bbh);
     //don't call gs_PDFimage_size 
     //in order to benefit from caching
@@ -324,9 +324,9 @@ gs_to_png (url image, url png, int w, int h) { //Achtung! w,h in pixels
   }
   string ans= eval_system (cmd);
   if (DEBUG_CONVERT) debug_convert << cmd <<LF
-    <<"answer :"<<ans <<LF;
-  if (! exists(png)) {
-    convert_error << "gs_to_png failed for "<< image <<LF;
+    << "answer :" << ans << LF;
+  if (!exists (png)) {
+    convert_error << "gs_to_png failed for " << image <<LF;
     return false;
   }
   return true;
@@ -339,9 +339,9 @@ gs_to_eps (url image, url eps) { //this should be used mostly for pdf->eps conve
   if (DEBUG_CONVERT) debug_convert << "gs_to_eps"<<LF;
   cmd= gs_prefix ();
   cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER ";
-  cmd << "-sDEVICE="<<eps_device ();
+  cmd << "-sDEVICE=" << eps_device ();
   cmd << " -sOutputFile=" << sys_concretize (eps) << " ";
-  if (suffix(image) == "pdf") {
+  if (suffix (image) == "pdf") {
     image_size (image, bx2, by2);
     bx1=by1=0;
     cmd << "-dUseCropBox "
@@ -361,8 +361,8 @@ gs_to_eps (url image, url eps) { //this should be used mostly for pdf->eps conve
   }
   string ans= eval_system (cmd);
   if (DEBUG_CONVERT) debug_convert << cmd <<LF
-    <<"answer :"<<ans <<LF
-    <<"eps generated? "<< exists(eps)<<LF;
+    << "answer :" << ans << LF
+    << "eps generated? " << exists (eps) << LF;
   // eps(2)write and bbox devices do a "smart" job of finding the boundingbox on their own,
   // possibly changing the original margins/aspect ratio defined by the pdf CropBox|MediaBox
   // here were restore the original size.
@@ -380,25 +380,25 @@ gs_to_pdf (url image, url pdf, int w, int h) {
   // the resulting pdf image will always start at 0,0.
 
   int bx1, by1, bx2, by2; // bounding box
-  ps_bounding_box(image, bx1, by1, bx2, by2);
+  ps_bounding_box (image, bx1, by1, bx2, by2);
   double scale_x = w/((double)(bx2-bx1));
   double scale_y = h/((double)(by2-by1));
 
-  cmd= gs_prefix();
+  cmd= gs_prefix ();
   cmd << " -dQUIET -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite ";
   cmd << "-dAutoRotatePages=/None ";
   cmd << "-dCompatibilityLevel=" << pdf_version () << " ";
-  cmd << " -sOutputFile=" << sys_concretize(pdf) << " ";
-  cmd << " -c \" << /PageSize [ " << as_string(bx2-bx1) << " " << as_string(by2-by1)
+  cmd << " -sOutputFile=" << sys_concretize (pdf) << " ";
+  cmd << " -c \" << /PageSize [ " << as_string (bx2-bx1) << " " << as_string (by2-by1)
     << " ] >> setpagedevice gsave  "
-    << as_string(-bx1) << " " << as_string(-by1) << " translate "
-    << as_string(scale_x) << " " << as_string(scale_y) << " scale \"";
+    << as_string (-bx1) << " " << as_string (-by1) << " translate "
+    << as_string (scale_x) << " " << as_string (scale_y) << " scale \"";
   cmd << " -f " << sys_concretize (image);
   cmd << " -c \" grestore \"  ";
   // debug_convert << cmd << LF;
-  system(cmd);
+  system (cmd);
   if (DEBUG_CONVERT)
-    debug_convert << cmd << LF << "pdf generated? " << exists(pdf) << LF;
+    debug_convert << cmd << LF << "pdf generated? " << exists (pdf) << LF;
 }
 
 // This conversion is appropriate for printed pages
@@ -417,7 +417,7 @@ gs_to_pdf (url doc, url pdf, bool landscape, double paper_h, double paper_w) {
 
   cmd << " -sOutputFile=" << sys_concretize (pdf) << " ";
   cmd << sys_concretize (doc);
-  cmd << " -c \"[ /Title (" << as_string (tail(pdf)) << ") /DOCINFO pdfmark\" ";
+  cmd << " -c \"[ /Title (" << as_string (tail (pdf)) << ") /DOCINFO pdfmark\" ";
 
   // NOTE: when converting from ps to pdf the title of the document is 
   // incorrectly referring to the name of the temporary file
@@ -425,13 +425,13 @@ gs_to_pdf (url doc, url pdf, bool landscape, double paper_h, double paper_w) {
   // the name of the PDF file.
 
   system (cmd);
-  if (DEBUG_CONVERT) debug_convert << cmd <<LF
-    <<"pdf generated? "<< exists(pdf)<<LF;
+  if (DEBUG_CONVERT) debug_convert << cmd << LF
+    << "pdf generated? "<< exists (pdf) << LF;
 }
 
 void
 gs_to_ps (url doc, url ps, bool landscape, double paper_h, double paper_w) {
-  if (DEBUG_CONVERT) debug_convert << "gs_to_ps"<<LF;
+  if (DEBUG_CONVERT) debug_convert << "gs_to_ps" << LF;
   string cmd= gs_prefix ();
   cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER -sDEVICE=ps2write ";
   if (landscape)
@@ -443,7 +443,7 @@ gs_to_ps (url doc, url ps, bool landscape, double paper_h, double paper_w) {
 
   cmd << " -sOutputFile=" << sys_concretize (ps) << " ";
   cmd << sys_concretize (doc);
-  cmd << " -c \"[ /Title (" << as_string (tail(ps)) << ") /DOCINFO pdfmark\" ";
+  cmd << " -c \"[ /Title (" << as_string (tail (ps)) << ") /DOCINFO pdfmark\" ";
 
   // NOTE: when converting from pdf to ps the title of the document is 
   // incorrectly referring to the name of the temporary file
@@ -451,8 +451,8 @@ gs_to_ps (url doc, url ps, bool landscape, double paper_h, double paper_w) {
   // the name of the PS file.
 
   system (cmd);
-  if (DEBUG_CONVERT) debug_convert << cmd <<LF
-    <<"ps generated? "<< exists(ps)<<LF;
+  if (DEBUG_CONVERT) debug_convert << cmd << LF
+    << "ps generated? " << exists (ps) << LF;
 }
 
 void

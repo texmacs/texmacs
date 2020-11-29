@@ -331,10 +331,16 @@ endif (_guile_dots_test)
 ### Generate configure headers
 ### --------------------------------------------------------------------
 set (DEBUG_ASSERT 1)
+
 set (USE_GS 1)
-set (GS_EXE /usr/bin/gs)
+if (WIN32)
+  set (GS_EXE bin/gs.exe)
+else (WIN32)
+  set (GS_EXE /usr/bin/gs)
+endif (WIN32)
 set (GS_FONTS ../share/ghostscript/fonts:/usr/share/fonts:)
 set (GS_LIB ../share/ghostscript/9.06/lib:)
+
 set (GUILE_NUM 1)
 set (PDF_RENDERER 1)
 set (SIZEOF_VOID_P 8)
