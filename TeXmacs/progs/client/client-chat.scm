@@ -18,8 +18,12 @@
 ;; Chat room urls
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (chat-room-url? u)
+(tm-define (chat-room-url? u)
   (string-starts? (url->string u) "tmfs://chat/"))
+
+(tm-define (mail-box-url? u)
+  (and (chat-room-url? u)
+       (string-starts? (url->string (url-tail u)) "mail-")))
 
 (define (chat-room-name u)
   (cAr (tmfs->list (url->string u))))
@@ -34,9 +38,19 @@
 ;; Receiving and sending messages
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (message->share u)
+  (let* ((name (url->string (url-tail u)))
+         (h `(hlink ,name ,(url->string u))))
+    (if (chat-room-url? u)
+        `(concat "You were invited to join the chat room " ,h ".")
+        `(concat "The resource " ,h " has been shared with you."))))
+
 (define (message->document msg)
   (with (action pseudo full-name date doc) msg
-    `(chat-output ,full-name ,pseudo "" ,date ,doc)))
+    (cond ((== action "share")
+           (with doc* `(document ,(message->share doc))
+             `(chat-output ,full-name ,pseudo "" ,date ,doc*)))
+          (else `(chat-output ,full-name ,pseudo "" ,date ,doc)))))
 
 (define (messages->document msgs name)
   `(document
@@ -135,6 +149,81 @@
   (and-let* ((pseudo (client-find-server-pseudo server))
              (mbox (string-append "mail-" pseudo)))
     (chat-room-join server mbox)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; List of chat rooms
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tmfs-permission-handler (chat-rooms name type)
+  (in? type (list "read")))
+
+(tmfs-load-handler (chat-rooms sname)
+  (let* ((u (string-append "tmfs://chat-rooms/" sname))
+         (base (string-append "tmfs://chat/" sname))
+         (server (client-find-server sname)))
+    (client-remote-eval server `(remote-list-chat-rooms)
+      (lambda (l)
+        (with hyp (lambda (c) `(hlink ,c ,(string-append base "/" c)))
+          (with doc `(document (section* "My chat rooms") ,@(map hyp l))
+            (buffer-set-body u doc)
+            (set-message "retrieved contents" "list of chat rooms"))))
+      (lambda (err)
+        (set-message err "list of chat rooms")))
+    (set-message "loading..." "list of chat rooms")
+    (empty-document)))
+
+(tm-define (list-chat-rooms server)
+  (with sname (client-find-server-name server)
+    (string-append "tmfs://chat-rooms/" sname)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; List of shared documents
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tmfs-permission-handler (shared sname type)
+  (in? type (list "read")))
+
+(define (list-shared? msg)
+  (with (action pseudo full-name date doc) msg
+    (== action "share")))
+
+(define (list-shared-name msg)
+  (with (action pseudo full-name date doc) msg
+    full-name))
+
+(define (list-shared-links l name)
+  (with f (list-filter l (lambda (m) (== (list-shared-name m) name)))
+    `((subsection* ,name)
+      ,@(map (lambda (m)
+               (with (action pseudo full-name date u) m
+                 `(hlink ,(url->string (url-tail u))
+                         ,(url->string u))))
+             f))))
+
+(define (list-shared-document l)
+  (let* ((f (list-filter l list-shared?))
+         (names (list-remove-duplicates (map list-shared-name f))))
+    `(document
+       (section* "Shared resources")
+       ,@(append-map (cut list-shared-links f <>) names))))
+
+(tmfs-load-handler (shared sname)
+  (let* ((u (string-append "tmfs://shared/" sname))
+         (base (string-append "tmfs://chat/" sname))
+         (server (client-find-server sname)))
+    (client-remote-eval server `(remote-mail-open)
+      (lambda (l)
+        (with doc (list-shared-document l)
+          (buffer-set-body u doc)
+          (set-message "retrieved contents" "list of shared resources")))
+      (lambda (err)
+        (set-message err "list of chat rooms")))
+    (set-message "loading..." "list of shared resources")
+    (empty-document)))
+
+(tm-define (list-shared server)
+  (with sname (client-find-server-name server)
+    (string-append "tmfs://shared/" sname)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Chat rooms as files

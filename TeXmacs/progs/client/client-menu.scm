@@ -42,7 +42,8 @@
     (when (not (remote-home-directory? (current-buffer)))
       ("Rename" (remote-rename-interactive server)))
     ("Remove" (remote-remove-interactive server))
-    ("Permissions" (open-file-permissions-editor server (current-buffer))))
+    ("Permissions" (open-file-permissions-editor server (current-buffer)))
+    ("Share" (open-share-document-widget server (current-buffer))))
   ---
   ("Upload" (remote-interactive-upload server))
   ("Download" (remote-interactive-download server))
@@ -89,16 +90,20 @@
     (if (nnull? remote-client-list)
         (=> (balloon (icon "tm_cloud.xpm") "Connection with server")
             ("Logout" (client-logout server)))
-        (when (remote-home-directory server)
-          ((balloon (icon "tm_cloud_home.xpm") "Home directory on server")
-           (load-document (remote-home-directory server))))
+        (=> (balloon (icon "tm_cloud_home.xpm") "Home directory on server")
+            (when (remote-home-directory server)
+              ("My documents" (load-document (remote-home-directory server))))
+            ("My chat rooms" (load-document (list-chat-rooms server)))
+            ("Shared resources" (load-document (list-shared server))))
         (if (and (remote-file-name (current-buffer))
                  (not (remote-home-directory? (current-buffer))))
             (=> (balloon (icon "tm_cloud_file.xpm") "Remote file")
                 ("Rename" (remote-rename-interactive server))
                 ("Remove" (remote-remove-interactive server))
                 ("Permissions"
-                 (open-file-permissions-editor server (current-buffer)))))
+                 (open-file-permissions-editor server (current-buffer)))
+                ("Share"
+                 (open-share-document-widget server (current-buffer)))))
         (if (and (remote-file-name (current-buffer))
                  (remote-home-directory? (current-buffer)))
             (=> (balloon (icon "tm_cloud_dir.xpm") "Remote directory")
@@ -106,10 +111,16 @@
                 ("New remote directory" (remote-create-dir-interactive server))
                 ("Remove" (remote-remove-interactive server))
                 ("Permissions"
-                 (open-file-permissions-editor server (current-buffer)))))
+                 (open-file-permissions-editor server (current-buffer)))
+                ("Share"
+                 (open-share-document-widget server (current-buffer)))))
         (=> (balloon (icon "tm_cloud_mail.xpm") "Messages")
             ("Incoming messages" (mail-box-open server))
             ("Send message" (open-message-editor server))
             ---
             ("Create chat room" (chat-room-create-interactive server))
-            ("Join chat room" (chat-room-join-interactive server))))))
+            ("Join chat room" (chat-room-join-interactive server))
+            (when (and (chat-room-url? (current-buffer))
+                       (not (mail-box-url? (current-buffer))))
+              ("Invite to chat room"
+               (open-share-document-widget server (current-buffer))))))))

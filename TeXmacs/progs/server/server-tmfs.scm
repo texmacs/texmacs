@@ -86,6 +86,9 @@
          (name (db-get-field-first rid "name" "?")))
     (if dir (string-append (resource->file-name dir) "/" name) name)))
 
+(tm-define (search-remote-identifier rname)
+  (file-name->resource (tmfs-cdr rname)))
+
 (define (inheritance-reserved-attributes)
   (append (db-reserved-attributes)
           (db-meta-attributes)
@@ -104,7 +107,7 @@
   ;;(display* "remote-identifier " rname "\n")
   (with-remote-context rname
     (let* ((uid (server-get-user envelope))
-           (rid (file-name->resource (tmfs-cdr rname))))
+           (rid (search-remote-identifier rname)))
       (cond ((not uid)
              (server-error envelope "Error: not logged in"))
             ((not rid)

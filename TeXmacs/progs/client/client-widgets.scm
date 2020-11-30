@@ -915,3 +915,48 @@
                        (lambda x (noop))
                        "Message editor" u)
       (buffer-set-master u b))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Sharing documents
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (share-document server u to)
+  (and-let* ((msg (url->string u))
+             (dest (map (cut string-append "mail-" <>) to))
+             (cmd `(remote-send-message ,dest "share" ,msg)))
+    (client-remote-eval server cmd
+      (lambda x
+        (set-message (if (chat-room-url? u)
+                         "invitation sent"
+                         "document shared")
+                     "instant message")
+        (show-message (if (chat-room-url? u)
+                          "Your invitation has been sent."
+                          "Your document has been shared.")
+                      "Send instant message")))))
+
+(tm-widget ((share-document-widget server u users to) quit)
+  (padded
+    (with s (if (chat-room-url? u) "Invite" "Share with")
+      (bold (text s)))
+    === ===
+    (resize "250px" "350px"
+      (choices (set! to answer) (sort users string<=?) to))
+    ======
+    (hlist
+      >>
+      (explicit-buttons
+	("Send" (share-document server u to) (quit))))))
+
+(tm-define (open-share-document-widget server u)
+  (:interactive #t)
+  (with-remote-search-user users server (list)
+    (with-remote-identifier rid server u
+      (when rid
+        (with-remote-get-entry entry server rid
+          (with to (list-union (or (assoc-ref entry "readable") (list))
+                               (or (assoc-ref entry "owner") (list)))
+            (if (in? "all" to) (set! to users) (set! users to))
+            (dialogue-window (share-document-widget server u users to)
+                             (lambda x (noop))
+                             "Instant message")))))))

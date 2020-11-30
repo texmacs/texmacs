@@ -38,6 +38,22 @@
                        ("name" ,name)))
     (and (nnull? l) (car l))))
 
+(tm-define (search-remote-identifier u)
+  (:require (string-starts? (url->string u) "tmfs://chat/"))
+  (chat-room-id (url->string (url-tail u))))
+
+(tm-service (remote-list-chat-rooms)
+  ;; Return list of chat rooms owned by the user
+  ;;(display* "remote-list-chat-rooms\n")
+  (with (client msg-id) envelope
+    (let* ((uid (server-get-user envelope))
+           (l (db-search `(("type" "chat-room")
+                           ("owner" ,uid))))
+           (get-name (lambda (id) (db-get-field-first id "name" #f)))
+           (r (list-filter (map get-name l)
+                           (lambda (s) (not (string-starts? s "mail-"))))))
+      (server-return envelope r))))
+
 (define chat-room-messages (make-ahash-table))
 (define chat-room-present  (make-ahash-table))
 
