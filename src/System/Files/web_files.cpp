@@ -75,14 +75,8 @@ fetch_tool () {
   static bool done= false;
   static string tool= "";
   if (done) return tool;
-  if (tool == "") {
-    string test= var_eval_system ("which wget");
-    if (ends (test, "wget")) tool= "wget";
-  }
-  if (tool == "") {
-    string test= var_eval_system ("which curl");
-    if (ends (test, "curl")) tool= "curl";
-  }
+  if (tool == "" && exists_in_path ("wget")) tool= "wget";
+  if (tool == "" && exists_in_path ("curl")) tool= "curl";
   done= true;
   return tool;
 }
