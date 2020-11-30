@@ -470,7 +470,7 @@
     ((balloon (icon "tm_add.xpm") "Permanently add to dictionary")
      (spell-insert-word))
     ///
-    (text "Correct: ")
+    (text "Correct: ") //
     (input (spell-toolbar-keypress answer) "spell"
            (list spell-correct-string) "15em")
     (assuming (nnull? spell-suggestions)

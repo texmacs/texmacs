@@ -382,7 +382,9 @@ QWidget*
 qt_input_text_widget_rep::as_qwidget () {
   QTMLineEdit* le = new QTMLineEdit (NULL, type, width, style, cmd);
   qwid = le;
-  bool can_autocommit= !(ends (type, "search") || ends (type, "replace"));
+  bool can_autocommit= !(ends (type, "search") ||
+                         ends (type, "replace") ||
+                         ends (type, "replace"));
   QTMInputTextWidgetHelper* helper =
     new QTMInputTextWidgetHelper (this, can_autocommit);
   (void) helper;

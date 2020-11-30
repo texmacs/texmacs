@@ -517,14 +517,14 @@
 
 (tm-widget (search-toolbar)
   (hlist
-    (text "Search: ")
+    (text "Search: ") //
     ;;(resize "0.5w" "24px"
     ;;  (texmacs-input `(document "")
     ;;                 `(style (tuple "generic"))
     ;;                 (search-buffer)))
     (input (search-toolbar-keypress answer #f) "search"
            (list (or current-search pending-key-strokes)) "25em")
-    //
+    // //
     ((balloon (icon "tm_search_first.xpm") "First occurrence")
      (search-extreme-match #f))
     ((balloon (icon "tm_search_previous.xpm") "Previous occurrence")
@@ -610,14 +610,14 @@
 
 (tm-widget (replace-toolbar)
   (hlist
-    (text "Replace: ")
+    (text "Replace: ") //
     (input (search-toolbar-keypress answer #t) "replace-what"
            (list (or current-search pending-key-strokes)) "15em")
     //
     (text " by: ")
     (input (replace-toolbar-keypress answer) "replace-by"
            (list (or current-replace "")) "15em")
-    //
+    // //
     ;;(if (nnull? (get-alt-selection "alternate"))
     ((balloon (icon "tm_search_first.xpm") "First occurrence")
      (search-extreme-match #f))
