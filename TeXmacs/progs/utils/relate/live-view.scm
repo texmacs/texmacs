@@ -20,7 +20,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (live-context? t)
-  (and (tree-func? t 'live-io 3)
+  (and (or (tree-func? t 'live-io 3)
+           (tree-func? t 'live-io* 3))
        (tree-atomic? (tree-ref t 0))
        (tree-atomic? (tree-ref t 1))))
 

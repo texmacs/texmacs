@@ -21,20 +21,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (live-remote-context? t)
-  (and (tree-func? t 'live-io 3)
-       (live-context? t)))
+  (and (live-context? t)
+       (url-rooted-tmfs? (live-id t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (live-find-server lid)
-  (with sname (tmfs-car (url->string (url-unroot lid)))
+  (let* ((s1 (url->string (url-unroot lid)))
+         (s2 (if (== (tmfs-car s1) "live") (tmfs-cdr s1) s1))
+         (sname (tmfs-car s2)))
     (client-find-server sname)))
 
 (tm-define (live-get-name lid)
-  (with rname (tmfs-cdr (url->string (url-unroot lid)))
-    (if (== (tmfs-car rname) "live") (tmfs-cdr rname) rname)))
+  (let* ((s1 (url->string (url-unroot lid)))
+         (s2 (if (== (tmfs-car s1) "live") (tmfs-cdr s1) s1))
+         (s3 (tmfs-cdr s2))
+         (s4 (if (== (tmfs-car s3) "live") (tmfs-cdr s3) s3)))
+    s4))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Retrieving the initial document
@@ -75,11 +80,7 @@
 
 (tm-define (live-retrieve t)
   (:require (live-remote-context? t))
-  (let* ((lid (live-id t))
-         (vid (live-view-id t)))
-    (if (url-rooted-tmfs? lid)
-        (live-remote-retrieve lid vid)
-        (former t))))
+  (live-remote-retrieve (live-id t) (live-view-id t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Treating local modifications in live documents
@@ -164,3 +165,33 @@
         (with result (client-return envelope #t)
           (live-resend-local-changes lid new-state)
           result)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Live discussions as documents
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tmfs-permission-handler (live name type)
+  ;; FIXME: to be improved...
+  (in? type (list "read" "write")))
+
+(tmfs-title-handler (live fname doc)
+  (let* ((lid (string-append "tmfs://live/" fname))
+         (name (live-get-name lid))
+         (title (string-append "Live discussion - " name)))
+    title))
+
+(define live-vid-table (make-ahash-table))
+
+(define (get-live-vid lid)
+  (or (ahash-ref live-vid-table lid)
+      (with vid (create-unique-id)
+        (ahash-set! live-vid-table lid vid)
+        vid)))
+
+(tmfs-load-handler (live fname)
+  (with lid (string-append "tmfs://live/" fname)
+    `(document
+       (TeXmacs ,(texmacs-version))
+       (style (tuple "generic" "live-document"))
+       (body (document
+               (live-io* ,(get-live-vid lid) ,lid (document "")))))))
