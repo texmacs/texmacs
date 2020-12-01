@@ -21,6 +21,9 @@
 (tm-define (chat-room-url? u)
   (string-starts? (url->string u) "tmfs://chat/"))
 
+(tm-define (chat-rooms-url? u)
+  (string-starts? (url->string u) "tmfs://chat-rooms/"))
+
 (tm-define (mail-box-url? u)
   (and (chat-room-url? u)
        (string-starts? (url->string (url-tail u)) "mail-")))
@@ -75,6 +78,7 @@
 (define (chat-room-set fname msgs)
   (with doc (messages->document msgs (chat-room-name fname))
     (buffer-set fname (chat-document doc))
+    (buffer-pretend-saved fname)
     (chat-room-modified fname)))
 
 (define (chat-room-insert fname msg)
@@ -166,6 +170,7 @@
         (with hyp (lambda (c) `(hlink ,c ,(string-append base "/" c)))
           (with doc `(document (section* "My chat rooms") ,@(map hyp l))
             (buffer-set-body u doc)
+            (buffer-pretend-saved u)
             (set-message "retrieved contents" "list of chat rooms"))))
       (lambda (err)
         (set-message err "list of chat rooms")))
@@ -209,12 +214,12 @@
 
 (tmfs-load-handler (shared sname)
   (let* ((u (string-append "tmfs://shared/" sname))
-         (base (string-append "tmfs://chat/" sname))
          (server (client-find-server sname)))
     (client-remote-eval server `(remote-mail-open)
       (lambda (l)
         (with doc (list-shared-document l)
           (buffer-set-body u doc)
+          (buffer-pretend-saved u)
           (set-message "retrieved contents" "list of shared resources")))
       (lambda (err)
         (set-message err "list of chat rooms")))

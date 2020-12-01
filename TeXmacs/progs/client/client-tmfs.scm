@@ -32,7 +32,8 @@
 (define (buffer-set-stm u doc)
   (let* ((s (object->tmstring doc))
          (t (tree-import-loaded s u "stm")))
-    (buffer-set u t)))
+    (buffer-set u t)
+    (buffer-pretend-saved u)))
 
 (define (remote-file-set name doc)
   (with fname (string-append "tmfs://remote-file/" name)
@@ -373,7 +374,8 @@
              (let* ((s (url->tmfs-string rname))
                     (h (string-append "tmfs://history/" s))
                     (doc (build-version-page s prefix l)))
-               (buffer-set h doc)))
+               (buffer-set h doc)
+               (buffer-pretend-saved h)))
            (lambda (err)
              (set-message err "get list with remote versions"))))))
 

@@ -14,7 +14,8 @@
 (texmacs-module (client client-widgets)
   (:use (client client-tmfs)
         (client client-sync)
-        (client client-chat)))
+        (client client-chat)
+        (client client-live)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Account creation

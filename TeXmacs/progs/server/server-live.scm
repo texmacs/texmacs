@@ -41,6 +41,10 @@
                        ("name" ,(live-name lid))))
     (and (nnull? l) (car l))))
 
+(tm-define (search-remote-identifier u)
+  (:require (string-starts? (url->string u) "tmfs://live/"))
+  (live-find (url->string u)))
+
 (define (live-load lid)
   (and-let* ((rid (live-find lid))
              (fname (repository-get rid))
@@ -54,6 +58,17 @@
              (fname (repository-get rid))
              (doc (convert t "texmacs-stree" "texmacs-snippet")))
     (string-save doc fname)))
+
+(tm-service (remote-list-live)
+  ;; Return list of live discussions owned by the user
+  ;;(display* "remote-list-chat-rooms\n")
+  (with (client msg-id) envelope
+    (let* ((uid (server-get-user envelope))
+           (l (db-search `(("type" "live")
+                           ("owner" ,uid))))
+           (get-name (lambda (id) (db-get-field-first id "name" #f)))
+           (r (map get-name l)))
+      (server-return envelope r))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Applying modifications
@@ -131,6 +146,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Public services
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-service (live-exists? lid)
+  (server-return envelope (nnot (live-find lid))))
 
 (tm-service (live-open lid)
   ;; Connect client to the live channel lid

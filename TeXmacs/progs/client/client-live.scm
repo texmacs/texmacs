@@ -17,12 +17,18 @@
         (client client-tmfs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Tags for remote live documents
+;; Remote live documents
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (live-remote-context? t)
   (and (live-context? t)
        (url-rooted-tmfs? (live-id t))))
+
+(tm-define (live-url? fname)
+  (string-starts? (url->string fname) "tmfs://live/"))
+
+(tm-define (live-list-url? fname)
+  (string-starts? (url->string fname) "tmfs://live-list/"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful subroutines
@@ -167,6 +173,36 @@
           result)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; List of live documents
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tmfs-permission-handler (live-list name type)
+  (in? type (list "read")))
+
+(tmfs-load-handler (live-list sname)
+  (let* ((u (string-append "tmfs://live-list/" sname))
+         (base (string-append "tmfs://live/" sname))
+         (server (client-find-server sname)))
+    (client-remote-eval server `(remote-list-live)
+      (lambda (l)
+        (with hyp (lambda (c) `(hlink ,c ,(string-append base "/" c)))
+          (with doc `(document (section* "Live documents") ,@(map hyp l))
+            (buffer-set-body u doc)
+            (buffer-pretend-saved u)
+            (set-message "retrieved contents" "list of live documents"))))
+      (lambda (err)
+        (set-message err "list of live documents")))
+    (set-message "loading..." "list of live documents")
+    `(document
+       (TeXmacs ,(texmacs-version))
+       (style (tuple "generic"))
+       (body (document "")))))
+
+(tm-define (list-live server)
+  (with sname (client-find-server-name server)
+    (string-append "tmfs://live-list/" sname)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Live discussions as documents
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -177,7 +213,7 @@
 (tmfs-title-handler (live fname doc)
   (let* ((lid (string-append "tmfs://live/" fname))
          (name (live-get-name lid))
-         (title (string-append "Live discussion - " name)))
+         (title (string-append "Live - " name)))
     title))
 
 (define live-vid-table (make-ahash-table))
@@ -195,3 +231,29 @@
        (style (tuple "generic" "live-document"))
        (body (document
                (live-io* ,(get-live-vid lid) ,lid (document "")))))))
+
+(tm-define (live-create-interactive server)
+  (:interactive #t)
+  (and-with sname (client-find-server-name server)
+    (interactive
+        (lambda (name)
+          (with lid (string-append "tmfs://live/" sname "/" name)
+            (client-remote-eval server `(live-exists? ,lid)
+              (lambda (e?)
+                (if (not e?) (load-document lid)
+                    (set-message "live document already exists"
+                                 "create live document"))))))
+      (list "Create live document" "string" '()))))
+
+(tm-define (live-open-interactive server)
+  (:interactive #t)
+  (and-with sname (client-find-server-name server)
+    (interactive
+        (lambda (name)
+          (with lid (string-append "tmfs://live/" sname "/" name)
+            (client-remote-eval server `(live-exists? ,lid)
+              (lambda (e?)
+                (if e? (load-document lid)
+                    (set-message "live document not found"
+                                 "open live document"))))))
+      (list "Open live document" "string" '()))))
