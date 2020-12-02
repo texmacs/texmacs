@@ -60,7 +60,7 @@
     (string-save doc fname)))
 
 (tm-service (remote-list-live)
-  ;; Return list of live discussions owned by the user
+  ;; Return list of live documents owned by the user
   ;;(display* "remote-list-chat-rooms\n")
   (with (client msg-id) envelope
     (let* ((uid (server-get-user envelope))
