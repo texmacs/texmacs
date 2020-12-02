@@ -50,10 +50,11 @@
 
 (define (message->document msg)
   (with (action pseudo full-name date doc) msg
-    (cond ((== action "share")
-           (with doc* `(document ,(message->share doc))
-             `(chat-output ,full-name ,pseudo "" ,date ,doc*)))
-          (else `(chat-output ,full-name ,pseudo "" ,date ,doc)))))
+    (with date* (pretty-time (string->number date))
+      (cond ((== action "share")
+             (with doc* `(document ,(message->share doc))
+               `(chat-output ,full-name ,pseudo "" ,date* ,doc*)))
+            (else `(chat-output ,full-name ,pseudo "" ,date* ,doc))))))
 
 (define (messages->document msgs name)
   `(document
