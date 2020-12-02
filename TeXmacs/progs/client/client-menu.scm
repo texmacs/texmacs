@@ -41,17 +41,18 @@
 (tm-menu (remote-file-menu server)
   ("Rename" (remote-rename-interactive server))
   ("Remove" (remote-remove-interactive server))
-  ("Permissions" (open-file-permissions-editor server (current-buffer)))
+  ("Permissions" (open-permissions-editor server (current-buffer)))
   ("Share" (open-share-document-widget server (current-buffer))))
 
 (tm-menu (remote-dir-menu server)
   ("New remote file" (remote-create-file-interactive server))
   ("New remote directory" (remote-create-dir-interactive server))
   ("Remove" (remote-remove-interactive server))
-  ("Permissions" (open-file-permissions-editor server (current-buffer)))
+  ("Permissions" (open-permissions-editor server (current-buffer)))
   ("Share" (open-share-document-widget server (current-buffer))))
 
 (tm-menu (remote-chat-menu server)
+  ("Permissions" (open-permissions-editor server (current-buffer)))
   ("Invite" (open-share-document-widget server (current-buffer))))
 
 (tm-menu (remote-chat-list-menu server)
@@ -59,6 +60,7 @@
   ("Join chat room" (chat-room-join-interactive server)))
 
 (tm-menu (remote-live-menu server)
+  ("Permissions" (open-permissions-editor server (current-buffer)))
   ("Share" (open-share-document-widget server (current-buffer))))
 
 (tm-menu (remote-live-list-menu server)

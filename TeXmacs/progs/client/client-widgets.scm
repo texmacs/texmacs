@@ -405,7 +405,7 @@
                                                        users enc dec perms)
                              noop "Change permissions")))))))
 
-(tm-define (open-file-permissions-editor server u)
+(tm-define (open-permissions-editor server u)
   (:interactive #t)
   (with-remote-identifier rid server u
     (when rid

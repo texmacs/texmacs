@@ -153,29 +153,37 @@
 (tm-service (live-open lid)
   ;; Connect client to the live channel lid
   ;;(display* "live-open " lid "\n")
-  (when (not (live-current-document lid))
-    (when (not (live-find lid))
-      (let* ((uid (server-get-user envelope))
-             (rid (live-new uid lid))
-             (doc '(document "")))
-        (live-save lid doc)))
-    (with doc (live-load lid)
-      (live-create lid doc)))
-  (with (client msg-id) envelope
-    (live-connect lid client)
-    (let* ((doc (live-current-document lid))
-           (state (live-get-remote-state lid client)))
-      (server-return envelope (list state (tm->stree doc))))))
+  (with uid (server-get-user envelope)
+    (when (not (live-current-document lid))
+      (when (not (live-find lid))
+        (let* ((rid (live-new uid lid))
+               (doc '(document "")))
+          (live-save lid doc)))
+      (with doc (live-load lid)
+        (live-create lid doc)))
+    (if (and-with rid (live-find lid)
+          (db-allow? rid uid "readable"))
+        (with (client msg-id) envelope
+          (live-connect lid client)
+          (let* ((doc (live-current-document lid))
+                 (state (live-get-remote-state lid client)))
+            (server-return envelope (list state (tm->stree doc)))))
+        (server-error envelope "Error: read access denied"))))
 
 (tm-service (live-modify lid mods old-state new-state)
   ;; States that the 'new-state' of the client is obtained
   ;; from 'old-state' by applying the list of modifications 'mods'
-  (with (client msg-id) envelope
-    (display* "Receive " client ": " mods ", " old-state ", " new-state "\n")
-    (with ok? (live-applicable? lid client mods old-state)
-      (when (not ok?)
-	(display* ">> refuse " client ", " mods
-		  ", state= " (live-current-state lid) "\n"))
-      (when ok?
-        (live-apply lid client mods old-state new-state))
-      (server-return envelope ok?))))
+  (if (and-let* ((rid (live-find lid))
+                 (uid (server-get-user envelope)))
+        (db-allow? rid uid "writable"))
+      (with (client msg-id) envelope
+        (display* "Receive " client
+                  ": " mods ", " old-state ", " new-state "\n")
+        (with ok? (live-applicable? lid client mods old-state)
+          (when (not ok?)
+            (display* ">> refuse " client ", " mods
+                      ", state= " (live-current-state lid) "\n"))
+          (when ok?
+            (live-apply lid client mods old-state new-state))
+          (server-return envelope ok?)))
+      (server-error envelope "Error: write access denied")))

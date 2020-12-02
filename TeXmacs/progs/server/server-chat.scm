@@ -84,17 +84,22 @@
   ;; Connect client to a chat room and return list of past messages
   ;;(display* "remote-chat-room-open " name "\n")
   (with (client msg-id) envelope
-    (with crid (chat-room-id name)
+    (let* ((uid (server-get-user envelope))
+           (crid (chat-room-id name)))
       (cond ((not crid)
              (server-error envelope "Error: unknown chat room"))
             ((string-starts? name "mail-")
-             (served-error envelope "Error: invalid name of chat room"))
+             (server-error envelope "Error: invalid name of chat room"))
+            ((not (db-allow? crid uid "readable"))
+             (server-error envelope "Error: access to chat room denied"))
             (else
              (chat-room-initialize crid)
              (with l (ahash-ref chat-room-present crid)
                (when (nin? client l)
                  (ahash-set! chat-room-present crid (cons client l))))
-             (server-return envelope (ahash-ref chat-room-messages crid)))))))
+             (let* ((ms (ahash-ref chat-room-messages crid))
+                    (w? (db-allow? crid uid "writable")))
+               (server-return envelope (list w? ms))))))))
 
 (tm-service (remote-mail-open)
   ;; Open mail while creating mail box (a chat room) if necessary
@@ -153,7 +158,9 @@
                                         ("message" ,msg)))
              (chat-room-notify mid))))
         ((chat-room-id dest)
-         (remote-send uid (chat-room-id dest) action msg))
+         (with crid (chat-room-id dest)
+           (when (db-allow? crid uid "writable")
+             (remote-send uid (chat-room-id dest) action msg))))
         ((string-starts? dest "mail-")
          (let* ((pseudo (string-drop dest 5))
                 (user (or (pseudo->user pseudo) pseudo))
