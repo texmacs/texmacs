@@ -191,7 +191,7 @@
     (empty-document)))
 
 (tm-define (list-chat-rooms server)
-  (with sname (client-find-server-name server)
+  (and-with sname (client-find-server-name server)
     (string-append "tmfs://chat-rooms/" sname)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -240,7 +240,7 @@
     (empty-document)))
 
 (tm-define (list-shared server)
-  (with sname (client-find-server-name server)
+  (and-with sname (client-find-server-name server)
     (string-append "tmfs://shared/" sname)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

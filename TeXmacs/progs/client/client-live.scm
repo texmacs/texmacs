@@ -199,7 +199,7 @@
        (body (document "")))))
 
 (tm-define (list-live server)
-  (with sname (client-find-server-name server)
+  (and-with sname (client-find-server-name server)
     (string-append "tmfs://live-list/" sname)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

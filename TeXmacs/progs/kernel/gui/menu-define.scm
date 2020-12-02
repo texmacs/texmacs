@@ -84,6 +84,10 @@
   (require-format x '(text :%1))
   `($menu-text ,(cadr x)))
 
+(define (gui-make-invisible x)
+  (require-format x '(invisible :%1))
+  `($menu-invisible ,(cadr x)))
+
 (define (gui-make-glue x)
   (require-format x '(glue :%4))
   `($glue ,(second x) ,(third x) ,(fourth x) ,(fifth x)))
@@ -360,6 +364,7 @@
   (refreshable ,gui-make-refreshable)
   (group ,gui-make-group)
   (text ,gui-make-text)
+  (invisible ,gui-make-invisible)
   (glue ,gui-make-glue)
   (color ,gui-make-color)
   (texmacs-output ,gui-make-texmacs-output)

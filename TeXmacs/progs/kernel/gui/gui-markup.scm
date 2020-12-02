@@ -308,6 +308,10 @@
     (ahash-set! all-translations text #t))
   `(list 'text ,(process-translate text)))
 
+(tm-define-macro ($menu-invisible text)
+  (:synopsis "Make invisible")
+  `(list 'invisible ,text))
+
 (tm-define-macro ($input cmd type proposals width)
   (:synopsis "Make input field")
   `(list 'input (lambda (answer) ,cmd) ,type (lambda () ,proposals) ,width))
