@@ -619,9 +619,10 @@ init_sections () {
     section_traverse_tags= hashset<tree_label> ();
     section_traverse_tags->insert (DOCUMENT);
     section_traverse_tags->insert (CONCAT);
-    section_traverse_tags->insert (as_tree_label ("ignore"));
-    section_traverse_tags->insert (as_tree_label ("show-part"));
-    section_traverse_tags->insert (as_tree_label ("hide-part"));
+    section_traverse_tags->insert (make_tree_label ("ignore"));
+    section_traverse_tags->insert (make_tree_label ("show-part"));
+    section_traverse_tags->insert (make_tree_label ("hide-part"));
+    section_traverse_tags->insert (make_tree_label ("live-io*"));
   }
   if (N(section_tags) == 0) {
     eval ("(use-modules (text text-drd))");
@@ -638,6 +639,8 @@ previous_section_impl (tree t, path p) {
   if (is_atomic (t)) return path ();
   else if (N(t) == 1 && section_tags->contains (L(t)))
     return p * 0;
+  else if (is_compound (t, "live-io*") && !is_nil (p) && p->item == 2)
+    return path (2, previous_section_impl (t[2], p->next));
   else if (section_traverse_tags->contains (L(t))) {
     int i= is_nil (p)? N(t)-1: p->item;
     for (; i>=0; i--) {
