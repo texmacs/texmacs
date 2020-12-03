@@ -252,6 +252,9 @@
         (tm-ref t 0)
         t)))
 
+(tm-define (parameter-get-string l mode)
+  (force-string (parameter-get l mode)))
+
 (tm-define (parameter-default? l mode)
   (cond ((== mode :global)
          (not (init-has? l)))
@@ -790,12 +793,12 @@
 
 (tm-menu (focus-customizable-icons-item var name mode)
   (input (parameter-set var answer mode) "string"
-         (list (parameter-get var mode)) "5em"))
+         (list (parameter-get-string var mode)) "5em"))
 
 (tm-menu (focus-customizable-icons-item var name mode)
   (:require (parameter-choice-list var))
   (mini #t
-    (=> (eval (parameter-get var mode))
+    (=> (eval (parameter-get-string var mode))
         (dynamic (parameter-submenu var mode)))))
 
 (tm-menu (focus-customizable-icons-item var name mode)
