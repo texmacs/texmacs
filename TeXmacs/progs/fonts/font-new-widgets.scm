@@ -604,6 +604,22 @@
   (assuming (not (selector-customize?))
     === === ===))
 
+(tm-widget (font-customization-dialog quit)
+  (padded
+    === === ===
+    (hlist
+      (bold (text "Font customization"))
+      >>>)
+    ===
+    (horizontal
+      (link font-effects-selector)
+      >>>
+      (link font-variant-selector)
+      >>>
+      (link font-math-selector))
+    === === ===
+    (explicit-buttons (hlist >>> ("Done" (quit))))))
+
 (tm-widget (font-selector-demo)
   (hlist
     (bold (text "Sample text"))
@@ -646,6 +662,10 @@
                 "Unicode 4000-4fff")
               (get-font-sample-kind) "120px")
         >>>
+        (assuming (not (selector-customize?))
+          ("Advanced"
+           (dialogue-window font-customization-dialog
+                            noop "Advanced font selector")) // //)
         ("Import" (choose-file font-import "Import font" "")) // //
         (if flag?
             ("Reset"
