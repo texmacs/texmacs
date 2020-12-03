@@ -402,7 +402,9 @@
 
 (tm-define (current-anim-set-now x)
   (and-with t (tree-innermost user-anim-context? #t)
-    (when x (anim-set-now t x))))
+    (when x
+      (anim-set-now t x)
+      (notify-change 256))))
 
 (define (get-ms t)
   (cond ((and (tree? t) (tree-atomic? t)) (get-ms (tree->string t)))
@@ -425,7 +427,9 @@
 
 (tm-define (current-anim-set-portion x)
   (and-with t (tree-innermost user-anim-context? #t)
-    (when x (anim-set-portion t x))))
+    (when x
+      (anim-set-portion t x)
+      (notify-change 256))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Removal of entire animations and specific frames
