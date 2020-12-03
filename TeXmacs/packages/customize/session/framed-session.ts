@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.16>
 
 <style|<tuple|source|english>>
 
@@ -120,7 +120,7 @@
         <\ornament>
           <\ornament-render-body>
             <surround||<right-flush>|<tabbed*|<tformat|<table|<row|<cell|<id-function|<with|color|<value|generic-prompt-color>|<arg|prompt>>>>|<\cell>
-              <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
+              <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>|math-display|true>
                 <arg|body>
               </with>
             </cell>>>>>>

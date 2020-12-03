@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.16>
 
 <style|<tuple|source|english>>
 
@@ -126,7 +126,7 @@
     <\with|ornament-shape|classic|ornament-color|<value|input-color>|ornament-hpadding|<tuple|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>>|ornament-vpadding|<value|input-vpadding>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
       <\ornament>
         <surround||<right-flush>|<tabbed*|<tformat|<table|<row|<cell|<id-function|<with|color|<value|generic-prompt-color>|<arg|prompt>>>>|<\cell>
-          <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
+          <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>|math-display|true>
             <arg|body>
           </with>
         </cell>>>>>>
