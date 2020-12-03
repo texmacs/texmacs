@@ -68,6 +68,7 @@ debug_set (string s, bool on) {
   else if (s == "correct") debug_set (DEBUG_FLAG_CORRECT, on);
   else if (s == "convert") debug_set (DEBUG_FLAG_CONVERT, on);
   else if (s == "remote") debug_set (DEBUG_FLAG_REMOTE, on);
+  else if (s == "live") debug_set (DEBUG_FLAG_LIVE, on);
 }
 
 static bool
@@ -92,6 +93,7 @@ debug_get (string s) {
   else if (s == "correct") return debug_get (DEBUG_FLAG_CORRECT);
   else if (s == "convert") return debug_get (DEBUG_FLAG_CONVERT);
   else if (s == "remote") return debug_get (DEBUG_FLAG_REMOTE);
+  else if (s == "live") return debug_get (DEBUG_FLAG_LIVE);
   else return false;
 }
 

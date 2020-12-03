@@ -229,6 +229,7 @@ TeXmacs_main (int argc, char** argv) {
       else if (s == "-debug-correct") debug (DEBUG_FLAG_CORRECT, true);
       else if (s == "-debug-convert") debug (DEBUG_FLAG_CONVERT, true);
       else if (s == "-debug-remote") debug (DEBUG_FLAG_REMOTE, true);
+      else if (s == "-debug-live") debug (DEBUG_FLAG_LIVE, true);
       else if (s == "-debug-all") {
         debug (DEBUG_FLAG_EVENTS, true);
         debug (DEBUG_FLAG_STD, true);

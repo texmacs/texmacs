@@ -79,15 +79,16 @@
 (define (live-applicable? lid client p old-state)
   (when (and (list? p) (== (live-current-state lid) old-state))
     (set! p (modlist->patch p (live-current-document lid))))
-  (cond ((!= (live-get-remote-state lid client) old-state)
-	 (display* "  ** Bad remote state " (live-get-remote-state lid client)
-                   " instead of " old-state "\n"))
-	((!= (live-current-state lid) old-state)
-	 (display* "  ** Bad state " (live-current-state lid)
-                   " instead of " old-state "\n"))
-	((not (with doc (live-current-document lid)
-		(patch-applicable? p doc)))
-	 (display* "  ** Non applicable patch " (patch->scheme p) "\n")))
+  (when (debug-get "live")
+    (cond ((!= (live-get-remote-state lid client) old-state)
+           (display* "  ** Bad remote state " (live-get-remote-state lid client)
+                     " instead of " old-state "\n"))
+          ((!= (live-current-state lid) old-state)
+           (display* "  ** Bad state " (live-current-state lid)
+                     " instead of " old-state "\n"))
+          ((not (with doc (live-current-document lid)
+                  (patch-applicable? p doc)))
+           (display* "  ** Non applicable patch " (patch->scheme p) "\n"))))
   (and (== (live-get-remote-state lid client) old-state)
        (== (live-current-state lid) old-state)
        (with doc (live-current-document lid)
@@ -99,7 +100,8 @@
   (and (== (live-current-state lid) old-state)
        (live-apply-patch lid p new-state)
        (begin
-         (display* "Confirm " client ": " new-state "\n")
+         (when (debug-get "live")
+           (display* "Confirm " client ": " new-state "\n"))
          (live-set-remote-state lid client new-state)
 	 (live-forget-obsolete lid)
          (live-broadcast lid)
@@ -112,11 +114,13 @@
       (let* ((p (live-get-inverse-patch lid state))
              (mods (patch->modlist p))
              (new-state (live-current-state lid)))
-	(display* "Send " client ": "
-		  `(live-modify ,lid ,mods ,state ,new-state) "\n")
+        (when (debug-get "live")
+          (display* "Send " client ": "
+                    `(live-modify ,lid ,mods ,state ,new-state) "\n"))
         (server-remote-eval client `(live-modify ,lid ,mods ,state ,new-state)
           (lambda (ok?)
-	    (display* "Confirm " client ": " new-state ", " ok? "\n")
+            (when (debug-get "live")
+              (display* "Confirm " client ": " new-state ", " ok? "\n"))
             (ahash-remove! live-waiting key)
             (when ok?
 	      (live-set-remote-state lid client new-state)
@@ -177,12 +181,14 @@
                  (uid (server-get-user envelope)))
         (db-allow? rid uid "writable"))
       (with (client msg-id) envelope
-        (display* "Receive " client
-                  ": " mods ", " old-state ", " new-state "\n")
+        (when (debug-get "live")
+          (display* "Receive " client
+                    ": " mods ", " old-state ", " new-state "\n"))
         (with ok? (live-applicable? lid client mods old-state)
-          (when (not ok?)
-            (display* ">> refuse " client ", " mods
-                      ", state= " (live-current-state lid) "\n"))
+          (when (debug-get "live")
+            (when (not ok?)
+              (display* ">> refuse " client ", " mods
+                        ", state= " (live-current-state lid) "\n")))
           (when ok?
             (live-apply lid client mods old-state new-state))
           (server-return envelope ok?)))

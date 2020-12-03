@@ -114,8 +114,9 @@
     (if (or (not server) following-server-instruction?) new-state
         (and old-state new-state
              (begin
-	       (display* "Send " (patch->modlist p)
-			 ", " old-state ", " new-state "\n")
+               (when (debug-get "live")
+                 (display* "Send " (patch->modlist p)
+                           ", " old-state ", " new-state "\n"))
                (live-remote-modify lid p old-state new-state)
                new-state)))))
 
@@ -133,27 +134,32 @@
   (let* ((new-state (live-current-state lid))
          (p (live-get-inverse-patch lid old-state)))
     (when (!= new-state old-state)
-      (display* "Resend " (patch->modlist p)
-		", " old-state ", " new-state "\n")
+      (when (debug-get "live")
+        (display* "Resend " (patch->modlist p)
+                  ", " old-state ", " new-state "\n"))
       (live-remote-modify lid p old-state new-state))))
 
 (tm-call-back (live-modify lid mods old-state new-state)
-  (display* "Receive " mods ", " old-state ", " new-state "\n")
-  ;;(display* "live-modify " lid ", " mods ", " old-state ", " new-state "\n")
+  (when (debug-get "live")
+    (display* "Receive " mods ", " old-state ", " new-state "\n")
+    ;;(display* "live-modify " lid
+    ;;          ", " mods ", " old-state ", " new-state "\n")
+    )
   (live-treat-pending lid)
   (with (server msg-id) envelope
     (let* ((old-t (live-get-document lid old-state)) ;; TODO: check old-t != #f
            (p (modlist->patch mods old-t))
            (inv-p (patch-invert p old-t))
            (ok-state (live-latest-compatible lid old-state p)))
-      (when (!= ok-state (live-current-state lid))
-	(display* "-- full-history= " (live-get-history lid) "\n")
-	(display* "-- history= " (live-get-state-list lid old-state) "\n")
-	(display* "-- ok-state= " ok-state "\n")
-	(display* "-- mods= " mods "\n")
-	(display* "-- oldp= "
-		  (patch->modlist
-		   (live-get-inverse-patch lid old-state)) "\n"))
+      (when (debug-get "live")
+        (when (!= ok-state (live-current-state lid))
+          (display* "-- full-history= " (live-get-history lid) "\n")
+          (display* "-- history= " (live-get-state-list lid old-state) "\n")
+          (display* "-- ok-state= " ok-state "\n")
+          (display* "-- mods= " mods "\n")
+          (display* "-- oldp= "
+                    (patch->modlist
+                     (live-get-inverse-patch lid old-state)) "\n")))
       (live-retract lid ok-state)
       (live-update-views lid)
       (let* ((rev (live-get-patch-list lid old-state))
