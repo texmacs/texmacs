@@ -617,8 +617,13 @@ edit_interface_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t) {
 #ifdef USE_EXCEPTIONS
   try {
 #endif
-  if (is_nil (eb) || (env_change & (THE_TREE + THE_ENVIRONMENT)) != 0)
+  if (is_nil (eb) || (env_change & (THE_TREE + THE_ENVIRONMENT)) != 0) {
+    //cout << "handle_mouse in " << buf->buf->name << ", " << got_focus << LF;
+    //cout << kind << " (" << x << ", " << y << "; " << m << ")"
+    //     << " at " << t << "\n";
+    if (!got_focus) return;
     apply_changes ();
+  }
   start_editing ();
   started= true;
   x= ((SI) (x / magf));
