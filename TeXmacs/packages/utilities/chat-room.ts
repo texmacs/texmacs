@@ -34,7 +34,7 @@
     <with|shadow-elevation|0.75|<\quarter-bend-in-shadow>
       <\wide-tabular>
         <tformat|<cwith|1|1|1|1|cell-background|<arg|bar-color>>|<cwith|1|-1|1|1|cell-lsep|1spc>|<cwith|1|-1|1|1|cell-rsep|1spc>|<cwith|1|-1|1|1|cell-tsep|0.5spc>|<cwith|1|-1|1|1|cell-bsep|0.5spc>|<cwith|2|-1|1|1|cell-tsep|2spc>|<cwith|2|-1|1|1|cell-bsep|1spc>|<table|<row|<\cell>
-          <samp|<with|color|white|<arg|title>>>
+          <samp|<with|color|white|locus-color|preserve|<arg|title>>>
         </cell>>|<row|<\cell>
           <arg|body>
         </cell>>>>
@@ -58,8 +58,8 @@
   </macro>>
 
   <assign|chat-input|<\macro|body>
-    <\chat-render|dark blue|New message>
-      <surround||<right-flush><chat-send>|<arg|body>>
+    <\chat-render|dark blue|New message<htab|5mm><action|<strong|Send>|button-chat-send|<arg|body>>>
+      <arg|body>
     </chat-render>
   </macro>>
 </body>

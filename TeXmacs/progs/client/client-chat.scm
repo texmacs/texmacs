@@ -129,6 +129,12 @@
   (:require (inside? 'chat-input))
   (chat-room-send))
 
+(tm-define (button-chat-send t)
+  (:secure #t)
+  (tree-go-to t :end)
+  (when (inside? 'chat-input)
+    (chat-room-send)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Creating and joining chat rooms
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
