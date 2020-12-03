@@ -642,8 +642,9 @@
       (form-input field-name "string" (list (form-ref field-name)) width))
     // //
     (explicit-buttons
-      ("Browse"
-       (when (or (remote-file-name name) (remote-home-directory server))
+      (when (or (remote-file-name (form-ref field-name))
+                (remote-home-directory server))
+        ("Browse"
          (open-remote-file-browser
           server
           (with name (form-ref field-name)
@@ -756,10 +757,10 @@
   (form "auto-sync"
     (padded
       (tabs
-	(tab (text "Data")
-	  (dynamic (client-auto-sync-data-widget server)))
 	(tab (text "Files")
-	  (dynamic (client-auto-sync-files-widget server))))
+	  (dynamic (client-auto-sync-files-widget server)))
+	(tab (text "Data")
+	  (dynamic (client-auto-sync-data-widget server))))
       ======
       (hlist
 	>>
@@ -775,22 +776,18 @@
 ;; Upload and download widgets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget ((upload-widget server) quit)
+(tm-widget ((upload-widget server src dest) quit)
   (padded
     (form "upload-form"
       ======
       (aligned
         (item (text "Local source:")
-	  (with dummy (form-set "local-name"
-                                (if (remote-file-name (current-buffer)) ""
-                                    (url->system (current-buffer))))
+	  (with dummy (form-set "local-name" src)
 	    (dynamic (form-local-widget "upload-form" "local-name"
 					"Local file or directory"
 					"" "300px"))))
         (item (text "Remote destination:")
-	  (with dummy (form-set "remote-name"
-                                (if (remote-file-name (current-buffer))
-                                    (url->system (current-buffer)) ""))
+	  (with dummy (form-set "remote-name" dest)
 	    (dynamic (form-remote-widget server "upload-form" "remote-name"
 					 "Remote file or directory"
 					 "Upload as:" "300px"))))
@@ -817,13 +814,18 @@
 		   ;;(display* "Local  : " local-name "\n")
 		   ;;(display* "Remote : " remote-name "\n")
 		   ;;(display* "Message: " message "\n")
-		   (remote-upload local-name remote-name message)))
+		   (remote-upload local-name remote-name message
+                                  (lambda x (revert-buffer)))))
 	     (quit))))))))
 
 (tm-define (remote-interactive-upload server)
   (:interactive #t)
-  (dialogue-window (upload-widget server) noop
-		   "Upload file or directory"))
+  (let* ((src  (if (remote-file-name (current-buffer)) ""
+                   (url->system (current-buffer))))
+         (dest (if (remote-file-name (current-buffer))
+                   (url->system (current-buffer)) "")))
+    (dialogue-window (upload-widget server src dest) noop
+                     "Upload file or directory")))
 
 (tm-widget ((download-widget server) quit)
   (padded
@@ -871,6 +873,70 @@
   (:interactive #t)
   (dialogue-window (download-widget server) noop
 		   "Download file or directory"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Direct upload and download dialogs
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (simple-upload server local-name remote-dir)
+  (when (and (url-exists? local-name)
+             (remote-file-name remote-dir)
+             (url-regular? local-name)
+             (remote-directory? remote-dir))
+    (with remote-name (url-append remote-dir (url-tail local-name))
+      (remote-upload local-name remote-name "uploaded"
+                     (lambda x
+                       (revert-buffer)
+                       (set-message "upload completed" "upload"))))))
+
+(tm-define (simple-interactive-upload server)
+  (:interactive #t)
+  (choose-file (lambda (local-name)
+                 (simple-upload server local-name (current-buffer)))
+               "Upload file or directory" "generic" ""
+               (system->url "$PWD")))
+
+(define (simple-download server remote-name local-name)
+  (when (and (remote-file-name remote-name)
+             (or (url-exists? local-name)
+                 (url-exists? (url-head local-name))))
+    (when (and (remote-file? remote-name)
+               (url-directory? local-name))
+      (set! local-name (url-append local-name (url-tail remote-name))))
+    (remote-download local-name remote-name
+                     (lambda x
+                       (set-message "download completed" "download")))))
+
+(tm-define (simple-interactive-download server)
+  (:interactive #t)
+  (let* ((name (current-buffer))
+         (type (if (remote-directory? name) "directory" "generic"))
+         (tail (if (remote-home-directory? name) "Home" (url-tail name)))
+         (prop (url-append (system->url "$PWD") tail)))
+    (choose-file (lambda (local-name)
+                   (simple-download server name local-name))
+                 "Download file or directory" type "Download" prop)))
+
+(define (simple-synchronize server remote-name local-name)
+  (when (and (remote-file-name remote-name)
+             (or (url-exists? local-name)
+                 (url-exists? (url-head local-name))))
+    (when (and (remote-file? remote-name)
+               (url-directory? local-name))
+      (set! local-name (url-append local-name (url-tail remote-name))))
+    (client-auto-sync-add server (url->system local-name)
+                                 (url->system remote-name))
+    (remote-interactive-sync server)))
+
+(tm-define (simple-interactive-synchronize server)
+  (:interactive #t)
+  (let* ((name (current-buffer))
+         (type (if (remote-directory? name) "directory" "generic"))
+         (tail (if (remote-home-directory? name) "Home" (url-tail name)))
+         (prop (url-append (system->url "$PWD") tail)))
+    (choose-file (lambda (local-name)
+                   (simple-synchronize server name local-name))
+                 "Synchronize file or directory" type "Synchronize" prop)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Message widgets

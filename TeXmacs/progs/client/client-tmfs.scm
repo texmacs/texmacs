@@ -251,7 +251,7 @@
       hlink)))
 
 (define (dir-page sname entries)
-  (generic-document `(document (subsection* "File list")
+  (generic-document `(document (section* "File list")
                                ,@(map (cut dir-line sname <>) entries))))
 
 (tmfs-load-handler (remote-dir name)

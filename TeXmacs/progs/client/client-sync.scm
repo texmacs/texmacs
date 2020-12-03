@@ -334,19 +334,19 @@
 ;; Master routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (remote-upload local-name remote-name msg)
+(tm-define (remote-upload local-name remote-name msg . cont)
   (client-sync-status local-name remote-name
     (lambda (l)
       (client-upload (append (filter-status-list l "upload")
 			     (filter-status-list l "conflict"))
-		     msg ignore))))
+		     msg (if (null? cont) ignore (car cont))))))
 
-(tm-define (remote-download local-name remote-name)
+(tm-define (remote-download local-name remote-name . cont)
   (client-sync-status local-name remote-name
     (lambda (l)
       (client-download (append (filter-status-list l "download")
                                (filter-status-list l "conflict"))
-                       ignore))))
+                       (if (null? cont) ignore (car cont))))))
 
 (tm-define (client-sync-proceed l msg cont)
   (client-upload (filter-status-list l "upload") msg
