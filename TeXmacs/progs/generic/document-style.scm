@@ -150,9 +150,9 @@
 
 (define (url-resolve-package name)
   (let* ((style-name  (string-append name ".ts"))
-         (style-local (url-relative (current-buffer) style-name))
-         (style-url   (url-append "$TEXMACS_STYLE_PATH" style-name)))
-    (url-resolve (url-or style-local style-url) "r")))
+         (style-url   (url-append "$TEXMACS_STYLE_PATH" style-name))
+         (style-local (url-relative (current-buffer) style-name)))
+    (url-resolve (url-or style-url style-local) "r")))
 
 (tm-define (edit-package-source name)
   (with file-name (url-resolve-package name)
