@@ -29,7 +29,7 @@ import ast
 from inspect   import ismodule, getsource, getsourcefile
 from tmpy.compat import py_ver
 from tmpy.capture import CaptureStdout
-from tmpy.postscript import ps_out, PSOutDummy
+from tmpy.postscript import ps_out, PSOutDummy, pdf_out, FileOutDummy
 from tmpy.completion import parse_complete_command, complete
 from tmpy.protocol   import *
 
@@ -53,6 +53,11 @@ def flush_output (data):
 
     if isinstance (data, PSOutDummy):
         flush_ps (data.content)
+    elif isinstance (data, FileOutDummy):
+        if (data.content is None):
+            flush_verbatim ("")
+        else:
+            flush_file (data.content)
     else:
         flush_verbatim (str(data).strip())
 
@@ -102,6 +107,7 @@ my_globals   = {}
 
 # We insert into the session's namespace the 'ps_out' method.
 my_globals['ps_out'] = ps_out
+my_globals['pdf_out'] = pdf_out
 
 # As well as some documentation.
 my_globals['__doc__'] = """A Python plugin for TeXmacs.
