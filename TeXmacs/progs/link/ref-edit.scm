@@ -39,7 +39,7 @@
                   (exists? (cut tm-equal? <> id) (tm-children t)))
                 ids)))
 
-(define (and-nnull? l)
+(tm-define (and-nnull? l)
   (and (nnull? l) l))
 
 (tm-define (search-labels t)

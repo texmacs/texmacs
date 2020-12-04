@@ -23,14 +23,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (mirror-context? t)
-  (and (or (tree-func? t 'mirror 3) (tree-func? t 'shared 3))
+  (and (or (tree-func? t 'mirror 3)
+           (tree-func? t 'shared 3)
+           (tree-func? t 'show-comment 6)
+           (tree-func? t 'hide-comment 6)
+           (tree-func? t 'mirror-comment 6))
        (tree-atomic? (tree-ref t 0))
        (tree-atomic? (tree-ref t 1))))
 
 (define (mirror-body? t)
   (and (tree->path t)
        (mirror-context? (tree-up t))
-       (== (tree-index t) 2)))
+       (== (tree-index t) (- (tree-arity (tree-up t)) 1))))
 
 (define (mirror-unique-id t)
   (or (and (mirror-context? t) (tree->string (tree-ref t 0)))
@@ -45,7 +49,7 @@
          (with other? (lambda (u) (!= (tree->path t) (tree->path u)))
            (list-filter (id->trees (mirror-id t)) other?)))
         ((mirror-context? t)
-         (mirror-list (tree-ref t 2)))
+         (mirror-list (tree-ref t (- (tree-arity t) 1))))
         (else (list))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -136,7 +140,8 @@
           (mirror-invalidate t))
         (ahash-set! mirror-initialized key #t))
       (when (>= (length (id->trees (mirror-unique-id t))) 2)
-        (mirror-invalidate t)))))
+        (mirror-invalidate t))))
+  "")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Updating

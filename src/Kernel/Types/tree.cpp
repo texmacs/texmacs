@@ -324,6 +324,7 @@ is_multi_paragraph (tree t) {
 	inline_set->insert (make_tree_label ("footnote-anchor"));
 	inline_set->insert (make_tree_label ("note-footnote"));
 	inline_set->insert (make_tree_label ("note-footnote*"));
+	inline_set->insert (make_tree_label ("hide-comment"));
 	inline_set->insert (make_tree_label ("script-input"));
 	inline_set->insert (make_tree_label ("converter-input"));
       }

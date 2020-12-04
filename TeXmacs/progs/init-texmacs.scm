@@ -453,6 +453,7 @@
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting editing modes for various special styles\n")
+(lazy-menu (various comment-menu) comment-menu)
 (lazy-menu (various poster-menu) poster-block-menu)
 (lazy-menu (various theme-menu) basic-theme-menu)
 (lazy-define (various theme-edit) current-basic-theme)

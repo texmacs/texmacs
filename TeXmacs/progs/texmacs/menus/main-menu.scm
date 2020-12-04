@@ -49,6 +49,8 @@
           (=> "Source" (link source-menu)))
       (if (with-linking-tool?)
           (=> "Link" (link link-menu)))
+      (if (in-comment?)
+          (=> "Comment" (link comment-menu)))
       (if (in-presentation?)
           (=> "Dynamic" (link dynamic-menu)))
       (if (style-has? "icourse-dtd")
