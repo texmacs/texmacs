@@ -82,6 +82,22 @@
   (list-go-to (comments-in-buffer) dir))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Operate on comments
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (active-comments)
+  (if (selection-active-any?)
+      (append-map search-comments (selection-trees))
+      (search-comments (buffer-tree))))
+
+(tm-define (operate-on-comments op)
+  (:applicable (nnull? (active-comments)))
+  (for (c (reverse (active-comments)))
+    (cond ((== op :show) (tree-assign-node c 'show-comment))
+          ((== op :hide) (tree-assign-node c 'hide-comment))
+          ((== op :cut) (tree-cut c)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Open comment editor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

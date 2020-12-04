@@ -16,13 +16,16 @@
 
 (menu-bind comment-menu
   ("New comment" (make-comment))
+  ("Edit comments" (open-comments-editor (current-buffer)))
   ---
   ("First comment" (go-to-comment :first))
   ("Previous comment" (go-to-comment :previous))
   ("Next comment" (go-to-comment :next))
   ("Last comment" (go-to-comment :last))
   ---
-  ("Edit comments" (open-comments-editor (current-buffer))))
+  ("Show comments" (operate-on-comments :show))
+  ("Hide comments" (operate-on-comments :hide))
+  ("Remove comments" (operate-on-comments :cut)))
 
 (kbd-map
   (:mode in-comment?)
