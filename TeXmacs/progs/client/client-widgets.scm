@@ -17,6 +17,9 @@
         (client client-chat)
         (client client-live)))
 
+(tm-define (tm-servers)
+  (list "server.texmacs.org" "localhost"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Account creation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -56,8 +59,8 @@
       (form "account-info"
 	(aligned
 	  (item (text "Server:")
-	    (form-input "server" "string"
-			(list "") "300px"))
+	    (form-enum "server" (rcons (tm-servers) "")
+                       (car (tm-servers)) "280px"))
 	  (item (text "Pseudo:")
 	    (form-input "pseudo" "string"
 			(list (get-user-info "pseudo")) "300px"))
@@ -192,8 +195,14 @@
       ======
       (aligned
 	(item (text "Server:")
-	  (form-input "server" "string"
-		      (list server-name) "300px"))
+	  (form-enum "server"
+                     (if (== server-name "")
+                         (rcons (tm-servers) "")
+                         (cons server-name (rcons (tm-servers) "")))
+                     (if (== server-name "")
+                         (car (tm-servers))
+                         server-name)
+                     "280px"))
 	(item (text "Pseudo:")
 	  (form-input "pseudo" "string"
 		      (list pseudo) "300px"))

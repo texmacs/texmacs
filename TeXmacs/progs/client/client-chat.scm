@@ -178,6 +178,23 @@
 ;; List of chat rooms
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (fix-link sname u)
+  (if (and (string? u)
+           (or (string-starts? u "tmfs://remote-file/")
+               (string-starts? u "tmfs://remote-dir/")
+               (string-starts? u "tmfs://chat/")
+               (string-starts? u "tmfs://live/")))
+      (let* ((v (tmfs-cdr (tmfs-cdr (tmfs-cdr u))))
+             (v* (string-append sname "/" (tmfs-cdr v)))
+             (b (string-drop-right u (string-length v))))
+        (string-append b v*))
+      u))
+
+(define (fix-links sname doc)
+  (tm-replace doc (cut tm-func? <> 'hlink 2)
+              (lambda (h)
+                `(hlink ,(tm-ref h 0) ,(fix-link sname (tm-ref h 1))))))
+
 (tmfs-permission-handler (chat-rooms name type)
   (in? type (list "read")))
 
@@ -189,7 +206,7 @@
       (lambda (l)
         (with hyp (lambda (c) `(hlink ,c ,(string-append base "/" c)))
           (with doc `(document (section* "My chat rooms") ,@(map hyp l))
-            (buffer-set-body u doc)
+            (buffer-set-body u (fix-links sname doc))
             (buffer-pretend-saved u)
             (set-message "retrieved contents" "list of chat rooms"))))
       (lambda (err)
@@ -238,7 +255,7 @@
     (client-remote-eval server `(remote-mail-open)
       (lambda (l)
         (with doc (list-shared-document l)
-          (buffer-set-body u doc)
+          (buffer-set-body u (fix-links sname doc))
           (buffer-pretend-saved u)
           (set-message "retrieved contents" "list of shared resources")))
       (lambda (err)
