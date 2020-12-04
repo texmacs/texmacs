@@ -1215,7 +1215,8 @@ smart_font_rep::resolve (string c) {
       }
   }
 
-  if (mfam == "roman" && shape == "mathupright" && variant == "rm" &&
+  if (mfam == "roman" && shape == "mathupright" &&
+      (variant == "rm" || variant == "ss" || variant == "tt") &&
       N(c) == 1 && (c[0] < 'A' || c[0] > 'Z') && (c[0] < 'a' || c[0] > 'z'))
     return sm->add_char (tuple ("italic-roman"), c);
 
