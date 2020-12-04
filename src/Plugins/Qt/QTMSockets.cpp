@@ -249,7 +249,16 @@ socket_link::data_set_ready (int s) {
   }
   else {
     inbuf << string (data, lgdata);
-    DBG_IO ("Data Received:" << string(data, lgdata));
+    if (DEBUG_IO) {
+      string s (data, lgdata);
+      bool ok= true;
+      for (int i=0; i<N(s); i++)
+        if (((int) (unsigned char) s[i]) >= 128 ||
+            (((int) (unsigned char) s[i]) < 32 &&
+             s[i] != '\n' && s[i] != '\t')) ok= false;
+      if (ok) { DBG_IO ("Data received:" << s); }
+      else { DBG_IO ("Binary data received size=" << N(s)); }
+    }
     qsnr->setEnabled (true);
   }
 }
