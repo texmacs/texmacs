@@ -1367,6 +1367,7 @@ match_font_base_name (string fontname, string basename) {
     return false;
   int i= N(basename);
   while (i < N(fontname)) {
+    if (fontname[i] == ':') break;
     if (fontname[i] < '0' || fontname[i] > '9')
       return false;
     i++;
