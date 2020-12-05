@@ -88,13 +88,13 @@
 
 (setq binary-keywords
   '(with with-define with-global and-with with-innermost receive
-    with-environment with-environment* converter
+    with-environment with-environment* converter with-cache
     user-confirm user-url
     resize
     $with))
 
 (setq binary-no-highlight
-  '(client-remote-eval server-remote-eval with-cache))
+  '(client-remote-eval server-remote-eval))
 
 (setq binary-indent
   (append binary-keywords binary-no-highlight))

@@ -35,33 +35,6 @@
      (ahash-ref volatile-cache key)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Basic subroutines
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (comment-context? t)
-  (and (tm-in? t (comment-tag-list))
-       (== (tm-arity t) 6)))
-
-(tm-define (hidden-comment-context? t)
-  (and (tree-in? t (hidden-comment-tag-list))
-       (== (tree-arity t) 6)))
-
-(define (behind-hidden-comment?)
-  (and (== (cAr (cursor-path)) 1)
-       (== (cDr (cursor-path)) (tree->path (cursor-tree)))
-       (hidden-comment-context? (path->tree (cDr (cursor-path))))
-       (list (tree-label (cursor-tree))
-             (tree->path (cursor-tree)))))
-
-(define (comment-id t)
-  (and (comment-context? t)
-       (tm->string (tree-ref t 1))))
-
-(define (comment-preview t)
-  (and (hidden-comment-context? t)
-       `(preview-comment ,@(tm-children t))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Abbreviations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -73,95 +46,160 @@
         (if (>= i 0) (substring s 0 i) s))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Inserting a new comment
+;; Basic subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (make-comment)
-  (let* ((id (create-unique-id))
-         (mirror-id (create-unique-id))
-         (by (buffer-get-metadata (current-buffer) "author"))
-         (date (number->string (current-time))))
-    (insert-go-to `(show-comment ,id ,mirror-id "comment" ,by ,date "")
-                  (list 5 0))))
+(define comment-mode :visible)
+
+(tm-define (comment-context? t)
+  (and (tm-in? t (cond ((== comment-mode :visible)
+                        (comment-tag-list))
+                       ((== comment-mode :invisible)
+                        (invisible-comment-tag-list))
+                       (else
+                        (any-comment-tag-list))))
+       (== (tm-arity t) 6)))
+
+(tm-define (hidden-comment-context? t)
+  (and (tree-in? t (cond ((== comment-mode :visible)
+                          (hidden-comment-tag-list))
+                         ((== comment-mode :invisible)
+                          (invisible-hidden-comment-tag-list))
+                         (else
+                          (any-hidden-comment-tag-list))))
+       (== (tree-arity t) 6)))
+
+(define (any-comment-context? t)
+  (and (tm-in? t (any-comment-tag-list))
+       (== (tm-arity t) 6)))
+
+(define (comment-id t)
+  (and (any-comment-context? t)
+       (tm->string (tree-ref t 1))))
+
+(define (comment-type t)
+  (or (and (any-comment-context? t)
+           (tm->string (tree-ref t 2)))
+      "?"))
+
+(define (comment-by t)
+  (or (and (any-comment-context? t)
+           (tm->string (tree-ref t 3)))
+      "?"))
+
+(define (comment-preview t)
+  (and (hidden-comment-context? t)
+       `(preview-comment ,@(tm-children t))))
+
+(define (behind-hidden-comment?)
+  (and (== (cAr (cursor-path)) 1)
+       (== (cDr (cursor-path)) (tree->path (cursor-tree)))
+       (hidden-comment-context? (path->tree (cDr (cursor-path))))
+       (list (tree-label (cursor-tree))
+             (tree->path (cursor-tree)))))
+
+(tm-define (hidden-child? t i)
+  (:require (any-comment-context? t))
+  (in? i (list 2 3)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Comment navigation
+;; Searching comments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (search-comments t)
   (tree-search t comment-context?))
 
 (tm-define (comments-in-buffer)
-  (with-cache (change-time) :comments-in-buffer
+  (with-cache (change-time) (list :comments-in-buffer comment-mode)
     (and-nnull? (search-comments (buffer-tree)))))
 
+(define (comment-list)
+  (with-cache (change-time) (list :comment-list comment-mode)
+    (if (selection-active-any?)
+        (append-map search-comments (selection-trees))
+        (search-comments (buffer-tree)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Inserting a new comment
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (make-comment type)
+  (let* ((id (create-unique-id))
+         (mirror-id (create-unique-id))
+         (by (buffer-get-metadata (current-buffer) "author"))
+         (date (number->string (current-time))))
+    (insert-go-to `(show-comment ,id ,mirror-id ,type ,by ,date "")
+                  (list 5 0))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Comment navigation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (tm-define (go-to-comment dir)
-  (:applicable (comments-in-buffer))
-  (list-go-to (comments-in-buffer) dir))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Types and authors
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (hidden-child? t i)
-  (:require (comment-context? t))
-  (in? i (list 2 3)))
-
-(define (search-comment-types t)
-  (with l (if (comment-context? t) (list (tm->string (tm-ref t 2))) (list))
-    (list-remove-duplicates l)))
-
-(define (search-comments-types l)
-  (sort (list-remove-duplicates (append-map search-comment-types l))
-        string<=?))
-
-(tm-define (comment-type-list)
-  (with-cache (change-time) :comment-type-list
-    (search-comments-types (comment-list))))
-
-(tm-define (comment-test-type? tp)
-  (in? tp (comment-type-list)))
-
-(tm-define (comment-toggle-type tp)
-  (noop))
-
-(define (search-comment-by t)
-  (with l (if (comment-context? t) (list (tm->string (tm-ref t 3))) (list))
-    (list-remove-duplicates l)))
-
-(define (search-comments-by l)
-  (sort (list-remove-duplicates (append-map search-comment-by l))
-        string<=?))
-
-(tm-define (comment-by-list)
-  (with-cache (change-time) :comment-by-list
-    (search-comments-by (comment-list))))
-
-(tm-define (comment-test-by? by)
-  (in? by (comment-by-list)))
-
-(tm-define (comment-toggle-by by)
-  (noop))
+  (:applicable (comment-list))
+  (list-go-to (comment-list) dir))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Operate on comments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (comment-list)
-  (with-cache (change-time) :comment-list
-    (if (selection-active-any?)
-        (append-map search-comments (selection-trees))
-        (search-comments (buffer-tree)))))
+(define (operate-on-comments-in op l)
+  (for (c (reverse l))
+    (with lab (tree-label c)
+      (cond ((== op :show) (tree-assign-node c 'show-comment))
+            ((== op :hide) (tree-assign-node c 'hide-comment))
+            ((== op :cut) (tree-cut c))
+            ((and (== op :invisible) (in? lab (comment-tag-list)))
+             (with lab* (symbol-append 'invisible- lab)
+               (tree-assign-node c lab*)))
+            ((and (== op :visible) (in? lab (invisible-comment-tag-list)))
+             (with lab* (symbol-drop lab 10)
+               (tree-assign-node c lab*)))))))
 
 (tm-define (operate-on-comments op)
   (:applicable (nnull? (comment-list)))
-  (for (c (reverse (comment-list)))
-    (cond ((== op :show) (tree-assign-node c 'show-comment))
-          ((== op :hide) (tree-assign-node c 'hide-comment))
-          ((== op :cut) (tree-cut c)))))
+  (operate-on-comments-in op (comment-list)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Open comment editor
+;; Types
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (comment-type-list mode)
+  (with-cache (change-time) (list :comment-type-list mode)
+    (with-global comment-mode mode
+      (with l (map comment-type (comment-list))
+        (sort (list-remove-duplicates l) string<=?)))))
+
+(tm-define (comment-test-type? tp)
+  (nin? tp (comment-type-list :invisible)))
+
+(tm-define (comment-toggle-type tp)
+  (let* ((new-mode (if (comment-test-type? tp) :invisible :visible))
+         (l (with-global comment-mode :all (comment-list)))
+         (f (list-filter l (lambda (c) (== (comment-type c) tp)))))
+    (operate-on-comments-in new-mode f)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Authors
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (comment-by-list mode)
+  (with-cache (change-time) (list :comment-by-list mode)
+    (with-global comment-mode mode
+      (with l (map comment-by (comment-list))
+        (sort (list-remove-duplicates l) string<=?)))))
+
+(tm-define (comment-test-by? by)
+  (nin? by (comment-by-list :invisible)))
+
+(tm-define (comment-toggle-by by)
+  (let* ((new-mode (if (comment-test-by? by) :invisible :visible))
+         (l (with-global comment-mode :all (comment-list)))
+         (f (list-filter l (lambda (c) (== (comment-by c) by)))))
+    (operate-on-comments-in new-mode f)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Open comments editor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tmfs-permission-handler (comments name type)

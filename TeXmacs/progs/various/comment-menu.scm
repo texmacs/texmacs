@@ -15,7 +15,8 @@
   (:use (various comment-edit)))
 
 (menu-bind comment-menu
-  ("New comment" (make-comment))
+  ("New comment" (make-comment "comment"))
+  ("New reminder" (make-comment "reminder"))
   ---
   ("First comment" (go-to-comment :first))
   ("Previous comment" (go-to-comment :previous))
@@ -25,13 +26,13 @@
   ("Show comments" (operate-on-comments :show))
   ("Hide comments" (operate-on-comments :hide))
   ("Remove comments" (operate-on-comments :cut))
-  (with tl (comment-type-list)
+  (with tl (comment-type-list :all)
     (assuming (> (length tl) 1)
       ---
       (for (tp tl)
         ((check (eval (upcase-first tp)) "v" (comment-test-type? tp))
          (comment-toggle-type tp)))))
-  (with bl (comment-by-list)
+  (with bl (comment-by-list :all)
     (assuming (> (length bl) 1)
       ---
       (for (by bl)
@@ -42,7 +43,8 @@
 
 (kbd-map
   (:mode in-comment?)
-  ("std :" (make-comment))
+  ("std ;" (make-comment "comment"))
+  ("std :" (make-comment "reminder"))
   ("std [" (go-to-comment :previous))
   ("std ]" (go-to-comment :next))
   ("std {" (go-to-comment :first))
