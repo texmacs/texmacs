@@ -62,11 +62,11 @@
 
   <assign|block-comment|<macro|unique-id|mirror-id|type|by|time|body|<with|old-locus-color|<value|locus-color>|locus-color|preserve|<style-with|src-compact|none|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<with|locus-color|<value|old-color>|<surround|<extern|mirror-initialize|<quote-arg|body>>||<expand-as|<arg|body>|<render-block-comment|<arg|by>|<arg|body>>>>>>>>>>
 
-  <assign|show-comment|<macro|unique-id|mirror-id|type|by|time|body|<expand-as|<arg|body>|<compound|<if|<equal|<get-label|<quote-arg|body>>|document>|block-comment|inline-comment>|<arg|unique-id>|<arg|mirror-id>|<arg|type>|<arg|by>|<arg|time>|<arg|body>>>>>
+  <assign|unfolded-comment|<macro|unique-id|mirror-id|type|by|time|body|<expand-as|<arg|body>|<compound|<if|<equal|<get-label|<quote-arg|body>>|document>|block-comment|inline-comment>|<arg|unique-id>|<arg|mirror-id>|<arg|type>|<arg|by>|<arg|time>|<arg|body>>>>>
 
   <assign|nested-comment|<macro|unique-id|mirror-id|type|by|time|body|<expand-as|<arg|body>|<compound|<if|<equal|<get-label|<quote-arg|body>>|document>|block-comment|inline-comment>|<arg|unique-id>|<arg|mirror-id>|<arg|type>|<arg|by>|<arg|time>|<arg|body>>>>>
 
-  <assign|hide-comment|<macro|unique-id|mirror-id|type|by|time|body|<with|old-locus-color|<value|locus-color>|locus-color|preserve|<style-with|src-compact|none|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<expand-as|<arg|body>|<extern|mirror-initialize|<quote-arg|body>><flag|<abbreviate-name|<arg|by>>|<comment-color|<arg|by>>><hidden|<arg|body>>>>>>>>
+  <assign|folded-comment|<macro|unique-id|mirror-id|type|by|time|body|<with|old-locus-color|<value|locus-color>|locus-color|preserve|<style-with|src-compact|none|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<expand-as|<arg|body>|<extern|mirror-initialize|<quote-arg|body>><flag|<abbreviate-name|<arg|by>>|<comment-color|<arg|by>>><hidden|<arg|body>>>>>>>>
 
   <assign|mirror-comment|<macro|unique-id|mirror-id|type|by|time|body|<with|old-locus-color|<value|locus-color>|locus-color|preserve|<style-with|src-compact|none|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<with|locus-color|<value|old-color>|<surround|<extern|mirror-initialize|<quote-arg|body>>||<render-box-comment|<arg|by>|<arg|body>>>>>>>>>
 
@@ -76,7 +76,7 @@
     </preview-balloon>
   </macro>>
 
-  <drd-props|show-comment|arity|6|accessible|5>
+  <drd-props|unfolded-comment|arity|6|accessible|5>
 
   <drd-props|nested-comment|arity|6|accessible|5>
 
@@ -91,9 +91,9 @@
 
   <assign|invisible-comment|<macro|unique-id|mirror-id|type|by|time|body|<hidden|<arg|body>>>>
 
-  <assign|invisible-show-comment|<macro|unique-id|mirror-id|type|by|time|body|<compound|<if|<extern|ext-contains-visible-comments?|<quote-arg|body>>|<if|<equal|<get-label|<quote-arg|body>>|document>|block-comment|inline-comment>|invisible-comment>|<arg|unique-id>|<arg|mirror-id>|<arg|type>|<arg|by>|<arg|time>|<arg|body>>>>
+  <assign|invisible-unfolded-comment|<macro|unique-id|mirror-id|type|by|time|body|<compound|<if|<extern|ext-contains-visible-comments?|<quote-arg|body>>|<if|<equal|<get-label|<quote-arg|body>>|document>|block-comment|inline-comment>|invisible-comment>|<arg|unique-id>|<arg|mirror-id>|<arg|type>|<arg|by>|<arg|time>|<arg|body>>>>
 
-  <assign|invisible-hide-comment|<macro|unique-id|mirror-id|type|by|time|body|<compound|<if|<extern|ext-contains-visible-comments?|<quote-arg|body>>|hide-comment|invisible-comment>|<arg|unique-id>|<arg|mirror-id>|<arg|type>|<arg|by>|<arg|time>|<arg|body>>>>
+  <assign|invisible-folded-comment|<macro|unique-id|mirror-id|type|by|time|body|<compound|<if|<extern|ext-contains-visible-comments?|<quote-arg|body>>|folded-comment|invisible-comment>|<arg|unique-id>|<arg|mirror-id>|<arg|type>|<arg|by>|<arg|time>|<arg|body>>>>
 
   <assign|invisible-nested-comment|<macro|unique-id|mirror-id|type|by|time|body|<compound|<if|<extern|ext-contains-visible-comments?|<quote-arg|body>>|nested-comment|invisible-comment>|<arg|unique-id>|<arg|mirror-id>|<arg|type>|<arg|by>|<arg|time>|<arg|body>>>>
 

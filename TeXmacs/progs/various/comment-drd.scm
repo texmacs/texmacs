@@ -25,19 +25,21 @@
 ;; Comments
 
 (define-group hidden-comment-tag
-  hide-comment)
+  folded-comment)
 
 (define-group comment-tag
-  hide-comment show-comment)
+  folded-comment unfolded-comment)
 
 (define-group visible-comment-tag
   (comment-tag) nested-comment)
 
+;; Hidden comments
+
 (define-group invisible-hidden-comment-tag
-  invisible-hide-comment)
+  invisible-folded-comment)
 
 (define-group invisible-comment-tag
-  invisible-hide-comment invisible-show-comment invisible-nested-comment)
+  invisible-folded-comment invisible-unfolded-comment invisible-nested-comment)
 
 (define-group any-comment-tag
   (visible-comment-tag) (invisible-comment-tag))

@@ -23,8 +23,8 @@
   ("Next comment" (go-to-comment :next))
   ("Last comment" (go-to-comment :last))
   ---
-  ("Show comments" (operate-on-comments :show))
-  ("Hide comments" (operate-on-comments :hide))
+  ("Fold comments" (operate-on-comments :fold))
+  ("Unfold comments" (operate-on-comments :unfold))
   ("Remove comments" (operate-on-comments :cut))
   (with tl (comment-type-list :all)
     (assuming (> (length tl) 1)
