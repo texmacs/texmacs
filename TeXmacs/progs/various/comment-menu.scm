@@ -16,7 +16,6 @@
 
 (menu-bind comment-menu
   ("New comment" (make-comment))
-  ("Edit comments" (open-comments-editor (current-buffer)))
   ---
   ("First comment" (go-to-comment :first))
   ("Previous comment" (go-to-comment :previous))
@@ -25,7 +24,21 @@
   ---
   ("Show comments" (operate-on-comments :show))
   ("Hide comments" (operate-on-comments :hide))
-  ("Remove comments" (operate-on-comments :cut)))
+  ("Remove comments" (operate-on-comments :cut))
+  (with tl (comment-type-list)
+    (assuming (> (length tl) 1)
+      ---
+      (for (tp tl)
+        ((check (eval (upcase-first tp)) "v" (comment-test-type? tp))
+         (comment-toggle-type tp)))))
+  (with bl (comment-by-list)
+    (assuming (> (length bl) 1)
+      ---
+      (for (by bl)
+        ((check (eval by) "v" (comment-test-by? by))
+         (comment-toggle-by by)))))
+  ---
+  ("Edit comments" (open-comments-editor)))
 
 (kbd-map
   (:mode in-comment?)

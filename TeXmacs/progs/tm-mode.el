@@ -94,7 +94,7 @@
     $with))
 
 (setq binary-no-highlight
-  '(client-remote-eval server-remote-eval))
+  '(client-remote-eval server-remote-eval with-cache))
 
 (setq binary-indent
   (append binary-keywords binary-no-highlight))

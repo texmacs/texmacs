@@ -40,6 +40,8 @@
     </src-comment>
   </active*>
 
+  <assign|render-invisible-comment|<macro|unique-id|mirror-id|type|by|time|body|<hidden|<arg|body>>>>
+
   <assign|render-box-comment|<\macro|bar-color|title|body>
     <with|shadow-elevation|0.75|<\half-bend-in-shadow>
       <\wide-tabular>
@@ -57,6 +59,10 @@
       Various rendering styles for comments
     </src-comment>
   </active*>
+
+  <assign|invisible-show-comment|<value|render-invisible-comment>>
+
+  <assign|invisible-hide-comment|<value|render-invisible-comment>>
 
   <assign|show-comment|<macro|unique-id|mirror-id|type|by|time|body|<with|old-color|<value|color>|old-locus-color|<value|locus-color>|locus-color|preserve|<style-with|src-compact|none|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<with|locus-color|<value|old-color>|color|<comment-color|<arg|by>>|<surround|<extern|mirror-initialize|<quote-arg|body>>[<condensed|<name|<abbreviate-name|<arg|by>>>>:
   |<if|<equal|<get-label|<quote-arg|body>>|document>|<right-flush>>]|<with|color|<value|old-color>|<arg|body>>>>>>>>>
