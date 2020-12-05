@@ -196,16 +196,27 @@
            (prompt (upcase-first name))
            (type (tree-child-type t i))
            (fm (type->format type))
+           (props (child-proposals t i))
            (setter (lambda (x)
                      (pull-focus t
                        (when x
                          (tree-set t i (inputter-encode x type))
                          (focus-tree-modified t))))))
       (assuming (!= name "")
-        (when (inputter-active? (tree-ref t i) type)
-          ((eval s)
-           (interactive setter
-             (list prompt fm (inputter-decode (tree-ref t i) type)))))))))
+        (assuming props
+          (-> (eval s)
+              (for (prop props)
+                (assuming (string? prop)
+                  ((eval prop) (setter prop)))
+                (assuming (== prop :other)
+                  ---
+                  ("Other"
+                   (interactive setter (list (upcase-first name) fm in)))))))
+        (assuming (not props)
+          (when (inputter-active? (tree-ref t i) type)
+            ((eval s)
+             (interactive setter
+               (list prompt fm (inputter-decode (tree-ref t i) type))))))))))
 
 (tm-menu (string-input-icon t i)
   (:require (string-variable-name? t i))
