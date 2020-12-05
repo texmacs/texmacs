@@ -368,8 +368,8 @@
   (if (== (get-cell-mode) "column") (group "Column"))
   (if (== (get-cell-mode) "table") (group "Cells"))
   (link cell-menu)
-  (dynamic (focus-extra-menu t))
   (dynamic (focus-hidden-menu t))
+  (dynamic (focus-extra-menu t))
   (dynamic (focus-label-menu t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

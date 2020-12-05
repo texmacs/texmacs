@@ -239,6 +239,10 @@
          (f (list-filter l (lambda (c) (== (comment-type c) tp)))))
     (operate-on-comments-in new-mode f)))
 
+(tm-define (child-proposals t i)
+  (:require (and (any-comment-context? t) (== i 2)))
+  (rcons (comment-type-list :all) :other))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Authors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -257,6 +261,10 @@
          (l (with-global comment-mode :all (comment-list)))
          (f (list-filter l (lambda (c) (== (comment-by c) by)))))
     (operate-on-comments-in new-mode f)))
+
+(tm-define (child-proposals t i)
+  (:require (and (any-comment-context? t) (== i 3)))
+  (rcons (comment-by-list :all) :other))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Open comments editor

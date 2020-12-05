@@ -609,8 +609,8 @@
   (assuming (focus-can-insert-remove? t)
     ---
     (dynamic (focus-insert-menu t)))
-  (dynamic (focus-extra-menu t))
   (dynamic (focus-hidden-menu t))
+  (dynamic (focus-extra-menu t))
   (dynamic (focus-label-menu t)))
 
 (tm-menu (focus-menu)
