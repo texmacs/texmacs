@@ -30,19 +30,19 @@
 (define-group comment-tag
   folded-comment unfolded-comment)
 
-(define-group visible-comment-tag
+(define-group shown-comment-tag
   (comment-tag) nested-comment)
 
 ;; Hidden comments
 
-(define-group invisible-folded-comment-tag
-  invisible-folded-comment)
+(define-group hidden-folded-comment-tag
+  hidden-folded-comment)
 
-(define-group invisible-comment-tag
-  invisible-folded-comment invisible-unfolded-comment invisible-nested-comment)
+(define-group hidden-comment-tag
+  hidden-folded-comment hidden-unfolded-comment hidden-nested-comment)
 
 (define-group any-comment-tag
-  (visible-comment-tag) (invisible-comment-tag))
+  (shown-comment-tag) (hidden-comment-tag))
 
 (define-group any-folded-comment-tag
-  (folded-comment-tag) (invisible-folded-comment-tag))
+  (folded-comment-tag) (hidden-folded-comment-tag))

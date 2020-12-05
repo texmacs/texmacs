@@ -45,36 +45,36 @@
              (i (string-search-forwards " " 0 s)))
         (if (>= i 0) (substring s 0 i) s))))
 
-(tm-define (ext-contains-visible-comments? t)
+(tm-define (ext-contains-shown-comments? t)
   (:secure #t)
-  (if (nnull? (tree-search t visible-comment-context?)) "true" "false"))
+  (if (nnull? (tree-search t shown-comment-context?)) "true" "false"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define comment-mode :visible)
+(define comment-mode :show)
 
 (tm-define (comment-context? t)
-  (and (tm-in? t (cond ((== comment-mode :visible)
+  (and (tm-in? t (cond ((== comment-mode :show)
                         (comment-tag-list))
-                       ((== comment-mode :invisible)
-                        (invisible-comment-tag-list))
+                       ((== comment-mode :hide)
+                        (hidden-comment-tag-list))
                        (else
                         (any-comment-tag-list))))
        (== (tm-arity t) 6)))
 
 (tm-define (folded-comment-context? t)
-  (and (tree-in? t (cond ((== comment-mode :visible)
+  (and (tree-in? t (cond ((== comment-mode :show)
                           (folded-comment-tag-list))
-                         ((== comment-mode :invisible)
-                          (invisible-folded-comment-tag-list))
+                         ((== comment-mode :hide)
+                          (hidden-folded-comment-tag-list))
                          (else
                           (any-folded-comment-tag-list))))
        (== (tree-arity t) 6)))
 
-(define (visible-comment-context? t)
-  (and (tm-in? t (visible-comment-tag-list))
+(define (shown-comment-context? t)
+  (and (tm-in? t (shown-comment-tag-list))
        (== (tm-arity t) 6)))
 
 (define (any-comment-context? t)
@@ -166,17 +166,17 @@
       (cond ((== op :cut) (tree-cut c))
             ((and (== op :fold) (== lab 'unfolded-comment))
              (tree-assign-node c 'folded-comment))
-            ((and (== op :fold) (== lab 'invisible-unfolded-comment))
-             (tree-assign-node c 'invisible-folded-comment))
+            ((and (== op :fold) (== lab 'hidden-unfolded-comment))
+             (tree-assign-node c 'hidden-folded-comment))
             ((and (== op :unfold) (== lab 'folded-comment))
              (tree-assign-node c 'unfolded-comment))
-            ((and (== op :unfold) (== lab 'invisible-folded-comment))
-             (tree-assign-node c 'invisible-unfolded-comment))
-            ((and (== op :invisible) (in? lab (visible-comment-tag-list)))
-             (with lab* (symbol-append 'invisible- lab)
+            ((and (== op :unfold) (== lab 'hidden-folded-comment))
+             (tree-assign-node c 'hidden-unfolded-comment))
+            ((and (== op :hide) (in? lab (shown-comment-tag-list)))
+             (with lab* (symbol-append 'hidden- lab)
                (tree-assign-node c lab*)))
-            ((and (== op :visible) (in? lab (invisible-comment-tag-list)))
-             (with lab* (symbol-drop lab 10)
+            ((and (== op :show) (in? lab (hidden-comment-tag-list)))
+             (with lab* (symbol-drop lab 7)
                (tree-assign-node c lab*)))))))
 
 (tm-define (operate-on-comments op)
@@ -194,10 +194,10 @@
         (sort (list-remove-duplicates l) string<=?)))))
 
 (tm-define (comment-test-type? tp)
-  (nin? tp (comment-type-list :invisible)))
+  (nin? tp (comment-type-list :hide)))
 
 (tm-define (comment-toggle-type tp)
-  (let* ((new-mode (if (comment-test-type? tp) :invisible :visible))
+  (let* ((new-mode (if (comment-test-type? tp) :hide :show))
          (l (with-global comment-mode :all (comment-list)))
          (f (list-filter l (lambda (c) (== (comment-type c) tp)))))
     (operate-on-comments-in new-mode f)))
@@ -213,10 +213,10 @@
         (sort (list-remove-duplicates l) string<=?)))))
 
 (tm-define (comment-test-by? by)
-  (nin? by (comment-by-list :invisible)))
+  (nin? by (comment-by-list :hide)))
 
 (tm-define (comment-toggle-by by)
-  (let* ((new-mode (if (comment-test-by? by) :invisible :visible))
+  (let* ((new-mode (if (comment-test-by? by) :hide :show))
          (l (with-global comment-mode :all (comment-list)))
          (f (list-filter l (lambda (c) (== (comment-by c) by)))))
     (operate-on-comments-in new-mode f)))

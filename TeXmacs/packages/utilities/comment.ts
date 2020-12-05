@@ -89,13 +89,13 @@
     </src-comment>
   </active*>
 
-  <assign|invisible-comment|<macro|unique-id|mirror-id|type|by|time|body|<hidden|<arg|body>>>>
+  <assign|hidden-comment|<macro|unique-id|mirror-id|type|by|time|body|<hidden|<arg|body>>>>
 
-  <assign|invisible-unfolded-comment|<macro|unique-id|mirror-id|type|by|time|body|<compound|<if|<extern|ext-contains-visible-comments?|<quote-arg|body>>|<if|<equal|<get-label|<quote-arg|body>>|document>|block-comment|inline-comment>|invisible-comment>|<arg|unique-id>|<arg|mirror-id>|<arg|type>|<arg|by>|<arg|time>|<arg|body>>>>
+  <assign|hidden-unfolded-comment|<macro|unique-id|mirror-id|type|by|time|body|<compound|<if|<extern|ext-contains-shown-comments?|<quote-arg|body>>|<if|<equal|<get-label|<quote-arg|body>>|document>|block-comment|inline-comment>|hidden-comment>|<arg|unique-id>|<arg|mirror-id>|<arg|type>|<arg|by>|<arg|time>|<arg|body>>>>
 
-  <assign|invisible-folded-comment|<macro|unique-id|mirror-id|type|by|time|body|<compound|<if|<extern|ext-contains-visible-comments?|<quote-arg|body>>|folded-comment|invisible-comment>|<arg|unique-id>|<arg|mirror-id>|<arg|type>|<arg|by>|<arg|time>|<arg|body>>>>
+  <assign|hidden-folded-comment|<macro|unique-id|mirror-id|type|by|time|body|<compound|<if|<extern|ext-contains-shown-comments?|<quote-arg|body>>|folded-comment|hidden-comment>|<arg|unique-id>|<arg|mirror-id>|<arg|type>|<arg|by>|<arg|time>|<arg|body>>>>
 
-  <assign|invisible-nested-comment|<macro|unique-id|mirror-id|type|by|time|body|<compound|<if|<extern|ext-contains-visible-comments?|<quote-arg|body>>|nested-comment|invisible-comment>|<arg|unique-id>|<arg|mirror-id>|<arg|type>|<arg|by>|<arg|time>|<arg|body>>>>
+  <assign|hidden-nested-comment|<macro|unique-id|mirror-id|type|by|time|body|<compound|<if|<extern|ext-contains-shown-comments?|<quote-arg|body>>|nested-comment|hidden-comment>|<arg|unique-id>|<arg|mirror-id>|<arg|type>|<arg|by>|<arg|time>|<arg|body>>>>
 
   \;
 </body>
