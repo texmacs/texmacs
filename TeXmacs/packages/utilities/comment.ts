@@ -26,7 +26,7 @@
 
   <\active*>
     <\src-comment>
-      Helper macros
+      Rendering macros
     </src-comment>
   </active*>
 
@@ -34,19 +34,17 @@
 
   <assign|abbreviate-name|<macro|by|<extern|ext-abbreviate-name|<arg|by>>>>
 
-  <\active*>
-    <\src-comment>
-      Rendering macros
-    </src-comment>
-  </active*>
+  <assign|render-inline-comment|<macro|by|body|<surround|<with|color|<comment-color|<arg|by>>|[<condensed|<name|<abbreviate-name|<arg|by>>>>:
+  >|<with|color|<comment-color|<arg|by>>|]>|<arg|body>>>>
 
-  <assign|render-invisible-comment|<macro|unique-id|mirror-id|type|by|time|body|<hidden|<arg|body>>>>
+  <assign|render-block-comment|<macro|by|body|<surround|<with|color|<comment-color|<arg|by>>|<condensed|<name|<abbreviate-name|<arg|by>>>>\<rangle\>
+  >|<right-flush>|<arg|body>>>>
 
-  <assign|render-box-comment|<\macro|bar-color|title|body>
+  <assign|render-box-comment|<\macro|by|body>
     <with|shadow-elevation|0.75|<\half-bend-in-shadow>
       <\wide-tabular>
-        <tformat|<cwith|1|1|1|1|cell-background|<arg|bar-color>>|<cwith|1|-1|1|1|cell-lsep|1spc>|<cwith|1|-1|1|1|cell-rsep|1spc>|<cwith|1|-1|1|1|cell-tsep|0.5spc>|<cwith|1|-1|1|1|cell-bsep|0.5spc>|<cwith|2|-1|1|1|cell-tsep|2spc>|<cwith|2|-1|1|1|cell-bsep|1spc>|<table|<row|<\cell>
-          <samp|<with|color|white|locus-color|preserve|<arg|title>>>
+        <tformat|<cwith|1|1|1|1|cell-background|<comment-color|<arg|by>>>|<cwith|1|-1|1|1|cell-lsep|1spc>|<cwith|1|-1|1|1|cell-rsep|1spc>|<cwith|1|-1|1|1|cell-tsep|0.5spc>|<cwith|1|-1|1|1|cell-bsep|0.5spc>|<cwith|2|-1|1|1|cell-tsep|2spc>|<cwith|2|-1|1|1|cell-bsep|1spc>|<table|<row|<\cell>
+          <samp|<with|color|white|locus-color|preserve|<copy|<arg|by>>>>
         </cell>>|<row|<\cell>
           <arg|body>
         </cell>>>>
@@ -56,33 +54,50 @@
 
   <\active*>
     <\src-comment>
-      Various rendering styles for comments
+      Various kinds of comments
     </src-comment>
   </active*>
 
-  <assign|invisible-show-comment|<value|render-invisible-comment>>
+  <assign|inline-comment|<macro|unique-id|mirror-id|type|by|time|body|<with|old-locus-color|<value|locus-color>|locus-color|preserve|<style-with|src-compact|none|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<with|locus-color|<value|old-color>|<surround|<extern|mirror-initialize|<quote-arg|body>>||<expand-as|<arg|body>|<render-inline-comment|<arg|by>|<arg|body>>>>>>>>>>
 
-  <assign|invisible-hide-comment|<value|render-invisible-comment>>
+  <assign|block-comment|<macro|unique-id|mirror-id|type|by|time|body|<with|old-locus-color|<value|locus-color>|locus-color|preserve|<style-with|src-compact|none|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<with|locus-color|<value|old-color>|<surround|<extern|mirror-initialize|<quote-arg|body>>||<expand-as|<arg|body>|<render-block-comment|<arg|by>|<arg|body>>>>>>>>>>
 
-  <assign|show-comment|<macro|unique-id|mirror-id|type|by|time|body|<with|old-color|<value|color>|old-locus-color|<value|locus-color>|locus-color|preserve|<style-with|src-compact|none|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<with|locus-color|<value|old-color>|color|<comment-color|<arg|by>>|<surround|<extern|mirror-initialize|<quote-arg|body>>[<condensed|<name|<abbreviate-name|<arg|by>>>>:
-  |<if|<equal|<get-label|<quote-arg|body>>|document>|<right-flush>>]|<with|color|<value|old-color>|<arg|body>>>>>>>>>
+  <assign|show-comment|<macro|unique-id|mirror-id|type|by|time|body|<expand-as|<arg|body>|<compound|<if|<equal|<get-label|<quote-arg|body>>|document>|block-comment|inline-comment>|<arg|unique-id>|<arg|mirror-id>|<arg|type>|<arg|by>|<arg|time>|<arg|body>>>>>
+
+  <assign|nested-comment|<macro|unique-id|mirror-id|type|by|time|body|<expand-as|<arg|body>|<compound|<if|<equal|<get-label|<quote-arg|body>>|document>|block-comment|inline-comment>|<arg|unique-id>|<arg|mirror-id>|<arg|type>|<arg|by>|<arg|time>|<arg|body>>>>>
 
   <assign|hide-comment|<macro|unique-id|mirror-id|type|by|time|body|<with|old-locus-color|<value|locus-color>|locus-color|preserve|<style-with|src-compact|none|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<expand-as|<arg|body>|<extern|mirror-initialize|<quote-arg|body>><flag|<abbreviate-name|<arg|by>>|<comment-color|<arg|by>>><hidden|<arg|body>>>>>>>>
 
+  <assign|mirror-comment|<macro|unique-id|mirror-id|type|by|time|body|<with|old-locus-color|<value|locus-color>|locus-color|preserve|<style-with|src-compact|none|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<with|locus-color|<value|old-color>|<surround|<extern|mirror-initialize|<quote-arg|body>>||<render-box-comment|<arg|by>|<arg|body>>>>>>>>>
+
   <assign|preview-comment|<\macro|unique-id|mirror-id|type|by|time|body>
     <\preview-balloon>
-      <surround|<with|color|<comment-color|<arg|by>>|<condensed|<name|<abbreviate-name|<arg|by>>>>\<rangle\>
-      >||<arg|body>>
+      <render-block-comment|<arg|by>|<arg|body>>
     </preview-balloon>
   </macro>>
 
-  <assign|mirror-comment|<macro|unique-id|mirror-id|type|by|time|body|<with|old-locus-color|<value|locus-color>|locus-color|preserve|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<\surround|<hidden|<extern|mirror-initialize|<quote-arg|body>>>|>
-    <\with|locus-color|<value|old-locus-color>>
-      <\render-box-comment|<comment-color|<arg|by>>|<copy|<arg|by>>>
-        <arg|body>
-      </render-box-comment>
-    </with>
-  </surround>>>>>
+  <drd-props|show-comment|arity|6|accessible|5>
+
+  <drd-props|nested-comment|arity|6|accessible|5>
+
+  <drd-props|mirror-comment|arity|6|accessible|5>
+
+  <\active*>
+    <\src-comment>
+      Completely invisible comments (except when they contain visible nested
+      comments)
+    </src-comment>
+  </active*>
+
+  <assign|invisible-comment|<macro|unique-id|mirror-id|type|by|time|body|<hidden|<arg|body>>>>
+
+  <assign|invisible-show-comment|<macro|unique-id|mirror-id|type|by|time|body|<compound|<if|<extern|ext-contains-visible-comments?|<quote-arg|body>>|<if|<equal|<get-label|<quote-arg|body>>|document>|block-comment|inline-comment>|invisible-comment>|<arg|unique-id>|<arg|mirror-id>|<arg|type>|<arg|by>|<arg|time>|<arg|body>>>>
+
+  <assign|invisible-hide-comment|<macro|unique-id|mirror-id|type|by|time|body|<compound|<if|<extern|ext-contains-visible-comments?|<quote-arg|body>>|hide-comment|invisible-comment>|<arg|unique-id>|<arg|mirror-id>|<arg|type>|<arg|by>|<arg|time>|<arg|body>>>>
+
+  <assign|invisible-nested-comment|<macro|unique-id|mirror-id|type|by|time|body|<compound|<if|<extern|ext-contains-visible-comments?|<quote-arg|body>>|nested-comment|invisible-comment>|<arg|unique-id>|<arg|mirror-id>|<arg|type>|<arg|by>|<arg|time>|<arg|body>>>>
+
+  \;
 </body>
 
 <\initial>

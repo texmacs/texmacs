@@ -35,15 +35,19 @@
      (ahash-ref volatile-cache key)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Abbreviations
+;; External macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (ext-abbreviate-name x)
+(tm-define (ext-abbreviate-name t)
   (:secure #t)
-  (if (not (and (tree? x) (tree-atomic? x))) x
-      (let* ((s (tree->string x))
+  (if (not (and (tree? t) (tree-atomic? t))) t
+      (let* ((s (tree->string t))
              (i (string-search-forwards " " 0 s)))
         (if (>= i 0) (substring s 0 i) s))))
+
+(tm-define (ext-contains-visible-comments? t)
+  (:secure #t)
+  (if (nnull? (tree-search t visible-comment-context?)) "true" "false"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic subroutines
@@ -68,6 +72,10 @@
                          (else
                           (any-hidden-comment-tag-list))))
        (== (tree-arity t) 6)))
+
+(define (visible-comment-context? t)
+  (and (tm-in? t (visible-comment-tag-list))
+       (== (tm-arity t) 6)))
 
 (define (any-comment-context? t)
   (and (tm-in? t (any-comment-tag-list))
@@ -102,6 +110,10 @@
   (:require (any-comment-context? t))
   (in? i (list 2 3)))
 
+(tm-define (hidden-child? t i)
+  (:require (tree-is? t 'mirror-comment))
+  #f)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Searching comments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -123,12 +135,17 @@
 ;; Inserting a new comment
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (nest? t)
+  (or (any-comment-context? t)
+      (tree-is? t 'mirror-comment)))
+
 (tm-define (make-comment type)
-  (let* ((id (create-unique-id))
+  (let* ((lab (if (tree-innermost nest?) 'nested-comment 'show-comment))
+         (id (create-unique-id))
          (mirror-id (create-unique-id))
          (by (buffer-get-metadata (current-buffer) "author"))
          (date (number->string (current-time))))
-    (insert-go-to `(show-comment ,id ,mirror-id ,type ,by ,date "")
+    (insert-go-to `(,lab ,id ,mirror-id ,type ,by ,date "")
                   (list 5 0))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -149,7 +166,7 @@
       (cond ((== op :show) (tree-assign-node c 'show-comment))
             ((== op :hide) (tree-assign-node c 'hide-comment))
             ((== op :cut) (tree-cut c))
-            ((and (== op :invisible) (in? lab (comment-tag-list)))
+            ((and (== op :invisible) (in? lab (visible-comment-tag-list)))
              (with lab* (symbol-append 'invisible- lab)
                (tree-assign-node c lab*)))
             ((and (== op :visible) (in? lab (invisible-comment-tag-list)))

@@ -30,14 +30,17 @@
 (define-group comment-tag
   hide-comment show-comment)
 
+(define-group visible-comment-tag
+  (comment-tag) nested-comment)
+
 (define-group invisible-hidden-comment-tag
   invisible-hide-comment)
 
 (define-group invisible-comment-tag
-  invisible-hide-comment invisible-show-comment)
+  invisible-hide-comment invisible-show-comment invisible-nested-comment)
 
 (define-group any-comment-tag
-  (comment-tag) (invisible-comment-tag))
+  (visible-comment-tag) (invisible-comment-tag))
 
 (define-group any-hidden-comment-tag
   (hidden-comment-tag) (invisible-hidden-comment-tag))
