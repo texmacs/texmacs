@@ -99,7 +99,7 @@
                         (hidden-comment-tag-list))
                        (else
                         (any-comment-tag-list))))
-       (== (tm-arity t) 6)))
+       (== (tm-arity t) 7)))
 
 (tm-define (folded-comment-context? t)
   (and (tree-in? t (cond ((== comment-mode :show)
@@ -108,15 +108,15 @@
                           (hidden-folded-comment-tag-list))
                          (else
                           (any-folded-comment-tag-list))))
-       (== (tree-arity t) 6)))
+       (== (tree-arity t) 7)))
 
 (define (shown-comment-context? t)
   (and (tm-in? t (shown-comment-tag-list))
-       (== (tm-arity t) 6)))
+       (== (tm-arity t) 7)))
 
 (tm-define (any-comment-context? t)
   (and (tm-in? t (any-comment-tag-list))
-       (== (tm-arity t) 6)))
+       (== (tm-arity t) 7)))
 
 (define (comment-id t)
   (and (any-comment-context? t)
@@ -182,8 +182,8 @@
          (mirror-id (create-unique-id))
          (by (get-user-info "name"))
          (date (number->string (current-time))))
-    (insert-go-to `(,lab ,id ,mirror-id ,type ,by ,date "")
-                  (list 5 0))))
+    (insert-go-to `(,lab ,id ,mirror-id ,type ,by ,date "" "")
+                  (list 6 0))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Comment navigation
@@ -272,8 +272,9 @@
 (define (mirror-comment t)
   (let* ((id (if (tm-atomic? (tm-ref t 0))
                  (string-append (tm-ref t 0) "-edit")
-                 (create-unique-id))))
-    `(mirror-comment ,id ,@(cdr (tm-children t)))))
+                 (create-unique-id)))
+         (l (tm-children t)))
+    `(mirror-comment ,id ,@(cDr (cDr (cdr l))) "" ,(cAr l))))
 
 (tmfs-load-handler (comments name)
   (let* ((u (tmfs-string->url name))
