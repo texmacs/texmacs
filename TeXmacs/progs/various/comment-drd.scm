@@ -24,7 +24,7 @@
 
 ;; Comments
 
-(define-group hidden-comment-tag
+(define-group folded-comment-tag
   folded-comment)
 
 (define-group comment-tag
@@ -35,7 +35,7 @@
 
 ;; Hidden comments
 
-(define-group invisible-hidden-comment-tag
+(define-group invisible-folded-comment-tag
   invisible-folded-comment)
 
 (define-group invisible-comment-tag
@@ -44,5 +44,5 @@
 (define-group any-comment-tag
   (visible-comment-tag) (invisible-comment-tag))
 
-(define-group any-hidden-comment-tag
-  (hidden-comment-tag) (invisible-hidden-comment-tag))
+(define-group any-folded-comment-tag
+  (folded-comment-tag) (invisible-folded-comment-tag))

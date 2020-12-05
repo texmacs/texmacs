@@ -64,13 +64,13 @@
                         (any-comment-tag-list))))
        (== (tm-arity t) 6)))
 
-(tm-define (hidden-comment-context? t)
+(tm-define (folded-comment-context? t)
   (and (tree-in? t (cond ((== comment-mode :visible)
-                          (hidden-comment-tag-list))
+                          (folded-comment-tag-list))
                          ((== comment-mode :invisible)
-                          (invisible-hidden-comment-tag-list))
+                          (invisible-folded-comment-tag-list))
                          (else
-                          (any-hidden-comment-tag-list))))
+                          (any-folded-comment-tag-list))))
        (== (tree-arity t) 6)))
 
 (define (visible-comment-context? t)
@@ -96,13 +96,13 @@
       "?"))
 
 (define (comment-preview t)
-  (and (hidden-comment-context? t)
+  (and (folded-comment-context? t)
        `(preview-comment ,@(tm-children t))))
 
-(define (behind-hidden-comment?)
+(define (behind-folded-comment?)
   (and (== (cAr (cursor-path)) 1)
        (== (cDr (cursor-path)) (tree->path (cursor-tree)))
-       (hidden-comment-context? (path->tree (cDr (cursor-path))))
+       (folded-comment-context? (path->tree (cDr (cursor-path))))
        (list (tree-label (cursor-tree))
              (tree->path (cursor-tree)))))
 
@@ -268,15 +268,15 @@
           (close-tooltip)))))
 
 (tm-define (mouse-event key x y mods time)
-  (with before? (behind-hidden-comment?)
+  (with before? (behind-folded-comment?)
     (former key x y mods time)
-    (with after? (behind-hidden-comment?)
+    (with after? (behind-folded-comment?)
       (when (!= before? after?)
         (update-comment-tooltip)))))
 
 (tm-define (keyboard-press key time)
-  (with before? (behind-hidden-comment?)
+  (with before? (behind-folded-comment?)
     (former key time)
-    (with after? (behind-hidden-comment?)
+    (with after? (behind-folded-comment?)
       (when (!= before? after?)
         (update-comment-tooltip)))))
