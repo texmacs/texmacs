@@ -12,10 +12,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (various comment-edit)
-  (:use (generic document-edit)
+  (:use (utils library tree)
+        (generic document-edit)
         (link ref-edit)
         (various comment-drd)
-        (part part-shared)))
+        (part part-shared)
+        (database db-users)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Caching highly volatile computations
@@ -49,6 +51,41 @@
   (:secure #t)
   (if (nnull? (tree-search t shown-comment-context?)) "true" "false"))
 
+(tm-define (ext-comment-color type by)
+  (:secure #t)
+  (get-comment-color (or (tm->string type) "?")
+                     (or (tm->string by) "?")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Colors
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (default-comment-color type by)
+  (cond ((== type "reminder") "#844")
+        ((== by (get-user-info "name")) "#277")
+        (else "#727")))
+
+(tm-define (get-comment-color type by)
+  (let* ((key (string-append by " " type " color"))
+         (val (default-comment-color type by)))
+    (cpp-get-preference key val)))
+
+(tm-define (default-comment-color? type by)
+  (with key (string-append by " " type " color")
+    (not (cpp-has-preference? key))))
+
+(tm-define (reset-comment-color type by)
+  (with key (string-append by " " type " color")
+    (cpp-reset-preference key)
+    (for (t (tree-search (buffer-tree) any-comment-context?))
+      (update-tree t))))
+  
+(tm-define (set-comment-color type by val)
+  (with key (string-append by " " type " color")
+    (cpp-set-preference key val)
+    (for (t (tree-search (buffer-tree) any-comment-context?))
+      (update-tree t))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -77,7 +114,7 @@
   (and (tm-in? t (shown-comment-tag-list))
        (== (tm-arity t) 6)))
 
-(define (any-comment-context? t)
+(tm-define (any-comment-context? t)
   (and (tm-in? t (any-comment-tag-list))
        (== (tm-arity t) 6)))
 
@@ -85,12 +122,12 @@
   (and (any-comment-context? t)
        (tm->string (tree-ref t 1))))
 
-(define (comment-type t)
+(tm-define (comment-type t)
   (or (and (any-comment-context? t)
            (tm->string (tree-ref t 2)))
       "?"))
 
-(define (comment-by t)
+(tm-define (comment-by t)
   (or (and (any-comment-context? t)
            (tm->string (tree-ref t 3)))
       "?"))
@@ -143,7 +180,7 @@
   (let* ((lab (if (tree-innermost nest?) 'nested-comment 'unfolded-comment))
          (id (create-unique-id))
          (mirror-id (create-unique-id))
-         (by (buffer-get-metadata (current-buffer) "author"))
+         (by (get-user-info "name"))
          (date (number->string (current-time))))
     (insert-go-to `(,lab ,id ,mirror-id ,type ,by ,date "")
                   (list 5 0))))

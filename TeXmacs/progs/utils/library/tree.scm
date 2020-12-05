@@ -349,6 +349,12 @@
   (:synopsis "Correct the tree @(tree-ref t . l) and its ancestors")
   (cpp-tree-correct-upwards (apply tree-ref (cons t l))))
 
+(tm-define (update-tree t . l)
+  (:synopsis "Re-typeset and render the tree @(tree-ref t . l)")
+  (and-let* ((u (apply tree-ref (cons t l)))
+             (p (tree->path u)))
+    (update-path p)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Try a modification with possibility for cancelation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

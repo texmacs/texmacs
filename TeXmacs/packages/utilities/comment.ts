@@ -30,20 +30,20 @@
     </src-comment>
   </active*>
 
-  <assign|comment-color|<macro|by|dark magenta>>
+  <assign|comment-color|<macro|type|by|<extern|ext-comment-color|<arg|type>|<arg|by>>>>
 
   <assign|abbreviate-name|<macro|by|<extern|ext-abbreviate-name|<arg|by>>>>
 
-  <assign|render-inline-comment|<macro|by|body|<surround|<with|color|<comment-color|<arg|by>>|[<condensed|<name|<abbreviate-name|<arg|by>>>>:
+  <assign|render-inline-comment|<macro|type|by|body|<surround|<with|color|<comment-color|<arg|type>|<arg|by>>|[<condensed|<name|<abbreviate-name|<arg|by>>>>:
   >|<with|color|<comment-color|<arg|by>>|]>|<arg|body>>>>
 
-  <assign|render-block-comment|<macro|by|body|<surround|<with|color|<comment-color|<arg|by>>|<condensed|<name|<abbreviate-name|<arg|by>>>>\<rangle\>
+  <assign|render-block-comment|<macro|type|by|body|<surround|<with|color|<comment-color|<arg|type>|<arg|by>>|<condensed|<name|<abbreviate-name|<arg|by>>>>\<rangle\>
   >|<right-flush>|<arg|body>>>>
 
-  <assign|render-box-comment|<\macro|by|body>
+  <assign|render-box-comment|<\macro|type|by|body>
     <with|shadow-elevation|0.75|<\half-bend-in-shadow>
       <\wide-tabular>
-        <tformat|<cwith|1|1|1|1|cell-background|<comment-color|<arg|by>>>|<cwith|1|-1|1|1|cell-lsep|1spc>|<cwith|1|-1|1|1|cell-rsep|1spc>|<cwith|1|-1|1|1|cell-tsep|0.5spc>|<cwith|1|-1|1|1|cell-bsep|0.5spc>|<cwith|2|-1|1|1|cell-tsep|2spc>|<cwith|2|-1|1|1|cell-bsep|1spc>|<table|<row|<\cell>
+        <tformat|<cwith|1|1|1|1|cell-background|<comment-color|<arg|type>|<arg|by>>>|<cwith|1|-1|1|1|cell-lsep|1spc>|<cwith|1|-1|1|1|cell-rsep|1spc>|<cwith|1|-1|1|1|cell-tsep|0.5spc>|<cwith|1|-1|1|1|cell-bsep|0.5spc>|<cwith|2|-1|1|1|cell-tsep|2spc>|<cwith|2|-1|1|1|cell-bsep|1spc>|<table|<row|<\cell>
           <samp|<with|color|white|locus-color|preserve|<copy|<arg|by>>>>
         </cell>>|<row|<\cell>
           <arg|body>
@@ -58,22 +58,24 @@
     </src-comment>
   </active*>
 
-  <assign|inline-comment|<macro|unique-id|mirror-id|type|by|time|body|<with|old-locus-color|<value|locus-color>|locus-color|preserve|<style-with|src-compact|none|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<with|locus-color|<value|old-color>|<surround|<extern|mirror-initialize|<quote-arg|body>>||<expand-as|<arg|body>|<render-inline-comment|<arg|by>|<arg|body>>>>>>>>>>
+  <assign|inline-comment|<macro|unique-id|mirror-id|type|by|time|body|<with|old-locus-color|<value|locus-color>|locus-color|preserve|<style-with|src-compact|none|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<with|locus-color|<value|old-color>|<surround|<extern|mirror-initialize|<quote-arg|body>>||<expand-as|<arg|body>|<render-inline-comment|<arg|type>|<arg|by>|<arg|body>>>>>>>>>>
 
-  <assign|block-comment|<macro|unique-id|mirror-id|type|by|time|body|<with|old-locus-color|<value|locus-color>|locus-color|preserve|<style-with|src-compact|none|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<with|locus-color|<value|old-color>|<surround|<extern|mirror-initialize|<quote-arg|body>>||<expand-as|<arg|body>|<render-block-comment|<arg|by>|<arg|body>>>>>>>>>>
+  <assign|block-comment|<macro|unique-id|mirror-id|type|by|time|body|<with|old-locus-color|<value|locus-color>|locus-color|preserve|<style-with|src-compact|none|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<with|locus-color|<value|old-color>|<surround|<extern|mirror-initialize|<quote-arg|body>>||<expand-as|<arg|body>|<render-block-comment|<arg|type>|<arg|by>|<arg|body>>>>>>>>>>
 
   <assign|unfolded-comment|<macro|unique-id|mirror-id|type|by|time|body|<expand-as|<arg|body>|<compound|<if|<equal|<get-label|<quote-arg|body>>|document>|block-comment|inline-comment>|<arg|unique-id>|<arg|mirror-id>|<arg|type>|<arg|by>|<arg|time>|<arg|body>>>>>
 
   <assign|nested-comment|<macro|unique-id|mirror-id|type|by|time|body|<expand-as|<arg|body>|<compound|<if|<equal|<get-label|<quote-arg|body>>|document>|block-comment|inline-comment>|<arg|unique-id>|<arg|mirror-id>|<arg|type>|<arg|by>|<arg|time>|<arg|body>>>>>
 
-  <assign|folded-comment|<macro|unique-id|mirror-id|type|by|time|body|<with|old-locus-color|<value|locus-color>|locus-color|preserve|<style-with|src-compact|none|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<expand-as|<arg|body>|<extern|mirror-initialize|<quote-arg|body>><flag|<abbreviate-name|<arg|by>>|<comment-color|<arg|by>>><hidden|<arg|body>>>>>>>>
+  <assign|folded-comment|<macro|unique-id|mirror-id|type|by|time|body|<with|old-locus-color|<value|locus-color>|locus-color|preserve|<style-with|src-compact|none|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<expand-as|<arg|body>|<extern|mirror-initialize|<quote-arg|body>><flag|<abbreviate-name|<arg|by>>|<comment-color|<arg|type>|<arg|by>>><hidden|<arg|body>>>>>>>>
 
-  <assign|mirror-comment|<macro|unique-id|mirror-id|type|by|time|body|<with|old-locus-color|<value|locus-color>|locus-color|preserve|<style-with|src-compact|none|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<with|locus-color|<value|old-color>|<surround|<extern|mirror-initialize|<quote-arg|body>>||<render-box-comment|<arg|by>|<arg|body>>>>>>>>>
+  <assign|mirror-comment|<macro|unique-id|mirror-id|type|by|time|body|<with|old-locus-color|<value|locus-color>|locus-color|preserve|<style-with|src-compact|none|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<with|locus-color|<value|old-color>|<surround|<extern|mirror-initialize|<quote-arg|body>>||<render-box-comment|<arg|type>|<arg|by>|<arg|body>>>>>>>>>
 
   <assign|preview-comment|<\macro|unique-id|mirror-id|type|by|time|body>
-    <\preview-balloon>
-      <render-block-comment|<arg|by>|<arg|body>>
-    </preview-balloon>
+    <\with|preview-bg-color|<blend|#fffd|<comment-color|<arg|type>|<arg|by>>>>
+      <\preview-balloon>
+        <render-block-comment|<arg|type>|<arg|by>|<arg|body>>
+      </preview-balloon>
+    </with>
   </macro>>
 
   <drd-props|unfolded-comment|arity|6|accessible|5>
