@@ -106,7 +106,7 @@ edit_text_rep::remove_text_sub (bool forward) {
                   is_compound (u, "footnote-anchor", 2) ||
                   is_compound (u, "note-footnote") ||
                   is_compound (u, "note-footnote*") ||
-                  is_compound (u, "hide-comment")) {
+                  is_compound (u, "folded-comment")) {
                 assign (path_up (p), "");
                 correct (path_up (p, 2));
               }

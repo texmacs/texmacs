@@ -63,7 +63,7 @@ edit_dynamic_rep::is_multi_paragraph_macro (tree t, bool pure) {
       !is_compound (t, "footnote-anchor") &&
       !is_compound (t, "note-footnote") &&
       !is_compound (t, "note-footnote*") &&
-      !is_compound (t, "hide-comment")) {
+      !is_compound (t, "folded-comment")) {
     int i;
     for (i=1; i<n; i++)
       if (is_multi_paragraph_macro (t[i], pure))
@@ -135,7 +135,7 @@ edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
         (l == make_tree_label ("footnote-anchor")) ||
         (l == make_tree_label ("note-footnote")) ||
         (l == make_tree_label ("note-footnote*")) ||
-        (l == make_tree_label ("hide-comment")))
+        (l == make_tree_label ("folded-comment")))
       {
         t[0]= tree (DOCUMENT, "");
         p   = path (0, 0, 0);
