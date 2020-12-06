@@ -29,6 +29,7 @@
 (menu-bind bookmarks-menu)
 (menu-bind test-menu)
 (menu-bind help-icons (if (in-session?) (link session-help-icons)))
+(menu-bind comment-menu)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The TeXmacs main menu

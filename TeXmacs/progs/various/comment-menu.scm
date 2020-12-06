@@ -20,6 +20,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind comment-menu
+  (:require (in-comment?))
   ("New folded comment" (make-folded-comment "comment"))
   ("New unfolded comment" (make-unfolded-comment "comment"))
   ---
