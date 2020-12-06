@@ -152,6 +152,10 @@
   (require-format x '(check :%3))
   `($check ,(gui-make (cadr x)) ,(caddr x) ,(cadddr x)))
 
+(define (gui-make-shortcut x)
+  (require-format x '(shortcut :%2))
+  `($shortcut* ,(gui-make (cadr x)) ,(caddr x)))
+
 (define (gui-make-balloon x)
   (require-format x '(balloon :%2))
   `($balloon ,(gui-make (cadr x)) ,(gui-make (caddr x))))
@@ -381,6 +385,7 @@
   (concat ,gui-make-concat)
   (verbatim ,gui-make-verbatim)
   (check ,gui-make-check)
+  (shortcut ,gui-make-shortcut)
   (balloon ,gui-make-balloon)
   (-> ,gui-make-submenu)
   (=> ,gui-make-top-submenu)

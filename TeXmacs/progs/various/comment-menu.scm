@@ -12,15 +12,19 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (various comment-menu)
-  (:use (various comment-edit)))
+  (:use (various comment-edit)
+        (various comment-widgets)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main 'Comment' menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind comment-menu
-  ("New comment" (make-comment "comment"))
-  ("New reminder" (make-comment "reminder"))
+  ("New folded comment" (make-folded-comment "comment"))
+  ("New unfolded comment" (make-unfolded-comment "comment"))
+  ---
+  ((shortcut "Edit comment" "C-return") (open-comment-editor))
+  ("Edit comments" (open-comments-editor))
   ---
   ("First comment" (go-to-comment :first))
   ("Previous comment" (go-to-comment :previous))
@@ -41,9 +45,7 @@
       ---
       (for (by bl)
         ((check (eval by) "v" (comment-test-by? by))
-         (comment-toggle-by by)))))
-  ---
-  ("Edit comments" (open-comments-editor)))
+         (comment-toggle-by by))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Selecting the colors of different types of comments
@@ -85,8 +87,8 @@
 
 (kbd-map
   (:mode in-comment?)
-  ("std ;" (make-comment "comment"))
-  ("std :" (make-comment "reminder"))
+  ("std ;" (make-unfolded-comment "comment"))
+  ("std :" (make-folded-comment "comment"))
   ("std [" (go-to-comment :previous))
   ("std ]" (go-to-comment :next))
   ("std {" (go-to-comment :first))

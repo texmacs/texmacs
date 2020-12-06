@@ -136,7 +136,7 @@
   (and (folded-comment-context? t)
        `(preview-comment ,@(tm-children t))))
 
-(define (behind-folded-comment?)
+(tm-define (behind-folded-comment?)
   (and (== (cAr (cursor-path)) 1)
        (== (cDr (cursor-path)) (tree->path (cursor-tree)))
        (folded-comment-context? (path->tree (cDr (cursor-path))))
@@ -176,14 +176,20 @@
   (or (any-comment-context? t)
       (tree-is? t 'mirror-comment)))
 
-(tm-define (make-comment type)
-  (let* ((lab (if (tree-innermost nest?) 'nested-comment 'unfolded-comment))
-         (id (create-unique-id))
+(tm-define (inside-comment?)
+  (tree-innermost nest?))
+  
+(tm-define (make-comment lab type)
+  (let* ((id (create-unique-id))
          (mirror-id (create-unique-id))
          (by (get-user-info "name"))
          (date (number->string (current-time))))
     (insert-go-to `(,lab ,id ,mirror-id ,type ,by ,date "" "")
                   (list 6 0))))
+
+(tm-define (make-unfolded-comment type)
+  (with lab (if (inside-comment?) 'nested-comment 'unfolded-comment)
+    (make-comment lab type)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Comment navigation
@@ -265,39 +271,6 @@
 (tm-define (child-proposals t i)
   (:require (and (any-comment-context? t) (== i 3)))
   (rcons (comment-by-list :all) :other))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Open comments editor
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tmfs-permission-handler (comments name type)
-  (in? type (list "read")))
-
-(tmfs-title-handler (comments name doc)
-  (with u (tmfs-string->url name)
-    (string-append (url->system (url-tail u)) " - Comments")))
-
-(define (mirror-comment t)
-  (let* ((id (if (tm-atomic? (tm-ref t 0))
-                 (string-append (tm-ref t 0) "-edit")
-                 (create-unique-id)))
-         (l (tm-children t)))
-    `(mirror-comment ,id ,@(cDr (cDr (cdr l))) "" ,(cAr l))))
-
-(tmfs-load-handler (comments name)
-  (let* ((u (tmfs-string->url name))
-         (doc (tree->stree (buffer-get u))))
-    (tm-replace doc (cut tm-func? <> 'body 1)
-                (lambda (t)
-                  (let* ((l (tm-search t comment-context?))
-                         (r (map mirror-comment l)))
-                    `(body (document ,@r)))))))
-
-(tm-define (open-comments-editor)
-  (:applicable (comments-in-buffer))
-  (let* ((u (current-buffer))
-         (cu (string-append "tmfs://comments/" (url->tmfs-string u))))
-    (load-buffer-in-new-window cu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Previewing

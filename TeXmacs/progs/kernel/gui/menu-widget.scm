@@ -381,10 +381,10 @@
 	      (logior style (+ widget-style-inert widget-style-grey)))))))
 
 (define (make-menu-entry-attrs label action opt-key opt-check)
-  (cond ((match? label '(shortcut :%1 :string?))
-         (make-menu-entry-attrs (cadr label) action (caddr label) opt-check))
-        ((match? label '(check :%1 :string? :%1))
+  (cond ((match? label '(check :%1 :string? :%1))
          (make-menu-entry-attrs (cadr label) action opt-key (cddr label)))
+        ((match? label '(shortcut :%1 :string?))
+         (make-menu-entry-attrs (cadr label) action (caddr label) opt-check))
         (else (values label action opt-key opt-check))))
 
 (define (make-menu-entry-sub p style bar?)
@@ -889,6 +889,12 @@
                        (menu-expand (car a))
                        (cadr a)
                        ((caddr a)))
+                 (replace-procedures (cadr p)))))
+        ((match? (car p) '(shortcut :menu-wide-label :string?))
+         (with a (cdar p)
+           (list (list 'shortcut
+                       (menu-expand (car a))
+                       (cadr a))
                  (replace-procedures (cadr p)))))
         ((match? (car p) ':menu-wide-label)
          (replace-procedures p))

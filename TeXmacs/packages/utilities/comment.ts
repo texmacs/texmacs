@@ -70,6 +70,8 @@
 
   <assign|mirror-comment|<macro|unique-id|mirror-id|type|by|time|src|body|<with|old-locus-color|<value|locus-color>|locus-color|preserve|<style-with|src-compact|none|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<with|locus-color|<value|old-color>|<surround|<extern|mirror-initialize|<quote-arg|body>>||<render-box-comment|<arg|type>|<arg|by>|<arg|body>>>>>>>>>
 
+  <assign|carbon-comment|<macro|unique-id|mirror-id|type|by|time|src|body|<with|old-locus-color|<value|locus-color>|locus-color|preserve|<style-with|src-compact|none|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<with|locus-color|<value|old-color>|<surround|<extern|mirror-initialize|<quote-arg|body>>||<arg|body>>>>>>>>
+
   <assign|preview-comment|<\macro|unique-id|mirror-id|type|by|time|src|body>
     <\with|preview-bg-color|<blend|#fffd|<comment-color|<arg|type>|<arg|by>>>>
       <\preview-balloon>
@@ -82,7 +84,9 @@
 
   <drd-props|nested-comment|arity|7|accessible|6>
 
-  <drd-props|mirror-comment|arity|7|accessible|6>
+  <drd-props|mirror-comment|arity|7|accessible|6|border|no>
+
+  <drd-props|carbon-comment|arity|7|accessible|6|border|no>
 
   <\active*>
     <\src-comment>

@@ -27,7 +27,8 @@
            (tree-func? t 'shared 3)
            (tree-func? t 'folded-comment 7)
            (tree-func? t 'unfolded-comment 7)
-           (tree-func? t 'mirror-comment 7))
+           (tree-func? t 'mirror-comment 7)
+           (tree-func? t 'carbon-comment 7))
        (tree-atomic? (tree-ref t 0))
        (tree-atomic? (tree-ref t 1))))
 

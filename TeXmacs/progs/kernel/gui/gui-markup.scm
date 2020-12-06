@@ -263,10 +263,16 @@
   `(list ,text (lambda () ,@cmds)))
 
 (tm-define-macro ($check text check pred?)
-  (:synopsis "Make button")
+  (:synopsis "Make check")
   (if developer-mode?
     (ahash-set! all-translations text #t))
   `(list 'check ,text ,check (lambda () ,pred?)))
+
+(tm-define-macro ($shortcut* text sh)
+  (:synopsis "Make shortcut")
+  (if developer-mode?
+    (ahash-set! all-translations text #t))
+  `(list 'shortcut ,text ,sh))
 
 (tm-define-macro ($balloon text balloon)
   (:synopsis "Make balloon")
