@@ -84,7 +84,9 @@
                 (lambda (t)
                   (let* ((l (tm-search t comment-context?))
                          (r (map mirror-comment l)))
-                    `(body (document ,@r)))))))
+                    (if (null? r)
+                        `(body (document ""))
+                        `(body (document ,@r))))))))
 
 (tm-define (open-comments-editor)
   (:applicable (comments-in-buffer))
@@ -145,3 +147,36 @@
   (former key time)
   (when (in-comments-editor?)
     (sync-master-cursor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Pairing cursor positions: commented -> comments
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (has-comments-editor?)
+  (let* ((u (current-buffer))
+         (cu (string-append "tmfs://comments/" (url->tmfs-string u))))
+    (and (buffer-exists? cu)
+         (in? (string->url cu) (map window->buffer (window-list))))))
+
+(define (sync-comments-cursor)
+  (let* ((m (current-buffer))
+         (u (string-append "tmfs://comments/" (url->tmfs-string m)))
+         (b (buffer-get-body u))
+         (t (tree-innermost any-comment-context? #t)))
+    (with-buffer u
+      (if t
+          (and-let* ((i (comment-id t))
+                     (c (search-comment b i)))
+            (tree-select (tm-ref c :last))
+            (tree-go-to c :start))
+          (selection-cancel)))))
+
+(tm-define (mouse-event key x y mods time)
+  (former key x y mods time)
+  (when (and (has-comments-editor?) (!= key "move"))
+    (sync-comments-cursor)))
+
+(tm-define (keyboard-press key time)
+  (former key time)
+  (when (has-comments-editor?)
+    (sync-comments-cursor)))
