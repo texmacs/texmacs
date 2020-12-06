@@ -159,8 +159,9 @@
   (tree-search t comment-context?))
 
 (tm-define (comments-in-buffer)
-  (with-cache (change-time) (list :comments-in-buffer comment-mode)
-    (and-nnull? (search-comments (buffer-tree)))))
+  (with-cache (change-time) :comments-in-buffer
+    (with-global comment-mode :all
+      (and-nnull? (search-comments (buffer-tree))))))
 
 (define (comment-list)
   (with-cache (change-time) (list :comment-list comment-mode)

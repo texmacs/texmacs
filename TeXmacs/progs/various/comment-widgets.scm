@@ -88,13 +88,29 @@
 
 (tm-define (open-comments-editor)
   (:applicable (comments-in-buffer))
-  (let* ((u (current-buffer))
+  (let* ((l (comments-in-buffer))
+         (u (current-buffer))
          (cu (string-append "tmfs://comments/" (url->tmfs-string u))))
-    (load-buffer-in-new-window cu)
-    (buffer-set-master cu u)))
+    (when (not (tree-innermost any-comment-context? #t))
+      (list-go-to l :next))
+    (when (not (tree-innermost any-comment-context? #t))
+      (list-go-to l :previous))
+    (when (not (tree-innermost any-comment-context? #t))
+      (list-go-to l :first))
+    (let* ((t (tree-innermost any-comment-context? #t))
+           (id (comment-id t)))
+      (when t (tree-select t))
+      (load-buffer-in-new-window cu)
+      (buffer-set-master cu u)
+      (delayed
+        (:pause 50)
+        (and-let* ((b (buffer-get-body cu))
+                   (c (search-comment b id)))
+          (with-buffer cu
+            (tree-go-to c :start)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Pairing the cursor positions in main and comment buffers
+;; Pairing cursor positions: comments -> commented
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (in-comments-editor?)
