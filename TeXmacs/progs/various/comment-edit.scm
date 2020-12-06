@@ -118,7 +118,7 @@
   (and (tm-in? t (any-comment-tag-list))
        (== (tm-arity t) 7)))
 
-(define (comment-id t)
+(tm-define (comment-id t)
   (and (any-comment-context? t)
        (tm->string (tree-ref t 1))))
 

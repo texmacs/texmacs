@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (various comment-widgets)
-  (:use (various comment-edit)))
+  (:use (various comment-edit)
+        (utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Editing a simple comment in a separate widget
@@ -89,4 +90,42 @@
   (:applicable (comments-in-buffer))
   (let* ((u (current-buffer))
          (cu (string-append "tmfs://comments/" (url->tmfs-string u))))
-    (load-buffer-in-new-window cu)))
+    (load-buffer-in-new-window cu)
+    (buffer-set-master cu u)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Pairing the cursor positions in main and comment buffers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (in-comments-editor?)
+  (string-starts? (url->string (current-buffer)) "tmfs://comments/"))
+
+(define ((comment-by-id? id) t)
+  (and (any-comment-context? t)
+       (== (comment-id t) id)))
+
+(define (search-comment t id)
+  (with l (tree-search t (comment-by-id? id))
+    (and (nnull? l) (car l))))
+
+(define (sync-master-cursor)
+  (and-let* ((c (tree-innermost 'mirror-comment))
+             (m (buffer-get-master (current-buffer)))
+             (b (buffer-get-body m))
+             (i (comment-id c))
+             (t (search-comment b i)))
+    (with-buffer m
+      (tree-select t)
+      (tree-go-to t :end)
+      (when (and (not (cursor-accessible?)) (not (in-source?)))
+        (cursor-show-hidden)))))
+
+(tm-define (mouse-event key x y mods time)
+  (former key x y mods time)
+  (when (and (in-comments-editor?) (!= key "move"))
+    (sync-master-cursor)))
+
+(tm-define (keyboard-press key time)
+  (former key time)
+  (when (in-comments-editor?)
+    (sync-master-cursor)))

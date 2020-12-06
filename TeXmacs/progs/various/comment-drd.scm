@@ -42,7 +42,8 @@
   hidden-folded-comment hidden-unfolded-comment hidden-nested-comment)
 
 (define-group any-comment-tag
-  (shown-comment-tag) (hidden-comment-tag))
+  (shown-comment-tag) (hidden-comment-tag)
+  mirror-comment carbon-comment)
 
 (define-group any-folded-comment-tag
   (folded-comment-tag) (hidden-folded-comment-tag))
