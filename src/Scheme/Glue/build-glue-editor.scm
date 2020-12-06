@@ -327,6 +327,7 @@
   (generate-aux generate_aux (void string))
   (notify-page-change notify_page_change (void))
   (notify-change notify_change (void int))
+  (notified-change? has_changed (bool int))
   (get-metadata get_metadata (string string))
   (cpp-nr-pages nr_pages (int))
   (print-to-file print_to_file (void url))

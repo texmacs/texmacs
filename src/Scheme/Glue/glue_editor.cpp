@@ -3214,6 +3214,19 @@ tmg_notify_change (tmscm arg1) {
 }
 
 tmscm
+tmg_notified_changeP (tmscm arg1) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "notified-change?");
+
+  int in1= tmscm_to_int (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= get_current_editor()->has_changed (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_get_metadata (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "get-metadata");
 
@@ -3861,6 +3874,7 @@ initialize_glue_editor () {
   tmscm_install_procedure ("generate-aux",  tmg_generate_aux, 1, 0, 0);
   tmscm_install_procedure ("notify-page-change",  tmg_notify_page_change, 0, 0, 0);
   tmscm_install_procedure ("notify-change",  tmg_notify_change, 1, 0, 0);
+  tmscm_install_procedure ("notified-change?",  tmg_notified_changeP, 1, 0, 0);
   tmscm_install_procedure ("get-metadata",  tmg_get_metadata, 1, 0, 0);
   tmscm_install_procedure ("cpp-nr-pages",  tmg_cpp_nr_pages, 0, 0, 0);
   tmscm_install_procedure ("print-to-file",  tmg_print_to_file, 1, 0, 0);

@@ -1077,6 +1077,7 @@
 "generate-aux"
 "notify-page-change"
 "notify-change"
+"notified-change?"
 "get-metadata"
 "cpp-nr-pages"
 "print-to-file"

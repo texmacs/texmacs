@@ -8419,6 +8419,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(notified-change? <scm-arg|int>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|has_changed> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
     <scm|(get-metadata <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>

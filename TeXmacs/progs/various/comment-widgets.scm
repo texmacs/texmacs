@@ -131,9 +131,10 @@
              (m (buffer-get-master (current-buffer)))
              (b (buffer-get-body m))
              (i (comment-id c))
-             (t (search-comment b i)))
+             (t (search-comment b i))
+             (inv? (not (notified-change? 4))))
     (with-buffer m
-      (tree-select t)
+      (when inv? (tree-select t))
       (tree-go-to t :end)
       (when (and (not (cursor-accessible?)) (not (in-source?)))
         (cursor-show-hidden)))))
@@ -162,12 +163,13 @@
   (let* ((m (current-buffer))
          (u (string-append "tmfs://comments/" (url->tmfs-string m)))
          (b (buffer-get-body u))
-         (t (tree-innermost any-comment-context? #t)))
+         (t (tree-innermost any-comment-context? #t))
+         (inv? (not (notified-change? 4))))
     (with-buffer u
       (if t
           (and-let* ((i (comment-id t))
                      (c (search-comment b i)))
-            (tree-select (tm-ref c :last))
+            (when inv? (tree-select (tm-ref c :last)))
             (tree-go-to c :start))
           (selection-cancel)))))
 

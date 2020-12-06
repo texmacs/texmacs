@@ -13,6 +13,7 @@
 
 (texmacs-module (various comment-edit)
   (:use (utils library tree)
+        (utils library cursor)
         (generic document-edit)
         (link ref-edit)
         (various comment-drd)
@@ -170,6 +171,27 @@
         (search-comments (buffer-tree)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Notifying comments editor in case of added of removed comments
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (notify-comments-editor)
+  (let* ((u (current-buffer))
+         (cu (string-append "tmfs://comments/" (url->tmfs-string u))))
+    (when (buffer-exists? cu)
+      (with-buffer cu
+        (revert-buffer)))))
+
+(tm-define (clipboard-cut which)
+  (with l (tree-search (selection-tree) any-comment-context?)
+    (former which)
+    (when (nnull? l) (notify-comments-editor))))
+
+(tm-define (clipboard-paste which)
+  (with l (tree-search (clipboard-get which) any-comment-context?)
+    (former which)
+    (when (nnull? l) (notify-comments-editor))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting a new comment
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -186,7 +208,8 @@
          (by (get-user-info "name"))
          (date (number->string (current-time))))
     (insert-go-to `(,lab ,id ,mirror-id ,type ,by ,date "" "")
-                  (list 6 0))))
+                  (list 6 0))
+    (notify-comments-editor)))
 
 (tm-define (make-unfolded-comment type)
   (with lab (if (inside-comment?) 'nested-comment 'unfolded-comment)
