@@ -27,6 +27,9 @@
 
 (tm-define (parameter-choice-list l) #f)
 
+(tm-define inhibit-local-table (make-ahash-table))
+(tm-define inhibit-global-table (make-ahash-table))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Collecting style options for a tag
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

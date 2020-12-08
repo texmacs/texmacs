@@ -1,4 +1,4 @@
-<TeXmacs|1.99.15>
+<TeXmacs|1.99.16>
 
 <style|<tuple|source|std|english>>
 
@@ -144,13 +144,23 @@
 
   <assign|itemize-levels|3>
 
-  <new-list|itemize-1|<value|aligned-space-item>|<macro|name|<active*|<with|mode|math|\<bullet\>>>>>
+  <assign|item-1|<macro|<active*|<with|mode|math|\<bullet\>>>>>
 
-  <new-list|itemize-2|<value|aligned-space-item>|<macro|name|<active*|<with|mode|math|<rigid|\<circ\>>>>>>
+  <assign|item-2|<macro|<active*|<with|mode|math|<rigid|\<circ\>>>>>>
 
-  <new-list|itemize-3|<value|aligned-space-item>|<macro|name|<active*|<with|mode|math|<rigid|->>>>>
+  <assign|item-3|<macro|<active*|<with|mode|math|<rigid|->>>>>
 
-  <new-list|itemize-4|<value|aligned-space-item>|<macro|name|<active*|<with|mode|math|<rigid|.>>>>>
+  <assign|item-4|<macro|<active*|<with|mode|math|<rigid|.>>>>>
+
+  <assign|item-tag|<macro|<compound|<merge|item-|<itemize-reduce|<value|itemize-level>>>>>>
+
+  <new-list|itemize-1|<value|aligned-space-item>|<macro|name|<item-tag>>>
+
+  <new-list|itemize-2|<value|aligned-space-item>|<macro|name|<item-tag>>>
+
+  <new-list|itemize-3|<value|aligned-space-item>|<macro|name|<item-tag>>>
+
+  <new-list|itemize-4|<value|aligned-space-item>|<macro|name|<item-tag>>>
 
   <assign|itemize-reduce|<macro|nr|<plus|<mod|<minus|<arg|nr>|1>|<minimum|<value|itemize-levels>|4>>|1>>>
 
@@ -182,13 +192,23 @@
 
   <assign|enumerate-levels|4>
 
-  <new-list|enumerate-1|<value|aligned-dot-item>|<value|identity>>
+  <assign|enum-1|<macro|name|<arg|name>>>
 
-  <new-list|enumerate-2|<value|aligned-dot-item>|<macro|name|<number|<arg|name>|alpha>>>
+  <assign|enum-2|<macro|name|<number|<arg|name>|alpha>>>
 
-  <new-list|enumerate-3|<value|aligned-dot-item>|<macro|name|<number|<arg|name>|roman>>>
+  <assign|enum-3|<macro|name|<number|<arg|name>|roman>>>
 
-  <new-list|enumerate-4|<value|aligned-dot-item>|<macro|name|<number|<arg|name>|Alpha>>>
+  <assign|enum-4|<macro|name|<number|<arg|name>|Alpha>>>
+
+  <assign|enum-tag|<macro|name|<compound|<merge|enum-|<enumerate-reduce|<value|enumerate-level>>>|<arg|name>>>>
+
+  <new-list|enumerate-1|<value|aligned-dot-item>|<macro|name|<enum-tag|<arg|name>>>>
+
+  <new-list|enumerate-2|<value|aligned-dot-item>|<macro|name|<enum-tag|<arg|name>>>>
+
+  <new-list|enumerate-3|<value|aligned-dot-item>|<macro|name|<enum-tag|<arg|name>>>>
+
+  <new-list|enumerate-4|<value|aligned-dot-item>|<macro|name|<enum-tag|<arg|name>>>>
 
   <assign|enumerate-reduce|<macro|nr|<plus|<mod|<minus|<arg|nr>|1>|<minimum|<value|enumerate-levels>|4>>|1>>>
 

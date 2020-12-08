@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.16>
 
 <style|<tuple|source|english>>
 
@@ -21,13 +21,13 @@
     </src-license>
   </src-title>>
 
-  <new-list|itemize-1|<value|aligned-space-item>|<macro|name|<math|<strong|<op|\<blacktriangleright\>>>>>>
+  <assign|item-1|<macro|<math|<strong|<op|\<blacktriangleright\>>>>>>
 
-  <new-list|itemize-2|<value|aligned-space-item>|<macro|name|<math|<strong|<op|\<vartriangleright\>>>>>>
+  <assign|item-2|<macro|<math|<strong|<op|\<vartriangleright\>>>>>>
 
-  <new-list|itemize-3|<value|aligned-space-item>|<macro|name|<math|<strong|<op|\<minus\>>>>>>
+  <assign|item-3|<macro|<math|<strong|<op|\<minus\>>>>>>
 
-  <new-list|itemize-4|<value|aligned-space-item>|<macro|name|<math|<strong|<op|.>>><active*|<with|mode|math|>>>>
+  <assign|item-4|<macro|<math|<strong|<op|.>>>>>
 </body>
 
 <\initial>

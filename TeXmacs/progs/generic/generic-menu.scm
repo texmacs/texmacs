@@ -232,9 +232,9 @@
 (tm-define (parameter-test? l val mode)
   (cond ((not (tm? val)) #f)
         ((== mode :global)
-         (== (get-init-tree l) (string->tree val)))
+         (== (get-init-tree l) (tm->tree val)))
         ((and (func? mode :local) (tree-is? (focus-tree) (cadr mode)))
-         (== (tree-with-get (focus-tree) l) (string->tree val)))
+         (== (tree-with-get (focus-tree) l) (tm->tree val)))
         (else #f)))
 
 (tm-define (parameter-set l val mode)
@@ -249,6 +249,11 @@
   (interactive (lambda (s) (parameter-set l s mode))
     (list (or (logic-ref env-var-description% l) l) "string"
           (parameter-get l mode))))
+
+(tm-define (parameter-interactive-set l mode)
+  (:require (and (tree-label-macro? (string->symbol l))
+                 (not (tm-atomic? (parameter-get l mode)))))
+  (open-macro-editor l mode))
 
 (define (parameter-get* l mode)
   (cond ((== mode :global)
@@ -294,16 +299,23 @@
 ;; Submenus for editing various types of style parameters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (parameter-value? c)
+  (or (string? c) (and (list-2? c) (string? (car c)))))
+  
 (tm-menu (parameter-choice-menu l cs mode)
-  (with ss (list-filter cs string?)
+  (with ss (list-filter cs parameter-value?)
     ((check "Default" "*" (parameter-default? l mode))
      (parameter-reset l mode))
     (if (nnull? ss)
         ---
         (for (c ss)
-          (if (string? c)
-              ((check (eval (upcase-first c)) "*" (parameter-test? l c mode))
-               (parameter-set l c mode)))))
+          (assuming (string? c)
+            ((check (eval (upcase-first c)) "*" (parameter-test? l c mode))
+             (parameter-set l c mode)))
+          (assuming (and (list-2? c) (string? (car c)))
+            ((check (eval (car c)) "*"
+                    (parameter-test? l (cadr c) mode))
+             (parameter-set l (cadr c) mode)))))
     (if (and (nnull? ss) (in? :other cs))
         ---)
     (if (in? :other cs)
@@ -427,8 +439,11 @@
   (let* ((ls (list-filter (search-parameters (tree-label t))
                           parameter-show-in-menu?))
          (xs (if (== mode :global) (list)
-                 (map car (customizable-parameters-memo t)))))
-    (list-difference ls xs)))
+                 (map car (customizable-parameters-memo t))))
+         (no (if (== mode :global) inhibit-global-table
+                 inhibit-local-table)))
+    (list-filter (list-difference ls xs)
+                 (lambda (x) (not (ahash-ref no x))))))
 
 (define parameters-list-cache (make-ahash-table))
 

@@ -1,4 +1,4 @@
-<TeXmacs|1.99.13>
+<TeXmacs|1.99.16>
 
 <style|source>
 
@@ -321,11 +321,17 @@
 
   \;
 
-  <new-list|itemize-1|<value|simple-item>|<macro|x|<active*|<with|mode|math|<rigid|\<bullet\>>>>>>
+  <assign|item-1|<macro|<active*|<with|mode|math|<rigid|\<bullet\>>>>>>
 
-  <new-list|itemize-2|<value|simple-item>|<macro|x|<active*|<with|mode|math|<rigid|->>>>>
+  <assign|item-2|<macro|<active*|<with|mode|math|<rigid|->>>>>
 
-  <new-list|itemize-3|<value|simple-item>|<macro|x|.>>
+  <assign|item-3|<macro|.>>
+
+  <new-list|itemize-1|<value|simple-item>|<macro|x|<item-tag>>>
+
+  <new-list|itemize-2|<value|simple-item>|<macro|x|<item-tag>>>
+
+  <new-list|itemize-3|<value|simple-item>|<macro|x|<item-tag>>>
 
   <new-list|itemize-minus|<value|simple-item>|<macro|x|<active*|<with|mode|math|<rigid|->>>>>
 
@@ -335,11 +341,17 @@
 
   \;
 
-  <new-list|enumerate-1|<value|aligned-dot-item>|<value|identity>>
+  <assign|enum-1|<macro|name|<arg|name>>>
 
-  <new-list|enumerate-2|<value|aligned-bracket-item>|<macro|x|<number|<arg|x>|alpha>>>
+  <assign|enum-2|<macro|name|<number|<arg|name>|alpha>>>
 
-  <new-list|enumerate-3|<value|aligned-dot-item>|<macro|x|<number|<arg|x>|roman>>>
+  <assign|enum-3|<macro|name|<number|<arg|name>|roman>>>
+
+  <new-list|enumerate-1|<value|aligned-dot-item>|<macro|x|<enum-tag|<arg|x>>>>
+
+  <new-list|enumerate-2|<value|aligned-bracket-item>|<macro|x|<enum-tag|<arg|x>>>>
+
+  <new-list|enumerate-3|<value|aligned-dot-item>|<macro|x|<enum-tag|<arg|x>>>>
 
   \;
 

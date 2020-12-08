@@ -1,4 +1,4 @@
-<TeXmacs|1.99.13>
+<TeXmacs|1.99.16>
 
 <style|source>
 
@@ -210,11 +210,11 @@
 
   \;
 
-  <new-list|itemize-1|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|<rigid|\<bullet\>>>>>>
+  <assign|item-1|<macro|<active*|<with|mode|math|\<bullet\>>>>>
 
-  <new-list|itemize-2|<value|aligned-space-item>|<macro|x|<active*|<with|mode|math|<rigid|\<cdot\>>>>>>
+  <assign|item-2|<macro|<active*|<with|mode|math|<rigid|\<cdot\>>>>>>
 
-  <new-list|itemize-3|<value|aligned-space-item>|<macro|x|>>
+  <assign|item-3|<macro|>>
 
   <active*|<\src-comment>
     Rendering of floating objects.
