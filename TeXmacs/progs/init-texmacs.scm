@@ -257,10 +257,14 @@
              editable-macro? open-macros-editor
 	     open-macro-editor create-table-macro
              edit-focus-macro edit-previous-macro)
+(lazy-define (source shortcut-edit) init-user-shortcuts has-user-shortcut?)
+(lazy-define (source shortcut-widgets) open-shortcuts-editor)
 (tm-property (open-macro-editor l mode) (:interactive #t))
 (tm-property (create-table-macro l mode) (:interactive #t))
 (tm-property (open-macros-editor mode) (:interactive #t))
 (tm-property (edit-focus-macro) (:interactive #t))
+(tm-property (open-shortcuts-editor . opt) (:interactive #t))
+(when (url-exists? "") (delayed (:idle 100) (init-user-shortcuts)))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 

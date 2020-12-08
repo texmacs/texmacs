@@ -179,6 +179,12 @@
               (get-macro-mode) "9em"))
       >>
       (explicit-buttons
+        ("Shortcut" (and-with t (macro-retrieve u)
+                      (let* ((s (tree->string (tm-ref t 0)))
+                             (sh (string-append "(make '" s ")"))
+                             (sh* (if (== s "") "" sh)))
+                        (open-shortcuts-editor "" sh*))))
+        //
         ("Apply" (macro-apply u))
         // //
         ("Ok" (macro-apply u) (quit))))))
@@ -379,6 +385,12 @@
               (get-macro-mode) "9em"))
       >>
       (explicit-buttons
+        ("Shortcut" (and-with t (macro-retrieve u)
+                      (let* ((s (tree->string (tm-ref t 0)))
+                             (sh (string-append "(make '" s ")"))
+                             (sh* (if (== s "") "" sh)))
+                        (open-shortcuts-editor "" sh*))))
+        //
         ("Apply" (macro-apply u))
 	// //
 	("Ok" (macro-apply u) (quit))))))

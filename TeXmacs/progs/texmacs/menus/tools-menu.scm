@@ -36,6 +36,9 @@
 (menu-bind tools-menu
   (-> "Macros"
       (link source-macros-menu))
+  (-> "Keyboard"
+      ("Edit keyboard shortcuts" (open-shortcuts-editor "" "")))
+  ---
   (-> "Update"
       ("Inclusions" (inclusions-gc))
       ("Plugins" (reinit-plugin-cache))
@@ -43,14 +46,6 @@
   (if (url-exists-in-path? "pdflatex")
       (-> "LaTeX"
           (link tmtex-menu)))
-  (-> "Fonts"
-      ("Look for more fonts"
-       (system-wait "Full search for more fonts on your system"
-                    "(can be long)")
-       (font-database-build-local)))
-  (-> "Web"
-      ("Create web site" (tmweb-interactive-build))
-      ("Update web site" (tmweb-interactive-update)))
   (-> "References"
       (link ref-menu))
   (if supports-email?
@@ -65,6 +60,15 @@
       ("Count characters" (show-character-count))
       ("Count words" (show-word-count))
       ("Count lines" (show-line-count)))
+  ---
+  (-> "Fonts"
+      ("Look for more fonts"
+       (system-wait "Full search for more fonts on your system"
+                    "(can be long)")
+       (font-database-build-local)))
+  (-> "Web"
+      ("Create web site" (tmweb-interactive-build))
+      ("Update web site" (tmweb-interactive-update)))
   (-> "Miscellaneous"
       ("Clear undo history" (clear-undo-history))
       ("Save auxiliary data" (toggle-save-aux))
