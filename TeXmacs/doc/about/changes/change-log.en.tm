@@ -18,6 +18,8 @@
     <item>Lightweight facility for managing user-defined keyboard shortcuts
     (1.99.17).
 
+    <item>Improved customizability of item lists and enumerations (1.99.17).
+
     <item>Further improvements for preview and help balloons (1.99.16).
 
     <item>Possibility to find labels from their numeric value (1.99.16).
