@@ -1,13 +1,23 @@
-<TeXmacs|1.99.15>
+<TeXmacs|1.99.16>
 
 <style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.99.1 to 1.99.16>
+  <section|Changes from version 1.99.1 to 1.99.17>
 
   <\itemize>
+    <item>Continued bug fixes (1.99.17).
+
+    <item>Improved remote editing tools (1.99.17).
+
+    <item>New style package \P<tmpackage|comment>\Q for various kinds of
+    comments (1.99.17).
+
+    <item>Lightweight facility for managing user-defined keyboard shortcuts
+    (1.99.17).
+
     <item>Further improvements for preview and help balloons (1.99.16).
 
     <item>Possibility to find labels from their numeric value (1.99.16).
