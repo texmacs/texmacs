@@ -21,7 +21,7 @@ BUMP_VERSION_SED_1="s/VERSION_BUILD=\"${CURRENT_VERSION_BUILD}\"/VERSION_BUILD=\
 BUMP_VERSION_SED_2="s/VERSION_BUILD \"${CURRENT_VERSION_BUILD}\"/VERSION_BUILD \"${NEXT_VERSION_BUILD}\"/"
 
 set -x
-sed -i "${BUMP_VERSION_SED_1}" $APP_HOME/cmake/build_deb.sh
-sed -i "${BUMP_VERSION_SED_1}" $APP_HOME/configure
-sed -i "${BUMP_VERSION_SED_1}" $APP_HOME/misc/m4/tm_version.m4
-sed -i "${BUMP_VERSION_SED_2}" $APP_HOME/CMakeLists.txt
+sed -i '' -e "${BUMP_VERSION_SED_1}" $APP_HOME/cmake/build_deb.sh
+sed -i '' -e "${BUMP_VERSION_SED_1}" $APP_HOME/configure
+sed -i '' -e "${BUMP_VERSION_SED_1}" $APP_HOME/misc/m4/tm_version.m4
+sed -i '' -e "${BUMP_VERSION_SED_2}" $APP_HOME/CMakeLists.txt
