@@ -364,3 +364,8 @@
 
 (define-group mini-flow-tag
   table graphics ornament ornamented tree)
+
+(define-group make-inline-tag)
+
+(define-group make-wrapped-tag
+  wide-tabular wide-block footnote)

@@ -240,10 +240,10 @@
 
   ("table N t" (make 'tabular))
   ("table N T" (make 'tabular*))
-  ("table N w" (make-wrapped 'wide-tabular))
+  ("table N w" (make 'wide-tabular))
   ("table N b" (make 'block))
   ("table N B" (make 'block*))
-  ("table N W" (make-wrapped 'wide-block)))
+  ("table N W" (make 'wide-block)))
 
 (kbd-map
   (:mode in-hybrid?)
@@ -726,8 +726,8 @@
   ("windows _" (make 'nbhyph))
   ("windows A-." "<ldots>")
   ("windows A-c" (make 'copyright))
-  ("windows e" (make-wrapped 'footnote))
-  ("windows F" (make-wrapped 'footnote))
+  ("windows e" (make 'footnote))
+  ("windows F" (make 'footnote))
   ("windows h" (interactive-replace))
   ("windows k" (make 'hlink))
   ("windows K" (toggle-small-caps))

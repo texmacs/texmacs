@@ -35,10 +35,13 @@
       (cpp-insert t)
       (cpp-insert-go-to t (path-in t opt-l))))
 
-(tm-define (make tag . opt-arity)
+(define (var-make tag . opt-arity)
   (if (null? opt-arity)
       (cpp-make tag)
       (cpp-make-arity tag (car opt-arity))))
+
+(tm-define (make tag . opt-arity)
+  (apply var-make (cons tag opt-arity)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wrappers
@@ -49,22 +52,24 @@
         ((nstring? val) (insert-go-to `(with ,var ,val "") '(2 0)))
         (else (cpp-make-with var val))))
 
-(tm-define (make-inline lab)
+(tm-define (make lab . opt-arity)
+  (:require (in? lab (make-inline-tag-list)))
   (if (selection-active-large?)
       (with sel `(par-block ,(selection-tree))
 	(clipboard-cut "wrapbuf")
 	(make-return-after)
-	(make lab)
+	(apply var-make (cons lab opt-arity))
 	(tree-set (cursor-tree) sel)
 	(with-innermost t lab
 	  (tree-go-to t :end)
 	  (make-return-before)))
-      (make lab)))
+      (apply var-make (cons lab opt-arity))))
 
-(tm-define (make-wrapped lab)
+(tm-define (make lab . opt-arity)
+  (:require (in? lab (make-wrapped-tag-list)))
   (with sel? (selection-active-any?)
     (clipboard-cut "wrapbuf")
-    (make lab)
+    (apply var-make (cons lab opt-arity))
     (if sel? (clipboard-paste "wrapbuf"))))
 
 (tm-define (insert-go-to t p) (cpp-insert-go-to t p))

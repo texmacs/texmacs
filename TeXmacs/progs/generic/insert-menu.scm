@@ -36,7 +36,7 @@
     (if (detailed-menus?)
         ("Action" (make 'action))))
   (if (simple-menus?)
-      ("Footnote" (make-wrapped 'footnote)))
+      ("Footnote" (make 'footnote)))
   (if (and (style-has? "std-dtd") (in-text?))
       ---
       (when (not (selection-active-non-small?))

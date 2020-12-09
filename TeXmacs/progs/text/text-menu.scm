@@ -255,7 +255,7 @@
 (menu-bind note-menu
   (when (not (or (inside? 'float) (inside? 'footnote)))
     (when (in-main-flow?)
-      ("Footnote" (make-wrapped 'footnote))
+      ("Footnote" (make 'footnote))
       (when (not (selection-active-non-small?))
         ("Marginal note" (make-marginal-note))))
     ("Balloon" (make-balloon))

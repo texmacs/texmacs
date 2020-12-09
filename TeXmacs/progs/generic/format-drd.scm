@@ -32,6 +32,9 @@
   (gaussian-effect-tag) (oval-effect-tag)
   (rectangular-effect-tag) (motion-effect-tag))
 
+(define-group make-inline-tag
+  (basic-effect-tag))
+
 ;; Various formatting tags
 
 (define-group vspace-tag

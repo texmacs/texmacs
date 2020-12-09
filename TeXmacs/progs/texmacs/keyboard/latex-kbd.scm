@@ -382,7 +382,7 @@
   ("label" "Make label" (make-label))
   ("ref" "Make reference" (make 'reference))
   ("pageref" "Make page reference" (make 'pageref))
-  ("footnote" "Insert a footnote" (make-wrapped 'footnote))
+  ("footnote" "Insert a footnote" (make 'footnote))
   ("input" "Include a document" (make 'include)))
 
 (when (not (get-boolean-preference "new style fonts"))
