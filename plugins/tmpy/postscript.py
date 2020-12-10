@@ -148,4 +148,4 @@ def pdf_out (out):
         fd.close()
         name = pdf_out_tmp_file
 
-    return FileOutDummy(name)
+    return FileOutDummy(pdf_out_tmp_file)

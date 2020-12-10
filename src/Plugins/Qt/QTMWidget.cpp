@@ -214,15 +214,25 @@ QTMWidget::scrollContentsBy (int dx, int dy) {
 void 
 QTMWidget::resizeEvent (QResizeEvent* event) {
   (void) event;
-  // this is the resize event for the viewport embedded in the scroll area
-  coord2 s = from_qsize (event->size());
-  the_gui -> process_resize (tm_widget(), s.x1, s.x2);
+  // Is this ok?
+  //coord2 s = from_qsize (event->size());
+  //the_gui -> process_resize (tm_widget(), s.x1, s.x2);
+
+  // the_gui->force_update();
+
+  //FIXME: I would like to have a force_update here but this causes a failed
+  //assertion in TeXmacs since the at the boot not every internal structure is
+  //initialized at this point. It seems not too difficult to fix but I
+  //postpone this to discuss with Joris. 
+  //
+  //Not having a force_update results in some lack of sync of the surface
+  //while the user is actively resizing with the mouse.
 }
 
 void
 QTMWidget::resizeEventBis (QResizeEvent *event) {
-  (void) event;
-  // this is the resize event for the scroll area
+  coord2 s = from_qsize (event->size());
+  the_gui -> process_resize (tm_widget(), s.x1, s.x2);
 }
 
 /*!
@@ -588,8 +598,8 @@ QTMWidget::inputMethodQuery (Qt::InputMethodQuery query) const {
 void
 QTMWidget::mousePressEvent (QMouseEvent* event) {
   if (is_nil (tmwid)) return;
-  QPoint point = viewportToContents (event->pos());
-  coord2 pt = from_qpoint (point);
+  QPoint point = event->pos() + origin();
+  coord2 pt = from_qpoint(point);
   unsigned int mstate= mouse_state (event, false);
   string s= "press-" * mouse_decode (mstate);
   the_gui -> process_mouse (tm_widget(), s, pt.x1, pt.x2,  
@@ -600,8 +610,8 @@ QTMWidget::mousePressEvent (QMouseEvent* event) {
 void
 QTMWidget::mouseReleaseEvent (QMouseEvent* event) {
   if (is_nil (tmwid)) return;
-  QPoint point = viewportToContents (event->pos());
-  coord2 pt = from_qpoint (point);
+  QPoint point = event->pos() + origin();
+  coord2 pt = from_qpoint(point);
   unsigned int mstate = mouse_state (event, true);
   string s = "release-" * mouse_decode (mstate);
   the_gui->process_mouse (tm_widget(), s, pt.x1, pt.x2,
@@ -612,8 +622,8 @@ QTMWidget::mouseReleaseEvent (QMouseEvent* event) {
 void
 QTMWidget::mouseMoveEvent (QMouseEvent* event) {
   if (is_nil (tmwid)) return;
-  QPoint point = viewportToContents (event->pos());
-  coord2 pt = from_qpoint (point);
+  QPoint point = event->pos() + origin();
+  coord2 pt = from_qpoint(point);
   unsigned int mstate = mouse_state (event, false);
   string s = "move";
   the_gui->process_mouse (tm_widget(), s, pt.x1, pt.x2, 
@@ -745,7 +755,8 @@ void
 QTMWidget::dropEvent (QDropEvent *event)
 {
   if (is_nil (tmwid)) return;
-  QPoint point = viewportToContents (event->pos());
+  
+  QPoint point = event->pos () + origin ();
   coord2 pt= from_qpoint (point);
 
   //qDebug() << event;

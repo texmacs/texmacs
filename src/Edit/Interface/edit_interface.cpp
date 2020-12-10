@@ -810,26 +810,32 @@ edit_interface_rep::apply_changes () {
     SI w, h;
     widget me= ::get_canvas (widget (cvw));
     ::get_size (me, w, h);
+#ifdef X11TEXMACS
     w -= 2*PIXEL;
     h -= 2*PIXEL;
+#endif
     if (cur_sb && ey2 - ey1 > h) w -= scrollbar_width ();
     if (cur_sb && ex2 - ex1 > w) h -= scrollbar_width ();
     if (ex2 - ex1 <= w + 2*PIXEL) {
       if (medium == "automatic")
         ex2= ex1 + w;
       else {
+#ifdef X11TEXMACS
         ex1= (ex1 + ex2 - w) / 2;
         abs_round (ex1);
         ex2= ex1 + w;
+#endif
       }
     }
     if (ey2 - ey1 <= h + 2*PIXEL) {
       if (medium == "papyrus" || medium == "automatic")
         ey1= ey2 - h;
       else {
+#ifdef X11TEXMACS
         ey1= (ey1 + ey2 - h) / 2;
         abs_round (ey1);
         ey2= ey1 + h;
+#endif
       }
     }
     SERVER (set_extents (ex1, ey1, ex2, ey2));
