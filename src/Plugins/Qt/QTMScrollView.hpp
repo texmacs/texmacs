@@ -25,18 +25,15 @@ class QPaintEvent;
  a QAbstractScrollArea owns a central widget called the "viewport".
  QAbstractScrollArea coordinates the viewport with the scrollbars and maintains
  informations like the real extent of the working surface and the current 
- origin which can be acted upon via the scrollbars. This setup has been 
- augmented via another widget child of the scrollview which we call the 
- "surface", with the purpose of centering the working area. See the 
- documentation for QTMSurface for more info on this.
+ origin which can be acted upon via the scrollbars.
 */
+
 class QTMScrollView : public QAbstractScrollArea {
   Q_OBJECT
 
   bool   editor_flag;   // Set to true for editor widgets
   QRect    p_extents;   // The size of the virtual area where things are drawn.
   QPoint    p_origin;   // The offset into that area
-  QWidget* p_surface;   // Actual drawing area, centered (or not) in the scrollarea
   
 public:
   
@@ -48,25 +45,22 @@ public:
   QRect   extents () { return p_extents; }
   void setExtents (QRect newExtents);
 
-  QWidget* surface () const { return p_surface; }
+  QWidget* surface () const { return viewport (); }
   
   void ensureVisible (int cx, int cy, int mx = 50, int my = 50);
   
     // Viewport/contents position converters.
-  QPoint viewportToContents (QPoint const& pos) const { return pos + p_origin; }
-  QPoint contentsToViewport (QPoint const& pos) const { return pos - p_origin; }
+  QPoint viewportToContents (QPoint const& pos) const { return pos + p_origin + p_extents.topLeft(); }
+  QPoint contentsToViewport (QPoint const& pos) const { return pos - p_origin - p_extents.topLeft(); }
   
 protected:
   
   void updateScrollBars();
   void scrollContentsBy (int dx, int dy);
   
+  virtual bool event (QEvent *event);
   virtual void resizeEventBis (QResizeEvent *e);
-  virtual bool viewportEvent (QEvent *e);
-  virtual bool surfaceEvent (QEvent *e);
-  virtual bool event (QEvent *e);
 
-  friend class QTMSurface;
   friend class qt_simple_widget_rep;
 };
 

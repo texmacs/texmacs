@@ -51,12 +51,15 @@ qt_simple_widget_rep::as_qwidget () {
   handle_get_size_hint (width, height);
   QSize sz = to_qsize (width, height);
   scrollarea()->editor_flag= is_editor_widget ();
-  scrollarea()->setExtents (QRect (QPoint(0,0), sz));
+  scrollarea()->setExtents (QRect (QPoint (0,0), sz));
   canvas()->resize (sz);
   
+  backingPixmap = QPixmap(sz);
+  backingPixmap.fill (to_qcolor (tm_background));
+  invalidate_all ();
   
   all_widgets->insert((pointer) this);
-  backing_pos = canvas()->origin ();
+  backing_pos = canvas()->viewportToContents (QPoint(0,0));
 
   return qwid;
 }
@@ -293,9 +296,8 @@ qt_simple_widget_rep::query (slot s, int type_id) {
         // calculate the global screen cordinates and substract
       QPoint sg = scrollarea()->surface()->mapToGlobal (QPoint (0,0));
       QRect  wg = scrollarea()->window()->frameGeometry();
-      sg.ry() -= wg.y();
-      sg.rx() -= wg.x();
-      return close_box<coord2> (from_qpoint (sg));
+      QPoint qp = sg - wg.topLeft() - canvas()->extents().topLeft();
+      return close_box<coord2> (from_qpoint (qp));
     }
       
     case SLOT_SIZE:
@@ -307,7 +309,8 @@ qt_simple_widget_rep::query (slot s, int type_id) {
     case SLOT_SCROLL_POSITION:
     {
       check_type_id<coord2> (type_id, s);
-      return close_box<coord2> (from_qpoint (canvas()->origin()));
+      QPoint qp = canvas()->origin();
+      return close_box<coord2> (from_qpoint (qp));
     }
       
     case SLOT_EXTENTS:
@@ -474,7 +477,9 @@ void
 qt_simple_widget_rep::repaint_invalid_regions () {
   
   QRegion qrgn;
-  QPoint origin = canvas()->origin();
+ // QPoint origin = canvas()->origin() + canvas()->extents().topLeft();
+  QPoint origin = canvas()->viewportToContents (QPoint(0,0));
+
   // qrgn is to keep track of the area on the screen which needs to be updated
   
   // update backing store origin wrt. TeXmacs document
@@ -486,7 +491,6 @@ qt_simple_widget_rep::repaint_invalid_regions () {
     
     QPixmap newBackingPixmap (backingPixmap.size());
     QPainter p (&newBackingPixmap);
-    //newBackingPixmap.fill (Qt::black);
     p.drawPixmap (-dx,-dy,backingPixmap);
     p.end();
     backingPixmap = newBackingPixmap;

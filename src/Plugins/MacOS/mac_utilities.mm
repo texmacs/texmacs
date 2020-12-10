@@ -504,6 +504,7 @@ mac_fix_yosemite_bug() {
 }
 
 
+
 static id background_activity= nil;
 
 void
