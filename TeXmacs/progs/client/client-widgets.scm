@@ -18,7 +18,7 @@
         (client client-live)))
 
 (tm-define (tm-servers)
-  (list "server.texmacs.org" "localhost"))
+  (list "server.texmacs.org" "texmacs.math.unc.edu" "localhost"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Account creation
