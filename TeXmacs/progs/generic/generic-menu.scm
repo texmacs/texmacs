@@ -196,7 +196,9 @@
            (prompt (upcase-first name))
            (type (tree-child-type t i))
            (fm (type->format type))
+           (active? (inputter-active? (tree-ref t i) type))
            (props (child-proposals t i))
+           (in (if active? (inputter-decode (tree-ref t i) type) "n.a."))
            (setter (lambda (x)
                      (pull-focus t
                        (when x

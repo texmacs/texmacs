@@ -131,7 +131,7 @@
 (tm-define (gpg-get-ahash-set-attachment var key val)
   (with t (gpg-get-ahash-table-attachment var)
     (ahash-set! t key val)
-    (set-ahash-table-attachment var t)))
+    (gpg-set-ahash-table-attachment var t)))
 
 (tm-define (gpg-get-ahash-ref-attachment var key)
   (ahash-ref (gpg-get-ahash-table-attachment var) key))

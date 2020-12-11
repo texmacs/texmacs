@@ -253,6 +253,12 @@
     (with fill (- w (remainder (cAr (cursor-path)) w))
       (if (> fill 0) (insert (make-string fill #\space))))))
 
+;;HACK: should rewrite program-indent-line to accept unindent
+(tm-define (remove-tabstop)
+  (with w (get-tabstop)
+    (with c (program-get-indent)
+      (if (>= c w) (program-set-indent (- c w))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Automatic indentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

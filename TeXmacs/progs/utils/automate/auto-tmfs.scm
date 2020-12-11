@@ -42,7 +42,7 @@
          (file-name (tmfs-cdr name))
          (u (tmfs-string->url file-name))
          (safe? (string-starts? (url->unix u) "tmfs://help/")))
-    (auto-load-tree u bindings safe?)))
+    (auto-load-tree u bs safe?)))
 
 (tm-define (auto-load-aux name u bindings)
   (with doc (auto-load-tree u bindings #t)

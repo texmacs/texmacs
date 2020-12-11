@@ -196,7 +196,7 @@
         ((tm-func? t 'inline-texmacs-tag)
          (apply build-tag :inline (tm-children t)))
         ((tm-func? t 'inline-assign 2)
-         (apply inline-assign :inline (tm-children t)))
+         (apply build-assign :inline (tm-children t)))
         ((tm-func? t 'output-string 1)
          (apply build-output-string (tm-children t)))
         ((tm-func? t 'inline-output 1)

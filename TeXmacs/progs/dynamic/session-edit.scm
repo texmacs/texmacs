@@ -802,12 +802,6 @@
   (with l (selection-trees)
     (and (nnull? l) (forall? session-selection-one? l))))
 
-(define (session-selection sel*)
-  (let* ((sel (selection-as-document sel*))
-         (doc (tree-up (tree-ref sel 0)))
-         (ses (tree-up doc)))
-    `(session ,(cDr (tm-children ses)) ,sel)))
-
 (tm-define (clipboard-cut which)
   (:require (session-selection?))
   (let* ((l (selection-trees))
@@ -820,7 +814,8 @@
     (clipboard-copy which)
     (if (= k n)
         (tree-cut ses)
-        (begin
+        (let* ((sel `(session ,@(cDr (tm-children ses)) (document ,@l))))
+          (clipboard-set which sel)
           (tree-remove doc i k)
           (with next (tree-ref doc (min i (- n (+ k 1))))
             (cond ((field-context? next)

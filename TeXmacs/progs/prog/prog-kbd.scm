@@ -86,12 +86,6 @@
   ("]" (cpp-bracket-close "[" "]" ))
   ("\"" (cpp-bracket-open "\"" "\"" )))
 
-;HACK: should rewrite program-indent-line to accept unindent
-(define (remove-tabstop)
-  (with w (get-tabstop)
-    (with c (program-get-indent)
-      (if (>= c w) (program-set-indent (- c w))))))
-
 (kbd-map
   (:mode in-prog-python?)
   ("A-tab" (insert-tabstop))

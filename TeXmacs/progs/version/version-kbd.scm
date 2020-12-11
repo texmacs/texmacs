@@ -26,9 +26,9 @@
   ("version |" (version-show 'version-both))
   ("version left" (version-show 'version-old))
   ("version right" (version-show 'version-new))
-  ("version return" (version-select-current))
-  ("version 1" (version-select-old))
-  ("version 2" (version-select-new)))
+  ("version return" (version-retain 'current))
+  ("version 1" (version-retain 0))
+  ("version 2" (version-retain 1)))
 
 (kbd-map
   (:mode in-versioning?)

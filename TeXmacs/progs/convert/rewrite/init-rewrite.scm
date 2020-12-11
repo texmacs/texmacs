@@ -85,7 +85,7 @@
       (texmacs->code (tm->tree t) (car enc))))
 
 (tm-define (code->texmacs x . opts)
-  (verbatim-->texmacs x (acons "verbatim->texmacs:encoding" "SourceCode" '())))
+  (verbatim->texmacs x (acons "verbatim->texmacs:encoding" "SourceCode" '())))
 
 (tm-define (code-snippet->texmacs x . opts)
   (verbatim-snippet->texmacs x (acons "verbatim->texmacs:encoding" "SourceCode" '())))

@@ -283,7 +283,7 @@
             ((!= (version-get-number fid) (version-get-current vid))
              (list :error "Error: version number mismatch"))
             ((== (string-load fname) doc) ;; no changes need to be saved
-             (server-return envelope doc))
+             (list :unchanged fid))
             (else
               (let* ((nr (version-next vid))
                      (rid (remote-create uid rname vid nr doc msg)))

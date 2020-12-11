@@ -66,7 +66,7 @@
 
 (tm-define (doc-symbol-code tsym)
   (:secure #t)
-  (doc-symbol-code* (tree->symbol tsym)))
+  ($doc-symbol-code (tree->symbol tsym)))
 
 (tm-define (doc-symbol-template tsym)
   (:secure #t)
