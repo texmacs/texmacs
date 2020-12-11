@@ -44,7 +44,7 @@
       (and (secure-expr? (car args) env)
 	   (secure-args? (cdr args) env))))
 
-(define (secure-cond? expr env)
+(define (secure-cond? args env)
   (if (null? args) #t
       (and (or (== (caar args) 'else) (secure-expr? (caar args) env))
 	   (secure-expr? (cadar args) env)
@@ -55,8 +55,8 @@
 	((pair? l) (local-env (assoc-set! env (car l) #t) (cdr l)))
 	(else (assoc-set! env l #t))))
 
-(define (secure-lambda? expr env)
-  (secure-args? (cdr expr) (local-env env (car expr))))
+(define (secure-lambda? args env)
+  (secure-args? (cdr args) (local-env env (car args))))
 
 (define (secure-quasiquote? args env)
   (cond ((npair? args) #t)
