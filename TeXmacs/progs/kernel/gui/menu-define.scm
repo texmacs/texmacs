@@ -48,8 +48,11 @@
 
 (define (gui-make-push-focus x)
   (require-format x '(push-focus :%1 :*))
-  `(with pushed-focus (tree->fingerprint ,(cadr x))
-     (menu-dynamic ,@(cddr x))))
+  `(with pushed-tree ,(cadr x)
+     (with pushed-focus (tree->fingerprint pushed-tree)
+       (menu-dynamic
+         (invisible (tree->path pushed-tree))
+         ,@(cddr x)))))
 
 (define (gui-make-cond x)
   (require-format x '(cond :*))
