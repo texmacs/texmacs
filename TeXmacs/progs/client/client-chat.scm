@@ -50,11 +50,12 @@
 
 (define (message->document msg)
   (with (action pseudo full-name date doc) msg
-    (with date* (pretty-time (string->number date))
+    (let* ((date* (pretty-time (string->number date)))
+           (full-name* (utf8->cork full-name)))
       (cond ((== action "share")
              (with doc* `(document ,(message->share doc))
-               `(chat-output ,full-name ,pseudo "" ,date* ,doc*)))
-            (else `(chat-output ,full-name ,pseudo "" ,date* ,doc))))))
+               `(chat-output ,full-name* ,pseudo "" ,date* ,doc*)))
+            (else `(chat-output ,full-name* ,pseudo "" ,date* ,doc))))))
 
 (define (messages->document msgs name)
   `(document
@@ -231,7 +232,7 @@
 
 (define (list-shared-name msg)
   (with (action pseudo full-name date doc) msg
-    full-name))
+    (utf8->cork full-name)))
 
 (define (list-shared-links l name)
   (with f (list-filter l (lambda (m) (== (list-shared-name m) name)))
