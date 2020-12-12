@@ -55,7 +55,7 @@
 
 (tm-define (make-folded-comment type)
   (:applicable (not (inside-comment?)))
-  (make-comment 'folded-comment type)
+  (make-comment 'folded-comment type (list 1))
   (open-comment-editor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -202,18 +202,17 @@
 (tm-define (inside-comment?)
   (tree-innermost nest?))
   
-(tm-define (make-comment lab type)
+(tm-define (make-comment lab type pos)
   (let* ((id (create-unique-id))
          (mirror-id (create-unique-id))
          (by (get-user-info "name"))
          (date (number->string (current-time))))
-    (insert-go-to `(,lab ,id ,mirror-id ,type ,by ,date "" "")
-                  (list 6 0))
+    (insert-go-to `(,lab ,id ,mirror-id ,type ,by ,date "" "") pos)
     (notify-comments-editor)))
 
 (tm-define (make-unfolded-comment type)
   (with lab (if (inside-comment?) 'nested-comment 'unfolded-comment)
-    (make-comment lab type)))
+    (make-comment lab type (list 6 0))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Comment navigation
