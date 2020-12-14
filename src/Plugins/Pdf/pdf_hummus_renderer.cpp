@@ -1393,7 +1393,7 @@ requires_hack_notdef_for_tex_font (string fontname) {
     match_font_base_name (fontname, "cmbcsc") ||
     match_font_base_name (fontname, "cmdunh") ||
     match_font_base_name (fontname, "cmex") ||
-    match_font_base_name (fontname, "cmexb") ||	       
+    //match_font_base_name (fontname, "cmexb") ||	       
     match_font_base_name (fontname, "cmff") ||
     match_font_base_name (fontname, "cmfi") ||
     match_font_base_name (fontname, "cmfib") ||
