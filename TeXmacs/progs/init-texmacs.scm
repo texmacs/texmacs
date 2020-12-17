@@ -347,13 +347,15 @@
 (lazy-define (doc tmweb) youtube-select
              tmweb-convert-dir tmweb-update-dir
              tmweb-convert-dir-keep-texmacs tmweb-update-dir-keep-texmacs
-             tmweb-interactive-build tmweb-interactive-update)
+             tmweb-interactive-build tmweb-interactive-update
+             open-website-builder)
 (lazy-define (doc apidoc) apidoc-all-modules apidoc-all-symbols)
 (lazy-menu (doc apidoc-menu) apidoc-menu)
 (lazy-tmfs-handler (doc docgrep) grep)
 (lazy-tmfs-handler (doc tmdoc) help)
 (lazy-tmfs-handler (doc apidoc) apidoc)
 (define-secure-symbols tmdoc-include youtube-select)
+(tm-property (open-website-builder) (:interactive #t))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 

@@ -139,3 +139,52 @@
   (user-url "Source directory" "directory" 
     (lambda (src)  (user-url "Destination directory" "directory"
       (lambda (dest) (tmweb-convert-directory src dest #t #f))))))
+
+(tm-widget ((website-widget src-dir dest-dir) cmd)
+  (padded
+    === ===
+    (refreshable "website-tool-directories"
+      (aligned
+        (item (text "Source directory:")
+          (hlist
+            (input (when answer (set! src-dir answer))
+                   "file" (list src-dir) "30em") // //
+            (explicit-buttons
+              ((icon "tm_find.xpm")
+               (cpp-choose-file
+                (lambda (u) (set! src-dir (url->string u))
+                        (refresh-now "website-tool-directories"))
+                "Choose source dir" "directory" ""
+                (string->url src-dir))))))
+        (item (text "Destination directory:")
+          (hlist
+            (input (when answer (set! dest-dir answer))
+                   "file" (list dest-dir) "30em") // //
+            (explicit-buttons
+              ((icon "tm_find.xpm")
+               (cpp-choose-file
+                (lambda (u) (set! dest-dir (url->string u))
+                        (refresh-now "website-tool-directories"))
+                "Choose dest dir" "directory" ""
+                (string->url dest-dir))))))))
+    === ===
+    (refreshable "website-tool-dialog-buttons"
+      (bottom-buttons
+        >>>
+        ("Cancel" (cmd #f src-dir dest-dir #f)) // //
+        ("Create" (cmd #t src-dir dest-dir #f)) // //
+        ("Update" (cmd #t src-dir dest-dir #t))))))
+
+(tm-define (open-website-builder)
+  (:interactive #t)
+  (let ((src (get-preference "website:src-dir"))
+        (dest (get-preference "website:dest-dir")))
+    (dialogue-window (website-widget src dest)
+                     (lambda (flag? src dest update?)
+                       (when flag?
+                         (set-preference "website:src-dir" src)
+                         (set-preference "website:dest-dir" dest)
+                         (if update? 
+                             (tmweb-update-dir src dest)
+                             (tmweb-convert-dir src dest))))
+                     "Create web site")))
