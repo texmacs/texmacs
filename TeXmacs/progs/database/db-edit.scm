@@ -344,12 +344,12 @@
 
 (tm-define (make-db-field-before attr)
   (:argument attr "Field attribute")
-  (:proposals attr (db-field-possible-attributes))
+  (:proposals attr (db-this-field-possible-attributes))
   (make-db-field attr 0))
           
 (tm-define (make-db-field-after attr)
   (:argument attr "Field attribute")
-  (:proposals attr (db-field-possible-attributes))
+  (:proposals attr (db-this-field-possible-attributes))
   (make-db-field attr 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
