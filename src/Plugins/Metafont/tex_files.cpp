@@ -37,16 +37,20 @@ kpsewhich (string name) {
 
 static url
 resolve_tfm (url name) {
+  url r= resolve (the_tfm_path * name);
+  if (!is_none (r)) return r;
   if (get_setting ("KPSEWHICH") == "true") {
     string which= kpsewhich (as_string (name));
     if ((which!="") && exists (url_system (which))) return url_system (which);
     // cout << "Missed " << name << "\n";
   }
-  return resolve (the_tfm_path * name);
+  return r;
 }
 
 static url
 resolve_pk (url name) {
+  url r= resolve (the_pk_path * name);
+  if (!is_none (r)) return r;
 #ifndef OS_WIN32 // The kpsewhich from MikTeX is bugged for pk fonts
   if (get_setting ("KPSEWHICH") == "true") {
     string which= kpsewhich (as_string (name));
@@ -54,11 +58,13 @@ resolve_pk (url name) {
     // cout << "Missed " << name << "\n";
   }
 #endif
-  return resolve (the_pk_path * name);
+  return r;
 }
 
 static url
 resolve_pfb (url name) {
+  url r= resolve (the_pfb_path * name);
+  if (!is_none (r)) return r;
 #ifndef OS_WIN32 // The kpsewhich from MikTeX is bugged for pfb fonts
   if (get_setting ("KPSEWHICH") == "true") {
     string which= kpsewhich (as_string (name));
@@ -66,7 +72,7 @@ resolve_pfb (url name) {
     // cout << "Missed " << name << "\n";
   }
 #endif
-  return resolve (the_pfb_path * name);
+  return r;
 }
 
 url
