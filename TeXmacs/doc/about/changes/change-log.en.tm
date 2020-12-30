@@ -1,13 +1,15 @@
-<TeXmacs|1.99.16>
+<TeXmacs|1.99.17>
 
 <style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.99.1 to 1.99.17>
+  <section|Changes from version 1.99.1 to 1.99.18>
 
   <\itemize>
+    <item>Minor bug fixes (1.99.18).
+
     <item>Continued bug fixes (1.99.17).
 
     <item>Improved remote editing tools (1.99.17).
