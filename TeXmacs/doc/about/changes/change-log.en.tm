@@ -1,4 +1,4 @@
-<TeXmacs|1.99.17>
+<TeXmacs|1.99.18>
 
 <style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
@@ -9,6 +9,8 @@
 
   <\itemize>
     <item>Minor bug fixes (1.99.18).
+
+    <item>Minor progress on the remote editing tools (1.99.18).
 
     <item>Continued bug fixes (1.99.17).
 
