@@ -1626,7 +1626,9 @@
 	(else (cons (car l) (tmhtml-append-attribute-sub (cdr l) var val)))))
 
 (define (tmhtml-append-attribute t var val)
-  (cond ((and (func? t 'h:p 1) (func? (cadr t) 'h:p))
+  (cond ((and (func? t 'h:img) (== var 'style))
+         `(class (@ (,var ,val)) ,t))
+        ((and (func? t 'h:p 1) (func? (cadr t) 'h:p))
          (tmhtml-append-attribute (cadr t) var val))
         ((and (pair? t) (pair? (cdr t)) (list? t)
               (pair? (cadr t)) (== (caadr t) '@) (list? (cadr t)))
