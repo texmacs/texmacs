@@ -1,4 +1,4 @@
-configure_file(scripts/texmacs.in ${TEXMACS_BINARY_DIR}/misc/script/texmacs @ONLY)
+configure_file(scripts/texmacs.in ${TEXMACS_BINARY_DIR}/misc/scripts/texmacs @ONLY)
 configure_file(scripts/fig2ps.in ${TEXMACS_BINARY_DIR}/misc/scripts/fig2ps @ONLY)
 configure_file(man/texmacs.1.in ${TEXMACS_SOURCE_DIR}/misc/man/texmacs.1 @ONLY)
 

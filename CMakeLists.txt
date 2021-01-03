@@ -736,7 +736,7 @@ if (APPLE)
 endif (APPLE)
 
 if (NOT WIN32)
-  install (FILES ${TEXMACS_BINARY_DIR}/misc/script/texmacs
+  install (FILES ${TEXMACS_BINARY_DIR}/misc/scripts/texmacs
                  ${TEXMACS_BINARY_DIR}/misc/scripts/fig2ps
                  misc/scripts/tm_gs
           DESTINATION bin
