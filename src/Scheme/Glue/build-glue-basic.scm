@@ -611,6 +611,8 @@
   (url-grep grep (url string url))
   (url-search-upwards search_file_upwards (url url string array_string))
   (picture-cache-reset picture_cache_reset (void))
+  (set-file-focus set_file_focus (void url))
+  (get-file-focus get_file_focus (url))
 
   ;; Persistent data
   (persistent-set persistent_set (void url string string))

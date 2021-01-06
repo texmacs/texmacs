@@ -4387,6 +4387,22 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(set-file-focus <scm-arg|url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|set_file_focus> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(get-file-focus)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_file_focus> which returns
+    <scm|url>.
+  </explain>
+
+  <\explain>
     <scm|(persistent-set <scm-arg|url> <scm-arg|string> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>

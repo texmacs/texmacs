@@ -573,6 +573,8 @@
 "url-grep"
 "url-search-upwards"
 "picture-cache-reset"
+"set-file-focus"
+"get-file-focus"
 "persistent-set"
 "persistent-remove"
 "persistent-has?"
