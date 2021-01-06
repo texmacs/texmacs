@@ -1630,6 +1630,41 @@ accented_to_Cork (tree t) {
 * Interface
 ******************************************************************************/
 
+static bool
+skip_expansion (url u) {
+  string s= as_string (tail (u));
+  return
+    s == "aaai1.sty" ||
+    s == "aixi.sty" ||
+    s == "algorithm.sty" ||
+    s == "algorithm2e.sty" ||
+    s == "algorithmic.sty" ||
+    s == "amssymb.sty" ||
+    s == "aopmath.sty" ||
+    s == "boxedeps.sty" ||
+    s == "braids.sty" ||
+    s == "bux2ref.sty" ||
+    s == "buxmath.sty" ||
+    s == "buxlayout.sty" ||
+    s == "chicagob.sty" ||
+    s == "chicagor.sty" ||
+    s == "dfadobe.sty" ||
+    s == "eepic.sty" ||
+    s == "fancyhdr.sty" ||
+    s == "geompsfi.sty" ||
+    s == "hyperref.sty" ||
+    s == "IEEEtrantools.sty" ||
+    s == "jair.sty" ||
+    s == "jmlr2e.sty" ||
+    s == "latexsym.sty" ||
+    s == "natbib.sty" ||
+    s == "psfig.tex" ||
+    s == "soul.sty" ||
+    s == "tcolorbox.sty" ||
+    s == "theapa.sty" ||
+    s == "times.sty";
+}
+
 tree
 latex_parser::parse (string s, int change) {
   command_type ->extend ();
@@ -1688,7 +1723,8 @@ latex_parser::parse (string s, int change) {
           if (!ends (name, suffix)) name= name * suffix;
           url incl= relative (get_file_focus (), name);
           string body;
-          if (!exists (incl) || load_string (incl, body, false));
+          if (!exists (incl) || skip_expansion (incl) ||
+              load_string (incl, body, false));
           else {
             //cout << "Include " << name << " -> " << incl << "\n";
             s= s (0, cut) * "\n" * body * "\n" * s (i+1, N(s));
