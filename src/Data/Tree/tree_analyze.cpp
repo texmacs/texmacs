@@ -196,6 +196,7 @@ symbol_type (tree t) {
     case WITH:
     case STYLE_WITH:
     case VAR_STYLE_WITH:
+      if (N(t) == 0) return SYMBOL_SKIP;
       return symbol_type (t[N(t)-1]);
     case LABEL:
       return SYMBOL_SKIP;
