@@ -792,13 +792,13 @@ count_env_changes (tree t) {
 }
 
 static bool
-contains_board_effects (tree t, bool root= true) {
+contains_side_effects (tree t, bool root= true) {
   if (is_atomic (t)) return false;
   if (is_def (t) || is_var_def (t)) return true;
   if (root && count_env_changes (t) != 0) return true;
   int i, n= N(t);
   for (i=0; i<n; i++)
-    if (contains_board_effects (t[i], false))
+    if (contains_side_effects (t[i], false))
       return true;
   return false;
 }
@@ -1169,7 +1169,7 @@ latex_parser::parse_command (string s, int& i, string cmd, int change) {
     }
   }
 
-  /***************** detecting substitutions and boards effects  *************/
+  /***************** detecting substitutions and side effects  *************/
   if (!done) {
     if (pic && is_def (t)) {
       bool subs= false;
@@ -1186,24 +1186,24 @@ latex_parser::parse_command (string s, int& i, string cmd, int change) {
         command_type ("\\end-"*name)=   "replace";
       }
     }
-    if ((is_tuple (t, "\\def")   && contains_board_effects (t[N(t)-1])) ||
-        (is_tuple (t, "\\def*")  && contains_board_effects (t[N(t)-1])) ||
-        (is_tuple (t, "\\def**") && contains_board_effects (t[N(t)-1])) ||
-        (is_tuple (t, "\\def**") && contains_board_effects (t[N(t)-2]))) {
+    if ((is_tuple (t, "\\def")   && contains_side_effects (t[N(t)-1])) ||
+        (is_tuple (t, "\\def*")  && contains_side_effects (t[N(t)-1])) ||
+        (is_tuple (t, "\\def**") && contains_side_effects (t[N(t)-1])) ||
+        (is_tuple (t, "\\def**") && contains_side_effects (t[N(t)-2]))) {
       string name= string_arg (t[1]);
-      command_type (name)= "bord-effect!";
+      command_type (name)= "side-effect!";
     }
     if ((is_tuple (t, "\\newenvironment")
-          && contains_board_effects (concat (t[N(t)-2], t[N(t)-1]))) ||
+          && contains_side_effects (concat (t[N(t)-2], t[N(t)-1]))) ||
         (is_tuple (t, "\\newenvironment*")
-         && contains_board_effects (concat (t[N(t)-2], t[N(t)-1]))) ||
+         && contains_side_effects (concat (t[N(t)-2], t[N(t)-1]))) ||
         (is_tuple (t, "\\newenvironment**")
-         && contains_board_effects (concat (t[N(t)-2], t[N(t)-1]))) ||
+         && contains_side_effects (concat (t[N(t)-2], t[N(t)-1]))) ||
         (is_tuple (t, "\\newenvironment**")
-         && contains_board_effects (t[N(t)-3]))) {
+         && contains_side_effects (t[N(t)-3]))) {
       string name= string_arg (t[1]);
-      command_type ("\\begin-"*name)= "bord-effect!";
-      command_type ("\\end-"*name)  = "bord-effect!";
+      command_type ("\\begin-"*name)= "side-effect!";
+      command_type ("\\end-"*name)  = "side-effect!";
     }
   }
 
@@ -1211,11 +1211,11 @@ latex_parser::parse_command (string s, int& i, string cmd, int change) {
   if ((pic && latex_type (cmd) == "replace")
       || latex_type (cmd) == "begin-end!"
       || latex_type (cmd) == "defined-env!"
-      || latex_type (cmd) == "bord-effect!") {
+      || latex_type (cmd) == "side-effect!") {
     int pos= 0;
     array<string> body= command_def[cmd];
     arity= command_arity[cmd];
-    if (N(body) > 0 && latex_type (cmd) == "bord-effect!"
+    if (N(body) > 0 && latex_type (cmd) == "side-effect!"
         && !occurs (cmd, body[0]))
       (void) parse (body[0], pos, "", change);
     else if (N(body) > 0 && latex_type (cmd) == "begin-end!"
