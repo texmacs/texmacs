@@ -2212,8 +2212,9 @@ clean_vspace (tree t) {
     tree r (DOCUMENT);
     for (i=0; i<n; i++) {
       tree cur= clean_vspace (t[i]);
-      if (is_concat (cur) && N(cur) > 1 &&
-          is_func (cur[0], VSPACE))
+      if (is_func (cur, CONCAT, 0)) r << "";
+      else if (is_concat (cur) && N(cur) > 1 &&
+               is_func (cur[0], VSPACE))
         cur[0]= tree (VAR_VSPACE, A(cur[0]));
       else if (is_concat (cur) && N(cur) > 2 &&
                is_func (cur[0], NO_INDENT) &&
@@ -2222,7 +2223,8 @@ clean_vspace (tree t) {
       bool eat= (i == n-1 || auto_vspace (t[i+1]));
       if (is_atomic (cur)) r << cur;
       else if (is_vspace (cur, true));
-      else if (is_concat (cur) && is_vspace (cur[N(cur)-1], eat)) {
+      else if (is_concat (cur) && N(cur) > 0 &&
+               is_vspace (cur[N(cur)-1], eat)) {
         tree c= cur (0, N(cur) - 1);
         r << clean_space_right (c);
       }
@@ -2242,19 +2244,33 @@ clean_vspace (tree t) {
 
 tree
 finalize_textm (tree t) {
+  //cout << "Downgrade newlines\n";
   t= downgrade_newlines (t);
+  //cout << "Remove geometry\n";
   t= remove_geometry (t);
+  //cout << "Modernize newlines\n";
   t= modernize_newlines (t, false);
+  //cout << "Merge successive withs\n";
   t= merge_successive_withs (t);
+  //cout << "Unnest withs\n";
   t= unnest_withs (t);
+  //cout << "Remove empty withs\n";
   t= remove_empty_withs (t);
+  //cout << "Nonumber to eqnumber\n";
   t= nonumber_to_eqnumber (t);
+  //cout << "Eat space around control\n";
   t= eat_space_around_control (t);
+  //cout << "Remove superfluous newlines\n";
   t= remove_superfluous_newlines (t);
+  //cout << "Concat document correct\n";
   t= concat_document_correct (t);
+  //cout << "Remove labels from sections\n";
   t= remove_labels_from_sections (t);
+  //cout << "Concat sections and labels\n";
   t= concat_sections_and_labels (t);
+  //cout << "Clean vspace\n";
   t= clean_vspace (t);
+  //cout << "Simplify correct\n";
   return simplify_correct (t);
 }
 
