@@ -631,7 +631,7 @@ move_brackets_sub (tree t, bool in) {
     bool search= true;
     if (is_concat (t))
       for (int i=0; i<N(t) && search; i++)
-        if (is_compound (t[i], "math")) {
+        if (is_compound (t[i], "math", 1)) {
           array<tree> a= concat_tokenize (t[i][0]);
           for (int j=0; j<N(a) && search; j++)
             if (is_atomic (a[j]) && is_simple_opening (a[j]->label))
