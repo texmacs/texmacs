@@ -584,6 +584,7 @@ filter_preamble (tree t) {
         i++;
         tree var= latex_symbol_to_tree (u[0]->label);
         string val;
+        if (i<n && t[i] == "&") i++;
         if (i<n && t[i] == "=") i++;
         while (i<n && is_atomic (t[i]) && N(t[i]->label) == 1 &&
                (is_alpha (t[i]->label[0]) ||
@@ -1629,25 +1630,25 @@ abs_length(tree t) {
 
 tree
 find_next_length(tree t) {
-  if (is_atomic(t))
+  if (is_atomic (t))
     return t;
   else
-    if(is_func(t, APPLY))
+    if (is_func (t, APPLY) && N(t) >= 2)
       if (t[0] == "tex-len")
         return find_next_length (t[1]);
-  return tree();
+  return "";
 }
 
 bool
 is_negative_length(tree t) {
   t = find_next_length(t);
   string s= t->label;
-    for (int i=0 ; i < N(s) ; i++){
-      if (s[i] == '-') return true;
-      else if (is_space(s[i]));
-      else if (is_numeric(s[i]) || is_alpha(s[i]) ||
-          s[i] == '+' || s[i] == '.' || s[i] == ',') return false;
-    }
+  for (int i=0 ; i < N(s) ; i++){
+    if (s[i] == '-') return true;
+    else if (is_space(s[i]));
+    else if (is_numeric(s[i]) || is_alpha(s[i]) ||
+             s[i] == '+' || s[i] == '.' || s[i] == ',') return false;
+  }
   return false;
 }
 
@@ -2454,8 +2455,8 @@ latex_command_to_tree (tree t) {
     indent = l2e(t[3]);
     spb = l2e(t[4]);
     spa = l2e(t[5]);
-    style = concat();
-    r = concat();
+    style = concat ();
+    r = concat ();
     bool inserted = false, center = false;
 
     if (is_compound (t[6]))
@@ -2464,33 +2465,33 @@ latex_command_to_tree (tree t) {
         else if (is_tuple(t[6][i], "\\normalfont", 0)) ;
         else style << t[6][i];
       }
-    style = l2e(style);
+    style= l2e (style);
 
     if (is_negative_length(spb)) indentafter = tree();
-    else indentafter = tree(HSPACE, "par-first");
-    spb = compound("vspace*", abs_length(spb));
+    else indentafter= tree (HSPACE, "par-first");
+    spb= compound("vspace*", abs_length (spb));
 
     if (is_negative_length(spa))
-      spa = tree(HSPACE, abs_length(spa));
+      spa= tree (HSPACE, abs_length (spa));
     else
-      spa = tree(VSPACE, spa);
+      spa= tree (VSPACE, spa);
 
-    for (int i = 0 ; i < N(style) ; i++) {
-      if (is_func(style[i], RESET) && !inserted) {
-        if (center)
-          r << spb << compound ("center", tree (ARG, "name"))
-            << spa << indentafter;
+    if (is_compound (style))
+      for (int i = 0 ; i < N(style) ; i++) {
+        if (is_func(style[i], RESET) && !inserted) {
+          if (center)
+            r << spb << compound ("center", tree (ARG, "name"))
+              << spa << indentafter;
+          else
+            r << spb << tree(HSPACE, indent) << tree (ARG, "name")
+              << spa << indentafter;
+          inserted = true;
+        }
         else
-          r << spb << tree(HSPACE, indent) << tree (ARG, "name")
-            << spa << indentafter;
-        inserted = true;
+          r << style[i];
       }
-      else
-        r << style[i];
-    }
-    if (is_func(spa, VSPACE)) r = compound("sectional-normal", r);
-    return tree (ASSIGN, concat(name->label, "-title"),
-        tree (MACRO, "name", r));
+    if (is_func (spa, VSPACE)) r= compound("sectional-normal", r);
+    return tree (ASSIGN, name->label * "-title", tree (MACRO, "name", r));
   }
   if (is_tuple (t, "\\@setfontsize", 3)) {
     tree fontsize = l2e(t[2]);
