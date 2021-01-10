@@ -12,5 +12,7 @@
 #include "font.hpp"
 
 TEST(font, default_chinese_font_name) {
+#ifdef OS_MACOS
   ASSERT_TRUE (default_chinese_font_name () == string ("Songti SC"));
+#endif
 }
