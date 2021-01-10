@@ -1052,32 +1052,30 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
     if (fam == mfam && !is_italic_font (mfam)) {
       array<string> emu_names= emu_font_names ();
       for (int i=0; i<N(emu_names); i++)
-	if (virtually_defined (c, emu_names[i])) {
-	  tree key= tuple ("emulate", emu_names[i]);
-	  int nr= sm->add_font (key, REWRITE_NONE);
-	  initialize_font (nr);
-	  if (fn[nr]->supports (c))
-	    return sm->add_char (key, c);
-	}
+        if (virtually_defined (c, emu_names[i])) {
+          tree key= tuple ("emulate", emu_names[i]);
+          int nr= sm->add_font (key, REWRITE_NONE);
+          initialize_font (nr);
+          if (fn[nr]->supports (c))
+            return sm->add_char (key, c);
+        }
     }
   }
 
   if (attempt > 1) {
     string range= get_unicode_range (c);
-    if (true) {
-      int a= attempt - 1;
-      string v;
-      if (range == "") v= variant;
-      else if (v == "rm") v= range;
-      else v= variant * "-" * range;
-      font cfn= closest_font (fam, v, series, rshape, sz, dpi, a);
-      //cout << "Trying " << c << " in " << cfn->res_name << "\n";
-      if (cfn->supports (c)) {
-        tree key= tuple (fam, v, series, rshape, as_string (a));
-        int nr= sm->add_font (key, REWRITE_NONE);
-        initialize_font (nr);
-        return sm->add_char (key, c);
-      }
+    int a= attempt - 1;
+    string v;
+    if (range == "") v= variant;
+    else if (v == "rm") v= range;
+    else v= variant * "-" * range;
+    font cfn= closest_font (fam, v, series, rshape, sz, dpi, a);
+    //cout << "Trying " << c << " in " << cfn->res_name << "\n";
+    if (cfn->supports (c)) {
+      tree key= tuple (fam, v, series, rshape, as_string (a));
+      int nr= sm->add_font (key, REWRITE_NONE);
+      initialize_font (nr);
+      return sm->add_char (key, c);
     }
   }
 

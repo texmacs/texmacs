@@ -156,7 +156,7 @@ upgrade_family_name (string f) {
 
     t ("modern")= "roman";
     t ("cyrillic")= "roman";
-    t ("sys-chinese")= default_chinese_font_name();
+    t ("sys-chinese")= default_chinese_font_name ();
     t ("sys-japanese")= "roman";
     t ("sys-korean")= "roman";
   }

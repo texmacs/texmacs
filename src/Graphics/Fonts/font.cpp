@@ -569,16 +569,19 @@ script (int sz, int level) {
 
 string
 default_chinese_font_name () {
-  if (tt_font_exists ("FandolSong-Regular")) return "FandolSong";
-
   // Set default Chinese font for Windows
   // see: https://docs.microsoft.com/en-us/typography/fonts/windows_10_font_list
+#ifdef OS_MINGW
   if (tt_font_exists ("simsun")) return "simsun";
+#endif
 
   // Set default Chinese font for macOS
   // see: https://developer.apple.com/fonts/system-fonts/
-  if (tt_font_exists ("Songti SC Regular")) return "Songti SC";
+#ifdef OS_MACOS
+  if (tt_font_exists ("Songti")) return "Songti SC";
+#endif
 
+  if (tt_font_exists ("FandolSong-Regular")) return "FandolSong";
   if (tt_font_exists ("fireflysung")) return "fireflysung";
   if (tt_font_exists ("uming")) return "uming";
   if (tt_font_exists ("儷黑 Pro")) return "lihei";
