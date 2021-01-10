@@ -246,6 +246,7 @@
 ("class" "类")
 ("clear" "清除")
 ("clear all fields" "清除全部区域")
+("clear font cache" "清除字体缓存")
 ("clear menu" "清除列表")
 ("clear selection" "清除选择")
 ("clear undo history" "清除撤销记录")
