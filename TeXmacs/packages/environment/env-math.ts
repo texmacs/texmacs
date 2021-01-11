@@ -1,4 +1,4 @@
-<TeXmacs|1.99.13>
+<TeXmacs|1.99.18>
 
 <style|source>
 
@@ -54,7 +54,7 @@
     </src-comment>
   </active*>
 
-  <assign|next-number|<macro|<style-with|src-compact|none|<next-equation><with|mode|text|font-shape|right|(<the-equation>)>>>>
+  <assign|next-number|<macro|<style-with|src-compact|none|<inc-label-counter><render-label|<make-label>>>>>
 
   <drd-props|next-number|syntax|<macro|>>
 
@@ -64,11 +64,13 @@
 
   <assign|eq-number|<value|req-number>>
 
-  <assign|eq-lab|<macro|lab|<htab|5mm><with|mode|text|font-shape|right|(<arg|lab>)>>>
-
   <assign|no-number|<macro|>>
 
   <assign|eqref|<macro|id|(<reference|<arg|id>>)>>
+
+  <assign|inc-label-counter|<macro|<next-equation>>>
+
+  <assign|make-label|<macro|<the-equation>>>
 
   <\active*>
     <\src-comment>
@@ -76,12 +78,14 @@
     </src-comment>
   </active*>
 
+  <assign|render-label|<macro|lab|<with|mode|text|font-shape|right|(<arg|lab>)>>>
+
   <assign|equation*|<macro|body|<\with|mode|math|math-display|true|par-ver-sep|<eqn-ver-sep>>
     <style-with|src-compact|none|<surround|<no-page-break*><vspace*|<eqn-short-above>><no-indent><htab|0fn>|<htab|0fn><vspace|<eqn-short-below>><no-indent*>|<arg|body>>>
   </with>>>
 
   <assign|equation-lab|<\macro|body|lab>
-    <\surround|<set-binding|<arg|lab>>|<space|5mm><with|mode|text|font-shape|right|(<arg|lab>)>>
+    <\surround|<set-binding|<arg|lab>>|<space|5mm><render-label|<arg|lab>>>
       <\equation*>
         <arg|body>
       </equation*>
@@ -89,10 +93,10 @@
   </macro>>
 
   <assign|equation|<\macro|body>
-    <\surround|<next-equation>|>
+    <\surround|<inc-label-counter>|>
       <\equation-lab>
         <arg|body>
-      </equation-lab|<the-equation>>
+      </equation-lab|<make-label>>
     </surround>
   </macro>>
 
@@ -202,9 +206,7 @@
     <eqsplit*|<tformat|<arg|body>>>
   </macro>>
 
-  <assign|subequations|<\macro|body>
-    <arg|body>
-  </macro>>
+  <assign|subequations|<macro|body|<surround|<inc-label-counter><new-counter|subequation>||<with|inc-label-counter|<macro|<next-subequation>>|make-label|<macro|<the-equation><number|<the-subequation>|alpha>>|<arg|body>>>>>
 
   <\active*>
     <\src-comment>
