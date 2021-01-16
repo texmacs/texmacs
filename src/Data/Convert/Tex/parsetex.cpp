@@ -1208,13 +1208,14 @@ latex_parser::parse_command (string s, int& i, string cmd, int change) {
     }
   }
 
-  /***************** apply substitutions and bords effects  ******************/
+  /***************** apply substitutions and side effects  ******************/
   if ((pic && latex_type (cmd) == "replace")
       || latex_type (cmd) == "begin-end!"
       || latex_type (cmd) == "defined-env!"
       || latex_type (cmd) == "side-effect!") {
     int pos= 0;
     array<string> body= command_def[cmd];
+    if (cmd == "\\def") body= array<string> ();
     arity= command_arity[cmd];
     if (N(body) > 0 && latex_type (cmd) == "side-effect!"
         && !occurs (cmd, body[0]))
