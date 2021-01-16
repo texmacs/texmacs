@@ -1012,8 +1012,8 @@ tex_font_rep::index_glyph (string s, font_metric& rm, font_glyphs& rg) {
     if (s == "<less>") s= "<";
     if (s == "<gtr>") s= ">";
     for (i=0; i<N(s); i++)
-      if ((s[i] & 128) != 0)
-	return font_rep::index_glyph (s, rm, rg);
+      if ((s[i] & 128) != 0 && s[i] != ((char) 254))
+        return font_rep::index_glyph (s, rm, rg);
     break;
   }
   int c;
@@ -1021,7 +1021,10 @@ tex_font_rep::index_glyph (string s, font_metric& rm, font_glyphs& rg) {
   else c= ((QN) s[0]);
   if (c == -1) return font_rep::index_glyph (s, rm, rg);
   glyph gl= pk->get (c);
-  if (is_nil (gl)) return font_rep::index_glyph (s, rm, rg);
+  if (is_nil (gl)) {
+    if (c == ((QN) 254)) return -1;
+    return font_rep::index_glyph (s, rm, rg);
+  }
   rm= tfm_font_metric (tfm, pk, unit);
   rg= pk;
   return c;
