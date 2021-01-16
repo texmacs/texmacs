@@ -465,6 +465,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
     //cout << "Ignored " << type << ", " << x << ", " << y << "; " << mods << ", " << t << "\n";
     return;
   }
+  if (t > last_event) last_event= t;
   if (((x > last_x && !tremble_right) || (x < last_x && tremble_right)) &&
       (abs (x - last_x) > abs (y - last_y)) &&
       type == "move") {

@@ -55,6 +55,7 @@ edit_interface_rep::edit_interface_rep ():
   editor_rep (), // NOTE: ignored by the compiler, but suppresses warning
   env_change (0),
   last_change (texmacs_time()), last_update (last_change-1),
+  last_event (texmacs_time()),
   anim_next (1.0e12),
   full_screen (false), got_focus (false),
   sh_s (""), sh_mark (0),
@@ -681,7 +682,8 @@ edit_interface_rep::apply_changes () {
 
   if (tremble_count > 0 &&
       last_change-last_update > 0 &&
-      idle_time (INTERRUPTED_EVENT) >= 80) {
+      (idle_time (INTERRUPTED_EVENT) >= 80 ||
+       texmacs_time() - last_event >= 3000)) {
     tremble_count--;
     if (tremble_count > 2) {
       env_change = env_change | (THE_CURSOR + THE_FREEZE);
