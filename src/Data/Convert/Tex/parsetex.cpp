@@ -50,6 +50,7 @@ struct latex_parser {
   char lf;
   bool pic;
   hashmap<string,bool> loaded_package;
+  hashmap<string,bool> loaded_include;
   latex_parser (bool unicode2): level (0), unicode (unicode2) {}
   void latex_error (string s, int i, string message);
 
@@ -1180,7 +1181,7 @@ latex_parser::parse_command (string s, int& i, string cmd, int change) {
         string name= string_arg (t[1]);
         command_type (name)= "replace";
       }
-      if (subs && starts (as_string (t[0]), "\\newenvironment")) {
+      if (subs && starts (as_string (t[0]), "\\newenvironment") && N(t) >= 2) {
         string name= string_arg (t[1]);
         command_type ("\\begin-"*name)= "replace";
         command_type ("\\end-"*name)=   "replace";
@@ -1193,13 +1194,13 @@ latex_parser::parse_command (string s, int& i, string cmd, int change) {
       string name= string_arg (t[1]);
       command_type (name)= "side-effect!";
     }
-    if ((is_tuple (t, "\\newenvironment")
+    if ((is_tuple (t, "\\newenvironment") && N(t) >= 2
           && contains_side_effects (concat (t[N(t)-2], t[N(t)-1]))) ||
-        (is_tuple (t, "\\newenvironment*")
+        (is_tuple (t, "\\newenvironment*") && N(t) >= 2
          && contains_side_effects (concat (t[N(t)-2], t[N(t)-1]))) ||
-        (is_tuple (t, "\\newenvironment**")
+        (is_tuple (t, "\\newenvironment**") && N(t) >= 2
          && contains_side_effects (concat (t[N(t)-2], t[N(t)-1]))) ||
-        (is_tuple (t, "\\newenvironment**")
+        (is_tuple (t, "\\newenvironment**") && N(t) >= 3
          && contains_side_effects (t[N(t)-3]))) {
       string name= string_arg (t[1]);
       command_type ("\\begin-"*name)= "side-effect!";
@@ -1723,12 +1724,15 @@ latex_parser::parse (string s, int change) {
           if (!ends (name, suffix)) name= name * suffix;
           url incl= relative (get_file_focus (), name);
           string body;
-          if (!exists (incl) || skip_expansion (incl) ||
+          if (!exists (incl) ||
+              skip_expansion (incl) ||
+              loaded_include[as_string (incl)] ||
               load_string (incl, body, false));
           else {
             //cout << "Include " << name << " -> " << incl << "\n";
             s= s (0, cut) * "\n" * body * "\n" * s (i+1, N(s));
             n= N(s);
+            loaded_include (as_string (incl))= true;
           }
           i= cut + 1;
         }
