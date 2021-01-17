@@ -12,9 +12,15 @@ endif (APPLE)
 
 add_library(texmacs_body STATIC ${TeXmacs_All_SRCS})
 
-add_executable (${TeXmacs_binary_name}
-  ./Texmacs/Texmacs/texmacs.cpp
-)
+if (WIN32)
+  add_executable (${TeXmacs_binary_name} WIN32
+    ./Texmacs/Texmacs/texmacs.cpp
+  )
+else (WIN32)
+  add_executable (${TeXmacs_binary_name}
+    ./Texmacs/Texmacs/texmacs.cpp
+  )
+endif (WIN32)
 
 target_link_libraries (${TeXmacs_binary_name}
   texmacs_body

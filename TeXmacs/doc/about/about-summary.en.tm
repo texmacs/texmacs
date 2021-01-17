@@ -1,6 +1,6 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.18>
 
-<style|<tuple|tmdoc|english|old-spacing>>
+<style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|Summary>
@@ -10,7 +10,7 @@
   version>|<cell|<TeXmacs-version>>>|<row|<cell|SVN
   revision>|<cell|<TeXmacs-version-release|revision>>>|<row|<cell|Supported
   systems>|<cell|Most GNU/<name|Linux> systems>>|<row|<cell|Copyright>|<cell|<copyright>
-  1998\U2019 by Joris van der Hoeven >>|<row|<cell|License>|<cell|<hlink|GNU
+  1998\U2021 by Joris van der Hoeven >>|<row|<cell|License>|<cell|<hlink|GNU
   General Public License|$TEXMACS_PATH/LICENSE>>>|<row|<cell|Web
   sites>|<cell|<tabular|<tformat|<twith|table-valign|T>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<table|<row|<cell|<verbatim|https://www.texmacs.org>>>|<row|<cell|<verbatim|http://www.gnu.org/software/texmacs>>>>>>>>|<row|<cell|Contact>|<cell|<verbatim|contact@texmacs.org>>>|<row|<cell|Regular
   mail>|<cell|<tabular|<tformat|<twith|table-valign|T>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<table|<row|<cell|<abbr|Prof.>
@@ -69,7 +69,7 @@
     </very-small>
   </itemize>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2021|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

@@ -1,6 +1,6 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.18>
 
-<style|<tuple|tmdoc|english|old-spacing>>
+<style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|<TeXmacs> fonts>
@@ -115,55 +115,54 @@
 
   The main abstract <verbatim|font> class is defined in <verbatim|font.hpp>:\ 
 
-  <\verbatim>
-    \ \ \ \ struct font_rep: rep\<less\>font\<gtr\> {<next-line>
-    \ \ \ \ \ display \ dis; \ \ \ \ \ \ \ \ \ \ \ \ \ // underlying
-    display<next-line> \ \ \ \ \ encoding enc; \ \ \ \ \ \ \ \ \ \ \ \ \ //
-    underlying encoding of the font<next-line> \ \ \ \ \ SI
-    \ \ \ \ \ \ design_size; \ \ \ \ \ // design size in
-    points/256<next-line> \ \ \ \ \ SI \ \ \ \ \ \ display_size; \ \ \ \ //
-    display size in points/PIXEL<next-line> \ \ \ \ \ double \ \ slope;
-    \ \ \ \ \ \ \ \ \ \ \ // italic slope<next-line> \ \ \ \ \ space
-    \ \ \ spc; \ \ \ \ \ \ \ \ \ \ \ \ \ // usual space between
-    words<next-line> \ \ \ \ \ space \ \ \ extra; \ \ \ \ \ \ \ \ \ \ \ //
-    extra space at end of words<next-line><next-line> \ \ \ \ \ SI
-    \ \ \ \ \ \ y1; \ \ \ \ \ \ \ \ \ \ \ \ \ \ // bottom y
-    position<next-line> \ \ \ \ \ SI \ \ \ \ \ \ y2;
-    \ \ \ \ \ \ \ \ \ \ \ \ \ \ // top y position<next-line> \ \ \ \ \ SI
-    \ \ \ \ \ \ yfrac; \ \ \ \ \ \ \ \ \ \ \ // vertical position fraction
-    bar<next-line> \ \ \ \ \ SI \ \ \ \ \ \ ysub; \ \ \ \ \ \ \ \ \ \ \ \ //
-    base line for subscripts<next-line> \ \ \ \ \ SI \ \ \ \ \ \ ysup;
+  <\cpp-code>
+    struct font_rep: rep\<less\>font\<gtr\> {<next-line> \ display \ dis;
+    \ \ \ \ \ \ \ \ \ \ \ \ \ // underlying display<next-line> \ encoding
+    enc; \ \ \ \ \ \ \ \ \ \ \ \ \ // underlying encoding of the
+    font<next-line> \ SI \ \ \ \ \ \ design_size; \ \ \ \ \ // design size in
+    points/256<next-line> \ SI \ \ \ \ \ \ display_size; \ \ \ \ // display
+    size in points/PIXEL<next-line> \ double \ \ slope;
+    \ \ \ \ \ \ \ \ \ \ \ // italic slope<next-line> \ space \ \ \ spc;
+    \ \ \ \ \ \ \ \ \ \ \ \ \ // usual space between words<next-line> \ space
+    \ \ \ extra; \ \ \ \ \ \ \ \ \ \ \ // extra space at end of
+    words<next-line><next-line> \ SI \ \ \ \ \ \ y1;
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ // bottom y position<next-line> \ SI
+    \ \ \ \ \ \ y2; \ \ \ \ \ \ \ \ \ \ \ \ \ \ // top y position<next-line>
+    \ SI \ \ \ \ \ \ yfrac; \ \ \ \ \ \ \ \ \ \ \ // vertical position
+    fraction bar<next-line> \ SI \ \ \ \ \ \ ysub; \ \ \ \ \ \ \ \ \ \ \ \ //
+    base line for subscripts<next-line> \ SI \ \ \ \ \ \ ysup;
     \ \ \ \ \ \ \ \ \ \ \ \ // base line for
-    superscripts<next-line><next-line> \ \ \ \ \ SI \ \ \ \ \ \ wpt;
-    \ \ \ \ \ \ \ \ \ \ \ \ \ // width of one point in font<next-line>
-    \ \ \ \ \ SI \ \ \ \ \ \ wquad; \ \ \ \ \ \ \ \ \ \ \ // wpt * design
-    size in points<next-line> \ \ \ \ \ SI \ \ \ \ \ \ wunit;
-    \ \ \ \ \ \ \ \ \ \ \ // unit width for extendable fonts<next-line>
-    \ \ \ \ \ SI \ \ \ \ \ \ wfrac; \ \ \ \ \ \ \ \ \ \ \ // width fraction
-    bar<next-line> \ \ \ \ \ SI \ \ \ \ \ \ wsqrt; \ \ \ \ \ \ \ \ \ \ \ //
-    width horzontal line in square root<next-line> \ \ \ \ \ SI
-    \ \ \ \ \ \ wneg; \ \ \ \ \ \ \ \ \ \ \ \ // width of negation
-    line<next-line><next-line> \ \ \ \ \ font_rep (display dis, string
-    name);<next-line> \ \ \ \ \ font_rep (display dis, string name, font
-    fn);<next-line> \ \ \ \ \ void copy_math_pars (font
-    fn);<next-line><next-line> \ \ \ \ \ virtual void \ \ get_extents (string
-    s, text_extents& ex) = 0;<next-line> \ \ \ \ \ virtual void \ \ draw
-    (ps_device dev, string s, SI x, SI y) = 0;<next-line><next-line>
-    \ \ \ \ \ virtual SI \ \ \ \ get_sub_base (string s);<next-line>
-    \ \ \ \ \ virtual SI \ \ \ \ get_sup_base (string s);<next-line>
-    \ \ \ \ \ virtual double get_left_slope \ (string s);<next-line>
-    \ \ \ \ \ virtual double get_right_slope (string s);<next-line>
-    \ \ \ \ \ virtual SI \ \ \ \ get_left_correction \ (string s);<next-line>
-    \ \ \ \ \ virtual SI \ \ \ \ get_right_correction (string s);<next-line>
-    \ \ \ \ \ virtual SI \ \ \ \ get_lsub_correction (string s, double
-    level);<next-line> \ \ \ \ \ virtual SI \ \ \ \ get_lsup_correction
-    (string s, double level);<next-line> \ \ \ \ \ virtual SI
-    \ \ \ \ get_rsub_correction (string s, double level);<next-line>
-    \ \ \ \ \ virtual SI \ \ \ \ get_rsup_correction (string s, double
-    level);<next-line><next-line> \ \ \ \ void var_get_extents (string s,
-    text_extents& ex);<next-line> \ \ \ \ void var_draw (ps_device dev,
-    string s, SI x, SI y);<next-line> \ \ \ \ virtual bitmap_char get_bitmap
-    (string s);<next-line> \ \ };
+    superscripts<next-line><next-line> \ SI \ \ \ \ \ \ wpt;
+    \ \ \ \ \ \ \ \ \ \ \ \ \ // width of one point in font<next-line> \ SI
+    \ \ \ \ \ \ wquad; \ \ \ \ \ \ \ \ \ \ \ // wpt * design size in
+    points<next-line> \ SI \ \ \ \ \ \ wunit; \ \ \ \ \ \ \ \ \ \ \ // unit
+    width for extendable fonts<next-line> \ SI \ \ \ \ \ \ wfrac;
+    \ \ \ \ \ \ \ \ \ \ \ // width fraction bar<next-line> \ SI
+    \ \ \ \ \ \ wsqrt; \ \ \ \ \ \ \ \ \ \ \ // width horzontal line in
+    square root<next-line> \ SI \ \ \ \ \ \ wneg; \ \ \ \ \ \ \ \ \ \ \ \ //
+    width of negation line<next-line><next-line> \ font_rep (display dis,
+    string name);<next-line> \ font_rep (display dis, string name, font
+    fn);<next-line> \ void copy_math_pars (font fn);<next-line><next-line>
+    \ virtual void \ \ get_extents (string s, text_extents& ex) =
+    0;<next-line> \ virtual void \ \ draw (ps_device dev, string s, SI x, SI
+    y) = 0;<next-line><next-line> \ virtual SI \ \ \ \ get_sub_base (string
+    s);<next-line> \ virtual SI \ \ \ \ get_sup_base (string s);<next-line>
+    \ virtual double get_left_slope \ (string s);<next-line> \ virtual double
+    get_right_slope (string s);<next-line> \ virtual SI
+    \ \ \ \ get_left_correction \ (string s);<next-line> \ virtual SI
+    \ \ \ \ get_right_correction (string s);<next-line> \ virtual SI
+    \ \ \ \ get_lsub_correction (string s, double level);<next-line>
+    \ virtual SI \ \ \ \ get_lsup_correction (string s, double
+    level);<next-line> \ virtual SI \ \ \ \ get_rsub_correction (string s,
+    double level);<next-line> \ virtual SI \ \ \ \ get_rsup_correction
+    (string s, double level);<next-line><next-line> \ void var_get_extents
+    (string s, text_extents& ex);<next-line> \ void var_draw (ps_device dev,
+    string s, SI x, SI y);<next-line> \ virtual bitmap_char get_bitmap
+    (string s);<next-line>};
+  </cpp-code>
+
+  <\verbatim>
+    \ \ \ \ 
   </verbatim>
 
   The main abstract routines are <verbatim|get_extents> and <verbatim|draw>.
@@ -209,27 +208,27 @@
   At the lowest level, we provide a fixed number of macros which directly
   correspond to the above types of concrete fonts. For instance, the macro\ 
 
-  <\verbatim>
+  <\scm>
     \ \ \ \ (tex $name $size $dpi)
-  </verbatim>
+  </scm>
 
-  corresponds to the constructor\ 
+  corresponds to the constructor
 
-  <\verbatim>
-    \ \ \ \ font tex_font (display dis, string fam, int size, int dpi, int
-    dsize=10);
-  </verbatim>
+  <\cpp-code>
+    font tex_font (display dis, string fam, int size, int dpi, int dsize=10);
+  </cpp-code>
 
   of a <TeX> text font.
 
   At the middle level, it is possible to specify some rewriting rules like\ 
 
-  <\verbatim>
-    \ \ \ \ ((roman rm medium right $s $d) (ec ecrm $s $d))<next-line>
-    \ \ \ ((avant-garde rm medium right $s $d) (tex rpagk $s $d
-    0))<next-line> \ \ \ ((x-times rm medium right $s $d) (ps
-    adobe-times-medium-r-normal $s $d))
-  </verbatim>
+  <\scm-code>
+    ((roman rm medium right $s $d) (ec ecrm $s $d))
+
+    ((avant-garde rm medium right $s $d) (tex rpagk $s $d 0))
+
+    ((x-times rm medium right $s $d) (ps adobe-times-medium-r-normal $s $d))
+  </scm-code>
 
   When a left hand pattern is matched, it is recursively substituted by the
   right hand side. The files in the directory <verbatim|progs/fonts> contain
@@ -237,15 +236,15 @@
 
   At the top level, <TeXmacs> calls a macro of the form\ 
 
-  <\verbatim>
-    \ \ \ \ ($name $family $series $shape $size $dpi)
-  </verbatim>
+  <\scm-code>
+    ($name $family $series $shape $size $dpi)
+  </scm-code>
 
   as a function of the current environment in the text. In the future, the
   top level macro call might change in order to enable the user to let the
   font depend on other environment variables.
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2021|Joris van der Hoeven|Darcy Shen>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

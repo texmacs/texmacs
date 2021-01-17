@@ -294,6 +294,7 @@ edit_interface_rep::kbd_shortcut (string cmd) {
 void
 edit_interface_rep::handle_keypress (string key, time_t t) {
   if (is_nil (buf)) return;
+  if (t > last_event) last_event= t;
   bool started= false;
 #ifdef USE_EXCEPTIONS
   try {

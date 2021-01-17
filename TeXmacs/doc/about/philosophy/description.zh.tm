@@ -1,6 +1,6 @@
-<TeXmacs|1.99.5>
+<TeXmacs|1.99.18>
 
-<style|<tuple|tmdoc|chinese>>
+<style|<tuple|tmdoc|chinese|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|GNU <TeXmacs>\<#7B80\>\<#8FF0\>>
@@ -14,7 +14,7 @@
   GNU <TeXmacs>\<#9879\>\<#76EE\>\<#7531\><with|font|roman|<hlink|INRIA|http://www.inria.fr>,
   Bâtiment Alan Turing, Palaiseau, France>\<#6258\>\<#7BA1\>\<#3002\>
 
-  <tmdoc-copyright|1998--2013|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2021|Joris van der Hoeven|\<#6C88\>\<#8FBE\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

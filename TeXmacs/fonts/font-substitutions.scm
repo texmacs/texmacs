@@ -15,6 +15,9 @@
 ((SimSun sansserif) (SimHei))
 ((SimSun italic) (KaiTi_GB2312))
 ((SimSun typewriter) (FangSong_GB2312))
+
+((Songti\ SC sansserif) (PingFang\ SC))
+
 ((STSong bold) (STHeiti))
 ((STSong sansserif) (STHeiti))
 ((STSong italic) (STKaiti))

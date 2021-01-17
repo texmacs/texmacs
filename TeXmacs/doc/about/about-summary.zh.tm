@@ -1,6 +1,6 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.18>
 
-<style|<tuple|tmdoc|chinese|old-spacing>>
+<style|<tuple|tmdoc|chinese|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|\<#6982\>\<#8981\>>
@@ -62,7 +62,7 @@
     </very-small>
   </itemize>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2021|Joris van der Hoeven|\<#6C88\>\<#8FBE\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
