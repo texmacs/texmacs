@@ -14,8 +14,12 @@
 
 function tmrepl()
   while (true)
-    __r= input ("", "s");
-
+    __r = input ("", "s");
+    __r0= input ("", "s");
+    while (!strcmp(__r0,"<EOF>"))
+        __r = strcat(__r,"\n",__r0);
+        __r0= input ("", "s");
+    endwhile
     if __r(length (__r)) != ";"
       disp_ans= true;
     else

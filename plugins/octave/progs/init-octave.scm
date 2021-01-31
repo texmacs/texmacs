@@ -11,6 +11,11 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (octave-serialize lan t)
+    (with u (pre-serialize lan t)
+      (with s (texmacs->code (stree->tree u) "SourceCode")
+        (string-append s "\n<EOF>\n"))))
+
 (define (octave-source-path)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/octave")
       (string-append (getenv "TEXMACS_HOME_PATH") "/plugins/octave/octave")
@@ -32,6 +37,7 @@
   (:macpath "Octave*" "Contents/Resources/usr/bin")
   (:require (or (url-exists-in-path? "octave-cli")
                 (url-exists-in-path? "octave-octave-app")))
+  (:serializer ,octave-serialize)
   (:launch ,(octave-launcher))
   (:session "Octave"))
 
