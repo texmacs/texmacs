@@ -2100,6 +2100,12 @@
 	((func? x 'concat)
 	 (apply string-append (map-in-order tmtex-tt (cdr x))))
         ((func? x 'mtm 2) (tmtex-tt (cAr x)))
+        ((func? x 'surround 3)
+         (string-append (tmtex-tt (cadr x))
+                        (tmtex-tt (cadddr x))
+                        (tmtex-tt (caddr x))))
+        ((or (func? x 'hgroup 1) (func? x 'vgroup 1))
+         (tmtex-tt (cadr x)))
         ((func? x 'with)
          (begin
            (display* "TeXmacs] lost <with> in verbatim content: " (cDr x) "\n")

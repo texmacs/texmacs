@@ -330,6 +330,10 @@
   (pari "{\\sc Pari}")
   (qed (!math (Box)))
   (textdots "...")
+  (filldots "{\\dotfill\\hfill\\hbox{}}")
+  (infixand (text " and "))
+  (infixor (text " or "))
+  (infixiff (text " iff "))
 
   ;; Unary macros
   (tmrsub (ensuremath (!append "_{" (textrm 1) "}")))
