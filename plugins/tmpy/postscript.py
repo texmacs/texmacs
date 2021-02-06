@@ -90,7 +90,7 @@ def ps_out (out):
                 fd.close()
                 break
             else:
-                raise IOError('File "%s%s" not found.' % (out, str(ext_lis)))
+                raise IOError('File "%s%s" not found.' % (out, str(ext_list)))
     elif 'read' in dir(out):
         data = out.read()
 
@@ -140,7 +140,7 @@ def pdf_out (out):
                 name = out+ext
                 break
             else:
-                raise IOError('File "%s%s" not found.' % (out, str(ext_lis)))
+                raise IOError('File "%s%s" not found.' % (out, str(ext_list)))
     elif 'read' in dir(out):
         data = out.read()
         fd = open(pdf_out_tmp_file, 'wb')

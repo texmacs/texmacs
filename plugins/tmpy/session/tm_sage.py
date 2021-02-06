@@ -24,38 +24,34 @@ import tempfile
 import traceback
 import re
 import string
+import ast
 import warnings
 warnings.simplefilter("ignore") # don't print warnings to stdout
-from tmpy.compat import py_ver
-from tmpy.protocol   import *
-from tmpy.postscript import ps_out
+from tmpy.compat import py_ver, tm_input
+from tmpy.capture import CaptureStdout
+from tmpy.postscript import ps_out, PSOutDummy, pdf_out, FileOutDummy
 from tmpy.completion import parse_complete_command, complete
+from tmpy.protocol   import *
 from sage.all        import *
 
-__version__ = '0.8.1'
-__author__ = 'Ero Carrera'
+if py_ver == 2:
+    flush_err ("This version of SageMath uses Python 2, which is no longer actively supported in TeXmacs.\nIf you experience any problems please upgrade to SageMath 9.0 or higher.")
+#    exit (-1)
 
-class Capture:
-    """Capture python output.
-  
-    Class in charge of recording the output of the
-    statements/expressions entered in the TeXmacs
-    session and executed in Python.
-    """
-    def __init__(self):
-        self.text = ''
-    def write(self, str):
-        self.text += str
-    def getOutput(self):
-        return self.text
-    def flush(self):
-        self.text = ''
+# import logging as log
+# log.basicConfig(filename='/tmp/tm_python.log',level=log.INFO)
 
-def compose_output(data):
-    """Do some parsing on the output according to its type."""
+def flush_output (data):
+# TODO: integrate Sage to TeXmacs parsing from compose_output()
+    """Do some parsing on the output according to its type.
+    
+    Non printable characters in unicode strings are escaped
+    and objects of type None are not printed (so that procedure calls,
+    as opposed to function calls, don't produce any output)."""
 
-    if data == None:
-        return "verbatim: "
+    if (data is None):
+        flush_verbatim ("")
+        return
 
     #If the object is a graphics object, try to return
     #postscript to TeXmacs
@@ -70,42 +66,52 @@ def compose_output(data):
             ps_contents = ps_file.read()
             ps_file.close()
 
-            return "ps: " + ps_contents
+            flush_ps(ps_contents)
         except:
             pass
-
-    if isinstance(data, SageObject):
+    elif isinstance(data, SageObject):
         try:
-            l = latex(data)
             #Replace latex arrays with matrix
-            return "latex:" + "$" +  l + "$"
+            flush_latex(latex(data))
         except:
-          return "verbatim: %s" % str(data)
-    if isinstance(data, str):
-        return 'verbatim:'+data.strip()
-    if isinstance(data, int):
-        return 'verbatim: %d' % data
-    if isinstance(data, float):
-        return 'verbatim: %f' % data
-  
-    if py_ver == 2:
-        if isinstance(data, unicode):
-            data2 = r''
-            for c in data:
-                if c not in string.printable:
-                    data2 += '\\x%x' % ord(c)
-                else:
-                    data2 += c
-            data = data2
+            flush_verbatim('%s' % str(data))
+    elif isinstance(data, str):
+        flush_verbatim(data.strip())
+    elif isinstance(data, int):
+        flush_verbatim('%d' % data)
+    elif isinstance(data, float):
+        flush_verbatim('%f' % data)
+    elif isinstance (data, PSOutDummy):
+        flush_ps (data.content)
+    elif isinstance (data, FileOutDummy):
+        if (data.content is None):
+            flush_verbatim ("")
+        else:
+            flush_file (data.content)
+    else:
+        flush_verbatim (str(data).strip())
 
-    return 'verbatim: %s' % str(data)
+def my_eval (code, p_globals):
+    '''Execute a script and return the value of the last expression'''
 
-my_globals = {}
+    block = ast.parse(code, mode='exec')
+    if len(block.body) > 1 and isinstance(block.body[-1], ast.Expr):
+        last = ast.Expression(block.body.pop().value)
+        exec(compile(block, '<string>', mode='exec'), p_globals)
+        return eval(compile(last, '<string>', mode='eval'), p_globals)
+    else:
+        return eval(code, p_globals)
+
+__version__ = '0.8.1'
+__author__ = 'Ero Carrera'
+my_globals   = {}
+
 # We insert into the session's namespace the 'ps_out' method.
 my_globals['ps_out'] = ps_out
+my_globals['pdf_out'] = pdf_out
 
 # As well as some documentation.
-my_globals['__doc__'] = """TeXmacs SAGE plugin.
+my_globals['__doc__'] = """A SageMath plugin for TeXmacs.
 
   TeXmacs SAGE interface v0.8.1.
 
@@ -116,20 +122,18 @@ my_globals['__doc__'] = """TeXmacs SAGE plugin.
   Enjoy it!
   """
 
-capt = Capture()
-os.chdir( os.environ['HOME'] + '/.TeXmacs/system/tmp')
-stdout_saved, os.sys.stdout  =  os.sys.stdout, capt
-if os.sys.version[0] == '2':
-    co = compile('import __builtin__ as __builtins__', 'tm_sage', 'exec')
+if py_ver > 3:
+    text = 'import builtins as __builtins__'
 else:
-    co = compile('import builtins', 'tm_sage', 'exec')
-eval(co, my_globals)
-os.sys.stdout = stdout_saved
+    text = 'import __builtin__ as __builtins__'
+CaptureStdout.capture (text, my_globals, "tm_sage")
+
+sys.stdout = os.fdopen (sys.stdout.fileno(), 'w')
+
 co = compile('from sage.all import *', 'tm_sage', 'exec')
 eval(co, my_globals)
 co = compile('from sage.calculus.predefined import x', 'tm_sage', 'exec')
 eval(co, my_globals)
-
 
 ###############################################################################
 # Session start
@@ -137,45 +141,38 @@ eval(co, my_globals)
 if (os.path.exists (tmpy_home_path)):
     flush_verbatim ("WARNING: You are under develop mode using " + tmpy_home_path)
     flush_newline (2)
-flush_verbatim (sage.misc.banner.version())
+flush_verbatim (sage.misc.banner.version() + "\n" +
+		"Python " + sys.version + "\n" +
+               "SageMath plugin for TeXmacs.\n" +
+               "Please see the documentation in Help -> Plugins -> Sage")
 flush_prompt (">>> ")
 while True:
-    line = os.sys.stdin.readline()
+    line= tm_input ()
     if not line:
         continue
-    if line[0]  ==  DATA_COMMAND:
+    if line[0] == DATA_COMMAND:
         sf = parse_complete_command (line[1:])
         if sf[0] == 'complete':
             flush_scheme (complete (sf[1], sf[2], my_globals))
         continue
-
-    capt = Capture()
-    result = None
-    # We guess where the lines will break.
-    line = re.sub(r' {2}(\s*)', r'\n \1', line)
-
-    try:
-        # Handle the case where the string ends in ??
-        if line[-3:] == "??\n":
-            result = eval('sage.misc.sageinspect.sage_getsource('+line[:-3]+')', my_globals)
-        # Handle the case where the command ends in ?
-        elif line[-2:] == "?\n":
-            result = eval('sage.misc.sageinspect.sage_getdoc('+line[:-2]+')', my_globals)
+    elif line.endswith('??') and not line.strip().startswith('#'):
+        result = eval('sage.misc.sageinspect.sage_getsource('+line[:-2]+')', my_globals)
+    elif line.endswith('?') and not line.strip().startswith('#'):
+        if len(line) > 1:
+            result = eval('sage.misc.sageinspect.sage_getdoc('+line[:-1]+')', my_globals)
         else:
-            out = eval(preparse(line), my_globals)
-            result = out
-    except:
-        try:
-            stdout_saved, os.sys.stdout  =  os.sys.stdout, capt
-            co = compile(preparse(line), 'tm_sage', 'exec')
-            eval(co, my_globals)
-            os.sys.stdout = stdout_saved
-            result = capt.getOutput()
-        except Exception:
-            traceback.print_exc(file = os.sys.stdout, limit = 0)
-            os.sys.stdout = stdout_saved
-            result = capt.getOutput()
-    del capt
-    
-    out = compose_output(result)
-    flush_any (out.strip())
+            flush_verbatim ('Type a name before the "?" to see the help')
+        continue
+    else:
+        lines= [line]
+        while line != "<EOF>":
+            line= tm_input ()
+            if line == '': 
+                continue
+            lines.append (line)
+        text = '\n'.join (lines[:-1])
+        try: # Is it an expression?
+            result= my_eval (preparse(text), my_globals)
+        except:
+            result= CaptureStdout.capture (preparse(text), my_globals, "tm_sage")
+        flush_output (result)
