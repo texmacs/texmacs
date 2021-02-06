@@ -56,7 +56,8 @@
      "hex_with_32_bits" "octal_upto_3_digits")
     (escape_sequences "\\" "\"" "'" "a" "b" "f" "n" "r" "t" "v")))
 
+; See: https://octave.org/doc/v6.1.0/Single-Line-Comments.html
 (tm-define (parser-feature lan key)
   (:require (and (== lan "octave") (== key "comment")))
   `(,(string->symbol key)
-    (inline "#")))
+    (inline "#" "%")))
