@@ -3,7 +3,7 @@
 ;;
 ;; MODULE      : files.scm
 ;; DESCRIPTION : file handling
-;; COPYRIGHT   : (C) 2001  Joris van der Hoeven
+;; COPYRIGHT   : (C) 2001-2021  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -204,9 +204,9 @@
           ((cannot-write? name "Save file")
            (noop))
           ((and (url-test? name "fr")
-		(and-with mod-t (url-last-modified name)
-		  (and-with save-t (buffer-last-save name)
-		    (> mod-t save-t))))
+                (and-with mod-t (url-last-modified name)
+                  (and-with save-t (buffer-last-save name)
+                    (> mod-t save-t))))
            (user-confirm "The file has changed on disk. Really save?" #f
              (lambda (answ)
                (when answ
@@ -417,7 +417,7 @@
   (if (not (url-rooted? u))
       (set! u (url-relative (current-buffer) u)))
   (if (url-rooted-web? u)
-      (system (string-append (default-open) " " (url->system u)))
+      (system (string-append (default-open) " " (raw-quote (url->system u))))
       (system-1 (default-open) u)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -433,7 +433,7 @@
           (switch-to-buffer name)))
   (buffer-notify-recent name)
   (when (nnull? (select (buffer-get name)
-			'(:* gpg-passphrase-encrypted-buffer)))
+                        '(:* gpg-passphrase-encrypted-buffer)))
     (tm-gpg-dialogue-passphrase-decrypt-buffer name))
   (and-with master (and (url-rooted-tmfs? name) (tmfs-master name))
     (when (!= master name)
@@ -649,7 +649,7 @@
         ((tree-in? t '(with with-bib))
          (linked-files-inside (tm-ref t :last)))
         ((or (tree-func? t 'bibliography 4)
-	     (tree-func? t 'bibliography* 5))
+             (tree-func? t 'bibliography* 5))
          (with name (tm->stree (tm-ref t 2))
            (if (or (== name "") (nstring? name)) (list)
                (with s (if (string-ends? name ".bib") name

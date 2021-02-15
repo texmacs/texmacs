@@ -211,6 +211,9 @@
   "Pretty print the association list @l as a string."
   (string-recompose (map property-pair->string l) "/"))
 
+(define-public (raw-quote s)
+  (string-append (string-append "\"" s "\"")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some string-like functions on symbols
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
