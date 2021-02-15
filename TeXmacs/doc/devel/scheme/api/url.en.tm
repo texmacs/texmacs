@@ -1,6 +1,6 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.18>
 
-<style|<tuple|tmdoc|old-spacing>>
+<style|<tuple|tmdoc|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|The URL system>
@@ -54,7 +54,8 @@
     full paths in the file system or internet <abbr|URL>s starting with a
     protocol specification like <verbatim|ftp> or <verbatim|http>. The
     <verbatim|tmfs> urls are also understood to be rooted. See also
-    <scm|url-rooted-tmfs?>, <scm|url-rooted-web?> and .
+    <scm|url-rooted-tmfs?>, <scm|url-rooted-web?> and
+    <scm|url-rooted-protocol?>.
   </explain>
 
   <\explain>
@@ -71,6 +72,18 @@
     Applies only to filesystem urls. Returns <scm|#t> if the url is a regular
     file, <scm|#f> otherwise. See also <scm|url-directory?> and
     <scm|url-link?>.
+
+    <\session|scheme|default>
+      <\unfolded-io|Scheme] >
+        (url-regular? "$TEXMACS_PATH/LICENSE")
+      <|unfolded-io>
+        #t
+      </unfolded-io>
+
+      <\input|Scheme] >
+        \;
+      </input>
+    </session>
   </explain>
 
   <\explain>
@@ -78,7 +91,31 @@
     refers to a directory>
   <|explain>
     Applies only to filesystem urls. Returns <scm|#t> if the url is a
-    directory, <scm|#f> otherwise.
+    directory and it exists, <scm|#f> otherwise.
+
+    <\session|scheme|default>
+      <\unfolded-io|Scheme] >
+        (url-directory? "/tmp")
+      <|unfolded-io>
+        #t
+      </unfolded-io>
+
+      <\unfolded-io|Scheme] >
+        (url-directory? "/tmp_not_exist")
+      <|unfolded-io>
+        #f
+      </unfolded-io>
+
+      <\unfolded-io|Scheme] >
+        (url-directory? "$TEXMACS_PATH/LICENSE")
+      <|unfolded-io>
+        #f
+      </unfolded-io>
+
+      <\input|Scheme] >
+        \;
+      </input>
+    </session>
   </explain>
 
   <\explain>
@@ -89,7 +126,108 @@
     symbolic link, <scm|#f> otherwise.
   </explain>
 
-  <tmdoc-copyright|2013|the <TeXmacs> team.>
+  <subsection|Accessors>
+
+  <\explain>
+    <scm|(url-basename <scm-arg|u>)><explain-synopsis|Return the basename as
+    string for @u>
+  <|explain>
+    <\session|scheme|default>
+      <\unfolded-io|Scheme] >
+        (url-basename "/tmp")
+      <|unfolded-io>
+        "tmp"
+      </unfolded-io>
+
+      <\unfolded-io|Scheme] >
+        (url-basename "/tmp/hello.tm")
+      <|unfolded-io>
+        "hello"
+      </unfolded-io>
+
+      <\unfolded-io|Scheme] >
+        (url-basename "/tmp/a.out")
+      <|unfolded-io>
+        "a"
+      </unfolded-io>
+
+      <\unfolded-io|Scheme] >
+        (url-basename "/tmp/install-sh")
+      <|unfolded-io>
+        "install-sh"
+      </unfolded-io>
+
+      <\input|Scheme] >
+        \;
+      </input>
+    </session>
+  </explain>
+
+  <\explain>
+    <scm|(url-head <scm-arg|u>)><explain-synopsis|Return the head part as url
+    for @u>
+  <|explain>
+    <\session|scheme|default>
+      <\unfolded-io|Scheme] >
+        (url-head "/tmp")
+      <|unfolded-io>
+        \<less\>url /\<gtr\>
+      </unfolded-io>
+
+      <\unfolded-io|Scheme] >
+        (url-head "/tmp/a.out")
+      <|unfolded-io>
+        \<less\>url /tmp\<gtr\>
+      </unfolded-io>
+
+      <\unfolded-io|Scheme] >
+        (url-head "/tmp/texmacs/TeXmacs/LICENSE")
+      <|unfolded-io>
+        \<less\>url /tmp/texmacs/TeXmacs\<gtr\>
+      </unfolded-io>
+
+      <\input|Scheme] >
+        \;
+      </input>
+    </session>
+  </explain>
+
+  <\explain>
+    <scm|(url-tail <scm-arg|u>)><explain-synopsis|Return the tail part as url
+    for @u>
+  <|explain>
+    <\session|scheme|default>
+      <\unfolded-io|Scheme] >
+        (url-tail "/tmp")
+      <|unfolded-io>
+        \<less\>url tmp\<gtr\>
+      </unfolded-io>
+
+      <\unfolded-io|Scheme] >
+        (url-tail "/tmp/hello.tm")
+      <|unfolded-io>
+        \<less\>url hello.tm\<gtr\>
+      </unfolded-io>
+
+      <\unfolded-io|Scheme] >
+        (url-tail "/tmp/a.out")
+      <|unfolded-io>
+        \<less\>url a.out\<gtr\>
+      </unfolded-io>
+
+      <\unfolded-io|Scheme] >
+        (url-tail "/tmp/texmacs/TeXmacs/LICENSE")
+      <|unfolded-io>
+        \<less\>url LICENSE\<gtr\>
+      </unfolded-io>
+
+      <\input|Scheme] >
+        \;
+      </input>
+    </session>
+  </explain>
+
+  <tmdoc-copyright|2013\U2021|the <TeXmacs> team.>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify
   this\ndocument under the terms of the GNU Free Documentation License,
