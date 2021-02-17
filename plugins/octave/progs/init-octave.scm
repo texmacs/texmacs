@@ -27,6 +27,10 @@
         (string-append "octave-cli -qi " boot)
         (string-append "octave-octave-app -qi " boot))))
 
+; when using `:macpath`, the (octave-launcher) uses `octave-octave-app`
+; that's why we are using `plugin-add-macos-path` here
+(plugin-add-macos-path "Octave*/Contents/Resources/usr/Cellar/octave-octave-app@*/*" "bin" #t)
+
 (plugin-configure octave
   (:winpath "Octave*" ".")
   (:winpath "Octave*" "bin")

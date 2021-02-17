@@ -1,6 +1,6 @@
-<TeXmacs|1.99.13>
+<TeXmacs|1.99.18>
 
-<style|<tuple|tmdoc|british>>
+<style|<tuple|tmdoc|british|old-lengths>>
 
 <\body>
   <tmdoc-title|Tests on octave/convert>
@@ -270,6 +270,14 @@
       <with|mode|math|math-display|true|<matrix|<tformat|<table|<row|<cell|<with|mode|math|0.0>>|<cell|<with|mode|math|0.0>>>|<row|<cell|<with|mode|math|0.0>>|<cell|<with|mode|math|0.0>>>>>>>
     </unfolded-io>
 
+    <\unfolded-io>
+      octave\<gtr\>\ 
+    <|unfolded-io>
+      eye(3)
+    <|unfolded-io>
+      <with|mode|math|math-display|true|<matrix|<tformat|<table|<row|<cell|<with|mode|math|1>>|<cell|<with|mode|math|0.0>>|<cell|<with|mode|math|0.0>>>|<row|<cell|<with|mode|math|0.0>>|<cell|<with|mode|math|1>>|<cell|<with|mode|math|0.0>>>|<row|<cell|<with|mode|math|0.0>>|<cell|<with|mode|math|0.0>>|<cell|<with|mode|math|1>>>>>>>
+    </unfolded-io>
+
     <\input>
       octave\<gtr\>\ 
     <|input>
@@ -285,8 +293,6 @@
     <|unfolded-io>
       "Hello World"
     <|unfolded-io>
-      ret = (with "color" "blue" "Hello World")
-
       <with|color|blue|Hello World>
     </unfolded-io>
 
