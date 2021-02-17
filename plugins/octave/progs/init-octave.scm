@@ -16,13 +16,13 @@
       (with s (texmacs->code (stree->tree u) "SourceCode")
         (string-append s "\n<EOF>\n"))))
 
-(define (octave-source-path)
+(define (octave-entry)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/octave")
-      (string-append (getenv "TEXMACS_HOME_PATH") "/plugins/octave/octave")
-      (string-append (getenv "TEXMACS_PATH") "/plugins/octave/octave")))
+      (system-url->string "$TEXMACS_HOME_PATH/plugins/octave/octave/tmstart.m")
+      (system-url->string "$TEXMACS_PATH/plugins/octave/octave/tmstart.m")))
 
 (define (octave-launcher)
-  (with boot (string-append "\"" (octave-source-path) "/tmstart.m\"")
+  (with boot (raw-quote (octave-entry))
     (if (url-exists-in-path? "octave-cli")
         (string-append "octave-cli -qi " boot)
         (string-append "octave-octave-app -qi " boot))))

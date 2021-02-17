@@ -7,8 +7,10 @@ under the `$TEXMACS_HOME_PATH`:
 
 ```
 # For GNU/Linux or macOS
-git clone git@github.com:texmacs/octave.git $HOME/.TeXmacs/plugins/octave
+git clone -b v1.99.18 https://github.com/texmacs/octave.git $HOME/.TeXmacs/plugins/octave
 
-# For Windows
-git clone git@github.com:texmacs/octave.git %APPDATA%\TeXmacs\plugins/octave
+# For Windows (Please use CMD or manually expand the %APPDATA% variable)
+git clone -b v1.99.18 https://github.com/texmacs/octave.git %APPDATA%\TeXmacs\plugins/octave
 ```
+
+`-b v1.99.18` means that the octave plugin cloned is the same as the built-in one in GNU TeXmacs v1.99.18.
