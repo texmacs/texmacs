@@ -267,7 +267,7 @@
 
 (tm-define (git-commit message)
   (let* ((cmd (string-append
-               (current-git-command) " commit -m \"" message "\""))
+               (current-git-command) " commit -m " (raw-quote message)))
          (ret (eval-system cmd)))
     ;; (display ret)
     (set-message (string-append (current-git-command) " commit") message))
