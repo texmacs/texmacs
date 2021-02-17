@@ -16,7 +16,7 @@ function ret= obj2scm (n,c)
   	c= 0;
   endif
   switch (typeinfo (n))
-    case {"range", "matrix", "complex matrix", "bool matrix", "char matrix"}
+    case {"range", "matrix", "complex matrix", "bool matrix", "char matrix", "diagonal matrix"}
       ret= mat2scm (n);
     case {"int32 scalar", "int64 scalar", "complex scalar", "scalar", "bool"}
       ret= num2scm (n);
