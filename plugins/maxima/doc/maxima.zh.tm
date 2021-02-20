@@ -1,6 +1,6 @@
-<TeXmacs|1.99.12>
+<TeXmacs|1.99.18>
 
-<style|<tuple|tmdoc|old-spacing|old-dots|chinese>>
+<style|<tuple|tmdoc|old-spacing|old-dots|chinese|old-lengths>>
 
 <\body>
   <tmdoc-title|<name|Maxima>\<#63D2\>\<#4EF6\>>
@@ -11,7 +11,7 @@
     <branch|\<#793A\>\<#4F8B\>|maxima-demo.zh.tm>
   </traverse>
 
-  <tmdoc-copyright|2011-2020|Joris van der Hoeven|\<#6C88\>\<#8FBE\>>
+  <tmdoc-copyright|2011\U2021|Joris van der Hoeven|\<#6C88\>\<#8FBE\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

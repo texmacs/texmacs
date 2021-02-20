@@ -1,6 +1,6 @@
-<TeXmacs|1.99.12>
+<TeXmacs|1.99.18>
 
-<style|<tuple|tmdoc|maxima|old-spacing|old-dots|chinese>>
+<style|<tuple|tmdoc|maxima|old-spacing|old-dots|chinese|old-lengths>>
 
 <\body>
   <\tmdoc-title>
@@ -190,7 +190,7 @@
     </input>
   </session>
 
-  <tmdoc-copyright|2003-2020|Chu-Ching Huang|\<#6C88\>\<#8FBE\>>
+  <tmdoc-copyright|2003-2021|Chu-Ching Huang|\<#6C88\>\<#8FBE\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

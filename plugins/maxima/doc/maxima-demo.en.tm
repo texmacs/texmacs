@@ -1,6 +1,6 @@
-<TeXmacs|1.99.12>
+<TeXmacs|1.99.18>
 
-<style|<tuple|tmdoc|maxima|english|old-spacing|old-dots>>
+<style|<tuple|tmdoc|maxima|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <\tmdoc-title>
@@ -191,7 +191,7 @@
     </input>
   </session>
 
-  <tmdoc-copyright|2003-2020|Chu-Ching Huang|Darcy Shen>
+  <tmdoc-copyright|2003-2021|Chu-Ching Huang|Darcy Shen>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
