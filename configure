@@ -8351,7 +8351,7 @@ $as_echo "$as_me: WARNING: could not find source tree for $ax_dir" >&2;}
 
 
 
-      GUILE_STATIC="$(pwd)/tm-guile168/build/lib/libguile.a $(pwd)/tm-guile168/build/lib/libguile-ltdl.a -lm"
+      GUILE_STATIC='$(shell ../tm-guile168/guile-config/guile-config link)'
 
 
   if [[ "-I$(pwd)/tm-guile168/build/include" =~ $(echo '^-Wl,') ]]

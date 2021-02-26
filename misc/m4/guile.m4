@@ -102,7 +102,7 @@ AC_DEFUN([LC_WITH_GUILE],[
         [[--without-guile-readline]],
         [--disable-shared],[--prefix=$(pwd)/embedded_guile/build],
         [--with-tmrepo=])
-      GUILE_STATIC="$(pwd)/embedded_guile/build/lib/libguile.a $(pwd)/embedded_guile/build/lib/libguile-ltdl.a -lm"
+      GUILE_STATIC='$(shell ../tm-guile168/guile-config/guile-config link)'
       AC_SUBST([GUILE_STATIC])
       LC_APPEND_FLAG([-I$(pwd)/embedded_guile/build/include],[GUILE_CPPFLAGS])
       LC_APPEND_FLAG([-I$(pwd)/embedded_guile/build/include/guile],[GUILE_CPPFLAGS])
