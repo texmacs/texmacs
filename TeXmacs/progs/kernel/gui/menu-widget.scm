@@ -164,6 +164,8 @@
 	 (recursive-replace (recursive-replace t "c" "<#441>") "e" "<#435>"))
         ((recursive-occurs? "onfigur" s)
 	 (recursive-replace t "o" "<#43E>"))
+        ((in? s (list "Help" "Edit" "View"))
+	 (recursive-replace t "e" "<#435>"))
         (else t)))
 
 (define (make-menu-label p style . opt)
