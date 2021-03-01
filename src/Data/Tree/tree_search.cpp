@@ -154,8 +154,8 @@ match (tree t, tree what) {
     if (L(t) != L(what)) return false;
     int cur=0;
     for (int i=0; i<N(t); i++) {
-      if (match_cascaded (t[i], what[cur])) cur++;
       if (cur >= N(what)) return true;
+      if (match_cascaded (t[i], what[cur])) cur++;
     }
     return cur >= N(what);
   }
