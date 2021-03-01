@@ -48,7 +48,7 @@
                        (list (url-exists? (url-unix help-file-path s))))))))
 
 (define (url-resolve-help s)
-  (if (or (in? (url-suffix s) '("tex" "tm")) (url-exists? s))
+  (if (and (in? (url-suffix s) '("tex" "tm")) (url-exists? s))
       s
       (let* ((lan (string-take (language-to-locale (get-output-language)) 2)) 
              (suf-tmml (string-append "." lan ".tmml"))
