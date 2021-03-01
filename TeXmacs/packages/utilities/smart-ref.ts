@@ -1,4 +1,4 @@
-<TeXmacs|1.99.15>
+<TeXmacs|1.99.18>
 
 <style|source>
 
@@ -82,6 +82,8 @@
 
   <assign|not-ref|<xmacro|args|<extern|ext-typed-ref|Notation|<quote-arg|args>>>>
 
+  <assign|nota-ref|<xmacro|args|<extern|ext-typed-ref|Notation|<quote-arg|args>>>>
+
   <assign|notation-ref|<xmacro|args|<extern|ext-typed-ref|Notation|<quote-arg|args>>>>
 
   <assign|ax-ref|<xmacro|args|<extern|ext-typed-ref|Axiom|<quote-arg|args>>>>
@@ -139,6 +141,8 @@
   <assign|c-ref|<xmacro|args|<extern|ext-typed-ref|Chapter|<quote-arg|args>>>>
 
   <assign|ch-ref|<xmacro|args|<extern|ext-typed-ref|Chapter|<quote-arg|args>>>>
+
+  <assign|chp-ref|<xmacro|args|<extern|ext-typed-ref|Chapter|<quote-arg|args>>>>
 
   <assign|chap-ref|<xmacro|args|<extern|ext-typed-ref|Chapter|<quote-arg|args>>>>
 
