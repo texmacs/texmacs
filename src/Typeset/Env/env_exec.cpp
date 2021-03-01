@@ -489,8 +489,10 @@ edit_env_rep::exec (tree t) {
   case FIND_ACCESSIBLE:
     return exec_find_accessible (t);
   case HLINK:
-  case ACTION:
     return exec_compound (t);
+  case ACTION:
+    if (N(t) < 3) return exec_compound (t);
+    else return exec_compound (tree (ACTION, t[0], t[1]));
   case SET_BINDING:
     return exec_set_binding (t);
   case GET_BINDING:
