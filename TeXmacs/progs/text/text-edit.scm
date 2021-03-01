@@ -80,8 +80,14 @@
 	    ((== l 'doc-title-options)
 	     (tree-insert! t pos `((,l))))
 	    ((in? l doc-data-inactive-tags)
-	     (tree-insert! t pos `((doc-inactive (,l ""))))
-	     (tree-go-to t pos 0 0 0))
+             (let* ((r (tree-search t (cut tree-is? <> l)))
+                    (x (and (pair? r) (car r))))
+               (cond ((not x)
+                      (tree-insert! t pos `((doc-inactive (,l ""))))
+                      (tree-go-to t pos 0 0 0))
+                     (else
+                      (tree-set! x `(doc-inactive ,x))
+                      (tree-go-to x 0 0 :end)))))
 	    (else
 	     (tree-insert! t pos `((,l "")))
 	     (tree-go-to t pos 0 0))))))
