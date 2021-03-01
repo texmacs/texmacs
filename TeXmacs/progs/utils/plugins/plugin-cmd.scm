@@ -26,9 +26,13 @@
 	 (pre-serialize lan (plugin-math-input (list 'tuple lan (cadr t)))))
 	(else t)))
 
+(define (hacked-texmacs->code x)
+  (with r (texmacs->code x)
+    (string-replace r "‘" "`")))
+
 (tm-define (verbatim-serialize lan t)
   (with u (pre-serialize lan t)
-    (string-append (escape-verbatim (texmacs->code u)) "\n")))
+    (string-append (escape-verbatim (hacked-texmacs->code u)) "\n")))
 
 (tm-define (generic-serialize lan t)
   (with u (pre-serialize lan t)
