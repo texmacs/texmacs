@@ -265,7 +265,8 @@
 (tm-property (open-macros-editor mode) (:interactive #t))
 (tm-property (edit-focus-macro) (:interactive #t))
 (tm-property (open-shortcuts-editor . opt) (:interactive #t))
-(when (url-exists? "") (delayed (:idle 100) (init-user-shortcuts)))
+(when (url-exists? "$TEXMACS_HOME_PATH/system/shortcuts.scm")
+  (delayed (:idle 100) (init-user-shortcuts)))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
