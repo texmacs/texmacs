@@ -24,8 +24,11 @@
 ;; the svg produced by this method can be pasted in inkscape via the clipboard
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (default-image-export-format)
+  (if (nnot (converter-search "pdf-file" "svg-file")) "svg" "pdf"))
+
 (define-preferences
-  ("texmacs->image:format" "svg" noop))
+  ("texmacs->image:format" (default-image-export-format) noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; private functions
@@ -253,6 +256,14 @@
   ;; global document parameters such as style, fonts, etc. are respected
   ;; in the typesetting. However they are presently not passed to
   ;; the svg and therefore lost when re-editing the svg
+
+  (when (or (== (url-suffix myurl) "")
+            (not (converter-search "pdf-file" (file-format myurl))))
+    (with format (get-preference "texmacs->image:format")
+      (when (not (converter-search "pdf-file" (string-append format "-file")))
+        (set! format "pdf"))
+      (with suffix (format-default-suffix format)
+        (set! myurl (url-glue myurl (string-append "." suffix))))))
 
   (if (not (selection-active-any?))
       (set-message "no selection!" "")

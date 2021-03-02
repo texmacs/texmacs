@@ -471,6 +471,11 @@
 	       ""))
 	  (else (car l)))))
 
+(define-public (image-formats)
+  (let* ((suffixes (format-image-suffixes))
+         (formats (map format-from-suffix suffixes)))
+    (sort (list-remove-duplicates formats) string<=?)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Automatic determination of the format
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

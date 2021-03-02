@@ -154,6 +154,13 @@
       ---
       (link recent-file-menu)))
 
+(menu-bind export-as-image-menu
+  ;; FIXME: no warning on overwrite!
+  (for (fm (image-formats))
+    ((eval (upcase-first fm))
+     (choose-file export-selection-as-graphics
+                  "Export selection as image" fm))))
+
 (menu-bind save-menu
   ("Save" (save-buffer))
   ("Save as" (choose-file save-buffer-as "Save TeXmacs file" "texmacs"))
@@ -165,9 +172,8 @@
   ((eval '(concat "Export as " "PostScript"))
    (choose-file wrapped-print-to-file "Save postscript file" "postscript"))
   (when (selection-active-any?)
-    ("Export selection as image" ;; FIXME: no warning on overwrite!
-     (choose-file export-selection-as-graphics
-                  "Select export file with extension" ""))))
+    (=> "Export selection as image"
+        (link export-as-image-menu))))
 
 (menu-bind print-menu-sub
   (if (has-printing-cmd?)
@@ -242,10 +248,8 @@
       ("Postscript"
        (choose-file wrapped-print-to-file "Save postscript file" "postscript"))
       (when (selection-active-any?)
-        ("Export selection as image"
-         (choose-file ;; no warning on overwrite!
-          export-selection-as-graphics 
-          "Save image file" ""))))
+        (=> "Export selection as image"
+            (link export-as-image-menu))))
   ---
   (if (window-per-buffer?)
       ("Close window" (close-document)))
