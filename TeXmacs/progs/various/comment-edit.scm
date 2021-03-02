@@ -179,7 +179,7 @@
          (cu (string-append "tmfs://comments/" (url->tmfs-string u))))
     (when (buffer-exists? cu)
       (with-buffer cu
-        (revert-buffer)))))
+        (revert-buffer-revert)))))
 
 (tm-define (clipboard-cut which)
   (with l (tree-search (selection-tree) any-comment-context?)

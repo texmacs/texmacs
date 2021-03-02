@@ -131,10 +131,10 @@
         (else (email-message name))))
 
 (tm-define (email-open-mailbox)
-  (revert-buffer "tmfs://email/mailbox"))
+  (revert-buffer-revert "tmfs://email/mailbox"))
 
 (tm-define (email-open-inbox)
-  (revert-buffer "tmfs://email/inbox"))
+  (revert-buffer-revert "tmfs://email/inbox"))
 
 (tm-define (email-pop)
   (system "mmail --pop-retrieve"))

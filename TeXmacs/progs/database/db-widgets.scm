@@ -164,7 +164,7 @@
   (refresh-now "identity-info")
   (refresh-now "identity-buttons")
   (when (and (in-database?) flag?)
-    (revert-buffer)))
+    (revert-buffer-revert)))
 
 (define (set-identity vars vals)
   (if adding-user?

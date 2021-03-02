@@ -528,7 +528,7 @@
 ;; Reverting buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (revert-buffer . l)
+(tm-define (revert-buffer-revert . l)
   (with name (if (null? l) (current-buffer) (car l))
     (if (not (buffer-exists? name))
         (load-buffer name)
@@ -540,6 +540,14 @@
             (if (== t (tm->tree "error"))
                 (set-message "Error: file not found" "Revert buffer")
                 (buffer-set name t)))))))
+
+(tm-define (revert-buffer . l)
+  (with name (if (null? l) (current-buffer) (car l))
+    (if (and (buffer-exists? name) (buffer-modified? name))
+        (user-confirm "Buffer has been modified. Really revert?" #f
+          (lambda (answ)
+            (when answ (apply revert-buffer-revert l))))
+        (apply revert-buffer-revert l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Importing buffers

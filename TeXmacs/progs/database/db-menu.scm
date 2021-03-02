@@ -27,7 +27,7 @@
          (s (string-recompose keys ",")))
     (db-set-query-preference (current-buffer) "exact-search" search)
     (db-set-query-preference (current-buffer) "search" s)
-    (revert-buffer)
+    (revert-buffer-revert)
     (keyboard-focus-on "db-search")))
 
 (define (db-toolbar-current-order)
@@ -37,21 +37,21 @@
   (with order* (string-replace (locase-all order) " " "")
     (db-set-query-preference (current-buffer) "exact-order" order)
     (db-set-query-preference (current-buffer) "order" order*)
-    (revert-buffer)))
+    (revert-buffer-revert)))
 
 (define (db-toolbar-current-direction)
   (db-get-query-preference (current-buffer) "direction" "ascend"))
 
 (define (db-toolbar-direction dir)
   (db-set-query-preference (current-buffer) "direction" dir)
-  (revert-buffer))
+  (revert-buffer-revert))
 
 (define (db-toolbar-current-limit)
   (db-get-query-preference (current-buffer) "limit" "10"))
 
 (define (db-toolbar-limit limit)
   (db-set-query-preference (current-buffer) "limit" limit)
-  (revert-buffer))
+  (revert-buffer-revert))
 
 (define (db-toolbar-current-present)
   (with p (db-get-query-preference (current-buffer) "present" "detailed")
@@ -60,7 +60,7 @@
 (define (db-toolbar-present present)
   (with p (locase-all present)
     (db-set-query-preference (current-buffer) "present" p)
-    (revert-buffer)))
+    (revert-buffer-revert)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Visibility of the database toolbar

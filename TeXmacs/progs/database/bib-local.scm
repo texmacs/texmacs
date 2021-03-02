@@ -160,5 +160,5 @@
 (tm-define (open-biblio)
   (:interactive #t)
   (cursor-history-add (cursor-path))
-  (revert-buffer (biblio-url (current-buffer) (biblio-tag)))
+  (revert-buffer-revert (biblio-url (current-buffer) (biblio-tag)))
   (cursor-history-add (cursor-path)))

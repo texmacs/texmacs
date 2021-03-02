@@ -824,7 +824,7 @@
 		   ;;(display* "Remote : " remote-name "\n")
 		   ;;(display* "Message: " message "\n")
 		   (remote-upload local-name remote-name message
-                                  (lambda x (revert-buffer)))))
+                                  (lambda x (revert-buffer-revert)))))
 	     (quit))))))))
 
 (tm-define (remote-interactive-upload server)
@@ -895,7 +895,7 @@
     (with remote-name (url-append remote-dir (url-tail local-name))
       (remote-upload local-name remote-name "uploaded"
                      (lambda x
-                       (revert-buffer)
+                       (revert-buffer-revert)
                        (set-message "upload completed" "upload"))))))
 
 (tm-define (simple-interactive-upload server)

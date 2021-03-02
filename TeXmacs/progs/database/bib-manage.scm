@@ -141,7 +141,7 @@
   (with-database (bib-database)
     (bib-save doc))
   (when (db-url? (current-buffer))
-    (revert-buffer)))
+    (revert-buffer-revert)))
 
 (define (bib-confirm-tree doc)
   (with-database (bib-database)

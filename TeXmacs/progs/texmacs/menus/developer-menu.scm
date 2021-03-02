@@ -22,7 +22,7 @@
    (load-document u) 
    (if (not (url-exists? u)) 
 ;; save empty file & reload so that it is recognized as scheme code, not plain tm doc  
-      (begin (buffer-save u) (revert-buffer))))
+      (begin (buffer-save u) (revert-buffer-revert))))
 
 (menu-bind developer-menu
   (group "Scheme")

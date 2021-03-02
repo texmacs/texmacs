@@ -101,7 +101,7 @@
   ;;   3. set the master of tmfs to the URL
   (cursor-history-add (cursor-path))
   (with s (url->tmfs-string url)
-    (revert-buffer (string-append "tmfs://history/" s))
+    (revert-buffer-revert (string-append "tmfs://history/" s))
     (buffer-set-master (current-buffer) url)))
 
 (tmfs-title-handler (history name doc)
