@@ -287,7 +287,7 @@ GENERIC_PACKAGE: TEXMACS STRIP
 	$(MKDIR) $(GENERIC_PACKAGE_DIR)
 	-find @GUILE_DATA_PATH@ -type d -name ice-9 -exec $(CP) {} $(tmdir)/progs \; && \
 		 $(CP) $(tmdir) $(STATIC_QT) && \
-		 tar -czhf $(GENERIC_PACKAGE_DIR)/$(STATIC_QT)-@CONFIG_STYPE@.tar.gz $(STATIC_QT) --exclude .svn --mode go=rX
+		 tar --exclude .svn --mode go=rX -czhf $(GENERIC_PACKAGE_DIR)/$(STATIC_QT)-@CONFIG_STYPE@.tar.gz $(STATIC_QT)
 	$(RM) -r $(tmdir)/progs/ice-9 $(STATIC_QT)
 
 GENERIC_X11_PACKAGE: COPY_SOURCES COPY_GUILE
