@@ -2811,6 +2811,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(string-find-non-alpha <scm-arg|string> <scm-arg|int> <scm-arg|bool>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|find_non_alpha> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
     <scm|(string-alpha? <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>

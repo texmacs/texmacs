@@ -376,6 +376,7 @@
 "string-search-backwards"
 "string-overlapping"
 "string-replace"
+"string-find-non-alpha"
 "string-alpha?"
 "string-locase-alpha?"
 "upcase-first"

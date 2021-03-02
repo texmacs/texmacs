@@ -164,6 +164,12 @@
 
   <assign|subsection-ref|<xmacro|args|<extern|ext-typed-ref|Section|<quote-arg|args>>>>
 
+  <assign|ap-ref|<xmacro|args|<extern|ext-typed-ref|Appendix|<quote-arg|args>>>>
+
+  <assign|app-ref|<xmacro|args|<extern|ext-typed-ref|Appendix|<quote-arg|args>>>>
+
+  <assign|appendix-ref|<xmacro|args|<extern|ext-typed-ref|Appendix|<quote-arg|args>>>>
+
   <assign|par-ref|<xmacro|args|<extern|ext-typed-ref|Paragraph|<quote-arg|args>>>>
 
   <assign|para-ref|<xmacro|args|<extern|ext-typed-ref|Paragraph|<quote-arg|args>>>>
@@ -201,6 +207,10 @@
   <assign|tab-ref|<xmacro|args|<extern|ext-typed-ref|Table|<quote-arg|args>>>>
 
   <assign|table-ref|<xmacro|args|<extern|ext-typed-ref|Table|<quote-arg|args>>>>
+
+  <assign|a-ref|<xmacro|args|<extern|ext-typed-ref|Algorithm|<quote-arg|args>>>>
+
+  <assign|al-ref|<xmacro|args|<extern|ext-typed-ref|Algorithm|<quote-arg|args>>>>
 
   <assign|alg-ref|<xmacro|args|<extern|ext-typed-ref|Algorithm|<quote-arg|args>>>>
 

@@ -1301,6 +1301,19 @@ match_wildcard (string s, string w) {
   return match_wildcard (s, 0, w, 0);
 }
 
+int
+find_non_alpha (string s, int pos, bool forward) {
+  if (forward) {
+    for (; pos<N(s); pos++)
+      if (!is_alpha (s[pos])) return pos;
+  }
+  else {
+    for (; pos>0; pos--)
+      if (!is_alpha (s[pos-1])) return pos-1;
+  }
+  return -1;
+}
+
 array<string>
 tokenize (string s, string sep) {
   int start=0;

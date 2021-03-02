@@ -397,6 +397,7 @@
   (string-search-backwards search_backwards (int string int string))
   (string-overlapping overlapping (int string string))
   (string-replace replace (string string string string))
+  (string-find-non-alpha find_non_alpha (int string int bool))
   (string-alpha? is_alpha (bool string))
   (string-locase-alpha? is_locase_alpha (bool string))
   (upcase-first upcase_first (string string))
