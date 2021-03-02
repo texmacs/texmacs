@@ -27,7 +27,12 @@ function ret= obj2scm (n,c)
     case ("cell")
       ret= cell2scm (n);
     case {"sq_string", "string"}
-      ret= str2scm (n);
+      [r, c]= size(n);
+      if (r == 1)
+        ret = "";
+      else
+        ret= str2scm (n);
+      endif
     otherwise
       ret= "";
   endswitch
