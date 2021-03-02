@@ -1450,6 +1450,18 @@ v2e (tree t) {
   return string_arg (t2e (t, false));
 }
 
+tree
+tm_encode (tree t) {
+  if (is_atomic (t)) return tm_encode (t->label);
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= tm_encode (t[i]);
+    return r;
+  }
+}
+
 static bool
 is_left_type (string s) {
   return
@@ -2408,6 +2420,8 @@ latex_command_to_tree (tree t) {
   }
   if (is_tuple (t, "\\raisebox", 2))
     return tree (MOVE, l2e (t[2]), "0pt", t2e (t[1]));
+  if (is_tuple (t, "\\verbatim", 1))
+    return compound ("verbatim", tm_encode (t[1]));
   if (is_tuple (t, "\\tmcodeinline", 1) || is_tuple (t, "\\tmverbatim", 1))
     return compound ("verbatim", v2e (t[1]));
   if (is_tuple (t, "\\tmcodeinline*", 2))
