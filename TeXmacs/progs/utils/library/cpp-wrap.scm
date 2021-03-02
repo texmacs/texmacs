@@ -60,7 +60,7 @@
              (end (path-end selection '())))
         (clipboard-cut "nowhere")
         (insert-go-to ins (cons (- (tm-arity ins) 1) end)))
-      (apply former (cons tag opt-arity))))
+      (apply former (cons lab opt-arity))))
 
 (tm-define (make lab . opt-arity)
   (:require (in? lab (make-inline-tag-list)))
