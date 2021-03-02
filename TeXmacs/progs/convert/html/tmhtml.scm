@@ -1445,6 +1445,8 @@
               (nnull? (cdr x))
               (tm-in? (cadr x) '(item item*)))
          `(!item ,(cadr x) (concat ,@(cddr x))))
+        ((tm-in? x '(item item*))
+         `(!item ,x (hspace "1pt")))
         ((tm-is? x 'document)
          (let* ((r  (map transform-items (cdr x)))
                 (p? (lambda (i) (tm-is? i '!item)))
