@@ -77,6 +77,18 @@
 	(append me (append-map (cut tree-search <> pred?)
 			       (tree-children t))))))
 
+(define (prepend-index l i)
+  (if (null? l) l
+      (cons (map (lambda (x) (cons i x)) (car l))
+            (prepend-index (cdr l) (+ i 1)))))
+
+(define-public (tree-search-indices t pred?)
+  (with me (if (pred? t) (list (list)) (list))
+    (if (tree-atomic? t) me
+        (let* ((l1 (map (cut tree-search-indices <> pred?) (tree-children t)))
+               (l2 (prepend-index l1 0)))
+          (append me (apply append l2))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Navigation inside trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
