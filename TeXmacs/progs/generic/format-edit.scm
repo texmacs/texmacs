@@ -203,7 +203,7 @@
 	((selection-active-any?)
 	 (let* ((selection (selection-tree))
 		(ins `(,@(cDr w) ,selection))
-		(end (path-end ins '())))
+		(end (path-end selection '())))
 	   (clipboard-cut "nowhere")
 	   (insert-go-to ins (cons (- (tm-arity ins) 1) end))))
 	(else

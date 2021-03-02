@@ -53,6 +53,16 @@
         (else (cpp-make-with var val))))
 
 (tm-define (make lab . opt-arity)
+  (:require (with-like? `(,lab "")))
+  (if (selection-active-any?)
+      (let* ((selection (selection-tree))
+             (ins `(,lab ,selection))
+             (end (path-end selection '())))
+        (clipboard-cut "nowhere")
+        (insert-go-to ins (cons (- (tm-arity ins) 1) end)))
+      (apply former (cons tag opt-arity))))
+
+(tm-define (make lab . opt-arity)
   (:require (in? lab (make-inline-tag-list)))
   (if (selection-active-large?)
       (with sel `(par-block ,(selection-tree))
