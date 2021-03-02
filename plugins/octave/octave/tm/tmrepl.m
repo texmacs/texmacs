@@ -13,12 +13,13 @@
 
 
 function tmrepl()
+  cmds_for_plot= plot_cmds();
   while (true)
     __r = input ("", "s");
     __r0= input ("", "s");
     while (!strcmp(__r0,"<EOF>"))
-        __r = strcat(__r,"\n",__r0);
-        __r0= input ("", "s");
+      __r = strcat(__r,"\n",__r0);
+      __r0= input ("", "s");
     endwhile
     if __r(length (__r)) != ";"
       disp_ans= true;
@@ -40,11 +41,7 @@ function tmrepl()
     eval (__r, "tmlasterr");
 
     if disp_ans
-      global TM_OCTAVE_PLOT_DIGEST;
-      
-      updated_digest= hash ("md5", serialize (get(gcf())));
-      if !strcmp (TM_OCTAVE_PLOT_DIGEST, updated_digest)
-        TM_OCTAVE_PLOT_DIGEST= updated_digest;
+      if (isplot (cmds_for_plot, __r))
         plotted= tmplot (); ## call TeXmacs plotting interface
         if plotted
           disp_ans= false;
