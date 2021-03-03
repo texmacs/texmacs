@@ -253,6 +253,13 @@
 ;; Replace occurrences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (search-tree)
+  (and (buffer-exists? (search-buffer))
+       (with what (buffer-get-body (search-buffer))
+         (when (tm-func? what 'document 1)
+           (set! what (tm-ref what 0)))
+         what)))
+
 (define (by-tree)
   (and (buffer-exists? (replace-buffer))
        (with by (buffer-get-body (replace-buffer))
@@ -260,16 +267,95 @@
            (set! by (tm-ref by 0)))
          by)))
 
-(define (replace-next by)
+(define (get-wildcards what match)
+  (cond ((tm-equal? what match) (list))
+        ((tm-func? what 'wildcard 1)
+         (list `(:wildcard ,(tm->stree (tm-ref what 0)) ,(tm->stree match))))
+        ((tm-equal? what "")
+         (list `(:empty ,(tm->stree match))))
+        ((and (tm-compound? what) (tm-compound? match)
+              (== (tm-label what) (tm-label match))
+              (== (tm-arity what) (tm-arity match)))
+         (append-map get-wildcards (tm-children what) (tm-children match)))
+        (else (list))))
+
+(define (find-wildcard wc which)
+  (cond ((null? wc) "")
+        ((and (tm-func? (car wc) :wildcard 2)
+              (== (cadr (car wc)) which))
+         (caddr (car wc)))
+        (else (find-wildcard (cdr wc) which))))
+
+(define (find-empty wc)
+  (cond ((null? wc)
+         (cons "" wc))
+        ((tm-func? (car wc) :empty 1)
+         (cons (cadar wc) (cdr wc)))
+        (else (with r (find-empty (cdr wc))
+                (cons (car r) (cons (car wc) (cdr r)))))))
+
+(define (replace-wildcards-list l wc)
+  (if (null? l) (cons l wc)
+      (let* ((h (replace-wildcards (car l) wc))
+             (t (replace-wildcards-list (cdr l) (cdr h))))
+        (cons (cons (car h) (car t)) (cdr t)))))
+
+(define (replace-wildcards by wc)
+  (cond ((null? wc)
+         (cons by wc))
+        ((tm-func? by 'wildcard 1)
+         (cons (find-wildcard wc (tm->stree (tm-ref by 0))) wc))
+        ((tm-equal? by "")
+         (find-empty wc))
+        ((tm-atomic? by)
+         (cons by wc))
+        (else (with r (replace-wildcards-list (tm-children by) wc)
+                (cons (cons (tm-label by) (car r)) (cdr r))))))
+
+(define (adjust-by by what match)
+  (let* ((swhat (and (tm-atomic? what) (tm->string what)))
+         (smatch (and (tm-atomic? match) (tm->string match)))
+         (sby (and (tm-atomic? by) (tm->string by)))
+         (lwhat (and (tm-compound? what) (tm->list what)))
+         (lmatch (and (tm-compound? match) (tm->list match)))
+         (wc (get-wildcards what match)))
+    (cond ((tm-equal? what match) by)
+          ((and (tm-func? what 'concat)
+                (tm-func? match 'concat)
+                (< (length lwhat) (length lmatch))
+                (tm-equal? what (sublist lmatch 0 (length lwhat))))
+           (let* ((lby (if (tm-func? by 'concat) (tm->list by) `(concat ,by)))
+                  (xby (sublist lmatch (length lwhat) (length lmatch))))
+             (append lby xby)))
+          ((and swhat smatch sby (== (locase-all swhat) (locase-all smatch)))
+           (cond ((== (locase-all swhat) smatch) (locase-all sby))
+                 ((== (upcase-all swhat) smatch) (upcase-all sby))
+                 ((== (locase-first swhat) smatch) (locase-first sby))
+                 ((== (upcase-first swhat) smatch) (upcase-first sby))
+                 (else sby)))
+          (else (car (replace-wildcards by wc))))))
+
+(define (replace-next* by)
   (let* ((sels (get-alt-selection "alternate"))
          (cur (get-search-reference #t)))
     (and (nnull? sels)
          (and-with sel (search-next sels cur #f)
            (go-to* (car sel))
            (selection-set-range-set sel)
-           (clipboard-cut "dummy")
-           (insert-go-to (tree-copy by) (path-end by '()))
+           (with by* (tm->tree (adjust-by by (search-tree) (selection-tree)))
+             (clipboard-cut "dummy")
+             (insert-go-to (tree-copy by*) (path-end by* '())))
            #t))))
+
+(define (replace-next by)
+  (with old-p (cursor-path)
+    (and (replace-next* by)
+         (with mid-p (cursor-path)
+           (perform-search*)
+           (with new-p (cursor-path)
+             (or (and (path-less? old-p new-p)
+                      (path-less? mid-p new-p))
+                 (search-next-match #t)))))))
 
 (tm-define (replace-one)
   (and-with by (by-tree)
@@ -374,6 +460,29 @@
 ;; Search widget
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-preferences
+  ("allow-blank-match" "on" noop)
+  ("allow-initial-match" "on" noop)
+  ("allow-partial-match" "on" noop)
+  ("allow-injective-match" "on" noop)
+  ("allow-cascaded-match" "on" noop)
+  ("case-insensitive-match" "off" noop))
+
+(tm-define (toggle-search-preference which)
+  (:synopsis "Toggle the search preference @which")
+  (:check-mark "v" preference-on?)
+  (toggle-preference which)
+  (perform-search*))
+
+(menu-bind search-preferences-menu
+  ("Allow blank matches" (toggle-search-preference "allow-blank-match"))
+  ("Allow initial matches" (toggle-search-preference "allow-initial-match"))
+  ("Allow partial matches" (toggle-search-preference "allow-partial-match"))
+  ("Allow injective matches" (toggle-search-preference "allow-injective-match"))
+  ("Allow cascaded matches" (toggle-search-preference "allow-cascaded-match"))
+  ("Disable case sensitivity"
+   (toggle-search-preference "case-insensitive-match")))
+
 (tm-widget ((search-widget u style init aux) quit)
   (padded
     (resize "600px" "100px"
@@ -390,6 +499,8 @@
       ((balloon (icon "tm_search_last.xpm") "Last occurrence")
        (search-extreme-match #t))
       >>>
+      (=> (balloon (icon "tm_preferences.xpm") "Search preferences")
+          (link search-preferences-menu))
       ((check (balloon (icon "tm_filter.xpm") "Only show paragraphs with hits")
               "v" (search-filter-enabled?))
        (search-toggle-filter))
@@ -421,6 +532,18 @@
 ;; Search and replace widget
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-preferences
+  ("allow-blank-replace" "off" noop)
+  ("allow-initial-replace" "off" noop)
+  ("allow-partial-replace" "off" noop)
+  ("allow-injective-replace" "off" noop))
+
+(menu-bind replace-preferences-menu
+  ("Allow blank matches" (toggle-search-preference "allow-blank-replace"))
+  ("Allow cascaded matches" (toggle-search-preference "allow-cascaded-match"))
+  ("Disable case sensitivity"
+   (toggle-search-preference "case-insensitive-match")))
+
 (tm-widget ((replace-widget u style init saux raux) quit)
   (padded
     (resize "600px" "100px"
@@ -446,6 +569,9 @@
       ((balloon (icon "tm_replace_all.xpm") "Replace all further occurrences")
        (replace-all))
       >>>
+      (=> (balloon (icon "tm_preferences.xpm")
+                   "Search and replace preferences")
+          (link replace-preferences-menu))
       ((check (balloon (icon "tm_filter.xpm") "Only show paragraphs with hits")
               "v" (search-filter-enabled?))
        (search-toggle-filter))

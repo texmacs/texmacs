@@ -51,10 +51,14 @@ initialize_search () {
     (get_user_preference ("case-insensitive-match", "off") == "on");
   
   if (get_user_preference ("search-and-replace", "on") == "on") {
-    blank_match_flag    = false;
-    initial_match_flag  = false;
-    partial_match_flag  = false;
-    injective_match_flag= false;
+    blank_match_flag=
+      (get_user_preference ("allow-blank-replace", "off") == "on");
+    initial_match_flag=
+      (get_user_preference ("allow-initial-replace", "off") == "on");
+    partial_match_flag=
+      (get_user_preference ("allow-partial-replace", "off") == "on");
+    injective_match_flag=
+      (get_user_preference ("allow-injective-replace", "off") == "on");
   }
 }
 
