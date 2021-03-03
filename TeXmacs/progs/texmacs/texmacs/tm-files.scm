@@ -556,10 +556,10 @@
 (define (import-buffer-import name fm opts)
   ;;(display* "import-buffer-import " name ", " fm "\n")
   (if (== fm (url-format name))
-      (load-buffer-main name opts)
+      (apply load-buffer-main (cons name opts))
       (let* ((s (url->tmfs-string name))
              (u (string-append "tmfs://import/" fm "/" s)))
-        (load-buffer-main u opts))))
+        (apply load-buffer-main (cons u opts)))))
 
 (define (import-buffer-check-permissions name fm opts)
   ;;(display* "import-buffer-check-permissions " name ", " fm "\n")
@@ -580,7 +580,9 @@
   (import-buffer-check-permissions name fm opts))
 
 (tm-define (import-buffer name fm . opts)
-  (import-buffer-main name fm opts))
+  (if (window-per-buffer?)
+      (import-buffer-main name fm (cons :new-window opts))
+      (import-buffer-main name fm opts)))
 
 (tm-define (buffer-importer fm)
   (lambda (s) (import-buffer s fm)))
