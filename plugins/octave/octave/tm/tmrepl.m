@@ -15,33 +15,40 @@
 function tmrepl()
   cmds_for_plot= plot_cmds();
   while (true)
-    __r = input ("", "s");
-    __r0= input ("", "s");
-    while (!strcmp(__r0,"<EOF>"))
-      __r = strcat(__r,"\n",__r0);
-      __r0= input ("", "s");
-    endwhile
-    if __r(length (__r)) != ";"
+    line = input ("", "s");
+    code = line;
+    if (index(line, char(16)) == 1)
+      flush_scheme (complete (parse_complete (substr (line, 2))));
+      continue
+    else
+      line = input ("", "s");
+      while (!strcmp (line, "<EOF>"))
+        code = [code, "\n", line];
+        line = input ("", "s");
+      endwhile
+    endif
+  
+    if code(length (code)) != ";"
       disp_ans= true;
     else
       disp_ans= false;
     endif
 
-    trimed_r= strtrim (__r);
+    trimed_r= strtrim (code);
     if isvarname (trimed_r) && exist (trimed_r)
-      __r= sprintf ("ans= %s;", __r);
+      code= sprintf ("ans= %s;", code);
     else
       # Reset ans to empty string
       ans= "";
       # Suppress the output
-      __r= sprintf ("%s;", __r);
+      code= sprintf ("%s;", code);
     endif
 
     # NOTE: the evaled code will use the polluted env
-    eval (__r, "tmlasterr");
+    eval (code, "tmlasterr");
 
     if disp_ans
-      if (isplot (cmds_for_plot, __r))
+      if (isplot (cmds_for_plot, code))
         plotted= tmplot (); ## call TeXmacs plotting interface
         if plotted
           disp_ans= false;
@@ -55,7 +62,7 @@ function tmrepl()
       flush_verbatim ("\n");
     endif
 
-    flush_prompt (PS1 ())
+    flush_prompt (PS1 ());
 
     # Debugging Hints:
     # fid= fopen ("/tmp/octave.log", "a");

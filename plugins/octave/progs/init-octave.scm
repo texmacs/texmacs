@@ -43,6 +43,7 @@
                 (url-exists-in-path? "octave-octave-app")))
   (:serializer ,octave-serialize)
   (:launch ,(octave-launcher))
+  (:tab-completion #t)
   (:session "Octave"))
 
 (when (supports-octave?)
