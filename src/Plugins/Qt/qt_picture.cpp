@@ -18,6 +18,7 @@
 #include "scheme.hpp"
 #include "frame.hpp"
 #include "effect.hpp"
+#include "iterator.hpp"
 
 #include <QObject>
 #include <QWidget>
@@ -202,6 +203,18 @@ get_image (url u, int w, int h, tree eff, SI pixel) {
   if (!qt_pic_cache->contains (key))
     qt_pic_cache (key)= get_image_for_real (u, w, h, eff, pixel);
   return qt_pic_cache[key];
+}
+
+void
+qt_clean_picture_cache () {
+  iterator<tree> it= iterate (qt_pic_cache);
+  while (it->busy ()) {
+    tree key= it->next ();
+    QImage* im= qt_pic_cache [key];
+    delete im;
+    qt_pic_cache (key)= (QImage*) NULL;
+  }
+  qt_pic_cache= hashmap<tree,QImage*> ();
 }
 
 picture

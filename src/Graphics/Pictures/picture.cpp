@@ -179,11 +179,18 @@ picture_cache_clean () {
   picture_blacklist= hashmap<tree,int> ();
 }
 
+#ifdef QTTEXMACS
+void qt_clean_picture_cache ();
+#endif
+
 void
 picture_cache_reset () {
   picture_blacklist= hashmap<tree,int> ();
   picture_cache= hashmap<tree,picture> ();
   picture_stamp= hashmap<tree,int> ();
+#ifdef QTTEXMACS
+  qt_clean_picture_cache ();
+#endif
 }
 
 static bool

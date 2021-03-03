@@ -74,3 +74,11 @@
       "$TEXMACS_HOME_PATH/fonts/font-database.scm"
       "$TEXMACS_HOME_PATH/fonts/font-features.scm"
       "$TEXMACS_HOME_PATH/fonts/font-characteristics.scm")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Miscellaneous
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (picture-gc)
+  (picture-cache-reset)
+  (update-all-buffers))

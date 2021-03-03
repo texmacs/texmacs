@@ -41,6 +41,7 @@
   ---
   (-> "Update"
       ("Inclusions" (inclusions-gc))
+      ("Pictures" (picture-gc))
       ("Plugins" (reinit-plugin-cache))
       ("Styles" (style-clear-cache)))
   (if (url-exists-in-path? "pdflatex")
