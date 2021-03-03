@@ -5,9 +5,14 @@
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.99.1 to 1.99.18>
+  <section|Changes from version 1.99.1 to 1.99.19>
 
   <\itemize>
+    <item>Many bug fixes (1.99.19).
+
+    <item>Enhanced structured search & replace: added preferences and
+    wildcards (1.99.19).
+
     <item>Minor bug fixes (1.99.18).
 
     <item>Minor progress on the remote editing tools (1.99.18).
