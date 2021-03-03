@@ -158,7 +158,7 @@ conv_sub (const string& ks) {
     int pos = -1, tmp = 0, n = N(a[i]);
     while (tmp < n && (tmp = search_forwards ("+", tmp, a[i])) != -1)
       pos = tmp++;
-    if (pos != -1 && n > pos+1) {
+    if (n > pos+1) {
       if (is_locase (a[i][pos+1]))
         a[i] = a[i](0, pos) * upcase_all (a[i] (pos, n));
       else if (is_upcase (a[i][pos+1])) {
@@ -166,7 +166,7 @@ conv_sub (const string& ks) {
         if (n>pos+2 && a[i][pos+1] == 'F' && as_int (a[i][pos+2]) > 0)
           ;
         else
-          a[i] = a[i](0, pos) * "+Shift" * upcase_all (a[i] (pos, n));
+          a[i] = a[i](0, pos+1) * "Shift+" * upcase_all (a[i] (pos+1, n));
       }
     }
   }
