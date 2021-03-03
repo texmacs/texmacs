@@ -55,6 +55,8 @@ function tmrepl()
       flush_verbatim ("\n");
     endif
 
+    flush_prompt (PS1 ())
+
     # Debugging Hints:
     # fid= fopen ("/tmp/octave.log", "a");
     # fprintf (fid, "command: %s\n", r);
