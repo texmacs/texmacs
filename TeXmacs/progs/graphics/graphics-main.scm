@@ -45,8 +45,10 @@
   (set! t (tree-ref t 1))
   (while (tree-is? t 'with)
     (set! t (tm-ref t :last)))
-  (when (tree-is? t 'graphics)
-    (tree-go-to t :last :end)))
+  (cond ((tm-equal? t '(graphics))
+         (tree-go-to t :end))
+        ((tree-is? t 'graphics)
+         (tree-go-to t :last :end))))
 
 (tm-define (graphics-enter)
   (with t (cursor-tree)
