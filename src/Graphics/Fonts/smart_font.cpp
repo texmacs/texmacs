@@ -1106,7 +1106,7 @@ smart_font_rep::resolve_rubber (string c, string fam, int attempt) {
   string ss= c (l, r);
   string goal= ss;
   if (N(goal) != 1) goal= "<" * goal * ">";
-  if (goal == ".") {
+  if (goal == "." || goal == "<nobracket>") {
     tree key= tuple ("ignore");
     int nr= sm->add_font (key, REWRITE_IGNORE);
     initialize_font (nr);
