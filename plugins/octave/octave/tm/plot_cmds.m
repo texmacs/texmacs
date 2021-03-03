@@ -16,7 +16,9 @@ function ret= plot_cmds()
   for x=strsplit(path(), ":")
     p = x{1};
     if (starts_with(p, octave_home) && 
-      (ends_with(p, "m/plot/appearance") || (ends_with(p, "m/plot/draw"))))
+        (ends_with(p, "m/plot/appearance") ||
+         ends_with(p, "m/plot/draw") ||
+         ends_with(p, "m/image")))
       files= ls (p);
       [r, c]= size (files);
       for i=1:r
