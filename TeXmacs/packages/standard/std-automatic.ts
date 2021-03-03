@@ -1,4 +1,4 @@
-<TeXmacs|1.99.15>
+<TeXmacs|1.99.18>
 
 <style|<tuple|source|std>>
 
@@ -124,8 +124,13 @@
 
   <assign|with-toc|<macro|toc|body|<with|toc-prefix|<arg|toc>|<arg|body>>>>
 
-  <assign|toc-entry|<macro|type|what|<quasi|<style-with|src-compact|none|<flag|<localize|table
-  of contents>|dark green|what><auto-label><write|<value|toc-prefix>|<compound|<unquote|<arg|type>>|<arg|what>|<pageref|<the-auto>>>><toc-notify|<arg|type>|<arg|what>>>>>>
+  <assign|toc-next|>
+
+  <assign|toc-override|<macro|what|<style-with|src-compact|none|<flag|<localize|override
+  toc entry>|dark green|what><assign|toc-next|<arg|what>>>>>
+
+  <assign|toc-entry|<macro|type|what|<quasi|<style-with|src-compact|none|||<flag|<localize|table
+  of contents>|dark green|what><auto-label><write|<value|toc-prefix>|<compound|<unquote|<arg|type>>|<arg|what>|<pageref|<the-auto>>>><style-with|src-compact|none|<if|<equal|<value|toc-next>|>|<toc-notify|<arg|type>|<arg|what>>|<toc-notify|<arg|type>|<value|toc-next>><assign|toc-next|>>>>>>>
 
   <assign|toc-main-1|<macro|what|<toc-entry|toc-strong-1|<arg|what>>>>
 
