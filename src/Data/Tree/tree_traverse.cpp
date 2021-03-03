@@ -278,13 +278,29 @@ move_valid_sub (tree t, path p, bool forward) {
 }
 
 static path
-move_valid (tree t, path p, bool forward) {
+move_valid_bis (tree t, path p, bool forward) {
   bool inside= the_drd->is_accessible_path (t, p);
   if (inside) return move_valid_sub (t, p, forward);
   bool old_mode= set_access_mode (DRD_ACCESS_SOURCE);
   path r= move_valid_sub (t, p, forward);
   set_access_mode (old_mode);
   return r;
+}
+
+static bool
+inside_graphics (tree t, path p) {
+  if (is_func (t, GRAPHICS)) return true;
+  if (is_nil (p) || is_nil (p->next)) return false;
+  return inside_graphics (t[p->item], p->next);
+}
+
+static path
+move_valid (tree t, path p, bool forward) {
+  // NOTE: extra hook for moving inside graphical text
+  path q= move_valid_bis (t, p, forward);
+  if (!inside_graphics (t, p)) return q;
+  if (inside_contiguous_document (t, p, q)) return q;
+  return false;
 }
 
 path next_valid (tree t, path p) {
@@ -592,11 +608,22 @@ inside_same_or_more (tree t, path p, path q, tree_label which) {
 }
 
 bool
+is_boundary (tree t, path p) {
+  if (is_func (subtree (t, p), DOCUMENT)) return true;
+  if (is_nil (p)) return false;
+  path q= path_up (p);
+  if (is_func (subtree (t, q), GRAPHICS)) return true;
+  if (is_nil (q)) return false;
+  if (is_func (subtree (t, path_up (q)), GRAPHICS)) return true;
+  return false;
+}
+
+bool
 inside_contiguous_document (tree t, path op, path oq) {
   if (!inside_same (t, op, oq, DOCUMENT)) return false;
   path p= path_up (op), q= path_up (oq);
-  while (!is_nil (p) && !is_func (subtree (t, p), DOCUMENT)) p= path_up (p);
-  while (!is_nil (q) && !is_func (subtree (t, q), DOCUMENT)) q= path_up (q);
+  while (!is_nil (p) && !is_boundary (t, p)) p= path_up (p);
+  while (!is_nil (q) && !is_boundary (t, q)) q= path_up (q);
   if (p == q) return true;
   if (q <= p) return inside_contiguous_document (t, oq, op);
   if (!(p <= q)) return false;
