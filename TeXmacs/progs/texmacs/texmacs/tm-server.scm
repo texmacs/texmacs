@@ -173,17 +173,25 @@
       (:idle 100)
       (buffer-close buf))))
 
+(define (do-kill-window* u)
+ (with buf (window->buffer u)
+   (kill-window u)
+   (delayed
+     (:idle 100)
+     (buffer-close buf))))
+
 (tm-define (safely-kill-window . opt-name)
   (cond ((and (buffer-embedded? (current-buffer)) (null? opt-name))
          (alt-windows-delete (alt-window-search (current-buffer))))
         ((<= (windows-number) 1)
          (safely-quit-TeXmacs))
         ((nnull? opt-name)
-         (with buf (window->buffer (car opt-name))
-           (kill-window (car opt-name))
-           (delayed
-             (:idle 100)
-             (buffer-close buf))))
+         (if (buffer-modified? (window->buffer (car opt-name)))
+             (user-confirm
+                 "The document has not been saved. Really close it?" #f
+               (lambda (answ)
+                 (when answ (do-kill-window* (car opt-name)))))
+             (do-kill-window* (car opt-name))))
         ((buffer-modified? (current-buffer))
          (user-confirm "The document has not been saved. Really close it?" #f
            (lambda (answ)
