@@ -1,4 +1,4 @@
-<TeXmacs|1.99.16>
+<TeXmacs|1.99.18>
 
 <style|<tuple|source|std>>
 
@@ -440,7 +440,7 @@
   <assign|tiny-block|<xmacro|switch-args|<map-args|identity|concat|switch-args>>>
 
   <assign|slide|<\macro|body>
-    <\surround||<new-page>>
+    <\surround||<if|<quasi|<tm-last?|<unquote|<quote-arg|body>>|up>>||<new-page>>>
       <arg|body>
     </surround>
   </macro>>

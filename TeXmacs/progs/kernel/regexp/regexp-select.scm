@@ -124,6 +124,11 @@
 ;; Navigation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (navigate-same p pat bl)
+  (if (and p (nnull? p))
+      (select-list (path->tree p) pat bl)
+      '()))
+
 (define (navigate-up p pat bl)
   (if (and p (nnull? p))
       (select-list (path->tree (cDr p)) pat bl)
@@ -186,6 +191,7 @@
 (ahash-set! select-table :replace select-replace)
 
 (define navigate-table (make-ahash-table))
+(ahash-set! navigate-table :same navigate-same)
 (ahash-set! navigate-table :up navigate-up)
 (ahash-set! navigate-table :down navigate-down)
 (ahash-set! navigate-table :first navigate-first)

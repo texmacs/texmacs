@@ -1,4 +1,4 @@
-<TeXmacs|1.99.13>
+<TeXmacs|1.99.18>
 
 <style|<tuple|source|std>>
 
@@ -436,6 +436,24 @@
   <drd-props|comma-separated|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|semicolon-separated|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <assign|tm-ref|<xmacro|x|<extern|ext-tm-ref|<quote-arg|x|0>|<map-args|identity|tuple|x|1>>>>
+
+  <assign|tm-arity|<xmacro|x|<extern|ext-tm-arity|<quote-arg|x|0>|<map-args|identity|tuple|x|1>>>>
+
+  <assign|tm-index|<xmacro|x|<extern|ext-tm-index|<quote-arg|x|0>|<map-args|identity|tuple|x|1>>>>
+
+  <assign|tm-last?|<xmacro|x|<extern|ext-tm-last?|<quote-arg|x|0>|<map-args|identity|tuple|x|1>>>>
+
+  <assign|tm-ref-example|<macro|body|<quasi|<tm-ref|<unquote|<quote-arg|body>>|0>>>>
+
+  <drd-props|tm-ref|arity|<tuple|repeat|1|1>>
+
+  <drd-props|tm-arity|arity|<tuple|repeat|1|1>>
+
+  <drd-props|tm-index|arity|<tuple|repeat|1|1>>
+
+  <drd-props|tm-last?|arity|<tuple|repeat|1|1>>
 
   <assign|prepend-space|<macro|x| <arg|x>>>
 

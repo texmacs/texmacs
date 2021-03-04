@@ -66,6 +66,48 @@
     (list 'quote (cons 'tuple (select body (map rewrite-select pat))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Navigation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (decode-tm-arg a)
+  (with s (and (tree? a) (tree-atomic? a) (tree->string a))
+    (cond ((not s) :same)
+          ((and (string->number s) (integer? (string->number s)))
+           (string->number s))
+          ((== s "up") :up)
+          ((== s "next") :next)
+          ((== s "previous") :previous)
+          ((== s "first") :first)
+          ((== s "last") :last)
+          (else :same))))
+
+(tm-define (ext-tm-ref body args)
+  (:secure #t)
+  (let* ((a (map decode-tm-arg (tm-children args)))
+         (r (apply tm-ref (cons body a))))
+    (if (tree? r) r "false")))
+
+(tm-define (ext-tm-arity body args)
+  (:secure #t)
+  (let* ((a (map decode-tm-arg (tm-children args)))
+         (r (apply tm-ref (cons body a))))
+    (if (tree? r) (number->string (tree-arity r)) "false")))
+
+(tm-define (ext-tm-index body args)
+  (:secure #t)
+  (let* ((a (map decode-tm-arg (tm-children args)))
+         (r (apply tm-ref (cons body a))))
+    (if (tree? r) (number->string (tree-index r)) "false")))
+
+(tm-define (ext-tm-last? body args)
+  (:secure #t)
+  (let* ((a (map decode-tm-arg (tm-children args)))
+         (r (apply tm-ref (cons body a))))
+    (if (and (tree? r) (tree-up r)
+             (== (tree-index r) (- (tree-arity (tree-up r)) 1)))
+        "true" "false")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language suffix
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
