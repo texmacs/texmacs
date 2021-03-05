@@ -1,6 +1,6 @@
-<TeXmacs|1.99.13>
+<TeXmacs|1.99.18>
 
-<style|<tuple|tmdoc|old-spacing|old-dots>>
+<style|<tuple|tmdoc|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|The <name|Octave> plug-in>
@@ -15,7 +15,7 @@
     <branch|Example session|octave-demo.en.tm>
   </traverse>
 
-  <tmdoc-copyright|2011|Joris van der Hoeven>
+  <tmdoc-copyright|2011\U2021|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

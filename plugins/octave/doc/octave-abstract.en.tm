@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.11>
+<TeXmacs|1.99.18>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|The <name|GNU Octave> system>
@@ -26,7 +26,7 @@
   you like the idea of using <name|Octave> from inside <TeXmacs>, then please
   help advertising it.
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2021|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -36,8 +36,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
