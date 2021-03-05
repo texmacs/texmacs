@@ -10,6 +10,9 @@
   <\itemize>
     <item>Many bug fixes (1.99.19).
 
+    <item>Improved Octave plugin with tab completion and multi-line input
+    (1.99.19).
+
     <item>Enhanced structured search & replace: added preferences and
     wildcards (1.99.19).
 
@@ -2068,7 +2071,7 @@
     <item>Implementation of symbol menus.
   </itemize>
 
-  <tmdoc-copyright|1998\U2020|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2021|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
