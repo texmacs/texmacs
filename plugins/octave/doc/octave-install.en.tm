@@ -10,7 +10,8 @@
 
   <\enumerate>
     <item>Check if GNU Octave is installed, if not, please install GNU Octave
-    (5.x) first
+    first. GNU Octave 5.x is recommended. Plotting in <TeXmacs> for GNU
+    Octave 6.x on Windows is broken.
 
     <item>Check if the command line <shell|octave-cli> is available
 
