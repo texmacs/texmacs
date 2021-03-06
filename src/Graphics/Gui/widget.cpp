@@ -23,7 +23,6 @@ slot_name (const slot s) {
   const char * slot_names[]= {
     "SLOT_IDENTIFIER",
     "SLOT_WINDOW",
-    "SLOT_RENDERER",
     "SLOT_VISIBILITY",
     "SLOT_FULL_SCREEN",
     "SLOT_NAME",
