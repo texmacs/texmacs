@@ -38,6 +38,27 @@ string get_attr_from_element (tree t, string name, string default_value) {
   return default_value;
 }
 
+// See https://www.w3.org/TR/css-values-3/#absolute-lengths
+static int cm2pt (double cm) {
+  return (int) tm_round (28.34645 * cm);
+}
+
+static int mm2pt (double mm) {
+  return (int) tm_round (2.834645 * mm);
+}
+
+static int Q2pt (double Q) {
+  return (int) tm_round (28.34645 * Q / 40.0);
+}
+
+static int in2pt (double in) {
+  return (int) tm_round (72 * in);
+}
+
+static int pc2pt (double pc) {
+  return (int) tm_round (72 * pc / 6.0);
+}
+
 static int px2pt (double px) {
   // TODO: assume dpi is 600
   return (int) tm_round (72 * px / 96.0);
@@ -51,6 +72,16 @@ int parse_xml_length (string length) {
   // default unit is px
   if (unit == "px" || is_empty (unit)) {
     return px2pt (len);
+  } else if (unit == "cm") {
+    return cm2pt (len);
+  } else if (unit == "mm") {
+    return mm2pt (len);
+  } else if (unit == "Q") {
+    return Q2pt (len);
+  } else if (unit == "in") {
+    return in2pt (len);
+  } else if (unit == "pc") {
+    return pc2pt (len);
   } else if (unit == "pt") {
     return (int) tm_round (len);
   } else {
