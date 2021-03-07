@@ -159,7 +159,10 @@
         (else t)))
 
 (define (adjust-translation s t)
-  (cond ((not (and (qt-gui?) (os-macos?))) t)
+  (cond ((not (and (qt-gui?) (os-macos?)
+                   (in? (get-preference "language")
+                        (list "english" "british"))))
+         t)
         ((recursive-occurs? "reference" s)
 	 (recursive-replace (recursive-replace t "c" "<#441>") "e" "<#435>"))
         ((recursive-occurs? "onfigur" s)
