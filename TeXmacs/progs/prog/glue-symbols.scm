@@ -726,7 +726,7 @@
 "open-window"
 "open-window-geometry"
 "clone-window"
-"buffer-close"
+"cpp-buffer-close"
 "kill-window"
 "kill-current-window-and-buffer"
 "project-attach"

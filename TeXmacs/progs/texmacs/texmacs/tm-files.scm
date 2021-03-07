@@ -95,16 +95,12 @@
        r)))
 
 (define buffer-newly-created-table (make-ahash-table))
-(define buffer-initialized-table (make-ahash-table))
 
 (tm-define (buffer-newly-created? name)
   (and name
        (or (and (not (buffer-has-name? name))
-                (not (ahash-ref buffer-initialized-table name)))
+                (not (buffer-initialized? name)))
            (ahash-ref buffer-newly-created-table name))))
-
-(tm-define (buffer-initialized name)
-  (ahash-set! buffer-initialized-table name #t))
 
 (tm-define (buffer-copy buf u)
   (:synopsis "Creates a copy of @buf in @u and return @u.")

@@ -5611,7 +5611,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(buffer-close <scm-arg|url>)>
+    <scm|(cpp-buffer-close <scm-arg|url>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|kill_buffer> which returns

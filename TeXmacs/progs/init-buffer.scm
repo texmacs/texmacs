@@ -24,4 +24,4 @@
     (lazy-plugin-force)
     (init-env "prog-scripts" (get-preference "scripting language")))
   (buffer-pretend-saved (current-buffer))
-  (buffer-initialized (current-buffer)))
+  (buffer-set-initialized (current-buffer) #t))

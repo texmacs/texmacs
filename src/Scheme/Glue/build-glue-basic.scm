@@ -785,7 +785,7 @@
   (open-window open_window (url))
   (open-window-geometry open_window (url content))
   (clone-window clone_window (void))
-  (buffer-close kill_buffer (void url))
+  (cpp-buffer-close kill_buffer (void url))
   (kill-window kill_window (void url))
   (kill-current-window-and-buffer kill_current_window_and_buffer (void))
 

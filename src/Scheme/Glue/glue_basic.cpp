@@ -9557,8 +9557,8 @@ tmg_clone_window () {
 }
 
 tmscm
-tmg_buffer_close (tmscm arg1) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-close");
+tmg_cpp_buffer_close (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "cpp-buffer-close");
 
   url in1= tmscm_to_url (arg1);
 
@@ -10730,7 +10730,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("open-window",  tmg_open_window, 0, 0, 0);
   tmscm_install_procedure ("open-window-geometry",  tmg_open_window_geometry, 1, 0, 0);
   tmscm_install_procedure ("clone-window",  tmg_clone_window, 0, 0, 0);
-  tmscm_install_procedure ("buffer-close",  tmg_buffer_close, 1, 0, 0);
+  tmscm_install_procedure ("cpp-buffer-close",  tmg_cpp_buffer_close, 1, 0, 0);
   tmscm_install_procedure ("kill-window",  tmg_kill_window, 1, 0, 0);
   tmscm_install_procedure ("kill-current-window-and-buffer",  tmg_kill_current_window_and_buffer, 0, 0, 0);
   tmscm_install_procedure ("project-attach",  tmg_project_attach, 1, 0, 0);
