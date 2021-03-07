@@ -31,7 +31,7 @@
            (long-name `(verbatim ,(url->system name))))
       ((check (balloon (eval short-name) (eval long-name)) "v"
               (== (current-buffer) name))
-       (switch-to-buffer name)))))
+       (switch-to-buffer* name)))))
 
 (tm-define (buffer-more-recent? b1 b2)
   (>= (buffer-last-visited b1)
@@ -51,6 +51,18 @@
          (l2 (map window->buffer (window-list)))
          (l3 (list-difference l2 (list (current-buffer)))))
     (buffer-list-menu (list-difference l1 l3))))
+
+(tm-define (buffer-windows-menu)
+  (let* ((l1 (map window->buffer (window-list))))
+    (buffer-list-menu l1)))
+
+(tm-define (buffer-invisible-list n)
+  (let* ((l1 (list-difference (buffer-menu-list n) (linked-file-list)))
+         (l2 (map window->buffer (window-list))))
+    (list-difference l1 l2)))
+
+(tm-define (buffer-invisible-menu)
+  (buffer-list-menu (buffer-invisible-list 25)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic menu for recent files
@@ -268,24 +280,38 @@
     ("Forward" (cursor-history-forward)))
   ("Save position" (cursor-history-add (cursor-path)))
   ---
-  (link buffer-go-menu)
-  (if (nnull? (linked-file-list))
-      ---
-      (link linked-file-menu))
   (if (not (window-per-buffer?))
+      (link buffer-go-menu)
+      (if (nnull? (linked-file-list))
+          ---
+          (link linked-file-menu))
       (if (nnull? (recent-unloaded-file-list 1))
           ---
-          (link recent-unloaded-file-menu)))
-  (if (nnull? (bookmarks-menu))
-      ---
-      (link bookmarks-menu))
+          (link recent-unloaded-file-menu))
+      (if (nnull? (bookmarks-menu))
+          ---
+          (link bookmarks-menu)))
   (if (window-per-buffer?)
+      (group "Windows")
+      (link buffer-windows-menu)
       ---
       (group "Buffer in this window")
       ("New" (new-document*))
       ("Load" (open-document*))
-      (-> "Recent"
-          (if (nnull? (recent-unloaded-file-list 1))
+      (if (nnull? (buffer-invisible-list 25))
+          (-> "Hidden"
+              ---
+              (link buffer-invisible-menu)))
+      (if (nnull? (linked-file-list))
+          (-> "Linked"
+              ---
+              (link linked-file-menu)))
+      (if (nnull? (recent-unloaded-file-list 1))
+          (-> "Recent"
               ---
               (link recent-unloaded-file-menu)))
+      (if (nnull? (bookmarks-menu))
+          (-> "Bookmarks"
+              ---
+              (link bookmarks-menu)))
       ("Close" (close-document*))))

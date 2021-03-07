@@ -199,6 +199,33 @@ window_focus (url win) {
   set_current_view (old);
 }
 
+void
+switch_to_window (url new_w) {
+  url old_w= get_current_window ();
+  if (new_w == old_w) return;
+  url old_u= window_to_view (old_w);
+  url new_u= window_to_view (new_w);
+  if (!is_none (old_u) && !is_none (new_u)) {
+    tm_view old_vw = concrete_view (old_u);
+    if (old_vw != NULL) {
+      //old_vw->ed->end_editing ();
+      old_vw->ed->suspend ();
+    }
+  }
+  if (!is_none (new_u)) {
+    tm_view new_vw = concrete_view (new_u);
+    //attach_view (new_w, new_u);
+    //set_current_view (new_u);
+    tm_window win= concrete_window (new_w);
+    if (win != NULL) win->map ();
+    if (new_vw != NULL) {
+      //new_vw->ed->start_editing ();
+      new_vw->ed->resume ();
+      send_keyboard_focus (new_vw->ed);
+    }
+  }
+}
+
 /******************************************************************************
 * Other subroutines
 ******************************************************************************/

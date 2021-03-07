@@ -9487,6 +9487,19 @@ tmg_window_focus (tmscm arg1) {
 }
 
 tmscm
+tmg_switch_to_window (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "switch-to-window");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  switch_to_window (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_new_buffer () {
   // TMSCM_DEFER_INTS;
   url out= create_buffer ();
@@ -10711,6 +10724,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("window-to-buffer",  tmg_window_to_buffer, 1, 0, 0);
   tmscm_install_procedure ("window-set-buffer",  tmg_window_set_buffer, 2, 0, 0);
   tmscm_install_procedure ("window-focus",  tmg_window_focus, 1, 0, 0);
+  tmscm_install_procedure ("switch-to-window",  tmg_switch_to_window, 1, 0, 0);
   tmscm_install_procedure ("new-buffer",  tmg_new_buffer, 0, 0, 0);
   tmscm_install_procedure ("open-buffer-in-window",  tmg_open_buffer_in_window, 3, 0, 0);
   tmscm_install_procedure ("open-window",  tmg_open_window, 0, 0, 0);

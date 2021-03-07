@@ -130,6 +130,12 @@
         (for-each set-reference refl refs))
       u)))
 
+(tm-define (switch-to-buffer* buf)
+  (cond ((== buf (current-buffer)) (noop))
+        ((nnull? (buffer->windows buf))
+         (switch-to-window (car (buffer->windows buf))))
+        (else (switch-to-buffer buf))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Saving buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

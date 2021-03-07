@@ -22,6 +22,7 @@ url  get_current_window ();
 url  window_to_buffer (url win);
 void window_set_buffer (url win, url name);
 void window_focus (url win);
+void switch_to_window (url win);
 
 url  create_buffer ();
 url  open_window (tree geom= "");

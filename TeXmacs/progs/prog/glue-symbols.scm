@@ -720,6 +720,7 @@
 "window-to-buffer"
 "window-set-buffer"
 "window-focus"
+"switch-to-window"
 "new-buffer"
 "open-buffer-in-window"
 "open-window"

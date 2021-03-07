@@ -5563,6 +5563,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(switch-to-window <scm-arg|url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|switch_to_window> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(new-buffer)>
 <explain-synopsis|no synopsis>
   <|explain>

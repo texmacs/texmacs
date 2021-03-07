@@ -778,6 +778,7 @@
   (window-to-buffer window_to_buffer (url url))
   (window-set-buffer window_set_buffer (void url url))
   (window-focus window_focus (void url))
+  (switch-to-window switch_to_window (void url))
 
   (new-buffer create_buffer (url))
   (open-buffer-in-window new_buffer_in_new_window (url url content content))
