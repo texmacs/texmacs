@@ -302,13 +302,13 @@
   ("emacs:meta $" (interactive-spell))
   ("emacs:meta %" (interactive-replace))
 
-  ("emacs:prefix tab" (make 'indent))
   ("emacs:prefix b" (interactive go-to-buffer))
   ("emacs:prefix h" (select-all))
   ("emacs:prefix k" (close-document))
   ("emacs:prefix K" (close-document*))
   ("emacs:prefix C-c" (safely-quit-TeXmacs))
   ("emacs:prefix C-f" (interactive load-document))
+  ("emacs:prefix C-i" (make 'indent))
   ("emacs:prefix C-s" (save-buffer))
   ("emacs:prefix C-w" (interactive save-buffer-as))
 
