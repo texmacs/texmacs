@@ -1039,9 +1039,10 @@ qt_gui_rep::put_graphics_on_clipboard (url file) {
     string filecontent;
     load_string (file, filecontent, true);
     
+    // warning: we need to tell Qt the size of the byte buffer
     c_string tmp (filecontent);
-    QByteArray rawdata (tmp);
-    
+    QByteArray rawdata (tmp, N(filecontent));
+
     QMimeData *mymimeData = new QMimeData;
     mymimeData->setData (mime, rawdata);
     

@@ -14,9 +14,66 @@
 
 #include <QApplication>
 #include <QIcon>
+#include <QMacPasteboardMime>
 #include "string.hpp"
 #include "sys_utils.hpp"
 #include "url.hpp"
+
+
+#ifdef Q_OS_MAC
+// On MacOS we have to register appropriate mime types for PDF files
+// The QMacPasteboardMimePDF class is instantiated in QTMApplication
+// and provides the necessary support.
+//
+// code from:
+// https://www.lyx.org/trac/browser/lyxsvn/lyx-devel/trunk/src/frontends/qt4/GuiApplication.cpp?rev=24894
+
+// (mg) I'm not sure this is the right place to have this code, but well...
+
+class QMacPasteboardMimePDF : public QMacPasteboardMime
+{
+public:
+  QMacPasteboardMimePDF ()
+    : QMacPasteboardMime (MIME_QT_CONVERTOR | MIME_ALL)
+  {}
+
+  QString convertorName() { return "PDF"; }
+
+  QString flavorFor (QString const & mime)
+  {
+    if (mime == QLatin1String ("application/pdf"))
+      return QLatin1String ("com.adobe.pdf");
+    return QString();
+  }
+
+  QString mimeFor(QString flav)
+  {
+    if (flav == QLatin1String ("com.adobe.pdf"))
+      return QLatin1String ("application/pdf");
+    return QString ();
+  }
+
+  bool canConvert(QString const & mime, QString flav)
+  { return mimeFor (flav) == mime; }
+
+  QVariant convertToMime (QString const & mime, QList<QByteArray> data, QString flav)
+  {
+    (void) flav; (void) mime;
+    if (data.count () > 1)
+      debug_qt << "QMacPasteboardMimePDF: Cannot handle multiple member data " << LF;
+    return data.first ();
+  }
+
+  QList<QByteArray> convertFromMime (QString const & mime, QVariant data, QString flav)
+  {
+    (void) flav; (void) mime;
+    QList<QByteArray> ret;
+    ret.append (data.toByteArray ());
+    return ret;
+  }
+};
+#endif
+
 
 /*
  FIXME: We would like to do the following
@@ -43,6 +100,10 @@
  */
 class QTMApplication: public QApplication {
   Q_OBJECT
+  
+#ifdef Q_OS_MAC
+  QMacPasteboardMimePDF mac_pasteboard_mime_pdf;
+#endif
   
 public:
   QTMApplication (int& argc, char** argv) :
