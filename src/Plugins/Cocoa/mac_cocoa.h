@@ -18,6 +18,7 @@
 #undef EVENT_H 
 #define extend CARBON_extends 
 #define object COCOA_object
+#define OS_object OS_COCOA_object
 
 #include <Cocoa/Cocoa.h>
 
@@ -27,5 +28,6 @@
 #undef outline
 #undef extend
 #undef object
+#undef OS_object
 
 #endif
