@@ -13,24 +13,24 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (gnuplot-serialize lan t)
-    (with u (pre-serialize lan t)
-      (with s (texmacs->code (stree->tree u) "SourceCode")
-        (string-append s "\n<EOF>\n"))))
+  (with u (pre-serialize lan t)
+    (with s (texmacs->code (stree->tree u) "SourceCode")
+      (string-append s "\n<EOF>\n"))))
+
+(define (gnuplot-entry)
+  (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
+      (system-url->string "$TEXMACS_HOME_PATH/plugins/tmpy/session/tm_gnuplot.py")
+      (system-url->string "$TEXMACS_PATH/plugins/tmpy/session/tm_gnuplot.py")))
+
+(plugin-add-macos-path "Octave*/Contents/Resources/usr/Cellar/gnuplot-octave-app/*" "bin" #t)
 
 (define (gnuplot-launcher)
-  (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
-      `((:launch ,(string-append (python-command) " \""
-                                 (getenv "TEXMACS_HOME_PATH")
-                                 "/plugins/tmpy/session/tm_gnuplot.py\"")))
-      `((:launch ,(string-append (python-command) " \""
-                                 (getenv "TEXMACS_PATH")
-                                 "/plugins/tmpy/session/tm_gnuplot.py\"")))))
-
+  `((:launch ,(string-append (python-command) " " (raw-quote (gnuplot-entry))))))
 
 (plugin-configure gnuplot
   (:winpath "gnuplot" "bin")
   (:require (url-exists-in-path? "gnuplot"))
-  (:require (python-command))
+  (:require (url-exists-in-path? (python-command)))
   ,@(gnuplot-launcher)
   (:serializer ,gnuplot-serialize)
   (:session "Gnuplot")
