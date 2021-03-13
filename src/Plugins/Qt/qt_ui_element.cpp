@@ -28,12 +28,12 @@
 #include "QTMGuiHelper.hpp"
 #include "QTMMenuHelper.hpp"
 #include "QTMStyle.hpp"
-#include "QTMApplication.hpp"
 #include "QTMTreeModel.hpp"
 
 #include <QCheckBox>
 #include <QPushButton>
 #include <QSplitter>
+#include <QApplication>
 #include <QTreeView>
 
 

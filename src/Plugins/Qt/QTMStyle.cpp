@@ -13,13 +13,13 @@
 #include "renderer.hpp"
 
 #include "QTMStyle.hpp"
-#include "QTMApplication.hpp"
 
 #include <QStyleOptionMenuItem>
 #include <qdrawutil.h>
 #include <QPainter>
 #include <QPainterPath>
 #include <QMainWindow>
+#include <QApplication>
 
 int
 qt_zoom (int sz) {

@@ -20,12 +20,12 @@
 #include "QTMMenuHelper.hpp"
 #include "QTMGuiHelper.hpp"
 #include "QTMStyle.hpp"
-#include "QTMApplication.hpp"
 #include "QTMTreeModel.hpp"
 
 #include <QToolTip>
 #include <QCompleter>
 #include <QKeyEvent>
+#include <QApplication>
 
 /******************************************************************************
  * QTMCommand

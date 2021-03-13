@@ -21,7 +21,6 @@
 #include "converter.hpp"
 #include "QTMMenuHelper.hpp"
 #include "QTMGuiHelper.hpp"
-#include "QTMApplication.hpp"
 
 #include <QMessageBox>
 #include <QLabel>
@@ -34,6 +33,8 @@
 #include <QVector>
 #include <QPushButton>
 #include <QDialogButtonBox>
+#include <QApplication>
+
 
 #include "string.hpp"
 #include "scheme.hpp"

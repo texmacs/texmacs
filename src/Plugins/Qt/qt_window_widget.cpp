@@ -16,7 +16,6 @@
 #include "QTMWindow.hpp"
 #include "QTMGuiHelper.hpp"
 #include "QTMMenuHelper.hpp"
-#include "QTMApplication.hpp"
 
 #include "message.hpp"
 #include "analyze.hpp"

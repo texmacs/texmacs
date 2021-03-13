@@ -12,13 +12,13 @@
 #include "message.hpp"
 
 #include "QTMScrollView.hpp"
-#include "QTMApplication.hpp"
 
 #include <QScrollBar>
 #include <QPainter>
 #include <QBoxLayout>
 #include <QPaintEvent>
 #include <QStyle>
+#include <QApplication>
 
 
 /*! Provide automatic centering of the working area inside the viewport.

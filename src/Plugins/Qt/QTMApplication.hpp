@@ -14,13 +14,15 @@
 
 #include <QApplication>
 #include <QIcon>
-#include <QMacPasteboardMime>
 #include "string.hpp"
 #include "sys_utils.hpp"
 #include "url.hpp"
 
 
 #ifdef Q_OS_MAC
+
+#include <QMacPasteboardMime>
+
 // On MacOS we have to register appropriate mime types for PDF files
 // The QMacPasteboardMimePDF class is instantiated in QTMApplication
 // and provides the necessary support.

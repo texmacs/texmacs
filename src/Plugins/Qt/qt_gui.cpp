@@ -46,11 +46,11 @@
 #include <QImage>
 #include <QUrl>
 #include <QDesktopWidget>
+#include <QApplication>
 
 #include "QTMGuiHelper.hpp"
 #include "QTMWidget.hpp"
 #include "QTMWindow.hpp"
-#include "QTMApplication.hpp"
 
 #ifdef MACOSX_EXTENSIONS
 #include "MacOS/mac_utilities.h"
@@ -500,7 +500,7 @@ void gui_interpose (void (*r) (void)) { the_interpose_handler = r; }
 
 void
 qt_gui_rep::event_loop () {
-  QTMApplication* app = static_cast<QTMApplication*>(QApplication::instance());
+  QCoreApplication* app = QApplication::instance ();
   update();
     //need_update();
   app->exec();
