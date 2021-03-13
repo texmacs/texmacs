@@ -5,7 +5,7 @@
 ## DESCRIPTION : REPL loop
 ## COPYRIGHT   : (C) 2004-2010  Joris van der Hoeven
 ##               (C) 2014       François Poulain
-##               (C) 2020       Darcy Shen
+##               (C) 2020-2021  Darcy Shen
 ##
 ## This software falls under the GNU general public license version 3 or later.
 ## It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -14,7 +14,13 @@
 
 function tmrepl()
   cmds_for_plot= plot_cmds();
+
   while (true)
+    # If it was cleared, initialize it again
+    if exist ("cmds_for_plot") != 1
+      cmds_for_plot= plot_cmds();
+    endif
+
     line = input ("", "s");
     code = line;
     if (index(line, char(16)) == 1)
@@ -35,7 +41,7 @@ function tmrepl()
     endif
 
     trimed_r= strtrim (code);
-    if isvarname (trimed_r) && exist (trimed_r)
+    if isvarname (trimed_r) && exist (trimed_r) == 1
       code= sprintf ("ans= %s;", code);
     else
       # Reset ans to empty string
@@ -46,6 +52,11 @@ function tmrepl()
 
     # NOTE: the evaled code will use the polluted env
     eval (code, "tmlasterr");
+
+    # For `clear` or `clear all`, disp_ans will be cleared
+    if exist ("disp_ans") == 0
+      disp_ans= false;
+    endif
 
     if disp_ans
       if (isplot (cmds_for_plot, code))
