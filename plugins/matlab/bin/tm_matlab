@@ -1,4 +1,10 @@
-#!/bin/sh
-echo -ne "\002verbatim:"
-cd $TEXMACS_PATH/plugins/matlab/code
-matlab -nojvm -r tmrepl
+#!/bin/bash
+ echo -ne "\002verbatim:"
+
+# location of plugin-config (tmrepl.m)  
+# PLUGIN_CODE=$TEXMACS_HOME_PATH/plugins/matlab/code/
+  PLUGIN_CODE_PATH=$TEXMACS_PATH/plugins/matlab/code/
+# extend and export MATLABPATH
+  export MATLABPATH="$MATLABPATH:$PLUGIN_CODE_PATH"
+# start Matlab for plugin session
+  matlab -nodesktop -nosplash -r tmrepl 
