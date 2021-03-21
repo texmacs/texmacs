@@ -48,4 +48,7 @@ if (length (prefix) > 0)
   set (0, "defaultlinelinewidth", 1.5);
 endif
 
+# Default to $HOME
+cd ("~");
+
 tmrepl ()
