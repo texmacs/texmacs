@@ -295,6 +295,11 @@
 	   (with sp (path-previous-section bt bp)
 	     (and (!= sp bp) (path->tree (append (tree->path bt) sp))))))))
 
+(tm-define (go-to-section-title)
+  (and-with s (previous-section)
+    (when (or (section-tag? (tm-car s)) (section*-tag? (tm-car s)))
+      (tree-go-to s 0 :start))))
+
 (define (selection-trim-ending)
   (if (selection-active-any?)
     (with st (selection-tree)

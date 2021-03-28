@@ -191,7 +191,7 @@
 	((or (tree-is? t 'show-part) (and all? (tree-is? t 'hide-part)))
 	 (list (document-part-name t)))
 	((principal-section? t)
-	 (list (tm/section-get-title-string t)))
+	 (list (tm/section-get-title-string t #f)))
 	((not (tree-in? t '(document ignore))) '())
 	(else (with ls (map (lambda (x) (document-get-parts x all?))
 			    (tree-children t))

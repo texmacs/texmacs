@@ -32,11 +32,11 @@
 ;; Detecting sections inside paragraph lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tm/section-get-title-string-sub l)
+(define (tm/section-get-title-string-sub l indent?)
   (if (null? l) "no title"
-      (with title (tm/section-get-title-string (car l))
+      (with title (tm/section-get-title-string (car l) indent?)
 	(if (!= title "no title") title
-	    (tm/section-get-title-string-sub (cdr l))))))
+	    (tm/section-get-title-string-sub (cdr l) indent?)))))
 
 (tm-define (texmacs->string x)
   (texmacs->code (verbatim-expand x) "cork"))
@@ -44,20 +44,39 @@
 (tm-define (texmacs->title-string x)
   (downgrade-math-letters (texmacs->string x)))
 
-(tm-define (tm/section-get-title-string t)
+(define (indent-prefix* sec)
+  (cond ((in? sec '(chapter chapter*)) "")
+        ((in? sec '(appendix appendix*)) "")
+        ((in? sec '(section section*)) "   ")
+        ((in? sec '(subsection subsection*)) "      ")
+        ((in? sec '(subsubsection subsubsection*)) "         ")
+        ((in? sec '(paragraph paragraph*)) "         ")
+        ((in? sec '(subparagraph subparagraph*)) "         ")
+        (else "")))
+
+(define (indent-prefix sec)
+  (with prefix (indent-prefix* sec)
+    (if (and (short-style?) (string-starts? prefix "   "))
+        (string-drop prefix 3)
+        prefix)))
+
+(tm-define (tm/section-get-title-string t indent?)
   (cond ((tm-atomic? t) "no title")
 	((or (section-tag? (tm-car t)) (section*-tag? (tm-car t)))
-         (texmacs->title-string (tm-ref t 0)))
+         (with title (texmacs->title-string (tm-ref t 0))
+           (if indent?
+               (string-append (indent-prefix (tm-car t)) title)
+               title)))
 	((tree-is? (tm-car t) 'the-index) "Index")
 	((tree-is? (tm-car t) 'the-glossary) "Glossary")
 	((or (special-section-tag? (tm-car t))
 	     (automatic-section-tag? (tm-car t)))
 	 (upcase-first (string-replace (symbol->string (tm-car t)) "-" " ")))
 	((tree-is? t 'concat)
-	 (tm/section-get-title-string-sub (tree-children t)))
+	 (tm/section-get-title-string-sub (tree-children t) indent?))
         ((and (tm-func? t 'shared 3)
               (tm-func? (tm-ref t 2) 'document))
-         (tm/section-get-title-string (tm-ref t 2 0)))
+         (tm/section-get-title-string (tm-ref t 2 0) indent?))
 	(else "no title")))
 
 (define (tm/section-detect? t pred?)
@@ -111,7 +130,7 @@
 (define (principal-section-title-sub l)
   (cond ((null? l) "no title")
 	((tm/section-detect? (car l) (principal-section-predicate))
-	 (tm/section-get-title-string (car l)))
+	 (tm/section-get-title-string (car l) #f))
 	(else (principal-section-title-sub (cdr l)))))
 
 (tm-define (principal-section-title t)
