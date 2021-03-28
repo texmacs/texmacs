@@ -23,8 +23,8 @@
 
 (define (octave-launcher)
   (with boot (raw-quote (octave-entry))
-    (if (url-exists-in-path? "octave-cli")
-        (string-append "octave-cli -qi " boot)
+    (if (url-exists-in-path? "octave")
+        (string-append "octave --no-gui -qi " boot)
         (string-append "octave-octave-app -qi " boot))))
 
 ; when using `:macpath`, the (octave-launcher) uses `octave-octave-app`
@@ -39,7 +39,7 @@
   (:winpath "Octave/Octave*" "bin")
   (:winpath "Octave/Octave*" "mingw64/bin")
   (:macpath "Octave*" "Contents/Resources/usr/bin")
-  (:require (or (url-exists-in-path? "octave-cli")
+  (:require (or (url-exists-in-path? "octave")
                 (url-exists-in-path? "octave-octave-app")))
   (:serializer ,octave-serialize)
   (:launch ,(octave-launcher))
