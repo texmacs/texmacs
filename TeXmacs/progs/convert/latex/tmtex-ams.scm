@@ -144,3 +144,38 @@
   (:mode ams-style?)
   (with args (tmtex-concat-Sep (map tmtex (cdr t)))
     `(subjclass ,@args)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; AMS theorems
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-macro (ams-latex-texmacs-thmenv prim name before after)
+  (let* ((prim* (string-append prim "*"))
+         (nonum (string-append "nn" prim))
+         (thenonum (string-append "\\the" nonum)))
+    `(smart-table latex-texmacs-env-preamble
+       (:mode ams-style?)
+       (,prim  (!append ,@before
+                        (newtheorem ,prim (!translate ,name))
+                        ,@after "\n"))
+       (,prim* (!append (newcounter ,nonum) "\n"
+                        "\\def" ,thenonum "{\\unskip}\n"
+                        ,@before
+                        (newtheorem ,prim* (!option ,nonum) (!translate ,name))
+                        ,@after "\n")))))
+
+(define-macro (ams-latex-texmacs-remark prim name)
+  `(ams-latex-texmacs-thmenv
+    ,prim ,name ("{" (!recurse (theoremstyle "remark"))) ("}")))
+
+(ams-latex-texmacs-remark "remark" "Remark")
+(ams-latex-texmacs-remark "note" "Note")
+(ams-latex-texmacs-remark "example" "Example")
+(ams-latex-texmacs-remark "convention" "Convention")
+(ams-latex-texmacs-remark "warning" "Warning")
+(ams-latex-texmacs-remark "acknowledgments" "Acknowledgments")
+(ams-latex-texmacs-remark "answer" "Answer")
+(ams-latex-texmacs-remark "question" "Question")
+(ams-latex-texmacs-remark "exercise" "Exercise")
+(ams-latex-texmacs-remark "problem" "Problem")
+(ams-latex-texmacs-remark "solution" "Solution")
