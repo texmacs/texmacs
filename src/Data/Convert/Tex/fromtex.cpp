@@ -1466,7 +1466,7 @@ static bool
 is_left_type (string s) {
   return
     (s == "(") || (s == "[") || (s == "\\{") ||
-    (s == "\\lvert") || (s == "lVert") ||
+    (s == "\\lvert") || (s == "\\lVert") ||
     (s == "\\lfloor") || (s == "\\lceil") || (s == "\\langle");
 }
 
