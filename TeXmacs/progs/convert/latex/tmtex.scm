@@ -632,6 +632,8 @@
            (map (lambda (x) (string-convert (char->string x) from to)) c))))
 
 (define (tmtex-verb-string s)
+  (when (nstring? s)
+    (set! s (texmacs->verbatim (tm->tree s))))
   (let* ((l (string->list s))
          (t (tmtex-verb-list l))
          (r (tmtex-string-produce t)))
