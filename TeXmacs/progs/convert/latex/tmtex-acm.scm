@@ -264,6 +264,38 @@
   `(crdata ,@(map tmtex l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Put 'maketitle' after abstract
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define removed-maketitle? #f)
+(define added-maketitle? #f)
+
+(define (remove-maketitle t)
+  (cond ((nlist? t) t)
+        ((and (func? t '!document) (== (cAr t) '(maketitle)))
+         (set! removed-maketitle? #t)
+         (cDr t))
+        (else (map remove-maketitle t))))
+
+(define (add-maketitle t)
+  (cond ((nlist? t) t)
+        ((and (func? t '!document)
+              (pair? (cdr t))
+              (pair? (cadr t))
+              (== (caadr t) '(!begin "abstract")))
+         (set! added-maketitle? #t)
+         (rcons t '(maketitle)))
+        (else (map add-maketitle t))))
+
+(tm-define (tmtex-postprocess x)
+  (:mode acm-style?)
+  (set! removed-maketitle? #f)
+  (set! added-maketitle? #f)
+  (let* ((y (remove-maketitle x))
+         (z (add-maketitle y)))
+    (if (and removed-maketitle? added-maketitle?) z x)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ACM specific macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

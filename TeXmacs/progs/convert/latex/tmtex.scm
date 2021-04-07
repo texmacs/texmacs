@@ -3303,6 +3303,8 @@
         ((null? sty) (set! sty '("article"))))
   sty)
 
+(tm-define (tmtex-postprocess x) x)
+
 (tm-define (texmacs->latex x opts)
   ;;(display* "texmacs->latex [" opts "], " x "\n")
   (if (tmfile? x)
@@ -3327,7 +3329,7 @@
         (import-tmtex-styles)
         (tmtex-style-init body)
         (set! doc (tmtex-style-preprocess doc))
-        (with result (texmacs->latex doc opts)
+        (with result (tmtex-postprocess (texmacs->latex doc opts))
           (set! tmtex-style "generic")
           (set! tmtex-packages '())
           result))
