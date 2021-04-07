@@ -1,4 +1,4 @@
-<TeXmacs|1.99.13>
+<TeXmacs|1.99.19>
 
 <style|source>
 
@@ -94,9 +94,11 @@
 
   <assign|homepage-text|<macro|<localize|Homepage>>>
 
-  <assign|doc-date|<macro|x|<em|<date-text>><localize|:> <arg|x>>>
+  <assign|doc-date|<macro|x|<surround|<em|<date-text>><localize|:>
+  ||<arg|x>>>>
 
-  <assign|doc-note|<macro|x|<em|<note-text>><localize|:> <arg|x>>>
+  <assign|doc-note|<macro|x|<surround|<em|<note-text>><localize|:>
+  ||<arg|x>>>>
 
   <assign|author-affiliation|<macro|x|<quasi|<concat-tuple|<unquote|<arg|x>>|,
   >>>>
@@ -105,13 +107,14 @@
 
   <assign|author-affiliation|<macro|x|<with|font-shape|small-caps|<arg|x|0><map-args|prepend-comma|concat|x|1>>>>
 
-  <assign|author-email|<macro|x|<em|<email-text>><localize|:>
-  <verbatim|<arg|x>>>>
+  <assign|author-email|<macro|x|<surround|<em|<email-text>><localize|:>
+  ||<verbatim|<arg|x>>>>>
 
-  <assign|author-homepage|<macro|x|<em|<homepage-text>><localize|:>
-  <verbatim|<arg|x>>>>
+  <assign|author-homepage|<macro|x|<surround|<em|<homepage-text>><localize|:>
+  ||<verbatim|<arg|x>>>>>
 
-  <assign|author-note|<macro|x|<em|<note-text>><localize|:> <arg|x>>>
+  <assign|author-note|<macro|x|<surround|<em|<note-text>><localize|:>
+  ||<arg|x>>>>
 
   <assign|author-misc|<macro|x|<arg|x>>>
 
