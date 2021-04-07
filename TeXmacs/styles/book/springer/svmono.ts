@@ -1,4 +1,4 @@
-<TeXmacs|1.99.16>
+<TeXmacs|1.99.19>
 
 <style|source>
 
@@ -423,8 +423,8 @@
 
   \;
 
-  <assign|toc-title|<macro|env|title|<style-with|src-compact|none|<if|<compound|<unquote|<merge|<arg|env>|-numbered>>>|<style-with|src-compact|none|<if|<equal|<arg|env>|part>|<style-with|src-compact|none|<part-text>
-  <compound|<unquote|<merge|the-|<arg|env>>>><space|7pt><arg|title>>|<style-with|src-compact|none|<style-with|src-compact|none|<resize|<compound|<unquote|<merge|the-|<arg|env>>>>|||<value|<unquote|<merge|<arg|env>|-toc-width>>>|>><arg|title>>>>|<arg|title>>>>>
+  <assign|toc-title|<macro|env|title|<style-with|src-compact|none|<quasi|<style-with|src-compact|none|<if|<compound|<unquote|<merge|<arg|env>|-numbered>>>|<style-with|src-compact|none|<if|<equal|<arg|env>|part>|<style-with|src-compact|none|<part-text>
+  <compound|<unquote|<merge|the-|<arg|env>>>><space|7pt><arg|title>>|<style-with|src-compact|none|<style-with|src-compact|none|<resize|<compound|<unquote|<merge|the-|<arg|env>>>>|||<value|<unquote|<merge|<arg|env>|-toc-width>>>|>><arg|title>>>>|<arg|title>>>>>>>
 
   \;
 

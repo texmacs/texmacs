@@ -1,4 +1,4 @@
-<TeXmacs|1.99.13>
+<TeXmacs|1.99.19>
 
 <style|source>
 
@@ -223,7 +223,7 @@
     </src-comment>
   </active*>
 
-  <assign|toc-title|<macro|env|title|<style-with|src-compact|none|<if|<compound|<unquote|<merge|<arg|env>|-numbered>>>|<compound|<unquote|<merge|the-|<arg|env>>>><compound|<unquote|<merge|<arg|env>|-sep>>><arg|title>|<arg|title>>>>>
+  <assign|toc-title|<macro|env|title|<quasi|<style-with|src-compact|none|<if|<compound|<unquote|<merge|<arg|env>|-numbered>>>|<compound|<unquote|<merge|the-|<arg|env>>>><compound|<unquote|<merge|<arg|env>|-sep>>><arg|title>|<arg|title>>>>>>
 
   <assign|part-toc|<macro|name|<toc-main-1|<toc-title|part|<arg|name>>>>>
 

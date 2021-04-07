@@ -1,4 +1,4 @@
-<TeXmacs|1.99.18>
+<TeXmacs|1.99.19>
 
 <style|<tuple|source|std>>
 
@@ -414,6 +414,8 @@
       </description-table>
     </with>
   </macro>>
+
+  <assign|alt-prefixed-line|<macro|prefix|body|<with|p|<times|<look-up|<box-info|<arg|prefix>|w>|0>|1tmpt>|<with|par-left|<plus|<value|par-left>|<value|p>>|par-first|<minus|<value|p>>|<surround|<yes-indent><arg|prefix>||<arg|body>>>>>>
 
   <\active*>
     <\src-comment>
