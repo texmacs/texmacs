@@ -13,6 +13,7 @@
 #include "hyphenate.hpp"
 #include "analyze.hpp"
 #include "converter.hpp"
+#include "universal.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -72,7 +73,8 @@ load_hyphen_tables (string file_name,
   int i=0, n= N(s);
   while (i<n) {
     string buffer;
-    while ((i<n) && (s[i]!=' ') && (s[i]!='\t') && (s[i]!='\n') && (s[i]!='\r')) {
+    while ((i<n) && (s[i]!=' ') &&
+           (s[i]!='\t') && (s[i]!='\n') && (s[i]!='\r')) {
       if (s[i] != '%') buffer << s[i++];
       else while ((i<n) && (s[i]!='\n')) i++;
     }
@@ -135,7 +137,8 @@ get_hyphens (string s,
              hashmap<string,string> hyphenations, bool utf8) {
   ASSERT (N(s) != 0, "hyphenation of empty string");
 
-  if (utf8) s= cork_to_utf8 (s);
+  if (utf8) s= cork_to_utf8 (uni_locase_all(s));
+  else s= locase_all(s);
 
   if (hyphenations->contains (s)) {
     string h= hyphenations [s];
@@ -156,7 +159,7 @@ get_hyphens (string s,
     return penalty;
   }
   else {
-    s= "." * locase_all (s) * ".";
+    s= "." * s * ".";
     // cout << s << "\n";
     int i, j, k, l, m, len;
     array<int> T (str_length (s, utf8)+1);
