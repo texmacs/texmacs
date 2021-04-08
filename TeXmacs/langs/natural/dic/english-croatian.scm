@@ -4,7 +4,7 @@
 ("a.M.S. subject class" "a.M.S. predmetni razred")
 ("a series" "serija A")
 ("abbreviated authors" "skra¢eni autori")
-("abreviated authors" "skra¢eni autori")
+("abbreviated authors" "skra¢eni autori")
 ("abbreviation" "kratica")
 ("about" "o programu")
 ("about menu" "izbornik o programu")

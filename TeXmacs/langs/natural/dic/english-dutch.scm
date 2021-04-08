@@ -12,7 +12,7 @@
 ("about" "over")
 ("about menu" "over menu")
 ("above" "boven")
-("abreviated authors" "afgekorte auteurs")
+("abbreviated authors" "afgekorte auteurs")
 ("abstract" "samenvatting")
 ("accent" "accent")
 ("accent above" "accent hierboven")

@@ -9,7 +9,7 @@
 ("about" "")
 ("about menu" "")
 ("above" "")
-("abreviated authors" "")
+("abbreviated authors" "")
 ("abstract" "")
 ("accent" "")
 ("accent above" "")

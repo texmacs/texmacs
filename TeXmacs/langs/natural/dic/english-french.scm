@@ -13,7 +13,7 @@
 ("about" "à propos de")
 ("about menu" "à propos de")
 ("above" "en haut")
-("abreviated authors" "auteurs abrégés")
+("abbreviated authors" "auteurs abrégés")
 ("abstract" "résumé")
 ("accent" "accent")
 ("accent above" "accent au-dessus")
