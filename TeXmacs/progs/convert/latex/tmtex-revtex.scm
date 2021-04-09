@@ -57,6 +57,7 @@
 (tm-define (tmtex-style-preprocess doc)
   (:mode aip-style?)
   (revtex-set-style-option "aip")
+  (revtex-set-style-option "reprint")
   (revtex-style-preprocess doc))
 
 (tm-define (tmtex-style-preprocess doc)
@@ -66,6 +67,7 @@
   (if (stree-contains? doc 'abstract-msc)
     (revtex-set-style-option "showpacs"))
   (revtex-set-style-option "aps")
+  (revtex-set-style-option "reprint")
   (revtex-style-preprocess doc))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
