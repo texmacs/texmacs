@@ -1,4 +1,4 @@
-<TeXmacs|1.99.16>
+<TeXmacs|1.99.19>
 
 <style|source>
 
@@ -29,6 +29,8 @@
   <active*|<\src-comment>
     Page layout.
   </src-comment>>
+
+  <assign|par-first|1em>
 
   <assign|parindent|<value|par-first>>
 
@@ -76,6 +78,8 @@
   <the-part><new-line><vspace*|<value|parindent>>><huge|<arg|name>><vspace|3ex><new-line>>>>>>>
 
   <assign|section-title|<macro|name|<style-with|src-compact|none|<sectional-short-bold|<vspace*|<tex-len|0.8cm|1ex|0.2ex>><with|font-family|ss|<small|<change-case|<arg|name>|UPCASE>>><vspace|0.5cm>>>>>
+
+  <assign|section-numbered-title|<macro|name|<section-title|<sectional-prefixed|<the-section><section-sep>|<change-case|<arg|name>|UPCASE><section-post-sep>>>>>
 
   <assign|subsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|<tex-len|0.8cm|1ex|0.2ex>><with|font-family|ss|<small|<arg|name>>><vspace|0.5cm>>>>>
 
@@ -322,12 +326,22 @@
     </src-comment>
   </active*>
 
+  <assign|bibitem-width|2em>
+
+  <assign|transform-bibitem|<macro|body|[<arg|body>] >>
+
+  <assign|xtransform-bibitem|<macro|body|<rsup|<arg|body>>>>
+
+  <assign|xrender-bibitem|<macro|text|<style-with|src-compact|none|<with|par-first|<minus|1tmpt|<value|bibitem-width>>|<yes-indent>><hspace|<maximum|0cm|<minus|<value|bibitem-width>|<box-info|<arg|text>|w.>>>><arg|text>>>>
+
   <assign|bib-list|<\macro|largest|body>
-    <\description>
-      <\with|par-left|1em|par-first|-1em|font-size|1|bibitem-nr|0>
-        <arg|body>
+    <\small>
+      <\with|bibitem-width|<minimum|<box-info|<transform-bibitem|<arg|largest>>.|w.>|2em>|item-hsep|<value|bibitem-hsep>|bibitem-nr|0|par-flexibility|2.0>
+        <\description>
+          <arg|body>
+        </description>
       </with>
-    </description>
+    </small>
   </macro>>
 
   <assign|bibliography-text|<macro|<rule|9cm|1pt>>>
@@ -338,10 +352,10 @@
     </with>
   </macro>>
 
+  <assign|bibliography-text|<macro|<localize|References>>>
+
   <assign|render-bibliography|<\macro|name|body>
-    <\with|par-columns|1>
-      <center|<section*|<arg|name>>>
-    </with>
+    <section*|<arg|name>>
 
     <arg|body>
   </macro>>
@@ -394,11 +408,13 @@
     </with>
   </macro>>
 
-  <assign|doc-data|<xmacro|args|<with|par-columns|1|<extern|doc-data|<quote-arg|args>|>>>>
+  <assign|doc-data|<xmacro|args|<with|par-columns|1|par-first|0em|<extern|doc-data|<quote-arg|args>|>>>>
 
-  \ <assign|doc-render-title|<macro|x|<\surround|<vspace*|0.5fn>|>
+  <assign|doc-render-title|<macro|x|<\surround|<vspace*|0.5fn>|>
     <doc-title-block|<font-magnify|1.682|<with|math-font-series|bold|font-series|bold|font-family|ss|<arg|x>>>>
   </surround>>>
+
+  <assign|doc-title|<value|doc-render-title>>
 
   <assign|doc-title-block|<macro|body|<arg|body>>>
 
