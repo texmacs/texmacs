@@ -19,20 +19,21 @@
 #include "image_files.hpp"
 #include "file.hpp"
 
-#define STATUS_NORMAL 0
-#define STATUS_ESCAPE 1
-#define STATUS_BEGIN  2
+#define STATUS_NORMAL  0
+#define STATUS_ESCAPE  1
+#define STATUS_BEGIN   2
 
-#define MODE_VERBATIM 0
-#define MODE_SCHEME   1
-#define MODE_LATEX    2
-#define MODE_HTML     3
-#define MODE_PS       4
-#define MODE_MATH     5
-#define MODE_CHANNEL  6
-#define MODE_COMMAND  7
-#define MODE_XFORMAT  8
-#define MODE_FILE     9
+#define MODE_VERBATIM  0
+#define MODE_UTF8      1
+#define MODE_SCHEME    2
+#define MODE_LATEX     3
+#define MODE_HTML      4
+#define MODE_PS        5
+#define MODE_MATH      6
+#define MODE_CHANNEL   7
+#define MODE_COMMAND   8
+#define MODE_XFORMAT   9
+#define MODE_FILE     10
 
 /******************************************************************************
 * Universal data input
@@ -59,6 +60,7 @@ texmacs_input::texmacs_input (string type):
 int
 texmacs_input_rep::get_mode (string s) {
   if (s == "verbatim")  return MODE_VERBATIM;
+  if (s == "utf8")  return MODE_UTF8;
   if (s == "latex") return MODE_LATEX;
   if (s == "scheme") return MODE_SCHEME;
   if (s == "html")  return MODE_HTML;
@@ -117,7 +119,9 @@ texmacs_input_rep::put (char c) { // returns true when expecting input
       flush (true);
       status= STATUS_BEGIN;
     }
-    else if (c == DATA_ABORT && format == "verbatim" && buf == "") {
+    else if (c == DATA_ABORT &&
+             (format == "verbatim" || format == "utf8") &&
+             buf == "") {
       // Aborting sessions allows completion with a naive read-eval loop
       ignore_verb= true;
     }
@@ -200,6 +204,9 @@ texmacs_input_rep::flush (bool force) {
   case MODE_VERBATIM:
     verbatim_flush (force);
     break;
+  case MODE_UTF8:
+    utf8_flush (force);
+    break;
   case MODE_SCHEME:
     scheme_flush (force);
     break;
@@ -238,6 +245,19 @@ texmacs_input_rep::verbatim_flush (bool force) {
   if (force || ends (buf, "\n")) {
     if (!ignore_verb)
       write (verbatim_to_tree (buf, false, "auto"));
+    else if (DEBUG_IO)
+      debug_io << "ignore verbatim (aborted input)" << LF;
+    buf= "";
+  }
+}
+
+void
+texmacs_input_rep::utf8_flush (bool force) {
+  if (force || ends (buf, "\n")) {
+    if (!ignore_verb) {
+      string tms= utf8_to_cork (buf);
+      write (verbatim_to_tree (tms, false, "auto"));
+    }
     else if (DEBUG_IO)
       debug_io << "ignore verbatim (aborted input)" << LF;
     buf= "";

@@ -47,7 +47,7 @@ def flush_any (out_str):
     data_end()
 
 def flush_verbatim(content):
-    flush_any ("verbatim:" + content)
+    flush_any ("utf8:" + content)
 
 def flush_newline (n = 1):
     if (n >= 1):
@@ -74,7 +74,7 @@ def flush_ps(content):
 
 def flush_err(content):
     os.sys.stderr.write(chr(2))
-    os.sys.stderr.write("verbatim:" + content)
+    os.sys.stderr.write("utf8:" + content)
     os.sys.stderr.write(chr(5))
     os.sys.stderr.flush() 
 

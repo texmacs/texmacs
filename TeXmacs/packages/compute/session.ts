@@ -1,4 +1,4 @@
-<TeXmacs|1.99.11>
+<TeXmacs|1.99.19>
 
 <style|source>
 
@@ -112,7 +112,7 @@
     </wide-normal>
   </macro>>
 
-  <assign|timing|<macro|time|<compound|small|<htab|5mm><with|color|dark
+  <assign|timing|<macro|time|<small|<htab|5mm><with|color|dark
   grey|<arg|time>>>>>
 
   <\active*>

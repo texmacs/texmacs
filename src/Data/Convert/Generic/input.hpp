@@ -38,6 +38,7 @@ struct texmacs_input_rep: concrete_struct {
 
   void flush (bool force= false);
   void verbatim_flush (bool force= false);
+  void utf8_flush (bool force= false);
   void scheme_flush (bool force= false);
   void latex_flush (bool force= false);
   void html_flush (bool force= false);
