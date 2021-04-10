@@ -38,7 +38,8 @@ function ret= num2scm (n)
       if (isfloat (n) && n == 0.0)
         ret= with_mode_math (dquote ("0.0"));
       else
-        ret= with_mode_math (dquote (num2str (n)));
+        tmp= disp (n);
+        ret= with_mode_math (dquote (strtrim (tmp)));
       endif
     case ("bool")
       if (n)
