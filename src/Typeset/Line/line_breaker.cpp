@@ -120,14 +120,15 @@ hyphenate (line_item item, int pos, line_item& item1, line_item& item2) {
   string s1, s2;
   array<int> hp= item->lan->get_hyphens (s);
   item->lan->hyphenate (s, pos, s1, s2);
-  int d= N(s1) + N(s2) - N(s);
+  int real_pos= N(s) - N(s2);
+  //int real_pos= pos + (N(s1) + N(s2) - N(s));
   
   path ip= item->b->ip;
   int  x1= is_accessible (ip)? item->b->get_leaf_left_pos (): 0;
-  int  x2= is_accessible (ip)? x1 + pos + d: 0;
+  int  x2= is_accessible (ip)? x1 + real_pos: 0;
   
   item1= line_item (STRING_ITEM, OP_SKIP,
-		    shorter_box (ip, text_box (ip, x1, s1, fn, pen), pos + d),
+		    shorter_box (ip, text_box (ip, x1, s1, fn, pen), real_pos),
 		    hp[pos], item->lan);
   item2= line_item (STRING_ITEM, item->op_type,
                     text_box (ip, x2, s2, fn, pen),

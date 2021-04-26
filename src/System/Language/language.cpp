@@ -404,7 +404,7 @@ ad_hoc_language_rep::hyphenate (
 {
   if (hyphens->contains (s)) {
     array<int> penalty= get_hyphens (s);
-    std_hyphenate (s, after, left, right, penalty[after]);
+    std_hyphenate (s, after, left, right, penalty[after], true);
   }
   else base->hyphenate (s, after, left, right);
 }
