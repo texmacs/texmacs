@@ -151,6 +151,8 @@
 ;(display "Booting main TeXmacs functionality\n")
 (use-modules (texmacs texmacs tm-server) (texmacs texmacs tm-view)
              (texmacs texmacs tm-files) (texmacs texmacs tm-print))
+(lazy-define (texmacs texmacs tm-files)
+             buffer-missing-style? buffer-set-default-style)
 (use-modules (texmacs keyboard config-kbd))
 (lazy-keyboard (texmacs keyboard prefix-kbd) always?)
 (lazy-keyboard (texmacs keyboard latex-kbd) always?)
@@ -186,7 +188,7 @@
            preamble-menu document-part-menu project-manage-menu)
 (lazy-menu (generic insert-menu) insert-menu texmacs-insert-menu
            texmacs-insert-icons insert-link-menu insert-image-menu)
-(lazy-define (generic document-edit) update-document
+(lazy-define (generic document-edit) update-document set-document-language
              get-init-page-rendering init-page-rendering)
 (lazy-define (generic generic-edit) notify-activated notify-disactivated)
 (lazy-define (generic generic-doc) focus-help)

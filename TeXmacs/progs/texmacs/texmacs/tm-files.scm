@@ -66,6 +66,23 @@
 ;; Miscellaneous subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (buffer-missing-style?)
+  (with t (tree->stree (get-style-tree))
+    (and (pair? t) (== (car t) 'tuple) (null? (cdr t)))))
+
+(tm-define (buffer-set-default-style)
+  (init-style "generic")
+  (with lan (get-preference "language")
+    (if (!= lan "english") (set-document-language lan)))
+  (with psz (get-printer-paper-type)
+    (if (!= psz "a4") (init-page-type psz)))
+  (with type (get-preference "page medium")
+    (if (!= type "papyrus") (init-env "page-medium" type)))
+  (when (!= (get-preference "scripting language") "none")
+    (lazy-plugin-force)
+    (init-env "prog-scripts" (get-preference "scripting language")))
+  (buffer-pretend-saved (current-buffer)))
+
 (tm-define (propose-name-buffer)
   (with name (url->unix (current-buffer))
     (cond ((not (url-scratch? name)) name)
@@ -93,14 +110,6 @@
      (with r (begin ,@prg)
        (switch-to-buffer name)
        r)))
-
-(define buffer-newly-created-table (make-ahash-table))
-
-(tm-define (buffer-newly-created? name)
-  (and name
-       (or (and (not (buffer-has-name? name))
-                (not (buffer-initialized? name)))
-           (ahash-ref buffer-newly-created-table name))))
 
 (tm-define (buffer-copy buf u)
   (:synopsis "Creates a copy of @buf in @u and return @u.")
@@ -454,9 +463,8 @@
           (else
             (with uname (if (string? name) (string->url name) name)
               (buffer-set-body name '(document ""))
-              (ahash-set! buffer-newly-created-table uname #t)
               (load-buffer-open name opts)
-              (ahash-remove! buffer-newly-created-table uname)
+              (buffer-set-default-style)
               (set-message `(concat "Could not load " ,vname
                                     ". Created new document")
                            "Load file"))))))

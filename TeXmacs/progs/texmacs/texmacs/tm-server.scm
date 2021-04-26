@@ -154,17 +154,8 @@
 ;; Killing buffers, windows and TeXmacs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define buffer-initialized-table (make-ahash-table))
-
-(tm-define (buffer-set-initialized name done?)
-  (ahash-set! buffer-initialized-table name done?))
-
-(tm-define (buffer-initialized? name)
-  (ahash-ref buffer-initialized-table name))
-
 (tm-define (buffer-close name)
-  (cpp-buffer-close name)
-  (buffer-set-initialized name #f))
+  (cpp-buffer-close name))
 
 (tm-define (buffers-modified?)
   (list-or (map buffer-modified? (buffer-list))))

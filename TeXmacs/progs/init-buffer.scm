@@ -11,17 +11,6 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(when (buffer-newly-created? (current-buffer))
-  (use-modules (generic document-edit) (texmacs texmacs tm-print))
-  (init-style "generic")
-  (with lan (get-preference "language")
-    (if (!= lan "english") (set-document-language lan)))
-  (with psz (get-printer-paper-type)
-    (if (!= psz "a4") (init-page-type psz)))
-  (with type (get-preference "page medium")
-    (if (!= type "papyrus") (init-env "page-medium" type)))
-  (when (!= (get-preference "scripting language") "none")
-    (lazy-plugin-force)
-    (init-env "prog-scripts" (get-preference "scripting language")))
-  (buffer-pretend-saved (current-buffer))
-  (buffer-set-initialized (current-buffer) #t))
+(when (not (buffer-has-name? (current-buffer)))
+  (when (buffer-missing-style?)
+    (buffer-set-default-style)))
