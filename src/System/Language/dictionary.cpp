@@ -50,7 +50,7 @@ dictionary_rep::load (url u) {
       if (to == "chinese" ||  to == "japanese"  ||
           to == "korean"  ||  to == "taiwanese" ||
           to == "russian" ||  to == "ukrainian" || to == "bulgarian" ||
-          to == "german" || to == "greek")
+          to == "german" || to == "greek" || to == "slovak")
         r= utf8_to_cork (r);
       table (l)= r;
     }

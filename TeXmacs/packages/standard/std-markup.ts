@@ -185,6 +185,8 @@
 
   <assign|russian|<macro|body|<with|language|russian|<arg|body>>>>
 
+  <assign|slovak|<macro|body|<with|language|slovak|<arg|body>>>>
+
   <assign|slovene|<macro|body|<with|language|slovene|<arg|body>>>>
 
   <assign|spanish|<macro|body|<with|language|spanish|<arg|body>>>>

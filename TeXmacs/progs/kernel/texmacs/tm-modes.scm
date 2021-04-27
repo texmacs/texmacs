@@ -183,7 +183,7 @@
   '("british" "bulgarian" "chinese" "croatian" "czech"
     "danish" "dutch" "english" "esperanto" "finnish" "french" "german" "greek"
     "hungarian" "italian" "japanese" "korean" "polish"
-    "portuguese" "romanian" "russian" "slovene" "spanish"
+    "portuguese" "romanian" "russian" "slovak" "slovene" "spanish"
     "swedish" "taiwanese" "ukrainian"))
 
 (define-public (supported-language? lan)
@@ -220,6 +220,7 @@
   (in-portugese% (== (get-env "language") "portugese") in-text%)
   (in-romanian% (== (get-env "language") "romanian") in-text%)
   (in-russian% (== (get-env "language") "russian") in-cyrillic%)
+  (in-slovak% (== (get-env "language") "slovak") in-text%)
   (in-slovene% (== (get-env "language") "slovene") in-text%)
   (in-spanish% (== (get-env "language") "spanish") in-text%)
   (in-swedish% (== (get-env "language") "swedish") in-text%)

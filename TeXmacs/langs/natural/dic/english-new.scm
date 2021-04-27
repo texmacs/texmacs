@@ -2672,6 +2672,7 @@
 ("slide" "")
 ("slides" "")
 ("sloppy" "")
+("slovak" "")
 ("slovene" "")
 ("slow" "")
 ("slow decrease" "")

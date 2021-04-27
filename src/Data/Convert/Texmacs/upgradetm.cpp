@@ -3927,7 +3927,7 @@ is_std_textual_env (string s) {
       << "czech" << "danish" << "dutch" << "english" << "finnish"
       << "french" << "german" << "greek" << "hungarian" << "italian"
       << "japanese" << "korean" << "polish" << "portuguese" << "romanian"
-      << "russian" << "slovene" << "spanish" << "swedish"
+      << "russian" << "slovak" << "slovene" << "spanish" << "swedish"
       << "taiwanese" << "ukrainian"
       << "switch" << "screens" << "tiny-switch"
       << "shown" << "hidden" << "shown*" << "hidden*"

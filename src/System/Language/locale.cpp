@@ -50,7 +50,7 @@ windows_locale_to_language () {
     LANGID lid= GetUserDefaultUILanguage();
     switch(PRIMARYLANGID(lid)) {
     case LANG_BULGARIAN:  language= "bulgarian"; break;
-    case LANG_CHINESE:	   language= "chinese"; break;
+    case LANG_CHINESE:	  language= "chinese"; break;
     case LANG_CHINESE_TRADITIONAL: language= "taiwanese"; break;
     case LANG_CROATIAN:   language= "croatian"; break;
     case LANG_CZECH:      language= "czech"; break;
@@ -73,6 +73,7 @@ windows_locale_to_language () {
     case LANG_PORTUGUESE: language= "portuguese"; break;
     case LANG_ROMANIAN:   language= "romanian"; break;
     case LANG_RUSSIAN:    language= "russian"; break;
+    case LANG_SLOVAK:     language= "slovak"; break;
     case LANG_SLOVENIAN:  language= "slovene"; break;
     case LANG_SPANISH:    language= "spanish"; break;
     case LANG_SWEDISH:    language= "swedish"; break;
@@ -122,6 +123,7 @@ locale_to_language (string s) {
   if (s == "pt") return "portuguese";
   if (s == "ro") return "romanian";
   if (s == "ru") return "russian";
+  if (s == "sk") return "slovak";
   if (s == "sl") return "slovene";
   if (s == "es") return "spanish";
   if (s == "sv") return "swedish";
@@ -153,6 +155,7 @@ language_to_locale (string s) {
   if (s == "portuguese") return "pt_PT";
   if (s == "romanian")   return "ro_RO";
   if (s == "russian")    return "ru_RU";
+  if (s == "slovak")     return "sk_SK";
   if (s == "slovene")    return "sl_SI";
   if (s == "spanish")    return "es_ES";
   if (s == "swedish")    return "sv_SV";
@@ -174,6 +177,7 @@ language_to_local_ISO_charset (string s) {
   if (s == "polish")     return "ISO-8859-2";
   if (s == "romanian")   return "ISO-8859-2";
   if (s == "russian")    return "ISO-8859-5";
+  if (s == "slovak")     return "ISO-8859-2";
   if (s == "slovene")    return "ISO-8859-2";
   if (s == "taiwanese")  return "";
   if (s == "ukrainian")  return "ISO-8859-5";

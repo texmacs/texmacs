@@ -1,4 +1,4 @@
-<TeXmacs|1.99.13>
+<TeXmacs|1.99.19>
 
 <style|source>
 
@@ -397,6 +397,10 @@
   <assign|joris-versions|<macro|name|<hlink|Html|<merge|<arg|name>|.tm>>,
   <hlink|<TeXmacs>|<merge|<arg|name>|.texmacs>>,
   <joris-versions*|<arg|name>>>>
+
+  <assign|joris-versions***|<macro|name|<hlink|Html|<merge|<arg|name>|.tm>>,
+  <hlink|<TeXmacs>|<merge|<arg|name>|.texmacs>>,
+  <hlink|Pdf|<merge|<arg|name>|.pdf>>>>
 </body>
 
 <\initial>

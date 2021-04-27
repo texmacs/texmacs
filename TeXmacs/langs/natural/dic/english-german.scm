@@ -1184,6 +1184,7 @@
 ("size tag" "Schriftgröße")
 ("slanted" "geneigt")
 ("sloppy" "nachlässig")
+("slovak" "slowakisch")
 ("slovene" "slowenisch")
 ("small" "klein")
 ("small capitals" "Kapitälchen")

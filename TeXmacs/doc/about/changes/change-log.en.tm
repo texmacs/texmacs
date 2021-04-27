@@ -1,13 +1,18 @@
-<TeXmacs|1.99.18>
+<TeXmacs|1.99.19>
 
 <style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.99.1 to 1.99.19>
+  <section|Changes from version 1.99.1 to 1.99.20>
 
   <\itemize>
+    <item>Various bug fixes (1.99.20).
+
+    <item>Added Slovak language support with the help of Peter Rap£an
+    (1.99.20).
+
     <item>Many bug fixes (1.99.19).
 
     <item>Improved Octave plugin with tab completion and multi-line input

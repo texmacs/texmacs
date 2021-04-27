@@ -443,6 +443,7 @@ get_supported_languages () {
     << string ("portuguese")
     << string ("romanian")
     << string ("russian")
+    << string ("slovak")
     << string ("slovene")
     << string ("spanish")
     << string ("swedish")
@@ -498,6 +499,7 @@ text_language (string s) {
   if (s == "portuguese") return make_text_language (s, "portuguese");
   if (s == "romanian")   return make_text_language (s, "romanian");
   if (s == "russian")    return make_ucs_text_language (s, "russian");
+  if (s == "slovak")     return make_text_language (s, "slovak");
   if (s == "slovene")    return make_text_language (s, "slovene");
   if (s == "spanish")    return make_text_language (s, "spanish");
   if (s == "swedish")    return make_text_language (s, "swedish");

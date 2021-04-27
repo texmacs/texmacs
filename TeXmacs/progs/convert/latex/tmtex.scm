@@ -2998,7 +2998,7 @@
   (really-huge (,tmtex-Huge 1))
   ((:or british bulgarian chinese croatian czech danish dutch english
 	esperanto finnish french german greek hungarian italian japanese
-	korean polish portuguese romanian russian slovene spanish
+	korean polish portuguese romanian russian slovak slovene spanish
 	swedish taiwanese ukrainian)
    (,tmtex-specific-language 1))
 
