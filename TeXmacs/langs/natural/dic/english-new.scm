@@ -2879,7 +2879,6 @@
 ("teXmacs fonts" "")
 ("teXmacs macro" "")
 ("teXmacs manual" "")
-("teXmacs manuel" "")
 ("teXmacs notice" "")
 ("teXmacs package" "")
 ("teXmacs plugins" "")
