@@ -99,7 +99,7 @@
 
   <assign|render-proof|<\macro|which|body>
     <\render-enunciation|<theorem-name|<arg|which>><remark-sep>>
-      <surround||<if|<occurs-inside|<quote|<qed>>|body>||<tab-qed>>|<arg|body>>
+      <surround||<if|<occurs-inside|<quote|<qed>>|body>||<htab|5mm><qed>>|<arg|body>>
     </render-enunciation>
   </macro>>
 
