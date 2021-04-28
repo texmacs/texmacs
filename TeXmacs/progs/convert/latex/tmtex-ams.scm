@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert latex tmtex-ams)
-  (:use (convert latex tmtex)))
+  (:use (convert latex tmtex)
+        (convert latex latex-define)))
 
 (tm-define (tmtex-transform-style x)
   (:mode ams-style?) x)
@@ -149,24 +150,10 @@
 ;;; AMS theorems
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-macro (ams-latex-texmacs-thmenv prim name before after)
-  (let* ((prim* (string-append prim "*"))
-         (nonum (string-append "nn" prim))
-         (thenonum (string-append "\\the" nonum)))
-    `(smart-table latex-texmacs-env-preamble
-       (:mode ams-style?)
-       (,prim  (!append ,@before
-                        (newtheorem ,prim (!translate ,name))
-                        ,@after "\n"))
-       (,prim* (!append (newcounter ,nonum) "\n"
-                        "\\def" ,thenonum "{\\unskip}\n"
-                        ,@before
-                        (newtheorem ,prim* (!option ,nonum) (!translate ,name))
-                        ,@after "\n")))))
-
 (define-macro (ams-latex-texmacs-remark prim name)
-  `(ams-latex-texmacs-thmenv
-    ,prim ,name ("{" (!recurse (theoremstyle "remark"))) ("}")))
+  `(latex-texmacs-thmenv ,prim ,name
+                         ("{" (!recurse (theoremstyle "remark"))) ("}")
+                         ams-style?))
 
 (ams-latex-texmacs-remark "remark" "Remark")
 (ams-latex-texmacs-remark "note" "Note")

@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert latex tmtex-acm)
-  (:use (convert latex tmtex)))
+  (:use (convert latex tmtex)
+        (convert latex latex-define)))
 
 (tm-define (tmtex-transform-style x)
   (:mode acm-style?)
@@ -325,20 +326,15 @@
 ;; Missing theorem types
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-macro (acm-thmenv prim name before after)
-  `(smart-table latex-texmacs-env-preamble
-     (:mode acm-art-style?)
-     (,prim (!append ,@before
-                     (newtheorem ,prim (!translate ,name)) "\n"
-		     ,@after))))
-
 (define-macro (acm-theorem prim name)
-  `(acm-thmenv ,prim ,name () ()))
+  `(latex-texmacs-thmenv ,prim ,name () ()
+                         acm-art-style?))
 
 (define-macro (acm-remark prim name)
-  `(acm-thmenv ,prim ,name
-               ("\\theoremstyle{acmdefinition}\n")
-               ("\\theoremstyle{acmplain}\n")))
+  `(latex-texmacs-thmenv ,prim ,name
+                         ("\\theoremstyle{acmdefinition}\n")
+                         ("\n\\theoremstyle{acmplain}")
+                         acm-art-style?))
 
 (acm-theorem "axiom" "Axiom")
 (acm-theorem "notation" "Notation")
