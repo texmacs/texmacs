@@ -21,6 +21,7 @@ AC_DEFUN([LC_SPARKLE],[
       AC_MSG_RESULT([disabling Sparkle usage])
   else
     unset sparkle_ok
+    AC_SUBST([CONFIG_SPARKLE])
     AX_SAVE_FLAGS
     case "${CONFIG_OS}" in
     (MINGW)  
@@ -54,6 +55,7 @@ AC_DEFUN([LC_SPARKLE],[
   ],[
   SUUpdater* updater;
   ],[ sparkle_ok=1
+      AC_SUBST([CONFIG_SPARKLE],[Updater])
   ],[AC_MSG_ERROR([Can't use WinSparkle])])
       AC_LANG_POP([Objective C])
       ;;
@@ -62,10 +64,8 @@ AC_DEFUN([LC_SPARKLE],[
     if [[ $sparkle_ok ]]
     then AC_MSG_RESULT(yes)
       AC_DEFINE(USE_SPARKLE, 1, [Use Sparkle framework])
-      CONFIG_SPARKLE="Updater"
       AX_RESTORE_FLAGS
       LC_SUBST(SPARKLE)
-      AC_SUBST([CONFIG_SPARKLE],[Updater])
     else
       AC_MSG_RESULT(no)
       AX_RESTORE_FLAGS
