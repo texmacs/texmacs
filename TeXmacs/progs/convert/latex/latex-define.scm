@@ -406,6 +406,7 @@
   (uddot (underaccent (ddot) 1))
   (udddot (underaccent (dddot (hphantom 1)) 1))
   (uddddot (underaccent (ddddot (hphantom 1)) 1))
+  (widespacing 1)
 
   ;; With options
   (tmcodeinline ((!option "") (!group (ttfamily) (!group 2))))

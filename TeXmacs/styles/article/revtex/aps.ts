@@ -24,7 +24,7 @@
     </src-title>
   </active*>
 
-  <use-package|std|env-base|env-math|env-theorem|env-float|header-generic|section-book|title-generic|std-latex|cite-author-year|std-automatic|two-columns|html-font-size>
+  <use-package|std|env|header-generic|section-book|title-generic|std-latex|cite-author-year|std-automatic|two-columns|html-font-size>
 
   <active*|<\src-comment>
     Page layout.
