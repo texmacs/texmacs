@@ -328,7 +328,7 @@
   (tmsep  ", ")
   (tmSep  "; ")
   (pari "{\\sc Pari}")
-  (qed (!math (Box)))
+  (qed (ensuremath (Box)))
   (textdots "...")
   (filldots "{\\dotfill\\hfill\\hbox{}}")
   (infixand (text " and "))
