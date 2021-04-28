@@ -18,7 +18,7 @@
 (tm-define (tmtex-transform-style x)
   (:mode ams-style?) x)
 
-(tm-define tmtex-provided-packages
+(tm-define (tmtex-provided-packages)
   (:mode ams-style?)
   '("amsmath"))
 
@@ -145,6 +145,14 @@
   (:mode ams-style?)
   (with args (tmtex-concat-Sep (map tmtex (cdr t)))
     `(subjclass ,@args)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; AMS specific macros
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(smart-table latex-texmacs-macro
+  (:mode ams-style?)
+  (qed #f))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; AMS theorems

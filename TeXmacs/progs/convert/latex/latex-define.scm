@@ -348,7 +348,7 @@
   (tmtextsl (!group (slshape) (!group 1)))
   (tmtextit (!group (itshape) (!group 1)))
   (tmtextsc (!group (scshape) (!group 1)))
-  (tmmathbf (ensuremath (boldsymbol 1)))
+  (tmmathbf (ensuremath (!recurse (boldsymbol 1))))
   (tmmathmd (ensuremath 1))
   (tmop (ensuremath (operatorname 1)))
   (tmstrong (textbf 1))

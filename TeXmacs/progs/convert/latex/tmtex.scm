@@ -30,7 +30,6 @@
 
 (tm-define tmtex-style "generic")
 (tm-define tmtex-packages '())
-(tm-define tmtex-provided-packages '())
 (tm-define tmtex-replace-style? #t)
 (define tmtex-languages '())
 (define tmtex-colors '())
@@ -122,6 +121,8 @@
         ((or (springer-style?) (svmono-style?))
          (import-from (convert latex tmtex-springer)))
          (else (noop))))
+
+(tm-define (tmtex-provided-packages) '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initialization from options

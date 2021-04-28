@@ -439,10 +439,10 @@
     (< vl vr)))
 
 (define (filter-packages l)
-  (filter (lambda (x) (nin? x tmtex-provided-packages)) l))
+  (filter (lambda (x) (nin? x (tmtex-provided-packages))) l))
 
 (define (filter-packages* l)
-  (filter (lambda (x) (nin? (cAr x) tmtex-provided-packages)) l))
+  (filter (lambda (x) (nin? (cAr x) (tmtex-provided-packages))) l))
 
 (define (make-use-package l)
   (with po (ahash-ref latex-packages-option (cAr l))
