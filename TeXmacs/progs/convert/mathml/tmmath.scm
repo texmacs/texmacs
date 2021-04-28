@@ -296,10 +296,12 @@
 	 (x (cdr l)))))
 
 (define (tmmath x)
-  (cond ((!= (ahash-ref tmmath-env "mode") "math")
-	 `(m:mtext ,(texmacs->code x  "utf-8")))
-	((string? x) (tmmath-concat (list x)))
-	(else (or (tmmath-dispatch 'tmmath-primitives% x) ""))))
+  (if (!= (ahash-ref tmmath-env "mode") "math")
+      (cond ((string? x) `(m:mtext ,(texmacs->code x  "utf-8")))
+            ((== (car x) 'with) (tmmath-with (cdr x)))
+            (else `(m:mrow ,@(map tmmath (cdr x)))))
+      (cond ((string? x) (tmmath-concat (list x)))
+            (else (or (tmmath-dispatch 'tmmath-primitives% x) "")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dispatching
@@ -338,6 +340,7 @@
   (wide* tmmath-wide*)
   (neg tmmath-neg)
   (tree tmmath-noop)
+  (syntax tmmath-first)
 
   ;; Tabular markup
   (tformat tmmath-tformat)
