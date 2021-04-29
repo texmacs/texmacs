@@ -1594,7 +1594,12 @@
 	((logic-in? (string->symbol var) tmtex-protected%)
 	 (string-append "tm" var))
 	((<= (string-length var) 1) var)
-	(else (list->string (tmtex-var-name-sub (string->list var))))))
+	(else
+          (with r (list->string (tmtex-var-name-sub (string->list var)))
+            (if (and (string-occurs? "*" r)
+                     (== (latex-type r) "undefined"))
+                (string-replace r "*" "star")
+                r)))))
 
 (define (tmtex-tex-arg l)
   (cons '!arg l))
