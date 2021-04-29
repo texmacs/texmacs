@@ -283,7 +283,8 @@
         ((and (pair? (car l)) (== (caar l) '(!begin "abstract")))
          (set! added-maketitle? #t)
          (cons (car l) (cons '(maketitle) (cdr l))))
-        (else (cons (car l) (add-maketitle-sub (cdr l))))))
+        (else (cons (add-maketitle (car l))
+                    (add-maketitle-sub (cdr l))))))
 
 (define (add-maketitle t)
   (cond ((nlist? t) t)
