@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.18>
+<TeXmacs|1.99.19>
 
 <style|source>
 
@@ -24,9 +24,70 @@
     </src-title>
   </active*>
 
-  <active*|<src-comment|IEEEconf is temporarily a version of article.>>
+  <active*|<src-comment|IEEEconf is quite imcomplete for the moment.
+  Currently, it is essentially a hacked version of article>>
 
-  <use-package|article>
+  <use-package|article|std-latex|two-columns|termes-font>
+
+  <active*|<src-comment|Global layout parameters>>
+
+  <assign|tex-odd-side-margin|<macro|-.304in>>
+
+  <assign|tex-even-side-margin|<macro|-.304in>>
+
+  <assign|tex-text-width|<macro|6.875in>>
+
+  <assign|tex-top-margin|<macro|0in>>
+
+  <assign|tex-head-height|<macro|0in>>
+
+  <assign|tex-text-height|<macro|8.875in>>
+
+  <assign|tex-column-sep|<macro|0.375in>>
+
+  <assign|tex-column-sep|<macro|0.3125in>>
+
+  <assign|par-first|<macro|0.25in>>
+
+  <assign|par-first|<macro|1pc>>
+
+  <\active*>
+    <\src-comment>
+      Title + abstract.
+    </src-comment>
+  </active*>
+
+  <assign|doc-make-title|<\macro|body>
+    <\with|par-columns|1>
+      <\surround||<right-flush>>
+        <doc-title-block|<arg|body>>
+
+        \;
+
+        \;
+      </surround>
+    </with>
+  </macro>>
+
+  <assign|render-abstract|<\macro|body>
+    <sectional-centered-bold|<abstract-text>><vspace|0.5fn>
+
+    <\with|font-shape|italic>
+      <arg|body>
+    </with>
+  </macro>>
+
+  <assign|render-abstract*|<\macro|body|note>
+    <\quasi>
+      <\render-abstract>
+        <surround||<vspace|0.5fn>|<unquote|<quote-arg|body>>>
+
+        <\with|par-par-sep|0.25fn|font-shape|right>
+          <unquote*|<arg|note>>
+        </with>
+      </render-abstract>
+    </quasi>
+  </macro>>
 </body>
 
 <\initial>

@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.19>
 
 <style|source>
 
@@ -223,6 +223,14 @@
     <section*|<abstract-text>>
 
     <surround|<no-indent>|<float|footnote||<smaller|<make-conference-permissions>>>|<arg|body>>
+  </macro>>
+
+  <assign|render-abstract*|<\macro|body|notes>
+    <\render-abstract>
+      <arg|body>
+
+      <arg|notes>
+    </render-abstract>
   </macro>>
 
   <assign|abstract-category-item|<macro|ind|cat|sub|det|<arg|ind><if|<unequal|<arg|cat>|<uninit>>|
