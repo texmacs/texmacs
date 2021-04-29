@@ -975,9 +975,13 @@
 	 (caption (tmtex (into-single-paragraph capt)))
 	 (body* `(!paragraph ,body (caption ,caption))))
     (cond ((and (== size "big") (== type "figure"))
-	   `((!begin ,type* (!option ,pos)) ,body*))
+           (if (== pos "")
+               `((!begin ,type) ,body*)
+               `((!begin ,type* (!option ,pos)) ,body*)))
 	  ((and (== size "big") (== type "table"))
-	   `((!begin ,type* (!option ,pos)) ,body*))
+           (if (== pos "")
+               `((!begin ,type) ,body*)
+               `((!begin ,type* (!option ,pos)) ,body*)))
 	  (else (list 'tmfloat pos size type* body caption)))))
 
 (define (tmtex-float-table? x)
@@ -1685,6 +1689,9 @@
 
 (define (tmtex-pageref l)
   (list 'pageref (force-string (car l))))
+
+(define (tmtex-eqref s l)
+  (list 'eqref (force-string (car l))))
 
 (define (tmtex-smart-ref s l)
   (let* ((ss (map force-string l))
@@ -3108,6 +3115,7 @@
   (action (,tmtex-action -1))
   (href (,tmtex-href 1))
   (slink (,tmtex-href 1))
+  (eqref (,tmtex-eqref 1))
   (smart-ref (,tmtex-smart-ref -1))
   (choose (,tmtex-choose 2))
   (tt (,tmtex-text-tt 1))

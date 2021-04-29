@@ -235,7 +235,7 @@
 (tm-define (tmtex-abstract-keywords t)
   (:mode acm-style?)
   (with args (tmtex-concat-sep (map tmtex (cdr t)))
-    `(keywords ,@args)))
+    `(keywords ,@(map tmtex args))))
 
 (tm-define (tmtex-abstract-acm t)
   (:mode acm-style?)
@@ -246,7 +246,7 @@
                 (else (append (sublist (cdr t) 0 3)
                               `((!option ,(fourth (cdr t))))
                               (sublist (cdr t) 4 (length (cdr t))))))
-    `(category ,@l)))
+    `(category ,@(map tmtex l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; ACM specific misc markup
@@ -304,9 +304,14 @@
 ;; ACM specific macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(logic-group latex-texmacs-3%
+  (:mode acm-style?)
+  category)
+
 (smart-table latex-texmacs-macro
   (:mode acm-style?)
-  (qed #f))
+  (qed #f)
+  (category ""))
 
 (smart-table latex-texmacs-environment
   (:mode acm-style?)

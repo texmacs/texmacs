@@ -262,10 +262,10 @@
 
   <assign|ruled-tabular*|<macro|body|<with|par-columns|1|<tformat|<twith|table-width|1par>|<cwith|1|1|1|-1|cell-bborder|0.5pt>|<cwith|1|1|1|-1|cell-tborder|1pt>|<cwith|-1|-1|1|-1|cell-bborder|1pt>|<arg|body>>>>>
 
-  <assign|big-table-enlarge|<macro|body|<if|<greater|<times|2|<look-up|<box-info|<arg|body>|w>|0>>|<look-up|<box-info|<space|<tex-text-width>>|w>|0>>|<with|par-columns|1|<arg|body>>|<arg|body>>>>
+  <assign|big-table-enlarge|<macro|contents|body|<if|<greater|<times|2|<look-up|<box-info|<arg|contents>|w>|0>>|<look-up|<box-info|<space|<tex-text-width>>|w>|0>>|<with|par-columns|1|<arg|body>>|<arg|body>>>>
 
   <assign|big-table|<\macro|body|caption>
-    <\big-table-enlarge>
+    <\big-table-enlarge|<arg|body>>
       <\surround|<compound|next-table>|>
         <\render-big-table>
           table
