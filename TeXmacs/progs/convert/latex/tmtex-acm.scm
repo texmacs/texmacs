@@ -278,14 +278,17 @@
          (cDr t))
         (else (map remove-maketitle t))))
 
+(define (add-maketitle-sub l)
+  (cond ((null? l) l)
+        ((and (pair? (car l)) (== (caar l) '(!begin "abstract")))
+         (set! added-maketitle? #t)
+         (cons (car l) (cons '(maketitle) (cdr l))))
+        (else (cons (car l) (add-maketitle-sub (cdr l))))))
+
 (define (add-maketitle t)
   (cond ((nlist? t) t)
-        ((and (func? t '!document)
-              (pair? (cdr t))
-              (pair? (cadr t))
-              (== (caadr t) '(!begin "abstract")))
-         (set! added-maketitle? #t)
-         (rcons t '(maketitle)))
+        ((func? t '!document)
+         (cons (car t) (add-maketitle-sub (cdr t))))
         (else (map add-maketitle t))))
 
 (tm-define (tmtex-postprocess x)
