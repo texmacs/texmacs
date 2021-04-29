@@ -179,3 +179,30 @@
   (:mode ieee-tran-style?)
   (with args (list-intersperse (map tmtex (cdr t)) '(!concat (tmsep) " "))
     `((!begin "IEEEkeywords") (!concat ,@args))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Further tweaking for IEEE styles
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (ieee-replace t)
+  (cond ((nlist? t) t)
+        ((== t '(jmath)) '(ieeejmath))
+        ((== t '(amalg)) '(ieeeamalg))
+        ((== t '(coprod)) '(ieeecoprod))
+        (else (map ieee-replace t))))
+
+(tm-define (tmtex-postprocess-body x)
+  (:mode ieee-style?)
+  (ieee-replace x))
+
+(logic-group latex-texmacs-symbol%
+  ieeejmath ieeeamalg ieeecoprod)
+
+(smart-table latex-texmacs-macro
+  (ieeejmath "j")
+  (ieeecoprod
+   (!group (mathop (mbox (reflectbox (rotatebox
+     (!option "origin=c") "180" (!math (prod))))))))
+  (ieeeamalg
+   (!group (mathop (mbox (reflectbox (rotatebox
+     (!option "origin=c") "180" (!math (Pi)))))))))

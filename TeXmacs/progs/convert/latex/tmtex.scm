@@ -745,7 +745,7 @@
                            styles*))
              (preamble* (ahash-with tmtex-env :preamble #t
                                     (map-in-order tmtex-pre doc-preamble)))
-             (body* (tmtex doc-body))
+             (body* (tmtex-postprocess-body (tmtex doc-body)))
              (needs (list tmtex-languages tmtex-colors tmtex-colormaps)))
         (list '!file body* styles** needs init preamble*)))))
 
@@ -3310,6 +3310,7 @@
   sty)
 
 (tm-define (tmtex-postprocess x) x)
+(tm-define (tmtex-postprocess-body x) x)
 
 (tm-define (texmacs->latex x opts)
   ;;(display* "texmacs->latex [" opts "], " x "\n")
