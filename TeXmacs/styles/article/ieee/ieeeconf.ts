@@ -43,11 +43,7 @@
 
   <assign|tex-text-height|<macro|8.875in>>
 
-  <assign|tex-column-sep|<macro|0.375in>>
-
   <assign|tex-column-sep|<macro|0.3125in>>
-
-  <assign|par-first|<macro|0.25in>>
 
   <assign|par-first|<macro|1pc>>
 
