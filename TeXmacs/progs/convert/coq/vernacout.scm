@@ -125,7 +125,7 @@
 
 (tm-define (vernacout x)
   (cond ((string? x) (output-vernac x))
-        ((nlist>0? x) (display* "TeXmacs] bad formated stree:\n" x "\n"))
+        ((nlist>0? x) (display* "TeXmacs] badly formatted stree:\n" x "\n"))
 	((== (car x) '!file)      (vernacout-file (cadr x)))
 	((== (car x) '!comment)   (vernacout-comment (cadr x)))
 	((== (car x) '!coqdoc)    (vernacout-coqdoc (cadr x)))

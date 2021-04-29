@@ -66,9 +66,10 @@
          (titles    (tmtex-concat-Sep (map cadr titles)))
          (titles    (if (null? titles) '() `((title ,@title-opt ,@titles))))
          (title-data `(,@titles ,@subtitles ,@notes ,@miscs))
-         (title-data (if (null? title-data) '() `((!paragraph ,@title-data)))))
+         (title-data (if (null? title-data) '() `((!paragraph ,@title-data))))
+         (authors*   (filter pair? authors)))
     (if (and (null? title-data) (null? authors) (null? dates)) '()
-      `(!document ,@title-data ,@authors ,@dates))))
+      `(!document ,@title-data ,@authors* ,@dates))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; AMS specific titlemarkup

@@ -113,13 +113,14 @@
         (map (lambda (x) `(doc-author ,x)) (append others* (list last)))))))
 
 (define (cluster-by tag l)
-  (if (null? l) '()
-    (letrec ((get-affiliations (lambda (x) (tmtex-select-args-by-func tag x))))
-      (let* ((author (car l))
-             (aff    (get-affiliations author))
-             (same   (filter (lambda (x) (== aff (get-affiliations x))) l))
-             (others (filter (lambda (x) (!= aff (get-affiliations x))) l)))
-            (append (merge-with aff same) (cluster-by tag others))))))
+  (if (or (null? l) (nlist? (car l))) '()
+      (letrec ((get-affiliations
+                (lambda (x) (tmtex-select-args-by-func tag x))))
+        (let* ((author (car l))
+               (aff    (get-affiliations author))
+               (same   (filter (lambda (x) (== aff (get-affiliations x))) l))
+               (others (filter (lambda (x) (!= aff (get-affiliations x))) l)))
+          (append (merge-with aff same) (cluster-by tag others))))))
 
 (tm-define (tmtex-doc-data s l)
   (:mode revtex-style?)

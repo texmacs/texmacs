@@ -101,12 +101,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (springer-clear-aff aff a filter?)
-  (with datas (cdadr a)
-    (if (and filter?
-             (== `(,aff)
-                 (filter (lambda (x) (== 'author-affiliation (car x))) datas)))
-      '()
-      `(doc-author (author-data ,@(filter (lambda (x) (!= aff x)) datas))))))
+  (if (pair? (cadr a))
+      (with datas (cdadr a)
+        (if (and filter?
+                 (== `(,aff)
+                     (filter (lambda (x)
+                               (== 'author-affiliation (car x))) datas)))
+            '()
+            `(doc-author
+              (author-data ,@(filter (lambda (x) (!= aff x)) datas)))))
+      '()))
 
 (define (next-affiliation l)
   (cond ((or (null? l) (nlist? l)) #f)
@@ -306,12 +310,14 @@
          (datas (cdadr a)))
     `(doc-author (author-data ,@(map (lambda (x)
                                        (if (!= aff x) x ref)) datas)))))
+
 (define (replace-affiliations l n)
   (with aff (next-affiliation l)
     (if (or (nlist? l) (not aff)) l
-      (let* ((n     (1+ n))
-             (l*    (map (lambda (x) (springer-replace-aff aff x n)) l)))
-        (replace-affiliations l* n)))))
+        (let* ((n    (1+ n))
+               (l*   (filter (lambda (x) (pair? (cadr x))) l))
+               (l**  (map (lambda (x) (springer-replace-aff aff x n)) l*)))
+          (replace-affiliations l** n)))))
 
 (define (tmtex-author-affiliation-ref t)
   `(inst ,(tmtex (cadr t))))

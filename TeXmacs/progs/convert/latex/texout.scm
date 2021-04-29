@@ -438,9 +438,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (texout x)
-  ;; (display* "texout " x "\n")
   (cond ((string? x) (output-tex x))
-        ((nlist>0? x) (display* "TeXmacs] bad formated stree:\n" x "\n"))
+        ((nlist>0? x) (display* "TeXmacs] badly formatted stree:\n" x "\n"))
 	((== (car x) '!widechar) (output-tex (symbol->string (cadr x))))
 	((== (car x) '!file) (texout-file (cdr x)))
 	((== (car x) '!preamble) (texout-preamble (cadr x)))
