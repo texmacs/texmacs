@@ -3258,9 +3258,9 @@
 (define tmtex-always-expand
   ;; FIXME: find a cleaner way to handle these environments
   (list "render-theorem" "render-remark" "render-exercise" "render-proof"
-        "algorithm" "algorithm*" "named-algorithm"
+        "algorithm" "algorithm*" "named-algorithm" "named-algorithm-old"
         "specified-algorithm" "specified-algorithm*"
-        "named-specified-algorithm" "numbered"
+        "named-specified-algorithm" "algorithm-body" "numbered"
 
         "short-item" "short-question"
         "question-arabic" "question-alpha" "question-Alpha"
