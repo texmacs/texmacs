@@ -413,3 +413,7 @@
 (smart-table latex-texmacs-macro
   (:mode elsevier-style?)
   (qed #f))
+
+(smart-table latex-texmacs-preamble
+  (:mode elsevier-style?)
+  (qed (!append "\\renewcommand{\\qed}{}")))
