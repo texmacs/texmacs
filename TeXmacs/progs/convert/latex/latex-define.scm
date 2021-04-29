@@ -367,6 +367,7 @@
   (tmdef 1)
   (dueto (textup (textbf (!append "(" 1 ") "))))
   (op 1)
+  (todo (!group (!append (color "red!75!black") "[To do: " 1 "]")))
   (tmoutput 1)
   (tmerrput (!append (color "red!50!black") 1))
   (tmtiming (!append (hfill) (footnotesize) (color "black!50") 1 (par)))
@@ -638,7 +639,7 @@
   (newmdenv
    (!append (mdfsetup (!append "linecolor=black,linewidth=0.5pt,"
 			       "skipabove=0.5em,skipbelow=0.5em,"
-			       "hidealllines=true,\ninnerleftmargin=0pt,"
+			       "hidealllines=true,innerleftmargin=0pt,"
 			       "innerrightmargin=0pt,innertopmargin=0pt,"
 			       "innerbottommargin=0pt" )) "\n"))
   (tikzframe

@@ -186,19 +186,21 @@
 
 (define (ieee-replace t)
   (cond ((nlist? t) t)
+        ((== t '(hbar)) '(ieeehbar))
         ((== t '(jmath)) '(ieeejmath))
         ((== t '(amalg)) '(ieeeamalg))
         ((== t '(coprod)) '(ieeecoprod))
         (else (map ieee-replace t))))
 
 (tm-define (tmtex-postprocess-body x)
-  (:mode ieee-style?)
+  (:mode ieee-conf-style?)
   (ieee-replace x))
 
 (logic-group latex-texmacs-symbol%
-  ieeejmath ieeeamalg ieeecoprod)
+  ieeehbar ieeejmath ieeeamalg ieeecoprod)
 
 (smart-table latex-texmacs-macro
+  (ieeehbar (not "h"))
   (ieeejmath "j")
   (ieeecoprod
    (!group (mathop (mbox (reflectbox (rotatebox
