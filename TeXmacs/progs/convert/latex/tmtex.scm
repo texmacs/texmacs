@@ -335,8 +335,7 @@
 
 (define (tmtex-env-get var)
   (let ((val (tmtex-env-list var)))
-    (if (null? val) #f
-	(car val))))
+    (and (pair? val) (car val))))
 
 (define (tmtex-env-get-previous var)
   (let ((val (tmtex-env-list var)))
