@@ -1198,12 +1198,14 @@
   (list 'overset (tmtex (cadr l)) (tmtex (car l))))
 
 (define (tmtex-lsub l)
-  (tmtex (list
-           'concat (if (tmtex-math-mode?) '(!group) "") (list 'rsub (car l)))))
+  (cond ((== (car l) "") "")
+        ((tmtex-math-mode?) (tmtex `(concat (!group) (rsub ,(car l)))))
+        (else (tmtex `(rsub ,(car l))))))
 
 (define (tmtex-lsup l)
-  (tmtex (list
-           'concat (if (tmtex-math-mode?) '(!group) "") (list 'rsup (car l)))))
+  (cond ((== (car l) "") "")
+        ((tmtex-math-mode?) (tmtex `(concat (!group) (rsup ,(car l)))))
+        (else (tmtex `(rsup ,(car l))))))
 
 (define (tmtex-contains-table? x)
   (cond ((nlist? x) #f)
@@ -1217,14 +1219,14 @@
 	(list which r))))
 
 (define (tmtex-rsub l)
-  (if (tmtex-math-mode?)
-      (tmtex-script '!sub (car l))
-      (list 'tmrsub (tmtex (car l)))))
+  (cond ((== (car l) "") "")
+        ((tmtex-math-mode?) (tmtex-script '!sub (car l)))
+        (else (list 'tmrsub (tmtex (car l))))))
 
 (define (tmtex-rsup l)
-  (if (tmtex-math-mode?)
-      (tmtex-script '!sup (car l))
-      (list 'tmrsup (tmtex (car l)))))
+  (cond ((== (car l) "") "")
+        ((tmtex-math-mode?) (tmtex-script '!sup (car l)))
+        (else (list 'tmrsup (tmtex (car l))))))
 
 (define (tmtex-modulo l)
       (tmtex-script 'mod (car l)))
