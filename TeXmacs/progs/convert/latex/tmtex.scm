@@ -104,7 +104,7 @@
 
   ;; Other styles
   (beamer-style%        (in? tmtex-style '("beamer" "old-beamer")))
-  (natbib-package%      (in? "cite-author-year" tmtex-packages)))
+  (natbib-package%      (in? "natbib" tmtex-packages)))
 
 (tm-define (tmtex-style-init body)
   (noop))
@@ -2484,7 +2484,7 @@
 (define (tmtex-thebibliography s l)
   (list (list '!begin s (car l)) (tmtex (cadr l))))
 
-(define (tmtex-bibitem* s l)
+(define (tmtex-bibitem*-std s l)
   (cond ((= (length l) 1)
 	 `(bibitem ,(car l)))
 	((= (length l) 2)
@@ -2494,6 +2494,32 @@
 	    (display* "TeXmacs] non converted bibitem content: "
                       (list s l) "\n")
             ""))))
+
+(tm-define (tmtex-bibitem* s l)
+  (tmtex-bibitem*-std s l))
+
+(define (split-year s pos)
+  (if (and (> pos 0)
+           (string>=? (substring s (- pos 1) pos) "0")
+           (string<=? (substring s (- pos 1) pos) "9"))
+      (split-year s (- pos 1))
+      pos))
+
+(define (natbibify s)
+  (let* ((pos  (split-year s (string-length s)))
+         (auth (substring s 0 pos))
+         (year (substring s pos (string-length s))))
+    (when (== (string-length year) 2)
+      (set! year (string-append (if (string>=? year "30") "19" "20") year)))
+    (string-append auth "(" year ")")))
+
+(tm-define (tmtex-bibitem* s l)
+  (:mode natbib-package?)
+  (if (and (== (length l) 2)
+           (string? (cadr l))
+           (not (string-occurs? "(" (cadr l))))
+      (tmtex-bibitem*-std s (list (natbibify (cadr l)) (cadr l)))
+      (tmtex-bibitem*-std s l)))
 
 (define (tmtex-figure s l)
   (tmtex-float-sub #f "h" (cons (string->symbol s) l)))

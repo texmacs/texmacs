@@ -1,4 +1,4 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.19>
 
 <style|source>
 
@@ -65,7 +65,7 @@
 
   <assign|cite-sep|<macro|; >>
 
-  <assign|natbib-show|<macro|nr|text|<natbib-author*|<arg|text>><if|<equal|<natbib-year|<cite-data|<arg|key>>>|?>||,
+  <assign|natbib-show|<macro|nr|text|<natbib-author*|<arg|text>><if|<equal|<natbib-year|<arg|text>>|?>||,
   <natbib-year|<arg|text>>>>>
 
   <assign|natbib-bind|<macro|nr|text|<arg|text>>>

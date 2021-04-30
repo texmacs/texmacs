@@ -62,8 +62,10 @@
          (sdir (url-expand (url-complete sub-dir "dr")))
          (u1 (url-append sdir (url-wildcard "*.tm")))
          (files (url->list (url-expand (url-complete u1 "fr"))))
-         (styles (list "article" "acmart" "aip" "amsart" "elsarticle"
-                       "ieeeconf" "ieeetran" "llncs" "sigconf" "svjour")))
+         (styles (list "article" "acmart"
+                       "acmtog" "aip" "amsart" "aps"
+                       "elsarticle" "ieeeconf" "ieeetran" "ifac"
+                       "llncs" "sigconf" "svjour")))
     (for (file files)
       (for (style styles)
         (with name (url->string (url-tail file))
