@@ -133,6 +133,7 @@
   (mathD "\\mathrm{D}")
   (mathe "\\mathrm{e}")
   (matheuler "\\gamma")
+  (mathGamma "\\Gamma")
   (mathlambda "\\lambda")
   (mathLaplace "\\Delta")
   (mathi "\\mathrm{i}")

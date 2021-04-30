@@ -58,7 +58,8 @@
   divides ndivides asterisk dottimes precdot
 
   ;; extra literal symbols
-  mathcatalan mathd mathD mathe matheuler mathlambda mathLaplace mathi mathpi
+  mathcatalan mathd mathD mathe matheuler
+  mathGamma mathlambda mathLaplace mathi mathpi
   Alpha Beta Epsilon Eta Iota Kappa Mu Nu Omicron Chi Rho Tau Zeta
 
   ;; negations
