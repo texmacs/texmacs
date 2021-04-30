@@ -345,6 +345,12 @@
                          ("\n\\theoremstyle{acmplain}")
                          acm-art-style?))
 
+(define-macro (acm-exercise prim name)
+  `(latex-texmacs-thmenv ,prim ,name
+                         ("\\theoremstyle{acmdefinition}\n")
+                         ("\n\\theoremstyle{acmplain}")
+                         acm-art-style?))
+
 (acm-theorem "axiom" "Axiom")
 (acm-theorem "notation" "Notation")
 (acm-remark "remark" "Remark")
@@ -357,3 +363,6 @@
 (acm-remark "remark" "Remark")
 (acm-remark "problem" "Problem")
 (acm-remark "solution" "Solution")
+(acm-exercise "exercise" "Exercise")
+(acm-exercise "problem" "Problem")
+(acm-exercise "solution" "Solution")
