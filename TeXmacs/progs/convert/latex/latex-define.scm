@@ -234,6 +234,7 @@
   (gflux "\\gg")
   (colons "\\,:\\,")
   (transtype "\\,:\\!!>")
+  (tmxspace (hspace "1em"))
   (lebar (mathrel (Yleft)))
   (gebar (mathrel (Yright)))
   (leangle (mathrel (angle)))

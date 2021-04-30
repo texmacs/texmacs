@@ -81,7 +81,8 @@
   lflux gflux colons transtype
   lebar gebar leangle geangle leqangle geqangle
   udots subsetsim supsetsim
-  rightmap leftmap leftrightmap)
+  rightmap leftmap leftrightmap
+  tmxspace)
 
 (logic-rules
   ((latex-texmacs-arity% 'x 0) (latex-texmacs-symbol% 'x))

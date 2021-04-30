@@ -482,7 +482,10 @@
            (list '!widechar (string->symbol cv))))
         (else (let* ((s2 (string-replace s "-" ""))
                      (ss (list (string->symbol s2))))
-                (cond ((not (logic-in? (car ss) latex-symbol%))
+                (cond ((logic-in? (car ss) tmtex-protected-symbol%)
+                       (with sy (string->symbol (string-append "tmx" s2))
+                         (list '!symbol (list sy))))
+                      ((not (logic-in? (car ss) latex-symbol%))
                        (display* "TeXmacs] non converted symbol: " s "\n")
                        "")
                       (group? (list '!group ss))
@@ -3264,6 +3267,9 @@
   aa ae bf cr dh dj dp em fi ge gg ht if in it le lg ll lu lq mp mu
   ne ng ni nu oe or pi pm rm rq sb sc sf sl sp ss th to tt wd wp wr xi
   AA AE DH DJ Im NG OE Pi Pr Re SS TH Xi)
+
+(logic-group tmtex-protected-symbol%
+  space)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Expansion of all macros which are not recognized by LaTeX
