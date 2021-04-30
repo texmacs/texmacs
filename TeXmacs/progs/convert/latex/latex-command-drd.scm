@@ -147,7 +147,8 @@
   Begin ELSIF FORALL FOR IF WHILE tcp tcp* tcc tcc*)
 
 (logic-group latex-command-2*%
-  def newcommand renewcommand newtheorem newtheorem* frac parbox 
+  def newcommand renewcommand providecommand
+  newtheorem newtheorem* frac parbox 
   ElseIf uElseIf lElseIf ForEach lForEach lForAll lFor)
 
 (logic-group latex-command-3*%

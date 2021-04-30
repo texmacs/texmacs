@@ -458,7 +458,10 @@
       (with opts (if (== opt "") "" (string-append "["  opt "]"))
         (string-append "\\usepackage" opts "{" sty "}\n")))))
 
-(define (latex-as-use-package l1)
+(tm-define (latex-ifacconf-style?)
+  (== tmtex-style "ifacconf"))
+
+(tm-define (latex-as-use-package l1)
   (let* ((l2  (sort l1 latex-use-package-compare))
 	 (l3  (filter
                 (lambda (x)

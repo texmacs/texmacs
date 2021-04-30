@@ -330,7 +330,6 @@
   (tmsep  ", ")
   (tmSep  "; ")
   (pari "{\\sc Pari}")
-  (qed (ensuremath (Box)))
   (textdots "...")
   (filldots "{\\dotfill\\hfill\\hbox{}}")
   (infixand (text " and "))
@@ -702,6 +701,7 @@
 		       (!translate "Misc:") " #2}}\n"))
   (thankssubtitle (!append "\\newcommand{\\thankssubtitle}[2][]{\\thanks[#1]{"
                            (!translate "Subtitle:") " #2}}\n"))
+  (qed (!append (providecommand "\\qed" (ensuremath (Box))) "\n"))
   (mho
    (!append
     "\\renewcommand{\\mho}{\\mbox{\\rotatebox[origin=c]{180}{$\\omega$}}}"))

@@ -54,6 +54,29 @@
                         )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Hack for ifac incompatibility with hyperref package
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (latex-as-use-package l)
+  (:require (latex-ifacconf-style?))
+  (if (nin? "hyperref" l)
+      (former l)
+      (let* ((l* (list-remove l "hyperref"))
+             (s1 (if (null? l*) "" (former l*)))
+             (s2 (string-append
+                  "\\makeatletter\n"
+                  "\\let\\old@ssect\\@ssect\n"
+                  "\\makeatother\n"
+                  "\\usepackage{hyperref}\n"
+                  "\\makeatletter\n"
+                  "\\def\\@ssect#1#2#3#4#5#6{%\n"
+                  "  \\NR@gettitle{#6}%\n"
+                  "  \\old@ssect{#1}{#2}{#3}{#4}{#5}{#6}%\n"
+                  "}\n"
+                  "\\makeatother\n")))
+        (string-append s1 s2))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preprocessing data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -278,9 +301,9 @@
   (with label (string-append "author-misc-" (car l))
     `(thanksamisc (!option ,label) ,(tmtex (cadr l)))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; IFAC specific authors macros
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-author-email-label s l)
   (:mode ifac-style?)
@@ -410,10 +433,7 @@
 ;; Elsevier specific macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(smart-table latex-texmacs-macro
-  (:mode elsevier-style?)
-  (qed #f))
-
 (smart-table latex-texmacs-preamble
   (:mode elsevier-style?)
-  (qed (!append "\\renewcommand{\\qed}{}")))
+  (:require (elsarticle-style?))
+  (qed (!append (renewcommand "\\qed" "") "\n")))
