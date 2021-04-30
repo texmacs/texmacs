@@ -134,6 +134,7 @@
   (mathe "\\mathrm{e}")
   (matheuler "\\gamma")
   (mathlambda "\\lambda")
+  (mathLaplace "\\Delta")
   (mathi "\\mathrm{i}")
   (mathpi "\\pi")
   (Alpha "\\mathrm{A}")
@@ -650,6 +651,8 @@
     "  \\tikz[baseline=(X.base)]\n"
     "  \\node[draw=black,semithick,rectangle,inner sep=2pt,rounded corners=2pt]\n"
     "  (X) {#1};}\n"))
+  (nonconverted
+   (!append "\\newcommand{\\nonconverted}[1]{\\mbox{}}\n"))
   (tmkeywords
    (!append (newcommand (tmkeywords)
 			(!append (textbf (!translate "Keywords:")) " "))

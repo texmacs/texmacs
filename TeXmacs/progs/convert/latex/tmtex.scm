@@ -487,7 +487,7 @@
                          (list '!symbol (list sy))))
                       ((not (logic-in? (car ss) latex-symbol%))
                        (display* "TeXmacs] non converted symbol: " s "\n")
-                       "")
+                       (list '!symbol (list 'nonconverted s2)))
                       (group? (list '!group ss))
                       (else (list '!symbol ss)))))))
 

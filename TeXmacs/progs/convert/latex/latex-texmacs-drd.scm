@@ -58,7 +58,7 @@
   divides ndivides asterisk dottimes precdot
 
   ;; extra literal symbols
-  mathcatalan mathd mathD mathe matheuler mathlambda mathi mathpi
+  mathcatalan mathd mathD mathe matheuler mathlambda mathLaplace mathi mathpi
   Alpha Beta Epsilon Eta Iota Kappa Mu Nu Omicron Chi Rho Tau Zeta
 
   ;; negations
@@ -112,7 +112,7 @@
   uhat uwidehat utilde uwidetilde
   uvec ubreve uinvbreve ucheck uring uacute ugrave
   underdot uddot udddot uddddot
-  widespacing)
+  widespacing nonconverted)
 
 (logic-group latex-texmacs-1*%
   tmcodeinline)
