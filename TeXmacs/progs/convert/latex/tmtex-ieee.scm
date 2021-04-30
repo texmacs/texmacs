@@ -152,15 +152,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-author-affiliation-ref s l)
+  (:mode ieee-tran-style?)
   `(IEEEauthorrefmark ,(car l)))
 
 (tm-define (tmtex-author-affiliation-label s l)
+  (:mode ieee-tran-style?)
   `(!concat (IEEEauthorrefmark ,(car l))
-                               ,(tmtex (cadr l))))
+            ,(tmtex (cadr l))))
+
 (tm-define (tmtex-author-email-ref s l)
+  (:mode ieee-tran-style?)
   `(IEEEauthorrefmark ,(car l)))
 
 (tm-define (tmtex-author-email-label s l)
+  (:mode ieee-tran-style?)
   `(!concat (IEEEauthorrefmark ,(car l))
                                ,(tmtex-author-email l)))
 
