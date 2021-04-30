@@ -76,8 +76,15 @@ bibtex_update_encoding (string s) {
     array<string> b= tokenize (a[i], "\n");
     for (int j=0; j<N(b); j++)
       b[j]= cork_to_sourcecode (western_to_cork (b[j]));
-    if (i != 0) r << "\\bibitem";
-    r << recompose (b, "\n");
+    if (i == 0) {
+      if (N(b) > 0 && starts (b[0], "\\begin{thebibliography}"))
+        r << b[0] << "\n";
+      else r << recompose (b, "\n");
+    }
+    else {
+      r << "\\bibitem";
+      r << recompose (b, "\n");
+    }
   }
   return r;
 }
