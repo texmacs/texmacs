@@ -1132,15 +1132,8 @@
 
 (define (tmtex-mid l)
   (if (tmtex-math-mode?)
-      (let* ((s (tmtex-large-decode (car l)))
-             (n (if (= (length l) 2) (string->number (cadr l)) 0))
-             (b (cond ((not n) "middle")
-                      ((= n 1) "bigm")
-                      ((= n 2) "Bigm")
-                      ((= n 3) "biggm")
-                      ((= n 4) "Biggm")
-                      (else "middle"))))
-        (list (string->symbol (string-append b s))))
+      (with s (tmtex-large-decode (car l))
+        (if (== s ".") "" s))
       (tmtex-large-decode-text (car l))))
 
 (define (tmtex-right l)
