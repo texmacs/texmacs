@@ -88,9 +88,10 @@
                                 subtits-l dates-l miscs-l notes-l tr ar)
   (:mode revtex-style?)
   (let* ((title-data `(,@titles ,@subtitles ,@notes ,@miscs))
-         (title-data (if (null? title-data) '() `((!paragraph ,@title-data)))))
-    (if (and (null? title-data) (null? authors) (null? dates)) '()
-      `(!document ,@title-data ,@authors ,@dates))))
+         (title-data (if (null? title-data) '() `((!paragraph ,@title-data))))
+         (authors*   (filter pair? authors)))
+    (if (and (null? title-data) (null? authors*) (null? dates)) '()
+        `(!document ,@title-data ,@authors* ,@dates))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; RevTeX clustered authors presentation

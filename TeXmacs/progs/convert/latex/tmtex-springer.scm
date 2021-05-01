@@ -61,7 +61,8 @@
     (if (null? result) '()
       `((title (!concat ,@result))))))
 
-(define (svjour-make-doc-data titles subtits authors affs dates miscs notes tr ar)
+(define (svjour-make-doc-data
+         titles subtits authors affs dates miscs notes tr ar)
   `(!document
      ,@(svjour-make-title titles notes miscs)
      ,@subtits
@@ -105,8 +106,8 @@
       (with datas (cdadr a)
         (if (and filter?
                  (== `(,aff)
-                     (filter (lambda (x)
-                               (== 'author-affiliation (car x))) datas)))
+                     (filter (lambda (x) (func? x 'author-affiliation))
+                             datas)))
             '()
             `(doc-author
               (author-data ,@(filter (lambda (x) (!= aff x)) datas)))))
