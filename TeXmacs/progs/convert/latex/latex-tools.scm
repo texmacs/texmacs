@@ -556,6 +556,8 @@
         ((nnull? colors)
          (ahash-set! latex-packages-option pack (list "")))))
 
+(tm-define (latex-extra-preamble) "")
+
 (tm-define (latex-preamble text style lan init colors colormaps)
   (:synopsis "Compute preamble for @text")
   (with-global tmtex-style (if (list? style) (cAr style) style)
@@ -569,13 +571,14 @@
            (pre-macro    (latex-serialize-preamble Macro))
            (pre-colors   (latex-serialize-preamble Colors))
            (pre-catcode  (latex-catcode-defs Text))
-           (pre-uses     (latex-use-package-command Text)))
+           (pre-uses     (latex-use-package-command Text))
+           (pre-extra    (latex-extra-preamble)))
       (values
         (cond ((and (in? "amsthm" latex-all-packages)
                     (== style "amsart")) "[amsthm]")
               ((list? style) (latex-make-option (cDr style)))
               (else ""))
-        (string-append pre-uses)
+        (string-append pre-uses pre-extra)
         (string-append pre-page)
         (string-append pre-catcode pre-macro pre-colors)))))
 
