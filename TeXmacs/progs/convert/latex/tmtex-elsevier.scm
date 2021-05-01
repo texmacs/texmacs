@@ -438,6 +438,11 @@
 ;; Elsevier specific macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(smart-table latex-texmacs-macro
+  (:mode elsevier-style?)
+  (:require (elsarticle-style?))
+  (comma #f))
+
 (smart-table latex-texmacs-preamble
   (:mode elsevier-style?)
   (:require (elsarticle-style?))

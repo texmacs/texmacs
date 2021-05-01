@@ -741,6 +741,13 @@
 	   (tmtex-apply-init `(verbatim ,body) init*)))
 	(else body)))
 
+(define (tmtex-clean-body b)
+  (when (and (func? b '!document)
+             (> (length b) 1)
+             (== (cadr b) `(!document "")))
+    (set! b (cons (car b) (cddr b))))
+  b)
+
 (define (tmtex-file l)
   (let* ((doc (car l))
          (styles (cadr l))
@@ -768,8 +775,9 @@
              (preamble* (ahash-with tmtex-env :preamble #t
                           (map-in-order tmtex-pre doc-preamble)))
              (body* (tmtex-postprocess-body (tmtex doc-body)))
+             (body** (tmtex-clean-body body*))
              (needs (list tmtex-languages tmtex-colors tmtex-colormaps)))
-        (list '!file body* styles** needs init preamble*)))))
+        (list '!file body** styles** needs init preamble*)))))
 
 (define (convert-charset t)
   (cond ((string? t) (unescape-angles (utf8->cork t)))
