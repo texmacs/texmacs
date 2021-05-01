@@ -2134,6 +2134,22 @@
          (body    (filter-enunciation-body t)))
   `((!begin ,s ,@option*) ,(tmtex body))))
 
+(define (find-label x)
+  (cond ((npair? x) #f)
+        ((func? x 'label) x)
+        (else (or (find-label (car x)) (find-label (cdr x))))))
+
+(define (remove-labels x)
+  (cond ((npair? x) x)
+        ((func? x 'label) "")
+        (else (cons (remove-labels (car x)) (remove-labels (cdr x))))))
+
+(define (tmtex-sectional s l)
+  (let* ((lab (find-label (car l)))
+         (tit (if lab (remove-labels (car l)) (car l)))
+         (sec (list (string->symbol s) (tmtex tit))))
+    (if lab (list '!concat sec lab) sec)))
+
 (define (tmtex-appendix s l)
   (with app (list (if (latex-book-style?) 'chapter 'section) (tmtex (car l)))
     (if tmtex-appendices? app
@@ -2699,7 +2715,9 @@
 
 (define (tmtex-cite-list l)
   (cond ((null? l) "")
-	;((nstring? (car l)) (tmtex-cite-list (cdr l)))
+        ((nstring? (car l))
+         (display* "TeXmacs] non converted citation: " (car l) "\n")
+         (tmtex-cite-list (cdr l)))
 	((null? (cdr l)) (car l))
 	(else (string-append (car l) "," (tmtex-cite-list (cdr l))))))
 
@@ -2717,16 +2735,17 @@
   (tex-apply 'citetexmacs (tmtex-cite-list l)))
 
 (tm-define (tmtex-cite-detail s l)
-  (tex-apply 'cite `(!option ,(tmtex (cadr l))) (tmtex (car l))))
+  (with c (tmtex-cite-list (list (car l)))
+    (tex-apply 'cite `(!option ,(tmtex (cadr l))) c)))
 
 (tm-define (tmtex-cite-detail s l)
   (:mode natbib-package?)
-  (tex-apply 'citetext `(!concat (citealp ,(tmtex (car l))) ", "
-				 ,(tmtex (cadr l)))))
+  (with c (tmtex-cite-list (list (car l)))
+    (tex-apply 'citetext `(!concat (citealp ,c) ", " ,(tmtex (cadr l))))))
 
 (tm-define (tmtex-cite-detail-poor s l)
-  `(!concat ,(tex-apply 'cite (tmtex (car l)))
-            " (" ,(tmtex (cadr l)) ")"))
+  (with c (tmtex-cite-list (list (car l)))
+    `(!concat ,(tex-apply 'cite c) " (" ,(tmtex (cadr l)) ")")))
 
 (define (tmtex-cite-detail-hook s l)
   (tmtex-cite-detail s l))
@@ -3013,7 +3032,7 @@
 
 (logic-table tmtex-tmstyle%
   ((:or section subsection subsubsection paragraph subparagraph part chapter)
-   (,tmtex-default 1))
+   (,tmtex-sectional 1))
   ((:or hide-preamble show-preamble) (,tmtex-default -1))
   (hide-part (,tmtex-hide-part -1))
   (show-part (,tmtex-show-part -1))

@@ -65,7 +65,8 @@
          (styles (list "article" "acmart"
                        "acmtog" "aip" "amsart" "aps"
                        "elsarticle" "ieeeconf" "ieeetran" "ifac"
-                       "llncs" "sigconf" "svjour")))
+                       "llncs" "sigconf" "svjour"
+                       )))
     (for (file files)
       (for (style styles)
         (with name (url->string (url-tail file))
