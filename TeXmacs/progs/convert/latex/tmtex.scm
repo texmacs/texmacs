@@ -1131,6 +1131,7 @@
       (tmtex-large-decode-text (car l))))
 
 (define (tmtex-mid l)
+  (display* "TeXmacs] downgraded large middle delimiter: " (car l) "\n")
   (if (tmtex-math-mode?)
       (with s (tmtex-large-decode (car l))
         (if (== s ".") "" s))
