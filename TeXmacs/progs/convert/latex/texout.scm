@@ -32,8 +32,20 @@
               (with s (string-convert (symbol->string (cadr t)) "UTF-8" "LaTeX")
                 (or (string-starts? s "{\\cyr")
                     (string-starts? s "{\\CYR"))))
-             ((pair? t)
-              (list-or (map uses-cyrillic? (cdr t))))
+             ((pair? t) (list-or (map uses-cyrillic? (cdr t))))
+             (else #f))))
+
+(define (uses-xlatin? t)
+  (and tmtex-use-ascii?
+       (cond ((string? t)
+              (with s (string-convert t "UTF-8" "LaTeX")
+                (and (!= s t)
+                     (string-occurs? "{\\k " s)
+                     (or (string-occurs? "{\\k a}" s)
+                         (string-occurs? "{\\k e}" s)
+                         (string-occurs? "{\\k A}" s)
+                         (string-occurs? "{\\k E}" s)))))
+             ((pair? t) (list-or (map uses-xlatin? (cdr t))))
              (else #f))))
 
 (define (output-tex s)
@@ -110,9 +122,12 @@
                      (set! pre-end "\n\\end{CJK*}")
                      (output-verbatim "\\usepackage{CJK}\n")))
                   (else
-                    (if (or (uses-cyrillic? doc-preamble)
-                            (uses-cyrillic? doc-body))
-                        (output-verbatim "\\usepackage[T2A,T1]{fontenc}\n"))
+                    (cond ((or (uses-cyrillic? doc-preamble)
+                               (uses-cyrillic? doc-body))
+                           (output-verbatim "\\usepackage[T2A,T1]{fontenc}\n"))
+                          ((or (uses-xlatin? doc-preamble)
+                               (uses-xlatin? doc-body))
+                           (output-verbatim "\\usepackage[T1]{fontenc}\n")))
                     (with langs
                       (apply string-append (list-intersperse lan ", "))
                       (output-verbatim "\\usepackage[" langs "]{babel}\n"))
@@ -266,7 +281,7 @@
   (texout-concat-sub #f l))
 
 (tm-define (texout-multiline? x)
-  (cond ((nlist? x) #f)
+  (cond ((npair? x) #f)
         ((in? (car x) '(!begin !nextline !newline !linefeed !eqn !table)) #t)
         ((and (in? (car x) '(!document !paragraph)) (> (length (cdr x)) 1)) #t)
         ((npair? (cdr x)) #f)
