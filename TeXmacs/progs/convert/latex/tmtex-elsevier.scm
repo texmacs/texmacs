@@ -137,10 +137,6 @@
     (set! r (string-append l r)))
   `(tnoteref ,r))
 
-(tm-define (tmtex-doc-title t)
-  (:mode elsevier-style?)
-  `(title ,(tmtex (cadr t))))
-
 (tm-define (tmtex-doc-subtitle-ref s l)
   (:mode elsevier-style?)
   (springer-note-ref "sub-" (car l)))
