@@ -317,9 +317,9 @@
   (:mode acm-style?)
   ("proof" #f))
 
-(tm-define (tmtex-cite-detail s l)
-  (:mode acm-style?)
-  (tmtex-cite-detail-poor s l))
+;;(tm-define (tmtex-cite-detail s l)
+;;  (:mode acm-style?)
+;;  (tmtex-cite-detail-poor s l))
 
 (smart-table latex-texmacs-env-preamble
   (:mode acm-art-style?)
