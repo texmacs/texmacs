@@ -28,6 +28,15 @@
         ((== (car l) "") (remove-empty-strings (cdr l)))
         (else (cons (car l) (remove-empty-strings (cdr l))))))
 
+(define (eval-svn cmd)
+  (with r (eval-system cmd)
+    (while (string-starts? r "svnserve: warning: ")
+      (with pos (string-search-forwards "\n" 0 r)
+        (if (< pos 0)
+            (set! r "")
+            (set! r (substring r (+ pos 1) (string-length r))))))
+    r))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; File status
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -36,7 +45,7 @@
   (:require (== (version-tool name) "svn"))
   (let* ((name-s (url->string name))
          (cmd (string-append "svn status " name-s))
-         (ret (eval-system cmd)))
+         (ret (eval-svn cmd)))
     (cond ((== ret "") "unmodified")
           ((string-starts? ret "I") "unknown")
           ((string-starts? ret "?") "unknown")
@@ -59,7 +68,7 @@
   (:require (== (version-tool name) "svn"))
   (let* ((name-s (url->string name))
          (cmd (string-append "svn log " name-s))
-         (s (dos->unix (eval-system cmd)))
+         (s (dos->unix (eval-svn cmd)))
          (l (string-decompose s svn-sep)))
     (and (> (length l) 1)
          (== (car l) "")
@@ -75,7 +84,7 @@
   ;;(display* "Loading revision " rev " of " name "\n")
   (let* ((name-s (url->string name))
          (cmd (string-append "svn cat -r " rev " " name-s))
-         (ret (eval-system cmd)))
+         (ret (eval-svn cmd)))
     ;;(display* "Got " ret "\n")
     ret))
 
@@ -91,7 +100,7 @@
   (:require (== (version-tool name) "svn"))
   (let* ((name-s (url->string name))
          (cmd (string-append "svn up --accept theirs-full " name-s))
-         (ret (eval-system cmd))
+         (ret (eval-svn cmd))
          (l (remove-empty-strings (string-decompose ret "\n"))))
     ;;(display* "ret= " ret "\n")
     (if (null? l) "" (cAr l))))
@@ -100,7 +109,7 @@
   (:require (== (version-tool name) "svn"))
   (let* ((name-s (url->string name))
          (cmd (string-append "svn add " name-s))
-         (ret (eval-system cmd))
+         (ret (eval-svn cmd))
          (l (remove-empty-strings (string-decompose ret "\n"))))
     (if (null? l) "" (cAr l))))
 
@@ -108,7 +117,7 @@
   (:require (== (version-tool name) "svn"))
   (let* ((name-s (url->string name))
          (cmd (string-append "svn remove --force " name-s))
-         (ret (eval-system cmd))
+         (ret (eval-svn cmd))
          (l (remove-empty-strings (string-decompose ret "\n"))))
     (if (null? l) "" (cAr l))))
 
@@ -118,6 +127,6 @@
          (msg-s (string-replace msg "\"" "\\\""))
          (encoded (cork->utf8 msg-s))
          (cmd (string-append "svn commit -m \"" encoded "\" " name-s))
-         (ret (eval-system cmd))
+         (ret (eval-svn cmd))
          (l (remove-empty-strings (string-decompose ret "\n"))))
     (if (null? l) "" (cAr l))))
