@@ -212,6 +212,7 @@ latex_invarianted_search (string_searcher finder, tree t, path p, string tar,
 string
 latex_invarianted_apply (string s, hashmap<int,path> subs) {
   string r;
+  bool itm_flag= true;
   bool empty_flag= true;
   int i= 0, n= N(s);
   while (i<n) {
@@ -219,11 +220,18 @@ latex_invarianted_apply (string s, hashmap<int,path> subs) {
       path p= subs[i];
       int len= p->item;
       string id= encode_as_string (p->next);
+      if (N(r)>2 && r[N(r)-1] == '\n' && r[N(r)-2] == '}' && itm_flag) r << "\n";
       r << "{\\itm{" << id << "}}";
+      //cout << HRULE;
+      //cout << s (i, i+len) << LF;
+      //cout << "---> {\\itm{" << id << "}}" << LF;
+      //cout << "~~~> " << subs[i] << LF;
       i += len;
       empty_flag= (len != 0);
+      itm_flag= true;
     }
     else {
+      if (s[i] != '\n') itm_flag= false;
       r << s[i++];
       empty_flag= true;
     }
@@ -252,6 +260,9 @@ latex_invarianted_replace (tree t, tree src) {
   if (is_atomic (t)) return t;
   else if (is_compound (t, "itm", 1)) {
     path p= decode_as_path (as_string (t[0]));
+    //cout << HRULE;
+    //cout << p << " -> "
+    //     << (has_subtree (src, p)? subtree (src, p): tree ("?")) << LF;
     if (has_subtree (src, p)) return subtree (src, p);
     else return t;
   }

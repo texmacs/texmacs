@@ -347,8 +347,8 @@
   (refresh-now "source-tracking"))
 
 (define (get-latex-conservative)
-  (or (get-boolean-preference "latex->texmacs:conservative")
-      (get-boolean-preference "texmacs->latex:conservative")))
+  (and (get-boolean-preference "latex->texmacs:conservative")
+       (get-boolean-preference "texmacs->latex:conservative")))
 
 (define (set-latex-conservative on?)
   (set-boolean-preference "latex->texmacs:conservative" on?)
