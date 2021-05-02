@@ -1,4 +1,4 @@
-<TeXmacs|1.99.13>
+<TeXmacs|1.99.19>
 
 <style|<tuple|source|std-pattern>>
 
@@ -285,28 +285,34 @@
     </padded-normal>
   </macro>>
 
-  <assign|abstract-keywords|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<keywords-text><localize|:>
-  ><concat-tuple|<quote-arg|args>|, >>>>
+  <assign|render-classify|<macro|scheme|text|<style-with|src-compact|none|<no-indent><theorem-name|<arg|scheme><localize|:>
+  ><arg|text>>>>
+
+  <assign|abstract-keywords|<xmacro|args|<style-with|src-compact|none|<render-classify|<keywords-text>|<concat-tuple|<quote-arg|args>|,
+  >>>>>
 
   <assign|acm-ref|<value|identity>>
 
-  <assign|abstract-acm|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<ACM-class-text><localize|:>
-  ><concat-tuple|<map|acm-ref|<quote-arg|args>>|, >>>>
+  <assign|abstract-acm|<xmacro|args|<style-with|src-compact|none|<render-classify|<ACM-class-text>|<concat-tuple|<map|acm-ref|<quote-arg|args>>|,
+  >>>>>
 
   <assign|arxiv-ref|<macro|cat-id|<style-with|src-compact|none|<hlink|<arg|cat-id>|<style-with|src-compact|none|<merge|http://arxiv.org/find/all/1/cat%3A+|<arg|cat-id>|/0/1/0/all/0/1>>>>>>
 
-  <assign|abstract-arxiv|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<arXiv-class-text><localize|:>
-  ><concat-tuple|<map|arxiv-ref|<quote-arg|args>>|, >>>>
+  <assign|abstract-arxiv|<xmacro|args|<style-with|src-compact|none|<render-classify|<arXiv-class-text>|<concat-tuple|<map|arxiv-ref|<quote-arg|args>>|,
+  >>>>>
 
   <assign|pacs-ref|<value|identity>>
 
-  <assign|abstract-pacs|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<PACS-class-text><localize|:>
-  ><concat-tuple|<map|pacs-ref|<quote-arg|args>>|, >>>>
+  <assign|abstract-pacs|<xmacro|args|<style-with|src-compact|none|<render-classify|<PACS-class-text>|<concat-tuple|<map|pacs-ref|<quote-arg|args>>|,
+  >>>>>
 
   <assign|msc-ref|<macro|msc-id|<style-with|src-compact|none|<hlink|<arg|msc-id>|<style-with|src-compact|none|<merge|http://www.ams.org/mathscinet/search/mscbrowse.html?sk=|<arg|msc-id>|&submit=Search>>>>>>
 
   <assign|abstract-msc|<xmacro|args|<style-with|src-compact|none|<no-indent><theorem-name|<AMS-class-text><localize|:>
   ><concat-tuple|<map|msc-ref|<quote-arg|args>>|, >>>>
+
+  <assign|abstract-msc|<xmacro|args|<style-with|src-compact|none|<render-classify|<AMS-class-text>|<concat-tuple|<map|msc-ref|<quote-arg|args>>|,
+  >>>>>
 
   <assign|abstract-data|<xmacro|args|<extern|abstract-data|<quote-arg|args>>>>
 
