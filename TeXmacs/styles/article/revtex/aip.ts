@@ -198,6 +198,8 @@
 
   \;
 
+  <assign|left-margin-0|24pt>
+
   <assign|left-margin-1|24pt>
 
   <assign|left-margin-2|20pt>
@@ -212,6 +214,8 @@
 
   \;
 
+  <assign|top-sep-0|<tex-len|10pt|4pt|6pt>>
+
   <assign|top-sep-1|<tex-len|10pt|4pt|6pt>>
 
   <assign|top-sep-2|<tex-len|5pt|2.5pt|1pt>>
@@ -219,6 +223,8 @@
   <assign|top-sep-3|<tex-len|2.5pt|1pt|1pt>>
 
   \;
+
+  <assign|par-par-sep-0|<tex-len|5pt|2.5pt|1pt>>
 
   <assign|par-par-sep-1|<tex-len|5pt|2.5pt|1pt>>
 
