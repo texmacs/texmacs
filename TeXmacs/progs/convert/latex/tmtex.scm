@@ -1044,6 +1044,8 @@
          (disable-large? (cadr x) (- level 1)))
         ((tm-in? x '(with rigid locus))
          (disable-large? (cAr x) level))
+        ((tm-in? x '(math-up math-ss math-tt math-bf math-it math-sl))
+         (and (== (tm-arity x) 1) (disable-large? (cadr x) level)))
         (else #f)))
 
 (define (make-small s)
