@@ -1,4 +1,4 @@
-<TeXmacs|1.99.16>
+<TeXmacs|1.99.19>
 
 <style|source>
 
@@ -24,7 +24,7 @@
     </src-title>
   </active*>
 
-  <use-package|std|env-base|env-flush-math|env-theorem|env-float|header-article|section-article|title-generic|std-latex|cite-author-year|env-program|html-font-size>
+  <use-package|std|env|title-generic|header-article|section-article|std-latex|cite-author-year|html-font-size>
 
   <active*|<\src-comment>
     TeX-like style parameters.
@@ -166,7 +166,7 @@
 
   <assign|enunciation-name|<macro|name|<with|font-series|bold|<arg|name>>>>
 
-  <assign|enunciation-sep|. >
+  <assign|enunciation-sep|<space|1em>>
 
   <assign|remark-name|<macro|name|<with|font-shape|italic|<arg|name>>>>
 
@@ -181,8 +181,6 @@
   <new-theorem|criterion|<localize|Criterion>>
 
   <new-theorem|principle|<localize|Principle>>
-
-  <assign|proof-text|<change-case|<localize|Proof>|UPCASE>>
 
   <active*|<\src-comment>
     Customization of other environments.
@@ -204,9 +202,9 @@
     </src-comment>
   </active*>
 
-  <assign|aligned-item|<macro|x|<style-with|src-compact|none|<vspace*|0.0fn><with|par-first|-2.5fn|<yes-indent>><resize|<arg|x>|<minus|1r|2.2fn>|||><hspace|0.3fn>>>>
+  <assign|aligned-item|<macro|x|<style-with|src-compact|none|<vspace*|0.0fn><with|par-first|-2.5em|<yes-indent>><resize|<arg|x>|<minus|1r|2.2em>|||><hspace|0.3em>>>>
 
-  <assign|render-list|<macro|body|<surround|<no-page-break*>|<right-flush><no-indent*>|<with|par-left|<plus|<value|par-left>|1.5fn>|par-sep|0.2fn|par-par-sep|0fn|<arg|body>>>>>
+  <assign|render-list|<macro|body|<surround|<no-page-break*>|<right-flush><no-indent*>|<with|par-left|<plus|<value|par-left>|1.5em>|par-sep|0.2fn|par-par-sep|0fn|<arg|body>>>>>
 
   \;
 
@@ -216,10 +214,6 @@
 
   <assign|item-3|<macro|>>
 
-  <active*|<\src-comment>
-    Rendering of floating objects.
-  </src-comment>>
-
   <\active*>
     <\src-comment>
       Bibliographies.
@@ -227,6 +221,8 @@
   </active*>
 
   <assign|bibitem-width|2em>
+
+  <assign|transform-bibitem|<macro|body|[<arg|body>] >>
 
   <assign|elsart-bibitem*|<macro|text|<style-with|src-compact|none|<assign|bibitem-nr|<plus|<value|bibitem-nr>|1>><render-bibitem|<transform-bibitem|<value|bibitem-nr>>><set-binding|<value|bibitem-nr>>>>>
 
@@ -248,17 +244,40 @@
     Title rendering.
   </src-comment>>
 
-  <assign|by-text|<macro|<localize|>>>
+  <assign|doc-title|<macro|x|<\surround|<vspace*|0.5fn>|<vspace|0.5fn>>
+    <doc-title-block|<with|font-size|1.414|<arg|x>>>
+  </surround>>>
+
+  <assign|by-text|<macro|>>
+
+  <assign|author-name|<macro|author|<doc-author-block|<author-by|<arg|author>>>>>
+
+  <assign|author-affiliation|<\macro|address>
+    <surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<smaller|<em|<arg|address>>>>>
+  </macro>>
+
+  <assign|author-email|<macro|email|<doc-author-block|<smaller|<with|font-shape|italic|<email-text><localize|:>
+  > <verbatim|<arg|email>>>>>>
+
+  <assign|author-email-note|<macro|sym|id|email|<doc-author-block|<smaller|<doc-note-text|<arg|sym>|<arg|id>|<with|font-shape|italic|<email-text><localize|:>
+  ><verbatim|<arg|email>>>>>>>
+
+  <active*|<\src-comment>
+    Abstract.
+  </src-comment>>
 
   <assign|render-abstract|<macro|body|<\surround|<vspace*|2fn>|<right-flush><vspace|1fn>>
     <\with|par-first|10pt|par-par-sep|5pt|font-base-size|9>
       <\surround|<hrule><next-line>|<next-line><hrule><yes-indent>>
         <no-indent><with|font-series|bold|<abstract-text>><vspace|5pt><no-page-break>
 
-        <arg|body>
+        <surround|<no-indent>||<arg|body>>
       </surround>
     </with>
   </surround>>>
+
+  <assign|render-classify|<macro|scheme|text|<no-indent><em|<arg|scheme><localize|:>>
+  <arg|text>>>
 
   <active*|<\src-comment>
     Specific macros for Elsevier styles.

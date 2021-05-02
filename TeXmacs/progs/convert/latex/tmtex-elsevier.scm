@@ -429,10 +429,10 @@
 ;; The elsarticle class does not insert a 'References' section title
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (tmtex-bib t)
-  (:mode elsevier-style?)
-  (:require (elsarticle-style?))
-  (tmtex-biblio (car t) (cdr t) #t))
+;;(tm-define (tmtex-bib t)
+;;  (:mode elsevier-style?)
+;;  (:require (elsarticle-style?))
+;;  (tmtex-biblio (car t) (cdr t) #t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Elsevier specific macros

@@ -177,7 +177,11 @@
 
   <assign|doc-make-title|<macro|body|<\surround||<vspace|0.5fn>>
     <\compact>
-      <doc-title-block|<arg|body>>
+      <\doc-title-block>
+        <arg|body>
+
+        \;
+      </doc-title-block>
     </compact>
   </surround>>>
 

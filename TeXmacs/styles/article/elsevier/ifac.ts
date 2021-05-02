@@ -1,4 +1,4 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.19>
 
 <style|source>
 
@@ -24,35 +24,35 @@
     </src-title>
   </active*>
 
-  <active*|><use-package|elsart|two-columns>
+  <active*|><use-package|elsarticle|env-math|two-columns>
 
   <active*|<\src-comment>
     LaTeX-like page layout parameters.
   </src-comment>>
 
-  <assign|tex-odd-side-margin|<macro|<if|<equal|<value|par-columns>|1>|0pt|0pt>>>
+  <assign|tex-odd-side-margin|<macro|-11mm>>
 
-  <assign|tex-even-side-margin|<macro|<if|<equal|<value|par-columns>|1>|0pt|0pt>>>
+  <assign|tex-even-side-margin|<macro|-11mm>>
 
-  <assign|tex-text-width|<macro|<if|<equal|<value|par-columns>|1>|38pc|38pc>>>
+  <assign|tex-text-width|<macro|180mm>>
 
   \;
 
-  <assign|tex-voffset|<macro|-10.5mm>>
+  <assign|tex-voffset|<macro|-12.5mm>>
 
-  <assign|tex-top-margin|<macro|0pt>>
+  <assign|tex-top-margin|<macro|2mm>>
 
   <assign|tex-head-height|<macro|10pt>>
 
-  <assign|tex-head-sep|<macro|11pt>>
+  <assign|tex-head-sep|<macro|20pt>>
 
   <assign|tex-top-skip|<macro|10pt>>
 
-  <assign|tex-text-height|<macro|<if|<equal|<value|par-columns>|1>|252mm|252mm>>>
+  <assign|tex-text-height|<macro|245mm>>
 
   <assign|tex-foot-height-heuristic|<macro|1em>>
 
-  <assign|tex-foot-skip|<macro|23pt>>
+  <assign|tex-foot-skip|<macro|10pt>>
 
   \;
 
@@ -60,13 +60,13 @@
 
   <assign|tex-footnote-tm-barlen|<macro|2in>>
 
-  <assign|tex-column-sep|<macro|0.3in>>
+  <assign|tex-column-sep|<macro|5mm>>
 
-  <assign|tex-float-sep|<macro|<tmlen|6pt|8pt|12pt>>>
+  <assign|tex-float-sep|<macro|<tmlen|8pt|4pt|2pt>>>
 
-  <assign|tex-margin-par-width|<macro|2pc>>
+  <assign|tex-margin-par-width|<macro|1pc>>
 
-  <assign|tex-margin-par-sep|<macro|20pt>>
+  <assign|tex-margin-par-sep|<macro|10pt>>
 
   <active*|<\src-comment>
     Global layout.
@@ -78,6 +78,8 @@
 
   <assign|par-par-sep|5pt>
 
+  <assign|par-sep|1pt>
+
   <assign|par-first|0fn>
 
   <assign|padded-par-par-sep|5pt>
@@ -88,13 +90,13 @@
 
   <assign|tex-jot|2pt>
 
-  <assign|tex-above-display-skip|<macro|<tex-len|5.75pt|2pt|2pt>>>
+  <assign|tex-above-display-skip|<macro|<tex-len|3pt|1pt|1pt>>>
 
-  <assign|tex-below-display-skip|<macro|<tex-len|5.75pt|2pt|2pt>>>
+  <assign|tex-below-display-skip|<macro|<tex-len|3pt|1pt|1pt>>>
 
   <assign|tex-above-display-short-skip|<macro|<tex-len|0pt|2pt|0pt>>>
 
-  <assign|tex-below-display-short-skip|<macro|<tex-len|3.5pt|2pt|2pt>>>
+  <assign|tex-below-display-short-skip|<macro|<tex-len|2pt|1pt|1pt>>>
 
   <active*|<\src-comment>
     Sizes.
@@ -125,17 +127,19 @@
   <assign|display-part|<macro|nr|<change-case|<localize|Part>|UPCASE>
   <number|<arg|nr>|Roman>>>
 
-  <assign|part-title|<macro|name|<style-with|src-compact|none|<sectional-normal|<vspace*|2bls|2bls|2.4bls><normal-size|<change-case|<arg|name>|UPCASE>><vspace|1bls>>>>>
+  <assign|part-title|<macro|name|<style-with|src-compact|none|<sectional-normal|<vspace*|<tmlen|0.8bls|0.4bls|0bls>><normal-size|<change-case|<arg|name>|UPCASE>><vspace|1bls>>>>>
 
-  <assign|section-title|<macro|name|<style-with|src-compact|none|<sectional-centered|<vspace*|<plus|18pt|<tmlen|-4pt|0bls|1bls>>><normal-size|<change-case|<arg|name>|UPCASE>><vspace*|5pt|6pt|8pt>>>>>
+  <assign|section-title|<macro|name|<style-with|src-compact|none|<sectional-centered|<vspace*|<tmlen|0.5bls|0.2bls|0.1bls>><normal-size|<change-case|<arg|name>|UPCASE>><vspace|0.5bls>>>>>
 
-  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-italic|<vspace*|<plus|18pt|<tmlen|-4pt|0bls|1bls>>><normal-size|<arg|name>><vspace*|5pt|6pt|8pt>>>>>
+  <assign|section-numbered-title|<macro|name|<section-title|<sectional-prefixed|<the-section><section-sep>|<change-case|<arg|name>|UPCASE><section-post-sep>>>>>
 
-  <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-italic|<vspace*|1bls|1bls|1.2bls><normal-size|<arg|name>><space|1em>>>>>
+  <assign|subsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-italic|<vspace*|<tmlen|0.3bls|0.2bls|0.1bls>><normal-size|<arg|name>><vspace|0.3bls>>>>>
 
-  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<sectional-short-bold|<vspace*|3.05ex|3.25ex|5.25ex><normal-size|<arg|name>><space|1em>>>>>
+  <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-italic|<vspace*|<tmlen|0.3bls|0.1bls|0bls>><normal-size|<arg|name>><vspace|0.001bls>>>>>
 
-  <assign|subparagraph-title|<macro|name|<style-with|src-compact|none|<sectional-short-bold|<vspace*|3.05ex|3.25ex|5.25ex><space|1em><normal-size|<arg|name>><space|1em>>>>>
+  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<sectional-short-bold|<vspace*|3.25ex|2ex|0.2ex><normal-size|<arg|name>><space|1em>>>>>
+
+  <assign|subparagraph-title|<macro|name|<style-with|src-compact|none|<sectional-short-bold|<vspace*|3.25ex|2ex|0.2ex><space|1em><normal-size|<arg|name>><space|1em>>>>>
 
   <active*|<\src-comment>
     Section and environment numbering.
@@ -153,25 +157,15 @@
     Theorem-like environments.
   </src-comment>>
 
-  <assign|theorem-sep|. >
+  <assign|enunciation-name|<macro|name|<with|font-shape|italic|<arg|name>>>>
 
-  <assign|theorem-name|<macro|name|<arg|name>>>
+  <assign|enunciation-sep|. >
 
   <assign|render-theorem|<\macro|which|body>
-    <render-remark|<with|font-shape|italic|<arg|which>>|<arg|body>>
+    <render-enunciation|<theorem-name|<arg|which><theorem-sep>>|<arg|body>>
   </macro>>
 
-  <assign|proof-text|<with|font-series|bold|<change-case|<localize|Proof>|UPCASE>>>
-
-  <assign|render-proof|<macro|which|body|<render-remark|<arg|which>|<arg|body>>>>
-
-  <active*|<\src-comment>
-    List environments.
-  </src-comment>>
-
-  <assign|aligned-item|<macro|x|<style-with|src-compact|none|<vspace*|0.5fn><with|par-first|-3fn|<yes-indent>><resize|<arg|x>|<minus|1r|2.3fn>||<minus|1r|0.2fn>|>>>>
-
-  <assign|render-list|<macro|body|<padded-normal|0.0fn|1em|<with|par-sep|-0.8em|<arg|body>>>>>
+  <assign|render-proof|<macro|which|body|<surround|<with|font-series|bold|font-shape|right|<arg|which>><space|1em>|<tab-qed>|<arg|body>>>>
 
   <active*|<\src-comment>
     Rendering of floating objects.
@@ -195,14 +189,57 @@
     Title rendering.
   </src-comment>>
 
-  <assign|doc-abstract|<\macro|body>
-    <\with|par-columns|1|par-left|17mm|par-right|17mm>
-      <surround|<abstract-text><localize|:> |<right-flush>|<arg|body>>
+  <assign|doc-title|<\macro|x>
+    \;
+
+    <\surround|<vspace*|0.5fn>|<vspace|0.5fn>>
+      <doc-title-block|<with|font-size|1.414|<strong|<arg|x>>>>
+    </surround>
+  </macro>>
+
+  <assign|author-name|<macro|author|<doc-author-block|<strong|<author-by|<arg|author>>>>>>
+
+  <assign|author-affiliation|<\macro|address>
+    <surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<em|<arg|address>>>>
+  </macro>>
+
+  <assign|author-email|<macro|email|<doc-author-block|<with|font-shape|italic|<email-text><localize|:>
+  > <verbatim|<arg|email>>>>>
+
+  <assign|author-email-note|<macro|sym|id|email|<doc-author-block|<doc-note-text|<arg|sym>|<arg|id>|<with|font-shape|italic|<email-text><localize|:>
+  ><verbatim|<arg|email>>>>>>
+
+  <active*|<\src-comment>
+    Abstract.
+  </src-comment>>
+
+  <assign|render-abstract|<\macro|body>
+    <\with|par-columns|1|par-left|17mm|par-right|17mm|overlined-sep|1spc|underlined-sep|1spc>
+      <\wide-std-bothlined>
+        <surround|<abstract-text><localize|:> |<right-flush>|<arg|body>>
+      </wide-std-bothlined>
+
+      \;
     </with>
   </macro>>
 
-  <assign|keywords|<macro|x|<vspace*|0.5fn><no-indent><keywords-text>
-  <arg|x><right-flush>>>
+  <\active*>
+    <\src-comment>
+      Headers.
+    </src-comment>
+  </active*>
+
+  <set-header|>
+
+  <set-footer|>
+
+  <assign|header-title|<macro|name|>>
+
+  <assign|header-author|<macro|name|>>
+
+  <assign|header-primary|<macro|name|nr|what|>>
+
+  <assign|header-secondary|<macro|name|nr|what|>>
 
   \;
 </body>
