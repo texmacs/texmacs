@@ -126,6 +126,10 @@
 
   <assign|item-vsep|0.5spc>
 
+  <assign|bibitem-width|1.5tab>
+
+  <assign|transform-bibitem|<macro|body|<strong|[<arg|body>] >>>
+
   \;
 </body>
 
