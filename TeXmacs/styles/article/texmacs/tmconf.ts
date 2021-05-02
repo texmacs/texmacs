@@ -34,7 +34,15 @@
 
   <assign|page-type|letter>
 
-  <assign|font-base-size|9>
+  <assign|page-odd|2cm>
+
+  <assign|page-even|2cm>
+
+  <assign|page-right|2cm>
+
+  <assign|page-top|2.25cm>
+
+  <assign|page-bot|2cm>
 
   <\active*>
     <\src-comment>
@@ -93,7 +101,7 @@
     </src-comment>
   </active*>
 
-  <assign|sectional-sep|<macro|.<space|2spc>>>
+  <assign|sectional-sep|<macro|<space|2spc>>>
 
   <assign|sectional-post-sep|<macro|<space|2spc>>>
 
