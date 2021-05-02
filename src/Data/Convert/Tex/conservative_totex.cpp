@@ -15,8 +15,6 @@
 #include "scheme.hpp"
 #include "iterator.hpp"
 
-tree latex_expand (tree doc);
-
 /******************************************************************************
 * Extract tables for source/target correspondences
 ******************************************************************************/
@@ -554,18 +552,18 @@ latex_merge_preamble (string olds, string news) {
 string
 conservative_texmacs_to_latex (tree doc, object opts) {
   if (get_preference ("texmacs->latex:conservative", "off") != "on")
-    return tracked_texmacs_to_latex (latex_expand (doc), opts);
+    return tracked_texmacs_to_latex (doc, opts);
   tree atts= extract (doc, "attachments");
   hashmap<string,tree> atts_map (UNINIT, atts);
   if (!atts_map->contains ("latex-source"))
-    return tracked_texmacs_to_latex (latex_expand (doc), opts);
+    return tracked_texmacs_to_latex (doc, opts);
   string lsource= as_string (atts_map["latex-source"]);
   tree ltarget= atts_map["latex-target"];
   tree target= texmacs_unmark (ltarget);
   if (doc == target) return lsource;
   tree idoc= texmacs_invarianted (doc, ltarget, lsource);
   call ("latex-set-virtual-packages", get_used_packages (lsource));
-  string conv= tracked_texmacs_to_latex (latex_expand (idoc), opts);
+  string conv= tracked_texmacs_to_latex (idoc, opts);
   call ("latex-set-virtual-packages", null_object ());
   if (latex_unchanged_metadata (target, doc))
     conv= latex_merge_metadata (lsource, conv);
