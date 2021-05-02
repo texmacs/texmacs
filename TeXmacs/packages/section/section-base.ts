@@ -63,11 +63,13 @@
     </src-comment>
   </active*>
 
+  <assign|sectional-no-indent|<macro|<no-indent*>>>
+
   <assign|sectional-short|<macro|name|<no-indent><arg|name>>>
 
-  <assign|sectional-normal|<macro|name|<wide-normal|<arg|name><no-page-break><no-indent*>>>>
+  <assign|sectional-normal|<macro|name|<wide-normal|<arg|name><no-page-break><sectional-no-indent>>>>
 
-  <assign|sectional-centered|<macro|name|<wide-centered|<arg|name><no-page-break><no-indent*>>>>
+  <assign|sectional-centered|<macro|name|<wide-centered|<arg|name><no-page-break><sectional-no-indent>>>>
 
   <assign|sectional-short-italic|<macro|name|<sectional-short|<with|font-shape|italic|<arg|name>>>>>
 

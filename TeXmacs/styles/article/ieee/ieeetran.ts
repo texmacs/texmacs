@@ -24,12 +24,15 @@
     </src-title>
   </active*>
 
-  <active*|<src-comment|IEEEtran is quite imcomplete for the moment.
-  Currently, it is essentially a hacked version of article>>
-
   <use-package|article|std-latex|two-columns|termes-font>
 
+  <active*|<src-comment|Global style parameters>>
+
   <assign|font|math=roman,termes>
+
+  <assign|par-sep|0.2fn>
+
+  <assign|par-ver-sep|0.1fn>
 
   <active*|<src-comment|Global layout parameters>>
 
@@ -47,15 +50,15 @@
 
   <assign|tex-below-display-skip|<macro|<tex-len|1.5ex|3pt|1pt>>>
 
-  <assign|tex-above-display-short-skip|<macro|<tex-len|0pt|3pt|0pt>>>
+  <assign|tex-above-display-short-skip|<macro|<tex-len|1.5ex|3pt|1pt>>>
 
-  <assign|tex-below-display-short-skip|<macro|<tex-len|1.5ex|3pt|1pt>>>
+  <assign|tex-below-display-short-skip|<macro|<tex-len|0pt|3pt|0pt>>>
 
   <assign|par-first|<macro|1.0em>>
 
   <\active*>
     <\src-comment>
-      Title + abstract.
+      Title.
     </src-comment>
   </active*>
 
@@ -77,19 +80,59 @@
     </with>
   </macro>>
 
-  <assign|render-abstract|<\macro|body>
-    <sectional-centered-bold|<abstract-text>><vspace|0.5fn>
+  <assign|by-text|<macro|>>
 
-    <\with|font-series|bold>
-      <arg|body>
-    </with>
+  <assign|author-name|<macro|author|<doc-author-block|<author-by|<arg|author>>>>>
+
+  <assign|author-email|<macro|email|<doc-author-block|<with|font-shape|italic|<email-text><localize|:>
+  > <arg|email>>>>
+
+  <assign|author-email-note|<macro|sym|id|email|<doc-author-block|<doc-note-text|<arg|sym>|<arg|id>|<with|font-shape|italic|<email-text><localize|:>
+  ><arg|email>>>>>
+
+  <\active*>
+    <\src-comment>
+      Abstract.
+    </src-comment>
+  </active*>
+
+  <assign|render-abstract|<\macro|body>
+    <\flat-size>
+      <\with|font-series|bold>
+        <surround|<em|<abstract-text>>\V||<arg|body>>
+      </with>
+    </flat-size>
   </macro>>
+
+  <assign|render-classify|<macro|scheme|text|<em|<arg|scheme>>\V<arg|text>>>
+
+  <assign|keywords-text|<macro|<localize|Index terms>>>
+
+  <\active*>
+    <\src-comment>
+      Headers.
+    </src-comment>
+  </active*>
+
+  <assign|header-title|<macro|name|<assign|page-odd-header|><assign|page-even-header|>>>
+
+  <assign|header-author|<macro|name|<assign|page-odd-header|><assign|page-even-header|>>>
+
+  <assign|header-primary|<macro|name|nr|what|>>
+
+  <assign|header-secondary|<macro|name|nr|what|>>
 
   <\active*>
     <\src-comment>
       Sections
     </src-comment>
   </active*>
+
+  <assign|sectional-sep|<macro|.<space|2spc>>>
+
+  <assign|sectional-post-sep|<macro|<space|2spc>>>
+
+  <assign|sectional-no-indent|<macro|>>
 
   <assign|the-section|<macro|<number|<section-nr>|Roman>>>
 
@@ -122,6 +165,10 @@
   <assign|itemize-reduce|<macro|nr|<minimum|<arg|nr>|4>>>
 
   <assign|enumerate-reduce|<macro|nr|<minimum|<arg|nr>|4>>>
+
+  <assign|transform-bibitem|<macro|body|[<arg|body>] >>
+
+  \;
 </body>
 
 <\initial>
