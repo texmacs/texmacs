@@ -113,11 +113,10 @@
   uhat uwidehat utilde uwidetilde
   uvec ubreve uinvbreve ucheck uring uacute ugrave
   underdot uddot udddot uddddot
-  widespacing nonconverted)
-
-(logic-group latex-texmacs-1*%
-  tmcodeinline
-  groupcommoncounter)
+  widespacing nonconverted
+  tmcodeinline groupcommoncounter
+  ;; NOTE: for personal use from vdh style package
+  gb gbt)
 
 (logic-group latex-texmacs-2%
   tmcolor

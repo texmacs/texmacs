@@ -410,6 +410,8 @@
   (udddot (underaccent (dddot (hphantom 1)) 1))
   (uddddot (underaccent (ddddot (hphantom 1)) 1))
   (widespacing 1)
+  (gb  (!append (texttt "[\\!\\![") 1 (texttt "]\\!\\!]")))
+  (gbt (!append (texttt "[\\!\\![\\!\\![") 1 (texttt "]\\!\\!]\\!\\!]")))
 
   ;; With options
   (tmcodeinline ((!option "") (!group (ttfamily) (!group 2))))

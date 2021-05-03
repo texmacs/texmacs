@@ -3242,7 +3242,13 @@
   ((:or cite-author* cite-author*-link) (,tmtex-cite-author* 1))
   ((:or cite-year cite-year-link) (,tmtex-cite-year 1))
   (natbib-triple (,tmtex-natbib-triple 3))
-  (natexlab (,tmtex-noop -1)))
+  (natexlab (,tmtex-noop -1))
+
+  ;; FIXME: we should do something more useful with this information
+  (set-header (,tmtex-noop -1))
+  (set-footer (,tmtex-noop -1))
+  (set-this-page-header (,tmtex-noop -1))
+  (set-this-page-footer (,tmtex-noop -1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tags which are customized in particular style files
