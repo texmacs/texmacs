@@ -740,7 +740,9 @@
     "      \\tmfloatcontents\n"
     "      \\captionof{#3}{#5}\n"
     "    \\end{center}\n"
-    "  \\end{minipage}}\n")))
+    "  \\end{minipage}}\n"))
+  (addtocountergroup (!append "\\newcommand{\\addtocountergroup}[2]{}\n"))
+  (groupcommoncounter (!append "\\newcommand{\\groupcommoncounter}[1]{}\n")))
 
 ;;(define-macro (latex-texmacs-long prim x l m r)
 ;;  `(smart-table latex-texmacs-preamble

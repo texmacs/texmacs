@@ -116,7 +116,8 @@
   widespacing nonconverted)
 
 (logic-group latex-texmacs-1*%
-  tmcodeinline)
+  tmcodeinline
+  groupcommoncounter)
 
 (logic-group latex-texmacs-2%
   tmcolor
@@ -132,7 +133,8 @@
   tmfoldedplain tmunfoldedplain tmfoldedenv tmunfoldedenv
   tmfoldedstd tmunfoldedstd tmfolded tmunfolded
   tminput tminputmath tmhlink tmaction ontop subindex
-  renderfootnote tmlinenumber)
+  renderfootnote tmlinenumber
+  addtocountergroup)
 
 (logic-group latex-texmacs-3%
   tmsession tmfoldedio tmunfoldedio tmfoldediomath tmunfoldediomath
