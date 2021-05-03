@@ -311,6 +311,7 @@
 (smart-table latex-texmacs-macro
   (:mode acm-style?)
   (qed #f)
+  (nequiv #f)
   (category ""))
 
 (smart-table latex-texmacs-environment
