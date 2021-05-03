@@ -157,7 +157,8 @@
   ;; Each inner list correspond to a table row.
   (map stm-table-row->list
        (do ((x x (last x)))
-	   ((func? x 'table) (cdr x)))))
+	   ((or (func? x 'table) (func? x '!arg))
+            (if (func? x 'table) (cdr x) `((row (cell ""))))))))
 
 (define (stm-table-formats x)
     (cond ((func? x 'table) '())
