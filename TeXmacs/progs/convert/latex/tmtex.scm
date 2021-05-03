@@ -802,7 +802,7 @@
 ;; Simple text
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmtex-noop l) "")
+(define (tmtex-noop . l) "")
 (define (tmtex-default s l) (cons (string->symbol s) (tmtex-list l)))
 (define (tmtex-id l) (tmtex (car l)))
 (define (tmtex-first l) (tmtex (car l)))
@@ -811,8 +811,6 @@
 (define (tmtex-style-second s l) (tmtex (cadr l)))
 (define (tmtex-hide-part s l) "")
 (define (tmtex-show-part s l) (tmtex (cadr l)))
-
-(define (tmtex-noop l) "")
 
 (define (tmtex-error l)
   (display* "TeXmacs] error in conversion: " l "\n")
@@ -2534,7 +2532,7 @@
       (tex-concat (list (list 'bibliographystyle (force-string (cadr l)))
 			(list 'bibliography (force-string (caddr l)))))
       (let* ((doc (tmtex-bib-sub (cadddr l)))
-	     (max (tmtex-bib-max doc))
+	     (max (tmtex-textual (tmtex-bib-max doc)))
              (tls tmtex-languages)
              (lan (or (and (pair? tls) (car tls)) "english"))
              (txt (translate-from-to "References" "english" lan))
@@ -3243,7 +3241,8 @@
   ((:or cite-author cite-author-link) (,tmtex-cite-author 1))
   ((:or cite-author* cite-author*-link) (,tmtex-cite-author* 1))
   ((:or cite-year cite-year-link) (,tmtex-cite-year 1))
-  (natbib-triple (,tmtex-natbib-triple 3)))
+  (natbib-triple (,tmtex-natbib-triple 3))
+  (natexlab (,tmtex-noop -1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tags which are customized in particular style files
