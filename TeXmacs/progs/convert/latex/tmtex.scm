@@ -3139,6 +3139,7 @@
         flalign alignat align* flalign* alignat*) (,tmtex-eqnarray 1))
 
   (eq-number (,tmtex-default -1))
+  (separating-space (,tmtex-hspace* 1))
   (application-space (,tmtex-hspace* 1))
 
   ((:or code cpp-code mmx-code scm-code shell-code scilab-code verbatim-code)
