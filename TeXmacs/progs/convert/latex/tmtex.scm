@@ -2228,9 +2228,11 @@
         (else (map escape-backslashes l))))
 
 (define (tmtex-new-theorem s l)
-  (ahash-set! tmtex-dynamic (string->symbol (car l)) 'environment)
-  (if (and (logic-in? (car l) latex-texmacs-theorem-environment%)) ""
-      `(newtheorem ,@l)))
+  (with var (tmtex-var-name (car l))
+    (ahash-set! tmtex-dynamic (string->symbol (car l)) 'environment)
+    (ahash-set! tmtex-dynamic (string->symbol var) 'environment)
+    (if (and (logic-in? var latex-texmacs-theorem-environment%)) ""
+        `(newtheorem ,var (,@(cdr l))))))
 
 (define (tmtex-verbatim s l)
   (if (func? (car l) 'document)
