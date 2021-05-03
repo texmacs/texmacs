@@ -133,6 +133,7 @@
 
   (url "hyperref")
   (href "hyperref")
+  (hyperref "hyperref")
 
   (cref "cleveref")
   

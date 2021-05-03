@@ -136,7 +136,8 @@
 
 (logic-group latex-texmacs-3%
   tmsession tmfoldedio tmunfoldedio tmfoldediomath tmunfoldediomath
-  tmlinenote subsubindex tmref glossaryentry natbib-triple)
+  tmlinenote subsubindex tmref glossaryentry natbib-triple
+  renderfootnotestar)
 
 (logic-group latex-texmacs-4%
   tmscriptinput tmscriptoutput tmconverterinput tmconverteroutput

@@ -489,6 +489,7 @@
   (ontop (genfrac "" "" "0pt" "" 1 2))
   (subindex (index (!append 1 "!" 2)))
   (renderfootnote (footnotetext (!append (tmrsup 1) " " 2)))
+  (renderfootnotestar (footnotetext (!append (tmrsup 1) " " 3)))
   (tmlinenumber (!append (custombinding 1)
                          (tmlinenote (footnotesize 1) 2 "0cm")))
 

@@ -2325,6 +2325,11 @@
 (define (tmtex-fcolorbox s l)
   `(fcolorbox ,@(map tmtex-decode-color (cDr l)) ,(tmtex (cAr l))))
 
+(define (tmtex-rotate s l)
+  (let* ((body (tmtex (cadr l)))
+         (body* (if (tmtex-math-mode?) `(ensuremath ,body) body)))
+    `(rotatebox (!option "origin=c") ,(tmtex (car l)) ,body*)))
+
 (define (tmtex-translate s l)
   (let ((from (cadr l))
         (to   (caddr l))
@@ -2687,7 +2692,11 @@
   (tmtex-tt (escape-backslashes-in-url u)))
 
 (define (tmtex-hlink s l)
-  (list 'href (tmtex-hyperref (cadr l)) (tmtex (car l))))
+  (let* ((h (cadr l))
+         (d (tmtex (car l))))
+    (if (and (string? h) (string-starts? h "#"))
+        (list 'hyperref `(!option ,(string-drop h 1)) d)
+        (list 'href (tmtex-hyperref h) d))))
 
 (define (tmtex-href s l)
   (list 'url (tmtex-verb-string (car l))))
@@ -3165,9 +3174,10 @@
    (,tmtex-code-block 1))
   ((:or mmx cpp scm shell scilab) (,tmtex-code-inline 1))
 
-  (frame    (,tmtex-frame 1))
+  (frame (,tmtex-frame 1))
   (colored-frame (,tmtex-colored-frame 2))
   (fcolorbox (,tmtex-fcolorbox 3))
+  (rotate (,tmtex-rotate 2))
   (condensed (,tmtex-style-first 1))
   (translate (,tmtex-translate 3))
   (localize (,tmtex-localize 1))

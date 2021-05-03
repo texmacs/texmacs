@@ -144,7 +144,8 @@
   xleftarrow xrightarrow xleftrightarrow xminus
   xLeftarrow xRightarrow xLeftrightarrow xequal
   xmapsto xmapsfrom citealp citet citep citet* citep*
-  Begin ELSIF FORALL FOR IF WHILE tcp tcp* tcc tcc*)
+  Begin ELSIF FORALL FOR IF WHILE tcp tcp* tcc tcc*
+  hyperref)
 
 (logic-group latex-command-2*%
   def newcommand renewcommand providecommand
