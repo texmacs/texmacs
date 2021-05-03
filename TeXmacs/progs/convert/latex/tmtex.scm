@@ -1572,6 +1572,18 @@
         `(!group (!append (color ,@ltxcolor) ,arg))
         `(tmcolor ,ltxcolor ,arg))))
 
+(define (post-process-math-text t)
+  (cond ((or (nlist? t) (!= (length t) 2)) t)
+        ((nin? (car t) '(mathrm mathbf mathsf mathit mathsl mathtt)) t)
+        ((and (string? (cadr t)) (string-alpha? (cadr t))) t)
+        ((func? t 'mathrm 1) `(textrm ,(cadr t)))
+        ((func? t 'mathbf 1) `(textbf ,(cadr t)))
+        ((func? t 'mathsf 1) `(textsf ,(cadr t)))
+        ((func? t 'mathit 1) `(textit ,(cadr t)))
+        ((func? t 'mathsl 1) `(textsl ,(cadr t)))
+        ((func? t 'mathtt 1) `(texttt ,(cadr t)))
+        (else t)))
+
 (define (tmtex-with-one var val arg)
   (if (== var "mode")
       (let ((old (tmtex-env-get-previous "mode")))
@@ -1590,6 +1602,8 @@
       (let ((w (tmtex-get-with-cmd var val))
 	    (a (tmtex-get-assign-cmd var val)))
 	(cond ((and w (tm-func? arg w 1)) arg)
+              ((in? w '(mathrm mathbf mathsf mathit mathtt mathsl))
+               (post-process-math-text (list w arg)))
               (w (list w arg))
 	      (a (list '!group (tex-concat (list (list a) " " arg))))
 	      ((== "par-left" var)  (tmtex-make-parmod val "0pt" "0pt" arg #t))
@@ -2215,7 +2229,8 @@
 
 (define (tmtex-new-theorem s l)
   (ahash-set! tmtex-dynamic (string->symbol (car l)) 'environment)
-  `(newtheorem ,@l))
+  (if (and (logic-in? (car l) latex-texmacs-theorem-environment%)) ""
+      `(newtheorem ,@l)))
 
 (define (tmtex-verbatim s l)
   (if (func? (car l) 'document)
@@ -2444,22 +2459,22 @@
   (list 'text (tmtex-textual (car l))))
 
 (define (tmtex-math-up s l)
-  (list 'mathrm (tmtex-textual (car l))))
+  (post-process-math-text (list 'mathrm (tmtex-textual (car l)))))
 
 (define (tmtex-math-ss s l)
-  (list 'mathsf (tmtex-textual (car l))))
+  (post-process-math-text (list 'mathsf (tmtex-textual (car l)))))
 
 (define (tmtex-math-tt s l)
-  (list 'mathtt (tmtex-textual (car l))))
+  (post-process-math-text (list 'mathtt (tmtex-textual (car l)))))
 
 (define (tmtex-math-bf s l)
-  (list 'mathbf (tmtex-textual (car l))))
+  (post-process-math-text (list 'mathbf (tmtex-textual (car l)))))
 
 (define (tmtex-math-sl s l)
-  (list 'mathsl (tmtex-textual (car l))))
+  (post-process-math-text (list 'mathsl (tmtex-textual (car l)))))
 
 (define (tmtex-math-it s l)
-  (list 'mathit (tmtex-textual (car l))))
+  (post-process-math-text (list 'mathit (tmtex-textual (car l)))))
 
 (define (tmtex-mathord s l)
   (list 'mathord (tmtex (car l))))
@@ -3050,6 +3065,8 @@
         exercise* problem* question* solution* answer*)
    (,tmtex-enunciation 1))
   (new-theorem (,tmtex-new-theorem 2))
+  (new-remark (,tmtex-new-theorem 2))
+  (new-exercise (,tmtex-new-theorem 2))
   (verbatim (,tmtex-verbatim 1))
   (padded-center (,tmtex-padded-center 1))
   (padded-left-aligned (,tmtex-padded-left-aligned 1))

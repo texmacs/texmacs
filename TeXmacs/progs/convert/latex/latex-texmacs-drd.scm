@@ -265,7 +265,7 @@
   "tmpadded" "tmoverlined" "tmunderlined" "tmbothlined"
   "tmframed" "tmornamented")
 
-(logic-group latex-texmacs-env-preamble-environment%
+(logic-group latex-texmacs-theorem-environment%
   "theorem" "proposition" "lemma" "corollary"
   "axiom" "definition" "notation" "conjecture"
   "remark" "note" "example" "convention"
@@ -292,6 +292,8 @@
   begin-exercise* begin-problem* begin-solution*)
 
 (logic-rules
+  ((latex-texmacs-env-preamble-environment% 'x)
+   (latex-texmacs-theorem-environment% 'x))
   ((latex-texmacs-arity% 'x 0) (latex-texmacs-theorem% 'x))
   ((latex-environment-0% 'x) (latex-texmacs-theorem% 'x)))
 
