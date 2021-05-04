@@ -272,7 +272,10 @@
         (tree-go-to t 0 :end)))))
 
 (define (binary-relations)
-  (or (get-packrat-definition "std-symbols" "Relation-nolim-symbol") (list)))
+  (append (or (get-packrat-definition "std-symbols" "Relation-nolim-symbol")
+              (list))
+          (or (get-packrat-definition "std-symbols" "Assign-symbol")
+              (list))))
 
 (define (binary-relation? t)
   (in? (tm->stree t) (binary-relations)))
