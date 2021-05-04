@@ -104,7 +104,7 @@
 
   ;; Other styles
   (beamer-style%        (in? tmtex-style '("beamer" "old-beamer")))
-  (natbib-package%      (in? "natbib" tmtex-packages)))
+  (natbib-package%      (in? "cite-author-year" tmtex-packages)))
 
 (tm-define (tmtex-style-init body)
   (noop))
@@ -561,11 +561,11 @@
 
 (define (tmtex-math-operator l)
   (receive (p q) (list-break l (lambda (c) (not (char-alphabetic? c))))
-    (let* ((op (list->string p))
+    (let* ((op (tmtex-textual (list->string p)))
 	   (tail (tmtex-math-list q)))
       (if (logic-in? (string->symbol op) latex-operator%)
 	  (cons (list '!symbol (tex-apply (string->symbol op))) tail)
-	  (cons (tex-apply 'tmop op) tail)))))
+	  (cons (post-process-math-text (tex-apply 'tmop op)) tail)))))
 
 (define (tmtex-math-list l)
   (if (null? l) l
@@ -889,6 +889,25 @@
 	   (if (== s "") (cons '(!nbsp) r) (cons* s '(!nbsp) r))))
 	(else (cons (car l) (tmtex-rewrite-no-break (cdr l))))))
 
+(define (check-double-script? l sub? sup?)
+  (cond ((or (null? l) (npair? (car l))) #f)
+        ((== (caar l) 'rsub)
+         (or sub? (check-double-script? (cdr l) #t sup?)))
+        ((in? (caar l) '(rsup rprime))
+         (or sup? (check-double-script? (cdr l) sub? #t)))
+        (else #f)))
+
+(define (pre-scripts l)
+  (cond ((or (null? l) (null? (cdr l))) l)
+        ((check-double-script? (cdr l) #f #f)
+         (if (== (== (caadr l) 'rsub) (== (caaddr l) 'rsub))
+             (pre-scripts (cons `(!group (concat ,(car l) ,(cadr l)))
+                                (cddr l)))
+             (pre-scripts (cons `(!group (concat ,(car l) ,(cadr l) ,(caddr l)))
+                                (cdddr l)))))
+        (else
+         (cons (car l) (pre-scripts (cdr l))))))
+
 (define (tmtex-concat l)
   ;;(display* "l= " l "\n")
   (if (> (length l) 50)
@@ -897,12 +916,13 @@
             (t (list-tail l s)))
         (tmtex-concat `((concat ,@h) (concat ,@t)))))
     (if (tmtex-math-mode?)
-        (begin
-          ;;(display* "l1= " l "\n")
-          ;;(display* "l2= " (pre-brackets-recurse l) "\n")
-          ;;(display* "l3= " (tmtex-list (pre-brackets-recurse l)) "\n")
+        (with l* (pre-scripts l)
+          ;;(when (!= l* l) (display* l " -> " l* "\n"))
+          ;;(display* "l1= " l* "\n")
+          ;;(display* "l2= " (pre-brackets-recurse l*) "\n")
+          ;;(display* "l3= " (tmtex-list (pre-brackets-recurse l*)) "\n")
           (tex-concat (tmtex-math-concat-spaces
-                       (tmtex-list (pre-brackets-recurse l)))))
+                       (tmtex-list (pre-brackets-recurse l*)))))
         (tex-concat (tmtex-list (tmtex-rewrite-no-break l))))))
 
 (define (tmtex-rigid l)
@@ -1572,7 +1592,7 @@
 
 (define (post-process-math-text t)
   (cond ((or (nlist? t) (!= (length t) 2)) t)
-        ((nin? (car t) '(mathrm mathbf mathsf mathit mathsl mathtt)) t)
+        ((nin? (car t) '(mathrm mathbf mathsf mathit mathsl mathtt tmop)) t)
         ((and (string? (cadr t)) (string-alpha? (cadr t))) t)
         ((func? t 'mathrm 1) `(textrm ,(cadr t)))
         ((func? t 'mathbf 1) `(textbf ,(cadr t)))
@@ -1580,6 +1600,7 @@
         ((func? t 'mathit 1) `(textit ,(cadr t)))
         ((func? t 'mathsl 1) `(textsl ,(cadr t)))
         ((func? t 'mathtt 1) `(texttt ,(cadr t)))
+        ((func? t 'tmop 1) `(textrm ,(cadr t)))
         (else t)))
 
 (define (tmtex-with-one var val arg)
@@ -3037,7 +3058,6 @@
   (!file tmtex-file)
   (!arg tmtex-tex-arg))
 
-
 (logic-dispatcher tmtex-extra-methods%
   (wide-float tmtex-wide-float)
   (phantom-float tmtex-noop)
@@ -3237,6 +3257,10 @@
   (cite-textual* (,tmtex-cite-textual* -1))
   (cite-parenthesized (,tmtex-cite-parenthesized -1))
   (cite-parenthesized* (,tmtex-cite-parenthesized* -1))
+  (citet (,tmtex-cite-textual -1))
+  (citet* (,tmtex-cite-textual* -1))
+  (citep (,tmtex-cite-parenthesized -1))
+  (citep* (,tmtex-cite-parenthesized* -1))
   (render-cite (,tmtex-render-cite 1))
   ((:or cite-author cite-author-link) (,tmtex-cite-author 1))
   ((:or cite-author* cite-author*-link) (,tmtex-cite-author* 1))

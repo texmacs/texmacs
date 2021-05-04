@@ -42,14 +42,14 @@
 (tm-define (tmtex-style-init body)
   (:mode ifac-style?)
   (init-elsevier body)
-  (set! tmtex-packages (cons "natbib" tmtex-packages))
+  (set! tmtex-packages (cons "cite-author-year" tmtex-packages))
   (latex-set-packages '("natbib"))
   )
 
 (tm-define (tmtex-style-init body)
   (:mode jsc-style?)
   (init-elsevier body)
-  ;;(set! tmtex-packages (cons "natbib" tmtex-packages))
+  ;;(set! tmtex-packages (cons "cite-author-year" tmtex-packages))
   (latex-set-packages '("amsthm" "yjsco" ;;"natbib"
                         )))
 
