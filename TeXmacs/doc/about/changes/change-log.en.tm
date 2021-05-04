@@ -8,6 +8,11 @@
   <section|Changes from version 1.99.1 to 1.99.20>
 
   <\itemize>
+    <item>Better support for the most common <LaTeX> style files (1.99.20).
+
+    <item>Many corrections for the <LaTeX> export when using common <LaTeX>
+    styles (1.99.20).
+
     <item>Various bug fixes (1.99.20).
 
     <item>Added Slovak language support with the help of Peter Rap£an
