@@ -156,6 +156,16 @@
   </active*>
 
   <assign|natexlab|<macro|x|<em|<arg|x>>>>
+
+  <assign|render-citep|<macro|x|(<arg|x>)>>
+
+  <assign|citep|<xmacro|x|<render-citep|<cite-raw-1|<arg|x|0>><map-args|cite-raw+|concat|x|1>>>>
+
+  <assign|citep*|<xmacro|x|<render-citep|<cite-raw*-1|<arg|x|0>><map-args|cite-raw*+|concat|x|1>>>>
+
+  <assign|citet|<value|cite-textual>>
+
+  <assign|citet*|<value|cite-textual*>>
 </body>
 
 <\initial>
