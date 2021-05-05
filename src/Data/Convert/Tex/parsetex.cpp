@@ -1127,7 +1127,8 @@ latex_parser::parse_command (string s, int& i, string cmd, int change) {
       command_type  (var)= "length";
       command_arity (var)= 0;
     }
-    if (is_tuple (t, "\\newenvironment", 3)) {
+    if (is_tuple (t, "\\newenvironment", 3) &&
+        latex_type ("\\begin-" * string_arg (t[1])) != "enunciation") {
       string var= "\\begin-" * string_arg (t[1]);
       command_type  (var)= "user";
       command_arity (var)= 0;
@@ -1144,7 +1145,8 @@ latex_parser::parse_command (string s, int& i, string cmd, int change) {
       command_def   (var)= tree_to_str_array (u[3]);
       if (is_math_environment (t)) command_type (var)= "math-environment";
     }
-    if (is_tuple (t, "\\newenvironment*", 4)) {
+    if (is_tuple (t, "\\newenvironment*", 4) &&
+        latex_type ("\\begin-" * string_arg (t[1])) != "enunciation") {
       string var= "\\begin-" * string_arg (t[1]);
       command_type  (var)= "user";
       command_arity (var)= as_int (t[2]);
@@ -1156,7 +1158,8 @@ latex_parser::parse_command (string s, int& i, string cmd, int change) {
       command_def   (var)= tree_to_str_array (u[4]);
       if (is_math_environment (t)) command_type (var)= "math-environment";
     }
-    if (is_tuple (t, "\\newenvironment**", 5)) {
+    if (is_tuple (t, "\\newenvironment**", 5) &&
+        latex_type ("\\begin-" * string_arg (t[1])) != "enunciation") {
       string var= "\\begin-" * string_arg (t[1]);
       command_type  (var)= "user";
       command_arity (var)= -as_int (t[2]);
