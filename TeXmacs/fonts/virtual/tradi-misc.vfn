@@ -120,8 +120,12 @@
   (maltesetimes (pretend (align (crop (rotate maltese 0.7854)) + 0.5 0.5) maltese))
   (leangle angle)
   (geangle (hor-flip angle))
+  (anglele (ver-flip angle))
+  (anglege (hor-flip anglele))
   (leqangle (stack-less leangle (hor-scale minus leangle)))
   (geqangle (stack-less geangle (hor-scale minus geangle)))
+  (legeangle (stack-less leangle anglege))
+  (geleangle (stack-less geangle anglele))
 
   (frak-imath (clip frak-i * * * 0.47))
   (frak-jmath (clip frak-j * * * 0.47))

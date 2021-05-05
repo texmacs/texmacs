@@ -171,7 +171,8 @@
     "<dotsucc>" "<dotsucceq>" "<dotsucccurlyeq>"
 
     "<because>" "<between>" "<therefore>" "<lebar>" "<gebar>"
-    "<leangle>" "<geangle>" "<leqangle>" "<geqangle>")
+    "<leangle>" "<geangle>" "<leqangle>" "<geqangle>"
+    "<legeangle>" "<geleangle>")
 
   (define Relation-lim-symbol
     (:type infix)

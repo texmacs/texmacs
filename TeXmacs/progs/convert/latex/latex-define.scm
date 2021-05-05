@@ -241,8 +241,16 @@
   (gebar (mathrel (Yright)))
   (leangle (mathrel (angle)))
   (geangle (mathrel (!group (mbox (reflectbox (!math (angle)))))))
-  (leqangle (mathrel (substack (!append (angle) "\\\\" "-"))))
-  (geqangle (mathrel (!group (mbox (reflectbox (!math (substack (!append (angle) "\\\\" "-"))))))))
+  (anglege (mathrel (!group (mbox (rotatebox (!option "origin=c") "180"
+                                             (!math (angle)))))))
+  (anglele (mathrel (!group (mbox (rotatebox (!option "origin=c") "180"
+                                             (!math (!recurse (geangle))))))))
+  ;;(leqangle (mathrel (substack (!append (angle) "\\\\" (smash "-")))))
+  (leqangle (mathrel (!append (angle) " \\llap "
+                              (!group (raisebox "-1ex" (!math "-"))))))
+  (geqangle (mathrel (!group (mbox (reflectbox (!math (!recurse (leqangle))))))))
+  (legeangle (mathrel (substack (!append (leangle) "\\\\" (!recurse (anglege))))))
+  (geleangle (mathrel (substack (!append (geangle) "\\\\" (!recurse (anglele))))))
   (udots "{\\mathinner{\\mskip1mu\\raise1pt\\vbox{\\kern7pt\\hbox{.}}\\mskip2mu\\raise4pt\\hbox{.}\\mskip2mu\\raise7pt\\hbox{.}\\mskip1mu}}")
   (subsetsim (underset (sim) (subset)))
   (supsetsim (underset (sim) (supset)))

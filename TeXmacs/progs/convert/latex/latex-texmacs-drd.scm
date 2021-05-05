@@ -81,6 +81,7 @@
   assign plusassign minusassign timesassign overassign backassign
   lflux gflux colons transtype
   lebar gebar leangle geangle leqangle geqangle
+  anglele anglege legeangle geleangle
   udots subsetsim supsetsim
   rightmap leftmap leftrightmap
   tmxspace)
