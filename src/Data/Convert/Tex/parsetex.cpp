@@ -1650,20 +1650,25 @@ skip_expansion (url u) {
     s == "buxlayout.sty" ||
     s == "chicagob.sty" ||
     s == "chicagor.sty" ||
+    s == "cleveref.sty" ||
+    s == "courier.sty" ||
     s == "dfadobe.sty" ||
     s == "eepic.sty" ||
     s == "fancyhdr.sty" ||
     s == "geompsfi.sty" ||
+    s == "helvet.sty" ||
     s == "hyperref.sty" ||
     s == "IEEEtrantools.sty" ||
     s == "jair.sty" ||
     s == "jmlr2e.sty" ||
     s == "latexsym.sty" ||
+    s == "microtype.sty" ||
     s == "natbib.sty" ||
     s == "psfig.tex" ||
     s == "soul.sty" ||
     s == "tcolorbox.sty" ||
     s == "theapa.sty" ||
+    s == "tikz.sty" ||
     s == "times.sty";
 }
 
