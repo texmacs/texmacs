@@ -128,7 +128,7 @@
   (:argument last "Last page"))
 
 (tm-define (preview-file u)
-  (with s (url->system u)
+  (with s (url-sys-concretize u)
     (cond ((!= preview-command "default")
            (shell (string-append preview-command " " s " &")))
           ((or (os-mingw?) (os-win32?))

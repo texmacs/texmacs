@@ -585,6 +585,7 @@
   (url-exists-in-tex? exists_in_tex (bool url))
   (url-concretize* concretize_url (url url))
   (url-concretize concretize (string url))
+  (url-sys-concretize sys_concretize (string url))
   (url-materialize materialize (string url string))
   (url-test? is_of_type (bool url string))
   (url-regular? is_regular (bool url))

@@ -7024,6 +7024,19 @@ tmg_url_concretize (tmscm arg1) {
 }
 
 tmscm
+tmg_url_sys_concretize (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url-sys-concretize");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= sys_concretize (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_url_materialize (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url-materialize");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "url-materialize");
@@ -10551,6 +10564,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("url-exists-in-tex?",  tmg_url_exists_in_texP, 1, 0, 0);
   tmscm_install_procedure ("url-concretize*",  tmg_url_concretize_dot, 1, 0, 0);
   tmscm_install_procedure ("url-concretize",  tmg_url_concretize, 1, 0, 0);
+  tmscm_install_procedure ("url-sys-concretize",  tmg_url_sys_concretize, 1, 0, 0);
   tmscm_install_procedure ("url-materialize",  tmg_url_materialize, 2, 0, 0);
   tmscm_install_procedure ("url-test?",  tmg_url_testP, 2, 0, 0);
   tmscm_install_procedure ("url-regular?",  tmg_url_regularP, 1, 0, 0);
