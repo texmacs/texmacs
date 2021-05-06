@@ -203,7 +203,7 @@
   </active*>
 
   <assign|title-bold-hv|<macro|x|<with|font|TeX Gyre
-  Heros|font-size|<over|18|2>|font-series|bold|math-font-series|bold|<arg|x>>>>
+  Heros|font-size|<over|18|9>|font-series|bold|math-font-series|bold|<arg|x>>>>
 
   <assign|title-hv|<macro|x|<with|font|TeX Gyre
   Heros|font-size|<over|12|9>|<arg|x>>>>
