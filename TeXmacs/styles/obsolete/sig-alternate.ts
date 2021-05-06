@@ -1,4 +1,4 @@
-<TeXmacs|1.99.13>
+<TeXmacs|1.99.20>
 
 <style|<tuple|source|doc>>
 
@@ -144,29 +144,29 @@
     Sizes.
   </src-comment>>
 
-  <assign|tiny|<macro|x|<with|font-base-size|5|par-sep|1pt|<arg|x>>>>
+  <assign|tiny|<macro|x|<with|font-size|<over|5|9>|par-sep|1pt|<arg|x>>>>
 
-  <assign|very-small|<macro|x|<with|font-base-size|6|par-sep|1pt|<arg|x>>>>
+  <assign|very-small|<macro|x|<with|font-size|<over|6|9>|par-sep|1pt|<arg|x>>>>
 
-  <assign|smaller|<macro|x|<with|font-base-size|7|par-sep|1pt|<arg|x>>>>
+  <assign|smaller|<macro|x|<with|font-size|<over|7|9>|par-sep|1pt|<arg|x>>>>
 
-  <assign|small|<macro|x|<with|font-base-size|7|par-sep|2pt|<arg|x>>>>
+  <assign|small|<macro|x|<with|font-size|<over|7|9>|par-sep|2pt|<arg|x>>>>
 
-  <assign|xxsmall|<macro|x|<style-with|src-compact|none|<with|font-base-size|8|par-sep|1pt|tex-above-display-skip|<macro|<tex-len|6.6pt|3pt|4pt>>|tex-below-display-skip|<macro|<tex-len|6.6pt|3pt|4pt>>|tex-above-display-short-skip|<macro|<tex-len|0pt|2pt|0pt>>|tex-below-display-short-skip|<macro|<tex-len|3.6pt|2pt|2pt>>|<arg|x>>>>>
+  <assign|xxsmall|<macro|x|<style-with|src-compact|none|<with|font-size|<over|8|9>|par-sep|1pt|tex-above-display-skip|<macro|<tex-len|6.6pt|3pt|4pt>>|tex-below-display-skip|<macro|<tex-len|6.6pt|3pt|4pt>>|tex-above-display-short-skip|<macro|<tex-len|0pt|2pt|0pt>>|tex-below-display-short-skip|<macro|<tex-len|3.6pt|2pt|2pt>>|<arg|x>>>>>
 
-  <assign|xsmall|<macro|x|<style-with|src-compact|none|<with|font-base-size|9|par-sep|1pt|tex-above-display-skip|<macro|<tex-len|7.6pt|3pt|4pt>>|tex-below-display-skip|<macro|<tex-len|7.6pt|3pt|4pt>>|tex-above-display-short-skip|<macro|<tex-len|0pt|2pt|0pt>>|tex-below-display-short-skip|<macro|<tex-len|3.6pt|2pt|2pt>>|<arg|x>>>>>
+  <assign|xsmall|<macro|x|<style-with|src-compact|none|<with|font-size|<over|9|9>|par-sep|1pt|tex-above-display-skip|<macro|<tex-len|7.6pt|3pt|4pt>>|tex-below-display-skip|<macro|<tex-len|7.6pt|3pt|4pt>>|tex-above-display-short-skip|<macro|<tex-len|0pt|2pt|0pt>>|tex-below-display-short-skip|<macro|<tex-len|3.6pt|2pt|2pt>>|<arg|x>>>>>
 
-  <assign|normal-size|<macro|x|<style-with|src-compact|none|<with|font-base-size|9|par-sep|1.5pt|tex-above-display-skip|<macro|<tex-len|6pt|2pt|1pt>>|tex-below-display-skip|<macro|<tex-len|6pt|2pt|1pt>>|tex-above-display-short-skip|<macro|<tex-len|6pt|0pt|3pt>>|tex-below-display-short-skip|<macro|<tex-len|6pt|0pt|3pt>>|<arg|x>>>>>
+  <assign|normal-size|<macro|x|<style-with|src-compact|none|<with|font-size|<over|9|9>|par-sep|1.5pt|tex-above-display-skip|<macro|<tex-len|6pt|2pt|1pt>>|tex-below-display-skip|<macro|<tex-len|6pt|2pt|1pt>>|tex-above-display-short-skip|<macro|<tex-len|6pt|0pt|3pt>>|tex-below-display-short-skip|<macro|<tex-len|6pt|0pt|3pt>>|<arg|x>>>>>
 
-  <assign|large|<macro|x|<with|font-base-size|12|par-sep|2pt|<arg|x>>>>
+  <assign|large|<macro|x|<with|font-size|<over|12|9>|par-sep|2pt|<arg|x>>>>
 
-  <assign|larger|<macro|x|<with|font-base-size|14|par-sep|4pt|<arg|x>>>>
+  <assign|larger|<macro|x|<with|font-size|<over|14|9>|par-sep|4pt|<arg|x>>>>
 
-  <assign|very-large|<macro|x|<with|font-base-size|17|par-sep|3pt|<arg|x>>>>
+  <assign|very-large|<macro|x|<with|font-size|<over|17|9>|par-sep|3pt|<arg|x>>>>
 
-  <assign|huge|<macro|x|<with|font-base-size|20|par-sep|5pt|<arg|x>>>>
+  <assign|huge|<macro|x|<with|font-size|<over|20|9>|par-sep|5pt|<arg|x>>>>
 
-  <assign|really-huge|<macro|x|<with|font-base-size|25|par-sep|5pt|<arg|x>>>>
+  <assign|really-huge|<macro|x|<with|font-size|<over|25|9>|par-sep|5pt|<arg|x>>>>
 
   <active*|<\src-comment>
     Sectional macros.
@@ -203,10 +203,10 @@
   </active*>
 
   <assign|title-bold-hv|<macro|x|<with|font|TeX Gyre
-  Heros|font-base-size|18|font-series|bold|math-font-series|bold|<arg|x>>>>
+  Heros|font-size|<over|18|2>|font-series|bold|math-font-series|bold|<arg|x>>>>
 
   <assign|title-hv|<macro|x|<with|font|TeX Gyre
-  Heros|font-base-size|12|<arg|x>>>>
+  Heros|font-size|<over|12|9>|<arg|x>>>>
 
   <assign|doc-title|<\macro|x>
     <\surround|<new-line><vspace*|<minus|2em|10pt>>|<vspace|1.5em>>
@@ -237,7 +237,7 @@
   <assign|author-name|<macro|author|<surround|<vspace*|0.25fn>|<vspace|0.25fn>|<doc-author-block|<compound|title-hv|<arg|author>>>>>>
 
   <assign|author-affiliation|<\macro|address>
-    <surround|<vspace*|0.25fn>|<vspace|0.25fn>|<doc-author-block|<title-hv|<with|font-base-size|10|<arg|address>>>>>
+    <surround|<vspace*|0.25fn>|<vspace|0.25fn>|<doc-author-block|<title-hv|<with|font-size|<over|10|9>|<arg|address>>>>>
   </macro>>
 
   <assign|author-email|<macro|email|<doc-author-block|<title-hv|<arg|email>>>>>
