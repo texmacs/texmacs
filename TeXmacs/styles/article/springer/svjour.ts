@@ -1,4 +1,4 @@
-<TeXmacs|1.99.16>
+<TeXmacs|1.99.19>
 
 <style|source>
 
@@ -100,25 +100,25 @@
     Sizes.
   </src-comment>>
 
-  <assign|tiny|<macro|x|<with|font-base-size|5|par-sep|1pt|<arg|x>>>>
+  <assign|tiny|<macro|x|<with|font-size|0.5|par-sep|1pt|<arg|x>>>>
 
-  <assign|very-small|<macro|x|<with|font-base-size|7|par-sep|1pt|<arg|x>>>>
+  <assign|very-small|<macro|x|<with|font-size|0.7|par-sep|1pt|<arg|x>>>>
 
-  <assign|smaller|<macro|x|<with|font-base-size|9|par-sep|2pt|<arg|x>>>>
+  <assign|smaller|<macro|x|<with|font-size|0.9|par-sep|2pt|<arg|x>>>>
 
-  <assign|small|<macro|x|<style-with|src-compact|none|<with|font-base-size|9|par-sep|2pt|tex-above-display-skip|<macro|<tex-len|8.5pt|3pt|4pt>>|tex-below-display-skip|<macro|<tex-len|8.5pt|3pt|4pt>>|tex-above-display-short-skip|<macro|<tex-len|0pt|2pt|0pt>>|tex-below-display-short-skip|<macro|<tex-len|4pt|2pt|2pt>>|<arg|x>>>>>
+  <assign|small|<macro|x|<style-with|src-compact|none|<with|font-size|0.9|par-sep|2pt|tex-above-display-skip|<macro|<tex-len|8.5pt|3pt|4pt>>|tex-below-display-skip|<macro|<tex-len|8.5pt|3pt|4pt>>|tex-above-display-short-skip|<macro|<tex-len|0pt|2pt|0pt>>|tex-below-display-short-skip|<macro|<tex-len|4pt|2pt|2pt>>|<arg|x>>>>>
 
-  <assign|normal-size|<macro|x|<style-with|src-compact|none|<with|font-base-size|10|par-sep|0.2em|tex-above-display-skip|<macro|<tex-len|3mm|6pt|4pt>>|tex-below-display-skip|<macro|<tex-len|3mm|6pt|4pt>>|tex-above-display-short-skip|<macro|<tex-len|0mm|6pt|0pt>>|tex-below-display-short-skip|<macro|<tex-len|2mm|4pt|4pt>>|<arg|x>>>>>
+  <assign|normal-size|<macro|x|<style-with|src-compact|none|<with|font-size|1.0|par-sep|0.2em|tex-above-display-skip|<macro|<tex-len|3mm|6pt|4pt>>|tex-below-display-skip|<macro|<tex-len|3mm|6pt|4pt>>|tex-above-display-short-skip|<macro|<tex-len|0mm|6pt|0pt>>|tex-below-display-short-skip|<macro|<tex-len|2mm|4pt|4pt>>|<arg|x>>>>>
 
-  <assign|large|<macro|x|<with|font-base-size|12|par-sep|2pt|<arg|x>>>>
+  <assign|large|<macro|x|<with|font-size|1.2|par-sep|2pt|<arg|x>>>>
 
-  <assign|larger|<macro|x|<with|font-base-size|14|par-sep|<minus|<tmlen|16dd>|<tmlen|14pt>>|<arg|x>>>>
+  <assign|larger|<macro|x|<with|font-size|1.4|par-sep|<minus|<tmlen|16dd>|<tmlen|14pt>>|<arg|x>>>>
 
-  <assign|very-large|<macro|x|<with|font-base-size|17|par-sep|<minus|<tmlen|17dd>|<tmlen|17pt>>|<arg|x>>>>
+  <assign|very-large|<macro|x|<with|font-size|1.7|par-sep|<minus|<tmlen|17dd>|<tmlen|17pt>>|<arg|x>>>>
 
-  <assign|huge|<macro|x|<with|font-base-size|20|par-sep|5pt|<arg|x>>>>
+  <assign|huge|<macro|x|<with|font-size|2.0|par-sep|5pt|<arg|x>>>>
 
-  <assign|really-huge|<macro|x|<with|font-base-size|25|par-sep|5pt|<arg|x>>>>
+  <assign|really-huge|<macro|x|<with|font-size|2.5|par-sep|5pt|<arg|x>>>>
 
   <active*|<\src-comment>
     Sectional macros.

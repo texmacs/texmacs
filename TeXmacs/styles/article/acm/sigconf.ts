@@ -66,29 +66,29 @@
     Sizes.
   </src-comment>>
 
-  <assign|tiny|<macro|x|<with|font-base-size|5|par-sep|1pt|<arg|x>>>>
+  <assign|tiny|<macro|x|<with|font-size|<over|5|9>|par-sep|1pt|<arg|x>>>>
 
-  <assign|very-small|<macro|x|<with|font-base-size|6|par-sep|1pt|<arg|x>>>>
+  <assign|very-small|<macro|x|<with|font-size|<over|6|9>|par-sep|1pt|<arg|x>>>>
 
-  <assign|smaller|<macro|x|<with|font-base-size|7|par-sep|1pt|<arg|x>>>>
+  <assign|smaller|<macro|x|<with|font-size|<over|7|9>|par-sep|1pt|<arg|x>>>>
 
-  <assign|small|<macro|x|<with|font-base-size|7|par-sep|2pt|<arg|x>>>>
+  <assign|small|<macro|x|<with|font-size|<over|7|9>|par-sep|2pt|<arg|x>>>>
 
-  <assign|flat-size|<macro|x|<with|font-base-size|8|par-sep|1.5pt|<arg|x>>>>
+  <assign|flat-size|<macro|x|<with|font-size|<over|8|9>|par-sep|1.5pt|<arg|x>>>>
 
-  <assign|normal-size|<macro|x|<with|font-base-size|9|par-sep|1.5pt|<arg|x>>>>
+  <assign|normal-size|<macro|x|<with|font-size|<over|9|9>|par-sep|1.5pt|<arg|x>>>>
 
-  <assign|sharp-size|<macro|x|<with|font-base-size|11|par-sep|1.5pt|<arg|x>>>>
+  <assign|sharp-size|<macro|x|<with|font-size|<over|11|9>|par-sep|1.5pt|<arg|x>>>>
 
-  <assign|large|<macro|x|<with|font-base-size|12|par-sep|2pt|<arg|x>>>>
+  <assign|large|<macro|x|<with|font-size|<over|12|9>|par-sep|2pt|<arg|x>>>>
 
-  <assign|larger|<macro|x|<with|font-base-size|14|par-sep|4pt|<arg|x>>>>
+  <assign|larger|<macro|x|<with|font-size|<over|14|9>|par-sep|4pt|<arg|x>>>>
 
-  <assign|very-large|<macro|x|<with|font-base-size|17|par-sep|3pt|<arg|x>>>>
+  <assign|very-large|<macro|x|<with|font-size|<over|17|9>|par-sep|3pt|<arg|x>>>>
 
-  <assign|huge|<macro|x|<with|font-base-size|20|par-sep|5pt|<arg|x>>>>
+  <assign|huge|<macro|x|<with|font-size|<over|20|9>|par-sep|5pt|<arg|x>>>>
 
-  <assign|really-huge|<macro|x|<with|font-base-size|25|par-sep|5pt|<arg|x>>>>
+  <assign|really-huge|<macro|x|<with|font-size|<over|25|9>|par-sep|5pt|<arg|x>>>>
 
   <active*|<src-comment|Sectional macros>>
 
@@ -175,7 +175,7 @@
 
   <assign|doc-title|<\macro|x>
     <\surround|<new-line><vspace*|<minus|2em|10pt>>|<vspace|1em>>
-      <doc-title-block|<with|font-family|ss|font-series|bold|font-base-size|18|<arg|x>>>
+      <doc-title-block|<with|font-family|ss|font-series|bold|font-size|<over|18|9>|<arg|x>>>
     </surround>
   </macro>>
 
@@ -203,10 +203,10 @@
     </style-with>
   </xmacro>>
 
-  <assign|author-name|<macro|author|<surround|<vspace*|0.25fn>|<vspace|0.5fn>|<doc-author-block|<with|font-base-size|12|<arg|author>>>>>>
+  <assign|author-name|<macro|author|<surround|<vspace*|0.25fn>|<vspace|0.5fn>|<doc-author-block|<with|font-size|<over|12|9>|<arg|author>>>>>>
 
   <assign|author-affiliation|<\macro|address>
-    <surround|<vspace*|0.25fn>|<vspace|0.25fn>|<doc-author-block|<with|font-base-size|10|<arg|address>>>>
+    <surround|<vspace*|0.25fn>|<vspace|0.25fn>|<doc-author-block|<with|font-size|<over|10|9>|<arg|address>>>>
   </macro>>
 
   <assign|author-email|<macro|email|<doc-author-block|<arg|email>>>>

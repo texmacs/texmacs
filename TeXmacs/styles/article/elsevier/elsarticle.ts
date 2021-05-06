@@ -114,21 +114,21 @@
     Sizes.
   </src-comment>>
 
-  <assign|tiny|<macro|x|<with|font-base-size|6|par-sep|1pt|<arg|x>>>>
+  <assign|tiny|<macro|x|<with|font-size|<over|6|12>|par-sep|1pt|<arg|x>>>>
 
-  <assign|very-small|<macro|x|<with|font-base-size|8|par-sep|1.5pt|<arg|x>>>>
+  <assign|very-small|<macro|x|<with|font-size|<over|8|12>|par-sep|1.5pt|<arg|x>>>>
 
-  <assign|small|<macro|x|<style-with|src-compact|none|<with|font-base-size|11|par-sep|2.6pt|tex-above-display-skip|<macro|<tex-len|11pt|3pt|6pt>>|tex-below-display-skip|<macro|<tex-len|11pt|3pt|6pt>>|tex-above-display-short-skip|<macro|<tex-len|0pt|3pt|0pt>>|tex-below-display-short-skip|<macro|<tex-len|6.5pt|3.5pt|3pt>>|<arg|x>>>>>
+  <assign|small|<macro|x|<style-with|src-compact|none|<with|font-size|<over|11|12>|par-sep|2.6pt|tex-above-display-skip|<macro|<tex-len|11pt|3pt|6pt>>|tex-below-display-skip|<macro|<tex-len|11pt|3pt|6pt>>|tex-above-display-short-skip|<macro|<tex-len|0pt|3pt|0pt>>|tex-below-display-short-skip|<macro|<tex-len|6.5pt|3.5pt|3pt>>|<arg|x>>>>>
 
-  <assign|normal-size|<macro|x|<style-with|src-compact|none|<with|font-base-size|12|par-sep|0.2em|tex-above-display-skip|<macro|<tex-len|12pt|2pt|2pt>>|tex-below-display-skip|<macro|<tex-len|12pt|2pt|2pt>>|tex-above-display-short-skip|<macro|<tex-len|0pt|2pt|0pt>>|texs-below-display-short-skip|<macro|<tex-len|3.5pt|2pt|2pt>>|<arg|x>>>>>
+  <assign|normal-size|<macro|x|<style-with|src-compact|none|<with|font-size|<over|12|12>|par-sep|0.2em|tex-above-display-skip|<macro|<tex-len|12pt|2pt|2pt>>|tex-below-display-skip|<macro|<tex-len|12pt|2pt|2pt>>|tex-above-display-short-skip|<macro|<tex-len|0pt|2pt|0pt>>|texs-below-display-short-skip|<macro|<tex-len|3.5pt|2pt|2pt>>|<arg|x>>>>>
 
-  <assign|large|<macro|x|<with|font-base-size|14|par-sep|4pt|<arg|x>>>>
+  <assign|large|<macro|x|<with|font-size|<over|14|12>|par-sep|4pt|<arg|x>>>>
 
-  <assign|larger|<macro|x|<with|font-base-size|17|par-sep|5pt|<arg|x>>>>
+  <assign|larger|<macro|x|<with|font-size|<over|17|12>|par-sep|5pt|<arg|x>>>>
 
-  <assign|very-large|<macro|x|<with|font-base-size|20|par-sep|2pt|<arg|x>>>>
+  <assign|very-large|<macro|x|<with|font-size|<over|20|12>|par-sep|2pt|<arg|x>>>>
 
-  <assign|huge|<macro|x|<with|font-base-size|25|par-sep|2pt|<arg|x>>>>
+  <assign|huge|<macro|x|<with|font-size|<over|25|12>|par-sep|2pt|<arg|x>>>>
 
   <assign|really-huge|<macro|x|<huge|<arg|x>>>>
 
@@ -267,7 +267,7 @@
   </src-comment>>
 
   <assign|render-abstract|<macro|body|<\surround|<vspace*|2fn>|<right-flush><vspace|1fn>>
-    <\with|par-first|10pt|par-par-sep|5pt|font-base-size|9>
+    <\with|par-first|10pt|par-par-sep|5pt|font-size|<over|9|12>>
       <\surround|<hrule><next-line>|<next-line><hrule><yes-indent>>
         <no-indent><with|font-series|bold|<abstract-text>><vspace|5pt><no-page-break>
 
