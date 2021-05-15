@@ -1,4 +1,4 @@
-<TeXmacs|1.99.18>
+<TeXmacs|1.99.20>
 
 <style|source>
 
@@ -114,7 +114,7 @@
     </equations-base>
   </macro>>
 
-  <assign|rcl-table|<macro|body|<tformat|<cwith|1|-1|1|-1|cell-bsep|0sep>|<cwith|1|-1|1|-1|cell-tsep|0sep>|<cwith|1|-2|1|-1|cell-bsep|<eqn-row-sep>>|<cwith|1|-1|1|1|cell-hpart|1>|<cwith|1|-1|-1|-1|cell-hpart|1>|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|1|1|cell-hyphen|b>|<cwith|1|-1|2|-2|cell-halign|c>|<cwith|1|-1|-1|-1|cell-halign|l>|<cwith|1|-1|-1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-block|no>|<arg|body>>>>
+  <assign|rcl-table|<macro|body|<tformat|<cwith|1|-1|1|-1|cell-bsep|0sep>|<cwith|1|-1|1|-1|cell-tsep|0sep>|<cwith|1|-2|1|-1|cell-bsep|<over|<eqn-row-sep>|2>>|<cwith|2|-1|1|-1|cell-tsep|<over|<eqn-row-sep>|2>>|<cwith|1|-1|1|1|cell-hpart|1>|<cwith|1|-1|-1|-1|cell-hpart|1>|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|1|1|cell-hyphen|b>|<cwith|1|-1|2|-2|cell-halign|c>|<cwith|1|-1|-1|-1|cell-halign|l>|<cwith|1|-1|-1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-block|no>|<arg|body>>>>
 
   <assign|eqnarray|<\macro|body>
     <eqnarray*|<tformat|<arg|body>>>
