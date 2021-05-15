@@ -14,6 +14,7 @@
 
 import os
 import sys
+import platform
 from os.path import exists
 tmpy_home_path = os.environ.get("TEXMACS_HOME_PATH") + "/plugins/tmpy"
 if (exists (tmpy_home_path)):
@@ -127,7 +128,7 @@ sys.stdout = os.fdopen (sys.stdout.fileno(), 'w')
 if (exists (tmpy_home_path)):
     flush_verbatim ("WARNING: You are under develop mode using " + tmpy_home_path)
     flush_newline (2)
-flush_verbatim ("Python " + sys.version + "\n" +
+flush_verbatim (f"Python { platform.python_version() } [{ sys.executable }] \n" +
                "Python plugin for TeXmacs.\n" +
                "Please see the documentation in Help -> Plugins -> Python")
 flush_prompt (">>> ")
