@@ -60,8 +60,9 @@
   (latex-set-dependencies))
 
 (tm-define (latex-add-extra p)
-  (set! latex-extra-packages (cons p latex-extra-packages))
-  (latex-set-dependencies))
+  (when (nin? p latex-extra-packages)
+    (set! latex-extra-packages (cons p latex-extra-packages))
+    (latex-set-dependencies)))
 
 (tm-define (latex-set-virtual-packages ps)
   (set! latex-virtual-packages ps)

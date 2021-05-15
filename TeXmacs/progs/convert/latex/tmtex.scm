@@ -259,7 +259,9 @@
   (stack ("" "c" "" #f))
   (choice ((left\{) "l" (right.) #f))
   (tabbed ("" "l" "" #f))
-  (tabbed* ("" "l" "" #f)))
+  (tabbed* ("" "l" "" #f))
+  (rcl-table ("{\\setlength\\arraylinesep{0.4em}\\everymath={\\displaystyle}"
+              "rcl" "}" #f)))
 
 (logic-table tex-with-cmd%
   (("font-family" "rm") tmtextrm)
@@ -1484,6 +1486,8 @@
 (define (tmtex-table-apply key args x)
   (let* ((props (logic-ref tmtex-table-props% key))
          (wide? (and props (string-contains? (cadr props) "X"))))
+    (when (== key 'rcl-table)
+      (latex-add-extra "tabls"))
     (when (and (not (tmtex-math-mode?)) (not wide?))
       (set! x (tmtex-block-adjust x))
       (set! x (tmtex-figure-adjust x)))
