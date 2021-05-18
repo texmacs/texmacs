@@ -179,7 +179,7 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_widget _tmwid)
   surface ()->setMouseTracking (true);
   surface ()->setAcceptDrops (true);
 
-#if (QT_VERSION >= 0x050000)
+#if (QT_VERSION >= QT_VERSION_CHECK(5,9,0))
   surface ()->setTabletTracking (true);
   for (QWidget *parent = surface()->parentWidget();
        parent != nullptr; parent = parent->parentWidget())
