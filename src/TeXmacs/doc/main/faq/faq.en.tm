@@ -1,4 +1,4 @@
-<TeXmacs|1.99.16>
+<TeXmacs|1.99.20>
 
 <style|<tuple|tmweb|english|old-spacing|old-dots|old-lengths>>
 
@@ -244,7 +244,10 @@
 
       <item>Rename your <verbatim|~/.TeXmacs> directory (you may also delete
       it, but that will irrevocably destroy all your preferences) and
-      relaunch the editor.
+      relaunch the editor. If you use Windows, then we note that you have no
+      <hgroup|<verbatim|~/.TeXmacs>> directory, but the hidden
+      <verbatim|AppData\\Roaming\\TeXmacs> subdirectory of your home
+      directory plays the same role.
 
       <item>Try reinstalling <TeXmacs>, preferably the latest version that
       used to work for you. Old versions can be found at
