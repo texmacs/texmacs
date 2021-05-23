@@ -258,6 +258,8 @@
   <assign|implied-mmx|<macro|body|<mmx|<arg|body>>>>
 
   <assign|implied-python|<macro|body|<python|<arg|body>>>>
+  
+  <assign|implied-julia|<macro|body|<julia|<arg|body>>>>
 
   <assign|implied-scilab|<macro|body|<scilab|<arg|body>>>>
 
@@ -276,6 +278,8 @@
   <drd-props|implied-mmx|border|no>
 
   <drd-props|implied-python|border|no>
+  
+  <drd-props|implied-julia|border|no>
 
   <drd-props|implied-scilab|border|no>
 

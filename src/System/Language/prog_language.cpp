@@ -284,7 +284,7 @@ prog_language (string s) {
   prog_v1_langs
     << string("cpp")        << string("dot")    << string("java")
     << string("javascript") << string("json")   << string("octave")
-    << string("python")     << string("scala");
+    << string("python")     << string("julia")  << string("scala");
 
   if (prog_v1_langs->contains (s))
     return make (language, s, tm_new<prog_language_rep> (s));

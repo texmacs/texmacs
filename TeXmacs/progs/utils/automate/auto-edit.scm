@@ -19,7 +19,7 @@
 
 (define-group implied-tag
   implied-generic implied-verbatim implied-scm implied-cpp implied-mmx
-  implied-python implied-scilab implied-shell)
+  implied-python implied-julia implied-scilab implied-shell)
 
 (define-group variant-tag
   (implied-tag))
