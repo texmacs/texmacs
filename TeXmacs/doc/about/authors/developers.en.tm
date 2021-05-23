@@ -1,4 +1,4 @@
-<TeXmacs|1.99.19>
+<TeXmacs|1.99.20>
 
 <style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
@@ -74,6 +74,8 @@
 
     <item>Basile Audoly contributed a series of detailed bug descriptions and
     suggestions for improvements.
+
+    <item>Jeroen Wouters for several patches.
 
     <item>Sam Liddicott for several patches, including hyperlink support for
     <name|Pdf> files.
