@@ -166,7 +166,9 @@
   (write (list (url->system (string->url "$PATH"))
                (launcher-list)
                (ahash-table->list connection-session)
-               (ahash-table->list connection-scripts)))
+               (ahash-table->list connection-scripts)
+               (url->system (string->url "$TEXMACS_PATH"))
+               (url->system (string->url "$TEXMACS_HOME_PATH"))))
   (display "\n"))
 
 (define-public (get-remote-plugin-info where)
@@ -231,6 +233,12 @@
 (define remote-session-table (make-ahash-table))
 (define remote-scripts-table (make-ahash-table))
 
+(define (opt-export env opts)
+  (if (null? opts) env
+      (string-append env
+                     "; export TEXMACS_PATH=" (car opts)
+                     "; export TEXMACS_HOME_PATH=" (cadr opts))))
+
 (define-public (update-remote-tables)
   (set! remote-servers-table (make-ahash-table))
   (set! remote-supported-table (make-ahash-table))
@@ -239,7 +247,7 @@
   (set! remote-session-table (make-ahash-table))
   (set! remote-scripts-table (make-ahash-table))
   (for (entry (ahash-table->list remote-plugins-table))
-    (with (where path launch session scripts) entry
+    (with (where path launch session scripts . opts) entry
       (ahash-set! remote-servers-table where #t)
       (for (x launch)
         (with (p v c) x
@@ -247,7 +255,7 @@
           (with variant (string-append where "/" v)
             (with l (or (ahash-ref remote-variant-table p) (list))
               (ahash-set! remote-variant-table p (rcons l variant)))
-            (let* ((env (string-append "export PATH=" path))
+            (let* ((env (opt-export (string-append "export PATH=" path) opts))
                    (rem (string-quote (string-append env "; " c)))
                    (cmd (string-append "ssh " where " " rem))
                    (val `(tuple "pipe" ,cmd)))
