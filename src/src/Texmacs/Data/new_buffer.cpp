@@ -422,6 +422,7 @@ attach_subformat (tree t, url u, string fm) {
       fm != "java" &&
       fm != "scala" &&
       fm != "python" &&
+      fm != "julia" &&
       fm != "cpp" &&
       fm != "mathemagix" &&
       fm != "scilab" &&
@@ -431,6 +432,7 @@ attach_subformat (tree t, url u, string fm) {
   if (s == "java") fm= "java";
   if (s == "scala") fm= "scala";
   if (s == "py")  fm= "python";
+  if (s == "jl")  fm= "julia";
   if (s == "cpp" || s == "hpp" || s == "cc" || s == "hh") fm= "cpp";
   if (s == "mmx" || s == "mmh") fm= "mathemagix";
   if (s == "sce" || s == "sci") fm= "scilab";
