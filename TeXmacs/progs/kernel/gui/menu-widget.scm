@@ -148,6 +148,9 @@
 (define (greyed? style)
   (!= (logand style widget-style-grey) 0))
 
+(define (verb? style)
+  (!= (logand style widget-style-verb) 0))
+
 (define (recursive-occurs? w t)
   (cond ((string? t) (string-occurs? w t))
         ((list? t) (list-or (map (cut recursive-occurs? w <>) t)))
@@ -255,14 +258,15 @@
 (define (make-enum p style)
   "Make @(enum :%3 :string?) item."
   (with (tag cmd vals val width) p
-    (let* ((xval (val))
+    (let* ((translate* (if (verb? style) identity translate))
+           (xval (val))
            (xvals (vals))
            (nvals (if (and (nnull? xvals) (== (cAr xvals) ""))
                       `(,@(cDr xvals) ,xval "") `(,@xvals ,xval)))
            (xvals* (list-remove-duplicates nvals))
-           (tval (translate xval))
-           (tvals (map translate xvals*))
-           (dec (map (lambda (v) (cons (translate v) v)) xvals*))
+           (tval (translate* xval))
+           (tvals (map translate* xvals*))
+           (dec (map (lambda (v) (cons (translate* v) v)) xvals*))
            (cmd* (lambda (r) (cmd (or (assoc-ref dec r) r)))))
       (widget-enum (object->command (menu-protect cmd*))
                    tvals tval style width))))
