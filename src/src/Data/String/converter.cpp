@@ -877,20 +877,36 @@ utf8_to_hex_entities (string s) {
   return result;
 }
 
+
 string
-utf8_to_hex_string (string s) {
-  string result;
+utf8_to_utf16be_string (string s) {
+  string result, hex;
   int i, n= N(s);
   for (i=0; i<n; ) {
     unsigned int code= decode_from_utf8 (s, i);
-    string hex= as_hexadecimal (code);
-    while (N(hex) < 4) hex = "0" * hex;
-    result << hex;
+    // see e.g. https://en.wikipedia.org/wiki/UTF-16
+    if (code >= 0x10000) {
+      // supplementary planes
+      unsigned int code2= code - 0x10000;
+      unsigned int w1= 0xD800 + (code2 >> 10);
+      unsigned int w2= 0xDC00 + (code2 & 0x3FF);
+      hex= as_hexadecimal (w1);
+      while (N(hex) < 4) hex = "0" * hex;
+      result << hex;
+      hex= as_hexadecimal (w2);
+      while (N(hex) < 4) hex = "0" * hex;
+      result << hex;
+    } else {
+      // basic planes
+      string hex= as_hexadecimal (code);
+      while (N(hex) < 4) hex = "0" * hex;
+      result << hex;
+    }
   }
   return result;
 }
 
 string
 utf8_to_pdf_hex_string (string s) {
-  return "<FEFF" * utf8_to_hex_string (cork_to_utf8 (s)) * ">";
+  return "<FEFF" * utf8_to_utf16be_string (cork_to_utf8 (s)) * ">";
 }
