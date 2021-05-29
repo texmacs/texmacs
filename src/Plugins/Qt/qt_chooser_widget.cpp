@@ -263,7 +263,14 @@ qt_chooser_widget_rep::perform_dialog () {
   if (dialog->exec ()) {
     fileNames = dialog->selectedFiles();
     if (fileNames.count() > 0) {
-      string imname    = from_qstring_utf8 (fileNames.first());
+      QString imqstring = fileNames.first();
+      // QTBUG-59401: QFileDialog::setDefaultSuffix doesn't work when file path contains a dot
+      if (!defaultSuffix.isEmpty() && imqstring.contains(QLatin1Char('/'))
+          && !imqstring.endsWith(QLatin1Char('/'))
+          && imqstring.indexOf(QLatin1Char('.'), imqstring.lastIndexOf(QLatin1Char('/'))) == -1) {
+            imqstring = imqstring + QLatin1Char('.') + defaultSuffix;
+          }
+      string imname    = from_qstring_utf8 (imqstring);
       file = "(system->url " * scm_quote (imname) * ")";
       if (type == "image") {
 #if !defined(Q_OS_MAC) // && !defined(Q_WS_WIN)   //at least windows Xp and 7 lack image preview, switch to custom dialog
