@@ -107,13 +107,13 @@
       ("Last difference" (version-last-difference)))
   (when (or (inside-version?) (selection-active-any?))
     (-> "Show"
-	("Both versions" (version-show 'version-both))
-	("Old version" (version-show 'version-old))
-	("New version" (version-show 'version-new)))
+	((shortcut "Both versions" "C-|") (version-show 'version-both))
+	((shortcut "Old version" "C-left") (version-show 'version-old))
+	((shortcut "New version" "C-right") (version-show 'version-new)))
     (-> "Retain"
-	("Current version" (version-retain 'current))
-	("Old version" (version-retain 0))
-	("New version" (version-retain 1))))
+	((shortcut "Current version" "C-return") (version-retain 'current))
+	((shortcut "Old version" "C-1") (version-retain 0))
+	((shortcut "New version" "C-2") (version-retain 1))))
   (-> "Grain"
       ("Detailed" (version-set-grain "detailed"))
       ("Block" (version-set-grain "block"))
