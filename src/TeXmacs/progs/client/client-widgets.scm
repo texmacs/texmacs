@@ -195,14 +195,15 @@
       ======
       (aligned
 	(item (text "Server:")
-	  (form-enum "server"
-                     (if (== server-name "")
-                         (rcons (tm-servers) "")
-                         (cons server-name (rcons (tm-servers) "")))
-                     (if (== server-name "")
-                         (car (tm-servers))
-                         server-name)
-                     "280px"))
+	  (verb
+            (form-enum "server"
+                       (if (== server-name "")
+                           (rcons (tm-servers) "")
+                           (cons server-name (rcons (tm-servers) "")))
+                       (if (== server-name "")
+                           (car (tm-servers))
+                           server-name)
+                       "280px")))
 	(item (text "Pseudo:")
 	  (form-input "pseudo" "string"
 		      (list pseudo) "300px"))

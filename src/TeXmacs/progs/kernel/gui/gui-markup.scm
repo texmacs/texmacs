@@ -26,6 +26,7 @@
 (define-public widget-style-button 32)
 (define-public widget-style-centered 64)
 (define-public widget-style-bold 128)
+(define-public widget-style-verb 256)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Control structures
