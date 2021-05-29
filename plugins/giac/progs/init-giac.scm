@@ -4,6 +4,7 @@
 ;; MODULE      : init-giac.scm
 ;; DESCRIPTION : Initialize giac plugin
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
+;;               (C) 2021  Luka Marohnić
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -14,9 +15,9 @@
 (plugin-configure giac
   (:winpath "xcas*" ".")
   (:macpath "usr" "bin")
-  (:require (url-exists-in-path? "giac"))
+  (:require (url-exists-in-path? "icas"))
   (:tab-completion #t)
-  (:launch "giac --texmacs")
+  (:launch "icas --texmacs")
   (:session "Giac")
   (:scripts "Giac"))
 
@@ -30,9 +31,9 @@
     (import-from (utils plugins plugin-eval))
     (if (selection-active-any?)
       (let* ((t (tree->stree (the-selection)))
-	     (u (plugin-eval "giac" "default" t)))
-	(clipboard-cut "primary")
-	(insert (stree->tree u)))))
+       (u (plugin-eval "giac" "default" t)))
+  (clipboard-cut "primary")
+  (insert (stree->tree u)))))
 
   (kbd-map
     (:mode in-giac?)
