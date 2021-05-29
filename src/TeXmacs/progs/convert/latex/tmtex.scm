@@ -1764,7 +1764,7 @@
 (define (tmtex-smart-ref s l)
   (let* ((ss (map force-string l))
          (key (string-recompose ss ",")))
-    (list 'cref key)))
+    (list 'Cref key)))
 
 (define (tmtex-specific l)
   (cond ((== (car l) "latex") (tmtex-tt (cadr l)))
