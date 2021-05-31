@@ -1,13 +1,17 @@
-<TeXmacs|1.99.19>
+<TeXmacs|1.99.20>
 
 <style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.99.1 to 1.99.20>
+  <section|Changes from version 1.99.1 to 1.99.21>
 
   <\itemize>
+    <item>Various minor bug fixes (1.99.21).
+
+    <item>Updated plug-in for <name|Giac> (1.99.21).
+
     <item>Better support for the most common <LaTeX> style files (1.99.20).
 
     <item>Many corrections for the <LaTeX> export when using common <LaTeX>
