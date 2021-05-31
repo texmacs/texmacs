@@ -31,13 +31,29 @@ my_strncmp (char* s1, char* s2, int len) {
 }
 */
 
+void
+goto_next_char (string s, int &i, bool utf8) {
+  if (utf8) decode_from_utf8 (s, i);
+  else if (i < N(s)) {
+    if (s[i] == '<') {
+      i++;
+      while (i < N(s) && s[i] != '>') i++;
+      if (i < N(s)) i++;
+    }
+    else i++;
+  }
+}
+
 static string
-unpattern (string s) {
-  int i, n= N(s);
+unpattern (string s, bool utf8) {
+  int i, j, n= N(s);
   string r;
   for (i=0; i<n; ) {
-    while (i<n && is_digit (s[i])) i++;
-    if (i<n) r << s[i++];
+    while (i<n && is_digit (s[i])) goto_next_char (s, i, utf8);
+    j = i;
+    goto_next_char (s, j, utf8);
+    if (i<n) r << s(i,j);
+    i = j;
   }
   return r;
 }
@@ -85,13 +101,14 @@ load_hyphen_tables (string file_name,
     }
     if (pattern_flag && i != 0 && N(buffer) != 0) {
       string norm= hyphen_normalize (buffer);
-      patterns (unpattern (norm))= norm;
-      //cout << unpattern (norm) << " ==> " << norm << "\n";
+      patterns (unpattern (norm, !toCork))= norm;
+      //cout << buffer << " ==> " << unpattern (norm, !toCork) << " ==> " << norm << "\n";
     }
     if (hyphenation_flag && i != 0 && N(buffer) != 0) {
       string word= replace (buffer, "-", "");
       hyphenations (word)= buffer;
       //cout << word << " --> " << buffer << "\n";
+      // bug: shows the hyphenation "something} --> some-thing}" for english
     }
     if (buffer == "\\patterns{") pattern_flag=true;
     if (buffer == "\\hyphenation{") hyphenation_flag=true;
@@ -105,17 +122,22 @@ get_hyphens (string s,
   return get_hyphens (s, patterns, hyphenations, false);
 }
 
-void
-goto_next_char (string s, int &i, bool utf8) {
-  if (utf8) decode_from_utf8 (s, i);
-  else if (i < N(s)) {
-    if (s[i] == '<') {
-      i++;
-      while (i < N(s) && s[i] != '>') i++;
-      if (i < N(s)) i++;
-    }
-    else i++;
-  }
+string
+sub_str (string s, int i, int len, bool utf8) {
+  // i: start (index is encoding-dependent, i.e. it is not a number of characters)
+  // len: length in characters (encoding-independent)
+  int j=i, k=0;
+  for (k = 0; k < len; k++)
+    goto_next_char (s, j, utf8);
+  return s (i, j);
+}
+
+int
+str_ind (string s, int ind, bool utf8) {
+  int i=0, k;
+  for (k=0; k<ind; k++)
+    goto_next_char (s, i, utf8);
+  return i;
 }
 
 int
@@ -138,7 +160,7 @@ get_hyphens (string s,
   ASSERT (N(s) != 0, "hyphenation of empty string");
 
   if (utf8) s= cork_to_utf8 (uni_locase_all(s));
-  else s= locase_all(s);
+  else s= uni_locase_all(s);
 
   if (hyphenations->contains (s)) {
     string h= hyphenations [s];
@@ -158,11 +180,44 @@ get_hyphens (string s,
     //cout << s << " --> " << penalty << "\n";
     return penalty;
   }
+  else if (utf8) {
+    s= "." * s * ".";
+    // cout << s << "\n";
+    int i, j, k, l, m, len, slen= str_length (s, utf8);
+    array<int> T (slen+1);
+    for (i=0; i<N(T); i++) T[i]=0;
+    for (len=1; len < MAX_SEARCH; len++)
+      for (i=0, l=0;
+          i<str_ind (s, slen-len+1, utf8);
+          goto_next_char (s, i, utf8), l++) {
+        string r= patterns [sub_str (s, i, len, utf8)];
+        if (!(r == "?")) {
+          // cout << "  " << sub_str (s, i, len, utf8) << " => " << r << "\n";
+          for (j=0, k=0; j<=len; j++, goto_next_char (r, k, utf8)) {
+            if (k<N(r) && is_digit (r[k])) {
+              m= ((int) r[k])-((int) '0');
+              goto_next_char (r, k, utf8);
+            }
+            else m=0;
+            if (m>T[l+j]) T[l+j]=m;
+          }
+        }
+      }
+
+    array<int> penalty (N(T)-4);
+    for (i=2; i < N(T)-4; i++)
+      penalty [i-2]= (((T[i]&1)==1)? HYPH_STD: HYPH_INVALID);
+    if (N(penalty)>0) penalty[0] = penalty[N(penalty)-1] = HYPH_INVALID;
+    if (N(penalty)>1) penalty[1] = penalty[N(penalty)-2] = HYPH_INVALID;
+    if (N(penalty)>2) penalty[N(penalty)-3] = HYPH_INVALID;
+    // cout << s << " --> " << penalty << "\n";
+    return penalty;
+  }
   else {
     s= "." * s * ".";
     // cout << s << "\n";
     int i, j, k, l, m, len;
-    array<int> T (str_length (s, utf8)+1);
+    array<int> T (N(s)+1);
     for (i=0; i<N(T); i++) T[i]=0;
     for (len=1; len < MAX_SEARCH; len++)
       for (i=0, l=0; i<N(s) - len; goto_next_char (s, i, utf8), l++) {
