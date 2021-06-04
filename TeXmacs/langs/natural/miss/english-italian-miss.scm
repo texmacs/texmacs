@@ -123,87 +123,35 @@
 
 
 
-("dark grey" "grigio scuro")
-("data" "dati")
-("database entry" "voce di database")
-("database tool" "strumento database")
-("database toolbar" "barra degli strumenti del database")
-("deactivate once" "disattivare una volta")
-("dead" "morto")
+
+
+
+
+
 ("debug" "debug")
-("debugging console" "console di debug")
-("debugging tool" "strumento di debug")
-("decimal comma" "virgola decimale")
-("decimal dot" "punto decimale")
-("decomposed" "decomposto")
-("decorated" "decorato")
-("decorated wood" "legno decorato")
-("decorative" "decorativo")
-("decrease size" "Riduci dimensioni")
-("decrypt" "decifrare")
-("decrypted" "decrittografato")
-("decryption" "decodifica")
-("default size" "dimensione predefinita")
-("degrade" "degradare")
-("degraded" "degradato")
-("delete documentation cache" "elimina cache documentazione")
-("delete entries" "elimina voci")
-("delete link" "elimina collegamento")
-("delete selected entries in wallet" "elimina le voci selezionate nel portafoglio")
-("delete user identity" "elimina identità utente")
-("deleted" "cancellato")
-("describe" "descrivi")
-("describe tag" "descrivi tag")
-("destroy" "distruggere")
-("detach master" "distacco maestro")
-("detailed" "dettagliato")
-("detailed menus" "menu dettagliati")
-("details in menus" "dettagli nei menu")
-("determine margins from text width" "determina i margini dalla larghezza del testo")
-("developer" "sviluppatore")
-("developer tool" "strumento per sviluppatori")
-("device" "dispositivo")
-("diamond" "diamante")
-("differentiate" "differenziare")
-("digital" "digitale")
-("dilate" "dilatare")
-("direction of progression" "direzione della progressione")
-("direction of translation" "direzione della traduzione")
-("disable" "disabilita")
-("disable coloring on paper" "disabilita colorazione su carta")
-("disable encryption" "disabilita crittografia")
-("disabled" "disabilitato")
-("disappear" "sparisci")
-("disk" "disco")
-("display style" "stile di visualizzazione")
-("displayed formula" "formula visualizzata")
-("dissociate joined cells" "dissociate cellule unite")
-("distill encapsulated Pdf files" "file Pdf incapsulati da distill")
-("distort" "distorcere")
-("distorted" "distorto")
-("division" "divisione")
-("do not remap" "non rimappare")
-("document colors" "colori del documento")
-("document font selector" "selettore font documento")
-("document language" "lingua del documento")
-("document metadata" "metadati del documento")
-("document page format" "formato pagina documento")
-("document paragraph format" "formato paragrafo del documento")
-("document source tree preferences" "Preferenze dell'albero dei sorgenti del documento")
-("document updates run" "Esegui aggiornamenti documenti")
-("documents in separate windows" "documenti in finestre separate")
-("download" "scarica")
-("download file or directory" "scarica file o directory")
-("downwards" "verso il basso")
-("dragging" "trascinamento")
-("draw" "disegna")
-("draw graphics" "disegna grafica")
-("draw image" "disegna immagine")
-("draw over" "disegnare")
-("draw over selection" "disegna sopra la selezione")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ("drop" "drop")
-("due to" "dovuto a")
-("dynamic" "dinamico")
+
 ("eRROR" "eRROR")
 ("edit animation" "modifica animazione")
 ("edit groups of objects" "modifica gruppi di oggetti")
