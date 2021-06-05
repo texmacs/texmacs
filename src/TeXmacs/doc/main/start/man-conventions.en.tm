@@ -1,6 +1,6 @@
-<TeXmacs|1.99.13>
+<TeXmacs|1.99.21>
 
-<style|<tuple|tmdoc|english|old-spacing|old-dots>>
+<style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|Conventions for this manual>
@@ -36,14 +36,13 @@
     \;
 
     <descriptive-table|<tformat|<cwith|1|-1|3|3|cell-lborder|1ln>|<cwith|1|-1|1|-1|cell-row-span|1>|<cwith|1|-1|1|-1|cell-col-span|1>|<cwith|1|-1|1|-1|cell-bsep|3spc>|<cwith|1|-1|1|-1|cell-tsep|3sep>|<cwith|1|1|1|-1|cell-bsep|1spc>|<cwith|2|-1|1|-1|cell-bsep|2sep>|<cwith|1|-1|1|-1|cell-halign|c>|<cwith|1|-1|1|-1|cell-valign|c>|<cwith|1|-1|1|-1|cell-hyphen|n>|<table|<row|<cell|>|<cell|<key*|C->>|<cell|<key*|A->>|<cell|<key*|M->>>|<row|<\cell>
-      <name|Windows> or <name|Linux>/<name|Unix>
-
-      \ with <name|Windows> keyboard
+      <name|Windows> keyboard
     </cell>|<cell|<render-key|Ctrl>>|<cell|left <render-key|Alt>
     (<math|\<dag\>>)>|<cell|<render-key|<math|<shift|<draw-over|<phantom|ihj>|<with|gr-frame|<tuple|scale|0.707111cm|<tuple|0.5gw|0.415159gh>>|gr-mode|<tuple|group-edit|move>|gr-fill-color|black|gr-color|white|gr-snap|<tuple|control
     point|grid point|grid curve point|curve-grid intersection|curve-curve
     intersection|text border point|text border>|magnify|0.707106780759852|<graphics|<with|fill-color|black|<cline|<point|-0.190551|-0.0360167>|<point|0.149110332054505|-0.126306389734092>|<point|0.151690038364863|0.212495039026326>|<point|-0.190550998809366|0.148862283370816>>>|<with|color|white|fill-color|black|<with|color|white|fill-color|black|<line|<point|-0.193989980156105|0.049973520664109>|<point|0.145671135070777|0.0525532105172642>>>>|<with|color|white|fill-color|black|<line|<point|-0.0529667|0.176379>|<point|-0.0521067601534595|-0.072132557216563>>>>>|0cm>||2ln>>><math|><math|>
-    (<math|\<dag\>>)>>|<row|<cell|<name|Apple>>|<cell|<render-key|<with|font-family|ss|^<small|<with|font-family|ss|
+    (<math|\<dag\>>)>>|<row|<cell|<name|Apple>
+    keyboard>|<cell|<render-key|<with|font-family|ss|^<small|<with|font-family|ss|
     Control>>>> (<math|\<dag\>>)>|<cell|<render-key|<with|font-family|ss|\<option
     key\><small|<with|font-family|ss| Option>>>>
     (<math|\<dag\>>)>|<cell|<render-key|<with|font-family|ss|<small|\<place

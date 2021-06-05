@@ -1,15 +1,15 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.21>
 
-<style|<tuple|tmdoc|english|old-spacing>>
+<style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|Specifying the cell and table alignment>
 
   The most frequent formatting operation is the horizontal or vertical
-  alignment of a block of cells. You may use the
-  <shortcut|(positioning-left)>, <shortcut|(positioning-right)>,
-  <shortcut|(positioning-up)> and <shortcut|(positioning-down)> keystrokes to
-  quickly align more to the left, right, top or bottom.
+  alignment of a block of cells. You may use the <shortcut|(geometry-left)>,
+  <shortcut|(geometry-right)>, <shortcut|(geometry-up)> and
+  <shortcut|(geometry-down)> keystrokes to quickly align more to the left,
+  right, top or bottom.
 
   A specific alignment can also be selected in the <menu|Table|Horizontal
   cell alignment> and <menu|Table|Vertical cell alignment> menus.
@@ -26,7 +26,7 @@
   \Pcentered\Q, <key|r> for \Pright\Q, <key|b> for \Pbottom\Q and <key|t> for
   \Ptop\Q.
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2002|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
