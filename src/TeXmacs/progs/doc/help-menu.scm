@@ -32,6 +32,7 @@
 (menu-bind help-menu
   (when (url-exists-in-help? "about/welcome/new-welcome.en.tm")
 	("Welcome" (load-help-article "about/welcome/new-welcome"))
+	("Getting started" (load-help-article "about/welcome/start"))
 	---)
   (if (detailed-menus?)
       (when (url-exists-in-help? "main/config/man-configuration.en.tm")
@@ -145,14 +146,14 @@
 	     (load-help-article "about/contribute/interfaces/interfaces"))
 	    ("Become a TeXmacs developer"
 	     (load-help-article "about/contribute/develop/develop"))))
-      (when (url-exists-in-help? "about/projects/projects.en.tm")
-	(-> "Projects"
-	    ("Browse" (load-help-buffer "about/projects/projects"))
-	    ---
-	    ("Improving the current implementation"
-	     (load-help-buffer "about/projects/improvements"))
-	    ("Plans for the future"
-	     (load-help-buffer "about/projects/future"))))
+;;      (when (url-exists-in-help? "about/projects/projects.en.tm")
+;;	(-> "Projects"
+;;	    ("Browse" (load-help-buffer "about/projects/projects"))
+;;	    ---
+;;	    ("Improving the current implementation"
+;;	     (load-help-buffer "about/projects/improvements"))
+;;	    ("Plans for the future"
+;;	     (load-help-buffer "about/projects/future"))))
 ;;       (when (url-exists-in-help? "devel/format/format.en.tm")
 ;; 	(-> "Document format"
 ;; 	    ("Browse" (load-help-buffer "devel/format/format"))

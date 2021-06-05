@@ -1,12 +1,16 @@
-<TeXmacs|1.99.13>
+<TeXmacs|1.99.21>
 
 <style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|Welcome to GNU <TeXmacs> <TeXmacs-version>>
 
-  Thank you for using <TeXmacs>! Here are a few useful tips in case you are
-  new to the program:
+  Thank you for using <TeXmacs>!
+
+  For new users, we recommend the tutorial \P<hlink|Getting started with
+  <TeXmacs>|start.en.tm>\Q.
+
+  Other useful ressources are:
 
   <\wide-tabular>
     <tformat|<cwith|1|1|1|1|cell-hyphen|n>|<cwith|6|6|1|1|cell-hyphen|n>|<cwith|3|3|1|1|cell-hyphen|n>|<cwith|4|4|1|1|cell-hyphen|n>|<cwith|1|-1|1|-1|cell-valign|t>|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|1|-1|cell-bsep|1em>|<cwith|6|6|1|-1|cell-bsep|0em>|<cwith|1|-1|1|1|cell-rsep|2spc>|<cwith|1|1|1|-1|cell-tsep|1em>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|2|cell-valign|t>|<cwith|2|2|1|1|cell-halign|r>|<cwith|2|2|1|2|cell-bsep|1em>|<cwith|2|2|1|1|cell-rsep|2spc>|<table|<row|<cell|<image|../../../misc/images/welcome-videos.png||2.2em||>>|<\cell>
@@ -17,7 +21,7 @@
     </cell>>|<row|<cell|<image|../../../misc/images/The_Jolly_Writer.png||2.2em||>
     >|<\cell>
       <hlink|The Jolly Writer|https://www.scypress.com/book_info.html> is an
-      up-to-date guide to <TeXmacs>. The book can both be used to learn
+      up-to-date guide for <TeXmacs>. The book can both be used to learn
       <TeXmacs> and as a guide for more experienced users.
     </cell>>|<row|<cell|<image|../../../misc/images/welcome-manual.png||2.2em||>
     >|<\cell>
@@ -37,7 +41,8 @@
       <hlink|subscribe|https://www.texmacs.org/tmweb/home/ml.en.html#tmusers>
       to the <verbatim|texmacs-users@texmacs.org> mailing list and post your
       questions there. You may also browse the <hlink|list
-      archives|https://lists.texmacs.org/wws/arc/texmacs-users>.
+      archives|https://lists.texmacs.org/wws/arc/texmacs-users>. There is
+      also a <hlink|forum|http://forum.texmacs.cn/>.
     </cell>>|<row|<cell|<image|../../../misc/images/welcome-promote.png||2.2em||>
     >|<\cell>
       If you like the program, then you can also help us! Please cite
@@ -48,7 +53,7 @@
     </cell>>>>
   </wide-tabular>
 
-  <tmdoc-copyright|1998\U2020|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2021|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
