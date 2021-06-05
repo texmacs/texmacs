@@ -213,7 +213,7 @@ struct ucs_text_language_rep: language_rep {
 
 ucs_text_language_rep::ucs_text_language_rep (string lan_name, string hyph_name):
   language_rep (lan_name), patterns ("?"), hyphenations ("?")
-  { load_hyphen_tables (hyph_name, patterns, hyphenations, true); }
+  { load_hyphen_tables (hyph_name, patterns, hyphenations, false); }
 
 text_property
 ucs_text_language_rep::advance (tree t, int& pos) {
@@ -272,7 +272,7 @@ ucs_text_language_rep::advance (tree t, int& pos) {
 
 array<int>
 ucs_text_language_rep::get_hyphens (string s) {
-  return ::get_hyphens (s, patterns, hyphenations, false);
+  return ::get_hyphens (s, patterns, hyphenations, true);
 }
 
 void
