@@ -1,6 +1,6 @@
-<TeXmacs|1.99.1>
+<TeXmacs|1.99.21>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|Books and multifile documents>
@@ -22,13 +22,13 @@
 
   In order to see cross references to other chapters when editing a
   particular chapter <verbatim|ci.tm>, one may specify <verbatim|book.tm> as
-  a ``master file'' for the files <verbatim|c1.tm> to <verbatim|cn.tm> using
-  <menu|Tools|Project|Attach master...>. Currently, the chapter numbers
+  a \Pmaster file\Q for the files <verbatim|c1.tm> to <verbatim|cn.tm> using
+  <menu|Tools|Project|Attach master>. Currently, the chapter numbers
   themselves are not dealt with by this mechanism, so you may want to
   manually assign the environment variable <src-var|chapter-nr> at the start
   of each chapter file in order to get the numbering right when editing.
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2002|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -37,3 +37,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>
