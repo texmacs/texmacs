@@ -1035,7 +1035,7 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
       if (fn[nr]->supports (rewrite (c, REWRITE_MATH)))
         return sm->add_char (key, c);
     }
-    if (fam == "roman" && N(c) > 1) {
+    if ((fam == "roman" || fam == "cyrillic") && N(c) > 1) {
       tree key= tuple ("cyrillic", fam, variant, series, rshape);
       int nr= sm->add_font (key, REWRITE_CYRILLIC);
       initialize_font (nr);
