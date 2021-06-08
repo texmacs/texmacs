@@ -551,6 +551,15 @@ compress (patch archive1) {
   return make_history (patch (cun, cdr (un2)), re2);
 }
 
+static bool
+has_marker (patch archive, double m) {
+  if (nr_undo (archive) == 0) return false;
+  //if (is_marker (car (get_undo (archive)), m, false))
+  //  return nr_redo (archive) == 0;
+  if (is_marker (car (get_undo (archive)), m, false)) return true;
+  return has_marker (cdr (get_undo (archive)), m);
+}
+
 static patch
 remove_marker_bis (patch archive, double m) {
   ASSERT (nr_undo (archive) != 0, "marker not found");
@@ -568,6 +577,12 @@ remove_marker_bis (patch archive, double m) {
 
 static patch
 remove_marker (patch archive, double m) {
+  archive= compress (archive);
+  if (!has_marker (archive, m)) {
+    // NOTE: temporary fix of bug #60743: turn fatal error into warning
+    cout << "TeXmacs] warning, marker not found\n";
+    return make_compound (0);
+  }
   return remove_marker_bis (compress (archive), m);
 }
 
