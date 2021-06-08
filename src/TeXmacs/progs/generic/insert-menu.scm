@@ -58,7 +58,7 @@
                 ---
                 (group "Decomposed")
                 ("Parenthesis" (make 'render-cite))
-                ("Abreviated authors" (make 'cite-author-link))
+                ("Abbreviated authors" (make 'cite-author-link))
                 ("Full author list" (make 'cite-author*-link))
                 ("Year" (make 'cite-year-link))
                 ("Invisible" (make 'nocite))))

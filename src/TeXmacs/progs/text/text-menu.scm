@@ -786,7 +786,7 @@
   ("Affiliation" (make-author-data-element 'author-affiliation))
   ("Email" (make-author-data-element 'author-email))
   ("Homepage" (make-author-data-element 'author-homepage))
-  ("Miscellanous" (make-author-data-element 'author-misc))
+  ("Miscellaneous" (make-author-data-element 'author-misc))
   ("Note" (make-author-data-element 'author-note)))
 
 (tm-menu (focus-author-icons)

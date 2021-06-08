@@ -155,7 +155,7 @@
   (:require (style-has? "exam-style"))
   ("Class" (make-doc-data-element 'doc-exam-class))
   ("Date" (make-doc-data-element 'doc-exam-date))
-  ("Miscellanous" (make-doc-data-element 'doc-misc))
+  ("Miscellaneous" (make-doc-data-element 'doc-misc))
   ("Note" (make-doc-data-element 'doc-note)))
 
 (tm-menu (focus-title-hidden-menu)
