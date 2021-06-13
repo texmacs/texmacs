@@ -158,7 +158,7 @@ upgrade_family_name (string f) {
     t ("cyrillic")= "roman";
     t ("rm-cyrillic")= "roman";
     t ("sys-chinese")= default_chinese_font_name ();
-    t ("sys-japanese")= "roman";
+    t ("sys-japanese")= default_japanese_font_name ();
     t ("sys-korean")= default_korean_font_name ();
   }
   if (t->contains (f)) return t[f];
