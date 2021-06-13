@@ -591,6 +591,11 @@ default_chinese_font_name () {
 
 string
 default_japanese_font_name () {
+  // Set default Japanese font for macOS
+  // see: https://developer.apple.com/fonts/system-fonts/
+#ifdef OS_MACOS
+  if (tt_font_exists ("ヒラギノ角ゴシック W3")) return "Hiragino Kaku Gothic ProN";
+#endif
   if (tt_font_exists ("ipam")) return (new_fonts? "IPAMincho": "modern");
   if (tt_font_exists ("sazanami")) return "sazanami";
   if (tt_font_exists ("ttf-japanese-gothic")) return "ttf-japanese";

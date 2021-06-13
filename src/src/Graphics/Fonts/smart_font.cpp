@@ -464,6 +464,7 @@ get_unicode_range (int code) {
   else if (code >= 0x3000 && code <= 0x303f) return "cjk";
   else if (code >= 0x4e00 && code <= 0x9fcc) return "cjk";
   else if (code >= 0xff00 && code <= 0xffef) return "cjk";
+  else if (code >= 0x3040 && code <= 0x309F) return "hiragana";
   else if (code >= 0xac00 && code <= 0xd7af) return "hangul";
   else if (code >= 0x2000 && code <= 0x23ff) return "mathsymbols";
   else if (code >= 0x2900 && code <= 0x2e7f) return "mathextra";
@@ -490,7 +491,7 @@ in_cjk_range(string c) {
   int pos= 0;
   int code= decode_from_utf8 (uc, pos);
   string range= get_unicode_range (code);
-  return range == "cjk" || range == "hangul";
+  return range == "cjk" || range == "hangul" || range == "hiragana";
 }
 
 bool
