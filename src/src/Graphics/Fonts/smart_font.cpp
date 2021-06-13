@@ -483,6 +483,17 @@ get_unicode_range (string c) {
 }
 
 bool
+in_cjk_range(string c) {
+  string uc= strict_cork_to_utf8 (c);
+  if (N(uc) == 0) return false;
+
+  int pos= 0;
+  int code= decode_from_utf8 (uc, pos);
+  string range= get_unicode_range (code);
+  return range == "cjk" || range == "hangul";
+}
+
+bool
 in_unicode_range (string c, string range) {
   string uc= strict_cork_to_utf8 (c);
   if (N(uc) == 0) return "";
@@ -959,6 +970,12 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
         if (wanted == "") ok= true;
         else if (contains (wanted, given)) ok= true;
         else if (in_unicode_range (c, wanted)) ok= true;
+        else if (in_cjk_range(c)) {
+          // For Korean charactors, its default family is `sys-korean`
+          // `sys-korean` is expanded to `cjk=Apple SD Gothic Neo,roman`
+          // There are actually two ranges (cjk/hangul) for Korean characters
+          ok= true;
+        }
         else if (wanted == substitute_math_letter (c, 2)) ok= true;
         else if (wanted == c) ok= true;
         else if (in_collection (c, wanted)) ok= true;
@@ -1274,8 +1291,8 @@ smart_font_rep::resolve (string c) {
   string virt= find_in_virtual (c);
   if (math_kind != 0 && !unicode_provides (c) && virt == "")
     if (!starts (c, "<left-") &&
-	!starts (c, "<right-") &&
-	!starts (c, "<mid-")) {
+        !starts (c, "<right-") &&
+        !starts (c, "<mid-")) {
       //cout << "Found " << c << " in other\n";
       return sm->add_char (tuple ("other"), c);
     }
