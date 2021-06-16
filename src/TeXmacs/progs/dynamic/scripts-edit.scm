@@ -398,3 +398,10 @@
          (if (not (tree-is? t 1 'document))
              (tree-set t 1 `(document ,(tree-ref t 1))))
          (insert-return))))
+
+(tm-define (kbd-remove t forwards?)
+  (:require (and (or (tree-is? t 'converter-input)
+                     (tree-is? t 'converter-eval))
+                 (tm-ref t 1)
+                 (tree-empty? (tree-ref t 1))))
+  (remove-structure-upwards))
