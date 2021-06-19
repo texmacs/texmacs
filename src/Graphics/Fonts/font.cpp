@@ -598,8 +598,7 @@ default_japanese_font_name () {
 #endif
 
 #ifdef OS_MINGW
-  if (tt_font_exists ("msgothic")) return "MS PGothic Regular";
-  if (tt_font_exists ("msmincho")) return "MS PMincho Regular";
+  if (tt_font_exists ("msmincho")) return "MS PMincho";
 #endif
 
   if (tt_font_exists ("ipam")) return (new_fonts? "IPAMincho": "modern");
@@ -618,7 +617,7 @@ default_korean_font_name () {
 #endif
 
 #ifdef OS_MINGW
-  if (tt_font_exists ("batang")) return "Batang Regular";
+  if (tt_font_exists ("batang")) return "Batang";
 #endif
 
   if (tt_font_exists ("unbatang")) return (new_fonts? "UnBatang": "modern");
