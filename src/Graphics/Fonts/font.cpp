@@ -596,12 +596,16 @@ default_japanese_font_name () {
 #ifdef OS_MACOS
   if (tt_font_exists ("ヒラギノ角ゴシック W3")) return "Hiragino Kaku Gothic ProN";
 #endif
+
+#ifdef OS_MINGW
+  if (tt_font_exists ("msgothic")) return "MS PGothic Regular";
+  if (tt_font_exists ("msmincho")) return "MS PMincho Regular";
+#endif
+
   if (tt_font_exists ("ipam")) return (new_fonts? "IPAMincho": "modern");
   if (tt_font_exists ("sazanami")) return "sazanami";
   if (tt_font_exists ("ttf-japanese-gothic")) return "ttf-japanese";
   if (tt_font_exists ("ヒラギノ明朝 ProN W6")) return "kaku";
-  if (tt_font_exists ("MS PGothic")) return "ms-gothic";
-  if (tt_font_exists ("MS PMincho")) return "ms-mincho";
   return "roman";  
 }
 
@@ -612,6 +616,11 @@ default_korean_font_name () {
 #ifdef OS_MACOS
   if (tt_font_exists ("AppleSDGothicNeo")) return "Apple SD Gothic Neo";
 #endif
+
+#ifdef OS_MINGW
+  if (tt_font_exists ("batang")) return "Batang Regular";
+#endif
+
   if (tt_font_exists ("unbatang")) return (new_fonts? "UnBatang": "modern");
   if (tt_font_exists ("UnBatang")) return (new_fonts? "UnBatang": "modern");
   if (tt_font_exists ("AppleGothic")) return "apple-gothic";
