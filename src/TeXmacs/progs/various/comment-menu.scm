@@ -88,9 +88,18 @@
 
 (kbd-map
   (:mode in-comment?)
-  ("std ;" (make-unfolded-comment "comment"))
   ("std :" (make-folded-comment "comment"))
   ("std [" (go-to-comment :previous))
   ("std ]" (go-to-comment :next))
   ("std {" (go-to-comment :first))
   ("std }" (go-to-comment :last)))
+
+(kbd-map
+  (:mode in-comment?)
+  (:profile no-macos)
+  ("std ;" (make-unfolded-comment "comment")))
+
+(kbd-map
+  (:mode in-comment?)
+  (:profile macos)
+  ("std /" (make-unfolded-comment "comment")))

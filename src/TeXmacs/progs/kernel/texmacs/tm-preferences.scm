@@ -149,6 +149,8 @@
   ;;(display* "Check look and feel " t "\n")
   (cond ((list? t) (list-or (map test-look-and-feel t)))
         ((symbol? t) (test-look-and-feel (symbol->string t)))
+        ((and (string? t) (string-starts? t "no-"))
+         (not (test-look-and-feel (substring t 3 (string-length t)))))
         (else
           (with s (look-and-feel)
             (or (== t s) (and (== t "std") (!= s "emacs")))))))
