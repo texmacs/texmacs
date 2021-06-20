@@ -764,10 +764,17 @@ else (WIN32)
 endif (WIN32)
 
 install (FILES TeXmacs/misc/mime/texmacs.desktop DESTINATION share/applications)
-install (FILES TeXmacs/misc/images/texmacs.svg DESTINATION share/icons/gnome/scalable/apps)
-install (FILES TeXmacs/misc/images/text-x-texmacs.svg DESTINATION share/icons/gnome/scalable/mimetypes)
+install (FILES TeXmacs/misc/images/texmacs.svg RENAME TeXmacs.svg
+  DESTINATION share/icons/hicolor/scalable/apps)
+install (FILES TeXmacs/misc/images/text-x-texmacs.svg
+  DESTINATION share/icons/hicolor/scalable/mimetypes)
 install (FILES TeXmacs/misc/mime/texmacs.xml DESTINATION share/mime/packages)
 install (FILES TeXmacs/misc/pixmaps/TeXmacs.xpm DESTINATION share/pixmaps)
+foreach (size IN ITEMS 16 22 24 32 48 64 128 256 512)
+  message (STATUS ${size})
+  install (FILES TeXmacs/misc/images/texmacs-${size}.png RENAME TeXmacs.png
+    DESTINATION share/icons/hicolor/${size}x${size}/apps/)
+endforeach ()
 
 ### --------------------------------------------------------------------
 ### Testing
