@@ -25,7 +25,7 @@
 (tm-menu (help-plugins-menu)
   (for (name (list-filter (map symbol->string (plugin-list))
                           plugin-documented?))
-    (with menu-name (session-name name)
+    (with menu-name `(verbatim ,(session-name name))
       ((eval menu-name)
        (load-help-article (string-append name))))))
 
