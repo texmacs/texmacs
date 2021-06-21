@@ -1,13 +1,21 @@
-<TeXmacs|1.99.12>
+<TeXmacs|1.99.21>
 
-<style|<tuple|tmweb2|old-dots>>
+<style|<tuple|tmweb2|old-dots|old-lengths>>
 
 <\body>
   <tmweb-current|Home|Videos><tmweb-title|<TeXmacs>
   videos|<tmweb-home-links>>
 
   <\center>
-    <tiny-switch|<hidden|<\youtube-video-legend|ga4OIf6oviM>
+    <tiny-switch|<shown|<\youtube-video-legend|H46ON2FB30U>
+      <strong|A quick tour of <TeXmacs>>
+
+      This video quickly demonstrates some of the most important features of
+      TeXmacs: starting a scientific article, typing mathematical formulas,
+      inserting and annotating pictures, citations, references, drawing
+      pictures, document styles and fonts, Html export, laptop presentations,
+      animations.
+    </youtube-video-legend|400|250>>|<hidden|<\youtube-video-legend|ga4OIf6oviM>
       <strong|Keyboard conventions for the <TeXmacs> videos>
 
       In this video, we briefly discuss the conventions that are used in the
@@ -17,7 +25,7 @@
 
       In this demo, we show how to type your first scientific article using
       GNU <TeXmacs>.
-    </youtube-video-legend|400|250>>|<shown|<\youtube-video-legend|iqjgN_KNHgM>
+    </youtube-video-legend|400|250>>|<hidden|<\youtube-video-legend|iqjgN_KNHgM>
       <strong|Typing basic mathematical formulas>
 
       How to type basic mathematical formulas with the GNU <TeXmacs>
@@ -62,6 +70,20 @@
       Cette deuxième partie montre comment corriger d'éventuels problèmes.
     </youtube-video-legend|400|250>>>
   </center>
+
+  <section*|Teasers>
+
+  <\tmweb-hlist>
+    <\youtube-thumbnail-legend|H46ON2FB30U>
+      <strong|A quick tour of <TeXmacs>>
+
+      This video quickly demonstrates some of the most important features of
+      TeXmacs: starting a scientific article, typing mathematical formulas,
+      inserting and annotating pictures, citations, references, drawing
+      pictures, document styles and fonts, Html export, laptop presentations,
+      animations.
+    </youtube-thumbnail-legend|20em|12.5em>
+  </tmweb-hlist>
 
   <section*|<TeXmacs> videos for scientists>
 
