@@ -774,7 +774,7 @@ QTMWidget::dropEvent (QDropEvent *event)
 #else
       name= from_qstring (l[i].toLocalFile ());
 #endif
-      string extension = suffix (name);
+      string extension = locase_all (suffix (name));
       if ((extension == "eps") || (extension == "ps")   ||
 #if (QT_VERSION >= 0x050000)
           (extension == "svg") ||
@@ -811,7 +811,7 @@ QTMWidget::dropEvent (QDropEvent *event)
     tree t (IMAGE, tree (RAW_DATA, string (buf.constData (), buf.size ()), "pdf"),
                    "", "", "", "");
     doc << t;
-  }  else if (md->hasText ()) {
+  } else if (md->hasText ()) {
     buf= md->text ().toUtf8 ();
     doc << string (buf.constData (), buf.size ());
   }
