@@ -751,9 +751,18 @@ QTMWidget::dragEnterEvent (QDragEnterEvent *event)
 int drop_payload_serial  =0;
 hashmap<int, tree> payloads;
 
+string
+drop_suffix (string s) {
+  int i, n= N(s);
+  for (i=n-1; i>=0; i--)
+    if (s[i]=='.') break;
+  if ((i>0) && (i<n-1))
+    return locase_all (s (i+1, N(s)));
+  return "";
+}
+ 
 void
-QTMWidget::dropEvent (QDropEvent *event)
-{
+QTMWidget::dropEvent (QDropEvent *event) {
   if (is_nil (tmwid)) return;
   
   QPoint point = event->pos () + origin ();
@@ -774,7 +783,7 @@ QTMWidget::dropEvent (QDropEvent *event)
 #else
       name= from_qstring (l[i].toLocalFile ());
 #endif
-      string extension = locase_all (suffix (name));
+      string extension = drop_suffix (name);
       if ((extension == "eps") || (extension == "ps")   ||
 #if (QT_VERSION >= 0x050000)
           (extension == "svg") ||
