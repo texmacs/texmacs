@@ -1,4 +1,4 @@
-<TeXmacs|1.99.20>
+<TeXmacs|1.99.21>
 
 <style|<tuple|tmweb2|old-dots|old-lengths>>
 
@@ -165,6 +165,12 @@
 
       <item><hlink|<TeXmacs> package for Fedora-31 with a 64 bits Intel/AMD
       processor|<merge|http://www.texmacs.org/Download/ftp/tmftp/Linux/Fedora_31/|<merge|<TeXmacs-version-release|devel>|.x86_64.rpm>>>
+
+      <item><hlink|<TeXmacs> package for Fedora-32 with a 64 bits Intel/AMD
+      processor|<merge|http://www.texmacs.org/Download/ftp/tmftp/Linux/Fedora_32/|<merge|<TeXmacs-version-release|devel>|.x86_64.rpm>>>
+
+      <item><hlink|<TeXmacs> package for Fedora-33 with a 64 bits Intel/AMD
+      processor|<merge|http://www.texmacs.org/Download/ftp/tmftp/Linux/Fedora_33/|<merge|<TeXmacs-version-release|devel>|.x86_64.rpm>>>
     </itemize>
 
     <item>Install the package using
