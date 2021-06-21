@@ -1,6 +1,6 @@
-<TeXmacs|1.99.10>
+<TeXmacs|1.99.14>
 
-<style|tmweb2>
+<style|<tuple|tmweb2|old-dots|old-lengths>>
 
 <\body>
   <tmweb-current|Download|MacOS><tmweb-title|Installing <TeXmacs> for
@@ -27,6 +27,10 @@
         applications folder.
 
         <item>Launch <TeXmacs> from your applications folder.
+
+        <item>When opening <TeXmacs> for the first time, you may need to go
+        to \PSecurity & Privacy\Q in the system preferences and allow the
+        program to be executed.
       </itemize>
     </cell>>|<row|<cell|<item-pic|../images/Book_icon_1.png>>|<\cell>
       <strong|Learning <TeXmacs>>
@@ -61,7 +65,7 @@
     </cell>>>>>
   </tmweb-split>
 
-  <tmdoc-copyright|1999--2019|Joris van der Hoeven|Massimiliano
+  <tmdoc-copyright|1999\U2019|Joris van der Hoeven|Massimiliano
   Gubinelli|Denis Raux>
 
   <tmweb-license>
