@@ -484,23 +484,17 @@ get_unicode_range (string c) {
 }
 
 bool
-in_cjk_range(string c) {
-  string uc= strict_cork_to_utf8 (c);
-  if (N(uc) == 0) return false;
-
-  int pos= 0;
-  int code= decode_from_utf8 (uc, pos);
-  string range= get_unicode_range (code);
-  return range == "cjk" || range == "hangul" || range == "hiragana";
-}
-
-bool
 in_unicode_range (string c, string range) {
   string uc= strict_cork_to_utf8 (c);
   if (N(uc) == 0) return "";
   int pos= 0;
   int code= decode_from_utf8 (uc, pos);
-  if (range == get_unicode_range (code)) return range != "";
+  string got= get_unicode_range (code);
+  if (range == got) return range != "";
+  if (range == "cjk" && got == "hangul") return true;
+    // For Korean charactors, its default family is `sys-korean`
+    // `sys-korean` is expanded to `cjk=Apple SD Gothic Neo,roman`
+    // There are actually two ranges (cjk/hangul) for Korean characters
   if (range == "mathlarge" || range == "mathbigop")
     if (starts (c, "<big-") ||
         (code >= 0x220f && code <= 0x2211) ||
@@ -971,12 +965,6 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
         if (wanted == "") ok= true;
         else if (contains (wanted, given)) ok= true;
         else if (in_unicode_range (c, wanted)) ok= true;
-        else if (in_cjk_range(c)) {
-          // For Korean charactors, its default family is `sys-korean`
-          // `sys-korean` is expanded to `cjk=Apple SD Gothic Neo,roman`
-          // There are actually two ranges (cjk/hangul) for Korean characters
-          ok= true;
-        }
         else if (wanted == substitute_math_letter (c, 2)) ok= true;
         else if (wanted == c) ok= true;
         else if (in_collection (c, wanted)) ok= true;
