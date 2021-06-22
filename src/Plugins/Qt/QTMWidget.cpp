@@ -758,14 +758,12 @@ QTMWidget::dropEvent (QDropEvent *event) {
   QPoint point = event->pos () + origin ();
   coord2 pt= from_qpoint (point);
 
-  //qDebug() << event;
   tree doc (CONCAT);
   const QMimeData *md= event->mimeData ();
   QByteArray buf;
 
   if (md->hasUrls ()) {
     QList<QUrl> l= md->urls ();
-//    qDebug() << l;
     for (int i=0; i<l.size (); i++) {
       string name;
 #ifdef OS_MACOS
