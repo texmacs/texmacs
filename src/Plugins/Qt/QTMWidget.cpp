@@ -773,6 +773,7 @@ QTMWidget::dropEvent (QDropEvent *event) {
 #else
       name= from_qstring (l[i].toLocalFile ());
 #endif
+      string orig_name= name;
 #ifdef OS_MINGW
       if (N(name) >=2 && is_alpha (name[0]) && name[1] == ':')
         name= "/" * locase_all (name (0, 1)) * name (2, N(name));
@@ -785,7 +786,7 @@ QTMWidget::dropEvent (QDropEvent *event) {
           (extension == "pdf") || (extension == "png")  ||
           (extension == "jpg") || (extension == "jpeg")) {
         string w, h;
-        qt_pretty_image_size (url_system (name), w, h);
+        qt_pretty_image_size (url_system (orig_name), w, h);
         tree im (IMAGE, name, w, h, "", "");
         doc << im;
       } else {
