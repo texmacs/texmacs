@@ -1,13 +1,15 @@
-<TeXmacs|1.99.20>
+<TeXmacs|1.99.21>
 
 <style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.99.1 to 1.99.21>
+  <section|Changes from version 1.99.1 to 2.1>
 
   <\itemize>
+    <item>Minor bug fixes (2.1).
+
     <item>Various minor bug fixes (1.99.21).
 
     <item>Updated plug-in for <name|Giac> (1.99.21).
