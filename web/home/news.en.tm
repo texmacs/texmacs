@@ -1,10 +1,23 @@
-<TeXmacs|1.99.15>
+<TeXmacs|2.1>
 
 <style|<tuple|tmweb2|old-dots|old-lengths>>
 
 <\body>
   <tmweb-current|Home|News><tmweb-title|Latest news about
   <TeXmacs>|<tmweb-home-links>>
+
+  <section*|Version 2.1 has been released>
+
+  This version of <TeXmacs> consolidates many developments that took place in
+  the last decade. Most importantly, the interface is now based on <name|Qt>,
+  which allowed us develop native versions for <name|Linux>, <name|MacOS>,
+  and <name|Windows>. <TeXmacs> has evolved from a scientific text editor
+  into a scientific office suite, with an integrated presentation mode,
+  technical drawing editor, versioning tools, bibliography tool, etc. The
+  typesetting quality has continued to improve with a better support of
+  microtypography and a large variety of fonts. The converters for <LaTeX>
+  and <name|Html> have also been further perfected and <TeXmacs> now comes
+  with a native support for <name|Pdf>.
 
   <section*|Tricks for references and citations>
 
