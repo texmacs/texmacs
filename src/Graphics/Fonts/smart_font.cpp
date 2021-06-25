@@ -491,10 +491,11 @@ in_unicode_range (string c, string range) {
   int code= decode_from_utf8 (uc, pos);
   string got= get_unicode_range (code);
   if (range == got) return range != "";
-  if (range == "cjk" && got == "hangul") return true;
-    // For Korean charactors, its default family is `sys-korean`
-    // `sys-korean` is expanded to `cjk=Apple SD Gothic Neo,roman`
-    // There are actually two ranges (cjk/hangul) for Korean characters
+  if (range == "cjk" && (got == "hangul" || got == "hiragana")) return true;
+    // There are actually two ranges (cjk/hangul) for Korean characters and
+    // two ranges (cjk/hiragana) for Japanese characters
+    // For example, on macOS, `sys-korean` is expanded to `cjk=Apple SD Gothic Neo,roman`,
+    // assuming that `Apple SD Gothic Neo` is the default korean font on macOS
   if (range == "mathlarge" || range == "mathbigop")
     if (starts (c, "<big-") ||
         (code >= 0x220f && code <= 0x2211) ||
