@@ -1,3 +1,11 @@
+# GNU TeXmacs - Qt6 branch
+
+This branch is EXPERIMENTAL. It contains patches to run TeXmacs with Qt5/6. PR and testing are welcome. 
+
+WARNING: Be aware that there could be serious bugs (even if we do not expect them). Use at your own risk.
+
+Below the original README.md
+
 # GNU TeXmacs
 [![Join the chat at https://gitter.im/texmacs/Lobby](https://badges.gitter.im/texmacs/Lobby.svg)](https://gitter.im/texmacs/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
