@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
-<TeXmacs version="1.99.13">
-  <style><tuple><tm-arg>tmdoc</tm-arg><tm-arg>chinese</tm-arg><tm-arg>old-spacing</tm-arg><tm-arg>old-dots</tm-arg></tuple></style>
+<TeXmacs version="2.1">
+  <style><tuple><tm-arg>tmdoc</tm-arg><tm-arg>chinese</tm-arg><tm-arg>old-spacing</tm-arg><tm-arg>old-dots</tm-arg><tm-arg>old-lengths</tm-arg></tuple></style>
   
   <body>
     <tm-par>
@@ -162,7 +162,7 @@
     </tm-par>
     
     <tm-par>
-      <tmdoc-copyright><tm-arg>2013–2020</tm-arg><tm-arg>Joris van der
+      <tmdoc-copyright><tm-arg>2013–2021</tm-arg><tm-arg>Joris van der
       Hoeven</tm-arg><tm-arg>沈达</tm-arg></tmdoc-copyright>
     </tm-par>
     
