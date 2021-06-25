@@ -121,32 +121,35 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; File history
-;; 1. Eval `git log --pretty=%ai%n%an%n%s%n%H%n <name>`
+;; 1. Eval `git log --follow --pretty=%ai%n%an%n%s%n%H --name-only <name>`
 ;; 2. Split the result by \n\n
 ;; 3. Transform each string record to texmacs document
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (string->commit str name)
-  (if (string-null? str) '()
-      (with alist (string-split str #\nl)
-        (with (date by msg commit . opts) alist
-          (set! date (string-take date (min 19 (string-length date))))
-          (list commit by date msg)))))
+(define (git-history-item alist root)
+  (with (date by msg commit blank path) alist
+        (list
+         (string-append commit ":"
+          (url->tmfs-string (system->url (string-append root "/" path))))
+         by date msg)))
+
+(define (git-history-items alist root)
+  (if (< (length alist) 6)
+      (list)
+      (cons (git-history-item (list-take alist 6) root)
+            (git-history-items (list-drop alist 6) root))))
 
 (tm-define (version-history name)
   (:require (== (version-tool name) "git"))
   (let* ((cmd (string-append
-               (git-command name) " log --pretty=%ai%n%an%n%s%n%H%n"
+               (git-command name) " log --follow --pretty=%ai%n%an%n%s%n%H --name-only"
                NR_LOG_OPTION
                (url->system name)))
+         (root (current-git-root))
          (ret1 (eval-system cmd))
-         (ret2 (string-decompose ret1 "\n\n")))
+         (ret2 (string-decompose ret1 "\n")))
 
-    (define (string->commit-file str)
-      (string->commit str (url->tmfs-string name)))
-    (and (> (length ret2) 0)
-         (string-null? (cAr ret2))
-         (map string->commit-file (cDr ret2)))))
+    (git-history-items ret2 root)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; File revisions
