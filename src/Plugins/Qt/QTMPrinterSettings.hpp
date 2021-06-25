@@ -14,7 +14,8 @@
 
 #include <QObject>
 
-#include <QPrinter>  // Provides QPrinter::PaperSize
+#include <QPrinter>
+#include <QPageSize>  // Provides QPageSize::PageSizeId
 #include <QProcess>
 #include <QHash>
 
@@ -99,8 +100,8 @@ public:
    */
   virtual QList<QPair<QString,QString> > availablePrinters() = 0;
   
-  static QString qtPaperSizeToQString(const QPrinter::PaperSize);
-  static QPrinter::PaperSize qStringToQtPaperSize(const QString&);
+  static QString qtPaperSizeToQString(const QPageSize::PageSizeId);
+  static QPageSize::PageSizeId qStringToQtPaperSize(const QString&);
 
 signals:
   void doneReading();

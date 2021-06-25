@@ -21,8 +21,9 @@
 #include <QFont>
 #include <QUrl>
 
-
+#if (QT_VERSION < 0x060000)
 class QStringList;
+#endif
 class QKeySequence;
 
 typedef quartet<SI,SI,SI,SI> coord4;

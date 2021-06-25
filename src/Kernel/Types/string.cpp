@@ -437,3 +437,6 @@ system_wait (string message, string argument, int level) {
   }
   else the_wait_handler (message, argument, level);
 }
+
+
+int N (c_string s) { return strlen (s->value); }

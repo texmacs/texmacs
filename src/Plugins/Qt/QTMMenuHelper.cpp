@@ -200,6 +200,9 @@ QWidget*
 QTMMinibarAction::createWidget (QWidget* parent) {
   static QImage* pxm = xpm_image ("tm_add.xpm"); // See qt_tm_widget.cpp 
   QSize sz = pxm ? pxm->size() : QSize (16, 16);
+#if (QT_VERSION >= 0x050000)
+   if (pxm) sz *= 1.0/pxm->devicePixelRatio ();
+#endif
   qt_tm_widget_rep::tweak_iconbar_size (sz);
   
   if (DEBUG_QT_WIDGETS) debug_widgets << "QTMMinibarAction::createWidget\n";
@@ -785,7 +788,7 @@ QTMRefreshWidget::QTMRefreshWidget (qt_widget _tmwid, string _strwid, string _ki
                    this, SLOT (doRefresh (string)));
   QVBoxLayout* l = new QVBoxLayout (this);
   l->setContentsMargins (0, 0, 0, 0);
-  l->setMargin (0);
+//  l->setMargin (0);
   setLayout (l);
   
   doRefresh ("init");
@@ -873,7 +876,7 @@ QTMRefreshableWidget::QTMRefreshableWidget (qt_widget _tmwid, object _prom, stri
                    this, SLOT (doRefresh (string)));
   QVBoxLayout* l = new QVBoxLayout (this);
   l->setContentsMargins (0, 0, 0, 0);
-  l->setMargin (0);
+//  l->setMargin (0);
   setLayout (l);
   
   doRefresh ("init");
@@ -974,7 +977,7 @@ QTMComboBox::addItemsAndResize (const QStringList& texts, string ww, string hh) 
   QComboBox::addItems (texts);
   
     ///// Calculate the minimal contents size:
-  calcSize = QApplication::globalStrut ();
+  calcSize = QSize(2, 2);
   const QFontMetrics& fm = fontMetrics ();
   
   for (int i = 0; i < count(); ++i) {
@@ -1166,13 +1169,13 @@ BEGIN_SLOT
     // docs state the index is valid, no need to check
   QVariant d = tmModel()->data (index, QTMTreeModel::CommandRole);
     // If there's no CommandRole, we return the subtree by default
-  if (!d.isValid() || !d.canConvert (QVariant::String))
+  if (!d.isValid() || !d.canConvert (QMetaType::QString))
     arguments = cons (tmModel()->item_from_index (index), arguments);
   else
     arguments = cons (from_qstring (d.toString()), arguments);
   int cnt = QTMTreeModel::TMUserRole;
   d = tmModel()->data (index, cnt);
-  while (d.isValid() && d.canConvert (QVariant::String)) {
+  while (d.isValid() && d.canConvert (QMetaType::QString)) {
     arguments = cons (from_qstring (d.toString()), arguments);
     d = tmModel()->data (index, ++cnt);
   }

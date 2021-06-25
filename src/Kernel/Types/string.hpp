@@ -101,6 +101,7 @@ public:
   inline c_string_rep (char* v = NULL): value (v) {}
   inline ~c_string_rep () { if (value != NULL) tm_delete_array (value); }
   friend class c_string;
+  friend int N (c_string s);
 };
 
 class c_string {
@@ -115,5 +116,7 @@ public:
   inline operator char* () const { return rep->value; }
 };
 CONCRETE_CODE(c_string);
+
+int N (c_string s);
 
 #endif // defined STRING_H

@@ -22,7 +22,7 @@
 
 cmake_minimum_required (VERSION 3.13)
 
-set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD 17)
 set (CMAKE_AUTOMOC ON)
 set (CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -573,13 +573,33 @@ if (TEXMACS_GUI MATCHES "Qt.*")
       ${QT_INCLUDE_DIR}
     )
     include (${QT_USE_FILE})
+  elseif (TEXMACS_GUI STREQUAL "Qt6")
+    find_package (Qt6 COMPONENTS Core Gui Widgets PrintSupport Core5Compat REQUIRED)
+    set (QT_LIBRARIES Qt6::Core Qt6::Gui Qt6::Widgets Qt6::PrintSupport Qt6::Core5Compat)
+  
+    set (TeXmacs_Include_Dirs
+      ${TeXmacs_Include_Dirs}
+      ${Qt6Core_INCLUDE_DIRS}
+      ${Qt6Gui_INCLUDE_DIRS}
+      ${Qt6Widgets_INCLUDE_DIRS}
+      ${Qt6PrintSupport_INCLUDE_DIRS}
+      ${Qt6Core5Compat_INCLUDE_DIRS}
+    )
+    if (Qt6_POSITION_INDEPENDENT_CODE)
+      set (CMAKE_POSITION_INDEPENDENT_CODE ON)
+    endif (Qt6_POSITION_INDEPENDENT_CODE)
+    if (APPLE)
+      add_definitions ("-DQ_WS_MAC")
+    endif (APPLE)
   else (TEXMACS_GUI STREQUAL "Qt4")
     # Homebrew installs Qt5 in /usr/local/opt/qt5
     if (APPLE AND EXISTS /usr/local/opt/qt5)
       list (APPEND CMAKE_PREFIX_PATH "/usr/local/opt/qt5")
     endif()
+    
     find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport REQUIRED)
     set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport)
+    
     set (TeXmacs_Include_Dirs
       ${TeXmacs_Include_Dirs}
       ${Qt5Core_INCLUDE_DIRS}

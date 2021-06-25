@@ -283,8 +283,8 @@ void
 QTMStyle::drawPrimitive (PrimitiveElement element, const QStyleOption *opt, QPainter *p, const QWidget *widget) const {
   //  if (element == QStyle::PE_FrameStatusBarItem) return;
   switch (element) {
-    case PE_FrameStatusBar : 
-      return;
+//    case PE_FrameStatusBar : 
+//      return;
     case PE_PanelButtonTool:
       if ((opt->state & (State_Sunken | State_On))) {
         qtmDrawShadeRoundPanel(p, opt->rect,  QPalette(opt->palette.color(QPalette::Mid)),//opt->palette,
@@ -361,7 +361,7 @@ QTMStyle::drawComplexControl (ComplexControl cc, const QStyleOptionComplex* opt,
         } else if ((toolbutton->features & QStyleOptionToolButton::HasMenu) 
                    && (mflags & State_MouseOver))
         {
-          int mbi = proxy()->pixelMetric(PM_MenuButtonIndicator, toolbutton, widget);
+          int mbi = proxy()->pixelMetric(PM_MenuButtonIndicator, toolbutton, widget)*retina_factor;
           QRect ir = toolbutton->rect;
           QStyleOptionToolButton newBtn = *toolbutton;
           newBtn.rect = QRect(ir.right() + 5 - mbi, ir.y() + ir.height() - mbi + 4, mbi - 6, mbi - 6);

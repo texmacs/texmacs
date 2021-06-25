@@ -60,6 +60,13 @@ AC_DEFUN([LC_WITH_QT],[
 
   AC_PATH_PROGS([QMAKE], [qmake qmake-qt4 qmake-qt5], [echo]) 
   case $($QMAKE -query QT_VERSION 2>/dev/null) in
+  6.*) 
+    AC_MSG_NOTICE([Qt6 found])
+    AT_WITH_QT([$xtralibs +printsupport +svg],[+exceptions],[
+      LIBS += $LDFLAGS
+      QTPLUGIN = qjpeg qgif qico qsvg
+    ],AC_MSG_ERROR([Cannot find a working Qt library]))
+    ;;
   5.*) 
     AC_MSG_NOTICE([Qt5 found])
     AT_WITH_QT([$xtralibs +printsupport +svg],[+exceptions],[

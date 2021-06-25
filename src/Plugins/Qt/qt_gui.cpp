@@ -29,7 +29,6 @@
 #include "qt_simple_widget.hpp"
 #include "qt_window_widget.hpp"
 
-#include <QDesktopWidget>
 #include <QClipboard>
 #include <QBuffer>
 #include <QFileOpenEvent>
@@ -45,8 +44,8 @@
 #include <QLibraryInfo>
 #include <QImage>
 #include <QUrl>
-#include <QDesktopWidget>
 #include <QApplication>
+#include <QScreen>
 
 #include "QTMGuiHelper.hpp"
 #include "QTMWidget.hpp"
@@ -194,7 +193,7 @@ needing_update (false)
 /* important routines */
 void
 qt_gui_rep::get_extents (SI& width, SI& height) {
-  coord2 size = from_qsize (QApplication::desktop()->size());
+  coord2 size = from_qsize (QApplication::primaryScreen()->availableSize());
   width  = size.x1;
   height = size.x2;
 }
@@ -344,7 +343,7 @@ qt_gui_rep::set_selection (string key, tree t,
   cb->clear (mode);
   
   c_string selection (s);
-  cb->setText (QString::fromLatin1 (selection), mode);
+  cb->setText (QString::fromLatin1 (selection, N(selection)), mode);
   QMimeData *md = new QMimeData;
   
   if (format == "verbatim" || format == "default") {
@@ -368,21 +367,21 @@ qt_gui_rep::set_selection (string key, tree t,
       enc = get_locale_charset ();
     
     if (enc == "utf-8" || enc == "UTF-8")
-      md->setText (QString::fromUtf8 (selection));
+      md->setText (QString::fromUtf8 (selection, N(selection)));
     else if (enc == "iso-8859-1" || enc == "ISO-8859-1")
-      md->setText (QString::fromLatin1 (selection));
+      md->setText (QString::fromLatin1 (selection, N(selection)));
     else
-      md->setText (QString::fromLatin1 (selection));
+      md->setText (QString::fromLatin1 (selection, N(selection)));
   }
   else if (format == "latex") {
     string enc = get_preference ("texmacs->latex:encoding"); 
     if (enc == "utf-8" || enc == "UTF-8" || enc == "cork")
       md->setText (to_qstring (string (selection)));
     else
-      md->setText (QString::fromLatin1 (selection));
+      md->setText (QString::fromLatin1 (selection, N(selection)));
   }
   else
-    md->setText (QString::fromLatin1 (selection));
+    md->setText (QString::fromLatin1 (selection, N(selection)));
   cb->setMimeData (md, mode);
     // according to the docs, ownership of mimedata is transferred to clipboard
     // so no memory leak here
@@ -486,7 +485,7 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
     waitWindow->close();
   }
   qApp->processEvents();
-  QApplication::flush();
+//  QApplication::flush();
   
   wid->qwid->activateWindow ();
   send_keyboard_focus (wid);

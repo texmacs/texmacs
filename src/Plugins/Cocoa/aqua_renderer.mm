@@ -279,7 +279,7 @@ aqua_renderer_rep::image (url u, SI w, SI h, SI x, SI y, int alpha) {
   w= w/pixel; h= h/pixel;
   decode (x, y);
   
-  //painter.setRenderHints (0);
+  //painter.setRenderHints (QFlags<QPainter::RenderHint> ());
   //painter.drawRect (QRect (x, y-h, w, h));
   
   NSImage *pm = NULL;
