@@ -28,6 +28,7 @@
                      "/plugins/tmpy/session/tm_graphviz.py\"")))
 
 (plugin-configure dot 
+  (:winpath "Graphviz" "bin")
   (:require (url-exists-in-path? "dot"))
   (:require (python-command))
   (:launch ,(graphviz-launcher))
