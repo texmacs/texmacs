@@ -25,7 +25,7 @@
 (plugin-add-macos-path "Octave*/Contents/Resources/usr/Cellar/gnuplot-octave-app/*" "bin" #t)
 
 (define (gnuplot-launcher)
-  `((:launch ,(string-append (python-command) " " (raw-quote (gnuplot-entry))))))
+  `((:launch ,(string-append (python-command) " " (gnuplot-entry)))))
 
 (plugin-configure gnuplot
   (:winpath "gnuplot" "bin")
