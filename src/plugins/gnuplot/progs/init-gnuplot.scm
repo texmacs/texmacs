@@ -28,7 +28,8 @@
   `((:launch ,(string-append (python-command) " " (gnuplot-entry)))))
 
 (plugin-configure gnuplot
-  (:winpath "gnuplot" "bin")
+  (:winpath "gnuplot" "bin") ;; the first winpath has the highest priority
+  (:winpath "GNU Octave/Octave*/mingw64" "bin")
   (:require (url-exists-in-path? "gnuplot"))
   (:require (url-exists-in-path? (python-command)))
   ,@(gnuplot-launcher)
