@@ -30,18 +30,51 @@
     (with s (texmacs->code (stree->tree u) "SourceCode")
       (string-append  s  "\n<EOF>\n"))))
 
-(define (sage-launchers)
+(define (sage-entry)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
-      `((:launch ,(string-append "sage -python "
-                                 (getenv "TEXMACS_HOME_PATH")
-                                 "/plugins/tmpy/session/tm_sage.py")))
-      `((:launch ,(string-append "sage -python "
-                                 (getenv "TEXMACS_PATH")
-                                 "/plugins/tmpy/session/tm_sage.py")))))
+      (system-url->string "$TEXMACS_HOME_PATH/plugins/tmpy/session/tm_sage.py")
+      (system-url->string "$TEXMACS_PATH/plugins/tmpy/session/tm_sage.py")))
+
+(define (sage-version) "9.2")
+
+(define (texmacs-cygwin-path)
+  (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
+      (string-replace
+       (string-replace
+        (string-replace
+         (string-replace
+          (string-replace (getenv "TEXMACS_HOME_PATH")
+           "C:" "/cygdrive/c")
+          "\\" "/")
+         " " "\\ ")
+        "(" "\\(")
+       ")" "\\)")
+      (string-replace
+       (string-replace
+        (string-replace
+         (string-replace
+          (string-replace (getenv "TEXMACS_PATH")
+           "C:" "/cygdrive/c")
+          "\\" "/")
+         " " "\\ ")
+        "(" "\\(")
+       ")" "\\)")))
+
+
+(define (sage-launchers)
+  (if (os-mingw?)
+      `((:launch ,(string-append "\"C:\\Program Files\\SageMath " (sage-version) "\\runtime\\bin\\bash.exe\""
+                                 " --login -c '/opt/sagemath-" (sage-version) "/sage -python " (texmacs-cygwin-path)  "/plugins/tmpy/session/tm_sage.py'")))
+      `((:launch ,(string-append "sage -python " (sage-entry))))))
+
+(define (sage-folder)
+  (string-append "sagemath-" (sage-version)))
+
+(define (sage-winpath)
+  `((:winpath "SageMath*/runtime/opt" ,(sage-folder))))
 
 (plugin-configure sage
-  (:winpath "Sage*" "bin")
-  (:winpath "Sage*/runtime" "bin")
+  ,@(sage-winpath)
   (:macpath "Sage*" "Contents/Resources/sage")
   (:require (url-exists-in-path? "sage"))
   ,@(sage-launchers)
