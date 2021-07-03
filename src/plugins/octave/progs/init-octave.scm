@@ -22,7 +22,7 @@
       (system-url->string "$TEXMACS_PATH/plugins/octave/octave/tmstart.m")))
 
 (define (octave-launcher)
-  (with boot (raw-quote (octave-entry))
+  (with boot (octave-entry)
     (if (os-mingw?)
       (string-append "octave-cli -qi " boot)
       (if (url-exists-in-path? "octave")
