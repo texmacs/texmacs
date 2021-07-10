@@ -10,12 +10,17 @@ override the system one.
 
 For GNU/Linux and macOS:
 ``` bash
-git clone git@github.com:texmacs/sage.git $HOME/.TeXmacs/plugins/sage
+git clone https://github.com/texmacs/sage.git $HOME/.TeXmacs/plugins/sage
 ```
 
 For Windows:
 ``` bash
-git clone git@github.com:texmacs/sage.git %APPDATA%\TeXmacs\plugins\sage
+git clone https://github.com/texmacs/sage.git %APPDATA%\TeXmacs\plugins\sage
 ```
 
 To switch to a specific version, use `git checkout` or modify it manually.
+
+If Github is not available, just replace github with gitee. For example:
+```
+git clone https://gitee.com/texmacs/sage.git %APPDATA%\TeXmacs\plugins\sage
+```
