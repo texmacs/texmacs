@@ -35,8 +35,6 @@
       (system-url->string "$TEXMACS_HOME_PATH/plugins/tmpy/session/tm_sage.py")
       (system-url->string "$TEXMACS_PATH/plugins/tmpy/session/tm_sage.py")))
 
-(define (sage-version) "9.2")
-
 (define (texmacs-cygwin-path)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
       (string-replace
@@ -60,23 +58,33 @@
         "(" "\\(")
        ")" "\\)")))
 
+;; TODO: what if there are two different versions of SageMath
+(define (sagemath-win-app-url)
+  (url-or (url-resolve "C:/Program Files/SageMath*" "r")
+          (url-resolve "C:/Program Files (x86)/SageMath*" "r")))
+
+(define (sagemath-bash)
+  (string-append (url->system (sagemath-win-app-url)) "\\runtime\\bin\\bash.exe"))
+
+(define (sage-version)
+  (string-replace
+   (url->system (url-tail (sagemath-win-app-url)))
+   "SageMath "
+   ""))
 
 (define (sage-launchers)
   (if (os-mingw?)
-      `((:launch ,(string-append "\"C:\\Program Files\\SageMath " (sage-version) "\\runtime\\bin\\bash.exe\""
-                                 " --login -c '/opt/sagemath-" (sage-version) "/sage -python " (texmacs-cygwin-path)  "/plugins/tmpy/session/tm_sage.py'")))
+      `((:launch ,(string-append (raw-quote (sagemath-bash)) " --login -c '/opt/sagemath-" (sage-version) "/sage -python " (texmacs-cygwin-path)  "/plugins/tmpy/session/tm_sage.py'")))
       `((:launch ,(string-append "sage -python " (sage-entry))))))
 
-(define (sage-folder)
-  (string-append "sagemath-" (sage-version)))
-
-(define (sage-winpath)
-  `((:winpath "SageMath*/runtime/opt" ,(sage-folder))))
+(define (sage-require)
+  (if (os-mingw?)
+    (url-exists? (sagemath-win-app-url))
+    (url-exists-in-path? "sage")))
 
 (plugin-configure sage
-  ,@(sage-winpath)
   (:macpath "Sage*" "Contents/Resources/sage")
-  (:require (url-exists-in-path? "sage"))
+  (:require (sage-require))
   ,@(sage-launchers)
   (:tab-completion #t)
   (:serializer ,sage-serialize)
