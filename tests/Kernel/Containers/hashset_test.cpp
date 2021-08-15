@@ -9,24 +9,37 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "gtest/gtest.h"
+#include <QtTest/QtTest>
 #include "hashset.hpp"
 #include "string.hpp"
+
+class TestHashset: public QObject {
+  Q_OBJECT
+
+private slots:
+  void test_contains();
+  void test_init();
+};
 
 /******************************************************************************
 * tests on contains 
 ******************************************************************************/
-TEST (hashset, contains) {
+void
+TestHashset::test_contains () {
   auto set= hashset<string>();
   set->insert("Hello");
-  EXPECT_EQ (set->contains("Hello"), true);
-  EXPECT_EQ (set->contains("hello"), false);
+  QCOMPARE (set->contains("Hello"), true);
+  QCOMPARE (set->contains("hello"), false);
 }
 
-TEST (hashset, init) {
+void
+TestHashset::test_init () {
   auto set= hashset<string>();
   set << string("hello") << string("world");
-  EXPECT_EQ (set->contains("hello"), true);
-  EXPECT_EQ (set->contains("world"), true);
-  EXPECT_EQ (N(set), 2);
+  QCOMPARE (set->contains("hello"), true);
+  QCOMPARE (set->contains("world"), true);
+  QCOMPARE (N(set), 2);
 }
+
+QTEST_MAIN(TestHashset)
+#include "hashset_test.moc"

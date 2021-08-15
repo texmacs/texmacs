@@ -1,5 +1,3 @@
-add_subdirectory (gtest EXCLUDE_FROM_ALL)
-
 file (GLOB_RECURSE TEST_SRC_FILES "*.cpp")
 
 # from list of files we'll create tests test_name.cpp -> test_name
@@ -9,10 +7,9 @@ foreach (_test_file ${TEST_SRC_FILES})
     ${_test_file}
   )
   target_link_libraries (${_test_name}
-    ${GTEST_LIBRARY}
-    ${GTEST_MAIN_LIBRARY}
     texmacs_body
     ${TeXmacs_Libraries}
+    Qt5::Test
   )
   add_test (${_test_name} ${_test_name})
   set_tests_properties (${_test_name} PROPERTIES TIMEOUT 5)

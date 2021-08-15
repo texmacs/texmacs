@@ -793,19 +793,12 @@ endforeach ()
 ### --------------------------------------------------------------------
 ### Testing
 ### --------------------------------------------------------------------
-set (GTEST_ROOT "${TEXMACS_SOURCE_DIR}/tests/gtest")
-set (GTEST_INCLUDE_DIR ${GTEST_ROOT}/include)
-set (GTEST_LIBRARIES gtest gtest_main)
-set (GTEST_MAIN_LIBRARY gtest_main)
-set (GTEST_LIBRARY gtest)
 
-if (EXISTS ${GTEST_ROOT})
-  include (CTest)
-  find_package (GTest REQUIRED)
-  enable_testing ()
-  add_subdirectory (tests)
-  # add_subdirectory (misc/benchmark)
-endif (EXISTS ${GTEST_ROOT})
+include (CTest)
+find_package(Qt5Test REQUIRED)
+enable_testing ()
+add_subdirectory (tests)
+# add_subdirectory (misc/benchmark)
 
 ### ---------------------------------------------------------------------
 ### VSCode Support
