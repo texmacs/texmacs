@@ -9,11 +9,17 @@
 ******************************************************************************/
 
 #include "env.hpp"
-#include "gtest/gtest.h"
+#include <QtTest/QtTest>
 
-auto env= edit_env ();
+class TestEnvLength: public QObject {
+  Q_OBJECT
 
-TEST (edit_env_rep, is_length) {
+private slots:
+  void is_length();
+};
+
+void TestEnvLength::is_length() {
+  auto env= edit_env ();
   auto valid_lengths= list<string>()
     * string("1cm") * string("1mm") * string("1in") * string("1pt")
     * string("1bp") * string("1dd") * string("1pc") * string("1cc")
@@ -26,6 +32,9 @@ TEST (edit_env_rep, is_length) {
     * string("1par") * string("1pag") * string("1px") * string("1tmpt");
 
   for (auto i=0; i<N(valid_lengths); i++) {
-    ASSERT_TRUE (env->is_length (valid_lengths[i]));
+    QVERIFY (env->is_length (valid_lengths[i]));
   }
 }
+
+QTEST_MAIN(TestEnvLength)
+#include "env_length_test.moc"
