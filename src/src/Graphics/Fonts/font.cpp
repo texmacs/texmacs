@@ -9,6 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "boot.hpp"
 #include "font.hpp"
 #include "gui.hpp"
 #include "Freetype/tt_file.hpp"
@@ -569,6 +570,10 @@ script (int sz, int level) {
 
 string
 default_chinese_font_name () {
+  if (has_user_preference("default chinese font name")) {
+    return get_user_preference("default chinese font name");
+  }
+
   // Set default Chinese font for Windows
   // see: https://docs.microsoft.com/en-us/typography/fonts/windows_10_font_list
 #ifdef OS_MINGW
@@ -591,6 +596,10 @@ default_chinese_font_name () {
 
 string
 default_japanese_font_name () {
+  if (has_user_preference("default japanese font name")) {
+    return get_user_preference("default japanese font name");
+  }
+
   // Set default Japanese font for macOS
   // see: https://developer.apple.com/fonts/system-fonts/
 #ifdef OS_MACOS
@@ -610,6 +619,10 @@ default_japanese_font_name () {
 
 string
 default_korean_font_name () {
+  if (has_user_preference("default korean font name")) {
+    return get_user_preference("default korean font name");
+  }
+
   // Set default Korean font for macOS
   // see: https://developer.apple.com/fonts/system-fonts/
 #ifdef OS_MACOS
