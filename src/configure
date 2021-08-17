@@ -2969,19 +2969,22 @@ function cmp_dot_number {
   PACKAGE="TeXmacs"
   DEBIAN_NAME="texmacs"
 
-  VERSION_MAJOR="2"
-  VERSION_MINOR="1"
-  VERSION_BUILD=""
+  VERSION_MAJOR="1"
+  VERSION_MINOR="99"
+  VERSION_BUILD="21"
 
   # the svn revision of this version
   DEVEL_REVISION="$Rev$:"
 
-  if test -n "$VERSION_BUILD"
+  DEVEL_VERSION="$VERSION_MAJOR.$VERSION_MINOR.$VERSION_BUILD"
+  DEVEL_RELEASE="1"         # I think we should use SVNREV here
+  STABLE_VERSION="$VERSION_MAJOR.$VERSION_MINOR.$VERSION_BUILD"
+  STABLE_RELEASE="1"
+
+  if test -n $VERSION_BUILD
   then DEVEL_VERSION="$VERSION_MAJOR.$VERSION_MINOR.$VERSION_BUILD"
   else DEVEL_VERSION="$VERSION_MAJOR.$VERSION_MINOR"
   fi
-  DEVEL_RELEASE="1"         # I think we should use SVNREV here
-
   STABLE_VERSION=$DEVEL_VERSION
   STABLE_RELEASE=$DEVEL_RELEASE
 
@@ -23868,6 +23871,11 @@ test -n "$QMAKE" || QMAKE="echo"
   5.*)
     { $as_echo "$as_me:${as_lineno-$LINENO}: Qt5 found" >&5
 $as_echo "$as_me: Qt5 found" >&6;}
+    if test $CONFIG_OS == MACOS; then :
+  xtraPlug=+macextras
+else
+  unset xtraPlug
+fi
     echo "$as_me: this is autotroll.m4 serial 10" >&5
 
   test x"$TROLL" != x && echo 'ViM rox emacs.'
@@ -24455,10 +24463,10 @@ $at_mod"
   echo "$qt_conf" | sed 1d >>"$pro_file"
 
 
- # Tweak the value of QT in the .pro file for $xtralibs +printsupport +svg +macextras.
+ # Tweak the value of QT in the .pro file for $xtralibs +printsupport +svg $xtraPlug.
 
   qt_conf=''
-  for at_mod in $xtralibs +printsupport +svg +macextras; do
+  for at_mod in $xtralibs +printsupport +svg $xtraPlug; do
     at_mod=`echo "$at_mod" | sed 's/^-//; tough
                                   s/^+//; beef
                                   :ough
