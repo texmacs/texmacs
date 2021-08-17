@@ -24455,10 +24455,10 @@ $at_mod"
   echo "$qt_conf" | sed 1d >>"$pro_file"
 
 
- # Tweak the value of QT in the .pro file for $xtralibs +printsupport +svg.
+ # Tweak the value of QT in the .pro file for $xtralibs +printsupport +svg +macextras.
 
   qt_conf=''
-  for at_mod in $xtralibs +printsupport +svg; do
+  for at_mod in $xtralibs +printsupport +svg +macextras; do
     at_mod=`echo "$at_mod" | sed 's/^-//; tough
                                   s/^+//; beef
                                   :ough
