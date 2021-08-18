@@ -110,6 +110,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("constant")= c;
   t ("constructor")= c;
   t ("continue")= c;
+  t ("custom")= c;
   t ("convert")= c;
   t ("debugger")= c;
   t ("destructor")= c;
@@ -174,6 +175,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("module")= e;
   t ("mutable")= c;
   t ("operator")= c;
+  t ("optional")= c;
   t ("or")= c;
   t ("outline")= d;
   t ("packed")= c;
