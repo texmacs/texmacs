@@ -233,7 +233,7 @@ widget hsplit_widget (widget l, widget r);
   // two horizontally juxtaposed widgets l and r with an ajustable border
 widget vsplit_widget (widget t, widget b);
   // two vertically juxtaposed widgets t and b with an ajustable border
-widget extend (widget w, array<widget> a);
+widget extend_widget (widget w, array<widget> a);
   // extend the size of w to the maximum of the sizes of
   // the widgets in the list a
 widget toggle_widget (command cmd, bool on= false, int style= 0);

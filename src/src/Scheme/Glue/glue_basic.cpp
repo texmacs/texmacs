@@ -8046,7 +8046,7 @@ tmg_widget_extend (tmscm arg1, tmscm arg2) {
   array_widget in2= tmscm_to_array_widget (arg2);
 
   // TMSCM_DEFER_INTS;
-  widget out= extend (in1, in2);
+  widget out= extend_widget (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return widget_to_tmscm (out);
