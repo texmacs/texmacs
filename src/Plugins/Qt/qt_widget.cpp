@@ -547,7 +547,7 @@ widget tree_view_widget (command cmd, tree data, tree actions) {
   //// Widgets which are not strictly required by TeXmacs have void implementations
 
 widget empty_widget () { NOT_IMPLEMENTED("empty_widget"); return widget(); }
-widget extend (widget w, array<widget> a) { (void) a; return w; }
+widget extend_widget (widget w, array<widget> a) { (void) a; return w; }
 widget wait_widget (SI width, SI height, string message) {
   (void) width; (void) height; (void) message; return widget();
 }
