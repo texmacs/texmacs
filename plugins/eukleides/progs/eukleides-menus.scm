@@ -17,8 +17,6 @@
 
 (texmacs-module (eukleides-menus))
 
-(lazy-menu (eukleides-figures-menu) eukleides-figures-menu)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Insert Eukleides primitive
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -33,7 +31,8 @@
 	(else (+ (eukleides-cursor-pos (cdr l)) 1))))
 
 (define (eukleides-insert s)
-  (insert-go-to s (list (eukleides-cursor-pos (string->list s)))))
+  (with str (string->tmstring s)
+    (insert-go-to str (list (eukleides-cursor-pos (string->list str))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Eukleides menu
@@ -44,7 +43,7 @@
       (link scripts-eval-menu)
       ---)
 
-  (link eukleides-figures-menu)
+  ;; (link eukleides-figures-menu)
 
   (->"Numbers"
 	(->"Calculations"
