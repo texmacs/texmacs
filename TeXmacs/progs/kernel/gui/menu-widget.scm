@@ -337,7 +337,7 @@
 (define-public (promise-source action)
   "Helper routines for menu-widget and kbd-define"
   (and (procedure? action)
-       (with source (procedure-source action)
+       (with source (tm-procedure-source action)
          (and (== (car source) 'lambda)
               (== (cadr source) '())
               (null? (cdddr source))

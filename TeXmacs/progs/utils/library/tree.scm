@@ -78,6 +78,12 @@
       (with r (tree-focus-index t l)
 	(if r r (tree-get-focus-index ref (tree-up t) l)))))
 
+(tm-define-macro (tree-set-diff! ref t)
+  (:synopsis "Assign @ref with @t.")
+  `(begin
+     (set! ,ref (tree-set-diff ,ref ,t))
+     ,ref))
+
 (tm-define (tree-set-diff ref t)
   (:type (-> tree content void))
   (:synopsis "Assign @ref with @t.")
@@ -125,11 +131,6 @@
                    (set! ref (tree-set-diff ref mid))
 		   (tree-insert-node! ref pos merged))))))))
 
-(tm-define-macro (tree-set-diff! ref t)
-  (:synopsis "Assign @ref with @t.")
-  `(begin
-     (set! ,ref (tree-set-diff ,ref ,t))
-     ,ref))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; High level tree access

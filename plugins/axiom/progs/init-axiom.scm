@@ -16,5 +16,5 @@
   (:launch "tm_axiom")
   (:session "Axiom"))
 
-(when (supports-axiom?)
+(tm-cond-expand (supports-axiom?)
   (lazy-input-converter (axiom-input) axiom))

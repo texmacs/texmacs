@@ -270,6 +270,7 @@
           (server-error envelope (cadr r))
           (server-return envelope (cadr r))))))
 
+;;FIXME: the symbol 'envelope is not defined
 (tm-define (server-file-save uid rname doc msg)
   (let* ((fid (file-name->resource (tmfs-cdr rname)))
          (vid (version-get-list fid))

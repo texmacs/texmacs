@@ -46,5 +46,5 @@
   (:tab-completion #t)
   (:session "Octave"))
 
-(when (supports-octave?)
+(tm-cond-expand (supports-octave?)
   (plugin-input-converters octave))

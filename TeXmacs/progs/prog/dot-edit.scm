@@ -37,6 +37,7 @@
   (:mode in-prog-dot?)
   (select-brackets-after-movement "([{" ")]}" "\\"))
 
+;;FIXME: remove-tabstop is not visible
 (kbd-map
   (:mode in-prog-dot?)
   ("A-tab" (insert-tabstop))

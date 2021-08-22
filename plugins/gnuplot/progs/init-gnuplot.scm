@@ -36,5 +36,5 @@
   (:session "Gnuplot")
   (:scripts "Gnuplot"))
 
-(when (supports-gnuplot?)
+(tm-cond-expand (supports-gnuplot?)
   (lazy-input-converter (gnuplot-input) gnuplot))

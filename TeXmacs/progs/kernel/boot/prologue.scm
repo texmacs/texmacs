@@ -12,34 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel boot prologue)
-  (:use (kernel boot ahash-table)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Additional support for loading modules
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define module-loaded-table (make-ahash-table))
-
-(define-public (list->module module)
-  (let* ((aux (lambda (s) (string-append "/" (symbol->string s))))
-	 (name* (apply string-append (map aux module)))
-	 (name (substring name* 1 (string-length name*)))
-	 (u (url-unix "$GUILE_LOAD_PATH" (string-append name ".scm")))
-	 ;; FIXME: should use %load-path instead of $GUILE_LOAD_PATH
-	 )
-    (url-materialize u "r")))
-
-(define-public (module-load module*)
-  (if (list? module*)
-      (let* ((module (list->module module*))
-	     (loaded (ahash-ref module-loaded-table module)))
-	(ahash-set! module-loaded-table module #t)
-	;;(if (not loaded) (display* "TeXmacs] Loading module " module* "\n"))
-	(if (not loaded) (load-module module)))))
-
-;; FIXME: why does this not work?
-;(define-public (module-load name)
-;  (module-use! (current-module) (resolve-module name)))
+  (:use (kernel boot abbrevs) (kernel boot ahash-table)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Work around broken 'symbol-property'

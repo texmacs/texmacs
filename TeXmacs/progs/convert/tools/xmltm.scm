@@ -42,11 +42,12 @@
 ;; no provisions are made to preserve the namespace prefixes used in the
 ;; orginial sxml tree. Namespace normalization is not reversible.
 
-(define xmlns-uri-xml "http://www.w3.org/XML/1998/namespace")
-(define xmlns-uri-xhtml "http://www.w3.org/1999/xhtml")
-(define xmlns-uri-mathml "http://www.w3.org/1998/Math/MathML")
-(define xmlns-uri-gallina "Gallina")
-(define xmlns-uri-coqml "CoqML")
+(eval-when (expand load eval)
+  (define xmlns-uri-xml "http://www.w3.org/XML/1998/namespace")
+  (define xmlns-uri-xhtml "http://www.w3.org/1999/xhtml")
+  (define xmlns-uri-mathml "http://www.w3.org/1998/Math/MathML")
+  (define xmlns-uri-gallina "Gallina")
+  (define xmlns-uri-coqml "CoqML"))
 
 ;;; Building the namespace bindings environment
 

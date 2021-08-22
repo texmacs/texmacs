@@ -19,7 +19,7 @@
 (when (url-exists-in-path? "coqtop")
   (lazy-format (convert coq init-coqml) vernac))
 
-(when (supports-coq?)
+(tm-cond-expand (supports-coq?)
   (texmacs-modes
     (in-coq-style% (style-has? "coq-style")))
 

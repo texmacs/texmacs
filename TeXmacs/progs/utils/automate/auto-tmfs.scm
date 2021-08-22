@@ -35,6 +35,7 @@
     (with-global auto-safe-mode? safe?
       (apply build-document (cons doc bindings)))))
 
+;;FIXME: 'bindings is not defined
 (tmfs-load-handler (automate name)
   (let* ((q* (tmfs-car name))
 	 (q (query-escape q*))

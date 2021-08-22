@@ -25,7 +25,7 @@
   (:session "Reduce")
   (:scripts "Reduce"))
 
-(when (supports-reduce?)
+(tm-cond-expand (supports-reduce?)
   (define reduce-help #f)
   (import-from (reduce-kbd))
   (import-from (reduce-menus))

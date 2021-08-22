@@ -31,7 +31,8 @@
 ;;    (i.e. linked with <branch>) anywhere in the manuals.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (doc apidoc-collect))
+(texmacs-module (doc apidoc-collect)
+    (:use (prog scheme-tools)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Internal variables and generic one-use routines.

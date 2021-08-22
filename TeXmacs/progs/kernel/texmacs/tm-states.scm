@@ -32,8 +32,7 @@
   (for (e l)
      (eval
         `(begin
-	   (if (not (defined? ',(car e)))
-	       (define-public ,(car e) #f))
+           (define-public-once ,(car e) #f)
 	   (set! ,(car e)
 		 ,(with val (cadr e)
 		     (if (and (pair? val) (eq? (car val) 'quote))
@@ -41,10 +40,9 @@
 			`(quote ,(eval val)))))))))
 
 (define (proplist-load l funcs b)
- ;(display* "load[props]=" l "\n")
+;(display* "load[props]=" l "\n")
   (for (e l)
-     (if (not (defined? `,(car e)))
-	 (eval `(define-public ,(car e) #f))))
+	 (eval `(define-public-once ,(car e) #f)))
   (if b
       (for (f funcs)
 	 (f))))
@@ -131,8 +129,7 @@
 	 (slots (cadr (car theslots)))
 	 (props (cadr (cadr theslots))))
     `(begin
-	(if (not (defined? ',name))
-	    (define-public ,name #f))
+        (define-public-once ,name #f)
 	(with cprops #f
 	  (set! cprops (map (lambda (x)
 			       (eval

@@ -29,6 +29,6 @@
   (:tab-completion #t)
   (:commander ,pari-commander))
 
-(when (supports-pari?)
+(tm-cond-expand (supports-pari?)
   (import-from (pari-menus))
   (plugin-input-converters pari))

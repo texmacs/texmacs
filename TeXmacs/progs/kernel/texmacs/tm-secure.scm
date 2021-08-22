@@ -19,8 +19,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-public-macro (define-secure-symbols . l)
-  (for-each (lambda (x) (property-set! x :secure #t '())) l)
-  '(noop))
+  `(for-each (lambda (x) (property-set! x :secure #t '())) ',l))
 
 (define-secure-symbols
   boolean? null? symbol? string? pair? list?

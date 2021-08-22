@@ -39,7 +39,7 @@
 
 (lazy-keyboard (r-edit) in-prog-r?)
 
-(when (supports-r?)
+(tm-cond-expand (supports-r?)
   (lazy-input-converter (r-input) r)
 
   (menu-bind r-menu

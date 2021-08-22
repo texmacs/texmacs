@@ -16,5 +16,5 @@
   (:launch "tm_lush")
   (:session "Lush"))
 
-(when (supports-lush?)
+(tm-cond-expand (supports-lush?)
   (plugin-input-converters lush))

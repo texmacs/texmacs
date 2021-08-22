@@ -17,7 +17,7 @@
 ;; Internal record utilities
 
 (define tmcolor-type (make-record-type
-		      "tmcolor" '(name-promise red green blue)))
+		      'tmcolor '(name-promise red green blue)))
 (define tmcolor-record (record-constructor tmcolor-type))
 (define tmcolor-name-promise (record-accessor tmcolor-type 'name-promise))
 

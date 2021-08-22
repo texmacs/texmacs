@@ -33,6 +33,6 @@
   (:session "Asymptote")
   (:scripts "Asymptote"))
 
-(when (supports-asymptote?)
+(tm-cond-expand (supports-asymptote?)
   (import-from (asymptote-menus))
   (import-from (utils plugins plugin-convert)))

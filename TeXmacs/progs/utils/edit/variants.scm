@@ -18,8 +18,9 @@
 ;; Definition of tag groups (could be done using drds in the future)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define group-table (make-ahash-table))
-(tm-define group-resolve-table (make-ahash-table))
+(eval-when (expand load eval)
+  (tm-define group-table (make-ahash-table))
+  (tm-define group-resolve-table (make-ahash-table)))
 
 (define (group-resolve-one x)
   (if (pair? x) (group-resolve (car x)) (list x)))
@@ -32,18 +33,19 @@
   (ahash-ref group-resolve-table which))
 
 (tm-define-macro (define-group group . l)
+`(eval-when (expand load eval)
   (set! group-resolve-table (make-ahash-table))
-  (with old (ahash-ref group-table group)
+  (with old (ahash-ref group-table ',group)
     (if old
-	`(ahash-set! group-table ',group (append ',old ',l))
-	`(begin
+	 (ahash-set! group-table ',group (append old ',l))
+	 (begin
 	   (ahash-set! group-table ',group ',l)
 	   (tm-define (,(symbol-append group '-list))
 	     (group-resolve ',group))
 	   (tm-define (,(symbol-append group '?) lab)
 	     (in? lab (group-resolve ',group)))
 	   (tm-define (,(symbol-append 'inside- group '?))
-	     (not (not (inside-which (group-resolve ',group)))))))))
+	     (not (not (inside-which (group-resolve ',group))))))))))
 
 (tm-define (group-find which group)
   (:synopsis "Find subgroup of @group which contains @which")

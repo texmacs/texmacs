@@ -18,7 +18,8 @@
         (generic format-edit)
         (generic format-geometry-edit)
         (generic document-edit)
-        (source source-edit)))
+        (source source-edit)
+        (graphics graphics-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Variants
@@ -189,6 +190,7 @@
   (:require (== (tree-child-type t i) "duration"))
   (list "0.25s" "0.5s" "1s" "1.5s" "2s" "2.5s" "3s" "4s" "5s" "10s" :other))
 
+;;FIXME: There is a symbol 'in which is not bounded.
 (tm-menu (string-input-menu t i)
   (push-focus t
     (let* ((name (tree-child-long-name* t i))

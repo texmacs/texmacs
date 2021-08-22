@@ -27,7 +27,8 @@
   (if (string? class) (set! class (string->symbol class)))
   (and-with module (ahash-ref lazy-tmfs-table class)
     (ahash-remove! lazy-tmfs-table class)
-    (eval `(use-modules ,module))))
+    (module-use! (current-module) (resolve-module ',module))))
+;;    (eval `(use-modules ,module))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Handler system

@@ -56,5 +56,5 @@
 ;(set-session-multiline-input "python" "default" #t)
 ;(set-program-multiline-input "python" "default" #t)
 
-(when (supports-python?)
+(tm-cond-expand (supports-python?)
   (import-from (python-widgets) (python-menus)))

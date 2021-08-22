@@ -34,7 +34,7 @@
 
 (lazy-keyboard (mathemagix-edit) in-prog-mathemagix?)
 
-(when (supports-mathemagix?)
+(tm-cond-expand (supports-mathemagix?)
   (import-from (mathemagix-menus))
   (lazy-input-converter (mathemagix-input) mathemagix)
   (lazy-keyboard (mathemagix-kbd) in-mathemagix?)

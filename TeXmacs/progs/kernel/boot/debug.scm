@@ -71,6 +71,7 @@
 ;; TeXmacs errors and assertions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; FIXME: this requires to be run at eval time
 (define old-format?
   (catch 'wrong-number-of-args
 	 (lambda () (car))
@@ -104,8 +105,8 @@
       (scm-error* 'out-of-range caller
 		  "Argument out of range: ~S" (list arg) '())))
 
-(define-public (syntax-error where message . args)
-  (scm-error* 'syntax-error where message args #f))
+(define-public (tm-syntax-error where message . args)
+  (scm-error* 'tm-syntax-error where message args #f))
 
 (define-public (former . l)
   (texmacs-error "former" "no next method"))
@@ -221,18 +222,25 @@
 ;;; Debugging
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;(use-modules (system repl error-handling))
+
+(cond-expand (guile-2 #t)
+ (else (define with-throw-handler lazy-catch)))
+
 (define-public (wrap-catch proc)
   ;; Wrap a procedure in a closure which displays and passes exceptions.
   (lambda args
-    (lazy-catch #t
-		(lambda () (apply proc args))
+    (with-throw-handler #t
+;		(lambda () (call-with-error-handling  (lambda () (apply proc args))))
+        (lambda () (apply proc args))
 		(lambda err
 		  (tm-display-error "Guile error: " (list err))
+          ;;(cpp-error)
 		  (apply throw err)))))
 
 (define-public (wrap-catch-list expr)
   ;; Similar to wrap-catch for a scheme expression in list form.
-  `(lazy-catch #t
+  `(with-throw-handler #t
 	       (lambda () ,expr)
 	       (lambda err
 		 (tm-display-error "Guile error: " (list err))
@@ -277,7 +285,7 @@
 		  ,@(map (lambda (x) (string-append " " (object->string x)))
 			 args) "]"))))
     (set! trace-level (1+ trace-level))
-    (lazy-catch #t
+    (with-throw-handler #t
 		(lambda ()
 		  (let ((res (apply lam args)))
 		    (set! trace-level (1- trace-level))      
