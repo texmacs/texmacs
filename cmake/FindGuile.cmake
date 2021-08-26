@@ -8,9 +8,9 @@
 
 include (LibFindMacros)
 
-libfind_pkg_check_modules (Guile guile-1.8)
+libfind_pkg_check_modules (Guile guile-3.0)
 
-set (Guile_VERSION_STRING 1.8.8)
+set (Guile_VERSION_STRING 3.0.5)
 
 string (REPLACE "-l" " " _guile_lib_list "${Guile_LIBRARIES}" )
 string (REPLACE "-L" " " _guile_libdirs ${Guile_LIBRARY_DIRS} "")
