@@ -122,6 +122,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("do")= c;
   t ("downto")= c;
   t ("downgrade")= c;
+  t ("dynamic_unit")= e;
   t ("else")= c;
   t ("enumeration")= c;
   t ("evolutive")= c;
@@ -173,6 +174,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("method")= c;
   t ("mod")= c;
   t ("module")= e;
+  t ("monadic_map")= c;
   t ("mutable")= c;
   t ("operator")= c;
   t ("optional")= c;
@@ -200,6 +202,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("sequel")= c;
   t ("spawn")= c;
   t ("split")= c;
+  t ("static_unit")= e;
   t ("step")= c;
   t ("stereotype")= e;
   t ("structure")= e;
