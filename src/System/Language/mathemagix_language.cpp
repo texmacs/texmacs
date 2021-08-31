@@ -99,6 +99,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("and")= c;
   t ("assume")= d;
   t ("autofold")= d;
+  t ("automap")= c;
   t ("begin")= c;
   t ("break")= c;
   t ("case")= c;
@@ -174,7 +175,6 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("method")= c;
   t ("mod")= c;
   t ("module")= e;
-  t ("monadic_map")= c;
   t ("mutable")= c;
   t ("operator")= c;
   t ("optional")= c;
