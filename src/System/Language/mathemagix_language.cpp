@@ -123,6 +123,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("do")= c;
   t ("downto")= c;
   t ("downgrade")= c;
+  t ("dynamic_load")= c;
   t ("dynamic_unit")= e;
   t ("else")= c;
   t ("enumeration")= c;
@@ -206,6 +207,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("step")= c;
   t ("stereotype")= e;
   t ("structure")= e;
+  t ("sugar")= c;
   t ("supports?")= c;
   t ("symbolic_lift")= c;
   t ("then")= c;
