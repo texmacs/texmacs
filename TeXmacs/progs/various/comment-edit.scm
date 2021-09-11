@@ -63,7 +63,7 @@
 
 (define (default-comment-color type by)
   (cond ((== type "reminder") "#844")
-        ((== by (get-user-info "name")) "#277")
+        ((== by (utf8->cork (get-user-info "name"))) "#277")
         (else "#727")))
 
 (tm-define (get-comment-color type by)
@@ -205,7 +205,7 @@
 (tm-define (make-comment lab type pos)
   (let* ((id (create-unique-id))
          (mirror-id (create-unique-id))
-         (by (get-user-info "name"))
+         (by (utf8->cork (get-user-info "name")))
          (date (number->string (current-time))))
     (insert-go-to `(,lab ,id ,mirror-id ,type ,by ,date "" "") pos)
     (notify-comments-editor)))
