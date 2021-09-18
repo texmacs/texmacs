@@ -177,7 +177,7 @@ get_image_for_real (url u, int w, int h, tree eff, SI pixel) {
       return NULL;
   }
   if (pm->width () != w || pm->height () != h)
-    (*pm)= pm->scaled (w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    (*pm)= pm->scaled (w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
   if (eff != "") {
     effect e= build_effect (eff);
     picture src= qt_picture (*pm, 0, 0);
