@@ -423,15 +423,14 @@ texmacs_input_rep::file_flush (bool force) {
       write (verbatim_to_tree (err_msg, false, "auto"));
     }
     else {
-      int real_w, real_h;
-      native_image_size (file, real_w, real_h);
-      if (real_w > 0 && width == 0) width= real_w;
-      if (real_h > 0 && height == 0) height= real_h;
-
       string type= suffix (file);
       string content;
       load_string (file, content, false);
       if (type == "png") {
+        int real_w, real_h;
+        native_image_size (file, real_w, real_h);
+        if (real_w > 0 && width == 0) width= real_w;
+        if (real_h > 0 && height == 0) height= real_h;
         image_flush (content, "png", w_unit, h_unit, width, height);
       }
       else if (type == "eps") {
@@ -441,6 +440,10 @@ texmacs_input_rep::file_flush (bool force) {
         image_flush (content, "pdf", w_unit, h_unit, width, height);
       }
       else if (type == "svg") {
+        int real_w, real_h;
+        svg_image_size (file, real_w, real_h);
+        if (real_w > 0 && width == 0) { width= real_w; w_unit= "pt"; }
+        if (real_h > 0 && height == 0) { height= real_h; h_unit= "pt"; }
         image_flush (content, "svg", w_unit, h_unit, width, height);
       }
       else {
