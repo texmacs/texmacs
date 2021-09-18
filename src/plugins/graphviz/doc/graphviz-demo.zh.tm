@@ -1,4 +1,4 @@
-<TeXmacs|1.99.18>
+<TeXmacs|2.1>
 
 <style|<tuple|tmdoc|old-spacing|framed-session|old-dots|chinese|old-lengths>>
 
@@ -91,7 +91,7 @@
     <\folded-io>
       twopi]\ 
     <|folded-io>
-      %dot -width 300 -output png // \<#56FE\>\<#56DB\>
+      %dot -output png // \<#56FE\>\<#56DB\>
 
       digraph G { label="\<#56FE\>\<#56DB\>" a -\<gtr\> b; a -\<gtr\> c; a
       -\<gtr\> d; a -\<gtr\> f; a -\<gtr\> g }
@@ -194,7 +194,7 @@
     </with>
   </with>
 
-  <tmdoc-copyright|2019|\<#6C88\>\<#8FBE\>, Massimiliano Gubinelli>
+  <tmdoc-copyright|2019\U2021|\<#6C88\>\<#8FBE\>, Massimiliano Gubinelli>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

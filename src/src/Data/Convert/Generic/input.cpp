@@ -423,6 +423,11 @@ texmacs_input_rep::file_flush (bool force) {
       write (verbatim_to_tree (err_msg, false, "auto"));
     }
     else {
+      int real_w, real_h;
+      native_image_size (file, real_w, real_h);
+      if (real_w > 0 && width == 0) width= real_w;
+      if (real_h > 0 && height == 0) height= real_h;
+
       string type= suffix (file);
       string content;
       load_string (file, content, false);
