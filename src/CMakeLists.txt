@@ -591,14 +591,15 @@ if (TEXMACS_GUI MATCHES "Qt.*")
       set (Qt5WindowsUIAutomationSupport_DIR "${QT_CMAKE_DIR}/Qt5WindowsUIAutomationSupport")
       set (Qt5PrintSupport_DIR "${QT_CMAKE_DIR}/Qt5PrintSupport")
     endif ()
-    find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport REQUIRED)
-    set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport)
+    find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport Svg REQUIRED)
+    set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport Qt5::Svg)
     set (TeXmacs_Include_Dirs
       ${TeXmacs_Include_Dirs}
       ${Qt5Core_INCLUDE_DIRS}
       ${Qt5Gui_INCLUDE_DIRS}
       ${Qt5Widgets_INCLUDE_DIRS}
       ${Qt5PrintSupport_INCLUDE_DIRS}
+      ${Qt5Svg_INCLUDE_DIRS}
     )
     if (Qt5_POSITION_INDEPENDENT_CODE)
       set (CMAKE_POSITION_INDEPENDENT_CODE ON)

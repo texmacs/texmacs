@@ -22,8 +22,10 @@
 
 #include <QObject>
 #include <QWidget>
+#include <QPainter>
 #include <QPaintDevice>
 #include <QPixmap>
+#include <QSvgRenderer>
 
 /******************************************************************************
 * Abstract Qt pictures
@@ -50,6 +52,7 @@ void
 qt_picture_rep::internal_set_pixel (int x, int y, color c) {
   pict.setPixel (x, h - 1 - y, c);
 }
+
 
 picture
 qt_picture (const QImage& im, int ox, int oy) {
@@ -163,21 +166,34 @@ picture_renderer (picture p, double zoomf) {
 QImage*
 get_image_for_real (url u, int w, int h, tree eff, SI pixel) {
   QImage *pm = NULL;
-  if (qt_supports (u) && !prefer_inkscape (suffix (u)))
+
+  if (suffix (u) == "svg") {
+    QSvgRenderer renderer (utf8_to_qstring (concretize (u)));
+    pm= new QImage (w, h, QImage::Format_ARGB32);
+    pm->fill (Qt::transparent);
+    QPainter painter (pm);
+    renderer.render (&painter);
+  } else if (qt_supports (u)) {
     pm= new QImage (utf8_to_qstring (concretize (u)));
-  else {
+  } else {
     url temp= url_temp (".png");
     image_to_png (u, temp, w, h);
     pm= new QImage (utf8_to_qstring (as_string (temp)));
     remove (temp);
   }
+
+  // Error Handling
   if (pm == NULL || pm->isNull ()) {
       if (pm != NULL) delete pm;
       cout << "TeXmacs] warning: cannot render " << concretize (u) << "\n";
       return NULL;
   }
+
+  // Scaling
   if (pm->width () != w || pm->height () != h)
     (*pm)= pm->scaled (w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+
+  // Build effect
   if (eff != "") {
     effect e= build_effect (eff);
     picture src= qt_picture (*pm, 0, 0);
