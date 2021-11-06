@@ -25,6 +25,7 @@ endif (WIN32)
 target_link_libraries (${TeXmacs_binary_name}
   texmacs_body
   ${TeXmacs_Libraries}
+  ${CMAKE_DL_LIBS}
 )
 
 if (APPLE)

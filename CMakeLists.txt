@@ -411,7 +411,8 @@ set (TeXmacs_Include_Dirs
   ${TEXMACS_SOURCE_DIR}/src/Plugins
   ${TEXMACS_SOURCE_DIR}/src/Plugins/Pdf/LibAesgm
   ${TEXMACS_SOURCE_DIR}/src/Scheme
-  ${TEXMACS_SOURCE_DIR}/src/Scheme/Guile
+#  ${TEXMACS_SOURCE_DIR}/src/Scheme/Guile
+  ${TEXMACS_SOURCE_DIR}/src/Scheme/S7
   ${TEXMACS_SOURCE_DIR}/src/Scheme/Scheme
   ${TEXMACS_SOURCE_DIR}/src/Style/Environment
   ${TEXMACS_SOURCE_DIR}/src/Style/Evaluate
@@ -442,7 +443,8 @@ else (WIN32)
 endif (WIN32)
 
 set (TeXmacs_Include_Dirs ${TeXmacs_Include_Dirs}
-  ${Guile_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS} ${Cairo_INCLUDE_DIRS}
+  # ${Guile_INCLUDE_DIRS}
+        ${FREETYPE_INCLUDE_DIRS} ${Cairo_INCLUDE_DIRS}
   ${IMLIB2_INCLUDE_DIR} ${GMP_INCLUDES}
 )
 
@@ -455,7 +457,9 @@ file (GLOB_RECURSE TeXmacs_Base_SRCS
   "${TEXMACS_SOURCE_DIR}/src/Graphics/*.cpp"
   "${TEXMACS_SOURCE_DIR}/src/Kernel/*.cpp"
   "${TEXMACS_SOURCE_DIR}/src/Scheme/Scheme/*.cpp"
-  "${TEXMACS_SOURCE_DIR}/src/Scheme/Guile/*.cpp"
+#  "${TEXMACS_SOURCE_DIR}/src/Scheme/Guile/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Scheme/S7/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Scheme/S7/*.c"
   "${TEXMACS_SOURCE_DIR}/src/System/*.cpp"
   "${TEXMACS_SOURCE_DIR}/src/Texmacs/Data/*.cpp"
   "${TEXMACS_SOURCE_DIR}/src/Texmacs/Server/*.cpp"
@@ -536,14 +540,23 @@ set (TeXmacs_MacOS_SRCS
 ### --------------------------------------------------------------------
 ### Determine TeXmacs_Libraries
 ### --------------------------------------------------------------------
-
 set (TeXmacs_Libraries
-  ${Guile_LIBRARIES}
+  # ${Guile_LIBRARIES}
   ${ZLIB_LIBRARIES}
   ${JPEG_LIBRARIES}
   ${PNG_LIBRARIES}
   -lpthread
 )
+
+if (WIN32)
+# explore this
+# CMAKE_INSTALL_UCRT_LIBRARIES
+# I only to manage to get it working for msys2-ucrt.
+set (TeXmacs_Libraries
+  ${TeXmacs_Libraries}
+  wsock32 ws2_32
+)
+endif (WIN32)
 
 if (LINKED_CAIRO)
   set (TeXmacs_Libraries ${TeXmacs_Libraries} ${CAIRO_LIBRARIES})
