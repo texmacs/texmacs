@@ -513,6 +513,12 @@
   ("1.6" "1.6")
   ("1.7" "1.7"))
 
+(define (color-links? locus-on-paper)
+ (if (== locus-on-paper "preserve") #f #t))
+
+(define (preserve-or-change color-links)
+ (if color-links "change" "preserve"))
+
 (tm-widget (pdf-preferences-widget)
   ===
   (bold (text "TeXmacs -> Pdf/Postscript"))
@@ -528,7 +534,10 @@
                 (get-boolean-preference "native postscript"))))
    (meti (hlist // (text "Expand beamer slides"))
       (toggle (set-boolean-preference "texmacs->pdf:expand slides" answer)
-              (get-boolean-preference "texmacs->pdf:expand slides"))))
+              (get-boolean-preference "texmacs->pdf:expand slides")))
+   (meti (hlist // (text "Color links"))
+      (toggle (set-locus-rendering "locus-on-paper" (preserve-or-change answer))
+         (color-links? (get-locus-rendering "locus-on-paper")))))
     (assuming (supports-native-pdf?)
       (aligned (meti (hlist // (text "Distill encapsulated Pdf files"))
         (toggle (set-boolean-preference "texmacs->pdf:distill inclusion" answer)
