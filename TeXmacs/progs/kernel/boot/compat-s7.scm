@@ -90,13 +90,18 @@
 
 (define-public (append! . ls) (apply append ls))
 
-(define-public (string-split s ch)
-  (let ((len (length s)))
-    (let f ((start 0) (acc ()))
-      (if (< start len)
-        (let ((end (+ (or (char-position ch s start) (- len 1)) 1)))
-           (f end (cons (substring s start end)  acc)))
-        (reverse acc)))))
+(define-public (string-split str ch)
+  (let ((len (string-length str)))
+    (letrec
+      ((split
+        (lambda (a b)
+          (cond
+            ((>= b len) (if (= a b) '() (cons (substring str a b) '())))
+              ((char=? ch (string-ref str b)) (if (= a b)
+                (split (+ 1 a) (+ 1 b))
+                  (cons (substring str a b) (split b b))))
+                (else (split a (+ 1 b)))))))
+                  (split 0 0))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;guile-style records
