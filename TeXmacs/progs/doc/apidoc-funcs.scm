@@ -223,7 +223,7 @@
     (if (and file line column)
         (let ((lno (number->string line))
               (cno (number->string column)))
-          `(hlink ,(string-append (basename file) ":" lno)
+          `(hlink ,(string-append (url->system (url-tail file)) ":" lno)
                   ,(string-append file "?line=" lno "&column=" cno
                                        "&select=" (symbol->string s))))
         "")))

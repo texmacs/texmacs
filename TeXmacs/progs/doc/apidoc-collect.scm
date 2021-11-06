@@ -146,7 +146,7 @@
              (lan (doctree-lan t))
              (ex (map tree->stree (select t '(:* explain))))
              (br (map tree->stree (select t '(:* traverse :* branch)))))
-        (set! basedir (string-append basedir "/" (url-head (tm-ref l 1))))
+        (set! basedir (string-append basedir "/" (url->system (url-head (tm-ref l 1)))))
         (for-each (lambda (t) (process-explain t lan furl)) ex)
         (for-each (lambda (t) (parse-branch t basedir)) br))));)
 
