@@ -269,8 +269,9 @@
       (set! l (cdr l)))))
 
 (define (load-tag-file relative_filename)
-  (let ((filename (url->system (url-append
-		   (url-head (current-buffer)) relative_filename))))
+  (let ((filename (url->system
+                   (url-append
+                    (url-head (current-buffer)) relative_filename))))
     (if (url-test? filename "r")
 	(let ((nst (url-last-modified filename))
 	      (ost (ahash-ref* file->stamp filename '())))
