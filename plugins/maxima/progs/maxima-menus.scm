@@ -143,8 +143,8 @@
 (define (maxima-dirs)
   (if (os-mingw?)
       (map (lambda (x) (string-drop-right x 1))
-           (string-split (var-eval-system "maxima.bat -d") #\nl))
-      (string-split (var-eval-system "maxima -d") #\nl)))
+           (string-split (var-eval-system "maxima.bat -d") #\newline))
+      (string-split (var-eval-system "maxima -d") #\newline)))
 
 (define (maxima-htmldir)
   (map (lambda (x) (string-drop x (string-length "maxima-htmldir=")))

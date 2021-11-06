@@ -42,21 +42,22 @@
 	    (set-rcons! out (environment-ref env foo)))
 	   out)
 	 '("bar" "baz" "bar"))
-   (test "never bound"
-	 (error-or-value
-	  (lambda ()
-	    (let ((env (environment)))
-	      (environment-ref env foo))))
-	 "")
-   (test "unbound"
-	 (error-or-value
-	  (lambda ()
-	    (let ((env (environment)))
-	      (with-environment
-	       env ((foo "bar"))
-	       (noop))
-	      (environment-ref env foo))))
-	 "")))
+;   (test "never bound"
+;	 (error-or-value
+;	  (lambda ()
+;	    (let ((env (environment)))
+;	      (environment-ref env foo))))
+;	 "")
+;   (test "unbound"
+;	 (error-or-value
+;	  (lambda ()
+;	    (let ((env (environment)))
+;	      (with-environment
+;	       env ((foo "bar"))
+;	       (noop))
+;	      (environment-ref env foo))))
+;	 "")
+))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Test suite

@@ -69,16 +69,12 @@
 (define-public (number->keyword x)
   (symbol->keyword (string->symbol (string-append "%" (number->string x)))))
 
-(if (guile-c?)
-    (define-public (save-object file value)
-      (pretty-print value (open-file (url-materialize file "") OPEN_WRITE))
-      (flush-all-ports))
-    (define-public (save-object file value)
-      (write value (open-file (url-materialize file "") OPEN_WRITE))
-      (flush-all-ports)))
+(define-public (save-object file value)
+  (call-with-output-file (url-materialize file "") (lambda (port)
+    (let-temporarily (((*s7* 'print-length) 9223372036854775807)) (write value port)))))
 
 (define-public (load-object file)
-  (let ((r (read (open-file (url-materialize file "r") OPEN_READ))))
+  (let ((r (call-with-input-file (url-materialize file "r") (lambda (port) (read port)))))
         (if (eof-object? r) '() r)))
 
 (define-public (persistent-ref dir key)
@@ -88,12 +84,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Common programming constructs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-public-macro (when cond? . body)
-  `(if ,cond? (begin ,@body)))
-
-(define-public-macro (unless cond? . body)
-  `(if (not ,cond?) (begin ,@body)))
 
 (define-public-macro (with var val . body)
   (if (pair? var)

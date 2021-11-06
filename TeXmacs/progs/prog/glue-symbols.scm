@@ -65,6 +65,8 @@
 "scheme-dialect"
 "get-texmacs-path"
 "get-texmacs-home-path"
+"get-user-login"
+"get-user-name"
 "plugin-list"
 "set-fast-environments"
 "font-exists-in-tt?"

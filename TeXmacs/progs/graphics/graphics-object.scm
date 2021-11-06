@@ -26,7 +26,7 @@
 	(y (- (s2f (caddr p2)) (s2f (caddr p1)))))
     (sqrt (+ (* x x) (* y y)))))
 
-(define infinity (/ 1.0 0.0))
+(define infinity (string->number "+inf.0"))
 (define (is-point? p)
   (and (pair? p) (in? (car p) '(point tuple))))
   

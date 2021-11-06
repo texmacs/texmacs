@@ -88,11 +88,7 @@
 (define (begin* conds)
   (if (list-1? conds) (car conds) `(begin ,@conds)))
 
-(let ((old-procedure-name procedure-name))
-  (set! procedure-name
-        (lambda (fun)
-          (or (old-procedure-name fun)
-              (ahash-ref tm-defined-name fun)))))
+(define-public (procedure-name fun) (ahash-ref tm-defined-name fun))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Overloading
@@ -129,9 +125,9 @@
     ;;(define-option-require opt decl)
     decl))
 
-(hash-set! define-option-table :mode define-option-mode)
-(hash-set! define-option-table :require define-option-require)
-(hash-set! define-option-table :applicable define-option-applicable)
+(ahash-set! define-option-table :mode define-option-mode)
+(ahash-set! define-option-table :require define-option-require)
+(ahash-set! define-option-table :applicable define-option-applicable)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Properties of overloaded functions
@@ -159,13 +155,13 @@
 (define (property-rewrite l)
   `(property-set! ,@l (list ,@cur-conds)))
 
-(define ((define-property which) opt decl)
+(define (define-property which) (lambda (opt decl)
   (set! cur-props (cons `(',(ca*adr decl) ,which ',opt) cur-props))
-  decl)
+  decl))
 
-(define ((define-property* which) opt decl)
+(define (define-property* which) (lambda (opt decl)
   (set! cur-props (cons `(',(ca*adr decl) ,which (list ,@opt)) cur-props))
-  decl)
+  decl))
 
 (define (compute-arguments decl)
   (cond ((pair? (cadr decl)) (cdadr decl))
@@ -194,17 +190,17 @@
     (set! cur-props (cons `(',var ',arg (lambda () ,@(cdr opt))) cur-props))
     decl))
 
-(hash-set! define-option-table :type (define-property :type))
-(hash-set! define-option-table :synopsis (define-property :synopsis))
-(hash-set! define-option-table :returns (define-property :returns))
-(hash-set! define-option-table :note (define-property :note))
-(hash-set! define-option-table :argument define-option-argument)
-(hash-set! define-option-table :default define-option-default)
-(hash-set! define-option-table :proposals define-option-proposals)
-(hash-set! define-option-table :secure (define-property* :secure))
-(hash-set! define-option-table :check-mark (define-property* :check-mark))
-(hash-set! define-option-table :interactive (define-property* :interactive))
-(hash-set! define-option-table :balloon (define-property* :balloon))
+(ahash-set! define-option-table :type (define-property :type))
+(ahash-set! define-option-table :synopsis (define-property :synopsis))
+(ahash-set! define-option-table :returns (define-property :returns))
+(ahash-set! define-option-table :note (define-property :note))
+(ahash-set! define-option-table :argument define-option-argument)
+(ahash-set! define-option-table :default define-option-default)
+(ahash-set! define-option-table :proposals define-option-proposals)
+(ahash-set! define-option-table :secure (define-property* :secure))
+(ahash-set! define-option-table :check-mark (define-property* :check-mark))
+(ahash-set! define-option-table :interactive (define-property* :interactive))
+(ahash-set! define-option-table :balloon (define-property* :balloon))
 
 (define-public (procedure-sources about)
   (or (and (procedure? about)
@@ -245,16 +241,12 @@
            ;;    (display* "Overloaded " ',var "\n"))
            ;;(display* "Overloaded " ',var "\n")
            ;;(display* "   " ',nval "\n")
-           (set! temp-module ,(current-module))
-           (set! temp-value ,nval)
-           (set-current-module texmacs-user)
-           (set! ,var temp-value)
-           (set-current-module temp-module)
+           (set! ,var ,nval)
            (ahash-set! tm-defined-table ',var
                        (cons ',nval (ahash-ref tm-defined-table ',var)))
            (ahash-set! tm-defined-name ,var ',var)
 	   (ahash-set! tm-defined-module ',var
-		       (cons (module-name temp-module)
+		       (cons *module-name*
 			     (ahash-ref tm-defined-module ',var)))
            ,@(map property-rewrite cur-props))
         `(begin
@@ -263,25 +255,21 @@
              (display* "   " ',nval "\n"))
            ;;(display* "Defined " ',var "\n")
            ;;(if (nnull? cur-conds) (display* "   " ',nval "\n"))
-           (set! temp-module ,(current-module))
-           (set! temp-value
+           (varlet (rootlet) ',var
                  (if (null? cur-conds) ,nval
                      ,(list 'let '((former (lambda args (noop)))) nval)))
-           (set-current-module texmacs-user)
-           (define-public ,var temp-value)
-           (set-current-module temp-module)
            (ahash-set! tm-defined-table ',var (list ',nval))
            (ahash-set! tm-defined-name ,var ',var)
 	   (ahash-set! tm-defined-module ',var
-                       (list (module-name temp-module)))
+                       (list *module-name*))
            ,@(map property-rewrite cur-props)))))
 
 (define-public (tm-define-sub head body)
   (if (and (pair? (car body)) (keyword? (caar body)))
       (let ((decl (tm-define-sub head (cdr body))))
-	(if (not (hash-ref define-option-table (caar body)))
+	(if (not (ahash-ref define-option-table (caar body)))
 	    (texmacs-error "tm-define-sub" "unknown option ~S" (caar body)))
-	((hash-ref define-option-table (caar body)) (cdar body) decl))
+	((ahash-ref define-option-table (caar body)) (cdar body) decl))
       (cons 'tm-define-overloaded (cons head body))))
 
 (define-public-macro (tm-define head . body)
@@ -306,11 +294,9 @@
     ;;                   ,(apply* (ca*r macro-head) head)) "\n")
     `(begin
        (tm-define ,macro-head ,@body)
-       (set! temp-module ,(current-module))
-       (set-current-module texmacs-user)
-       (define-public-macro ,head
-         ,(apply* (ca*r macro-head) head))
-       (set-current-module temp-module))))
+       (with-module *texmacs-user-module*
+         (define-public-macro ,head
+           ,(apply* (ca*r macro-head) head))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Associating extra properties to existing function symbols
@@ -320,7 +306,7 @@
   (if (null? body)
       (cons 'tm-property-overloaded (cons head body))
       (let ((decl (tm-property-sub head (cdr body))))
-	((hash-ref define-option-table (caar body)) (cdar body) decl))))
+	((ahash-ref define-option-table (caar body)) (cdar body) decl))))
 
 (define-public-macro (tm-property head . body)
   (set! cur-conds '())
@@ -349,8 +335,7 @@
        (tm-define (,name . args)
          ,@opts
          (let* ((m (resolve-module ',module))
-                (p (module-ref texmacs-user '%module-public-interface))
-                (r (module-ref p ',name #f)))
+                (r (m ',name)))
            (if (not r)
                (texmacs-error "lazy-define"
                               ,(string-append "Could not retrieve "

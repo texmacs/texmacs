@@ -323,6 +323,22 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(get-user-login)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_user_login> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
+    <scm|(get-user-name)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_user_name> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
     <scm|(plugin-list)>
 <explain-synopsis|no synopsis>
   <|explain>

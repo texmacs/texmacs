@@ -372,7 +372,7 @@ object eval (const char* expr) {
 object eval (string expr) {
   return tmscm_to_object (eval_scheme (expr)); }
 object eval (object expr) {
-  return call ("eval", expr); }
+  return call ("tm-eval", expr); }
 object eval_secure (string expr) {
   return eval ("(wrap-eval-secure " * expr * ")"); }
 object eval_file (string name) {

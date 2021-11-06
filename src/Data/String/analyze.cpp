@@ -911,7 +911,9 @@ unescape_guile (string s) {
           && is_hex_digit (s[i+2]) && is_hex_digit (s[i+3])) {
         string e= s(i+2, i+4);
         r << (unsigned char) from_hexadecimal (e);
-        i+=3;
+        i+=4;
+        //NOTE: format is "\xHH;" in S7
+        //In Guile it is  "\xHH"
       }
       else
         r << s[i];

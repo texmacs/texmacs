@@ -343,7 +343,7 @@
   (refresh-now "macros-editor-documentation"))
 
 (tm-define (macros-editor-current-help)
-  (with doc (tmdoc-search-tag (string->symbol macro-current-macro))
+  (with doc (and (!= macro-current-macro "") (tmdoc-search-tag (string->symbol macro-current-macro)))
     (if doc (tm->stree doc)
         `(document (em "No documentation available.")))))
 

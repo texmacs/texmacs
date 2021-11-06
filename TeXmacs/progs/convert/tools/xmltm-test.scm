@@ -84,7 +84,7 @@
    (test "processing instruction"
          "<?xml version='1.0'?>" '((*PI* xml "version='1.0'")))
    (test "empty PI" "<?empty?>" '((*PI* empty "")))
-   (test "null PI" "<??>" `((*PI* ,(string->symbol "") "")))
+  ;(test "null PI" "<??>" `((*PI* ,(string->symbol "") "")))
    (test "doctype" "<!DOCTYPE mytype>" '((*DOCTYPE* "mytype")))
    (test "implicit /p" "<p>hello<p>b" '((p "hello") (p "b")))
    (test "implicit /li" "<ul><li>a<li>b</ul>" '((ul (li "a")  (li "b"))))

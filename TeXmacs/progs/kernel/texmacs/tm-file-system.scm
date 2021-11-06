@@ -35,7 +35,12 @@
 
 (define-public tmfs-handler-table (make-ahash-table))
 
-(define-public (object->tmstring s) (unescape-guile (object->string s)))
+(define-public (object->tmstring s)
+ ;; S7 impose an upper bound on the lenght of sequences to be printed
+ ;; we override it...
+ ;; FIXME: do we have a more elegant way to do it??
+ (let-temporarily (((*s7* 'print-length) 9223372036854775807)) (unescape-guile (object->string s))))
+ 
 (define (tmstring->object s) (string->object s))
 
 (define-public (tmfs-handler class action handle)
