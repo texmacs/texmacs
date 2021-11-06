@@ -162,9 +162,7 @@
 (define (tm-exported? sym)
   (and (symbol? sym) (ahash-ref tm-defined-table sym)))
 
-(define (dir-with-access? path)
-  (and (access? path (logior R_OK X_OK))
-       (== 'directory (stat:type (stat path)))))
+(define (dir-with-access? path) (url-test? path "dx"))
 
 (define (list-submodules module)
   (with full (module->path module)
@@ -225,7 +223,7 @@
     (if (and file line column)
         (let ((lno (number->string line))
               (cno (number->string column)))
-          `(hlink ,(string-append (basename file) ":" lno)
+          `(hlink ,(string-append (url->system (url-tail file)) ":" lno)
                   ,(string-append file "?line=" lno "&column=" cno
                                        "&select=" (symbol->string s))))
         "")))
