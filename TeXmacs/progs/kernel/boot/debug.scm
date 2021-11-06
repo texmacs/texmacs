@@ -71,20 +71,8 @@
 ;; TeXmacs errors and assertions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define old-format?
-  (catch 'wrong-number-of-args
-	 (lambda () (car))
-	 (lambda (type caller message opts extra)
-	   (let next ((l (string->list message)))
-	     (cond ((null? l) #f)
-		   ((char=? #\% (car l)) #t)
-		   (else (next (cdr l))))))))
-
 (define (scm-error* type caller message . opt)
-  (if old-format?
-      (begin (set! message (string-replace message "~S" "%S"))
-	     (set! message (string-replace message "~A" "%s"))))
-  (apply scm-error type caller message opt))
+  (apply error type caller message opt))
 
 (define-public (texmacs-error where message . args)
   (scm-error* 'texmacs-error where message args #f))

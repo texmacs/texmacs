@@ -88,11 +88,7 @@
 (define (begin* conds)
   (if (list-1? conds) (car conds) `(begin ,@conds)))
 
-(let ((old-procedure-name procedure-name))
-  (set! procedure-name
-        (lambda (fun)
-          (or (old-procedure-name fun)
-              (ahash-ref tm-defined-name fun)))))
+(define-public (procedure-name fun) (ahash-ref tm-defined-name fun))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Overloading
@@ -159,13 +155,13 @@
 (define (property-rewrite l)
   `(property-set! ,@l (list ,@cur-conds)))
 
-(define ((define-property which) opt decl)
+(define (define-property which) (lambda (opt decl)
   (set! cur-props (cons `(',(ca*adr decl) ,which ',opt) cur-props))
-  decl)
+  decl))
 
-(define ((define-property* which) opt decl)
+(define (define-property* which) (lambda (opt decl)
   (set! cur-props (cons `(',(ca*adr decl) ,which (list ,@opt)) cur-props))
-  decl)
+  decl))
 
 (define (compute-arguments decl)
   (cond ((pair? (cadr decl)) (cdadr decl))
@@ -245,16 +241,12 @@
            ;;    (display* "Overloaded " ',var "\n"))
            ;;(display* "Overloaded " ',var "\n")
            ;;(display* "   " ',nval "\n")
-           (set! temp-module ,(current-module))
-           (set! temp-value ,nval)
-           (set-current-module texmacs-user)
-           (set! ,var temp-value)
-           (set-current-module temp-module)
+           (set! ,var ,nval)
            (ahash-set! tm-defined-table ',var
                        (cons ',nval (ahash-ref tm-defined-table ',var)))
            (ahash-set! tm-defined-name ,var ',var)
 	   (ahash-set! tm-defined-module ',var
-		       (cons (module-name temp-module)
+		       (cons *module-name*
 			     (ahash-ref tm-defined-module ',var)))
            ,@(map property-rewrite cur-props))
         `(begin
@@ -263,17 +255,13 @@
              (display* "   " ',nval "\n"))
            ;;(display* "Defined " ',var "\n")
            ;;(if (nnull? cur-conds) (display* "   " ',nval "\n"))
-           (set! temp-module ,(current-module))
-           (set! temp-value
+           (varlet (rootlet) ',var
                  (if (null? cur-conds) ,nval
                      ,(list 'let '((former (lambda args (noop)))) nval)))
-           (set-current-module texmacs-user)
-           (define-public ,var temp-value)
-           (set-current-module temp-module)
            (ahash-set! tm-defined-table ',var (list ',nval))
            (ahash-set! tm-defined-name ,var ',var)
 	   (ahash-set! tm-defined-module ',var
-                       (list (module-name temp-module)))
+                       (list *module-name*))
            ,@(map property-rewrite cur-props)))))
 
 (define-public (tm-define-sub head body)
@@ -306,11 +294,9 @@
     ;;                   ,(apply* (ca*r macro-head) head)) "\n")
     `(begin
        (tm-define ,macro-head ,@body)
-       (set! temp-module ,(current-module))
-       (set-current-module texmacs-user)
-       (define-public-macro ,head
-         ,(apply* (ca*r macro-head) head))
-       (set-current-module temp-module))))
+       (with-module *texmacs-user-module*
+         (define-public-macro ,head
+           ,(apply* (ca*r macro-head) head))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Associating extra properties to existing function symbols
@@ -349,8 +335,7 @@
        (tm-define (,name . args)
          ,@opts
          (let* ((m (resolve-module ',module))
-                (p (module-ref texmacs-user '%module-public-interface))
-                (r (module-ref p ',name #f)))
+                (r (m ',name)))
            (if (not r)
                (texmacs-error "lazy-define"
                               ,(string-append "Could not retrieve "

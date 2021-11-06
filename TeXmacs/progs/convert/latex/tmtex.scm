@@ -20,7 +20,7 @@
         (doc tmdoc-markup)
 	(convert latex latex-tools)))
 
-(use-modules (ice-9 format))
+;(use-modules (ice-9 format))
 
 (tm-define tmtex-debug-mode? #f)
 
