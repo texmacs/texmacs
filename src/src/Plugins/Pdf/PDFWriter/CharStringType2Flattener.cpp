@@ -18,6 +18,9 @@
 
    
 */
+
+// 2021-07-01, patch dedicated to TeXmacs, in CharStringType2Flattener::Type2Cntrmask
+
 #include "CharStringType2Flattener.h"
 #include "CFFFileInput.h"
 #include "IByteWriter.h"
@@ -292,7 +295,7 @@ EStatusCode CharStringType2Flattener::WriteStemMask(Byte* inProgramCounter)
 
 EStatusCode CharStringType2Flattener::Type2Cntrmask(const CharStringOperandList& inOperandList,Byte* inProgramCounter)
 {
-	(void) inOperandList;
+	mStemsCount+= (unsigned short)(inOperandList.size() / 2);
 	if(WriteRegularOperator(20) != PDFHummus::eSuccess)
 		return PDFHummus::eFailure;
 

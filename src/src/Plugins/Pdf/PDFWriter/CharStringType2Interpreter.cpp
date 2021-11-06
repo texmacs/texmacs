@@ -18,11 +18,15 @@
 
    
 */
+
+// 2021-07-01, patch dedicated to TeXmacs: suppress mCheckedWidth() and
+// fix CharStringType2Interpreter::InterpretCntrMask
+
 #include "CharStringType2Interpreter.h"
 #include "Trace.h"
 #include <math.h>
 #include <stdlib.h>
- 
+
 using namespace PDFHummus;
 
 
@@ -46,7 +50,6 @@ EStatusCode CharStringType2Interpreter::Intepret(const CharString& inCharStringT
 		mImplementationHelper = inImplementationHelper;
 		mGotEndChar = false;
 		mStemsCount = 0;
-		mCheckedWidth = false;
 		if(!inImplementationHelper)
 		{
 			TRACE_LOG("CharStringType2Interpreter::Intepret, null implementation helper passed. pass a proper pointer!!");
@@ -180,19 +183,15 @@ Byte* CharStringType2Interpreter::InterpretOperator(Byte* inProgramCounter,bool&
 		operatorValue = *newPosition;
 		++newPosition;
 	}
-
 	switch(operatorValue)
 	{
 		case 1: // hstem
-			CheckWidth();
 			newPosition = InterpretHStem(newPosition);
 			break;
 		case 3: // vstem
-			CheckWidth();
 			newPosition = InterpretVStem(newPosition);
 			break;
 		case 4: // vmoveto
-			CheckWidth();
 			newPosition = InterpretVMoveto(newPosition);
 			break;
 		case 5: // rlineto
@@ -215,31 +214,24 @@ Byte* CharStringType2Interpreter::InterpretOperator(Byte* inProgramCounter,bool&
 			outGotEndExecutionCommand = true;
 			break;
 		case 14: // endchar
-			CheckWidth();
 			newPosition = InterpretEndChar(newPosition);
 			break;
 		case 18: // hstemhm
-			CheckWidth();
 			newPosition = InterpretHStemHM(newPosition);
 			break;
 		case 19: // hintmask
-			CheckWidth();
 			newPosition = InterpretHintMask(newPosition);
 			break;
 		case 20: // cntrmask
-			CheckWidth();
 			newPosition = InterpretCntrMask(newPosition);
 			break;
 		case 21: // rmoveto
-			CheckWidth();
 			newPosition = InterpretRMoveto(newPosition);
 			break;
 		case 22: // hmoveto
-			CheckWidth();
 			newPosition = InterpretHMoveto(newPosition);
 			break;
 		case 23: // vstemhm
-			CheckWidth();
 			newPosition = InterpretVStemHM(newPosition);
 			break;
 		case 24: // rcurveline
@@ -339,18 +331,11 @@ Byte* CharStringType2Interpreter::InterpretOperator(Byte* inProgramCounter,bool&
 		case 0x0c25: // flex1
 			newPosition = InterpretFlex1(newPosition);
 			break;
+	        default:
+		        TRACE_LOG("CharStringType2Interpreter::InterpretOperator, unknown operator");
+	                break;
 	}
 	return newPosition;
-}
-
-void CharStringType2Interpreter::CheckWidth()
-{
-	if(!mCheckedWidth)
-	{
-		if(mOperandStack.size() % 2 != 0) // has width
-			mOperandStack.pop_front();
-		mCheckedWidth = true;
-	}
 }
 
 Byte* CharStringType2Interpreter::InterpretHStem(Byte* inProgramCounter)
@@ -520,17 +505,18 @@ Byte* CharStringType2Interpreter::InterpretHintMask(Byte* inProgramCounter)
 		return NULL;
 
 	ClearStack();
-	return inProgramCounter+(mStemsCount/8 + (mStemsCount % 8 != 0 ? 1:0));
+	return inProgramCounter+(mStemsCount/8 + ((mStemsCount % 8) != 0 ? 1:0));
 }
 
 Byte* CharStringType2Interpreter::InterpretCntrMask(Byte* inProgramCounter)
 {
+	mStemsCount+= (unsigned short)(mOperandStack.size() / 2);
 	EStatusCode status = mImplementationHelper->Type2Cntrmask(mOperandStack,inProgramCounter);
 	if(status != PDFHummus::eSuccess)
 		return NULL;
 
 	ClearStack();
-	return inProgramCounter+(mStemsCount/8 + (mStemsCount % 8 != 0 ? 1:0) );
+	return inProgramCounter+(mStemsCount/8 + ((mStemsCount % 8) != 0 ? 1:0) );
 }
 
 Byte* CharStringType2Interpreter::InterpretRMoveto(Byte* inProgramCounter)
