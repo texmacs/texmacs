@@ -168,20 +168,22 @@
   (with full (module->path module)
     (if (not (dir-with-access? full))
       '()
-      (let* ((dir (opendir full))
-             (entries '())
-             (add (lambda (s)
-                  (set! entries 
-                    (rcons entries (rcons module (string->symbol s)))))))
-        (do ((entry (readdir dir) (readdir dir)))
-            ((eof-object? entry))
-            (cond ((string-starts? entry ".") (noop))
-                  ((string-ends? entry ".scm") 
-                   (add (string-drop-right entry 4)))
-                  ((dir-with-access? (string-append full "/" entry))
-                   (add entry))))
-        (closedir dir)
-        entries))))
+      (let* ((list-1 (url->list
+                      (url-expand
+                       (url-complete
+                        (url-append full (url-wildcard "*")) "r"))))
+             (list-2 (map (lambda (u)
+                            (cond ((string-ends? (url->system u) ".scm")
+                                   (string->symbol (string-drop-right (url->system (url-tail u)) 4)))
+                                  ((dir-with-access? (url->system u))
+                                   (string->symbol (url->system (url-tail u))))
+                                  (else
+                                   '())))
+                          list-1))
+             (list-3 (filter (lambda (s) (nnull? s))
+                             list-2))
+             (list-4 (map (lambda (s) (rcons module s)) list-3)))
+        list-4))))
 
 (tm-define (list-submodules-recursive ml)
   (:synopsis "Return all submodules, recursively, for module list @ml")
