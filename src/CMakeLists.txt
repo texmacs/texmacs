@@ -33,7 +33,6 @@ else (WIN32)
   )
 endif (WIN32)
 
-
 if (APPLE)
   set(MACOSX_BUNDLE_DISPLAY_NAME TeXmacs)
   set_target_properties (${TeXmacs_binary_name}
