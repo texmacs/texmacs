@@ -297,7 +297,7 @@
 (Gotika\ Brokas Gotika\ Brokas Oblique Miscellaneous)
 (Gotika\ Serifai\ A Gotikaai\ A Miscellaneous)
 (Gotika\ Serifai\ B Gotikaai\ B Miscellaneous)
-(Goudy\ Booklet<ter\ 1911 Goudy\ Bookletter\ 1911)
+(Goudy\ Bookletter\ 1911 Goudy\ Bookletter\ 1911)
 (Greciliae Greciliae Regular)
 (Greciliae-hole Greciliae-hole)
 (Greciliae-hollow Greciliae-hollow)
