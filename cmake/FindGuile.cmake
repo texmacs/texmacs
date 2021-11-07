@@ -10,8 +10,6 @@ include (LibFindMacros)
 
 pkg_check_modules (Guile REQUIRED guile-1.8)
 
-set (Guile_VERSION_STRING 1.8.8)
-
 string (REPLACE "-l" " " _guile_lib_list "${Guile_LIBRARIES}" )
 string (REPLACE "-L" " " _guile_libdirs ${Guile_LIBRARY_DIRS} "")
 
