@@ -376,7 +376,7 @@
     (let* ((file (url->system u))
            (help? (and (== "texmacs-file" (file-format u)) 
                        (url-exists-in-help? file)))
-           (text (if help? (help-file-title u) (basename (url->system base)))))
+           (text (if help? (help-file-title u) (url->system (url-tail base)))))
       ($link file text))))
 
 (define (url-list->document l)
