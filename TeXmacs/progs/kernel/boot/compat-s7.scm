@@ -97,11 +97,17 @@
         (lambda (a b)
           (cond
             ((>= b len) (if (= a b) '() (cons (substring str a b) '())))
-              ((char=? ch (string-ref str b)) (if (= a b)
-                (split (+ 1 a) (+ 1 b))
-                  (cons (substring str a b) (split b b))))
-                (else (split a (+ 1 b)))))))
-                  (split 0 0))))
+            ((char=? ch (string-ref str b))
+             (cond
+               ((!= a b)
+                (cons (substring str a b) (split b b)))
+               ((and (= a b) (or (= b 0) (= b (- len 1))))
+                (cons "" (split (+ 1 b) (+ 1 b))))
+               (else
+                (split (+ 1 b) (+ 1 b)))))
+            (else
+             (split a (+ 1 b)))))))
+      (split 0 0))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;guile-style records
