@@ -1178,7 +1178,7 @@ glue_widget (tree col, bool hx, bool vx, SI w, SI h) {
 }
 
 widget
-extend (widget w, array<widget> a) {
+extend_widget (widget w, array<widget> a) {
   (void) a;
   return w;
 }
