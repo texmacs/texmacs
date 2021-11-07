@@ -402,7 +402,7 @@
          (u3 (if after? (url-or u2 u1) (url-or u1 u2)))
          (p  (url-expand u3)))
     (when (not (url-none? u1))
-      (setenv "PATH" (url->system p)))))
+      (system-setenv "PATH" (url->system p)))))
 
 (define (add-to-path* prefix u after?)
   (add-to-path (url-append (system->url prefix) u) after?))
