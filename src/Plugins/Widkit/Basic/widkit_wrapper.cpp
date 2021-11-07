@@ -73,7 +73,7 @@ concrete (promise<widget> pw) {
 ******************************************************************************/
 
 widget
-extend (widget w, array<widget> a) {
+extend_widget (widget w, array<widget> a) {
   return abstract (extend (concrete (w), concrete (a)));
 }
 
