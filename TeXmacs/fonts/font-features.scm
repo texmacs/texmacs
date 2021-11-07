@@ -264,6 +264,7 @@
 (Gears\ of\ Peace Gears\ of\ Peace Black Condensed SansSerif SciFi)
 (Geeza\ Pro Geeza\ Pro)
 (Geeza\ Pro\ Interface Geeza\ Pro\ Interface)
+(Geeza\ Pro\ PUA Geeza\ Pro\ PUA)
 (Geeza\ PUA Geeza\ PUA)
 (Gentium Gentium)
 (Gentium\ Basic Gentium\ Basic)
