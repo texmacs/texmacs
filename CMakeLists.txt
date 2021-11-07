@@ -283,7 +283,38 @@ find_package (JPEG)
 ### --------------------------------------------------------------------
 ###  Some Guile related adjustements
 ### --------------------------------------------------------------------
-find_package (Guile REQUIRED)
+
+# Find Guile and determine which version we are using.
+# Look for guile versions in this order: 1.8 > 3.0 > 2.2 > 2.0
+
+pkg_check_modules (GUILE18 guile-1.8 QUIET)
+pkg_check_modules (GUILE20 guile-2.0 QUIET)
+pkg_check_modules (GUILE22 guile-2.2 QUIET)
+pkg_check_modules (GUILE30 guile-3.0 QUIET)
+
+if (GUILE18_FOUND)
+  set (Guile_FOUND TRUE)
+  set (Guile_VERSION ${GUILE18_VERSION})
+  set (Guile_LIBRARIES ${GUILE18_LIBRARIES})
+  set (Guile_INCLUDE_DIRS ${GUILE18_INCLUDE_DIRS})
+elseif (GUILE30_FOUND)
+  set (Guile_FOUND TRUE)
+  set (Guile_VERSION ${GUILE30_VERSION})
+  set (Guile_LIBRARIES ${GUILE30_LIBRARIES})
+  set (Guile_INCLUDE_DIRS ${GUILE30_INCLUDE_DIRS})
+elseif (GUILE22_FOUND)
+  set (Guile_FOUND TRUE)
+  set (Guile_VERSION ${GUILE22_VERSION})
+  set (Guile_LIBRARIES ${GUILE22_LIBRARIES})
+  set (Guile_INCLUDE_DIRS ${GUILE22_INCLUDE_DIRS})
+elseif (GUILE20_FOUND)
+  set (Guile_FOUND TRUE)
+  set (Guile_VERSION ${GUILE20_VERSION})
+  set (Guile_LIBRARIES ${GUILE20_LIBRARIES})
+  set (Guile_INCLUDE_DIRS ${GUILE20_INCLUDE_DIRS})
+else ()
+  message (FATAL_ERROR "Guile 1.8, 3.0, 2.2, or 2.0 wasn't found. TeXmacs can't run without one of them. Ensure that one is installed and can be found with pkg-config.")
+endif ()
 
 if (Guile_VERSION VERSION_LESS 1.6)
   set (CONFIG_GUILE_SERIAL "A")
