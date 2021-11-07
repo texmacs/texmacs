@@ -1,14 +1,14 @@
 # - Locate the GNU Guile library
 # Once done, this will define
 #
-#  Guile_FOUND - system has Freetype
-#  Guile_INCLUDE_DIRS - the Freetype include directories
-#  Guile_LIBRARIES - link these to use Freetype
+#  Guile_FOUND - system has Guile 
+#  Guile_INCLUDE_DIRS - the Guile include directories
+#  Guile_LIBRARIES - link these to use Guile
 #  Guile_VERSION_STRING - version of Guile
 
 include (LibFindMacros)
 
-libfind_pkg_check_modules (Guile guile-1.8)
+pkg_check_modules (Guile REQUIRED guile-1.8)
 
 set (Guile_VERSION_STRING 1.8.8)
 
