@@ -4347,6 +4347,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(system-setenv <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|set_env> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(system-search-score <scm-arg|url> <scm-arg|array_string>)>
 <explain-synopsis|no synopsis>
   <|explain>

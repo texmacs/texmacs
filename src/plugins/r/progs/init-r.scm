@@ -19,7 +19,7 @@
 
 (define (r-launcher)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/r")
-      (setenv "TEXMACS_SEND"
+      (system-setenv "TEXMACS_SEND"
               "source(paste(Sys.getenv(\"TEXMACS_HOME_PATH\"),\"/plugins/r/texmacs.r\",sep=\"\"))\n"))
   "tm_r")
 

@@ -568,6 +568,7 @@
 "system-remove"
 "system-mkdir"
 "system-rmdir"
+"system-setenv"
 "system-search-score"
 "system-1"
 "system-2"
