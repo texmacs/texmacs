@@ -284,10 +284,28 @@ find_package (JPEG)
 ###  Some Guile related adjustements
 ### --------------------------------------------------------------------
 
-# Find Guile and determine which version we are using.
-# Look for guile versions in this order: 1.8 > 3.0 > 2.2 > 2.0
+# Allow for selection of Scheme implementation
+set(Scheme_impl "default" CACHE STRING "Implementation of Scheme to compile for.")
+set_property(CACHE Scheme_impl PROPERTY STRINGS default guile-1.8 guile-2.0 guile-2.2 guile-3.0 chez s7)
+message(STATUS "Looking for Scheme implementation: " ${Scheme_impl})
 
-pkg_search_module (Guile REQUIRED guile-1.8 guile-3.0 guile-2.2 guile-2.0 )
+if (${Scheme_impl} STREQUAL "default")
+  # Find Guile and determine which version we are using.
+  # Look for guile versions in this order: 1.8 > 3.0 > 2.2 > 2.0
+  pkg_search_module (Guile REQUIRED guile-1.8 guile-3.0 guile-2.2 guile-2.0)
+  if (NOT Guile_FOUND)
+    message(FATAL_ERROR "Guile not installed or pkg-config cannot detect it.")
+  endif ()
+elseif ( (${Scheme_impl} STREQUAL "guile-1.8") 
+         OR (${Scheme_impl} STREQUAL "guile-2.0")
+         OR (${Scheme_impl} STREQUAL "guile-2.2")
+         OR (${Scheme_impl} STREQUAL "guile-3.0") )
+  pkg_check_modules (Guile REQUIRED ${Scheme_impl})
+elseif ((${Scheme_impl} STREQUAL "chez") OR (${Scheme_impl} STREQUAL "s7"))
+  message(FATAL_ERROR "Selected Scheme implementation not implemented yet.")
+else ()
+  message(FATAL_ERROR "Incorrect scheme implementation selected.")
+endif()
 
 if (Guile_VERSION VERSION_LESS 2.0)
   set (CONFIG_GUILE_SERIAL "C")
@@ -620,7 +638,7 @@ if (TEXMACS_GUI MATCHES "Qt.*")
   set (QTTEXMACS 1)
   set (CONFIG_GUI "QT")
   set (CONFIG_QT "Qt")
-  message (STATUS "Enabling experimental  Qt port")
+  message (STATUS "Enabling Qt port")
 elseif (TEXMACS_GUI STREQUAL "Aqua")
   find_library (COCOA_LIBRARY Cocoa)
   find_path (COCOA_INCLUDE_DIR Cocoa/Cocoa.h)
