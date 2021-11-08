@@ -429,7 +429,7 @@
 ((Candara Italic) ((Candarai.ttf 0 227648)))
 ((Candara Light) ((Candaral.ttf 0 122132)))
 ((Candara Light\ Italic) ((Candarali.ttf 0 120996)))
-((Candara Regular) ((Candara.ttf 0 219532) (Candara.ttf 0 162584))
+((Candara Regular) ((Candara.ttf 0 219532) (Candara.ttf 0 162584)))
 ((Cantarell Bold) ((Cantarell-Bold.otf 0 143192)))
 ((Cantarell Light) ((Cantarell-Light.otf 0 141608)))
 ((Cantarell Regular) ((Cantarell-Regular.otf 0 137812)))
