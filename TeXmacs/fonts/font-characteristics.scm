@@ -352,6 +352,7 @@
 ((Bodoni\ 72\ Oldstyle Book\ Italic) (Ascii mono=no sans=no slant=37 italic=yes case=mixed regular=yes ex=72 em=179 lvw=19 lhw=2 uvw=23 uhw=2 fillp=23 vcnt=29 lasprat=98 pasprat=114 loasc=165 lodes=161 dides=150))
 ((Bodoni\ 72\ Smallcaps Book) (Ascii mono=no sans=no slant=0 italic=no case=smallcaps regular=yes ex=76 em=165 lvw=21 lhw=3 uvw=25 uhw=3 fillp=31 vcnt=29 lasprat=97 pasprat=92 loasc=102 lodes=130 dides=150))
 ((Bodoni\ Ornaments Regular) (mono=no sans=no slant=0 italic=no case=mixed regular=yes ex=129 em=47 lvw=5 lhw=11 uvw=6 uhw=3 fillp=29 vcnt=41 lasprat=137 pasprat=125 loasc=104 lodes=124 dides=124))
+((Bodoni\ Ornaments\ ITC\ TT Regular) (mono=no sans=no slant=0 italic=no case=mixed regular=yes ex=129 em=47 lvw=6 lhw=10 uvw=5 uhw=3 fillp=29 vcnt=40 lasprat=137 pasprat=125 loasc=104 lodes=124 dides=124))
 ((BPreplay Bold) (Ascii Greek mono=no sans=yes slant=0 italic=no case=mixed regular=yes ex=98 em=157 lvw=26 lhw=23 uvw=27 uhw=26 fillp=60 vcnt=73 lasprat=88 pasprat=76 loasc=139 lodes=140 dides=103))
 ((BPreplay Bold\ Italic) (Ascii Greek mono=no sans=yes slant=10 italic=yes case=mixed regular=yes ex=98 em=157 lvw=26 lhw=23 uvw=27 uhw=26 fillp=56 vcnt=69 lasprat=90 pasprat=83 loasc=139 lodes=140 dides=103))
 ((BPreplay Italic) (Ascii Greek mono=no sans=yes slant=11 italic=yes case=mixed regular=yes ex=93 em=160 lvw=13 lhw=12 uvw=13 uhw=13 fillp=33 vcnt=39 lasprat=92 pasprat=81 loasc=139 lodes=143 dides=103))
