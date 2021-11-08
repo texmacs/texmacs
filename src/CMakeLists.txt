@@ -795,11 +795,15 @@ endforeach ()
 ### Testing
 ### --------------------------------------------------------------------
 
-include (CTest)
-find_package(Qt5Test REQUIRED)
-enable_testing ()
-add_subdirectory (tests)
-# add_subdirectory (misc/benchmark)
+option (BUILD_TESTS "Build unit tests" OFF)
+
+if (BUILD_TESTS)
+  include (CTest)
+  find_package(Qt5Test REQUIRED)
+  enable_testing ()
+  add_subdirectory (tests)
+  # add_subdirectory (misc/benchmark)
+endif (BUILD_TESTS)
 
 ### ---------------------------------------------------------------------
 ### VSCode Support
