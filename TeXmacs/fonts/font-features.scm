@@ -140,7 +140,6 @@
 (Caladea Caladea)
 (Calibri Calibri)
 (Cambria Cambria)
-(Cambria\ Math Cambria\ Math)
 (Candara Candara)
 (Cantarell Cantarell SansSerif)
 (Cantarell\ Extra Cantarell Heavy SansSerif)

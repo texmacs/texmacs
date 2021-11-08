@@ -424,7 +424,6 @@
 ((Cambria Bold\ Italic) ((cambriaz.ttf 0 856672)))
 ((Cambria Italic) ((cambriai.ttf 0 892620)))
 ((Cambria Regular) ((cambria.ttc 0 1792664)))
-((Cambria\ Math Regular) ((cambria.ttc 1 1792664)))
 ((Candara Bold) ((Candarab.ttf 0 227604)))
 ((Candara Bold\ Italic) ((Candaraz.ttf 0 229364)))
 ((Candara Italic) ((Candarai.ttf 0 227648)))
