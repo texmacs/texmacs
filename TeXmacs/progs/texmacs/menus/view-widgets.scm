@@ -53,10 +53,7 @@
 		    (get-retina-boolean-preference "retina-factor")))
 	  (meti (hlist // (text "Use retina icons"))
 	    (toggle (set-retina-boolean-preference "retina-icons" answer)
-		    (get-retina-boolean-preference "retina-icons")))
-	  (meti (hlist // (text "Use unified toolbars"))
-            (toggle (set-boolean-preference "use unified toolbar" answer)
-                    (get-boolean-preference "use unified toolbar")))))
+		    (get-retina-boolean-preference "retina-icons")))))
       ===
       (aligned
         (item (text "Graphical interface font scale:")

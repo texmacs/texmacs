@@ -124,8 +124,9 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   mw->setStyle (qtmstyle ());
   mw->menuBar()->setStyle (qtmstyle ());
 
-#if (defined(MACOS_QT_MENU))
-  mw->menuBar()->setNativeMenuBar(false);
+#ifdef Q_OS_MAC
+  if (!use_native_menubar)
+    mw->menuBar()->setNativeMenuBar(false);
 #endif
   
   // there is a bug in the early implementation of toolbars in Qt 4.6
