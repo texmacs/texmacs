@@ -283,27 +283,40 @@ find_package (JPEG)
 ### --------------------------------------------------------------------
 ###  Some Guile related adjustements
 ### --------------------------------------------------------------------
-find_package (Guile REQUIRED)
 
-if (Guile_VERSION VERSION_LESS 1.6)
-  set (CONFIG_GUILE_SERIAL "A")
-  option (GUILE_A "Using Guile < 1.6.x" ON)
-  message (STATUS "Using GUILE_A: " ${Guile_VERSION_STRING})
-elseif (Guile_VERSION VERSION_LESS 1.8)
-  set (CONFIG_GUILE_SERIAL "B")
-  option (GUILE_B "Using Guile 1.6.x" ON)
-  message (STATUS "Using GUILE_B: " ${Guile_VERSION_STRING})
-elseif (Guile_VERSION VERSION_LESS 2.0)
+# Allow for selection of Scheme implementation
+set(SCHEME_IMPL "default" CACHE STRING "Implementation of Scheme to compile for.")
+set_property(CACHE SCHEME_IMPL PROPERTY STRINGS default guile-1.8 guile-2.0 guile-2.2 guile-3.0 chez s7)
+message(STATUS "Looking for Scheme implementation: " ${SCHEME_IMPL})
+
+if (${SCHEME_IMPL} STREQUAL "default")
+  # Find Guile and determine which version we are using.
+  # Look for guile versions in this order: 1.8 > 3.0 > 2.2 > 2.0
+  pkg_search_module (Guile REQUIRED guile-1.8 guile-3.0 guile-2.2 guile-2.0)
+  if (NOT Guile_FOUND)
+    message(FATAL_ERROR "Guile not installed or pkg-config cannot detect it.")
+  endif ()
+elseif ( (${SCHEME_IMPL} STREQUAL "guile-1.8")
+         OR (${SCHEME_IMPL} STREQUAL "guile-2.0")
+         OR (${SCHEME_IMPL} STREQUAL "guile-2.2")
+         OR (${SCHEME_IMPL} STREQUAL "guile-3.0") )
+  pkg_check_modules (Guile REQUIRED ${SCHEME_IMPL})
+elseif ((${SCHEME_IMPL} STREQUAL "chez") OR (${SCHEME_IMPL} STREQUAL "s7"))
+  message(FATAL_ERROR "Selected Scheme implementation not implemented yet.")
+else ()
+  message(FATAL_ERROR "Incorrect scheme implementation selected.")
+endif()
+
+if (Guile_VERSION VERSION_LESS 2.0)
   set (CONFIG_GUILE_SERIAL "C")
   option (GUILE_C "Using Guile 1.8.x" ON)
-  message (STATUS "Using GUILE_C: " ${Guile_VERSION_STRING})
-else (Guile_VERSION VERSION_LESS 1.6)
+  message (STATUS "Using GUILE_C: " ${Guile_VERSION})
+else ()
   set (CONFIG_GUILE_SERIAL "D")
-  option (GUILE_D "Using Guile >= 2.x" ON)
+  option (GUILE_D "Using Guile 2.x or 3.x" ON)
   set (SCM_SIZET size_t)
-  message (STATUS "Using GUILE_D >= 2.x: " ${Guile_VERSION_STRING})
-endif (Guile_VERSION VERSION_LESS 1.6)
-
+  message (STATUS "Using GUILE_D: " ${Guile_VERSION})
+endif ()
 
 set (CMAKE_REQUIRED_FLAGS "-Werror ${Guile_CFLAGS}")
 set (CMAKE_REQUIRED_INCLUDES ${Guile_INCLUDE_DIRS})
@@ -575,15 +588,29 @@ if (TEXMACS_GUI MATCHES "Qt.*")
     # Homebrew installs Qt5 in /usr/local/opt/qt5
     if (APPLE AND EXISTS /usr/local/opt/qt5)
       list (APPEND CMAKE_PREFIX_PATH "/usr/local/opt/qt5")
-    endif()
-    find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport REQUIRED)
-    set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport)
+    endif ()
+    if (WIN32 AND EXISTS ${QT_CMAKE_DIR})
+      set (Qt5Core_DIR "${QT_CMAKE_DIR}/Qt5Core")
+      set (Qt5Gui_DIR "${QT_CMAKE_DIR}/Qt5Gui")
+      set (Qt5EventDispatcherSupport_DIR "${QT_CMAKE_DIR}/Qt5EventDispatcherSupport")
+      set (Qt5FontDatabaseSupport_DIR "${QT_CMAKE_DIR}/Qt5FontDatabaseSupport")
+      set (Qt5Svg_DIR "${QT_CMAKE_DIR}/Qt5Svg")
+      set (Qt5Widgets_DIR "${QT_CMAKE_DIR}/Qt5Widgets")
+      set (Qt5Network_DIR "${QT_CMAKE_DIR}/Qt5Network")
+      set (Qt5ThemeSupport_DIR "${QT_CMAKE_DIR}/Qt5ThemeSupport")
+      set (Qt5AccessibilitySupport_DIR "${QT_CMAKE_DIR}/Qt5AccessibilitySupport")
+      set (Qt5WindowsUIAutomationSupport_DIR "${QT_CMAKE_DIR}/Qt5WindowsUIAutomationSupport")
+      set (Qt5PrintSupport_DIR "${QT_CMAKE_DIR}/Qt5PrintSupport")
+    endif ()
+    find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport Svg REQUIRED)
+    set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport Qt5::Svg)
     set (TeXmacs_Include_Dirs
       ${TeXmacs_Include_Dirs}
       ${Qt5Core_INCLUDE_DIRS}
       ${Qt5Gui_INCLUDE_DIRS}
       ${Qt5Widgets_INCLUDE_DIRS}
       ${Qt5PrintSupport_INCLUDE_DIRS}
+      ${Qt5Svg_INCLUDE_DIRS}
     )
     if (Qt5_POSITION_INDEPENDENT_CODE)
       set (CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -611,7 +638,7 @@ if (TEXMACS_GUI MATCHES "Qt.*")
   set (QTTEXMACS 1)
   set (CONFIG_GUI "QT")
   set (CONFIG_QT "Qt")
-  message (STATUS "Enabling experimental  Qt port")
+  message (STATUS "Enabling Qt port")
 elseif (TEXMACS_GUI STREQUAL "Aqua")
   find_library (COCOA_LIBRARY Cocoa)
   find_path (COCOA_INCLUDE_DIR Cocoa/Cocoa.h)
@@ -778,19 +805,16 @@ endforeach ()
 ### --------------------------------------------------------------------
 ### Testing
 ### --------------------------------------------------------------------
-set (GTEST_ROOT "${TEXMACS_SOURCE_DIR}/tests/gtest")
-set (GTEST_INCLUDE_DIR ${GTEST_ROOT}/include)
-set (GTEST_LIBRARIES gtest gtest_main)
-set (GTEST_MAIN_LIBRARY gtest_main)
-set (GTEST_LIBRARY gtest)
 
-if (EXISTS ${GTEST_ROOT})
+option (BUILD_TESTS "Build unit tests" OFF)
+
+if (BUILD_TESTS)
   include (CTest)
-  find_package (GTest REQUIRED)
+  find_package(Qt5Test REQUIRED)
   enable_testing ()
   add_subdirectory (tests)
   # add_subdirectory (misc/benchmark)
-endif (EXISTS ${GTEST_ROOT})
+endif (BUILD_TESTS)
 
 ### ---------------------------------------------------------------------
 ### VSCode Support
