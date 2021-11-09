@@ -73,6 +73,9 @@
 (define (notify-new-page-breaking var val)
   (noop))
 
+(define (get-default-native-menubar)
+  (if (qt4-gui?) "on" "off"))
+
 (define (get-default-unified-toolbar)
   (if (qt4-gui?) "on" "off"))
 
@@ -121,6 +124,7 @@
   ("open console on errors" "on" noop)
   ("open console on warnings" "on" noop)
   ("gui:line-input:autocommit" "on" noop)
+  ("use native menubar" (get-default-native-menubar) noop)
   ("use unified toolbar" (get-default-unified-toolbar) noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

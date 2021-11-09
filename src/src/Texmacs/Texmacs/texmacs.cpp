@@ -423,8 +423,11 @@ TeXmacs_main (int argc, char** argv) {
   // End options via environment variables
 
   // Further user preferences
-  string unify= (gui_version () == "qt4"? string ("on"): string ("off"));
+  string native= (gui_version () == "qt4"? string ("on"): string ("off"));
+  string unify = (gui_version () == "qt4"? string ("on"): string ("off"));
+  use_native_menubar = get_preference ("use native menubar", native) == "on";
   use_unified_toolbar= get_preference ("use unified toolbar", unify) == "on";
+  if (!use_native_menubar) use_unified_toolbar= false;
   // End user preferences
 
   if (DEBUG_STD) debug_boot << "Installing internal plug-ins...\n";
