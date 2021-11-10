@@ -1785,7 +1785,9 @@ latex_command_to_tree (tree t) {
           def << tree (APPLY, as_string (a));
         }
         l2edef = l2e (def);
-        if (N(l2edef) != 0 && ! is_concat (l2edef))
+        if (N(l2edef) != 0 && !is_concat (l2edef))
+          f << l2edef;
+        else if (is_tuple (def) && N(def) > 0 && def[0] == "\\\\*")
           f << l2edef;
         else if (is_tuple (def)) {
           tree adef (APPLY);
