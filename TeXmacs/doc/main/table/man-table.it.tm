@@ -14,7 +14,7 @@
 
     <apply|branch|Dimensioni|man-size.it.tm>
 
-    <apply|branch|Bordi e colori di sfondo|man-decorations.it.tm>
+    <apply|branch|Bordi e colori di sfondo|man-table-decorations.it.tm>
 
     <apply|branch|Caratteristiche avanzate|man-advanced-features.it.tm>
   </traverse>

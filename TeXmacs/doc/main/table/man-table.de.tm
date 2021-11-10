@@ -15,7 +15,7 @@
     <branch|Gröÿe von Tabellen und Zellen|man-size.de.tm>
 
     <branch|Sichtbare Zellränder, Padding und
-    Hintergrundfarbe|man-decorations.de.tm>
+    Hintergrundfarbe|man-table-decorations.de.tm>
 
     <branch|Erweiterte Tabellen-Eigenschaften|man-advanced-features.de.tm>
   </traverse>

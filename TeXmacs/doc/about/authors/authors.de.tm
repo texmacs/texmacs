@@ -17,12 +17,12 @@
   <\traverse>
     <branch|<TeXmacs> Entwickler|developers.de.tm>
 
-    <branch|Autoren und Betreuer von <TeXmacs> Plugins|plugins.de.tm>
+    <branch|Autoren und Betreuer von <TeXmacs> Plugins|about-plugins.de.tm>
 
     <branch|Administration von <TeXmacs> und materielle
     Unterstützung|administration.de.tm>
 
-    <branch|Portierung von <TeXmacs> auf andere Plattformen|porting.de.tm>
+    <branch|Portierung von <TeXmacs> auf andere Plattformen|about-porting.de.tm>
 
     <branch|<TeXmacs> Programm-Pakete|maintainers.de.tm>
 
