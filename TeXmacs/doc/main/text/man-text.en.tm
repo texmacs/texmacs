@@ -16,7 +16,7 @@
 
     <branch|Environments|man-environments.en.tm>
 
-    <branch|Layout issues|man-layout.en.tm>
+    <branch|Layout issues|man-layout-issues.en.tm>
 
     <branch|The font selection system|man-fonts.en.tm>
 

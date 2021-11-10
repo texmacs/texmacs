@@ -16,7 +16,7 @@
 
     <apply|branch|Environnements|man-environments.fr.tm>
 
-    <apply|branch|Problèmes de mise en page|man-layout.fr.tm>
+    <apply|branch|Problèmes de mise en page|man-layout-issues.fr.tm>
 
     <apply|branch|Système de sélection de polices|man-fonts.fr.tm>
 
