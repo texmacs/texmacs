@@ -32,7 +32,7 @@
         </tm-par>
         
         <tm-par>
-          <branch><tm-arg>边界和背景色</tm-arg><tm-arg>man-decorations.zh.tmml</tm-arg></branch>
+          <branch><tm-arg>边界和背景色</tm-arg><tm-arg>man-table-decorations.zh.tmml</tm-arg></branch>
         </tm-par>
         
         <tm-par>

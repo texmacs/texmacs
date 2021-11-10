@@ -20,7 +20,7 @@
     <TeXmacs>|administration.fr.tm>
 
     <apply|branch|Les porteurs de <TeXmacs> sur d'autres
-    plateformes|porting.fr.tm>
+    plateformes|about-porting.fr.tm>
 
     <apply|branch|Les mainteneurs de <TeXmacs>|maintainers.fr.tm>
 

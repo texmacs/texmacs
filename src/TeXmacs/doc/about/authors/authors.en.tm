@@ -14,12 +14,12 @@
   <\traverse>
     <branch|Developers of <TeXmacs>|developers.en.tm>
 
-    <branch|Authors and maintainers of <TeXmacs> plugins|plugins.en.tm>
+    <branch|Authors and maintainers of <TeXmacs> plugins|about-plugins.en.tm>
 
     <branch|Administration of <TeXmacs> and material
     support|administration.en.tm>
 
-    <branch|Porting <TeXmacs> to other platforms|porting.en.tm>
+    <branch|Porting <TeXmacs> to other platforms|about-porting.en.tm>
 
     <branch|Packaging <TeXmacs>|maintainers.en.tm>
 

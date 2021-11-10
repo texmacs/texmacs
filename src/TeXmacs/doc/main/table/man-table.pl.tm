@@ -14,7 +14,7 @@
 
     <branch|Rozmiar|man-size.pl.tm>
 
-    <branch|Brzeg, podszycie i kolor tªa|man-decorations.pl.tm>
+    <branch|Brzeg, podszycie i kolor tªa|man-table-decorations.pl.tm>
 
     <branch|Zaawansowane mo»liwo±ci|man-advanced-features.pl.tm>
   </traverse>

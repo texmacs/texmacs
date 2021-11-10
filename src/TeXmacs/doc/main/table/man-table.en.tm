@@ -19,7 +19,7 @@
 
     <branch|Size|man-size.en.tm>
 
-    <branch|Border and background color|man-decorations.en.tm>
+    <branch|Border and background color|man-table-decorations.en.tm>
 
     <branch|Advanced features|man-advanced-features.en.tm>
   </traverse>

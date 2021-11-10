@@ -14,7 +14,7 @@
 
     <apply|branch|Tamanho|man-size.pt.tm>
 
-    <apply|branch|Bordas e cores de fundo|man-decorations.pt.tm>
+    <apply|branch|Bordas e cores de fundo|man-table-decorations.pt.tm>
 
     <apply|branch|Propriedades avançadas|man-advanced-features.pt.tm>
   </traverse>
