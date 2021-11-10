@@ -10,7 +10,7 @@
 
     <branch|Configuring <TeXmacs>|configuration|man-setup.en.tm>
 
-    <branch|Creating, loading and saving documents|documents|man-files.en.tm>
+    <branch|Creating, loading and saving documents|documents|man-file-ops.en.tm>
 
     <branch|Printing documents|printing|man-print.en.tm>
   </traverse>
