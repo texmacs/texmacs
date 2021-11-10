@@ -52,6 +52,8 @@ closest_inside (tree t, path p) {
     return path (max (0, min (1, p->item)));
   else if (is_func (t, RAW_DATA, 1))
     return path (0, 0);
+  else if (is_func (t, AROUND, 3) && p->item == 0) return path (0);
+  else if (is_func (t, AROUND, 3) && p->item == 2) return path (1);
   else return path (p->item, closest_inside (t[p->item], p->next));
 }
 
@@ -177,6 +179,12 @@ closest_accessible (tree t, path p, int dir) {
   if (is_atomic (t)) return p;
   else if (is_nil (p)) return closest_accessible (t, path (0), dir);
   else if (is_atom (p) && !the_drd->is_child_enforcing (t)) return p;
+  else if (is_func (t, AROUND) && (p->item == 0 || p->item == 2)) {
+    if (p->item == 0 && dir < 0) return path (0);
+    if (p->item == 2 && dir > 0) return path (1);
+    if (p->item == 0) return path (1, start (t[1]));
+    if (p->item == 2) return path (1, end (t[1]));
+  }
   else {
     int i, k= p->item, n= N(t);
     if (p == path (1)) k= max (0, n-1);
