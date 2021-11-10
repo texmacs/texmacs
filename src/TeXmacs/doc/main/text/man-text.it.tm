@@ -16,7 +16,7 @@
 
     <apply|branch|Ambienti|man-environments.it.tm>
 
-    <apply|branch|Impaginazione|man-layout.it.tm>
+    <apply|branch|Impaginazione|man-layout-issues.it.tm>
 
     <apply|branch|Sistema di selezione dei font|man-fonts.it.tm>
 

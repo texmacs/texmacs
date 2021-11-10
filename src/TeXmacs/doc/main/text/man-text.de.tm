@@ -16,7 +16,7 @@
 
     <branch|<translate|environment|english|german>|man-environments.de.tm>
 
-    <branch|<translate|layout issues|english|german>|man-layout.de.tm>
+    <branch|<translate|layout issues|english|german>|man-layout-issues.de.tm>
 
     <branch|Das Auswahlsystem für Schriftarten|man-fonts.de.tm>
 

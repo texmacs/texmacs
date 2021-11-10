@@ -16,7 +16,7 @@
 
     <branch|\<#73AF\>\<#5883\>|man-environments.zh.tm>
 
-    <branch|\<#5E03\>\<#5C40\>\<#95EE\>\<#9898\>|man-layout.zh.tm>
+    <branch|\<#5E03\>\<#5C40\>\<#95EE\>\<#9898\>|man-layout-issues.zh.tm>
 
     <branch|\<#5B57\>\<#4F53\>\<#9009\>\<#62E9\>\<#7CFB\>\<#7EDF\>|man-fonts.zh.tm>
 
