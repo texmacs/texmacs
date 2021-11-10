@@ -23,7 +23,7 @@
     <apply|branch|Creare dei menu dinamici personalizzati|man-menus.it.tm>
 
     <apply|branch|Creare delle scorciatoie da tastiera
-    personalizzate|man-keyboard.it.tm>
+    personalizzate|man-custom-keyboard.it.tm>
 
     <apply|branch|Altri file interessanti|man-files.it.tm>
   </traverse>

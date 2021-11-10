@@ -22,7 +22,7 @@
 
     <apply|branch|Création de menus dynamiques|man-menus.fr.tm>
 
-    <apply|branch|Création de raccourcis clavier|man-keyboard.fr.tm>
+    <apply|branch|Création de raccourcis clavier|man-custom-keyboard.fr.tm>
 
     <apply|branch|Autres fichiers à voir|man-files.fr.tm>
   </traverse>
