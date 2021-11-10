@@ -22,7 +22,7 @@
 
     <branch|Creating your own dynamic menus|menus|man-menus.en.tm>
 
-    <branch|Creating your own keyboard shortcuts|keyboard|man-keyboard.en.tm>
+    <branch|Creating your own keyboard shortcuts|keyboard|man-custom-keyboard.en.tm>
 
     <branch|Other interesting files|files|man-files.en.tm>
   </traverse>
