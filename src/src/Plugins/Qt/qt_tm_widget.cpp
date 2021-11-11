@@ -240,7 +240,14 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   focusToolBar->setFixedHeight (toolbarHeight);
 #endif
 #else
-#ifndef Q_OS_MAC
+#ifdef Q_OS_MAC
+  if (retina_icons > 1) {
+    int toolbarHeight= 30;
+    mainToolBar->setFixedHeight (toolbarHeight + 8);
+    modeToolBar->setFixedHeight (toolbarHeight + 4);
+    focusToolBar->setFixedHeight (toolbarHeight);
+  }
+#else
   int toolbarHeight= 30 * retina_icons;
   mainToolBar->setFixedHeight (toolbarHeight + 8);
   modeToolBar->setFixedHeight (toolbarHeight + 4);
