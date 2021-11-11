@@ -228,10 +228,17 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   // NOTICE: setFixedHeight must be after setIconSize
   // TODO: the size of the toolbar should be calculated dynamically
 #if (QT_VERSION >= 0x050000)
+#ifdef Q_OS_MAC
   int toolbarHeight= 30 * retina_icons;
   mainToolBar->setFixedHeight (toolbarHeight + 8 * retina_icons);
   modeToolBar->setFixedHeight (toolbarHeight + 4 * retina_icons);
   focusToolBar->setFixedHeight (toolbarHeight);
+#else
+  int toolbarHeight= 30;
+  mainToolBar->setFixedHeight (toolbarHeight + 8);
+  modeToolBar->setFixedHeight (toolbarHeight + 4);
+  focusToolBar->setFixedHeight (toolbarHeight);
+#endif
 #else
 #ifndef Q_OS_MAC
   int toolbarHeight= 30 * retina_icons;
