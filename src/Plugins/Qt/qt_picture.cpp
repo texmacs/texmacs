@@ -240,6 +240,24 @@ load_picture (url u, int w, int h, tree eff, int pixel) {
   return qt_picture (*im, 0, 0);
 }
 
+void
+invert_colors (QImage& im) {
+  if (im.format () != QImage::Format_ARGB32)
+    im= im.convertToFormat (QImage::Format_ARGB32);
+  int r, g, b, a;
+  int w= im.width (), h= im.height ();
+  for (int y=0; y<h; y++)
+    for (int x=0; x<w; x++) {
+      QColor col= im.pixelColor (x, y);
+      col.getRgb (&r, &g, &b, &a);
+      int m1= min (r, min (g, b));
+      int M1= max (r, max (g, b));
+      int m2= 255 - M1;
+      int dc= m2 - m1;
+      im.setPixelColor (x, y, QColor (r + dc, g + dc, b + dc, a));
+    }
+}
+
 picture
 qt_load_xpm (url file_name) {
   string sss;
@@ -258,6 +276,7 @@ qt_load_xpm (url file_name) {
   c_string buf (sss);
   QImage pm;
   pm.loadFromData ((uchar*) (char*) buf, N(sss));
+  //invert_colors (pm);
   return qt_picture (pm, 0, 0);
 }
 
