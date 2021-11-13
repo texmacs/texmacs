@@ -57,10 +57,6 @@ QToolButton::menu-button {
 }
 */
 
-QMenu::right-arrow {
-    border-image: url($TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_search_next_x2.png) 6 4 6 8;
-}
-
 QTabBar::tab {
     background: #808080;
     margin-top: 2px;
@@ -84,6 +80,14 @@ QTabBar::tab::selected {
 
 QMenu {
     background: #2C2C2C;
+}
+
+QMenu::item:selected {
+    background: #2C6080;
+}
+
+QMenu::right-arrow {
+    border-image: url($TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_search_next_x2.png) 6 4 6 8;
 }
 
 QLineEdit {
@@ -110,7 +114,15 @@ QToolBar#focusToolBar {
     background: #404040;
 }
 
+QAbstractScrollArea {
+    background: #202020;
+}
+
 QListView {
+    background: #606060;
+}
+
+QListView QAbstractScrollArea {
     background: #606060;
 }
 
@@ -125,6 +137,15 @@ QToolTip {
 QListView {
     background: #606060;
 }
+
+QListView::item:selected {
+    background: #2C6080;
+}
+
+QListView::item:hover {
+    color: #f0d090;
+}
+
 
 QComboBox {
     background: #606060;
@@ -142,14 +163,26 @@ QComboBox::drop-down {
     border-bottom-right-radius: 5px;
 }
 
+QComboBox {
+    background: #606060;
+    padding: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+    border: 0px;
+    border-radius: 5px;
+}
+
+xQComboBox::drop-down {
+    background: #606060;
+    border: 0px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
 QComboBox::down-arrow {
     border-image: url($TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_similar_next_x2.png) 0 0 0 0 stretch stretch;
 }
 
-QAbstractScrollArea {
-    background: #202020;
-}
-
-QListView QAbstractScrollArea, QComboBox QAbstractScrollArea {
-    background: #606060;
+QComboBox QAbstractItemView {
+    background: #404040;
 }
