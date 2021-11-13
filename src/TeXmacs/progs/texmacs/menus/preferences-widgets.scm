@@ -709,7 +709,11 @@
                 (get-boolean-preference "advanced font customization")))
       (meti (hlist // (text "New style page breaking"))
         (toggle (set-boolean-preference "new style page breaking" answer)
-                (get-boolean-preference "new style page breaking"))))
+                (get-boolean-preference "new style page breaking")))
+      (assuming (os-macos?)
+        (meti (hlist // (text "Use native menubar"))
+          (toggle (set-boolean-preference "use native menubar" answer)
+                  (get-boolean-preference "use native menubar")))))
     /// ///
     (vlist
       (aligned
@@ -733,10 +737,6 @@
           (meti (hlist // (text "Use print dialogue"))
             (toggle (set-boolean-preference "gui:print dialogue" answer)
                     (get-boolean-preference "gui:print dialogue"))))
-        (assuming (os-macos?)
-          (meti (hlist // (text "Use native menubar"))
-            (toggle (set-boolean-preference "use native menubar" answer)
-                    (get-boolean-preference "use native menubar"))))
         (assuming (os-macos?)
           (meti (hlist // (text "Use unified toolbars"))
             (toggle (set-boolean-preference "use unified toolbar" answer)
