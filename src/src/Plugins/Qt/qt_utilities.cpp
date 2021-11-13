@@ -878,20 +878,25 @@ init_style_sheet (QApplication* app) {
   string ss;
   url css (tm_style_sheet);
   if (tm_style_sheet != "" && !load_string (css, ss, false)) {
-    QPalette pal= app -> style () -> standardPalette ();
-    pal.setColor (QPalette::Window, QColor (64, 64, 64));
-    pal.setColor (QPalette::WindowText, QColor (224, 224, 224));
-    pal.setColor (QPalette::Base, QColor (96, 96, 96));
-    pal.setColor (QPalette::Text, QColor (224, 224, 224));
-    pal.setColor (QPalette::ButtonText, QColor (224, 224, 224));
-    pal.setColor (QPalette::Light, QColor (64, 64, 64));
-    pal.setColor (QPalette::Midlight, QColor (96, 96, 96));
-    pal.setColor (QPalette::Mid, QColor (128, 128, 128));
-    pal.setColor (QPalette::Dark, QColor (224, 224, 224));
-    pal.setColor (QPalette::Shadow, QColor (240, 240, 240));
-    app->setPalette (pal);
+    if (occurs ("dark", tm_style_sheet)) {
+      QPalette pal= app -> style () -> standardPalette ();
+      pal.setColor (QPalette::Window, QColor (64, 64, 64));
+      pal.setColor (QPalette::WindowText, QColor (224, 224, 224));
+      pal.setColor (QPalette::Base, QColor (96, 96, 96));
+      pal.setColor (QPalette::Text, QColor (224, 224, 224));
+      pal.setColor (QPalette::ButtonText, QColor (224, 224, 224));
+      pal.setColor (QPalette::Light, QColor (64, 64, 64));
+      pal.setColor (QPalette::Midlight, QColor (96, 96, 96));
+      pal.setColor (QPalette::Mid, QColor (128, 128, 128));
+      pal.setColor (QPalette::Dark, QColor (224, 224, 224));
+      pal.setColor (QPalette::Shadow, QColor (240, 240, 240));
+      app->setPalette (pal);
+      tm_background= rgb_color (32, 32, 32);
+    }
+    string p= as_string (url ("$TEXMACS_PATH"));
     ss= replace (ss, "\n", " ");
     ss= replace (ss, "\t", " ");
+    ss= replace (ss, "$TEXMACS_PATH", p); // TODO: check under Windows
     app->setStyleSheet (to_qstring (ss));
   }
 }
