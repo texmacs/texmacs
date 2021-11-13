@@ -275,7 +275,7 @@ qt_load_xpm (url file_name) {
   c_string buf (sss);
   QImage pm;
   pm.loadFromData ((uchar*) (char*) buf, N(sss));
-  //invert_colors (pm);
+  if (occurs ("dark", tm_style_sheet)) invert_colors (pm);
   return qt_picture (pm, 0, 0);
 }
 

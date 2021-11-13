@@ -14,10 +14,12 @@
 
 #include <QApplication>
 #include <QIcon>
+#include <QStyle>
 #include "string.hpp"
 #include "sys_utils.hpp"
 #include "url.hpp"
 
+void init_style_sheet (QApplication* app);
 
 #ifdef Q_OS_MAC
 
@@ -109,7 +111,9 @@ class QTMApplication: public QApplication {
   
 public:
   QTMApplication (int& argc, char** argv) :
-    QApplication (argc, argv) { }
+    QApplication (argc, argv) {
+      init_style_sheet (this);
+  }
 
   void set_window_icon (string icon_path) {
     url icon_url= url_system (get_env ("TEXMACS_PATH") * icon_path);

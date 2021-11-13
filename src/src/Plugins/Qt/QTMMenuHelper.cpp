@@ -434,10 +434,12 @@ QTMLineEdit::QTMLineEdit (QWidget* parent, string _type, string _ww,
     setStyle (qtmstyle());
       // FIXME: we should remove this and let the scheme code decide.
 #ifdef OS_MACOS
-    QPalette pal (palette());
-    pal.setColor (QPalette::Base, QColor (252, 252, 248));
-    pal.setColor (QPalette::WindowText, Qt::black);
-    setPalette (pal);
+    if (tm_style_sheet == "") {
+      QPalette pal (palette());
+      pal.setColor (QPalette::Base, QColor (252, 252, 248));
+      pal.setColor (QPalette::WindowText, Qt::black);
+      setPalette (pal);
+    }
 #endif
   }
   
