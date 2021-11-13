@@ -196,12 +196,14 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   dock_window_widget = tm_new<qt_window_widget_rep> (sideTools, dock_name,
                                                      command(), true);
   
-  mainToolBar->setStyle (qtmstyle ());
-  modeToolBar->setStyle (qtmstyle ());
-  focusToolBar->setStyle (qtmstyle ());
-  userToolBar->setStyle (qtmstyle ());
-  sideTools->setStyle (qtmstyle ());
-  bottomTools->setStyle (qtmstyle ());
+  if (tm_style_sheet == "") {
+    mainToolBar->setStyle (qtmstyle ());
+    modeToolBar->setStyle (qtmstyle ());
+    focusToolBar->setStyle (qtmstyle ());
+    userToolBar->setStyle (qtmstyle ());
+    sideTools->setStyle (qtmstyle ());
+    bottomTools->setStyle (qtmstyle ());
+  }
   
   {
     // set proper sizes for icons
@@ -269,6 +271,11 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   bl->addWidget (q);
   
   mw->setCentralWidget (cw);
+
+  mainToolBar->setObjectName ("mainToolBar");
+  modeToolBar->setObjectName ("modeToolBar");
+  focusToolBar->setObjectName ("focusToolBar");
+  userToolBar->setObjectName ("userToolBar");
 
 #ifdef UNIFIED_TOOLBAR
 
@@ -374,11 +381,13 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   mainwindow()->statusBar()->setVisible (true);
 #ifndef Q_OS_MAC
   mainwindow()->menuBar()->setVisible (false);
-#endif  
-  QPalette pal;
-  QColor bgcol (160, 160, 160); // same as tm_background
-  pal.setColor (QPalette::Mid, bgcol);
-  mainwindow()->setPalette(pal);
+#endif
+  if (tm_style_sheet == "") {
+    QPalette pal;
+    QColor bgcol (160, 160, 160); // same as tm_background
+    pal.setColor (QPalette::Mid, bgcol);
+    mainwindow()->setPalette(pal);
+  }
 }
 
 qt_tm_widget_rep::~qt_tm_widget_rep () {

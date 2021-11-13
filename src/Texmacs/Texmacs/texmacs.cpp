@@ -348,7 +348,8 @@ TeXmacs_main (int argc, char** argv) {
                (s == "-delete-cache") || (s == "-delete-font-cache") ||
                (s == "-delete-style-cache") || (s == "-delete-file-cache") ||
                (s == "-delete-doc-cache") || (s == "-delete-plugin-cache") ||
-               (s == "-delete-server-data") || (s == "-delete-databases"));
+               (s == "-delete-server-data") || (s == "-delete-databases") ||
+               (s == "-standard-dark"));
       else if (s == "-build-manual") {
         if ((++i)<argc)
           extra_init_cmd << "(build-manual "
@@ -468,7 +469,7 @@ TeXmacs_main (int argc, char** argv) {
              (s == "-x") || (s == "-execute") ||
              (s == "-log-file") ||
              (s == "-build-manual") ||
-             (s == "-reference-suite") || (s == "-test-suite")) i++;
+             (s == "-reference-suite") || (s == "-test-suite")) {}
   }
   if (install_status == 1) {
     if (DEBUG_STD) debug_boot << "Loading welcome message...\n";
@@ -622,6 +623,8 @@ immediate_options (int argc, char** argv) {
       cout.redirect (logf);
       cerr.redirect (logf);
     }
+    else if (s == "-standard-dark")
+      tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-dark.css";
   }
 }
 

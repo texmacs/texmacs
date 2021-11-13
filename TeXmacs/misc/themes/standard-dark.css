@@ -1,0 +1,132 @@
+
+/*
+xQWidget {
+    background: #404040;
+    color: #e0e0e0;
+}
+
+QToolBar#mainToolBar xQWidget, QStatusBar xQWidget {
+    background: #2C2C2C;
+}
+
+QToolBar#modeToolBarx QWidget {
+    background: #363636;
+}
+
+QToolBar#focusToolbar xQWidget {
+    background: #404040;
+}
+*/
+
+QWidget {
+    font-size: 14px;
+}
+
+QPushButton {
+    background: #707070;
+    padding: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-left: 3px;
+    margin-right: 3px;
+    border: 1px solid #A0A0A0;
+    border-right: 1px solid #404040;
+    border-bottom: 1px solid #404040;
+    border-radius: 5px;
+}
+
+QPushButton:pressed {
+    background: #303030;
+    padding: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-left: 3px;
+    margin-right: 3px;
+    border: 1px solid #606060;
+    border-top: 1px solid #000000;
+    border-left: 1px solid #000000;
+    border-radius: 5px;
+}
+
+QTabBar::tab {
+    background: #808080;
+    margin-top: 2px;
+    padding: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border: 1px solid #A0A0A0;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+QTabBar::tab::selected {
+    background: #3C3C3C;
+    margin-top: 0px;
+    padding: 3px;
+    border: 1px solid #A0A0A0;
+    border-bottom: 0px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+QMenu {
+    background: #2C2C2C;
+}
+
+QLineEdit {
+    background: #606060;
+}
+
+QStatusBar {
+    background: #2C2C2C;
+    padding: 2px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+QToolBar {
+    background: #2C2C2C;
+    border-bottom: 1px solid #505050;
+}
+
+QToolBar#modeToolBar {
+    background: #363636;
+}
+
+QToolBar#focusToolBar {
+    background: #404040;
+}
+
+QListView {
+    background: #606060;
+}
+
+QToolTip {
+    font-size: 18px;
+    background: #ffe8c0;
+    color: #806020;
+    padding: 2px;
+}
+
+
+QListView {
+    background: #606060;
+}
+
+QComboBox {
+    background: #606060;
+    padding: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+    border: 1px;
+    margin-bottom: -1px;
+    border-radius: 5px;
+}
+
+QAbstractScrollArea {
+    background: #202020;
+}
+
+QListView QAbstractScrollArea, QComboBox QAbstractScrollArea {
+    background: #606060;
+}

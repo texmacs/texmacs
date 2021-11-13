@@ -27,6 +27,7 @@
 #include <QPrinter>
 #include <QPrintDialog>
 #include <QImageReader>
+#include <QApplication>
 
 #include "colors.hpp"
 
@@ -656,6 +657,12 @@ parse_tm_style (int style) {
     sheet += "font-weight: bold;";
   if (DEBUG_QT_WIDGETS)
     sheet += "border:1px solid rgb(255, 0, 0);";
+
+  if (occurs ("dark", tm_style_sheet)) {
+    sheet += "color: #e0e0e0;";
+    if (style & WIDGET_STYLE_GREY) sheet += "color: #a0a0a0;";
+    if (style & WIDGET_STYLE_INERT) sheet += "color: #a0a0a0;";
+  }
   return sheet;
 }
 
@@ -671,6 +678,7 @@ qt_apply_tm_style (QWidget* qwid, int style, color c) {
   int r,g,b,a;
   get_rgb_color (c, r, g, b, a);
   a = a*100/255;
+  if (occurs ("dark", tm_style_sheet)) { r= g= b= 224; a= 100; }
   QString sheet = "* {" + parse_tm_style (style)
   + QString("color: rgba(%1, %2, %3, %4%);").arg(r).arg(g).arg(b).arg(a)
   + "} ";
@@ -861,3 +869,29 @@ QString fromNSUrl(const QUrl &url) {
 }
 #endif // OS_MACOS
 
+/******************************************************************************
+ * Style sheets
+ ******************************************************************************/
+
+void
+init_style_sheet (QApplication* app) {
+  string ss;
+  url css (tm_style_sheet);
+  if (tm_style_sheet != "" && !load_string (css, ss, false)) {
+    QPalette pal= app -> style () -> standardPalette ();
+    pal.setColor (QPalette::Window, QColor (64, 64, 64));
+    pal.setColor (QPalette::WindowText, QColor (224, 224, 224));
+    pal.setColor (QPalette::Base, QColor (96, 96, 96));
+    pal.setColor (QPalette::Text, QColor (224, 224, 224));
+    pal.setColor (QPalette::ButtonText, QColor (224, 224, 224));
+    pal.setColor (QPalette::Light, QColor (64, 64, 64));
+    pal.setColor (QPalette::Midlight, QColor (96, 96, 96));
+    pal.setColor (QPalette::Mid, QColor (128, 128, 128));
+    pal.setColor (QPalette::Dark, QColor (224, 224, 224));
+    pal.setColor (QPalette::Shadow, QColor (240, 240, 240));
+    app->setPalette (pal);
+    ss= replace (ss, "\n", " ");
+    ss= replace (ss, "\t", " ");
+    app->setStyleSheet (to_qstring (ss));
+  }
+}
