@@ -240,6 +240,8 @@ load_picture (url u, int w, int h, tree eff, int pixel) {
   return qt_picture (*im, 0, 0);
 }
 
+void reverse (int& r, int& g, int& b);
+
 void
 invert_colors (QImage& im) {
   if (im.format () != QImage::Format_ARGB32)
@@ -250,11 +252,8 @@ invert_colors (QImage& im) {
     for (int x=0; x<w; x++) {
       QColor col= im.pixelColor (x, y);
       col.getRgb (&r, &g, &b, &a);
-      int m1= min (r, min (g, b));
-      int M1= max (r, max (g, b));
-      int m2= 255 - M1;
-      int dc= m2 - m1;
-      im.setPixelColor (x, y, QColor (r + dc, g + dc, b + dc, a));
+      reverse (r, g, b);
+      im.setPixelColor (x, y, QColor (r, g, b, a));
     }
 }
 
