@@ -27,8 +27,6 @@ QPushButton {
     padding: 3px;
     padding-left: 5px;
     padding-right: 5px;
-    margin-left: 3px;
-    margin-right: 3px;
     border: 1px solid #A0A0A0;
     border-right: 1px solid #404040;
     border-bottom: 1px solid #404040;
@@ -46,6 +44,21 @@ QPushButton:pressed {
     border-top: 1px solid #000000;
     border-left: 1px solid #000000;
     border-radius: 5px;
+}
+
+/*
+QToolButton {
+    background: red;
+    color: green;
+}
+
+QToolButton::menu-button {
+    image: url($TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_similar_previous.png);
+}
+*/
+
+QMenu::right-arrow {
+    border-image: url($TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_search_next_x2.png) 6 4 6 8;
 }
 
 QTabBar::tab {
@@ -102,7 +115,7 @@ QListView {
 }
 
 QToolTip {
-    font-size: 18px;
+    font-size: 14px;
     background: #ffe8c0;
     color: #806020;
     padding: 2px;
@@ -119,8 +132,18 @@ QComboBox {
     padding-left: 5px;
     padding-right: 5px;
     border: 1px;
-    margin-bottom: -1px;
     border-radius: 5px;
+}
+
+QComboBox::drop-down {
+    background: #606060;
+    border: 1px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+QComboBox::down-arrow {
+    border-image: url($TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_similar_next_x2.png) 0 0 0 0 stretch stretch;
 }
 
 QAbstractScrollArea {

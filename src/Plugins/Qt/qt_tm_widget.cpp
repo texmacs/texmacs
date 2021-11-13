@@ -382,12 +382,10 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 #ifndef Q_OS_MAC
   mainwindow()->menuBar()->setVisible (false);
 #endif
-  if (tm_style_sheet == "") {
-    QPalette pal;
-    QColor bgcol (160, 160, 160); // same as tm_background
-    pal.setColor (QPalette::Mid, bgcol);
-    mainwindow()->setPalette(pal);
-  }
+  QPalette pal;
+  QColor bgcol= to_qcolor (tm_background);
+  pal.setColor (QPalette::Mid, bgcol);
+  mainwindow()->setPalette(pal);
 }
 
 qt_tm_widget_rep::~qt_tm_widget_rep () {
@@ -993,7 +991,7 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
   if (win) {
     if (flag ) {
       QPalette pal;
-      pal.setColor(QPalette::Mid, Qt::black);
+      pal.setColor(QPalette::Mid, QColor (0, 0, 0));
       mainwindow()->setPalette(pal);
 #ifdef UNIFIED_TOOLBAR
       if (use_unified_toolbar) {
@@ -1010,7 +1008,7 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
     }
     else {
       QPalette pal;
-      QColor bgcol (160, 160, 160); // same as tm_background
+      QColor bgcol= to_qcolor (tm_background);
       pal.setColor (QPalette::Mid, bgcol);
       mainwindow()->setPalette(pal);
       bool cache = visibility[0];
