@@ -310,6 +310,7 @@ page_border_box_rep::pre_display (renderer& ren) {
 static void
 set_shadow (renderer ren, color bg, SI alpha) {
   color c= rgb_color (0, 0, 0, alpha);
+  if (get_reverse_colors ()) c= rgb_color (128, 128, 128, alpha);
   ren->set_background (blend_colors (c, bg));
 }
 
