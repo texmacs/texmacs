@@ -250,10 +250,10 @@ invert_colors (QImage& im) {
   int w= im.width (), h= im.height ();
   for (int y=0; y<h; y++)
     for (int x=0; x<w; x++) {
-      QColor col= im.pixelColor (x, y);
-      col.getRgb (&r, &g, &b, &a);
+      QRgb col= im.pixel (x, y);
+      r= qRed (col); g= qGreen (col); b= qBlue (col); a= qAlpha (col);
       reverse (r, g, b);
-      im.setPixelColor (x, y, QColor (r, g, b, a));
+      im.setPixel (x, y, qRgba (r, g, b, a));
     }
 }
 
