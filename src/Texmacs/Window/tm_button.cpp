@@ -166,6 +166,8 @@ box_widget (box b, bool tr) {
 
 widget
 box_widget (scheme_tree p, string s, color col, bool trans, bool ink) {
+  if (get_reverse_colors () ^ occurs ("dark", tm_style_sheet))
+    col= reverse (col);  
   string family  = "roman";
   string fn_class= "mr";
   string series  = "medium";

@@ -84,6 +84,10 @@ QMenu::item * {
     margin: 3px;
 }
 
+QMenu::item * QToolTip {
+    background: #ffe8c0;
+}
+
 QMenu::item:disabled {
     color: #808080;
 }

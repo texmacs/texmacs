@@ -70,6 +70,9 @@ color  blend_colors (color fg, color bg);
 string named_color_to_xcolormap (string s);
   // get xcolor colorscheme
 
+color reverse (color col);
+  // get reverse color
+
 /******************************************************************************
 * Color vectors
 ******************************************************************************/
