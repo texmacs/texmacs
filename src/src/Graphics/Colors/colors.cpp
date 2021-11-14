@@ -135,6 +135,14 @@ reverse (int& r, int& g, int& b) {
   b= (int) (tt + mu * (b - t) + 0.5);
 }
 
+color
+reverse (color col) {
+  int r, g, b, a;
+  get_rgb_color (col, r, g, b, a);
+  reverse (r, g, b);
+  return rgb_color (r, g, b, a);
+}
+
 /******************************************************************************
 * Blended colors
 ******************************************************************************/
