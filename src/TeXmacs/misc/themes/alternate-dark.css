@@ -209,6 +209,10 @@ QToolBar#modeToolBar QToolButton:hover {
     /* FIXME: bug when using a color */
 }
 
+Qt4QToolButton, Qt4QToolButton:hover {
+    background-color: rgba(96,96,96,0%);
+}
+
 QToolButton:pressed,
 QToolBar#mainToolBar QToolButton:pressed,
 QToolBar#modeToolBar QToolButton:pressed {
