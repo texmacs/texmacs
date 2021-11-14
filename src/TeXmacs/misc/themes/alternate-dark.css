@@ -208,7 +208,11 @@ QScrollBar {
     background: none;
 }
 
-xQScrollBar::handle {
+Qt4QScrollBar {
+    background: #404040;
+}
+
+Qt4QScrollBar::handle {
     background: #808080;
     border: 0px;
     border-radius: 5px;
