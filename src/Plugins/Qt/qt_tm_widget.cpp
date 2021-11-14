@@ -128,10 +128,20 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   }
 
 #ifdef Q_OS_MAC
-  if (!use_native_menubar)
+  if (!use_native_menubar) {
     mw->menuBar()->setNativeMenuBar(false);
+    if (tm_style_sheet != "") {
+      int min_h= (int) floor (28 * retina_scale);
+      mw->menuBar()->setMinimumHeight (min_h);
+    }
+  }
+#else
+  if (tm_style_sheet != "") {
+    int min_h= (int) floor (28 * retina_scale);
+    mw->menuBar()->setMinimumHeight (min_h);
+  }
 #endif
-  
+
   // there is a bug in the early implementation of toolbars in Qt 4.6
   // which has been fixed in 4.6.2 (at least)
   // this is why we change dimension of icons
@@ -173,8 +183,13 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   bar->setMinimumHeight (min_h);
 #else
 #if (QT_VERSION >= 0x050000)
+#ifdef Q_OS_MAC
+  int min_h= (int) floor (28 * retina_scale);
+  bar->setMinimumHeight (min_h);
+#else
   int min_h= (int) floor (24 * retina_scale);
   bar->setMinimumHeight (min_h);
+#endif
 #else
   if (retina_scale > 1.0) {
     int min_h= (int) floor (20 * retina_scale);
