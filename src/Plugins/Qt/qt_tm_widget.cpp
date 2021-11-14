@@ -75,7 +75,8 @@ replaceButtons (QToolBar* dest, QList<QAction*>* src) {
     QToolButton* button = qobject_cast<QToolButton*> (list[i]);
     if (button) {
       button->setPopupMode (QToolButton::InstantPopup);
-      button->setStyle (qtmstyle());
+      if (tm_style_sheet == "")
+        button->setStyle (qtmstyle());
     }
   }
   if (visible) dest->show(); //TRICK: see above
@@ -121,8 +122,10 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   // general setup for main window
   
   QMainWindow* mw= mainwindow ();
-  mw->setStyle (qtmstyle ());
-  mw->menuBar()->setStyle (qtmstyle ());
+  if (tm_style_sheet == "") {
+    mw->setStyle (qtmstyle ());
+    mw->menuBar()->setStyle (qtmstyle ());
+  }
 
 #ifdef Q_OS_MAC
   if (!use_native_menubar)
@@ -149,7 +152,8 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   rightLabel->setFrameStyle (QFrame::NoFrame);
   bar->addWidget (leftLabel, 1);
   bar->addPermanentWidget (rightLabel);
-  bar->setStyle (qtmstyle ());
+  if (tm_style_sheet == "")
+    bar->setStyle (qtmstyle ());
   
   // NOTE (mg): the following setMinimumWidth command disable automatic 
   // enlarging of the status bar and consequently of the main window due to 

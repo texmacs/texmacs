@@ -171,7 +171,8 @@ QTMTileAction::createWidget (QWidget* parent)
     QToolButton* tb= new QTMMenuButton (wid);
     tb->setDefaultAction (sa);
     QObject::connect (tb, SIGNAL (released()), this, SLOT (trigger()));
-      //  tb->setStyle (qtmstyle ());
+    if (tm_style_sheet == "")
+      tb->setStyle (qtmstyle ());
     l->addWidget (tb, row, col);
     col++;
     if (col >= cols) { col = 0; row++; }
@@ -226,7 +227,8 @@ QTMMinibarAction::createWidget (QWidget* parent) {
       tb->setDefaultAction (sa);
       tb->setAutoRaise (true);
       tb->setPopupMode (QToolButton::InstantPopup);
-      tb->setStyle (qtmstyle());
+      if (tm_style_sheet == "")
+        tb->setStyle (qtmstyle());
       tb->setIconSize (sz);
       QFont f = tb->font();
       int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
@@ -431,10 +433,10 @@ QTMLineEdit::QTMLineEdit (QWidget* parent, string _type, string _ww,
   set_type (_type);
   if (type == "password") setEchoMode(QLineEdit::Password);
   if (style & WIDGET_STYLE_MINI) {
-    setStyle (qtmstyle());
+    if (tm_style_sheet == "") {
+      setStyle (qtmstyle());
       // FIXME: we should remove this and let the scheme code decide.
 #ifdef OS_MACOS
-    if (tm_style_sheet == "") {
       QPalette pal (palette());
       pal.setColor (QPalette::Base, QColor (252, 252, 248));
       pal.setColor (QPalette::WindowText, Qt::black);
