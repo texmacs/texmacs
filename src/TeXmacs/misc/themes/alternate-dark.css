@@ -220,3 +220,11 @@ Qt4QScrollBar::handle {
     margin-right: 2px;
     margin-bottom: 2px;
 }
+
+Qt4QScrollBar::add-line:horizontal,
+Qt4QScrollBar::sub-line:horizontal,
+Qt4QScrollBar::add-line:vertical,
+Qt4QScrollBar::sub-line:vertical {
+      border: none;
+      background: none;
+}
