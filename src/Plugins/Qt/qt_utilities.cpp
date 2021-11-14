@@ -897,6 +897,9 @@ init_style_sheet (QApplication* app) {
     ss= replace (ss, "\n", " ");
     ss= replace (ss, "\t", " ");
     ss= replace (ss, "$TEXMACS_PATH", p); // TODO: check under Windows
+#if (QT_VERSION < 0x050000)
+    ss= replace (ss, "Qt4", "");
+#endif
     app->setStyleSheet (to_qstring (ss));
   }
 }
