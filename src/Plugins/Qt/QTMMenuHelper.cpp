@@ -441,8 +441,8 @@ QTMLineEdit::QTMLineEdit (QWidget* parent, string _type, string _ww,
       pal.setColor (QPalette::Base, QColor (252, 252, 248));
       pal.setColor (QPalette::WindowText, Qt::black);
       setPalette (pal);
-    }
 #endif
+    }
   }
   
   // just to be sure we don't capture the wrong keys in keyPressEvent
