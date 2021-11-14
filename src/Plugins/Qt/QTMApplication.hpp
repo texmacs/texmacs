@@ -20,6 +20,7 @@
 #include "url.hpp"
 
 void init_style_sheet (QApplication* app);
+void set_standard_style_sheet (QWidget *w);
 
 #ifdef Q_OS_MAC
 

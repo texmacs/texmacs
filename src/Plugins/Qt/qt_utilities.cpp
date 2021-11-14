@@ -870,8 +870,10 @@ QString fromNSUrl(const QUrl &url) {
 #endif // OS_MACOS
 
 /******************************************************************************
- * Style sheets
- ******************************************************************************/
+* Style sheets
+******************************************************************************/
+
+static string current_style_sheet;
 
 void
 init_style_sheet (QApplication* app) {
@@ -900,6 +902,13 @@ init_style_sheet (QApplication* app) {
 #if (QT_VERSION < 0x050000)
     ss= replace (ss, "Qt4", "");
 #endif
-    app->setStyleSheet (to_qstring (ss));
+    current_style_sheet= ss;
+    app->setStyleSheet (to_qstring (current_style_sheet));
   }
+}
+
+void
+set_standard_style_sheet (QWidget* w) {
+  if (current_style_sheet != "")
+    w->setStyleSheet (to_qstring (current_style_sheet));
 }
