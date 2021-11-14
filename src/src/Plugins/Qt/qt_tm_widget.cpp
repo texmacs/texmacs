@@ -258,7 +258,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 #endif
   
   QWidget *cw= new QWidget();
-  cw->setObjectName("central widget");  // this is important for styling toolbars.
+  cw->setObjectName("centralWidget");  // this is important for styling toolbars.
   
     // The main layout
   
