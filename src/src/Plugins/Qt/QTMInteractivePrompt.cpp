@@ -9,6 +9,7 @@
  ******************************************************************************/
 
 #include "scheme.hpp"
+#include "gui.hpp"
 
 #include "QTMInteractivePrompt.hpp"
 #include "QTMStyle.hpp"
@@ -38,12 +39,14 @@ QTMInteractivePrompt::QTMInteractivePrompt(qt_widget int_prompt,
   _hl->addItem (li2);
   _hl->setContentsMargins (3,0,0,0);
   setLayout (_hl);
-  
-  QFont f = font ();
-  int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
-  f.setPointSize (qt_zoom (fs > 0 ? fs : QTM_MINI_FONTSIZE));
-  li->widget()->setFont (f);
-  li2->widget()->setFont (f);
+
+  if (tm_style_sheet == "") {
+    QFont f = font ();
+    int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
+    f.setPointSize (qt_zoom (fs > 0 ? fs : QTM_MINI_FONTSIZE));
+    li->widget()->setFont (f);
+    li2->widget()->setFont (f);
+  }
 }
 
 

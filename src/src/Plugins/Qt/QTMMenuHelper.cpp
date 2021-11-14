@@ -227,13 +227,14 @@ QTMMinibarAction::createWidget (QWidget* parent) {
       tb->setDefaultAction (sa);
       tb->setAutoRaise (true);
       tb->setPopupMode (QToolButton::InstantPopup);
-      if (tm_style_sheet == "")
+      if (tm_style_sheet == "") {
         tb->setStyle (qtmstyle());
-      tb->setIconSize (sz);
-      QFont f = tb->font();
-      int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
-      f.setPointSize (qt_zoom (fs > 0 ? fs : QTM_MINI_FONTSIZE));
-      tb->setFont(f);
+        tb->setIconSize (sz);
+        QFont f = tb->font();
+        int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
+        f.setPointSize (qt_zoom (fs > 0 ? fs : QTM_MINI_FONTSIZE));
+        tb->setFont(f);
+      }
       l->addWidget (tb);
     }
   }
