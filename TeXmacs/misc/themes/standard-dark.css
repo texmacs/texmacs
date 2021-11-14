@@ -52,6 +52,12 @@ QToolBar#focusToolBar {
     background: #404040;
 }
 
+QToolBar::separator {
+    background: rgba(128,128,128,50%);
+    width: 0px;
+    margin: 4px 8px;
+}
+
 QStatusBar {
     background: #2C2C2C;
     padding: 2px;
