@@ -145,9 +145,9 @@
             '("None" "Translit" "Jcuken" "Yawerty")
             (get-pretty-preference "cyrillic input method")
             "15em")))
-  ======
+  ====== ===
   (bold (text "Remote controllers with keyboard simulation"))
-  ===
+  ======
   (hlist
     (aligned
       (item (text "Left:")
@@ -318,8 +318,8 @@
               "https://www.texmacs.org/css/web-article-colored.css"
               "https://www.texmacs.org/css/web-article-dark-colored.css"
               "")
-            (get-preference "texmacs->html:css-stylesheet") "30em")))
-  ======
+            (get-preference "texmacs->html:css-stylesheet") "35em")))
+  ====== ===
   (bold (text "Html -> TeXmacs"))
   ===
   (refreshable "html -> texmacs"
@@ -372,7 +372,7 @@
       (toggle
         (set-boolean-preference "latex->texmacs:fallback-on-pictures" answer)
         (get-boolean-preference "latex->texmacs:fallback-on-pictures"))))
-  ======
+  ====== ===
   (bold (text "TeXmacs -> LaTeX"))
   ===
   (aligned
@@ -398,7 +398,7 @@
             '("Ascii" "Cork with catcodes" "Utf-8 with inputenc")
             (get-pretty-preference "texmacs->latex:encoding")
             "15em")))
-  ======
+  ====== ===
   (bold (text "Conservative conversion options"))
   ===
   (refreshable "source-tracking"
@@ -453,7 +453,7 @@
     (meti (hlist // (text "Only convert changes when re-importing"))
       (toggle (set-bibtm-conservative answer)
               (get-bibtm-conservative))))
-  ======
+  ====== ===
   (bold (text "TeXmacs -> BibTeX"))
   ===
   (aligned
@@ -489,8 +489,8 @@
       (enum (set-pretty-preference "texmacs->verbatim:encoding" answer)
             '("Automatic" "Cork" "Iso-8859-1" "Utf-8")
             (get-pretty-preference "texmacs->verbatim:encoding")
-            "5em")))
-  ======
+            "12em")))
+  ====== ===
   (bold (text "Verbatim -> TeXmacs"))
   ===
   (aligned
@@ -503,7 +503,7 @@
       (enum (set-pretty-preference "verbatim->texmacs:encoding" answer)
             '("Auto" "Cork" "Iso-8859-1" "Utf-8")
             (get-pretty-preference "verbatim->texmacs:encoding")
-            "5em"))))
+            "12em"))))
 
 ;; Pdf ----------
 (define-preference-names "texmacs->pdf:version"
@@ -563,13 +563,13 @@
       (enum (set-preference "texmacs->image:raster-resolution" answer)
             '("1200" "600" "300" "150" "")
             (get-preference "texmacs->image:raster-resolution")
-            "5em"))
+            "8em"))
     (item (text "Clipboard image format:")
       (enum (set-pretty-preference "texmacs->image:format" answer)
             (pretty-format-list)
             (get-pretty-preference "texmacs->image:format")
-            "5em")))
-  ===
+            "8em")))
+  ====== ===
   (bold (text "Image -> TeXmacs"))
   ===
   (aligned
@@ -677,17 +677,19 @@
 (tm-widget (security-preferences-widget)
   (refreshable "security-preferences-refresher"
     (padded
-      (tabs
-        (tab (text "Wallet")
-          (centered
-            (dynamic (wallet-preferences-widget))))
-        (tab (text "Encryption")
-          (centered
-            (dynamic (gpg-preferences-widget))))
-        ;;(tab (text "Scripts")
-        ;;  (centered
-        ;;    (dynamic (script-preferences-widget))))
-        ))))
+      ===
+      (bold (text "Wallet"))
+      ===
+      (dynamic (wallet-preferences-widget))
+      ====== ===
+      (bold (text "Encryption"))
+      ===
+      (dynamic (gpg-preferences-widget))
+      ;;====== ===
+      ;;(bold (text "Scripts")) 
+      ;;===
+      ;;(dynamic (script-preferences-widget))
+      )))
 
 (tm-widget (experimental-preferences-widget)
   (hlist
