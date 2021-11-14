@@ -66,6 +66,11 @@ bool start_server_flag= false;
 string extra_init_cmd;
 void server_start ();
 
+#ifdef QTTEXMACS
+// Qt application infrastructure
+static QTMApplication* qtmapp;
+#endif
+
 /******************************************************************************
 * For testing
 ******************************************************************************/
@@ -495,6 +500,10 @@ TeXmacs_main (int argc, char** argv) {
   bench_reset ("initialize plugins");
   bench_reset ("initialize scheme");
 
+#ifdef QTTEXMACS
+  init_style_sheet (qtmapp);
+#endif
+
   if (DEBUG_STD) debug_boot << "Starting event loop...\n";
   texmacs_started= true;
   if (!disable_error_recovery) signal (SIGSEGV, clean_exit_on_segfault);
@@ -675,7 +684,7 @@ main (int argc, char** argv) {
 #endif
 #ifdef QTTEXMACS
   // initialize the Qt application infrastructure
-  QTMApplication* qtmapp= new QTMApplication (argc, argv);  
+  qtmapp= new QTMApplication (argc, argv);  
 #endif
   TeXmacs_init_paths (argc, argv);
 #ifdef QTTEXMACS
