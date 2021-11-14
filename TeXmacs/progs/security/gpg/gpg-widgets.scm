@@ -676,31 +676,22 @@
     (text "GnuPG command:") // //
     (enum (gpg-set-executable answer)
           (list "" "gpg" "gpg2" "")
-          "" "15em") // //
-          (explicit-buttons
-            ("Browse"
-             (choose-file (lambda (x)
-                            (gpg-set-executable (url->system x))
-                            (refresh-now "security-preferences-refresher"))
-                          "Select GnuPG command" ""))) >>))
+          "" "15em")))
 
 (tm-widget (gpg-supported-preferences-widget)
   (hlist
     (text "GnuPG command:") // //
     (enum (gpg-set-executable answer)
           (list (gpg-get-executable) "gpg" "gpg2" "")
-          (gpg-get-executable) "15em") // //
-          (explicit-buttons
-            ("Browse"
-             (choose-file (lambda (x)
-                            (gpg-set-executable (url->system x))
-                            (refresh-now "security-preferences-refresher"))
-                          "Select GnuPG command" ""))) >>)
+          (gpg-get-executable) "15em")
+    >>)
+  ===
   (hlist
     (text "Cipher algorithm for passphrase encryption:") // //
     (enum (gpg-set-cipher-algorithm answer)
           (list "AES192" "AES256")
-          (gpg-get-cipher-algorithm) "7em") >>))
+          (gpg-get-cipher-algorithm) "7em")
+    >>))
 
 (tm-widget (gpg-preferences-widget)
   (if (supports-gpg?)
