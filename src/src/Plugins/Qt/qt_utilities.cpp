@@ -877,26 +877,48 @@ QString fromNSUrl(const QUrl &url) {
 
 static string current_style_sheet;
 
+string
+scale_font_sizes (string s) {
+  string r;
+  for (int i=0; i<N(s); )
+    if (test (s, i, "font-size: ")) {
+      r << "font-size: ";
+      i += 11;
+      int j= i;
+      while (j<N(s) && (is_numeric (s[j]) || s[j] == '.')) j++;
+      double x= as_double (s (i, j));
+      int nx= (int) floor (x * retina_scale + 0.5);
+      r << as_string (nx);
+      i= j;
+    }
+    else r << s[i++];
+  return r;
+}
+
+void
+init_palette (QApplication* app) {
+  if (occurs ("dark", tm_style_sheet)) {
+    QPalette pal= app -> style () -> standardPalette ();
+    pal.setColor (QPalette::Window, QColor (64, 64, 64));
+    pal.setColor (QPalette::WindowText, QColor (224, 224, 224));
+    pal.setColor (QPalette::Base, QColor (96, 96, 96));
+    pal.setColor (QPalette::Text, QColor (224, 224, 224));
+    pal.setColor (QPalette::ButtonText, QColor (224, 224, 224));
+    pal.setColor (QPalette::Light, QColor (64, 64, 64));
+    pal.setColor (QPalette::Midlight, QColor (96, 96, 96));
+    pal.setColor (QPalette::Mid, QColor (128, 128, 128));
+    pal.setColor (QPalette::Dark, QColor (224, 224, 224));
+    pal.setColor (QPalette::Shadow, QColor (240, 240, 240));
+    app->setPalette (pal);
+    tm_background= rgb_color (32, 32, 32);
+  }
+}
+
 void
 init_style_sheet (QApplication* app) {
   string ss;
   url css (tm_style_sheet);
   if (tm_style_sheet != "" && !load_string (css, ss, false)) {
-    if (occurs ("dark", tm_style_sheet)) {
-      QPalette pal= app -> style () -> standardPalette ();
-      pal.setColor (QPalette::Window, QColor (64, 64, 64));
-      pal.setColor (QPalette::WindowText, QColor (224, 224, 224));
-      pal.setColor (QPalette::Base, QColor (96, 96, 96));
-      pal.setColor (QPalette::Text, QColor (224, 224, 224));
-      pal.setColor (QPalette::ButtonText, QColor (224, 224, 224));
-      pal.setColor (QPalette::Light, QColor (64, 64, 64));
-      pal.setColor (QPalette::Midlight, QColor (96, 96, 96));
-      pal.setColor (QPalette::Mid, QColor (128, 128, 128));
-      pal.setColor (QPalette::Dark, QColor (224, 224, 224));
-      pal.setColor (QPalette::Shadow, QColor (240, 240, 240));
-      app->setPalette (pal);
-      tm_background= rgb_color (32, 32, 32);
-    }
     string p= as_string (url ("$TEXMACS_PATH"));
     ss= replace (ss, "\n", " ");
     ss= replace (ss, "\t", " ");
@@ -904,6 +926,7 @@ init_style_sheet (QApplication* app) {
 #if (QT_VERSION < 0x050000)
     ss= replace (ss, "Qt4", "");
 #endif
+    ss= scale_font_sizes (ss);
     current_style_sheet= ss;
     app->setStyleSheet (to_qstring (current_style_sheet));
   }
