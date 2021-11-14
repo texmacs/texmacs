@@ -86,12 +86,12 @@ QListView QAbstractScrollArea {
     background: #606060;
 }
 
-QListView::item:selected {
-    background: #2C6080;
+QListView::item:hover {
+    background: #404040;
 }
 
-QListView::item:hover {
-    color: #f0d090;
+QListView::item:selected {
+    background: #2C6080;
 }
 
 QComboBox {
@@ -187,13 +187,25 @@ QPushButton:pressed {
     border-radius: 5px;
 }
 
-/*
 QToolButton {
-    background: red;
-    color: green;
+    background: none;
+    padding-left: 0px;
+    padding-right: 0px;
 }
 
-QToolButton::menu-button {
-    image: url($TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_similar_previous.png);
+QToolButton:hover {
+    background: none;
+    /* FIXME: bug when using a color */
 }
-*/
+
+QToolButton:pressed {
+    background: #808080;
+    border: 0px;
+    border-radius: 3px;
+}
+
+QToolButton::menu-indicator {
+    border: none;
+    background: none;
+    image: none;
+}
