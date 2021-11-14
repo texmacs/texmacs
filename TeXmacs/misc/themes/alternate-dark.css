@@ -69,6 +69,10 @@ QMenu {
     background: #2C2C2C;
 }
 
+QMenu::item:disabled {
+    color: #808080;
+}
+
 QMenu::item:selected {
     background: #2C6080;
 }
