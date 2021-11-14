@@ -75,6 +75,15 @@ QMenu {
     background: #2C2C2C;
 }
 
+QMenu::item {
+    background: #2C2C2C;
+}
+
+QMenu::item * {
+    background: #2C2C2C; /* does not seem to do much */
+    margin: 3px;
+}
+
 QMenu::item:disabled {
     color: #808080;
 }
