@@ -117,6 +117,7 @@
   ("yawerty" "Yawerty"))
 
 (tm-widget (keyboard-preferences-widget)
+  ======
   (aligned
     (item (text "Space bar in text mode:")
       (enum (set-pretty-preference "text spacebar" answer)
@@ -145,7 +146,7 @@
             '("None" "Translit" "Jcuken" "Yawerty")
             (get-pretty-preference "cyrillic input method")
             "15em")))
-  ====== ===
+  ====== ======
   (bold (text "Remote controllers with keyboard simulation"))
   ======
   (hlist
@@ -291,7 +292,7 @@
     (refresh-now "texmacs to html")))
 
 (tm-widget (html-preferences-widget)
-  ===
+  ======
   (bold (text "TeXmacs -> Html"))
   ===
   (refreshable "texmacs to html"
@@ -319,7 +320,7 @@
               "https://www.texmacs.org/css/web-article-dark-colored.css"
               "")
             (get-preference "texmacs->html:css-stylesheet") "35em")))
-  ====== ===
+  ====== ======
   (bold (text "Html -> TeXmacs"))
   ===
   (refreshable "html -> texmacs"
@@ -364,7 +365,7 @@
   (set-boolean-preference "texmacs->latex:transparent-source-tracking" on?))
 
 (tm-widget (latex-preferences-widget)
-  ===
+  ======
   (bold (text "LaTeX -> TeXmacs"))
   ===
   (aligned
@@ -372,7 +373,7 @@
       (toggle
         (set-boolean-preference "latex->texmacs:fallback-on-pictures" answer)
         (get-boolean-preference "latex->texmacs:fallback-on-pictures"))))
-  ====== ===
+  ====== ======
   (bold (text "TeXmacs -> LaTeX"))
   ===
   (aligned
@@ -398,7 +399,7 @@
             '("Ascii" "Cork with catcodes" "Utf-8 with inputenc")
             (get-pretty-preference "texmacs->latex:encoding")
             "15em")))
-  ====== ===
+  ====== ======
   (bold (text "Conservative conversion options"))
   ===
   (refreshable "source-tracking"
@@ -453,7 +454,7 @@
     (meti (hlist // (text "Only convert changes when re-importing"))
       (toggle (set-bibtm-conservative answer)
               (get-bibtm-conservative))))
-  ====== ===
+  ====== ======
   (bold (text "TeXmacs -> BibTeX"))
   ===
   (aligned
@@ -476,7 +477,7 @@
   ("utf-8" "Utf-8"))
 
 (tm-widget (verbatim-preferences-widget)
-  ===
+  ======
   (bold (text "TeXmacs -> Verbatim"))
   ===
   (aligned
@@ -490,7 +491,7 @@
             '("Automatic" "Cork" "Iso-8859-1" "Utf-8")
             (get-pretty-preference "texmacs->verbatim:encoding")
             "12em")))
-  ====== ===
+  ====== ======
   (bold (text "Verbatim -> TeXmacs"))
   ===
   (aligned
@@ -514,7 +515,7 @@
   ("1.7" "1.7"))
 
 (tm-widget (pdf-preferences-widget)
-  ===
+  ======
   (bold (text "TeXmacs -> Pdf/Postscript"))
   ===
   (aligned
@@ -555,7 +556,7 @@
 (define (supports-inkscape?) (url-exists-in-path? "inkscape"))
 
 (tm-widget (image-preferences-widget)
-  ===
+  ======
   (bold (text "TeXmacs -> Image"))
   ===
   (aligned
@@ -569,7 +570,7 @@
             (pretty-format-list)
             (get-pretty-preference "texmacs->image:format")
             "8em")))
-  ====== ===
+  ====== ======
   (bold (text "Image -> TeXmacs"))
   ===
   (aligned
@@ -677,15 +678,15 @@
 (tm-widget (security-preferences-widget)
   (refreshable "security-preferences-refresher"
     (padded
-      ===
+      ======
       (bold (text "Wallet"))
       ===
       (dynamic (wallet-preferences-widget))
-      ====== ===
+      ====== ======
       (bold (text "Encryption"))
       ===
       (dynamic (gpg-preferences-widget))
-      ;;====== ===
+      ;;====== ======
       ;;(bold (text "Scripts")) 
       ;;===
       ;;(dynamic (script-preferences-widget))
