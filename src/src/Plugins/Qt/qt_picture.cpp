@@ -197,9 +197,6 @@ saturate (QImage& im) {
       r= (int) floor (f * r + 0.5);
       g= (int) floor (f * g + 0.5);
       b= (int) floor (f * b + 0.5);
-      //r += 240 - m;
-      //g += 240 - m;
-      //b += 240 - m;
       im.setPixel (x, y, qRgba (r, g, b, a));      
     }
 }
