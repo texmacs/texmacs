@@ -123,27 +123,11 @@ QComboBox {
     padding: 3px;
     padding-left: 5px;
     padding-right: 5px;
-    border: 1px;
-    border-radius: 5px;
-}
-
-QComboBox::drop-down {
-    background: #606060;
-    border: 1px;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-}
-
-QComboBox {
-    background: #606060;
-    padding: 3px;
-    padding-left: 5px;
-    padding-right: 5px;
     border: 0px;
     border-radius: 5px;
 }
 
-xQComboBox::drop-down {
+QComboBox::drop-down {
     background: #606060;
     border: 0px;
     border-top-right-radius: 5px;
