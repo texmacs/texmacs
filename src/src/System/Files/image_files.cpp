@@ -389,6 +389,15 @@ svg_image_size (url image, int& w, int& h) {
 * displaying and printing : png, eps, pdf
 ******************************************************************************/
 
+bool
+wrap_qt_supports (url image) {
+#ifdef QTTEXMACS
+  return qt_supports (image);
+#else
+  (void) image; return false;
+#endif
+}
+
 void
 image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
   if (DEBUG_CONVERT) debug_convert << "image_to_eps ...";
@@ -402,7 +411,8 @@ image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
   // Note: since inkscape would most likely be the prog called to
   // translate svg we could at no additional cost allow other
   // vector formats supported by inkscape : ai, svgz, cdr, wmf ...
-  if ((s == "svg") && (call_scm_converter (image, eps))) return;
+  if ((s == "svg") && !wrap_qt_supports (image) &&
+      (call_scm_converter (image, eps))) return;
   
 #ifdef USE_GS
   if (gs_supports (image)) {
@@ -444,7 +454,8 @@ image_to_pdf (url image, url pdf, int w_pt, int h_pt, int dpi) {
   if (DEBUG_CONVERT) debug_convert << "image_to_pdf ... ";
   string s= suffix (image);
   // First try to preserve "vectorialness"
-  if ((s == "svg") && call_scm_converter(image, pdf)) return;
+  if ((s == "svg") && !wrap_qt_supports (image) &&
+      call_scm_converter (image, pdf)) return;
 #ifdef USE_GS
   if (gs_supports (image)) {
     if (DEBUG_CONVERT) debug_convert << " using gs "<<LF;
