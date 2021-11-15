@@ -73,7 +73,7 @@
     === ===
     (bottom-buttons
       ("Cancel" (cmd "cancel")) >>
-      ("Reset" (begin (reset-retina-preferences) (cmd "ok"))) //
+      ("Reset" (begin (reset-retina-preferences) (cmd "ok"))) // //
       ("Ok" (cmd "ok")))))
 
 
