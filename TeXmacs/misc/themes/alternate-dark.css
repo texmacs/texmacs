@@ -125,27 +125,11 @@ QComboBox {
     padding: 3px;
     padding-left: 5px;
     padding-right: 5px;
-    border: 1px;
-    border-radius: 5px;
-}
-
-QComboBox::drop-down {
-    background: #606060;
-    border: 1px;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-}
-
-QComboBox {
-    background: #606060;
-    padding: 3px;
-    padding-left: 5px;
-    padding-right: 5px;
     border: 0px;
     border-radius: 5px;
 }
 
-xQComboBox::drop-down {
+QComboBox::drop-down {
     background: #606060;
     border: 0px;
     border-top-right-radius: 5px;
@@ -277,4 +261,14 @@ Qt4QScrollBar::add-line:vertical,
 Qt4QScrollBar::sub-line:vertical {
       border: none;
       background: none;
+}
+
+Qt4QComboBox {
+    margin: 3px;
+}
+
+Qt4QPushButton {
+    margin: 3px;
+    margin-left: 6px;
+    margin-right: 6px;
 }
