@@ -897,7 +897,7 @@ scale_font_sizes (string s) {
 
 void
 init_palette (QApplication* app) {
-  if (occurs ("dark", tm_style_sheet)) {
+  if (occurs ("standard-dark", tm_style_sheet)) {
     QPalette pal= app -> style () -> standardPalette ();
     pal.setColor (QPalette::Window, QColor (64, 64, 64));
     pal.setColor (QPalette::WindowText, QColor (224, 224, 224));
@@ -910,8 +910,9 @@ init_palette (QApplication* app) {
     pal.setColor (QPalette::Dark, QColor (224, 224, 224));
     pal.setColor (QPalette::Shadow, QColor (240, 240, 240));
     app->setPalette (pal);
-    tm_background= rgb_color (32, 32, 32);
   }
+  if (occurs ("dark", tm_style_sheet))
+    tm_background= rgb_color (32, 32, 32);
 }
 
 void
