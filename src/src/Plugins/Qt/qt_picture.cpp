@@ -298,7 +298,42 @@ load_picture (url u, int w, int h, tree eff, int pixel) {
 }
 
 picture
+new_qt_load_xpm (url file_name) {
+  string sss;
+  double f= 1.0;
+  if (suffix (file_name) == "xpm" || suffix (file_name) == "png") {
+    string suf= ".png";
+    if (retina_scale == 1.0) {}
+    else if (retina_scale == 2.0) suf= "_x2.png";
+    else if (retina_scale == 4.0) suf= "_x4.png";
+    else { suf= "_x4.png"; f= retina_scale / 4.0; }
+    url png_equiv= glue (unglue (file_name, 4), suf);
+    load_string ("$TEXMACS_PIXMAP_PATH" * png_equiv, sss, false);
+  }
+  if (sss == "") {
+    f= retina_scale;
+    load_string ("$TEXMACS_PIXMAP_PATH" * file_name, sss, false);
+  }
+  if (sss == "") {
+    f= retina_scale;
+    load_string ("$TEXMACS_PATH/misc/pixmaps/TeXmacs.xpm", sss, true);
+  }
+  c_string buf (sss);
+  QImage pm;
+  pm.loadFromData ((uchar*) (char*) buf, N(sss));
+  pm= pm.scaled ((int) floor (f * pm.width () + 0.5),
+                 (int) floor (f * pm.height () + 0.5),
+                 Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+  if (occurs ("dark", tm_style_sheet)) {
+    invert_colors (pm);
+    saturate (pm);
+  }
+  return qt_picture (pm, 0, 0);
+}
+
+picture
 qt_load_xpm (url file_name) {
+  if (tm_style_sheet != "") return new_qt_load_xpm (file_name);
   string sss;
   if (retina_icons > 1 && suffix (file_name) == "xpm") {
     url png_equiv= glue (unglue (file_name, 4), "_x2.png");
@@ -315,10 +350,6 @@ qt_load_xpm (url file_name) {
   c_string buf (sss);
   QImage pm;
   pm.loadFromData ((uchar*) (char*) buf, N(sss));
-  if (occurs ("dark", tm_style_sheet)) {
-    invert_colors (pm);
-    saturate (pm);
-  }
   return qt_picture (pm, 0, 0);
 }
 

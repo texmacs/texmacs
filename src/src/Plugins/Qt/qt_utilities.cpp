@@ -898,6 +898,26 @@ init_palette (QApplication* app) {
 }
 
 string
+scale_px (string s) {
+  string r;
+  for (int i=0; i<N(s); )
+    if (s[i] == ':') {
+      r << s[i++];
+      while (i<N(s) && s[i] == ' ') r << s[i++];
+      int j= i;
+      while (j<N(s) && (is_numeric (s[j]) || s[j] == '.')) j++;
+      if (test (s, j, "px;") || test (s, j, "px ")) {
+        double x= as_double (s (i, j));
+        int nx= (int) floor (x * retina_scale + 0.5);
+        r << as_string (nx);
+        i= j;
+      }
+    }
+    else r << s[i++];
+  return r;
+}
+
+string
 scale_font_sizes (string s) {
   string r;
   for (int i=0; i<N(s); )
@@ -927,7 +947,8 @@ init_style_sheet (QApplication* app) {
 #if (QT_VERSION < 0x050000)
     ss= replace (ss, "Qt4", "");
 #endif
-    ss= scale_font_sizes (ss);
+    //ss= scale_font_sizes (ss);
+    ss= scale_px (ss);
     current_style_sheet= ss;
     app->setStyleSheet (to_qstring (current_style_sheet));
   }
