@@ -95,7 +95,7 @@ QMenu::item:selected {
 }
 
 QMenu::right-arrow {
-    border-image: url($TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_search_next_x2.png) 6 4 6 8;
+    border-image: url($TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_search_next_x4.png) 7 7 7 13;
 }
 
 /****************************************************************************
@@ -135,7 +135,7 @@ QComboBox::drop-down {
 }
 
 QComboBox::down-arrow {
-    border-image: url($TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_similar_next_x2.png) 0 0 0 0 stretch stretch;
+    border-image: url($TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_similar_next_x4.png) 0 0 0 0 stretch stretch;
 }
 
 QComboBox QAbstractItemView {
