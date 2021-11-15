@@ -275,6 +275,14 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   focusToolBar->setFixedHeight (toolbarHeight);  
 #endif
 #endif
+  if (tm_style_sheet != "") {
+    int h1= (int) floor (38 * retina_scale + 0.5);
+    int h2= (int) floor (34 * retina_scale + 0.5);
+    int h3= (int) floor (30 * retina_scale + 0.5);
+    mainToolBar->setFixedHeight (h1);
+    modeToolBar->setFixedHeight (h2);
+    focusToolBar->setFixedHeight (h3);
+  }
   
   QWidget *cw= new QWidget();
   cw->setObjectName("centralWidget");  // this is important for styling toolbars.
