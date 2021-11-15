@@ -160,6 +160,66 @@ picture_renderer (picture p, double zoomf) {
 }
 
 /******************************************************************************
+* Reverse video mode for icons
+******************************************************************************/
+
+void reverse (int& r, int& g, int& b);
+
+int
+max (const QImage& im, bool sum) {
+  int r, g, b, a;
+  int w= im.width (), h= im.height ();
+  int m= 0;
+  for (int y=0; y<h; y++)
+    for (int x=0; x<w; x++) {
+      QRgb col= im.pixel (x, y);
+      r= qRed (col); g= qGreen (col); b= qBlue (col); a= qAlpha (col);
+      if (a >= 128) {
+        if (sum) m= max (m, (r + g + b) / 3);
+        else m= max (m, max (r, max (g, b)));
+      }
+    }
+  return m;
+}
+
+void
+saturate (QImage& im) {
+  int m= max (im, false);
+  int s= max (im, true);
+  if (m == 0 || s >= 224) return;
+  double f= min (224.0 / s, 255.0 / m);
+  quint16 r, g, b, a;
+  int w= im.width (), h= im.height ();
+  for (int y=0; y<h; y++)
+    for (int x=0; x<w; x++) {
+      QRgb col= im.pixel (x, y);
+      r= qRed (col); g= qGreen (col); b= qBlue (col); a= qAlpha (col);
+      r= (int) floor (f * r + 0.5);
+      g= (int) floor (f * g + 0.5);
+      b= (int) floor (f * b + 0.5);
+      //r += 240 - m;
+      //g += 240 - m;
+      //b += 240 - m;
+      im.setPixel (x, y, qRgba (r, g, b, a));      
+    }
+}
+
+void
+invert_colors (QImage& im) {
+  if (im.format () != QImage::Format_ARGB32)
+    im= im.convertToFormat (QImage::Format_ARGB32);
+  int r, g, b, a;
+  int w= im.width (), h= im.height ();
+  for (int y=0; y<h; y++)
+    for (int x=0; x<w; x++) {
+      QRgb col= im.pixel (x, y);
+      r= qRed (col); g= qGreen (col); b= qBlue (col); a= qAlpha (col);
+      reverse (r, g, b);
+      im.setPixel (x, y, qRgba (r, g, b, a));
+    }
+}
+
+/******************************************************************************
 * Loading pictures
 ******************************************************************************/
 
@@ -240,23 +300,6 @@ load_picture (url u, int w, int h, tree eff, int pixel) {
   return qt_picture (*im, 0, 0);
 }
 
-void reverse (int& r, int& g, int& b);
-
-void
-invert_colors (QImage& im) {
-  if (im.format () != QImage::Format_ARGB32)
-    im= im.convertToFormat (QImage::Format_ARGB32);
-  int r, g, b, a;
-  int w= im.width (), h= im.height ();
-  for (int y=0; y<h; y++)
-    for (int x=0; x<w; x++) {
-      QRgb col= im.pixel (x, y);
-      r= qRed (col); g= qGreen (col); b= qBlue (col); a= qAlpha (col);
-      reverse (r, g, b);
-      im.setPixel (x, y, qRgba (r, g, b, a));
-    }
-}
-
 picture
 qt_load_xpm (url file_name) {
   string sss;
@@ -275,7 +318,10 @@ qt_load_xpm (url file_name) {
   c_string buf (sss);
   QImage pm;
   pm.loadFromData ((uchar*) (char*) buf, N(sss));
-  if (occurs ("dark", tm_style_sheet)) invert_colors (pm);
+  if (occurs ("dark", tm_style_sheet)) {
+    invert_colors (pm);
+    saturate (pm);
+  }
   return qt_picture (pm, 0, 0);
 }
 

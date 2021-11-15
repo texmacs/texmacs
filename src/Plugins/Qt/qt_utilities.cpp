@@ -877,24 +877,6 @@ QString fromNSUrl(const QUrl &url) {
 
 static string current_style_sheet;
 
-string
-scale_font_sizes (string s) {
-  string r;
-  for (int i=0; i<N(s); )
-    if (test (s, i, "font-size: ")) {
-      r << "font-size: ";
-      i += 11;
-      int j= i;
-      while (j<N(s) && (is_numeric (s[j]) || s[j] == '.')) j++;
-      double x= as_double (s (i, j));
-      int nx= (int) floor (x * retina_scale + 0.5);
-      r << as_string (nx);
-      i= j;
-    }
-    else r << s[i++];
-  return r;
-}
-
 void
 init_palette (QApplication* app) {
   if (occurs ("standard-dark", tm_style_sheet)) {
@@ -913,6 +895,24 @@ init_palette (QApplication* app) {
   }
   if (occurs ("dark", tm_style_sheet))
     tm_background= rgb_color (32, 32, 32);
+}
+
+string
+scale_font_sizes (string s) {
+  string r;
+  for (int i=0; i<N(s); )
+    if (test (s, i, "font-size: ")) {
+      r << "font-size: ";
+      i += 11;
+      int j= i;
+      while (j<N(s) && (is_numeric (s[j]) || s[j] == '.')) j++;
+      double x= as_double (s (i, j));
+      int nx= (int) floor (x * retina_scale + 0.5);
+      r << as_string (nx);
+      i= j;
+    }
+    else r << s[i++];
+  return r;
 }
 
 void
