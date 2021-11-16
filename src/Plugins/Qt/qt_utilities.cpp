@@ -97,6 +97,14 @@ to_qfont (int style, QFont font) {
   return font;
 }
 
+double
+em_factor () {
+#if (QT_VERSION < 0x050000)
+  if (tm_style_sheet == "") return 1.0 / 1.4;
+#endif
+  return 1.0;
+}
+
 /*! Try to convert a TeXmacs length (em, px, w, h) into a QSize.
  
  This uses the widget's current size to compute relative sizes as specified
@@ -120,7 +128,7 @@ qt_decode_length (string width, string height,
     // Width as a function of the default height
   else if (w_unit == "h") size.rwidth() = w_len * size.height();
     // Absolute EM units
-  else if (w_unit == "em") size.setWidth (w_len * fm.width("M"));
+  else if (w_unit == "em") size.setWidth (em_factor()* w_len * fm.width("M"));
     // Absolute pixel units
   else if (w_unit == "px") {
     if (tm_style_sheet != "") w_len *= retina_scale;
@@ -132,7 +140,7 @@ qt_decode_length (string width, string height,
   if (h_unit == "w") size.rheight() = h_len * size.width();
     // Height as a function of the default height
   else if (h_unit == "h") size.rheight() *= h_len;
-  else if (h_unit == "em") size.setHeight (h_len * fm.width("M"));
+  else if (h_unit == "em") size.setHeight (em_factor()* h_len * fm.width("M"));
   else if (h_unit == "px") {
     if (tm_style_sheet != "") h_len *= retina_scale;
     else if (retina_zoom == 2) h_len *= 1.5;
