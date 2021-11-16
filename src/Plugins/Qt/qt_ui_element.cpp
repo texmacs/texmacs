@@ -620,6 +620,12 @@ qt_ui_element_rep::as_qlayoutitem () {
 
       // FIXME: lpad and rpad ignored.
       SI hsep = y.x1; SI vsep = y.x2; SI lpad = y.x3; SI rpad = y.x4;
+      if (tm_style_sheet != "") {
+        hsep= (SI) (floor (retina_scale * hsep / 256.0 + 0.5) * PIXEL);
+        vsep= (SI) (floor (retina_scale * vsep / 256.0 + 0.5) * PIXEL);
+        lpad= (SI) (floor (retina_scale * lpad / 256.0 + 0.5) * PIXEL);
+        rpad= (SI) (floor (retina_scale * rpad / 256.0 + 0.5) * PIXEL);
+      }
       (void) lpad; (void) rpad;
      
       if (N(lhs) != N(rhs)) FAILED("aligned_widget: N(lhs) != N(rhs) ");
@@ -703,7 +709,12 @@ qt_ui_element_rep::as_qlayoutitem () {
     {
       typedef quartet<bool, bool, SI, SI> T;
       T x = open_box<T> (load);
-      QSize sz = QSize (x.x3, x.x4);
+      SI w= x.x3, h= x.x4;
+      if (tm_style_sheet != "") {
+        w= (SI) floor (retina_scale * w + 0.5);
+        h= (SI) floor (retina_scale * h + 0.5);
+      }
+      QSize sz = QSize (w, h);
       QSizePolicy::Policy hpolicy = x.x1 ? QSizePolicy::MinimumExpanding
                                          : QSizePolicy::Minimum;
       QSizePolicy::Policy vpolicy = x.x2 ? QSizePolicy::MinimumExpanding
@@ -804,7 +815,12 @@ qt_ui_element_rep::as_qwidget () {
     {
       typedef quartet<bool, bool, SI, SI> T;
       T x = open_box<T>(load);
-      QSize sz = QSize (x.x3, x.x4);
+      SI w= x.x3, h= x.x4;
+      if (tm_style_sheet != "") {
+        w= (SI) floor (retina_scale * w + 0.5);
+        h= (SI) floor (retina_scale * h + 0.5);
+      }
+      QSize sz = QSize (w, h);
       QSizePolicy::Policy hpolicy = x.x1 ? QSizePolicy::MinimumExpanding
                                          : QSizePolicy::Minimum;
       QSizePolicy::Policy vpolicy = x.x2 ? QSizePolicy::MinimumExpanding
