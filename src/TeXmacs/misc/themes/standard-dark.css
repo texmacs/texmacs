@@ -13,6 +13,7 @@ QAbstractScrollArea {
 
 QLineEdit {
     background: #606060;
+    min-height: 16px;
 }
 
 QToolTip {

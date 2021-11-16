@@ -15,6 +15,7 @@ QAbstractScrollArea {
 
 QLineEdit, QStatusBar QWidget QLineEdit, QToolBar#focusToolbar QWidget QLineEdit {
     background: #606060;
+    min-height: 16px;
 }
 
 QToolTip {
@@ -41,9 +42,12 @@ QMenuBar::item:selected {
     background: #2C6080;
 }
 
+QToolBar {
+    border-bottom: 1px solid #505050;
+}
+
 QToolBar, QToolBar#mainToolBar QWidget, QStatusBar QWidget {
     background: #2C2C2C;
-    border-bottom: 1px solid #505050;
 }
 
 QToolBar#modeToolBar, QToolBar#modeToolBar QWidget {
