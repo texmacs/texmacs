@@ -489,6 +489,9 @@ tree edit_env_rep::exec_px_length () {
   return tree (TMLEN, as_string (pixel));
 #endif
 }
+tree edit_env_rep::exec_guipx_length () {
+  return tree (TMLEN, as_string ((int) floor (retina_scale * pixel + 0.5)));
+}
 
 tree edit_env_rep::exec_lcorner_length () {
   ornament_parameters ps= get_ornament_parameters ();

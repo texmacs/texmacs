@@ -462,6 +462,7 @@ init_std_drd () {
   init (GU_LENGTH, "gu-length", fixed (0) -> returns_length ());
   init (TMPT_LENGTH, "tmpt-length", fixed (0) -> returns_length ());
   init (PX_LENGTH, "px-length", fixed (0) -> returns_length ());
+  init (GUIPX_LENGTH, "guipx-length", fixed (0) -> returns_length ());
   init (LCORNER_LENGTH, "lcorner-length", fixed (0) -> returns_length ());
   init (BCORNER_LENGTH, "bcorner-length", fixed (0) -> returns_length ());
   init (RCORNER_LENGTH, "rcorner-length", fixed (0) -> returns_length ());

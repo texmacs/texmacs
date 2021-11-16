@@ -37,7 +37,7 @@
 (define (bibwid-output-content t style)
   (if (tree-is? t 'string) 
       '(with "bg-color" "white"
-         (mini-paragraph "480px" 
+         (mini-paragraph "480guipx"
            (document (concat "Please choose a valid " (BibTeX) " file"))))
       `(with "bg-color" "#ffffff"
          (mini-paragraph "480px" ,(bib-process "bib" style (tree->stree t))))))

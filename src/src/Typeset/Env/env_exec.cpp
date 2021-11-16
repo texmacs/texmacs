@@ -444,6 +444,8 @@ edit_env_rep::exec (tree t) {
     return exec_tmpt_length ();
   case PX_LENGTH:
     return exec_px_length ();
+  case GUIPX_LENGTH:
+    return exec_guipx_length ();
   case LCORNER_LENGTH:
     return exec_lcorner_length ();
   case BCORNER_LENGTH:
