@@ -20,7 +20,10 @@
 (tm-define (get-retina-preference which)
   (if (cpp-has-preference? which)
       (get-preference which)
-      (cond ((== which "retina-scale") (number->string (get-retina-scale)))
+      (cond ((== which "retina-scale")
+             (cond ((== (get-retina-scale) 1.0) "1")
+                   ((== (get-retina-scale) 2.0) "2")
+                   (else (number->string (get-retina-scale)))))
             (else ""))))
 
 (tm-define (set-retina-preference which val)
