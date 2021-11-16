@@ -14,6 +14,8 @@
 (texmacs-module (kernel gui menu-define)
   (:use (kernel gui gui-markup)))
 
+(define use-minibars? (== (cpp-get-preference "use minibars" "off") "on"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of dynamic menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -261,7 +263,9 @@
 
 (define (gui-make-minibar x)
   (require-format x '(minibar :*))
-  `(gui$minibar ,@(map gui-make (cdr x))))
+  (if use-minibars?
+      `(gui$minibar ,@(map gui-make (cdr x)))
+      `($when #t ,@(map gui-make (cdr x)))))
 
 (define (gui-make-extend x)
   (require-format x '(extend :%1 :*))
@@ -317,7 +321,9 @@
 
 (define (gui-make-mini x)
   (require-format x '(mini :%1 :*))
-  `($mini ,(cadr x) ,@(map gui-make (cddr x))))
+  (if use-minibars?
+      `($mini ,(cadr x) ,@(map gui-make (cddr x)))
+      `($when #t ,@(map gui-make (cddr x)))))
 
 (define (gui-make-symbol x)
   (require-format x '(symbol :string? :*))

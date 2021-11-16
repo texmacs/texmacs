@@ -73,7 +73,7 @@ operator << (tm_ostream& out, QRect rect) {
 
 QFont
 to_qfont (int style, QFont font) {
-  if ((style & WIDGET_STYLE_MINI) && tm_style_sheet == "") {
+  if ((style & WIDGET_STYLE_MINI) && tm_style_sheet == "" && use_mini_bars) {
     // Use smaller text font
     int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
     font.setPointSize (qt_zoom (fs > 0 ? fs : QTM_MINI_FONTSIZE));
@@ -639,7 +639,7 @@ as_pixmap (const QImage& im) {
 QString
 parse_tm_style (int style) {
   QString sheet;
-  if ((style & WIDGET_STYLE_MINI) && tm_style_sheet == "") {
+  if ((style & WIDGET_STYLE_MINI) && tm_style_sheet == "" && use_mini_bars) {
     // Use smaller text font
     int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
     sheet += QString("font-size: %1pt;").arg (fs > 0 ? fs : QTM_MINI_FONTSIZE);

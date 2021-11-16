@@ -568,7 +568,7 @@ qt_tm_widget_rep::update_visibility () {
   }
 #endif // UNIFIED_TOOLBAR
 #undef XOR
-  if (tm_style_sheet == "") {
+  if (tm_style_sheet == "" && use_mini_bars) {
     QFont f = leftLabel->font();
     int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
     f.setPointSize (qt_zoom (fs > 0 ? fs : QTM_MINI_FONTSIZE));

@@ -58,6 +58,9 @@ QTMAction::QTMAction (QObject *parent) : QAction (parent) {
   _timer = new QTimer (this);
   QObject::connect (_timer, SIGNAL (timeout()),
                     this,     SLOT (doShowToolTip()));
+  QFont fn;
+  fn.setPixelSize (14);
+  setFont (fn);
 }
 
 QTMAction::~QTMAction() { 
@@ -230,6 +233,8 @@ QTMMinibarAction::createWidget (QWidget* parent) {
       if (tm_style_sheet == "") {
         tb->setStyle (qtmstyle());
         tb->setIconSize (sz);
+      }
+      if (use_mini_bars) {
         QFont f = tb->font();
         int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
         f.setPointSize (qt_zoom (fs > 0 ? fs : QTM_MINI_FONTSIZE));
