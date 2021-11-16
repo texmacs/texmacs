@@ -354,7 +354,8 @@ TeXmacs_main (int argc, char** argv) {
                (s == "-delete-style-cache") || (s == "-delete-file-cache") ||
                (s == "-delete-doc-cache") || (s == "-delete-plugin-cache") ||
                (s == "-delete-server-data") || (s == "-delete-databases") ||
-               (s == "-standard-dark") || (s == "-alternate-dark"));
+               (s == "-standard-dark") || (s == "-alternate-dark") ||
+               (s == "-standard-light") || (s == "-alternate-light"));
       else if (s == "-build-manual") {
         if ((++i)<argc)
           extra_init_cmd << "(build-manual "
@@ -637,6 +638,10 @@ immediate_options (int argc, char** argv) {
       tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-dark.css";
     else if (s == "-alternate-dark")
       tm_style_sheet= "$TEXMACS_PATH/misc/themes/alternate-dark.css";
+    else if (s == "-standard-light")
+      tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-light.css";
+    //else if (s == "-alternate-light")
+    //  tm_style_sheet= "$TEXMACS_PATH/misc/themes/alternate-light.css";
   }
 }
 
