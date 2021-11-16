@@ -898,13 +898,31 @@ init_palette (QApplication* app) {
     pal.setColor (QPalette::ButtonText, QColor (224, 224, 224));
     pal.setColor (QPalette::Light, QColor (64, 64, 64));
     pal.setColor (QPalette::Midlight, QColor (96, 96, 96));
+    pal.setColor (QPalette::Dark, QColor (112, 112, 112));
     pal.setColor (QPalette::Mid, QColor (128, 128, 128));
-    pal.setColor (QPalette::Dark, QColor (224, 224, 224));
     pal.setColor (QPalette::Shadow, QColor (240, 240, 240));
     app->setPalette (pal);
   }
+  else if (tm_style_sheet != "") {
+    QPalette pal= app -> style () -> standardPalette ();
+    pal.setColor (QPalette::Window, QColor (232, 232, 232));
+    pal.setColor (QPalette::WindowText, QColor (0, 0, 0));
+    pal.setColor (QPalette::Base, QColor (255, 255, 255));
+    pal.setColor (QPalette::Text, QColor (0, 0, 0));
+    pal.setColor (QPalette::ButtonText, QColor (0, 0, 0));
+    pal.setColor (QPalette::Light, QColor (240, 240, 240));
+    pal.setColor (QPalette::Midlight, QColor (224, 224, 224));
+    pal.setColor (QPalette::Dark, QColor (192, 192, 192));
+    pal.setColor (QPalette::Mid, QColor (160, 160, 160));
+    pal.setColor (QPalette::Shadow, QColor (0, 0, 0));
+    pal.setColor (QPalette::HighlightedText, QColor (192, 192, 192));
+    app->setPalette (pal);
+  }
+    
   if (occurs ("dark", tm_style_sheet))
     tm_background= rgb_color (32, 32, 32);
+  else if (tm_style_sheet != "")
+    tm_background= rgb_color (160, 160, 160);
 }
 
 string
