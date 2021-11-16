@@ -949,7 +949,7 @@ END_SLOT
  * QTMComboBox
  ******************************************************************************/
 
-QTMComboBox::QTMComboBox (QWidget* parent) : QComboBox (parent) {
+QTMComboBox::QTMComboBox (QWidget* parent) : QComboBox (parent), incorrect (parent == NULL) {
     ///// Obtain the minimum vertical size
   QComboBox cb;
   cb.setSizeAdjustPolicy (AdjustToContents);
@@ -976,6 +976,7 @@ QTMComboBox::QTMComboBox (QWidget* parent) : QComboBox (parent) {
  */
 void
 QTMComboBox::addItemsAndResize (const QStringList& texts, string ww, string hh) {
+  theTexts= texts; theWidth= ww; theHeight= hh;
   QComboBox::addItems (texts);
   
     ///// Calculate the minimal contents size:
@@ -1002,18 +1003,33 @@ QTMComboBox::addItemsAndResize (const QStringList& texts, string ww, string hh) 
  */
 bool
 QTMComboBox::event (QEvent* ev) {
+  bool ret= true;
   if (ev->type() == QEvent::KeyPress && isEditable()) {       // Handle ALL keys
     QKeyEvent* k = static_cast<QKeyEvent*> (ev);
     if (k->key() == Qt::Key_Up || k->key() == Qt::Key_Down)
       showPopup();
     else if (k->key() != Qt::Key_Escape) // HACK: QTMLineEdit won't need this
       lineEdit()->event (ev);             // but we do.
-    else
-      return false;
-  } else
-    return QComboBox::event (ev);
+  }
+  else ret= QComboBox::event (ev);
 
-  return true;
+  if (incorrect && parent () != NULL && ev->type() == QEvent::StyleChange) {
+    // FIXME by Joris: this ugly hack was necessary in case when
+    // the widget was constructed with a 'NULL' parent.  In that case,
+    // many of the size computations are typically done using a wrong
+    // font size.  The color of the popup border also seems to be set
+    // at creation time.  It would be better to first create a lazy
+    // copy of the scheme widgets and then create all Qt widgets with
+    // the correct parents (at creation time).
+    int cur= currentIndex ();
+    clear ();
+    addItemsAndResize (theTexts, theWidth, theHeight);
+    setCurrentIndex (cur);
+    updateGeometry ();
+    incorrect= false;
+  }
+
+  return ret;
 }
 
 
