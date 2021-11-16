@@ -357,6 +357,7 @@ private:
   tree exec_gu_length ();
   tree exec_tmpt_length ();
   tree exec_px_length ();
+  tree exec_guipx_length ();
   tree exec_lcorner_length ();
   tree exec_bcorner_length ();
   tree exec_rcorner_length ();
