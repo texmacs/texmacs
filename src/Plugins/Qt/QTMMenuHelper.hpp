@@ -373,11 +373,6 @@ class QTMComboBox : public QComboBox {
   
   QSize  calcSize;
   QSize   minSize;
-
-  bool        incorrect;
-  QStringList theTexts;
-  string      theWidth;
-  string      theHeight;
   
 public:
   QTMComboBox (QWidget* parent);

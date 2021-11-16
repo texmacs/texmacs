@@ -949,7 +949,7 @@ END_SLOT
  * QTMComboBox
  ******************************************************************************/
 
-QTMComboBox::QTMComboBox (QWidget* parent) : QComboBox (parent), incorrect (parent == NULL) {
+QTMComboBox::QTMComboBox (QWidget* parent) : QComboBox (parent) {
     ///// Obtain the minimum vertical size
   QComboBox cb;
   cb.setSizeAdjustPolicy (AdjustToContents);
@@ -976,7 +976,6 @@ QTMComboBox::QTMComboBox (QWidget* parent) : QComboBox (parent), incorrect (pare
  */
 void
 QTMComboBox::addItemsAndResize (const QStringList& texts, string ww, string hh) {
-  theTexts= texts; theWidth= ww; theHeight= hh;
   QComboBox::addItems (texts);
   
     ///// Calculate the minimal contents size:
@@ -989,6 +988,10 @@ QTMComboBox::addItemsAndResize (const QStringList& texts, string ww, string hh) 
     calcSize.setHeight (qMax (calcSize.height(), br.height()));
   }
   calcSize = qt_decode_length (ww, hh, calcSize, fm);
+  if (ends (ww, "em") && (parent () == NULL))
+    calcSize.rwidth ()= (int) floor (retina_scale * calcSize.width () + 0.5);
+  if (ends (hh, "em") && (parent () == NULL))
+    calcSize.rheight()= (int) floor (retina_scale * calcSize.height() + 0.5);
   
     ///// Add minimum constraints and fix size
   calcSize.setHeight (qMax (calcSize.height(), minSize.height()));
@@ -1012,22 +1015,6 @@ QTMComboBox::event (QEvent* ev) {
       lineEdit()->event (ev);             // but we do.
   }
   else ret= QComboBox::event (ev);
-
-  if (incorrect && parent () != NULL && ev->type() == QEvent::StyleChange) {
-    // FIXME by Joris: this ugly hack was necessary in case when
-    // the widget was constructed with a 'NULL' parent.  In that case,
-    // many of the size computations are typically done using a wrong
-    // font size.  The color of the popup border also seems to be set
-    // at creation time.  It would be better to first create a lazy
-    // copy of the scheme widgets and then create all Qt widgets with
-    // the correct parents (at creation time).
-    int cur= currentIndex ();
-    clear ();
-    addItemsAndResize (theTexts, theWidth, theHeight);
-    setCurrentIndex (cur);
-    updateGeometry ();
-    incorrect= false;
-  }
 
   return ret;
 }
