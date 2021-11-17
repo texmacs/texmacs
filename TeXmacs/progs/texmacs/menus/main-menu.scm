@@ -208,23 +208,25 @@
 ;; The TeXmacs side tools
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-widget (texmacs-side-tools)
+  (for (t (window->tools ""))
+    (dynamic (texmacs-side-tool "" t)))
+  ===
+  (glue #t #t 200 1))
+
 (tm-define (upward-context-trees t)
   (cond ((tree-is-buffer? t) (list t))
         ((tree-atomic? t) (upward-context-trees (tree-up t)))
         (else (cons t (upward-context-trees (tree-up t))))))
 
-(tm-widget (texmacs-side-tool t)
-  (horizontal
-    (mini #t
-      ((eval (symbol->string (tree-label t)))
-       (tree-select t)))
-    >>>))
-
-(tm-widget (texmacs-side-tools)
+(tm-widget (texmacs-side-tool win tool)
+  (:require (== tool "test"))
   (for (t (upward-context-trees (cursor-tree)))
-    (dynamic (texmacs-side-tool t))
-    ===)
-  (glue #t #t 100 0))
+    ===
+    (horizontal
+      ((eval (symbol->string (tree-label t)))
+       (tree-select t))
+      >>>)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The TeXmacs bottom tools

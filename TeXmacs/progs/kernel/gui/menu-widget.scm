@@ -1150,3 +1150,18 @@
   (:interactive #t)
   (show-message "Restart TeXmacs in order to let changes take effect"
                 "Notification"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Side tools
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define window-tools-table (make-ahash-table))
+
+(tm-widget (texmacs-side-tool win tool)
+  (text "Missing tool"))
+
+(tm-define (window->tools win)
+  (or (ahash-ref window-tools-table win) (list)))
+
+(tm-define (set-window-tools win l)
+  (ahash-set! window-tools-table l))
