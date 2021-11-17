@@ -312,6 +312,8 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   modeToolBar->setObjectName ("modeToolBar");
   focusToolBar->setObjectName ("focusToolBar");
   userToolBar->setObjectName ("userToolBar");
+  bottomTools->setObjectName ("bottomTools");
+  sideTools->setObjectName ("sideTools");
 
 #ifdef UNIFIED_TOOLBAR
 

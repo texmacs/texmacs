@@ -52,6 +52,10 @@ QToolBar#focusToolBar {
     background: #E8E8E8;
 }
 
+QToolBar#userToolBar {
+    background: #F8F8F8;
+}
+
 QToolBar::separator {
     background: rgba(128,128,128,50%);
     width: 0px;

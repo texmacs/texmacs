@@ -9,11 +9,11 @@ QWidget {
     font-size: 14px;
 }
 
-QAbstractScrollArea {
+QAbstractScrollArea, QDockWidget#sideTools, QDockWidget#sideTools::title {
     background: #202020;
 }
 
-QLineEdit, QStatusBar QWidget QLineEdit, QToolBar#focusToolbar QWidget QLineEdit {
+QLineEdit, QStatusBar QWidget QLineEdit, QToolBar#focusToolbar QWidget QLineEdit, QToolBar#userToolbar QWidget QLineEdit {
     background: #606060;
     min-height: 16px;
     padding-left: 2px;
@@ -59,6 +59,10 @@ QToolBar#modeToolBar, QToolBar#modeToolBar QWidget {
 
 QToolBar#focusToolBar, QToolBar#focusToolbar QWidget {
     background: #404040;
+}
+
+QToolBar#userToolBar, QToolBar#userToolbar QWidget {
+    background: #4A4A4A;
 }
 
 QToolBar::separator {

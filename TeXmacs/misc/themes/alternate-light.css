@@ -13,7 +13,7 @@ QAbstractScrollArea {
     background: #A0A0A0;
 }
 
-QLineEdit, QStatusBar QWidget QLineEdit, QToolBar#focusToolbar QWidget QLineEdit {
+QLineEdit, QStatusBar QWidget QLineEdit, QToolBar#focusToolbar QWidget QLineEdit, QToolBar#userToolbar QWidget QLineEdit {
     min-height: 16px;
     padding-left: 2px;
     padding-right: 2px;
@@ -59,6 +59,10 @@ QToolBar#modeToolBar, QToolBar#modeToolBar QWidget {
 
 QToolBar#focusToolBar, QToolBar#focusToolbar QWidget {
     background: #E8E8E8;
+}
+
+QToolBar#userToolBar, QToolBar#userToolbar QWidget {
+    background: #F8F8F8;
 }
 
 QToolBar::separator {

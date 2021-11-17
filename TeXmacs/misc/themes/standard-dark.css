@@ -7,7 +7,7 @@ QWidget {
     font-size: 14px;
 }
 
-QAbstractScrollArea {
+QAbstractScrollArea, QDockWidget#sideTools, QDockWidget#sideTools::title {
     background: #202020;
 }
 
@@ -54,6 +54,10 @@ QToolBar#modeToolBar {
 
 QToolBar#focusToolBar {
     background: #404040;
+}
+
+QToolBar#userToolBar {
+    background: #4A4A4A;
 }
 
 QToolBar::separator {
