@@ -50,6 +50,7 @@
     (symbol :string? :*)
     (texmacs-output :%2)
     (texmacs-input :%3)
+    (texmacs-input* :%3)
     (input :%1 :string? :%1 :string?)
     (enum :%3 :string?)
     (choice :%3)
@@ -248,6 +249,24 @@
   "Make @(texmacs-input :%3) item."
   (with (tag t tmstyle name) p
     (widget-texmacs-input (t) (tmstyle) (or (name) (url-none)))))
+
+(define texmacs-inputs (make-ahash-table))
+
+(define (make-texmacs-input* p style)
+  "Make @(texmacs-input* :%3) item."
+  (with (tag t tmstyle name) p
+    (let* ((t* (t))
+           (tmstyle* (tmstyle))
+           (name* (name))
+           (key (list tmstyle* name*))
+           (old (ahash-ref texmacs-inputs name*))
+           (w (and old (== (car old) key) (cdr old))))
+      (cond (w w)
+            ((not name*) (widget-texmacs-input t* tmstyle* (url-none)))
+            (else
+              (with w* (widget-texmacs-input t* tmstyle* name*)
+                (ahash-set! texmacs-inputs name* (cons key w*))
+                w*))))))
 
 (define (make-menu-input p style)
   "Make @(input :%1 :string? :%1 :string?) menu item."
@@ -710,6 +729,8 @@
     ,(lambda (p style bar?) (list (make-texmacs-output p style))))
   (texmacs-input (:%3)
     ,(lambda (p style bar?) (list (make-texmacs-input p style))))
+  (texmacs-input* (:%3)
+    ,(lambda (p style bar?) (list (make-texmacs-input* p style))))
   (input (:%1 :string? :%1 :string?)
          ,(lambda (p style bar?) (list (make-menu-input p style))))
   (enum (:%3 :string?)
@@ -828,6 +849,12 @@
                   ,(replace-procedures (caddr p))
                   ,(replace-procedures (cadddr p))))
 
+(define (menu-expand-texmacs-input* p)
+  "Expand texmacs-input* item @p."
+  `(texmacs-input* ,(replace-procedures (cadr p))
+                   ,(replace-procedures (caddr p))
+                   ,(replace-procedures (cadddr p))))
+
 (define (menu-expand-texmacs-output p)
   "Expand output menu item @p."
   (with (tag doc tmstyle) p
@@ -928,6 +955,7 @@
   (color ,replace-procedures)
   (symbol ,replace-procedures)
   (texmacs-input ,menu-expand-texmacs-input)
+  (texmacs-input* ,menu-expand-texmacs-input*)
   (texmacs-output ,menu-expand-texmacs-output)
   (input ,menu-expand-input)
   (enum ,menu-expand-enum)
