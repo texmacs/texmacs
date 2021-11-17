@@ -112,8 +112,9 @@ edit_interface_rep::resume () {
   SERVER (menu_icons (1, "(horizontal (link texmacs-mode-icons))"));
   SERVER (menu_icons (2, "(horizontal (link texmacs-focus-icons))"));
   SERVER (menu_icons (3, "(horizontal (link texmacs-extra-icons))"));
-  if (use_side_tools)
-    { SERVER (side_tools (0, "(vertical (link texmacs-side-tools))")); }
+#if (defined (QTTEXMACS) && (QT_VERSION >= 0x050000))
+  SERVER (side_tools (0, "(vertical (link texmacs-side-tools))"));
+#endif
   SERVER (bottom_tools (0, "(vertical (link texmacs-bottom-tools))"));
   cur_sb= 2;
   env_change= env_change & (~THE_FREEZE);
@@ -608,8 +609,9 @@ edit_interface_rep::update_menus () {
   SERVER (menu_icons (1, "(horizontal (link texmacs-mode-icons))"));
   SERVER (menu_icons (2, "(horizontal (link texmacs-focus-icons))"));
   SERVER (menu_icons (3, "(horizontal (link texmacs-extra-icons))"));
-  if (use_side_tools)
-    { SERVER (side_tools (0, "(vertical (link texmacs-side-tools))")); }
+#if (defined (QTTEXMACS) && (QT_VERSION >= 0x050000))
+  SERVER (side_tools (0, "(vertical (link texmacs-side-tools))"));
+#endif
   SERVER (bottom_tools (0, "(vertical (link texmacs-bottom-tools))"));
   set_footer ();
   if (has_current_window ()) {
