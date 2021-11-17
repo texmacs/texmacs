@@ -353,9 +353,7 @@ TeXmacs_main (int argc, char** argv) {
                (s == "-delete-cache") || (s == "-delete-font-cache") ||
                (s == "-delete-style-cache") || (s == "-delete-file-cache") ||
                (s == "-delete-doc-cache") || (s == "-delete-plugin-cache") ||
-               (s == "-delete-server-data") || (s == "-delete-databases") ||
-               (s == "-standard-dark") || (s == "-alternate-dark") ||
-               (s == "-standard-light") || (s == "-alternate-light"));
+               (s == "-delete-server-data") || (s == "-delete-databases"));
       else if (s == "-build-manual") {
         if ((++i)<argc)
           extra_init_cmd << "(build-manual "
@@ -634,14 +632,6 @@ immediate_options (int argc, char** argv) {
       cout.redirect (logf);
       cerr.redirect (logf);
     }
-    else if (s == "-standard-dark")
-      tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-dark.css";
-    else if (s == "-alternate-dark")
-      tm_style_sheet= "$TEXMACS_PATH/misc/themes/alternate-dark.css";
-    else if (s == "-standard-light")
-      tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-light.css";
-    else if (s == "-alternate-light")
-      tm_style_sheet= "$TEXMACS_PATH/misc/themes/alternate-light.css";
   }
 }
 
@@ -671,6 +661,23 @@ main (int argc, char** argv) {
   boot_hacks ();
   windows_delayed_refresh (1000000000);
   immediate_options (argc, argv);
+  load_user_preferences ();
+  string theme= get_user_preference ("gui theme", "");
+#if (QT_VERSION >= 0x050000)
+  if (theme == "light")
+    tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-light.css";
+  else if (theme == "dark")
+    tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-dark.css";
+  else if (theme == "")
+    tm_style_sheet= theme;
+#else
+  if (theme == "light")
+    tm_style_sheet= "$TEXMACS_PATH/misc/themes/alternate-light.css";
+  else if (theme == "dark")
+    tm_style_sheet= "$TEXMACS_PATH/misc/themes/alternate-dark.css";
+  else if (theme == "")
+    tm_style_sheet= theme;
+#endif
 #ifndef OS_MINGW
   set_env ("LC_NUMERIC", "POSIX");
 #ifndef OS_MACOS
