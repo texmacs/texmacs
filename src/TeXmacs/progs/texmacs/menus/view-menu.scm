@@ -138,10 +138,8 @@
         ("Focus dependent icons" (toggle-visible-icon-bar 2))
         ("User provided icons" (toggle-visible-icon-bar 3)))
   ("Status bar" (toggle-visible-footer))
-  (if #f ; Side tools are for now (v1.99.2) disabled.
+  (if (qt5-or-later-gui?)
       ("Side tools" (toggle-visible-side-tools 0)))
-  (if #f ; Search bar cannot be toggled from here, remove the menu item?
-      ("Bottom tools" (toggle-visible-bottom-tools 0)))
   ---
   ("Search toolbar" (toggle-bottom-bar "search"))
   ("Replace toolbar" (toggle-bottom-bar "replace"))
