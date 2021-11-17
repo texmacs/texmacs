@@ -359,6 +359,11 @@
   `(list 'texmacs-input (lambda () ,doc) (lambda () ,tmstyle)
                         (lambda () ,name)))
 
+(tm-define-macro ($texmacs-input* doc tmstyle name)
+  (:synopsis "Make persistent TeXmacs input field")
+  `(list 'texmacs-input* (lambda () ,doc) (lambda () ,tmstyle)
+                         (lambda () ,name)))
+
 (tm-define-macro ($ink cmd)
   (:synopsis "Make an ink widget")
   `(list 'ink (lambda (answer) ,cmd)))

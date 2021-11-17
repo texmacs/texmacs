@@ -109,6 +109,10 @@
   (require-format x '(texmacs-input :%3))
   `($texmacs-input ,@(cdr x)))
 
+(define (gui-make-texmacs-input* x)
+  (require-format x '(texmacs-input* :%3))
+  `($texmacs-input* ,@(cdr x)))
+
 (define (gui-make-input x)
   (require-format x '(input :%4))
   `($input ,@(cdr x)))
@@ -390,6 +394,7 @@
   (color ,gui-make-color)
   (texmacs-output ,gui-make-texmacs-output)
   (texmacs-input ,gui-make-texmacs-input)
+  (texmacs-input* ,gui-make-texmacs-input*)
   (input ,gui-make-input)
   (enum ,gui-make-enum)
   (choice ,gui-make-choice)
