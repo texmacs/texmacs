@@ -640,8 +640,8 @@ immediate_options (int argc, char** argv) {
       tm_style_sheet= "$TEXMACS_PATH/misc/themes/alternate-dark.css";
     else if (s == "-standard-light")
       tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-light.css";
-    //else if (s == "-alternate-light")
-    //  tm_style_sheet= "$TEXMACS_PATH/misc/themes/alternate-light.css";
+    else if (s == "-alternate-light")
+      tm_style_sheet= "$TEXMACS_PATH/misc/themes/alternate-light.css";
   }
 }
 
