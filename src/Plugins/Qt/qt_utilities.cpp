@@ -127,8 +127,13 @@ qt_decode_length (string width, string height,
   if (w_unit == "w") size.rwidth() *= w_len;
     // Width as a function of the default height
   else if (w_unit == "h") size.rwidth() = w_len * size.height();
-    // Absolute EM units
-  else if (w_unit == "em") size.setWidth (em_factor()* w_len * fm.width("M"));
+    // Absolute EM units (temporarily fixed to 14px)
+  else if (w_unit == "em") {
+    //size.setWidth (em_factor()* w_len * fm.width("M"));
+    if (tm_style_sheet != "") w_len *= 14 * retina_scale;
+    else if (retina_zoom == 2) w_len *= 21;
+    size.setWidth (w_len);
+  }
     // Absolute pixel units
   else if (w_unit == "px") {
     if (tm_style_sheet != "") w_len *= retina_scale;
@@ -140,7 +145,12 @@ qt_decode_length (string width, string height,
   if (h_unit == "w") size.rheight() = h_len * size.width();
     // Height as a function of the default height
   else if (h_unit == "h") size.rheight() *= h_len;
-  else if (h_unit == "em") size.setHeight (em_factor()* h_len * fm.width("M"));
+  else if (h_unit == "em") {
+    //size.setHeight (em_factor()* h_len * fm.width("M"));
+    if (tm_style_sheet != "") h_len *= 14 * retina_scale;
+    else if (retina_zoom == 2) h_len *= 21;
+    size.setHeight (h_len);
+  }
   else if (h_unit == "px") {
     if (tm_style_sheet != "") h_len *= retina_scale;
     else if (retina_zoom == 2) h_len *= 1.5;
