@@ -132,6 +132,7 @@ qt_decode_length (string width, string height,
     //size.setWidth (em_factor()* w_len * fm.width("M"));
     if (tm_style_sheet != "") w_len *= 14 * retina_scale;
     else if (retina_zoom == 2) w_len *= 21;
+    else w_len *= 14;
     size.setWidth (w_len);
   }
     // Absolute pixel units
@@ -149,6 +150,7 @@ qt_decode_length (string width, string height,
     //size.setHeight (em_factor()* h_len * fm.width("M"));
     if (tm_style_sheet != "") h_len *= 14 * retina_scale;
     else if (retina_zoom == 2) h_len *= 21;
+    else w_len *= 14;
     size.setHeight (h_len);
   }
   else if (h_unit == "px") {

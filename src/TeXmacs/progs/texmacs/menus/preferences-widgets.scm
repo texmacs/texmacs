@@ -45,6 +45,11 @@
   ("separate" "Documents in separate windows")
   ("shared" "Multiple documents share window"))
 
+(define-preference-names "gui theme"
+  ("" "Default")
+  ("light" "Bright")
+  ("dark" "Dark"))
+
 (tm-widget (general-preferences-widget)
   (aligned
     (item (text "Look and feel:")
@@ -77,6 +82,11 @@
             '("Documents in separate windows"
               "Multiple documents share window")
             (get-pretty-preference "buffer management")
+            "22em"))
+    (item (text "User interface theme:")
+      (enum (set-pretty-preference "gui theme" answer)
+            '("Default" "Bright" "Dark")
+            (get-pretty-preference "gui theme")
             "22em"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
