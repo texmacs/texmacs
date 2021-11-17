@@ -197,6 +197,8 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     int min_h= (int) floor (20 * retina_scale);
     bar->setMinimumHeight (min_h);
   }
+  if (tm_style_sheet != "" && ((double) retina_icons) > retina_scale)
+    bar->setMinimumHeight (30);
 #endif
 #endif
   mw->setStatusBar (bar);
@@ -279,9 +281,13 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 #endif
 #endif
   if (tm_style_sheet != "") {
-    int h1= (int) floor (38 * retina_scale + 0.5);
-    int h2= (int) floor (34 * retina_scale + 0.5);
-    int h3= (int) floor (30 * retina_scale + 0.5);
+    double scale= retina_scale;
+#if ((QT_VERSION < 0x050000) && defined (Q_OS_MAC))
+    scale= max (scale, 0.6 * ((double) retina_icons));
+#endif
+    int h1= (int) floor (38 * scale + 0.5);
+    int h2= (int) floor (34 * scale + 0.5);
+    int h3= (int) floor (30 * scale + 0.5);
     mainToolBar->setFixedHeight (h1);
     modeToolBar->setFixedHeight (h2);
     focusToolBar->setFixedHeight (h3);

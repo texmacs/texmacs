@@ -157,7 +157,8 @@ needing_update (false)
       if (DEBUG_STD) debug_boot << "Setting up HiDPI mode\n";
 #if (QT_VERSION < 0x050000)
       retina_factor= 2;
-      retina_scale = 1.4;
+      if (tm_style_sheet == "") retina_scale = 1.4;
+      else retina_scale = 1.0;
       if (!retina_iman) {
         retina_iman  = true;
         retina_icons = 2;
