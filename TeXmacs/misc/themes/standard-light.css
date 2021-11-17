@@ -89,7 +89,7 @@ QComboBox {
     padding-right: 5px;
     border: 0px;
     border-radius: 5px;
-    min-height: 16px;
+    min-height: 18px;
 }
 
 QComboBox::drop-down {
