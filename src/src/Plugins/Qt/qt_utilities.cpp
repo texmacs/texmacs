@@ -889,7 +889,7 @@ static string current_style_sheet;
 
 void
 init_palette (QApplication* app) {
-  if (occurs ("standard-dark", tm_style_sheet)) {
+  if (occurs ("dark", tm_style_sheet)) {
     QPalette pal= app -> style () -> standardPalette ();
     pal.setColor (QPalette::Window, QColor (64, 64, 64));
     pal.setColor (QPalette::WindowText, QColor (224, 224, 224));

@@ -301,21 +301,22 @@ picture
 new_qt_load_xpm (url file_name) {
   string sss;
   double f= 1.0;
+  double scale= max (retina_scale, (double) retina_icons);
   if (suffix (file_name) == "xpm" || suffix (file_name) == "png") {
     string suf= ".png";
-    if (retina_scale == 1.0) {}
-    else if (retina_scale == 2.0) suf= "_x2.png";
-    else if (retina_scale == 4.0) suf= "_x4.png";
-    else { suf= "_x4.png"; f= retina_scale / 4.0; }
+    if (scale == 1.0) {}
+    else if (scale == 2.0) suf= "_x2.png";
+    else if (scale == 4.0) suf= "_x4.png";
+    else { suf= "_x4.png"; f= scale / 4.0; }
     url png_equiv= glue (unglue (file_name, 4), suf);
     load_string ("$TEXMACS_PIXMAP_PATH" * png_equiv, sss, false);
   }
   if (sss == "") {
-    f= retina_scale;
+    f= scale;
     load_string ("$TEXMACS_PIXMAP_PATH" * file_name, sss, false);
   }
   if (sss == "") {
-    f= retina_scale;
+    f= scale;
     load_string ("$TEXMACS_PATH/misc/pixmaps/TeXmacs.xpm", sss, true);
   }
   c_string buf (sss);
