@@ -91,6 +91,14 @@ QMenu::item:disabled {
 * Lists
 ****************************************************************************/
 
+QListView {
+    background: #FFFFFF;
+}
+
+QListView QAbstractScrollArea {
+    background: #FFFFFF;
+}
+
 QComboBox {
     background: #FFFFFF;
     padding: 3px;
@@ -231,7 +239,7 @@ QScrollBar {
 }
 
 Qt4QScrollBar {
-    background: #C0C0C0;
+    background: #E0E0E0;
 }
 
 Qt4QScrollBar::handle {
