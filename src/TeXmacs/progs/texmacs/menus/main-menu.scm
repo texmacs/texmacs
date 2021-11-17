@@ -208,9 +208,9 @@
 ;; The TeXmacs side tools
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (texmacs-side-tools)
-  (for (t (window->tools ""))
-    (dynamic (texmacs-side-tool "" t)))
+(tm-widget (texmacs-side-tools win)
+  (for (t (window->tools win))
+      (dynamic (texmacs-side-tool win t)))
   ===
   (glue #t #t 200 1))
 

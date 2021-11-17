@@ -659,6 +659,12 @@
     (if linked (make-menu-items linked style bar?)
         (make-menu-error "bad link: " (object->string (cadr p))))))
 
+(define (make-menu-dynamic p style bar?)
+  "Make @(dynamic :%1) menu items."
+  (with dyn (eval (cadr p))
+    (if dyn (make-menu-items dyn style bar?)
+        (make-menu-error "bad link: " (object->string (cadr p))))))
+
 (define (make-menu-promise p style bar?)
   "Make @(promise :%1) menu items."
   (with value ((cadr p))
@@ -747,6 +753,8 @@
           ,(lambda (p style bar?) (list (make-toggle p style))))
   (link (:%1)
         ,(lambda (p style bar?) (make-menu-link p style bar?)))
+  (dynamic (:%1)
+           ,(lambda (p style bar?) (make-menu-dynamic p style bar?)))
   (horizontal (:*)
               ,(lambda (p style bar?) (list (make-menu-horizontal p style))))
   (vertical (:*)
