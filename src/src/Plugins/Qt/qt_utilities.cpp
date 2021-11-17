@@ -943,6 +943,7 @@ scale_px (string s) {
       r << s[i++];
       while (i<N(s) && s[i] == ' ') r << s[i++];
       int j= i;
+      if (j<N(s) && s[j] == '-') j++;
       while (j<N(s) && (is_numeric (s[j]) || s[j] == '.')) j++;
       if (test (s, j, "px;") || test (s, j, "px ")) {
         double x= as_double (s (i, j));
@@ -950,24 +951,6 @@ scale_px (string s) {
         r << as_string (nx);
         i= j;
       }
-    }
-    else r << s[i++];
-  return r;
-}
-
-string
-scale_font_sizes (string s) {
-  string r;
-  for (int i=0; i<N(s); )
-    if (test (s, i, "font-size: ")) {
-      r << "font-size: ";
-      i += 11;
-      int j= i;
-      while (j<N(s) && (is_numeric (s[j]) || s[j] == '.')) j++;
-      double x= as_double (s (i, j));
-      int nx= (int) floor (x * retina_scale + 0.5);
-      r << as_string (nx);
-      i= j;
     }
     else r << s[i++];
   return r;
