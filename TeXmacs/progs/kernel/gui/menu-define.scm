@@ -217,6 +217,10 @@
   (require-format x '(icon-tab :%2 :*))
   `($icon-tab ,@(map gui-make (cdr x))))
 
+(define (gui-make-plain-style x)
+  (require-format x '(plain-style :*))
+  `($widget-style 0 ,@(map gui-make (cdr x))))
+
 (define (gui-make-inert x)
   (require-format x '(inert :*))
   `($widget-style ,widget-style-inert ,@(map gui-make (cdr x))))
@@ -413,6 +417,7 @@
   (tab ,gui-make-tab)
   (icon-tabs ,gui-make-icon-tabs)
   (icon-tab ,gui-make-icon-tab)
+  (plain-style ,gui-make-plain-style)
   (inert ,gui-make-inert)
   (explicit-buttons ,gui-make-explicit-buttons)
   (bold ,gui-make-bold)
