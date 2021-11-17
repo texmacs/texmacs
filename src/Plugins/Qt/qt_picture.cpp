@@ -19,6 +19,7 @@
 #include "frame.hpp"
 #include "effect.hpp"
 #include "iterator.hpp"
+#include "language.hpp"
 
 #include <QObject>
 #include <QWidget>
@@ -216,6 +217,17 @@ invert_colors (QImage& im) {
     }
 }
 
+bool
+may_transform (url file_name, const QImage& pm) {
+  string name= basename (tail (file_name));
+  array<string> lans= get_supported_languages ();
+  for (int i=0; i<N(lans); i++)
+    if (name == "tm_" * lans[i]) return false;
+  (void) pm;
+  //if (pm.height() == 24) return false;
+  return true;
+}
+
 /******************************************************************************
 * Loading pictures
 ******************************************************************************/
@@ -322,13 +334,13 @@ new_qt_load_xpm (url file_name) {
   c_string buf (sss);
   QImage pm;
   pm.loadFromData ((uchar*) (char*) buf, N(sss));
-  pm= pm.scaled ((int) floor (f * pm.width () + 0.5),
-                 (int) floor (f * pm.height () + 0.5),
-                 Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-  if (occurs ("dark", tm_style_sheet)) {
+  if (occurs ("dark", tm_style_sheet) && may_transform (file_name, pm)) {
     invert_colors (pm);
     saturate (pm);
   }
+  pm= pm.scaled ((int) floor (f * pm.width () + 0.5),
+                 (int) floor (f * pm.height () + 0.5),
+                 Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
   return qt_picture (pm, 0, 0);
 }
 
