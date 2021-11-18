@@ -210,7 +210,7 @@
 
 (tm-widget (texmacs-side-tools win)
   (for (tool (window->tools win))
-      (dynamic (texmacs-side-tool win tool)))
+    (dynamic (texmacs-side-tool win tool)))
   ===
   (glue #t #t 300 1))
 
@@ -220,10 +220,11 @@
         (else (cons t (upward-context-trees (tree-up t))))))
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "test"))
+  (:require (== tool "context"))
   (for (t (upward-context-trees (cursor-tree)))
     ===
     (horizontal
+      //
       ((eval (symbol->string (tree-label t)))
        (tree-select t))
       >>>)))
