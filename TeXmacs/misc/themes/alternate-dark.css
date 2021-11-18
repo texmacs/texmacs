@@ -9,8 +9,13 @@ QWidget {
     font-size: 14px;
 }
 
-QAbstractScrollArea, QDockWidget#sideTools, QDockWidget#sideTools::title {
+QAbstractScrollArea {
     background: #202020;
+}
+
+QDockWidget#sideTools::title {
+    background: #303030;
+    text-align: center;
 }
 
 QLineEdit, QStatusBar QWidget QLineEdit, QToolBar#focusToolbar QWidget QLineEdit, QToolBar#userToolbar QWidget QLineEdit {
