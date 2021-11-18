@@ -16,7 +16,9 @@
 
 (use-modules (prog scheme-tools) (prog scheme-menu)
              (doc apidoc) (doc apidoc-widgets)
-             (language natural))
+             (language natural)
+             ;; Experimental (should be put elsewhere)
+             (generic format-tools))
 
 (define (scm-load-buffer u)
    (load-document u) 
@@ -48,4 +50,6 @@
     ---
     (group "Experimental side tools")
     ("Context" (tool-toggle "context"))
-    ("Invalid" (tool-toggle "invalid"))))
+    ("Invalid" (tool-toggle "invalid"))
+    ("Paragraph (Format)" (tool-toggle "format paragraph"))
+    ("Paragraph (Document)" (tool-toggle "document paragraph"))))
