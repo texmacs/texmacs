@@ -209,8 +209,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (texmacs-side-tools win)
-  (for (t (window->tools win))
-      (dynamic (texmacs-side-tool win t)))
+  (for (tool (window->tools win))
+      (dynamic (texmacs-side-tool win tool)))
   ===
   (glue #t #t 300 1))
 

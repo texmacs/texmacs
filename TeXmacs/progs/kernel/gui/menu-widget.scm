@@ -1172,4 +1172,4 @@
   (or (ahash-ref window-tools-table win) (list)))
 
 (tm-define (set-window-tools win l)
-  (ahash-set! window-tools-table l))
+  (ahash-set! window-tools-table win l))
