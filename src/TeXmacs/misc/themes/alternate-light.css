@@ -40,6 +40,12 @@ QMenuBar::item {
     background: #C0C0C0;
 }
 
+Qt4QMenuBar::item {
+    padding: 10px 10px;
+    padding-bottom: 2px;
+    background: #C0C0C0;
+}
+
 QMenuBar::item:selected {
     background: #000080;
     color: #FFFFFF;
