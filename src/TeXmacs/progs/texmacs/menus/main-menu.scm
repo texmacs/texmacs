@@ -212,7 +212,7 @@
   (for (t (window->tools win))
       (dynamic (texmacs-side-tool win t)))
   ===
-  (glue #t #t 200 1))
+  (glue #t #t 300 1))
 
 (tm-define (upward-context-trees t)
   (cond ((tree-is-buffer? t) (list t))
