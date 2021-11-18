@@ -138,7 +138,7 @@
         ("Focus dependent icons" (toggle-visible-icon-bar 2))
         ("User provided icons" (toggle-visible-icon-bar 3)))
   ("Status bar" (toggle-visible-footer))
-  (if (qt5-or-later-gui?)
+  (if (with-developer-tool?)
       ("Side tools" (toggle-visible-side-tools 0)))
   ---
   ("Search toolbar" (toggle-bottom-bar "search"))
