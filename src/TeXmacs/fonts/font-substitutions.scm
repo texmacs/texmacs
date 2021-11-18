@@ -40,6 +40,7 @@
 ((Bodoni\ 72 smallcaps) (Bodoni\ 72\ Smallcaps))
 ((Bodoni\ 72\ Oldstyle smallcaps) (Bodoni\ 72\ Smallcaps))
 ((Linux\ Libertine sansserif) (Linux\ Biolinum))
+((TeX\ Gyre\ Pagella typewriter) (roman typewriter))
 
 ((Calibri typewriter) (Consolas))
 ((Cambria sansserif) (Calibri))
