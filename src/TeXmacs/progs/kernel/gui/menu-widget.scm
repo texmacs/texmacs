@@ -821,6 +821,11 @@
   (with linked ((eval (cadr p)))
     (if linked (menu-expand linked) p)))
 
+(define (menu-expand-dynamic p)
+  "Expand menu link @p."
+  (with dyn (eval (cadr p))
+    (if dyn (menu-expand dyn) p)))
+
 (define (menu-expand-if p)
   "Expand conditional menu @p."
   (with (tag pred? . items) p
@@ -973,6 +978,7 @@
   (tree-view ,menu-expand-tree-view)
   (toggle ,menu-expand-toggle)
   (link ,menu-expand-link p)
+  (dynamic ,menu-expand-dynamic p)
   (horizontal ,(lambda (p) `(horizontal ,@(menu-expand-list (cdr p)))))
   (vertical ,(lambda (p) `(vertical ,@(menu-expand-list (cdr p)))))
   (hlist ,(lambda (p) `(hlist ,@(menu-expand-list (cdr p)))))
@@ -1166,10 +1172,23 @@
 (define window-tools-table (make-ahash-table))
 
 (tm-widget (texmacs-side-tool win tool)
-  (text "Missing tool"))
+  (text (string-append "Missing tool '" tool "'")))
 
 (tm-define (window->tools win)
   (or (ahash-ref window-tools-table win) (list)))
 
 (tm-define (set-window-tools win l)
   (ahash-set! window-tools-table win l))
+
+(tm-define (tool-active? tool . opt-win)
+  (with win (if (null? opt-win) (current-window) (car opt-win))
+    (and-with l (ahash-ref window-tools-table win)
+      (in? tool l))))
+  
+(tm-define (tool-toggle tool . opt-win)
+  (:check-mark "v" tool-active?)
+  (with win (if (null? opt-win) (current-window) (car opt-win))
+    (with l (window->tools win)
+      (if (in? tool l)
+          (set-window-tools win (list-remove l tool))
+          (set-window-tools win (cons tool l))))))
