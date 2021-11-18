@@ -221,13 +221,14 @@
 
 (tm-widget (texmacs-side-tool win tool)
   (:require (== tool "context"))
-  (for (t (upward-context-trees (cursor-tree)))
-    ===
-    (horizontal
-      //
-      ((eval (symbol->string (tree-label t)))
-       (tree-select t))
-      >>>)))
+  (centered
+    (centered
+      (bold (text "Context tool")))
+    (for (t (reverse (upward-context-trees (cursor-tree))))
+      ===
+      (horizontal
+        ((eval (symbol->string (tree-label t)))
+         (tree-select t))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The TeXmacs bottom tools

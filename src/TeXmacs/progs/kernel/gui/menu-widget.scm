@@ -1172,7 +1172,9 @@
 (define window-tools-table (make-ahash-table))
 
 (tm-widget (texmacs-side-tool win tool)
-  (text (string-append "Missing tool '" tool "'")))
+  (centered
+    ===
+    (bold (text (string-append "Missing '" tool "' tool")))))
 
 (tm-define (window->tools win)
   (or (ahash-ref window-tools-table win) (list)))
