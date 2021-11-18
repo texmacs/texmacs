@@ -320,6 +320,10 @@ endif ()
 
 set (CMAKE_REQUIRED_FLAGS "-Werror ${Guile_CFLAGS}")
 set (CMAKE_REQUIRED_INCLUDES ${Guile_INCLUDE_DIRS})
+message("GUILE " ${Guile_LIBRARIES} ${Guile_LIBRARY_DIR})
+link_directories(${Guile_LIBRARY_DIRS})
+link_directories("/opt/homebrew/opt/gmp/lib")
+link_directories("/opt/homebrew/opt/libtool/lib")
 set (guile_str_size_t size_t)
 
 message (STATUS "Checking whether ... arguments behave correctly")
@@ -586,8 +590,8 @@ if (TEXMACS_GUI MATCHES "Qt.*")
     include (${QT_USE_FILE})
   else (TEXMACS_GUI STREQUAL "Qt4")
     # Homebrew installs Qt5 in /usr/local/opt/qt5
-    if (APPLE AND EXISTS /usr/local/opt/qt5)
-      list (APPEND CMAKE_PREFIX_PATH "/usr/local/opt/qt5")
+    if (APPLE AND EXISTS /opt/homebrew/opt/qt5)
+      list (APPEND CMAKE_PREFIX_PATH "/opt/homebrew/opt/qt5")
     endif ()
     if (WIN32 AND EXISTS ${QT_CMAKE_DIR})
       set (Qt5Core_DIR "${QT_CMAKE_DIR}/Qt5Core")
@@ -601,9 +605,10 @@ if (TEXMACS_GUI MATCHES "Qt.*")
       set (Qt5AccessibilitySupport_DIR "${QT_CMAKE_DIR}/Qt5AccessibilitySupport")
       set (Qt5WindowsUIAutomationSupport_DIR "${QT_CMAKE_DIR}/Qt5WindowsUIAutomationSupport")
       set (Qt5PrintSupport_DIR "${QT_CMAKE_DIR}/Qt5PrintSupport")
+      set (Qt5MacExtras_DIR "${QT_CMAKE_DIR}/Qt5MacExtras")
     endif ()
-    find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport Svg REQUIRED)
-    set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport Qt5::Svg)
+    find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport Svg MacExtras REQUIRED)
+    set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport Qt5::Svg Qt5::MacExtras)
     set (TeXmacs_Include_Dirs
       ${TeXmacs_Include_Dirs}
       ${Qt5Core_INCLUDE_DIRS}
@@ -611,7 +616,11 @@ if (TEXMACS_GUI MATCHES "Qt.*")
       ${Qt5Widgets_INCLUDE_DIRS}
       ${Qt5PrintSupport_INCLUDE_DIRS}
       ${Qt5Svg_INCLUDE_DIRS}
+      ${Qt5MacExtras_INCLUDE_DIRS}
     )
+
+    message("QT_LIBS: " ${QT_LIBRARIES})
+
     if (Qt5_POSITION_INDEPENDENT_CODE)
       set (CMAKE_POSITION_INDEPENDENT_CODE ON)
     endif (Qt5_POSITION_INDEPENDENT_CODE)
