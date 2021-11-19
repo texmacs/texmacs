@@ -120,8 +120,8 @@ QComboBox::down-arrow {
 }
 
 QComboBox QAbstractItemView {
-    background: #FFFFFF;
-    color: #000040;
+    background: #E8E8E8;
+    color: #000000;
 }
 
 /****************************************************************************

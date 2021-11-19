@@ -14,6 +14,7 @@ QAbstractScrollArea {
 }
 
 QLineEdit, QStatusBar QWidget QLineEdit, QToolBar#focusToolbar QWidget QLineEdit, QToolBar#userToolbar QWidget QLineEdit {
+    background: #FFFFFF;
     min-height: 16px;
     padding-left: 2px;
     padding-right: 2px;
@@ -143,8 +144,8 @@ QComboBox::down-arrow {
 }
 
 QComboBox QAbstractItemView {
-    background: #FFFFFF;
-    color: #000040;
+    background: #E8E8E8;
+    color: #000000;
 }
 
 /****************************************************************************
