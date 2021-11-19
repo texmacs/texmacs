@@ -302,17 +302,18 @@ Qt4QPushButton {
 ****************************************************************************/
 
 QDockWidget#sideTools::title {
-    background: #303030;
+    background: #2C2C2C;
     text-align: center;
 }
 
 QDockWidget#sideTools QWidget#title {
-    background: #303030;
+    background: #2C2C2C;
     text-align: center;
     font-weight: bold;
 }
 
 QDockWidget#sideTools QWidget#title * {
+    background: #2C2C2C;
     text-align: center;
     font-weight: bold;
     margin: 5px;
