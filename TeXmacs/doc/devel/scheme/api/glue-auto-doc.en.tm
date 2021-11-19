@@ -4750,7 +4750,7 @@ source code.
     <scm|(widget-extend <scm-arg|widget> <scm-arg|array_widget>)>
 <explain-synopsis|no synopsis>
   <|explain>
-    Calls the <c++> function <cpp|extend> which returns
+    Calls the <c++> function <cpp|extend_widget> which returns
     <scm|widget>.
   </explain>
 
@@ -4951,6 +4951,14 @@ source code.
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|vertical_list> which returns
+    <scm|widget>.
+  </explain>
+
+  <\explain>
+    <scm|(widget-division <scm-arg|string> <scm-arg|widget>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|division_widget> which returns
     <scm|widget>.
   </explain>
 

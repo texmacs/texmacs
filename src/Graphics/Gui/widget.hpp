@@ -208,6 +208,8 @@ widget horizontal_list (array<widget> a);
   // a horizontal list made up of the widgets in a
 widget vertical_list (array<widget> a);
   // a vertical list made up of the widgets in a
+widget division_widget (string name, widget w);
+  // a widget with a CSS style name
 widget aligned_widget (array<widget> lhs, array<widget> rhs,
                        SI hsep= 3*PIXEL, SI vsep= 3*PIXEL,
                        SI lpad= 0, SI rpad= 0);

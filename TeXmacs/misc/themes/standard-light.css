@@ -191,3 +191,24 @@ QToolButton::menu-indicator {
 QToolButton::disabled {
     color: #808080;
 }
+
+/****************************************************************************
+* Side tools
+****************************************************************************/
+
+QDockWidget#sideTools::title {
+    background: #D4D4D4;
+    text-align: center;
+}
+
+QDockWidget#sideTools QWidget#title {
+    background: #D4D4D4;
+    text-align: center;
+    font-weight: bold;
+}
+
+QDockWidget#sideTools QWidget#title * {
+    text-align: center;
+    font-weight: bold;
+    margin: 5px;
+}

@@ -8473,6 +8473,21 @@ tmg_widget_vlist (tmscm arg1) {
 }
 
 tmscm
+tmg_widget_division (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "widget-division");
+  TMSCM_ASSERT_WIDGET (arg2, TMSCM_ARG2, "widget-division");
+
+  string in1= tmscm_to_string (arg1);
+  widget in2= tmscm_to_widget (arg2);
+
+  // TMSCM_DEFER_INTS;
+  widget out= division_widget (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return widget_to_tmscm (out);
+}
+
+tmscm
 tmg_widget_aligned (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_ARRAY_WIDGET (arg1, TMSCM_ARG1, "widget-aligned");
   TMSCM_ASSERT_ARRAY_WIDGET (arg2, TMSCM_ARG2, "widget-aligned");
@@ -10676,6 +10691,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("widget-color",  tmg_widget_color, 5, 0, 0);
   tmscm_install_procedure ("widget-hlist",  tmg_widget_hlist, 1, 0, 0);
   tmscm_install_procedure ("widget-vlist",  tmg_widget_vlist, 1, 0, 0);
+  tmscm_install_procedure ("widget-division",  tmg_widget_division, 2, 0, 0);
   tmscm_install_procedure ("widget-aligned",  tmg_widget_aligned, 2, 0, 0);
   tmscm_install_procedure ("widget-tabs",  tmg_widget_tabs, 2, 0, 0);
   tmscm_install_procedure ("widget-icon-tabs",  tmg_widget_icon_tabs, 3, 0, 0);

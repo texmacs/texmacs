@@ -388,6 +388,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   sideTools->setFeatures (QDockWidget::DockWidgetMovable |
                          QDockWidget::DockWidgetFloatable);
   sideTools->setFloating (false);
+  sideTools->setTitleBarWidget (new QWidget()); // Disables title bar
   mw->addDockWidget (Qt::RightDockWidgetArea, sideTools);
 
   bottomTools->setAllowedAreas (Qt::BottomDockWidgetArea);

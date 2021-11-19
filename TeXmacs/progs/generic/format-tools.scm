@@ -92,16 +92,16 @@
 
 (tm-widget (texmacs-side-tool win tool)
   (:require (== tool "format paragraph"))
+  (division "title"
+    (text "This paragraph format"))
   (centered
-    (centered
-      (bold (text "This paragraph format")))
-    ===
-    (dynamic (paragraph-basic-tool win :local))))
+    (dynamic (paragraph-basic-tool win :local))
+    ======))
 
 (tm-widget (texmacs-side-tool win tool)
   (:require (== tool "document paragraph"))
+  (division "title"
+    (text "Global paragraph format"))
   (centered
-    (centered
-      (bold (text "Global paragraph format")))
-    ===
-    (dynamic (paragraph-basic-tool win :global))))
+    (dynamic (paragraph-basic-tool win :global))
+    ======))

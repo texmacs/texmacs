@@ -60,8 +60,8 @@
     with-user with-extra-fields
     with-remote-context with-identifier-context
     user-ask
-    tab icon-tab form item meti refreshable
-    $when $let $let* $for $refreshable
+    tab icon-tab form item meti refreshable division
+    $when $let $let* $for $refreshable $division
     tmfs-load-handler tmfs-save-handler
     tmfs-autosave-handler tmfs-remove-handler tmfs-wrap-handler
     tmfs-date-handler tmfs-title-handler tmfs-permission-handler

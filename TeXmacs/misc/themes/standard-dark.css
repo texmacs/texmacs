@@ -11,11 +11,6 @@ QAbstractScrollArea {
     background: #202020;
 }
 
-QDockWidget#sideTools::title {
-    background: #303030;
-    text-align: center;
-}
-
 QLineEdit {
     background: #606060;
     min-height: 16px;
@@ -236,4 +231,25 @@ QToolButton::menu-indicator {
 
 QToolButton::disabled {
     color: #909090;
+}
+
+/****************************************************************************
+* Side tools
+****************************************************************************/
+
+QDockWidget#sideTools::title {
+    background: #2C2C2C;
+    text-align: center;
+}
+
+QDockWidget#sideTools QWidget#title {
+    background: #2C2C2C;
+    text-align: center;
+    font-weight: bold;
+}
+
+QDockWidget#sideTools QWidget#title * {
+    text-align: center;
+    font-weight: bold;
+    margin: 5px;
 }
