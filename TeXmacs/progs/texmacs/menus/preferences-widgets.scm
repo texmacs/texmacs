@@ -85,7 +85,7 @@
             "22em"))
     (item (text "User interface theme:")
       (enum (set-pretty-preference "gui theme" answer)
-            '("Default" "Bright" "Dark")
+            '("Default" "Bright" "Dark" "")
             (get-pretty-preference "gui theme")
             "22em"))))
 

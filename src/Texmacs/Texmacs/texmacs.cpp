@@ -668,14 +668,14 @@ main (int argc, char** argv) {
     tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-light.css";
   else if (theme == "dark")
     tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-dark.css";
-  else if (theme == "")
+  else if (theme != "")
     tm_style_sheet= theme;
 #else
   if (theme == "light")
     tm_style_sheet= "$TEXMACS_PATH/misc/themes/alternate-light.css";
   else if (theme == "dark")
     tm_style_sheet= "$TEXMACS_PATH/misc/themes/alternate-dark.css";
-  else if (theme == "")
+  else if (theme != "")
     tm_style_sheet= theme;
 #endif
 #ifndef OS_MINGW

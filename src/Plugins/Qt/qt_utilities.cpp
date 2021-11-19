@@ -962,6 +962,12 @@ void
 init_style_sheet (QApplication* app) {
   string ss;
   url css (tm_style_sheet);
+  if (!exists (css)) {
+    if (suffix (css) == "") css= glue (css, ".css");
+    url dir ("$TEXMACS_THEME_PATH");
+    css= resolve (dir * css);
+    if (is_none (css)) return;
+  }
   if (tm_style_sheet != "" && !load_string (css, ss, false)) {
     string p= as_string (url ("$TEXMACS_PATH"));
     ss= replace (ss, "\n", " ");
