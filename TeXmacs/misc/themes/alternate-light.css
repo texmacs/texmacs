@@ -88,6 +88,10 @@ QStatusBar {
 * Menus
 ****************************************************************************/
 
+QMenu::item:selected {
+    background: #C0D0E0;
+}
+
 QMenu::item * {
     background: #F0F0F0;
     margin: 3px;
