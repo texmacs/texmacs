@@ -217,6 +217,12 @@ QToolButton:hover {
     /* FIXME: bug when using a color */
 }
 
+NomacQToolButton:hover {
+    background: #585858;
+    border: 0px;
+    border-radius: 3px;
+}
+
 QToolButton:pressed {
     background: #808080;
     border: 0px;

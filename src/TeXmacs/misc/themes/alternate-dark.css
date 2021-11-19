@@ -225,15 +225,17 @@ QToolBar#modeToolBar QToolButton {
     padding-right: 0px;
 }
 
-QToolButton:hover,
-QToolBar#mainToolBar QToolButton:hover,
-QToolBar#modeToolBar QToolButton:hover {
-    background: none;
-    /* FIXME: bug when using a color */
+Qt4QToolButton {
+    background-color: rgba(96,96,96,0%);
 }
 
-Qt4QToolButton, Qt4QToolButton:hover {
-    background-color: rgba(96,96,96,0%);
+QToolButton:hover,
+QToolBar#mainToolBar QToolButton:hover,
+QToolBar#modeToolBar QToolButton:hover,
+QToolBar#focusToolBar QToolButton:hover {
+    background: #585858;
+    border: 0px;
+    border-radius: 3px;
 }
 
 QToolButton:pressed,
