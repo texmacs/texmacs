@@ -976,6 +976,17 @@ init_style_sheet (QApplication* app) {
 #if (QT_VERSION < 0x050000)
     ss= replace (ss, "Qt4", "");
 #endif
+#ifdef OS_MACOS
+    ss= replace (ss, "Macos", "");
+#else
+    ss= replace (ss, "Nomac", "");
+#endif
+#ifdef OS_MINGW
+    ss= replace (ss, "Mingw", "");
+#endif
+#ifdef OS_GNU_LINUX
+    ss= replace (ss, "Linux", "");
+#endif
     //ss= scale_font_sizes (ss);
     ss= scale_px (ss);
     current_style_sheet= ss;
