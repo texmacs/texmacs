@@ -1001,10 +1001,10 @@ QTMComboBox::addItemsAndResize (const QStringList& texts, string ww, string hh) 
     calcSize.setHeight (qMax (calcSize.height(), br.height()));
   }
   calcSize = qt_decode_length (ww, hh, calcSize, fm);
-  if (ends (ww, "em") && (parent () == NULL))
-    calcSize.rwidth ()= (int) floor (retina_scale * calcSize.width () + 0.5);
-  if (ends (hh, "em") && (parent () == NULL))
-    calcSize.rheight()= (int) floor (retina_scale * calcSize.height() + 0.5);
+  //if (ends (ww, "em") && (parent () == NULL))
+  //  calcSize.rwidth ()= (int) floor (retina_scale * calcSize.width () + 0.5);
+  //if (ends (hh, "em") && (parent () == NULL))
+  //  calcSize.rheight()= (int) floor (retina_scale * calcSize.height() + 0.5);
   
     ///// Add minimum constraints and fix size
   calcSize.setHeight (qMax (calcSize.height(), minSize.height()));

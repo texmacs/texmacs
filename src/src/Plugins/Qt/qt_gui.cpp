@@ -176,7 +176,7 @@ needing_update (false)
       debug_boot << "Screen extents: " << w/PIXEL << " x " << h/PIXEL << "\n";
     if (min (w, h) >= 1440 * PIXEL) {
       retina_zoom = 2;
-      retina_scale= 1.0;
+      retina_scale= (tm_style_sheet == ""? 1.0: 1.6666);
       if (!retina_iman) {
         retina_iman  = true;
         retina_icons = 2;
