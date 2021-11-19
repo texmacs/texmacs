@@ -124,6 +124,7 @@ QListView QAbstractScrollArea {
 
 QComboBox {
     background: #FFFFFF;
+    color: #000000;
     padding: 3px;
     padding-left: 5px;
     padding-right: 5px;

@@ -927,7 +927,7 @@ init_palette (QApplication* app) {
     pal.setColor (QPalette::Dark, QColor (192, 192, 192));
     pal.setColor (QPalette::Mid, QColor (160, 160, 160));
     pal.setColor (QPalette::Shadow, QColor (0, 0, 0));
-    pal.setColor (QPalette::HighlightedText, QColor (192, 192, 192));
+    pal.setColor (QPalette::HighlightedText, QColor (255, 255, 255));
     app->setPalette (pal);
   }
     
