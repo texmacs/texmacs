@@ -106,6 +106,12 @@ QMenu::right-arrow {
     border-image: url($TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_search_next_x4.png) 7 7 7 13;
 }
 
+QMenu::separator {
+    background: #686868;
+    height: 1px;
+    margin: 6px 3px;
+}
+
 /****************************************************************************
 * Lists
 ****************************************************************************/
