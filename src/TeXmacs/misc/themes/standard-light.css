@@ -208,6 +208,7 @@ QDockWidget#sideTools QWidget#title {
 }
 
 QDockWidget#sideTools QWidget#title * {
+    background: #D4D4D4;
     text-align: center;
     font-weight: bold;
     margin: 5px;
