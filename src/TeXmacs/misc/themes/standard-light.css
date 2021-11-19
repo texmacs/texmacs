@@ -73,8 +73,16 @@ QStatusBar {
 * Menus
 ****************************************************************************/
 
+QMenu::item {
+    background: #F0F0F0;
+    color: #000000;
+}
+
 QMenu::item:selected {
+    /* background: #000080; */
+    /* color: #FFFFFF; */
     background: #C0D0E0;
+    color: #000000;
 }
 
 QMenu::item * {
