@@ -13,11 +13,6 @@ QAbstractScrollArea {
     background: #202020;
 }
 
-QDockWidget#sideTools::title {
-    background: #303030;
-    text-align: center;
-}
-
 QLineEdit, QStatusBar QWidget QLineEdit, QToolBar#focusToolbar QWidget QLineEdit, QToolBar#userToolbar QWidget QLineEdit {
     background: #606060;
     min-height: 16px;
@@ -300,4 +295,25 @@ Qt4QPushButton {
     margin: 3px;
     margin-left: 6px;
     margin-right: 6px;
+}
+
+/****************************************************************************
+* Side tools
+****************************************************************************/
+
+QDockWidget#sideTools::title {
+    background: #303030;
+    text-align: center;
+}
+
+QDockWidget#sideTools QWidget#title {
+    background: #303030;
+    text-align: center;
+    font-weight: bold;
+}
+
+QDockWidget#sideTools QWidget#title * {
+    text-align: center;
+    font-weight: bold;
+    margin: 5px;
 }

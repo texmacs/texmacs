@@ -88,6 +88,12 @@ vertical_list (array<widget> a) {
 }
 
 widget
+division_widget (string name, widget w) {
+  (void) name;
+  return w;
+}
+
+widget
 aligned_widget (array<widget> lhs, array<widget> rhs,
                 SI hsep, SI vsep, SI lpad, SI rpad) {
   return abstract (aligned_widget (concrete (lhs), concrete (rhs),

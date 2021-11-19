@@ -232,6 +232,12 @@ horizontal_list (array<widget> a) {
   return horizontal_menu (a);
 }  
 
+widget
+division_widget (string name, widget w) {
+  (void) name;
+  return w;
+}
+
 widget minibar_menu (array<widget> a) {
   return horizontal_menu (a);
 }

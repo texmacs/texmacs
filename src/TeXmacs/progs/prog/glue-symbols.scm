@@ -644,6 +644,7 @@
 "widget-color"
 "widget-hlist"
 "widget-vlist"
+"widget-division"
 "widget-aligned"
 "widget-tabs"
 "widget-icon-tabs"

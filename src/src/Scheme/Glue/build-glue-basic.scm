@@ -668,7 +668,7 @@
   ;; widgets
   (widget-printer printer_widget (widget command url))
   (widget-color-picker color_picker_widget (widget command bool array_tree))
-  (widget-extend extend (widget widget array_widget))
+  (widget-extend extend_widget (widget widget array_widget))
   (widget-hmenu horizontal_menu (widget array_widget))
   (widget-vmenu vertical_menu (widget array_widget))
   (widget-tmenu tile_menu (widget array_widget int))
@@ -696,6 +696,7 @@
   (widget-color glue_widget (widget content bool bool int int))
   (widget-hlist horizontal_list (widget array_widget))
   (widget-vlist vertical_list (widget array_widget))
+  (widget-division division_widget (widget string widget))
   (widget-aligned aligned_widget (widget array_widget array_widget))
   (widget-tabs tabs_widget (widget array_widget array_widget))
   (widget-icon-tabs icon_tabs_widget (widget array_url array_widget

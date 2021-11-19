@@ -62,6 +62,7 @@
     (vertical :menu-item-list)
     (hlist :menu-item-list)
     (vlist :menu-item-list)
+    (division :%1 :menu-item-list)
     (aligned :menu-item-list)
     (aligned-item :%2)
     (tabs :menu-item-list)
@@ -497,13 +498,19 @@
   "Make @(vlist :menu-item-list) menu item."
   (widget-vlist (make-menu-items (cdr p) style #f)))
 
+(define (make-menu-division p style)
+  "Make @(division :%1 :menu-item-list) item."
+  (with (tag name . items) p
+    (with inner (make-menu-items (list (cons 'vertical items)) style #f)
+      (widget-division (name) (car inner)))))
+
 (define (make-aligned p style)
   "Make @(aligned :menu-item-list) item."
   (widget-aligned (make-menu-items (map cadr (cdr p)) style #f)
                   (make-menu-items (map caddr (cdr p)) style #f)))
 
 (define (make-aligned-item p style)
-  "Make @(aligned-item :2%) item."
+  "Make @(aligned-item :%2) item."
   (display* "Error 'make-aligned-item', " p ", " style "\n")
   (list 'vlist))
 
@@ -763,6 +770,8 @@
          ,(lambda (p style bar?) (list (make-menu-hlist p style))))
   (vlist (:*)
          ,(lambda (p style bar?) (list (make-menu-vlist p style))))
+  (division (:%1 :*)
+            ,(lambda (p style bar?) (list (make-menu-division p style))))
   (aligned (:*)
          ,(lambda (p style bar?) (list (make-aligned p style))))
   (aligned-item (:%2)
@@ -983,6 +992,7 @@
   (vertical ,(lambda (p) `(vertical ,@(menu-expand-list (cdr p)))))
   (hlist ,(lambda (p) `(hlist ,@(menu-expand-list (cdr p)))))
   (vlist ,(lambda (p) `(vlist ,@(menu-expand-list (cdr p)))))
+  (division ,replace-procedures)
   (aligned ,(lambda (p) `(aligned ,@(menu-expand-list (cdr p)))))
   (aligned-item ,(lambda (p) `(aligned-item ,@(menu-expand-list (cdr p)))))
   (tabs ,(lambda (p) `(tabs ,@(menu-expand-list (cdr p)))))
@@ -1172,9 +1182,8 @@
 (define window-tools-table (make-ahash-table))
 
 (tm-widget (texmacs-side-tool win tool)
-  (centered
-    ===
-    (bold (text (string-append "Missing '" tool "' tool")))))
+  (division "title"
+    (text (string-append "Missing '" tool "' tool"))))
 
 (tm-define (window->tools win)
   (or (ahash-ref window-tools-table win) (list)))

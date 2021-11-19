@@ -243,7 +243,7 @@ qt_ui_element_rep::get_payload (qt_widget qtw, types check_type) {
     case scrollable_widget: case hsplit_widget:    case vsplit_widget:
     case tabs_widget:       case icon_tabs_widget: case resize_widget:
     case refresh_widget:    case refreshable_widget:  case balloon_widget:
-    case glue_widget:
+    case glue_widget:       case division_widget:
     {
       qt_ui_element_rep* rep = static_cast<qt_ui_element_rep*> (qtw.rep);
       return rep->load;
@@ -698,6 +698,7 @@ qt_ui_element_rep::as_qlayoutitem () {
     case refresh_widget:
     case refreshable_widget:
     case balloon_widget:
+    case division_widget:
     {
       QWidgetItem* wi = new QWidgetItem (this->as_qwidget());
       return wi;
@@ -1097,6 +1098,23 @@ qt_ui_element_rep::as_qwidget () {
       split->addWidget (qw2);
       
       qwid = split;
+    }
+      break;
+
+    case division_widget:
+    {
+      typedef pair<string, widget> T;
+      T            x = open_box<T>(load);
+      string    name = x.x1;
+      qt_widget    w = concrete(x.x2);
+      
+      QWidget* qw = w->as_qwidget();
+      QSplitter* split = new QSplitter();
+      split->setOrientation (Qt::Horizontal);
+      split->addWidget (qw);
+      
+      qwid = split;
+      qwid->setObjectName (to_qstring (name));
     }
       break;
       
