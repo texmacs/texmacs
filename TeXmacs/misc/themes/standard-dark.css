@@ -266,3 +266,18 @@ QDockWidget#sideTools QWidget#title * {
     font-weight: bold;
     margin: 5px;
 }
+
+QDockWidget#sideTools QWidget#discrete * {
+    color: #808080;
+    font-size: 12px;
+}
+
+QDockWidget#sideTools QWidget#discrete QPushButton {
+    background: none;
+    border: none;
+}
+
+QDockWidget#sideTools QWidget#discrete QPushButton:pressed {
+    background: #303030;
+    border: none;
+}
