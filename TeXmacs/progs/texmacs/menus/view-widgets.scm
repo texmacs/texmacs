@@ -70,11 +70,12 @@
 	  (item (text "Use retina fonts:")
 	    (toggle (set-retina-boolean-preference "retina-factor" answer)
 		    (get-retina-boolean-preference "retina-factor")))
-          (item (text "Scale graphical interface:")
-            (enum (set-retina-preference "retina-scale" answer)
-                  '("1" "1.2" "1.5" "2" "")
-                  (get-retina-preference "retina-scale")
-                  "5em")))))
+          (assuming (!= (get-preference "gui theme") "")
+            (item (text "Scale graphical interface:")
+              (enum (set-retina-preference "retina-scale" answer)
+                    '("1" "1.2" "1.5" "2" "")
+                    (get-retina-preference "retina-scale")
+                    "5em"))))))
     (assuming (not (os-macos?))
       (centered
 	(aligned
@@ -83,7 +84,13 @@
 		    (get-retina-boolean-preference "retina-zoom")))
 	  (meti (hlist // (text "Use high resolution icons"))
 	    (toggle (set-retina-boolean-preference "retina-icons" answer)
-		    (get-retina-boolean-preference "retina-icons"))))))
+		    (get-retina-boolean-preference "retina-icons")))
+          (assuming (!= (get-preference "gui theme") "")
+            (item (text "Scale graphical interface:")
+              (enum (set-retina-preference "retina-scale" answer)
+                    '("1" "1.2" "1.5" "2" "")
+                    (get-retina-preference "retina-scale")
+                    "5em"))))))
     === ===
     (bottom-buttons
       ("Cancel" (cmd "cancel")) >>

@@ -319,7 +319,7 @@ TeXmacs_main (int argc, char** argv) {
 #else
         retina_factor= 1;
         retina_zoom  = 2;
-        retina_scale = 1.0;
+        retina_scale = (tm_style_sheet == ""? 1.0: 1.6666);
 #endif
         retina_icons = 2;
       }
@@ -413,7 +413,7 @@ TeXmacs_main (int argc, char** argv) {
 #else
     retina_factor= 1;
     retina_zoom  = 2;
-    retina_scale = 1.0;
+    retina_scale = (tm_style_sheet == ""? 1.0: 1.6666);
 #endif
     retina_icons = 2;
   }
