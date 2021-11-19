@@ -683,7 +683,6 @@ parse_tm_style (int style) {
     sheet += "border:1px solid rgb(255, 0, 0);";
 
   if (occurs ("dark", tm_style_sheet)) {
-    sheet += "color: #e0e0e0;";
     if (style & WIDGET_STYLE_GREY) sheet += "color: #a0a0a0;";
     if (style & WIDGET_STYLE_INERT) sheet += "color: #a0a0a0;";
   }

@@ -268,7 +268,7 @@ QDockWidget#sideTools QWidget#title * {
 }
 
 QDockWidget#sideTools QWidget#discrete * {
-    color: #808080;
+    color: #B0B0B0;
     font-size: 12px;
 }
 
