@@ -7,6 +7,10 @@ QWidget {
     font-size: 14px;
 }
 
+QAbstractScrollArea, QWidget#centralWidget {
+    background: #A0A0A0;
+}
+
 QLineEdit {
     min-height: 16px;
     padding-left: 2px;
