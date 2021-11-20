@@ -332,6 +332,11 @@ QDockWidget#sideTools QWidget#discrete QPushButton {
     border: none;
 }
 
+QDockWidget#sideTools QWidget#discrete QPushButton:hover {
+    background: #F8F8F8;
+    border: none;
+}
+
 QDockWidget#sideTools QWidget#discrete QPushButton:pressed {
     background: #D0D0D0;
     border: none;
