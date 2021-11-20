@@ -339,17 +339,17 @@
               (hlist
                 (input (window-set-init win "page-odd" answer) "string"
                        (list (window-get-init win "page-odd")) "6em")
-                // // (text "(odd pages)") // >> >> >>))
+                // // (text "(odd pages)") // >>>))
             (item (text "")
               (hlist
                 (input (window-set-init win "page-even" answer) "string"
                        (list (window-get-init win "page-odd")) "6em")
-                // // (text "(even pages)") >> >> >>))
+                // // (text "(even pages)") >>>))
             (item (text "Right:")
               (hlist
                 (input (window-set-init win "page-right" answer) "string"
                        (list (window-get-init win "page-right")) "6em")
-                // // (text "(odd pages)") // >> >> >>))
+                // // (text "(odd pages)") // >>>))
             (item (text "Top:")
               (input (window-set-init win "page-top" answer) "string"
                      (list (window-get-init win "page-top")) "6em"))
@@ -534,6 +534,67 @@
          (refresh-now "page-breaking-settings"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Document -> Page / Header & Footer
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define header-parameters
+  (list "page-odd-header" "page-even-header"
+        "page-odd-footer" "page-even-footer"))
+
+(define (header-buffer var)
+  (string->url (string-append "tmfs://aux/" var)))
+
+(define (header-buffers)
+  (map header-buffer header-parameters))
+
+(define (get-field-contents u)
+  (and-with t (tm->stree (buffer-get-body u))
+    (when (tm-func? t 'document 1)
+      (set! t (tm-ref t 0)))
+    t))
+
+(define (apply-headers-settings u)
+  (with l (list)
+    (for (var header-parameters)
+      (and-with doc (get-field-contents (string-append "tmfs://aux/" var))
+        (set! l (cons `(,var ,doc) l))))
+    (when (nnull? l)
+      (delayed
+        (:idle 10)
+        (for (x l) (initial-set-tree u (car x) (cadr x)))
+        (refresh-window)))))
+
+(define (editing-headers?)
+  (in? (current-buffer)
+       (map (lambda (x) (string->url (string-append "tmfs://aux/" x)))
+            header-parameters)))
+
+(tm-widget (page-headers-tool win)
+  (cached "page-header-settings"
+    (let* ((u (window->buffer win))
+           (style (list-remove-duplicates
+                   (rcons (get-style-list) "macro-editor"))))
+      (for (var header-parameters)
+        ======
+        (text (eval (parameter-name var)))
+        ===
+        (resize "400px" "60px"
+          (texmacs-input `(document ,(initial-get-tree u var))
+                         `(style (tuple ,@style))
+                         (header-buffer var))))))
+  === ===
+  (hlist
+    (text "Insert:")
+    // //
+    ("Tab" (when (editing-headers?) (make-htab "5mm")))
+    // //
+    ("Page number" (when (editing-headers?) (make 'page-the-page)))
+    >>>
+    ("Restore" (apply window-reset-init (cons win header-parameters)))
+    // //
+    ("Apply" (apply-headers-settings (window->buffer win)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global page settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -556,4 +617,12 @@
     (text "Page margins"))
   (centered
     (dynamic (page-margins-tool win))
+    ======))
+
+(tm-widget (texmacs-side-tool win tool)
+  (:require (== tool "document headers"))
+  (division "title"
+    (text "Page headers and footers"))
+  (centered
+    (dynamic (page-headers-tool win))
     ======))

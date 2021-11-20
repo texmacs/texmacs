@@ -81,6 +81,10 @@
   (require-format x '(refreshable :%1 :*))
   `($refreshable ,(cadr x) ,@(map gui-make (cddr x))))
 
+(define (gui-make-cached x)
+  (require-format x '(cached :%1 :*))
+  `($cached ,(cadr x) ,@(map gui-make (cddr x))))
+
 (define (gui-make-group x)
   (require-format x '(group :%1))
   `($menu-group ,(cadr x)))
@@ -108,10 +112,6 @@
 (define (gui-make-texmacs-input x)
   (require-format x '(texmacs-input :%3))
   `($texmacs-input ,@(cdr x)))
-
-(define (gui-make-texmacs-input* x)
-  (require-format x '(texmacs-input* :%3))
-  `($texmacs-input* ,@(cdr x)))
 
 (define (gui-make-input x)
   (require-format x '(input :%4))
@@ -391,6 +391,7 @@
   (loop ,gui-make-loop)
   (refresh ,gui-make-refresh)
   (refreshable ,gui-make-refreshable)
+  (cached ,gui-make-cached)
   (group ,gui-make-group)
   (text ,gui-make-text)
   (invisible ,gui-make-invisible)
@@ -398,7 +399,6 @@
   (color ,gui-make-color)
   (texmacs-output ,gui-make-texmacs-output)
   (texmacs-input ,gui-make-texmacs-input)
-  (texmacs-input* ,gui-make-texmacs-input*)
   (input ,gui-make-input)
   (enum ,gui-make-enum)
   (choice ,gui-make-choice)
