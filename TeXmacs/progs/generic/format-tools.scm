@@ -227,8 +227,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (window-get-page-rendering win)
-  (with-window win
-    (get-init-page-rendering)))
+  (or (with-window win
+        (get-init-page-rendering))
+      "?"))
 
 (define (window-set-page-rendering win s)
   (with-window win
