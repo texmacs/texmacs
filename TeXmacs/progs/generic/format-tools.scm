@@ -14,27 +14,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (generic format-tools)
-  (:use (generic format-widgets)))
+  (:use (generic format-widgets)
+        (utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (window-get-env win l mode)
-  ;; FIXME: should read environment from buffer in window win
-  (cond ((== mode :local)
-         (get-env l))
-        ((== mode :global)
-         (get-init l))
-        (else "")))
+  (with-window win
+    (cond ((== mode :here)
+           (get-env l))
+          ((== mode :paragraph)
+           (get-env l))
+          ((== mode :global)
+           (get-init l))
+          (else ""))))
 
 (tm-define (window-set-env win l val mode)
-  ;; FIXME: should modify buffer in window win
-  ;; FIXME: maybe call 'window-set-line-env'
-  (cond ((== mode :local)
-         (make-multi-line-with (list l val)))
-        ((== mode :global)
-         (init-env l val))))
+  (with-window win
+    (cond ((== mode :here)
+           (make-with (list l val)))
+          ((== mode :paragraph)
+           (make-multi-line-with (list l val)))
+          ((== mode :global)
+           (init-env l val)))))
 
 (define tool-key-table (make-ahash-table))
 
@@ -55,7 +59,7 @@
         (enum (window-set-env win "par-mode" answer mode)
               '("left" "center" "right" "justify")
               (window-get-env win "par-mode" mode) "10em"))
-      (assuming (== mode :local)
+      (assuming (== mode :paragraph)
         (item ====== ======)
         (item (text "Left margin:")
           (enum (window-set-env win "par-left" answer mode)
@@ -186,7 +190,7 @@
   (division "title"
     (text "This paragraph format"))
   (centered
-    (dynamic (paragraph-basic-tool win :local))
+    (dynamic (paragraph-basic-tool win :paragraph))
     ======))
 
 (tm-widget (texmacs-side-tool win tool)

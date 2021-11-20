@@ -53,7 +53,7 @@
     with-focus-after
     logic-group logic-table logic-dispatcher
     with-aux with-action with-module
-    with-cursor with-buffer with-author
+    with-cursor with-buffer with-window with-author
     with-server with-database with-database*
     with-time with-time-stamp with-limit
     with-encoding with-indexing
