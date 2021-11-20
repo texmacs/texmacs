@@ -245,8 +245,11 @@ QToolBar#focusToolBar QToolButton:hover {
 }
 
 QToolButton:pressed,
+QToolButton:checked,
 QToolBar#mainToolBar QToolButton:pressed,
-QToolBar#modeToolBar QToolButton:pressed {
+QToolBar#mainToolBar QToolButton:checked,
+QToolBar#modeToolBar QToolButton:pressed,
+QToolBar#modeToolBar QToolButton:checked, {
     background: #808080;
     border: 0px;
     border-radius: 3px;
