@@ -308,8 +308,8 @@
   (system-remove u))
 
 (define-public (url-autosave u suf)
-  (and (not (url-rooted-web? name))
-       (not (url-rooted-tmfs? name))
+  (and (not (url-rooted-web? u))
+       (not (url-rooted-tmfs? u))
        (url-glue u suf)))
 
 (define-public (url-wrap u)
