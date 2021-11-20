@@ -593,7 +593,9 @@
     >>>
     ("Restore" (apply window-reset-init (cons win header-parameters)))
     // //
-    ("Apply" (apply-headers-settings (window->buffer win)))))
+    ("Apply"
+     (apply-headers-settings (window->buffer win))
+     (with-window win (update-menus)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global page settings
