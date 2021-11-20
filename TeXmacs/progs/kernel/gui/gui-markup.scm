@@ -137,6 +137,10 @@
   (:synopsis "Make a refreshable widget")
   `(cons* 'refreshable (lambda () ,kind) ($list ,@l)))
 
+(tm-define-macro ($cached kind . l)
+  (:synopsis "Make a cached widget")
+  `(cons* 'cached (lambda () ,kind) ($list ,@l)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General layout widgets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -362,11 +366,6 @@
   (:synopsis "Make TeXmacs input field")
   `(list 'texmacs-input (lambda () ,doc) (lambda () ,tmstyle)
                         (lambda () ,name)))
-
-(tm-define-macro ($texmacs-input* doc tmstyle name)
-  (:synopsis "Make persistent TeXmacs input field")
-  `(list 'texmacs-input* (lambda () ,doc) (lambda () ,tmstyle)
-                         (lambda () ,name)))
 
 (tm-define-macro ($ink cmd)
   (:synopsis "Make an ink widget")
