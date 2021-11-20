@@ -129,9 +129,9 @@
     ;;(define-option-require opt decl)
     decl))
 
-(hash-set! define-option-table :mode define-option-mode)
-(hash-set! define-option-table :require define-option-require)
-(hash-set! define-option-table :applicable define-option-applicable)
+(ahash-set! define-option-table :mode define-option-mode)
+(ahash-set! define-option-table :require define-option-require)
+(ahash-set! define-option-table :applicable define-option-applicable)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Properties of overloaded functions
@@ -194,17 +194,17 @@
     (set! cur-props (cons `(',var ',arg (lambda () ,@(cdr opt))) cur-props))
     decl))
 
-(hash-set! define-option-table :type (define-property :type))
-(hash-set! define-option-table :synopsis (define-property :synopsis))
-(hash-set! define-option-table :returns (define-property :returns))
-(hash-set! define-option-table :note (define-property :note))
-(hash-set! define-option-table :argument define-option-argument)
-(hash-set! define-option-table :default define-option-default)
-(hash-set! define-option-table :proposals define-option-proposals)
-(hash-set! define-option-table :secure (define-property* :secure))
-(hash-set! define-option-table :check-mark (define-property* :check-mark))
-(hash-set! define-option-table :interactive (define-property* :interactive))
-(hash-set! define-option-table :balloon (define-property* :balloon))
+(ahash-set! define-option-table :type (define-property :type))
+(ahash-set! define-option-table :synopsis (define-property :synopsis))
+(ahash-set! define-option-table :returns (define-property :returns))
+(ahash-set! define-option-table :note (define-property :note))
+(ahash-set! define-option-table :argument define-option-argument)
+(ahash-set! define-option-table :default define-option-default)
+(ahash-set! define-option-table :proposals define-option-proposals)
+(ahash-set! define-option-table :secure (define-property* :secure))
+(ahash-set! define-option-table :check-mark (define-property* :check-mark))
+(ahash-set! define-option-table :interactive (define-property* :interactive))
+(ahash-set! define-option-table :balloon (define-property* :balloon))
 
 (define-public (procedure-sources about)
   (or (and (procedure? about)
@@ -279,9 +279,9 @@
 (define-public (tm-define-sub head body)
   (if (and (pair? (car body)) (keyword? (caar body)))
       (let ((decl (tm-define-sub head (cdr body))))
-	(if (not (hash-ref define-option-table (caar body)))
+	(if (not (ahash-ref define-option-table (caar body)))
 	    (texmacs-error "tm-define-sub" "unknown option ~S" (caar body)))
-	((hash-ref define-option-table (caar body)) (cdar body) decl))
+	((ahash-ref define-option-table (caar body)) (cdar body) decl))
       (cons 'tm-define-overloaded (cons head body))))
 
 (define-public-macro (tm-define head . body)
@@ -320,7 +320,7 @@
   (if (null? body)
       (cons 'tm-property-overloaded (cons head body))
       (let ((decl (tm-property-sub head (cdr body))))
-	((hash-ref define-option-table (caar body)) (cdar body) decl))))
+	((ahash-ref define-option-table (caar body)) (cdar body) decl))))
 
 (define-public-macro (tm-property head . body)
   (set! cur-conds '())
