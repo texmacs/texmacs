@@ -239,6 +239,7 @@ static s7_pointer free_blackbox (s7_scheme *sc, s7_pointer obj)
 
 static s7_pointer mark_blackbox (s7_scheme *sc, s7_pointer obj)
 {
+  return (NULL);
 }
 
 static s7_pointer blackbox_is_equal(s7_scheme *sc, s7_pointer args)
