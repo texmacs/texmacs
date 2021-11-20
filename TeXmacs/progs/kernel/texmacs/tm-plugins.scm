@@ -87,8 +87,8 @@
   (if (not (ahash-ref connection-handler name))
       (ahash-set! connection-handler name '()))
   (ahash-set! connection-handler name
-	      (cons (list 'tuple channel routine)
-		    (ahash-ref connection-handler name))))
+              (cons (list 'tuple channel routine)
+                    (ahash-ref connection-handler name))))
 
 (define-public (connection-get-handlers name)
   (lazy-plugin-force)
@@ -345,12 +345,12 @@
     (when (url-exists? plugin-cache)
       (with cached (load-object plugin-cache)
         (if (== (length cached) 2) (set! cached (cons "" cached)))
-	(with (p t1 t2) cached
+        (with (p t1 t2) cached
           (set! plugin-check-path p)
-	  (set! plugin-data-table (list->ahash-table t1))
-	  (set! check-dir-table (list->ahash-table t2))
-	  (when (path-up-to-date?)
-	    (set! reconfigure-flag? #f)))))
+          (set! plugin-data-table (list->ahash-table t1))
+          (set! check-dir-table (list->ahash-table t2))
+          (when (path-up-to-date?)
+            (set! reconfigure-flag? #f)))))
     ;;(display* "Reconfigure " reconfigure-flag? "\n")
     (when reconfigure-flag?
       (set! check-dir-table (make-ahash-table))
@@ -360,16 +360,16 @@
 (define (plugin-save-setup)
   (when reconfigure-flag?
     (save-object plugin-cache
-		 (list (get-original-path)
+                 (list (get-original-path)
                        (ahash-table->list plugin-data-table)
-		       (ahash-table->list check-dir-table)))))
+                       (ahash-table->list check-dir-table)))))
 
 (define-public (plugin-versions name)
   (with versions (ahash-ref plugin-data-table name)
     (cond ((not versions) (list))
-	  ((list? versions) versions)
-	  ((string? versions) (list versions))
-	  (else (list "default")))))
+          ((list? versions) versions)
+          ((string? versions) (list versions))
+          (else (list "default")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Manage directories where to search for plugins
@@ -438,56 +438,56 @@
 
 (define (plugin-configure-cmd name cmd)
   (cond ((func? cmd :require 1)
-	 (when reconfigure-flag?
-	   (ahash-set! plugin-data-table name ((second cmd)))))
+         (when reconfigure-flag?
+           (ahash-set! plugin-data-table name ((second cmd)))))
         ((func? cmd :versions 1)
-	 (when reconfigure-flag?
-	   (ahash-set! plugin-data-table name ((second cmd)))))
+         (when reconfigure-flag?
+           (ahash-set! plugin-data-table name ((second cmd)))))
         ((func? cmd :setup 1)
-	 (if reconfigure-flag? ((second cmd))))
-	((func? cmd :prioritary 1)
-	 (ahash-set! plugin-data-table (list name :prioritary) (cadr cmd)))
+         (if reconfigure-flag? ((second cmd))))
+        ((func? cmd :prioritary 1)
+         (ahash-set! plugin-data-table (list name :prioritary) (cadr cmd)))
         ((func? cmd :initialize 1)
-	 ((second cmd)))
-	((func? cmd :launch 1)
-	 (connection-setup name `(tuple "pipe" ,(second cmd))))
-	((func? cmd :launch 2)
-	 (connection-setup name `(tuple "pipe" ,(third cmd)) (cadr cmd)))
-	((func? cmd :socket 2)
-	 (connection-setup name `(tuple "socket" ,(second cmd) ,(third cmd))))
-	((func? cmd :socket 3)
-	 (connection-setup
-	  name `(tuple "socket" ,(third cmd) ,(fourth cmd)) (cadr cmd)))
-	((func? cmd :link 3)
-	 (connection-setup
-	  name `(tuple "dynlink" ,(second cmd) ,(third cmd) ,(fourth cmd))))
-	((func? cmd :link 4)
-	 (connection-setup
-	  name `(tuple "dynlink" ,(third cmd) ,(fourth cmd) ,(fifth cmd))
-	  (cadr cmd)))
-	((func? cmd :handler 2)
-	 (connection-insert-handler
-	  name (second cmd) (symbol->string (third cmd))))
-	((func? cmd :winpath 2)
-	 (when (os-mingw?)
+         ((second cmd)))
+        ((func? cmd :launch 1)
+         (connection-setup name `(tuple "pipe" ,(second cmd))))
+        ((func? cmd :launch 2)
+         (connection-setup name `(tuple "pipe" ,(third cmd)) (cadr cmd)))
+        ((func? cmd :socket 2)
+         (connection-setup name `(tuple "socket" ,(second cmd) ,(third cmd))))
+        ((func? cmd :socket 3)
+         (connection-setup
+          name `(tuple "socket" ,(third cmd) ,(fourth cmd)) (cadr cmd)))
+        ((func? cmd :link 3)
+         (connection-setup
+          name `(tuple "dynlink" ,(second cmd) ,(third cmd) ,(fourth cmd))))
+        ((func? cmd :link 4)
+         (connection-setup
+          name `(tuple "dynlink" ,(third cmd) ,(fourth cmd) ,(fifth cmd))
+          (cadr cmd)))
+        ((func? cmd :handler 2)
+         (connection-insert-handler
+          name (second cmd) (symbol->string (third cmd))))
+        ((func? cmd :winpath 2)
+         (when (os-mingw?)
            (add-windows-program-path (url-append (second cmd) (third cmd)) #t)))
-	((func? cmd :macpath 2)
-	 (when (os-macos?)
+        ((func? cmd :macpath 2)
+         (when (os-macos?)
            (add-macos-program-path (url-append (second cmd) (third cmd)) #t)))
-	((func? cmd :session 1)
-	 (session-setup name (second cmd)))
-	((func? cmd :scripts 1)
-	 (scripts-setup name (second cmd)))
-	((func? cmd :filter-in 1)
-	 (noop))
-	((func? cmd :serializer 1)
-	 (plugin-serializer-set! name (second cmd)))
-	((func? cmd :commander 1)
-	 (plugin-commander-set! name (second cmd)))
-	((func? cmd :tab-completion 1)
-	 (if (second cmd) (plugin-supports-completions-set! name)))
-	((func? cmd :test-input-done 1)
-	 (if (second cmd) (plugin-supports-input-done-set! name))))
+        ((func? cmd :session 1)
+         (session-setup name (second cmd)))
+        ((func? cmd :scripts 1)
+         (scripts-setup name (second cmd)))
+        ((func? cmd :filter-in 1)
+         (noop))
+        ((func? cmd :serializer 1)
+         (plugin-serializer-set! name (second cmd)))
+        ((func? cmd :commander 1)
+         (plugin-commander-set! name (second cmd)))
+        ((func? cmd :tab-completion 1)
+         (if (second cmd) (plugin-supports-completions-set! name)))
+        ((func? cmd :test-input-done 1)
+         (if (second cmd) (plugin-supports-input-done-set! name))))
 
    (ahash-ref plugin-data-table name))
 
@@ -499,7 +499,7 @@
 (define-public (plugin-configure-sub cmd)
   "Helper function for plugin-configure"
   (if (and (list? cmd) (= (length cmd) 2)
-	   (in? (car cmd) '(:require :versions :setup :initialize)))
+           (in? (car cmd) '(:require :versions :setup :initialize)))
       (list (car cmd) (list 'unquote `(lambda () ,(cadr cmd))))
       cmd))
 
@@ -507,8 +507,8 @@
   "Declare and configure plug-in with name @name2 according to @options"
   (let* ((name (if (string? name2) name2 (symbol->string name2)))
          (supports-name? (string->symbol (string-append "supports-" name "?")))
-	 (in-name (string->symbol (string-append "in-" name "%")))
-	 (name-scripts (string->symbol (string-append name "-scripts%"))))
+         (in-name (string->symbol (string-append "in-" name "%")))
+         (name-scripts (string->symbol (string-append name "-scripts%"))))
     `(begin
        (texmacs-modes (,in-name (== (get-env "prog-language") ,name)))
        (texmacs-modes (,name-scripts (== (get-env "prog-scripts") ,name)))
@@ -517,7 +517,7 @@
              (remote-connection-defined? ,name)))
        (if reconfigure-flag? (ahash-set! plugin-data-table ,name #t))
        (plugin-configure-cmds ,name
-	 ,(list 'quasiquote (map plugin-configure-sub options))))))
+         ,(list 'quasiquote (map plugin-configure-sub options))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initialization of plugins
@@ -535,19 +535,19 @@
   (plugin-load-setup)
   (if (ahash-ref plugin-initialize-todo name*)
       (let* ((name (symbol->string name*))
-	     (file (string-append "plugins/" name "/progs/init-" name ".scm"))
-	     (u (url-unix "$TEXMACS_HOME_PATH:$TEXMACS_PATH" file)))
-	(ahash-set! plugin-initialize-todo name* #f)
-	(if (url-exists? u)
-	    (with fname (url-materialize u "r")
-	      ;;(display* "loading plugin " name* "\n")
-	      ;;(display* "loading plugin " fname "\n")
-	      ;;(with start (texmacs-time)
-	      ;;  (load fname)
-	      ;;  (display* name " -> " (- (texmacs-time) start) " ms\n"))
-	      (load fname)
-	      ))
-	(if (plugin-all-initialized?) (plugin-save-setup)))))
+             (file (string-append "plugins/" name "/progs/init-" name ".scm"))
+             (u (url-unix "$TEXMACS_HOME_PATH:$TEXMACS_PATH" file)))
+        (ahash-set! plugin-initialize-todo name* #f)
+        (if (url-exists? u)
+            (with fname (url-materialize u "r")
+              ;;(display* "loading plugin " name* "\n")
+              ;;(display* "loading plugin " fname "\n")
+              ;;(with start (texmacs-time)
+              ;;  (load fname)
+              ;;  (display* name " -> " (- (texmacs-time) start) " ms\n"))
+              (load fname)
+              ))
+        (if (plugin-all-initialized?) (plugin-save-setup)))))
 
 (define-public (lazy-plugin-initialize name)
   "Initialize the plug-in @name in a lazy way"
@@ -562,6 +562,6 @@
   "Force all lazy plugin initializations to take place"
   (if plugin-initialize-done? #f
       (with l (ahash-table->list plugin-initialize-todo)
-	(for-each plugin-initialize (map car l))
-	(set! plugin-initialize-done? #t)
-	#t)))
+        (for-each plugin-initialize (map car l))
+        (set! plugin-initialize-done? #t)
+        #t)))
