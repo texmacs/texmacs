@@ -487,12 +487,13 @@
 	((func? cmd :tab-completion 1)
 	 (if (second cmd) (plugin-supports-completions-set! name)))
 	((func? cmd :test-input-done 1)
-	 (if (second cmd) (plugin-supports-input-done-set! name)))))
+	 (if (second cmd) (plugin-supports-input-done-set! name))))
+
+   (ahash-ref plugin-data-table name))
 
 (define-public (plugin-configure-cmds name cmds)
   "Helper function for plugin-configure"
-  (when (and (nnull? cmds) (ahash-ref plugin-data-table name))
-    (plugin-configure-cmd name (car cmds))
+  (when (and (nnull? cmds) (plugin-configure-cmd name (car cmds)))
     (plugin-configure-cmds name (cdr cmds))))
 
 (define-public (plugin-configure-sub cmd)
