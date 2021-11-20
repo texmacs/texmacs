@@ -86,20 +86,20 @@
       ((null? entry))
       (if (func? (car entry) 'bib-entry)
           (let* ((label (bib-format-label-prefix 0 (car entry)))
-                 (num (hash-ref bib-label-table label)))
-            (hash-set! bib-key-table (list-ref (car entry) 2) label)
+                 (num (ahash-ref bib-label-table label)))
+            (ahash-set! bib-key-table (list-ref (car entry) 2) label)
             (if num
-                (hash-set! bib-label-table label
+                (ahash-set! bib-label-table label
                            (if (equal? num `()) `(1 2) 
                                `(,@num ,(+ 1 (length num)))))
-                (hash-set! bib-label-table label `()))))))
+                (ahash-set! bib-label-table label `()))))))
 
 (define (bib-format-label n x)
-  (let* ((pre (hash-ref bib-key-table (list-ref x 2)))
-         (num (hash-ref bib-label-table pre)))
+  (let* ((pre (ahash-ref bib-key-table (list-ref x 2)))
+         (num (ahash-ref bib-label-table pre)))
     (if (null? num) pre
         (with n (car num)
-          (hash-set! bib-label-table pre (cdr num))
+          (ahash-set! bib-label-table pre (cdr num))
           (string-append pre (string (integer->char (+ 96 n))))))))
 
 (tm-define (bib-format-bibitem n x)
@@ -117,7 +117,7 @@
 (tm-define (bib-sort-key x)
   (:mode bib-alpha?)
   (let* ((auths (bib-format-label-names (bib-field x "author")))
-         (label (hash-ref bib-key-table (list-ref x 2)))
+         (label (ahash-ref bib-key-table (list-ref x 2)))
          (year (bib-field x "year"))
                (lplain (bib-with-style "plain" bib-sort-key x)))
     (string-append (string-upcase (if (bib-null? auths) label auths))
