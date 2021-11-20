@@ -51,5 +51,8 @@
     (group "Experimental side tools")
     ("Context" (tool-toggle "context"))
     ("Invalid" (tool-toggle "invalid"))
-    ("Paragraph (Format)" (tool-toggle "format paragraph"))
-    ("Paragraph (Document)" (tool-toggle "document paragraph"))))
+    (-> "Format"
+        ("Paragraph" (tool-toggle "format paragraph")))
+    (-> "Document"
+        ("Paragraph" (tool-toggle "document paragraph"))
+        ("Page" (tool-toggle "document page")))))

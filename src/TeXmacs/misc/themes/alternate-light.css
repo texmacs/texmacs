@@ -311,13 +311,20 @@ QDockWidget#sideTools::title {
 
 QDockWidget#sideTools QWidget#title {
     background: #D4D4D4;
-    text-align: center;
     font-weight: bold;
 }
 
 QDockWidget#sideTools QWidget#title * {
     background: #D4D4D4;
-    text-align: center;
+    font-weight: bold;
+    margin: 5px;
+}
+
+QDockWidget#sideTools QWidget#subtitle {
+    font-weight: bold;
+}
+
+QDockWidget#sideTools QWidget#subtitle * {
     font-weight: bold;
     margin: 5px;
 }
