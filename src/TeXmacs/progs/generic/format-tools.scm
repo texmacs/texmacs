@@ -22,14 +22,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (window-get-env win var mode)
-  (with-window win
-    (cond ((== mode :here)
-           (get-env var))
-          ((== mode :paragraph)
-           (get-env var))
-          ((== mode :global)
-           (get-init var))
-          (else ""))))
+  (or (with-window win
+        (cond ((== mode :here)
+               (get-env var))
+              ((== mode :paragraph)
+               (get-env var))
+              ((== mode :global)
+               (get-init var))
+              (else "?")))
+      "?"))
 
 (tm-define (window-set-env win var val mode)
   (with-window win
@@ -38,7 +39,7 @@
           ((== mode :paragraph)
            (make-multi-line-with (list var val)))
           ((== mode :global)
-           (init-env var val)
+           (with-window win (init-env var val))
            (update-menus)))))
 
 (tm-define (window-get-init win var)
@@ -50,6 +51,11 @@
 (tm-define (window-defined-init? win var)
   (with-window win
     (style-has? var)))
+
+(tm-define (window-reset-init win . vars)
+  (with-window win
+    (apply init-default vars)
+    (update-menus)))
 
 (define tool-key-table (make-ahash-table))
 
@@ -181,20 +187,24 @@
                   (== (window-get-env win "par-kerning-margin" mode)
                       "true")))))
     ======
-    (assuming (not (tool-ref (list win mode "advanced paragraph")))
-      (division "discrete"
-        ("Show advanced settings"
-         (begin
-           (tool-set (list win mode "advanced paragraph") #t)
-           (refresh-now "paragraph tool")
-           (update-menus)))))      
-    (assuming (tool-ref (list win mode "advanced paragraph"))
-      (division "discrete"
-        ("Hide advanced settings"
-         (begin
-           (tool-set (list win mode "advanced paragraph") #f)
-           (refresh-now "paragraph tool")
-           (update-menus)))))))
+    (division "discrete"
+      (hlist
+        (assuming (== mode :global)
+          ("Restore defaults"
+           (apply window-reset-init (cons win paragraph-parameters))))
+        >>
+        (assuming (not (tool-ref (list win mode "advanced paragraph")))
+          ("Show advanced settings"
+           (begin
+             (tool-set (list win mode "advanced paragraph") #t)
+             (refresh-now "paragraph tool")
+             (update-menus))))
+        (assuming (tool-ref (list win mode "advanced paragraph"))
+          ("Hide advanced settings"
+           (begin
+             (tool-set (list win mode "advanced paragraph") #f)
+             (refresh-now "paragraph tool")
+             (update-menus))))))))
 
 (tm-widget (texmacs-side-tool win tool)
   (:require (== tool "format paragraph"))
@@ -250,6 +260,7 @@
 
 (tm-widget (page-format-tool win)
   (refreshable "page format tool"
+    ===
     (aligned
       (item (text "Page rendering:")
         (enum (window-set-page-rendering win (encode-rendering answer))
@@ -288,7 +299,15 @@
                                (encode-crop-marks answer))
               '("none" "a3" "a4" "letter")
               (decode-crop-marks (window-get-init win "page-crop-marks"))
-              "10em")))))
+              "10em")))
+    ===
+    (division "discrete"
+      (hlist
+        >>
+        ("Restore defaults"
+         (window-reset-init win "page-medium" "page-type" "page-orientation"
+                            "page-border" "page-packet" "page-offset"
+                            "page-width" "page-height" "page-crop-marks"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global page margins
@@ -372,7 +391,20 @@
                    (list (window-get-init win "page-screen-top")) "6em"))
           (item (text "Bottom:")
             (input (window-set-init win "page-screen-bot" answer) "string"
-                   (list (window-get-init win "page-screen-bot")) "6em")))))))
+                   (list (window-get-init win "page-screen-bot")) "6em"))))))
+  (division "discrete"
+    (hlist
+      >>
+      ("Restore defaults"
+       (window-reset-init win "page-odd" "page-even" "page-right"
+                          "page-top" "page-bot" "par-width"
+                          "page-odd-shift" "page-even-shift"
+                          "page-screen-left" "page-screen-right"
+                          "page-screen-top" "page-screen-bot"
+                          "page-width-margin" "page-screen-margin")
+       (refresh-now "page-margin-toggles")
+       (refresh-now "page-margin-settings")
+       (refresh-now "page-screen-margin-settings")))))
 
 (tm-widget (page-margins-tool win)
   (:require (style-has? "std-latex-dtd"))
@@ -447,7 +479,59 @@
                    (list (window-get-init win "page-screen-top")) "6em"))
           (item (text "Bottom:")
             (input (window-set-init win "page-screen-bot" answer) "string"
-                   (list (window-get-init win "page-screen-bot")) "6em")))))))
+                   (list (window-get-init win "page-screen-bot")) "6em"))))))
+  (division "discrete"
+    (hlist
+      >>
+      ("Restore defaults"
+       (window-reset-init win "tex-odd-side-margin" "tex-even-side-margin"
+                          "tex-text-width" "tex-line-width"
+                          "tex-column-width" "tex-top-margin"
+                          "tex-head-height" "tex-head-sep"
+                          "tex-text-height" "tex-foot-skip"
+                          "page-screen-left" "page-screen-right"
+                          "page-screen-top" "page-screen-bot"
+                          "page-width-margin" "page-screen-margin")
+       (refresh-now "page-margin-toggles")
+       (refresh-now "page-tex-hor-margins")
+       (refresh-now "page-tex-ver-margins")
+       (refresh-now "page-screen-margin-settings")))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Document -> Page / Breaking
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget (page-breaking-tool win)
+  (refreshable "page-breaking-settings"
+    ===
+    (aligned
+      (item (text "Page breaking algorithm:")
+        (enum (window-set-init win "page-breaking" answer)
+              '("sloppy" "professional")
+              (window-get-init win "page-breaking") "10em"))
+      (item (text "Allowed page height reduction:")
+        (enum (window-set-init win "page-shrink" answer)
+              (cons-new (window-get-init win "page-shrink")
+                        '("0cm" "0.5cm" "1cm" ""))
+              (window-get-init win "page-shrink") "10em"))
+      (item (text "Allowed page height extension:")
+        (enum (window-set-init win "page-extend" answer)
+              (cons-new (window-get-init win "page-extend")
+                        '("0cm" "0.5cm" "1cm" ""))
+              (window-get-init win "page-extend") "10em"))
+      (item (text "Vertical space stretchability:")
+        (enum (window-set-init win "page-flexibility" answer)
+              (cons-new (window-get-init win "page-flexibility")
+                        '("0" "0.25" "0.5" "0.75" "1" ""))
+              (window-get-init win "page-flexibility") "10em")))
+    ===
+    (division "discrete"
+      (hlist
+        >>
+        ("Restore defaults"
+         (window-reset-init win "page-breaking" "page-shrink"
+                            "page-extend" "page-flexibility")
+         (refresh-now "page-breaking-settings"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global page settings
@@ -461,6 +545,15 @@
     (dynamic (page-format-tool win))
     ======)
   (division "title"
+    (text "Page breaking"))
+  (centered
+    (dynamic (page-breaking-tool win))
+    ======))
+
+(tm-widget (texmacs-side-tool win tool)
+  (:require (== tool "document margins"))
+  (division "title"
     (text "Page margins"))
-  (dynamic (page-margins-tool win))
-  ======)
+  (centered
+    (dynamic (page-margins-tool win))
+    ======))

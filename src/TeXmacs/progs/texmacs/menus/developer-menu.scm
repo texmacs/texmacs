@@ -55,4 +55,5 @@
         ("Paragraph" (tool-toggle "format paragraph")))
     (-> "Document"
         ("Paragraph" (tool-toggle "document paragraph"))
-        ("Page" (tool-toggle "document page")))))
+        ("Page" (tool-toggle "document page"))
+        ("Margins" (tool-toggle "document margins")))))

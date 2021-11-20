@@ -271,7 +271,7 @@
 
 (define (make-menu-input p style)
   "Make @(input :%1 :string? :%1 :string?) menu item."
-  (with (tag cmd type props width) p
+  (with (tag cmd type props width) p    
     (widget-input (object->command (menu-protect cmd)) type (props)
                   style width)))
 
