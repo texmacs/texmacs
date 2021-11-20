@@ -888,21 +888,20 @@
   "Expand enum item @p."
   `(enum ,(replace-procedures (cadr p))
          ,(replace-procedures (caddr p))
-         ,(replace-procedures (cadddr p))
+         ,((cadddr p))
          ,(fifth p)))
 
 (define (menu-expand-choice p)
   "Expand choice item @p."
   `(,(car p) ,(replace-procedures (cadr p))
              ,(caddr p)
-             ,(cadddr p)))
+             ,((cadddr p))))
 
 (define (menu-expand-filtered-choice p)
   "Expand filtered choice item @p."
-  
   `(,(car p) ,(replace-procedures (cadr p))
              ,(caddr p)
-             ,(cadddr p)
+             ,((cadddr p))
              ,(car (cddddr p))))
 
 (define (menu-expand-tree-view p)
@@ -915,14 +914,18 @@
 (define (menu-expand-toggle p)
   "Expand toggle item @p."
   `(toggle ,(replace-procedures (cadr p))
-           ,(replace-procedures (caddr p))))
+           ,((caddr p))))
 
 (define (menu-expand-list l)
   "Expand links and conditional menus in list of menus @l."
   (map menu-expand l))
 
+(define must-eval-list
+  '(input enum choice filtered-choice toggle))
+
 (define (replace-procedures x)
   (cond ((procedure? x) (procedure-source x))
+        ((and (pair? x) (in? (car x) must-eval-list)) (menu-expand x))
         ((list? x) (map replace-procedures x))
         (else x)))
 
