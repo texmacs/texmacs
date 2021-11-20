@@ -24,7 +24,7 @@
 (define-public ahash-set! hash-table-set!)
 (define-public (ahash-remove! h s) (hash-table-set! h s #f))
 (define-public (ahash-table->list h) (map values h))
-(define-public (ahash-size h) (lenght h))
+(define-public (ahash-size h) (length h))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra routines on adaptive hash tables
