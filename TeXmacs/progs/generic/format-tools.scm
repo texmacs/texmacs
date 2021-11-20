@@ -21,24 +21,35 @@
 ;; Subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (window-get-env win l mode)
+(tm-define (window-get-env win var mode)
   (with-window win
     (cond ((== mode :here)
-           (get-env l))
+           (get-env var))
           ((== mode :paragraph)
-           (get-env l))
+           (get-env var))
           ((== mode :global)
-           (get-init l))
+           (get-init var))
           (else ""))))
 
-(tm-define (window-set-env win l val mode)
+(tm-define (window-set-env win var val mode)
   (with-window win
     (cond ((== mode :here)
-           (make-with (list l val)))
+           (make-with (list var val)))
           ((== mode :paragraph)
-           (make-multi-line-with (list l val)))
+           (make-multi-line-with (list var val)))
           ((== mode :global)
-           (init-env l val)))))
+           (init-env var val)
+           (update-menus)))))
+
+(tm-define (window-get-init win var)
+  (window-get-env win var :global))
+
+(tm-define (window-set-init win var val)
+  (window-set-env win var val :global))
+
+(tm-define (window-defined-init? win var)
+  (with-window win
+    (style-has? var)))
 
 (define tool-key-table (make-ahash-table))
 
@@ -200,3 +211,256 @@
   (centered
     (dynamic (paragraph-basic-tool win :global))
     ======))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Global Page format
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (window-get-page-rendering win)
+  (with-window win
+    (get-init-page-rendering)))
+
+(define (window-set-page-rendering win s)
+  (with-window win
+    (init-page-rendering s)))
+
+(define (window-page-size-list win)
+  (if (window-defined-init? win "beamer-style")
+      (list "16:9" "8:5" "4:3" "5:4" "user")
+      (list "a3" "a4" "a5" "b4" "b5" "letter" "legal" "executive" "user")))
+
+(define (window-user-page-size? win)
+  (== (window-get-init win "page-type") "user"))
+
+(define (encode-rendering s)
+  (cond ((== s "screen") "automatic")
+        (else s)))
+
+(define (decode-rendering s)
+  (cond ((== s "automatic") "screen")
+        (else s)))
+
+(define (encode-crop-marks s)
+  (cond ((== s "none") "")
+        (else s)))
+
+(define (decode-crop-marks s)
+  (cond ((== s "") "none")
+        (else s)))
+
+(tm-widget (page-format-tool win)
+  (refreshable "page format tool"
+    (aligned
+      (item (text "Page rendering:")
+        (enum (window-set-page-rendering win (encode-rendering answer))
+              '("paper" "papyrus" "screen" "beamer" "book" "panorama")
+              (decode-rendering (window-get-page-rendering win)) "10em"))
+      (item (text "Page type:")
+        (enum (begin
+                (window-set-init win "page-type" answer)
+                (when (!= answer "user")
+                  (window-set-init win "page-width" "auto")
+                  (window-set-init win "page-height" "auto"))
+                (refresh-now "page format tool"))
+              (cons-new (window-get-init win "page-type")
+                        (window-page-size-list win))
+              (window-get-init win "page-type") "10em"))
+      (item (when (window-user-page-size? win) (text "Page width:"))
+        (when (window-user-page-size? win)
+          (enum (window-set-init win "page-width" answer)
+                (list (window-get-init win "page-width") "")
+                (window-get-init win "page-width") "10em")))
+      (item (when (window-user-page-size? win) (text "Page height:"))
+        (when (window-user-page-size? win)
+          (enum (window-set-init win "page-height" answer)
+                (list (window-get-init win "page-height") "")
+                (window-get-init win "page-height") "10em")))
+      (item (text "Orientation:")
+        (enum (window-set-init win "page-orientation" answer)
+              '("portrait" "landscape")
+              (window-get-init win "page-orientation") "10em"))
+      (item (text "First page:")
+        (enum (window-set-init win "page-first" answer)
+              (list (window-get-init win "page-first") "")
+              (window-get-init win "page-first") "10em"))
+      (item (text "Crop marks:")
+        (enum (window-set-init win "page-crop-marks"
+                               (encode-crop-marks answer))
+              '("none" "a3" "a4" "letter")
+              (decode-crop-marks (window-get-init win "page-crop-marks"))
+              "10em")))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Global page margins
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget (page-margins-tool win)
+  (padded
+    (aligned
+      (meti (hlist // (text "Determine margins from text width"))
+        (toggle (begin
+                  (window-set-init win "page-width-margin"
+                                   (if answer "true" "false"))
+                  (refresh-now "page-margin-settings"))
+                (== (window-get-init win "page-width-margin") "true")))
+      (meti (hlist // (text "Same screen margins as on paper"))
+        (toggle (begin
+                  (window-set-init win "page-screen-margin"
+                                   (if answer "false" "true"))
+                  (refresh-now "page-screen-margin-settings"))
+                (!= (window-get-init win "page-screen-margin") "true")))))
+  (refreshable "page-margin-settings"
+    ===
+    (division "subtitle"
+      (text "Margins on paper"))
+    (padded
+      (if (!= (window-get-init win "page-width-margin") "true")
+          (aligned
+            (item (text "Left:")
+              (hlist
+                (input (window-set-init win "page-odd" answer) "string"
+                       (list (window-get-init win "page-odd")) "6em")
+                // // (text "(odd pages)") // >> >> >>))
+            (item (text "")
+              (hlist
+                (input (window-set-init win "page-even" answer) "string"
+                       (list (window-get-init win "page-odd")) "6em")
+                // // (text "(even pages)") >> >> >>))
+            (item (text "Right:")
+              (hlist
+                (input (window-set-init win "page-right" answer) "string"
+                       (list (window-get-init win "page-right")) "6em")
+                // // (text "(odd pages)") // >> >> >>))
+            (item (text "Top:")
+              (input (window-set-init win "page-top" answer) "string"
+                     (list (window-get-init win "page-top")) "6em"))
+            (item (text "Bottom:")
+              (input (window-set-init win "page-bot" answer) "string"
+                     (list (window-get-init win "page-bot")) "6em"))))
+      (if (== (window-get-init win "page-width-margin") "true")
+          (aligned
+            (item (text "Text width:")
+              (input (window-set-init win "par-width" answer) "string"
+                     (list (window-get-init win "par-width")) "6em"))
+            (item (text "Odd page shift:")
+              (input (window-set-init win "page-odd-shift" answer) "string"
+                     (list (window-get-init win "page-odd-shift")) "6em"))
+            (item (text "Even page shift:")
+              (input (window-set-init win "page-even-shift" answer) "string"
+                     (list (window-get-init win "page-even-shift")) "6em"))
+            (item (text "Top:")
+              (input (window-set-init win "page-top" answer) "string"
+                     (list (window-get-init win "page-top")) "6em"))
+            (item (text "Bottom:")
+              (input (window-set-init win "page-bot" answer) "string"
+                     (list (window-get-init win "page-bot")) "6em"))))))
+  (refreshable "page-screen-margin-settings"
+    (assuming (== (window-get-init win "page-screen-margin") "true")
+      ===
+      (division "subtitle"
+        (text "Margins on screen"))
+      (padded
+        (aligned
+          (item (text "Left:")
+            (input (window-set-init win "page-screen-left" answer) "string"
+                   (list (window-get-init win "page-screen-left")) "6em"))
+          (item (text "Right:")
+            (input (window-set-init win "page-screen-right" answer) "string"
+                   (list (window-get-init win "page-screen-right")) "6em"))
+          (item (text "Top:")
+            (input (window-set-init win "page-screen-top" answer) "string"
+                   (list (window-get-init win "page-screen-top")) "6em"))
+          (item (text "Bottom:")
+            (input (window-set-init win "page-screen-bot" answer) "string"
+                   (list (window-get-init win "page-screen-bot")) "6em")))))))
+
+(tm-widget (page-margins-tool win)
+  (:require (style-has? "std-latex-dtd"))
+  (padded
+    (text "This style specifies page margins in the TeX way"))
+  (refreshable "page-margin-toggles"
+    (padded
+      (aligned
+        (meti (hlist // (text "Same screen margins as on paper"))
+          (toggle (begin
+                    (window-set-init win "page-screen-margin"
+                                     (if answer "false" "true"))
+                    (refresh-now "page-screen-margin-settings"))
+                  (!= (window-get-init win "page-screen-margin") "true"))))))
+  (refreshable "page-tex-hor-margins"
+    ===
+    (division "subtitle"
+      (text "Horizontal margins"))
+    (padded
+      (aligned
+        (item (text "oddsidemargin:")
+          (input (window-set-init win "tex-odd-side-margin" answer) "string"
+                 (list (window-get-init win "tex-odd-side-margin")) "6em"))
+        (item (text "evensidemargin:")
+          (input (window-set-init win "tex-even-side-margin" answer) "string"
+                 (list (window-get-init win "tex-even-side-margin")) "6em"))
+        (item (text "textwidth:")
+          (input (window-set-init win "tex-text-width" answer) "string"
+                 (list (window-get-init win "tex-text-width")) "6em"))
+        (item (text "linewidth:")
+          (input (window-set-init win "tex-line-width" answer) "string"
+                 (list (window-get-init win "tex-line-width")) "6em"))
+        (item (text "columnwidth:")
+          (input (window-set-init win "tex-column-width" answer) "string"
+                 (list (window-get-init win "tex-column-width")) "6em")))))
+  (refreshable "page-tex-ver-margins"
+    ===
+    (division "subtitle"
+      (text "Vertical margins"))
+    (padded
+      (aligned
+        (item (text "topmargin:")
+          (input (window-set-init win "tex-top-margin" answer) "string"
+                 (list (window-get-init win "tex-top-margin")) "6em"))
+        (item (text "headheight:")
+          (input (window-set-init win "tex-head-height" answer) "string"
+                 (list (window-get-init win "tex-head-height")) "6em"))
+        (item (text "headsep:")
+          (input (window-set-init win "tex-head-sep" answer) "string"
+                 (list (window-get-init win "tex-head-sep")) "6em"))
+        (item (text "textheight:")
+          (input (window-set-init win "tex-text-height" answer) "string"
+                 (list (window-get-init win "tex-text-height")) "6em"))
+        (item (text "footskip:")
+          (input (window-set-init win "tex-foot-skip" answer) "string"
+                 (list (window-get-init win "tex-foot-skip")) "6em")))))
+  (refreshable "page-screen-margin-settings"
+    (assuming (== (window-get-init win "page-screen-margin") "true")
+      ===
+      (division "subtitle"
+        (text "Margins on screen"))
+      (padded
+        (aligned
+          (item (text "Left:")
+            (input (window-set-init win "page-screen-left" answer) "string"
+                   (list (window-get-init win "page-screen-left")) "6em"))
+          (item (text "Right:")
+            (input (window-set-init win "page-screen-right" answer) "string"
+                   (list (window-get-init win "page-screen-right")) "6em"))
+          (item (text "Top:")
+            (input (window-set-init win "page-screen-top" answer) "string"
+                   (list (window-get-init win "page-screen-top")) "6em"))
+          (item (text "Bottom:")
+            (input (window-set-init win "page-screen-bot" answer) "string"
+                   (list (window-get-init win "page-screen-bot")) "6em")))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Global page settings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget (texmacs-side-tool win tool)
+  (:require (== tool "document page"))
+  (division "title"
+    (text "Page format"))
+  (centered
+    (dynamic (page-format-tool win))
+    ======)
+  (division "title"
+    (text "Page margins"))
+  (dynamic (page-margins-tool win))
+  ======)
