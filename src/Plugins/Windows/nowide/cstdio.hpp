@@ -144,7 +144,7 @@ inline DIR* opendir(char const *name)
     return _wopendir (wname.c_str());
 }
 
-inline char* readir_entry(DIR* dir)
+inline string readir_entry(DIR* dir)
 {
   struct _wdirent *wentry;
   wentry = _wreaddir (dir);
@@ -152,14 +152,16 @@ inline char* readir_entry(DIR* dir)
 	     && (0 == wcscmp (wentry->d_name, L".") ||
 		 0 == wcscmp (wentry->d_name, L"..")))
 	     wentry = _wreaddir (dir);
-  if (wentry == NULL) return NULL;
+  if (wentry == NULL) return string("");
   else { 
-  stackstring entry;
+    stackstring entry;
     if(!entry.convert(wentry->d_name) ) {
         errno = EINVAL;
-        return NULL;
+        return string("");
     }
-    else return entry.c_str();
+    else {
+      return string(entry.c_str());
+    }
   }
 } 
 

@@ -536,9 +536,14 @@ read_directory (url u, bool& error_flag) {
   array<string> dir;
   #ifdef OS_MINGW
   while (true) {
-    const char* nextname =  nowide::readir_entry (dp);
-    if (nextname==NULL) break;
-    dir << string (nextname);
+    // const char* nextname =  nowide::readir_entry (dp);
+    string nextname = nowide::readir_entry (dp);
+    // nowide::stackstring dir_entry = nowide::readir_entry (dp);
+    // const char* nextname = dir_entry.c_str();
+    
+    if (N(nextname) == 0) break;
+    dir << nextname;
+    // cout << "nowide::readir_entry() " << dir << '\n';
   #else
   struct dirent* ep;
   while (true) {
