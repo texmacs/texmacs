@@ -7208,8 +7208,17 @@ static void resize_heap_to(s7_scheme *sc, int64_t size)
       /* (sc->heap_size < 2048000) */  /* 8192000 here improves various gc benchmarks only slightly */
       /* maybe the choice of 4 should depend on how much space was freed rather than the current heap_size? */
       if (old_free < old_size * sc->gc_resize_heap_by_4_fraction)
-	sc->heap_size *= 4;          /* *8 if < 1M (or whatever) doesn't make much difference */
-      else sc->heap_size *= 2;
+	sc->heap_size *= 2;          /* *8 if < 1M (or whatever) doesn't make much difference */
+      else {
+        // Feel free to tune this value -- performance or memory footprint (2.0 is too much).
+        int64_t new_heap_size = sc->heap_size * 1.2;
+        // clear the last 5 bits to make it a multiple 32, which is required by s7.
+        // maybe even increment of constants could be considered to reduce memory footprint during editing.
+        // while paying logarithmic number of times for memory allocation is good, a gigantic memory footprint is no joke.
+        new_heap_size = new_heap_size >> 5;
+        new_heap_size = new_heap_size << 5;
+        sc->heap_size = new_heap_size;
+      }
     }
   else
     if (size > sc->heap_size)
