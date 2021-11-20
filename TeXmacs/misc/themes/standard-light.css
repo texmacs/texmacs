@@ -204,7 +204,7 @@ NomacQToolButton:hover {
     border-radius: 3px;
 }
 
-QToolButton:pressed {
+QToolButton:pressed, QToolButton:checked {
     background: #909090;
     border: 0px;
     border-radius: 3px;
