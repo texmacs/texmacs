@@ -140,7 +140,7 @@ picture rectangular_pen_picture (double rx, double ry, double phi= 0.0);
 picture motion_pen_picture (double dx, double dy);
 
 picture blur (picture pic, picture pen);
-picture outline (picture pic, picture pen);
+picture outlines (picture pic, picture pen);
 picture thicken (picture pic, picture pen);
 picture erode (picture pic, picture pen);
 
