@@ -51,6 +51,9 @@
     (group "Experimental side tools")
     ("Context" (tool-toggle "context"))
     ("Invalid" (tool-toggle "invalid"))
+    (-> "Test"
+        ("Sections" (tool-toggle "sections"))
+        ("Subsections" (tool-toggle "subsections")))
     (-> "Format"
         ("Paragraph" (tool-toggle "format paragraph")))
     (-> "Document"
