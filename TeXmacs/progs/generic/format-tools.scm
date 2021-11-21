@@ -643,3 +643,42 @@
   (centered
     (dynamic (page-headers-tool win))
     ======))
+
+(tm-widget (texmacs-side-tool win tool)
+  (:require (== tool "sections"))
+  (division "sections"
+    (hlist
+      ("File" (noop))
+      ("Edit" (noop))
+      ("Insert" (noop))
+      ("Format" (noop))
+      (class "active-section" ("Document" (noop)))
+      >>>))
+  (division "title"
+    (text "Page headers and footers"))
+  (centered
+    (dynamic (page-headers-tool win))
+    ======))
+
+(tm-widget (texmacs-side-tool win tool)
+  (:require (== tool "subsections"))
+  (division "sections"
+    (hlist
+      ("File" (noop))
+      ("Edit" (noop))
+      ("Insert" (noop))
+      ("Format" (noop))
+      (class "active-section" ("Document" (noop)))
+      >>>))
+  (division "section-tabs"
+    (hlist
+      ("Style" (noop))
+      ("View" (noop))
+      (class "section-active-tab" ("Page" (noop)))
+      ("Paragraph" (noop))
+      ("Font" (noop))
+      ("More" (noop))
+      >>>))
+  (centered
+    (dynamic (page-format-tool win))
+    ======))

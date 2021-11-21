@@ -293,3 +293,123 @@ QDockWidget#sideTools QWidget#discrete QPushButton:pressed {
     background: #303030;
     border: none;
 }
+
+/****************************************************************************
+* Tab bar with several options for sections
+****************************************************************************/
+
+QDockWidget#sideTools QWidget#sections {
+    background: #202020;
+    color: #808080;
+    font-weight: bold;
+    border-top: 10px solid #202020;
+    border-bottom: 5px solid #2C2C2C;
+    padding: 0px;
+    margin: 0px;
+}
+
+QDockWidget#sideTools QWidget#sections QPushButton {
+    background: #202020;
+    color: #808080;
+    font-weight: bold;
+    border: none;
+    border-top: 10px solid #202020;
+    border-bottom: 5px solid #2C2C2C;
+    border-radius: 0px;
+    padding: 5px 10px;
+    padding-bottom: 10px;
+    margin: 0px;
+}
+
+QDockWidget#sideTools QWidget#sections QPushButton:hover {
+    background: #383838;
+    color: #B0B0B0;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+QDockWidget#sideTools QWidget#sections QPushButton:pressed {
+    background: #101010;
+    color: #B0B0B0;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+QDockWidget#sideTools QWidget#sections QWidget#active-section QPushButton,
+QDockWidget#sideTools QWidget#sections QWidget#active-section QPushButton:hover,
+QDockWidget#sideTools QWidget#sections QWidget#active-section QPushButton:pressed {
+    background: #2C2C2C;
+    color: #E0E0E0;
+    border: none;
+    border-bottom: 10px solid #2C2C2C;
+    border-radius: 0px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    padding: 5px 10px;
+    padding-bottom: 5px;
+    margin: 0px;
+    margin-top: 10px;
+}
+
+/****************************************************************************
+* Sections with tab bars
+****************************************************************************/
+
+QDockWidget#sideTools QWidget#section {
+    background: #2C2C2C;
+    font-weight: bold;
+}
+
+QDockWidget#sideTools QWidget#section * {
+    background: #2C2C2C;
+    font-weight: bold;
+    margin: 5px;
+    margin-bottom: 3px;
+}
+
+QDockWidget#sideTools QWidget#section-tabs {
+    background: #2C2C2C;
+    color: #808080;
+    font-weight: bold;
+    padding: 0px;
+    margin: 0px;
+}
+
+QDockWidget#sideTools QWidget#section-tabs QPushButton {
+    background: #2C2C2C;
+    color: #808080;
+    font-weight: bold;
+    border: none;
+    border-radius: 0px;
+    padding: 5px 8px;
+    margin: 0px;
+}
+
+QDockWidget#sideTools QWidget#section-tabs QPushButton:hover {
+    background: #383838;
+    color: #B0B0B0;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+QDockWidget#sideTools QWidget#section-tabs QPushButton:pressed {
+    background: #202020;
+    color: #B0B0B0;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+QDockWidget#sideTools QWidget#section-tabs QWidget#section-active-tab QPushButton {
+    background: #404040;
+    color: #E0E0E0;
+    font-weight: bold;
+    border: none;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    padding: 5px 8px;
+    margin: 0px;
+}
