@@ -244,7 +244,7 @@ QToolButton:checked,
 QToolBar#mainToolBar QToolButton:pressed,
 QToolBar#mainToolBar QToolButton:checked,
 QToolBar#modeToolBar QToolButton:pressed,
-QToolBar#modeToolBar QToolButton:checked, {
+QToolBar#modeToolBar QToolButton:checked {
     background: #909090;
     border: 0px;
     border-radius: 3px;
