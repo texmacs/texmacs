@@ -570,6 +570,20 @@
        (map (lambda (var) (header-buffer win var))
             header-parameters)))
 
+(tm-define synchronize-table (make-ahash-table))
+
+(define (synchronize win var)
+  (let* ((key (list "header" win var))
+         (val (tm->stree (initial-get-tree (window->buffer win) var)))
+         (old (ahash-ref synchronize-table key)))
+    (when (and old (!= val old))
+      (delayed
+        (:idle 1)
+        (buffer-set-body (header-buffer win var) `(document ,val))))
+    (when (!= val old)
+      (ahash-set! synchronize-table key val))
+    #t))
+
 (tm-widget (page-headers-tool win)
   (let* ((u (window->buffer win))
          (style (list-remove-duplicates
@@ -578,7 +592,7 @@
       ======
       (text (eval (parameter-name var)))
       ===
-      (cached (string-append "edit-" var) #t
+      (cached (string-append "edit-" var) (synchronize win var)
         (resize "400px" "60px"
           (texmacs-input `(document ,(initial-get-tree u var))
                          `(style (tuple ,@style))
