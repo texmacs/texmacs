@@ -137,9 +137,9 @@
   (:synopsis "Make a refreshable widget")
   `(cons* 'refreshable (lambda () ,kind) ($list ,@l)))
 
-(tm-define-macro ($cached kind . l)
+(tm-define-macro ($cached kind valid? . l)
   (:synopsis "Make a cached widget")
-  `(cons* 'cached (lambda () ,kind) ($list ,@l)))
+  `(cons* 'cached (lambda () ,kind) (lambda () ,valid?) ($list ,@l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General layout widgets

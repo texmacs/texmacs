@@ -80,7 +80,7 @@
     (vsplit :menu-item :menu-item)
     (refresh :%1 :string?)
     (refreshable :%1 :menu-item-list)
-    (cached :%1 :menu-item-list)
+    (cached :%1 :%1 :menu-item-list)
     (if :%1 :menu-item-list)
     (when :%1 :menu-item-list)
     (for :%1 :%1)
@@ -677,10 +677,10 @@
 
 (define (make-cached p style bar?)
   "Make @(cached :%1 :menu-item-list) menu items."
-  (with (tag kind . items) p
+  (with (tag kind valid? . items) p
     (let* ((kind* (kind))
            (fun (lambda ()
-                  (or (ahash-ref cached-widgets kind*)
+                  (or (and (valid?) (ahash-ref cached-widgets kind*))
                       (let* ((l (make-menu-items-list items style bar?))
                              (w (widget-vmenu l)))
                         (ahash-set! cached-widgets kind* w)
@@ -818,7 +818,7 @@
            ,(lambda (p style bar?) (make-refresh p style bar?)))
   (refreshable (:%1 :*)
                ,(lambda (p style bar?) (make-refreshable p style bar?)))
-  (cached (:%1 :*)
+  (cached (:%1 :%1 :*)
                ,(lambda (p style bar?) (make-cached p style bar?))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
