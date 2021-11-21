@@ -34,6 +34,7 @@ QTMInteractivePrompt::QTMInteractivePrompt(qt_widget int_prompt,
     _la->setBuddy (li2->widget ());
   if (QWidget *w = qobject_cast<QWidget*> (li2->widget ())) 
     w->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+  _hl->addSpacing (6);
   _hl->addItem (li);
   _hl->addSpacing (6);
   _hl->addItem (li2);

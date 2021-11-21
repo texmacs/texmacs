@@ -583,7 +583,7 @@
           (texmacs-input `(document ,(initial-get-tree u var))
                          `(style (tuple ,@style))
                          (header-buffer var))))))
-  === ===
+  ====== ===
   (hlist
     (text "Insert:")
     // //
