@@ -82,8 +82,8 @@
   `($refreshable ,(cadr x) ,@(map gui-make (cddr x))))
 
 (define (gui-make-cached x)
-  (require-format x '(cached :%1 :*))
-  `($cached ,(cadr x) ,@(map gui-make (cddr x))))
+  (require-format x '(cached :%1 :%1 :*))
+  `($cached ,(cadr x) ,(caddr x) ,@(map gui-make (cdddr x))))
 
 (define (gui-make-group x)
   (require-format x '(group :%1))

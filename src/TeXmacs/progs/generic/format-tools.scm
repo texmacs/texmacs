@@ -571,14 +571,14 @@
             header-parameters)))
 
 (tm-widget (page-headers-tool win)
-  (cached "page-header-settings"
-    (let* ((u (window->buffer win))
-           (style (list-remove-duplicates
-                   (rcons (get-style-list) "macro-editor"))))
-      (for (var header-parameters)
-        ======
-        (text (eval (parameter-name var)))
-        ===
+  (let* ((u (window->buffer win))
+         (style (list-remove-duplicates
+                 (rcons (get-style-list) "macro-editor"))))
+    (for (var header-parameters)
+      ======
+      (text (eval (parameter-name var)))
+      ===
+      (cached (string-append "edit-" var) #t
         (resize "400px" "60px"
           (texmacs-input `(document ,(initial-get-tree u var))
                          `(style (tuple ,@style))
