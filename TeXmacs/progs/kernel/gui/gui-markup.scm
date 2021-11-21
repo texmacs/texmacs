@@ -165,6 +165,10 @@
   (:synopsis "Widget with CSS style name")
   `(cons* 'division (lambda () ,name) ($list ,@l)))
 
+(tm-define-macro ($class name . l)
+  (:synopsis "Widget with CSS style name")
+  `(cons* 'class (lambda () ,name) ($list ,@l)))
+
 (tm-define-macro ($aligned . l)
   (:synopsis "Align two column table")
   `(cons* 'aligned ($list ,@l)))

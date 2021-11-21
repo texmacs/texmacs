@@ -62,6 +62,7 @@
     (hlist :menu-item-list)
     (vlist :menu-item-list)
     (division :%1 :menu-item-list)
+    (class :%1 :menu-item-list)
     (aligned :menu-item-list)
     (aligned-item :%2)
     (tabs :menu-item-list)
@@ -486,6 +487,12 @@
     (with inner (make-menu-items (list (cons 'vertical items)) style #f)
       (widget-division (name) (car inner)))))
 
+(define (make-menu-class p style)
+  "Make @(class :%1 :menu-item-list) item."
+  (with (tag name . items) p
+    (with inner (make-menu-items (list (cons 'horizontal items)) style #f)
+      (widget-division (name) (car inner)))))
+
 (define (make-aligned p style)
   "Make @(aligned :menu-item-list) item."
   (widget-aligned (make-menu-items (map cadr (cdr p)) style #f)
@@ -770,6 +777,8 @@
          ,(lambda (p style bar?) (list (make-menu-vlist p style))))
   (division (:%1 :*)
             ,(lambda (p style bar?) (list (make-menu-division p style))))
+  (class (:%1 :*)
+            ,(lambda (p style bar?) (list (make-menu-class p style))))
   (aligned (:*)
          ,(lambda (p style bar?) (list (make-aligned p style))))
   (aligned-item (:%2)
@@ -989,6 +998,7 @@
   (hlist ,(lambda (p) `(hlist ,@(menu-expand-list (cdr p)))))
   (vlist ,(lambda (p) `(vlist ,@(menu-expand-list (cdr p)))))
   (division ,replace-procedures)
+  (class ,replace-procedures)
   (aligned ,(lambda (p) `(aligned ,@(menu-expand-list (cdr p)))))
   (aligned-item ,(lambda (p) `(aligned-item ,@(menu-expand-list (cdr p)))))
   (tabs ,(lambda (p) `(tabs ,@(menu-expand-list (cdr p)))))
