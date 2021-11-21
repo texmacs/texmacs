@@ -1107,13 +1107,23 @@ qt_ui_element_rep::as_qwidget () {
       T            x = open_box<T>(load);
       string    name = x.x1;
       qt_widget    w = concrete(x.x2);
-      
+
+      /* NOTE: we might wish to wrap the widget in something else,
+         but there does not semm to be any easy Qt widget constructor
+         that allows us to do so.  A splitter with one child comes close,
+         but adds a bit of padding.
+
       QWidget* qw = w->as_qwidget();
       QSplitter* split = new QSplitter();
       split->setOrientation (Qt::Horizontal);
       split->addWidget (qw);
       
       qwid = split;
+      qwid->setObjectName (to_qstring (name));
+      */
+
+      QWidget* qw = w->as_qwidget();
+      qwid = qw;
       qwid->setObjectName (to_qstring (name));
     }
       break;
