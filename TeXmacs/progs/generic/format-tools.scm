@@ -57,6 +57,9 @@
     (apply init-default vars)
     (update-menus)))
 
+(tm-define (window-id win)
+  (url->string (url-tail win)))
+
 (define tool-key-table (make-ahash-table))
 
 (tm-define (tool-ref key)
@@ -542,11 +545,8 @@
   (list "page-odd-header" "page-even-header"
         "page-odd-footer" "page-even-footer"))
 
-(define (header-buffer var)
-  (string->url (string-append "tmfs://aux/" var)))
-
-(define (header-buffers)
-  (map header-buffer header-parameters))
+(define (header-buffer win var)
+  (string->url (string-append "tmfs://aux/" var "-" (window-id win))))
 
 (define (get-field-contents u)
   (and-with t (tm->stree (buffer-get-body u))
@@ -554,10 +554,10 @@
       (set! t (tm-ref t 0)))
     t))
 
-(define (apply-headers-settings u)
+(define (apply-headers-settings win u)
   (with l (list)
     (for (var header-parameters)
-      (and-with doc (get-field-contents (string-append "tmfs://aux/" var))
+      (and-with doc (get-field-contents (header-buffer win var))
         (set! l (cons `(,var ,doc) l))))
     (when (nnull? l)
       (delayed
@@ -565,9 +565,9 @@
         (for (x l) (initial-set-tree u (car x) (cadr x)))
         (refresh-window)))))
 
-(define (editing-headers?)
+(define (editing-headers? win)
   (in? (current-buffer)
-       (map (lambda (x) (string->url (string-append "tmfs://aux/" x)))
+       (map (lambda (var) (header-buffer win var))
             header-parameters)))
 
 (tm-widget (page-headers-tool win)
@@ -582,19 +582,19 @@
         (resize "400px" "60px"
           (texmacs-input `(document ,(initial-get-tree u var))
                          `(style (tuple ,@style))
-                         (header-buffer var))))))
+                         (header-buffer win var))))))
   ====== ===
   (hlist
     (text "Insert:")
     // //
-    ("Tab" (when (editing-headers?) (make-htab "5mm")))
+    ("Tab" (when (editing-headers? win) (make-htab "5mm")))
     // //
-    ("Page number" (when (editing-headers?) (make 'page-the-page)))
+    ("Page number" (when (editing-headers? win) (make 'page-the-page)))
     >>>
     ("Restore" (apply window-reset-init (cons win header-parameters)))
     // //
     ("Apply"
-     (apply-headers-settings (window->buffer win))
+     (apply-headers-settings win (window->buffer win))
      (with-window win (update-menus)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
