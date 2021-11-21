@@ -589,6 +589,7 @@ if (TEXMACS_GUI MATCHES "Qt.*")
     if (APPLE AND EXISTS /usr/local/opt/qt5)
       list (APPEND CMAKE_PREFIX_PATH "/usr/local/opt/qt5")
     endif ()
+
     if (WIN32 AND EXISTS ${QT_CMAKE_DIR})
       set (Qt5Core_DIR "${QT_CMAKE_DIR}/Qt5Core")
       set (Qt5Gui_DIR "${QT_CMAKE_DIR}/Qt5Gui")
@@ -602,8 +603,19 @@ if (TEXMACS_GUI MATCHES "Qt.*")
       set (Qt5WindowsUIAutomationSupport_DIR "${QT_CMAKE_DIR}/Qt5WindowsUIAutomationSupport")
       set (Qt5PrintSupport_DIR "${QT_CMAKE_DIR}/Qt5PrintSupport")
     endif ()
-    find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport Svg REQUIRED)
-    set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport Qt5::Svg)
+
+    if (APPLE)
+      find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport Svg MacExtras REQUIRED)
+    else (APPLE)
+      find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport Svg REQUIRED)
+    endif ()
+    
+    if (APPLE)
+      set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport Qt5::Svg Qt5::MacExtras)
+    else (APPLE)
+      set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport Qt5::Svg)
+    endif (APPLE)
+
     set (TeXmacs_Include_Dirs
       ${TeXmacs_Include_Dirs}
       ${Qt5Core_INCLUDE_DIRS}
@@ -611,10 +623,13 @@ if (TEXMACS_GUI MATCHES "Qt.*")
       ${Qt5Widgets_INCLUDE_DIRS}
       ${Qt5PrintSupport_INCLUDE_DIRS}
       ${Qt5Svg_INCLUDE_DIRS}
+      ${Qt5MacExtras_INCLUDE_DIRS}
     )
+
     if (Qt5_POSITION_INDEPENDENT_CODE)
       set (CMAKE_POSITION_INDEPENDENT_CODE ON)
     endif (Qt5_POSITION_INDEPENDENT_CODE)
+
     if (APPLE)
       add_definitions ("-DQ_WS_MAC")
     endif (APPLE)

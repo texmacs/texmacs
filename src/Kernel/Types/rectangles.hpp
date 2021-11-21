@@ -54,7 +54,7 @@ rectangles operator * (rectangles l, int d);
 rectangles operator / (rectangles l, int d);
 rectangles translate (rectangles l, SI x, SI y);
 rectangles thicken (rectangles l, SI width, SI height);
-rectangles outline (rectangles l, SI pixel);
+rectangles outlines (rectangles l, SI pixel);
 rectangles correct (rectangles l);
 rectangles simplify (rectangles l);
 rectangle  least_upper_bound (rectangles l);
