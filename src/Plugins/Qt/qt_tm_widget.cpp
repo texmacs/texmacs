@@ -160,6 +160,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   rightLabel= new QLabel (qt_translate ("Booting"), mw);
   leftLabel->setFrameStyle (QFrame::NoFrame);
   rightLabel->setFrameStyle (QFrame::NoFrame);
+  leftLabel->setIndent (8);
   bar->addWidget (leftLabel, 1);
   bar->addPermanentWidget (rightLabel);
   if (tm_style_sheet == "")
