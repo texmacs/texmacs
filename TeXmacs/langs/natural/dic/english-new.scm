@@ -2521,6 +2521,7 @@
 ("save verbatim file" "")
 ("saved" "")
 ("saved modifications in database" "")
+("scale of the graphical user interface" "")
 ("scale graphical interface" "")
 ("scheme command" "")
 ("scheme developers guide" "")
