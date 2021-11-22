@@ -51,19 +51,17 @@
     (assuming (and (os-macos?) (qt4-gui?))
       (centered
 	(aligned
-	  (meti (hlist // (text "Use retina fonts"))
+	  (item (text "Use retina fonts:")
 	    (toggle (set-retina-boolean-preference "retina-factor" answer)
 		    (get-retina-boolean-preference "retina-factor")))
-	  (meti (hlist // (text "Use retina icons"))
+	  (item (text "Use retina icons:")
 	    (toggle (set-retina-boolean-preference "retina-icons" answer)
-		    (get-retina-boolean-preference "retina-icons")))))
-      ===
-      (aligned
-        (item (text "Graphical interface font scale:")
-          (enum (set-retina-preference "retina-scale" answer)
-                '("1" "1.2" "1.4" "1.6" "1.8" "2" "")
-                (get-retina-preference "retina-scale")
-                "5em"))))
+		    (get-retina-boolean-preference "retina-icons")))
+          (item (text "Scale graphical interface:")
+            (enum (set-retina-preference "retina-scale" answer)
+                  '("1" "1.2" "1.4" "1.6" "1.8" "2" "")
+                  (get-retina-preference "retina-scale")
+                  "5em")))))
     (assuming (and (os-macos?) (qt5-or-later-gui?))
       (centered
         (aligned
@@ -79,14 +77,14 @@
     (assuming (not (os-macos?))
       (centered
 	(aligned
-	  (meti (hlist // (text "Double the zoom factor for TeXmacs documents"))
+	  (item (text "Double the zoom factor for TeXmacs documents:")
 	    (toggle (set-retina-boolean-preference "retina-zoom" answer)
 		    (get-retina-boolean-preference "retina-zoom")))
-	  (meti (hlist // (text "Use high resolution icons"))
+	  (item (text "Use high resolution icons:")
 	    (toggle (set-retina-boolean-preference "retina-icons" answer)
 		    (get-retina-boolean-preference "retina-icons")))
           (assuming (!= (get-preference "gui theme") "")
-            (item (text "Scale graphical interface:")
+            (item (text "Scale of the graphical user interface:")
               (enum (set-retina-preference "retina-scale" answer)
                     '("1" "1.2" "1.5" "2" "")
                     (get-retina-preference "retina-scale")
