@@ -185,13 +185,8 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 #else
 #if (QT_VERSION >= 0x050000)
   if (tm_style_sheet != "") {
-#ifdef Q_OS_MAC
     int min_h= (int) floor (28 * retina_scale);
     bar->setMinimumHeight (min_h);
-#else
-    int min_h= (int) floor (24 * retina_scale);
-    bar->setMinimumHeight (min_h);
-#endif
   }
 #else
   if (retina_scale > 1.0) {
