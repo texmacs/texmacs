@@ -414,3 +414,51 @@ QDockWidget#sideTools QWidget#section-tabs QWidget#section-active-tab QPushButto
     padding: 5px 8px;
     margin: 0px;
 }
+
+/****************************************************************************
+* Adjustments for Windows
+****************************************************************************/
+
+MingwQScrollBar {
+    background: #404040;
+}
+
+MingwQScrollBar::handle {
+    background: #606060;
+    border: 0px;
+    margin: 2px;
+}
+
+MingwQScrollBar::add-line:horizontal,
+MingwQScrollBar::sub-line:horizontal,
+MingwQScrollBar::add-page:horizontal,
+MingwQScrollBar::sub-page:horizontal,
+MingwQScrollBar::add-line:vertical,
+MingwQScrollBar::sub-line:vertical,
+MingwQScrollBar::add-page:vertical,
+MingwQScrollBar::sub-page:vertical {
+    background: none;
+    border: 0px;
+}
+
+MingwQStatusBar::item {
+    background: #2C2C2C;
+    border: 0px;
+}
+
+MingwQMenu::item {
+    padding-left: 15px;
+    padding-right: 12px;
+}
+
+MingwQMenu::right_arrow {
+    border-image: url("$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_search_next_x4.png") 7 7 7 7;
+}
+
+MingwQComboBox::drop_down {
+    padding-right: 10px;
+}
+
+MingwQComboBox::down_arrow {
+    border-image: url("$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_similar_next_x4.png") 7 7 7 7 stretch stretch;
+}
