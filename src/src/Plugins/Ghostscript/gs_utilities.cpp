@@ -197,8 +197,15 @@ gs_PDFimage_size (url image, int& w_pt, int& h_pt) {
   string cmd= gs_prefix ();
   cmd << "-dNODISPLAY -q -sFile=";
   cmd << sys_concretize (image);
-  cmd <<" "<<sys_concretize ("$TEXMACS_PATH/misc/convert/pdf_info.ps");
+  cmd << " pdf_info.ps";
   buf= eval_system (cmd);
+  if (occurs ("Unrecoverable error", buf)) {
+    cmd= gs_prefix ();
+    cmd << "-dNODISPLAY -q -sFile=";
+    cmd << sys_concretize (image);
+    cmd << " " << sys_concretize ("$TEXMACS_PATH/misc/convert/pdf_info.ps");
+    buf= eval_system (cmd);
+  }
   if (DEBUG_CONVERT) debug_convert << "gs cmd :" << cmd << LF
     << "answer :" << buf ;
   //if CropBox is defined, then use it, else Mediabox
