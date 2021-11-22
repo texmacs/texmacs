@@ -217,7 +217,7 @@ thicken (rectangles l, SI width, SI height) {
 }
 
 rectangles
-outline (rectangles rs, SI pixel) {
+outlines (rectangles rs, SI pixel) {
   return simplify (correct (thicken (rs, pixel, 3*pixel) -
 			    thicken (rs, 0, 2*pixel)));
 }
