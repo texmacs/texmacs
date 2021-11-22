@@ -112,6 +112,7 @@ QMenu::item * {
 }
 
 QMenu::item:disabled {
+    background: #F0F0F0;
     color: #A0A0A0;
 }
 
