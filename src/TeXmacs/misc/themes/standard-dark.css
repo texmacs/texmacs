@@ -94,12 +94,13 @@ QMenu::item * QToolTip {
     background: #ffe8c0;
 }
 
-QMenu::item:disabled {
-    color: #808080;
-}
-
 QMenu::item:selected {
     background: #2C6080;
+}
+
+QMenu::item:disabled {
+    background: #2C2C2C;
+    color: #808080;
 }
 
 QMenu::right-arrow {
