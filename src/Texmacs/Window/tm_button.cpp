@@ -161,7 +161,11 @@ box_widget_rep::handle_repaint (renderer ren, SI x1, SI y1, SI x2, SI y2) {
 widget
 box_widget (box b, bool tr) {
   color col= light_grey;
-  return widget (tm_new<box_widget_rep> (b, col, tr, 5/6.0, 3*PIXEL, 3*PIXEL));
+  double zoom= 5.0/6.0;
+  if (retina_zoom == 1) {}
+  else if (tm_style_sheet == "") zoom *= 1.5;
+  else zoom *= retina_scale;
+  return widget (tm_new<box_widget_rep> (b, col, tr, zoom, 3*PIXEL, 3*PIXEL));
 }
 
 widget
@@ -234,6 +238,7 @@ texmacs_output_widget (tree doc, tree style) {
 #else
     col= light_grey;
 #endif
+    double zoom= (retina_zoom == 2? 0.8: 1.2);
   return widget (tm_new<box_widget_rep> (b, col, false, 1.2, 0, 0));
 }
 
