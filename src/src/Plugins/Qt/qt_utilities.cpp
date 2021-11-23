@@ -969,9 +969,12 @@ init_style_sheet (QApplication* app) {
   }
   if (tm_style_sheet != "" && !load_string (css, ss, false)) {
     string p= as_string (url ("$TEXMACS_PATH"));
+#ifdef Q_OS_WIN
+    p = replace (p , "\\", "/");
+#endif
     ss= replace (ss, "\n", " ");
     ss= replace (ss, "\t", " ");
-    ss= replace (ss, "$TEXMACS_PATH", p); // TODO: check under Windows
+    ss= replace (ss, "$TEXMACS_PATH", p);
 #if (QT_VERSION < 0x050000)
     ss= replace (ss, "Qt4", "");
 #endif
@@ -986,7 +989,6 @@ init_style_sheet (QApplication* app) {
 #ifdef OS_GNU_LINUX
     ss= replace (ss, "Linux", "");
 #endif
-    //ss= scale_font_sizes (ss);
     ss= scale_px (ss);
     current_style_sheet= ss;
     app->setStyleSheet (to_qstring (current_style_sheet));
