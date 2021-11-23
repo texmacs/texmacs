@@ -108,6 +108,14 @@ QMenu::item:disabled {
 * Lists
 ****************************************************************************/
 
+QListView {
+    background: #FFFFFF;
+}
+
+QListView QAbstractScrollArea {
+    background: #FFFFFF;
+}
+
 QComboBox {
     background: #FFFFFF;
     color: #000000;
@@ -281,14 +289,6 @@ MingwQScrollBar {
 MingwQStatusBar::item {
     background: #C0C0C0;
     border: 0px;
-}
-
-MingwQListView {
-    background: #FFFFFF;
-}
-
-MingwQListView QAbstractScrollArea {
-    background: #FFFFFF;
 }
 
 MingwQMenu::item {

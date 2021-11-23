@@ -427,6 +427,7 @@ MingwQScrollBar::handle {
     background: #606060;
     border: 0px;
     margin: 2px;
+    min-height: 20px;
 }
 
 MingwQScrollBar::add-line:horizontal,
