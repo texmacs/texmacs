@@ -278,7 +278,7 @@ Qt4QScrollBar {
 }
 
 Qt4QScrollBar::handle {
-    background: #808080;
+    background: #B0B0B0;
     border: 0px;
     border-radius: 5px;
     margin: 3px;
@@ -351,4 +351,30 @@ QDockWidget#sideTools QWidget#discrete QPushButton:hover {
 QDockWidget#sideTools QWidget#discrete QPushButton:pressed {
     background: #D0D0D0;
     border: none;
+}
+
+/****************************************************************************
+* Adjustments for Windows
+****************************************************************************/
+
+MingwQStatusBar::item {
+    background: #C0C0C0;
+    border: 0px;
+}
+
+MingwQMenu::item {
+    padding-left: 15px;
+    padding-right: 12px;
+}
+
+MingwQMenu::right_arrow {
+    border-image: url("$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_search_next_x4.png") 7 7 7 7;
+}
+
+MingwQComboBox::drop_down {
+    padding-right: 10px;
+}
+
+MingwQComboBox::down_arrow {
+    border-image: url("$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_similar_next_x4.png") 7 7 7 7 stretch stretch;
 }
