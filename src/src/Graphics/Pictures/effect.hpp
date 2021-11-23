@@ -60,7 +60,7 @@ effect rectangular_pen (double rx, double ry, double phi= 0);
 effect motion_pen (double dx, double dy);
 
 effect blur (effect eff, effect pen);
-effect outline (effect eff, effect pen);
+effect outlines (effect eff, effect pen);
 effect thicken (effect eff, effect pen);
 effect erode (effect eff, effect pen);
 
