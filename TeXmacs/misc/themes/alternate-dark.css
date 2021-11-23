@@ -289,6 +289,7 @@ Qt4QScrollBar::handle {
     margin: 3px;
     margin-right: 2px;
     margin-bottom: 2px;
+    min-height: 20px;
 }
 
 Qt4QScrollBar::add-line:horizontal,
