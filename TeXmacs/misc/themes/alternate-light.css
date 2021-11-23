@@ -36,7 +36,7 @@ QMenuBar, QMenuBar QWidget {
 }
 
 QMenuBar::item {
-    padding: 4px 10px;
+    padding: 6px 10px;
     padding-bottom: 2px;
     background: #C0C0C0;
 }
@@ -85,6 +85,11 @@ QStatusBar {
     padding-right: 5px;
 }
 
+QStatusBar::item, QStatusBar QWidget {
+    background: #C0C0C0;
+    border: 0px;
+}
+
 /****************************************************************************
 * Menus
 ****************************************************************************/
@@ -99,11 +104,9 @@ QMenu::item {
     color: #000000;
 }
 
-QMenu::item:selected {
-    /* background: #000080; */
-    /* color: #FFFFFF; */
-    background: #C0D0E0;
-    color: #000000;
+MingwQMenu::item {
+    padding-left: 15px;
+    padding-right: 12px;
 }
 
 QMenu::item * {
@@ -111,10 +114,33 @@ QMenu::item * {
     margin: 3px;
 }
 
+
+
+
+
+QMenu::item:selected {
+    background: #C0D0E0;
+    color: #000000;
+}
+
 QMenu::item:disabled {
     background: #F0F0F0;
     color: #A0A0A0;
 }
+
+MingwQMenu::right_arrow {
+    border-image: url("$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_search_next_x4.png") 7 7 7 7;
+}
+
+MingwQMenu::right_arrow {
+    border-image: url("$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_search_next_x4.png") 7 7 7 7;
+}
+
+
+
+
+
+
 
 /****************************************************************************
 * Lists
@@ -128,6 +154,14 @@ QListView QAbstractScrollArea {
     background: #FFFFFF;
 }
 
+
+
+
+
+
+
+
+
 QComboBox {
     background: #FFFFFF;
     color: #000000;
@@ -139,6 +173,10 @@ QComboBox {
     min-height: 18px;
 }
 
+Qt4QComboBox {
+    margin: 3px;
+}
+
 QComboBox::drop-down {
     background: #FFFFFF;
     border: 0px;
@@ -146,8 +184,16 @@ QComboBox::drop-down {
     border-bottom-right-radius: 5px;
 }
 
+MingwQComboBox::drop_down {
+    padding-right: 10px;
+}
+
 QComboBox::down-arrow {
     border-image: url($TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_similar_next_x4.png) 0 0 0 0 stretch stretch;
+}
+
+MingwQComboBox::down_arrow {
+    border-image: url("$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_similar_next_x4.png") 7 7 7 7 stretch stretch;
 }
 
 QComboBox QAbstractItemView {
@@ -171,7 +217,7 @@ QTabBar::tab {
 }
 
 QTabBar::tab::selected {
-    background: #E8E8E8; /*#DEDEDE;*/
+    background: #E8E8E8;
     margin-top: 0px;
     padding: 3px;
     padding-left: 10px;
@@ -183,19 +229,16 @@ QTabBar::tab::selected {
 }
 
 QTabWidget::pane {
-    background: #E8E8E8; /*#DEDEDE;*/
+    background: #E8E8E8;
     border: 1px solid #C0C0C0;
-    position: absolute;
-    top: -0.5em;
+    margin-top: -1px;
     padding: 5px;
-    padding-top: 0.75em;
     border-radius: 5px;
 }
 
 /****************************************************************************
 * Buttons
 ****************************************************************************/
-
 
 QPushButton {
     background: #FFFFFF;
@@ -208,11 +251,19 @@ QPushButton {
     border-radius: 5px;
 }
 
+Qt4QPushButton {
+    margin: 3px;
+    margin-left: 6px;
+    margin-right: 6px;
+}
+
 QPushButton:pressed {
     background: #E0E0E0;
     padding: 3px;
     padding-left: 5px;
     padding-right: 5px;
+    margin-left: 3px;
+    margin-right: 3px;
     border: 1px solid #F8F8F8;
     border-top: 1px solid #D0D0D0;
     border-left: 1px solid #D0D0D0;
@@ -235,6 +286,18 @@ QToolButton:hover,
 QToolBar#mainToolBar QToolButton:hover,
 QToolBar#modeToolBar QToolButton:hover,
 QToolBar#focusToolBar QToolButton:hover {
+    background: none;
+    /* FIXME: bug under MacOS when using a color */
+}
+
+Qt4QToolButton:hover,
+Qt4QToolBar#mainToolBar QToolButton:hover,
+Qt4QToolBar#modeToolBar QToolButton:hover,
+Qt4QToolBar#focusToolBar QToolButton:hover,
+NomacQToolButton:hover,
+NomacQToolBar#mainToolBar QToolButton:hover,
+NomacQToolBar#modeToolBar QToolButton:hover,
+NomacQToolBar#focusToolBar QToolButton:hover {
     background: #B0B0B0;
     border: 0px;
     border-radius: 3px;
@@ -245,7 +308,9 @@ QToolButton:checked,
 QToolBar#mainToolBar QToolButton:pressed,
 QToolBar#mainToolBar QToolButton:checked,
 QToolBar#modeToolBar QToolButton:pressed,
-QToolBar#modeToolBar QToolButton:checked {
+QToolBar#modeToolBar QToolButton:checked,
+QToolBar#focusToolBar QToolButton:pressed,
+QToolBar#focusToolBar QToolButton:checked {
     background: #909090;
     border: 0px;
     border-radius: 3px;
@@ -270,14 +335,10 @@ QToolBar#modeToolBar QToolButton:disabled {
 ****************************************************************************/
 
 QScrollBar {
-    background: none;
-}
-
-Qt4QScrollBar {
     background: #E0E0E0;
 }
 
-Qt4QScrollBar::handle {
+QScrollBar::handle {
     background: #B0B0B0;
     border: 0px;
     border-radius: 5px;
@@ -287,23 +348,17 @@ Qt4QScrollBar::handle {
     min-height: 20px;
 }
 
-Qt4QScrollBar::add-line:horizontal,
-Qt4QScrollBar::sub-line:horizontal,
-Qt4QScrollBar::add-line:vertical,
-Qt4QScrollBar::sub-line:vertical {
+QScrollBar::add-line:horizontal,
+QScrollBar::sub-line:horizontal,
+QScrollBar::add-page:horizontal,
+QScrollBar::sub-page:horizontal,
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical,
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:vertical {
     border: none;
     background: none;
     height: 5px;
-}
-
-Qt4QComboBox {
-    margin: 3px;
-}
-
-Qt4QPushButton {
-    margin: 3px;
-    margin-left: 6px;
-    margin-right: 6px;
 }
 
 /****************************************************************************
@@ -353,35 +408,4 @@ QDockWidget#sideTools QWidget#discrete QPushButton:hover {
 QDockWidget#sideTools QWidget#discrete QPushButton:pressed {
     background: #D0D0D0;
     border: none;
-}
-
-/****************************************************************************
-* Adjustments for Windows
-****************************************************************************/
-
-MingwQStatusBar::item {
-    background: #C0C0C0;
-    border: 0px;
-}
-
-MingwQStatusBar MingwQWidget {
-    background: #C0C0C0;
-    border: 0px;
-}
-
-MingwQMenu::item {
-    padding-left: 15px;
-    padding-right: 12px;
-}
-
-MingwQMenu::right_arrow {
-    border-image: url("$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_search_next_x4.png") 7 7 7 7;
-}
-
-MingwQComboBox::drop_down {
-    padding-right: 10px;
-}
-
-MingwQComboBox::down_arrow {
-    border-image: url("$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_similar_next_x4.png") 7 7 7 7 stretch stretch;
 }
