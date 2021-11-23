@@ -296,8 +296,9 @@ Qt4QScrollBar::add-line:horizontal,
 Qt4QScrollBar::sub-line:horizontal,
 Qt4QScrollBar::add-line:vertical,
 Qt4QScrollBar::sub-line:vertical {
-      border: none;
-      background: none;
+    border: none;
+    background: none;
+    height: 5px;
 }
 
 Qt4QComboBox {
