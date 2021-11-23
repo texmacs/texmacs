@@ -370,6 +370,7 @@ init_env_vars () {
                        url ("$TEXMACS_PATH/langs/natural/dic") |
                        plugin_path ("langs/natural/dic"));
   (void) get_env_path ("TEXMACS_THEME_PATH",
+                       url ("$TEXMACS_PATH/misc/themes") |
                        url ("$TEXMACS_HOME_PATH/misc/themes") |
                        plugin_path ("misc/themes"));
 #ifdef OS_WIN32
