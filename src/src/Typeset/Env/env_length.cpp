@@ -490,7 +490,11 @@ tree edit_env_rep::exec_px_length () {
 #endif
 }
 tree edit_env_rep::exec_guipx_length () {
-  return tree (TMLEN, as_string ((int) floor (retina_scale * pixel + 0.5)));
+  double scale= retina_scale;
+  if (retina_zoom == 1) {}
+  else if (tm_style_sheet == "") scale= 2.0;
+  else scale= 1.5 * retina_scale;
+  return tree (TMLEN, as_string ((int) floor (scale * pixel + 0.5)));
 }
 
 tree edit_env_rep::exec_lcorner_length () {
