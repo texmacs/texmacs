@@ -163,7 +163,7 @@ box_widget (box b, bool tr) {
   color col= light_grey;
   double zoom= 5.0/6.0;
   if (retina_zoom == 1) {}
-  else if (tm_style_sheet == "") zoom *= 1.5;
+  else if (tm_style_sheet == "") zoom *= 2;
   else zoom *= retina_scale;
   return widget (tm_new<box_widget_rep> (b, col, tr, zoom, 3*PIXEL, 3*PIXEL));
 }
@@ -238,8 +238,8 @@ texmacs_output_widget (tree doc, tree style) {
 #else
     col= light_grey;
 #endif
-    double zoom= (retina_zoom == 2? 0.8: 1.2);
-  return widget (tm_new<box_widget_rep> (b, col, false, 1.2, 0, 0));
+  double zoom= (retina_zoom == 2? 0.8: 1.2);
+  return widget (tm_new<box_widget_rep> (b, col, false, zoom, 0, 0));
 }
 
 array<SI>
