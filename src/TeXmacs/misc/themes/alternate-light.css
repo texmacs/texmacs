@@ -363,6 +363,11 @@ MingwQStatusBar::item {
     border: 0px;
 }
 
+MingwQStatusBar MingwQWidget {
+    background: #C0C0C0;
+    border: 0px;
+}
+
 MingwQMenu::item {
     padding-left: 15px;
     padding-right: 12px;
