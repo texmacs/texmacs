@@ -9,7 +9,7 @@ QWidget {
     font-size: 14px;
 }
 
-QAbstractScrollArea, QWidget#centralWidget, QAbstractScrollArea::corner {
+QAbstractScrollArea, QWidget#centralWidget {
     background: #A0A0A0;
 }
 
@@ -141,6 +141,8 @@ MingwQMenu::right_arrow {
 
 QLineEdit, QStatusBar QWidget QLineEdit, QToolBar#focusToolbar QWidget QLineEdit, QToolBar#userToolbar QWidget QLineEdit {
     background: #FFFFFF;
+
+
     min-height: 16px;
     padding-left: 2px;
     padding-right: 2px;
@@ -154,7 +156,7 @@ QLineEdit:focus, QStatusBar QWidget QLineEdit:focus, QToolBar#focusToolbar QWidg
 * Line edits
 ****************************************************************************/
 
-QListView {
+QListView, QTableView {
     background: #FFFFFF;
 }
 
@@ -173,6 +175,8 @@ QListView QAbstractScrollArea {
 QComboBox {
     background: #FFFFFF;
     color: #000000;
+
+
     padding: 3px;
     padding-left: 5px;
     padding-right: 5px;
@@ -355,7 +359,7 @@ QToolBar#modeToolBar QToolButton:disabled {
 * Scrollbars
 ****************************************************************************/
 
-QScrollBar {
+QScrollBar, QAbstractScrollArea::corner {
     background: #E0E0E0;
 }
 

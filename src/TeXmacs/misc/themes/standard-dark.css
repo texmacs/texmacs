@@ -9,7 +9,7 @@ QWidget {
     font-size: 14px;
 }
 
-QAbstractScrollArea, QAbstractScrollArea::corner {
+QAbstractScrollArea {
     background: #202020;
 }
 
@@ -141,6 +141,8 @@ QMenu::separator {
 
 QLineEdit, QStatusBar QWidget QLineEdit, QToolBar#focusToolbar QWidget QLineEdit, QToolBar#userToolbar QWidget QLineEdit {
     background: #606060;
+    selection-color: #E0E0E0;
+    selection-background-color: #004080;
     min-height: 16px;
     padding-left: 2px;
     padding-right: 2px;
@@ -154,7 +156,7 @@ QLineEdit:focus, QStatusBar QWidget QLineEdit:focus, QToolBar#focusToolbar QWidg
 * Lists
 ****************************************************************************/
 
-QListView {
+QListView, QTableView {
     background: #606060;
 }
 
@@ -173,6 +175,8 @@ QListView::item:selected {
 QComboBox {
     background: #606060;
     color: #E0E0E0;
+    selection-color: #E0E0E0;
+    selection-background-color: #004080;
     padding: 3px;
     padding-left: 5px;
     padding-right: 5px;
@@ -355,7 +359,7 @@ QToolBar#modeToolBar QToolButton:disabled {
 * Scrollbars
 ****************************************************************************/
 
-QScrollBar {
+QScrollBar, QAbstractScrollArea::corner {
     background: #404040;
 }
 
