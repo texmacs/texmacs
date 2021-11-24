@@ -46,10 +46,11 @@
   ("shared" "Multiple documents share window"))
 
 (define-preference-names "gui theme"
-  ("" "Default")
+  ("default" "Default")
   ("light" "Bright")
   ("dark" "Dark")
-  ("native-light" "Native"))
+  ("native-light" "Native")
+  ("" "Legacy"))
 
 (tm-widget (general-preferences-widget)
   (aligned
@@ -86,7 +87,7 @@
             "22em"))
     (item (text "User interface theme:")
       (enum (set-pretty-preference "gui theme" answer)
-            '("Default" "Bright" "Dark" "Native" "")
+            '("Default" "Bright" "Dark" "Native" "Legacy" "")
             (get-pretty-preference "gui theme")
             "22em"))))
 
