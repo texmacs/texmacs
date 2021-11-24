@@ -9,7 +9,7 @@ QWidget {
     font-size: 14px;
 }
 
-QAbstractScrollArea {
+QAbstractScrollArea, QTableView {
     background: #202020;
 }
 
@@ -156,7 +156,7 @@ QLineEdit:focus, QStatusBar QWidget QLineEdit:focus, QToolBar#focusToolbar QWidg
 * Lists
 ****************************************************************************/
 
-QListView, QTableView {
+QListView {
     background: #606060;
 }
 
