@@ -11,6 +11,10 @@ QMenu::item:disabled {
     color: #A0A0A0;
 }
 
+QStatusBar::item, QStatusBar QWidget {
+    border: 0px;
+}
+
 QComboBox {
     min-height: 18px;
 }
