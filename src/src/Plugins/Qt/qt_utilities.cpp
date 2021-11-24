@@ -912,7 +912,7 @@ init_palette (QApplication* app) {
     pal.setColor (QPalette::Dark, QColor (112, 112, 112));
     pal.setColor (QPalette::Mid, QColor (128, 128, 128));
     pal.setColor (QPalette::Shadow, QColor (240, 240, 240));
-    pal.setColor (QPalette::HighlightedText, QColor (48, 48, 48));
+    pal.setColor (QPalette::BrightText, QColor (48, 48, 48));
     app->setPalette (pal);
   }
   else if (tm_style_sheet != "" && !occurs ("native", tm_style_sheet)) {
