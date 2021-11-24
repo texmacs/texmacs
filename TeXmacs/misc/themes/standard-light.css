@@ -341,6 +341,10 @@ QScrollBar {
 QScrollBar::handle {
     background: #B0B0B0;
     border: 0px;
+    margin: 2px;
+}
+
+MacosQScrollBar::handle {
     border-radius: 5px;
 }
 
@@ -366,12 +370,22 @@ QScrollBar::handle:horizontal {
     margin-top: 2px;
 }
 
+MingwQScrollBar::handle:horizontal {
+    margin: 0px;
+    margin-top: 2px;
+}
+
 QScrollBar:vertical {
     max-width: 16px;
 }
 
 QScrollBar::handle:vertical {
     min-height: 16px;
+    margin-left: 2px;
+}
+
+MingwQScrollBar::handle:vertical {
+    margin: 0px;
     margin-left: 2px;
 }
 
