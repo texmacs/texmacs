@@ -367,12 +367,10 @@ QScrollBar:horizontal {
 
 QScrollBar::handle:horizontal {
     min-width: 16px;
-    margin-top: 2px;
 }
 
 MingwQScrollBar::handle:horizontal {
-    margin: 0px;
-    margin-top: 2px;
+    margin: 2px 0px;
 }
 
 QScrollBar:vertical {
@@ -381,12 +379,10 @@ QScrollBar:vertical {
 
 QScrollBar::handle:vertical {
     min-height: 16px;
-    margin-left: 2px;
 }
 
 MingwQScrollBar::handle:vertical {
-    margin: 0px;
-    margin-left: 2px;
+    margin: 0px 2px;
 }
 
 /****************************************************************************
