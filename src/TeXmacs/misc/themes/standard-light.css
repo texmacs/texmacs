@@ -256,6 +256,11 @@ QTabWidget::pane {
 * Buttons
 ****************************************************************************/
 
+QCheckBox {
+    min-width: 10px;
+    min-height: 10px;
+}
+
 QCheckBox:focus {
     border: 0px solid #80C0C0;
     border-radius: 2px;

@@ -11,6 +11,15 @@ QMenu::item:disabled {
     color: #A0A0A0;
 }
 
+QComboBox {
+    min-height: 18px;
+}
+
+QCheckBox {
+    min-width: 10px;
+    min-height: 10px;
+}
+
 QToolButton::menu-indicator,
 QToolBar#mainToolBar QToolButton::menu-indicator,
 QToolBar#modeToolBar QToolButton::menu-indicator {
