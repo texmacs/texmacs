@@ -13,13 +13,6 @@ QAbstractScrollArea, QWidget#centralWidget, QAbstractScrollArea::corner {
     background: #A0A0A0;
 }
 
-QLineEdit, QStatusBar QWidget QLineEdit, QToolBar#focusToolbar QWidget QLineEdit, QToolBar#userToolbar QWidget QLineEdit {
-    background: #FFFFFF;
-    min-height: 16px;
-    padding-left: 2px;
-    padding-right: 2px;
-}
-
 QToolTip {
     font-size: 14px;
     background: #ffe8c0;
@@ -146,6 +139,21 @@ MingwQMenu::right_arrow {
 * Lists
 ****************************************************************************/
 
+QLineEdit, QStatusBar QWidget QLineEdit, QToolBar#focusToolbar QWidget QLineEdit, QToolBar#userToolbar QWidget QLineEdit {
+    background: #FFFFFF;
+    min-height: 16px;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+QLineEdit:focus, QStatusBar QWidget QLineEdit:focus, QToolBar#focusToolbar QWidget QLineEdit:focus, QToolBar#userToolbar QWidget QLineEdit:focus {
+    border: 2px solid #80C0C0;
+}
+
+/****************************************************************************
+* Line edits
+****************************************************************************/
+
 QListView {
     background: #FFFFFF;
 }
@@ -175,6 +183,10 @@ QComboBox {
 
 Qt4QComboBox {
     margin: 3px;
+}
+
+QComboBox:focus {
+    border: 2px solid #80C0C0;
 }
 
 QComboBox::drop-down {
@@ -240,6 +252,11 @@ QTabWidget::pane {
 * Buttons
 ****************************************************************************/
 
+QCheckBox:focus {
+    border: 0px solid #80C0C0;
+    border-radius: 2px;
+}
+
 QPushButton {
     background: #FFFFFF;
     padding: 3px;
@@ -268,6 +285,10 @@ QPushButton:pressed {
     border-top: 1px solid #D0D0D0;
     border-left: 1px solid #D0D0D0;
     border-radius: 5px;
+}
+
+QPushButton:focus {
+    border: 0px solid #80C0C0;
 }
 
 QToolButton,

@@ -13,13 +13,6 @@ QAbstractScrollArea, QAbstractScrollArea::corner {
     background: #202020;
 }
 
-QLineEdit, QStatusBar QWidget QLineEdit, QToolBar#focusToolbar QWidget QLineEdit, QToolBar#userToolbar QWidget QLineEdit {
-    background: #606060;
-    min-height: 16px;
-    padding-left: 2px;
-    padding-right: 2px;
-}
-
 QToolTip {
     font-size: 14px;
     background: #ffe8c0;
@@ -143,6 +136,21 @@ QMenu::separator {
 }
 
 /****************************************************************************
+* Line edit
+****************************************************************************/
+
+QLineEdit, QStatusBar QWidget QLineEdit, QToolBar#focusToolbar QWidget QLineEdit, QToolBar#userToolbar QWidget QLineEdit {
+    background: #606060;
+    min-height: 16px;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+QLineEdit:focus, QStatusBar QWidget QLineEdit:focus, QToolBar#focusToolbar QWidget QLineEdit:focus, QToolBar#userToolbar QWidget QLineEdit:focus {
+    border: 1px solid #A0C0E0;
+}
+
+/****************************************************************************
 * Lists
 ****************************************************************************/
 
@@ -172,9 +180,13 @@ QComboBox {
     border-radius: 5px;
     min-height: 18px;
 }
-
+    
 Qt4QComboBox {
     margin: 3px;
+}
+
+QComboBox:focus {
+    border: 1px solid #A0C0E0;
 }
 
 QComboBox::drop-down {
@@ -240,6 +252,11 @@ QTabWidget::pane {
 * Buttons
 ****************************************************************************/
 
+QCheckBox:focus {
+    border: 0px solid #A0C0E0;
+    border-radius: 2px;
+}
+
 QPushButton {
     background: #707070;
     padding: 3px;
@@ -268,6 +285,10 @@ QPushButton:pressed {
     border-top: 1px solid #000000;
     border-left: 1px solid #000000;
     border-radius: 5px;
+}
+
+QPushButton:focus {
+    border: 0px solid #A0C0E0;
 }
 
 QToolButton,
@@ -434,6 +455,10 @@ QDockWidget#sideTools QWidget#discrete QPushButton:pressed {
     border: none;
 }
 
+QDockWidget#sideTools QWidget#discrete QPushButton:focus {
+    border: 0px solid #A0C0E0;
+}
+
 /****************************************************************************
 * Tab bar with several options for sections
 ****************************************************************************/
@@ -477,6 +502,11 @@ QDockWidget#sideTools QWidget#sections QPushButton:pressed {
     border: none;
     border-radius: 5px;
     padding: 5px;
+}
+
+
+QDockWidget#sideTools QWidget#sections QPushButton:focus {
+    border: 0px solid #A0C0E0;
 }
 
 QDockWidget#sideTools QWidget#sections QWidget#active-section QPushButton,
@@ -541,6 +571,11 @@ QDockWidget#sideTools QWidget#section-tabs QPushButton:pressed {
     color: #B0B0B0;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
+}
+
+
+QDockWidget#sideTools QWidget#section-tabs QPushButton:focus {
+    border: 0px solid #A0C0E0;
 }
 
 QDockWidget#sideTools QWidget#section-tabs QWidget#section-active-tab QPushButton {

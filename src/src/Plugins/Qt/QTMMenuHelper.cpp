@@ -462,6 +462,9 @@ QTMLineEdit::QTMLineEdit (QWidget* parent, string _type, string _ww,
   // just to be sure we don't capture the wrong keys in keyPressEvent
   setCompleter (0);
 
+  if (tm_style_sheet != "" && !occurs ("native", tm_style_sheet))
+    setAttribute (Qt::WA_MacShowFocusRect, 0);
+
   setFocusPolicy (Qt::StrongFocus);
   qt_apply_tm_style (this, style);
 }
