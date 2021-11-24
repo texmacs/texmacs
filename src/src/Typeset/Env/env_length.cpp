@@ -485,7 +485,7 @@ tree edit_env_rep::exec_tmpt_length () {
 }
 
 tree edit_env_rep::exec_px_length () {
-#ifdef OS_MINGW
+#ifndef OS_MACOS
   return tree (TMLEN, as_string ((int) (retina_zoom * pixel)));
 #else
   return tree (TMLEN, as_string (pixel));
@@ -497,7 +497,7 @@ tree edit_env_rep::exec_guipx_length () {
   if (retina_zoom == 1) scale= retina_scale;
   else if (tm_style_sheet == "") scale= 2.0;
   else scale= 1.5 * retina_scale;
-#ifdef OS_MINGW
+#ifndef OS_MACOS
   if (retina_zoom == 1) scale= retina_scale;
   else if (tm_style_sheet == "") scale= 2.6666;
   else scale= 1.8 * retina_scale;

@@ -430,7 +430,7 @@ TeXmacs_main (int argc, char** argv) {
   // Further user preferences
   string native= (gui_version () == "qt4"? string ("on"): string ("off"));
   string unify = (gui_version () == "qt4"? string ("on"): string ("off"));
-  string mini  = (os_mingw ()? string ("on"): string ("off"));
+  string mini  = (os_macos ()? string ("off"): string ("on"));
   if (tm_style_sheet != "") mini= "off";
   use_native_menubar = get_preference ("use native menubar", native) == "on";
   use_unified_toolbar= get_preference ("use unified toolbar", unify) == "on";
@@ -665,10 +665,10 @@ main (int argc, char** argv) {
   immediate_options (argc, argv);
   load_user_preferences ();
   string theme= get_user_preference ("gui theme", "default");
-#ifdef OS_MINGW
-  if (theme == "default") theme= "light";
-#else
+#ifdef OS_MACOS
   if (theme == "default") theme= "";  
+#else
+  if (theme == "default") theme= "native-light";
 #endif
   if (theme == "light")
     tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-light.css";

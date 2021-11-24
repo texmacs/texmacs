@@ -232,7 +232,7 @@ QTabBar::tab {
     border-top-right-radius: 5px;
 }
 
-QTabBar::tab::selected {
+QTabBar::tab:selected {
     background: #404040;
     margin-top: 0px;
     padding: 3px;
@@ -242,6 +242,10 @@ QTabBar::tab::selected {
     border-bottom: 0px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
+}
+
+QTabBar::tab:focus {
+    border: 0px solid #A0C0E0;
 }
 
 QTabWidget::pane {
