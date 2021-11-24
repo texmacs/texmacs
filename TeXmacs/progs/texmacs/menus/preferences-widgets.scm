@@ -48,7 +48,8 @@
 (define-preference-names "gui theme"
   ("" "Default")
   ("light" "Bright")
-  ("dark" "Dark"))
+  ("dark" "Dark")
+  ("native-light" "Native"))
 
 (tm-widget (general-preferences-widget)
   (aligned
@@ -85,7 +86,7 @@
             "22em"))
     (item (text "User interface theme:")
       (enum (set-pretty-preference "gui theme" answer)
-            '("Default" "Bright" "Dark" "")
+            '("Default" "Bright" "Dark" "Native" "")
             (get-pretty-preference "gui theme")
             "22em"))))
 
