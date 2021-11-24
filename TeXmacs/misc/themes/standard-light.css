@@ -9,7 +9,7 @@ QWidget {
     font-size: 14px;
 }
 
-QAbstractScrollArea, QWidget#centralWidget {
+QAbstractScrollArea, QWidget#centralWidget, QAbstractScrollArea::corner {
     background: #A0A0A0;
 }
 
