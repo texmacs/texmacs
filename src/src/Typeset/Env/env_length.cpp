@@ -490,10 +490,15 @@ tree edit_env_rep::exec_px_length () {
 #endif
 }
 tree edit_env_rep::exec_guipx_length () {
-  double scale= retina_scale;
-  if (retina_zoom == 1) {}
+  double scale;
+  if (retina_zoom == 1) scale= retina_scale;
   else if (tm_style_sheet == "") scale= 2.0;
   else scale= 1.5 * retina_scale;
+#ifdef OS_MINGW
+  if (retina_zoom == 1) scale= retina_scale;
+  else if (tm_style_sheet == "") scale= 1.6666 * 2.0;
+  else scale= 1.5 * 1.5 * retina_scale;
+#endif
   return tree (TMLEN, as_string ((int) floor (scale * pixel + 0.5)));
 }
 
