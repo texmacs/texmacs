@@ -62,7 +62,7 @@ MacosNonuniQToolBar#mainToolBar, MacosNonuniQToolBar#mainToolBar MacosNonuniQWid
     padding-bottom: 1px;
 }
 
-MacosQToolBar#modeToolBar, MacosQToolBar#modeToolBar MacosQWidget {
+MacosNounimQToolBar#modeToolBar, MacosNounimQToolBar#modeToolBar MacosNounimQWidget {
     background: #D6D6D6;
 }
 
@@ -86,7 +86,7 @@ MacosQStatusBar::item, MacosQStatusBar MacosQWidget {
 
 MacosNonuniQToolButton,
 MacosNonuniQToolBar#mainToolBar MacosNonuniQToolButton,
-MacosQToolBar#modeToolBar MacosQToolButton {
+MacosNounimQToolBar#modeToolBar MacosNounimQToolButton {
     background: none;
     padding-left: 0px;
     padding-right: 0px;
