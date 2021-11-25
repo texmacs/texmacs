@@ -32,15 +32,12 @@ QMenuBar, QMenuBar QWidget {
     background: #2C2C2C;
 }
 
-QMenuBar::item {
-    padding: 6px 10px;
-    padding-bottom: 2px;
-    background: #2C2C2C;
+QMenuBar {
+    padding-top: 5px;
+    spacing: 10px;
 }
 
-Qt4QMenuBar::item {
-    padding: 10px 10px;
-    padding-bottom: 2px;
+QMenuBar::item {
     background: #2C2C2C;
 }
 
