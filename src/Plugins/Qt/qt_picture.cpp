@@ -338,6 +338,23 @@ new_qt_load_xpm (url file_name) {
     invert_colors (pm);
     saturate (pm);
   }
+#if (QT_VERSION < 0x050000) && defined (Q_OS_MAC)
+  if (retina_icons == 2) {
+    if (use_unified_toolbar) {
+      static bool main_icons=
+        get_preference ("main icon bar", "off") != "off";
+      if (pm.height () > 40) f *= 0.75;
+      else if (pm.height () > 32 && main_icons) f *= 0.85;
+      else if (pm.height () > 32) f *= 0.6;
+      else f *= 0.5;
+    }
+    else {
+      if (pm.height () > 40) f *= 1.0;
+      else if (pm.height () > 32) f *= 0.9;
+      else f *= 0.8;
+    }
+  }
+#endif
   pm= pm.scaled ((int) floor (f * pm.width () + 0.5),
                  (int) floor (f * pm.height () + 0.5),
                  Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
