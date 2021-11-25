@@ -63,24 +63,24 @@ MacosNonuniQToolBar#mainToolBar, MacosNonuniQToolBar#mainToolBar MacosNonuniQWid
 }
 
 MacosNounimQToolBar#modeToolBar, MacosNounimQToolBar#modeToolBar MacosNounimQWidget {
-    background: #D6D6D6;
+    background: #DADADA;
 }
 
 MacosQToolBar#focusToolBar, MacosQToolBar#focusToolbar MacosQWidget {
-    background: #E0E0E0;
-}
-
-MacosQToolBar#userToolBar, MacosQToolBar#userToolbar MacosQWidget {
     background: #E8E8E8;
 }
 
+MacosQToolBar#userToolBar, MacosQToolBar#userToolbar MacosQWidget {
+    background: #EEEEEE;
+}
+
 MacosQStatusBar {
-    background: #E0E0E0;
+    background: #E8E8E8;
     border-top: 1px solid #B0B0B0;
 }
 
 MacosQStatusBar::item, MacosQStatusBar MacosQWidget {
-    background: #E0E0E0;
+    background: #E8E8E8;
     border: 0px;
 }
 
