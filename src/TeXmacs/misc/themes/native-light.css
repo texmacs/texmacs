@@ -7,13 +7,17 @@ QWidget {
     font-size: 14px;
 }
 
+QMenuBar {
+    padding-top: 5px;
+    spacing: 10px;
+}
+
 QMenu::item:disabled {
     color: #A0A0A0;
 }
 
-QMenuBar {
-    padding-top: 5px;
-    spacing: 10px;
+QMenu::item * {
+    margin: 3px;
 }
 
 QStatusBar::item, QStatusBar QWidget {
