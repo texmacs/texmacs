@@ -9,6 +9,7 @@ foreach (_test_file ${TEST_SRC_FILES})
   target_link_libraries (${_test_name}
     texmacs_body
     ${TeXmacs_Libraries}
+    ${CMAKE_DL_LIBS}
     Qt5::Test
   )
   add_test (${_test_name} ${_test_name})
