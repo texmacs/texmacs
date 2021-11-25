@@ -260,7 +260,7 @@ QTabWidget::pane {
 * Buttons
 ****************************************************************************/
 
-QCheckBox {
+QCheckBox, QCheckBox::indicator {
     min-width: 10px;
     min-height: 10px;
 }

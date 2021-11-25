@@ -19,7 +19,7 @@ NomacQComboBox {
     min-height: 18px;
 }
 
-NomacQCheckBox {
+NomacQCheckBox, NomacQCheckBox::indicator {
     min-width: 10px;
     min-height: 10px;
 }
