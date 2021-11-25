@@ -100,7 +100,7 @@
   (dialogue-window retina-settings-widget
     (lambda (answer)
       (when (== answer "ok")
-        (restart-notify)))
+        (notify-restart)))
     (if (os-macos?)
 	"Retina screen settings"
 	"High resolution screen settings")))

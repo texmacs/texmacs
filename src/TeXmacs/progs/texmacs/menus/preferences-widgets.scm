@@ -15,6 +15,17 @@
   (:use (texmacs menus preferences-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Wrapper
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (set-pretty-preference* which pretty-val)
+  (let* ((old (get-preference which))
+         (act (set-pretty-preference which pretty-val))
+         (new (get-preference which)))
+    (when (!= new old)
+      (notify-restart))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Appearance preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -55,7 +66,7 @@
 (tm-widget (general-preferences-widget)
   (aligned
     (item (text "Look and feel:")
-      (enum (set-pretty-preference "look and feel" answer)
+      (enum (set-pretty-preference* "look and feel" answer)
             '("Default" "Emacs" "Gnome" "KDE" "Mac OS" "Windows")
             (get-pretty-preference "look and feel")
             "22em"))
@@ -86,7 +97,7 @@
             (get-pretty-preference "buffer management")
             "22em"))
     (item (text "User interface theme:")
-      (enum (set-pretty-preference "gui theme" answer)
+      (enum (set-pretty-preference* "gui theme" answer)
             '("Default" "Bright" "Dark" "Native" "Legacy" "")
             (get-pretty-preference "gui theme")
             "22em"))))
