@@ -95,24 +95,12 @@
       ("Reset" (begin (reset-retina-preferences) (cmd "ok"))) // //
       ("Ok" (cmd "ok")))))
 
-
-(tm-widget (retina-settings-notify cmd)
-  (padded
-    (text "Restart TeXmacs in order to let changes take effect")
-    ===
-    (bottom-buttons
-      >>
-      ("Ok" (cmd "Ok"))
-      >>)))
-
 (tm-define (open-retina-settings)
   (:interactive #t)
   (dialogue-window retina-settings-widget
     (lambda (answer)
       (when (== answer "ok")
-        (delayed
-          (:idle 1)
-	  (dialogue-window retina-settings-notify noop "Notification"))))
+        (restart-notify)))
     (if (os-macos?)
 	"Retina screen settings"
 	"High resolution screen settings")))
