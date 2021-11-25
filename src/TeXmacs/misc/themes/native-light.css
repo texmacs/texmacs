@@ -52,12 +52,12 @@ MacosQMenuBar::item, MacosQMenuBar {
     padding: 3px 10px;
 }
 
-MacosQToolBar {
+MacosNonuniQToolBar {
     background: #CCCCCC;
     border-bottom: 1px solid #B0B0B0;
 }
 
-MacosQToolBar#mainToolBar, MacosQToolBar#mainToolBar MacosQWidget {
+MacosNonuniQToolBar#mainToolBar, MacosNonuniQToolBar#mainToolBar MacosNonuniQWidget {
     background: #CCCCCC;
     padding-bottom: 1px;
 }
@@ -84,15 +84,15 @@ MacosQStatusBar::item, MacosQStatusBar MacosQWidget {
     border: 0px;
 }
 
-MacosQToolButton,
-MacosQToolBar#mainToolBar MacosQToolButton,
+MacosNonuniQToolButton,
+MacosNonuniQToolBar#mainToolBar MacosNonuniQToolButton,
 MacosQToolBar#modeToolBar MacosQToolButton {
     background: none;
     padding-left: 0px;
     padding-right: 0px;
 }
 
-MacosQt4QToolButton {
+MacosNonuniQt4QToolButton {
     background-color: rgba(96,96,96,0%);
 }
 
@@ -123,20 +123,6 @@ MacosQToolBar#focusToolBar MacosQToolButton:checked {
     background: #A0A0A0;
     border: 0px;
     border-radius: 3px;
-}
-
-MacosQToolButton::menu-indicator,
-MacosQToolBar#mainToolBar MacosQToolButton::menu-indicator,
-MacosQToolBar#modeToolBar MacosQToolButton::menu-indicator {
-    border: none;
-    background: none;
-    image: none;
-}
-
-MacosQToolButton::disabled,
-MacosQToolBar#mainToolBar MacosQToolButton:disabled,
-MacosQToolBar#modeToolBar MacosQToolButton:disabled {
-    color: #808080;
 }
 
 MacosQWidget#centralWidget {
