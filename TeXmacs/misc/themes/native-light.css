@@ -5,6 +5,7 @@
 
 QWidget {
     font-size: 14px;
+    icon-size: 16px;
 }
 
 QMenuBar {
@@ -45,6 +46,14 @@ QToolButton::disabled,
 QToolBar#mainToolBar QToolButton:disabled,
 QToolBar#modeToolBar QToolButton:disabled {
     color: #808080;
+}
+
+QScrollBar:horizontal {
+    min-height: 16px;
+}
+
+QScrollBar:vertical {
+    min-width: 16px;
 }
 
 /****************************************************************************
