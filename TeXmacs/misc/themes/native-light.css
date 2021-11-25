@@ -15,11 +15,11 @@ QStatusBar::item, QStatusBar QWidget {
     border: 0px;
 }
 
-QComboBox {
+NomacQComboBox {
     min-height: 18px;
 }
 
-QCheckBox {
+NomacQCheckBox {
     min-width: 10px;
     min-height: 10px;
 }
@@ -36,6 +36,111 @@ QToolButton::disabled,
 QToolBar#mainToolBar QToolButton:disabled,
 QToolBar#modeToolBar QToolButton:disabled {
     color: #808080;
+}
+
+/****************************************************************************
+* Counter extremely ugly native Qt/Mac toolbars
+****************************************************************************/
+
+MacosQMenuBar {
+    background: #CCCCCC;
+    padding-top: 4px;
+}
+
+MacosQMenuBar::item, MacosQMenuBar {
+    background: #CCCCCC;
+    padding: 3px 10px;
+}
+
+MacosQToolBar {
+    background: #CCCCCC;
+    border-bottom: 1px solid #B0B0B0;
+}
+
+MacosQToolBar#mainToolBar, MacosQToolBar#mainToolBar MacosQWidget {
+    background: #CCCCCC;
+    padding-bottom: 1px;
+}
+
+MacosQToolBar#modeToolBar, MacosQToolBar#modeToolBar MacosQWidget {
+    background: #D6D6D6;
+}
+
+MacosQToolBar#focusToolBar, MacosQToolBar#focusToolbar MacosQWidget {
+    background: #E0E0E0;
+}
+
+MacosQToolBar#userToolBar, MacosQToolBar#userToolbar MacosQWidget {
+    background: #E8E8E8;
+}
+
+MacosQStatusBar {
+    background: #E0E0E0;
+    border-top: 1px solid #B0B0B0;
+}
+
+MacosQStatusBar::item, MacosQStatusBar MacosQWidget {
+    background: #E0E0E0;
+    border: 0px;
+}
+
+MacosQToolButton,
+MacosQToolBar#mainToolBar MacosQToolButton,
+MacosQToolBar#modeToolBar MacosQToolButton {
+    background: none;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+MacosQt4QToolButton {
+    background-color: rgba(96,96,96,0%);
+}
+
+MacosQToolButton:hover,
+MacosQToolBar#mainToolBar MacosQToolButton:hover,
+MacosQToolBar#modeToolBar MacosQToolButton:hover,
+MacosQToolBar#focusToolBar MacosQToolButton:hover {
+    background: none;
+}
+
+MacosQt4QToolButton:hover,
+MacosQt4QToolBar#mainToolBar MacosQToolButton:hover,
+MacosQt4QToolBar#modeToolBar MacosQToolButton:hover,
+MacosQt4QToolBar#focusToolBar MacosQToolButton:hover {
+    background: #C0C0C0;
+    border: 0px;
+    border-radius: 3px;
+}
+
+MacosQToolButton:pressed,
+MacosQToolButton:checked,
+MacosQToolBar#mainToolBar MacosQToolButton:pressed,
+MacosQToolBar#mainToolBar MacosQToolButton:checked,
+MacosQToolBar#modeToolBar MacosQToolButton:pressed,
+MacosQToolBar#modeToolBar MacosQToolButton:checked,
+MacosQToolBar#focusToolBar MacosQToolButton:pressed,
+MacosQToolBar#focusToolBar MacosQToolButton:checked {
+    background: #A0A0A0;
+    border: 0px;
+    border-radius: 3px;
+}
+
+MacosQToolButton::menu-indicator,
+MacosQToolBar#mainToolBar MacosQToolButton::menu-indicator,
+MacosQToolBar#modeToolBar MacosQToolButton::menu-indicator {
+    border: none;
+    background: none;
+    image: none;
+}
+
+MacosQToolButton::disabled,
+MacosQToolBar#mainToolBar MacosQToolButton:disabled,
+MacosQToolBar#modeToolBar MacosQToolButton:disabled {
+    color: #808080;
+}
+
+MacosQWidget#centralWidget {
+    background: #A0A0A0;
 }
 
 /****************************************************************************
