@@ -933,6 +933,11 @@ init_palette (QApplication* app) {
     
   if (occurs ("dark", tm_style_sheet))
     tm_background= rgb_color (32, 32, 32);
+  else if (occurs ("native", tm_style_sheet)) {
+    QPalette pal = app -> palette ();
+    QColor   col = pal.color (QPalette::Mid);
+    tm_background= rgb_color (col.red (), col.green (), col.blue ());
+  }
   else if (tm_style_sheet != "")
     tm_background= rgb_color (160, 160, 160);
 }
