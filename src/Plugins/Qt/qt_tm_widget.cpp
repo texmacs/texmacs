@@ -285,6 +285,10 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     int h1= (int) floor (38 * scale + 0.5);
     int h2= (int) floor (34 * scale + 0.5);
     int h3= (int) floor (30 * scale + 0.5);
+#if ((QT_VERSION < 0x050000) && defined (Q_OS_MAC))
+    if (use_unified_toolbar && retina_icons == 2 && scale == 1.2) {
+      h1= 34; h2= 36; h3= 32; }
+#endif
     mainToolBar->setFixedHeight (h1);
     modeToolBar->setFixedHeight (h2);
     focusToolBar->setFixedHeight (h3);
