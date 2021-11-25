@@ -51,8 +51,10 @@ MacosQMenuBar {
     background: #CCCCCC;
 }
 
-MacosQMenuBar::item, MacosQMenuBar {
+MacosQMenuBar::item {
     background: #CCCCCC;
+    padding: 0px 5px;
+    padding-top: 10px;
 }
 
 MacosNonuniQToolBar {

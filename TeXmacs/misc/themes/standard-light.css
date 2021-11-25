@@ -41,6 +41,11 @@ QMenuBar::item {
     background: #C0C0C0;
 }
 
+MacosQMenuBar::item {
+    padding: 0px 5px;
+    padding-top: 10px;
+}
+
 QMenuBar::item:selected {
     background: #000080;
     color: #FFFFFF;
