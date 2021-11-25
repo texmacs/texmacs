@@ -11,6 +11,11 @@ QMenu::item:disabled {
     color: #A0A0A0;
 }
 
+QMenuBar {
+    padding-top: 5px;
+    spacing: 10px;
+}
+
 QStatusBar::item, QStatusBar QWidget {
     border: 0px;
 }
@@ -44,12 +49,10 @@ QToolBar#modeToolBar QToolButton:disabled {
 
 MacosQMenuBar {
     background: #CCCCCC;
-    padding-top: 4px;
 }
 
 MacosQMenuBar::item, MacosQMenuBar {
     background: #CCCCCC;
-    padding: 3px 10px;
 }
 
 MacosNonuniQToolBar {
