@@ -13,6 +13,10 @@ QAbstractScrollArea, QWidget#centralWidget {
     background: #A0A0A0;
 }
 
+QFileDialog QAbstractScrollArea, QFileDialog QWidget::section {
+    background: #FFFFFF;
+}
+
 QToolTip {
     font-size: 14px;
     background: #ffe8c0;
@@ -215,6 +219,8 @@ MingwQComboBox::down_arrow {
 QComboBox QAbstractItemView {
     background: #E8E8E8;
     color: #000000;
+
+
 }
 
 /****************************************************************************
@@ -242,10 +248,6 @@ QTabBar::tab:selected {
     border-bottom: 0px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-}
-
-QTabBar::tab:focus {
-    border: 0px solid #80C0C0;
 }
 
 QTabWidget::pane {
