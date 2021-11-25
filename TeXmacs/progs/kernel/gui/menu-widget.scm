@@ -1196,7 +1196,7 @@
     (:idle 1)
     (dialogue-window (notify-dialogue message) noop "Notification")))
 
-(tm-define (restart-notify)
+(tm-define (notify-restart . args)
   (notify-now "Restart TeXmacs in order to let changes take effect"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
