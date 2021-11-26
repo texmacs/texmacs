@@ -60,6 +60,10 @@ QScrollBar:vertical {
 * Counter extremely ugly native Qt/Mac toolbars
 ****************************************************************************/
 
+MacosQWidget {
+    selection-color: #FFFFFF;
+}
+
 MacosQMenuBar {
     background: #CCCCCC;
 }
@@ -106,6 +110,10 @@ MacosQStatusBar {
 MacosQStatusBar::item, MacosQStatusBar MacosQWidget {
     background: #ECECEC;
     border: 0px;
+}
+
+MacosQStatusBar MacosQLineEdit {
+    background: #FFFFFF;
 }
 
 MacosNonuniQToolButton,
