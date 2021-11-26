@@ -70,6 +70,12 @@ MacosQMenuBar::item {
     padding-top: 10px;
 }
 
+MacosUniQToolBar * {
+    border: none;
+    padding: 0px;
+    margin: 0px;
+}
+
 MacosNonuniQToolBar {
     background: #CCCCCC;
     border-bottom: 1px solid #B0B0B0;
