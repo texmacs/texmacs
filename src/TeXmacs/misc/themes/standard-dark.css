@@ -14,6 +14,11 @@ QAbstractScrollArea, QTableView {
     background: #202020;
 }
 
+QFileDialog {
+    min-width: 800px;
+    min-height: 600px;
+}
+
 QFileDialog QAbstractScrollArea, QFileDialog QWidget::section {
     background: #202020;
 }
