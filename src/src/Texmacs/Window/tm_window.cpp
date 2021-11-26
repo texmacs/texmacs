@@ -76,11 +76,7 @@ static bool
 resize_accept (int old_w, int old_h, int w, int h) {
   if (old_w == w && old_h == h) return false;
 #ifdef QTTEXMACS
-  if (old_w == w && old_h == h + 41) return false;
-  if (old_w == w && old_h == h + 24) return false;
-  if (old_w == w && old_h == h + 22) return false;
-  if (old_w == w && old_h == h + 16) return false;
-  if (old_w == w && old_h == h - 40) return false;
+  if (old_w == w && old_h - 80 <= h && h <= old_h + 80) return false;
 #endif
   return true;
 }
