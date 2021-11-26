@@ -8,6 +8,11 @@ QWidget {
     icon-size: 16px;
 }
 
+QFileDialog {
+    min-width: 800px;
+    min-height: 600px;
+}
+
 QMenuBar {
     padding-top: 5px;
     spacing: 10px;

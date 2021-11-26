@@ -14,6 +14,11 @@ QAbstractScrollArea, QWidget#centralWidget {
     background: #A0A0A0;
 }
 
+QFileDialog {
+    min-width: 800px;
+    min-height: 600px;
+}
+
 QFileDialog QAbstractScrollArea, QFileDialog QWidget::section {
     background: #FFFFFF;
 }
