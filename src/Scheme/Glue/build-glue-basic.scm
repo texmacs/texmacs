@@ -55,6 +55,8 @@
   (scheme-dialect scheme_dialect (string))
   (get-texmacs-path get_texmacs_path (url))
   (get-texmacs-home-path get_texmacs_home_path (url))
+  (get-user-login get_user_login (string))
+  (get-user-name get_user_name (string))
   (plugin-list plugin_list (scheme_tree))
   (set-fast-environments set_fast_environments (void bool))
   (font-exists-in-tt? tt_font_exists (bool string))

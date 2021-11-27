@@ -19,6 +19,7 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <pthread.h>
+#include <pwd.h>
 
 int
 unix_system (string s) {
@@ -340,3 +341,15 @@ unix_system (array<string> arg,
 }
 
 #endif
+
+string unix_get_login () {
+  uid_t uid= getuid ();
+  struct passwd* pwd= getpwuid (uid);
+  return string(pwd->pw_name);
+}
+
+string unix_get_username () {
+  uid_t uid= getuid ();
+  struct passwd* pwd= getpwuid (uid);
+  return tokenize (string (pwd->pw_gecos), string(","))[0];
+}
