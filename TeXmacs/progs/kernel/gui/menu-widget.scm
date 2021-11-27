@@ -1248,7 +1248,7 @@
                (division "title"
                  (text ,(cadr name)))
                (dynamic (,(car tool) ,(cadr tool)))
-               ;; TODO: additional arguments from tool
+               ;; TODO: also pass additional arguments from tool
                ======)
              ))))
 
