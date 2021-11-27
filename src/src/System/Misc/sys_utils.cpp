@@ -183,3 +183,19 @@ has_printing_cmd () {
   static bool has= get_printing_cmd () != "";
   return has;
 }
+
+string get_user_login () {
+#if OS_MINGW
+  return getenv ("USERNAME");
+#else
+  return unix_get_login ();
+#endif
+}
+
+string get_user_name () {
+#if OS_MINGW
+  return sys_utils::mingw_get_username ();
+#else // Linux and macOS
+  return unix_get_username ();
+#endif
+}

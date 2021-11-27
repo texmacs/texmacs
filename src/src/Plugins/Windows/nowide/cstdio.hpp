@@ -131,7 +131,11 @@ inline int stat(char const *name, struct_stat *buf)
         errno = EINVAL;
         return -1;
     }
+#ifdef __MINGW64__
+    return _wstat64(wname.c_str(), buf);
+#else
     return _wstat32(wname.c_str(), buf);
+#endif
 }
 typedef _WDIR DIR;
 inline DIR* opendir(char const *name)
