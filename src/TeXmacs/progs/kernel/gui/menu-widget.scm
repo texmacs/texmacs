@@ -1219,6 +1219,12 @@
   (== (car tool) type))
 
 (tm-define (tool-active? tool . opt-win)
+  (when (func? tool 'quote)
+    (set! tool (cadr tool)))
+  (when (string? tool)
+    (set! tool (string->symbol tool)))
+  (when (symbol? tool)
+    (set! tool (list tool)))
   (with win (if (null? opt-win) (current-window) (car opt-win))
     (and-with l (ahash-ref window-tools-table win)
       (in? tool l))))
@@ -1247,8 +1253,9 @@
                (:require (== (car tool) ',(car tool)))
                (division "title"
                  (text ,(cadr name)))
-               (dynamic (,(car tool) ,(cadr tool)))
-               ;; TODO: also pass additional arguments from tool
+               (dynamic (,(car tool) ,(cadr tool)
+                         ,@(map (lambda (i) `(list-ref tool ,(- i 1)))
+                                (.. 2 (length tool)))))
                ======)
              ))))
 

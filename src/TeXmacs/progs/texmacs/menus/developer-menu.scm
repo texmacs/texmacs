@@ -19,6 +19,7 @@
              (language natural)
              ;; Experimental (should be put elsewhere)
              (generic format-tools)
+             ;;(generic pattern-tools)
              (texmacs menus preferences-tools))
 
 (define (scm-load-buffer u)
@@ -76,4 +77,9 @@
             ("Images" (tool-toggle 'image-preferences-tool)))
         ("Security" (tool-toggle 'security-preferences-tool))
         ("Miscellaneous" (tool-toggle 'misc-preferences-tool))
-        ("Experimental" (tool-toggle 'experimental-preferences-tool)))))
+        ("Experimental" (tool-toggle 'experimental-preferences-tool)))
+    ;;(-> "Color"
+    ;;    ("Pattern" (tool-toggle '(pattern-tool "Background pattern")))
+    ;;    ("Gradient" (tool-toggle '(gradient-tool "Background gradient")))
+    ;;    ("Picture" (tool-toggle '(picture-tool "Background picture"))))
+    ))
