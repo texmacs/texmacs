@@ -1207,7 +1207,7 @@
 
 (tm-widget (texmacs-side-tool win tool)
   (division "title"
-    (text (string-append "Missing '" tool "' tool"))))
+    (text (string-append "Missing '" (object->string (car tool)) "' tool"))))
 
 (tm-define (window->tools win)
   (or (ahash-ref window-tools-table win) (list)))
@@ -1226,9 +1226,31 @@
 (tm-define (tool-toggle tool . opt-win)
   (:check-mark "v" tool-active?)
   (when (string? tool)
+    (set! tool (string->symbol tool)))
+  (when (symbol? tool)
     (set! tool (list tool)))
   (with win (if (null? opt-win) (current-window) (car opt-win))
     (with l (window->tools win)
       (if (in? tool l)
           (set-window-tools win (list-remove l tool))
           (set-window-tools win (cons tool l))))))
+
+(tm-define-macro (tm-tool* tool name . body)
+  (cond ((or (npair? tool) (npair? (cdr tool)))
+         (texmacs-error "tm-tool" "tool name ~S should be a pair" tool))
+        ((not (func? name :name 1))
+         (texmacs-error "tm-tool" "~S should be of the form (:name :1)" name))
+        (else
+          `(begin
+             (tm-widget ,tool ,@body)
+             (tm-widget (texmacs-side-tool ,(cadr tool) tool)
+               (:require (== (car tool) ',(car tool)))
+               (division "title"
+                 (text ,(cadr name)))
+               (dynamic (,(car tool) ,(cadr tool)))
+               ;; TODO: additional arguments from tool
+               ======)
+             ))))
+
+(tm-define-macro (tm-tool tool name . body)
+  `(tm-tool* ,tool ,name (centered ,@body)))

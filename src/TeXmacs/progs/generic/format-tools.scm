@@ -209,22 +209,6 @@
              (refresh-now "paragraph tool")
              (update-menus))))))))
 
-(tm-widget (texmacs-side-tool win tool)
-  (:require (tool? tool "format paragraph"))
-  (division "title"
-    (text "This paragraph format"))
-  (centered
-    (dynamic (paragraph-basic-tool win :paragraph))
-    ======))
-
-(tm-widget (texmacs-side-tool win tool)
-  (:require (tool? tool "document paragraph"))
-  (division "title"
-    (text "Global paragraph format"))
-  (centered
-    (dynamic (paragraph-basic-tool win :global))
-    ======))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global Page format
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -612,40 +596,35 @@
      (with-window win (update-menus)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Global page settings
+;; Public tools
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (texmacs-side-tool win tool)
-  (:require (tool? tool "document page"))
-  (division "title"
-    (text "Page format"))
-  (centered
-    (dynamic (page-format-tool win))
-    ======)
-  (division "title"
-    (text "Page breaking"))
-  (centered
-    (dynamic (page-breaking-tool win))
-    ======))
+(tm-tool (format-paragraph-tool win)
+  (:name "This paragraph format")
+  (dynamic (paragraph-basic-tool win :paragraph)))
+
+(tm-tool (document-paragraph-tool win)
+  (:name "Global paragraph format")
+  (dynamic (paragraph-basic-tool win :global)))
+
+(tm-tool (document-page-tool win)
+  (:name "Page format")
+  (dynamic (page-format-tool win)))
+
+(tm-tool (document-breaking-tool win)
+  (:name "Page breaking")
+  (dynamic (page-breaking-tool win)))
+
+(tm-tool (document-margins-tool win)
+  (:name "Page margins")
+  (dynamic (page-margins-tool win)))
+
+(tm-tool (document-headers-tool win)
+  (:name "Page headers and footers")
+  (dynamic (page-headers-tool win)))
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (tool? tool "document margins"))
-  (division "title"
-    (text "Page margins"))
-  (centered
-    (dynamic (page-margins-tool win))
-    ======))
-
-(tm-widget (texmacs-side-tool win tool)
-  (:require (tool? tool "document headers"))
-  (division "title"
-    (text "Page headers and footers"))
-  (centered
-    (dynamic (page-headers-tool win))
-    ======))
-
-(tm-widget (texmacs-side-tool win tool)
-  (:require (tool? tool "sections"))
+  (:require (== (car tool) 'sections-tool))
   (division "sections"
     (hlist
       ("File" (noop))
@@ -661,7 +640,7 @@
     ======))
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (tool? tool "subsections"))
+  (:require (== (car tool) 'subsections-tool))
   (division "sections"
     (hlist
       ("File" (noop))
