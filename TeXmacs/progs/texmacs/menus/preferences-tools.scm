@@ -18,114 +18,66 @@
 ;; General preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (texmacs-side-tool win tool)
-  (:require (tool? tool "general preferences"))
-  (division "title"
-    (text "General preferences"))
-  (centered
-    (dynamic (general-preferences-widget))
-    ======))
+(tm-tool (general-preferences-tool win)
+  (:name "General preferences")
+  (dynamic (general-preferences-widget)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (texmacs-side-tool win tool)
-  (:require (tool? tool "keyboard preferences"))
-  (division "title"
-    (text "Keyboard preferences"))
-  (centered
-    (dynamic (keyboard-preferences-widget))
-    ======))
+(tm-tool (keyboard-preferences-tool win)
+  (:name "Keyboard preferences")
+  (dynamic (keyboard-preferences-widget)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mathematical preferences widget
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (texmacs-side-tool win tool)
-  (:require (tool? tool "math preferences"))
-  (division "title"
-    (text "Mathematical preferences"))
-  (centered
-    (dynamic (math-preferences-widget*))
-    ======))
+(tm-tool (math-preferences-tool win)
+  (:name "Mathematical preferences")
+  (dynamic (math-preferences-widget*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Conversion preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (texmacs-side-tool win tool)
-  (:require (tool? tool "html preferences"))
-  (division "title"
-    (text "HTML conversion preferences"))
-  (centered
-    (dynamic (html-preferences-widget))
-    ======))
+(tm-tool (html-preferences-tool win)
+  (:name "HTML conversion preferences")
+  (dynamic (html-preferences-widget)))
 
-(tm-widget (texmacs-side-tool win tool)
-  (:require (tool? tool "latex preferences"))
-  (division "title"
-    (text "LaTeX conversion preferences"))
-  (centered
-    (dynamic (latex-preferences-widget))
-    ======))
+(tm-tool (latex-preferences-tool win)
+  (:name "LaTeX conversion preferences")
+  (dynamic (latex-preferences-widget)))
 
-(tm-widget (texmacs-side-tool win tool)
-  (:require (tool? tool "bibtex preferences"))
-  (division "title"
-    (text "BibTeX conversion preferences"))
-  (centered
-    (dynamic (bibtex-preferences-widget))
-    ======))
+(tm-tool (bibtex-preferences-tool win)
+  (:name "BibTeX conversion preferences")
+  (dynamic (bibtex-preferences-widget)))
 
-(tm-widget (texmacs-side-tool win tool)
-  (:require (tool? tool "verbatim preferences"))
-  (division "title"
-    (text "Verbatim conversion preferences"))
-  (centered
-    (dynamic (verbatim-preferences-widget))
-    ======))
+(tm-tool (verbatim-preferences-tool win)
+  (:name "Verbatim conversion preferences")
+  (dynamic (verbatim-preferences-widget)))
 
-(tm-widget (texmacs-side-tool win tool)
-  (:require (tool? tool "pdf preferences"))
-  (division "title"
-    (text "Pdf and Postscript conversion preferences"))
-  (centered
-    (dynamic (pdf-preferences-widget))
-    ======))
+(tm-tool (pdf-preferences-tool win)
+  (:name "Pdf and Postscript conversion preferences")
+  (dynamic (pdf-preferences-widget)))
 
-(tm-widget (texmacs-side-tool win tool)
-  (:require (tool? tool "image preferences"))
-  (division "title"
-    (text "Image conversion preferences"))
-  (centered
-    (dynamic (image-preferences-widget))
-    ======))
+(tm-tool (image-preferences-tool win)
+  (:name "Image conversion preferences")
+  (dynamic (image-preferences-widget)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Security preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (texmacs-side-tool win tool)
-  (:require (tool? tool "security preferences"))
-  (division "title"
-    (text "Security preferences"))
-  (centered
-    (dynamic (security-preferences-widget))
-    ======))
+(tm-tool (security-preferences-tool win)
+  (:name "Security preferences")
+  (dynamic (security-preferences-widget)))
 
-(tm-widget (texmacs-side-tool win tool)
-  (:require (tool? tool "miscellaneous preferences"))
-  (division "title"
-    (text "Miscellaneous preferences"))
-  (centered
-    (dynamic (misc-preferences-widget))
-    ======))
+(tm-tool (misc-preferences-tool win)
+  (:name "Miscellaneous preferences")
+  (dynamic (misc-preferences-widget)))
 
-(tm-widget (texmacs-side-tool win tool)
-  (:require (tool? tool "experimental preferences"))
-  (division "title"
-    (text "Experimental features (to be used with care)"))
-  (centered
-    (dynamic (experimental-preferences-widget*))
-    ======))
+(tm-tool (experimental-preferences-tool win)
+  (:name "Experimental features (to be used with care)")
+  (dynamic (experimental-preferences-widget*)))

@@ -72,7 +72,7 @@
   '(define define-public define-macro define-public-macro
     texmacs-module provide-public define-group
     tm-define tm-define-macro lazy-body-macro tm-property request-handler
-    tm-menu define-menu tm-widget define-widget tm-generate
+    tm-menu define-menu tm-widget define-widget tm-generate tm-tool tm-tool*
     tm-build tm-build-macro tm-build-widget
     menu-bind define-table extend-table smart-table
     tm-service tm-call-back
