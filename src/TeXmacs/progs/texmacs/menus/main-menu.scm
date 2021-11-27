@@ -220,7 +220,7 @@
         (else (cons t (upward-context-trees (tree-up t))))))
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "context"))
+  (:require (tool? tool "context"))
   (division "title"
     (text "Context tool"))
   (centered

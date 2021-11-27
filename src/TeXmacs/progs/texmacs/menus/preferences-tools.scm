@@ -19,7 +19,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "general preferences"))
+  (:require (tool? tool "general preferences"))
   (division "title"
     (text "General preferences"))
   (centered
@@ -31,7 +31,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "keyboard preferences"))
+  (:require (tool? tool "keyboard preferences"))
   (division "title"
     (text "Keyboard preferences"))
   (centered
@@ -43,7 +43,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "math preferences"))
+  (:require (tool? tool "math preferences"))
   (division "title"
     (text "Mathematical preferences"))
   (centered
@@ -55,7 +55,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "html preferences"))
+  (:require (tool? tool "html preferences"))
   (division "title"
     (text "HTML conversion preferences"))
   (centered
@@ -63,7 +63,7 @@
     ======))
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "latex preferences"))
+  (:require (tool? tool "latex preferences"))
   (division "title"
     (text "LaTeX conversion preferences"))
   (centered
@@ -71,7 +71,7 @@
     ======))
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "bibtex preferences"))
+  (:require (tool? tool "bibtex preferences"))
   (division "title"
     (text "BibTeX conversion preferences"))
   (centered
@@ -79,7 +79,7 @@
     ======))
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "verbatim preferences"))
+  (:require (tool? tool "verbatim preferences"))
   (division "title"
     (text "Verbatim conversion preferences"))
   (centered
@@ -87,7 +87,7 @@
     ======))
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "pdf preferences"))
+  (:require (tool? tool "pdf preferences"))
   (division "title"
     (text "Pdf and Postscript conversion preferences"))
   (centered
@@ -95,7 +95,7 @@
     ======))
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "image preferences"))
+  (:require (tool? tool "image preferences"))
   (division "title"
     (text "Image conversion preferences"))
   (centered
@@ -107,7 +107,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "security preferences"))
+  (:require (tool? tool "security preferences"))
   (division "title"
     (text "Security preferences"))
   (centered
@@ -115,7 +115,7 @@
     ======))
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "miscellaneous preferences"))
+  (:require (tool? tool "miscellaneous preferences"))
   (division "title"
     (text "Miscellaneous preferences"))
   (centered
@@ -123,7 +123,7 @@
     ======))
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "experimental preferences"))
+  (:require (tool? tool "experimental preferences"))
   (division "title"
     (text "Experimental features (to be used with care)"))
   (centered

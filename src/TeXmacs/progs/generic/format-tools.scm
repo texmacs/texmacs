@@ -210,7 +210,7 @@
              (update-menus))))))))
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "format paragraph"))
+  (:require (tool? tool "format paragraph"))
   (division "title"
     (text "This paragraph format"))
   (centered
@@ -218,7 +218,7 @@
     ======))
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "document paragraph"))
+  (:require (tool? tool "document paragraph"))
   (division "title"
     (text "Global paragraph format"))
   (centered
@@ -616,7 +616,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "document page"))
+  (:require (tool? tool "document page"))
   (division "title"
     (text "Page format"))
   (centered
@@ -629,7 +629,7 @@
     ======))
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "document margins"))
+  (:require (tool? tool "document margins"))
   (division "title"
     (text "Page margins"))
   (centered
@@ -637,7 +637,7 @@
     ======))
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "document headers"))
+  (:require (tool? tool "document headers"))
   (division "title"
     (text "Page headers and footers"))
   (centered
@@ -645,7 +645,7 @@
     ======))
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "sections"))
+  (:require (tool? tool "sections"))
   (division "sections"
     (hlist
       ("File" (noop))
@@ -661,7 +661,7 @@
     ======))
 
 (tm-widget (texmacs-side-tool win tool)
-  (:require (== tool "subsections"))
+  (:require (tool? tool "subsections"))
   (division "sections"
     (hlist
       ("File" (noop))

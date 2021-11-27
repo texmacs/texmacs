@@ -1215,6 +1215,9 @@
 (tm-define (set-window-tools win l)
   (ahash-set! window-tools-table win l))
 
+(tm-define (tool? tool type)
+  (== (car tool) type))
+
 (tm-define (tool-active? tool . opt-win)
   (with win (if (null? opt-win) (current-window) (car opt-win))
     (and-with l (ahash-ref window-tools-table win)
@@ -1222,6 +1225,8 @@
   
 (tm-define (tool-toggle tool . opt-win)
   (:check-mark "v" tool-active?)
+  (when (string? tool)
+    (set! tool (list tool)))
   (with win (if (null? opt-win) (current-window) (car opt-win))
     (with l (window->tools win)
       (if (in? tool l)
