@@ -133,6 +133,10 @@
   (require-format x '(filtered-choice :%4))
   `($filtered-choice ,@(cdr x)))
 
+(define (gui-make-color-input x)
+  (require-format x '(color-input :%3))
+  `($color-input ,@(cdr x)))
+
 (define (gui-make-tree-view x)
   (require-format x '(tree-view :%3))
   `($tree-view ,@(cdr x)))
@@ -409,6 +413,7 @@
   (choices ,gui-make-choices)
   (tree-view ,gui-make-tree-view)
   (filtered-choice ,gui-make-filtered-choice)
+  (color-input ,gui-make-color-input)
   (toggle ,gui-make-toggle)
   (icon ,gui-make-icon)
   (replace ,gui-make-replace)
