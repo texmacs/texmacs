@@ -39,7 +39,4 @@ bool has_printing_cmd (void);
 string get_printing_cmd (void);
 void set_printing_cmd (string cmd);
 
-string get_user_login ();
-string get_user_name ();
-
 #endif // defined SYS_UTILS_H
