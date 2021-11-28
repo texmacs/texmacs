@@ -16,23 +16,16 @@ if (WIN32)
   add_executable (${TeXmacs_binary_name} WIN32
     ./Texmacs/Texmacs/texmacs.cpp
   )
-  target_link_libraries (${TeXmacs_binary_name}
-    texmacs_body
-    ${TeXmacs_Libraries}
-    ${CMAKE_DL_LIBS}
-    -lsecur32
-  )
 else (WIN32)
   add_executable (${TeXmacs_binary_name}
     ./Texmacs/Texmacs/texmacs.cpp
   )
-  target_link_libraries (${TeXmacs_binary_name}
-    texmacs_body
-    ${TeXmacs_Libraries}
-    ${CMAKE_DL_LIBS}
-  )
 endif (WIN32)
 
+target_link_libraries (${TeXmacs_binary_name}
+  texmacs_body
+  ${TeXmacs_Libraries}
+)
 
 if (APPLE)
   set(MACOSX_BUNDLE_DISPLAY_NAME TeXmacs)
