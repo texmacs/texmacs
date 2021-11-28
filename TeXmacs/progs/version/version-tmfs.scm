@@ -109,7 +109,7 @@
     (string-append (url->system (url-tail u)) " - History")))
 
 (tm-define (version-revision-url u rev)
-  (if (string-contains rev ":")
+  (if (string-contains? rev ":")
     (string-append "tmfs://revision/" (string-replace rev ":" "/"))
     (string-append "tmfs://revision/" rev "/" (url->tmfs-string u))))
 
