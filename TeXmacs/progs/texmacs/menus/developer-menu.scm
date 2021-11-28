@@ -79,6 +79,7 @@
         ("Miscellaneous" (tool-toggle 'misc-preferences-tool))
         ("Experimental" (tool-toggle 'experimental-preferences-tool)))
     ;;(-> "Color"
+    ;;    ("Color" (tool-toggle '(color-tool "Background color")))
     ;;    ("Pattern" (tool-toggle '(pattern-tool "Background pattern")))
     ;;    ("Gradient" (tool-toggle '(gradient-tool "Background gradient")))
     ;;    ("Picture" (tool-toggle '(picture-tool "Background picture"))))

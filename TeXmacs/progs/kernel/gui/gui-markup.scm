@@ -357,6 +357,10 @@
   `(list 'filtered-choice (lambda (answer filter) ,cmd) (lambda () ,vals)
                            (lambda () ,val) (lambda () ,filterstr)))
 
+(tm-define-macro ($color-input cmd bg? proposals)
+  (:synopsis "Make color picker")
+  `(list 'color-input (lambda (answer) ,cmd) ,bg? (lambda () ,proposals)))
+
 (tm-define-macro ($tree-view cmd data roles)
   (:synopsis "Make a tree view of the data")
   `(list 'tree-view (lambda x (apply ,cmd (reverse x)))

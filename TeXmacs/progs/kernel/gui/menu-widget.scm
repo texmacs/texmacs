@@ -55,6 +55,7 @@
     (choice :%3)
     (choices :%3)
     (filtered-choice :%4)
+    (color-input :%3)
     (tree-view :%3)
     (toggle :%2)
     (horizontal :menu-item-list)
@@ -289,6 +290,11 @@
   (with (tag cmd vals val filterstr) p
     (widget-filtered-choice (object->command (menu-protect cmd)) (vals) (val)
                             (filterstr))))
+
+(define (make-color-input p style)
+  "Make @(color-input :%3) menu item."
+  (with (tag cmd bg? props) p
+    (widget-color-picker (object->command (menu-protect cmd)) bg? (props))))
 
 (define (make-tree-view p style)
   "Make @(tree-view :%3) item."
@@ -759,6 +765,8 @@
            ,(lambda (p style bar?) (list (make-choices p style))))
   (filtered-choice (:%4)
            ,(lambda (p style bar?) (list (make-filtered-choice p style))))
+  (color-input (:%3)
+         ,(lambda (p style bar?) (list (make-color-input p style))))
   (tree-view (:%3)
              ,(lambda (p style bar?) (list (make-tree-view p style))))
   (toggle (:%2)
@@ -913,6 +921,13 @@
              ,((cadddr p))
              ,(car (cddddr p))))
 
+(define (menu-expand-color-input p)
+  "Expand color-input menu item @p."
+  `(input ,(replace-procedures (cadr p))
+          ,(caddr p)
+          ,(with r ((cadddr p))
+             (if (pair? r) (car r) (replace-procedures (cadddr p))))))
+
 (define (menu-expand-tree-view p)
   "Expand tree-view item @p."
   (display* "menu-expand-tree-view\n")
@@ -989,6 +1004,7 @@
   (choice ,menu-expand-choice)
   (choices ,menu-expand-choice)
   (filtered-choice ,menu-expand-filtered-choice)
+  (color-input ,menu-expand-color-input)
   (tree-view ,menu-expand-tree-view)
   (toggle ,menu-expand-toggle)
   (link ,menu-expand-link p)
