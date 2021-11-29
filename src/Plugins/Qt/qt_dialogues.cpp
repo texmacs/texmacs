@@ -125,6 +125,7 @@ qt_field_widget_rep::as_qwidget () {
     cb->setLineEdit (new QTMLineEdit (cb, type, "1w", WIDGET_STYLE_MINI));
     cb->setSizeAdjustPolicy (QComboBox::AdjustToContents);
     cb->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
+    cb->setMinimumWidth (80);
     cb->setDuplicatesEnabled (true); 
     cb->completer()->setCaseSensitivity (Qt::CaseSensitive);
     if (N(type) == 0) cb->setObjectName ("default focus target");
