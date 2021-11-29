@@ -668,7 +668,7 @@ main (int argc, char** argv) {
 #ifdef OS_MACOS
   if (theme == "default") theme= "";  
 #else
-  if (theme == "default") theme= "native-light";
+  if (theme == "default") theme= "light";
 #endif
   if (theme == "light")
     tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-light.css";
