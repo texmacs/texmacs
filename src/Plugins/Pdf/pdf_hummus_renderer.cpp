@@ -2420,8 +2420,8 @@ pdf_hummus_renderer_rep::flush_metadata () {
     info.Author= as_hummus_string (metadata ["author"]);
   if (metadata->contains ("subject"))
     info.Subject= as_hummus_string (metadata ["subject"]);
-  string creator= "T e X m a c s - " * string (TEXMACS_VERSION);
-  string producer= creator * " + Hummus";
+  string creator= "TeXmacs " * string (TEXMACS_VERSION);
+  string producer= creator * " + Hummus 4.0";
   info.Creator= utf8_as_hummus_string (creator);
   info.Producer= utf8_as_hummus_string (producer);
   PDFDate date; date.SetToCurrentTime ();

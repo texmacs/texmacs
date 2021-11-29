@@ -70,7 +70,7 @@ printer_rep::printer_rep (
   if (suffix (ps_file_name) == "eps")
     prologue << " EPSF-2.0";
   prologue   << "\n"
-             << "%%Creator: T e X m a c s - " TEXMACS_VERSION "\n"
+             << "%%Creator: TeXmacs " TEXMACS_VERSION "\n"
              << "%%Title: " << as_string (tail (ps_file_name)) << "\n"
              << "%%Pages: " << as_string (nr_pages) << "\n"
              << "%%PageOrder: Ascend\n";
