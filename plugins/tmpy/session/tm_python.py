@@ -15,19 +15,24 @@
 import os
 import sys
 import platform
-from os.path import exists
-tmpy_home_path = os.environ.get("TEXMACS_HOME_PATH") + "/plugins/tmpy"
-if (exists (tmpy_home_path)):
-    sys.path.append(os.environ.get("TEXMACS_HOME_PATH") + "/plugins/")
-else:
-    sys.path.append(os.environ.get("TEXMACS_PATH") + "/plugins/")
-
-
 
 import traceback
 import string
 import ast
 from inspect   import ismodule, getsource, getsourcefile
+
+from os.path import exists
+
+sys.path.append(os.path.join(os.getenv("TEXMACS_HOME_PATH").replace("\\", "/"),
+                "plugins"))
+sys.path.append(os.path.join(os.getenv("TEXMACS_PATH").replace("\\", "/"),
+                "plugins"))
+
+from contextlib import redirect_stdout
+import io
+
+import tmpy
+
 from tmpy.compat import py_ver
 from tmpy.capture import CaptureStdout
 from tmpy.postscript import ps_out, PSOutDummy, pdf_out, FileOutDummy
@@ -125,9 +130,10 @@ sys.stdout = os.fdopen (sys.stdout.fileno(), 'w')
 ###############################################################################
 # Session start
 ###############################################################################
-if (exists (tmpy_home_path)):
-    flush_verbatim ("WARNING: You are under develop mode using " + tmpy_home_path)
-    flush_newline (2)
+if os.path.commonpath([os.getenv("TEXMACS_HOME_PATH"),tmpy.__file__])  \
+            == os.getenv("TEXMACS_HOME_PATH"):
+    flush_verbatim ("WARNING: You are under develop mode using " + tmpy_path)
+    #flush_newline (2)
 flush_verbatim (f"Python { platform.python_version() } [{ sys.executable }] \n" +
                "Python plugin for TeXmacs.\n" +
                "Please see the documentation in Help -> Plugins -> Python")
