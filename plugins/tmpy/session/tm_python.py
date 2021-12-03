@@ -78,7 +78,7 @@ def compile_help (text):
     out = {"help" : "", "src": "", "file": ""}
 
     try:
-        out["help"] = CaptureStdout.capture (cmd, my_globals, "tm_python");
+        ret, out["help"] = CaptureStdout.capture (cmd, my_globals, "tm_python");
     except Exception as e:
         out ["help"] = 'No help for "%s": %s' % (text, e)
 
