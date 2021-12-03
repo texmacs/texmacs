@@ -124,7 +124,7 @@ def eval_code (code, p_globals):
     return ret, output
 
 __version__ = '3.0'
-__author__ = 'Ero Carrera, Adrian Soto, Miguel de Benito Delgado, Darcy Shen'
+__author__ = 'Ero Carrera, Adrian Soto, Miguel de Benito Delgado, Darcy Shen, Jeroen Wouters'
 my_globals   = {}
 
 # We insert into the session's namespace the 'ps_out' and 'pdf_out' methods.
