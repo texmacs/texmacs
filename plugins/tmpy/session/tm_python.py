@@ -102,18 +102,22 @@ def my_eval (code, p_globals):
     '''Execute a script and return the value of the last expression'''
 
     block = ast.parse(code, mode='exec')
-    if len(block.body) > 1 and isinstance(block.body[-1], ast.Expr):
-        last = ast.Expression(block.body.pop().value)
-        exec(compile(block, '<string>', mode='exec'), p_globals)
-        return eval(compile(last, '<string>', mode='eval'), p_globals)
-    else:
-        return eval(code, p_globals)
+    f = io.StringIO()
+    with redirect_stdout(f):
+        if len(block.body) > 1 and isinstance(block.body[-1], ast.Expr):
+            last = ast.Expression(block.body.pop().value)
+            exec(compile(block, '<string>', mode='exec'), p_globals)
+            ret = eval(compile(last, '<string>', mode='eval'), p_globals)
+        else:
+            ret = eval(code, p_globals)
+    output = f.getvalue()
+    return ret, output
 
 __version__ = '3.0'
 __author__ = 'Ero Carrera, Adrian Soto, Miguel de Benito Delgado, Darcy Shen'
 my_globals   = {}
 
-# We insert into the session's namespace the 'ps_out' method.
+# We insert into the session's namespace the 'ps_out' and 'pdf_out' methods.
 my_globals['ps_out'] = ps_out
 my_globals['pdf_out'] = pdf_out
 
