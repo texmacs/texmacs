@@ -23,18 +23,19 @@ DATA_COMMAND = chr(16)
 
 def data_begin():
     """Signal the beginning of data to TeXmacs."""
-    os.sys.stdout.write(chr(2))
+    os.sys.stdout.write(DATA_BEGIN)
 
 
 def data_end():
     """Signal the end of data to TeXmacs."""
-    os.sys.stdout.write(chr(5))
+    os.sys.stdout.write(DATA_END)
     os.sys.stdout.flush()
 
 
-def texmacs_escape (data):
-    return data.replace(DATA_BEGIN.encode(), (DATA_ESCAPE + DATA_BEGIN).encode()) \
-               .replace(DATA_END.encode(), (DATA_ESCAPE + DATA_END).encode())
+def texmacs_escape(data):
+    return data.replace(DATA_ESCAPE, DATA_ESCAPE + DATA_ESCAPE) \
+               .replace(DATA_BEGIN, DATA_ESCAPE + DATA_BEGIN) \
+               .replace(DATA_END, DATA_ESCAPE + DATA_END)
 
 
 def flush_any (out_str):
@@ -43,7 +44,7 @@ def flush_any (out_str):
     Output results back to TeXmacs, with the DATA_BEGIN,
     DATA_END control characters."""
     data_begin()
-    os.sys.stdout.write(out_str)
+    os.sys.stdout.write(texmacs_escape(out_str))
     data_end()
 
 def flush_verbatim(content):
@@ -73,9 +74,9 @@ def flush_ps(content):
     flush_any ("ps:" + content)
 
 def flush_err(content):
-    os.sys.stderr.write(chr(2))
-    os.sys.stderr.write("utf8:" + content)
-    os.sys.stderr.write(chr(5))
+    os.sys.stderr.write(DATA_BEGIN)
+    os.sys.stderr.write("verbatim:" + content)
+    os.sys.stderr.write(DATA_END)
     os.sys.stderr.flush() 
 
 def get_plugin_path(name):
