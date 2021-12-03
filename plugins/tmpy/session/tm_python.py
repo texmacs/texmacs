@@ -61,7 +61,7 @@ def flush_output (data):
         else:
             flush_file (data.content)
     else:
-        flush_verbatim (str(data).strip())
+        flush_verbatim (str(data))
 
 def as_scm_string (text):
     return '"%s"' % text.replace('\\', '\\\\').replace('"', '\\"')
