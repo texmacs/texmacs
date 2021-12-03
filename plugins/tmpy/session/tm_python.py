@@ -148,7 +148,8 @@ sys.stdout = os.fdopen (sys.stdout.fileno(), 'w')
 ###############################################################################
 if os.path.commonpath([os.getenv("TEXMACS_HOME_PATH"),tmpy.__file__])  \
             == os.getenv("TEXMACS_HOME_PATH"):
-    flush_verbatim ("WARNING: You are under develop mode using " + tmpy_path + "\n")
+    flush_verbatim ("WARNING: development mode enabled, using " + \
+                os.path.dirname(tmpy.__file__) + "\n")
     #flush_newline (2)
 flush_verbatim (f"Python { platform.python_version() } [{ sys.executable }] \n" +
                "Python plugin for TeXmacs.\n" +
