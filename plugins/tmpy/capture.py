@@ -35,8 +35,7 @@ class CaptureStdout:
     def capture (code, env, filename):
         with CaptureStdout() as capt:
             try:
-                eval (compile (code, filename, 'exec'), env)
+                ret = eval (compile (code, filename, 'exec'), env)
             except Exception as e:
                 traceback.print_exc (file = os.sys.stdout, limit = 0)
-            return capt.getOutput()
-
+            return ret, capt.getOutput()

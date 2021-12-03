@@ -158,8 +158,23 @@ while True:
                 continue
             lines.append (line)
         text = '\n'.join (lines[:-1])
-        try: # Is it an expression?
-            result= my_eval (text, my_globals)
-        except:
-            result= CaptureStdout.capture (text, my_globals, "tm_python")
+        
+        # TODO move both expression and statement case to my_eval (rename to eval_capture)
+        # Is it an expression?
+        try:
+            ret, output= my_eval (text, my_globals)
+        # Is it a statement (e.g. an assignment "a=1"), in which case `compile`
+        # in my_eval raises a SyntaxError
+        # (https://stackoverflow.com/questions/3876231/python-how-to-tell-if-a-string-represent-a-statement-or-an-expression)
+        except SyntaxError:
+            ret, output= CaptureStdout.capture (text, my_globals, "tm_python")
+        
+        if ret is not None:
+            if output != "":
+                result = output + "\n" + str(ret)
+            else:
+                result = str(ret)
+        else:
+            result = output
+
         flush_output (result)
