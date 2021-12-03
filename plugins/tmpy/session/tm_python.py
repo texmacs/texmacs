@@ -49,18 +49,23 @@ if py_ver == 2:
 # import logging as log
 # log.basicConfig(filename='/tmp/tm_python.log',level=log.INFO)
 
-def flush_output (data):
+def flush_output (output,data):
     """Do some parsing on the output according to its type.
     
     Non printable characters in unicode strings are escaped
     and objects of type None are not printed (so that procedure calls,
     as opposed to function calls, don't produce any output)."""
-
+    
+    # wrap stdout output and data output in nested DATA_BEGIN/DATA_END blocks
+    data_begin()
+    os.sys.stdout.write("verbatim:")
+    
+    if output != "":
+        flush_verbatim(output)
+    
     if (data is None):
         flush_verbatim ("")
-        return
-
-    if isinstance (data, PSOutDummy):
+    elif isinstance (data, PSOutDummy):
         flush_ps (data.content)
     elif isinstance (data, FileOutDummy):
         if (data.content is None):
@@ -69,6 +74,8 @@ def flush_output (data):
             flush_file (data.content)
     else:
         flush_verbatim (str(data))
+    
+    data_end()
 
 def as_scm_string (text):
     return '"%s"' % text.replace('\\', '\\\\').replace('"', '\\"')
@@ -102,15 +109,17 @@ def compile_help (text):
 def my_eval (code, p_globals):
     '''Execute a script and return the value of the last expression'''
 
-    block = ast.parse(code, mode='exec')
+    # capture stdout
     f = io.StringIO()
     with redirect_stdout(f):
-        if len(block.body) > 1 and isinstance(block.body[-1], ast.Expr):
-            last = ast.Expression(block.body.pop().value)
-            exec(compile(block, '<string>', mode='exec'), p_globals)
-            ret = eval(compile(last, '<string>', mode='eval'), p_globals)
-        else:
-            ret = eval(code, p_globals)
+        # Is it an expression or a statement (e.g. an assignment "a=1"), in 
+        # which case `compile` in raises a SyntaxError  
+        # (https://stackoverflow.com/questions/3876231/python-how-to-tell-if-a-string-represent-a-statement-or-an-expression)
+        try:
+            code= compile(code, '<string>', 'eval')
+        except SyntaxError:
+            code= compile (code, '<string>', 'exec')
+        ret = eval(code, p_globals)
     output = f.getvalue()
     return ret, output
 
@@ -170,23 +179,5 @@ while True:
                 continue
             lines.append (line)
         text = '\n'.join (lines[:-1])
-        
-        # TODO move both expression and statement case to my_eval (rename to eval_capture)
-        # Is it an expression?
-        try:
-            ret, output= my_eval (text, my_globals)
-        # Is it a statement (e.g. an assignment "a=1"), in which case `compile`
-        # in my_eval raises a SyntaxError
-        # (https://stackoverflow.com/questions/3876231/python-how-to-tell-if-a-string-represent-a-statement-or-an-expression)
-        except SyntaxError:
-            ret, output= CaptureStdout.capture (text, my_globals, "tm_python")
-        
-        if ret is not None:
-            if output != "":
-                result = output + "\n" + str(ret)
-            else:
-                result = str(ret)
-        else:
-            result = output
-
-        flush_output (result)
+        ret, output= my_eval (text, my_globals)
+        flush_output (output,ret)
