@@ -106,7 +106,7 @@ def compile_help (text):
     return dict (map (lambda k_v: (k_v[0], as_scm_string (k_v[1])), out.items()))
 
 
-def my_eval (code, p_globals):
+def eval_code (code, p_globals):
     '''Execute a script and return the value of the last expression'''
 
     # capture stdout
@@ -179,5 +179,5 @@ while True:
                 continue
             lines.append (line)
         text = '\n'.join (lines[:-1])
-        ret, output= my_eval (text, my_globals)
+        ret, output= eval_code (text, my_globals)
         flush_output (output,ret)
