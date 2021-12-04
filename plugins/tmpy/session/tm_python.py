@@ -116,10 +116,16 @@ def eval_code (code, p_globals):
         # which case `compile` in raises a SyntaxError  
         # (https://stackoverflow.com/questions/3876231/python-how-to-tell-if-a-string-represent-a-statement-or-an-expression)
         try:
-            code= compile(code, '<string>', 'eval')
+            block = ast.parse(code, mode='exec')
+            if len(block.body) > 1 and isinstance(block.body[-1], ast.Expr):
+                last = ast.Expression(block.body.pop().value)
+                exec(compile(block, '<string>', mode='exec'), p_globals)
+                ret = eval(compile(last, '<string>', mode='eval'), p_globals)
+            else:
+                ret = eval(code, p_globals)
         except SyntaxError:
             code= compile (code, '<string>', 'exec')
-        ret = eval(code, p_globals)
+            ret = eval(code, p_globals)
     output = f.getvalue()
     return ret, output
 
