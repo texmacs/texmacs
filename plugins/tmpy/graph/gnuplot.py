@@ -20,7 +20,7 @@ class Gnuplot(Graph):
         super(Gnuplot, self).__init__()
         self.name = name
         self.width = 600
-        self.default_output = "eps"
+        self.default_output = "svg"
 
     def greet(self):
         if len(self.message) == 0:
