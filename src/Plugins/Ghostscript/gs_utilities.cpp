@@ -61,6 +61,22 @@ gs_prefix () {
   return string ("\"") * gs_executable () * string ("\"") * string (" ");
 }
 
+static double
+gs_version () {
+  static double version= 0;
+  if (version == 0) {
+    string cmd= gs_prefix () * " --version";
+    string buf= var_eval_system (cmd);
+    int pos= 0;
+    if (read_double (buf, pos, version)) {
+      if (DEBUG_CONVERT) debug_convert << "gs version : " << buf << LF;
+    }
+    else
+      convert_error << "Cannot determine gs version" << LF;
+  }
+  return version;
+}
+
  // eps2write available starting with gs  9.14 (2014-03-26)
  // epswrite removed in gs 9.16 (2015-03-30)
 string
@@ -195,12 +211,16 @@ gs_PDFimage_size (url image, int& w_pt, int& h_pt) {
   if (DEBUG_CONVERT) debug_convert << "gs PDF image size :"<<LF;
   string buf;
   string cmd= gs_prefix ();
+  if (gs_version () >= 9.50)
+    cmd << "--permit-file-read=" << sys_concretize (image) << " "; 
   cmd << "-dNODISPLAY -q -sFile=";
   cmd << sys_concretize (image);
   cmd << " pdf_info.ps";
   buf= eval_system (cmd);
   if (occurs ("Unrecoverable error", buf)) {
     cmd= gs_prefix ();
+    if (gs_version () >= 9.50)
+      cmd << "--permit-file-read=" << sys_concretize (image) << " "; 
     cmd << "-dNODISPLAY -q -sFile=";
     cmd << sys_concretize (image);
     cmd << " " << sys_concretize ("$TEXMACS_PATH/misc/convert/pdf_info.ps");
