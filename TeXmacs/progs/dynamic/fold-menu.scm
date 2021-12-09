@@ -70,7 +70,7 @@
   (for (name (session-list))
     (with menu-name (session-name name)
       ((eval menu-name)
-       (insert-go-to `(script-input ,name "default" "" "") '(2 0))))))
+       (make-script name "default")))))
 
 (menu-bind insert-fold-menu
   (-> "Folded"
