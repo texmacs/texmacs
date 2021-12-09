@@ -975,6 +975,7 @@ resolve_in_path (url u) {
     if (ends (which, name))
       return which;
     else if ((which != "") &&
+             (!occurs ("bin/which: ", which)) &&
              (!starts (which, "which: ")) &&
              (!starts (which, "no ")))
       cout << "TeXmacs] " << which << "\n";
