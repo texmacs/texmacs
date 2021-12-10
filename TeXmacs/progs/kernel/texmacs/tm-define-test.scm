@@ -12,6 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel texmacs tm-define-test)
+(texmacs-module (prog prog-format-test)
   (:use (kernel texmacs tm-define)))
 
 (define (regtest-procedure-name)
