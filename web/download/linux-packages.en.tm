@@ -1,4 +1,4 @@
-<TeXmacs|1.99.21>
+<TeXmacs|2.1.1>
 
 <style|<tuple|tmweb2|old-dots|old-lengths>>
 
@@ -313,6 +313,12 @@
 
       <item><hlink|<TeXmacs> package for xUbuntu_20.10 with a 64 bits
       Intel/AMD processor|<merge|http://www.texmacs.org/Download/ftp/tmftp/Linux/ubuntu2010/|<merge|<TeXmacs-version-release|devel>|.amd64.deb>>>
+
+      <item><hlink|<TeXmacs> package for xUbuntu_21.04 with a 64 bits
+      Intel/AMD processor|<merge|http://www.texmacs.org/Download/ftp/tmftp/Linux/ubuntu2104/|<merge|<TeXmacs-version-release|devel>|.amd64.deb>>>
+
+      <item><hlink|<TeXmacs> package for xUbuntu_21.10 with a 64 bits
+      Intel/AMD processor|<merge|http://www.texmacs.org/Download/ftp/tmftp/Linux/ubuntu2110/|<merge|<TeXmacs-version-release|devel>|.amd64.deb>>>
     </itemize>
 
     <item>As <verbatim|root>, install the package using
