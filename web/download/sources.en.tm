@@ -1,6 +1,6 @@
-<TeXmacs|1.99.10>
+<TeXmacs|2.1.1>
 
-<style|tmweb2>
+<style|<tuple|tmweb2|old-dots|old-lengths>>
 
 <\body>
   <tmweb-current|Download|Sources><tmweb-title|Compiling <TeXmacs> from the
@@ -44,10 +44,8 @@
   <paragraph|Download the latest version>
 
   Download the <hlink|latest version|<merge|https://www.texmacs.org/Download/ftp/tmftp/source/|<merge|<TeXmacs-version-release|devel>|-src.tar.gz>>>
-  of the source code, or the <hlink|latest stable
-  version|<merge|https://www.texmacs.org/Download/ftp/tmftp/source/|<merge|<TeXmacs-version-release|stable>|-src.tar.gz>>>,
-  <verbatim|cd> into the directory where you wish to compile <TeXmacs> and
-  type
+  of the source code, \ <verbatim|cd> into the directory where you wish to
+  compile <TeXmacs> and type
 
   <\shell-code>
     tar -zxvf <merge|<TeXmacs-version-release|devel>|-src.tar.gz>
@@ -184,7 +182,7 @@
   <hlink|contact|../contact/contact.en.tm> us, but you might need to be more
   patient.
 
-  <tmdoc-copyright|1999--2019|Joris van der Hoeven>
+  <tmdoc-copyright|1999\U2019|Joris van der Hoeven>
 
   <tmweb-license>
 </body>

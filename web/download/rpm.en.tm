@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.18>
+<TeXmacs|2.1.1>
 
-<style|tmweb2>
+<style|<tuple|tmweb2|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmweb-current|Download|Linux><tmweb-title|Installing <TeXmacs> as an RPM
@@ -38,10 +38,6 @@
     texmacs &
   </shell-code>
 
-  In a similar way, you may download an RPM for the <hlink|last stable
-  version|<merge|http://www.texmacs.org/Download/ftp/tmftp/redhat/|<merge|<TeXmacs-version-release|stable-release>|.i386.rpm>>>
-  of <TeXmacs>.
-
   <section|Happy <TeXmacs>-ing!>
 
   If you like the program, then please consider
@@ -53,13 +49,10 @@
   <hlink|contact|../contact/contact.en.tm> us, but you might need to be more
   patient.
 
-  <tmdoc-copyright|1999--2011|Joris van der Hoeven>
+  <tmdoc-copyright|1999\U2011|Joris van der Hoeven>
 
   <tmweb-license>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

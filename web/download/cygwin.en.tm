@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.3>
+<TeXmacs|2.1.1>
 
-<style|tmweb2>
+<style|<tuple|tmweb2|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmweb-current|Download|Windows><tmweb-title|Installing <TeXmacs> under
@@ -91,9 +91,7 @@
 
   Download the <hlink|latest version (3.8
   Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|devel>|-src.tar.gz>>>
-  of the source code, or the <hlink|latest stable version (3.8
-  Mb)|<merge|ftp://ftp.texmacs.org/pub/TeXmacs/targz/|<merge|<TeXmacs-version-release|stable>|-src.tar.gz>>>.
-  You may for instance save the distribution in
+  of the source code. You may for instance save the distribution in
   <with|font-family|tt|C:\\tmp>. The name of the file with the distribution
   is of the form <with|font-family|tt|TeXmacs-[source version]-src.tar.gz>,
   where <with|font-family|tt|[source version]> is the corresponding version.
@@ -138,7 +136,7 @@
       from
 
       <\verbatim>
-        \ \ \ \ <hlink|<with|font-family|tt|http://netpbm.sourceforge.net>|http://netpbm.sourceforge.net>
+        \ \ \ \ <hlink|http://netpbm.sourceforge.net|http://netpbm.sourceforge.net>
       </verbatim>
 
       and save it into <with|font-family|tt|C:\\Cygwin-installation>.
@@ -166,13 +164,10 @@
     <with|font-family|tt|port> the corresponding port.
   </itemize>
 
-  <tmdoc-copyright|1999--2003|Joris van der Hoeven>
+  <tmdoc-copyright|1999\U2003|Joris van der Hoeven>
 
   <tmweb-license>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

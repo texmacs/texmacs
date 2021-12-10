@@ -1,6 +1,6 @@
-<TeXmacs|1.99.6>
+<TeXmacs|2.1.1>
 
-<style|tmweb2>
+<style|<tuple|tmweb2|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmweb-current|Download|Windows><tmweb-title|Installing <TeXmacs> under
@@ -12,9 +12,9 @@
   you should:
 
   <\enumerate>
-    <item>Download <hlink|<verbatim|<merge|<TeXmacs-version-release|devel>|-installer.exe>>|<merge|http://www.texmacs.org/Download/ftp/tmftp/windows/|<TeXmacs-version-release|devel>|-installer.exe>>
-    the last stable version or an another
-    <hlink|here|http://ftp.texmacs.org/TeXmacs/tmftp/windows/>.
+    <item>Download the last stable version
+    <hlink|<verbatim|<merge|<TeXmacs-version-release|devel>|-installer.exe>>|<merge|http://www.texmacs.org/Download/ftp/tmftp/windows/|<TeXmacs-version-release|devel>|-installer.exe>>
+    or an another one <hlink|here|http://ftp.texmacs.org/TeXmacs/tmftp/windows/>.
 
     <item>Execute the downloaded installer and follow the installation
     instructions.
@@ -48,7 +48,7 @@
     be fast.
   </itemize>
 
-  <tmdoc-copyright|1999--2013|Joris van der Hoeven|David Michel|Denis Raux>
+  <tmdoc-copyright|1999\U2013|Joris van der Hoeven|David Michel|Denis Raux>
 
   <tmweb-license>
 </body>
