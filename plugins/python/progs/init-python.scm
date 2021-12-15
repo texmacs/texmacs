@@ -31,16 +31,18 @@
     (with s (texmacs->code (stree->tree u) "SourceCode")
       (string-append  s  "\n<EOF>\n"))))
 
-(define (python-utf8-command) (string-append (python-command) " -X utf8 "))
+(define (python-utf8-command)
+  (if (python-command) (string-append (python-command) " -X utf8 ") #f))
 
 (define (python-launcher)
+  (if (python-utf8-command)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
       (string-append (python-utf8-command) " \""
                      (getenv "TEXMACS_HOME_PATH")
                      "/plugins/tmpy/session/tm_python.py\"")
       (string-append (python-utf8-command) " \""
                      (getenv "TEXMACS_PATH")
-                     "/plugins/tmpy/session/tm_python.py\"")))
+                     "/plugins/tmpy/session/tm_python.py\""))))
 
 (plugin-configure python
   (:winpath "python*" ".")
