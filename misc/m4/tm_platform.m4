@@ -50,7 +50,7 @@ AC_DEFUN([TM_PLATFORM],[
   AC_DEFINE_UNQUOTED([WORD_LENGTH_INC],[$(($ac_cv_sizeof_void_p - 1))],[Pointer increment])
 
   AC_MSG_NOTICE([Sizeof integer: $ac_cv_sizeof_void_p])
-  AC_DEFINE_UNQUOTED([WORD_MASK],[$( printf "0x%x" $(( (~($ac_cv_alignof_void_p - 1)) & ((256 ** ac_cv_sizeof_void_p) -1) )))],[Word Mask])
+  AC_DEFINE_UNQUOTED([WORD_MASK],[$( printf 0x%x $(( (~($ac_cv_alignof_void_p - 1)) & ((256 ** ac_cv_sizeof_void_p) -1) )))],[Word Mask])
   AC_DEFINE([MAX_FAST],[264] ,[Max fast alloc // WORD_LENGTH more than power of 2])
   AX_RESTORE_FLAGS
 
@@ -165,7 +165,7 @@ AC_DEFUN([TM_PLATFORM],[
       X11_LDFLAGS="$X_LIBS -lXext -lX11 -lsocket"
       AC_DEFINE_UNQUOTED([WORD_LENGTH],[8],[Pointer  size])
       AC_DEFINE_UNQUOTED([WORD_LENGTH_INC],[7],[Pointer increment])
-      AC_DEFINE_UNQUOTED([WORD_MASK],[$( printf "0x%x" 0xfffffff8)],[Word Mask])
+      AC_DEFINE_UNQUOTED([WORD_MASK],[$( printf 0x%x 0xfffffff8)],[Word Mask])
       CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
       CONFIG_STD_SETENV=""
     ;;
@@ -176,7 +176,7 @@ AC_DEFUN([TM_PLATFORM],[
       CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
       AC_DEFINE_UNQUOTED([WORD_LENGTH],[8],[Pointer  size])
       AC_DEFINE_UNQUOTED([WORD_LENGTH_INC],[7],[Pointer increment])
-      AC_DEFINE_UNQUOTED([WORD_MASK],[$( printf "0x%x" 0xfffffff8)],[Word Mask])
+      AC_DEFINE_UNQUOTED([WORD_MASK],[$( printf 0x%x 0xfffffff8)],[Word Mask])
       CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
       CONFIG_STD_SETENV=""
     ;;
@@ -226,7 +226,7 @@ AC_DEFUN([TM_PLATFORM],[
       CONFIG_BSHARED=""
       CONFIG_BPATH=""
       X11_LDFLAGS="$X_LIBS -lX11"
-      AC_DEFINE_UNQUOTED([WORD_MASK],[$( printf "0x%x" 0xfffffff8)],[Word Mask])
+      AC_DEFINE_UNQUOTED([WORD_MASK],[$( printf 0x%x 0xfffffff8)],[Word Mask])
       CONFIG_STD_SETENV=""
       CONFIG_CHMOD="chmod"
       CONFIG_LIB_PATH="LD_LIBRARYN32_PATH"
