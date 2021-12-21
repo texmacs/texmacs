@@ -5689,7 +5689,7 @@ _ACEOF
 $as_echo "$as_me: Sizeof integer: $ac_cv_sizeof_void_p" >&6;}
 
 cat >>confdefs.h <<_ACEOF
-#define WORD_MASK $( printf "0x%x" $(( (~($ac_cv_alignof_void_p - 1)) & ((256 ** ac_cv_sizeof_void_p) -1) )))
+#define WORD_MASK $( printf 0x%x $(( (~($ac_cv_alignof_void_p - 1)) & ((256 ** ac_cv_sizeof_void_p) -1) )))
 _ACEOF
 
 
@@ -7196,7 +7196,7 @@ _ACEOF
 
 
 cat >>confdefs.h <<_ACEOF
-#define WORD_MASK $( printf "0x%x" 0xfffffff8)
+#define WORD_MASK $( printf 0x%x 0xfffffff8)
 _ACEOF
 
       CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
@@ -7222,7 +7222,7 @@ _ACEOF
 
 
 cat >>confdefs.h <<_ACEOF
-#define WORD_MASK $( printf "0x%x" 0xfffffff8)
+#define WORD_MASK $( printf 0x%x 0xfffffff8)
 _ACEOF
 
       CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
@@ -7293,7 +7293,7 @@ $as_echo "#define OS_IRIX 1" >>confdefs.h
       X11_LDFLAGS="$X_LIBS -lX11"
 
 cat >>confdefs.h <<_ACEOF
-#define WORD_MASK $( printf "0x%x" 0xfffffff8)
+#define WORD_MASK $( printf 0x%x 0xfffffff8)
 _ACEOF
 
       CONFIG_STD_SETENV=""
