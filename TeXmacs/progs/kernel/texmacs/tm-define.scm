@@ -94,9 +94,10 @@
 (define-public (procedure-symbol-name fun)
   (cond ((symbol? fun) fun)
         ((string? fun) (string->symbol fun))
-        ((procedure? fun)
-         (with s-fun (ahash-ref tm-defined-name fun)
-           (if (symbol? s-fun) s-fun (string->symbol (object->string fun)))))
+        ((and (procedure? fun) (ahash-ref tm-defined-name fun))
+         (ahash-ref tm-defined-name fun))
+        ((and (procedure? fun) (string-alpha? (object->string fun)))
+         (string->symbol (object->string fun)))
         (else #f)))
 
 (define-public (procedure-string-name fun)

@@ -30,6 +30,7 @@
    (test "glue procedure" system 'system)
    (test "tm-defined" exec-interactive-command
                       'exec-interactive-command)
+   (test "anonymous function" (lambda (x) (+ x 1)) #f)
    (test "invalid input" 1 #f)))
 
 
