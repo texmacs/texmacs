@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (prog prog-format-test)
+(texmacs-module (kernel texmacs tm-define-test)
   (:use (kernel texmacs tm-define)))
 
 (define (regtest-procedure-name)
@@ -23,7 +23,18 @@
    (test "procedures defined via tm-define" regtest-tm-define regtest-tm-define)
    (test "invalid input" 1 #f)))
 
+(define (regtest-procedure-symbol-name)
+  (regression-test-group
+   "procedure" "symbol"
+   procedure-symbol-name :none
+   (test "glue procedure" system 'system)
+   (test "tm-defined" exec-interactive-command
+                      'exec-interactive-command)
+   (test "invalid input" 1 #f)))
+
+
 (tm-define (regtest-tm-define)
-  (let ((n (+ (regtest-procedure-name))))
+  (let ((n (+ (regtest-procedure-name)
+              (regtest-procedure-symbol-name))))
     (display* "Total: " (object->string n) " tests.\n")
     (display "Test suite of tm-define: ok\n")))

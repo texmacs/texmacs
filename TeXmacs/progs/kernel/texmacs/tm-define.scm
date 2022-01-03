@@ -91,6 +91,18 @@
 (define-public (procedure-name fun) 
   (if (procedure? fun) fun #f))
 
+(define-public (procedure-symbol-name fun)
+  (cond ((symbol? fun) fun)
+        ((string? fun) (string->symbol fun))
+        ((procedure? fun)
+         (with s-fun (ahash-ref tm-defined-name fun)
+           (if (symbol? s-fun) s-fun (string->symbol (object->string fun)))))
+        (else #f)))
+
+(define-public (procedure-string-name fun)
+  (and-with name (procedure-symbol-name fun)
+    (symbol->string name)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Overloading
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

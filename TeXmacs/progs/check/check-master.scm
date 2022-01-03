@@ -14,6 +14,7 @@
 
 (texmacs-module (check check-master)
   (:use (kernel texmacs tm-define-test)
+        (kernel texmacs tm-dialogue-test)
         (convert html htmltm-test)
         (convert html tmhtml-test)
         (convert tools xmltm-test)
@@ -90,4 +91,5 @@
   (regtest-tmmltm)
   (regtest-prog-format)
   (regtest-tm-define)
+  (regtest-tm-dialogue)
 )
