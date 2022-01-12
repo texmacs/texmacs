@@ -203,8 +203,13 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   sideTools->setStyle (qtmstyle ());
   bottomTools->setStyle (qtmstyle ());
   
+  mainToolBar->setMovable (false);
+  modeToolBar->setMovable (false);
+  focusToolBar->setMovable (false);
+  userToolBar->setMovable (false);
+  
   {
-#if (QT_VERSION >= 0x050000)
+#if ((QT_VERSION >= 0x050000) && (QT_VERSION < 0x060000))
     //FIXME: this should be moved in QTMApplication or made screen dependent.
      QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
@@ -217,6 +222,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 #endif
     QSize sz = (pxm ? pxm->size()/dpr : QSize (24, 24));
     tweak_iconbar_size (sz);
+    sz= QSize(20,20);
     mainToolBar->setIconSize (sz);
     pxm = xpm_image ("tm_section.xpm");
 #if (QT_VERSION >= 0x050000)
@@ -242,6 +248,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   //
   // NOTICE: setFixedHeight must be after setIconSize
   // TODO: the size of the toolbar should be calculated dynamically
+#if 0
 #if (QT_VERSION >= 0x050000)
   int toolbarHeight= 30;
   mainToolBar->setFixedHeight (toolbarHeight + 8);
@@ -252,7 +259,8 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   int toolbarHeight= 30 * retina_icons;
   mainToolBar->setFixedHeight (toolbarHeight + 8);
   modeToolBar->setFixedHeight (toolbarHeight + 4);
-  focusToolBar->setFixedHeight (toolbarHeight);  
+  focusToolBar->setFixedHeight (toolbarHeight);
+#endif
 #endif
 #endif
   
@@ -393,6 +401,7 @@ qt_tm_widget_rep::~qt_tm_widget_rep () {
 
 void
 qt_tm_widget_rep::tweak_iconbar_size (QSize& sz) {
+  return ;
 #ifdef Q_OS_LINUX
   if (sz.height () >= 24) {
     sz.setWidth (sz.width () + 2);
@@ -500,10 +509,10 @@ qt_tm_widget_rep::update_visibility () {
       bool tmp = modeToolBar->isVisible();
       dumbToolBar->removeAction(modeToolBarAction);
       dumbToolBar->addAction(mainToolBarAction);
-      bl->insertWidget(0, rulerWidget);
+      //bl->insertWidget(0, rulerWidget);
       bl->insertWidget(0, modeToolBar);
       mainToolBarAction->setVisible(true);
-      rulerWidget->setVisible(true);
+      //rulerWidget->setVisible(true);
       modeToolBar->setVisible(tmp);
       if (modeToolBarAction)
         modeToolBarAction->setVisible(tmp);
@@ -511,8 +520,8 @@ qt_tm_widget_rep::update_visibility () {
     } else { 
       dumbToolBar->removeAction(mainToolBarAction);
       if (modeToolBar->isVisible()) {
-        bl->removeWidget(rulerWidget);
-        rulerWidget->setVisible(false);
+        //bl->removeWidget(rulerWidget);
+        //rulerWidget->setVisible(false);
         bl->removeWidget(modeToolBar);
         if (modeToolBarAction == NULL) {
           modeToolBarAction = dumbToolBar->addWidget(modeToolBar);

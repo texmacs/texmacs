@@ -759,13 +759,19 @@ BEGIN_SLOT
       widget(i)->setSizePolicy (QSizePolicy::Minimum, QSizePolicy::Minimum);
   }
   
+  QWidget *widget=currentWidget();
+  widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+  widget->resize(widget->minimumSizeHint());
+  widget->adjustSize();
+  cout << widget->minimumSizeHint().width() << "," << widget->minimumSizeHint().height() << LF;
+  resize(widget->minimumSizeHint());
     // FIXME? this could loop indefinitely if parents are cyclic.
-  QWidget* p = this;
-  while (p != window()) {
+  QWidget* p = parentWidget();
+  while (p && p != window()) {
     p->adjustSize();
     p = p->parentWidget();
   }
-  p->adjustSize();
+  if (p) p->adjustSize();
 
   if (window()->minimumSize()!=QSize (0,0) && 
       window()->maximumSize() != QSize (QWIDGETSIZE_MAX, QWIDGETSIZE_MAX))

@@ -424,7 +424,6 @@ QTMStyle::drawControl (ControlElement element, const QStyleOption* option, QPain
         break;
       }
 #endif
-
 #if (QT_VERSION < 0x050000)
     case CE_ToolBar: {
 #ifdef UNIFIED_TOOLBAR
@@ -467,11 +466,15 @@ QTMStyle::drawControl (ControlElement element, const QStyleOption* option, QPain
     } break;
 #else
   case CE_ToolBar:
+      
 #ifdef UNIFIED_TOOLBAR
     if (use_unified_toolbar &&
         (widget) && (widget->windowTitle() == "main toolbar"))
       break;
 #endif // UNIFIED_TOOLBAR
+
+      painter->fillRect(option->rect, QColor (208, 208, 208));
+      break;
 
     if ((widget) && (widget->windowTitle() == "main toolbar"))
       painter->fillRect(option->rect, QColor (208, 208, 208));
@@ -485,7 +488,7 @@ QTMStyle::drawControl (ControlElement element, const QStyleOption* option, QPain
       baseStyle()->drawControl (element, option, painter, widget);
     break;
 #endif
-      
+
     default:
       baseStyle()->drawControl (element, option, painter, widget);
   }

@@ -39,6 +39,7 @@
 #include <QApplication>
 #include <QKeyEvent>
 #include <QString>
+#include <QWidget>
 #include "Qt/QTMWidget.hpp"
 #include "Qt/qt_gui.hpp"
 #include "Qt/qt_utilities.hpp"
@@ -530,4 +531,21 @@ mac_end_server () {
   }
 #endif
 #endif
+}
+
+// see
+// https://forum.qt.io/topic/72335/changing-window-titlebar-colour-in-macos/11
+// and
+// https://github.com/dfct/TrueFramelessWindow
+
+void
+changeTitleBarColor(long winId, double red, double green, double blue)
+{
+   if (winId == 0) return;
+   NSView* view = reinterpret_cast<NSView *>(winId);
+   NSWindow* window = [view window];
+   [window setStyleMask:
+    [window styleMask] | NSWindowStyleMaskFullSizeContentView | NSWindowTitleHidden ];
+   [window setTitlebarAppearsTransparent:YES];
+    window.backgroundColor = [NSColor redColor];
 }

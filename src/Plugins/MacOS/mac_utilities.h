@@ -25,4 +25,6 @@ void mac_fix_yosemite_bug();
 void mac_begin_server ();
 void mac_end_server ();
 
+void changeTitleBarColor(long winId, double red, double green, double blue);
+
 #endif // MAC_UTILITIES_H

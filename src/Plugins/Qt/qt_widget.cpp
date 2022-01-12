@@ -28,7 +28,7 @@
 #include "QTMMenuHelper.hpp"
 #include "QTMWindow.hpp"
 
-
+#include "MacOS/mac_utilities.h"
 /******************************************************************************
  * qt_widget_rep: the base widget for the Qt port.
  ******************************************************************************/
@@ -284,6 +284,9 @@ plain_window_widget (widget w, string name, command q) {
       set_position (win, xx, yy);
     if (ww != -1)
       set_size (win, ww, hh);
+    //changeTitleBarColor(concrete(win)->qwid->winId(),0,0,0);
+
+
   }
   return win;
 }
