@@ -237,8 +237,10 @@ get_widget_size (widget w) {
   return array<SI> (width, height);
 }
 
+bool use_native_menubar = true;
 bool use_unified_toolbar= true;
-
+string tm_style_sheet;
+bool use_mini_bars= false;
 
 template<> void
 tm_delete<widget_rep> (widget_rep* ptr) {

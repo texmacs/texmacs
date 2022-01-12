@@ -445,54 +445,54 @@
       ;;(item (text "Base family:")
       ;;  (enum (set! selector-font-family answer)
       ;;        (font-database-families)
-      ;;        selector-font-family "120px"))
+      ;;        selector-font-family "150px"))
       ;;(item (text "Base style:")
       ;;  (enum (set! selector-font-style answer)
       ;;        (font-database-styles selector-font-family)
-      ;;        selector-font-style "120px"))
+      ;;        selector-font-style "150px"))
       ;;(item ====== ======)
       (item (text "Weight:")
         (enum (selector-search-set! selector-search-weight answer)
               '("Any" "Thin" "Light" "Medium" "Bold" "Black")
-              selector-search-weight "120px"))
+              selector-search-weight "150px"))
       (item (text "Slant:")
         (enum (selector-search-set! selector-search-slant answer)
               '("Any" "Normal" "Italic" "Oblique")
-              selector-search-slant "120px"))
+              selector-search-slant "150px"))
       (item (text "Stretch:")
         (enum (selector-search-set! selector-search-stretch answer)
               '("Any" "Condensed" "Unextended" "Wide")
-              selector-search-stretch "120px"))
+              selector-search-stretch "150px"))
       (item (text "Case:")
         (enum (selector-search-set! selector-search-case answer)
               '("Any" "Mixed" "Small Capitals")
-              selector-search-case "120px"))
+              selector-search-case "150px"))
       (item ====== ======)
       (item (text "Serif:")
         (enum (selector-search-set! selector-search-serif answer)
               '("Any" "Serif" "Sans Serif")
-              selector-search-serif "120px"))
+              selector-search-serif "150px"))
       (item (text "Spacing:")
         (enum (selector-search-set! selector-search-spacing answer)
               '("Any" "Proportional" "Monospaced")
-              selector-search-spacing "120px"))
+              selector-search-spacing "150px"))
       (item (text "Device:")
         (enum (selector-search-set! selector-search-device answer)
               '("Any" "Print" "Typewriter" "Digital"
 		"Pen" "Art Pen" "Chalk" "Marker")
-              selector-search-device "120px"))
+              selector-search-device "150px"))
       (item (text "Category:")
         (enum (selector-search-set! selector-search-category answer)
               '("Any" "Ancient" "Attached" "Calligraphic" "Comic"
                 "Decorative" "Distorted" "Gothic" "Handwritten" "Initials"
                 "Medieval" "Miscellaneous" "Outline" "Retro" "Scifi" "Title")
-              selector-search-category "120px"))
+              selector-search-category "150px"))
       (item ====== ======)
       (item (text "Glyphs:")
         (enum (selector-search-set! selector-search-glyphs answer)
               '("Any" "ASCII" "Latin" "Greek" "Cyrillic"
                 "CJK" "Hangul" "Math Symbols" "Math Extra" "Math Letters")
-              selector-search-glyphs "120px")))
+              selector-search-glyphs "150px")))
     (horizontal (glue #f #t 0 0))
     ;;(horizontal
     ;;  >>>
@@ -626,7 +626,7 @@
     (text (selector-font-simulate-comment))
     >>>)
   ===
-  (resize "850px" "225px"
+  (resize "880px" "225px"
     (scrollable
       (link font-sample-text))))
 
@@ -660,7 +660,7 @@
                 "Unicode 0000-0fff" "Unicode 1000-1fff"
                 "Unicode 2000-2fff" "Unicode 3000-3fff"
                 "Unicode 4000-4fff")
-              (get-font-sample-kind) "120px")
+              (get-font-sample-kind) "20em")
         >>>
         (assuming (not (selector-customize?))
           ("Advanced"

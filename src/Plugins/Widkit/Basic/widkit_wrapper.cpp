@@ -73,7 +73,7 @@ concrete (promise<widget> pw) {
 ******************************************************************************/
 
 widget
-extend (widget w, array<widget> a) {
+extend_widget (widget w, array<widget> a) {
   return abstract (extend (concrete (w), concrete (a)));
 }
 
@@ -85,6 +85,12 @@ horizontal_list (array<widget> a) {
 widget
 vertical_list (array<widget> a) {
   return abstract (vertical_list (concrete (a)));
+}
+
+widget
+division_widget (string name, widget w) {
+  (void) name;
+  return w;
 }
 
 widget

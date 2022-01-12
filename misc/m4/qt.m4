@@ -69,7 +69,8 @@ AC_DEFUN([LC_WITH_QT],[
     ;;
   5.*) 
     AC_MSG_NOTICE([Qt5 found])
-    AT_WITH_QT([$xtralibs +printsupport +svg],[+exceptions],[
+    AS_IF([test $CONFIG_OS == MACOS],[xtraPlug=+macextras],[unset xtraPlug])
+    AT_WITH_QT([$xtralibs +printsupport +svg $xtraPlug],[+exceptions],[
       LIBS += $LDFLAGS
       QTPLUGIN = qjpeg qgif qico qsvg
     ],AC_MSG_ERROR([Cannot find a working Qt library]))

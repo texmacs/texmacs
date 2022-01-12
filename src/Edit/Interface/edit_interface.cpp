@@ -112,8 +112,12 @@ edit_interface_rep::resume () {
   SERVER (menu_icons (1, "(horizontal (link texmacs-mode-icons))"));
   SERVER (menu_icons (2, "(horizontal (link texmacs-focus-icons))"));
   SERVER (menu_icons (3, "(horizontal (link texmacs-extra-icons))"));
-  if (use_side_tools)
-    { SERVER (side_tools (0, "(vertical (link texmacs-side-tools))")); }
+  array<url> a= buffer_to_windows (buf->buf->name);
+  if (N(a) > 0) {
+    string win= "(string->url \"" * as_string (a[0]) * "\")";
+    string dyn= "(dynamic (texmacs-side-tools " * win * "))";
+    SERVER (side_tools (0, "(vertical " * dyn * ")"));
+  }
   SERVER (bottom_tools (0, "(vertical (link texmacs-bottom-tools))"));
   cur_sb= 2;
   env_change= env_change & (~THE_FREEZE);
@@ -561,7 +565,7 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
       selection sel= eb->find_check_selection (q1, q2);
       if (N(focus_get ()) >= N(p))
         if (!recurse || get_preference ("show full context") == "on")
-          rs << outline (sel->rs, pixel);
+          rs << outlines (sel->rs, pixel);
     }
     set_access_mode (old_mode);
     if (recurse || N(rs) == 0)
@@ -608,8 +612,12 @@ edit_interface_rep::update_menus () {
   SERVER (menu_icons (1, "(horizontal (link texmacs-mode-icons))"));
   SERVER (menu_icons (2, "(horizontal (link texmacs-focus-icons))"));
   SERVER (menu_icons (3, "(horizontal (link texmacs-extra-icons))"));
-  if (use_side_tools)
-    { SERVER (side_tools (0, "(vertical (link texmacs-side-tools))")); }
+  array<url> a= buffer_to_windows (buf->buf->name);
+  if (N(a) > 0) {
+    string win= "(string->url \"" * as_string (a[0]) * "\")";
+    string dyn= "(dynamic (texmacs-side-tools " * win * "))";
+    SERVER (side_tools (0, "(vertical " * dyn * ")"));
+  }
   SERVER (bottom_tools (0, "(vertical (link texmacs-bottom-tools))"));
   set_footer ();
   if (has_current_window ()) {
@@ -926,7 +934,7 @@ edit_interface_rep::apply_changes () {
       path q1, q2;
       selection_correct (p1, p2, q1, q2);
       selection sel= eb->find_check_selection (q1, q2);
-      sem_rects << outline (sel->rs, pixel);
+      sem_rects << outlines (sel->rs, pixel);
     }
     if (sem_rects != old_sem_rects || sem_correct != old_sem_correct) {
       invalidate (old_sem_rects);

@@ -79,7 +79,7 @@ enum tree_label {
   SPC_LENGTH, XSPC_LENGTH,                        // font specific & stretchy
   PAR_LENGTH, PAW_LENGTH, PAG_LENGTH,             // page dimensions
   GW_LENGTH, GH_LENGTH, GU_LENGTH,                // extents & unit of graphics
-  TMPT_LENGTH, PX_LENGTH,                         // miscellaneous
+  TMPT_LENGTH, PX_LENGTH, GUIPX_LENGTH,           // miscellaneous
   LCORNER_LENGTH, BCORNER_LENGTH,
   RCORNER_LENGTH, TCORNER_LENGTH,
   MS_LENGTH, S_LENGTH, MSEC_LENGTH, SEC_LENGTH,   // durations

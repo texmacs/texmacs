@@ -16,7 +16,7 @@
 
     <branch|‘rodowiska|man-environments.pl.tm>
 
-    <branch|Ukªad|man-layout.pl.tm>
+    <branch|Ukªad|man-layout-issues.pl.tm>
 
     <branch|System wyboru fontu|man-fonts.pl.tm>
 

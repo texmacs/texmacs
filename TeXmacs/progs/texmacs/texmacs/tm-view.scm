@@ -112,7 +112,10 @@
                     ((== n 3) "user provided icons"))))
     (if (== (windows-number) 1)
         (set-boolean-preference var val)
-        (show-icon-bar n val))))
+        (show-icon-bar n val))
+    (when (and (os-macos?) (== n 0)
+               (get-boolean-preference "use unified toolbar"))
+      (notify-now "Restart TeXmacs to avoid potential visual artefacts"))))
 
 (define saved-informative-flags "default")
 

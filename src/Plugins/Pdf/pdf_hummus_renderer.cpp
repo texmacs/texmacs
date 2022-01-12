@@ -1006,12 +1006,13 @@ pdf_hummus_renderer_rep::flush_glyphs ()
 void
 pdf_hummus_renderer_rep::draw_bitmap_glyph (int ch, font_glyphs fn, SI x, SI y)
 {
+  (void) x; (void) y;
   // use bitmap (to be improved)
   string fontname = fn->res_name;
   string char_name (fontname * "-" * as_string ((int) ch));
   if (!pdf_glyphs->contains(char_name)) {
-    // debug_convert << "draw bitmap glyph " << (double)gl->width / 8 << " " << (double)gl->height / 8 << "\n";
     glyph gl= fn->get(ch);
+    // debug_convert << "draw bitmap glyph " << (double)gl->width / 8 << " " << (double)gl->height / 8 << "\n";
     if (is_nil (gl)) return;
     string buf= load_virtual_glyph (gl);
     ObjectIDType imageXObjectID  = pdfWriter.GetObjectsContext().GetInDirectObjectsRegistry().AllocateNewObjectID();
@@ -1128,7 +1129,7 @@ t3font_rep::write_char (glyph gl, ObjectIDType inCharID) {
     data  << as_string ((double)(cwidth)) << " 0 0 "
 	  << as_string ((double)(cheight)) << " "
 	  << as_string ((double)(llx)) << " "
-	  << as_string (lly) << " cm\r\n";
+	  << as_string ((double)(lly)) << " cm\r\n";
     data << "BI\r\n/W " << as_string (cwidth)
 	 << "\r\n/H " << as_string (cheight) << "\r\n";
     data << "/CS /G /BPC 1 /F /AHx /D [0.0 1.0] /IM true\r\nID\r\n";
@@ -1305,6 +1306,33 @@ pdf_hummus_renderer_rep::flush_fonts()
  * Text handling
  ******************************************************************************/
 
+static hashset<string>
+pdf_font_issues () {
+  static const url u ("$TEXMACS_PATH/fonts/pdf-font-issues.scm");
+  static bool loaded= false;
+  static hashset<string> set;
+  if (loaded)
+    return set;
+  string s;
+  if (exists (u) && !load_string (u, s, false)) {
+    tree t= block_to_scheme_tree (s);
+    for (int i=0; i<N(t); i++)
+      if (is_func (t[i], TUPLE) && (N(t[i]) >= 1)) {
+        tree key= t[i][0];
+	if (is_string (key))
+	  set->insert (as_string (key));
+      }
+  }
+  loaded= true;
+  return set;
+}
+
+static bool
+no_font_issues (url u) {
+  string h= as_standard_string (tail (u));
+  return !pdf_font_issues ()->contains (h);
+}
+
 void
 pdf_hummus_renderer_rep::make_pdf_font (string fontname)
 {
@@ -1329,13 +1357,12 @@ pdf_hummus_renderer_rep::make_pdf_font (string fontname)
       font = pdfWriter.GetFontForFile((char*)_u);
     }
     
-    if (font != NULL) {
+    if (font != NULL && no_font_issues (u)) {
       native_fonts (fontname)= font;
       std::string _ps_name= font->GetFreeTypeFont()->GetPostscriptName();
       string ps_name (_ps_name.c_str ());
       if (starts (ps_name, "EuropeanComputerModern"))
 	EuropeanComputerModern_fonts->insert (fontname);
-      //cout << EuropeanComputerModern_fonts << LF;
       return;
     }
     else {

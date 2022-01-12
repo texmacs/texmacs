@@ -83,7 +83,12 @@
   (let* ((omit? (list? the-level))
 	 (level (if omit? (car the-level) the-level)))
     (cond ((or (func? x 'tmdoc-title) (func? x 'tmdoc-title*))
-	   (if omit? '(document) (cons level (cdr x))))
+	   (cond (omit? '(document))
+                 ((== level 'title) (cons level (cdr x)))
+                 (else
+                   (let* ((name (url-basename (url-basename cur)))
+                          (lab  (string-append "sec-" (url->string name))))
+                     `(concat ,(cons level (cdr x)) (label ,lab))))))
           ((and (func? x 'concat)
                 (or (func? (tm-ref x 0) 'tmdoc-title)
                     (func? (tm-ref x 0) 'tmdoc-title*)))
@@ -126,6 +131,45 @@
 	      (with u (cadr (assoc 'body (cdr t)))
 		(cons 'document
 		      (tmdoc-rewrite (cdr u) root cur level done))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Make all TeXmacs hyperlinks internal to the document
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmdoc-label-table doc t)
+  (cond ((tm-atomic? doc) (noop))
+        ((tm-func? doc 'label 1)
+         (ahash-set! t (tm->stree (tm-ref doc 0)) #t))
+        (else (for-each (cut tmdoc-label-table <> t) (tm-children doc)))))
+
+(define (tmdoc-internal-label dest)
+  (and (string? dest)
+       (with pos (string-search-backwards "#" (string-length dest) dest)
+         (if (>= pos 0)
+             (substring dest (+ pos 1) (string-length dest))
+             (with name (url-basename (url-basename dest))
+               (string-append "sec-" (url->string name)))))))
+
+(define (tmdoc-internal-link dest t)
+  (and-with lab (tmdoc-internal-label dest)
+    (and (ahash-ref t lab)
+         (string-append "#" lab))))
+
+(define (tmdoc-internalize* doc t)
+  (cond ((tm-atomic? doc) doc)
+        ((or (tm-func? doc 'hlink 2) (tm-func? doc 'hyper-link 2))
+         (let* ((text (tm-ref doc 0))
+                (dest (tmdoc-internal-link (tm-ref doc 1) t)))
+           (if dest `(hlink ,text ,dest) text)))
+        ((tm-compound? doc)
+         (cons (tm-label doc)
+               (map (cut tmdoc-internalize* <> t) (tm-children doc))))
+        (else "")))
+
+(define (tmdoc-internalize doc)
+  (with t (make-ahash-table)
+    (tmdoc-label-table doc t)
+    (tmdoc-internalize* doc t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Further subroutines
@@ -197,7 +241,8 @@
           ((== type "normal")
            (tm->stree (tree-import root "texmacs")))
           ((== type "book")
-           (let* ((body (tmdoc-expand root root 'title))
+           (let* ((body* (tmdoc-expand root root 'title))
+                  (body (tmdoc-internalize body*))
                   (lan (tmdoc-language root)))
              (tm->stree
               `(document

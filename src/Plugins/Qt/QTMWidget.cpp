@@ -833,17 +833,15 @@ QTMWidget::dropEvent (QDropEvent *event) {
   }
 }
 
-/*
 void
 QTMWidget::wheelEvent(QWheelEvent *event) {
   if (QApplication::keyboardModifiers() == Qt::ControlModifier) {
     if (event->delta() > 0) {
-      the_gui->process_keypress (tm_widget(), string("C-+"), texmacs_time());
+      call ("zoom-in", object (sqrt (sqrt (2.0))));
     } else {
-      the_gui->process_keypress (tm_widget(), string("C--"), texmacs_time());
+      call ("zoom-out", object (sqrt (sqrt (2.0))));
     }
   } else {
     QAbstractScrollArea::wheelEvent(event);
   }
 }
-*/

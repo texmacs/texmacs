@@ -169,14 +169,15 @@
 
 (tm-widget ((macro-editor u packs doc mode) quit)
   (padded
+    ===
     (resize "600px" "300px"
       (texmacs-input doc `(style (tuple ,@packs)) u))
-    ===
+    ======
     (hlist
       (refreshable "macro-editor-mode"
         (enum (set-macro-mode u answer)
               '("Text" "Source" "Mathematics")
-              (get-macro-mode) "9em"))
+              (get-macro-mode) "12em"))
       >>
       (explicit-buttons
         ("Shortcut" (and-with t (macro-retrieve u)
@@ -184,10 +185,11 @@
                              (sh (string-append "(make '" s ")"))
                              (sh* (if (== s "") "" sh)))
                         (open-shortcuts-editor "" sh*))))
-        //
+        // //
         ("Apply" (macro-apply u))
         // //
-        ("Ok" (macro-apply u) (quit))))))
+        ("Ok" (macro-apply u) (quit))))
+    ===))
 
 (tm-define (editable-macro? l)
   (if (symbol? l) (set! l (symbol->string l)))
@@ -374,7 +376,7 @@
             (refreshable "macros-editor-documentation"
               (texmacs-output
                `(document
-                  (mini-paragraph "480px" ,(macros-editor-current-help)))
+                  (mini-paragraph "476guipx" ,(macros-editor-current-help)))
                '(style "tmdoc"))))
           (glue #t #f 0 0))))
     ======
@@ -382,7 +384,7 @@
       (refreshable "macro-editor-mode"
         (enum (set-macro-mode u answer)
               '("Text" "Source" "Mathematics")
-              (get-macro-mode) "9em"))
+              (get-macro-mode) "12em"))
       >>
       (explicit-buttons
         ("Shortcut" (and-with t (macro-retrieve u)
@@ -390,7 +392,7 @@
                              (sh (string-append "(make '" s ")"))
                              (sh* (if (== s "") "" sh)))
                         (open-shortcuts-editor "" sh*))))
-        //
+        // //
         ("Apply" (macro-apply u))
 	// //
 	("Ok" (macro-apply u) (quit))))))

@@ -731,7 +731,7 @@ void
 locus_box_rep::loci (SI x, SI y, SI delta, list<string>& l, rectangles& rs) {
   bs[0]->loci (x, y, delta, l, rs);
   l = l * ids;
-  rs= rs * outline (rectangles (rectangle (x1, y1, x2, y2)), pixel);
+  rs= rs * outlines (rectangles (rectangle (x1, y1, x2, y2)), pixel);
 }
 
 void

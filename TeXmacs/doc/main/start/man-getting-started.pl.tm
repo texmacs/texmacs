@@ -10,7 +10,7 @@
 
     <branch|Konfiguracja <TeXmacs>|man-setup.pl.tm>
 
-    <branch|Tworzenie, ªadowanie i zapisywanie dokumentów|man-files.pl.tm>
+    <branch|Tworzenie, ªadowanie i zapisywanie dokumentów|man-file-ops.pl.tm>
 
     <branch|Drukowanie dokumentów|man-print.pl.tm>
   </traverse>

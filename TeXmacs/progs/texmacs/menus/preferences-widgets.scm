@@ -15,6 +15,17 @@
   (:use (texmacs menus preferences-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Wrapper
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (set-pretty-preference* which pretty-val)
+  (let* ((old (get-preference which))
+         (act (set-pretty-preference which pretty-val))
+         (new (get-preference which)))
+    (when (!= new old)
+      (notify-restart))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Appearance preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -45,39 +56,51 @@
   ("separate" "Documents in separate windows")
   ("shared" "Multiple documents share window"))
 
+(define-preference-names "gui theme"
+  ("default" "Default")
+  ("light" "Bright")
+  ("dark" "Dark")
+  ("native-light" "Native")
+  ("" "Legacy"))
+
 (tm-widget (general-preferences-widget)
   (aligned
     (item (text "Look and feel:")
-      (enum (set-pretty-preference "look and feel" answer)
+      (enum (set-pretty-preference* "look and feel" answer)
             '("Default" "Emacs" "Gnome" "KDE" "Mac OS" "Windows")
             (get-pretty-preference "look and feel")
-            "21em"))
+            "18em"))
     (item (text "User interface language:")
       (enum (set-pretty-preference "language" answer)
             (map upcase-first supported-languages)
             (get-pretty-preference "language")
-            "21em"))
+            "18em"))
     (item (text "Complex actions:")
       (enum (set-pretty-preference "complex actions" answer)
             '("Through the menus" "Through popup windows")
             (get-pretty-preference "complex actions")
-            "21em"))
+            "18em"))
     (item (text "Interactive questions:")
       (enum (set-pretty-preference "interactive questions" answer)
             '("On the footer" "In popup windows")
             (get-pretty-preference "interactive questions")
-            "21em"))
+            "18em"))
     (item (text "Details in menus:")
       (enum (set-pretty-preference "detailed menus" answer)
             '("Simplified menus" "Detailed menus")
             (get-pretty-preference "detailed menus")
-            "21em"))
+            "18em"))
     (item (text "Buffer management:")
       (enum (set-pretty-preference "buffer management" answer)
             '("Documents in separate windows"
               "Multiple documents share window")
             (get-pretty-preference "buffer management")
-            "21em"))))
+            "18em"))
+    (item (text "User interface theme:")
+      (enum (set-pretty-preference* "gui theme" answer)
+            '("Default" "Bright" "Dark" "Native" "Legacy" "")
+            (get-pretty-preference "gui theme")
+            "18em"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard preferences
@@ -117,6 +140,7 @@
   ("yawerty" "Yawerty"))
 
 (tm-widget (keyboard-preferences-widget)
+  ======
   (aligned
     (item (text "Space bar in text mode:")
       (enum (set-pretty-preference "text spacebar" answer)
@@ -145,9 +169,9 @@
             '("None" "Translit" "Jcuken" "Yawerty")
             (get-pretty-preference "cyrillic input method")
             "15em")))
-  ======
+  ====== ======
   (bold (text "Remote controllers with keyboard simulation"))
-  ===
+  ======
   (hlist
     (aligned
       (item (text "Left:")
@@ -183,85 +207,103 @@
 ;;        - Too much alignment tweaking      
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-widget (math-keyboard-preferences-widget)
+  (bold (text "Keyboard"))
+  ======
+  (aligned
+    (meti (text "Use extensible brackets")
+      (toggle (set-boolean-preference "use large brackets"
+                                      answer)
+              (get-boolean-preference "use large brackets")))))
+
+(tm-widget (math-hints-preferences-widget)
+  (bold (text "Contextual hints"))
+  ======
+  (refreshable "math-pref-context"
+    (aligned
+      (meti (text "Show full context")
+        (toggle (set-boolean-preference "show full context" answer)
+                (get-boolean-preference "show full context")))
+      (meti (text "Show table cells")
+        (toggle (set-boolean-preference "show table cells" answer)
+                (get-boolean-preference "show table cells")))
+      (meti (text "Show current focus")
+        (toggle (set-boolean-preference "show focus" answer)
+                (get-boolean-preference "show focus")))
+      (assuming (get-boolean-preference "semantic editing")
+        (meti (text "Only show semantic focus")
+          (toggle (set-boolean-preference
+                   "show only semantic focus" answer)
+                  (get-boolean-preference
+                   "show only semantic focus")))))))
+
+(tm-widget (math-semantics-preferences-widget)
+  (bold (text "Semantics"))
+  ======
+  (refreshable "math-pref-semantic-selections"
+    (aligned
+      (meti (text "Semantic editing")
+        (toggle (and (set-boolean-preference "semantic editing"
+                                             answer)
+                     (refresh-now "math-pref-semantic-selections")
+                     (refresh-now "math-pref-context"))
+                (get-boolean-preference "semantic editing")))
+      (assuming (get-boolean-preference "semantic editing")
+        (meti (text "Semantic selections")
+          (toggle (set-boolean-preference "semantic selections"
+                                          answer)
+                  (get-boolean-preference
+                   "semantic selections"))))
+      (assuming #f
+        (meti (text "Semantic correctness")
+          (toggle (set-boolean-preference "semantic correctness"
+                                          answer)
+                  (get-boolean-preference
+                   "semantic correctness")))))))
+
+(tm-widget (math-correction-preferences-widget)
+  (bold (text "Correction"))
+  ======
+  (aligned
+    (meti (text "Remove superfluous invisible operators")
+      (toggle (set-boolean-preference
+               "manual remove superfluous invisible" answer)
+              (get-boolean-preference
+               "manual remove superfluous invisible")))
+    (meti (text "Insert missing invisible operators")
+      (toggle (set-boolean-preference
+               "manual insert missing invisible" answer)
+              (get-boolean-preference
+               "manual insert missing invisible")))
+    (meti (text "Homoglyph substitutions")
+      (toggle (set-boolean-preference
+               "manual homoglyph correct" answer)
+              (get-boolean-preference
+               "manual homoglyph correct")))))
+
 (tm-widget (math-preferences-widget)
   (padded
-  (hlist
-    (glue #t #f 5 0)
-    (vlist
-      (vlist (hlist (glue #t #f 5 0) (bold (text "Keyboard"))) ---
-        (hlist
-          (glue #t #f 5 0)
-          (aligned
-            (item (text "Use extensible brackets")
-              (toggle (set-boolean-preference "use large brackets"
-                                              answer)
-                      (get-boolean-preference "use large brackets")))))
-        (glue #f #t 0 5))
-      === ===
-      (vlist (hlist (glue #t #f 5 0) (bold (text "Contextual hints"))) ---
-        (hlist 
-          (glue #t #f 5 0)
-          (refreshable "math-pref-context"
-            (aligned
-              (item (text "Show full context")
-                (toggle (set-boolean-preference "show full context" answer)
-                        (get-boolean-preference "show full context")))
-              (item (text "Show table cells")
-                (toggle (set-boolean-preference "show table cells" answer)
-                        (get-boolean-preference "show table cells")))
-              (item (text "Show current focus")
-                (toggle (set-boolean-preference "show focus" answer)
-                        (get-boolean-preference "show focus")))
-              (assuming (get-boolean-preference "semantic editing")
-                (item (text "Only show semantic focus")
-                  (toggle (set-boolean-preference
-                           "show only semantic focus" answer)
-                          (get-boolean-preference
-                           "show only semantic focus")))))))))
-    /// ///
-    (vlist
-      (vlist (bold (text "Semantics")) ---
-        (refreshable "math-pref-semantic-selections"
-          (aligned
-            (meti (hlist // (text "Semantic editing"))
-              (toggle (and (set-boolean-preference "semantic editing"
-                                                   answer)
-                           (refresh-now "math-pref-semantic-selections")
-                           (refresh-now "math-pref-context"))
-                      (get-boolean-preference "semantic editing")))
-            (assuming (get-boolean-preference "semantic editing")
-              (meti (hlist // (text "Semantic selections"))
-                (toggle (set-boolean-preference "semantic selections"
-                                                answer)
-                        (get-boolean-preference
-                         "semantic selections"))))
-            (if #f
-                (meti (hlist // (text "Semantic correctness"))
-                  (toggle (set-boolean-preference "semantic correctness"
-                                                  answer)
-                          (get-boolean-preference
-                           "semantic correctness"))))))
-          (glue #f #t 0 5))
-      === ===
-      (vlist (bold (text "Correction")) ---
-        (aligned
-          (meti (hlist // (text "Remove superfluous invisible operators"))
-            (toggle (set-boolean-preference
-                     "manual remove superfluous invisible" answer)
-                    (get-boolean-preference
-                     "manual remove superfluous invisible")))
-          (meti (hlist // (text "Insert missing invisible operators"))
-            (toggle (set-boolean-preference
-                     "manual insert missing invisible" answer)
-                    (get-boolean-preference
-                     "manual insert missing invisible")))
-          (meti (hlist // (text "Homoglyph substitutions"))
-            (toggle (set-boolean-preference
-                     "manual homoglyph correct" answer)
-                    (get-boolean-preference
-                     "manual homoglyph correct"))))
-        (glue #f #t 0 5)))
-    (glue #t #f 5 0))))
+    (hlist
+      (vlist
+        (dynamic (math-keyboard-preferences-widget))
+        ====== ======
+        (dynamic (math-hints-preferences-widget))
+        (glue #f #t 0 1))
+      (glue #f #f 30 0)
+      (vlist
+        (dynamic (math-semantics-preferences-widget))
+        ====== ======
+        (dynamic (math-correction-preferences-widget))
+        (glue #f #t 0 1)))))  
+
+(tm-widget (math-preferences-widget*)
+  (dynamic (math-keyboard-preferences-widget))
+  ====== ======
+  (dynamic (math-hints-preferences-widget))
+  ====== ======
+  (dynamic (math-semantics-preferences-widget))
+  ====== ======
+  (dynamic (math-correction-preferences-widget)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Conversion preferences widget
@@ -291,7 +333,7 @@
     (refresh-now "texmacs to html")))
 
 (tm-widget (html-preferences-widget)
-  ===
+  ======
   (bold (text "TeXmacs -> Html"))
   ===
   (refreshable "texmacs to html"
@@ -318,8 +360,8 @@
               "https://www.texmacs.org/css/web-article-colored.css"
               "https://www.texmacs.org/css/web-article-dark-colored.css"
               "")
-            (get-preference "texmacs->html:css-stylesheet") "30em")))
-  ======
+            (get-preference "texmacs->html:css-stylesheet") "18em")))
+  ====== ======
   (bold (text "Html -> TeXmacs"))
   ===
   (refreshable "html -> texmacs"
@@ -364,7 +406,7 @@
   (set-boolean-preference "texmacs->latex:transparent-source-tracking" on?))
 
 (tm-widget (latex-preferences-widget)
-  ===
+  ======
   (bold (text "LaTeX -> TeXmacs"))
   ===
   (aligned
@@ -372,7 +414,7 @@
       (toggle
         (set-boolean-preference "latex->texmacs:fallback-on-pictures" answer)
         (get-boolean-preference "latex->texmacs:fallback-on-pictures"))))
-  ======
+  ====== ======
   (bold (text "TeXmacs -> LaTeX"))
   ===
   (aligned
@@ -398,7 +440,7 @@
             '("Ascii" "Cork with catcodes" "Utf-8 with inputenc")
             (get-pretty-preference "texmacs->latex:encoding")
             "15em")))
-  ======
+  ====== ======
   (bold (text "Conservative conversion options"))
   ===
   (refreshable "source-tracking"
@@ -453,7 +495,7 @@
     (meti (hlist // (text "Only convert changes when re-importing"))
       (toggle (set-bibtm-conservative answer)
               (get-bibtm-conservative))))
-  ======
+  ====== ======
   (bold (text "TeXmacs -> BibTeX"))
   ===
   (aligned
@@ -476,7 +518,7 @@
   ("utf-8" "Utf-8"))
 
 (tm-widget (verbatim-preferences-widget)
-  ===
+  ======
   (bold (text "TeXmacs -> Verbatim"))
   ===
   (aligned
@@ -489,8 +531,8 @@
       (enum (set-pretty-preference "texmacs->verbatim:encoding" answer)
             '("Automatic" "Cork" "Iso-8859-1" "Utf-8")
             (get-pretty-preference "texmacs->verbatim:encoding")
-            "5em")))
-  ======
+            "12em")))
+  ====== ======
   (bold (text "Verbatim -> TeXmacs"))
   ===
   (aligned
@@ -503,7 +545,7 @@
       (enum (set-pretty-preference "verbatim->texmacs:encoding" answer)
             '("Auto" "Cork" "Iso-8859-1" "Utf-8")
             (get-pretty-preference "verbatim->texmacs:encoding")
-            "5em"))))
+            "12em"))))
 
 ;; Pdf ----------
 (define-preference-names "texmacs->pdf:version"
@@ -514,7 +556,7 @@
   ("1.7" "1.7"))
 
 (tm-widget (pdf-preferences-widget)
-  ===
+  ======
   (bold (text "TeXmacs -> Pdf/Postscript"))
   ===
   (aligned
@@ -526,17 +568,19 @@
       (meti (hlist // (text "Produce Postscript using native export filter"))
         (toggle (set-boolean-preference "native postscript" answer)
                 (get-boolean-preference "native postscript"))))
-   (meti (hlist // (text "Expand beamer slides"))
+    (meti (hlist // (text "Expand beamer slides"))
       (toggle (set-boolean-preference "texmacs->pdf:expand slides" answer)
-              (get-boolean-preference "texmacs->pdf:expand slides"))))
+              (get-boolean-preference "texmacs->pdf:expand slides")))
     (assuming (supports-native-pdf?)
-      (aligned (meti (hlist // (text "Distill encapsulated Pdf files"))
+      (meti (hlist // (text "Distill encapsulated Pdf files"))
         (toggle (set-boolean-preference "texmacs->pdf:distill inclusion" answer)
-                (get-boolean-preference "texmacs->pdf:distill inclusion"))))
-      (aligned (meti (hlist // (text "Check exported Pdf files for correctness"))
+                (get-boolean-preference "texmacs->pdf:distill inclusion")))
+      (meti (hlist // (text "Check exported Pdf files for correctness"))
         (toggle (set-boolean-preference "texmacs->pdf:check" answer)
-                (get-boolean-preference "texmacs->pdf:check"))))
-      (aligned (item (text "Pdf version number:")
+                (get-boolean-preference "texmacs->pdf:check")))))
+  (assuming (supports-native-pdf?)
+    (aligned
+      (item (text "Pdf version number:")
         (enum (set-preference "texmacs->pdf:version" answer)
               '("default" "1.4" "1.5" "1.6" "1.7")
               (get-preference "texmacs->pdf:version") "12em")))))
@@ -555,7 +599,7 @@
 (define (supports-inkscape?) (url-exists-in-path? "inkscape"))
 
 (tm-widget (image-preferences-widget)
-  ===
+  ======
   (bold (text "TeXmacs -> Image"))
   ===
   (aligned
@@ -563,13 +607,13 @@
       (enum (set-preference "texmacs->image:raster-resolution" answer)
             '("1200" "600" "300" "150" "")
             (get-preference "texmacs->image:raster-resolution")
-            "5em"))
+            "8em"))
     (item (text "Clipboard image format:")
       (enum (set-pretty-preference "texmacs->image:format" answer)
             (pretty-format-list)
             (get-pretty-preference "texmacs->image:format")
-            "5em")))
-  ===
+            "8em")))
+  ====== ======
   (bold (text "Image -> TeXmacs"))
   ===
   (aligned
@@ -677,17 +721,50 @@
 (tm-widget (security-preferences-widget)
   (refreshable "security-preferences-refresher"
     (padded
-      (tabs
-        (tab (text "Wallet")
-          (centered
-            (dynamic (wallet-preferences-widget))))
-        (tab (text "Encryption")
-          (centered
-            (dynamic (gpg-preferences-widget))))
-        ;;(tab (text "Scripts")
-        ;;  (centered
-        ;;    (dynamic (script-preferences-widget))))
-        ))))
+      ======
+      (bold (text "Wallet"))
+      ===
+      (dynamic (wallet-preferences-widget))
+      ====== ======
+      (bold (text "Encryption"))
+      ===
+      (dynamic (gpg-preferences-widget))
+      ;;====== ======
+      ;;(bold (text "Scripts")) 
+      ;;===
+      ;;(dynamic (script-preferences-widget))
+      )))
+
+(tm-widget (misc-preferences-widget)
+  (aligned
+    (item (text "Automatically save:")
+      (enum (set-pretty-preference "autosave" answer)
+            '("5 sec" "30 sec" "120 sec" "300 sec" "Disable")
+            (get-pretty-preference "autosave")
+            "12em"))
+    (item (text "Security:")
+      (enum (set-pretty-preference "security" answer)
+            '("Accept no scripts" "Prompt on scripts" "Accept all scripts")
+            (get-pretty-preference "security")
+            "12em"))
+    (item (text "Scripting language:")
+      (enum (set-pretty-preference "scripting language" answer)
+            (scripts-preferences-list)
+            (get-pretty-preference "scripting language")
+            "12em"))
+    (item (text "Document updates run:")
+      (enum (set-pretty-preference "document update times" answer)
+            '("Once" "Twice" "Three times")
+            (get-pretty-preference "document update times") 
+            "12em"))
+    (assuming (updater-supported?)
+      (item (text "Check for automatic updates:")
+        (enum (set-pretty-preference "updater:interval" answer)
+              (automatic-checks-choices)
+              (get-pretty-preference "updater:interval")
+              "12em")))
+    (assuming (updater-supported?)
+      (item (text "Last check:") (text (last-check-string))))))
 
 (tm-widget (experimental-preferences-widget)
   (hlist
@@ -709,7 +786,11 @@
                 (get-boolean-preference "advanced font customization")))
       (meti (hlist // (text "New style page breaking"))
         (toggle (set-boolean-preference "new style page breaking" answer)
-                (get-boolean-preference "new style page breaking"))))
+                (get-boolean-preference "new style page breaking")))
+      (assuming (os-macos?)
+        (meti (hlist // (text "Use native menubar"))
+          (toggle (set-boolean-preference "use native menubar" answer)
+                  (get-boolean-preference "use native menubar")))))
     /// ///
     (vlist
       (aligned
@@ -739,69 +820,90 @@
                     (get-boolean-preference "use unified toolbar")))))
       (glue #f #t 0 0))))
 
+(tm-widget (experimental-preferences-widget*)
+  (aligned
+    (meti (hlist // (text "Encryption"))
+      (toggle (set-boolean-preference "experimental encryption" answer)
+              (get-boolean-preference "experimental encryption")))
+    (meti (hlist // (text "Fast environments"))
+      (toggle (set-boolean-preference "fast environments" answer)
+              (get-boolean-preference "fast environments")))
+    ;;(meti (hlist // (text "Alpha transparency"))
+    ;;  (toggle (set-boolean-preference "experimental alpha" answer)
+    ;;          (get-boolean-preference "experimental alpha")))
+    ;;(meti (hlist // (text "New style fonts"))
+    ;;  (toggle (set-boolean-preference "new style fonts" answer)
+    ;;          (get-boolean-preference "new style fonts")))
+    ;;(meti (hlist // (text "Advanced font customization"))
+    ;;  (toggle (set-boolean-preference "advanced font customization" answer)
+    ;;          (get-boolean-preference "advanced font customization")))
+    (meti (hlist // (text "New style page breaking"))
+      (toggle (set-boolean-preference "new style page breaking" answer)
+              (get-boolean-preference "new style page breaking")))
+    ;;(meti (hlist // (text "New bibliography dialogue"))
+    ;;  (toggle
+    ;;   (set-boolean-preference "gui:new bibliography dialogue" answer)
+    ;;   (get-boolean-preference "gui:new bibliography dialogue")))
+    (meti (hlist // (text "Program bracket matching"))
+      (toggle (set-boolean-preference "prog:highlight brackets" answer)
+              (get-boolean-preference "prog:highlight brackets")))
+    (meti (hlist // (text "Automatic program brackets"))
+      (toggle (set-boolean-preference "prog:automatic brackets" answer)
+              (get-boolean-preference "prog:automatic brackets")))
+    (meti (hlist // (text "Program bracket selections"))
+      (toggle (set-boolean-preference "prog:select brackets" answer)
+              (get-boolean-preference "prog:select brackets")))
+    ;;(meti (hlist // (text "Case-insensitive search"))
+    ;;  (toggle (set-boolean-preference "case-insensitive-match" answer)
+    ;;          (get-boolean-preference "case-insensitive-match")))
+    (assuming (qt-gui?)  ; TODO: recode the dialogue in scheme
+      (meti (hlist // (text "Use print dialogue"))
+        (toggle (set-boolean-preference "gui:print dialogue" answer)
+                (get-boolean-preference "gui:print dialogue"))))
+    (assuming (os-macos?)
+      (meti (hlist // (text "Use native menubar"))
+        (toggle (set-boolean-preference "use native menubar" answer)
+                (get-boolean-preference "use native menubar")))
+      (meti (hlist // (text "Use unified toolbars"))
+        (toggle (set-boolean-preference "use unified toolbar" answer)
+                (get-boolean-preference "use unified toolbar"))))))
+
 (tm-widget (other-preferences-widget)
   (centered
-    (aligned
-      (item (text "Automatically save:")
-        (enum (set-pretty-preference "autosave" answer)
-              '("5 sec" "30 sec" "120 sec" "300 sec" "Disable")
-              (get-pretty-preference "autosave")
-              "15em"))
-      (item (text "Security:")
-        (enum (set-pretty-preference "security" answer)
-              '("Accept no scripts" "Prompt on scripts" "Accept all scripts")
-              (get-pretty-preference "security")
-              "15em"))
-      (item (text "Scripting language:")
-        (enum (set-pretty-preference "scripting language" answer)
-              (scripts-preferences-list)
-              (get-pretty-preference "scripting language")
-              "15em"))
-      (item (text "Document updates run:")
-        (enum (set-pretty-preference "document update times" answer)
-              '("Once" "Twice" "Three times")
-              (get-pretty-preference "document update times") 
-              "15em"))
-      (assuming (updater-supported?)
-        (item (text "Check for automatic updates:")
-          (enum (set-pretty-preference "updater:interval" answer)
-                (automatic-checks-choices)
-                (get-pretty-preference "updater:interval")
-                "15em")))
-      (assuming (updater-supported?)
-        (item (text "Last check:") (text (last-check-string))))))
-  ======
-  (bold (text "Experimental features (to be used with care)"))
-  ======
-  (dynamic (experimental-preferences-widget)))
+    (dynamic (misc-preferences-widget))
+    ======
+    (bold (text "Experimental features (to be used with care)"))
+    ======
+    (dynamic (experimental-preferences-widget))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences widget
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (preferences-widget)
-  (icon-tabs
-    (icon-tab "tm_prefs_general.xpm" (text "General")
-      (centered
-        (dynamic (general-preferences-widget))))
-    (icon-tab "tm_prefs_keyboard.xpm" (text "Keyboard")
-      (centered
-        (dynamic (keyboard-preferences-widget))))
-    ;; TODO: please implement nice icon tabs first before
-    ;; adding new tabs in the preferences widget
-    ;; The tabs currently take too much horizontal space
-    ;;(icon-tab "tm_prefs_other.xpm" (text "Mathematics") ; TODO: icon
-    ;;  (centered
-    ;;    (dynamic (math-preferences-widget))))
-    (icon-tab "tm_prefs_convert.xpm" (text "Convert")
-      (dynamic (conversion-preferences-widget)))
-    (assuming (== (get-preference "experimental encryption") "on")
-      (icon-tab "tm_prefs_security.xpm" (text "Security")
+  (centered
+    (icon-tabs
+      (icon-tab "tm_prefs_general.xpm" (text "General")
         (centered
-          (dynamic (security-preferences-widget)))))
-    (icon-tab "tm_prefs_other.xpm" (text "Other")
-      (centered
-        (dynamic (other-preferences-widget))))))
+          (dynamic (general-preferences-widget))))
+      (icon-tab "tm_prefs_keyboard.xpm" (text "Keyboard")
+        (centered
+          (dynamic (keyboard-preferences-widget))))
+      ;; TODO: please implement nice icon tabs first before
+      ;; adding new tabs in the preferences widget
+      ;; The tabs currently take too much horizontal space
+      ;;(icon-tab "tm_prefs_other.xpm" (text "Mathematics") ; TODO: icon
+      ;;  (centered
+      ;;    (dynamic (math-preferences-widget))))
+      (icon-tab "tm_prefs_convert.xpm" (text "Convert")
+        (dynamic (conversion-preferences-widget)))
+      (assuming (== (get-preference "experimental encryption") "on")
+        (icon-tab "tm_prefs_security.xpm" (text "Security")
+          (centered
+            (dynamic (security-preferences-widget)))))
+      (icon-tab "tm_prefs_other.xpm" (text "Other")
+        (centered
+          (dynamic (other-preferences-widget)))))))
 
 (tm-define (open-preferences)
   (:interactive #t)

@@ -55,12 +55,15 @@
     (choice :%3)
     (choices :%3)
     (filtered-choice :%4)
+    (color-input :%3)
     (tree-view :%3)
     (toggle :%2)
     (horizontal :menu-item-list)
     (vertical :menu-item-list)
     (hlist :menu-item-list)
     (vlist :menu-item-list)
+    (division :%1 :menu-item-list)
+    (class :%1 :menu-item-list)
     (aligned :menu-item-list)
     (aligned-item :%2)
     (tabs :menu-item-list)
@@ -79,6 +82,7 @@
     (vsplit :menu-item :menu-item)
     (refresh :%1 :string?)
     (refreshable :%1 :menu-item-list)
+    (cached :%1 :%1 :menu-item-list)
     (if :%1 :menu-item-list)
     (when :%1 :menu-item-list)
     (for :%1 :%1)
@@ -251,7 +255,7 @@
 
 (define (make-menu-input p style)
   "Make @(input :%1 :string? :%1 :string?) menu item."
-  (with (tag cmd type props width) p
+  (with (tag cmd type props width) p    
     (widget-input (object->command (menu-protect cmd)) type (props)
                   style width)))
 
@@ -286,6 +290,11 @@
   (with (tag cmd vals val filterstr) p
     (widget-filtered-choice (object->command (menu-protect cmd)) (vals) (val)
                             (filterstr))))
+
+(define (make-color-input p style)
+  "Make @(color-input :%3) menu item."
+  (with (tag cmd bg? props) p
+    (widget-color-picker (object->command (menu-protect cmd)) bg? (props))))
 
 (define (make-tree-view p style)
   "Make @(tree-view :%3) item."
@@ -478,13 +487,25 @@
   "Make @(vlist :menu-item-list) menu item."
   (widget-vlist (make-menu-items (cdr p) style #f)))
 
+(define (make-menu-division p style)
+  "Make @(division :%1 :menu-item-list) item."
+  (with (tag name . items) p
+    (with inner (make-menu-items (list (cons 'vertical items)) style #f)
+      (widget-division (name) (car inner)))))
+
+(define (make-menu-class p style)
+  "Make @(class :%1 :menu-item-list) item."
+  (with (tag name . items) p
+    (with inner (make-menu-items (list (cons 'horizontal items)) style #f)
+      (widget-division (name) (car inner)))))
+
 (define (make-aligned p style)
   "Make @(aligned :menu-item-list) item."
   (widget-aligned (make-menu-items (map cadr (cdr p)) style #f)
                   (make-menu-items (map caddr (cdr p)) style #f)))
 
 (define (make-aligned-item p style)
-  "Make @(aligned-item :2%) item."
+  "Make @(aligned-item :%2) item."
   (display* "Error 'make-aligned-item', " p ", " style "\n")
   (list 'vlist))
 
@@ -640,6 +661,12 @@
     (if linked (make-menu-items linked style bar?)
         (make-menu-error "bad link: " (object->string (cadr p))))))
 
+(define (make-menu-dynamic p style bar?)
+  "Make @(dynamic :%1) menu items."
+  (with dyn (eval (cadr p))
+    (if dyn (make-menu-items dyn style bar?)
+        (make-menu-error "bad link: " (object->string (cadr p))))))
+
 (define (make-menu-promise p style bar?)
   "Make @(promise :%1) menu items."
   (with value ((cadr p))
@@ -658,6 +685,24 @@
     (list (widget-refreshable
             (lambda () (widget-vmenu (make-menu-items-list items style bar?)))
             (kind)))))
+
+(define cached-widgets (make-ahash-table))
+
+(define (make-cached p style bar?)
+  "Make @(cached :%1 :menu-item-list) menu items."
+  (with (tag kind valid? . items) p
+    (let* ((kind* (kind))
+           (fun (lambda ()
+                  (or (and (valid?) (ahash-ref cached-widgets kind*))
+                      (let* ((l (make-menu-items-list items style bar?))
+                             (w (widget-vmenu l)))
+                        (ahash-set! cached-widgets kind* w)
+                        w)))))
+      (list (widget-refreshable fun kind*)))))
+
+(tm-define (invalidate-now kind)
+  (ahash-remove! cached-widgets kind)
+  (refresh-now kind))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main routines for making menu items
@@ -720,12 +765,16 @@
            ,(lambda (p style bar?) (list (make-choices p style))))
   (filtered-choice (:%4)
            ,(lambda (p style bar?) (list (make-filtered-choice p style))))
+  (color-input (:%3)
+         ,(lambda (p style bar?) (list (make-color-input p style))))
   (tree-view (:%3)
              ,(lambda (p style bar?) (list (make-tree-view p style))))
   (toggle (:%2)
           ,(lambda (p style bar?) (list (make-toggle p style))))
   (link (:%1)
         ,(lambda (p style bar?) (make-menu-link p style bar?)))
+  (dynamic (:%1)
+           ,(lambda (p style bar?) (make-menu-dynamic p style bar?)))
   (horizontal (:*)
               ,(lambda (p style bar?) (list (make-menu-horizontal p style))))
   (vertical (:*)
@@ -734,6 +783,10 @@
          ,(lambda (p style bar?) (list (make-menu-hlist p style))))
   (vlist (:*)
          ,(lambda (p style bar?) (list (make-menu-vlist p style))))
+  (division (:%1 :*)
+            ,(lambda (p style bar?) (list (make-menu-division p style))))
+  (class (:%1 :*)
+            ,(lambda (p style bar?) (list (make-menu-class p style))))
   (aligned (:*)
          ,(lambda (p style bar?) (list (make-aligned p style))))
   (aligned-item (:%2)
@@ -781,7 +834,9 @@
   (refresh (:%1 :string?)
            ,(lambda (p style bar?) (make-refresh p style bar?)))
   (refreshable (:%1 :*)
-               ,(lambda (p style bar?) (make-refreshable p style bar?))))
+               ,(lambda (p style bar?) (make-refreshable p style bar?)))
+  (cached (:%1 :%1 :*)
+               ,(lambda (p style bar?) (make-cached p style bar?))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu expansion
@@ -791,6 +846,11 @@
   "Expand menu link @p."
   (with linked ((eval (cadr p)))
     (if linked (menu-expand linked) p)))
+
+(define (menu-expand-dynamic p)
+  "Expand menu link @p."
+  (with dyn (eval (cadr p))
+    (if dyn (menu-expand dyn) p)))
 
 (define (menu-expand-if p)
   "Expand conditional menu @p."
@@ -845,22 +905,28 @@
   "Expand enum item @p."
   `(enum ,(replace-procedures (cadr p))
          ,(replace-procedures (caddr p))
-         ,(replace-procedures (cadddr p))
+         ,((cadddr p))
          ,(fifth p)))
 
 (define (menu-expand-choice p)
   "Expand choice item @p."
   `(,(car p) ,(replace-procedures (cadr p))
              ,(caddr p)
-             ,(cadddr p)))
+             ,((cadddr p))))
 
 (define (menu-expand-filtered-choice p)
   "Expand filtered choice item @p."
-  
   `(,(car p) ,(replace-procedures (cadr p))
              ,(caddr p)
-             ,(cadddr p)
+             ,((cadddr p))
              ,(car (cddddr p))))
+
+(define (menu-expand-color-input p)
+  "Expand color-input menu item @p."
+  `(input ,(replace-procedures (cadr p))
+          ,(caddr p)
+          ,(with r ((cadddr p))
+             (if (pair? r) (car r) (replace-procedures (cadddr p))))))
 
 (define (menu-expand-tree-view p)
   "Expand tree-view item @p."
@@ -872,14 +938,18 @@
 (define (menu-expand-toggle p)
   "Expand toggle item @p."
   `(toggle ,(replace-procedures (cadr p))
-           ,(replace-procedures (caddr p))))
+           ,((caddr p))))
 
 (define (menu-expand-list l)
   "Expand links and conditional menus in list of menus @l."
   (map menu-expand l))
 
+(define must-eval-list
+  '(input enum choice filtered-choice toggle))
+
 (define (replace-procedures x)
   (cond ((procedure? x) (procedure-source x))
+        ((and (pair? x) (in? (car x) must-eval-list)) (menu-expand x))
         ((list? x) (map replace-procedures x))
         (else x)))
 
@@ -934,13 +1004,17 @@
   (choice ,menu-expand-choice)
   (choices ,menu-expand-choice)
   (filtered-choice ,menu-expand-filtered-choice)
+  (color-input ,menu-expand-color-input)
   (tree-view ,menu-expand-tree-view)
   (toggle ,menu-expand-toggle)
   (link ,menu-expand-link p)
+  (dynamic ,menu-expand-dynamic p)
   (horizontal ,(lambda (p) `(horizontal ,@(menu-expand-list (cdr p)))))
   (vertical ,(lambda (p) `(vertical ,@(menu-expand-list (cdr p)))))
   (hlist ,(lambda (p) `(hlist ,@(menu-expand-list (cdr p)))))
   (vlist ,(lambda (p) `(vlist ,@(menu-expand-list (cdr p)))))
+  (division ,replace-procedures)
+  (class ,replace-procedures)
   (aligned ,(lambda (p) `(aligned ,@(menu-expand-list (cdr p)))))
   (aligned-item ,(lambda (p) `(aligned-item ,@(menu-expand-list (cdr p)))))
   (tabs ,(lambda (p) `(tabs ,@(menu-expand-list (cdr p)))))
@@ -964,7 +1038,8 @@
   (mini ,menu-expand-mini)
   (promise ,menu-expand-promise)
   (refresh ,replace-procedures)
-  (refreshable ,replace-procedures))
+  (refreshable ,replace-procedures)
+  (cached ,replace-procedures))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
@@ -1122,3 +1197,83 @@
   (:interactive #t)
   (show-message "Restart TeXmacs in order to let changes take effect"
                 "Notification"))
+
+(tm-widget ((notify-dialogue message) cmd)
+  (padded
+    (text message)
+    ===
+    (bottom-buttons
+      >>
+      ("Ok" (cmd "Ok"))
+      >>)))
+
+(tm-define (notify-now message)
+  (delayed
+    (:idle 1)
+    (dialogue-window (notify-dialogue message) noop "Notification")))
+
+(tm-define (notify-restart . args)
+  (notify-now "Restart TeXmacs in order to let changes take effect"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Side tools
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define window-tools-table (make-ahash-table))
+
+(tm-widget (texmacs-side-tool win tool)
+  (division "title"
+    (text (string-append "Missing '" (object->string (car tool)) "' tool"))))
+
+(tm-define (window->tools win)
+  (or (ahash-ref window-tools-table win) (list)))
+
+(tm-define (set-window-tools win l)
+  (ahash-set! window-tools-table win l))
+
+(tm-define (tool? tool type)
+  (== (car tool) type))
+
+(tm-define (tool-active? tool . opt-win)
+  (when (func? tool 'quote)
+    (set! tool (cadr tool)))
+  (when (string? tool)
+    (set! tool (string->symbol tool)))
+  (when (symbol? tool)
+    (set! tool (list tool)))
+  (with win (if (null? opt-win) (current-window) (car opt-win))
+    (and-with l (ahash-ref window-tools-table win)
+      (in? tool l))))
+  
+(tm-define (tool-toggle tool . opt-win)
+  (:check-mark "v" tool-active?)
+  (when (string? tool)
+    (set! tool (string->symbol tool)))
+  (when (symbol? tool)
+    (set! tool (list tool)))
+  (with win (if (null? opt-win) (current-window) (car opt-win))
+    (with l (window->tools win)
+      (if (in? tool l)
+          (set-window-tools win (list-remove l tool))
+          (set-window-tools win (cons tool l))))))
+
+(tm-define-macro (tm-tool* tool name . body)
+  (cond ((or (npair? tool) (npair? (cdr tool)))
+         (texmacs-error "tm-tool" "tool name ~S should be a pair" tool))
+        ((not (func? name :name 1))
+         (texmacs-error "tm-tool" "~S should be of the form (:name :1)" name))
+        (else
+          `(begin
+             (tm-widget ,tool ,@body)
+             (tm-widget (texmacs-side-tool ,(cadr tool) tool)
+               (:require (== (car tool) ',(car tool)))
+               (division "title"
+                 (text ,(cadr name)))
+               (dynamic (,(car tool) ,(cadr tool)
+                         ,@(map (lambda (i) `(list-ref tool ,(- i 1)))
+                                (.. 2 (length tool)))))
+               ======)
+             ))))
+
+(tm-define-macro (tm-tool tool name . body)
+  `(tm-tool* ,tool ,name (centered ,@body)))

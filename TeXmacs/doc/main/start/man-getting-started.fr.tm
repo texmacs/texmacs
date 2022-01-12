@@ -11,7 +11,7 @@
     <apply|branch|Configuration initiale de <TeXmacs>|man-setup.fr.tm>
 
     <apply|branch|Création, ouverture et sauvegarde de
-    documents|man-files.fr.tm>
+    documents|man-file-ops.fr.tm>
 
     <apply|branch|Impression de documents|man-print.fr.tm>
   </traverse>

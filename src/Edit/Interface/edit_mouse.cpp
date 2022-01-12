@@ -304,7 +304,7 @@ edit_interface_rep::update_mouse_loci () {
       tree lt= l->item;
       path lp= reverse (obtain_ip (lt));
       selection sel= eb->find_check_selection (lp * start(lt), lp * end(lt));
-      rs2 << outline (sel->rs, pixel);
+      rs2 << outlines (sel->rs, pixel);
       l= l->next;
     }
     ids1= as_list_string (call ("link-active-ids", object (ids1)));

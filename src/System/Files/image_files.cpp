@@ -389,6 +389,15 @@ svg_image_size (url image, int& w, int& h) {
 * displaying and printing : png, eps, pdf
 ******************************************************************************/
 
+bool
+wrap_qt_supports (url image) {
+#ifdef QTTEXMACS
+  return qt_supports (image);
+#else
+  (void) image; return false;
+#endif
+}
+
 void
 image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
   if (DEBUG_CONVERT) debug_convert << "image_to_eps ...";
@@ -402,7 +411,8 @@ image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
   // Note: since inkscape would most likely be the prog called to
   // translate svg we could at no additional cost allow other
   // vector formats supported by inkscape : ai, svgz, cdr, wmf ...
-  if ((s == "svg") && (call_scm_converter (image, eps))) return;
+  if ((s == "svg") && !wrap_qt_supports (image) &&
+      (call_scm_converter (image, eps))) return;
   
 #ifdef USE_GS
   if (gs_supports (image)) {
@@ -444,7 +454,8 @@ image_to_pdf (url image, url pdf, int w_pt, int h_pt, int dpi) {
   if (DEBUG_CONVERT) debug_convert << "image_to_pdf ... ";
   string s= suffix (image);
   // First try to preserve "vectorialness"
-  if ((s == "svg") && call_scm_converter(image, pdf)) return;
+  if ((s == "svg") && !wrap_qt_supports (image) &&
+      call_scm_converter (image, pdf)) return;
 #ifdef USE_GS
   if (gs_supports (image)) {
     if (DEBUG_CONVERT) debug_convert << " using gs "<<LF;
@@ -464,12 +475,6 @@ image_to_pdf (url image, url pdf, int w_pt, int h_pt, int dpi) {
   call_imagemagick_convert(image, pdf, w_pt, h_pt, dpi);
 }
 
-bool prefer_inkscape (string suffix) {
-  return suffix == "svg" &&
-    exists_in_path ("inkscape") &&
-    get_preference ("image->texmacs:svg-prefer-inkscape", "off") == "on";
-}
-
 void
 image_to_png (url image, url png, int w, int h) {// IN PIXEL UNITS!
   string source_suffix= suffix (image);
@@ -480,21 +485,21 @@ image_to_png (url image, url png, int w, int h) {// IN PIXEL UNITS!
   */
 #ifdef MACOSX_EXTENSIONS
   //cout << "mac convert " << image << ", " << png << "\n";
-  if (mac_supports (image) && !prefer_inkscape (source_suffix)) {
+  if (mac_supports (image)) {
     if (DEBUG_CONVERT) debug_convert << " using mac_os "<<LF;
     mac_image_to_png (image, png, w, h);
     return;
   }
 #endif
 #ifdef QTTEXMACS
-  if (qt_supports (image) && !prefer_inkscape (source_suffix)) {
+  if (qt_supports (image)) {
     if (DEBUG_CONVERT) debug_convert << " using qt "<<LF;
     qt_convert_image (image, png, w, h);
     return;
   }
 #endif
 #ifdef USE_GS
-  if (gs_supports (image) && !prefer_inkscape (source_suffix)) {
+  if (gs_supports (image)) {
     if (DEBUG_CONVERT) debug_convert << " using gs "<<LF;
     if (gs_to_png (image, png, w, h)) return;
   }

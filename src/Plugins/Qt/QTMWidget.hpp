@@ -69,8 +69,7 @@ protected:
   //virtual void dragMoveEvent (QDragMoveEvent *event);
   virtual void dropEvent(QDropEvent *event);
 
-  // void wheelEvent(QWheelEvent *event) override;
-  // FIXME: Plugins/Qt/QTMWidget.hpp:61: error: expected ';' before 'override'
+  virtual void wheelEvent(QWheelEvent *event);
   virtual QVariant inputMethodQuery (Qt::InputMethodQuery query) const;
 
 };

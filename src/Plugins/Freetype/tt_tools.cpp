@@ -159,6 +159,9 @@ tt_table (string tt, int i, string tag) {
 
 string
 tt_extract_subfont (string tt, int i) {
+  if (i < 0 || i >= tt_nr_fonts (tt))
+    cout << "TeXmacs] error, invalid TrueType subfont " << i
+         << " out of " << tt_nr_fonts (tt) << "\n";
   ASSERT (i >= 0 && i < tt_nr_fonts (tt), "index out of range");
   if (!tt_is_collection (tt)) return tt;
   string r;

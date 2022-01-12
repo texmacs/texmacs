@@ -202,6 +202,7 @@ init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH/misc");
   make_dir ("$TEXMACS_HOME_PATH/misc/patterns");
   make_dir ("$TEXMACS_HOME_PATH/misc/pixmaps");
+  make_dir ("$TEXMACS_HOME_PATH/misc/themes");
   make_dir ("$TEXMACS_HOME_PATH/packages");
   make_dir ("$TEXMACS_HOME_PATH/plugins");
   make_dir ("$TEXMACS_HOME_PATH/progs");
@@ -368,6 +369,10 @@ init_env_vars () {
                        "$TEXMACS_HOME_PATH/langs/natural/dic" |
                        url ("$TEXMACS_PATH/langs/natural/dic") |
                        plugin_path ("langs/natural/dic"));
+  (void) get_env_path ("TEXMACS_THEME_PATH",
+                       url ("$TEXMACS_PATH/misc/themes") |
+                       url ("$TEXMACS_HOME_PATH/misc/themes") |
+                       plugin_path ("misc/themes"));
 #ifdef OS_WIN32
   set_env ("TEXMACS_SOURCE_PATH", "");
 #else

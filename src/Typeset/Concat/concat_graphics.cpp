@@ -80,9 +80,10 @@ BEGIN_MAGNIFY
                   env->clip_lim1, env->clip_lim2);
   typeset_graphical (bs, t, ip);
 
+  bool crop= env->get_bool (GR_AUTO_CROP);
   point lim1= env->clip_lim1;
   point lim2= env->clip_lim2;
-  if (env->get_bool (GR_AUTO_CROP)) {
+  if (crop) {
     SI x1= MAX_SI, y1= MAX_SI, x2= -MAX_SI, y2= -MAX_SI;
     for (int i=1; i<N(bs); i++) {
       box b= bs[i];
@@ -101,6 +102,14 @@ BEGIN_MAGNIFY
   gr= as_grid (env->read (GR_EDIT_GRID));
   gr->set_aspect (env->read (GR_EDIT_GRID_ASPECT));
   box b= graphics_box (ip, bs, env->fr, gr, lim1, lim2);
+  if (crop && lim1[1] * lim2[1] > 0) {
+    SI y1= env->fr (lim1) [1];
+    SI y2= env->fr (lim2) [1];
+    if (y1 > 0 && y2 > 0)
+      b= move_box (ip, b, 0, -min (y1, y2));
+    else if (y1 < 0 && y2 < 0)
+      b= move_box (ip, b, 0, -max (y1, y2));
+  }
   print (b);
 
   notify_graphics_extents (t, lim1, lim2);

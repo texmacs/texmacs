@@ -14,6 +14,8 @@
 (texmacs-module (kernel gui menu-define)
   (:use (kernel gui gui-markup)))
 
+(define use-minibars? (== (cpp-get-preference "use minibars" "off") "on"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of dynamic menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -79,6 +81,10 @@
   (require-format x '(refreshable :%1 :*))
   `($refreshable ,(cadr x) ,@(map gui-make (cddr x))))
 
+(define (gui-make-cached x)
+  (require-format x '(cached :%1 :%1 :*))
+  `($cached ,(cadr x) ,(caddr x) ,@(map gui-make (cdddr x))))
+
 (define (gui-make-group x)
   (require-format x '(group :%1))
   `($menu-group ,(cadr x)))
@@ -126,6 +132,10 @@
 (define (gui-make-filtered-choice x)
   (require-format x '(filtered-choice :%4))
   `($filtered-choice ,@(cdr x)))
+
+(define (gui-make-color-input x)
+  (require-format x '(color-input :%3))
+  `($color-input ,@(cdr x)))
 
 (define (gui-make-tree-view x)
   (require-format x '(tree-view :%3))
@@ -187,6 +197,14 @@
   (require-format x '(vlist :*))
   `($vlist ,@(map gui-make (cdr x))))
 
+(define (gui-make-division x)
+  (require-format x '(division :%1 :*))
+  `($division ,(cadr x) ,@(map gui-make (cddr x))))
+
+(define (gui-make-class x)
+  (require-format x '(class :%1 :*))
+  `($class ,(cadr x) ,@(map gui-make (cddr x))))
+
 (define (gui-make-aligned x)
   (require-format x '(aligned :*))
   `($aligned ,@(map gui-make (cdr x))))
@@ -214,6 +232,10 @@
 (define (gui-make-icon-tab x)
   (require-format x '(icon-tab :%2 :*))
   `($icon-tab ,@(map gui-make (cdr x))))
+
+(define (gui-make-plain-style x)
+  (require-format x '(plain-style :*))
+  `($widget-style 0 ,@(map gui-make (cdr x))))
 
 (define (gui-make-inert x)
   (require-format x '(inert :*))
@@ -261,7 +283,9 @@
 
 (define (gui-make-minibar x)
   (require-format x '(minibar :*))
-  `(gui$minibar ,@(map gui-make (cdr x))))
+  (if use-minibars?
+      `(gui$minibar ,@(map gui-make (cdr x)))
+      `($when #t ,@(map gui-make (cdr x)))))
 
 (define (gui-make-extend x)
   (require-format x '(extend :%1 :*))
@@ -317,7 +341,9 @@
 
 (define (gui-make-mini x)
   (require-format x '(mini :%1 :*))
-  `($mini ,(cadr x) ,@(map gui-make (cddr x))))
+  (if use-minibars?
+      `($mini ,(cadr x) ,@(map gui-make (cddr x)))
+      `($when #t ,@(map gui-make (cddr x)))))
 
 (define (gui-make-symbol x)
   (require-format x '(symbol :string? :*))
@@ -373,6 +399,7 @@
   (loop ,gui-make-loop)
   (refresh ,gui-make-refresh)
   (refreshable ,gui-make-refreshable)
+  (cached ,gui-make-cached)
   (group ,gui-make-group)
   (text ,gui-make-text)
   (invisible ,gui-make-invisible)
@@ -386,6 +413,7 @@
   (choices ,gui-make-choices)
   (tree-view ,gui-make-tree-view)
   (filtered-choice ,gui-make-filtered-choice)
+  (color-input ,gui-make-color-input)
   (toggle ,gui-make-toggle)
   (icon ,gui-make-icon)
   (replace ,gui-make-replace)
@@ -400,6 +428,8 @@
   (vertical ,gui-make-vertical)
   (hlist ,gui-make-hlist)
   (vlist ,gui-make-vlist)
+  (division ,gui-make-division)
+  (class ,gui-make-class)
   (aligned ,gui-make-aligned)
   (item ,gui-make-item)
   (meti ,gui-make-meti)
@@ -407,6 +437,7 @@
   (tab ,gui-make-tab)
   (icon-tabs ,gui-make-icon-tabs)
   (icon-tab ,gui-make-icon-tab)
+  (plain-style ,gui-make-plain-style)
   (inert ,gui-make-inert)
   (explicit-buttons ,gui-make-explicit-buttons)
   (bold ,gui-make-bold)

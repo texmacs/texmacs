@@ -58,6 +58,17 @@ QTMAction::QTMAction (QObject *parent) : QAction (parent) {
   _timer = new QTimer (this);
   QObject::connect (_timer, SIGNAL (timeout()),
                     this,     SLOT (doShowToolTip()));
+  if (tm_style_sheet == "" && !use_mini_bars) {
+    int sz= 14;
+    //int sz= (int) floor (14 * retina_scale + 0.5);
+#ifdef Q_OS_MAC
+    QFont fn ("Lucida Grande", sz);
+#else
+    QFont fn;
+    fn.setPixelSize (sz);
+#endif
+    setFont (fn);
+  }
 }
 
 QTMAction::~QTMAction() { 
@@ -171,7 +182,8 @@ QTMTileAction::createWidget (QWidget* parent)
     QToolButton* tb= new QTMMenuButton (wid);
     tb->setDefaultAction (sa);
     QObject::connect (tb, SIGNAL (released()), this, SLOT (trigger()));
-      //  tb->setStyle (qtmstyle ());
+    if (tm_style_sheet == "")
+      tb->setStyle (qtmstyle ());
     l->addWidget (tb, row, col);
     col++;
     if (col >= cols) { col = 0; row++; }
@@ -229,12 +241,16 @@ QTMMinibarAction::createWidget (QWidget* parent) {
       tb->setDefaultAction (sa);
       tb->setAutoRaise (true);
       tb->setPopupMode (QToolButton::InstantPopup);
-      tb->setStyle (qtmstyle());
-      tb->setIconSize (sz);
-      QFont f = tb->font();
-      int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
-      f.setPointSize (qt_zoom (fs > 0 ? fs : QTM_MINI_FONTSIZE));
-      tb->setFont(f);
+      if (tm_style_sheet == "") {
+        tb->setStyle (qtmstyle());
+        tb->setIconSize (sz);
+      }
+      if (use_mini_bars) {
+        QFont f = tb->font();
+        int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
+        f.setPointSize (qt_zoom (fs > 0 ? fs : QTM_MINI_FONTSIZE));
+        tb->setFont(f);
+      }
       l->addWidget (tb);
     }
   }
@@ -434,18 +450,23 @@ QTMLineEdit::QTMLineEdit (QWidget* parent, string _type, string _ww,
   set_type (_type);
   if (type == "password") setEchoMode(QLineEdit::Password);
   if (style & WIDGET_STYLE_MINI) {
-    setStyle (qtmstyle());
+    if (tm_style_sheet == "") {
+      setStyle (qtmstyle());
       // FIXME: we should remove this and let the scheme code decide.
 #ifdef OS_MACOS
-    QPalette pal (palette());
-    pal.setColor (QPalette::Base, QColor (252, 252, 248));
-    pal.setColor (QPalette::WindowText, Qt::black);
-    setPalette (pal);
+      QPalette pal (palette());
+      pal.setColor (QPalette::Base, QColor (252, 252, 248));
+      pal.setColor (QPalette::WindowText, Qt::black);
+      setPalette (pal);
 #endif
+    }
   }
   
   // just to be sure we don't capture the wrong keys in keyPressEvent
   setCompleter (0);
+
+  if (tm_style_sheet != "" && !occurs ("native", tm_style_sheet))
+    setAttribute (Qt::WA_MacShowFocusRect, 0);
 
   setFocusPolicy (Qt::StrongFocus);
   qt_apply_tm_style (this, style);
@@ -992,6 +1013,10 @@ QTMComboBox::addItemsAndResize (const QStringList& texts, string ww, string hh) 
     calcSize.setHeight (qMax (calcSize.height(), br.height()));
   }
   calcSize = qt_decode_length (ww, hh, calcSize, fm);
+  //if (ends (ww, "em") && (parent () == NULL))
+  //  calcSize.rwidth ()= (int) floor (retina_scale * calcSize.width () + 0.5);
+  //if (ends (hh, "em") && (parent () == NULL))
+  //  calcSize.rheight()= (int) floor (retina_scale * calcSize.height() + 0.5);
   
     ///// Add minimum constraints and fix size
   calcSize.setHeight (qMax (calcSize.height(), minSize.height()));
@@ -1006,18 +1031,17 @@ QTMComboBox::addItemsAndResize (const QStringList& texts, string ww, string hh) 
  */
 bool
 QTMComboBox::event (QEvent* ev) {
+  bool ret= true;
   if (ev->type() == QEvent::KeyPress && isEditable()) {       // Handle ALL keys
     QKeyEvent* k = static_cast<QKeyEvent*> (ev);
     if (k->key() == Qt::Key_Up || k->key() == Qt::Key_Down)
       showPopup();
     else if (k->key() != Qt::Key_Escape) // HACK: QTMLineEdit won't need this
       lineEdit()->event (ev);             // but we do.
-    else
-      return false;
-  } else
-    return QComboBox::event (ev);
+  }
+  else ret= QComboBox::event (ev);
 
-  return true;
+  return ret;
 }
 
 

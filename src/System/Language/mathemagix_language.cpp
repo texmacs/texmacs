@@ -99,6 +99,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("and")= c;
   t ("assume")= d;
   t ("autofold")= d;
+  t ("automap")= c;
   t ("begin")= c;
   t ("break")= c;
   t ("case")= c;
@@ -110,6 +111,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("constant")= c;
   t ("constructor")= c;
   t ("continue")= c;
+  t ("custom")= c;
   t ("convert")= c;
   t ("debugger")= c;
   t ("destructor")= c;
@@ -121,6 +123,8 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("do")= c;
   t ("downto")= c;
   t ("downgrade")= c;
+  t ("dynamic_load")= c;
+  t ("dynamic_unit")= e;
   t ("else")= c;
   t ("enumeration")= c;
   t ("evolutive")= c;
@@ -174,6 +178,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("module")= e;
   t ("mutable")= c;
   t ("operator")= c;
+  t ("optional")= c;
   t ("or")= c;
   t ("outline")= d;
   t ("packed")= c;
@@ -198,9 +203,11 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("sequel")= c;
   t ("spawn")= c;
   t ("split")= c;
+  t ("static_unit")= e;
   t ("step")= c;
   t ("stereotype")= e;
   t ("structure")= e;
+  t ("sugar")= c;
   t ("supports?")= c;
   t ("symbolic_lift")= c;
   t ("then")= c;

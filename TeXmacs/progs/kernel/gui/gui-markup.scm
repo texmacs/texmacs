@@ -137,6 +137,10 @@
   (:synopsis "Make a refreshable widget")
   `(cons* 'refreshable (lambda () ,kind) ($list ,@l)))
 
+(tm-define-macro ($cached kind valid? . l)
+  (:synopsis "Make a cached widget")
+  `(cons* 'cached (lambda () ,kind) (lambda () ,valid?) ($list ,@l)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General layout widgets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -156,6 +160,14 @@
 (tm-define-macro ($vlist . l)
   (:synopsis "Vertical layout of widgets")
   `(cons* 'vlist ($list ,@l)))
+
+(tm-define-macro ($division name . l)
+  (:synopsis "Widget with CSS style name")
+  `(cons* 'division (lambda () ,name) ($list ,@l)))
+
+(tm-define-macro ($class name . l)
+  (:synopsis "Widget with CSS style name")
+  `(cons* 'class (lambda () ,name) ($list ,@l)))
 
 (tm-define-macro ($aligned . l)
   (:synopsis "Align two column table")
@@ -344,6 +356,10 @@
   (:synopsis "Make a scrollable choice list with a filter on top")
   `(list 'filtered-choice (lambda (answer filter) ,cmd) (lambda () ,vals)
                            (lambda () ,val) (lambda () ,filterstr)))
+
+(tm-define-macro ($color-input cmd bg? proposals)
+  (:synopsis "Make color picker")
+  `(list 'color-input (lambda (answer) ,cmd) ,bg? (lambda () ,proposals)))
 
 (tm-define-macro ($tree-view cmd data roles)
   (:synopsis "Make a tree view of the data")

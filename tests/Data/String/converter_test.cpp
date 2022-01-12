@@ -8,12 +8,22 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "gtest/gtest.h"
+#include <QtTest/QtTest>
 
 #include "converter.hpp"
 
-TEST (string, utf8_to_cork) {
-  ASSERT_STREQ (as_charp (utf8_to_cork ("中")), "<#4E2D>");
-  ASSERT_STREQ (as_charp (utf8_to_cork ("“")), "\x10");
-  ASSERT_STREQ (as_charp (utf8_to_cork("”")), "\x11");
+class TestConverter: public QObject {
+  Q_OBJECT
+
+private slots:
+  void test_utf8_to_cork();
+};
+
+void TestConverter::test_utf8_to_cork() {
+  QCOMPARE (as_charp (utf8_to_cork ("中")), "<#4E2D>");
+  QCOMPARE (as_charp (utf8_to_cork ("“")), "\x10");
+  QCOMPARE (as_charp (utf8_to_cork("”")), "\x11");
 }
+
+QTEST_MAIN(TestConverter)
+#include "converter_test.moc"

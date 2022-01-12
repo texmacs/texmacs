@@ -18,6 +18,9 @@
 
    
 */
+
+// 2021-07-01, patch dedicated to TeXmacs: suppress mCheckedWidth().
+
 #pragma once
 
 #include "IType2InterpreterImplementation.h"
@@ -44,7 +47,6 @@ private:
 	IType2InterpreterImplementation* mImplementationHelper;
 	bool mGotEndChar;
 	CharStringOperandVector mStorage;
-	bool mCheckedWidth;
 
 
 	PDFHummus::EStatusCode ProcessCharString(Byte* inCharString,LongFilePositionType inCharStringLength);
@@ -54,7 +56,6 @@ private:
 
 	PDFHummus::EStatusCode ClearNFromStack(unsigned short inCount);
 	void ClearStack();
-	void CheckWidth();
 
 	Byte* InterpretHStem(Byte* inProgramCounter);
 	Byte* InterpretVStem(Byte* inProgramCounter);

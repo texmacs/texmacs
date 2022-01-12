@@ -109,11 +109,16 @@
 (tm-define (evaluate-context? t)
   (tree-in? t '(script-input script-output)))
 
+(tm-define (make-script-input* lan ses)
+  (if (url-exists? (url-unix "$TEXMACS_STYLE_PATH"
+                             (string-append lan ".ts")))
+      (add-style-package lan))
+  (insert-go-to `(script-input ,lan ,ses "" "") '(2 0)))
+
 (tm-define (make-script-input)
   (let* ((lan (get-env "prog-scripts"))
-	 (session (get-env "prog-session")))
-    (insert-go-to `(script-input ,lan ,session "" "")
-		  '(2 0))))
+	 (ses (get-env "prog-session")))
+    (make-script-input* lan ses)))
 
 (tm-define (alternate-toggle t)
   (:require (tree-is? t 'script-input))

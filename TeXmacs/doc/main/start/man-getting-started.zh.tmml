@@ -19,7 +19,7 @@
         </tm-par>
         
         <tm-par>
-          <branch><tm-arg>新建，打开和保存文档</tm-arg><tm-arg>man-files.zh.tmml</tm-arg></branch>
+          <branch><tm-arg>新建，打开和保存文档</tm-arg><tm-arg>man-file-ops.zh.tmml</tm-arg></branch>
         </tm-par>
         
         <tm-par>

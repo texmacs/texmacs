@@ -53,15 +53,15 @@
     with-focus-after
     logic-group logic-table logic-dispatcher
     with-aux with-action with-module
-    with-cursor with-buffer with-author
+    with-cursor with-buffer with-window with-author
     with-server with-database with-database*
     with-time with-time-stamp with-limit
     with-encoding with-indexing
     with-user with-extra-fields
     with-remote-context with-identifier-context
     user-ask
-    tab icon-tab form item meti refreshable
-    $when $let $let* $for $refreshable
+    tab icon-tab form item meti refreshable division
+    $when $let $let* $for $refreshable $division
     tmfs-load-handler tmfs-save-handler
     tmfs-autosave-handler tmfs-remove-handler tmfs-wrap-handler
     tmfs-date-handler tmfs-title-handler tmfs-permission-handler
@@ -72,7 +72,7 @@
   '(define define-public define-macro define-public-macro
     texmacs-module provide-public define-group
     tm-define tm-define-macro lazy-body-macro tm-property request-handler
-    tm-menu define-menu tm-widget define-widget tm-generate
+    tm-menu define-menu tm-widget define-widget tm-generate tm-tool tm-tool*
     tm-build tm-build-macro tm-build-widget
     menu-bind define-table extend-table smart-table
     tm-service tm-call-back
@@ -90,7 +90,7 @@
   '(with with-define with-global and-with with-innermost receive
     with-environment with-environment* converter with-cache
     user-confirm user-url
-    resize
+    resize cached
     $with))
 
 (setq binary-no-highlight

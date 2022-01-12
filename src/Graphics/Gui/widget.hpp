@@ -208,6 +208,8 @@ widget horizontal_list (array<widget> a);
   // a horizontal list made up of the widgets in a
 widget vertical_list (array<widget> a);
   // a vertical list made up of the widgets in a
+widget division_widget (string name, widget w);
+  // a widget with a CSS style name
 widget aligned_widget (array<widget> lhs, array<widget> rhs,
                        SI hsep= 3*PIXEL, SI vsep= 3*PIXEL,
                        SI lpad= 0, SI rpad= 0);
@@ -233,7 +235,7 @@ widget hsplit_widget (widget l, widget r);
   // two horizontally juxtaposed widgets l and r with an ajustable border
 widget vsplit_widget (widget t, widget b);
   // two vertically juxtaposed widgets t and b with an ajustable border
-widget extend (widget w, array<widget> a);
+widget extend_widget (widget w, array<widget> a);
   // extend the size of w to the maximum of the sizes of
   // the widgets in the list a
 widget toggle_widget (command cmd, bool on= false, int style= 0);

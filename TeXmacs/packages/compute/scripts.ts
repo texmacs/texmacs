@@ -1,4 +1,4 @@
-<TeXmacs|1.99.11>
+<TeXmacs|2.1>
 
 <style|source>
 
@@ -106,7 +106,9 @@
 
   <assign|generic-script-input|<macro|language|session|in|out|<style-with|src-compact|none|<compound|<if|<equal|<get-label|<arg|in>>|document>|render-big-script|render-small-script>|<arg|language>|<script-aux-3|<arg|language>|<arg|in>>>>>>
 
-  <assign|script-output|<macro|language|session|in|out|<arg|out>>>
+  <assign|script-output|<macro|language|session|in|out|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<provides|<merge|<arg|language>|-script-output>>|<merge|<arg|language>|-script-output>|generic-script-output>>|<arg|language>|<arg|session>|<arg|in>|<arg|out>>>>>
+
+  <assign|generic-script-output|<macro|language|session|in|out|<arg|out>>>
 
   <assign|script-eval|<macro|in|<render-eval-script|<value|prog-scripts>|<script-aux-3|<value|prog-scripts>|<arg|in>>>>>
 
