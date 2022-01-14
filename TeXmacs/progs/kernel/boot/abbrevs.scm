@@ -98,9 +98,9 @@
   (let ((old (gensym)) (new (gensym)))
     `(let ((,old ,var))
        (set! ,var ,val)
-       (let ((,new (begin ,@body)))
+       (let ((,new (list (begin ,@body)))) ;; handle multiple values in s7
          (set! ,var ,old)
-         ,new))))
+         (apply values ,new)) )))
 
 (define-public-macro (and-with var val . body)
   `(with ,var ,val
