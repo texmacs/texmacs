@@ -1820,7 +1820,10 @@
          (suffix (url-suffix u))
          (fm (string-append (format-from-suffix suffix) "-file")))
     (if (and (url-exists? u) (in? suffix (list "eps" "pdf" "png" "jpg")))
-	(list 'includegraphics name)
+        (with p (url->string "$TEXMACS_PATH")
+          (set! name (string-replace name "$TEXMACS_PATH" p))
+          (set! name (string-replace name "file://" ""))
+          (list 'includegraphics name))
         (receive (name-url name-string) (tmtex-eps-names)
           (convert-to-file u fm "postscript-file" name-url)
           (list 'includegraphics name-string)))))
@@ -3450,7 +3453,12 @@
         "with-button-arabic" "with-button-alpha" "with-button-Alpha"
         "with-button-roman" "with-button-Roman"
         "mc-field" "mc-wide-field" "show-reply" "hide-reply"
-        "mc" "mc-monospaced" "mc-horizontal" "mc-vertical"))
+        "mc" "mc-monospaced" "mc-horizontal" "mc-vertical"
+
+        "tmdoc-title" "menu" "icon" "shortcut" "key" "prefix"
+        "markup" "tmstyle" "tmpackage" "src-arg" "scm-arg" "scm-args"
+        "descriptive-table" "explain" "explain-synopsis" "explain-macro"
+        "tm-fragment" "cursor" "TeXmacs-version"))
 
 (tm-define (tmtex-env-patch t l0)
   (let* ((st (tree->stree t))

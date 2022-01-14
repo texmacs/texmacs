@@ -190,6 +190,8 @@
   (Exists "\\exists")
   (bigintwl "\\int")
   (bigointwl "\\oint")
+  (bigintlim "\\int")
+  (bigointlim "\\oint")
   (of ":")
   (suchthat ":")
   (barsuchthat "|")
