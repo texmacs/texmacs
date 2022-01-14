@@ -3468,13 +3468,19 @@
         "mc-field" "mc-wide-field" "show-reply" "hide-reply"
         "mc" "mc-monospaced" "mc-horizontal" "mc-vertical"
 
-        "tmdoc-title" "menu" "icon" "shortcut" "key" "prefix"
-        "markup" "tmstyle" "tmpackage" "def-index"
-        "src-arg" "scm-arg" "scm-args"
-        "descriptive-table" "tm-fragment"
+        "textual-table" "numeric-dot-table"
+        "calc-table" "calc-inert" "calc-input" "calc-output" "calc-ref"
+        "cell-inert" "cell-input" "cell-output" "cell-ref"
+        "cell-range" "cell-sum" "cell-plusses" "cell-commas"
+
+        "tmdoc-title" "icon" "shortcut" "key" "prefix"
+        "menu" "render-menu" "submenu" "subsubmenu" "subsubsubmenu"
+        "markup" "tmstyle" "tmpackage" "tmdtd" "def-index"
+        "src-arg" "src-var" "scm-arg" "scm-args"
+        "descriptive-table" "tm-fragment" "framed-fragment"
         "explain" "explain-synopsis" "explain-macro"
         "small-envbox" "big-envbox" "small-focus" "big-focus"
-        "cursor" "math-cursor" "TeXmacs-version"))
+        "cursor" "math-cursor" "TeXmacs-version" "c++" "BibTeX"))
 
 (tm-define (tmtex-env-patch t l0)
   (let* ((st (tree->stree t))
