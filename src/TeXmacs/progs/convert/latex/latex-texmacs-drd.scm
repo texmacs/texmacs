@@ -115,9 +115,12 @@
   uvec ubreve uinvbreve ucheck uring uacute ugrave
   underdot uddot udddot uddddot
   widespacing nonconverted
-  tmcodeinline groupcommoncounter
+  groupcommoncounter
   ;; NOTE: for personal use from vdh style package
   gb gbt)
+
+(logic-group latex-texmacs-1*%
+  tmcodeinline)
 
 (logic-group latex-texmacs-2%
   tmcolor
