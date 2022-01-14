@@ -3469,9 +3469,12 @@
         "mc" "mc-monospaced" "mc-horizontal" "mc-vertical"
 
         "tmdoc-title" "menu" "icon" "shortcut" "key" "prefix"
-        "markup" "tmstyle" "tmpackage" "src-arg" "scm-arg" "scm-args"
-        "descriptive-table" "explain" "explain-synopsis" "explain-macro"
-        "tm-fragment" "cursor" "TeXmacs-version"))
+        "markup" "tmstyle" "tmpackage" "def-index"
+        "src-arg" "scm-arg" "scm-args"
+        "descriptive-table" "tm-fragment"
+        "explain" "explain-synopsis" "explain-macro"
+        "small-envbox" "big-envbox" "small-focus" "big-focus"
+        "cursor" "math-cursor" "TeXmacs-version"))
 
 (tm-define (tmtex-env-patch t l0)
   (let* ((st (tree->stree t))
