@@ -94,13 +94,26 @@
   `(let ((,(car fun) (lambda ,(cdr fun) ,fun-body)))
      ,@body))
 
+
+;; handle multiple values in a way compatible with s7 (and backcompatible with guile)
 (define-public-macro (with-global var val . body)
   (let ((old (gensym)) (new (gensym)))
     `(let ((,old ,var))
        (set! ,var ,val)
-       (let ((,new (list (begin ,@body)))) ;; handle multiple values in s7
-         (set! ,var ,old)
-         (apply values ,new)) )))
+       (call-with-values 
+          (lambda () ,@body) 
+          (lambda vals 
+            (set! ,var ,old) 
+            (apply values vals))))))
+ 
+;; old code
+;(define-public-macro (with-global var val . body)
+;  (let ((old (gensym)) (new (gensym)))
+;    `(let ((,old ,var))
+;       (set! ,var ,val)
+;       (let ((,new (begin ,@body))) ;; handle multiple values in s7
+;         (set! ,var ,old)
+;         ,new))))
 
 (define-public-macro (and-with var val . body)
   `(with ,var ,val
