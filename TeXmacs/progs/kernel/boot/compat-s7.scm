@@ -214,6 +214,13 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; s7 does not have iota, let's provide it
+
+(define-public (iota n)
+   (let loop ((count (1- n)) (result '()))
+     (if (< count 0) result
+         (loop (1- count) (cons count result)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TODO/FIXME
 
