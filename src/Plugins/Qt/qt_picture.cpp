@@ -358,6 +358,9 @@ new_qt_load_xpm (url file_name) {
   pm= pm.scaled ((int) floor (f * pm.width () + 0.5),
                  (int) floor (f * pm.height () + 0.5),
                  Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+#if (QT_VERSION >= 0x050000)
+  pm.setDevicePixelRatio (scale);
+#endif
   return qt_picture (pm, 0, 0);
 }
 
