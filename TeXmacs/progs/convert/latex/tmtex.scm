@@ -140,6 +140,11 @@
   (if (== (url-suffix current-save-target) "tex")
       (begin
 	(set! tmtex-image-root-url (url-unglue current-save-target 4))
+        (with suf (url-suffix tmtex-image-root-url)
+          (when (!= suf "")
+            (set! tmtex-image-root-url
+                  (url-unglue tmtex-image-root-url
+                              (+ (string-length suf) 1)))))
 	(set! tmtex-image-root-string
 	      (url->unix (url-tail tmtex-image-root-url))))
       (begin
@@ -1820,9 +1825,16 @@
          (suffix (url-suffix u))
          (fm (string-append (format-from-suffix suffix) "-file")))
     (if (and (url-exists? u) (in? suffix (list "eps" "pdf" "png" "jpg")))
-	(list 'includegraphics name)
+        (with p (url->string "$TEXMACS_PATH")
+          (set! name (string-replace name "$TEXMACS_PATH" p))
+          (set! name (string-replace name "file://" ""))
+          (list 'includegraphics name))
         (receive (name-url name-string) (tmtex-eps-names)
-          (convert-to-file u fm "postscript-file" name-url)
+          (when (string-starts? name "..")
+            (set! u (url-relative current-save-source (unix->url name))))
+          (with nfm (if (== (url-suffix name-url) "pdf") "pdf-file"
+                        "postscript-file")
+            (convert-to-file u fm nfm name-url))
           (list 'includegraphics name-string)))))
 
 (define (tmtex-image-length len)
@@ -2712,13 +2724,17 @@
       (set! lst `(!indent (!paragraph ,@(cdr lst)))))
     `(!document (,tag ,arg ,lan ,lst))))
 
-(define (escape-backslashes-in-url l)
-  (cond ((string? l) (string-replace l "\\" "\\\\"))
+(define (escape-hyperref-url l)
+  (cond ((string? l)
+         (let* ((r1 (string-replace l "\\" "\\\\"))
+                (r2 (string-replace r1 "#" "\\#"))
+                (r3 (string-replace r2 "_" "\\_")))
+           r3))
         ((symbol? l) l)
-        (else (map escape-backslashes-in-url l))))
+        (else (map escape-hyperref-url l))))
 
 (define (tmtex-hyperref u)
-  (tmtex-tt (escape-backslashes-in-url u)))
+  (tmtex-tt (escape-hyperref-url u)))
 
 (define (tmtex-hlink s l)
   (let* ((h (cadr l))
@@ -3450,7 +3466,21 @@
         "with-button-arabic" "with-button-alpha" "with-button-Alpha"
         "with-button-roman" "with-button-Roman"
         "mc-field" "mc-wide-field" "show-reply" "hide-reply"
-        "mc" "mc-monospaced" "mc-horizontal" "mc-vertical"))
+        "mc" "mc-monospaced" "mc-horizontal" "mc-vertical"
+
+        "textual-table" "numeric-dot-table"
+        "calc-table" "calc-inert" "calc-input" "calc-output" "calc-ref"
+        "cell-inert" "cell-input" "cell-output" "cell-ref"
+        "cell-range" "cell-sum" "cell-plusses" "cell-commas"
+
+        "tmdoc-title" "icon" "shortcut" "key" "prefix"
+        "menu" "render-menu" "submenu" "subsubmenu" "subsubsubmenu"
+        "markup" "tmstyle" "tmpackage" "tmdtd" "def-index"
+        "src-arg" "src-var" "scm-arg" "scm-args"
+        "descriptive-table" "tm-fragment" "framed-fragment"
+        "explain" "explain-synopsis" "explain-macro"
+        "small-envbox" "big-envbox" "small-focus" "big-focus"
+        "cursor" "math-cursor" "TeXmacs-version" "c++" "BibTeX"))
 
 (tm-define (tmtex-env-patch t l0)
   (let* ((st (tree->stree t))
