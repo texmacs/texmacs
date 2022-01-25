@@ -387,7 +387,7 @@ init_env_vars () {
 static void
 init_misc () {
   // Test whether 'which' works
-#ifdef OS_MINGW
+#if defined(OS_MINGW) || defined(__EMSCRIPTEN__)
   use_which = false;
 #else
   use_which = (var_eval_system ("which texmacs 2> /dev/null") != "");

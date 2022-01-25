@@ -217,6 +217,8 @@ get_locale_charset () {
   return "UTF-8";
 #elif OS_HAIKU
   return "UTF-8";
+#elif __EMSCRIPTEN__
+  return "UTF-8";
 #else
   std::locale previous= std::locale::global (std::locale(""));
   string charset= string (nl_langinfo (CODESET));

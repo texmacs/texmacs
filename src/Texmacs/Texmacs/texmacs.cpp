@@ -201,6 +201,8 @@ TeXmacs_init_paths (int& argc, char** argv) {
 #endif
 
 #ifdef __EMSCRIPTEN__
+  set_env ("PWD", "/");
+  set_env ("HOME", "/");
   if (is_empty (current_texmacs_path))
     set_env ("TEXMACS_PATH", "/TeXmacs");
 
