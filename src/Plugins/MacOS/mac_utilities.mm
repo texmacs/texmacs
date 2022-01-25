@@ -167,7 +167,7 @@ mac_install_filter () {
 #endif // HACK
 #endif // QTTEXMACS
 
-//#ifdef Q_WS_MAC
+//#ifdef Q_OS_MAC
 #if 0
 
 // this code is not used. It was an hack. Maybe sometimes in the future we

@@ -142,7 +142,7 @@ edit_interface_rep::draw_selection (renderer ren, rectangle r) {
   }
   for (int i=0; i<N(alt_selection_rects); i++) {
     ren->set_pencil (pencil (rgb_color (240, 192, 0), ren->pixel));
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
     ren->draw_selection (alt_selection_rects[i] & visible);
 #else
     ren->draw_rectangles (alt_selection_rects[i] & visible);
@@ -151,7 +151,7 @@ edit_interface_rep::draw_selection (renderer ren, rectangle r) {
   if (!is_nil (selection_rects)) {
     color col= (table_selection? rgb_color (192, 0, 255): red);
     ren->set_pencil (pencil (col, ren->pixel));
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
     ren->draw_selection (selection_rects & visible);
 #else
     ren->draw_rectangles (selection_rects & visible);

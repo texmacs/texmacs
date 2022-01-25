@@ -11,7 +11,7 @@
 
 #include "basic.hpp"
 
-#if !(defined (QTTEXMACS) && (defined (OS_MINGW) || defined (QTPIPES)))
+#if !((defined (QTTEXMACS) && (defined (OS_MINGW) || defined (QTPIPES))) || defined(QTWKTEXMACS))
 
 #include "tm_link.hpp"
 #include "socket_notifier.hpp"

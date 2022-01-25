@@ -238,7 +238,7 @@ load_xpm (url file_name) {
   string name= as_string (file_name);
   if (cache->contains (name)) return cache[name];
 
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
 
   picture pict= qt_load_xpm (file_name);
 

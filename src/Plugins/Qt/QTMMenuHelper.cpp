@@ -210,8 +210,11 @@ QTMMinibarAction::QTMMinibarAction (array<widget>& arr, QObject* parent)
 
 QWidget*
 QTMMinibarAction::createWidget (QWidget* parent) {
-  static QImage* pxm = xpm_image ("tm_add.xpm"); // See qt_tm_widget.cpp 
+  static QImage* pxm = xpm_image ("tm_add.xpm"); // See qt_tm_widget.cpp
   QSize sz = pxm ? pxm->size() : QSize (16, 16);
+#if (QT_VERSION >= 0x050000)
+  sz *= 1.0/pxm->devicePixelRatio ();
+#endif
   qt_tm_widget_rep::tweak_iconbar_size (sz);
   
   if (DEBUG_QT_WIDGETS) debug_widgets << "QTMMinibarAction::createWidget\n";

@@ -31,6 +31,8 @@ public:
   ~tm_server_rep ();
   server_rep* get_server ();
 
+  inline virtual void* derived_this () { return (tm_server_rep*)this; }
+
   /* Miscellaneous routines */
   void   style_clear_cache ();
   void   refresh ();

@@ -1,7 +1,7 @@
 
 /******************************************************************************
-* MODULE     : qt_gui.hpp
-* DESCRIPTION: QT GUI class
+* MODULE     : qtwk_gui.hpp
+* DESCRIPTION: QT/Widkit  GUI class
 * COPYRIGHT  : (C) 2008 Massimiliano Gubinelli
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
@@ -9,36 +9,31 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#ifndef QT_GUI_HPP
-#define QT_GUI_HPP
+#ifndef QTWK_GUI_HPP
+#define QTWK_GUI_HPP
 
-#include <QtGui>
-#if (QT_VERSION >= 0x050000)
-#include <QtCore>
-#include <QtWidgets>
-#endif
-//#include <QTranslator>
-//#include <QTimer>
-//#include <QLabel>
-//#include <QList>
+#include <QTranslator>
+#include <QTimer>
+#include <QLabel>
+#include <QList>
 
-#include "qt_simple_widget.hpp"
-#include "tm_timer.hpp"
+#include "array.hpp"
+#include "list.hpp"
+#include "hashmap.hpp"
+
 #include "gui.hpp"
 #include "font.hpp"
 #include "widget.hpp"
-#include "array.hpp"
-#include "hashmap.hpp"
+
+#include "tm_timer.hpp"
 #include "socket_notifier.hpp"
 
-#if (QT_VERSION >= 0x050000) && defined(OS_MACOS) && defined(CocoaPlugin)
-#ifndef QT_MAC_USE_COCOA
-#define QT_MAC_USE_COCOA 1
-#endif
-#endif
+#include "simple_wk_widget.hpp"
+#include "qtwk_window.hpp"
 
-typedef class qt_gui_rep* qt_gui;
-extern qt_gui the_gui;
+
+typedef class qtwk_gui_rep* qtwk_gui;
+extern qtwk_gui the_gui;
 
 /******************************************************************************
  * Event queue
@@ -114,17 +109,17 @@ public:
   void clear_pending ();
   bool must_wait (time_t now) const;
   
-  friend class qt_gui_rep;
+  friend class qtwk_gui_rep;
 };
 
 
 /******************************************************************************
-* The qt_gui class
+* The qtwk_gui class
 ******************************************************************************/
 
-class QTMGuiHelper;
+class QTWKGuiHelper;
 
-class qt_gui_rep {
+class qtwk_gui_rep {
   bool           interrupted;
   time_t      interrupt_time;
   QTimer*        updatetimer;
@@ -133,9 +128,26 @@ class qt_gui_rep {
   widget          _popup_wid;
   time_t      popup_wid_time; //!< 0 means not to show _popup_wid
   
+  
+  widget          balloon_wid;
+  window          balloon_win;
+  SI              balloon_x;
+  SI              balloon_y;
+  time_t          balloon_time;
+
+  
+  
+  
+  list<qtwk_window>        windows_l;
+
+  list<widget>    grab_ptr;
+  list<widget>    grab_kbd;
+
   hashmap<string,tree>   selection_t;
   hashmap<string,string> selection_s;
   
+  list<message>   messages;
+
   QTranslator* q_translator;
   
   time_t time_credit;        // interval to interrupt long redrawings
@@ -150,11 +162,11 @@ class qt_gui_rep {
   command_queue delayed_commands;
 
 public:
-  QTMGuiHelper*  gui_helper;
+  QTWKGuiHelper*  gui_helper;
 
 public:
-  qt_gui_rep (int &argc, char **argv);
-  virtual ~qt_gui_rep ();
+  qtwk_gui_rep (int &argc, char **argv);
+  virtual ~qtwk_gui_rep ();
 
   /* extents, grabbing, selections */
   void get_extents (SI& width, SI& height);
@@ -165,17 +177,32 @@ public:
   void event_loop ();
 
   /* interclient communication */
+  void   created_window (qtwk_window win);
+  void   deleted_window (qtwk_window win);
+  void   focussed_window (qtwk_window win);
+
   virtual bool get_selection (string key, tree& t, string& s, string format);
   virtual bool set_selection (string key, tree t, string s, string sv,
                               string sh, string format);
   virtual void clear_selection (string key);
   bool put_graphics_on_clipboard (url file);
 
+  
+  void   emulate_leave_enter (widget old_widget, widget new_widget);
+  void   obtain_mouse_grab (widget wid);
+  void   release_mouse_grab ();
+  bool   has_mouse_grab (widget w);
+
+  
   /* miscellaneous */
   void set_mouse_pointer (string name);
   void set_mouse_pointer (string curs_name, string mask_name);
   void show_wait_indicator (widget w, string message, string arg);
+
   void show_help_balloon (widget wid, SI x, SI y);
+  void map_balloon ();
+  void unmap_balloon ();
+
   void add_event (const queued_event& ev);
   bool check_event (int type);
   void set_check_events (bool enable_check);
@@ -185,13 +212,16 @@ public:
   void need_update();
   void refresh_language();
   
+  /******************************** Fonts ************************************/
+  void set_default_font (string name);
+  font default_font_sub (bool tt, bool mini, bool bold);
+  font default_font (bool tt= false, bool mini= false, bool bold= false);
+
   /* queued processing */
-  void process_keypress (qt_simple_widget_rep *wid, string key, time_t t);
-  void process_keyboard_focus (qt_simple_widget_rep *wid, bool has_focus,
-                               time_t t);
-  void process_mouse (qt_simple_widget_rep *wid, string kind, SI x, SI y,
-                      int mods, time_t t);
-  void process_resize (qt_simple_widget_rep *wid, SI x, SI y);
+  void process_keypress (widget wid, string key, time_t t);
+  void process_keyboard_focus (widget wid, bool has_focus, time_t t);
+  void process_mouse (widget wid, string kind, SI x, SI y, int mods, time_t t);
+  void process_resize (widget wid, SI x, SI y);
   void process_command (command _cmd);
   void process_command (command _cmd, object _args);
   void process_delayed_commands (); 
@@ -199,6 +229,7 @@ public:
   
   /* befriended interface functions */
   friend class QTMGuiHelper;
+  friend class qtwk_window_rep;
   friend void exec_delayed (object cmd);
   friend void exec_delayed_pause (object cmd);
   friend void clear_pending_commands ();
@@ -216,4 +247,4 @@ void force_update();
     the_exception= s;                           \
   }
 
-#endif // defined QT_GUI_HPP
+#endif // defined QTWK_GUI_HPP

@@ -28,6 +28,8 @@ public:
   virtual ~server_rep ();
   virtual server_rep* get_server () = 0;
 
+  inline virtual void* derived_this () { return (server_rep*)this; }
+
   /* Control global server parameters */
   virtual void   set_font_rules (scheme_tree rules) = 0;
   virtual bool   kbd_get_command (string s, string& help, command& cmd) = 0;
@@ -110,6 +112,8 @@ public:
   virtual void   shell (string s) = 0;
 };
 
+template<> void tm_delete<server_rep> (server_rep* ptr);
+
 class server {
   ABSTRACT(server);
   server ();
@@ -125,5 +129,4 @@ inline bool in_rescue_mode () { return rescue_mode; }
 /* low level */
 void create_buffer (url name, tree doc);
 void new_buffer_in_this_window (url name, tree t);
-
 #endif // defined SERVER_H

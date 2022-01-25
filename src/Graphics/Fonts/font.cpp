@@ -512,7 +512,7 @@ x_font (string family, int size, int dpi) {
 
 #endif
 
-#ifndef QTTEXMACS
+#if !defined(QTTEXMACS) && !defined(QTWKTEXMACS)
 
 font
 qt_font (string family, int size, int dpi) {

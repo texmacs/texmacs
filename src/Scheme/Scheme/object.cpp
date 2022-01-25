@@ -462,7 +462,7 @@ get_preference (string var, string def) {
 * Delayed evaluation
 ******************************************************************************/
 
-#ifndef QTTEXMACS
+#if !(defined(QTTEXMACS) || defined(QTWKTEXMACS))
 static array<object> delayed_queue;
 static array<time_t> start_queue;
 

@@ -40,7 +40,7 @@
 #include "MacOS/mac_images.h"
 #endif
 
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
 #include "Qt/qt_utilities.hpp"
 #endif
 
@@ -320,7 +320,7 @@ image_size_sub (url image, int& w, int& h) { // returns w,h in units of pt (1/72
     return;
   }
 #endif
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
   if (qt_supports (image)) { // native support by Qt : most bitmaps & svg
     qt_image_size (image, w, h);
     return;
@@ -422,7 +422,7 @@ image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
   }
 #endif
   //converters below will yield only raster images.
-#ifdef QTTEXMACS 
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
   if (qt_supports (image)) {
     if (DEBUG_CONVERT) debug_convert << " using qt" << LF;
     qt_image_to_eps (image, eps, w_pt, h_pt, dpi);
@@ -464,7 +464,7 @@ image_to_pdf (url image, url pdf, int w_pt, int h_pt, int dpi) {
   }
 #endif
   //converters below will yield only raster images.
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
   if (qt_supports (image)) {
     if (DEBUG_CONVERT) debug_convert << " using qt "<<LF;
     qt_image_to_pdf (image, pdf, w_pt, h_pt, dpi);
@@ -491,8 +491,8 @@ image_to_png (url image, url png, int w, int h) {// IN PIXEL UNITS!
     return;
   }
 #endif
-#ifdef QTTEXMACS
-  if (qt_supports (image)) {
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)  
+if (qt_supports (image)) {
     if (DEBUG_CONVERT) debug_convert << " using qt "<<LF;
     qt_convert_image (image, png, w, h);
     return;
@@ -629,14 +629,14 @@ imagemagick_image_size(url image, int& w, int& h, bool pt_units) {
 * Applying a TeXmacs effect to a picture
 ******************************************************************************/
 
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
 bool qt_native_image_size (url image, int& w, int& h);
 void qt_apply_effect (tree eff, array<url> src, url dest, int w, int h);
 #endif
 
 void
 native_image_size (url image, int& w, int& h) {
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
   if (qt_native_image_size (image, w, h)) return;
 #endif
   // Scale to 300 dpi
@@ -648,7 +648,7 @@ native_image_size (url image, int& w, int& h) {
 
 void
 apply_effect (tree eff, array<url> src, url dest, int w, int h) {
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
   qt_apply_effect (eff, src, dest, w, h);
 #endif
 }

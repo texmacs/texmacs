@@ -820,7 +820,7 @@ edit_interface_rep::apply_changes () {
     SI w, h;
     widget me= ::get_canvas (widget (cvw));
     ::get_size (me, w, h);
-#ifdef X11TEXMACS
+#if defined(X11TEXMACS) || defined(QTWKTEXMACS)
     w -= 2*PIXEL;
     h -= 2*PIXEL;
 #endif
@@ -830,7 +830,7 @@ edit_interface_rep::apply_changes () {
       if (medium == "automatic")
         ex2= ex1 + w;
       else {
-#ifdef X11TEXMACS
+#if defined(X11TEXMACS) || defined(QTWKTEXMACS)
         ex1= (ex1 + ex2 - w) / 2;
         abs_round (ex1);
         ex2= ex1 + w;
@@ -841,7 +841,7 @@ edit_interface_rep::apply_changes () {
       if (medium == "papyrus" || medium == "automatic")
         ey1= ey2 - h;
       else {
-#ifdef X11TEXMACS
+#if defined(X11TEXMACS) || defined(QTWKTEXMACS)
         ey1= (ey1 + ey2 - h) / 2;
         abs_round (ey1);
         ey2= ey1 + h;

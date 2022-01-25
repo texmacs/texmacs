@@ -32,6 +32,14 @@ void   set_retina_zoom (int z) { retina_zoom= z; }
 void   set_retina_icons (int i) { retina_icons= i; }
 void   set_retina_scale (double s) { retina_scale= s; }
 
+
+template<> void 
+tm_delete<renderer_rep> (renderer_rep* ptr) {
+  void *mem= ptr->derived_this ();
+  ptr -> ~renderer_rep ();
+  fast_delete (mem);
+}
+
 /******************************************************************************
 * Constructors and handles
 ******************************************************************************/
@@ -519,6 +527,7 @@ delete_renderer (renderer ren) {
 }
 
 #ifndef QTTEXMACS
+#ifndef QTWKTEXMACS
 #ifndef X11TEXMACS
 
 picture
@@ -554,5 +563,6 @@ save_picture (url dest, picture p) {
   FAILED ("not yet implemented");
 }
 
+#endif
 #endif
 #endif

@@ -14,7 +14,7 @@
 #include "socket_server.hpp"
 #include "scheme.hpp"
 
-#ifdef QTTEXMACS
+#if (defined(QTTEXMACS) || defined(QTWKTEXMACS))
 #include "Qt/QTMSockets.hpp"
 
 #if defined(OS_MACOS)

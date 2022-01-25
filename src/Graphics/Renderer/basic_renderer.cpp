@@ -9,7 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#if (defined(QTTEXMACS) || defined(AQUATEXMACS))
+#if (defined(QTTEXMACS) || defined(AQUATEXMACS) || defined(QTWKTEXMACS))
 
 #include "basic_renderer.hpp"
 #include "analyze.hpp"

@@ -14,7 +14,7 @@
 #include "socket_link.hpp"
 #include "scheme.hpp"
 
-#ifdef QTTEXMACS
+#if (defined(QTTEXMACS) || defined(QTWKTEXMACS))
 #include "Qt/QTMSockets.hpp"
 
 #define CLT_KO(c) (c == NULL || !c->alive())

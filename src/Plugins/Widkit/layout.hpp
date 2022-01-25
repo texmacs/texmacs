@@ -11,7 +11,9 @@
 
 #ifndef LAYOUT_H
 #define LAYOUT_H
+
 #include "window.hpp"
+#include "renderer.hpp"
 
 color layout_pastel (renderer win);
 color layout_light (renderer win);

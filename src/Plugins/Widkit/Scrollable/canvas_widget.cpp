@@ -140,6 +140,8 @@ bool
 canvas_widget_rep::handle_canvas_mouse (mouse_event ev) {
   if (ev->type == "press-left" && request_focus)
     win->set_keyboard_focus (this);
+  if (ev->type == "wheel")
+    cout << "canvas wheel event\n";
   return basic_widget_rep::handle (ev);
 }
 

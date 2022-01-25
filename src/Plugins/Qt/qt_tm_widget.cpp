@@ -229,14 +229,23 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     // set proper sizes for icons
     QImage *pxm = xpm_image ("tm_new.xpm");
     QSize sz = (pxm ? pxm->size() : QSize (24, 24));
+#if (QT_VERSION >= 0x050000)
+    sz *= 1.0/pxm->devicePixelRatio();
+#endif
     tweak_iconbar_size (sz);
     mainToolBar->setIconSize (sz);
     pxm = xpm_image ("tm_section.xpm");
     sz = (pxm ? pxm->size() : QSize (20, 20));
+#if (QT_VERSION >= 0x050000)
+    sz *= 1.0/pxm->devicePixelRatio();
+#endif
     tweak_iconbar_size (sz);
     modeToolBar->setIconSize (sz);
     pxm = xpm_image ("tm_add.xpm");
     sz = (pxm ? pxm->size() : QSize (16, 16));
+#if (QT_VERSION >= 0x050000)
+    sz *= 1.0/pxm->devicePixelRatio();
+#endif
     tweak_iconbar_size (sz);
     focusToolBar->setIconSize (sz);
   }

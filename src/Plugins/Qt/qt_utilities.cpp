@@ -14,7 +14,6 @@
 #include <time.h>
 
 #include <QImage>
-#include <QPrinter>
 #include <QPainter>
 #include <QCoreApplication>
 #include <QLocale>
@@ -24,8 +23,10 @@
 #include <QStringList>
 #include <QKeySequence>
 
+#ifndef __EMSCRIPTEN__
 #include <QPrinter>
 #include <QPrintDialog>
+#endif
 #include <QImageReader>
 #include <QApplication>
 
@@ -37,7 +38,14 @@
 #include "scheme.hpp"
 #include "wencoding.hpp"
 
+#ifdef QTTEXMACS
 #include "qt_gui.hpp"    // gui_maximal_extents()
+#else
+#define center TEXMACS_center // avoid name clash
+#include "Qtwk/qtwk_gui.hpp"    // gui_maximal_extents()
+#undef center
+#endif
+
 #include "editor.hpp"
 #include "new_view.hpp"  // get_current_editor()
 
@@ -473,6 +481,12 @@ qt_convert_image (url image, url dest, int w, int h) {// w, h in pixels
   }
 }
 
+#ifdef __EMSCRIPTEN__
+void
+qt_image_to_pdf (url image, url outfile, int w_pt, int h_pt, int dpi) {
+  if (DEBUG_CONVERT) debug_convert << "NOT SUPPORTED: qt_image_to_eps_or_pdf " << image << " -> "<<outfile<<LF;
+}
+#else // #ifdef __EMSCRIPTEN__
 void
 qt_image_to_pdf (url image, url outfile, int w_pt, int h_pt, int dpi) {
 // use a QPrinter to output raster images to eps or pdf
@@ -525,6 +539,7 @@ qt_image_to_pdf (url image, url outfile, int w_pt, int h_pt, int dpi) {
     p.end();
     }
 }
+#endif // #ifdef __EMSCRIPTEN__
 
 void qt_image_to_eps(url image, url outfile, int w_pt, int h_pt, int dpi) {
   qt_image_to_pdf(image, outfile, w_pt, h_pt, dpi);};
@@ -777,6 +792,14 @@ qt_pretty_time (int t) {
   return from_qstring (s);
 }
 
+#ifdef __EMSCRIPTEN__
+bool 
+qt_print (bool& to_file, bool& landscape, string& pname, url& filename, 
+          string& first, string& last, string& paper_type) {
+  return false;
+}
+
+#else  // #ifdef __EMSCRIPTEN__
 #ifndef _MBD_EXPERIMENTAL_PRINTER_WIDGET  // this is in qt_printer_widget
 
 #define PAPER(fmt)  case QPrinter::fmt : return "fmt"
@@ -837,6 +860,7 @@ qt_print (bool& to_file, bool& landscape, string& pname, url& filename,
 }
 
 #endif //(not defined) _MBD_EXPERIMENTAL_PRINTER_WIDGET
+#endif  // #ifdef __EMSCRIPTEN__
 
 
 #ifdef OS_MACOS

@@ -265,7 +265,7 @@ gui_is_x () {
 
 bool
 gui_is_qt () {
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
   return true;
 #else
   return false;

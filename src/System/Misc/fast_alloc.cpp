@@ -268,7 +268,7 @@ bool break_stub(void *ptr) {
 * Redefine standard new and delete
 ******************************************************************************/
 
-#if defined(X11TEXMACS) && (!defined(NO_FAST_ALLOC))
+#if 0 //defined(X11TEXMACS) && (!defined(NO_FAST_ALLOC))
 
 void*
 operator new (size_t s) {

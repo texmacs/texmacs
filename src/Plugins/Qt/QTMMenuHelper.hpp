@@ -89,6 +89,9 @@ class QTMLazyMenu: public QMenu {
   
   promise<widget> promise_widget;
   bool show_right;
+    
+protected:
+  bool forced;
 
 public:
   QTMLazyMenu (promise<widget> _pm, QWidget* p = NULL, bool right = false);

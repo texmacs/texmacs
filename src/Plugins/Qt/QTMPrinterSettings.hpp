@@ -1,7 +1,7 @@
 
 /******************************************************************************
  * MODULE     : QTMPrinterSettings.hpp
- * DESCRIPTION: 
+ * DESCRIPTION:
  * COPYRIGHT  : (C) 2010 Miguel de Benito Delgado
  *******************************************************************************
  * This software falls under the GNU general public license version 3 or later.
@@ -14,7 +14,11 @@
 
 #include <QObject>
 
+#if (QT_VERSION >= 0x050000)
+#include <QtPrintSupport/QPrinter>  // Provides QPrinter::PaperSize
+#else
 #include <QPrinter>  // Provides QPrinter::PaperSize
+#endif
 #include <QProcess>
 #include <QHash>
 
@@ -140,7 +144,7 @@ protected:
   void systemCommandFinished(int exitCode, QProcess::ExitStatus exitStatus);
   };
 
-#endif  // defined(Q_WS_MAC) || defined (Q_WS_X11)
+#endif  // defined(Q_OS_MAC) || defined (Q_WS_X11)
 
 #ifdef Q_OS_WIN
 
@@ -171,6 +175,6 @@ protected:
   void systemCommandFinished(int exitCode, QProcess::ExitStatus exitStatus);
 };
 
-#endif // Q_WS_WIN
+#endif // Q_OS_WIN
 
 #endif  // QTMPRINTERSETTINGS_HPP

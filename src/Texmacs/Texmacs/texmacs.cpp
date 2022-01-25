@@ -36,6 +36,16 @@ void mac_fix_paths ();
 #include <QDir>
 #endif
 
+#ifdef QTWKTEXMACS
+#include "Qt/QTMApplication.hpp"
+#include "Qt/qt_utilities.hpp"
+#include <QDir>
+#endif
+
+#ifdef QTWSTEXMACS
+#include <QCorepplication>
+#endif
+
 #ifdef OS_MINGW
 #include "Windows/win-utf8-compat.hpp"
 #endif
@@ -66,7 +76,7 @@ bool start_server_flag= false;
 string extra_init_cmd;
 void server_start ();
 
-#ifdef QTTEXMACS
+#if (defined(QTTEXMACS)||defined(QTWKTEXMACS))
 // Qt application infrastructure
 static QTMApplication* qtmapp;
 #endif
@@ -101,7 +111,7 @@ clean_exit_on_segfault (int sig_num) {
 void
 TeXmacs_init_paths (int& argc, char** argv) {
   (void) argc; (void) argv;
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
   url exedir = url_system (qt_application_directory ());
 #else
   url exedir = url_system(argv[0]) * ".." ;
@@ -112,7 +122,7 @@ TeXmacs_init_paths (int& argc, char** argv) {
 
   string current_texmacs_path = get_env ("TEXMACS_PATH");
 
-#ifdef Q_OS_MAC 
+#if (defined(QTTEXMACS) && defined(Q_OS_MAC))
   // the following line can inibith external plugin loading
   // QCoreApplication::setLibraryPaths(QStringList());
   // ideally we would like to control the external plugins
@@ -138,7 +148,7 @@ TeXmacs_init_paths (int& argc, char** argv) {
   }
 #endif
 
-#if defined(AQUATEXMACS) || defined(Q_OS_MAC) || (defined(X11TEXMACS) && defined (MACOSX_EXTENSIONS))
+#if defined(AQUATEXMACS) ||(defined(QTTEXMACS) && defined(Q_OS_MAC)) || (defined(X11TEXMACS) && defined (MACOSX_EXTENSIONS))
   // Mac bundle environment initialization
   // We set some environment variables when the executable
   // is in a .app bundle on MacOSX
@@ -552,7 +562,7 @@ boot_hacks () {
   //printf ("max: %i\n", lims.rlim_max);
   mac_fix_yosemite_bug();
 
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
 #if defined(MAC_OS_X_VERSION_10_9) || defined(MAC_OS_X_VERSION_10_10)
 #if QT_VERSION <= QT_VERSION_CHECK(4,8,5)
   // Work around Qt bug: https://bugreports.qt-project.org/browse/QTBUG-32789
@@ -693,13 +703,18 @@ main (int argc, char** argv) {
     remove (url ("$TEXMACS_HOME_PATH/fonts/error") * url_wildcard ("*"));    
   }
 #endif
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
   // initialize the Qt application infrastructure
-  qtmapp= new QTMApplication (argc, argv);  
+  #if (QT_VERSION >= 0x050000)
+      QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+      QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+  #endif
+  qtmapp= new QTMApplication (argc, argv);
+  //QTMApplication* qtmapp= new QTMApplication (argc, argv);
 #endif
   TeXmacs_init_paths (argc, argv);
-#ifdef QTTEXMACS
-  qtmapp->set_window_icon("/misc/images/texmacs-512.png");
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
+  //qtmapp->set_window_icon("/misc/images/texmacs-512.png");
 #endif
   //cout << "Bench  ] Started TeXmacs\n";
   the_et     = tuple ();
@@ -715,7 +730,7 @@ main (int argc, char** argv) {
 //  test_environments ();
 //#endif
   start_scheme (argc, argv, TeXmacs_main);
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
   delete qtmapp;
 #endif
   return 0;

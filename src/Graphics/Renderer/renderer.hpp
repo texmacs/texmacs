@@ -58,6 +58,8 @@ public:
   virtual bool is_started ();
   virtual void* get_handle ();
   virtual void* get_data_handle ();
+  
+  inline virtual void* derived_this () { return (renderer_rep*)this; }
 
   /* coordinate system */
   void set_origin (SI x, SI y);
@@ -138,6 +140,9 @@ public:
   virtual void toc_entry (string kind, string title, SI x, SI y);
   virtual void set_metadata (string kind, string val);
 };
+
+template<> void tm_delete<renderer_rep> (renderer_rep* ptr);
+
 
 /* native pictures and rendering on pictures */
 renderer picture_renderer (picture p, double zoom);

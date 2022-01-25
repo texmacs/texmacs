@@ -716,7 +716,7 @@ windows_refresh (string kind) {
   while (it->busy ()) {
     int id= it->next ();
     send_refresh (window_table[id], kind);
-#ifdef X11TEXMACS
+#if defined(X11TEXMACS) || defined(QTWKTEXMACS)
     if (kind == "auto") refresh_size (window_table[id], false);
 #endif
   }

@@ -10,6 +10,8 @@
 ******************************************************************************/
 
 #include "window.hpp"
+#include "renderer.hpp"
+#include "colors.hpp"
 
 color layout_pastel (renderer ren) { return rgb_color (228, 228, 220); }
 color layout_light (renderer ren) { return light_grey; }

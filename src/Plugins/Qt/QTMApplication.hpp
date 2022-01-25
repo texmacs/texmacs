@@ -24,8 +24,9 @@ void init_style_sheet (QApplication* app);
 void set_standard_style_sheet (QWidget *w);
 
 #ifdef Q_OS_MAC
-
+#define extend MAC_extend // go around name collision with MacTypes.h
 #include <QMacPasteboardMime>
+#undef extend
 
 // On MacOS we have to register appropriate mime types for PDF files
 // The QMacPasteboardMimePDF class is instantiated in QTMApplication

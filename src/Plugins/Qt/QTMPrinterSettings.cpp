@@ -13,8 +13,13 @@
 #include "qt_utilities.hpp"
 #include "sys_utils.hpp"
 
+#if (QT_VERSION >= 0x050000)
+#include <QtPrintSupport/QPrinter>
+#include <QtPrintSupport/QPrinterInfo>
+#else
 #include <QPrinter>
 #include <QPrinterInfo>
+#endif
 #include <QProcess>
 #include <QRegExp>
 

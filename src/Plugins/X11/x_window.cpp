@@ -161,8 +161,7 @@ static x_drawable_rep*
 new_drawable (x_gui gui, x_window win) {
   // FIXME: for gcc 3.*, use this in order to avoid ambiguity
   // for tm_new with two arguments
-  return new x_drawable_rep (gui, win);
-  //return tm_new<x_drawable_rep> (gui, win);
+  return tm_new<x_drawable_rep> (gui, win);
 }
 
 x_window_rep::x_window_rep (widget w2, x_gui gui2, char* n2,

@@ -21,6 +21,24 @@
 #include <pthread.h>
 #include <pwd.h>
 
+
+#ifdef __EMSCRIPTEN__
+
+// stubs
+
+int unix_system (string) {  return 0; }
+int unix_system (string, string& out) { out = ""; return 0; };
+int unix_system (string, string& out, string& err) { out = "";  err= ""; return 0; }
+
+int unix_system (array<string> arg,
+		 array<int> fd_in, array<string> str_in,
+		 array<int> fd_out, array<string*> str_out) { return 0; }
+
+string unix_get_login () { return "emscripten";  }
+string unix_get_username () { return "emscripten-user";  }
+
+#else // #ifdef __EMSCRIPTEN__
+
 int
 unix_system (string s) {
   c_string _s (s * " > /dev/null 2>&1");
@@ -353,3 +371,5 @@ string unix_get_username () {
   struct passwd* pwd= getpwuid (uid);
   return tokenize (string (pwd->pw_gecos), string(","))[0];
 }
+
+#endif // #ifdef __EMSCRIPTEN__

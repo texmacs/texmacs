@@ -33,7 +33,7 @@
 #include "sys_utils.hpp"
 #include "analyze.hpp"
 
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
 #include "Qt/qt_utilities.hpp"
 #endif
 
@@ -229,7 +229,7 @@ get_locale_charset () {
 * Getting a formatted date
 ******************************************************************************/
 
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
 string
 get_date (string lan, string fm) {
   return qt_get_date(lan, fm);

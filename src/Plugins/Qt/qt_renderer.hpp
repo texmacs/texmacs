@@ -93,10 +93,11 @@ public:
   qt_renderer_rep *master;
   
 public:
-  qt_shadow_renderer_rep (QPixmap _px = QPixmap());
+//  qt_shadow_renderer_rep (QPixmap _px = QPixmap());
+  qt_shadow_renderer_rep (int w, int h);
   ~qt_shadow_renderer_rep ();
   
-  void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
+  //void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
 };
 
 class qt_proxy_renderer_rep: public qt_renderer_rep {

@@ -238,7 +238,7 @@ connection_start (string name, string session, bool again) {
       tm_link ln= make_pipe_link (t[1]->label);
       con= tm_new<connection_rep> (name, session, ln);
     }
-#ifndef QTTEXMACS
+#if !(defined(QTTEXMACS) || defined(QTWKTEXMACS))
     else if (is_tuple (t, "socket", 2)) {
       tm_link ln= make_socket_link (t[1]->label, as_int (t[2]->label));
       con= tm_new<connection_rep> (name, session, ln);
@@ -335,7 +335,7 @@ connection_retrieve (string name, string session) {
   tree doc (DOCUMENT);
   while (true) {
     con->forced_eval= true;
-#ifndef QTTEXMACS
+#if !(defined(QTTEXMACS) || defined(QTWKTEXMACS))
     perform_select ();
 #endif
     con->forced_eval= false;

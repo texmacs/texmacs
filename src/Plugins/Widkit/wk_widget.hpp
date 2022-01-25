@@ -12,6 +12,7 @@
 #ifndef WK_WIDGET_H
 #define WK_WIDGET_H
 #include "widget.hpp"
+#include "window.hpp"
 #include "Widkit/event.hpp"
 
 /******************************************************************************

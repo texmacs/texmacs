@@ -30,7 +30,7 @@
 #ifdef QT_CORE_LIB
 #include <QtCore>
 #endif
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
 #include "Qt/qt_utilities.hpp"
 #include "Qt/qt_picture.hpp"
 #include <QImage>
@@ -659,6 +659,7 @@ CONCRETE_NULL_CODE(pdf_pattern);
 
 void
 pdf_hummus_renderer_rep::register_pattern_image (brush br, SI pixel) {
+#ifdef X11TEXMACS
   // debug_convert << "register_pattern_image\n";
   if (is_nil (br) || br->get_type () != brush_pattern) {
     convert_warning << "register_pattern_image: "
@@ -712,6 +713,7 @@ pdf_hummus_renderer_rep::register_pattern_image (brush br, SI pixel) {
 		     ((double) default_dpi) / dpi,
 		     ((double) default_dpi) / dpi, id);
   pattern_pool(p) = p_pdf;
+#endif
 }
 
 /******************************************************************************
@@ -1878,7 +1880,7 @@ pdf_image_info (url image, int& w, int& h, PDFRectangle& cropBox, double (&tMat)
     << "dx,dy={"<<tMat[4]<< ", "<<tMat[5] <<"}"<< LF;
 }
 
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
 void
 qt_image_data (url image, int& w, int&h, string& data, string& mask) {
   // debug_convert << "in qt_image_data"<<LF; 
@@ -1909,7 +1911,7 @@ bool
 pdf_image_rep::flush_for_pattern (PDFWriter& pdfw) {
   string data, smask;
   int iw = 0, ih =0;
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
   qt_image_data (u, iw, ih, data, smask);
 #else
   convert_error << "pdf_image_rep::flush_for_pattern: cannot export pattern "
@@ -2096,7 +2098,7 @@ pdf_hummus_renderer_rep::image (
 * Applying effects to existing pictures
 ******************************************************************************/
 
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
 static picture
 pdf_raster_picture (picture pic) {
   picture ret= qt_picture (QImage (pic->get_width (), pic->get_height (),
@@ -2116,7 +2118,7 @@ pdf_hummus_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   if (picture_cache->contains (key)) temp= picture_cache[key];
   else {
     // As an improvement one could handle native pictures without conversions
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) || defined(QTWKTEXMACS)
     picture q= pdf_raster_picture (p);
     qt_picture_rep* pict= (qt_picture_rep*) q->get_handle ();
     temp= url_temp (".png");

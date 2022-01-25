@@ -29,6 +29,13 @@ url tm_init_file= url_none ();
 url my_init_file= url_none ();
 string my_init_cmds= "";
 
+template<> void
+tm_delete<server_rep> (server_rep* ptr) {
+  void *mem= ptr->derived_this ();
+  ptr -> ~server_rep ();
+  fast_delete (mem);
+}
+
 /******************************************************************************
 * Execution of commands
 ******************************************************************************/
@@ -38,7 +45,7 @@ extern string printing_dpi;
 extern string printing_on;
 extern int nr_windows;
 
-#ifdef QTTEXMACS
+#if (defined(QTTEXMACS) || defined(QTWKTEXMACS))
 void del_obj_qt_renderer(void);
 #endif
 
@@ -119,6 +126,13 @@ tm_server_rep::~tm_server_rep () {}
 server::server (): rep (tm_new<tm_server_rep> ()) {}
 server_rep* tm_server_rep::get_server () { return this; }
 
+void
+tm_delete (server_rep* ptr) {
+  void *mem= ptr->derived_this ();
+  ptr -> ~server_rep ();
+  fast_delete (mem);
+}
+
 /******************************************************************************
 * Miscellaneous routines
 ******************************************************************************/
@@ -143,7 +157,7 @@ tm_server_rep::refresh () {
 
 void
 tm_server_rep::interpose_handler () {
-#ifdef QTTEXMACS
+#if (defined(QTTEXMACS) || defined(QTWKTEXMACS))
   // TeXmacs/Qt handles delayed messages and socket notification
   // in its own runloop
 #ifndef QTPIPES
@@ -253,7 +267,7 @@ tm_server_rep::quit () {
   close_all_pipes ();
   call ("quit-TeXmacs-scheme");
   clear_pending_commands ();
-#ifdef QTTEXMACS
+#if (defined(QTTEXMACS) || defined(QTWKTEXMACS))
   del_obj_qt_renderer ();
 #endif
   exit (0);

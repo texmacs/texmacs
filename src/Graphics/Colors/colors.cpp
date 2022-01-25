@@ -69,7 +69,7 @@ get_color_attrs (int &cs, int &cf, int &gr, int &ct) {
 * Set up colors
 ******************************************************************************/
 
-#ifdef QTTEXMACS
+#if defined (QTTEXMACS) || defined (QTWKTEXMACS)
 color black      = rgb_color (  0,   0,   0);
 color white      = rgb_color (255, 255, 255);
 color red        = rgb_color (255,   0,   0);
