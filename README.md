@@ -1,3 +1,26 @@
+# GNU TeXmacs (experimental branch S7/Qt/Widkit/Emscripten)
+
+January 2022.
+
+This is *experimental code*. Use at your own risk. In particular do not assume that ./configure do the right job, it might not.
+
+This branch uses S7 and the original TeXmacs own widget kit on top of a minimal Qt support. The idea is that this combination allows an easy porting to Web Assembly via the Qt support for Wasm. 
+
+Ideally one could get rid also of Qt and use SDL but we would need anyway some library for graphics rendering, so for the moment we stick to Qt which provide an easy access to the Wasm platform. 
+
+Build system is not yet ready. Maybe the following incantation will work for you after some tinkering, provided you have emscripten and Qt/Wasm properly installed.
+```
+cp packages/wasm/CMakeList.txt .
+emcmake cmake
+cd src
+emmake make
+```
+
+Below follows the standard README.md for TeXmacs/S7 and the original TeXmacs
+
+-----------------------
+
+
 # GNU TeXmacs (experimental branch for S7 Scheme)
 
 January 2021.
