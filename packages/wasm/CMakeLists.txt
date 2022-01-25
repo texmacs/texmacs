@@ -22,6 +22,8 @@
 
 cmake_minimum_required (VERSION 3.13)
 
+set(CMAKE_VERBOSE_MAKEFILE on)
+
 set (CMAKE_CXX_STANDARD 11)
 set (CMAKE_AUTOMOC ON)
 set (CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -107,8 +109,8 @@ check_include_file (strings.h HAVE_STRINGS_H)
 check_include_file (string.h HAVE_STRING_H)
 check_include_file (sys/stat.h HAVE_SYS_STAT_H)
 check_include_file (unistd.h HAVE_UNISTD_H)
-check_include_file (X11/Xlib.h HAVE_X11_XLIB_H)
-check_include_file (X11/Xutil.h HAVE_X11_XUTIL_H)
+#check_include_file (X11/Xlib.h HAVE_X11_XLIB_H)
+#check_include_file (X11/Xutil.h HAVE_X11_XUTIL_H)
 check_include_file (pty.h HAVE_PTY_H)
 check_include_file (util.h HAVE_UTIL_H)
 check_function_exists (gettimeofday HAVE_GETTIMEOFDAY)
@@ -185,17 +187,23 @@ set (PACKAGE_VERSION 1)
 #find_package (JPEG)
 #FIND_PACKAGE(Axel)
 
+# Also search for packages beneath filesystem root (in addition to /emsdk_portable/sdk/system)
+list(APPEND CMAKE_FIND_ROOT_PATH "/")
+
 #list(APPEND CMAKE_PREFIX_PATH "/Users/mgubi/t/qt-wasm/qtbase/lib/cmake")
-set(Qt5_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5)
-set(Qt5Core_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5Core)
-set(Qt5Gui_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5Gui)
-set(Qt5Network_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5Network)
-set(Qt5EventDispatcherSupport_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5EventDispatcherSupport)
-set(Qt5FontDatabaseSupport_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5FontDatabaseSupport)
-set(Qt5EglSupport_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5EglSupport)
+#set(Qt5_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5)
+#set(Qt5Core_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5Core)
+#set(Qt5Gui_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5Gui)
+#set(Qt5Widgets_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5Widgets)
+#set(Qt5Network_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5Network)
+#set(Qt5EventDispatcherSupport_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5EventDispatcherSupport)
+#set(Qt5FontDatabaseSupport_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5FontDatabaseSupport)
+#set(Qt5EglSupport_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5EglSupport)
 #message("${CMAKE_PREFIX_PATH}")
 
-find_package(Qt5 COMPONENTS Core Gui REQUIRED)
+find_package(Qt5 REQUIRED Gui Widgets Core PATHS /Users/mgubi/t/qt-wasm/qtbase/lib/cmake NO_DEFAULT_PATH)
+
+#find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
 
 ### --------------------------------------------------------------------
@@ -356,9 +364,8 @@ set (TeXmacs_All_SRCS ${TeXmacs_Base_SRCS}  ${TeXmacs_Std_Plugins_SRCS})
 
 file (GLOB_RECURSE TeXmacs_Widkit_SRCS "${TEXMACS_SOURCE_DIR}/src/Plugins/Widkit/*.cpp")
 #file (GLOB_RECURSE TeXmacs_X11_SRCS "${TEXMACS_SOURCE_DIR}/src/Plugins/X11/*.cpp")
-file (GLOB_RECURSE TeXmacs_Qt_SRCS "${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/*.cpp")
-file (GLOB_RECURSE TeXmacs_Qtwk_SRCS "${TEXMACS_SOURCE_DIR}/src/Plugins/Qtwk/*.cpp")
-
+#file (GLOB_RECURSE TeXmacs_Qt_SRCS "${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/*.cpp")
+#file (GLOB_RECURSE TeXmacs_Qtwk_SRCS "${TEXMACS_SOURCE_DIR}/src/Plugins/Qtwk/*.cpp")
 
 set (TeXmacs_Qtwk_SRCS
   ${TEXMACS_SOURCE_DIR}/src/Plugins/Qtwk/QTWKGuiHelper.cpp
@@ -403,25 +410,6 @@ set (TeXmacs_Qt_Moc_HDRS
   ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMWindow.hpp
 )
 
-set (TeXmacs_Cocoa_SRCS
-  ${TEXMACS_SOURCE_DIR}/src/Plugins/Cocoa/aqua_dialogues.mm
-  ${TEXMACS_SOURCE_DIR}/src/Plugins/Cocoa/aqua_gui.mm
-  ${TEXMACS_SOURCE_DIR}/src/Plugins/Cocoa/aqua_menu.mm
-  ${TEXMACS_SOURCE_DIR}/src/Plugins/Cocoa/aqua_renderer.mm
-  ${TEXMACS_SOURCE_DIR}/src/Plugins/Cocoa/aqua_utilities.mm
-  ${TEXMACS_SOURCE_DIR}/src/Plugins/Cocoa/aqua_widget.mm
-  ${TEXMACS_SOURCE_DIR}/src/Plugins/Cocoa/mac_utilities.mm
-  ${TEXMACS_SOURCE_DIR}/src/Plugins/Cocoa/TMButtonsController.m
-  ${TEXMACS_SOURCE_DIR}/src/Plugins/Cocoa/TMView.mm
-)
-
-set (TeXmacs_MacOS_SRCS
-  ${TEXMACS_SOURCE_DIR}/src/Plugins/MacOS/HIDRemote.m
-  ${TEXMACS_SOURCE_DIR}/src/Plugins/MacOS/mac_images.mm
-  ${TEXMACS_SOURCE_DIR}/src/Plugins/MacOS/mac_spellservice.mm
-  ${TEXMACS_SOURCE_DIR}/src/Plugins/MacOS/mac_utilities.mm
-)
-
 ### --------------------------------------------------------------------
 ### Determine TeXmacs_Libraries
 ### --------------------------------------------------------------------
@@ -440,21 +428,24 @@ set (TeXmacs_Libraries
 
 set (GUI_TYPE) # nothing or WIN32, MACOSX bundles are treated independetly
 
+include(packages/wasm/wasm.cmake)
+
 add_definitions ("-DQTWKTEXMACS")
-add_definitions ("-DPDFHUMMUS_NO_DCT") ## FIXME
-set (CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -pipe -O2 -Wall -Wextra  -include ${TEXMACS_BINARY_DIR}/src/System/config.h")
-set (CMAKE_CFLAGS "${CMAKE_CFLAGS} -pipe -O2 -s ALLOW_MEMORY_GROWTH=1 -Wall -Wextra")
-add_compile_options("-s" "USE_FREETYPE=1")
-add_definitions ("-DQT_NO_DEBUG"  "-DQT_GUI_LIB" "-DQT_CORE_LIB"  "-DQT_WIDGETS_LIB")
+add_compile_options("-pipe" "-O2" "-Wall" "-Wextra" "-include" "${TEXMACS_BINARY_DIR}/src/System/config.h")
+add_compile_options("SHELL:-s USE_FREETYPE=1")
 
-set (LINK_OPTIONS "${LINK_OPTIONS} -s WASM=1 -s FULL_ES2=1 -s FULL_ES3=1 -s USE_WEBGL2=1" 
-    "-s EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 " 
-    "-s EXTRA_EXPORTED_RUNTIME_METHODS=[\"UTF16ToString\",\"stringToUTF16\"] " 
-    "--preload-file ${TEXMACS_SOURCE_DIR}/TeXmacs@TeXmacs"
-    "--bind -s FETCH=1 -O2 -s ALLOW_MEMORY_GROWTH=1"
-    "-s USE_FREETYPE=1")
+add_link_options ("SHELL:-s USE_FREETYPE=1" "SHELL:--preload-file ${TEXMACS_SOURCE_DIR}/TeXmacs@TeXmacs")
 
-set (QT_INCLUDES
+#add_definitions ("-DQT_NO_DEBUG"  "-DQT_GUI_LIB" "-DQT_CORE_LIB"  "-DQT_WIDGETS_LIB")
+
+#add_link_options ("SHELL:-s WASM=1" "SHELL:-s FULL_ES2=1" "SHELL:-s FULL_ES3=1" "SHELL:-s USE_WEBGL2=1" 
+#    "SHELL:-s EXIT_RUNTIME=1" "SHELL:-s ERROR_ON_UNDEFINED_SYMBOLS=1 " 
+#    "SHELL:-s EXTRA_EXPORTED_RUNTIME_METHODS=[\"UTF16ToString\",\"stringToUTF16\"] " 
+#    "SHELL:--preload-file ${TEXMACS_SOURCE_DIR}/TeXmacs@TeXmacs"
+#    "--bind" "SHELL:-s FETCH=1" "-O2" "SHELL:-s ALLOW_MEMORY_GROWTH=1")
+
+
+set (XXX_QT_INCLUDES
   /Users/mgubi/t/qt-wasm/qtbase/include
   /Users/mgubi/t/qt-wasm/qtbase/include/QtWidgets
   /Users/mgubi/t/qt-wasm/qtbase/include/QtGui
@@ -463,7 +454,7 @@ set (QT_INCLUDES
   /Users/mgubi/.emscripten_ports/openssl/include
 )
 
-set (QT_LIBRARIES
+set (XXX_QT_LIBRARIES
   /Users/mgubi/t/qt-wasm/qtbase/plugins/platforms/libqwasm.a 
   /Users/mgubi/t/qt-wasm/qtbase/lib/libQt5EventDispatcherSupport.a 
   /Users/mgubi/t/qt-wasm/qtbase/lib/libQt5FontDatabaseSupport.a 
@@ -485,10 +476,9 @@ if (CMAKE_BUILD_TYPE STREQUAL "Release")
 endif (CMAKE_BUILD_TYPE STREQUAL "Release")
 
 set (TeXmacs_All_SRCS ${TeXmacs_All_SRCS} ${TeXmacs_Qtwk_SRCS} ${TeXmacs_Qtwk_Moc_HDRS} ${TeXmacs_Widkit_SRCS} )
-set (TeXmacs_Include_Dirs ${TeXmacs_Include_Dirs} ${QT_INCLUDES})
-set (TeXmacs_Libraries ${TeXmacs_Libraries}  ${QT_LIBRARIES})
+set (TeXmacs_Include_Dirs ${TeXmacs_Include_Dirs}) ## ${QT_INCLUDES}
+set (TeXmacs_Libraries ${TeXmacs_Libraries})
 
-##  set (QTTEXMACS 1)
 set (CONFIG_GUI "QT")
 set (CONFIG_QT "Qtwk Widkit")
 message (STATUS "Enabling Qtwk port")
@@ -520,7 +510,7 @@ include_directories (${TeXmacs_Include_Dirs})
 ### Compile sources
 ### --------------------------------------------------------------------
 
-add_subdirectory (src)
+#add_subdirectory (src)
 ##add_subdirectory (plugins)
 ##add_subdirectory (misc)
 ##add_subdirectory (TeXmacs)
@@ -530,28 +520,28 @@ add_subdirectory (src)
 ### --------------------------------------------------------------------
 
 ### include/
-install (DIRECTORY TeXmacs/include DESTINATION ${CMAKE_INSTALL_PREFIX}
-  FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
+#install (DIRECTORY TeXmacs/include DESTINATION ${CMAKE_INSTALL_PREFIX}
+#  FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
 
 ### share/
-install (DIRECTORY plugins DESTINATION share/TeXmacs
-  FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-  PATTERN "bin" EXCLUDE
-  PATTERN "CMakeLists.txt" EXCLUDE
-  PATTERN ".gitignore" EXCLUDE)
+#install (DIRECTORY plugins DESTINATION share/TeXmacs
+#  FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+#  PATTERN "bin" EXCLUDE
+#  PATTERN "CMakeLists.txt" EXCLUDE
+#  PATTERN ".gitignore" EXCLUDE)
 
-install (FILES TeXmacs/misc/mime/texmacs.desktop DESTINATION share/applications)
-install (FILES TeXmacs/misc/images/texmacs.svg RENAME TeXmacs.svg
-  DESTINATION share/icons/hicolor/scalable/apps)
-install (FILES TeXmacs/misc/images/text-x-texmacs.svg
-  DESTINATION share/icons/hicolor/scalable/mimetypes)
-install (FILES TeXmacs/misc/mime/texmacs.xml DESTINATION share/mime/packages)
-install (FILES TeXmacs/misc/pixmaps/TeXmacs.xpm DESTINATION share/pixmaps)
-foreach (size IN ITEMS 16 22 24 32 48 64 128 256 512)
-  message (STATUS ${size})
-  install (FILES TeXmacs/misc/images/texmacs-${size}.png RENAME TeXmacs.png
-    DESTINATION share/icons/hicolor/${size}x${size}/apps/)
-endforeach ()
+#install (FILES TeXmacs/misc/mime/texmacs.desktop DESTINATION share/applications)
+#install (FILES TeXmacs/misc/images/texmacs.svg RENAME TeXmacs.svg
+#  DESTINATION share/icons/hicolor/scalable/apps)
+#install (FILES TeXmacs/misc/images/text-x-texmacs.svg
+#  DESTINATION share/icons/hicolor/scalable/mimetypes)
+#install (FILES TeXmacs/misc/mime/texmacs.xml DESTINATION share/mime/packages)
+#install (FILES TeXmacs/misc/pixmaps/TeXmacs.xpm DESTINATION share/pixmaps)
+#foreach (size IN ITEMS 16 22 24 32 48 64 128 256 512)
+#  message (STATUS ${size})
+#  install (FILES TeXmacs/misc/images/texmacs-${size}.png RENAME TeXmacs.png
+#    DESTINATION share/icons/hicolor/${size}x${size}/apps/)
+#endforeach ()
 
 ### ---------------------------------------------------------------------
 ### VSCode Support
@@ -566,3 +556,29 @@ configure_file (${TEXMACS_SOURCE_DIR}/misc/vscode/c_cpp_properties.json.in
 )
 
 message (STATUS "TeXmacs_Libraries" ${TeXmacs_Libraries})
+
+
+
+### compiling
+
+### --------------------------------------------------------------------
+### Set the executable target name and other stuff
+### --------------------------------------------------------------------
+
+set (TeXmacs_binary_name "texmacs.bin")
+
+add_executable (${TeXmacs_binary_name}
+  ${TeXmacs_All_SRCS}
+  ${TEXMACS_SOURCE_DIR}/src/Texmacs/Texmacs/texmacs.cpp
+)
+
+target_link_libraries (${TeXmacs_binary_name}
+  PRIVATE Qt5::Gui Qt5::Core Qt5::Widgets
+)
+
+qt5_import_plugins (${TeXmacs_binary_name})
+
+link_qt_static (${TeXmacs_binary_name})
+
+#install (TARGETS ${TeXmacs_binary_name} DESTINATION ${tmbin}/bin)
+
