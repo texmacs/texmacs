@@ -24,31 +24,33 @@ cmake_minimum_required (VERSION 3.13)
 
 set(CMAKE_VERBOSE_MAKEFILE on)
 
-set (CMAKE_CXX_STANDARD 11)
+#set (CMAKE_CXX_STANDARD 11)
 set (CMAKE_AUTOMOC ON)
-set (CMAKE_INCLUDE_CURRENT_DIR ON)
+#set (CMAKE_INCLUDE_CURRENT_DIR ON)
 
-if (NOT CMAKE_BUILD_TYPE)
-  set (CMAKE_BUILD_TYPE Debug CACHE STRING
-    "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
-    FORCE)
-endif (NOT CMAKE_BUILD_TYPE)
+#if (NOT CMAKE_BUILD_TYPE)
+#  set (CMAKE_BUILD_TYPE Debug CACHE STRING
+#    "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
+#    FORCE)
+#endif (NOT CMAKE_BUILD_TYPE)
 
 #INCLUDE(CMakeDetermineSystem)
 
 # Configure CCache if available
-find_program (CCACHE_FOUND ccache)
-if (CCACHE_FOUND)
-  set_property (GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
-  set_property (GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
-endif (CCACHE_FOUND)
+#find_program (CCACHE_FOUND ccache)
+#if (CCACHE_FOUND)
+#  set_property (GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+#  set_property (GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+#endif (CCACHE_FOUND)
 
 
 ### --------------------------------------------------------------------
 ### Project name 
 ### --------------------------------------------------------------------
 
-project (TEXMACS CXX C) # check for C/C++ compiler
+project (TEXMACS) # check for C/C++ compiler
+
+#project (TEXMACS CXX C) # check for C/C++ compiler
 
 set (PACKAGE TeXmacs)
 set (CMAKE_MODULE_PATH ${TEXMACS_SOURCE_DIR}/cmake)
@@ -87,13 +89,12 @@ option (USE_STACK_TRACE "Use stack trace" OFF) ## not supported yet for wasm
 ### --------------------------------------------------------------------
 
 include (CheckFunctionExists)
-include (CheckLibraryExists)
+#include (CheckLibraryExists)
 include (CheckIncludeFile)
 include (CheckTypeSize)
 #include (FindPkgConfig)
-include (CheckCSourceCompiles)
+#include (CheckCSourceCompiles)
 #include (FindX11)
-
 
 ### --------------------------------------------------------------------
 ### Check for standard functionalities
@@ -181,30 +182,9 @@ set (PACKAGE_VERSION 1)
 ###  Test for Libraries
 ### --------------------------------------------------------------------
 
-#find_package (PNG)
-#find_package (Iconv)
-#find_package (ZLIB)
-#find_package (JPEG)
-#FIND_PACKAGE(Axel)
-
-# Also search for packages beneath filesystem root (in addition to /emsdk_portable/sdk/system)
-list(APPEND CMAKE_FIND_ROOT_PATH "/")
-
-#list(APPEND CMAKE_PREFIX_PATH "/Users/mgubi/t/qt-wasm/qtbase/lib/cmake")
-#set(Qt5_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5)
-#set(Qt5Core_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5Core)
-#set(Qt5Gui_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5Gui)
-#set(Qt5Widgets_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5Widgets)
-#set(Qt5Network_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5Network)
-#set(Qt5EventDispatcherSupport_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5EventDispatcherSupport)
-#set(Qt5FontDatabaseSupport_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5FontDatabaseSupport)
-#set(Qt5EglSupport_DIR /Users/mgubi/t/qt-wasm/qtbase/lib/cmake/Qt5EglSupport)
-#message("${CMAKE_PREFIX_PATH}")
+include(packages/wasm/wasm.cmake)
 
 find_package(Qt5 REQUIRED Gui Widgets Core PATHS /Users/mgubi/t/qt-wasm/qtbase/lib/cmake NO_DEFAULT_PATH)
-
-#find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
-
 
 ### --------------------------------------------------------------------
 ###  Some Guile related adjustements
@@ -215,6 +195,7 @@ set (CONFIG_GUILE_SERIAL "D")
 ### --------------------------------------------------------------------
 ### Generate configure headers
 ### --------------------------------------------------------------------
+
 set (DEBUG_ASSERT 1)
 
 set (GS_EXE /usr/bin/gs)
@@ -247,7 +228,6 @@ set (tmbin ${exec_prefix}/lib/texmacs/TeXmacs)
 
 configure_file (${TEXMACS_SOURCE_DIR}/src/System/config.h.cmake ${TEXMACS_BINARY_DIR}/src/System/config.h)
 configure_file (${TEXMACS_SOURCE_DIR}/src/System/tm_configure.hpp.cmake ${TEXMACS_BINARY_DIR}/src/System/tm_configure.hpp)
-
 
 ### --------------------------------------------------------------------
 ### the include dirs
@@ -308,15 +288,10 @@ set (TeXmacs_Include_Dirs
   ${TEXMACS_BINARY_DIR}/src/System/ 
 )
 
-set (TeXmacs_Include_Dirs ${TeXmacs_Include_Dirs}
-  # ${Guile_INCLUDE_DIRS}
-#        ${FREETYPE_INCLUDE_DIRS} ${Cairo_INCLUDE_DIRS}
-#  ${IMLIB2_INCLUDE_DIR} ${GMP_INCLUDES}
-)
-
 ### --------------------------------------------------------------------
 ### the main sources
 ### --------------------------------------------------------------------
+
 file (GLOB_RECURSE TeXmacs_Base_SRCS
   "${TEXMACS_SOURCE_DIR}/src/Data/*.cpp"
   "${TEXMACS_SOURCE_DIR}/src/Edit/*.cpp"
@@ -357,10 +332,6 @@ file (GLOB_RECURSE TeXmacs_Style_SRCS
 )
 
 set (TeXmacs_All_SRCS ${TeXmacs_Base_SRCS}  ${TeXmacs_Std_Plugins_SRCS})
-
-### --------------------------------------------------------------------
-### GUI Interfaces
-### --------------------------------------------------------------------
 
 file (GLOB_RECURSE TeXmacs_Widkit_SRCS "${TEXMACS_SOURCE_DIR}/src/Plugins/Widkit/*.cpp")
 #file (GLOB_RECURSE TeXmacs_X11_SRCS "${TEXMACS_SOURCE_DIR}/src/Plugins/X11/*.cpp")
@@ -411,24 +382,10 @@ set (TeXmacs_Qt_Moc_HDRS
 )
 
 ### --------------------------------------------------------------------
-### Determine TeXmacs_Libraries
-### --------------------------------------------------------------------
-
-set (TeXmacs_Libraries
-  # ${Guile_LIBRARIES}
-#  ${ZLIB_LIBRARIES}
-#  ${JPEG_LIBRARIES}
-#  ${PNG_LIBRARIES}
-#  -lpthread
-)
-
-### --------------------------------------------------------------------
 ### GUI selection
 ### --------------------------------------------------------------------
 
 set (GUI_TYPE) # nothing or WIN32, MACOSX bundles are treated independetly
-
-include(packages/wasm/wasm.cmake)
 
 add_definitions ("-DQTWKTEXMACS")
 add_compile_options("-pipe" "-O2" "-Wall" "-Wextra" "-include" "${TEXMACS_BINARY_DIR}/src/System/config.h")
@@ -436,47 +393,12 @@ add_compile_options("SHELL:-s USE_FREETYPE=1")
 
 add_link_options ("SHELL:-s USE_FREETYPE=1" "SHELL:--preload-file ${TEXMACS_SOURCE_DIR}/TeXmacs@TeXmacs")
 
-#add_definitions ("-DQT_NO_DEBUG"  "-DQT_GUI_LIB" "-DQT_CORE_LIB"  "-DQT_WIDGETS_LIB")
-
-#add_link_options ("SHELL:-s WASM=1" "SHELL:-s FULL_ES2=1" "SHELL:-s FULL_ES3=1" "SHELL:-s USE_WEBGL2=1" 
-#    "SHELL:-s EXIT_RUNTIME=1" "SHELL:-s ERROR_ON_UNDEFINED_SYMBOLS=1 " 
-#    "SHELL:-s EXTRA_EXPORTED_RUNTIME_METHODS=[\"UTF16ToString\",\"stringToUTF16\"] " 
-#    "SHELL:--preload-file ${TEXMACS_SOURCE_DIR}/TeXmacs@TeXmacs"
-#    "--bind" "SHELL:-s FETCH=1" "-O2" "SHELL:-s ALLOW_MEMORY_GROWTH=1")
-
-
-set (XXX_QT_INCLUDES
-  /Users/mgubi/t/qt-wasm/qtbase/include
-  /Users/mgubi/t/qt-wasm/qtbase/include/QtWidgets
-  /Users/mgubi/t/qt-wasm/qtbase/include/QtGui
-  /Users/mgubi/t/qt-wasm/qtbase/include/QtCore
-  /Users/mgubi/t/qt-wasm/qtbase/mkspecs/wasm-emscripten
-  /Users/mgubi/.emscripten_ports/openssl/include
-)
-
-set (XXX_QT_LIBRARIES
-  /Users/mgubi/t/qt-wasm/qtbase/plugins/platforms/libqwasm.a 
-  /Users/mgubi/t/qt-wasm/qtbase/lib/libQt5EventDispatcherSupport.a 
-  /Users/mgubi/t/qt-wasm/qtbase/lib/libQt5FontDatabaseSupport.a 
-  /Users/mgubi/t/qt-wasm/qtbase/lib/libqtfreetype.a 
-  /Users/mgubi/t/qt-wasm/qtbase/lib/libQt5EglSupport.a 
-  /Users/mgubi/t/qt-wasm/qtbase/plugins/imageformats/libqgif.a 
-  /Users/mgubi/t/qt-wasm/qtbase/plugins/imageformats/libqico.a 
-  /Users/mgubi/t/qt-wasm/qtbase/plugins/imageformats/libqjpeg.a 
-  /Users/mgubi/t/qt-wasm/qtbase/lib/libQt5Widgets.a 
-  /Users/mgubi/t/qt-wasm/qtbase/lib/libQt5Gui.a 
-  /Users/mgubi/t/qt-wasm/qtbase/lib/libqtlibpng.a 
-  /Users/mgubi/t/qt-wasm/qtbase/lib/libqtharfbuzz.a 
-  /Users/mgubi/t/qt-wasm/qtbase/lib/libQt5Core.a 
-  /Users/mgubi/t/qt-wasm/qtbase/lib/libqtpcre2.a)
-
-
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
   add_definitions ("-DQT_NO_DEBUG")
 endif (CMAKE_BUILD_TYPE STREQUAL "Release")
 
 set (TeXmacs_All_SRCS ${TeXmacs_All_SRCS} ${TeXmacs_Qtwk_SRCS} ${TeXmacs_Qtwk_Moc_HDRS} ${TeXmacs_Widkit_SRCS} )
-set (TeXmacs_Include_Dirs ${TeXmacs_Include_Dirs}) ## ${QT_INCLUDES}
+set (TeXmacs_Include_Dirs ${TeXmacs_Include_Dirs})
 set (TeXmacs_Libraries ${TeXmacs_Libraries})
 
 set (CONFIG_GUI "QT")
@@ -494,78 +416,10 @@ set (TeXmacs_All_SRCS ${TeXmacs_All_SRCS} ${TeXmacs_System_SRCS})
 include_directories (${TeXmacs_Include_Dirs})
 
 ### --------------------------------------------------------------------
-### Debugging options
-### --------------------------------------------------------------------
-
-
-### --------------------------------------------------------------------
-### Warning options
-### --------------------------------------------------------------------
-
-### --------------------------------------------------------------------
-### Optimization options
-### --------------------------------------------------------------------
-
-### --------------------------------------------------------------------
-### Compile sources
-### --------------------------------------------------------------------
-
-#add_subdirectory (src)
-##add_subdirectory (plugins)
-##add_subdirectory (misc)
-##add_subdirectory (TeXmacs)
-
-### --------------------------------------------------------------------
-### Installation
-### --------------------------------------------------------------------
-
-### include/
-#install (DIRECTORY TeXmacs/include DESTINATION ${CMAKE_INSTALL_PREFIX}
-#  FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
-
-### share/
-#install (DIRECTORY plugins DESTINATION share/TeXmacs
-#  FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-#  PATTERN "bin" EXCLUDE
-#  PATTERN "CMakeLists.txt" EXCLUDE
-#  PATTERN ".gitignore" EXCLUDE)
-
-#install (FILES TeXmacs/misc/mime/texmacs.desktop DESTINATION share/applications)
-#install (FILES TeXmacs/misc/images/texmacs.svg RENAME TeXmacs.svg
-#  DESTINATION share/icons/hicolor/scalable/apps)
-#install (FILES TeXmacs/misc/images/text-x-texmacs.svg
-#  DESTINATION share/icons/hicolor/scalable/mimetypes)
-#install (FILES TeXmacs/misc/mime/texmacs.xml DESTINATION share/mime/packages)
-#install (FILES TeXmacs/misc/pixmaps/TeXmacs.xpm DESTINATION share/pixmaps)
-#foreach (size IN ITEMS 16 22 24 32 48 64 128 256 512)
-#  message (STATUS ${size})
-#  install (FILES TeXmacs/misc/images/texmacs-${size}.png RENAME TeXmacs.png
-#    DESTINATION share/icons/hicolor/${size}x${size}/apps/)
-#endforeach ()
-
-### ---------------------------------------------------------------------
-### VSCode Support
-### ---------------------------------------------------------------------
-foreach (DIR ${TeXmacs_Include_Dirs})
-  set (VSCODE_INCLUDE_DIRS "${VSCODE_INCLUDE_DIRS}\"${DIR}\",\n                ")
-endforeach (DIR ${TeXmacs_Include_Dirs})
-
-configure_file (${TEXMACS_SOURCE_DIR}/misc/vscode/c_cpp_properties.json.in
-  ${TEXMACS_SOURCE_DIR}/.vscode/c_cpp_properties.json
-  @ONLY
-)
-
-message (STATUS "TeXmacs_Libraries" ${TeXmacs_Libraries})
-
-
-
-### compiling
-
-### --------------------------------------------------------------------
 ### Set the executable target name and other stuff
 ### --------------------------------------------------------------------
 
-set (TeXmacs_binary_name "texmacs.bin")
+set (TeXmacs_binary_name "TeXmacs")
 
 add_executable (${TeXmacs_binary_name}
   ${TeXmacs_All_SRCS}
@@ -581,4 +435,19 @@ qt5_import_plugins (${TeXmacs_binary_name})
 link_qt_static (${TeXmacs_binary_name})
 
 #install (TARGETS ${TeXmacs_binary_name} DESTINATION ${tmbin}/bin)
+
+### ---------------------------------------------------------------------
+### VSCode Support
+### ---------------------------------------------------------------------
+
+foreach (DIR ${TeXmacs_Include_Dirs})
+  set (VSCODE_INCLUDE_DIRS "${VSCODE_INCLUDE_DIRS}\"${DIR}\",\n                ")
+endforeach (DIR ${TeXmacs_Include_Dirs})
+
+configure_file (${TEXMACS_SOURCE_DIR}/misc/vscode/c_cpp_properties.json.in
+  ${TEXMACS_SOURCE_DIR}/.vscode/c_cpp_properties.json
+  @ONLY
+)
+
+message (STATUS "TeXmacs_Libraries" ${TeXmacs_Libraries})
 
