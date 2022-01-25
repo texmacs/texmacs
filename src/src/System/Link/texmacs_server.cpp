@@ -35,7 +35,7 @@ server_start () {
     (void) eval ("(use-modules (server server-tmfs))");
     (void) eval ("(use-modules (server server-menu))");
     (void) eval ("(use-modules (server server-live))");
-    the_server= tm_new<socket_server> (INADDR_ANY,6561);
+    the_server= tm_new<socket_server> ("", 6561);
   }
   if (the_server->alive ())
     cout << "TeXmacs] Server started... \n";
