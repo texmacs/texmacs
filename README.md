@@ -6,6 +6,8 @@ This is *experimental code*. Use at your own risk.
 
 This branch uses S7 Scheme and the TeXmacs own widget kit (Widkit) on top of a minimal Qt5/6 support. The idea is that this combination allows an easy porting to Web Assembly via the Qt support for Wasm. 
 
+![Screenshot](packages/wasm/first-screenshot.png "the first screenshot")
+
 Ideally one could get rid also of Qt and use SDL or GLFW but we would need anyway some library for graphics rendering. For the moment we stick to Qt which provide an easy access to the Wasm platform. 
 
 The build system is not yet ready. Maybe the following incantation will work for you after some tinkering, provided you have the `emscripten`SDK and Qt6/Wasm properly installed. (it can work also with Qt5 I believe).
