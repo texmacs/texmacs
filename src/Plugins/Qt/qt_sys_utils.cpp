@@ -16,6 +16,14 @@
 #include <QProcess>
 #include <QString>
 
+#ifdef __EMSCRIPTEN__
+
+int qt_system (string) { return 0; }
+int qt_system (string, string&) { return 0; }
+int qt_system (string, string&, string&) { return 0; }
+
+#else
+
 static void
 ReadOutputs(QProcess& p, string& o, string& e) {
   if (p.processChannelMode() == QProcess::MergedChannels)
@@ -73,3 +81,4 @@ qt_system (string cmd, string& result) {
   proc.setProcessChannelMode (QProcess::MergedChannels);
   return qt_system (proc, cmd, result, dummy);
 }
+#endif // #ifdef __EMSCRIPTEN__

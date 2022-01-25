@@ -26,9 +26,20 @@
 
 // stubs
 
-int unix_system (string) {  return 0; }
-int unix_system (string, string& out) { out = ""; return 0; };
-int unix_system (string, string& out, string& err) { out = "";  err= ""; return 0; }
+int unix_system (string s) {  
+  cout << "SYSTEM CALL 1:" << s << LF;
+  return 0; 
+}
+
+int unix_system (string s, string& out) { 
+  cout << "SYSTEM CALL 2:" << s << LF;
+  out = ""; return 0; 
+};
+
+int unix_system (string s, string& out, string& err) { 
+  cout << "SYSTEM CALL 3:" << s << LF;
+  out = "";  err= ""; return 0; 
+}
 
 int unix_system (array<string> arg,
 		 array<int> fd_in, array<string> str_in,

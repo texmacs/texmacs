@@ -18,7 +18,7 @@
 #include <QCoreApplication>
 #include <QLocale>
 #include <QDateTime>
-#include <QTextCodec>
+//#include <QTextCodec>
 #include <QHash>
 #include <QStringList>
 #include <QKeySequence>
@@ -787,7 +787,7 @@ qt_get_date (string lan, string fm) {
 
 string
 qt_pretty_time (int t) {
-  QDateTime dt= QDateTime::fromTime_t (t);
+  QDateTime dt= QDateTime::fromSecsSinceEpoch (t);
   QString s= dt.toString ();
   return from_qstring (s);
 }

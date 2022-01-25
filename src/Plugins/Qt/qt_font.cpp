@@ -88,7 +88,7 @@ void
 qt_font_rep::get_extents (string s, metric& ex) {
   QString qs  = utf8_to_qstring (cork_to_utf8 (s));
   QRectF  rect= qfm.tightBoundingRect (qs);
-  qreal   w   = qfm.width (qs);
+  qreal   w   = qfm.horizontalAdvance (qs);
   ex->x1= 0;
   ex->x2= ROUND (w);
   ex->y1= FLOOR (-rect.bottom ());

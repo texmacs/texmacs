@@ -32,7 +32,6 @@
 #include "qtwk_window.hpp"
 #include "widget.hpp"
 
-#include <QDesktopWidget>
 #include <QClipboard>
 #include <QBuffer>
 #include <QFileOpenEvent>
@@ -48,7 +47,6 @@
 #include <QLibraryInfo>
 #include <QImage>
 #include <QUrl>
-#include <QDesktopWidget>
 #include <QWidget>
 
 #include "QTWKGuiHelper.hpp"
@@ -185,7 +183,7 @@ needing_update (false)
 /* important routines */
 void
 qtwk_gui_rep::get_extents (SI& width, SI& height) {
-  coord2 size = from_qsize (QApplication::desktop ()->size ());
+  coord2 size = from_qsize (QApplication::primaryScreen()->availableSize());
   width  = size.x1;
   height = size.x2;
 }
@@ -221,7 +219,7 @@ get_button_state () {
   Qt::MouseButtons bstate= QApplication::mouseButtons ();
   Qt::KeyboardModifiers kstate= QApplication::keyboardModifiers ();
   if ((bstate & Qt::LeftButton     ) != 0) i += 1;
-  if ((bstate & Qt::MidButton      ) != 0) i += 2;
+  if ((bstate & Qt::MiddleButton   ) != 0) i += 2;
   if ((bstate & Qt::RightButton    ) != 0) i += 4;
   if ((bstate & Qt::XButton1       ) != 0) i += 8;
   if ((bstate & Qt::XButton2       ) != 0) i += 16;
@@ -450,7 +448,8 @@ qtwk_gui_rep::set_selection (string key, tree t,
   cb->clear (mode);
   
   c_string selection (s);
-  cb->setText (QString::fromLatin1 (selection), mode);
+  int ns = N(s);
+  cb->setText (QString::fromLatin1 (selection, ns), mode);
   QMimeData *md = new QMimeData;
   
   if (format == "verbatim" || format == "default") {
@@ -467,6 +466,7 @@ qtwk_gui_rep::set_selection (string key, tree t,
         //tm_delete_array (selection);
       
       selection = c_string (sv);
+      ns = N(sv);
     }
     
     string enc = get_preference ("texmacs->verbatim:encoding");
@@ -474,14 +474,14 @@ qtwk_gui_rep::set_selection (string key, tree t,
       enc = get_locale_charset ();
     
     if (enc == "utf-8" || enc == "UTF-8")
-      md->setText (QString::fromUtf8 (selection));
+      md->setText (QString::fromUtf8 (selection, ns));
     else if (enc == "iso-8859-1" || enc == "ISO-8859-1")
-      md->setText (QString::fromLatin1 (selection));
+      md->setText (QString::fromLatin1 (selection, ns));
     else
-      md->setText (QString::fromLatin1 (selection));
+      md->setText (QString::fromLatin1 (selection, ns));
   }
   else
-    md->setText (QString::fromLatin1 (selection));
+    md->setText (QString::fromLatin1 (selection, ns));
   cb->setMimeData (md, mode);
     // according to the docs, ownership of mimedata is transferred to clipboard
     // so no memory leak here
@@ -1400,3 +1400,13 @@ int
 event_queue::size() const {
   return n;
 }
+
+
+#ifdef __EMSCRIPTEN__
+#include "tm_link.hpp"
+tm_link make_pipe_link (string cmd) { return tm_link(); }
+
+void close_all_pipes () {}
+void process_all_pipes () {}
+
+#endif

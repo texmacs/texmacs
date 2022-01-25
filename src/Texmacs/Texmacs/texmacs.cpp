@@ -200,6 +200,15 @@ TeXmacs_init_paths (int& argc, char** argv) {
            as_string (exedir * "/system/lib/TeXmacs/bin"));
 #endif
 
+#ifdef __EMSCRIPTEN__
+  if (is_empty (current_texmacs_path))
+    set_env ("TEXMACS_PATH", "/TeXmacs");
+
+  //FIXME: this below I think is useless
+  set_env ("PATH", get_env("PATH") * ":" *
+           as_string (exedir * "/system/lib/TeXmacs/bin"));
+#endif
+
   // check on the latest $TEXMACS_PATH
   current_texmacs_path = get_env ("TEXMACS_PATH");
   if (is_empty (current_texmacs_path) ||
@@ -589,6 +598,8 @@ immediate_options (int argc, char** argv) {
 	}
 #elif defined(OS_HAIKU)
     set_env ("TEXMACS_HOME_PATH", get_env ("HOME") * "/config/settings/TeXmacs");
+#elif defined(__EMSCRIPTEN__)
+    set_env ("TEXMACS_HOME_PATH", "/.TeXmacs");
 #else
     set_env ("TEXMACS_HOME_PATH", get_env ("HOME") * "/.TeXmacs");
 #endif
@@ -675,7 +686,7 @@ main (int argc, char** argv) {
   immediate_options (argc, argv);
   load_user_preferences ();
   string theme= get_user_preference ("gui theme", "default");
-#ifdef OS_MACOS
+#ifdef Q_OS_MACOS
   if (theme == "default") theme= "";  
 #else
   if (theme == "default") theme= "light";
@@ -689,8 +700,10 @@ main (int argc, char** argv) {
 #ifndef OS_MINGW
   set_env ("LC_NUMERIC", "POSIX");
 #ifndef OS_MACOS
+#ifndef __EMSCRIPTEN__
   set_env ("QT_QPA_PLATFORM", "xcb");
   set_env ("XDG_SESSION_TYPE", "x11");
+#endif
 #endif
 #endif
 #ifdef MACOSX_EXTENSIONS
@@ -705,10 +718,10 @@ main (int argc, char** argv) {
 #endif
 #if defined(QTTEXMACS) || defined(QTWKTEXMACS)
   // initialize the Qt application infrastructure
-  #if (QT_VERSION >= 0x050000)
-      QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-      QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-  #endif
+//  #if (QT_VERSION >= 0x050000)
+//      QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+//      QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+//  #endif
   qtmapp= new QTMApplication (argc, argv);
   //QTMApplication* qtmapp= new QTMApplication (argc, argv);
 #endif

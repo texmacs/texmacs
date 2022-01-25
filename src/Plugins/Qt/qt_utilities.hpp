@@ -22,7 +22,7 @@
 #include <QUrl>
 
 
-class QStringList;
+//class QStringList;
 class QKeySequence;
 
 typedef quartet<SI,SI,SI,SI> coord4;
