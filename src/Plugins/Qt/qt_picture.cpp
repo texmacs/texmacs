@@ -96,6 +96,7 @@ qt_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   decode (x, y);
   qreal old_opacity= painter->opacity ();
   painter->setOpacity (qreal (alpha) / qreal (255));
+//  painter->drawImage (x - x0, y - y0, pict->pict);
   painter->drawImage (QRect (x - x0, y - y0,
                              pict->pict.width(),
                              pict->pict.height()),
@@ -364,6 +365,9 @@ new_qt_load_xpm (url file_name) {
   pm= pm.scaled ((int) floor (f * pm.width () + 0.5),
                  (int) floor (f * pm.height () + 0.5),
                  Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+#if (QT_VERSION >= 0x050000)
+  pm.setDevicePixelRatio (scale);
+#endif
   return qt_picture (pm, 0, 0);
 }
 
@@ -371,11 +375,11 @@ picture
 qt_load_xpm (url file_name) {
   if (tm_style_sheet != "") return new_qt_load_xpm (file_name);
   string sss;
-  float dpr = 1.0;
+  double dpr= 1.0;
   if (retina_icons > 1 && suffix (file_name) == "xpm") {
     url png_equiv= glue (unglue (file_name, 4), "_x2.png");
     load_string ("$TEXMACS_PIXMAP_PATH" * png_equiv, sss, false);
-    if (!(sss == "")) dpr = 2.0;
+    if (sss != "") dpr = 2.0;
   }
   if (sss == "" && suffix (file_name) == "xpm") {
     url png_equiv= glue (unglue (file_name, 3), "png");
