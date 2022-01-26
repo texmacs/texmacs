@@ -338,9 +338,15 @@ TeXmacs_main (int argc, char** argv) {
         retina_zoom  = 1;
         retina_scale = 1.4;
 #else
+#ifdef __EMSCRIPTEN__
+        retina_factor= 2;
+        retina_zoom  = 2;
+        retina_scale = (tm_style_sheet == ""? 1.0: 1.6666);
+#else
         retina_factor= 1;
         retina_zoom  = 2;
         retina_scale = (tm_style_sheet == ""? 1.0: 1.6666);
+#endif
 #endif
         retina_icons = 2;
       }
