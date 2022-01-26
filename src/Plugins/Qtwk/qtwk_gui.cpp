@@ -160,7 +160,13 @@ needing_update (false)
     get_extents (w, h);
     if (DEBUG_STD)
       debug_boot << "Screen extents: " << w/PIXEL << " x " << h/PIXEL << "\n";
-    if (min (w, h) >= 1440 * PIXEL) {
+    double ratio= QApplication::primaryScreen()->devicePixelRatio();
+    if (DEBUG_STD)
+      debug_boot << "Screen pixel ratio: " << ratio << "\n";
+    if (ratio > 1) {
+#ifdef __EMSCRIPTEN__
+      retina_factor= 2;
+#endif
       retina_zoom = 2;
       retina_scale= 1.0;
       if (!retina_iman) {
