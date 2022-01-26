@@ -85,7 +85,7 @@ set (TEXMACS_GUI "Qt" CACHE STRING "TeXmacs Gui (Qt, X11, Aqua)")
 option (QTPIPES "use Qt pipes" OFF)
 option (USE_SQLITE3 "Use SQLite3" OFF)
 option (USE_FREETYPE "use Freetype" ON)
-option (LINKED_FREETYPE ON) ## statically link freetype
+option (LINKED_FREETYPE "statically link Freetype" ON) ## statically link freetype
 option (USE_CAIRO "use Cairo" OFF)
 option (USE_IMLIB2 "use Imlib2" OFF)
 option (USE_SPARKLE "use Sparkle" OFF)
