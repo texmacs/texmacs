@@ -14,7 +14,6 @@
 
 #include <QTranslator>
 #include <QTimer>
-#include <QLabel>
 #include <QList>
 
 #include "array.hpp"
@@ -123,8 +122,8 @@ class qtwk_gui_rep {
   bool           interrupted;
   time_t      interrupt_time;
   QTimer*        updatetimer;
-  QList<QLabel*> waitDialogs;
-  QWidget*        waitWindow;
+  //QList<QLabel*> waitDialogs;
+  //QWidget*        waitWindow;
   widget          _popup_wid;
   time_t      popup_wid_time; //!< 0 means not to show _popup_wid
   

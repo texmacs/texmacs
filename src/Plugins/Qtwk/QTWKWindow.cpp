@@ -18,23 +18,6 @@
 #include "boot.hpp"
 #include "scheme.hpp"
 
-#include <QDebug>
-#include <QEvent>
-#include <QResizeEvent>
-#include <QKeyEvent>
-#include <QPaintEvent>
-#include <QMouseEvent>
-#include <QFocusEvent>
-#include <QPainter>
-#include <QApplication>
-
-#include <QBuffer>
-#include <QMimeData>
-#include <QByteArray>
-#include <QImage>
-#include <QUrl>
-#include <QFileInfo>
-
 
 hashmap<int,string> qtkeymap (0);
 hashmap<int,string> qtdeadmap (0);
@@ -167,16 +150,15 @@ static long int QTMWcounter = 0; // debugging hack
   \param _parent The parent QWidget.
   \param _tmwid the TeXmacs window who owns this object.
  */
-QTWKWindow::QTWKWindow (QWidget* _parent, qtwk_window _tmwid)
-: QWidget (_parent), tmwid (_tmwid),  imwidget (NULL)
-{
-  setFocusPolicy (Qt::StrongFocus);
-  setAttribute (Qt::WA_InputMethodEnabled);
-  setMouseTracking (true);
-  setAcceptDrops (true);
+QTWKWindow::QTWKWindow (qtwk_window _tmwid)
+  : QWindow ((QWindow *)nullptr), tmwid (_tmwid) {
+  setSurfaceType(QSurface::RasterSurface);
+  backing_store = new QBackingStore(this);
+  create();
 }
 
 QTWKWindow::~QTWKWindow () {
+  if (backing_store) delete backing_store;
 }
 
 widget
@@ -184,10 +166,18 @@ QTWKWindow::tm_widget () const {
   return tmwid->w;
 }
 
+void 
+QTWKWindow::exposeEvent(QExposeEvent *) {
+    if (isExposed()) repaint();
+}
+
 void
 QTWKWindow::resizeEvent (QResizeEvent *event) {
+  backing_store->resize(event->size());
   coord2 s = from_qsize (event->size());
+  cout << from_qstring (objectName()) << " resize event " << s << "\n";
  // tmwid->resize_event (s.x1,s.x2);
+//  if (event->size() == size()) return;
   the_gui -> process_resize (tm_widget (), s.x1, s.x2);
 }
 
@@ -199,19 +189,29 @@ QTWKWindow::resizeEvent (QResizeEvent *event) {
  CHECK: Maybe just putting onscreen all the region bounding rectangles might 
  be less expensive.
 */
-void
-QTWKWindow::paintEvent (QPaintEvent* event) {
-  QPainter p (this);
-  for (const QRect &qr : event->region()) {
-    p.drawPixmap (QRect (qr.x(), qr.y(), qr.width(), qr.height()),
+void 
+QTWKWindow::repaint (const QRegion &rgn) {
+  if (!isExposed()) return;
+  backing_store->beginPaint(rgn);
+  QPaintDevice *device = backing_store->paintDevice();
+  QPainter painter(device);
+  for (const QRect &qr : rgn) {
+    painter.drawPixmap (QRect (qr.x(), qr.y(), qr.width(), qr.height()),
                   tmwid->backingPixmap,
                   QRect (retina_factor * qr.x(),
                          retina_factor * qr.y(),
                          retina_factor * qr.width(),
                          retina_factor * qr.height()));
   }
+  painter.end();
+  backing_store->endPaint();
+  backing_store->flush(rgn);
 }
 
+void 
+QTWKWindow::repaint () {
+  repaint (QRect(QPoint(), geometry().size()));
+}
 
 void
 set_shift_preference (int key_code, char shifted) {
@@ -410,196 +410,6 @@ mouse_decode (unsigned int mstate) {
   return "unknown";
 }
 
-#if 0 // NOT USED
-static void setRoundedMask (QWidget *widget)
-{
-  QPixmap pixmap (widget->size());
-  QPainter painter (&pixmap);
-  painter.fillRect (pixmap.rect(), Qt::white);
-  painter.setBrush (Qt::black);
-#if (QT_VERSION >= 0x040400)
-  painter.drawRoundedRect (pixmap.rect(),8,8, Qt::AbsoluteSize);
-#else
-  painter.drawRect (pixmap.rect());
-#endif
-  widget->setMask (pixmap.createMaskFromColor (Qt::white));
-}
-#endif
-
-
-#if 0 
-// OLD INPUT METHOD PREVIEW
-void
-QTWKWindow::inputMethodEvent (QInputMethodEvent* event) {
-  if (! imwidget) {   
-    imwidget = new QLabel (this);
-    imwidget->setWindowFlags (Qt::Tool | Qt::FramelessWindowHint);
-  //  imwidget->setAttribute (Qt::WA_TranslucentBackground);
-//    imwidget->setAutoFillBackground (false);
-       imwidget->setAutoFillBackground (true);
-    imwidget->setWindowOpacity (0.5);
-    imwidget->setFocusPolicy (Qt::NoFocus);
-    QPalette pal = imwidget->palette();
-//    pal.setColor (QPalette::Window, QColor (0,0,255,80));
-    pal.setColor (QPalette::Window, QColor (0,0,255,255));
-    pal.setColor (QPalette::WindowText, Qt::white);
-    imwidget->setPalette (pal);
-    QFont f = imwidget->font();
-    f.setPointSize (qt_zoom (30));
-    imwidget->setFont (f);
-    imwidget->setMargin (5);
-  }
-
-  QString const & preedit_string = event->preeditString();
-  QString const & commit_string = event->commitString();
-
-  if (preedit_string.isEmpty()) {
-    imwidget->hide();
-  } else {
-    if (DEBUG_QT)
-      debug_qt << "IM preediting :" << preedit_string.toUtf8().data() << LF;
-    imwidget->setText (preedit_string);
-    imwidget->adjustSize();
-    QSize sz = size();
-    QRect g = imwidget->geometry();
-    QPoint c = mapToGlobal (cursor_pos);
-    c += QPoint (5,5);
-    // g.moveCenter (QPoint (sz.width()/2,sz.height()/2));
-    g.moveTopLeft (c);
-    if (DEBUG_QT)
-      debug_qt << "IM hotspot: " << cursor_pos.x() << "," << cursor_pos.y() << LF;
-    imwidget->setGeometry (g);
-    // setRoundedMask (imwidget);
-    imwidget->show();
-#ifdef QT_MAC_USE_COCOA
-    // HACK: we unexplicably loose the focus even when showing the small window,
-    // so we need to restore it manually.....
-    // The following fixes the problem (but I do not really understand why it 
-    // happens)
-    // Maybe this is a Qt/Cocoa bug.
-    this->window()->activateWindow();
-#endif    
-  }
-  
-  if (!commit_string.isEmpty()) {
-    if (DEBUG_QT)
-      debug_qt << "IM committing :" << commit_string.toUtf8().data() << LF;
-
-    int key = 0;
-#if 1
-    for (int i = 0; i < commit_string.size(); ++i) {
-      QKeyEvent ev (QEvent::KeyPress, key, Qt::NoModifier, commit_string[i]);
-      keyPressEvent (&ev);
-    }
-#else
-    QKeyEvent ev (QEvent::KeyPress, key, Qt::NoModifier, commit_string);
-    keyPressEvent (&ev);
-#endif
-  }
-  
-  event->accept();
-
-}  
-
-QVariant 
-QTWKWindow::inputMethodQuery (Qt::InputMethodQuery query) const {
-  switch (query) {
-    case Qt::ImMicroFocus :
-      return QVariant (QRect (cursor_pos + QPoint (10,10),QSize (20,40)));
-    default:
-      return QVariant();
-  }
-}
-
-#else
-
-// NEW INPUT METHOD PREVIEW
-void
-QTWKWindow::inputMethodEvent (QInputMethodEvent* event) {
-  
-  QString const & preedit_string = event->preeditString();
-  QString const & commit_string = event->commitString();
-  
-  if (!commit_string.isEmpty()) {
-    if (DEBUG_QT)
-      debug_qt << "IM committing :" << commit_string.toUtf8().data() << LF;
-    
-    int key = 0;
-#if 1
-    for (int i = 0; i < commit_string.size(); ++i) {
-      QKeyEvent ev (QEvent::KeyPress, key, Qt::NoModifier, commit_string[i]);
-      keyPressEvent (&ev);
-    }
-#else
-    QKeyEvent ev (QEvent::KeyPress, key, Qt::NoModifier, commit_string);
-    keyPressEvent (&ev);
-#endif
-  }
-  
-  if (DEBUG_QT)
-    debug_qt << "IM preediting :" << preedit_string.toUtf8().data() << LF;
-  
-  string r = "pre-edit:";
-  if (!preedit_string.isEmpty())
-  {
-    
-    // find cursor position in the preedit string
-    QList<QInputMethodEvent::Attribute>  const & attrs = event->attributes();
-    //    int pos = preedit_string.count();
-    int pos = 0;
-    bool visible_cur = false;
-    for (int i=0; i< attrs.count(); i++) 
-      if (attrs[i].type == QInputMethodEvent::Cursor) {
-        pos = attrs[i].start;
-        visible_cur = (attrs[i].length != 0);
-      }
-    
-    // find selection in the preedit string
-    int sel_start = 0;
-    int sel_length = 0;
-    if (pos <  preedit_string.count()) {
-      for (int i=0; i< attrs.count(); i++) 
-        if ((attrs[i].type == QInputMethodEvent::TextFormat) &&
-            (attrs[i].start <= pos) &&
-            (pos < attrs[i].start + attrs[i].length)) {
-          sel_start = attrs[i].start;
-          sel_length =  attrs[i].length;
-          if (!visible_cur) pos += attrs[i].length;
-        }
-    } else {
-      sel_start = pos;
-      sel_length = 0;
-    }
-    (void) sel_start; (void) sel_length;
-    
-    r = r * as_string (pos) * ":" * from_qstring (preedit_string);
-  }
-  
-#if (QT_VERSION < 0x050000)
-  // hack for fixing #47338 [CJK] input disappears immediately
-  // see http://lists.gnu.org/archive/html/texmacs-dev/2017-09/msg00000.html
-  if (!is_nil (tmwid))
-    the_gui->process_keypress (tm_widget(), r, texmacs_time());
-#endif 
-  
-  event->accept();
-}  
-
-QVariant 
-QTWKWindow::inputMethodQuery (Qt::InputMethodQuery query) const {
-  switch (query) {
-    case Qt::ImCursorRectangle : {
-//      const QPoint &topleft= cursor_pos - tmwid->backing_pos + surface()->geometry().topLeft();
-      const QPoint &topleft= cursor_pos  + geometry().topLeft();
-      return QVariant (QRect (topleft, QSize (5, 5)));
-    }
-    default:
-      return QWidget::inputMethodQuery (query);
-  }
-}
-
-#endif // input method variants
-
 void
 QTWKWindow::mousePressEvent (QMouseEvent* event) {
   if (is_nil (tm_widget ())) return;
@@ -656,6 +466,10 @@ QTWKWindow::wheelEvent (QWheelEvent* event) {
 
 bool
 QTWKWindow::event (QEvent* event) {
+  if (event->type() == QEvent::UpdateRequest) {
+    repaint();
+    return true;
+  }
     // Catch Keypresses to avoid default handling of (Shift+)Tab keys
   if (event->type() == QEvent::KeyPress) {
     QKeyEvent *ke = static_cast<QKeyEvent*> (event);
@@ -669,7 +483,7 @@ QTWKWindow::event (QEvent* event) {
     event->accept();
     return true;
   }
-  return QWidget::event (event);
+  return QWindow::event (event);
 }
 
 void
@@ -678,7 +492,7 @@ QTWKWindow::focusInEvent (QFocusEvent * event) {
   //  if (DEBUG_QT) debug_qt << "FOCUSIN: " << tm_widget()->type_as_string() << LF;
     the_gui->process_keyboard_focus (tm_widget (), true, texmacs_time ());
   }
-  QWidget::focusInEvent (event);
+  QWindow::focusInEvent (event);
 }
 
 void
@@ -687,7 +501,7 @@ QTWKWindow::focusOutEvent (QFocusEvent * event) {
   //  if (DEBUG_QT) debug_qt << "FOCUSOUT: " << tm_widget()->type_as_string() << LF;
     the_gui -> process_keyboard_focus (tm_widget (), false, texmacs_time ());
   }
-  QWidget::focusOutEvent (event);
+  QWindow::focusOutEvent (event);
 }
 
 void
@@ -695,12 +509,12 @@ QTWKWindow::enterEvent (QEnterEvent* event) {
   if (is_nil (tm_widget ())) return;
   QPoint point = mapFromGlobal(QCursor::pos());
   coord2 pt = from_qpoint (point);
-  unsigned int mstate = mouse_state (QApplication::mouseButtons (),
-                                     QApplication::keyboardModifiers ());
+  unsigned int mstate = mouse_state (QGuiApplication::mouseButtons (),
+                                     QGuiApplication::keyboardModifiers ());
   string s = "enter";
   the_gui->process_mouse (tm_widget (), s, pt.x1, pt.x2,
                           mstate, texmacs_time ());
-  QWidget::enterEvent (event);
+  //QWindow::enterEvent (event);
 }
 
 void
@@ -708,12 +522,12 @@ QTWKWindow::leaveEvent (QMoveEvent* event) {
   if (is_nil (tm_widget ())) return;
   QPoint point = mapFromGlobal(QCursor::pos());
   coord2 pt = from_qpoint (point);
-  unsigned int mstate = mouse_state (QApplication::mouseButtons (),
-                                     QApplication::keyboardModifiers ());
+  unsigned int mstate = mouse_state (QGuiApplication::mouseButtons (),
+                                     QGuiApplication::keyboardModifiers ());
   string s = "leave";
   the_gui->process_mouse (tm_widget (), s, pt.x1, pt.x2,
                           mstate, texmacs_time ());
-  QWidget::leaveEvent (event);
+  //QWindow::leaveEvent (event);
 }
 
 
@@ -842,69 +656,6 @@ QTWKWindow::wheelEvent(QWheelEvent *event) {
   }
 }
 */
-
-
-
-
-
-QTMPopupWindow::QTMPopupWindow (QWidget* _parent, qtwk_window _tmwid)
- : QTWKWindow (_parent, _tmwid) {
-  setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-  setWindowFlags (Qt::Popup | Qt::FramelessWindowHint);
-  setAttribute (Qt::WA_NoSystemBackground);
-  setMouseTracking (true);            // Receive mouse events
-//  setFocusPolicy(Qt::StrongFocus);   // Don't! Receive key events
-//  setWindowOpacity(0.9);
-
-    //cout << "QTMPopupWidget created with size: " << size().width()
-    // << " x " << size().height() << LF;
-}
-
-
-/*
- If our contents QWidget is of type QTMWidget it will capture mouse events
- and we won't get called until the pointer exits the contents, so the check
- inside is unnecessary unless the contents are of another kind.
- 
- NOTE that this is intended for popups which appear under the cursor!
- */
-void
-QTMPopupWindow::mouseMoveEvent(QMouseEvent* event) {
-  
-  /* It'd be nice to have something like this...
-  if (! drawArea().contains(event->globalPos())) {
-    hide();
-    emit closed();
-  } else {
-    move(event->globalPos());
-  }
-   */
-
-  if (!this->rect().contains (QCursor::pos())) {
-    hide();
-    event->ignore ();
-    emit closed();
-  } else {
-    QTWKWindow::mouseMoveEvent (event);
-  }
-}
-
-void
-QTMPopupWindow::keyPressEvent (QKeyEvent* event) {
-  (void) event;
-  hide();
-  event->ignore ();
-  emit closed();
-}
-
-void
-QTMPopupWindow::closeEvent (QCloseEvent* event)
-{
-  if (DEBUG_QT_WIDGETS) debug_widgets << "Close QTMPopupWidget" << LF;
-  // Tell QT not to close the window, qt_window_widget_rep will if need be.
-  event->ignore ();
-  emit closed();
-}
 
 
 

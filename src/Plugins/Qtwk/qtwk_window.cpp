@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : qtwk_window.cpp
-* DESCRIPTION: QT WebSockets window class
+* DESCRIPTION: QT/Widkit window class
 * COPYRIGHT  : (C) 2020 Massimiliano Gubinelli
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
@@ -16,6 +16,9 @@
 
 #include "qtwk_gui.hpp"
 #include "QTWKWindow.hpp"
+
+
+#include "analyze.hpp" // starts
 
 extern int nr_windows;
 
@@ -43,25 +46,31 @@ qtwk_window_rep::initialize () {
   
   //SI screen_width, screen_height;
   //gui->get_extents (screen_width, screen_height);
-  
+
+  win = new QTWKWindow (this);
+
   if (name == NULL) {
-    win = new QTWKWindow (NULL, this);
-    win ->setWindowFlags ( win->windowFlags () | Qt::FramelessWindowHint );
+    win->setFlags(Qt::Popup);
     name= const_cast<char*> ("popup");
   } else {
-    win = new QTWKWindow (NULL, this);
+    if (!starts(name, "TeXmacs")) {
+    win->setFlags(Qt::Popup | Qt::WindowTitleHint | Qt::WindowSystemMenuHint
+                      | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+    }
   }
   
   if (the_name == "") {
     the_name= name;
     mod_name= name;
   }
-  
-  win->setMinimumSize (min_w, min_h);
-  win->setMaximumSize (max_w, max_h);
-  win->resize (def_w, def_h);
 
-  //cout  << "init size " << def_w << " " << def_h << "\n";
+  win->setObjectName(to_qstring(the_name));
+  win->setGeometry(QRect(win->geometry().topLeft(), QSize(def_w, def_h)));
+  win->setMinimumSize(QSize(min_w, min_h));
+  win->setMaximumSize(QSize(max_w, max_h));
+  win->setBaseSize(QSize(def_w, def_h));
+
+  cout << the_name << " init size " << def_w << " " << def_h << "\n";
   
   nr_windows++;
   Window_to_window (win_id)= (void*) this;
@@ -77,6 +86,8 @@ qtwk_window_rep::qtwk_window_rep (widget w2, qtwk_gui gui2, char* n2,
   window_rep (), w (w2), gui (gui2),
   orig_name (n2 == ((char*) NULL) ? string ("popup") : n2),
   name (n2),
+  win_x (0), win_y (0),
+  win_w (def_w), win_h (def_h),
   Min_w (min_w), Min_h (min_h),
   Def_w (def_w), Def_h (def_h),
   Max_w (max_w), Max_h (max_h),
@@ -151,7 +162,7 @@ qtwk_window_rep::set_position (SI x, SI y) {
   x= x/PIXEL;
   y= -y/PIXEL;
 //  cout << "move to " << x << "," << y << "\n";
-  win->move (x,y);
+  win->setPosition (x,y);
 
 #if 0
   if ((x+ win_w) > gui->screen_width) x= gui->screen_width- win_w;
@@ -165,7 +176,7 @@ qtwk_window_rep::set_position (SI x, SI y) {
 void
 qtwk_window_rep::set_size (SI w, SI h) {
   QSize sz=to_qsize (w, h);
-  //cout << "resize to " << sz.width() << " " << sz.height() << "\n";
+  cout << "resize " <<  name << " to " << sz.width() << " " << sz.height() << "\n";
   win->resize (sz);
 }
 
@@ -176,6 +187,8 @@ qtwk_window_rep::set_size_limits (SI min_w, SI min_h, SI max_w, SI max_h) {
   Min_w= min_w; Min_h= min_h; Max_w= max_w; Max_h= max_h;
   //min_w= min_w/PIXEL; min_h= min_h/PIXEL;
   //max_w= max_w/PIXEL; max_h= max_h/PIXEL;
+  cout << "set minimum size " <<  name << " to " << min_w << " " << min_h << "\n";
+  cout << "set maximum size " <<  name << " to " << max_w << " " << max_h << "\n";
 
   win->setMinimumSize (to_qsize  (min_w, min_h));
   win->setMaximumSize (to_qsize (max_w, max_h));
@@ -185,7 +198,7 @@ void
 qtwk_window_rep::set_name (string name) {
   if (the_name != name) {
     c_string s (name);
-    win->setWindowTitle (QString (s));
+    win->setTitle (QString (s));
     the_name= name;
     mod_name= name;
   }
@@ -201,7 +214,7 @@ qtwk_window_rep::set_modified (bool flag) {
   string name= (flag? (the_name * " *"): the_name);
   if (mod_name != name) {
     c_string s (name);
-    win->setWindowTitle (QString (s));
+    win->setTitle (QString (s));
     mod_name= name;
   }
 }
@@ -278,8 +291,12 @@ qtwk_window_rep::move_event (int x, int y) {
 
 void
 qtwk_window_rep::resize_event (int ww, int hh) {
-  notify_size (w, ww, hh);
-  notify_window_resize (orig_name, ww, hh);
+  bool flag= (win_w!=ww) || (win_h!=hh);
+  win_w= ww; win_h= hh;
+  if (flag) {
+    notify_size (w, ww, hh);
+    notify_window_resize (orig_name, ww, hh);
+  }
 }
 
 void
@@ -305,6 +322,7 @@ qtwk_window_rep::key_event (string key) {
 void
 qtwk_window_rep::focus_in_event () {
   //if (ic_ok) XSetICFocus (ic);
+  win->setKeyboardGrabEnabled (true);
   has_focus= true;
   notify_keyboard_focus (kbd_focus, true);
   gui->focussed_window (this);
@@ -313,6 +331,7 @@ qtwk_window_rep::focus_in_event () {
 void
 qtwk_window_rep::focus_out_event () {
  // if (ic_ok) XUnsetICFocus (ic);
+  win->setKeyboardGrabEnabled (false);
   has_focus= false;
   notify_keyboard_focus (kbd_focus, false);
 }

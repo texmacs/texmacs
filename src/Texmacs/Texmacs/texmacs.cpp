@@ -37,7 +37,8 @@ void mac_fix_paths ();
 #endif
 
 #ifdef QTWKTEXMACS
-#include "Qt/QTMApplication.hpp"
+//#include "Qt/QTMApplication.hpp"
+#include <QGuiApplication>
 #include "Qt/qt_utilities.hpp"
 #include <QDir>
 #endif
@@ -78,7 +79,7 @@ void server_start ();
 
 #if (defined(QTTEXMACS)||defined(QTWKTEXMACS))
 // Qt application infrastructure
-static QTMApplication* qtmapp;
+static QGuiApplication* qtmapp;
 #endif
 
 /******************************************************************************
@@ -730,7 +731,7 @@ main (int argc, char** argv) {
 //      QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 //      QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 //  #endif
-  qtmapp= new QTMApplication (argc, argv);
+  qtmapp= new QGuiApplication (argc, argv);
   //QTMApplication* qtmapp= new QTMApplication (argc, argv);
 #endif
   TeXmacs_init_paths (argc, argv);

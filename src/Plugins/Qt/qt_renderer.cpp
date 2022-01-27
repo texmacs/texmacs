@@ -19,7 +19,6 @@
 #include "frame.hpp"
 
 #include <QObject>
-#include <QWidget>
 #include <QPaintDevice>
 #include <QPainterPath>
 #include <QPixmap>

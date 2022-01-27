@@ -10,7 +10,7 @@
 ******************************************************************************/
 
 #include <stdint.h>
-#include <QApplication>
+#include <QCoreApplication>
 #include <QObject>
 #include <QThread>
 #include <QSocketNotifier>

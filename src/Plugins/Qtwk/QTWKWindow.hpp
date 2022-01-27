@@ -13,7 +13,8 @@
 #define QTWKWINDOW_HPP
 
 #include "qtwk_window.hpp"
-#include <QLabel>
+
+#include <QtGui>
 
 class qtwk_window_rep;
 
@@ -24,16 +25,17 @@ class qtwk_window_rep;
  set_tm_widget() for more on this.
  
  */
-class QTWKWindow: public QWidget {
+class QTWKWindow : public QWindow {
   Q_OBJECT
 
   qtwk_window  tmwid;
-  QLabel*      imwidget;
+//  QLabel*      imwidget;
   QPoint       cursor_pos;
-  
+  QBackingStore* backing_store;
+
 public:
 
-  QTWKWindow (QWidget* _parent=0, qtwk_window _tmwid=0);
+  QTWKWindow (qtwk_window _tmwid=0);
   virtual ~QTWKWindow ();
   
 //  virtual QSize	sizeHint () const;
@@ -41,21 +43,22 @@ public:
 
   void setCursorPos (QPoint pos) { cursor_pos = pos; }
   widget tm_widget () const;
+  void repaint (const QRegion &rgn);
+  void repaint ();
   
 protected:
 
   virtual bool event (QEvent *event);
 
-  virtual void paintEvent (QPaintEvent* event);
+  virtual void exposeEvent(QExposeEvent *event);
+
   virtual void focusInEvent (QFocusEvent* event);
   virtual void focusOutEvent (QFocusEvent* event);
   virtual void keyPressEvent (QKeyEvent* event);
-  virtual void inputMethodEvent (QInputMethodEvent* event);
   virtual void mousePressEvent (QMouseEvent* event);
   virtual void mouseReleaseEvent (QMouseEvent* event);
   virtual void mouseMoveEvent (QMouseEvent* event);
   virtual void resizeEvent (QResizeEvent *event);
-//  virtual void resizeEventBis (QResizeEvent *e);
   virtual void dragEnterEvent (QDragEnterEvent *event);
   //virtual void dragMoveEvent (QDragMoveEvent *event);
   virtual void dropEvent (QDropEvent *event);
@@ -64,30 +67,6 @@ protected:
   virtual void leaveEvent (QMoveEvent* event);
 
   // void wheelEvent(QWheelEvent *event) override;
-  // FIXME: Plugins/Qt/QTWKWindow.hpp:61: error: expected ';' before 'override'
-  virtual QVariant inputMethodQuery (Qt::InputMethodQuery query) const;
-
-};
-
-
-/*! The underlying QWidget for a qt_popup_widget.
- 
- This is just a container QWidget that disappears after the mouse leaves it.
- As usual, it takes ownership of its contents.
- */
-class QTMPopupWindow : public QTWKWindow {
-  Q_OBJECT
-  
-public:
-  QTMPopupWindow (QWidget* _parent=0, qtwk_window _tmwid=0);
-
-signals:
-  void closed();
-  
-protected:
-  virtual void closeEvent (QCloseEvent* event);
-  virtual void mouseMoveEvent (QMouseEvent* event);
-  virtual void keyPressEvent  (QKeyEvent* event);
 };
 
 #endif // QTWKWINDOW_HPP

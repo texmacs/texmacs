@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : qtwk_window.hpp
-* DESCRIPTION: QT WebSockets window class
+* DESCRIPTION: QT/Widkit window class
 * COPYRIGHT  : (C) 2020 Massimiliano Gubinelli
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
@@ -14,10 +14,11 @@
 #include "widget.hpp"
 #include "window.hpp"
 #include "Qt/qt_renderer.hpp"
-//#include "qtwk_gui.hpp"
+
 #include "rectangles.hpp"
 #include "array.hpp"
 
+#include <QtGui>
 
 /******************************************************************************
 * Delayed messages
@@ -48,6 +49,8 @@ typedef qtwk_window_rep* qtwk_window;
 class qtwk_gui_rep;
 typedef qtwk_gui_rep* qtwk_gui;
 
+class QTWKWindow;
+
 class qtwk_window_rep: public window_rep {
 public:
   widget           w;
@@ -56,14 +59,15 @@ public:
   char*            name;
   string           the_name;
   string           mod_name;
-  QWidget*         win;
+  QTWKWindow*      win;
   int              win_id;
-//  x_drawable_rep*  ren;
 
   rectangles    invalid_regions;
   SI            Min_w, Min_h;
   SI            Def_w, Def_h;
   SI            Max_w, Max_h;
+  SI            win_w, win_h;
+  SI            win_x, win_y;
 
   widget_rep*   kbd_focus;
   bool          has_focus;

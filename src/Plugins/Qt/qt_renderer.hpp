@@ -17,7 +17,6 @@
 #include <QPixmap>
 #include <QImage>
 #include <QtGlobal>
-#include <QWidget>
 
 // if QTMPIXMAPS is defined we use QPixmap for characters
 // otherwise we use QImage (which support alpha also under X11)

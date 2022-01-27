@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : QTWKGuiHelper.cpp
-* DESCRIPTION: QT WebSockets Gui helper class.
+* DESCRIPTION: QT/Widkit Gui helper class.
 *              Infrastructure for delayed menu installation 
 * COPYRIGHT  : (C) 2020 Massimiliano Gubinelli
 *******************************************************************************

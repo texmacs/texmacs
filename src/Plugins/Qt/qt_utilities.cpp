@@ -9,7 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "QTMStyle.hpp"
+//#include "QTMStyle.hpp"
 #include "qt_utilities.hpp"
 #include <time.h>
 
@@ -28,7 +28,6 @@
 #include <QPrintDialog>
 #endif
 #include <QImageReader>
-#include <QApplication>
 
 #include "colors.hpp"
 
@@ -78,6 +77,15 @@ operator << (tm_ostream& out, QRect rect) {
 /******************************************************************************
  * Conversion of data types
  ******************************************************************************/
+#ifdef __EMSCRIPTEN__
+#define QTM_MINI_FONTSIZE 9
+
+int
+qt_zoom (int sz) {
+  return (int) (retina_scale * ((double) sz));
+}
+
+#endif
 
 QFont
 to_qfont (int style, QFont font) {
@@ -672,68 +680,6 @@ as_pixmap (const QImage& im) {
  ******************************************************************************/
 
 QString
-parse_tm_style (int style) {
-  QString sheet;
-  if ((style & WIDGET_STYLE_MINI) && tm_style_sheet == "" && use_mini_bars) {
-    // Use smaller text font
-    int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
-    sheet += QString("font-size: %1pt;").arg (fs > 0 ? fs : QTM_MINI_FONTSIZE);
-    sheet += QString("padding: 1px;");
-  }
-  if (style & WIDGET_STYLE_MONOSPACED)  // Use monospaced font
-    sheet += "font-family: \"monospace\";";
-  if (style & WIDGET_STYLE_GREY)      // Use grey text font
-    sheet += "color: #414141;";
-  if (style & WIDGET_STYLE_PRESSED)   // Button is currently pressed
-    sheet += "";
-  if (style & WIDGET_STYLE_INERT)     // Only render, don't associate any action
-    sheet += "color: #414141;";
-  if (style & WIDGET_STYLE_BUTTON)    // Render button as standard button
-    sheet += "";
-  if (style & WIDGET_STYLE_CENTERED)  // Use centered text
-    sheet += "text-align: center;";
-  if (style & WIDGET_STYLE_BOLD)
-    sheet += "font-weight: bold;";
-  if (DEBUG_QT_WIDGETS)
-    sheet += "border:1px solid rgb(255, 0, 0);";
-
-  if (occurs ("dark", tm_style_sheet)) {
-    if (style & WIDGET_STYLE_GREY) sheet += "color: #a0a0a0;";
-    if (style & WIDGET_STYLE_INERT) sheet += "color: #a0a0a0;";
-  }
-  return sheet;
-}
-
-void
-qt_apply_tm_style (QWidget* qwid, int style) {
-  QString sheet = "* {" + parse_tm_style (style) + "}";
-  qwid->setStyleSheet (sheet);
-  qwid->setEnabled (! (style & WIDGET_STYLE_INERT));
-}
-
-void
-qt_apply_tm_style (QWidget* qwid, int style, color c) {
-  int r,g,b,a;
-  get_rgb_color (c, r, g, b, a);
-  a = a*100/255;
-  if (occurs ("dark", tm_style_sheet)) { r= g= b= 224; a= 100; }
-  QString sheet = "* {" + parse_tm_style (style)
-  + QString("color: rgba(%1, %2, %3, %4%);").arg(r).arg(g).arg(b).arg(a)
-  + "} ";
-
-#ifdef Q_OS_MAC
-    /* Disabled QLabels are not greyed out (at least in MacOS, since Qt 4.7.2), 
-     see: https://bugreports.qt-project.org/browse/QTBUG-19008
-     For consistency we set the disabled color for all widgets.
-     */
-  sheet += " :disabled { color: #7F7F7F; }";
-#endif
-  qwid->setEnabled (! (style & WIDGET_STYLE_INERT));
-  qwid->setStyleSheet (sheet);
-}
-
-
-QString
 qt_translate (const string& s) {
   string in_lan= get_input_language ();
   string out_lan= get_output_language ();
@@ -920,6 +866,74 @@ QString fromNSUrl(const QUrl &url) {
 * Style sheets
 ******************************************************************************/
 
+#ifndef __EMSCRIPTEN__
+#include <QApplication>
+#include <QWidget>
+
+
+
+QString
+parse_tm_style (int style) {
+  QString sheet;
+  if ((style & WIDGET_STYLE_MINI) && tm_style_sheet == "" && use_mini_bars) {
+    // Use smaller text font
+    int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
+    sheet += QString("font-size: %1pt;").arg (fs > 0 ? fs : QTM_MINI_FONTSIZE);
+    sheet += QString("padding: 1px;");
+  }
+  if (style & WIDGET_STYLE_MONOSPACED)  // Use monospaced font
+    sheet += "font-family: \"monospace\";";
+  if (style & WIDGET_STYLE_GREY)      // Use grey text font
+    sheet += "color: #414141;";
+  if (style & WIDGET_STYLE_PRESSED)   // Button is currently pressed
+    sheet += "";
+  if (style & WIDGET_STYLE_INERT)     // Only render, don't associate any action
+    sheet += "color: #414141;";
+  if (style & WIDGET_STYLE_BUTTON)    // Render button as standard button
+    sheet += "";
+  if (style & WIDGET_STYLE_CENTERED)  // Use centered text
+    sheet += "text-align: center;";
+  if (style & WIDGET_STYLE_BOLD)
+    sheet += "font-weight: bold;";
+  if (DEBUG_QT_WIDGETS)
+    sheet += "border:1px solid rgb(255, 0, 0);";
+
+  if (occurs ("dark", tm_style_sheet)) {
+    if (style & WIDGET_STYLE_GREY) sheet += "color: #a0a0a0;";
+    if (style & WIDGET_STYLE_INERT) sheet += "color: #a0a0a0;";
+  }
+  return sheet;
+}
+
+void
+qt_apply_tm_style (QWidget* qwid, int style) {
+  QString sheet = "* {" + parse_tm_style (style) + "}";
+  qwid->setStyleSheet (sheet);
+  qwid->setEnabled (! (style & WIDGET_STYLE_INERT));
+}
+
+void
+qt_apply_tm_style (QWidget* qwid, int style, color c) {
+  int r,g,b,a;
+  get_rgb_color (c, r, g, b, a);
+  a = a*100/255;
+  if (occurs ("dark", tm_style_sheet)) { r= g= b= 224; a= 100; }
+  QString sheet = "* {" + parse_tm_style (style)
+  + QString("color: rgba(%1, %2, %3, %4%);").arg(r).arg(g).arg(b).arg(a)
+  + "} ";
+
+#ifdef Q_OS_MAC
+    /* Disabled QLabels are not greyed out (at least in MacOS, since Qt 4.7.2), 
+     see: https://bugreports.qt-project.org/browse/QTBUG-19008
+     For consistency we set the disabled color for all widgets.
+     */
+  sheet += " :disabled { color: #7F7F7F; }";
+#endif
+  qwid->setEnabled (! (style & WIDGET_STYLE_INERT));
+  qwid->setStyleSheet (sheet);
+}
+
+
 static string current_style_sheet;
 
 void
@@ -965,6 +979,7 @@ init_palette (QApplication* app) {
   else if (tm_style_sheet != "")
     tm_background= rgb_color (160, 160, 160);
 }
+
 
 string
 scale_px (string s) {
@@ -1037,3 +1052,5 @@ set_standard_style_sheet (QWidget* w) {
   if (current_style_sheet != "")
     w->setStyleSheet (to_qstring (current_style_sheet));
 }
+
+#endif // #ifndef __EMSCRIPTEN__

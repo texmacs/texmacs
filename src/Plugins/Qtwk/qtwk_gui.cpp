@@ -32,27 +32,10 @@
 #include "qtwk_window.hpp"
 #include "widget.hpp"
 
-#include <QClipboard>
-#include <QBuffer>
-#include <QFileOpenEvent>
-#include <QStackedLayout>
-#include <QLabel>
-#include <QSocketNotifier>
-#include <QSetIterator>
-#include <QTranslator>
-#include <QLocale>
-#include <QMimeData>
-#include <QByteArray>
-#include <QCoreApplication>
-#include <QLibraryInfo>
-#include <QImage>
-#include <QUrl>
-#include <QWidget>
+#include <QtGui>
 
 #include "QTWKGuiHelper.hpp"
-//#include "QTMWidget.hpp"
-//#include "QTMWindow.hpp"
-#include "Qt/QTMApplication.hpp"
+#include "QTWKWindow.hpp"
 
 #ifdef MACOSX_EXTENSIONS
 #include "MacOS/mac_utilities.h"
@@ -105,9 +88,9 @@ tm_sleep () {
 ******************************************************************************/
 
 qtwk_gui_rep::qtwk_gui_rep (int &argc, char **argv):
-interrupted (false), waitWindow (NULL), popup_wid_time (0), q_translator (0),
+interrupted (false), popup_wid_time (0), q_translator (0),
 time_credit (100), do_check_events (false), updating (false), 
-needing_update (false)
+needing_update (false) //waitWindow (NULL), 
 {
   (void) argc; (void) argv;
     // argc = argc2;
@@ -160,7 +143,7 @@ needing_update (false)
     get_extents (w, h);
     if (DEBUG_STD)
       debug_boot << "Screen extents: " << w/PIXEL << " x " << h/PIXEL << "\n";
-    double ratio= QApplication::primaryScreen()->devicePixelRatio();
+    double ratio= QGuiApplication::primaryScreen()->devicePixelRatio();
     if (DEBUG_STD)
       debug_boot << "Screen pixel ratio: " << ratio << "\n";
     if (ratio > 1) {
@@ -189,7 +172,7 @@ needing_update (false)
 /* important routines */
 void
 qtwk_gui_rep::get_extents (SI& width, SI& height) {
-  coord2 size = from_qsize (QApplication::primaryScreen()->availableSize());
+  coord2 size = from_qsize (QGuiApplication::primaryScreen()->availableSize());
   width  = size.x1;
   height = size.x2;
 }
@@ -203,13 +186,14 @@ qtwk_gui_rep::get_max_size (SI& width, SI& height) {
 
 qtwk_gui_rep::~qtwk_gui_rep()  {
   delete gui_helper;
-  
+
+#if 0  
   while (waitDialogs.count()) {
     waitDialogs.last()->deleteLater();
     waitDialogs.removeLast();
   }
   if (waitWindow) delete waitWindow;
-  
+#endif
     // delete updatetimer; we do not need this given that gui_helper is the
     // parent of updatetimer
 }
@@ -222,8 +206,8 @@ qtwk_gui_rep::~qtwk_gui_rep()  {
 static unsigned int
 get_button_state () {
   unsigned int i= 0;
-  Qt::MouseButtons bstate= QApplication::mouseButtons ();
-  Qt::KeyboardModifiers kstate= QApplication::keyboardModifiers ();
+  Qt::MouseButtons bstate= QGuiApplication::mouseButtons ();
+  Qt::KeyboardModifiers kstate= QGuiApplication::keyboardModifiers ();
   if ((bstate & Qt::LeftButton     ) != 0) i += 1;
   if ((bstate & Qt::MiddleButton   ) != 0) i += 2;
   if ((bstate & Qt::RightButton    ) != 0) i += 4;
@@ -288,13 +272,13 @@ pritty (tree t) {
 
 void
 qtwk_gui_rep::obtain_mouse_grab (widget wid) {
-  QWidget* win= get_qtwk_window (wid)->win;
+  QWindow* win= get_qtwk_window (wid)->win;
   if ((!is_nil (grab_ptr)) && (wid==grab_ptr->item)) return;
   widget old_widget; if (!is_nil (grab_ptr)) old_widget= grab_ptr->item;
   grab_ptr= list<widget> (wid, grab_ptr);
   widget new_widget= grab_ptr->item;
   notify_mouse_grab (new_widget, true);
-  win->grabMouse ();
+  win->setMouseGrabEnabled (true);
 //   cout << "\n---> In grab " << pritty ((tree) wid) << "\n\n";
 //  cout << "\n---> In grab " << wid << "\n\n";
   if (!is_nil (old_widget)) {
@@ -310,13 +294,13 @@ qtwk_gui_rep::release_mouse_grab () {
   grab_ptr= grab_ptr->next;
   widget new_widget; if (!is_nil (grab_ptr)) new_widget= grab_ptr->item;
   if (is_nil (grab_ptr)) {
-    get_qtwk_window (old_widget)->win->releaseMouse ();
+    get_qtwk_window (old_widget)->win->setMouseGrabEnabled (false);
   //  cout << "\n---> No grab\n\n";
   }
   else {
     qtwk_window grab_win= get_qtwk_window (new_widget);
     notify_mouse_grab (new_widget, true);
-    grab_win->win->grabMouse ();
+    grab_win->win->setMouseGrabEnabled (true);
   //   cout << "\n---> In grab " << new_widget << "\n";
     notify_mouse_grab (old_widget, false);
     emulate_leave_enter (old_widget, new_widget);
@@ -335,7 +319,7 @@ qtwk_gui_rep::has_mouse_grab (widget w) {
 
 bool
 qtwk_gui_rep::get_selection (string key, tree& t, string& s, string format) {
-  QClipboard *cb = QApplication::clipboard ();
+  QClipboard *cb = QGuiApplication::clipboard ();
   QClipboard::Mode mode = QClipboard::Clipboard;
   if (key == "primary" || (key == "mouse" && cb->supportsSelection ()))
     if (key == "mouse") mode = QClipboard::Selection;
@@ -445,7 +429,7 @@ qtwk_gui_rep::set_selection (string key, tree t,
   selection_t (key)= copy (t);
   selection_s (key)= copy (s);
   
-  QClipboard *cb = QApplication::clipboard ();
+  QClipboard *cb = QGuiApplication::clipboard ();
   QClipboard::Mode mode = QClipboard::Clipboard;
   if (key == "primary");
   else if (key == "mouse" && cb->supportsSelection())
@@ -499,7 +483,7 @@ qtwk_gui_rep::clear_selection (string key) {
   selection_t->reset (key);
   selection_s->reset (key);
   
-  QClipboard *cb = QApplication::clipboard();
+  QClipboard *cb = QGuiApplication::clipboard();
   QClipboard::Mode mode = QClipboard::Clipboard;
   if (key == "primary");
   else if (key == "mouse" && cb->supportsSelection())
@@ -580,8 +564,8 @@ void gui_interpose (void (*r) (void)) { the_interpose_handler = r; }
 
 void
 qtwk_gui_rep::event_loop () {
-//  QTMApplication* app = static_cast<QTMApplication*>(QApplication::instance());
- // QCoreApplication* app = QApplication::instance();
+//  QTMApplication* app = static_cast<QTMApplication*>(QGuiApplication::instance());
+ // QCoreApplication* app = QGuiApplication::instance();
   update ();
   //need_update ();
   qApp->exec();
@@ -595,12 +579,8 @@ qtwk_gui_rep::event_loop () {
 void
 gui_open (int& argc, char** argv) {
     // start the gui
-    // new QApplication (argc,argv); now in texmacs.cpp
+    // new QGuiApplication (argc,argv); now in texmacs.cpp
   the_gui = tm_new<qtwk_gui_rep> (argc, argv);
-  
-#ifdef MACOSX_EXTENSIONS
-  mac_begin_remote();
-#endif
 }
 
 void
@@ -615,10 +595,6 @@ gui_close () {
   ASSERT (the_gui != NULL, "gui not yet open");
   tm_delete (the_gui);
   the_gui = NULL;
-  
-#ifdef MACOSX_EXTENSIONS
-  mac_end_remote();
-#endif
 }
 
 void
@@ -899,7 +875,8 @@ qtwk_gui_rep::update () {
     // 1.
     // Check if a wait dialog is active and in that case remove it.
     // If we are here then the long operation has finished.
-  
+
+#if 0  
   if (waitDialogs.count()) {
     waitWindow->layout()->removeWidget (waitDialogs.last());
     waitWindow->close();
@@ -908,6 +885,7 @@ qtwk_gui_rep::update () {
       waitDialogs.removeLast();
     }
   }
+#endif
 
 #if 0
   if (popup_wid_time > 0) {
@@ -1059,8 +1037,8 @@ qtwk_gui_rep::show_help_balloon (widget wid, SI x, SI y) {
   balloon_time= texmacs_time ();
 
   widget win_wid= popup_window_widget (balloon_wid, "Balloon");
-  get_qtwk_window (win_wid)->win->setWindowFlags (Qt::ToolTip);
-  get_qtwk_window (win_wid)->win->setFocusPolicy (Qt::NoFocus);
+  get_qtwk_window (win_wid)->win->setFlags (Qt::ToolTip);
+//  get_qtwk_window (win_wid)->win->setFocusPolicy (Qt::NoFocus);
   set_position (win_wid, balloon_x, balloon_y);
   balloon_win= (window) get_qtwk_window (win_wid);
 
@@ -1122,8 +1100,8 @@ qtwk_gui_rep::default_font_sub (bool tt, bool mini, bool bold) {
   if (j<n) j++;
   int dpi= (j<n? as_int (s (j, n)): 300);
   if (mini) { sz= (int) (0.6 * sz); dpi= (int) (1.3333333 * dpi); }
-  if (use_macos_fonts ()) {
-    tree lucida_fn= tuple ("apple-lucida", "ss", series, "right");
+  {
+    tree lucida_fn= tuple ("Fira", "ss", series, "right");
     lucida_fn << as_string (sz) << as_string ((int) (0.95 * dpi));
     return find_font (lucida_fn);
   }
@@ -1212,7 +1190,7 @@ qtwk_gui_rep::put_graphics_on_clipboard (url file) {
     // for bitmaps this works :
   if ((extension == "bmp") || (extension == "png") ||
       (extension == "jpg") || (extension == "jpeg")) {
-    QClipboard *clipboard = QApplication::clipboard();
+    QClipboard *clipboard = QGuiApplication::clipboard();
     c_string tmp (concretize (file));
     clipboard->setImage (QImage (QString (tmp)));
   }
@@ -1234,7 +1212,7 @@ qtwk_gui_rep::put_graphics_on_clipboard (url file) {
     QMimeData *mymimeData = new QMimeData;
     mymimeData->setData (mime, rawdata);
     
-    QClipboard *clipboard = QApplication::clipboard();
+    QClipboard *clipboard = QGuiApplication::clipboard();
     clipboard->setMimeData (mymimeData);// default mode = QClipboard::Clipboard
   }
   return true;
@@ -1248,7 +1226,7 @@ int char_clip = 0;
 void
 beep () {
     // Issue a beep
-  QApplication::beep();
+//  QGuiApplication::beep();
 }
 
 bool

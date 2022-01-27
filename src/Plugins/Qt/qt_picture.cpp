@@ -22,7 +22,6 @@
 #include "language.hpp"
 
 #include <QObject>
-#include <QWidget>
 #include <QPainter>
 #include <QPaintDevice>
 #include <QPixmap>
