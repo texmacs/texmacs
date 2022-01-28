@@ -143,18 +143,24 @@ enum WindowsNativeModifiers {
     ExtendedKey          = 0x01000000,
 };
 #endif
-static long int QTMWcounter = 0; // debugging hack
 
 /*! Constructor.
  
-  \param _parent The parent QWidget.
   \param _tmwid the TeXmacs window who owns this object.
  */
 QTWKWindow::QTWKWindow (qtwk_window _tmwid)
-  : QWindow ((QWindow *)nullptr), tmwid (_tmwid) {
+  : QWindow (), tmwid (_tmwid) {
+  // disable alpha; saves filling the window with transparent pixels
+  QSurfaceFormat format;
+  format.setAlphaBufferSize(0);
+  setFormat(format);
+  // ensure a raster surface
   setSurfaceType(QSurface::RasterSurface);
-  backing_store = new QBackingStore(this);
+  // force creation of the pixels
   create();
+
+  backing_store= new QBackingStore(this);
+  repaintTimer= 0;
 }
 
 QTWKWindow::~QTWKWindow () {
@@ -167,23 +173,47 @@ QTWKWindow::tm_widget () const {
 }
 
 void 
+QTWKWindow::scheduleRepaint() {
+  if (!repaintTimer) repaintTimer= startTimer(1);
+}
+
+void 
+QTWKWindow::timerEvent(QTimerEvent *) {
+  if (isExposed()) {
+    repaint();
+  }
+  killTimer(repaintTimer);
+  repaintTimer= 0;
+}
+
+void 
 QTWKWindow::exposeEvent(QExposeEvent *) {
     if (isExposed()) repaint();
 }
 
 void
 QTWKWindow::resizeEvent (QResizeEvent *event) {
-  backing_store->resize(event->size());
+  backing_store->resize(size()); 
+  QRect r= QRect(QPoint(), size());
+  backing_store->beginPaint(r);
+  QPaintDevice *device = backing_store->paintDevice();
+  QPainter painter(device);
+  painter.fillRect(r, Qt::gray);
+  painter.drawPixmap(QPoint(), tmwid->backingPixmap);
+  painter.end();
+  backing_store->endPaint();
+  backing_store->flush(r);
+
   coord2 s = from_qsize (event->size());
   cout << from_qstring (objectName()) << " resize event " << s << "\n";
  // tmwid->resize_event (s.x1,s.x2);
-//  if (event->size() == size()) return;
   the_gui -> process_resize (tm_widget (), s.x1, s.x2);
+  scheduleRepaint();
 }
 
 /*!
  In the current implementation repainting takes place during the call to
- the widget's repaint_invalid_regions() method in the_gui::update. All
+ the window's repaint_invalid_regions() method in qtwk_gui::update. All
  we have to do is to take the backing store and put it on screen according
  to the QRegion marked invalid. 
  CHECK: Maybe just putting onscreen all the region bounding rectangles might 
@@ -446,7 +476,6 @@ QTWKWindow::mouseMoveEvent (QMouseEvent* event) {
   event->accept();
 }
 
-
 void
 QTWKWindow::wheelEvent (QWheelEvent* event) {
   if (is_nil (tm_widget ())) return;
@@ -462,7 +491,6 @@ QTWKWindow::wheelEvent (QWheelEvent* event) {
                             mstate, texmacs_time ());
   event->accept();
 }
-
 
 bool
 QTWKWindow::event (QEvent* event) {
@@ -529,9 +557,6 @@ QTWKWindow::leaveEvent (QMoveEvent* event) {
                           mstate, texmacs_time ());
   //QWindow::leaveEvent (event);
 }
-
-
-
 
 #if 0
 QSize
@@ -641,21 +666,3 @@ QTWKWindow::dropEvent (QDropEvent *event)
     event->acceptProposedAction();
   }
 }
-
-/*
-void
-QTWKWindow::wheelEvent(QWheelEvent *event) {
-  if (QApplication::keyboardModifiers() == Qt::ControlModifier) {
-    if (event->delta() > 0) {
-      the_gui->process_keypress (tm_widget(), string("C-+"), texmacs_time());
-    } else {
-      the_gui->process_keypress (tm_widget(), string("C--"), texmacs_time());
-    }
-  } else {
-    QAbstractScrollArea::wheelEvent(event);
-  }
-}
-*/
-
-
-

@@ -32,6 +32,7 @@ class QTWKWindow : public QWindow {
 //  QLabel*      imwidget;
   QPoint       cursor_pos;
   QBackingStore* backing_store;
+  int repaintTimer;
 
 public:
 
@@ -45,13 +46,14 @@ public:
   widget tm_widget () const;
   void repaint (const QRegion &rgn);
   void repaint ();
+  void scheduleRepaint();
   
 protected:
 
   virtual bool event (QEvent *event);
 
   virtual void exposeEvent(QExposeEvent *event);
-
+  virtual void timerEvent(QTimerEvent *event);
   virtual void focusInEvent (QFocusEvent* event);
   virtual void focusOutEvent (QFocusEvent* event);
   virtual void keyPressEvent (QKeyEvent* event);

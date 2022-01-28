@@ -54,7 +54,7 @@ qtwk_window_rep::initialize () {
     name= const_cast<char*> ("popup");
   } else {
     if (!starts(name, "TeXmacs")) {
-    win->setFlags(Qt::Popup | Qt::WindowTitleHint | Qt::WindowSystemMenuHint
+      win->setFlags(Qt::WindowTitleHint | Qt::WindowSystemMenuHint
                       | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
     }
   }
@@ -221,8 +221,10 @@ qtwk_window_rep::set_modified (bool flag) {
 
 void
 qtwk_window_rep::set_visibility (bool flag) {
-  if (flag) win->show();
-  else win->hide();
+  if (flag)  {
+    if (starts(the_name, "TeXmacs")) win->show();
+    else win->showNormal();
+  } else win->hide();
 }
 
 void
