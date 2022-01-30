@@ -198,8 +198,8 @@ QTWKWindow::resizeEvent (QResizeEvent *event) {
   backing_store->beginPaint(r);
   QPaintDevice *device = backing_store->paintDevice();
   QPainter painter(device);
-  painter.fillRect(r, Qt::gray);
-  painter.drawPixmap(QPoint(), tmwid->backingPixmap);
+  //painter.fillRect(r, Qt::gray);
+  painter.drawPixmap(r, tmwid->backingPixmap, QRect(QPoint(), size() * retina_factor));
   painter.end();
   backing_store->endPaint();
   backing_store->flush(r);
