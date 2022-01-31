@@ -53,7 +53,8 @@ qtwk_window_rep::initialize () {
     win->setFlags(Qt::Popup);
     name= const_cast<char*> ("popup");
   } else {
-    if (!starts(name, "TeXmacs")) {
+    //if (!starts(name, "TeXmacs")) 
+    {
       win->setFlags(Qt::WindowTitleHint | Qt::WindowSystemMenuHint
                       | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
     }
@@ -95,6 +96,7 @@ qtwk_window_rep::qtwk_window_rep (widget w2, qtwk_gui gui2, char* n2,
   has_focus (false),
   full_screen_flag (false),
   win_id (window_unique_id++),
+  backingImage (),
   backingPixmap (1,1) // avoid problems at startup with translate
 {
   initialize ();
@@ -222,13 +224,14 @@ qtwk_window_rep::set_modified (bool flag) {
 void
 qtwk_window_rep::set_visibility (bool flag) {
   if (flag)  {
-    if (starts(the_name, "TeXmacs")) win->show();
+    if (starts(the_name, "TeXmacs")) win->showNormal();
     else win->showNormal();
   } else win->hide();
 }
 
 void
 qtwk_window_rep::set_full_screen (bool flag) {
+  (void) flag;
 #if 0
   if (full_screen_flag == flag) return;
   string old_name= get_name ();
@@ -364,7 +367,12 @@ qtwk_window_rep::mouse_event (string ev, int x, int y, int flags, time_t t) {
 basic_renderer
 qtwk_window_rep::get_renderer () {
   qt_renderer_rep *ren = the_qt_renderer ();
-  ren->begin (&backingPixmap);
+  if (backingImage.isNull()) {
+    backingImage = QImage(win->size() * retina_factor, QImage::Format_RGB32);
+  }
+  ren->begin (&backingImage);
+//  ren->begin (win->backing_store->paintDevice());
+//  ren->begin (&backingPixmap);
   return ren;
 }
 
@@ -372,36 +380,41 @@ void
 qtwk_window_rep::repaint_invalid_regions () {
   //if (!is_nil (invalid_regions)) cout << invalid_regions << "\n";
   //else { cout << "."; cout.flush (); }
-  QRegion qrgn;
 
-  {
-    QSize _oldSize = backingPixmap.size();
-    QSize _new_logical_Size = win->size();
-    QSize _newSize = _new_logical_Size;
-    _newSize *= retina_factor;
-    
-    //cout << "      surface size of " << _newSize.width() << " x "
-    // << _newSize.height() << LF;
-    
-    if (_newSize != _oldSize) {
-      // cout << "RESIZING BITMAP"<< LF;
-      QPixmap newBackingPixmap (_newSize);
-      QPainter p (&newBackingPixmap);
-      p.drawPixmap (0,0,backingPixmap);
-      //p.fillRect (0, 0, _newSize.width(), _newSize.height(), Qt::red);
-      if (_newSize.width() >= _oldSize.width()) {
-        invalidate_event (_oldSize.width(), 0, _newSize.width(), _newSize.height());
-        p.fillRect (QRect (_oldSize.width(), 0, _newSize.width()-_oldSize.width(), _newSize.height()), Qt::gray);
-      }
-      if (_newSize.height() >= _oldSize.height()) {
-        invalidate_event (0,_oldSize.height(), _newSize.width(), _newSize.height());
-        p.fillRect (QRect (0,_oldSize.height(), _newSize.width(), _newSize.height()-_oldSize.height()), Qt::gray);
-      }
-      p.end();
-      backingPixmap = newBackingPixmap;
-    }
+  QRegion qrgn;
+  const QSize _new_logical_Size(win->size());
+  const QSize _newSize(_new_logical_Size * retina_factor);
+
+  if (_new_logical_Size != win->backing_store->size()) {
+    win->backing_store->resize(_new_logical_Size);
+    backingImage = QImage(_newSize, QImage::Format_RGB32);
+    invalid_regions= rectangles (rectangle (0,0, _newSize.width(), _newSize.height()));
   }
-  
+
+#if 0
+  rectangles it= invalid_regions;
+  while (!is_nil (it)) {
+    rectangle r0 = it->item;
+    QRect qr = QRect (r0->x1 / retina_factor, r0->y1 / retina_factor,
+                      (r0->x2 - r0->x1) / retina_factor,
+                      (r0->y2 - r0->y1) / retina_factor);
+    qrgn += qr;
+    it= it->next;
+  }
+
+  // we have to make sure the backing store is ready for drawing.
+  //win->backing_store->beginPaint(qrgn);
+  qrgn= QRegion();
+#endif 
+
+  // HACK: we need to draw in real pixels so we change the devicePixelRation of the QImage
+  // which is used by QWasmBackingStore. Probably it would be better that we modify qt_renderer to 
+  // work in real pixel, or that we unset retina_factor.
+  // This has to be done after beginPaint, since it insist to check that the devicePixelRatio
+  // of the image is the same as that of the window.
+  //static_cast<QImage*>(win->backing_store->paintDevice())->setDevicePixelRatio(1.0);
+
+  // we are really ready to draw now.
   basic_renderer_rep* ren = get_renderer();
 
   rectangles new_regions;
@@ -432,7 +445,18 @@ qtwk_window_rep::repaint_invalid_regions () {
   invalid_regions= new_regions;
   
   ren->end();
-  // propagate immediately the changes to the screen
+#if 0
+  {
+    QPainter p(win->backing_store->paintDevice());
+    p.drawImage(QRect(QPoint(), backingImage.size()/retina_factor), backingImage, QRect(QPoint(), backingImage.size()));
+  }
+#endif
+
+  // retore the original 
+  //static_cast<QImage*>(win->backing_store->paintDevice())->setDevicePixelRatio(win->devicePixelRatio());
+  // propagate immediately the changes to the window
+  //win->backing_store->endPaint();
+  //win->backing_store->flush(qrgn);
   win->repaint (qrgn);
 }
 
@@ -465,6 +489,7 @@ qtwk_window_rep::get_mouse_grab (widget w) {
 
 void
 qtwk_window_rep::set_mouse_pointer (widget wid, string name, string mask) {
+  (void) wid; (void) name; (void) mask;
   //FIXME: implement
 #if 0
   if (mask == "") gui->set_mouse_pointer (wid, name);
@@ -532,14 +557,42 @@ qtwk_window_rep::translate (SI x1, SI y1, SI x2, SI y2, SI dx, SI dy) {
   rectangles extra= thicken (region - ::translate (region, dx, dy), 1, 1);
   invalid_regions= invalid_regions | extra;
 
-  if (x1<x2 && y2<y1)
-    backingPixmap.scroll (dx, dy, x1, y2, x2-x1, y1-y2);
-
   ren->unclip ();
   ren->end ();
-  
-  // we need to propagate the changes from the backingPixmap to the window
-  win->repaint();  
+
+  if (x1<x2 && y2<y1) {
+    // QWasmBackingStore seems not have a functional implementation of scroll (at least in Qt 6.2.2)
+    // ideally we would like to use the code used in QRasterBackingStore::scroll
+    // which uses
+    // extern void qt_scrollRectInImage(QImage &, const QRect &, const QPoint &);
+    // to move the pixels without copying the whole image
+    // unfortunately this seems to give rise to memory allocation problems which I (mg) do
+    // not understand, so for the moment we use the fallback code below copied from QPixmap::scroll
+
+    const QRect src (x1, y2, (x2-x1), (y1-y2));
+    const QRect rect (src.topLeft()/retina_factor, src.size()/retina_factor);
+    const QPoint delta(dx, dy);
+    QImage &img = backingImage;
+    if (!img.isNull()) {
+      {
+        // Fallback
+        QImage img2 = img;
+        QPainter painter(&img2);
+        painter.setCompositionMode(QPainter::CompositionMode_Source);
+        painter.drawImage(src.translated(delta), img, src);
+        painter.end();
+        img = img2;
+      }
+      // update the window's backing store
+      win->backing_store->beginPaint(QRegion());
+      {
+        QPainter p(win->backing_store->paintDevice());
+        p.drawImage(rect, img, src);
+      }
+      win->backing_store->endPaint();
+      win->backing_store->flush(rect);
+    }
+  }
 }
 
 void
@@ -565,6 +618,7 @@ window
 popup_window (widget w, string name, SI min_w, SI min_h,
 	      SI def_w, SI def_h, SI max_w, SI max_h)
 {
+  (void) name;
   window win= tm_new<qtwk_window_rep> (w, the_gui, (char*) NULL,
 				    min_w, min_h, def_w, def_h, max_w, max_h);
   return win;

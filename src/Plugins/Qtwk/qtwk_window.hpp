@@ -131,6 +131,7 @@ protected:
   
 //  rectangles   invalid_regions;
   QPixmap      backingPixmap;
+  QImage backingImage;
 //  QPoint       backing_pos;
 
   void invalidate_rect (int x1, int y1, int x2, int y2);

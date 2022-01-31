@@ -687,7 +687,7 @@ qt_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
     QRect rect = QRect(x1, y2, x2-x1, y1-y2);
     //    shadow->painter->setCompositionMode(QPainter::CompositionMode_Source);  
     shadow->painter->setClipRect(rect);
-    shadow->painter->drawPixmap (rect, * dynamic_cast<QPixmap*> (painter->device ()), rect);
+    shadow->painter->drawImage (rect, * static_cast<QImage*> (painter->device ()), rect);
     //    cout << "qt_shadow_renderer_rep::get_shadow " 
     //         << rectangle(x1,y2,x2,y1) << LF;
     //  XCopyArea (dpy, win, shadow->win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
@@ -716,7 +716,7 @@ qt_renderer_rep::put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
     //         << rectangle(x1,y2,x2,y1) << LF;
     //    painter->setCompositionMode(QPainter::CompositionMode_Source);
 //    painter->drawPixmap (rect,  * dynamic_cast<QPixmap*> (shadow->painter->device ()), rect);
-    painter->drawPixmap (rect,  shadow->px, rect);
+    painter->drawImage (rect,  shadow->img, rect);
     //  XCopyArea (dpy, shadow->win, win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
   }
 }
@@ -758,7 +758,7 @@ qt_proxy_renderer_rep::new_shadow (renderer& ren) {
   
   // cout << "Create " << mw << ", " << mh << "\n";
   static_cast<qt_shadow_renderer_rep*>(ren)->begin(
-          &(static_cast<qt_shadow_renderer_rep*>(ren)->px));
+          &(static_cast<qt_shadow_renderer_rep*>(ren)->img));
 }
 
 void 
@@ -787,9 +787,9 @@ qt_proxy_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
     shadow->painter->setClipRect(rect);
 
     //    shadow->painter->setCompositionMode(QPainter::CompositionMode_Source);
-    QPixmap *_pixmap = static_cast<QPixmap*>(painter->device()); 
-    if (_pixmap) {
-      shadow->painter->drawPixmap (rect, *_pixmap, rect);
+    QImage *_image = static_cast<QImage*>(painter->device());
+    if (_image) {
+      shadow->painter->drawImage (rect, *_image, rect);
     }
     //    cout << "qt_shadow_renderer_rep::get_shadow " 
     //         << rectangle(x1,y2,x2,y1) << LF;
@@ -807,10 +807,10 @@ qt_proxy_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
 
 qt_shadow_renderer_rep::qt_shadow_renderer_rep (int w, int h)
 // : qt_renderer_rep (_px.width(),_px.height()), px(_px) 
-: qt_renderer_rep (new QPainter()), px (w, h)
+: qt_renderer_rep (new QPainter()), img (QSize(w, h), QImage::Format_RGB32)
 { 
   //cout << px.width() << "," << px.height() << " " << LF;
-  painter->begin (&px);
+  painter->begin (&img);
 }
 
 qt_shadow_renderer_rep::~qt_shadow_renderer_rep () 

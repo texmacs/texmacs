@@ -193,17 +193,6 @@ QTWKWindow::exposeEvent(QExposeEvent *) {
 
 void
 QTWKWindow::resizeEvent (QResizeEvent *event) {
-  backing_store->resize(size()); 
-  QRect r= QRect(QPoint(), size());
-  backing_store->beginPaint(r);
-  QPaintDevice *device = backing_store->paintDevice();
-  QPainter painter(device);
-  //painter.fillRect(r, Qt::gray);
-  painter.drawPixmap(r, tmwid->backingPixmap, QRect(QPoint(), size() * retina_factor));
-  painter.end();
-  backing_store->endPaint();
-  backing_store->flush(r);
-
   coord2 s = from_qsize (event->size());
   cout << from_qstring (objectName()) << " resize event " << s << "\n";
  // tmwid->resize_event (s.x1,s.x2);
@@ -221,21 +210,22 @@ QTWKWindow::resizeEvent (QResizeEvent *event) {
 */
 void 
 QTWKWindow::repaint (const QRegion &rgn) {
+
   if (!isExposed()) return;
+
   backing_store->beginPaint(rgn);
   QPaintDevice *device = backing_store->paintDevice();
   QPainter painter(device);
   for (const QRect &qr : rgn) {
-    painter.drawPixmap (QRect (qr.x(), qr.y(), qr.width(), qr.height()),
-                  tmwid->backingPixmap,
-                  QRect (retina_factor * qr.x(),
-                         retina_factor * qr.y(),
-                         retina_factor * qr.width(),
-                         retina_factor * qr.height()));
+    painter.drawImage (qr,
+                  tmwid->backingImage,
+                  QRect (retina_factor * qr.topLeft(),
+                         retina_factor * qr.size()));
   }
   painter.end();
   backing_store->endPaint();
   backing_store->flush(rgn);
+
 }
 
 void 

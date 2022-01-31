@@ -29,12 +29,12 @@ class QTWKWindow : public QWindow {
   Q_OBJECT
 
   qtwk_window  tmwid;
-//  QLabel*      imwidget;
   QPoint       cursor_pos;
-  QBackingStore* backing_store;
-  int repaintTimer;
+  int          repaintTimer;
 
 public:
+
+  QBackingStore* backing_store;
 
   QTWKWindow (qtwk_window _tmwid=0);
   virtual ~QTWKWindow ();
