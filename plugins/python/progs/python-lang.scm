@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (prog python-lang)
+(texmacs-module (python-lang)
   (:use (prog default-lang)))
 
 (tm-define (parser-feature lan key)

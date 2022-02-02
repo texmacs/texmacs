@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (prog dot-lang)
+(texmacs-module (dot-lang)
   (:use (prog default-lang)))
 
 (tm-define (parser-feature lan key)

@@ -22,7 +22,7 @@ prog_language_rep::prog_language_rep (string name):
   if (DEBUG_PARSER)
     debug_packrat << "Building the " * name * " language parser" << LF;
 
-  string use_modules= "(use-modules (prog " * name * "-lang))";
+  string use_modules= "(use-modules (" * name * "-lang))";
   eval (use_modules);
 
   tree keyword_config= get_parser_config (name, "keyword");

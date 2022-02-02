@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (prog octave-lang)
+(texmacs-module (octave-lang)
   (:use (prog default-lang)))
 
 (tm-define (parser-feature lan key)
