@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (prog javascript-lang)
+(texmacs-module (javascript-lang)
   (:use (prog default-lang)))
 
 (tm-define (parser-feature lan key)

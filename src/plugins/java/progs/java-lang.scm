@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (prog java-lang)
+(texmacs-module (java-lang)
   (:use (prog default-lang)))
 
 (tm-define (parser-feature lan key)

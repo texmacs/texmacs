@@ -12,7 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (prog cpp-lang)
+(texmacs-module (cpp-lang)
   (:use (prog default-lang)))
 
 (tm-define (parser-feature lan key)

@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (prog scala-lang)
+(texmacs-module (scala-lang)
   (:use (prog default-lang)))
 
 ;; https://www.scala-lang.org/files/archive/spec/2.13/13-syntax-summary.html
