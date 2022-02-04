@@ -476,7 +476,7 @@ TeXmacs_main (int argc, char** argv) {
              (s == "-x") || (s == "-execute") ||
              (s == "-log-file") ||
              (s == "-build-manual") ||
-             (s == "-reference-suite") || (s == "-test-suite")) {}
+             (s == "-reference-suite") || (s == "-test-suite")) {i++;}
   }
   if (install_status == 1) {
     if (DEBUG_STD) debug_boot << "Loading welcome message...\n";
