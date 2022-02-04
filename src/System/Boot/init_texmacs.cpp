@@ -404,30 +404,6 @@ init_misc () {
 
 }
 
-static void
-setup_inkscape_extension () {
-debug_boot << "attempt install of inkscape extension \n ";
-#ifdef OS_MINGW
-  url ink_ext = url ("$APPDATA/inkscape/extensions");
-#else
-  url ink_ext = "~/.config/inkscape/extensions/";
-#endif 
-  if ( exists (ink_ext)) {
-    url f1 = url (ink_ext * "texmacs.inx");
-    url f2 = url (ink_ext * "texmacs_reedit.py");
-    url f3 = url (ink_ext * "texmacs_latex.sty");
-    url plug_source = url ("$TEXMACS_PATH/misc/inkscape_extension/");
-    debug_boot << "installing or updating inkscape extension\n";
-    copy (url (plug_source * "texmacs.inx"), f1);
-    copy (url (plug_source * "texmacs_reedit.py"), f2);
-    copy (url (plug_source * "texmacs_latex.sty"), f3);
-    if (!(exists (f1) && exists (f2))) {
-      debug_boot << "automatic install of inkscape extension failed\n; ";
-      debug_boot << "see documentation for manual install\n";
-    }
-  }
-}
-
 /******************************************************************************
 * Deprecated initializations
 ******************************************************************************/
@@ -483,7 +459,6 @@ setup_texmacs () {
 
   set_setting ("VERSION", TEXMACS_VERSION);
   setup_tex ();
-  setup_inkscape_extension ();
   
   string s= scheme_tree_to_block (texmacs_settings);
   //cout << "settings_t= " << texmacs_settings << "\n";
