@@ -157,7 +157,6 @@ mupdf_renderer_rep::mupdf_renderer_rep (int w2, int h2)
     pixmap (NULL), dev (NULL), proc (NULL),
     fg (-1), bg (-1),
     lw (-1),
-    pen (black), bgb (white), fgb (black),
     in_text (false), cfn ("")
 {
   reset_zoom_factor();
@@ -348,7 +347,7 @@ mupdf_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore) {
 
 void
 mupdf_renderer_rep::select_alpha (int alpha) {
-  float da = ((float) alpha)/255.0;
+  float da = ((float) alpha)/1000.0;
   proc->op_gs_ca (mupdf_context (), proc, da);
   proc->op_gs_CA (mupdf_context (), proc, da);
 }
@@ -540,7 +539,7 @@ mupdf_renderer_rep::set_pencil (pencil pen2) {
   if (pen->get_type () == pencil_brush) {
     // debug_convert << "pencil has brush type" << LF;
     brush br= pen->get_brush ();
-    fgb= br;
+    fg_brush= br;
     select_fill_pattern (br);
     select_stroke_pattern (br);
   }
@@ -554,13 +553,13 @@ mupdf_renderer_rep::set_pencil (pencil pen2) {
 void
 mupdf_renderer_rep::set_brush (brush br) {
   // debug_convert << "set_brush\n";
-  fgb= br;
+  fg_brush= br;
   pen= pencil (br);
   set_pencil (pen);  // FIXME ???
   if (is_nil (br)) return;
   if (br->get_type () == brush_none) {
     pen = pencil ();
-    fgb = brush ();
+    fg_brush = brush ();
   }
   else {
     select_fill_color (pen->get_color ());
@@ -583,7 +582,7 @@ void
 mupdf_renderer_rep::set_background (brush b) {
   // debug_convert << "set_background\n";
   //if (bgb==b) return;
-  bgb= b;
+  bg_brush= b;
   bg= b->get_color ();
 }
 
@@ -632,12 +631,12 @@ mupdf_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   // debug_convert << "clear" << xx1 << " " << yy1 << " " << xx2 << " " << yy2 << LF;
   proc->op_q (mupdf_context (), proc);
   select_fill_color (bg);
-  select_fill_pattern (bgb);
+  select_fill_pattern (bg_brush);
   proc->op_re (mupdf_context (), proc, xx1, yy1, xx2-xx1, yy2-yy1);
   proc->op_h (mupdf_context (), proc);
   proc->op_f (mupdf_context (), proc);
   select_fill_color (fg);
-  select_fill_pattern (fgb);
+  select_fill_pattern (fg_brush);
   proc->op_Q (mupdf_context (), proc);
   //snapshot_pixmap (pixmap);
 }

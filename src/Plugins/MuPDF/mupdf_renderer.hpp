@@ -36,8 +36,8 @@ protected:
   double    current_width;
   int       clip_level;
   
-  pencil    pen;
-  brush     bgb, fgb;
+//  pencil    pen;
+//  brush     bgb, fgb;
 
   double    prev_text_x, prev_text_y;
   bool      in_text;
