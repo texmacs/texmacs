@@ -1054,6 +1054,9 @@
 		9CACE326242BD54F00D0B7CA /* string_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CACE31C242BD54F00D0B7CA /* string_parser.cpp */; };
 		9CACE327242BD54F00D0B7CA /* string_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CACE31C242BD54F00D0B7CA /* string_parser.cpp */; };
 		9CACE328242BD54F00D0B7CA /* string_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CACE31C242BD54F00D0B7CA /* string_parser.cpp */; };
+		9CBAC91B27AC8914008E1893 /* mupdf_renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CBAC91927AC8913008E1893 /* mupdf_renderer.cpp */; };
+		9CBAC91C27AC8914008E1893 /* mupdf_renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CBAC91927AC8913008E1893 /* mupdf_renderer.cpp */; };
+		9CBAC91D27AC8914008E1893 /* mupdf_renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CBAC91927AC8913008E1893 /* mupdf_renderer.cpp */; };
 		9CC6149110A999460055F808 /* QTMMenuHelper.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48B710A8CC100097A335 /* QTMMenuHelper.hpp */; };
 		9CC6149310A999460055F808 /* QTMWidget.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48BB10A8CC100097A335 /* QTMWidget.hpp */; };
 		9CC6149410A999460055F808 /* QTMWindow.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B48BD10A8CC100097A335 /* QTMWindow.hpp */; };
@@ -2771,6 +2774,10 @@
 		9CACE31B242BD54F00D0B7CA /* keyword_parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = keyword_parser.cpp; sourceTree = "<group>"; };
 		9CACE31C242BD54F00D0B7CA /* string_parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = string_parser.cpp; sourceTree = "<group>"; };
 		9CACE329242BD56100D0B7CA /* locale.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = locale.hpp; sourceTree = "<group>"; };
+		9CBAC91927AC8913008E1893 /* mupdf_renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mupdf_renderer.cpp; sourceTree = "<group>"; };
+		9CBAC91A27AC8913008E1893 /* mupdf_renderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = mupdf_renderer.hpp; sourceTree = "<group>"; };
+		9CBAC92427AEF25B008E1893 /* mupdf_picture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mupdf_picture.cpp; sourceTree = "<group>"; };
+		9CBAC92527AEF25B008E1893 /* mupdf_picture.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = mupdf_picture.hpp; sourceTree = "<group>"; };
 		9CC6148B10A998BC0055F808 /* MOCs.o */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.objfile"; includeInIndex = 0; path = MOCs.o; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CCC738D12A7D6DA006EDBDA /* HIDRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIDRemote.h; sourceTree = "<group>"; };
 		9CCC738E12A7D6DA006EDBDA /* HIDRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HIDRemote.m; sourceTree = "<group>"; };
@@ -3908,6 +3915,7 @@
 		9C0B484710A8CC100097A335 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				9CBAC91227AC8641008E1893 /* MuPDF */,
 				9C0B484810A8CC100097A335 /* Axel */,
 				9C0B484B10A8CC100097A335 /* Bibtex */,
 				9C0B484E10A8CC100097A335 /* Cairo */,
@@ -4957,6 +4965,17 @@
 			path = Pdf;
 			sourceTree = "<group>";
 		};
+		9CBAC91227AC8641008E1893 /* MuPDF */ = {
+			isa = PBXGroup;
+			children = (
+				9CBAC92427AEF25B008E1893 /* mupdf_picture.cpp */,
+				9CBAC92527AEF25B008E1893 /* mupdf_picture.hpp */,
+				9CBAC91927AC8913008E1893 /* mupdf_renderer.cpp */,
+				9CBAC91A27AC8913008E1893 /* mupdf_renderer.hpp */,
+			);
+			path = MuPDF;
+			sourceTree = "<group>";
+		};
 		9CD46A9114740A3F00A7E2FC /* Scheme */ = {
 			isa = PBXGroup;
 			children = (
@@ -5883,6 +5902,7 @@
 				9C0B4B3410A8CC110097A335 /* formatter.cpp in Sources */,
 				9C0B4B3510A8CC110097A335 /* line_item.cpp in Sources */,
 				9C0B4B3610A8CC110097A335 /* page_item.cpp in Sources */,
+				9CBAC91B27AC8914008E1893 /* mupdf_renderer.cpp in Sources */,
 				9C0B4B3C10A8CC110097A335 /* lazy_gui.cpp in Sources */,
 				9C0104EC22BC0F9E00F81331 /* xml.cpp in Sources */,
 				9C0B4B3D10A8CC110097A335 /* lazy_paragraph.cpp in Sources */,
@@ -6153,6 +6173,7 @@
 				9CCC745D10D303D900E88D90 /* modification.cpp in Sources */,
 				9CCC745E10D303D900E88D90 /* parse_string.cpp in Sources */,
 				9CD958EE1D241BB000AA2C65 /* metadata-ams.cpp in Sources */,
+				9CBAC91D27AC8914008E1893 /* mupdf_renderer.cpp in Sources */,
 				9CCC745F10D303D900E88D90 /* path.cpp in Sources */,
 				9CCC746010D303D900E88D90 /* rectangles.cpp in Sources */,
 				9CCC746110D303D900E88D90 /* space.cpp in Sources */,
@@ -6707,6 +6728,7 @@
 				9C33F4202412BF7E00F73F5A /* locale.cpp in Sources */,
 				9CD4E70B10B14AEE00E0DD5C /* attribute_event.cpp in Sources */,
 				9CD4E70C10B14AEE00E0DD5C /* attribute_widget.cpp in Sources */,
+				9CBAC91C27AC8914008E1893 /* mupdf_renderer.cpp in Sources */,
 				9C33F4082412BF4800F73F5A /* inline_comment_parser.cpp in Sources */,
 				9CD4E70D10B14AEE00E0DD5C /* balloon_widget.cpp in Sources */,
 				9CD4E70E10B14AEE00E0DD5C /* basic_event.cpp in Sources */,

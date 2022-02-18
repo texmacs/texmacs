@@ -21,6 +21,7 @@
 #include <QPixmap>
 #include <QLayout>
 
+#include "mupdf_renderer.hpp"
 
 #ifdef USE_CAIRO
 #include "Cairo/cairo_renderer.hpp"
@@ -396,7 +397,6 @@ qt_simple_widget_rep::as_qaction () {
  * Backing store management
  ******************************************************************************/
 
-
 void
 qt_simple_widget_rep::invalidate_rect (int x1, int y1, int x2, int y2) {
 #ifdef Q_OS_MAC
@@ -425,9 +425,6 @@ bool
 qt_simple_widget_rep::is_invalid () {
   return !is_nil (invalid_regions);
 }
-
-
-
 
 basic_renderer
 qt_simple_widget_rep::get_renderer() {
@@ -568,15 +565,31 @@ qt_simple_widget_rep::repaint_invalid_regions () {
       if (area (lub) < 1.2 * area (invalid_regions))
         invalid_regions= rectangles (lub);
       
-      basic_renderer_rep* ren = get_renderer();
+      //basic_renderer_rep* ren = get_renderer();
+      mupdf_renderer_rep* ren= tm_new<mupdf_renderer_rep> ();
+      fz_pixmap *pix= NULL;
+      {
+        QImage im= backingPixmap.toImage ();
+        im.detach ();
+        im.convertTo (QImage::Format_RGBA8888_Premultiplied);
+        uchar *samples= im.bits ();
+        pix= fz_new_pixmap_with_data (mupdf_context (),
+                                     fz_device_rgb (mupdf_context ()),
+                                     im.width (), im.height (),
+                                     NULL, 1, im.width()*4, samples);
+        fz_pixmap *pix2= fz_clone_pixmap (mupdf_context (), pix);
+        fz_drop_pixmap (mupdf_context (), pix);
+        pix= pix2;
+        ren->begin (pix);
+      }
       
-      coord2 pt_or = from_qpoint(backing_pos);
+      coord2 pt_or = from_qpoint (backing_pos);
       SI ox = -pt_or.x1;
       SI oy = -pt_or.x2;
       
       rectangles rects = invalid_regions;
       invalid_regions = rectangles();
-      
+      rects = rectangle (0,0, backingPixmap.width(), backingPixmap.height());
       while (!is_nil (rects)) {
         rectangle r = copy (rects->item);
         rectangle r0 = rects->item;
@@ -600,7 +613,21 @@ qt_simple_widget_rep::repaint_invalid_regions () {
         rects = rects->next;
       }
       
-      ren->end();
+      {
+        if (pix) {
+//          fz_output *out= fz_new_output_with_path(mupdf_context(), "/Users/mgubi/test-xxx.png", 0);
+//          fz_write_pixmap_as_png(mupdf_context (), out, pix);
+//          fz_close_output(mupdf_context(), out);
+//          fz_drop_output(mupdf_context(), out);
+          uchar * samples= fz_pixmap_samples (mupdf_context (), pix);
+          QImage im= QImage(samples, backingPixmap.width(), backingPixmap.height(), 4*backingPixmap.width(), QImage::Format_RGBA8888_Premultiplied);
+          QPixmap p= QPixmap::fromImage (im);
+          backingPixmap= p;
+        }
+        fz_drop_pixmap (mupdf_context (), pix);
+        ren->end();
+        tm_delete (ren);
+      }
     } // !is_nil (invalid_regions)
   }
   

@@ -246,6 +246,8 @@ QTMWidget::resizeEventBis (QResizeEvent *event) {
 void
 QTMWidget::paintEvent (QPaintEvent* event) {
   QPainter p (surface());
+  p.drawPixmap(QRect(QPoint(), size()), tm_widget()->backingPixmap, QRect(QPoint(), size() * retina_factor));
+  return;
   QVector<QRect> rects = event->region().rects();
   for (int i = 0; i < rects.count(); ++i) {
     QRect qr = rects.at (i);
