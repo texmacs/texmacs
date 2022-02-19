@@ -72,6 +72,7 @@ public:
 picture mupdf_picture (fz_pixmap *im, int ox, int oy);
 picture as_mupdf_picture (picture pic);
 
-fz_image *mupdf_load_image (url u);
+fz_image  *mupdf_load_image (url u);
+fz_pixmap *mupdf_load_pixmap (url u, int w, int h, tree eff, SI pixel);
 
 #endif // defined MUPDF_PICTURE_HPP

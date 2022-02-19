@@ -163,6 +163,7 @@ picture_renderer (picture p, double zoomf) {
 /******************************************************************************
 * Loading pictures
 ******************************************************************************/
+
 fz_image *
 mupdf_load_image (url u) {
   fz_image *im = NULL;
@@ -201,8 +202,8 @@ mupdf_load_image (url u) {
   return im;
 }
 
-static fz_pixmap*
-get_image (url u, int w, int h, tree eff, SI pixel) {
+fz_pixmap*
+mupdf_load_pixmap (url u, int w, int h, tree eff, SI pixel) {
   fz_image *im = mupdf_load_image (u);
 
   if (im == NULL) {
@@ -251,7 +252,7 @@ get_image (url u, int w, int h, tree eff, SI pixel) {
 
 picture
 load_picture (url u, int w, int h, tree eff, int pixel) {
-  fz_pixmap* pix= get_image (u, w, h, eff, pixel);
+  fz_pixmap* pix= mupdf_load_pixmap (u, w, h, eff, pixel);
   if (pix == NULL) return error_picture (w, h);
   picture p= mupdf_picture (pix, 0, 0);
   fz_drop_pixmap (mupdf_context(), pix);

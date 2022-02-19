@@ -386,8 +386,15 @@ mupdf_renderer_rep::select_fill_color (color c) {;
 
 static mupdf_image
 get_image (url u, int w, int h, tree eff, SI pixel) {
+  mupdf_image mpim= mupdf_image ();
+  fz_pixmap *pix= mupdf_load_pixmap (u, w, h, eff, pixel);
+  if (pix) {
+    fz_image *im= fz_new_image_from_pixmap (mupdf_context (), pix, NULL);
+    fz_drop_pixmap (mupdf_context (), pix);
+    mpim= mupdf_image (im);
+  }
   // FIXME: implement
-  return mupdf_image ();
+  return mpim;
 }
 
 void
@@ -831,44 +838,6 @@ mupdf_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
          to_x (x - x0 * pixel), to_y (y - y0 * pixel));
 }
 
-
-#if 0
-void
-mupdf_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
-  // debug_convert << "pdf mupdf_renderer_rep::draw_picture " << x << ", " << y
-  //    << " (" << alpha << ")" << LF;
-  int w= p->get_width (), h= p->get_height ();
-  int ox= p->get_origin_x (), oy= p->get_origin_y ();
-  int _pixel= (int) (PIXEL / PICTURE_ZOOM);
-
-  mupdf_image temp;
-  unsigned long long int key= p->get_unique_id ();
-  if (picture_pool->contains (key))
-    temp= picture_pool [key];
-  else {
-    fz_pixmap* pix= fz_new_pixmap (mupdf_context (),
-                                   fz_device_rgb (mupdf_context ()),
-                                   w, h, NULL, 0);
-    color *samples= (color*) fz_pixmap_samples (mupdf_context (), pix);
-    for (int x=0; x <w; x++) for (int y=0; y <h; y++) {
-      samples[x+w*y]= p->get_pixel(x, y);
-    }
-    fz_image* im= fz_new_image_from_pixmap (mupdf_context (), pix, NULL);
-    temp= mupdf_image (im);
-    picture_pool (key)= temp;
-    fz_drop_pixmap (mupdf_context (), pix);
-    fz_drop_image (mupdf_context (), im);
-  }
-  if (is_nil (temp)) return;
-  end_text ();
-  image (mupdf_context (), proc, temp, alpha,
-         ((double)w) / ((double)temp->w), 0,
-         0, ((double)h) / ((double)temp->h),
-         to_x (x - ox * _pixel), to_y (y - oy * _pixel));
-  //w, h, x - ox * _pixel, y - oy * _pixel, alpha);
-}
-#endif
-
 void
 mupdf_renderer_rep::draw_scalable (scalable im, SI x, SI y, int alpha) {
   // debug_convert << "pdf renderer, draw_scalable "
@@ -896,13 +865,9 @@ mupdf_renderer_rep::draw_scalable (scalable im, SI x, SI y, int alpha) {
     int ox= r->x1, oy= r->y1;
     end_text ();
     image (mupdf_context (), proc, im2, alpha,
-//           ((double)w) / (pixel*(double)im2->w), 0,
-//           0, ((double)h) / (pixel*(double)im2->h),
            ((double)w)/pixel, 0,
            0, ((double)h)/pixel ,
            to_x (x - ox), to_y (y - oy));
-    // ((double) w) / pixel, ((double) h) / pixel,
-    //x - ox, y - oy, alpha);
 
   }
 }

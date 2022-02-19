@@ -589,7 +589,6 @@ qt_simple_widget_rep::repaint_invalid_regions () {
       
       rectangles rects = invalid_regions;
       invalid_regions = rectangles();
-      rects = rectangle (0,0, backingPixmap.width(), backingPixmap.height());
       while (!is_nil (rects)) {
         rectangle r = copy (rects->item);
         rectangle r0 = rects->item;
@@ -615,10 +614,6 @@ qt_simple_widget_rep::repaint_invalid_regions () {
       
       {
         if (pix) {
-//          fz_output *out= fz_new_output_with_path(mupdf_context(), "/Users/mgubi/test-xxx.png", 0);
-//          fz_write_pixmap_as_png(mupdf_context (), out, pix);
-//          fz_close_output(mupdf_context(), out);
-//          fz_drop_output(mupdf_context(), out);
           uchar * samples= fz_pixmap_samples (mupdf_context (), pix);
           QImage im= QImage(samples, backingPixmap.width(), backingPixmap.height(), 4*backingPixmap.width(), QImage::Format_RGBA8888_Premultiplied);
           QPixmap p= QPixmap::fromImage (im);
