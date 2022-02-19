@@ -19,6 +19,8 @@
 
 #include <mupdf/pdf.h>
 
+#include "mupdf_picture.hpp"
+
 // manage a single global context for fitz
 fz_context*
 mupdf_context () {
@@ -581,7 +583,6 @@ mupdf_renderer_rep::set_brush (brush br) {
 void
 mupdf_renderer_rep::set_background (brush b) {
   // debug_convert << "set_background\n";
-  //if (bgb==b) return;
   bg_brush= b;
   bg= b->get_color ();
 }
@@ -797,13 +798,9 @@ image (fz_context *ctx, pdf_processor *proc, mupdf_image im, int alpha,
        float a, float b, float c, float d, float e, float f) {
   // debug_convert << "mupdf_renderer_rep::image " << u << ", " << w << " x " << h
   //    << " + (" << x << ", " << y << ")" << LF;
-
   proc->op_q (ctx, proc);
   set_default_gstate (ctx, proc);
   proc->op_cm (ctx, proc, a, b, c, d, e, f);
-//          ((double)w) / ((double)im->w), 0,
-//          0, ((double)h) / ((double)im->h),
-//          to_x (x), to_y (y));
   float da = ((float) alpha)/255.0;
   proc->op_gs_ca (ctx, proc, da);
   proc->op_gs_CA (ctx, proc, da);
@@ -813,6 +810,29 @@ image (fz_context *ctx, pdf_processor *proc, mupdf_image im, int alpha,
   proc->op_Q (ctx, proc);
 }
 
+void
+mupdf_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
+  p= as_mupdf_picture (p);
+  mupdf_picture_rep* pict= (mupdf_picture_rep*) p->get_handle ();
+  if (!pict->im) {
+    // let's cache the image representation of the pixmap
+    // it will be dropped by the object
+    pict->im= fz_new_image_from_pixmap (mupdf_context (), pict->pix, NULL);
+  }
+  int w= p->get_width (), h= p->get_height ();
+  int ox= p->get_origin_x (), oy= p->get_origin_y ();
+
+  int x0= ox, y0=-oy-1; //y0= h - 1 - oy;
+  decode (x, y);
+  end_text ();
+  image (mupdf_context (), proc, pict->im, alpha,
+         ((float)pict->w) , 0,
+         0, ((float)pict->h) ,
+         to_x (x - x0 * pixel), to_y (y - y0 * pixel));
+}
+
+
+#if 0
 void
 mupdf_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   // debug_convert << "pdf mupdf_renderer_rep::draw_picture " << x << ", " << y
@@ -847,6 +867,7 @@ mupdf_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
          to_x (x - ox * _pixel), to_y (y - oy * _pixel));
   //w, h, x - ox * _pixel, y - oy * _pixel, alpha);
 }
+#endif
 
 void
 mupdf_renderer_rep::draw_scalable (scalable im, SI x, SI y, int alpha) {
@@ -864,8 +885,7 @@ mupdf_renderer_rep::draw_scalable (scalable im, SI x, SI y, int alpha) {
       im2= image_pool [lookup];
     else {
       // FIXME: handle the possibility that the image is not found
-      c_string fpath (concretize (u));
-      fz_image* fzim= fz_new_image_from_file (mupdf_context (), fpath);
+      fz_image* fzim= mupdf_load_image (u);
       im2= mupdf_image (fzim);
       fz_drop_image (mupdf_context (), fzim);
       image_pool (lookup)= im2;
@@ -876,8 +896,10 @@ mupdf_renderer_rep::draw_scalable (scalable im, SI x, SI y, int alpha) {
     int ox= r->x1, oy= r->y1;
     end_text ();
     image (mupdf_context (), proc, im2, alpha,
-           ((double)w) / (pixel*(double)im2->w), 0,
-           0, ((double)h) / (pixel*(double)im2->h),
+//           ((double)w) / (pixel*(double)im2->w), 0,
+//           0, ((double)h) / (pixel*(double)im2->h),
+           ((double)w)/pixel, 0,
+           0, ((double)h)/pixel ,
            to_x (x - ox), to_y (y - oy));
     // ((double) w) / pixel, ((double) h) / pixel,
     //x - ox, y - oy, alpha);

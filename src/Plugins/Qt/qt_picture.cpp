@@ -70,22 +70,28 @@ as_qt_picture (picture pic) {
   return ret;
 }
 
+#ifndef MUPDF_RENDERER
 picture
 as_native_picture (picture pict) {
   return as_qt_picture (pict);
 }
+#endif
+
+picture qt_load_xpm (url file_name);
 
 QImage*
 xpm_image (url file_name) {
-  picture p= load_xpm (file_name);
+  picture p= qt_load_xpm (file_name);
   qt_picture_rep* rep= (qt_picture_rep*) p->get_handle ();
   return &(rep->pict);
 }
 
+#ifndef MUPDF_RENDERER
 picture
 native_picture (int w, int h, int ox, int oy) {
   return qt_picture (QImage (w, h, QImage::Format_ARGB32), ox, oy);
 }
+#endif
 
 void
 qt_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
@@ -155,10 +161,12 @@ qt_image_renderer_rep::get_data_handle () {
   return (void*) this;
 }
 
+#ifndef MUPDF_RENDERER
 renderer
 picture_renderer (picture p, double zoomf) {
   return (renderer) tm_new<qt_image_renderer_rep> (p, zoomf);
 }
+#endif
 
 /******************************************************************************
 * Reverse video mode for icons
@@ -302,12 +310,14 @@ qt_clean_picture_cache () {
   qt_pic_cache= hashmap<tree,QImage*> ();
 }
 
+#ifndef MUPDF_RENDERER
 picture
 load_picture (url u, int w, int h, tree eff, int pixel) {
   QImage* im= get_image (u, w, h, eff, pixel);
   if (im == NULL) return error_picture (w, h);
   return qt_picture (*im, 0, 0);
 }
+#endif
 
 picture
 new_qt_load_xpm (url file_name) {
@@ -365,7 +375,7 @@ new_qt_load_xpm (url file_name) {
 }
 
 picture
-qt_load_xpm (url file_name) {
+qt_load_xpm_bis (url file_name) {
   if (tm_style_sheet != "") return new_qt_load_xpm (file_name);
   string sss;
   double dpr= 1.0;
@@ -391,6 +401,19 @@ qt_load_xpm (url file_name) {
   return qt_picture (pm, 0, 0);
 }
 
+picture
+qt_load_xpm (url file_name) {
+  static hashmap<string,picture> cache;
+  string name= as_string (file_name);
+  if (cache->contains (name)) return cache[name];
+
+  picture pict= qt_load_xpm_bis (file_name);
+
+  cache (name)= pict;
+  return pict;
+}
+
+
 /******************************************************************************
 * Applying effects to existing pictures
 ******************************************************************************/
@@ -407,6 +430,7 @@ qt_apply_effect (tree eff, array<url> src, url dest, int w, int h) {
   pict->pict.save (utf8_to_qstring (concretize (dest)));
 }
 
+#ifndef MUPDF_RENDERER
 void
 save_picture (url dest, picture p) {
   picture q= as_qt_picture (p);
@@ -414,3 +438,4 @@ save_picture (url dest, picture p) {
   if (exists (dest)) remove (dest);
   pict->pict.save (utf8_to_qstring (concretize (dest)));
 }
+#endif

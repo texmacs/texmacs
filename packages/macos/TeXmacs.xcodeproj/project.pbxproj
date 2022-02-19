@@ -1286,6 +1286,9 @@
 		9CCC752210D304EB00E88D90 /* aqua_utilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B486110A8CC100097A335 /* aqua_utilities.mm */; };
 		9CCC752310D304EB00E88D90 /* aqua_widget.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B486310A8CC100097A335 /* aqua_widget.mm */; };
 		9CCC752510D304EB00E88D90 /* TMView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B486F10A8CC100097A335 /* TMView.mm */; };
+		9CCDFBFD27C0E1A0005F047F /* mupdf_picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CBAC92427AEF25B008E1893 /* mupdf_picture.cpp */; };
+		9CCDFC0427C0E1A1005F047F /* mupdf_picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CBAC92427AEF25B008E1893 /* mupdf_picture.cpp */; };
+		9CCDFC0527C0E1A1005F047F /* mupdf_picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CBAC92427AEF25B008E1893 /* mupdf_picture.cpp */; };
 		9CD1513B15A72D0F006F2205 /* metadata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CD1513A15A72D0F006F2205 /* metadata.cpp */; };
 		9CD1513C15A72D0F006F2205 /* metadata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CD1513A15A72D0F006F2205 /* metadata.cpp */; };
 		9CD1513D15A72D0F006F2205 /* metadata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CD1513A15A72D0F006F2205 /* metadata.cpp */; };
@@ -6040,6 +6043,7 @@
 				9C33F4432412C20100F73F5A /* poor_effected.cpp in Sources */,
 				49194C6C184E892800DC45E2 /* tree_search.cpp in Sources */,
 				49C096111B0F945300E038BA /* database.cpp in Sources */,
+				9CCDFBFD27C0E1A0005F047F /* mupdf_picture.cpp in Sources */,
 				49250532186DD65400D32374 /* QTMTreeModel.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6402,6 +6406,7 @@
 				49FFB07B16EDF83A004A2A32 /* glyph_analyze.cpp in Sources */,
 				492EA53F18634091007F16D8 /* fromtex_post.cpp in Sources */,
 				9C52100C2028AFE500A2B5B6 /* tm_timer.cpp in Sources */,
+				9CCDFC0527C0E1A1005F047F /* mupdf_picture.cpp in Sources */,
 				9CE5CF8A16EFDB55001A6292 /* guile_tm.cpp in Sources */,
 				9C5210292028B86900A2B5B6 /* font_scripts.cpp in Sources */,
 				9CE5CF8B16EFDB5B001A6292 /* glue.cpp in Sources */,
@@ -6681,6 +6686,7 @@
 				9CD4E6D110B14AB300E0DD5C /* bridge_surround.cpp in Sources */,
 				9CD4E6D210B14AB300E0DD5C /* bridge_with.cpp in Sources */,
 				9CD4E6D310B14AB300E0DD5C /* typesetter.cpp in Sources */,
+				9CCDFC0427C0E1A1005F047F /* mupdf_picture.cpp in Sources */,
 				9CD4E6D410B14AB300E0DD5C /* concat_active.cpp in Sources */,
 				9CD4E6D510B14AB300E0DD5C /* concat_animate.cpp in Sources */,
 				9CD4E6D610B14AB300E0DD5C /* concat_graphics.cpp in Sources */,
