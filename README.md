@@ -1,3 +1,27 @@
+February 2022
+
+Welcome! You are in the `wip_mupdf` branch of TeXmacs. This is experimental code. Build tools are not yet updated for it. You will have to find you way to compile it. 
+
+The goal of this branch is to implement a new document rendering subsystem based on the [MuPDF](https://mupdf.com) PDF library. This will allow us to handle also images in PDF (and SVG) format and all the other formats supported by MuPDF and make our document rendering independent of the GUI library. Currently we rely on Qt for these tasks and we do not have any 
+internal support for vector images. 
+
+In a second step we will evaluate the possibility to reimplement the PDF *output* device, now based on the [Hummus PDF](https://pdfhummus.com) library with MuPDF (to minimize our footprint).
+
+
+Some additional literature on MuPDF can be found here:
+- T. Hoekwater paper on MuPDF for TUGboat (2019) ([PDF](https://tug.org/TUGboat/tb40-3/tb126hoekwater-mupdf.pdf))
+- A presenation of Ghostscript, MuPDF and others Artifex's tools (2016) ([PDF](https://ftp.pwg.org/pub/pwg/liaison/openprinting/presentations/OpenPrint_GhostScript_April_2016.pdf))
+- The MuPDF product leaflet ([PDF](https://artifex.com/documents/MuPDF-Product-Sheet.pdf))
+
+
+<br>
+<br>
+<br>
+
+(below follows the original `README.md`)
+
+----
+
 # GNU TeXmacs
 [![Join the chat at https://gitter.im/texmacs/Lobby](https://badges.gitter.im/texmacs/Lobby.svg)](https://gitter.im/texmacs/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
