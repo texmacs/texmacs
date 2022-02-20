@@ -183,8 +183,8 @@ tt_font_glyphs_rep::get (int i) {
     // the index variable is used by code who need the glyph_index for unicode characters
     // to locate the right glyph in the font file
     G->index = (face->ft_face->charmap &&
-                face->ft_face->charmap->encoding == FT_ENCODING_UNICODE) ?
-                  glyph_index : i;
+                face->ft_face->charmap->platform_id == 7) ?
+                  i : glyph_index;
     G->lwidth= (tt_si (slot->metrics.horiAdvance)+(PIXEL>>1))/PIXEL;
 
     for (y=0; y<h; y++) {
