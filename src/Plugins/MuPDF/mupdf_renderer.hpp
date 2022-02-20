@@ -42,6 +42,7 @@ protected:
   double    prev_text_x, prev_text_y;
   bool      in_text;
   string    cfn;
+  float     fsize;
   
 
   // geometry

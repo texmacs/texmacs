@@ -17,6 +17,10 @@
 #include "scheme.hpp"
 #include "frame.hpp"
 
+#include "Freetype/tt_file.hpp"
+#include "Freetype/free_type.hpp"
+
+
 #include <mupdf/pdf.h>
 
 #include "mupdf_picture.hpp"
@@ -129,6 +133,28 @@ class mupdf_pattern {
 CONCRETE_NULL_CODE (mupdf_pattern);
 
 /******************************************************************************
+* pdf fonts
+******************************************************************************/
+
+struct mupdf_font_rep: concrete_struct {
+  pdf_font_desc *fn;
+  mupdf_font_rep (pdf_font_desc* _fn)
+    : fn (_fn) {
+    pdf_keep_font (mupdf_context (), fn);
+  }
+  ~mupdf_font_rep() { pdf_drop_font (mupdf_context (), fn); }
+  friend class mupdf_font;
+};
+
+class mupdf_font {
+  CONCRETE_NULL (mupdf_font);
+  mupdf_font (pdf_font_desc* _fn):
+    rep (tm_new<mupdf_font_rep> (_fn)) {}
+};
+
+CONCRETE_NULL_CODE (mupdf_font);
+
+/******************************************************************************
 * Global support variables for all mupdf_renderers
 ******************************************************************************/
 
@@ -140,6 +166,7 @@ static hashmap<unsigned long long int, mupdf_image> picture_pool;
 static hashmap<tree, mupdf_image>  image_pool;
 static hashmap<tree, mupdf_pattern> pattern_pool;
 static hashmap<tree, mupdf_image> pattern_image_pool;
+static hashmap<string, mupdf_font> native_fonts;
 
 // flush caches
 void del_obj_mupdf_renderer (void)  {
@@ -148,6 +175,7 @@ void del_obj_mupdf_renderer (void)  {
   picture_pool= hashmap<unsigned long long int, mupdf_image> ();
   pattern_pool= hashmap<tree, mupdf_pattern> ();
   pattern_image_pool= hashmap<tree, mupdf_image> ();
+  native_fonts= hashmap<string, mupdf_font> ();
 }
 
 /******************************************************************************
@@ -393,7 +421,6 @@ get_image (url u, int w, int h, tree eff, SI pixel) {
     fz_drop_pixmap (mupdf_context (), pix);
     mpim= mupdf_image (im);
   }
-  // FIXME: implement
   return mpim;
 }
 
@@ -646,7 +673,6 @@ mupdf_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   select_fill_color (fg);
   select_fill_pattern (fg_brush);
   proc->op_Q (mupdf_context (), proc);
-  //snapshot_pixmap (pixmap);
 }
 
 void
@@ -833,8 +859,7 @@ mupdf_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   decode (x, y);
   end_text ();
   image (mupdf_context (), proc, pict->im, alpha,
-         ((float)pict->w) , 0,
-         0, ((float)pict->h) ,
+         w, 0, 0, h,
          to_x (x - x0 * pixel), to_y (y - y0 * pixel));
 }
 
@@ -944,9 +969,126 @@ mupdf_renderer_rep::draw_bis (int c, font_glyphs fng, SI x, SI y) {
 }
 #endif
 
+static
+pdf_font_desc *load_pdf_font (string fontname) {
+  int pos= search_forwards (":", fontname);
+  string fname= (pos==-1? fontname: fontname (0, pos));
+  url u = url_none ();
+  {
+    //debug_convert << " try freetype " << LF;
+    u = tt_font_find (fname);
+    //debug_convert << fname << " " << u << LF;
+  }
+  if (!is_none (u)) {
+    int pos= search_forwards (".", fontname);
+    string rname= (pos==-1? fontname: fontname (0, pos));
+    pdf_font_desc* fontdesc= NULL;
+    {
+      //debug_convert << "fz_new_font_from_file "  << u  << LF;
+      c_string path (concretize (u));
+      fz_font *font= fz_new_font_from_file (mupdf_context (), NULL, path, 0, 0);
+      if (font) {
+        fontdesc= pdf_new_font_desc (mupdf_context ());
+        fontdesc->font= font;
+        fontdesc->encoding=
+            pdf_load_system_cmap (mupdf_context (), "Identity-H");
+        // FIXME: do we need to care about all the other fields? (seems not)
+      }
+    }
+    if (fontdesc != NULL) {
+      return fontdesc;
+    }
+    else {
+//      convert_warning << "mupdf_renderer, font: " << fname
+//          << " in file " << u << " cannot be loaded. "
+//          << "Will be rendered as pixmaps" << LF;
+    }
+  }
+  return NULL;
+}
+
+static float
+font_size (string name) {
+  int pos= search_backwards (".", name);
+  int szpos= pos-1;
+  while ((szpos>0) && is_numeric (name[szpos-1])) szpos--;
+  double size= as_double (name (szpos, pos));
+  if (size == 0) size= 10;
+  int end= pos+1;
+  while (end < N(name) && is_numeric (name[end])) end++;
+  double dpi= as_double (name (pos+1, end));
+  double mag= (size) * (dpi/72.0);
+  return mag;
+}
+
+// copied from tt_face.cpp
+inline FT_UInt
+decode_index (FT_Face face, int i) {
+  if (i < 0xc000000) return ft_get_char_index (face, i);
+  return i - 0xc000000;
+}
+
 void
 mupdf_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
+  string fontname = fng->res_name;
+  pdf_font_desc* fontdesc= NULL;
+
+  begin_text ();
+
+  if (cfn != fontname) {
+    // change font
+    cfn= fontname;
+    // try to find a native font
+    if (!native_fonts->contains (fontname)) {
+      fontdesc= load_pdf_font (fontname);
+      if (fontdesc) {
+        native_fonts (fontname)= mupdf_font (fontdesc);
+        pdf_drop_font (mupdf_context (), fontdesc);
+      } else {
+        native_fonts (fontname)= mupdf_font (NULL);
+        // this means use bitmap glyphs
+      }
+    } else {
+      fontdesc= native_fonts (fontname)->fn;
+    }
+    if (fontdesc) {
+      // we have a native font
+      fsize = font_size (fontname);
+      proc->op_Tf (mupdf_context (), proc, "draw", fontdesc, fsize/std_shrinkf);
+    }
+  } else {
+    fontdesc= native_fonts (fontname)->fn;
+  }
+  // draw glyph
+  if (fontdesc) {
+    proc->op_Td (mupdf_context (), proc,
+                 to_x (x) - prev_text_x, to_y (y) - prev_text_y);
+    prev_text_x= to_x (x);
+    prev_text_y= to_y (y);
+    glyph gl= fng->get (c);
+    if (is_nil (gl)) return;
+    unsigned int gl_index; //= gl->index;
+    {
+      // apriori we already have the glyph index in gl->index
+      // however we cannot trust this value since it is manipulated
+      // in tt_face.cpp to go aroung a problem with glyph mapping in
+      // Type1 fonts (for example) for pdf_hummus
+      //
+      // MuPDF seems to like the glyph value returned by
+      // ft_get_char_index on the FT_Face it will use.
+      FT_Face face= (FT_Face)fontdesc->font->ft_face;
+      gl_index= decode_index (face, c);
+    }
+    char glyphs[2] = { (char)(gl_index >> 8), (char)(gl_index) };
+    proc->op_Tj (mupdf_context (), proc, glyphs, 2);
+    return;
+  }
+  // we do not have a native font, draw a bitmap
+  // we use an "immediate" approach, without trying to build a Type3 font
+  // this is appropriate for raster rendering, but we need to change it
+  // if we want to render to a PDF file
 #if 0
+  // FIXME: implement brushes!
   if (pen->get_type () == pencil_brush) {
     draw_bis (c, fng, x, y);
     return;
@@ -966,18 +1108,21 @@ mupdf_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     int w= gl->width, h= gl->height;
 
     unsigned char *samples = (unsigned char *)
-         Memento_label(fz_malloc(mupdf_context(), h*w*4), "glyph_pixmap_data");
+         Memento_label (fz_malloc (mupdf_context (), h*w*4),
+                        "glyph_pixmap_data");
     int nr_cols= std_shrinkf*std_shrinkf;
     if (nr_cols >= 64) nr_cols= 64;
     unsigned char *d= samples;
     for (int y=0; y <h; y++) {
       for (int x=0; x <w; x++) {
         int col = gl->get_x (x, y);
-          d[0] = r;
-          d[1] = g;
-          d[2] = b;
-          d[3]= (a*col)/nr_cols;
-          d+= 4;
+        // we need to store premultiplied values for fz_pixmap
+        int alpha= ((a*col)/nr_cols) & 0xFF;
+        d[0] = (r*alpha)/255;
+        d[1] = (g*alpha)/255;
+        d[2] = (b*alpha)/255;
+        d[3] = alpha;
+        d+= 4;
       }
     }
     fz_pixmap* pix= fz_new_pixmap_with_data (mupdf_context (),
@@ -991,8 +1136,7 @@ mupdf_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     fz_drop_image (mupdf_context (), im);
   }
   // draw the character
-//  line(x- mi->xo*std_shrinkf,y+ mi->yo*std_shrinkf-mi->h*pixel,x- mi->xo*std_shrinkf+mi->w*pixel,y+ mi->yo*std_shrinkf);
-  image (mupdf_context (), proc, mi, 255, //mi->w, mi->h, x- mi->xo*std_shrinkf, y+ mi->yo*std_shrinkf, 1);
+  image (mupdf_context (), proc, mi, 255,
          mi->w, 0.0, 0.0, mi->h,
          to_x (x- mi->xo*std_shrinkf), to_y (y+ mi->yo*std_shrinkf-mi->h*pixel));
 }
