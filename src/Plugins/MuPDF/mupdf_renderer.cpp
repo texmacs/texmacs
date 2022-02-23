@@ -854,13 +854,10 @@ mupdf_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   }
   int w= p->get_width (), h= p->get_height ();
   int ox= p->get_origin_x (), oy= p->get_origin_y ();
-
-  int x0= ox, y0=-oy-1; //y0= h - 1 - oy;
-  decode (x, y);
   end_text ();
   image (mupdf_context (), proc, pict->im, alpha,
          w, 0, 0, h,
-         to_x (x - x0 * pixel), to_y (y - y0 * pixel));
+         to_x (x - ox*pixel), to_y (y - oy*pixel));
 }
 
 void

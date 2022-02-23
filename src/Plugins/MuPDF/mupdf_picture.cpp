@@ -11,14 +11,9 @@
 
 #include "mupdf_picture.hpp"
 
-//#include "analyze.hpp"
 #include "file.hpp"
 #include "image_files.hpp"
-//#include "scheme.hpp"
-//#include "frame.hpp"
 #include "effect.hpp"
-//#include "iterator.hpp"
-//#include "language.hpp"
 
 
 /******************************************************************************
@@ -27,8 +22,8 @@
 
 mupdf_picture_rep::mupdf_picture_rep (fz_pixmap *_pix, int ox2, int oy2):
   pix (_pix), im (NULL),
-  w (fz_pixmap_width (mupdf_context(), pix)),
-  h (fz_pixmap_height (mupdf_context(), pix)),
+  w (fz_pixmap_width (mupdf_context (), pix)),
+  h (fz_pixmap_height (mupdf_context (), pix)),
   ox (ox2), oy (oy2) {
     fz_keep_pixmap (mupdf_context (), pix);
   }
@@ -50,24 +45,24 @@ void mupdf_picture_rep::set_origin (int ox2, int oy2) { ox= ox2; oy= oy2; }
 color
 mupdf_picture_rep::internal_get_pixel (int x, int y) {
   unsigned char *samples= fz_pixmap_samples (mupdf_context (), pix);
-  return  rgbap_to_argb(((color*)samples)[x+w*(h-1-y)]);
+  return  rgbap_to_argb (((color*)samples)[x+w*(h-1-y)]);
 }
 
 void
 mupdf_picture_rep::internal_set_pixel (int x, int y, color c) {
   unsigned char *samples= fz_pixmap_samples (mupdf_context (), pix);
-  ((color*)samples)[x+w*(h-1-y)]= argb_to_rgbap(c);
+  ((color*)samples)[x+w*(h-1-y)]= argb_to_rgbap (c);
 }
 
 picture
 mupdf_picture (fz_pixmap *_pix, int ox, int oy) {
-  return (picture) tm_new<mupdf_picture_rep,fz_pixmap*,int,int> (_pix, ox, oy);
+  return (picture)tm_new<mupdf_picture_rep, fz_pixmap*,int,int> (_pix, ox, oy);
 }
 
 picture
 as_mupdf_picture (picture pic) {
   if (pic->get_type () == picture_native) return pic;
-  fz_pixmap *pix= fz_new_pixmap (mupdf_context(),
+  fz_pixmap *pix= fz_new_pixmap (mupdf_context (),
                                  fz_device_rgb (mupdf_context ()),
                                  pic->get_width (), pic->get_height (),
                                  NULL, 1);
@@ -84,7 +79,7 @@ as_native_picture (picture pict) {
 
 picture
 native_picture (int w, int h, int ox, int oy) {
-  fz_pixmap *pix= fz_new_pixmap (mupdf_context(),
+  fz_pixmap *pix= fz_new_pixmap (mupdf_context (),
                                  fz_device_rgb (mupdf_context ()),
                                  w, h, NULL, 1);
   picture p= mupdf_picture (pix, ox, oy);
@@ -138,11 +133,12 @@ mupdf_image_renderer_rep::mupdf_image_renderer_rep (picture p, double zoom)
 
   mupdf_picture_rep* handle= (mupdf_picture_rep*) pict->get_handle ();
   // blacken pixmap
-  fz_clear_pixmap_with_value (mupdf_context (), handle->pix, 0);
+  fz_clear_pixmap (mupdf_context (), handle->pix);
   begin (handle->pix);
 }
 
 mupdf_image_renderer_rep::~mupdf_image_renderer_rep () {
+  end ();
 }
 
 void
@@ -178,6 +174,7 @@ mupdf_load_image (url u) {
       renderer.render (&painter);
   #endif
     } else if ((suf == "jpg") || (suf == "png")) {
+      // FIXME: add more supported formats
       c_string path (concretize (u));
       im= fz_new_image_from_file (mupdf_context (), path);
     } else if (suf == "xpm") {
@@ -270,8 +267,8 @@ save_picture (url dest, picture p) {
   mupdf_picture_rep* pict= (mupdf_picture_rep*) q->get_handle ();
   if (exists (dest)) remove (dest);
   c_string path= concretize (dest);
-  fz_output *out= fz_new_output_with_path (mupdf_context(), path, 0);
+  fz_output *out= fz_new_output_with_path (mupdf_context (), path, 0);
   fz_write_pixmap_as_png (mupdf_context (), out, pict->pix);
-  fz_close_output (mupdf_context(), out);
-  fz_drop_output (mupdf_context(), out);
+  fz_close_output (mupdf_context (), out);
+  fz_drop_output (mupdf_context (), out);
 }
