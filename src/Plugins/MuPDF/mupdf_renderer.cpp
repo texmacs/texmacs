@@ -990,6 +990,10 @@ pdf_font_desc *load_pdf_font (string fontname) {
         fontdesc->encoding=
             pdf_load_system_cmap (mupdf_context (), "Identity-H");
         // FIXME: do we need to care about all the other fields? (seems not)
+        // fix the encoding for FreeType
+        // see tt_face_rep::tt_face_rep
+        FT_Face face= (FT_Face)fontdesc->font->ft_face;
+        ft_select_charmap (face, ft_encoding_adobe_custom);
       }
     }
     if (fontdesc != NULL) {
@@ -1064,7 +1068,7 @@ mupdf_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     prev_text_y= to_y (y);
     glyph gl= fng->get (c);
     if (is_nil (gl)) return;
-    unsigned int gl_index; //= gl->index;
+    unsigned int gl_index; // = gl->index;
     {
       // apriori we already have the glyph index in gl->index
       // however we cannot trust this value since it is manipulated
