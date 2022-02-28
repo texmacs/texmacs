@@ -72,6 +72,7 @@ as_mupdf_picture (picture pic) {
   return ret;
 }
 
+#ifdef MUPDF_RENDERER
 picture
 as_native_picture (picture pict) {
   return as_mupdf_picture (pict);
@@ -87,6 +88,7 @@ native_picture (int w, int h, int ox, int oy) {
   fz_drop_pixmap (mupdf_context (), pix);
   return p;
 }
+#endif
 
 /******************************************************************************
 * Rendering on images
@@ -95,7 +97,6 @@ native_picture (int w, int h, int ox, int oy) {
 class mupdf_image_renderer_rep: public mupdf_renderer_rep {
 public:
   picture pict;
-  int x1, y1, x2, y2;
   
 public:
   mupdf_image_renderer_rep (picture pict, double zoom);
@@ -142,10 +143,12 @@ mupdf_image_renderer_rep::get_data_handle () {
   return (void*) this;
 }
 
+#ifdef MUPDF_RENDERER
 renderer
 picture_renderer (picture p, double zoomf) {
   return (renderer) tm_new<mupdf_image_renderer_rep> (p, zoomf);
 }
+#endif
 
 /******************************************************************************
 * Loading pictures
@@ -238,6 +241,7 @@ mupdf_load_pixmap (url u, int w, int h, tree eff, SI pixel) {
   return pix;
 }
 
+#ifdef MUPDF_RENDERER
 picture
 load_picture (url u, int w, int h, tree eff, int pixel) {
   fz_pixmap* pix= mupdf_load_pixmap (u, w, h, eff, pixel);
@@ -263,3 +267,4 @@ save_picture (url dest, picture p) {
   fz_close_output (mupdf_context (), out);
   fz_drop_output (mupdf_context (), out);
 }
+#endif

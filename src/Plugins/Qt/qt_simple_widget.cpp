@@ -15,8 +15,11 @@
 #include "qt_window_widget.hpp"
 #include "qt_utilities.hpp"
 #include "qt_renderer.hpp"
-#include "mupdf_picture.hpp"
-
+#ifdef MUPDF_RENDERER
+  #include "mupdf_picture.hpp"
+#else
+  #include "qt_picture.hpp"
+#endif
 #include "QTMWidget.hpp"
 #include "QTMMenuHelper.hpp"
 #include <QPixmap>
@@ -433,37 +436,7 @@ qt_simple_widget_rep::is_invalid () {
   return !is_nil (invalid_regions);
 }
 
-basic_renderer
-qt_simple_widget_rep::get_renderer() {
-#ifdef USE_CAIRO
-  cairo_renderer_rep *ren = the_cairo_renderer ();
-  cairo_surface_t *surf;
-#ifdef Q_OS_LINUX
-  //const QX11Info & info = x11Info();//qt_x11Info (this);
-  //    Display *dpy = x11Info().display();
-  //backingPixmap = QPixmap (width(),height());
-  //cout << backingPixmap.width() << LF;
-  Display *dpy = QX11Info::display();
-  Drawable drawable = backingPixmap.handle();
-  Visual *visual = (Visual*)(backingPixmap.x11Info().visual());
-  surf = tm_cairo_xlib_surface_create (dpy, drawable, visual,
-                                       backingPixmap.width (), backingPixmap.height ());
-#elif defined (Q_OS_MAC)
-  surf = tm_cairo_quartz_surface_create_for_cg_context (
-                                                        (CGContextRef)(this->macCGHandle()), width(), height());
-#endif
-  cairo_t *ct = tm_cairo_create (surf);
-  ren->begin (ct);
-  tm_cairo_surface_destroy (surf);
-  tm_cairo_destroy (ct);
-#else
-  qt_renderer_rep * ren = the_qt_renderer();
-  ren->begin (&backingPixmap);
-#endif
-  return ren;
-}
-
-/*
+/*!
  This function is called by the qt_gui::update method (via repaint_all) to keep
  the backing store in sync and propagate the changes to the surface on screen.
  First we check that the backing store geometry is right and then we
@@ -473,7 +446,6 @@ qt_simple_widget_rep::get_renderer() {
  If repaint has been interrupted we do not propagate the changes and proceed
  to mark the region invalid again.
  */
-
 
 void
 qt_simple_widget_rep::repaint_invalid_regions () {
@@ -521,9 +493,6 @@ qt_simple_widget_rep::repaint_invalid_regions () {
     rectangles invalid;
     int dx= -(new_bs_ox - bs_ox)/(PIXEL);
     int dy= (new_bs_oy - bs_oy)/(PIXEL);
-  //  fz_pixmap *src_pix= ((mupdf_picture_rep*)backing_store->get_handle())->pix;
-  //  fz_pixmap *dest_pix= ((mupdf_picture_rep*)new_backing_store->get_handle())->pix;
-  //  translate (dest_pix, src_pix, -dx, -dy );
     while (!is_nil (invalid_regions)) {
       rectangle r = invalid_regions->item ;
       //      rectangle q = rectangle (r->x1+dx,r->y1-dy,r->x2+dx,r->y2-dy);
@@ -570,20 +539,13 @@ qt_simple_widget_rep::repaint_invalid_regions () {
     rectangles new_regions;
     if (!is_nil (invalid_regions)) {
       
- //     invalid_regions= rectangles (rectangle (0,0, bs_w, bs_h));
-
-      
       rectangle lub= least_upper_bound (invalid_regions);
       if (area (lub) < 1.2 * area (invalid_regions))
         invalid_regions= rectangles (lub);
       
-//      coord2 pt_or = from_qpoint (backing_pos);
-//      SI ox = -pt_or.x1;
-//      SI oy = -pt_or.x2;
-      //        ren->set_origin (ox, oy);
-      SI ox= ren->ox, oy= ren->oy; // cache since they are muddled by handle_repaint...
+      // cache since they are muddled by handle_repaint...
+      SI ox= ren->ox, oy= ren->oy;
       
-
       rectangles rects = invalid_regions;
       invalid_regions = rectangles();
       while (!is_nil (rects)) {
@@ -610,13 +572,12 @@ qt_simple_widget_rep::repaint_invalid_regions () {
       }
     } // !is_nil (invalid_regions)
   }
-  
   delete_renderer (ren);
-
   // propagate immediately the changes to the screen
   canvas()->surface()->repaint (qrgn);
 }
 
+#ifdef MUPDF_RENDERER
 static void
 mupdf_pixmap_cleanup_handler (void *info) {
   fz_pixmap *pix= (fz_pixmap *)info;
@@ -637,6 +598,13 @@ qt_simple_widget_rep::get_backing_store () {
                      mupdf_pixmap_cleanup_handler, pix);
   return im;
 }
+#else // #ifdef MUPDF_RENDERER
+QImage
+qt_simple_widget_rep::get_backing_store () {
+  QImage pix= ((qt_picture_rep*)backing_store->get_handle())->pict;
+  return pix;
+}
+#endif // #ifdef MUPDF_RENDERER
 
 hashset<pointer> qt_simple_widget_rep::all_widgets;
 

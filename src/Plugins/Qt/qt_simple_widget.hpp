@@ -103,9 +103,7 @@ protected:
   void invalidate_all ();
   bool is_invalid ();
   void repaint_invalid_regions ();
-  basic_renderer get_renderer ();
-  
-  QImage get_backing_store ();
+    QImage get_backing_store ();
   
   friend class QTMWidget;
 };

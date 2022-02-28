@@ -39,16 +39,4 @@ QImage* get_image (url u, int w, int h, tree eff, SI pixel);
 picture qt_picture (const QImage& im, int ox, int oy);
 QImage* xpm_image (url file_name);
 
-class qt_image_renderer_rep: public qt_renderer_rep {
-public:
-  picture pict;
-  int x1, y1, x2, y2;
-  
-public:
-  qt_image_renderer_rep (picture pict, double zoom);
-  ~qt_image_renderer_rep ();
-  void set_zoom_factor (double zoom);
-  void* get_data_handle ();
-};
-
 #endif // defined QT_PICTURE_HPP

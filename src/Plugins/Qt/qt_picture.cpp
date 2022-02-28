@@ -116,6 +116,16 @@ qt_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
 * Rendering on images
 ******************************************************************************/
 
+class qt_image_renderer_rep: public qt_renderer_rep {
+public:
+  picture pict;
+  
+public:
+  qt_image_renderer_rep (picture pict, double zoom);
+  ~qt_image_renderer_rep ();
+  void* get_data_handle ();
+};
+
 qt_image_renderer_rep::qt_image_renderer_rep (picture p, double zoom):
   qt_renderer_rep (new QPainter ()), pict (p)
 {
@@ -153,10 +163,12 @@ qt_image_renderer_rep::~qt_image_renderer_rep () {
   painter = NULL;
 }
 
+#if 0
 void
 qt_image_renderer_rep::set_zoom_factor (double zoom) {
   renderer_rep::set_zoom_factor (zoom);
 }
+#endif
 
 void*
 qt_image_renderer_rep::get_data_handle () {
@@ -248,7 +260,7 @@ get_image_for_real (url u, int w, int h, tree eff, SI pixel) {
 
   if (suffix (u) == "svg") {
     QSvgRenderer renderer (utf8_to_qstring (concretize (u)));
-    pm= new QImage (w, h, QImage::Format_ARGB32);
+    pm= new QImage (w, h, QImage::Format_ARGB32); // Qt doc sahs this is ok
     pm->fill (Qt::transparent);
     QPainter painter (pm);
     renderer.render (&painter);

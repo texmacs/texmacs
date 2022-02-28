@@ -93,11 +93,14 @@ void del_obj_qt_renderer(void)  {
 * qt_renderer
 ******************************************************************************/
 
-qt_renderer_rep::qt_renderer_rep (QPainter *_painter, int w2, int h2):
-  basic_renderer_rep (true, w2, h2), painter(_painter) {
-    reset_zoom_factor(); }
+qt_renderer_rep::qt_renderer_rep (QPainter *_painter, int w2, int h2)
+  : basic_renderer_rep (true, w2, h2), painter(_painter) {
+  reset_zoom_factor();
+}
 
-qt_renderer_rep::~qt_renderer_rep () {}
+qt_renderer_rep::~qt_renderer_rep () {
+  end();
+}
 
 void*
 qt_renderer_rep::get_handle () {
@@ -116,7 +119,12 @@ qt_renderer_rep::begin (void* handle) {
   h = painter->device()->height();
 }
 
-void qt_renderer_rep::end () { painter->end (); }
+void
+qt_renderer_rep::end () {
+  if (painter && painter->isActive()) {
+    painter->end ();
+  }
+}
 
 void 
 qt_renderer_rep::get_extents (int& w2, int& h2) {  
@@ -621,46 +629,42 @@ qt_renderer_rep::fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y) {
   x += x1 - X1;
   y += y1 - Y1;
   if (x1<x2 && y2<y1) {
-    QRect src_rect= QRect(x, y, x2-x1, y1-y2);
+    QRect src_rect= QRect(x, y+y2-y1, x2-x1, y1-y2);
     QRect dst_rect= QRect(x1, y2, x2-x1, y1-y2);
-    painter->drawPixmap (dst_rect,
-                         *static_cast<QPixmap*>(src->painter->device()),
-                         src_rect);
+    painter->drawImage (dst_rect,
+                        *static_cast<QImage*>(src->painter->device()),
+                        src_rect);
    //  XCopyArea (dpy, src->win, win, gc, x, y, x2-x1, y1-y2, x1, y2);
   }
 }
 
 /******************************************************************************
- * Shadow management methods 
+ * shadow qt renderer
  ******************************************************************************/
 
-/* Shadows are auxiliary renderers which allow double buffering and caching of
- * graphics. TeXmacs has explicit double buffering from the X11 port. Maybe
- * it would be better to design a better API abstracting from the low level 
- * details but for the moment the following code and the qt_proxy_renderer_rep
- * and qt_shadow_renderer_rep classes are designed to solve two problems:
- * 
- * 1) Qt has already double buffering.
- * 2) in Qt we are not easily allowed to read onscreen pixels (we can only ask a
- *    widget to redraw himself on a pixmap or read the screen pixels -- this has
- *    the drawback that if our widget is under another one we won't read the 
- *    right pixels)
- * 
- * qt_proxy_renderer_rep solves the double buffering problem: when texmacs asks
- * a qt_renderer_rep for a shadow it is given a proxy of the original renderer
- * texmacs uses this shadow for double buffering and the proxy will simply
- * forward the drawing operations to the original surface and neglect all the
- * syncronization operations
- *
- * to solve the second problem we do not draw directly on screen in QTMWidget.
- * Instead we maintain an internal pixmap which represents the state of the pixels
- * according to texmacs. When we are asked to initialize a qt_shadow_renderer_rep
- * we simply read the pixels form this backing store. At the Qt level then
- * (in QTMWidget) we make sure that the state of the backing store is in sync
- * with the screen via paintEvent/repaint mechanism.
- *
- */
 
+class qt_shadow_renderer_rep: public qt_renderer_rep {
+public:
+  QImage px;
+  qt_renderer_rep *master;
+  
+public:
+  qt_shadow_renderer_rep (QImage _px = QImage())
+    : qt_renderer_rep (new QPainter()), px(_px) {
+    //cout << px.width() << "," << px.height() << " " << LF;
+    painter->begin(&px);
+  }
+  
+  ~qt_shadow_renderer_rep () {
+    painter->end();
+    delete painter;
+    painter = NULL;
+  }
+};
+
+/******************************************************************************
+ * Shadow management methods 
+ ******************************************************************************/
 
 void
 qt_renderer_rep::new_shadow (renderer& ren) {
@@ -674,9 +678,11 @@ qt_renderer_rep::new_shadow (renderer& ren) {
     }
     // cout << "Old: " << sw << ", " << sh << "\n";
   }
-  if (ren == NULL)  ren= (renderer) tm_new<qt_proxy_renderer_rep> (this);
-  
   // cout << "Create " << mw << ", " << mh << "\n";
+  if (ren == NULL) {
+    QImage im= QImage (mw, mh, QImage::Format_ARGB32_Premultiplied);
+    ren= (renderer) tm_new<qt_shadow_renderer_rep> (im);
+  }
 }
 
 void 
@@ -710,14 +716,13 @@ qt_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   decode (x2, y2);
   if (x1<x2 && y2<y1) {
     QRect rect = QRect(x1, y2, x2-x1, y1-y2);
-    //    shadow->painter->setCompositionMode(QPainter::CompositionMode_Source);  
-    shadow->painter->setClipRect(rect);
-//    shadow->painter->drawPixmap (rect, px, rect);
-    //    cout << "qt_shadow_renderer_rep::get_shadow " 
+    QImage *_image = static_cast<QImage*> (painter->device ());
+    if (_image) {
+      shadow->painter->drawImage (rect, *_image, rect);
+    }
+    //    cout << "qt_shadow_renderer_rep::get_shadow "
     //         << rectangle(x1,y2,x2,y1) << LF;
     //  XCopyArea (dpy, win, shadow->win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
-  } else {
-    shadow->painter->setClipRect(QRect());
   }
 }
 
@@ -737,14 +742,13 @@ qt_renderer_rep::put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   decode (x2, y2);
   if (x1<x2 && y2<y1) {
     QRect rect = QRect(x1, y2, x2-x1, y1-y2);
+    painter->drawImage (rect, shadow->px, rect);
     //    cout << "qt_shadow_renderer_rep::put_shadow " 
     //         << rectangle(x1,y2,x2,y1) << LF;
     //    painter->setCompositionMode(QPainter::CompositionMode_Source);
-    painter->drawPixmap (rect, shadow->px, rect);
     //  XCopyArea (dpy, shadow->win, win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
   }
 }
-
 
 void 
 qt_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2)  {
@@ -756,124 +760,4 @@ qt_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2)  {
   static_cast<qt_renderer_rep*>(master)->encode (x1, y1);
   static_cast<qt_renderer_rep*>(master)->encode (x2, y2);
   master->put_shadow (this, x1, y1, x2, y2);
-}
-
-
-/******************************************************************************
-* proxy qt renderer
-******************************************************************************/
-
-void 
-qt_proxy_renderer_rep::new_shadow (renderer& ren) {
-  SI mw, mh, sw, sh;
-  get_extents (mw, mh);
-  if (ren != NULL) {
-    ren->get_extents (sw, sh);
-    if (sw != mw || sh != mh) {
-      delete_shadow (ren);
-      ren= NULL;
-    }
-    else 
-      static_cast<qt_shadow_renderer_rep*>(ren)->end();
-    // cout << "Old: " << sw << ", " << sh << "\n";
-  }
-  if (ren == NULL)  
-    ren= (renderer) tm_new<qt_shadow_renderer_rep> (QPixmap (mw, mh));
-  
-  // cout << "Create " << mw << ", " << mh << "\n";
-  static_cast<qt_shadow_renderer_rep*>(ren)->begin(
-          &(static_cast<qt_shadow_renderer_rep*>(ren)->px));
-}
-
-void 
-qt_proxy_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
-  // FIXME: we should use the routine fetch later
-  ASSERT (ren != NULL, "invalid renderer");
-  if (ren->is_printer ()) return;
-  qt_renderer_rep* shadow= static_cast<qt_renderer_rep*>(ren);
-  outer_round (x1, y1, x2, y2);
-  x1= max (x1, cx1- ox);
-  y1= max (y1, cy1- oy);
-  x2= min (x2, cx2- ox);
-  y2= min (y2, cy2- oy);
-  shadow->ox= ox;
-  shadow->oy= oy;
-  shadow->cx1= x1+ ox;
-  shadow->cy1= y1+ oy;
-  shadow->cx2= x2+ ox;
-  shadow->cy2= y2+ oy;
-  shadow->master= this;
-  decode (x1, y1);
-  decode (x2, y2);
-  if (x1<x2 && y2<y1) {
-    QRect rect = QRect(x1, y2, x2-x1, y1-y2);
-
-    shadow->painter->setClipRect(rect);
-
-    //    shadow->painter->setCompositionMode(QPainter::CompositionMode_Source);
-    QPixmap *_pixmap = static_cast<QPixmap*>(painter->device()); 
-    if (_pixmap) {
-      shadow->painter->drawPixmap (rect, *_pixmap, rect);
-    }
-    //    cout << "qt_shadow_renderer_rep::get_shadow " 
-    //         << rectangle(x1,y2,x2,y1) << LF;
-    //  XCopyArea (dpy, win, shadow->win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
-  } else {
-    shadow->painter->setClipRect(QRect());
-  }
-
-}
-
-
-/******************************************************************************
- * shadow qt renderer
- ******************************************************************************/
-
-qt_shadow_renderer_rep::qt_shadow_renderer_rep (QPixmap _px) 
-// : qt_renderer_rep (_px.width(),_px.height()), px(_px) 
-: qt_renderer_rep (new QPainter()), px(_px) 
-{ 
-  //cout << px.width() << "," << px.height() << " " << LF;
- // painter->begin(&px);
-}
-
-qt_shadow_renderer_rep::~qt_shadow_renderer_rep () 
-{ 
-  painter->end(); 
-  delete painter;
-  painter = NULL;
-}
-
-void 
-qt_shadow_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
-  // FIXME: we should use the routine fetch later
-  ASSERT (ren != NULL, "invalid renderer");
-  if (ren->is_printer ()) return;
-  qt_shadow_renderer_rep* shadow= static_cast<qt_shadow_renderer_rep*>(ren);
-  outer_round (x1, y1, x2, y2);
-  x1= max (x1, cx1- ox);
-  y1= max (y1, cy1- oy);
-  x2= min (x2, cx2- ox);
-  y2= min (y2, cy2- oy);
-  shadow->ox= ox;
-  shadow->oy= oy;
-  shadow->cx1= x1+ ox;
-  shadow->cy1= y1+ oy;
-  shadow->cx2= x2+ ox;
-  shadow->cy2= y2+ oy;
-  shadow->master= this;
-  decode (x1, y1);
-  decode (x2, y2);
-  if (x1<x2 && y2<y1) {
-    QRect rect = QRect(x1, y2, x2-x1, y1-y2);
-    shadow->painter->setClipRect(rect);
-
-//    shadow->painter->setCompositionMode(QPainter::CompositionMode_Source);   
-    shadow->painter->drawPixmap (rect, px, rect);
-//    cout << "qt_shadow_renderer_rep::get_shadow " 
-//         << rectangle(x1,y2,x2,y1) << LF;
-//  XCopyArea (dpy, win, shadow->win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
-  } else {
-    shadow->painter->setClipRect(QRect());
-  }
 }
