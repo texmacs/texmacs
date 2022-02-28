@@ -193,10 +193,7 @@ mupdf_renderer_rep::mupdf_renderer_rep (int w2, int h2)
 }
 
 mupdf_renderer_rep::~mupdf_renderer_rep () {
-  // FIXME: should we call end() instead ? 
-  fz_drop_device (mupdf_context (), dev);
-  pdf_drop_processor (mupdf_context(), proc);
-  fz_drop_pixmap (mupdf_context(), pixmap);
+  end ();
 }
 
 void*
@@ -258,31 +255,26 @@ mupdf_renderer_rep::begin (void* handle) {
 void
 mupdf_renderer_rep::end () {
   end_text ();
-  // reset set_clipping calls in order to have well formed PDF.
-  while (clip_level--)
-    proc->op_Q (mupdf_context (), proc);
-  // outmost restore for the graphics state (see begin_page)
-  proc->op_Q (mupdf_context (), proc);
 
   if (proc) {
+    // reset set_clipping calls in order to have well formed PDF.
+    while (clip_level--)
+      proc->op_Q (mupdf_context (), proc);
+    // outmost restore for the graphics state (see begin_page)
+    proc->op_Q (mupdf_context (), proc);
+
     pdf_close_processor (mupdf_context (), proc);
     pdf_drop_processor (mupdf_context (), proc);
     proc= NULL;
-  } else {
-    debug_std << "mupdf_renderer_rep::end : no current processor" << LF;
   }
   if (dev) {
     fz_close_device (mupdf_context (), dev);
     fz_drop_device (mupdf_context (), dev);
     dev= NULL;
-  } else {
-    debug_std << "mupdf_renderer_rep::end : no current device" << LF;
   }
   if (pixmap) {
     fz_drop_pixmap (mupdf_context (), pixmap);
     pixmap= NULL;
-  } else {
-    debug_std << "mupdf_renderer_rep::end : no current pixmap" << LF;
   }
 }
 

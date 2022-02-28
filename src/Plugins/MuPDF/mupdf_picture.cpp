@@ -100,7 +100,6 @@ public:
   
 public:
   mupdf_image_renderer_rep (picture pict, double zoom);
-  ~mupdf_image_renderer_rep ();
   void* get_data_handle ();
 };
 
@@ -132,10 +131,6 @@ mupdf_image_renderer_rep::mupdf_image_renderer_rep (picture p, double zoom)
 
   mupdf_picture_rep* handle= (mupdf_picture_rep*) pict->get_handle ();
   begin (handle->pix);
-}
-
-mupdf_image_renderer_rep::~mupdf_image_renderer_rep () {
-  end ();
 }
 
 void*
