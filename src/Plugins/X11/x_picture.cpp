@@ -33,6 +33,7 @@ extern int nr_windows;
 x_picture_rep::x_picture_rep (Pixmap pm2, int w2, int h2, int ox2, int oy2):
   pm (pm2), im (NULL), bm (0), data (NULL),
   w (w2), h (h2), ox (ox2), oy (oy2), ok (true) {}
+
 x_picture_rep::~x_picture_rep () {
   XFreePixmap (the_gui->dpy, pm);
   if (im != NULL) XDestroyImage (im);
@@ -141,6 +142,17 @@ retrieve_pixmap (picture pic) {
 picture
 native_picture (int w, int h, int ox, int oy) {
   Pixmap pm= XCreatePixmap (the_gui->dpy, the_gui->root, w, h, the_gui->depth);
+  Region region= XCreateRegion ();
+  XRectangle r;
+  r.x     = 0;
+  r.y     = 0;
+  r.width = w;
+  r.height= h;
+  XUnionRectWithRegion (&r, region, region);
+  XSetRegion (the_gui->dpy, the_gui->gc, region);
+  XDestroyRegion (region);
+  XSetForeground (the_gui->dpy, the_gui->gc, VCONVERT (white));
+  XFillRectangle (the_gui->dpy, pm, gc, 0, 0, w, h);
   return x_picture (pm, w, h, ox, oy);
 }
 
@@ -206,18 +218,6 @@ x_image_renderer_rep::x_image_renderer_rep (picture p, double zoom):
   cy1= 0;
   cx2= pw * pixel;
   cy2= ph * pixel;
-
-  Region region= XCreateRegion ();
-  XRectangle r;
-  r.x     = 0;
-  r.y     = 0;
-  r.width = w;
-  r.height= h;
-  XUnionRectWithRegion (&r, region, region);
-  XSetRegion (dpy, gc, region);
-  XDestroyRegion (region);
-  XSetForeground (dpy, gc, VCONVERT (white));
-  XFillRectangle (dpy, win, gc, 0, 0, w, h);
 }
 
 x_image_renderer_rep::~x_image_renderer_rep () {}

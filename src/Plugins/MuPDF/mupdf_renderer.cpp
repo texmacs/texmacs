@@ -193,6 +193,7 @@ mupdf_renderer_rep::mupdf_renderer_rep (int w2, int h2)
 }
 
 mupdf_renderer_rep::~mupdf_renderer_rep () {
+  // FIXME: should we call end() instead ? 
   fz_drop_device (mupdf_context (), dev);
   pdf_drop_processor (mupdf_context(), proc);
   fz_drop_pixmap (mupdf_context(), pixmap);
@@ -206,8 +207,8 @@ mupdf_renderer_rep::get_handle () {
 void
 mupdf_renderer_rep::get_extents (int& w2, int& h2) {
   if (pixmap) {
-    w2= fz_pixmap_width (mupdf_context(), pixmap);
-    h2= fz_pixmap_height (mupdf_context(), pixmap);
+    w2= fz_pixmap_width (mupdf_context (), pixmap);
+    h2= fz_pixmap_height (mupdf_context (), pixmap);
   } else {
     w2 = w; h2 = h;
   }
@@ -278,7 +279,7 @@ mupdf_renderer_rep::end () {
     debug_std << "mupdf_renderer_rep::end : no current device" << LF;
   }
   if (pixmap) {
-    fz_drop_pixmap (mupdf_context(), pixmap);
+    fz_drop_pixmap (mupdf_context (), pixmap);
     pixmap= NULL;
   } else {
     debug_std << "mupdf_renderer_rep::end : no current pixmap" << LF;
@@ -484,8 +485,8 @@ mupdf_renderer_rep::register_pattern (brush br, SI pixel) {
     // make a pdf_pattern
     int width= fz_pixmap_width (ctx, pixmap);
     int height= fz_pixmap_height (ctx, pixmap);
-    SI sx= width + to_x(0); // FIXME??
-    SI sy= height; // FIXME??
+    SI sx= width + to_x(0); // FIXME: ??
+    SI sy= height; // FIXME: ??
     float scale_x= 1.0; //((float) default_dpi) / dpi;
     float scale_y= 1.0; //((float) default_dpi) / dpi;
 
@@ -1008,6 +1009,7 @@ pdf_font_desc *load_pdf_font (string fontname) {
   return NULL;
 }
 
+// FIXME: cannot we handle more easily font size? (also in pdf_hummus)
 static float
 font_size (string name) {
   int pos= search_backwards (".", name);
@@ -1156,37 +1158,87 @@ the_mupdf_renderer () {
 }
 
 /******************************************************************************
+* Copying regions
+******************************************************************************/
+
+
+// fitz does not have a function for low lever copy of pixmaps
+// we have to do it ourselves
+
+static void
+translate_pixmap (fz_pixmap *dest_pix, fz_irect dest_rect,
+                  fz_pixmap *src_pix, int dx, int dy) {
+  fz_context *ctx= mupdf_context ();
+  fz_irect src_rect = fz_translate_irect (dest_rect,  -dx, -dy);
+  src_rect = fz_intersect_irect (src_rect, fz_pixmap_bbox (ctx, src_pix));
+  src_rect = fz_intersect_irect (src_rect,
+                fz_translate_irect (fz_pixmap_bbox (ctx, dest_pix), -dx, -dy));
+  dest_rect = fz_translate_irect (src_rect,  dx, dy);
+  if (fz_is_empty_irect(dest_rect))  return;
+  // all set up, let's do the work now
+  {
+    unsigned char *srcp;
+    unsigned char *destp;
+    unsigned int y, w;
+    size_t destspan, srcspan;
+    w = (unsigned int)(dest_rect.x1 - dest_rect.x0);
+    y = (unsigned int)(dest_rect.y1 - dest_rect.y0);
+
+    srcspan = src_pix->stride;
+    srcp = src_pix->samples + srcspan * (src_rect.y0 - src_pix->y) +
+           (src_rect.x0 - src_pix->x) * (size_t)src_pix->n;
+    destspan = dest_pix->stride;
+    destp = dest_pix->samples + destspan * (dest_rect.y0 - dest_pix->y) +
+            (dest_rect.x0 - dest_pix->x) * (size_t)dest_pix->n;
+
+    if (src_pix->n == dest_pix->n)
+    {
+      w *= src_pix->n;
+      do
+      {
+        memcpy (destp, srcp, w);
+        srcp += srcspan;
+        destp += destspan;
+      }
+      while (--y);
+    }
+    else
+    {
+      cout << "mupdf_renderer_rep / translate_pixmap : non compatible pixmaps"
+           << LF;
+    }
+  }
+}
+
+
+void
+mupdf_renderer_rep::fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y) {
+  ASSERT (ren != NULL, "invalid situation");
+  if (ren->is_printer ()) return;
+  mupdf_renderer_rep* src= (mupdf_renderer_rep*) ren->get_handle ();
+  if (src->pixmap == pixmap && x1 == x && y1 == y) return;
+  outer_round (x1, y1, x2, y2);
+  SI X1= x1, Y1= y1;
+  x1= max (x1, cx1- ox);
+  y1= max (y1, cy1- oy);
+  x2= min (x2, cx2- ox);
+  y2= min (y2, cy2- oy);
+  decode (X1, Y1);
+  decode (x1, y1);
+  decode (x2, y2);
+  src->decode (x, y);
+  x += x1 - X1;
+  y += y1 - Y1;
+  if (x1<x2 && y2<y1) {
+    //  XCopyArea (dpy, src->win, win, gc, x, y, x2-x1, y1-y2, x1, y2);
+    translate_pixmap (pixmap, fz_make_irect (x1, y2, x2, y1),
+                      src->pixmap, x1-x, y1-y);
+  }
+}
+
+/******************************************************************************
  * Shadow management methods 
  ******************************************************************************/
-
-// OLD DESCRIPTION
-
-/* Shadows are auxiliary renderers which allow double buffering and caching of
- * graphics. TeXmacs has explicit double buffering from the X11 port. Maybe
- * it would be better to design a better API abstracting from the low level 
- * details but for the moment the following code and the mupdf_proxy_renderer_rep
- * and mupdf_shadow_renderer_rep classes are designed to solve two problems:
- * 
- * 1) Qt has already double buffering.
- * 2) in Qt we are not easily allowed to read onscreen pixels (we can only ask a
- *    widget to redraw himself on a pixmap or read the screen pixels -- this has
- *    the drawback that if our widget is under another one we won't read the 
- *    right pixels)
- * 
- * mupdf_proxy_renderer_rep solves the double buffering problem: when texmacs asks
- * a mupdf_renderer_rep for a shadow it is given a proxy of the original renderer
- * texmacs uses this shadow for double buffering and the proxy will simply
- * forward the drawing operations to the original surface and neglect all the
- * syncronization operations
- *
- * to solve the second problem we do not draw directly on screen in QTMWidget.
- * Instead we maintain an internal pixmap which represents the state of the pixels
- * according to texmacs. When we are asked to initialize a mupdf_shadow_renderer_rep
- * we simply read the pixels form this backing store. At the Qt level then
- * (in QTMWidget) we make sure that the state of the backing store is in sync
- * with the screen via paintEvent/repaint mechanism.
- *
- */
 
 void
 mupdf_renderer_rep::new_shadow (renderer& ren) {
@@ -1206,8 +1258,6 @@ mupdf_renderer_rep::new_shadow (renderer& ren) {
                                    NULL, 1);
     static_cast<mupdf_renderer_rep*>(ren)->begin(pix);
     fz_drop_pixmap (mupdf_context (), pix);
-    ren->set_pencil(pencil(red));
-    ren->fill(0,0, 1000, 1000);
   }
 }
 

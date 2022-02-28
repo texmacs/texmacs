@@ -33,7 +33,8 @@
 ******************************************************************************/
 
 qt_picture_rep::qt_picture_rep (const QImage& im, int ox2, int oy2):
-  pict (im), w (im.width ()), h (im.height ()), ox (ox2), oy (oy2) {}
+  pict (im), w (im.width ()), h (im.height ()), ox (ox2), oy (oy2) {
+}
 
 picture_kind qt_picture_rep::get_type () { return picture_native; }
 void* qt_picture_rep::get_handle () { return (void*) this; }
@@ -89,7 +90,13 @@ xpm_image (url file_name) {
 #ifndef MUPDF_RENDERER
 picture
 native_picture (int w, int h, int ox, int oy) {
-  return qt_picture (QImage (w, h, QImage::Format_ARGB32), ox, oy);
+  QImage im= QImage (w, h, QImage::Format_ARGB32);
+#if (QT_VERSION >= 0x040800)
+  im.fill (QColor (0, 0, 0, 0));
+#else
+  im.fill ((uint) 0);
+#endif
+  return qt_picture (im, ox, oy);
 }
 #endif
 
@@ -137,11 +144,6 @@ qt_image_renderer_rep::qt_image_renderer_rep (picture p, double zoom):
 
   qt_picture_rep* handle= (qt_picture_rep*) pict->get_handle ();
   QImage& im (handle->pict);
-#if (QT_VERSION >= 0x040800)
-  im.fill (QColor (0, 0, 0, 0));
-#else
-  im.fill ((uint) 0);
-#endif
   painter->begin (&im);
 }
 

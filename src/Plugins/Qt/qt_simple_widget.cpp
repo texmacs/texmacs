@@ -15,6 +15,7 @@
 #include "qt_window_widget.hpp"
 #include "qt_utilities.hpp"
 #include "qt_renderer.hpp"
+#include "mupdf_picture.hpp"
 
 #include "QTMWidget.hpp"
 #include "QTMMenuHelper.hpp"
@@ -55,10 +56,15 @@ qt_simple_widget_rep::as_qwidget () {
   scrollarea()->setExtents (QRect (QPoint(0,0), sz));
   canvas()->resize (sz);
   
-  
   all_widgets->insert((pointer) this);
   backing_pos = canvas()->origin ();
-
+  bs_w = sz.width() * retina_factor;
+  bs_h = sz.height() * retina_factor;
+  bs_ox= backing_pos.x() * PIXEL;
+  bs_oy= backing_pos.y() * PIXEL;
+  bs_zoomf= 1;
+  backing_store = native_picture (bs_w, bs_h, bs_ox, bs_oy);
+  
   return qwid;
 }
 
@@ -100,6 +106,7 @@ qt_simple_widget_rep::handle_mouse (string kind, SI x, SI y, int mods, time_t t)
 void
 qt_simple_widget_rep::handle_set_zoom_factor (double zoom) {
   (void) zoom;
+  bs_zoomf= zoom;
 }
 
 void
@@ -467,30 +474,56 @@ qt_simple_widget_rep::get_renderer() {
  to mark the region invalid again.
  */
 
+
 void
 qt_simple_widget_rep::repaint_invalid_regions () {
   
   QRegion qrgn;
-  QPoint origin = canvas()->origin();
   // qrgn is to keep track of the area on the screen which needs to be updated
+  QPoint origin = canvas()->origin();
   
-  // update backing store origin wrt. TeXmacs document
-  if (backing_pos != origin) {
+  coord2 pt_or =  from_qpoint (backing_pos);
+  coord2 pt_new_or = from_qpoint (origin);
+
+  QSize _newSize = retina_factor * canvas()->surface()->size();
+
+  bs_ox = -pt_or.x1 * retina_factor;
+  bs_oy = -pt_or.x2 * retina_factor;
+
+  SI new_bs_ox = -pt_new_or.x1 * retina_factor;
+  SI new_bs_oy = -pt_new_or.x2 * retina_factor;
+  int new_bs_w = _newSize.width();
+  int new_bs_h = _newSize.height();
+  bs_zoomf= std_shrinkf;
+  
+  // prepare to render to the backing store
+  renderer ren= picture_renderer (backing_store, bs_zoomf * retina_factor);
+  
+  if ((new_bs_ox != bs_ox) || (new_bs_oy != bs_oy) ||
+      (new_bs_w != bs_w)   || (new_bs_h != bs_h)) {
+    // the viewport changed, reset the backing store
     
-    int dx =  retina_factor * (origin.x() - backing_pos.x());
-    int dy =  retina_factor * (origin.y() - backing_pos.y());
-    backing_pos = origin;
+    // create a new backing store with updated viewport and the renderer
+    picture new_backing_store= native_picture (new_bs_w, new_bs_h,
+                                               new_bs_ox / PIXEL,
+                                               new_bs_oy / PIXEL);
+    renderer ren2= picture_renderer (new_backing_store,
+                                     bs_zoomf * retina_factor);
     
-    QPixmap newBackingPixmap (backingPixmap.size());
-    QPainter p (&newBackingPixmap);
-    //newBackingPixmap.fill (Qt::black);
-    p.drawPixmap (-dx,-dy,backingPixmap);
-    p.end();
-    backingPixmap = newBackingPixmap;
-    //cout << "SCROLL CONTENTS BY " << dx << " " << dy << LF;
+    // copy the old backingstore
+    SI x1=0, y1=0, x2=bs_w, y2=bs_h;
+    ren->encode (x1, y1);
+    ren->encode (x2, y2);
+    ren2->fetch (x1, y2, x2, y1, ren, x1, y2);
     
-    
+    // compute new invalid regions
+    // 1. translate
     rectangles invalid;
+    int dx= -(new_bs_ox - bs_ox)/(PIXEL);
+    int dy= (new_bs_oy - bs_oy)/(PIXEL);
+  //  fz_pixmap *src_pix= ((mupdf_picture_rep*)backing_store->get_handle())->pix;
+  //  fz_pixmap *dest_pix= ((mupdf_picture_rep*)new_backing_store->get_handle())->pix;
+  //  translate (dest_pix, src_pix, -dx, -dy );
     while (!is_nil (invalid_regions)) {
       rectangle r = invalid_regions->item ;
       //      rectangle q = rectangle (r->x1+dx,r->y1-dy,r->x2+dx,r->y2-dy);
@@ -499,94 +532,58 @@ qt_simple_widget_rep::repaint_invalid_regions () {
       //cout << r << " ---> " << q << LF;
       invalid_regions = invalid_regions->next;
     }
+    // 2. add new exposed regions due to translation
+    invalid_regions= invalid & rectangles (rectangle (0,0, bs_w, bs_h));
+    if (dy<0) invalidate_rect (0, 0, bs_w, min (bs_h,-dy));
+    else if (dy>0) invalidate_rect (0, max (0, bs_h-dy), bs_w , bs_h);
     
-    QSize sz = backingPixmap.size();
-    
-    invalid_regions= invalid & rectangles (rectangle (0,0,
-                                                      sz.width(),sz.height()));
-    
-    if (dy<0)
-      invalidate_rect (0,0,sz.width(),min (sz.height(),-dy));
-    else if (dy>0)
-      invalidate_rect (0,max (0,sz.height()-dy),sz.width(),sz.height());
-    
-    if (dx<0)
-      invalidate_rect (0,0,min (-dx,sz.width()),sz.height());
-    else if (dx>0)
-      invalidate_rect (max (0,sz.width()-dx),0,sz.width(),sz.height());
-    
-    // we call update now to allow repainting of invalid regions
-    // this cannot be done directly since interpose_handler needs
-    // to be run at least once in some situations
-    // (for example when scrolling is initiated by TeXmacs itself)
-    //the_gui->update();
-    //  QAbstractScrollArea::viewport()->scroll (-dx,-dy);
-    // QAbstractScrollArea::viewport()->update();
-    qrgn += QRect (QPoint (0,0),sz);
-  }
-  
-  //cout << "   repaint QPixmap of size " << backingPixmap.width() << " x "
-  // << backingPixmap.height() << LF;
-  // update backing store size
-  {
-    QSize _oldSize = backingPixmap.size();
-    QSize _new_logical_Size = canvas()->surface()->size();
-    QSize _newSize = _new_logical_Size;
-    _newSize *= retina_factor;
-    
-    //cout << "      surface size of " << _newSize.width() << " x "
-    // << _newSize.height() << LF;
-    
-    
-    if (_newSize != _oldSize) {
-      // cout << "RESIZING BITMAP"<< LF;
-      QPixmap newBackingPixmap (_newSize);
-      QPainter p (&newBackingPixmap);
-      p.drawPixmap (0,0,backingPixmap);
-      //p.fillRect (0, 0, _newSize.width(), _newSize.height(), Qt::red);
-      if (_newSize.width() >= _oldSize.width()) {
-        invalidate_rect (_oldSize.width(), 0, _newSize.width(), _newSize.height());
-        p.fillRect (QRect (_oldSize.width(), 0, _newSize.width()-_oldSize.width(), _newSize.height()), Qt::gray);
-      }
-      if (_newSize.height() >= _oldSize.height()) {
-        invalidate_rect (0,_oldSize.height(), _newSize.width(), _newSize.height());
-        p.fillRect (QRect (0,_oldSize.height(), _newSize.width(), _newSize.height()-_oldSize.height()), Qt::gray);
-      }
-      p.end();
-      backingPixmap = newBackingPixmap;
+    if (dx<0) invalidate_rect (0, 0, min (-dx, bs_w), bs_h);
+    else if (dx>0) invalidate_rect (max (0, bs_w-dx), 0, bs_w, bs_h);
+ 
+    // 3. add new exposed regions due to resize
+    if (new_bs_w > bs_w) {
+      invalidate_rect (bs_w, 0, new_bs_w, new_bs_h);
+//      p.fillRect (QRect (_oldSize.width(), 0, _newSize.width()-_oldSize.width(), _newSize.height()), Qt::gray);
     }
+    if (new_bs_h > bs_h) {
+      invalidate_rect (0, bs_h, new_bs_w, new_bs_h);
+//      p.fillRect (QRect (0,_oldSize.height(), _newSize.width(), _newSize.height()-_oldSize.height()), Qt::gray);
+    }
+    
+    // syncronize all the picture, just to be safe
+    qrgn += QRect (QPoint (0,0),
+                   QSize (new_bs_w / retina_factor, new_bs_h / retina_factor));
+
+    // update the state
+    bs_ox= new_bs_ox;
+    bs_oy= new_bs_oy;
+    bs_w = new_bs_w;
+    bs_h = new_bs_h;
+    backing_pos= origin;
+    backing_store= new_backing_store;
+    delete_renderer (ren);
+    ren= ren2;
   }
   
   // repaint invalid rectangles
   {
     rectangles new_regions;
     if (!is_nil (invalid_regions)) {
+      
+ //     invalid_regions= rectangles (rectangle (0,0, bs_w, bs_h));
+
+      
       rectangle lub= least_upper_bound (invalid_regions);
       if (area (lub) < 1.2 * area (invalid_regions))
         invalid_regions= rectangles (lub);
       
-      //basic_renderer_rep* ren = get_renderer();
-      mupdf_renderer_rep* ren= tm_new<mupdf_renderer_rep> ();
-      fz_pixmap *pix= NULL;
-      {
-        QImage im= backingPixmap.toImage ();
-        im.detach ();
-        im.convertTo (QImage::Format_RGBA8888_Premultiplied);
-        uchar *samples= im.bits ();
-        pix= fz_new_pixmap_with_data (mupdf_context (),
-                                     fz_device_rgb (mupdf_context ()),
-                                     im.width (), im.height (),
-                                     NULL, 1, im.width()*4, samples);
-        fz_pixmap *pix2= fz_clone_pixmap (mupdf_context (), pix);
-        fz_drop_pixmap (mupdf_context (), pix);
-        pix= pix2;
-        ren->begin (pix);
-      }
+//      coord2 pt_or = from_qpoint (backing_pos);
+//      SI ox = -pt_or.x1;
+//      SI oy = -pt_or.x2;
+      //        ren->set_origin (ox, oy);
+      SI ox= ren->ox, oy= ren->oy; // cache since they are muddled by handle_repaint...
       
-      coord2 pt_or = from_qpoint (backing_pos);
-      SI ox = -pt_or.x1;
-      SI oy = -pt_or.x2;
-      
+
       rectangles rects = invalid_regions;
       invalid_regions = rectangles();
       while (!is_nil (rects)) {
@@ -611,23 +608,34 @@ qt_simple_widget_rep::repaint_invalid_regions () {
         qrgn += qr;
         rects = rects->next;
       }
-      
-      {
-        if (pix) {
-          uchar * samples= fz_pixmap_samples (mupdf_context (), pix);
-          QImage im= QImage(samples, backingPixmap.width(), backingPixmap.height(), 4*backingPixmap.width(), QImage::Format_RGBA8888_Premultiplied);
-          QPixmap p= QPixmap::fromImage (im);
-          backingPixmap= p;
-        }
-        fz_drop_pixmap (mupdf_context (), pix);
-        ren->end();
-        tm_delete (ren);
-      }
     } // !is_nil (invalid_regions)
   }
   
+  delete_renderer (ren);
+
   // propagate immediately the changes to the screen
   canvas()->surface()->repaint (qrgn);
+}
+
+static void
+mupdf_pixmap_cleanup_handler (void *info) {
+  fz_pixmap *pix= (fz_pixmap *)info;
+  if (pix) {
+    fz_drop_pixmap (mupdf_context (), pix);
+  }
+}
+
+QImage
+qt_simple_widget_rep::get_backing_store () {
+  fz_pixmap *pix= ((mupdf_picture_rep*)backing_store->get_handle())->pix;
+  uchar * samples= fz_pixmap_samples (mupdf_context (), pix);
+  int w= fz_pixmap_width (mupdf_context (), pix);
+  int h= fz_pixmap_height (mupdf_context (), pix);
+  fz_keep_pixmap (mupdf_context (), pix);
+  // we keep the samples since QImage will drop it later
+  QImage im= QImage (samples, w, h, 4*w, QImage::Format_RGBA8888_Premultiplied,
+                     mupdf_pixmap_cleanup_handler, pix);
+  return im;
 }
 
 hashset<pointer> qt_simple_widget_rep::all_widgets;

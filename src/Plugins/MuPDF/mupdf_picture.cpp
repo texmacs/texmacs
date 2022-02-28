@@ -25,8 +25,8 @@ mupdf_picture_rep::mupdf_picture_rep (fz_pixmap *_pix, int ox2, int oy2):
   w (fz_pixmap_width (mupdf_context (), pix)),
   h (fz_pixmap_height (mupdf_context (), pix)),
   ox (ox2), oy (oy2) {
-    fz_keep_pixmap (mupdf_context (), pix);
-  }
+  fz_keep_pixmap (mupdf_context (), pix);
+}
 
 mupdf_picture_rep::~mupdf_picture_rep () {
   fz_drop_pixmap (mupdf_context (), pix);
@@ -82,6 +82,7 @@ native_picture (int w, int h, int ox, int oy) {
   fz_pixmap *pix= fz_new_pixmap (mupdf_context (),
                                  fz_device_rgb (mupdf_context ()),
                                  w, h, NULL, 1);
+  fz_clear_pixmap (mupdf_context (), pix);
   picture p= mupdf_picture (pix, ox, oy);
   fz_drop_pixmap (mupdf_context (), pix);
   return p;
@@ -99,11 +100,8 @@ public:
 public:
   mupdf_image_renderer_rep (picture pict, double zoom);
   ~mupdf_image_renderer_rep ();
-  void set_zoom_factor (double zoom);
   void* get_data_handle ();
 };
-
-
 
 mupdf_image_renderer_rep::mupdf_image_renderer_rep (picture p, double zoom)
   : mupdf_renderer_rep (), pict (p)
@@ -132,18 +130,11 @@ mupdf_image_renderer_rep::mupdf_image_renderer_rep (picture p, double zoom)
   cy2= 0;
 
   mupdf_picture_rep* handle= (mupdf_picture_rep*) pict->get_handle ();
-  // blacken pixmap
-  fz_clear_pixmap (mupdf_context (), handle->pix);
   begin (handle->pix);
 }
 
 mupdf_image_renderer_rep::~mupdf_image_renderer_rep () {
   end ();
-}
-
-void
-mupdf_image_renderer_rep::set_zoom_factor (double zoom) {
-  renderer_rep::set_zoom_factor (zoom);
 }
 
 void*

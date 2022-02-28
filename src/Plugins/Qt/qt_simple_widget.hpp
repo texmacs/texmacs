@@ -92,16 +92,20 @@ protected:
   
   static hashset<pointer> all_widgets;
   rectangles   invalid_regions;
-  QPixmap      backingPixmap;  
   QPoint       backing_pos;
 
-
+  double       bs_zoomf;
+  picture      backing_store;
+  int          bs_w, bs_h;
+  SI           bs_ox, bs_oy;
+  
   void invalidate_rect (int x1, int y1, int x2, int y2);
   void invalidate_all ();
   bool is_invalid ();
   void repaint_invalid_regions ();
-  basic_renderer get_renderer();
+  basic_renderer get_renderer ();
   
+  QImage get_backing_store ();
   
   friend class QTMWidget;
 };

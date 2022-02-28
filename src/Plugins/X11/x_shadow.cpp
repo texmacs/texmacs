@@ -27,12 +27,12 @@ x_drawable_rep::fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y) {
   y1= max (y1, cy1- oy);
   x2= min (x2, cx2- ox);
   y2= min (y2, cy2- oy);
-  src->decode (X1, Y1);
-  src->decode (x1, y1);
-  src->decode (x2, y2);
-  decode (x, y);
+  decode (X1, Y1);
+  decode (x1, y1);
+  decode (x2, y2);
+  src->decode (x, y);
   x += x1 - X1;
-  y += y2 - Y1;
+  y += y1 - Y1;
   if (x1<x2 && y2<y1)
     XCopyArea (dpy, src->win, win, gc, x, y, x2-x1, y1-y2, x1, y2);
 }

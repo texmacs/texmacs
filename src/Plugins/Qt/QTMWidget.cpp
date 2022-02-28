@@ -245,19 +245,27 @@ QTMWidget::resizeEventBis (QResizeEvent *event) {
 */
 void
 QTMWidget::paintEvent (QPaintEvent* event) {
-  QPainter p (surface());
-  p.drawPixmap(QRect(QPoint(), size()), tm_widget()->backingPixmap, QRect(QPoint(), size() * retina_factor));
+  (void)event;
+  QImage bs= tm_widget ()->get_backing_store ();
+  QPainter p(surface());
+  // this code override the invalid region computations
+  p.drawImage(QRect(QPoint(), size()),
+              bs,
+              QRect(QPoint(), size() * retina_factor));
   return;
+  // return;
+  // FIXME: do we want to use the code below?
+#if 0
   QVector<QRect> rects = event->region().rects();
   for (int i = 0; i < rects.count(); ++i) {
     QRect qr = rects.at (i);
-    p.drawPixmap (QRect (qr.x(), qr.y(), qr.width(), qr.height()),
-                  tm_widget()->backingPixmap,
+    p.drawPixmap (qr, tm_widget()->backingPixmap,
                   QRect (retina_factor * qr.x(),
                          retina_factor * qr.y(),
                          retina_factor * qr.width(),
                          retina_factor * qr.height()));
   }
+#endif
 }
 
 void

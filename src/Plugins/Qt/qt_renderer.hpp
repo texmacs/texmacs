@@ -80,7 +80,8 @@ public:
   void put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
 
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
-
+  void fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y);
+  
   void draw_picture (picture pict, SI x, SI y, int alpha);
 };
 
