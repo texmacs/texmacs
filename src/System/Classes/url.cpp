@@ -101,7 +101,7 @@ url_get_atom (string s, int type) {
   return as_url (tree (s));
 }
 
-static int
+static void
 skip_ipv6 (string s, int& i) {
   i++;
   while (i<N(s) && (s[i] == ':' ||
