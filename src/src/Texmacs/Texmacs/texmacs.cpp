@@ -665,7 +665,7 @@ main (int argc, char** argv) {
   immediate_options (argc, argv);
   load_user_preferences ();
   string theme= get_user_preference ("gui theme", "default");
-#ifdef OS_MACOS
+#if defined(OS_MACOS) && !defined(__arm64__)
   if (theme == "default") theme= "";  
 #else
   if (theme == "default") theme= "light";
