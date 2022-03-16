@@ -831,5 +831,5 @@
       (link scripts-eval-toggle-menu)))
 
 (menu-bind plugin-menu
-  (:require (or (in-giac?) and ((not-in-session?) (giac-scripts?))))
+  (:require (or (in-giac?) (and (not-in-session?) (giac-scripts?))))
   (=> "Giac" (link giac-functions-menu)))
