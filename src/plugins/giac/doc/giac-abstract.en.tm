@@ -1,4 +1,4 @@
-<TeXmacs|1.99.20>
+<TeXmacs|2.1.1>
 
 <style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
@@ -65,12 +65,12 @@
   <paragraph|A note on session plots.>Any interactive <name|Giac> figure can
   be automatically embedded into the <TeXmacs> document by pressing \POK\Q.
   However, the PostScript conversion requires <scm|eps2eps> script to be
-  available in PATH. Linux users simply need to install the Ghostscript
-  package. Windows users need to install either MiKTeX or Ghostscript. If the
-  latter is installed, then the paths to <scm|bin> and <scm|lib> folders in
-  the Ghostscript installation directory (e.g.<nbsp><scm|C:\\Program
-  Files\\gs\\gs9.53.3\\bin> and also <scm|lib>) must be added to the PATH
-  variable, which can be edited by typing \Penv\Q' in the Windows start menu.
+  available in PATH, which is resolved by installing Ghostscript. In
+  <abbr|MS> Windows, paths to <scm|bin> and <scm|lib> folders in the
+  Ghostscript installation directory (e.g.<nbsp><scm|C:\\Program
+  Files\\gs\\gs9.53.3\\bin> and also <scm|lib>) must be manually added to the
+  PATH variable after installation (type <verbatim|env> in the Start menu to
+  edit environment variables).
 
   <tmdoc-copyright|1998\U2002|Joris van der Hoeven, 2021 by Luka Marohni¢>
 
