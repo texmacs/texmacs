@@ -173,6 +173,8 @@
   (npreceqq (!annotate "\\mathrel{\\not\\preceqq}" (preceqq)))
   (nprecsim (!annotate "\\mathrel{\\not\\precsim}" (precsim)))
   (nsimeq (!annotate "\\mathrel{\\not\\simeq}" (simeq)))
+  (nsubset (!annotate "\\mathrel{\\not\\subset}" (subset)))
+  (napprox (!annotate "\\mathrel{\\not\\approx}" (approx)))
   (nsqsubset (!annotate "\\mathrel{\\not\\sqsubset}" (sqsubset)))
   (nsqsubseteq (!annotate "\\mathrel{\\not\\sqsubseteq}" (sqsubseteq)))
   (nsqsubseteqq (!annotate "\\mathrel{\\not\\sqsubseteqq}" (sqsubseteqq)))
