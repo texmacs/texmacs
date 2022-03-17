@@ -36,8 +36,6 @@
   "Sigma" "Tau" "Upsilon" "Phi" "Chi" "Psi" "Omega"
   "grave" "acute" "check" "breve" "invbreve" "bar"
   "cedille"
-  "AA" "AE" "DH" "L" "NG" "O" "OE" "S" "SS" "TH"
-  "aa" "ae" "dh" "dj" "i" "j" "l" "ng" "o" "oe" "ss" "sz" "th"
 
   "ast" "asterisk"
   
@@ -163,14 +161,29 @@
   ("^o" "Insert ô" (emulate-keyboard "hat o"))
   ("^u" "Insert û" (emulate-keyboard "hat u"))
   ("S" "Make Ÿ" (emulate-keyboard "S-F5 p"))
-  ("aa" "Insert aa" (emulate-keyboard "abovering a"))
-  ("oe" "Insert oe" (emulate-keyboard "S-F5 o e"))
+  ("aa" "Insert å" (insert "å"))
   ("ae" "Insert ae" (emulate-keyboard "S-F5 a"))
+  ("dh" "Insert Ã°" (insert "<#00F0>"))
+  ("dj" "Insert <#0111>" (insert "<#0111>"))
+  ("i" "Insert " (insert ""))
+  ("j" "Insert <#0237>" (insert "<#0237>"))
+  ("l" "Insert <#0142>" (insert "<#0142>"))
+  ("ng" "Insert <#014B>" (insert "<#014B>"))
+  ("o" "Insert <#00F8>" (insert "<#00F8>"))
+  ("oe" "Insert oe" (emulate-keyboard "S-F5 o e"))
   ("ss" "Insert ÿ" (emulate-keyboard "S-F5 s"))
-  ("AA" "Insert AA" (emulate-keyboard "abovering A"))
-  ("OE" "Insert OE" (emulate-keyboard "S-F5 O E"))
+  ("sz" "Insert ÿ" (emulate-keyboard "S-F5 s"))
+  ("th" "Insert <#00FE>" (insert "<#00FE>"))
+  ("AA" "Insert Å" (insert "Å"))
   ("AE" "Insert AE" (emulate-keyboard "S-F5 A"))
+  ("DH" "Insert Ã" (insert "<#00D0>"))
+  ("L" "Insert <#0141>" (insert "<#0141>"))
+  ("NG" "Insert <#014A>" (insert "<#014A>"))
+  ("O" "Insert <#00D8>" (insert "<#00D8>"))
+  ("OE" "Insert OE" (emulate-keyboard "S-F5 O E"))
+  ("S" "Insert <#00A7>" (insert "<#00A7>"))
   ("SS" "Insert SS" (emulate-keyboard "S-F5 S"))
+  ("TH" "Insert <#00DE>" (insert "<#00DE>"))
 
   ("arccos" "Insert arccos" (insert "arccos"))
   ("arcsin" "Insert arcsin" (insert "arcsin"))
