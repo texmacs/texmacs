@@ -152,7 +152,7 @@ native_picture (int w, int h, int ox, int oy) {
   XSetRegion (the_gui->dpy, the_gui->gc, region);
   XDestroyRegion (region);
   XSetForeground (the_gui->dpy, the_gui->gc, VCONVERT (white));
-  XFillRectangle (the_gui->dpy, pm, gc, 0, 0, w, h);
+  XFillRectangle (the_gui->dpy, pm, the_gui->gc, 0, 0, w, h);
   return x_picture (pm, w, h, ox, oy);
 }
 

@@ -298,6 +298,7 @@ load_xpm (url file_name) {
     }
   }
   
+  pict= magnify(pict, 2.0, 2.0); // FIXME: hack for retina icons
   pict= as_native_picture (pict);
   cache (name)= pict;
   return pict;
