@@ -1,4 +1,4 @@
-<TeXmacs|1.99.14>
+<TeXmacs|2.1.1>
 
 <style|<tuple|tmweb2|old-dots|old-lengths>>
 
@@ -15,6 +15,9 @@
       <\itemize>
         <item>Download <hlink|<verbatim|<merge|<TeXmacs-version-release|devel>|.dmg>>|<merge|https://www.texmacs.org/Download/ftp/tmftp/macos/|<TeXmacs-version-release|devel>|.dmg>>
         for MacOS 10.10 and later.
+
+        <item>Download <hlink|<verbatim|<merge|<TeXmacs-version-release|devel>|-arm.dmg>>|<merge|https://www.texmacs.org/Download/ftp/tmftp/macos/|<TeXmacs-version-release|devel>|-arm.dmg>>
+        for ARM-based (M1) Apple computers.
 
         <item>Download <hlink|<verbatim|<merge|<TeXmacs-version-release|devel>|-os10.6.dmg>>|<merge|https://www.texmacs.org/Download/ftp/tmftp/macos/|<TeXmacs-version-release|devel>|-os10.6.dmg>>
         for MacOS versions 10.6 until 10.9.
