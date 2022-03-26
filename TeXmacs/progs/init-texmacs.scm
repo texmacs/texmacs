@@ -222,6 +222,7 @@
 
 ;(display "Booting text mode\n")
 (lazy-keyboard (text text-kbd) in-text?)
+(lazy-keyboard (text chinese chinese) in-chinese?)
 (lazy-menu (text text-menu) text-format-menu text-format-icons
 	   text-menu text-block-menu text-inline-menu
            text-icons text-block-icons text-inline-icons)
