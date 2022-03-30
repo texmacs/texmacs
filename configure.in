@@ -111,6 +111,7 @@ LC_AXEL
 LC_GS
 LC_SQL
 LC_SPARKLE
+LC_MUPDF
 
 #--------------------------------------------------------------------
 # Further TeXmacs settings

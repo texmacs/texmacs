@@ -195,6 +195,9 @@
 /* Enabling native PDF renderer */
 #undef PDF_RENDERER
 
+/* Enabling native MuPDF backend */
+#undef MUPDF_RENDERER
+
 /* Enabling Qt pipes */
 #undef QTPIPES
 

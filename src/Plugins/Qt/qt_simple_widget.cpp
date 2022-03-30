@@ -16,7 +16,8 @@
 #include "qt_utilities.hpp"
 #include "qt_renderer.hpp"
 #ifdef MUPDF_RENDERER
-  #include "mupdf_picture.hpp"
+  #include "MuPDF/mupdf_picture.hpp"
+  #include "MuPDF/mupdf_renderer.hpp"
 #else
   #include "qt_picture.hpp"
 #endif
@@ -25,7 +26,6 @@
 #include <QPixmap>
 #include <QLayout>
 
-#include "mupdf_renderer.hpp"
 
 #ifdef USE_CAIRO
 #include "Cairo/cairo_renderer.hpp"

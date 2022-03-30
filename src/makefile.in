@@ -46,10 +46,11 @@ CXXICONV = @ICONV_CXX@
 CXXGUILE = @GUILE_CFLAGS@
 CXXSPARKLE = @SPARKLE_CXX@ @SPARKLE_CPP@
 CXXPDF = @PDF_CFLAGS@
+CXXMUPDF = @MUPDF_CFLAGS@
 
 LD = @CXX@
 LDFLAGS = @LDFLAGS@ @CONFIG_BFLAGS@ @QT_LDFLAGS@ $(CXXPROFILE)
-LIBS = @GUILE_STATIC@ @SPARKLE_LIBS@ @LIBS@ 
+LIBS = @GUILE_STATIC@ @SPARKLE_LIBS@ @MUPDF_LIBS@ @LIBS@
 LDSTATIC = @CONFIG_BSTATIC@
 LDSHARED = @CONFIG_BSHARED@
 LDPATH = @CONFIG_BPATH@
@@ -116,6 +117,7 @@ scheme_src   := $(call findsrc_in,Scheme,Scheme Guile)
 pdf_src      := $(call findsrc_in,Plugins,@CONFIG_PDF@)
 pdf_c_src    := $(call findc_in,Plugins,@CONFIG_PDF@/LibAesgm)
 freetype_src := $(call findsrc_in,Plugins,Freetype)
+mupdf_src    := $(call findsrc_in,Plugins,@CONFIG_MUPDF@)
 
 # Each makefile will have its own Deps directory. Okay that is a bit
 # inefficient, but that is much simpler to maintain.
@@ -133,7 +135,7 @@ texmacs_cpp_deps := $(call make_cpp_deps,$(system_src) $(kernel_src) $(data_src)
  $(edit_src) $(scheme_src) $(graphics_src)\
  $(plugins_src) $(x11_src) $(texmacs_src)\
  $(typeset_src) $(style_src) $(qt_src) $(gs_src) $(os_src)\
- $(pdf_src) $(freetype_src))
+ $(pdf_src) $(freetype_src) $(mupdf_src))
 texmacs_m_deps += $(call make_m_deps,$(cocoa_m_src))
 texmacs_mm_deps += $(call make_mm_deps,$(cocoa_mm_src))
 texmacs_c_deps := $(call make_c_deps, $(call findc_in,System,Misc))
@@ -176,6 +178,7 @@ texmacs_incl  := $(scheme_incl)
 pdf_incl      := $(system_incl) \
   $(call incl_flags,Plugins/Pdf/LibAesgm)
 freetype_incl := $(system_incl)
+mupdf_incl := $(system_incl)
 
 ###############################################################################
 # MOC files
@@ -291,6 +294,7 @@ typeset_obj  := $(call makeobj,$(typeset_src))
 style_obj    := $(call makeobj,$(style_src))
 pdf_obj      := $(call makeobj,$(pdf_src))
 freetype_obj := $(call makeobj,$(freetype_src))
+mupdf_obj      := $(call makeobj,$(mupdf_src))
 
 # To enforce some degree of modularity, each object file must be
 # compiled with only a specific set of include flags. To achieve that,
@@ -361,6 +365,8 @@ $(pdf_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(pdf_incl) $(CXXFREETYPE) $(CXXPDF) $(CXXGUI))
 $(freetype_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(freetype_incl) $(CXXFREETYPE))
+$(mupdf_obj): Objects/%.o: %.cpp
+	$(call cxx_incl,$(mupdf_incl) $(CXXFREETYPE) $(CXXMUPDF))
 $(texmacs_c_deps):   Objects/%.o: %.c
 	$(call cc_flags, $(CFLAGS))
 
@@ -421,13 +427,14 @@ uses_scheme   := $(scheme_obj)
 uses_texmacs  := $(texmacs_obj)
 uses_pdf      := $(pdf_obj)
 uses_freetype := $(freetype_obj)
+uses_mupdf    := $(mupdf_obj)
 #"uses_windowsres" is defined above
 
 # Compilation rules
 
 TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
  plugins x11 os qt gs cocoa style typeset edit scheme texmacs pdf\
- freetype windowsres)) $(texmacs_c_deps)
+ freetype mupdf windowsres)) $(texmacs_c_deps)
 
 link_options:=-L$(tmsrc)/lib -lm $(LDPATH) $(LDGUI) $(LDICONV) $(CXXFLAGS)\
    $(LDAXEL) $(LDCAIRO) $(LDSQLITE3) @SPARKLE_LDFLAGS@
