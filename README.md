@@ -9,6 +9,10 @@ and brace for it to find the needed libraries and set up things correclty. Patch
 The goal of this branch is to implement a new document rendering subsystem based on the [MuPDF](https://mupdf.com) PDF library. This will allow us to handle also images in PDF (and SVG) format and all the other formats supported by MuPDF and make our document rendering independent of the GUI library. Currently we rely on Qt for these tasks and we do not have any 
 internal support for vector images. 
 
+
+![Screenshot of the MuPDF backend](./screenshot-1.png)
+
+
 In a second step we will evaluate the possibility to reimplement the PDF *output* device, now based on the [Hummus PDF](https://pdfhummus.com) library with MuPDF (to minimize our footprint).
 
 
