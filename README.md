@@ -1,6 +1,10 @@
-February 2022
+March 2022
 
-Welcome! You are in the `wip_mupdf` branch of TeXmacs. This is experimental code. Build tools are not yet updated for it. You will have to find you way to compile it. 
+Welcome! You are in the `wip_mupdf` branch of TeXmacs. This is experimental code. Build tools are not yet perfected for it. You can try to run
+```
+./configure --with-mupdf
+``` 
+and brace for it to find the needed libraries and set up things correclty. Patch to the build process are welcome.
 
 The goal of this branch is to implement a new document rendering subsystem based on the [MuPDF](https://mupdf.com) PDF library. This will allow us to handle also images in PDF (and SVG) format and all the other formats supported by MuPDF and make our document rendering independent of the GUI library. Currently we rely on Qt for these tasks and we do not have any 
 internal support for vector images. 
