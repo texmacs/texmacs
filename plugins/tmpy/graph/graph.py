@@ -97,9 +97,8 @@ class Graph(object):
                 while line != "<EOF>":
                     line = tm_input()
                     lines.append(line)
-                text='\n'.join(lines[:-1])
+                text = '\n'.join(lines[:-1])
                 self.eval(text)
-
 
     def get_tmp_dir(self):
         dir = "graph_" + self.name + "_" + str(os.getpid())

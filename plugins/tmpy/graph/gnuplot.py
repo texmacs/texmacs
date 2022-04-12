@@ -80,23 +80,3 @@ set autoscale
           flush_file (image)
         else:
           flush_verbatim (err.decode())
-
-    def main_loop(self):
-        # Main session loop.
-        while True:
-            line = tm_input()
-            if not line:
-                continue
-            if line[0] == DATA_COMMAND:
-                # TODO: Handle completions
-                continue
-            else:
-                lines = []
-                for x in line.split('~'):
-                    lines.append(x)
-                while line != "<EOF>":
-                    line = tm_input()
-                    for x in line.split('~'):
-                        lines.append(x)
-                text = '\n'.join(lines[:-1])
-                self.eval(text)
