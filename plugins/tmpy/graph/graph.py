@@ -22,10 +22,12 @@ class Graph(object):
     message = ""
     pre_code = ""
     post_code = ""
-    height = 0
-    width = 0
-    default_output = "eps"
+    height = ""
+    width = ""
     output = ""
+    default_width = "0px"
+    default_height = "0px"
+    default_output = "eps"
 
     def greet(self):
         for x in self.message.split("\n"):
@@ -39,8 +41,8 @@ class Graph(object):
         return which(self.name) is not None
 
     def reset_options(self):
-        self.height = "0px"
-        self.width = "0px"
+        self.height = self.default_height
+        self.width = self.default_width
         self.output = self.default_output
 
     def apply_magic(self, magic_line):
