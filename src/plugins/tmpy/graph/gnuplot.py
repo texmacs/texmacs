@@ -19,8 +19,8 @@ class Gnuplot(Graph):
     def __init__(self, name = "gnuplot"):
         super(Gnuplot, self).__init__()
         self.name = name
-        self.width = 600
         self.default_output = "svg"
+        self.default_width = "0.8par"
 
     def greet(self):
         if len(self.message) == 0:
