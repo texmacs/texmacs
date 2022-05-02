@@ -1,4 +1,4 @@
-<TeXmacs|1.99.19>
+<TeXmacs|2.1.1>
 
 <style|source>
 
@@ -249,7 +249,17 @@
 
   <assign|transform-bibitem|<macro|body|[<arg|body>] >>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Theorems.
+    </src-comment>
+  </active*>
+
+  <assign|large-padding-above|0.6666fn>
+
+  <assign|large-padding-below|0.6666fn>
+
+  <assign|remark-name|<macro|name|<with|font-shape|italic|<arg|name>>>>
 </body>
 
 <\initial>
