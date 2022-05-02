@@ -1,4 +1,4 @@
-<TeXmacs|1.99.13>
+<TeXmacs|2.1.1>
 
 <style|source>
 
@@ -108,8 +108,6 @@
 
   <provide|uncolored-exercise-name|<value|exercise-name>>
 
-  <provide|uncolored-render-list|<value|render-list>>
-
   <provide|uncolored-strong|<value|strong>>
 
   <assign|enunciation-name|<macro|x|<with|color|<value|strong-color>|<uncolored-enunciation-name|<arg|x>>>>>
@@ -120,6 +118,16 @@
 
   <assign|exercise-name|<macro|x|<with|color|<value|strong-color>|<uncolored-exercise-name|<arg|x>>>>>
 
+  <assign|strong|<macro|x|<with|color|<value|strong-color>|<uncolored-strong|<arg|x>>>>>
+
+  <\active*>
+    <\src-comment>
+      Adapted list environments
+    </src-comment>
+  </active*>
+
+  <provide|uncolored-render-list|<value|render-list>>
+
   <assign|render-list|<\macro|body>
     <\uncolored-render-list>
       <\with|uncolored-current-item|<or-value|uncolored-current-item|current-item>|current-item|<macro|name|<with|color|<value|strong-color>|<uncolored-current-item|<arg|name>>>>>
@@ -128,7 +136,23 @@
     </uncolored-render-list>
   </macro>>
 
-  <assign|strong|<macro|x|<with|color|<value|strong-color>|<uncolored-strong|<arg|x>>>>>
+  <assign|list|<\macro|item-render|item-transform|body>
+    <\with|uncolored-current-item|<arg|item-render>|current-item|<macro|name|<with|color|<value|strong-color>|<uncolored-current-item|<arg|name>>>>|transform-item|<arg|item-transform>|item-nr|0>
+      <uncolored-render-list|<arg|body>>
+    </with>
+  </macro>>
+
+  <assign|list*|<\macro|item-render|item-transform|body>
+    <\with|uncolored-current-item|<arg|item-render>|current-item|<macro|name|<with|color|<value|strong-color>|<uncolored-current-item|<arg|name>>>>|transform-item|<quasiquote|<macro|name|<unquote|<value|last-item>>.<compound|<unquote|<arg|item-transform>>|<arg|name>>>>|item-nr|0|last-item-nr|0>
+      <uncolored-render-list|<arg|body>>
+    </with>
+  </macro>>
+
+  <assign|list-continued|<\macro|item-render|item-transform|body>
+    <\with|uncolored-current-item|<arg|item-render>|current-item|<macro|name|<with|color|<value|strong-color>|<uncolored-current-item|<arg|name>>>>|transform-item|<arg|item-transform>|item-nr|<value|last-item-nr>>
+      <uncolored-render-list|<arg|body>>
+    </with>
+  </macro>>
 
   <\active*>
     <\src-comment>
