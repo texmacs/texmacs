@@ -291,6 +291,7 @@
     (:idle 1)
     (graphics-set-extents "8.1cm" "3.1cm")
     (graphics-set-text-at-halign "center")
+    (graphics-set-text-at-valign "center")
     (graphics-set-arrow-end "<gtr>")
     (graphics-set-mode '(edit math-at))
     (graphics-set-notebook-grid)))
