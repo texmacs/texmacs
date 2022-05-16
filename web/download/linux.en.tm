@@ -1,4 +1,4 @@
-<TeXmacs|1.99.13>
+<TeXmacs|2.1.2>
 
 <style|<tuple|tmweb2|old-dots|old-lengths>>
 
@@ -17,10 +17,9 @@
     the following installation methods:
 
     <\itemize>
-      <item>Some distributions (such as<nbsp><hlink|ArchLinux|http://www.archlinux.org/>
-      and <hlink|Gentoo|http://www.gentoo.org/>) actively support <TeXmacs>,
-      in which case you may directly install <TeXmacs> using the standard
-      tools of your system.
+      <item>Some distributions (such as <hlink|Gentoo|http://www.gentoo.org/>)
+      actively support <TeXmacs>, in which case you may directly install
+      <TeXmacs> using the standard tools of your system.
 
       <item>We provide ready-to-install packages for
       <hlink|CentOS|linux-packages.en.tm#centos>,
