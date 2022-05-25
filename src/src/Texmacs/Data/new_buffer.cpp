@@ -594,7 +594,12 @@ buffer_save (url name) {
   string fm= file_format (name);
   if (fm == "generic") fm= "verbatim";
   bool r= buffer_export (name, name, fm);
-  if (!r) pretend_buffer_saved (name);
+  if (!r) {
+    pretend_buffer_saved (name);
+    array<url> ws = buffer_to_windows (name);
+    for (int i=0; i<N(ws); i++)
+      concrete_window (ws[i])->set_modified (false);
+  }
   return r;
 }
 
