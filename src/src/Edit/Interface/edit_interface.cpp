@@ -717,8 +717,7 @@ edit_interface_rep::apply_changes () {
 
   // cout << "Applying changes " << env_change << " to " << get_name() << "\n";
   // time_t t1= texmacs_time ();
-  if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS+
-                    THE_CURSOR+THE_SELECTION+THE_FOCUS)) {
+  if (!(env_change & THE_FREEZE)) {
     update_focus_toolbar ();
   }
   if (env_change & THE_TREE) {
