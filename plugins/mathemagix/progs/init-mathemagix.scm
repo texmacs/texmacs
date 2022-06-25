@@ -11,11 +11,41 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Python source files
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-format mathemagix
+  (:name "Mathemagix Source Code")
+  (:suffix "mmx" "mmh"))
+
+(define (texmacs->mathemagix x . opts)
+  (texmacs->verbatim x (acons "texmacs->verbatim:encoding" "SourceCode" '())))
+
+(define (mathemagix->texmacs x . opts)
+  (code->texmacs x))
+
+(define (mathemagix-snippet->texmacs x . opts)
+  (code-snippet->texmacs x))
+
+(converter texmacs-tree mathemagix-document
+  (:function texmacs->mathemagix))
+
+(converter mathemagix-document texmacs-tree
+  (:function mathemagix->texmacs))
+  
+(converter texmacs-tree mathemagix-snippet
+  (:function texmacs->mathemagix))
+
+(converter mathemagix-snippet texmacs-tree
+  (:function mathemagix-snippet->texmacs))
+
+
 (define (mathemagix-serialize lan t)
   (with u (pre-serialize lan t)
     (with v (texmacs->code u)
       (with w (string-replace v "\n" "/{CR}/")
-	(string-append (escape-verbatim w) "\n")))))
+        (string-append (escape-verbatim w) "\n")))))
 
 (plugin-configure mathemagix
   (:winpath "mathemagix*" "bin")

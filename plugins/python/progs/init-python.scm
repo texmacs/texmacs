@@ -28,11 +28,10 @@
   (texmacs->verbatim x (acons "texmacs->verbatim:encoding" "SourceCode" '())))
 
 (define (python->texmacs x . opts)
-  (verbatim->texmacs x (acons "verbatim->texmacs:encoding" "SourceCode" '())))
+  (code->texmacs x))
 
 (define (python-snippet->texmacs x . opts)
-  (verbatim-snippet->texmacs x 
-    (acons "verbatim->texmacs:encoding" "SourceCode" '())))
+  (code-snippet->texmacs x))
 
 (converter texmacs-tree python-document
   (:function texmacs->python))

@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : new_buffer.cpp
 * DESCRIPTION: Buffer management
-* COPYRIGHT  : (C) 1999-2012  Joris van der Hoeven
+* COPYRIGHT  : (C) 1999-2022  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -418,25 +418,14 @@ attach_buffer_notifier (url name) {
 
 tree
 attach_subformat (tree t, url u, string fm) {
-  if (fm != "scheme" &&
-      fm != "java" &&
-      fm != "scala" &&
-      fm != "python" &&
-      fm != "julia" &&
-      fm != "cpp" &&
-      fm != "mathemagix" &&
-      fm != "scilab" &&
-      fm != "verbatim") return t;
+  if ((fm == "texmacs") || (fm == "tmml") || (fm == "stm")) return t;
+  if (!format_exists (fm)) return t;
+
   string s= suffix (u);
-  if (s == "scm") fm= "scheme";
-  if (s == "java") fm= "java";
-  if (s == "scala") fm= "scala";
-  if (s == "py")  fm= "python";
-  if (s == "jl")  fm= "julia";
-  if (s == "cpp" || s == "hpp" || s == "cc" || s == "hh") fm= "cpp";
-  if (s == "mmx" || s == "mmh") fm= "mathemagix";
-  if (s == "sce" || s == "sci") fm= "scilab";
+  string inferred_fm= suffix_to_format (s);
+  if (!is_empty (inferred_fm) && inferred_fm != "generic") fm= inferred_fm;
   if (fm == "verbatim") return t;
+  
   hashmap<string,tree> h (UNINIT, extract (t, "initial"));
   h (MODE)= "prog";
   h (PROG_LANGUAGE)= fm;
@@ -531,8 +520,8 @@ export_tree (tree doc, url u, string fm) {
   if (fm == "texmacs")
     for (int i=0; i<N(init); i++)
       if (is_func (init[i], ASSOCIATE, 2) && init[i][0] == "encryption") {
-	aux= as_tree (call ("tree-export-encrypted", u, aux));
-	break;
+        aux= as_tree (call ("tree-export-encrypted", u, aux));
+        break;
       }
   // END hook
   if (fm == "generic") fm= "verbatim";
