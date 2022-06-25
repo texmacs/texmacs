@@ -11,11 +11,10 @@
   (texmacs->verbatim x (acons "texmacs->verbatim:encoding" "SourceCode" '())))
 
 (define (cpp->texmacs x . opts)
-  (verbatim->texmacs x (acons "verbatim->texmacs:encoding" "SourceCode" '())))
+  (code->texmacs x))
 
 (define (cpp-snippet->texmacs x . opts)
-  (verbatim-snippet->texmacs x 
-    (acons "verbatim->texmacs:encoding" "SourceCode" '())))
+  (code-snippet->texmacs x))
 
 (converter texmacs-tree cpp-document
   (:function texmacs->cpp))
@@ -42,11 +41,10 @@
   (texmacs->verbatim x (acons "texmacs->verbatim:encoding" "SourceCode" '())))
 
 (define (julia->texmacs x . opts)
-  (verbatim->texmacs x (acons "verbatim->texmacs:encoding" "SourceCode" '())))
+  (code->texmacs x))
 
 (define (julia-snippet->texmacs x . opts)
-  (verbatim-snippet->texmacs x 
-    (acons "verbatim->texmacs:encoding" "SourceCode" '())))
+  (code-snippet->texmacs x))
 
 (converter texmacs-tree julia-document
   (:function texmacs->julia))
@@ -73,11 +71,10 @@
   (texmacs->verbatim x (acons "texmacs->verbatim:encoding" "SourceCode" '())))
 
 (define (java->texmacs x . opts)
-  (verbatim->texmacs x (acons "verbatim->texmacs:encoding" "SourceCode" '())))
+  (code->texmacs x))
 
 (define (java-snippet->texmacs x . opts)
-  (verbatim-snippet->texmacs x 
-    (acons "verbatim->texmacs:encoding" "SourceCode" '())))
+  (code-snippet->texmacs x))
 
 (converter texmacs-tree java-document
   (:function texmacs->java))
@@ -104,11 +101,10 @@
   (texmacs->verbatim x (acons "texmacs->verbatim:encoding" "SourceCode" '())))
 
 (define (scala->texmacs x . opts)
-  (verbatim->texmacs x (acons "verbatim->texmacs:encoding" "SourceCode" '())))
+  (code->texmacs x))
 
 (define (scala-snippet->texmacs x . opts)
-  (verbatim-snippet->texmacs x 
-    (acons "verbatim->texmacs:encoding" "SourceCode" '())))
+  (code-snippet->texmacs x))
 
 (converter texmacs-tree scala-document
   (:function texmacs->scala))
