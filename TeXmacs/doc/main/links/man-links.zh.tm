@@ -20,7 +20,7 @@
 
     <branch|Multiple extractions|man-multiple-extractions.zh.tm>
 
-    <branch|\<#4E66\>\<#7C4D\>\<#548C\>\<#591A\>\<#6587\>\<#4EF6\>\<#7684\>\<#6587\>\<#6863\>|man-multifile.en.tm>
+    <branch|\<#4E66\>\<#7C4D\>\<#548C\>\<#591A\>\<#6587\>\<#4EF6\>\<#7684\>\<#6587\>\<#6863\>|man-multifile.zh.tm>
   </traverse>
 
   <tmdoc-copyright|1998\U2002|Joris van der Hoeven>
