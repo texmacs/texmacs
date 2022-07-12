@@ -1,6 +1,6 @@
-<TeXmacs|1.99.1>
+<TeXmacs|2.1.1>
 
-<style|<tuple|tmdoc|chinese>>
+<style|<tuple|tmdoc|chinese|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|\<#94FE\>\<#63A5\>\<#548C\>\<#5185\>\<#5BB9\>\<#81EA\>\<#52A8\>\<#751F\>\<#6210\>>
@@ -12,7 +12,7 @@
 
     <branch|\<#751F\>\<#6210\>\<#76EE\>\<#5F55\>|man-toc.zh.tm>
 
-    <branch|\<#7F16\>\<#5236\>\<#53C2\>\<#8003\>\<#6587\>\<#732E\>|man-bibliography.en.tm>
+    <branch|\<#7F16\>\<#5236\>\<#53C2\>\<#8003\>\<#6587\>\<#732E\>|man-bibliography.zh.tm>
 
     <branch|\<#751F\>\<#6210\>\<#7D22\>\<#5F15\>|man-index.en.tm>
 
@@ -23,7 +23,7 @@
     <branch|\<#4E66\>\<#7C4D\>\<#548C\>\<#591A\>\<#6587\>\<#4EF6\>\<#7684\>\<#6587\>\<#6863\>|man-multifile.en.tm>
   </traverse>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2002|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -32,3 +32,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>
