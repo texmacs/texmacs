@@ -18,7 +18,7 @@
 
     <branch|\<#7F16\>\<#5236\>\<#672F\>\<#8BED\>\<#8868\>|man-glossary.zh.tm>
 
-    <branch|Multiple extractions|man-multiple-extractions.en.tm>
+    <branch|Multiple extractions|man-multiple-extractions.zh.tm>
 
     <branch|\<#4E66\>\<#7C4D\>\<#548C\>\<#591A\>\<#6587\>\<#4EF6\>\<#7684\>\<#6587\>\<#6863\>|man-multifile.en.tm>
   </traverse>
