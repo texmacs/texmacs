@@ -1,6 +1,6 @@
-<TeXmacs|1.99.9>
+<TeXmacs|2.1.1>
 
-<style|<tuple|tmdoc|old-spacing|chinese>>
+<style|<tuple|tmdoc|old-spacing|chinese|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|GNU <TeXmacs> \<#7528\>\<#6237\>\<#624B\>\<#518C\>>
@@ -24,7 +24,7 @@
 
     <branch|\<#5E7B\>\<#706F\>\<#7247\>|beamer/man-beamer.en.tm>
 
-    <branch|<TeXmacs>\<#7684\>\<#4EA4\>\<#4E92\>\<#5F0F\>\<#754C\>\<#9762\>|interface/man-itf.en.tm>
+    <branch|<TeXmacs>\<#7684\>\<#4EA4\>\<#4E92\>\<#5F0F\>\<#754C\>\<#9762\>|interface/man-itf.zh.tm>
 
     <branch|\<#64B0\>\<#5199\>\<#6837\>\<#5F0F\>|../devel/style/style.en.tm>
 
@@ -49,7 +49,7 @@
     <extra-branch|\<#5173\>\<#4E8E\>GNU <TeXmacs>|../about/about.zh.tm>
   </traverse>
 
-  <tmdoc-copyright|1998--2019|Joris van der Hoeven|\<#6C88\>\<#8FBE\>>
+  <tmdoc-copyright|1998\U2022|Joris van der Hoeven|\<#6C88\>\<#8FBE\>|\<#8A79\>\<#65ED\>\<#5F18\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
