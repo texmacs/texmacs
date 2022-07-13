@@ -23,7 +23,8 @@
     <branch|\<#4E66\>\<#7C4D\>\<#548C\>\<#591A\>\<#6587\>\<#4EF6\>\<#7684\>\<#6587\>\<#6863\>|man-multifile.zh.tm>
   </traverse>
 
-  <tmdoc-copyright|1998\U2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2022|Joris van der
+  Hoeven|\<#8A79\>\<#65ED\>\<#5F18\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

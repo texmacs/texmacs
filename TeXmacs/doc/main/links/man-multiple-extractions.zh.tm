@@ -30,7 +30,7 @@
   \<#672C\>\<#8EAB\>\<#5E94\>\<#8BE5\>\<#4EE5\>\<#7C7B\>\<#4F3C\>\<#7684\>\<#65B9\><verbatim|>\<#5F0F\>\<#521B\>\<#5EFA\>\<#FF1A\>\<#9996\>\<#5148\>\<#5355\>\<#51FB\><menu|Insert|Link|Alternate|Bibliography>\<#FF0C\>\<#7136\>\<#540E\>\<#5728\>\<#63D0\>\<#793A\>\<#4E2D\>\<#8F93\>\<#5165\><verbatim|
   bib2>\<#3002\>\<#63A5\>\<#4E0B\>\<#6765\>\<#50CF\>\<#5F80\>\<#5E38\>\<#4E00\>\<#6837\>\<#901A\>\<#8FC7\><menu|Insert|Automatic|Bibliography>\<#63D2\>\<#5165\>\<#53C2\>\<#8003\>\<#6587\>\<#732E\>\<#3002\>\<#63A5\>\<#4E0B\>\<#6765\>\<#6839\>\<#636E\>\<#9700\>\<#8981\>\<#591A\>\<#6B21\>\<#6267\>\<#884C\><menu|Document|Update|All>\<#FF0C\>\<#4EE5\>\<#751F\>\<#6210\>\<#53C2\>\<#8003\>\<#6587\>\<#732E\>\<#5E76\>\<#6B63\>\<#786E\>\<#83B7\>\<#53D6\>\<#6240\>\<#6709\>\<#94FE\>\<#63A5\>\<#3002\>
 
-  <tmdoc-copyright|2015|Joris van der Hoeven>
+  <tmdoc-copyright|2015\U2022|Joris van der Hoeven|\<#8A79\>\<#65ED\>\<#5F18\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

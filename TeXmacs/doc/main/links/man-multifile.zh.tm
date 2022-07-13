@@ -22,7 +22,7 @@
   \<#7684\>\P\<#4E3B\>\<#6587\>\<#4EF6\>\Q\<#3002\>\<#5728\>\<#76EE\>\<#524D\>\<#FF0C\>\<#8BE5\>\<#673A\>\<#5236\>\<#4E0D\>\<#4F1A\>\<#5904\>\<#7406\>\<#7AE0\>\<#8282\>\<#7F16\>\<#53F7\>\<#672C\>\<#8EAB\>\<#FF0C\>\<#56E0\>\<#6B64\>\<#60A8\>\<#53EF\>\<#80FD\>\<#9700\>\<#8981\>\<#5728\>\<#6BCF\>\<#4E2A\>\<#7AE0\>\<#8282\>\<#6587\>\<#4EF6\>\<#7684\>\<#5F00\>\<#5934\>\<#624B\>\<#52A8\>\<#5206\>\<#914D\>\<#73AF\>\<#5883\>\<#53D8\>\<#91CF\>
   <src-var|chapter-nr> \<#4EE5\>\<#4FBF\>\<#5728\>\<#7F16\>\<#8F91\>\<#65F6\>\<#83B7\>\<#5F97\>\<#6B63\>\<#786E\>\<#7684\>\<#7F16\>\<#53F7\>\<#3002\>
 
-  <tmdoc-copyright|1998\U2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2022|Joris van der Hoeven|\<#8A79\>\<#65ED\>\<#5F18\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

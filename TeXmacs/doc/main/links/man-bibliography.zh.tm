@@ -66,7 +66,7 @@
   \<#6837\>\<#5F0F\>\<#5E94\>\<#8BE5\>\<#653E\>\<#5728\>\<#76EE\>\<#5F55\>
   <verbatim|~/.TeXmacs/system/bib> \<#4E2D\>\<#3002\>
 
-  <tmdoc-copyright|2015|Joris van der Hoeven>
+  <tmdoc-copyright|2015\U2022|Joris van der Hoeven|\<#8A79\>\<#65ED\>\<#5F18\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
