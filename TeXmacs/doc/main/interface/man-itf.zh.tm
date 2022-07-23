@@ -17,9 +17,9 @@
   <\traverse>
     <branch|\<#521B\>\<#5EFA\>\<#4F1A\>\<#8BDD\>|man-session-basic.zh.tm>
 
-    <branch|\<#7F16\>\<#8F91\>\<#4F1A\>\<#8BDD\>|man-session-edit.en.tm>
+    <branch|\<#7F16\>\<#8F91\>\<#4F1A\>\<#8BDD\>|man-session-edit.zh.tm>
 
-    <branch|\<#9009\>\<#62E9\>\<#8F93\>\<#5165\>\<#65B9\>\<#5F0F\>|man-session-input.en.tm>
+    <branch|\<#9009\>\<#62E9\>\<#8F93\>\<#5165\>\<#65B9\>\<#5F0F\>|man-session-input.zh.tm>
 
     <branch|\<#811A\>\<#672C\>\<#8BED\>\<#8A00\>|man-scripting-language.en.tm>
 
