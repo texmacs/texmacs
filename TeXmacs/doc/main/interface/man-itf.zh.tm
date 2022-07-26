@@ -21,11 +21,11 @@
 
     <branch|\<#9009\>\<#62E9\>\<#8F93\>\<#5165\>\<#65B9\>\<#5F0F\>|man-session-input.zh.tm>
 
-    <branch|\<#811A\>\<#672C\>\<#8BED\>\<#8A00\>|man-scripting-language.en.tm>
+    <branch|\<#811A\>\<#672C\>\<#8BED\>\<#8A00\>|man-scripting-language.zh.tm>
 
-    <branch|\<#7535\>\<#5B50\>\<#8868\>\<#683C\>|man-spreadsheet.en.tm>
+    <branch|\<#7535\>\<#5B50\>\<#8868\>\<#683C\>|man-spreadsheet.zh.tm>
 
-    <branch|\<#8FDC\>\<#7A0B\>\<#63D2\>\<#4EF6\>|man-remote-plugins.en.tm>
+    <branch|\<#8FDC\>\<#7A0B\>\<#63D2\>\<#4EF6\>|man-remote-plugins.zh.tm>
   </traverse>
 
   <tmdoc-copyright|1998\U2022|Joris van der
