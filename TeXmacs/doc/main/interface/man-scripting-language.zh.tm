@@ -1,20 +1,19 @@
-<TeXmacs|2.1.1>
+<TeXmacs|2.1.3>
 
 <style|<tuple|tmdoc|old-spacing|old-dots|old-lengths|chinese>>
 
 <\body>
-  <tmdoc-title|\<#811A\>\<#672C\>\<#8BED\>\<#8A00\>>
+  <tmdoc-title|脚本语言>
 
   <TeXmacs> provides a few other kinds of additional interfaces to external
   systems in addition to shell-like interfaces. First of all, it is possible
   to insert a so called \Pexecutable switch\Q anywhere in the document using
   <menu|Insert|Fold|Executable>.
 
-  \<#9664\>\<#4E86\>\<#7C7B\>\<#4F3C\>\<#4E8E\> shell
-  \<#7684\>\<#63A5\>\<#53E3\>\<#FF0C\><TeXmacs>
-  \<#8FD8\>\<#4E3A\>\<#5916\>\<#90E8\>\<#7CFB\>\<#7EDF\>\<#63D0\>\<#4F9B\>\<#4E86\>\<#4E00\>\<#4E9B\>\<#5176\>\<#4ED6\>\<#7C7B\>\<#578B\>\<#7684\>\<#9644\>\<#52A0\>\<#63A5\>\<#53E3\>\<#3002\>\<#9996\>\<#5148\>\<#FF0C\>\<#5728\>\<#6587\>\<#6863\>\<#7684\>\<#4EFB\>\<#4F55\>\<#4F4D\>\<#7F6E\>\<#53EF\>\<#4EE5\>\<#4F7F\>\<#7528\>
-  <menu|Insert|Fold|Executable> \<#63D2\>\<#5165\>\<#4E00\>\<#4E2A\>\<#6240\>\<#8C13\>\<#7684\>
-  \Pexecutable switch\Q\<#FF08\>\<#53EF\>\<#6267\>\<#884C\>\<#5F00\>\<#5173\>\<#FF09\>\<#3002\>
+  除了类似于 shell 的接口，<TeXmacs>
+  还为外部系统提供了一些其他类型的附加接口。首先，在文档的任何位置可以使用
+  <menu|Insert|Fold|Executable> 插入一个所谓的 \Pexecutable
+  switch\Q（可执行开关）。
 
   For instance, if <name|Maxima> is installed on your system, then
   <menu|Insert|Fold|Executable|Maxima> should yield something like
@@ -29,18 +28,17 @@
   <abbr|etc.>, which are mainly used for the efficient computation and
   insertion of special graphics inside <TeXmacs> documents.
 
-  \<#4F8B\>\<#5982\>\<#FF0C\>\<#5982\>\<#679C\>\<#4F60\>\<#7684\>\<#7CFB\>\<#7EDF\>\<#4E0A\>\<#5B89\>\<#88C5\>\<#4E86\>
-  <name|Maxima>\<#FF0C\>\<#90A3\>\<#4E48\>\<#4F7F\>\<#7528\>
-  <menu|Insert|Fold|Executable|Maxima> \<#5E94\>\<#8BE5\>\<#4F1A\>\<#4EA7\>\<#751F\>\<#7C7B\>\<#4F3C\>\<#4E8E\>
-  <script-input|maxima|default||> \<#7684\>\<#6807\>\<#8BB0\>\<#3002\>\<#4F60\>\<#53EF\>\<#4EE5\>\<#5728\>\<#6807\>\<#8BB0\>\<#7684\>\<#9EC4\>\<#8272\>\<#90E8\>\<#5206\>\<#8F93\>\<#5165\>\<#4E00\>\<#4E2A\>
-  <name|Maxima> \<#8868\>\<#8FBE\>\<#5F0F\>\<#FF0C\>\<#4F8B\>\<#5982\><script-input|maxima|default|diff(x^x,x)|>\<#3002\>\<#4F60\>\<#4E5F\>\<#53EF\>\<#4EE5\>\<#901A\>\<#8FC7\>\<#4F7F\>\<#7528\>
-  <shortcut|(kbd-return)> \<#5728\>\<#672A\>\<#6C42\>\<#503C\>\<#7684\>\<#8F93\>\<#5165\>\<#548C\>\<#5DF2\>\<#6C42\>\<#503C\>\<#7684\>\<#8F93\>\<#51FA\>
+  例如，如果你的系统上安装了 <name|Maxima>，那么使用
+  <menu|Insert|Fold|Executable|Maxima> 应该会产生类似于
+  <script-input|maxima|default||> 的标记。你可以在标记的黄色部分输入一个
+  <name|Maxima> 表达式，例如<script-input|maxima|default|diff(x^x,x)|>。你也可以通过使用
+  <shortcut|(kbd-return)> 在未求值的输入和已求值的输出
   <script-output|maxima|default|diff(x^x,x)|<math|x<rsup|x>*<around*|(|log
-  <around*|(|x|)>+1|)>>> \<#4E4B\>\<#95F4\>\<#6765\>\<#56DE\>\<#5207\>\<#6362\>\<#3002\>\<#4F60\>\<#8FD8\>\<#53EF\>\<#4EE5\>\<#901A\>\<#8FC7\>
-  <shortcut|(kbd-shift-return)> \<#542F\>\<#7528\>\<#591A\>\<#884C\>\<#8F93\>\<#5165\>\<#3002\>\<#8FD9\>\<#79CD\>\<#53EF\>\<#6267\>\<#884C\>\<#5F00\>\<#5173\>\<#5BF9\>\<#4E8E\><name|
-  Dra<TeX>>\<#3001\><name|Eukleides>\<#3001\><name|Feynmf>
-  \<#7B49\>\<#63D2\>\<#4EF6\>\<#975E\>\<#5E38\>\<#6709\>\<#7528\>\<#FF0C\>\<#8FD9\>\<#4E9B\>\<#63D2\>\<#4EF6\>\<#4E3B\>\<#8981\>\<#7528\>\<#4E8E\>
-  <TeXmacs> \<#6587\>\<#6863\>\<#5185\>\<#90E8\>\<#7684\>\<#9AD8\>\<#6548\>\<#8BA1\>\<#7B97\>\<#548C\>\<#63D2\>\<#5165\>\<#7279\>\<#6B8A\>\<#56FE\>\<#5F62\>\<#3002\>
+  <around*|(|x|)>+1|)>>> 之间来回切换。你还可以通过
+  <shortcut|(kbd-shift-return)> 启用多行输入。这种可执行开关对于<name|
+  Dra<TeX>>、<name|Eukleides>、<name|Feynmf>
+  等插件非常有用，这些插件主要用于 <TeXmacs>
+  文档内部的高效计算和插入特殊图形。
 
   Some plug-ins such as <name|Maxima> can even be selected as a <em|scripting
   language> using <menu|Document|Scripts|Maxima>. When doing so, a special
@@ -50,9 +48,9 @@
   <menu|Evaluate>, the formula gets evaluated automatically to yield
   <math|2>.
 
-  \<#4F60\>\<#751A\>\<#81F3\>\<#53EF\>\<#4EE5\>\<#901A\>\<#8FC7\><menu|Document|Scripts|Maxima>\<#6765\>\<#9009\>\<#62E9\><name|Maxima>\<#6216\>\<#5176\>\<#4ED6\>\<#63D2\>\<#4EF6\>\<#4F5C\>\<#4E3A\>\<#811A\>\<#672C\>\<#8BED\>\<#8A00\>\<#3002\>\<#5F53\>\<#4F60\>\<#9009\>\<#62E9\><name|Maxima>\<#63D2\>\<#4EF6\>\<#65F6\>\<#FF0C\>\<#4F1A\>\<#51FA\>\<#73B0\>\<#4E00\>\<#4E2A\>\<#7279\>\<#6B8A\>\<#7684\>
-  <menu|Maxima> \<#83DC\>\<#5355\>\<#FF0C\>\<#8FD9\>\<#4E2A\>\<#83DC\>\<#5355\>\<#4E2D\>\<#5305\>\<#542B\>\<#4E86\>\<#8BB8\>\<#591A\>\<#76F4\>\<#63A5\>\<#5BF9\>\<#516C\>\<#5F0F\>\<#4F7F\>\<#7528\>\<#7684\>\<#5B9E\>\<#7528\>\<#64CD\>\<#4F5C\>\<#3002\>\<#4F8B\>\<#5982\>\<#FF0C\>\<#5C06\>\<#5149\>\<#6807\>\<#653E\>\<#5728\>\<#6570\>\<#5B66\>\<#6A21\>\<#5F0F\>\<#7684\><math|1+1>\<#5185\>\<#5E76\>\<#4F7F\>\<#7528\><menu|Maxima|Evaluate>\<#FF0C\>\<#8FD9\>\<#4E2A\>\<#516C\>\<#5F0F\>\<#4F1A\>\<#88AB\>\<#81EA\>\<#52A8\>\<#6C42\>\<#503C\>\<#5F97\>\<#51FA\>
-  2\<#3002\>
+  你甚至可以通过<menu|Document|Scripts|Maxima>来选择<name|Maxima>或其他插件作为脚本语言。当你选择<name|Maxima>插件时，会出现一个特殊的
+  <menu|Maxima> 菜单，这个菜单中包含了许多直接对公式使用的实用操作。例如，将光标放在数学模式的<math|1+1>内并使用<menu|Maxima|Evaluate>，这个公式会被自动求值得出
+  2。
 
   If a plug-in can be used as a scripting language, then it is possible to
   create executable switches with links between them. More precisely,
@@ -63,10 +61,10 @@
   evaluated and you will see the corresponding output; you may switch back to
   the input by pressing <key|return> once more.
 
-  \<#5982\>\<#679C\>\<#4E00\>\<#4E2A\>\<#63D2\>\<#4EF6\>\<#53EF\>\<#4EE5\>\<#4F5C\>\<#4E3A\>\<#811A\>\<#672C\>\<#8BED\>\<#8A00\>\<#4F7F\>\<#7528\>\<#FF0C\>\<#90A3\>\<#4E48\>\<#5C31\>\<#53EF\>\<#4EE5\>\<#521B\>\<#5EFA\>\<#53EF\>\<#94FE\>\<#63A5\>\<#7684\>\<#53EF\>\<#6267\>\<#884C\>\<#5F00\>\<#5173\>\<#3002\>\<#4E5F\>\<#5C31\>\<#662F\>\<#8BF4\>\<#FF0C\>\<#5982\>\<#679C\>\<#4F60\>\<#5728\><menu|Document|Scripts>\<#4E2D\>\<#9009\>\<#4E2D\>\<#4E86\>\<#4E00\>\<#79CD\>\<#811A\>\<#672C\>\<#8BED\>\<#8A00\>\<#FF0C\>\<#4F60\>\<#5C31\>\<#53EF\>\<#4EE5\>\<#4F7F\>\<#7528\><shortcut|(make-calc-input)>\<#6216\>
-  <menu|Insert|Link|Executable input field>\<#63D2\>\<#5165\>\<#4E00\>\<#4E2A\>\<#65B0\>\<#7684\>\<#53EF\>\<#6267\>\<#884C\>\<#8F93\>\<#5165\>\<#5B57\>\<#6BB5\>\<#3002\>\<#548C\>\<#4E4B\>\<#524D\>\<#7684\>\<#4E00\>\<#6837\>\<#FF0C\>\<#6309\>\<#4E0B\>
-  <key|return> \<#65F6\>\<#FF0C\>\<#4F1A\>\<#5BF9\>\<#8F93\>\<#5165\>\<#5B57\>\<#6BB5\>\<#6C42\>\<#503C\>\<#5E76\>\<#7ED9\>\<#51FA\>\<#76F8\>\<#5E94\>\<#8F93\>\<#51FA\>\<#FF1B\>\<#518D\>\<#6B21\>\<#6309\>\<#4E0B\>
-  <key|return> \<#FF0C\>\<#4F1A\>\<#5207\>\<#6362\>\<#4E3A\>\<#672A\>\<#6C42\>\<#503C\>\<#7684\>\<#8F93\>\<#5165\>\<#3002\>
+  如果一个插件可以作为脚本语言使用，那么就可以创建可链接的可执行开关。也就是说，如果你在<menu|Document|Scripts>中选中了一种脚本语言，你就可以使用<shortcut|(make-calc-input)>或
+  <menu|Insert|Link|Executable input field>插入一个新的可执行输入字段。和之前的一样，按下
+  <key|return> 时，会对输入字段求值并给出相应输出；再次按下
+  <key|return> ，会切换为未求值的输入。
 
   Contrary to executable switches, you may attach an identifier to the
   executable input field by deactivating the field or by editing the
@@ -79,21 +77,20 @@
   and pressing <key|return> inside such a field will only recompute those
   other fields which depend on it.
 
-  \<#FF08\>\<#672A\>\<#80FD\>\<#627E\>\<#5230\>deactivating\<#76F8\>\<#5173\>\<#64CD\>\<#4F5C\>\<#FF0C\>\<#76EE\>\<#524D\>\<#4E3A\>\<#4F9D\>\<#7167\>\<#5B57\>\<#9762\>\<#610F\>\<#601D\>\<#7FFB\>\<#8BD1\>\<#FF09\>
+  （未能找到deactivating相关操作，目前为依照字面意思翻译）
 
-  \<#4E0E\>\<#53EF\>\<#6267\>\<#884C\>\<#5F00\>\<#5173\>\<#4E0D\>\<#540C\>\<#7684\>\<#662F\>\<#FF0C\>\<#4F60\>\<#53EF\>\<#4EE5\>\<#901A\>\<#8FC7\>\<#7981\>\<#7528\>\<#5B57\>\<#6BB5\>\<#6216\>\<#7F16\>\<#8F91\>\<#7126\>\<#70B9\>\<#680F\>\<#4E2D\>\<#7684\>
-  <samp|Ref> \<#5B57\>\<#6BB5\>\<#6765\>\<#5C06\>\<#6807\>\<#8BC6\>\<#7B26\>\<#9644\>\<#52A0\>\<#5230\>\<#8FD9\>\<#79CD\>\<#53EF\>\<#6267\>\<#884C\>\<#8F93\>\<#5165\>\<#5B57\>\<#6BB5\>\<#3002\>\<#5728\>\<#5176\>\<#4ED6\>\<#53EF\>\<#94FE\>\<#63A5\>\<#53EF\>\<#6267\>\<#884C\>\<#8F93\>\<#5165\>\<#5B57\>\<#6BB5\>\<#4E2D\>\<#FF0C\>\<#4F60\>\<#53EF\>\<#4EE5\>\<#901A\>\<#8FC7\>
-  <shortcut|(make 'calc-ref)> \<#6216\> <menu|Insert|Link|Field reference>
-  \<#63D2\>\<#5165\>\<#4E00\>\<#4E2A\> <em|field
-  reference>\<#FF0C\>\<#6765\>\<#5F15\>\<#7528\>\<#8BE5\>\<#5B57\>\<#6BB5\>\<#7684\>\<#503C\>\<#3002\>\<#4F60\>\<#53EF\>\<#4EE5\>\<#901A\>\<#8FC7\><shortcut|(make-calc-inert)>\<#6216\><menu|Insert|Link|Input
-  field>\<#6765\>\<#63D2\>\<#5165\>\<#666E\>\<#901A\>\<#8F93\>\<#5165\>\<#5B57\>\<#6BB5\>\<#FF0C\>\<#8FD9\>\<#662F\>\<#4E00\>\<#79CD\>\<#53EF\>\<#6267\>\<#884C\>\<#8F93\>\<#5165\>\<#5B57\>\<#6BB5\>\<#7684\>\<#53D8\>\<#4F53\>\<#3002\>\<#666E\>\<#901A\>\<#8F93\>\<#5165\>\<#5B57\>\<#6BB5\>\<#53EA\>\<#80FD\>\<#7528\>\<#4F5C\>\<#8F93\>\<#5165\>\<#FF0C\>\<#5728\>\<#8FD9\>\<#7C7B\>\<#5B57\>\<#6BB5\>\<#5185\>\<#6309\>\<#4E0B\><key|return>\<#FF0C\>\<#53EA\>\<#4F1A\>\<#8BA1\>\<#7B97\>\<#5E76\>\<#66F4\>\<#65B0\>\<#90A3\>\<#4E9B\>\<#5F15\>\<#7528\>\<#4E86\>\<#5B83\>\<#7684\>\<#5176\>\<#4ED6\>\<#5B57\>\<#6BB5\>\<#FF0C\>\<#800C\>\<#4E0D\>\<#4F1A\>\<#5BF9\>\<#5B83\>\<#672C\>\<#8EAB\>\<#8FDB\>\<#884C\>\<#6C42\>\<#503C\>\<#3002\>
+  与可执行开关不同的是，你可以通过禁用字段或编辑焦点栏中的
+  <samp|Ref> 字段来将标识符附加到这种可执行输入字段。在其他可链接可执行输入字段中，你可以通过
+  <shortcut|(make 'calc-ref)> 或 <menu|Insert|Link|Field reference>
+  插入一个 <em|field reference>，来引用该字段的值。你可以通过<shortcut|(make-calc-inert)>或<menu|Insert|Link|Input
+  field>来插入普通输入字段，这是一种可执行输入字段的变体。普通输入字段只能用作输入，在这类字段内按下<key|return>，只会计算并更新那些引用了它的其他字段，而不会对它本身进行求值。
 
   <\example>
     The executable input fields may for instance be nice in pedagogic
     documents in which parts of the document may be modified and recomputed
     by the reader. For instance, evaluation of the input fragment
 
-    \<#5728\>\<#6559\>\<#5B66\>\<#6587\>\<#6863\>\<#4E2D\>\<#FF0C\>\<#53EF\>\<#6267\>\<#884C\>\<#8F93\>\<#5165\>\<#5B57\>\<#6BB5\>\<#662F\>\<#5F88\>\<#597D\>\<#7528\>\<#7684\>\<#FF0C\>\<#6587\>\<#6863\>\<#4E2D\>\<#7684\>\<#8FD9\>\<#4E9B\>\<#90E8\>\<#5206\>\<#53EF\>\<#4EE5\>\<#88AB\>\<#8BFB\>\<#8005\>\<#81EA\>\<#7531\>\<#4FEE\>\<#6539\>\<#FF0C\>\<#5E76\>\<#89C2\>\<#5BDF\>\<#91CD\>\<#65B0\>\<#8BA1\>\<#7B97\>\<#7684\>\<#7ED3\>\<#679C\>\<#3002\>\<#4F8B\>\<#5982\>\<#FF0C\>\<#5BF9\>\<#8F93\>\<#5165\>\<#7247\>\<#6BB5\>\<#7684\>\<#6C42\>\<#503C\>\<#FF1A\>
+    在教学文档中，可执行输入字段是很好用的，文档中的这些部分可以被读者自由修改，并观察重新计算的结果。例如，对输入片段的求值：
 
     <\quote-env>
       The derivative of <with|prog-scripts|maxima|<calc-inert|function|<math|<no-break>x<rsup|x>>>>
@@ -119,12 +116,12 @@
     something else and presses <key|return>, then the first and second
     derivatives will be updated automatically.
 
-    \<#5F53\>\<#7136\>\<#FF0C\>\<#5982\>\<#679C\>\<#8BFB\>\<#8005\>\<#5C06\>\<#8F93\>\<#5165\>\<#51FD\>\<#6570\>
-    <math|x<rsup|x>> \<#66F4\>\<#6539\>\<#4E3A\>\<#5176\>\<#4ED6\>\<#5185\>\<#5BB9\>\<#5E76\>\<#6309\>\<#4E0B\>
-    <key|return> \<#952E\>\<#FF0C\>\<#90A3\>\<#4E48\>\<#4E00\>\<#9636\>\<#548C\>\<#4E8C\>\<#9636\>\<#5BFC\>\<#6570\>\<#5C06\>\<#88AB\>\<#81EA\>\<#52A8\>\<#66F4\>\<#65B0\>\<#3002\>
+    当然，如果读者将输入函数 <math|x<rsup|x>>
+    更改为其他内容并按下 <key|return>
+    键，那么一阶和二阶导数将被自动更新。
   </example>
 
-  <tmdoc-copyright|1998\U2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2022|Joris van der Hoeven|詹旭弘>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

@@ -1,9 +1,9 @@
-<TeXmacs|2.1.1>
+<TeXmacs|2.1.3>
 
 <style|<tuple|tmdoc|old-spacing|old-dots|old-lengths|chinese>>
 
 <\body>
-  <tmdoc-title|\<#9009\>\<#62E9\>\<#8F93\>\<#5165\>\<#65B9\>\<#5F0F\>>
+  <tmdoc-title|选择输入方式>
 
   By default, <TeXmacs> will attempt to evaluate the input field when
   pressing <key|return>. Multiline input can be created using <key|S-return>.
@@ -14,14 +14,12 @@
   testing whether the input has been completed; if not, then the <key|return>
   may behave as usual.
 
-  \<#9ED8\>\<#8BA4\>\<#60C5\>\<#51B5\>\<#4E0B\>\<#FF0C\>TeXmacs
-  \<#5C06\>\<#5728\>\<#6309\>\<#4E0B\> Return
-  \<#65F6\>\<#5C1D\>\<#8BD5\>\<#5BF9\>\<#8F93\>\<#5165\>\<#5B57\>\<#6BB5\>\<#6C42\>\<#503C\>\<#3002\>\<#4F7F\>\<#7528\>
-  <key|S-return> \<#53EF\>\<#4EE5\>\<#521B\>\<#5EFA\>\<#591A\>\<#884C\>\<#8F93\>\<#5165\>\<#3002\>\<#5F53\>\<#4F7F\>\<#7528\>
-  <menu|Session|Input options|Multiline input>
-  \<#9009\>\<#62E9\>\<#591A\>\<#884C\>\<#8F93\>\<#5165\>\<#6A21\>\<#5F0F\>\<#65F6\>\<#FF0C\>\<#6309\>\<#4E0B\>
-  <key|return> \<#952E\>\<#5C06\>\<#6B63\>\<#5E38\>\<#6362\>\<#884C\>\<#FF0C\>\<#5BF9\>\<#8F93\>\<#5165\>\<#5B57\>\<#6BB5\>\<#6C42\>\<#503C\>\<#5219\>\<#9700\>\<#8981\>\<#6309\>\<#4E0B\><key|S-return>\<#3002\>\<#6700\>\<#540E\>\<#8BF7\>\<#6CE8\>\<#610F\>\<#FF0C\>\<#67D0\>\<#4E9B\>\<#7CFB\>\<#7EDF\>\<#5141\>\<#8BB8\>\<#5185\>\<#7F6E\>\<#542F\>\<#53D1\>\<#5F0F\>\<#65B9\>\<#6CD5\>\<#6765\>\<#6D4B\>\<#8BD5\>\<#8F93\>\<#5165\>\<#662F\>\<#5426\>\<#5DF2\>\<#5B8C\>\<#6210\>\<#FF1B\>\<#5982\>\<#679C\>\<#4E0D\>\<#662F\>\<#FF0C\>\<#90A3\>\<#4E48\>
-  Return \<#53EF\>\<#80FD\>\<#4F1A\>\<#50CF\>\<#5F80\>\<#5E38\>\<#4E00\>\<#6837\>\<#8FD0\>\<#884C\>\<#3002\>
+  默认情况下，TeXmacs 将在按下 Return
+  时尝试对输入字段求值。使用 <key|S-return>
+  可以创建多行输入。当使用 <menu|Session|Input options|Multiline
+  input> 选择多行输入模式时，按下 <key|return>
+  键将正常换行，对输入字段求值则需要按下<key|S-return>。最后请注意，某些系统允许内置启发式方法来测试输入是否已完成；如果不是，那么
+  Return 可能会像往常一样运行。
 
   Certain applications allow you to type the mathematical input in a
   graphical, two dimensional form. This feature can be used by selecting
@@ -35,20 +33,20 @@
   key <key|S-F5> in \P<hlink|Keyboard shortcuts for text
   mode|../text/keyboard/man-text-kbd.en.tm>\Q.
 
-  \<#67D0\>\<#4E9B\>\<#5E94\>\<#7528\>\<#7A0B\>\<#5E8F\>\<#5141\>\<#8BB8\>\<#60A8\>\<#4EE5\>\<#56FE\>\<#5F62\>\<#5316\>\<#3001\>\<#4E8C\>\<#7EF4\>\<#5316\>\<#7684\>\<#5F62\>\<#5F0F\>\<#952E\>\<#5165\>\<#6570\>\<#5B66\>\<#8F93\>\<#5165\>\<#3002\>\<#53EF\>\<#4EE5\>\<#901A\>\<#8FC7\><menu|Session|Input
-  mode|Mathematical input>\<#5F00\>\<#542F\>\<#6B64\>\<#529F\>\<#80FD\>\<#3002\>\<#5982\>\<#679C\>\<#6B64\>\<#529F\>\<#80FD\>\<#53EF\>\<#7528\>\<#FF0C\>\<#5219\>\<#901A\>\<#5E38\>\<#4E5F\>\<#53EF\>\<#4EE5\>\<#5C06\>\<#8F93\>\<#51FA\>\<#590D\>\<#5236\>\<#5E76\>\<#7C98\>\<#8D34\>\<#5230\>\<#8F93\>\<#5165\>\<#5B57\>\<#6BB5\>\<#4F7F\>\<#7528\>\<#3002\>\<#4F46\>\<#662F\>\<#FF0C\>\<#8FD9\>\<#53D6\>\<#51B3\>\<#4E8E\>\<#7279\>\<#5B9A\>\<#5E94\>\<#7528\>\<#7A0B\>\<#5E8F\>\<#7684\>\<#5DE5\>\<#4F5C\>\<#60C5\>\<#51B5\>\<#3002\>\<#8BF7\>\<#8BB0\>\<#4F4F\>\<#FF0C\>\<#4E00\>\<#4E9B\>\<#7EC4\>\<#5408\>\<#952E\>\<#53EF\>\<#80FD\>\<#4F1A\>\<#88AB\><subsubmenu|Session|Input|Mathematical
-  input>\<#6A21\>\<#5F0F\>\<#5360\>\<#7528\>\<#FF1A\>\<#4F8B\>\<#5982\>\<#FF0C\>\<#952E\>
-  <key|$> \<#5728\>\<#6570\>\<#5B66\>\<#6A21\>\<#5F0F\>\<#4E2D\>\<#901A\>\<#5E38\>\<#4F1A\>\<#88AB\>\<#91CD\>\<#5B9A\>\<#4E49\>\<#FF0C\>\<#56E0\>\<#6B64\>\<#FF0C\>\<#5982\>\<#679C\>\<#60F3\>\<#8981\>\<#8F93\>\<#5165\>\<#5B83\>\<#FF0C\>\<#4F60\>\<#5FC5\>\<#987B\>\<#952E\>\<#5165\>
-  <key|S-F5><key|$>\<#3002\>\<#4F60\>\<#53EF\>\<#4EE5\>\<#5728\>\P<hlink|Keyboard
-  shortcuts for text mode|../text/keyboard/man-text-kbd.en.tm>\Q\<#4E2D\>\<#4E86\>\<#89E3\>\<#5230\>\<#5173\>\<#4E8E\>\<#524D\>\<#7F00\>\<#952E\>
-  <key|S-F5> \<#7684\>\<#66F4\>\<#591A\>\<#4FE1\>\<#606F\>\<#3002\>
+  某些应用程序允许您以图形化、二维化的形式键入数学输入。可以通过<menu|Session|Input
+  mode|Mathematical input>开启此功能。如果此功能可用，则通常也可以将输出复制并粘贴到输入字段使用。但是，这取决于特定应用程序的工作情况。请记住，一些组合键可能会被<subsubmenu|Session|Input|Mathematical
+  input>模式占用：例如，键 <key|$>
+  在数学模式中通常会被重定义，因此，如果想要输入它，你必须键入
+  <key|S-F5><key|$>。你可以在\P<hlink|Keyboard shortcuts for text
+  mode|../text/keyboard/man-text-kbd.en.tm>\Q中了解到关于前缀键
+  <key|S-F5> 的更多信息。
 
   <\example>
     Below, you will find the <hlink|previous example
     session|man-session-edit.en.tm#session-example>, but now using
     mathematical input:
 
-    \<#5728\>\<#4E0B\>\<#9762\>\<#FF0C\>\<#4F60\>\<#5C06\>\<#770B\>\<#5230\>\<#4E4B\>\<#524D\>\<#7684\>\<#793A\>\<#4F8B\>\<#4F1A\>\<#8BDD\>\<#FF0C\>\<#4F46\>\<#73B0\>\<#5728\>\<#542F\>\<#7528\>\<#4E86\>\<#6570\>\<#5B66\>\<#8F93\>\<#5165\>\<#FF1A\>
+    在下面，你将看到之前的示例会话，但现在启用了数学输入：
 
     <\session|maxima|default>
       <\output>
@@ -95,7 +93,7 @@
     </session>
   </example>
 
-  <tmdoc-copyright|1998\U2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2022|Joris van der Hoeven|詹旭弘>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
