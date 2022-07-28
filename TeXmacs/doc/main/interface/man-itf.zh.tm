@@ -24,7 +24,7 @@
 
     <branch|电子表格|man-spreadsheet.zh.tm>
 
-    <branch|远程插件|man-remote-plugins.zh.tm>
+    <branch|远程插件|man-remote-plugins.en.tm>
   </traverse>
 
   <tmdoc-copyright|1998\U2022|Joris van der Hoeven|詹旭弘>
