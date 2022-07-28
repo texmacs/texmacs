@@ -9,7 +9,7 @@
   是基于 <name|Scheme> 语言的，所以总是可以使用
   <menu|Insert|Session|Scheme> 来启动一个 <name|Scheme> 会话。在
   <name|Unix> 系统上，通常还可以使用 <menu|Insert|Session|Shell>
-  来启动一个 <name|Bash> shell 会话。<menu|Insert|Session>菜单中的其余项目取决于你的系统上安装的插件。
+  来启动一个 <name|Bash> shell 会话。如果你的系统上安装了其他会话插件，那么它们会出现在<menu|Insert|Session>菜单中的其余项目中。
 
   会话由一系列输入和输出字段以及它们之间可能的文本组成。当在一个会话的输入字段内按
   <shortcut|(kbd-return)> 时，输入字段内的文本将被求值，结果将会显示在输出字段中。
@@ -19,8 +19,6 @@
   the output will only be active in the session where the cursor is and at
   the place of the cursor. Therefore, we recommend to use different buffers
   for parallel executions.（这一段不太理解，保留）
-
-  当在会话中输入一个命令时，连接到的外部应用程序会尝试执行它。可以在同一个文档中同时启动多个命令，但输出只会在光标所在的会话和光标所在的位置处于活动状态。因此，我们建议使用不同的缓冲区来实现并行执行。
 
   对于不同类型的外部应用程序，可以选择是由不同的会话共享一个进程，还是为每个不同的会话启动一个单独的进程。更准确地说，当你使用<menu|Insert|Session|Other>插入会话时，你可以同时指定\P会话类型\Q（目前的选项名称为Lan）（Shell、Pari、Maxima
   等）和\P会话名称\Q（目前的选项名称为Sec）（默认名称为\Pdefault\Q）。不同名称的会话对应不同的进程，相同名称的会话共享一个共同的进程。

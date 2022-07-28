@@ -5,33 +5,10 @@
 <\body>
   <tmdoc-title|编辑会话>
 
-  Inside input fields of sessions, the cursor keys have a special meaning:
-  when moving upwards or downwards, you will move to previous or subsequent
-  input fields. When moving to the left or to the right, you will never leave
-  the input field; you should rather use the mouse for this.
-
   在会话的输入字段内，光标键有特殊的用途：使用向上或向下移动，会让你移动到上一个或下一个输入字段；使用向左或向右移动，允许你在当前输入字段移动。你无法使用光标键离开输入字段，这是鼠标的功能。
-
-  Some facilities for editing input, output and text fields are available in
-  the <menu|Session|Field> menu. Keyboard shortcuts for inserting fields are
-  <shortcut|(structured-insert-up)> (insert above) and
-  <shortcut|(structured-insert-down)>. Keyboard shortcuts for removing
-  matching text/input/output fields are <shortcut|(structured-remove-left)>
-  (remove backwards) and <shortcut|(structured-remove-right)> (remove current
-  fields).
 
   <menu|Session|Field>菜单中提供了一些用于编辑输入、输出和文本字段的选项，它们都有着自己对应的快捷键。
   <shortcut|(structured-insert-up)>和<shortcut|(structured-insert-down)>可用于在当前字段上方或下方插入字段。<shortcut|(structured-remove-left)>可删除上方的字段，<shortcut|(structured-remove-right)>可删除当前的字段。
-
-  It is possible to create \Psubsessions\Q using <menu|Session|Session|Create
-  subsession> or <shortcut|(structured-insert-right)>. In that case, the
-  current input-output field becomes the body of an unfolded subsession. Such
-  a subsession consists of an explanatory text together with the subsession
-  body. Subsessions can be folded and unfolded using
-  <shortcut|(dynamic-previous)> <abbr|resp.> <shortcut|(dynamic-next)>.
-  Subsessions have a nice rendering on the screen when using the
-  <tmpackage|framed-session> package in <menu|Document|Use
-  package|Program>.（不太理解）
 
   可以使用<menu|Session|Session commands|Create subsession>或
   <shortcut|(structured-insert-right)> 创建\P子会话\Q。在这种情况下，当前的输入输出字段将成为展开子会话的主体。这样的子会话由解释性文本和展开子会话主体组成。可以使用
@@ -40,22 +17,9 @@
   package|Add other package>添加<tmpackage| framed-session>
   宏包以增强子会话的渲染效果。
 
-  Notice that input/output fields and subsessions are foldable: when clicking
-  on the prompt with the mouse, you may fold or unfold the entry to hide or
-  show the output. For laptop presentations, this folding and unfolding
-  process is done automatically when traversing your presentation. It is also
-  possible to fold or unfold all fields in a session using
-  <menu|Session|Session|Fold all fields> and <menu|Session|Session|Unfold all
-  fields>.<scm|>
-
   请注意，输入/输出字段和子会话是可折叠的：当用鼠标单击输入字段的提示符时，你可以折叠或展开条目以隐藏或显示输出。对于演示文稿，此折叠和展开过程会在你遍历演示文稿时自动完成。也可以使用<menu|Session|Session
   commands|Fold all fields>和<menu|Session|Session commands|Unfold all
   fields>来折叠或展开会话中的所有字段。
-
-  Other useful editing operations are <menu|Session|Session|Clear all
-  fields>, which is useful for creating a demo session which will be executed
-  later on, and <menu|Session|Split session>, which can be used for splitting
-  a session into parts for inclusion into a paper.
 
   其他有用的编辑操作还有<menu|Session|Session commands|Clear all
   fields>和<menu|Session|Session commands|Split
