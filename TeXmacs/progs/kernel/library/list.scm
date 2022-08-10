@@ -461,6 +461,9 @@
 ;; Operations on association lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-public (assoc-remove! t x)
+  (list-filter t (lambda (y) (!= x (car y)))))
+
 (define (assoc-remove-duplicates-sub t l)
   (cond ((null? l) l)
 	((ahash-ref t (caar l))

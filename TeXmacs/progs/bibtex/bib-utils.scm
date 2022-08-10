@@ -53,7 +53,7 @@
   ;; redefine when (e.g.) sorting should be disabled
   (with is-entry? (lambda (x) (func? x 'bib-entry))
     (with l1 (list-filter l is-entry?)
-      (with l2 (stable-sort (bib-with-sort-key l1) bib-compare)
+      (with l2 (sort! (bib-with-sort-key l1) bib-compare)
         (bib-without-sort-key l2)))))
 
 (tm-define (bib-process prefix style t)
