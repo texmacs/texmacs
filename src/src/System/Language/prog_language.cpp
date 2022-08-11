@@ -273,10 +273,18 @@ prog_language_rep::get_color (tree t, int start, int end) {
   return decode_color (lan_name, encode_color (type));
 }
 
+bool prog_lang_exists (string s) {
+  return exists (url_system ("$TEXMACS_PATH/progs/prog/" * s * "-lang.scm"))
+   || exists (url_system ("$TEXMACS_PATH/plugins/" * s * "/progs/" * s * "-lang.scm"))
+   || exists (url_system ("$TEXMACS_PATH/plugins/code/progs/" * s * "-lang.scm"))
+   || exists (url_system ("$TEXMACS_HOME_PATH/plugins/" * s * "/progs/" * s * "-lang.scm"))
+   || exists (url_system ("$TEXMACS_HOME_PATH/plugins/code/progs/" * s * "-lang.scm"))
+   ;
+}
+
 /******************************************************************************
 * Interface
 ******************************************************************************/
-
 language
 prog_language (string s) {
   if (language::instances -> contains (s)) return language (s);
@@ -292,7 +300,7 @@ prog_language (string s) {
   if (s == "fortran")
     return make (language, s, tm_new<fortran_language_rep> (s));
 
-  if (format_exists (s))
+  if (format_exists (s) && prog_lang_exists (s))
     return make (language, s, tm_new<prog_language_rep> (s));
 
   return make (language, s, tm_new<verb_language_rep> (s));
