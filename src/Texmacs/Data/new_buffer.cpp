@@ -429,9 +429,13 @@ attach_subformat (tree t, url u, string fm) {
   hashmap<string,tree> h (UNINIT, extract (t, "initial"));
   h (MODE)= "prog";
   h (PROG_LANGUAGE)= fm;
-  tree t2= change_doc_attr (t, "initial", make_collection (h));
-  tree t3= change_doc_attr (t2, "style", tree ("code"));
-  return t3;
+  if (prog_lang_exists (fm)) {
+    tree t2= change_doc_attr (t, "initial", make_collection (h));
+    tree t3= change_doc_attr (t2, "style", tree ("code"));
+    return t3;
+  } else {
+    return change_doc_attr (t, "initial", make_collection (h));
+  }
 }
 
 tree
