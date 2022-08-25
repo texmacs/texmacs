@@ -446,6 +446,17 @@
        (pair? (cdr x))
        (null? (cddr x))))
 
+(define-public (iota count . rest)
+  "Return a list containing count numbers"
+  ;; It starts from start and adding step each time.
+  ;; The default start is 0, the default step is 1.
+  (let ((start (if (pair? rest) (car rest) 0))
+        (step (if (and (pair? rest) (pair? (cdr rest))) (cadr rest) 1)))
+    (let lp ((n 0) (acc '()))
+      (if (= n count)
+        (reverse! acc)
+        (lp (+ n 1) (cons (+ start (* n step)) acc))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Operations on association lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
