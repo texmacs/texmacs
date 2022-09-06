@@ -45,7 +45,7 @@ concater_rep::typeset_math_macro
     if (c1 == ',' || c1 == ':' || c1 == ';' ||
         c2 == ',' || c2 == ':' || c2 == ';') {
       m= VAR_LOW_DOTS;
-      a[N(a)-1]->spc= 0;
+      if (N(a) != 0) a[N(a)-1]->spc= 0;
     }
   }
   // NOTE: end dirty hack to get spacing of ,..., right
