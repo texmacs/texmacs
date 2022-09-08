@@ -130,7 +130,7 @@
      (output-verbatim "{" (cadr x) "--" (caddr x) "}"))
     ((bibtex-match x 'bib-pages 1)
      (output-verbatim "{" (cadr x) "}"))
-    ((string? x) (output-verbatim "{" x "}"))
+    ((string? x) (output-verbatim "{" (cork->utf8 x) "}"))
     ((if (bibtex-has-var x)
 	 (bibtex-arg-var (cdr x))
 	 (begin
