@@ -365,7 +365,7 @@ conservative_bib_export (tree old_t, string old_s, tree new_t) {
   string new_s;
   for (int i=0; i<N(new_t); i++)
     if (is_db_entry (new_t[i])) {
-      string key= new_t[i][2]->label;
+      string key= cork_to_utf8 (new_t[i][2]->label);
       if (delta_i->contains (key))
         new_s << "\n" << delta_a [delta_i [key]];
       else if (old_i->contains (key))
