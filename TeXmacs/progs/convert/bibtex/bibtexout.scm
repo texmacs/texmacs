@@ -206,7 +206,7 @@
 	(id (caddr x))
 	(fields (cdddr x)))
     (begin
-      (output-verbatim pre (upcase-first type) "{" id)
+      (output-verbatim pre (upcase-first type) "{" (cork->utf8 id))
       (if (not (null? fields))
 	  (begin
 	    (output-verbatim ",")
