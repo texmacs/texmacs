@@ -302,7 +302,7 @@ bib_entry (string s, int& pos, tree type, tree& t) {
   bib_blank (s, pos);
   bib_char (s, pos, cend);
   entry= compound ("bib-entry");
-  entry << type << tag << fields;
+  entry << type << utf8_to_cork (tag) << fields;
   t << entry;
 }
 
