@@ -164,7 +164,7 @@
 
 (tm-define (bib-import-current-buffer)
   (when (and (in-bib?) (not (db-url? (current-buffer))))
-    (bib-confirm-tree (buffer-tree))))
+    (bib-import-tree (buffer-tree))))
 
 (tm-define (bib-importable?)
   (cond ((selection-active-any?)
@@ -468,7 +468,7 @@
 (tm-define (db-import-this-entry)
   (:require (bib-importable?))
   (and-with t (tree-innermost db-entry-any?)
-    (bib-confirm-tree t)))
+    (bib-import-tree t)))
 
 (tm-define (db-import-current-buffer)
   (:require (bib-importable?))
