@@ -23,7 +23,8 @@
   (db-get-query-preference (current-buffer) "exact-search" ""))
 
 (define (db-toolbar-search search)
-  (let* ((keys (compute-keys-string search "verbatim"))
+  (let* ((u-search (cork->utf8 search))
+         (keys (compute-keys-string u-search "verbatim"))
          (s (string-recompose keys ",")))
     (db-set-query-preference (current-buffer) "exact-search" search)
     (db-set-query-preference (current-buffer) "search" s)

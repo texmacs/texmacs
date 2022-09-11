@@ -30,13 +30,11 @@ void
 compute_keywords (array<string>& r, string s) {
   s= uni_translit (s);
   s= locase_all (s);
-  int i=0, n=N(s);
+  array<string> arr= tokenize(s, " ");
+  int i=0, n=N(arr);
   while (i<n) {
-    while (i<n && !is_keyword_char (s[i])) tm_char_forwards (s, i);
-    if (i >= n) break;
-    int start= i;
-    while (i<n && is_keyword_char (s[i])) i++;
-    r << s (start, i);
+    r << arr[i];
+    i++;
   }
 }
 
