@@ -115,7 +115,7 @@
   (tminput
    ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
     (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-		       (!group (!append (color "blue!50!black") (mbox "") 2))))))
+                       (!group (!append (color "blue!50!black") (mbox "") 2))))))
   (tminputmath
    ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
     (trivlist (!append (item (!option 1)) (mbox "") (ensuremath 2)))))
@@ -124,20 +124,20 @@
   (tmfoldediomath
    ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
     (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-		       (mbox "") (!group (!append (color "blue!50!black") (ensuremath 2)))))))
+                       (mbox "") (!group (!append (color "blue!50!black") (ensuremath 2)))))))
   (tmunfoldediomath
    (!append ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
-	     (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-				(mbox "") (!group (!append (color "blue!50!black") (ensuremath 2))))))
-	    ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor=white,linewidth=0pt"))
-	     (trivlist (!append (item (!option "")) (mbox "") 3)))))
+             (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
+                                (mbox "") (!group (!append (color "blue!50!black") (ensuremath 2))))))
+            ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor=white,linewidth=0pt"))
+             (trivlist (!append (item (!option "")) (mbox "") 3)))))
   (tmfoldedio
    ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
     (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-		       (mbox "") (!group (!append (color "blue!50!black") 2))))))
+                       (mbox "") (!group (!append (color "blue!50!black") 2))))))
   (tmunfoldedio
    (!append ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor={yellow!15},linecolor={black!15}"))
-	     (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-				(mbox "") (!group (!append (color "blue!50!black") 2)))))
-	    ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor=white,linewidth=0pt"))
-	     (trivlist (!append (item (!option "")) (mbox "") 3))))))
+             (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
+                                (mbox "") (!group (!append (color "blue!50!black") 2)))))
+            ((!begin "tmframed" (!option "skipabove=0,skipbelow=0,backgroundcolor=white,linewidth=0pt"))
+             (trivlist (!append (item (!option "")) (mbox "") 3))))))

@@ -17,9 +17,9 @@
 (tm-define (tmtex-transform-style x)
   (:mode elsevier-style?)
   (cond ((== x "elsart") "elsart")
-	((== x "elsarticle") "elsarticle")
-	((== x "ifac") "ifacconf")
-	((== x "jsc") `("amsthm" "elsart"))
+        ((== x "elsarticle") "elsarticle")
+        ((== x "ifac") "ifacconf")
+        ((== x "jsc") `("amsthm" "elsart"))
         (else x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -421,9 +421,9 @@
   (let ((r (tmtex (car l))))
     (tmtex-env-reset "mode")
     (if (== s "equation")
-	(list (list '!begin "eqnarray") r)  ;; FIXME: why do elsequation
-	(list (list '!begin "eqnarray*") r) ;; and elsequation* not work?
-	)))
+        (list (list '!begin "eqnarray") r)  ;; FIXME: why do elsequation
+        (list (list '!begin "eqnarray*") r) ;; and elsequation* not work?
+        )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The elsarticle class does not insert a 'References' section title

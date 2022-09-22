@@ -62,33 +62,33 @@
 ;;    (test "simple block*" `(block* ,(simple-tformat)) (expect-hline "|c|"))
 ;;    ;; These conversions are only meaningful in math mode!
 ;;    ;; (test "simple matrix" `(matrix ,(simple-tformat))
-;;    ;;	 `(!concat (#{left\(}#) ,(expect-simple "c") (#{right\)}#)))
+;;    ;;         `(!concat (#{left\(}#) ,(expect-simple "c") (#{right\)}#)))
 ;;    ;; (test "simple det" `(det ,(simple-tformat))
-;;    ;;	 `(!concat (left|) ,(expect-simple "c")  (right|)))
+;;    ;;         `(!concat (left|) ,(expect-simple "c")  (right|)))
 ;;    ;; (test "simple choice" `(choice ,(simple-tformat))
-;;    ;;	 `(!concat (left\{) ,(expect-simple "c") (right.)))
+;;    ;;         `(!concat (left\{) ,(expect-simple "c") (right.)))
 ;;    (test "tabular*, two cells" `(tabular* ,(tformat '() '(("a" "b"))))
-;; 	 (tabular "cc" '(("a" "b"))))
+;;       (tabular "cc" '(("a" "b"))))
 ;;    (test "tabular*, four cells"
-;; 	 `(tabular* ,(tformat '() '(("a" "b") ("c" "d"))))
-;; 	 (tabular "cc" '(("a" "b") ("c" "d"))))
+;;       `(tabular* ,(tformat '() '(("a" "b") ("c" "d"))))
+;;       (tabular "cc" '(("a" "b") ("c" "d"))))
 ;;    (test "tabular*, first col aligned right"
-;; 	 `(tabular* ,(tformat (list (colwith "1" "cell-halign" "r"))
-;; 			      '(("a" "b") ("c" "d"))))
-;; 	 (tabular "rc" '(("a" "b") ("c" "d"))))
+;;       `(tabular* ,(tformat (list (colwith "1" "cell-halign" "r"))
+;;                            '(("a" "b") ("c" "d"))))
+;;       (tabular "rc" '(("a" "b") ("c" "d"))))
 ;;    (test "tabular*, whole table aligned right"
-;; 	 `(tabular* ,(tformat (list (allwith "cell-halign" "r"))
-;; 			      '(("a" "b") ("c" "d"))))
-;; 	 (tabular "rr" '(("a" "b") ("c" "d"))))
+;;       `(tabular* ,(tformat (list (allwith "cell-halign" "r"))
+;;                            '(("a" "b") ("c" "d"))))
+;;       (tabular "rr" '(("a" "b") ("c" "d"))))
 ;;    (test "tabular*, one row border"
-;; 	 `(tabular* ,(tformat (list (rowwith "1" "cell-bborder" "1ln"))
-;; 			      '(("a" "b") ("c" "d"))))
-;; 	 `((!begin "tabular" "cc") (!table ,@(!row-hline '("a" "b"))
-;; 					   ,(!row '("c" "d")))))
+;;       `(tabular* ,(tformat (list (rowwith "1" "cell-bborder" "1ln"))
+;;                            '(("a" "b") ("c" "d"))))
+;;       `((!begin "tabular" "cc") (!table ,@(!row-hline '("a" "b"))
+;;                                         ,(!row '("c" "d")))))
 ;;    (test "tabular*, one col border"
-;; 	 `(tabular* ,(tformat (list (colwith "1" "cell-bborder" "1ln"))
-;; 			      '(("a" "b") ("c" "d"))))
-;; 	 (tabular "cc" '(("a" "b") ("c" "d"))))))
+;;       `(tabular* ,(tformat (list (colwith "1" "cell-bborder" "1ln"))
+;;                            '(("a" "b") ("c" "d"))))
+;;       (tabular "cc" '(("a" "b") ("c" "d"))))))
 
 ;; TODO: getting menus entries :
 ;; find . -name '*menu.scm' -exec grep 'make' {} \; | sed -e 's/^\s\+//' | grep -v '^;'

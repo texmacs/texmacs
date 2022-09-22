@@ -19,12 +19,12 @@
   (:mode acm-style?)
   (cond ((== x "acmconf") "acm_proc_article-sp")
         ((== x "sig-alternate") x)
-	((== x "acmsmall") `("format=acmsmall" "acmart"))
-	((== x "acmlarge") `("format=acmlarge" "acmart"))
-	((== x "acmtog") `("format=acmtog" "acmart"))
-	((== x "sigconf") `("format=sigconf" "acmart"))
-	((== x "sigchi") `("format=sigchi" "acmart"))
-	((== x "sigplan") `("format=sigplan" "acmart"))
+        ((== x "acmsmall") `("format=acmsmall" "acmart"))
+        ((== x "acmlarge") `("format=acmlarge" "acmart"))
+        ((== x "acmtog") `("format=acmtog" "acmart"))
+        ((== x "sigconf") `("format=sigconf" "acmart"))
+        ((== x "sigchi") `("format=sigchi" "acmart"))
+        ((== x "sigplan") `("format=sigplan" "acmart"))
         (else x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

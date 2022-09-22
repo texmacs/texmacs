@@ -4,7 +4,7 @@
 ;; MODULE      : latex-drd.scm
 ;; DESCRIPTION : Formal specification of the part of LaTeX
 ;;               which is understood by TeXmacs
-;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
+;; COPYRIGHT   : (C) 1999-2022  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -243,16 +243,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (latex-resolve s)
+  (define (safe-string2symbol s)
+    (if (== s "") (string->symbol " ") (string->symbol s)))
+
   (if (string-starts? s "\\")
       (set! s (substring s 1 (string-length s))))
-  (with arity (logic-ref latex-arity% (string->symbol s))
-    (if (logic-in? (string->symbol s) latex-optional-arg%)
-	(set! arity (- -1 arity)))
+
+  (with arity (logic-ref latex-arity% (safe-string2symbol s))
+    (if (logic-in? (safe-string2symbol s) latex-optional-arg%)
+        (set! arity (- -1 arity)))
     (if (string-starts? s "end-")
-	(begin
-	  (set! s (string-append "begin-" (substring s 4 (string-length s))))
-	  (set! arity 0)))
-    (values (string->symbol s) arity)))
+        (begin
+          (set! s (string-append "begin-" (substring s 4 (string-length s))))
+          (set! arity 0)))
+    (values (safe-string2symbol s) arity)))
 
 (tm-define (latex-arity tag)
   "Get the arity of a LaTeX @tag"
@@ -269,14 +273,14 @@
           ((logic-in? s latex-as-pic%) "as-picture")
           ((logic-in? s latex-name%) "name")
           ((logic-in? s latex-counter%) "counter")
-	  ((logic-in? s latex-modifier%) "modifier")
-	  ((logic-in? s latex-control%) "control")
-	  ((logic-in? s latex-operator%) "operator")
-	  ((logic-in? s latex-list%) "list")
-	  ((logic-in? s latex-math-environment%) "math-environment")
-	  ((logic-in? s latex-enunciation%) "enunciation")
-	  ((logic-in? s latex-environment%) "environment")
-	  ((logic-in? s latex-texmacs%) "texmacs")
-	  ((logic-in? s latex-symbol%) "symbol")
-	  ((logic-in? s latex-big-symbol%) "big-symbol")
-	  (else "undefined"))))
+          ((logic-in? s latex-modifier%) "modifier")
+          ((logic-in? s latex-control%) "control")
+          ((logic-in? s latex-operator%) "operator")
+          ((logic-in? s latex-list%) "list")
+          ((logic-in? s latex-math-environment%) "math-environment")
+          ((logic-in? s latex-enunciation%) "enunciation")
+          ((logic-in? s latex-environment%) "environment")
+          ((logic-in? s latex-texmacs%) "texmacs")
+          ((logic-in? s latex-symbol%) "symbol")
+          ((logic-in? s latex-big-symbol%) "big-symbol")
+          (else "undefined"))))

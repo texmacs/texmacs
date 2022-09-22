@@ -45,64 +45,64 @@
 
   ;; rotated arrows and other symbols
   (mapsfrom (!group (mbox (rotatebox (!option "origin=c") "180"
-				     (!math (mapsto))))))
+                                     (!math (mapsto))))))
   (longmapsfrom (!group (mbox (rotatebox (!option "origin=c") "180"
-					 (!math (longmapsto))))))
+                                         (!math (longmapsto))))))
   (mapmulti (!group (mbox (rotatebox (!option "origin=c") "180"
-				     (!math "\\multimap")))))
+                                     (!math "\\multimap")))))
   (leftsquigarrow (!group (mbox (rotatebox (!option "origin=c") "180"
-					   (!math (rightsquigarrow))))))
+                                           (!math (rightsquigarrow))))))
   (upequal (!group (mbox (rotatebox (!option "origin=c") "90"
-				    (!math "=")))))
+                                    (!math "=")))))
   (downequal (!group (mbox (rotatebox (!option "origin=c") "-90"
-				      (!math "=")))))
+                                      (!math "=")))))
   (longupequal (!group (mbox (rotatebox (!option "origin=c") "90"
-					(!math (longequal))))))
+                                        (!math (longequal))))))
   (longdownequal (!group (mbox (rotatebox (!option "origin=c") "-90"
-					  (!math (longequal))))))
+                                          (!math (longequal))))))
   (longupminus (!group (mbox (rotatebox (!option "origin=c") "90"
-					(!math (longminus))))))
+                                        (!math (longminus))))))
   (longdownminus (!group (mbox (rotatebox (!option "origin=c") "-90"
-					  (!math (longminus))))))
+                                          (!math (longminus))))))
   (longuparrow (!group (mbox (rotatebox (!option "origin=c") "90"
-					(!math (longrightarrow))))))
+                                        (!math (longrightarrow))))))
   (longdownarrow (!group (mbox (rotatebox (!option "origin=c") "-90"
-					  (!math (longrightarrow))))))
+                                          (!math (longrightarrow))))))
   (longupdownarrow (!group (mbox (rotatebox (!option "origin=c") "-90"
                                             (!math (longleftrightarrow))))))
   (Longuparrow (!group (mbox (rotatebox (!option "origin=c") "90"
-					(!math (Longrightarrow))))))
+                                        (!math (Longrightarrow))))))
   (Longdownarrow (!group (mbox (rotatebox (!option "origin=c") "-90"
-					  (!math (Longrightarrow))))))
+                                          (!math (Longrightarrow))))))
   (Longupdownarrow (!group (mbox (rotatebox (!option "origin=c") "-90"
                                             (!math (Longleftrightarrow))))))
   (mapsup (!group (mbox (rotatebox (!option "origin=c") "90"
-				   (!math (mapsto))))))
+                                   (!math (mapsto))))))
   (mapsdown (!group (mbox (rotatebox (!option "origin=c") "-90"
-				     (!math (mapsto))))))
+                                     (!math (mapsto))))))
   (longmapsup (!group (mbox (rotatebox (!option "origin=c") "90"
-				       (!math (longmapsto))))))
+                                       (!math (longmapsto))))))
   (longmapsdown (!group (mbox (rotatebox (!option "origin=c") "-90"
-					 (!math (longmapsto))))))
+                                         (!math (longmapsto))))))
   (upsquigarrow (!group (mbox (rotatebox (!option "origin=c") "90"
-					 (!math (rightsquigarrow))))))
+                                         (!math (rightsquigarrow))))))
   (downsquigarrow (!group (mbox (rotatebox (!option "origin=c") "-90"
-					   (!math (rightsquigarrow))))))
+                                           (!math (rightsquigarrow))))))
   (updownsquigarrow (!group (mbox (rotatebox (!option "origin=c") "-90"
                                              (!math (leftrightsquigarrow))))))
   (hookuparrow (!group (mbox (rotatebox (!option "origin=c") "90"
-					(!math (hookrightarrow))))))
+                                        (!math (hookrightarrow))))))
   (hookdownarrow (!group (mbox (rotatebox (!option "origin=c") "-90"
-					  (!math (hookrightarrow))))))
+                                          (!math (hookrightarrow))))))
   (longhookuparrow (!group (mbox (rotatebox (!option "origin=c") "90"
-					    (!math (longhookrightarrow))))))
+                                            (!math (longhookrightarrow))))))
   (longhookdownarrow (!group (mbox (rotatebox (!option "origin=c") "-90"
-					      (!math (longhookrightarrow))))))
+                                              (!math (longhookrightarrow))))))
   (Backepsilon (!group (mbox (rotatebox (!option "origin=c") "180"
-					"E"))))
+                                        "E"))))
   (Backsigma (!group (mbox (reflectbox (!math "\\Sigma")))))
   (Mho (!group (mbox (rotatebox (!option "origin=c") "180"
-				(!math "\\Omega")))))
+                                (!math "\\Omega")))))
   (btimes (!group (mbox (rotatebox (!option "origin=c") "90"
                                    (!math "\\ltimes")))))
   
@@ -461,41 +461,41 @@
    (trivlist (!append (item (!option "")) (mbox "") "\\large\\bf" 1)))
   (tmunfoldeddocumentation
    (trivlist (!append (item (!option "")) (mbox "")
-		      (!group "\\large\\bf" 1) "\\\\"
-		      (item (!option "")) (mbox "") 2)))
+                      (!group "\\large\\bf" 1) "\\\\"
+                      (item (!option "")) (mbox "") 2)))
   (tmfoldedsubsession
    (trivlist (!append (item (!option "$\\bullet$")) (mbox "") 1)))
   (tmunfoldedsubsession
    (trivlist (!append (item (!option "$\\circ$"))   (mbox "") 1 "\\\\"
-		      (item (!option "")) (mbox "") 2 )))
+                      (item (!option "")) (mbox "") 2 )))
   (tmfoldedgrouped
    (trivlist (!append (item (!option "["))  (mbox "") 1)))
   (tmunfoldedgrouped
    (trivlist (!append (item (!option "$\\lceil$"))  (mbox "") 1 "\\\\"
-		      (item (!option "$\\lfloor$")) (mbox "") 2 )))
+                      (item (!option "$\\lfloor$")) (mbox "") 2 )))
   (tmfoldedexplain (trivlist (!append (item (!option "")) "\\bf" 1)))
   (tmunfoldedexplain
    (trivlist (!append (item (!option "")) (mbox "")
-		      (!group "\\bf" 1) "\\\\"
-		      (item (!option "")) (mbox "") 2 )))
+                      (!group "\\bf" 1) "\\\\"
+                      (item (!option "")) (mbox "") 2 )))
   (tmfoldedplain (trivlist (!append (item (!option "")) (mbox "") 1)))
   (tmunfoldedplain
    (trivlist (!append (item (!option "")) (mbox "") 1 "\\\\"
-		      (item (!option "")) (mbox "") 2 )))
+                      (item (!option "")) (mbox "") 2 )))
   (tmfoldedenv (trivlist (!append (item (!option "$\\bullet$")) (mbox "") 1)))
   (tmunfoldedenv
    (trivlist (!append (item (!option "$\\circ$")) (mbox "") 1 "\\\\"
-		      (item (!option "")) (mbox "") 2 )))
+                      (item (!option "")) (mbox "") 2 )))
   (tmfoldedstd (trivlist (!append (item (!option "$\\bullet$")) (mbox "") 1)))
   (tmunfoldedstd
    (trivlist (!append (item (!option "$\\circ$")) (mbox "") 1 "\\\\"
-		      (item (!option "")) (mbox "") 2 )))
+                      (item (!option "")) (mbox "") 2 )))
   (tmfolded (trivlist (!append (item (!option "$\\bullet$")) (mbox "") 1)))
   (tmunfolded (trivlist (!append (item (!option "$\\circ$")) (mbox "") 1 "\\\\"
-				 (item (!option "")) (mbox "") 2 )))
+                                 (item (!option "")) (mbox "") 2 )))
   (tminput
    (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-		      (!group (!append (color "blue!50!black") (mbox "") 2)))))
+                      (!group (!append (color "blue!50!black") (mbox "") 2)))))
   (tminputmath
    (trivlist (!append (item (!option 1)) (ensuremath 2))))
   (tmhlink  (!group (!append (color "blue") 1)))
@@ -511,18 +511,18 @@
   (tmsession (!group (!append (tt) 3)))
   (tmfoldediomath
    (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-		      (!group (!append (color "blue!50!black") (ensuremath 2))))))
+                      (!group (!append (color "blue!50!black") (ensuremath 2))))))
   (tmunfoldediomath
    (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-		      (!group (!append (color "blue!50!black") (ensuremath 2)))
-		      (item (!option "")) (mbox "") 3)))
+                      (!group (!append (color "blue!50!black") (ensuremath 2)))
+                      (item (!option "")) (mbox "") 3)))
   (tmfoldedio
    (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-		      (mbox "") (!group (!append (color "blue!50!black") 2)))))
+                      (mbox "") (!group (!append (color "blue!50!black") 2)))))
   (tmunfoldedio
    (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
-		      (mbox "") (!group (!append (color "blue!50!black") 2))
-		      (item (!option "")) (mbox "") 3)))
+                      (mbox "") (!group (!append (color "blue!50!black") 2))
+                      (item (!option "")) (mbox "") 3)))
   (tmlinenote
    (!append (tmdummy)
             (marginpar (adjustbox
@@ -535,10 +535,10 @@
 
   ;; Tetrary macros
   (tmscriptinput (fbox (!append (fbox (!append (sf) 2)) " "
-				(!append (tt) 3))))
+                                (!append (tt) 3))))
   (tmscriptoutput (!append 4))
   (tmconverterinput (fbox (!append (fbox (!append (sf) 2)) " "
-				   (!append (tt) 3))))
+                                   (!append (tt) 3))))
   (tmconverteroutput (!append 4))
   (subsubsubindex (index (!append 1 "!" 2 "!" 3 "!" 4))))
 
@@ -564,12 +564,12 @@
 (smart-table latex-texmacs-environment
   ("proof"
    (!append (noindent) (textbf (!append (!translate "Proof") "\\ "))
-	    ---
-	    (hspace* (fill)) (!math (Box)) (medskip)))
+            ---
+            (hspace* (fill)) (!math (Box)) (medskip)))
   ("proof*"
    (!append (noindent) (textbf (!append 1 "\\ "))
-	    ---
-	    (hspace* (fill)) (!math (Box)) (medskip)))
+            ---
+            (hspace* (fill)) (!math (Box)) (medskip)))
   ("leftaligned"
    ((!begin "flushleft") ---))
   ("rightaligned"
@@ -581,14 +581,14 @@
     ((!begin "alltt") ---)))
   ("tmparmod"
    ((!begin "list" "" (!append "\\setlength{\\topsep}{0pt}"
-			       "\\setlength{\\leftmargin}{" 1 "}"
-			       "\\setlength{\\rightmargin}{" 2 "}"
-			       "\\setlength{\\parindent}{" 3 "}"
-			       "\\setlength{\\listparindent}{\\parindent}"
-			       "\\setlength{\\itemindent}{\\parindent}"
-			       "\\setlength{\\parsep}{\\parskip}"))
+                               "\\setlength{\\leftmargin}{" 1 "}"
+                               "\\setlength{\\rightmargin}{" 2 "}"
+                               "\\setlength{\\parindent}{" 3 "}"
+                               "\\setlength{\\listparindent}{\\parindent}"
+                               "\\setlength{\\itemindent}{\\parindent}"
+                               "\\setlength{\\parsep}{\\parskip}"))
     (!append "\\item[]"
-	     ---)))
+             ---)))
   ("tmparsep"
    (!append (begingroup) "\\setlength{\\parskip}{" 1 "}"
             ---
@@ -609,8 +609,8 @@
   ("elsequation*" ((!begin "eqnarray*") (!append --- "&&")))
   ("theglossary"
    ((!begin "list" "" (!append "\\setlength{\\labelwidth}{6.5em}"
-			       "\\setlength{\\leftmargin}{7em}"
-			       "\\small")) ---)))
+                               "\\setlength{\\leftmargin}{7em}"
+                               "\\small")) ---)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TeXmacs list environments
@@ -621,10 +621,10 @@
      (,env
       ((!begin "itemize")
        (!append "\\renewcommand{\\labelitemi}{" ,lab "}"
-		"\\renewcommand{\\labelitemii}{" ,lab "}"
-		"\\renewcommand{\\labelitemiii}{" ,lab "}"
-		"\\renewcommand{\\labelitemiv}{" ,lab "}"
-		---)))))
+                "\\renewcommand{\\labelitemii}{" ,lab "}"
+                "\\renewcommand{\\labelitemiii}{" ,lab "}"
+                "\\renewcommand{\\labelitemiv}{" ,lab "}"
+                ---)))))
 
 (define-macro (latex-texmacs-enumerate env lab)
   `(smart-table latex-texmacs-environment
@@ -655,10 +655,10 @@
 (smart-table latex-texmacs-preamble
   (newmdenv
    (!append (mdfsetup (!append "linecolor=black,linewidth=0.5pt,"
-			       "skipabove=0.5em,skipbelow=0.5em,"
-			       "hidealllines=true,innerleftmargin=0pt,"
-			       "innerrightmargin=0pt,innertopmargin=0pt,"
-			       "innerbottommargin=0pt" )) "\n"))
+                               "skipabove=0.5em,skipbelow=0.5em,"
+                               "hidealllines=true,innerleftmargin=0pt,"
+                               "innerrightmargin=0pt,innertopmargin=0pt,"
+                               "innerbottommargin=0pt" )) "\n"))
   (tikzframe
    (!append
     (!ignore (tikz))
@@ -670,51 +670,51 @@
    (!append "\\newcommand{\\nonconverted}[1]{\\mbox{}}\n"))
   (tmkeywords
    (!append (newcommand (tmkeywords)
-			(!append (textbf (!translate "Keywords:")) " "))
-	    "\n"))
+                        (!append (textbf (!translate "Keywords:")) " "))
+            "\n"))
   (tmacm
    (!append (newcommand (tmacm)
-			(!append
+                        (!append
                          (textbf
-			  (!translate "A.C.M. subject classification:")) " "))
-	    "\n"))
+                          (!translate "A.C.M. subject classification:")) " "))
+            "\n"))
   (tmarxiv
    (!append (newcommand (tmarxiv)
-			(!append
-			 (textbf
-			  (!translate "arXiv subject classification:")) " "))
-	    "\n"))
+                        (!append
+                         (textbf
+                          (!translate "arXiv subject classification:")) " "))
+            "\n"))
   (tmpacs
    (!append (newcommand (tmpacs)
                         (!append
-			 (textbf
-			  (!translate "P.A.C.S. subject classification:"))
-			 " "))
-	    "\n"))
+                         (textbf
+                          (!translate "P.A.C.S. subject classification:"))
+                         " "))
+            "\n"))
   (tmmsc
    (!append (newcommand (tmmsc)
-			(!append
+                        (!append
                          (textbf
-			  (!translate "A.M.S. subject classification:")) " "))
-	    "\n"))
+                          (!translate "A.M.S. subject classification:")) " "))
+            "\n"))
   (fmtext (!append "\\newcommand{\\fmtext}[2][]{\\fntext[#1]{"
-		   (!translate "Misc:") " #2}}\n"))
+                   (!translate "Misc:") " #2}}\n"))
   (tdatetext (!append "\\newcommand{\\tdatetext}[2][]{\\tnotetext[#1]{"
-		      (!translate "Date:") " #2}}\n"))
+                      (!translate "Date:") " #2}}\n"))
   (tmisctext (!append "\\newcommand{\\tmisctext}[2][]{\\tnotetext[#1]{"
-		      (!translate "Misc:") " #2}}\n"))
+                      (!translate "Misc:") " #2}}\n"))
   (tsubtitletext (!append "\\newcommand{\\tsubtitletext}[2][]{\\tnotetext[#1]{"
                           (!translate "Subtitle:") " #2}}\n"))
   (thankshomepage (!append "\\newcommand{\\thankshomepage}[2][]{\\thanks[#1]{"
-			   (!translate "URL:") " #2}}\n"))
+                           (!translate "URL:") " #2}}\n"))
   (thanksemail (!append "\\newcommand{\\thanksemail}[2][]{\\thanks[#1]{"
-			(!translate "Email:") " #2}}\n"))
+                        (!translate "Email:") " #2}}\n"))
   (thanksdate (!append "\\newcommand{\\thanksdate}[2][]{\\thanks[#1]{"
-		       (!translate "Date:") " #2}}\n"))
+                       (!translate "Date:") " #2}}\n"))
   (thanksamisc (!append "\\newcommand{\\thanksamisc}[2][]{\\thanks[#1]{"
-			(!translate "Misc:") " #2}}\n"))
+                        (!translate "Misc:") " #2}}\n"))
   (thanksmisc (!append "\\newcommand{\\thanksmisc}[2][]{\\thanks[#1]{"
-		       (!translate "Misc:") " #2}}\n"))
+                       (!translate "Misc:") " #2}}\n"))
   (thankssubtitle (!append "\\newcommand{\\thankssubtitle}[2][]{\\thanks[#1]{"
                            (!translate "Subtitle:") " #2}}\n"))
   (qed (!append (providecommand "\\qed" (ensuremath (Box))) "\n"))
