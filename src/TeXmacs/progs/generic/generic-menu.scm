@@ -35,7 +35,7 @@
           (focus-tag-name (string->symbol ns)))
         (if (symbol-unnumbered? l)
             (focus-tag-name (symbol-drop-right l 1))
-            (with r (upcase-first (tree-name (tree l)))
+            (with r (tree-name (tree l))
               (string-replace r "-" " "))))))
 
 (tm-menu (focus-variant-menu t)
