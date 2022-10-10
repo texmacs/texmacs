@@ -275,6 +275,20 @@
               (tree-assign! t `(document ,@(cDr l) ,@(tree-children d)))
               (if q (delayed (:idle 1) (go-to-path (append b q)))))))))))
 
+(tm-define (remove-single-slideshow)
+(let* ((t (buffer-tree))
+       (l (tree-children t)))
+  (when (tree-func? (cAr l) 'slideshow 1)
+    (when (tree-func? (tree-ref (cAr l) 0 0) 'slide 1)
+      (let* ((d (tree-ref (cAr l) 0 0 0))
+             (b (tree->path t))
+             (p (cursor-inside? d)))
+        (when (tree-func? d 'document)
+          (with q (and (pair? p)
+                         (cons (+ (car p) (length (cDr l))) (cdr p)))
+              (tree-assign! t `(document ,@(cDr l) ,@(tree-children d)))
+              (if q (delayed (:idle 1) (go-to-path (append b q)))))))))))
+
 (tm-define (document-propose-screens?)
   (and (style-has? "beamer-style")
        (not (screens-buffer?))))
@@ -291,9 +305,12 @@
 
 (tm-define (notify-new-style style)
   (former style)
-  (if (style-has? "beamer-style")
-      (if (not (screens-buffer?)) (make-screens))
-      (if (screens-buffer?) (remove-single-screens))))
+  (cond ((style-has? "beamer-style")
+         (when (not (screens-buffer?))
+           (set-init-env "page-medium" "beamer") 
+           (make-screens)))
+        ((screens-buffer?) (remove-single-screens))
+        ((slideshow-buffer?) (remove-single-slideshow))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Slide titles
