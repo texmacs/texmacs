@@ -439,18 +439,6 @@
 ;; Loading buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (toggle-toolbars-for-coding name)
-  (if (has-style-package? "code")
-      (show-icon-bar 0 #f)
-      (show-icon-bar 0 (get-boolean-preference "main icon bar")))
-  (if (has-style-package? "code")
-      (show-icon-bar 1 #f)
-      (show-icon-bar 1 (get-boolean-preference "mode dependent icons"))))
-
-(define (smart-switch-to-buffer name)
-  (switch-to-buffer name)
-  (toggle-toolbars-for-coding name))
-
 (define (load-buffer-open name opts)
   ;;(display* "load-buffer-open " name ", " opts "\n")
   (cond ((in? :background opts) (noop))
@@ -465,7 +453,6 @@
   (and-with master (and (url-rooted-tmfs? name) (tmfs-master name))
     (when (!= master name)
       (buffer-set-master name master)))
-  (toggle-toolbars-for-coding name)
   (noop))
 
 (define (load-buffer-load name opts)
@@ -542,7 +529,7 @@
 
 (tm-define (load-browse-buffer name)
   (:synopsis "Load a buffer or switch to it if already open")
-  (cond ((buffer-exists? name) (smart-switch-to-buffer name))
+  (cond ((buffer-exists? name) (switch-to-buffer name))
         ((buffer-external? name) (load-external name))
         ((url-rooted-web? (current-buffer)) (load-buffer name))
         (else (load-buffer name))))
