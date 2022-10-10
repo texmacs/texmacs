@@ -427,6 +427,17 @@ table_descend (tree& t, path& p, tree& fm) {
   }
 }
 
+static void
+define_style_macros (edit_env& env, tree t) {
+  if (is_document (t) || is_concat (t)) {
+    int i, n=N(t);
+    for (i=0; i<n; i++)
+      define_style_macros (env, t[i]);
+  }
+  else if (is_func (t, ASSIGN, 2) && is_atomic (t[0]))
+    env->write (t[0]->label, t[1]);
+}
+
 void
 edit_typeset_rep::typeset_exec_until (path p) {
   // FIXME: we should ensure that p is inside the document
@@ -488,6 +499,8 @@ edit_typeset_rep::typeset_exec_until (path p) {
       env->write (MODE, "src");
   }
   else exec_until (ttt, p / rp);
+  if (env->read (MODE) == "src" && env->read (PREAMBLE) != "true")
+    define_style_macros (env, subtree (et, rp));
   env->read_env (cur (p));
   //time_t t2= texmacs_time ();
   //if (t2 - t1 >= 10) cout << "typeset_exec_until took " << t2-t1 << "ms\n";
