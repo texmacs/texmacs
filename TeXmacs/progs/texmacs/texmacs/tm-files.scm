@@ -139,7 +139,7 @@
   (cond ((== buf (current-buffer)) (noop))
         ((nnull? (buffer->windows buf))
          (switch-to-window (car (buffer->windows buf))))
-        (else (smart-switch-to-buffer buf))))
+        (else (switch-to-buffer buf))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Saving buffers
