@@ -1135,7 +1135,7 @@
 (define (tmtex-large-decode s)
   (cond ((nstring? s) ".")
         ((in? s '("(" ")" "[" "]" "|" "/" ".")) s)
-        ((== s "||") "\\|")
+        ((in? s '("||" "<||>")) "\\|")
         ((== s "\\") "\\backslash")
         ((and (string-starts? s "<") (string-ends? s ">"))
          (string-append "\\" (substring s 1 (- (string-length s) 1))))
