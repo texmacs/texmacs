@@ -836,6 +836,8 @@
   (with m (tree->stree (get-env-tree "gr-mode"))
     (cond ((string? m)
 	   `(edit ,(string->symbol m)))
+          ((== m '(uninit))
+           `(edit none))
           ((pair? m)
            (map string->symbol (cdr m))))))
 
