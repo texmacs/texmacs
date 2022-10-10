@@ -62,10 +62,10 @@
   (bib-preprocessing (cdr t))
   (if (and (list? t) (func? t 'document))
       (with ts (bib-sorted-entries (cdr t))
-        (bib-simplify
-         `(bib-list
-           ,(number->string (length ts))
-           (document ,@(format-entries 1 ts)))))))
+	(bib-simplify
+	 `(bib-list
+	   ,(number->string (length ts))
+	   (document ,@(format-entries 1 ts)))))))
 
 (tm-define bib-functions-table (make-hash-table 100))
 
@@ -80,14 +80,14 @@
 (tm-define-macro (bib-define-style s d)
   (if (equal? s d)
       `(begin
-         (set! bib-default-style ,s)
-         (texmacs-modes (,(string->symbol (string-append "bib-" s "%"))
-                         (bib-mode? ,s))))
+	 (set! bib-default-style ,s)
+	 (texmacs-modes (,(string->symbol (string-append "bib-" s "%"))
+			 (bib-mode? ,s))))
       `(begin
-         (set! bib-default-style ,d)
-         (texmacs-modes (,(string->symbol (string-append "bib-" s "%"))
-                         (bib-mode? ,s)
-                         ,(string->symbol (string-append "bib-" d "%")))))))
+	 (set! bib-default-style ,d)
+	 (texmacs-modes (,(string->symbol (string-append "bib-" s "%"))
+			 (bib-mode? ,s)
+			 ,(string->symbol (string-append "bib-" d "%")))))))
 
 (tm-define (bib-with-style s f . args)
   (with tmp-s bib-style
@@ -124,7 +124,7 @@
 (define (elim-empty x)
   (if (bib-null? x) `()
       (if (bib-null? (car x)) (elim-empty (cdr x))
-          `(,(car x) ,@(elim-empty (cdr x))))))
+	  `(,(car x) ,@(elim-empty (cdr x))))))
 
 (tm-define (new-list-rec s x)
   ;; redefined in ieeetr.scm
@@ -172,7 +172,7 @@
 
 (tm-define (bib-translate s) `(localize ,s))
 
-(tm-define bib-range-symbol "–")
+(tm-define bib-range-symbol "")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sample function
@@ -182,8 +182,8 @@
   (:secure #t)
   (if (tree-compound? t) t
       (let* ((s (tree->string t))
-             (i (string-search-forwards " " 0 s))
-             (m (number->string i))
-             (e (number->string (string-length s))))
-        (if (< i 0) t
-            `(concat (range ,t "0" ,m) (name (range ,t ,m ,e)))))))
+	     (i (string-search-forwards " " 0 s))
+	     (m (number->string i))
+	     (e (number->string (string-length s))))
+	(if (< i 0) t
+	    `(concat (range ,t "0" ,m) (name (range ,t ,m ,e)))))))

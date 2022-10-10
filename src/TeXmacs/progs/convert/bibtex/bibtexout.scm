@@ -130,7 +130,7 @@
      (output-verbatim "{" (cadr x) "--" (caddr x) "}"))
     ((bibtex-match x 'bib-pages 1)
      (output-verbatim "{" (cadr x) "}"))
-    ((string? x) (output-verbatim "{" (cork->utf8 x) "}"))
+    ((string? x) (output-verbatim "{" x "}"))
     ((if (bibtex-has-var x)
 	 (bibtex-arg-var (cdr x))
 	 (begin
@@ -206,7 +206,7 @@
 	(id (caddr x))
 	(fields (cdddr x)))
     (begin
-      (output-verbatim pre (upcase-first type) "{" (cork->utf8 id))
+      (output-verbatim pre (upcase-first type) "{" id)
       (if (not (null? fields))
 	  (begin
 	    (output-verbatim ",")
