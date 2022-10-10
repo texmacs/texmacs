@@ -66,6 +66,11 @@
   (with t (buffer-tree)
     (and (tree-is? t 'document)
          (tree-is? t :last 'screens))))
+         
+(tm-define (slideshow-buffer?)
+  (with t (buffer-tree)
+    (and (tree-is? t 'document)
+        (tree-is? t :last 'slideshow))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic movements for fold tags and switches
