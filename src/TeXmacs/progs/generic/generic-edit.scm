@@ -223,6 +223,11 @@
 (tm-define (swipe-up) (noop))
 (tm-define (swipe-down) (noop))
 
+(tm-define (pinch-start) (noop))
+(tm-define (pinch-end) (noop))
+(tm-define (pinch-scale scale) (noop))
+(tm-define (pinch-rotate angle) (noop))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic predicates
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
