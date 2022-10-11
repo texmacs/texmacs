@@ -171,6 +171,26 @@
   (set! the-graphics-drop-object (tm->stree obj)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Gestures in graphics mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define pinch-current-scale #f)
+
+(tm-define (pinch-start)
+  (:mode in-active-graphics?)
+  (set! pinch-current-scale (graphics-get-zoom)))
+
+(tm-define (pinch-end)
+  (:mode in-active-graphics?)
+  (set! pinch-current-scale #f))
+
+(tm-define (pinch-scale scale)
+  (:mode in-active-graphics?)
+  (when (not pinch-current-scale)
+    (pinch-start))
+  (graphics-set-zoom (* scale pinch-current-scale)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Overriding standard structured editing commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

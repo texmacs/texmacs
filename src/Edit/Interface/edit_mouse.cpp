@@ -551,8 +551,17 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
       (type == "press-right"))
     notify_change (THE_DECORATIONS);
 
-  if (starts (type, "swipe-"))
-    eval ("(" * type * ")");
+  if (starts (type, "swipe-")) eval ("(" * type * ")");
+
+  if (type == "pinch-start") eval ("(pinch-start)");
+  if (type == "pinch-end") eval ("(pinch-end)");
+
+  if (starts (type, "scale-"))
+    eval ("(pinch-scale " * type (6, N(type)) * ")");
+  if (starts (type, "rotate-left-"))
+    eval ("(pinch-rotate " * type (12, N(type)) * ")");
+  if (starts (type, "rotate-right-"))
+    eval ("(pinch-rotate -" * type (13, N(type)) * ")");
 }
 
 /******************************************************************************
