@@ -701,13 +701,13 @@ QTMWidget::gestureEvent (QGestureEvent* event) {
     hotspot = swipe->hotSpot ();
     if (swipe->state() == Qt::GestureFinished) {
       if (swipe->horizontalDirection() == QSwipeGesture::Left)
-        s= s * "-left";
-      if (swipe->horizontalDirection() == QSwipeGesture::Right)
-        s= s * "-right";
-      if (swipe->verticalDirection() == QSwipeGesture::Up)
-        s= s * "-up";
-      if (swipe->verticalDirection() == QSwipeGesture::Down)
-        s= s * "-down";
+        s= "swipe-left";
+      else if (swipe->horizontalDirection() == QSwipeGesture::Right)
+        s= "swipe-right";
+      else if (swipe->verticalDirection() == QSwipeGesture::Up)
+        s= "swipe-up";
+      else if (swipe->verticalDirection() == QSwipeGesture::Down)
+        s= "swipe-down";
     }
     else {
       event->accept ();

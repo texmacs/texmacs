@@ -550,6 +550,9 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
       (type == "press-middle") ||
       (type == "press-right"))
     notify_change (THE_DECORATIONS);
+
+  if (starts (type, "swipe-"))
+    eval ("(" * type * ")");
 }
 
 /******************************************************************************
