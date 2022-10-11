@@ -178,6 +178,9 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_widget _tmwid)
   setAttribute (Qt::WA_InputMethodEnabled);
   surface ()->setMouseTracking (true);
   surface ()->setAcceptDrops (true);
+  grabGesture (Qt::PanGesture);
+  grabGesture (Qt::PinchGesture);
+  grabGesture (Qt::SwipeGesture);
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5,9,0))
   surface ()->setTabletTracking (true);
@@ -687,6 +690,78 @@ QTMWidget::tabletEvent (QTabletEvent* event) {
 }
 #endif
 
+void
+QTMWidget::gestureEvent (QGestureEvent* event) {
+  if (is_nil (tmwid)) return;
+  string s= "gesture";
+  QPointF hotspot;
+  if (QGesture *swipe_gesture = event->gesture(Qt::SwipeGesture)) {
+    QSwipeGesture *swipe= static_cast<QSwipeGesture *> (swipe_gesture);
+    s= "swipe";
+    hotspot = swipe->hotSpot ();
+    if (swipe->state() == Qt::GestureFinished) {
+      if (swipe->horizontalDirection() == QSwipeGesture::Left)
+        s= s * "-left";
+      if (swipe->horizontalDirection() == QSwipeGesture::Right)
+        s= s * "-right";
+      if (swipe->verticalDirection() == QSwipeGesture::Up)
+        s= s * "-up";
+      if (swipe->verticalDirection() == QSwipeGesture::Down)
+        s= s * "-down";
+    }
+    else {
+      event->accept ();
+      return;
+    }
+  }
+  else if (QGesture *pan_gesture = event->gesture(Qt::PanGesture)) {
+    QPanGesture *pan= static_cast<QPanGesture *> (pan_gesture);
+    string s= "pan";
+    hotspot = pan->hotSpot ();
+    //QPointF delta = pan->delta();
+    //cout << "Pan " << delta.x() << ", " << delta.y() << LF;
+  }
+  else if (QGesture *pinch_gesture = event->gesture(Qt::PinchGesture)) {
+    QPinchGesture *pinch= static_cast<QPinchGesture *> (pinch_gesture);
+    s= "pinch";
+    hotspot = pinch->hotSpot ();
+    QPinchGesture::ChangeFlags changeFlags = pinch->changeFlags();
+    if (changeFlags & QPinchGesture::RotationAngleChanged) {
+      qreal a1 = pinch->lastRotationAngle();
+      qreal a2 = pinch->rotationAngle();
+      if (a2 != a1) {
+        if (a2 >= 0) s= "rotate-right-" * as_string (a2);
+        else s= "rotate-left-" * as_string (-a2);
+      }
+      else {
+        pinch->setRotationAngle (0.0);
+        s= "rotate-end";
+      }
+    }
+    else if (changeFlags & QPinchGesture::ScaleFactorChanged) {
+      qreal s1 = pinch->lastScaleFactor();
+      qreal s2 = pinch->scaleFactor();
+      if (s1 != s2) s= "scale-" * as_string (s2);
+      else {
+        pinch->setScaleFactor (1.0);
+        s= "scale-end";
+      }      
+    }
+    else if (pinch->state() == Qt::GestureFinished) {
+      pinch->setRotationAngle (0.0);
+      pinch->setScaleFactor (1.0);
+      s= "pinch-end";
+    }
+  }
+  else return;
+  QPoint point (hotspot.x(), hotspot.y());
+  coord2 pt = from_qpoint (point);
+  the_gui->process_mouse (tm_widget(), s, pt.x1, pt.x2, 
+                          0, texmacs_time ());
+  event->accept();
+}
+
+ 
 bool
 QTMWidget::event (QEvent* event) {
     // Catch Keypresses to avoid default handling of (Shift+)Tab keys
@@ -700,6 +775,10 @@ QTMWidget::event (QEvent* event) {
    shortcut text in the menus while relaying all keypresses through the editor*/
   if (event->type() == QEvent::ShortcutOverride) {
     event->accept();
+    return true;
+  }
+  if (event->type() == QEvent::Gesture) {
+    gestureEvent(static_cast<QGestureEvent*>(event));
     return true;
   }
   return QTMScrollView::event (event);
