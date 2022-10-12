@@ -161,6 +161,14 @@
   (:require (toggle-context? t))
   (alternate-toggle t))
 
+(tm-define (structured-minimize t)
+  (:require (toggle-second-context? t))
+  (alternate-toggle t))
+
+(tm-define (structured-maximize t)
+  (:require (toggle-first-context? t))
+  (alternate-toggle t))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Operations on switch trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
