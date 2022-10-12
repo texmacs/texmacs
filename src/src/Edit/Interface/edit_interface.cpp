@@ -610,6 +610,7 @@ edit_interface_rep::update_menus () {
   SERVER (menu_main ("(horizontal (link texmacs-menu))"));
   SERVER (menu_icons (0, "(horizontal (link texmacs-main-icons))"));
   SERVER (menu_icons (1, "(horizontal (link texmacs-mode-icons))"));
+  SERVER (menu_icons (2, "(horizontal (link texmacs-focus-icons))"));
   SERVER (menu_icons (3, "(horizontal (link texmacs-extra-icons))"));
   array<url> a= buffer_to_windows (buf->buf->name);
   if (N(a) > 0) {
@@ -619,19 +620,6 @@ edit_interface_rep::update_menus () {
   }
   SERVER (bottom_tools (0, "(vertical (link texmacs-bottom-tools))"));
   set_footer ();
-  if (!gui_interrupted ()) drd_update ();
-  cache_memorize ();
-  last_update= last_change;
-  save_user_preferences ();
-}
-
-void
-edit_interface_rep::update_focus_toolbar () {
-  SERVER (menu_icons (2, "(horizontal (link texmacs-focus-icons))"));
-}
-
-void
-edit_interface_rep::update_title () {
   if (has_current_window ()) {
     array<url> ws= buffer_to_windows (
                      window_to_buffer (
@@ -641,6 +629,10 @@ edit_interface_rep::update_title () {
     for (int i=0; i<n; i++)
       concrete_window (ws[i])->set_modified (ns);
   }
+  if (!gui_interrupted ()) drd_update ();
+  cache_memorize ();
+  last_update= last_change;
+  save_user_preferences ();
 }
 
 int
@@ -717,12 +709,6 @@ edit_interface_rep::apply_changes () {
 
   // cout << "Applying changes " << env_change << " to " << get_name() << "\n";
   // time_t t1= texmacs_time ();
-  if (!(env_change & THE_FREEZE)) {
-    update_focus_toolbar ();
-  }
-  if (env_change & THE_TREE) {
-    update_title ();
-  }
   
   // cout << "Handling automatic resizing\n";
   int sb= 1;

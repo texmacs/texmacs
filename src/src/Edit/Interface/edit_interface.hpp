@@ -131,8 +131,6 @@ public:
   int  idle_time (int event_type= ANY_EVENT);
   int  change_time ();
   void update_menus ();
-  void update_focus_toolbar ();
-  void update_title ();
   int  find_alt_selection_index (range_set alt_sel, SI y, int b, int e);
   void apply_changes ();
   void animate ();
