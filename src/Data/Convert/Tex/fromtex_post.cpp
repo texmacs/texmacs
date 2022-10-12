@@ -531,7 +531,7 @@ finalize_layout (tree t) {
         continue;
       }
 
-      if (is_func (v, BEGIN, 2) && is_enunciation (v)) {
+      if (is_func (v, BEGIN, 2) && is_enunciation (v) && v[0] != "proof*") {
         string s= as_string (v[0]);
         s= s(0, N(s)-1);
         r << tree (BEGIN, s) << compound ("dueto", v[1]);
