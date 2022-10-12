@@ -187,29 +187,35 @@
 ;; Gestures in graphics mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define pinch-current-scale #f)
+(define pinch-graphics-scale #f)
 
 (tm-define (pinch-start)
   (:mode in-active-graphics?)
-  (set! pinch-current-scale (graphics-get-zoom)))
+  (set! pinch-graphics-scale (graphics-get-zoom)))
 
 (tm-define (pinch-end)
   (:mode in-active-graphics?)
-  (set! pinch-current-scale #f))
+  (set! pinch-graphics-scale #f))
 
-(tm-define (pinch-scale scale)
+(tm-define (pinch-scale scale*)
   (:mode in-active-graphics?)
-  (when (not pinch-current-scale)
+  (when (not pinch-graphics-scale)
     (pinch-start))
-  (graphics-set-zoom (* scale pinch-current-scale)))
+  (let* ((old (graphics-get-zoom))
+         (lg (/ (log scale*) (log 2.0)))
+         (lg* (/ (round (* 24.0 lg)) 24.0))
+         (scale (exp (* (log 2.0) lg*))))
+    (graphics-set-zoom (* scale pinch-graphics-scale))))
 
 (tm-define (wheel-capture?)
   (:mode in-active-graphics?)
   #t)
 
-(tm-define (graphics-wheel dx dy)
-  (graphics-move-origin (string-append dx "gw")
-                        (string-append dy "gh")))
+(tm-define (graphics-wheel dx* dy*)
+  (let* ((dx (/ (round (* (string->number dx*) 100.0)) 100.0))
+         (dy (/ (round (* (string->number dy*) 100.0)) 100.0)))
+    (graphics-move-origin (string-append (number->string dx) "gw")
+                          (string-append (number->string dy) "gh"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Overriding standard structured editing commands
