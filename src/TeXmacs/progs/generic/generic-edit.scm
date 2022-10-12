@@ -228,6 +228,9 @@
 (tm-define (pinch-scale scale) (noop))
 (tm-define (pinch-rotate angle) (noop))
 
+(tm-define (wheel-capture?) #f)
+(tm-define (wheel-event x y) (noop))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic predicates
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
