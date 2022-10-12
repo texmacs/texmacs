@@ -211,6 +211,16 @@
 	(length-increase (tree-ref t 1) inc)
 	(length-increase (tree-ref t 2) inc)))))
 
+(tm-define (geometry-scale t scale*)
+  (:require (var-space-context? t))
+  (with-focus-after t
+    (let* ((old (tree->stree t))
+           (scale (sqrt (sqrt (+ (abs scale*) 0.000001))))
+           (mult (if (== (tree-arity t) 1) 1.0 0.001)))
+      (when pinch-modified? (undo 0))
+      (for-each (cut length-scale <> scale mult) (tree-children t))
+      (set! pinch-modified? (!= (tree->stree t) old)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Rubber horizontal spaces
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -243,6 +253,16 @@
     (with-focus-after t
       (rubber-space-increase t inc))))
 
+(tm-define (geometry-scale t scale*)
+  (:require (hspace-context? t))
+  (with-focus-after t
+    (let* ((old (tree->stree t))
+           (scale (sqrt (sqrt (+ (abs scale*) 0.000001))))
+           (mult (if (== (tree-arity t) 1) 1.0 0.001)))
+      (when pinch-modified? (undo 0))
+      (for-each (cut length-scale <> scale mult) (tree-children t))
+      (set! pinch-modified? (!= (tree->stree t) old)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Vertical spaces
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -261,6 +281,15 @@
   (with inc (if down? 1 -1)
     (with-focus-after t
       (rubber-space-increase t inc))))
+
+(tm-define (geometry-scale t scale*)
+  (:require (vspace-context? t))
+  (with-focus-after t
+    (let* ((old (tree->stree t))
+           (scale (sqrt (sqrt (+ (abs scale*) 0.000001)))))
+      (when pinch-modified? (undo 0))
+      (for-each (cut length-scale <> scale 0.2) (tree-children t))
+      (set! pinch-modified? (!= (tree->stree t) old)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Vertical adjustments
@@ -467,12 +496,12 @@
 (tm-define (geometry-scale t scale*)
   (:require (image-context? t))
   (with-focus-after t
-    (let* ((scale (sqrt (+ (abs scale*) 0.000001)))
+    (let* ((old (tree->stree t))
+           (scale (sqrt (sqrt (+ (abs scale*) 0.000001))))
            (e1? (tree-empty? (tree-ref t 1)))
            (e2? (tree-empty? (tree-ref t 2)))
-           (step (if (or e1? e2?) 0.5 0.001)))
+           (mult (if (or e1? e2?) 0.5 0.001)))
       (when pinch-modified? (undo 0))
-      (with old (tree->stree t)
-        (length-scale (tree-ref t 1) scale step)
-        (length-scale (tree-ref t 2) scale step)
-        (set! pinch-modified? (!= (tree->stree t) old))))))
+      (length-scale (tree-ref t 1) scale mult)
+      (length-scale (tree-ref t 2) scale mult)
+      (set! pinch-modified? (!= (tree->stree t) old)))))
