@@ -425,17 +425,13 @@ attach_subformat (tree t, url u, string fm) {
   string inferred_fm= suffix_to_format (s);
   if (!is_empty (inferred_fm) && inferred_fm != "generic") fm= inferred_fm;
   if (fm == "verbatim") return t;
-  
+  if (!prog_lang_exists (fm)) return t;
+
   hashmap<string,tree> h (UNINIT, extract (t, "initial"));
   h (MODE)= "prog";
   h (PROG_LANGUAGE)= fm;
-  if (prog_lang_exists (fm)) {
-    tree t2= change_doc_attr (t, "initial", make_collection (h));
-    tree t3= change_doc_attr (t2, "style", tree ("code"));
-    return t3;
-  } else {
-    return change_doc_attr (t, "initial", make_collection (h));
-  }
+  tree t2= change_doc_attr (t, "initial", make_collection (h));
+  return change_doc_attr (t2, "style", tree ("code"));
 }
 
 tree
