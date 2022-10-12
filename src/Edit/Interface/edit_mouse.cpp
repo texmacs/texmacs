@@ -482,7 +482,15 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
     }
     //cout << "Tremble+ " << tremble_count << LF;
   }
-  last_x= x; last_y= y; last_t= t;
+
+  if (!starts (type, "swipe-") && !starts (type, "pinch-") &&
+      !starts (type, "scale-") && !starts (type, "rotate-") &&
+      type != "wheel") {
+    last_x= x;
+    last_y= y;
+    last_t= t;
+  }
+
   bool move_like=
     (type == "move" || type == "dragging-left" || type == "dragging-right");
   if ((!move_like) || (is_attached (this) && !check_event (MOTION_EVENT)))
@@ -504,7 +512,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
     destroy_window_widget (popup_win);
     popup_win= widget ();
   }
-  
+
   if (starts (type, "swipe-")) eval ("(" * type * ")");
   if (type == "pinch-start") eval ("(pinch-start)");
   if (type == "pinch-end") eval ("(pinch-end)");
