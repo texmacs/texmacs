@@ -94,7 +94,15 @@
   (:mode in-active-graphics?)
   ("+" (graphics-zoom-in))
   ("-" (graphics-zoom-out))
-  ("0" (graphics-set-zoom 0.5))
+  ("A-1" (graphics-set-zoom 1))
+  ("A-2" (graphics-set-zoom 0.5))
+  ("A-3" (graphics-set-zoom 0.333333333333))
+  ("A-4" (graphics-set-zoom 0.25))
+  ("A-5" (graphics-set-zoom 0.2))
+  ("A-6" (graphics-set-zoom 0.166666666666))
+  ("A-7" (graphics-set-zoom 0.142857142857))
+  ("A-8" (graphics-set-zoom 0.125))
+  ("A-9" (graphics-set-zoom 0.111111111111))
   ("1" (graphics-set-zoom 1.0))
   ("2" (graphics-set-zoom 2.0))
   ("3" (graphics-set-zoom 3.0))
@@ -104,6 +112,10 @@
   ("7" (graphics-set-zoom 7.0))
   ("8" (graphics-set-zoom 8.0))
   ("9" (graphics-set-zoom 9.0))
+  ("c" (graphics-set-origin "0.5gw" "0.5gh"))
+  ("t" (graphics-set-origin "0gw" "1gh"))
+  ("l" (graphics-set-origin "0gw" "0.5gh"))
+  ("b" (graphics-set-origin "0gw" "0gh"))
   ("#" (graphics-toggle-grid))
   ("!" (open-plots-editor "scheme" "default" ""))
   ("left" (graphics-move-origin-left))
@@ -157,6 +169,7 @@
 
 (define graphics-keys
   '("+" "-" "1" "2" "3" "4" "5" "6" "7" "8" "9" "0" "#" "!"
+    "c" "l" "b" "t"
     "left" "right" "down" "up" "home" "end" "pageup" "pagedown"
     "return" "backspace" "delete" "tab"
     "F1" "F2" "F3" "F4" "F9" "F10" "F11" "F12"))
@@ -189,6 +202,14 @@
   (when (not pinch-current-scale)
     (pinch-start))
   (graphics-set-zoom (* scale pinch-current-scale)))
+
+(tm-define (wheel-capture?)
+  (:mode in-active-graphics?)
+  #t)
+
+(tm-define (graphics-wheel dx dy)
+  (graphics-move-origin (string-append dx "gw")
+                        (string-append dy "gh")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Overriding standard structured editing commands

@@ -551,6 +551,9 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
       (type == "press-right"))
     notify_change (THE_DECORATIONS);
 
+  if (type == "wheel")
+    eval ("(wheel-event " * as_string (x) * " " * as_string (y) * ")");
+  
   if (starts (type, "swipe-")) eval ("(" * type * ")");
 
   if (type == "pinch-start") eval ("(pinch-start)");

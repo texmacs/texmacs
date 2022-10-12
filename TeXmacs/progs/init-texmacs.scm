@@ -190,7 +190,8 @@
            texmacs-insert-icons insert-link-menu insert-image-menu)
 (lazy-define (generic document-edit) update-document set-document-language
              get-init-page-rendering init-page-rendering)
-(lazy-define (generic generic-edit) notify-activated notify-disactivated)
+(lazy-define (generic generic-edit) notify-activated notify-disactivated
+             wheel-capture?)
 (lazy-define (generic generic-doc) focus-help)
 (lazy-define (generic search-widgets) search-toolbar replace-toolbar
              open-search toolbar-search-start interactive-search
@@ -284,8 +285,9 @@
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting graphics mode\n")
-(lazy-keyboard (graphics graphics-kbd) in-active-graphics?)
-(lazy-menu (graphics graphics-menu) graphics-menu graphics-icons)
+(lazy-keyboard (graphics graphics-kbd) in-active-graphics? graphics-wheel)
+(lazy-menu (graphics graphics-menu) graphics-menu graphics-icons
+           graphics-focus-icons)
 (lazy-define (graphics graphics-object)
              graphics-reset-state graphics-decorations-update)
 (lazy-define (graphics graphics-utils) make-graphics)

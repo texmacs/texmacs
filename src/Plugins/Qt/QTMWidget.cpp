@@ -920,15 +920,55 @@ QTMWidget::dropEvent (QDropEvent *event) {
   }
 }
 
+static unsigned int
+wheel_state (QWheelEvent* event) {
+  // TODO: factor mouse_state, tablet_state, wheel_state
+  // This should be easier on modern versions of Qt
+  unsigned int i= 0;
+  Qt::MouseButtons bstate= event->buttons ();
+  Qt::KeyboardModifiers kstate= event->modifiers ();
+  if ((bstate & Qt::LeftButton     ) != 0) i += 1;
+  if ((bstate & Qt::MidButton      ) != 0) i += 2;
+  if ((bstate & Qt::RightButton    ) != 0) i += 4;
+  if ((bstate & Qt::XButton1       ) != 0) i += 8;
+  if ((bstate & Qt::XButton2       ) != 0) i += 16;
+#ifdef Q_OS_MAC
+    // We emulate right and middle clicks with ctrl and option, but we pass the
+    // modifiers anyway: old code continues to work and new one can use them.
+  if ((kstate & Qt::MetaModifier   ) != 0) i = 1024+4; // control key
+  if ((kstate & Qt::AltModifier    ) != 0) i = 2048+2; // option key
+  if ((kstate & Qt::ShiftModifier  ) != 0) i += 256;
+  if ((kstate & Qt::ControlModifier) != 0) i += 4096;   // cmd key
+#else
+  if ((kstate & Qt::ShiftModifier  ) != 0) i += 256;
+  if ((kstate & Qt::ControlModifier) != 0) i += 1024;
+  if ((kstate & Qt::AltModifier    ) != 0) i += 2048;
+  if ((kstate & Qt::MetaModifier   ) != 0) i += 4096;
+#endif
+  return i;
+}
+
 void
 QTMWidget::wheelEvent(QWheelEvent *event) {
-  if (QApplication::keyboardModifiers() == Qt::ControlModifier) {
-    if (event->delta() > 0) {
-      call ("zoom-in", object (sqrt (sqrt (2.0))));
-    } else {
-      call ("zoom-out", object (sqrt (sqrt (2.0))));
-    }
-  } else {
-    QAbstractScrollArea::wheelEvent(event);
+  if (is_nil (tmwid)) return; 
+  if (as_bool (call ("wheel-capture?"))) {
+#if (QT_VERSION >= 0x050000)
+    QPoint point = event->pixelDelta();
+#else
+    double delta= event->delta();
+    bool   hor  = event->orientation() == Qt::Horizontal;
+    QPoint point (hor? delta: 0.0, hor? 0.0: delta);
+#endif
+    coord2 pt = from_qpoint (point);
+    unsigned int mstate= wheel_state (event);
+    the_gui -> process_mouse (tm_widget(), "wheel", pt.x1, pt.x2,  
+                              mstate, texmacs_time ());
   }
+  else if (QApplication::keyboardModifiers() == Qt::ControlModifier) {
+    if (event->delta() > 0)
+      call ("zoom-in", object (sqrt (sqrt (2.0))));
+    else
+      call ("zoom-out", object (sqrt (sqrt (2.0))));
+  }
+  else QAbstractScrollArea::wheelEvent (event);
 }

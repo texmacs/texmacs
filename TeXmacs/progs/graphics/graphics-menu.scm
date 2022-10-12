@@ -39,7 +39,6 @@
 
 (menu-bind graphics-alignment-menu
   ("Top" (graphics-set-geo-valign "top"))
-  ("Axis" (graphics-set-geo-valign "axis"))
   ("Center" (graphics-set-geo-valign "center"))
   ("Bottom" (graphics-set-geo-valign "bottom")))
 

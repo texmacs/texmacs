@@ -480,11 +480,27 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t) {
   // apply_changes (); // FIXME: remove after review of synchronization
   frame f= find_frame ();
   if (!is_nil (f)) {
+    if (type == "wheel") {
+      point  p0= f [point (0.0, 0.0)];
+      point  p1= f [point (x, y)];
+      point  dp= p1 - p0;
+      //string sx= as_string (dp[0]);
+      //string sy= as_string (dp[1]);
+      //call ("graphics-wheel", sx, sy);
+      point lim1, lim2;
+      find_limits (lim1, lim2);
+      double dx= dp[0] / max (lim2[0] - lim1[0], 0.000001);
+      double dy= dp[1] / max (lim2[1] - lim1[1], 0.000001);
+      call ("graphics-wheel", as_string (dx), as_string (dy));
+      return true;
+    }
+
     if (!over_graphics (x, y))
       return false;
     if (type == "move" || type == "dragging-left")
       if (check_event (MOTION_EVENT))
         return true;
+
     point p = f [point (x, y)];
     graphical_select (p[0], p[1]); // init the caching for adjust().
     p= adjust (p);
