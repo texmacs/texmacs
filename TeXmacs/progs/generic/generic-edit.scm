@@ -223,10 +223,38 @@
 (tm-define (swipe-up) (noop))
 (tm-define (swipe-down) (noop))
 
-(tm-define (pinch-start) (noop))
-(tm-define (pinch-end) (noop))
-(tm-define (pinch-scale scale) (noop))
-(tm-define (pinch-rotate angle) (noop))
+(tm-define pinch-modified? #f)
+(tm-define pinch-current-scale 1.0)
+(tm-define pinch-current-angle 0.0)
+
+(tm-define (pinch-clear)
+  (set! pinch-modified? #f)
+  (set! pinch-current-scale 1.0)
+  (set! pinch-current-angle 0.0))
+
+(tm-define (structured-maximize t)
+  (and-with p (tree-outer t)
+    (structured-maximize p)))
+
+(tm-define (structured-minimize t)
+  (and-with p (tree-outer t)
+    (structured-minimize p)))
+
+(tm-define (pinch-start)
+  (pinch-clear))
+
+(tm-define (pinch-end)
+  (cond ((> pinch-current-scale 1.05)
+         (structured-maximize (focus-tree)))
+        ((< pinch-current-scale 0.95)
+         (structured-minimize (focus-tree))))
+  (pinch-clear))
+
+(tm-define (pinch-scale scale)
+  (geometry-scale (focus-tree) scale))
+
+(tm-define (pinch-rotate angle)
+  (geometry-rotate (focus-tree) angle))
 
 (tm-define (wheel-capture?) #f)
 (tm-define (wheel-event x y) (noop))
@@ -523,6 +551,16 @@
 (tm-define (geometry-incremental t down?)
   (and-with p (tree-outer t)
     (geometry-incremental p down?)))
+
+(tm-define (geometry-scale t scale)
+  (with p (tree-outer t)
+    (if p (geometry-scale p scale)
+        (set! pinch-current-scale scale))))
+
+(tm-define (geometry-rotate t angle)
+  (with p (tree-outer t)
+    (if p (geometry-rotate p angle)
+        (set! pinch-current-angle angle))))
 
 (tm-define (geometry-slower)
   (geometry-speed (focus-tree) #f))
