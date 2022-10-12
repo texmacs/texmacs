@@ -726,6 +726,27 @@ QTMWidget::gestureEvent (QGestureEvent* event) {
     s= "pinch";
     hotspot = pinch->hotSpot ();
     QPinchGesture::ChangeFlags changeFlags = pinch->changeFlags();
+#if (QT_VERSION >= 0x050000)
+    if (pinch->state() == Qt::GestureStarted) {
+      pinch->setRotationAngle (0.0);
+      pinch->setScaleFactor (1.0);
+      s= "pinch-start";
+    }
+    else if (pinch->state() == Qt::GestureFinished) {
+      pinch->setRotationAngle (0.0);
+      pinch->setScaleFactor (1.0);
+      s= "pinch-end";
+    }
+    else if (changeFlags & QPinchGesture::RotationAngleChanged) {
+      qreal angle = pinch->rotationAngle();
+      if (angle >= 0) s= "rotate-right-" * as_string (angle);
+      else s= "rotate-left-" * as_string (-angle);
+    }
+    else if (changeFlags & QPinchGesture::ScaleFactorChanged) {
+      qreal scale = pinch->totalScaleFactor();
+      s= "scale-" * as_string (scale);
+    }
+#else
     if (pinch->state() == Qt::GestureStarted) {
       QPoint point (hotspot.x(), hotspot.y());
       coord2 pt = from_qpoint (point);
@@ -739,10 +760,6 @@ QTMWidget::gestureEvent (QGestureEvent* event) {
         if (a2 >= 0) s= "rotate-right-" * as_string (a2);
         else s= "rotate-left-" * as_string (-a2);
       }
-      //else {
-      //  pinch->setRotationAngle (0.0);
-      //  s= "rotate-end";
-      //}
     }
     else if (changeFlags & QPinchGesture::ScaleFactorChanged) {
       qreal s1 = pinch->lastScaleFactor();
@@ -758,10 +775,12 @@ QTMWidget::gestureEvent (QGestureEvent* event) {
       pinch->setScaleFactor (1.0);
       s= "pinch-end";
     }
+#endif
   }
   else return;
   QPoint point (hotspot.x(), hotspot.y());
   coord2 pt = from_qpoint (point);
+  //cout << s << ", " << pt.x1 << ", " << pt.x2 << LF;
   the_gui->process_mouse (tm_widget(), s, pt.x1, pt.x2, 
                           0, texmacs_time ());
   event->accept();
