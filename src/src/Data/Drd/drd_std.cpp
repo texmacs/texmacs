@@ -709,6 +709,8 @@ init_std_drd () {
         repeat (2, 1) -> returns_graphical () -> point_type (0));
   init (CSMOOTH, "csmooth",
         repeat (3, 1) -> returns_graphical () -> point_type (0));
+  init (CALLIGRAPHY, "calligraphy",
+        var_repeat (1, 1, BIFORM) -> returns_graphical () -> point_type (1));
   init (FILL, "fill",
         repeat (1, 1));                       // Not yet implemented
   init (IMAGE, "image",

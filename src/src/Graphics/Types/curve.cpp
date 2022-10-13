@@ -88,6 +88,7 @@ curvet_closest_points (
     bool stored= true;
     double nprec= n0;
     bool decreasing= false;
+    double max_step= 0.5 / max (c->nr_components (), 1);
     for (t=t1; t<=t2;) {
       point pt= c->evaluate(t);
       double n= norm (pt - p);
@@ -108,7 +109,7 @@ curvet_closest_points (
       if (stored && decreasing)
         n0= tm_infinity;
       double delta= (n - eps) / 2;
-      t += max (0.00001, c->bound (t, max (eps, delta)));
+      t += min (max_step, max (0.00001, c->bound (t, max (eps, delta))));
       nprec= n;
     }
     if (!stored && decreasing) {
@@ -1308,4 +1309,38 @@ truncate (curve c, double portion, double eps) {
     else rem -= d;
   }
   return c;
+}
+
+/******************************************************************************
+* Changing the control points
+******************************************************************************/
+
+struct recontrol_curve_rep: public curve_rep {
+  curve c;
+  array<point> a;
+  array<path> cip;
+  recontrol_curve_rep (curve c2, array<point> a2, array<path> cip2):
+    c (c2), a (a2), cip (cip2) {}
+  int nr_components () { return c->nr_components (); }
+  point evaluate (double t) { return c (t); }
+  void rectify_cumul (array<point>& a, double e) { c->rectify_cumul (a, e); }
+  double bound (double t, double eps) { return c->bound (t, eps); }
+  point grad (double t, bool& error) { return c->grad (t, error); }
+  double curvature (double u1, double u2) { return c->curvature (u1, u2); }
+  int get_control_points (
+    array<double>&abs, array<point>& a2, array<path>& cip2) {
+      a2= a;
+      cip2= cip;
+      int i, n= N(a);
+      abs= array<double> (n);
+      for (i=0; i<n; i++) abs[i]= i / (1.0 * max (1, n-1));
+      return n; }
+  array<double> find_closest_points (
+    double t1, double t2, point p, double eps) {
+      return c->find_closest_points (t1, t2, p, eps); }
+};
+
+curve
+recontrol (curve c, array<point> a, array<path> cip) {
+  return tm_new<recontrol_curve_rep> (c, a, cip);
 }

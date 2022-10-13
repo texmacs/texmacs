@@ -467,6 +467,61 @@ END_MAGNIFY
 }
 
 void
+concater_rep::typeset_calligraphy (tree t, path ip) {
+BEGIN_MAGNIFY
+  if (N(t) < 2 || N(t[N(t)-1]) < 1) typeset_error (t, ip);
+  else {
+    int i, n= N(t), k=N(t[n-1]);
+    array<point> a(n-1);
+    for (i=0; i<n-1; i++)
+      a[i]= env->as_point (env->exec (t[i]));
+    array<path> ipa(n-1);
+    for (i=0; i<n-1; i++)
+      ipa[i]= descend (ip, i);
+    array<point> b(k);
+    for (i=0; i<k; i++)
+      b[i]= env->as_point (env->exec (t[n-1][i]));
+    array<path> ipb(k);
+    for (i=0; i<k; i++)
+      ipb[i]= descend (descend (ip, n-1), i);
+    if (N(b) == 1) {
+      b << copy (b[0]);
+      ipb << ipb[0];
+    }
+    if (N(a) >= 1 && N(b) >= 1 && b[0] != a[0]) {
+      point dp= a[0] - b[0];
+      for (i=0; i<k; i++)
+        b[i]= b[i] + dp;
+      b[0]= a[0];
+    }
+    if (N(a) >= 2 && N(b) >= 1 && b[N(b)-1] != a[1]) {
+      point d1= a[1] - a[0];
+      point d2= b[N(b)-1] - b[0];
+      if (norm (d1) != 0.0 && norm (d2) != 0.0) {
+        double mag= norm (d1) / norm (d2);
+        double an1= atan2 (d1[1], d1[0]);
+        double an2= atan2 (d2[1], d2[0]);
+        double dan= an1 - an2;
+        double m11= mag * cos (dan);
+        double m12= mag * sin (-dan);
+        double m21= -m12;
+        double m22= m11;
+        for (i=0; i<k; i++) {
+          point p= b[i] - b[0];
+          point q (m11 * p[0] + m12 * p[1], m21 * p[0] + m22 * p[1]);
+          b[i]= b[0] + q;
+        }
+      }
+    }
+    curve c = env->fr (recontrol (poly_segment (b, ipb), a, ipa));
+    print (curve_box (ip, c, env->line_portion, env->pen,
+                      env->dash_style, env->dash_motif, env->dash_style_unit,
+                      env->fill_brush, typeset_line_arrows (ip)));
+  }
+END_MAGNIFY
+}
+
+void
 concater_rep::typeset_fill (tree t, path ip) {
   (void) t; (void) ip;
   print (test_box (ip));

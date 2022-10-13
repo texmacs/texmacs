@@ -166,6 +166,7 @@ class concater_rep {
   void typeset_var_spline (tree t, path ip);
   void typeset_cspline (tree t, path ip);
   void typeset_bezier (tree t, path ip);
+  void typeset_calligraphy (tree t, path ip);
   void typeset_fill (tree t, path ip);
   void typeset_image (tree t, path ip);
   void typeset_graphics_3d (tree t, path ip);
