@@ -489,6 +489,59 @@
   (graphics-decorations-reset))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Calligraphy
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (edit_move mode x y)
+  (:require (== mode 'calligraphy))
+  (:state graphics-state)
+  (noop))
+
+(tm-define (edit_left-button mode x y)
+  (:require (== mode 'calligraphy))
+  (:state graphics-state)
+  (set-texmacs-pointer 'graphics-cross)
+  (edit-clean-up)
+  (object-set! `(with "point style" "disk"
+		      "point-size" ,(graphics-get-property "line-width")
+		  (point ,x ,y)) 'new))
+
+(tm-define (edit_start-drag mode x y)
+  (:require (== mode 'calligraphy))
+  (:state graphics-state)
+  (set-texmacs-pointer 'graphics-cross)
+  (edit-clean-up)
+  (let* ((cal `(calligraphy (point ,x ,y) (point ,x ,y)
+                            (tuple (tuple ,x ,y))))
+         (o (graphics-enrich cal)))
+    (graphics-store-state 'start-create)
+    (object-set! o 'checkout)
+    (graphics-store-state #f)))
+
+(tm-define (edit_drag mode x y)
+  (:require (== mode 'calligraphy))
+  (:state graphics-state)
+  (let* ((obj (car (sketch-get1)))
+         (cal (stree-radical obj))
+         (rad (cAr cal)))
+    (set-cdr! (cdr cal) (cons `(point ,x ,y) (cdddr cal)))
+    (set-cdr! rad (append (cdr rad) (list `(tuple ,x ,y))))
+    (object-set! obj))
+  (graphics-decorations-update))
+
+(tm-define (edit_end-drag mode x y)
+  (:require (== mode 'calligraphy))
+  (:state graphics-state)
+  (object_commit)
+  (graphics-decorations-reset))
+
+(tm-define (graphics-complete? obj)
+  (:require (tm-func? obj 'calligraphy))
+  ;; Temporarily redefine; we should decide on
+  ;; the arity of the 'calligraphy' tag
+  (>= (tm-arity obj) 3))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Don't dispatch certain actions on textual arguments of graphical macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

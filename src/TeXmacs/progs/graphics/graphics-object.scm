@@ -29,8 +29,11 @@
 (define infinity +inf.0)
 
 (define (is-point? p)
-  (and (pair? p) (in? (car p) '(point tuple))))
-  
+  (and (pair? p)
+       (in? (car p) '(point tuple))
+       (pair? (cdr p))
+       (npair? (cadr p))))
+
 (define (graphics-closest-point-pos-bis p l)
   (if (null? l)
       '()
