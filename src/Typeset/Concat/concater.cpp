@@ -810,6 +810,9 @@ concater_rep::typeset (tree t, path ip) {
   case CSMOOTH:
     typeset_bezier (t, ip);
     break;
+  case CALLIGRAPHY:
+    typeset_calligraphy (t, ip);
+    break;
   case FILL:
     typeset_fill (t, ip);
     break;
