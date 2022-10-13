@@ -44,6 +44,9 @@
 (define-group graphical-text-tag
   (graphical-short-text-tag) (graphical-long-text-tag))
 
+(define-group graphical-calligraphy-tag
+  calligraphy)
+
 (define-group graphical-contains-curve-tag
   (graphical-curve-tag))
 
@@ -210,6 +213,12 @@
             "doc-at-ppsep" "doc-at-border" "doc-at-padding")))
 
 (tm-define (graphics-attributes tag)
+  (:require (graphical-calligraphy-tag? tag))
+  (append (graphics-common-attributes)
+          '("line-width" "line-join" "line-caps" "line-effects" "line-portion"
+            "dash-style" "dash-style-unit")))
+
+(tm-define (graphics-attributes tag)
   (:require (graphical-group-tag? tag))
   (graphics-all-attributes))
 
@@ -230,6 +239,7 @@
 (tm-define (graphics-mode-attributes mode)
   (cond ((func? mode 'edit 1) (graphics-attributes (cadr mode)))
         ((func? mode 'hand-edit 1) (graphics-attributes (cadr mode)))
+        ((func? mode 'calligraphy 1) (graphics-attributes 'calligraphy))
         ((== mode '(group-edit props)) (graphics-all-attributes))
         ((== mode '(group-edit edit-props)) (graphics-all-attributes))
         (else '())))
