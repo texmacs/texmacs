@@ -158,3 +158,48 @@ alt_bezier_fit (array<point> a, int pack_size) {
     times << (1.0 * i) / (N(a) - 1.0);
   return alt_bezier_fit (a, segments, times);
 }
+
+/******************************************************************************
+* Gaussian smoothing
+******************************************************************************/
+
+array<point>
+refine (array<point> a, int factor) {
+  array<point> r;
+  if (N(a) == 0) return r;
+  r << a[0];
+  for (int i=1; i<N(a); i++)
+    for (int j=1; j<=factor; j++)
+      r << a[i-1] + (((double) j)/((double) factor)) * (a[i] - a[i-1]);
+  return r;
+}
+
+array<point>
+smoothen (array<point> a, int width) {
+  array<point> r;
+  int cached_w= -1;
+  array<double> coeffs;
+  double weight;
+  for (int i=0; i<N(a); i++) {
+    int w= min (i, min (N(a)-1-i, width));
+    if (w != cached_w) {
+      double alpha= 3.0 / max (w * w, 1);
+      coeffs= array<double> ();
+      weight= 0.0;
+      for (int j=0; j<=w; j++) {
+        double c= exp (-alpha * j * j);
+        coeffs << c;
+        weight += c;
+        if (j!=0) weight += c;
+      }
+      cached_w= w;
+    }
+    point cum (0.0, 0.0);
+    for (int j=-w; j<=w; j++) {
+      double c= coeffs [j>=0? j: -j];
+      cum = cum + c * a[i+j];
+    }
+    r << cum / weight;
+  }
+  return r;
+}
