@@ -1,7 +1,7 @@
 
 /******************************************************************************
-* MODULE     : bezier.hpp
-* DESCRIPTION: least square approximations by poly-Bezier curves
+* MODULE     : curve_extras.hpp
+* DESCRIPTION: helper routines for the manipulation of curves
 * COPYRIGHT  : (C) 2022  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
@@ -13,8 +13,9 @@
 #include "matrix.hpp"
 
 /******************************************************************************
-* For the first fitting method, each inner node comes with potentially
-* distinct incoming and outgoing slopes
+* Approximations by poly-Bezier curves using least square fitting
+* For this first method, each inner node comes with potentially distinct
+* incoming and outgoing slopes
 ******************************************************************************/
 
 matrix<double>
@@ -82,7 +83,8 @@ bezier_fit (array<point> a, int pack_size) {
 }
 
 /******************************************************************************
-* For the second fitting method, the incoming and outgoing slopes coincide
+* Approximations by poly-Bezier curves using least square fitting
+* For this second method, the incoming and outgoing slopes coincide
 * for each inner node
 ******************************************************************************/
 
