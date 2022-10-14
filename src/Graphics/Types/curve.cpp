@@ -287,7 +287,7 @@ struct poly_segment_rep: public curve_rep {
     a (a2), cip (cip2), n(N(a)-1) {}
   int nr_components () { return n; }
   point evaluate (double t) {
-    int i= min ((int) (n*t), n-1);
+    int i= max (min ((int) (n*t), n-1), 0);
     return (i+1 - n*t)*a[i] + (n*t - i)*a[i+1];
   }
   void rectify_cumul (array<point>& cum, double eps) {
@@ -328,6 +328,98 @@ poly_segment_rep::get_control_points (
 curve
 poly_segment (array<point> a, array<path> cip) {
   return tm_new<poly_segment_rep> (a, cip);
+}
+
+/******************************************************************************
+* Poly-smoothed segments
+******************************************************************************/
+
+struct poly_smoothed_rep: public curve_rep {
+  array<point> a;
+  array<double> ts;
+  array<path> cip;
+  double wt;
+  int n;
+  poly_smoothed_rep (array<point> a2, array<double> ts2,
+                     array<path> cip2, double wt2):
+    a (a2), ts (ts2), cip (cip2), wt (wt2), n(N(a)-1) {}
+  int nr_components () { return n; }
+  int find_index (double t) {
+    int lo= 0, hi= n;
+    if (t <= ts[lo]) return lo;
+    if (t >= ts[hi]) return hi - 1;
+    while (hi - lo > 1) {
+      int mid= (lo + hi) - 1;
+      if (t < ts[mid]) hi= mid;
+      else lo= mid;
+    }
+    return lo;
+  }
+  point old_evaluate (double t) {
+    if (t <= ts[0]) return a[0];
+    if (t >= ts[n]) return a[n];
+    int i0= find_index (t);
+    double t01= ts[i0];
+    double t02= ts[i0+1];
+    return ((t02-t) * a[i0] + (t-t01) * a[i0+1]) / (t02 - t01);
+  }
+  point evaluate (double t) { 
+    double w= min (min (wt, t), 1.0 - t);
+    int prec= 5;
+    double weight= 0.0;
+    double alpha= 3.0 / (prec * prec);
+    point cum (0.0, 0.0);
+    for (int i=-prec; i<=prec; i++) {
+      double c= exp (-alpha * i * i);
+      cum = cum + c * old_evaluate (t + (i*w) / prec);
+      weight += c;
+    }
+    return cum / weight;
+  }
+  void rectify_cumul (array<point>& cum, double eps) {
+    (void) eps;
+    for (int i=0; i<n; i++)
+      for (int j=1; j<=5; j++) {
+        double t= ts[i] + (j/5.0) * (ts[i+1] - ts[i]);
+        cum << evaluate (t);
+      }
+  }
+  double bound (double t, double eps) {
+    return curve_rep::bound (t, eps);
+  }
+  double curvature (double t1, double t2) {
+    (void) t1; (void) t2;
+    return tm_infinity;
+  }
+  point grad (double t, bool& error) {
+    error= false;
+    double eps= 1.0e-7;
+    point v1= evaluate (t);
+    point v2= evaluate (t + eps);
+    return (v2 - v1) / eps;
+  }
+  int get_control_points (
+    array<double>&abs, array<point>& pts, array<path>& rcip) {
+      abs= ts; pts= a; rcip= cip; return n+1; }
+};
+
+curve
+poly_smoothed (array<point> a, array<double> ts, array<path> cip, double wt) {
+  int n= N(a);
+  ASSERT (N(ts) == n && N(cip) == n, "incompatible lengths");
+  ASSERT (n >= 2 && ts[0] == 0.0 && ts[n-1] == 1.0, "invalid end points");
+  for (int i=1; i<n; i++)
+    ASSERT (ts[i] > ts[i-1], "consecutive times expected");
+  return tm_new<poly_smoothed_rep> (a, ts, cip, wt);
+}
+
+curve
+poly_smoothed (array<point> a, array<path> cip, double strength) {
+  ASSERT (N(a) >= 2, "invalid length");
+  array<double> ts;
+  int n= N(a) - 1;
+  for (int i=0; i<=n; i++) ts << ((double) i) / n;
+  return poly_smoothed (a, ts, cip, strength / N(a));
 }
 
 /******************************************************************************

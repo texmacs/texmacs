@@ -514,12 +514,20 @@ BEGIN_MAGNIFY
       }
     }
 
+    curve c= env->fr (recontrol (poly_smoothed (b, ipb, 2.0), a, ipa));
+    box cb= curve_box (ip, c, env->line_portion, env->pen,
+                       env->dash_style, env->dash_motif, env->dash_style_unit,
+                       env->fill_brush, typeset_line_arrows (ip));
+    print (cb);
+
+    /*
     array<point> bez= alt_bezier_fit (b, 10);
     curve c= env->fr (recontrol (poly_bezier (bez, ipb, false, false), a, ipa));
     box cb= curve_box (ip, c, env->line_portion, env->pen,
                        env->dash_style, env->dash_motif, env->dash_style_unit,
                        env->fill_brush, typeset_line_arrows (ip));
     print (cb);
+    */
 
     /*
     array<path> _ipb= copy (ipb);

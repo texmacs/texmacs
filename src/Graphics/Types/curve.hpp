@@ -75,6 +75,7 @@ ABSTRACT_NULL_CODE(curve);
 
 curve segment (point p1, point p2);
 curve poly_segment (array<point> a, array<path> cip);
+curve poly_smoothed (array<point> a, array<path> cip, double strength= 1.0);
 curve spline (
   array<point> a, array<path> cip, bool close=false, bool interpol=true);
 curve bezier (array<point> a);
