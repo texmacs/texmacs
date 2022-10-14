@@ -75,7 +75,6 @@ ABSTRACT_NULL_CODE(curve);
 
 curve segment (point p1, point p2);
 curve poly_segment (array<point> a, array<path> cip);
-curve poly_smoothed (array<point> a, array<path> cip, double strength= 1.0);
 curve spline (
   array<point> a, array<path> cip, bool close=false, bool interpol=true);
 curve bezier (array<point> a);
@@ -92,5 +91,7 @@ point closest (curve f, point p);
 
 array<point> bezier_fit (array<point> a, int pack_size);
 array<point> alt_bezier_fit (array<point> a, int pack_size);
+array<point> refine (array<point> a, int factor);
+array<point> smoothen (array<point> a, int width);
 
 #endif // defined CURVE_H

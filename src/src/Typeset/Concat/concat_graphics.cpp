@@ -514,7 +514,9 @@ BEGIN_MAGNIFY
       }
     }
 
-    curve c= env->fr (recontrol (poly_smoothed (b, ipb, 2.0), a, ipa));
+    array<point> rb= refine (b, 5);
+    array<point> sb= smoothen (rb, 10);
+    curve c= env->fr (recontrol (poly_segment (sb, ipb), a, ipa));
     box cb= curve_box (ip, c, env->line_portion, env->pen,
                        env->dash_style, env->dash_motif, env->dash_style_unit,
                        env->fill_brush, typeset_line_arrows (ip));
