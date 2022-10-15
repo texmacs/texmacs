@@ -374,9 +374,19 @@
 	       (lambda (x) (graphics-set-grid-color 'subunits x)) "Color")))
 
 (menu-bind graphics-pen-enhance-menu
-  ("None" (graphics-set-pen-enhance "none"))
-  ("Gaussian" (graphics-set-pen-enhance "default"))
-  ("Bezier" (graphics-set-pen-enhance "bezier")))
+  (group "Smoothing method")
+  ("None" (graphics-set-pen-enhance-method "none"))
+  ("Gaussian" (graphics-set-pen-enhance-method "default"))
+  ("Bezier" (graphics-set-pen-enhance-method "bezier"))
+  ---
+  (when (!= (graphics-get-pen-enhance-method) "none")
+    (group "Strength")
+    ("0.2" (graphics-set-pen-enhance-strength "0.2"))
+    ("0.5" (graphics-set-pen-enhance-strength "0.5"))
+    ("1" (graphics-set-pen-enhance-strength "1"))
+    ("2" (graphics-set-pen-enhance-strength "2"))
+    ("5" (graphics-set-pen-enhance-strength "5"))
+    ("Other" (interactive graphics-set-pen-enhance-strength))))
 
 (menu-bind graphics-point-style-menu
   ;;("Default" (graphics-set-point-style "default"))
@@ -780,8 +790,7 @@
     /
     (mini #t
       (group "Enhance:")
-      (let* ((ps (graphics-get-property "gr-pen-enhance"))
-             (s (if (== ps "default") "gaussian" ps)))
+      (with s (graphics-get-pen-enhance-method)
 	(=> (eval s)
 	    (link graphics-pen-enhance-menu)))))
   (assuming (graphics-mode-attribute? (graphics-mode) "point-style")

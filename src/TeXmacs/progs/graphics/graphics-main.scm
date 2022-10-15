@@ -917,10 +917,38 @@
   (:check-mark "*" (graphics-test-property? "gr-color"))
   (graphics-set-property "gr-color" val))
 
-(tm-define (graphics-set-pen-enhance val)
+(tm-define (graphics-get-pen-enhance-method)
+  (with v (graphics-get-property "gr-pen-enhance")
+    (cond ((== v "default") "gaussian")
+          ((string? v) v)
+          (else (cadr v)))))
+
+(define (graphics-test-pen-enhance-method val)
+  (when (== val "default") (set! val "gaussian"))
+  (== (graphics-get-pen-enhance-method) val))
+
+(tm-define (graphics-set-pen-enhance-method val)
   (:argument val "Pen enhance")
-  (:check-mark "*" (graphics-test-property? "gr-pen-enhance"))
-  (graphics-set-property "gr-pen-enhance" val))
+  (:check-mark "*" graphics-test-pen-enhance-method)
+  (with strength (graphics-get-pen-enhance-strength)
+    (with v (cond ((== strength "1") val)
+                  ((== val "default") `(tuple "gaussian" ,strength))
+                  (else `(tuple ,val ,strength)))
+      (graphics-set-property "gr-pen-enhance" v))))
+
+(tm-define (graphics-get-pen-enhance-strength)
+  (with v (graphics-get-property "gr-pen-enhance")
+    (if (string? v) "1" (caddr v))))
+
+(define (graphics-test-pen-enhance-strength val)
+  (== (graphics-get-pen-enhance-strength) val))
+
+(tm-define (graphics-set-pen-enhance-strength val)
+  (:argument val "Pen enhance")
+  (:check-mark "*" graphics-test-pen-enhance-strength)
+  (with method (graphics-get-pen-enhance-method)
+    (with v (if (== val "1") method `(tuple ,method ,val))
+      (graphics-set-property "gr-pen-enhance" v))))
 
 (tm-define (graphics-set-point-style val)
   (:argument val "Point style")
