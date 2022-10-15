@@ -478,7 +478,7 @@ is_graphical (tree t) {
     is_func (t, SPLINE) || is_func (t, CSPLINE) ||
     is_func (t, BEZIER) || is_func (t, CBEZIER) ||
     is_func (t, SMOOTH) || is_func (t, CSMOOTH) ||
-    is_func (t, CALLIGRAPHY);
+    is_func (t, PENSCRIPT) || is_func (t, CALLIGRAPHY);
 }
 
 static void

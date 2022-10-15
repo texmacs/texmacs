@@ -277,6 +277,8 @@ initialize_default_env () {
   env (GR_DOC_AT_PPSEP)    = "default";   // par-par-sep for new document-ats
   env (GR_DOC_AT_BORDER)   = "default";   // border of new document-ats
   env (GR_DOC_AT_PADDING)  = "default";   // padding for new document-ats
+  env (GR_PEN_ENHANCE)     = "default";   // smoothing method for hand-drawings
+  env (GR_PEN_STYLE)       = "default";   // pen style for hand-drawings
 
   env (GID)              = "default";   // graphical identifier
   env (ANIM_ID)          = "";          // identifier inside animations
@@ -307,6 +309,8 @@ initialize_default_env () {
   env (DOC_AT_PPSEP)     = "0fn";       // par-par-sep for document-ats
   env (DOC_AT_BORDER)    = "0ln";       // border of document-ats
   env (DOC_AT_PADDING)   = "0spc";      // padding for document-ats
+  env (PEN_ENHANCE)      = "gaussian";  // smoothing method for hand-drawings
+  env (PEN_STYLE)        = "default";   // pen style for hand-drawings
 
   env (SRC_STYLE)        = "angular";   // style for "source" tags
   env (SRC_SPECIAL)      = "normal";    // special treatment of certain tags

@@ -44,8 +44,14 @@
 (define-group graphical-text-tag
   (graphical-short-text-tag) (graphical-long-text-tag))
 
+(define-group graphical-penscript-tag
+  penscript)
+
 (define-group graphical-calligraphy-tag
   calligraphy)
+
+(define-group graphical-pen-tag
+  (graphical-penscript-tag) (graphical-calligraphy-tag))
 
 (define-group graphical-contains-curve-tag
   (graphical-curve-tag))
@@ -146,7 +152,9 @@
   ("doc-at-hmode" . "min")
   ("doc-at-ppsep" . "0fn")
   ("doc-at-border" . "0ln")
-  ("doc-at-padding" . "0spc"))
+  ("doc-at-padding" . "0spc")
+  ("pen-enhance" . "gaussian")
+  ("pen-style" . "default"))
 
 (tm-define (graphics-attribute-default attr)
   (if (gr-prefixed? attr)
@@ -213,10 +221,17 @@
             "doc-at-ppsep" "doc-at-border" "doc-at-padding")))
 
 (tm-define (graphics-attributes tag)
+  (:require (graphical-penscript-tag? tag))
+  (append (graphics-common-attributes)
+          '("pen-enhance"
+            "line-width" "line-join" "line-caps" "line-effects" "line-portion"
+            "dash-style" "dash-style-unit"
+            "arrow-begin" "arrow-end" "arrow-length" "arrow-height")))
+
+(tm-define (graphics-attributes tag)
   (:require (graphical-calligraphy-tag? tag))
   (append (graphics-common-attributes)
-          '("line-width" "line-join" "line-caps" "line-effects" "line-portion"
-            "dash-style" "dash-style-unit")))
+          '("pen-enhance" "pen-style" "line-width" "line-portion")))
 
 (tm-define (graphics-attributes tag)
   (:require (graphical-group-tag? tag))
@@ -239,7 +254,6 @@
 (tm-define (graphics-mode-attributes mode)
   (cond ((func? mode 'edit 1) (graphics-attributes (cadr mode)))
         ((func? mode 'hand-edit 1) (graphics-attributes (cadr mode)))
-        ((func? mode 'calligraphy 1) (graphics-attributes 'calligraphy))
         ((== mode '(group-edit props)) (graphics-all-attributes))
         ((== mode '(group-edit edit-props)) (graphics-all-attributes))
         (else '())))

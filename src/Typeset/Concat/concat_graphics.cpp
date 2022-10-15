@@ -514,22 +514,22 @@ BEGIN_MAGNIFY
       }
     }
 
-    array<point> rb= refine (b, 5);
-    array<point> sb= smoothen (rb, 10);
-    curve c= env->fr (recontrol (poly_segment (sb, ipb), a, ipa));
+    tree enhance= env->read (PEN_ENHANCE);
+    curve c;
+    if (enhance == "gaussian" || is_tuple (enhance, "gaussian")) {
+      array<point> rb= refine (b, 5);
+      array<point> sb= smoothen (rb, 10);
+      c= env->fr (recontrol (poly_segment (sb, ipb), a, ipa));
+    }
+    else if (enhance == "bezier" || is_tuple (enhance, "bezier")) {
+      array<point> bez= alt_bezier_fit (b, 10);
+      curve c= env->fr (recontrol (poly_bezier (bez, ipb, false, false), a, ipa));
+    }
+    else c= env->fr (recontrol (poly_segment (b, ipb), a, ipa));
     box cb= curve_box (ip, c, env->line_portion, env->pen,
                        env->dash_style, env->dash_motif, env->dash_style_unit,
                        env->fill_brush, typeset_line_arrows (ip));
     print (cb);
-
-    /*
-    array<point> bez= alt_bezier_fit (b, 10);
-    curve c= env->fr (recontrol (poly_bezier (bez, ipb, false, false), a, ipa));
-    box cb= curve_box (ip, c, env->line_portion, env->pen,
-                       env->dash_style, env->dash_motif, env->dash_style_unit,
-                       env->fill_brush, typeset_line_arrows (ip));
-    print (cb);
-    */
 
     /*
     array<path> _ipb= copy (ipb);
@@ -539,7 +539,6 @@ BEGIN_MAGNIFY
                         pencil (red, env->pen->get_width()),
                         env->dash_style, env->dash_motif, env->dash_style_unit,
                         env->fill_brush, typeset_line_arrows (ip));
-
     array<box> sb;
     sb << ccb << cb;
     print (composite_box (ip, sb));
