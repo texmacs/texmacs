@@ -950,6 +950,32 @@
     (with v (if (== val "1") method `(tuple ,method ,val))
       (graphics-set-property "gr-pen-enhance" v))))
 
+(tm-define (graphics-get-pen-style)
+  (with v (graphics-get-property "gr-pen-style")
+    (if (== v "default")
+        (list "oval" "1" "0")
+        (cdr v))))
+
+(tm-define (graphics-test-pen-ratio val)
+  (with (type ratio angle) (graphics-get-pen-style)
+    (== ratio val)))
+
+(tm-define (graphics-set-pen-ratio val)
+  (:argument val "Pen ratio")
+  (:check-mark "*" graphics-test-pen-ratio)
+  (with (type ratio angle) (graphics-get-pen-style)
+    (graphics-set-property "gr-pen-style" `(tuple ,type ,val ,angle))))
+
+(tm-define (graphics-test-pen-angle val)
+  (with (type ratio angle) (graphics-get-pen-style)
+    (== angle val)))
+
+(tm-define (graphics-set-pen-angle val)
+  (:argument val "Pen angle")
+  (:check-mark "*" graphics-test-pen-angle)
+  (with (type ratio angle) (graphics-get-pen-style)
+    (graphics-set-property "gr-pen-style" `(tuple ,type ,ratio ,val))))
+
 (tm-define (graphics-set-point-style val)
   (:argument val "Point style")
   (:check-mark "*" (graphics-test-property? "gr-point-style"))

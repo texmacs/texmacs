@@ -231,7 +231,7 @@
 (tm-define (graphics-attributes tag)
   (:require (graphical-calligraphy-tag? tag))
   (append (graphics-common-attributes)
-          '("pen-enhance" "pen-style" "line-width" "line-portion")))
+          '("pen-enhance" "pen-style" "line-width")))
 
 (tm-define (graphics-attributes tag)
   (:require (graphical-group-tag? tag))

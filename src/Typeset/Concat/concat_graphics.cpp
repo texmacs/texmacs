@@ -527,19 +527,40 @@ BEGIN_MAGNIFY
 
     curve c;
     if (method == "gaussian" || method == "default") {
-      array<point> rb= refine (b, 5);
-      array<point> sb= smoothen (rb, (int) round (10 * strength));
-      c= env->fr (recontrol (poly_segment (sb, ipb), a, ipa));
+      b= refine (b, 5);
+      b= smoothen (b, (int) round (10 * strength));
+      c= env->fr (recontrol (poly_segment (b, ipb), a, ipa));
     }
-    else if (method == "bezier") {
+    else if (method == "bezier" && !is_func (t, CALLIGRAPHY)) {
       strength= max (0.5, strength);
       array<point> bez= alt_bezier_fit (b, (int) round (10 * strength));
       c= env->fr (recontrol (poly_bezier (bez, ipb, false, false), a, ipa));
     }
     else c= env->fr (recontrol (poly_segment (b, ipb), a, ipa));
-    box cb= curve_box (ip, c, env->line_portion, env->pen,
-                       env->dash_style, env->dash_motif, env->dash_style_unit,
-                       env->fill_brush, typeset_line_arrows (ip));
+
+    box cb;
+    if (is_func (t, CALLIGRAPHY)) {
+      tree style= env->read (PEN_STYLE);
+      double w = 0.5 * env->fr->inverse_scalar (env->pen->get_width ());
+      double mx= 1.0;
+      double my= 1.0;
+      double an= 1.0;
+      if (is_tuple (style, "oval", 2)) {
+        my= as_double (style[1]);
+        an= 0.0174532925199432957691 * as_double (style[2]);
+      }
+      array<point> oval= oval_profile (mx * w, my * w, an, 37);
+      array<point> cal = calligraphy (b, oval);
+      cal << cal[0];
+      c= env->fr (recontrol (poly_segment (cal, ipb), a, ipa));
+      color col= env->pen->get_color ();
+      cb= curve_box (ip, c, 1.0, pencil (col, 0),
+                     array<bool> (), array<point> (), PIXEL,
+                     brush (col), array<box> ());
+    }
+    else cb= curve_box (ip, c, env->line_portion, env->pen,
+                        env->dash_style, env->dash_motif, env->dash_style_unit,
+                        env->fill_brush, typeset_line_arrows (ip));
     print (cb);
 
     /*
