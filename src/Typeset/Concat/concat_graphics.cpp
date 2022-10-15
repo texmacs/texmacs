@@ -514,15 +514,26 @@ BEGIN_MAGNIFY
       }
     }
 
-    tree enhance= env->read (PEN_ENHANCE);
+    tree   enhance = env->read (PEN_ENHANCE);
+    string method  = "gaussian";
+    double strength= 1.0;
+    if (is_atomic (enhance)) method= enhance->label;
+    else if (is_func (enhance, TUPLE, 2) &&
+             is_atomic (enhance[0]) && is_atomic (enhance[1])) {
+      method  = enhance[0]->label;
+      strength= as_double (enhance[1]->label);
+      strength= max (0.2, min (5.0, strength));
+    }
+
     curve c;
-    if (enhance == "gaussian" || is_tuple (enhance, "gaussian")) {
+    if (method == "gaussian" || method == "default") {
       array<point> rb= refine (b, 5);
-      array<point> sb= smoothen (rb, 10);
+      array<point> sb= smoothen (rb, (int) round (10 * strength));
       c= env->fr (recontrol (poly_segment (sb, ipb), a, ipa));
     }
-    else if (enhance == "bezier" || is_tuple (enhance, "bezier")) {
-      array<point> bez= alt_bezier_fit (b, 10);
+    else if (method == "bezier") {
+      strength= max (0.5, strength);
+      array<point> bez= alt_bezier_fit (b, (int) round (10 * strength));
       c= env->fr (recontrol (poly_bezier (bez, ipb, false, false), a, ipa));
     }
     else c= env->fr (recontrol (poly_segment (b, ipb), a, ipa));
