@@ -11,6 +11,8 @@
 
 #include "point.hpp"
 #include "matrix.hpp"
+#include "path.hpp"
+#include "curve.hpp"
 
 /******************************************************************************
 * Approximations by poly-Bezier curves using least square fitting
@@ -200,6 +202,111 @@ smoothen (array<point> a, int width) {
       cum = cum + c * a[i+j];
     }
     r << cum / weight;
+  }
+  return r;
+}
+
+/******************************************************************************
+* Calligraphy
+******************************************************************************/
+
+static double TWO_PI= 6.283185307179586;
+
+double
+get_phi (curve c, double t) {
+  bool error= false;
+  point g= c->grad (t, error);
+  while (error) {
+    t += 0.000001;
+    if (t >= 1.0) t -= 1.0;
+    g= c->grad (t, error);
+  }
+  if (g == point (0.0, 0.0)) return 0.0;
+  double phi= atan2 (g[1], g[0]) / TWO_PI;
+  return phi - floor (phi);
+}
+
+array<point>
+angle_profile (curve c, int nr) {
+  array<point> r;
+  int steps= 5*nr;
+  double t = 0.0;
+  double dt= 1.0 / steps;
+  double phi0= get_phi (c, t);
+  double phi1= get_phi (c, t + dt);
+  for (int i=0; i<nr; i++) {
+    double psi= ((double) i) / ((double) nr);
+    while (true) {
+      if ((phi0 <= phi1 && (phi0 <= psi && psi < phi1)) ||
+          (phi1 + 1.0e-6 < phi0 && ((phi0 <= psi && psi < phi1 + 1) ||
+                                    (phi0 - 1 <= psi && psi < phi1)))) break;
+      phi0= phi1;
+      t += dt;
+      if (t >= 1.0) t -= 1.0;
+      phi1= get_phi (c, t + dt);
+    }
+    r << c->evaluate (t);
+  }
+  return r;
+}
+
+array<point>
+oval_profile (double rx, double ry, double a, int nr) {
+  array<point> oval;
+  int n= 5*nr;
+  double cos_a = cos (a);
+  double sin_a = sin (a);
+  for (int i=0; i<n; i++) {
+    double phi= (TWO_PI * i) / n;
+    double x  = rx * cos (phi);
+    double y  = ry * sin (phi);
+    double tx =  cos_a * x + sin_a * y;
+    double ty = -sin_a * x + cos_a * y;
+    oval << point (tx, ty);
+  }
+  curve oval_c= poly_segment (oval, array<path> ());
+  return angle_profile (oval_c, nr);
+}
+
+array<point>
+calligraphy (array<point> a, array<point> pen) {
+  int p= N(pen);
+  array<point> c;
+  c << a;
+  for (int i=N(a)-2; i>=0; i--) c << a[i];
+  c << a[1];
+  int prev_k= -1;
+  double prev_phi;
+  array<point> r;
+  for (int i=0; i<N(c)-1; i++) {
+    point c0= c[i];
+    point c1= c[i+1];
+    point dc= c1 - c0;
+    if (c1 != c0) {
+      double phi= atan2 (dc[1], dc[0]) / TWO_PI;
+      phi= phi - floor (phi);
+      int k= round (phi * p);
+      if (k == p) k= 0;
+      if (k != prev_k && prev_k != -1) {
+        double dphi= phi - prev_phi;
+        dphi= phi - round (phi);
+        if (dphi >= 0.0 || dphi < 0.4999999) {
+          int nr= k - prev_k;
+          if (nr < 0) nr += p;
+          for (int j=prev_k; j<(prev_k+nr); j++)
+            r << c0 + pen[j<p? j: j-p];
+        }
+        else {
+          int nr= prev_k - k;
+          if (nr < 0) nr += p;
+          for (int j=prev_k; j>(prev_k-nr); j--)
+            r << c0 + pen[j>=0? j: j+p];
+        }
+      }
+      r << c0 + pen[k];
+      prev_k  = k;
+      prev_phi= phi;
+    }
   }
   return r;
 }

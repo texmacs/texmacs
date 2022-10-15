@@ -290,7 +290,8 @@
   ("Text" (graphics-set-mode '(edit text-at)))
   ("Mathematics" (graphics-set-mode '(edit math-at)))
   ("Long text" (graphics-set-mode '(edit document-at)))
-  ("Hand drawn" (graphics-set-mode '(hand-edit penscript))) 
+  ("Penscript" (graphics-set-mode '(hand-edit penscript)))
+  ("Calligraphy" (graphics-set-mode '(hand-edit calligraphy)))
   (assuming (style-has? "std-markup-dtd")
     (with u '(arrow-with-text arrow-with-text*)
       (with l (list-filter u (lambda (s) (style-has? (symbol->string s))))
@@ -387,6 +388,28 @@
     ("2" (graphics-set-pen-enhance-strength "2"))
     ("5" (graphics-set-pen-enhance-strength "5"))
     ("Other" (interactive graphics-set-pen-enhance-strength))))
+
+(menu-bind graphics-pen-style-menu
+  (group "Aspect ratio")
+  ("0.25" (graphics-set-pen-ratio "0.25"))
+  ("0.5" (graphics-set-pen-ratio "0.5"))
+  ("1" (graphics-set-pen-ratio "1"))
+  ("2" (graphics-set-pen-ratio "2"))
+  ("3" (graphics-set-pen-ratio "3"))
+  ("4" (graphics-set-pen-ratio "4"))
+  ("5" (graphics-set-pen-ratio "5"))
+  ("Other" (interactive graphics-set-pen-ratio))
+  ---
+  (group "Angle")
+  ("-60" (graphics-set-pen-angle "-60"))
+  ("-45" (graphics-set-pen-angle "-45"))
+  ("-30" (graphics-set-pen-angle "-30"))
+  ("0" (graphics-set-pen-angle "0"))
+  ("30" (graphics-set-pen-angle "30"))
+  ("45" (graphics-set-pen-angle "45"))
+  ("60" (graphics-set-pen-angle "60"))
+  ("90" (graphics-set-pen-angle "90"))
+  ("Other" (interactive graphics-set-pen-angle)))
 
 (menu-bind graphics-point-style-menu
   ;;("Default" (graphics-set-point-style "default"))
@@ -636,6 +659,8 @@
         (-> "Opacity" (link graphics-opacity-menu))))
     (assuming (graphics-mode-attribute? (graphics-mode) "pen-enhance")
       (-> "Enhance" (link graphics-pen-enhance-menu)))
+    (assuming (graphics-mode-attribute? (graphics-mode) "pen-style")
+      (-> "Pen style" (link graphics-pen-style-menu)))
     (assuming (graphics-mode-attribute? (graphics-mode) "point-style")
       (-> "Point style" (link graphics-point-style-menu)))
     (assuming (graphics-mode-attribute? (graphics-mode) "point-size")
@@ -793,6 +818,12 @@
       (with s (graphics-get-pen-enhance-method)
 	(=> (eval s)
 	    (link graphics-pen-enhance-menu)))))
+  (assuming (graphics-mode-attribute? (graphics-mode) "pen-style")
+    /
+    (mini #t
+      (group "Pen:")
+      (=> "oval"
+          (link graphics-pen-style-menu))))
   (assuming (graphics-mode-attribute? (graphics-mode) "point-style")
     /
     (mini #t
@@ -823,14 +854,16 @@
     /
     (mini #t
       (group "Line style:")
-      (let* ((lw (graphics-get-property "gr-line-width"))
-             (s (if (== lw "default") "1ln" lw)))
-	(=> (eval s)
-	    (link graphics-line-width-menu)))
-      (let* ((dash (graphics-get-property "gr-dash-style"))
-             (s (decode-dash dash)))
-        (=> (eval s)
-            (link graphics-dash-menu)))))
+      (assuming (graphics-mode-attribute? (graphics-mode) "line-width")
+        (let* ((lw (graphics-get-property "gr-line-width"))
+               (s (if (== lw "default") "1ln" lw)))
+          (=> (eval s)
+              (link graphics-line-width-menu))))
+      (assuming (graphics-mode-attribute? (graphics-mode) "dash-style")
+        (let* ((dash (graphics-get-property "gr-dash-style"))
+               (s (decode-dash dash)))
+          (=> (eval s)
+              (link graphics-dash-menu))))))
   (assuming
       (or (graphics-mode-attribute? (graphics-mode) "arrow-begin")
           (graphics-mode-attribute? (graphics-mode) "arrow-end"))
@@ -939,7 +972,8 @@
         ((== s '(group-edit move)) "move")
         ((== s '(group-edit zoom)) "resize")
         ((== s '(group-edit rotate)) "rotate")
-        ((== s '(hand-edit penscript)) "hand drawn")
+        ((== s '(hand-edit penscript)) "penscript")
+        ((== s '(hand-edit calligraphy)) "calligraphy")
         ((== s '(group-edit group-ungroup)) "group/ungroup")
         ((and (list-2? s) (== (car s) 'edit) (in? (cadr s) gr-tags-user))
          (symbol->string (cadr s)))
