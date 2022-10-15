@@ -709,6 +709,8 @@ init_std_drd () {
         repeat (2, 1) -> returns_graphical () -> point_type (0));
   init (CSMOOTH, "csmooth",
         repeat (3, 1) -> returns_graphical () -> point_type (0));
+  init (PENSCRIPT, "penscript",
+        var_repeat (1, 1, BIFORM) -> returns_graphical () -> point_type (1));
   init (CALLIGRAPHY, "calligraphy",
         var_repeat (1, 1, BIFORM) -> returns_graphical () -> point_type (1));
   init (FILL, "fill",
@@ -1219,6 +1221,8 @@ init_std_drd () {
   init_var (GR_DOC_AT_HMODE, TYPE_STRING);
   init_var (GR_DOC_AT_BORDER, TYPE_LENGTH);
   init_var (GR_DOC_AT_PADDING, TYPE_LENGTH);
+  init_var (GR_PEN_ENHANCE, TYPE_ADHOC);
+  init_var (GR_PEN_STYLE, TYPE_ADHOC);
 
   init_var (GID, TYPE_INTEGER);
   init_var (ANIM_ID, TYPE_INTEGER);
@@ -1248,6 +1252,8 @@ init_std_drd () {
   init_var (DOC_AT_HMODE, TYPE_STRING);
   init_var (DOC_AT_BORDER, TYPE_LENGTH);
   init_var (DOC_AT_PADDING, TYPE_LENGTH);
+  init_var (PEN_ENHANCE, TYPE_ADHOC);
+  init_var (PEN_STYLE, TYPE_ADHOC);
 
   init_var (SRC_STYLE, TYPE_STRING);
   init_var (SRC_SPECIAL, TYPE_STRING);

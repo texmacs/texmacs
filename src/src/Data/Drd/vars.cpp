@@ -282,6 +282,8 @@ string GR_DOC_AT_HMODE ("gr-doc-at-hmode");
 string GR_DOC_AT_PPSEP ("gr-doc-at-ppsep");
 string GR_DOC_AT_BORDER ("gr-doc-at-border");
 string GR_DOC_AT_PADDING ("gr-doc-at-padding");
+string GR_PEN_ENHANCE ("gr-pen-enhance");
+string GR_PEN_STYLE ("gr-pen-style");
 
 string GID ("gid");
 string ANIM_ID ("anim-id");
@@ -312,6 +314,8 @@ string DOC_AT_HMODE ("doc-at-hmode");
 string DOC_AT_PPSEP ("doc-at-ppsep");
 string DOC_AT_BORDER ("doc-at-border");
 string DOC_AT_PADDING ("doc-at-padding");
+string PEN_ENHANCE ("pen-enhance");
+string PEN_STYLE ("pen-style");
 
 /******************************************************************************
 * Environment variables for preamble mode
