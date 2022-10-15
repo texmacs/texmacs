@@ -373,6 +373,11 @@
   ("Other" (interactive
 	       (lambda (x) (graphics-set-grid-color 'subunits x)) "Color")))
 
+(menu-bind graphics-pen-enhance-menu
+  ("None" (graphics-set-pen-enhance "none"))
+  ("Gaussian" (graphics-set-pen-enhance "default"))
+  ("Bezier" (graphics-set-pen-enhance "bezier")))
+
 (menu-bind graphics-point-style-menu
   ;;("Default" (graphics-set-point-style "default"))
   ;;---
@@ -619,6 +624,8 @@
     (assuming (graphics-mode-attribute? (graphics-mode) "opacity")
       (assuming (== (get-preference "experimental alpha") "on")
         (-> "Opacity" (link graphics-opacity-menu))))
+    (assuming (graphics-mode-attribute? (graphics-mode) "pen-enhance")
+      (-> "Enhance" (link graphics-pen-enhance-menu)))
     (assuming (graphics-mode-attribute? (graphics-mode) "point-style")
       (-> "Point style" (link graphics-point-style-menu)))
     (assuming (graphics-mode-attribute? (graphics-mode) "point-size")
@@ -769,6 +776,14 @@
                (s (if (== o "default") "100%" o)))
           (=> (eval s)
               (link graphics-opacity-menu))))))
+  (assuming (graphics-mode-attribute? (graphics-mode) "pen-enhance")
+    /
+    (mini #t
+      (group "Enhance:")
+      (let* ((ps (graphics-get-property "gr-pen-enhance"))
+             (s (if (== ps "default") "gaussian" ps)))
+	(=> (eval s)
+	    (link graphics-pen-enhance-menu)))))
   (assuming (graphics-mode-attribute? (graphics-mode) "point-style")
     /
     (mini #t

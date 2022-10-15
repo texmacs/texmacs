@@ -523,7 +523,7 @@ BEGIN_MAGNIFY
     }
     else if (enhance == "bezier" || is_tuple (enhance, "bezier")) {
       array<point> bez= alt_bezier_fit (b, 10);
-      curve c= env->fr (recontrol (poly_bezier (bez, ipb, false, false), a, ipa));
+      c= env->fr (recontrol (poly_bezier (bez, ipb, false, false), a, ipa));
     }
     else c= env->fr (recontrol (poly_segment (b, ipb), a, ipa));
     box cb= curve_box (ip, c, env->line_portion, env->pen,

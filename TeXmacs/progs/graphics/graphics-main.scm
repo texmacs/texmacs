@@ -917,6 +917,11 @@
   (:check-mark "*" (graphics-test-property? "gr-color"))
   (graphics-set-property "gr-color" val))
 
+(tm-define (graphics-set-pen-enhance val)
+  (:argument val "Pen enhance")
+  (:check-mark "*" (graphics-test-property? "gr-pen-enhance"))
+  (graphics-set-property "gr-pen-enhance" val))
+
 (tm-define (graphics-set-point-style val)
   (:argument val "Point style")
   (:check-mark "*" (graphics-test-property? "gr-point-style"))
