@@ -330,13 +330,13 @@
 (tm-define (edit_right-button mode x y)
   (display* "Uncaptured graphical right-button " mode ", " x ", " y "\n"))
 
-(tm-define (edit_start-drag mode x y)
+(tm-define (edit_start-drag mode x y t p)
   (edit_left-button mode x y))
 
-(tm-define (edit_drag mode x y)
+(tm-define (edit_drag mode x y t p)
   (edit_move mode x y))
 
-(tm-define (edit_end-drag mode x y)
+(tm-define (edit_end-drag mode x y t p)
   (edit_left-button mode x y))
 
 (tm-define (edit_tab-key mode inc)
@@ -404,7 +404,7 @@
   (when current-obj
     (graphics-delete)))
 
-(tm-define (edit_start-drag mode x y)
+(tm-define (edit_start-drag mode x y t p)
   (:require (== mode 'edit))
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross)
@@ -420,13 +420,13 @@
       (edit-insert x y))
   (set! previous-leftclick `(point ,current-x ,current-y)))
 
-(tm-define (edit_drag mode x y)
+(tm-define (edit_drag mode x y t p)
   (:require (== mode 'edit))
   (:state graphics-state)
   (edit_move mode x y)
   (set-message "Release left button: finish editing" "Dragging"))
 
-(tm-define (edit_end-drag mode x y)
+(tm-define (edit_end-drag mode x y t p)
   (:require (== mode 'edit))
   (:state graphics-state)
   (when dragging-busy?
@@ -466,30 +466,35 @@
 		      "point-size" ,(graphics-get-property "line-width")
 		  (point ,x ,y)) 'new))
 
-(tm-define (edit_start-drag mode x y)
+(tm-define (edit_start-drag mode x y t* p*)
   (:require (== mode 'hand-edit))
   (:state graphics-state)
   (set-texmacs-pointer 'graphics-cross)
   (edit-clean-up)
-  (let* ((pen (cadr (graphics-mode)))
-         (cal `(,pen (point ,x ,y) (point ,x ,y) (tuple (tuple ,x ,y))))
+  (let* ((t (number->string t*))
+         (p (number->string p*))
+         (pen (cadr (graphics-mode)))
+         (cal `(,pen (point ,x ,y) (point ,x ,y)
+                     (tuple (tuple ,x ,y ,t ,p))))
          (o (graphics-enrich cal)))
     (graphics-store-state 'start-create)
     (object-set! o 'checkout)
     (graphics-store-state #f)))
 
-(tm-define (edit_drag mode x y)
+(tm-define (edit_drag mode x y t* p*)
   (:require (== mode 'hand-edit))
   (:state graphics-state)
-  (let* ((obj (car (sketch-get1)))
+  (let* ((t (number->string t*))
+         (p (number->string p*))
+         (obj (car (sketch-get1)))
          (cal (stree-radical obj))
          (rad (cAr cal)))
     (set-cdr! (cdr cal) (cons `(point ,x ,y) (cdddr cal)))
-    (set-cdr! rad (append (cdr rad) (list `(tuple ,x ,y))))
+    (set-cdr! rad (append (cdr rad) (list `(tuple ,x ,y ,t ,p))))
     (object-set! obj))
   (graphics-decorations-update))
 
-(tm-define (edit_end-drag mode x y)
+(tm-define (edit_end-drag mode x y t p)
   (:require (== mode 'hand-edit))
   (:state graphics-state)
   (object_commit)
@@ -515,17 +520,17 @@
   ;; FIXME: should destroy graphical macro
   (noop))
 
-(tm-define (edit_start-drag mode x y)
+(tm-define (edit_start-drag mode x y t p)
   (:require (edit-macro-arg? mode))
   (:state graphics-state)
   (noop))
 
-(tm-define (edit_drag mode x y)
+(tm-define (edit_drag mode x y t p)
   (:require (edit-macro-arg? mode))
   (:state graphics-state)
   (noop))
 
-(tm-define (edit_end-drag mode x y)
+(tm-define (edit_end-drag mode x y t p)
   (:require (edit-macro-arg? mode))
   (:state graphics-state)
   (noop))

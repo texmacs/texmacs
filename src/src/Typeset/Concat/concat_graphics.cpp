@@ -466,6 +466,15 @@ BEGIN_MAGNIFY
 END_MAGNIFY
 }
 
+static array<point>
+project2 (array<point> a) {
+  int i, n= N(a);
+  array<point> r (n);
+  for (i=0; i<n; i++)
+    r[i]= point (a[i][0], a[i][1]);
+  return r;
+}
+
 void
 concater_rep::typeset_calligraphy (tree t, path ip) {
 BEGIN_MAGNIFY
@@ -490,13 +499,17 @@ BEGIN_MAGNIFY
     }
     if (N(a) >= 1 && N(b) >= 1 && b[0] != a[0]) {
       point dp= a[0] - b[0];
-      for (i=0; i<k; i++)
-        b[i]= b[i] + dp;
-      b[0]= a[0];
+      for (i=0; i<k; i++) {
+        b[i][0]= b[i][0] + dp[0];
+        b[i][1]= b[i][1] + dp[1];
+      }
+      b[0][0]= a[0][0];
+      b[0][1]= a[0][1];
     }
     if (N(a) >= 2 && N(b) >= 1 && b[N(b)-1] != a[1]) {
       point d1= a[1] - a[0];
       point d2= b[N(b)-1] - b[0];
+      d2= point (d2[0], d2[1]);
       if (norm (d1) != 0.0 && norm (d2) != 0.0) {
         double mag= norm (d1) / norm (d2);
         double an1= atan2 (d1[1], d1[0]);
@@ -506,10 +519,11 @@ BEGIN_MAGNIFY
         double m12= mag * sin (-dan);
         double m21= -m12;
         double m22= m11;
-        for (i=0; i<k; i++) {
+        for (i=1; i<k; i++) {
           point p= b[i] - b[0];
           point q (m11 * p[0] + m12 * p[1], m21 * p[0] + m22 * p[1]);
-          b[i]= b[0] + q;
+          b[i][0]= b[0][0] + q[0];
+          b[i][1]= b[0][1] + q[1];
         }
       }
     }
@@ -529,14 +543,15 @@ BEGIN_MAGNIFY
     if (method == "gaussian" || method == "default") {
       b= refine (b, 5);
       b= smoothen (b, (int) round (10 * strength));
-      c= env->fr (recontrol (poly_segment (b, ipb), a, ipa));
+      c= env->fr (recontrol (poly_segment (project2 (b), ipb), a, ipa));
     }
     else if (method == "bezier" && !is_func (t, CALLIGRAPHY)) {
       strength= max (0.5, strength);
       array<point> bez= alt_bezier_fit (b, (int) round (10 * strength));
+      bez= project2 (bez);
       c= env->fr (recontrol (poly_bezier (bez, ipb, false, false), a, ipa));
     }
-    else c= env->fr (recontrol (poly_segment (b, ipb), a, ipa));
+    else c= env->fr (recontrol (poly_segment (project2 (b), ipb), a, ipa));
 
     box cb;
     if (is_func (t, CALLIGRAPHY)) {

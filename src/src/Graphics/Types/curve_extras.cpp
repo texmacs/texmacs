@@ -196,7 +196,7 @@ smoothen (array<point> a, int width) {
       }
       cached_w= w;
     }
-    point cum (0.0, 0.0);
+    point cum= 0.0 * a[0];
     for (int j=-w; j<=w; j++) {
       double c= coeffs [j>=0? j: -j];
       cum = cum + c * a[i+j];
@@ -279,10 +279,17 @@ calligraphy (array<point> a, array<point> pen) {
   double prev_phi;
   array<point> r;
   for (int i=0; i<N(c)-1; i++) {
-    point c0= c[i];
-    point c1= c[i+1];
-    point dc= c1 - c0;
+    point  c0= c[i];
+    point  c1= c[i+1];
+    double p0= 1.0;
+    if (N(c0) > 2) {
+      if (N(c0) >= 4) p0= c0[3];
+      c0= point (c0[0], c0[1]);
+    }
+    if (N(c1) > 2)
+      c1= point (c1[0], c1[1]);
     if (c1 != c0) {
+      point dc= c1 - c0;
       double phi= atan2 (dc[1], dc[0]) / TWO_PI;
       phi= phi - floor (phi);
       int k= round (phi * p);
@@ -294,16 +301,16 @@ calligraphy (array<point> a, array<point> pen) {
           int nr= k - prev_k;
           if (nr < 0) nr += p;
           for (int j=prev_k; j<(prev_k+nr); j++)
-            r << c0 + pen[j<p? j: j-p];
+            r << c0 + p0 * pen[j<p? j: j-p];
         }
         else {
           int nr= prev_k - k;
           if (nr < 0) nr += p;
           for (int j=prev_k; j>(prev_k-nr); j--)
-            r << c0 + pen[j>=0? j: j+p];
+            r << c0 + p0 * pen[j>=0? j: j+p];
         }
       }
-      r << c0 + pen[k];
+      r << c0 + p0 * pen[k];
       prev_k  = k;
       prev_phi= phi;
     }
