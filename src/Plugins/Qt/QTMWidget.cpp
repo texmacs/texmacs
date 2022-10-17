@@ -663,8 +663,15 @@ QTMWidget::tabletEvent (QTabletEvent* event) {
     double x= point.x() + event->hiResGlobalX() - event->globalX();
     double y= point.y() + event->hiResGlobalY() - event->globalY();
     coord2 pt= coord2 ((SI) (x * PIXEL), (SI) (-y * PIXEL));
+    array<double> data;
+    data << ((double) event->pressure())
+         << ((double) event->rotation())
+         << ((double) event->xTilt())
+         << ((double) event->yTilt())
+         << ((double) event->z())
+         << ((double) event->tangentialPressure());
     the_gui->process_mouse (tm_widget(), s, pt.x1, pt.x2, 
-                            mstate, texmacs_time ());
+                            mstate, texmacs_time (), data);
   }
   /*
   cout << HRULE << LF;

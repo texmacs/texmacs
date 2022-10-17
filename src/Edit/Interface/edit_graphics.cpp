@@ -510,6 +510,7 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t,
     string sx= as_string (p[0]);
     string sy= as_string (p[1]);
     invalidate_graphical_object ();
+    double pressure= (N(data) == 0? 1.0: data[0]);
     call ("set-keyboard-modifiers", object (m));
     if (type == "move")
       call ("graphics-move", sx, sy);
@@ -520,11 +521,11 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t,
     else if (type == "release-right" || type == "double-right")
       call ("graphics-release-right", sx, sy);
     else if (type == "start-drag-left")
-      call ("graphics-start-drag-left", sx, sy);
+      call ("graphics-start-drag-left", sx, sy, (double) t, pressure);
     else if (type == "dragging-left")
-      call ("graphics-dragging-left", sx, sy);
+      call ("graphics-dragging-left", sx, sy, (double) t, pressure);
     else if (type == "end-drag-left")
-      call ("graphics-end-drag-left", sx, sy);
+      call ("graphics-end-drag-left", sx, sy, (double) t, pressure);
     else if (type == "start-drag-right")
       call ("graphics-start-drag-right", sx, sy);
     else if (type == "dragging-right")
