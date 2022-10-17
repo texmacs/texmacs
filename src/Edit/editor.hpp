@@ -191,7 +191,8 @@ public:
   virtual bool complete_keypress (string key) = 0;
   virtual string session_complete_command (tree t) = 0;
   virtual void custom_complete (tree t) = 0;
-  virtual void mouse_any (string s, SI x, SI y, int mods, time_t t) = 0;
+  virtual void mouse_any (string s, SI x, SI y, int m, time_t t,
+                          array<double> d) = 0;
   virtual void mouse_click (SI x, SI y) = 0;
   virtual bool mouse_extra_click (SI x, SI y) = 0;
   virtual void mouse_drag (SI x, SI y) = 0;
@@ -260,7 +261,8 @@ public:
   virtual void   set_graphical_object (tree t) = 0;
   virtual void   invalidate_graphical_object () = 0;
   virtual void   draw_graphical_object (renderer ren) = 0;
-  virtual bool   mouse_graphics (string s, SI x, SI y, int mods, time_t t) = 0;
+  virtual bool   mouse_graphics (string s, SI x, SI y, int mods, time_t t,
+                                 array<double> d) = 0;
 
   /* public routines from edit_typeset */
   virtual void     clear_local_info () = 0;

@@ -65,7 +65,7 @@
     (tooltip-delayed-unmap))
   (former key time))
 
-(tm-define (mouse-event key x y mods time)
+(tm-define (mouse-event key x y mods time data)
   (:require (and tooltip-win (not tooltip-unmap?)))
   ;;(display* "Mouse event " key ", " x ", " y "; " time "\n")
   (with (x1 y1 x2 y2 mx my sx sy zf type) tooltip-settings
@@ -80,7 +80,7 @@
                 (> dx 10) (> dy 10))
         (when (!= type "keyboard")
           (tooltip-delayed-unmap)))))
-  (former key x y mods time))
+  (former key x y mods time data))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Positioning of the tooltip
