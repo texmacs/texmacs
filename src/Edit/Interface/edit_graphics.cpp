@@ -472,8 +472,7 @@ edit_graphics_rep::back_in_text_at (tree t, path p, bool forward) {
 
 bool
 edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t,
-                                   array<double> d) {
-  (void) d;
+                                   array<double> data) {
   //cout << type << ", " << x << ", " << y << ", " << m << ", " << t << "\n";
   //cout << "et= " << et << "\n";
   //cout << "tp= " << tp << "\n";
@@ -484,7 +483,7 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t,
   if (!is_nil (f)) {
     if (type == "wheel") {
       point  p0= f [point (0.0, 0.0)];
-      point  p1= f [point (x, y)];
+      point  p1= f [point (data[0], data[1])];
       point  dp= p1 - p0;
       //string sx= as_string (dp[0]);
       //string sy= as_string (dp[1]);

@@ -694,6 +694,7 @@ void
 QTMWidget::gestureEvent (QGestureEvent* event) {
   if (is_nil (tmwid)) return;
   string s= "gesture";
+  array<double> data;
   QPointF hotspot;
   if (QGesture *swipe_gesture = event->gesture(Qt::SwipeGesture)) {
     QSwipeGesture *swipe= static_cast<QSwipeGesture *> (swipe_gesture);
@@ -739,12 +740,13 @@ QTMWidget::gestureEvent (QGestureEvent* event) {
     }
     else if (changeFlags & QPinchGesture::RotationAngleChanged) {
       qreal angle = pinch->rotationAngle();
-      if (angle >= 0) s= "rotate-right-" * as_string (angle);
-      else s= "rotate-left-" * as_string (-angle);
+      s= "rotate";
+      data << ((double) angle);
     }
     else if (changeFlags & QPinchGesture::ScaleFactorChanged) {
       qreal scale = pinch->totalScaleFactor();
-      s= "scale-" * as_string (scale);
+      s= "scale";
+      data << ((double) scale);
     }
 #else
     if (pinch->state() == Qt::GestureStarted) {
@@ -757,14 +759,17 @@ QTMWidget::gestureEvent (QGestureEvent* event) {
       qreal a1 = pinch->lastRotationAngle();
       qreal a2 = pinch->rotationAngle();
       if (a2 != a1) {
-        if (a2 >= 0) s= "rotate-right-" * as_string (a2);
-        else s= "rotate-left-" * as_string (-a2);
+        s= "rotate";
+        data << ((double) a2);
       }
     }
     else if (changeFlags & QPinchGesture::ScaleFactorChanged) {
       qreal s1 = pinch->lastScaleFactor();
       qreal s2 = pinch->scaleFactor();
-      if (s1 != s2) s= "scale-" * as_string (s2);
+      if (s1 != s2) {
+        s= "scale";
+        data << ((double) s2);
+      }
       else {
         pinch->setScaleFactor (1.0);
         s= "pinch-end";
@@ -782,7 +787,7 @@ QTMWidget::gestureEvent (QGestureEvent* event) {
   coord2 pt = from_qpoint (point);
   //cout << s << ", " << pt.x1 << ", " << pt.x2 << LF;
   the_gui->process_mouse (tm_widget(), s, pt.x1, pt.x2, 
-                          0, texmacs_time ());
+                          0, texmacs_time (), data);
   event->accept();
 }
 
@@ -971,17 +976,25 @@ void
 QTMWidget::wheelEvent(QWheelEvent *event) {
   if (is_nil (tmwid)) return; 
   if (as_bool (call ("wheel-capture?"))) {
+#if (QT_VERSION >= 0x060000)
+    QPointF pos  = event->position();
+    QPoint  point= QPointF (pos.x(), pos.y()) + origin();
+#else
+    QPoint  point= event->pos() + origin();
+#endif
 #if (QT_VERSION >= 0x050000)
-    QPoint point = event->pixelDelta();
+    QPoint  wheel= event->pixelDelta();
 #else
     double delta= event->delta();
     bool   hor  = event->orientation() == Qt::Horizontal;
-    QPoint point (hor? delta: 0.0, hor? 0.0: delta);
+    QPoint wheel (hor? delta: 0.0, hor? 0.0: delta);
 #endif
     coord2 pt = from_qpoint (point);
+    coord2 wh = from_qpoint (wheel);
     unsigned int mstate= wheel_state (event);
-    the_gui -> process_mouse (tm_widget(), "wheel", pt.x1, pt.x2,  
-                              mstate, texmacs_time ());
+    array<double> data; data << ((double) wh.x1) << ((double) wh.x2);
+    the_gui -> process_mouse (tm_widget(), "wheel", pt.x1, pt.x2,
+                              mstate, texmacs_time (), data);
   }
   else if (QApplication::keyboardModifiers() == Qt::ControlModifier) {
     if (event->delta() > 0)

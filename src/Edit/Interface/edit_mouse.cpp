@@ -461,8 +461,7 @@ detect_right_drag (void* handle, string type, SI x, SI y, time_t t,
 void
 edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t,
                                array<double> data) {
-  (void) data;
-  //cout << "Mouse any " << type << ", " << x << ", " << y << "; " << mods << ", " << t << "\n";
+  //cout << "Mouse any " << type << ", " << x << ", " << y << "; " << mods << ", " << t << ", " << data << "\n";
   if (t < last_t && (last_x != 0 || last_y != 0 || last_t != 0)) {
     //cout << "Ignored " << type << ", " << x << ", " << y << "; " << mods << ", " << t << "\n";
     return;
@@ -486,8 +485,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t,
   }
 
   if (!starts (type, "swipe-") && !starts (type, "pinch-") &&
-      !starts (type, "scale-") && !starts (type, "rotate-") &&
-      type != "wheel") {
+      type != "scale" && type != "rotate" && type != "wheel") {
     last_x= x;
     last_y= y;
     last_t= t;
@@ -518,12 +516,8 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t,
   if (starts (type, "swipe-")) eval ("(" * type * ")");
   if (type == "pinch-start") eval ("(pinch-start)");
   if (type == "pinch-end") eval ("(pinch-end)");
-  if (starts (type, "scale-"))
-    eval ("(pinch-scale " * type (6, N(type)) * ")");
-  if (starts (type, "rotate-left-"))
-    eval ("(pinch-rotate " * type (12, N(type)) * ")");
-  if (starts (type, "rotate-right-"))
-    eval ("(pinch-rotate -" * type (13, N(type)) * ")");
+  if (type == "scale") eval ("(pinch-scale " * as_string (data[0]) * ")");
+  if (type == "rotate") eval ("(pinch-rotate " * as_string (-data[0]) * ")");
 
   //if (inside_graphics (false)) {
   //if (inside_graphics ()) {
@@ -571,8 +565,9 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t,
       (type == "press-right"))
     notify_change (THE_DECORATIONS);
 
-  if (type == "wheel")
-    eval ("(wheel-event " * as_string (x) * " " * as_string (y) * ")");
+  if (type == "wheel" && N(data) == 2)
+    eval ("(wheel-event " * as_string (data[0]) *
+          " " * as_string (data[1]) * ")");
 }
 
 /******************************************************************************
