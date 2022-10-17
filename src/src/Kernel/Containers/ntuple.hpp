@@ -119,4 +119,37 @@ operator << (tm_ostream& out, const quintuple<T1,T2,T3,T4,T5>& q) {
   return out << "[ " << q.x1 << ", " << q.x2 << ", " << q.x3
 	     << ", " << q.x4 << ", " << q.x5 << " ]"; }
 
+template<class T1, class T2, class T3, class T4, class T5, class T6>
+class sextuple {
+public:
+  T1 x1; T2 x2; T3 x3; T4 x4; T5 x5; T6 x6;
+  inline sextuple (const sextuple& s):
+    x1 (s.x1), x2 (s.x2), x3 (s.x3), x4 (s.x4), x5 (s.x5), x6 (s.x6) {}
+  inline sextuple (const T1& y1, const T2& y2, const T3& y3,
+                   const T4& y4, const T5& y5, const T6& y6):
+    x1 (y1), x2 (y2), x3 (y3), x4 (y4), x5 (y5), x6 (y6) {}
+  inline sextuple& operator = (const sextuple& s) {
+    x1= s.x1; x2= s.x2; x3= s.x3; x4= s.x4; x5= s.x5; x6= s.x6; return *this; }
+  inline bool operator == (const sextuple& s) {
+    return x1 == s.x1 && x2 == s.x2 && x3 == s.x3 &&
+           x4 == s.x4 && x5 == s.x5 && x6 == s.x6; }
+  inline bool operator != (const sextuple& s) {
+    return x1 != s.x1 || x2 != s.x2 || x3 != s.x3 ||
+           x4 != s.x4 || x5 != s.x5 || x6 != s.x6; }
+};
+
+template<class T1, class T2, class T3, class T4, class T5, class T6> int
+hash (const sextuple<T1,T2,T3,T4,T5,T6>& s) {
+  int h= hash (s.x1);
+  h= (h << 11) ^ (h >> 21) ^ hash (s.x2);
+  h= (h << 11) ^ (h >> 21) ^ hash (s.x3);
+  h= (h << 11) ^ (h >> 21) ^ hash (s.x4);
+  h= (h << 11) ^ (h >> 21) ^ hash (s.x5);
+  return (h << 11) ^ (h >> 21) ^ hash (s.x6); }
+
+template<class T1, class T2, class T3, class T4, class T5, class T6> inline tm_ostream&
+operator << (tm_ostream& out, const sextuple<T1,T2,T3,T4,T5,T6>& s) {
+  return out << "[ " << s.x1 << ", " << s.x2 << ", " << s.x3
+	     << ", " << s.x4 << ", " << s.x5 << ", " << s.x6 << " ]"; }
+
 #endif // NTUPLE_H

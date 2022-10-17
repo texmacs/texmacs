@@ -642,12 +642,13 @@ qt_gui_rep::process_queued_events (int max) {
         break;
       case qp_type::QP_MOUSE :
       {
-        typedef quintuple<string, SI, SI, int, time_t > T1;
+        typedef sextuple<string, SI, SI, int, time_t, array<double> > T1;
         typedef pair<widget, T1> T;
         T x = open_box <T> (ev.x2);
         if (!is_nil (x.x1))
           concrete_simple_widget (x.x1)->handle_mouse (x.x2.x1, x.x2.x2,
-                                                       x.x2.x3, x.x2.x4, x.x2.x5);
+                                                       x.x2.x3, x.x2.x4,
+                                                       x.x2.x5, x.x2.x6);
       }
         break;
       case qp_type::QP_RESIZE :
@@ -710,11 +711,11 @@ qt_gui_rep::process_keyboard_focus (qt_simple_widget_rep *wid, bool has_focus,
 
 void
 qt_gui_rep::process_mouse (qt_simple_widget_rep *wid, string kind, SI x, SI y,
-                           int mods, time_t t ) {
-  typedef quintuple<string, SI, SI, int, time_t > T1;
+                           int mods, time_t t, array<double> data) {
+  typedef sextuple<string, SI, SI, int, time_t, array<double> > T1;
   typedef pair<widget, T1> T;
   add_event (queued_event (qp_type::QP_MOUSE,
-                           close_box<T> ( T (wid, T1 (kind, x, y, mods, t)))));
+                           close_box<T> (T (wid, T1 (kind, x, y, mods, t, data)))));
 }
 
 void
