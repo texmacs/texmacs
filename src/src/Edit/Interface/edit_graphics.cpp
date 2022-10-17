@@ -471,7 +471,9 @@ edit_graphics_rep::back_in_text_at (tree t, path p, bool forward) {
 }
 
 bool
-edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t) {
+edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t,
+                                   array<double> d) {
+  (void) d;
   //cout << type << ", " << x << ", " << y << ", " << m << ", " << t << "\n";
   //cout << "et= " << et << "\n";
   //cout << "tp= " << tp << "\n";

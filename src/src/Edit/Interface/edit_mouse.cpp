@@ -459,7 +459,9 @@ detect_right_drag (void* handle, string type, SI x, SI y, time_t t,
 ******************************************************************************/
 
 void
-edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
+edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t,
+                               array<double> data) {
+  (void) data;
   //cout << "Mouse any " << type << ", " << x << ", " << y << "; " << mods << ", " << t << "\n";
   if (t < last_t && (last_x != 0 || last_y != 0 || last_t != 0)) {
     //cout << "Ignored " << type << ", " << x << ", " << y << "; " << mods << ", " << t << "\n";
@@ -526,7 +528,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
   //if (inside_graphics (false)) {
   //if (inside_graphics ()) {
   if (inside_graphics (type != "release-left")) {
-    if (mouse_graphics (type, x, y, mods, t)) return;
+    if (mouse_graphics (type, x, y, mods, t, data)) return;
     if (!over_graphics (x, y))
       eval ("(graphics-reset-context 'text-cursor)");
   }
@@ -614,26 +616,38 @@ call_drop_event (string kind, SI x, SI y, SI ticket, time_t t, url base) {
 }
 
 static void
-call_mouse_event (string kind, SI x, SI y, SI m, time_t t) {
+call_mouse_event (string kind, SI x, SI y, SI m, time_t t, array<double> d) {
   array<object> args;
   args << object (kind) << object (x) << object (y)
-       << object (m) << object ((double) t);
+       << object (m) << object ((double) t) << object (d);
   call ("mouse-event", args);
 }
 
+static string
+as_scm_string (array<double> a) {
+  string s= "(list";
+  for (int i=0; i<N(a); i++)
+    s << " " << as_string (a[i]);
+  s << ")";
+  return s;
+}
+
 static void
-delayed_call_mouse_event (string kind, SI x, SI y, SI m, time_t t) {
+delayed_call_mouse_event (string kind, SI x, SI y, SI m, time_t t,
+                          array<double> d) {
   // NOTE: interestingly, the (:idle 1) is not necessary for the Qt port
   // but is required for appropriate updating when using the X11 port
   string cmd=
     "(delayed (:idle 1) (mouse-event " * scm_quote (kind) * " " *
     as_string (x) * " " * as_string (y) * " " *
-    as_string (m) * " " * as_string ((long int) t) * "))";
+    as_string (m) * " " * as_string ((long int) t) * " " *
+    as_scm_string (d) * "))";
   eval (cmd);
 }
 
 void
-edit_interface_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t) {
+edit_interface_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t,
+                                  array<double> data) {
   if (is_nil (buf)) return;
   bool started= false;
 #ifdef USE_EXCEPTIONS
@@ -641,7 +655,7 @@ edit_interface_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t) {
 #endif
   if (is_nil (eb) || (env_change & (THE_TREE + THE_ENVIRONMENT)) != 0) {
     //cout << "handle_mouse in " << buf->buf->name << ", " << got_focus << LF;
-    //cout << kind << " (" << x << ", " << y << "; " << m << ")"
+    //cout << kind << " (" << x << ", " << y << "; " << m << ", " << data << ")"
     //     << " at " << t << "\n";
     if (!got_focus) return;
     apply_changes ();
@@ -650,29 +664,29 @@ edit_interface_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t) {
   started= true;
   x= ((SI) (x / magf));
   y= ((SI) (y / magf));
-  //cout << kind << " (" << x << ", " << y << "; " << m << ")"
+  //cout << kind << " (" << x << ", " << y << "; " << m << ", " << data << ")"
   //     << " at " << t << "\n";
 
   if (kind == "drop") {
     call_drop_event (kind, x, y, m, t, buf->buf->name);
     if (inside_graphics (true))
-      mouse_graphics ("drop-object", x, y, m, t);
+      mouse_graphics ("drop-object", x, y, m, t, data);
   }
   else {
     string rew= kind;
     SI dist= (SI) (5 * PIXEL / magf);
     rew= detect_left_drag ((void*) this, rew, x, y, t, m, dist);
     if (rew == "start-drag-left") {
-      call_mouse_event (rew, left_x, left_y, m, t);
-      delayed_call_mouse_event ("dragging-left", x, y, m, t);
+      call_mouse_event (rew, left_x, left_y, m, t, data);
+      delayed_call_mouse_event ("dragging-left", x, y, m, t, data);
     }
     else {
       rew= detect_right_drag ((void*) this, rew, x, y, t, m, dist);
       if (rew == "start-drag-right") {
-        call_mouse_event (rew, right_x, right_y, m, t);
-        delayed_call_mouse_event ("dragging-right", x, y, m, t);
+        call_mouse_event (rew, right_x, right_y, m, t, data);
+        delayed_call_mouse_event ("dragging-right", x, y, m, t, data);
       }
-      else call_mouse_event (rew, x, y, m, t);
+      else call_mouse_event (rew, x, y, m, t, data);
     }
   }
   end_editing ();

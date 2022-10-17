@@ -7451,7 +7451,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(mouse-any <scm-arg|string> <scm-arg|int> <scm-arg|int> <scm-arg|int> <scm-arg|double>)>
+    <scm|(mouse-any <scm-arg|string> <scm-arg|int> <scm-arg|int> <scm-arg|int> <scm-arg|double> <scm-arg|array_double>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|mouse_any> which returns

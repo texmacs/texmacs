@@ -29,9 +29,9 @@
 (tm-define (keyboard-focus has-focus? time)
   (noop))
 
-(tm-define (mouse-event key x y mods time)
-  ;;(display* "mouse-event " key ", " x ", " y ", " mods ", " time "\n")
-  (mouse-any key x y mods (+ time 0.0)))
+(tm-define (mouse-event key x y mods time data)
+  ;;(display* "mouse-event " key ", " x ", " y ", " mods ", " time ", " data "\n")
+  (mouse-any key x y mods (+ time 0.0) data))
 
 (tm-define (mouse-drop-event x y obj)
   ;;(display* "mouse-drop-event " x ", " y ", " (tm->stree obj) "\n")

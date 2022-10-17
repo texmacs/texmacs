@@ -128,6 +128,8 @@ bool is_symbol (object obj) { return tmscm_is_symbol (object_to_tmscm (obj)); }
 bool is_tree (object obj) { return tmscm_is_tree (object_to_tmscm (obj)); }
 bool is_path (object obj) { return tmscm_is_path (object_to_tmscm (obj)); }
 bool is_url (object obj) { return tmscm_is_url (object_to_tmscm (obj)); }
+bool is_array_double (object obj) {
+  return tmscm_is_array_double (object_to_tmscm (obj)); }
 bool is_widget (object obj) { return tmscm_is_widget (object_to_tmscm (obj)); }
 bool is_patch (object obj) { return tmscm_is_patch (object_to_tmscm (obj)); }
 bool is_modification (object obj) {
@@ -155,6 +157,8 @@ object::object (list<tree> l):
   rep (tm_new<tmscm_object_rep> (list_tree_to_tmscm (l))) {}
 object::object (path p): rep (tm_new<tmscm_object_rep> (path_to_tmscm (p))) {}
 object::object (url u): rep (tm_new<tmscm_object_rep> (url_to_tmscm (u))) {}
+object::object (array<double> a):
+  rep (tm_new<tmscm_object_rep> (array_double_to_tmscm (a))) {}
 object::object (patch m):
   rep (tm_new<tmscm_object_rep> (patch_to_tmscm (m))) {}
 object::object (modification m):
@@ -245,6 +249,13 @@ as_url (object obj) {
   tmscm t= object_to_tmscm (obj);
   if (!tmscm_is_url (t)) return url ("");
   return tmscm_to_url (t);
+}
+
+array<double>
+as_array_double (object obj) {
+  ASSERT (is_array_double (obj), "array<double> expected");
+  tmscm t= object_to_tmscm (obj);
+  return tmscm_to_array_double (t);
 }
 
 modification
