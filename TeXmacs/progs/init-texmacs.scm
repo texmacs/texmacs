@@ -111,7 +111,9 @@
                  (kernel texmacs tm-states))
 (inherit-modules (kernel gui gui-markup)
                  (kernel gui menu-define) (kernel gui menu-widget)
-                 (kernel gui kbd-define) (kernel gui kbd-handlers)
+                 (kernel gui kbd-define)
+                 ;;(kernel gui speech-define)
+                 (kernel gui kbd-handlers)
                  (kernel gui menu-test)
                  (kernel old-gui old-gui-widget)
                  (kernel old-gui old-gui-factory)
@@ -173,6 +175,7 @@
 
 ;(display "Booting generic mode\n")
 (lazy-keyboard (generic generic-kbd) always?)
+;;(lazy-keyboard (generic generic-speech-en) always?)
 (lazy-menu (generic generic-menu) focus-menu texmacs-focus-icons)
 (lazy-menu (generic format-menu) format-menu
            font-size-menu color-menu horizontal-space-menu
@@ -223,6 +226,7 @@
 
 ;(display "Booting text mode\n")
 (lazy-keyboard (text text-kbd) in-text?)
+;;(lazy-keyboard (text text-speech-en) in-text?)
 (lazy-keyboard (text chinese chinese) in-chinese?)
 (lazy-menu (text text-menu) text-format-menu text-format-icons
 	   text-menu text-block-menu text-inline-menu
@@ -232,6 +236,7 @@
 
 ;(display "Booting math mode\n")
 (lazy-keyboard (math math-kbd) in-math?)
+;;(lazy-keyboard (math math-speech-en) in-math?)
 (lazy-keyboard (math math-sem-edit) in-sem-math?)
 (lazy-menu (math math-menu) math-format-menu math-format-icons
 	   math-menu math-insert-menu

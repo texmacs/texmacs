@@ -168,12 +168,6 @@ void
 edit_interface_rep::key_press (string gkey) {
   string zero= "a"; zero[0]= '\0';
   string key= replace (gkey, "<#0>", zero);
-  if (starts (key, "speech:")) {
-    archive_state ();
-    call ("kbd-insert", key (7, N(key)));
-    interrupt_shortcut ();
-    return;
-  }
   if (pre_edit_mark != 0) {
     ASSERT (sh_mark == 0, "invalid shortcut during pre-edit");
     mark_cancel (pre_edit_mark);
@@ -226,9 +220,16 @@ edit_interface_rep::key_press (string gkey) {
     interrupt_shortcut ();
     if (try_shortcut (key)) return;
   }
-  
+
   string rew= sv->kbd_post_rewrite (key);
-  if (N(rew) == 1) {
+  if (starts (key, "speech:")) {
+    string lan= get_preference ("language");
+    if (try_shortcut (lan * ":" * locase_all (key (7, N(key))))) return;
+    archive_state ();
+    call ("kbd-speech", key (7, N(key)));
+    interrupt_shortcut ();
+  }
+  else if (N(rew) == 1) {
     int i ((unsigned char) rew[0]);
     if ((i >= 1 && i <= 127) || (i >= 128 && i <= 255) || (i == 25))
       if (!inside_active_graphics ()) {
