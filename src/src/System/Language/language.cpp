@@ -27,6 +27,8 @@ text_property_rep tp_thin_space_rep
   (TP_THIN_SPACE, SPC_NONE, SPC_THIN_SPACE, 0, 0);
 text_property_rep tp_space_rep
   (TP_SPACE, SPC_NONE, SPC_SPACE, 0, 0);
+text_property_rep tp_space_before_rep
+  (TP_SPACE, SPC_SPACE, SPC_NONE, 0, 0);
 text_property_rep tp_dspace_rep
   (TP_DSPACE, SPC_NONE, SPC_DSPACE, 0, 0);
 text_property_rep tp_nb_thin_space_rep

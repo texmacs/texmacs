@@ -365,6 +365,11 @@ oriental_language_rep::advance (tree t, int& pos) {
     return &tp_space_rep;
   }
 
+  if (test (s, pos, "<#3000>")) {
+    pos += 7;
+    return &tp_space_before_rep;
+  }
+
   if (s[pos] == '<' && !test (s, pos, "<#")) {
     while ((pos<N(s)) && (s[pos]!='>')) pos++;
     if (pos<N(s)) pos++;
