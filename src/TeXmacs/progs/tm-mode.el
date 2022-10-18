@@ -48,6 +48,7 @@
   '(let let* lambda
     with-result and-let* setup-append-if
     while for repeat when unless assuming mini tile
+    speech-map speech-adjust
     plugin-configure
     define-preference-names
     with-focus-after
