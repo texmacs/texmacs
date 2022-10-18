@@ -495,7 +495,6 @@ QTMWidget::kbdEvent (int key, Qt::KeyboardModifiers mods, const QString& s) {
 
 void
 QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
-  
   QString const & preedit_string = event->preeditString();
   QString const & commit_string = event->commitString();
   
@@ -530,12 +529,13 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     if (!done) {
       if (DEBUG_QT)
         debug_qt << "IM committing: " << commit_string.toUtf8().data() << LF;
-#if 1
-      for (int i = 0; i < commit_string.size(); ++i)
-        kbdEvent (0, Qt::NoModifier, commit_string[i]);
-#else
-      kbdEvent (0, Qt::NoModifier, commit_string);
-#endif
+      if (preediting)
+        for (int i = 0; i < commit_string.size(); ++i)
+          kbdEvent (0, Qt::NoModifier, commit_string[i]);
+      else {
+        string s= "speech:" * from_qstring (commit_string);
+        kbdEvent (0, Qt::NoModifier, to_qstring (s));
+      }
     }
   }
   
@@ -577,12 +577,12 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     
     r = r * as_string (pos) * ":" * from_qstring (preedit_string);
   }
-  
+
   if (!is_nil (tmwid)) {
     preediting = !preedit_string.isEmpty();
     the_gui->process_keypress (tm_widget(), r, texmacs_time());
   }
-  
+
   event->accept();
 }  
 
