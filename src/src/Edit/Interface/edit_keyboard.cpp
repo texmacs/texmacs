@@ -168,6 +168,12 @@ void
 edit_interface_rep::key_press (string gkey) {
   string zero= "a"; zero[0]= '\0';
   string key= replace (gkey, "<#0>", zero);
+  if (starts (key, "speech:")) {
+    archive_state ();
+    call ("kbd-insert", key (7, N(key)));
+    interrupt_shortcut ();
+    return;
+  }
   if (pre_edit_mark != 0) {
     ASSERT (sh_mark == 0, "invalid shortcut during pre-edit");
     mark_cancel (pre_edit_mark);
