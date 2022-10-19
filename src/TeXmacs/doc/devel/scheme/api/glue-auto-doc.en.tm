@@ -2027,6 +2027,30 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(math-stats-compile <scm-arg|string> <scm-arg|content> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|compile_stats> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(math-stats-occurrences <scm-arg|string> <scm-arg|content>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|number_occurrences> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
+    <scm|(math-stats-best-variant <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|best_variant> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
     <scm|(path-strip <scm-arg|path> <scm-arg|path>)>
 <explain-synopsis|no synopsis>
   <|explain>
