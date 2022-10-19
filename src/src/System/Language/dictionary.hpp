@@ -30,6 +30,8 @@ public:
   void   load (url fname);
   void   load (string fname);
   string translate (string s, bool guess=true);
+
+  friend dictionary load_dictionary (string from, string to);
 };
 
 dictionary load_dictionary (string from, string to);
