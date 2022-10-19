@@ -16,6 +16,7 @@
 #include "universal.hpp"
 #include "drd_std.hpp"
 #include "scheme.hpp"
+#include "iterator.hpp"
 
 RESOURCE_CODE(dictionary);
 
@@ -71,6 +72,16 @@ load_dictionary (string from, string to) {
     return dictionary (name);
   dictionary dict= tm_new<dictionary_rep> (from, to);
   if (from != to) dict->load (name);
+  
+  if (N(dict->table) == 0) {
+    dictionary inv= load_dictionary (to, from);
+    for (iterator<string> it= iterate (inv->table); it->busy (); ) {
+      string key= it->next ();
+      string im = inv->table [key];
+      dict->table (im)= key;
+    }
+  }
+  
   return dict;
 }
 
