@@ -284,6 +284,9 @@
   (tree-downgrade-big downgrade_big (tree content))
   (math-status-print math_status_print (void))
   (math-status-reset math_status_reset (void))
+  (math-stats-compile compile_stats (void string content string))
+  (math-stats-occurrences number_occurrences (int string content))
+  (math-stats-best-variant best_variant (tree string string))
 
   ;; paths
   (path-strip strip (path path path))
