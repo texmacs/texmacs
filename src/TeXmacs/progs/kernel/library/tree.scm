@@ -153,6 +153,16 @@
 	  ((> i 0) t)
 	  (else #f))))
 
+(define-public (before-before-cursor)
+  (let* ((t (cursor-tree))
+	 (i (cAr (cursor-path))))
+    (and (tree-atomic? t) (> i 1)
+         (with s (tree->string t)
+           (with j (string-previous s i)
+             (and (> j 0)
+                  (with k (string-previous s j)
+                    (substring s k j))))))))
+
 (define-public (after-cursor)
   (let* ((t (cursor-tree*))
 	 (i (cAr (cursor-path*))))
