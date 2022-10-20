@@ -41,6 +41,9 @@
   (insert s))
 
 (tm-define (speech-make S)
+  (with lan (get-preference "language")
+    (when (!= lan "english")
+      (set! S (translate-from-to S lan "english"))))
   (with s (locase-all S)
     (and (style-has? s)
          (>= (string-length s) 3)
