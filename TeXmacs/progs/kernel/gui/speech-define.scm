@@ -1,0 +1,248 @@
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; MODULE      : speech-define.scm
+;; DESCRIPTION : Definition of speech commands
+;; COPYRIGHT   : (C) 2022  Joris van der Hoeven
+;;
+;; This software falls under the GNU general public license version 3 or later.
+;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+;; in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(texmacs-module (kernel gui speech-define)
+  (:use (kernel gui kbd-define)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Definition of speech commands
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define speech-map-table (make-ahash-table))
+
+(tm-define (speech-map-set lan mode key im)
+  (ahash-set! speech-map-table (list lan mode key) im))
+
+(tm-define (speech-map-ref lan mode key)
+  (ahash-ref speech-map-table (list lan mode key)))
+
+(define (speech-map-line lan mode line)
+  (if (and (pair? line) (string? (car line)))
+      (with (key . l) line
+        (set! key (utf8->cork key))
+        (speech-map-set lan mode key l)
+        (speech-accepts lan mode key)
+        (with key* (string-append (symbol->string lan) ":" (locase-all key))
+          (list (cons* key* '(noop) l))))
+      (list line)))
+
+(tm-define-macro (speech-map lan mode . l)
+  (:synopsis "Add entries in @l to the keyboard speech mapping")
+  `(kbd-map
+     ,@(if (== mode 'any) (list) `((:mode ,(symbol-append 'in- mode '?))))
+     ,@(append-map (cut speech-map-line lan mode <>) l)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Definition of speech ajustments
+;; - speech-adjust corresponds to words that are badly recognized
+;; - speech-reduce is used for synonyms that are mapped to a single command
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define speech-adjust-table (make-ahash-table))
+
+(tm-define (speech-adjust-set lan mode key im)
+  (ahash-set! speech-adjust-table (list lan mode key) im))
+
+(tm-define (speech-adjust-ref lan mode key)
+  (ahash-ref speech-adjust-table (list lan mode key)))
+
+(define (speech-adjust-line lan mode line)
+  (if (and (list-2? line) (string? (car line)))
+      (with (key im) line
+        (set! key (utf8->cork key))
+        (set! im (utf8->cork im))
+        (speech-accepts lan mode key)
+        `(speech-adjust-set ',lan ',mode ,key ,im))
+      `(noop)))
+
+(tm-define-macro (speech-adjust lan mode . l)
+  (:synopsis "Add entries in @l to the keyboard speech adjustment table")
+  `(begin
+     ,@(map (cut speech-adjust-line lan mode <>) l)))
+
+(tm-define-macro (speech-reduce lan mode . l)
+  (:synopsis "Add entries in @l to the keyboard speech reduction table")
+  `(speech-adjust ,(symbol-append lan '*) ,mode ,@l))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Collections of language specific words
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define speech-collection-table (make-ahash-table))
+
+(tm-define (speech-collection-set name lan elem)
+  (set! elem (utf8->cork elem))
+  (ahash-set! speech-collection-table (list name lan elem) #t))
+
+(tm-define (speech-has? lan name elem)
+  (ahash-ref speech-collection-table (list name lan elem)))
+
+(define (speech-collection-add name lan elem)
+  `(speech-collection-set ',name ',lan ,elem))
+
+(tm-define-macro (speech-collection name lan . l)
+  (:synopsis "Add entries in @l to the speech collection tables")
+  `(begin
+     ,@(map (cut speech-collection-add name lan <>) l)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Sanitizing speech commands
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (string-locase? s)
+  (and (string? s) (string-alpha? s) (== s (locase-all s))))
+
+(tm-define (string-upcase? s)
+  (and (string? s) (string-alpha? s) (== s (upcase-all s))))
+
+(tm-define (clean-letter-digit l)
+  (cond ((or (null? l) (null? (cdr l))) l)
+        ((and (string-alpha? (car l)) (string-number? (cadr l)))
+         (cons* (car l) " " (clean-letter-digit (cdr l))))
+        ((and (string-number? (car l)) (string-alpha? (cadr l)))
+         (cons* (car l) " " (clean-letter-digit (cdr l))))
+        ((and (string-locase? (car l)) (string-upcase? (cadr l)))
+         (cons* (car l) " " (clean-letter-digit (cdr l))))
+        (else (cons (car l) (clean-letter-digit (cdr l))))))
+
+(define (string-replace-trailing-one s what by)
+  (let* ((l (string-length what))
+         (n (string-length s)))
+    (if (and (>= n l) (>= n 2)
+             (not (string-occurs? what (substring s 1 (- n 1)))))
+        (string-replace s what by)
+        s)))
+
+(tm-define (string-replace-trailing s what by)
+  (let* ((l (string-decompose s " "))
+         (r (map (cut string-replace-trailing-one <> what by) l)))
+    (string-recompose r " ")))
+
+(tm-define (speech-sanitize lan mode s) s)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Rewriting speech commands
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (speech-current-mode) 'any)
+
+(define (speech-rewrite*** lan mode h t)
+  (with key (locase-all (string-recompose h " "))
+    (if (null? h)
+        (if (null? t) t
+            (cons (car t) (speech-rewrite*** lan mode (cdr t) (list))))
+        (or (and-with im (speech-adjust-ref lan mode key)
+              (with im* (string-decompose im " ")
+                (append im* (speech-rewrite*** lan mode t (list)))))
+            (speech-rewrite*** lan mode (cDr h) (cons (cAr h) t))))))
+
+(define (speech-rewrite** lan mode l depth)
+  ;;(display* "Rewrite " l ", " lan ", " mode ", " depth "\n")
+  (with r (speech-rewrite*** lan mode l (list))
+    (if (or (<= depth 0) (== r l)) r
+        (speech-rewrite** lan mode r (- depth 1)))))
+
+(define (speech-rewrite* lan mode l)
+  (with r (speech-rewrite** lan mode l 25)
+    (speech-rewrite** (symbol-append lan '*) mode r 25)))
+
+(tm-define (speech-rewrite lan mode s)
+  (set! s (speech-sanitize lan mode s))
+  (let* ((l (string-decompose s " "))
+         (r (speech-rewrite* lan mode l)))
+    (string-recompose r " ")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Check whether commands are recognized in a given mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define speech-accepts-table (make-ahash-table))
+(define speech-recognizes-table (make-ahash-table))
+
+(tm-define (speech-accepts lan mode s)
+  (with ls (locase-all s)
+    (ahash-set! speech-recognizes-table (list lan mode ls) #t))
+  (with l (string-decompose s " ")
+    (for (ss l)
+      (ahash-set! speech-accepts-table (list lan mode ss) #t))))
+
+(define (speech-accepts-one? lan mode s)
+  (with lan* (symbol-append lan '*)
+    (or (nnot (string->number s))
+        (ahash-ref speech-accepts-table (list lan mode s))
+        (ahash-ref speech-accepts-table (list lan* mode s)))))
+
+(tm-define (speech-accepts? lan mode s)
+  (set! s (speech-sanitize lan mode s))
+  (forall? (cut speech-accepts-one? lan mode <>)
+           (string-decompose s " ")))
+
+(define (speech-recognizes-list? lan mode h t)
+  (with key (locase-all (string-recompose h " "))
+    (if (null? h) (null? t)
+        (or (and (or (string->number key)
+                     (ahash-ref speech-recognizes-table (list lan mode key))
+                     (ahash-ref speech-recognizes-table (list lan 'any key)))
+                 (speech-recognizes-list? lan mode t (list)))
+            (speech-recognizes-list? lan mode (cDr h) (cons (cAr h) t))))))
+
+(tm-define (speech-recognizes? lan mode s)
+  (set! s (speech-sanitize lan mode s))
+  (and (speech-accepts? lan mode s)
+       (let* ((r (speech-rewrite lan mode s))
+              (l (string-decompose r " ")))
+         (speech-recognizes-list? lan mode l (list)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Execution of speech commands
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (speech-language)
+  (string->symbol (get-preference "language")))
+
+(tm-define (speech-insert-number nr)
+  (insert nr))
+
+(tm-define (speech-exec-hook l) #f)
+
+(define (speech-exec-list lan h t)
+  (let* ((key* (locase-all (string-recompose h " ")))
+         (key (string-append (symbol->string lan) ":" key*)))
+    ;;(display* "  Try " key* " -> " (kbd-find-key-binding key) "\n")
+    (and (nnull? h)
+         (cond ((speech-exec-hook (apply string-append h))
+                (speech-exec-list lan t (list)))
+               ((string->number key*)
+                (speech-insert-number key*)
+                (speech-exec-list lan t (list)))
+               ((kbd-find-key-binding key)
+                (with cmd (kbd-find-key-binding key)
+                  (when (pair? cmd) (set! cmd (car cmd)))
+                  (when (procedure? cmd)
+                    ;;(display* "  Execute " key*
+                    ;;          " -> " (procedure-source cmd) "\n")
+                    (cmd))
+                  (speech-exec-list lan t (list))))
+               (else (speech-exec-list lan (cDr h) (cons (cAr h) t)))))))
+
+(tm-define (speech-done)
+  (noop))
+
+(tm-define (speech-exec s)
+  ;;(display* "Speech " s "\n")
+  (let* ((lan (speech-language))
+         (mode (speech-current-mode))
+         (r (speech-rewrite lan mode s))
+         (l (string-decompose r " ")))
+    (speech-exec-list lan l (list))
+    (speech-done)))
