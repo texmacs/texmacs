@@ -421,6 +421,13 @@
                (tm-in? prev '(with math-ss math-tt rsub rsup around)))
            (speech-apply-brackets)))))
 
+(tm-define (speech-factor)
+  (when (and (nnull? speech-state) (== (car speech-state) :factor))
+    (speech-leave))
+  (insert "*")
+  (math-bracket-open "(" ")" 'default)
+  (set! speech-state (cons :factor speech-state)))
+
 (tm-define (speech-for)
   (make 'rsub))
 

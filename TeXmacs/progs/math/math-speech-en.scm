@@ -173,6 +173,7 @@
   ("plus" (insert "+"))
   ("minus" (insert "-"))
   ("times" (insert "*"))
+  ("factor" (speech-factor))
   ("cross" (insert "<times>"))
   ("slash" (insert "/"))
   ("inverse" (speech-insert-superscript "-1"))
