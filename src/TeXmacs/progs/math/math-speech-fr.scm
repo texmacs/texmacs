@@ -148,6 +148,7 @@
   ("plus" (insert "+"))
   ("moins" (insert "-"))
   ("fois" (insert "*"))
+  ("facteur" (speech-factor))
   ("croix" (insert "<times>"))
   ("inverse" (speech-insert-superscript "-1"))
   ("carré" (speech-insert-superscript "2"))
