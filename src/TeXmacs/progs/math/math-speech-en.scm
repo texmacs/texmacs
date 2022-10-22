@@ -265,12 +265,27 @@
   ("wide bar under" (speech-wide-under "<bar>"))
 
   ("of" (speech-of))
-  ("parentheses" (math-bracket-open "(" ")" 'default))
-  ("brackets" (math-bracket-open "[" "]" 'default))
-  ("braces" (math-bracket-open "{" "}" 'default))
-  ("chevrons" (math-bracket-open "<langle>" "<rangle>" 'default))
-  ("floor" (math-bracket-open "<lfloor>" "<rfloor>" 'default))
-  ("ceiling" (math-bracket-open "<lceil>" "<rceil>" 'default))
+  ("open" (speech-open "(" ")"))
+  ("close" (speech-close))
+  ("parentheses" (speech-brackets "(" ")"))
+  ("brackets" (speech-brackets "[" "]"))
+  ("braces" (speech-brackets "{" "}"))
+  ("chevrons" (speech-brackets "<langle>" "<rangle>"))
+  ("floor" (speech-brackets "<lfloor>" "<rfloor>"))
+  ("ceiling" (speech-brackets "<lceil>" "<rceil>"))
+  ("open parentheses" (speech-open "(" ")"))
+  ("open open" (speech-open "[" "]"))
+  ("open braces" (speech-open "{" "}"))
+  ("open chevrons" (speech-open "<langle>" "<rangle>"))
+  ("open floor" (speech-open "<lfloor>" "<rfloor>"))
+  ("open ceiling" (speech-open "<lceil>" "<rceil>"))
+
+  ("(" (speech-open "(" ")"))
+  ("[" (speech-open "[" "]"))
+  ("{" (speech-open "{" "}"))
+  (")" (speech-close))
+  ("]" (speech-close))
+  ("}" (speech-close))
 
   ("exponential" (speech-insert-operator "exp"))
   ("exponential of" (speech-insert-function "exp"))
@@ -391,6 +406,13 @@
   ("square brackets" "brackets")
   ("curly brackets" "braces")
   ("angular brackets" "chevrons")
+  ("close parentheses" "close")
+  ("close brackets" "close")
+  ("close braces" "close")
+  ("close chevrons" "close")
+  ("close floor" "close")
+  ("close ceiling" "close")
+
   ("set" "braces")
   ("set of" "braces")
   ("the set" "braces")
@@ -472,6 +494,14 @@
   ("dominates" "dominates")
 
   ("tilde" "tilda")
+  ("big hat" "wide hat")
+  ("big tilda" "wide tilda")
+  ("big tilde" "wide tilda")
+  ("big bar" "wide bar")
+
+  ("big sum" "sum")
+  ("big product" "product")
+  ("big integral" "integral")
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -793,6 +823,9 @@
   ("side bar" "psi bar")
   
   ("write" "right")
+  ("leaf" "leave")
+  ("leafs" "leave")
+  ("leaves" "leave")
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
