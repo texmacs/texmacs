@@ -112,6 +112,9 @@
         "<omicron>" "<pi>" "<rho>" "<sigma>" "<tau>" "<upsilon>"
         "<phi>" "<psi>" "<chi>" "<omega>"))
 
+(tm-define punctuation-symbols
+  (list "." "," ":" ";" "!" "?"))
+
 (tm-define lowercase-letters
   (append roman-letters greek-letters))
 

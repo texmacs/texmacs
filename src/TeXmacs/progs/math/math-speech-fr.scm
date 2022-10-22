@@ -167,9 +167,19 @@
   ("implique" "<Rightarrow>")
   ("équivaut" "<Leftrightarrow>")
 
-  ("virgule" ",")
-  ("tel que" "<suchthat>")
   ("point" ".")
+  ("virgule" ",")
+  ("double point" ":")
+  ("point virgule" ";")
+  ("point d'exclamation" "!")
+  ("point d'interrogation" "?")
+  ("." ".")
+  ("," ",")
+  (":" ":")
+  (";" ";")
+  ("!" "!")
+  ("?" "?")
+  ("tel que" "<suchthat>")
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
