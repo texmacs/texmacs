@@ -268,10 +268,33 @@
         (else mods)))
 
 (tm-define (speech-alter-letter type)
+  ;; Alteration spoken before letter (e.g. 'bold x')
   (with prev (before-cursor)
     (when (not (and (string? prev) (string-alpha? prev)))
       (set! speech-operator-mode :off)))
   (set! speech-letter-mode (update-mode speech-letter-mode type)))
+
+(define (root-letter s)
+  (cond ((not s) #f)
+        ((tree? s) (root-letter (tm->stree s)))
+        ((tm-in? s '(math-ss math-tt)) (root-letter (tm-ref s 0)))
+        ((and (string? s) (string-occurs? "-" s) (string-ends? s ">"))
+         (let* ((n (string-length s))
+                (i (string-search-backwards "-" n s)))
+           (string-append "<" (substring s (+ i 1) n))))
+        ((string? s) s)
+        (else #f)))
+
+(define (best-letter-variant* x)
+  (with mx (modified-letter x speech-letter-mode*)
+    (improve-letter mx x speech-letter-mode*)))
+
+(tm-define (speech-alter-letter* type)
+  ;; Alteration spoken after letter (e.g. 'X calligraphique')
+  (set! speech-letter-mode* (update-mode speech-letter-mode* type))
+  (and-with prev (root-letter (before-cursor))
+    (cut-before-cursor)
+    (insert (best-letter-variant* prev))))
 
 (define (modified-letter x mods)
   (with x* x
