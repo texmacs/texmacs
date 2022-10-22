@@ -77,7 +77,7 @@
            (list->tmstring (list-intersperse l " ")))
           (else s))))
 
-(define (letterize s)
+(tm-define (letterize s)
   (let* ((lan (speech-language))
          (l (string-decompose s " "))
          (r (map (cut letterize-one lan <>) l)))

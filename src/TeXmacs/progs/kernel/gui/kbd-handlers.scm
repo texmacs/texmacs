@@ -52,5 +52,6 @@
            #t))))
 
 (tm-define (kbd-speech s)
+  ;;(display* "Speech " s "\n")
   (cond ((speech-make s) (noop))
         (else (kbd-insert s))))
