@@ -208,7 +208,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (speech-language)
-  (string->symbol (get-preference "language")))
+  (with lan (string->symbol (get-preference "speech"))
+    (if (== lan 'off) 'english lan)))
 
 (tm-define (speech-insert-number nr)
   (insert nr))

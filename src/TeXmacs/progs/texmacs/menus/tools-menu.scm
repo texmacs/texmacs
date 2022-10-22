@@ -38,6 +38,11 @@
       (link source-macros-menu))
   (-> "Keyboard"
       ("Edit keyboard shortcuts" (open-shortcuts-editor "" "")))
+  (-> "Speech"
+      ("Off" (reset-preference "speech"))
+      ---
+      ("English" (set-preference "speech" "english"))
+      ("French" (set-preference "speech" "french")))
   ---
   (-> "Update"
       ("Inclusions" (inclusions-gc))
