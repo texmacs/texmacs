@@ -129,6 +129,47 @@
   ("rationnels" "<bbb-Q>")
   ("réels" "<bbb-R>")
   ("entiers" "<bbb-Z>")
+
+  ("plus" "+")
+  ("moins" "-")
+  ("fois" "*")
+  ("croix" "<times>")
+  ("tenseur" "<otimes>")
+  ("factoriel" "!")
+
+  ("égal" "=")
+  ("non égal" "<neq>")
+  ("inférieur" "<less>")
+  ("inférieur égal" "<leqslant>")
+  ("supérieur" "<gtr>")
+  ("supérieur égal" "<geqslant>")
+  ("dans" "<in>")
+  ("contient l'élément" "<ni>")
+  ("sous ensemble" "<subset>")
+  ("sur ensemble" "<supset>")
+
+  ("similaire" "<sim>")
+  ("asymptotique" "<asymp>")
+  ;;("approx" "<approx>")
+  ("isomorphe" "<cong>")
+  ("négligeable" "<prec>")
+  ("dominé" "<preccurlyeq>")
+  ("domine" "<succcurlyeq>")
+  ("domine strictement" "<succ>")
+
+  ("flèche" "<rightarrow>")
+  ("longue flèche" "<rightarrow>")
+
+  ("pour tout" "<forall>")
+  ("existe" "<exists>")
+  ("ou" "<vee>")
+  ("et" "<wedge>")
+  ("implique" "<Rightarrow>")
+  ("équivaut" "<Leftrightarrow>")
+
+  ("virgule" ",")
+  ("tel que" "<suchthat>")
+  ("point" ".")
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -152,24 +193,14 @@
   ("machine à écrire" (speech-alter-letter* :tt))
   ("opérateur" (speech-operator))
 
-  ("virgule" (insert ","))
-  ("tel que" (insert "<suchthat>"))
-  ("point" (insert "."))
-
-  ("plus" (insert "+"))
-  ("moins" (insert "-"))
-  ("fois" (insert "*"))
   ("facteur" (speech-factor))
-  ("croix" (insert "<times>"))
   ("inverse" (speech-insert-superscript "-1"))
   ("carré" (speech-insert-superscript "2"))
   ("cube" (speech-insert-superscript "3"))
   ("indice" (speech-subscript))
   ("puissance" (speech-superscript))
-  ("e puissance" (insert "<mathe>") (speech-superscript))
   ;;("subscript" (make 'rsub))
   ("exposant" (make 'rsup))
-  ("e exposant" (insert "<mathe>") (make 'rsup))
 
   ("prime" (make-rprime "'"))
   ("double prime" (make-rprime "'") (make-rprime "'"))
@@ -194,28 +225,8 @@
   ("parenthèses" (math-bracket-open "(" ")" 'default))
   ("crochets" (math-bracket-open "[" "]" 'default))
   ("accolades" (math-bracket-open "{" "}" 'default))
-
-  ("égal" (insert "="))
-  ("non égal" (insert "<neq>"))
-
-  ("inférieur" (insert "<less>"))
-  ("inférieur égal" (insert "<leqslant>"))
-  ("supérieur" (insert "<gtr>"))
-  ("supérieur égal" (insert "<geqslant>"))
-
-  ("dans" (insert "<in>"))
-  ("contient l'élément" (insert "<ni>"))
-  ("sous ensemble" (insert "<subset>"))
-  ("sur ensemble" (insert "<supset>"))
-  ("flèche" (insert "<rightarrow>"))
-  ("longue flèche" (insert "<rightarrow>"))
-
-  ("pour tout" (insert "<forall>"))
-  ("existe" (insert "<exists>"))
-  ("ou" (insert "<vee>"))
-  ("et" (insert "<wedge>"))
-  ("implique" (insert "<Rightarrow>"))
-  ("équivaut" (insert "<Leftrightarrow>"))
+  ("chevrons" (math-bracket-open "<langle>" "<rangle>" 'default))
+  ("partie entière" (math-bracket-open "<lfloor>" "<rfloor>" 'default))
 
   ("exponentielle" (speech-insert-operator "exp"))
   ("exponentielle de" (speech-insert-function "exp"))
@@ -227,7 +238,6 @@
   ("cosinus de" (speech-insert-function "cos"))
   ("tangente" (speech-insert-operator "tan"))
   ("tangente de" (speech-insert-function "tan"))
-  ("factoriel" (insert "!"))
   
   ("plus points plus" (insert "+<cdots>+"))
   ("moins points moins" (insert "-<cdots>-"))
@@ -259,15 +269,6 @@
   ("numérateur" (go-to-fraction :numerator))
   ("dénominateur" (go-to-fraction :denominator))
 
-  ("similaire" (insert "<sim>"))
-  ("asymptotique" (insert "<asymp>"))
-  ;;("approx" (insert "<approx>"))
-  ("isomorphe" (insert "<cong>"))
-  ("négligeable" (insert "<prec>"))
-  ("dominé" (insert "<preccurlyeq>"))
-  ("domine" (insert "<succcurlyeq>"))
-  ("domine strictement" (insert "<succ>"))
-
   ("matrice" (make 'matrix))
   ("déterminant" (make 'det))
   ("choix" (make 'choice))
@@ -276,7 +277,6 @@
   ("points diagonaux" (insert "<ddots>"))
   ("points montants" (insert "<udots>"))
 
-  ("tenseur" (insert "<otimes>"))
   ;;("more" "var")
   )
 
@@ -332,6 +332,11 @@
   ("nombres réels" "réels")
   ("nombres entiers" "entiers")
 
+  ("parenthèse" "parenthèses")
+  ("crochet" "crochets")
+  ("accolade" "accolades")
+  ("chevron" "chevrons")
+  ("partie entière de" "partie entière")
   ("ensemble" "accolades")
   ("ensemble de" "accolades")
   ("ensemble des" "accolades")
