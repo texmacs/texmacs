@@ -529,7 +529,7 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     if (!done) {
       if (DEBUG_QT)
         debug_qt << "IM committing: " << commit_string.toUtf8().data() << LF;
-      if (preediting)
+      if (preediting && get_preference ("speech", "off") == "off")
         for (int i = 0; i < commit_string.size(); ++i)
           kbdEvent (0, Qt::NoModifier, commit_string[i]);
       else {
