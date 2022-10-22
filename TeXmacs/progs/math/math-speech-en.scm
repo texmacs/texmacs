@@ -645,6 +645,7 @@
   ("subscribed" "subscript")
   ("exponent" "superscript")
   ("squared" "square")
+  ("e xquire" "x square")
   ("exquire" "x square")
   ("by square" "pi square")
   ("cubed" "cube")

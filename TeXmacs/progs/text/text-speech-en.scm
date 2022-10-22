@@ -19,33 +19,29 @@
 ;; Extra tables for mathematics inside text
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(speech-collection modify-letters english
+(speech-collection prefix english
   "big" "small" "capital" "uppercase" "lowercase"
   "bold" "upright" "calligraphic" "fraktur" "gothic"
   "blackboard bold" "sans serif" "typewriter")
 
-(speech-collection accept-start english
+(speech-collection prefix english
   "exponential" "logarithm" "sine" "cosine" "tangent"
   "square root")
 
-(speech-collection accept-end english
-  "prime" "dagger" "factorial")
+(speech-collection postfix english
+  "prime" "dagger")
 
-(speech-collection reminder-dangerous english
-  "be" "see" "he" "eat" "each" "if" "yes" "age" "edge" "all" "old" "an"
+(speech-collection dangerous english
+  "a" "be" "see" "he" "eat" "each" "if" "yes" "age" "edge" "all" "old" "an"
   "piece" "queue" "are" "our" "tea" "you" "ask" "why" "mute" "mood"
   "no" "bye" "row" "towel" "toe" "fight" "fine" "play" "time" "pick"
   "of" "off" "it's" "some" "such" "that" "power")
 
 (speech-collection dangerous english
-  "a" "be")
+  "is")
 
-(speech-collection dangerous-end english
-  "be" "if" "all" "are" "our" "you" "why" "no" "row"
-  "of" "off" "some" "such" "that" "power")
-
-(speech-collection forbid english
-  )
+(speech-collection skip english
+  "such" "that")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General speech commands for all modes

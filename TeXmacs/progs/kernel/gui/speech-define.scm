@@ -112,6 +112,9 @@
         "<omicron>" "<pi>" "<rho>" "<sigma>" "<tau>" "<upsilon>"
         "<phi>" "<psi>" "<chi>" "<omega>"))
 
+(tm-define lowercase-letters
+  (append roman-letters greek-letters))
+
 (define (number-cadr? x) (string-number? (cadr x)))
 (define (roman-cadr? x) (in? (cadr x) roman-letters))
 (define (greek-cadr? x) (in? (cadr x) greek-letters))
@@ -304,7 +307,7 @@
   (noop))
 
 (tm-define (speech-exec s)
-  ;;(display* "Speech " s "\n")
+  ;;(display* "Execute " s "\n")
   (let* ((lan (speech-language))
          (mode (speech-current-mode))
          (r (speech-rewrite lan mode s))
