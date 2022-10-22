@@ -2043,14 +2043,6 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(math-stats-best-variant <scm-arg|string> <scm-arg|string>)>
-<explain-synopsis|no synopsis>
-  <|explain>
-    Calls the <c++> function <cpp|best_variant> which returns
-    <scm|tree>.
-  </explain>
-
-  <\explain>
     <scm|(path-strip <scm-arg|path> <scm-arg|path>)>
 <explain-synopsis|no synopsis>
   <|explain>

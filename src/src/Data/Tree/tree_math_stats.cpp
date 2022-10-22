@@ -31,8 +31,6 @@ protected:
 public:
   math_stats (): occurrences (0) {}
   void compile (tree t, string mode);
-  void improve (tree& best, int& nr, tree propose);
-  tree best_variant (string s);
 };
 
 bool
@@ -81,46 +79,6 @@ math_stats::compile (tree t, string mode) {
 }
 
 /******************************************************************************
-* Best variants of letters
-******************************************************************************/
-
-void
-math_stats::propose (tree& best, int& nr, tree propose) {
-  if (occurrences [propose] > nr) {
-    best= propose;
-    nr= occurrences [propose];
-  }
-}
-
-void
-math_stats::improve (tree& best, int& nr, string s) {
-  string rad= s;
-  if (N(rad) >= 2) rad= rad (1, N(rad)-1);
-  propose (best, nr, s);
-  propose (best, nr, tree ("<up-" * rad * ">"));
-  propose (best, nr, tree ("<cal-" * rad * ">"));
-  propose (best, nr, tree ("<frak-" * rad * ">"));
-  propose (best, nr, tree ("<bbb-" * rad * ">"));
-  propose (best, nr, tree ("<b-" * rad * ">"));
-  propose (best, nr, tree ("<b-up-" * rad * ">"));
-  propose (best, nr, tree ("<b-cal-" * rad * ">"));
-  propose (best, nr, tree ("<b-frak-" * rad * ">"));
-  propose (best, nr, compound ("math-ss", s));
-  propose (best, nr, compound ("math-tt", s));
-}
-
-tree
-math_stats::best_variant (string s) {
-  tree best= "";
-  int nr= 0;
-  improve (best, nr, s);
-  if (N(s) == 1) s= upcase_first (s);
-  else s= "<" * upcase_first (s (1, N(s)-1)) * ">";
-  improve (best, nr, s);
-  return best;
-}
-
-/******************************************************************************
 * User interface
 ******************************************************************************/
 
@@ -137,10 +95,4 @@ int
 number_occurrences (string id, tree t) {
   if (!stats_table->contains (id)) return 0;
   return stats_table[id].occurrences[t];
-}
-
-tree
-best_variant (string id, string s) {
-  if (!stats_table->contains (id)) return "";
-  return stats_table[id].best_variant (s);
 }
