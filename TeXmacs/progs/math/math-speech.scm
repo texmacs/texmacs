@@ -28,8 +28,7 @@
   (set! speech-letter-mode (list))
   (set! speech-operator-mode :off)
   (while (nnull? speech-state)
-    (structured-exit-right)
-    (set! speech-state (cdr speech-state)))
+    (speech-exit-innermost))
   (former))
 
 (tm-define (speech-current-mode)
@@ -88,17 +87,41 @@
 ;; Speech state related routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (speech-exit-from op)
+  (and-with t (tree-innermost op)
+    (tree-go-to t :end))
+  (set! speech-state (cdr speech-state)))
+
+(define (around-context? t) (tree-in? t '(around around*)))
+(define (wide-context? t) (tree-in? t '(wide wide*)))
+
+(define (speech-exit-innermost)
+  (with type (and (nnull? speech-state) (car speech-state))
+    (cond ((not type) (noop))
+          ((== type :subscript) (speech-exit-from 'rsub))
+          ((== type :superscript) (speech-exit-from 'rsup))
+          ((== type :over) (speech-exit-from 'frac))
+          ((== type :sqrt) (speech-exit-from 'sqrt))
+          ((== type :wide) (speech-exit-from wide-context?))
+          ((== type :apply) (speech-exit-from around-context?))
+          ((== type :factor) (speech-exit-from around-context?))
+          ((== type :brackets) (speech-exit-from around-context?))
+          ((== type :braces) (speech-exit-from around-context?))
+          (else (set! speech-state (cdr speech-state))))))
+
+(define (speech-enter type)
+  (set! speech-state (cons type speech-state)))
+
 (tm-define (speech-leave)
   (:mode in-math?)
-  (when (nnull? speech-state)
-    (set! speech-state (cdr speech-state)))
-  (structured-exit-right))
+  (if (nnull? speech-state)
+      (speech-exit-innermost)
+      (structured-exit-right)))
 
 (tm-define (speech-exit-scripts)
   (when (and (nnull? speech-state)
              (in? (car speech-state) (list :subscript :superscript)))
-    (structured-exit-right)
-    (set! speech-state (cdr speech-state))))
+    (speech-exit-innermost)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Exploiting statistics
@@ -391,7 +414,8 @@
 
 (define (speech-relation-exit)
   (when (nnull? speech-state)
-    (when (in? (car speech-state) (list :over :apply))
+    (when (in? (car speech-state)
+               (list :over :sqrt :wide :apply :factor :brackets))
       (speech-leave)
       (speech-relation-exit))))
 
@@ -438,11 +462,11 @@
 
 (tm-define (speech-subscript)
   (make 'rsub)
-  (set! speech-state (cons :subscript speech-state)))
+  (speech-enter :subscript))
 
 (tm-define (speech-superscript)
   (make 'rsup)
-  (set! speech-state (cons :superscript speech-state)))
+  (speech-enter :superscript))
 
 (tm-define (speech-insert-superscript s)
   (if (== (before-cursor) " ")
@@ -451,20 +475,22 @@
           (math-insert `(rsup ,s))))
       (math-insert `(rsup ,s))))
 
-(tm-define (speech-apply-brackets)
-  (math-bracket-open "(" ")" 'default)
-  (set! speech-state (cons :apply speech-state)))
-
 (tm-define (speech-sqrt)
   (make 'sqrt)
-  (set! speech-state (cons :sqrt speech-state)))
+  (speech-enter :sqrt))
 
 (tm-define (speech-over)
   (with prev (before-cursor)
     (if (tm-is? prev 'big) (make 'rsub)
         (with sel (cut-before-cursor)
           (insert-go-to `(frac ,sel "") (list 1 0))
-          (set! speech-state (cons :over speech-state))))))
+          (speech-enter :over)))))
+
+(tm-define (go-to-fraction where)
+  (with-innermost t 'frac
+    (when t
+      (cond ((== where :numerator) (tree-go-to t 0 :end))
+            ((== where :denominator) (tree-go-to t 1 :end))))))
 
 (tm-define (speech-accent acc)
   (with sel (tm->stree (cut-before-cursor))
@@ -478,23 +504,37 @@
 
 (tm-define (speech-wide acc)
   (make-wide acc)
-  (set! speech-state (cons :wide speech-state)))
+  (speech-enter :wide))
 
 (tm-define (speech-wide-under acc)
   (make-wide-under acc)
-  (set! speech-state (cons :wide speech-state)))
+  (speech-enter :wide))
 
-(tm-define (go-to-fraction where)
-  (with-innermost t 'frac
-    (when t
-      (cond ((== where :numerator) (tree-go-to t 0 :end))
-            ((== where :denominator) (tree-go-to t 1 :end))))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Brackets
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (editing-big-operator?)
-  (and-with t (tree-innermost script-context?)
-    (while (and t (script-context? t))
-      (set! t (tree-ref t :previous)))
-    (and t (tree-is? t 'big))))
+(tm-define (speech-apply-brackets)
+  (math-bracket-open "(" ")" 'default)
+  (speech-enter :apply))
+
+(tm-define (speech-factor)
+  (when (and (nnull? speech-state) (== (car speech-state) :factor))
+    (speech-leave))
+  (insert "*")
+  (math-bracket-open "(" ")" 'default)
+  (speech-enter :factor))
+
+(tm-define (speech-brackets open close)
+  (math-bracket-open open close 'default)
+  (speech-enter (if (== open "{") :braces :brackets)))
+
+(tm-define (speech-open open close)
+  (math-bracket-open open close 'default))
+
+(tm-define (speech-close)
+  (and-with t (tree-innermost around-context?)
+    (tree-go-to t :end)))
 
 (tm-define (speech-of)
   (with prev (before-cursor)
@@ -506,12 +546,15 @@
                (tm-in? prev '(with math-ss math-tt rsub rsup around)))
            (speech-apply-brackets)))))
 
-(tm-define (speech-factor)
-  (when (and (nnull? speech-state) (== (car speech-state) :factor))
-    (speech-leave))
-  (insert "*")
-  (math-bracket-open "(" ")" 'default)
-  (set! speech-state (cons :factor speech-state)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Big operators and dots
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (editing-big-operator?)
+  (and-with t (tree-innermost script-context?)
+    (while (and t (script-context? t))
+      (set! t (tree-ref t :previous)))
+    (and t (tree-is? t 'big))))
 
 (tm-define (speech-for)
   (make 'rsub))
@@ -521,16 +564,16 @@
   (insert dots)
   (speech-insert-symbol sym))
 
-(define (relation-symbol? x)
-  (and (string? x)
-       (== (math-symbol-group x) "Relation-nolim-symbol")))
-
 (define (big->dots prev t sym dots)
   (with arg (tm->stree (tm-ref t 0))
     (selection-set (rcons (tree->path prev) 0) (rcons (tree->path t) 1))
     (cpp-clipboard-cut "dummy")
     (insert arg)
     (speech-dots sym dots)))
+
+(define (relation-symbol? x)
+  (and (string? x)
+       (== (math-symbol-group x) "Relation-nolim-symbol")))
 
 (tm-define (speech-until)
   (if (inside? 'rsub)

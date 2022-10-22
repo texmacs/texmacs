@@ -42,7 +42,7 @@
   "ah" "an" "au" "el" "en" "es" "et" "ex" "il" "oh" "ou" "un"
   "ma" "ta" "za" "de" "he" "le" "se" "te"
   "ai" "bi" "hi" "ji" "pi" "si" "ti" "xi"
-  "ho" "no" "to" "du" "mu" "nu" "ou")
+  "ho" "no" "to" "du" "mu" "nu" "ou" "sy")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Entering mathematical symbols via English speech
@@ -232,11 +232,25 @@
   ("large barre dessous" (speech-wide-under "<bar>"))
 
   ("de" (speech-of))
-  ("parenthèses" (math-bracket-open "(" ")" 'default))
-  ("crochets" (math-bracket-open "[" "]" 'default))
-  ("accolades" (math-bracket-open "{" "}" 'default))
-  ("chevrons" (math-bracket-open "<langle>" "<rangle>" 'default))
-  ("partie entière" (math-bracket-open "<lfloor>" "<rfloor>" 'default))
+  ("ouvrir" (speech-open "(" ")"))
+  ("fermer" (speech-close))
+  ("parenthèses" (speech-brackets "(" ")"))
+  ("crochets" (speech-brackets "[" "]"))
+  ("accolades" (speech-brackets "{" "}"))
+  ("chevrons" (speech-brackets "<langle>" "<rangle>"))
+  ("partie entière" (speech-brackets "<lfloor>" "<rfloor>"))
+  ("ouvrir parenthèses" (speech-open "(" ")"))
+  ("ouvrir crochets" (speech-open "[" "]"))
+  ("ouvrir accolades" (speech-open "{" "}"))
+  ("ouvrir chevrons" (speech-open "<langle>" "<rangle>"))
+  ("ouvrir partie entière" (speech-open "<lfloor>" "<rfloor>"))
+
+  ("(" (speech-open "(" ")"))
+  ("[" (speech-open "[" "]"))
+  ("{" (speech-open "{" "}"))
+  (")" (speech-close))
+  ("]" (speech-close))
+  ("}" (speech-close))
 
   ("exponentielle" (speech-insert-operator "exp"))
   ("exponentielle de" (speech-insert-function "exp"))
@@ -347,6 +361,31 @@
   ("accolade" "accolades")
   ("chevron" "chevrons")
   ("partie entière de" "partie entière")
+  ("fermer parenthèses" "fermer")
+  ("fermer crochets" "fermer")
+  ("fermer accolades" "fermer")
+  ("fermer chevrons" "fermer")
+  ("fermer partie entière" "fermer")
+
+  ("ouvre" "ouvrir")
+  ("ouvres" "ouvrir")
+  ("ouvrent" "ouvrir")
+  ("ouvrir le" "ouvrir")
+  ("ouvrir la" "ouvrir")
+  ("ouvrir les" "ouvrir")
+  ("ouvrir un" "ouvrir")
+  ("ouvrir une" "ouvrir")
+  ("ouvrir des" "ouvrir")
+  ("ferme" "fermer")
+  ("fermes" "fermer")
+  ("ferment" "fermer")
+  ("fermer le" "fermer")
+  ("fermer la" "fermer")
+  ("fermer les" "fermer")
+  ("fermer un" "fermer")
+  ("fermer une" "fermer")
+  ("fermer des" "fermer")
+
   ("ensemble" "accolades")
   ("ensemble de" "accolades")
   ("ensemble des" "accolades")
