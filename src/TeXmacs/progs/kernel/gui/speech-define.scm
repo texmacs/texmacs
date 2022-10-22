@@ -115,6 +115,12 @@
 (tm-define punctuation-symbols
   (list "." "," ":" ";" "!" "?"))
 
+(tm-define standard-operators
+  (list "arc" "arc cos" "arc sin" "arc tan" "arccos" "arcsin" "arctan"
+        "arg" "cos" "cosh" "cot" "coth" "csc" "deg" "det" "dim" "exp" "gcd"
+        "hom" "inf" "ker" "lg" "lim" "liminf" "limsup" "lim inf" "lim sup"
+        "ln" "log" "max" "min" "Pr" "sec" "sin" "sinh" "sup" "tan" "tanh"))
+
 (tm-define lowercase-letters
   (append roman-letters greek-letters))
 
@@ -315,5 +321,6 @@
          (mode (speech-current-mode))
          (r (speech-rewrite lan mode s))
          (l (string-decompose r " ")))
+    ;;(display* "Execute " r "\n")
     (speech-exec-list lan l (list))
     (speech-done)))
