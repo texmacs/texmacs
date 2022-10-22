@@ -15,6 +15,5 @@
 
 void compile_stats (string id, tree t, string mode);
 int number_occurrences (string id, tree t);
-tree best_variant (string id, string s);
 
 #endif // defined TREE_MATH_STATS_H

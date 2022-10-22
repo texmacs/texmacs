@@ -280,7 +280,6 @@
 "math-status-reset"
 "math-stats-compile"
 "math-stats-occurrences"
-"math-stats-best-variant"
 "path-strip"
 "path-inf?"
 "path-inf-eq?"

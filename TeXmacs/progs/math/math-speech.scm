@@ -20,6 +20,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define speech-letter-mode (list))
+(define speech-letter-mode* (list))
 (define speech-operator-mode :off)
 (define speech-state (list))
 
@@ -116,37 +117,55 @@
     (when (tree-ref buf :down)
       (math-stats-compile "cursor" (tree-ref buf :down) "text"))))
 
-(define (stats-best-variant x)
-  (with v (tree->stree (math-stats-best-variant "cursor" x))
-    (if (!= v "") v
-        (with w (tree->stree (math-stats-best-variant "buffer" x))
-          (if (!= w "") w x)))))
-
 (tm-define (stats-has? s)
   (or (> (math-stats-occurrences "cursor" s) 0)
       (> (math-stats-occurrences "buffer" s) 0)))
+
+(tm-define (stats-better? alt best)
+  (let* ((alt1  (math-stats-occurrences "cursor" alt))
+         (best1 (math-stats-occurrences "cursor" best))
+         (alt2  (math-stats-occurrences "buffer" alt))
+         (best2 (math-stats-occurrences "buffer" best)))
+    (or (> alt1 best1) (and (== alt1 best1) (> alt2 best2)))))
+
+(tm-define (stats-better*? alt best)
+  (> (math-stats-occurrences "cursor" alt)
+     (math-stats-occurrences "cursor" best)))
 
 (tm-define (stats-best . l)
   (stats-update)
   (with best (car l)
     (for (alt (cdr l))
-      (let* ((alt1  (math-stats-occurrences "cursor" alt))
-             (best1 (math-stats-occurrences "cursor" best))
-             (alt2  (math-stats-occurrences "buffer" alt))
-             (best2 (math-stats-occurrences "buffer" best)))
-        (when (or (> alt1 best1) (and (== alt1 best1) (> alt2 best2)))
-          (set! best alt))))
+      (when (stats-better? alt best)
+        (set! best alt)))
     best))
 
 (tm-define (stats-best* . l)
   (stats-update)
   (with best (car l)
     (for (alt (cdr l))
-      (let* ((alt1  (math-stats-occurrences "cursor" alt))
-             (best1 (math-stats-occurrences "cursor" best)))
-        (when (> alt1 best1)
-          (set! best alt))))
+      (when (stats-better*? alt best)
+        (set! best alt)))
     best))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Default letter roles
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define basic-letters (list "a" "b" "c" "d" "u" "v" "w" "x" "y" "z"
+                            "<alpha>" "<beta>" "<gamma>" "<delta>"
+                            "<varepsilon>" "<zeta>" "<eta>" "<theta>"
+                            "<lambda>" "<mu>" "<xi>" "<omicron>" "<pi>" "<rho>"
+                            "<sigma>" "<tau>" "<upsilon>" "<chi>" "<omega>"
+                            "<mathe>" "<mathi>" "<mathpi>" "<mathgamma>"
+                            "A" "B" "C" "D" "E" "F" "G" "H" "I" "J"
+                            "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T"
+                            "U" "V" "W" "X" "Y" "Z" "<Delta>" "<Theta>"
+                            "<Lambda>" "<Xi>" "<Pi>" "<Sigma>" "<Omega>"))
+(define function-letters (list "f" "g" "h" "<phi>" "<psi>"
+                               "<Gamma>" "<Phi>" "<Psi>"))
+(define index-letters (list "i" "j" "k" "l" "m" "n" "p" "q" "r" "s" "t"
+                            "<iota>" "<kappa>" "<nu>"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Analysis of content before cursor
@@ -232,65 +251,75 @@
         (former nr)))
   (speech-exit-scripts))
 
+(define (update-mode mods type)
+  (cond ((in? type mods) mods)
+        ((and (in? type (list :cal :bbb))
+              (nin? :small mods)
+              (nin? :big mods))
+         (update-mode (update-mode mods :big) type))
+        ((in? type (list :big :small))
+         (cons type (list-difference mods (list :big :small))))
+        ((in? type (list :bold :medium))
+         (cons type (list-difference mods (list :bold :medium))))
+        ((in? type (list :up :it :cal :frak :bbb))
+         (cons type (list-difference mods (list :up :it :cal :frak :bbb))))
+        ((in? type (list :normal :ss :tt))
+         (cons type (list-difference mods (list :normal :ss :tt))))
+        (else mods)))
+
 (tm-define (speech-alter-letter type)
   (with prev (before-cursor)
     (when (not (and (string? prev) (string-alpha? prev)))
       (set! speech-operator-mode :off)))
-  (set! speech-letter-mode (cons type speech-letter-mode)))
+  (set! speech-letter-mode (update-mode speech-letter-mode type)))
 
-(define (get-letter-variant x*)
-  (with x x*
+(define (modified-letter x mods)
+  (with x* x
     (when (> (string-length x) 1)
       (set! x (substring x 1 (- (string-length x) 1))))
-    (when (in? :big speech-letter-mode)
-      (set! x (upcase-first x)))
-    (when (in? :small speech-letter-mode)
-      (set! x (locase-first x)))
-    (cond ((in? :up speech-letter-mode)
-           (set! x (string-append "up-" x)))
-          ((in? :cal speech-letter-mode)
-           (set! x (string-append "cal-" x)))
-          ((in? :frak speech-letter-mode)
-           (set! x (string-append "frak-" x)))
-          ((in? :bbb speech-letter-mode)
-           (set! x (string-append "bbb-" x))))
-    (when (and (in? :bold speech-letter-mode)
-               (nin? :bbb speech-letter-mode))
-      (set! x (string-append "b-" x)))
+    (when (in? :big mods)   (set! x (upcase-first x)))
+    (when (in? :small mods) (set! x (locase-first x)))
+    (cond ((in? :up mods)   (set! x (string-append "up-" x)))
+          ((in? :cal mods)  (set! x (string-append "cal-" x)))
+          ((in? :frak mods) (set! x (string-append "frak-" x)))
+          ((in? :bbb mods)  (set! x (string-append "bbb-" x))))
+    (when (in? :bold mods)  (set! x (string-append "b-" x)))
     (when (> (string-length x) 1)
       (set! x (string-append "<" x ">")))
-    (cond ((in? :ss speech-letter-mode)
-           (set! x `(math-ss ,x)))
-          ((in? :tt speech-letter-mode)
-           (set! x `(math-tt ,x))))
-    (when (== x x*)
-      (stats-update)
-      (set! x (stats-best-variant x)))
+    (cond ((in? :ss mods) (set! x `(math-ss ,x)))
+          ((in? :tt mods) (set! x `(math-tt ,x))))
     x))
 
-(define basic-letters (list "a" "b" "c" "d" "u" "v" "w" "x" "y" "z"
-                            "<alpha>" "<beta>" "<gamma>" "<delta>"
-                            "<varepsilon>" "<zeta>" "<eta>" "<theta>"
-                            "<lambda>" "<mu>" "<xi>" "<omicron>" "<pi>" "<rho>"
-                            "<sigma>" "<tau>" "<upsilon>" "<chi>" "<omega>"
-                            "<mathe>" "<mathi>" "<mathpi>" "<mathgamma>"
-                            "A" "B" "C" "D" "E" "F" "G" "H" "I" "J"
-                            "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T"
-                            "U" "V" "W" "X" "Y" "Z" "<Delta>" "<Theta>"
-                            "<Lambda>" "<Xi>" "<Pi>" "<Sigma>" "<Omega>"))
-(define function-letters (list "f" "g" "h" "<phi>" "<psi>"
-                               "<Gamma>" "<Phi>" "<Psi>"))
-(define index-letters (list "i" "j" "k" "l" "m" "n" "p" "q" "r" "s" "t"
-                            "<iota>" "<kappa>" "<nu>"))
+(define (improve-letter best x mods)
+  (when (and (nin? :big mods) (nin? :small mods))
+    (set! best (improve-letter best x (cons* :big mods))))
+  (when (and (nin? :bold mods) (nin? :medium mods))
+    (set! best (improve-letter best x (cons* :bold mods))))
+  (when (and (nin? :up mods) (nin? :it mods)
+             (nin? :cal mods) (nin? :frak mods) (nin? :bbb mods))
+    (set! best (improve-letter best x (cons* :up mods)))
+    (set! best (improve-letter best x (cons* :cal mods)))
+    (set! best (improve-letter best x (cons* :frak mods)))
+    (set! best (improve-letter best x (cons* :bbb mods))))
+  (when (and (nin? :ss mods) (nin? :tt mods) (nin? :normal mods))
+    (set! best (improve-letter best x (cons* :ss mods)))
+    (set! best (improve-letter best x (cons* :tt mods))))
+  (stats-best best (modified-letter x mods)))
+
+(tm-define (best-letter-variant x)
+  (with mx (modified-letter x speech-letter-mode)
+    (improve-letter mx x speech-letter-mode)))
 
 (tm-define (speech-insert-letter x*)
   (with prev* (before-cursor)
+    (set! speech-letter-mode* (list))
     (when (and (== speech-operator-mode :on)
                (not (and (string? prev*) (string-alpha? prev*))))
       (set! speech-letter-mode (list))
       (set! speech-operator-mode :off))
     (let* ((prev (root-before-cursor))
-           (x (get-letter-variant x*)))
+           (x (best-letter-variant x*)))
+      ;;(display* x* ", " speech-letter-mode " ~> " x "\n")
       (cond ((!= speech-operator-mode :off)
              (insert x))
             ((or (and (string? prev) (string-number? prev))
@@ -306,6 +335,7 @@
             (else
               (insert x)
               (speech-exit-scripts)))
+      (set! speech-letter-mode* speech-letter-mode)
       (when (== speech-operator-mode :start)
         (set! speech-operator-mode :on))
       (when (== speech-operator-mode :off)
