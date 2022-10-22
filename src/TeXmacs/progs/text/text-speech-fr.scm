@@ -12,13 +12,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (text text-speech-fr)
-  (:use (text text-speech)))
+  (:use (text text-speech)
+        (math math-speech-fr)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra tables for mathematics inside text
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(speech-collection numbers french
+(speech-collection number french
   "zéro" "un" "deux" "trois" "quatre" "cinq" "six" "sept"
   "huit" "neuf" "dix" "cent" "mille" "million" "milliard")
 

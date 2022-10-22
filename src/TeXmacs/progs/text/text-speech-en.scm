@@ -12,24 +12,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (text text-speech-en)
-  (:use (text text-speech)))
+  (:use (text text-speech)
+        (math math-speech-en)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra tables for mathematics inside text
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(speech-collection numbers english
-  "zero" "one" "two" "three" "four" "five" "six" "seven"
-  "eight" "nine" "ten" "hundred" "thousand" "million" "billion")
-
-(speech-collection roman english
-  "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m"
-  "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z")
-
-(speech-collection greek english
-  "alpha" "beta" "gamma" "delta" "epsilon" "zeta" "eta" "theta" "iota"
-  "kappa" "lambda" "mu" "nu" "xi" "omicron" "pi" "rho" "sigma" "tau"
-  "upsilon" "phi" "psi" "chi" "omega")
 
 (speech-collection modify-letters english
   "big" "small" "capital" "uppercase" "lowercase"

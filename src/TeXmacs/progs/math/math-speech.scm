@@ -368,6 +368,14 @@
   (insert x)
   (speech-exit-scripts))
 
+(tm-define (speech-insert-symbol x)
+  (:require (string-number? x))
+  (speech-insert-number x))
+
+(tm-define (speech-insert-symbol x)
+  (:require (or (in? x roman-letters) (in? x greek-letters)))
+  (speech-insert-letter x))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Textual operators
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
