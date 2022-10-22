@@ -199,9 +199,19 @@
   ("maps to" "<mapsto>")
   ("long maps to" "<longmapsto>")
 
-  ("comma" ",")
-  ("such that" "<suchthat>")
   ("period" ".")
+  ("comma" ",")
+  ("colon" ":")
+  ("semicolon" ";")
+  ("exclamation mark" "!")
+  ("question mark" "?")
+  ("." ".")
+  ("," ",")
+  (":" ":")
+  (";" ";")
+  ("!" "!")
+  ("?" "?")
+  ("such that" "<suchthat>")
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

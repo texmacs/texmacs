@@ -43,7 +43,12 @@
         (else #t)))
 
 (define (accept-end? lan l r)
+  (display* "  accept-end? " l ", " r "\n")
   (cond ((< (length r) 1) #f)
+        ((in? (cAr l) punctuation-symbols) #f)
+        ((in? (string-take-right (cAr l) 1) punctuation-symbols)
+         (with h (string-drop-right (cAr l) 1)
+           (accept-end? lan (rcons (cDr l) h) (cDr r))))
         ((speech-has? lan 'dangerous (cAr l))
          (and (>= (length l) 2) (>= (length r) 2)
               (let* ((l1 (speech-rewrite lan 'math (cAr l)))
@@ -84,7 +89,15 @@
               (speech-inline 'math)
               (kbd-speech s2)
               (with t (tree-innermost 'math)
-                (when t (tree-go-to t :end))
+                (when t
+                  (tree-go-to t 0 :end)
+                  (with prev (before-cursor)
+                    (if (in? prev punctuation-symbols)
+                        (begin
+                          (cut-before-cursor)
+                          (tree-go-to t :end)
+                          (insert prev))
+                        (tree-go-to t :end))))
                 (when (!= s3 "")
                   (kbd-speech s3))))))))
 

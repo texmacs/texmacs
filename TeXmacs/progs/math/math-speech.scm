@@ -54,6 +54,7 @@
 (tm-define (kbd-speech s)
   (:mode in-math?)
   ;;(display* "Math speech " s "\n")
+  ;;(display* "  Letterized " (letterize (locase-all s)) "\n")
   (cond ((speech-make s) (noop))
         (else (speech-exec (letterize (locase-all s))))))
 
