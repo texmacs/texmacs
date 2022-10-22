@@ -59,6 +59,7 @@
     with-encoding with-indexing
     with-user with-extra-fields
     with-remote-context with-identifier-context
+    speech-symbols
     user-ask
     tab icon-tab form item meti refreshable division
     $when $let $let* $for $refreshable $division

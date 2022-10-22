@@ -96,6 +96,70 @@
      ,@(map (cut speech-collection-add name lan <>) l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Mathematical symbols
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (string-list-2? line)
+  (and (list-2? line) (string? (car line)) (string? (cadr line))))
+
+(tm-define roman-letters
+  (list "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m"
+        "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"))
+
+(tm-define greek-letters
+  (list "<alpha>" "<beta>" "<gamma>" "<delta>" "<epsilon>" "<zeta>" "<eta>"
+        "<theta>" "<iota>" "<kappa>" "<lambda>" "<mu>" "<nu>" "<xi>"
+        "<omicron>" "<pi>" "<rho>" "<sigma>" "<tau>" "<upsilon>"
+        "<phi>" "<psi>" "<chi>" "<omega>"))
+
+(define (number-cadr? x) (string-number? (cadr x)))
+(define (roman-cadr? x) (in? (cadr x) roman-letters))
+(define (greek-cadr? x) (in? (cadr x) greek-letters))
+
+(define (ordinary-cadr? x)
+  (and (== (math-symbol-type (cadr x)) "symbol")
+       (nin? (cadr x) roman-letters)
+       (nin? (cadr x) greek-letters)))
+
+(define (infix-cadr? x) (== (math-symbol-type (cadr x)) "infix"))
+(define (prefix-cadr? x) (== (math-symbol-type (cadr x)) "prefix"))
+(define (postfix-cadr? x) (== (math-symbol-type (cadr x)) "postfix"))
+(define (prefix-infix-cadr? x) (== (math-symbol-type (cadr x)) "prefix-infix"))
+(define (separator-cadr? x) (== (math-symbol-type (cadr x)) "separator"))
+
+(tm-define (speech-insert-symbol sym)
+  (insert sym))
+
+(define (speech-map-symbol line)
+  (with (key im) line
+    `(,key (speech-insert-symbol ,im))))
+
+(tm-define-macro (speech-symbols lan . l)
+  (:synopsis "Add entries in @l to the keyboard speech adjustment table")
+  (set! l (filter string-list-2? l))
+  (let* ((number (filter number-cadr? l))
+         (roman (filter roman-cadr? l))
+         (greek (filter greek-cadr? l))
+         (ordinary (filter ordinary-cadr? l))
+         (infix (filter infix-cadr? l))
+         (prefix (filter infix-cadr? l))
+         (postfix (filter infix-cadr? l))
+         (prefix-infix (filter prefix-infix-cadr? l))
+         (separator (filter separator-cadr? l)))
+    `(begin
+       (speech-map ,lan math
+         ,@(map speech-map-symbol l))
+       (speech-collection number ,lan ,@(map car number))
+       (speech-collection roman ,lan ,@(map car roman))
+       (speech-collection greek ,lan ,@(map car greek))
+       (speech-collection ordinary-symbol ,lan ,@(map car ordinary))
+       (speech-collection prefix ,lan ,@(map car ordinary))
+       (speech-collection infix ,lan ,@(map car infix))
+       (speech-collection postfix ,lan ,@(map car postfix))
+       (speech-collection prefix-infix ,lan ,@(map car prefix-infix))
+       (speech-collection separator ,lan ,@(map car separator)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sanitizing speech commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -240,7 +304,7 @@
   (noop))
 
 (tm-define (speech-exec s)
-  ;;(display* "Speech " s "\n")
+  (display* "Speech " s "\n")
   (let* ((lan (speech-language))
          (mode (speech-current-mode))
          (r (speech-rewrite lan mode s))
