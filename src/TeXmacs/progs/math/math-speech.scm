@@ -516,11 +516,39 @@
 (tm-define (speech-for)
   (make 'rsub))
 
+(tm-define (speech-dots sym dots)
+  (speech-insert-symbol sym)
+  (insert dots)
+  (speech-insert-symbol sym))
+
+(define (relation-symbol? x)
+  (and (string? x)
+       (== (math-symbol-group x) "Relation-nolim-symbol")))
+
+(define (big->dots prev t sym dots)
+  (with arg (tm->stree (tm-ref t 0))
+    (selection-set (rcons (tree->path prev) 0) (rcons (tree->path t) 1))
+    (cpp-clipboard-cut "dummy")
+    (insert arg)
+    (speech-dots sym dots)))
+
 (tm-define (speech-until)
-  (when (inside? 'rsub)
-    (with-innermost t 'rsub
-      (tree-go-to t :end)))
-  (make 'rsup))
+  (if (inside? 'rsub)
+      (with-innermost t 'rsub
+        (let* ((prev (tree-ref t :previous))
+               (big? (and (tree? prev) (tree-is? prev 'big)))
+               (op (and big? (tm->stree (tm-ref prev 0))))
+               (l (map tm->stree (concat-tokenize-math (tm-ref t 0)))))
+          (cond ((not big?) (noop))
+                ((exists? relation-symbol? l)
+                 (tree-go-to t :end)
+                 (make 'rsup))
+                ((== op "sum") (big->dots prev t "+" "<cdots>"))
+                ((== op "prod") (big->dots prev t "*" "<cdots>"))
+                (else
+                  (tree-go-to t :end)
+                  (make 'rsup)))))
+      (speech-dots "," "<ldots>")))
 
 (tm-define (speech-to)
   (cond ((inside? 'rsub) (speech-until))
