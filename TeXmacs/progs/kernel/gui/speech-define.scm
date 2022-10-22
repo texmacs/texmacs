@@ -304,7 +304,7 @@
   (noop))
 
 (tm-define (speech-exec s)
-  (display* "Speech " s "\n")
+  ;;(display* "Speech " s "\n")
   (let* ((lan (speech-language))
          (mode (speech-current-mode))
          (r (speech-rewrite lan mode s))
