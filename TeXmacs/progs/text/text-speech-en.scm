@@ -35,7 +35,8 @@
   "a" "be" "see" "he" "eat" "each" "if" "yes" "age" "edge" "all" "old" "an"
   "piece" "queue" "are" "our" "tea" "you" "ask" "why" "mute" "mood"
   "no" "bye" "row" "towel" "toe" "fight" "fine" "play" "time" "pick"
-  "of" "off" "it's" "some" "such" "that" "power")
+  "of" "off" "it's" "some" "such" "that" "power"
+  "make" "did")
 
 (speech-collection dangerous english
   "is")

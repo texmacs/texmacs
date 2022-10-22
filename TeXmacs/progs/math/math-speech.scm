@@ -38,7 +38,8 @@
 (tm-define (speech-exec-hook s)
   (:mode in-math?)
   ;;(display* "Hook " s "\n")
-  (and (>= (string-length s) 2)
+  (and (nin? s standard-operators)
+       (>= (string-length s) 2)
        (<= (string-length s) 10)
        (string-alpha? s)
        (let* ((ss (locase-all s))
@@ -53,7 +54,6 @@
 (tm-define (kbd-speech s)
   (:mode in-math?)
   ;;(display* "Math speech " s "\n")
-  ;;(display* "  Letterized " (letterize (locase-all s)) "\n")
   (cond ((speech-make s) (noop))
         (else (speech-exec (letterize (locase-all s))))))
 
