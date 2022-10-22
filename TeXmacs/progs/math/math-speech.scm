@@ -388,6 +388,17 @@
   (:require (or (in? x roman-letters) (in? x greek-letters)))
   (speech-insert-letter x))
 
+(define (speech-relation-exit)
+  (when (nnull? speech-state)
+    (when (in? (car speech-state) (list :over :apply))
+      (speech-leave)
+      (speech-relation-exit))))
+
+(tm-define (speech-insert-symbol x)
+  (:require (== (math-symbol-group x) "Relation-nolim-symbol"))
+  (speech-relation-exit)
+  (insert x))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Textual operators
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
