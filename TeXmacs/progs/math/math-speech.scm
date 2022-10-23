@@ -278,6 +278,9 @@
       (set! l (list-remove l :subscript)))
     (when (tree-is? x 'rsup)
       (set! l (list-remove l :superscript)))
+    (when (and (nstring? x)
+               (not (tree-in? x '(frac sqrt around around*))))
+      (set! l (list)))
     l))
 
 (define (insert-implicit impl x)
