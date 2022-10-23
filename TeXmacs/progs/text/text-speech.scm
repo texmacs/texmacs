@@ -43,7 +43,6 @@
         (else #t)))
 
 (define (accept-end? lan l r)
-  (display* "  accept-end? " l ", " r "\n")
   (cond ((< (length r) 1) #f)
         ((in? (cAr l) punctuation-symbols) #f)
         ((in? (string-take-right (cAr l) 1) punctuation-symbols)
@@ -101,14 +100,24 @@
                 (when (!= s3 "")
                   (kbd-speech s3))))))))
 
-(define (longest-math-prefix lan l)
+(define (longest-math-prefix* lan l)
   (cond ((null? l) l)
         ((with s (locase-all (car l))
            (!= (letterize s) s))
-         (cons (car l) (longest-math-prefix lan (cdr l))))
+         (cons (car l) (longest-math-prefix* lan (cdr l))))
         ((speech-has? lan 'skip (car l)) (list))
         ((not (speech-accepts? lan 'math (car l))) (list))
-        (else (cons (car l) (longest-math-prefix lan (cdr l))))))
+        (else (cons (car l) (longest-math-prefix* lan (cdr l))))))
+
+(define (trim-longest-math-prefix lan l)
+  (cond ((null? l) l)
+        ((speech-border-accepts? lan 'math (cAr l)) l)
+        (else (trim-longest-math-prefix lan (cDr l)))))
+
+(define (longest-math-prefix lan l)
+  (cond ((null? l) l)
+        ((not (speech-border-accepts? lan 'math (car l))) (list))
+        (else (trim-longest-math-prefix lan (longest-math-prefix* lan l)))))
 
 (define (text-speech* lan h t)
   (if (null? t)

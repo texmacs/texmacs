@@ -36,7 +36,7 @@
   "either" "case" "all" "old" "an" "piece" "queue"
   "are" "our" "tea" "you" "ask" "why" "mute" "mood"
   "no" "bye" "row" "towel" "toe" "fight" "fine" "play" "time" "pick"
-  "of" "off" "it's" "some" "such" "that" "power"
+  "of" "off" "it's" "some" "power"
   "make" "did")
 
 (speech-collection dangerous english
