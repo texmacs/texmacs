@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (math math-speech-fr)
-  (:use (math math-speech-en)))
+  (:use (math math-speech)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sanitize input
@@ -36,6 +36,7 @@
   (set! s (string-replace s "  " " "))
   (set! s (string-replace s "  " " "))
   (set! s (tm-string-trim-both s))
+  (set! s (french-normalize 'math s))
   s)
 
 (speech-collection dont-break french
@@ -43,6 +44,67 @@
   "ma" "ta" "za" "de" "he" "le" "se" "te"
   "ai" "bi" "hi" "ji" "pi" "si" "ti" "xi"
   "ho" "no" "to" "du" "mu" "nu" "ou" "sy")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Normalization of French text (singular/plural, masculin/feminin, etc.)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (french-resuffix* mode s suf1 suf2)
+  (and (string-ends? s suf1)
+       (let* ((l1 (string-length s))
+              (l2 (string-length suf1))
+              (r  (string-append (substring s 0 (- l1 l2)) suf2)))
+         (and (>= l1 (+ l2 3))
+              (raw-speech-accepts? 'french mode r)
+              r))))
+
+(define (french-resuffix mode s suf1 suf2)
+  (or (french-resuffix* mode s suf1 suf2)
+      (french-resuffix* mode s suf2 suf1)))
+
+(define (french-normalize-one mode s)
+  (or (and (raw-speech-accepts? 'french mode s) s)
+      (french-resuffix mode s "e" "")
+      (french-resuffix mode s "s" "")
+      (french-resuffix mode s "es" "")
+      (french-resuffix mode s "x" "")
+      (french-resuffix mode s "aux" "al")
+      (french-resuffix mode s "ère" "er")
+      (french-resuffix mode s "ères" "ers")
+      (french-resuffix mode s "ères" "er")
+      (french-resuffix mode s "ve" "f")
+      (french-resuffix mode s "ves" "f")
+      (french-resuffix mode s "ves" "fs")
+      (french-resuffix mode s "er" "")
+      (french-resuffix mode s "er" "e")
+      (french-resuffix mode s "er" "es")
+      (french-resuffix mode s "er" "ent")
+      (french-resuffix mode s "er" "é")
+      (french-resuffix mode s "er" "ée")
+      (french-resuffix mode s "er" "és")
+      (french-resuffix mode s "er" "ées")
+      (french-resuffix mode s "ir" "")
+      (french-resuffix mode s "ir" "e")
+      (french-resuffix mode s "ir" "es")
+      (french-resuffix mode s "ir" "ent")
+      (french-resuffix mode s "tir" "s")
+      (french-resuffix mode s "re" "")
+      (french-resuffix mode s "re" "s")
+      (french-resuffix mode s "re" "ent")
+      s))
+
+(define (french-normalize-compute mode s)
+  (let* ((l (string-decompose s " "))
+         (r (map (cut french-normalize-one mode <>) l)))
+    (string-recompose r " ")))
+
+(define french-normal-table (make-ahash-table))
+
+(tm-define (french-normalize mode s)
+  (with key (list mode s)
+    (when (not (ahash-ref french-normal-table key))
+      (ahash-set! french-normal-table key (french-normalize-compute mode s)))
+    (ahash-ref french-normal-table key)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Entering mathematical symbols via English speech
@@ -354,15 +416,8 @@
   ("lettre y" "y")
   ("lettre z" "z")
 
-  ("majuscules" "majuscule")
-  ("minuscules" "minuscule")
   ("la constante" "constante")
 
-  ("rationnel" "rationnels")
-  ("réel" "réels")
-  ("entier" "entiers")
-  ("le rationnel" "rationnels")
-  ("le réel" "réels")
   ("les complexes" "complexes")
   ("les entiers positifs" "entiers positifs")
   ("les rationnels" "rationnels")
@@ -374,10 +429,6 @@
   ("nombres réels" "réels")
   ("nombres entiers" "entiers")
 
-  ("parenthèse" "parenthèses")
-  ("crochet" "crochets")
-  ("accolade" "accolades")
-  ("chevron" "chevrons")
   ("partie entière de" "partie entière")
   ("fermer parenthèses" "fermer")
   ("fermer crochets" "fermer")
@@ -385,18 +436,12 @@
   ("fermer chevrons" "fermer")
   ("fermer partie entière" "fermer")
 
-  ("ouvre" "ouvrir")
-  ("ouvres" "ouvrir")
-  ("ouvrent" "ouvrir")
   ("ouvrir le" "ouvrir")
   ("ouvrir la" "ouvrir")
   ("ouvrir les" "ouvrir")
   ("ouvrir un" "ouvrir")
   ("ouvrir une" "ouvrir")
   ("ouvrir des" "ouvrir")
-  ("ferme" "fermer")
-  ("fermes" "fermer")
-  ("ferment" "fermer")
   ("fermer le" "fermer")
   ("fermer la" "fermer")
   ("fermer les" "fermer")
@@ -448,13 +493,7 @@
   ("existe un" "existe")
   ("si et seulement si" "équivaut")
 
-  ("applique" "appliquer")
-  ("appliques" "appliquer")
   ("appliquer à" "appliquer")
-  ("appliqué à" "appliquer")
-  ("appliquée à" "appliquer")
-  ("appliqués à" "appliquer")
-  ("appliquées à" "appliquer")
   ("la racine carrée" "racine carrée")
 
   ("arc cosinus" "arc cos")
@@ -560,36 +599,19 @@
 
   ("la somme" "somme")
   ("le produit" "produit")
-  ("intégral" "intégrale")
   ("l'intégral" "intégrale")
   ("l'intégrale" "intégrale")
   ("l'infini" "infini")
 
   ("une" "un")
-  ("égale" "égal")
-  ("petite" "petit")
-  ("petits" "petit")
-  ("petites" "petit")
-  ("grande" "grand")
-  ("grands" "grand")
-  ("grandes" "grand")
-  ("inférieure" "inférieur")
-  ("inférieurs" "inférieur")
-  ("inférieures" "inférieur")
-  ("supérieure" "supérieur")
-  ("supérieurs" "supérieur")
-  ("supérieures" "supérieur")
-  ("équivalente" "équivalent")
-  ("équivalents" "équivalent")
-  ("équivalentes" "équivalent")
-  ("dominée" "dominé")
-  ("dominés" "dominé")
-  ("dominées" "dominé")
 
   ("grand chapeau" "large chapeau")
   ("grand tilde" "large tilde")
   ("grand barre" "large barre")
   ("en dessous" "dessous")
+
+  ("à" "a")
+  ("qu'à" "k")
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -597,7 +619,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (speech-adjust french math
-  ("à" "a")
+  ;;("à" "a")
   ("ah" "a")
   ("bae" "b")
   ("bébé" "b")
@@ -609,7 +631,7 @@
   ("œuf" "f")
   ("j'ai" "g")
   ("gay" "g")
-  ("qu'à" "k")
+  ;;("qu'à" "k")
   ("caca" "k")
   ("car" "k")
   ("casse" "k")
@@ -681,7 +703,6 @@
   ("constante dans une heure" "constante d'euler")
   ("constante de eyelar" "constante d'euler")
 
-  ("sommes" "somme")
   ("au carré" "carré")
   ("est carré" "carré")
   ("chaos carré" "k carré")
@@ -730,10 +751,6 @@
   ("un 10" "indice")
   ("un dix" "indice")
 
-  ("point horizontaux" "points horizontaux")
-  ("point verticaux" "points verticaux")
-  ("point diagonaux" "points diagonaux")
-  ("point montant" "points montants")
   (". diagonaux" "points diagonaux")
   (". montant" "points montants")
   )

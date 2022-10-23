@@ -234,6 +234,7 @@
 
 (tm-define (speech-rewrite lan mode s)
   (set! s (speech-sanitize lan mode s))
+  ;;(display* "Sanitized " s "\n")
   (let* ((l (string-decompose s " "))
          (r (speech-rewrite* lan mode l)))
     (string-recompose r " ")))
@@ -252,7 +253,7 @@
     (for (ss l)
       (ahash-set! speech-accepts-table (list lan mode ss) #t))))
 
-(define (speech-accepts-one? lan mode s)
+(tm-define (raw-speech-accepts? lan mode s)
   (with lan* (symbol-append lan '*)
     (or (nnot (string->number s))
         (ahash-ref speech-accepts-table (list lan mode s))
@@ -260,7 +261,7 @@
 
 (tm-define (speech-accepts? lan mode s)
   (set! s (speech-sanitize lan mode s))
-  (forall? (cut speech-accepts-one? lan mode <>)
+  (forall? (cut raw-speech-accepts? lan mode <>)
            (string-decompose s " ")))
 
 (tm-define (speech-border-accepts? lan mode s)
@@ -328,6 +329,6 @@
          (mode (speech-current-mode))
          (r (speech-rewrite lan mode s))
          (l (string-decompose r " ")))
-    ;;(display* "Execute " r "\n")
+    ;;(display* "Rewritten " r "\n")
     (speech-exec-list lan l (list))
     (speech-done)))
