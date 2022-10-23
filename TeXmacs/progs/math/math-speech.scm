@@ -172,13 +172,18 @@
         (set! best alt)))
     best))
 
+(tm-define (stats-in-role s)
+  (stats-update)
+  (+ (* 100 (math-stats-number-in-role "cursor" s))
+     (math-stats-number-in-role "buffer" s)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Default letter roles
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define basic-letters (list "a" "b" "c" "d" "u" "v" "w" "x" "y" "z"
                             "<alpha>" "<beta>" "<gamma>" "<delta>"
-                            "<varepsilon>" "<zeta>" "<eta>" "<theta>"
+                            "<varepsilon>" "<eta>" "<theta>"
                             "<lambda>" "<mu>" "<xi>" "<omicron>" "<pi>" "<rho>"
                             "<sigma>" "<tau>" "<upsilon>" "<chi>" "<omega>"
                             "<mathe>" "<mathi>" "<mathpi>" "<mathgamma>"
@@ -186,7 +191,7 @@
                             "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T"
                             "U" "V" "W" "X" "Y" "Z" "<Delta>" "<Theta>"
                             "<Lambda>" "<Xi>" "<Pi>" "<Sigma>" "<Omega>"))
-(define function-letters (list "f" "g" "h" "<phi>" "<psi>"
+(define function-letters (list "f" "g" "h" "<phi>" "<psi>" "<zeta>"
                                "<Gamma>" "<Phi>" "<Psi>"))
 (define index-letters (list "i" "j" "k" "l" "m" "n" "p" "q" "r" "s" "t"
                             "<iota>" "<kappa>" "<nu>"))
@@ -310,8 +315,7 @@
         (else #f)))
 
 (define (best-letter-variant* x)
-  (with mx (modified-letter x speech-letter-mode*)
-    (improve-letter mx x speech-letter-mode*)))
+  (best-variant x speech-letter-mode*))
 
 (tm-define (speech-alter-letter* type)
   ;; Alteration spoken after letter (e.g. 'X calligraphique')
@@ -337,36 +341,46 @@
           ((in? :tt mods) (set! x `(math-tt ,x))))
     x))
 
-(define (improve-letter* best x mods)
+(define (improve-letter best x mods)
   (when (and (nin? :big mods) (nin? :small mods))
-    (set! best (improve-letter* best x (cons* :big mods))))
+    (set! best (improve-letter best x (cons* :big mods))))
   (when (and (nin? :bold mods) (nin? :medium mods))
-    (set! best (improve-letter* best x (cons* :bold mods))))
+    (set! best (improve-letter best x (cons* :bold mods))))
   (when (and (nin? :up mods) (nin? :it mods)
              (nin? :cal mods) (nin? :frak mods) (nin? :bbb mods))
-    (set! best (improve-letter* best x (cons* :up mods)))
-    (set! best (improve-letter* best x (cons* :cal mods)))
-    (set! best (improve-letter* best x (cons* :frak mods)))
-    (set! best (improve-letter* best x (cons* :bbb mods))))
+    (set! best (improve-letter best x (cons* :up mods)))
+    (set! best (improve-letter best x (cons* :cal mods)))
+    (set! best (improve-letter best x (cons* :frak mods)))
+    (set! best (improve-letter best x (cons* :bbb mods))))
   (when (and (nin? :ss mods) (nin? :tt mods) (nin? :normal mods))
-    (set! best (improve-letter* best x (cons* :ss mods)))
-    (set! best (improve-letter* best x (cons* :tt mods))))
+    (set! best (improve-letter best x (cons* :ss mods)))
+    (set! best (improve-letter best x (cons* :tt mods))))
   (stats-best best (modified-letter x mods)))
 
-(define (improve-letter best x mods)
-  (set! best (improve-letter* best x mods))
-  (when (== mods (list))
-    (when (and (== x "e") (stats-better? "<mathe>" best))
-      (set! best "<mathe>"))
-    (when (and (== x "i") (stats-better? "<mathi>" best))
-      (set! best "<mathi>"))
-    (when (and (== x "<pi>") (stats-better? "<mathpi>" best))
-      (set! best "<mathpi>")))
-  best)
+(define (best-variant x mods)
+  (with best (modified-letter x mods)
+    (set! best (improve-letter best x mods))
+    (when (== mods (list))
+      (when (and (== x "e") (stats-better? "<mathe>" best))
+        (set! best "<mathe>"))
+      (when (and (== x "i") (stats-better? "<mathi>" best))
+        (set! best "<mathi>"))
+      (when (and (== x "<pi>") (stats-better? "<mathpi>" best))
+        (set! best "<mathpi>")))
+    (when (in? x (list "<epsilon>" "<theta>" "<kappa>" "<pi>"
+                       "<rho>" "<sigma>" "<phi>"))
+      (with y (string-append "<var" (substring x 1 (string-length x)))
+        (with var-best (best-variant y mods)
+          (when (in? x (list "<epsilon>" "<phi>"))
+            (with aux best
+              (set! best var-best)
+              (set! var-best aux)))
+          (when (stats-better? var-best best)
+            (set! best var-best)))))
+    best))
 
 (tm-define (best-letter-variant x)
-  (with mx (modified-letter x speech-letter-mode)
-    (improve-letter mx x speech-letter-mode)))
+  (best-variant x speech-letter-mode))
 
 (tm-define (speech-insert-letter x*)
   (with prev* (before-cursor)
