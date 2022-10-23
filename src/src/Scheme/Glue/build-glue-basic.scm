@@ -286,6 +286,7 @@
   (math-status-reset math_status_reset (void))
   (math-stats-compile compile_stats (void string content string))
   (math-stats-occurrences number_occurrences (int string content))
+  (math-stats-number-in-role number_in_role (int string content))
 
   ;; paths
   (path-strip strip (path path path))
