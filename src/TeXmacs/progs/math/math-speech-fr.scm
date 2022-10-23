@@ -18,10 +18,15 @@
 ;; Sanitize input
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (speech-pre-sanitize lan s)
+  (:require (== lan 'french))
+  (clean-quotes s))
+
 (tm-define (speech-sanitize lan mode s)
   (:require (and (== lan 'french) (== mode 'math)))
   (set! s (locase-all s))
   (set! s (list->tmstring (clean-letter-digit (tmstring->list s))))
+  (set! s (clean-quotes s))
   (set! s (string-replace s "+" " plus "))
   (set! s (string-replace-trailing s "-" " moins "))
   (set! s (string-replace s "<times>" " fois "))
@@ -91,6 +96,7 @@
       (french-resuffix mode s "re" "")
       (french-resuffix mode s "re" "s")
       (french-resuffix mode s "re" "ent")
+      (french-resuffix mode s "qu'" "que")
       s))
 
 (define (french-normalize-compute mode s)
@@ -753,6 +759,10 @@
 
   (". diagonaux" "points diagonaux")
   (". montant" "points montants")
+
+  ("telle" "tel")
+  ("tel qu'" "tel que")
+  ("a-t-elle" "a tel")
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

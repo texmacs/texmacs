@@ -29,7 +29,7 @@
 (define (speech-map-line lan mode line)
   (if (and (pair? line) (string? (car line)))
       (with (key . l) line
-        (set! key (utf8->cork key))
+        (set! key (speech-pre-sanitize lan (utf8->cork key)))
         (speech-map-set lan mode key l)
         (speech-accepts lan mode key)
         (with key* (string-append (symbol->string lan) ":" (locase-all key))
@@ -59,8 +59,8 @@
 (define (speech-adjust-line lan mode line)
   (if (and (list-2? line) (string? (car line)))
       (with (key im) line
-        (set! key (utf8->cork key))
-        (set! im (utf8->cork im))
+        (set! key (speech-pre-sanitize lan (utf8->cork key)))
+        (set! im  (speech-pre-sanitize lan (utf8->cork im )))
         (speech-accepts lan mode key)
         `(speech-adjust-set ',lan ',mode ,key ,im))
       `(noop)))
@@ -81,7 +81,7 @@
 (define speech-collection-table (make-ahash-table))
 
 (tm-define (speech-collection-set name lan elem)
-  (set! elem (utf8->cork elem))
+  (set! elem (speech-pre-sanitize lan (utf8->cork elem)))
   (ahash-set! speech-collection-table (list name lan elem) #t))
 
 (tm-define (speech-has? lan name elem)
@@ -181,6 +181,13 @@
 (tm-define (string-upcase? s)
   (and (string? s) (string-alpha? s) (== s (upcase-all s))))
 
+(tm-define (clean-quotes s)
+  (cond ((string-starts? s "'")
+         (string-append "'" (clean-quotes (string-drop s 1))))
+        ((string-ends? s "'")
+         (string-append (clean-quotes (string-drop-right s 1)) "'"))
+        (else (string-replace (string-replace s "'" "' ") "'  " "' "))))
+
 (tm-define (clean-letter-digit l)
   (cond ((or (null? l) (null? (cdr l))) l)
         ((and (string-alpha? (car l)) (string-number? (cadr l)))
@@ -204,6 +211,7 @@
          (r (map (cut string-replace-trailing-one <> what by) l)))
     (string-recompose r " ")))
 
+(tm-define (speech-pre-sanitize lan s) s)
 (tm-define (speech-sanitize lan mode s) s)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -218,8 +226,9 @@
         (if (null? t) t
             (cons (car t) (speech-rewrite*** lan mode (cdr t) (list))))
         (or (and-with im (speech-adjust-ref lan mode key)
+              ;;(display* "  Rewrote " key " ~> " im "\n")
               (with im* (string-decompose im " ")
-                (append im* (speech-rewrite*** lan mode t (list)))))
+                (append im* t)))
             (speech-rewrite*** lan mode (cDr h) (cons (cAr h) t))))))
 
 (define (speech-rewrite** lan mode l depth)
