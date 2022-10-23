@@ -2043,6 +2043,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(math-stats-number-in-role <scm-arg|string> <scm-arg|content>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|number_in_role> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
     <scm|(path-strip <scm-arg|path> <scm-arg|path>)>
 <explain-synopsis|no synopsis>
   <|explain>

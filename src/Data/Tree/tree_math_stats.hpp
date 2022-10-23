@@ -15,5 +15,6 @@
 
 void compile_stats (string id, tree t, string mode);
 int number_occurrences (string id, tree t);
+int number_in_role (string id, tree t);
 
 #endif // defined TREE_MATH_STATS_H

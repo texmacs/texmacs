@@ -3295,6 +3295,21 @@ tmg_math_stats_occurrences (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_math_stats_number_in_role (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "math-stats-number-in-role");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "math-stats-number-in-role");
+
+  string in1= tmscm_to_string (arg1);
+  content in2= tmscm_to_content (arg2);
+
+  // TMSCM_DEFER_INTS;
+  int out= number_in_role (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
 tmg_path_strip (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "path-strip");
   TMSCM_ASSERT_PATH (arg2, TMSCM_ARG2, "path-strip");
@@ -10359,6 +10374,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("math-status-reset",  tmg_math_status_reset, 0, 0, 0);
   tmscm_install_procedure ("math-stats-compile",  tmg_math_stats_compile, 3, 0, 0);
   tmscm_install_procedure ("math-stats-occurrences",  tmg_math_stats_occurrences, 2, 0, 0);
+  tmscm_install_procedure ("math-stats-number-in-role",  tmg_math_stats_number_in_role, 2, 0, 0);
   tmscm_install_procedure ("path-strip",  tmg_path_strip, 2, 0, 0);
   tmscm_install_procedure ("path-inf?",  tmg_path_infP, 2, 0, 0);
   tmscm_install_procedure ("path-inf-eq?",  tmg_path_inf_eqP, 2, 0, 0);
