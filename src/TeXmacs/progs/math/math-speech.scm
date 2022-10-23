@@ -383,7 +383,8 @@
             ((or (and (string? prev) (string-number? prev))
                  (and (in? prev basic-letters) (in? x basic-letters))
                  (and (in? prev index-letters) (in? x index-letters))
-                 (and (in? prev (list "<pi>" "<mathpi>")) (== x "i")))
+                 (and (in? prev (list "<pi>" "<mathpi>")) (== x "i"))
+                 (tree-in? prev '(sqrt frac)))
              (insert "*")
              (insert x))
             ((and (not (and (tree? prev*) (tree-in? prev* '(rsub rsup))))
@@ -433,7 +434,8 @@
   (with prev (root-before-cursor)
     (cond ((or (and (string? prev) (string-number? prev))
                (in? prev basic-letters)
-               (in? prev index-letters))
+               (in? prev index-letters)
+               (tree-in? prev '(sqrt frac)))
            (insert "*")
            (insert x))
           ((and (in? prev function-letters) (in? x basic-letters))
@@ -457,7 +459,7 @@
   (set! speech-operator-mode :start))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Structured markup
+;; Subscripts, superscripts, and wide accents
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (speech-subscript)
@@ -474,23 +476,6 @@
         (with-cursor (append (cDr p) (list (- (cAr p) 1)))
           (math-insert `(rsup ,s))))
       (math-insert `(rsup ,s))))
-
-(tm-define (speech-sqrt)
-  (make 'sqrt)
-  (speech-enter :sqrt))
-
-(tm-define (speech-over)
-  (with prev (before-cursor)
-    (if (tm-is? prev 'big) (make 'rsub)
-        (with sel (cut-before-cursor)
-          (insert-go-to `(frac ,sel "") (list 1 0))
-          (speech-enter :over)))))
-
-(tm-define (go-to-fraction where)
-  (with-innermost t 'frac
-    (when t
-      (cond ((== where :numerator) (tree-go-to t 0 :end))
-            ((== where :denominator) (tree-go-to t 1 :end))))))
 
 (tm-define (speech-accent acc)
   (with sel (tm->stree (cut-before-cursor))
@@ -509,6 +494,46 @@
 (tm-define (speech-wide-under acc)
   (make-wide-under acc)
   (speech-enter :wide))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Structured markup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (speech-start-2d)
+  (when (not (selection-active-any?))
+    (with prev (root-before-cursor)
+      (cond ((or (and (string? prev) (string-number? prev))
+                 (in? prev basic-letters)
+                 (in? prev index-letters)
+                 (tree-in? prev '(sqrt frac)))
+             (insert "*"))
+            ((and (in? prev function-letters) (in? x basic-letters))
+             (speech-apply-brackets))))))
+
+(tm-define (speech-sqrt)
+  (speech-start-2d)
+  (make 'sqrt))
+
+(tm-define (speech-sqrt-of)
+  (speech-sqrt)
+  (speech-enter :sqrt))
+
+(tm-define (speech-fraction)
+  (speech-start-2d)
+  (make 'frac))
+
+(tm-define (speech-over)
+  (with prev (before-cursor)
+    (if (tm-is? prev 'big) (make 'rsub)
+        (with sel (cut-before-cursor)
+          (insert-go-to `(frac ,sel "") (list 1 0))
+          (speech-enter :over)))))
+
+(tm-define (go-to-fraction where)
+  (with-innermost t 'frac
+    (when t
+      (cond ((== where :numerator) (tree-go-to t 0 :end))
+            ((== where :denominator) (tree-go-to t 1 :end))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Brackets
