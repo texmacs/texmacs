@@ -331,9 +331,9 @@
   ("pour" (speech-for))
   ("jusqu'à" (speech-until))
 
-  ("racine carrée" (make 'sqrt))
-  ("racine carrée de" (speech-sqrt))
-  ("fraction" (make 'frac))
+  ("racine carrée" (speech-sqrt))
+  ("racine carrée de" (speech-sqrt-of))
+  ("fraction" (speech-fraction))
   ("sur" (speech-over))
   ("numérateur" (go-to-fraction :numerator))
   ("dénominateur" (go-to-fraction :denominator))

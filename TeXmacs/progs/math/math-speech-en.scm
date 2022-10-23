@@ -376,9 +376,9 @@
   ("d y" (speech-insert-d "y"))
   ("d z" (speech-insert-d "z"))
 
-  ("square root" (make 'sqrt))
-  ("square root of" (speech-sqrt))
-  ("fraction" (make 'frac))
+  ("square root" (speech-sqrt))
+  ("square root of" (speech-sqrt-of))
+  ("fraction" (speech-fraction))
   ("over" (speech-over))
   ("numerator" (go-to-fraction :numerator))
   ("denominator" (go-to-fraction :denominator))
