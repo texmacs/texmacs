@@ -281,6 +281,8 @@
     (when (and (nstring? x)
                (not (tree-in? x '(frac sqrt around around*))))
       (set! l (list)))
+    (when (and (string? x) (!= (math-symbol-type x) "symbol"))
+      (set! l (list)))
     l))
 
 (define (insert-implicit impl x)
@@ -475,8 +477,9 @@
         (set! best "<mathi>"))
       (when (and (== x "<pi>") (stats-better? "<mathpi>" best))
         (set! best "<mathpi>")))
-    (when (in? x (list "<epsilon>" "<theta>" "<kappa>" "<pi>"
-                       "<rho>" "<sigma>" "<phi>"))
+    (when (and (in? x (list "<epsilon>" "<theta>" "<kappa>" "<pi>"
+                            "<rho>" "<sigma>" "<phi>"))
+               (nin? :big mods) (nin? :up mods))
       (with y (string-append "<var" (substring x 1 (string-length x)))
         (with var-best (best-variant y mods)
           (when (in? x (list "<epsilon>" "<phi>"))

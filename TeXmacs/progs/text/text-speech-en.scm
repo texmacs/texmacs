@@ -34,10 +34,12 @@
 (speech-collection dangerous english
   "a" "be" "see" "he" "eat" "each" "if" "yes" "age" "edge"
   "either" "case" "all" "old" "an" "piece" "queue"
-  "are" "our" "tea" "you" "ask" "why" "mute" "mood"
-  "no" "bye" "row" "towel" "toe" "fight" "fine" "play" "time" "pick"
+  "are" "art" "our" "tea" "you" "ask" "why" "mute" "mood"
+  "no" "new" "knew" "bye" "road" "row" "role" "towel" "toe" "fight"
+  "fine" "play" "time" "pick"
   "of" "off" "it's" "some" "power"
-  "make" "did")
+
+  "make" "did" "both" "build" "press" "please" "set")
 
 (speech-collection dangerous english
   "is")
