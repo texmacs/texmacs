@@ -33,17 +33,17 @@
 
 (speech-collection dangerous english
   "to"
-  
+
   "a" "be" "see" "de" "the" "he" "eat" "each" "if" "yes" "age" "edge"
   "i" "eye" "eyes" "either" "ok" "case" "cake" "all" "old"
   "an" "and" "piece" "queue" "cute"
-  "are" "art" "our" "tea" "team" "you" "ask" "why"
+  "are" "art" "our" "tea" "team" "you" "ask" "eggs" "why"
 
   "theater" "copper" "mute" "mood" "no" "new" "gnu" "knew" "bye" "pie"
   "road" "row" "role" "roll" "ciao" "towel" "tall" "toe" "toll" "town"
   "fight" "fine" "sigh" "size" "kind" "sky"
 
-  "plastic" "both" "build" "bouquet" "tractor"
+  "plastic" "both" "bowl" "build" "bouquet" "tractor"
   "does" "play" "blessed" "please" "press" "time"
   "time" "sake" "subway" "pizza"
   "cosign" "pick" "dutch" "ducks"

@@ -294,12 +294,7 @@
   ("large chapeau" (speech-wide "^"))
   ("large tilde" (speech-wide "~"))
   ("large barre" (speech-wide "<bar>"))
-  ("chapeau dessous" (speech-accent-under "^"))
-  ("tilde dessous" (speech-accent-under "~"))
-  ("barre dessous" (speech-accent-under "<bar>"))
-  ("large chapeau dessous" (speech-wide-under "^"))
-  ("large tilde dessous" (speech-wide-under "~"))
-  ("large barre dessous" (speech-wide-under "<bar>"))
+  ("dessous" (speech-under))
 
   ("de" (speech-of))
   ("ouvrir" (speech-open "(" ")"))
