@@ -704,8 +704,10 @@
   ("qui" "chi")
   ("oméga" "omega")
 
-  ("an" "a n")
   ("assez" "a c")
+  ("an" "a n")
+  ("aime" "a n")
+
   ("constante dans une heure" "constante d'euler")
   ("constante de eyelar" "constante d'euler")
 
