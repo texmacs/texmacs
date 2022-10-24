@@ -64,6 +64,11 @@
 ;; Statistical resolution of ambiguities
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (english-m/n)
+  (if (stats-prefer? "n" "m" :strong)
+      (speech-insert-symbol "n")
+      (speech-insert-symbol "m")))
+
 (define (english-and)
   (if (stats-prefer? "<wedge>" "n" :normal)
       (speech-insert-symbol "<wedge>")
@@ -73,11 +78,6 @@
   (if (stats-prefer? "n" "<in>" :strong)
       (speech-insert-symbol "n")
       (speech-insert-symbol "<in>")))
-
-(define (english-m)
-  (if (stats-prefer? "n" "m" :strong)
-      (speech-insert-symbol "n")
-      (speech-insert-symbol "m")))
 
 (define (english-the)
   (speech-insert-symbol "d"))
@@ -246,9 +246,6 @@
   ("typewriter" (speech-alter-letter :tt))
   ("operator" (speech-operator))
  
-  ("in" (english-in))
-  ("and" (english-and))
-
   ("factor" (speech-factor))
   ("inverse" (speech-insert-superscript "-1"))
   ("square" (speech-insert-superscript "2"))
@@ -374,7 +371,9 @@
   ("diagonal dots" (insert "<ddots>"))
   ("upward dots" (insert "<udots>"))
 
-  ("m/n" (english-m))
+  ("m/n" (english-m/n))
+  ("in" (english-in))
+  ("and" (english-and))
   ("the" (english-the))
 
   ;;("more" "var")
@@ -1068,9 +1067,6 @@
   ("eight plus" "a plus")
   ("eight minus" "a minus")
   ("eight times" "a times")
-  ("plus eight" "plus eight")
-  ("minus eight" "minus eight")
-  ("times eight" "times eight")
   ("eight hat" "a hat")
   ("eight tilda" "a tilda")
   ("eight bar" "a bar")
