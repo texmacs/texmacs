@@ -23,6 +23,9 @@
 
 (define (accept-start? lan l r)
   (cond ((< (length r) 1) #f)
+        ((and (null? (cdr r))
+              (> (string-length (car r)) 1)
+              (nin? (string-append "<" (car r) ">") greek-letters)) #f)
         ((speech-has? lan 'dangerous (car l))
          (and (>= (length l) 2) (>= (length r) 2)
               (let* ((l1 (speech-rewrite lan 'math (car l)))
@@ -172,7 +175,7 @@
 (tm-define (kbd-speech S)
   (:mode in-std-text?)
   (set! S (list->tmstring (clean-text-speech (tmstring->list S))))
-  (display* "Text speech " S "\n")
+  ;;(display* "Text speech " S "\n")
   (let* ((prev1 (before-cursor))
          (prev2 (before-before-cursor))
          (prev  (if (== prev1 " ") prev2 prev1))

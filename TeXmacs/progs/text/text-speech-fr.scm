@@ -19,39 +19,40 @@
 ;; Extra tables for mathematics inside text
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(speech-collection number french
-  "zéro" "un" "deux" "trois" "quatre" "cinq" "six" "sept"
-  "huit" "neuf" "dix" "cent" "mille" "million" "milliard")
+(speech-collection prefix french
+  "grand" "petit")
 
-(speech-collection roman french
-  "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m"
-  "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z")
-
-(speech-collection greek french
-  "alpha" "beta" "gamma" "delta" "epsilon" "zeta" "eta" "theta" "iota"
-  "kappa" "lambda" "mu" "nu" "xi" "omicron" "pi" "rho" "sigma" "tau"
-  "upsilon" "phi" "psi" "chi" "omega")
-
-(speech-collection modify-letters french
-  "grand" "petit" "majuscule" "minuscule"
+(speech-collection postfix french
+  "majuscule" "minuscule"
   "gras" "droit" "calligraphique" "fraktur" "gothique"
   "tableau noir gras" "sans serif" "machine à écrire")
 
-(speech-collection accept-start french
+(speech-collection prefix french
   "exponentielle" "logarithme" "sinus" "cosinus" "tangente"
   "racine carrée")
 
-(speech-collection accept-end french
+(speech-collection postfix french
   "prime" "factoriel")
 
-(speech-collection reminder-dangerous french
-  "a" "à")
-
 (speech-collection dangerous french
-  )
+  "des" "œuf" "gay" "car" "casse" "j'y" "elle" "aime" "haine"
+  "haut" "beau" "paye" "pays" "air" "est-ce" "t'es" "tes" "eu" "value"
 
-(speech-collection dangerous-end french
-  )
+  "gamin" "éteins" "est" "état" "mus" "pis" "rose" "tôt"
+  "taux" "options" "fille" "fit" "qui"
+
+  "assez" "bars" "bar" "chapeaux" "utile" "utilité" "tel" "telle"
+
+  "a" "à" "un" "une" "deux" "de" "dans")
+
+(speech-collection skip french
+  "et" "ou")
+
+(speech-collection math-mode french
+  "math" "maths" "matt" "mathématiques" "formule" "formules")
+
+(speech-collection text-mode french
+  "text" "texte")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General speech commands for all modes
