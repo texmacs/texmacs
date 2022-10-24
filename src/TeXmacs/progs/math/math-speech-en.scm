@@ -22,6 +22,9 @@
   ("0" "zero") ("1" "one") ("2" "two") ("3" "three") ("4" "four")
   ("5" "five") ("6" "six") ("7" "seven") ("8" "eight") ("9" "nine"))
 
+(define-table english-ambiguate
+  ("m" "m/n"))
+
 (define (string-table-replace s t)
   (with repl (lambda (x) (with y (ahash-ref t x) (if y (car y) x)))
     (with l (string-decompose s " ")
@@ -44,6 +47,7 @@
   (set! s (string-replace s "<ldots>" " dots "))
   (set! s (string-replace s "<cdots>" " dots "))
   (set! s (string-table-replace s english-numbers))
+  (set! s (string-table-replace s english-ambiguate))
   (set! s (string-replace s "  " " "))
   (set! s (string-replace s "  " " "))
   (set! s (tm-string-trim-both s))
@@ -61,26 +65,22 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (english-and)
-  (with n (best-letter-variant "n")
-    (if (stats-better? "<wedge>" n)
-        (insert"<wedge>")
-        (speech-insert-letter "n"))))
+  (if (stats-prefer? "<wedge>" "n" :normal)
+      (speech-insert-symbol "<wedge>")
+      (speech-insert-symbol "n")))
 
 (define (english-in)
-  (with n (best-letter-variant "n")
-    (if (stats-better*? n "<in>")
-        (speech-insert-letter "n")
-        (insert "<in>"))))
+  (if (stats-prefer? "n" "<in>" :strong)
+      (speech-insert-symbol "n")
+      (speech-insert-symbol "<in>")))
 
 (define (english-m)
-  (let* ((m (best-letter-variant "m"))
-         (n (best-letter-variant "n")))
-    (if (stats-better*? n m)
-        (speech-insert-letter "n")
-        (speech-insert-letter "m"))))
+  (if (stats-prefer? "n" "m" :strong)
+      (speech-insert-symbol "n")
+      (speech-insert-symbol "m")))
 
 (define (english-the)
-  (speech-insert-letter "d"))
+  (speech-insert-symbol "d"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Entering mathematical symbols via English speech
@@ -1111,5 +1111,4 @@
   ("10 four" "one over")
   ("104" "one over")
   ("times 10" "times n")
-  ("times five" "times phi")
   )

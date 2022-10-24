@@ -138,11 +138,15 @@
          (down (tree-ref buf :down)))
     (when (or (!= stats-url (current-buffer))
               (!= stats-lines n))
+      ;;(display* "update  buffer stats\n")
       (math-stats-compile "buffer" buf "text")
+      ;;(display* "updated buffer stats\n")
       (set! stats-url (current-buffer))
       (set! stats-lines n))
     (when (and down (!= (tm->stree down) stats-cursor))
+      ;;(display* "update  cursor stats\n")
       (math-stats-compile "cursor" (tree-ref buf :down) "text")
+      ;;(display* "updated cursor stats\n")
       (set! stats-cursor (tm->stree down)))))
 
 (tm-define (stats-occurrences s)
@@ -151,17 +155,11 @@
      (math-stats-occurrences "buffer" s)))
 
 (tm-define (stats-in-role s)
-  (stats-update)
-  (+ (* 1000 (math-stats-number-in-role "cursor" s))
-     (math-stats-number-in-role "buffer" s)))
-
-(tm-define (stats-occurrences* s)
-  (stats-update)
-  (math-stats-occurrences "buffer" s))
-
-(tm-define (stats-in-role* s)
-  (stats-update)
-  (math-stats-number-in-role "buffer" s))
+  (if (not s) 0
+      (begin
+        (stats-update)
+        (+ (* 1000 (math-stats-number-in-role "cursor" s))
+           (math-stats-number-in-role "buffer" s)))))
 
 (tm-define (stats-has? s)
   (> (stats-occurrences s) 0))
@@ -169,22 +167,11 @@
 (tm-define (stats-better? alt best)
   (> (stats-occurrences alt) (stats-occurrences best)))
 
-(tm-define (stats-better*? alt best)
-  (> (stats-occurrences* alt) (stats-occurrences* best)))
-
 (tm-define (stats-best . l)
   (stats-update)
   (with best (car l)
     (for (alt (cdr l))
       (when (stats-better? alt best)
-        (set! best alt)))
-    best))
-
-(tm-define (stats-best* . l)
-  (stats-update)
-  (with best (car l)
-    (for (alt (cdr l))
-      (when (stats-better*? alt best)
         (set! best alt)))
     best))
 
@@ -279,7 +266,7 @@
     (when (tree-is? x 'rsup)
       (set! l (list-remove l :superscript)))
     (when (and (nstring? x)
-               (not (tree-in? x '(frac sqrt around around*))))
+               (not (tree-in? x '(math-ss math-tt frac sqrt around around*))))
       (set! l (list)))
     (when (and (string? x) (!= (math-symbol-type x) "symbol"))
       (set! l (list)))
@@ -292,6 +279,104 @@
         ((== impl :apply)       (insert `(around "(" ,x ")")))
         ((== impl :subscript)   (insert `(rsub ,x)))
         ((== impl :superscript) (insert `(rsup ,x)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Fine-grained contextual preferences
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (infix-like? x)
+  (and (string? x)
+       (in? (math-symbol-type x)
+            (list "infix" "prefix-infix" "separator"))))
+
+(define (get-rich-contextual x)
+  (let* ((prev  (expr-before-cursor))
+         (prev2 (root-before-before-cursor))
+         (up    (tm-ref (cursor-tree) :up))
+         (prev* (root-before-start)))
+    (when (== prev "-") (set! prev "+"))
+    (cond ((infix-like? prev)
+           (tmconcat prev2 prev x))
+          ((and prev* up
+                (tm-in? up '(rsub rsup))
+                (tree-empty? (tm-ref up 0)))
+           (tmconcat prev* `(,(tm-label up) ,x)))
+          ((and prev* up
+                (tm-in? up '(around around*))
+                (tree-empty? (tm-ref up 1)))
+           (tmconcat prev* `(,(tm-label up) ,(tm-ref 0) ,x ,(tm-ref 2))))
+          (else #f))))
+
+(define (get-combine x impl)
+  (and-with prev (expr-before-cursor)
+    (cond ((== impl :multiply   ) (tmconcat prev "*" x))
+          ((== impl :space      ) (tmconcat prev " " x))
+          ((== impl :comma      ) (tmconcat prev "," x))
+          ((== impl :apply      ) (tmconcat prev `(around "(" ,x ")")))
+          ((== impl :subscript  ) (tmconcat prev `(rsub ,x)))
+          ((== impl :superscript) (tmconcat prev `(rsub ,x)))
+          (else #f))))
+
+(tm-define (stats-rich-contextual x)
+  (max (stats-in-role (get-rich-contextual x))
+       (stats-in-role (get-combine x :multiply))
+       (stats-in-role (get-combine x :space))
+       (stats-in-role (get-combine x :comma))
+       (stats-in-role (get-combine x :apply))
+       (stats-in-role (get-combine x :subscript))
+       (stats-in-role (get-combine x :superscript))
+       0))
+
+(define (get-contextual x)
+  (let* ((prev  (expr-before-cursor))
+         (up    (tm-ref (cursor-tree) :up))
+         (prev* (root-before-start)))
+    (when (== prev "-") (set! prev "+"))
+    (cond ((infix-like? prev)
+           (tmconcat prev x))
+          ((and (tm-in? up '(rsub rsup))
+                (tree-empty? (tm-ref up 0)))
+           `(,(tm-label up) ,x))
+          ((and (tm-in? up '(around around*))
+                (tree-empty? (tm-ref up 1)))
+           `(,(tm-label up) ,(tm-ref 0) ,x ,(tm-ref 2)))
+          (else #f))))
+
+(tm-define (stats-contextual x)
+  (with c (get-contextual x)
+    (if (not c) 0 (stats-in-role c))))
+
+(tm-define (stats-prefer-contextual? what over prefer?)
+  (let* ((what1 (stats-rich-contextual what))
+         (over1 (stats-rich-contextual over)))
+    ;;(display* "  rich  : " what ", " what1
+    ;;          "; " over ", " over1 "\n")
+    (cond ((> what1 over1) #t)
+          ((> over1 0) #f)
+          (else (let* ((what2 (stats-contextual what))
+                       (over2 (stats-contextual over)))
+                  ;;(display* "  medium: " what ", " what2
+                  ;;          "; " over ", " over2 "\n")
+                  (cond ((> what2 over2) #t)
+                        ((> over2 0) #f)
+                        (else (let* ((what3 (stats-occurrences what))
+                                     (over3 (stats-occurrences over)))
+                                ;;(display* "  weak  : " what ", " what3
+                                ;;          "; " over ", " over3 "\n")
+                                (cond ((prefer? what3 over3) #t)
+                                      ((> over3 0) #f)
+                                      (else #f))))))))))
+
+(define (stats-prefer-predicate mode)
+  (cond ((== mode :normal) >)
+        ((== mode :strong) (lambda (w o) (> w (* 5 (+ o 1)))))
+        (else >)))
+
+(tm-define (stats-prefer? what over mode)
+  (let* ((prefer? (stats-prefer-predicate mode))
+         (what* (best-letter-variant what))
+         (over* (best-letter-variant over)))
+    (stats-prefer-contextual? what* over* prefer?)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Analysis of content before cursor
@@ -337,6 +422,28 @@
                           (j (if (> n 0) (string-previous* s n) n)))
                      (substring s j n)))
                   (else t))))))
+
+(define (before-cursor-path)
+  (let* ((t (cursor-tree))
+         (p (cDr (cursor-path)))
+	 (i (cAr (cursor-path))))
+    (cond ((and (tree-atomic? t) (> i 0))
+	   (with s (tree->string t)
+	     (with j (string-previous* s i)
+	       (rcons p j))))
+	  ((tree-atomic? t) #f)
+	  ((> i 0) (rcons p 0))
+	  (else #f))))
+
+(tm-define (root-before-before-cursor)
+  (and-with p (before-cursor-path)
+    (with-cursor p
+      (root-before-cursor))))
+
+(tm-define (root-before-start)
+  (and-with p (rcons (cDr (cursor-path)) 0)
+    (with-cursor p
+      (root-before-cursor))))
 
 (tm-define (select-before-cursor)
   (let* ((t (cursor-tree))
@@ -468,6 +575,7 @@
   (stats-best best (modified-letter x mods)))
 
 (define (best-variant x mods)
+  ;;(display* "    best variant " x ", " mods "\n")
   (with best (modified-letter x mods)
     (set! best (improve-letter best x mods))
     (when (== mods (list))
@@ -488,12 +596,14 @@
               (set! var-best aux)))
           (when (stats-better? var-best best)
             (set! best var-best)))))
+    ;;(display* "    best variant " x ", " mods " -> " best "\n")
     best))
 
 (tm-define (best-letter-variant x)
   (best-variant x speech-letter-mode))
 
 (tm-define (speech-insert-letter x*)
+  ;;(display* "insert letter " x* "\n")
   (with prev* (expr-before-cursor)
     (set! speech-letter-mode* (list))
     (when (and (== speech-operator-mode :on)
@@ -504,15 +614,18 @@
            (x (best-letter-variant x*))
            (permit (get-permitted))
            (impl (best-implicit prev x permit)))
-      ;;(display* x* ", " speech-letter-mode " ~> " x "\n")
+      ;;(display* "  inserting " x* " as " x "\n")
       (cond ((!= speech-operator-mode :off) (insert x))
             ((!= impl :none) (insert-implicit impl x))
             (else (insert x) (speech-exit-scripts)))
+      ;;(display* "  inserted  " x* " as " x "\n")
       (set! speech-letter-mode* speech-letter-mode)
       (when (== speech-operator-mode :start)
         (set! speech-operator-mode :on))
       (when (== speech-operator-mode :off)
-        (set! speech-letter-mode (list))))))
+        (set! speech-letter-mode (list)))))
+  ;;(display* "inserted letter " x* "\n")
+  )
 
 (tm-define (speech-insert-symbol x)
   (insert x)
