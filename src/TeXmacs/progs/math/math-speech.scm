@@ -212,7 +212,7 @@
 ;; Default letter roles
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define basic-letters (list "a" "b" "c" "d" "u" "v" "w" "x" "y" "z"
+(define basic-letters (list "a" "b" "c" "d" "e" "o" "u" "v" "w" "x" "y" "z"
                             "<alpha>" "<beta>" "<gamma>" "<delta>"
                             "<varepsilon>" "<eta>" "<theta>"
                             "<lambda>" "<mu>" "<xi>" "<omicron>" "<pi>" "<rho>"
@@ -273,7 +273,8 @@
     (when (tree-is? x 'rsup)
       (set! l (list-remove l :superscript)))
     (when (and (nstring? x)
-               (not (tree-in? x '(math-ss math-tt frac sqrt around around*))))
+               (not (tree-in? x '(math-ss math-tt rsub rsup wide wide*
+                                  frac sqrt around around*))))
       (set! l (list)))
     (when (and (string? x) (!= (math-symbol-type x) "symbol"))
       (set! l (list)))
@@ -384,6 +385,12 @@
          (what* (best-letter-variant what))
          (over* (best-letter-variant over)))
     (stats-prefer-contextual? what* over* prefer?)))
+
+(tm-define (stats-preferred . l)
+  (and (nnull? l)
+       (with best (apply stats-preferred (cdr l))
+         (if (and best (stats-prefer? best (car l) :normal)) best
+             (and (stats-has? (best-letter-variant (car l))) (car l))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Analysis of content before cursor
@@ -664,6 +671,10 @@
   ;;(display* "inserted letter " x* "\n")
   )
 
+(tm-define (speech-best-letter . l)
+  (with sym (apply stats-preferred l)
+    (speech-insert-symbol (or sym (cAr l)))))
+
 (tm-define (speech-insert-symbol x)
   (insert x)
   (speech-exit-scripts))
@@ -733,17 +744,27 @@
     (when (== sel "j") (set! sel "<jmath>"))
     (insert `(wide ,sel ,acc))))
 
-(tm-define (speech-accent-under acc)
-  (with sel (cut-before-cursor)
-    (insert `(wide* ,sel ,acc))))
+(tm-define (speech-best-accent acc . l)
+  (let* ((v (append-map (cut letter-variants <> speech-letter-mode) l))
+         (w (map (lambda (x) `(wide ,x ,acc)) v))
+         (b (apply stats-best w)))
+    (if (> (stats-occurrences b) 0)
+        (insert b)
+        (begin
+          (apply speech-best-letter (rcons l (car l)))
+          (speech-accent acc)))))
 
 (tm-define (speech-wide acc)
   (make-wide acc)
   (speech-enter :wide))
 
-(tm-define (speech-wide-under acc)
-  (make-wide-under acc)
-  (speech-enter :wide))
+(tm-define (speech-under)
+  (cond ((inside? 'wide)
+         (with t (tree-innermost 'wide)
+           (tree-assign-node! t 'wide*)))
+        ((tm-is? (before-cursor) 'wide)
+         (with t (before-cursor)
+           (tree-assign-node! t 'wide*)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured markup

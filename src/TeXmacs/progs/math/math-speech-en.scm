@@ -54,33 +54,12 @@
   s)
 
 (speech-collection dont-break english
-  "ad" "ag" "ah" "al" "an" "ar" "as" "el" "em" "en" "ex" "if" "in" "is" "it"
-  "of" "oh" "ok" "ol" "or" "be" "de" "he" "pe" "se" "ve" "we"
+  "ad" "ag" "ah" "al" "an" "ar" "as" "eg" "el" "em" "en" "ex"
+  "if" "in" "is" "it" "of" "oh" "ok" "ol" "or"
+  "be" "de" "he" "pe" "se" "ve" "we"
   "ma" "bi" "hi" "ji" "pi" "si" "xi"
   "do" "fo" "ho" "jo" "ko" "lo" "no" "po" "so" "to" "vo" "wo"
   "mu" "nu" "by" "hy" "ky" "my" "sy")
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Statistical resolution of ambiguities
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (english-m/n)
-  (if (stats-prefer? "n" "m" :strong)
-      (speech-insert-symbol "n")
-      (speech-insert-symbol "m")))
-
-(define (english-and)
-  (if (stats-prefer? "<wedge>" "n" :normal)
-      (speech-insert-symbol "<wedge>")
-      (speech-insert-symbol "n")))
-
-(define (english-in)
-  (if (stats-prefer? "n" "<in>" :strong)
-      (speech-insert-symbol "n")
-      (speech-insert-symbol "<in>")))
-
-(define (english-the)
-  (speech-insert-symbol "d"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Entering mathematical symbols via English speech
@@ -266,12 +245,7 @@
   ("wide hat" (speech-wide "^"))
   ("wide tilda" (speech-wide "~"))
   ("wide bar" (speech-wide "<bar>"))
-  ("hat under" (speech-accent-under "^"))
-  ("tilda under" (speech-accent-under "~"))
-  ("bar under" (speech-accent-under "<bar>"))
-  ("wide hat under" (speech-wide-under "^"))
-  ("wide tilda under" (speech-wide-under "~"))
-  ("wide bar under" (speech-wide-under "<bar>"))
+  ("under" (speech-under))
 
   ("of" (speech-of))
   ("open" (speech-open "(" ")"))
@@ -371,11 +345,6 @@
   ("diagonal dots" (insert "<ddots>"))
   ("upward dots" (insert "<udots>"))
 
-  ("m/n" (english-m/n))
-  ("in" (english-in))
-  ("and" (english-and))
-  ("the" (english-the))
-
   ;;("more" "var")
   )
 
@@ -410,6 +379,8 @@
   ("letter x" "x")
   ("letter y" "y")
   ("letter z" "z")
+
+  ("greek phi" "phi")
 
   ("big" "uppercase")
   ("capital" "uppercase")
@@ -586,6 +557,73 @@
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Disambiguation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (english-m/n)
+  (if (stats-prefer? "n" "m" :strong)
+      (speech-insert-symbol "n")
+      (speech-insert-symbol "m")))
+
+(define (english-and)
+  (if (stats-prefer? "<wedge>" "n" :normal)
+      (speech-insert-symbol "<wedge>")
+      (speech-insert-symbol "n")))
+
+(define (english-in)
+  (if (stats-prefer? "n" "<in>" :strong)
+      (speech-insert-symbol "n")
+      (speech-insert-symbol "<in>")))
+
+(define (english-the)
+  (speech-insert-symbol "d"))
+
+(speech-map english math
+  ("a/e/8" (speech-best-letter "a" "e" "8"))
+  ("a/e/8 hat" (speech-best-accent "^" "a" "e"))
+  ("a/e/8 tilda" (speech-best-accent "~" "a" "e"))
+  ("a/e/8 bar" (speech-best-accent "<bar>" "a" "e"))
+  ("v/t/d/3" (speech-best-letter "v" "t" "d" "3"))
+  ("d/t/v/3" (speech-best-letter "d" "t" "v" "3"))
+  ("t/d/v/3" (speech-best-letter "t" "d" "v" "3"))
+  ("t/d/v/3 hat" (speech-best-accent "^" "t" "d" "v"))
+  ("t/d/v/3 tilda" (speech-best-accent "~" "t" "d" "v"))
+  ("t/d/v/3 bar" (speech-best-accent "<bar>" "t" "d" "v"))
+  ("phi/5" (speech-best-letter "<phi>" "5"))
+  ("m/n" (english-m/n))
+  ("in" (english-in))
+  ("and" (english-and))
+  ("the" (english-the))
+  )
+
+(speech-reduce english math
+  ("plus eight" "plus a/e/8")
+  ("minus eight" "minus a/e/8")
+  ("times eight" "times a/e/8")
+  ("eight plus" "a/e/8 plus")
+  ("eight minus" "a/e/8 minus")
+  ("eight times" "a/e/8 times")
+  ("eight hat" "a/e/8 hat")
+  ("eight tilda" "a/e/8 tilda")
+  ("eight bar" "a/e/8 bar")
+
+  ("bold three" "bold v/t/d/3")
+  ("times three" "times d/t/v/3")
+  ("three hat" "t/d/v/3 hat")
+  ("three tilda" "t/d/v/3 tilda")
+  ("three bar" "t/d/v/3 bar")
+
+  ("greek five" "phi")
+  ("times five" "times phi/5")
+  ("big five" "big phi")
+  ("bold five" "bold phi/5")
+  ("upright five" "upright phi")
+  ("five hat" "phi hat")
+  ("five tilda" "phi tilda")
+  ("five bar" "phi bar")
+  )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Adjust wrongly recognized words
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -644,6 +682,7 @@
   ("ve" "v")
   ("ask" "x")
   ("ex" "x")
+  ("eggs" "x")
   ("why" "y")
   
   ("l5" "alpha")
@@ -767,14 +806,17 @@
   ("big five" "big phi")
   ("becky" "big chi")
 
+  ("bol" "bold")
   ("bolt" "bold")
   ("both" "bold")
+  ("bowl" "bold")
   ("build" "bold")
   ("that's bold" "plus bold")
   ("bowlby" "bold b")
   ("baldy" "bold d")
   ("boke" "bold k")
   ("bouquet" "bold k")
+  ("volpe" "bold p")
   ("baltar" "bold r")
   ("bote" "bold t")
   ("bold wi‑fi" "bold v")
@@ -1061,30 +1103,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (speech-adjust english math
-  ("plus eight" "plus a")
-  ("minus eight" "minus a")
-  ("times eight" "times a")
-  ("eight plus" "a plus")
-  ("eight minus" "a minus")
-  ("eight times" "a times")
-  ("eight hat" "a hat")
-  ("eight tilda" "a tilda")
-  ("eight bar" "a bar")
-
-  ("times three" "times d")
-  ("three hat" "t hat")
-  ("three tilda" "t tilda")
-  ("three bar" "t bar")
-  ("bold three" "bold v")
-
-  ("times five" "times phi")
-  ("big five" "big phi")
-  ("bold five" "bold phi")
-  ("upright five" "upright phi")
-  ("five hat" "phi hat")
-  ("five tilda" "phi tilda")
-  ("five bar" "phi bar")
-
   ("28" "2 a")
   ("38" "3 a")
   ("48" "4 a")
@@ -1094,17 +1112,22 @@
   ("83" "a 3")
   ("84" "a 4")
   ("85" "a 5")
-  ("40" "for all")
-  ("408" "for all a")
-  ("search that" "such that")
+
+  ("plus 80" "plus e")
   ("power a power" "power e power")
   ("a power e" "e power e")
-  ("a.m." "a n")
-  ("p.m." "p n")
-  ("sign" "sine")
+
   ("and log" "n log")
   ("end" "and")
+  ("times 10" "times n")
+  ("a.m." "a n")
+  ("p.m." "p n")
+
+  ("40" "for all")
+  ("408" "for all a")
+
+  ("search that" "such that")
+  ("sign" "sine")
   ("10 four" "one over")
   ("104" "one over")
-  ("times 10" "times n")
   )
