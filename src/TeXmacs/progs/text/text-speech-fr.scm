@@ -41,7 +41,8 @@
   "gamin" "éteins" "est" "état" "mus" "pis" "rose" "tôt"
   "taux" "options" "fille" "fit" "qui"
 
-  "assez" "bars" "bar" "chapeaux" "utile" "utilité" "tel" "telle"
+  "assez" "aime"
+  "bars" "bar" "chapeaux" "utile" "utilité" "tel" "telle"
 
   "a" "à" "un" "une" "deux" "de" "dans")
 
