@@ -24,11 +24,11 @@ struct math_stats {
   hashmap<tree,int> roles;
 
 protected:
-  void compile (array<tree> a, tree_label parent);
+  void compile (array<tree> a, tree parent);
 
 public:
   math_stats (): occurrences (0), roles (0) {}
-  void compile (tree t, tree_label parent, string mode);
+  void compile (tree t, tree parent, string mode);
 };
 
 static tree
@@ -47,19 +47,24 @@ strip_decorations (tree t) {
  }
 
 void
-math_stats::compile (array<tree> a, tree_label parent) {
+math_stats::compile (array<tree> a, tree parent) {
   //array<int> tp= symbol_types (a);
   for (int i=0; i<N(a); i++) {
     occurrences (a[i])= occurrences [a[i]] + 1;
-    if (i == 0 && (parent == RSUB || parent == RSUP) && is_atomic (a[i])) {
-      tree u (parent, a[i]);
+    if (i == 0 && is_atomic (a[i]) &&
+        (is_func (parent, RSUB) || is_func (parent, RSUP))) {
+      tree u (L(parent), a[i]);
+      roles (u)= roles[u] + 1;
+    }
+    if (i == 0 && is_atomic (a[i]) &&
+        (is_func (parent, AROUND) || is_func (parent, VAR_AROUND))) {
+      tree u (L(parent), copy (parent[0]), a[i], copy (parent[2]));
       roles (u)= roles[u] + 1;
     }
     if ((i+2) < N(a) &&
         //is_atomic (a[i]) && tp[i] == SYMBOL_BASIC &&
         //is_atomic (a[i+2]) && tp[i+2] == SYMBOL_BASIC &&
-        (a[i+1] == "*" || a[i+1] == " " || a[i+1] == "," ||
-         a[i+1] == "+" || a[i+1] == "-")) {
+        is_atomic (a[i+1])) {
       int j=i;
       while (j>0 && (is_func (a[j], RSUB) ||
                      is_func (a[j], RSUP) ||
@@ -112,14 +117,14 @@ get_submode (tree t, int i, string mode) {
 }
 
 void
-math_stats::compile (tree t, tree_label parent, string mode) {
+math_stats::compile (tree t, tree parent, string mode) {
   if (is_compound (t)) {
     int i, n= N(t);
     for (i=0; i<n; i++) {
       string smode= get_submode (t, i, mode);
       if (is_func (t, WITH) && i != N(t)-1);
       else if (is_correctable_child (t, i))
-        compile (t[i], L(t), smode);
+        compile (t[i], t, smode);
     }
   }
   if (mode == "math")
@@ -135,7 +140,7 @@ static hashmap<string,math_stats> stats_table;
 void
 compile_stats (string id, tree t, string mode) {
   math_stats stats;
-  stats.compile (t, DOCUMENT, mode);
+  stats.compile (t, tree (DOCUMENT, t), mode);
   stats_table (id)= stats;
 }
 
