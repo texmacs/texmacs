@@ -4611,8 +4611,8 @@ tmg_graphics_notify_update (tmscm arg1) {
 }
 
 tmscm
-tmg_string_numberP (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "string-number?");
+tmg_cpp_string_numberP (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-string-number?");
 
   string in1= tmscm_to_string (arg1);
 
@@ -10466,7 +10466,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("graphics-ref",  tmg_graphics_ref, 1, 0, 0);
   tmscm_install_procedure ("graphics-needs-update?",  tmg_graphics_needs_updateP, 0, 0, 0);
   tmscm_install_procedure ("graphics-notify-update",  tmg_graphics_notify_update, 1, 0, 0);
-  tmscm_install_procedure ("string-number?",  tmg_string_numberP, 1, 0, 0);
+  tmscm_install_procedure ("cpp-string-number?",  tmg_cpp_string_numberP, 1, 0, 0);
   tmscm_install_procedure ("string-occurs?",  tmg_string_occursP, 2, 0, 0);
   tmscm_install_procedure ("string-count-occurrences",  tmg_string_count_occurrences, 2, 0, 0);
   tmscm_install_procedure ("string-search-forwards",  tmg_string_search_forwards, 3, 0, 0);

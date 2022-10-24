@@ -372,7 +372,7 @@
 "graphics-ref"
 "graphics-needs-update?"
 "graphics-notify-update"
-"string-number?"
+"cpp-string-number?"
 "string-occurs?"
 "string-count-occurrences"
 "string-search-forwards"

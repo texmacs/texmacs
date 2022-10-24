@@ -36,6 +36,9 @@
 (define-public (string->float s)
   (exact->inexact (string->number s)))
 
+(define-public (string-number? s)
+  (and (string? s) (cpp-string-number? s)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Strings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -103,7 +106,7 @@
   (substring s 0 n))
 
 (provide-public (string-take-right s n)
-  "Return the first @n chars of @s."
+  "Return the last @n chars of @s."
   (let ((l (string-length s)))
     (substring s (- l n) l)))
 

@@ -393,7 +393,7 @@
   (graphics-notify-update graphics_notify_update (void content))
 
   ;; routines for strings
-  (string-number? is_double (bool string))
+  (cpp-string-number? is_double (bool string))
   (string-occurs? occurs (bool string string))
   (string-count-occurrences count_occurrences (int string string))
   (string-search-forwards search_forwards (int string int string))
