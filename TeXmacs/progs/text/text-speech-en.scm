@@ -32,20 +32,43 @@
   "prime" "dagger")
 
 (speech-collection dangerous english
-  "a" "be" "see" "he" "eat" "each" "if" "yes" "age" "edge"
-  "either" "case" "all" "old" "an" "piece" "queue"
-  "are" "art" "our" "tea" "you" "ask" "why" "mute" "mood"
-  "no" "new" "knew" "bye" "road" "row" "role" "towel" "toe" "fight"
-  "fine" "play" "time" "pick"
-  "of" "off" "it's" "some" "power"
+  "to"
+  
+  "a" "be" "see" "de" "the" "he" "eat" "each" "if" "yes" "age" "edge"
+  "i" "eye" "eyes" "either" "ok" "case" "cake" "all" "old"
+  "an" "and" "piece" "queue" "cute"
+  "are" "art" "our" "tea" "team" "you" "ask" "why"
 
-  "make" "did" "both" "build" "press" "please" "set")
+  "theater" "copper" "mute" "mood" "no" "new" "gnu" "knew" "bye" "pie"
+  "road" "row" "role" "roll" "ciao" "towel" "tall" "toe" "toll" "town"
+  "fight" "fine" "sigh" "size" "kind" "sky"
+
+  "plastic" "both" "build" "bouquet" "tractor"
+  "does" "play" "blessed" "please" "press" "time"
+  "time" "sake" "subway" "pizza"
+  "cosign" "pick" "dutch" "ducks"
+  "of" "off" "some" "offer" "oversee" "it's"
+  "lock" "luck" "look" "unlock" "timeslot"
+  "white" "head" "had" "hit" "hunt" "hurt"
+  "cuba" "write"
+
+  "sign" "end"
+
+  "factor" "power" "set"
+
+  "make" "did")
 
 (speech-collection dangerous english
   "is")
 
 (speech-collection skip english
   "such" "that")
+
+(speech-collection math-mode english
+  "math" "maths" "mathematics" "formula")
+
+(speech-collection text-mode english
+  "text")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General speech commands for all modes
