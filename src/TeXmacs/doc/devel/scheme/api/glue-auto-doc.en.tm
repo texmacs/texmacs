@@ -2779,7 +2779,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(string-number? <scm-arg|string>)>
+    <scm|(cpp-string-number? <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|is_double> which returns
