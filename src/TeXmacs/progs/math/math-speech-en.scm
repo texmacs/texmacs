@@ -18,6 +18,15 @@
 ;; Sanitize input
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-table english-numbers
+  ("0" "zero") ("1" "one") ("2" "two") ("3" "three") ("4" "four")
+  ("5" "five") ("6" "six") ("7" "seven") ("8" "eight") ("9" "nine"))
+
+(define (string-table-replace s t)
+  (with repl (lambda (x) (with y (ahash-ref t x) (if y (car y) x)))
+    (with l (string-decompose s " ")
+      (string-recompose (map repl l) " "))))
+
 (tm-define (speech-sanitize lan mode s)
   (:require (and (== lan 'english) (== mode 'math)))
   (set! s (locase-all s))
@@ -34,6 +43,7 @@
   (set! s (string-replace s "~" " tilda "))
   (set! s (string-replace s "<ldots>" " dots "))
   (set! s (string-replace s "<cdots>" " dots "))
+  (set! s (string-table-replace s english-numbers))
   (set! s (string-replace s "  " " "))
   (set! s (string-replace s "  " " "))
   (set! s (tm-string-trim-both s))
@@ -755,7 +765,6 @@
   ("bixi" "big xi")
   ("big side" "big xi")
   ("big site" "big xi")
-  ("big 5" "big phi")
   ("big five" "big phi")
   ("becky" "big chi")
 
@@ -773,16 +782,13 @@
   ("bold fee" "bold v")
   ("bold feet" "bold v")
   ("volví" "bold v")
-  ("bold 3" "bold v")
   ("bullseye" "bold z")
   ("bold laptop" "bold lambda")
-  ("bold 5" "bold phi")
   ("bold five" "bold phi")
   ("bullfight" "bold phi")
 
   ("a bright" "upright")
   ("a pride" "upright")
-  ("upright 5" "upright phi")
   ("upright five" "upright phi")
 
   ("blackboard bolt" "blackboard bold")
@@ -830,7 +836,7 @@
   ("sounds to reach" "sans serif")
   ("sarife" "sans serif")
   ("sunseri" "sans serif")
-  ("7 siri" "sans serif")
+  ("seven siri" "sans serif")
   ("sans serif day" "sans serif d")
   ("sans serif femme" "sans serif m")
   ("sans serif 50" "sans serif t")
@@ -926,9 +932,7 @@
 
   ("sam" "sum")
   ("some" "sum")
-  ("sum 4" "sum for")
   ("sum four" "sum for")
-  ("product 4" "sum for")
   ("product four" "sum for")
   ("enter girl" "integral")
 
@@ -1058,12 +1062,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (speech-adjust english math
-  ("8 plus" "a plus")
-  ("8 minus" "a minus")
-  ("8 times" "a times")
-  ("plus 8" "plus a")
-  ("minus 8" "minus a")
-  ("times 8" "times a")
   ("plus eight" "plus a")
   ("minus eight" "minus a")
   ("times eight" "times a")
@@ -1073,8 +1071,24 @@
   ("plus eight" "plus eight")
   ("minus eight" "minus eight")
   ("times eight" "times eight")
-  ("times 3" "times d")
+  ("eight hat" "a hat")
+  ("eight tilda" "a tilda")
+  ("eight bar" "a bar")
+
   ("times three" "times d")
+  ("three hat" "t hat")
+  ("three tilda" "t tilda")
+  ("three bar" "t bar")
+  ("bold three" "bold v")
+
+  ("times five" "times phi")
+  ("big five" "big phi")
+  ("bold five" "bold phi")
+  ("upright five" "upright phi")
+  ("five hat" "phi hat")
+  ("five tilda" "phi tilda")
+  ("five bar" "phi bar")
+
   ("28" "2 a")
   ("38" "3 a")
   ("48" "4 a")
@@ -1091,21 +1105,11 @@
   ("a power e" "e power e")
   ("a.m." "a n")
   ("p.m." "p n")
-  ("8 hat" "a hat")
-  ("3 hat" "t hat")
-  ("5 hat" "phi hat")
-  ("8 tilda" "a tilda")
-  ("3 tilda" "t tilda")
-  ("5 tilda" "phi tilda")
-  ("8 bar" "a bar")
-  ("3 bar" "t bar")
-  ("5 bar" "phi bar")
   ("sign" "sine")
   ("and log" "n log")
   ("end" "and")
-  ("10 4" "one over")
+  ("10 four" "one over")
   ("104" "one over")
   ("times 10" "times n")
-  ("times 5" "times phi")
   ("times five" "times phi")
   )
