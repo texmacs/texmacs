@@ -61,6 +61,10 @@
 (tm-define (stats-has? s)
   (> (stats-occurrences s) 0))
 
+(tm-define (stats-filter l)
+  (stats-update)
+  (list-filter l (lambda (s) (> (stats-occurrences* s) 0))))
+
 (tm-define (stats-role? s)
   (> (stats-in-role s) 0))
 
@@ -89,6 +93,9 @@
 
 (tm-define (math-operator? s)
   (and (string? s) (>= (string-length s) 2) (string-alpha? s)))
+
+(tm-define (math-relation? s)
+  (and (string? s) (== (math-symbol-group s) "Relation-nolim-symbol")))
 
 (define (string-previous* s k)
   (with j (string-previous s k)
@@ -412,19 +419,44 @@
           ((> over1 0) #f)
           (else (stats-prefer-medium-contextual? what over prefer?)))))
 
-(define (stats-prefer-predicate mode)
-  (cond ((== mode :normal) >)
-        ((== mode :strong) (lambda (w o) (> w (* 5 (+ o 1)))))
-        (else >)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Contextual preferences for letter combinations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (stats-prefer? what over mode)
-  (let* ((prefer? (stats-prefer-predicate mode))
-         (what* (best-letter-variant what))
-         (over* (best-letter-variant over)))
-    (stats-prefer-contextual? what* over* prefer?)))
+(tm-define (stats-combination x y)
+  (max (stats-in-role (tmconcat x "*" y))
+       (stats-in-role (tmconcat x " " y))
+       (stats-in-role (tmconcat x "," y))
+       (stats-in-role (tmconcat x `(around "(" ,y ")")))
+       (stats-in-role (tmconcat x `(around "[" ,y "]")))
+       (stats-in-role (tmconcat x `(rsub ,y)))
+       (stats-in-role (tmconcat x `(rsup ,y)))
+       0))
 
-(tm-define (stats-preferred . l)
-  (and (nnull? l)
-       (with best (apply stats-preferred (cdr l))
-         (if (and best (stats-prefer? best (car l) :normal)) best
-             (and (stats-has? (best-letter-variant (car l))) (car l))))))
+(tm-define (stats-prefer-combination? p1 p2)
+  (with (x1 y1) p1
+    (with (x2 y2) p2
+      (let* ((occ1 (stats-combination x1 y1))
+             (occ2 (stats-combination x2 y2)))
+        ;;(display* "  compare: " p1 ", " occ1 "; " p2 ", " occ2 "\n")
+        (cond ((> occ1 occ2) #t)
+              ((> occ2 0) #f)
+              (else #f))))))
+
+(define (stats-preferred-combination* best l)
+  (cond ((null? l) best)
+        ((stats-prefer-combination? (car l) best)
+         (stats-preferred-combination* (car l) (cdr l)))
+        (else (stats-preferred-combination* best (cdr l)))))
+
+(define (list-pairs l1 l2)
+  (if (null? l1) l1
+      (append (map (cut list (car l1) <>) l2)
+              (list-pairs (cdr l1) l2))))
+
+(tm-define (stats-preferred-combination l1 l2)
+  (and (nnull? l1) (nnull? l2)
+       (let* ((prod (list-pairs l1 l2))
+              (comb (stats-preferred-combination* (car prod) (cdr prod))))
+         (with (x y) comb
+           (and (> (stats-combination x y) 0) comb)))))

@@ -42,6 +42,20 @@
      ,@(if (== mode 'any) (list) `((:mode ,(symbol-append 'in- mode '?))))
      ,@(append-map (cut speech-map-line lan mode <>) l)))
 
+(define (speech-subst-wildcard x w)
+  (cond ((string? x) (string-replace x "*" w))
+        ((list? x) (map (cut speech-subst-wildcard <> w) x))
+        (else x)))
+
+(define (speech-expand-wildcards l)
+  (if (null? l) l
+      (append (map (cut speech-subst-wildcard (car l) <>) roman-letters)
+              (speech-expand-wildcards (cdr l)))))
+
+(tm-define-macro (speech-map-wildcard lan mode . l)
+  `(speech-map ,lan ,mode
+     ,@(speech-expand-wildcards l)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of speech ajustments
 ;; - speech-adjust corresponds to words that are badly recognized
