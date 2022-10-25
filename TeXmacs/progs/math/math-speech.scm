@@ -109,6 +109,7 @@
           ((== type :subscript) (speech-exit-from 'rsub))
           ((== type :superscript) (speech-exit-from 'rsup))
           ((== type :over) (speech-exit-from 'frac))
+          ((== type :small-over) (speech-exit-from frac-context?))
           ((== type :sqrt) (speech-exit-from 'sqrt))
           ((== type :wide) (speech-exit-from wide-context?))
           ((== type :apply) (speech-exit-from around-context?))
@@ -128,7 +129,8 @@
 
 (tm-define (speech-exit-scripts)
   (when (and (nnull? speech-state)
-             (in? (car speech-state) (list :subscript :superscript)))
+             (in? (car speech-state)
+                  (list :small-over :subscript :superscript)))
     (speech-exit-innermost)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -315,7 +317,7 @@
 (define (speech-relation-exit)
   (when (nnull? speech-state)
     (when (in? (car speech-state)
-               (list :over :sqrt :wide :apply :factor :brackets))
+               (list :over :small-over :sqrt :wide :apply :factor :brackets))
       (speech-leave)
       (speech-relation-exit))))
 
@@ -339,6 +341,10 @@
 (tm-define (speech-insert-d x)
   (speech-insert-operator "<mathd>")
   (insert x))
+
+(tm-define (speech-insert-symbol x)
+  (:require (== x "<mathd>"))
+  (speech-insert-operator x))
 
 (tm-define (speech-operator)
   (set! speech-operator-mode :start))
@@ -484,6 +490,13 @@
           (insert-go-to `(frac ,sel "") (list 1 0))
           (speech-enter :over)))))
 
+(tm-define (speech-small-over)
+  (with sel (cut-before-cursor)
+    (if (inside? 'math)
+        (insert-go-to `(frac* ,sel "") (list 1 0))
+        (insert-go-to `(frac ,sel "") (list 1 0)))
+    (speech-enter :small-over)))
+
 (tm-define (go-to-fraction where)
   (with-innermost t 'frac
     (when t
@@ -518,7 +531,8 @@
 
 (tm-define (speech-of)
   (with prev (expr-before-cursor)
-    (cond ((tm-is? prev 'big) (make 'rsub))
+    (cond ((tm-in? prev '(frac frac*)) (insert "*"))
+          ((tm-is? prev 'big) (make 'rsub))
           ((editing-big-operator?)
            (with-innermost t script-context?
              (tree-go-to t :end)))

@@ -34,10 +34,19 @@
   (:require (== lan 'french))
   (clean-quotes s))
 
+(define (rewrite-/ s)
+  (with l (string-decompose s "/")
+    (if (and (== (length l) 2)
+             (string-number? (car l))
+             (string-number? (cadr l)))
+        (string-replace s "/" " @sur ")
+        s)))
+
 (tm-define (speech-sanitize lan mode s)
   (:require (and (== lan 'french) (== mode 'math)))
   (set! s (locase-all s))
   (set! s (list->tmstring (clean-letter-digit (tmstring->list s))))
+  (set! s (string-recompose (map rewrite-/ (string-decompose s " ")) " "))
   (set! s (clean-quotes s))
   (set! s (string-replace s "+" " plus "))
   (set! s (string-replace-trailing s "-" " moins "))
@@ -395,6 +404,7 @@
   ("racine carrée deux/de" (speech-sqrt-of))
   ("fraction" (speech-fraction))
   ("sur" (speech-over))
+  ("@sur" (speech-small-over))
   ("numérateur" (go-to-fraction :numerator))
   ("dénominateur" (go-to-fraction :denominator))
 
