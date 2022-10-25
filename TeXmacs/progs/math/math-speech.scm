@@ -197,15 +197,17 @@
          (spc (count (in? :space       p) (tmconcat l " " r)))
          (com (count (in? :comma       p) (tmconcat l "," r)))
          (app (count (in? :apply       p) (tmconcat l `(around "(" ,r ")"))))
+         (bra (count (in? :brackets    p) (tmconcat l `(around "[" ,r "]"))))
          (sub (count (in? :subscript   p) (tmconcat l `(rsub ,r))))
          (sup (count (in? :superscript p) (tmconcat l `(rsup ,r))))
-         (m (max mul spc com app sub sup)))
+         (m (max mul spc com app bra sub sup)))
     (when (== r "") (set! sup 0))
     (cond ((== m 0) :none)
           ((== m mul) :multiply)
           ((== m spc) :space)
           ((== m com) :comma)
           ((== m app) :apply)
+          ((== m bra) :brackets)
           ((== m sub) :subscript)
           ((== m sup) :superscript)
           (else :none))))
@@ -250,7 +252,7 @@
                 (letter-symbol? l)
                 (in? r index-letters))
            :subscript)
-          ((and (in? :superscript p)
+          ((and (in? :apply p)
                 (in? l function-letters)
                 (in? r basic-letters))
            :apply)
@@ -272,7 +274,8 @@
         (best-implicit* l r p))))
 
 (define (get-permitted)
-  (let* ((l (list :multiply :space :comma :apply :subscript :superscript))
+  (let* ((l (list :multiply :space :comma :apply :brackets
+                  :subscript :superscript))
          (x (expr-before-cursor))
          (a (tree-innermost around-context?)))
     (when (not a)
@@ -296,6 +299,7 @@
         ((== impl :space)       (insert " ") (insert x))
         ((== impl :comma)       (insert ",") (insert x))
         ((== impl :apply)       (insert `(around "(" ,x ")")))
+        ((== impl :brackets)    (insert `(around "[" ,x "]")))
         ((== impl :subscript)   (insert `(rsub ,x)))
         ((== impl :superscript) (insert `(rsup ,x)))))
 
@@ -333,6 +337,7 @@
           ((== impl :space      ) (tmconcat prev " " x))
           ((== impl :comma      ) (tmconcat prev "," x))
           ((== impl :apply      ) (tmconcat prev `(around "(" ,x ")")))
+          ((== impl :brackets   ) (tmconcat prev `(around "[" ,x "]")))
           ((== impl :subscript  ) (tmconcat prev `(rsub ,x)))
           ((== impl :superscript) (tmconcat prev `(rsub ,x)))
           (else #f))))
@@ -343,6 +348,7 @@
        (stats-in-role (get-combine x :space))
        (stats-in-role (get-combine x :comma))
        (stats-in-role (get-combine x :apply))
+       (stats-in-role (get-combine x :brackets))
        (stats-in-role (get-combine x :subscript))
        (stats-in-role (get-combine x :superscript))
        0))
@@ -791,7 +797,7 @@
                  (tree-in? prev '(sqrt frac around around*)))
              (insert "*"))
             ((and (in? prev function-letters) (in? x basic-letters))
-             (speech-apply-brackets))))))
+             (speech-apply))))))
 
 (tm-define (speech-sqrt)
   (speech-start-2d)
@@ -822,7 +828,7 @@
 ;; Brackets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (speech-apply-brackets)
+(tm-define (speech-apply)
   (math-bracket-open "(" ")" 'default)
   (speech-enter :apply))
 
@@ -852,7 +858,7 @@
              (tree-go-to t :end)))
           ((or (letter-symbol? prev)
                (tm-in? prev '(with math-ss math-tt rsub rsup around)))
-           (speech-apply-brackets)))))
+           (speech-apply)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Big operators and dots
