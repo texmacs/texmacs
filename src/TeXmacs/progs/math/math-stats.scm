@@ -85,6 +85,7 @@
 ;; Analysis of content before cursor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (frac-context? t) (tree-in? t '(frac frac*)))
 (tm-define (around-context? t) (tree-in? t '(around around*)))
 (tm-define (wide-context? t) (tree-in? t '(wide wide*)))
 
@@ -271,7 +272,7 @@
           ((and (in? :multiply p)
                 (or (string-number? l)
                     (math-symbol? l)
-                    (tm-in? l '(sqrt frac around around*))))
+                    (tm-in? l '(sqrt frac frac* around around*))))
            :multiply)
           (else :none))))
 
@@ -299,16 +300,17 @@
     (when (if (string? x)
               (not (or (math-symbol? x) (math-operator? x)))
               (not (tree-in? x '(math-ss math-tt rsub rsup wide wide*
-                                 frac sqrt around around*))))
+                                 frac frac* sqrt around around*))))
       (set! l (list)))
     l))
 
 (define (best-permitted-implicit l r p)
   (when (tree? l) (set! l (tm->stree l)))
   (when (tree? r) (set! r (tm->stree r)))
-  (when (string-number? r) (set! r "1"))
-  (when (tm-func? r 'sqrt) (set! r '(sqrt "1")))
-  (when (tm-func? r 'frac) (set! r '(frac "1" "1")))
+  (when (string-number? r)  (set! r "1"))
+  (when (tm-func? r 'sqrt)  (set! r '(sqrt "1")))
+  (when (tm-func? r 'frac)  (set! r '(frac "1" "1")))
+  (when (tm-func? r 'frac*) (set! r '(frac "1" "1")))
   (best-implicit* l r p))
 
 (tm-define (best-implicit l r)

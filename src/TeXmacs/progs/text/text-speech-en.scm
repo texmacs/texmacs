@@ -40,7 +40,7 @@
   "i" "eye" "eyes" "either" "iron" "ok" "cake" "care" "case" "all" "old"
   "an" "and" "piece" "queue" "cute"
   "are" "art" "our" "yes" "chease" "tea" "team"
-  "via" "you" "ask" "eggs" "why"
+  "via" "you" "vegan" "ask" "eggs" "why"
 
   ;; greek letters
   "theater" "copper" "mute" "mood" "no" "new" "gnu" "knew" "bye" "pie"
@@ -48,7 +48,7 @@
   "fight" "fine" "sigh" "size" "kind" "sky"
 
   ;; letter combinations
-  "ecu" "easy" "busy" "agency" "icy" "ma" "empty" "auntie" "envy"
+  "ecu" "easy" "bi" "busy" "agency" "icy" "ma" "empty" "auntie" "envy"
   "annex" "pity" "peezy" "cutie" "essay" "usually" "excess" "whitey"
 
   ;; variants
