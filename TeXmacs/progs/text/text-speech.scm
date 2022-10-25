@@ -178,7 +178,7 @@
 (tm-define (kbd-speech S)
   (:mode in-std-text?)
   (set! S (list->tmstring (clean-text-speech (tmstring->list S))))
-  ;;(display* "Text speech " S "\n")
+  ;;(display* "Text speech " (cork->utf8 S) "\n")
   (let* ((prev1 (before-cursor))
          (prev2 (before-before-cursor))
          (prev  (if (== prev1 " ") prev2 prev1))

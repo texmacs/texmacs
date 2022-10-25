@@ -52,6 +52,6 @@
            #t))))
 
 (tm-define (kbd-speech s)
-  ;;(display* "Speech " s "\n")
+  ;;(display* "Speech " (cork->utf8 s) "\n")
   (cond ((speech-make s) (noop))
         (else (kbd-insert s))))

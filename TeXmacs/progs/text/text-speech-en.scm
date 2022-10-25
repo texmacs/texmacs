@@ -34,10 +34,11 @@
 (speech-collection dangerous english
   "to"
 
-  "a" "be" "see" "de" "the" "he" "eat" "each" "if" "yes" "age" "edge"
-  "i" "eye" "eyes" "either" "ok" "case" "cake" "all" "old"
+  "a" "be" "see" "de" "day" "the" "he" "eat" "each" "if" "age" "edge"
+  "i" "eye" "eyes" "either" "iron" "ok" "cake" "care" "case" "all" "old"
   "an" "and" "piece" "queue" "cute"
-  "are" "art" "our" "tea" "team" "you" "ask" "eggs" "why"
+  "are" "art" "our" "yes" "chease" "tea" "team"
+  "via" "you" "ask" "eggs" "why"
 
   "theater" "copper" "mute" "mood" "no" "new" "gnu" "knew" "bye" "pie"
   "road" "row" "role" "roll" "ciao" "towel" "tall" "toe" "toll" "town"
@@ -45,11 +46,11 @@
 
   "plastic" "both" "bowl" "build" "bouquet" "tractor"
   "does" "play" "blessed" "please" "press" "time"
-  "time" "sake" "subway" "pizza"
+  "time" "bishop" "sake" "subversion" "subway" "pizza" "visa"
   "cosign" "pick" "dutch" "ducks"
-  "of" "off" "some" "offer" "oversee" "it's"
+  "of" "off" "some" "offer" "oversee" "overall" "overview" "it's"
   "lock" "luck" "look" "unlock" "timeslot"
-  "white" "head" "had" "hit" "hunt" "hurt"
+  "white" "head" "had" "hit" "hunt" "hurt" "pet"
   "cuba" "write"
 
   "sign" "end"

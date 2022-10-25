@@ -35,16 +35,21 @@
   "prime" "factoriel")
 
 (speech-collection dangerous french
-  "des" "œuf" "gay" "car" "casse" "j'y" "elle" "aime" "haine"
-  "haut" "beau" "paye" "pays" "air" "est-ce" "t'es" "tes" "eu" "value"
+  "des" "eux" "œuf" "gay" "car" "casse" "j'y" "elle" "aime" "haine"
+  "au" "beau" "haut" "os" "paye" "pays" "air" "est-ce"
+  "t'es" "tes" "eu" "value" "vert"
 
-  "gamin" "éteins" "est" "état" "mus" "pis" "rose" "tôt"
+  "gamin" "éteins" "est" "état" "mou" "mieux" "mûr" "mus"
+  "nue" "nul" "pis" "rock" "rome" "rose" "tôt"
   "taux" "options" "fille" "fit" "qui"
 
   "assez" "aime"
+  "rang" "rend" "irons" "giron" "aileron" "huron" "verrons"
+  "ranger" "ronger" "rompez" "remonter"
+  "sûr" "assure"
   "bars" "bar" "chapeaux" "utile" "utilité" "tel" "telle"
 
-  "a" "à" "un" "une" "deux" "de" "dans")
+  "a" "à" "en" "un" "une" "deux" "de" "dans" "the")
 
 (speech-collection skip french
   "et" "ou")
