@@ -57,7 +57,7 @@
   "ad" "ag" "ah" "al" "an" "ar" "as" "eg" "el" "em" "en" "ex"
   "if" "in" "is" "it" "of" "oh" "ok" "ol" "or" "up"
   "be" "de" "he" "pe" "se" "ve" "we"
-  "ma" "va" "bi" "hi" "ji" "pi" "si" "xi"
+  "ma" "va" "bi" "hi" "ji" "pi" "si" "xi" "yi"
   "do" "fo" "ho" "jo" "ko" "lo" "no" "po" "so" "to" "vo" "wo"
   "mu" "nu" "by" "hy" "ky" "my" "sy")
 
@@ -585,6 +585,7 @@
   ("a/e/8 tilda" (speech-best-accent "~" "a" "e"))
   ("a/e/8 bar" (speech-best-accent "<bar>" "a" "e"))
   ("b/p/d" (speech-best-letter "b" "p" "d" "b"))
+  ("d/b" (speech-best-letter "d" "b" "d"))
   ("v/t/d/3" (speech-best-letter "v" "t" "d" "3"))
   ("d/t/v/3" (speech-best-letter "d" "t" "v" "3"))
   ("t/d/v/3" (speech-best-letter "t" "d" "v" "3"))
@@ -594,6 +595,7 @@
   ("phi/5" (speech-best-letter "<phi>" "5"))
   ("s/f" (speech-best-letter "s" "f" "s"))
   ("l/i" (speech-best-letter "l" "i" "l"))
+  ("xi/psi" (speech-best-letter "<xi>" "<psi>" "<xi>"))
   ("m/n" (english-m/n))
   ("in" (english-in))
   ("and" (english-and))
@@ -632,13 +634,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (speech-adjust english math
+  ;; Adjust latin letters
   ("hey" "a")
   ("be" "b")
   ("bee" "b")
   ("see" "c")
   ("siri" "c")
-  ("de" "d")
   ("day" "d")
+  ("de" "d")
+  ("dee" "d")
   ("he" "e")
   ("eat" "e")
   ("each" "e")
@@ -695,7 +699,9 @@
   ("eggs" "x")
   ("why" "y")
   
+  ;; Adjust greek letters
   ("l5" "alpha")
+  ("b that" "beta")
   ("beata" "beta")
   ("peta" "beta")
   ("vita" "beta")
@@ -741,7 +747,6 @@
   ("new" "nu")
   ("gnu" "nu")
   ("knew" "nu")
-  ;;("sigh" "xi")
   ("all my chrome" "omicron")
   ("o n my chrome" "omicron")
   ("o my crumb" "omicron")
@@ -773,7 +778,7 @@
   ("u p so long" "upsilon")
   ("fight" "phi")
   ("fine" "phi")
-  ("sigh" "psi")
+  ("sigh" "xi/psi")
   ("size" "psi")
   ("kai" "chi")
   ("kite" "chi")
@@ -782,24 +787,74 @@
   ("amiga" "omega")
   ("oh my god" "omega")
 
+  ;; Adjust letter combinations
+  ("ah" "a h")
+  ("ai" "a i")
+  ("ecu" "a q")
   ("ar" "a r")
+  ("easy" "a z")
   ("be my" "b i")
-  ("pedi" "p d")
-  ("pei" "p i")
-  ("pique" "p k")
+  ("decu" "d/b q")
+  ("busy" "b z")
   ("the u" "d u")
   ("the v" "d v")
   ("the w" "d w")
   ("the x" "d x")
   ("the y" "d y")
+  ("dez" "d z")
   ("the z" "d z")
+  ("ea" "e a")
+  ("e.g." "e g")
+  ("ei" "e i")
+  ("en" "e n")
+  ("eo" "e o")
+  ("eu" "e u")
+  ("eax" "e x")
+  ("exo" "e x")
+  ("eyi" "e y")
+  ("eli" "e y")
+  ("iwai" "e y")
+  ("is z" "e z")
+  ("fo" "f o")
+  ("fav" "f v")
+  ("fve" "f v")
+  ("fyi" "f y")
+  ("g.i." "g i")
+  ("g-eazy" "g z")
+  ("hiv" "h v")
+  ("hve" "h v")
+  ("hy" "h y")
+  ("agency" "h z")
+  ("ia" "i a")
+  ("icy" "i c")
+  ("i.e." "i e")
+  ("iah" "i h")
+  ("i/o" "i o")
+  ("ize" "i z")
+  ("jo" "j o")
+  ("jav" "j v")
+  ("javy" "j v")
+  ("ok baby" "k b")
+  ("katie" "k t")
+  ("ky" "k y")
+  ("casey" "k z")
+  ("aldi" "l d")
+  ("lo" "l o")
+  ("elzhi" "l z")
+  ("pedi" "p d")
+  ("pei" "p i")
+  ("pique" "p k")
+  ("sy" "s y")
   ("buy ice" "pi i")
   ("bye bye" "pi i")
   ("bye-bye" "pi i")
   ("bye i" "pi i")
   ("to fight i" "two pi i")
   ("to buy i" "two pi i")
-  
+
+  ;; Adjust capitalized letters
+  ("dick" "big")
+  ("pick" "big")
   ("beck" "big")
   ("plastic" "plus big")
   ("dixie" "big c")
@@ -820,6 +875,7 @@
   ("big five" "big phi")
   ("becky" "big chi")
 
+  ;; Adjust bold variants
   ("bol" "bold")
   ("bolt" "bold")
   ("both" "bold")
@@ -843,10 +899,12 @@
   ("bold five" "bold phi")
   ("bullfight" "bold phi")
 
+  ;; Adjust upright variants
   ("a bright" "upright")
   ("a pride" "upright")
   ("upright five" "upright phi")
 
+  ;; Adjust blackboard bold variants
   ("blackboard bolt" "blackboard bold")
   ("blackboard bolte" "blackboard bold")
   ("blackboard both" "blackboard bold")
@@ -855,7 +913,9 @@
   ("blackboard volt" "blackboard bold")
   ("backward bold" "blackboard bold")
   ("blackbird" "blackboard")
+  ("reels" "reals")
 
+  ;; Adjust fraktur variants
   ("fractura" "fraktur")
   ("fracture" "fraktur")
   ("tractor" "fraktur")
@@ -864,6 +924,7 @@
   ("plus factor" "plus fraktur")
   ("fraktur version" "fraktur v")
 
+  ;; Adjust calligraphic variants
   ("carrie graphic" "calligraphic")
   ("carry graphic" "calligraphic")
   ("kelly graphic" "calligraphic")
@@ -874,6 +935,7 @@
   ("skinny graphic" "calligraphic")
   ("tabby graphic" "calligraphic")
 
+  ;; Adjust sans serif variants
   ("salsarita" "sans serif")
   ("salsaritas" "sans serif")
   ("salsa refill" "sans serif")
@@ -905,20 +967,24 @@
   ("sans serif v data" "sans serif beta")
   ("sans serif side" "sans serif psi")
   
+  ;; Adjust 'letter plus' and 'plus letter'
   ("does" "plus")
   ("play" "plus")
   ("blessed" "plus")
   ("please" "plus")
   ("press" "plus")
+  ("plusa" "plus a")
   ("iplus" "i plus")
   ("ipads" "i plus")
   ("busqué" "plus k")
   ("plus speed" "plus p")
   
+  ;; Adjust 'letter minus' and 'minus letter'
   ("midas" "minus")
   ("mine is" "minus")
   ("minus vive" "minus v")
 
+  ;; Adjust 'letter times' and 'times letter'
   ("time" "times")
   ("and times" "n times")
   ("endtimes" "n times")
@@ -928,8 +994,60 @@
   ("times vive" "times v")
   ("times we" "times v")
 
+  ;; Adjust basic relations
+  ("smaller" "less")
+  ("bigger" "greater")
+  ("larger" "greater")
+  ("less then" "less than")
+  ("greater then" "greater than")
+  ("difference" "different")
+  ("and less" "n less")
+  ("and greater" "n greater")
+
+  ;; Adjust further binary relations
+  ("10 sir" "tensor")
+  ("dancer" "tensor")
+
+  ;; Adjust operator names
+  ("cosign" "cosine")
+  ("lock" "log")
+  ("luck" "log")
+  ("look" "log")
+  ("clock" "log")
+  ("log and" "log n")
+  ("log in" "log n")
+  ("unlock" "n log")
+  ("timeslot" "times log")
+
+  ;; Adjust punctuation
+  ("call ma" "comma")
+  ("call matt" "comma")
+  ("call mark" "comma")
+  ("call mom" "comma")
+  ("docs" "dots")
+  ("dutch" "dots")
+  ("ducks" "dots")
+
+  ;; Adjust brackets
+  ("off" "of")
+  ("fof" "f of")
+  ("fof" "f of")
+  ("find of" "phi of")
+  ("rackets" "brackets")
+
+  ;; Adjust big operators
+  ("sam" "sum")
+  ("some" "sum")
+  ("sum four" "sum for")
+  ("product four" "sum for")
+  ("enter girl" "integral")
+
+  ;; Adjust subscripts
   ("sab" "sub")
   ("sup" "sub")
+  ("subscripts" "subscript")
+  ("subscribe" "subscript")
+  ("subscribed" "subscript")
   ("sabe" "sub a")
   ("subsea" "sub c")
   ("sera d" "sub d")
@@ -971,6 +1089,8 @@
   ("zisa" "z sub")
   ("by sub" "pi sub")
 
+  ;; Adjust powers and superscripts
+  ("exponent" "superscript")
   ("powerbeats" "power b")
   ("power and" "power n")
   ("power in" "power n")
@@ -979,42 +1099,13 @@
   ("in power" "n power")
   ("is power" "e power")
   ("is superscript" "e superscript")
-
-  ("subscripts" "subscript")
-  ("subscribe" "subscript")
-  ("subscribed" "subscript")
-  ("exponent" "superscript")
   ("squared" "square")
   ("e xquire" "x square")
   ("exquire" "x square")
   ("by square" "pi square")
   ("cubed" "cube")
 
-  ("cosign" "cosine")
-
-  ("dick" "big")
-  ("pick" "big")
-
-  ("call ma" "comma")
-  ("call matt" "comma")
-  ("call mark" "comma")
-  ("call mom" "comma")
-  ("docs" "dots")
-  ("dutch" "dots")
-  ("ducks" "dots")
-
-  ("off" "of")
-  ("fof" "f of")
-  ("fof" "f of")
-  ("find of" "phi of")
-  ("rackets" "brackets")
-
-  ("sam" "sum")
-  ("some" "sum")
-  ("sum four" "sum for")
-  ("product four" "sum for")
-  ("enter girl" "integral")
-
+  ;; Adjust fractions
   ("o for" "over")
   ("o from" "over")
   ("offer" "over")
@@ -1050,30 +1141,7 @@
   ("over laptop" "over lambda")
   ("overtone" "over tau")
 
-  ("smaller" "less")
-  ("bigger" "greater")
-  ("larger" "greater")
-  ("less then" "less than")
-  ("greater then" "greater than")
-  ("difference" "different")
-  ("and less" "n less")
-  ("and greater" "n greater")
-
-  ("reels" "reals")
-  ("it's" "is")
-
-  ("lock" "log")
-  ("luck" "log")
-  ("look" "log")
-  ("clock" "log")
-  ("log and" "log n")
-  ("log in" "log n")
-  ("unlock" "n log")
-  ("timeslot" "times log")
-
-  ("10 sir" "tensor")
-  ("dancer" "tensor")
-
+  ;; Adjust hat accents
   ("white" "wide")
   ("head" "hat")
   ("had" "hat")
@@ -1105,11 +1173,15 @@
   ("find hat" "phi hat")
   ("sign hat" "psi hat")
   ("side hat" "psi hat")
+
+  ;; Adjust tilda accents
   ("in tilda" "n tilda")
   ("and tilda" "n tilda")
   ("find tilda" "phi tilda")
   ("sign tilda" "psi tilda")
   ("side tilda" "psi tilda")
+
+  ;; Adjust bar accents
   ("bieber" "b bar")
   ("the bar" "d bar")
   ("ebar" "e bar")
@@ -1133,7 +1205,9 @@
   ("find bar" "phi bar")
   ("sign bar" "psi bar")
   ("side bar" "psi bar")
-  
+
+  ;; Miscellaneous
+  ("it's" "is")
   ("write" "right")
   ("leaf" "leave")
   ("leafs" "leave")
@@ -1156,6 +1230,8 @@
   ("85" "a 5")
 
   ("de de" "b d")
+  ("by" "b y")
+  ("my" "m y")
 
   ("plus 80" "plus e")
   ("power a power" "power e power")

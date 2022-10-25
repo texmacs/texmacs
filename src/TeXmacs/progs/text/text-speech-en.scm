@@ -32,32 +32,50 @@
   "prime" "dagger")
 
 (speech-collection dangerous english
-  "to"
+  ;; explicit commands
+  "to" "factor" "power" "set"
 
+  ;; latin letters
   "a" "be" "see" "de" "day" "the" "he" "eat" "each" "if" "age" "edge"
   "i" "eye" "eyes" "either" "iron" "ok" "cake" "care" "case" "all" "old"
   "an" "and" "piece" "queue" "cute"
   "are" "art" "our" "yes" "chease" "tea" "team"
   "via" "you" "ask" "eggs" "why"
 
+  ;; greek letters
   "theater" "copper" "mute" "mood" "no" "new" "gnu" "knew" "bye" "pie"
   "road" "row" "role" "roll" "ciao" "towel" "tall" "toe" "toll" "town"
   "fight" "fine" "sigh" "size" "kind" "sky"
 
-  "plastic" "both" "bowl" "build" "bouquet" "tractor"
-  "does" "play" "blessed" "please" "press" "time"
-  "time" "bishop" "sake" "subversion" "subway" "pizza" "visa"
-  "cosign" "pick" "dutch" "ducks"
-  "of" "off" "some" "offer" "oversee" "overall" "overview" "it's"
-  "lock" "luck" "look" "unlock" "timeslot"
-  "white" "head" "had" "hit" "hunt" "hurt" "pet"
-  "cuba" "write"
+  ;; letter combinations
+  "ecu" "easy" "busy" "agency" "icy"
 
-  "sign" "end"
+  ;; variants
+  "pick" "plastic"
+  "both" "bowl" "build" "bouquet"
+  "tractor"
 
-  "factor" "power" "set"
+  ;; binary operators and relations
+  "does" "play" "blessed" "please" "press" "time" "dancer"
 
-  "make" "did")
+  ;; textual operators
+  "cosign" "lock" "luck" "look" "unlock" "timeslot"
+
+  ;; punctuation, brackets, big operators
+  "dutch" "ducks" "of" "off" "some"
+
+  ;; fractions, subscripts, superscripts
+  "offer" "oversee" "overall" "overview"
+  "bishop" "sake" "subversion" "subway" "pizza" "visa"
+
+  ;; wide accents
+  "white" "head" "had" "hit" "hunt" "hurt" "pet" "cuba"
+
+  ;; miscellaneous
+  "it's" "write"
+
+  ;; dangerous adjustments
+  "by" "my" "sign" "end")
 
 (speech-collection dangerous english
   "is")
