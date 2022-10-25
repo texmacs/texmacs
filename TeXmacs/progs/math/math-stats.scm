@@ -361,7 +361,7 @@
        (stats-in-role (get-combine x :superscript))
        0))
 
-(define (get-contextual x)
+(define (get-medium-contextual x)
   (let* ((prev  (expr-before-cursor))
          (up    (tm-ref (cursor-tree) :up))
          (prev* (root-before-start)))
@@ -376,9 +376,27 @@
            `(,(tm-label up) ,(tm-ref 0) ,x ,(tm-ref 2)))
           (else #f))))
 
-(tm-define (stats-contextual x)
-  (with c (get-contextual x)
+(tm-define (stats-medium-contextual x)
+  (with c (get-medium-contextual x)
     (if (not c) 0 (stats-in-role c))))
+
+(tm-define (stats-prefer-weak-contextual? what over prefer?)
+  (let* ((what3 (stats-occurrences what))
+         (over3 (stats-occurrences over)))
+    ;;(display* "  weak  : " what ", " what3
+    ;;          "; " over ", " over3 "\n")
+    (cond ((prefer? what3 over3) #t)
+          ((> over3 0) #f)
+          (else #f))))
+
+(tm-define (stats-prefer-medium-contextual? what over prefer?)
+  (let* ((what2 (stats-medium-contextual what))
+         (over2 (stats-medium-contextual over)))
+    ;;(display* "  medium: " what ", " what2
+    ;;          "; " over ", " over2 "\n")
+    (cond ((> what2 over2) #t)
+          ((> over2 0) #f)
+          (else (stats-prefer-weak-contextual? what over prefer?)))))
 
 (tm-define (stats-prefer-contextual? what over prefer?)
   (let* ((what1 (stats-rich-contextual what))
@@ -387,19 +405,7 @@
     ;;          "; " over ", " over1 "\n")
     (cond ((> what1 over1) #t)
           ((> over1 0) #f)
-          (else (let* ((what2 (stats-contextual what))
-                       (over2 (stats-contextual over)))
-                  ;;(display* "  medium: " what ", " what2
-                  ;;          "; " over ", " over2 "\n")
-                  (cond ((> what2 over2) #t)
-                        ((> over2 0) #f)
-                        (else (let* ((what3 (stats-occurrences what))
-                                     (over3 (stats-occurrences over)))
-                                ;;(display* "  weak  : " what ", " what3
-                                ;;          "; " over ", " over3 "\n")
-                                (cond ((prefer? what3 over3) #t)
-                                      ((> over3 0) #f)
-                                      (else #f))))))))))
+          (else (stats-prefer-medium-contextual? what over prefer?)))))
 
 (define (stats-prefer-predicate mode)
   (cond ((== mode :normal) >)
