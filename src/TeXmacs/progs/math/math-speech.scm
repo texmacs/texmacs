@@ -54,7 +54,7 @@
 
 (tm-define (kbd-speech s)
   (:mode in-math?)
-  ;;(display* "Math speech " s "\n")
+  ;;(display* "Math speech " (cork->utf8 s) "\n")
   (cond ((speech-make s) (noop))
         (else (speech-exec (letterize (locase-all s))))))
 
@@ -73,6 +73,12 @@
           ((or (speech-has? lan 'dont-break (substring s 0 2))
                (speech-has? lan 'dont-break (string-take-right s 2)))
            s)
+          ((and (== lan 'french) (in? (string-ref s 1) (list #\d #\t)))
+           (with de (if (== (string-ref s 1) #\d) " de " " t/de ")
+             (when (== (string-length s) 2)
+               (set! de (string-drop-right de 1)))
+             (string-append (string-take s 1) de
+                            (letterize-one lan (string-drop s 2)))))
           ((or (forall? (cut ahash-ref consonants <>) (cdr l))
                (forall? (cut ahash-ref consonants <>) (cDr l)))
            (list->tmstring (list-intersperse l " ")))
@@ -169,6 +175,9 @@
 (tm-define (stats-has? s)
   (> (stats-occurrences s) 0))
 
+(tm-define (stats-role? s)
+  (> (stats-in-role s) 0))
+
 (tm-define (stats-better? alt best)
   (> (stats-occurrences alt) (stats-occurrences best)))
 
@@ -230,16 +239,13 @@
 (define (best-implicit* l r p)
   (with impl1 (stats-best-implicit l r p)
     (cond ((!= impl1 :none) impl1)
+          ((and (in? :multiply p)
+                (in? l (list "<pi>" "<mathpi>"))
+                (== r "i"))
+           :multiply)
           ((and (in? :space p)
                 (in? l standard-operators))
            :space)
-          ((and (in? :multiply p)
-                (or (string-number? l)
-                    (and (in? l basic-letters) (in? r basic-letters))
-                    (and (in? l index-letters) (in? r index-letters))
-                    (and (in? l (list "<pi>" "<mathpi>")) (== r "i"))
-                    (tm-in? l '(sqrt frac around around*))))
-           :multiply)
           ((and (in? :subscript p)
                 (letter-symbol? l)
                 (in? r index-letters))
@@ -248,6 +254,11 @@
                 (in? l function-letters)
                 (in? r basic-letters))
            :apply)
+          ((and (in? :multiply p)
+                (or (string-number? l)
+                    (and (string? l) (== (math-symbol-type l) "symbol"))
+                    (tm-in? l '(sqrt frac around around*))))
+           :multiply)
           (else :none))))
 
 (tm-define (best-implicit l r p)
@@ -303,7 +314,8 @@
          (up    (tm-ref (cursor-tree) :up))
          (prev* (root-before-start)))
     (when (== prev "-") (set! prev "+"))
-    (cond ((infix-like? prev)
+    (cond ((and prev*
+                (infix-like? prev))
            (tmconcat prev2 prev x))
           ((and prev* up
                 (tm-in? up '(rsub rsup))

@@ -243,7 +243,7 @@
 
 (tm-define (speech-rewrite lan mode s)
   (set! s (speech-sanitize lan mode s))
-  ;;(display* "Sanitized " s "\n")
+  ;;(display* "Sanitized " (cork->utf8 s) "\n")
   (let* ((l (string-decompose s " "))
          (r (speech-rewrite* lan mode l)))
     (string-recompose r " ")))
@@ -333,11 +333,11 @@
   (noop))
 
 (tm-define (speech-exec s)
-  ;;(display* "Execute " s "\n")
+  ;;(display* "Execute " (cork->utf8 s) "\n")
   (let* ((lan (speech-language))
          (mode (speech-current-mode))
          (r (speech-rewrite lan mode s))
          (l (string-decompose r " ")))
-    ;;(display* "Rewritten " r "\n")
+    ;;(display* "Rewritten " (cork->utf8 r) "\n")
     (speech-exec-list lan l (list))
     (speech-done)))
