@@ -142,6 +142,8 @@ math_stats::compile (tree t, tree parent, string mode) {
     for (i=0; i<n; i++) {
       string smode= get_submode (t, i, mode);
       if (is_func (t, WITH) && i != N(t)-1);
+      else if (is_compound (t, "math-ss"));
+      else if (is_compound (t, "math-tt"));
       else if (is_correctable_child (t, i))
         compile (t[i], t, smode);
     }

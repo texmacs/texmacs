@@ -23,7 +23,7 @@
   ("5" "five") ("6" "six") ("7" "seven") ("8" "eight") ("9" "nine"))
 
 (define-table english-ambiguate
-  ("m" "m/n"))
+  ("d" "d/b/p") ("m" "m/n") ("s" "s/f"))
 
 (define (string-table-replace s t)
   (with repl (lambda (x) (with y (ahash-ref t x) (if y (car y) x)))
@@ -44,6 +44,12 @@
   (set! s (string-replace s ";" " semicolon "))
   (set! s (string-replace s "^" " hat "))
   (set! s (string-replace s "~" " tilda "))
+  (set! s (string-replace s "(" " ( "))
+  (set! s (string-replace s ")" " ) "))
+  (set! s (string-replace s "[" " [ "))
+  (set! s (string-replace s "]" " ] "))
+  (set! s (string-replace s "{" " { "))
+  (set! s (string-replace s "}" " } "))
   (set! s (string-replace s "<ldots>" " dots "))
   (set! s (string-replace s "<cdots>" " dots "))
   (set! s (string-table-replace s english-numbers))
@@ -221,6 +227,7 @@
   ("fraktur" (speech-alter-letter :frak))
   ("gothic" (speech-alter-letter :frak))
   ("blackboard bold" (speech-alter-letter :bbb))
+  ("double" (speech-alter-letter :bbb))
   ("normal" (speech-alter-letter :normal))
   ("sans serif" (speech-alter-letter :ss))
   ("typewriter" (speech-alter-letter :tt))
@@ -316,6 +323,7 @@
 
   ("sum" (math-big-operator "sum"))
   ("product" (math-big-operator "prod"))
+  ("tensor product" (math-big-operator "otimes"))
   ("integral" (math-big-operator "int"))
   ("contour integral" (math-big-operator "oint"))
   ("double integral" (math-big-operator "iint"))
@@ -324,12 +332,6 @@
   ("from" (speech-for))
   ("until" (speech-until))
   ("to" (speech-to))
-  ("d u" (speech-insert-d "u"))
-  ("d v" (speech-insert-d "v"))
-  ("d w" (speech-insert-d "w"))
-  ("d x" (speech-insert-d "x"))
-  ("d y" (speech-insert-d "y"))
-  ("d z" (speech-insert-d "z"))
 
   ("square root" (speech-sqrt))
   ("square root of" (speech-sqrt-of))
@@ -358,6 +360,10 @@
   ("letter b" "b")
   ("letter c" "c")
   ("letter d" "d")
+  ("letter d/b" "d")
+  ("letter d/v" "d")
+  ("letter d/b/p" "d")
+  ("letter d/t/v/3" "d")
   ("letter e" "e")
   ("letter f" "f")
   ("letter g" "g")
@@ -554,6 +560,7 @@
 
   ("big sum" "sum")
   ("big product" "product")
+  ("big tensor product" "tensor product")
   ("big integral" "integral")
   )
 
@@ -561,10 +568,12 @@
 ;; Disambiguation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (english-m/n)
-  (if (stats-prefer? "n" "m" :strong)
-      (speech-insert-symbol "n")
-      (speech-insert-symbol "m")))
+(define differential-letters (list "s" "t" "u" "v" "w" "x" "y" "z"))
+
+(define (english-d/b/p . l)
+  (if (and (== (length l) 1) (in? (car l) differential-letters))
+      (speech-best-combination (list "<mathd>" "d" "b" "p") l)
+      (speech-best-combination (list "d" "b" "p") l)))
 
 (define (english-and)
   (if (stats-prefer? "<wedge>" "n" :normal)
@@ -576,32 +585,76 @@
       (speech-insert-symbol "n")
       (speech-insert-symbol "<in>")))
 
-(define (english-the)
-  (speech-insert-symbol "d"))
-
 (speech-map english math
+  ;; a/e/8 ambiguity
   ("a/e/8" (speech-best-letter "a" "e" "8"))
   ("a/e/8 hat" (speech-best-accent "^" "a" "e"))
   ("a/e/8 tilda" (speech-best-accent "~" "a" "e"))
   ("a/e/8 bar" (speech-best-accent "<bar>" "a" "e"))
-  ("b/p/d" (speech-best-letter "b" "p" "d" "b"))
-  ("d/b" (speech-best-letter "d" "b" "d"))
+
+  ;; phi/5 ambiguity
+  ("phi/5" (speech-best-letter "<phi>" "5"))
+
+  ;; t/d/v/3 and related ambiguities
   ("v/t/d/3" (speech-best-letter "v" "t" "d" "3"))
   ("d/t/v/3" (speech-best-letter "d" "t" "v" "3"))
   ("t/d/v/3" (speech-best-letter "t" "d" "v" "3"))
   ("t/d/v/3 hat" (speech-best-accent "^" "t" "d" "v"))
   ("t/d/v/3 tilda" (speech-best-accent "~" "t" "d" "v"))
   ("t/d/v/3 bar" (speech-best-accent "<bar>" "t" "d" "v"))
-  ("phi/5" (speech-best-letter "<phi>" "5"))
-  ("s/f" (speech-best-letter "s" "f" "s"))
-  ("j/g" (speech-best-letter "j" "g" "j"))
-  ("l/i" (speech-best-letter "l" "i" "l"))
-  ("xi/psi" (speech-best-letter "<xi>" "<psi>" "<xi>"))
-  ("m/n" (english-m/n))
+
+  ;; b/p/d ambiguity
+  ("b/p/d" (speech-insert-best "b" "p" "d"))
+
+  ;; d/b/p and related ambiguities
+  ("d u" (speech-insert-d "u"))
+  ("d v" (speech-insert-d "v"))
+  ("d w" (speech-insert-d "w"))
+  ("d x" (speech-insert-d "x"))
+  ("d y" (speech-insert-d "y"))
+  ("d z" (speech-insert-d "z"))
+  ("d/b" (speech-insert-best "d" "b"))
+  ("d/b/p" (speech-insert-best "d" "b" "p"))
+  ("d/b/p b/p/d" (english-d/b/p "b" "p" "d"))
+  ("d/b/p d/b" (english-d/b/p "d" "b"))
+  ("d/b/p d/b/p" (english-d/b/p "d" "b" "p"))
+  ("d/b/p d/v" (english-d/b/p "d" "v"))
+  ("d/b/p s/f" (english-d/b/p "s" "f"))
+  ("d/v" (speech-insert-best "d" "v"))
+  
+  ;; m/n and related ambiguities
+  ("m/n" (speech-insert-best "m" "n"))
+  ("m/n b/p/d" (speech-best-combination (list "m" "n") (list "b" "p" "d")))
+  ("m/n d/b" (speech-best-combination (list "m" "n") (list "d" "b")))
+  ("m/n d/b/p" (speech-best-combination (list "m" "n") (list "d" "b" "p")))
+  ("m/n d/v" (speech-best-combination (list "m" "n") (list "d" "v")))
+  ("m/n m/n" (speech-best-combination (list "m" "n") (list "m" "n")))
+  ("m/n s/f" (speech-best-combination (list "m" "n") (list "s" "f")))
+
+  ;; s/f and related ambiguities
+  ("s/f" (speech-insert-best "s" "f"))
+  ("s/f b/p/d" (speech-best-combination (list "s" "f") (list "b" "p" "d")))
+  ("s/f d/b" (speech-best-combination (list "s" "f") (list "d" "b")))
+  ("s/f d/b/p" (speech-best-combination (list "s" "f") (list "d" "b" "p")))
+  ("s/f d/v" (speech-best-combination (list "s" "f") (list "d" "v")))
+  ("s/f m/n" (speech-best-combination (list "s" "f") (list "m" "n")))
+  ("s/f s/f" (speech-best-combination (list "s" "f") (list "s" "f")))
+
+  ;; Other ambiguities
+  ("j/g" (speech-insert-best "j" "g"))
+  ("l/i" (speech-insert-best "l" "i"))
+  ("xi/psi" (speech-insert-best "<xi>" "<psi>"))
   ("in" (english-in))
   ("and" (english-and))
-  ("the" (speech-best-letter "d" "v" "d"))
   )
+
+(speech-map-wildcard english math
+  ("d/b/p *" (english-d/b/p "*"))
+  ("* d/b/p" (speech-best-combination (list "*") (list "d" "b" "p")))
+  ("m/n *" (speech-best-combination (list "m" "n") (list "*")))
+  ("* m/n" (speech-best-combination (list "*") (list "m" "n")))
+  ("s/f *" (speech-best-combination (list "s" "f") (list "*")))
+  ("* s/f" (speech-best-combination (list "*") (list "s" "f"))))
 
 (speech-reduce english math
   ("plus eight" "plus a/e/8")
@@ -628,6 +681,8 @@
   ("five hat" "phi hat")
   ("five tilda" "phi tilda")
   ("five bar" "phi bar")
+
+  ("the" "d/v")
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -794,16 +849,12 @@
   ("ecu" "a q")
   ("ar" "a r")
   ("easy" "a z")
+  ("be be" "b b")
   ("be my" "b i")
+  ("bia" "b i")
   ("decu" "d/b q")
   ("busy" "b z")
-  ("the u" "d u")
-  ("the v" "d v")
-  ("the w" "d w")
-  ("the x" "d x")
-  ("the y" "d y")
   ("dez" "d z")
-  ("the z" "d z")
   ("ea" "e a")
   ("e.g." "e g")
   ("ei" "e i")
@@ -862,6 +913,7 @@
   ("pii" "p i")
   ("pique" "p k")
   ("po" "p o")
+  ("pikachu" "p q")
   ("petey" "p t")
   ("pity" "p t")
   ("pey" "p y")
@@ -873,7 +925,7 @@
   ("se" "s e")
   ("ask you" "s q")
   ("sy" "s y")
-  ("s z a" "s z")
+  ("s/f z a" "s/f z")
   ("ua" "u a")
   ("usa" "u a")
   ("you ate" "u a")
@@ -1084,6 +1136,7 @@
   ("call matt" "comma")
   ("call mark" "comma")
   ("call mom" "comma")
+  ("call my" "comma")
   ("docs" "dots")
   ("dutch" "dots")
   ("ducks" "dots")
@@ -1218,7 +1271,6 @@
   ("my tilda" "wide tilda")
   ("my tilde" "wide tilda")
   ("my bar" "wide bar")
-  ("the hat" "d hat")
   ("he had" "e hat")
   ("jihad" "g hat")
   ("ipad" "i hat")
@@ -1243,7 +1295,6 @@
 
   ;; Adjust bar accents
   ("bieber" "b bar")
-  ("the bar" "d bar")
   ("ebar" "e bar")
   ("aybar" "i bar")
   ("al-bahr" "l bar")
@@ -1290,8 +1341,8 @@
   ("84" "a 4")
   ("85" "a 5")
 
-  ("de de" "b d")
-  ("by" "b y")
+  ("de de" "d/b/p d/b/p")
+  ("by" "b/p/d y")
   ("my" "m y")
 
   ("plus 80" "plus e")

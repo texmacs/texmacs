@@ -35,20 +35,25 @@
   (:mode in-math?)
   'math)
 
-(tm-define (speech-exec-hook s)
-  (:mode in-math?)
-  ;;(display* "Hook " s "\n")
-  (and (nin? s standard-operators)
+(define (stats-has-operator? s)
+  (and (<= (string-length s) 10)
        (>= (string-length s) 2)
-       (<= (string-length s) 10)
        (string-alpha? s)
        (let* ((ss (locase-all s))
               (Ss (upcase-first ss))
               (SS (upcase-all s)))
-         (cond ((stats-has? ss) (speech-insert-operator ss) #t)
-               ((stats-has? Ss) (speech-insert-operator Ss) #t)
-               ((stats-has? SS) (speech-insert-operator SS) #t)
+         (cond ((stats-has? ss) ss)
+               ((stats-has? Ss) Ss)
+               ((stats-has? SS) SS)
                (else #f)))))
+
+(tm-define (speech-exec-hook s)
+  (:mode in-math?)
+  ;;(display* "Hook " s "\n")
+  (and (nin? s standard-operators)
+       (and-with op (stats-has-operator? s)
+         (speech-insert-operator op)
+         #t)))
 
 (tm-define (kbd-speech s)
   (:mode in-math?)
@@ -68,6 +73,7 @@
 (define (letterize-one lan s)
   (with l (tmstring->list s)
     (cond ((< (length l) 2) s)
+          ((stats-has-operator? s) s)
           ((or (speech-has? lan 'dont-break (substring s 0 2))
                (speech-has? lan 'dont-break (string-take-right s 2)))
            s)
@@ -279,10 +285,10 @@
          (over* (best-letter-variant over)))
     (stats-prefer-contextual? what* over* prefer?)))
 
-(tm-define (stats-preferred . l)
+(tm-define (stats-preferred l mode)
   (and (nnull? l)
-       (with best (apply stats-preferred (cdr l))
-         (if (and best (stats-prefer? best (car l) :normal)) best
+       (with best (stats-preferred (cdr l) mode)
+         (if (and best (stats-prefer? best (car l) mode)) best
              (and (stats-has? (best-letter-variant (car l))) (car l))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -314,7 +320,7 @@
       (speech-relation-exit))))
 
 (tm-define (speech-insert-symbol x)
-  (:require (== (math-symbol-group x) "Relation-nolim-symbol"))
+  (:require (math-relation? x))
   (speech-relation-exit)
   (insert x))
 
@@ -370,8 +376,34 @@
   (speech-insert-letter x))
 
 (tm-define (speech-best-letter . l)
-  (with sym (apply stats-preferred l)
+  (with sym (stats-preferred l :normal)
     (speech-insert-symbol (or sym (cAr l)))))
+
+(tm-define (speech-insert-best . l)
+  (with sym (stats-preferred l :strong)
+    (speech-insert-symbol (or sym (car l)))))
+
+(define (complete-letter-variants l mode)
+  (if (null? l) l
+      (with v (letter-variants (car l) mode)
+        (append (stats-filter v)
+                (complete-letter-variants (cdr l) mode)))))
+
+(tm-define (speech-best-combination l1 l2)
+  ;;(display* "best combination? " l1 ", " l2 "\n")
+  (let* ((l1* (list-remove-duplicates
+               (complete-letter-variants l1 speech-letter-mode)))
+         (l2* (list-remove-duplicates
+               (complete-letter-variants l2 (list))))
+         (p   (stats-preferred-combination l1* l2*)))
+    ;;(display* "best combination " l1* ", " l2* " ~> " p "\n")
+    (if p
+        (with (x y) p
+          (speech-insert-symbol x)
+          (speech-insert-symbol y))
+        (begin
+          (apply speech-insert-best (rcons l1 (car l1)))
+          (apply speech-insert-best (rcons l2 (car l2)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subscripts, superscripts, and wide accents
