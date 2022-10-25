@@ -137,7 +137,7 @@
 	 (i (cAr (cursor-path))))
     (cond ((and (tree-atomic? t) (> i 0))
 	   (with s (tree->string t)
-Hello	     (with j (string-previous* s i)
+	     (with j (string-previous* s i)
 	       (rcons p j))))
 	  ((tree-atomic? t) #f)
 	  ((> i 0) (rcons p 0))
