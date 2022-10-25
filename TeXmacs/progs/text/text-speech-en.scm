@@ -48,7 +48,8 @@
   "fight" "fine" "sigh" "size" "kind" "sky"
 
   ;; letter combinations
-  "ecu" "easy" "busy" "agency" "icy"
+  "ecu" "easy" "busy" "agency" "icy" "ma" "empty" "auntie" "envy"
+  "annex" "pity" "peezy" "cutie" "essay" "usually" "excess" "whitey"
 
   ;; variants
   "pick" "plastic"
