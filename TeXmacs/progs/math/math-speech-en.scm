@@ -350,7 +350,6 @@
   ("for" (speech-for))
   ("from" (speech-for))
   ("until" (speech-until))
-  ("to" (speech-to))
 
   ("square root" (speech-sqrt))
   ("square root of" (speech-sqrt-of))
@@ -376,6 +375,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (speech-reduce english math
+  ("digit zero" "zero")
+  ("digit one" "one")
+  ("digit two" "two")
+  ("digit three" "three")
+  ("digit d/t/v/3" "three")
+  ("digit four" "four")
+  ("digit five" "five")
+  ("digit phi/5" "five")
+  ("digit 5/phi" "five")
+  ("digit six" "six")
+  ("digit seven" "seven")
+  ("digit eight" "eight")
+  ("digit a/e/8" "eight")
+  ("digit nine" "nine")
+  
   ("letter a" "a")
   ("letter b" "b")
   ("letter c" "c")
@@ -644,6 +658,15 @@
       (speech-insert-symbol "n")
       (speech-insert-symbol "<in>")))
 
+(define (english-to)
+  (if (inside? 'rsub)
+      (with-innermost t 'rsub
+        (with prev (tree-ref t :previous)
+          (if (and (tree? prev) (tree-is? prev 'big))
+              (speech-until)
+              (speech-insert-number "2"))))
+      (speech-insert-number "2")))
+
 (speech-map english math
   ;; a/e/8 ambiguity
   ("a/e/8" (speech-best-letter "a" "e" "8"))
@@ -722,6 +745,7 @@
   ("psi/xi" (speech-insert-best "<psi>" "<xi>"))
   ("in" (english-in))
   ("and" (english-and))
+  ("to" (english-to))
   )
 
 (speech-map-wildcard english math
