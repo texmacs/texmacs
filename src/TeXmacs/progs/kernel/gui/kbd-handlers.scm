@@ -39,19 +39,3 @@
 
 (tm-define (kbd-insert s)
   (insert s))
-
-(tm-define (speech-make S)
-  (with lan (get-preference "language")
-    (when (!= lan "english")
-      (set! S (translate-from-to S lan "english"))))
-  (with s (string-replace (locase-all S) " " "-")
-    (and (style-has? s)
-         (>= (string-length s) 3)
-         (begin
-           (make (string->symbol s))
-           #t))))
-
-(tm-define (kbd-speech s)
-  ;;(display* "Speech " (cork->utf8 s) "\n")
-  (cond ((speech-make s) (noop))
-        (else (kbd-insert s))))

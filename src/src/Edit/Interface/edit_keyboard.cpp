@@ -174,6 +174,12 @@ edit_interface_rep::key_press (string gkey) {
     pre_edit_s= "";
     pre_edit_mark= 0;
   }
+  if (starts (key, "speech:")) {
+    archive_state ();
+    call ("kbd-speech", key (7, N(key)));
+    interrupt_shortcut ();
+    return;
+  }
   if (starts (key, "pre-edit:")) {
     string s= key (9, N(key));
     int i, n= N(s), pos= N(s);
@@ -203,7 +209,12 @@ edit_interface_rep::key_press (string gkey) {
       pre_edit_mark= new_marker ();
       mark_start (pre_edit_mark);
       archive_state ();
-      insert_tree (compound ("pre-edit", s), path (0, pos));
+      if (get_preference ("speech", "off") == "off")
+        insert_tree (compound ("pre-edit", s), path (0, pos));
+      else {
+        insert_tree (compound ("pre-edit", ""), path (0, 0));
+        call ("kbd-speech", s);
+      }
       return;
     }
   }
@@ -222,14 +233,7 @@ edit_interface_rep::key_press (string gkey) {
   }
 
   string rew= sv->kbd_post_rewrite (key);
-  if (starts (key, "speech:")) {
-    string lan= get_preference ("language");
-    if (try_shortcut (lan * ":" * locase_all (key (7, N(key))))) return;
-    archive_state ();
-    call ("kbd-speech", key (7, N(key)));
-    interrupt_shortcut ();
-  }
-  else if (N(rew) == 1) {
+  if (N(rew) == 1) {
     int i ((unsigned char) rew[0]);
     if ((i >= 1 && i <= 127) || (i >= 128 && i <= 255) || (i == 25))
       if (!inside_active_graphics ()) {
