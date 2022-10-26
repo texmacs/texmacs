@@ -319,7 +319,12 @@
     (speech-exit-scripts)))
 
 (tm-define (speech-insert-symbol x)
-  (insert x)
+  (let* ((prev (root-before-cursor))
+         (impl (best-implicit prev x)))
+    (cond ((== impl :none) (insert x))
+          ((tm-in? x '(math-ss math-tt)) (insert-implicit impl x))
+          ((math-symbol? x) (insert-implicit impl x))
+          (else (insert x))))
   (speech-exit-scripts))
 
 (tm-define (speech-insert-symbol x)
