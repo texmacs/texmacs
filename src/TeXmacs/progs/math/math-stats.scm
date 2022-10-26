@@ -262,6 +262,7 @@
            :space)
           ((and (in? :subscript p)
                 (math-symbol? l)
+                (not (string-number? l))
                 (in? r index-letters))
            :subscript)
           ((and (in? :apply p)
