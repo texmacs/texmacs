@@ -29,7 +29,7 @@
   "square root")
 
 (speech-collection postfix english
-  "prime" "dagger")
+  "prime" "dagger" "square" "squared" "cube" "cubed")
 
 (speech-collection dangerous english
   ;; explicit commands

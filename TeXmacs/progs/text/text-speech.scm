@@ -16,6 +16,26 @@
         (math math-speech)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Stripping punctuation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (strip-punctuation s)
+  (if (and (>= (string-length s) 2)
+           (nin? (string-take s 1) (list "." "," ":" ";" "!" "?"))
+           (in? (string-take-right s 1) (list "." "," ":" ";" "!" "?")))
+      (strip-punctuation (string-drop-right s 1))
+      s))
+
+(define (speech-has*? lan type s)
+  (speech-has? lan type (strip-punctuation s)))
+
+(define (speech-accepts*? lan type s)
+  (speech-accepts? lan type (strip-punctuation s)))
+
+(define (speech-border-accepts*? lan type s)
+  (speech-border-accepts? lan type (strip-punctuation s)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Text with inline mathematical formulas
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -90,10 +110,12 @@
       (when (!= s3 "")
         (kbd-speech s3)))))
 
-(define (text-math-speech lan pre l post)
+(define (text-math-speech-bis lan pre l punc post)
   (let* ((s (string-recompose l " "))
          (w (speech-rewrite lan 'math s))
          (r (string-decompose w " ")))
+    ;;(display* "Try " (string-recompose pre " ")
+    ;;          " / " s " / " punc (string-recompose post " ") "\n")
     (cond ((or (null? l) (null? r))
            (text-speech* lan pre post))
           ((speech-has? lan 'math-mode (car l))
@@ -112,31 +134,40 @@
            (text-math-speech lan pre (cDr l) (cons (cAr l) post)))
           ((not (speech-recognizes? lan 'math s))
            (text-math-speech lan pre (cDr l) (cons (cAr l) post)))
-          (else (text-math-speech* lan pre l post)))))
+          ((== punc "") (text-math-speech* lan pre l post))
+          (else (text-math-speech* lan pre l (cons punc post))))))
+
+(define (text-math-speech lan pre l post)
+  (if (or (null? l) (== (strip-punctuation (cAr l)) (cAr l)))
+      (text-math-speech-bis lan pre l "" post)
+      (let* ((s (cAr l))
+             (s* (strip-punctuation s))
+             (punc (string-drop s (string-length s*))))
+        (text-math-speech-bis lan pre (rcons (cDr l) s*) punc post))))
 
 (define (longest-math-prefix* lan l)
   (cond ((null? l) l)
         ((with s (locase-all (car l))
            (!= (letterize s) s))
          (cons (car l) (longest-math-prefix* lan (cdr l))))
-        ((speech-has? lan 'skip (car l)) (list))
-        ((not (speech-accepts? lan 'math (car l))) (list))
+        ((speech-has*? lan 'skip (car l)) (list))
+        ((not (speech-accepts*? lan 'math (car l))) (list))
         (else (cons (car l) (longest-math-prefix* lan (cdr l))))))
 
 (define (trim-longest-math-prefix lan l)
   (cond ((null? l) l)
-        ((speech-border-accepts? lan 'math (cAr l)) l)
+        ((speech-border-accepts*? lan 'math (cAr l)) l)
         (else (trim-longest-math-prefix lan (cDr l)))))
 
 (define (speech-until-text lan l)
   (cond ((null? l) l)
-        ((speech-has? lan 'text-mode (car l)) (list (car l)))
+        ((speech-has*? lan 'text-mode (car l)) (list (car l)))
         (else (cons (car l) (speech-until-text lan (cdr l))))))
 
 (define (longest-math-prefix lan l)
   (cond ((null? l) l)
-        ((speech-has? lan 'math-mode (car l)) (speech-until-text lan l))
-        ((not (speech-border-accepts? lan 'math (car l))) (list))
+        ((speech-has*? lan 'math-mode (car l)) (speech-until-text lan l))
+        ((not (speech-border-accepts*? lan 'math (car l))) (list))
         (else (trim-longest-math-prefix lan (longest-math-prefix* lan l)))))
 
 (define (text-speech* lan h t)
@@ -154,8 +185,10 @@
   (let* ((lan (speech-language))
          (s (speech-rewrite lan 'text-hack s*))
          (l (string-decompose s " ")))
+    ;;(display* (upcase-first (symbol->string lan))
+    ;;          " text speach " (cork->utf8 s) "\n")
     (when (nnull? l)
-      (text-speech* lan (list (car l)) (cdr l)))))
+      (text-speech* lan (list) l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customized speech driver routines for text mode
@@ -165,8 +198,24 @@
   (cond ((or (null? l) (null? (cdr l))) l)
         ((and (string-locase? (car l)) (string-upcase? (cadr l)))
          (cons* (car l) " " (clean-text-speech (cdr l))))
-        ((and (string-number? (car l)) (not (string-number? (cadr l))))
+        ((and (string-number? (car l)) (string-alpha? (cadr l)))
          (cons* (car l) " " (clean-text-speech (cdr l))))
+        ((and (string-alpha? (car l)) (string-number? (cadr l)))
+         (cons* (car l) " " (clean-text-speech (cdr l))))
+        ((and (== (car l) "+") (string-alpha? (cadr l)))
+         (cons* (car l) " " (clean-text-speech (cdr l))))
+        ((and (string-alpha? (car l)) (== (cadr l) "+"))
+         (cons* (car l) " " (clean-text-speech (cdr l))))
+        ((null? (cddr l))
+         (cond ((== (car l) " ")
+                (cons (car l) (clean-text-speech (cdr l))))
+               ((in? (cadr l) (list "+" "-"))
+                (cons* (car l) " " (clean-text-speech (cdr l))))
+               (else (cons (car l) (clean-text-speech (cdr l))))))
+        ((and (== (car l) " ") (== (cadr l) "-") (string-alpha? (caddr l)))
+         (cons* " " "-" " " (clean-text-speech (cddr l))))
+        ((and (string-alpha? (car l)) (== (cadr l) "-") (== (caddr l) " "))
+         (cons* (car l) " " "-" (clean-text-speech (cddr l))))
         (else (cons (car l) (clean-text-speech (cdr l))))))
 
 (define (requires-lowercase? t)
@@ -177,13 +226,15 @@
 
 (tm-define (kbd-speech S)
   (:mode in-std-text?)
+  ;;(display* "Raw  speech " (cork->utf8 S) "\n")
   (set! S (list->tmstring (clean-text-speech (tmstring->list S))))
   ;;(display* "Text speech " (cork->utf8 S) "\n")
   (let* ((prev1 (before-cursor))
          (prev2 (before-before-cursor))
          (prev  (if (== prev1 " ") prev2 prev1))
          (spc?  (!= prev1 " ")))
-    (cond ((speech-make S) (noop))
+    (cond ((speech-command S) (noop))
+          ((speech-make S) (noop))
           ((in? prev (list "." "!" "?"))
            (when spc? (kbd-space))
            (text-speech S))
