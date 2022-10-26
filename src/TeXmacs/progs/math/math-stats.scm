@@ -312,7 +312,7 @@
     (when (tm-atomic? x)
       (set! x (tm->string x)))
     (when (if (string? x)
-              (not (or (math-symbol? x) (math-operator? x)))
+              (not (or (string-number? x) (math-symbol? x) (math-operator? x)))
               (not (tree-in? x '(math-ss math-tt rsub rsup wide wide*
                                  frac frac* sqrt around around*))))
       (set! l (list)))
