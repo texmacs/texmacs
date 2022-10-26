@@ -180,10 +180,18 @@
   ("less equal" "<leqslant>")
   ("greater" "<gtr>")
   ("greater equal" "<geqslant>")
+  ("much less" "<ll>")
+  ("much greater" "<gg>")
+
+  ("element" "<in>")
   ("is in" "<in>")
+  ("not in" "<nin>")
+  ("is not in" "<nin>")
   ("contains the element" "<ni>")
   ("subset" "<subset>")
   ("superset" "<supset>")
+  ("intersection" "<cap>")
+  ("union" "<cup>")
 
   ("similar" "<sim>")
   ("asymptotic" "<asymp>")
@@ -436,6 +444,12 @@
   ("the set" "braces")
   ("the set of" "braces")
 
+  ("to the" "power")
+  ("to the power" "power")
+  ("exponent" "superscript")
+  ("squared" "square")
+  ("cubed" "cube")
+
   ("equals" "equal")
   ("equal to" "equal")
   ("is equal to" "equal")
@@ -458,18 +472,33 @@
   ("difference" "different")
 
   ("inferior" "less")
-  ("inferior to" "less")
-  ("inferior" "less")
+  ("inferior to" "inferior")
+  ("very inferior" "much less")
   ("is less" "less")
   ("less than" "less")
   ("less or equal" "less equal")
+  ("is much less" "much less")
 
   ("superior" "greater")
-  ("superior to" "greater")
+  ("superior to" "superior")
+  ("very superior" "much greater")
   ("is greater" "greater")
   ("greater than" "greater")
   ("greater or equal to" "greater equal")
+  ("is much greater" "much greater")
 
+  ("belongs" "element")
+  ("belongs to" "element")
+  ("member" "element")
+  ("member of" "element")
+  ("is a member of" "element")
+  ("element of" "element")
+  ("is an element of" "element")
+  ("does not belong to" "not in")
+  ("is not a member of" "not in")
+  ("is not an element of" "not in")
+
+  ("subset of" "subset")
   ("is a subset of" "subset")
   ("contains" "superset")
   ("into" "right arrow")
@@ -1224,6 +1253,7 @@
   ("ecua" "equal")
   ("and less" "n less")
   ("and greater" "n greater")
+  ("does not belong to" "not in")
 
   ;; Adjust further binary relations
   ("10 sir" "tensor")
@@ -1312,7 +1342,6 @@
   ("by sub" "pi sub")
 
   ;; Adjust powers and superscripts
-  ("exponent" "superscript")
   ("powerbeats" "power b")
   ("power and" "power n")
   ("power in" "power n")
@@ -1321,11 +1350,9 @@
   ("in power" "n power")
   ("is power" "e power")
   ("is superscript" "e superscript")
-  ("squared" "square")
   ("e xquire" "x square")
   ("exquire" "x square")
   ("by square" "pi square")
-  ("cubed" "cube")
 
   ;; Adjust fractions
   ("o for" "over")
@@ -1426,6 +1453,8 @@
 
   ;; Miscellaneous
   ("it's" "is")
+  ("isn't" "is not")
+  ("doesn't" "does not")
   ("write" "right")
   ("leaf" "leave")
   ("leafs" "leave")

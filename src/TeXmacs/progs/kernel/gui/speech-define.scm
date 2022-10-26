@@ -252,8 +252,8 @@
         (speech-rewrite** lan mode r (- depth 1)))))
 
 (define (speech-rewrite* lan mode l)
-  (with r (speech-rewrite** lan mode l 25)
-    (speech-rewrite** (symbol-append lan '*) mode r 25)))
+  (with r (speech-rewrite** lan mode l 100)
+    (speech-rewrite** (symbol-append lan '*) mode r 100)))
 
 (tm-define (speech-rewrite lan mode s)
   (set! s (speech-sanitize lan mode s))
