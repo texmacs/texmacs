@@ -179,6 +179,11 @@
             (text-speech* lan (rcons h (car t)) (cdr t))
             (with r (sublist t (length l) (length t))
               ;;(display* "Mathematics " (string-recompose l " ") "\n")
+              ;;(debug-message "keyboard-warning"
+              ;;               (string-append "Mathematics "
+              ;;                              (string-recompose h " ") " / "
+              ;;                              (string-recompose l " ") " / "
+              ;;                              (string-recompose r " ") "\n"))
               (text-math-speech lan h l r))))))
 
 (define (text-speech s*)
@@ -226,6 +231,7 @@
 
 (tm-define (kbd-speech S)
   (:mode in-std-text?)
+  (:require (not (inside? 'math)))
   ;;(display* "Raw  speech " (cork->utf8 S) "\n")
   (set! S (list->tmstring (clean-text-speech (tmstring->list S))))
   ;;(display* "Text speech " (cork->utf8 S) "\n")
