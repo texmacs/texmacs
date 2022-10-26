@@ -43,9 +43,10 @@
   "via" "you" "vegan" "ask" "eggs" "why"
 
   ;; greek letters
-  "theater" "copper" "mute" "mood" "no" "new" "gnu" "knew" "bye" "pie"
+  "theater" "yoga" "copper" "laptop"
+  "mute" "mood" "no" "new" "gnu" "knew" "site" "bye" "pie" "pipe"
   "road" "row" "role" "roll" "ciao" "towel" "tall" "toe" "toll" "town"
-  "fight" "fine" "sigh" "size" "kind" "sky"
+  "fight" "fine" "sigh" "side" "size" "kind" "sky"
 
   ;; letter combinations
   "ecu" "easy" "bi" "busy" "agency" "icy" "ma" "empty" "auntie" "envy"
@@ -57,7 +58,8 @@
   "tractor"
 
   ;; binary operators and relations
-  "does" "play" "blessed" "please" "press" "time" "dancer"
+  "does" "play" "blessed" "please" "press" "minors"
+  "time" "dancer"
 
   ;; textual operators
   "cosign" "lock" "luck" "look" "unlock" "timeslot"

@@ -261,6 +261,10 @@
       (ahash-set! letter-variants-table key im))
     im))
 
+(tm-define (stats-has-variant? x)
+  (with l (letter-variants x speech-letter-mode)
+    (nnull? (stats-filter l))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Best and statistically preferred letter variants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
