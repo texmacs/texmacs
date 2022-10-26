@@ -43,7 +43,7 @@
   "via" "you" "vegan" "ask" "eggs" "why"
 
   ;; greek letters
-  "theater" "yoga" "copper" "laptop"
+  "grandma" "theater" "yoga" "copper" "laptop"
   "mute" "mood" "no" "new" "gnu" "knew" "site" "bye" "pie" "pipe"
   "road" "row" "role" "roll" "ciao" "towel" "tall" "toe" "toll" "town"
   "fight" "fine" "sigh" "side" "size" "kind" "sky"

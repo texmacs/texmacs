@@ -849,6 +849,7 @@
   ("beat that" "beta")
   ("gonna" "gamma")
   ("got my" "gamma")
+  ("grandma" "gamma")
   ("gummer" "gamma")
   ("add simon" "epsilon")
   ("add cylon" "epsilon")
@@ -1251,6 +1252,13 @@
 
   ;; Adjust basic relations
   ("ecua" "equal")
+  ("equus" "equal")
+  ("vehicles" "v equal")
+  ("say equal" "xi/psi equal")
+  ("buy equal" "pi equal")
+  ("tell equal" "tau equal")
+  ("equal samantha" "equal lambda")
+  ("equal by" "equal pi")
   ("and less" "n less")
   ("and greater" "n greater")
   ("does not belong to" "not in")
