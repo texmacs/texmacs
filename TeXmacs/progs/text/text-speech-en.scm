@@ -31,9 +31,12 @@
 (speech-collection postfix english
   "prime" "dagger" "square" "squared" "cube" "cubed")
 
+(speech-collection infix english
+  "superior" "inferior" "smaller" "larger" "less" "greater")
+
 (speech-collection dangerous english
   ;; explicit commands
-  "to" "factor" "power" "set"
+  "to" "factor" "power" "set" "element"
 
   ;; latin letters
   "a" "be" "see" "de" "day" "the" "he" "eat" "each" "if" "age" "edge"
@@ -83,8 +86,15 @@
 (speech-collection dangerous english
   "is")
 
+(speech-collection skip-start english
+  "the" "integer" "integers" "rational" "rationals" "real" "reals"
+  "sum" "product" "integral")
+
+(speech-collection skip-end english
+  "are")
+
 (speech-collection skip english
-  "such" "that")
+  "and" "such" "that")
 
 (speech-collection math-mode english
   "math" "maths" "mathematics" "formula")
