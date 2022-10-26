@@ -45,6 +45,7 @@
 (tm-define (speech-sanitize lan mode s)
   (:require (and (== lan 'french) (== mode 'math)))
   (set! s (locase-all s))
+  (set! s (letterize s))
   (set! s (list->tmstring (clean-letter-digit (tmstring->list s))))
   (set! s (string-recompose (map rewrite-/ (string-decompose s " ")) " "))
   (set! s (clean-quotes s))

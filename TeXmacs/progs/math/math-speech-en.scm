@@ -41,6 +41,7 @@
 (tm-define (speech-sanitize lan mode s)
   (:require (and (== lan 'english) (== mode 'math)))
   (set! s (locase-all s))
+  (set! s (letterize s))
   (set! s (list->tmstring (clean-letter-digit (tmstring->list s))))
   (set! s (string-recompose (map rewrite-/ (string-decompose s " ")) " "))
   (set! s (string-replace s "+" " plus "))
@@ -176,6 +177,7 @@
   ("equal" "=")
   ("not equal" "<neq>")
   ("assign" "<assign>")
+  ("defined as" "<assign>")
   ("less" "<less>")
   ("less equal" "<leqslant>")
   ("greater" "<gtr>")
@@ -1079,6 +1081,8 @@
   ("to fight i" "two pi i")
   ("to buy i" "two pi i")
 
+  ("al-fayed" "alpha n")
+
   ;; Adjust capitalized letters
   ("dick" "big")
   ("pick" "big")
@@ -1484,6 +1488,7 @@
   ("83" "a 3")
   ("84" "a 4")
   ("85" "a 5")
+  ("eight a m/n" "a m/n")
 
   ("de de" "d/b/p d/b/p")
   ("by" "b/p/d y")
