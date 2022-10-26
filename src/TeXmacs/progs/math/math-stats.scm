@@ -82,7 +82,7 @@
     (stats-best* (car l) (car c) (cdr l) (cdr c))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Analysis of content before cursor
+;; Symbol categories
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (frac-context? t) (tree-in? t '(frac frac*)))
@@ -97,6 +97,19 @@
 
 (tm-define (math-relation? s)
   (and (string? s) (== (math-symbol-group s) "Relation-nolim-symbol")))
+
+(define weak-infix-types
+  (list "Assign-symbol"
+        "Models-symbol" "Modeled-symbol"
+        "Imply-nolim-symbol" "Or-symbol" "And-symbol"
+        "Relation-nolim-symbol" "Arrow-nolim-symbol"))
+
+(tm-define (math-weak-infix? s)
+  (and (string? s) (in? (math-symbol-group s) weak-infix-types)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Analysis of content before cursor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (string-previous* s k)
   (with j (string-previous s k)

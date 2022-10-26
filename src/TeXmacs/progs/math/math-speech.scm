@@ -326,16 +326,16 @@
   (:require (string-number? x))
   (speech-insert-number x))
 
-(define (speech-relation-exit)
+(define (speech-weak-exit)
   (when (nnull? speech-state)
     (when (in? (car speech-state)
                (list :over :small-over :sqrt :wide :apply :factor :brackets))
       (speech-leave)
-      (speech-relation-exit))))
+      (speech-weak-exit))))
 
 (tm-define (speech-insert-symbol x)
-  (:require (math-relation? x))
-  (speech-relation-exit)
+  (:require (math-weak-infix? x))
+  (speech-weak-exit)
   (insert x))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -577,10 +577,6 @@
     (insert arg)
     (speech-dots sym dots)))
 
-(define (relation-symbol? x)
-  (and (string? x)
-       (== (math-symbol-group x) "Relation-nolim-symbol")))
-
 (tm-define (speech-until)
   (if (inside? 'rsub)
       (with-innermost t 'rsub
@@ -589,7 +585,7 @@
                (op (and big? (tm->stree (tm-ref prev 0))))
                (l (map tm->stree (concat-tokenize-math (tm-ref t 0)))))
           (cond ((not big?) (noop))
-                ((exists? relation-symbol? l)
+                ((exists? math-weak-infix? l)
                  (tree-go-to t :end)
                  (make 'rsup))
                 ((== op "sum") (big->dots prev t "+" "<cdots>"))
