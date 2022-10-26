@@ -386,6 +386,6 @@
 
 (tm-define (kbd-speech s)
   ;;(display* "Speech " (cork->utf8 s) "\n")
-  (cond ((speech-command key) (noop))
+  (cond ((speech-command s) (noop))
         ((speech-make s) (noop))
         (else (kbd-insert s))))
