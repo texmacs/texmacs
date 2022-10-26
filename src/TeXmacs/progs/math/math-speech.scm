@@ -57,7 +57,7 @@
 
 (tm-define (kbd-speech s)
   (:mode in-math?)
-  ;;(display* "Math speech " (cork->utf8 s) "\n")
+  (display* "Math speech " (cork->utf8 s) "\n")
   (cond ((speech-make s) (noop))
         (else (speech-exec s))))
 
@@ -601,5 +601,5 @@
       (speech-dots "," "<ldots>")))
 
 (tm-define (speech-to)
-  (cond ((inside? 'rsub) (speech-until))
-        (else (speech-insert-number "2"))))
+  (when (inside? 'rsub)
+    (speech-until)))
