@@ -57,9 +57,9 @@
 
 (tm-define (kbd-speech s)
   (:mode in-math?)
-  (display* "Math speech " (cork->utf8 s) "\n")
+  ;;(display* "Math speech " (cork->utf8 s) "\n")
   (cond ((speech-make s) (noop))
-        (else (speech-exec (letterize (locase-all s))))))
+        (else (speech-exec s))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Separate letters that where agglutinated by the speech recognition software
@@ -93,6 +93,14 @@
          (l (string-decompose s " "))
          (r (map (cut letterize-one lan <>) l)))
     (string-recompose r " ")))
+
+(tm-define (letterized? s*)
+  (with s (locase-all s*)
+    (!= (letterize s) s)))
+
+(tm-define (letterized-list s*)
+  (with s (locase-all s*)
+    (string-decompose (letterize (locase-all s)) " ")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Speech state related routines

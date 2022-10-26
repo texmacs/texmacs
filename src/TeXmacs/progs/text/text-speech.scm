@@ -32,8 +32,17 @@
 (define (speech-accepts*? lan type s)
   (speech-accepts? lan type (strip-punctuation s)))
 
-(define (speech-border-accepts*? lan type s)
-  (speech-border-accepts? lan type (strip-punctuation s)))
+(define (speech-start-accepts*? lan type s)
+  (set! s (strip-punctuation s))
+  (when (letterized? s)
+    (set! s (car (letterized-list s))))
+  (speech-border-accepts? lan type s))
+
+(define (speech-end-accepts*? lan type s)
+  (set! s (strip-punctuation s))
+  (when (letterized? s)
+    (set! s (cAr (letterized-list s))))
+  (speech-border-accepts? lan type s))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Text with inline mathematical formulas
@@ -43,6 +52,8 @@
 
 (define (accept-start? lan l r)
   (cond ((< (length r) 1) #f)
+        ((and (list-1? l) (letterized? (car l)))
+         (accept-start? lan (letterized-list (car l)) r))
         ((and (null? (cdr r))
               (> (string-length (car r)) 1)
               (nin? (string-append "<" (car r) ">") greek-letters)) #f)
@@ -68,6 +79,8 @@
 
 (define (accept-end? lan l r)
   (cond ((< (length r) 1) #f)
+        ((and (list-1? l) (letterized? (car l)))
+         (accept-end? lan (letterized-list (car l)) r))
         ((in? (cAr l) punctuation-symbols) #f)
         ((in? (string-take-right (cAr l) 1) punctuation-symbols)
          (with h (string-drop-right (cAr l) 1)
@@ -147,8 +160,7 @@
 
 (define (longest-math-prefix* lan l)
   (cond ((null? l) l)
-        ((with s (locase-all (car l))
-           (!= (letterize s) s))
+        ((letterized? (car l))
          (cons (car l) (longest-math-prefix* lan (cdr l))))
         ((speech-has*? lan 'skip (car l)) (list))
         ((not (speech-accepts*? lan 'math (car l))) (list))
@@ -156,7 +168,9 @@
 
 (define (trim-longest-math-prefix lan l)
   (cond ((null? l) l)
-        ((speech-border-accepts*? lan 'math (cAr l)) l)
+        ((speech-has*? lan 'skip-end (locase-all (cAr l)))
+         (trim-longest-math-prefix lan (cDr l)))
+        ((speech-end-accepts*? lan 'math (cAr l)) l)
         (else (trim-longest-math-prefix lan (cDr l)))))
 
 (define (speech-until-text lan l)
@@ -167,7 +181,8 @@
 (define (longest-math-prefix lan l)
   (cond ((null? l) l)
         ((speech-has*? lan 'math-mode (car l)) (speech-until-text lan l))
-        ((not (speech-border-accepts*? lan 'math (car l))) (list))
+        ((not (speech-start-accepts*? lan 'math (car l))) (list))
+        ((speech-has*? lan 'skip-start (locase-all (car l))) (list))
         (else (trim-longest-math-prefix lan (longest-math-prefix* lan l)))))
 
 (define (text-speech* lan h t)
@@ -178,7 +193,7 @@
         (if (null? l)
             (text-speech* lan (rcons h (car t)) (cdr t))
             (with r (sublist t (length l) (length t))
-              ;;(display* "Mathematics " (string-recompose l " ") "\n")
+              ;;(display* "Try mathematics " (string-recompose l " ") "\n")
               ;;(debug-message "keyboard-warning"
               ;;               (string-append "Mathematics "
               ;;                              (string-recompose h " ") " / "
@@ -234,12 +249,15 @@
   (:require (not (inside? 'math)))
   ;;(display* "Raw  speech " (cork->utf8 S) "\n")
   (set! S (list->tmstring (clean-text-speech (tmstring->list S))))
+  (set! S (string-replace S "a.m." "AM"))
+  (set! S (string-replace S "p.m." "PM"))
   ;;(display* "Text speech " (cork->utf8 S) "\n")
   (let* ((prev1 (before-cursor))
          (prev2 (before-before-cursor))
          (prev  (if (== prev1 " ") prev2 prev1))
          (spc?  (!= prev1 " ")))
-    (cond ((speech-command S) (noop))
+    (cond ((== S "") (noop))
+          ((speech-command S) (noop))
           ((speech-make S) (noop))
           ((in? prev (list "." "!" "?"))
            (when spc? (kbd-space))
@@ -248,7 +266,8 @@
            (when spc? (kbd-space))
            (text-speech (locase-first S)))
           (prev
-           (when (and spc? (nin? S (list "." "," ":" ";" "!" "?")))
+           (when (and spc? (nin? (string-take S 1)
+                                 (list "." "," ":" ";" "!" "?")))
              (kbd-space))
            (text-speech (locase-first S)))
           ((requires-lowercase? (cursor-tree))

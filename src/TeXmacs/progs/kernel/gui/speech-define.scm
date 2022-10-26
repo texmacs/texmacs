@@ -295,6 +295,7 @@
         (ahash-ref speech-recognizes-table (list lan* mode s)))))
 
 (define (speech-recognizes-list? lan mode h t)
+  ;;(display* "    checking " h ", " t "\n")
   (with key (locase-all (string-recompose h " "))
     (if (null? h) (null? t)
         (or (and (or (string->number key)
@@ -304,8 +305,8 @@
             (speech-recognizes-list? lan mode (cDr h) (cons (cAr h) t))))))
 
 (tm-define (speech-recognizes? lan mode s)
-  (set! s (speech-sanitize lan mode s))
-  (and (speech-accepts? lan mode s)
+  ;;(display* "    checking " (speech-sanitize lan mode s) "\n")
+  (and (speech-accepts? lan mode (speech-sanitize lan mode s))
        (let* ((r (speech-rewrite lan mode s))
               (l (string-decompose r " ")))
          (speech-recognizes-list? lan mode l (list)))))
