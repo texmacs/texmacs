@@ -13,21 +13,26 @@
 
 (texmacs-module (math math-speech)
   (:use (math math-kbd)
-        (math math-stats)))
+        (math math-stats)
+        (utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customization of main speech hooks
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define speech-state (list))
 (define speech-letter-mode (list))
 (define speech-letter-mode* (list))
 (define speech-operator-mode :off)
-(define speech-state (list))
+(define speech-can-extend-script? #f)
+(define speech-can-extend-brackets? #f)
 
 (tm-define (speech-done)
+  (speech-exit-all)
   (set! speech-letter-mode (list))
   (set! speech-operator-mode :off)
-  (speech-exit-all)
+  (set! speech-can-extend-script? #f)
+  (set! speech-can-extend-brackets? #f)
   (former))
 
 (tm-define (speech-current-mode)
@@ -56,7 +61,7 @@
 
 (tm-define (kbd-speech s)
   (:mode in-math?)
-  (display* "Math speech " (cork->utf8 s) "\n")
+  ;;(display* "Math speech " (cork->utf8 s) "\n")
   (cond ((speech-make s) (noop))
         (else (speech-exec s))))
 
@@ -144,6 +149,8 @@
   (when (and (nnull? speech-state)
              (in? (car speech-state)
                   (list :short-over :short-subscript :short-superscript)))
+    (when (in? (car speech-state) (list :short-subscript :short-superscript))
+      (set! speech-can-extend-script? #t))
     (speech-exit-innermost)
     (speech-exit-scripts)))
 
@@ -152,6 +159,13 @@
     (speech-exit-innermost))
   (and-with t (tree-innermost tag)
     (tree-go-to t :end)))
+
+(tm-define (speech-insert-implicit impl x)
+  (insert-implicit impl x)
+  (when (in? impl (list :subscript :superscript))
+    (set! speech-can-extend-script? #t))
+  (when (in? impl (list :apply :brackets))
+    (set! speech-can-extend-brackets? #t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Letter alteration mode (bold, calligraphic, sans serif, etc.)
@@ -274,6 +288,8 @@
   (let* ((key (list x mods))
          (im (ahash-ref letter-variants-table key)))
     (when (not im)
+      (when (string-number? x)
+        (set! mods (cons* :it :normal mods)))
       (set! current-variants (list))
       (add-variants x mods)
       (set! im current-variants)
@@ -326,7 +342,7 @@
   (let* ((prev (root-before-cursor))
          (impl (best-implicit prev x)))
     (cond ((string-number? prev) (insert x))
-          ((!= impl :none) (insert-implicit impl x))
+          ((!= impl :none) (speech-insert-implicit impl x))
           (else (insert x)))
     (speech-exit-scripts)))
 
@@ -334,8 +350,8 @@
   (let* ((prev (root-before-cursor))
          (impl (best-implicit prev x)))
     (cond ((== impl :none) (insert x))
-          ((tm-in? x '(math-ss math-tt)) (insert-implicit impl x))
-          ((math-symbol? x) (insert-implicit impl x))
+          ((tm-in? x '(math-ss math-tt)) (speech-insert-implicit impl x))
+          ((math-symbol? x) (speech-insert-implicit impl x))
           (else (insert x))))
   (speech-exit-scripts))
 
@@ -364,7 +380,7 @@
   (let* ((prev (root-before-cursor))
          (impl (best-implicit prev x)))
     (if (!= impl :none)
-        (insert-implicit impl x)
+        (speech-insert-implicit impl x)
         (insert x))))
 
 (tm-define (speech-insert-d x)
@@ -395,7 +411,7 @@
            (impl (best-implicit prev x)))
       ;;(display* "  inserting " x* " as " x "\n")
       (cond ((!= speech-operator-mode :off) (insert x))
-            ((!= impl :none) (insert-implicit impl x))
+            ((!= impl :none) (speech-insert-implicit impl x))
             (else (insert x) (speech-exit-scripts)))
       ;;(display* "  inserted  " x* " as " x "\n")
       (set! speech-letter-mode* speech-letter-mode)
@@ -509,6 +525,81 @@
            (tree-assign-node! t 'wide*)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Extend previously finished scripts
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (dont-extend-script? x)
+  (and-let* ((root (root-before-cursor))
+             (expr (expr-before-cursor))
+             (ok?  (tm-in? expr '(rsub rsup))))
+    (or (stats-role? (tmconcat root "*" x))
+        (stats-role? (tmconcat root " " x))
+        (stats-role? (tmconcat root "," x))
+        (stats-role? (tmconcat root ";" x))
+        (stats-role? (tmconcat root `(around "(" ,x ")")))
+        (stats-role? (tmconcat root `(around "[" ,x "]"))))))
+
+(define (do-extend-script? x)
+  (and-let* ((root (root-before-cursor))
+             (expr (expr-before-cursor))
+             (ok?  (tm-in? expr '(rsub rsup)))
+             (c1   (tmconcat root `(,(tm-label expr) ,(tmconcat "," x))))
+             (c2   (tmconcat root `(,(tm-label expr) ,(tmconcat ";" x)))))
+    (or (and (stats-role? c1) ",")
+        (and (stats-role? c2) ";"))))
+
+(define (extend-script? x)
+  (with v (letter-variants x speech-letter-mode)
+    (and speech-can-extend-script?
+         (not (exists? dont-extend-script? v))
+         (exists? do-extend-script? v))))
+
+(define (extend-script op x)
+  (with expr (expr-before-cursor)
+    (and (tm-in? expr '(rsub rsup))
+         (with-cursor (tree->path expr 0 :end)
+           (insert op)
+           (speech-insert-symbol x)))))
+
+(define (dont-continue-script? x)
+  (and-let* ((prev (expr-before-cursor))
+             (ok?  (in? prev (list "+" "-" "," ";")))
+             (op   (if (== prev "-") "+" prev))
+             (x*   (if (string-number? x) "1" x))
+             (root (root-before-before-cursor)))
+    (stats-role? (tmconcat root op x*))))
+
+(define (do-continue-script? x)
+  (and-let* ((prev (expr-before-cursor))
+             (ok?  (in? prev (list "+" "-" "," ";")))
+             (op   (if (== prev "-") "+" prev))
+             (x*   (if (string-number? x) "1" x))
+             (app  (tmconcat op x*))
+             (root (root-before-before-cursor))
+             (expr (expr-before-before-cursor))
+             (ok2? (tm-in? expr '(rsub rsup))))
+    (stats-role? (tmconcat root `(,(tm-label expr) ,app)))))
+
+(define (continue-script? x)
+  (with v (letter-variants x speech-letter-mode)
+    (and speech-can-extend-script?
+         (not (exists? dont-continue-script? v))
+         (exists? do-continue-script? v))))
+
+(define (continue-script x)
+  (with op (cut-before-cursor)
+    (extend-script op x)))
+
+(tm-define (speech-insert-symbol x)
+  (:require (or (string-number? x)
+                (in? x roman-letters)
+                (in? x greek-letters)))
+  (with extend? (extend-script? x)
+    (cond (extend? (extend-script extend? x))
+          ((continue-script? x) (continue-script x))
+          (else (former x)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -589,6 +680,95 @@
           ((or (math-symbol? prev)
                (tm-in? prev '(with math-ss math-tt rsub rsup around)))
            (speech-apply)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Extend previously finished brackets
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (brackets-before-cursor)
+  (let* ((expr (expr-before-cursor))
+         (prev (expr-before-before-cursor)))
+    (cond ((tm-in? expr '(around around*)) expr)
+          ((nin? expr (list "," ";")) #f)
+          ((tm-in? prev '(around around*)) prev)
+          (else #f))))
+
+(define (root-before-brackets)
+  (and-let* ((expr (brackets-before-cursor))
+             (prev (tree-ref expr :previous))
+             (ok2? (tree? prev)))
+    (with-cursor (tree->path prev :end)
+      (root-before-cursor))))
+
+(define (dont-extend-brackets? x)
+  (and-with root (root-before-brackets)
+    (or (stats-role? (tmconcat root "*" x))
+        (stats-role? (tmconcat root " " x))
+        (stats-role? (tmconcat root "," x))
+        (stats-role? (tmconcat root ";" x))
+        (stats-role? (tmconcat root `(rsub ,x)))
+        (stats-role? (tmconcat root `(rsup ,x))))))
+
+(define (do-extend-brackets? x)
+  (and-let* ((expr (expr-before-cursor))
+             (ok?  (tm-in? expr '(around around*)))
+             (root (root-before-brackets))
+             (l    (tm->stree (tm-ref expr 0)))
+             (r    (tm->stree (tm-ref expr 2)))
+             (c1   (tmconcat root `(around ,l ,(tmconcat "," x) ,r)))
+             (c2   (tmconcat root `(around ,l ,(tmconcat ";" x) ,r)))
+             (c3   (tmconcat root `(around* ,l ,(tmconcat "," x) ,r)))
+             (c4   (tmconcat root `(around* ,l ,(tmconcat ";" x) ,r))))
+    (or (and (stats-role? c1) ",")
+        (and (stats-role? c2) ";"))))
+
+(define (extend-brackets? x)
+  (with v (letter-variants x speech-letter-mode)
+    (and speech-can-extend-brackets?
+         (not (exists? dont-extend-brackets? v))
+         (exists? do-extend-brackets? v))))
+
+(define (extend-brackets op x)
+  (with expr (expr-before-cursor)
+    (and (tm-in? expr '(around around*))
+         (with-cursor (tree->path expr 1 :end)
+           (insert op)
+           (speech-insert-symbol x)))))
+
+(define (dont-continue-brackets? x)
+  (and-let* ((prev (expr-before-cursor))
+             (ok?  (in? prev (list "," ";")))
+             (root (root-before-brackets)))
+    (stats-role? (tmconcat root prev x))))
+
+(define (do-continue-brackets? x)
+  (and-let* ((prev (expr-before-cursor))
+             (ok?  (in? prev (list "," ";")))
+             (expr (brackets-before-cursor))
+             (root (root-before-brackets))
+             (l    (tm->stree (tm-ref expr 0)))
+             (c    (tmconcat prev x))
+             (r    (tm->stree (tm-ref expr 2))))
+    (stats-role? (tmconcat root `(,(tm-label expr) ,l ,c ,r)))))
+
+(define (continue-brackets? x)
+  (with v (letter-variants x speech-letter-mode)
+    (and speech-can-extend-brackets?
+         (not (exists? dont-continue-brackets? v))
+         (exists? do-continue-brackets? v))))
+
+(define (continue-brackets x)
+  (with op (cut-before-cursor)
+    (extend-brackets op x)))
+
+(tm-define (speech-insert-symbol x)
+  (:require (or (string-number? x)
+                (in? x roman-letters)
+                (in? x greek-letters)))
+  (with extend? (extend-brackets? x)
+    (cond (extend? (extend-brackets extend? x))
+          ((continue-brackets? x) (continue-brackets x))
+          (else (former x)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Big operators and dots

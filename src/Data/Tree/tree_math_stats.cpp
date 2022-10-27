@@ -65,32 +65,41 @@ tmconcat (tree a1, tree a2, tree a3) {
   return c;
 }
 
+static int
+root_index (array<tree> a, int i) {
+  int j= i;
+  while (j>0 && (is_func (a[j], RSUB) ||
+                 is_func (a[j], RSUP) ||
+                 is_func (a[j], RPRIME))) j--;
+  return j;
+}
+
 void
 math_stats::compile (array<tree> a, tree parent) {
   //array<int> tp= symbol_types (a);
   for (int i=0; i<N(a); i++) {
     occurrences (a[i])= occurrences [a[i]] + 1;
+
     if (i == 0 && is_atomic (a[i]) &&
         (is_func (parent, RSUB) || is_func (parent, RSUP))) {
       tree u (L(parent), a[i]);
       roles (u)= roles[u] + 1;
     }
+
     if (i == 0 && is_atomic (a[i]) &&
         (is_func (parent, AROUND) || is_func (parent, VAR_AROUND))) {
       tree u (L(parent), copy (parent[0]), a[i], copy (parent[2]));
       roles (u)= roles[u] + 1;
     }
+
     if ((i+2) < N(a) &&
         //is_atomic (a[i]) && tp[i] == SYMBOL_BASIC &&
         //is_atomic (a[i+2]) && tp[i+2] == SYMBOL_BASIC &&
         is_atomic (a[i+1])) {
-      int j=i;
-      while (j>0 && (is_func (a[j], RSUB) ||
-                     is_func (a[j], RSUP) ||
-                     is_func (a[j], RPRIME))) j--;
-      tree l= strip_decorations (a[j]);
+      int  j = root_index (a, i);
+      tree l = strip_decorations (a[j]);
       tree op= a[i+1];
-      tree r= strip_decorations (a[i+2]);
+      tree r = strip_decorations (a[i+2]);
       if (op == "-") op= "+";
       tree C= tmconcat (a[j], op, a[i+2]);
       roles (C)= roles[C] + 1;
@@ -99,18 +108,35 @@ math_stats::compile (array<tree> a, tree parent) {
       c= tmconcat (l, op);
       roles (c)= roles[c] + 1;
     }
+
     if ((i+1) < N(a) &&
         //is_atomic (a[i]) && tp[i] == SYMBOL_BASIC &&
         (is_func (a[i+1], AROUND, 3) || is_func (a[i+1], VAR_AROUND, 3))) {
-      tree l= strip_decorations (a[i]);
+      int  j= root_index (a, i);
+      tree l= strip_decorations (a[j]);
       tree b= a[i+1];
-      tree C (CONCAT, a[i], tree (AROUND, b[0], b[1], b[2]));
+      tree C (CONCAT, a[j], tree (AROUND, b[0], b[1], b[2]));
       roles (C)= roles[C] + 1;
       tree c (CONCAT, l, tree (AROUND, b[0], strip_decorations (b[1]), b[2]));
       if (c != C) roles (c)= roles[c] + 1;
       c= tree (CONCAT, l, tree (AROUND, b[0], "", b[2]));
       roles (c)= roles[c] + 1;
+
+      array<tree> v= concat_tokenize (b[1]);
+      if (N(v) >= 1) {
+        c= tree (CONCAT, l, tree (AROUND, b[0], strip_decorations (v[0]), b[2]));
+        roles (c)= roles[c] + 1;
+      }
+      for (int k=0; k<N(v)-1; k++) {
+        if (v[k] == "," || v[k] == ";")
+          if (is_atomic (v[k+1])) {
+            tree sc= tmconcat (v[k], strip_decorations (v[k+1]));
+            c= tree (CONCAT, l, tree (AROUND, b[0], sc, b[2]));
+            roles (c)= roles[c] + 1;
+          }
+      }
     }
+
     if ((i+1) < N(a) &&
         //is_atomic (a[i]) && tp[i] == SYMBOL_BASIC &&
         (is_func (a[i+1], RSUB, 1) || is_func (a[i+1], RSUP, 1))) {
@@ -122,6 +148,23 @@ math_stats::compile (array<tree> a, tree parent) {
       if (c != C) roles (c)= roles[c] + 1;
       c= tree (CONCAT, l, tree (L(s), ""));
       roles (c)= roles[c] + 1;
+
+      array<tree> v= concat_tokenize (s[0]);
+      if (N(v) >= 1) {
+        c= tree (CONCAT, l, tree (L(s), strip_decorations (v[0])));
+        roles (c)= roles[c] + 1;
+      }
+      for (int k=0; k<N(v)-1; k++) {
+        if (v[k] == "+" || v[k] == "-" || v[k] == "," || v[k] == ";") {
+          tree op= v[k];
+          if (op == "-") op= "+";
+          tree sc= tmconcat (op, strip_decorations (v[k+1]));
+          if (is_atomic (v[k+1])) {
+            c= tree (CONCAT, l, tree (L(s), sc));
+            roles (c)= roles[c] + 1;
+          }
+        }
+      }
     }
   }
 }
