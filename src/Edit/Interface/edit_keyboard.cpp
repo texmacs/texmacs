@@ -176,6 +176,7 @@ edit_interface_rep::key_press (string gkey) {
   }
   if (starts (key, "speech:")) {
     if (pre_edit_s != "") return;
+    interrupt_shortcut ();
     archive_state ();
     call ("kbd-speech", key (7, N(key)));
     interrupt_shortcut ();
