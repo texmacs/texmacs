@@ -347,7 +347,6 @@
   ("contour integral" (math-big-operator "oint"))
   ("double integral" (math-big-operator "iint"))
   ("triple integral" (math-big-operator "iiint"))
-  ("for" (speech-for))
   ("from" (speech-for))
   ("until" (speech-until))
 
@@ -667,6 +666,12 @@
               (speech-insert-number "2"))))
       (speech-insert-number "2")))
 
+(define (english-for)
+  (with prev (expr-before-cursor)
+    (if (tm-is? prev 'big)
+        (speech-for)
+        (speech-insert-number "4"))))
+
 (speech-map english math
   ;; a/e/8 ambiguity
   ("a/e/8" (speech-best-letter "a" "e" "8"))
@@ -746,6 +751,7 @@
   ("in" (english-in))
   ("and" (english-and))
   ("to" (english-to))
+  ("for" (english-for))
   )
 
 (speech-map-wildcard english math
@@ -797,6 +803,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (speech-adjust english math
+  ;; Adjust digits
+  ("too" "two")
+  
   ;; Adjust latin letters
   ("hey" "a")
   ("be" "b")
@@ -1105,6 +1114,7 @@
   ("to fight i" "two pi i")
   ("to buy i" "two pi i")
 
+  ;; Adjust letter combinations involving Greek letters
   ("al-fayed" "alpha n")
 
   ;; Adjust capitalized letters
@@ -1292,6 +1302,7 @@
   ("does not belong to" "not in")
 
   ;; Adjust further binary relations
+  ("crossed" "cross")
   ("10 sir" "tensor")
   ("dancer" "tensor")
 
