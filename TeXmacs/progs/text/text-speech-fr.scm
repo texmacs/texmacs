@@ -35,20 +35,43 @@
   "prime" "factoriel")
 
 (speech-collection dangerous french
-  "des" "eux" "œuf" "gay" "car" "casse" "j'y" "elle" "aime" "haine"
+  ;; latin letters
+  "des" "eux" "œuf" "gay" "hache" "il" "ils"
+  "j'y" "car" "casse" "elle" "aime" "haine"
   "au" "beau" "haut" "os" "paye" "pays" "air" "est-ce"
-  "t'es" "tes" "eu" "value" "vert"
+  "t'es" "tes" "eu" "vais" "value" "vert"
 
-  "gamin" "éteins" "est" "état" "mou" "mieux" "mûr" "mus"
-  "nue" "nul" "pis" "rock" "rome" "rose" "tôt"
+  ;; greek letters
+  "bâtard" "gamin" "éteins" "est" "atteint" "état" "tata"
+  "mou" "mieux" "mûr" "mus" "nue" "nul" "pis"
+  "euro" "euros" "robot" "rock" "rome" "rose" "rouge" "auto" "tôt"
   "taux" "options" "fille" "fit" "qui"
 
-  "assez" "aime"
-  "rang" "rend" "irons" "giron" "aileron" "huron" "verrons"
-  "ranger" "ronger" "rompez" "remonter"
-  "sûr" "assure"
-  "bars" "bar" "chapeaux" "utile" "utilité" "tel" "telle"
+  ;; letter combinations
+  "assez"
 
+  ;; punctuation
+  "tel" "telle"
+
+  ;; operators 'plus', 'moins', 'fois'
+  "opus" "pupuce" "moi" "monter" "noisette" "manteau"
+  "foie" "fort" "photo" "photos"
+
+  ;; composition 'rond'
+  "rang" "rend" "irons" "giron" "caron" "aileron" "huron" "verrons"
+  "ranger" "ronger" "rompez" "remonter"
+
+  ;; operators and function application
+  "dette" "bédé" "idée" "rodé" "décès"
+ 
+  ;; fractions
+  "sûr" "assure" "culture" "mesure" "chaussure" "chaussures"
+  "surgé" "surveille" "sureau" "surtout"
+
+  ;; wide accents
+  "chapeaux" "utile" "utilité" "bars" "bar"
+
+  ;; dangerous adjustments
   "a" "à" "en" "un" "une" "deux" "de" "dans" "the")
 
 (speech-collection skip french

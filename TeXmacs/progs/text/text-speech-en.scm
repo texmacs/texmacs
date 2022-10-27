@@ -38,6 +38,9 @@
   ;; explicit commands
   "to" "factor" "power" "set" "element"
 
+  ;; digits
+  "too"
+
   ;; latin letters
   "a" "be" "see" "de" "day" "the" "he" "eat" "each" "if" "age" "edge"
   "i" "eye" "eyes" "either" "iron" "ok" "cake" "care" "case" "all" "old"
