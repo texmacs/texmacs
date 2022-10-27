@@ -27,8 +27,7 @@
 (tm-define (speech-done)
   (set! speech-letter-mode (list))
   (set! speech-operator-mode :off)
-  (while (nnull? speech-state)
-    (speech-exit-innermost))
+  (speech-exit-all)
   (former))
 
 (tm-define (speech-current-mode)
@@ -115,9 +114,11 @@
   (with type (and (nnull? speech-state) (car speech-state))
     (cond ((not type) (noop))
           ((== type :subscript) (speech-exit-from 'rsub))
+          ((== type :short-subscript) (speech-exit-from 'rsub))
           ((== type :superscript) (speech-exit-from 'rsup))
+          ((== type :short-superscript) (speech-exit-from 'rsup))
           ((== type :over) (speech-exit-from 'frac))
-          ((== type :small-over) (speech-exit-from frac-context?))
+          ((== type :short-over) (speech-exit-from frac-context?))
           ((== type :sqrt) (speech-exit-from 'sqrt))
           ((== type :wide) (speech-exit-from wide-context?))
           ((== type :apply) (speech-exit-from around-context?))
@@ -125,6 +126,10 @@
           ((== type :brackets) (speech-exit-from around-context?))
           ((== type :braces) (speech-exit-from around-context?))
           (else (set! speech-state (cdr speech-state))))))
+
+(define (speech-exit-all)
+  (while (nnull? speech-state)
+    (speech-exit-innermost)))
 
 (define (speech-enter type)
   (set! speech-state (cons type speech-state)))
@@ -138,8 +143,15 @@
 (tm-define (speech-exit-scripts)
   (when (and (nnull? speech-state)
              (in? (car speech-state)
-                  (list :small-over :subscript :superscript)))
-    (speech-exit-innermost)))
+                  (list :short-over :short-subscript :short-superscript)))
+    (speech-exit-innermost)
+    (speech-exit-scripts)))
+
+(tm-define (speech-end tag)
+  (while (and (inside? tag) (nnull? speech-state))
+    (speech-exit-innermost))
+  (and-with t (tree-innermost tag)
+    (tree-go-to t :end)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Letter alteration mode (bold, calligraphic, sans serif, etc.)
@@ -334,7 +346,7 @@
 (define (speech-weak-exit)
   (when (nnull? speech-state)
     (when (in? (car speech-state)
-               (list :over :small-over :sqrt :wide :apply :factor :brackets))
+               (list :over :short-over :sqrt :wide :apply :factor :brackets))
       (speech-leave)
       (speech-weak-exit))))
 
@@ -432,20 +444,41 @@
 ;; Subscripts, superscripts, and wide accents
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (re-enter-script type mode)
+  (with prev (expr-before-cursor)
+    (when (tm-is? prev type)
+      (tree-go-to prev 0 :end)
+      (speech-enter mode)
+      (re-enter-script type mode))))
+
 (tm-define (speech-subscript)
+  (re-enter-script 'rsub :subscript)
   (make 'rsub)
   (speech-enter :subscript))
 
+(tm-define (speech-short-subscript)
+  (re-enter-script 'rsub :short-subscript)
+  (make 'rsub)
+  (speech-enter :short-subscript))
+
 (tm-define (speech-superscript)
+  (re-enter-script 'rsup :superscript)
   (make 'rsup)
   (speech-enter :superscript))
+
+(tm-define (speech-short-superscript)
+  (re-enter-script 'rsup :short-superscript)
+  (make 'rsup)
+  (speech-enter :short-superscript))
 
 (tm-define (speech-insert-superscript s)
   (if (== (expr-before-cursor) " ")
       (with p (cursor-path)
         (with-cursor (append (cDr p) (list (- (cAr p) 1)))
           (math-insert `(rsup ,s))))
-      (math-insert `(rsup ,s))))
+      (begin
+        (re-enter-script 'rsup :short-superscript)
+        (math-insert `(rsup ,s)))))
 
 (tm-define (speech-accent acc)
   (with sel (tm->stree (cut-before-cursor))
@@ -507,12 +540,12 @@
           (insert-go-to `(frac ,sel "") (list 1 0))
           (speech-enter :over)))))
 
-(tm-define (speech-small-over)
+(tm-define (speech-short-over)
   (with sel (cut-before-cursor)
     (if (inside? 'math)
         (insert-go-to `(frac* ,sel "") (list 1 0))
         (insert-go-to `(frac ,sel "") (list 1 0)))
-    (speech-enter :small-over)))
+    (speech-enter :short-over)))
 
 (tm-define (go-to-fraction where)
   (with-innermost t 'frac

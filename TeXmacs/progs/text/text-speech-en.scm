@@ -64,7 +64,7 @@
   "tractor"
 
   ;; binary operators and relations
-  "does" "play" "blessed" "please" "press" "minors"
+  "class" "does" "play" "blessed" "please" "press" "minors"
   "time" "dancer"
 
   ;; textual operators
