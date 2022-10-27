@@ -257,7 +257,7 @@
 
 (tm-define (speech-rewrite lan mode s)
   (set! s (speech-sanitize lan mode s))
-  (display* "Sanitized " (cork->utf8 s) "\n")
+  ;;(display* "Sanitized " (cork->utf8 s) "\n")
   (let* ((l (string-decompose s " "))
          (r (speech-rewrite* lan mode l)))
     (string-recompose r " ")))
@@ -338,8 +338,8 @@
                 (with cmd (kbd-find-key-binding key)
                   (when (pair? cmd) (set! cmd (car cmd)))
                   (when (procedure? cmd)
-                    (display* "  Execute " key*
-                              " -> " (procedure-source cmd) "\n")
+                    ;;(display* "  Execute " key*
+                    ;;          " -> " (procedure-source cmd) "\n")
                     (cmd))
                   (speech-exec-list lan t (list))))
                (else (speech-exec-list lan (cDr h) (cons (cAr h) t)))))))
@@ -348,12 +348,12 @@
   (noop))
 
 (tm-define (speech-exec s)
-  (display* "Execute " (cork->utf8 s) "\n")
+  ;;(display* "Execute " (cork->utf8 s) "\n")
   (let* ((lan (speech-language))
          (mode (speech-current-mode))
          (r (speech-rewrite lan mode s))
          (l (string-decompose r " ")))
-    (display* "Rewritten " (cork->utf8 r) "\n")
+    ;;(display* "Rewritten " (cork->utf8 r) "\n")
     (speech-exec-list lan l (list))
     (speech-done)))
 

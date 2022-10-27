@@ -159,10 +159,17 @@
     (cond ((and (tree-atomic? t) (> i 0))
 	   (with s (tree->string t)
 	     (with j (string-previous* s i)
-	       (rcons p j))))
+               (cond ((> j 0) (rcons p j))
+                     ((tree-ref t :previous) (tree->path t :previous :end))
+                     (else (rcons p j))))))
 	  ((tree-atomic? t) #f)
 	  ((> i 0) (rcons p 0))
 	  (else #f))))
+
+(tm-define (expr-before-before-cursor)
+  (and-with p (before-cursor-path)
+    (with-cursor p
+      (expr-before-cursor))))
 
 (tm-define (root-before-before-cursor)
   (and-with p (before-cursor-path)

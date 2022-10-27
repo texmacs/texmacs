@@ -310,6 +310,7 @@
   ("inverse" (speech-insert-superscript "-1"))
   ("carré" (speech-insert-superscript "2"))
   ("cube" (speech-insert-superscript "3"))
+  ("transpose" (speech-insert-superscript "<top>"))
   ("indice" (speech-short-subscript))
   ("grand indice" (speech-subscript))
   ("puissance" (speech-short-superscript))
@@ -322,6 +323,7 @@
   ("prime" (make-rprime "'"))
   ("double prime" (make-rprime "'") (make-rprime "'"))
   ("triple prime" (make-rprime "'") (make-rprime "'") (make-rprime "'"))
+  ("adjoint" (make-rprime "<asterisk>"))
 
   ("chapeau" (speech-accent "^"))
   ("tilde" (speech-accent "~"))
@@ -541,6 +543,7 @@
   ("sortir de l' exposant" "fin exposant")
   ("sortir de la racine carrée" "fin racine carrée")
   ("sortir de la fraction" "fin fraction")
+  ("transposé" "transpose")
 
   ("égal à" "égal")
   ("est égal à" "égal")
