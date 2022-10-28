@@ -330,7 +330,7 @@
          (key (string-append (symbol->string lan) ":" key*)))
     ;;(display* "  Try " key* " -> " (kbd-find-key-binding key) "\n")
     (cond ((and (null? h) (null? t)) (noop))
-	  ((null? h) (speech-exec-list (cdr t) (list)))
+	  ((null? h) (speech-exec-list lan (cdr t) (list)))
 	  ((speech-exec-hook (apply string-append h))
 	   (speech-exec-list lan t (list)))
 	  ((string->number key*)
