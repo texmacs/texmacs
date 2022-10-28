@@ -23,7 +23,7 @@
   ("5" "cinq") ("6" "six") ("7" "sept") ("8" "huit") ("9" "neuf"))
 
 (define-table french-ambiguate
-  ("deux" "deux/de"))
+  ("deux" "2/de"))
 
 (define (string-table-replace s t)
   (with repl (lambda (x) (with y (ahash-ref t x) (if y (car y) x)))
@@ -32,7 +32,8 @@
 
 (tm-define (speech-pre-sanitize lan s)
   (:require (== lan 'french))
-  (clean-quotes s))
+  (set! s (clean-quotes s))
+  s)
 
 (define (rewrite-/ s)
   (with l (string-decompose s "/")
@@ -53,6 +54,7 @@
   (set! s (string-replace-trailing s "-" " moins "))
   (set! s (string-replace s "<times>" " fois "))
   (set! s (string-replace-trailing s "." " point "))
+  (set! s (string-replace s "=" " égal "))
   (set! s (string-replace s "," " virgule "))
   (set! s (string-replace s ":" " double points "))
   (set! s (string-replace s ";" " point virgule "))
@@ -75,11 +77,13 @@
   s)
 
 (speech-collection dont-break french
-  "ah" "an" "ar" "at" "au" "el" "en" "es" "et" "ex" "ét"
-  "il" "oh" "ok" "on" "os" "ou" "un"
+  "ah" "ai" "an" "ar" "as" "at" "au"
+  "el" "en" "es" "et" "eu" "ex" "ét"
+  "il" "oh" "ok" "on" "os" "ou" "un" "ye" "yo"
+
   "la" "ma" "ta" "za" "de" "he" "je" "le" "ne" "se" "te"
-  "ai" "bi" "hi" "ji" "pi" "si" "ti" "xi"
-  "ho" "no" "to" "ye" "yo" "du" "mu" "nu" "tu" "ou" "sy")
+  "bi" "hi" "ji" "pi" "si" "ti" "xi"
+  "ho" "no" "to" "du" "mu" "nu" "tu" "sy")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Normalization of French text (singular/plural, masculin/feminin, etc.)
@@ -165,6 +169,7 @@
   ("milliard" "1000000000")
 
   ("a" "a")
+  ("à" "a")
   ("b" "b")
   ("c" "c")
   ("d" "d")
@@ -221,6 +226,10 @@
   ("constante pi" "<mathpi>")
   ("constante gamma" "<mathgamma>")
   ("constante d'euler" "<mathgamma>")
+  ("nombre e" "<mathe>")
+  ("nombre i" "<mathi>")
+  ("nombre pi" "<mathpi>")
+  ("nombre gamma" "<mathgamma>")
 
   ("infini" "<infty>")
   ("complexes" "<bbb-C>")
@@ -409,7 +418,7 @@
 
   ("racine carrée" (speech-sqrt-of))
   ("racine carrée de" (speech-sqrt-of))
-  ("racine carrée deux/de" (speech-sqrt-of))
+  ("racine carrée 2/de" (speech-sqrt-of))
   ("début racine carrée" (speech-sqrt))
   ("fin racine carrée" (speech-end 'sqrt))
   ("sur" (speech-over))
@@ -463,7 +472,9 @@
   ("lettre y" "y")
   ("lettre z" "z")
 
+  ("le nombre" "nombre")
   ("la constante" "constante")
+  ("la lettre" "lettre")
 
   ("les complexes" "complexes")
   ("les entiers positifs" "entiers positifs")
@@ -477,7 +488,7 @@
   ("nombres entiers" "entiers")
 
   ("partie entière de" "partie entière")
-  ("partie entière deux/de" "partie entière")
+  ("partie entière 2/de" "partie entière")
   ("fermer parenthèses" "fermer")
   ("fermer crochets" "fermer")
   ("fermer accolades" "fermer")
@@ -499,11 +510,11 @@
 
   ("ensemble" "accolades")
   ("ensemble de" "accolades")
-  ("ensemble deux/de" "accolades")
+  ("ensemble 2/de" "accolades")
   ("ensemble des" "accolades")
   ("l'ensemble" "accolades")
   ("l'ensemble de" "accolades")
-  ("l'ensemble deux/de" "accolades")
+  ("l'ensemble 2/de" "accolades")
   ("l'ensemble des" "accolades")
 
   ("débuter" "début")
@@ -553,9 +564,9 @@
   ("n'est pas égal à" "non égal")
   ("différent" "non égal")
   ("différent de" "non égal")
-  ("différent deux/de" "non égal")
+  ("différent 2/de" "non égal")
   ("est différent de" "non égal")
-  ("est différent deux/de" "non égal")
+  ("est différent 2/de" "non égal")
 
   ("plus petit" "inférieur")
   ("plus petit que" "inférieur")
@@ -575,7 +586,7 @@
 
   ("est dans" "dans")
   ("sous ensemble de" "sous ensemble")
-  ("sous ensemble deux/de" "sous ensemble")
+  ("sous ensemble 2/de" "sous ensemble")
   ("un sous ensemble" "sous ensemble")
   ("est un sous ensemble" "sous ensemble")
   ("contient" "sur ensemble")
@@ -696,9 +707,6 @@
   ("grand tilde" "large tilde")
   ("grand barre" "large barre")
   ("en dessous" "dessous")
-
-  ("une" "un")
-  ("en" "un")
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -708,9 +716,10 @@
 (define (french-de s)
   (with prev (expr-before-cursor)
     (cond ((not prev) (speech-insert-symbol s))
-          ((or (and (string? prev)
-                    (== (math-symbol-type prev) "symbol"))
-               (tm-in? prev '(math-ss math-tt wide wide*)))
+          ((or (and (string? prev) (== (math-symbol-type prev) "symbol"))
+               (tm-in? prev '(math-ss math-tt wide wide*))
+	       (tm-is? prev 'big)
+	       (editing-big-operator?))
            (if (or (stats-role? `(concat ,prev (rsub ,s)))
                    (stats-role? `(concat ,prev (rsup ,s)))
                    (stats-role? `(concat ,prev (around "(" ,s ")")))
@@ -725,17 +734,41 @@
       (speech-insert-symbol "m")))
 
 (speech-map french math
-  ("deux/de" (french-de "2"))
+  ;; psi/xi/6 ambiguity
+  ("psi/xi" (speech-insert-best "<psi>" "<xi>"))
+  ("psi/xi/6" (speech-best-letter "<psi>" "<xi>" "6"))
+  ("psi/xi/6 chapeau" (speech-best-accent "^" "<psi>" "<xi>"))
+  ("psi/xi/6 tilde" (speech-best-accent "~" "<psi>" "<xi>"))
+  ("psi/xi/6 barre" (speech-best-accent "<bar>" "<psi>" "<xi>"))
+
+  ;; nu/9 ambiguity
+  ("nu/9" (speech-best-letter "<nu>" "9"))
+  ("nu/9 chapeau" (speech-best-accent "^" "<nu>"))
+  ("nu/9 tilde" (speech-best-accent "~" "<nu>"))
+  ("nu/9 barre" (speech-best-accent "<bar>" "<nu>"))
+
+  ;; 2/de and related ambiguities
+  ("2/de" (french-de "2"))
   ("d/de" (french-de "d"))
   ("t/de" (french-de "t"))
 
+  ;; m/n ambiguity
   ("m/n" (french-m/n))
-
-  ("psi/xi" (speech-insert-best "<psi>" "<xi>"))
   )
 
 (speech-reduce french math
-  ("à" "a")
+  ("psi/xi/6 de" "psi/xi de")
+  ("nu/9 de" "nu de")
+  ("psi/xi/6 prime" "psi/xi prime")
+  ("nu/9 prime" "nu prime")
+  ("psi/xi/6 rond" "psi/xi rond")
+  ("nu/9 rond" "nu rond")
+  ("rond psi/xi/6" "rond psi/xi")
+  ("rond nu/9" "rond nu")
+
+  ("une" "un")
+  ("en" "un")
+  ("si" "psi/xi")
   )
 
 (speech-adjust french math
@@ -757,18 +790,20 @@
   ("c'est" "c")
   ("say" "c")
   ("day" "d")
-  ("des" "d")
+  ("des" "d/de")
   ("eux" "e")
   ("œuf" "f")
   ("j'ai" "g")
   ("gay" "g")
   ("ashe" "h")
   ("hache" "h")
+  ("aïe" "i")
   ("il" "i")
   ("ils" "i")
   ("caca" "k")
   ("car" "k")
   ("cara" "k")
+  ("cas" "k")
   ("casse" "k")
   ("kaaris" "k")
   ("j'y" "j")
@@ -790,8 +825,9 @@
   ("her" "r")
   ("air" "r")
   ("est-ce" "s")
-  ("t'es" "t")
   ("stay" "t")
+  ("t'es" "t")
+  ("taille" "t")
   ("tes" "t")
   ("eu" "u")
   ("vais" "v")
@@ -818,6 +854,8 @@
   ("kama" "gamma")
   ("k ma" "gamma")
   ("epsylon" "epsilon")
+  ("silone" "epsilon")
+  ("si l'homme" "epsilon")
   ("vous êtes a" "zeta")
   ("vous êtes à" "zeta")
   ("za" "zeta")
@@ -870,6 +908,7 @@
   ("lomepal" "lambda")
   ("mieux" "mu")
   ("mou" "mu")
+  ("mur" "mu")
   ("mûr" "mu")
   ("mubi" "mu")
   ("mumu" "mu")
@@ -882,6 +921,7 @@
   ("aux migrants" "omicron")
   ("haut microns" "omicron")
   ("pie" "pi")
+  ("pile" "pi")
   ("pis" "pi")
   ("pipi" "pi")
   ("euro" "rho")
@@ -889,6 +929,7 @@
   ("raux" "rho")
   ("raw" "rho")
   ("rhô" "rho")
+  ("robe" "rho")
   ("robot" "rho")
   ("rock" "rho")
   ("roh" "rho")
@@ -925,19 +966,21 @@
 
   ;; Adjust letter combinations
   ("assez" "a c")
+  ("aka" "a k")
+  ("agen" "a n")
   ("an" "a n")
+  ("arènes" "a n")
+  ("la haine" "a n")
+  ("apple" "a p")
+  ("béa" "b a")
+  ("béat" "b a")
+  ("léa" "b a")
 
   ;; Adjust miscellaneous symbols and constants
   ("constante dans une heure" "constante d'euler")
   ("constante de eyelar" "constante d'euler")
 
   ;; Adjust addition 'plus'
-  ("youssef" "plus f")
-  ("plusi" "plus i")
-  ("plus cher" "plus r")
-  ("plus spée" "plus p")
-  ("plus d'" "plus delta")
-  ("plus mieux" "plus mu")
   ("capucel" "k plus l")
   ("en plus" "n plus")
   ("au plus" "o plus")
@@ -951,7 +994,20 @@
   ("d' plus" "delta plus")
   ("mets plus" "mu plus")
   ("ne plus" "nu plus")
-
+  ("neuf plus" "nu/9 plus")
+  ("gros plus" "rho plus")
+  ("si plus" "psi/xi plus")
+  ("six plus" "psi/xi/6 plus")
+  ("youssef" "plus f")
+  ("plusi" "plus i")
+  ("plus cher" "plus r")
+  ("plus spée" "plus p")
+  ("plus d'" "plus delta")
+  ("plus mieux" "plus mu")
+  ("plus neuf" "plus nu/9")
+  ("plus si" "plus psi/xi")
+  ("plus six" "plus psi/xi/6")
+  
   ;; Adjust subtraction 'moins'
   ("moi" "moins")
   ("dis-moi" "d moins")
@@ -991,6 +1047,7 @@
   ("lambda-moi" "lambda moins")
   ("mets-moi" "mu moins")
   ("mu-moi" "mu moins")
+  ("neuf moins" "nu/9 moins")
   ("omicron-moi" "omicron moins")
   ("rho-moi" "rho moins")
   ("rose-moi" "rho moins")
@@ -1000,6 +1057,8 @@
   ("file-moi" "phi moins")
   ("fille-moi" "phi moins")
   ("film-moi" "phi moins")
+  ("si moins" "psi/xi moins")
+  ("six moins" "psi/xi/6 moins")
   ("qui-moi" "qui moins")
   ("oméga-moi" "omega moins")
   ("moinsi" "moins i")
@@ -1023,31 +1082,19 @@
   ("moins tête" "moins theta")
   ("moins tête a" "moins theta")
   ("moins tête à" "moins theta")
+  ("moins neuf" "moins nu/9")
   ("moins un pays" "moins pi")
   ("moins gros" "moins rho")
   ("moins un rot" "moins rho")
   ("manteau" "moins tau")
+  ("moins si" "moins psi/xi")
+  ("moins six" "moins psi/xi/6")
   ("monkey" "moins chi")
   ("moins un chi" "moins chi")
 
   ;; Adjust multiplication 'fois'
   ("foie" "fois")
   ("fort" "fois")
-  ("foisa" "fois i")
-  ("fois 10" "fois d")
-  ("fois deux" "fois d")
-  ("fois deux/de" "fois d")
-  ("fois quatre" "fois k")
-  ("foisi" "fois i")
-  ("fois on" "fois o")
-  ("fois où" "fois o")
-  ("foiso" "fois o")
-  ("foisu" "fois u")
-  ("fadel tard" "fois delta")
-  ("fois six" "fois psi/xi")
-  ("fois zéro" "fois rho")
-  ("photo" "fois tau")
-  ("photos" "fois tau")
   ("à chaque fois" "h fois")
   ("hey fois" "p fois")
   ("t une fois" "t fois")
@@ -1057,7 +1104,27 @@
   ("mets fois" "mu fois")
   ("meuf à" "mu fois")
   ("meuf fois" "mu fois")
+  ("neuf fois" "nu/9 fois")
   ("rho de fois" "rho fois")
+  ("si fois" "psi/xi fois")
+  ("six fois" "psi/xi/6 fois")
+  ("foisa" "fois i")
+  ("fois 10" "fois d")
+  ("fois deux" "fois d")
+  ("fois 2/de" "fois d")
+  ("fois quatre" "fois k")
+  ("foisi" "fois i")
+  ("fois on" "fois o")
+  ("fois où" "fois o")
+  ("foiso" "fois o")
+  ("foisu" "fois u")
+  ("fadel tard" "fois delta")
+  ("fois neuf" "fois nu/9")
+  ("fois si" "fois psi/xi")
+  ("fois six" "fois psi/xi")
+  ("fois zéro" "fois rho")
+  ("photo" "fois tau")
+  ("photos" "fois tau")
 
   ;; Adjust multiplication 'croix'
   ("croisette" "fois zeta")
@@ -1087,6 +1154,36 @@
   ("ranvée" "rond v")
   ("ranger z" "rond z")
 
+  ;; Adjust predicates 'égal'
+  ("égale" "égal")
+  ("égal à jusqu'à" "égal un jusqu'à")
+  ("fais gaffe" "f égal")
+  ("quatre égal" "k égal")
+  ("elle est égal" "l égal")
+  ("ou égal" "u égal")
+  ("je v égal" "v égal")
+  ("bête égal" "beta égal")
+  ("vous êtes égal" "zeta égal")
+  ("tête égal" "theta égal")
+  ("ferme ta égal" "lambda égal")
+  ("neuf égal" "nu/9 égal")
+  ("si égal" "psi/xi égal")
+  ("six égal" "psi/xi/6 égal")
+  ("qui est égal" "chi égal")
+  ("égalité" "égal t")
+  ("égal bête à" "égal beta")
+  ("égal bête a" "égal beta")
+  ("égal bête" "égal beta")
+  ("égal tête à" "égal theta")
+  ("égal tête a" "égal theta")
+  ("égal tête" "égal theta")
+  ("également" "égal mu")
+  ("égal neuf" "égal nu/9")
+  ("est galaxie" "égal xi")
+  ("et galaxie" "égal xi")
+  ("égal si" "égal psi/xi")
+  ("égal six" "égal psi/xi/6")
+
   ;; Adjust punctuation
   ("telle" "tel")
   ("tel qu'" "tel que")
@@ -1112,7 +1209,7 @@
   ("i de ée" "i de")
   ("j'y d" "j de")
   ("qu'à de" "k de")
-  ("qu'à deux/de" "k de")
+  ("qu'à 2/de" "k de")
   ("elle d" "l d/de")
   ("un d" "n de")
   ("cul des" "q de")
@@ -1138,7 +1235,7 @@
   ("road" "rho de")
   ("rodè" "rho de")
   ("rodé" "rho de")
-  ("rho de deux/de" "rho de")
+  ("rho de 2/de" "rho de")
   ("site mad" "sigma de")
   ("upsilon d" "upsilon d/de")
   ("chi d" "chi d/de")
@@ -1182,6 +1279,7 @@
   ("mesure" "mu sur")
   ("mets sur" "mu sur")
   ("nous sur" "nu sur")
+  ("neuf sur" "nu/9 sur")
   ("si sur" "xi sur")
   ("omicron de sur" "omicron sur")
   ("rond sur" "rho sur")
@@ -1189,6 +1287,7 @@
   ("autosur" "tau sur")
   ("chaussures" "tau sur")
   ("si sur" "psi/xi sur")
+  ("six sur" "psi/xi/6 sur")
   ("ok sur" "chi sur")
   ("sur ces" "sur c")
   ("sur ses" "sur c")
@@ -1203,11 +1302,14 @@
   ("sur veille" "sur v")
   ("surveille" "sur v")
   ("suzette" "sur zeta")
+  ("sur neuf" "sur nu/9")
   ("sur que si" "sur xi")
   ("sûr que si" "sur xi")
   ("sur tilles" "sur pi")
   ("sureau" "sur rho")
   ("surtout" "sur tau")
+  ("sur si" "sur psi/xi")
+  ("sur six" "sur psi/xi/6")
 
   ;; Adjust wide hats
   ("chapo" "chapeau")

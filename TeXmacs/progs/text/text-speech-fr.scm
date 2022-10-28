@@ -37,15 +37,15 @@
 (speech-collection dangerous french
   ;; latin letters
   "des" "eux" "œuf" "gay" "hache" "il" "ils"
-  "j'y" "car" "casse" "elle" "aime" "haine"
+  "j'y" "car" "cas" "casse" "elle" "aime"
   "au" "beau" "haut" "os" "paye" "pays" "air" "est-ce"
-  "t'es" "tes" "eu" "vais" "value" "vert"
+  "t'es" "taille" "tes" "eu" "vais" "value" "vert"
 
   ;; greek letters
   "bâtard" "gamin" "éteins" "est" "atteint" "état" "tata"
-  "mou" "mieux" "mûr" "mus" "nue" "nul" "pis"
-  "euro" "euros" "robot" "rock" "rome" "rose" "rouge" "auto" "tôt"
-  "taux" "options" "fille" "fit" "qui"
+  "mou" "mieux" "mur" "mûr" "mus" "nue" "nul" "pile" "pis"
+  "euro" "euros" "robe" "robot" "rock" "rome" "rose" "rouge"
+  "auto" "tôt" "taux" "options" "fille" "fit" "qui"
 
   ;; letter combinations
   "assez"
@@ -61,6 +61,9 @@
   "rang" "rend" "irons" "giron" "caron" "aileron" "huron" "verrons"
   "ranger" "ronger" "rompez" "remonter"
 
+  ;; predicates 'égal'
+  "égalité" "également"
+  
   ;; operators and function application
   "dette" "bédé" "idée" "rodé" "décès"
  
@@ -72,7 +75,7 @@
   "chapeaux" "utile" "utilité" "bars" "bar"
 
   ;; dangerous adjustments
-  "a" "à" "en" "un" "une" "deux" "de" "dans" "the")
+  "a" "à" "en" "un" "une" "si" "deux" "de" "dans" "the")
 
 (speech-collection skip french
   "et" "ou")
