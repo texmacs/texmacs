@@ -774,7 +774,7 @@
 ;; Big operators and dots
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (editing-big-operator?)
+(tm-define (editing-big-operator?)
   (and-with t (tree-innermost script-context?)
     (while (and t (script-context? t))
       (set! t (tree-ref t :previous)))
