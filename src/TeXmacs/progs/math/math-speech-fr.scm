@@ -966,6 +966,7 @@
 
   ;; Adjust letter combinations
   ("assez" "a c")
+  ("ah oui" "a i")
   ("aka" "a k")
   ("agen" "a n")
   ("an" "a n")
