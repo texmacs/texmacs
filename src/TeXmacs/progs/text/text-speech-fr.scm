@@ -37,8 +37,8 @@
 (speech-collection dangerous french
   ;; latin letters
   "des" "eux" "œuf" "gay" "hache" "il" "ils"
-  "j'y" "car" "cas" "casse" "elle" "aime"
-  "au" "beau" "haut" "os" "paye" "pays" "air" "est-ce"
+  "j'y" "car" "cas" "casse" "aile" "ailes" "elle" "aime"
+  "au" "beau" "eau" "eaux" "haut" "os" "paye" "pays" "air" "est-ce"
   "t'es" "taille" "tes" "eu" "vais" "value" "vert"
 
   ;; greek letters
@@ -48,7 +48,8 @@
   "auto" "tôt" "taux" "options" "fille" "fit" "qui"
 
   ;; letter combinations
-  "assez"
+  "assez" "ai" "août" "avez" "bébé" "baisser"
+  "déesse" "gaité" "dévérrouiller"
 
   ;; punctuation
   "tel" "telle"
@@ -74,8 +75,8 @@
   ;; wide accents
   "chapeaux" "utile" "utilité" "bars" "bar"
 
-  ;; dangerous adjustments
-  "a" "à" "en" "un" "une" "si" "deux" "de" "dans" "the")
+  ;; particularly dangerous adjustments
+  "a" "à" "ai" "en" "un" "une" "si" "deux" "de" "dans" "the")
 
 (speech-collection skip french
   "et" "ou")
