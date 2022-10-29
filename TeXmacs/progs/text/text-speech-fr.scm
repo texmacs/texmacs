@@ -77,8 +77,15 @@
   "chapeaux" "utile" "utilité" "bars" "bar"
 
   ;; particularly dangerous adjustments
-  "a" "à" "ai" "en" "un" "une" "si" "deux" "de" "dans" "the"
-  "le" "la" "ne")
+  "a" "à" "ai" "ce" "dans" "de" "deux" "en"
+  "le" "la" "ne" "on" "se" "si"
+  "ta" "te" "the" "un" "une")
+
+(speech-collection skip-start french
+  "ce" "dans" "est" "est-ce" "le" "la" "ne" "on" "se" "ta" "te)
+
+(speech-collection skip-end french
+  "ce" "dans" "est" "est-ce" "le" "la" "ne" "on" "se" "ta" "te")
 
 (speech-collection skip french
   "et" "ma" "ou")
