@@ -36,7 +36,7 @@
 
 (speech-collection dangerous french
   ;; latin letters
-  "des" "eux" "œuf" "gay" "âge" "hache" "il" "ils"
+  "sait" "des" "eux" "œuf" "gay" "âge" "hache" "il" "ils"
   "j'y" "car" "cas" "casse" "aile" "ailes" "elle" "aime"
   "au" "beau" "eau" "eaux" "haut" "os" "paye" "pays" "air" "est-ce"
   "t'es" "taille" "tes" "eu" "vais" "value" "vert"
@@ -50,6 +50,7 @@
   ;; letter combinations
   "assez" "ai" "août" "avez" "bébé" "baisser"
   "déesse" "gaité" "dévérrouiller" "acheter" "achevé"
+  "je"
 
   ;; punctuation
   "tel" "telle"
@@ -76,10 +77,11 @@
   "chapeaux" "utile" "utilité" "bars" "bar"
 
   ;; particularly dangerous adjustments
-  "a" "à" "ai" "en" "un" "une" "si" "deux" "de" "dans" "the")
+  "a" "à" "ai" "en" "un" "une" "si" "deux" "de" "dans" "the"
+  "le" "la" "ne")
 
 (speech-collection skip french
-  "et" "ou")
+  "et" "ma" "ou")
 
 (speech-collection math-mode french
   "math" "maths" "matt" "mathématiques" "formule" "formules")
