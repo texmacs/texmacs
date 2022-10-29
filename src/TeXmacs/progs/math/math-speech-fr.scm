@@ -79,7 +79,7 @@
 (speech-collection dont-break french
   "ah" "ai" "an" "ar" "as" "at" "au"
   "el" "en" "es" "et" "eu" "ex" "ét"
-  "il" "oh" "ok" "on" "os" "ou" "un" "ye" "yo"
+  "id" "il" "oh" "ok" "on" "os" "ou" "un" "ye" "yo"
 
   "la" "ma" "ta" "za" "de" "he" "je" "le" "ne" "se" "te"
   "bi" "hi" "ji" "pi" "si" "ti" "xi"
@@ -762,9 +762,11 @@
   ;; 4/k ambiguity
   ("k/4" (speech-best-letter "k" "4"))
 
-  ;; a/e ambiguity
+  ;; a/e/i and related ambiguities
   ("a/a" (speech-insert-best "a")) ;; prevent problems with "a n", "a p", ...
   ("a/e" (speech-insert-best "a" "e"))
+  ("e/a" (speech-insert-best "e" "a"))
+  ("e/i" (speech-insert-best "e" "i"))
 
   ;; b/d/p/t and related ambiguities
   ("b/d" (speech-insert-best "b" "d"))
@@ -773,12 +775,16 @@
   ("p/b" (speech-insert-best "p" "b"))
   ("p/t" (speech-insert-best "p" "t"))
   ("t/d" (speech-insert-best "t" "d"))
-  
+
   ;; g/j ambiguity
   ("g/j" (speech-insert-best "g" "j"))
 
+  ;; i/y ambiguity
+  ("y/i" (speech-insert-best "y" "i"))
+
   ;; m/n ambiguity
   ("m/n" (speech-insert-best "m" "n"))
+  ("n/m" (speech-insert-best "n" "m"))
   )
 
 (speech-reduce french math
@@ -813,6 +819,7 @@
   ("ben" "b")
   ("bye" "b")
   ("c'est" "c")
+  ("sait" "c")
   ("say" "c")
   ("day" "d")
   ("des" "d/de")
@@ -870,6 +877,7 @@
   ("vert" "v")
   ("vii" "v")
   ("that" "z")
+  ("zed" "z")
 
   ;; Adjust greek letters
   ("bâtard" "beta")
@@ -998,7 +1006,41 @@
   ("qui" "chi")
   ("oméga" "omega")
 
-  ;; Adjust letter combinations
+  ;; Adjust case
+  ("granda" "grand a")
+  ("grand deux" "grand e")
+  ("grand dash" "grand h")
+  ("grande arche" "grand h")
+  ("grandi" "grand i")
+  ("grand tel" "grand l")
+  ("grandel" "grand l")
+  ("grand haine" "grand n")
+  ("quarantaine" "grand n")
+  ("canto" "grand o")
+  ("grand haut" "grand o")
+  ("grand o 2/de" "grand o de")
+  ("grand torino" "grand o")
+  ("grande ou" "grand o")
+  ("grandeau" "grand o")
+  ("grando" "grand o")
+  ("rando" "grand o")
+  ("grandeur" "grand r")
+  ("grandesse" "grand s")
+  ("grandu" "grand u")
+  ("grand dix" "grand x")
+  ("grandi grec" "grand y")
+  ("grandy" "grand y")
+  ("rangama" "grand gamma")
+  ("grand états" "grand zeta")
+  ("grand état" "grand theta")
+  ("i gotta" "grand iota")
+  ("grand lampe" "grand lambda")
+  ("grand mut" "grand mu")
+  ("quand omicron" "grand omicron")
+  ("grand pays" "grand pi")
+  ("grand amphi" "grand phi")
+
+  ;; Adjust latin letter combinations
   ("assez" "a c")
   ("a f" "a/e f")
   ("ah oui" "a i")
@@ -1084,7 +1126,7 @@
   ("dévé" "d v")
   ("dévérrouiller" "d v")
   ("div" "d v")
-  ("mets x" "d xOuais")
+  ("mets x" "d x")
   ("d y" "d/b y")
   ("ea" "e a")
   ("ee" "e e")
@@ -1093,7 +1135,7 @@
   ("ek" "e k")
   ("eo" "e o")
   ("es" "e s")
-  ("e.t." "e t")
+  ("e.t." "e/i t")
   ("ex" "e x")
   ("f.a." "f a")
   ("f g" "f g/j")
@@ -1101,12 +1143,16 @@
   ("f.o." "f o")
   ("f.u." "f u")
   ("j'ai des" "g d")
-  ("gie" "g e")
+  ("gie" "g/j e")
   ("gégé" "g g")
   ("gigi" "g j")
   ("j'ai quatre" "g 4/k")
   ("gen" "g n")
   ("géhenne" "g n")
+  ("g s" "g/j s")
+  ("g t/de" "g/j t/de")
+  ("j'ai eu" "g/j u")
+  ("g x" "g/j x")
   ("jay-z" "g z")
   ("h e" "h e")
   ("h a h" "h h")
@@ -1120,10 +1166,93 @@
   ("achevé" "h v")
   ("ah je vais" "h v")
   ("hiv" "h v")
+  ("ia" "i a")
+  ("ebay" "i b")
+  ("ie" "i e")
+  ("i.e." "i e")
+  ("ii" "i i")
+  ("ikea" "i k")
+  ("io" "i o")
+  ("iu" "i u")
+  ("jia" "j a")
+  ("je" "j e")
+  ("ji" "j i")
+  ("j m" "j m/n")
+  ("gio" "j o")
+  ("gsx" "j x")
+  ("carla" "k a")
+  ("cardi b" "k b")
+  ("cassé" "k c")
+  ("karma" "k e/a")
+  ("k f c" "k f")
+  ("cash" "k h")
+  ("kaash" "k h")
+  ("kai" "k i")
+  ("kygo" "k i")
+  ("kylie" "k i")
+  ("gaël" "k l")
+  ("canem" "k m")
+  ("cahen" "k n")
+  ("caren" "k n/m")
+  ("karen" "k n/m")
+  ("chaos" "k o")
+  ("canapé" "k p")
+  ("capet" "k p")
+  ("carpe" "k p")
+  ("capter" "k t")
+  ("quarter" "k t")
+  ("cavez" "k v")
+  ("kaz" "k z")
+  ("el ars" "l a")
+  ("la" "l a")
+  ("le" "l e")
+  ("appelle f" "l f")
+  ("appelle g" "l g")
+  ("l g" "l g/j")
+  ("appelle h" "l h")
+  ("appelle m" "l m/n")
+  ("l m" "l m/n")
+  ("hello" "l o")
+  ("l homme" "l o")
+  ("l p" "l p/b")
+  ("elle était" "l t")
+  ("appelle w" "l w")
+  ("helix" "l x")
+  ("eligrek" "l y")
+  ("a l z" "l z")
+  ("emma" "m a")
+  ("ma" "m a")
+  ("m b" "m/n b")
+  ("m c" "m/n c")
+  ("m d/de" "m/n d/de")
+  ("m f" "m/n f")
+  ("mah" "m h")
+  ("am i" "m i")
+  ("m l" "m/n l")
+  ("m m" "m n/m")
+  ("m p" "m/n p")
+  ("m q" "m/n q")
+  ("m r" "m/n r")
+  ("m v" "m/n v")
+  ("m w" "m/n w")
+  ("m y" "m/n y")
+  ("m z" "m/n z")
+  ("and est" "n d")
+  ("ne" "n e")
+  ("angers" "n g")
+  ("i n g" "n g")
+  ("angie" "n j")
+  ("no" "n o")
+  ("and que" "n q")
+  ("henvez" "n v")
+  ("p m w" "n/m w")
+  ("oa" "o a")
 
   ("p d" "p/t d")
   ("p s" "p/b s")
   ("p y" "p/b y")
+
+  ("q.i." "q i")
 
   ("t h" "t/d h")
   ("t k" "t/d k")
@@ -1131,6 +1260,8 @@
   ("t s" "t/d s")
   ("t t" "d/t t")
   ("t v" "t/d v")
+
+  ("y a" "y/i a")
 
   ;; Adjust miscellaneous symbols and constants
   ("constante dans une heure" "constante d'euler")
@@ -1361,8 +1492,7 @@
   ("j'aide" "g de")
   ("j'ai dit" "g de")
   ("j'ai w w" "g de w")
-  ("idée" "i de")
-  ("i de ée" "i de")
+  ("idée" "i d/de")
   ("j'y d" "j de")
   ("qu'à de" "k de")
   ("qu'à 2/de" "k de")
