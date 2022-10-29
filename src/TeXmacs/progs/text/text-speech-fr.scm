@@ -36,7 +36,7 @@
 
 (speech-collection dangerous french
   ;; latin letters
-  "des" "eux" "œuf" "gay" "hache" "il" "ils"
+  "des" "eux" "œuf" "gay" "âge" "hache" "il" "ils"
   "j'y" "car" "cas" "casse" "aile" "ailes" "elle" "aime"
   "au" "beau" "eau" "eaux" "haut" "os" "paye" "pays" "air" "est-ce"
   "t'es" "taille" "tes" "eu" "vais" "value" "vert"
@@ -49,7 +49,7 @@
 
   ;; letter combinations
   "assez" "ai" "août" "avez" "bébé" "baisser"
-  "déesse" "gaité" "dévérrouiller"
+  "déesse" "gaité" "dévérrouiller" "acheter" "achevé"
 
   ;; punctuation
   "tel" "telle"

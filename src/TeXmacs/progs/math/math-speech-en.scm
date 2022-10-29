@@ -189,7 +189,7 @@
   ("is in" "<in>")
   ("not in" "<nin>")
   ("is not in" "<nin>")
-  ("contains the element" "<ni>")
+  ("contains" "<ni>")
   ("subset" "<subset>")
   ("superset" "<supset>")
   ("intersection" "<cap>")
@@ -539,7 +539,8 @@
 
   ("subset of" "subset")
   ("is a subset of" "subset")
-  ("contains" "superset")
+  ("superset of" "superset")
+  ("is a superset of" "superset")
   ("into" "right arrow")
   
   ("there exists a" "exists")
