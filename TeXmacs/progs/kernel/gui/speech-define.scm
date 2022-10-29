@@ -29,6 +29,7 @@
 (define (speech-map-line lan mode line)
   (if (and (pair? line) (string? (car line)))
       (with (key . l) line
+        (speech-accepts lan mode (utf8->cork key))
         (set! key (speech-pre-sanitize lan (utf8->cork key)))
         (speech-map-set lan mode key l)
         (speech-accepts lan mode key)
@@ -74,6 +75,7 @@
   (with *lan (if (symbol-ends? lan '*) (symbol-drop-right lan 1) lan)
     (if (and (list-2? line) (string? (car line)))
 	(with (key im) line
+          (speech-accepts lan mode (utf8->cork key))
 	  (set! key (speech-pre-sanitize *lan (utf8->cork key)))
 	  (set! im  (speech-pre-sanitize *lan (utf8->cork im )))
 	  (speech-accepts lan mode key)
@@ -196,11 +198,11 @@
 (tm-define (string-upcase? s)
   (and (string? s) (string-alpha? s) (== s (upcase-all s))))
 
-(tm-define (clean-quotes s)
+(tm-define (spaced-quotes s)
   (cond ((string-starts? s "'")
-         (string-append "'" (clean-quotes (string-drop s 1))))
+         (string-append "'" (spaced-quotes (string-drop s 1))))
         ((string-ends? s "'")
-         (string-append (clean-quotes (string-drop-right s 1)) "'"))
+         (string-append (spaced-quotes (string-drop-right s 1)) "'"))
         (else (string-replace (string-replace s "'" "' ") "'  " "' "))))
 
 (tm-define (clean-letter-digit l)
@@ -307,7 +309,7 @@
 
 (tm-define (speech-recognizes? lan mode s)
   ;;(display* "    checking " (speech-sanitize lan mode s) "\n")
-  (and (speech-accepts? lan mode (speech-sanitize lan mode s))
+  (and (speech-accepts? lan mode s)
        (let* ((r (speech-rewrite lan mode s))
               (l (string-decompose r " ")))
          (speech-recognizes-list? lan mode l (list)))))

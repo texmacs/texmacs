@@ -240,7 +240,9 @@
 (lazy-keyboard (math math-kbd) in-math?)
 (lazy-keyboard (math math-sem-edit) in-sem-math?)
 (lazy-keyboard (math math-speech-en) in-math?)
+(lazy-keyboard (math math-adjust-en) in-math?)
 (lazy-keyboard (math math-speech-fr) in-math?)
+(lazy-keyboard (math math-adjust-fr) in-math?)
 (lazy-menu (math math-menu) math-format-menu math-format-icons
 	   math-menu math-insert-menu
            math-icons math-insert-icons

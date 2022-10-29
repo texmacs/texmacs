@@ -42,7 +42,7 @@
       (set! stats-cursor (tm->stree down)))))
 
 (define (stats-occurrences* s)
-  (+ (* 1000 (math-stats-occurrences "cursor" s))
+  (+ (* 10 (math-stats-occurrences "cursor" s))
      (math-stats-occurrences "buffer" s)))
 
 (tm-define (stats-occurrences s)
@@ -51,7 +51,7 @@
 
 (define (stats-in-role* s)
   (if (not s) 0
-      (+ (* 1000 (math-stats-number-in-role "cursor" s))
+      (+ (* 10 (math-stats-number-in-role "cursor" s))
          (math-stats-number-in-role "buffer" s))))
 
 (tm-define (stats-in-role s)
