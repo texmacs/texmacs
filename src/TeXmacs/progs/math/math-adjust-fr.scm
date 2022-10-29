@@ -1072,11 +1072,33 @@
 
   ;; Adjust big operators
   ("sam" "somme")
-  ("samedi" "somme de i")
   ("some" "somme")
+  ("sonne" "somme")
+  ("somme des" "somme de")
+  ("samedi" "somme de i")
   ("someday" "somme de")
   ("somme d'y" "somme de i")
-  ("the contours" "de contour")
+  ("de contours" "contour")
+  ("the contours" "contour")
+  ("intégrale de un sur" "intégrale un sur")
+
+  ;; Sugar for big operators
+  ("d' a à" "de a jusqu' à")
+  ("d' à à" "de a jusqu' à")
+  ("d' a jusqu' à" "de a jusqu' à")
+  ("d' à jusqu' à" "de a jusqu' à")
+  ("de zéro a" "de zéro jusqu' à")
+  ("de zéro à" "de zéro jusqu' à")
+  ("de un a" "de un jusqu' à")
+  ("de un à" "de un jusqu' à")
+  ("de deux a" "de deux jusqu' à")
+  ("de deux à" "de deux jusqu' à")
+  ("égal zéro a" "égal zéro jusqu' à")
+  ("égal zéro à" "égal zéro jusqu' à")
+  ("égal un a" "égal un jusqu' à")
+  ("égal un à" "égal un jusqu' à")
+  ("égal deux a" "égal deux jusqu' à")
+  ("égal deux à" "égal deux jusqu' à")
 
   ;; Adjust fractions
   ("sûr" "sur")

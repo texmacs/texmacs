@@ -422,7 +422,7 @@
   ("somme" (math-big-operator "sum"))
   ("produit" (math-big-operator "prod"))
   ("intégrale" (math-big-operator "int"))
-  ("intégrale de contours" (math-big-operator "oint"))
+  ("intégrale contours" (math-big-operator "oint"))
   ("intégrale double" (math-big-operator "iint"))
   ("intégrale triple" (math-big-operator "iiint"))
   ("double intégrale" (math-big-operator "iint"))
@@ -733,7 +733,6 @@
 
   ("la somme" "somme")
   ("le produit" "produit")
-  ("l'intégral" "intégrale")
   ("l'intégrale" "intégrale")
   ("l'infini" "infini")
 
