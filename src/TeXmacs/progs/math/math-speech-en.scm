@@ -405,6 +405,37 @@
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Commonly used unambiguous words for letters
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(speech-reduce english math
+  ("alfred" "a")
+  ("benjamin" "b")
+  ("charles" "c")
+  ("david" "d")
+  ("edward" "e")
+  ("frederick" "f")
+  ("george" "g")
+  ("harry" "h")
+  ("issac" "i")
+  ("jack" "j")
+  ("king" "k")
+  ("london" "l")
+  ("mary" "m")
+  ("nellie" "n")
+  ("oliver" "o")
+  ("peter" "p")
+  ("queen" "q")
+  ("robert" "r")
+  ("samuel" "s")
+  ("tommy" "t")
+  ("uncle" "u")
+  ("victor" "v")
+  ("x-ray" "x")
+  ("yellow" "y")
+  ("zebra" "z"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Speech reductions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
