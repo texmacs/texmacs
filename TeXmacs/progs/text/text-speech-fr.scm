@@ -48,9 +48,15 @@
   "auto" "tôt" "taux" "options" "fille" "fit" "qui"
 
   ;; letter combinations
-  "assez" "ai" "août" "avez" "bébé" "baisser"
-  "déesse" "gaité" "dévérrouiller" "acheter" "achevé"
-  "je"
+  "assez" "haï" "haïti" "agit" "agen" "arènes" "août"
+  "appeler" "appelle" "happer" "athée" "avez"
+  "béat" "bébé" "baisser" "bédé" "bide" "déesse" "gaité"
+  "dévérrouiller" "acheter" "achevé" "cassé" "canapé" "capter"
+  "hello" "hélix" "hausser" "noël" "ôter" "paysan" "paysannes"
+  "cruel" "couper" "occuper" "cousin" "respect" "rester"
+  "yuen" "butter" "lutter" "buvez" "veggie" "vécu" "véhicule"
+  "vérité" "fixer" "exiger" "pixels" "exo" "excuse" "issue"
+  "fixette" "zappé"
 
   ;; punctuation
   "tel" "telle"
