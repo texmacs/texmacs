@@ -187,6 +187,75 @@
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Tables to adjust recognition of mathematics inside text
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(speech-collection dangerous english
+  ;; explicit commands
+  "to" "factor" "power" "set" "element"
+
+  ;; digits
+  "too"
+
+  ;; latin letters
+  "a" "be" "see" "de" "day" "the" "he" "eat" "each" "if" "age" "edge"
+  "i" "eye" "eyes" "either" "iron" "ok" "cake" "care" "case" "all" "old"
+  "an" "and" "piece" "queue" "cute"
+  "are" "art" "our" "yes" "chease" "tea" "team"
+  "via" "you" "vegan" "ask" "eggs" "why"
+
+  ;; greek letters
+  "grandma" "theater" "yoga" "copper" "laptop"
+  "mute" "mood" "no" "new" "gnu" "knew" "site" "bye" "pie" "pipe"
+  "road" "row" "role" "roll" "ciao" "towel" "tall" "toe" "toll" "town"
+  "fight" "fine" "sigh" "side" "size" "kind" "sky"
+
+  ;; letter combinations
+  "ecu" "easy" "bi" "busy" "agency" "icy" "ma" "empty" "auntie" "envy"
+  "annex" "pity" "peezy" "cutie" "essay" "usually" "excess" "whitey"
+
+  ;; variants
+  "pick" "plastic"
+  "both" "bowl" "build" "bouquet"
+  "tractor"
+
+  ;; binary operators and relations
+  "class" "does" "play" "blessed" "please" "press" "minors"
+  "time" "dancer"
+
+  ;; textual operators
+  "cosign" "lock" "luck" "look" "unlock" "timeslot"
+
+  ;; punctuation, brackets, big operators
+  "dutch" "ducks" "of" "off" "some"
+
+  ;; fractions, subscripts, superscripts
+  "offer" "oversee" "overall" "overview"
+  "bishop" "sake" "subversion" "subway" "pizza" "visa"
+
+  ;; wide accents
+  "white" "head" "had" "hit" "hunt" "hurt" "pet" "cuba"
+
+  ;; miscellaneous
+  "it's" "write"
+
+  ;; dangerous adjustments
+  "by" "my" "sign" "end")
+
+(speech-collection dangerous english
+  "is")
+
+(speech-collection skip-start english
+  "the" "integer" "integers" "rational" "rationals" "real" "reals"
+  "sum" "product" "integral")
+
+(speech-collection skip-end english
+  "are")
+
+(speech-collection skip english
+  "and" "such" "that")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Adjust wrongly recognized words
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

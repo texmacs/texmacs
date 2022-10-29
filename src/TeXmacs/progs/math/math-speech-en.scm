@@ -78,6 +78,31 @@
   "mu" "nu" "by" "hy" "ky" "my" "sy")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Tables for recognizing mathematics inside text
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(speech-collection prefix english
+  "big" "small" "capital" "uppercase" "lowercase"
+  "bold" "upright" "calligraphic" "fraktur" "gothic"
+  "blackboard bold" "sans serif" "typewriter")
+
+(speech-collection prefix english
+  "exponential" "logarithm" "sine" "cosine" "tangent"
+  "square root")
+
+(speech-collection postfix english
+  "prime" "dagger" "square" "squared" "cube" "cubed")
+
+(speech-collection infix english
+  "superior" "inferior" "smaller" "larger" "less" "greater")
+
+(speech-collection math-mode english
+  "math" "maths" "mathematics" "formula")
+
+(speech-collection text-mode english
+  "text")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Entering mathematical symbols via English speech
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
