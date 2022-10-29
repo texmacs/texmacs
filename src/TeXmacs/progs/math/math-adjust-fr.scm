@@ -265,6 +265,8 @@
   ("vii" "v")
   ("that" "z")
   ("zed" "z")
+  ("désirer" "d")
+  ("emile" "e")
 
   ;; Adjust greek letters
   ("bâtard" "beta")

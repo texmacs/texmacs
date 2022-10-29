@@ -329,6 +329,9 @@
   ("ex" "x")
   ("eggs" "x")
   ("why" "y")
+  ("at work" "edward")
+  ("hairy" "harry")
+  ("isak" "isaac")
   
   ;; Adjust greek letters
   ("l5" "alpha")
@@ -347,7 +350,6 @@
   ("add simon" "epsilon")
   ("add cylon" "epsilon")
   ("abseiling" "epsilon")
-  ("simon" "epsilon")
   ("atta" "eta")
   ("eat a" "eta")
   ("eater" "eta")
@@ -957,7 +959,6 @@
   ("eubar" "u bar")
   ("rebar" "v bar")
   ("rober" "rho bar")
-  ("robert" "rho bar")
   ("robar" "rho bar")
   ("rovar" "rho bar")
   ("tovar" "tau bar")
