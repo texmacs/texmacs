@@ -155,6 +155,31 @@
     (ahash-ref french-normal-table key)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Tables for recognizing mathematics inside text
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(speech-collection prefix french
+  "grand" "petit")
+
+(speech-collection postfix french
+  "majuscule" "minuscule"
+  "gras" "droit" "calligraphique" "fraktur" "gothique"
+  "tableau noir gras" "sans serif" "machine à écrire")
+
+(speech-collection prefix french
+  "exponentielle" "logarithme" "sinus" "cosinus" "tangente"
+  "racine carrée")
+
+(speech-collection postfix french
+  "prime" "factoriel")
+
+(speech-collection math-mode french
+  "math" "maths" "matt" "mathématiques" "formule" "formules")
+
+(speech-collection text-mode french
+  "text" "texte")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Entering mathematical symbols via French speech
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

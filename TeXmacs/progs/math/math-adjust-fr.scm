@@ -118,6 +118,72 @@
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Tables to adjust recognition of mathematics inside text
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(speech-collection dangerous french
+  ;; latin letters
+  "sait" "des" "eux" "œuf" "gay" "âge" "hache" "il" "ils"
+  "j'y" "car" "cas" "casse" "aile" "ailes" "elle" "aime"
+  "au" "beau" "eau" "eaux" "haut" "os" "paye" "pays" "air" "est-ce"
+  "t'es" "taille" "tes" "eu" "vais" "value" "vert"
+
+  ;; greek letters
+  "bâtard" "gamin" "éteins" "est" "atteint" "état" "tata"
+  "mou" "mieux" "mur" "mûr" "mus" "nue" "nul" "pile" "pis"
+  "euro" "euros" "robe" "robot" "rock" "rome" "rose" "rouge"
+  "auto" "tôt" "taux" "options" "fille" "fit" "qui"
+
+  ;; letter combinations
+  "assez" "haï" "haïti" "agit" "agen" "arènes" "août"
+  "appeler" "appelle" "happer" "athée" "avez"
+  "béat" "bébé" "baisser" "bédé" "bide" "déesse" "gaité"
+  "dévérrouiller" "acheter" "achevé" "cassé" "canapé" "capter"
+  "hello" "hélix" "hausser" "noël" "ôter" "paysan" "paysannes"
+  "cruel" "couper" "occuper" "cousin" "respect" "rester"
+  "yuen" "butter" "lutter" "buvez" "veggie" "vécu" "véhicule"
+  "vérité" "fixer" "exiger" "pixels" "exo" "excuse" "issue"
+  "fixette" "zappé"
+
+  ;; punctuation
+  "tel" "telle"
+
+  ;; operators 'plus', 'moins', 'fois'
+  "opus" "pupuce" "moi" "monter" "noisette" "manteau"
+  "foie" "fort" "photo" "photos"
+
+  ;; composition 'rond'
+  "rang" "rend" "irons" "giron" "caron" "aileron" "huron" "verrons"
+  "ranger" "ronger" "rompez" "remonter"
+
+  ;; predicates 'égal'
+  "égalité" "également"
+  
+  ;; operators and function application
+  "dette" "bédé" "idée" "rodé" "décès"
+ 
+  ;; fractions
+  "sûr" "assure" "culture" "mesure" "chaussure" "chaussures"
+  "surgé" "surveille" "sureau" "surtout"
+
+  ;; wide accents
+  "chapeaux" "utile" "utilité" "bars" "bar"
+
+  ;; particularly dangerous adjustments
+  "a" "à" "ai" "ce" "dans" "de" "deux" "en"
+  "le" "la" "ne" "on" "se" "si"
+  "ta" "te" "the" "un" "une")
+
+(speech-collection skip-start french
+  "ce" "dans" "est" "est-ce" "le" "la" "ne" "on" "se" "ta" "te")
+
+(speech-collection skip-end french
+  "ce" "dans" "est" "est-ce" "le" "la" "ne" "on" "se" "ta" "te")
+
+(speech-collection skip french
+  "et" "ma" "ou")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Adjust wrongly recognized words
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
