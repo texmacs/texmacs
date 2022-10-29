@@ -30,19 +30,23 @@
   (speech-has? lan type (strip-punctuation s)))
 
 (define (speech-accepts*? lan type s)
-  (speech-accepts? lan type (strip-punctuation s)))
+  (set! s (strip-punctuation s))
+  (or (speech-accepts? lan type s)
+      (string->number s)))
 
 (define (speech-start-accepts*? lan type s)
   (set! s (strip-punctuation s))
   (when (letterized? s)
     (set! s (car (letterized-list s))))
-  (speech-border-accepts? lan type s))
+  (or (speech-border-accepts? lan type s)
+      (string->number s)))
 
 (define (speech-end-accepts*? lan type s)
   (set! s (strip-punctuation s))
   (when (letterized? s)
     (set! s (cAr (letterized-list s))))
-  (speech-border-accepts? lan type s))
+  (or (speech-border-accepts? lan type s)
+      (string->number s)))
 
 ;; (define (speech-has*? lan type s)
 ;;   (with r (speech-has**? lan type s)
