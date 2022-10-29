@@ -61,7 +61,7 @@
 
 (tm-define (kbd-speech s)
   (:mode in-math?)
-  ;;(display* "Math speech " (cork->utf8 s) "\n")
+  ;;(display* "\nMath speech " (cork->utf8 s) "\n")
   (cond ((speech-make s) (noop))
         (else (speech-exec s))))
 
@@ -82,7 +82,7 @@
                (speech-has? lan 'dont-break (string-take-right s 2)))
            s)
           ((and (== lan 'french) (in? (string-ref s 1) (list #\d #\t)))
-           (with de (if (== (string-ref s 1) #\d) " de " " t/de ")
+           (with de (if (== (string-ref s 1) #\d) " d/de " " t/de ")
              (when (== (string-length s) 2)
                (set! de (string-drop-right de 1)))
              (string-append (string-take s 1) de

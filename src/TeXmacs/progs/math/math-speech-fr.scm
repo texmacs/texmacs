@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (math math-speech-fr)
-  (:use (math math-adjust-fr)))
+  (:use (math math-speech)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sanitize input
@@ -32,7 +32,7 @@
 
 (tm-define (speech-pre-sanitize lan s)
   (:require (== lan 'french))
-  (set! s (clean-quotes s))
+  (set! s (spaced-quotes s))
   s)
 
 (define (rewrite-/ s)
@@ -49,7 +49,7 @@
   (set! s (letterize s))
   (set! s (list->tmstring (clean-letter-digit (tmstring->list s))))
   (set! s (string-recompose (map rewrite-/ (string-decompose s " ")) " "))
-  (set! s (clean-quotes s))
+  (set! s (spaced-quotes s))
   (set! s (string-replace s "+" " plus "))
   (set! s (string-replace-trailing s "-" " moins "))
   (set! s (string-replace s "<times>" " fois "))
@@ -171,10 +171,10 @@
   "racine carrée")
 
 (speech-collection postfix french
-  "prime" "factoriel")
+  "prime" "factoriel" "carré" "cube")
 
 (speech-collection math-mode french
-  "math" "maths" "matt" "mathématiques" "formule" "formules")
+  "math" "maths" "matt" "mathématiques")
 
 (speech-collection text-mode french
   "text" "texte")

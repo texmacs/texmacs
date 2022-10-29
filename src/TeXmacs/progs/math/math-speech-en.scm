@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (math math-speech-en)
-  (:use (math math-adjust-en)))
+  (:use (math math-speech)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Sanitize input
@@ -97,7 +97,7 @@
   "superior" "inferior" "smaller" "larger" "less" "greater")
 
 (speech-collection math-mode english
-  "math" "maths" "mathematics" "formula")
+  "math" "maths" "mathematics")
 
 (speech-collection text-mode english
   "text")
