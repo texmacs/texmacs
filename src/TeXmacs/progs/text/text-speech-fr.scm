@@ -82,7 +82,7 @@
   "ta" "te" "the" "un" "une")
 
 (speech-collection skip-start french
-  "ce" "dans" "est" "est-ce" "le" "la" "ne" "on" "se" "ta" "te)
+  "ce" "dans" "est" "est-ce" "le" "la" "ne" "on" "se" "ta" "te")
 
 (speech-collection skip-end french
   "ce" "dans" "est" "est-ce" "le" "la" "ne" "on" "se" "ta" "te")
