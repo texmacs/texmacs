@@ -24,7 +24,7 @@
 (define (english-5/phi)
   (if (stats-has-variant? "<phi>")
       (speech-insert-symbol "<phi>")
-      (speech-insert-number "5")))
+      (speech-insert-symbol "5")))
 
 (define (english-d/b/p-* . l)
   (if (and (== (length l) 1) (in? (car l) differential-letters))
@@ -231,7 +231,7 @@
 
   ;; fractions, subscripts, superscripts
   "offer" "oversee" "overall" "overview"
-  "bishop" "sake" "subversion" "subway" "pizza" "visa"
+  "saturday" "bishop" "sake" "subversion" "subway" "pizza" "visa"
 
   ;; wide accents
   "white" "head" "had" "hit" "hunt" "hurt" "pet" "cuba"
@@ -250,7 +250,7 @@
   "sum" "product" "integral")
 
 (speech-collection skip-end english
-  "are" "as" "be" "in")
+  "are" "as" "be" "he" "if" "in" "me" "or" "we")
 
 (speech-collection skip english
   "and" "such" "that")
@@ -822,6 +822,7 @@
   ("subscribed" "subscript")
   ("sabe" "sub a")
   ("subsea" "sub c")
+  ("saturday" "sub d")
   ("sera d" "sub d")
   ("sub g e" "sub g")
   ("subject" "sub g")

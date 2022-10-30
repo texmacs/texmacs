@@ -420,9 +420,13 @@
   (with c (get-medium-contextual x)
     (if (not c) 0 (stats-in-role c))))
 
+(define (stats-occurrences-nodup prev x)
+  (if (== prev x) 0 (stats-occurrences x)))
+
 (tm-define (stats-prefer-weak-contextual? what over prefer?)
-  (let* ((what3 (stats-occurrences what))
-         (over3 (stats-occurrences over)))
+  (let* ((prev  (root-before-cursor))
+         (what3 (stats-occurrences-nodup prev what))
+         (over3 (stats-occurrences-nodup prev over)))
     ;;(display* "  weak  : " what ", " what3
     ;;          "; " over ", " over3 "\n")
     (cond ((prefer? what3 over3) #t)
