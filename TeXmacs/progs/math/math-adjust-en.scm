@@ -250,7 +250,7 @@
   "sum" "product" "integral")
 
 (speech-collection skip-end english
-  "are")
+  "are" "as" "be" "in")
 
 (speech-collection skip english
   "and" "such" "that")
@@ -532,6 +532,7 @@
   ("cutie" "q t")
   ("q v c" "q v")
   ("cousy" "q z")
+  ("arcade" "r k")
   ("essay" "s a")
   ("se" "s e")
   ("ask you" "s q")
@@ -783,6 +784,7 @@
   ("log in" "log n")
   ("unlock" "n log")
   ("timeslot" "times log")
+  ("reminder" "remainder")
 
   ;; Adjust punctuation
   ("call ma" "comma")

@@ -428,7 +428,17 @@
   ("sin" (speech-insert-operator "sin"))
   ("supremum" (speech-insert-operator "sup"))
   ("tan" (speech-insert-operator "tan"))
-  
+
+  ("mod" (speech-insert-infix-operator "mod"))
+  ("div" (speech-insert-infix-operator "div"))
+  ("quo" (speech-insert-infix-operator "quo"))
+  ("rem" (speech-insert-infix-operator "rem"))
+  ("division" (speech-insert-infix-operator "div"))
+  ("modulo" (speech-insert-infix-operator "mod"))
+  ("quotient" (speech-insert-infix-operator "quo"))
+  ("reste" (speech-insert-infix-operator "rem"))
+  ("pseudo reste" (speech-insert-infix-operator "prem"))
+
   ("plus points plus" (speech-dots "+" "<cdots>"))
   ("moins points moins" (speech-dots "-" "<cdots>"))
   ("fois points fois" (speech-dots "*" "<cdots>"))

@@ -310,6 +310,8 @@
       ;; TODO: also disallow commas inside brackets that
       ;; enclose infix operators or relations
       (set! l (list-remove l :comma)))
+    (when (== x " ")
+      (set! l (list)))
     (while (tm-in? x '(rsub rsup))
       (when (tree-is? x 'rsub)
         (set! l (list-remove l :subscript)))
