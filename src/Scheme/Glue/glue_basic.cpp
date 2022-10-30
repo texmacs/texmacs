@@ -880,15 +880,6 @@ tmg_get_output_language () {
 }
 
 tmscm
-tmg_input_method_commit () {
-  // TMSCM_DEFER_INTS;
-  commit_input ();
-  // TMSCM_ALLOW_INTS;
-
-  return TMSCM_UNSPECIFIED;
-}
-
-tmscm
 tmg_translate (tmscm arg1) {
   TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "translate");
 
@@ -10208,7 +10199,6 @@ initialize_glue_basic () {
   tmscm_install_procedure ("get-input-language",  tmg_get_input_language, 0, 0, 0);
   tmscm_install_procedure ("set-output-language",  tmg_set_output_language, 1, 0, 0);
   tmscm_install_procedure ("get-output-language",  tmg_get_output_language, 0, 0, 0);
-  tmscm_install_procedure ("input-method-commit",  tmg_input_method_commit, 0, 0, 0);
   tmscm_install_procedure ("translate",  tmg_translate, 1, 0, 0);
   tmscm_install_procedure ("string-translate",  tmg_string_translate, 1, 0, 0);
   tmscm_install_procedure ("translate-from-to",  tmg_translate_from_to, 3, 0, 0);

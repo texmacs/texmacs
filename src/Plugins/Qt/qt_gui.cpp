@@ -1101,15 +1101,6 @@ external_event (string type, time_t t) {
   }
 }
 
-void
-commit_input () {
-  //debug_message ("keyboard-warning", "commit input\n");
-#if (QT_VERSION >= 0x050000)
-  QInputMethod *im = QGuiApplication::inputMethod();
-  im->commit ();
-#endif
-}
-
 /******************************************************************************
  * Delayed commands
  ******************************************************************************/

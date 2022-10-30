@@ -260,7 +260,7 @@
 
 (tm-define (speech-rewrite lan mode s)
   (set! s (speech-sanitize lan mode s))
-  (display* "Sanitized " (cork->utf8 s) "\n")
+  ;;(display* "Sanitized " (cork->utf8 s) "\n")
   (let* ((l (string-decompose s " "))
          (r (speech-rewrite* lan mode l)))
     (string-recompose r " ")))
@@ -352,12 +352,12 @@
   (noop))
 
 (tm-define (speech-exec s)
-  (display* "Execute " (cork->utf8 s) "\n")
+  ;;(display* "Execute " (cork->utf8 s) "\n")
   (let* ((lan (speech-language))
          (mode (speech-current-mode))
          (r (speech-rewrite lan mode s))
          (l (string-decompose r " ")))
-    (display* "Rewritten " (cork->utf8 r) "\n")
+    ;;(display* "Rewritten " (cork->utf8 r) "\n")
     (speech-exec-list lan l (list))
     (speech-done)))
 
@@ -394,37 +394,3 @@
   (cond ((speech-command s) (noop))
         ((speech-make s) (noop))
         (else (kbd-insert s))))
-
-(define kbd-speech-last #f)
-(define kbd-speech-timeout 2000)
-
-(tm-define (kbd-speech-complete s)
-  (kbd-speech s)
-  (set! kbd-speech-last #f))
-
-(define (kbd-speech-commit t)
-  ;;(debug-message "keyboard-warning"
-  ;;               (string-append "commit for time "
-  ;;                              (object->string t)
-  ;;                              ", currently "
-  ;;                              (object->string kbd-speech-last) "\n"))
-  (when (and (== kbd-speech-last t)
-             (>= (texmacs-time) (+ t kbd-speech-timeout)))
-    (input-method-commit)
-    (set! kbd-speech-last #f)))
-
-(tm-define (kbd-speech-in-progress s)
-  (kbd-speech s)
-  (let* ((t (texmacs-time))
-         (issue? (or (not kbd-speech-last)
-                     (>= t (+ kbd-speech-last (/ kbd-speech-timeout 4))))))
-    (when issue?
-      (set! kbd-speech-last t)
-      ;;(debug-message "keyboard-warning"
-      ;;               (string-append "delayed at time "
-      ;;                              (object->string t) "\n"))
-      (exec-delayed-pause
-       (lambda ()
-         (with left (- kbd-speech-timeout (idle-time))
-           (if (> left 0) left
-               (begin (kbd-speech-commit t) #t))))))))
