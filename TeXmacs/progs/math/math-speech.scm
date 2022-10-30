@@ -572,6 +572,17 @@
            (insert op)
            (speech-insert-symbol x)))))
 
+(define (must-continue-script? x)
+  (and-let* ((prev (expr-before-cursor))
+             (ok1? (in? prev (list "+" "-" "," ";")))
+             (expr (expr-before-before-cursor))
+             (ok2? (tm-in? expr '(rsub rsup)))
+             (op   (if (== prev "-") "+" prev))
+             (x*   (if (string-number? x) "1" x))
+             (pref (tm->stree (tm-ref expr 0))))
+    (or (stats-has?  (tmconcat pref prev x))
+        (stats-role? (tmconcat pref op x*)))))
+
 (define (dont-continue-script? x)
   (and-let* ((prev (expr-before-cursor))
              (ok?  (in? prev (list "+" "-" "," ";")))
@@ -594,8 +605,9 @@
 (define (continue-script? x)
   (with v (letter-variants x speech-letter-mode)
     (and speech-can-extend-script?
-         (not (exists? dont-continue-script? v))
-         (exists? do-continue-script? v))))
+         (or (exists? must-continue-script? v)
+             (and (not (exists? dont-continue-script? v))
+                  (exists? do-continue-script? v))))))
 
 (define (continue-script x)
   (with op (cut-before-cursor)

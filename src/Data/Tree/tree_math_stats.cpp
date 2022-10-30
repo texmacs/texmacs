@@ -191,8 +191,21 @@ math_stats::compile (tree t, tree parent, string mode) {
         compile (t[i], t, smode);
     }
   }
-  if (mode == "math")
-    compile (concat_tokenize (t), parent);
+  if (mode == "math") {
+    array<tree> a= concat_tokenize (t);
+    if (N(a) > 1) {
+      occurrences (t)= occurrences [t] + 1;
+      array<tree> b= copy (a);
+      tree last= strip_decorations (b[N(b)-1]);
+      if (b[N(b)-2] == "-" || b[N(b)-1] != last) {
+        if (b[N(b)-2] == "-") b[N(b)-2]= "+";
+        b[N(b)-1]= last;
+        tree u= concat_recompose (b);
+        roles (u)= roles [u] + 1;
+      }
+    }
+    compile (a, parent);
+  }
 }
 
 /******************************************************************************
