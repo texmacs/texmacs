@@ -164,6 +164,42 @@ std_accent (string s) {
   return s;
 }
 
+static bool speech_pre_edit;
+static time_t last_uttering;
+static array<string> pauses;
+static string current_speech;
+
+static void
+handle_speech (string s) {
+  if (speech_pre_edit) {
+    time_t now= texmacs_time ();
+    if (now > last_uttering + 1000) {
+      while (N(pauses) != 0 && !starts (current_speech, pauses[N(pauses)-1]))
+        pauses= range (pauses, 0, N(pauses) - 1);
+      if (N(pauses) == 0 || N(current_speech) > N(pauses[N(pauses)-1]))
+        pauses << current_speech;
+    }
+  }
+  string prefix= "";
+  list<string> bursts;
+  for (int i=0; i<N(pauses); i++) {
+    if (starts (s, pauses[i]) && N(pauses[i]) > N(prefix)) {
+      string next= pauses[i];
+      int j= N(prefix);
+      while (j<N(next) && next[j] == ' ') j++;
+      if (j < N(next)) bursts << next (j, N(next));
+      prefix= next;
+    }
+  }
+  if (N(s) > N(prefix)) {
+    int j= N(prefix);
+    while (j<N(s) && s[j] == ' ') j++;
+    if (j < N(s)) bursts << s (j, N(s));
+  }
+  call ("keyboard-speech", bursts);
+  last_uttering= texmacs_time ();
+}
+
 void
 edit_interface_rep::key_press (string gkey) {
   string zero= "a"; zero[0]= '\0';
@@ -178,7 +214,10 @@ edit_interface_rep::key_press (string gkey) {
     if (pre_edit_s != "") return;
     interrupt_shortcut ();
     archive_state ();
-    call ("kbd-speech", key (7, N(key)));
+    handle_speech (key (7, N(key)));
+    speech_pre_edit= false;
+    pauses= array<string> ();
+    current_speech= "";
     interrupt_shortcut ();
     return;
   }
@@ -214,8 +253,10 @@ edit_interface_rep::key_press (string gkey) {
       if (get_preference ("speech", "off") == "off")
         insert_tree (compound ("pre-edit", s), path (0, pos));
       else {
-        insert_tree (compound ("pre-edit", ""), path (0, 0));
-        call ("kbd-speech", s);
+        //insert_tree (compound ("pre-edit", ""), path (0, 0));
+        handle_speech (s);
+        speech_pre_edit= true;
+        current_speech= s;
       }
       return;
     }
@@ -340,7 +381,10 @@ edit_interface_rep::handle_keypress (string key, time_t t) {
     string zero= "a"; zero[0]= '\0';
     string gkey= replace (key, zero, "<#0>");
     if (gkey == "<#3000>") gkey= "space";
-    call ("keyboard-press", object (gkey), object ((double) t));
+    if (starts (gkey, "pre-edit:"))
+      call ("delayed-keyboard-press", object (gkey), object ((double) t));
+    else
+      call ("keyboard-press", object (gkey), object ((double) t));
     update_focus_loci ();
     if (!is_nil (focus_ids))
       call ("link-follow-ids", object (focus_ids), object ("focus"));

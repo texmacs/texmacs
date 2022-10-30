@@ -394,3 +394,6 @@
   (cond ((speech-command s) (noop))
         ((speech-make s) (noop))
         (else (kbd-insert s))))
+
+(tm-define (keyboard-speech l)
+  (for (s l) (kbd-speech s)))
