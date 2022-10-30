@@ -283,6 +283,7 @@
   ("égal" "=")
   ("non égal" "<neq>")
   ("défini par" "<assign>")
+  ("congru" "<equiv>")
   ("inférieur" "<less>")
   ("inférieur égal" "<leqslant>")
   ("supérieur" "<gtr>")
@@ -694,6 +695,9 @@
   ("est différent de" "non égal")
   ("est différent 2/de" "non égal")
 
+  ("congru à" "congru")
+  ("est congru à" "congru")
+  
   ("plus petit" "inférieur")
   ("plus petit que" "inférieur")
   ("est plus petit" "inférieur")

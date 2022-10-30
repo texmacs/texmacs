@@ -94,6 +94,7 @@
   "prime" "dagger" "square" "squared" "cube" "cubed")
 
 (speech-collection infix english
+  "equal" "assign" "congruent"
   "superior" "inferior" "smaller" "larger" "less" "greater")
 
 (speech-collection math-mode english
@@ -203,6 +204,7 @@
   ("not equal" "<neq>")
   ("assign" "<assign>")
   ("defined as" "<assign>")
+  ("congruent" "<equiv>")
   ("less" "<less>")
   ("less equal" "<leqslant>")
   ("greater" "<gtr>")
