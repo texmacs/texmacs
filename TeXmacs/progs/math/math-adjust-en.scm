@@ -784,6 +784,8 @@
   ("log in" "log n")
   ("unlock" "n log")
   ("timeslot" "times log")
+  ("mott" "mod")
+  ("modelo" "modulo")
   ("reminder" "remainder")
 
   ;; Adjust punctuation
