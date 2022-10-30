@@ -116,6 +116,8 @@ void show_wait_indicator (widget base, string message, string argument);
   // the indicator should be removed if the message is empty
 void external_event (string type, time_t t);
   // External events, such as pushing a button of a remote infrared commander
+void commit_input ();
+  // Flush input of current input method (e.g., a long pause during speech)
 bool gui_interrupted (bool check = false);
   // Probe whether external events are waiting to be handled
   // Useful to stop lengthy repainting operations

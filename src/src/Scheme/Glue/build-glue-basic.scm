@@ -96,6 +96,7 @@
   (get-input-language get_input_language (string))
   (set-output-language gui_set_output_language (void string))
   (get-output-language get_output_language (string))
+  (input-method-commit commit_input (void))
   (translate translate (string content))
   (string-translate translate_as_is (string string))
   (translate-from-to translate (string content string string))

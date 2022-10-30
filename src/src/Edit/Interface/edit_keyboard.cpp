@@ -178,7 +178,7 @@ edit_interface_rep::key_press (string gkey) {
     if (pre_edit_s != "") return;
     interrupt_shortcut ();
     archive_state ();
-    call ("kbd-speech", key (7, N(key)));
+    call ("kbd-speech-complete", key (7, N(key)));
     interrupt_shortcut ();
     return;
   }
@@ -215,7 +215,7 @@ edit_interface_rep::key_press (string gkey) {
         insert_tree (compound ("pre-edit", s), path (0, pos));
       else {
         insert_tree (compound ("pre-edit", ""), path (0, 0));
-        call ("kbd-speech", s);
+        call ("kbd-speech-in-progress", s);
       }
       return;
     }

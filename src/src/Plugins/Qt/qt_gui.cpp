@@ -1057,8 +1057,9 @@ qt_gui_rep::put_graphics_on_clipboard (url file) {
 }
 
 /******************************************************************************
- * Miscellaneous
- ******************************************************************************/
+* Miscellaneous
+******************************************************************************/
+
 int char_clip = 0;
 
 void
@@ -1100,6 +1101,14 @@ external_event (string type, time_t t) {
   }
 }
 
+void
+commit_input () {
+  //debug_message ("keyboard-warning", "commit input\n");
+#if (QT_VERSION >= 0x050000)
+  QInputMethod *im = QGuiApplication::inputMethod();
+  im->commit ();
+#endif
+}
 
 /******************************************************************************
  * Delayed commands
