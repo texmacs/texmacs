@@ -228,7 +228,6 @@ get_default_styled_font (int style) {
 bool use_side_tools= false;
 #else
 bool use_side_tools= false;
-void commit_input () {}
 #endif
 
 array<SI>

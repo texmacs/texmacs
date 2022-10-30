@@ -105,7 +105,6 @@
 "get-input-language"
 "set-output-language"
 "get-output-language"
-"input-method-commit"
 "translate"
 "string-translate"
 "translate-from-to"

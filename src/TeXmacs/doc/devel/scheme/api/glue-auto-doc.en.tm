@@ -643,14 +643,6 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(input-method-commit)>
-<explain-synopsis|no synopsis>
-  <|explain>
-    Calls the <c++> function <cpp|commit_input> which returns
-    <scm|void>.
-  </explain>
-
-  <\explain>
     <scm|(translate <scm-arg|content>)>
 <explain-synopsis|no synopsis>
   <|explain>
