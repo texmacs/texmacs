@@ -348,9 +348,6 @@
 	     (speech-exec-list lan t (list))))
 	  (else (speech-exec-list lan (cDr h) (cons (cAr h) t))))))
 
-(tm-define (speech-done)
-  (noop))
-
 (tm-define (speech-exec s)
   ;;(display* "Execute " (cork->utf8 s) "\n")
   (let* ((lan (speech-language))
@@ -358,8 +355,7 @@
          (r (speech-rewrite lan mode s))
          (l (string-decompose r " ")))
     ;;(display* "Rewritten " (cork->utf8 r) "\n")
-    (speech-exec-list lan l (list))
-    (speech-done)))
+    (speech-exec-list lan l (list))))
 
 (tm-define (speech-make S)
   (with lan (get-preference "language")
@@ -395,5 +391,33 @@
         ((speech-make s) (noop))
         (else (kbd-insert s))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Outer interface
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (speech-cleanup)
+  (noop))
+
+(tm-define (speech-pause)
+  (noop))
+
+(define last-speech-time #f)
+
 (tm-define (keyboard-speech l)
-  (for (s l) (kbd-speech s)))
+  (when (nnull? l)
+    (with t (texmacs-time)
+      (set! last-speech-time t)
+      (speech-cleanup)
+      (for (s (cDr l))
+        (kbd-speech s)
+        (speech-pause))
+      (kbd-speech (cAr l))
+      (exec-delayed-pause
+       (lambda ()
+         (with left (- 1000 (idle-time))
+           (or (!= last-speech-time t)
+               (if (> left 0) left
+                   (begin
+                     (set! last-speech-time #f)
+                     (speech-pause)
+                     #t)))))))))
