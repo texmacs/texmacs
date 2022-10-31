@@ -253,6 +253,7 @@
   "is")
 
 (speech-collection skip-start english
+  "and" "in" "or"
   "the" "integer" "integers" "rational" "rationals" "real" "reals"
   "sum" "product" "integral"
   "quotient" "remainder")
@@ -829,6 +830,9 @@
   ("docs" "dots")
   ("dutch" "dots")
   ("ducks" "dots")
+  ("call him" "colon")
+  ("colin" "colon")
+  ("column" "colon")
   ("call ma" "comma")
   ("call matt" "comma")
   ("call mark" "comma")
