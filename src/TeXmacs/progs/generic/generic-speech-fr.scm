@@ -68,11 +68,6 @@
   ("couper" (kbd-cut))
   ("coller" (kbd-paste))
   ("copier" (kbd-copy))
-  ("chercher" (interactive-search))
-  ("résultat précédent" (search-next-match #f))
-  ("résultat suivant" (search-next-match #t))
-  ("orthographe" (interactive-spell))
-  ("remplacer" (interactive-replace))
 
   ("précédent" (cursor-history-backward))
   ("suivant" (cursor-history-backward))

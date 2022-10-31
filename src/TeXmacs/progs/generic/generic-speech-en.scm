@@ -79,11 +79,6 @@
   ("cut" (kbd-cut))
   ("paste" (kbd-paste))
   ("copy" (kbd-copy))
-  ("search" (interactive-search))
-  ("previous match" (search-next-match #f))
-  ("next match" (search-next-match #t))
-  ("spell" (interactive-spell))
-  ("replace" (interactive-replace))
   
   ("back" (cursor-history-backward))
   ("forward" (cursor-history-backward))

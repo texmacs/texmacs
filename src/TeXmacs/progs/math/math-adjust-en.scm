@@ -91,13 +91,14 @@
   ("b/p q" (speech-best-combination (list "b" "p") (list "q")))
   ("b/p t" (speech-best-combination (list "b" "p") (list "t")))
 
-  ;; d/b/p and related ambiguities
+  ;; d/b/p/v and related ambiguities
   ("d u" (speech-insert-d "u"))
   ("d v" (speech-insert-d "v"))
   ("d w" (speech-insert-d "w"))
   ("d x" (speech-insert-d "x"))
   ("d y" (speech-insert-d "y"))
   ("d z" (speech-insert-d "z"))
+  ("b/v" (speech-insert-best "b" "v"))
   ("d/b" (speech-insert-best "d" "b"))
   ("d/b/p" (speech-insert-best "d" "b" "p"))
   ("d/b/p b/p/d" (english-d/b/p-* "b" "p" "d"))
@@ -198,17 +199,18 @@
   "too"
 
   ;; latin letters
-  "a" "be" "see" "de" "day" "the" "he" "eat" "each" "if" "age" "edge"
+  "a" "be" "sea" "seat" "see" "de" "day" "the"
+  "he" "eat" "each" "if" "age" "edge"
   "i" "eye" "eyes" "either" "iron" "ok" "cake" "care" "case" "all" "old"
   "an" "and" "piece" "queue" "cute"
   "are" "art" "our" "yes" "chease" "tea" "team"
-  "via" "you" "vegan" "ask" "eggs" "why"
+  "via" "you" "vegan" "ask" "eggs" "thanks" "why"
 
   ;; greek letters
   "grandma" "theater" "yoga" "copper" "laptop"
   "mute" "mood" "no" "new" "gnu" "knew" "site" "bye" "pie" "pipe"
   "road" "row" "role" "roll" "ciao" "towel" "tall" "toe" "toll" "town"
-  "fight" "fine" "sigh" "side" "size" "kind" "sky"
+  "fight" "find" "fine" "fly" "sigh" "side" "size" "kind" "sky"
 
   ;; letter combinations
   "ecu" "easy" "bi" "busy" "agency" "icy" "ma" "empty" "auntie" "envy"
@@ -225,6 +227,11 @@
 
   ;; textual operators
   "cosign" "lock" "luck" "look" "unlock" "timeslot"
+
+  ;; brackets
+  "bill" "seal" "cool" "tower" "final" "offbeat" "fan" "offend"
+  "far" "office" "coffee" "affects" "effects" "fax" "fedex" "fix"
+  "facts" "opposite" "offsite"
 
   ;; punctuation, brackets, big operators
   "dutch" "ducks" "of" "off" "some"
@@ -269,6 +276,8 @@
   ("be" "b")
   ("bea" "b")
   ("bee" "b")
+  ("sea" "c")
+  ("seat" "c")
   ("see" "c")
   ("siri" "c")
   ("day" "d")
@@ -299,6 +308,7 @@
   ("que" "k")
   ("al" "l")
   ("el" "l")
+  ("hell" "l")
   ("i'll" "l/i")
   ("em" "m/n")
   ("an" "n")
@@ -327,9 +337,12 @@
   ("via" "v")
   ("va" "v")
   ("ve" "v")
+  ("a c t s/f" "x")
+  ("acts" "x")
   ("ask" "x")
   ("ex" "x")
   ("eggs" "x")
+  ("thanks" "x")
   ("why" "y")
   ("at work" "edward")
   ("hairy" "harry")
@@ -349,6 +362,8 @@
   ("gonna" "gamma")
   ("got my" "gamma")
   ("grandma" "gamma")
+  ("gum all" "gamma")
+  ("gum out" "gamma")
   ("gummer" "gamma")
   ("add simon" "epsilon")
   ("add cylon" "epsilon")
@@ -364,6 +379,7 @@
   ("santa" "theta")
   ("sciota" "iota")
   ("utah" "iota")
+  ("yodel" "iota")
   ("yoga" "iota")
   ("yorktown" "iota")
   ("yota" "iota")
@@ -382,6 +398,7 @@
   ("lamp off" "lambda")
   ("lamp of" "lambda")
   ("lamp that" "lambda")
+  ("lampke" "lambda")
   ("lampton" "lambda")
   ("laptop" "lambda")
   ("length of" "lambda")
@@ -390,6 +407,7 @@
   ("mantha" "lambda")
   ("manta" "lambda")
   ("mamta" "lambda")
+  ("mew" "mu")
   ("mute" "mu")
   ("moo" "mu")
   ("mood" "mu")
@@ -432,10 +450,16 @@
   ("up salon" "upsilon")
   ("up so long" "upsilon")
   ("u p so long" "upsilon")
+  ("f l y" "phi")
   ("fight" "phi")
+  ("file" "phi")
+  ("find" "phi")
   ("fine" "phi")
+  ("fire" "phi")
+  ("fly" "phi")
   ("side" "psi/xi")
   ("size" "psi/xi")
+  ("psy" "psi")
   ("upside" "psi")
   ("kai" "chi")
   ("kite" "chi")
@@ -583,6 +607,8 @@
   ("zer" "z r")
   ("ziti" "z t")
   ("buy ice" "pi i")
+  ("by i" "pi i")
+  ("by iu" "pi i")
   ("bye bye" "pi i")
   ("bye-bye" "pi i")
   ("bye i" "pi i")
@@ -870,9 +896,101 @@
   
   ;; Adjust brackets
   ("off" "of")
+  ("of of" "of")
+  ("eight of" "a/e of")
+  ("ayo fax" "a of x")
+  ("be your" "b of")
+  ("bill" "b of")
+  ("seal" "c of")
+  ("see your" "c of")
+  ("dior" "d of")
+  ("e f x" "e of x")
+  ("eoff" "e of")
+  ("f f" "f of")
   ("fof" "f of")
   ("fof" "f of")
-  ("find of" "phi of")
+  ("s/f f a" "f of a")
+  ("s/f f b" "f of b")
+  ("jaya" "j of")
+  ("jayo" "j of")
+  ("can you" "k of")
+  ("lol" "l of")
+  ("emma" "m of")
+  ("i am a" "m of") 
+  ("i'm of" "m of")
+  ("eno" "n of")
+  ("i know" "n of")
+  ("n f x" "n of x")
+  ("n f y" "n of y")
+  ("nox" "n of x")
+  ("p f x" "p of x")
+  ("pio fax" "p of x")
+  ("cool" "q of")
+  ("haro" "r of")
+  ("as of" "s of")
+  ("ass of" "s of")
+  ("s/f f x" "s of x")
+  ("s/f f y" "s of y")
+  ("three of" "t/d/v/3 of")
+  ("theo" "t of")
+  ("tio" "t of")
+  ("u r of" "u of")
+  ("v f x" "v of x")
+  ("v f y" "v of y")
+  ("version of" "v of")
+  ("video of" "v of")
+  ("my of" "y of")
+  ("y r of" "y of")
+  ("zio" "z of")
+  ("alfalfa" "alpha of")
+  ("how far of" "alpha of")
+  ("beetle" "beta of")
+  ("daltile" "delta of")
+  ("zito" "zeta of")
+  ("it'll" "eta of")
+  ("ctown" "theta of")
+  ("tito" "theta of")
+  ("call paul" "kappa of")
+  ("move of" "mu of")
+  ("pi of" "pi of")
+  ("set mouth" "sigma of")
+  ("sick mouth" "sigma of")
+  ("tower" "tau of")
+  ("filofax" "phi of x")
+  ("final" "phi of")
+  ("find f" "phi of")
+  ("five of" "phi of")
+  ("scio" "psi of")
+  ("kyle" "chi of")
+  ("offbeat" "of b")
+  ("of the" "of b/v")
+  ("fan" "of n")
+  ("offend" "of n")
+  ("far" "of r")
+  ("office" "of s")
+  ("coffee" "of v")
+  ("offie" "of v")
+  ("affects" "of x")
+  ("a fax" "of x")
+  ("effects" "of x")
+  ("fax" "of x")
+  ("fedex" "of x")
+  ("fix" "of x")
+  ("i'll fax" "of x")
+  ("facts" "of x")
+  ("o fax" "of x")
+  ("officemax" "of x")
+  ("or fax" "of x")
+  ("off-white" "of y")
+  ("opposite" "of z")
+  ("of data" "of beta")
+  ("evita" "of eta")
+  ("of m/n ø" "of mu")
+  ("of by" "of pi")
+  ("off-road" "of rho")
+  ("05" "of 5/phi")
+  ("of five" "of 5/phi")
+  ("offsite" "of psi")
   ("rackets" "brackets")
 
   ;; Adjust big operators
@@ -881,6 +999,11 @@
   ("sum four" "sum for")
   ("product four" "sum for")
   ("enter girl" "integral")
+  ("enter grow" "integral")
+  ("contours" "contour")
+  ("come to her" "contour")
+  ("come to our" "contour")
+  ("ikon tour" "i contour")
 
   ;; Adjust subscripts
   ("sab" "sub")
@@ -944,6 +1067,10 @@
   ("in power" "n power")
   ("is power" "e power")
   ("is superscript" "e superscript")
+  ("exponent and" "exponent n")
+  ("exponent in" "exponent n")
+  ("superscript and" "superscript n")
+  ("superscript in" "superscript n")
   ("e xquire" "x square")
   ("exquire" "x square")
   ("by square" "pi square")

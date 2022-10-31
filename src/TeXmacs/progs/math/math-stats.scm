@@ -376,7 +376,7 @@
           ((and prev* up
                 (tm-in? up '(around around*))
                 (tree-empty? (tm-ref up 1)))
-           (tmconcat prev* `(,(tm-label up) ,(tm-ref 0) ,x ,(tm-ref 2))))
+           (tmconcat prev* `(,(tm-label up) ,(tm-ref up 0) ,x ,(tm-ref up 2))))
           (else #f))))
 
 (define (get-combine x impl)
@@ -413,7 +413,7 @@
            `(,(tm-label up) ,x))
           ((and (tm-in? up '(around around*))
                 (tree-empty? (tm-ref up 1)))
-           `(,(tm-label up) ,(tm-ref 0) ,x ,(tm-ref 2)))
+           `(,(tm-label up) ,(tm-ref up 0) ,x ,(tm-ref up 2)))
           (else #f))))
 
 (tm-define (stats-medium-contextual x)

@@ -48,7 +48,12 @@
 
   ("proof" (speech-proof))
 
-  ("find" (interactive-search)))
+  ("find" (interactive-search))
+  ("search" (interactive-search))
+  ("previous match" (search-next-match #f))
+  ("next match" (search-next-match #t))
+  ("spell" (interactive-spell))
+  ("replace" (interactive-replace)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Further adjustments
