@@ -342,15 +342,6 @@
 (tm-define (best-implicit l r)
   (if (not l) :none (best-permitted-implicit l r (permitted-implicit))))
 
-(tm-define (insert-implicit impl x)
-  (cond ((== impl :multiply)    (insert "*") (insert x))
-        ((== impl :space)       (insert " ") (insert x))
-        ((== impl :comma)       (insert ",") (insert x))
-        ((== impl :apply)       (insert `(around "(" ,x ")")))
-        ((== impl :brackets)    (insert `(around "[" ,x "]")))
-        ((== impl :subscript)   (insert `(rsub ,x)))
-        ((== impl :superscript) (insert `(rsup ,x)))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Fine-grained contextual preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
