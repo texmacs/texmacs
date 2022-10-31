@@ -43,6 +43,11 @@
   ("start document" (go-start))
   ("end document" (go-end))
 
+  ("cell left" (cell-left))
+  ("cell right" (cell-right))
+  ("cell up" (cell-up))
+  ("cell down" (cell-down))
+
   ("delete tag" (remove-structure-upwards))
   ("delete inner" (remove-structure-upwards))
   ("delete innermost" (remove-structure-upwards))
