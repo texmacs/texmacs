@@ -28,6 +28,7 @@
 (define speech-can-extend-brackets? #f)
 
 (tm-define (speech-cleanup)
+  ;;(display* "Cleanup\n")
   (speech-exit-all)
   (set! speech-letter-mode (list))
   (set! speech-operator-mode :off)
@@ -36,6 +37,7 @@
   (former))
 
 (tm-define (speech-pause)
+  ;;(display* "Pause\n")
   (speech-exit-all)
   (set! speech-letter-mode (list))
   (set! speech-operator-mode :off)
@@ -155,19 +157,19 @@
       (speech-exit-innermost)
       (structured-exit-right)))
 
-(define script-list
-  (list :subscript :short-subscript :superscript :weak-superscript))
+(define short-list
+  (list :short-over :short-subscript :short-superscript))
 
-(define 2d-list
-  (list :subscript :short-subscript :superscript :weak-superscript
-        :over :short-over :sqrt :wide))
-
-(tm-define (speech-exit-scripts)
-  (when (and (nnull? speech-state) (in? (car speech-state) script-list))
+(tm-define (speech-exit-short)
+  (when (and (nnull? speech-state) (in? (car speech-state) short-list))
     (when (in? (car speech-state) (list :short-subscript :short-superscript))
       (set! speech-can-extend-script? #t))
     (speech-exit-innermost)
-    (speech-exit-scripts)))
+    (speech-exit-short)))
+
+(define 2d-list
+  (list :subscript :short-subscript :superscript :short-superscript
+        :over :short-over :sqrt :wide))
 
 (tm-define (speech-exit-2d)
   (when (and (nnull? speech-state) (in? (car speech-state) 2d-list))
@@ -364,7 +366,7 @@
     (cond ((string-number? prev) (insert x))
           ((!= impl :none) (speech-insert-implicit impl x))
           (else (insert x)))
-    (speech-exit-scripts)))
+    (speech-exit-short)))
 
 (tm-define (speech-insert-symbol x)
   (let* ((prev (root-before-cursor))
@@ -374,7 +376,7 @@
           ((tm-in? x '(math-ss math-tt)) (speech-insert-implicit impl x))
           ((math-symbol? x) (speech-insert-implicit impl x))
           (else (insert x))))
-  (speech-exit-scripts))
+  (speech-exit-short))
 
 (tm-define (speech-insert-symbol x)
   (:require (string-number? x))
@@ -383,13 +385,16 @@
 (define weak-quit-list
   (list :over :short-over :sqrt :wide :apply :factor :brackets))
 
+(define script-list
+  (list :subscript :short-subscript :superscript :short-superscript))
+
 (define (speech-weak-exit)
   (when (nnull? speech-state)
     (with mode (car speech-state)
-      (cond ((in? mode weak-quit-list) (speech-leave))
-            ((and (not (editing-big-operator?)) (in? mode script-list))
-             (speech-leave))
-            (else (speech-weak-exit))))))
+      (when (or (in? mode weak-quit-list)
+                (and (not (editing-big-operator?)) (in? mode script-list)))
+        (speech-leave)
+        (speech-weak-exit)))))
 
 (tm-define (speech-insert-symbol x)
   (:require (math-weak-infix? x))
@@ -445,7 +450,7 @@
       ;;(display* "  inserting " x* " as " x "\n")
       (cond ((!= speech-operator-mode :off) (insert x))
             ((!= impl :none) (speech-insert-implicit impl x))
-            (else (insert x) (speech-exit-scripts)))
+            (else (insert x) (speech-exit-short)))
       ;;(display* "  inserted  " x* " as " x "\n")
       (set! speech-letter-mode* speech-letter-mode)
       (when (== speech-operator-mode :start)

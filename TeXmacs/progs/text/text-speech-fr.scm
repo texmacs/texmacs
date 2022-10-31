@@ -52,4 +52,11 @@
   ("sous paragraphe" (make-section 'subparagraph))
 
   ("preuve" (speech-proof))
-  ("démonstration" (speech-proof)))
+  ("démonstration" (speech-proof))
+
+  ("chercher" (interactive-search))
+  ("résultat précédent" (search-next-match #f))
+  ("résultat suivant" (search-next-match #t))
+  ("orthographe" (interactive-spell))
+  ("remplacer" (interactive-replace))
+  )
