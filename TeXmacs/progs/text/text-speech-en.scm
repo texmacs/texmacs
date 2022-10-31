@@ -63,3 +63,7 @@
   ("mb" "m be")
   ("nb" "n be")
   ("rb" "r be"))
+
+(speech-adjust english text
+  ("call ma" ",")
+  ("andrew" "undo"))
