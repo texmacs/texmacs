@@ -20,3 +20,23 @@
 
 (tm-define (speech-leave)
   (structured-exit-right))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Moving inside tables
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (cell-left)
+  (and-with t (tree-innermost 'table)
+    (structured-horizontal t #f)))
+
+(tm-define (cell-right)
+  (and-with t (tree-innermost 'table)
+    (structured-horizontal t #t)))
+
+(tm-define (cell-up)
+  (and-with t (tree-innermost 'table)
+    (structured-vertical t #f)))
+
+(tm-define (cell-down)
+  (and-with t (tree-innermost 'table)
+    (structured-vertical t #t)))
