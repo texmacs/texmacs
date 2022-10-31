@@ -155,14 +155,24 @@
       (speech-exit-innermost)
       (structured-exit-right)))
 
+(define script-list
+  (list :subscript :short-subscript :superscript :weak-superscript))
+
+(define 2d-list
+  (list :subscript :short-subscript :superscript :weak-superscript
+        :over :short-over :sqrt :wide))
+
 (tm-define (speech-exit-scripts)
-  (when (and (nnull? speech-state)
-             (in? (car speech-state)
-                  (list :short-over :short-subscript :short-superscript)))
+  (when (and (nnull? speech-state) (in? (car speech-state) script-list))
     (when (in? (car speech-state) (list :short-subscript :short-superscript))
       (set! speech-can-extend-script? #t))
     (speech-exit-innermost)
     (speech-exit-scripts)))
+
+(tm-define (speech-exit-2d)
+  (when (and (nnull? speech-state) (in? (car speech-state) 2d-list))
+    (speech-exit-innermost)
+    (speech-exit-2d)))
 
 (tm-define (speech-end tag)
   (while (and (inside? tag) (nnull? speech-state))
@@ -370,12 +380,16 @@
   (:require (string-number? x))
   (speech-insert-number x))
 
+(define weak-quit-list
+  (list :over :short-over :sqrt :wide :apply :factor :brackets))
+
 (define (speech-weak-exit)
   (when (nnull? speech-state)
-    (when (in? (car speech-state)
-               (list :over :short-over :sqrt :wide :apply :factor :brackets))
-      (speech-leave)
-      (speech-weak-exit))))
+    (with mode (car speech-state)
+      (cond ((in? mode weak-quit-list) (speech-leave))
+            ((and (not (editing-big-operator?)) (in? mode script-list))
+             (speech-leave))
+            (else (speech-weak-exit))))))
 
 (tm-define (speech-insert-symbol x)
   (:require (math-weak-infix? x))
@@ -807,6 +821,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Big operators and dots
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (speech-big-operator sym)
+  (speech-exit-2d)
+  (speech-start-2d)
+  (math-big-operator sym))
 
 (tm-define (editing-big-operator?)
   (and-with t (tree-innermost script-context?)
