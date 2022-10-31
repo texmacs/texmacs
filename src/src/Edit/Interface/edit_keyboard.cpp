@@ -204,6 +204,9 @@ void
 edit_interface_rep::key_press (string gkey) {
   string zero= "a"; zero[0]= '\0';
   string key= replace (gkey, "<#0>", zero);
+  if (starts (key, "pre-edit:") &&
+      speech_pre_edit &&
+      ends (key, ":" * current_speech)) return;
   if (pre_edit_mark != 0) {
     ASSERT (sh_mark == 0, "invalid shortcut during pre-edit");
     mark_cancel (pre_edit_mark);
@@ -215,6 +218,7 @@ edit_interface_rep::key_press (string gkey) {
     interrupt_shortcut ();
     archive_state ();
     handle_speech (key (7, N(key)));
+    call ("speech-pause");
     speech_pre_edit= false;
     pauses= array<string> ();
     current_speech= "";

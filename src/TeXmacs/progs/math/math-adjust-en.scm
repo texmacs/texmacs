@@ -262,6 +262,7 @@
 (speech-adjust english math
   ;; Adjust digits
   ("too" "two")
+  ("digit to" "digit two")
   
   ;; Adjust latin letters
   ("hey" "a")
@@ -884,6 +885,8 @@
   ;; Adjust subscripts
   ("sab" "sub")
   ("sup" "sub")
+  ("sub script" "subscript")
+  ("super script" "superscript")
   ("subscripted" "subscript")
   ("subscription" "subscript")
   ("subscripts" "subscript")
@@ -936,6 +939,7 @@
   ("power and" "power n")
   ("power in" "power n")
   ("powers e" "power z")
+  ("to power" "two power")
   ("empower" "m power")
   ("in power" "n power")
   ("is power" "e power")
@@ -973,6 +977,8 @@
   ("find over" "phi over")
   ("fine over" "phi over")
   ("fios for" "phi over")
+  ("overbay" "over b")
+  ("overbee" "over b")
   ("overby" "over b")
   ("oversee" "over c")
   ("overall" "over o")
