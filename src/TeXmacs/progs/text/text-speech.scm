@@ -288,6 +288,7 @@
   (set! S (list->tmstring (clean-text-speech (tmstring->list S))))
   (set! S (string-replace S "a.m." "AM"))
   (set! S (string-replace S "p.m." "PM"))
+  (set! S (speech-rewrite (speech-language) 'text S))
   ;;(display* "Text speech " (cork->utf8 S) "\n")
   (let* ((prev1 (before-cursor))
          (prev2 (before-before-cursor))
