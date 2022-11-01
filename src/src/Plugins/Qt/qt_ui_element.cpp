@@ -111,14 +111,14 @@ public:
  * glue widget
  ******************************************************************************/
 
-QPixmap 
+QTMPixmapOrImage 
 qt_glue_widget_rep::render () {
   QSize s = to_qsize (w, h);
-  QPixmap pxm(s);
+  QTMPixmapOrImage pxm (s);
     //cout << "glue (" << s.width() << "," << s.height() << ")\n";
   pxm.fill (Qt::transparent);
-  QPaintDevice *pd = static_cast<QPaintDevice*>(&pxm);
-  
+  QPaintDevice *pd;
+  pd = static_cast<QPaintDevice*>(pxm.rep);
   if (pd && !pxm.isNull()) {
     qt_renderer_rep* ren = the_qt_renderer();
     ren->begin (pd);
@@ -148,7 +148,7 @@ qt_glue_widget_rep::render () {
     ren->end();
   }
   
-  return pxm;  
+  return pxm;
 }
 
 QAction *
@@ -163,7 +163,8 @@ qt_glue_widget_rep::as_qaction() {
   icon.addPixmap (render(), QIcon::Normal, QIcon::On);
   col = old_col;
 #else
-  icon.addPixmap (render ());
+  if (!headless_mode)
+    icon.addPixmap (*(render ().QPixmap_ptr ()));
 #endif
   a->setIcon (icon);  
   a->setEnabled (false);
@@ -174,7 +175,8 @@ QWidget *
 qt_glue_widget_rep::as_qwidget() {
   QLabel* qw = new QLabel();
   qw->setText (to_qstring (as_string (col)));
-  qw->setPixmap (render ());
+  if (!headless_mode)
+    qw->setPixmap (*(render ().QPixmap_ptr ()));
   qw->setMinimumSize (to_qsize (w, h));
     //  w->setEnabled(false);
   qwid = qw;
