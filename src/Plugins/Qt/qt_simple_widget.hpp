@@ -93,7 +93,7 @@ protected:
   
   static hashset<pointer> all_widgets;
   rectangles   invalid_regions;
-  QPixmap      backingPixmap;  
+  QPixmap*     backingPixmap;  
   QPoint       backing_pos;
 
 

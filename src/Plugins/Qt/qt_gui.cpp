@@ -197,7 +197,8 @@ needing_update (false)
 /* important routines */
 void
 qt_gui_rep::get_extents (SI& width, SI& height) {
-  coord2 size = from_qsize (QApplication::desktop()->size());
+  coord2 size = headless_mode ? coord2 (480, 320)
+    : from_qsize (QApplication::desktop()->size());
   width  = size.x1;
   height = size.x2;
 }
@@ -503,7 +504,11 @@ void gui_interpose (void (*r) (void)) { the_interpose_handler = r; }
 
 void
 qt_gui_rep::event_loop () {
-  QCoreApplication* app = QApplication::instance ();
+  QCoreApplication* app;
+  if (headless_mode)
+    app = QCoreApplication::instance ();
+  else
+    app = QApplication::instance ();
   update();
     //need_update();
   app->exec();
@@ -875,7 +880,7 @@ qt_gui_rep::update () {
   
   if (waiting_events.size() > 0) needing_update = true;
   if (interrupted)               needing_update = true;
-  if (nr_windows == 0)           qApp->quit();
+  if (!headless_mode && nr_windows == 0) qApp->quit();
   
   time_t delay = delayed_commands.lapse - texmacs_time();
   if (needing_update) delay = 0;

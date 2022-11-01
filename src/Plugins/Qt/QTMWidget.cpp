@@ -253,7 +253,7 @@ QTMWidget::paintEvent (QPaintEvent* event) {
   for (int i = 0; i < rects.count(); ++i) {
     QRect qr = rects.at (i);
     p.drawPixmap (QRect (qr.x(), qr.y(), qr.width(), qr.height()),
-                  tm_widget()->backingPixmap,
+                  *(tm_widget()->backingPixmap),
                   QRect (retina_factor * qr.x(),
                          retina_factor * qr.y(),
                          retina_factor * qr.width(),
