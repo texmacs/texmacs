@@ -8187,6 +8187,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(get-graphical-pixel)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_pixel> which returns
+    <scm|double>.
+  </explain>
+
+  <\explain>
     <scm|(get-graphical-object)>
 <explain-synopsis|no synopsis>
   <|explain>
