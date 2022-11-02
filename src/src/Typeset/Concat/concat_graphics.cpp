@@ -488,13 +488,13 @@ project2 (array<point> a) {
 void
 concater_rep::typeset_calligraphy (tree t, path ip) {
 BEGIN_MAGNIFY
-  if (N(t) < 2 || N(t[N(t)-1]) < 1) typeset_error (t, ip);
+  if (N(t) < 4 || N(t[N(t)-1]) < 1) typeset_error (t, ip);
   else {
     int i, n= N(t), k=N(t[n-1]);
-    array<point> a(n-1);
+    array<point> a(2);
     for (i=0; i<=1; i++)
       a[i]= env->as_point (env->exec (t[i]));
-    array<path> ipa(n-1);
+    array<path> ipa(2);
     for (i=0; i<=1; i++)
       ipa[i]= descend (ip, i);
     array<point> b(k);

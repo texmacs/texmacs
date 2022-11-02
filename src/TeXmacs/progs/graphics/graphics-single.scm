@@ -475,6 +475,9 @@
          (p (number->string p*))
          (pen (cadr (graphics-mode)))
          (cal `(,pen (point ,x ,y) (point ,x ,y)
+                     (hidden "")
+                     (ink-meta ,(create-unique-id)
+                               ,(number->string (get-graphical-pixel)))
                      (tuple (tuple ,x ,y ,t ,p))))
          (o (graphics-enrich cal)))
     (graphics-store-state 'start-create)
@@ -504,7 +507,7 @@
   (:require (tm-func? obj 'calligraphy))
   ;; Temporarily redefine; we should decide on
   ;; the arity of the 'calligraphy' tag
-  (>= (tm-arity obj) 3))
+  (>= (tm-arity obj) 4))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Don't dispatch certain actions on textual arguments of graphical macros
