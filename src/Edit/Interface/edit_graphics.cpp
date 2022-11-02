@@ -225,6 +225,12 @@ edit_graphics_rep::get_y () {
   return gr_y;
 }
 
+double
+edit_graphics_rep::get_pixel () {
+  edit_env env= get_typesetter ()->env;
+  return env->fr->inverse_scalar (env->pixel);
+}
+
 frame
 edit_graphics_rep::find_frame (bool last) {
   path gp= graphics_path ();

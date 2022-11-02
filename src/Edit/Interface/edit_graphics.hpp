@@ -37,6 +37,7 @@ public:
   tree   get_graphics ();
   double get_x ();
   double get_y ();
+  double get_pixel ();
   frame  find_frame (bool last= false);
   grid   find_grid ();
   void   find_limits (point& lim1, point& lim2);
