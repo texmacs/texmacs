@@ -588,6 +588,8 @@ BEGIN_MAGNIFY
       array<point> oval= oval_profile (mx * w, my * w, an, 37);
       array<point> cal = calligraphy (b, oval);
       cal << cal[0];
+      double tol= env->fr->inverse_scalar (0.5 * env->pixel);
+      cal= simplify_polyline (cal, tol);
       c= env->fr (recontrol (poly_segment (cal, ipb), a, ipa));
       color col= env->pen->get_color ();
       cb= curve_box (ip, c, 1.0, pencil (col, 0),
