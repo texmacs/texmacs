@@ -843,11 +843,11 @@
 
 (tm-define (make-graphics-over)
   (if (selection-active-any?)
-      (with g `(with "gr-mode" (tuple "hand-edit" "line") (graphics))
+      (with g `(with "gr-mode" (tuple "hand-edit" "penscript") (graphics))
         (with selection (selection-tree)
           (clipboard-cut "graphics background")
           (insert-go-to `(draw-over ,selection ,g "2cm") '(1 2 1))))
-      (with g `(with "gr-mode" (tuple "hand-edit" "line") (graphics))
+      (with g `(with "gr-mode" (tuple "hand-edit" "penscript") (graphics))
         (insert-go-to `(draw-over "" ,g "2cm") '(1 2 1)))))
 
 (tm-define (make-anim l)
