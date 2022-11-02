@@ -559,9 +559,15 @@ BEGIN_MAGNIFY
       c= env->fr (recontrol (poly_segment (project2 (b), ipb), a, ipa));
     }
     else if (method == "bezier") {
+      double gpixel= env->fr->inverse_scalar (0.5 * env->pixel);
+      double vpixel= gpixel;
+      if (is_compound (t[2], "ink-meta") && N(t[2]) >= 2 && is_double (t[2][1]))
+        vpixel= as_double (t[2][1]);
       strength= max (0.5, strength);
-      array<point> bez= alt_bezier_fit (b, (int) round (10 * strength));
-      b= rectify_bezier (bez, env->fr->inverse_scalar (0.5 * env->pixel));
+      //array<point> bez= alt_bezier_fit (b, (int) round (10 * strength));
+      array<point> bez= bezier_fit (b, 2.0 * strength * vpixel);
+      if (N(bez) == 1) bez << bez[0] << bez[0] << bez[0];
+      b= rectify_bezier (bez, gpixel);
       bez= project2 (bez);
       c= env->fr (recontrol (poly_bezier (bez, ipb, false, false), a, ipa));
     }
