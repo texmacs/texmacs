@@ -162,6 +162,64 @@ alt_bezier_fit (array<point> a, int pack_size) {
 }
 
 /******************************************************************************
+* Rectification of Bezier curves
+******************************************************************************/
+
+static array<point>
+project2 (array<point> a) {
+  int i, n= N(a);
+  array<point> r (n);
+  for (i=0; i<n; i++)
+    r[i]= point (a[i][0], a[i][1]);
+  return r;
+}
+
+static point
+eval_bezier (array<point> bez, double t) {
+  if (t == 0.0) return bez[0];
+  if (t == 1.0) return bez[3];
+  double t2= t * t;
+  double t3= t * t2;
+  double u = 1.0 - t;
+  double u2= u * u;
+  double u3= u * u2;
+  return u3 * bez[0] + (3.0*u2*t) * bez[1] + (3.0*u*t2) * bez[2] + t3 * bez[3];
+}
+
+void
+rectify_bezier (array<point>& r, array<point> bez,
+                double t0, double t1, double eps) {
+  array<point> pbez= project2 (bez);
+  point  p0= eval_bezier (pbez, t0);
+  point  p1= eval_bezier (pbez, 0.75 * t0 + 0.25 * t1);
+  point  p2= eval_bezier (pbez, 0.5 * t0 + 0.5 * t1);
+  point  p3= eval_bezier (pbez, 0.25 * t0 + 0.75 * t1);
+  point  p4= eval_bezier (pbez, t1);
+  double d1= seg_dist (p0, p4, p1);
+  double d2= seg_dist (p0, p4, p2);
+  double d3= seg_dist (p0, p4, p3);
+  if (d1 < eps && d2 < eps && d3 < eps)
+    r << eval_bezier (bez, t1);
+  else {
+    rectify_bezier (r, bez, t0, 0.5 * (t0 + t1), eps);
+    rectify_bezier (r, bez, 0.5 * (t0 + t1), t1, eps);
+  }
+}
+
+array<point>
+rectify_bezier (array<point> bez, double eps) {
+  array<point> r;
+  r << bez[0];
+  for (int i=0; i+3 < N(bez); i+=3) {
+    array<point> stroke= range (bez, i, i+4);
+    //for (int j=1; j<=10; j++)
+    //  r << eval_bezier (stroke, 0.1 * j);
+    rectify_bezier (r, stroke, 0.0, 1.0, eps);
+  }
+  return r;
+}
+
+/******************************************************************************
 * Gaussian smoothing
 ******************************************************************************/
 
@@ -314,6 +372,11 @@ calligraphy (array<point> a, array<point> pen) {
       prev_k  = k;
       prev_phi= phi;
     }
+  }
+  if (N(r) == 0) {
+    for (int i=0; i<N(pen); i++)
+      r << a[0] + pen[i];
+    r << a[0] + pen[0];
   }
   return r;
 }

@@ -466,6 +466,16 @@ BEGIN_MAGNIFY
 END_MAGNIFY
 }
 
+void
+concater_rep::typeset_fill (tree t, path ip) {
+  (void) t; (void) ip;
+  print (test_box (ip));
+}
+
+/******************************************************************************
+* Handwriting
+******************************************************************************/
+
 static array<point>
 project2 (array<point> a) {
   int i, n= N(a);
@@ -497,6 +507,8 @@ BEGIN_MAGNIFY
       b << copy (b[0]);
       ipb << ipb[0];
     }
+
+    // Adapt curve to modified end-points
     if (N(a) >= 1 && N(b) >= 1 && b[0] != a[0]) {
       point dp= a[0] - b[0];
       for (i=0; i<k; i++) {
@@ -528,6 +540,7 @@ BEGIN_MAGNIFY
       }
     }
 
+    // Enhancing the curve through bezier approximation, smoothing, ...
     tree   enhance = env->read (PEN_ENHANCE);
     string method  = "gaussian";
     double strength= 1.0;
@@ -545,14 +558,16 @@ BEGIN_MAGNIFY
       b= smoothen (b, (int) round (10 * strength));
       c= env->fr (recontrol (poly_segment (project2 (b), ipb), a, ipa));
     }
-    else if (method == "bezier" && !is_func (t, CALLIGRAPHY)) {
+    else if (method == "bezier") {
       strength= max (0.5, strength);
       array<point> bez= alt_bezier_fit (b, (int) round (10 * strength));
+      b= rectify_bezier (bez, env->fr->inverse_scalar (0.5 * env->pixel));
       bez= project2 (bez);
       c= env->fr (recontrol (poly_bezier (bez, ipb, false, false), a, ipa));
     }
     else c= env->fr (recontrol (poly_segment (project2 (b), ipb), a, ipa));
 
+    // Application of a calligraphic pen
     box cb;
     if (is_func (t, CALLIGRAPHY)) {
       tree style= env->read (PEN_STYLE);
@@ -592,12 +607,6 @@ BEGIN_MAGNIFY
     */
   }
 END_MAGNIFY
-}
-
-void
-concater_rep::typeset_fill (tree t, path ip) {
-  (void) t; (void) ip;
-  print (test_box (ip));
 }
 
 /******************************************************************************

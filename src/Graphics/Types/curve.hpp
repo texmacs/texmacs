@@ -91,6 +91,7 @@ point closest (curve f, point p);
 
 array<point> bezier_fit (array<point> a, int pack_size);
 array<point> alt_bezier_fit (array<point> a, int pack_size);
+array<point> rectify_bezier (array<point> bez, double eps);
 array<point> refine (array<point> a, int factor);
 array<point> smoothen (array<point> a, int width);
 array<point> oval_profile (double rx, double ry, double a, int nr);
