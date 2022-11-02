@@ -475,7 +475,6 @@
          (p (number->string p*))
          (pen (cadr (graphics-mode)))
          (cal `(,pen (point ,x ,y) (point ,x ,y)
-                     (hidden "")
                      (ink-meta ,(create-unique-id)
                                ,(number->string (get-graphical-pixel)))
                      (tuple (tuple ,x ,y ,t ,p))))
