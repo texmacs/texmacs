@@ -15,13 +15,43 @@
 #include "curve.hpp"
 
 /******************************************************************************
+* Utilities
+******************************************************************************/
+
+static array<point>
+project2 (array<point> a) {
+  int i, n= N(a);
+  array<point> r (n);
+  for (i=0; i<n; i++)
+    r[i]= point (a[i][0], a[i][1]);
+  return r;
+}
+
+static array<double>
+projectt (array<point> a) {
+  int i, n= N(a);
+  array<double> r (n);
+  for (i=0; i<n; i++)
+    r[i]= a[i][2];
+  return r;
+}
+
+static double
+length (array<point> a) {
+  double sum= 0.0;
+  for (int i=0; i+1 < N(a); i++)
+    sum += norm (a[i+1] - a[i]);
+  return sum;
+}
+
+/******************************************************************************
 * Approximations by poly-Bezier curves using least square fitting
 * For this first method, each inner node comes with potentially distinct
 * incoming and outgoing slopes
 ******************************************************************************/
 
 matrix<double>
-bezier_matrix (int segments, array<double> times) {
+std_bezier_matrix (int segments, array<double> times) {
   int rows= N(times), cols= 3*segments + 1;
   matrix<double> m (0.0, rows, cols);
   for (int i=0; i<rows; i++) {
@@ -40,10 +70,10 @@ bezier_matrix (int segments, array<double> times) {
 }
 
 array<point>
-bezier_fit (array<point> a, int segments, array<double> times) {
+std_bezier_fit (array<point> a, int segments, array<double> times) {
   ASSERT (N(a) == N(times) && N(a) > 0, "invalid number of points");
   int dim= N(a[0]), nr= N(times);
-  matrix<double> m  = bezier_matrix (segments, times);
+  matrix<double> m  = std_bezier_matrix (segments, times);
   matrix<double> tm = transpose (m);
   matrix<double> cov= invert (tm * m);
   matrix<double> b (0.0, nr, dim);
@@ -62,7 +92,7 @@ bezier_fit (array<point> a, int segments, array<double> times) {
 }
 
 array<point>
-bezier_fit (array<point> a, int pack_size) {
+std_bezier_fit (array<point> a, int pack_size) {
   ASSERT (N(a) > 0, "invalid number of points");
   ASSERT (pack_size >= 7, "invalid pack size");
   if (N(a) <= 3) {
@@ -81,7 +111,7 @@ bezier_fit (array<point> a, int pack_size) {
   array<double> times;
   for (int i=0; i<N(a); i++)
     times << (1.0 * i) / (N(a) - 1.0);
-  return bezier_fit (a, segments, times);
+  return std_bezier_fit (a, segments, times);
 }
 
 /******************************************************************************
@@ -162,17 +192,11 @@ alt_bezier_fit (array<point> a, int pack_size) {
 }
 
 /******************************************************************************
-* Rectification of Bezier curves
+* Yet another Bezier fitting algorithm
 ******************************************************************************/
 
-static array<point>
-project2 (array<point> a) {
-  int i, n= N(a);
-  array<point> r (n);
-  for (i=0; i<n; i++)
-    r[i]= point (a[i][0], a[i][1]);
-  return r;
-}
+array<point> bezier_fit_sub (array<point> a, double eps);
+
 
 static point
 eval_bezier (array<point> bez, double t) {
@@ -185,6 +209,133 @@ eval_bezier (array<point> bez, double t) {
   double u3= u * u2;
   return u3 * bez[0] + (3.0*u2*t) * bez[1] + (3.0*u*t2) * bez[2] + t3 * bez[3];
 }
+
+static array<point>
+bezier_fit_sub (array<point> a, double eps, int break_at) {
+  array<point> b1= bezier_fit_sub (range (a, 0, break_at + 1), eps);
+  array<point> b2= bezier_fit_sub (range (a, break_at, N(a)), eps);
+  return append (b1, range (b2, 1, N(b2)));
+}
+
+array<point>
+bezier_fit_sub (array<point> a, double eps) {
+  // scale the timing
+  if (a[0][2] != 0.0 || a[N(a)-1][2] != 1.0) {
+    double dt= a[N(a)-1][2] - a[0][2];
+    array<point> b;
+    double u= 1.0 / dt;
+    for (int i=0; i<N(a); i++) {
+      point p= copy (a[i]);
+      p[2]= u * (a[i][2] - a[0][2]);
+      b << p;
+    }
+    b[0][2]= 0.0;
+    b[N(b)-1][2]= 1.0;
+    array<point> bez= bezier_fit_sub (b, eps);
+    for (int i=0; i<N(bez); i++)
+      bez[i][2]= a[0][2] + dt * bez[i][2];
+    return bez;
+  }
+
+  // break curves that bend too wildly
+  array<point> pa= project2 (a);
+  double len= length (pa);
+  if (len == 0.0) return range (a, 0, 1);
+  if (len > 3 * norm (a[N(a)-1] - a[0])) {
+    int    best_i= 0;
+    double best_l= 0.0;
+    for (int i=1; i<N(a)-1; i++) {
+      double l= norm (a[i] - a[0]) + norm (a[i] - a[N(a)-1]);
+      if (l > best_l) {
+        best_i= i;
+        best_l= l;
+      }
+    }
+    return bezier_fit_sub (a, eps, best_i);
+  }
+
+  // actual fitting
+  array<point> bez;
+  if (N(a) == 2) {
+    point mid= 0.5 * (a[0] + a[1]);
+    bez << a[0] << mid << copy (mid) << a[1];
+    return bez;
+  }
+  else if (N(a) == 3) {
+    array<point> b;
+    point m1= 0.2 * a[0] + 0.8 * a[1];
+    point m2= 0.8 * a[1] + 0.2 * a[2];
+    b << a[0] << m1 << m2 << a[2];
+    bez= std_bezier_fit (b, 1, projectt (b));
+    return bez;
+  }
+  else bez= std_bezier_fit (a, 1, projectt (a));
+
+  // break at worst outlier, if one
+  int    worst_i= -1;
+  double worst_d= 0.0;
+  for (int i=1; i+1 < N(a); i++) {
+    point bez_i= eval_bezier (bez, a[i][2]);
+    double d= norm (range (bez_i, 0, 2) - range (a[i], 0, 2));
+    if (d > worst_d) {
+      worst_i= i;
+      worst_d= d;
+    }
+  }
+  if (worst_d < eps) return bez;
+  else return bezier_fit_sub (a, eps, worst_i);
+}
+
+array<point>
+bezier_fit (array<point> a, double eps, double advance) {
+  // advance = 0.0 -> preserve times from a
+  // advance = 1.0 -> replace by equally spaced times
+  // 0.0 < advance < 1.0 -> blend between two methods
+  
+  ASSERT (N(a) > 0, "non-empty array expected");
+  ASSERT (N(a[0]) >= 0, "points should be at least two-dimensional");
+  if (N(a) == 1) return a;
+
+  // reduce to case when we have a time coordinate and a non-zero time elapse
+  if (N(a[0]) == 2 || a[N(a)-1][2] == a[0][2]) {
+    array<point> b;
+    double u= 1.0 / (N(a) - 1);
+    for (int i=0; i<N(a); i++) {
+      point p= copy (a[i]);
+      if (N(p) == 2) p << u * i;
+      else p[2]= u * i;
+      b << p;
+    }
+    b[0][2]= 0.0;
+    b[N(b)-1][2]= 1.0;
+    array<point> bez= bezier_fit_sub (b, eps);
+    if (N(a[0]) == 2) return project2 (bez);
+    for (int i=0; i<N(bez); i++)
+      bez[i][2]= a[0][2];
+    return bez;
+  }
+
+  // ensure a minimal rate of time movement for numerical stability
+  double dt= a[N(a)-1][2] - a[0][2];
+  array<point> b;
+  double u= (1.0 - advance) / dt;
+  double x= advance / (N(a) - 1);
+  for (int i=0; i<N(a); i++) {
+    point p= copy (a[i]);
+    p[2]= u * (a[i][2] - a[0][2]) + x * i;
+    b << p;
+  }
+  b[0][2]= 0.0;
+  b[N(b)-1][2]= 1.0;
+  array<point> bez= bezier_fit_sub (b, eps);
+  for (int i=0; i<N(bez); i++)
+    bez[i][2]= a[0][2] + dt * bez[i][2];
+  return bez;
+}
+
+/******************************************************************************
+* Rectification of Bezier curves
+******************************************************************************/
 
 void
 rectify_bezier (array<point>& r, array<point> bez,
