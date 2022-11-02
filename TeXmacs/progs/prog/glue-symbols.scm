@@ -1048,6 +1048,7 @@
 "in-graphics?"
 "get-graphical-x"
 "get-graphical-y"
+"get-graphical-pixel"
 "get-graphical-object"
 "set-graphical-object"
 "invalidate-graphical-object"

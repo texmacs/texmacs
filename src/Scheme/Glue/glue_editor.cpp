@@ -2789,6 +2789,15 @@ tmg_get_graphical_y () {
 }
 
 tmscm
+tmg_get_graphical_pixel () {
+  // TMSCM_DEFER_INTS;
+  double out= get_current_editor()->get_pixel ();
+  // TMSCM_ALLOW_INTS;
+
+  return double_to_tmscm (out);
+}
+
+tmscm
 tmg_get_graphical_object () {
   // TMSCM_DEFER_INTS;
   tree out= get_current_editor()->get_graphical_object ();
@@ -3837,6 +3846,7 @@ initialize_glue_editor () {
   tmscm_install_procedure ("in-graphics?",  tmg_in_graphicsP, 0, 0, 0);
   tmscm_install_procedure ("get-graphical-x",  tmg_get_graphical_x, 0, 0, 0);
   tmscm_install_procedure ("get-graphical-y",  tmg_get_graphical_y, 0, 0, 0);
+  tmscm_install_procedure ("get-graphical-pixel",  tmg_get_graphical_pixel, 0, 0, 0);
   tmscm_install_procedure ("get-graphical-object",  tmg_get_graphical_object, 0, 0, 0);
   tmscm_install_procedure ("set-graphical-object",  tmg_set_graphical_object, 1, 0, 0);
   tmscm_install_procedure ("invalidate-graphical-object",  tmg_invalidate_graphical_object, 0, 0, 0);
