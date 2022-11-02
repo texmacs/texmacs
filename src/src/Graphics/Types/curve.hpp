@@ -89,6 +89,7 @@ curve recontrol (curve c, array<point> a, array<path> cip);
 array<point> intersection (curve f, curve g, point p0, double eps);
 point closest (curve f, point p);
 
+array<point> simplify_polyline (array<point> a, double eps);
 array<point> std_bezier_fit (array<point> a, int pack_size);
 array<point> alt_bezier_fit (array<point> a, int pack_size);
 array<point> bezier_fit (array<point> a, double eps, double advance= 1.0);

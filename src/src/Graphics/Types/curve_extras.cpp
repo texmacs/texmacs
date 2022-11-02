@@ -45,6 +45,40 @@ length (array<point> a) {
 }
 
 /******************************************************************************
+* Simplification of polyline curves
+******************************************************************************/
+
+static bool
+can_simplify (array<point> a, int i1, int i2, double eps) {
+  for (int i= i1+1; i < i2; i++)
+    if (seg_dist (a[i1], a[i2], a[i]) > eps)
+      return false;
+  return true;
+}
+
+array<point>
+simplify_polyline (array<point> a, double eps) {
+  array<point> pa= project2 (a);
+  array<point> r;
+  r << a[0];
+  int last= 0, n= N(a);
+  while (last < n-1) {
+    int step= 1;
+    while (last + (2*step) < n && can_simplify (a, last, last + 2*step, eps))
+      step= step << 1;
+    int next= last + step;
+    while (step != 1) {
+      step= step >> 1;
+      if (next + step < n && can_simplify (pa, last, next + step, eps))
+        next += step;
+    }
+    r << a[next];
+    last= next;
+  }
+  return r;
+}
+
+/******************************************************************************
 * Approximations by poly-Bezier curves using least square fitting
 * For this first method, each inner node comes with potentially distinct
 * incoming and outgoing slopes
