@@ -282,6 +282,7 @@
   (in-graphics? inside_graphics (bool))
   (get-graphical-x get_x (double))
   (get-graphical-y get_y (double))
+  (get-graphical-pixel get_pixel (double))
   (get-graphical-object get_graphical_object (tree))
   (set-graphical-object set_graphical_object (void tree))
   (invalidate-graphical-object invalidate_graphical_object (void))

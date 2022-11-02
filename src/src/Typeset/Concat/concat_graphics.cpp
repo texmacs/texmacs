@@ -492,10 +492,10 @@ BEGIN_MAGNIFY
   else {
     int i, n= N(t), k=N(t[n-1]);
     array<point> a(n-1);
-    for (i=0; i<n-1; i++)
+    for (i=0; i<=1; i++)
       a[i]= env->as_point (env->exec (t[i]));
     array<path> ipa(n-1);
-    for (i=0; i<n-1; i++)
+    for (i=0; i<=1; i++)
       ipa[i]= descend (ip, i);
     array<point> b(k);
     for (i=0; i<k; i++)
