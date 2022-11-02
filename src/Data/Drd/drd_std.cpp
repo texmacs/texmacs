@@ -710,9 +710,17 @@ init_std_drd () {
   init (CSMOOTH, "csmooth",
         repeat (3, 1) -> returns_graphical () -> point_type (0));
   init (PENSCRIPT, "penscript",
-        var_repeat (1, 1, BIFORM) -> returns_graphical () -> point_type (1));
+        fixed (4, 0, DETAILED) -> returns_graphical () ->
+        point_type (0) -> name (0, "start") ->
+        point_type (1) -> name (1, "end") ->
+        adhoc (2) -> name (2, "metadata") ->
+        adhoc (3) -> name (3, "ink"));
   init (CALLIGRAPHY, "calligraphy",
-        var_repeat (1, 1, BIFORM) -> returns_graphical () -> point_type (1));
+        fixed (4, 0, DETAILED) -> returns_graphical () ->
+        point_type (0) -> name (0, "start") ->
+        point_type (1) -> name (1, "end") ->
+        adhoc (2) -> name (2, "metadata") ->
+        adhoc (3) -> name (3, "ink"));
   init (FILL, "fill",
         repeat (1, 1));                       // Not yet implemented
   init (IMAGE, "image",
