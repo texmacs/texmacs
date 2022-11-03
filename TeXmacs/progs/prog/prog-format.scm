@@ -17,7 +17,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-format scheme
-  (:name "Scheme Source Code")
+  (:name "Scheme source code")
   (:suffix "scm"))
 
 (define (texmacs->scheme x . opts)

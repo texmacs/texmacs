@@ -16,7 +16,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-format scilab
-  (:name "Scilab Source Code")
+  (:name "Scilab source code")
   (:suffix "sce" "sci"))
 
 (define (texmacs->scilab x . opts)

@@ -18,7 +18,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-format mathemagix
-  (:name "Mathemagix Source Code")
+  (:name "Mathemagix source code")
   (:suffix "mmx" "mmh"))
 
 (define (texmacs->mathemagix x . opts)

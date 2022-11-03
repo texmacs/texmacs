@@ -18,7 +18,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-format python
-  (:name "Python Source Code")
+  (:name "Python source code")
   (:suffix "py"))
 
 (define (texmacs->python x . opts)

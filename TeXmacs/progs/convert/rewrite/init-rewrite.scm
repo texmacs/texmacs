@@ -76,7 +76,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-format code
-  (:name "Source Code"))
+  (:name "source code"))
 
 (tm-define (texmacs->code t . enc)
   (if (null? enc) (set! enc (list (get-locale-charset))))
