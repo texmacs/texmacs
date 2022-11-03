@@ -1,8 +1,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : mathemagix-format.scm
-;; DESCRIPTION : Mathemagix file format
+;; MODULE      : scilab-format.scm
+;; DESCRIPTION : Scilab file format
 ;; COPYRIGHT   : (C) 2022  Darcy Shen, Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
@@ -11,33 +11,33 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (mathemagix-format))
+(texmacs-module (scilab-format))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Mathemagix source files
+;; Scilab source files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-format mathemagix
-  (:name "Mathemagix source code")
-  (:suffix "mmx" "mmh"))
+(define-format scilab
+  (:name "Scilab source code")
+  (:suffix "sce" "sci"))
 
-(define (texmacs->mathemagix x . opts)
+(define (texmacs->scilab x . opts)
   (texmacs->verbatim x (acons "texmacs->verbatim:encoding" "SourceCode" '())))
 
-(define (mathemagix->texmacs x . opts)
+(define (scilab->texmacs x . opts)
   (code->texmacs x))
 
-(define (mathemagix-snippet->texmacs x . opts)
+(define (scilab-snippet->texmacs x . opts)
   (code-snippet->texmacs x))
 
-(converter texmacs-tree mathemagix-document
-  (:function texmacs->mathemagix))
+(converter texmacs-tree scilab-document
+  (:function texmacs->scilab))
 
-(converter mathemagix-document texmacs-tree
-  (:function mathemagix->texmacs))
+(converter scilab-document texmacs-tree
+  (:function scilab->texmacs))
   
-(converter texmacs-tree mathemagix-snippet
-  (:function texmacs->mathemagix))
+(converter texmacs-tree scilab-snippet
+  (:function texmacs->scilab))
 
-(converter mathemagix-snippet texmacs-tree
-  (:function mathemagix-snippet->texmacs))
+(converter scilab-snippet texmacs-tree
+  (:function scilab-snippet->texmacs))
