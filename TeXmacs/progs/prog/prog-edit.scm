@@ -83,8 +83,8 @@
 
 (define (string-bracket-find* s pos inc br ibr level)
   ;(display* "find: pos= " pos ", level= " level "\n")
-  (cond ((or (< pos 0) (>= pos (string-length s))) (- -1 (abs level)))
-        ((and (== level 1) (== (string-ref s pos) br)) 
+  (cond ((or (< pos 0) (>= pos (string-length s))) (- level 1000))
+        ((and (== level 0) (== (string-ref s pos) br))
          ;(display* "returning at " pos "\n")
          pos)
         ((== (string-ref s pos) br)
@@ -100,22 +100,22 @@
 
 (tm-define (string-bracket-level s pos inc br ibr)
   (with ret (string-bracket-find* s pos inc br ibr 0)
-    (if (< ret 0) (- -1 ret)
+    (if (< ret 0) (+ ret 1000)
         (string-bracket-level s (+ ret inc) inc br ibr))))
 
 (tm-define (string-bracket-forward s pos br ibr)
-  (:synopsis "find previous bracket @br with inverse @ibr in @s at @pos")
+  (:synopsis "find next bracket @br with inverse @ibr in @s at @pos")
   (string-bracket-find s pos 1 br ibr 0))
 
 (tm-define (string-bracket-backward s pos br ibr)
-  (:synopsis "find next bracket @br with inverse @ibr in @s at @pos")
+  (:synopsis "find previous bracket @br with inverse @ibr in @s at @pos")
   (string-bracket-find s pos -1 br ibr 0))
 
 (define (program-bracket-find row col inc br ibr level)
   (and-with s (program-row row)
     (with ret (string-bracket-find* s col inc br ibr level)   
       (if (>= ret 0) (cons row ret)
-	  (with level* (- -1 ret)
+	  (with level* (+ ret 1000)
 	    (and-with s* (program-row (+ row inc))
 	      (with col* (if (> inc 0) 0 (- (string-length s*) 1))
 		(program-bracket-find (+ row inc) col* inc
@@ -124,7 +124,7 @@
 (tm-define (program-previous-match row br ibr)
   (:synopsis "find matching opening row for @row and bracket @br")
   (let* ((s (program-row row))
-         (last (- (string-length s) 1)))    
+         (last (- (string-length s) 1)))
     (if (not s) row
         (with ret (string-bracket-level s last -1 br ibr)
           (if (== ret 0) row
