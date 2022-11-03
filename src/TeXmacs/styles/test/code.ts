@@ -1,4 +1,4 @@
-<TeXmacs|2.1.1>
+<TeXmacs|2.1.2>
 
 <style|source>
 
@@ -8,7 +8,7 @@
       <src-style-file|code|1.0>
 
       <\src-purpose>
-        The style for code.
+        The style for source code.
       </src-purpose>
 
       <\src-copyright|2022>
@@ -30,7 +30,7 @@
 
   <assign|par-par-sep|0fn>
 
-  <assign|page-medium|automatic>
+  <assign|page-medium|papyrus>
 </body>
 
 <\initial>
