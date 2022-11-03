@@ -254,7 +254,10 @@
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting programming modes\n")
-(lazy-format (prog prog-format) cpp scheme scala java python julia)
+(lazy-format (prog prog-format) scheme)
+(lazy-format (code-format) cpp julia scala java json csv)
+(lazy-format (mathemagix-format) mathemagix)
+(lazy-format (python-format) python)
 (lazy-keyboard (prog prog-kbd) in-prog?)
 (lazy-menu (prog prog-menu) prog-format-menu prog-format-icons
 	   prog-menu prog-icons)
