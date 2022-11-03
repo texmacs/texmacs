@@ -27,8 +27,8 @@
   (regression-test-group
    "format-get-name" "string"
    format-get-name :none
-   (test "python format" "python" "Python Source Code")
-   (test "scala format" "scala" "Scala Source Code")
+   (test "python format" "python" "Python source code")
+   (test "scala format" "scala" "Scala source code")
    (test "no such format" "no-such-format" #f)))
 
 (define (regtest-format-from-suffix)

@@ -18,7 +18,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-format cpp
-  (:name "C++ Source Code")
+  (:name "C++ source code")
   (:suffix "cpp" "cc" "hpp" "hh"))
 
 (define (texmacs->cpp x . opts)
@@ -48,7 +48,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-format julia
-  (:name "Julia Source Code")
+  (:name "Julia source code")
   (:suffix "jl"))
   
 (define (texmacs->julia x . opts)
@@ -78,7 +78,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-format java
-  (:name "Java Source Code")
+  (:name "Java source code")
   (:suffix "java"))
 
 (define (texmacs->java x . opts)
@@ -108,7 +108,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-format scala
-  (:name "Scala Source Code")
+  (:name "Scala source code")
   (:suffix "scala" "sc" "sbt"))
 
 (define (texmacs->scala x . opts)
