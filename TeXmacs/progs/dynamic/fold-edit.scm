@@ -1118,21 +1118,13 @@
     (with u (slide-get-document t)
       (slide-set-bg-color-bis u col))))
 
-(tm-define (swipe-left)
-  (:require (or (inside? 'screens) (inside? 'slideshow)))
-  (screens-switch-to :previous))
+(tm-define (swipe-horizontal t forward?)
+  (:require (dynamic-context? t))
+  (screens-switch-to (if forward? :next :previous)))
 
-(tm-define (swipe-right)
-  (:require (or (inside? 'screens) (inside? 'slideshow)))
-  (screens-switch-to :next))
-
-(tm-define (swipe-up)
-  (:require (or (inside? 'screens) (inside? 'slideshow)))
-  (dynamic-traverse-buffer :previous))
-
-(tm-define (swipe-down)
-  (:require (or (inside? 'screens) (inside? 'slideshow)))
-  (dynamic-traverse-buffer :next))
+(tm-define (swipe-vertical t down?)
+  (:require (dynamic-context? t))
+  (dynamic-traverse-buffer (if down? :next :previous)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Editing slideshows in expanded form
