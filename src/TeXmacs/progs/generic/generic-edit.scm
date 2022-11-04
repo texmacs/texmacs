@@ -218,10 +218,25 @@
 ;; Basic gestures
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (swipe-left) (noop))
-(tm-define (swipe-right) (noop))
-(tm-define (swipe-up) (noop))
-(tm-define (swipe-down) (noop))
+(tm-define (swipe-horizontal t forward?)
+  (and-with p (tree-outer t)
+    (swipe-horizontal p down?)))
+
+(tm-define (swipe-vertical t down?)
+  (and-with p (tree-outer t)
+    (swipe-vertical p down?)))
+
+(tm-define (swipe-left)
+  (swipe-horizontal (focus-tree) #f))
+
+(tm-define (swipe-right)
+  (swipe-horizontal (focus-tree) #t))
+
+(tm-define (swipe-up)
+  (swipe-vertical (focus-tree) #f))
+
+(tm-define (swipe-down)
+  (swipe-vertical (focus-tree) #t))
 
 (tm-define pinch-modified? #f)
 (tm-define pinch-current-scale 1.0)
