@@ -808,8 +808,8 @@ box_rep::anim_invalid () {
 ******************************************************************************/
 
 tree
-box_rep::action (tree t, SI x, SI y, SI delta) {
-  (void) x; (void) y; (void) delta; (void) t;
+box_rep::message (tree t, SI x, SI y, rectangles& rs) {
+  (void) x; (void) y; (void) delta; (void) t; (void) rs;
   return "";
 }
 

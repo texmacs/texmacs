@@ -148,12 +148,13 @@ struct scrollbar_box_rep: public composite_box_rep {
     composite_box_rep (ip), vertical (vertical2), span (span2), t (t2) {
       insert (b, 0, 0); position (); finalize (); }
   operator tree () { return tuple ("scrollbar", (tree) bs[0]); }
-  tree action (tree type, SI x, SI y, SI delta);
+  tree message (tree type, SI x, SI y, rectangles& rs);
 };
 
 tree
-scrollbar_box_rep::action (tree type, SI x, SI y, SI delta) {
-  (void) type; (void) delta;
+scrollbar_box_rep::message (tree type, SI x, SI y, rectangles& rs) {
+  (void) rs;
+  if (type != "click" && type != "drag") return "";
   tree u= t;
   if (vertical) {
     double p= 100.0;
@@ -171,12 +172,11 @@ scrollbar_box_rep::action (tree type, SI x, SI y, SI delta) {
     p= max (0.0, min (100.0, p));
     u= tree (as_string (p) * "%");
   }
-  if (u != t && is_accessible (obtain_ip (t)))
-    {
-      object fun= symbol_object ("tree-set");
-      object cmd= list_object (fun, t, u);
-      exec_delayed (scheme_cmd (cmd));
-    }
+  if (u != t && is_accessible (obtain_ip (t))) {
+    object fun= symbol_object ("tree-set");
+    object cmd= list_object (fun, t, u);
+    exec_delayed (scheme_cmd (cmd));
+  }
   return "done";
 }
 

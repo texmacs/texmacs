@@ -78,6 +78,28 @@ concater_rep::typeset_case (tree t, path ip) {
   marker (descend (ip, 1));
 }
 
+void
+concater_rep::typeset_dynamic_case (tree t, path ip) {
+  // This method must be kept consistent with edit_env_rep::exec(tree)
+  // in ../Env/env_exec.cpp
+  if (N(t)<2) {
+    typeset_executable (t, ip);
+    return;
+  }
+  int i, n= N(t);
+  array<tree> conds;
+  array<box>  bs;
+  for (i=0; i<(n-1); i+=2) {
+    conds << env->exec (t[i]);
+    bs << typeset_as_concat (env, t[i+1], descend (ip, i+1));
+  }
+  if (i<n) bs << typeset_as_concat (env, t[i], descend (ip, i));
+  box b= case_box (ip, conds, bs);
+  marker (descend (ip, 0));
+  print (b);
+  marker (descend (ip, 1));
+}
+
 /******************************************************************************
 * Typesetting linking primitives
 ******************************************************************************/

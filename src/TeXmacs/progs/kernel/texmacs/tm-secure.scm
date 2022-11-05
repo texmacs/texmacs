@@ -33,7 +33,8 @@
   caaaar caaadr caadar caaddr cadaar cadadr caddar cadddr
   cdaaar cdaadr cdadar cdaddr cddaar cddadr cdddar cddddr
   cons list append length reverse
-  texmacs-version texmacs-version-release*)
+  texmacs-version texmacs-version-release*
+  display display*)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Secure evaluation

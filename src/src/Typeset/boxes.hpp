@@ -143,7 +143,7 @@ public:
 				      int i, int i1, int i2);
   virtual int  subnr ();
   virtual box  subbox (int i);
-  virtual tree action (tree t, SI x, SI y, SI delta);
+  virtual tree message (tree t, SI x, SI y, rectangles& rs);
   virtual void loci (SI x, SI y, SI d, list<string>& ids, rectangles& rs);
   virtual void display_links (renderer ren);
   virtual void position_at (SI x, SI y, rectangles& change_log);

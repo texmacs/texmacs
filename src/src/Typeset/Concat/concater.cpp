@@ -517,6 +517,9 @@ concater_rep::typeset (tree t, path ip) {
   case CASE:
     typeset_case (t, ip);
     break;
+  case DYNAMIC_CASE:
+    typeset_dynamic_case (t, ip);
+    break;
   case WHILE:
   case FOR_EACH:
     typeset_executable (t, ip);

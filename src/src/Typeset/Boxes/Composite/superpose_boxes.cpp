@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : superpose.cpp
 * DESCRIPTION: Superpositions of arrays of boxes
-* COPYRIGHT  : (C) 2005  Henri Lesourd
+* COPYRIGHT  : (C) 2005  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE

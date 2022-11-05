@@ -348,6 +348,8 @@ init_std_drd () {
         regular (1));
   init (CASE, "case",
         repeat (2, 1));
+  init (DYNAMIC_CASE, "dynamic-case",
+        repeat (2, 1));
   init (WHILE, "while",
         fixed (1, 1, BIFORM) -> boolean (0) -> regular (1));
   init (FOR_EACH, "for-each",
