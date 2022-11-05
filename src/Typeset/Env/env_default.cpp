@@ -118,6 +118,20 @@ initialize_default_env () {
   env (PROG_FONT_SHAPE)  = "right";     // the font shape in prog mode
   env (PROG_SESSION)     = "default";   // computer algebra session name
 
+  env (KEYWORD_COLOR)    = "#8020c0";   // syntax highlight color for keywords
+  env (CONSTANT_COLOR)   = "#2060c0";   // ,, color for special constants
+  env (NUMBER_COLOR)     = "#2060c0";   // ,, color for numbers
+  env (STRING_COLOR)     = "#a06040";   // ,, color for strings
+  env (OPERATOR_COLOR)   = "";          // ,, color for operators
+  env (COMMENT_COLOR)    = "brown";     // ,, color for comments
+  env (PREPROCESSOR_COLOR) = "#400040"; // ,, color for preprocessor directives
+  env (MODIFIER_COLOR)   = "#8020c0";   // ,, color for declaration modifiers
+  env (DECLARATION_COLOR)= "#0000e0";   // ,, color for declarations
+  env (MACRO_COLOR)      = "#00A0A0";   // ,, color for macro declarations
+  env (FUNCTION_COLOR)   = "#606060";   // ,, color for functions
+  env (_TYPE_COLOR)      = "dark green";// ,, color for types
+  env (MISC_LEXEME_COLOR)= "";          // ,, color for miscellaneous lexemes
+
   env (PAR_MODE)         = "justify";   // outline method
   env (PAR_FLEXIBILITY)  = "1000";      // threshold for switching to ragged
   env (PAR_HYPHEN)       = "professional"; // quality of hyphenation

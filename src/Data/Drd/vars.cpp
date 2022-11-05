@@ -99,6 +99,20 @@ string PROG_FONT_SERIES ("prog-font-series");
 string PROG_FONT_SHAPE ("prog-font-shape");
 string PROG_SESSION ("prog-session");
 
+string KEYWORD_COLOR ("keyword-color");
+string CONSTANT_COLOR ("constant-color");
+string NUMBER_COLOR ("number-color");
+string STRING_COLOR ("string-color");
+string OPERATOR_COLOR ("operator-color");
+string COMMENT_COLOR ("comment-color");
+string PREPROCESSOR_COLOR ("preprocessor-color");
+string MODIFIER_COLOR ("modifier-color");
+string DECLARATION_COLOR ("declaration-color");
+string MACRO_COLOR ("macro-color");
+string FUNCTION_COLOR ("function-color");
+string _TYPE_COLOR ("type-color");
+string MISC_LEXEME_COLOR ("misc-lexeme-color");
+
 /******************************************************************************
 * Environment variables for paragraphs
 ******************************************************************************/

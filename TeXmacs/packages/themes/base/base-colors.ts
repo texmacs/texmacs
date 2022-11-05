@@ -1,4 +1,4 @@
-<TeXmacs|1.99.13>
+<TeXmacs|2.1.2>
 
 <style|source>
 
@@ -27,6 +27,12 @@
   </active*>
 
   <new-theme|colors|bg-color|monochrome-bg-color|color|math-color|strong-color|heading-color|locus-color|visited-color>
+
+  <new-theme|gui-colors|cursor-color|math-cursor-color|focus-color|context-color|selection-color|table-selection-color|match-color|clickable-color|correct-color|incorrect-color>
+
+  <new-theme|highlight-colors|keyword-color|constant-color|number-color|string-color|operator-color|comment-color|preprocessor-color|modifier-color|declaration-color|macro-color|function-color|type-color|misc-lexeme-color>
+
+  <copy-theme|all-colors|colors|gui-colors|highlight-colors>
 
   <\active*>
     <\src-comment>
