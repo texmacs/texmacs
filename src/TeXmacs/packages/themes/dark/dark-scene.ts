@@ -100,6 +100,28 @@
 
   <assign|dark-scene-type-color|#98c080>
 
+  <assign|dark-scene-defined-color|#d0c0a8>
+
+  <assign|dark-scene-alt-keyword-color|#60f0c0>
+
+  <assign|dark-scene-alt-constant-color|#f0c0e0>
+
+  <\active*>
+    <\src-comment>
+      Colors for sessions
+    </src-comment>
+  </active*>
+
+  <assign|dark-scene-generic-prompt-color|brown>
+
+  <assign|dark-scene-generic-input-color|#c0c0ff>
+
+  <assign|dark-scene-generic-error-color|#ff4040>
+
+  <assign|scheme-prompt-color|#60e060>
+
+  <assign|scheme-input-color|white>
+
   \;
 </body>
 

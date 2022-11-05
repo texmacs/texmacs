@@ -111,7 +111,10 @@ string DECLARATION_COLOR ("declaration-color");
 string MACRO_COLOR ("macro-color");
 string FUNCTION_COLOR ("function-color");
 string _TYPE_COLOR ("type-color");
+string DEFINED_COLOR ("defined-color");
 string MISC_LEXEME_COLOR ("misc-lexeme-color");
+string ALT_KEYWORD_COLOR ("alt-keyword-color");
+string ALT_CONSTANT_COLOR ("alt-constant-color");
 
 /******************************************************************************
 * Environment variables for paragraphs

@@ -101,6 +101,7 @@ extern string KEYWORD_COLOR;
 extern string CONSTANT_COLOR;
 extern string NUMBER_COLOR;
 extern string STRING_COLOR;
+extern string SYMBOL_COLOR;
 extern string OPERATOR_COLOR;
 extern string COMMENT_COLOR;
 extern string PREPROCESSOR_COLOR;
@@ -109,7 +110,10 @@ extern string DECLARATION_COLOR;
 extern string MACRO_COLOR;
 extern string FUNCTION_COLOR;
 extern string _TYPE_COLOR;
+extern string DEFINED_COLOR;
 extern string MISC_LEXEME_COLOR;
+extern string ALT_KEYWORD_COLOR;
+extern string ALT_CONSTANT_COLOR;
 
 extern string PAR_MODE;
 extern string PAR_FLEXIBILITY;

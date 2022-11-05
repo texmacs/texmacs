@@ -58,15 +58,15 @@ initialize_default_env () {
   env (LENGTH_MODE)      = "magnified"; // length units under magnification
 
   env (CURSOR_COLOR)     = "red";       // cursor color in user interface
-  env (MATH_CURSOR_COLOR)= "#B0F";      // cursor color in math mode
-  env (FOCUS_COLOR)      = "#0FF";      // color of focus rectangles
+  env (MATH_CURSOR_COLOR)= "#b0f";      // cursor color in math mode
+  env (FOCUS_COLOR)      = "#0ff";      // color of focus rectangles
   env (CONTEXT_COLOR)    = "#00555518"; // color of context rectangles
   env (SELECTION_COLOR)  = "red";       // color of selections
-  env (TABLE_SELECTION_COLOR)= "#B0F";  // color of selections of table cells
-  env (MATCH_COLOR)      = "#EB0";      // color of search matches
-  env (CLICKABLE_COLOR)  = "#20A060";   // color to indicate clickable loci
-  env (CORRECT_COLOR)    = "#70D070";   // indicate semantical correctness
-  env (INCORRECT_COLOR)  = "#D09050";   // indicate semantical incorrectness
+  env (TABLE_SELECTION_COLOR)= "#b0f";  // color of selections of table cells
+  env (MATCH_COLOR)      = "#eb0";      // color of search matches
+  env (CLICKABLE_COLOR)  = "#20a060";   // color to indicate clickable loci
+  env (CORRECT_COLOR)    = "#70d070";   // indicate semantical correctness
+  env (INCORRECT_COLOR)  = "#d09050";   // indicate semantical incorrectness
 
   env (FONT)             = "roman";     // the font name in text mode
   env (FONT_FAMILY)      = "rm";        // the font family in text mode
@@ -118,19 +118,22 @@ initialize_default_env () {
   env (PROG_FONT_SHAPE)  = "right";     // the font shape in prog mode
   env (PROG_SESSION)     = "default";   // computer algebra session name
 
-  env (KEYWORD_COLOR)    = "#8020c0";   // syntax highlight color for keywords
-  env (CONSTANT_COLOR)   = "#2060c0";   // ,, color for special constants
-  env (NUMBER_COLOR)     = "#2060c0";   // ,, color for numbers
-  env (STRING_COLOR)     = "#a06040";   // ,, color for strings
-  env (OPERATOR_COLOR)   = "";          // ,, color for operators
-  env (COMMENT_COLOR)    = "brown";     // ,, color for comments
-  env (PREPROCESSOR_COLOR) = "#400040"; // ,, color for preprocessor directives
-  env (MODIFIER_COLOR)   = "#8020c0";   // ,, color for declaration modifiers
-  env (DECLARATION_COLOR)= "#0000e0";   // ,, color for declarations
-  env (MACRO_COLOR)      = "#00A0A0";   // ,, color for macro declarations
-  env (FUNCTION_COLOR)   = "#606060";   // ,, color for functions
-  env (_TYPE_COLOR)      = "dark green";// ,, color for types
-  env (MISC_LEXEME_COLOR)= "";          // ,, color for miscellaneous lexemes
+  env (KEYWORD_COLOR)     = "#8020c0";   // syntax highlight color for keywords
+  env (CONSTANT_COLOR)    = "#2060c0";   // syntax highlight color for constants
+  env (NUMBER_COLOR)      = "#2060c0";   // ,, color for numbers
+  env (STRING_COLOR)      = "#a06040";   // ,, color for strings
+  env (OPERATOR_COLOR)    = "";          // ,, color for operators
+  env (COMMENT_COLOR)     = "brown";     // ,, color for comments
+  env (PREPROCESSOR_COLOR)= "#400040";   // ,, color for preprocessor directives
+  env (MODIFIER_COLOR)    = "#8020c0";   // ,, color for declaration modifiers
+  env (DECLARATION_COLOR) = "#0000e0";   // ,, color for declarations
+  env (MACRO_COLOR)       = "#00A0A0";   // ,, color for macro declarations
+  env (FUNCTION_COLOR)    = "#606060";   // ,, color for functions
+  env (_TYPE_COLOR)       = "dark green";// ,, color for types
+  env (DEFINED_COLOR)     = "#204080";   // ,, color for defined identifiers
+  env (MISC_LEXEME_COLOR) = "";          // ,, color for miscellaneous lexemes
+  env (ALT_KEYWORD_COLOR) = "#309090";   // alternative color for keywords
+  env (ALT_CONSTANT_COLOR)= "#800080";   // alternative color for constants
 
   env (PAR_MODE)         = "justify";   // outline method
   env (PAR_FLEXIBILITY)  = "1000";      // threshold for switching to ragged
