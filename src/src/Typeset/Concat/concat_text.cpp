@@ -55,16 +55,27 @@ concater_rep::typeset_math_macro
   marker (descend (ip, p2));
 }
 
+static inline color
+apply_alpha (color c, int alpha) {
+  if (alpha == 255) return c;
+  int r, g, b, a;
+  get_rgb_color (c, r, g, b, a);
+  return rgb_color (r, g, b, alpha);
+}
+
 void
 concater_rep::typeset_colored_substring
   (string s, path ip, int pos, string col)
 {
-  color c= (col == ""? env->pen->get_color (): named_color (col));
-  if (env->alpha != 255) {
-    int r, g, b, a;
-    get_rgb_color (c, r, g, b, a);
-    c= rgb_color (r, g, b, env->alpha);
+  color c;
+  if (col == "")
+    c= apply_alpha (env->pen->get_color (), env->alpha);
+  else if (env->provides (col)) {
+    tree t= env->read (col);
+    if (t == "") c= apply_alpha (env->pen->get_color (), env->alpha);
+    else c= named_color (as_string (t), env->alpha);
   }
+  else c= named_color (col, env->alpha);
   box b= text_box (ip, pos, s, env->fn, c);
   a << line_item (STRING_ITEM, OP_TEXT, b, HYPH_INVALID, env->lan);
 }

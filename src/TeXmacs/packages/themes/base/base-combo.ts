@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|2.1.2>
 
 <style|source>
 
@@ -38,7 +38,7 @@
 
   <new-theme|poster-ornament-shape|title-shape|framed-shape|alternate-shape>
 
-  <copy-theme|base|colors|deco|titles|session|session-skin|poster|poster-ornament-shape>
+  <copy-theme|base|all-colors|deco|titles|session|session-skin|poster|poster-ornament-shape>
 
   <\active*>
     <\src-comment>

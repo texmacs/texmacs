@@ -12,6 +12,7 @@
 #include "analyze.hpp"
 #include "impl_language.hpp"
 #include "scheme.hpp"
+
 #define COLOR_MARKUP "#500d04"
 
 static void parse_number (string s, int& pos);
@@ -70,7 +71,7 @@ mathemagix_language_rep::hyphenate (
 
 static void
 mathemagix_color_setup_constants (hashmap<string, string> & t) {
-  string c= "#2060c0";
+  string c= "constant-color";
   t ("cpp_flags")= c;
   t ("cpp_libs")= c;
   t ("cpp_preamble")= c;
@@ -93,7 +94,9 @@ mathemagix_color_setup_constants (hashmap<string, string> & t) {
 
 static void
 mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
-  string c= "#8020c0"; string d= "modifier"; string e= "class";
+  string c= "keyword-color";
+  string d= "modifier-color";
+  string e= "class";
   t ("abstract")= c;
   t ("alias")= c;
   t ("and")= c;
@@ -231,8 +234,8 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
 
 static void
 mathemagix_color_setup_otherlexeme (hashmap<string, string>& t) {
-  string c= "black";
-  t ("==<gtr>")= c; 
+  string c= "misc-lexeme-color";
+  t ("==<gtr>")= c;
   t ("==")= c;
   t (":=")= c;
   t ("+=")= c;
@@ -308,7 +311,7 @@ mathemagix_language_rep::parse_keyword (hashmap<string,string>& t, string s, int
   if (is_digit (s[i])) return;
   while ((i<N(s)) && belongs_to_identifier (s[i])) i++;
   string r= s (pos, i);
-  if (t->contains (r) && t(r)=="#8020c0") { pos=i; return; }
+  if (t->contains (r) && t(r)=="keyword-color") { pos=i; return; }
 }
 
 void
@@ -318,7 +321,7 @@ mathemagix_language_rep::parse_modifier (hashmap<string,string>& t, string s, in
   if (is_digit (s[i])) return;
   while ((i<N(s)) && belongs_to_identifier (s[i])) i++;
   string r= s (pos, i);
-  if (t->contains (r) && t(r)=="modifier") { pos=i; return; }
+  if (t->contains (r) && t(r)=="modifier-color") { pos=i; return; }
 }
 
 void
@@ -349,7 +352,7 @@ mathemagix_language_rep::parse_constant (hashmap<string,string>& t, string s, in
   if (is_digit (s[i])) return;
   while ((i<N(s)) && belongs_to_identifier (s[i])) i++;
   string r= s (pos, i);
-  if (t->contains (r) && t(r)=="#2060c0") { pos=i; return; }
+  if (t->contains (r) && t(r)=="constant-color") { pos=i; return; }
 }
 
 static void
@@ -357,7 +360,7 @@ parse_other_lexeme (hashmap<string,string>& t, string s, int& pos) {
   int i;
   for (i=12; i>=1; i--) {
     string r=s(pos,pos+i);
-    if (t->contains(r) && t(r)=="black") {
+    if (t->contains(r) && t(r)=="misc-lexeme-color") {
       pos=pos+i; return; }
   }
 }
@@ -499,7 +502,7 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
       if (opos<pos) break;
       parse_end_comment (s, pos);
       if (opos<pos) { 
-        if (pos>start) {return "brown";} 
+        if (pos>start) { return "comment-color"; } 
         else break;
       }
       pos++;
@@ -539,7 +542,7 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
       }
       parse_modifier (colored, s, pos);
       if (opos<pos) {
-        type="keyword";
+        type="modifier";
         backquote= false;
         postfix= false;
         possible_future_type= false;
@@ -652,7 +655,7 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
         break;
       }
       if (opos<pos && possible_type==true)
-        return "dark green";
+        return "type-color";
       if (opos<pos && after_backquote)  
         return none;
       backquote= false;
@@ -663,13 +666,14 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
     while (false);
   }
   while (pos<=start);
-  if (possible_type) return "dark green";
-  if (type=="string") return "#a06040";
-  if (type=="comment") return "brown";
-  if (type=="keyword" && !after_backquote) return "#8020c0";
+  if (possible_type) return "type-color";
+  if (type=="string") return "string-color";
+  if (type=="comment") return "comment-color";
+  if (type=="keyword" && !after_backquote) return "keyword-color";
+  if (type=="modifier" && !after_backquote) return "modifier-color";
   if (type=="other_lexeme") return none;
-  if (type=="constant") return "#2060c0";
-  if (type=="number") return "#2060c0";
+  if (type=="constant") return "constant-color";
+  if (type=="number") return "number-color";
   if (type=="no_declare_type") return none;
   if (type=="declare_type") return none;
   if (type=="left_parenthesis") return none;
@@ -699,7 +703,8 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
     }
     while (opos!=pos);
     if (!possible_function) {
-      if (type=="identifier") {return none;} else return COLOR_MARKUP;
+      if (type=="identifier") { return none;}
+      else return COLOR_MARKUP;
     }
     do {
       do {
@@ -718,16 +723,17 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
         parse_declare_type (s, pos);
         if (opos<pos) break;
         parse_declare_macro(s,pos);
-        if (opos<pos) return "#00d000";
+        if (opos<pos) return "macro-color";
         parse_declare_function (s, pos);
-        if (opos<pos) return "#0000e0";
-        if (type=="identifier") {return none;} else return COLOR_MARKUP;
+        if (opos<pos) return "declaration-color";
+        if (type == "identifier") { return none; }
+        else return COLOR_MARKUP;
       }
       while (false);
     }
     while (pos<N(s));
   }
-  if ( (type=="identifier" || type=="identifier_markup") && possible_class) {
+  if ((type=="identifier" || type=="identifier_markup") && possible_class) {
     do {
       do {
         opos=pos;
@@ -745,13 +751,14 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
         parse_declare_type (s, pos);
         if (opos<pos) break;
         parse_declare_function (s, pos);
-        if (opos<pos) return "#0000e0";
-        if (type=="identifier") {return none;} else return COLOR_MARKUP;
+        if (opos<pos) return "declaration-color";
+        if (type == "identifier") { return none; }
+        else return COLOR_MARKUP;
       }
       while (false);
     }
     while (pos<N(s));
   }
-  if (type=="identifier_markup") {return COLOR_MARKUP;}
+  if (type=="identifier_markup") { return COLOR_MARKUP; }
   else return none;
 }
