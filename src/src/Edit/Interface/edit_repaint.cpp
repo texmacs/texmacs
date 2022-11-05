@@ -143,7 +143,7 @@ void
 edit_interface_rep::draw_selection (renderer ren, rectangle r) {
   rectangles visible (thicken (r, 2 * ren->pixel, 2 * ren->pixel));
   if (!is_nil (locus_rects)) {
-    color col= get_env_color (CLICKABLE_COLOR);
+    color col= mouse_clickable_color ();
     ren->set_pencil (pencil (col, ren->pixel));
     ren->draw_rectangles (locus_rects);
   }

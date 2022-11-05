@@ -835,6 +835,8 @@ drd_info_rep::arg_access (tree t, tree arg, tree env, int& type, bool& found) {
                        arg, env, type, found);
   else if ((is_func (t, IF) || is_func (t, VAR_IF)) && N(t) >= 2)
     return arg_access (t[1], arg, env, type, found);
+  else if (is_func (t, DYNAMIC_CASE) && N(t) >= 1)
+    return arg_access (t[N(t)-1], arg, env, type, found);
   else {
     int i, n= N(t);
     for (i=0; i<n; i++) {
