@@ -427,7 +427,8 @@ attach_subformat (tree t, url u, string fm) {
   if (fm == "verbatim") return t;
   if (!prog_lang_exists (fm) &&
       fm != "mathemagix" &&
-      fm != "scilab") return t;
+      fm != "scilab" &&
+      fm != "scheme") return t;
 
   hashmap<string,tree> h (UNINIT, extract (t, "initial"));
   h (MODE)= "prog";
