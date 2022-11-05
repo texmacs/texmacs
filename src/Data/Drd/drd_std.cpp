@@ -1010,6 +1010,17 @@ init_std_drd () {
   init_var (GLOBAL_AUTHOR, TYPE_STRING);
   init_var (GLOBAL_SUBJECT, TYPE_STRING);
 
+  init_var (CURSOR_COLOR, TYPE_COLOR);
+  init_var (MATH_CURSOR_COLOR, TYPE_COLOR);
+  init_var (FOCUS_COLOR, TYPE_COLOR);
+  init_var (CONTEXT_COLOR, TYPE_COLOR);
+  init_var (SELECTION_COLOR, TYPE_COLOR);
+  init_var (TABLE_SELECTION_COLOR, TYPE_COLOR);
+  init_var (MATCH_COLOR, TYPE_COLOR);
+  init_var (CLICKABLE_COLOR, TYPE_COLOR);
+  init_var (CORRECT_COLOR, TYPE_COLOR);
+  init_var (INCORRECT_COLOR, TYPE_COLOR);
+
   init_var (FONT, TYPE_STRING);
   init_var (FONT_FAMILY, TYPE_STRING);
   init_var (FONT_SERIES, TYPE_STRING);

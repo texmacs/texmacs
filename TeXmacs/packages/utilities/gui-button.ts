@@ -43,7 +43,7 @@
     </src-comment>
   </active*>
 
-  <assign|action-button|<macro|x|cmd|<style-with|src-compact|none|<dynamic-case|click|<with|locus-color|preserve|<action|<render-button-pressed|<arg|x>>|<arg|cmd>|<arg|x>>>|mouse-over|<render-button-hover|<arg|x>>|<render-button-normal|<arg|x>>>>>>
+  <assign|action-button|<macro|x|cmd|<with|locus-color|preserve|clickable-color|#00000000|<style-with|src-compact|none|<dynamic-case|click|<action|<render-button-pressed|<arg|x>>|<arg|cmd>|<arg|x>>|mouse-over|<render-button-hover|<arg|x>>|<render-button-normal|<arg|x>>>>>>>
 
   <assign|xaction-button|<macro|x|cmd|<action|<render-button-pressed|<arg|x>>|<arg|cmd>|<arg|x>>>>
 

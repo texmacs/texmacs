@@ -296,6 +296,8 @@ public:
   virtual int      get_init_int (string var_name) = 0;
   virtual double   get_env_double (string var_name) = 0;
   virtual double   get_init_double (string var_name) = 0;
+  virtual color    get_env_color (string var_name) = 0;
+  virtual color    get_init_color (string var_name) = 0;
   virtual language get_env_language () = 0;
   virtual int      get_page_count () = 0;
   virtual SI       get_page_width (bool deco) = 0;

@@ -36,6 +36,17 @@ extern string GLOBAL_AUTHOR;
 extern string GLOBAL_SUBJECT;
 extern string LENGTH_MODE;
 
+extern string CURSOR_COLOR;
+extern string MATH_CURSOR_COLOR;
+extern string FOCUS_COLOR;
+extern string CONTEXT_COLOR;
+extern string SELECTION_COLOR;
+extern string TABLE_SELECTION_COLOR;
+extern string MATCH_COLOR;
+extern string CLICKABLE_COLOR;
+extern string CORRECT_COLOR;
+extern string INCORRECT_COLOR;
+
 extern string FONT;
 extern string FONT_FAMILY;
 extern string FONT_SERIES;
