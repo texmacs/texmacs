@@ -34,6 +34,17 @@ string GLOBAL_AUTHOR ("global-author");
 string GLOBAL_SUBJECT ("global-subject");
 string LENGTH_MODE ("length-mode");
 
+string CURSOR_COLOR ("cursor-color");
+string MATH_CURSOR_COLOR ("math-cursor-color");
+string FOCUS_COLOR ("focus-color");
+string CONTEXT_COLOR ("context-color");
+string SELECTION_COLOR ("selection-color");
+string TABLE_SELECTION_COLOR ("table-selection-color");
+string MATCH_COLOR ("match-color");
+string CLICKABLE_COLOR ("clickable-color");
+string CORRECT_COLOR ("correct-color");
+string INCORRECT_COLOR ("incorrect-color");
+
 /******************************************************************************
 * Text properties for tex, math and prog modes
 ******************************************************************************/

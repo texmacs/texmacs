@@ -57,6 +57,17 @@ initialize_default_env () {
   env (GLOBAL_SUBJECT)   = "";          // global document subject
   env (LENGTH_MODE)      = "magnified"; // length units under magnification
 
+  env (CURSOR_COLOR)     = "red";       // cursor color in user interface
+  env (MATH_CURSOR_COLOR)= "#B0F";      // cursor color in math mode
+  env (FOCUS_COLOR)      = "#0FF";      // color of focus rectangles
+  env (CONTEXT_COLOR)    = "#00555518"; // color of context rectangles
+  env (SELECTION_COLOR)  = "red";       // color of selections
+  env (TABLE_SELECTION_COLOR)= "#B0F";  // color of selections of table cells
+  env (MATCH_COLOR)      = "#EB0";      // color of search matches
+  env (CLICKABLE_COLOR)  = "#20A060";   // color to indicate clickable loci
+  env (CORRECT_COLOR)    = "#70D070";   // indicate semantical correctness
+  env (INCORRECT_COLOR)  = "#D09050";   // indicate semantical incorrectness
+
   env (FONT)             = "roman";     // the font name in text mode
   env (FONT_FAMILY)      = "rm";        // the font family in text mode
   env (FONT_SERIES)      = "medium";    // the font series in text mode

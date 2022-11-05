@@ -56,18 +56,24 @@ void
 edit_interface_rep::draw_env (renderer ren) {
   if (!full_screen) {
     if (!is_nil (env_rects)) {
-      ren->set_pencil (pencil (rgb_color (0, 85, 85, 24), ren->pixel));
+      color col= get_env_color (CONTEXT_COLOR);
+      ren->set_pencil (pencil (col, ren->pixel));
       ren->draw_rectangles (env_rects);
     }
     if (!is_nil (foc_rects)) {
-      ren->set_pencil (pencil (rgb_color (0, 255, 255), ren->pixel));
+      color col= get_env_color (FOCUS_COLOR);
+      ren->set_pencil (pencil (col, ren->pixel));
       ren->draw_rectangles (foc_rects);
     }
     if (!is_nil (sem_rects)) {
-      if (sem_correct)
-        ren->set_pencil (pencil (rgb_color (112, 208, 112), ren->pixel));
-      else
-        ren->set_pencil (pencil (rgb_color (208, 144, 80), ren->pixel));
+      if (sem_correct) {
+        color col= get_env_color (CORRECT_COLOR);
+        ren->set_pencil (pencil (col, ren->pixel));
+      }
+      else {
+        color col= get_env_color (INCORRECT_COLOR);
+        ren->set_pencil (pencil (col, ren->pixel));
+      }
       ren->draw_rectangles (sem_rects);
     }
   }
@@ -86,9 +92,9 @@ edit_interface_rep::draw_cursor (renderer ren) {
       SI x2= cu->ox + ((SI) (cu->y2 * cu->slope)), y2= cu->oy + cu->y2;
       string mode= get_env_string (MODE);
       string family, series;
-      color cuc= red;
+      color cuc= get_env_color (CURSOR_COLOR);
       if (!cu->valid) cuc= green;
-      else if (mode == "math") cuc= rgb_color (192, 0, 255);
+      else if (mode == "math") cuc= get_env_color (MATH_CURSOR_COLOR);
       ren->set_pencil (pencil (cuc, pixel + dw));
       if ((mode == "text") || (mode == "src")) {
         family= get_env_string (FONT_FAMILY);
@@ -137,11 +143,13 @@ void
 edit_interface_rep::draw_selection (renderer ren, rectangle r) {
   rectangles visible (thicken (r, 2 * ren->pixel, 2 * ren->pixel));
   if (!is_nil (locus_rects)) {
-    ren->set_pencil (pencil (rgb_color (32, 160, 96), ren->pixel));
+    color col= get_env_color (CLICKABLE_COLOR);
+    ren->set_pencil (pencil (col, ren->pixel));
     ren->draw_rectangles (locus_rects);
   }
   for (int i=0; i<N(alt_selection_rects); i++) {
-    ren->set_pencil (pencil (rgb_color (240, 192, 0), ren->pixel));
+    color col= get_env_color (MATCH_COLOR);
+    ren->set_pencil (pencil (col, ren->pixel));
 #ifdef QTTEXMACS
     ren->draw_selection (alt_selection_rects[i] & visible);
 #else
@@ -149,7 +157,8 @@ edit_interface_rep::draw_selection (renderer ren, rectangle r) {
 #endif
   }
   if (!is_nil (selection_rects)) {
-    color col= (table_selection? rgb_color (192, 0, 255): red);
+    color col= get_env_color (SELECTION_COLOR);
+    if (table_selection) col= get_env_color (TABLE_SELECTION_COLOR);
     ren->set_pencil (pencil (col, ren->pixel));
 #ifdef QTTEXMACS
     ren->draw_selection (selection_rects & visible);

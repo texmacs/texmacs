@@ -79,6 +79,8 @@ public:
   int      get_init_int (string var_name);
   double   get_env_double (string var_name);
   double   get_init_double (string var_name);
+  color    get_env_color (string var_name);
+  color    get_init_color (string var_name);
   language get_env_language ();
   int      get_page_count ();
   SI       get_page_width (bool deco);

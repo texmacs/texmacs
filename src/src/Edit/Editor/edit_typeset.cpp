@@ -595,6 +595,16 @@ edit_typeset_rep::get_init_double (string var) {
   return as_double (get_init_value (var));
 }
 
+color
+edit_typeset_rep::get_env_color (string var) {
+  return named_color (as_string (get_env_value (var)));
+}
+
+color
+edit_typeset_rep::get_init_color (string var) {
+  return named_color (as_string (get_init_value (var)));
+}
+
 language
 edit_typeset_rep::get_env_language () {
   string mode= get_env_string (MODE);
