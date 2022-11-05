@@ -193,6 +193,7 @@ public:
   virtual void custom_complete (tree t) = 0;
   virtual void mouse_any (string s, SI x, SI y, int m, time_t t,
                           array<double> d) = 0;
+  virtual bool mouse_message (string message, SI x, SI y) = 0;
   virtual void mouse_click (SI x, SI y) = 0;
   virtual bool mouse_extra_click (SI x, SI y) = 0;
   virtual void mouse_drag (SI x, SI y) = 0;

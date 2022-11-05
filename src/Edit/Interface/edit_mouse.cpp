@@ -34,9 +34,17 @@ void disable_double_clicks ();
 * Routines for the mouse
 ******************************************************************************/
 
+bool
+edit_interface_rep::mouse_message (string message, SI x, SI y) {
+  rectangles rs;
+  tree r= eb->message (message, x, y, rs);
+  if (N(rs) != 0) invalidate (rs);
+  return r != "";
+}
+
 void
 edit_interface_rep::mouse_click (SI x, SI y) {
-  if (eb->action ("click", x, y, 0) != "") return;
+  if (mouse_message ("click", x, y)) return;
   start_x= x;
   start_y= y;
   send_mouse_grab (this, true);
@@ -45,7 +53,7 @@ edit_interface_rep::mouse_click (SI x, SI y) {
 bool
 edit_interface_rep::mouse_extra_click (SI x, SI y) {
   go_to (x, y);
-  if (eb->action ("double-click", x, y, 0) != "") return true;
+  if (mouse_message ("double-click", x, y)) return true;
   go_to (x, y);
   path p1, p2;
   get_selection (p1, p2);
@@ -59,7 +67,7 @@ edit_interface_rep::mouse_extra_click (SI x, SI y) {
 void
 edit_interface_rep::mouse_adjust_selection (SI x, SI y, int mods) {
   if (inside_graphics () || mods <=1) return;
-  if (eb->action ("drag", x, y, 0) != "") return;
+  if (mouse_message ("drag", x, y)) return;
   go_to (x, y);
   end_x= x;
   end_y= y;
@@ -106,7 +114,7 @@ edit_interface_rep::mouse_adjust_selection (SI x, SI y, int mods) {
 void
 edit_interface_rep::mouse_drag (SI x, SI y) {
   if (inside_graphics ()) return;
-  if (eb->action ("drag", x, y, 0) != "") return;
+  if (mouse_message ("drag", x, y)) return;
   go_to (x, y);
   end_x  = x;
   end_y  = y;
@@ -125,7 +133,7 @@ edit_interface_rep::mouse_drag (SI x, SI y) {
 
 void
 edit_interface_rep::mouse_select (SI x, SI y, int mods, bool drag) {
-  if (eb->action ("select" , x, y, 0) != "") return;
+  if (mouse_message ("select" , x, y)) return;
   if (!is_nil (mouse_ids) && (mods & (ShiftMask+Mod2Mask)) == 0 && !drag) {
     call ("link-follow-ids", object (mouse_ids), object ("click"));
     disable_double_clicks ();
@@ -157,14 +165,14 @@ edit_interface_rep::mouse_select (SI x, SI y, int mods, bool drag) {
 
 void
 edit_interface_rep::mouse_paste (SI x, SI y) { (void) x; (void) y;
-  if (eb->action ("paste", x, y, 0) != "") return;
+  if (mouse_message ("paste", x, y)) return;
   go_to (x, y);
   selection_paste ("mouse");
 }
 
 void
 edit_interface_rep::mouse_adjust (SI x, SI y, int mods) {
-  if (eb->action ("adjust", x, y, 0) != "") return;
+  if (mouse_message ("adjust", x, y)) return;
   x= (SI) (x * magf);
   y= (SI) (y * magf);
   abs_round (x, y);
@@ -193,8 +201,8 @@ edit_interface_rep::mouse_adjust (SI x, SI y, int mods) {
 
 void
 edit_interface_rep::mouse_scroll (SI x, SI y, bool up) {
-  string action= up? string ("scroll up"): string ("scroll down");
-  if (eb->action (action , x, y, 0) != "") return;
+  string message= up? string ("scroll up"): string ("scroll down");
+  if (mouse_message (message, x, y)) return;
   SI dy= 100*PIXEL;
   if (!up) dy= -dy;
   path sp= find_innermost_scroll (eb, tp);
@@ -484,6 +492,15 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t,
     //cout << "Tremble+ " << tremble_count << LF;
   }
 
+  bool found_flag= false;
+  path old_p= eb->find_box_path (last_x, last_y, 0, false, found_flag);
+  found_flag= false;
+  path new_p= eb->find_box_path (x, y, 0, false, found_flag);
+  if (path_up (old_p) != path_up (new_p)) {
+    mouse_message ("leave", last_x, last_y);
+    mouse_message ("enter", x, y);
+  }
+
   if (!starts (type, "swipe-") && !starts (type, "pinch-") &&
       type != "scale" && type != "rotate" && type != "wheel") {
     last_x= x;
@@ -502,6 +519,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t,
     // but a cleaner solution would be welcome
     call ("link-follow-ids", object (mouse_ids), object ("mouse-over"));
   }
+  if (type == "move") mouse_message ("move", x, y);
 
   if (type == "leave")
     set_pointer ("XC_top_left_arrow");
