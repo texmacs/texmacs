@@ -42,6 +42,16 @@ edit_interface_rep::mouse_message (string message, SI x, SI y) {
   return r != "";
 }
 
+color
+edit_interface_rep::mouse_clickable_color () {
+  path sp= find_innermost_scroll (eb, tp);
+  path p= tree_path (sp, last_x, last_y, 0);
+  tree t= "#20A060";
+  if (rp <= p) t= get_env_value (CLICKABLE_COLOR, p);
+  if (!is_atomic (t)) t= "#20A060";
+  return named_color (t->label);
+}
+
 void
 edit_interface_rep::mouse_click (SI x, SI y) {
   if (mouse_message ("click", x, y)) return;
