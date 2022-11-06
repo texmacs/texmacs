@@ -135,6 +135,10 @@ snap_to_guide (point p, gr_selections sels, double eps) {
           !is_nil (sels[j]->c) &&
           (sels[i]->type != "grid-curve-point" ||
            sels[j]->type != "grid-curve-point") &&
+          (!ends (sels[i]->type, "-point") ||
+           !ends (sels[j]->type, "-border")) &&
+          (!ends (sels[i]->type, "-border") ||
+           !ends (sels[j]->type, "-point")) &&
           !ends (sels[i]->type, "handle") &&
           !ends (sels[j]->type, "handle"))
         {
