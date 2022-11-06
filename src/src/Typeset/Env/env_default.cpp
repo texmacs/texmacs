@@ -298,7 +298,8 @@ initialize_default_env () {
   env (GR_FILL_STYLE)      = "default";   // fill style for new objects
   env (GR_TEXT_AT_HALIGN)  = "default";   // horiz. alignment for new text-ats
   env (GR_TEXT_AT_VALIGN)  = "default";   // vert. alignment for new text-ats
-  env (GR_TEXT_AT_MARGIN)  = "default";   // margins for new text-ats
+  env (GR_TEXT_AT_REPULSE) = "default";   // repulsive margins for new text-ats
+  env (GR_TEXT_AT_SNAPPING)= "default";   // snapping margins for new text-ats
   env (GR_DOC_AT_VALIGN)   = "default";   // vert. al. for new document-ats
   env (GR_DOC_AT_WIDTH)    = "default";   // width of new document-ats
   env (GR_DOC_AT_HMODE)    = "default";   // width mode for new document-ats
@@ -330,7 +331,8 @@ initialize_default_env () {
   env (FILL_STYLE)       = "plain";     // fill style
   env (TEXT_AT_HALIGN)   = "left";      // horizontal text-at alignment
   env (TEXT_AT_VALIGN)   = "base";      // vertical text-at alignment
-  env (TEXT_AT_MARGIN)   = "1spc";      // margin for smart guides
+  env (TEXT_AT_REPULSE)  = "off";       // repulsive margin for white zones
+  env (TEXT_AT_SNAPPING) = "1spc";      // margin for smart guides
   env (DOC_AT_VALIGN)    = "top";       // vertical document-at alignment
   env (DOC_AT_WIDTH)     = "1par";      // width of document-ats
   env (DOC_AT_HMODE)     = "min";       // width mode for document-ats

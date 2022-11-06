@@ -146,7 +146,8 @@
   ("fill-style" . "plain")
   ("text-at-halign" . "left")
   ("text-at-valign" . "base")
-  ("text-at-margin" . "1spc")
+  ("text-at-repulse" . "off")
+  ("text-at-snapping" . "1spc")
   ("doc-at-valign" . "top")
   ("doc-at-width" . "1par")
   ("doc-at-hmode" . "min")
@@ -211,12 +212,14 @@
 (tm-define (graphics-attributes tag)
   (:require (graphical-text-tag? tag))
   (append (graphics-common-attributes)
-          '("text-at-halign" "text-at-valign" "text-at-margin")))
+          '("text-at-halign" "text-at-valign"
+            "text-at-repulse" "text-at-snapping")))
 
 (tm-define (graphics-attributes tag)
   (:require (graphical-long-text-tag? tag))
   (append (graphics-common-attributes)
-          '("text-at-halign" "doc-at-valign" "text-at-margin"
+          '("text-at-halign" "doc-at-valign"
+            "text-at-repulse" "text-at-snapping"
             "fill-color" "doc-at-width" "doc-at-hmode"
             "doc-at-ppsep" "doc-at-border" "doc-at-padding")))
 

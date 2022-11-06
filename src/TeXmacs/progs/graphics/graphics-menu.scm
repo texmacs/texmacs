@@ -557,6 +557,17 @@
   ("Center" (graphics-set-text-at-valign "center"))
   ("Top" (graphics-set-text-at-valign "top")))
 
+(menu-bind graphics-text-repulse-menu
+  ("Off" (graphics-set-text-at-repulse "off"))
+  ---
+  ("0 spc" (graphics-set-text-at-repulse "0spc"))
+  ("0.5 spc" (graphics-set-text-at-repulse "0.5spc"))
+  ("1 spc" (graphics-set-text-at-repulse "1spc"))
+  ("1.5 spc" (graphics-set-text-at-repulse "1.5spc"))
+  ("2 spc" (graphics-set-text-at-repulse "2spc"))
+  ---
+  ("Other" (interactive graphics-set-text-at-repulse)))
+
 (menu-bind graphics-doc-valign-menu
   ;;("Default" (graphics-set-doc-at-valign "default"))
   ;;---
@@ -614,8 +625,9 @@
       ("20 px" (graphics-set-snap-distance "20px"))
       ---
       ("Other" (interactive graphics-set-snap-distance)))
-  (assuming (graphics-mode-attribute? (graphics-mode) "text-at-margin")
+  (assuming (graphics-mode-attribute? (graphics-mode) "text-at-snapping")
     (-> "Text padding"
+        ("0 spc" (graphics-set-snap-text-padding "0spc"))
         ("0.5 spc" (graphics-set-snap-text-padding "0.5spc"))
         ("1 spc" (graphics-set-snap-text-padding "1spc"))
         ("1.5 spc" (graphics-set-snap-text-padding "1.5spc"))
@@ -686,7 +698,9 @@
       (assuming (graphics-mode-attribute? (graphics-mode) "doc-at-valign")
         (-> "Vertical alignment" (link graphics-doc-valign-menu))))
     (assuming (graphics-mode-attribute? (graphics-mode) "doc-at-width")
-      (-> "Text box style" (link graphics-doc-mode-menu))))
+      (-> "Text box style" (link graphics-doc-mode-menu)))
+    (assuming (graphics-mode-attribute? (graphics-mode) "text-at-repulse")
+      (-> "Repulsive padding" (link graphics-text-repulse-menu))))
   (assuming (graphics-get-anim-type)
     (-> "Status" (link graphics-anim-type-menu)))
   ---
@@ -915,7 +929,15 @@
       (let* ((w (graphics-get-property "gr-doc-at-width"))
              (m (graphics-get-property "gr-doc-at-hmode")))
         (=> (eval (doc-at-mode w m))
-            (link graphics-doc-mode-menu))))))
+            (link graphics-doc-mode-menu)))))
+  (assuming (graphics-mode-attribute? (graphics-mode) "text-at-repulse")
+    /
+    (mini #t
+      (group "Repulse:")
+      (let* ((rep (graphics-get-property "gr-text-at-repulse"))
+             (val (if (== rep "default") "off" rep)))
+        (=> (eval val)
+            (link graphics-text-repulse-menu))))))
 
 (tm-menu (graphics-snap-icons)
   (mini #t

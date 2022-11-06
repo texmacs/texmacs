@@ -143,6 +143,7 @@ initialize_default_var_type () {
   var_type (LINE_PORTION)       = Env_Line_Portion;
   var_type (TEXT_AT_HALIGN)     = Env_Text_At_Halign;
   var_type (TEXT_AT_VALIGN)     = Env_Text_At_Valign;
+  var_type (TEXT_AT_REPULSE)    = Env_Text_At_Repulse;
   var_type (DOC_AT_VALIGN)      = Env_Doc_At_Valign;
   var_type (GR_FRAME)           = Env_Frame;
   var_type (GR_GEOMETRY)        = Env_Geometry;
@@ -966,6 +967,8 @@ edit_env_rep::update () {
   line_portion= get_double (LINE_PORTION);
   text_at_halign= get_string (TEXT_AT_HALIGN);
   text_at_valign= get_string (TEXT_AT_VALIGN);
+  if (get_string (TEXT_AT_REPULSE) == "off") text_at_repulse= -1;
+  else text_at_repulse= get_length (TEXT_AT_REPULSE);
   doc_at_valign= get_string (DOC_AT_VALIGN);
 
   update_src_style ();
@@ -1106,6 +1109,10 @@ edit_env_rep::update (string s) {
     break;
   case Env_Text_At_Valign:
     text_at_valign= get_string (TEXT_AT_VALIGN);
+    break;
+  case Env_Text_At_Repulse:
+    if (get_string (TEXT_AT_REPULSE) == "off") text_at_repulse= -1;
+    else text_at_repulse= get_length (TEXT_AT_REPULSE);
     break;
   case Env_Doc_At_Valign:
     doc_at_valign= get_string (DOC_AT_VALIGN);
