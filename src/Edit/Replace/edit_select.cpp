@@ -22,8 +22,9 @@
 
 string
 selection_encode (string lan, string s) {
-  if ((lan == "croatian") || (lan == "czech") || (lan == "hungarian") ||
-      (lan == "polish") || (lan == "slovak") || (lan == "slovene"))
+  if (get_preference ("texmacs->verbatim:encoding", "auto") == "iso-8859-2" &&
+      ((lan == "croatian") || (lan == "czech") || (lan == "hungarian") ||
+       (lan == "polish") || (lan == "slovak") || (lan == "slovene")))
     return cork_to_il2 (s);
   else if (lan == "spanish")
     return spanish_to_ispanish (s);
@@ -34,8 +35,9 @@ selection_encode (string lan, string s) {
 
 string
 selection_decode (string lan, string s) {
-  if ((lan == "croatian") || (lan == "czech") || (lan == "hungarian") ||
-      (lan == "polish") || (lan == "slovak") || (lan == "slovene"))
+  if (get_preference ("verbatim->texmacs:encoding", "auto") == "iso-8859-2" &&
+      ((lan == "croatian") || (lan == "czech") || (lan == "hungarian") ||
+       (lan == "polish") || (lan == "slovak") || (lan == "slovene")))
     return il2_to_cork (s);
   else if (lan == "spanish")
     return ispanish_to_spanish (s);
