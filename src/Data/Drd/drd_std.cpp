@@ -1253,7 +1253,8 @@ init_std_drd () {
   init_var (GR_FILL_STYLE, TYPE_STRING);
   init_var (GR_TEXT_AT_HALIGN, TYPE_STRING);
   init_var (GR_TEXT_AT_VALIGN, TYPE_STRING);
-  init_var (GR_TEXT_AT_MARGIN, TYPE_LENGTH);
+  init_var (GR_TEXT_AT_REPULSE, TYPE_LENGTH);
+  init_var (GR_TEXT_AT_SNAPPING, TYPE_LENGTH);
   init_var (GR_DOC_AT_VALIGN, TYPE_STRING);
   init_var (GR_DOC_AT_WIDTH, TYPE_LENGTH);
   init_var (GR_DOC_AT_HMODE, TYPE_STRING);
@@ -1284,7 +1285,8 @@ init_std_drd () {
   init_var (FILL_STYLE, TYPE_STRING);
   init_var (TEXT_AT_HALIGN, TYPE_STRING);
   init_var (TEXT_AT_VALIGN, TYPE_STRING);
-  init_var (TEXT_AT_MARGIN, TYPE_LENGTH);
+  init_var (TEXT_AT_REPULSE, TYPE_LENGTH);
+  init_var (TEXT_AT_SNAPPING, TYPE_LENGTH);
   init_var (DOC_AT_VALIGN, TYPE_STRING);
   init_var (DOC_AT_WIDTH, TYPE_LENGTH);
   init_var (DOC_AT_HMODE, TYPE_STRING);

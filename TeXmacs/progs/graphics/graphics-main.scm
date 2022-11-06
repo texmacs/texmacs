@@ -1041,6 +1041,11 @@
   (:check-mark "*" (graphics-test-property? "gr-text-at-valign"))
   (graphics-set-property "gr-text-at-valign" val))
 
+(tm-define (graphics-set-text-at-repulse val)
+  (:argument val "Text-at repulsive margins")
+  (:check-mark "*" (graphics-test-property? "gr-text-at-repulse"))
+  (graphics-set-property "gr-text-at-repulse" val))
+
 (tm-define (graphics-set-doc-at-valign val)
   (:argument val "Document-at vertical alignment")
   (:check-mark "*" (graphics-test-property? "gr-doc-at-valign"))
@@ -1148,8 +1153,8 @@
 
 (tm-define (graphics-set-snap-text-padding val)
   (:argument val "Text padding for snapping")
-  (:check-mark "*" (graphics-test-property? "gr-text-at-margin"))
-  (graphics-set-property "gr-text-at-margin" val))
+  (:check-mark "*" (graphics-test-property? "gr-text-at-snapping"))
+  (graphics-set-property "gr-text-at-snapping" val))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Special routines for text-at boxes and its variants
@@ -1200,6 +1205,11 @@
   (:argument val "Vertical alignment")
   (:check-mark "*" (object-test-property? "text-at-valign"))
   (object-set-property "text-at-valign" val))
+
+(tm-define (object-set-text-at-repulse val)
+  (:argument val "Repulsive margin")
+  (:check-mark "*" (object-test-property? "text-at-repulse"))
+  (object-set-property "text-at-repulse" val))
 
 (tm-define (object-set-doc-at-valign val)
   (:argument val "Vertical alignment")

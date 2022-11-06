@@ -111,13 +111,21 @@ snap_to_guide (point p, gr_selections sels, double eps) {
   }
 
   sort (sels);
+  //for (int i=0; i<N(sels); i++)
+  //  cout << "snap " << sels[i]->type
+  //       << ", " << sels[i]->dist
+  //       << ", " << can_snap (sels[i]) << LF;
+  //cout << LF;
+
   gr_selection best;
   best->type= "none";
   for (int i=0; i<N(sels); i++)
     if (can_snap (sels[i])) {
       if (sels[i]->type == "grid-point")
         best= sels[i];
-      else if (is_nil (sels[i]->c))
+      else if (is_nil (sels[i]->c) &&
+               best->type != "grid-point" &&
+               !ends (best->type, "-handle"))
         return sels[i];
     }
 

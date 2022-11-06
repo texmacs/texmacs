@@ -78,7 +78,10 @@ BEGIN_MAGNIFY
   gr->set_aspect (env->read (GR_GRID_ASPECT));
   bs << grid_box (ip, gr, env->fr, env->as_length ("2ln"),
                   env->clip_lim1, env->clip_lim2);
+  array<rectangle> saved_white_zones= env->white_zones;
+  env->white_zones= array<rectangle> ();
   typeset_graphical (bs, t, ip);
+  env->white_zones= saved_white_zones;
 
   bool crop= env->get_bool (GR_AUTO_CROP);
   point lim1= env->clip_lim1;
@@ -226,7 +229,7 @@ BEGIN_MAGNIFY
     if (N(p) == 0)
       typeset_dynamic (tree (ERROR, "bad text-at"), ip);
     else {
-      SI x= (SI) p[0], y= (SI) p[1], axis= (b->h() >> 1);
+      SI ox= (SI) p[0], oy= (SI) p[1], axis= (b->h() >> 1), x= ox, y= oy;
       if (halign == "left") x -= b->x1;
       else if (halign == "center") x -= ((b->x1 + b->x2) >> 1);
       else if (halign == "right") x -= b->x2;
@@ -237,8 +240,12 @@ BEGIN_MAGNIFY
       }
       else if (valign == "center") y -= ((b->y1 + b->y2) >> 1);
       else if (valign == "top") y -= b->y2;
-      SI pad= env->get_length (TEXT_AT_MARGIN);
-      print (text_at_box (ip, b, x, y, axis, pad));
+      SI snap= env->get_length (TEXT_AT_SNAPPING);
+      print (text_at_box (ip, b, x, y, ox - x, oy - y, axis, snap));
+      SI pad = env->text_at_repulse;
+      if (pad >= 0)
+        env->white_zones << rectangle (x + b->x1 - pad, y + b->y1 - pad,
+                                       x + b->x2 + pad, y + b->y2 + pad);
     }
   }
 END_MAGNIFY
@@ -259,7 +266,7 @@ BEGIN_MAGNIFY
     if (N(p) == 0)
       typeset_dynamic (tree (ERROR, "bad math-at"), ip);
     else {
-      SI x= (SI) p[0], y= (SI) p[1], axis= (b->h() >> 1);
+      SI ox= (SI) p[0], oy= (SI) p[1], axis= (b->h() >> 1), x= ox, y= oy;
       if (halign == "left") x -= b->x1;
       else if (halign == "center") x -= ((b->x1 + b->x2) >> 1);
       else if (halign == "right") x -= b->x2;
@@ -270,7 +277,12 @@ BEGIN_MAGNIFY
       }
       else if (valign == "center") y -= ((b->y1 + b->y2) >> 1);
       else if (valign == "top") y -= b->y2;
-      print (text_at_box (ip, b, x, y, axis, env->fn->spc->def));
+      SI snap= env->get_length (TEXT_AT_SNAPPING);
+      print (text_at_box (ip, b, x, y, ox - x, oy - y, axis, snap));
+      SI pad = env->text_at_repulse;
+      if (pad >= 0)
+        env->white_zones << rectangle (x + b->x1 - pad, y + b->y1 - pad,
+                                       x + b->x2 + pad, y + b->y2 + pad);
     }
   }
 END_MAGNIFY
@@ -291,7 +303,7 @@ BEGIN_MAGNIFY
     if (N(p) == 0)
       typeset_dynamic (tree (ERROR, "bad document-at"), ip);
     else {
-      SI x= (SI) p[0], y= (SI) p[1], axis= (b->h() >> 1);
+      SI ox= (SI) p[0], oy= (SI) p[1], axis= (b->h() >> 1), x= ox, y= oy;
       if (halign == "left") x -= b->x1;
       else if (halign == "center") x -= ((b->x1 + b->x2) >> 1);
       else if (halign == "right") x -= b->x2;
@@ -302,7 +314,12 @@ BEGIN_MAGNIFY
       }
       else if (valign == "center") y -= ((b->y1 + b->y2) >> 1);
       else if (valign == "top") y -= b->y2;
-      print (text_at_box (ip, b, x, y, axis, env->fn->spc->def));
+      SI snap= env->get_length (TEXT_AT_SNAPPING);
+      print (text_at_box (ip, b, x, y, ox - x, oy - y, axis, snap));
+      SI pad = env->text_at_repulse;
+      if (pad >= 0)
+        env->white_zones << rectangle (x + b->x1 - pad, y + b->y1 - pad,
+                                       x + b->x2 + pad, y + b->y2 + pad);
     }
   }
 END_MAGNIFY
@@ -346,6 +363,66 @@ concater_rep::typeset_line_arrows (path ip) {
   return bs;
 }
 
+static inline bool
+inside (SI x, SI y, rectangle r) {
+  return r->x1 <= x && r->y1 <= y && x <= r->x2 && y <= r->y2;
+}
+
+static inline bool
+inside (point p, point lb, point rt) {
+  return lb[0] <= p[0] && lb[1] <= p[1] && p[0] <= rt[0] && p[1] <= rt[1];  
+}
+
+static double
+first_intersection (curve c, point lb, point rt) {
+  double dt= 1.0 / 16.0, t0= 0.0;
+  while (t0 + dt <= 0.999999 && inside (c (t0 + dt), lb, rt)) t0 += dt; 
+  double t1= min (1.0, t0 + dt);
+  while (t1 - t0 >= 0.000001) {
+    double mid= 0.5 * (t0 + t1);
+    point  p= c (mid);
+    if (inside (p, lb, rt)) t0= mid;
+    else t1= mid;
+  }
+  return 0.5 * (t0 + t1);
+}
+
+static double
+last_intersection (curve c, point lb, point rt) {
+  double dt= 1.0 / 16.0, t1= 1.0;
+  while (t1 - dt >= 0.000001 && inside (c (t1 - dt), lb, rt)) t1 -= dt;
+  double t0= max (0.0, t1 - dt);
+  while (t1 - t0 >= 0.000001) {
+    double mid= 0.5 * (t0 + t1);
+    point  p= c (mid);
+    if (inside (p, lb, rt)) t1= mid;
+    else t0= mid;
+  }
+  return 0.5 * (t0 + t1);
+}
+
+void
+adjust_extremities (curve& c, array<rectangle> a) {
+  if (N(a) != 0) {
+    double t0= 0.0, t1= 1.0;
+    point p0= c (0.0), p1= c (1.0);
+    SI x0= (SI) p0[0], y0= (SI) p0[1], x1= (SI) p1[0], y1= (SI) p1[1];
+    for (int i=0; i<N(a); i++)
+      if (inside (x0, y0, a[i])) {
+        point lb (a[i]->x1, a[i]->y1);
+        point rt (a[i]->x2, a[i]->y2);
+        t0= first_intersection (c, lb, rt);
+      }
+    for (int i=0; i<N(a); i++)
+      if (inside (x1, y1, a[i])) {
+        point lb (a[i]->x1, a[i]->y1);
+        point rt (a[i]->x2, a[i]->y2);
+        t1= last_intersection (c, lb, rt);
+      }
+    if (t0 + 2.0e-6 < t1) c= part (c, t0, t1);
+  }
+}
+
 void
 concater_rep::typeset_line (tree t, path ip, bool close) {
 BEGIN_MAGNIFY
@@ -367,6 +444,7 @@ BEGIN_MAGNIFY
       cip << cip[0];
     }
     curve c= env->fr (poly_segment (a, cip));
+    adjust_extremities (c, env->white_zones);
     print (curve_box (ip, c, env->line_portion, env->pen,
                       env->dash_style, env->dash_motif, env->dash_style_unit,
                       env->fill_brush, typeset_line_arrows (ip)));
@@ -392,6 +470,7 @@ BEGIN_MAGNIFY
       typeset_line (t, ip, close);
     else {
       curve c= env->fr (arc (a, cip, close));
+      adjust_extremities (c, env->white_zones);
       print (curve_box (ip, c, env->line_portion, env->pen,
                         env->dash_style, env->dash_motif, env->dash_style_unit,
                         env->fill_brush, typeset_line_arrows (ip)));
@@ -417,6 +496,7 @@ BEGIN_MAGNIFY
       cip << cip[0];
     }
     curve c= env->fr (N(a)>=3 ? spline (a, cip, close): poly_segment (a, cip));
+    adjust_extremities (c, env->white_zones);
     print (curve_box (ip, c, env->line_portion, env->pen,
                       env->dash_style, env->dash_motif, env->dash_style_unit,
                       env->fill_brush, typeset_line_arrows (ip)));
@@ -459,6 +539,7 @@ BEGIN_MAGNIFY
       c= poly_bezier (a, cip, simple, closed);
     }
     c= env->fr (c);
+    adjust_extremities (c, env->white_zones);
     print (curve_box (ip, c, env->line_portion, env->pen,
                       env->dash_style, env->dash_motif, env->dash_style_unit,
                       env->fill_brush, typeset_line_arrows (ip)));

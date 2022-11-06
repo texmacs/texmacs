@@ -83,7 +83,7 @@ curve arc (array<point> a, array<path> cip, bool close=false);
 curve compound (array<curve> cs);
 curve invert (curve c);
 curve part (curve c, double start, double end);
-curve truncate (curve c, double portion, double eps);
+curve truncate (curve c, double t0, double eps);
 curve recontrol (curve c, array<point> a, array<path> cip);
 
 array<point> intersection (curve f, curve g, point p0, double eps);
