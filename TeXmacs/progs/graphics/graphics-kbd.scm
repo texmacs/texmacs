@@ -36,8 +36,10 @@
 
 (define (inside-graphical-text-context? t)
   (and-with p (tree-ref t :up)
-    (and-with u (tree-search-upwards p graphical-text-context?)
-      (inside-graphics-context? u))))
+    (and-with i (tree-index t)
+      (and (tree-accessible-child? p i)
+           (and-with u (tree-search-upwards p graphical-text-context?)
+             (inside-graphics-context? u))))))
 
 (tm-define (generic-context? t)
   (:require (inside-graphics-context? t))
@@ -247,14 +249,12 @@
 (tm-define (kbd-horizontal t forwards?)
   (:require (graphical-text-context? t))
   (with-define (move) ((if forwards? go-right go-left))
-    (with-define (next) (go-to-next-inside move inside-graphics-context?)
-      (go-to-next-such-that next inside-graphical-text-context?))))
+    (go-to-next-inside move inside-graphical-text-context?)))
 
 (tm-define (kbd-vertical t downwards?)
   (:require (graphical-text-context? t))
   (with-define (move) ((if downwards? go-down go-up))
-    (with-define (next) (go-to-next-inside move inside-graphics-context?)
-      (go-to-next-such-that next inside-graphical-text-context?))))
+    (go-to-next-inside move inside-graphical-text-context?)))
 
 (tm-define (kbd-extremal t forwards?)
   (:require (graphical-text-context? t))
