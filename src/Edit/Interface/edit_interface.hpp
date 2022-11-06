@@ -45,6 +45,7 @@ protected:
   double        zoomf;         // the current zoom factor
   double        magf;          // the current magnification factor
   SI            pixel;         // current size of a pixel on the screen
+  SI            zpixel;        // pixel multiplied by zoom factor
   rectangles    copy_always;   // for wiping out cursor
   int           input_mode;    // INPUT_NORMAL, INPUT_SEARCH, INPUT_REPLACE
 

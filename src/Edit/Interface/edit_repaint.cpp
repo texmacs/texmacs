@@ -87,7 +87,7 @@ edit_interface_rep::draw_cursor (renderer ren) {
     if (!inside_active_graphics ()) {
       SI dw= 0;
       if (tremble_count > 3) dw= min (tremble_count - 3, 25) * pixel;
-      cu->y1 -= 2*pixel + dw; cu->y2 += 2*pixel + dw;
+      cu->y1 -= 2*zpixel + dw; cu->y2 += 2*zpixel + dw;
       SI x1= cu->ox + ((SI) (cu->y1 * cu->slope)), y1= cu->oy + cu->y1;
       SI x2= cu->ox + ((SI) (cu->y2 * cu->slope)), y2= cu->oy + cu->y2;
       string mode= get_env_string (MODE);
@@ -95,7 +95,7 @@ edit_interface_rep::draw_cursor (renderer ren) {
       color cuc= get_env_color (CURSOR_COLOR);
       if (!cu->valid) cuc= green;
       else if (mode == "math") cuc= get_env_color (MATH_CURSOR_COLOR);
-      ren->set_pencil (pencil (cuc, pixel + dw));
+      ren->set_pencil (pencil (cuc, zpixel + dw));
       if ((mode == "text") || (mode == "src")) {
         family= get_env_string (FONT_FAMILY);
         series= get_env_string (FONT_SERIES);
@@ -108,14 +108,14 @@ edit_interface_rep::draw_cursor (renderer ren) {
         family= get_env_string (PROG_FONT_FAMILY);
         series= get_env_string (PROG_FONT_SERIES);
       }
-      SI lserif= (series=="bold"? 2*pixel: pixel) + dw;
-      SI rserif= pixel + dw;
+      SI lserif= (series=="bold"? 2*zpixel: zpixel) + dw;
+      SI rserif= zpixel + dw;
       if (family == "ss") lserif= rserif= 0;
       ren->line (x1-lserif, y1, x1+rserif, y1);
-      if (y1<=y2-pixel) {
-        ren->line (x1, y1, x2, y2-pixel);
-        if (series == "bold") ren->line (x1-pixel, y1, x2-pixel, y2-pixel);
-        ren->line (x2-lserif, y2-pixel, x2+rserif, y2-pixel);
+      if (y1<=y2-zpixel) {
+        ren->line (x1, y1, x2, y2-zpixel);
+        if (series == "bold") ren->line (x1-zpixel, y1, x2-zpixel, y2-zpixel);
+        ren->line (x2-lserif, y2-zpixel, x2+rserif, y2-zpixel);
       }
     }
   }
