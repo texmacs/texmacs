@@ -15,6 +15,9 @@
 
     <item>Improved quality of hand-drawn graphics (2.1.3).
 
+    <item>Repulsive margin facility for simpler arrows between graphical text
+    (2.1.3).
+
     <item>Stylable interface colors (2.1.3).
 
     <item>Stylable colors for syntax highlighting for Mathemagix and Scheme
