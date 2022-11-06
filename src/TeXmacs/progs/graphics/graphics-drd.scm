@@ -93,7 +93,10 @@
   (tm-in? t (graphical-over-under-tag-list)))
 
 (tm-define (inside-graphical-text?)
-  (tree-innermost graphical-text-context?))
+  (and-with t (tree-innermost graphical-text-context?)
+    (and-with u (tree-ref t :down)
+      (and-with i (tree-index u)
+        (tree-accessible-child? t i)))))
 
 (tm-define (inside-graphical-over-under?)
   (tree-innermost graphical-over-under-context?))
