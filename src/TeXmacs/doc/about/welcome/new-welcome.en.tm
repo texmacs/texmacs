@@ -1,4 +1,4 @@
-<TeXmacs|1.99.21>
+<TeXmacs|2.1.2>
 
 <style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
@@ -10,7 +10,7 @@
   For new users, we recommend the tutorial \P<hlink|Getting started with
   <TeXmacs>|start.en.tm>\Q.
 
-  Other useful ressources are:
+  Other useful resources are:
 
   <\wide-tabular>
     <tformat|<cwith|1|1|1|1|cell-hyphen|n>|<cwith|6|6|1|1|cell-hyphen|n>|<cwith|3|3|1|1|cell-hyphen|n>|<cwith|4|4|1|1|cell-hyphen|n>|<cwith|1|-1|1|-1|cell-valign|t>|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|1|-1|cell-bsep|1em>|<cwith|6|6|1|-1|cell-bsep|0em>|<cwith|1|-1|1|1|cell-rsep|2spc>|<cwith|1|1|1|-1|cell-tsep|1em>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|2|cell-valign|t>|<cwith|2|2|1|1|cell-halign|r>|<cwith|2|2|1|2|cell-bsep|1em>|<cwith|2|2|1|1|cell-rsep|2spc>|<table|<row|<cell|<image|../../../misc/images/welcome-videos.png||2.2em||>>|<\cell>
