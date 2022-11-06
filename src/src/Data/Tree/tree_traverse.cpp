@@ -610,11 +610,7 @@ inside_same_or_more (tree t, path p, path q, tree_label which) {
 bool
 is_boundary (tree t, path p) {
   if (is_func (subtree (t, p), DOCUMENT)) return true;
-  if (is_nil (p)) return false;
-  path q= path_up (p);
-  if (is_func (subtree (t, q), GRAPHICS)) return true;
-  if (is_nil (q)) return false;
-  if (is_func (subtree (t, path_up (q)), GRAPHICS)) return true;
+  if (is_func (subtree (t, p), GRAPHICS)) return true;
   return false;
 }
 
