@@ -39,7 +39,6 @@
 
 (menu-bind graphics-alignment-menu
   ("Top" (graphics-set-geo-valign "top"))
-  ("Axis" (graphics-set-geo-valign "axis"))
   ("Center" (graphics-set-geo-valign "center"))
   ("Bottom" (graphics-set-geo-valign "bottom")))
 
@@ -291,7 +290,8 @@
   ("Text" (graphics-set-mode '(edit text-at)))
   ("Mathematics" (graphics-set-mode '(edit math-at)))
   ("Long text" (graphics-set-mode '(edit document-at)))
-  ("Hand drawn" (graphics-set-mode '(hand-edit line))) 
+  ("Penscript" (graphics-set-mode '(hand-edit penscript)))
+  ("Calligraphy" (graphics-set-mode '(hand-edit calligraphy)))
   (assuming (style-has? "std-markup-dtd")
     (with u '(arrow-with-text arrow-with-text*)
       (with l (list-filter u (lambda (s) (style-has? (symbol->string s))))
@@ -373,6 +373,43 @@
               (lambda (c) (graphics-set-grid-color 'subunits c)) '()))
   ("Other" (interactive
 	       (lambda (x) (graphics-set-grid-color 'subunits x)) "Color")))
+
+(menu-bind graphics-pen-enhance-menu
+  (group "Smoothing method")
+  ("None" (graphics-set-pen-enhance-method "none"))
+  ("Gaussian" (graphics-set-pen-enhance-method "default"))
+  ("Bezier" (graphics-set-pen-enhance-method "bezier"))
+  ---
+  (when (!= (graphics-get-pen-enhance-method) "none")
+    (group "Strength")
+    ("0.2" (graphics-set-pen-enhance-strength "0.2"))
+    ("0.5" (graphics-set-pen-enhance-strength "0.5"))
+    ("1" (graphics-set-pen-enhance-strength "1"))
+    ("2" (graphics-set-pen-enhance-strength "2"))
+    ("5" (graphics-set-pen-enhance-strength "5"))
+    ("Other" (interactive graphics-set-pen-enhance-strength))))
+
+(menu-bind graphics-pen-style-menu
+  (group "Aspect ratio")
+  ("0.25" (graphics-set-pen-ratio "0.25"))
+  ("0.5" (graphics-set-pen-ratio "0.5"))
+  ("1" (graphics-set-pen-ratio "1"))
+  ("2" (graphics-set-pen-ratio "2"))
+  ("3" (graphics-set-pen-ratio "3"))
+  ("4" (graphics-set-pen-ratio "4"))
+  ("5" (graphics-set-pen-ratio "5"))
+  ("Other" (interactive graphics-set-pen-ratio))
+  ---
+  (group "Angle")
+  ("-60" (graphics-set-pen-angle "-60"))
+  ("-45" (graphics-set-pen-angle "-45"))
+  ("-30" (graphics-set-pen-angle "-30"))
+  ("0" (graphics-set-pen-angle "0"))
+  ("30" (graphics-set-pen-angle "30"))
+  ("45" (graphics-set-pen-angle "45"))
+  ("60" (graphics-set-pen-angle "60"))
+  ("90" (graphics-set-pen-angle "90"))
+  ("Other" (interactive graphics-set-pen-angle)))
 
 (menu-bind graphics-point-style-menu
   ;;("Default" (graphics-set-point-style "default"))
@@ -520,6 +557,17 @@
   ("Center" (graphics-set-text-at-valign "center"))
   ("Top" (graphics-set-text-at-valign "top")))
 
+(menu-bind graphics-text-repulse-menu
+  ("Off" (graphics-set-text-at-repulse "off"))
+  ---
+  ("0 spc" (graphics-set-text-at-repulse "0spc"))
+  ("0.5 spc" (graphics-set-text-at-repulse "0.5spc"))
+  ("1 spc" (graphics-set-text-at-repulse "1spc"))
+  ("1.5 spc" (graphics-set-text-at-repulse "1.5spc"))
+  ("2 spc" (graphics-set-text-at-repulse "2spc"))
+  ---
+  ("Other" (interactive graphics-set-text-at-repulse)))
+
 (menu-bind graphics-doc-valign-menu
   ;;("Default" (graphics-set-doc-at-valign "default"))
   ;;---
@@ -577,8 +625,9 @@
       ("20 px" (graphics-set-snap-distance "20px"))
       ---
       ("Other" (interactive graphics-set-snap-distance)))
-  (assuming (graphics-mode-attribute? (graphics-mode) "text-at-margin")
+  (assuming (graphics-mode-attribute? (graphics-mode) "text-at-snapping")
     (-> "Text padding"
+        ("0 spc" (graphics-set-snap-text-padding "0spc"))
         ("0.5 spc" (graphics-set-snap-text-padding "0.5spc"))
         ("1 spc" (graphics-set-snap-text-padding "1spc"))
         ("1.5 spc" (graphics-set-snap-text-padding "1.5spc"))
@@ -620,6 +669,10 @@
     (assuming (graphics-mode-attribute? (graphics-mode) "opacity")
       (assuming (== (get-preference "experimental alpha") "on")
         (-> "Opacity" (link graphics-opacity-menu))))
+    (assuming (graphics-mode-attribute? (graphics-mode) "pen-enhance")
+      (-> "Enhance" (link graphics-pen-enhance-menu)))
+    (assuming (graphics-mode-attribute? (graphics-mode) "pen-style")
+      (-> "Pen style" (link graphics-pen-style-menu)))
     (assuming (graphics-mode-attribute? (graphics-mode) "point-style")
       (-> "Point style" (link graphics-point-style-menu)))
     (assuming (graphics-mode-attribute? (graphics-mode) "point-size")
@@ -645,7 +698,9 @@
       (assuming (graphics-mode-attribute? (graphics-mode) "doc-at-valign")
         (-> "Vertical alignment" (link graphics-doc-valign-menu))))
     (assuming (graphics-mode-attribute? (graphics-mode) "doc-at-width")
-      (-> "Text box style" (link graphics-doc-mode-menu))))
+      (-> "Text box style" (link graphics-doc-mode-menu)))
+    (assuming (graphics-mode-attribute? (graphics-mode) "text-at-repulse")
+      (-> "Repulsive padding" (link graphics-text-repulse-menu))))
   (assuming (graphics-get-anim-type)
     (-> "Status" (link graphics-anim-type-menu)))
   ---
@@ -708,8 +763,8 @@
           "v" (== (graphics-mode) '(edit document-at)))
    (graphics-set-mode '(edit document-at)))
   ((check (balloon (icon "tm_ink_mode.xpm") "Insert hand drawn curves")
-          "v" (== (graphics-mode) '(hand-edit line)))
-   (graphics-set-mode '(hand-edit line))))
+          "v" (== (graphics-mode) '(hand-edit penscript)))
+   (graphics-set-mode '(hand-edit penscript))))
 
 (tm-menu (graphics-group-icons)
   ((check (balloon (icon "tm_edit_props.xpm") "Edit object properties")
@@ -770,6 +825,19 @@
                (s (if (== o "default") "100%" o)))
           (=> (eval s)
               (link graphics-opacity-menu))))))
+  (assuming (graphics-mode-attribute? (graphics-mode) "pen-enhance")
+    /
+    (mini #t
+      (group "Enhance:")
+      (with s (graphics-get-pen-enhance-method)
+	(=> (eval s)
+	    (link graphics-pen-enhance-menu)))))
+  (assuming (graphics-mode-attribute? (graphics-mode) "pen-style")
+    /
+    (mini #t
+      (group "Pen:")
+      (=> "oval"
+          (link graphics-pen-style-menu))))
   (assuming (graphics-mode-attribute? (graphics-mode) "point-style")
     /
     (mini #t
@@ -800,14 +868,16 @@
     /
     (mini #t
       (group "Line style:")
-      (let* ((lw (graphics-get-property "gr-line-width"))
-             (s (if (== lw "default") "1ln" lw)))
-	(=> (eval s)
-	    (link graphics-line-width-menu)))
-      (let* ((dash (graphics-get-property "gr-dash-style"))
-             (s (decode-dash dash)))
-        (=> (eval s)
-            (link graphics-dash-menu)))))
+      (assuming (graphics-mode-attribute? (graphics-mode) "line-width")
+        (let* ((lw (graphics-get-property "gr-line-width"))
+               (s (if (== lw "default") "1ln" lw)))
+          (=> (eval s)
+              (link graphics-line-width-menu))))
+      (assuming (graphics-mode-attribute? (graphics-mode) "dash-style")
+        (let* ((dash (graphics-get-property "gr-dash-style"))
+               (s (decode-dash dash)))
+          (=> (eval s)
+              (link graphics-dash-menu))))))
   (assuming
       (or (graphics-mode-attribute? (graphics-mode) "arrow-begin")
           (graphics-mode-attribute? (graphics-mode) "arrow-end"))
@@ -859,7 +929,15 @@
       (let* ((w (graphics-get-property "gr-doc-at-width"))
              (m (graphics-get-property "gr-doc-at-hmode")))
         (=> (eval (doc-at-mode w m))
-            (link graphics-doc-mode-menu))))))
+            (link graphics-doc-mode-menu)))))
+  (assuming (graphics-mode-attribute? (graphics-mode) "text-at-repulse")
+    /
+    (mini #t
+      (group "Repulse:")
+      (let* ((rep (graphics-get-property "gr-text-at-repulse"))
+             (val (if (== rep "default") "off" rep)))
+        (=> (eval val)
+            (link graphics-text-repulse-menu))))))
 
 (tm-menu (graphics-snap-icons)
   (mini #t
@@ -916,7 +994,8 @@
         ((== s '(group-edit move)) "move")
         ((== s '(group-edit zoom)) "resize")
         ((== s '(group-edit rotate)) "rotate")
-        ((== s '(hand-edit line)) "hand drawn")
+        ((== s '(hand-edit penscript)) "penscript")
+        ((== s '(hand-edit calligraphy)) "calligraphy")
         ((== s '(group-edit group-ungroup)) "group/ungroup")
         ((and (list-2? s) (== (car s) 'edit) (in? (cadr s) gr-tags-user))
          (symbol->string (cadr s)))

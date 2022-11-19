@@ -348,13 +348,18 @@
            #t))))
 
 (define (replace-next by)
+  ;; TODO: replacing all occurrences of 'a' by 'axa' may result in
+  ;; a segmentation fault.  We may wish to protect against that
   (with old-p (cursor-path)
     (and (replace-next* by)
          (with mid-p (cursor-path)
            (perform-search*)
            (with new-p (cursor-path)
              (or (and (path-less? old-p new-p)
-                      (path-less? mid-p new-p))
+                      ;; (path-less? mid-p new-p)
+                      ;; Commenting fixes bug #62534
+                      ;; Check also bug #59508
+                      )
                  (search-next-match #t)))))))
 
 (tm-define (replace-one)

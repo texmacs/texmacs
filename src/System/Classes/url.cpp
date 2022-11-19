@@ -101,7 +101,7 @@ url_get_atom (string s, int type) {
   return as_url (tree (s));
 }
 
-static int
+static void
 skip_ipv6 (string s, int& i) {
   i++;
   while (i<N(s) && (s[i] == ':' ||
@@ -488,18 +488,6 @@ bool
 is_name_in_path (url u) {
   if (is_name (u)) return true;
   return is_concat (u) && is_root (u[1], "default") && is_name (u[2]);
-}
-
-bool
-is_path (url u) {
-  if (is_atomic (u)) return true;
-  if ((!is_or (u)) && (!is_concat (u))) return false;
-  return is_path (u[1]) && is_path (u[2]);
-}
-
-bool
-is_rooted_path (url u) {
-  return is_rooted (u) && is_path (u);
 }
 
 bool

@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "config.h"
+#include "boot.hpp"
 #include "tm_server.hpp"
 #include "drd_std.hpp"
 #include "convert.hpp"
@@ -155,22 +156,23 @@ tm_server_rep::interpose_handler () {
   exec_pending_commands ();
 #endif
 
-  int i, j;
-  for (i=0; i<N(bufs); i++) {
-    tm_buffer buf= (tm_buffer) bufs[i];
-
-    for (j=0; j<N(buf->vws); j++) {
-      tm_view vw= (tm_view) buf->vws[j];
-      if (vw->win != NULL) vw->ed->apply_changes ();
+  if (!headless_mode) {
+    int i, j;
+    for (i=0; i<N(bufs); i++) {
+      tm_buffer buf= (tm_buffer) bufs[i];
+      
+      for (j=0; j<N(buf->vws); j++) {
+	tm_view vw= (tm_view) buf->vws[j];
+	if (vw->win != NULL) vw->ed->apply_changes ();
+      }
+      
+      for (j=0; j<N(buf->vws); j++) {
+	tm_view vw= (tm_view) buf->vws[j];
+	if (vw->win != NULL) vw->ed->animate ();
+      }
     }
-
-    for (j=0; j<N(buf->vws); j++) {
-      tm_view vw= (tm_view) buf->vws[j];
-      if (vw->win != NULL) vw->ed->animate ();
-    }
+    windows_refresh ();
   }
-
-  windows_refresh ();
   sync_databases ();
 }
 

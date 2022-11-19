@@ -1,9 +1,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : gnuplot-input.scm
-;; DESCRIPTION : Mathematical input conversion for Gnuplot
-;; COPYRIGHT   : (C) 2005  Joris van der Hoeven
+;; MODULE      : generic-speech.scm
+;; DESCRIPTION : control generic editing via speech
+;; COPYRIGHT   : (C) 2022  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -11,21 +11,32 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (gnuplot-input)
-  (:use (utils plugins plugin-convert)))
+(texmacs-module (generic generic-speech)
+  (:use (generic generic-kbd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Specific conversion routines
+;; Helper routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (gnuplot-rsup args)
-  (display "**")
-  (plugin-input-arg (car args)))
+(tm-define (speech-leave)
+  (structured-exit-right))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Initialization
+;; Moving inside tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(plugin-input-converters gnuplot
-  (rsup gnuplot-rsup)
-  ("<mathpi>" "pi"))
+(tm-define (cell-left)
+  (and-with t (tree-innermost 'table)
+    (structured-horizontal t #f)))
+
+(tm-define (cell-right)
+  (and-with t (tree-innermost 'table)
+    (structured-horizontal t #t)))
+
+(tm-define (cell-up)
+  (and-with t (tree-innermost 'table)
+    (structured-vertical t #f)))
+
+(tm-define (cell-down)
+  (and-with t (tree-innermost 'table)
+    (structured-vertical t #t)))

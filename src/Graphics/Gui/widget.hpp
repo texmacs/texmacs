@@ -274,9 +274,10 @@ widget refreshable_widget (object prom, string kind= "any");
 // void simple_widget_rep::handle_keyboard_focus (bool new_focus, time_t t);
 //   issued when the keyboard focus of the widget has changed
 // void simple_widget_rep::handle_mouse
-//        (string kind, SI x, SI y, int mods, time_t t);
+//        (string kind, SI x, SI y, int mods, time_t t, array<double> data);
 //   a mouse event of a given kind at position (x, y) and time t
 //   mods contains the active keyboard modifiers at time t
+//   data contains extra information about pen or gesture events
 // void simple_widget_rep::handle_set_zoom_factor (double zoom);
 //   set the zoom factor for painting
 // void simple_widget_rep::handle_clear

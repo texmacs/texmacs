@@ -111,13 +111,21 @@ snap_to_guide (point p, gr_selections sels, double eps) {
   }
 
   sort (sels);
+  //for (int i=0; i<N(sels); i++)
+  //  cout << "snap " << sels[i]->type
+  //       << ", " << sels[i]->dist
+  //       << ", " << can_snap (sels[i]) << LF;
+  //cout << LF;
+
   gr_selection best;
   best->type= "none";
   for (int i=0; i<N(sels); i++)
     if (can_snap (sels[i])) {
       if (sels[i]->type == "grid-point")
         best= sels[i];
-      else if (is_nil (sels[i]->c))
+      else if (is_nil (sels[i]->c) &&
+               best->type != "grid-point" &&
+               !ends (best->type, "-handle"))
         return sels[i];
     }
 
@@ -127,6 +135,10 @@ snap_to_guide (point p, gr_selections sels, double eps) {
           !is_nil (sels[j]->c) &&
           (sels[i]->type != "grid-curve-point" ||
            sels[j]->type != "grid-curve-point") &&
+          (!ends (sels[i]->type, "-point") ||
+           !ends (sels[j]->type, "-border")) &&
+          (!ends (sels[i]->type, "-border") ||
+           !ends (sels[j]->type, "-point")) &&
           !ends (sels[i]->type, "handle") &&
           !ends (sels[j]->type, "handle"))
         {
@@ -223,6 +235,12 @@ edit_graphics_rep::get_x () {
 double
 edit_graphics_rep::get_y () {
   return gr_y;
+}
+
+double
+edit_graphics_rep::get_pixel () {
+  edit_env env= get_typesetter ()->env;
+  return env->fr->inverse_scalar (env->pixel);
 }
 
 frame
@@ -471,7 +489,8 @@ edit_graphics_rep::back_in_text_at (tree t, path p, bool forward) {
 }
 
 bool
-edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t) {
+edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t,
+                                   array<double> data) {
   //cout << type << ", " << x << ", " << y << ", " << m << ", " << t << "\n";
   //cout << "et= " << et << "\n";
   //cout << "tp= " << tp << "\n";
@@ -480,11 +499,27 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t) {
   // apply_changes (); // FIXME: remove after review of synchronization
   frame f= find_frame ();
   if (!is_nil (f)) {
+    if (type == "wheel") {
+      point  p0= f [point (0.0, 0.0)];
+      point  p1= f [point (data[0], data[1])];
+      point  dp= p1 - p0;
+      //string sx= as_string (dp[0]);
+      //string sy= as_string (dp[1]);
+      //call ("graphics-wheel", sx, sy);
+      point lim1, lim2;
+      find_limits (lim1, lim2);
+      double dx= dp[0] / max (lim2[0] - lim1[0], 0.000001);
+      double dy= dp[1] / max (lim2[1] - lim1[1], 0.000001);
+      call ("graphics-wheel", as_string (dx), as_string (dy));
+      return true;
+    }
+
     if (!over_graphics (x, y))
       return false;
     if (type == "move" || type == "dragging-left")
       if (check_event (MOTION_EVENT))
         return true;
+
     point p = f [point (x, y)];
     graphical_select (p[0], p[1]); // init the caching for adjust().
     p= adjust (p);
@@ -493,6 +528,7 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t) {
     string sx= as_string (p[0]);
     string sy= as_string (p[1]);
     invalidate_graphical_object ();
+    double pressure= (N(data) == 0? 1.0: data[0]);
     call ("set-keyboard-modifiers", object (m));
     if (type == "move")
       call ("graphics-move", sx, sy);
@@ -503,11 +539,11 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t) {
     else if (type == "release-right" || type == "double-right")
       call ("graphics-release-right", sx, sy);
     else if (type == "start-drag-left")
-      call ("graphics-start-drag-left", sx, sy);
+      call ("graphics-start-drag-left", sx, sy, (double) t, pressure);
     else if (type == "dragging-left")
-      call ("graphics-dragging-left", sx, sy);
+      call ("graphics-dragging-left", sx, sy, (double) t, pressure);
     else if (type == "end-drag-left")
-      call ("graphics-end-drag-left", sx, sy);
+      call ("graphics-end-drag-left", sx, sy, (double) t, pressure);
     else if (type == "start-drag-right")
       call ("graphics-start-drag-right", sx, sy);
     else if (type == "dragging-right")

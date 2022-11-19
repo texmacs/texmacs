@@ -15,6 +15,14 @@
   (:use (generic format-edit)
 	(generic insert-menu)))
 
+(tm-menu (focus-code-icons t)
+  (mini #t
+    (inert ((eval (format-get-name (get-env "prog-language"))) (noop)))))
+
+(tm-menu (standard-focus-icons t)
+  (:require (in-code?))
+  (dynamic (focus-code-icons t)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Format menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

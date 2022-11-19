@@ -3565,7 +3565,7 @@ function cmp_dot_number {
 
   VERSION_MAJOR="2"
   VERSION_MINOR="1"
-  VERSION_BUILD="1"
+  VERSION_BUILD="2"
 
   # the svn revision of this version
   DEVEL_REVISION="$Rev$:"
@@ -7772,6 +7772,10 @@ printf "%s\n" "#define OS_GNU_LINUX 1" >>confdefs.h
     *apple*darwin10*)
       echo "$ac_t""Xcode 3.2 project tweak (only MacOSX 10.6)" 1>&6
       CONFIG_ARCHS='$(NATIVE_ARCH_ACTUAL)'
+    ;;
+    arm*apple*darwin*)
+      echo "$ac_t""Adjust optimization flag for Apple M1" 1>&6
+      CONFIG_CXXOPTIMIZE="-O2"
     ;;
   esac
 

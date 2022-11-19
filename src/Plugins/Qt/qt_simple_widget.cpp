@@ -42,10 +42,13 @@ extern const QX11Info *qt_x11Info (const QPaintDevice *pd);
 
 
 qt_simple_widget_rep::qt_simple_widget_rep ()
- : qt_widget_rep (simple_widget),  sequencer (0) { }
+  : qt_widget_rep (simple_widget),  sequencer (0) {
+  backingPixmap= headless_mode ? NULL : new QPixmap ();
+}
 
 qt_simple_widget_rep::~qt_simple_widget_rep () {
   all_widgets->remove ((pointer) this);
+  if (backingPixmap != NULL) delete backingPixmap;
 }
 
 QWidget*
@@ -102,8 +105,9 @@ qt_simple_widget_rep::handle_keyboard_focus (bool has_focus, time_t t) {
 }
 
 void
-qt_simple_widget_rep::handle_mouse (string kind, SI x, SI y, int mods, time_t t) {
-  (void) kind; (void) x; (void) y; (void) mods; (void) t;
+qt_simple_widget_rep::handle_mouse (string kind, SI x, SI y, int mods, time_t t,
+                                    array<double> data) {
+  (void) kind; (void) x; (void) y; (void) mods; (void) t; (void) data;
 }
 
 void
@@ -436,7 +440,43 @@ qt_simple_widget_rep::is_invalid () {
   return !is_nil (invalid_regions);
 }
 
-/*!
+
+
+
+basic_renderer
+qt_simple_widget_rep::get_renderer() {
+  ASSERT (backingPixmap != NULL,
+	  "internal error in qt_simple_widget_rep::get_renderer");
+#ifdef USE_CAIRO
+  cairo_renderer_rep *ren = the_cairo_renderer ();
+  cairo_surface_t *surf;
+#ifdef Q_OS_LINUX
+  //const QX11Info & info = x11Info();//qt_x11Info (this);
+  //    Display *dpy = x11Info().display();
+  //*backingPixmap = QPixmap (width(),height());
+  //cout << backingPixmap->width() << LF;
+  Display *dpy = QX11Info::display();
+  Drawable drawable = backingPixmap->handle();
+  Visual *visual = (Visual*)(backingPixmap->x11Info().visual());
+  surf = tm_cairo_xlib_surface_create (dpy, drawable, visual,
+                                       backingPixmap->width (),
+				       backingPixmap->height ());
+#elif defined (Q_OS_MAC)
+  surf = tm_cairo_quartz_surface_create_for_cg_context
+    ((CGContextRef)(this->macCGHandle()), width(), height());
+#endif
+  cairo_t *ct = tm_cairo_create (surf);
+  ren->begin (ct);
+  tm_cairo_surface_destroy (surf);
+  tm_cairo_destroy (ct);
+#else
+  qt_renderer_rep * ren = the_qt_renderer();
+  ren->begin ((void*) backingPixmap);
+#endif
+  return ren;
+}
+
+/*
  This function is called by the qt_gui::update method (via repaint_all) to keep
  the backing store in sync and propagate the changes to the surface on screen.
  First we check that the backing store geometry is right and then we

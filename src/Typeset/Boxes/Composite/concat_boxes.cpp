@@ -57,7 +57,7 @@ struct concat_box_rep: public composite_box_rep {
   cursor    find_cursor (path bp);
   selection find_selection (path lbp, path rbp);
 
-  tree      action (tree t, SI x, SI y, SI delta);
+  tree      message (tree t, SI x, SI y, rectangles& rs);
   void      loci (SI x, SI y, SI delta, list<string>& ids, rectangles& rs);
   SI        get_leaf_offset (string search);
 
@@ -561,12 +561,14 @@ concat_box_rep::find_selection (path lbp, path rbp) {
 }
 
 tree
-concat_box_rep::action (tree t, SI x, SI y, SI delta) {
-  int delta_out, m= find_any_child (x, y, delta, delta_out);
+concat_box_rep::message (tree t, SI x, SI y, rectangles& rs) {
+  int delta_out, m= find_any_child (x, y, 0, delta_out);
   if (m == -1) return "";
   SI xx= x- sx(m), yy= y- sy(m);
-  SI dd= delta_out + get_delta (xx, bs[m]->x1, bs[m]->x2);
-  return bs[m]->action (t, xx, yy, dd);
+  rectangles xtra;
+  tree r= bs[m]->message (t, xx, yy, xtra);
+  rs << translate (xtra, sx(m), sy(m));
+  return r;
 }
 
 void

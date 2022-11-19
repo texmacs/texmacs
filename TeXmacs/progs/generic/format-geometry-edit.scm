@@ -134,6 +134,19 @@
 		(new-l (tm-make-length new-v u)))
 	   (tree-set t new-l)))))
 
+(tm-define (length-scale t sc step-mult)
+  (cond ((tree-in? t '(plus minus minimum maximum))
+         (for-each (cut length-scale <> sc) (tree-children)))
+	((tm-length? t)
+	 (let* ((l (tree->string t))
+		(v (tm-length-value l))
+		(u (tm-length-unit l))
+		(a (* (get-step u) step-mult))
+		(new-v (* (round (/ (* sc v) a)) a))
+		(new-l (tm-make-length new-v u)))
+           (when (> (* v new-v) 0.0)
+             (tree-set t new-l))))))
+
 (define (length-rightmost t)
   (cond ((tree-in? t '(plus minus minimum maximum))
 	 (length-rightmost (tree-ref t :last)))
@@ -198,6 +211,16 @@
 	(length-increase (tree-ref t 1) inc)
 	(length-increase (tree-ref t 2) inc)))))
 
+(tm-define (geometry-scale t scale*)
+  (:require (var-space-context? t))
+  (when pinch-modified? (undo 0))
+  (let* ((old (tree->stree t))
+         (scale (sqrt (+ (abs scale*) 0.000001)))
+         (mult (if (== (tree-arity t) 1) 1.0 0.001)))
+    (for-each (cut length-scale <> scale mult) (tree-children t))
+    (set! pinch-modified? (!= (tree->stree t) old))
+    (tree-go-to t :end)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Rubber horizontal spaces
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -230,6 +253,16 @@
     (with-focus-after t
       (rubber-space-increase t inc))))
 
+(tm-define (geometry-scale t scale*)
+  (:require (hspace-context? t))
+  (when pinch-modified? (undo 0))
+  (let* ((old (tree->stree t))
+         (scale (sqrt (+ (abs scale*) 0.000001)))
+         (mult (if (== (tree-arity t) 1) 1.0 0.001)))
+    (for-each (cut length-scale <> scale mult) (tree-children t))
+    (set! pinch-modified? (!= (tree->stree t) old))
+    (tree-go-to t :end)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Vertical spaces
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -248,6 +281,15 @@
   (with inc (if down? 1 -1)
     (with-focus-after t
       (rubber-space-increase t inc))))
+
+(tm-define (geometry-scale t scale*)
+  (:require (vspace-context? t))
+  (when pinch-modified? (undo 0))
+  (let* ((old (tree->stree t))
+         (scale (sqrt (+ (abs scale*) 0.000001))))
+    (for-each (cut length-scale <> scale 0.2) (tree-children t))
+    (set! pinch-modified? (!= (tree->stree t) old))
+    (tree-go-to t :end)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Vertical adjustments
@@ -450,3 +492,16 @@
     (with-focus-after t
       (replace-empty t 4 "0h")
       (length-increase (tree-ref t 4) inc))))
+
+(tm-define (geometry-scale t scale*)
+  (:require (image-context? t))
+  (when pinch-modified? (undo 0))
+  (let* ((old (tree->stree t))
+         (scale (sqrt (+ (abs scale*) 0.000001)))
+         (e1? (tree-empty? (tree-ref t 1)))
+         (e2? (tree-empty? (tree-ref t 2)))
+         (mult (if (or e1? e2?) 0.1 0.001)))
+    (length-scale (tree-ref t 1) scale mult)
+    (length-scale (tree-ref t 2) scale mult)
+    (set! pinch-modified? (!= (tree->stree t) old))
+    (tree-go-to t :end)))

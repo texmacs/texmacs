@@ -13,27 +13,12 @@
 #define QT_RENDERER_HPP
 
 #include "basic_renderer.hpp"
+#include "QTMPixmapOrImage.hpp"
 #include <QPainter>
 #include <QPixmap>
 #include <QImage>
 #include <QtGlobal>
 #include <QWidget>
-
-// if QTMPIXMAPS is defined we use QPixmap for characters
-// otherwise we use QImage (which support alpha also under X11)
-
-#ifdef Q_OS_MAC
-#define QTMPIXMAPS
-#else
-#undef QTMPIXMAPS
-#endif
-
-#ifdef QTMPIXMAPS
-#define QTMImage QPixmap
-#else
-#define QTMImage QImage
-#endif
-
 
 class qt_renderer_rep:  public basic_renderer_rep {
 public:
@@ -72,7 +57,7 @@ public:
   void  draw_triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3);
 
   void draw_clipped (QImage * im, int w, int h, SI x, SI y);
-  void draw_clipped (QPixmap * im, int w, int h, SI x, SI y);
+  void draw_clipped (QTMPixmapOrImage * im, int w, int h, SI x, SI y);
   
   void new_shadow (renderer& ren);
   void delete_shadow (renderer& ren);
@@ -87,5 +72,30 @@ public:
 
 qt_renderer_rep* the_qt_renderer();
 QImage* get_image (url u, int w, int h, tree eff, SI pixel);
+
+class qt_shadow_renderer_rep: public qt_renderer_rep {
+public:
+  QTMPixmapOrImage px;   
+  qt_renderer_rep *master;
+  
+public:
+  qt_shadow_renderer_rep (QTMPixmapOrImage _px= QTMPixmapOrImage ());
+  ~qt_shadow_renderer_rep ();
+  
+  void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
+};
+
+class qt_proxy_renderer_rep: public qt_renderer_rep {
+public:
+  qt_renderer_rep *base;
+  
+public:
+  qt_proxy_renderer_rep (qt_renderer_rep *_base) 
+  : qt_renderer_rep(_base->painter), base(_base) {}
+  ~qt_proxy_renderer_rep () {};
+  
+  void new_shadow (renderer& ren);
+  void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
+};
 
 #endif // defined QT_RENDERER_HPP

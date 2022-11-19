@@ -3,7 +3,7 @@
 ;;
 ;; MODULE      : init-scilab.scm
 ;; DESCRIPTION : Initialize scilab plugin
-;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
+;; COPYRIGHT   : (C) 1999-2022  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
