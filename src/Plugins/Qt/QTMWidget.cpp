@@ -287,7 +287,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     if (DEBUG_QT && DEBUG_KEYBOARD) {
       debug_qt << "key  : " << key << LF;
       debug_qt << "text : " << event->text().toLatin1().data() << LF;
-      debug_qt << "count: " << event->text().count() << LF;
+      debug_qt << "size : " << event->text().size() << LF;
       debug_qt << "unic : " << event->text().data()[0].unicode() << LF;
 
 #ifdef OS_MINGW
@@ -549,7 +549,7 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     //    int pos = preedit_string.count();
     int pos = 0;
     bool visible_cur = false;
-    for (int i=0; i< attrs.count(); i++) 
+    for (int i=0; i< attrs.size(); i++) 
       if (attrs[i].type == QInputMethodEvent::Cursor) {
         pos = attrs[i].start;
         visible_cur = (attrs[i].length != 0);
@@ -558,8 +558,8 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     // find selection in the preedit string
     int sel_start = 0;
     int sel_length = 0;
-    if (pos <  preedit_string.count()) {
-      for (int i=0; i< attrs.count(); i++) 
+    if (pos <  preedit_string.size()) {
+      for (int i=0; i< attrs.size(); i++) 
         if ((attrs[i].type == QInputMethodEvent::TextFormat) &&
             (attrs[i].start <= pos) &&
             (pos < attrs[i].start + attrs[i].length)) {
@@ -599,7 +599,7 @@ QTMWidget::inputMethodQuery (Qt::InputMethodQuery query) const {
 void
 QTMWidget::mousePressEvent (QMouseEvent* event) {
   if (is_nil (tmwid)) return;
-  QPoint point = event->pos() + origin();
+  QPoint point = event->position().toPoint() + origin();
   coord2 pt = from_qpoint(point);
   unsigned int mstate= mouse_state (event, false);
   string s= "press-" * mouse_decode (mstate);
@@ -611,7 +611,7 @@ QTMWidget::mousePressEvent (QMouseEvent* event) {
 void
 QTMWidget::mouseReleaseEvent (QMouseEvent* event) {
   if (is_nil (tmwid)) return;
-  QPoint point = event->pos() + origin();
+  QPoint point = event->position().toPoint() + origin();
   coord2 pt = from_qpoint(point);
   unsigned int mstate = mouse_state (event, true);
   string s = "release-" * mouse_decode (mstate);
@@ -623,7 +623,7 @@ QTMWidget::mouseReleaseEvent (QMouseEvent* event) {
 void
 QTMWidget::mouseMoveEvent (QMouseEvent* event) {
   if (is_nil (tmwid)) return;
-  QPoint point = event->pos() + origin();
+  QPoint point = event->position().toPoint() + origin();
   coord2 pt = from_qpoint(point);
   unsigned int mstate = mouse_state (event, false);
   string s = "move";
@@ -657,9 +657,9 @@ QTMWidget::tabletEvent (QTabletEvent* event) {
     else s= "press-" * mouse_decode (mstate);
   }
   if ((mstate & 4) == 0 || s == "press-right") {
-    QPoint point = event->pos() + origin() - surface()->pos();
-    double x= point.x() + event->hiResGlobalX() - event->globalX();
-    double y= point.y() + event->hiResGlobalY() - event->globalY();
+    QPoint point = event->position().toPoint() + origin() - surface()->pos();
+    double x= point.x();
+    double y= point.y();
     coord2 pt= coord2 ((SI) (x * PIXEL), (SI) (-y * PIXEL));
     array<double> data;
     data << ((double) event->pressure())
@@ -869,7 +869,7 @@ void
 QTMWidget::dropEvent (QDropEvent *event) {
   if (is_nil (tmwid)) return;
   
-  QPoint point = event->pos () + origin ();
+  QPoint point = event->position().toPoint() + origin ();
   coord2 pt= from_qpoint (point);
 
   tree doc (CONCAT);
@@ -957,7 +957,7 @@ wheel_state (QWheelEvent* event) {
   Qt::MouseButtons bstate= event->buttons ();
   Qt::KeyboardModifiers kstate= event->modifiers ();
   if ((bstate & Qt::LeftButton     ) != 0) i += 1;
-  if ((bstate & Qt::MidButton      ) != 0) i += 2;
+  if ((bstate & Qt::MiddleButton   ) != 0) i += 2;
   if ((bstate & Qt::RightButton    ) != 0) i += 4;
   if ((bstate & Qt::XButton1       ) != 0) i += 8;
   if ((bstate & Qt::XButton2       ) != 0) i += 16;
@@ -982,10 +982,10 @@ QTMWidget::wheelEvent(QWheelEvent *event) {
   if (is_nil (tmwid)) return; 
   if (as_bool (call ("wheel-capture?"))) {
 #if (QT_VERSION >= 0x060000)
-    QPointF pos  = event->position();
-    QPoint  point= QPointF (pos.x(), pos.y()) + origin();
+    QPointF pos  = event->position().toPoint();
+    QPoint  point= pos.toPoint() + origin();
 #else
-    QPoint  point= event->pos() + origin();
+    QPoint  point= event->position().toPoint() + origin();
 #endif
 #if (QT_VERSION >= 0x050000)
     QPoint  wheel= event->pixelDelta();
