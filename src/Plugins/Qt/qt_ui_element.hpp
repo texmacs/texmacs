@@ -20,6 +20,7 @@
 
 #include "qt_widget.hpp"
 #include "QTMMenuHelper.hpp"
+#include "QTMPixmapOrImage.hpp"
 
 #include <QPointer>
 #include <QWidgetItem>
@@ -113,7 +114,7 @@ public:
   
   qt_glue_widget_rep () { }
   
-  QPixmap render ();
+  QTMPixmapOrImage render ();
   
   virtual QAction* as_qaction ();
   virtual QWidget* as_qwidget ();

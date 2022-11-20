@@ -29,9 +29,9 @@
 (tm-define (keyboard-focus has-focus? time)
   (noop))
 
-(tm-define (mouse-event key x y mods time)
-  ;;(display* "mouse-event " key ", " x ", " y ", " mods ", " time "\n")
-  (mouse-any key x y mods (+ time 0.0)))
+(tm-define (mouse-event key x y mods time data)
+  ;;(display* "mouse-event " key ", " x ", " y ", " mods ", " time ", " data "\n")
+  (mouse-any key x y mods (+ time 0.0) data))
 
 (tm-define (mouse-drop-event x y obj)
   ;;(display* "mouse-drop-event " x ", " y ", " (tm->stree obj) "\n")
@@ -39,3 +39,17 @@
 
 (tm-define (kbd-insert s)
   (insert s))
+
+(define delayed-keyboard-time #f)
+
+(tm-define (delayed-keyboard-press x t)
+  (set! delayed-keyboard-time t)
+  (exec-delayed-pause
+   (lambda ()
+     (or (!= delayed-keyboard-time t)
+         (with left (- 100 (idle-time))
+           (if (> left 0) left
+               (begin
+                 (set! delayed-keyboard-time #f)
+                 (keyboard-press x t)
+                 #t)))))))

@@ -196,7 +196,8 @@ needing_update (false)
 /* important routines */
 void
 qt_gui_rep::get_extents (SI& width, SI& height) {
-  coord2 size = from_qsize (QApplication::primaryScreen()->availableSize());
+  coord2 size = headless_mode ? coord2 (480, 320)
+    : from_qsize (QApplication::primaryScreen()->availableSize());
   width  = size.x1;
   height = size.x2;
 }
@@ -502,7 +503,11 @@ void gui_interpose (void (*r) (void)) { the_interpose_handler = r; }
 
 void
 qt_gui_rep::event_loop () {
-  QCoreApplication* app = QApplication::instance ();
+  QCoreApplication* app;
+  if (headless_mode)
+    app = QCoreApplication::instance ();
+  else
+    app = QApplication::instance ();
   update();
     //need_update();
   app->exec();
@@ -641,12 +646,13 @@ qt_gui_rep::process_queued_events (int max) {
         break;
       case qp_type::QP_MOUSE :
       {
-        typedef quintuple<string, SI, SI, int, time_t > T1;
+        typedef sextuple<string, SI, SI, int, time_t, array<double> > T1;
         typedef pair<widget, T1> T;
         T x = open_box <T> (ev.x2);
         if (!is_nil (x.x1))
           concrete_simple_widget (x.x1)->handle_mouse (x.x2.x1, x.x2.x2,
-                                                       x.x2.x3, x.x2.x4, x.x2.x5);
+                                                       x.x2.x3, x.x2.x4,
+                                                       x.x2.x5, x.x2.x6);
       }
         break;
       case qp_type::QP_RESIZE :
@@ -709,11 +715,11 @@ qt_gui_rep::process_keyboard_focus (qt_simple_widget_rep *wid, bool has_focus,
 
 void
 qt_gui_rep::process_mouse (qt_simple_widget_rep *wid, string kind, SI x, SI y,
-                           int mods, time_t t ) {
-  typedef quintuple<string, SI, SI, int, time_t > T1;
+                           int mods, time_t t, array<double> data) {
+  typedef sextuple<string, SI, SI, int, time_t, array<double> > T1;
   typedef pair<widget, T1> T;
   add_event (queued_event (qp_type::QP_MOUSE,
-                           close_box<T> ( T (wid, T1 (kind, x, y, mods, t)))));
+                           close_box<T> (T (wid, T1 (kind, x, y, mods, t, data)))));
 }
 
 void
@@ -873,7 +879,7 @@ qt_gui_rep::update () {
   
   if (waiting_events.size() > 0) needing_update = true;
   if (interrupted)               needing_update = true;
-  if (nr_windows == 0)           qApp->quit();
+  if (!headless_mode && nr_windows == 0) qApp->quit();
   
   time_t delay = delayed_commands.lapse - texmacs_time();
   if (needing_update) delay = 0;
@@ -1055,8 +1061,9 @@ qt_gui_rep::put_graphics_on_clipboard (url file) {
 }
 
 /******************************************************************************
- * Miscellaneous
- ******************************************************************************/
+* Miscellaneous
+******************************************************************************/
+
 int char_clip = 0;
 
 void
@@ -1097,7 +1104,6 @@ external_event (string type, time_t t) {
     if (wid) the_gui -> process_keypress (wid, type, t);
   }
 }
-
 
 /******************************************************************************
  * Delayed commands

@@ -309,9 +309,9 @@
                         "auto" "auto" "keyboard" 0.7)
           (close-tooltip)))))
 
-(tm-define (mouse-event key x y mods time)
+(tm-define (mouse-event key x y mods time data)
   (with before? (behind-folded-comment?)
-    (former key x y mods time)
+    (former key x y mods time data)
     (with after? (behind-folded-comment?)
       (when (and (or (!= before? after?) after?) (== key "release-left"))
         (update-comment-tooltip)))))

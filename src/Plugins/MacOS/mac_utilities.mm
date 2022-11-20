@@ -8,6 +8,7 @@
  * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
  ******************************************************************************/
 
+#include "boot.hpp"
 #include "url.hpp"
 #include "mac_utilities.h"
 #include "tm_timer.hpp"
@@ -123,11 +124,12 @@ mac_handler_body (NSEvent *event) {
         str.append("Tab");
         cout << from_qstring (str) << LF;
 #endif
-        
-        QKeyEvent *qe = new QKeyEvent(([event type] == NSKeyDown) ? 
-                                      QEvent::KeyPress : QEvent::KeyRelease, 
-                                      Qt::Key_Tab, modifs);
-        QApplication::postEvent(qApp->focusWidget(), qe);
+        if (!headless_mode) {
+          QKeyEvent *qe = new QKeyEvent(([event type] == NSKeyDown) ? 
+                                        QEvent::KeyPress : QEvent::KeyRelease, 
+                                        Qt::Key_Tab, modifs);
+          QApplication::postEvent(qApp->focusWidget(), qe);
+	}
         return nil;
       }
       if (key == 0x0051 || key == 0x0071) {
@@ -138,10 +140,12 @@ mac_handler_body (NSEvent *event) {
         if (nsmods &  NSAlternateKeyMask) modifs |= Qt::AltModifier;
         if (nsmods &  NSCommandKeyMask) modifs |= Qt::ControlModifier;
         if (nsmods & NSCommandKeyMask) {
-          QKeyEvent *qe = new QKeyEvent(([event type] == NSKeyDown) ? 
-                                        QEvent::KeyPress : QEvent::KeyRelease, 
-                                        Qt::Key_Q, modifs);
-          QApplication::postEvent(qApp->focusWidget(), qe);
+          if (!headless_mode) {
+            QKeyEvent *qe = new QKeyEvent(([event type] == NSKeyDown) ? 
+                                          QEvent::KeyPress : QEvent::KeyRelease, 
+                                          Qt::Key_Q, modifs);
+            QApplication::postEvent(qApp->focusWidget(), qe);
+	  }
           return nil;
         }
       }

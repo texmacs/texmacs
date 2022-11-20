@@ -83,9 +83,20 @@ curve arc (array<point> a, array<path> cip, bool close=false);
 curve compound (array<curve> cs);
 curve invert (curve c);
 curve part (curve c, double start, double end);
-curve truncate (curve c, double portion, double eps);
+curve truncate (curve c, double t0, double eps);
+curve recontrol (curve c, array<point> a, array<path> cip);
 
 array<point> intersection (curve f, curve g, point p0, double eps);
 point closest (curve f, point p);
+
+array<point> simplify_polyline (array<point> a, double eps);
+array<point> std_bezier_fit (array<point> a, int pack_size);
+array<point> alt_bezier_fit (array<point> a, int pack_size);
+array<point> bezier_fit (array<point> a, double eps, double advance= 1.0);
+array<point> rectify_bezier (array<point> bez, double eps);
+array<point> refine (array<point> a, int factor);
+array<point> smoothen (array<point> a, int width);
+array<point> oval_profile (double rx, double ry, double a, int nr);
+array<point> calligraphy (array<point> a, array<point> pen);
 
 #endif // defined CURVE_H

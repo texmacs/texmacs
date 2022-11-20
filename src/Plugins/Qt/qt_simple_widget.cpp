@@ -37,10 +37,13 @@ extern const QX11Info *qt_x11Info (const QPaintDevice *pd);
 
 
 qt_simple_widget_rep::qt_simple_widget_rep ()
- : qt_widget_rep (simple_widget),  sequencer (0) { }
+  : qt_widget_rep (simple_widget),  sequencer (0) {
+  backingPixmap= headless_mode ? NULL : new QPixmap ();
+}
 
 qt_simple_widget_rep::~qt_simple_widget_rep () {
   all_widgets->remove ((pointer) this);
+  if (backingPixmap != NULL) delete backingPixmap;
 }
 
 QWidget*
@@ -92,8 +95,9 @@ qt_simple_widget_rep::handle_keyboard_focus (bool has_focus, time_t t) {
 }
 
 void
-qt_simple_widget_rep::handle_mouse (string kind, SI x, SI y, int mods, time_t t) {
-  (void) kind; (void) x; (void) y; (void) mods; (void) t;
+qt_simple_widget_rep::handle_mouse (string kind, SI x, SI y, int mods, time_t t,
+                                    array<double> data) {
+  (void) kind; (void) x; (void) y; (void) mods; (void) t; (void) data;
 }
 
 void
@@ -431,22 +435,25 @@ qt_simple_widget_rep::is_invalid () {
 
 basic_renderer
 qt_simple_widget_rep::get_renderer() {
+  ASSERT (backingPixmap != NULL,
+	  "internal error in qt_simple_widget_rep::get_renderer");
 #ifdef USE_CAIRO
   cairo_renderer_rep *ren = the_cairo_renderer ();
   cairo_surface_t *surf;
 #ifdef Q_OS_LINUX
   //const QX11Info & info = x11Info();//qt_x11Info (this);
   //    Display *dpy = x11Info().display();
-  //backingPixmap = QPixmap (width(),height());
-  //cout << backingPixmap.width() << LF;
+  //*backingPixmap = QPixmap (width(),height());
+  //cout << backingPixmap->width() << LF;
   Display *dpy = QX11Info::display();
-  Drawable drawable = backingPixmap.handle();
-  Visual *visual = (Visual*)(backingPixmap.x11Info().visual());
+  Drawable drawable = backingPixmap->handle();
+  Visual *visual = (Visual*)(backingPixmap->x11Info().visual());
   surf = tm_cairo_xlib_surface_create (dpy, drawable, visual,
-                                       backingPixmap.width (), backingPixmap.height ());
+                                       backingPixmap->width (),
+				       backingPixmap->height ());
 #elif defined (Q_OS_MAC)
-  surf = tm_cairo_quartz_surface_create_for_cg_context (
-                                                        (CGContextRef)(this->macCGHandle()), width(), height());
+  surf = tm_cairo_quartz_surface_create_for_cg_context
+    ((CGContextRef)(this->macCGHandle()), width(), height());
 #endif
   cairo_t *ct = tm_cairo_create (surf);
   ren->begin (ct);
@@ -454,7 +461,7 @@ qt_simple_widget_rep::get_renderer() {
   tm_cairo_destroy (ct);
 #else
   qt_renderer_rep * ren = the_qt_renderer();
-  ren->begin (&backingPixmap);
+  ren->begin ((void*) backingPixmap);
 #endif
   return ren;
 }
@@ -484,12 +491,12 @@ qt_simple_widget_rep::repaint_invalid_regions () {
     int dy =  retina_factor * (origin.y() - backing_pos.y());
     backing_pos = origin;
     
-    QPixmap newBackingPixmap (backingPixmap.size());
+    QPixmap newBackingPixmap (backingPixmap->size());
     QPainter p (&newBackingPixmap);
     //newBackingPixmap.fill (Qt::black);
-    p.drawPixmap (-dx,-dy,backingPixmap);
+    p.drawPixmap (-dx,-dy,*backingPixmap);
     p.end();
-    backingPixmap = newBackingPixmap;
+    *backingPixmap = newBackingPixmap;
     //cout << "SCROLL CONTENTS BY " << dx << " " << dy << LF;
     
     
@@ -503,7 +510,7 @@ qt_simple_widget_rep::repaint_invalid_regions () {
       invalid_regions = invalid_regions->next;
     }
     
-    QSize sz = backingPixmap.size();
+    QSize sz = backingPixmap->size();
     
     invalid_regions= invalid & rectangles (rectangle (0,0,
                                                       sz.width(),sz.height()));
@@ -532,7 +539,7 @@ qt_simple_widget_rep::repaint_invalid_regions () {
   // << backingPixmap.height() << LF;
   // update backing store size
   {
-    QSize _oldSize = backingPixmap.size();
+    QSize _oldSize = backingPixmap->size();
     QSize _new_logical_Size = canvas()->surface()->size();
     QSize _newSize = _new_logical_Size;
     _newSize *= retina_factor;
@@ -545,7 +552,7 @@ qt_simple_widget_rep::repaint_invalid_regions () {
       // cout << "RESIZING BITMAP"<< LF;
       QPixmap newBackingPixmap (_newSize);
       QPainter p (&newBackingPixmap);
-      p.drawPixmap (0,0,backingPixmap);
+      p.drawPixmap (0,0,*backingPixmap);
       //p.fillRect (0, 0, _newSize.width(), _newSize.height(), Qt::red);
       if (_newSize.width() >= _oldSize.width()) {
         invalidate_rect (_oldSize.width(), 0, _newSize.width(), _newSize.height());
@@ -556,7 +563,7 @@ qt_simple_widget_rep::repaint_invalid_regions () {
         p.fillRect (QRect (0,_oldSize.height(), _newSize.width(), _newSize.height()-_oldSize.height()), Qt::gray);
       }
       p.end();
-      backingPixmap = newBackingPixmap;
+      *backingPixmap = newBackingPixmap;
     }
   }
   

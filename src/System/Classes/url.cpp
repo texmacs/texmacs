@@ -101,11 +101,22 @@ url_get_atom (string s, int type) {
   return as_url (tree (s));
 }
 
+static void
+skip_ipv6 (string s, int& i) {
+  i++;
+  while (i<N(s) && (s[i] == ':' ||
+                    (s[i] >= '0' && s[i] <= '9') ||
+                    (s[i] >= 'a' && s[i] <= 'f') ||
+                    (s[i] >= 'A' && s[i] <= 'F'))) i++;
+  if (i<N(s) && s[i] == ']') i++;
+}
+
 static url
 url_get_name (string s, int type= URL_STANDARD, int i=0) {
   char sep= (type == URL_SYSTEM)? URL_CONCATER: '/';
   int start= i, n= N(s);
-  while ((i<n) && (s[i] != sep) && (s[i] != '/')) i++;
+  while ((i<n) && (s[i] != sep) && (s[i] != '/')) {
+    if (s[i] == '[') skip_ipv6 (s, i); else i++; }
   url u= url_get_atom (s (start, i), type);
   // url u= tree (s (start, i));
   if (i == n) return u;
@@ -118,7 +129,8 @@ url_get_path (string s, int type= URL_STANDARD, int i=0) {
   char sep= (type == URL_SYSTEM)? URL_SEPARATOR: ':';
   int start= i, n= N(s);
   if (i == n) return url_none ();
-  while ((i<n) && (s[i] != sep)) i++;
+  while ((i<n) && (s[i] != sep)) {
+    if (s[i] == '[') skip_ipv6 (s, i); else i++; }
   url u= url_general (s (start, i), type);
   if (i == n) return u;
   if (start == i) return url_get_path (s, type, i+1);
@@ -214,10 +226,11 @@ url_blank (string name) {
 static bool
 heuristic_is_path (string name, int type) {
   char sep= (type==0)? URL_SEPARATOR: ':';
-  int i, n= N(name);
-  for (i=0; i<n; i++)
-    if (name[i] == sep)
-      return true;
+  int i= 0, n= N(name);
+  while (i<n)
+    if (name[i] == '[') skip_ipv6 (name, i);
+    else if (name[i] == sep) return true;
+    else i++;
   return false;
 }
 
@@ -475,18 +488,6 @@ bool
 is_name_in_path (url u) {
   if (is_name (u)) return true;
   return is_concat (u) && is_root (u[1], "default") && is_name (u[2]);
-}
-
-bool
-is_path (url u) {
-  if (is_atomic (u)) return true;
-  if ((!is_or (u)) && (!is_concat (u))) return false;
-  return is_path (u[1]) && is_path (u[2]);
-}
-
-bool
-is_rooted_path (url u) {
-  return is_rooted (u) && is_path (u);
 }
 
 bool

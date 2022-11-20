@@ -284,6 +284,9 @@
   (tree-downgrade-big downgrade_big (tree content))
   (math-status-print math_status_print (void))
   (math-status-reset math_status_reset (void))
+  (math-stats-compile compile_stats (void string content string))
+  (math-stats-occurrences number_occurrences (int string content))
+  (math-stats-number-in-role number_in_role (int string content))
 
   ;; paths
   (path-strip strip (path path path))
@@ -390,7 +393,7 @@
   (graphics-notify-update graphics_notify_update (void content))
 
   ;; routines for strings
-  (string-number? is_double (bool string))
+  (cpp-string-number? is_double (bool string))
   (string-occurs? occurs (bool string string))
   (string-count-occurrences count_occurrences (int string string))
   (string-search-forwards search_forwards (int string int string))

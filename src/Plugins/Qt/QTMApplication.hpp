@@ -160,4 +160,28 @@ public:
   }
 };
 
+class QTMCoreApplication: public QCoreApplication {
+  Q_OBJECT
+  
+public:
+  QTMCoreApplication (int& argc, char** argv) :
+    QCoreApplication (argc, argv) {}
+
+  void set_window_icon (string icon_path) {
+    (void) icon_path;
+  }
+
+  virtual bool notify (QObject* receiver, QEvent* event)
+  {
+    try {
+      return QCoreApplication::notify (receiver, event);
+    }
+    catch (string s) {
+      qt_error << "Thrown " << s << LF;
+      the_exception= s;
+    }
+    return false;
+  }
+};
+
 #endif   // QTMAPPLICATION_HPP
