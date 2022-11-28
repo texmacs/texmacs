@@ -129,6 +129,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("dynamic_load")= c;
   t ("dynamic_unit")= e;
   t ("else")= c;
+  t ("endow")= e;
   t ("enumeration")= c;
   t ("evolutive")= c;
   t ("exists")= d;
@@ -139,6 +140,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("extern")= c;
   t ("for")= c;
   t ("forall")= d;
+  t ("forany")= d;
   t ("foreach")= c;
   t ("foreign")= c;
   t ("former")= c;
