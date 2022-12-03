@@ -220,7 +220,7 @@
 
 (tm-define (swipe-horizontal t forward?)
   (and-with p (tree-outer t)
-    (swipe-horizontal p down?)))
+    (swipe-horizontal p forward?)))
 
 (tm-define (swipe-vertical t down?)
   (and-with p (tree-outer t)
