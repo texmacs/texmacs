@@ -480,6 +480,7 @@ void
 edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t,
                                array<double> data) {
   //cout << "Mouse any " << type << ", " << x << ", " << y << "; " << mods << ", " << t << ", " << data << "\n";
+  if (is_nil (eb)) return;
   if (t < last_t && (last_x != 0 || last_y != 0 || last_t != 0)) {
     //cout << "Ignored " << type << ", " << x << ", " << y << "; " << mods << ", " << t << "\n";
     return;
