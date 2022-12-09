@@ -167,8 +167,7 @@
       (link recent-file-menu)))
 
 (menu-bind export-as-image-menu
-  ;; FIXME: no warning on overwrite!
-  (for (fm (image-formats))
+  (for (fm (filter (lambda (x) (file-converter-exists? "x.pdf" (string-append "y."  x))) (image-formats)) )
     ((eval (upcase-first fm))
      (choose-file export-selection-as-graphics
                   "Export selection as image" fm))))
