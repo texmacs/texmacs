@@ -44,9 +44,22 @@
 
 (define (mathtm-math env a c)
   (let* ((m (mathtm-args-serial env c))
-	 (r (tree->stree (upgrade-mathml m))))
-    `((math ,r))))
+	 (r (tree->stree (upgrade-mathml m)))
+   (displayed? (attribute-is? a 'display "block")))
+       ; according to https://developer.mozilla.org/en-US/docs/Web/MathML/Element/math
+    (if displayed?
+       `((document (equation* ,r)))
+       `((math ,r)))))
 
+(define (attribute-is? a key value)
+  (if (null? a) 
+    #f
+    (if (and (pair? (car a))
+       (func? (car a) key 1)
+       (== (cadar a) value))
+       #t 
+       (attribute-is? (cdr a) key value))))
+    
 (define (mathtm-none env a c)
   '())
 
@@ -254,8 +267,7 @@
        (or (func? src 'm:mo) (func? src 'mo))
        (>= (length src) 3)
        (func? (cadr src) '@)
-       (>= (length (cadr src)) 2)
-       (func? (cadr (cadr src)) 'stretchy 1)))
+       (attribute-is? (cdadr src) 'stretchy "true")))
 
 (define (rubberify arrow)
   (string-append "<rubber-" (substring arrow 1 (string-length arrow))))
@@ -265,7 +277,7 @@
       (let ((base (mathtm-as-serial env (first c)))
 	    (sub (mathtm-as-serial env (second c))))
         (if (stretchy? (first c) base)
-            `((long-arrow ,(ruzbberify base) "" ,sub))
+            `((long-arrow ,(rubberify base) "" ,sub))
             (mathtm-below base sub)))
       (mathtm-error "bad munder")))
 
@@ -284,7 +296,7 @@
 	    (sub (mathtm-as-serial env (second c)))
 	    (sup (mathtm-as-serial env (third c))))
         (if (stretchy? (first c) base)
-            `((long-arrow ,(rubberify base) ,sub ,sup))
+            `((long-arrow ,(rubberify base) ,sup ,sub))
             (mathtm-above (car (mathtm-below base sub)) sup)))
       (mathtm-error "bad munderover")))
 
@@ -390,7 +402,7 @@
     `((tabular ,t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Further features used by wikipedia
+;; Further features used by wikipedia & LibreOffice Math
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (mathtm-semantics env a c)
@@ -406,6 +418,12 @@
                     (r (latex->texmacs l)))
                (list r))
              (mathtm env (first c))))
+        ((and (list-2? c)
+              (func? (second c) 'm:annotation 2)
+              (func? (second (second c)) '@)
+              (string-starts? (shtml-attr-non-null (cdr (second (second c))) 'encoding)
+                  "StarMath"))
+              (mathtm env (first c)))
         (else (mathtm-pass env a c))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
