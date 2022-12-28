@@ -45,6 +45,7 @@
 (define (mathtm-math env a c)
   (let* ((m (mathtm-args-serial env c))
 	 (r (tree->stree (upgrade-mathml m)))
+   (r (replace-symbol-in-stree r 'around 'around*))
    (displayed? (attribute-is? a 'display "block")))
        ; according to https://developer.mozilla.org/en-US/docs/Web/MathML/Element/math
     (if displayed?
@@ -59,6 +60,13 @@
        (== (cadar a) value))
        #t 
        (attribute-is? (cdr a) key value))))
+       
+;copied from htmltm.scm
+(define (replace-symbol-in-stree st from to)
+  (cond ((== st from) to)
+        ((list? st) (map (lambda (x) (replace-symbol-in-stree x from to)) st))
+        (else st)))
+
     
 (define (mathtm-none env a c)
   '())
@@ -71,6 +79,7 @@
   ;; FIXME: use translators or parser for this!!!
   ;; TODO: learn when the trailing ';' is optional
   (cond ((logic-ref mathml-symbol->tm% s) => identity)
+  ((string-starts? s "&") (entity->tm s))
 	(else (xmltm-text s))))
 
 (define (mathtm-mo env a c)
@@ -87,8 +96,20 @@
 		 ((logic-ref tmtm-left% r) => (lambda (x) `((left ,x))))
 		 ((logic-ref tmtm-right% r) => (lambda (x) `((right ,x))))
 		 ((logic-ref tmtm-big% r) => (lambda (x) `((big ,x))))
+		 ((string-starts? s "&") `(,(entity->tm s)))
 		 (else (list r)))))))
-
+     
+(define (entity->tm s)
+  (let* ((l (string-length s))
+         (typ (cond 
+               ((and (== l 6) (== (string-take-right s 4) "opf;")) "<bbb-" )
+               ((and (== l 6) (== (string-take-right s 4) "scr;")) "<cal-" )
+               ((and (== l 5) (== (string-take-right s 3) "fr;")) "<frak-" )
+               (else #f))))
+        (if typ 
+          (string-append typ (substring s 1 2) ">")
+          s)))  
+  
 (define (mathtm-mtext env a c)
   `((with "mode" "text" ,(mathtm-args-serial env c))))
 
@@ -276,18 +297,26 @@
   (if (== (length c) 2)
       (let ((base (mathtm-as-serial env (first c)))
 	    (sub (mathtm-as-serial env (second c))))
-        (if (stretchy? (first c) base)
-            `((long-arrow ,(rubberify base) "" ,sub))
-            (mathtm-below base sub)))
+        (cond 
+             ((and (list? sub) (== (first sub) 'below) (logic-ref mathml-below->tm% (second sub) )) 
+             ;widenable-decoration, but inverted order 
+             `((below ,(car (mathtm-below base (second sub))) ,(third sub))))
+            ((stretchy? (first c) base)
+            `((long-arrow ,(rubberify base) "" ,sub)))
+            (else (mathtm-below base sub))))
       (mathtm-error "bad munder")))
 
 (define (mathtm-mover env a c)
   (if (== (length c) 2)
       (let ((base (mathtm-as-serial env (first c)))
 	    (sup (mathtm-as-serial env (second c))))
-        (if (stretchy? (first c) base)
-            `((long-arrow ,(rubberify base) ,sup))
-            (mathtm-above base sup)))
+        (cond 
+           ((and (list? sup) (== (first sup) 'above) (logic-ref mathml-above->tm% (second sup) ))
+             ;inverted over
+             `((above ,(car (mathtm-above base (second sup))) ,(third sup))))
+           ((stretchy? (first c) base)
+            `((long-arrow ,(rubberify base) ,sup)))
+           (else (mathtm-above base sup))))
       (mathtm-error "bad mover")))
 
 (define (mathtm-munderover env a c)
@@ -471,7 +500,7 @@
   (ms (mathtm-handler :mixed mathtm-mtext))
   (mglyph (mathtm-handler :empty mathtm-drop))
   ;; General layout
-  (mrow (mathtm-handler :element mathtm-pass))
+  (mrow (mathtm-handler :mixed mathtm-pass)) ;was :element, now more tolerant with malformed xml  
   (mfrac (mathtm-handler :element mathtm-mfrac))
   (msqrt (mathtm-handler :element mathtm-msqrt))
   (mroot (mathtm-handler :element mathtm-mroot))
