@@ -549,6 +549,7 @@
   (small (handler :collapse :inline '(with "font-size" "0.83")))
   ((:or s strike) (handler :collapse :inline htmltm-pass))
   (u (handler :collapse :inline "underline"))
+  (style htmltm-drop) ; <style> contains css data
 
   ;; Font modifiers (deprecated)
   (font (handler :collapse :inline htmltm-font))

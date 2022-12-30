@@ -47,6 +47,7 @@
 (logic-table mathml-operator->tm%
   ("⁢" "*") ;U+2062 Invisible Times 
   ("*" "*")
+  ("−" "-") ;U+2212 minus 
   ("⃛" "<dddot>") ;U+20DB
   ("˚" "<abovering>")
   ("´" "<acute>")
@@ -82,7 +83,7 @@
   ("&OverBar;" "¯")
   
 ;below a selection of html math entities (there are so many, and redundant ones)
-;with unicode equivalent (data from the web)
+;with unicode equivalent (data from the web), or equivalent texmacs code
 ;note that when Firefox saves an html file, it replaces &entities by utf8 characters
 ;can be a workaround for missing entities
   
@@ -93,12 +94,22 @@
   ("&UnderBrace;" "<underbrace>")  ; was ⏟ U+023DF
   ("&OverBrace;" "<overbrace>")  ; was ⏞ U+023DE
   ("&ee;" "<mathe>")  ; was ⅇ U+2147 Double-Struck Italic Small E
-  ("&bigcup;" "<#022C3>")  ; ⋃ U+022C3 
-  ("&bigcap;" "<#022C2>")  ; ⋂ U+022C2
-  ("&Integral;" "<#0222B>")  ; ∫ U+0222B
+  ("&plus;" "+")  ; + U+002B Plus Sign
+  ("&minus;" "-")  ; − U+2212 Minus Sign
+  ("&times;" "<times>")  ; × U+00D7 Multiplication Sign
+  ("&divide;" "<div>")  ; ÷ U+00F7 Division Sign
+  ("&equals;" "=")  ; = U+003D Equals Sign
+  ("&ne;" "<neq>")  ; ≠ U+2260 Not Equal To
+  ("&plusmn;" "<pm>")  ; ± U+00B1 Plus minus symbol
+  ("&not;" "<neg>")  ; ¬ U+00AC Not Sign
+  ("&gt;" "<gtr>")  ; > U+003E Greater-Than Sign
+  ("&deg;" "<#00B0>")  ; ° U+00B0 Degree Sign
+  ("&bigcup;" (big "cup"))  ; ⋃ U+022C3 
+  ("&bigcap;" (big "cap"))  ; ⋂ U+022C2
+  ("&Integral;" (big "int"))  ; ∫ U+0222B
   ("&hamilt;" "<#210B>")  ; ℋ U+210B Script Capital H
   ("&planckh;" "<#210E>")  ; ℎ U+210E Planck Constant
-  ("&planck;" "<#210F>")  ; ℏ U+210F Planck Constant Over Two Pi
+  ("&planck;" "<hbar>")  ; ℏ U+210F Planck Constant Over Two Pi
   ("&image;" "<#2111>")  ; ℑ U+2111 Black-Letter Capital I
   ("&weierp;" "<#2118>")  ; ℘ U+2118 Script Capital P
   ("&real;" "<#211C>")  ; ℜ U+211C Black-Letter Capital R
@@ -109,8 +120,8 @@
   ("&beth;" "<#2136>")  ; ℶ U+2136 Bet Symbol
   ("&gimel;" "<#2137>")  ; ℷ U+2137 Gimel Symbol
   ("&daleth;" "<#2138>")  ; ℸ U+2138 Dalet Symbol
-  ("&DD;" "<#2145>")  ; ⅅ U+2145 Double-Struck Italic Capital D
-  ("&dd;" "<#2146>")  ; ⅆ U+2146 Double-Struck Italic Small D
+  ("&DD;" "<bbb-D>")  ; ⅅ U+2145 Double-Struck Italic Capital D
+  ("&dd;" "<bbb-d>")  ; ⅆ U+2146 Double-Struck Italic Small D
   ("&starf;" "<#2605>")  ; ★ U+2605 Black Star
   ("&star;" "<#2606>")  ; ☆ U+2606 White Star
   ("&loz;" "<#25CA>")  ; ◊ U+25CA Lozenge
@@ -123,8 +134,6 @@
   ("&malt;" "<#2720>")  ; ✠ U+2720 Maltese Cross
   ("&sext;" "<#2736>")  ; ✶ U+2736 Six Pointed Black Star
   ("&VerticalSeparator;" "<#2758>")  ; ❘ U+2758 Light Vertical Bar
-  ("&lbbrk;" "<#2772>")  ; ❲ U+2772 Light Left Tortoise Shell Bracket Ornament
-  ("&rbbrk;" "<#2773>")  ; ❳ U+2773 Light Right Tortoise Shell Bracket Ornament
   ("&excl;" "<#0021>")  ; ! U+0021 Exclamation Mark
   ("&num;" "<#0023>")  ; # U+0023 Number Sign
   ("&percnt;" "<#0025>")  ; % U+0025 Percent Sign
@@ -154,13 +163,12 @@
   ("&thinsp;" "<#2009>")  ;   U+2009 Thin Space
   ("&zwnj;" "<#200C>")  ; ‌ U+200C Zero Width Non-Joiner
   ("&zwj;" "<#200D>")  ; ‍ U+200D Zero Width Joiner
-  ("&lrm;" "<#200E>")  ; ‎ U+200E Left-To-Right Mark
+  ;("&lrm;" "<#200E>")  ; ‎ U+200E Left-To-Right Mark
   ("&iexcl;" "<#00A1>")  ; ¡ U+00A1 Inverted Exclamation Mark
   ("&brvbar;" "<#00A6>")  ; ¦ U+00A6 Broken Bar
   ("&sect;" "<#00A7>")  ; § U+00A7 Section Sign
   ("&uml;" "<#00A8>")  ; ¨ U+00A8 Diaeresis
   ("&ordf;" "<#00AA>")  ; ª U+00AA Feminine Ordinal Indicator
-  ("&not;" "<#00AC>")  ; ¬ U+00AC Not Sign
   ("&shy;" "<#00AD>")  ; ­ U+00AD Soft Hyphen
   ("&macr;" "<#00AF>")  ; ¯ U+00AF Macron
   ("&acute;" "<#00B4>")  ; ´ U+00B4 Acute Accent
@@ -186,22 +194,10 @@
   ("&Prime;" "<#2033>")  ; ″ U+2033 Double Prime
   ("&tprime;" "<#2034>")  ; ‴ U+2034 Triple Prime
   ("&bprime;" "<#2035>")  ; ‵ U+2035 Reversed Prime
-  ("&oline;" "<#203E>")  ; ‾ U+203E Overline
+  ("&oline;" "¯")  ; ‾ U+203E Overline
   ("&caret;" "<#2041>")  ; ⁁ U+2041 Caret Insertion Point
   ("&hybull;" "<#2043>")  ; ⁃ U+2043 Hyphen Bullet
-  ("&frasl;" "<#2044>")  ; ⁄ U+2044 Fraction Slash
-  ("&bsemi;" "<#204F>")  ; ⁏ U+204F Reversed Semicolon
-  ("&qprime;" "<#2057>")  ; ⁗ U+2057 Quadruple Prime
-  ("&plus;" "<#002B>")  ; + U+002B Plus Sign
-  ("&minus;" "<#2212>")  ; − U+2212 Minus Sign
-  ("&times;" "<#00D7>")  ; × U+00D7 Multiplication Sign
-  ("&divide;" "<#00F7>")  ; ÷ U+00F7 Division Sign
-  ("&equals;" "<#003D>")  ; = U+003D Equals Sign
-  ("&ne;" "<#2260>")  ; ≠ U+2260 Not Equal To
-  ("&plusmn;" "<#00B1>")  ; ± U+00B1 Plus minus symbol
-  ("&not;" "<#00AC>")  ; ¬ U+00AC Not Sign
-  ("&gt;" "<#003E>")  ; > U+003E Greater-Than Sign
-  ("&deg;" "<#00B0>")  ; ° U+00B0 Degree Sign
+  ("&frasl;" "/")  ; ⁄ U+2044 Fraction Slash
   ("&sup1;" "<#00B9>")  ; ¹ U+00B9 Superscript One
   ("&sup2;" "<#00B2>")  ; ² U+00B2 Superscript Two
   ("&sup3;" "<#00B3>")  ; ³ U+00B3 Superscript Three
@@ -211,7 +207,7 @@
   ("&pertenk;" "<#2031>")  ; ‱ U+2031 Per Ten Thousand Sign
   ("&forall;" "<#2200>")  ; ∀ U+2200 For All
   ("&comp;" "<#2201>")  ; ∁ U+2201 Complement
-  ("&part;" "<#2202>")  ; ∂ U+2202 Partial Differential
+  ("&part;" "<partial>")  ; ∂ U+2202 Partial Differential
   ("&exist;" "<#2203>")  ; ∃ U+2203 There Exists
   ("&nexist;" "<#2204>")  ; ∄ U+2204 There Does Not Exist
   ("&empty;" "<#2205>")  ; ∅ U+2205 Empty Set
@@ -220,25 +216,20 @@
   ("&notin;" "<#2209>")  ; ∉ U+2209 Not an Element Of
   ("&ni;" "<#220B>")  ; ∋ U+220B Contains As Member
   ("&notni;" "<#220C>")  ; ∌ U+220C Does Not Contain As Member
-  ("&prod;" "<#220F>")  ; ∏ U+220F N-Ary Product
-  ("&coprod;" "<#2210>")  ; ∐ U+2210 N-Ary Coproduct
-  ("&sum;" "<#2211>")  ; ∑ U+2211 N-Ary Summation
-  ("&mnplus;" "<#2213>")  ; ∓ U+2213 Minus-or-Plus Sign
-  ("&plusdo;" "<#2214>")  ; ∔ U+2214 Dot Plus
+  ("&prod;" (big "prod"))  ; ∏ U+220F N-Ary Product
+  ("&coprod;" (big "amalg"))  ; ∐ U+2210 N-Ary Coproduct
+  ("&sum;" (big "sum"))  ; ∑ U+2211 N-Ary Summation
+  ("&mnplus;" <mp>)  ; ∓ U+2213 Minus-or-Plus Sign
   ("&setminus;" "<#2216>")  ; ∖ U+2216 Set Minus
   ("&lowast;" "<#2217>")  ; ∗ U+2217 Asterisk Operator
-  ("&compfn;" "<#2218>")  ; ∘ U+2218 Ring Operator
+  ("&compfn;" "<circ>")  ; ∘ U+2218 Ring Operator
   ("&radic;" "<#221A>")  ; √ U+221A Square Root
   ("&prop;" "<#221D>")  ; ∝ U+221D Proportional To
   ("&infin;" "<#221E>")  ; ∞ U+221E Infinity
   ("&angrt;" "<#221F>")  ; ∟ U+221F Right Angle
   ("&ang;" "<#2220>")  ; ∠ U+2220 Angle
-  ("&angmsd;" "<#2221>")  ; ∡ U+2221 Measured Angle
-  ("&angsph;" "<#2222>")  ; ∢ U+2222 Spherical Angle
   ("&mid;" "<#2223>")  ; ∣ U+2223 Divides
-  ("&nmid;" "<#2224>")  ; ∤ U+2224 Does Not Divide
   ("&parallel;" "<#2225>")  ; ∥ U+2225 Parallel To
-  ("&npar;" "<#2226>")  ; ∦ U+2226 Not Parallel To
   ("&and;" "<#2227>")  ; ∧ U+2227 Logical And
   ("&or;" "<#2228>")  ; ∨ U+2228 Logical Or
   ("&cap;" "<#2229>")  ; ∩ U+2229 Intersection
@@ -246,26 +237,18 @@
   ("&int;" "<#222B>")  ; ∫ U+222B Integral
   ("&Int;" "<#222C>")  ; ∬ U+222C Double Integral
   ("&iiint;" "<#222D>")  ; ∭ U+222D Triple Integral
-  ("&conint;" "<#222E>")  ; ∮ U+222E Contour Integral
+  ("&conint;" "<#222E>")  ; ∮ U+222E Contour Integral 
   ("&Conint;" "<#222F>")  ; ∯ U+222F Surface Integral
   ("&Cconint;" "<#2230>")  ; ∰ U+2230 Volume Integral
-  ("&cwint;" "<#2231>")  ; ∱ U+2231 Clockwise Integral
-  ("&cwconint;" "<#2232>")  ; ∲ U+2232 Clockwise Contour Integral
-  ("&awconint;" "<#2233>")  ; ∳ U+2233 Anticlockwise Contour Integral
   ("&there4;" "<#2234>")  ; ∴ U+2234 Therefore
   ("&because;" "<#2235>")  ; ∵ U+2235 Because
   ("&ratio;" "<#2236>")  ; ∶ U+2236 Ratio
   ("&Colon;" "<#2237>")  ; ∷ U+2237 Proportion
-  ("&minusd;" "<#2238>")  ; ∸ U+2238 Dot Minus
-  ("&mDDot;" "<#223A>")  ; ∺ U+223A Geometric Proportion
   ("&homtht;" "<#223B>")  ; ∻ U+223B Homothetic
   ("&sim;" "<#223C>")  ; ∼ U+223C Tilde Operator
   ("&bsim;" "<#223D>")  ; ∽ U+223D Reversed Tilde
   ("&ac;" "<#223E>")  ; ∾ U+223E Inverted Lazy S
   ("&acd;" "<#223F>")  ; ∿ U+223F Sine Wave
-  ("&wreath;" "<#2240>")  ; ≀ U+2240 Wreath Product
-  ("&nsim;" "<#2241>")  ; ≁ U+2241 Not Tilde
-  ("&esim;" "<#2242>")  ; ≂ U+2242 Minus Tilde
   ("&sime;" "<#2243>")  ; ≃ U+2243 Asymptotically Equal To
   ("&nsime;" "<#2244>")  ; ≄ U+2244 Not Asymptotically Equal To
   ("&cong;" "<#2245>")  ; ≅ U+2245 Approximately Equal To
@@ -274,23 +257,11 @@
   ("&asymp;" "<#2248>")  ; ≈ U+2248 Almost Equal To
   ("&nap;" "<#2249>")  ; ≉ U+2249 Not Almost Equal To
   ("&approxeq;" "<#224A>")  ; ≊ U+224A Almost Equal or Equal To
-  ("&apid;" "<#224B>")  ; ≋ U+224B Triple Tilde
-  ("&bcong;" "<#224C>")  ; ≌ U+224C All Equal To
   ("&asympeq;" "<#224D>")  ; ≍ U+224D Equivalent To
   ("&bump;" "<#224E>")  ; ≎ U+224E Geometrically Equivalent To
   ("&bumpe;" "<#224F>")  ; ≏ U+224F Difference Between
-  ("&esdot;" "<#2250>")  ; ≐ U+2250 Approaches the Limit
-  ("&eDot;" "<#2251>")  ; ≑ U+2251 Geometrically Equal To
-  ("&efDot;" "<#2252>")  ; ≒ U+2252 Approximately Equal To or the Image Of
-  ("&erDot;" "<#2253>")  ; ≓ U+2253 Image of or Approximately Equal To
-  ("&colone;" "<#2254>")  ; ≔ U+2254 Colon Equals
-  ("&ecolon;" "<#2255>")  ; ≕ U+2255 Equals Colon
   ("&ecir;" "<#2256>")  ; ≖ U+2256 Ring In Equal To
   ("&cire;" "<#2257>")  ; ≗ U+2257 Ring Equal To
-  ("&wedgeq;" "<#2259>")  ; ≙ U+2259 Estimates
-  ("&veeeq;" "<#225A>")  ; ≚ U+225A Equiangular To
-  ("&trie;" "<#225C>")  ; ≜ U+225C Delta Equal To
-  ("&equest;" "<#225F>")  ; ≟ U+225F Questioned Equal To
   ("&equiv;" "<#2261>")  ; ≡ U+2261 Identical To
   ("&nequiv;" "<#2262>")  ; ≢ U+2262 Not Identical To
   ("&le;" "<#2264>")  ; ≤ U+2264 Less-Than or Equal To
@@ -301,7 +272,6 @@
   ("&gnE;" "<#2269>")  ; ≩ U+2269 Greater-Than But Not Equal To
   ("&Lt;" "<#226A>")  ; ≪ U+226A Much Less-Than
   ("&Gt;" "<#226B>")  ; ≫ U+226B Much Greater-Than
-  ("&between;" "<#226C>")  ; ≬ U+226C Between
   ("&NotCupCap;" "<#226D>")  ; ≭ U+226D Not Equivalent To
   ("&nlt;" "<#226E>")  ; ≮ U+226E Not Less-Than
   ("&ngt;" "<#226F>")  ; ≯ U+226F Not Greater-Than
@@ -311,10 +281,6 @@
   ("&gsim;" "<#2273>")  ; ≳ U+2273 Greater-Than or Equivalent To
   ("&nlsim;" "<#2274>")  ; ≴ U+2274 Neither Less-Than nor Equivalent To
   ("&ngsim;" "<#2275>")  ; ≵ U+2275 Neither Greater-Than nor Equivalent To
-  ("&lg;" "<#2276>")  ; ≶ U+2276 Less-Than or Greater-Than
-  ("&gl;" "<#2277>")  ; ≷ U+2277 Greater-Than or Less-Than
-  ("&ntlg;" "<#2278>")  ; ≸ U+2278 Neither Less-Than nor Greater-Than
-  ("&ntgl;" "<#2279>")  ; ≹ U+2279 Neither Greater-Than nor Less-Than
   ("&pr;" "<#227A>")  ; ≺ U+227A Precedes
   ("&sc;" "<#227B>")  ; ≻ U+227B Succeeds
   ("&prcue;" "<#227C>")  ; ≼ U+227C Precedes or Equal To
@@ -333,7 +299,6 @@
   ("&nsupe;" "<#2289>")  ; ⊉ U+2289 Neither a Superset of nor Equal To
   ("&subne;" "<#228A>")  ; ⊊ U+228A Subset of with Not Equal To
   ("&supne;" "<#228B>")  ; ⊋ U+228B Superset of with Not Equal To
-  ("&cupdot;" "<#228D>")  ; ⊍ U+228D Multiset Multiplication
   ("&uplus;" "<#228E>")  ; ⊎ U+228E Multiset Union
   ("&sqsub;" "<#228F>")  ; ⊏ U+228F Square Image Of
   ("&sqsup;" "<#2290>")  ; ⊐ U+2290 Square Original Of
@@ -361,25 +326,12 @@
   ("&vDash;" "<#22A8>")  ; ⊨ U+22A8 True
   ("&Vdash;" "<#22A9>")  ; ⊩ U+22A9 Forces
   ("&Vvdash;" "<#22AA>")  ; ⊪ U+22AA Triple Vertical Bar Right Turnstile
-  ("&VDash;" "<#22AB>")  ; ⊫ U+22AB Double Vertical Bar Double Right Turnstile
-  ("&nvdash;" "<#22AC>")  ; ⊬ U+22AC Does Not Prove
-  ("&nvDash;" "<#22AD>")  ; ⊭ U+22AD Not True
-  ("&nVdash;" "<#22AE>")  ; ⊮ U+22AE Does Not Force
-  ("&nVDash;" "<#22AF>")  ; ⊯ U+22AF Negated Double Vertical Bar Double Right Turnstile
   ("&prurel;" "<#22B0>")  ; ⊰ U+22B0 Precedes Under Relation
   ("&vltri;" "<#22B2>")  ; ⊲ U+22B2 Normal Subgroup Of
   ("&vrtri;" "<#22B3>")  ; ⊳ U+22B3 Contains As Normal Subgroup
   ("&ltrie;" "<#22B4>")  ; ⊴ U+22B4 Normal Subgroup of or Equal To
   ("&rtrie;" "<#22B5>")  ; ⊵ U+22B5 Contains As Normal Subgroup or Equal To
-  ("&origof;" "<#22B6>")  ; ⊶ U+22B6 Original Of
-  ("&imof;" "<#22B7>")  ; ⊷ U+22B7 Image Of
-  ("&mumap;" "<#22B8>")  ; ⊸ U+22B8 Multimap
   ("&hercon;" "<#22B9>")  ; ⊹ U+22B9 Hermitian Conjugate Matrix
-  ("&intcal;" "<#22BA>")  ; ⊺ U+22BA Intercalate
-  ("&veebar;" "<#22BB>")  ; ⊻ U+22BB Xor
-  ("&barvee;" "<#22BD>")  ; ⊽ U+22BD Nor
-  ("&angrtvb;" "<#22BE>")  ; ⊾ U+22BE Right Angle with Arc
-  ("&lrtri;" "<#22BF>")  ; ⊿ U+22BF Right Triangle
   ("&xwedge;" "<#22C0>")  ; ⋀ U+22C0 N-Ary Logical And
   ("&xvee;" "<#22C1>")  ; ⋁ U+22C1 N-Ary Logical Or
   ("&xcap;" "<#22C2>")  ; ⋂ U+22C2 N-Ary Intersection
@@ -387,8 +339,6 @@
   ("&diamond;" "<#22C4>")  ; ⋄ U+22C4 Diamond Operator
   ("&sdot;" "<#22C5>")  ; ⋅ U+22C5 Dot Operator
   ("&Star;" "<#22C6>")  ; ⋆ U+22C6 Star Operator
-  ("&divonx;" "<#22C7>")  ; ⋇ U+22C7 Division Times
-  ("&bowtie;" "<#22C8>")  ; ⋈ U+22C8 Bowtie
   ("&ltimes;" "<#22C9>")  ; ⋉ U+22C9 Left Normal Factor Semidirect Product
   ("&rtimes;" "<#22CA>")  ; ⋊ U+22CA Right Normal Factor Semidirect Product
   ("&lthree;" "<#22CB>")  ; ⋋ U+22CB Left Semidirect Product
@@ -400,14 +350,8 @@
   ("&Sup;" "<#22D1>")  ; ⋑ U+22D1 Double Superset
   ("&Cap;" "<#22D2>")  ; ⋒ U+22D2 Double Intersection
   ("&Cup;" "<#22D3>")  ; ⋓ U+22D3 Double Union
-  ("&fork;" "<#22D4>")  ; ⋔ U+22D4 Pitchfork
-  ("&epar;" "<#22D5>")  ; ⋕ U+22D5 Equal and Parallel To
-  ("&ltdot;" "<#22D6>")  ; ⋖ U+22D6 Less-Than with Dot
-  ("&gtdot;" "<#22D7>")  ; ⋗ U+22D7 Greater-Than with Dot
   ("&Ll;" "<#22D8>")  ; ⋘ U+22D8 Very Much Less-Than
   ("&Gg;" "<#22D9>")  ; ⋙ U+22D9 Very Much Greater-Than
-  ("&leg;" "<#22DA>")  ; ⋚ U+22DA Less-Than Equal To or Greater-Than
-  ("&gel;" "<#22DB>")  ; ⋛ U+22DB Greater-Than Equal To or Less-Than
   ("&cuepr;" "<#22DE>")  ; ⋞ U+22DE Equal To or Precedes
   ("&cuesc;" "<#22DF>")  ; ⋟ U+22DF Equal To or Succeeds
   ("&nprcue;" "<#22E0>")  ; ⋠ U+22E0 Does Not Precede or Equal
@@ -427,17 +371,6 @@
   ("&utdot;" "<#22F0>")  ; ⋰ U+22F0 Up Right Diagonal Ellipsis
   ("&dtdot;" "<#22F1>")  ; ⋱ U+22F1 Down Right Diagonal Ellipsis
   ("&disin;" "<#22F2>")  ; ⋲ U+22F2 Element of with Long Horizontal Stroke
-  ("&isinsv;" "<#22F3>")  ; ⋳ U+22F3 Element of with Vertical Bar At End of Horizontal Stroke
-  ("&isins;" "<#22F4>")  ; ⋴ U+22F4 Small Element of with Vertical Bar At End of Horizontal Stroke
-  ("&isindot;" "<#22F5>")  ; ⋵ U+22F5 Element of with Dot Above
-  ("&notinvc;" "<#22F6>")  ; ⋶ U+22F6 Element of with Overbar
-  ("&notinvb;" "<#22F7>")  ; ⋷ U+22F7 Small Element of with Overbar
-  ("&isinE;" "<#22F9>")  ; ⋹ U+22F9 Element of with Two Horizontal Strokes
-  ("&nisd;" "<#22FA>")  ; ⋺ U+22FA Contains with Long Horizontal Stroke
-  ("&xnis;" "<#22FB>")  ; ⋻ U+22FB Contains with Vertical Bar At End of Horizontal Stroke
-  ("&nis;" "<#22FC>")  ; ⋼ U+22FC Small Contains with Vertical Bar At End of Horizontal Stroke
-  ("&notnivc;" "<#22FD>")  ; ⋽ U+22FD Contains with Overbar
-  ("&notnivb;" "<#22FE>")  ; ⋾ U+22FE Small Contains with Overbar
   ("&lceil;" "<#2308>")  ; ⌈ U+2308 Left Ceiling
   ("&rceil;" "<#2309>")  ; ⌉ U+2309 Right Ceiling
   ("&lfloor;" "<#230A>")  ; ⌊ U+230A Left Floor
@@ -514,9 +447,6 @@
   ("&ddarr;" "<#21CA>")  ; ⇊ U+21CA Downwards Paired Arrows
   ("&lrhar;" "<#21CB>")  ; ⇋ U+21CB Leftwards Harpoon Over Rightwards Harpoon
   ("&rlhar;" "<#21CC>")  ; ⇌ U+21CC Rightwards Harpoon Over Leftwards Harpoon
-  ("&nlArr;" "<#21CD>")  ; ⇍ U+21CD Leftwards Double Arrow with Stroke
-  ("&nhArr;" "<#21CE>")  ; ⇎ U+21CE Left Right Double Arrow with Stroke
-  ("&nrArr;" "<#21CF>")  ; ⇏ U+21CF Rightwards Double Arrow with Stroke
   ("&lArr;" "<#21D0>")  ; ⇐ U+21D0 Leftwards Double Arrow
   ("&uArr;" "<#21D1>")  ; ⇑ U+21D1 Upwards Double Arrow
   ("&rArr;" "<#21D2>")  ; ⇒ U+21D2 Rightwards Double Arrow
@@ -534,9 +464,6 @@
   ("&larrb;" "<#21E4>")  ; ⇤ U+21E4 Leftwards Arrow To Bar
   ("&rarrb;" "<#21E5>")  ; ⇥ U+21E5 Rightwards Arrow To Bar
   ("&duarr;" "<#21F5>")  ; ⇵ U+21F5 Downwards Arrow Leftwards of Upwards Arrow
-  ("&hoarr;" "<#21FF>")  ; ⇿ U+21FF Left Right Open-Headed Arrow
-  ("&loarr;" "<#21FD>")  ; ⇽ U+21FD Leftwards Open-Headed Arrow
-  ("&roarr;" "<#21FE>")  ; ⇾ U+21FE Rightwards Open-Headed Arrow
   ("&xlarr;" "<#27F5>")  ; ⟵ U+27F5 Long Leftwards Arrow
   ("&xrarr;" "<#27F6>")  ; ⟶ U+27F6 Long Rightwards Arrow
   ("&xharr;" "<#27F7>")  ; ⟷ U+27F7 Long Left Right Arrow
@@ -575,7 +502,7 @@
   ("&aleph;" "<#02135>")  ; ℵ U+02135
   ("&uparrow;" "<#02191>")  ; ↑ U+02191
   ("&Product;" "<#0220F>")  ; ∏ U+0220F
-  ("&exponentiale;" "<#02147>")  ; ⅇ U+02147
+  ("&exponentiale;" "<mathe>")  ; ⅇ U+02147
 
   )
 
