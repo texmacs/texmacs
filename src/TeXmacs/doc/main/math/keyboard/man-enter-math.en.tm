@@ -38,8 +38,8 @@
 
     This entry allows you to create an <markup|eqnarray*>, a three columns
     wide table-like environment (see <hlink|creating
-    tables|../table/man-create-table.en.tm>). This environment is typically
-    used for lists of multiple relations like
+    tables|../../table/man-create-table.en.tm>). This environment is
+    typically used for lists of multiple relations like
 
     <\eqnarray*>
       <tformat|<table|<row|<cell|x+0>|<cell|=>|<cell|x>>|<row|<cell|x+<around|(|\<um\>x|)>>|<cell|=>|<cell|0>>|<row|<cell|x+y>|<cell|=>|<cell|y+x>>|<row|<cell|<around|(|x+y|)>+z>|<cell|=>|<cell|x+<around|(|y+z|)>>>>>

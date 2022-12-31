@@ -13,7 +13,7 @@
   variety of other systems, such as <name|Axiom>, <name|Gap>, <name|Pari GP>,
   <name|Macaulay<nbsp>2>, <name|Maxima>, <name|Octave>, and <name|Singular>.
   The system was started by <hlink|<name|William
-  Stein>|http://modular.math.washington.edu/>.
+  Stein>|https://www.wstein.org/>.
 
   <tmdoc-copyright|2007|Joris van der Hoeven>
 

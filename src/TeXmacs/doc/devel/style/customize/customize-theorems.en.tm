@@ -1,6 +1,6 @@
-<TeXmacs|1.0.4>
+<TeXmacs|2.1.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Customizing numbered textual environments>
@@ -30,11 +30,11 @@
     <inactive*|<new-theorem|experiment|Experiment>>
   </tm-fragment>
 
-  When available in the <TeXmacs> dictionaries, the text ``Experiment'' will
+  When available in the <TeXmacs> dictionaries, the text \PExperiment\Q will
   be automatically translated when your document is written in a foreign
-  language. In the section about <hyper-link|how to define new
-  environments|../../../main/styles/std-dtds/env-manage-dtd.en.tm>, it is
-  also explained how to define other numbered textual environments (besides
+  language. In the section about <hlink|how to define new
+  environments|../../../main/styles/env/env-base-dtd.en.tm>, it is also
+  explained how to define other numbered textual environments (besides
   theorems, remarks and exercises).
 
   <paragraph*|Customization of the rendering>
@@ -42,7 +42,7 @@
   The principal rendering of the environments can be customized by redefining
   the <markup|render-theorem>, <markup|render-remark> and
   <markup|render-exercise> macros. These macros take the <src-arg|name> of
-  the environment (like ``Theorem <no-break>1.2'') and its <src-arg|body> as
+  the environment (like \PTheorem <no-break>1.2\Q) and its <src-arg|body> as
   arguments. For instance, if you want theorems to appear in a slightly
   indented way, with a slanted body, then you may redefine
   <markup|render-theorem> as follows:
@@ -94,7 +94,7 @@
 
   <paragraph*|Customization of the numbering>
 
-  In the sections about <hyper-link|counters and counter
+  In the sections about <hlink|counters and counter
   groups|../../../main/styles/std/std-counter-dtd.en.tm>, it is explained how
   to customize the counters of numbered environments for particular purposes.
   For instance, by redefining <markup|inc-theorem>, you may force theorems to
@@ -117,7 +117,7 @@
     <inactive*|<assign|display-std-env|<macro|nr|<section-prefix><arg|nr>>>>
   </tm-fragment>
 
-  <tmdoc-copyright|1998--2004|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2004|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -126,3 +126,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

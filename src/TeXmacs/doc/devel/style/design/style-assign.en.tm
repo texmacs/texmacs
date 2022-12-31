@@ -1,12 +1,12 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|2.1.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Assignments>
 
   All user defined <TeXmacs> macros and style variables are stored in the
-  ``current typesetting environment''. This environment associates a tree
+  \Pcurrent typesetting environment\Q. This environment associates a tree
   value to each string variable. Variables whose values are macros correspond
   to new primitives. The others are ordinary environment variables. The
   primitives for operating on the environment are available from
@@ -36,9 +36,9 @@
 
   Finally, you may associate logical properties to environment variables
   using the <markup|drd-props> primitive. This is explained in more detail in
-  the section about <hyper-link|macro primitives|../../format/primitives/prim-macro.en.tm>.
+  the section about <hlink|macro primitives|../../format/stylesheet/prim-macro.en.tm>.
 
-  <tmdoc-copyright|1998--2004|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2004|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -48,17 +48,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|par-width|150mm>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

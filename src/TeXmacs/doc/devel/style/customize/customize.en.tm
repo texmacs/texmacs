@@ -1,6 +1,6 @@
-<TeXmacs|1.0.4>
+<TeXmacs|2.1.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Customizing the standard <TeXmacs> styles>
@@ -12,8 +12,8 @@
   understanding of the global architecture of the standard style files and a
   more precise understanding of the parts you wish to customize. In this
   section, we will explain the general principles. For more details, we refer
-  to the chapter on the <hyper-link|principal <TeXmacs>
-  tags|../../../main/styles/std-dtds/dtds.en.tm>.
+  to the chapter on the <hlink|principal <TeXmacs>
+  tags|../design/style-language.en.tm>.
 
   <\traverse>
     <branch|Organization of the style files and
@@ -33,7 +33,7 @@
     information|customize-title.en.tm>
   </traverse>
 
-  <tmdoc-copyright|1998--2004|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2004|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -43,8 +43,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

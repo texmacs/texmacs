@@ -1,6 +1,6 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|2.1.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Computational markup>
@@ -9,7 +9,7 @@
   <menu|Source|Tuple> and <menu|Source|Condition> you will find different
   primitives for computing with integers, strings, tuples and boolean values.
   For instance, in the following code, the <markup|new-important> tag defines
-  a new ``important tag'' as well as a variant in red:
+  a new \Pimportant tag\Q as well as a variant in red:
 
   <\tm-fragment>
     <inactive*|<assign|new-important|<macro|name|<quasi|<style-with|src-compact|none|<style-with|src-compact|none|<assign|<unquote|<arg|name>>|<macro|x|<with|font-series|bold|<arg|x>>>>><style-with|src-compact|none|<assign|<unquote|<merge|<arg|name>|-red>>|<macro|x|<with|font-series|bold|color|red|<arg|x>>>>>>>>>>
@@ -17,11 +17,10 @@
 
   Here we use the <markup|merge> primitive in order to concatenate two
   strings. The different computational primitives are described in more
-  detail in the <hyper-link|corresponding
-  section|../../format/primitives/prim-functional.en.tm> on the
-  <hyper-link|<TeXmacs> primitives|../../format/primitives/primitives.en.tm>.
+  detail in the <hlink|corresponding section|../../format/stylesheet/prim-functional.en.tm>
+  on the <hlink|<TeXmacs> primitives|../../format/stylesheet/stylesheet.en.tm>.
 
-  <tmdoc-copyright|1998--2004|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2004|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -31,17 +30,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|par-width|150mm>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

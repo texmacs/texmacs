@@ -1,6 +1,6 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|2.1.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|White space primitives>
@@ -11,9 +11,9 @@
     <explain-macro|vspace|len|min|max><explain-synopsis|vertical space after>
   <|explain>
     This primitive inserts an elastic vertical space after the current
-    paragraph. All operands must be <hyper-link|length
-    values|../language/lengths.en.tm>. The <src-arg|len> argument specifies
-    the default length and the <src-arg|min> and <src-arg|max> arguments the
+    paragraph. All operands must be <hlink|length
+    values|../basics/lengths.en.tm>. The <src-arg|len> argument specifies the
+    default length and the <src-arg|min> and <src-arg|max> arguments the
     bounds to vertical stretching for page breaking and filling. If
     <src-arg|min> and <src-arg|max> are not specified, then they are
     determined implicitly from the length unit of <src-arg|len>.
@@ -57,9 +57,9 @@
     <explain-macro|hspace|len|min|max><explain-synopsis|stretchable
     horizontal space>
   <|explain>
-    This primitive inserts a stretchable horizontal space of nominal
-    width <src-arg|len>, which must be a <hyper-link|length
-    value|../language/lengths.en.tm>. The <src-arg|min> and <src-arg|max>
+    This primitive inserts a stretchable horizontal space of nominal width
+    <src-arg|len>, which must be a <hlink|length
+    value|../basics/lengths.en.tm>. The <src-arg|min> and <src-arg|max>
     arguments specify bounds to horizontal stretching for line breaking and
     filling. If <src-arg|min> and <src-arg|max> are not specified, then they
     are determined implicitly from the length unit of <src-arg|len>.
@@ -88,7 +88,7 @@
     <\indent>
       <explain-macro|htab|min> inserts a strong spring of minimal width
       <src-arg|min> and of weight unity. The <src-arg|min> operand must be a
-      <hyper-link|length value|../language/lengths.en.tm>.
+      <hlink|length value|../basics/lengths.en.tm>.
 
       <explain-macro|htab|min|weight> specifies the weight, which can be a
       positive decimal number or one of the two special values documented
@@ -119,3 +119,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

@@ -89,7 +89,7 @@
   </session>
 
   <scm|resize> is another of the several available container or
-  <hlink|content management widgets|scheme-gui-container.en.tm>. It accepts
+  <hlink|content management widgets|scheme-gui-advanced.en.tm>. It accepts
   two sorts of arguments. Either one sets a fixed size for the widget with
   two strings, as in the example above, or one passes two lists, the first
   for widths, the second for heights, with the minimum, default and maximum

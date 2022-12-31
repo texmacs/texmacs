@@ -1,13 +1,13 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|2.1.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|ASCII-based or tree-based editing: an intricate choice>
 
   Most users are used to edit source code using a conventional editor like
   <name|Emacs>, while presenting the source code in ASCII format. Since all
-  <TeXmacs> documents are stored as <hyper-link|trees|../../format/format.en.tm>,
+  <TeXmacs> documents are stored as <hlink|trees|../../../devel/format/basics/basics.en.tm>,
   an interesting but complicated question is which format is most suitable
   for editing such documents. One option is to represent the tree using an
   ASCII-based format, such as XML, Scheme, or the native format for storing
@@ -15,10 +15,10 @@
   fundamental distinction between source code and normal documents.
 
   In <TeXmacs> we have chosen to implement the second option. More precisely,
-  any document can be edited in ``source mode'', which is merely a mode for
+  any document can be edited in \Psource mode\Q, which is merely a mode for
   rendering the document in a way which makes its tree structure particularly
   apparent. It may be instructive to take an arbitrary document of yours and
-  to take a look at it in ``source mode'' by enabling
+  to take a look at it in \Psource mode\Q by enabling
   <menu|Document|Source|Edit source tree>.
 
   The choice between ASCII-based editing and tree-based editing is
@@ -38,7 +38,7 @@
     highlighting, indentation, <abbr|etc.>
 
     <item><label|structure-constraints>One is not constraint by any
-    ``structure'' during the editing phase.
+    \Pstructure\Q during the editing phase.
   </enumerate>
 
   Our approach is to reproduce as much of the above advantages in a
@@ -50,11 +50,11 @@
 
   For instance, consider a piece of manually formatted code like
 
-  <\cpp-fragment>
+  <\cpp-code>
     if (cond) hop \ \ = 2;
 
     else \ \ \ \ \ holala= 3;
-  </cpp-fragment>
+  </cpp-code>
 
   Clearly, the user had a particular formatting policy when writing this
   code. However, this policy does not appear in the document: manual
@@ -70,7 +70,7 @@
   structured highlighting. Further tools will be developed later and we are
   open for any suggestions from our users.
 
-  <tmdoc-copyright|1998--2004|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2004|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -80,17 +80,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|par-width|150mm>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

@@ -5,12 +5,12 @@
 <\body>
   <tmdoc-title|The GTybalt system>
 
-  <hlink|<name|GTybalt>|http://wwwthep.physik.uni-mainz.de/~stefanw/gtybalt.html>
+  <hlink|<name|GTybalt>|https://particlephysics.uni-mainz.de/weinzierl/gtybalt.html>
   is a free computer algebra system which is built on top of <name|GiNaC>,
   CLN and a program to interpret C and C++ commands. <name|gTybalt>, which is
   still in an experimental stage, is maintained by <hlink|<name|Stefan
-  Weinzierl>|http://www.fis.unipr.it/~stefanw>. Some of the main features of
-  <name|gTybalt> are the following:
+  Weinzierl>|https://particlephysics.uni-mainz.de/weinzierl/>. Some of the
+  main features of <name|gTybalt> are the following:
 
   <\itemize>
     <item>Object Oriented: <name|gTybalt> allows symbolic calculations within
