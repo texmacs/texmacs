@@ -605,7 +605,7 @@
   (bold (text "TeXmacs -> Image"))
   ===
   (aligned
-    (item (text "Bitmap resolution (dpi):")
+    (item (text "Bitmap export resolution (dpi):")
       (enum (set-preference "texmacs->image:raster-resolution" answer)
             '("1200" "600" "300" "150" "")
             (get-preference "texmacs->image:raster-resolution")
