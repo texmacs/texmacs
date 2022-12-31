@@ -1,22 +1,24 @@
-<TeXmacs|1.99.21>
+<TeXmacs|2.1.1>
 
 <style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|Inserting images>
 
-  You can include images in the text using the menu <menu|Insert|Image>.
-  Currently, <TeXmacs> recognizes the <verbatim|ps>, <verbatim|eps>,
-  <verbatim|tif>, <verbatim|pdf>, <verbatim|pdm>, <verbatim|gif>,
-  <verbatim|ppm>, <verbatim|xpm> and <verbatim|fig> file formats.
+  You can include images in the text using the menu <menu|Insert|Image> or
+  using drag-and-drop. Currently, <TeXmacs> recognizes the <verbatim|ps>,
+  <verbatim|eps>, <verbatim|tif>, <verbatim|pdf>, <verbatim|svg>,
+  <verbatim|png>, <verbatim|pdm>, <verbatim|gif>, <verbatim|ppm>,
+  <verbatim|xpm> and <verbatim|fig> file formats.
 
   By default, images are displayed at their design sizes and aligned at their
   bottom lines. Alternative widths, heights and alignment offsets may be
-  specified in the image chooser dialogue window.\ 
+  specified in the image chooser dialogue window, using <hlink|<TeXmacs>
+  notation for lengths|../../devel/format/basics/lengths.en.tm>.\ 
 
   <\itemize>
     <item>When specifying a new width, but no height at the prompt (or vice
-    versa), the image is resized so as to preserve the aspect ration. For
+    versa), the image is resized so as to preserve the aspect ratio. For
     instance, entering a width of <verbatim|1par> will make the image span
     over the entire paragraph width and adjust the height proportionally.
 
@@ -41,8 +43,9 @@
   <\remark>
     For the support of certain formats, <TeXmacs> may rely on external
     converters to more standard formats such as <name|Ghostscript>,
-    <name|ImageMagick>, and the <name|Netpbm> tools. If necessary, then you
-    may consider installing these tools or ask your system administrator.
+    <name|ImageMagick>, <name|Inkscape>, or <name|rsvg-convert>. If
+    necessary, then you may consider installing these tools or ask your
+    system administrator.
   </remark>
 
   <tmdoc-copyright|1998\U2002|Joris van der Hoeven>
