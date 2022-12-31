@@ -93,7 +93,7 @@
     <src-var|prog-language> variable in order to determine a concrete
     implementation as well as a particular instance of the current
     programming language. For instance, in case of the
-    <hlink|<name|Maxima>|../../../main/interface/cas/man-maxima.en.tm>
+    <hlink|<name|Maxima>|../../../../plugins/maxima/doc/maxima-abstract.en.tm>
     language, different implementation may be used fooor the underlying
     <name|Lisp>. Similarly, one may wish to run two different instances of
     <name|Maxima> in parallel.
@@ -136,7 +136,7 @@
     like ``<verbatim|Salmon>'', are supported for different color charts:
     <hlink|<verbatim|dvips>|https://en.wikibooks.org/wiki/LaTeX/Colors#The_68_standard_colors_known_to_dvips>,
     <hlink|<verbatim|x11>|https://en.wikipedia.org/wiki/X11_color_names#Color_name_charts>
-    and <hlink|<verbatim|html>|http://www.w3schools.com/html/html_colornames.asp>.
+    and <hlink|<verbatim|html>|https://www.w3schools.com/colors/colors_names.asp>.
   </explain>
 
   <\explain>

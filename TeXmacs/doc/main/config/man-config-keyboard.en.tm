@@ -137,7 +137,7 @@
 
   If, for some reason, the standard <TeXmacs> shortcuts are not sufficient or
   suitable for you, then you may <hlink|define your own
-  shortcuts|../scheme/man-keyboard.en.tm>.
+  shortcuts|../scheme/man-custom-keyboard.en.tm>.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 

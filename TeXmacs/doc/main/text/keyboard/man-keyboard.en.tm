@@ -6,7 +6,7 @@
   <tmdoc-title|Mastering the keyboard>
 
   We recall that the section on <hlink|general
-  conventions|../start/man-conventions.en.tm> contains explanations on the
+  conventions|../../start/man-conventions.en.tm> contains explanations on the
   way keyboard shortcuts are printed in this manual. It may also be useful to
   take a look at the section on <hlink|keyboard
   configuration|../../config/man-config-keyboard.en.tm>.

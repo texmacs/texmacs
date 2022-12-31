@@ -3,35 +3,33 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Ongoing external developments>
+  <tmdoc-title|external developments>
 
   Some people which are not part of the core development team use <TeXmacs>
   for other projects. We do our best to support such external developments
   and make the necessary changes inside <TeXmacs> when necessary. Here
-  follows a list of a few initiatives that we are aware of:
+  follows a list of a few initiatives that we have been aware of:
 
   <\itemize>
-    <item><hlink|Lionel Mamane|http://www.cs.ru.nl/~lionelm/> is developing a
-    plug-in for the <hlink|<name|Coq>|http://coq.inria.fr/coq-fra.html> proof
-    assistant, called <name|Tmegg>. A first version of this plug-in is about
-    to be released; please check Lionel's homepage. Similarly, Henri Lesourd
-    is developing an interface to the <hlink|Omega
-    system|http://www.ags.uni-sb.de/~omega/software/omega/index.html>. The
-    use of <TeXmacs> as a front-end for proof assistants and theorem provers
-    raises interesting questions about asynchroneous plug-in evaluations,
-    keeping track and appropriate rendering of the state of a prover,
-    appropriate mathematical and proof markup, etc.
+    <item>Lionel Mamane has developed a plug-in for the
+    <hlink|<name|Coq>|https://coq.inria.fr/> proof assistant, called
+    <name|Tmegg>, but was never released publicly. Similarly, Henri Lesourd
+    developed an interface to the \<Omega\>mega mathematical assistant
+    system. The use of <TeXmacs> as a front-end for proof assistants and
+    theorem provers raises interesting questions about asynchroneous plug-in
+    evaluations, keeping track and appropriate rendering of the state of a
+    prover, appropriate mathematical and proof markup, etc.
 
-    <item>Saugata Basu, Richard Pollack and Marie-François Roy have written
-    an interactive book ``<hlink|Algorithms in Real Algebraic
-    Geometry|http://perso.univ-rennes1.fr/marie-francoise.roy/bpr-posted1.html>''
+    <item>Saugata Basu, Richard Pollack and Marie-Franï¿½ois Roy have written
+    an interactive book \P<hlink|Algorithms in Real Algebraic
+    Geometry|https://perso.univ-rennes1.fr/marie-francoise.roy/bpr-ed2-posted3.html>\Q
     using <TeXmacs>. Any people interested in developing addional interactive
     features inside <TeXmacs> are invited to contact us.
 
     <item><hlink|Felix Breuer|http://www.felixbreuer.net/index.html> and
-    formerly <name|David Mentré> have considered developing a <hlink|literate
-    programming plug-in|http://david.mentre.free.fr/serendipity/index.php?/archives/8-Literate-programming-as-source-code-comments.html>
-    for <TeXmacs>. Another such initiative is
+    formerly <name|David Mentrï¿½> have considered developing a <hlink|literate
+    programming plug-in|http://www.felixbreuer.net/LP4TeXmacs-0.1.tar.gz> for
+    <TeXmacs>. Another such initiative is
     <hlink|<name|Fangle>|http://www.nongnu.org/fangle/>, which has recently
     been started by <name|Sam Liddicott>. Any concrete implementation of
     their proposals would happily find its way into the main distribution.
@@ -49,8 +47,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
