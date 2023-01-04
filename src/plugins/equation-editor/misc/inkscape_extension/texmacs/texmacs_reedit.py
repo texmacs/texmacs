@@ -47,7 +47,7 @@ Part of the code was directly copied from textext.py. Thank you Pauli!
 """
 #------------------------------------------------------------------------------
 
-import os, glob, platform, time
+import os, glob, platform, time, shutil
 import inkex, tempfile, subprocess
 #from xml.etree import ElementTree as etree
 from lxml import etree
@@ -63,17 +63,40 @@ def myfind():
     texmacs_path = os.path.join(os.environ[pf], 'TeXmacs', 'bin', 'texmacs.exe')
     if os.path.isfile(texmacs_path) : return texmacs_path
     else : #check if TeXmacs dir was added to PATH
-        inkex.utils.debug(os.get_exec_path())
+        #inkex.utils.debug(os.get_exec_path())
         for dirname in os.get_exec_path():
             candidate = os.path.join(dirname, 'bin', 'texmacs.exe')
             if os.path.isfile(candidate) :
               return candidate
-        return '' #don't fail right away, TeXmacs may be running in server mode      
+        return ''    
 
-if IS_WINDOWS :
-    texmacs_path = myfind() #enables adding custom location in PATH, e.g. for portable version
+def texmacs_exe_path() :
+  ''' Find texmacs path, save config file to user profile if necessary'''
+  texmacs_path = ""
+  UserPath = inkex.utils.get_user_directory()
+  conf_file = UserPath+'/extensions/texmacs/texmacs_path.conf'
+  if os.path.isfile(conf_file):
+  # try to load from saved config file
+    with open(conf_file, 'r') as f:
+      texmacs_path = f.read()
+      if not(os.path.isfile(texmacs_path)):
+        texmacs_path = ""
 
-else : texmacs_path ='texmacs' #texmacs needs to be in the path!
+  if (texmacs_path == "" ) :
+      texmacs_path = shutil.which('texmacs') # looking in $PATH
+      if texmacs_path == None :
+        texmacs_path = ""
+    
+  if (texmacs_path == "" ) and IS_WINDOWS :
+        texmacs_path = myfind()
+
+  #raise inkex.AbortExtension("texmacs path: " +texmacs_path)
+  if texmacs_path == "":
+     raise inkex.AbortExtension('''Inkscape cannot connect with TeXmacs, sorry.
+Please see the submenu Extensions>TeXmacs equation>Help to enter the path of your TeXmacs executable
+or have TeXmacs already running with the equation plugin in socket server mode''')
+  else :
+    return texmacs_path
 
 def string_unescape(s):
     """
@@ -265,11 +288,7 @@ class Texmacs(inkex.Effect):
 #  
 # http://code.activestate.com/lists/python-list/446422/
 # https://mail.python.org/pipermail/python-list/2005-March/355623.html
-            if texmacs_path == "" : # windows only
-               inkex.utils.debug("Inkcape cannot connect with TeXmacs, sorry.\n"+
-                          "Please add TeXmacs installation directory to the PATH\n"+
-                          "or have TeXmacs running with equation-plugin in socket server mode")
-               raise SystemExit()
+            texmacs_path = texmacs_exe_path()
             if IS_WINDOWS :
                 import ctypes
                 PIPE_ACCESS_DUPLEX = 0x3

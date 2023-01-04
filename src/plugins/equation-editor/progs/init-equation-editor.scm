@@ -211,10 +211,10 @@
           (url-append 
             (if (os-mingw?) (system->url "$APPDATA")  (system->url "~/.config"))
             (string->url "inkscape/extensions")))))
-         (source-dir (escape-shell (url-concretize (url-unix "$TEXMACS_PATH" "plugins/equation-editor/misc/inkscape_extension/texmacs")))))
+         (source-dir (escape-shell (url-concretize (url-unix "$TEXMACS_PATH" "plugins/equation-editor/misc/inkscape_extension")))))
          (if (os-mingw?)
            (system (string-append "xcopy " source-dir " " dest-dir "\\ /S /Y"))
-           (system (string-append "mkdir -p " dest-dir " ; cp -r " source-dir " " dest-dir)))
+           (system (string-append "mkdir -p " dest-dir " ; cp -r " source-dir "/texmacs " dest-dir)))
        (refresh-now "equ-ed-config")))
        
 (define (install-libreoffice-extension)
