@@ -75,7 +75,11 @@ qt_window_widget_rep::~qt_window_widget_rep ()
   if (!fake) nr_windows--;
   if (DEBUG_QT)
     debug_qt << "Deleting qt_window_widget " << id << "\n";
-  if (qwid) qwid->deleteLater();
+  //if (qwid) qwid->deleteLater(); // this caused bug 61844
+  if (qwid) {
+    notify_window_destroy (get_nickname ());
+    delete qwid;
+  }
 }
 
 widget
