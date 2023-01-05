@@ -42,6 +42,10 @@
 (if (not (defined? 'string-contains)) ; for s7
     (define (string-contains ss s)
        (string-position s ss)))
+       
+(define (debug . args)
+  (when (debug-get "convert")
+     (apply display* args))) 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; commodity functions for tree manipulations
@@ -121,8 +125,19 @@
       ;; 2: define a bunch of locations in the tree
       (buftree (buffer-get-body mybuf)) ;; the whole tree
       (svgroot (car (select buftree '(:* svg)))) ;; the <svg > node
-      (maingroup (car (select svgroot '(g))))
+      (groups (select svgroot '(g)))
+      (maingroup (if (list>1? groups)
+                     (begin
+                       (tree-insert-node! svgroot 0 '(svg))
+                       (with oldroot (tree-ref svgroot 'svg)
+                         (move-node! (tree-ref oldroot '@) 
+                                   svgroot 0)
+                         (tree-insert! oldroot 0 (list '(@)) )
+                         (tree-assign-node! oldroot 'g)
+                         oldroot))
+                     (car groups)))
       ;; the main group in the svg, containing the drawing layout
+      ;; (if more than one group, we group everything in a new group)
       (maingroup-attrib (car (select maingroup '(@))))
       ;; attributes of the main group
       (defs (select svgroot '(defs)))
@@ -154,10 +169,10 @@
         (tree-set! bgframe " stroke:none;fill-rule:nonzero;fill:rgb(100%,100%,100%);fill-opacity:0.00"))
     ;; 4.2 move defs containing the glyph outlines inside main group
     ;; so that they remain together in inkscape
-    (if defs (move-node! defs maingroup 2))
+    (if defs (move-node! defs maingroup 1))
     ;; 4.3 (not optional!), add our own new attributes for re-editting equation
-    (tree-insert! maingroup-attrib 1 extra-latex-attrib) ;; for textext compatibility
-    (tree-insert! maingroup-attrib 2 extra-tm-attrib)
+    (tree-insert! maingroup-attrib 0 extra-latex-attrib) ;; for textext compatibility
+    (tree-insert! maingroup-attrib 1 extra-tm-attrib)
     
     ;; 5: finally create output
     (let* (;; convert back to stree, recreate the *TOP* node,
@@ -243,15 +258,15 @@
      
       (tm-fragment
         (cond
-          (issomemath  (display "selection tree is a math tag \n")
+          (issomemath  (debug "selection tree is a math tag \n")
                        (selection-tree)) 
           (inmath
              (if indisplaymath
-               (begin (display "selection tree is in display math \n" )
+               (begin (debug "selection tree is in display math \n" )
                  (stree->tree `(equation* ,(selection-tree))))
-               (begin (display "selection tree is in inline math \n" )
+               (begin (debug "selection tree is in inline math \n" )
                  (stree->tree `(math ,(selection-tree))))))
-          (else (display "selection not purely math \n") (selection-tree))))
+          (else (debug "selection not purely math \n") (selection-tree))))
 ;; is selection wider than 1par (and needs linebreaks and or hyphenation)?
       (maxwidth (length-decode "1par"))
       (partmpt (string-append (number->string maxwidth) "tmpt"))
@@ -336,7 +351,7 @@
       (system-remove tmppng)
       (if (== suffix "svg")
         (begin 
-         (display* "relbaseline= " relbaseline "\n")
+         (debug "relbaseline= " relbaseline "\n")
          (refactor-svg myurl tm-fragment relbaseline))
          ;; modify svg, embedding texmacs code
         )
