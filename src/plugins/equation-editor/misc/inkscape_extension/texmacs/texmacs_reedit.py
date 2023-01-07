@@ -232,20 +232,21 @@ class Texmacs(inkex.Effect):
 
 #try connecting already running texmacs on socket (spares boot-up time)
         size = 1024
-        clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
         try:
-            clientsocket.settimeout(0.25)
-            clientsocket.connect(('localhost', 6561))
+            clientsocket = socket.create_connection(('localhost', 6561), timeout=0.25)
             time.sleep(.1)
             msg='(0 (remote-login "inkscape" "inkscape"))\n'
             clientsocket.sendall(bytes(str(len(bytes(msg,'utf8')))+ '\n'+msg,'utf8'))
             clientsocket.setblocking(1)
             time.sleep(.1)
             msg = clientsocket.recv(size)
-        except : #any error : can't connect (texmacs not running or server not started), no answer,...
+        except Exception as e : #any error : can't connect (texmacs not running or server not started), no answer,...
+            print(e)
             use_socket = False
-            clientsocket.close()
+            try :
+              clientsocket.close()
+            except :
+              pass
             #inkex.debug("use_socket = False")
         else:
             if msg.find(b"ready") : use_socket = True
