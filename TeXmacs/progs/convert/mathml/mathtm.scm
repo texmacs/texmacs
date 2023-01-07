@@ -483,11 +483,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  
 (define (mathtm-globattr env a c tagproc)
-  (if (null? a)
-    (tagproc env a c)
-    (with attrs (mathtm-style a)
-      (if (null? attrs) (tagproc env a c)
-    `((with ,@attrs ,(car (tagproc env a c))))))))
+  (with res (tagproc env a c)
+    (cond 
+      ((null? res) res)
+      ((null? a) res)
+      (else 
+        (with attrs (mathtm-style a)
+          (if (null? attrs) res
+         `((with ,@attrs ,(car res)))))))))
 
 (define (mathtm-style l)
 ;note that it does not hurt handling tag-specific attributes here
