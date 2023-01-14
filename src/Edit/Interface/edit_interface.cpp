@@ -723,10 +723,8 @@ edit_interface_rep::apply_changes () {
       init_env (ZOOM_FACTOR, new_zoom);
       notify_change (THE_ENVIRONMENT);
     }
-  }
-  if (is_attached (this) &&
-      has_current_window () &&
-      get_init_string (PAGE_MEDIUM) == "automatic")
+  
+    if (get_init_string (PAGE_MEDIUM) == "automatic")
     {
       SI wx, wy;
       if (cvw == NULL) ::get_size (get_window (this), wx, wy);
@@ -734,13 +732,14 @@ edit_interface_rep::apply_changes () {
       if (get_init_string (SCROLL_BARS) == "false") sb= 0;
       if (get_server () -> in_full_screen_mode ()) sb= 0;
       if (sb) wx -= scrollbar_width();
-      if (wx != cur_wx || wy != cur_wy) {
-        cur_wx= wx; cur_wy= wy;
+      if (wx != cur_wx || wy != cur_wy || new_zoom != old_zoom) {
+        cur_wx= wx*as_double(old_zoom); cur_wy= wy*as_double(old_zoom);
         init_env (PAGE_SCREEN_WIDTH, as_string ((SI) (wx/magf)) * "tmpt");
         init_env (PAGE_SCREEN_HEIGHT, as_string ((SI) (wy/magf)) * "tmpt");
         notify_change (THE_ENVIRONMENT);
       }
     }
+  }  
   if (get_init_string (PAGE_MEDIUM) == "beamer" && full_screen) sb= 0;
   if (sb != cur_sb) {
     cur_sb= sb;
