@@ -733,7 +733,7 @@ edit_interface_rep::apply_changes () {
       if (get_server () -> in_full_screen_mode ()) sb= 0;
       if (sb) wx -= scrollbar_width();
       if (wx != cur_wx || wy != cur_wy || new_zoom != old_zoom) {
-        cur_wx= wx*as_double(old_zoom); cur_wy= wy*as_double(old_zoom);
+        cur_wx= wx; cur_wy= wy;
         init_env (PAGE_SCREEN_WIDTH, as_string ((SI) (wx/magf)) * "tmpt");
         init_env (PAGE_SCREEN_HEIGHT, as_string ((SI) (wy/magf)) * "tmpt");
         notify_change (THE_ENVIRONMENT);
