@@ -1,4 +1,4 @@
-<TeXmacs|1.99.15>
+<TeXmacs|2.1.2>
 
 <style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
@@ -100,11 +100,11 @@
 
   <paragraph|Html importation>
 
-  <TeXmacs> also contains a rudimentary input converter for <name|Html> in
-  <menu|File|Import|Html>. Most of HTML 2.0 and parts of HTML 3.0 are
-  currently supported. However, no browsing facilities have been added yet.
-  The converter also contains a reasonably complete input converter for
-  embedded <name|MathML> fragments.
+  <TeXmacs> also contains an input converter for <name|Html>/<name|Mathml>.
+  Most of HTML 2.0 and parts of HTML 3.0 are currently supported, and
+  standalone or embedded <name|MathML> are reasonably well supported. Entire
+  <name|Html> and/or <name|Mathml> documents can be imported with
+  <menu|File|Import|Html>.\ 
 
   When importing HTML documents, files whose names start with
   <verbatim|http:> or <verbatim|ftp:> will be downloaded from the web using
@@ -116,6 +116,15 @@
   </verbatim>
 
   In the binary distributions, we have included <verbatim|wget>.
+
+  With most web browsers, interesting fragments of a web page can easily be
+  imported into <TeXmacs> without saving the page to a file: Using the
+  browser's <verbatim|"inspect"> contextual menu it is easy to spot the
+  desired fragment in the xml tree, copy it, and then paste it into <TeXmacs>
+  using \ <menu|Edit|Paste from|Html>. When copying <name|Mathml> formulas,
+  the entire \<less\>math\<gtr\> element should be selected. In some
+  browsers, the <verbatim|"inspect"> functionaly needs to be activated in the
+  preferences.
 
   <tmdoc-copyright|1998\U2019|Joris van der Hoeven>
 

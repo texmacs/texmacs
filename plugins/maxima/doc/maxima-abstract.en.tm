@@ -9,8 +9,8 @@
   oldest and best computer algebra systems around, it is also one of the only
   general purpose systems for which there is a free implementation. The
   current free <name|Maxima> implementation was started by
-  <hlink|<name|William F. Schelter>|http://www.ma.utexas.edu/users/wfs>. It
-  is dedicated to his memory. Here follow some features of <name|Maxima>:
+  <hlink|<name|William F. Schelter>|https://en.wikipedia.org/wiki/Bill_Schelter>.
+  It is dedicated to his memory. Here follow some features of <name|Maxima>:
 
   <\itemize>
     <item>Plotting via netmath over the network.

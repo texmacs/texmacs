@@ -44,9 +44,38 @@
 
 (define (mathtm-math env a c)
   (let* ((m (mathtm-args-serial env c))
-	 (r (tree->stree (upgrade-mathml m))))
-    `((math ,r))))
+	 (r (tree->stree (upgrade-mathml m)))
+   (r (replace-symbol-in-stree r 'around 'around*))
+   (displayed? (attribute-is? a 'display "block")))
+       ; according to https://developer.mozilla.org/en-US/docs/Web/MathML/Element/math
+    (if displayed?
+       `((document (equation* ,r)))
+       `((math ,r)))))
 
+(define (attribute-is? a key value)
+  (if (null? a) 
+    #f
+    (if (and (pair? (car a))
+       (func? (car a) key 1)
+       (== (cadar a) value))
+       #t 
+       (attribute-is? (cdr a) key value))))
+
+(define (attribute-val a key)
+  (if (null? a) 
+    #f
+    (if (and (pair? (car a))
+       (func? (car a) key 1))
+       (cadar a)
+       (attribute-val (cdr a) key))))
+       
+;copied from htmltm.scm
+(define (replace-symbol-in-stree st from to)
+  (cond ((== st from) to)
+        ((list? st) (map (lambda (x) (replace-symbol-in-stree x from to)) st))
+        (else st)))
+
+    
 (define (mathtm-none env a c)
   '())
 
@@ -58,6 +87,7 @@
   ;; FIXME: use translators or parser for this!!!
   ;; TODO: learn when the trailing ';' is optional
   (cond ((logic-ref mathml-symbol->tm% s) => identity)
+  ((string-starts? s "&") (entity->tm s))
 	(else (xmltm-text s))))
 
 (define (mathtm-mo env a c)
@@ -74,8 +104,20 @@
 		 ((logic-ref tmtm-left% r) => (lambda (x) `((left ,x))))
 		 ((logic-ref tmtm-right% r) => (lambda (x) `((right ,x))))
 		 ((logic-ref tmtm-big% r) => (lambda (x) `((big ,x))))
+		 ((string-starts? s "&") `(,(entity->tm s)))
 		 (else (list r)))))))
-
+     
+(define (entity->tm s)
+  (let* ((l (string-length s))
+         (typ (cond 
+               ((and (== l 6) (== (string-take-right s 4) "opf;")) "<bbb-" )
+               ((and (== l 6) (== (string-take-right s 4) "scr;")) "<cal-" )
+               ((and (== l 5) (== (string-take-right s 3) "fr;")) "<frak-" )
+               (else #f))))
+        (if typ 
+          (string-append typ (substring s 1 2) ">")
+          s)))  
+  
 (define (mathtm-mtext env a c)
   `((with "mode" "text" ,(mathtm-args-serial env c))))
 
@@ -85,10 +127,15 @@
 
 (define (mathtm-mfrac env a c)
   (if (== (length c) 2)
-      `((frac
-	 ,(mathtm-as-serial env (first c))
-	 ,(mathtm-as-serial env (second c))))
-      (mathtm-error "bad mfrac")))
+    (with lt (attribute-val a 'linethickness)
+      (if (and lt  (length-zero? lt)) 
+        `((stack (tformat (table
+           (row (cell ,(mathtm-as-serial env (first c))))
+           (row (cell ,(mathtm-as-serial env (second c)))))))) 
+        `((frac
+     ,(mathtm-as-serial env (first c))
+     ,(mathtm-as-serial env (second c))))))
+    (mathtm-error "bad mfrac")))
 
 (define (mathtm-msqrt env a c)
   `((sqrt ,(mathtm-args-serial env c))))
@@ -106,28 +153,10 @@
 (define (mathtm-merror env a c)
   (matthtm-error (mathtm-mrow env a c)))
 
-(define (mathtm-style l)
-  (if (null? l) l
-      (let* ((h (car l))
-	     (r (mathtm-style (cdr l))))
-	(cond ((or (func? h 'mathcolor) (func? h 'color))
-	       (cons* "color" (cadr h) r))
-	      ((func? h 'displaystyle)
-	       (cons* "math-display" (cadr h) r))
-	      ((or (== h '(mathvariant "bold"))
-		   (== h '(mathvariant "bold-italic")))
-	       (cons* "math-font-series" "bold" r))
-	      ((or (== h '(mathvariant "sans-serif"))
-		   (== h '(mathvariant "sans-serif--italic")))
-	       (cons* "math-font-family" "ms" r))
-	      ((== h '(mathvariant "monospace"))
-	       (cons* "math-font-family" "mt" r))
-	      (else r)))))
-
-(define (mathtm-mstyle env a c)
-  (let* ((attrs (mathtm-style a))
-	 (l (mathtm-args env c)))
-    (if (null? attrs) l `((with ,@attrs ,(mathtm-serial env l))))))
+;(define (mathtm-mstyle env a c)
+;  (let* ((attrs (mathtm-style a))
+;	 (l (mathtm-args env c)))
+;    (if (null? attrs) l `((with ,@attrs ,(mathtm-serial env l))))))
 
 (define (mathtm-mphantom env a c)
   `((phantom ,(mathtm-args-serial env c))))
@@ -254,8 +283,7 @@
        (or (func? src 'm:mo) (func? src 'mo))
        (>= (length src) 3)
        (func? (cadr src) '@)
-       (>= (length (cadr src)) 2)
-       (func? (cadr (cadr src)) 'stretchy 1)))
+       (attribute-is? (cdadr src) 'stretchy "true")))
 
 (define (rubberify arrow)
   (string-append "<rubber-" (substring arrow 1 (string-length arrow))))
@@ -264,18 +292,26 @@
   (if (== (length c) 2)
       (let ((base (mathtm-as-serial env (first c)))
 	    (sub (mathtm-as-serial env (second c))))
-        (if (stretchy? (first c) base)
-            `((long-arrow ,(ruzbberify base) "" ,sub))
-            (mathtm-below base sub)))
+        (cond 
+             ((and (list? sub) (== (first sub) 'below) (logic-ref mathml-below->tm% (second sub) )) 
+             ;widenable-decoration, but inverted order 
+             `((below ,(car (mathtm-below base (second sub))) ,(third sub))))
+            ((stretchy? (first c) base)
+            `((long-arrow ,(rubberify base) "" ,sub)))
+            (else (mathtm-below base sub))))
       (mathtm-error "bad munder")))
 
 (define (mathtm-mover env a c)
   (if (== (length c) 2)
       (let ((base (mathtm-as-serial env (first c)))
 	    (sup (mathtm-as-serial env (second c))))
-        (if (stretchy? (first c) base)
-            `((long-arrow ,(rubberify base) ,sup))
-            (mathtm-above base sup)))
+        (cond 
+           ((and (list? sup) (== (first sup) 'above) (logic-ref mathml-above->tm% (second sup) ))
+             ;inverted over
+             `((above ,(car (mathtm-above base (second sup))) ,(third sup))))
+           ((stretchy? (first c) base)
+            `((long-arrow ,(rubberify base) ,sup)))
+           (else (mathtm-above base sup))))
       (mathtm-error "bad mover")))
 
 (define (mathtm-munderover env a c)
@@ -284,7 +320,7 @@
 	    (sub (mathtm-as-serial env (second c)))
 	    (sup (mathtm-as-serial env (third c))))
         (if (stretchy? (first c) base)
-            `((long-arrow ,(rubberify base) ,sub ,sup))
+            `((long-arrow ,(rubberify base) ,sup ,sub))
             (mathtm-above (car (mathtm-below base sub)) sup)))
       (mathtm-error "bad munderover")))
 
@@ -315,11 +351,16 @@
 	(else #f)))
 
 (define (mathtm-cell-format a)
+ (with sa (mathtm-style (list a))
+   (if (nnull? sa) ;styling attributes?
+      (map (lambda (x) `(cwith ,(first x) ,(second x))) 
+        (split-by sa 2))
   (cond ((and (func? a 'columnalign) (mathtm-halign (cadr a)))
 	 `((cwith "cell-halign" ,(mathtm-halign (cadr a)))))
 	((and (func? a 'rowalign) (mathtm-valign (cadr a)))
 	 `((cwith "cell-valign" ,(mathtm-valign (cadr a)))))
-	(else '())))
+	(else '()))
+  )))
 
 (define (mathtm-mtd env a c)
   (let ((fm (append-map mathtm-cell-format a))
@@ -335,12 +376,22 @@
 	(if h (cons c r) r))))
 
 (define (mathtm-row-format a)
+ (with sa (mathtm-style (list a))
+   (if (nnull? sa) ;styling attributes?
+      (map (lambda (x) `(cwith "1" "-1" ,(first x) ,(second x))) 
+        (split-by sa 2))
   (cond ((func? a 'columnalign)
 	 (with l (string-tokenize-by-char (cadr a) #\space)
 	   (mathtm-row-halign l 1)))
 	((and (func? a 'rowalign) (mathtm-valign (cadr a)))
 	 `((cwith "1" "-1" "cell-valign" ,(mathtm-valign (cadr a)))))
-	(else '())))
+	(else '()))
+  )))
+
+(define (split-by lst n)
+   (if (not (null? lst))
+       (cons (list-take lst n) (split-by (list-drop lst n) n))
+       '() ))  
 
 (define (mathtm-mtr env a c)
   (let* ((cell? (lambda (x) (mathml-func? x 'mtd)))
@@ -350,7 +401,7 @@
     (if (null? fm) `(,r) `((tformat ,@fm ,r)))))
 
 (define (mathtm-mlabeledtr env a c)
-  ;; FIXME: label is still ignored
+  ;; row label is ignored (not MathML Core spec)
   (if (null? c) '((row))
       (mathtm-mtr env a (cdr c))))
 
@@ -371,13 +422,18 @@
 	(if h (cons c r) r))))
 
 (define (mathtm-table-format a)
+ (with sa (mathtm-style (list a))
+   (if (nnull? sa) ;styling attributes?
+      (map (lambda (x) `(cwith "1" "-1" "1" "-1" ,(first x) ,(second x))) 
+        (split-by sa 2))
   (cond ((func? a 'columnalign)
 	 (with l (string-tokenize-by-char (cadr a) #\space)
 	   (mathtm-table-halign l 1)))
 	((func? a 'rowalign)
 	 (with l (string-tokenize-by-char (cadr a) #\space)
 	   (mathtm-table-valign l 1)))
-	(else '())))
+	(else '()))
+  )))
 
 (define (mathtm-mtable env a c)
   (let* ((row? (lambda (x) (mathml-func-in? x '(mtr mlabeledtr))))
@@ -386,27 +442,98 @@
 	 (fm (append-map mathtm-table-format a))
 	 (t (tmtable-complete `(tformat ,@fm (table ,@l)))))
     (set! t (tmtable-format-up t))
-    (if (func? t 'tformat 1) (set! t (cAr t)))
+    (if (func? t 'tformat 1) (set! t (cAr t))) 
     `((tabular ,t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Further features used by wikipedia
+;; Further features used by wikipedia & LibreOffice Math
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (mathtm-semantics env a c)
-  (cond ((and (list-2? c)
-              (func? (second c) 'm:annotation 2)
-              (func? (second (second c)) '@)
-              (== (shtml-attr-non-null (cdr (second (second c))) 'encoding)
-                  "application/x-tex")
-              (string? (third (second c))))
-         (if (== (get-preference "mathml->texmacs:latex-annotations") "on")
-             (let* ((s (third (second c)))
-                    (l (parse-latex (string-append "$" s "$")))
-                    (r (latex->texmacs l)))
-               (list r))
-             (mathtm env (first c))))
-        (else (mathtm-pass env a c))))
+  (or (and (list>1? c)
+       (== (get-preference "mathml->texmacs:latex-annotations") "on")
+       (mathtm-annotation env a (cdr c)))
+    (mathtm env (first c))))
+      
+(define (mathtm-annotation env a l) ;
+;there may be more than one annotation, scan them all
+  (with  r (and (list>1? l) (mathtm-annotation env a cdr (l)))
+    (or  r
+      (let* ((an (car l))
+        (enc (and (func? an 'm:annotation 2)
+              (func? (second an) '@)  (shtml-attr-non-null (cdr (second an)) 'encoding))))
+        (cond 
+          ((and enc (in? enc '("application/x-tex" "TeX")))
+            (let* ((s (third an))
+                    (lat (parse-latex (string-append "$" s "$")))
+                    (str (latex->texmacs lat)))
+               (list str)))
+          ((and enc (string-starts? enc "StarMath")) ;ignore
+            #f)
+          (else
+            (debug-message "debug-convert" (string-append "Mathml contains an unknown annotation type \"" enc "\"\n with value: \n" (third an) "\nTeXmacs is not using it\n"))
+            #f)          
+           )))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; mathml tags can all handle the same set of (so-called "global") styling attributes
+;; -> handle them with a single function (except for table tags, treated differently)
+;; If attributes can be interpreted, wrap the result of the tag procedure
+;; in the appropriate '(with ...)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 
+(define (mathtm-globattr env a c tagproc)
+  (with res (tagproc env a c)
+    (cond 
+      ((null? res) res)
+      ((null? a) res)
+      (else 
+        (with attrs (mathtm-style a)
+          (if (null? attrs) res
+         `((with ,@attrs ,(car res)))))))))
+
+(define (mathtm-style l)
+;note that it does not hurt handling tag-specific attributes here
+  (if (null? l) l
+      (let* ((h (car l))
+	     (r (mathtm-style (cdr l))))
+	(cond ((or (func? h 'mathcolor) (func? h 'color))
+	       (cons* "color" (cadr h) r))
+	      ((func? h 'displaystyle)
+	       (cons* "math-display" (cadr h) r))
+	      ((or (== h '(mathvariant "bold"))
+		   (== h '(mathvariant "bold-italic")))
+	       (cons* "math-font-series" "bold" r))
+	      ((or (== h '(mathvariant "sans-serif"))
+		   (== h '(mathvariant "sans-serif--italic")))
+	       (cons* "math-font-family" "ms" r))
+	      ((== h '(mathvariant "monospace"))
+	       (cons* "math-font-family" "mt" r))
+        ((func? h 'mathsize)
+	       (cons* "font-size" (cadr h) r))
+        ((func? h 'scriptlevel)
+          (with sl (string->number (cadr h))
+            (cond 
+              ((and sl (>= sl 0))
+	              (cons* "math-level" (cadr h) r))
+              ((== sl -1)
+                (cons* "font-size" "1.189" r)) ;std large
+              ((== sl -2)
+                (cons* "font-size" "1.414" r)) ;std very-large
+              ((== sl -3)
+                (cons* "font-size" "1.682" r)) ;std huge
+              ((< sl -3)
+                (cons* "font-size" "2" r)) ;std really huge
+              (else r))))
+        ((func? h 'style) ;css styling string, expand to attributes 
+         (append 
+           (mathtm-style 
+           (map (lambda (l) (list (string->symbol (car l)) (cAr l))) 
+            (filter list-2? 
+              (map (lambda (x)  (map string-trim (string-tokenize-by-char x #\:))) 
+                (string-tokenize-by-char (cadr h) #\;)))))
+           r))
+	      (else r)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main translation
@@ -440,46 +567,48 @@
 
 (logic-dispatcher mathtm-methods%
   ;;; Interface
-  (math (mathtm-handler :element mathtm-math))
-  (none (mathtm-handler :mixed mathtm-none))
+  (math (mathtm-handler :element mathtm-math mathtm-globattr))
+  (none (mathtm-handler :mixed mathtm-none mathtm-globattr))
   ;;; Presentation
   ;; Token
   ;; presentation tokens contain CDATA, MathML entities, align marks, or glyphs
-  (mi (mathtm-handler :mixed mathtm-pass))
-  (mn (mathtm-handler :mixed mathtm-pass))
-  (mo (mathtm-handler :mixed mathtm-mo))
-  (mtext (mathtm-handler :mixed mathtm-mtext))
-  (mspace (mathtm-handler :mixed mathtm-drop))
-  (ms (mathtm-handler :mixed mathtm-mtext))
-  (mglyph (mathtm-handler :empty mathtm-drop))
+  (mi (mathtm-handler :mixed mathtm-pass mathtm-globattr))
+  (mn (mathtm-handler :mixed mathtm-pass mathtm-globattr))
+  (mo (mathtm-handler :mixed mathtm-mo mathtm-globattr))
+  (mtext (mathtm-handler :mixed mathtm-mtext mathtm-globattr))
+  (mspace (mathtm-handler :mixed mathtm-drop mathtm-globattr))
+  (ms (mathtm-handler :mixed mathtm-mtext mathtm-globattr))
+  (mglyph (mathtm-handler :empty mathtm-drop mathtm-globattr))
   ;; General layout
-  (mrow (mathtm-handler :element mathtm-pass))
-  (mfrac (mathtm-handler :element mathtm-mfrac))
-  (msqrt (mathtm-handler :element mathtm-msqrt))
-  (mroot (mathtm-handler :element mathtm-mroot))
-  (mstyle (mathtm-handler :element mathtm-mstyle))
-  (merror (mathtm-handler :element mathtm-merror))
-  (mpadded (mathtm-handler :element mathtm-pass))
-  (mphantom (mathtm-handler :element mathtm-mphantom))
-  (mfenced (mathtm-handler :element mathtm-mfenced))
-  (menclose (mathtm-handler :element mathtm-menclose))
+  (mrow (mathtm-handler :mixed mathtm-pass mathtm-globattr)) ;was :element, now more tolerant with malformed xml  
+  (mfrac (mathtm-handler :element mathtm-mfrac mathtm-globattr))
+  (msqrt (mathtm-handler :element mathtm-msqrt mathtm-globattr))
+  (mroot (mathtm-handler :element mathtm-mroot mathtm-globattr))
+  ;(mstyle (mathtm-handler :element mathtm-mstyle))
+  (mstyle (mathtm-handler :element mathtm-pass mathtm-globattr))
+  ; <mstyle> is now just equivalent to an <mrow>
+  (merror (mathtm-handler :element mathtm-merror mathtm-globattr))
+  (mpadded (mathtm-handler :element mathtm-pass mathtm-globattr))
+  (mphantom (mathtm-handler :element mathtm-mphantom mathtm-globattr))
+  (mfenced (mathtm-handler :element mathtm-mfenced mathtm-globattr))
+  (menclose (mathtm-handler :element mathtm-menclose mathtm-globattr))
   ;; Script and limits
-  (msub (mathtm-handler :element mathtm-msub))
-  (msup (mathtm-handler :element mathtm-msup))
-  (msubsup (mathtm-handler :element mathtm-msubsup))
-  (munder (mathtm-handler :element mathtm-munder))
-  (mover (mathtm-handler :element mathtm-mover))
-  (munderover (mathtm-handler :element mathtm-munderover))
-  (mmultiscripts (mathtm-handler :element mathtm-mmultiscripts))
+  (msub (mathtm-handler :element mathtm-msub mathtm-globattr))
+  (msup (mathtm-handler :element mathtm-msup mathtm-globattr))
+  (msubsup (mathtm-handler :element mathtm-msubsup mathtm-globattr))
+  (munder (mathtm-handler :element mathtm-munder mathtm-globattr))
+  (mover (mathtm-handler :element mathtm-mover mathtm-globattr))
+  (munderover (mathtm-handler :element mathtm-munderover mathtm-globattr))
+  (mmultiscripts (mathtm-handler :element mathtm-mmultiscripts mathtm-globattr))
   ;; Tables
   (mtable (mathtm-handler :element mathtm-mtable))
   (mtr (mathtm-handler :element mathtm-mtr))
   (mlabeledtr (mathtm-handler :element mathtm-mlabeledtr))
   (mtd (mathtm-handler :element mathtm-mtd))
   ;; Actions
-  (maction (mathtm-handler :element mathtm-pass))
+  (maction (mathtm-handler :element mathtm-pass mathtm-globattr))
   ;; Further features used by wikipedia
-  (semantics (mathtm-handler :element mathtm-semantics)))
+  (semantics (mathtm-handler :element mathtm-semantics mathtm-globattr)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface

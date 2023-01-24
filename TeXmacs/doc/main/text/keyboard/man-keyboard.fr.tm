@@ -6,8 +6,8 @@
   <tmdoc-title|Maîtrise du clavier>
 
   Nous rappelons que la section sur \ les <hlink|conventions
-  générales|../start/man-conventions.fr.tm> contiens des explications sur la
-  manière dont les raccourcis clavier sont afficher dans ce manuel. Il peut
+  générales|../../start/man-conventions.fr.tm> contient des explications sur la
+  manière dont les raccourcis clavier sont affichés dans ce manuel. Il peut
   aussi être utile de consulter la section sur <hlink|configuration
   clavier|../../config/man-config-keyboard.fr.tm>.
 

@@ -1,6 +1,6 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|2.1.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Macro expansion>
@@ -11,19 +11,19 @@
   expansion is computed by <name|Scheme> or a plug-in. The macro-related
   primitives are available from the <menu|Source|Macro> menu. Below, we will
   only describe the ordinary macros. For more details, we refer to the
-  section about <hyper-link|macro primitives|../../format/primitives/prim-macro.en.tm>.
+  section about <hlink|macro primitives|../../format/stylesheet/prim-macro.en.tm>.
 
   Ordinary macros are usually defined using
 
   <\tm-fragment>
-    <inactive*|<assign|my-macro|<macro|<active*|x<rsub|1>>|<active*|<with|mode|math|\<cdots\>>>|<active*|x<rsub|n>>|body>>>
+    <inactive*|<assign|my-macro|<macro|<active*|x<rsub|1>>|<active*|<math|\<cdots\>>>|<active*|x<rsub|n>>|body>>>
   </tm-fragment>
 
   After such an assignment, <markup|my-macro> becomes a new primitive with
-  <with|mode|math|n> arguments, which may be called using
+  <math|n> arguments, which may be called using
 
   <\tm-fragment>
-    <inactive|<my-macro|<active*|y<rsub|1>>|<active*|<with|mode|math|\<cdots\>>>|<active*|y<rsub|n>>>>
+    <inactive|<my-macro|<active*|y<rsub|1>>|<active*|<math|\<cdots\>>>|<active*|y<rsub|n>>>>
   </tm-fragment>
 
   Inside the body of the macro, the <markup|arg> primitive may be used to
@@ -59,7 +59,7 @@
     <inactive*|<assign|overloaded-hi|<macro|name|<style-with|src-compact|none|<compound|<if|<nice-weather>|<value|happy-hi>|<value|sad-hi>>|<arg|name>>>>>>
   </tm-fragment>
 
-  <tmdoc-copyright|1998--2004|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2004|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -69,17 +69,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|par-width|150mm>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

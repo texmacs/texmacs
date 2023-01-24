@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+  <name>Help</name>
+  <id>org.inkscape.texmacs.setup_texmacs_path</id>
+<param name="tab" type="notebook"> 
+ <page name="default" gui-text="Help">
+  <label appearance="header"> Creating a new TeXmacs equation :</label> 
+<label xml:space="preserve">     - use the menu item Extension>TeXmacs equation>Edit TeXmacs equation
+</label> 
+<label appearance="header"> Re-editing a TeXmacs equation :</label>
+<label xml:space="preserve">     - select it (it's an SVG group)
+     - use the menu item Extension>TeXmacs equation>Edit TeXmacs equation
+</label>
+<label appearance="header">Creating a keyboard shortcut</label>
+<label xml:space="preserve"> for Equation creation/re-edition:
+     - Edit>Preferences>Interface>Keyboard>Shortcuts>Edit TeXmacs equation
+
+If TeXmacs is not installed in the standard place (for instance if you use
+a Portable App, or an AppImage), you may enter its location in the other tab.
+     
+For more information, see TeXmacs' Help regarding the Equation Editor plugin</label>
+  </page>
+ <page name="texmacs_path" gui-text="TeXmacs path">
+  <label>In case Inkscape cannot find your TeXmacs executable, please point to it</label>
+  <param name="texmacs_exec" type="path" mode="file" gui-text="TeXmacs executable path" gui-description="Please point to your TeXmacs executable (AppImage, portable App,...)"></param>
+  </page>
+
+</param>
+  <effect needs-live-preview="false">
+    <object-type>all</object-type>
+    <effects-menu>
+      <submenu name="TeXmacs equation"/>
+    </effects-menu>
+  </effect>
+  <script>
+    <command reldir="extensions" interpreter="python">texmacs/texmacs_set_path.py</command>
+  </script>
+</inkscape-extension>

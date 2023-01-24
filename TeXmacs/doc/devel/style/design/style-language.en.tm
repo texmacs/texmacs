@@ -10,7 +10,7 @@
   the style-sheet language of <TeXmacs>. In this section, we will give a more
   complete survey of the available features. For more detailed descriptions,
   we refer to the chapter about the <hlink|<TeXmacs>
-  primitives|../../format/primitives/primitives.en.tm>.
+  primitives|../../format/stylesheet/stylesheet.en.tm>.
 
   The style-sheet primitives can be obtained from the <menu|Source> menu when
   you are in source mode. In all other modes, the <menu|Source> menu becomes
