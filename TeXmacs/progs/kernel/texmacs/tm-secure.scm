@@ -33,7 +33,8 @@
   caaaar caaadr caadar caaddr cadaar cadadr caddar cadddr
   cdaaar cdaadr cdadar cdaddr cddaar cddadr cdddar cddddr
   cons list append length reverse
-  texmacs-version texmacs-version-release*)
+  texmacs-version texmacs-version-release*
+  display display*)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Secure evaluation
@@ -42,48 +43,48 @@
 (define (secure-args? args env)
   (if (null? args) #t
       (and (secure-expr? (car args) env)
-	   (secure-args? (cdr args) env))))
+           (secure-args? (cdr args) env))))
 
 (define (secure-cond? args env)
   (if (null? args) #t
       (and (or (== (caar args) 'else) (secure-expr? (caar args) env))
-	   (secure-expr? (cadar args) env)
-	   (secure-cond? (cdr args) env))))
+           (secure-expr? (cadar args) env)
+           (secure-cond? (cdr args) env))))
 
 (define (local-env env l)
   (cond ((null? l) env)
-	((pair? l) (local-env (assoc-set! env (car l) #t) (cdr l)))
-	(else (assoc-set! env l #t))))
+        ((pair? l) (local-env (assoc-set! env (car l) #t) (cdr l)))
+        (else (assoc-set! env l #t))))
 
 (define (secure-lambda? args env)
   (secure-args? (cdr args) (local-env env (car args))))
 
 (define (secure-quasiquote? args env)
   (cond ((npair? args) #t)
-	((func? args 'unquote 1) (secure-expr? (cadr args) env))
-	((func? args 'unquote-splicing 1) (secure-expr? (cadr args) env))
-	(else (and (secure-quasiquote? (car args) env)
-		   (secure-quasiquote? (cdr args) env)))))
+        ((func? args 'unquote 1) (secure-expr? (cadr args) env))
+        ((func? args 'unquote-splicing 1) (secure-expr? (cadr args) env))
+        (else (and (secure-quasiquote? (car args) env)
+                   (secure-quasiquote? (cdr args) env)))))
 
 (define (secure-expr? expr env)
   (cond ((pair? expr)
-	 (let* ((f (car expr))
-		(m (logic-ref secure-macros% f)))
-	   (cond (m (m (cdr expr) env))
-		 ((assoc-ref env f) (secure-args? (cdr expr) env))
-		 ((== f 'quote) #t)
-		 ((== f 'quasiquote) (secure-quasiquote? (cdr expr) env))
-		 ((symbol? f)
-		  (and (property f :secure)
-		       (secure-args? (cdr expr) env)))
-		 (else (secure-args? expr env)))))
-	((symbol? expr) #t)
-	((number? expr) #t)
-	((string? expr) #t)
-	((tree? expr) #t)
-	((null? expr) #t)
-	((boolean? expr) #t)
-	(else #f)))
+         (let* ((f (car expr))
+                (m (logic-ref secure-macros% f)))
+           (cond (m (m (cdr expr) env))
+                 ((assoc-ref env f) (secure-args? (cdr expr) env))
+                 ((== f 'quote) #t)
+                 ((== f 'quasiquote) (secure-quasiquote? (cdr expr) env))
+                 ((symbol? f)
+                  (and (property f :secure)
+                       (secure-args? (cdr expr) env)))
+                 (else (secure-args? expr env)))))
+        ((symbol? expr) #t)
+        ((number? expr) #t)
+        ((string? expr) #t)
+        ((tree? expr) #t)
+        ((null? expr) #t)
+        ((boolean? expr) #t)
+        (else #f)))
 
 (logic-table secure-macros%
   (and ,secure-args?)

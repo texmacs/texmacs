@@ -45,6 +45,7 @@ protected:
   double        zoomf;         // the current zoom factor
   double        magf;          // the current magnification factor
   SI            pixel;         // current size of a pixel on the screen
+  SI            zpixel;        // pixel multiplied by zoom factor
   rectangles    copy_always;   // for wiping out cursor
   int           input_mode;    // INPUT_NORMAL, INPUT_SEARCH, INPUT_REPLACE
 
@@ -170,7 +171,9 @@ public:
   void custom_complete (tree t);
 
   /* mouse handling */
-  void mouse_any (string s, SI x, SI y, int mods, time_t t);
+  void mouse_any (string s, SI x, SI y, int m, time_t t, array<double> d);
+  bool mouse_message (string message, SI x, SI y);
+  color mouse_clickable_color ();
   void mouse_click (SI x, SI y);
   bool mouse_extra_click (SI x, SI y);
   void mouse_drag (SI x, SI y);
@@ -207,7 +210,7 @@ public:
   void handle_notify_resize (SI w, SI h);
   void handle_keypress (string key, time_t t);
   void handle_keyboard_focus (bool has_focus, time_t t);
-  void handle_mouse (string kind, SI x, SI y, int mods, time_t t);
+  void handle_mouse (string k, SI x, SI y, int m, time_t t, array<double> d);
   void handle_set_zoom_factor (double zoomf);
   void handle_clear (renderer win, SI x1, SI y1, SI x2, SI y2);
   void handle_repaint (renderer win, SI x1, SI y1, SI x2, SI y2);

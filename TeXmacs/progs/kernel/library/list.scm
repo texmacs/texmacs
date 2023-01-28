@@ -301,7 +301,7 @@
 
 (define-public (exists? pred? l)
   (cond ((null? l) #f)
-	((pred? (car l)) #t)
+	((pred? (car l)) (pred? (car l)))
 	(else (exists? pred? (cdr l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

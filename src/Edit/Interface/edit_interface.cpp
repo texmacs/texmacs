@@ -64,7 +64,9 @@ edit_interface_rep::edit_interface_rep ():
   message_l (""), message_r (""), last_l (""), last_r (""),
   zoomf (get_zoom (this, buf)),
   magf (zoomf / std_shrinkf),
-  pixel ((SI) tm_round ((std_shrinkf * PIXEL) / zoomf)), copy_always (),
+  pixel ((SI) tm_round ((std_shrinkf * PIXEL) / zoomf)),
+  zpixel (max ((SI) tm_round (std_shrinkf * PIXEL), pixel)),
+  copy_always (),
   last_x (0), last_y (0), last_t (0),
   tremble_count (0), tremble_right (false),
   table_selection (false), mouse_adjusting (false),
@@ -159,7 +161,8 @@ void
 edit_interface_rep::set_zoom_factor (double zoom) {
   zoomf = zoom;
   magf  = zoomf / std_shrinkf;
-  pixel = (int) tm_round ((std_shrinkf * PIXEL) / zoomf);
+  pixel = (SI) tm_round ((std_shrinkf * PIXEL) / zoomf);
+  zpixel= max ((SI) tm_round (std_shrinkf * PIXEL), pixel);
 }
 
 void
@@ -477,7 +480,8 @@ is_graphical (tree t) {
     is_func (t, ARC) || is_func (t, CARC) ||
     is_func (t, SPLINE) || is_func (t, CSPLINE) ||
     is_func (t, BEZIER) || is_func (t, CBEZIER) ||
-    is_func (t, SMOOTH) || is_func (t, CSMOOTH);
+    is_func (t, SMOOTH) || is_func (t, CSMOOTH) ||
+    is_func (t, PENSCRIPT) || is_func (t, CALLIGRAPHY);
 }
 
 static void
@@ -719,10 +723,8 @@ edit_interface_rep::apply_changes () {
       init_env (ZOOM_FACTOR, new_zoom);
       notify_change (THE_ENVIRONMENT);
     }
-  }
-  if (is_attached (this) &&
-      has_current_window () &&
-      get_init_string (PAGE_MEDIUM) == "automatic")
+  
+    if (get_init_string (PAGE_MEDIUM) == "automatic")
     {
       SI wx, wy;
       if (cvw == NULL) ::get_size (get_window (this), wx, wy);
@@ -730,13 +732,14 @@ edit_interface_rep::apply_changes () {
       if (get_init_string (SCROLL_BARS) == "false") sb= 0;
       if (get_server () -> in_full_screen_mode ()) sb= 0;
       if (sb) wx -= scrollbar_width();
-      if (wx != cur_wx || wy != cur_wy) {
+      if (wx != cur_wx || wy != cur_wy || new_zoom != old_zoom) {
         cur_wx= wx; cur_wy= wy;
         init_env (PAGE_SCREEN_WIDTH, as_string ((SI) (wx/magf)) * "tmpt");
         init_env (PAGE_SCREEN_HEIGHT, as_string ((SI) (wy/magf)) * "tmpt");
         notify_change (THE_ENVIRONMENT);
       }
     }
+  }  
   if (get_init_string (PAGE_MEDIUM) == "beamer" && full_screen) sb= 0;
   if (sb != cur_sb) {
     cur_sb= sb;
@@ -856,7 +859,6 @@ edit_interface_rep::apply_changes () {
   temp_invalid_cursor= false;
   if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS+
                     THE_CURSOR+THE_SELECTION+THE_FOCUS)) {
-    SI /*P1= pixel,*/ P2= 2*pixel, P3= 3*pixel;
     int THE_CURSOR_BAK= env_change & THE_CURSOR;
     go_to_here ();
     env_change= (env_change & (~THE_CURSOR)) | THE_CURSOR_BAK;
@@ -869,6 +871,7 @@ edit_interface_rep::apply_changes () {
 
     SI dw= 0;
     if (tremble_count > 3) dw= (1 + min (tremble_count - 3, 25)) * 2 * pixel;
+    SI /*P1= zpixel,*/ P2= 2*zpixel, P3= 3*zpixel;
     cursor cu= get_cursor();
     rectangle ocr (oc->ox+ ((SI) ((oc->y1-dw)*oc->slope))- P3 - dw,
                    oc->oy+ (oc->y1-dw)- P3,

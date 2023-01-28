@@ -721,8 +721,11 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
 void
 QTMLineEdit::inputMethodEvent (QInputMethodEvent* ev) {
   QLineEdit::inputMethodEvent (ev);
-  if (!ev->commitString().isEmpty() && ev->preeditString().isEmpty()) {
-    string str = from_qstring(ev->commitString());
+
+  if (!ev->commitString().isEmpty() &&
+      ev->preeditString().isEmpty() &&
+      continuous()) {
+    string str= from_qstring(ev->commitString());
     cmd (list_object (list_object (object (str), object (str))));
   }
 }

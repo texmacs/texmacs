@@ -270,7 +270,7 @@
     (if (or (in? "tmdoc" styles)
             (in? "tmweb" styles) (in? "tmweb2" styles)
             (in? "mmxdoc" styles) (in? "magix-web" styles)
-            (in? "max-web" styles))
+            (in? "max-web" styles) (in? "node-web" styles))
 	(set! body (tmhtml-tmdoc-post body)))
     (if tmhtml-css?
         (set! body (tmhtml-css-post body)))

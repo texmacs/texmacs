@@ -34,6 +34,17 @@ string GLOBAL_AUTHOR ("global-author");
 string GLOBAL_SUBJECT ("global-subject");
 string LENGTH_MODE ("length-mode");
 
+string CURSOR_COLOR ("cursor-color");
+string MATH_CURSOR_COLOR ("math-cursor-color");
+string FOCUS_COLOR ("focus-color");
+string CONTEXT_COLOR ("context-color");
+string SELECTION_COLOR ("selection-color");
+string TABLE_SELECTION_COLOR ("table-selection-color");
+string MATCH_COLOR ("match-color");
+string CLICKABLE_COLOR ("clickable-color");
+string CORRECT_COLOR ("correct-color");
+string INCORRECT_COLOR ("incorrect-color");
+
 /******************************************************************************
 * Text properties for tex, math and prog modes
 ******************************************************************************/
@@ -87,6 +98,23 @@ string PROG_FONT_FAMILY ("prog-font-family");
 string PROG_FONT_SERIES ("prog-font-series");
 string PROG_FONT_SHAPE ("prog-font-shape");
 string PROG_SESSION ("prog-session");
+
+string KEYWORD_COLOR ("keyword-color");
+string CONSTANT_COLOR ("constant-color");
+string NUMBER_COLOR ("number-color");
+string STRING_COLOR ("string-color");
+string OPERATOR_COLOR ("operator-color");
+string COMMENT_COLOR ("comment-color");
+string PREPROCESSOR_COLOR ("preprocessor-color");
+string MODIFIER_COLOR ("modifier-color");
+string DECLARATION_COLOR ("declaration-color");
+string MACRO_COLOR ("macro-color");
+string FUNCTION_COLOR ("function-color");
+string _TYPE_COLOR ("type-color");
+string DEFINED_COLOR ("defined-color");
+string MISC_LEXEME_COLOR ("misc-lexeme-color");
+string ALT_KEYWORD_COLOR ("alt-keyword-color");
+string ALT_CONSTANT_COLOR ("alt-constant-color");
 
 /******************************************************************************
 * Environment variables for paragraphs
@@ -275,13 +303,16 @@ string GR_FILL_COLOR ("gr-fill-color");
 string GR_FILL_STYLE ("gr-fill-style");
 string GR_TEXT_AT_HALIGN ("gr-text-at-halign");
 string GR_TEXT_AT_VALIGN ("gr-text-at-valign");
-string GR_TEXT_AT_MARGIN ("gr-text-at-margin");
+string GR_TEXT_AT_REPULSE ("gr-text-at-repulse");
+string GR_TEXT_AT_SNAPPING ("gr-text-at-snapping");
 string GR_DOC_AT_VALIGN ("gr-doc-at-valign");
 string GR_DOC_AT_WIDTH ("gr-doc-at-width");
 string GR_DOC_AT_HMODE ("gr-doc-at-hmode");
 string GR_DOC_AT_PPSEP ("gr-doc-at-ppsep");
 string GR_DOC_AT_BORDER ("gr-doc-at-border");
 string GR_DOC_AT_PADDING ("gr-doc-at-padding");
+string GR_PEN_ENHANCE ("gr-pen-enhance");
+string GR_PEN_STYLE ("gr-pen-style");
 
 string GID ("gid");
 string ANIM_ID ("anim-id");
@@ -305,13 +336,16 @@ string FILL_COLOR ("fill-color");
 string FILL_STYLE ("fill-style");
 string TEXT_AT_HALIGN ("text-at-halign");
 string TEXT_AT_VALIGN ("text-at-valign");
-string TEXT_AT_MARGIN ("text-at-margin");
+string TEXT_AT_REPULSE ("text-at-repulse");
+string TEXT_AT_SNAPPING ("text-at-snapping");
 string DOC_AT_VALIGN ("doc-at-valign");
 string DOC_AT_WIDTH ("doc-at-width");
 string DOC_AT_HMODE ("doc-at-hmode");
 string DOC_AT_PPSEP ("doc-at-ppsep");
 string DOC_AT_BORDER ("doc-at-border");
 string DOC_AT_PADDING ("doc-at-padding");
+string PEN_ENHANCE ("pen-enhance");
+string PEN_STYLE ("pen-style");
 
 /******************************************************************************
 * Environment variables for preamble mode

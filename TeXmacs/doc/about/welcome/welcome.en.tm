@@ -28,12 +28,6 @@
     documentation about the <TeXmacs> format, its primitives and environment
     variables, and the standard style files.
 
-    <item>In the <hlink|<menu|Help|Tutorial>|../../tutorial/tut-tutorial.en.tm>
-    menu, we have started a <TeXmacs> tutorial. The tutorial is mainly
-    intended for beginners, but the later chapters should also be useful for
-    more experienced users. Unfortunately, the tutorial is not very complete
-    yet.
-
     <item>The <hlink|<menu|Help|About>|../../about/about.en.tm> menu contains
     more information about <TeXmacs>, like information about its
     <hlink|authors|../../about/authors/authors.en.tm>, how to <hlink|contact
@@ -45,6 +39,10 @@
     <menu|Help|full manuals>. In fact, you may compile such books yourself
     from any help page using <menu|Help|full manuals|Compile book>. This may
     take a few minutes though.
+
+    <item>Finally the <hlink|<TeXmacs> website|https://www.texmacs.org>
+    provides further material such as videos, tutorials (not necessarily
+    up-to-date), FAQs, links to user forum and mailing lists, etc.\ 
   </itemize>
 
   <section|Contribute to <TeXmacs>>

@@ -83,6 +83,7 @@ cache_file_name (tree t) {
     string s= t->label;
     if (ends (s, ".ts")) s= s (0, N(s) - 3);
     s= replace (s, "/", "%");
+    s= replace (s, "\\", "%");
     s= replace (s, ":", "_");
     return s;
   }

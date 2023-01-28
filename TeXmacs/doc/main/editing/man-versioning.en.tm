@@ -13,7 +13,7 @@
   automatic. Below, we will describe in more detail how this tool works.
 
   In addition, there exist many stand-alone programs for maintaining several
-  versions of a same file, such as <hlink|<name|Subversion>|http://subversion.tigris.org/>,
+  versions of a same file, such as <hlink|<name|Subversion>|https://en.wikipedia.org/wiki/Apache_Subversion>,
   <hlink|<name|Git>|http://git-scm.com/>,
   <hlink|<name|Darcs>|http://darcs.net/>, <hlink|<name|GNU
   Arch>|http://www.gnu.org/software/gnu-arch/>, just to mention a few of

@@ -191,7 +191,10 @@ public:
   virtual bool complete_keypress (string key) = 0;
   virtual string session_complete_command (tree t) = 0;
   virtual void custom_complete (tree t) = 0;
-  virtual void mouse_any (string s, SI x, SI y, int mods, time_t t) = 0;
+  virtual void mouse_any (string s, SI x, SI y, int m, time_t t,
+                          array<double> d) = 0;
+  virtual bool mouse_message (string message, SI x, SI y) = 0;
+  virtual color mouse_clickable_color () = 0;
   virtual void mouse_click (SI x, SI y) = 0;
   virtual bool mouse_extra_click (SI x, SI y) = 0;
   virtual void mouse_drag (SI x, SI y) = 0;
@@ -247,6 +250,7 @@ public:
   virtual tree   get_graphics () = 0;
   virtual double get_x () = 0;
   virtual double get_y () = 0;
+  virtual double get_pixel () = 0;
   virtual frame  find_frame (bool last= false) = 0;
   virtual grid   find_grid () = 0;
   virtual void   find_limits (point& lim1, point& lim2) = 0;
@@ -260,7 +264,8 @@ public:
   virtual void   set_graphical_object (tree t) = 0;
   virtual void   invalidate_graphical_object () = 0;
   virtual void   draw_graphical_object (renderer ren) = 0;
-  virtual bool   mouse_graphics (string s, SI x, SI y, int mods, time_t t) = 0;
+  virtual bool   mouse_graphics (string s, SI x, SI y, int mods, time_t t,
+                                 array<double> d) = 0;
 
   /* public routines from edit_typeset */
   virtual void     clear_local_info () = 0;
@@ -292,6 +297,8 @@ public:
   virtual int      get_init_int (string var_name) = 0;
   virtual double   get_env_double (string var_name) = 0;
   virtual double   get_init_double (string var_name) = 0;
+  virtual color    get_env_color (string var_name) = 0;
+  virtual color    get_init_color (string var_name) = 0;
   virtual language get_env_language () = 0;
   virtual int      get_page_count () = 0;
   virtual SI       get_page_width (bool deco) = 0;
