@@ -13,8 +13,8 @@
   just start up a <kbd|gp> session, or have <kbd|gp> execute their scripts.
   Pari sessions can now be started inside <TeXmacs>.
 
-  Developed at <hlink|Bordeaux|<version-both|http://www.cribx1.u-bordeaux.fr/|https://www.math.u-bordeaux.fr/>>
-  by a team led by <hlink|<name|Henri Cohen>|https://www.math.u-bordeaux.fr/~hecohen/>,
+  Developed at <hlink|Bordeaux|https://www.math.u-bordeaux.fr/> by a team led
+  by <hlink|<name|Henri Cohen>|https://www.math.u-bordeaux.fr/~hecohen/>,
   PARI-GP is now maintained by <hlink|<name|Karim
   Belabas>|https://www.math.u-bordeaux.fr/~kbelabas/> with the help of many
   volunteer contributors.
