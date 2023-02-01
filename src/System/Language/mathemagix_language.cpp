@@ -214,6 +214,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("stereotype")= e;
   t ("structure")= e;
   t ("sugar")= c;
+  t ("supplant")= c;
   t ("supports?")= c;
   t ("symbolic_lift")= c;
   t ("then")= c;
