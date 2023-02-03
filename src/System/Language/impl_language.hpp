@@ -26,6 +26,7 @@ extern text_property_rep tp_normal_rep;
 extern text_property_rep tp_hyph_rep;
 extern text_property_rep tp_thin_space_rep;
 extern text_property_rep tp_space_rep;
+extern text_property_rep tp_space_before_rep;
 extern text_property_rep tp_dspace_rep;
 extern text_property_rep tp_nb_thin_space_rep;
 extern text_property_rep tp_nb_space_rep;

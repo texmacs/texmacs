@@ -12,13 +12,12 @@
 (texmacs-module (prog prog-format)
   (:use (convert rewrite init-rewrite)))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Scheme source files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-format scheme
-  (:name "Scheme Source Code")
+  (:name "Scheme source code")
   (:suffix "scm"))
 
 (define (texmacs->scheme x . opts)

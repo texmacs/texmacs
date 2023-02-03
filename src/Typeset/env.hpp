@@ -73,7 +73,8 @@
 #define Env_Line_Portion      40
 #define Env_Text_At_Halign    41
 #define Env_Text_At_Valign    42
-#define Env_Doc_At_Valign     43
+#define Env_Text_At_Repulse   43
+#define Env_Doc_At_Valign     44
 
 /******************************************************************************
 * For style file editing
@@ -154,6 +155,7 @@ public:
   hashmap<string,bool>         touched;     // touched refs
   link_repository              link_env;    // current links
   array<array<int> >           size_cache;  // math font size cache
+  array<rectangle>             white_zones; // text exclusion zones for curves
 
   int          dpi;
   double       inch;
@@ -217,6 +219,7 @@ public:
   double       line_portion;
   string       text_at_halign;
   string       text_at_valign;
+  SI           text_at_repulse;
   string       doc_at_valign;
 
   string       page_type;

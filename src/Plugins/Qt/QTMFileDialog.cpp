@@ -35,6 +35,7 @@ QTMFileDialog::QTMFileDialog (QWidget * parent, const QString & caption,
   hbox= new QHBoxLayout (this);
   hbox->setContentsMargins (0, 0, 0, 0);
   file= new QMyFileDialog (0, caption, directory, filter);
+  file->setOption(QFileDialog::DontUseNativeDialog, true);
   hbox->addWidget (file);
   setLayout (hbox);
   setAcceptDrops(true);

@@ -16,7 +16,8 @@
 #include "qt_utilities.hpp"
 #include "qt_renderer.hpp"
 #ifdef MUPDF_RENDERER
-  #include "mupdf_picture.hpp"
+  #include "MuPDF/mupdf_picture.hpp"
+  #include "MuPDF/mupdf_renderer.hpp"
 #else
   #include "qt_picture.hpp"
 #endif
@@ -25,7 +26,6 @@
 #include <QPixmap>
 #include <QLayout>
 
-#include "mupdf_renderer.hpp"
 
 #ifdef USE_CAIRO
 #include "Cairo/cairo_renderer.hpp"
@@ -42,7 +42,8 @@ extern const QX11Info *qt_x11Info (const QPaintDevice *pd);
 
 
 qt_simple_widget_rep::qt_simple_widget_rep ()
- : qt_widget_rep (simple_widget),  sequencer (0) { }
+  : qt_widget_rep (simple_widget),  sequencer (0) {
+}
 
 qt_simple_widget_rep::~qt_simple_widget_rep () {
   all_widgets->remove ((pointer) this);
@@ -102,8 +103,9 @@ qt_simple_widget_rep::handle_keyboard_focus (bool has_focus, time_t t) {
 }
 
 void
-qt_simple_widget_rep::handle_mouse (string kind, SI x, SI y, int mods, time_t t) {
-  (void) kind; (void) x; (void) y; (void) mods; (void) t;
+qt_simple_widget_rep::handle_mouse (string kind, SI x, SI y, int mods, time_t t,
+                                    array<double> data) {
+  (void) kind; (void) x; (void) y; (void) mods; (void) t; (void) data;
 }
 
 void
@@ -436,7 +438,8 @@ qt_simple_widget_rep::is_invalid () {
   return !is_nil (invalid_regions);
 }
 
-/*!
+
+/*
  This function is called by the qt_gui::update method (via repaint_all) to keep
  the backing store in sync and propagate the changes to the surface on screen.
  First we check that the backing store geometry is right and then we

@@ -1452,6 +1452,18 @@
 		9C75B68612895366008DE84F /* aligned_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C75B68512895366008DE84F /* aligned_widget.cpp */; };
 		9C75B720128973D5008DE84F /* minibar_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C75B71F128973D5008DE84F /* minibar_widget.cpp */; };
 		9C75B76C12897795008DE84F /* color_picker_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C75B76B12897795008DE84F /* color_picker_widget.cpp */; };
+		9C77B036298DB9E000F83E40 /* tree_math_stats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C77B035298DB9E000F83E40 /* tree_math_stats.cpp */; };
+		9C77B037298DB9E000F83E40 /* tree_math_stats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C77B035298DB9E000F83E40 /* tree_math_stats.cpp */; };
+		9C77B038298DB9E000F83E40 /* tree_math_stats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C77B035298DB9E000F83E40 /* tree_math_stats.cpp */; };
+		9C77B039298DB9E000F83E40 /* tree_math_stats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C77B035298DB9E000F83E40 /* tree_math_stats.cpp */; };
+		9C77B03B298DB9EB00F83E40 /* curve_extras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C77B03A298DB9EB00F83E40 /* curve_extras.cpp */; };
+		9C77B03C298DB9EB00F83E40 /* curve_extras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C77B03A298DB9EB00F83E40 /* curve_extras.cpp */; };
+		9C77B03D298DB9EB00F83E40 /* curve_extras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C77B03A298DB9EB00F83E40 /* curve_extras.cpp */; };
+		9C77B03E298DB9EB00F83E40 /* curve_extras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C77B03A298DB9EB00F83E40 /* curve_extras.cpp */; };
+		9C77B040298DBA0700F83E40 /* case_boxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C77B03F298DBA0700F83E40 /* case_boxes.cpp */; };
+		9C77B041298DBA0700F83E40 /* case_boxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C77B03F298DBA0700F83E40 /* case_boxes.cpp */; };
+		9C77B042298DBA0700F83E40 /* case_boxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C77B03F298DBA0700F83E40 /* case_boxes.cpp */; };
+		9C77B043298DBA0700F83E40 /* case_boxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C77B03F298DBA0700F83E40 /* case_boxes.cpp */; };
 		9C7FA62414FC57FF006F4449 /* toggle_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C7FA62314FC57FF006F4449 /* toggle_widget.cpp */; };
 		9C7FA62714FC5807006F4449 /* split_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C7FA62514FC5807006F4449 /* split_widget.cpp */; };
 		9C7FA62814FC5807006F4449 /* tabs_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C7FA62614FC5807006F4449 /* tabs_widget.cpp */; };
@@ -3198,6 +3210,10 @@
 		9C75B68512895366008DE84F /* aligned_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = aligned_widget.cpp; sourceTree = "<group>"; };
 		9C75B71F128973D5008DE84F /* minibar_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = minibar_widget.cpp; sourceTree = "<group>"; };
 		9C75B76B12897795008DE84F /* color_picker_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = color_picker_widget.cpp; sourceTree = "<group>"; };
+		9C77B034298DB9DF00F83E40 /* tree_math_stats.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tree_math_stats.hpp; sourceTree = "<group>"; };
+		9C77B035298DB9E000F83E40 /* tree_math_stats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tree_math_stats.cpp; sourceTree = "<group>"; };
+		9C77B03A298DB9EB00F83E40 /* curve_extras.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = curve_extras.cpp; sourceTree = "<group>"; };
+		9C77B03F298DBA0700F83E40 /* case_boxes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = case_boxes.cpp; sourceTree = "<group>"; };
 		9C7AC3381105DE4A00A7D07F /* fig2ps */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = fig2ps; sourceTree = "<group>"; };
 		9C7AC3391105DE4A00A7D07F /* fig2ps.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = fig2ps.in; sourceTree = "<group>"; };
 		9C7AC33A1105DE4A00A7D07F /* texmacs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = texmacs; sourceTree = "<group>"; };
@@ -3777,6 +3793,7 @@
 		4929A87E170207440028991F /* Types */ = {
 			isa = PBXGroup;
 			children = (
+				9C77B03A298DB9EB00F83E40 /* curve_extras.cpp */,
 				4929A87F170207440028991F /* curve.cpp */,
 				4929A880170207440028991F /* curve.hpp */,
 				4929A881170207440028991F /* equations.cpp */,
@@ -4067,6 +4084,8 @@
 		9C0B47A310A8CC100097A335 /* Tree */ = {
 			isa = PBXGroup;
 			children = (
+				9C77B035298DB9E000F83E40 /* tree_math_stats.cpp */,
+				9C77B034298DB9DF00F83E40 /* tree_math_stats.hpp */,
 				9C0104EF22BC0FF500F81331 /* tree_spell.cpp */,
 				9CEDAA2E1264FF6C009630CC /* tree_analyze.cpp */,
 				9CEDAA2F1264FF6C009630CC /* tree_analyze.hpp */,
@@ -5117,6 +5136,7 @@
 		9C0B498110A8CC110097A335 /* Composite */ = {
 			isa = PBXGroup;
 			children = (
+				9C77B03F298DBA0700F83E40 /* case_boxes.cpp */,
 				9C0B498210A8CC110097A335 /* composite_boxes.cpp */,
 				9C0B498310A8CC110097A335 /* concat_boxes.cpp */,
 				9C0B498410A8CC110097A335 /* decoration_boxes.cpp */,
@@ -6190,6 +6210,7 @@
 				9C0B49FA10A8CC110097A335 /* verbatim.cpp in Sources */,
 				49C0961D1B0F945300E038BA /* db_sort.cpp in Sources */,
 				9C0B49FB10A8CC110097A335 /* fromxml.cpp in Sources */,
+				9C77B03B298DB9EB00F83E40 /* curve_extras.cpp in Sources */,
 				9C0B49FC10A8CC110097A335 /* parsexml.cpp in Sources */,
 				9C0B49FD10A8CC110097A335 /* drd_info.cpp in Sources */,
 				9C0B49FE10A8CC110097A335 /* drd_mode.cpp in Sources */,
@@ -6309,6 +6330,7 @@
 				9C0B4A8210A8CC110097A335 /* load_tex.cpp in Sources */,
 				9C0B4A8310A8CC110097A335 /* load_tfm.cpp in Sources */,
 				9C33F40F2412BF6400F73F5A /* glyph_effected.cpp in Sources */,
+				9C77B036298DB9E000F83E40 /* tree_math_stats.cpp in Sources */,
 				9C0B4A8410A8CC110097A335 /* tex_files.cpp in Sources */,
 				9C0B4A8510A8CC110097A335 /* tex_font.cpp in Sources */,
 				9C33F3FE2412BF2700F73F5A /* cleanhtml.cpp in Sources */,
@@ -6475,6 +6497,7 @@
 				9CDA725E126CC926006E8028 /* tree_modify.cpp in Sources */,
 				9C646EBE12842B7A000ABCDF /* mac_utilities.mm in Sources */,
 				49A513F419426DD70017E373 /* true_color.cpp in Sources */,
+				9C77B040298DBA0700F83E40 /* case_boxes.cpp in Sources */,
 				9C066E6612849FD900DE2F84 /* QTMInteractivePrompt.cpp in Sources */,
 				9CF5BC73128A13CB00F691BF /* qt_tm_widget.cpp in Sources */,
 				9CF5BC75128A13CB00F691BF /* qt_window_widget.cpp in Sources */,
@@ -6683,6 +6706,7 @@
 				9C3BF67427CE64900075D26D /* renderer.cpp in Sources */,
 				9C3BF67527CE64900075D26D /* basic.cpp in Sources */,
 				9C3BF67627CE64900075D26D /* command.cpp in Sources */,
+				9C77B03E298DB9EB00F83E40 /* curve_extras.cpp in Sources */,
 				9C3BF67727CE64900075D26D /* observer.cpp in Sources */,
 				9C3BF67827CE64900075D26D /* adjust_biolinum.cpp in Sources */,
 				9C3BF67927CE64900075D26D /* array.cpp in Sources */,
@@ -6817,6 +6841,7 @@
 				9C3BF6F927CE64900075D26D /* concat_graphics.cpp in Sources */,
 				9C3BF6FA27CE64900075D26D /* concat_gui.cpp in Sources */,
 				9C3BF6FB27CE64900075D26D /* concat_inactive.cpp in Sources */,
+				9C77B043298DBA0700F83E40 /* case_boxes.cpp in Sources */,
 				9C3BF6FC27CE64900075D26D /* concat_macro.cpp in Sources */,
 				9C3BF6FD27CE64900075D26D /* concat_math.cpp in Sources */,
 				9C3BF6FE27CE64900075D26D /* concat_post.cpp in Sources */,
@@ -6870,6 +6895,7 @@
 				9C3BF72E27CE64900075D26D /* composite_widget.cpp in Sources */,
 				9C3BF72F27CE64900075D26D /* xml.cpp in Sources */,
 				9C3BF73027CE64900075D26D /* file_chooser_widget.cpp in Sources */,
+				9C77B039298DB9E000F83E40 /* tree_math_stats.cpp in Sources */,
 				9C3BF73127CE64900075D26D /* glue_widget.cpp in Sources */,
 				9C3BF73227CE64900075D26D /* input_widget.cpp in Sources */,
 				9C3BF73327CE64900075D26D /* inputs_list_widget.cpp in Sources */,
@@ -7096,6 +7122,7 @@
 				9CCC743C10D303D900E88D90 /* edit_search.cpp in Sources */,
 				9CCC743D10D303D900E88D90 /* edit_select.cpp in Sources */,
 				9CCC743E10D303D900E88D90 /* edit_spell.cpp in Sources */,
+				9C77B038298DB9E000F83E40 /* tree_math_stats.cpp in Sources */,
 				9CCC743F10D303D900E88D90 /* bitmap_font.cpp in Sources */,
 				9CCC744010D303D900E88D90 /* glyph.cpp in Sources */,
 				9CCC744110D303D900E88D90 /* glyph_ops.cpp in Sources */,
@@ -7152,6 +7179,7 @@
 				9CCC746B10D303D900E88D90 /* tt_font.cpp in Sources */,
 				9CCC746C10D303D900E88D90 /* unicode_font.cpp in Sources */,
 				9CCC746D10D303D900E88D90 /* imlib2.cpp in Sources */,
+				9C77B042298DBA0700F83E40 /* case_boxes.cpp in Sources */,
 				9CCC746E10D303D900E88D90 /* ispell.cpp in Sources */,
 				9CCC746F10D303D900E88D90 /* mac_app.mm in Sources */,
 				9CCC747010D303D900E88D90 /* mac_images.mm in Sources */,
@@ -7394,6 +7422,7 @@
 				491BB59A1731182600A755DF /* transformed.cpp in Sources */,
 				491BB59D1731182600A755DF /* triangulated.cpp in Sources */,
 				491BB5A11731183800A755DF /* pencil.cpp in Sources */,
+				9C77B03D298DB9EB00F83E40 /* curve_extras.cpp in Sources */,
 				491BB5A91731186A00A755DF /* effect.cpp in Sources */,
 				491BB5AC1731186A00A755DF /* scalable.cpp in Sources */,
 				9C33F4212412BF7E00F73F5A /* locale.cpp in Sources */,
@@ -7701,6 +7730,7 @@
 				9CD4E71110B14AEE00E0DD5C /* canvas_widget.cpp in Sources */,
 				9CD4E71210B14AEE00E0DD5C /* composite_event.cpp in Sources */,
 				9CD4E71310B14AEE00E0DD5C /* composite_widget.cpp in Sources */,
+				9C77B037298DB9E000F83E40 /* tree_math_stats.cpp in Sources */,
 				9C0104F522BC101200F81331 /* xml.cpp in Sources */,
 				9CD4E71410B14AEE00E0DD5C /* file_chooser_widget.cpp in Sources */,
 				9CD4E71510B14AEE00E0DD5C /* glue_widget.cpp in Sources */,
@@ -7717,6 +7747,7 @@
 				9C4A74191D22C3A200572468 /* poor_distorted.cpp in Sources */,
 				9CD4E71F10B14AEE00E0DD5C /* scrollbar_widget.cpp in Sources */,
 				9CD4E72010B14AEE00E0DD5C /* separator_widget.cpp in Sources */,
+				9C77B03C298DB9EB00F83E40 /* curve_extras.cpp in Sources */,
 				9CD4E72110B14AEE00E0DD5C /* simple_wk_widget.cpp in Sources */,
 				9CD4E72210B14AEE00E0DD5C /* switch_widget.cpp in Sources */,
 				9CD4E72310B14AEE00E0DD5C /* texmacs_widget.cpp in Sources */,
@@ -7731,6 +7762,7 @@
 				9CD4E72A10B14AEE00E0DD5C /* x_drawable.cpp in Sources */,
 				9CD4E72B10B14AEE00E0DD5C /* x_font.cpp in Sources */,
 				9C33F4342412C1E000F73F5A /* adjust_libertine.cpp in Sources */,
+				9C77B041298DBA0700F83E40 /* case_boxes.cpp in Sources */,
 				9CD4E72C10B14AEE00E0DD5C /* x_gui.cpp in Sources */,
 				9CD4E72D10B14AEE00E0DD5C /* x_init.cpp in Sources */,
 				9CD4E72E10B14AEE00E0DD5C /* x_loop.cpp in Sources */,

@@ -1722,7 +1722,7 @@ pdf_image_rep::flush (PDFWriter& pdfw)
   
   url temp;
   string s= suffix (name);
-  // debug_convert << "flushing :" << fname << LF;
+  //debug_convert << "flushing :" << name << LF;
   if (s == "pdf") {
     // double v= as_double (pdf_version (name));
     // if (10 * v > ((double) ePDFVersion))
@@ -1778,7 +1778,15 @@ pdf_image_rep::flush (PDFWriter& pdfw)
 		      << " (see the preference menu)." << LF;
     double tMat[6] ={ 1,0, 0, 1, 0, 0} ;
     PDFRectangle cropBox (0,0,0,0);
-    pdf_image_info (temp, w, h, cropBox, tMat, pageInput);
+    int neww,newh;
+    pdf_image_info (temp, neww, newh, cropBox, tMat, pageInput);
+    //debug_convert << "new w,h :" << neww << " "<< newh << LF;
+    if ((neww != w) && (neww !=0)) {
+        //image size changed, resize it to what we wanted
+        double r = w/(double)neww;
+        int j;
+        for (j= 0; j < 6; j++) tMat[j] *= r;        
+    }
     PDFFormXObject *form = dc.StartFormXObject(cropBox, id, tMat, true);
     status = copyingContext->MergePDFPageToFormXObject(form,0);
     if(status == eSuccess) pdfw.EndFormXObjectAndRelease(form);

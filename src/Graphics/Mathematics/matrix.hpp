@@ -229,16 +229,65 @@ matrix_2D (T a, T b, T c, T d) {
 }
 
 TMPL matrix<T>
+transpose (matrix<T> m) {
+  int rows= NR (m), cols= NC (m);
+  matrix<T> tm (T(0), cols, rows);
+  for (int i=0; i<rows; i++)
+    for (int j=0; j<cols; j++)
+      tm (j, i)= m (i, j);
+  return tm;
+}
+
+template<typename T> inline void
+el_swap (T& a, T& b) { T x= a; a= b; b= x; }
+
+TMPL matrix<T>
 invert (matrix<T> m) {
   int rows= NR (m), cols= NC (m);
-  ASSERT (rows == 2 && cols == 2, "only dimension two has been implemented");
-  T det= m (0, 0) * m (1, 1) - m (0, 1) * m (1, 0);
-  matrix<T> inv (T(0), rows, cols);
-  inv (0, 0)=  m (1, 1) / det;
-  inv (0, 1)= -m (0, 1) / det;
-  inv (1, 0)= -m (1, 0) / det;
-  inv (1, 1)=  m (0, 0) / det;
-  return inv;
+  ASSERT (rows == cols, "invalid matrix dimensions");
+  if (rows == 2) {
+    T det= m (0, 0) * m (1, 1) - m (0, 1) * m (1, 0);
+    matrix<T> inv (T(0), rows, cols);
+    inv (0, 0)=  m (1, 1) / det;
+    inv (0, 1)= -m (0, 1) / det;
+    inv (1, 0)= -m (1, 0) / det;
+    inv (1, 1)=  m (0, 0) / det;
+    return inv;
+  }
+  else {
+    matrix<T> mat= copy (m);
+    matrix<T> inv (T(1), rows, cols);
+    for (int j=0; j<cols; j++) {
+      int best_i= j;
+      T   best_a= abs (mat (j, j));
+      for (int i=j+1; i<rows; i++)
+        if (abs (mat (i, j)) > best_a) {
+          best_i = i;
+          best_a = abs (mat (i, j));
+        }
+      ASSERT (mat (best_i, j) != T(0), "matrix is not invertible");
+      if (best_i != j) {
+        for (int k=0; k<cols; k++) {
+          el_swap (mat (j, k), mat (best_i, k));
+          el_swap (inv (j, k), inv (best_i, k));
+        }
+      }
+      T u= T(1) / mat (j, j);
+      for (int k=0; k<cols; k++) {
+        mat (j, k) *= u;
+        inv (j, k) *= u;
+      }
+      for (int i=0; i<rows; i++)
+        if (i != j) {
+          T c= mat (i, j);
+          for (int k=0; k<cols; k++) {
+            mat (i, k) -= c * mat (j, k);
+            inv (i, k) -= c * inv (j, k);
+          }
+        }
+    }
+    return inv;
+  }
 }
 
 TMPL array<T>

@@ -3263,6 +3263,53 @@ tmg_math_status_reset () {
 }
 
 tmscm
+tmg_math_stats_compile (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "math-stats-compile");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "math-stats-compile");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "math-stats-compile");
+
+  string in1= tmscm_to_string (arg1);
+  content in2= tmscm_to_content (arg2);
+  string in3= tmscm_to_string (arg3);
+
+  // TMSCM_DEFER_INTS;
+  compile_stats (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_math_stats_occurrences (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "math-stats-occurrences");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "math-stats-occurrences");
+
+  string in1= tmscm_to_string (arg1);
+  content in2= tmscm_to_content (arg2);
+
+  // TMSCM_DEFER_INTS;
+  int out= number_occurrences (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_math_stats_number_in_role (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "math-stats-number-in-role");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "math-stats-number-in-role");
+
+  string in1= tmscm_to_string (arg1);
+  content in2= tmscm_to_content (arg2);
+
+  // TMSCM_DEFER_INTS;
+  int out= number_in_role (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
 tmg_path_strip (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "path-strip");
   TMSCM_ASSERT_PATH (arg2, TMSCM_ARG2, "path-strip");
@@ -4564,8 +4611,8 @@ tmg_graphics_notify_update (tmscm arg1) {
 }
 
 tmscm
-tmg_string_numberP (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "string-number?");
+tmg_cpp_string_numberP (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-string-number?");
 
   string in1= tmscm_to_string (arg1);
 
@@ -10325,6 +10372,9 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-downgrade-big",  tmg_tree_downgrade_big, 1, 0, 0);
   tmscm_install_procedure ("math-status-print",  tmg_math_status_print, 0, 0, 0);
   tmscm_install_procedure ("math-status-reset",  tmg_math_status_reset, 0, 0, 0);
+  tmscm_install_procedure ("math-stats-compile",  tmg_math_stats_compile, 3, 0, 0);
+  tmscm_install_procedure ("math-stats-occurrences",  tmg_math_stats_occurrences, 2, 0, 0);
+  tmscm_install_procedure ("math-stats-number-in-role",  tmg_math_stats_number_in_role, 2, 0, 0);
   tmscm_install_procedure ("path-strip",  tmg_path_strip, 2, 0, 0);
   tmscm_install_procedure ("path-inf?",  tmg_path_infP, 2, 0, 0);
   tmscm_install_procedure ("path-inf-eq?",  tmg_path_inf_eqP, 2, 0, 0);
@@ -10416,7 +10466,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("graphics-ref",  tmg_graphics_ref, 1, 0, 0);
   tmscm_install_procedure ("graphics-needs-update?",  tmg_graphics_needs_updateP, 0, 0, 0);
   tmscm_install_procedure ("graphics-notify-update",  tmg_graphics_notify_update, 1, 0, 0);
-  tmscm_install_procedure ("string-number?",  tmg_string_numberP, 1, 0, 0);
+  tmscm_install_procedure ("cpp-string-number?",  tmg_cpp_string_numberP, 1, 0, 0);
   tmscm_install_procedure ("string-occurs?",  tmg_string_occursP, 2, 0, 0);
   tmscm_install_procedure ("string-count-occurrences",  tmg_string_count_occurrences, 2, 0, 0);
   tmscm_install_procedure ("string-search-forwards",  tmg_string_search_forwards, 3, 0, 0);

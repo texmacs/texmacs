@@ -47,12 +47,12 @@
 
 (tm-define (plugin-input-arg t)
   (if (and (string? t)
-	   (= (length (string->tmtokens t 0 (string-length t))) 1))
+           (= (length (string->tmtokens t 0 (string-length t))) 1))
       (plugin-input t)
       (begin
-	(display "(")
-	(plugin-input t)
-	(display ")"))))
+        (display "(")
+        (plugin-input t)
+        (display ")"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; conversion of strings
@@ -60,27 +60,27 @@
 
 (define (string-find-char s i n c)
   (cond ((>= i n) n)
-	((== (string-ref s i) c) i)
-	(else (string-find-char s (+ i 1) n c))))
+        ((== (string-ref s i) c) i)
+        (else (string-find-char s (+ i 1) n c))))
 
 (define (string-find-end s i n pred)
   (cond ((>= i n) n)
-	((not (pred (string-ref s i))) i)
-	(else (string-find-end s (+ i 1) n pred))))
+        ((not (pred (string-ref s i))) i)
+        (else (string-find-end s (+ i 1) n pred))))
 
 (define (string->tmtokens s i n)
   (cond ((>= i n) '())
-	((== (string-ref s i) #\<)
-	 (let ((j (min n (+ (string-find-char s i n #\>) 1))))
-	   (cons (substring s i j) (string->tmtokens s j n))))
-	((char-alphabetic? (string-ref s i))
-	 (let ((j (string-find-end s i n char-alphabetic?)))
-	   (cons (substring s i j) (string->tmtokens s j n))))
-	((char-numeric? (string-ref s i))
-	 (let ((j (string-find-end s i n char-numeric?)))
-	   (cons (substring s i j) (string->tmtokens s j n))))
-	(else (cons (substring s i (+ 1 i))
-		    (string->tmtokens s (+ 1 i) n)))))
+        ((== (string-ref s i) #\<)
+         (let ((j (min n (+ (string-find-char s i n #\>) 1))))
+           (cons (substring s i j) (string->tmtokens s j n))))
+        ((char-alphabetic? (string-ref s i))
+         (let ((j (string-find-end s i n char-alphabetic?)))
+           (cons (substring s i j) (string->tmtokens s j n))))
+        ((char-numeric? (string-ref s i))
+         (let ((j (string-find-end s i n char-numeric?)))
+           (cons (substring s i j) (string->tmtokens s j n))))
+        (else (cons (substring s i (+ 1 i))
+                    (string->tmtokens s (+ 1 i) n)))))
 
 (define (plugin-input-tmtoken s)
   (let ((im (plugin-input-ref s)))
@@ -95,8 +95,8 @@
 (define (plugin-input-tmtokens l)
   (if (nnull? l)
       (begin
-	(plugin-input-tmtoken (car l))
-	(plugin-input-tmtokens (cdr l)))))
+        (plugin-input-tmtoken (car l))
+        (plugin-input-tmtokens (cdr l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; conversion of other nodes
@@ -109,18 +109,18 @@
 
 (define (plugin-input-concat-big op args)
   (let* ((i (list-find-index args (lambda (x) (== x '(big ".")))))
-	 (head (if i (sublist args 0 i) args))
-	 (tail (if i (sublist args (+ i 1) (length args)) '()))
-	 (bigop `(big-around ,(small-bracket op) (concat ,@head))))
+         (head (if i (sublist args 0 i) args))
+         (tail (if i (sublist args (+ i 1) (length args)) '()))
+         (bigop `(big-around ,(small-bracket op) (concat ,@head))))
     (plugin-input `(concat ,bigop ,@tail))))
 
 (define (plugin-input-concat args)
   (cond ((null? args) (noop))
-	((and (func? (car args) 'big) (nnull? (cdr args)))
-	 (plugin-input-concat-big (car args) (cdr args)))
-	(else
-	 (plugin-input (car args))
-	 (plugin-input-concat (cdr args)))))
+        ((and (func? (car args) 'big) (nnull? (cdr args)))
+         (plugin-input-concat-big (car args) (cdr args)))
+        (else
+         (plugin-input (car args))
+         (plugin-input-concat (cdr args)))))
 
 (define (plugin-input-math args)
   (plugin-input (car args)))
@@ -135,14 +135,14 @@
 (define (plugin-input-sqrt args)
   (if (= (length args) 1)
       (begin
-	(display "sqrt(")
-	(plugin-input (car args))
-	(display ")"))
+        (display "sqrt(")
+        (plugin-input (car args))
+        (display ")"))
       (begin
-	(plugin-input-arg (car args))
-	(display "^(1/")
-	(plugin-input-arg (cadr args))
-	(display ")"))))
+        (plugin-input-arg (car args))
+        (display "^(1/")
+        (plugin-input-arg (cadr args))
+        (display ")"))))
 
 (define (plugin-input-rsub args)
   (display "[")
@@ -161,10 +161,10 @@
 
 (define (plugin-input-big-around args)
   (let* ((b `(big-around ,@args))
-	 (name (big-name b))
-	 (sub (big-subscript b))
-	 (sup (big-supscript b))
-	 (body (big-body b)))
+         (name (big-name b))
+         (sub (big-subscript b))
+         (sup (big-supscript b))
+         (body (big-body b)))
     (display name)
     (display "(")
     (when sub
@@ -209,16 +209,16 @@
   (if (null? (cdr r))
       (plugin-input (car r))
       (begin
-	(plugin-input (car r))
-	(display ", ")
-	(plugin-input-row (cdr r)))))
+        (plugin-input (car r))
+        (display ", ")
+        (plugin-input-row (cdr r)))))
 
 (define (plugin-input-var-rows t)
   (if (nnull? t)
       (begin
-	(display "; ")
-	(plugin-input-row (car t))
-	(plugin-input-var-rows (cdr t)))))
+        (display "; ")
+        (plugin-input-row (car t))
+        (plugin-input-var-rows (cdr t)))))
 
 (define (plugin-input-rows t)
   (display "[")
@@ -245,9 +245,9 @@
   (with plugin (if (string? plugin2) (string->symbol plugin2) plugin2)
     (with module (ahash-ref lazy-input-converter-table plugin)
       (if module
-	  (begin
-	    (ahash-remove! lazy-input-converter-table plugin)
-	    (module-load module))))))
+          (begin
+            (ahash-remove! lazy-input-converter-table plugin)
+            (module-load module))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initialization subroutines
@@ -258,10 +258,10 @@
 (define (plugin-input-converters-rules name l)
   (if (null? l) '()
       (cons (let* ((rule (car l))
-		   (key (car rule))
-		   (im (list 'unquote (cadr rule))))
-	      (list (list 'plugin-input-converter% (list name key) im)))
-	    (plugin-input-converters-rules name (cdr l)))))
+                   (key (car rule))
+                   (im (list 'unquote (cadr rule))))
+              (list (list 'plugin-input-converter% (list name key) im)))
+            (plugin-input-converters-rules name (cdr l)))))
 
 (tm-define-macro (plugin-input-converters name2 . l)
   (let ((name (if (string? name2) name2 (symbol->string name2))))
@@ -272,7 +272,7 @@
 (define (plugin-input-ref key)
   (lazy-input-converter-force plugin-input-current-plugin)
   (let ((im (logic-ref plugin-input-converter%
-		     (list plugin-input-current-plugin key))))
+                     (list plugin-input-current-plugin key))))
     (if im im (logic-ref plugin-input-converter% (list "generic" key)))))
 
 (tm-define (plugin-supports-math-input-ref key)

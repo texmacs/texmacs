@@ -17,7 +17,7 @@
   <hlink|contact us|../../authors/contact.en.tm> if you want to contribute to
   these or any other issues. In the <menu|Help> menu you can find
   documentation about the <hlink|source code|../../../devel/source/source.en.tm>
-  of <TeXmacs>, its <hlink|document format|../../../devel/format/format.en.tm>,
+  of <TeXmacs>, its <hlink|document format|../../../devel/format/basics/basics.en.tm>,
   how to write <hlink|interfaces|../../../devel/plugin/plugin.en.tm> with
   other formats, and so on.
 

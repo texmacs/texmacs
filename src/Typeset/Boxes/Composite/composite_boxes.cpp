@@ -113,11 +113,15 @@ composite_box_rep::subbox (int i) {
 }
 
 tree
-composite_box_rep::action (tree t, SI x, SI y, SI delta) {
-  int m= find_child (x, y, delta, true);
+composite_box_rep::message (tree t, SI x, SI y, rectangles& rs) {
+  int m= find_child (x, y, 0, true);
   if (m == -1) return "";
-  else return bs[m]->action (t, x- sx(m), y- sy(m),
-			     delta + get_delta (x, x1, x2));
+  else {
+    rectangles xtra;
+    tree r= bs[m]->message (t, x- sx(m), y- sy(m), xtra);
+    rs << translate (xtra, sx(m), sy(m));
+    return r;
+  }
 }
 
 void

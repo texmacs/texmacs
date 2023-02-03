@@ -251,7 +251,7 @@
 
       <item>Try reinstalling <TeXmacs>, preferably the latest version that
       used to work for you. Old versions can be found at
-      <slink|ftp://ftp.texmacs.org/pub/TeXmacs/tmftp/>
+      \ <slink|http://ftp.texmacs.org/pub/TeXmacs/tmftp/>
 
       <item>Submit a bug report, report the issue to one of our mailing
       lists, or contact the authors.

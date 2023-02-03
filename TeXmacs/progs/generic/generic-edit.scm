@@ -215,6 +215,66 @@
 (tm-define (notify-disactivated t) (noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Basic gestures
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (swipe-horizontal t forward?)
+  (and-with p (tree-outer t)
+    (swipe-horizontal p forward?)))
+
+(tm-define (swipe-vertical t down?)
+  (and-with p (tree-outer t)
+    (swipe-vertical p down?)))
+
+(tm-define (swipe-left)
+  (swipe-horizontal (focus-tree) #f))
+
+(tm-define (swipe-right)
+  (swipe-horizontal (focus-tree) #t))
+
+(tm-define (swipe-up)
+  (swipe-vertical (focus-tree) #f))
+
+(tm-define (swipe-down)
+  (swipe-vertical (focus-tree) #t))
+
+(tm-define pinch-modified? #f)
+(tm-define pinch-current-scale 1.0)
+(tm-define pinch-current-angle 0.0)
+
+(tm-define (pinch-clear)
+  (set! pinch-modified? #f)
+  (set! pinch-current-scale 1.0)
+  (set! pinch-current-angle 0.0))
+
+(tm-define (structured-maximize t)
+  (and-with p (tree-outer t)
+    (structured-maximize p)))
+
+(tm-define (structured-minimize t)
+  (and-with p (tree-outer t)
+    (structured-minimize p)))
+
+(tm-define (pinch-start)
+  (pinch-clear))
+
+(tm-define (pinch-end)
+  (cond ((> pinch-current-scale 1.05)
+         (structured-maximize (focus-tree)))
+        ((< pinch-current-scale 0.95)
+         (structured-minimize (focus-tree))))
+  (pinch-clear))
+
+(tm-define (pinch-scale scale)
+  (geometry-scale (focus-tree) scale))
+
+(tm-define (pinch-rotate angle)
+  (geometry-rotate (focus-tree) angle))
+
+(tm-define (wheel-capture?) #f)
+(tm-define (wheel-event x y) (noop))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic predicates
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -507,6 +567,16 @@
   (and-with p (tree-outer t)
     (geometry-incremental p down?)))
 
+(tm-define (geometry-scale t scale)
+  (with p (tree-outer t)
+    (if p (geometry-scale p scale)
+        (set! pinch-current-scale scale))))
+
+(tm-define (geometry-rotate t angle)
+  (with p (tree-outer t)
+    (if p (geometry-rotate p angle)
+        (set! pinch-current-angle angle))))
+
 (tm-define (geometry-slower)
   (geometry-speed (focus-tree) #f))
 (tm-define (geometry-faster)
@@ -788,11 +858,11 @@
 
 (tm-define (make-graphics-over)
   (if (selection-active-any?)
-      (with g `(with "gr-mode" (tuple "hand-edit" "line") (graphics))
+      (with g `(with "gr-mode" (tuple "hand-edit" "penscript") (graphics))
         (with selection (selection-tree)
           (clipboard-cut "graphics background")
           (insert-go-to `(draw-over ,selection ,g "2cm") '(1 2 1))))
-      (with g `(with "gr-mode" (tuple "hand-edit" "line") (graphics))
+      (with g `(with "gr-mode" (tuple "hand-edit" "penscript") (graphics))
         (insert-go-to `(draw-over "" ,g "2cm") '(1 2 1)))))
 
 (tm-define (make-anim l)

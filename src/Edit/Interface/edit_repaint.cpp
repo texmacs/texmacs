@@ -56,18 +56,24 @@ void
 edit_interface_rep::draw_env (renderer ren) {
   if (!full_screen) {
     if (!is_nil (env_rects)) {
-      ren->set_pencil (pencil (rgb_color (0, 85, 85, 24), ren->pixel));
+      color col= get_env_color (CONTEXT_COLOR);
+      ren->set_pencil (pencil (col, ren->pixel));
       ren->draw_rectangles (env_rects);
     }
     if (!is_nil (foc_rects)) {
-      ren->set_pencil (pencil (rgb_color (0, 255, 255), ren->pixel));
+      color col= get_env_color (FOCUS_COLOR);
+      ren->set_pencil (pencil (col, ren->pixel));
       ren->draw_rectangles (foc_rects);
     }
     if (!is_nil (sem_rects)) {
-      if (sem_correct)
-        ren->set_pencil (pencil (rgb_color (112, 208, 112), ren->pixel));
-      else
-        ren->set_pencil (pencil (rgb_color (208, 144, 80), ren->pixel));
+      if (sem_correct) {
+        color col= get_env_color (CORRECT_COLOR);
+        ren->set_pencil (pencil (col, ren->pixel));
+      }
+      else {
+        color col= get_env_color (INCORRECT_COLOR);
+        ren->set_pencil (pencil (col, ren->pixel));
+      }
       ren->draw_rectangles (sem_rects);
     }
   }
@@ -81,15 +87,15 @@ edit_interface_rep::draw_cursor (renderer ren) {
     if (!inside_active_graphics ()) {
       SI dw= 0;
       if (tremble_count > 3) dw= min (tremble_count - 3, 25) * pixel;
-      cu->y1 -= 2*pixel + dw; cu->y2 += 2*pixel + dw;
+      cu->y1 -= 2*zpixel + dw; cu->y2 += 2*zpixel + dw;
       SI x1= cu->ox + ((SI) (cu->y1 * cu->slope)), y1= cu->oy + cu->y1;
       SI x2= cu->ox + ((SI) (cu->y2 * cu->slope)), y2= cu->oy + cu->y2;
       string mode= get_env_string (MODE);
       string family, series;
-      color cuc= red;
+      color cuc= get_env_color (CURSOR_COLOR);
       if (!cu->valid) cuc= green;
-      else if (mode == "math") cuc= rgb_color (192, 0, 255);
-      ren->set_pencil (pencil (cuc, pixel + dw));
+      else if (mode == "math") cuc= get_env_color (MATH_CURSOR_COLOR);
+      ren->set_pencil (pencil (cuc, zpixel + dw));
       if ((mode == "text") || (mode == "src")) {
         family= get_env_string (FONT_FAMILY);
         series= get_env_string (FONT_SERIES);
@@ -102,14 +108,14 @@ edit_interface_rep::draw_cursor (renderer ren) {
         family= get_env_string (PROG_FONT_FAMILY);
         series= get_env_string (PROG_FONT_SERIES);
       }
-      SI lserif= (series=="bold"? 2*pixel: pixel) + dw;
-      SI rserif= pixel + dw;
+      SI lserif= (series=="bold"? 2*zpixel: zpixel) + dw;
+      SI rserif= zpixel + dw;
       if (family == "ss") lserif= rserif= 0;
       ren->line (x1-lserif, y1, x1+rserif, y1);
-      if (y1<=y2-pixel) {
-        ren->line (x1, y1, x2, y2-pixel);
-        if (series == "bold") ren->line (x1-pixel, y1, x2-pixel, y2-pixel);
-        ren->line (x2-lserif, y2-pixel, x2+rserif, y2-pixel);
+      if (y1<=y2-zpixel) {
+        ren->line (x1, y1, x2, y2-zpixel);
+        if (series == "bold") ren->line (x1-zpixel, y1, x2-zpixel, y2-zpixel);
+        ren->line (x2-lserif, y2-zpixel, x2+rserif, y2-zpixel);
       }
     }
   }
@@ -137,11 +143,13 @@ void
 edit_interface_rep::draw_selection (renderer ren, rectangle r) {
   rectangles visible (thicken (r, 2 * ren->pixel, 2 * ren->pixel));
   if (!is_nil (locus_rects)) {
-    ren->set_pencil (pencil (rgb_color (32, 160, 96), ren->pixel));
+    color col= mouse_clickable_color ();
+    ren->set_pencil (pencil (col, ren->pixel));
     ren->draw_rectangles (locus_rects);
   }
   for (int i=0; i<N(alt_selection_rects); i++) {
-    ren->set_pencil (pencil (rgb_color (240, 192, 0), ren->pixel));
+    color col= get_env_color (MATCH_COLOR);
+    ren->set_pencil (pencil (col, ren->pixel));
 #if defined(QTTEXMACS) || defined (SDLTEXMACS)
     ren->draw_selection (alt_selection_rects[i] & visible);
 #else
@@ -149,7 +157,8 @@ edit_interface_rep::draw_selection (renderer ren, rectangle r) {
 #endif
   }
   if (!is_nil (selection_rects)) {
-    color col= (table_selection? rgb_color (192, 0, 255): red);
+    color col= get_env_color (SELECTION_COLOR);
+    if (table_selection) col= get_env_color (TABLE_SELECTION_COLOR);
     ren->set_pencil (pencil (col, ren->pixel));
 #if defined(QTTEXMACS) || defined (SDLTEXMACS)
     ren->draw_selection (selection_rects & visible);
@@ -162,8 +171,8 @@ edit_interface_rep::draw_selection (renderer ren, rectangle r) {
 void
 edit_interface_rep::draw_graphics (renderer ren) {
   if (got_focus || full_screen) {
-    cursor cu= get_cursor();
-    if (over_graphics(cu->ox, cu->oy) && inside_active_graphics ()) {
+    cursor cu= get_cursor ();
+    if (over_graphics (cu->ox, cu->oy) && inside_active_graphics ()) {
       eval ("(graphics-reset-context 'graphics-cursor)");
       draw_graphical_object (ren);
       string tm_curs= as_string (eval ("graphics-texmacs-pointer"));

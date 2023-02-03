@@ -1,13 +1,35 @@
-<TeXmacs|2.1>
+<TeXmacs|2.1.2>
 
 <style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 2.1 to 2.1.1>
+  <section|Changes from version 2.1 to 2.1.3>
 
   <\itemize>
+    <item>Headless option for running <TeXmacs> as a window-less script
+    (2.1.3).
+
+    <item>Support for basic gestures (2.1.3).
+
+    <item>Improved quality of hand-drawn graphics (2.1.3).
+
+    <item>Repulsive margin facility for simpler arrows between graphical text
+    (2.1.3).
+
+    <item>Stylable interface colors (2.1.3).
+
+    <item>Stylable colors for syntax highlighting for Mathemagix and Scheme
+    (2.1.3).
+
+    <item>Various bug fixes (2.1.3).
+
+    <item>Experimental interface for OS-supported speech recognition engines
+    (2.1.3).
+
+    <item>Various minor bug fixes (2.1.2).
+
     <item>Creation of various interface themes for <TeXmacs>, such as dark
     and bright (2.1.1).
 

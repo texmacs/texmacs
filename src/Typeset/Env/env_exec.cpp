@@ -1217,7 +1217,7 @@ edit_env_rep::exec_use_package (tree t) {
     if (is_rooted (base_file_name, "default"))
       styp= styp | ::expand (head (base_file_name) * url_ancestor ());
     else styp= styp | head (base_file_name);
-    if (ends (as_string (t[i]), ".ts")) name= as_string (t[i]);
+    if (ends (as_string (t[i]), ".ts")) name= url_system (as_string (t[i]));
     else name= styp * (as_string (t[i]) * string (".ts"));
     name= resolve (name);
     //cout << as_string (t[i]) << " -> " << name << "\n";
@@ -1225,7 +1225,7 @@ edit_env_rep::exec_use_package (tree t) {
     if (!load_string (name, doc_s, false)) {
       tree doc= texmacs_document_to_tree (doc_s);
       if (is_compound (doc))
-	exec (filter_style (extract (doc, "body")));
+        exec (filter_style (extract (doc, "body")));
     }
   }
   return "";

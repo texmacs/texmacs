@@ -1049,6 +1049,12 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
       if (fn[nr]->supports (rewrite (c, REWRITE_CYRILLIC)))
         return sm->add_char (key, c);
     }
+    if (c == "<#3000>") {
+      tree key= tuple ("ignore");
+      int nr= sm->add_font (key, REWRITE_IGNORE);
+      initialize_font (nr);
+      return sm->add_char (key, c);
+    }
     if (N(c) == 7 && starts (c, "<bbb-") && !occurs ("TeX Gyre", mfam)) {
       font cfn= closest_font (fam, variant, series, rshape, sz, dpi, 1);
       if (cfn->supports (c (N(c)-2, N(c)-1))) {

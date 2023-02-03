@@ -1,4 +1,4 @@
-<TeXmacs|1.99.20>
+<TeXmacs|2.1>
 
 <style|source>
 
@@ -20,13 +20,27 @@
     </src-license>
   </src-title>>
 
+  <assign|giac-prompt-color|dark brown>
+
+  <assign|giac-input-color|dark blue>
+
+  <assign|giac-input|<\macro|prompt|body>
+    <\with|generic-prompt-color|<value|giac-prompt-color>|generic-input-color|<value|giac-input-color>>
+      <generic-input|<arg|prompt>|<arg|body>>
+    </with>
+  </macro>>
+
   <assign|giac-output|<\macro|body>
     <\padded>
       <generic-output*|<arg|body>>
     </padded>
   </macro>>
 
-  \;
+  <assign|giac-errput|<\macro|body>
+    <\wide-normal>
+      <with|color|dark green|font-family|ss|<arg|body>>
+    </wide-normal>
+  </macro>>
 </body>
 
 <\initial>

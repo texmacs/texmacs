@@ -178,6 +178,9 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_widget _tmwid)
   setAttribute (Qt::WA_InputMethodEnabled);
   surface ()->setMouseTracking (true);
   surface ()->setAcceptDrops (true);
+  grabGesture (Qt::PanGesture);
+  grabGesture (Qt::PinchGesture);
+  grabGesture (Qt::SwipeGesture);
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5,9,0))
   surface ()->setTabletTracking (true);
@@ -502,7 +505,6 @@ QTMWidget::kbdEvent (int key, Qt::KeyboardModifiers mods, const QString& s) {
 
 void
 QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
-  
   QString const & preedit_string = event->preeditString();
   QString const & commit_string = event->commitString();
   
@@ -537,12 +539,13 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     if (!done) {
       if (DEBUG_QT)
         debug_qt << "IM committing: " << commit_string.toUtf8().data() << LF;
-#if 1
-      for (int i = 0; i < commit_string.size(); ++i)
-        kbdEvent (0, Qt::NoModifier, commit_string[i]);
-#else
-      kbdEvent (0, Qt::NoModifier, commit_string);
-#endif
+      if (preediting && get_preference ("speech", "off") == "off")
+        for (int i = 0; i < commit_string.size(); ++i)
+          kbdEvent (0, Qt::NoModifier, commit_string[i]);
+      else {
+        string s= "speech:" * from_qstring (commit_string);
+        kbdEvent (0, Qt::NoModifier, to_qstring (s));
+      }
     }
   }
   
@@ -584,12 +587,12 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     
     r = r * as_string (pos) * ":" * from_qstring (preedit_string);
   }
-  
+
   if (!is_nil (tmwid)) {
     preediting = !preedit_string.isEmpty();
     the_gui->process_keypress (tm_widget(), r, texmacs_time());
   }
-  
+
   event->accept();
 }  
 
@@ -670,8 +673,15 @@ QTMWidget::tabletEvent (QTabletEvent* event) {
     double x= point.x() + event->hiResGlobalX() - event->globalX();
     double y= point.y() + event->hiResGlobalY() - event->globalY();
     coord2 pt= coord2 ((SI) (x * PIXEL), (SI) (-y * PIXEL));
+    array<double> data;
+    data << ((double) event->pressure())
+         << ((double) event->rotation())
+         << ((double) event->xTilt())
+         << ((double) event->yTilt())
+         << ((double) event->z())
+         << ((double) event->tangentialPressure());
     the_gui->process_mouse (tm_widget(), s, pt.x1, pt.x2, 
-                            mstate, texmacs_time ());
+                            mstate, texmacs_time (), data);
   }
   /*
   cout << HRULE << LF;
@@ -697,6 +707,108 @@ QTMWidget::tabletEvent (QTabletEvent* event) {
 }
 #endif
 
+void
+QTMWidget::gestureEvent (QGestureEvent* event) {
+  if (is_nil (tmwid)) return;
+  string s= "gesture";
+  array<double> data;
+  QPointF hotspot;
+  if (QGesture *swipe_gesture = event->gesture(Qt::SwipeGesture)) {
+    QSwipeGesture *swipe= static_cast<QSwipeGesture *> (swipe_gesture);
+    s= "swipe";
+    hotspot = swipe->hotSpot ();
+    if (swipe->state() == Qt::GestureFinished) {
+      if (swipe->horizontalDirection() == QSwipeGesture::Left)
+        s= "swipe-left";
+      else if (swipe->horizontalDirection() == QSwipeGesture::Right)
+        s= "swipe-right";
+      else if (swipe->verticalDirection() == QSwipeGesture::Up)
+        s= "swipe-up";
+      else if (swipe->verticalDirection() == QSwipeGesture::Down)
+        s= "swipe-down";
+    }
+    else {
+      event->accept ();
+      return;
+    }
+  }
+  else if (QGesture *pan_gesture = event->gesture(Qt::PanGesture)) {
+    QPanGesture *pan= static_cast<QPanGesture *> (pan_gesture);
+    string s= "pan";
+    hotspot = pan->hotSpot ();
+    //QPointF delta = pan->delta();
+    //cout << "Pan " << delta.x() << ", " << delta.y() << LF;
+  }
+  else if (QGesture *pinch_gesture = event->gesture(Qt::PinchGesture)) {
+    QPinchGesture *pinch= static_cast<QPinchGesture *> (pinch_gesture);
+    s= "pinch";
+    hotspot = pinch->hotSpot ();
+    QPinchGesture::ChangeFlags changeFlags = pinch->changeFlags();
+#if (QT_VERSION >= 0x050000)
+    if (pinch->state() == Qt::GestureStarted) {
+      pinch->setRotationAngle (0.0);
+      pinch->setScaleFactor (1.0);
+      s= "pinch-start";
+    }
+    else if (pinch->state() == Qt::GestureFinished) {
+      pinch->setRotationAngle (0.0);
+      pinch->setScaleFactor (1.0);
+      s= "pinch-end";
+    }
+    else if (changeFlags & QPinchGesture::RotationAngleChanged) {
+      qreal angle = pinch->rotationAngle();
+      s= "rotate";
+      data << ((double) angle);
+    }
+    else if (changeFlags & QPinchGesture::ScaleFactorChanged) {
+      qreal scale = pinch->totalScaleFactor();
+      s= "scale";
+      data << ((double) scale);
+    }
+#else
+    if (pinch->state() == Qt::GestureStarted) {
+      QPoint point (hotspot.x(), hotspot.y());
+      coord2 pt = from_qpoint (point);
+      the_gui->process_mouse (tm_widget(), "pinch-start", pt.x1, pt.x2, 
+                              0, texmacs_time ());
+    }
+    if (changeFlags & QPinchGesture::RotationAngleChanged) {
+      qreal a1 = pinch->lastRotationAngle();
+      qreal a2 = pinch->rotationAngle();
+      if (a2 != a1) {
+        s= "rotate";
+        data << ((double) a2);
+      }
+    }
+    else if (changeFlags & QPinchGesture::ScaleFactorChanged) {
+      qreal s1 = pinch->lastScaleFactor();
+      qreal s2 = pinch->scaleFactor();
+      if (s1 != s2) {
+        s= "scale";
+        data << ((double) s2);
+      }
+      else {
+        pinch->setScaleFactor (1.0);
+        s= "pinch-end";
+      }
+    }
+    else if (pinch->state() == Qt::GestureFinished) {
+      pinch->setRotationAngle (0.0);
+      pinch->setScaleFactor (1.0);
+      s= "pinch-end";
+    }
+#endif
+  }
+  else return;
+  QPoint point (hotspot.x(), hotspot.y());
+  coord2 pt = from_qpoint (point);
+  //cout << s << ", " << pt.x1 << ", " << pt.x2 << LF;
+  the_gui->process_mouse (tm_widget(), s, pt.x1, pt.x2, 
+                          0, texmacs_time (), data);
+  event->accept();
+}
+
+ 
 bool
 QTMWidget::event (QEvent* event) {
     // Catch Keypresses to avoid default handling of (Shift+)Tab keys
@@ -710,6 +822,10 @@ QTMWidget::event (QEvent* event) {
    shortcut text in the menus while relaying all keypresses through the editor*/
   if (event->type() == QEvent::ShortcutOverride) {
     event->accept();
+    return true;
+  }
+  if (event->type() == QEvent::Gesture) {
+    gestureEvent(static_cast<QGestureEvent*>(event));
     return true;
   }
   return QTMScrollView::event (event);
@@ -845,15 +961,63 @@ QTMWidget::dropEvent (QDropEvent *event) {
   }
 }
 
+static unsigned int
+wheel_state (QWheelEvent* event) {
+  // TODO: factor mouse_state, tablet_state, wheel_state
+  // This should be easier on modern versions of Qt
+  unsigned int i= 0;
+  Qt::MouseButtons bstate= event->buttons ();
+  Qt::KeyboardModifiers kstate= event->modifiers ();
+  if ((bstate & Qt::LeftButton     ) != 0) i += 1;
+  if ((bstate & Qt::MidButton      ) != 0) i += 2;
+  if ((bstate & Qt::RightButton    ) != 0) i += 4;
+  if ((bstate & Qt::XButton1       ) != 0) i += 8;
+  if ((bstate & Qt::XButton2       ) != 0) i += 16;
+#ifdef Q_OS_MAC
+    // We emulate right and middle clicks with ctrl and option, but we pass the
+    // modifiers anyway: old code continues to work and new one can use them.
+  if ((kstate & Qt::MetaModifier   ) != 0) i = 1024+4; // control key
+  if ((kstate & Qt::AltModifier    ) != 0) i = 2048+2; // option key
+  if ((kstate & Qt::ShiftModifier  ) != 0) i += 256;
+  if ((kstate & Qt::ControlModifier) != 0) i += 4096;   // cmd key
+#else
+  if ((kstate & Qt::ShiftModifier  ) != 0) i += 256;
+  if ((kstate & Qt::ControlModifier) != 0) i += 1024;
+  if ((kstate & Qt::AltModifier    ) != 0) i += 2048;
+  if ((kstate & Qt::MetaModifier   ) != 0) i += 4096;
+#endif
+  return i;
+}
+
 void
 QTMWidget::wheelEvent(QWheelEvent *event) {
-  if (QApplication::keyboardModifiers() == Qt::ControlModifier) {
-    if (event->delta() > 0) {
-      call ("zoom-in", object (sqrt (sqrt (2.0))));
-    } else {
-      call ("zoom-out", object (sqrt (sqrt (2.0))));
-    }
-  } else {
-    QAbstractScrollArea::wheelEvent(event);
+  if (is_nil (tmwid)) return; 
+  if (as_bool (call ("wheel-capture?"))) {
+#if (QT_VERSION >= 0x060000)
+    QPointF pos  = event->position();
+    QPoint  point= QPointF (pos.x(), pos.y()) + origin();
+#else
+    QPoint  point= event->pos() + origin();
+#endif
+#if (QT_VERSION >= 0x050000)
+    QPoint  wheel= event->pixelDelta();
+#else
+    double delta= event->delta();
+    bool   hor  = event->orientation() == Qt::Horizontal;
+    QPoint wheel (hor? delta: 0.0, hor? 0.0: delta);
+#endif
+    coord2 pt = from_qpoint (point);
+    coord2 wh = from_qpoint (wheel);
+    unsigned int mstate= wheel_state (event);
+    array<double> data; data << ((double) wh.x1) << ((double) wh.x2);
+    the_gui -> process_mouse (tm_widget(), "wheel", pt.x1, pt.x2,
+                              mstate, texmacs_time (), data);
   }
+  else if (QApplication::keyboardModifiers() == Qt::ControlModifier) {
+    if (event->delta() > 0)
+      call ("zoom-in", object (sqrt (sqrt (2.0))));
+    else
+      call ("zoom-out", object (sqrt (sqrt (2.0))));
+  }
+  else QAbstractScrollArea::wheelEvent (event);
 }

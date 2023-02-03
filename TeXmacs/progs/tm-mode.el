@@ -59,6 +59,7 @@
     with-encoding with-indexing
     with-user with-extra-fields
     with-remote-context with-identifier-context
+    speech-symbols
     user-ask
     tab icon-tab form item meti refreshable division
     $when $let $let* $for $refreshable $division
@@ -74,7 +75,8 @@
     tm-define tm-define-macro lazy-body-macro tm-property request-handler
     tm-menu define-menu tm-widget define-widget tm-generate tm-tool tm-tool*
     tm-build tm-build-macro tm-build-widget
-    menu-bind define-table extend-table smart-table
+    menu-bind smart-table
+    define-table extend-table define-collection extend-collection
     tm-service tm-call-back
     define-format define-language define-graphics))
 
@@ -89,6 +91,8 @@
 (setq binary-keywords
   '(with with-define with-global and-with with-innermost receive
     with-environment with-environment* converter with-cache
+    speech-map speech-map-wildcard
+    speech-adjust speech-reduce speech-collection
     user-confirm user-url
     resize cached
     $with))
