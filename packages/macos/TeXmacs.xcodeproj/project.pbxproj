@@ -1688,17 +1688,26 @@
 		9CCC74E510D303D900E88D90 /* concat_math.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49B310A8CC110097A335 /* concat_math.cpp */; };
 		9CCC74E610D303D900E88D90 /* concat_post.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49B410A8CC110097A335 /* concat_post.cpp */; };
 		9CCC74E710D303D900E88D90 /* concat_text.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49B510A8CC110097A335 /* concat_text.cpp */; };
+		9CCC74E7298A7AB20071E179 /* curve_extras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC74E6298A7AB20071E179 /* curve_extras.cpp */; };
 		9CCC74E810D303D900E88D90 /* concater.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49B610A8CC110097A335 /* concater.cpp */; };
+		9CCC74E8298A7AB20071E179 /* curve_extras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC74E6298A7AB20071E179 /* curve_extras.cpp */; };
 		9CCC74E910D303D900E88D90 /* env.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49B910A8CC110097A335 /* env.cpp */; };
+		9CCC74E9298A7AB20071E179 /* curve_extras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC74E6298A7AB20071E179 /* curve_extras.cpp */; };
 		9CCC74EA10D303D900E88D90 /* env_default.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49BA10A8CC110097A335 /* env_default.cpp */; };
 		9CCC74EB10D303D900E88D90 /* env_exec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49BB10A8CC110097A335 /* env_exec.cpp */; };
 		9CCC74EC10D303D900E88D90 /* env_inactive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49BC10A8CC110097A335 /* env_inactive.cpp */; };
+		9CCC74EC298A7AE10071E179 /* tree_math_stats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC74EB298A7AE10071E179 /* tree_math_stats.cpp */; };
 		9CCC74ED10D303D900E88D90 /* env_length.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49BD10A8CC110097A335 /* env_length.cpp */; };
+		9CCC74ED298A7AE10071E179 /* tree_math_stats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC74EB298A7AE10071E179 /* tree_math_stats.cpp */; };
 		9CCC74EE10D303D900E88D90 /* env_semantics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49BE10A8CC110097A335 /* env_semantics.cpp */; };
+		9CCC74EE298A7AE10071E179 /* tree_math_stats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC74EB298A7AE10071E179 /* tree_math_stats.cpp */; };
 		9CCC74EF10D303D900E88D90 /* format.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49C110A8CC110097A335 /* format.cpp */; };
 		9CCC74F010D303D900E88D90 /* formatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49C310A8CC110097A335 /* formatter.cpp */; };
+		9CCC74F0298A7AFF0071E179 /* case_boxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC74EF298A7AFF0071E179 /* case_boxes.cpp */; };
 		9CCC74F110D303D900E88D90 /* line_item.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49C410A8CC110097A335 /* line_item.cpp */; };
+		9CCC74F1298A7AFF0071E179 /* case_boxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC74EF298A7AFF0071E179 /* case_boxes.cpp */; };
 		9CCC74F210D303D900E88D90 /* page_item.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49C610A8CC110097A335 /* page_item.cpp */; };
+		9CCC74F2298A7AFF0071E179 /* case_boxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC74EF298A7AFF0071E179 /* case_boxes.cpp */; };
 		9CCC74F810D303D900E88D90 /* lazy_gui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49D710A8CC110097A335 /* lazy_gui.cpp */; };
 		9CCC74F910D303D900E88D90 /* lazy_paragraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49D810A8CC110097A335 /* lazy_paragraph.cpp */; };
 		9CCC74FA10D303D900E88D90 /* lazy_typeset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49DA10A8CC110097A335 /* lazy_typeset.cpp */; };
@@ -3248,6 +3257,10 @@
 		9CC6148B10A998BC0055F808 /* MOCs.o */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.objfile"; includeInIndex = 0; path = MOCs.o; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CCC738D12A7D6DA006EDBDA /* HIDRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIDRemote.h; sourceTree = "<group>"; };
 		9CCC738E12A7D6DA006EDBDA /* HIDRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HIDRemote.m; sourceTree = "<group>"; };
+		9CCC74E6298A7AB20071E179 /* curve_extras.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = curve_extras.cpp; sourceTree = "<group>"; };
+		9CCC74EA298A7AE10071E179 /* tree_math_stats.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tree_math_stats.hpp; sourceTree = "<group>"; };
+		9CCC74EB298A7AE10071E179 /* tree_math_stats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tree_math_stats.cpp; sourceTree = "<group>"; };
+		9CCC74EF298A7AFF0071E179 /* case_boxes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = case_boxes.cpp; sourceTree = "<group>"; };
 		9CCC751410D303D900E88D90 /* TeXmacsCocoa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeXmacsCocoa.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CD074B72028A16F00512C68 /* PDFCosDict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFCosDict.h; sourceTree = "<group>"; };
 		9CD074B82028A16F00512C68 /* DecryptionHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DecryptionHelper.cpp; sourceTree = "<group>"; };
@@ -6499,6 +6512,7 @@
 				49A513F419426DD70017E373 /* true_color.cpp in Sources */,
 				9C77B040298DBA0700F83E40 /* case_boxes.cpp in Sources */,
 				9C066E6612849FD900DE2F84 /* QTMInteractivePrompt.cpp in Sources */,
+				9CCC74E7298A7AB20071E179 /* curve_extras.cpp in Sources */,
 				9CF5BC73128A13CB00F691BF /* qt_tm_widget.cpp in Sources */,
 				9CF5BC75128A13CB00F691BF /* qt_window_widget.cpp in Sources */,
 				9CF5BC76128A13CB00F691BF /* QTMGuiHelper.cpp in Sources */,
@@ -6525,11 +6539,13 @@
 				9C25212D14FFC7C000C62749 /* guile_tm.cpp in Sources */,
 				4911B18D1CCA195A00F0AFFD /* glyph_transforms.cpp in Sources */,
 				9C25212E14FFC7C100C62749 /* object.cpp in Sources */,
+				9CCC74EC298A7AE10071E179 /* tree_math_stats.cpp in Sources */,
 				9CFB849214FFCA5700757D4E /* glue.cpp in Sources */,
 				9C4FCFF7150F73100087378D /* new_document.cpp in Sources */,
 				492ED6CE150FD27D00DB0FB5 /* new_data.cpp in Sources */,
 				492ED6CF150FD27D00DB0FB5 /* new_style.cpp in Sources */,
 				493D309B15190AEA00A19C3D /* new_buffer.cpp in Sources */,
+				9CCC74F0298A7AFF0071E179 /* case_boxes.cpp in Sources */,
 				49F251D4151B70840091FF99 /* persistent.cpp in Sources */,
 				4906929B151B743F006645F4 /* new_view.cpp in Sources */,
 				49F9FA131573BA86006C7258 /* new_project.cpp in Sources */,
@@ -7344,6 +7360,7 @@
 				9CCC752210D304EB00E88D90 /* aqua_utilities.mm in Sources */,
 				9CCC752310D304EB00E88D90 /* aqua_widget.mm in Sources */,
 				9CCC752510D304EB00E88D90 /* TMView.mm in Sources */,
+				9CCC74F2298A7AFF0071E179 /* case_boxes.cpp in Sources */,
 				9C060A9E10FC6D8B00C51583 /* tm_ostream.cpp in Sources */,
 				9C6061EC112442BD00054149 /* gs_utilities.cpp in Sources */,
 				9CFEB3F811D79783005C12C4 /* bibtex_functions.cpp in Sources */,
@@ -7391,6 +7408,7 @@
 				497822CD16EC86D40054F5BA /* tt_analyze.cpp in Sources */,
 				49FFB07B16EDF83A004A2A32 /* glyph_analyze.cpp in Sources */,
 				492EA53F18634091007F16D8 /* fromtex_post.cpp in Sources */,
+				9CCC74E9298A7AB20071E179 /* curve_extras.cpp in Sources */,
 				9C52100C2028AFE500A2B5B6 /* tm_timer.cpp in Sources */,
 				9CCDFC0527C0E1A1005F047F /* mupdf_picture.cpp in Sources */,
 				9CE5CF8A16EFDB55001A6292 /* guile_tm.cpp in Sources */,
@@ -7430,6 +7448,7 @@
 				9C33F4032412BF2700F73F5A /* queryxml.cpp in Sources */,
 				9C33F41B2412BF7E00F73F5A /* fortran_language.cpp in Sources */,
 				9C25EABC1D2A9EDD00D7F2D5 /* columns_breaker.cpp in Sources */,
+				9CCC74EE298A7AE10071E179 /* tree_math_stats.cpp in Sources */,
 				491BB5B8173118F700A755DF /* rewrite_equation_number.cpp in Sources */,
 				490DBDAB176EEEBD001F362A /* scilab_language.cpp in Sources */,
 				491BF370178BFF4C00C69EEF /* tm_sparkle.mm in Sources */,
@@ -7457,6 +7476,7 @@
 				9C5210132028B7B000A2B5B6 /* adjust_stix.cpp in Sources */,
 				4934A46E18C5D00000BF1E6A /* tracked_fromtex.cpp in Sources */,
 				9CD4E5F910B14AB300E0DD5C /* parsetex.cpp in Sources */,
+				9CCC74E8298A7AB20071E179 /* curve_extras.cpp in Sources */,
 				9CD4E5FA10B14AB300E0DD5C /* fromtm.cpp in Sources */,
 				9CD4E5FB10B14AB300E0DD5C /* totm.cpp in Sources */,
 				9CD4E5FC10B14AB300E0DD5C /* upgradetm.cpp in Sources */,
@@ -7487,6 +7507,7 @@
 				9CD4E61010B14AB300E0DD5C /* converter.cpp in Sources */,
 				9CD4E61C10B14AB300E0DD5C /* tree_correct.cpp in Sources */,
 				9CD4E61D10B14AB300E0DD5C /* tree_cursor.cpp in Sources */,
+				9CCC74ED298A7AE10071E179 /* tree_math_stats.cpp in Sources */,
 				4973E9A218BC945F001F74F0 /* r_language.cpp in Sources */,
 				9C4A740D1D22BEF500572468 /* player.cpp in Sources */,
 				9CD4E61E10B14AB300E0DD5C /* tree_traverse.cpp in Sources */,
@@ -7773,6 +7794,7 @@
 				9C722C1E10D2FBD300C41915 /* unix_sys_utils.cpp in Sources */,
 				9C25EABD1D2A9EE800D7F2D5 /* new_breaker.cpp in Sources */,
 				9C060A9D10FC6D8B00C51583 /* tm_ostream.cpp in Sources */,
+				9CCC74F1298A7AFF0071E179 /* case_boxes.cpp in Sources */,
 				9C6061EB112442BD00054149 /* gs_utilities.cpp in Sources */,
 				9CFEB3F911D79783005C12C4 /* bibtex_functions.cpp in Sources */,
 				9CFEB40211D79AF6005C12C4 /* parsebib.cpp in Sources */,

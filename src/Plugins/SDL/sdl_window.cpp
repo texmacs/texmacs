@@ -457,7 +457,7 @@ sdl_window_rep::get_backing_store () {
   unsigned char *samples= fz_pixmap_samples (mupdf_context (), pix);
   int w= fz_pixmap_width (mupdf_context (), pix);
   int h= fz_pixmap_height (mupdf_context (), pix);
-//  fz_keep_pixmap (mupdf_context (), pix);
+  //  fz_keep_pixmap (mupdf_context (), pix);
   SDL_Surface *surf= NULL;
   unsigned char *pixels= tm_new_array<unsigned char>(w*h*4);
 #if 1
@@ -478,7 +478,7 @@ sdl_window_rep::get_backing_store () {
 #else
   memcpy (pixels, samples, w*h*4);
 #endif
-  
+  // the SDL pixel data is not copied so we need to ensure that the pixmap stays alive.
   surf= SDL_CreateRGBSurfaceWithFormatFrom (pixels, w, h, 32, 4*w,
                                             SDL_PIXELFORMAT_RGBA32); // FIXME: premultiplied?
   return surf;
@@ -491,6 +491,7 @@ sdl_window_rep::get_backing_store () {
 #endif
 
 extern "C" {
+// Additional Fitz API
 void fz_copy_pixmap_rect(fz_context *ctx, fz_pixmap *dest, fz_pixmap *src, fz_irect b, const fz_default_colorspaces *default_cs);
 }
 
