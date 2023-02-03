@@ -229,7 +229,7 @@ mupdf_renderer_rep::begin (void* handle) {
     h= fz_pixmap_height (ctx, pixmap);
     dev= fz_new_draw_device (ctx, fz_identity, pixmap);
     fz_matrix ctm= fz_make_matrix(1, 0, 0, -1, 0, 0);
-    proc=pdf_new_run_processor (ctx, dev, ctm, "View", NULL, NULL, NULL);
+    proc=pdf_new_run_processor (ctx, mupdf_document (),  dev, ctm, -1, "View", NULL, NULL, NULL);
     
     fg  = -1;
     bg  = -1;
@@ -808,7 +808,7 @@ set_default_gstate (fz_context *ctx, pdf_processor *proc) {
 //  buf << "/BM /Normal\r\n";
   proc->op_gs_BM (ctx, proc, "Normal");
 //  buf << "/SMask /None\r\n";
-  proc->op_gs_SMask (ctx, proc, NULL, NULL, NULL, 0);
+  proc->op_gs_SMask (ctx, proc, NULL, NULL, NULL);
 //  buf << "/CA 1.0\r\n";
   proc->op_gs_CA (ctx, proc, 1.0);
 //  buf << "/ca 1.0\r\n";

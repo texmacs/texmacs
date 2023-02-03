@@ -457,7 +457,7 @@ sdl_window_rep::get_backing_store () {
   unsigned char *samples= fz_pixmap_samples (mupdf_context (), pix);
   int w= fz_pixmap_width (mupdf_context (), pix);
   int h= fz_pixmap_height (mupdf_context (), pix);
-  fz_keep_pixmap (mupdf_context (), pix);
+//  fz_keep_pixmap (mupdf_context (), pix);
   SDL_Surface *surf= NULL;
   unsigned char *pixels= tm_new_array<unsigned char>(w*h*4);
 #if 1
@@ -490,11 +490,46 @@ sdl_window_rep::get_backing_store () {
 }
 #endif
 
+extern "C" {
+void fz_copy_pixmap_rect(fz_context *ctx, fz_pixmap *dest, fz_pixmap *src, fz_irect b, const fz_default_colorspaces *default_cs);
+}
 
 void
 sdl_window_rep::translate (SI x1, SI y1, SI x2, SI y2, SI dx, SI dy) {
-  // FIXME: need implementation
-  cout << "sdl_window_rep::translate not implemented!" << LF;
+  ren->set_origin (0,0);
+  SI X1= x1+ dx;
+  SI Y2= y2+ dy;
+  ren->decode (x1, y1);
+  ren->decode (x2, y2);
+  ren->decode (X1, Y2);
+  dx= X1- x1;
+  dy= Y2- y2;
+
+  rectangles region (rectangle (x1, y2, x2, y1));
+  rectangles invalid_intern= invalid_regions & region;
+  rectangles invalid_extern= invalid_regions - invalid_intern;
+  invalid_intern = ::translate (invalid_intern, dx, dy) & region;
+  invalid_regions= invalid_extern | invalid_intern;
+
+  rectangles extra= thicken (region - ::translate (region, dx, dy), 1, 1);
+  invalid_regions= invalid_regions | extra;
+
+  if (x1<x2 && y2<y1) {
+//    cout << "translate " << x1 << ", " << y1 << ", " << x2 << ", " << y2 << ", " << X1 << ", " << Y2  << LF;
+    fz_pixmap *pix= ((mupdf_picture_rep*)backing_store->get_handle())->pix;
+    int w= fz_pixmap_width (mupdf_context (), pix);
+    int h= fz_pixmap_height (mupdf_context (), pix);
+    fz_pixmap *area= fz_new_pixmap (mupdf_context (),
+                                   fz_device_rgb (mupdf_context ()),
+                                   w, h, NULL, 1);
+    fz_irect r= fz_make_irect (x1, y2, x2, y1);
+    fz_copy_pixmap_rect (mupdf_context(), area, pix, r, NULL);
+    area->x= dx;
+    area->y= dy;
+    fz_copy_pixmap_rect (mupdf_context(), pix, area, r, NULL);
+    fz_drop_pixmap (mupdf_context(), area);
+    //    XCopyArea (dpy, win, win, gc, x1, y2, x2-x1, y1-y2, X1, Y2);
+  }
 }
 
 void
