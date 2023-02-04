@@ -225,6 +225,14 @@ TeXmacs_main (int argc, char** argv) {
   int i;
   bool flag= true;
   string the_default_font;
+
+#ifdef __EMSCRIPTEN__
+  debug_set ("std", true);
+  debug_set ("io", true);
+  debug_set ("bench", true);
+  debug_set ("verbose", true);
+#endif
+
   for (i=1; i<argc; i++)
     if (argv[i][0] == '\0') argc= i;
     else if (((argv[i][0] == '-') ||
@@ -469,9 +477,11 @@ TeXmacs_main (int argc, char** argv) {
   if (DEBUG_STD) debug_boot << "Starting server...\n";
 #ifndef __EMSCRIPTEN__
   { // opening scope for server sv
+    server sv;
+#else
+  static server sv;// avoid destruction
 #endif
 
-  server sv;
     
   string where= "";
   for (i=1; i<argc; i++) {
@@ -679,6 +689,7 @@ main (int argc, char** argv) {
 #ifdef __EMSCRIPTEN__
   set_env ("TEXMACS_PATH", "/TeXmacs");
   set_env ("TEXMACS_HOME_PATH", "/TeXmacs_Home");
+  set_env ("HOME", "/");
   emscripten_set_main_loop (sdl_run_gui, 60, false);
 #endif
 

@@ -404,14 +404,15 @@ add_definitions ("-DSDLTEXMACS")
 add_compile_options ("-Wall" "-Wextra") 
 add_compile_options ("SHELL:-include ${TEXMACS_BINARY_DIR}/src/System/config.h")
 add_compile_options ("SHELL:-sUSE_FREETYPE=1")
-add_compile_options ("SHELL:-sUSE_SDL=2" "SHELL:-sALLOW_MEMORY_GROWTH=1")
+add_compile_options ("SHELL:-sUSE_SDL=2")
 
 add_link_options ("SHELL:-sUSE_FREETYPE=1" "SHELL:-sUSE_SDL=2" "SHELL:--preload-file ${TEXMACS_SOURCE_DIR}/TeXmacs@TeXmacs")
-add_link_options ("SHELL:--emrun" "SHELL:-sALLOW_MEMORY_GROWTH=1")
+add_link_options ("SHELL:--emrun" "SHELL:-sALLOW_MEMORY_GROWTH=1" "SHELL:-sSTACK_SIZE=300000")
 
 #"SHELL:--source-map-base /" 
 #"SHELL:-s DISABLE_EXCEPTION_CATCHING=0" 
-#add_compile_options ( "-g3")
+add_compile_options ( "-g3")
+add_link_options ("SHELL:-s ASSERTIONS=1" "SHELL:-s DEMANGLE_SUPPORT=1"  "-g3" "-gsource-map" "SHELL:--source-map-base ${TEXMACS_SOURCE_DIR}")
 #add_link_options ("SHELL:-s ASSERTIONS=1" "SHELL:-s DEMANGLE_SUPPORT=1"  "-g3" "-gsource-map")
 
 
