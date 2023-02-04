@@ -178,7 +178,9 @@ sdl_window_rep::set_position (SI x, SI y) {
   if (x<0) x=0;
   if ((y+ win_h) > gui->screen_height) y= gui->screen_height- win_h;
   if (y<0) y=0;
-  SDL_SetWindowPosition (win, x, y);
+  win_x= x;
+  win_y= y;
+  SDL_SetWindowPosition (win, win_x, win_y);
 }
 
 void
@@ -267,8 +269,6 @@ sdl_window_rep::set_full_screen (bool flag) {
 
 void
 sdl_window_rep::move_event (int x, int y) {
-  x *= retina_factor;
-  y *= retina_factor;
   bool flag= (win_x!=x) || (win_y!=y);
   win_x= x; win_y= y;
   if (flag) {
@@ -276,7 +276,7 @@ sdl_window_rep::move_event (int x, int y) {
  //   XGetWindowAttributes (dpy, win, &attrs);
  //   int border_x= attrs.x, border_y= attrs.y;
     int border_x=0, border_y=0;
-    notify_position (w, win_x*PIXEL, win_y*PIXEL);
+    notify_position (w, win_x*PIXEL, win_y*PIXEL); //FIXME: not used???
     if (border_x >= 0 && border_x <= 5 && border_y >= 0 && border_y <= 30) {
       //cout << "Move to " << x-border_x << ", " << y-border_y << "\n";
       notify_window_move (orig_name, (x-border_x)*PIXEL, (border_y-y)*PIXEL);
@@ -342,9 +342,15 @@ sdl_window_rep::mouse_event (string ev, int x, int y, time_t t) {
   }
   else {
     sdl_window grab_win= get_sdl_window (gui->grab_ptr->item);
+    int gw_x, gw_y;
+    SDL_GetWindowPosition (grab_win->win, &gw_x, &gw_y);
+    int w_x, w_y;
+    SDL_GetWindowPosition (win, &w_x, &w_y);
     if (this != grab_win) {
-      x += win_x - grab_win->win_x;
-      y += win_y - grab_win->win_y;
+//      x += win_x - grab_win->win_x;
+//      y += win_y - grab_win->win_y;
+      x += (w_x - gw_x)*retina_factor;
+      y += (w_y - gw_y)*retina_factor;
       // return;
     }
     ren->set_origin (0, 0);
@@ -460,7 +466,7 @@ sdl_window_rep::get_backing_store () {
   //  fz_keep_pixmap (mupdf_context (), pix);
   SDL_Surface *surf= NULL;
   unsigned char *pixels= tm_new_array<unsigned char>(w*h*4);
-#if 1
+#if 0
   unsigned char *p= pixels;
   for (int y=h; y; y--) {
     for (int x=w; x; x--) {

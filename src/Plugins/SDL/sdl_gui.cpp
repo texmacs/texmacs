@@ -102,33 +102,25 @@ void sdl_gui_rep::update_mouse_state (Uint32 mask) {
 
 void
 sdl_gui_rep::emulate_leave_enter (widget old_widget, widget new_widget) {
-  int root_x, root_y;
   int x, y, ox, oy, x1, y1;
   
-  update_mouse_state ();
-  
-  cout << "emulate_leave_enter mouse_state " << mouse_state << LF;
+  //update_mouse_state ();
+  // cout << "emulate_leave_enter mouse_state " << mouse_state << LF;
   //SDL_PumpEvents();  // make sure we have the latest mouse state.
   Uint32 buttons= SDL_GetGlobalMouseState (&x, &y);
-  cout << "emulate_leave_enter buttons " << buttons << LF;
+  // cout << "emulate_leave_enter buttons " << buttons << LF;
   //update_mouse_state ();
 
   SDL_GetWindowPosition (get_Window (old_widget), &ox, &oy);
   x1= x - ox; y1= y - oy;
-  x1= (x1 * PIXEL);
-  y1= ((-y1) * PIXEL);
-  x1 *= retina_factor;
-  y1 *= retina_factor;
-  // cout << "\nLeave " << old_widget << "\n";
+  x1= (x1 * PIXEL); y1= ((-y1) * PIXEL);
+  // cout << "Emulate leave " << old_widget << "\n";
   send_mouse (old_widget, "leave", x1, y1, mouse_state, 0);
   // cout << "Leave OK\n";
   SDL_GetWindowPosition (get_Window (new_widget), &ox, &oy);
   x1= x - ox; y1= y - oy;
-  x1= (x1 * PIXEL);
-  y1= ((-y1) * PIXEL);
-  x1 *= retina_factor;
-  y1 *= retina_factor;
-  // cout << "Enter " << new_widget << "\n";
+  x1= (x1 * PIXEL); y1= ((-y1) * PIXEL);
+  // cout << "Emulate enter " << new_widget << "\n";
   send_mouse (new_widget, "enter", x1, y1, mouse_state, 0);
   // cout << "Enter OK\n\n";
 }
@@ -147,8 +139,8 @@ sdl_gui_rep::obtain_mouse_grab (widget wid) {
   notify_mouse_grab (new_widget, true);
   SDL_RaiseWindow (win);
   SDL_CaptureMouse (SDL_TRUE);
-//  SDL_SetWindowGrab (win, SDL_TRUE);
-  // cout << "\n---> In grab " << pritty ((tree) wid) << "\n\n";
+  // SDL_SetWindowGrab (win, SDL_TRUE);
+  // cout << "---> obtain_mouse_grab: in grab " << wid << "\n";
   if (!is_nil (old_widget)) {
     notify_mouse_grab (old_widget, false);
     emulate_leave_enter (old_widget, new_widget);
@@ -163,18 +155,17 @@ sdl_gui_rep::release_mouse_grab () {
   widget new_widget; if (!is_nil (grab_ptr)) new_widget= grab_ptr->item;
   if (is_nil (grab_ptr)) {
     SDL_Window *win= SDL_GetGrabbedWindow ();
-//    if (win) SDL_SetWindowGrab (win, SDL_FALSE);
+    // if (win) SDL_SetWindowGrab (win, SDL_FALSE);
     SDL_CaptureMouse (SDL_FALSE);
-
-    // cout << "\n---> No grab\n\n";
+    // cout << "---> release_mouse_grab: no grab\n";
   }
   else {
     sdl_window grab_win= get_sdl_window (new_widget);
     notify_mouse_grab (new_widget, true);
     SDL_RaiseWindow (grab_win->win);
     SDL_CaptureMouse (SDL_TRUE);
-//    SDL_SetWindowGrab (grab_win->win, SDL_TRUE);
-    // cout << "\n---> In grab " << new_widget << "\n";
+    // SDL_SetWindowGrab (grab_win->win, SDL_TRUE);
+    // cout << "---> release_mouse_grab: next grab " <<  new_widget  << "\n";
     notify_mouse_grab (old_widget, false);
     emulate_leave_enter (old_widget, new_widget);
   }
@@ -885,9 +876,8 @@ sdl_gui_rep::process_event (SDL_Event *event) {
           int x,y, ox,oy;
           update_mouse_state ();
           SDL_GetGlobalMouseState (&x, &y);
-          SDL_GetWindowPosition(win->win, &ox, &oy);
+          SDL_GetWindowPosition (win->win, &ox, &oy);
           x -= ox; y -= oy;
-//          x= x*PIXEL; y= (-y)*PIXEL;
           win->mouse_event ("enter", x, y, event->window.timestamp);
 
         }
@@ -902,7 +892,6 @@ sdl_gui_rep::process_event (SDL_Event *event) {
           SDL_GetGlobalMouseState (&x, &y);
           SDL_GetWindowPosition(win->win, &ox, &oy);
           x -= ox; y -= oy;
-//          x= x*PIXEL; y= (-y)*PIXEL;
           win->mouse_event ("leave", x, y, event->window.timestamp);
 
         }
@@ -954,9 +943,31 @@ sdl_gui_rep::process_event (SDL_Event *event) {
       string action = event->button.type == SDL_MOUSEBUTTONDOWN ? "press-" : "release-";
 //      set_button_state (event->button.state ^ get_button_mask (&ev->xbutton));
       win->mouse_event (action * lookup_mouse (event->button.button),
-            event->button.x, event->button.y, event->button.timestamp);
+            event->button.x, event->button.y,  texmacs_time ());
       break;
     } // case SDL_MOUSEBUTTONDOWN:
+    case SDL_MOUSEWHEEL:
+    {
+      SDL_Log("Window %d got wheel event event %f %f",
+              event->window.windowID, event->wheel.preciseX, event->wheel.preciseY);
+
+      sdl_window win= get_window_from_ID (event->button.windowID);
+      if (win == NULL) break;
+      unmap_balloon ();
+      update_mouse_state ();
+      int x,y, ox,oy;
+      SDL_GetGlobalMouseState (&x, &y);
+      SDL_GetWindowPosition(win->win, &ox, &oy);
+      x -= ox; y -= oy;
+      float deltaX= event->wheel.preciseX;
+      float deltaY= event->wheel.preciseY;
+      if (deltaY >= 0.5) {
+        win->mouse_event ("press-up", x, y, texmacs_time ());
+      } else if (deltaY <= -0.5) {
+        win->mouse_event ("press-down", x, y, texmacs_time ());
+      }
+      break;
+    } // case SDL_MOUSEWHEEL:
     case SDL_MOUSEMOTION:
     {
       unmap_balloon ();
