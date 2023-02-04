@@ -30,6 +30,11 @@ bool char_clip= true;
 
 void initialize_keyboard ();
 
+#define MIN_DELAY   10
+#define MAX_DELAY   1000
+#define SLEEP_AFTER 120000
+
+
 /******************************************************************************
 * General stuff
 ******************************************************************************/
@@ -38,6 +43,10 @@ sdl_gui_rep::sdl_gui_rep (int& argc2, char** argv2)
   : selection_t ("none"), selection_s (""), selection_w ((SDL_Window*) 0),
     mouse_state (0)
 {
+  wait = true;
+  count= 0;
+  delay= MIN_DELAY;
+
   the_gui= this;
   
   if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0) {
@@ -697,24 +706,14 @@ initialize_keyboard () {
 * Event loop
 ******************************************************************************/
 
-#define MIN_DELAY   10
-#define MAX_DELAY   1000
-#define SLEEP_AFTER 120000
-
 extern int nr_windows;
 static void (*the_interpose_handler) (void) = NULL;
 
 static int  kbd_count= 0;
 static bool request_partial_redraw= false;
 
-
-void
-sdl_gui_rep::event_loop () {
-  bool wait = true;
-  int  count= 0;
-  int  delay= MIN_DELAY;
-
-  while (nr_windows>0 || number_of_servers () != 0) {
+bool
+sdl_gui_rep::run_gui () {
     request_partial_redraw= false;
 
     // Get events
@@ -725,7 +724,7 @@ sdl_gui_rep::event_loop () {
       delay= MIN_DELAY;
       wait = false;
     }
-    if (nr_windows == 0) continue;
+    if (nr_windows == 0) return false;
 
     // FIXME: Don't typeset when resizing window
 
@@ -742,7 +741,7 @@ sdl_gui_rep::event_loop () {
     }
     else wait= true;
     if (the_interpose_handler != NULL) the_interpose_handler ();
-    if (nr_windows == 0) continue;
+    if (nr_windows == 0) return false;
     //time_t t2= texmacs_time ();
     //if (t2 - t1 >= 10) cout << "interpose took " << t2-t1 << "ms\n";
 
@@ -784,7 +783,17 @@ sdl_gui_rep::event_loop () {
       }
       messages= not_ready;
     }
+    return true;
   }
+
+void
+sdl_gui_rep::event_loop () {
+#if __EMSCRIPTEN__
+#else
+  while (nr_windows>0 || number_of_servers () != 0) {
+    run_gui ();
+  }
+#endif
 }
 
 static sdl_window

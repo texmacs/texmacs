@@ -79,8 +79,7 @@
 ;; Copied from guile-1.6.0.
 
 (define-public-macro (receive vars vals . body)
-  `(call-with-values (lambda () ,vals)
-     (lambda ,vars ,@body)))
+  `((lambda ,vars ,@body) ,vals))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; SECTION : case-lambda special form (SRFI-16)
@@ -184,5 +183,5 @@
 (define-public-macro (cute . slots)
   (let ((temp
 	 (map (lambda (s) (and (not (memq s '(<> <...>))) (gensym))) slots)))
-    `(let ,(delq! #f (map (lambda (t s) (and t (list t s))) temp slots))
+    `(let ,(delq #f (map (lambda (t s) (and t (list t s))) temp slots))
        (cut ,@(map (lambda (t s) (or t s)) temp slots)))))

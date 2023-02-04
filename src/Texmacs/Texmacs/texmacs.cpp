@@ -207,6 +207,19 @@ TeXmacs_init_paths (int& argc, char** argv) {
 * Real main program for encaptulation of guile
 ******************************************************************************/
 
+#ifdef __EMSCRIPTEN__
+
+#include <emscripten.h>
+#include <emscripten/html5.h>
+#include "SDL/sdl_gui.hpp"
+
+void sdl_run_gui () {
+  extern sdl_gui the_gui;
+  the_gui->run_gui ();
+}
+
+#endif // __EMSCRIPTEN__
+
 void
 TeXmacs_main (int argc, char** argv) {
   int i;
@@ -454,7 +467,10 @@ TeXmacs_main (int argc, char** argv) {
   gui_open (argc, argv);
   set_default_font (the_default_font);
   if (DEBUG_STD) debug_boot << "Starting server...\n";
+#ifndef __EMSCRIPTEN__
   { // opening scope for server sv
+#endif
+
   server sv;
     
   string where= "";
@@ -516,6 +532,8 @@ TeXmacs_main (int argc, char** argv) {
   if (start_server_flag) server_start ();
   release_boot_lock ();
   if (N(extra_init_cmd) > 0) exec_delayed (scheme_cmd (extra_init_cmd));
+
+#ifndef __EMSCRIPTEN__
   gui_start_loop ();
 
   if (DEBUG_STD) debug_boot << "Stopping server...\n";
@@ -529,6 +547,12 @@ TeXmacs_main (int argc, char** argv) {
 #endif
   
   if (DEBUG_STD) debug_boot << "Good bye...\n";
+#else // __EMSCRIPTEN__
+
+  cout << "Starting SDL GUI\n";
+  gui_start_loop ();
+  cout << "Exiting TeXmacs...\n";
+#endif
 }
 
 /******************************************************************************
@@ -651,6 +675,12 @@ immediate_options (int argc, char** argv) {
 
 int
 main (int argc, char** argv) {
+
+#ifdef __EMSCRIPTEN__
+  set_env ("TEXMACS_PATH", "/TeXmacs");
+  set_env ("TEXMACS_HOME_PATH", "/TeXmacs_Home");
+  emscripten_set_main_loop (sdl_run_gui, 60, false);
+#endif
 
 #ifdef STACK_SIZE
   struct rlimit limit;

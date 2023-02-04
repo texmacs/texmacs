@@ -17,61 +17,14 @@
 ;; Adaptive hash tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(if (vector? (make-hash-table 1))
-    (begin ;; old style
-      (define-public (make-ahash-table)
-	(cons (make-hash-table 1) 0))
-
-      (define-public (ahash-ref h key)
-	(hash-ref (car h) key))
-
-      (define-public (ahash-get-handle h key)
-	(hash-get-handle (car h) key))
-
-      (define-public (ahash-size h)
-	(cdr h))
-
-      (define-public (ahash-slots! h new-size)
-	(let ((new-h (make-hash-table new-size)))
-	  (hash-fold (lambda (key value dummy) (hash-set! new-h key value))
-		     #f (car h))
-	  (set-car! h new-h)))
-
-      (define-public (ahash-set! h key value)
-	(if (hash-get-handle (car h) key)
-	    (hash-set! (car h) key value)
-	    (begin
-	      (if (>= (cdr h) (vector-length (car h)))
-		  (ahash-slots! h (+ (* 2 (vector-length (car h))) 1)))
-	      (set-cdr! h (+ (cdr h) 1))
-	      (hash-set! (car h) key value))))
-
-      (define-public (ahash-remove! h key)
-	(let ((removed (hash-remove! (car h) key)))
-	  (if removed
-	      (begin
-		(set-cdr! h (- (cdr h) 1))
-		(if (< (+ (* 4 (cdr h)) 1) (vector-length (car h)))
-		    (ahash-slots! h (quotient (vector-length (car h)) 2)))))
-	  removed))
-
-      (define-public (ahash-fold folder init h)
-	(hash-fold folder init (car h)))
-
-      (define-public (ahash-table->list h)
-	(hash-fold acons '() (car h))))
-
-    (begin ;; new style
-      (define-public make-ahash-table make-hash-table)
-      (define-public ahash-ref hash-ref)
-      (define-public ahash-get-handle hash-get-handle)
-      (define-public (ahash-size h)
-	(hash-fold (lambda (key value seed) (+ 1 seed)) 0 h))
-      (define-public ahash-set! hash-set!)
-      (define-public ahash-remove! hash-remove!)
-      (define-public ahash-fold hash-fold)
-      (define-public (ahash-table->list h)
-	(hash-fold acons '() h))))
+(define-public make-ahash-table make-hash-table)
+(define-public ahash-ref hash-table-ref)
+(define-public (ahash-get-handle h s)
+  (let ((v  (hash-table-ref h s))) (if v (cons s v) #f)))
+(define-public ahash-set! hash-table-set!)
+(define-public (ahash-remove! h s) (hash-table-set! h s #f))
+(define-public (ahash-table->list h) (map values h))
+(define-public (ahash-size h) (length h))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra routines on adaptive hash tables

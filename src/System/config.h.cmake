@@ -152,6 +152,9 @@
 /* Use freetype library */
 #cmakedefine USE_FREETYPE 1
 
+/* Use MuPDF library */
+#cmakedefine MUPDF_RENDERER 1
+
 #cmakedefine USE_GS 1
 
 /* Use iconv library */

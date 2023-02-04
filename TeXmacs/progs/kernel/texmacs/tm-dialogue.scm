@@ -169,16 +169,6 @@
         ((== x #t) "true")
         (else x)))
 
-(define-public (procedure-symbol-name fun)
-  (cond ((symbol? fun) fun)
-        ((string? fun) (string->symbol fun))
-        ((and (procedure? fun) (procedure-name fun)) => identity)
-        (else #f)))
-
-(define-public (procedure-string-name fun)
-  (and-with name (procedure-symbol-name fun)
-    (symbol->string name)))
-
 (define-public (learn-interactive fun assoc-t)
   "Learn interactive values for @fun"
   (set! assoc-t (map (lambda (x) (cons (car x) (as-stree (cdr x)))) assoc-t))
@@ -245,10 +235,11 @@
             (compute-interactive-arg-list fun (cdr l)))))
 
 (tm-define (compute-interactive-args fun)
-  (with args (property fun :arguments)
-    (if (not args)
-        (compute-interactive-args-try-hard fun)
-        (compute-interactive-arg-list fun args))))
+  (with s-fun (procedure-symbol-name fun)
+    (with args (property s-fun :arguments)
+      (if (not args)
+        (compute-interactive-args-try-hard s-fun)
+        (compute-interactive-arg-list s-fun args)))))
 
 (define (build-interactive-arg s)
   (cond ((string-ends? s ":") s)

@@ -1,0 +1,483 @@
+
+###############################################################################
+#
+# MODULE      : CMakeLists.txt
+# DESCRIPTION : CMake file for TeXmacs / Wasm / Emscripten
+# COPYRIGHT   : (C) 2008-2022  Massimiliano Gubinelli
+#               (C) 2017-2020  Darcy Shen
+#
+# This software falls under the GNU general public license version 3 or later.
+# It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+# in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+
+
+# The name of our project is "TEXMACS". CMakeLists files in this project can 
+# refer to the root source directory of the project as ${TEXMACS_SOURCE_DIR} and 
+# to the root binary directory of the project as ${TEXMACS_BINARY_DIR}. 
+
+
+### --------------------------------------------------------------------
+### Basic settings (project independent)
+### --------------------------------------------------------------------
+
+cmake_minimum_required (VERSION 3.13)
+
+set(CMAKE_VERBOSE_MAKEFILE on)
+
+# Also search for packages beneath filesystem root (in addition to /emsdk_portable/sdk/system)
+list(APPEND CMAKE_FIND_ROOT_PATH "/")
+
+#list(APPEND CMAKE_MODULE_PATH  /Users/mgubi/t/qt6-wasm/qtbase/lib/cmake /usr/local/Cellar/qt/6.2.2/lib/cmake)
+#list(APPEND CMAKE_PREFIX_PATH  /Users/mgubi/t/qt6-wasm/qtbase/lib/cmake /usr/local/Cellar/qt/6.2.2/lib/cmake)
+
+#set (CMAKE_CXX_STANDARD 11)
+#set (CMAKE_AUTOMOC ON)
+#set(CMAKE_AUTOMOC ON)
+#set(CMAKE_AUTORCC ON)
+#set(CMAKE_AUTOUIC ON)
+
+#set (CMAKE_INCLUDE_CURRENT_DIR ON)
+
+#if (NOT CMAKE_BUILD_TYPE)
+#  set (CMAKE_BUILD_TYPE Debug CACHE STRING
+#    "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
+#    FORCE)
+#endif (NOT CMAKE_BUILD_TYPE)
+
+#INCLUDE(CMakeDetermineSystem)
+
+# Configure CCache if available
+#find_program (CCACHE_FOUND ccache)
+#if (CCACHE_FOUND)
+#  set_property (GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+#  set_property (GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+#endif (CCACHE_FOUND)
+
+
+### --------------------------------------------------------------------
+### Project name 
+### --------------------------------------------------------------------
+
+project (TEXMACS) # check for C/C++ compiler
+
+#project (TEXMACS CXX C) # check for C/C++ compiler
+
+set (PACKAGE TeXmacs)
+set (CMAKE_MODULE_PATH ${TEXMACS_SOURCE_DIR}/cmake)
+
+set (VERSION_MAJOR "2")
+set (VERSION_MINOR "1")
+set (VERSION_BUILD "1")
+#set (TEXMACS_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BUILD})
+set (TEXMACS_VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
+
+set (DEVEL_VERSION ${TEXMACS_VERSION})
+set (DEVEL_RELEASE "1")
+set (STABLE_VERSION ${TEXMACS_VERSION})
+set (STABLE_RELEASE "1")
+set (TEXMACS_REVISION ${TEXMACS_VERSION})
+
+### --------------------------------------------------------------------
+### Options
+### --------------------------------------------------------------------
+
+set (TEXMACS_GUI "Qt" CACHE STRING "TeXmacs Gui (Qt, X11, Aqua)")
+option (QTPIPES "use Qt pipes" OFF)
+option (USE_SQLITE3 "Use SQLite3" OFF)
+option (USE_FREETYPE "use Freetype" ON)
+option (LINKED_FREETYPE "statically link Freetype" ON) ## statically link freetype
+option (USE_CAIRO "use Cairo" OFF)
+option (USE_IMLIB2 "use Imlib2" OFF)
+option (USE_SPARKLE "use Sparkle" OFF)
+option (USE_GMP "use GMP" OFF)
+option (PDF_RENDERER "use the PDF renderer" OFF) ## not supported yet for wasm
+option (PDFHUMMUS_NO_TIFF "Disable TIFF in PDF Hummus" ON)
+option (USE_STACK_TRACE "Use stack trace" OFF) ## not supported yet for wasm
+option (MUPDF_RENDERER "use the MuPDF renderer" ON)
+
+option (USE_GS "use Ghostscript" ON)
+
+### --------------------------------------------------------------------
+### Include standard modules
+### --------------------------------------------------------------------
+
+include (CheckFunctionExists)
+#include (CheckLibraryExists)
+include (CheckIncludeFile)
+include (CheckTypeSize)
+#include (FindPkgConfig)
+#include (CheckCSourceCompiles)
+#include (FindX11)
+
+### --------------------------------------------------------------------
+### Check for standard functionalities
+### --------------------------------------------------------------------
+
+check_type_size (FILE HAVE_FILE)
+check_type_size (intptr_t HAVE_INTPTR_T)
+check_type_size (time_t HAVE_TIME_T)
+check_include_file (inttypes.h HAVE_INTTYPES_H)
+check_include_file (memory.h HAVE_MEMORY_H)
+check_include_file (stdlib.h HAVE_STDLIB_H)
+check_include_file (strings.h HAVE_STRINGS_H)
+check_include_file (string.h HAVE_STRING_H)
+check_include_file (sys/stat.h HAVE_SYS_STAT_H)
+check_include_file (unistd.h HAVE_UNISTD_H)
+#check_include_file (X11/Xlib.h HAVE_X11_XLIB_H)
+#check_include_file (X11/Xutil.h HAVE_X11_XUTIL_H)
+check_include_file (pty.h HAVE_PTY_H)
+check_include_file (util.h HAVE_UTIL_H)
+check_function_exists (gettimeofday HAVE_GETTIMEOFDAY)
+
+### --------------------------------------------------------------------
+### Handle different systems case by case
+### --------------------------------------------------------------------
+
+set (HAVE_TIME_T TRUE)
+
+set (CONFIG_OS "WASM")
+set (CONFIG_OS_SUFFIX "wasm")
+set (CONFIG_STD_SETENV "#define STD_SETENV")
+
+set (CONFIG_WORD_LENGTH "4")
+set (CONFIG_WORD_LENGTH_INC "3")
+set (CONFIG_WORD_MASK "0xfffffffc")
+set (CONFIG_MAX_FAST "260 // WORD_LENGTH more than power of 2")
+
+set (SIZE_OF_VOIDP 8) ## 32 bit
+
+if (${SIZE_OF_VOIDP} EQUAL 8)
+  set (CONFIG_WORD_LENGTH "8")
+  set (CONFIG_WORD_LENGTH_INC "7")
+  set (CONFIG_WORD_MASK "0xfffffffffffffff8")
+  set (CONFIG_MAX_FAST "264 // WORD_LENGTH more than power of 2")
+endif (${SIZE_OF_VOIDP} EQUAL 8)
+
+### --------------------------------------------------------------------
+### Package Data
+### --------------------------------------------------------------------
+
+set (PACKAGE_BUGREPORT 1)
+set (PACKAGE_NAME 1)
+set (PACKAGE_STRING 1)
+set (PACKAGE_TARNAME 1)
+set (PACKAGE_URL 1)
+set (PACKAGE_VERSION 1)
+
+### --------------------------------------------------------------------
+### Memory allocation options
+### --------------------------------------------------------------------
+
+#if(${DISABLE_FASTALLOC})
+#  set(NO_FAST_ALLOC 1)
+#endif(${DISABLE_FASTALLOC})
+
+### --------------------------------------------------------------------
+### Experimental options
+### --------------------------------------------------------------------
+
+#  SET(EXPERIMENTAL 1)
+
+### --------------------------------------------------------------------
+###  Test for Libraries
+### --------------------------------------------------------------------
+
+#include(packages/wasm/wasm.cmake)
+#find_package(Qt6 COMPONENTS Core Gui REQUIRED)
+
+find_package (Freetype REQUIRED)
+find_package (Iconv REQUIRED)
+#include(CMakePrintHelpers)
+#cmake_print_variables(MUPDF_INCLUDE_DIR MUPDF_THIRD_LIBRARY_RELEASE MUPDF_LIBRARY_RELEASE)
+find_package (MuPDF REQUIRED)
+
+### --------------------------------------------------------------------
+###  Some Guile related adjustements
+### --------------------------------------------------------------------
+
+set (CONFIG_GUILE_SERIAL "D")
+
+### --------------------------------------------------------------------
+### Generate configure headers
+### --------------------------------------------------------------------
+
+set (DEBUG_ASSERT 1)
+
+set (GS_EXE /usr/bin/gs)
+set (GS_FONTS ../share/ghostscript/fonts:/usr/share/fonts:)
+set (GS_LIB ../share/ghostscript/9.06/lib:)
+
+set (GUILE_NUM 1)
+set (SIZEOF_VOID_P 8)
+set (STDC_HEADERS 1)
+
+
+set (CONFIG_STD_SETENV "#define STD_SETENV")
+set (tm_orig ${TEXMACS_SOURCE_DIR})
+set (CONFIG_HOST_OS "wasm-emscripten") # TODO: should not be hard-coded
+set (CONFIG_HOST_VENDOR "pc") # TODO: should not be hard-coded
+set (CONFIG_HOST_CPU ${CMAKE_SYSTEM_PROCESSOR})
+set (CONFIG_USER $ENV{USER})
+string (TIMESTAMP CONFIG_DATE)
+set (tm_devel TeXmacs-${DEVEL_VERSION})
+set (tm_stable TeXmacs-${STABLE_VERSION})
+set (tm_devel_release ${tm_devel}-${DEVEL_RELEASE})
+set (tm_stable_release ${tm_stable}-${STABLE_RELEASE})
+
+set (prefix ${CMAKE_INSTALL_PREFIX})
+set (exec_prefix ${prefix})
+set (datarootdir ${prefix}/share)
+set (datadir ${datarootdir})
+set (tmdata ${datarootdir}/TeXmacs)
+set (tmbin ${exec_prefix}/lib/texmacs/TeXmacs)
+
+configure_file (${TEXMACS_SOURCE_DIR}/src/System/config.h.cmake ${TEXMACS_BINARY_DIR}/src/System/config.h)
+configure_file (${TEXMACS_SOURCE_DIR}/src/System/tm_configure.hpp.cmake ${TEXMACS_BINARY_DIR}/src/System/tm_configure.hpp)
+
+### --------------------------------------------------------------------
+### the include dirs
+### --------------------------------------------------------------------
+
+set (TeXmacs_Include_Dirs
+  ${TEXMACS_BINARY_DIR}/src
+  ${TEXMACS_BINARY_DIR}/src/System/ 
+  ${TEXMACS_SOURCE_DIR}/src/Data/Convert
+  ${TEXMACS_SOURCE_DIR}/src/Data/Document
+  ${TEXMACS_SOURCE_DIR}/src/Data/Drd
+  ${TEXMACS_SOURCE_DIR}/src/Data/History
+  ${TEXMACS_SOURCE_DIR}/src/Data/Observers
+  ${TEXMACS_SOURCE_DIR}/src/Data/Parser
+  ${TEXMACS_SOURCE_DIR}/src/Data/String
+  ${TEXMACS_SOURCE_DIR}/src/Data/Tree
+  ${TEXMACS_SOURCE_DIR}/src/Edit
+  ${TEXMACS_SOURCE_DIR}/src/Edit/Editor
+  ${TEXMACS_SOURCE_DIR}/src/Edit/Interface
+  ${TEXMACS_SOURCE_DIR}/src/Edit/Modify
+  ${TEXMACS_SOURCE_DIR}/src/Edit/Process
+  ${TEXMACS_SOURCE_DIR}/src/Edit/Replace
+  ${TEXMACS_SOURCE_DIR}/src/Graphics/Bitmap_fonts
+  ${TEXMACS_SOURCE_DIR}/src/Graphics/Colors
+  ${TEXMACS_SOURCE_DIR}/src/Graphics/Fonts
+  ${TEXMACS_SOURCE_DIR}/src/Graphics/Gui
+  ${TEXMACS_SOURCE_DIR}/src/Graphics/Handwriting
+  ${TEXMACS_SOURCE_DIR}/src/Graphics/Mathematics
+  ${TEXMACS_SOURCE_DIR}/src/Graphics/Pictures
+  ${TEXMACS_SOURCE_DIR}/src/Graphics/Renderer
+  ${TEXMACS_SOURCE_DIR}/src/Graphics/Spacial
+  ${TEXMACS_SOURCE_DIR}/src/Graphics/Types
+  ${TEXMACS_SOURCE_DIR}/src/Kernel/Abstractions
+  ${TEXMACS_SOURCE_DIR}/src/Kernel/Containers
+  ${TEXMACS_SOURCE_DIR}/src/Kernel/Types
+  ${TEXMACS_SOURCE_DIR}/src/Plugins
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Widkit
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/MuPDF
+#  ${TEXMACS_SOURCE_DIR}/src/Plugins/Pdf/LibAesgm
+  ${TEXMACS_SOURCE_DIR}/src/Scheme
+#  ${TEXMACS_SOURCE_DIR}/src/Scheme/Guile
+  ${TEXMACS_SOURCE_DIR}/src/Scheme/S7
+  ${TEXMACS_SOURCE_DIR}/src/Scheme/Scheme
+  ${TEXMACS_SOURCE_DIR}/src/Style/Environment
+  ${TEXMACS_SOURCE_DIR}/src/Style/Evaluate
+  ${TEXMACS_SOURCE_DIR}/src/Style/Memorizer
+  ${TEXMACS_SOURCE_DIR}/src/System
+  ${TEXMACS_SOURCE_DIR}/src/System/Boot
+  ${TEXMACS_SOURCE_DIR}/src/System/Classes
+  ${TEXMACS_SOURCE_DIR}/src/System/Files
+  ${TEXMACS_SOURCE_DIR}/src/System/Language
+  ${TEXMACS_SOURCE_DIR}/src/System/Link
+  ${TEXMACS_SOURCE_DIR}/src/System/Misc
+  ${TEXMACS_SOURCE_DIR}/src/Texmacs
+  ${TEXMACS_SOURCE_DIR}/src/Texmacs/Data
+  ${TEXMACS_SOURCE_DIR}/src/Typeset
+  ${TEXMACS_SOURCE_DIR}/src/Typeset/Bridge
+  ${TEXMACS_SOURCE_DIR}/src/Typeset/Concat
+  ${TEXMACS_SOURCE_DIR}/src/Typeset/Page
+  ${TEXMACS_SOURCE_DIR}/TeXmacs/include 
+  ${TEXMACS_BINARY_DIR}/src/System/ 
+  ${TEXMACS_BINARY_DIR}/src
+)
+
+### --------------------------------------------------------------------
+### the main sources
+### --------------------------------------------------------------------
+
+file (GLOB_RECURSE TeXmacs_Base_SRCS
+  "${TEXMACS_SOURCE_DIR}/src/Data/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Edit/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Graphics/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Kernel/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Scheme/Scheme/*.cpp"
+#  "${TEXMACS_SOURCE_DIR}/src/Scheme/Guile/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Scheme/S7/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Scheme/S7/*.c"
+  "${TEXMACS_SOURCE_DIR}/src/System/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Texmacs/Data/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Texmacs/Server/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Texmacs/Window/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Texmacs/TeXmacs/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Typeset/*.cpp"
+)
+
+file (GLOB_RECURSE TeXmacs_Std_Plugins_SRCS
+  "${TEXMACS_SOURCE_DIR}/src/Plugins/Axel/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Plugins/Bibtex/*.cpp"
+#  "${TEXMACS_SOURCE_DIR}/src/Plugins/Cairo/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Plugins/MuPDF/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Plugins/SDL/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Plugins/Database/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Plugins/Freetype/*.cpp"
+#  "${TEXMACS_SOURCE_DIR}/src/Plugins/Pdf/*.cpp"
+#  "${TEXMACS_SOURCE_DIR}/src/Plugins/Pdf/*.c"
+  "${TEXMACS_SOURCE_DIR}/src/Plugins/Ghostscript/*.cpp"
+#  "${TEXMACS_SOURCE_DIR}/src/Plugins/Imlib2/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Plugins/Ispell/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Plugins/Metafont/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Plugins/LaTeX_Preview/*.cpp"
+#  "${TEXMACS_SOURCE_DIR}/src/Plugins/Mplayer/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Plugins/Openssl/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Plugins/Sqlite3/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Plugins/Updater/*.cpp"
+)
+
+file (GLOB_RECURSE TeXmacs_Style_SRCS
+  "${TEXMACS_SOURCE_DIR}/src/Style/*.cpp"
+)
+
+set (TeXmacs_All_SRCS ${TeXmacs_Base_SRCS}  ${TeXmacs_Std_Plugins_SRCS})
+
+file (GLOB_RECURSE TeXmacs_Widkit_SRCS "${TEXMACS_SOURCE_DIR}/src/Plugins/Widkit/*.cpp")
+#file (GLOB_RECURSE TeXmacs_X11_SRCS "${TEXMACS_SOURCE_DIR}/src/Plugins/X11/*.cpp")
+#file (GLOB_RECURSE TeXmacs_Qt_SRCS "${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/*.cpp")
+#file (GLOB_RECURSE TeXmacs_Qtwk_SRCS "${TEXMACS_SOURCE_DIR}/src/Plugins/Qtwk/*.cpp")
+
+set (TeXmacs_Qtwk_SRCS
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qtwk/QTWKGuiHelper.cpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qtwk/QTWKWindow.cpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qtwk/qtwk_gui.cpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qtwk/qtwk_window.cpp
+#  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMPipeLink.cpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMSockets.cpp
+#  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMStyle.cpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/qt_picture.cpp
+#  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/qt_pipe_link.cpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/qt_renderer.cpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/qt_sys_utils.cpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/qt_utilities.cpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/qt_font.cpp
+) 
+
+set (TeXmacs_Qtwk_Moc_HDRS
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qtwk/QTWKGuiHelper.hpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qtwk/QTWKWindow.hpp
+#  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMApplication.hpp
+#  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMPipeLink.hpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMSockets.hpp
+#  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMStyle.hpp
+) 
+
+set (TeXmacs_Qt_Moc_HDRS
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMApplication.hpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMFileDialog.hpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMGuiHelper.hpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMInteractiveInputHelper.hpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMInteractivePrompt.hpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMMenuHelper.hpp
+#  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMPipeLink.hpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMPrintDialog.hpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMPrinterSettings.hpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMScrollView.hpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMSockets.hpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMStyle.hpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMTreeModel.hpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMWidget.hpp
+  ${TEXMACS_SOURCE_DIR}/src/Plugins/Qt/QTMWindow.hpp
+)
+
+### --------------------------------------------------------------------
+### GUI selection
+### --------------------------------------------------------------------
+
+set (GUI_TYPE) # nothing or WIN32, MACOSX bundles are treated independetly
+
+add_definitions ("-DSDLTEXMACS")
+#add_compile_options("-pipe" "-O2")
+add_compile_options ("-Wall" "-Wextra") 
+add_compile_options ("SHELL:-include ${TEXMACS_BINARY_DIR}/src/System/config.h")
+add_compile_options ("SHELL:-sUSE_FREETYPE=1")
+add_compile_options ("SHELL:-sUSE_SDL=2" "SHELL:-sALLOW_MEMORY_GROWTH=1")
+
+add_link_options ("SHELL:-sUSE_FREETYPE=1" "SHELL:-sUSE_SDL=2" "SHELL:--preload-file ${TEXMACS_SOURCE_DIR}/TeXmacs@TeXmacs")
+add_link_options ("SHELL:--emrun" "SHELL:-sALLOW_MEMORY_GROWTH=1")
+
+#"SHELL:--source-map-base /" 
+#"SHELL:-s DISABLE_EXCEPTION_CATCHING=0" 
+#add_compile_options ( "-g3")
+#add_link_options ("SHELL:-s ASSERTIONS=1" "SHELL:-s DEMANGLE_SUPPORT=1"  "-g3" "-gsource-map")
+
+
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+#  add_definitions ("-DQT_NO_DEBUG")
+endif (CMAKE_BUILD_TYPE STREQUAL "Release")
+
+set (TeXmacs_All_SRCS ${TeXmacs_All_SRCS}  ${TeXmacs_Widkit_SRCS} )
+#set (TeXmacs_Include_Dirs ${TeXmacs_Include_Dirs})
+#set (TeXmacs_Libraries ${TeXmacs_Libraries})
+
+set (CONFIG_GUI "SDL")
+#set (CONFIG_QT "Qtwk Widkit")
+message (STATUS "Enabling SDL port")
+
+### --------------------------------------------------------------------
+### OS System selection
+### --------------------------------------------------------------------
+
+file (GLOB_RECURSE TeXmacs_System_SRCS "${TEXMACS_SOURCE_DIR}/src/Plugins/Unix/*.cpp")
+
+set (TeXmacs_All_SRCS ${TeXmacs_All_SRCS} ${TeXmacs_System_SRCS})
+
+#include_directories (${TeXmacs_Include_Dirs})
+
+### --------------------------------------------------------------------
+### Set the executable target name and other stuff
+### --------------------------------------------------------------------
+
+set (TeXmacs_binary_name "TeXmacs")
+
+#qt_add_executable (${TeXmacs_binary_name}
+#  ${TeXmacs_All_SRCS}
+#  ${TEXMACS_SOURCE_DIR}/src/Texmacs/Texmacs/texmacs.cpp
+#)
+
+add_executable (${TeXmacs_binary_name})
+target_sources (${TeXmacs_binary_name} PRIVATE ${TeXmacs_All_SRCS})
+target_include_directories (${TeXmacs_binary_name} PRIVATE ${TeXmacs_Include_Dirs})
+
+target_link_libraries (${TeXmacs_binary_name} PRIVATE MuPDF::MuPDF)
+target_link_libraries (${TeXmacs_binary_name} PRIVATE MuPDF::MuPDF-third)
+
+#target_link_libraries (${TeXmacs_binary_name}
+#  PRIVATE Qt6::Gui Qt6::Core ## Qt6::Widgets
+#)
+
+#qt_import_plugins (${TeXmacs_binary_name})
+
+#qt_finalize_target (${TeXmacs_binary_name})
+#link_qt_static (${TeXmacs_binary_name})
+
+#install (TARGETS ${TeXmacs_binary_name} DESTINATION ${tmbin}/bin)
+
+### ---------------------------------------------------------------------
+### VSCode Support
+### ---------------------------------------------------------------------
+
+foreach (DIR ${TeXmacs_Include_Dirs})
+  set (VSCODE_INCLUDE_DIRS "${VSCODE_INCLUDE_DIRS}\"${DIR}\",\n                ")
+endforeach (DIR ${TeXmacs_Include_Dirs})
+
+configure_file (${TEXMACS_SOURCE_DIR}/misc/vscode/c_cpp_properties.json.in
+  ${TEXMACS_SOURCE_DIR}/.vscodexx/c_cpp_properties.json
+  @ONLY
+)
+
+message (STATUS "TeXmacs_Libraries" ${TeXmacs_Libraries})
+

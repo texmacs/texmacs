@@ -1,72 +1,105 @@
-# from https://github.com/xiangxw/mupdf-qt/blob/dev/cmake/FindMuPDF.cmake
+#[=======================================================================[.rst:
+FindMuPDF
+------------
 
-# You can use following variables
-#   MuPDF_FOUND
-#   MuPDF_INCLUDE_DIRS
-#   MuPDF_LIBRARIES
+Find the MuPDF includes and library.
 
-# Build type
-if (NOT CMAKE_BUILD_TYPE)
-    set (MuPDF_BUILD_TYPE "Debug")
-elseif (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    set (MuPDF_BUILD_TYPE "Debug")
-elseif (${CMAKE_BUILD_TYPE} STREQUAL "Release")
-    set (MuPDF_BUILD_TYPE "Release")
+Imported Targets
+^^^^^^^^^^^^^^^^
+
+.. versionadded:: 1.00
+
+This module defines the following :prop_tgt:`IMPORTED` target:
+
+``MuPDF::MuPDF``
+  The MuPDF library, if found
+
+Result Variables
+^^^^^^^^^^^^^^^^
+
+This module will set the following variables in your project:
+
+``MUPDF_FOUND``
+  true if the MuPDF headers and libraries were found
+``MUPDF_INCLUDE_DIRS``
+  directories containing the MuPDF headers. 
+``MUPDF_LIBRARIES``
+  the libraries to link against
+
+Hints
+^^^^^
+
+The user may set the environment variable ``MUPDF_DIR`` to the root
+directory of a MuPDF installation.
+#]=======================================================================]
+
+# Created by Massimiliano Gubinelli.
+
+set (MUPDF_FIND_ARGS
+  HINTS
+    ENV MUPDF_DIR
+)
+
+find_path (MUPDF_INCLUDE_DIR
+  mupdf/pdf.h
+  ${MUPDF_FIND_ARGS}
+  PATH_SUFFIXES
+    include
+)
+    
+if (NOT MUPDF_LIBRARY)
+  find_library (MUPDF_LIBRARY
+    mupdf
+    ${MUPDF_FIND_ARGS}
+    PATH_SUFFIXES
+      lib
+  )
+  find_library (MUPDF_THIRD_LIBRARY
+    mupdf-third
+    ${MUPDF_FIND_ARGS}
+    PATH_SUFFIXES
+      lib
+  )
 else ()
-    message (FATAL_ERROR "CMAKE_BUILD_TYPE not supported: " ${CMAKE_BUILD_TYPE})
+  # on Windows, ensure paths are in canonical format (forward slahes):
+  file (TO_CMAKE_PATH "${MUPDF_LIBRARY}" MUPDF_LIBRARY)
 endif ()
-message (STATUS "Finding MuPDF with build type: " ${MuPDF_BUILD_TYPE} "...")
+  
+unset (MUPDF_FIND_ARGS)
 
-# Find MuPDF source directory
-set (MuPDF_SOURCE_NAME "mupdf")
-set (MuPDF_SOURCE_DIR ${CMAKE_SOURCE_DIR}/${MuPDF_SOURCE_NAME})
-if (NOT EXISTS ${MuPDF_SOURCE_DIR})
-    message (FATAL_ERROR "MuPDF source code not found!")
-endif ()
-
-# Find include directory
-set (MuPDF_INCLUDE_DIRS ${MuPDF_SOURCE_DIR}/include)
-
-# Find libraries
-if (MSVC) # TODO set different path for different build type
-    set (MuPDF_LIBRARY_COMPONENTS libmupdf libthirdparty)
-    if (${MuPDF_BUILD_TYPE} STREQUAL "Debug")
-        set (MuPDF_LIBRARY_PATH ${MuPDF_SOURCE_DIR}/platform/win32/Debug)
-        
-    elseif (${MuPDF_BUILD_TYPE} STREQUAL "Release")
-        set (MuPDF_LIBRARY_PATH ${MuPDF_SOURCE_DIR}/platform/win32/Release)
-    endif ()
-else ()
-    set (MuPDF_LIBRARY_COMPONENTS mupdf mujs jbig2dec jpeg openjpeg z)
-    if (NOT UNIX) # Use provided freetype library
-        set (MuPDF_LIBRARY_COMPONENTS ${MuPDF_LIBRARY_COMPONENTS} freetype)
-    endif ()
-    if (${MuPDF_BUILD_TYPE} STREQUAL "Debug")
-        set (MuPDF_LIBRARY_PATH ${MuPDF_SOURCE_DIR}/build/debug)
-    elseif (${MuPDF_BUILD_TYPE} STREQUAL "Release")
-        set (MuPDF_LIBRARY_PATH ${MuPDF_SOURCE_DIR}/build/release)
-    endif ()
-endif ()
-foreach (MuPDF_LIBRARY_COMPONENT ${MuPDF_LIBRARY_COMPONENTS})
-    find_library (${MuPDF_LIBRARY_COMPONENT}_LIB
-        ${MuPDF_LIBRARY_COMPONENT}
-        PATHS ${MuPDF_LIBRARY_PATH}
-        NO_DEFAULT_PATH)
-    if (NOT ${MuPDF_LIBRARY_COMPONENT}_LIB)
-        message (FATAL_ERROR "Library " ${MuPDF_LIBRARY_COMPONENT} " not found in " ${MuPDF_LIBRARY_PATH})
-    endif ()
-    set (MuPDF_LIBRARIES ${MuPDF_LIBRARIES} ${${MuPDF_LIBRARY_COMPONENT}_LIB})
-endforeach () 
-if (UNIX)
-    # Use system freetype library in Linux, it's more compatiable with Qt library
-    find_package (Freetype REQUIRED)
-    # Use system crypto library
-    find_package (PkgConfig REQUIRED)
-    pkg_check_modules (CRYPTO REQUIRED libcrypto)
-    set (MuPDF_LIBRARIES ${MuPDF_LIBRARIES} ${FREETYPE_LIBRARIES} ${CRYPTO_LIBRARIES} -lm )
+# set the user variables
+if (MUPDF_INCLUDE_DIR)
+  set (MUPDF_INCLUDE_DIRS ${MUPDF_INCLUDE_DIR})
 endif ()
 
-# Other
+set (MUPDF_LIBRARIES ${MUPDF_LIBRARY} ${MUPDF_THIRD_LIBRARY})
+
 include (FindPackageHandleStandardArgs)
-find_package_handle_standard_args (MuPDF MuPDF_INCLUDE_DIRS MuPDF_LIBRARIES)
-mark_as_advanced (MuPDF_INCLUDE_DIRS MuPDF_LIBRARIES)
+
+find_package_handle_standard_args (MuPDF
+  REQUIRED_VARS
+    MUPDF_LIBRARIES
+    MUPDF_INCLUDE_DIRS
+)
+
+if (MuPDF_FOUND)
+  if (NOT TARGET MuPDF::MuPDF)
+    add_library (MuPDF::MuPDF UNKNOWN IMPORTED)
+    set_target_properties (MuPDF::MuPDF PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES "${MUPDF_INCLUDE_DIRS}")
+    set_target_properties (MuPDF::MuPDF PROPERTIES
+      IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+      IMPORTED_LOCATION "${MUPDF_LIBRARY}")
+  endif ()
+
+  if (NOT TARGET MuPDF::MuPDF-third)
+    add_library (MuPDF::MuPDF-third UNKNOWN IMPORTED)
+    set_target_properties (MuPDF::MuPDF-third PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES "${MUPDF_INCLUDE_DIRS}")
+    set_target_properties (MuPDF::MuPDF-third PROPERTIES
+      IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+      IMPORTED_LOCATION "${MUPDF_THIRD_LIBRARY}")
+  endif ()
+endif ()
+
+

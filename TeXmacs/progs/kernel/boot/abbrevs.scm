@@ -69,16 +69,12 @@
 (define-public (number->keyword x)
   (symbol->keyword (string->symbol (string-append "%" (number->string x)))))
 
-(if (guile-c?)
-    (define-public (save-object file value)
-      (pretty-print value (open-file (url-materialize file "") OPEN_WRITE))
-      (flush-all-ports))
-    (define-public (save-object file value)
-      (write value (open-file (url-materialize file "") OPEN_WRITE))
-      (flush-all-ports)))
+(define-public (save-object file value)
+  (call-with-output-file (url-materialize file "") (lambda (port)
+    (let-temporarily (((*s7* 'print-length) 9223372036854775807)) (write value port)))))
 
 (define-public (load-object file)
-  (let ((r (read (open-file (url-materialize file "r") OPEN_READ))))
+  (let ((r (call-with-input-file (url-materialize file "r") (lambda (port) (read port)))))
         (if (eof-object? r) '() r)))
 
 (define-public (persistent-ref dir key)
@@ -89,12 +85,6 @@
 ;; Common programming constructs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public-macro (when cond? . body)
-  `(if ,cond? (begin ,@body)))
-
-(define-public-macro (unless cond? . body)
-  `(if (not ,cond?) (begin ,@body)))
-
 (define-public-macro (with var val . body)
   (if (pair? var)
       `(apply (lambda ,var ,@body) ,val)
@@ -104,13 +94,26 @@
   `(let ((,(car fun) (lambda ,(cdr fun) ,fun-body)))
      ,@body))
 
+
+;; handle multiple values in a way compatible with s7 (and backcompatible with guile)
 (define-public-macro (with-global var val . body)
   (let ((old (gensym)) (new (gensym)))
     `(let ((,old ,var))
        (set! ,var ,val)
-       (let ((,new (begin ,@body)))
-         (set! ,var ,old)
-         ,new))))
+       (call-with-values 
+          (lambda () ,@body) 
+          (lambda vals 
+            (set! ,var ,old) 
+            (apply values vals))))))
+ 
+;; old code
+;(define-public-macro (with-global var val . body)
+;  (let ((old (gensym)) (new (gensym)))
+;    `(let ((,old ,var))
+;       (set! ,var ,val)
+;       (let ((,new (begin ,@body))) ;; handle multiple values in s7
+;         (set! ,var ,old)
+;         ,new))))
 
 (define-public-macro (and-with var val . body)
   `(with ,var ,val

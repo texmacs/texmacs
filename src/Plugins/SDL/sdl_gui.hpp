@@ -76,6 +76,10 @@ public:
   hashmap<string,string>       selection_s;
   SDL_Window*                  selection_w;
 
+  // support for runloop
+  bool wait;
+  int count, delay;
+  
 public:
   sdl_gui_rep (int& argc, char** argv);
   ~sdl_gui_rep ();
@@ -115,9 +119,7 @@ public:
   /************************** Event processing *******************************/
   void process_event (SDL_Event* event);
   void event_loop ();
-
-  
-
+  bool run_gui ();
 };
 
 #endif // defined SDL_GUI_H

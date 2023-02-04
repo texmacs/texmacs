@@ -771,7 +771,7 @@
   (:synopsis "Selects word @w in tree @t, more or less around column @col.")
   (let* ((st (tree->string t))
          (pos (- col (string-length w)))
-         (beg (string-contains st w (max 0 pos)))) ; returns index of w in st
+         (beg (string-search-forwards w (max 0 pos) st))) ; returns index of w in st
     (if beg
         (with p (tree->path t)
           (go-to (rcons p beg))
