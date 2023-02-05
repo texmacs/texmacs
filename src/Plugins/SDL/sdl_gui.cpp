@@ -725,6 +725,34 @@ initialize_keyboard () {
   Map (0x20ac, "euro");
 }
 
+/******************************************************************************
+* Delayed messages
+******************************************************************************/
+
+message_rep::message_rep (widget wid2, string s2, time_t t2):
+  wid (wid2), s (s2), t (t2) {}
+message::message (widget wid, string s, time_t t):
+  rep (tm_new<message_rep> (wid, s, t)) {}
+
+tm_ostream&
+operator << (tm_ostream& out, message m) {
+  return out << "message " << m->s << " to " << m->wid
+       << "at time " << m->t << "\n";
+}
+
+static list<message>
+insert_message (list<message> l, widget wid, string s, time_t cur, time_t t) {
+  if (is_nil (l)) return list<message> (message (wid, s, t));
+  time_t ref= l->item->t;
+  if ((t-cur) <= (ref-cur)) return list<message> (message (wid, s, t), l);
+  return list<message> (l->item, insert_message (l->next, wid, s, cur, t));
+}
+
+void
+sdl_gui_rep::delayed_message (widget wid, string s, time_t delay) {
+  time_t ct= texmacs_time ();
+  messages= insert_message (messages, wid, s, ct, ct+ delay);
+}
 
 /******************************************************************************
 * Event loop
@@ -1482,7 +1510,6 @@ string
 gui_version () {
   return "sdl";
 }
-
 
 void
 beep () {

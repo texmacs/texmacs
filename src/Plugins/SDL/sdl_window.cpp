@@ -317,16 +317,14 @@ sdl_window_rep::mouse_event (string ev, int x, int y, time_t t) {
   }
   else {
     sdl_window grab_win= get_sdl_window (gui->grab_ptr->item);
-    int gw_x, gw_y;
+    int gw_x, gw_y, w_x, w_y;
     gui->get_window_position (grab_win->id, gw_x, gw_y);
-    int w_x, w_y;
     gui->get_window_position (id, w_x, w_y);
     if (this != grab_win) {
 //      x += win_x - grab_win->win_x;
 //      y += win_y - grab_win->win_y;
       x += (w_x - gw_x)*retina_factor;
       y += (w_y - gw_y)*retina_factor;
-      // return;
     }
     ren->set_origin (0, 0);
     ren->encode (x, y);
@@ -490,29 +488,9 @@ sdl_window_rep::set_mouse_pointer (widget wid, string name, string mask) {
 * Delayed messages
 ******************************************************************************/
 
-message_rep::message_rep (widget wid2, string s2, time_t t2):
-  wid (wid2), s (s2), t (t2) {}
-message::message (widget wid, string s, time_t t):
-  rep (tm_new<message_rep> (wid, s, t)) {}
-
-tm_ostream&
-operator << (tm_ostream& out, message m) {
-  return out << "message " << m->s << " to " << m->wid
-	     << "at time " << m->t << "\n";
-}
-
-static list<message>
-insert_message (list<message> l, widget wid, string s, time_t cur, time_t t) {
-  if (is_nil (l)) return list<message> (message (wid, s, t));
-  time_t ref= l->item->t;
-  if ((t-cur) <= (ref-cur)) return list<message> (message (wid, s, t), l);
-  return list<message> (l->item, insert_message (l->next, wid, s, cur, t));
-}
-
 void
 sdl_window_rep::delayed_message (widget wid, string s, time_t delay) {
-  time_t ct= texmacs_time ();
-  the_gui->messages= insert_message (the_gui->messages, wid, s, ct, ct+ delay);
+  gui->delayed_message (wid, s, delay);
 }
 
 /******************************************************************************

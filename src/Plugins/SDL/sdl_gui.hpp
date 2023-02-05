@@ -21,12 +21,10 @@
 #include <SDL2/SDL.h>
 
 class sdl_gui_rep;
-class sdl_drawable_rep;
 class sdl_window_rep;
 typedef sdl_gui_rep* sdl_gui;
 typedef sdl_window_rep* sdl_window;
 extern sdl_gui the_gui;
-
 
 /******************************************************************************
 * Delayed messages
@@ -60,9 +58,7 @@ public:
   unsigned int    mouse_state;
   list<widget>    grab_ptr;
   list<widget>    grab_kbd;
-//  unsigned int    state;
   list<message>   messages;
-  sdl_window_rep* gswindow;
   widget          balloon_wid;
   window          balloon_win;
   SI              balloon_x;
@@ -134,6 +130,8 @@ public:
   void set_window_visibility (int id, bool show);
   void set_window_fullscreen (int id, bool full);
   void sync_window (int id, picture backing_store);
+  
+  void delayed_message (widget wid, string s, time_t delay);
 };
 
 #endif // defined SDL_GUI_H
