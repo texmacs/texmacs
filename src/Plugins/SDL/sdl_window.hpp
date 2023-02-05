@@ -32,8 +32,6 @@ public:
   string           the_name;
   string           mod_name;
 
-  SDL_Window*   win;
-
   renderer      ren;
   
   rectangles    invalid_regions;

@@ -52,10 +52,10 @@ sdl_window_rep::initialize () {
   
   if (N(name) == 0) {
     name= "popup";
-    win= gui->create_window (id, name, win_x, win_y, win_w, win_h, true);
+    gui->create_window (id, name, win_x, win_y, win_w, win_h, true);
 
   } else {
-    win= gui->create_window (id, name, win_x, win_y, win_w, win_h, false);
+    gui->create_window (id, name, win_x, win_y, win_w, win_h, false);
   }
   
   if (the_name == "") {
@@ -63,7 +63,7 @@ sdl_window_rep::initialize () {
     mod_name= name;
   }
 
-  gui->set_window_limits (win, min_w, min_h, max_w, max_h);
+  gui->set_window_limits (id, min_w, min_h, max_w, max_h);
 
   backing_store= native_picture (win_w * retina_factor, win_h  * retina_factor, 0, 0);
   ren= picture_renderer (backing_store, std_shrinkf * retina_factor);
@@ -73,7 +73,7 @@ sdl_window_rep::initialize () {
   notify_position (w, 0, 0);
   notify_size (w, Def_w,  Def_h);
 
-  gui->created_window (win);
+  gui->created_window (id);
   cout << "create window " << id << LF;
 }
 
@@ -96,8 +96,8 @@ sdl_window_rep::sdl_window_rep (widget w2, sdl_gui gui2, string n2,
 
 sdl_window_rep::~sdl_window_rep () {
   cout << "destroy window " << id << LF;
-  gui->deleted_window (win);
-  gui->destroy_window (win);
+  gui->deleted_window (id);
+  gui->destroy_window (id);
   delete_renderer (ren);
   
   id_to_window->reset (id);
@@ -136,7 +136,7 @@ get_window (int id) {
 void
 sdl_window_rep::get_position (SI& x, SI& y) {
   int xx, yy;
-  gui->get_window_position (win, xx, yy);
+  gui->get_window_position (id, xx, yy);
   x=  xx*PIXEL;
   y= -yy*PIXEL;
 }
@@ -162,14 +162,14 @@ sdl_window_rep::set_position (SI x, SI y) {
   if (y<0) y=0;
   win_x= x;
   win_y= y;
-  gui->set_window_position (win, win_x, win_y);
+  gui->set_window_position (id, win_x, win_y);
 }
 
 void
 sdl_window_rep::set_size (SI w, SI h) {
   w= w/PIXEL; h= h/PIXEL;
   //h=-h; ren->decode (w, h);
-  gui->set_window_size (win, w, h);
+  gui->set_window_size (id, w, h);
 }
 
 void
@@ -179,13 +179,13 @@ sdl_window_rep::set_size_limits (SI min_w, SI min_h, SI max_w, SI max_h) {
   Min_w= min_w; Min_h= min_h; Max_w= max_w; Max_h= max_h;
   min_w= min_w/PIXEL; min_h= min_h/PIXEL;
   max_w= max_w/PIXEL; max_h= max_h/PIXEL;
-  gui->set_window_limits (win, min_w, min_h, max_w, max_h);
+  gui->set_window_limits (id, min_w, min_h, max_w, max_h);
 }
 
 void
 sdl_window_rep::set_name (string name) {
   if (the_name != name) {
-    gui->set_window_title (win, name);
+    gui->set_window_title (id, name);
     the_name= name;
     mod_name= name;
   }
@@ -200,14 +200,14 @@ void
 sdl_window_rep::set_modified (bool flag) {
   string name= (flag? (the_name * " *"): the_name);
   if (mod_name != name) {
-    gui->set_window_title (win, name);
+    gui->set_window_title (id, name);
     mod_name= name;
   }
 }
 
 void
 sdl_window_rep::set_visibility (bool flag) {
-  gui->set_window_visibility (win, flag);
+  gui->set_window_visibility (id, flag);
 }
 
 void
@@ -217,27 +217,26 @@ sdl_window_rep::set_full_screen (bool flag) {
   if (old_name == "")
     old_name=  name;
   if (flag) {
-    save_win= win;
+//    save_win= win;
     name= string ();
     save_x= win_x; save_y= win_y;
     save_w= win_w; save_h= win_h;
 //    initialize ();
-    gui->set_window_fullscreen (win, true);
+    gui->set_window_fullscreen (id, true);
     move_event   (0, 0);
     resize_event (gui->screen_width, gui->screen_height);
     set_visibility (true);
-//    XSetInputFocus (dpy, win, PointerRoot, CurrentTime);
+//    XSetInputFocus (dpy, id, PointerRoot, CurrentTime);
   }
   else {
-    gui->set_window_fullscreen (win, false);
-    win= save_win;
-    //FIXME: is this 'as_charp' a possible memory leak?
+    gui->set_window_fullscreen (id, false);
+//    win= save_win;
     name= old_name;
     win_x= save_x; win_y= save_y;
     win_w= save_w; win_h= save_h;
     set_visibility (true);
-    gui->set_window_position (win, save_x, save_y);
-    gui->set_window_size (win, save_w, save_h);
+    gui->set_window_position (id, save_x, save_y);
+    gui->set_window_size (id, save_w, save_h);
     resize_event (save_w, save_h);
     move_event   (save_x, save_y);
   }
@@ -298,7 +297,7 @@ sdl_window_rep::focus_in_event () {
 //  SDL_SetWindowKeyboardGrab (win, SDL_TRUE);
   has_focus= true;
   notify_keyboard_focus (kbd_focus, true);
-  gui->focussed_window (win);
+  gui->focussed_window (id);
 }
 
 void
@@ -321,9 +320,9 @@ sdl_window_rep::mouse_event (string ev, int x, int y, time_t t) {
   else {
     sdl_window grab_win= get_sdl_window (gui->grab_ptr->item);
     int gw_x, gw_y;
-    gui->get_window_position (grab_win->win, gw_x, gw_y);
+    gui->get_window_position (grab_win->id, gw_x, gw_y);
     int w_x, w_y;
-    gui->get_window_position (win, w_x, w_y);
+    gui->get_window_position (id, w_x, w_y);
     if (this != grab_win) {
 //      x += win_x - grab_win->win_x;
 //      y += win_y - grab_win->win_y;
@@ -344,7 +343,7 @@ sdl_window_rep::repaint_invalid_regions () {
   int bs_h= backing_store->get_height();
 
   int new_bs_w, new_bs_h;
-  gui->get_window_size (win, new_bs_w, new_bs_h);
+  gui->get_window_size (id, new_bs_w, new_bs_h);
   new_bs_w *= retina_factor;
   new_bs_h *= retina_factor;
   
@@ -409,7 +408,7 @@ sdl_window_rep::repaint_invalid_regions () {
     invalid_regions= new_regions;
   
     // propagate immediately the changes to the screen
-    gui->sync_window (win, backing_store);
+    gui->sync_window (id, backing_store);
   } // if (!is_nil (invalid_regions))
 }
 

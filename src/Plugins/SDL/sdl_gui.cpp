@@ -25,6 +25,7 @@
 
 //hashmap<SDL_Window*,pointer> Window_to_window;
 hashmap<SDL_Window*,int> Window_to_id;
+hashmap<int,SDL_Window*> id_to_Window;
 
 hashmap<SDL_Window*,SDL_Renderer*> Window_to_renderer;
 
@@ -53,8 +54,9 @@ get_Window (widget w) {
     failed_error << "widget = " << w << "\n";
     FAILED ("widget is not attached to a window");
   }
-  sdl_window w2= (sdl_window)id_to_window [id];
-  return w2->win;
+//  sdl_window w2= (sdl_window)id_to_window [id];
+  SDL_Window* win= id_to_Window[id];
+  return win;
 }
 
 
@@ -194,7 +196,8 @@ sdl_gui_rep::release_mouse_grab () {
   else {
     sdl_window grab_win= get_sdl_window (new_widget);
     notify_mouse_grab (new_widget, true);
-    SDL_RaiseWindow (grab_win->win);
+    SDL_Window *w= id_to_Window [grab_win->id];
+    SDL_RaiseWindow (w);
     SDL_CaptureMouse (SDL_TRUE);
     // SDL_SetWindowGrab (grab_win->win, SDL_TRUE);
     // cout << "---> release_mouse_grab: next grab " <<  new_widget  << "\n";
@@ -779,14 +782,14 @@ sdl_gui_rep::run_gui () {
       interrupted= false;
       interrupt_time= texmacs_time () + (100 / (1 + 1));
 //      interrupt_time= texmacs_time () + (100 / (XPending (dpy) + 1));
-      iterator<SDL_Window*> it= iterate (Window_to_id);
+      iterator<int> it= iterate (id_to_window);
       while (it->busy()) { // first the window which has the focus
-        sdl_window win= (sdl_window) id_to_window [Window_to_id[it->next()]];
+        sdl_window win= (sdl_window) id_to_window [it->next()];
         if (win->has_focus) win->repaint_invalid_regions();
       }
-      it= iterate (Window_to_id);
+      it= iterate (id_to_window);
       while (it->busy()) { // and then the other windows
-        sdl_window win= (sdl_window) id_to_window[Window_to_id[it->next()]];
+        sdl_window win= (sdl_window) id_to_window [it->next()];
         if (!win->has_focus) win->repaint_invalid_regions();
       }
     }
@@ -907,7 +910,8 @@ sdl_gui_rep::process_event (SDL_Event *event) {
           int x,y, ox,oy;
           update_mouse_state ();
           SDL_GetGlobalMouseState (&x, &y);
-          SDL_GetWindowPosition (win->win, &ox, &oy);
+          SDL_Window *sdl_win= id_to_Window (win->id);
+          SDL_GetWindowPosition (sdl_win, &ox, &oy);
           x -= ox; y -= oy;
           win->mouse_event ("enter", x, y, event->window.timestamp);
 
@@ -921,7 +925,8 @@ sdl_gui_rep::process_event (SDL_Event *event) {
           int x,y, ox,oy;
           update_mouse_state ();
           SDL_GetGlobalMouseState (&x, &y);
-          SDL_GetWindowPosition(win->win, &ox, &oy);
+          SDL_Window *sdl_win= id_to_Window (win->id);
+          SDL_GetWindowPosition (sdl_win, &ox, &oy);
           x -= ox; y -= oy;
           win->mouse_event ("leave", x, y, event->window.timestamp);
 
@@ -988,7 +993,7 @@ sdl_gui_rep::process_event (SDL_Event *event) {
       update_mouse_state ();
       int x,y, ox,oy;
       SDL_GetGlobalMouseState (&x, &y);
-      SDL_GetWindowPosition(win->win, &ox, &oy);
+      get_window_position (win->id, ox, oy);
       x -= ox; y -= oy;
       float deltaX= event->wheel.preciseX;
       float deltaY= event->wheel.preciseY;
@@ -1037,21 +1042,6 @@ sdl_gui_rep::process_event (SDL_Event *event) {
 /******************************************************************************
 * Selections
 ******************************************************************************/
-
-void
-sdl_gui_rep::created_window (SDL_Window* win) {
-  windows_l << win;
-}
-
-void
-sdl_gui_rep::deleted_window (SDL_Window* win) {
-  windows_l= remove (windows_l, win);
-}
-
-void
-sdl_gui_rep::focussed_window (SDL_Window* win) {
-  windows_l= list<SDL_Window*> (win, remove (windows_l, win));
-}
 
 bool
 sdl_gui_rep::get_selection (string key, tree& t, string& s) {
@@ -1281,7 +1271,7 @@ sdl_gui_rep::default_font (bool tt, bool mini, bool bold) {
   return fn;
 }
 
-SDL_Window*
+void
 sdl_gui_rep::create_window (int id, string name, int x, int y, int w, int h, bool popup) {
   SDL_Window *win= NULL;
   c_string c_name (name);
@@ -1296,25 +1286,20 @@ sdl_gui_rep::create_window (int id, string name, int x, int y, int w, int h, boo
   
   nr_windows++;
   Window_to_id (win) = id;
+  id_to_Window (id) = win;
   Window_to_renderer (win) = SDL_CreateRenderer (win, -1, SDL_RENDERER_ACCELERATED);
 //  Window_to_window (win)= (void*) this;
-
-  return win;
 }
 
 void
-sdl_gui_rep::set_window_limits (SDL_Window* win, int min_w, int min_h, int max_w, int max_h) {
-  SDL_SetWindowMaximumSize (win, max_w, max_h);
-  SDL_SetWindowMinimumSize (win, min_w, min_h);
-}
-
-void
-sdl_gui_rep::destroy_window (SDL_Window* win) {
-  if (Window_to_renderer (win)) {
+sdl_gui_rep::destroy_window (int id) {
+  SDL_Window* win = id_to_Window [id];
+  if (Window_to_renderer->contains (win)) {
     SDL_Renderer *ren= Window_to_renderer [win];
     Window_to_renderer->reset (win);
     SDL_DestroyRenderer (ren);
   }
+  id_to_Window->reset (id);
   Window_to_id->reset (win);
   SDL_DestroyWindow (win);
   //Window_to_window->reset (win);
@@ -1322,39 +1307,74 @@ sdl_gui_rep::destroy_window (SDL_Window* win) {
 }
 
 void
-sdl_gui_rep::get_window_position (SDL_Window* win, int& x, int& y) {
+sdl_gui_rep::created_window (int id) {
+  SDL_Window* win= id_to_Window [id];
+  cout << "Created id "<< id << " SDL_Window *" << (unsigned long)win << LF;
+  windows_l << win;
+}
+
+void
+sdl_gui_rep::deleted_window (int id) {
+  SDL_Window* win= id_to_Window [id];
+  cout << "Deleted id "<< id << " SDL_Window *" << (unsigned long)win << LF;
+  windows_l= remove (windows_l, win);
+}
+
+void
+sdl_gui_rep::focussed_window (int id) {
+  SDL_Window* win= id_to_Window [id];
+  windows_l= list<SDL_Window*> (win, remove (windows_l, win));
+}
+
+
+void
+sdl_gui_rep::get_window_position (int id, int& x, int& y) {
+  SDL_Window* win= id_to_Window [id];
   SDL_GetWindowPosition (win, &x, &y);
 }
 
 void
-sdl_gui_rep::set_window_position (SDL_Window* win, int x, int y) {
+sdl_gui_rep::set_window_position (int id, int x, int y) {
+  SDL_Window* win= id_to_Window [id];
   SDL_SetWindowPosition (win, x, y);
 }
 
 void
-sdl_gui_rep::get_window_size (SDL_Window* win, int& w, int& h) {
+sdl_gui_rep::get_window_size (int id, int& w, int& h) {
+  SDL_Window* win= id_to_Window [id];
   SDL_GetWindowSize (win, &w, &h);
 }
 
 void
-sdl_gui_rep::set_window_size (SDL_Window* win, int w, int h) {
+sdl_gui_rep::set_window_size (int id, int w, int h) {
+  SDL_Window* win= id_to_Window [id];
   SDL_SetWindowSize (win, w, h);
 }
 
 void
-sdl_gui_rep::set_window_title (SDL_Window* win, string name) {
+sdl_gui_rep::set_window_limits (int id, int min_w, int min_h, int max_w, int max_h) {
+  SDL_Window* win= id_to_Window [id];
+  SDL_SetWindowMaximumSize (win, max_w, max_h);
+  SDL_SetWindowMinimumSize (win, min_w, min_h);
+}
+
+void
+sdl_gui_rep::set_window_title (int id, string name) {
   c_string _name (name);
+  SDL_Window* win= id_to_Window [id];
   SDL_SetWindowTitle (win, _name);
 }
 
 void
-sdl_gui_rep::set_window_visibility (SDL_Window* win, bool show) {
+sdl_gui_rep::set_window_visibility (int id, bool show) {
+  SDL_Window* win= id_to_Window [id];
   if (show) SDL_ShowWindow (win);
   else SDL_HideWindow (win);
 }
 
 void
-sdl_gui_rep::set_window_fullscreen (SDL_Window* win, bool full) {
+sdl_gui_rep::set_window_fullscreen (int id, bool full) {
+  SDL_Window* win= id_to_Window [id];
   if (full) SDL_SetWindowFullscreen (win,  SDL_WINDOW_FULLSCREEN);
   else SDL_SetWindowFullscreen (win,  0);
 }
@@ -1402,7 +1422,8 @@ get_surface (picture backing_store) {
 #endif // ifdef MUPDF_RENDERER
 
 void
-sdl_gui_rep::sync_window (SDL_Window* win, picture backing_store) {
+sdl_gui_rep::sync_window (int id, picture backing_store) {
+  SDL_Window* win= id_to_Window [id];
   if (!Window_to_renderer (win)) {
     cerr << "Expecting renderer for window id " << Window_to_id [win] << LF;
     return;
@@ -1463,9 +1484,9 @@ gui_maximal_extents (SI& width, SI& height) {
 
 void
 gui_refresh () {
-  iterator<SDL_Window*> it= iterate (Window_to_id);
+  iterator<int> it= iterate (id_to_window);
   while (it->busy()) {
-    sdl_window win= (sdl_window) id_to_window [Window_to_id [it->next()]];
+    sdl_window win= (sdl_window) id_to_window [it->next()];
     if (get_sdl_window (win->w) != NULL)
       send_update (win->w);
   }

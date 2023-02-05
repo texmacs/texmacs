@@ -96,9 +96,7 @@ public:
   bool   has_mouse_grab (widget w);
 
   /*********************** interclient communication *************************/
-  void   created_window (SDL_Window* win);
-  void   deleted_window (SDL_Window* win);
-  void   focussed_window (SDL_Window* win);
+
   bool   get_selection (string key, tree& t, string& s);
   bool   set_selection (string key, tree t, string s);
   void   clear_selection (string key);
@@ -122,17 +120,22 @@ public:
   bool run_gui ();
   
   /************************** window interface *******************************/
-  SDL_Window* create_window (int id, string name, int x, int y, int w, int h, bool popup);
-  void set_window_limits (SDL_Window*, int min_w, int min_h, int max_w, int max_h);
-  void destroy_window (SDL_Window* win);
-  void get_window_position (SDL_Window* win, int& x, int& y);
-  void set_window_position (SDL_Window* win, int x, int y);
-  void get_window_size (SDL_Window* win, int& w, int& h);
-  void set_window_size (SDL_Window* win, int w, int h);
-  void set_window_title (SDL_Window* win, string name);
-  void set_window_visibility (SDL_Window* win, bool show);
-  void set_window_fullscreen (SDL_Window* win, bool full);
-  void sync_window (SDL_Window* win, picture backing_store);
+  void create_window (int id, string name, int x, int y, int w, int h, bool popup);
+  void destroy_window (int id);
+
+  void   created_window (int id);
+  void   deleted_window (int id);
+  void   focussed_window (int id);
+
+  void get_window_position (int id, int& x, int& y);
+  void set_window_position (int id, int x, int y);
+  void get_window_size (int id, int& w, int& h);
+  void set_window_size (int id, int w, int h);
+  void set_window_limits (int id, int min_w, int min_h, int max_w, int max_h);
+  void set_window_title (int id, string name);
+  void set_window_visibility (int id, bool show);
+  void set_window_fullscreen (int id, bool full);
+  void sync_window (int id, picture backing_store);
 
 };
 
