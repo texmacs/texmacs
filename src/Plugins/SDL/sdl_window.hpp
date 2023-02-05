@@ -30,7 +30,7 @@ public:
   widget           w;
   sdl_gui          gui;
   string           orig_name;
-  char*            name;
+  string            name;
   string           the_name;
   string           mod_name;
 
@@ -61,7 +61,7 @@ public:
 
   /******************** specific routines for sdl_window *********************/
 
-  sdl_window_rep (widget w, sdl_gui gui, char* name,
+  sdl_window_rep (widget w, sdl_gui gui, string name,
 		SI min_w, SI min_h, SI def_w, SI def_h, SI max_w, SI max_h);
   ~sdl_window_rep ();
   widget get_widget ();

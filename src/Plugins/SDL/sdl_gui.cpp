@@ -20,6 +20,8 @@
 #include "tm_link.hpp" // number_of_servers
 
 #include "sdl_window.hpp"
+#include "mupdf_renderer.hpp"
+#include "mupdf_picture.hpp"
 
 extern hashmap<SDL_Window*,pointer> Window_to_window;
 
@@ -1258,6 +1260,135 @@ sdl_gui_rep::default_font (bool tt, bool mini, bool bold) {
   if (!tt && !mini) the_default_wait_font= fn;
   return fn;
 }
+
+SDL_Window*
+sdl_gui_rep::create_window (string name, int x, int y, int w, int h, bool popup) {
+  SDL_Window *win= NULL;
+  c_string c_name (name);
+  if (popup) {
+    win= SDL_CreateWindow (c_name, x, y, w, h,
+                             SDL_WINDOW_BORDERLESS
+                             | SDL_WINDOW_ALLOW_HIGHDPI);
+  } else {
+    win= SDL_CreateWindow (c_name, x, y, w, h,
+                             SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+  }
+  return win;
+}
+
+void
+sdl_gui_rep::set_window_limits (SDL_Window* win, int min_w, int min_h, int max_w, int max_h) {
+  SDL_SetWindowMaximumSize (win, max_w, max_h);
+  SDL_SetWindowMinimumSize (win, min_w, min_h);
+}
+
+void
+sdl_gui_rep::destroy_window (SDL_Window* win) {
+  SDL_DestroyWindow (win);
+}
+
+void
+sdl_gui_rep::get_window_position (SDL_Window* win, int& x, int& y) {
+  SDL_GetWindowPosition (win, &x, &y);
+}
+
+void
+sdl_gui_rep::set_window_position (SDL_Window* win, int x, int y) {
+  SDL_SetWindowPosition (win, x, y);
+}
+
+void
+sdl_gui_rep::get_window_size (SDL_Window* win, int& w, int& h) {
+  SDL_GetWindowSize (win, &w, &h);
+}
+
+void
+sdl_gui_rep::set_window_size (SDL_Window* win, int w, int h) {
+  SDL_SetWindowSize (win, w, h);
+}
+
+void
+sdl_gui_rep::set_window_title (SDL_Window* win, string name) {
+  c_string _name (name);
+  SDL_SetWindowTitle (win, _name);
+}
+
+void
+sdl_gui_rep::set_window_visibility (SDL_Window* win, bool show) {
+  if (show) SDL_ShowWindow (win);
+  else SDL_HideWindow (win);
+}
+
+void
+sdl_gui_rep::set_window_fullscreen (SDL_Window* win, bool full) {
+  if (full) SDL_SetWindowFullscreen (win,  SDL_WINDOW_FULLSCREEN);
+  else SDL_SetWindowFullscreen (win,  0);
+}
+
+#ifdef MUPDF_RENDERER
+static SDL_Surface*
+get_surface (picture backing_store) {
+  fz_pixmap *pix= ((mupdf_picture_rep*)backing_store->get_handle())->pix;
+  //snapshot_pixmap (pix);
+  unsigned char *samples= fz_pixmap_samples (mupdf_context (), pix);
+  int w= fz_pixmap_width (mupdf_context (), pix);
+  int h= fz_pixmap_height (mupdf_context (), pix);
+  //  fz_keep_pixmap (mupdf_context (), pix);
+  SDL_Surface *surf= NULL;
+  unsigned char *pixels= tm_new_array<unsigned char>(w*h*4);
+#if 0
+  unsigned char *p= pixels;
+  for (int y=h; y; y--) {
+    for (int x=w; x; x--) {
+      if (samples[3]) {
+        p[0] = ((unsigned int)samples[0] * 255)/samples[3];
+        p[1] = ((unsigned int)samples[1] * 255)/samples[3];
+        p[2] = ((unsigned int)samples[2] * 255)/samples[3];
+        p[3] = samples[3];
+      } else {
+        p[0] = p[1] = p[2] = p[3] =0;
+      }
+      p += 4; samples += 4;
+    }
+  }
+#else
+  memcpy (pixels, samples, w*h*4);
+#endif
+  // the SDL pixel data is not copied so we need to ensure that the pixmap stays alive.
+  surf= SDL_CreateRGBSurfaceWithFormatFrom (pixels, w, h, 32, 4*w,
+                                            SDL_PIXELFORMAT_RGBA32); // FIXME: premultiplied?
+  return surf;
+}
+#else
+static SDL_Surface*
+get_surface (picture backing_store) {
+  cerr << "get_surface (sdl_gui.cpp) : not implemented! Returning NULL.\n";
+  return NULL;
+}
+#endif // ifdef MUPDF_RENDERER
+
+void
+sdl_gui_rep::sync_window (SDL_Window* win, SDL_Renderer* sdl_ren, picture backing_store) {
+  SDL_Surface *surf= get_surface (backing_store);
+  SDL_Texture *tex= SDL_CreateTextureFromSurface (sdl_ren, surf);
+  SDL_SetTextureBlendMode (tex, SDL_BLENDMODE_NONE);
+  SDL_Rect srcrect;
+  srcrect.x= 0; srcrect.y= 0;
+  srcrect.w= surf->w; srcrect.h= surf->h;
+  SDL_Rect destrect;
+  destrect.x= 0; destrect.y= 0;
+  destrect.w= surf->w*2; destrect.h= surf->h*2;
+  SDL_RenderClear (sdl_ren);
+  SDL_RenderCopy (sdl_ren, tex, &srcrect, &srcrect);
+  //    SDL_RenderCopy (sdl_ren, tex, NULL, NULL);
+  SDL_DestroyTexture (tex);
+  unsigned char *p= (unsigned char*)surf->pixels;
+  SDL_FreeSurface (surf);
+  tm_delete_array (p);
+  SDL_RenderPresent (sdl_ren);
+}
+
+
 
 /******************************************************************************
 * Interface
