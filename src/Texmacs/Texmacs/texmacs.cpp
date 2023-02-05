@@ -211,11 +211,12 @@ TeXmacs_init_paths (int& argc, char** argv) {
 
 #include <emscripten.h>
 #include <emscripten/html5.h>
-#include "SDL/sdl_gui.hpp"
 
-void sdl_run_gui () {
-  extern sdl_gui the_gui;
-  the_gui->run_gui ();
+bool gui_run ();
+
+void
+emscripten_gui_run () {
+  gui_run ();
 }
 
 #endif // __EMSCRIPTEN__
@@ -690,7 +691,7 @@ main (int argc, char** argv) {
   set_env ("TEXMACS_PATH", "/TeXmacs");
   set_env ("TEXMACS_HOME_PATH", "/TeXmacs_Home");
   set_env ("HOME", "/");
-  emscripten_set_main_loop (sdl_run_gui, 60, false);
+  emscripten_set_main_loop (emscripten_gui_run, 60, false);
 #endif
 
 #ifdef STACK_SIZE

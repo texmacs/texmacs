@@ -765,77 +765,77 @@ static bool request_partial_redraw= false;
 
 bool
 sdl_gui_rep::run_gui () {
-    request_partial_redraw= false;
+  request_partial_redraw= false;
 
-    // Get events
-    SDL_Event event;
-    if (SDL_PollEvent (&event)) {
-      process_event (&event);
-      count= 0;
-      delay= MIN_DELAY;
-      wait = false;
-    }
-    if (nr_windows == 0) return false;
+  // Get events
+  SDL_Event event;
+  if (SDL_PollEvent (&event)) {
+    process_event (&event);
+    count= 0;
+    delay= MIN_DELAY;
+    wait = false;
+  }
+  if (nr_windows == 0) return false;
 
-    // FIXME: Don't typeset when resizing window
+  // FIXME: Don't typeset when resizing window
 
-    // Wait for events on all channels and interpose
-    //time_t t1= texmacs_time ();
-    if (wait) {
+  // Wait for events on all channels and interpose
+  //time_t t1= texmacs_time ();
+  if (wait) {
 //      struct timeval tv;
 //      tv.tv_sec  = delay/1000;
 //      tv.tv_usec = 1000 * (delay%1000);
 //      select (0, NULL, NULL, NULL, &tv);
-      SDL_Delay (delay);
-      count += delay;
-      if (count >= SLEEP_AFTER) delay= MAX_DELAY;
-    }
-    else wait= true;
-    if (the_interpose_handler != NULL) the_interpose_handler ();
-    if (nr_windows == 0) return false;
-    //time_t t2= texmacs_time ();
-    //if (t2 - t1 >= 10) cout << "interpose took " << t2-t1 << "ms\n";
-
-    // Popup help balloons
-    if (!is_nil (balloon_wid))
-      if (texmacs_time () - balloon_time >= 666)
-        if (balloon_win == NULL)
-          map_balloon ();
-
-    // Redraw invalid windows
-    //time_t t3= texmacs_time ();
-    if (SDL_PollEvent (NULL) == 0 || request_partial_redraw) {
-      interrupted= false;
-      interrupt_time= texmacs_time () + (100 / (1 + 1));
-//      interrupt_time= texmacs_time () + (100 / (XPending (dpy) + 1));
-      iterator<int> it= iterate (id_to_window);
-      while (it->busy()) { // first the window which has the focus
-        sdl_window win= (sdl_window) id_to_window [it->next()];
-        if (win->has_focus) win->repaint_invalid_regions();
-      }
-      it= iterate (id_to_window);
-      while (it->busy()) { // and then the other windows
-        sdl_window win= (sdl_window) id_to_window [it->next()];
-        if (!win->has_focus) win->repaint_invalid_regions();
-      }
-    }
-    //time_t t4= texmacs_time ();
-    //if (t4 - t3 >= 10) cout << "redraw took " << t4-t3 << "ms\n";
-
-    // Handle alarm messages
-    if (!is_nil (messages)) {
-      list<message> not_ready;
-      while (!is_nil (messages)) {
-        time_t ct= texmacs_time ();
-        message m= messages->item;
-        if ((m->t - ct) <= 0) send_delayed_message (m->wid, m->s, m->t);
-        else not_ready= list<message> (m, not_ready);
-        messages= messages->next;
-      }
-      messages= not_ready;
-    }
-    return true;
+    SDL_Delay (delay);
+    count += delay;
+    if (count >= SLEEP_AFTER) delay= MAX_DELAY;
   }
+  else wait= true;
+  if (the_interpose_handler != NULL) the_interpose_handler ();
+  if (nr_windows == 0) return false;
+  //time_t t2= texmacs_time ();
+  //if (t2 - t1 >= 10) cout << "interpose took " << t2-t1 << "ms\n";
+
+  // Popup help balloons
+  if (!is_nil (balloon_wid))
+    if (texmacs_time () - balloon_time >= 666)
+      if (balloon_win == NULL)
+        map_balloon ();
+
+  // Redraw invalid windows
+  //time_t t3= texmacs_time ();
+  if (SDL_PollEvent (NULL) == 0 || request_partial_redraw) {
+    interrupted= false;
+    interrupt_time= texmacs_time () + (100 / (1 + 1));
+//      interrupt_time= texmacs_time () + (100 / (XPending (dpy) + 1));
+    iterator<int> it= iterate (id_to_window);
+    while (it->busy()) { // first the window which has the focus
+      sdl_window win= (sdl_window) id_to_window [it->next()];
+      if (win->has_focus) win->repaint_invalid_regions();
+    }
+    it= iterate (id_to_window);
+    while (it->busy()) { // and then the other windows
+      sdl_window win= (sdl_window) id_to_window [it->next()];
+      if (!win->has_focus) win->repaint_invalid_regions();
+    }
+  }
+  //time_t t4= texmacs_time ();
+  //if (t4 - t3 >= 10) cout << "redraw took " << t4-t3 << "ms\n";
+
+  // Handle alarm messages
+  if (!is_nil (messages)) {
+    list<message> not_ready;
+    while (!is_nil (messages)) {
+      time_t ct= texmacs_time ();
+      message m= messages->item;
+      if ((m->t - ct) <= 0) send_delayed_message (m->wid, m->s, m->t);
+      else not_ready= list<message> (m, not_ready);
+      messages= messages->next;
+    }
+    messages= not_ready;
+  }
+  return true;
+}
 
 void
 sdl_gui_rep::event_loop () {
@@ -1477,6 +1477,10 @@ gui_open (int& argc2, char** argv2) {
 void
 gui_start_loop () {
   the_gui->event_loop ();
+}
+
+bool gui_run () {
+  the_gui->run_gui ();
 }
 
 void
