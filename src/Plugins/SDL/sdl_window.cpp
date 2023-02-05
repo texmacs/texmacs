@@ -9,6 +9,10 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+// FIXME: rename?
+// REASON: this code is abstracted from SDL and depends only of a particular interface
+// for the GUI object.
+
 #include "sdl_window.hpp"
 
 #include "message.hpp"
@@ -18,9 +22,6 @@
 #include "mupdf_picture.hpp"
 #endif
 
-int nr_windows;
-
-hashmap<SDL_Window*,pointer> Window_to_window (NULL);
 hashmap<int, window> id_to_window (0);
 
 /******************************************************************************
@@ -31,6 +32,10 @@ static int serial= 1; // serial identifier for windows
 
 void
 sdl_window_rep::initialize () {
+
+  id= serial++;
+  id_to_window (id)= this;
+  
 
   SI min_w= Min_w / PIXEL, min_h= Min_h / PIXEL;
   SI def_w= Def_w / PIXEL, def_h= Def_h / PIXEL;
@@ -47,12 +52,11 @@ sdl_window_rep::initialize () {
   
   if (N(name) == 0) {
     name= "popup";
-    win= gui->create_window (name, win_x, win_y, win_w, win_h, true);
+    win= gui->create_window (id, name, win_x, win_y, win_w, win_h, true);
 
   } else {
-    win= gui->create_window (name, win_x, win_y, win_w, win_h, false);
+    win= gui->create_window (id, name, win_x, win_y, win_w, win_h, false);
   }
-  sdl_ren= SDL_CreateRenderer (win, -1, SDL_RENDERER_ACCELERATED);
   
   if (the_name == "") {
     the_name= name;
@@ -63,11 +67,6 @@ sdl_window_rep::initialize () {
 
   backing_store= native_picture (win_w * retina_factor, win_h  * retina_factor, 0, 0);
   ren= picture_renderer (backing_store, std_shrinkf * retina_factor);
-  
-  nr_windows++;
-  Window_to_window (win)= (void*) this;
-  id= serial++;
-  id_to_window (id)= this;
   
   // update widget state
   set_identifier (w, id);
@@ -97,31 +96,18 @@ sdl_window_rep::sdl_window_rep (widget w2, sdl_gui gui2, string n2,
 
 sdl_window_rep::~sdl_window_rep () {
   cout << "destroy window " << id << LF;
+  gui->deleted_window (win);
+  gui->destroy_window (win);
+  delete_renderer (ren);
+  
   id_to_window->reset (id);
   id= 0;
   set_identifier (w, 0); // FIXME: is this ok?
-  Window_to_window->reset (win);
-  nr_windows--;
-  gui->deleted_window (win);
-  gui->destroy_window (win);
-  SDL_DestroyRenderer (sdl_ren);
-  delete_renderer (ren);
 }
 
 widget
 sdl_window_rep::get_widget () {
   return w;
-}
-
-SDL_Window*
-get_Window (widget w) {
-  int id= get_identifier (w);
-  if (id == 0) {
-    failed_error << "widget = " << w << "\n";
-    FAILED ("widget is not attached to a window");
-  }
-  sdl_window w2= (sdl_window)id_to_window [id];
-  return w2->win;
 }
 
 sdl_window
@@ -423,7 +409,7 @@ sdl_window_rep::repaint_invalid_regions () {
     invalid_regions= new_regions;
   
     // propagate immediately the changes to the screen
-    gui->sync_window (win, sdl_ren, backing_store);
+    gui->sync_window (win, backing_store);
   } // if (!is_nil (invalid_regions))
 }
 

@@ -122,7 +122,7 @@ public:
   bool run_gui ();
   
   /************************** window interface *******************************/
-  SDL_Window* create_window (string name, int x, int y, int w, int h, bool popup);
+  SDL_Window* create_window (int id, string name, int x, int y, int w, int h, bool popup);
   void set_window_limits (SDL_Window*, int min_w, int min_h, int max_w, int max_h);
   void destroy_window (SDL_Window* win);
   void get_window_position (SDL_Window* win, int& x, int& y);
@@ -132,7 +132,7 @@ public:
   void set_window_title (SDL_Window* win, string name);
   void set_window_visibility (SDL_Window* win, bool show);
   void set_window_fullscreen (SDL_Window* win, bool full);
-  void sync_window (SDL_Window* win, SDL_Renderer* sdl_ren, picture backing_store);
+  void sync_window (SDL_Window* win, picture backing_store);
 
 };
 

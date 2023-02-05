@@ -23,7 +23,16 @@
 #include "mupdf_renderer.hpp"
 #include "mupdf_picture.hpp"
 
-extern hashmap<SDL_Window*,pointer> Window_to_window;
+//hashmap<SDL_Window*,pointer> Window_to_window;
+hashmap<SDL_Window*,int> Window_to_id;
+
+hashmap<SDL_Window*,SDL_Renderer*> Window_to_renderer;
+
+int nr_windows;
+
+
+extern hashmap<int, window> id_to_window;
+
 
 sdl_gui_rep* the_gui= NULL;
 
@@ -35,6 +44,18 @@ void initialize_keyboard ();
 #define MIN_DELAY   10
 #define MAX_DELAY   1000
 #define SLEEP_AFTER 120000
+
+
+SDL_Window*
+get_Window (widget w) {
+  int id= get_identifier (w);
+  if (id == 0) {
+    failed_error << "widget = " << w << "\n";
+    FAILED ("widget is not attached to a window");
+  }
+  sdl_window w2= (sdl_window)id_to_window [id];
+  return w2->win;
+}
 
 
 /******************************************************************************
@@ -708,7 +729,6 @@ initialize_keyboard () {
 * Event loop
 ******************************************************************************/
 
-extern int nr_windows;
 static void (*the_interpose_handler) (void) = NULL;
 
 static int  kbd_count= 0;
@@ -759,14 +779,14 @@ sdl_gui_rep::run_gui () {
       interrupted= false;
       interrupt_time= texmacs_time () + (100 / (1 + 1));
 //      interrupt_time= texmacs_time () + (100 / (XPending (dpy) + 1));
-      iterator<SDL_Window*> it= iterate (Window_to_window);
+      iterator<SDL_Window*> it= iterate (Window_to_id);
       while (it->busy()) { // first the window which has the focus
-        sdl_window win= (sdl_window) Window_to_window[it->next()];
+        sdl_window win= (sdl_window) id_to_window [Window_to_id[it->next()]];
         if (win->has_focus) win->repaint_invalid_regions();
       }
-      it= iterate (Window_to_window);
+      it= iterate (Window_to_id);
       while (it->busy()) { // and then the other windows
-        sdl_window win= (sdl_window) Window_to_window[it->next()];
+        sdl_window win= (sdl_window) id_to_window[Window_to_id[it->next()]];
         if (!win->has_focus) win->repaint_invalid_regions();
       }
     }
@@ -802,7 +822,7 @@ static sdl_window
 get_window_from_ID (Uint32 ID) {
   SDL_Window *w= SDL_GetWindowFromID (ID);
   if (w == NULL) return NULL;
-  sdl_window win= (sdl_window) Window_to_window [w];
+  sdl_window win= (sdl_window) id_to_window [Window_to_id [w]];
   return win;
 }
 
@@ -1136,7 +1156,7 @@ sdl_gui_rep::external_event (string type, time_t t) {
   (void) t;
   if (!is_nil (windows_l)) {
     SDL_Window* win= windows_l->item;
-    sdl_window sdl_win= (sdl_window) Window_to_window[win];
+    sdl_window sdl_win= (sdl_window) id_to_window [Window_to_id[win]];
     sdl_win->key_event (type);
   }
 }
@@ -1262,7 +1282,7 @@ sdl_gui_rep::default_font (bool tt, bool mini, bool bold) {
 }
 
 SDL_Window*
-sdl_gui_rep::create_window (string name, int x, int y, int w, int h, bool popup) {
+sdl_gui_rep::create_window (int id, string name, int x, int y, int w, int h, bool popup) {
   SDL_Window *win= NULL;
   c_string c_name (name);
   if (popup) {
@@ -1273,6 +1293,12 @@ sdl_gui_rep::create_window (string name, int x, int y, int w, int h, bool popup)
     win= SDL_CreateWindow (c_name, x, y, w, h,
                              SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
   }
+  
+  nr_windows++;
+  Window_to_id (win) = id;
+  Window_to_renderer (win) = SDL_CreateRenderer (win, -1, SDL_RENDERER_ACCELERATED);
+//  Window_to_window (win)= (void*) this;
+
   return win;
 }
 
@@ -1284,7 +1310,15 @@ sdl_gui_rep::set_window_limits (SDL_Window* win, int min_w, int min_h, int max_w
 
 void
 sdl_gui_rep::destroy_window (SDL_Window* win) {
+  if (Window_to_renderer (win)) {
+    SDL_Renderer *ren= Window_to_renderer [win];
+    Window_to_renderer->reset (win);
+    SDL_DestroyRenderer (ren);
+  }
+  Window_to_id->reset (win);
   SDL_DestroyWindow (win);
+  //Window_to_window->reset (win);
+  nr_windows--;
 }
 
 void
@@ -1368,7 +1402,12 @@ get_surface (picture backing_store) {
 #endif // ifdef MUPDF_RENDERER
 
 void
-sdl_gui_rep::sync_window (SDL_Window* win, SDL_Renderer* sdl_ren, picture backing_store) {
+sdl_gui_rep::sync_window (SDL_Window* win, picture backing_store) {
+  if (!Window_to_renderer (win)) {
+    cerr << "Expecting renderer for window id " << Window_to_id [win] << LF;
+    return;
+  }
+  SDL_Renderer* sdl_ren = Window_to_renderer [win];
   SDL_Surface *surf= get_surface (backing_store);
   SDL_Texture *tex= SDL_CreateTextureFromSurface (sdl_ren, surf);
   SDL_SetTextureBlendMode (tex, SDL_BLENDMODE_NONE);
@@ -1424,9 +1463,9 @@ gui_maximal_extents (SI& width, SI& height) {
 
 void
 gui_refresh () {
-  iterator<SDL_Window*> it= iterate (Window_to_window);
+  iterator<SDL_Window*> it= iterate (Window_to_id);
   while (it->busy()) {
-    sdl_window win= (sdl_window) Window_to_window [it->next()];
+    sdl_window win= (sdl_window) id_to_window [Window_to_id [it->next()]];
     if (get_sdl_window (win->w) != NULL)
       send_update (win->w);
   }

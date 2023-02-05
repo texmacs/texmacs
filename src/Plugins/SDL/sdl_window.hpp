@@ -18,8 +18,6 @@
 #include "widget.hpp"
 #include "sdl_gui.hpp"
 
-#include <SDL2/SDL.h>
-
 /******************************************************************************
 * The sdl_window class
 ******************************************************************************/
@@ -30,7 +28,7 @@ public:
   widget           w;
   sdl_gui          gui;
   string           orig_name;
-  string            name;
+  string           name;
   string           the_name;
   string           mod_name;
 
@@ -53,8 +51,6 @@ public:
   int           save_x, save_y;
   int           save_w, save_h;
 
-  SDL_Renderer* sdl_ren;
-  
   picture       backing_store;
   
 public:
