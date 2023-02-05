@@ -23,14 +23,12 @@
 #include "mupdf_renderer.hpp"
 #include "mupdf_picture.hpp"
 
-//hashmap<SDL_Window*,pointer> Window_to_window;
 hashmap<SDL_Window*,int> Window_to_id;
 hashmap<int,SDL_Window*> id_to_Window;
 
-hashmap<SDL_Window*,SDL_Renderer*> Window_to_renderer;
+hashmap<int,SDL_Renderer*> id_to_renderer;
 
 int nr_windows;
-
 
 extern hashmap<int, window> id_to_window;
 
@@ -1287,16 +1285,18 @@ sdl_gui_rep::create_window (int id, string name, int x, int y, int w, int h, boo
   nr_windows++;
   Window_to_id (win) = id;
   id_to_Window (id) = win;
-  Window_to_renderer (win) = SDL_CreateRenderer (win, -1, SDL_RENDERER_ACCELERATED);
+  id_to_renderer (id) = SDL_CreateRenderer (win, -1, SDL_RENDERER_ACCELERATED);
+  windows_l << win;
 //  Window_to_window (win)= (void*) this;
 }
 
 void
 sdl_gui_rep::destroy_window (int id) {
   SDL_Window* win = id_to_Window [id];
-  if (Window_to_renderer->contains (win)) {
-    SDL_Renderer *ren= Window_to_renderer [win];
-    Window_to_renderer->reset (win);
+  windows_l= remove (windows_l, win);
+  if (id_to_renderer->contains (id)) {
+    SDL_Renderer *ren= id_to_renderer [id];
+    id_to_renderer->reset (id);
     SDL_DestroyRenderer (ren);
   }
   id_to_Window->reset (id);
@@ -1304,20 +1304,6 @@ sdl_gui_rep::destroy_window (int id) {
   SDL_DestroyWindow (win);
   //Window_to_window->reset (win);
   nr_windows--;
-}
-
-void
-sdl_gui_rep::created_window (int id) {
-  SDL_Window* win= id_to_Window [id];
-  cout << "Created id "<< id << " SDL_Window *" << (unsigned long)win << LF;
-  windows_l << win;
-}
-
-void
-sdl_gui_rep::deleted_window (int id) {
-  SDL_Window* win= id_to_Window [id];
-  cout << "Deleted id "<< id << " SDL_Window *" << (unsigned long)win << LF;
-  windows_l= remove (windows_l, win);
 }
 
 void
@@ -1424,11 +1410,11 @@ get_surface (picture backing_store) {
 void
 sdl_gui_rep::sync_window (int id, picture backing_store) {
   SDL_Window* win= id_to_Window [id];
-  if (!Window_to_renderer (win)) {
+  if (!id_to_renderer->contains (id)) {
     cerr << "Expecting renderer for window id " << Window_to_id [win] << LF;
     return;
   }
-  SDL_Renderer* sdl_ren = Window_to_renderer [win];
+  SDL_Renderer* sdl_ren = id_to_renderer [id];
   SDL_Surface *surf= get_surface (backing_store);
   SDL_Texture *tex= SDL_CreateTextureFromSurface (sdl_ren, surf);
   SDL_SetTextureBlendMode (tex, SDL_BLENDMODE_NONE);

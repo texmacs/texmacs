@@ -45,7 +45,6 @@ public:
   bool          has_focus;
 
   bool          full_screen_flag;
-  SDL_Window*   save_win;
   int           save_x, save_y;
   int           save_w, save_h;
 
@@ -106,7 +105,6 @@ public:
 };
 
 typedef sdl_window_rep* sdl_window;
-SDL_Window* get_Window (widget w);
 sdl_window get_sdl_window (widget w);
 
 #endif // defined SDL_WINDOW_H

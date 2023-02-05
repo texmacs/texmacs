@@ -73,7 +73,6 @@ sdl_window_rep::initialize () {
   notify_position (w, 0, 0);
   notify_size (w, Def_w,  Def_h);
 
-  gui->created_window (id);
   cout << "create window " << id << LF;
 }
 
@@ -96,7 +95,6 @@ sdl_window_rep::sdl_window_rep (widget w2, sdl_gui gui2, string n2,
 
 sdl_window_rep::~sdl_window_rep () {
   cout << "destroy window " << id << LF;
-  gui->deleted_window (id);
   gui->destroy_window (id);
   delete_renderer (ren);
   
