@@ -510,7 +510,7 @@
 	      ((== h '(mathvariant "monospace"))
 	       (cons* "math-font-family" "mt" r))
         ((func? h 'mathsize)
-	       (cons* "font-size" (cadr h) r))
+	       (cons* "font-base-size" (cadr h) r))
         ((func? h 'scriptlevel)
           (with sl (string->number (cadr h))
             (cond 
