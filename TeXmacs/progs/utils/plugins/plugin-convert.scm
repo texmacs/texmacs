@@ -234,20 +234,24 @@
 ;; Lazy input converters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define lazy-input-converter-table (make-ahash-table))
+
+(eval-when (expand load eval)
+(define lazy-input-converter-table (make-ahash-table)))
+
+(eval-when (expand load eval)
+(define (lazy-input-converter-force plugin2)
+  (with plugin (if (string? plugin2) (string->symbol plugin2) plugin2)
+    (with module (ahash-ref lazy-input-converter-table plugin)
+      (if module
+	  (begin
+	    (ahash-remove! lazy-input-converter-table plugin)
+	    (module-load module)))))))
 
 (tm-define-macro (lazy-input-converter module plugin)
   (lazy-input-converter-force plugin)
   (ahash-set! lazy-input-converter-table plugin module)
   '(noop))
 
-(define (lazy-input-converter-force plugin2)
-  (with plugin (if (string? plugin2) (string->symbol plugin2) plugin2)
-    (with module (ahash-ref lazy-input-converter-table plugin)
-      (if module
-          (begin
-            (ahash-remove! lazy-input-converter-table plugin)
-            (module-load module))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initialization subroutines
@@ -255,13 +259,14 @@
 
 (define plugin-input-current-plugin "generic")
 
+(eval-when (expand load eval)
 (define (plugin-input-converters-rules name l)
   (if (null? l) '()
       (cons (let* ((rule (car l))
-                   (key (car rule))
-                   (im (list 'unquote (cadr rule))))
-              (list (list 'plugin-input-converter% (list name key) im)))
-            (plugin-input-converters-rules name (cdr l)))))
+		   (key (car rule))
+		   (im (list 'unquote (cadr rule))))
+	      (list (list 'plugin-input-converter% (list name key) im)))
+	    (plugin-input-converters-rules name (cdr l))))))
 
 (tm-define-macro (plugin-input-converters name2 . l)
   (let ((name (if (string? name2) name2 (symbol->string name2))))

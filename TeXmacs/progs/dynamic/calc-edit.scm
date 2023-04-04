@@ -150,6 +150,7 @@
                  (else (tm->tree `(concat "(" ,val ")"))))))
 	(else (tree-map-children (cut calc-substitute <> lan) t))))
 
+;;FIXME: in this definition 't is unbounded
 (tm-define (calc-reevaluate-output lan ses var in out)
   (when (calc-available? in)
     ;;(display* "Reevaluate output " t "\n")

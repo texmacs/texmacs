@@ -8449,7 +8449,7 @@ $as_echo "#define GUILE_B 1" >>confdefs.h
       (1.8 | 1.9)
 $as_echo "#define GUILE_C 1" >>confdefs.h
  ;;
-      (2.*)
+      (2.* | 3.*)
 $as_echo "#define GUILE_D 1" >>confdefs.h
 
             # Check whether --enable-guile2 was given.

@@ -209,11 +209,12 @@
      (regtest-htmltm-list-kinds)
      (regtest-htmltm-list-br)))
 
+(eval-when (expand load eval)
 (define (define-self-evaluating* syms)
   (map (lambda (name)
          (let ((sym (gensym)))
            `(define (,name . ,sym) (cons (quote ,name) ,sym))))
-       syms))
+       syms)))
 
 (define-macro (regtest-html-table-library . body)
   `(begin

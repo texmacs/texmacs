@@ -40,75 +40,81 @@
 ;; Delayed execution of commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (delayed-sub body)
+(eval-when (expand load eval)
+(define (delayed-sub body)
   (cond ((or (npair? body) (nlist? (car body)) (not (keyword? (caar body))))
-         `(lambda () ,@body #t))
-        ((== (caar body) :pause)
-         `(let* ((start (texmacs-time))
-                 (proc ,(delayed-sub (cdr body))))
-            (lambda ()
-              (with left (- (+ start ,(cadar body)) (texmacs-time))
-                (if (> left 0) left
-                    (begin
-                      (set! start (texmacs-time))
-                      (proc)))))))
-        ((== (caar body) :every)
-         `(let* ((time (+ (texmacs-time) ,(cadar body)))
-                 (proc ,(delayed-sub (cdr body))))
-            (lambda ()
-              (with left (- time (texmacs-time))
-                (if (> left 0) left
-                    (begin
-                      (set! time (+ (texmacs-time) ,(cadar body)))
-                      (proc)))))))
-        ((== (caar body) :idle)
-         `(with proc ,(delayed-sub (cdr body))
-            (lambda ()
-              (with left (- ,(cadar body) (idle-time))
-                (if (> left 0) left
-                    (proc))))))
-        ((== (caar body) :refresh)
-         (with sym (gensym)
-           `(let* ((,sym #f)
-                   (proc ,(delayed-sub (cdr body))))
-              (lambda ()
-                (if (!= ,sym (change-time)) 0
-                    (with left (- ,(cadar body) (idle-time))
-                      (if (> left 0) left
-                          (begin
-                            (set! ,sym (change-time))
-                            (proc)))))))))
-        ((== (caar body) :require)
-         `(with proc ,(delayed-sub (cdr body))
-            (lambda ()
-              (if (not ,(cadar body)) 0
-                  (proc)))))
-        ((== (caar body) :while)
-         `(with proc ,(delayed-sub (cdr body))
-            (lambda ()
-              (if (not ,(cadar body)) #t
-                  (with left (proc)
-                    (if (== left #t) 0 left))))))
-        ((== (caar body) :clean)
-         `(with proc ,(delayed-sub (cdr body))
-            (lambda ()
-              (with left (proc)
-                (if (!= left #t) left
-                    (begin ,(cadar body) #t))))))
-        ((== (caar body) :permanent)
-         `(with proc ,(delayed-sub (cdr body))
-            (lambda ()
-              (with left (proc)
-                (if (!= left #t) left
-                    (with next ,(cadar body)
-                      (if (!= next #t) #t
-                          0)))))))
-        ((== (caar body) :do)
-         `(with proc ,(delayed-sub (cdr body))
-            (lambda ()
-              ,(cadar body)
-              (proc))))
-        (else (delayed-sub (cdr body)))))
+     `(lambda ()
+        ;(display* "RUN DELAYED:" ',body "\n")
+         ,@body
+        ;(display "END DELAYED\n")
+         #t))
+	((== (caar body) :pause)
+	 `(let* ((start (texmacs-time))
+		 (proc ,(delayed-sub (cdr body))))
+	    (lambda ()
+	      (with left (- (+ start ,(cadar body)) (texmacs-time))
+		(if (> left 0) left
+		    (begin
+		      (set! start (texmacs-time))
+		      (proc)))))))
+	((== (caar body) :every)
+	 `(let* ((time (+ (texmacs-time) ,(cadar body)))
+		 (proc ,(delayed-sub (cdr body))))
+	    (lambda ()
+	      (with left (- time (texmacs-time))
+		(if (> left 0) left
+		    (begin
+		      (set! time (+ (texmacs-time) ,(cadar body)))
+		      (proc)))))))
+	((== (caar body) :idle)
+	 `(with proc ,(delayed-sub (cdr body))
+	    (lambda ()
+	      (with left (- ,(cadar body) (idle-time))
+		(if (> left 0) left
+		    (proc))))))
+	((== (caar body) :refresh)
+	 (with sym (gensym)
+	   `(let* ((,sym #f)
+		   (proc ,(delayed-sub (cdr body))))
+	      (lambda ()
+		(if (!= ,sym (change-time)) 0
+		    (with left (- ,(cadar body) (idle-time))
+		      (if (> left 0) left
+			  (begin
+			    (set! ,sym (change-time))
+			    (proc)))))))))
+	((== (caar body) :require)
+	 `(with proc ,(delayed-sub (cdr body))
+	    (lambda ()
+	      (if (not ,(cadar body)) 0
+		  (proc)))))
+	((== (caar body) :while)
+	 `(with proc ,(delayed-sub (cdr body))
+	    (lambda ()
+	      (if (not ,(cadar body)) #t
+		  (with left (proc)
+		    (if (== left #t) 0 left))))))
+	((== (caar body) :clean)
+	 `(with proc ,(delayed-sub (cdr body))
+	    (lambda ()
+	      (with left (proc)
+		(if (!= left #t) left
+		    (begin ,(cadar body) #t))))))
+	((== (caar body) :permanent)
+	 `(with proc ,(delayed-sub (cdr body))
+	    (lambda ()
+	      (with left (proc)
+		(if (!= left #t) left
+		    (with next ,(cadar body)
+		      (if (!= next #t) #t
+			  0)))))))
+	((== (caar body) :do)
+	 `(with proc ,(delayed-sub (cdr body))
+	    (lambda ()
+	      ,(cadar body)
+	      (proc))))
+	(else (delayed-sub (cdr body)))))
+)
 
 (define-public-macro (delayed . body)
   `(exec-delayed-pause ,(delayed-sub body)))

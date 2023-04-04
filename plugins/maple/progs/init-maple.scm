@@ -17,5 +17,5 @@
   (:launch "tm_maple")
   (:session "Maple"))
 
-(when (supports-maple?)
+(tm-cond-expand (supports-maple?)
   (lazy-input-converter (maple-input) maple))

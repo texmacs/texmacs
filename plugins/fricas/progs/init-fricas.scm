@@ -19,7 +19,7 @@
   (:session "FriCAS")
   (:scripts "FriCAS"))
 
-(when (supports-fricas?)
+(tm-cond-expand (supports-fricas?)
   (import-from (fricas-kbd))
   (import-from (fricas-menus))
   (lazy-input-converter (fricas-input) fricas))

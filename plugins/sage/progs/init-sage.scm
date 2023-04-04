@@ -94,5 +94,5 @@
 ;(set-session-multiline-input "sage" "default" #t)
 ;(set-program-multiline-input "sage" "default" #t)
 
-(when (supports-sage?)
+(tm-cond-expand (supports-sage?)
   (lazy-input-converter (sage-input) sage))

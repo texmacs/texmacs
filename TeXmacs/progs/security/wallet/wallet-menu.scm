@@ -14,11 +14,13 @@
 (texmacs-module (security wallet wallet-menu)
   (:use (security wallet wallet-base)))
 
+(eval-when (expand load eval)
 (when (os-macos?) 
   (use-modules (security keychain macos-security)))
 
 (when (or (os-mingw?) (os-win32?))
   (use-modules (security keychain win-security)))
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remember wallet master passphrase
@@ -180,11 +182,11 @@
             ("Ok"
              (with n (length (form-values))
                (when (and (> n 0) (string? (first (form-values))))
-                 (when (and (wallet-correct-passphrase? (first (form-values)))
+                 (when (wallet-correct-passphrase? (first (form-values)))
                             (when (and (wallet-turn-on (first (form-values)))
                                        (== (second (form-values)) "yes"))
                               (wallet-save-passphrase (first (form-values))))
-                            (cmd "Ok")))))
+                            (cmd "Ok"))))
              (set! wallet-widget-wrong-passphrase? #t)
              (refresh-now "wallet-widget-reask-passphrase"))))))))
 

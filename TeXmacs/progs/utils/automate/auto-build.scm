@@ -166,6 +166,7 @@
 ;; Master routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;FIXME: 'inline-assign below seems not be right
 (define (build t)
   ;;(display* "Building " t "\n")
   (cond ((tm-atomic? t) t)

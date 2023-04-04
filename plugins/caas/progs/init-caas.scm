@@ -34,7 +34,7 @@
 
 (lazy-keyboard (caas-edit) in-prog-caas?)
 
-(when (supports-caas?)
+(tm-cond-expand (supports-caas?)
   (import-from (utils plugins plugin-convert))
   (lazy-input-converter (caas-input) caas)
   (import-from (dynamic session-menu))

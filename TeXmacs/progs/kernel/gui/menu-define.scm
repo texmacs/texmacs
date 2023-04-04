@@ -20,6 +20,8 @@
 ;; Definition of dynamic menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(eval-when (expand load eval)
+
 (define (require-format x pattern)
   (if (not (match? x pattern))
     (texmacs-error "gui-make" "invalid menu item ~S" x)))
@@ -381,10 +383,12 @@
   (require-format x '(form-toggle :%2))
   `($form-toggle ,@(cdr x)))
 
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Table with Gui primitives and dispatching
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+(eval-when (expand load eval)
 (define-table gui-make-table
   (eval ,gui-make-eval)
   (dynamic ,gui-make-dynamic)
@@ -467,8 +471,9 @@
   (form-enum ,gui-make-form-enum)
   (form-choice ,gui-make-form-choice)
   (form-choices ,gui-make-form-choices)
-  (form-toggle ,gui-make-form-toggle))
+  (form-toggle ,gui-make-form-toggle)))
 
+(eval-when (expand load eval)
 (tm-define (gui-make x)
   ;;(display* "x= " x "\n")
   (cond ((symbol? x)
@@ -489,7 +494,7 @@
         ((and (pair? x) (or (string? (car x)) (pair? (car x))))
          `($> ,(gui-make (car x)) ,@(cdr x)))
         (else
-          (texmacs-error "gui-make" "invalid menu item ~S" x))))
+          (texmacs-error "gui-make" "invalid menu item ~S" x)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User interface for dynamic menu definitions
@@ -522,7 +527,7 @@
      (lazy-define ,module ,@menus)
      (delayed
        (:idle 500)
-       (module-provide ',module))))
+       (module-load ',module))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic color pickers

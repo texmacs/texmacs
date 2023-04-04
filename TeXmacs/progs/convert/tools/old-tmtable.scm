@@ -29,7 +29,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Foundation
 
-(define tmtable-type (make-record-type "tmtable" '(nrows ncols cells formats)))
+(define tmtable-type (make-record-type 'tmtable '(nrows ncols cells formats)))
 (define tmtable-record (record-constructor tmtable-type))
 (tm-define tmtable? (record-predicate tmtable-type))
 (tm-define tmtable-nrows (record-accessor tmtable-type 'nrows))

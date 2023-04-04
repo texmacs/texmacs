@@ -35,7 +35,7 @@
 
 (lazy-keyboard (mmi-edit) in-prog-mmi?)
 
-(when (supports-mmi?)
+(tm-cond-expand (supports-mmi?)
   (import-from (utils plugins plugin-convert))
   (lazy-input-converter (mmi-input) mmi)
   (import-from (dynamic session-menu))

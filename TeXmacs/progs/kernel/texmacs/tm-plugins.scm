@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel texmacs tm-plugins)
-  (:use (kernel texmacs tm-define) (kernel texmacs tm-modes)))
+  (:use (kernel texmacs tm-define) (kernel texmacs tm-modes) (kernel texmacs tm-dialogue)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Lazy exports from other modules
@@ -512,9 +512,10 @@
     `(begin
        (texmacs-modes (,in-name (== (get-env "prog-language") ,name)))
        (texmacs-modes (,name-scripts (== (get-env "prog-scripts") ,name)))
-       (define (,supports-name?)
-         (or (ahash-ref plugin-data-table ,name)
-             (remote-connection-defined? ,name)))
+       (eval-when (expand load eval)
+         (define (,supports-name?)
+           (or (ahash-ref plugin-data-table ,name)
+               (remote-connection-defined? ,name))))
        (if reconfigure-flag? (ahash-set! plugin-data-table ,name #t))
        (plugin-configure-cmds ,name
          ,(list 'quasiquote (map plugin-configure-sub options))))))
@@ -535,19 +536,19 @@
   (plugin-load-setup)
   (if (ahash-ref plugin-initialize-todo name*)
       (let* ((name (symbol->string name*))
-             (file (string-append "plugins/" name "/progs/init-" name ".scm"))
-             (u (url-unix "$TEXMACS_HOME_PATH:$TEXMACS_PATH" file)))
-        (ahash-set! plugin-initialize-todo name* #f)
-        (if (url-exists? u)
-            (with fname (url-materialize u "r")
-              ;;(display* "loading plugin " name* "\n")
-              ;;(display* "loading plugin " fname "\n")
-              ;;(with start (texmacs-time)
-              ;;  (load fname)
-              ;;  (display* name " -> " (- (texmacs-time) start) " ms\n"))
-              (load fname)
-              ))
-        (if (plugin-all-initialized?) (plugin-save-setup)))))
+	     (file (string-append "plugins/" name "/progs/init-" name ".scm"))
+	     (u (url-unix "$TEXMACS_HOME_PATH:$TEXMACS_PATH" file)))
+	(ahash-set! plugin-initialize-todo name* #f)
+	(if (url-exists? u)
+	    (with fname (url-materialize u "r")
+	      ;;(display* "loading plugin " name* "\n")
+	      ;;(display* "loading plugin " fname "\n")
+	      ;;(with start (texmacs-time)
+	      ;;  (load fname)
+	      ;;  (display* name " -> " (- (texmacs-time) start) " ms\n"))
+	      (primitive-load fname) ;; primitive-load suppress compilation of plugins
+	      ))
+	(if (plugin-all-initialized?) (plugin-save-setup)))))
 
 (define-public (lazy-plugin-initialize name)
   "Initialize the plug-in @name in a lazy way"

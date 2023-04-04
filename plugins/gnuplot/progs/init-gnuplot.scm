@@ -36,3 +36,6 @@
   (:serializer ,gnuplot-serialize)
   (:session "Gnuplot")
   (:scripts "Gnuplot"))
+
+(tm-cond-expand (supports-gnuplot?)
+  (lazy-input-converter (gnuplot-input) gnuplot))

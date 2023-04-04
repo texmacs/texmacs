@@ -13,7 +13,8 @@
 
 (texmacs-module (utils plugins plugin-eval)
   (:use (utils library tree)
-        (utils library cursor)))
+	(utils library cursor)
+    (utils plugins plugin-cmd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; evaluation + simplification of document fragments

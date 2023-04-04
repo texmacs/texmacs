@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : guile_tm.cpp
 * DESCRIPTION: Interface to Guile
-* COPYRIGHT  : (C) 1999-2011  Joris van der Hoeven and Massimiliano Gubinelli
+* COPYRIGHT  : (C) 1999-2019  Joris van der Hoeven and Massimiliano Gubinelli
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -85,9 +85,15 @@ TeXmacs_catcher (void *data, SCM tag, SCM args) {
 #ifndef DEBUG_ON
 static SCM
 TeXmacs_lazy_eval_file (char *file) {
+#if (defined(GUILE_D))
+  return scm_c_with_throw_handler (SCM_BOOL_T,
+                                  (scm_t_catch_body) scm_c_primitive_load, file,
+                                  (scm_t_catch_handler) TeXmacs_lazy_catcher, file, 0);
+#else
   return scm_internal_lazy_catch (SCM_BOOL_T,
                                   (scm_t_catch_body) scm_c_primitive_load, file,
                                   (scm_t_catch_handler) TeXmacs_lazy_catcher, file);
+#endif
 }
 #endif
 
@@ -98,7 +104,7 @@ TeXmacs_eval_file (char *file) {
                              (scm_t_catch_body) TeXmacs_lazy_eval_file, file,
                              (scm_t_catch_handler) TeXmacs_catcher, file);
 #else
-  return 	scm_c_primitive_load (file);										 
+  return 	scm_c_primitive_load (file);
 #endif
 }
 
@@ -121,9 +127,15 @@ eval_scheme_file (string file) {
 #ifndef DEBUG_ON
 static SCM
 TeXmacs_lazy_eval_string (char *s) {
+#if (defined(GUILE_D))
+  return scm_c_with_throw_handler (SCM_BOOL_T,
+                                  (scm_t_catch_body) scm_c_eval_string, s,
+                                  (scm_t_catch_handler) TeXmacs_lazy_catcher, s, 0);
+#else
   return scm_internal_lazy_catch (SCM_BOOL_T,
                                   (scm_t_catch_body) scm_c_eval_string, s,
                                   (scm_t_catch_handler) TeXmacs_lazy_catcher, s);
+#endif
 }
 #endif
 
@@ -180,9 +192,15 @@ TeXmacs_call (arg_list* args) {
 #ifndef DEBUG_ON
 static SCM
 TeXmacs_lazy_call_scm (arg_list* args) {
+#if (defined(GUILE_D))
+  return scm_c_with_throw_handler (SCM_BOOL_T,
+                                  (scm_t_catch_body) TeXmacs_call, (void*) args,
+                                  (scm_t_catch_handler) TeXmacs_lazy_catcher, (void*) args, 0);
+#else
   return scm_internal_lazy_catch (SCM_BOOL_T,
                                   (scm_t_catch_body) TeXmacs_call, (void*) args,
                                   (scm_t_catch_handler) TeXmacs_lazy_catcher, (void*) args);
+#endif
 }
 #endif
 
@@ -309,12 +327,20 @@ scm_to_bool (SCM flag) {
 
 SCM
 int_to_scm (int i) {
+#if (defined(GUILE_D))
+  return scm_from_int (i);
+#else
   return scm_long2scm ((long) i);
+#endif
 }
 
 SCM
 long_to_scm (long l) {
+#if (defined(GUILE_D))
+  return scm_from_long (l);
+#else
   return scm_long2scm (l);
+#endif
 }
 
 #if (defined(GUILE_A) || defined(GUILE_B))
@@ -368,18 +394,79 @@ string_to_tmscm (string s) {
 #endif
 }
 
+#ifdef GUILE_D
+
+// Guile-2 uses proper encoding of strings...
+//
+//  we have to hardcode some implementation details from libguile
+// since we need to peek at the internals of strings
+// in order to understand if they have a wide representation
+// or can be smuggled into a latin1 encoding
+
+// situation with strings is currently quite messy since TeXmacs uses its own
+// encoding while guile >1.8 want an explicit standard exconding
+// so we just inject everything into a latin1 (which allow to use 8-bits)
+// with this default we have the problem of scheme strings which contains
+// unicode chars, for example. They do not fit in 8-bit and some conversions is needed.
+// in this case we just convert them into a proper latin1
+
+
+#define STRINGBUF_F_WIDE        SCM_I_STRINGBUF_F_WIDE
+#define STRINGBUF_F_MUTABLE     SCM_I_STRINGBUF_F_MUTABLE
+
+#define STRINGBUF_WIDE(buf)     (SCM_CELL_WORD_0(buf) & STRINGBUF_F_WIDE)
+#define STRING_STRINGBUF(str) (SCM_CELL_OBJECT_1(str))
+
+/* (from libguile) True if the string is 'narrow', meaning it has a 8-bit Latin-1
+   encoding.  False if it is 'wide', having a 32-bit UCS-4
+   encoding.  */
+int
+scm_i_is_narrow_string (SCM str)
+{
+  return !STRINGBUF_WIDE (STRING_STRINGBUF (str));
+}
+
+string
+tmscm_to_string (tmscm s) {
+  guile_str_size_t len_r;
+  char* _r;
+  
+  if (scm_i_is_narrow_string(s)) {
+    _r = scm_scm2str (s, &len_r);
+    string r (_r, len_r);
+    #ifdef OS_WIN32
+      scm_must_free(_r);
+    #else
+      free (_r);
+    #endif
+    return r;
+  } else {
+    _r = scm_to_utf8_stringn (s, &len_r);
+    string r (_r, len_r);
+    string rr= utf8_to_cork (r);
+    #ifdef OS_WIN32
+      scm_must_free(_r);
+    #else
+      free (_r);
+    #endif
+    return rr;
+  }
+}
+#else
 string
 tmscm_to_string (tmscm s) {
   guile_str_size_t len_r;
   char* _r= scm_scm2str (s, &len_r);
   string r (_r, len_r);
-#ifdef OS_WIN32
-  scm_must_free(_r);
-#else
-  free (_r);
-#endif
+  #ifdef OS_WIN32
+    scm_must_free(_r);
+  #else
+    free (_r);
+  #endif
   return r;
 }
+#endif // #ifdef GUILE_D
+
 
 /******************************************************************************
  * Symbols
@@ -428,6 +515,11 @@ tmscm_is_blackbox (tmscm t) {
 tmscm
 blackbox_to_tmscm (blackbox b) {
   SCM blackbox_smob;
+#if (defined(GUILE_D))
+  // we run finalizers on the main thread periodically since our memory allocation scheme
+  // is not thread safe.
+  scm_run_finalizers ();
+#endif
   SET_SMOB (blackbox_smob, (void*) (tm_new<blackbox> (b)), (SCM) blackbox_tag);
   return blackbox_smob;
 }
@@ -532,10 +624,21 @@ tmscm object_stack;
 
 void
 initialize_scheme () {
+  
+#if (defined(GUILE_D))
+  // we do not want finalizers to be called in concurrent threads...
+  scm_set_automatic_finalization_enabled (0);
+#endif
+  
   const char* init_prg =
+//  "(display (current-module)) (display \"\\n\")\n"
+//  "(set-current-module the-root-module)\n"
+//  "(display (current-module)) (display \"\\n\")\n"
   "(read-set! keywords 'prefix)\n"
   "(read-enable 'positions)\n"
+#if (!defined(GUILE_D))
   "(debug-enable 'debug)\n"
+#endif
 #ifdef DEBUG_ON
   "(debug-enable 'backtrace)\n"
 #endif
@@ -555,7 +658,7 @@ initialize_scheme () {
   initialize_glue ();
   object_stack= scm_lookup_string ("object-stack");
   
-    // uncomment to have a guile repl available at startup	
+    // uncomment to have a guile repl available at startup
     //	gh_repl(guile_argc, guile_argv);
     //scm_shell (guile_argc, guile_argv);
   

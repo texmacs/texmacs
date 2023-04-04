@@ -22,7 +22,13 @@
         (doc apidoc-collect)
         (doc apidoc-widgets)
         (kernel texmacs tm-preferences)
-        (kernel gui kbd-handlers)))
+        (kernel gui kbd-handlers)
+        (link link-navigate)))
+     
+(cond-expand
+  (guile-2 #t)
+  (else (if (guile-b?)     ;; char-set-adjoin for guile-1.6.8
+    (use-modules (srfi srfi-14)))))
 
 (tm-define char-set:stopmark
            (char-set-adjoin char-set:whitespace #\( #\) #\" #\'))

@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (kernel texmacs tm-convert)
-  (:use (kernel texmacs tm-define) (kernel texmacs tm-modes)))
+  (:use (kernel texmacs tm-define) (kernel texmacs tm-modes) (kernel texmacs tm-preferences)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Lazy formats
@@ -72,19 +72,19 @@
     (define-preferences
       (option val converter-set-option))))
 
-(define-public (converter-cmd from to cmd)
+(define (run-cmd from to cmd)
   "Helper routine for converter macro"
+  ;;(display* "cmd=" cmd "\n")
   (cond ((func? cmd :penalty 1)
          (converter-set-penalty from to (second cmd)))
-;;        ((func? cmd :require 1) ;; already handled earlier now 
-;;       (if (not ((second cmd))) (converter-remove from to)))
+        ;;      ((func? cmd :require 1) ;; already handled earlier now
+        ;;            (if (not ((second cmd))) (converter-remove from to)))
         ((func? cmd :option 2)
          (converter-define-option from to (second cmd) (third cmd)))
         ((func? cmd :function 1)
-         (ahash-set! converter-function (list from to)
-                     (lambda (x opts) ((second cmd) x))))
-        ((func? cmd :function-with-options 1)
          (ahash-set! converter-function (list from to) (second cmd)))
+        ;;        ((func? cmd :function-with-options 1) ;; should not be seen (see normalize-cmd)
+        ;;              (ahash-set! converter-function (list from to) (second cmd)))
         ((func? cmd :shell)
          (if (not (url-exists-in-path? (second cmd)))
              (converter-remove from to))
@@ -92,15 +92,28 @@
                      (lambda (what opts)
                        (converter-shell (cdr cmd) what to opts))))))
 
-(define-public (converter-sub cmd)
+(define-public (converter-sub from to . options)
+  ;;(display* "options=" options "\n")
   "Helper routine for converter macro"
-  (cond ((and (list? cmd) (= (length cmd) 2)
-              (in? (car cmd) '(:function :function-with-options)))
-         (list (car cmd) (list 'unquote (cadr cmd))))
-        ((and (list? cmd) (= (length cmd) 2)
-              (in? (car cmd) '(:require)))
-         (list (car cmd) (list 'unquote `(lambda () ,(cadr cmd)))))
-        (else cmd)))
+  (set! converter-distance (make-ahash-table))
+  (set! converter-path (make-ahash-table))
+  (let ((req (cond ((and (in? (car (first options)) '(:penalty))
+                         (in? (car (second options)) '(:require))) (apply (second (second options)) '()))
+                   ((in? (car (first options)) '(:require)) (apply (second (first options)) '()))
+                   (else #t))))
+    (if req (begin
+              (converter-set-penalty from to 1.0)
+              (map (lambda (x) (run-cmd from to x)) options)))))
+
+(define (normalize-cmd cmd)
+  (cond
+   ((func? cmd :function 1)
+    `(list :function (lambda (x opts) (,(second cmd) x))))
+   ((func? cmd :function-with-options 1)
+    `(list :function (lambda (x opts) (,(second cmd) x opts))))
+   ((func? cmd :require 1)
+    `(list :require (lambda () ,(second cmd))))
+   (else `(quote ,cmd))))
 
 (define-public-macro (converter from* to* . options)
   "Declare a converter between @from@ and @to* according to @options"
@@ -108,19 +121,20 @@
          (to (if (string? to*) to* (symbol->string to*))))
     (set! converter-distance (make-ahash-table))
     (set! converter-path (make-ahash-table))
-;; NEW if (:required) clause present but not fulfilled do nothing
-;; this enables to define several possible implementations of a given converter
-;; not presuming on the availability of external tools : the last valid one is retained
-;; (previously the last defined -even if unavailable- erased whatever was already defined)
+    ;; NEW if (:required) clause present but not fulfilled do nothing
+    ;; this enables to define several possible implementations of a given converter
+    ;; not presuming on the availability of external tools : the last valid one is retained
+    ;; (previously the last defined -even if unavailable- erased whatever was already defined)
     (cond ((and (in? (car (first options)) '(:penalty)) 
-            (in? (car (second options)) '(:require)) 
-            (not (eval (second (second options))))) (noop))
+                (in? (car (second options)) '(:require)) 
+                (not (eval (second (second options))))) (noop))
           ((and (in? (car (first options)) '(:require)) 
-            (not (eval (second (first options))))) (noop))
+                (not (eval (second (first options))))) (noop))
           (else (converter-set-penalty from to 1.0) 
-             `(for-each (lambda (x) (converter-cmd ,from ,to x))
-                 ,(list 'quasiquote (map converter-sub options)))))))
+                `(for-each (lambda (x) (converter-cmd ,from ,to x))
+                   ,(list 'quasiquote (map converter-sub options)))))))
 
+                    
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Special converters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

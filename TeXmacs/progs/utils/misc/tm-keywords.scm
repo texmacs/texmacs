@@ -13,16 +13,24 @@
 
 (texmacs-module (utils misc tm-keywords))
 
+(eval-when (expand load eval)
 (define kws (string-load (unix->url "$TEXMACS_PATH/progs/tm-mode.el")))
-(define kwo (string->object (string-append "(" kws ")")))
+(define kwo (string->object (string-append "(" kws ")"))))
 
+(eval-when (expand load eval)
 (define (kw-transform l)
   (cond ((null? l) l)
 	((func? (car l) 'setq)
 	 (cons (cons 'tm-define (cdar l)) (kw-transform (cdr l))))
-	(else (kw-transform (cdr l)))))
+	(else (kw-transform (cdr l))))))
 
-(eval (cons 'begin (kw-transform kwo)))
+
+; we prefer to use the macro expander, since this is compatible with Guile 2.2
+; (eval (cons 'begin (kw-transform kwo)))
+
+(define-macro (kw-macro)
+  (cons 'begin (kw-transform kwo)))
+(kw-macro)
 
 (define indent-arity-table (make-ahash-table))
 

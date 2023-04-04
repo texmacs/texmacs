@@ -21,7 +21,7 @@
   (:session "Mupad")
   (:scripts "Mupad"))
 
-(when (supports-mupad?)
+(tm-cond-expand (supports-mupad?)
   (import-from (mupad-menus))
   (lazy-input-converter (mupad-input) mupad)
 

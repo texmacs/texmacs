@@ -16,5 +16,5 @@
   (:launch "tm_matlab")
   (:session "Matlab"))
 
-(when (supports-matlab?)
+(tm-cond-expand (supports-matlab?)
   (plugin-input-converters matlab))

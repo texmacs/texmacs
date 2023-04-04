@@ -16,5 +16,5 @@
   (:launch "qcl --texmacs")
   (:session "Qcl"))
 
-(when (supports-qcl?)
+(tm-cond-expand (supports-qcl?)
   (lazy-input-converter (qcl-input) qcl))

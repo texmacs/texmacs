@@ -15,6 +15,7 @@
   (:use (generic generic-kbd)
 	(version version-compare)))
 
+;;FIXME: the symbols version-select-* seems not well defined
 (kbd-map
   (:mode with-versioning-tool?)
   ("version home" (version-first-difference))

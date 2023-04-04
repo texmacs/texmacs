@@ -129,7 +129,7 @@ AC_DEFUN([LC_GUILE],[
       (1.0 | 1.1 | 1.2 | 1.3 | 1.4 | 1.5) AC_DEFINE([GUILE_A],[1],[Guile version]) ;;
       (1.6 | 1.7) AC_DEFINE(GUILE_B,[1],[Guile version]) ;;
       (1.8 | 1.9) AC_DEFINE(GUILE_C,[1],[Guile version]) ;;
-      (2.*) AC_DEFINE(GUILE_D,[1],[Guile version])
+      (2.* | 3.*) AC_DEFINE(GUILE_D,[1],[Guile version])
             AC_ARG_ENABLE(guile2,
               AS_HELP_STRING([--disable-guile2=[yes]],
               [enable compilation with Guile 2, for development purposes]),

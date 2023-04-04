@@ -69,13 +69,19 @@
 (define-public (number->keyword x)
   (symbol->keyword (string->symbol (string-append "%" (number->string x)))))
 
-(if (guile-c?)
+(cond-expand
+  (guile-2
+    (define-public (save-object file value)
+      (write value (open-file (url-materialize file "") OPEN_WRITE))
+      (flush-all-ports)))
+  (else (if (guile-c?)
     (define-public (save-object file value)
       (pretty-print value (open-file (url-materialize file "") OPEN_WRITE))
       (flush-all-ports))
     (define-public (save-object file value)
       (write value (open-file (url-materialize file "") OPEN_WRITE))
-      (flush-all-ports)))
+      (flush-all-ports))))
+)
 
 (define-public (load-object file)
   (let ((r (read (open-file (url-materialize file "r") OPEN_READ))))
@@ -89,11 +95,13 @@
 ;; Common programming constructs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public-macro (when cond? . body)
-  `(if ,cond? (begin ,@body)))
+(cond-expand (guile-2 #t) (else
+  (define-public-macro (when cond? . body)
+    `(if ,cond? (begin ,@body)))
 
-(define-public-macro (unless cond? . body)
-  `(if (not ,cond?) (begin ,@body)))
+  (define-public-macro (unless cond? . body)
+   `(if (not ,cond?) (begin ,@body)))
+))
 
 (define-public-macro (with var val . body)
   (if (pair? var)
@@ -107,10 +115,10 @@
 (define-public-macro (with-global var val . body)
   (let ((old (gensym)) (new (gensym)))
     `(let ((,old ,var))
-       (set! ,var ,val)
-       (let ((,new (begin ,@body)))
-         (set! ,var ,old)
-         ,new))))
+       (dynamic-wind
+         (lambda () (set! ,var ,val))
+         (lambda () ,@body)
+         (lambda () (set! ,var ,old))))))
 
 (define-public-macro (and-with var val . body)
   `(with ,var ,val
