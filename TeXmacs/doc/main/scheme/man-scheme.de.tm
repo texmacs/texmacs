@@ -20,7 +20,7 @@
 
     <branch|Eigene dynamische Menüs schreiben|man-menus.de.tm>
 
-    <branch|Eigene Kurzbefehle erzeugen|man-keyboard.de.tm>
+    <branch|Eigene Kurzbefehle erzeugen|man-custom-keyboard.de.tm>
 
     <branch|Andere interessante Dateien|man-files.de.tm>
   </traverse>

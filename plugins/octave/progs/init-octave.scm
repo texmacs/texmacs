@@ -22,16 +22,19 @@
       (system-url->string "$TEXMACS_PATH/plugins/octave/octave/tmstart.m")))
 
 (define (octave-launcher)
-  (with boot (raw-quote (octave-entry))
-    (if (url-exists-in-path? "octave")
+  (with boot (octave-entry)
+    (if (os-mingw?)
+      (string-append "octave-cli -qi " boot)
+      (if (url-exists-in-path? "octave")
         (string-append "octave --no-gui -qi " boot)
-        (string-append "octave-octave-app -qi " boot))))
+        (string-append "octave-octave-app -qi " boot)))))
 
 ; when using `:macpath`, the (octave-launcher) uses `octave-octave-app`
 ; that's why we are using `plugin-add-macos-path` here
 (plugin-add-macos-path "Octave*/Contents/Resources/usr/Cellar/octave-octave-app@*/*" "bin" #t)
 
 (plugin-configure octave
+  (:winpath "GNU Octave/Octave*/mingw64" "bin") ; For Octave 6.2.x
   (:winpath "Octave*" ".")
   (:winpath "Octave*" "bin")
   (:winpath "Octave*" "mingw64/bin")

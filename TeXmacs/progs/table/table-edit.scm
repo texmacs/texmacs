@@ -163,6 +163,14 @@
   (with-focus-after t
     (if down? (cell-valign-down) (cell-valign-up))))
 
+(tm-define (swipe-horizontal t forward?)
+  (:require (table-markup-context? t))
+  (geometry-horizontal t forward?))
+
+(tm-define (swipe-vertical t down?)
+  (:require (table-markup-context? t))
+  (geometry-vertical t down?))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured traversal
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

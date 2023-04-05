@@ -290,7 +290,7 @@ public:
   picture apply (array<picture> pics, SI pixel) {
     picture p1= eff->apply (pics, pixel);
     picture p2= pen->apply (pics, pixel);
-    return outline (p1, p2); }
+    return outlines (p1, p2); }
 };
 
 class thicken_effect_rep: public effect_rep {
@@ -327,7 +327,7 @@ public:
 
 effect blur (effect eff, effect pen) {
   return tm_new<blur_effect_rep> (eff, pen); }
-effect outline (effect eff, effect pen) {
+effect outlines (effect eff, effect pen) {
   return tm_new<outline_effect_rep> (eff, pen); }
 effect thicken (effect eff, effect pen) {
   return tm_new<thicken_effect_rep> (eff, pen); }
@@ -694,7 +694,7 @@ build_effect (tree t) {
   else if (is_func (t, EFF_OUTLINE, 2)) {
     effect eff  = build_effect (t[0]);
     effect pen= build_effect (t[1]);
-    return outline (eff, pen);
+    return outlines (eff, pen);
   }
   else if (is_func (t, EFF_THICKEN, 2)) {
     effect eff  = build_effect (t[0]);

@@ -173,7 +173,9 @@
                  (kernel texmacs tm-states))
 (inherit-modules (kernel gui gui-markup)
                  (kernel gui menu-define) (kernel gui menu-widget)
-                 (kernel gui kbd-define) (kernel gui kbd-handlers)
+                 (kernel gui kbd-define)
+                 (kernel gui speech-define)
+                 (kernel gui kbd-handlers)
                  (kernel gui menu-test)
                  (kernel old-gui old-gui-widget)
                  (kernel old-gui old-gui-factory)
@@ -236,6 +238,8 @@
 
 ;(display "Booting generic mode\n")
 (lazy-keyboard (generic generic-kbd) always?)
+(lazy-keyboard (generic generic-speech-en) always?)
+(lazy-keyboard (generic generic-speech-fr) always?)
 (lazy-menu (generic generic-menu) focus-menu texmacs-focus-icons)
 (lazy-menu (generic format-menu) format-menu
            font-size-menu color-menu horizontal-space-menu
@@ -253,7 +257,8 @@
            texmacs-insert-icons insert-link-menu insert-image-menu)
 (lazy-define (generic document-edit) update-document set-document-language
              get-init-page-rendering init-page-rendering)
-(lazy-define (generic generic-edit) notify-activated notify-disactivated)
+(lazy-define (generic generic-edit) notify-activated notify-disactivated
+             wheel-capture?)
 (lazy-define (generic generic-doc) focus-help)
 (lazy-define (generic search-widgets) search-toolbar replace-toolbar
              open-search toolbar-search-start interactive-search
@@ -285,6 +290,9 @@
 
 ;(display "Booting text mode\n")
 (lazy-keyboard (text text-kbd) in-text?)
+(lazy-keyboard (text text-speech-en) in-text?)
+(lazy-keyboard (text text-speech-fr) in-text?)
+(lazy-keyboard (text chinese chinese) in-chinese?)
 (lazy-menu (text text-menu) text-format-menu text-format-icons
 	   text-menu text-block-menu text-inline-menu
            text-icons text-block-icons text-inline-icons)
@@ -294,6 +302,10 @@
 ;(display "Booting math mode\n")
 (lazy-keyboard (math math-kbd) in-math?)
 (lazy-keyboard (math math-sem-edit) in-sem-math?)
+(lazy-keyboard (math math-speech-en) in-math?)
+(lazy-keyboard (math math-adjust-en) in-math?)
+(lazy-keyboard (math math-speech-fr) in-math?)
+(lazy-keyboard (math math-adjust-fr) in-math?)
 (lazy-menu (math math-menu) math-format-menu math-format-icons
 	   math-menu math-insert-menu
            math-icons math-insert-icons
@@ -305,7 +317,11 @@
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting programming modes\n")
-(lazy-format (prog prog-format) cpp scheme scala java python julia)
+(lazy-format (prog prog-format) scheme)
+(lazy-format (code-format) cpp julia scala java json csv)
+(lazy-format (mathemagix-format) mathemagix)
+(lazy-format (python-format) python)
+(lazy-format (scilab-format) scilab)
 (lazy-keyboard (prog prog-kbd) in-prog?)
 (lazy-menu (prog prog-menu) prog-format-menu prog-format-icons
 	   prog-menu prog-icons)
@@ -346,8 +362,9 @@
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting graphics mode\n")
-(lazy-keyboard (graphics graphics-kbd) in-active-graphics?)
-(lazy-menu (graphics graphics-menu) graphics-menu graphics-icons)
+(lazy-keyboard (graphics graphics-kbd) in-active-graphics? graphics-wheel)
+(lazy-menu (graphics graphics-menu) graphics-menu graphics-icons
+           graphics-focus-icons)
 (lazy-define (graphics graphics-object)
              graphics-reset-state graphics-decorations-update)
 (lazy-define (graphics graphics-utils) make-graphics)

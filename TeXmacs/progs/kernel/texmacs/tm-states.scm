@@ -45,7 +45,7 @@
 	 (eval `(define-public-once ,(car e) #f)))
   (if b
       (for (f funcs)
-	 (f))))
+         (f))))
 
 (define (slotlist-save l)
   (for (e l)
@@ -71,7 +71,7 @@
             (begin
               (state-synchronize)
               (slotlist-load (state-slots sr))))
-	(proplist-load (state-props sr) (state-cprops sr) (null? opt))
+        (proplist-load (state-props sr) (state-cprops sr) (null? opt))
         (set! current-state sr))))
 
 (define-public (state-save sr)
@@ -91,10 +91,10 @@
 
 (define-public (state-type sr name)
   (cond ((in? name (state-slotnames sr))
-	 'slot)
-	((in? name (state-propnames sr))
-	 'prop)
-	(else #f)))
+         'slot)
+        ((in? name (state-propnames sr))
+         'prop)
+        (else #f)))
 
 (define (seek-pred? pred? l)
   (define res #f)
@@ -126,8 +126,8 @@
 ;; slotlists === ((slots ((<NAME-SLOT1> <INIT1>) ... (<NAME-SLOTN> <INITN>)))
 ;;                (props ((<NAME-PROP1> <PROP1>) ... (<NAME-PROPN> <PROPN>))))
   (let* ((theslots (copy-tree slotlists))
-	 (slots (cadr (car theslots)))
-	 (props (cadr (cadr theslots))))
+         (slots (cadr (car theslots)))
+         (props (cadr (cadr theslots))))
     `(begin
         (define-public-once ,name #f)
 	(with cprops #f

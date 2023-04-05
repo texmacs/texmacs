@@ -14,10 +14,14 @@
 
 #include <QApplication>
 #include <QIcon>
+#include <QStyle>
 #include "string.hpp"
 #include "sys_utils.hpp"
 #include "url.hpp"
 
+void init_palette (QApplication* app);
+void init_style_sheet (QApplication* app);
+void set_standard_style_sheet (QWidget *w);
 
 #ifdef Q_OS_MAC
 
@@ -109,7 +113,10 @@ class QTMApplication: public QApplication {
   
 public:
   QTMApplication (int& argc, char** argv) :
-    QApplication (argc, argv) { }
+    QApplication (argc, argv) {
+      init_palette (this);
+      init_style_sheet (this);
+    }
 
   void set_window_icon (string icon_path) {
     url icon_url= url_system (get_env ("TEXMACS_PATH") * icon_path);
@@ -142,6 +149,30 @@ public:
         //c_string cs (s);
         //tm_failure (cs);
         //qt_error << "Thrown " << s << LF;
+      the_exception= s;
+    }
+    return false;
+  }
+};
+
+class QTMCoreApplication: public QCoreApplication {
+  Q_OBJECT
+  
+public:
+  QTMCoreApplication (int& argc, char** argv) :
+    QCoreApplication (argc, argv) {}
+
+  void set_window_icon (string icon_path) {
+    (void) icon_path;
+  }
+
+  virtual bool notify (QObject* receiver, QEvent* event)
+  {
+    try {
+      return QCoreApplication::notify (receiver, event);
+    }
+    catch (string s) {
+      qt_error << "Thrown " << s << LF;
       the_exception= s;
     }
     return false;

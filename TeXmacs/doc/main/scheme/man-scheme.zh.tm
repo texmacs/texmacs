@@ -14,7 +14,7 @@
 
     <branch|\<#5B9A\>\<#5236\>\<#52A8\>\<#6001\>\<#83DC\>\<#5355\>|man-menus.zh.tm>
 
-    <branch|\<#5B9A\>\<#5236\>\<#5FEB\>\<#6377\>\<#952E\>|man-keyboard.zh.tm>
+    <branch|\<#5B9A\>\<#5236\>\<#5FEB\>\<#6377\>\<#952E\>|man-custom-keyboard.zh.tm>
 
     <branch|\<#5176\>\<#5B83\>\<#503C\>\<#5F97\>\<#4E00\>\<#770B\>\<#7684\>\<#6587\>\<#4EF6\>|man-files.zh.tm>
   </traverse>

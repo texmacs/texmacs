@@ -15,7 +15,7 @@
   (with u (pre-serialize lan t)
     (with v (texmacs->code u)
       (with w (string-replace v "\n" "/{CR}/")
-	(string-append (escape-verbatim w) "\n")))))
+        (string-append (escape-verbatim w) "\n")))))
 
 (plugin-configure mathemagix
   (:winpath "mathemagix*" "bin")

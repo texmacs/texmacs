@@ -66,6 +66,11 @@
   (with t (buffer-tree)
     (and (tree-is? t 'document)
          (tree-is? t :last 'screens))))
+         
+(tm-define (slideshow-buffer?)
+  (with t (buffer-tree)
+    (and (tree-is? t 'document)
+        (tree-is? t :last 'slideshow))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic movements for fold tags and switches
@@ -154,6 +159,14 @@
 
 (tm-define (tree-show-hidden t)
   (:require (toggle-context? t))
+  (alternate-toggle t))
+
+(tm-define (structured-minimize t)
+  (:require (toggle-second-context? t))
+  (alternate-toggle t))
+
+(tm-define (structured-maximize t)
+  (:require (toggle-first-context? t))
   (alternate-toggle t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1104,6 +1117,14 @@
   (and-with t (tree-innermost screens-context?)
     (with u (slide-get-document t)
       (slide-set-bg-color-bis u col))))
+
+(tm-define (swipe-horizontal t forward?)
+  (:require (dynamic-context? t))
+  (screens-switch-to (if forward? :next :previous)))
+
+(tm-define (swipe-vertical t down?)
+  (:require (dynamic-context? t))
+  (dynamic-traverse-buffer (if down? :next :previous)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Editing slideshows in expanded form

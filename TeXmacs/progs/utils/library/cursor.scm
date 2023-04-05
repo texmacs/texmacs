@@ -265,6 +265,12 @@
                   (buffer-focus ,old)
                   ,res))))))
 
+(define-public-macro (with-window name . body)
+  (with buf (gensym)
+    `(with ,buf (window-to-buffer ,name)
+       (and (not (url-none? ,buf))
+            (with-buffer ,buf ,@body)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search and replace
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

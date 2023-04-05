@@ -100,6 +100,9 @@
 (define-public (supports-db?)
   (== (get-preference "database tool") "on"))
 
+(define-public (side-tools?)
+  (visible-side-tools? 0))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mode related
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -141,6 +144,7 @@
   (in-letter% (style-has? "header-letter-package"))
   (in-seminar% (style-has? "header-seminar-package"))
   (in-generic% (style-has? "generic-style"))
+  (in-code% (style-has? "code-style"))
   (in-browser% (style-has? "browser-style"))
   (in-beamer% (style-has? "beamer-style"))
   (in-poster% (style-has? "poster-style"))

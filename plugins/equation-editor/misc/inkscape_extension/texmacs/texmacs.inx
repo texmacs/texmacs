@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+  <_name>Edit TeXmacs equation</_name>
+  <id>org.inkscape.texmacs.texmacs_reedit</id>
+  <dependency type="executable" location="extensions">texmacs/texmacs_reedit.py</dependency>
+
+  <effect>
+    <object-type>all</object-type>
+    <effects-menu>
+      <submenu name="TeXmacs equation"/>
+    </effects-menu>
+  </effect>
+  <script>
+    <command reldir="extensions" interpreter="python">texmacs/texmacs_reedit.py</command>
+  </script>
+</inkscape-extension>

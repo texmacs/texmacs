@@ -15,6 +15,7 @@
 #include "fast_alloc.hpp"
 #include "widget.hpp"
 #include "message.hpp"
+#include "qt_utilities.hpp"
 #include <QPointer>
 
 class QWidget;
@@ -108,7 +109,7 @@ public:
     aligned_widget,  tabs_widget,        icon_tabs_widget,   wrapped_widget,
     refresh_widget,  refreshable_widget, glue_widget,        resize_widget,
     texmacs_widget,  simple_widget,      embedded_tm_widget, popup_widget,
-    field_widget,    filtered_choice_widget, tree_view_widget
+    field_widget, filtered_choice_widget,tree_view_widget,   division_widget
   } ;
   
   types type;
@@ -150,7 +151,8 @@ public:
       "wrapped_widget",     "refresh_widget",     "refreshable_widget",
       "glue_widget",        "resize_widget",      "texmacs_widget",
       "simple_widget",      "embedded_tm_widget", "popup_widget",
-      "field_widget",       "filtered_choice_widget", "tree_view_widget"
+      "field_widget",   "filtered_choice_widget", "tree_view_widget",
+      "division_widget"
     };
     return string (qt_widget_type_strings[type]) * "\t id: " * as_string (id);
   }
@@ -222,6 +224,74 @@ inline widget abstract (qt_widget w) { return widget (w.rep); }
 /*! Casting from widget to qt_widget */
 inline qt_widget concrete (widget w) {
   return qt_widget (static_cast<qt_widget_rep*> (w.rep));
+}
+
+/* Widgets for headless mode */
+inline widget headless_widget ();
+
+class qt_headless_widget_rep : public qt_widget_rep {
+public:
+  qt_headless_widget_rep () {};
+  virtual ~qt_headless_widget_rep () {
+    if (DEBUG_QT_WIDGETS)
+      debug_widgets << "~qt_headless_widget_rep" << LF;
+  }
+  virtual inline string get_nickname () { return "headless"; }
+
+  virtual widget plain_window_widget (string name, command quit, int b= 3) {
+    (void) name; (void) quit; (void) b;
+    return headless_widget ();
+  }
+  virtual widget make_popup_widget ()  {
+    return headless_widget ();
+  }
+  virtual widget popup_window_widget (string s) {
+    (void) s;
+    return headless_widget ();
+  }
+  virtual widget tooltip_window_widget (string s) {
+    (void) s;
+    return headless_widget ();
+  }
+
+  virtual QAction*         as_qaction () { return NULL; }
+  virtual QWidget*         as_qwidget () { return NULL; }
+  virtual QLayoutItem*     as_qlayoutitem () { return NULL; }
+  virtual QList<QAction*>* get_qactionlist() { return NULL; }
+
+  virtual void send (slot s, blackbox val) {
+    qt_widget_rep::send (s, val);
+  }
+  virtual blackbox query (slot s, int type_id) {
+    static int id= 1;
+    switch (s) {
+    case SLOT_IDENTIFIER:
+    {
+      check_type_id<int> (type_id, s);
+      return close_box<int> (id++);
+    }
+    default:
+      return qt_widget_rep::query (s, type_id);
+    }
+  }
+  virtual widget read (slot s, blackbox index) {
+    (void) s; (void) index;
+    return headless_widget ();;
+  }
+  virtual void write (slot s, blackbox index, widget w) {
+    (void) s; (void) index; (void) w;
+    qt_widget_rep::write (s, index, w);
+
+  }
+  virtual void notify (slot s, blackbox new_val) {
+    (void) s; (void) new_val;
+    qt_widget_rep::notify (s, new_val);
+
+  }
+};
+
+inline widget headless_widget () {
+  return widget ((widget_rep*) tm_new<qt_headless_widget_rep> ());
 }
 
 #endif // defined QT_WIDGET_HPP

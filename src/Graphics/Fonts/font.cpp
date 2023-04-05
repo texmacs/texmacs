@@ -9,6 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "boot.hpp"
 #include "font.hpp"
 #include "gui.hpp"
 #include "Freetype/tt_file.hpp"
@@ -536,10 +537,15 @@ use_poor_rubber (font fn) {
 
 static font
 make_rubber_font (font fn) {
-  if (starts (fn->res_name, "stix-"))
+  string name= locase_all (fn->res_name);
+  if (starts (name, "stix-") ||
+      starts (name, "stix,") ||
+      occurs (",stix,", name) ||
+      occurs ("math=stix", name) ||
+      occurs ("mathrubber=stix", name))
     return rubber_stix_font (fn);
-  else if (occurs ("mathlarge=", fn->res_name) ||
-           occurs ("mathrubber=", fn->res_name))
+  else if (occurs ("mathlarge=", name) ||
+           occurs ("mathrubber=", name))
     return fn;
   else if (has_poor_rubber && fn->type == FONT_TYPE_UNICODE)
     return poor_rubber_font (fn);
@@ -569,6 +575,10 @@ script (int sz, int level) {
 
 string
 default_chinese_font_name () {
+  if (has_user_preference("default chinese font name")) {
+    return get_user_preference("default chinese font name");
+  }
+
   // Set default Chinese font for Windows
   // see: https://docs.microsoft.com/en-us/typography/fonts/windows_10_font_list
 #ifdef OS_MINGW
@@ -591,6 +601,10 @@ default_chinese_font_name () {
 
 string
 default_japanese_font_name () {
+  if (has_user_preference("default japanese font name")) {
+    return get_user_preference("default japanese font name");
+  }
+
   // Set default Japanese font for macOS
   // see: https://developer.apple.com/fonts/system-fonts/
 #ifdef OS_MACOS
@@ -610,6 +624,10 @@ default_japanese_font_name () {
 
 string
 default_korean_font_name () {
+  if (has_user_preference("default korean font name")) {
+    return get_user_preference("default korean font name");
+  }
+
   // Set default Korean font for macOS
   // see: https://developer.apple.com/fonts/system-fonts/
 #ifdef OS_MACOS

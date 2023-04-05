@@ -165,7 +165,7 @@ blur (picture pic, picture pen) {
 }
 
 picture
-outline (picture pic, picture pen) {
+outlines (picture pic, picture pen) {
   raster<true_color> ras= as_raster<true_color> (pic);
   raster<double> alpha= get_alpha (as_raster<true_color> (pen));
   return raster_picture (variation (ras, alpha));

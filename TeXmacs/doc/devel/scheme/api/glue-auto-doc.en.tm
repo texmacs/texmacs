@@ -2027,6 +2027,30 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(math-stats-compile <scm-arg|string> <scm-arg|content> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|compile_stats> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(math-stats-occurrences <scm-arg|string> <scm-arg|content>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|number_occurrences> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
+    <scm|(math-stats-number-in-role <scm-arg|string> <scm-arg|content>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|number_in_role> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
     <scm|(path-strip <scm-arg|path> <scm-arg|path>)>
 <explain-synopsis|no synopsis>
   <|explain>
@@ -2755,7 +2779,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(string-number? <scm-arg|string>)>
+    <scm|(cpp-string-number? <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|is_double> which returns
@@ -4347,6 +4371,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(system-setenv <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|set_env> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(system-search-score <scm-arg|url> <scm-arg|array_string>)>
 <explain-synopsis|no synopsis>
   <|explain>
@@ -4742,7 +4774,7 @@ source code.
     <scm|(widget-extend <scm-arg|widget> <scm-arg|array_widget>)>
 <explain-synopsis|no synopsis>
   <|explain>
-    Calls the <c++> function <cpp|extend> which returns
+    Calls the <c++> function <cpp|extend_widget> which returns
     <scm|widget>.
   </explain>
 
@@ -4943,6 +4975,14 @@ source code.
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|vertical_list> which returns
+    <scm|widget>.
+  </explain>
+
+  <\explain>
+    <scm|(widget-division <scm-arg|string> <scm-arg|widget>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|division_widget> which returns
     <scm|widget>.
   </explain>
 
@@ -7435,7 +7475,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(mouse-any <scm-arg|string> <scm-arg|int> <scm-arg|int> <scm-arg|int> <scm-arg|double>)>
+    <scm|(mouse-any <scm-arg|string> <scm-arg|int> <scm-arg|int> <scm-arg|int> <scm-arg|double> <scm-arg|array_double>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|mouse_any> which returns
@@ -8143,6 +8183,14 @@ source code.
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|get_y> which returns
+    <scm|double>.
+  </explain>
+
+  <\explain>
+    <scm|(get-graphical-pixel)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_pixel> which returns
     <scm|double>.
   </explain>
 

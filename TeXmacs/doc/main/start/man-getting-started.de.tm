@@ -11,7 +11,7 @@
 
     <branch|<TeXmacs>-Konfiguration|man-setup.de.tm>
 
-    <branch|Erzeugen, laden und sichern von Dokumenten|man-files.de.tm>
+    <branch|Erzeugen, laden und sichern von Dokumenten|man-file-ops.de.tm>
 
     <branch|Dokumente drucken|man-print.de.tm>
   </traverse>

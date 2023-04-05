@@ -53,9 +53,8 @@ set (CMAKE_MODULE_PATH ${TEXMACS_SOURCE_DIR}/cmake)
 
 set (VERSION_MAJOR "2")
 set (VERSION_MINOR "1")
-set (VERSION_BUILD "")
-#set (TEXMACS_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BUILD})
-set (TEXMACS_VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
+set (VERSION_BUILD "2")
+set (TEXMACS_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BUILD})
 
 set (DEVEL_VERSION ${TEXMACS_VERSION})
 set (DEVEL_RELEASE "1")
@@ -288,11 +287,20 @@ find_package (JPEG)
 set(SCHEME_IMPL "default" CACHE STRING "Implementation of Scheme to compile for.")
 set_property(CACHE SCHEME_IMPL PROPERTY STRINGS default guile-1.8 guile-2.0 guile-2.2 guile-3.0 chez s7)
 message(STATUS "Looking for Scheme implementation: " ${SCHEME_IMPL})
+option(BUILD_PRIO_GUILE3 "Give guile3 higher priority." OFF)
 
 if (${SCHEME_IMPL} STREQUAL "default")
   # Find Guile and determine which version we are using.
-  # Look for guile versions in this order: 1.8 > 3.0 > 2.2 > 2.0
-  pkg_search_module (Guile REQUIRED guile-1.8 guile-3.0 guile-2.2 guile-2.0)
+  # Depending on whether BUILD_PRIO_GUILE3 is set:
+  # Look for guile versions in: 1.8 > 3.0 > 2.2 > 2.0 or
+  # Look for guile versions in: 3.0 > 1.8 > 2.2 > 2.0
+
+  if(BUILD_PRIO_GUILE3)
+    pkg_search_module (Guile REQUIRED guile-3.0 guile-1.8 guile-2.2 guile-2.0)
+  else ()
+    pkg_search_module (Guile REQUIRED guile-1.8 guile-3.0 guile-2.2 guile-2.0)
+  endif(BUILD_PRIO_GUILE3)
+
   if (NOT Guile_FOUND)
     message(FATAL_ERROR "Guile not installed or pkg-config cannot detect it.")
   endif ()
@@ -589,6 +597,7 @@ if (TEXMACS_GUI MATCHES "Qt.*")
     if (APPLE AND EXISTS /usr/local/opt/qt5)
       list (APPEND CMAKE_PREFIX_PATH "/usr/local/opt/qt5")
     endif ()
+
     if (WIN32 AND EXISTS ${QT_CMAKE_DIR})
       set (Qt5Core_DIR "${QT_CMAKE_DIR}/Qt5Core")
       set (Qt5Gui_DIR "${QT_CMAKE_DIR}/Qt5Gui")
@@ -602,8 +611,19 @@ if (TEXMACS_GUI MATCHES "Qt.*")
       set (Qt5WindowsUIAutomationSupport_DIR "${QT_CMAKE_DIR}/Qt5WindowsUIAutomationSupport")
       set (Qt5PrintSupport_DIR "${QT_CMAKE_DIR}/Qt5PrintSupport")
     endif ()
-    find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport Svg REQUIRED)
-    set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport Qt5::Svg)
+
+    if (APPLE)
+      find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport Svg MacExtras REQUIRED)
+    else (APPLE)
+      find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport Svg REQUIRED)
+    endif ()
+
+    if (APPLE)
+      set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport Qt5::Svg Qt5::MacExtras)
+    else (APPLE)
+      set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport Qt5::Svg)
+    endif (APPLE)
+
     set (TeXmacs_Include_Dirs
       ${TeXmacs_Include_Dirs}
       ${Qt5Core_INCLUDE_DIRS}
@@ -611,10 +631,13 @@ if (TEXMACS_GUI MATCHES "Qt.*")
       ${Qt5Widgets_INCLUDE_DIRS}
       ${Qt5PrintSupport_INCLUDE_DIRS}
       ${Qt5Svg_INCLUDE_DIRS}
+      ${Qt5MacExtras_INCLUDE_DIRS}
     )
+
     if (Qt5_POSITION_INDEPENDENT_CODE)
       set (CMAKE_POSITION_INDEPENDENT_CODE ON)
     endif (Qt5_POSITION_INDEPENDENT_CODE)
+
     if (APPLE)
       add_definitions ("-DQ_WS_MAC")
     endif (APPLE)

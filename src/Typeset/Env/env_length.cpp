@@ -481,13 +481,28 @@ edit_env_rep::exec_pag_length () {
 }
 
 tree edit_env_rep::exec_tmpt_length () {
-  return tree (TMLEN, "1"); }
+  return tree (TMLEN, "1");
+}
+
 tree edit_env_rep::exec_px_length () {
-#ifdef OS_MINGW
+#ifndef OS_MACOS
   return tree (TMLEN, as_string ((int) (retina_zoom * pixel)));
 #else
   return tree (TMLEN, as_string (pixel));
 #endif
+}
+
+tree edit_env_rep::exec_guipx_length () {
+  double scale;
+  if (retina_zoom == 1) scale= retina_scale;
+  else if (tm_style_sheet == "") scale= 2.0;
+  else scale= 1.5 * retina_scale;
+#ifndef OS_MACOS
+  if (retina_zoom == 1) scale= retina_scale;
+  else if (tm_style_sheet == "") scale= 2.6666;
+  else scale= 1.8 * retina_scale;
+#endif
+  return tree (TMLEN, as_string ((int) floor (scale * pixel + 0.5)));
 }
 
 tree edit_env_rep::exec_lcorner_length () {

@@ -25,7 +25,7 @@ public:
   box       subbox (int i);
   void      display (renderer ren);  
   operator  tree ();
-  tree      action (tree t, SI x, SI y, SI delta);
+  tree      message (tree t, SI x, SI y, rectangles& rs);
   void      loci (SI x, SI y, SI delta, list<string>& ids, rectangles& rs);
   void      collect_page_numbers (hashmap<string,tree>& h, tree page);
   path      find_tag (string name);

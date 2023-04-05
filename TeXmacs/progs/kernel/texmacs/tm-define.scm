@@ -112,11 +112,11 @@
 
 (define (define-option-match opt decl)
   (cond ((predicate-option? opt) (ctx-add-condition! 3 opt))
-	((and (pair? opt) (null? (cdr opt))
-	      (predicate-option? (car opt))
-	      (list? (cadr decl)) (= (length (cadr decl)) 3))
-	 (ctx-add-condition! 3 (car opt)))
-	(else (ctx-add-condition! 3 `(lambda args (match? args ',opt)))))
+        ((and (pair? opt) (null? (cdr opt))
+              (predicate-option? (car opt))
+              (list? (cadr decl)) (= (length (cadr decl)) 3))
+         (ctx-add-condition! 3 (car opt)))
+        (else (ctx-add-condition! 3 `(lambda args (match? args ',opt)))))
   decl)
 
 (define (define-option-require opt decl)
@@ -130,9 +130,9 @@
     ;;(define-option-require opt decl)
     decl))
 
-(hash-set! define-option-table :mode define-option-mode)
-(hash-set! define-option-table :require define-option-require)
-(hash-set! define-option-table :applicable define-option-applicable)
+(ahash-set! define-option-table :mode define-option-mode)
+(ahash-set! define-option-table :require define-option-require)
+(ahash-set! define-option-table :applicable define-option-applicable)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Properties of overloaded functions
@@ -141,15 +141,15 @@
 (define (filter-conds l)
   "Remove conditions which depend on arguments from list"
   (cond ((null? l) l)
-	((>= (car l) 2) (filter-conds (cddr l)))
-	(else (cons (car l) (cons (cadr l) (filter-conds (cddr l)))))))
+        ((>= (car l) 2) (filter-conds (cddr l)))
+        (else (cons (car l) (cons (cadr l) (filter-conds (cddr l)))))))
 
 (define-public (property-set! var prop what conds*)
   "Associate a property to a function symbol under conditions"
   (let* ((key (cons var prop))
-	 (conds (filter-conds conds*)))
+         (conds (filter-conds conds*)))
     (ahash-set! cur-props-table key
-		(ctx-insert (ahash-ref cur-props-table key) what conds))))
+                (ctx-insert (ahash-ref cur-props-table key) what conds))))
 
 (define-public (property var prop)
   "Retrieve a property of a function symbol"
@@ -170,42 +170,42 @@
 
 (define (compute-arguments decl)
   (cond ((pair? (cadr decl)) (cdadr decl))
-	((and (pair? (caddr decl)) (== (caaddr decl) 'lambda))
-	 (cadr (caddr decl)))
-	(else
-	 (texmacs-error "compute-arguments" "Bad argument documentation"))))
+        ((and (pair? (caddr decl)) (== (caaddr decl) 'lambda))
+         (cadr (caddr decl)))
+        (else
+         (texmacs-error "compute-arguments" "Bad argument documentation"))))
 
 (define (define-option-argument opt decl)
   (let* ((var (ca*adr decl))
-	 (args (compute-arguments decl))
-	 (arg (list :argument (car opt))))
+         (args (compute-arguments decl))
+         (arg (list :argument (car opt))))
     (set! cur-props (cons `(',var :arguments ',args) cur-props))
     (set! cur-props (cons `(',var ',arg ',(cdr opt)) cur-props))
     decl))
 
 (define (define-option-default opt decl)
   (let* ((var (ca*adr decl))
-	 (arg (list :default (car opt))))
+         (arg (list :default (car opt))))
     (set! cur-props (cons `(',var ',arg (lambda () ,@(cdr opt))) cur-props))
     decl))
 
 (define (define-option-proposals opt decl)
   (let* ((var (ca*adr decl))
-	 (arg (list :proposals (car opt))))
+         (arg (list :proposals (car opt))))
     (set! cur-props (cons `(',var ',arg (lambda () ,@(cdr opt))) cur-props))
     decl))
 
-(hash-set! define-option-table :type (define-property :type))
-(hash-set! define-option-table :synopsis (define-property :synopsis))
-(hash-set! define-option-table :returns (define-property :returns))
-(hash-set! define-option-table :note (define-property :note))
-(hash-set! define-option-table :argument define-option-argument)
-(hash-set! define-option-table :default define-option-default)
-(hash-set! define-option-table :proposals define-option-proposals)
-(hash-set! define-option-table :secure (define-property* :secure))
-(hash-set! define-option-table :check-mark (define-property* :check-mark))
-(hash-set! define-option-table :interactive (define-property* :interactive))
-(hash-set! define-option-table :balloon (define-property* :balloon))
+(ahash-set! define-option-table :type (define-property :type))
+(ahash-set! define-option-table :synopsis (define-property :synopsis))
+(ahash-set! define-option-table :returns (define-property :returns))
+(ahash-set! define-option-table :note (define-property :note))
+(ahash-set! define-option-table :argument define-option-argument)
+(ahash-set! define-option-table :default define-option-default)
+(ahash-set! define-option-table :proposals define-option-proposals)
+(ahash-set! define-option-table :secure (define-property* :secure))
+(ahash-set! define-option-table :check-mark (define-property* :check-mark))
+(ahash-set! define-option-table :interactive (define-property* :interactive))
+(ahash-set! define-option-table :balloon (define-property* :balloon))
 
 (define-public (procedure-sources about)
   (or (and (procedure? about)
@@ -216,10 +216,10 @@
 (define-public (help about)
   ;; very provisional
   (cond ((property about :synopsis)
-	 (property about :synopsis))
-	((procedure-documentation about)
-	 (procedure-documentation about))
-	(else #f)))
+         (property about :synopsis))
+        ((procedure-documentation about)
+         (procedure-documentation about))
+        (else #f)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Overloaded functions with properties
@@ -280,9 +280,9 @@
 (define-public (tm-define-sub head body)
   (if (and (pair? (car body)) (keyword? (caar body)))
       (let ((decl (tm-define-sub head (cdr body))))
-	(if (not (hash-ref define-option-table (caar body)))
-	    (texmacs-error "tm-define-sub" "unknown option ~S" (caar body)))
-	((hash-ref define-option-table (caar body)) (cdar body) decl))
+        (if (not (ahash-ref define-option-table (caar body)))
+            (texmacs-error "tm-define-sub" "unknown option ~S" (caar body)))
+        ((ahash-ref define-option-table (caar body)) (cdar body) decl))
       (cons 'tm-define-overloaded (cons head body))))
 
 (define-public-macro (tm-define head . body)
@@ -323,7 +323,7 @@
   (if (null? body)
       (cons 'tm-property-overloaded (cons head body))
       (let ((decl (tm-property-sub head (cdr body))))
-	((hash-ref define-option-table (caar body)) (cdar body) decl))))
+        ((ahash-ref define-option-table (caar body)) (cdar body) decl))))
 
 (define-public-macro (tm-property head . body)
   (set! cur-conds '())
@@ -368,6 +368,6 @@
 (define-public (lazy-define-force name)
   (if (procedure? name) (set! name (procedure-name name)))
   (let* ((im (ahash-ref lazy-define-table name))
-	 (modules (if im im '())))
+         (modules (if im im '())))
     (ahash-remove! lazy-define-table name)
     (for-each module-load modules)))

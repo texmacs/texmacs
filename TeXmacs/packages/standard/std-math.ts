@@ -253,6 +253,8 @@
 
   <assign|bmatrix|<macro|x|<math-table-base|<style-with|src-compact|none|<left|[><tformat|<cwith|1|-1|1|-1|cell-halign|c>|<cwith|1|-1|1|-1|cell-swell|<value|table-math-swell>>|<arg|x>><right|]>>>>>
 
+  <assign|Bmatrix|<macro|x|<math-table-base|<style-with|src-compact|none|<left|{><tformat|<cwith|1|-1|1|-1|cell-halign|c>|<cwith|1|-1|1|-1|cell-swell|<value|table-math-swell>>|<arg|x>><right|}>>>>>
+
   <assign|det|<macro|x|<math-table-base|<style-with|src-compact|none|<left|\|><tformat|<cwith|1|-1|1|-1|cell-halign|c>|<cwith|1|-1|1|-1|cell-swell|<value|table-math-swell>>|<arg|x>><right|\|>>>>>
 
   <assign|choice|<macro|x|<math-table-base|<style-with|src-compact|none|<left|{><tformat|<cwith|1|-1|1|-1|cell-swell|<value|table-math-swell>>|<arg|x>><right|.>>>>>

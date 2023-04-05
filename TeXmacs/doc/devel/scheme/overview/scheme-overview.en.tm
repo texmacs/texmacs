@@ -1,52 +1,53 @@
-<TeXmacs|1.0.5.2>
+<TeXmacs|2.1.2>
 
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Overview of the <value|scheme> extension language>
+  <tmdoc-title|Overview of the <scheme> extension language>
 
   One major characteristic of <TeXmacs> is the possibility to extend the
-  editor using the <name|Guile>-<value|scheme> <em|extension language>. Such
+  editor using the <name|Guile>-<scheme> <em|extension language>. Such
   extensions can be simple, like a personal boot file containing frequently
   used keyboard shortcuts, or more complex, like a plug-in with special
-  editing routines for a particular type of documents. The <value|scheme>
-  language can also be used interactively from within the editor or invoked
-  by special markup like ``actions''.
+  editing routines for a particular type of documents. The <scheme> language
+  can also be used interactively from within the editor or invoked by special
+  markup like \Pactions\Q.
 
-  In this chapter, we give an overview of why and how to use <value|scheme>
-  from within <TeXmacs>. The first sections provide sufficient information
-  for someone who wants to program some basic customization of the keyboard
-  and menus. The latter sections give an introduction to the general
-  architecture of the <value|scheme> API and some important features and
-  particularities of way <value|scheme> is used within <TeXmacs>. The reading
-  of the overview is highly recommended to anyone who wants to make
-  non-trivial use of <value|scheme> inside <TeXmacs>.
+  In this chapter, we give an overview of why and how to use <scheme> from
+  within <TeXmacs>. The first sections provide sufficient information for
+  someone who wants to program some basic customization of the keyboard and
+  menus. The latter sections give an introduction to the general architecture
+  of the <scheme> API and some important features and particularities of way
+  <scheme> is used within <TeXmacs>. The reading of the overview is highly
+  recommended to anyone who wants to make non-trivial use of <scheme> inside
+  <TeXmacs>.
 
-  More complete documentation about the <value|scheme> modules provided by
+  More complete documentation about the <scheme> modules provided by
   <TeXmacs> is available from the <menu|Help|Scheme extensions> menu. We also
-  recommend the following on-line manuals about <value|scheme> and its
-  <name|Guile> implementation:
+  recommend the following on-line manuals about <scheme> and its <name|Guile>
+  implementation:
 
   <\itemize-minus>
-    <item><hlink|The <value|scheme> programming
+    <item><hlink|The <scheme> programming
     language|http://www.scheme.com/tspl2d/index.html>.
 
-    <item><hlink|Guile reference manual|http://latakia.dyndns.org/~ruhl/guile-doc/guile_toc.html>.
+    <item><hlink|Guile reference manual|https://www.gnu.org/software/guile/manual/>.
   </itemize-minus>
 
-  For further information about <value|scheme>, we refer to
-  <hlink|<verbatim|http://www.schemers.org>|http://www.schemers.org>. As a
+  For further information about <scheme>, we refer to
+  <hlink|<verbatim|www.schemers.org>|http://www.schemers.org> or
+  <hlink|community.schemewiki.org|http://community.schemewiki.org/>. As a
   general rule, we also encourage users to take a look at the <TeXmacs>
-  source code for concrete examples on how to use <value|scheme> from within
+  source code for concrete examples on how to use <scheme> from within
   <TeXmacs>.
 
   <\traverse>
-    <branch|Why <TeXmacs> uses <value|scheme> as its extension
+    <branch|Why <TeXmacs> uses <scheme> as its extension
     language|overview-why.en.tm>
 
-    <branch|When and how to use <value|scheme>|overview-start.en.tm>
+    <branch|When and how to use <scheme>|overview-start.en.tm>
 
-    <branch|General architecture of the <value|scheme>
+    <branch|General architecture of the <scheme>
     API|overview-architecture.en.tm>
 
     <branch|The module system and lazy definitions|overview-lazyness.en.tm>
@@ -70,8 +71,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

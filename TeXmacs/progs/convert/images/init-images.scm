@@ -191,6 +191,10 @@
 (converter pdf-file svg-file
   (:require (url-exists-in-path? "pdf2svg"))
   (:shell "pdf2svg" from to))
+
+(converter svg-file postscript-document
+  (:require (qt5-or-later-gui?))
+  (:function image->psdoc))
  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Bitmap image formats

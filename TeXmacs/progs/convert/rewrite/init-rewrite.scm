@@ -76,7 +76,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-format code
-  (:name "Source Code"))
+  (:name "Source code"))
 
 (tm-define (texmacs->code t . enc)
   (if (null? enc) (set! enc (list (get-locale-charset))))
@@ -89,6 +89,15 @@
 
 (tm-define (code-snippet->texmacs x . opts)
   (verbatim-snippet->texmacs x (acons "verbatim->texmacs:encoding" "SourceCode" '())))
+
+(converter texmacs-tree code-document
+  (:function texmacs->code))
+
+(converter code-document texmacs-tree
+  (:function code->texmacs))
+  
+(converter texmacs-tree code-snippet
+  (:function texmacs->code))
 
 (converter code-snippet texmacs-tree
   (:function code-snippet->texmacs))

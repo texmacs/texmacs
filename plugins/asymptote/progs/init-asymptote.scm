@@ -26,6 +26,7 @@
                      "/plugins/tmpy/session/tm_asy.py\"")))
 
 (plugin-configure asymptote
+  (:winpath "Asymptote" ".")
   (:require (url-exists-in-path? "asy"))
   (:require (python-command))
   (:launch ,(asy-launcher))

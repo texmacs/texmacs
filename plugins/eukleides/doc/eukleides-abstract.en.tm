@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.11>
+<TeXmacs|2.1>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|The <name|Eukleides> system>
@@ -10,7 +10,7 @@
   language of elementary Euclidean geometry. In many cases, it makes possible
   to completely avoid the use of Cartesian coordinates.
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2021|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -22,7 +22,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|english>
     <associate|preamble|false>
   </collection>
 </initial>

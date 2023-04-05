@@ -517,6 +517,9 @@ concater_rep::typeset (tree t, path ip) {
   case CASE:
     typeset_case (t, ip);
     break;
+  case DYNAMIC_CASE:
+    typeset_dynamic_case (t, ip);
+    break;
   case WHILE:
   case FOR_EACH:
     typeset_executable (t, ip);
@@ -616,6 +619,7 @@ concater_rep::typeset (tree t, path ip) {
   case GU_LENGTH:
   case TMPT_LENGTH:
   case PX_LENGTH:
+  case GUIPX_LENGTH:
   case LCORNER_LENGTH:
   case BCORNER_LENGTH:
   case RCORNER_LENGTH:
@@ -808,6 +812,10 @@ concater_rep::typeset (tree t, path ip) {
   case SMOOTH:
   case CSMOOTH:
     typeset_bezier (t, ip);
+    break;
+  case PENSCRIPT:
+  case CALLIGRAPHY:
+    typeset_calligraphy (t, ip);
     break;
   case FILL:
     typeset_fill (t, ip);

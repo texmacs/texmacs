@@ -22,7 +22,7 @@
   (map (lambda (x)
          (string-replace (string-replace x ", lisp" "") "version " ""))
    (filter (lambda (x) (string-starts? x "version "))
-     (string-split (var-eval-system "maxima --list-avail") #\nl))))
+     (string-split (var-eval-system "maxima --list-avail") #\newline))))
 
 (define (maxima-launchers) ;; returns list of launchers for each version
   (if (os-mingw?)

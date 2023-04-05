@@ -731,7 +731,7 @@ void
 locus_box_rep::loci (SI x, SI y, SI delta, list<string>& l, rectangles& rs) {
   bs[0]->loci (x, y, delta, l, rs);
   l = l * ids;
-  rs= rs * outline (rectangles (rectangle (x1, y1, x2, y2)), pixel);
+  rs= rs * outlines (rectangles (rectangle (x1, y1, x2, y2)), pixel);
 }
 
 void
@@ -819,9 +819,11 @@ note_box_rep::note_box_rep (path ip, box b, box note, SI nx, SI ny):
 ******************************************************************************/
 
 struct text_at_box_rep: public move_box_rep {
+  SI hx;
+  SI hy;
   SI axis;
   SI pad;
-  text_at_box_rep (path ip, box b, SI x, SI y, SI axis, SI pad);
+  text_at_box_rep (path ip, box b, SI x, SI y, SI hx, SI hy, SI axis, SI pad);
   gr_selections graphical_select (SI x, SI y, SI dist);
   operator tree () { return tree (TUPLE, "text-at", (tree) bs[0]); }
   /*
@@ -835,8 +837,10 @@ struct text_at_box_rep: public move_box_rep {
   */
 };
 
-text_at_box_rep::text_at_box_rep (path ip, box b, SI x, SI y, SI a2, SI p2):
-  move_box_rep (ip, b, x, y, false, false), axis (a2), pad (p2) {}
+text_at_box_rep::text_at_box_rep (path ip, box b, SI x, SI y,
+                                  SI hx2, SI hy2, SI a2, SI p2):
+  move_box_rep (ip, b, x, y, false, false),
+  hx (hx2), hy (hy2), axis (a2), pad (p2) {}
 
 gr_selections
 text_at_box_rep::graphical_select (SI x, SI y, SI dist) {
@@ -859,11 +863,12 @@ text_at_box_rep::graphical_select (SI x, SI y, SI dist) {
 
   gr_selections res;
   point p= point (x, y);
-  if (norm (p - point (sx(0), sy(0))) <= dist) {
+  point h= point (sx(0) + hx, sy(0) + hy);
+  if (norm (p - h) <= dist) {
     gr_selection gs;
     gs->type= "text-handle";
-    gs->dist= (SI) norm (p - point (sx(0), sy(0)));
-    gs->p= point (sx(0), sy(0));
+    gs->dist= (SI) norm (p - h);
+    gs->p= h;
     gs->cp << reverse (path (0, path (1, ip)));
     gs->pts << gs->p;
     gs->c= curve ();
@@ -872,7 +877,7 @@ text_at_box_rep::graphical_select (SI x, SI y, SI dist) {
   else if (graphical_distance (x, y) == 0) {
     gr_selection gs;
     gs->type= "text";
-    gs->dist= graphical_distance (x, y);
+    gs->dist= graphical_distance (x, y) + dist;
     gs->p= p;
     gs->cp << box_rep::find_tree_path (x, y, dist);
     gs->pts << gs->p;
@@ -1002,6 +1007,6 @@ note_box (path ip, box b, box note, SI nx, SI ny) {
 }
 
 box
-text_at_box (path ip, box b, SI x, SI y, SI axis, SI pad) {
-  return tm_new<text_at_box_rep> (ip, b, x, y, axis, pad);
+text_at_box (path ip, box b, SI x, SI y, SI hx, SI hy, SI axis, SI pad) {
+  return tm_new<text_at_box_rep> (ip, b, x, y, hx, hy, axis, pad);
 }

@@ -15,8 +15,8 @@
     instance, the formulas might contain some text or meaningful whitespace.
     Another example of an <em|ad hoc> notation is the sign sequence
     <math|++-+-+>. In such cases, the user should <hlink|explicitly
-    annotate|man-semantic-annotation.en.tm> the appropriate parts of the
-    formula in order to make them semantically meaningful.
+    annotate|man-semantics.en.tm> the appropriate parts of the formula in
+    order to make them semantically meaningful.
 
     <item>The <TeXmacs> grammar used for the interpretation of mathematical
     formulas may be incomplete or inadequate for certain situations. It is

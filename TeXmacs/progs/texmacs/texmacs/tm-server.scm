@@ -35,6 +35,10 @@
   (set-message "Restart in order to let the new look and feel take effect"
                "configure look and feel"))
 
+(define (notify-gui-theme var val)
+  (set-message "Restart in order to let the new theme take effect"
+               "graphical interface theme"))
+
 (define (notify-language var val)
   (set-output-language val)
   (if (and (current-view) (== (buffer-tree) (stree->tree '(document ""))))
@@ -73,6 +77,9 @@
 (define (notify-new-page-breaking var val)
   (noop))
 
+(define (get-default-native-menubar)
+  (if (qt4-gui?) "on" "off"))
+
 (define (get-default-unified-toolbar)
   (if (qt4-gui?) "on" "off"))
 
@@ -85,6 +92,7 @@
   ("complex actions" "popups" noop)
   ("interactive questions" (get-default-interactive-questions) noop)
   ("language" (get-locale-language) notify-language)
+  ("gui theme" "default" notify-gui-theme)
   ("page medium" "paper" (lambda args (noop)))
   ("fast environments" "on" notify-fast-environments)
   ("show full context" "on" (lambda args (noop)))
@@ -121,6 +129,7 @@
   ("open console on errors" "on" noop)
   ("open console on warnings" "on" noop)
   ("gui:line-input:autocommit" "on" noop)
+  ("use native menubar" (get-default-native-menubar) noop)
   ("use unified toolbar" (get-default-unified-toolbar) noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

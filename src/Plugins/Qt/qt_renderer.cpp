@@ -52,18 +52,18 @@ CONCRETE_NULL_CODE(qt_image);
  ******************************************************************************/
 
 struct qt_pixmap_rep: concrete_struct {
-  QPixmap *img;
+  QTMPixmapOrImage img;
   SI xo,yo;
   int w,h;
-  qt_pixmap_rep (QPixmap* img2, SI xo2, SI yo2, int w2, int h2):
+  qt_pixmap_rep (QTMPixmapOrImage img2, SI xo2, SI yo2, int w2, int h2):
     img (img2), xo (xo2), yo (yo2), w (w2), h (h2) {};
-  ~qt_pixmap_rep()  { delete img; };
+  ~qt_pixmap_rep()  {};
   friend class qt_pixmap;
 };
 
 class qt_pixmap {
 CONCRETE_NULL(qt_pixmap);
-  qt_pixmap (QPixmap* img2, SI xo2, SI yo2, int w2, int h2):
+  qt_pixmap (QTMPixmapOrImage img2, SI xo2, SI yo2, int w2, int h2):
     rep (tm_new<qt_pixmap_rep> (img2, xo2, yo2, w2, h2)) {};
   // qt_pixmap ();
 };
@@ -107,11 +107,16 @@ qt_renderer_rep::get_handle () {
 void
 qt_renderer_rep::begin (void* handle) {
   QPaintDevice *device = static_cast<QPaintDevice*>(handle);
-  if (!painter->begin (device) && DEBUG_QT)
-    debug_qt << "qt_renderer_rep::begin(): uninitialized QPixmap of size "
-             << ((QPixmap*)handle)->width() << " x "
-             << ((QPixmap*)handle)->height() << LF;
-    
+  if (!painter->begin (device) && DEBUG_QT) {
+    if (headless_mode)
+      debug_qt << "qt_renderer_rep::begin(): uninitialized QImage of size "
+	       << ((QImage*) handle)->width() << " x "
+	       << ((QImage*) handle)->height() << LF;
+    else
+      debug_qt << "qt_renderer_rep::begin(): uninitialized QPixmap of size "
+	       << ((QPixmap*) handle)->width() << " x "
+	       << ((QPixmap*) handle)->height() << LF;
+  }
   w = painter->device()->width();
   h = painter->device()->height();
 }
@@ -449,12 +454,16 @@ qt_renderer_rep::draw_clipped (QImage *im, int w, int h, SI x, SI y) {
 }
 
 void
-qt_renderer_rep::draw_clipped (QPixmap *im, int w, int h, SI x, SI y) {
+qt_renderer_rep::draw_clipped (QTMPixmapOrImage *im, int w, int h, SI x, SI y) {
+  if (headless_mode) {
+    draw_clipped (im->QImage_ptr (), w, h, x, y);
+    return;
+  }
   decode (x , y );
   y--; // top-left origin to bottom-left origin conversion
   // clear(x1,y1,x2,y2);
   painter->setRenderHints (0);
-  painter->drawPixmap (x, y, w, h, *im);
+  painter->drawPixmap (x, y, w, h, *(im->QPixmap_ptr ()));
 }
 
 void
@@ -521,13 +530,13 @@ qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     glyph gl= shrink (pre_gl, std_shrinkf, std_shrinkf, xo, yo);
     int i, j, w= gl->width, h= gl->height;
 #ifdef QTMPIXMAPS
-    QTMImage *im = new QPixmap(w,h);
-    {
+    QTMPixmapOrImage* im= new QTMPixmapOrImage (w, h);
+    if (!headless_mode) {
       int nr_cols= std_shrinkf*std_shrinkf;
       if (nr_cols >= 64) nr_cols= 64;
 
       im->fill (Qt::transparent);
-      QPainter pp(im);
+      QPainter pp(im->QPixmap_ptr ());
       QPen pen(painter->pen());
       QBrush br(pen.color());
       pp.setPen(Qt::NoPen);
@@ -538,6 +547,17 @@ qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
           pp.fillRect (i, j, 1, 1, br);
         }
       pp.end();
+    }
+    else {
+      QImage* aux= im->QImage_ptr ();
+      int nr_cols= std_shrinkf*std_shrinkf;
+      if (nr_cols >= 64) nr_cols= 64;
+      im->fill (Qt::transparent);
+      for (j=0; j<h; j++)
+        for (i=0; i<w; i++) {
+          int col = gl->get_x (i, j);
+          aux->setPixel (i, j, qRgba (r, g, b, (a*col)/nr_cols));
+        }
     }
 #else
     QTMImage *im= new QImage (w, h, QImage::Format_ARGB32);
@@ -709,7 +729,10 @@ qt_renderer_rep::put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
     //    cout << "qt_shadow_renderer_rep::put_shadow " 
     //         << rectangle(x1,y2,x2,y1) << LF;
     //    painter->setCompositionMode(QPainter::CompositionMode_Source);
-    painter->drawPixmap (rect, shadow->px, rect);
+    if (headless_mode)
+      painter->drawImage (rect, *(shadow->px.QImage_ptr ()), rect);
+    else
+      painter->drawPixmap (rect, *(shadow->px.QPixmap_ptr ()), rect);
     //  XCopyArea (dpy, shadow->win, win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
   }
 }
@@ -746,12 +769,11 @@ qt_proxy_renderer_rep::new_shadow (renderer& ren) {
       static_cast<qt_shadow_renderer_rep*>(ren)->end();
     // cout << "Old: " << sw << ", " << sh << "\n";
   }
-  if (ren == NULL)  
-    ren= (renderer) tm_new<qt_shadow_renderer_rep> (QPixmap (mw, mh));
-  
+  if (ren == NULL)
+    ren= (renderer) tm_new<qt_shadow_renderer_rep> (QTMPixmapOrImage (mw, mh));
   // cout << "Create " << mw << ", " << mh << "\n";
   static_cast<qt_shadow_renderer_rep*>(ren)->begin(
-          &(static_cast<qt_shadow_renderer_rep*>(ren)->px));
+          static_cast<qt_shadow_renderer_rep*>(ren)->px.rep);
 }
 
 void 
@@ -780,9 +802,14 @@ qt_proxy_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
     shadow->painter->setClipRect(rect);
 
     //    shadow->painter->setCompositionMode(QPainter::CompositionMode_Source);
-    QPixmap *_pixmap = static_cast<QPixmap*>(painter->device()); 
-    if (_pixmap) {
-      shadow->painter->drawPixmap (rect, *_pixmap, rect);
+    if (headless_mode) {
+      QImage *_image = static_cast<QImage*>(painter->device());
+      if (_image)
+	shadow->painter->drawImage (rect, *_image, rect);
+    } else {
+      QPixmap *_pixmap = static_cast<QPixmap*>(painter->device()); 
+      if (_pixmap)
+	shadow->painter->drawPixmap (rect, *_pixmap, rect);
     }
     //    cout << "qt_shadow_renderer_rep::get_shadow " 
     //         << rectangle(x1,y2,x2,y1) << LF;
@@ -798,7 +825,7 @@ qt_proxy_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
  * shadow qt renderer
  ******************************************************************************/
 
-qt_shadow_renderer_rep::qt_shadow_renderer_rep (QPixmap _px) 
+qt_shadow_renderer_rep::qt_shadow_renderer_rep (QTMPixmapOrImage _px) 
 // : qt_renderer_rep (_px.width(),_px.height()), px(_px) 
 : qt_renderer_rep (new QPainter()), px(_px) 
 { 
@@ -837,8 +864,11 @@ qt_shadow_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
     QRect rect = QRect(x1, y2, x2-x1, y1-y2);
     shadow->painter->setClipRect(rect);
 
-//    shadow->painter->setCompositionMode(QPainter::CompositionMode_Source);   
-    shadow->painter->drawPixmap (rect, px, rect);
+//    shadow->painter->setCompositionMode(QPainter::CompositionMode_Source);
+    if (headless_mode)
+      shadow->painter->drawImage (rect, *(px.QImage_ptr ()), rect);
+    else
+      shadow->painter->drawPixmap (rect, *(px.QPixmap_ptr ()), rect);
 //    cout << "qt_shadow_renderer_rep::get_shadow " 
 //         << rectangle(x1,y2,x2,y1) << LF;
 //  XCopyArea (dpy, win, shadow->win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
