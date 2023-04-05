@@ -1,3 +1,4 @@
+
 /******************************************************************************
 * MODULE     : font_test.cpp
 * DESCRIPTION: tests on font
@@ -8,11 +9,21 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "gtest/gtest.h"
+#include <QtTest/QtTest>
 #include "font.hpp"
 
-TEST(font, default_chinese_font_name) {
+class TestFont: public QObject {
+  Q_OBJECT
+
+private slots:
+  void test_default_chinese_font_name();
+};
+
+void TestFont::test_default_chinese_font_name() {
 #ifdef OS_MACOS
-  ASSERT_TRUE (default_chinese_font_name () == string ("Songti SC"));
+  QCOMPARE (default_chinese_font_name (), string ("Songti SC"));
 #endif
 }
+
+QTEST_MAIN(TestFont)
+#include "font_test.moc"

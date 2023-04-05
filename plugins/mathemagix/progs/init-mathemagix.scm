@@ -15,7 +15,7 @@
   (with u (pre-serialize lan t)
     (with v (texmacs->code u)
       (with w (string-replace v "\n" "/{CR}/")
-	(string-append (escape-verbatim w) "\n")))))
+        (string-append (escape-verbatim w) "\n")))))
 
 (plugin-configure mathemagix
   (:winpath "mathemagix*" "bin")
@@ -34,7 +34,7 @@
 
 (lazy-keyboard (mathemagix-edit) in-prog-mathemagix?)
 
-(when (supports-mathemagix?)
+(tm-cond-expand (supports-mathemagix?)
   (import-from (mathemagix-menus))
   (lazy-input-converter (mathemagix-input) mathemagix)
   (lazy-keyboard (mathemagix-kbd) in-mathemagix?)

@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (utils automate auto-tmfs)
-  (:use (utils automate auto-build)))
+  (:use (utils automate auto-build)
+        (doc tmdoc)))
 
 (tmfs-title-handler (automate name doc)
   (let* ((question (tmfs-car name))
@@ -35,9 +36,10 @@
     (with-global auto-safe-mode? safe?
       (apply build-document (cons doc bindings)))))
 
+;;FIXME: 'bindings is not defined
 (tmfs-load-handler (automate name)
   (let* ((q* (tmfs-car name))
-	 (q (query-escape q*))
+         (q (query-escape q*))
          (bs (query->assoc q))
          (file-name (tmfs-cdr name))
          (u (tmfs-string->url file-name))

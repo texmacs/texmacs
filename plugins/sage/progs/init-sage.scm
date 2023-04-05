@@ -30,20 +30,61 @@
     (with s (texmacs->code (stree->tree u) "SourceCode")
       (string-append  s  "\n<EOF>\n"))))
 
-(define (sage-launchers)
+(define (sage-entry)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
-      `((:launch ,(string-append "sage -python "
-                                 (getenv "TEXMACS_HOME_PATH")
-                                 "/plugins/tmpy/session/tm_sage.py")))
-      `((:launch ,(string-append "sage -python "
-                                 (getenv "TEXMACS_PATH")
-                                 "/plugins/tmpy/session/tm_sage.py")))))
+      (system-url->string "$TEXMACS_HOME_PATH/plugins/tmpy/session/tm_sage.py")
+      (system-url->string "$TEXMACS_PATH/plugins/tmpy/session/tm_sage.py")))
+
+(define (texmacs-cygwin-path)
+  (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
+      (string-replace
+       (string-replace
+        (string-replace
+         (string-replace
+          (string-replace (getenv "TEXMACS_HOME_PATH")
+           "C:" "/cygdrive/c")
+          "\\" "/")
+         " " "\\ ")
+        "(" "\\(")
+       ")" "\\)")
+      (string-replace
+       (string-replace
+        (string-replace
+         (string-replace
+          (string-replace (getenv "TEXMACS_PATH")
+           "C:" "/cygdrive/c")
+          "\\" "/")
+         " " "\\ ")
+        "(" "\\(")
+       ")" "\\)")))
+
+;; TODO: what if there are two different versions of SageMath
+(define (sagemath-win-app-url)
+  (url-or (url-resolve "C:/Program Files/SageMath*" "r")
+          (url-resolve "C:/Program Files (x86)/SageMath*" "r")))
+
+(define (sagemath-bash)
+  (string-append (url->system (sagemath-win-app-url)) "\\runtime\\bin\\bash.exe"))
+
+(define (sage-version)
+  (string-replace
+   (url->system (url-tail (sagemath-win-app-url)))
+   "SageMath "
+   ""))
+
+(define (sage-launchers)
+  (if (os-mingw?)
+      `((:launch ,(string-append (raw-quote (sagemath-bash)) " --login -c '/opt/sagemath-" (sage-version) "/sage -python " (texmacs-cygwin-path)  "/plugins/tmpy/session/tm_sage.py'")))
+      `((:launch ,(string-append "sage -python " (sage-entry))))))
+
+(define (sage-require)
+  (if (os-mingw?)
+    (url-exists? (sagemath-win-app-url))
+    (url-exists-in-path? "sage")))
 
 (plugin-configure sage
-  (:winpath "Sage*" "bin")
-  (:winpath "Sage*/runtime" "bin")
   (:macpath "Sage*" "Contents/Resources/sage")
-  (:require (url-exists-in-path? "sage"))
+  (:require (sage-require))
   ,@(sage-launchers)
   (:tab-completion #t)
   (:serializer ,sage-serialize)
@@ -53,5 +94,5 @@
 ;(set-session-multiline-input "sage" "default" #t)
 ;(set-program-multiline-input "sage" "default" #t)
 
-(when (supports-sage?)
+(tm-cond-expand (supports-sage?)
   (lazy-input-converter (sage-input) sage))

@@ -298,16 +298,17 @@
       (vlist
         (refreshable "pattern-sample"
           (resize "600px" "450px"
-            (texmacs-output `(document
-                               (block
-                                (tformat
-                                 (cwith "1" "1" "1" "1" "cell-width" "590px")
-                                 (cwith "1" "1" "1" "1" "cell-height" "440px")
-                                 (cwith "1" "1" "1" "1" "cell-vmode" "exact")
-                                 (cwith "1" "1" "1" "1" "cell-background"
-                                        ,(get-color))
-                                 (table (row (cell ""))))))
-                            `(style (tuple "generic"))))))
+            (texmacs-output
+             `(document
+                (block
+                 (tformat
+                  (cwith "1" "1" "1" "1" "cell-width" "596guipx")
+                  (cwith "1" "1" "1" "1" "cell-height" "446guipx")
+                  (cwith "1" "1" "1" "1" "cell-vmode" "exact")
+                  (cwith "1" "1" "1" "1" "cell-background"
+                         ,(get-color))
+                  (table (row (cell ""))))))
+             `(style (tuple "generic"))))))
       // // //
       (explicit-buttons
         (vlist

@@ -19,11 +19,14 @@
 #include "frame.hpp"
 #include "effect.hpp"
 #include "iterator.hpp"
+#include "language.hpp"
 
 #include <QObject>
 #include <QWidget>
+#include <QPainter>
 #include <QPaintDevice>
 #include <QPixmap>
+#include <QSvgRenderer>
 
 /******************************************************************************
 * Abstract Qt pictures
@@ -50,6 +53,7 @@ void
 qt_picture_rep::internal_set_pixel (int x, int y, color c) {
   pict.setPixel (x, h - 1 - y, c);
 }
+
 
 picture
 qt_picture (const QImage& im, int ox, int oy) {
@@ -157,27 +161,108 @@ picture_renderer (picture p, double zoomf) {
 }
 
 /******************************************************************************
+* Reverse video mode for icons
+******************************************************************************/
+
+void reverse (int& r, int& g, int& b);
+
+int
+max (const QImage& im, bool sum) {
+  int r, g, b, a;
+  int w= im.width (), h= im.height ();
+  int m= 0;
+  for (int y=0; y<h; y++)
+    for (int x=0; x<w; x++) {
+      QRgb col= im.pixel (x, y);
+      r= qRed (col); g= qGreen (col); b= qBlue (col); a= qAlpha (col);
+      if (a >= 128) {
+        if (sum) m= max (m, (r + g + b) / 3);
+        else m= max (m, max (r, max (g, b)));
+      }
+    }
+  return m;
+}
+
+void
+saturate (QImage& im) {
+  int m= max (im, false);
+  int s= max (im, true);
+  if (m == 0 || s >= 224) return;
+  double f= min (224.0 / s, 255.0 / m);
+  quint16 r, g, b, a;
+  int w= im.width (), h= im.height ();
+  for (int y=0; y<h; y++)
+    for (int x=0; x<w; x++) {
+      QRgb col= im.pixel (x, y);
+      r= qRed (col); g= qGreen (col); b= qBlue (col); a= qAlpha (col);
+      r= (int) floor (f * r + 0.5);
+      g= (int) floor (f * g + 0.5);
+      b= (int) floor (f * b + 0.5);
+      im.setPixel (x, y, qRgba (r, g, b, a));      
+    }
+}
+
+void
+invert_colors (QImage& im) {
+  if (im.format () != QImage::Format_ARGB32)
+    im= im.convertToFormat (QImage::Format_ARGB32);
+  int r, g, b, a;
+  int w= im.width (), h= im.height ();
+  for (int y=0; y<h; y++)
+    for (int x=0; x<w; x++) {
+      QRgb col= im.pixel (x, y);
+      r= qRed (col); g= qGreen (col); b= qBlue (col); a= qAlpha (col);
+      reverse (r, g, b);
+      im.setPixel (x, y, qRgba (r, g, b, a));
+    }
+}
+
+bool
+may_transform (url file_name, const QImage& pm) {
+  string name= basename (tail (file_name));
+  array<string> lans= get_supported_languages ();
+  for (int i=0; i<N(lans); i++)
+    if (name == "tm_" * lans[i]) return false;
+  (void) pm;
+  //if (pm.height() == 24) return false;
+  return true;
+}
+
+/******************************************************************************
 * Loading pictures
 ******************************************************************************/
 
 QImage*
 get_image_for_real (url u, int w, int h, tree eff, SI pixel) {
   QImage *pm = NULL;
-  if (qt_supports (u) && !prefer_inkscape (suffix (u)))
+
+  if (suffix (u) == "svg") {
+    QSvgRenderer renderer (utf8_to_qstring (concretize (u)));
+    pm= new QImage (w, h, QImage::Format_ARGB32);
+    pm->fill (Qt::transparent);
+    QPainter painter (pm);
+    renderer.render (&painter);
+  } else if (qt_supports (u)) {
     pm= new QImage (utf8_to_qstring (concretize (u)));
-  else {
+  } else {
     url temp= url_temp (".png");
     image_to_png (u, temp, w, h);
     pm= new QImage (utf8_to_qstring (as_string (temp)));
     remove (temp);
   }
+
+  // Error Handling
   if (pm == NULL || pm->isNull ()) {
       if (pm != NULL) delete pm;
       cout << "TeXmacs] warning: cannot render " << concretize (u) << "\n";
       return NULL;
   }
+
+  // Scaling
   if (pm->width () != w || pm->height () != h)
-    (*pm)= pm->scaled (w, h);
+    (*pm)= pm->scaled (w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+
+  // Build effect
   if (eff != "") {
     effect e= build_effect (eff);
     picture src= qt_picture (*pm, 0, 0);
@@ -225,7 +310,60 @@ load_picture (url u, int w, int h, tree eff, int pixel) {
 }
 
 picture
+new_qt_load_xpm (url file_name) {
+  string sss;
+  double f= 1.0;
+  double scale= max (retina_scale, (double) retina_icons);
+  if (suffix (file_name) == "xpm" || suffix (file_name) == "png") {
+    string suf= ".png";
+    if (scale == 1.0) {}
+    else if (scale == 2.0) suf= "_x2.png";
+    else if (scale == 4.0) suf= "_x4.png";
+    else { suf= "_x4.png"; f= scale / 4.0; }
+    url png_equiv= glue (unglue (file_name, 4), suf);
+    load_string ("$TEXMACS_PIXMAP_PATH" * png_equiv, sss, false);
+  }
+  if (sss == "") {
+    f= scale;
+    load_string ("$TEXMACS_PIXMAP_PATH" * file_name, sss, false);
+  }
+  if (sss == "") {
+    f= scale;
+    load_string ("$TEXMACS_PATH/misc/pixmaps/TeXmacs.xpm", sss, true);
+  }
+  c_string buf (sss);
+  QImage pm;
+  pm.loadFromData ((uchar*) (char*) buf, N(sss));
+  if (occurs ("dark", tm_style_sheet) && may_transform (file_name, pm)) {
+    invert_colors (pm);
+    saturate (pm);
+  }
+#if (QT_VERSION < 0x050000) && defined (Q_OS_MAC)
+  if (retina_icons == 2) {
+    if (use_unified_toolbar) {
+      static bool main_icons=
+        get_preference ("main icon bar", "off") != "off";
+      if (pm.height () > 40) f *= 0.75;
+      else if (pm.height () > 32 && main_icons) f *= 0.85;
+      else if (pm.height () > 32) f *= 0.6;
+      else f *= 0.5;
+    }
+    else {
+      if (pm.height () > 40) f *= 1.0;
+      else if (pm.height () > 32) f *= 0.9;
+      else f *= 0.8;
+    }
+  }
+#endif
+  pm= pm.scaled ((int) floor (f * pm.width () + 0.5),
+                 (int) floor (f * pm.height () + 0.5),
+                 Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+  return qt_picture (pm, 0, 0);
+}
+
+picture
 qt_load_xpm (url file_name) {
+  if (tm_style_sheet != "") return new_qt_load_xpm (file_name);
   string sss;
   if (retina_icons > 1 && suffix (file_name) == "xpm") {
     url png_equiv= glue (unglue (file_name, 4), "_x2.png");

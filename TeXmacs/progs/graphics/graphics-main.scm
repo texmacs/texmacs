@@ -128,7 +128,7 @@
     (if (match? frame '(tuple "scale" :%2))
 	frame
         `(tuple "scale" ,(graphics-default-unit)
-                (tuple "0.5par" "0cm")))))
+                (tuple "0.5gw" "0.5gh")))))
 
 (define (graphics-unit-has-value? val)
   (let* ((fr (graphics-cartesian-frame))
@@ -200,21 +200,28 @@
          (y2 (length-add y1 "-0.5gh"))
          (x3 (length-mult e x2))
          (y3 (length-mult e y2))
-         (x4 (length-add x3 "0.5gw"))
-         (y4 (length-add y3 "0.5gh"))
+         (x4 (length-add "0.5gw" x3))
+         (y4 (length-add "0.5gh" y3))
          (x5 (if (and (string? x4) (string-ends? x4 "gw")) x4 x1))
          (y5 (if (and (string? y4) (string-ends? y4 "gh")) y4 y1))
          (newfr `(tuple "scale" ,newu (tuple ,x4 ,y4))))
+    ;;(display* "old fr= " fr "\n")
+    ;;(display* "new fr= " newfr "\n")
+    ;;(display* "old u = " u "\n")
+    ;;(display* "new u = " newu "\n")
     (if (and (> newud 100) (< newud 10000000))
         (with magn (multiply-magnify (graphics-get-property "magnify") e)
           (graphics-decorations-reset)
           (graphics-set-property "gr-frame" newfr)
           (graphics-set-property "magnify" magn)))))
 
-(tm-define (graphics-set-zoom z)
+(tm-define (graphics-get-zoom)
   (with magn (graphics-get-property "magnify")
     (if (or (not magn) (== magn "default")) (set! magn "1"))
-    (graphics-zoom (/ z (string->number magn)))))
+    (string->number magn)))
+
+(tm-define (graphics-set-zoom z)
+  (graphics-zoom (/ z (graphics-get-zoom))))
 
 (tm-define (graphics-move-origin dx dy)
   (define (add l1 l2)
@@ -836,6 +843,8 @@
   (with m (tree->stree (get-env-tree "gr-mode"))
     (cond ((string? m)
 	   `(edit ,(string->symbol m)))
+          ((== m '(uninit))
+           `(edit none))
           ((pair? m)
            (map string->symbol (cdr m))))))
 
@@ -908,6 +917,65 @@
   (:check-mark "*" (graphics-test-property? "gr-color"))
   (graphics-set-property "gr-color" val))
 
+(tm-define (graphics-get-pen-enhance-method)
+  (with v (graphics-get-property "gr-pen-enhance")
+    (cond ((== v "default") "gaussian")
+          ((string? v) v)
+          (else (cadr v)))))
+
+(define (graphics-test-pen-enhance-method val)
+  (when (== val "default") (set! val "gaussian"))
+  (== (graphics-get-pen-enhance-method) val))
+
+(tm-define (graphics-set-pen-enhance-method val)
+  (:argument val "Pen enhance")
+  (:check-mark "*" graphics-test-pen-enhance-method)
+  (with strength (graphics-get-pen-enhance-strength)
+    (with v (cond ((== strength "1") val)
+                  ((== val "default") `(tuple "gaussian" ,strength))
+                  (else `(tuple ,val ,strength)))
+      (graphics-set-property "gr-pen-enhance" v))))
+
+(tm-define (graphics-get-pen-enhance-strength)
+  (with v (graphics-get-property "gr-pen-enhance")
+    (if (string? v) "1" (caddr v))))
+
+(define (graphics-test-pen-enhance-strength val)
+  (== (graphics-get-pen-enhance-strength) val))
+
+(tm-define (graphics-set-pen-enhance-strength val)
+  (:argument val "Pen enhance")
+  (:check-mark "*" graphics-test-pen-enhance-strength)
+  (with method (graphics-get-pen-enhance-method)
+    (with v (if (== val "1") method `(tuple ,method ,val))
+      (graphics-set-property "gr-pen-enhance" v))))
+
+(tm-define (graphics-get-pen-style)
+  (with v (graphics-get-property "gr-pen-style")
+    (if (== v "default")
+        (list "oval" "1" "0")
+        (cdr v))))
+
+(tm-define (graphics-test-pen-ratio val)
+  (with (type ratio angle) (graphics-get-pen-style)
+    (== ratio val)))
+
+(tm-define (graphics-set-pen-ratio val)
+  (:argument val "Pen ratio")
+  (:check-mark "*" graphics-test-pen-ratio)
+  (with (type ratio angle) (graphics-get-pen-style)
+    (graphics-set-property "gr-pen-style" `(tuple ,type ,val ,angle))))
+
+(tm-define (graphics-test-pen-angle val)
+  (with (type ratio angle) (graphics-get-pen-style)
+    (== angle val)))
+
+(tm-define (graphics-set-pen-angle val)
+  (:argument val "Pen angle")
+  (:check-mark "*" graphics-test-pen-angle)
+  (with (type ratio angle) (graphics-get-pen-style)
+    (graphics-set-property "gr-pen-style" `(tuple ,type ,ratio ,val))))
+
 (tm-define (graphics-set-point-style val)
   (:argument val "Point style")
   (:check-mark "*" (graphics-test-property? "gr-point-style"))
@@ -972,6 +1040,11 @@
   (:argument val "Text-at vertical alignment")
   (:check-mark "*" (graphics-test-property? "gr-text-at-valign"))
   (graphics-set-property "gr-text-at-valign" val))
+
+(tm-define (graphics-set-text-at-repulse val)
+  (:argument val "Text-at repulsive margins")
+  (:check-mark "*" (graphics-test-property? "gr-text-at-repulse"))
+  (graphics-set-property "gr-text-at-repulse" val))
 
 (tm-define (graphics-set-doc-at-valign val)
   (:argument val "Document-at vertical alignment")
@@ -1080,8 +1153,8 @@
 
 (tm-define (graphics-set-snap-text-padding val)
   (:argument val "Text padding for snapping")
-  (:check-mark "*" (graphics-test-property? "gr-text-at-margin"))
-  (graphics-set-property "gr-text-at-margin" val))
+  (:check-mark "*" (graphics-test-property? "gr-text-at-snapping"))
+  (graphics-set-property "gr-text-at-snapping" val))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Special routines for text-at boxes and its variants
@@ -1132,6 +1205,11 @@
   (:argument val "Vertical alignment")
   (:check-mark "*" (object-test-property? "text-at-valign"))
   (object-set-property "text-at-valign" val))
+
+(tm-define (object-set-text-at-repulse val)
+  (:argument val "Repulsive margin")
+  (:check-mark "*" (object-test-property? "text-at-repulse"))
+  (object-set-property "text-at-repulse" val))
 
 (tm-define (object-set-doc-at-valign val)
   (:argument val "Vertical alignment")

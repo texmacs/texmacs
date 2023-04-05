@@ -348,6 +348,8 @@ init_std_drd () {
         regular (1));
   init (CASE, "case",
         repeat (2, 1));
+  init (DYNAMIC_CASE, "dynamic-case",
+        repeat (2, 1));
   init (WHILE, "while",
         fixed (1, 1, BIFORM) -> boolean (0) -> regular (1));
   init (FOR_EACH, "for-each",
@@ -462,6 +464,7 @@ init_std_drd () {
   init (GU_LENGTH, "gu-length", fixed (0) -> returns_length ());
   init (TMPT_LENGTH, "tmpt-length", fixed (0) -> returns_length ());
   init (PX_LENGTH, "px-length", fixed (0) -> returns_length ());
+  init (GUIPX_LENGTH, "guipx-length", fixed (0) -> returns_length ());
   init (LCORNER_LENGTH, "lcorner-length", fixed (0) -> returns_length ());
   init (BCORNER_LENGTH, "bcorner-length", fixed (0) -> returns_length ());
   init (RCORNER_LENGTH, "rcorner-length", fixed (0) -> returns_length ());
@@ -708,6 +711,18 @@ init_std_drd () {
         repeat (2, 1) -> returns_graphical () -> point_type (0));
   init (CSMOOTH, "csmooth",
         repeat (3, 1) -> returns_graphical () -> point_type (0));
+  init (PENSCRIPT, "penscript",
+        fixed (4, 0, DETAILED) -> returns_graphical () ->
+        point_type (0) -> name (0, "start") ->
+        point_type (1) -> name (1, "end") ->
+        adhoc (2) -> name (2, "metadata") ->
+        adhoc (3) -> name (3, "ink"));
+  init (CALLIGRAPHY, "calligraphy",
+        fixed (4, 0, DETAILED) -> returns_graphical () ->
+        point_type (0) -> name (0, "start") ->
+        point_type (1) -> name (1, "end") ->
+        adhoc (2) -> name (2, "metadata") ->
+        adhoc (3) -> name (3, "ink"));
   init (FILL, "fill",
         repeat (1, 1));                       // Not yet implemented
   init (IMAGE, "image",
@@ -995,6 +1010,17 @@ init_std_drd () {
   init_var (GLOBAL_AUTHOR, TYPE_STRING);
   init_var (GLOBAL_SUBJECT, TYPE_STRING);
 
+  init_var (CURSOR_COLOR, TYPE_COLOR);
+  init_var (MATH_CURSOR_COLOR, TYPE_COLOR);
+  init_var (FOCUS_COLOR, TYPE_COLOR);
+  init_var (CONTEXT_COLOR, TYPE_COLOR);
+  init_var (SELECTION_COLOR, TYPE_COLOR);
+  init_var (TABLE_SELECTION_COLOR, TYPE_COLOR);
+  init_var (MATCH_COLOR, TYPE_COLOR);
+  init_var (CLICKABLE_COLOR, TYPE_COLOR);
+  init_var (CORRECT_COLOR, TYPE_COLOR);
+  init_var (INCORRECT_COLOR, TYPE_COLOR);
+
   init_var (FONT, TYPE_STRING);
   init_var (FONT_FAMILY, TYPE_STRING);
   init_var (FONT_SERIES, TYPE_STRING);
@@ -1044,6 +1070,23 @@ init_std_drd () {
   init_var (PROG_FONT_SERIES, TYPE_STRING);
   init_var (PROG_FONT_SHAPE, TYPE_STRING);
   init_var (PROG_SESSION, TYPE_STRING);
+
+  init_var (KEYWORD_COLOR, TYPE_COLOR);
+  init_var (CONSTANT_COLOR, TYPE_COLOR);
+  init_var (NUMBER_COLOR, TYPE_COLOR);
+  init_var (STRING_COLOR, TYPE_COLOR);
+  init_var (OPERATOR_COLOR, TYPE_COLOR);
+  init_var (COMMENT_COLOR, TYPE_COLOR);
+  init_var (PREPROCESSOR_COLOR, TYPE_COLOR);
+  init_var (MODIFIER_COLOR, TYPE_COLOR);
+  init_var (DECLARATION_COLOR, TYPE_COLOR);
+  init_var (MACRO_COLOR, TYPE_COLOR);
+  init_var (FUNCTION_COLOR, TYPE_COLOR);
+  init_var (_TYPE_COLOR, TYPE_COLOR);
+  init_var (DEFINED_COLOR, TYPE_COLOR);
+  init_var (MISC_LEXEME_COLOR, TYPE_COLOR);
+  init_var (ALT_KEYWORD_COLOR, TYPE_COLOR);
+  init_var (ALT_CONSTANT_COLOR, TYPE_COLOR);
 
   init_var (PAR_MODE, TYPE_STRING);
   init_var (PAR_FLEXIBILITY, TYPE_NUMERIC);
@@ -1210,12 +1253,15 @@ init_std_drd () {
   init_var (GR_FILL_STYLE, TYPE_STRING);
   init_var (GR_TEXT_AT_HALIGN, TYPE_STRING);
   init_var (GR_TEXT_AT_VALIGN, TYPE_STRING);
-  init_var (GR_TEXT_AT_MARGIN, TYPE_LENGTH);
+  init_var (GR_TEXT_AT_REPULSE, TYPE_LENGTH);
+  init_var (GR_TEXT_AT_SNAPPING, TYPE_LENGTH);
   init_var (GR_DOC_AT_VALIGN, TYPE_STRING);
   init_var (GR_DOC_AT_WIDTH, TYPE_LENGTH);
   init_var (GR_DOC_AT_HMODE, TYPE_STRING);
   init_var (GR_DOC_AT_BORDER, TYPE_LENGTH);
   init_var (GR_DOC_AT_PADDING, TYPE_LENGTH);
+  init_var (GR_PEN_ENHANCE, TYPE_ADHOC);
+  init_var (GR_PEN_STYLE, TYPE_ADHOC);
 
   init_var (GID, TYPE_INTEGER);
   init_var (ANIM_ID, TYPE_INTEGER);
@@ -1239,12 +1285,15 @@ init_std_drd () {
   init_var (FILL_STYLE, TYPE_STRING);
   init_var (TEXT_AT_HALIGN, TYPE_STRING);
   init_var (TEXT_AT_VALIGN, TYPE_STRING);
-  init_var (TEXT_AT_MARGIN, TYPE_LENGTH);
+  init_var (TEXT_AT_REPULSE, TYPE_LENGTH);
+  init_var (TEXT_AT_SNAPPING, TYPE_LENGTH);
   init_var (DOC_AT_VALIGN, TYPE_STRING);
   init_var (DOC_AT_WIDTH, TYPE_LENGTH);
   init_var (DOC_AT_HMODE, TYPE_STRING);
   init_var (DOC_AT_BORDER, TYPE_LENGTH);
   init_var (DOC_AT_PADDING, TYPE_LENGTH);
+  init_var (PEN_ENHANCE, TYPE_ADHOC);
+  init_var (PEN_STYLE, TYPE_ADHOC);
 
   init_var (SRC_STYLE, TYPE_STRING);
   init_var (SRC_SPECIAL, TYPE_STRING);

@@ -87,10 +87,11 @@
 #define scm_scm2long(x) scm_num2long(x,SCM_ARG1,"scm2long")
 #define scm_double2scm scm_from_double
 #define scm_scm2double scm_to_double
-#define scm_str2scm scm_from_locale_stringn
-#define scm_scm2str scm_to_locale_stringn
+#define scm_str2scm scm_from_latin1_stringn
+#define scm_scm2str scm_to_latin1_stringn
 #define scm_symbol2scm scm_from_locale_symbol
 #define scm_scm2symbol(x,y) scm_to_locale_stringn(scm_symbol_to_string(x),y)
+#define scm_sizet size_t //FIXME: deprecated, maybe change in our code
 
 #else
 #ifdef GUILE_C

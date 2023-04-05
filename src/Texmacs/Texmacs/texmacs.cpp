@@ -63,8 +63,15 @@ extern bool texmacs_started;
 
 bool disable_error_recovery= false;
 bool start_server_flag= false;
+bool headless_mode= false;
 string extra_init_cmd;
 void server_start ();
+
+#ifdef QTTEXMACS
+// Qt application infrastructure
+static QTMApplication* qtmapp= NULL;
+static QTMCoreApplication* qtmcoreapp= NULL;
+#endif
 
 /******************************************************************************
 * For testing
@@ -314,7 +321,7 @@ TeXmacs_main (int argc, char** argv) {
 #else
         retina_factor= 1;
         retina_zoom  = 2;
-        retina_scale = 1.0;
+        retina_scale = (tm_style_sheet == ""? 1.0: 1.6666);
 #endif
         retina_icons = 2;
       }
@@ -348,7 +355,8 @@ TeXmacs_main (int argc, char** argv) {
                (s == "-delete-cache") || (s == "-delete-font-cache") ||
                (s == "-delete-style-cache") || (s == "-delete-file-cache") ||
                (s == "-delete-doc-cache") || (s == "-delete-plugin-cache") ||
-               (s == "-delete-server-data") || (s == "-delete-databases"));
+               (s == "-delete-server-data") || (s == "-delete-databases") ||
+	       (s == "-headless"));
       else if (s == "-build-manual") {
         if ((++i)<argc)
           extra_init_cmd << "(build-manual "
@@ -408,7 +416,7 @@ TeXmacs_main (int argc, char** argv) {
 #else
     retina_factor= 1;
     retina_zoom  = 2;
-    retina_scale = 1.0;
+    retina_scale = (tm_style_sheet == ""? 1.0: 1.6666);
 #endif
     retina_icons = 2;
   }
@@ -423,8 +431,14 @@ TeXmacs_main (int argc, char** argv) {
   // End options via environment variables
 
   // Further user preferences
-  string unify= (gui_version () == "qt4"? string ("on"): string ("off"));
+  string native= (gui_version () == "qt4"? string ("on"): string ("off"));
+  string unify = (gui_version () == "qt4"? string ("on"): string ("off"));
+  string mini  = (os_macos ()? string ("off"): string ("on"));
+  if (tm_style_sheet != "") mini= "off";
+  use_native_menubar = get_preference ("use native menubar", native) == "on";
   use_unified_toolbar= get_preference ("use unified toolbar", unify) == "on";
+  use_mini_bars      = get_preference ("use minibars",         mini) == "on";
+  if (!use_native_menubar) use_unified_toolbar= false;
   // End user preferences
 
   if (DEBUG_STD) debug_boot << "Installing internal plug-ins...\n";
@@ -436,7 +450,7 @@ TeXmacs_main (int argc, char** argv) {
 #if defined(X11TEXMACS) && defined(MACOSX_EXTENSIONS)
  // init_mac_application ();
 #endif
-    
+
   gui_open (argc, argv);
   set_default_font (the_default_font);
   if (DEBUG_STD) debug_boot << "Starting server...\n";
@@ -465,7 +479,7 @@ TeXmacs_main (int argc, char** argv) {
              (s == "-x") || (s == "-execute") ||
              (s == "-log-file") ||
              (s == "-build-manual") ||
-             (s == "-reference-suite") || (s == "-test-suite")) i++;
+             (s == "-reference-suite") || (s == "-test-suite")) {i++;}
   }
   if (install_status == 1) {
     if (DEBUG_STD) debug_boot << "Loading welcome message...\n";
@@ -490,6 +504,11 @@ TeXmacs_main (int argc, char** argv) {
   bench_reset ("initialize texmacs");
   bench_reset ("initialize plugins");
   bench_reset ("initialize scheme");
+
+#ifdef QTTEXMACS
+  if (!headless_mode)
+    init_style_sheet (qtmapp);
+#endif
 
   if (DEBUG_STD) debug_boot << "Starting event loop...\n";
   texmacs_started= true;
@@ -535,7 +554,9 @@ boot_hacks () {
   //getrlimit (RLIMIT_NOFILE, &lims);
   //printf ("cur: %i\n", lims.rlim_cur);
   //printf ("max: %i\n", lims.rlim_max);
+#ifdef MACOSX_EXTENSIONS
   mac_fix_yosemite_bug();
+#endif
 
 #ifdef QTTEXMACS
 #if defined(MAC_OS_X_VERSION_10_9) || defined(MAC_OS_X_VERSION_10_10)
@@ -610,6 +631,10 @@ immediate_options (int argc, char** argv) {
       system ("rm -rf", url ("$TEXMACS_HOME_PATH/system/database"));
       system ("rm -rf", url ("$TEXMACS_HOME_PATH/users"));
     }
+#ifdef QTTEXMACS
+    else if (s == "-headless")
+      headless_mode= true;
+#endif
     else if (s == "-log-file" && i + 1 < argc) {
       i++;
       char* log_file = argv[i];
@@ -648,6 +673,19 @@ main (int argc, char** argv) {
   boot_hacks ();
   windows_delayed_refresh (1000000000);
   immediate_options (argc, argv);
+  load_user_preferences ();
+  string theme= get_user_preference ("gui theme", "default");
+#if defined(OS_MACOS) && !defined(__arm64__)
+  if (theme == "default") theme= "";  
+#else
+  if (theme == "default") theme= "light";
+#endif
+  if (theme == "light")
+    tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-light.css";
+  else if (theme == "dark")
+    tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-dark.css";
+  else if (theme != "")
+    tm_style_sheet= theme;
 #ifndef OS_MINGW
   set_env ("LC_NUMERIC", "POSIX");
 #ifndef OS_MACOS
@@ -667,11 +705,15 @@ main (int argc, char** argv) {
 #endif
 #ifdef QTTEXMACS
   // initialize the Qt application infrastructure
-  QTMApplication* qtmapp= new QTMApplication (argc, argv);  
+  if (headless_mode)
+    qtmcoreapp= new QTMCoreApplication (argc, argv);
+  else
+    qtmapp= new QTMApplication (argc, argv);
 #endif
   TeXmacs_init_paths (argc, argv);
 #ifdef QTTEXMACS
-  qtmapp->set_window_icon("/misc/images/texmacs-512.png");
+  if (!headless_mode)
+    qtmapp->set_window_icon("/misc/images/texmacs-512.png");
 #endif
   //cout << "Bench  ] Started TeXmacs\n";
   the_et     = tuple ();
@@ -688,7 +730,10 @@ main (int argc, char** argv) {
 //#endif
   start_scheme (argc, argv, TeXmacs_main);
 #ifdef QTTEXMACS
-  delete qtmapp;
+  if (headless_mode)
+    delete qtmcoreapp;
+  else
+    delete qtmapp;
 #endif
   return 0;
 }

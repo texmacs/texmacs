@@ -22,7 +22,7 @@
 ;; The copyright of the reference implementation of SRFI-2 by Oleg Kiselyov was
 ;; assigned to the Free Software Foundation in Feb. 2001. The following
 ;; implementation also includes incidental changes by Dale Jordan.
-;; Modified by David Allouche to use TeXmacs syntax-error procedure.
+;; Modified by David Allouche to use TeXmacs tm-syntax-error procedure.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; and-let* is a generalized and: it evaluates a sequence of forms one
 ;; after another till the first one that yields #f; the non-#f result
@@ -45,7 +45,7 @@
         (set! growth-point clause-cell)))
 
     (if (not (list? claws))
-	(syntax-error "and-let*" "Bindings are not a list: ~A" claws))
+	(tm-syntax-error "and-let*" "Bindings are not a list: ~A" claws))
     (for-each
      (lambda (claw)
        (cond
@@ -58,13 +58,13 @@
 	 (let* ((var (car claw))
 		(var-cell (cons var '())))
 	   (if (memq var new-vars)
-	       (syntax-error "and-let*"
+	       (tm-syntax-error "and-let*"
 			     "Duplicate variable in bindings: ~A" var))
 	   (set! new-vars (cons var new-vars))
 	   (set-cdr! growth-point `((let (,claw) (and . ,var-cell))))
 	   (set! growth-point var-cell)))
 	(else
-	 (syntax-error "and-let*" "Ill-formed binding: ~A" claw))))
+	 (tm-syntax-error "and-let*" "Ill-formed binding: ~A" claw))))
      claws)
     (if (not (null? body))
 	(if (null? (cdr body))
@@ -88,6 +88,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Copied from guile-1.6.0. Author: Martin Grabmueller
 
+(cond-expand (guile-2 #t)
+ (else
 (define-public-macro (case-lambda . clauses)
 
   ;; Return the length of the list @var{l}, but allow dotted list.
@@ -153,6 +155,7 @@
 	      (let ((,length-name (length ,args-name)))
 		(cond ,@(gen-clauses clauses length-name args-name))))))
       proc)))
+)) ; cond-exp
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; SECTION : curry which is not curry (SRFI-26)

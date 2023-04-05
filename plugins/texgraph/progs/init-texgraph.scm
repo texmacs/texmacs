@@ -31,7 +31,7 @@
   (:session "Texgraph")
   (:scripts "Texgraph"))
 
-(when (supports-texgraph?)
+(tm-cond-expand (supports-texgraph?)
   (import-from (texgraph-menus))
   (lazy-input-converter (texgraph-input) texgraph) ;; uniquement pour le script plot-curve
   )

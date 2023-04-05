@@ -1,4 +1,4 @@
-<TeXmacs|1.99.13>
+<TeXmacs|2.1>
 
 <style|source>
 
@@ -14,7 +14,7 @@
       Joris van der Hoeven
     </src-copyright>
 
-    <\src-copyright|2020>
+    <\src-copyright|2020-2021>
       Darcy Shen
     </src-copyright>
 
@@ -62,7 +62,23 @@
     </cell>>>>>>>
   </macro>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      For Algorithm and Pseudo code blocks, do not translate the underlying
+      keywords when documentation language is Chinese.
+
+      \;
+
+      Affected:
+
+      Insert -\<gtr\> Program<compound|math|><compound|math|> -\<gtr\>
+      Algorithm
+
+      Insert -\<gtr\> Program -\<gtr\> Pseudo code
+    </src-comment>
+  </active*>
+
+  <assign|render-keyword|<macro|name|<with|font-series|bold|<arg|name>>>>
 </body>
 
 <initial|<\collection>

@@ -284,6 +284,9 @@
   (tree-downgrade-big downgrade_big (tree content))
   (math-status-print math_status_print (void))
   (math-status-reset math_status_reset (void))
+  (math-stats-compile compile_stats (void string content string))
+  (math-stats-occurrences number_occurrences (int string content))
+  (math-stats-number-in-role number_in_role (int string content))
 
   ;; paths
   (path-strip strip (path path path))
@@ -390,7 +393,7 @@
   (graphics-notify-update graphics_notify_update (void content))
 
   ;; routines for strings
-  (string-number? is_double (bool string))
+  (cpp-string-number? is_double (bool string))
   (string-occurs? occurs (bool string string))
   (string-count-occurrences count_occurrences (int string string))
   (string-search-forwards search_forwards (int string int string))
@@ -606,6 +609,7 @@
   (system-remove remove (void url))
   (system-mkdir mkdir (void url))
   (system-rmdir rmdir (void url))
+  (system-setenv set_env (void string string))
   (system-search-score search_score (int url array_string))
   (system-1 system (void string url))
   (system-2 system (void string url url))
@@ -667,7 +671,7 @@
   ;; widgets
   (widget-printer printer_widget (widget command url))
   (widget-color-picker color_picker_widget (widget command bool array_tree))
-  (widget-extend extend (widget widget array_widget))
+  (widget-extend extend_widget (widget widget array_widget))
   (widget-hmenu horizontal_menu (widget array_widget))
   (widget-vmenu vertical_menu (widget array_widget))
   (widget-tmenu tile_menu (widget array_widget int))
@@ -695,6 +699,7 @@
   (widget-color glue_widget (widget content bool bool int int))
   (widget-hlist horizontal_list (widget array_widget))
   (widget-vlist vertical_list (widget array_widget))
+  (widget-division division_widget (widget string widget))
   (widget-aligned aligned_widget (widget array_widget array_widget))
   (widget-tabs tabs_widget (widget array_widget array_widget))
   (widget-icon-tabs icon_tabs_widget (widget array_url array_widget

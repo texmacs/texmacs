@@ -759,8 +759,8 @@ latex_symbol_to_tree (string s) {
       if (s == " ")      return " ";
       if (s == "-")      return "";
       if (s == "/")      return "";
-      if (s == "lq")     return "`";
-      if (s == "rq")     return "'";
+      if (s == "lq")     return "<#2018>";
+      if (s == "rq")     return "<#2019>";
       if (s == "AA")     return "\xC5";
       if (s == "AE")     return "\xC6";
       if (s == "DH")     return "\xD0";
@@ -1785,7 +1785,9 @@ latex_command_to_tree (tree t) {
           def << tree (APPLY, as_string (a));
         }
         l2edef = l2e (def);
-        if (N(l2edef) != 0 && ! is_concat (l2edef))
+        if (N(l2edef) != 0 && !is_concat (l2edef))
+          f << l2edef;
+        else if (is_tuple (def) && N(def) > 0 && def[0] == "\\\\*")
           f << l2edef;
         else if (is_tuple (def)) {
           tree adef (APPLY);

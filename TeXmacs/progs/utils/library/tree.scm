@@ -78,6 +78,12 @@
       (with r (tree-focus-index t l)
 	(if r r (tree-get-focus-index ref (tree-up t) l)))))
 
+(tm-define-macro (tree-set-diff! ref t)
+  (:synopsis "Assign @ref with @t.")
+  `(begin
+     (set! ,ref (tree-set-diff ,ref ,t))
+     ,ref))
+
 (tm-define (tree-set-diff ref t)
   (:type (-> tree content void))
   (:synopsis "Assign @ref with @t.")
@@ -125,11 +131,6 @@
                    (set! ref (tree-set-diff ref mid))
 		   (tree-insert-node! ref pos merged))))))))
 
-(tm-define-macro (tree-set-diff! ref t)
-  (:synopsis "Assign @ref with @t.")
-  `(begin
-     (set! ,ref (tree-set-diff ,ref ,t))
-     ,ref))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; High level tree access
@@ -286,11 +287,12 @@
   (if (null? l) (tree-get-path t)
       (with i (cAr l)
 	(if (or (== i :start) (== i :end) (integer? i))
-	    (with u (apply tree-ref (cons t (cDr l)))
-	      (cond ((not u) #f)
-		    ((== i :start) (path-start (root-tree) (tree->path u)))
-		    ((== i :end) (path-end (root-tree) (tree->path u)))
-		    ((integer? i) (rcons (tree->path u) i))))
+	    (let* ((u (apply tree-ref (cons t (cDr l))))
+                   (p (and u (tree->path u))))
+	      (cond ((not p) #f)
+		    ((== i :start) (path-start (root-tree) p))
+		    ((== i :end) (path-end (root-tree) p))
+		    ((integer? i) (rcons p i))))
 	    (with u (apply tree-ref (cons t l))
 	      (and u (tree->path u)))))))
 

@@ -491,10 +491,11 @@ in_unicode_range (string c, string range) {
   int code= decode_from_utf8 (uc, pos);
   string got= get_unicode_range (code);
   if (range == got) return range != "";
-  if (range == "cjk" && got == "hangul") return true;
-    // For Korean charactors, its default family is `sys-korean`
-    // `sys-korean` is expanded to `cjk=Apple SD Gothic Neo,roman`
-    // There are actually two ranges (cjk/hangul) for Korean characters
+  if (range == "cjk" && (got == "hangul" || got == "hiragana")) return true;
+    // There are actually two ranges (cjk/hangul) for Korean characters and
+    // two ranges (cjk/hiragana) for Japanese characters
+    // For example, on macOS, `sys-korean` is expanded to `cjk=Apple SD Gothic Neo,roman`,
+    // assuming that `Apple SD Gothic Neo` is the default korean font on macOS
   if (range == "mathlarge" || range == "mathbigop")
     if (starts (c, "<big-") ||
         (code >= 0x220f && code <= 0x2211) ||
@@ -1047,6 +1048,12 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
       initialize_font (nr);
       if (fn[nr]->supports (rewrite (c, REWRITE_CYRILLIC)))
         return sm->add_char (key, c);
+    }
+    if (c == "<#3000>") {
+      tree key= tuple ("ignore");
+      int nr= sm->add_font (key, REWRITE_IGNORE);
+      initialize_font (nr);
+      return sm->add_char (key, c);
     }
     if (N(c) == 7 && starts (c, "<bbb-") && !occurs ("TeX Gyre", mfam)) {
       font cfn= closest_font (fam, variant, series, rshape, sz, dpi, 1);

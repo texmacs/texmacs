@@ -19,6 +19,7 @@
 		 (char->string #\005) "\n"))
 
 (plugin-configure pari
+  (:macpath "Pari*" "Contents/MacOS/PariGP")
   (:macpath "Pari*" "Contents/Resources/bin")
   (:winpath "PARI*" ".")
   (:winpath "Pari*" ".")
@@ -29,6 +30,6 @@
   (:tab-completion #t)
   (:commander ,pari-commander))
 
-(when (supports-pari?)
+(tm-cond-expand (supports-pari?)
   (import-from (pari-menus))
   (plugin-input-converters pari))

@@ -75,7 +75,8 @@ replaceButtons (QToolBar* dest, QList<QAction*>* src) {
     QToolButton* button = qobject_cast<QToolButton*> (list[i]);
     if (button) {
       button->setPopupMode (QToolButton::InstantPopup);
-      button->setStyle (qtmstyle());
+      if (tm_style_sheet == "")
+        button->setStyle (qtmstyle());
     }
   }
   if (visible) dest->show(); //TRICK: see above
@@ -121,13 +122,26 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   // general setup for main window
   
   QMainWindow* mw= mainwindow ();
-  mw->setStyle (qtmstyle ());
-  mw->menuBar()->setStyle (qtmstyle ());
+  if (tm_style_sheet == "") {
+    mw->setStyle (qtmstyle ());
+    mw->menuBar()->setStyle (qtmstyle ());
+  }
 
-#if (defined(MACOS_QT_MENU))
-  mw->menuBar()->setNativeMenuBar(false);
+#ifdef Q_OS_MAC
+  if (!use_native_menubar) {
+    mw->menuBar()->setNativeMenuBar(false);
+    if (tm_style_sheet != "") {
+      int min_h= (int) floor (28 * retina_scale);
+      mw->menuBar()->setMinimumHeight (min_h);
+    }
+  }
+#else
+  if (tm_style_sheet != "") {
+    int min_h= (int) floor (28 * retina_scale);
+    mw->menuBar()->setMinimumHeight (min_h);
+  }
 #endif
-  
+
   // there is a bug in the early implementation of toolbars in Qt 4.6
   // which has been fixed in 4.6.2 (at least)
   // this is why we change dimension of icons
@@ -146,9 +160,11 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   rightLabel= new QLabel (qt_translate ("Booting"), mw);
   leftLabel->setFrameStyle (QFrame::NoFrame);
   rightLabel->setFrameStyle (QFrame::NoFrame);
+  leftLabel->setIndent (8);
   bar->addWidget (leftLabel, 1);
   bar->addPermanentWidget (rightLabel);
-  bar->setStyle (qtmstyle ());
+  if (tm_style_sheet == "")
+    bar->setStyle (qtmstyle ());
   
   // NOTE (mg): the following setMinimumWidth command disable automatic 
   // enlarging of the status bar and consequently of the main window due to 
@@ -168,11 +184,16 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   bar->setMinimumHeight (min_h);
 #else
 #if (QT_VERSION >= 0x050000)
-  int min_h= (int) floor (24 * retina_scale);
-  bar->setMinimumHeight (min_h);
+  if (tm_style_sheet != "") {
+    int min_h= (int) floor (28 * retina_scale);
+    bar->setMinimumHeight (min_h);
+  }
 #else
-  if (retina_scale > 1.0) {
-    int min_h= (int) floor (20 * retina_scale);
+  double status_scale=
+    (((double) retina_icons) > retina_scale? 1.5: retina_scale);
+  if (status_scale > 1.0) {
+    int std_h= (os_mingw ()? 28: 20);
+    int min_h= (int) floor (std_h * status_scale);
     bar->setMinimumHeight (min_h);
   }
 #endif
@@ -195,12 +216,14 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   dock_window_widget = tm_new<qt_window_widget_rep> (sideTools, dock_name,
                                                      command(), true);
   
-  mainToolBar->setStyle (qtmstyle ());
-  modeToolBar->setStyle (qtmstyle ());
-  focusToolBar->setStyle (qtmstyle ());
-  userToolBar->setStyle (qtmstyle ());
-  sideTools->setStyle (qtmstyle ());
-  bottomTools->setStyle (qtmstyle ());
+  if (tm_style_sheet == "") {
+    mainToolBar->setStyle (qtmstyle ());
+    modeToolBar->setStyle (qtmstyle ());
+    focusToolBar->setStyle (qtmstyle ());
+    userToolBar->setStyle (qtmstyle ());
+    sideTools->setStyle (qtmstyle ());
+    bottomTools->setStyle (qtmstyle ());
+  }
   
   {
     // set proper sizes for icons
@@ -227,21 +250,52 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   // NOTICE: setFixedHeight must be after setIconSize
   // TODO: the size of the toolbar should be calculated dynamically
 #if (QT_VERSION >= 0x050000)
+#if defined (Q_OS_MAC) || defined (Q_OS_WIN)
+  int toolbarHeight= 30 * retina_icons;
+  mainToolBar->setFixedHeight (toolbarHeight + 8 * retina_icons);
+  modeToolBar->setFixedHeight (toolbarHeight + 4 * retina_icons);
+  focusToolBar->setFixedHeight (toolbarHeight);
+#else
   int toolbarHeight= 30;
   mainToolBar->setFixedHeight (toolbarHeight + 8);
   modeToolBar->setFixedHeight (toolbarHeight + 4);
   focusToolBar->setFixedHeight (toolbarHeight);
+#endif
 #else
-#ifndef Q_OS_MAC
+#ifdef Q_OS_MAC
+  if (retina_icons > 1) {
+    int toolbarHeight= 30;
+    if (!use_unified_toolbar)
+      mainToolBar->setFixedHeight (toolbarHeight + 8);
+    modeToolBar->setFixedHeight (toolbarHeight + 4);
+    focusToolBar->setFixedHeight (toolbarHeight);
+  }
+#else
   int toolbarHeight= 30 * retina_icons;
   mainToolBar->setFixedHeight (toolbarHeight + 8);
   modeToolBar->setFixedHeight (toolbarHeight + 4);
   focusToolBar->setFixedHeight (toolbarHeight);  
 #endif
 #endif
+  if (tm_style_sheet != "") {
+    double scale= retina_scale;
+#if ((QT_VERSION < 0x050000) && defined (Q_OS_MAC))
+    scale= max (scale, 0.6 * ((double) retina_icons));
+#endif
+    int h1= (int) floor (38 * scale + 0.5);
+    int h2= (int) floor (34 * scale + 0.5);
+    int h3= (int) floor (30 * scale + 0.5);
+#if ((QT_VERSION < 0x050000) && defined (Q_OS_MAC))
+    if (use_unified_toolbar && retina_icons == 2 && scale == 1.2) {
+      h1= 34; h2= 36; h3= 32; }
+#endif
+    mainToolBar->setFixedHeight (h1);
+    modeToolBar->setFixedHeight (h2);
+    focusToolBar->setFixedHeight (h3);
+  }
   
   QWidget *cw= new QWidget();
-  cw->setObjectName("central widget");  // this is important for styling toolbars.
+  cw->setObjectName("centralWidget");  // this is important for styling toolbars.
   
     // The main layout
   
@@ -254,6 +308,13 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   bl->addWidget (q);
   
   mw->setCentralWidget (cw);
+
+  mainToolBar->setObjectName ("mainToolBar");
+  modeToolBar->setObjectName ("modeToolBar");
+  focusToolBar->setObjectName ("focusToolBar");
+  userToolBar->setObjectName ("userToolBar");
+  bottomTools->setObjectName ("bottomTools");
+  sideTools->setObjectName ("sideTools");
 
 #ifdef UNIFIED_TOOLBAR
 
@@ -328,6 +389,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   sideTools->setFeatures (QDockWidget::DockWidgetMovable |
                          QDockWidget::DockWidgetFloatable);
   sideTools->setFloating (false);
+  sideTools->setTitleBarWidget (new QWidget()); // Disables title bar
   mw->addDockWidget (Qt::RightDockWidgetArea, sideTools);
 
   bottomTools->setAllowedAreas (Qt::BottomDockWidgetArea);
@@ -359,9 +421,9 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   mainwindow()->statusBar()->setVisible (true);
 #ifndef Q_OS_MAC
   mainwindow()->menuBar()->setVisible (false);
-#endif  
+#endif
   QPalette pal;
-  QColor bgcol (160, 160, 160); // same as tm_background
+  QColor bgcol= to_qcolor (tm_background);
   pal.setColor (QPalette::Mid, bgcol);
   mainwindow()->setPalette(pal);
 }
@@ -510,9 +572,16 @@ qt_tm_widget_rep::update_visibility () {
       }
     }
   }
+  else {
+    bool old_menuVisibility = mainwindow()->menuBar()->isVisible();
+    bool new_menuVisibility = visibility[0];
+
+    if ( XOR(old_menuVisibility,  new_menuVisibility) )
+      mainwindow()->menuBar()->setVisible (new_menuVisibility);
+  }
 #endif // UNIFIED_TOOLBAR
 #undef XOR
-  {
+  if (tm_style_sheet == "" && use_mini_bars) {
     QFont f = leftLabel->font();
     int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
     f.setPointSize (qt_zoom (fs > 0 ? fs : QTM_MINI_FONTSIZE));
@@ -962,6 +1031,8 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
   }
 }
 
+void set_standard_style_sheet (QWidget* w);
+
 void
 qt_tm_widget_rep::set_full_screen(bool flag) {
   full_screen = flag;
@@ -969,8 +1040,9 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
   if (win) {
     if (flag ) {
       QPalette pal;
-      pal.setColor(QPalette::Mid, Qt::black);
+      pal.setColor(QPalette::Mid, QColor (0, 0, 0));
       mainwindow()->setPalette(pal);
+      mainwindow()->setStyleSheet ("* { background: #000000; }");
 #ifdef UNIFIED_TOOLBAR
       if (use_unified_toolbar) {
         //HACK: we disable unified toolbar since otherwise
@@ -986,9 +1058,10 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
     }
     else {
       QPalette pal;
-      QColor bgcol (160, 160, 160); // same as tm_background
+      QColor bgcol= to_qcolor (tm_background);
       pal.setColor (QPalette::Mid, bgcol);
       mainwindow()->setPalette(pal);
+      set_standard_style_sheet (mainwindow());
       bool cache = visibility[0];
       visibility[0] = false;
       update_visibility();

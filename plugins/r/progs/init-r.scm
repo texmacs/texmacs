@@ -19,7 +19,7 @@
 
 (define (r-launcher)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/r")
-      (setenv "TEXMACS_SEND"
+      (system-setenv "TEXMACS_SEND"
               "source(paste(Sys.getenv(\"TEXMACS_HOME_PATH\"),\"/plugins/r/texmacs.r\",sep=\"\"))\n"))
   "tm_r")
 
@@ -39,7 +39,7 @@
 
 (lazy-keyboard (r-edit) in-prog-r?)
 
-(when (supports-r?)
+(tm-cond-expand (supports-r?)
   (lazy-input-converter (r-input) r)
 
   (menu-bind r-menu

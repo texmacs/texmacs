@@ -22,7 +22,7 @@
 
     <apply|branch|Crear sus propios menús dinámicos|man-menus.es.tm>
 
-    <apply|branch|Crear sus propios atajos de teclado|man-keyboard.es.tm>
+    <apply|branch|Crear sus propios atajos de teclado|man-custom-keyboard.es.tm>
 
     <apply|branch|Otros archivos interesantes|man-files.es.tm>
   </traverse>

@@ -20,7 +20,7 @@
     <apply|branch|Administración de <TeXmacs> y material de
     soporte|administration.es.tm>
 
-    <apply|branch|Portar <TeXmacs> a otras plataformas|porting.es.tm>
+    <apply|branch|Portar <TeXmacs> a otras plataformas|about-porting.es.tm>
 
     <apply|branch|Empaquetar <TeXmacs>|maintainers.es.tm>
 

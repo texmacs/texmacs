@@ -270,16 +270,20 @@
     ;; (display* "sols= " sols "\n")
     (map cadr sols)))
 
-(if (os-mingw?) ;; mingw guile does not define select
-    (with-module texmacs-user
-      (define-public (select . args) (apply tm-select args)))
-    (with-module texmacs-user
-      (begin (define-public guile-select select)
-	     (define-public (select . args)
-	       (import-from (kernel regexp regexp-select))
-	       (if (= (length args) 2)
-		   (apply tm-select args)
-		   (apply guile-select args))))))
+;; save core procedure 'select' if it exists
+(cond-expand
+  (guile-2
+    (module-define! texmacs-user 'guile-select select)
+    (module-export! texmacs-user '(guile-select)))
+  (else
+     (if (not (os-mingw?)) ;; mingw guile does not define select
+       (module-define! texmacs-user 'guile-select select)
+       (module-export! texmacs-user '(guile-select)))))
+ 
+;; install our own 'select'
+(define select tm-select)
+(module-define! texmacs-user 'select tm-select)
+(module-export! texmacs-user '(select))
 
 (define-public (tm-ref t . l)
   (and (tm? t)

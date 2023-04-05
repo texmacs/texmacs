@@ -8,15 +8,23 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#ifdef QTTEXMACS
-
-#include "gtest/gtest.h"
-
+#include <QtTest/QtTest>
 #include "Qt/qt_utilities.hpp"
 
-TEST (qt_supports, work) {
-  ASSERT_TRUE (qt_supports (url ("x.svg")));
-  ASSERT_TRUE (qt_supports (url ("x.png")));
+
+class TestQtUtilities: public QObject {
+  Q_OBJECT
+
+private slots:
+  void test_qt_supports();
+};
+
+void TestQtUtilities::test_qt_supports () {
+#ifdef QTTEXMACS
+  QVERIFY (qt_supports (url ("x.svg")));
+  QVERIFY (qt_supports (url ("x.png")));
+#endif
 }
 
-#endif
+QTEST_MAIN(TestQtUtilities)
+#include "qt_utilities_test.moc"

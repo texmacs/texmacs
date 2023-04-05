@@ -58,13 +58,32 @@ tt_font_path () {
 #elif defined OS_MACOS
     search_sub_dirs ("$HOME/Library/Fonts") |
     search_sub_dirs ("/Library/Fonts") |
+    search_sub_dirs ("/Library/Application Support/Apple/Fonts/iLife") |
+    search_sub_dirs ("/Library/Application Support/Apple/Fonts/iWork") |
     search_sub_dirs ("/System/Library/Fonts") |
+    search_sub_dirs ("/System/Library/PrivateFrameworks/FontServices.framework/Versions/A/Resources/Fonts/ApplicationSupport") |
+    search_sub_dirs ("/opt/local/share/texmf-texlive/fonts/opentype") |
     search_sub_dirs ("/opt/local/share/texmf-texlive/fonts/truetype") |
-    search_sub_dirs ("/opt/local/share/texmf-texlive-dist/fonts/truetype");
+    search_sub_dirs ("/opt/local/share/texmf-texlive-dist/fonts/opentype") |
+    search_sub_dirs ("/opt/local/share/texmf-texlive-dist/fonts/truetype") |
+    search_sub_dirs ("/usr/local/texlive/2020/texmf-dist/fonts/opentype") |
+    search_sub_dirs ("/usr/local/texlive/2020/texmf-dist/fonts/truetype") |
+    search_sub_dirs ("/usr/local/texlive/2021/texmf-dist/fonts/opentype") |
+    search_sub_dirs ("/usr/local/texlive/2021/texmf-dist/fonts/truetype") |
+    search_sub_dirs ("/usr/local/texlive/2022/texmf-dist/fonts/opentype") |
+    search_sub_dirs ("/usr/local/texlive/2022/texmf-dist/fonts/truetype");
 #else
     search_sub_dirs ("$HOME/.fonts") |
+    search_sub_dirs ("/usr/share/fonts/opentype") |
     search_sub_dirs ("/usr/share/fonts/truetype") |
-    search_sub_dirs ("/usr/local/share/fonts/truetype");
+    search_sub_dirs ("/usr/local/share/fonts/opentype") |
+    search_sub_dirs ("/usr/local/share/fonts/truetype") |
+    search_sub_dirs ("/usr/local/texlive/2020/texmf-dist/fonts/opentype") |
+    search_sub_dirs ("/usr/local/texlive/2020/texmf-dist/fonts/truetype") |
+    search_sub_dirs ("/usr/local/texlive/2021/texmf-dist/fonts/opentype") |
+    search_sub_dirs ("/usr/local/texlive/2021/texmf-dist/fonts/truetype") |
+    search_sub_dirs ("/usr/local/texlive/2022/texmf-dist/fonts/opentype") |
+    search_sub_dirs ("/usr/local/texlive/2022/texmf-dist/fonts/truetype");
 #endif
 }
 

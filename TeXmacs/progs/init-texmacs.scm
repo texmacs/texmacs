@@ -11,6 +11,47 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(cond-expand (guile-2
+;; we remove all optimizations from the compiler
+;; this allows for faster loading times
+((@ (system base compile) default-optimization-level) 0))
+(else #t))
+
+;(cond-expand (guile-2 (display "Guile-2\n")) (else #t))
+
+(cond-expand (guile-2
+  (set! %auto-compilation-options
+    '(#:warnings (shadowed-toplevel macro-use-before-definition
+                  arity-mismatch format duplicate-case-datum
+                  bad-case-datum))))
+  (else #t))
+
+(cond-expand (guile-2 (module-export-all! (current-module))) (else #t))
+
+; we import some modules which are standard in versions of Guile before 2.2
+(cond-expand
+  (guile-2
+    (use-modules (ice-9 curried-definitions)))
+  (else #t))
+
+; conditional expansion of code via macros
+; Guile 2 does not allow to have top-level definitions inside conditional statements
+; we go around this at macroexpansion
+; note that this macro introduces a binding which can clash with others!!!
+
+(define-macro (tm-cond-expand cond . code)
+  `(begin (define-macro (tm-cond-expand-init-TEMP) (if ,cond '(begin ,@code) '(begin #t))) (tm-cond-expand-init-TEMP)))
+(export-syntax tm-cond-expand)
+
+; Guile 2 has separate expand and evaluation phases so we have several eval-when in the code
+; which can be ignored in previous Guile versions.
+
+(cond-expand (guile-2 #t)
+  (else
+    (define-macro (eval-when a . b) `(begin ,@b)) (export-syntax eval-when)))
+
+; continue with initialization
+
 (cond ((os-mingw?)
        (debug-set! stack 0))
       ((os-macos?)
@@ -25,7 +66,9 @@
   (equal? (cpp-get-preference "developer tool" "off") "on"))
 
 (if developer-mode?
-    (debug-enable 'backtrace 'debug))
+   (if (equal? (scheme-dialect) "guile-d")
+     (debug-enable 'backtrace)
+     (debug-enable 'backtrace 'debug)))
 
 (define (%new-read-hook sym) (noop)) ; for autocompletion
 
@@ -33,7 +76,7 @@
                                 tm-define-macro))
 (define-public def-keywords
   `(define-public provide-public
-    tm-define tm-menu menu-bind tm-widget ,@macro-keywords))
+    tm-define tm-define-once tm-menu menu-bind tm-widget ,@macro-keywords))
 
 (define old-read read)
 (define (new-read port)
@@ -49,9 +92,12 @@
               (let ((old (or (symbol-property sym 'defs) '()))
                     (new `(,f ,l ,c)))
                 (%new-read-hook sym)
-                (if (and (member (car form) macro-keywords)
-                         (not (member sym def-keywords)))
-                    (set! def-keywords (cons sym def-keywords)))
+; (max) I do not understand the logic of the code below
+; since there are macros which do not introduce new definitions
+; so I will disable it for the moment.
+;               (if (and (member (car form) macro-keywords)
+;                        (not (member sym def-keywords)))
+;                   (set! def-keywords (cons sym def-keywords)))
                 (if (not (member new old))
                     (set-symbol-property! sym 'defs (cons new old)))))))
     form))
@@ -91,9 +137,20 @@
 ;; (set! primitive-load new-primitive-load)
 
 ;(display "Booting TeXmacs kernel functionality\n")
+
+; this boots the main TeXmacs module system facilities
+
 (if (os-mingw?)
     (load "kernel/boot/boot.scm")
     (load (url-concretize "$TEXMACS_PATH/progs/kernel/boot/boot.scm")))
+
+(cond-expand (guile-2
+(export! display write object->string string-replace) ;; silence some warnings
+) (else #t))
+
+; now we collect basic functionalities by re-exporting all the public symbols
+; as part of the current module
+
 (inherit-modules (kernel boot compat) (kernel boot abbrevs)
                  (kernel boot debug) (kernel boot srfi)
                  (kernel boot ahash-table) (kernel boot prologue))
@@ -103,6 +160,11 @@
 (inherit-modules (kernel regexp regexp-match) (kernel regexp regexp-select))
 (inherit-modules (kernel logic logic-rules) (kernel logic logic-query)
                  (kernel logic logic-data))
+
+(cond-expand (guile-2
+(export! ... compose select) ;; silence some warnings
+) (else #t))
+
 (inherit-modules (kernel texmacs tm-define)
                  (kernel texmacs tm-preferences) (kernel texmacs tm-modes)
                  (kernel texmacs tm-plugins) (kernel texmacs tm-secure)
@@ -111,7 +173,9 @@
                  (kernel texmacs tm-states))
 (inherit-modules (kernel gui gui-markup)
                  (kernel gui menu-define) (kernel gui menu-widget)
-                 (kernel gui kbd-define) (kernel gui kbd-handlers)
+                 (kernel gui kbd-define)
+                 (kernel gui speech-define)
+                 (kernel gui kbd-handlers)
                  (kernel gui menu-test)
                  (kernel old-gui old-gui-widget)
                  (kernel old-gui old-gui-factory)
@@ -136,6 +200,7 @@
 (lazy-tmfs-handler (utils automate auto-tmfs) automate)
 (lazy-define (utils automate auto-tmfs) auto-load-help)
 (lazy-keyboard (utils automate auto-kbd) in-auto?)
+;;FIXME: handle the evaluation phase of the following two lines
 (define supports-email? (url-exists-in-path? "mmail"))
 (if supports-email? (use-modules (utils email email-tmfs)))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
@@ -173,6 +238,8 @@
 
 ;(display "Booting generic mode\n")
 (lazy-keyboard (generic generic-kbd) always?)
+(lazy-keyboard (generic generic-speech-en) always?)
+(lazy-keyboard (generic generic-speech-fr) always?)
 (lazy-menu (generic generic-menu) focus-menu texmacs-focus-icons)
 (lazy-menu (generic format-menu) format-menu
            font-size-menu color-menu horizontal-space-menu
@@ -190,7 +257,8 @@
            texmacs-insert-icons insert-link-menu insert-image-menu)
 (lazy-define (generic document-edit) update-document set-document-language
              get-init-page-rendering init-page-rendering)
-(lazy-define (generic generic-edit) notify-activated notify-disactivated)
+(lazy-define (generic generic-edit) notify-activated notify-disactivated
+             wheel-capture?)
 (lazy-define (generic generic-doc) focus-help)
 (lazy-define (generic search-widgets) search-toolbar replace-toolbar
              open-search toolbar-search-start interactive-search
@@ -222,6 +290,9 @@
 
 ;(display "Booting text mode\n")
 (lazy-keyboard (text text-kbd) in-text?)
+(lazy-keyboard (text text-speech-en) in-text?)
+(lazy-keyboard (text text-speech-fr) in-text?)
+(lazy-keyboard (text chinese chinese) in-chinese?)
 (lazy-menu (text text-menu) text-format-menu text-format-icons
 	   text-menu text-block-menu text-inline-menu
            text-icons text-block-icons text-inline-icons)
@@ -231,6 +302,10 @@
 ;(display "Booting math mode\n")
 (lazy-keyboard (math math-kbd) in-math?)
 (lazy-keyboard (math math-sem-edit) in-sem-math?)
+(lazy-keyboard (math math-speech-en) in-math?)
+(lazy-keyboard (math math-adjust-en) in-math?)
+(lazy-keyboard (math math-speech-fr) in-math?)
+(lazy-keyboard (math math-adjust-fr) in-math?)
 (lazy-menu (math math-menu) math-format-menu math-format-icons
 	   math-menu math-insert-menu
            math-icons math-insert-icons
@@ -242,7 +317,11 @@
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting programming modes\n")
-(lazy-format (prog prog-format) cpp scheme scala java python julia)
+(lazy-format (prog prog-format) scheme)
+(lazy-format (code-format) cpp julia scala java json csv)
+(lazy-format (mathemagix-format) mathemagix)
+(lazy-format (python-format) python)
+(lazy-format (scilab-format) scilab)
 (lazy-keyboard (prog prog-kbd) in-prog?)
 (lazy-menu (prog prog-menu) prog-format-menu prog-format-icons
 	   prog-menu prog-icons)
@@ -283,8 +362,9 @@
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting graphics mode\n")
-(lazy-keyboard (graphics graphics-kbd) in-active-graphics?)
-(lazy-menu (graphics graphics-menu) graphics-menu graphics-icons)
+(lazy-keyboard (graphics graphics-kbd) in-active-graphics? graphics-wheel)
+(lazy-menu (graphics graphics-menu) graphics-menu graphics-icons
+           graphics-focus-icons)
 (lazy-define (graphics graphics-object)
              graphics-reset-state graphics-decorations-update)
 (lazy-define (graphics graphics-utils) make-graphics)
@@ -498,10 +578,10 @@
 (when (updater-supported?) 
   (use-modules (utils misc updater))
   (delayed (:idle 2000) (updater-initialize)))
-;(display* "time: " (- (texmacs-time) boot-start) "\n")
-;(display* "memory: " (texmacs-memory) " bytes\n")
+(display* "time: " (- (texmacs-time) boot-start) "\n")
+(display* "memory: " (texmacs-memory) " bytes\n")
 
-;(display "------------------------------------------------------\n")
+(display "------------------------------------------------------\n")
 (delayed (:idle 10000) (autosave-delayed))
 (texmacs-banner)
-;(display "Initialization done\n")
+(display "Initialization done\n")

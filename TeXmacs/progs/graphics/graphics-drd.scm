@@ -44,6 +44,15 @@
 (define-group graphical-text-tag
   (graphical-short-text-tag) (graphical-long-text-tag))
 
+(define-group graphical-penscript-tag
+  penscript)
+
+(define-group graphical-calligraphy-tag
+  calligraphy)
+
+(define-group graphical-pen-tag
+  (graphical-penscript-tag) (graphical-calligraphy-tag))
+
 (define-group graphical-contains-curve-tag
   (graphical-curve-tag))
 
@@ -84,7 +93,10 @@
   (tm-in? t (graphical-over-under-tag-list)))
 
 (tm-define (inside-graphical-text?)
-  (tree-innermost graphical-text-context?))
+  (and-with t (tree-innermost graphical-text-context?)
+    (and-with u (tree-ref t :down)
+      (and-with i (tree-index u)
+        (tree-accessible-child? t i)))))
 
 (tm-define (inside-graphical-over-under?)
   (tree-innermost graphical-over-under-context?))
@@ -137,13 +149,16 @@
   ("fill-style" . "plain")
   ("text-at-halign" . "left")
   ("text-at-valign" . "base")
-  ("text-at-margin" . "1spc")
+  ("text-at-repulse" . "off")
+  ("text-at-snapping" . "1spc")
   ("doc-at-valign" . "top")
   ("doc-at-width" . "1par")
   ("doc-at-hmode" . "min")
   ("doc-at-ppsep" . "0fn")
   ("doc-at-border" . "0ln")
-  ("doc-at-padding" . "0spc"))
+  ("doc-at-padding" . "0spc")
+  ("pen-enhance" . "gaussian")
+  ("pen-style" . "default"))
 
 (tm-define (graphics-attribute-default attr)
   (if (gr-prefixed? attr)
@@ -200,14 +215,29 @@
 (tm-define (graphics-attributes tag)
   (:require (graphical-text-tag? tag))
   (append (graphics-common-attributes)
-          '("text-at-halign" "text-at-valign" "text-at-margin")))
+          '("text-at-halign" "text-at-valign"
+            "text-at-repulse" "text-at-snapping")))
 
 (tm-define (graphics-attributes tag)
   (:require (graphical-long-text-tag? tag))
   (append (graphics-common-attributes)
-          '("text-at-halign" "doc-at-valign" "text-at-margin"
+          '("text-at-halign" "doc-at-valign"
+            "text-at-repulse" "text-at-snapping"
             "fill-color" "doc-at-width" "doc-at-hmode"
             "doc-at-ppsep" "doc-at-border" "doc-at-padding")))
+
+(tm-define (graphics-attributes tag)
+  (:require (graphical-penscript-tag? tag))
+  (append (graphics-common-attributes)
+          '("pen-enhance"
+            "line-width" "line-join" "line-caps" "line-effects" "line-portion"
+            "dash-style" "dash-style-unit"
+            "arrow-begin" "arrow-end" "arrow-length" "arrow-height")))
+
+(tm-define (graphics-attributes tag)
+  (:require (graphical-calligraphy-tag? tag))
+  (append (graphics-common-attributes)
+          '("pen-enhance" "pen-style" "line-width")))
 
 (tm-define (graphics-attributes tag)
   (:require (graphical-group-tag? tag))

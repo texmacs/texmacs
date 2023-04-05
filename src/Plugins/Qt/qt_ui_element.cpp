@@ -111,14 +111,14 @@ public:
  * glue widget
  ******************************************************************************/
 
-QPixmap 
+QTMPixmapOrImage 
 qt_glue_widget_rep::render () {
   QSize s = to_qsize (w, h);
-  QPixmap pxm(s);
+  QTMPixmapOrImage pxm (s);
     //cout << "glue (" << s.width() << "," << s.height() << ")\n";
   pxm.fill (Qt::transparent);
-  QPaintDevice *pd = static_cast<QPaintDevice*>(&pxm);
-  
+  QPaintDevice *pd;
+  pd = static_cast<QPaintDevice*>(pxm.rep);
   if (pd && !pxm.isNull()) {
     qt_renderer_rep* ren = the_qt_renderer();
     ren->begin (pd);
@@ -148,7 +148,7 @@ qt_glue_widget_rep::render () {
     ren->end();
   }
   
-  return pxm;  
+  return pxm;
 }
 
 QAction *
@@ -163,7 +163,8 @@ qt_glue_widget_rep::as_qaction() {
   icon.addPixmap (render(), QIcon::Normal, QIcon::On);
   col = old_col;
 #else
-  icon.addPixmap (render ());
+  if (!headless_mode)
+    icon.addPixmap (*(render ().QPixmap_ptr ()));
 #endif
   a->setIcon (icon);  
   a->setEnabled (false);
@@ -174,7 +175,8 @@ QWidget *
 qt_glue_widget_rep::as_qwidget() {
   QLabel* qw = new QLabel();
   qw->setText (to_qstring (as_string (col)));
-  qw->setPixmap (render ());
+  if (!headless_mode)
+    qw->setPixmap (*(render ().QPixmap_ptr ()));
   qw->setMinimumSize (to_qsize (w, h));
     //  w->setEnabled(false);
   qwid = qw;
@@ -243,7 +245,7 @@ qt_ui_element_rep::get_payload (qt_widget qtw, types check_type) {
     case scrollable_widget: case hsplit_widget:    case vsplit_widget:
     case tabs_widget:       case icon_tabs_widget: case resize_widget:
     case refresh_widget:    case refreshable_widget:  case balloon_widget:
-    case glue_widget:
+    case glue_widget:       case division_widget:
     {
       qt_ui_element_rep* rep = static_cast<qt_ui_element_rep*> (qtw.rep);
       return rep->load;
@@ -620,6 +622,12 @@ qt_ui_element_rep::as_qlayoutitem () {
 
       // FIXME: lpad and rpad ignored.
       SI hsep = y.x1; SI vsep = y.x2; SI lpad = y.x3; SI rpad = y.x4;
+      if (tm_style_sheet != "") {
+        hsep= (SI) (floor (retina_scale * hsep / 256.0 + 0.5) * PIXEL);
+        vsep= (SI) (floor (retina_scale * vsep / 256.0 + 0.5) * PIXEL);
+        lpad= (SI) (floor (retina_scale * lpad / 256.0 + 0.5) * PIXEL);
+        rpad= (SI) (floor (retina_scale * rpad / 256.0 + 0.5) * PIXEL);
+      }
       (void) lpad; (void) rpad;
      
       if (N(lhs) != N(rhs)) FAILED("aligned_widget: N(lhs) != N(rhs) ");
@@ -692,6 +700,7 @@ qt_ui_element_rep::as_qlayoutitem () {
     case refresh_widget:
     case refreshable_widget:
     case balloon_widget:
+    case division_widget:
     {
       QWidgetItem* wi = new QWidgetItem (this->as_qwidget());
       return wi;
@@ -703,7 +712,12 @@ qt_ui_element_rep::as_qlayoutitem () {
     {
       typedef quartet<bool, bool, SI, SI> T;
       T x = open_box<T> (load);
-      QSize sz = QSize (x.x3, x.x4);
+      SI w= x.x3, h= x.x4;
+      if (tm_style_sheet != "") {
+        w= (SI) floor (retina_scale * w + 0.5);
+        h= (SI) floor (retina_scale * h + 0.5);
+      }
+      QSize sz = QSize (w, h);
       QSizePolicy::Policy hpolicy = x.x1 ? QSizePolicy::MinimumExpanding
                                          : QSizePolicy::Minimum;
       QSizePolicy::Policy vpolicy = x.x2 ? QSizePolicy::MinimumExpanding
@@ -804,7 +818,12 @@ qt_ui_element_rep::as_qwidget () {
     {
       typedef quartet<bool, bool, SI, SI> T;
       T x = open_box<T>(load);
-      QSize sz = QSize (x.x3, x.x4);
+      SI w= x.x3, h= x.x4;
+      if (tm_style_sheet != "") {
+        w= (SI) floor (retina_scale * w + 0.5);
+        h= (SI) floor (retina_scale * h + 0.5);
+      }
+      QSize sz = QSize (w, h);
       QSizePolicy::Policy hpolicy = x.x1 ? QSizePolicy::MinimumExpanding
                                          : QSizePolicy::Minimum;
       QSizePolicy::Policy vpolicy = x.x2 ? QSizePolicy::MinimumExpanding
@@ -1081,6 +1100,33 @@ qt_ui_element_rep::as_qwidget () {
       split->addWidget (qw2);
       
       qwid = split;
+    }
+      break;
+
+    case division_widget:
+    {
+      typedef pair<string, widget> T;
+      T            x = open_box<T>(load);
+      string    name = x.x1;
+      qt_widget    w = concrete(x.x2);
+
+      /* NOTE: we might wish to wrap the widget in something else,
+         but there does not semm to be any easy Qt widget constructor
+         that allows us to do so.  A splitter with one child comes close,
+         but adds a bit of padding.
+
+      QWidget* qw = w->as_qwidget();
+      QSplitter* split = new QSplitter();
+      split->setOrientation (Qt::Horizontal);
+      split->addWidget (qw);
+      
+      qwid = split;
+      qwid->setObjectName (to_qstring (name));
+      */
+
+      QWidget* qw = w->as_qwidget();
+      qwid = qw;
+      qwid->setObjectName (to_qstring (name));
     }
       break;
       

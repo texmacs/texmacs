@@ -12,11 +12,11 @@
   <\traverse>
     <branch|<TeXmacs>\<#7684\>\<#5F00\>\<#53D1\>\<#8005\>|developers.en.tm>
 
-    <branch|<TeXmacs>\<#63D2\>\<#4EF6\>\<#7684\>\<#4F5C\>\<#8005\>\<#548C\>\<#7EF4\>\<#62A4\>\<#8005\>\<#4EEC\>|plugins.en.tm>
+    <branch|<TeXmacs>\<#63D2\>\<#4EF6\>\<#7684\>\<#4F5C\>\<#8005\>\<#548C\>\<#7EF4\>\<#62A4\>\<#8005\>\<#4EEC\>|about-plugins.en.tm>
 
     <branch|\<#7BA1\>\<#7406\><TeXmacs>\<#548C\>\<#7269\>\<#8D28\>\<#652F\>\<#6301\>|administration.en.tm>
 
-    <branch|<TeXmacs>\<#5176\>\<#5B83\>\<#5E73\>\<#53F0\>\<#7684\>\<#79FB\>\<#690D\>\<#8005\>|porting.en.tm>
+    <branch|<TeXmacs>\<#5176\>\<#5B83\>\<#5E73\>\<#53F0\>\<#7684\>\<#79FB\>\<#690D\>\<#8005\>|about-porting.en.tm>
 
     <branch|<TeXmacs>\<#7684\>\<#6253\>\<#5305\>\<#8005\>|maintainers.en.tm>
 

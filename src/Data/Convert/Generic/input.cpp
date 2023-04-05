@@ -426,6 +426,17 @@ texmacs_input_rep::file_flush (bool force) {
       string type= suffix (file);
       string content;
       load_string (file, content, false);
+
+      // Set default width and height
+      int real_w=0, real_h=0;
+      if (width == 0 && height == 0) {
+        if (type == "png") native_image_size (file, real_w, real_h);
+        else if (type == "svg") svg_image_size (file, real_w, real_h);
+
+        if (real_w > 0) width= real_w;
+        if (real_h > 0) height= real_h;
+      }
+
       if (type == "png") {
         image_flush (content, "png", w_unit, h_unit, width, height);
       }
@@ -436,6 +447,8 @@ texmacs_input_rep::file_flush (bool force) {
         image_flush (content, "pdf", w_unit, h_unit, width, height);
       }
       else if (type == "svg") {
+        if (real_w > 0) w_unit= "pt";
+        if (real_h > 0) h_unit= "pt";
         image_flush (content, "svg", w_unit, h_unit, width, height);
       }
       else {

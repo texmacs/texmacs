@@ -22,7 +22,7 @@
   (map (lambda (x)
          (string-replace (string-replace x ", lisp" "") "version " ""))
    (filter (lambda (x) (string-starts? x "version "))
-     (string-split (var-eval-system "maxima --list-avail") #\nl))))
+     (string-split (var-eval-system "maxima --list-avail") #\newline))))
 
 (define (maxima-launchers) ;; returns list of launchers for each version
   (if (os-mingw?)
@@ -62,7 +62,15 @@
   (:session "Maxima")
   (:scripts "Maxima"))
 
-(when (supports-maxima?)
+(tm-cond-expand (supports-maxima?)
+  (define maxima-help #f)
+  (let ((help-list (string->object (var-eval-system "maxima_detect help"))))
+    (if help-list
+	(cond ((pair? help-list)
+	       (set! maxima-help (car help-list)))
+	      ((string? help-list)
+	       (set! maxima-help help-list)))))
+
   (import-from (maxima-kbd))
   (import-from (maxima-menus))
   (lazy-input-converter (maxima-input) maxima)

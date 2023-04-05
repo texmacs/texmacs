@@ -2971,7 +2971,7 @@ function cmp_dot_number {
 
   VERSION_MAJOR="2"
   VERSION_MINOR="1"
-  VERSION_BUILD=""
+  VERSION_BUILD="2"
 
   # the svn revision of this version
   DEVEL_REVISION="$Rev$:"
@@ -5689,7 +5689,7 @@ _ACEOF
 $as_echo "$as_me: Sizeof integer: $ac_cv_sizeof_void_p" >&6;}
 
 cat >>confdefs.h <<_ACEOF
-#define WORD_MASK $( printf "0x%x" $(( (~($ac_cv_alignof_void_p - 1)) & ((256 ** ac_cv_sizeof_void_p) -1) )))
+#define WORD_MASK $( printf 0x%x $(( (~($ac_cv_alignof_void_p - 1)) & ((256 ** ac_cv_sizeof_void_p) -1) )))
 _ACEOF
 
 
@@ -7196,7 +7196,7 @@ _ACEOF
 
 
 cat >>confdefs.h <<_ACEOF
-#define WORD_MASK $( printf "0x%x" 0xfffffff8)
+#define WORD_MASK $( printf 0x%x 0xfffffff8)
 _ACEOF
 
       CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
@@ -7222,7 +7222,7 @@ _ACEOF
 
 
 cat >>confdefs.h <<_ACEOF
-#define WORD_MASK $( printf "0x%x" 0xfffffff8)
+#define WORD_MASK $( printf 0x%x 0xfffffff8)
 _ACEOF
 
       CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
@@ -7293,7 +7293,7 @@ $as_echo "#define OS_IRIX 1" >>confdefs.h
       X11_LDFLAGS="$X_LIBS -lX11"
 
 cat >>confdefs.h <<_ACEOF
-#define WORD_MASK $( printf "0x%x" 0xfffffff8)
+#define WORD_MASK $( printf 0x%x 0xfffffff8)
 _ACEOF
 
       CONFIG_STD_SETENV=""
@@ -7330,6 +7330,10 @@ $as_echo "#define OS_GNU_LINUX 1" >>confdefs.h
     *apple*darwin10*)
       echo "$ac_t""Xcode 3.2 project tweak (only MacOSX 10.6)" 1>&6
       CONFIG_ARCHS='$(NATIVE_ARCH_ACTUAL)'
+    ;;
+    arm*apple*darwin*)
+      echo "$ac_t""Adjust optimization flag for Apple M1" 1>&6
+      CONFIG_CXXOPTIMIZE="-O2"
     ;;
   esac
 
@@ -8445,7 +8449,7 @@ $as_echo "#define GUILE_B 1" >>confdefs.h
       (1.8 | 1.9)
 $as_echo "#define GUILE_C 1" >>confdefs.h
  ;;
-      (2.*)
+      (2.* | 3.*)
 $as_echo "#define GUILE_D 1" >>confdefs.h
 
             # Check whether --enable-guile2 was given.
@@ -23868,6 +23872,11 @@ test -n "$QMAKE" || QMAKE="echo"
   5.*)
     { $as_echo "$as_me:${as_lineno-$LINENO}: Qt5 found" >&5
 $as_echo "$as_me: Qt5 found" >&6;}
+    if test $CONFIG_OS == MACOS; then :
+  xtraPlug=+macextras
+else
+  unset xtraPlug
+fi
     echo "$as_me: this is autotroll.m4 serial 10" >&5
 
   test x"$TROLL" != x && echo 'ViM rox emacs.'
@@ -24455,10 +24464,10 @@ $at_mod"
   echo "$qt_conf" | sed 1d >>"$pro_file"
 
 
- # Tweak the value of QT in the .pro file for $xtralibs +printsupport +svg.
+ # Tweak the value of QT in the .pro file for $xtralibs +printsupport +svg $xtraPlug.
 
   qt_conf=''
-  for at_mod in $xtralibs +printsupport +svg; do
+  for at_mod in $xtralibs +printsupport +svg $xtraPlug; do
     at_mod=`echo "$at_mod" | sed 's/^-//; tough
                                   s/^+//; beef
                                   :ough

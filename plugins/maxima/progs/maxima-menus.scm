@@ -143,8 +143,8 @@
 (define (maxima-dirs)
   (if (os-mingw?)
       (map (lambda (x) (string-drop-right x 1))
-           (string-split (var-eval-system "maxima.bat -d") #\nl))
-      (string-split (var-eval-system "maxima -d") #\nl)))
+           (string-split (var-eval-system "maxima.bat -d") #\newline))
+      (string-split (var-eval-system "maxima -d") #\newline)))
 
 (define (maxima-htmldir)
   (map (lambda (x) (string-drop x (string-length "maxima-htmldir=")))
@@ -165,7 +165,7 @@
    (if (and (in-maxima?) help)
       /
       ((balloon (icon "tm_help.xpm") "Maxima manual")
-       (load-help-buffer help)))))
+       (load-buffer help)))))
 
 (menu-bind session-help-icons
   (:require (and (in-maxima?) (in-session?)))

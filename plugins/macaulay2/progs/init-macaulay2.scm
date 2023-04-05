@@ -17,7 +17,7 @@
   (:launch "M2 --texmacs")
   (:session "Macaulay 2"))
 
-(when (supports-macaulay2?)
+(tm-cond-expand (supports-macaulay2?)
   (import-from (doc help-funcs))
   (lazy-input-converter (m2-input) macaulay2)
 

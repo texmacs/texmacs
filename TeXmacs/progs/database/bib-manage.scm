@@ -297,7 +297,7 @@
 
 (tm-define (bib-generate prefix style doc)
   (with m `(bibtex ,(string->symbol style))
-    (module-provide m)
+    (module-load m)
     (bib-process prefix style doc)))
 
 (define (bib-difference l1 l2)

@@ -21,7 +21,7 @@
   (:session "Giac")
   (:scripts "Giac"))
 
-(when (supports-giac?)
+(tm-cond-expand (supports-giac?)
   (import-from (giac-kbd))
   (import-from (giac-menus))
   (lazy-input-converter (giac-input) giac)

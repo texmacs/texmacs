@@ -16,7 +16,7 @@
 
     <apply|branch|Ambientes|man-environments.pt.tm>
 
-    <apply|branch|Diagramação|man-layout.pt.tm>
+    <apply|branch|Diagramação|man-layout-issues.pt.tm>
 
     <apply|branch|O sistema de seleção de fontes|man-fonts.pt.tm>
 

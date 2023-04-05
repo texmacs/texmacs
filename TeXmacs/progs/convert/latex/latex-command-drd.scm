@@ -28,7 +28,7 @@
 (logic-group latex-command-0%
   ,(string->symbol " ") ,(string->symbol ";") 
   ,(string->symbol ",") ,(string->symbol ":") 
-  - / [ ] ! * ,(string->symbol "|") i j ss SS oe OE ae AE
+  - / ,(string->symbol "[")  ,(string->symbol "]")  ! * ,(string->symbol "|") i j ss SS oe OE ae AE
   AA DH L NG O S TH aa dh dj l ng o P th pounds colon and lq rq
   quad qquad enspace thinspace par smallskip medskip bigskip
   noindent newline linebreak nobreak nolinebreak strut

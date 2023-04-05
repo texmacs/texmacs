@@ -50,7 +50,7 @@ AC_DEFUN([TM_PLATFORM],[
   AC_DEFINE_UNQUOTED([WORD_LENGTH_INC],[$(($ac_cv_sizeof_void_p - 1))],[Pointer increment])
 
   AC_MSG_NOTICE([Sizeof integer: $ac_cv_sizeof_void_p])
-  AC_DEFINE_UNQUOTED([WORD_MASK],[$( printf "0x%x" $(( (~($ac_cv_alignof_void_p - 1)) & ((256 ** ac_cv_sizeof_void_p) -1) )))],[Word Mask])
+  AC_DEFINE_UNQUOTED([WORD_MASK],[$( printf 0x%x $(( (~($ac_cv_alignof_void_p - 1)) & ((256 ** ac_cv_sizeof_void_p) -1) )))],[Word Mask])
   AC_DEFINE([MAX_FAST],[264] ,[Max fast alloc // WORD_LENGTH more than power of 2])
   AX_RESTORE_FLAGS
 
@@ -65,7 +65,7 @@ AC_DEFUN([TM_PLATFORM],[
       AC_CHECK_LIB(expat,XML_ParserCreate,[CONFIG_BSTATIC="-lexpat $CONFIG_BSTATIC";CONFIG_STYPE=A])
       AC_CHECK_LIB(xcb,xcb_disconnect,[CONFIG_BSTATIC="-lxcb $CONFIG_BSTATIC";CONFIG_STYPE=B])
   ])
-  
+
   AC_MSG_CHECKING(final adjustments for)
   case "${host}" in
     x86_64-*-linux*)
@@ -127,9 +127,9 @@ AC_DEFUN([TM_PLATFORM],[
       CONFIG_SO="dylib"
       CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
       LC_APPEND_FLAG([-Wl,-stack_size,0x1000000,-headerpad_max_install_names],[LDFLAGS])
-      test -z "$with_tmrepo" -a -d /sw/include -a -d /sw/lib && 
+      test -z "$with_tmrepo" -a -d /sw/include -a -d /sw/lib &&
         LC_SCATTER_FLAGS([-I/sw/include -L/sw/lib])
-      test -z "$with_tmrepo" -a -d /opt/local/include -a -d /opt/local/lib && 
+      test -z "$with_tmrepo" -a -d /opt/local/include -a -d /opt/local/lib &&
         LC_SCATTER_FLAGS([-I/opt/local/include -L/opt/local/lib])
     ;;
     *darwin*)
@@ -148,7 +148,7 @@ AC_DEFUN([TM_PLATFORM],[
       CONFIG_OS="HAIKU"
       CONFIG_QTPIPES="yes"
       CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-    ;;    
+    ;;
     powerpc-*-linux*)
       AC_MSG_RESULT(a PowerPC/GNU-linux host)
       AC_DEFINE([OS_POWERPC_GNU_LINUX],[1],[OS type])
@@ -165,7 +165,7 @@ AC_DEFUN([TM_PLATFORM],[
       X11_LDFLAGS="$X_LIBS -lXext -lX11 -lsocket"
       AC_DEFINE_UNQUOTED([WORD_LENGTH],[8],[Pointer  size])
       AC_DEFINE_UNQUOTED([WORD_LENGTH_INC],[7],[Pointer increment])
-      AC_DEFINE_UNQUOTED([WORD_MASK],[$( printf "0x%x" 0xfffffff8)],[Word Mask])
+      AC_DEFINE_UNQUOTED([WORD_MASK],[$( printf 0x%x 0xfffffff8)],[Word Mask])
       CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
       CONFIG_STD_SETENV=""
     ;;
@@ -176,7 +176,7 @@ AC_DEFUN([TM_PLATFORM],[
       CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
       AC_DEFINE_UNQUOTED([WORD_LENGTH],[8],[Pointer  size])
       AC_DEFINE_UNQUOTED([WORD_LENGTH_INC],[7],[Pointer increment])
-      AC_DEFINE_UNQUOTED([WORD_MASK],[$( printf "0x%x" 0xfffffff8)],[Word Mask])
+      AC_DEFINE_UNQUOTED([WORD_MASK],[$( printf 0x%x 0xfffffff8)],[Word Mask])
       CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
       CONFIG_STD_SETENV=""
     ;;
@@ -226,7 +226,7 @@ AC_DEFUN([TM_PLATFORM],[
       CONFIG_BSHARED=""
       CONFIG_BPATH=""
       X11_LDFLAGS="$X_LIBS -lX11"
-      AC_DEFINE_UNQUOTED([WORD_MASK],[$( printf "0x%x" 0xfffffff8)],[Word Mask])
+      AC_DEFINE_UNQUOTED([WORD_MASK],[$( printf 0x%x 0xfffffff8)],[Word Mask])
       CONFIG_STD_SETENV=""
       CONFIG_CHMOD="chmod"
       CONFIG_LIB_PATH="LD_LIBRARYN32_PATH"
@@ -252,6 +252,10 @@ AC_DEFUN([TM_PLATFORM],[
     *apple*darwin10*)
       echo "$ac_t""Xcode 3.2 project tweak (only MacOSX 10.6)" 1>&6
       CONFIG_ARCHS='$(NATIVE_ARCH_ACTUAL)'
+    ;;
+    arm*apple*darwin*)
+      echo "$ac_t""Adjust optimization flag for Apple M1" 1>&6
+      CONFIG_CXXOPTIMIZE="-O2"
     ;;
   esac
 

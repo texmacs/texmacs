@@ -17,6 +17,18 @@
 ;; Adaptive hash tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(cond-expand (guile-2
+      (define-public make-ahash-table make-hash-table)
+      (define-public ahash-ref hash-ref)
+      (define-public ahash-get-handle hash-get-handle)
+      (define-public (ahash-size h)
+	(hash-fold (lambda (key value seed) (+ 1 seed)) 0 h))
+      (define-public ahash-set! hash-set!)
+      (define-public ahash-remove! hash-remove!)
+      (define-public ahash-fold hash-fold)
+      (define-public (ahash-table->list h)
+	(hash-fold acons '() h)))
+ (else
 (if (vector? (make-hash-table 1))
     (begin ;; old style
       (define-public (make-ahash-table)
@@ -71,7 +83,7 @@
       (define-public ahash-remove! hash-remove!)
       (define-public ahash-fold hash-fold)
       (define-public (ahash-table->list h)
-	(hash-fold acons '() h))))
+	(hash-fold acons '() h))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra routines on adaptive hash tables
@@ -156,11 +168,24 @@
 
 (define-public-macro (define-table name . l)
   `(begin
-     (when (not (defined? ',name))
-       (if (defined? 'tm-define)
-           (tm-define ,name (make-ahash-table))
-           (define-public ,name (make-ahash-table))))
+     (eval-when (expand load eval) (tm-define ,name (make-ahash-table)))
      (define-table-decls ,name ,(list 'quasiquote l))))
 
 (define-public-macro (extend-table name . l)
   `(define-table-decls ,name ,(list 'quasiquote l)))
+
+(define-public (define-collection-decls h l)
+  (define (insert elem)
+    (ahash-set! h elem #t))
+  (for-each insert l))
+
+(define-public-macro (define-collection name . l)
+  `(begin
+     (when (not (defined? ',name))
+       (if (defined? 'tm-define)
+           (tm-define ,name (make-ahash-table))
+           (define-public ,name (make-ahash-table))))
+     (define-collection-decls ,name ,(list 'quasiquote l))))
+
+(define-public-macro (extend-collection name . l)
+  `(define-collection-decls ,name ,(list 'quasiquote l)))

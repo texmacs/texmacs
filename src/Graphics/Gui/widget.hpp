@@ -208,6 +208,8 @@ widget horizontal_list (array<widget> a);
   // a horizontal list made up of the widgets in a
 widget vertical_list (array<widget> a);
   // a vertical list made up of the widgets in a
+widget division_widget (string name, widget w);
+  // a widget with a CSS style name
 widget aligned_widget (array<widget> lhs, array<widget> rhs,
                        SI hsep= 3*PIXEL, SI vsep= 3*PIXEL,
                        SI lpad= 0, SI rpad= 0);
@@ -233,7 +235,7 @@ widget hsplit_widget (widget l, widget r);
   // two horizontally juxtaposed widgets l and r with an ajustable border
 widget vsplit_widget (widget t, widget b);
   // two vertically juxtaposed widgets t and b with an ajustable border
-widget extend (widget w, array<widget> a);
+widget extend_widget (widget w, array<widget> a);
   // extend the size of w to the maximum of the sizes of
   // the widgets in the list a
 widget toggle_widget (command cmd, bool on= false, int style= 0);
@@ -272,9 +274,10 @@ widget refreshable_widget (object prom, string kind= "any");
 // void simple_widget_rep::handle_keyboard_focus (bool new_focus, time_t t);
 //   issued when the keyboard focus of the widget has changed
 // void simple_widget_rep::handle_mouse
-//        (string kind, SI x, SI y, int mods, time_t t);
+//        (string kind, SI x, SI y, int mods, time_t t, array<double> data);
 //   a mouse event of a given kind at position (x, y) and time t
 //   mods contains the active keyboard modifiers at time t
+//   data contains extra information about pen or gesture events
 // void simple_widget_rep::handle_set_zoom_factor (double zoom);
 //   set the zoom factor for painting
 // void simple_widget_rep::handle_clear

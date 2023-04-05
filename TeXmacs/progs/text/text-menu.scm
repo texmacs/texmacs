@@ -15,7 +15,7 @@
   (:use (text text-edit)
         (text text-structure)
         (generic document-menu)
-	(generic document-style)))
+        (generic document-style)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Format menu in text mode
@@ -864,9 +864,12 @@
   (:require (== l "appendix-prefix"))
   #f)
 
+(define (get-verbatim-section-title s indent?)
+  `(verbatim ,(tm/section-get-title-string s indent?)))
+
 (tm-menu (focus-section-menu)
   (for (s (tree-search-sections (buffer-tree)))
-    ((eval (tm/section-get-title-string s #t))
+    ((eval (get-verbatim-section-title s #t))
      (when (and (tree->path s) (section-context? s))
        (tree-go-to s 0 :end)))))
 
@@ -877,7 +880,7 @@
 (tm-menu (focus-document-extra-icons t)
   (:require (previous-section))
   (mini #t
-    (=> (eval (tm/section-get-title-string (previous-section) #f))
+    (=> (eval (get-verbatim-section-title (previous-section) #f))
         (link focus-section-menu))))
 
 (tm-menu (focus-extra-menu t)
@@ -890,7 +893,7 @@
   (:require (section-context? t))
   (mini #t
     //
-    (=> (eval (tm/section-get-title-string t #f))
+    (=> (eval (get-verbatim-section-title t #f))
         (link focus-section-menu))))
 
 (tm-define (child-proposals t i)

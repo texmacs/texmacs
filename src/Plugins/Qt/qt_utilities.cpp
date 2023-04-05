@@ -27,6 +27,7 @@
 #include <QPrinter>
 #include <QPrintDialog>
 #include <QImageReader>
+#include <QApplication>
 
 #include "colors.hpp"
 
@@ -72,7 +73,8 @@ operator << (tm_ostream& out, QRect rect) {
 
 QFont
 to_qfont (int style, QFont font) {
-  if (style & WIDGET_STYLE_MINI) {  // Use smaller text font
+  if ((style & WIDGET_STYLE_MINI) && tm_style_sheet == "" && use_mini_bars) {
+    // Use smaller text font
     int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
     font.setPointSize (qt_zoom (fs > 0 ? fs : QTM_MINI_FONTSIZE));
   }
@@ -93,6 +95,14 @@ to_qfont (int style, QFont font) {
   if (style & WIDGET_STYLE_BOLD)
     font.setBold(true);
   return font;
+}
+
+double
+em_factor () {
+#if (QT_VERSION < 0x050000)
+  if (tm_style_sheet == "") return 1.0 / 1.4;
+#endif
+  return 1.0;
 }
 
 /*! Try to convert a TeXmacs length (em, px, w, h) into a QSize.
@@ -117,11 +127,18 @@ qt_decode_length (string width, string height,
   if (w_unit == "w") size.rwidth() *= w_len;
     // Width as a function of the default height
   else if (w_unit == "h") size.rwidth() = w_len * size.height();
-    // Absolute EM units
-  else if (w_unit == "em") size.setWidth (w_len * fm.width("M"));
+    // Absolute EM units (temporarily fixed to 14px)
+  else if (w_unit == "em") {
+    //size.setWidth (em_factor()* w_len * fm.width("M"));
+    if (tm_style_sheet != "") w_len *= 14 * retina_scale;
+    else if (retina_zoom == 2) w_len *= 21;
+    else w_len *= 14;
+    size.setWidth (w_len);
+  }
     // Absolute pixel units
   else if (w_unit == "px") {
-    if (retina_zoom == 2) w_len *= 1.5;
+    if (tm_style_sheet != "") w_len *= retina_scale;
+    else if (retina_zoom == 2) w_len *= 1.5;
     size.setWidth (w_len);
   }
 
@@ -129,9 +146,16 @@ qt_decode_length (string width, string height,
   if (h_unit == "w") size.rheight() = h_len * size.width();
     // Height as a function of the default height
   else if (h_unit == "h") size.rheight() *= h_len;
-  else if (h_unit == "em") size.setHeight (h_len * fm.width("M"));
+  else if (h_unit == "em") {
+    //size.setHeight (em_factor()* h_len * fm.width("M"));
+    if (tm_style_sheet != "") h_len *= 14 * retina_scale;
+    else if (retina_zoom == 2) h_len *= 21;
+    else w_len *= 14;
+    size.setHeight (h_len);
+  }
   else if (h_unit == "px") {
-    if (retina_zoom == 2) h_len *= 1.5;
+    if (tm_style_sheet != "") h_len *= retina_scale;
+    else if (retina_zoom == 2) h_len *= 1.5;
     size.setHeight (h_len);
   }
   return size;
@@ -635,7 +659,8 @@ as_pixmap (const QImage& im) {
 QString
 parse_tm_style (int style) {
   QString sheet;
-  if (style & WIDGET_STYLE_MINI) {  // Use smaller text font
+  if ((style & WIDGET_STYLE_MINI) && tm_style_sheet == "" && use_mini_bars) {
+    // Use smaller text font
     int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
     sheet += QString("font-size: %1pt;").arg (fs > 0 ? fs : QTM_MINI_FONTSIZE);
     sheet += QString("padding: 1px;");
@@ -656,6 +681,11 @@ parse_tm_style (int style) {
     sheet += "font-weight: bold;";
   if (DEBUG_QT_WIDGETS)
     sheet += "border:1px solid rgb(255, 0, 0);";
+
+  if (occurs ("dark", tm_style_sheet)) {
+    if (style & WIDGET_STYLE_GREY) sheet += "color: #a0a0a0;";
+    if (style & WIDGET_STYLE_INERT) sheet += "color: #a0a0a0;";
+  }
   return sheet;
 }
 
@@ -671,6 +701,7 @@ qt_apply_tm_style (QWidget* qwid, int style, color c) {
   int r,g,b,a;
   get_rgb_color (c, r, g, b, a);
   a = a*100/255;
+  if (occurs ("dark", tm_style_sheet)) { r= g= b= 224; a= 100; }
   QString sheet = "* {" + parse_tm_style (style)
   + QString("color: rgba(%1, %2, %3, %4%);").arg(r).arg(g).arg(b).arg(a)
   + "} ";
@@ -861,3 +892,124 @@ QString fromNSUrl(const QUrl &url) {
 }
 #endif // OS_MACOS
 
+/******************************************************************************
+* Style sheets
+******************************************************************************/
+
+static string current_style_sheet;
+
+void
+init_palette (QApplication* app) {
+  if (occurs ("dark", tm_style_sheet)) {
+    QPalette pal= app -> style () -> standardPalette ();
+    pal.setColor (QPalette::Window, QColor (64, 64, 64));
+    pal.setColor (QPalette::WindowText, QColor (224, 224, 224));
+    pal.setColor (QPalette::Base, QColor (96, 96, 96));
+    pal.setColor (QPalette::Text, QColor (224, 224, 224));
+    pal.setColor (QPalette::ButtonText, QColor (224, 224, 224));
+    pal.setColor (QPalette::Light, QColor (64, 64, 64));
+    pal.setColor (QPalette::Midlight, QColor (96, 96, 96));
+    pal.setColor (QPalette::Dark, QColor (112, 112, 112));
+    pal.setColor (QPalette::Mid, QColor (128, 128, 128));
+    pal.setColor (QPalette::Shadow, QColor (240, 240, 240));
+    pal.setColor (QPalette::HighlightedText, QColor (48, 48, 48));
+    app->setPalette (pal);
+  }
+  else if (tm_style_sheet != "" && !occurs ("native", tm_style_sheet)) {
+    QPalette pal= app -> style () -> standardPalette ();
+    pal.setColor (QPalette::Window, QColor (232, 232, 232));
+    pal.setColor (QPalette::WindowText, QColor (0, 0, 0));
+    pal.setColor (QPalette::Base, QColor (255, 255, 255));
+    pal.setColor (QPalette::Text, QColor (0, 0, 0));
+    pal.setColor (QPalette::ButtonText, QColor (0, 0, 0));
+    pal.setColor (QPalette::Light, QColor (240, 240, 240));
+    pal.setColor (QPalette::Midlight, QColor (224, 224, 224));
+    pal.setColor (QPalette::Dark, QColor (192, 192, 192));
+    pal.setColor (QPalette::Mid, QColor (160, 160, 160));
+    pal.setColor (QPalette::Shadow, QColor (0, 0, 0));
+    pal.setColor (QPalette::HighlightedText, QColor (255, 255, 255));
+    app->setPalette (pal);
+  }
+    
+  if (occurs ("dark", tm_style_sheet))
+    tm_background= rgb_color (32, 32, 32);
+  else if (occurs ("native", tm_style_sheet)) {
+    QPalette pal = app -> palette ();
+    QColor   col = pal.color (QPalette::Mid);
+    tm_background= rgb_color (col.red (), col.green (), col.blue ());
+  }
+  else if (tm_style_sheet != "")
+    tm_background= rgb_color (160, 160, 160);
+}
+
+string
+scale_px (string s) {
+  string r;
+  for (int i=0; i<N(s); )
+    if (s[i] == ':') {
+      r << s[i++];
+      while (i<N(s) && s[i] == ' ') r << s[i++];
+      int j= i;
+      if (j<N(s) && s[j] == '-') j++;
+      while (j<N(s) && (is_numeric (s[j]) || s[j] == '.')) j++;
+      if (test (s, j, "px;") || test (s, j, "px ")) {
+        double x= as_double (s (i, j));
+        int nx= (int) floor (x * retina_scale + 0.5);
+        r << as_string (nx);
+        i= j;
+      }
+    }
+    else r << s[i++];
+  return r;
+}
+
+void
+init_style_sheet (QApplication* app) {
+  string ss;
+  url css (tm_style_sheet);
+  if (!exists (css)) {
+    if (suffix (css) == "") css= glue (css, ".css");
+    url dir ("$TEXMACS_THEME_PATH");
+    css= resolve (dir * css);
+    if (is_none (css)) return;
+  }
+  if (tm_style_sheet != "" && !load_string (css, ss, false)) {
+    string p= as_string (url ("$TEXMACS_PATH"));
+#ifdef Q_OS_WIN
+    p = replace (p , "\\", "/");
+#endif
+    ss= replace (ss, "\n", " ");
+    ss= replace (ss, "\t", " ");
+    ss= replace (ss, "$TEXMACS_PATH", p);
+#if (QT_VERSION < 0x050000)
+    ss= replace (ss, "Qt4", "");
+#endif
+#ifdef OS_MACOS
+    ss= replace (ss, "Macos", "");
+#else
+    ss= replace (ss, "Nomac", "");
+#endif
+#ifdef OS_MINGW
+    ss= replace (ss, "Mingw", "");
+#endif
+#ifdef OS_GNU_LINUX
+    ss= replace (ss, "Linux", "");
+#endif
+    if (use_unified_toolbar)
+      ss= replace (ss, "Uni", "");
+    else
+      ss= replace (ss, "Nonuni", "");
+    if (!use_unified_toolbar ||
+        get_preference ("main icon bar", "off") != "off")
+      ss= replace (ss, "Nounim", "");
+    ss= scale_px (ss);
+    current_style_sheet= ss;
+    app->setStyleSheet (to_qstring (current_style_sheet));
+  }
+}
+
+void
+set_standard_style_sheet (QWidget* w) {
+  if (current_style_sheet != "")
+    w->setStyleSheet (to_qstring (current_style_sheet));
+}

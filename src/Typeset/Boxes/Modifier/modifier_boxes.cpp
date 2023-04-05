@@ -45,8 +45,8 @@ modifier_box_rep::display (renderer ren) {
 }
 
 tree
-modifier_box_rep::action (tree t, SI x, SI y, SI delta) {
-  return b->action (t, x, y, delta);
+modifier_box_rep::message (tree t, SI x, SI y, rectangles& rs) {
+  return b->message (t, x, y, rs);
 }
 
 void

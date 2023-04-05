@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "analyze.hpp"
+#include "convert.hpp"
 #include "impl_language.hpp"
 #include "scheme.hpp"
 #include "tree.hpp"
@@ -22,7 +23,7 @@ prog_language_rep::prog_language_rep (string name):
   if (DEBUG_PARSER)
     debug_packrat << "Building the " * name * " language parser" << LF;
 
-  string use_modules= "(use-modules (prog " * name * "-lang))";
+  string use_modules= "(use-modules (" * name * "-lang))";
   eval (use_modules);
 
   tree keyword_config= get_parser_config (name, "keyword");
@@ -272,23 +273,22 @@ prog_language_rep::get_color (tree t, int start, int end) {
   return decode_color (lan_name, encode_color (type));
 }
 
+bool prog_lang_exists (string s) {
+  return exists (url_system ("$TEXMACS_PATH/progs/prog/" * s * "-lang.scm"))
+   || exists (url_system ("$TEXMACS_PATH/plugins/" * s * "/progs/" * s * "-lang.scm"))
+   || exists (url_system ("$TEXMACS_PATH/plugins/code/progs/" * s * "-lang.scm"))
+   || exists (url_system ("$TEXMACS_HOME_PATH/plugins/" * s * "/progs/" * s * "-lang.scm"))
+   || exists (url_system ("$TEXMACS_HOME_PATH/plugins/code/progs/" * s * "-lang.scm"))
+   ;
+}
+
 /******************************************************************************
 * Interface
 ******************************************************************************/
-
 language
 prog_language (string s) {
   if (language::instances -> contains (s)) return language (s);
-
-  hashset<string> prog_v1_langs= hashset<string>();
-  prog_v1_langs
-    << string("cpp")        << string("dot")    << string("java")
-    << string("javascript") << string("json")   << string("octave")
-    << string("python")     << string("julia")  << string("scala");
-
-  if (prog_v1_langs->contains (s))
-    return make (language, s, tm_new<prog_language_rep> (s));
-
+  
   if (s == "scheme")
     return make (language, s, tm_new<scheme_language_rep> (s));
   if (s == "mathemagix" || s == "mmi" || s == "caas" || s == "mmshell")
@@ -299,5 +299,9 @@ prog_language (string s) {
     return make (language, s, tm_new<r_language_rep> (s));
   if (s == "fortran")
     return make (language, s, tm_new<fortran_language_rep> (s));
+
+  if (format_exists (s) && prog_lang_exists (s))
+    return make (language, s, tm_new<prog_language_rep> (s));
+
   return make (language, s, tm_new<verb_language_rep> (s));
 }

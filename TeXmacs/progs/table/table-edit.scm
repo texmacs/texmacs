@@ -46,6 +46,16 @@
 ;; Supplementary routines for cetting cell and table formats
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define-macro (keep-table-selection . body)
+  `(with (sr1 sr2 sc1 sc2) (table-which-cells)
+     (with ktres (begin ,@body)
+       (if (or (!= sr2 sr1) (!= sc2 sc1))
+           ;; FIXME: find a robust way to keep the selection
+           (delayed
+             (:pause 10)
+             (table-select-cells sr1 sr2 sc1 sc2)))
+       ktres)))       
+
 (tm-define (cell-set-format* var val)
   (when val
     (keep-table-selection
@@ -152,6 +162,14 @@
   (:require (table-markup-context? t))
   (with-focus-after t
     (if down? (cell-valign-down) (cell-valign-up))))
+
+(tm-define (swipe-horizontal t forward?)
+  (:require (table-markup-context? t))
+  (geometry-horizontal t forward?))
+
+(tm-define (swipe-vertical t down?)
+  (:require (table-markup-context? t))
+  (geometry-vertical t down?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Structured traversal

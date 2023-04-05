@@ -22,13 +22,13 @@
 
 (tm-define (pre-serialize lan t)
   (cond ((func? t 'document 1) (pre-serialize lan (cadr t)))
-	((func? t 'math 1)
-	 (pre-serialize lan (plugin-math-input (list 'tuple lan (cadr t)))))
-	(else t)))
+        ((func? t 'math 1)
+         (pre-serialize lan (plugin-math-input (list 'tuple lan (cadr t)))))
+        (else t)))
 
 (define (hacked-texmacs->code x)
   (with r (texmacs->code x)
-    (string-replace r "‘" "`")))
+    (string-replace r "`" "`")))
 
 (tm-define (verbatim-serialize lan t)
   (with u (pre-serialize lan t)
@@ -37,14 +37,14 @@
 (tm-define (generic-serialize lan t)
   (with u (pre-serialize lan t)
     (string-append (char->string #\002) "verbatim:"
-		   (escape-generic (texmacs->code u))
-		   (char->string #\005))))
+                   (escape-generic (texmacs->code u))
+                   (char->string #\005))))
 
 (tm-define (plugin-serialize lan t)
   (with fun (ahash-ref plugin-serializer lan)
     (if fun
-	(fun lan t)
-	(verbatim-serialize lan t))))
+        (fun lan t)
+        (verbatim-serialize lan t))))
 
 (tm-define (plugin-serializer-set! lan val)
   (ahash-set! plugin-serializer lan val))
@@ -61,8 +61,8 @@
 (tm-define (format-command lan s)
   (with fun (ahash-ref plugin-commander lan)
     (if fun
-	(fun s)
-	(default-format-command s))))
+        (fun s)
+        (default-format-command s))))
 
 (tm-define (plugin-commander-set! lan val)
   (ahash-set! plugin-commander lan val))
@@ -76,7 +76,7 @@
   (or (and (list? which) (tree-in? t which))
       (and (nlist? which) (tree-is? t which))
       (and (tree-in? t '(table tformat document))
-	   (cell-context-inside-sub? (tree-up t) which))))
+           (cell-context-inside-sub? (tree-up t) which))))
 
 (define (cell-context-inside? t which)
   (and (tree-is? t 'cell)
@@ -86,12 +86,12 @@
 (tm-define (formula-context? t)
   (with u (tree-up t)
     (and u (or (tree-in? u '(math equation equation*))
-	       (match? u '(with "mode" "math" :%1))
-	       (cell-context-inside? u '(eqnarray eqnarray*))))))
+               (match? u '(with "mode" "math" :%1))
+               (cell-context-inside? u '(eqnarray eqnarray*))))))
 
 (tm-define (in-var-math?)
   (let* ((t1 (tree-innermost formula-context? #t))
-	 (t2 (tree-innermost 'text)))
+         (t2 (tree-innermost 'text)))
     (and (nnot t1) (or (not t2) (tree-inside? t1 t2)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

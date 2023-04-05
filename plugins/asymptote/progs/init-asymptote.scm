@@ -26,6 +26,7 @@
                      "/plugins/tmpy/session/tm_asy.py\"")))
 
 (plugin-configure asymptote
+  (:winpath "Asymptote" ".")
   (:require (url-exists-in-path? "asy"))
   (:require (python-command))
   (:launch ,(asy-launcher))
@@ -33,6 +34,6 @@
   (:session "Asymptote")
   (:scripts "Asymptote"))
 
-(when (supports-asymptote?)
+(tm-cond-expand (supports-asymptote?)
   (import-from (asymptote-menus))
   (import-from (utils plugins plugin-convert)))

@@ -14,40 +14,41 @@
 (texmacs-module (kernel texmacs tm-modes)
   (:use
     (kernel logic logic-rules) (kernel logic logic-query) (kernel logic logic-data)
-    (kernel texmacs tm-plugins) (kernel texmacs tm-preferences)))
+    (kernel texmacs tm-preferences)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Defining new modes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (texmacs-mode-pred mode)
-  (let* ((mode-str (symbol->string mode))
-         (mode-root (substring mode-str 0 (- (string-length mode-str) 1)))
-         (pred-str (string-append mode-root "?")))
-    (string->symbol pred-str)))
+(eval-when (expand load eval)
+   (define (texmacs-mode-pred mode)
+     (let* ((mode-str (symbol->string mode))
+           (mode-root (substring mode-str 0 (- (string-length mode-str) 1)))
+           (pred-str (string-append mode-root "?")))
+      (string->symbol pred-str)))
 
-(define-public (texmacs-mode item)
-  (with (mode action . deps) item
-    (let* ((pred (texmacs-mode-pred mode))
-           (deps* (map list (map texmacs-mode-pred deps)))
-           (l (if (== action #t) deps* (cons action deps*)))
-           (test (if (null? l) #t (if (null? (cdr l)) (car l) (cons 'and l))))
-           (defn `(define-public (,pred) ,test))
-           (rules (map (lambda (dep) (list dep mode)) deps))
-           (logic-cmd `(logic-rules ,@rules))
-           (arch1 `(set-symbol-procedure! ',mode ,pred))
-           (arch2 `(set-symbol-procedure! ',pred ,pred)))
-      (if (== mode 'always%) (set! defn '(noop)))
-      (if (null? deps)
-          (list 'begin defn arch1 arch2)
-          (list 'begin defn arch1 arch2 logic-cmd)))))
+ (define (texmacs-mode item)
+(with (mode action . deps) item
+  (let* ((pred (texmacs-mode-pred mode))
+         (deps* (map list (map texmacs-mode-pred deps)))
+         (l (if (== action #t) deps* (cons action deps*)))
+         (test (if (null? l) #t (if (null? (cdr l)) (car l) (cons 'and l))))
+         (defn `(define-public (,pred) ,test))
+         (rules (map (lambda (dep) (list dep mode)) deps))
+         (logic-cmd `(logic-rules ,@rules))
+         (arch1 `(set-symbol-procedure! ',mode ,pred))
+         (arch2 `(set-symbol-procedure! ',pred ,pred)))
+    (if (== mode 'always%) (set! defn '(noop)))
+    (if (null? deps)
+        (list 'begin defn arch1 arch2)
+        (list 'begin defn arch1 arch2 logic-cmd)))))
+)
 
 (define-public-macro (texmacs-modes . l)
+ (begin
   `(begin
-     (set! temp-module ,(current-module))
-     (set-current-module texmacs-user)
-     ,@(map texmacs-mode l)
-     (set-current-module temp-module)))
+     (with-module texmacs-user
+       ,@(map texmacs-mode l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Checking modes
@@ -99,6 +100,9 @@
 (define-public (supports-db?)
   (== (get-preference "database tool") "on"))
 
+(define-public (side-tools?)
+  (visible-side-tools? 0))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mode related
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -140,6 +144,7 @@
   (in-letter% (style-has? "header-letter-package"))
   (in-seminar% (style-has? "header-seminar-package"))
   (in-generic% (style-has? "generic-style"))
+  (in-code% (style-has? "code-style"))
   (in-browser% (style-has? "browser-style"))
   (in-beamer% (style-has? "beamer-style"))
   (in-poster% (style-has? "poster-style"))

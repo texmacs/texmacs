@@ -8,5 +8,5 @@
   <hlink|<name|Reduce>|http://reduce-algebra.sourceforge.net/> is one of the
   oldest computer algebra systems. It is powerful, stable and highly
   efficient. Its <TeXmacs> interface is described in the <hlink|arXiv
-  article|http://arxiv.org/html/1204.3020v1>.
+  article|https://arxiv.org/html/1204.3020v1>.
 </body>

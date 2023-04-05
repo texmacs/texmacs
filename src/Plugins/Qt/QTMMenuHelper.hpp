@@ -373,6 +373,7 @@ class QTMComboBox : public QComboBox {
   
   QSize  calcSize;
   QSize   minSize;
+  
 public:
   QTMComboBox (QWidget* parent);
 

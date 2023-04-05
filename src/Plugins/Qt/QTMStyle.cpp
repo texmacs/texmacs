@@ -434,7 +434,7 @@ QTMStyle::drawControl (ControlElement element, const QStyleOption* option, QPain
           // For unified tool bars, draw nothing.
           if (QMainWindow * mainWindow = qobject_cast<QMainWindow *>(widget->window())) {
             if ((mainWindow->unifiedTitleAndToolBarOnMac()) && 
-                (widget->parent()->objectName() != "central widget"))
+                (widget->parent()->objectName() != "centralWidget"))
               break;
           }
 

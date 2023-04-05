@@ -20,7 +20,10 @@
 (tm-define (get-retina-preference which)
   (if (cpp-has-preference? which)
       (get-preference which)
-      (cond ((== which "retina-scale") (number->string (get-retina-scale)))
+      (cond ((== which "retina-scale")
+             (cond ((== (get-retina-scale) 1.0) "1")
+                   ((== (get-retina-scale) 2.0) "2")
+                   (else (number->string (get-retina-scale)))))
             (else ""))))
 
 (tm-define (set-retina-preference which val)
@@ -45,58 +48,59 @@
 
 (tm-widget (retina-settings-widget cmd)
   (centered
-    (assuming (os-macos?)
+    (assuming (and (os-macos?) (qt4-gui?))
       (centered
 	(aligned
-	  (meti (hlist // (text "Use retina fonts"))
+	  (item (text "Use retina fonts:")
 	    (toggle (set-retina-boolean-preference "retina-factor" answer)
 		    (get-retina-boolean-preference "retina-factor")))
-	  (meti (hlist // (text "Use retina icons"))
+	  (item (text "Use retina icons:")
 	    (toggle (set-retina-boolean-preference "retina-icons" answer)
 		    (get-retina-boolean-preference "retina-icons")))
-	  (meti (hlist // (text "Use unified toolbars"))
-            (toggle (set-boolean-preference "use unified toolbar" answer)
-                    (get-boolean-preference "use unified toolbar")))))
-      ===
-      (aligned
-        (item (text "Graphical interface font scale:")
-          (enum (set-retina-preference "retina-scale" answer)
-                '("1" "1.2" "1.4" "1.6" "1.8" "2" "")
-                (get-retina-preference "retina-scale")
-                "5em"))))
+          (item (text "Scale graphical interface:")
+            (enum (set-retina-preference "retina-scale" answer)
+                  '("1" "1.2" "1.4" "1.6" "1.8" "2" "")
+                  (get-retina-preference "retina-scale")
+                  "5em")))))
+    (assuming (and (os-macos?) (qt5-or-later-gui?))
+      (centered
+        (aligned
+	  (item (text "Use retina fonts:")
+	    (toggle (set-retina-boolean-preference "retina-factor" answer)
+		    (get-retina-boolean-preference "retina-factor")))
+          (assuming (!= (get-preference "gui theme") "")
+            (item (text "Scale graphical interface:")
+              (enum (set-retina-preference "retina-scale" answer)
+                    '("1" "1.2" "1.5" "2" "")
+                    (get-retina-preference "retina-scale")
+                    "5em"))))))
     (assuming (not (os-macos?))
       (centered
 	(aligned
-	  (meti (hlist // (text "Double the zoom factor for TeXmacs documents"))
+	  (item (text "Double the zoom factor for TeXmacs documents:")
 	    (toggle (set-retina-boolean-preference "retina-zoom" answer)
 		    (get-retina-boolean-preference "retina-zoom")))
-	  (meti (hlist // (text "Use high resolution icons"))
+	  (item (text "Use high resolution icons:")
 	    (toggle (set-retina-boolean-preference "retina-icons" answer)
-		    (get-retina-boolean-preference "retina-icons"))))))
+		    (get-retina-boolean-preference "retina-icons")))
+          (assuming (!= (get-preference "gui theme") "")
+            (item (text "Scale of the graphical user interface:")
+              (enum (set-retina-preference "retina-scale" answer)
+                    '("1" "1.2" "1.5" "2" "")
+                    (get-retina-preference "retina-scale")
+                    "5em"))))))
     === ===
     (bottom-buttons
       ("Cancel" (cmd "cancel")) >>
-      ("Reset" (begin (reset-retina-preferences) (cmd "ok"))) //
+      ("Reset" (begin (reset-retina-preferences) (cmd "ok"))) // //
       ("Ok" (cmd "ok")))))
-
-
-(tm-widget (retina-settings-notify cmd)
-  (padded
-    (text "Restart TeXmacs in order to let changes take effect")
-    ===
-    (bottom-buttons
-      >>
-      ("Ok" (cmd "Ok"))
-      >>)))
 
 (tm-define (open-retina-settings)
   (:interactive #t)
   (dialogue-window retina-settings-widget
     (lambda (answer)
       (when (== answer "ok")
-        (delayed
-          (:idle 1)
-	  (dialogue-window retina-settings-notify noop "Notification"))))
+        (notify-restart)))
     (if (os-macos?)
 	"Retina screen settings"
 	"High resolution screen settings")))

@@ -37,5 +37,5 @@
   ,@(lisp-launchers)
   (:session "Lisp"))
 
-(when (supports-lisp?)
+(tm-cond-expand (supports-lisp?)
   (plugin-input-converters lisp))

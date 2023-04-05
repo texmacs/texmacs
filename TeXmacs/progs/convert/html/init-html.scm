@@ -24,6 +24,7 @@
 	((format-test? s pos "<body") #t)
 	((format-test? s pos "<title") #t)
 	((format-test? s pos "<!doctype html") #t)
+	((format-test? s pos "<math") #t)
 	((format-test? s pos "<?xml ")
 	 (html-recognizes-at? s (format-skip-line s pos)))
 	((format-test? s pos "<!doctype ")

@@ -25,10 +25,11 @@
 (plugin-add-macos-path "Octave*/Contents/Resources/usr/Cellar/gnuplot-octave-app/*" "bin" #t)
 
 (define (gnuplot-launcher)
-  `((:launch ,(string-append (python-command) " " (raw-quote (gnuplot-entry))))))
+  `((:launch ,(string-append (python-command) " " (gnuplot-entry)))))
 
 (plugin-configure gnuplot
-  (:winpath "gnuplot" "bin")
+  (:winpath "gnuplot" "bin") ;; the first winpath has the highest priority
+  (:winpath "GNU Octave/Octave*/mingw64" "bin")
   (:require (url-exists-in-path? "gnuplot"))
   (:require (url-exists-in-path? (python-command)))
   ,@(gnuplot-launcher)
@@ -36,5 +37,5 @@
   (:session "Gnuplot")
   (:scripts "Gnuplot"))
 
-(when (supports-gnuplot?)
+(tm-cond-expand (supports-gnuplot?)
   (lazy-input-converter (gnuplot-input) gnuplot))

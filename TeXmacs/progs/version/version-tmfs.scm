@@ -47,9 +47,9 @@
             (when (and tool (not (ahash-ref version-tool-loaded tool)))
               (ahash-set! version-tool-loaded tool #t)
               (cond ((== tool "svn")
-                     (module-provide '(version version-svn)))
+                     (module-load '(version version-svn)))
                     ((== tool "git")
-                     (module-provide '(version version-git)))))
+                     (module-load '(version version-git)))))
             (and (!= tool "") tool)))
       (and-with base (url-wrap name)
         (and (version-tool base) "wrap"))))
@@ -109,7 +109,9 @@
     (string-append (url->system (url-tail u)) " - History")))
 
 (tm-define (version-revision-url u rev)
-  (string-append "tmfs://revision/" rev "/" (url->tmfs-string u)))
+  (if (string-contains rev ":")
+    (string-append "tmfs://revision/" (string-replace rev ":" "/"))
+    (string-append "tmfs://revision/" rev "/" (url->tmfs-string u))))
 
 (tmfs-load-handler (history name)
   (let* ((u (tmfs-string->url name))

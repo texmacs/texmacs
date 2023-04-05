@@ -15,7 +15,8 @@
   (:use (utils edit selections)
 	(generic generic-edit)
 	(generic format-edit)
-	(generic format-geometry-edit)))
+	(generic format-geometry-edit)
+    (graphics graphics-main)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Insert links

@@ -47,7 +47,7 @@ void QTMWindow::closeEvent (QCloseEvent* event)
   string name= ( !is_nil(tmwid) ? concrete(tmwid)->get_nickname () : "QTMWindow");
   if (DEBUG_QT_WIDGETS) debug_widgets << "Close QTMWindow " << name << LF;
   event->ignore ();
-  notify_window_destroy (name);
+  //notify_window_destroy (name); closing can still be cancelled
   emit closed();
 }
 

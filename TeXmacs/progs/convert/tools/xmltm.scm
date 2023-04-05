@@ -42,11 +42,12 @@
 ;; no provisions are made to preserve the namespace prefixes used in the
 ;; orginial sxml tree. Namespace normalization is not reversible.
 
-(define xmlns-uri-xml "http://www.w3.org/XML/1998/namespace")
-(define xmlns-uri-xhtml "http://www.w3.org/1999/xhtml")
-(define xmlns-uri-mathml "http://www.w3.org/1998/Math/MathML")
-(define xmlns-uri-gallina "Gallina")
-(define xmlns-uri-coqml "CoqML")
+(eval-when (expand load eval)
+  (define xmlns-uri-xml "http://www.w3.org/XML/1998/namespace")
+  (define xmlns-uri-xhtml "http://www.w3.org/1999/xhtml")
+  (define xmlns-uri-mathml "http://www.w3.org/1998/Math/MathML")
+  (define xmlns-uri-gallina "Gallina")
+  (define xmlns-uri-coqml "CoqML"))
 
 ;;; Building the namespace bindings environment
 
@@ -488,7 +489,7 @@
 ;; Producing mathml handlers for dispatch table
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (mathtm-handler model method)
+(tm-define (mathtm-handler model method . amethod)
   ;;  model: content model category
   ;;         :empty -- element defined to be empty
   ;;         :element -- text node are ignored
@@ -496,6 +497,7 @@
   ;;         :mixed -- drop heading and trailing whitespaces, normalize and
   ;;           collapse internal whitespaces.
   ;;  method: <procedure> to convert the element content to a node-list.
+  ;;  amethod <procedure> to process global attributes
   (if (not (in? model '(:empty :element :mixed)))
       (error "Bad model: " model))
   (if (not (procedure? method))
@@ -503,13 +505,15 @@
   (let ((clean (cond ((eq? model :empty) (lambda (env c) c))
 		     ((eq? model :element) htmltm-space-element)
 		     ((eq? model :mixed) htmltm-space-mixed))))
-    (let ((proc method))
+    ;(let ((proc method))
       (lambda (env a c)
 	(mathtm-handler/procedure
-	 env a (clean env c) proc)))))
+	 env a (clean env c) method amethod))));)
 
-(define (mathtm-handler/procedure env a c proc)
-  (proc env a c))
+(define (mathtm-handler/procedure env a c proc aproc)
+  (if (null? aproc) 
+    (proc env a c)
+    ((car aproc) env a c proc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Producing gallina handlers for dispatch table

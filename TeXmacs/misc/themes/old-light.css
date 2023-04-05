@@ -1,0 +1,309 @@
+
+/****************************************************************************
+* General
+****************************************************************************/
+
+QWidget {
+    font-size: 14px;
+}
+
+QAbstractScrollArea, QWidget#centralWidget {
+    background: #A0A0A0;
+}
+
+QLineEdit {
+    min-height: 16px;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+QToolTip {
+    font-size: 14px;
+    background: #ffe8c0;
+    color: #302010;
+    padding: 2px;
+}
+
+/****************************************************************************
+* Toolbars
+****************************************************************************/
+
+QMenuBar {
+    background: #C0C0C0;
+}
+
+QMenuBar::item {
+    padding: 4px 10px;
+    padding-bottom: 2px;
+    background: #C0C0C0;
+}
+
+QMenuBar::item:selected {
+    background: #000080;
+    color: #FFFFFF;
+}
+
+QToolBar {
+    background: #C0C0C0;
+    border-bottom: 1px solid #B0B0B0;
+}
+
+QToolBar#modeToolBar {
+    background: #D4D4D4;
+}
+
+QToolBar#focusToolBar {
+    background: #E8E8E8;
+}
+
+QToolBar#userToolBar {
+    background: #F8F8F8;
+}
+
+QToolBar::separator {
+    background: rgba(128,128,128,50%);
+    width: 0px;
+    margin: 4px 8px;
+}
+
+QStatusBar {
+    background: #C0C0C0;
+    padding: 2px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+/****************************************************************************
+* Menus
+****************************************************************************/
+
+QMenu {
+    background: #F0F0F0;
+    color: #000000;
+}
+
+QMenu::item {
+    background: #F0F0F0;
+    color: #000000;
+}
+
+QMenu::item:selected {
+    /* background: #000080; */
+    /* color: #FFFFFF; */
+    background: #C0D0E0;
+    color: #000000;
+}
+
+QMenu::item * {
+    background: #F0F0F0;
+    margin: 3px;
+}
+
+QMenu::item:disabled {
+    background: #F0F0F0;
+    color: #A0A0A0;
+}
+
+/****************************************************************************
+* Lists
+****************************************************************************/
+
+QListView {
+    background: #FFFFFF;
+}
+
+QListView QAbstractScrollArea {
+    background: #FFFFFF;
+}
+
+QComboBox {
+    background: #FFFFFF;
+    color: #000000;
+    padding: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+    border: 0px;
+    border-radius: 5px;
+    min-height: 18px;
+}
+
+QComboBox::drop-down {
+    background: #FFFFFF;
+    border: 0px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+QComboBox::down-arrow {
+    border-image: url($TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_similar_next_x4.png) 0 0 0 0 stretch stretch;
+}
+
+QComboBox QAbstractItemView {
+    background: #E8E8E8;
+    color: #000000;
+}
+
+/****************************************************************************
+* Tabs
+****************************************************************************/
+
+QTabBar::tab {
+    background: #FFFFFF;
+    margin-top: 2px;
+    padding: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border: 1px solid #C0C0C0;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+QTabBar::tab::selected {
+    background: #DEDEDE;
+    margin-top: 0px;
+    padding: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border: 1px solid #C0C0C0;
+    border-bottom: 0px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+/****************************************************************************
+* Buttons
+****************************************************************************/
+
+QPushButton {
+    background: #FFFFFF;
+    padding: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+    border: 1px solid #F8F8F8;
+    border-right: 1px solid #D0D0D0;
+    border-bottom: 1px solid #D0D0D0;
+    border-radius: 5px;
+}
+
+QPushButton:pressed {
+    background: #E0E0E0;
+    padding: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+    border: 1px solid #F8F8F8;
+    border-top: 1px solid #D0D0D0;
+    border-left: 1px solid #D0D0D0;
+    border-radius: 5px;
+}
+
+QToolButton {
+    background: none;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+QToolButton:hover {
+    background: none;
+    /* FIXME: bug when using a color */
+}
+
+NomacQToolButton:hover {
+    background: #B0B0B0;
+    border: 0px;
+    border-radius: 3px;
+}
+
+QToolButton:pressed, QToolButton:checked {
+    background: #909090;
+    border: 0px;
+    border-radius: 3px;
+}
+
+QToolButton::menu-indicator {
+    border: none;
+    background: none;
+    image: none;
+}
+
+QToolButton::disabled {
+    color: #808080;
+}
+
+/****************************************************************************
+* Side tools
+****************************************************************************/
+
+QDockWidget#sideTools::title {
+    background: #D4D4D4;
+    text-align: center;
+}
+
+QDockWidget#sideTools QWidget#title {
+    background: #D4D4D4;
+    font-weight: bold;
+}
+
+QDockWidget#sideTools QWidget#title * {
+    background: #D4D4D4;
+    font-weight: bold;
+    margin: 5px;
+}
+
+QDockWidget#sideTools QWidget#subtitle {
+    font-weight: bold;
+}
+
+QDockWidget#sideTools QWidget#subtitle * {
+    font-weight: bold;
+    margin: 5px;
+}
+
+QDockWidget#sideTools QWidget#discrete * {
+    color: #505050;
+    font-size: 12px;
+}
+
+QDockWidget#sideTools QWidget#discrete QPushButton {
+    background: none;
+    border: none;
+}
+
+QDockWidget#sideTools QWidget#discrete QPushButton:hover {
+    background: #F8F8F8;
+    border: none;
+}
+
+QDockWidget#sideTools QWidget#discrete QPushButton:pressed {
+    background: #D0D0D0;
+    border: none;
+}
+
+/****************************************************************************
+* Adjustments for Windows
+****************************************************************************/
+
+MingwQScrollBar {
+    background: #E0E0E0;
+}
+
+MingwQStatusBar::item {
+    background: #C0C0C0;
+    border: 0px;
+}
+
+MingwQMenu::item {
+    padding-left: 15px;
+    padding-right: 12px;
+}
+
+MingwQMenu::right_arrow {
+    border-image: url("$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_search_next_x4.png") 7 7 7 7;
+}
+
+MingwQComboBox::drop_down {
+    padding-right: 10px;
+}
+
+MingwQComboBox::down_arrow {
+    border-image: url("$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_similar_next_x4.png") 7 7 7 7 stretch stretch;
+}

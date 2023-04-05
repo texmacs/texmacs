@@ -57,6 +57,17 @@ initialize_default_env () {
   env (GLOBAL_SUBJECT)   = "";          // global document subject
   env (LENGTH_MODE)      = "magnified"; // length units under magnification
 
+  env (CURSOR_COLOR)     = "red";       // cursor color in user interface
+  env (MATH_CURSOR_COLOR)= "#b0f";      // cursor color in math mode
+  env (FOCUS_COLOR)      = "#0ff";      // color of focus rectangles
+  env (CONTEXT_COLOR)    = "#00555518"; // color of context rectangles
+  env (SELECTION_COLOR)  = "red";       // color of selections
+  env (TABLE_SELECTION_COLOR)= "#b0f";  // color of selections of table cells
+  env (MATCH_COLOR)      = "#eb0";      // color of search matches
+  env (CLICKABLE_COLOR)  = "#20a060";   // color to indicate clickable loci
+  env (CORRECT_COLOR)    = "#70d070";   // indicate semantical correctness
+  env (INCORRECT_COLOR)  = "#d09050";   // indicate semantical incorrectness
+
   env (FONT)             = "roman";     // the font name in text mode
   env (FONT_FAMILY)      = "rm";        // the font family in text mode
   env (FONT_SERIES)      = "medium";    // the font series in text mode
@@ -106,6 +117,23 @@ initialize_default_env () {
   env (PROG_FONT_SERIES) = "medium";    // the font series in prog mode
   env (PROG_FONT_SHAPE)  = "right";     // the font shape in prog mode
   env (PROG_SESSION)     = "default";   // computer algebra session name
+
+  env (KEYWORD_COLOR)     = "#8020c0";   // syntax highlight color for keywords
+  env (CONSTANT_COLOR)    = "#2060c0";   // syntax highlight color for constants
+  env (NUMBER_COLOR)      = "#2060c0";   // ,, color for numbers
+  env (STRING_COLOR)      = "#a06040";   // ,, color for strings
+  env (OPERATOR_COLOR)    = "";          // ,, color for operators
+  env (COMMENT_COLOR)     = "brown";     // ,, color for comments
+  env (PREPROCESSOR_COLOR)= "#400040";   // ,, color for preprocessor directives
+  env (MODIFIER_COLOR)    = "#8020c0";   // ,, color for declaration modifiers
+  env (DECLARATION_COLOR) = "#0000e0";   // ,, color for declarations
+  env (MACRO_COLOR)       = "#00A0A0";   // ,, color for macro declarations
+  env (FUNCTION_COLOR)    = "#606060";   // ,, color for functions
+  env (_TYPE_COLOR)       = "dark green";// ,, color for types
+  env (DEFINED_COLOR)     = "#204080";   // ,, color for defined identifiers
+  env (MISC_LEXEME_COLOR) = "";          // ,, color for miscellaneous lexemes
+  env (ALT_KEYWORD_COLOR) = "#309090";   // alternative color for keywords
+  env (ALT_CONSTANT_COLOR)= "#800080";   // alternative color for constants
 
   env (PAR_MODE)         = "justify";   // outline method
   env (PAR_FLEXIBILITY)  = "1000";      // threshold for switching to ragged
@@ -270,13 +298,16 @@ initialize_default_env () {
   env (GR_FILL_STYLE)      = "default";   // fill style for new objects
   env (GR_TEXT_AT_HALIGN)  = "default";   // horiz. alignment for new text-ats
   env (GR_TEXT_AT_VALIGN)  = "default";   // vert. alignment for new text-ats
-  env (GR_TEXT_AT_MARGIN)  = "default";   // margins for new text-ats
+  env (GR_TEXT_AT_REPULSE) = "default";   // repulsive margins for new text-ats
+  env (GR_TEXT_AT_SNAPPING)= "default";   // snapping margins for new text-ats
   env (GR_DOC_AT_VALIGN)   = "default";   // vert. al. for new document-ats
   env (GR_DOC_AT_WIDTH)    = "default";   // width of new document-ats
   env (GR_DOC_AT_HMODE)    = "default";   // width mode for new document-ats
   env (GR_DOC_AT_PPSEP)    = "default";   // par-par-sep for new document-ats
   env (GR_DOC_AT_BORDER)   = "default";   // border of new document-ats
   env (GR_DOC_AT_PADDING)  = "default";   // padding for new document-ats
+  env (GR_PEN_ENHANCE)     = "default";   // smoothing method for hand-drawings
+  env (GR_PEN_STYLE)       = "default";   // pen style for hand-drawings
 
   env (GID)              = "default";   // graphical identifier
   env (ANIM_ID)          = "";          // identifier inside animations
@@ -300,13 +331,16 @@ initialize_default_env () {
   env (FILL_STYLE)       = "plain";     // fill style
   env (TEXT_AT_HALIGN)   = "left";      // horizontal text-at alignment
   env (TEXT_AT_VALIGN)   = "base";      // vertical text-at alignment
-  env (TEXT_AT_MARGIN)   = "1spc";      // margin for smart guides
+  env (TEXT_AT_REPULSE)  = "off";       // repulsive margin for white zones
+  env (TEXT_AT_SNAPPING) = "1spc";      // margin for smart guides
   env (DOC_AT_VALIGN)    = "top";       // vertical document-at alignment
   env (DOC_AT_WIDTH)     = "1par";      // width of document-ats
   env (DOC_AT_HMODE)     = "min";       // width mode for document-ats
   env (DOC_AT_PPSEP)     = "0fn";       // par-par-sep for document-ats
   env (DOC_AT_BORDER)    = "0ln";       // border of document-ats
   env (DOC_AT_PADDING)   = "0spc";      // padding for document-ats
+  env (PEN_ENHANCE)      = "gaussian";  // smoothing method for hand-drawings
+  env (PEN_STYLE)        = "default";   // pen style for hand-drawings
 
   env (SRC_STYLE)        = "angular";   // style for "source" tags
   env (SRC_SPECIAL)      = "normal";    // special treatment of certain tags

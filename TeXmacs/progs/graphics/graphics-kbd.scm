@@ -36,8 +36,10 @@
 
 (define (inside-graphical-text-context? t)
   (and-with p (tree-ref t :up)
-    (and-with u (tree-search-upwards p graphical-text-context?)
-      (inside-graphics-context? u))))
+    (and-with i (tree-index t)
+      (and (tree-accessible-child? p i)
+           (and-with u (tree-search-upwards p graphical-text-context?)
+             (inside-graphics-context? u))))))
 
 (tm-define (generic-context? t)
   (:require (inside-graphics-context? t))
@@ -94,7 +96,15 @@
   (:mode in-active-graphics?)
   ("+" (graphics-zoom-in))
   ("-" (graphics-zoom-out))
-  ("0" (graphics-set-zoom 0.5))
+  ("A-1" (graphics-set-zoom 1))
+  ("A-2" (graphics-set-zoom 0.5))
+  ("A-3" (graphics-set-zoom 0.333333333333))
+  ("A-4" (graphics-set-zoom 0.25))
+  ("A-5" (graphics-set-zoom 0.2))
+  ("A-6" (graphics-set-zoom 0.166666666666))
+  ("A-7" (graphics-set-zoom 0.142857142857))
+  ("A-8" (graphics-set-zoom 0.125))
+  ("A-9" (graphics-set-zoom 0.111111111111))
   ("1" (graphics-set-zoom 1.0))
   ("2" (graphics-set-zoom 2.0))
   ("3" (graphics-set-zoom 3.0))
@@ -104,6 +114,10 @@
   ("7" (graphics-set-zoom 7.0))
   ("8" (graphics-set-zoom 8.0))
   ("9" (graphics-set-zoom 9.0))
+  ("c" (graphics-set-origin "0.5gw" "0.5gh"))
+  ("t" (graphics-set-origin "0gw" "1gh"))
+  ("l" (graphics-set-origin "0gw" "0.5gh"))
+  ("b" (graphics-set-origin "0gw" "0gh"))
   ("#" (graphics-toggle-grid))
   ("!" (open-plots-editor "scheme" "default" ""))
   ("left" (graphics-move-origin-left))
@@ -157,6 +171,7 @@
 
 (define graphics-keys
   '("+" "-" "1" "2" "3" "4" "5" "6" "7" "8" "9" "0" "#" "!"
+    "c" "l" "b" "t"
     "left" "right" "down" "up" "home" "end" "pageup" "pagedown"
     "return" "backspace" "delete" "tab"
     "F1" "F2" "F3" "F4" "F9" "F10" "F11" "F12"))
@@ -169,6 +184,40 @@
 (tm-define (mouse-drop-event x y obj)
   (:mode in-active-graphics?)
   (set! the-graphics-drop-object (tm->stree obj)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Gestures in graphics mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define pinch-graphics-scale #f)
+
+(tm-define (pinch-start)
+  (:mode in-active-graphics?)
+  (set! pinch-graphics-scale (graphics-get-zoom)))
+
+(tm-define (pinch-end)
+  (:mode in-active-graphics?)
+  (set! pinch-graphics-scale #f))
+
+(tm-define (pinch-scale scale*)
+  (:mode in-active-graphics?)
+  (when (not pinch-graphics-scale)
+    (pinch-start))
+  (let* ((old (graphics-get-zoom))
+         (lg (/ (log scale*) (log 2.0)))
+         (lg* (/ (round (* 24.0 lg)) 24.0))
+         (scale (exp (* (log 2.0) lg*))))
+    (graphics-set-zoom (* scale pinch-graphics-scale))))
+
+(tm-define (wheel-capture?)
+  (:mode in-active-graphics?)
+  #t)
+
+(tm-define (graphics-wheel dx* dy*)
+  (let* ((dx (/ (round (* (string->number dx*) 100.0)) 100.0))
+         (dy (/ (round (* (string->number dy*) 100.0)) 100.0)))
+    (graphics-move-origin (string-append (number->string dx) "gw")
+                          (string-append (number->string dy) "gh"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Overriding standard structured editing commands
@@ -200,14 +249,12 @@
 (tm-define (kbd-horizontal t forwards?)
   (:require (graphical-text-context? t))
   (with-define (move) ((if forwards? go-right go-left))
-    (with-define (next) (go-to-next-inside move inside-graphics-context?)
-      (go-to-next-such-that next inside-graphical-text-context?))))
+    (go-to-next-inside move inside-graphical-text-context?)))
 
 (tm-define (kbd-vertical t downwards?)
   (:require (graphical-text-context? t))
   (with-define (move) ((if downwards? go-down go-up))
-    (with-define (next) (go-to-next-inside move inside-graphics-context?)
-      (go-to-next-such-that next inside-graphical-text-context?))))
+    (go-to-next-inside move inside-graphical-text-context?)))
 
 (tm-define (kbd-extremal t forwards?)
   (:require (graphical-text-context? t))

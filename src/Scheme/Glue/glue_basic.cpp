@@ -3263,6 +3263,53 @@ tmg_math_status_reset () {
 }
 
 tmscm
+tmg_math_stats_compile (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "math-stats-compile");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "math-stats-compile");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "math-stats-compile");
+
+  string in1= tmscm_to_string (arg1);
+  content in2= tmscm_to_content (arg2);
+  string in3= tmscm_to_string (arg3);
+
+  // TMSCM_DEFER_INTS;
+  compile_stats (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_math_stats_occurrences (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "math-stats-occurrences");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "math-stats-occurrences");
+
+  string in1= tmscm_to_string (arg1);
+  content in2= tmscm_to_content (arg2);
+
+  // TMSCM_DEFER_INTS;
+  int out= number_occurrences (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_math_stats_number_in_role (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "math-stats-number-in-role");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "math-stats-number-in-role");
+
+  string in1= tmscm_to_string (arg1);
+  content in2= tmscm_to_content (arg2);
+
+  // TMSCM_DEFER_INTS;
+  int out= number_in_role (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
 tmg_path_strip (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "path-strip");
   TMSCM_ASSERT_PATH (arg2, TMSCM_ARG2, "path-strip");
@@ -4564,8 +4611,8 @@ tmg_graphics_notify_update (tmscm arg1) {
 }
 
 tmscm
-tmg_string_numberP (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "string-number?");
+tmg_cpp_string_numberP (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-string-number?");
 
   string in1= tmscm_to_string (arg1);
 
@@ -7311,6 +7358,21 @@ tmg_system_rmdir (tmscm arg1) {
 }
 
 tmscm
+tmg_system_setenv (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "system-setenv");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "system-setenv");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  set_env (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_system_search_score (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "system-search-score");
   TMSCM_ASSERT_ARRAY_STRING (arg2, TMSCM_ARG2, "system-search-score");
@@ -8046,7 +8108,7 @@ tmg_widget_extend (tmscm arg1, tmscm arg2) {
   array_widget in2= tmscm_to_array_widget (arg2);
 
   // TMSCM_DEFER_INTS;
-  widget out= extend (in1, in2);
+  widget out= extend_widget (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return widget_to_tmscm (out);
@@ -8452,6 +8514,21 @@ tmg_widget_vlist (tmscm arg1) {
 
   // TMSCM_DEFER_INTS;
   widget out= vertical_list (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return widget_to_tmscm (out);
+}
+
+tmscm
+tmg_widget_division (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "widget-division");
+  TMSCM_ASSERT_WIDGET (arg2, TMSCM_ARG2, "widget-division");
+
+  string in1= tmscm_to_string (arg1);
+  widget in2= tmscm_to_widget (arg2);
+
+  // TMSCM_DEFER_INTS;
+  widget out= division_widget (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return widget_to_tmscm (out);
@@ -10295,6 +10372,9 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-downgrade-big",  tmg_tree_downgrade_big, 1, 0, 0);
   tmscm_install_procedure ("math-status-print",  tmg_math_status_print, 0, 0, 0);
   tmscm_install_procedure ("math-status-reset",  tmg_math_status_reset, 0, 0, 0);
+  tmscm_install_procedure ("math-stats-compile",  tmg_math_stats_compile, 3, 0, 0);
+  tmscm_install_procedure ("math-stats-occurrences",  tmg_math_stats_occurrences, 2, 0, 0);
+  tmscm_install_procedure ("math-stats-number-in-role",  tmg_math_stats_number_in_role, 2, 0, 0);
   tmscm_install_procedure ("path-strip",  tmg_path_strip, 2, 0, 0);
   tmscm_install_procedure ("path-inf?",  tmg_path_infP, 2, 0, 0);
   tmscm_install_procedure ("path-inf-eq?",  tmg_path_inf_eqP, 2, 0, 0);
@@ -10386,7 +10466,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("graphics-ref",  tmg_graphics_ref, 1, 0, 0);
   tmscm_install_procedure ("graphics-needs-update?",  tmg_graphics_needs_updateP, 0, 0, 0);
   tmscm_install_procedure ("graphics-notify-update",  tmg_graphics_notify_update, 1, 0, 0);
-  tmscm_install_procedure ("string-number?",  tmg_string_numberP, 1, 0, 0);
+  tmscm_install_procedure ("cpp-string-number?",  tmg_cpp_string_numberP, 1, 0, 0);
   tmscm_install_procedure ("string-occurs?",  tmg_string_occursP, 2, 0, 0);
   tmscm_install_procedure ("string-count-occurrences",  tmg_string_count_occurrences, 2, 0, 0);
   tmscm_install_procedure ("string-search-forwards",  tmg_string_search_forwards, 3, 0, 0);
@@ -10585,6 +10665,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("system-remove",  tmg_system_remove, 1, 0, 0);
   tmscm_install_procedure ("system-mkdir",  tmg_system_mkdir, 1, 0, 0);
   tmscm_install_procedure ("system-rmdir",  tmg_system_rmdir, 1, 0, 0);
+  tmscm_install_procedure ("system-setenv",  tmg_system_setenv, 2, 0, 0);
   tmscm_install_procedure ("system-search-score",  tmg_system_search_score, 2, 0, 0);
   tmscm_install_procedure ("system-1",  tmg_system_1, 2, 0, 0);
   tmscm_install_procedure ("system-2",  tmg_system_2, 3, 0, 0);
@@ -10660,6 +10741,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("widget-color",  tmg_widget_color, 5, 0, 0);
   tmscm_install_procedure ("widget-hlist",  tmg_widget_hlist, 1, 0, 0);
   tmscm_install_procedure ("widget-vlist",  tmg_widget_vlist, 1, 0, 0);
+  tmscm_install_procedure ("widget-division",  tmg_widget_division, 2, 0, 0);
   tmscm_install_procedure ("widget-aligned",  tmg_widget_aligned, 2, 0, 0);
   tmscm_install_procedure ("widget-tabs",  tmg_widget_tabs, 2, 0, 0);
   tmscm_install_procedure ("widget-icon-tabs",  tmg_widget_icon_tabs, 3, 0, 0);
