@@ -380,7 +380,7 @@
   (with (fun head . body) decl
     `(,fun ,head (with-state-by-name ,(car opt) ,@body))))
 
-(ahash-set! define-option-table :state define-option-state)
+(hash-set! define-option-table :state define-option-state)
 
 (eval-when (expand load eval)
 (define (define-option-state-slots opt decl)

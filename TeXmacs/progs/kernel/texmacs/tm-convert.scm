@@ -118,22 +118,9 @@
 (define-public-macro (converter from* to* . options)
   "Declare a converter between @from@ and @to* according to @options"
   (let* ((from (if (string? from*) from* (symbol->string from*)))
-         (to (if (string? to*) to* (symbol->string to*))))
-    (set! converter-distance (make-ahash-table))
-    (set! converter-path (make-ahash-table))
-    ;; NEW if (:required) clause present but not fulfilled do nothing
-    ;; this enables to define several possible implementations of a given converter
-    ;; not presuming on the availability of external tools : the last valid one is retained
-    ;; (previously the last defined -even if unavailable- erased whatever was already defined)
-    (cond ((and (in? (car (first options)) '(:penalty)) 
-                (in? (car (second options)) '(:require)) 
-                (not (eval (second (second options))))) (noop))
-          ((and (in? (car (first options)) '(:require)) 
-                (not (eval (second (first options))))) (noop))
-          (else (converter-set-penalty from to 1.0) 
-                `(for-each (lambda (x) (converter-cmd ,from ,to x))
-                   ,(list 'quasiquote (map converter-sub options)))))))
-
+         (to (if (string? to*) to* (symbol->string to*)))
+         (cmd `(converter-sub ,from ,to ,@(map normalize-cmd options))))
+         cmd))
                     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Special converters
