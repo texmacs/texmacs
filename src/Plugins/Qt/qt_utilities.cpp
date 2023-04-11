@@ -394,6 +394,8 @@ qt_supports (url u) {
 	  debug_convert <<LF;
   }	*/  
   string suf=suffix (u);
+  if (suf == "pdf")
+    return false;
   bool ans= (bool) formats.contains((QByteArray) as_charp(suf));
   //if (DEBUG_CONVERT) {debug_convert <<"QT valid format:"<<((ans)?"yes":"no")<<LF;}
   return ans;
