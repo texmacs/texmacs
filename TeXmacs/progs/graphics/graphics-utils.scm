@@ -16,16 +16,20 @@
 (texmacs-module (graphics graphics-utils)
   (:use (graphics graphics-drd) (graphics graphics-env)))
 
+(cond-expand
+ (guile-3
+  (use-modules (ice-9 copy-tree))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic scheme processing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;NOTE: This section is OK.
 (define-macro (define-export-macro head . body)
- `(begin
+  `(begin
      (define-macro ,(car head)
-        (lambda ,(cdr head) ,@body)
-     )
+       (lambda ,(cdr head) ,@body)
+       )
      (export ,(car head))))
      (export define-export-macro)
   ;; NOTE: It seems that as soon as macros become a little bit complex,
