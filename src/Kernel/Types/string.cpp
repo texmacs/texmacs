@@ -29,23 +29,27 @@ round_length (int n) {
 }
 
 string_rep::string_rep (int n2):
-  n(n2), a ((n==0)?((char*) NULL):tm_new_array<char> (round_length(n))) {}
+  n(n2), a ((n==0)?((char*) NULL):tm_new_array<char> (round_length(n))), freezed(false) {}
 
 void
 string_rep::resize (int m) {
   int nn= round_length (n);
   int mm= round_length (m);
-  if (mm != nn) {
+  if ((mm != nn) || freezed) {
     if (mm != 0) {
       int i, k= (m<n? m: n);
       char* b= tm_new_array<char> (mm);
       for (i=0; i<k; i++) b[i]= a[i];
-      if (nn != 0) tm_delete_array (a);
+      if ((nn != 0) && !freezed) tm_delete_array (a);
       a= b;
     }
-    else if (nn != 0) tm_delete_array (a);
+    else {
+      if ((nn != 0) && !freezed) tm_delete_array (a);
+      a= NULL;
+    }
   }
   n= m;
+  freezed= false;
 }
 
 string::string (char c) {
@@ -60,10 +64,17 @@ string::string (char c, int n) {
 }
 
 string::string (const char* a) {
+#if 1
+  rep= tm_new<string_rep> ();
+  rep->n= strlen(a);
+  rep->a= (char *)a;
+  rep->freezed= true;
+#else
   int i, n=strlen(a);
   rep= tm_new<string_rep> (n);
   for (i=0; i<n; i++)
     rep->a[i]=a[i];
+#endif
 }
 
 string::string (const char* a, int n) {
@@ -76,6 +87,14 @@ string::string (const char* a, int n) {
 /******************************************************************************
 * Common routines for strings
 ******************************************************************************/
+
+/* static void xxx(int i) { cout << i; }
+
+char string::operator [] (int i) const {
+ xxx(i);
+  return rep->a[i];
+}
+*/
 
 bool
 string::operator == (const char* s) {
@@ -124,7 +143,7 @@ string::operator () (int begin, int end) {
   int i;
   begin = max(min(rep->n, begin), 0);
   end = max(min(rep->n, end), 0);
-  string r (end-begin);
+  mut_string r (end-begin);
   for (i=begin; i<end; i++) r[i-begin]=rep->a[i];
   return r;
 }
@@ -132,7 +151,7 @@ string::operator () (int begin, int end) {
 string
 copy (string s) {
   int i, n=N(s);
-  string r (n);
+  mut_string r (n);
   for (i=0; i<n; i++) r[i]=s[i];
   return r;
 }
@@ -140,7 +159,8 @@ copy (string s) {
 string&
 operator << (string& a, char x) {
   a->resize (N(a)+ 1);
-  a [N(a)-1]=x;
+  mut_string ma(a);
+  ma [N(a)-1]=x;
   return a;
 }
 
@@ -148,14 +168,15 @@ string&
 operator << (string& a, string b) {
   int i, k1= N(a), k2=N(b);
   a->resize (k1+k2);
-  for (i=0; i<k2; i++) a[i+k1]= b[i];
+  mut_string ma(a);
+  for (i=0; i<k2; i++) ma[i+k1]= b[i];
   return a;
 }
 
 string
 operator * (string a, string b) {
   int i, n1=N(a), n2=N(b);
-  string c(n1+n2);
+  mut_string c(n1+n2);
   for (i=0; i<n1; i++) c[i]=a[i];
   for (i=0; i<n2; i++) c[i+n1]=b[i];
   return c;
@@ -286,53 +307,53 @@ as_string_bool (bool f) {
 string
 as_string (int i) {
   char buf[64];
-  sprintf (buf, "%i", i);
+  snprintf (buf, 64, "%i", i);
   // sprintf (buf, "%i\0", i);
-  return string (buf);
+  return mut_string (buf);
 }
 
 string
 as_string (unsigned int i) {
   char buf[64];
-  sprintf (buf, "%u", i);
+  snprintf (buf, 64, "%u", i);
   // sprintf (buf, "%u\0", i);
-  return string (buf);
+  return mut_string (buf);
 }
 
 string
 as_string (long int i) {
   char buf[64];
-  sprintf (buf, "%li", i);
+  snprintf (buf, 64, "%li", i);
   // sprintf (buf, "%li\0", i);
-  return string (buf);
+  return mut_string (buf);
 }
 
 string
 as_string (long long int i) {
   char buf[64];
 #ifdef OS_MINGW
-  sprintf (buf, "%I64d", i);
+  snprintf (buf, 64, "%I64d", i);
 #else
-  sprintf (buf, "%lli", i);
+  snprintf (buf, 64, "%lli", i);
 #endif
   // sprintf (buf, "%lli\0", i);
-  return string (buf);
+  return mut_string (buf);
 }
 
 string
 as_string (unsigned long int i) {
   char buf[64];
-  sprintf (buf, "%lu", i);
+  snprintf (buf, 64, "%lu", i);
   // sprintf (buf, "%lu\0", i);
-  return string (buf);
+  return mut_string (buf);
 }
 
 string
 as_string (double x) {
   char buf[64];
-  sprintf (buf, "%g", x);
+  snprintf (buf, 64, "%g", x);
   // sprintf (buf, "%g\0", x);
-  return string(buf);
+  return mut_string (buf);
 }
 
 string

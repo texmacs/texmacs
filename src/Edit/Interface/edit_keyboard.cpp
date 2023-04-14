@@ -150,7 +150,7 @@ edit_interface_rep::try_shortcut (string comb) {
 
 static string
 std_accent (string s) {
-  string c= "x";
+  mut_string c('x');
   c[0]= '\0';
   s= replace (s, c, "`");
   c[0]= '\1';
@@ -202,7 +202,7 @@ handle_speech (string s) {
 
 void
 edit_interface_rep::key_press (string gkey) {
-  string zero= "a"; zero[0]= '\0';
+  string zero('\0');
   string key= replace (gkey, "<#0>", zero);
   if (starts (key, "pre-edit:") &&
       speech_pre_edit &&
@@ -382,7 +382,7 @@ edit_interface_rep::handle_keypress (string key, time_t t) {
     if (is_nil (eb)) apply_changes ();
     start_editing ();
     started= true;
-    string zero= "a"; zero[0]= '\0';
+    string zero('\0');
     string gkey= replace (key, zero, "<#0>");
     if (gkey == "<#3000>") gkey= "space";
     if (starts (gkey, "pre-edit:"))

@@ -197,7 +197,7 @@ bib_is_bad (tree t) {
 char*
 bib_last_char (tree t) {
   if (is_atomic (t)) {
-    string s= t->label;
+    mut_string s= t->label;
     int end= N(s)-1;
     while ((end >= 0) && is_space (s[end])) end--;
     if (end >= 0) return &(s[end]);

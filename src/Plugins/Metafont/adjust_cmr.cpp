@@ -99,8 +99,8 @@ lsup_adjust_cmr (hashmap<string,double>& t) {
 
 void
 rsub_adjust_cmr (hashmap<string,double>& t) {
-  string empty= "a"; empty[0]= '\0';
-  adjust_char (t, empty, -0.15); // Gamma
+  string zero('\0');
+  adjust_char (t, zero, -0.15); // Gamma
   adjust_char (t, "\2", -0.02);  // Theta
   adjust_char (t, "\3", 0.03);   // Lambda
   adjust_char (t, "\7", -0.1);   // Upsilon

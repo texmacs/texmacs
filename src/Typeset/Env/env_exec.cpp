@@ -1653,11 +1653,11 @@ edit_env_rep::exec_change_case (tree t, tree nc, bool exec_flag, bool first) {
     if (nc == "Upcase") { all= false; up= true; }
     else if (nc == "UPCASE") { up= true; }
     else if (nc == "locase") { lo= true; }
-
+    mut_string ml(r->label);
     for (i=0; i<n; tm_char_forwards (s, i))
       if (is_iso_alpha (s[i]) && (all || (first && (i==0)))) {
-	if (up && is_iso_locase (s[i])) r->label[i]= upcase (s[i]);
-	if (lo && is_iso_upcase (s[i])) r->label[i]= locase (s[i]);
+	if (up && is_iso_locase (s[i])) ml[i]= upcase (s[i]);
+	if (lo && is_iso_upcase (s[i])) ml[i]= locase (s[i]);
       }
     r->obs= list_observer (ip_observer (obtain_ip (t)), r->obs);
     return r;

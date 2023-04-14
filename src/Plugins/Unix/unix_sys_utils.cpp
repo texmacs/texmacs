@@ -148,7 +148,7 @@ struct _channel {
   array<char> buffer;
   int status;
   _channel () : status (0) {}
-  void _init_in (int fd2, string data2, int chunk_size) {
+  void _init_in (int fd2, mut_string data2, int chunk_size) {
     fd= fd2;
     data.copy (&data2[0], N(data2));
     buffer_size= chunk_size; }

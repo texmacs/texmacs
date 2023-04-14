@@ -536,13 +536,14 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
         (ev->modifiers() & Qt::ControlModifier) == 0 &&
         (ev->modifiers() & Qt::MetaModifier) == 0)
       QLineEdit::keyPressEvent (ev);
-    string key= "none";
+    string key("none");
     string s  = from_qstring (text());
     if (last_key >= 32 && last_key <= 126) {
-      key= string ((char) last_key);
-      if (is_upcase (key[0]))
+      char ch= (char) last_key;
+      if (is_upcase (ch))
         if ((ev->modifiers() & Qt::ShiftModifier) == 0)
-          key[0]= (int) (key[0] + ((int) 'a') - ((int) 'A'));
+          ch= (char) (ch + ((int) 'a') - ((int) 'A'));
+      key= string (ch);
     }
     if (qtkeymap->contains (last_key)) key= qtkeymap[last_key];
     if ((ev->modifiers() & Qt::ShiftModifier) && N(key) > 1) key= "S-" * key;

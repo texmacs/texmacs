@@ -48,7 +48,7 @@ get_tag (string s, int i) {
 
 U8
 get_U8 (string s, int i) {
-  return *((U8*) ((void*) (&s[i])));
+  return *((U8*) ((void*) (&s.get(i))));
 }
 
 U16

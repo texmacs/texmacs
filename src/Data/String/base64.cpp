@@ -19,7 +19,7 @@ int_to_b64[]= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
 inline static string
 encode_base64 (char c1, char c2, char c3) {
-  string r(4);
+  mut_string r(4);
   int idx0, idx1, idx2, idx3;
 
   idx0= ((c1 >> 2) & 0x3F);
@@ -63,7 +63,7 @@ b64_to_int[]= "???????????????????????????????????????????~???\177tuvwxyz{|}??\
 
 string
 decode_base64 (array<int> ac) {
-  string r(3);
+  mut_string r(3);
   int n= N(ac), n1, n2, n3, n4;
 
   n1= b64_to_int[(int)ac[0]] - 64;

@@ -18,16 +18,18 @@ class string;
 class string_rep: concrete_struct {
   int n;
   char* a;
-
+  bool freezed;
+  
 public:
-  inline string_rep (): n(0), a(NULL) {}
+  inline string_rep (): n(0), a(NULL), freezed(false) {}
          string_rep (int n);
-  inline ~string_rep () { if (n!=0) tm_delete_array (a); }
+  inline ~string_rep () { if ((n!=0) && !freezed) tm_delete_array (a); }
   void resize (int n);
-
   friend class string;
   friend inline int N (string a);
 };
+
+class mut_string;
 
 class string {
   CONCRETE(string);
@@ -37,14 +39,20 @@ class string {
   string (char c, int n);
   string (const char *s);
   string (const char *s, int n);
-  inline char& operator [] (int i) { return rep->a[i]; }
+  inline char operator [] (int i) { return rep->a[i]; }
+  //char& operator [] (int i);// { return rep->a[i]; }
+  //char operator [] (int i) const;// { return rep->a[i]; }
   bool operator == (const char* s);
   bool operator != (const char* s);
   bool operator == (string s);
   bool operator != (string s);
   string operator () (int start, int end);
+  
+public:
+  char& get (int i) { return rep->a[i]; }
 };
 CONCRETE_CODE(string);
+
 
 extern inline int N (string a) { return a->n; }
 string   copy (string a);
@@ -57,6 +65,16 @@ string   operator * (string a, const char* b);
 bool     operator < (string a, string b);
 bool     operator <= (string a, string b);
 int      hash (string s);
+inline string melt (string s) { s->resize (N(s)); return s; }
+
+class mut_string: public string {
+public:
+  inline mut_string () : string (0) { }
+  inline mut_string (int n) : string (n) { } // automatically melted
+  inline mut_string (const char* a) : string (a) { melt (*this);  }
+  inline mut_string (string& s) : string (s) { melt (*this); }
+  inline char& operator [] (int i) { return get(i); };// { return rep->a[i]; }
+};
 
 bool     as_bool   (string s);
 int      as_int    (string s);

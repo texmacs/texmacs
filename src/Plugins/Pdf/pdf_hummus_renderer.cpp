@@ -1900,14 +1900,16 @@ qt_image_data (url image, int& w, int&h, string& data, string& mask) {
   h=  im.height ();    
   data = string ((w*h)*3);
   mask = string (w*h); 
+  mut_string mdata(data);
+  mut_string mmask(mask);
   int i= 0, j= 0, k= 0, l= 0;
   for (j= 0; j < im.height (); j++) {
     for (i=0; i < im.width (); i++) {
       QRgb p= im.pixel (i, j);
-      data[l++] = qRed (p);
-      data[l++] = qGreen (p);
-      data[l++] = qBlue (p);
-      mask[k++] = qAlpha (p);
+      mdata[l++] = qRed (p);
+      mdata[l++] = qGreen (p);
+      mdata[l++] = qBlue (p);
+      mmask[k++] = qAlpha (p);
     }
   }
 }

@@ -107,7 +107,7 @@ load_string (url u, string& s, bool fatal) {
     if (!err) {
       rewind (fin);
       s->resize (size);
-      int read= fread (&(s[0]), 1, size, fin);
+      int read= fread (&(s.get(0)), 1, size, fin);
       if (read < size) s->resize (read);
 #ifdef OS_MINGW
 #else
@@ -516,7 +516,7 @@ cache_dir_set (string dir, array<string> a) {
 
 array<string>
 read_directory (url u, bool& error_flag) {
-  // cout << "Directory " << u << LF;
+  //cout << "Directory " << u << LF;
   u= resolve (u, "dr");
   if (is_none (u)) return array<string> ();
   string name= concretize (u);
@@ -544,7 +544,7 @@ read_directory (url u, bool& error_flag) {
   while (true) {
     ep= readdir (dp);
     if (ep==NULL) break;
-    dir << string (ep->d_name);
+    dir << string (mut_string (ep->d_name));
   #endif
   }
   (void) closedir (dp);

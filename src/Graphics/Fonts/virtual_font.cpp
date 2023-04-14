@@ -1803,7 +1803,7 @@ virtual_font_rep::get_char (string s, font_metric& cfnm, font_glyphs& cfng) {
       s= decode_sharp (s, nr);
       if (!virt->dict->contains (s)) return -1;
       int c2= virt->dict [s];
-      string ss= "x";
+      mut_string ss("x");
       ss[0]= (char) c2;
       ss << nr;
       return get_char (ss, cfnm, cfng);

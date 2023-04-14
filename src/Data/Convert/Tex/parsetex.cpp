@@ -1508,7 +1508,7 @@ from_char_code (int i) {
   if (i == ((int) '<')) return tree (TUPLE, "\\<less>");
   if (i == ((int) '>')) return tree (TUPLE, "\\<gtr>");
   if (i == ((int) '\\')) return tree (TUPLE, "\\textbackslash");
-  string s ("?");
+  mut_string s ("?");
   s[0]= (unsigned char) i;
   return s;
 }
@@ -1597,7 +1597,7 @@ accented_to_Cork (tree t) {
     string v= r[1]->label;
     if (N(v)==0) {
       if (s[1] == '`' ) {
-        string ret_s (1);
+        mut_string ret_s (1);
         ret_s[0]= '\000';
         return ret_s;
       }

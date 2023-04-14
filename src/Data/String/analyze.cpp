@@ -127,7 +127,7 @@ locase_first (string s) {
 string
 upcase_all (string s) {
   int i;
-  string r (N(s));
+  mut_string r (N(s));
   for (i=0; i<N(s); i++)
     if (!is_iso_locase (s[i])) r[i]= s[i];
     else r[i]= (char) (((int) ((unsigned char) s[i]))-32);
@@ -137,7 +137,7 @@ upcase_all (string s) {
 string
 locase_all (string s) {
   int i;
-  string r (N(s));
+  mut_string r (N(s));
   for (i=0; i<N(s); i++)
     if (!is_iso_upcase (s[i])) r[i]= s[i];
     else r[i]= (char) (((int) ((unsigned char) s[i]))+32);
@@ -269,7 +269,7 @@ cork_to_il2 (char c) {
 string
 il2_to_cork (string s) {
   int i, n= N(s);
-  string r (n);
+  mut_string r (n);
   for (i=0; i<n; i++)
     r[i]= il2_to_cork (s[i]);
   return r;
@@ -278,7 +278,7 @@ il2_to_cork (string s) {
 string
 cork_to_il2 (string s) {
   int i, n= N(s);
-  string r (n);
+  mut_string r (n);
   for (i=0; i<n; i++)
     r[i]= cork_to_il2 (s[i]);
   return r;
@@ -342,7 +342,7 @@ iso_to_koi8 (char c, bool ukrainian) {
 string
 koi8_to_iso (string s) {
   int i, n= N(s);
-  string r (n);
+  mut_string r (n);
   for (i=0; i<n; i++)
     r[i]= koi8_to_iso (s[i], false);
   return r;
@@ -351,7 +351,7 @@ koi8_to_iso (string s) {
 string
 iso_to_koi8 (string s) {
   int i, n= N(s);
-  string r (n);
+  mut_string r (n);
   for (i=0; i<n; i++)
     r[i]= iso_to_koi8 (s[i], false);
   return r;
@@ -360,7 +360,7 @@ iso_to_koi8 (string s) {
 string
 koi8uk_to_iso (string s) {
   int i, n= N(s);
-  string r (n);
+  mut_string r (n);
   for (i=0; i<n; i++)
     r[i]= koi8_to_iso (s[i], true);
   return r;
@@ -369,7 +369,7 @@ koi8uk_to_iso (string s) {
 string
 iso_to_koi8uk (string s) {
   int i, n= N(s);
-  string r (n);
+  mut_string r (n);
   for (i=0; i<n; i++)
     r[i]= iso_to_koi8 (s[i], true);
   return r;

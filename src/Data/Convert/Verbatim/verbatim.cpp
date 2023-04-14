@@ -172,7 +172,7 @@ as_verbatim (tree t, bool wrap) {
     if (h[MODE] == "prog" || h[FONT_FAMILY] == "tt") wrap= false;
     t= extract (t, "body");
   }
-  string buf;
+  mut_string buf;
   print_verbatim (buf, t, wrap);
   if (wrap) {
     int i= 0, n= N(buf);
