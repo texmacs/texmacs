@@ -88,16 +88,9 @@ string::string (const char* a, int n) {
 * Common routines for strings
 ******************************************************************************/
 
-/* static void xxx(int i) { cout << i; }
-
-char string::operator [] (int i) const {
- xxx(i);
-  return rep->a[i];
-}
-*/
-
 bool
 string::operator == (const char* s) {
+  if (rep->a == s) return true; // fast path
   int i, n= rep->n;
   char* S= rep->a;
   for (i=0; i<n; i++) {
@@ -109,6 +102,7 @@ string::operator == (const char* s) {
 
 bool
 string::operator != (const char* s) {
+  if (rep->a == s) return false; // fast path
   int i, n= rep->n;
   char* S= rep->a;
   for (i=0; i<n; i++) {
@@ -120,6 +114,7 @@ string::operator != (const char* s) {
 
 bool
 string::operator == (string a) {
+  if (rep->a == a->a) return true; // fast path
   int i;
   if (rep->n!=a->n) return false;
   for (i=0; i<rep->n; i++)
@@ -129,6 +124,7 @@ string::operator == (string a) {
 
 bool
 string::operator != (string a) {
+  if (rep->a == a->a) return false; // fast path
   int i;
   if (rep->n!=a->n) return true;
   for (i=0; i<rep->n; i++)
