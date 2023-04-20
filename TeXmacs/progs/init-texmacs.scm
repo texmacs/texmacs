@@ -161,9 +161,11 @@
 (inherit-modules (kernel logic logic-rules) (kernel logic logic-query)
                  (kernel logic logic-data))
 
-(cond-expand (guile-2
-(export! ... compose select) ;; silence some warnings
-) (else #t))
+(cond-expand ((and guile-2 (not guile-3)) 
+              (export! ... select compose)) ;; silence some warnings
+             (guile-3
+               (export! ... select))
+             (else #t))
 
 (inherit-modules (kernel texmacs tm-define)
                  (kernel texmacs tm-preferences) (kernel texmacs tm-modes)
