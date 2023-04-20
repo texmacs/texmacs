@@ -71,7 +71,7 @@ Q_IMPORT_PLUGIN(qico)
 Q_IMPORT_PLUGIN(qsvg)
 #endif
 
-#ifdef WIN32 
+#ifdef WIN32
 Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
 #endif
 #ifdef QT_MAC_USE_COCOA
@@ -114,32 +114,32 @@ tm_sleep () {
 ******************************************************************************/
 
 qt_gui_rep::qt_gui_rep (int &argc, char **argv):
-interrupted (false), waitWindow (NULL), popup_wid_time (0), q_translator (0),
-time_credit (100), do_check_events (false), updating (false), 
-needing_update (false)
+  interrupted (false), waitWindow (NULL), popup_wid_time (0), q_translator (0),
+  time_credit (100), do_check_events (false), updating (false),
+  needing_update (false)
 {
   (void) argc; (void) argv;
     // argc = argc2;
     // argv = argv2;
-  
+
   interrupted  = false;
   time_credit  = 100;
   timeout_time = texmacs_time () + time_credit;
-  
+
     //waitDialog = NULL;
-  
+
   gui_helper = new QTMGuiHelper (this);
   qApp->installEventFilter (gui_helper);
-  
+
 #ifdef QT_MAC_USE_COCOA
     //HACK: this filter is needed to overcome a bug in Qt/Cocoa
   extern void mac_install_filter(); // defined in src/Plugins/MacOS/mac_app.mm
   mac_install_filter();
 #endif
-  
+
   set_output_language (get_locale_language ());
   refresh_language();
-  
+
   updatetimer = new QTimer (gui_helper);
   updatetimer->setSingleShot (true);
   QObject::connect (updatetimer, SIGNAL (timeout()),
@@ -152,7 +152,7 @@ needing_update (false)
     double mac_hidpi = mac_screen_scale_factor();
     if (DEBUG_STD)
       debug_boot << "Mac Screen scaleFfactor: " << mac_hidpi <<  "\n";
-          
+
     if (mac_hidpi == 2) {
       if (DEBUG_STD) debug_boot << "Setting up HiDPI mode\n";
 #if (QT_VERSION < 0x050000)
@@ -166,7 +166,7 @@ needing_update (false)
         // retina_icons = 2;  // FIXME: why is this not better?
       }
 #else
-      retina_factor= 2;      
+      retina_factor= 2;
 #endif
     }
 #else
@@ -211,13 +211,13 @@ qt_gui_rep::get_max_size (SI& width, SI& height) {
 
 qt_gui_rep::~qt_gui_rep()  {
   delete gui_helper;
-  
+
   while (waitDialogs.count()) {
     waitDialogs.last()->deleteLater();
     waitDialogs.removeLast();
   }
   if (waitWindow) delete waitWindow;
-  
+
     // delete updatetimer; we do not need this given that gui_helper is the
     // parent of updatetimer
 }
@@ -233,18 +233,18 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
   QClipboard::Mode mode = QClipboard::Clipboard;
   if (key == "primary" || (key == "mouse" && cb->supportsSelection ()))
     if (key == "mouse") mode = QClipboard::Selection;
-  
+
   QString originalText = cb->text (mode);
   const QMimeData *md = cb->mimeData (mode);
   QByteArray buf;
   string input_format;
-  
+
   s = "";
   t = "none";
     // Knowing when we owns (or not) the content is not clear
   bool owns = (format != "temp" && format != "wrapbuf" && key != "primary") &&
   !(key == "mouse" && cb->supportsSelection ());
-  
+
   if (!owns && md->hasFormat ("application/x-texmacs-pid")) {
     buf = md->data ("application/x-texmacs-pid");
     if (!(buf.isEmpty())) {
@@ -252,14 +252,14 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
       == as_string (QCoreApplication::applicationPid ());
     }
   }
-  
+
   if (owns) {
     if (!selection_t->contains (key)) return false;
     t = copy (selection_t [key]);
     s = copy (selection_s [key]);
     return true;
   }
-  
+
   if (format == "default") {
     if (md->hasFormat ("application/x-texmacs-clipboard")) {
       buf = md->data ("application/x-texmacs-clipboard");
@@ -338,7 +338,7 @@ qt_gui_rep::set_selection (string key, tree t,
                            string s, string sv, string sh, string format) {
   selection_t (key)= copy (t);
   selection_s (key)= copy (s);
-  
+
   QClipboard *cb = QApplication::clipboard ();
   QClipboard::Mode mode = QClipboard::Clipboard;
   if (key == "primary");
@@ -346,31 +346,31 @@ qt_gui_rep::set_selection (string key, tree t,
     mode = QClipboard::Selection;
   else return true;
   cb->clear (mode);
-  
+
   c_string selection (s);
   cb->setText (QString::fromLatin1 (selection), mode);
   QMimeData *md = new QMimeData;
-  
+
   if (format == "verbatim" || format == "default") {
     if (format == "default") {
       md->setData ("application/x-texmacs-clipboard", (char*)selection);
-      
+
       QString pid_str;
       pid_str.setNum (QCoreApplication::applicationPid ());
       md->setData ("application/x-texmacs-pid", pid_str.toLatin1());
-      
+
       (void) sh;
         //selection = c_string (sh);
         //md->setHtml (selection);
         //tm_delete_array (selection);
-      
+
       selection = c_string (sv);
     }
-    
+
     string enc = get_preference ("texmacs->verbatim:encoding");
     if (enc == "auto")
       enc = get_locale_charset ();
-    
+
     if (enc == "utf-8" || enc == "UTF-8")
       md->setText (QString::fromUtf8 (selection));
     else if (enc == "iso-8859-1" || enc == "ISO-8859-1")
@@ -379,7 +379,7 @@ qt_gui_rep::set_selection (string key, tree t,
       md->setText (QString::fromLatin1 (selection));
   }
   else if (format == "latex") {
-    string enc = get_preference ("texmacs->latex:encoding"); 
+    string enc = get_preference ("texmacs->latex:encoding");
     if (enc == "utf-8" || enc == "UTF-8" || enc == "cork")
       md->setText (to_qstring (string (selection)));
     else
@@ -397,14 +397,14 @@ void
 qt_gui_rep::clear_selection (string key) {
   selection_t->reset (key);
   selection_s->reset (key);
-  
+
   QClipboard *cb = QApplication::clipboard();
   QClipboard::Mode mode = QClipboard::Clipboard;
   if (key == "primary");
   else if (key == "mouse" && cb->supportsSelection())
     mode = QClipboard::Selection;
   else return;
-  
+
   bool owns = false;
   const QMimeData *md = cb->mimeData (mode);
   if (md) owns = md->hasFormat ("application/x-texmacs-clipboard");
@@ -428,16 +428,16 @@ void
 qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
   if (DEBUG_QT)
     debug_qt << "show_wait_indicator \"" << message << "\"\"" << arg << "\"\n";
-  
+
   qt_window_widget_rep* wid = static_cast<qt_window_widget_rep*> (w.rep);
-  
+
     // we move the texmacs window during an operation.
     // We need to disable updates of the window to avoid erasure of the canvas
     // area
     //  wid->wid->setUpdatesEnabled (false);
-  
+
     //FIXME: we must center the wait widget wrt the current active window
-  
+
   if (!waitWindow) {
     waitWindow = new QWidget (wid->qwid->window());
     waitWindow->setWindowFlags (Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
@@ -445,16 +445,16 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
     layout->setSizeConstraint (QLayout::SetFixedSize);
     waitWindow->setLayout (layout);
   }
-  
+
   if (waitDialogs.count()) {
     waitWindow->layout()->removeWidget (waitDialogs.last());
   }
-  
+
   if (N(message)) {
       // push a new wait message in the list
-    
+
     if (arg != "") message = message * " " * arg * "...";
-    
+
     QLabel* lab = new  QLabel();
     lab->setFocusPolicy (Qt::NoFocus);
     lab->setMargin (15);
@@ -467,7 +467,7 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
       waitDialogs.removeLast();
     }
   }
-  
+
   if (waitDialogs.count()) {
     waitWindow->layout()->addWidget (waitDialogs.last());
     waitWindow->updateGeometry();
@@ -481,7 +481,7 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
       QPoint pt = wid->qwid->window()->geometry().center();
       rect.moveCenter (pt);
       waitWindow->move (rect.topLeft());
-      
+
     }
     waitWindow->show();
     qApp->processEvents (QEventLoop::ExcludeUserInputEvents);
@@ -491,7 +491,7 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
   }
   qApp->processEvents();
   QApplication::flush();
-  
+
   wid->qwid->activateWindow ();
   send_keyboard_focus (wid);
     // next time we do update the dialog will disappear
@@ -524,7 +524,7 @@ gui_open (int& argc, char** argv) {
     // start the gui
     // new QApplication (argc,argv); now in texmacs.cpp
   the_gui = tm_new<qt_gui_rep> (argc, argv);
-  
+
 #ifdef MACOSX_EXTENSIONS
   mac_begin_remote();
 #endif
@@ -558,7 +558,7 @@ gui_close () {
   ASSERT (the_gui != NULL, "gui not yet open");
   tm_delete (the_gui);
   the_gui = NULL;
-  
+
 #ifdef MACOSX_EXTENSIONS
   mac_end_remote();
 #endif
@@ -682,7 +682,7 @@ qt_gui_rep::process_queued_events (int max) {
         delayed_commands.exec_pending();
       }
         break;
-        
+
       default:
         FAILED ("Unexpected queued event");
     }
@@ -753,7 +753,7 @@ bool
 qt_gui_rep::check_event (int type) {
     // do not interrupt if not updating (e.g. while painting the icons in menus)
   if (!updating || !do_check_events) return false;
-  
+
   switch (type) {
     case INTERRUPT_EVENT:
       if (interrupted) return true;
@@ -813,23 +813,23 @@ qt_gui_rep::update () {
     need_update();
     return;
   }
-  
+
     // cout << "<" << texmacs_time() << " " << N(delayed_queue) << " ";
-  
+
   updatetimer->stop();
   updating = true;
-  
+
   static int count_events    = 0;
   static int max_proc_events = 40;
-  
+
   time_t     now = texmacs_time();
   needing_update = false;
   time_credit    = 9 / (waiting_events.size() + 1);
-  
+
     // 1.
     // Check if a wait dialog is active and in that case remove it.
     // If we are here then the long operation has finished.
-  
+
   if (waitDialogs.count()) {
     waitWindow->layout()->removeWidget (waitDialogs.last());
     waitWindow->close();
@@ -838,23 +838,23 @@ qt_gui_rep::update () {
       waitDialogs.removeLast();
     }
   }
-  
+
   if (popup_wid_time > 0 && now > popup_wid_time) {
     popup_wid_time = 0;
     _popup_wid->send (SLOT_VISIBILITY, close_box<bool> (true));
   }
-  
+
     // 2.
     // Manage delayed commands
-  
+
   if (delayed_commands.must_wait (now))
     process_delayed_commands();
-  
+
     // 3.
     // If there are pending events in the private queue process them until the
     // limit in processed events is reached.
     // If there are no events or the limit is reached then proceed to a redraw.
-  
+
   if (waiting_events.size() == 0) {
       // If there are no waiting events call the interpose handler at least once
     //if (the_interpose_handler) the_interpose_handler();
@@ -869,7 +869,7 @@ qt_gui_rep::update () {
   keyboard_events = 0;
   keyboard_special= 0;
   count_events    = 0;
-  
+
   interrupted  = false;
   timeout_time = texmacs_time() + time_credit;
 
@@ -877,19 +877,19 @@ qt_gui_rep::update () {
     if (the_interpose_handler) the_interpose_handler();
     qt_simple_widget_rep::repaint_all ();
   }
-  
+
   if (waiting_events.size() > 0) needing_update = true;
   if (interrupted)               needing_update = true;
   if (!headless_mode && nr_windows == 0) qApp->quit();
-  
+
   time_t delay = delayed_commands.lapse - texmacs_time();
   if (needing_update) delay = 0;
   else                delay = max (0, min (std_delay, delay));
   if (postpone_treatment) delay= 9; // NOTE: force occasional display
- 
+
   updatetimer->start (delay);
   updating = false;
-  
+
     // FIXME: we need to ensure that the interpose_handler is run at regular
     //        intervals (1/6th of sec) so that informations on the footbar are
     //        updated. (this should be better handled by promoting code in
@@ -916,7 +916,7 @@ void needs_update () {
 }
 
 /*! Called upon change of output language.
- 
+
  We currently emit a signal which forces every QTMAction to change his text
  according to the new language, but the preferred Qt way seems to use
  LanguageChange events (these are triggered upon installation of QTranslators)
@@ -926,7 +926,7 @@ qt_gui_rep::refresh_language() {
   /* FIXME: why is this here? We don't use QTranslators...
   QTranslator* qtr = new QTranslator();
   if (qtr->load ("qt_" +
-                 QLocale (to_qstring 
+                 QLocale (to_qstring
                            (language_to_locale (get_output_language()))).name(),
                  QLibraryInfo::location (QLibraryInfo::TranslationsPath))) {
     if (q_translator)
@@ -941,7 +941,7 @@ qt_gui_rep::refresh_language() {
 }
 
 /*! Display a popup help balloon (i.e. a tooltip) at window coordinates x, y
- 
+
  We use a dedicated wrapper QWidget which handles mouse events: as soon as the
  mouse is moved out of we hide it.
  Problem: the widget need not appear below the mouse pointer, thus making it
@@ -953,7 +953,7 @@ qt_gui_rep::refresh_language() {
 void
 qt_gui_rep::show_help_balloon (widget wid, SI x, SI y) {
   if (popup_wid_time > 0) return;
-  
+
   _popup_wid = popup_window_widget (wid, "Balloon");
   SI winx, winy;
   // HACK around wrong? reporting of window widget for embedded texmacs-inputs:
@@ -1028,7 +1028,7 @@ clear_selection (string key) {
 bool
 qt_gui_rep::put_graphics_on_clipboard (url file) {
   string extension = suffix (file) ;
-  
+
     // for bitmaps this works :
   if ((extension == "bmp") || (extension == "png") ||
       (extension == "jpg") || (extension == "jpeg")) {
@@ -1044,17 +1044,17 @@ qt_gui_rep::put_graphics_on_clipboard (url file) {
     if (extension == "eps") mime = "application/postscript";
     if (extension == "pdf") mime = "application/pdf";
     if (extension == "svg") mime = "image/svg+xml"; //this works with Inskcape version >= 0.47
-    
+
     string filecontent;
     load_string (file, filecontent, true);
-    
+
     // warning: we need to tell Qt the size of the byte buffer
     c_string tmp (filecontent);
     QByteArray rawdata (tmp, N(filecontent));
 
     QMimeData *mymimeData = new QMimeData;
     mymimeData->setData (mime, rawdata);
-    
+
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setMimeData (mymimeData);// default mode = QClipboard::Clipboard
   }
