@@ -22,8 +22,8 @@
   (let*
     ((t1 (car t1))
      (t2 (car t2))
-     (s1 (if (string? t1) t1 (convert t1 "stm-snippet" "verbatim-snippet")))
-     (s2 (if (string? t2) t2 (convert t2 "stm-snippet" "verbatim-snippet"))))
+     (s1 (if (string? t1) t1 (convert t1 "texmacs-stree" "verbatim-snippet")))
+     (s2 (if (string? t2) t2 (convert t2 "texmacs-stree" "verbatim-snippet"))))
     (compare-string s1 s2)))
 
 (define (expand-references k)
