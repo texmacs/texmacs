@@ -202,6 +202,7 @@
     ("See documentation" (help-window "scheme" (tmstring->string clw-string))))))
 
 (tm-define (open-symbol-browser)
+  (scheme-completions-rebuild)
   (set! clw-string "")
   (set! clw-string-filter "")
   (top-window symbol-browser-widget "Symbol browser"))
