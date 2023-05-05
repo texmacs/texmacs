@@ -225,6 +225,10 @@
 
 (converter tif-file postscript-document
   (:function image->psdoc))
+  
+(converter tif-file png-file
+  (:require (has-convert?))
+  (:shell "convert" from to))
 
 (define-format ppm
   (:name "Ppm")
