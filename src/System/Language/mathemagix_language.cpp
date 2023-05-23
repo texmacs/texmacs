@@ -205,6 +205,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("recurse")= c;
   t ("rem")= c ;
   t ("require")= c;
+  t ("restrict")= c;
   t ("return")= c ;
   t ("sequel")= c;
   t ("spawn")= c;
