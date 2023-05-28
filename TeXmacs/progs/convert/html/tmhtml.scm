@@ -1360,7 +1360,7 @@
               (func? (cadar l) 'raw-data 1)
               (string? (cadr (cadar l)))
               (string? (caddar l)))
-         (receive (name-url name-string) (tmhtml-image-names (caddar l))
+         (receive (name-url name-string) (tmhtml-image-names (cork->utf8 (caddar l)))
            (when (in? (url-suffix name-url)
                       (list "ps" "eps" "pdf" "tif"))
              (set! name-string (url->string name-url)))
@@ -1369,7 +1369,7 @@
         ((nstring? (first l))
          (tmhtml-png (cons 'image l)))
         (else
-          (let* ((s (tmhtml-image-name (cork->html (first l))))
+          (let* ((s (tmhtml-image-name (first l)))
                  (w (tmlength->htmllength (second l) #f))
                  (h (tmlength->htmllength (third l) #f)))
             `((h:img (@ (class "image")
