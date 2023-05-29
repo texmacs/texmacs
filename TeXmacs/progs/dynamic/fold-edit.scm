@@ -1275,7 +1275,7 @@
               (>= (tree-arity t) 1))
          `(document ,(extract-slide-template (tree-ref t 0))))
         ((tree-is? t 'tit)
-         `(tit ""))
+         (cons `tit (make-list (tree-arity t) "")))
         ((tree-func? t 'gr-screen 1)
          `(gr-screen ,(extract-slide-template (tree-ref t 0))))
         ((tree-func? t 'gr-overlays 3)
