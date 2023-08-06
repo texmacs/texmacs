@@ -1,4 +1,4 @@
-<TeXmacs|1.99.18>
+<TeXmacs|2.1.2>
 
 <style|<tuple|source|std>>
 
@@ -161,9 +161,9 @@
 
   <assign|toc-3|<macro|left|right|<with|par-left|2tab|<arg|left><toc-dots><no-break><arg|right>>>>
 
-  <assign|toc-4|<macro|left|right|<with|par-left|4tab|<arg|left><toc-dots><no-break><arg|right><vspace|0.15fn>>>>
+  <assign|toc-4|<macro|left|right|<with|par-left|3tab|<arg|left><toc-dots><no-break><arg|right>>>>
 
-  <assign|toc-5|<macro|left|right|<arg|left><toc-dots><no-break><arg|right><vspace|0.15fn>>>
+  <assign|toc-5|<macro|left|right|<with|par-left|4tab|<arg|left><toc-dots><no-break><arg|right>>>>
 
   <\active*>
     <\src-comment>
