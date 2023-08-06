@@ -47,7 +47,7 @@ void QTMWindow::closeEvent (QCloseEvent* event)
   string name= ( !is_nil(tmwid) ? concrete(tmwid)->get_nickname () : "QTMWindow");
   if (DEBUG_QT_WIDGETS) debug_widgets << "Close QTMWindow " << name << LF;
   event->ignore ();
-#if defined(OS_MACOS) //&& (QT_VERSION < 0x050000)
+#if defined(OS_MACOS)
   notify_window_destroy (name);
   // this caused bug 61884, closing can still be cancelled
 #endif
