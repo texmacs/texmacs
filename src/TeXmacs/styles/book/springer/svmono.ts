@@ -1,4 +1,4 @@
-<TeXmacs|1.99.19>
+<TeXmacs|2.1.2>
 
 <style|source>
 
@@ -159,7 +159,7 @@
 
   <assign|chapter-numbered-title|<macro|title|<chapter-number-title|<the-chapter>|<arg|title>>>>
 
-  <assign|appendic-numbered-title|<macro|title|<style-with|src-compact|none|<chapter-number-title|<appendix-text>
+  <assign|appendix-numbered-title|<macro|title|<style-with|src-compact|none|<chapter-number-title|<appendix-text>
   <the-appendix>|<arg|title>>>>>
 
   \;
