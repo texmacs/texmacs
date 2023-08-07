@@ -83,7 +83,7 @@
   ("preview command" "default" notify-preview-command)
   ("printing command" (get-default-printing-command) notify-printing-command)
   ("paper type" (get-default-paper-size) notify-paper-type)
-  ("printer dpi" "600" notify-printer-dpi))
+  ("printer dpi" "1200" notify-printer-dpi))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Printing wrapper for slides

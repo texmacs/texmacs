@@ -48,7 +48,7 @@
           "Letter" "Legal" "Executive"
           *)
     (enum ("Printer dpi" "printer dpi")
-          "150" "200" "300" "400" "600" "800" "1200"
+          "150" "200" "300" "400" "600" "800" "1200" "2400"
           *)))
 
 (tm-define preferences-tree
