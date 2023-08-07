@@ -44,7 +44,7 @@
               "18em"))
       (item (text "Printer dpi:")
         (enum (set-pretty-preference "printer dpi" answer)
-              '("150" "200" "300" "400" "600" "800" "1200" "")
+              '("150" "200" "300" "400" "600" "800" "1200" "2400" "")
               (get-pretty-preference "printer dpi")
               "18em")))))
 
