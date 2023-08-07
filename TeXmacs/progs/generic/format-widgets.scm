@@ -265,7 +265,8 @@
         (when (!= val "unchanged")
           (if (!= var "page-the-page")
               (insert `(assign ,var ,val))
-              (insert `(assign ,var (macro ,(page-the-page-body val))))))))))
+              (insert `(assign ,var (macro ,(page-the-page-body val))))))
+        (refresh-window)))))
 
 (define (change-background settings what u)
   (let* ((var "page-this-bg-color")
@@ -280,19 +281,6 @@
           ((== what "picture")
            (open-background-picture-selector setter)))))
 
-(define (get-field-contents u)
-  (and-with t (tm->stree (buffer-get-body u))
-    (when (tm-func? t 'document 1)
-      (set! t (tm-ref t 0)))
-    (and (!= t '(unchanged)) t)))
-
-(define (apply-page-settings u settings)
-  (with l (list)
-    (and-with doc (get-field-contents "tmfs://aux/this-page-header")
-      (set! l (cons `(set-this-page-header ,doc) l)))
-    (and-with doc (get-field-contents "tmfs://aux/this-page-footer")
-      (set! l (cons `(set-this-page-footer ,doc) l)))))
-
 (define (header-buffer)
   (string->url "tmfs://aux/this-page-header"))
 
@@ -301,6 +289,48 @@
 
 (define (editing-headers?)
   (in? (current-buffer) (list (header-buffer) (footer-buffer))))
+
+(define (get-field-contents u)
+  (and-with t (tm->stree (buffer-get-body u))
+    (when (tm-func? t 'document 1)
+      (set! t (tm-ref t 0)))
+    (and (!= t '(unchanged)) t)))
+
+(define (cut-tag t var)
+  (cond ((tree-atomic? t) (noop))
+        ((tree-func? t var 1) (tree-cut t))
+        (else (for-each (cut cut-tag <> var) (tree-children t)))))
+
+(define (get-tag-arg** l var)
+  (and (nnull? l)
+       (or (get-tag-arg*  (car l) var)
+           (get-tag-arg** (cdr l) var))))
+  
+(define (get-tag-arg* t var)
+  (cond ((tree-atomic? t) #f)
+        ((tree-func? t var 1) (tm->stree (tm-ref t 0)))
+        (else (get-tag-arg** (reverse (tree-children t)) var))))
+
+(define (get-tag-arg u var)
+  (with-buffer u
+    (and-with doc (tree-innermost 'document)
+      (and-with par (tree-down doc)
+        (or (get-tag-arg* par var)
+            '(unchanged))))))
+
+(define (apply-page-settings-one u settings var val)
+  (with-buffer u
+    (and-with doc (tree-innermost 'document)
+      (and-with par (tree-down doc)
+        (cut-tag par var)
+        (insert `(,var ,val))
+        (refresh-window)))))
+
+(define (apply-page-settings u settings)
+  (and-with val (get-field-contents (header-buffer))
+    (apply-page-settings-one u settings 'set-this-page-header val))
+  (and-with val (get-field-contents (footer-buffer))
+    (apply-page-settings-one u settings 'set-this-page-footer val)))
 
 (tm-widget ((page-formatter u style settings) quit)
   (padded
@@ -323,13 +353,13 @@
     (bold (text "This page header"))
     ===
     (resize "600px" "60px"
-      (texmacs-input `(document (unchanged))
+      (texmacs-input `(document ,(get-tag-arg u 'set-this-page-header))
                      `(style (tuple ,@style)) (header-buffer)))
     === ===
     (bold (text "This page footer"))
     ===
     (resize "600px" "60px"
-      (texmacs-input `(document (unchanged))
+      (texmacs-input `(document ,(get-tag-arg u 'set-this-page-footer))
                      `(style (tuple ,@style)) (footer-buffer)))
     ======
     (explicit-buttons
