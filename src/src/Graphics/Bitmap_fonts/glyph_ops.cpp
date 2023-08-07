@@ -258,6 +258,44 @@ copy (glyph gl) {
 }
 
 glyph
+junc_left (glyph gl, int jw) {
+  int i, j, k;
+  int ww= gl->width, hh= gl->height;
+  glyph bmr (ww, hh, gl->xoff, gl->yoff, gl->depth);
+  jw= min (jw, ww);
+  for (j=0; j<hh; j++) {
+    for (i=0; i<ww; i++)
+      bmr->set_x (i, j, gl->get_x (i, j));
+    for (i=0; i<jw; i++)
+      if (gl->get_x (i, j) != 0) {
+        for (k=0; k<i; k++)
+          bmr->set_x (k, j, gl->get_x (i, j));
+        break;
+      }
+  }
+  return bmr;
+}
+
+glyph
+junc_right (glyph gl, int jw) {
+  int i, j, k;
+  int ww= gl->width, hh= gl->height;
+  glyph bmr (ww, hh, gl->xoff, gl->yoff, gl->depth);
+  jw= min (jw, ww);
+  for (j=0; j<hh; j++) {
+    for (i=0; i<ww; i++)
+      bmr->set_x (i, j, gl->get_x (i, j));
+    for (i=ww-1; i>=ww-jw; i--)
+      if (gl->get_x (i, j) != 0) {
+        for (k=i+1; k<ww; k++)
+          bmr->set_x (k, j, gl->get_x (i, j));
+        break;
+      }
+  }
+  return bmr;
+}
+
+glyph
 simplify (glyph gl) {
   int i, j;
   int ww= gl->width, hh= gl->height;
