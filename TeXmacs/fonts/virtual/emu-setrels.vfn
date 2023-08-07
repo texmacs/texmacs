@@ -12,8 +12,9 @@
 
   (prein (with w (width ohalf)
            (join (align* ohalf (w 0 sheqset*) 1 * 0 *)
-                 (w 0 sheqset*))))
-  (preni (pretend (join sheqset* (align* halfo sheqset* 0 * 1 *)) prein))
+                 (w 0 (junc-left sheqset* 0.1)))))
+  (preni (pretend (join (junc-right sheqset* 0.1)
+                        (align* halfo sheqset* 0 * 1 *)) prein))
   (minus-in (or (font minus Carlito)
                 (scale* minus prein 1 0)))
   (minus-ni (or (font (scale* minus preni 0.5 0) Carlito)
@@ -26,9 +27,10 @@
   (subset (bitmap
             (with w (width ohalf)
               (join (align* ohalf (w 0 sheqset) 1 * 0 *)
-                    (w 0 sheqset)))))
+                    (w 0 (junc-left sheqset 0.1))))))
   (supset (bitmap
-            (pretend (join sheqset (align* halfo sheqset 0 * 1 *)) subset)))
+            (pretend (join (junc-right sheqset 0.1)
+                           (align* halfo sheqset 0 * 1 *)) subset)))
   (subseteq (stack-less subset (hor-scale minus subset)))
   (supseteq (stack-less supset (hor-scale minus supset)))
   (subseteqq (stack-less subset (hor-scale = subset)))
