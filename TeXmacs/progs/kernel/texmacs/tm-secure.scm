@@ -102,3 +102,7 @@
   "Test whether it is secure to evaluate the expression @expr"
   (or (secure-expr? expr '())
       (and (lazy-plugin-force) (secure-expr? expr '()))))
+
+(define-public (secure-eval expr)
+  "Evaluate @expr only when it is secure to do so"
+  (and (secure? expr) (eval expr)))
