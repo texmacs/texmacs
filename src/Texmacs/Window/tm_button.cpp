@@ -108,6 +108,7 @@ class box_widget_rep: public simple_widget_rep {
   double zoomf;
   double magf;
   SI     dw, dh;
+  SI     last_x, last_y;
 
 public:
   box_widget_rep (box b, color bg, bool trans, double zoom, SI dw, SI dh);
@@ -115,6 +116,8 @@ public:
 
   void handle_get_size_hint (SI& w, SI& h);
   void handle_repaint (renderer ren, SI x1, SI y1, SI x2, SI y2);
+  void handle_mouse (string kind, SI x, SI y, int m, time_t t,
+                     array<double> data);
 };
 
 box_widget_rep::box_widget_rep
@@ -122,7 +125,8 @@ box_widget_rep::box_widget_rep
     simple_widget_rep (), b (b2),
     bg (bg2), transparent (trans2),
     zoomf (zoom), magf (zoom / std_shrinkf),
-    dw (dw2+2*PIXEL), dh (dh2+2*PIXEL) {}
+    dw (dw2+2*PIXEL), dh (dh2+2*PIXEL),
+    last_x (0), last_y (0) {}
 
 box_widget_rep::operator tree () {
   return tree (TUPLE, "box", (tree) b);
@@ -152,6 +156,47 @@ box_widget_rep::handle_repaint (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   SI y= ((((SI) (h / magf)) - b->h()) >> 1) - b->y1 - ((SI) (h / magf));
   b->redraw (ren, path(), l, x, y);
   ren->reset_zoom_factor ();
+}
+
+void
+box_widget_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t,
+                              array<double> data) {
+  (void) m; (void) t; (void) data;
+  //cout << "Mouse  : " << kind << ", "
+  //     << (x/PIXEL) << ", " << (y/PIXEL) << "\n";
+  //cout << "Extents: "
+  //     << b->x1/PIXEL << ", " << b->y1/PIXEL << "; "
+  //     << b->x2/PIXEL << ", " << b->y2/PIXEL << "\n";
+  SI ox=  b->x1;
+  SI oy= -b->y2;
+  SI xx= 4*x - ox;
+  SI yy= 4*y - oy;
+  //cout << "Point  : " << xx/PIXEL << ", " << yy/PIXEL << LF;
+
+  rectangles rs;
+  bool found_flag= false;
+  path old_p= b->find_box_path (last_x, last_y, 0, false, found_flag);
+  found_flag= false;
+  path new_p= b->find_box_path (xx, yy, 0, false, found_flag);
+  if (path_up (old_p) != path_up (new_p)) {
+    b->message ("leave", last_x, last_y, rs);
+    b->message ("enter", xx, yy, rs);
+  }
+  last_x= xx; last_y= yy;
+
+  if (kind == "press-left")
+    b->message ("click", xx, yy, rs);
+  if (kind == "release-left")
+    b->message ("select", xx, yy, rs);
+
+  if (N(rs) > 0) {
+    send_invalidate_all (this);
+    //while (!is_nil (rs)) {
+    //  send_invalidate (rs->item->x1-pixel, rs->item->y1-pixel,
+    //                   rs->item->x2+pixel, rs->item->y2+pixel);
+    //  rs= rs->next;
+    //}
+  }
 }
 
 /******************************************************************************

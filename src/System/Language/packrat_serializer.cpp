@@ -193,6 +193,7 @@ packrat_parser_rep::serialize (tree t, path p) {
       break;
     case HLINK:
     case ACTION:
+    case RELAY:
       serialize (t[0], p * 0);
       break;
     case SET_BINDING:
