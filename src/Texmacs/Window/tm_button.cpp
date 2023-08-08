@@ -109,6 +109,7 @@ class box_widget_rep: public simple_widget_rep {
   double magf;
   SI     dw, dh;
   SI     last_x, last_y;
+  bool   lpressed;
 
 public:
   box_widget_rep (box b, color bg, bool trans, double zoom, SI dw, SI dh);
@@ -126,7 +127,7 @@ box_widget_rep::box_widget_rep
     bg (bg2), transparent (trans2),
     zoomf (zoom), magf (zoom / std_shrinkf),
     dw (dw2+2*PIXEL), dh (dh2+2*PIXEL),
-    last_x (0), last_y (0) {}
+    last_x (0), last_y (0), lpressed (false) {}
 
 box_widget_rep::operator tree () {
   return tree (TUPLE, "box", (tree) b);
@@ -184,10 +185,16 @@ box_widget_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t,
   }
   last_x= xx; last_y= yy;
 
-  if (kind == "press-left")
+  if (kind == "move" && lpressed)
+    b->message ("drag", xx, yy, rs);
+  if (kind == "press-left") {
+    lpressed= true;
     b->message ("click", xx, yy, rs);
-  if (kind == "release-left")
+  }
+  if (kind == "release-left") {
+    lpressed= false;
     b->message ("select", xx, yy, rs);
+  }
 
   if (N(rs) > 0) {
     send_invalidate_all (this);
