@@ -485,6 +485,110 @@ make_lazy_locus (edit_env env, tree t, path ip) {
 }
 
 /******************************************************************************
+* Dynamic case
+******************************************************************************/
+
+lazy_dynamic_case_rep::lazy_dynamic_case_rep (edit_env env, tree t, path ip):
+  lazy_rep (LAZY_DYNAMIC_CASE, ip)
+{
+  int i, n= N(t);
+  for (i=0; i<(n-1); i+=2) {
+    conds << env->exec (t[i]);
+    par << make_lazy (env, t[i+1], descend (ip, i+1));
+  }
+  if (i<n) par << make_lazy (env, t[i], descend (ip, i));
+}
+
+format
+lazy_dynamic_case_rep::query (lazy_type request, format fm) {
+  if ((request == LAZY_BOX) && (fm->type == QUERY_VSTREAM_WIDTH)) {
+    SI w= 1;
+    int i, n= N(par);
+    for (i=0; i<n; i++) {
+      format ret_fm= par[i]->query (request, fm);
+      format_width fmw= (format_width) ret_fm;
+      w= max (w, fmw->width);
+    }
+    return make_format_width (w);
+  }
+  return lazy_rep::query (request, fm);
+}
+
+lazy
+lazy_dynamic_case_rep::produce (lazy_type request, format fm) {
+  if (request == type) return this;
+  if (request == LAZY_VSTREAM || request == LAZY_BOX) {
+    int i, n= N(par);
+    array<box> bs (n);
+    format bfm= fm;
+    if (request == LAZY_VSTREAM) {
+      format_vstream fvs= (format_vstream) fm;
+      bfm= make_format_width (fvs->width);
+    }
+    for (i=0; i<n; i++)
+      bs[i]= (box) par[i]->produce (LAZY_BOX, bfm);
+    box b= case_box (ip, conds, bs);
+    if (request == LAZY_BOX) return make_lazy_box (b);
+    else {
+      array<page_item> l;
+      l << page_item (b);
+      return lazy_vstream (ip, "", l, stack_border ());
+    }
+  }
+  return lazy_rep::produce (request, fm);
+}
+
+void
+lazy_dynamic_case_rep::propagate () {
+  for (int i=0; i<N(par); i++)
+    par[i]->propagate ();
+}
+
+/******************************************************************************
+* Relay
+******************************************************************************/
+
+lazy_relay_rep::lazy_relay_rep (edit_env env, tree t, path ip):
+  lazy_rep (LAZY_RELAY, ip)
+{
+  par= make_lazy (env, t[0], descend (ip, 0));
+  for (int i=1; i<N(t); i++) args << env->exec_string (t[i]);
+}
+
+format
+lazy_relay_rep::query (lazy_type request, format fm) {
+  if ((request == LAZY_BOX) && (fm->type == QUERY_VSTREAM_WIDTH))
+    return par->query (request, fm);
+  return lazy_rep::query (request, fm);
+}
+
+lazy
+lazy_relay_rep::produce (lazy_type request, format fm) {
+  if (request == type) return this;
+  if (request == LAZY_VSTREAM || request == LAZY_BOX) {
+    format bfm= fm;
+    if (request == LAZY_VSTREAM) {
+      format_vstream fvs= (format_vstream) fm;
+      bfm= make_format_width (fvs->width);
+    }
+    box b = (box) par->produce (LAZY_BOX, bfm);
+    box rb= relay_box (ip, b, args);
+    if (request == LAZY_BOX) return make_lazy_box (rb);
+    else {
+      array<page_item> l;
+      l << page_item (rb);
+      return lazy_vstream (ip, "", l, stack_border ());
+    }
+  }
+  return lazy_rep::produce (request, fm);
+}
+
+void
+lazy_relay_rep::propagate () {
+  par->propagate ();
+}
+
+/******************************************************************************
 * Main routine
 ******************************************************************************/
 
@@ -543,6 +647,8 @@ make_lazy (edit_env env, tree t, path ip) {
     return make_lazy_eval (env, t, ip);
   case COMPOUND:
     return make_lazy_compound (env, t, ip);
+  case DYNAMIC_CASE:
+    return lazy_dynamic_case (env, t, ip);
   case EXTERN:
   case VAR_INCLUDE:
   case WITH_PACKAGE:
@@ -563,6 +669,8 @@ make_lazy (edit_env env, tree t, path ip) {
   case HLINK:
   case ACTION:
     return make_lazy_compound (env, t, ip);
+  case RELAY:
+    return lazy_relay (env, t, ip);
   case ANIM_STATIC:
   case ANIM_DYNAMIC:
     return make_lazy_eval (env, t, ip);
