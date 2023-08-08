@@ -22,9 +22,11 @@
 
   <use-package|std-shadow>
 
+  <use-module|(utils misc gui-utils)>
+
   <\active*>
     <\src-comment>
-      Rendering mactos
+      Rendering macros
     </src-comment>
   </active*>
 
@@ -43,7 +45,7 @@
     </src-comment>
   </active*>
 
-  <assign|action-button|<macro|x|cmd|<with|locus-color|preserve|clickable-color|#00000000|<style-with|src-compact|none|<dynamic-case|click|<action|<render-button-pressed|<arg|x>>|<arg|cmd>|<arg|x>>|mouse-over|<render-button-hover|<arg|x>>|<render-button-normal|<arg|x>>>>>>>
+  <assign|action-button|<macro|x|cmd|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<render-button-pressed|<arg|x>>|gui-on-select|<arg|cmd>>|mouse-over|<relay|<render-button-hover|<arg|x>>|gui-on-select|<arg|cmd>>|<relay|<render-button-normal|<arg|x>>|gui-on-select|<arg|cmd>>>>>>
 
   <drd-props|action-button|arity|2|accessible|0>
 

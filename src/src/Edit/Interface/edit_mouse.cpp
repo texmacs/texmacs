@@ -573,10 +573,10 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t,
   if ((type == "release-left" || type == "end-drag-left")) {
     if (!(mouse_adjusting & ShiftMask))
       mouse_select (x, y, mods, type == "end-drag-left");
-    send_mouse_grab (this, false);
     mouse_adjusting &= ~mouse_adjusting;
+    send_mouse_grab (this, false);
   }
-  
+
   if (type == "double-left") {
     send_mouse_grab (this, false);
     if (mouse_extra_click (x, y))

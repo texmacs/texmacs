@@ -552,6 +552,8 @@ init_std_drd () {
         accessible (0) -> name (0, "text") ->
         code (1) -> name (1, "function") ->
         regular (2) -> name (2, "arguments"));
+  init (RELAY, "relay",
+        repeat (1, 1) -> accessible (0));
   init (SET_BINDING, "set-binding",
         options (1, 2));                      // see env_exec.cpp
   init (GET_BINDING, "get-binding",
