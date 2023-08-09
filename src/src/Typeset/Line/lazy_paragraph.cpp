@@ -839,6 +839,17 @@ make_lazy_paragraph (edit_env env, array<box> bs, path ip) {
   return par;
 }
 
+box
+surround (edit_env env, box b, path ip,
+          array<line_item> l, array<line_item> r, format fm) {
+  if (N(l) == 0 && N(r) == 0) return b;
+  lazy_paragraph par (env, ip);
+  par->a << l;
+  par->a << line_item (STD_ITEM, env->mode_op, b, 0);
+  par->a << r;
+  return (box) par->produce (LAZY_BOX, fm);
+}
+
 array<line_item>
 join (array<line_item> a, array<line_item> b) {
   int i, m= N(a), n= N(b);
