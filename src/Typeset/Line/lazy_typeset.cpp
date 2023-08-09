@@ -157,6 +157,13 @@ lazy_surround_rep::propagate () {
   par->propagate ();
 }
 
+lazy
+add_markers (edit_env env, lazy par, path ip) {
+  array<line_item> a= typeset_marker (env, descend (ip, 0));
+  array<line_item> b= typeset_marker (env, descend (ip, 1));
+  return lazy_surround (a, b, par, ip);
+}
+
 /******************************************************************************
 * Hidden
 ******************************************************************************/
@@ -648,7 +655,7 @@ make_lazy (edit_env env, tree t, path ip) {
   case COMPOUND:
     return make_lazy_compound (env, t, ip);
   case DYNAMIC_CASE:
-    return lazy_dynamic_case (env, t, ip);
+    return add_markers (env, lazy_dynamic_case (env, t, ip), ip);
   case EXTERN:
   case VAR_INCLUDE:
   case WITH_PACKAGE:
@@ -670,7 +677,7 @@ make_lazy (edit_env env, tree t, path ip) {
   case ACTION:
     return make_lazy_compound (env, t, ip);
   case RELAY:
-    return lazy_relay (env, t, ip);
+    return add_markers (env, lazy_relay (env, t, ip), ip);
   case ANIM_STATIC:
   case ANIM_DYNAMIC:
     return make_lazy_eval (env, t, ip);
