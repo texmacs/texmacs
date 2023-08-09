@@ -355,6 +355,7 @@
   (update-menus update_menus (void))
 
   (show-tree show_tree (void))
+  (show-box show_box (void))
   (show-env show_env (void))
   (show-path show_path (void))
   (show-cursor show_cursor (void))
