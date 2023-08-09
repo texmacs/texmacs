@@ -329,8 +329,8 @@ void
 concater_rep::typeset_relay (tree t, path ip) {
   if (N(t) == 0) { typeset_error (t, ip); return; }
   box b= typeset_as_concat (env, t[0], descend (ip, 0));
-  array<string> args;
-  for (int i=1; i<N(t); i++) args << env->exec_string (t[i]);
+  array<tree> args;
+  for (int i=1; i<N(t); i++) args << env->exec (t[i]);
   print (relay_box (ip, b, args));
 }
 
