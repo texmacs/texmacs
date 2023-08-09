@@ -491,9 +491,27 @@ edit_main_rep::the_shifted_path () {
 ******************************************************************************/
 
 void
+stretched_print (box b) {
+  if (N(b) == 0) cout << b << " " << reverse (b->ip) << LF;
+  else {
+    tree t= (tree) b;
+    if (is_tuple (t) && N(t) > 0) t= t[0];
+    cout << t << " " << reverse (b->ip) << LF << INDENT;
+    for (int i=0; i<N(b); i++)
+      stretched_print (b[i]);
+    cout << UNINDENT;
+  }
+}
+
+void
 edit_main_rep::show_tree () {
   stretched_print (et, true);
   // cout << et << "\n";
+}
+
+void
+edit_main_rep::show_box () {
+  stretched_print (eb);
 }
 
 void

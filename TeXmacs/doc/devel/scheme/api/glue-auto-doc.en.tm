@@ -8731,6 +8731,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(show-box)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|show_box> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(show-env)>
 <explain-synopsis|no synopsis>
   <|explain>
