@@ -1981,7 +1981,9 @@
 
   (vgroup tmhtml-id)
   ((:or switch fold exclusive progressive superposed) tmhtml-noop)
-  ((:or mouse-over-balloon mouse-over-balloon*) tmhtml-balloon)
+  ((:or mouse-over-balloon mouse-over-balloon*
+        hover-balloon hover-balloon*
+        popup-balloon popup-balloon*) tmhtml-balloon)
   
   (!file tmhtml-file))
 
