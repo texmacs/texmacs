@@ -1114,6 +1114,7 @@
 "menu-after-action"
 "update-menus"
 "show-tree"
+"show-box"
 "show-env"
 "show-path"
 "show-cursor"

@@ -64,6 +64,7 @@
       ("Open on warnings" (toggle-preference "open console on warnings")))
   (-> "Status"
       ("Tree" (show-tree))
+      ("Box" (show-box))
       ("Path" (show-path))
       ("Cursors" (show-cursor))
       ("Selection" (show-selection))
