@@ -1042,7 +1042,7 @@
 (tm-define (make-balloon)
   (:synopsis "Insert a balloon.")
   (wrap-selection-small
-    (insert-go-to `(inactive (mouse-over-balloon "" "" "left" "Bottom"))
+    (insert-go-to `(inactive (hover-balloon "" "" "left" "Bottom"))
                   '(0 0 0))))
 
 (tm-define (test-balloon-halign? ha)

@@ -4393,6 +4393,10 @@ upgrade (tree t, string version) {
   }
   if (version_inf_eq (version, "1.99.13"))
     t= preserve_lengths (t);
+  if (version_inf_eq (version, "2.1.2")) {
+    t= rename_primitive (t, "mouse-over-balloon", "hover-balloon");
+    t= rename_primitive (t, "mouse-over-balloon*", "hover-balloon*");
+  }
 
   if (is_non_style_document (t))
     t= automatic_correct (t, version);

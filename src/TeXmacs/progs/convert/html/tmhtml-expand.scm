@@ -47,7 +47,10 @@
              html-javascript html-javascript-src html-video
 	     web-title tmdoc-title tmdoc-flag tmdoc-license
 	     tmdoc-title* tmdoc-title** tmdoc-copyright
-	     hlink action hyper-link mouse-over-balloon mouse-over-balloon*))
+	     hlink action hyper-link
+             mouse-over-balloon mouse-over-balloon*
+             hover-balloon hover-balloon*
+             popup-balloon popup-balloon*))
     ;; FIXME: should apply 'filter_style' to the environment
     ;; in an appropriate way to avoid adding the primitives below
     ,@(map tmhtml-env-macro

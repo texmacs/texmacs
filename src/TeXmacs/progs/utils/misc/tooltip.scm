@@ -77,7 +77,7 @@
       (when (or (!= key "move")
                 (< xx (- x1 d)) (> xx (+ x2 d))
                 (< yy (- y1 d)) (> yy (+ y2 d))
-                (> dx 10) (> dy 10))
+                (and (== type "mouse") (or (> dx 10) (> dy 10))))
         (when (!= type "keyboard")
           (tooltip-delayed-unmap)))))
   (former key x y mods time data))
@@ -137,7 +137,7 @@
   (with (bw bh) bsz
     (with (sw sh) ssz
       (with (mx my) mpos
-        (cond ((== type "mouse")
+        (cond ((in? type '("mouse" "mouse*"))
                (tooltip-position x1 y1 x2 y2 wx wy bsz ssz mpos
                                  (string-append "mouse-" ha)
                                  (string-append "mouse-" va)
