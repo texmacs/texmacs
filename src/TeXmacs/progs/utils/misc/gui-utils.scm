@@ -21,11 +21,14 @@
 (tm-define (gui-on-select type x y cmd)
   (:secure #t)
   ;;(display* "gui-on-select " type ", " x ", " y ", " cmd "\n")
+  (set! type (tm->stree type))
+  (set! cmd (tm->stree cmd))
   (or (and (in? type (list "click" "drag")) "done")
       (and (== type "select")
            (begin
              (delayed
                (:idle 1)
-               (secure-eval (string->object cmd))
+               (when (string? cmd)
+                 (secure-eval (string->object cmd)))
                (close-tooltip))
              "done"))))

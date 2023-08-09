@@ -385,3 +385,10 @@
   (:secure #t)
   (if (tree->path t) (handle-exclusive (tree->path t) #f))
   (perform-toggle t))
+
+(tm-define (popup-toggle-button type x y t)
+  (:secure #t)
+  (when (== (tm->stree type) "select")
+    (if (tree->path t) (handle-exclusive (tree->path t) #f))
+    (perform-toggle t)
+    (close-tooltip)))

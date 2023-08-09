@@ -71,6 +71,7 @@
 (define-mc mc-monospaced mcs-monospaced)
 (define-mc mc-horizontal mcs-horizontal)
 (define-mc mc-vertical mcs-vertical)
+(define-group mc-exclusive-tag mc-popup)
 
 ;; Tags for text with gaps
 
