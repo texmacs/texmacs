@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|2.1.2>
 
 <style|<tuple|source|std>>
 
@@ -330,29 +330,31 @@
     </src-comment>
   </active*>
 
-  <assign|button-ornament-on-color|dark blue>
+  <assign|button-bg-color|>
 
-  <assign|button-ornament-off-color|>
+  <assign|button-select-bg-color|dark blue>
 
-  <assign|button-ornament-shadow-on-color|#00c>
+  <assign|button-shadow-color|#ccc>
 
-  <assign|button-ornament-shadow-off-color|#ccc>
+  <assign|button-select-shadow-color|#00c>
 
-  <assign|button-ornament-sunny-on-color|#002>
+  <assign|button-sunny-color|#eee>
 
-  <assign|button-ornament-sunny-off-color|#eee>
+  <assign|button-select-sunny-color|#002>
 
-  <assign|button-on-color|white>
+  <assign|button-text-color|>
 
-  <assign|button-off-color|>
+  <assign|button-select-text-color|white>
 
-  <assign|button-ornament-off-color|>
-
-  <assign|button-ornament-border|0ln>
-
-  <assign|button-ornament|<macro|state|text|<with|locus-color|preserve|ornament-color|<if|<arg|state>|<value|button-ornament-on-color>|<value|button-ornament-off-color>>|ornament-shadow-color|<if|<arg|state>|<value|button-ornament-shadow-on-color>|<value|button-ornament-shadow-off-color>>|ornament-sunny-color|<if|<arg|state>|<value|button-ornament-sunny-on-color>|<value|button-ornament-sunny-off-color>>|color|<if|<arg|state>|<value|button-on-color>|<if|<equal|<value|button-off-color>|>|<value|color>|<value|button-off-color>>>|ornament-border|<value|button-ornament-border>|<action|<ornament|<arg|text>>|mouse-toggle-button|<arg|state>>>>>
+  <assign|button-border|0ln>
 
   \;
+
+  <assign|with-button-theme|<macro|state|body|<with|locus-color|preserve|ornament-color|<if|<arg|state>|<value|button-select-bg-color>|<value|button-bg-color>>|ornament-shadow-color|<if|<arg|state>|<value|button-select-shadow-color>|<value|button-shadow-color>>|ornament-sunny-color|<if|<arg|state>|<value|button-select-sunny-color>|<value|button-sunny-color>>|color|<if|<arg|state>|<value|button-select-text-color>|<if|<equal|<value|button-text-color>|>|<value|color>|<value|button-text-color>>>|ornament-border|<value|button-border>|<arg|body>>>>
+
+  \;
+
+  <assign|button-ornament|<macro|state|text|<style-with|src-compact|none|<with-button-theme|<arg|state>|<action|<ornament|<arg|text>>|mouse-toggle-button|<arg|state>>>>>>
 
   <assign|button-ornament-narrow|<macro|state|text|<button-ornament|<arg|state>|<surround|<resize|<phantom|dp>|||0em|>||<arg|text>>>>>
 
@@ -470,6 +472,30 @@
   \;
 
   <assign|with-button-ornament|<macro|body|<with|mc|<value|tiled-items>|mcs|<value|tiled-items>|mc-monospaced|<value|tiled-items>|mcs-monospaced|<value|tiled-items>|mc-horizontal|<value|horizontal-items>|mcs-horizontal|<value|horizontal-items>|mc-vertical|<value|vertical-items>|mcs-vertical|<value|vertical-items>|<arg|body>>>>
+
+  <\active*>
+    <\src-comment>
+      Multiple choices using popup menus
+    </src-comment>
+  </active*>
+
+  <assign|button-popup|<macro|state|text|<style-with|src-compact|none|<with-button-theme|<arg|state>|<relay|<ornament|<arg|text><htab|0mm>>|popup-toggle-button|<arg|state>>>>>>
+
+  \;
+
+  <assign|vertical-items*|<xmacro|items|<with|mc-field|<value|button-popup>|<extern|ext-vertical-items|<quote-arg|items>|<quote-value|vertical-items-outer-border>|<quote-value|vertical-items-inner-border>>>>>
+
+  <drd-props|vertical-items*|arity|<tuple|repeat|1|1>|accessible|all>
+
+  \;
+
+  <assign|mc-selected-field|<macro|x|<ornament|<arg|x>>>>
+
+  <assign|mc-selected-none|<macro|x|<mc-selected-field|<with|opacity|0|<arg|x>>>>>
+
+  <assign|mc-popup|<xmacro|items|<with|button-nr|0|<extern|ext-mc-popup|<quote-arg|items>>>>>
+
+  <drd-props|mc-popup|arity|<tuple|repeat|1|1>|accessible|all>
 
   <\active*>
     <\src-comment>

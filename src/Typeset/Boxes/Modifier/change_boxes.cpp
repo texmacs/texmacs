@@ -917,13 +917,13 @@ text_at_box_rep::graphical_select (SI x, SI y, SI dist) {
 ******************************************************************************/
 
 struct relay_box_rep: public change_box_rep {
-  array<string> args;
-  relay_box_rep (path ip, box b, array<string> a);
+  array<tree> args;
+  relay_box_rep (path ip, box b, array<tree> a);
   operator tree ();
   tree message (tree type, SI x, SI y, rectangles& rs);
 };
 
-relay_box_rep::relay_box_rep (path ip, box b, array<string> a):
+relay_box_rep::relay_box_rep (path ip, box b, array<tree> a):
   change_box_rep (ip, false), args (a)
 {
   insert (b, 0, 0);
@@ -938,30 +938,15 @@ relay_box_rep::operator tree () {
   return r;
 }
 
-string
-as_stree (tree t) {
-  if (is_atomic (t))
-    return scm_quote (t->label);
-  else {
-    string r= "(" * as_string (L(t));
-    for (int i=0; i<N(t); i++)
-      r << " " << as_stree (t[i]);
-    r << ")";
-    return r;
-  }
-}
-
 tree
 relay_box_rep::message (tree type, SI x, SI y, rectangles& rs) {
-  if (N(args) == 0 || args[0] == "") return;
-  string cmd= "(secure-eval '(" * args[0];
-  cmd << " " << as_stree (type);
-  cmd << " " << as_string (x);
-  cmd << " " << as_string (y);
-  for (int i=1; i<N(args); i++)
-    cmd << " " << scm_quote (args[i]);
-  cmd << "))";
-  object r= eval (cmd);
+  if (N(args) == 0 || args[0] == "" || !is_atomic (args[0])) return;
+  array<object> objs;
+  objs << symbol_object (args[0]->label);
+  objs << object (type) << object ((int) x) << object ((int) y);
+  for (int i=1; i<N(args); i++) objs << object (args[i]);
+  object cmd= list_object (objs);
+  object r= call ("secure-eval", cmd);
   if (!is_bool (r) || as_bool (r))
     rs << rectangle (x3, y3, x4, y4);
   if (is_string (r)) return as_string (r);
@@ -1070,6 +1055,6 @@ text_at_box (path ip, box b, SI x, SI y, SI hx, SI hy, SI axis, SI pad) {
 }
 
 box
-relay_box (path ip, box b, array<string> args) {
+relay_box (path ip, box b, array<tree> args) {
   return tm_new<relay_box_rep> (ip, b, args);
 }

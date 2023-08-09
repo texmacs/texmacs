@@ -77,7 +77,8 @@
   ---
   ("Monospaced" (make-mc 'mc-monospaced))
   ("Horizontal" (make-mc 'mc-horizontal))
-  ("Vertical" (make-mc 'mc-vertical)))
+  ("Vertical" (make-mc 'mc-vertical))
+  ("Popup menu" (make-mc 'mc-popup)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main menus for inserting and manipulating educational content

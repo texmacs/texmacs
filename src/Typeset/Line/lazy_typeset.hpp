@@ -73,8 +73,8 @@ struct lazy_dynamic_case {
 EXTEND_NULL_CODE(lazy,lazy_dynamic_case);
 
 struct lazy_relay_rep: public lazy_rep {
-  array<string> args;  // the arguments
-  lazy par;            // the relayed paragraph
+  array<tree> args;  // the arguments
+  lazy par;          // the relayed paragraph
 
   lazy_relay_rep (edit_env env, tree t, path ip);
   inline operator tree () { return "Relay"; }

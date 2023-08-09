@@ -559,7 +559,7 @@ lazy_relay_rep::lazy_relay_rep (edit_env env, tree t, path ip):
   lazy_rep (LAZY_RELAY, ip)
 {
   par= make_lazy (env, t[0], descend (ip, 0));
-  for (int i=1; i<N(t); i++) args << env->exec_string (t[i]);
+  for (int i=1; i<N(t); i++) args << env->exec (t[i]);
 }
 
 format
