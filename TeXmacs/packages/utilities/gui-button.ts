@@ -26,18 +26,19 @@
 
   <\active*>
     <\src-comment>
-      Rendering macros
+      GUI color scheme
     </src-comment>
   </active*>
 
-  <assign|render-button-normal|<macro|x|<with|ornament-corner|30%|ornament-color|pastel
-  grey|ornament-shadow-color|dark grey|ornament-sunny-color|white|<ornament|<arg|x>>>>>
+  <assign|gui-bg-color|#e0e0e0>
 
-  <assign|render-button-hover|<macro|x|<with|shadow-recolor|#6060c0|<drop-contour|<with|ornament-corner|30%|ornament-color|pastel
-  grey|ornament-shadow-color|dark grey|ornament-sunny-color|white|<ornament|<arg|x>>>>>>>
+  <assign|gui-sunny-color|white>
 
-  <assign|render-button-pressed|<macro|x|<with|shadow-recolor|#6060c0|<with|ornament-corner|30%|ornament-color|pastel
-  grey|ornament-sunny-color|dark grey|ornament-shadow-color|white|<ornament|<arg|x>>>>>>
+  <assign|gui-shadow-color|#707070>
+
+  <assign|gui-blur-color|#6060c0>
+
+  <assign|gui-select-color|#d0e0f0>
 
   <\active*>
     <\src-comment>
@@ -45,31 +46,27 @@
     </src-comment>
   </active*>
 
-  <assign|action-button|<macro|x|cmd|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<render-button-pressed|<arg|x>>|gui-on-select|<arg|cmd>>|mouse-over|<relay|<render-button-hover|<arg|x>>|gui-on-select|<arg|cmd>>|<relay|<render-button-normal|<arg|x>>|gui-on-select|<arg|cmd>>>>>>
+  <assign|action-button-normal|<macro|x|<with|ornament-corner|30%|ornament-color|<value|gui-bg-color>|ornament-shadow-color|<value|gui-shadow-color>|ornament-sunny-color|<value|gui-sunny-color>|<ornament|<arg|x>>>>>
+
+  <assign|action-button-hover|<macro|x|<with|shadow-recolor|<value|gui-blur-color>|<drop-contour|<with|ornament-corner|30%|ornament-color|<value|gui-bg-color>|ornament-shadow-color|<value|gui-shadow-color>|ornament-sunny-color|<value|gui-sunny-color>|<ornament|<arg|x>>>>>>>
+
+  <assign|action-button-pressed|<macro|x|<with|ornament-corner|30%|ornament-color|<value|gui-bg-color>|ornament-sunny-color|<value|gui-shadow-color>|ornament-shadow-color|<value|gui-sunny-color>|<ornament|<arg|x>>>>>
+
+  <assign|action-button|<macro|x|cmd|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<action-button-pressed|<arg|x>>|gui-on-select|<arg|cmd>>|mouse-over|<relay|<action-button-hover|<arg|x>>|gui-on-select|<arg|cmd>>|<relay|<action-button-normal|<arg|x>>|gui-on-select|<arg|cmd>>>>>>
 
   <drd-props|action-button|arity|2|accessible|0>
-
-  <\active*>
-    <\src-comment>
-      Rendering macros
-    </src-comment>
-  </active*>
-
-  <assign|menu-button-normal|<macro|x|<with|ornament-shape|classic|ornament-border|1ln|ornament-vpadding|2ln|ornament-color|pastel
-  grey|ornament-shadow-color|pastel grey|ornament-sunny-color|pastel
-  grey|<ornament|<space|0cm|-0.2em|0.8em><arg|x>>>>>
-
-  <assign|menu-button-hover|<macro|x|<with|ornament-shape|classic|ornament-border|1ln|ornament-vpadding|2ln|ornament-color|#d0e0f0|ornament-shadow-color|#d0e0f0|ornament-sunny-color|#d0e0f0|<ornament|<space|0cm|-0.2em|0.8em><arg|x>>>>>
-
-  <assign|menu-button-pressed|<macro|x|<with|ornament-shape|classic|ornament-border|1ln|ornament-vpadding|2ln|ornament-color|pastel
-  grey|ornament-shadow-color|white|ornament-sunny-color|dark
-  grey|<ornament|<space|0cm|-0.2em|0.8em><arg|x>>>>>
 
   <\active*>
     <\src-comment>
       Menu buttons
     </src-comment>
   </active*>
+
+  <assign|menu-button-normal|<macro|x|<with|ornament-shape|classic|ornament-border|1ln|ornament-vpadding|2ln|ornament-color|<value|gui-bg-color>|ornament-shadow-color|<value|gui-bg-color>|ornament-sunny-color|<value|gui-bg-color>|<ornament|<space|0cm|-0.2em|0.8em><arg|x>>>>>
+
+  <assign|menu-button-hover|<macro|x|<with|ornament-shape|classic|ornament-border|1ln|ornament-vpadding|2ln|ornament-color|<value|gui-select-color>|ornament-shadow-color|<value|gui-select-color>|ornament-sunny-color|<value|gui-select-color>|<ornament|<space|0cm|-0.2em|0.8em><arg|x>>>>>
+
+  <assign|menu-button-pressed|<macro|x|<with|ornament-shape|classic|ornament-border|1ln|ornament-vpadding|2ln|ornament-color|<value|gui-select-color>|ornament-shadow-color|<value|gui-sunny-color>|ornament-sunny-color|<value|gui-shadow-color>|<ornament|<space|0cm|-0.2em|0.8em><arg|x>>>>>
 
   <assign|menu-button|<macro|x|cmd|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<menu-button-pressed|<arg|x>>|gui-on-select|<arg|cmd>>|mouse-over|<relay|<menu-button-hover|<arg|x>>|gui-on-select|<arg|cmd>>|<relay|<menu-button-normal|<arg|x>>|gui-on-select|<arg|cmd>>>>>>
 
