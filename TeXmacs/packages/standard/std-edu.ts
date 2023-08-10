@@ -479,17 +479,23 @@
     </src-comment>
   </active*>
 
-  <assign|button-popup|<macro|state|text|<style-with|src-compact|none|<with-button-theme|<arg|state>|<relay|<ornament|<arg|text><htab|0mm>>|popup-toggle-button|<arg|state>>>>>>
+  <assign|button-in-popup|<macro|state|text|<style-with|src-compact|none|<with-button-theme|<arg|state>|<relay|<ornament|<space|0em|-0.2em|0.8em><arg|text><htab|0mm>>|popup-toggle-button|<arg|state>>>>>>
 
   \;
 
-  <assign|vertical-items*|<xmacro|items|<with|mc-field|<value|button-popup>|<extern|ext-vertical-items|<quote-arg|items>|<quote-value|vertical-items-outer-border>|<quote-value|vertical-items-inner-border>>>>>
+  <assign|vertical-items*|<xmacro|items|<with|mc-field|<value|button-in-popup>|<extern|ext-vertical-items|<quote-arg|items>|<quote-value|vertical-items-outer-border>|<quote-value|vertical-items-inner-border>>>>>
 
   <drd-props|vertical-items*|arity|<tuple|repeat|1|1>|accessible|all>
 
   \;
 
-  <assign|mc-selected-field|<macro|x|<ornament|<arg|x>>>>
+  <assign|button-popup-activate|click>
+
+  <assign|button-popup|<macro|x|x*|y|halign|valign|<on-event|<value|button-popup-activate>|<arg|x>|display-balloon|<quote-arg|x*>|<arg|y>|<arg|halign>|<arg|valign>|<if|<equal|<value|button-popup-activate>|focus>|keyboard|default>>>>
+
+  \;
+
+  <assign|mc-selected-field|<macro|x|<with-button-theme|false|<ornament|<space|0em|-0.2em|0.8em><arg|x>>>>>
 
   <assign|mc-selected-none|<macro|x|<mc-selected-field|<with|opacity|0|<arg|x>>>>>
 

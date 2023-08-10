@@ -40,6 +40,8 @@
 
   <assign|gui-select-color|#d0e0f0>
 
+  <assign|button-bg-color|white>
+
   <\active*>
     <\src-comment>
       Buttons that can trigger a scheme action
