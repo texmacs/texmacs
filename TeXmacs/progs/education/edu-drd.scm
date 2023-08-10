@@ -64,6 +64,7 @@
 (tm-define-macro (define-mc mc mcs)
   `(begin
      (define-group mc-exclusive-tag ,mc)
+     (define-group mc-exposed-tag ,mc)
      (define-group mc-plural-tag ,mcs)
      (define-alternate ,mc ,mcs)))
 
@@ -71,6 +72,8 @@
 (define-mc mc-monospaced mcs-monospaced)
 (define-mc mc-horizontal mcs-horizontal)
 (define-mc mc-vertical mcs-vertical)
+
+(define-group mc-popup-tag mc-popup)
 (define-group mc-exclusive-tag mc-popup)
 
 ;; Tags for text with gaps

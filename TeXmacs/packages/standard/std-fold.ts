@@ -603,8 +603,6 @@
 
   <assign|popup-balloon|<macro|x|y|halign|valign|<on-event|click|<arg|x>|display-balloon|<quote-arg|x>|<arg|y>|<arg|halign>|<arg|valign>|default>>>
 
-  <assign|popup-balloon-bis|<macro|x|x*|y|halign|valign|<on-event|click|<arg|x>|display-balloon|<quote-arg|x*>|<arg|y>|<arg|halign>|<arg|valign>|default>>>
-
   <assign|popup-balloon*|<macro|x|y|halign|valign|<on-event|click|<arg|x>|display-balloon|<quote-arg|x>|<arg|y>|<arg|halign>|<arg|valign>|mouse*>>>
 
   <assign|focus-balloon|<macro|x|y|halign|valign|<on-event|focus|<arg|x>|display-balloon|<quote-arg|x>|<arg|y>|<arg|halign>|<arg|valign>|keyboard>>>

@@ -68,6 +68,12 @@
 (tm-define (mc-context? t)
   (mc-tag? (tree-label t)))
 
+(tm-define (mc-exposed-context? t)
+  (mc-exposed-tag? (tree-label t)))
+
+(tm-define (mc-popup-context? t)
+  (mc-popup-tag? (tree-label t)))
+
 (tm-define (mc-exclusive-context? t)
   (mc-exclusive-tag? (tree-label t)))
 
@@ -275,6 +281,14 @@
            (with-innermost mc mc-context?
              (tree-set! mc `(,th ,mc)))))))
 
+(tm-define (customizable-parameters t)
+  (:require (mc-popup-context? t))
+  (list (list "button-popup-activate" "Activate")))
+
+(tm-define (parameter-choice-list var)
+  (:require (in? var (list "button-popup-activate")))
+  (list "click" "mouse-over" "focus"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Editing entries of multiple choice lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -291,11 +305,50 @@
   (:require (mc-context? t))
   #t)
 
+(tm-define (mc-field-active? h)
+  (and (tm-func? h 'mc-field 2)
+       (or (tm-equal? (tm-ref h 0) "true")
+           (and (tm-func? (tm-ref h 0) 'hide-simple 2)
+                (tm-equal? (tm-ref h 0 0) "true")))))
+
+(tm-define (mc-field-set h val)
+  (when (tm-func? h 'mc-field 2)
+    (perform-set (tm-ref h 0) val)))
+
+(tm-define (mc-switch t i)
+  (when (mc-context? t)
+    (let* ((p (tree->path t))
+           (c (tree-down-index t)))
+      (if (== i :first) (set! i 0))
+      (if (== i :previous) (set! i (max 0 (- c 1))))
+      (if (== i :this) (set! i c))
+      (if (== i :next) (set! i (min (+ c 1) (- (tm-arity t) 1))))
+      (if (== i :last) (set! i (- (tm-arity t) 1)))
+      (when (tm-ref t i)
+        (clear-buttons t)
+        (mc-field-set (tm-ref t i) "true")
+        (tree-go-to t i 1 :end)))))
+
+(define (mc-visible-sub l)
+  (cond ((null? l) (noop))
+        ((mc-field-active? (car l))
+         (when (not (cursor-inside? (tm-ref (car l) 1)))
+           (tree-go-to (car l) 1 :end)))
+        (else (mc-visible-sub (cdr l)))))
+
+(define (mc-visible-cursor)
+  (and-with t (tree-innermost mc-popup-context?)
+    (mc-visible-sub (tree-children t))))
+
 (define (insert-mc-field t forwards?)
   (let* ((p (tree->path t))
 	 (i (tree-down-index t))
 	 (d (if forwards? 1 0)))
-    (tree-insert! t (+ i d) '((mc-field "false" "")))
+    (cond ((mc-popup-context? t)
+           (mc-field-set (tm-ref t i) "false")
+           (tree-insert! t (+ i d) '((mc-field "true" ""))))
+          (else
+           (tree-insert! t (+ i d) '((mc-field "false" "")))))
     (go-to (append p (list (+ i d) 1 0)))))
 
 (tm-define (kbd-enter t shift?)
@@ -324,7 +377,9 @@
 		  (tree-go-to t (- i 1) :end))
 		 ((and (not forwards?) (== i 0))
 		  (tree-go-to t (+ i 1) :start)))
-	   (tree-remove t i 1))
+	   (tree-remove t i 1)
+           (when (mc-popup-context? t)
+             (mc-switch t :this)))
 	  ((with-button-context? (tree-up t))
 	   (tree-cut (tree-up t)))
 	  (else (tree-cut t)))))
@@ -349,17 +404,25 @@
   (:require (mc-context? t))
   (remove-mc-field t forwards? #t))
 
+(tm-define (kbd-incremental t down?)
+  (:require (mc-context? t))
+  (mc-switch t (if down? :next :previous)))
+
+(tm-define (kbd-extremal t last?)
+  (:require (mc-context? t))
+  (mc-switch t (if last? :last :first)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Toggling buttons
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (perform-clear t)
-  (cond ((tree-is? t 'hide-simple) (perform-clear (tree-ref t 0)))
-        ((tree-is? t 'show-simple) (perform-clear (tree-ref t 1)))
-        (else (tree-set t (tree "false")))))
+(define (perform-set t val)
+  (cond ((tree-is? t 'hide-simple) (perform-set (tree-ref t 0) val))
+        ((tree-is? t 'show-simple) (perform-set (tree-ref t 1) val))
+        (else (tree-set t (tree val)))))
 
 (define (clear-buttons t)
-  (cond ((tree-func? t 'mc-field 2) (perform-clear (tree-ref t 0)))
+  (cond ((tree-func? t 'mc-field 2) (perform-set (tree-ref t 0) "false"))
 	((tree-atomic? t) (noop))
 	(else (for-each clear-buttons (tree-children t)))))
 
@@ -384,11 +447,13 @@
   (:synopsis "Toggle a button using the mouse")
   (:secure #t)
   (if (tree->path t) (handle-exclusive (tree->path t) #f))
-  (perform-toggle t))
+  (perform-toggle t)
+  (mc-visible-cursor))
 
 (tm-define (popup-toggle-button type x y t)
   (:secure #t)
   (when (== (tm->stree type) "select")
     (if (tree->path t) (handle-exclusive (tree->path t) #f))
     (perform-toggle t)
+    (mc-visible-cursor)
     (close-tooltip)))

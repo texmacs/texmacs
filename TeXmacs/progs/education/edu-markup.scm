@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (education edu-markup)
-  (:use (database title-markup)))
+  (:use (database title-markup)
+        (education edu-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customization of titles
@@ -111,10 +112,7 @@
 (define (mc-popup-selected l)
   (and (nnull? l)
        (with (h . t) l
-         (if (and (tm-func? h 'mc-field 2)
-                  (or (tm-equal? (tm-ref h 0) "true")
-                      (and (tm-func? (tm-ref h 0) 'hide-simple 2)
-                           (tm-equal? (tm-ref h 0 0) "true"))))
+         (if (mc-field-active? h)
              (tm-ref h 1)
              (mc-popup-selected t)))))
 
@@ -127,6 +125,6 @@
                     (and first `(mc-selected-none ,first))
                     `(mc-selected-none "---")))
          (text* (or sel first "---")))
-    `(popup-balloon-bis
+    `(button-popup
       ,text ,text* (with "button-nr" "0" (vertical-items* ,@ch))
       "left" "Bottom" "default")))
