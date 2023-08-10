@@ -232,11 +232,21 @@
 
   <\active*>
     <\src-comment>
+      Attaching scripts to buttons and input fields
+    </src-comment>
+  </active*>
+
+  <assign|attached-script|(noop)>
+
+  <assign|attach-script|<macro|body|cmd|<with|attached-script|<arg|cmd>|<arg|body>>>>
+
+  <\active*>
+    <\src-comment>
       Unnumbered buttons
     </src-comment>
   </active*>
 
-  <assign|render-button|<macro|state|off|on|<with|locus-color|preserve|<action|<if|<arg|state>|<arg|on>|<arg|off>>|mouse-toggle-button|<arg|state>>>>>
+  <assign|render-button|<macro|state|off|on|<with|locus-color|preserve|<quasi|<action|<if|<arg|state>|<arg|on>|<arg|off>>|mouse-toggle-button|<arg|state>|<unquote|<value|attached-script>>>>>>>
 
   \;
 
@@ -274,7 +284,7 @@
 
   <assign|circled-button-padding|0.5spc>
 
-  <assign|render-circled-button|<macro|state|text|sep|<with|ornament-shape|rounded|ornament-color||ornament-border|<if|<arg|state>|1ln|0ln>|ornament-hpadding|<value|circled-button-padding>|ornament-vpadding|<value|circled-button-padding>|locus-color|preserve|<resize|<ornament|<action|<arg|text>|mouse-toggle-button|<arg|state>>><shift|<arg|sep>|<minus|<value|ornament-hpadding>>|>|<plus|1r|-1tab>|||>><assign|button-nr|<plus|<value|button-nr>|1>>>>
+  <assign|render-circled-button|<macro|state|text|sep|<with|ornament-shape|rounded|ornament-color||ornament-border|<if|<arg|state>|1ln|0ln>|ornament-hpadding|<value|circled-button-padding>|ornament-vpadding|<value|circled-button-padding>|locus-color|preserve|<resize|<ornament|<quasi|<action|<arg|text>|mouse-toggle-button|<arg|state>|<unquote|<value|attached-script>>>>><shift|<arg|sep>|<minus|<value|ornament-hpadding>>|>|<plus|1r|-1tab>|||>><assign|button-nr|<plus|<value|button-nr>|1>>>>
 
   \;
 
@@ -354,7 +364,7 @@
 
   \;
 
-  <assign|button-ornament|<macro|state|text|<style-with|src-compact|none|<with-button-theme|<arg|state>|<action|<ornament|<arg|text>>|mouse-toggle-button|<arg|state>>>>>>
+  <assign|button-ornament|<macro|state|text|<style-with|src-compact|none|<with-button-theme|<arg|state>|<quasi|<action|<ornament|<arg|text>>|mouse-toggle-button|<arg|state>|<unquote|<value|attached-script>>>>>>>>
 
   <assign|button-ornament-narrow|<macro|state|text|<button-ornament|<arg|state>|<surround|<resize|<phantom|dp>|||0em|>||<arg|text>>>>>
 
@@ -479,7 +489,7 @@
     </src-comment>
   </active*>
 
-  <assign|button-in-popup|<macro|state|text|<style-with|src-compact|none|<with-button-theme|<arg|state>|<relay|<ornament|<space|0em|-0.2em|0.8em><arg|text><htab|0mm>>|popup-toggle-button|<arg|state>>>>>>
+  <assign|button-in-popup|<macro|state|text|<style-with|src-compact|none|<with-button-theme|<arg|state>|<relay|<ornament|<space|0em|-0.2em|0.8em><arg|text><htab|0mm>>|popup-toggle-button|<arg|state>|<value|attached-script>>>>>>
 
   \;
 
