@@ -1103,9 +1103,8 @@ edit_interface_rep::search_cursor (path p) {
 
 selection
 edit_interface_rep::search_selection (path start, path end) {
-  selection sel= eb->find_check_selection (start, end);
-  rectangle r= least_upper_bound (sel->rs) / std_shrinkf;
-  return sel;
+  return eb->find_check_selection (start, end);
+  //rectangle r= least_upper_bound (sel->rs) / std_shrinkf;
 }
 
 /******************************************************************************

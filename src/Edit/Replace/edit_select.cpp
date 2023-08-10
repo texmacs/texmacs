@@ -415,8 +415,7 @@ edit_select_rep::compute_selection (path p1, path p2) {
         selection sel= eb->find_check_selection (cp * 0, cp * 1);
         if (sel->valid) {
           rectangles rs= sel->rs;
-          if (r != rectangle (0, 0, 0, 0)) rs= rectangles (r, rs);
-          r= least_upper_bound (rs);
+          if (!is_nil (rs)) r= least_upper_bound (rs);
         }
       }
     return selection (rectangles (r), fp * 0, fp * 1);
