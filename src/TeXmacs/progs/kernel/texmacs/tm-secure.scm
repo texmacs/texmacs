@@ -59,6 +59,12 @@
 (define (secure-lambda? args env)
   (secure-args? (cdr args) (local-env env (car args))))
 
+(define (secure-with args env)
+  (and (>= (length args) 3)
+       (symbol? (car args))
+       (secure-expr? (cadr args) env)
+       (secure-args? (cddr args) (local-env env (list (car args))))))
+
 (define (secure-quasiquote? args env)
   (cond ((npair? args) #t)
         ((func? args 'unquote 1) (secure-expr? (cadr args) env))
@@ -92,6 +98,7 @@
   (cond ,secure-cond?)
   (if ,secure-args?)
   (lambda ,secure-lambda?)
+  (with ,secure-with)
   (or ,secure-args?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
