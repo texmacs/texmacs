@@ -126,5 +126,5 @@
                     `(mc-selected-none "---")))
          (text* (or sel first "---")))
     `(button-popup
-      ,text ,text* (with "button-nr" "0" (vertical-items* ,@ch))
+      ,text ,t (with "button-nr" "0" (vertical-items* ,@ch))
       "left" "Bottom" "default")))

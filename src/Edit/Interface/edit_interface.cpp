@@ -991,6 +991,12 @@ edit_interface_rep::apply_changes () {
   if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS)) {
     update_mouse_loci ();
     update_focus_loci ();
+    call ("link-follow-ids", object (focus_ids), object ("focus"));
+  }
+  else if (env_change & THE_SELECTION) {
+    update_focus_loci ();
+    call ("close-tooltip");
+    call ("link-follow-ids", object (focus_ids), object ("focus"));
   }
   if (env_change & THE_LOCUS) {
     if (locus_new_rects != locus_rects) {
