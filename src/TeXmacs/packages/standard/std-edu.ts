@@ -499,7 +499,7 @@
 
   <assign|mc-selected-none|<macro|x|<mc-selected-field|<with|opacity|0|<arg|x>>>>>
 
-  <assign|mc-popup|<xmacro|items|<with|button-nr|0|<extern|ext-mc-popup|<quote-arg|items>>>>>
+  <assign|mc-popup|<xmacro|items|<with|button-nr|0|locus-color|preserve|<extern|ext-mc-popup|<quote-arg|items>>>>>
 
   <drd-props|mc-popup|arity|<tuple|repeat|1|1>|accessible|all>
 
