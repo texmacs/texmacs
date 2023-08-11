@@ -22,11 +22,19 @@
              ;;(generic pattern-tools)
              (texmacs menus preferences-tools))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Miscellaneous extra routines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define (scm-load-buffer u)
    (load-document u) 
    (if (not (url-exists? u)) 
 ;; save empty file & reload so that it is recognized as scheme code, not plain tm doc  
       (begin (buffer-save u) (revert-buffer-revert))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Customized keyboards
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-preferences
   ("custom keyboard" "" (lambda args (noop)))
@@ -40,14 +48,18 @@
   (with s (get-preference "custom keyboard")
     (parse-texmacs-snippet s)))
 
+(tm-define (get-the-keyboard)
+  (with s (get-custom-keyboard)
+    (if (not (tm-equal? s "")) s
+        (get-keyboard))))
+
 (tm-menu (custom-keyboard-toolbar)
   (centered
     (refreshable "custom-keyboard"
-      (invisible (get-custom-keyboard))
+      (invisible (get-the-keyboard))
       (texmacs-output
-       `(with "bg-color" "#404040" ,(get-custom-keyboard))
-       '(style "new-gui"))
-      )))
+       `(with "bg-color" "#404040" ,(get-the-keyboard))
+       '(style "new-gui")))))
 
 (tm-define (has-custom-keyboard?)
   (== (get-preference "keyboard tool") "on"))
@@ -61,14 +73,18 @@
 
 (tm-widget (custom-keyboard-widget cmd)
   (refreshable "custom-keyboard"
-    (invisible (get-custom-keyboard))
+    (invisible (get-the-keyboard))
     (texmacs-output
-     `(with "bg-color" "#404040" ,(get-custom-keyboard))
+     `(with "bg-color" "#404040" ,(get-the-keyboard))
      '(style "new-gui"))))
 
 (tm-define (open-custom-keyboard)
   (:interactive #t)
   (dialogue-window custom-keyboard-widget noop "Custom keyboard"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The developer menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind developer-menu
   (group "Scheme")
@@ -92,10 +108,12 @@
     (url-concretize "$TEXMACS_HOME_PATH/system/preferences.scm")))
   ---
   (group "Custom keyboard")
-  (when (selection-active-any?)
-    ("Set keyboard" (set-custom-keyboard (tm->tree (selection-tree)))))
   ("Show keyboard" (toggle-custom-keyboard))
   ("Open keyboard" (open-custom-keyboard))
+  (when (selection-active-any?)
+    ("Set keyboard" (set-custom-keyboard (tm->tree (selection-tree)))))
+  (when (not (tm-equal? (get-custom-keyboard) ""))
+    ("Reset keyboard" (set-custom-keyboard (tm->tree ""))))
   (assuming (side-tools?)
     ---
     (group "Experimental side tools")
