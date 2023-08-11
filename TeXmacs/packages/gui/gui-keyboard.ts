@@ -36,7 +36,7 @@
 
   <assign|key-sunny-color|#c0c0c0>
 
-  <assign|key-pressed-color|#666666>
+  <assign|key-pressed-color|#606090>
 
   <assign|key-pressed-shadow-color|#202020>
 
@@ -80,22 +80,16 @@
 
   <assign|std-key|<macro|x|cmd|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<key-button-pressed|<arg|x>>|gui-on-select|<arg|cmd>>|mouse-over|<relay|<key-button-hover|<arg|x>>|gui-on-select|<arg|cmd>>|<relay|<key-button-normal|<arg|x>>|gui-on-select|<arg|cmd>>>>>>
 
-  <assign|narrow-key|<macro|x|cmd|<with|key-width|<times|0.5|<value|key-width>>|<std-key|<arg|x>|<arg|cmd>>>>>
-
-  <assign|std-key-|<macro|x|cmd|<with|key-width|<times|0.75|<value|key-width>>|<std-key|<arg|x>|<arg|cmd>>>>>
-
-  <assign|std-key+|<macro|x|cmd|<with|key-width|<times|1.25|<value|key-width>>|<std-key|<arg|x>|<arg|cmd>>>>>
-
-  <assign|wide-key|<macro|x|cmd|<with|key-width|<times|1.5|<value|key-width>>|<std-key|<arg|x>|<arg|cmd>>>>>
-
-  <assign|wide-key+|<macro|x|cmd|<with|key-width|<times|1.75|<value|key-width>>|<std-key|<arg|x>|<arg|cmd>>>>>
+  <drd-props|std-key|arity|2|accessible|0>
 
   <assign|extended-key|<macro|x|cmd|width|<with|key-width|<times|<arg|width>|<value|key-width>>|<std-key|<arg|x>|<arg|cmd>>>>>
 
-  <drd-props|std-key|arity|2|accessible|0>
-
   <assign|simple-key|<macro|x|<std-key|<arg|x>|<merge|(emu-key
   "|<arg|x>|")>>>>
+
+  <assign|pressed-key|<macro|x|pressed|<if|<arg|pressed>|<with|save-color|<value|key-pressed-color>|save-shadow-color|<value|key-pressed-shadow-color>|save-sunny-color|<value|key-pressed-sunny-color>|<with|key-pressed-color|<value|key-color>|key-pressed-shadow-color|<value|key-sunny-color>|key-pressed-sunny-color|<value|key-shadow-color>|key-color|<value|save-color>|key-shadow-color|<value|save-sunny-color>|key-sunny-color|<value|save-shadow-color>|<arg|x>>>|<arg|x>>>>
+
+  <assign|modifier-key|<macro|x|cmd|width|pressed|<pressed-key|<extended-key|<arg|x>|<arg|cmd>|<arg|width>>|<arg|pressed>>>>
 
   \;
 </body>
