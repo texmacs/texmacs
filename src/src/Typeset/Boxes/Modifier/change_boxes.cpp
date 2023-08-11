@@ -945,7 +945,7 @@ relay_box_rep::message (tree type, SI x, SI y, rectangles& rs) {
   objs << symbol_object (args[0]->label);
   objs << object (type) << object ((int) x) << object ((int) y);
   for (int i=1; i<N(args); i++) objs << object (args[i]);
-  object cmd= list_object (objs);
+  object cmd= as_list_object (objs);
   object r= call ("secure-eval", cmd);
   if (!is_bool (r) || as_bool (r))
     rs << rectangle (x3, y3, x4, y4);
