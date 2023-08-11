@@ -275,6 +275,7 @@
   (with-remote-tool% (== (get-preference "remote tool") "on"))
   (with-source-tool% (== (get-preference "source tool") "on"))
   (with-versioning-tool% (== (get-preference "versioning tool") "on"))
+  (with-keyboard-tool% (== (get-preference "keyboard tool") "on"))
   (in-presentation% (or (style-has? "beamer-style")
                         (== (get-preference "presentation tool") "on")
                         (inside? 'screens)) in-beamer%)

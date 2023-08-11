@@ -66,8 +66,12 @@ enum slot_id {
   SLOT_USER_ICONS,
   SLOT_SIDE_TOOLS_VISIBILITY,
   SLOT_SIDE_TOOLS,
+  SLOT_LEFT_TOOLS_VISIBILITY,
+  SLOT_LEFT_TOOLS,
   SLOT_BOTTOM_TOOLS_VISIBILITY,
   SLOT_BOTTOM_TOOLS,
+  SLOT_EXTRA_TOOLS_VISIBILITY,
+  SLOT_EXTRA_TOOLS,
   SLOT_FOOTER_VISIBILITY,
   SLOT_LEFT_FOOTER,
   SLOT_RIGHT_FOOTER,
@@ -608,6 +612,24 @@ set_side_tools (widget w, widget bar) {
 }
 
 inline void
+set_left_tools_visibility (widget w, bool visible) {
+  // set visibility of left tools
+  send<bool> (w, SLOT_LEFT_TOOLS_VISIBILITY, visible);
+}
+
+inline bool
+get_left_tools_visibility (widget w) {
+  // get visibility of left tools
+  return query<bool> (w, SLOT_LEFT_TOOLS_VISIBILITY);
+}
+
+inline void
+set_left_tools (widget w, widget bar) {
+  // set left tools
+  write (w, SLOT_LEFT_TOOLS, bar);
+}
+
+inline void
 set_bottom_tools_visibility (widget w, bool visible) {
   // set visibility of bottom tools
   send<bool> (w, SLOT_BOTTOM_TOOLS_VISIBILITY, visible);
@@ -623,6 +645,24 @@ inline void
 set_bottom_tools (widget w, widget bar) {
   // set bottom tools
   write (w, SLOT_BOTTOM_TOOLS, bar);
+}
+
+inline void
+set_extra_tools_visibility (widget w, bool visible) {
+  // set visibility of extra tools
+  send<bool> (w, SLOT_EXTRA_TOOLS_VISIBILITY, visible);
+}
+
+inline bool
+get_extra_tools_visibility (widget w) {
+  // get visibility of extra tools
+  return query<bool> (w, SLOT_EXTRA_TOOLS_VISIBILITY);
+}
+
+inline void
+set_extra_tools (widget w, widget bar) {
+  // set extra tools
+  write (w, SLOT_EXTRA_TOOLS, bar);
 }
 
 inline void
