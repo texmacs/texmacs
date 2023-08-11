@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (utils misc gui-utils)
-  (:use (utils misc tooltip)))
+  (:use (utils misc tooltip)
+        (utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Call-backs
@@ -27,8 +28,18 @@
       (and (== type "select")
            (begin
              (delayed
-               (:idle 1)
+               (:pause 10)
+               ;; FIXME: it would be better to use :idle,
+               ;; but this may cause an infinite delay
+               ;; if the focus is not on a TeXmacs window.
                (when (string? cmd)
                  (secure-eval (string->object cmd)))
                (close-tooltip))
+             (update-menus)
              "done"))))
+
+(tm-define (emu-key t)
+  (:secure #t)
+  (with s (tm->stree t)
+    (when (string? s)
+      (key-press s))))

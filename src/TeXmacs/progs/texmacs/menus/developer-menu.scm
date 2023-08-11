@@ -28,6 +28,48 @@
 ;; save empty file & reload so that it is recognized as scheme code, not plain tm doc  
       (begin (buffer-save u) (revert-buffer-revert))))
 
+(define-preferences
+  ("custom keyboard" "" (lambda args (noop)))
+  ("keyboard tool" "off" (lambda args (noop))))
+
+(tm-define (set-custom-keyboard kbd)
+  (with s (serialize-texmacs-snippet kbd)
+    (set-preference "custom keyboard" s)))
+
+(tm-define (get-custom-keyboard)
+  (with s (get-preference "custom keyboard")
+    (parse-texmacs-snippet s)))
+
+(tm-menu (custom-keyboard-toolbar)
+  (centered
+    (refreshable "custom-keyboard"
+      (invisible (get-custom-keyboard))
+      (texmacs-output
+       `(with "bg-color" "#404040" ,(get-custom-keyboard))
+       '(style "new-gui"))
+      )))
+
+(tm-define (has-custom-keyboard?)
+  (== (get-preference "keyboard tool") "on"))
+
+(tm-define (toggle-custom-keyboard)
+  (:check-mark "*" has-custom-keyboard?)
+  (with on? (not (has-custom-keyboard?))
+    (set-boolean-preference "keyboard tool" on?)
+    (set-boolean-preference "extra tools" on?)
+    (refresh-now "custom-keyboard")))
+
+(tm-widget (custom-keyboard-widget cmd)
+  (refreshable "custom-keyboard"
+    (invisible (get-custom-keyboard))
+    (texmacs-output
+     `(with "bg-color" "#404040" ,(get-custom-keyboard))
+     '(style "new-gui"))))
+
+(tm-define (open-custom-keyboard)
+  (:interactive #t)
+  (dialogue-window custom-keyboard-widget noop "Custom keyboard"))
+
 (menu-bind developer-menu
   (group "Scheme")
   (link scheme-menu)
@@ -48,6 +90,12 @@
   ((replace "Open %1" (verbatim "preferences.scm"))
    (scm-load-buffer
     (url-concretize "$TEXMACS_HOME_PATH/system/preferences.scm")))
+  ---
+  (group "Custom keyboard")
+  (when (selection-active-any?)
+    ("Set keyboard" (set-custom-keyboard (tm->tree (selection-tree)))))
+  ("Show keyboard" (toggle-custom-keyboard))
+  ("Open keyboard" (open-custom-keyboard))
   (assuming (side-tools?)
     ---
     (group "Experimental side tools")

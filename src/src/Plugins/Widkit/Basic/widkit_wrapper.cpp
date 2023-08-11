@@ -734,8 +734,14 @@ wk_widget_rep::send (slot s, blackbox val) {
   case SLOT_SIDE_TOOLS_VISIBILITY:
     send_bool (THIS, "side tools", val);
     break;
+  case SLOT_LEFT_TOOLS_VISIBILITY:
+    send_bool (THIS, "left tools", val);
+    break;
   case SLOT_BOTTOM_TOOLS_VISIBILITY:
     send_bool (THIS, "bottom tools", val);
+    break;
+  case SLOT_EXTRA_TOOLS_VISIBILITY:
+    send_bool (THIS, "extra tools", val);
     break;
   case SLOT_FOOTER_VISIBILITY:
     send_bool (THIS, "footer flag", val);
@@ -889,8 +895,12 @@ wk_widget_rep::query (slot s, int type_id) {
     return query_bool (THIS, "user icons", type_id);
   case SLOT_SIDE_TOOLS_VISIBILITY:
     return query_bool (THIS, "side tools", type_id);
+  case SLOT_LEFT_TOOLS_VISIBILITY:
+    return query_bool (THIS, "left tools", type_id);
   case SLOT_BOTTOM_TOOLS_VISIBILITY:
     return query_bool (THIS, "bottom tools", type_id);
+  case SLOT_EXTRA_TOOLS_VISIBILITY:
+    return query_bool (THIS, "extra tools", type_id);
   case SLOT_FOOTER_VISIBILITY:
     return query_bool (THIS, "footer flag", type_id);
   case SLOT_INTERACTIVE_MODE:
@@ -1002,9 +1012,17 @@ wk_widget_rep::write (slot s, blackbox index, widget w) {
     check_type_void (index, "SLOT_SIDE_TOOLS");
     THIS << set_widget ("side tools", concrete (w));
     break;
+  case SLOT_LEFT_TOOLS:
+    check_type_void (index, "SLOT_LEFT_TOOLS");
+    THIS << set_widget ("left tools", concrete (w));
+    break;
   case SLOT_BOTTOM_TOOLS:
     check_type_void (index, "SLOT_BOTTOM_TOOLS");
     THIS << set_widget ("bottom tools", concrete (w));
+    break;
+  case SLOT_EXTRA_TOOLS:
+    check_type_void (index, "SLOT_EXTRA_TOOLS");
+    THIS << set_widget ("extra tools", concrete (w));
     break;
   case SLOT_SCROLLABLE:
     check_type_void (index, "SLOT_SCROLLABLE");
