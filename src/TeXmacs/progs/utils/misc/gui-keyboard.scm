@@ -45,7 +45,7 @@
     ((key 1.5 "<mapsto>" "tab")
      (keys "q" "w" "e" "r" "t" "y" "u" "i" "o" "p")
      (key 1 "<backslash>" "\\"))
-    ((key 1.75 "Alt" (noop))
+    ((key 1.75 "Sym" (noop))
      (keys "a" "s" "d" "f" "g" "h" "j" "k" "l")
      (key 1.75 "<hookleftarrow>" "return"))
     ((key 2.25 "Shift" (noop))
