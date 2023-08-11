@@ -361,7 +361,8 @@ query_keyboard_focus (widget w) {
 inline void
 send_keyboard_focus_on (widget w, string field) {
   // request the keyboard focus for field inside a widget
-  send<string> (w, SLOT_KEYBOARD_FOCUS_ON, field);
+  if (field == "canvas") send_keyboard_focus (w);
+  else send<string> (w, SLOT_KEYBOARD_FOCUS_ON, field);
 }
 
 inline void
