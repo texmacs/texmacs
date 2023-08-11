@@ -27,12 +27,9 @@
   (or (and (in? type (list "click" "drag")) "done")
       (and (== type "select")
            (begin
+             (keyboard-focus-on "canvas")
              (delayed
-               (:pause 10)
-               ;; FIXME: it would be better to use :idle,
-               ;; but this may cause an infinite delay
-               ;; if the focus is not on a TeXmacs window.
-               (keyboard-focus-on "canvas")
+               (:idle 1)
                (when (string? cmd)
                  (secure-eval (string->object cmd)))
                (close-tooltip))
