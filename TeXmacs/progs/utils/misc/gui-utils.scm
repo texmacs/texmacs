@@ -36,8 +36,28 @@
              (update-menus)
              "done"))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Keyboard emulation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define emu-modifier-table (make-ahash-table))
+
+(tm-define (emu-toggle-modifier t)
+  (:secure #t)
+  (ahash-set! emu-modifier-table t
+              (not (ahash-ref emu-modifier-table t)))
+  (refresh-now "custom-keyboard"))
+
+(tm-define (emu-active-modifier? t)
+  (ahash-ref emu-modifier-table t))
+
 (tm-define (emu-key t)
   (:secure #t)
   (with s (tm->stree t)
     (when (string? s)
-      (key-press s))))
+      (if (emu-active-modifier? "Control")
+          (set! s (string-append "C-" s)))
+      (if (emu-active-modifier? "Alt")
+          (set! s (string-append "A-" s)))
+      (key-press s)
+      (set! emu-modifier-table (make-ahash-table)))))
