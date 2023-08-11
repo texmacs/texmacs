@@ -76,6 +76,7 @@ operator << (tm_ostream& out, widget w) {
 }
 
 extern bool use_side_tools;
+extern bool use_left_tools;
 
 /******************************************************************************
 * Widget style parameters

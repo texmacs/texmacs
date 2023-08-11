@@ -208,6 +208,9 @@
 ;; The TeXmacs side tools
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-widget (texmacs-left-tools win)
+  (glue #t #t 300 1))
+
 (tm-widget (texmacs-side-tools win)
   (for (tool (window->tools win))
     (dynamic (texmacs-side-tool win tool)))
@@ -240,6 +243,10 @@
         (link texmacs-bottom-toolbars))
       (glue #f #f 0 1)
       ---))
+
+(tm-widget (texmacs-extra-tools)
+  (if (with-keyboard-tool?)
+      (dynamic (custom-keyboard-toolbar))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The mode dependent icon bar

@@ -139,7 +139,8 @@
         ("User provided icons" (toggle-visible-icon-bar 3)))
   ("Status bar" (toggle-visible-footer))
   (if (with-developer-tool?)
-      ("Side tools" (toggle-visible-side-tools 0)))
+      ("Left side tools" (toggle-visible-side-tools 1))
+      ("Right side tools" (toggle-visible-side-tools 0)))
   ---
   ("Search toolbar" (toggle-bottom-bar "search"))
   ("Replace toolbar" (toggle-bottom-bar "replace"))
