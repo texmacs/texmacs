@@ -16,11 +16,7 @@
 
 (use-modules (prog scheme-tools) (prog scheme-menu)
              (doc apidoc) (doc apidoc-widgets)
-             (language natural)
-             ;; Experimental (should be put elsewhere)
-             (generic format-tools)
-             ;;(generic pattern-tools)
-             (texmacs menus preferences-tools))
+             (language natural))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscellaneous extra routines
