@@ -52,6 +52,8 @@
 
   <assign|key-inner-padding|0.125em>
 
+  <assign|key-halign|c>
+
   <\active*>
     <\src-comment>
       Keyboards
@@ -68,7 +70,7 @@
 
   <assign|with-key|<macro|body|<with|ornament-shape|rounded|ornament-corner|100%|ornament-border|1ln|ornament-color|<value|key-color>|ornament-shadow-color|<value|key-shadow-color>|ornament-sunny-color|<value|key-sunny-color>|color|<value|key-text-color>|ornament-hpadding|<value|key-inner-padding>|ornament-vpadding|<value|key-inner-padding>|<arg|body>>>>
 
-  <assign|render-key-button-inner|<macro|x|<ornament|<tabular*|<tformat|<cwith|1|1|1|1|cell-width|<minus|<value|key-width>|<plus|<value|key-padding>|<value|key-inner-padding>>>>|<cwith|1|1|1|1|cell-hmode|exact>|<cwith|1|1|1|1|cell-height|<minus|<value|key-height>|<plus|<value|key-padding>|<value|key-inner-padding>>>>|<cwith|1|1|1|1|cell-vmode|exact>|<cwith|1|1|1|1|cell-valign|c>|<table|<row|<cell|<arg|x>>>>>>>>>
+  <assign|render-key-button-inner|<macro|x|<ornament|<tabular*|<tformat|<cwith|1|1|1|1|cell-width|<minus|<value|key-width>|<plus|<value|key-padding>|<value|key-inner-padding>>>>|<cwith|1|1|1|1|cell-hmode|exact>|<cwith|1|1|1|1|cell-height|<minus|<value|key-height>|<plus|<value|key-padding>|<value|key-inner-padding>>>>|<cwith|1|1|1|1|cell-vmode|exact>|<cwith|1|1|1|1|cell-valign|c>|<cwith|1|1|1|1|cell-halign|<value|key-halign>>|<table|<row|<cell|<arg|x>>>>>>>>>
 
   <assign|render-key-button|<macro|x|<tabular*|<tformat|<cwith|1|1|1|1|cell-width|<value|key-width>>|<cwith|1|1|1|1|cell-hmode|exact>|<cwith|1|1|1|1|cell-height|<value|key-height>>|<cwith|1|1|1|1|cell-vmode|exact>|<cwith|1|1|1|1|cell-valign|c>|<table|<row|<cell|<render-key-button-inner|<arg|x>>>>>>>>>
 
@@ -89,7 +91,7 @@
 
   <assign|pressed-key|<macro|x|pressed|<if|<arg|pressed>|<with|save-color|<value|key-pressed-color>|save-shadow-color|<value|key-pressed-shadow-color>|save-sunny-color|<value|key-pressed-sunny-color>|<with|key-pressed-color|<value|key-color>|key-pressed-shadow-color|<value|key-sunny-color>|key-pressed-sunny-color|<value|key-shadow-color>|key-color|<value|save-color>|key-shadow-color|<value|save-sunny-color>|key-sunny-color|<value|save-shadow-color>|<arg|x>>>|<arg|x>>>>
 
-  <assign|modifier-key|<macro|x|cmd|width|pressed|<pressed-key|<extended-key|<arg|x>|<arg|cmd>|<arg|width>>|<arg|pressed>>>>
+  <assign|modifier-key|<macro|x|cmd|width|pressed|<with|key-halign|l|<pressed-key|<extended-key|<very-small|<arg|x>>|<arg|cmd>|<arg|width>>|<arg|pressed>>>>>
 
   \;
 </body>
