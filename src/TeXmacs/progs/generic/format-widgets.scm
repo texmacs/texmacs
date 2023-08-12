@@ -204,13 +204,19 @@
                      (ahash-set! new key (ahash-ref t key))))
                  (refresh-now "paragraph-formatter"))))))))
 
-(tm-define (open-paragraph-format)
+(tm-define (open-paragraph-format-window)
   (:interactive #t)
   (let* ((old (get-env-table paragraph-parameters))
          (new (get-env-table paragraph-parameters))
          (u   (current-buffer)))
     (dialogue-window (paragraph-formatter old new make-multi-line-with u #f)
                      noop "Paragraph format")))
+
+(tm-define (open-paragraph-format)
+  (:interactive #t)
+  (if (side-tools?)
+      (tool-select :transient-right 'format-paragraph-tool)
+      (open-paragraph-format-window)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Page properties

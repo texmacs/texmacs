@@ -101,13 +101,19 @@
 ;; Document -> Paragraph
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (open-document-paragraph-format)
+(tm-define (open-document-paragraph-format-window)
   (:interactive #t)
   (let* ((old (get-init-table paragraph-parameters))
          (new (get-init-table paragraph-parameters))
          (u   (current-buffer)))
     (dialogue-window (paragraph-formatter old new init-multi u #t)
                      noop "Document paragraph format")))
+
+(tm-define (open-document-paragraph-format)
+  (:interactive #t)
+  (if (side-tools?)
+      (tool-select :transient-right 'document-paragraph-tool)
+      (open-document-paragraph-format-window)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document -> Page / Format

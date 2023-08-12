@@ -126,6 +126,7 @@
     plugin-input-converters use-modules export import-from inherit-modules
     lazy-menu lazy-keyboard lazy-define lazy-define-macro lazy-initialize
     lazy-format lazy-language lazy-input-converter lazy-tmfs-handler
+    lazy-tool
     $if))
 
 (setq highlight-definitions
