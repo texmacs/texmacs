@@ -60,7 +60,7 @@
     </src-comment>
   </active*>
 
-  <assign|keyboard|<macro|body|<tformat|<cwith|1|-1|1|1|cell-background|<value|keyboard-color>>|<cwith|1|-1|1|1|cell-lsep|<value|key-padding>>|<cwith|1|-1|1|1|cell-rsep|<value|key-padding>>|<cwith|1|1|1|1|cell-tsep|<value|key-padding>>|<cwith|-1|-1|1|1|cell-bsep|<value|key-padding>>|<arg|body>>>>
+  <assign|keyboard|<macro|body||<tformat|<cwith|1|-1|1|1|cell-background|<value|keyboard-color>>|<cwith|1|-1|1|-1|cell-lsep|0em>|<cwith|1|-1|1|-1|cell-rsep|0em>|<cwith|1|-1|1|-1|cell-tsep|0em>|<cwith|1|-1|1|-1|cell-bsep|0em>|<cwith|1|-1|1|1|cell-lsep|<value|key-padding>>|<cwith|1|-1|1|1|cell-rsep|<value|key-padding>>|<cwith|1|1|1|1|cell-tsep|<value|key-padding>>|<cwith|-1|-1|1|1|cell-bsep|<value|key-padding>>|<arg|body>>>>
 
   <\active*>
     <\src-comment>
@@ -70,9 +70,9 @@
 
   <assign|with-key|<macro|body|<with|ornament-shape|rounded|ornament-corner|100%|ornament-border|1ln|ornament-color|<value|key-color>|ornament-shadow-color|<value|key-shadow-color>|ornament-sunny-color|<value|key-sunny-color>|color|<value|key-text-color>|ornament-hpadding|<value|key-inner-padding>|ornament-vpadding|<value|key-inner-padding>|<arg|body>>>>
 
-  <assign|render-key-button-inner|<macro|x|<ornament|<tabular*|<tformat|<cwith|1|1|1|1|cell-width|<minus|<value|key-width>|<plus|<value|key-padding>|<value|key-inner-padding>>>>|<cwith|1|1|1|1|cell-hmode|exact>|<cwith|1|1|1|1|cell-height|<minus|<value|key-height>|<plus|<value|key-padding>|<value|key-inner-padding>>>>|<cwith|1|1|1|1|cell-vmode|exact>|<cwith|1|1|1|1|cell-valign|c>|<cwith|1|1|1|1|cell-halign|<value|key-halign>>|<table|<row|<cell|<arg|x>>>>>>>>>
+  <assign|render-key-button-inner|<macro|x|<ornament|<tabular*|<tformat|<cwith|1|1|1|1|cell-width|<minus|<value|key-width>|<plus|<value|key-padding>|<value|key-inner-padding>>>>|<cwith|1|1|1|1|cell-hmode|exact>|<cwith|1|1|1|1|cell-height|<minus|<value|key-height>|<plus|<value|key-padding>|<value|key-inner-padding>>>>|<cwith|1|1|1|1|cell-vmode|exact>|<cwith|1|1|1|1|cell-valign|c>|<cwith|1|1|1|1|cell-halign|<value|key-halign>>|<cwith|1|1|1|1|cell-vcorrect|n>|<table|<row|<cell|<arg|x>>>>>>>>>
 
-  <assign|render-key-button|<macro|x|<tabular*|<tformat|<cwith|1|1|1|1|cell-width|<value|key-width>>|<cwith|1|1|1|1|cell-hmode|exact>|<cwith|1|1|1|1|cell-height|<value|key-height>>|<cwith|1|1|1|1|cell-vmode|exact>|<cwith|1|1|1|1|cell-valign|c>|<table|<row|<cell|<render-key-button-inner|<arg|x>>>>>>>>>
+  <assign|render-key-button|<macro|x|<tabular*|<tformat|<cwith|1|1|1|1|cell-width|<value|key-width>>|<cwith|1|1|1|1|cell-hmode|exact>|<cwith|1|1|1|1|cell-height|<value|key-height>>|<cwith|1|1|1|1|cell-vmode|exact>|<cwith|1|1|1|1|cell-valign|c>|<cwith|1|1|1|1|cell-vcorrect|n>|<table|<row|<cell|<render-key-button-inner|<arg|x>>>>>>>>>
 
   <assign|key-button-normal|<macro|x|<with-key|<render-key-button|<arg|x>>>>>
 
