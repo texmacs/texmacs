@@ -62,4 +62,5 @@
       (if (emu-active-modifier? "Meta")
           (set! s (string-append "M-" s)))
       (key-press s)
-      (set! emu-modifier-table (make-ahash-table)))))
+      (if (not (emu-active-modifier? "Lock"))
+          (set! emu-modifier-table (make-ahash-table))))))

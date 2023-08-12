@@ -170,8 +170,8 @@ box_widget_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t,
   //     << b->x2/PIXEL << ", " << b->y2/PIXEL << "\n";
   SI ox=  b->x1;
   SI oy= -b->y2;
-  SI xx= 4*x - ox;
-  SI yy= 4*y - oy;
+  SI xx= ((SI) (4.15 * x)) - ox;
+  SI yy= ((SI) (4.15 * y)) - oy;
   //cout << "Point  : " << xx/PIXEL << ", " << yy/PIXEL << LF;
 
   rectangles rs;
