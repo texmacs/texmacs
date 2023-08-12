@@ -59,5 +59,7 @@
           (set! s (string-append "C-" s)))
       (if (emu-active-modifier? "Alt")
           (set! s (string-append "A-" s)))
+      (if (emu-active-modifier? "Meta")
+          (set! s (string-append "M-" s)))
       (key-press s)
       (set! emu-modifier-table (make-ahash-table)))))
