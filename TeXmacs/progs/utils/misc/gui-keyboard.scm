@@ -104,9 +104,9 @@
     ((modifier 2 "ctrl" :Control)
      (modifier 1.25 "alt" :Alt)
      (key 8.25 "" "space")
-     (key 1 "<nearrow>" "home")
+     (key 1 "<nwarrow>" "home")
      (key 1 "<Downarrow>" "pagedown")
-     (key 1 "<swarrow>" "end"))))
+     (key 1 "<searrow>" "end"))))
 
 (tm-define (narrow-us-uppercase-fn-keyboard)
   `(((modifier 1.25 "fn" :Fn)
@@ -135,9 +135,9 @@
     ((modifier 2 "ctrl" :Control)
      (modifier 1.25 "alt" :Alt)
      (key 8.25 "" "space")
-     (key 1 "<nearrow>" "S-home")
+     (key 1 "<nwarrow>" "S-home")
      (key 1 "<Downarrow>" "S-pagedown")
-     (key 1 "<swarrow>" "S-end"))))
+     (key 1 "<searrow>" "S-end"))))
 
 (tm-define (narrow-us-keyboard)
   (cond ((and (not (emu-active-modifier? "Shift"))
