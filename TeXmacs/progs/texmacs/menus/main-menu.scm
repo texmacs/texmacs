@@ -209,13 +209,30 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (texmacs-left-tools win)
-  (glue #t #t 300 1))
-
-(tm-widget (texmacs-side-tools win)
-  (for (tool (window->tools win))
+  (for (tool (window->tools win :left))
     (dynamic (texmacs-side-tool win tool)))
   ===
-  (glue #t #t 300 1))
+  (glue #t #t 300 1)
+  (for (tool (window->tools win :bottom-left))
+    (dynamic (texmacs-side-tool win tool))))
+
+(tm-widget (texmacs-side-tools win)
+  (for (tool (window->tools win :transient :right))
+    (dynamic (texmacs-side-tool win tool)))
+  ===
+  (glue #t #t 300 1)
+  (for (tool (window->tools win :bottom-right))
+    (dynamic (texmacs-side-tool win tool))))
+
+(tm-tool* (buffer-tool win)
+  (:name "Open documents")
+  (hlist
+    ===
+    (vertical
+      (division "plain"
+        (link buffer-go-menu)))
+    === ===
+    >>))
 
 (tm-define (upward-context-trees t)
   (cond ((tree-is-buffer? t) (list t))
