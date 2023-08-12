@@ -101,7 +101,7 @@
   (:check-mark "v" visible-side-tools?)
   (with val (not (visible-side-tools? n))
     (with var (if (== n 0) "side tools" "left tools")
-      (if (and (== (windows-number) 1) (== n 0))
+      (if (and (== (windows-number) 1) (in? n (list 0 1)))
           (set-boolean-preference var val)
           (show-side-tools n val)))))
 
@@ -110,7 +110,7 @@
   (:check-mark "v" visible-bottom-tools?)
   (with val (not (visible-bottom-tools? n))
     (with var (if (== n 0) "bottom tools" "extra tools")
-      (if (and (== (windows-number) 1) (== n 0))
+      (if (and (== (windows-number) 1) (in? n (list 0 1)))
           (set-boolean-preference var val)
           (show-bottom-tools n val)))))
 
