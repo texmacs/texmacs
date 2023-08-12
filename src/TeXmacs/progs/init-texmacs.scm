@@ -159,7 +159,8 @@
 (use-modules (texmacs keyboard config-kbd))
 (lazy-keyboard (texmacs keyboard prefix-kbd) always?)
 (lazy-keyboard (texmacs keyboard latex-kbd) always?)
-(lazy-menu (texmacs menus file-menu) file-menu go-menu
+(lazy-menu (texmacs menus file-menu)
+           file-menu go-menu buffer-go-menu
            new-file-menu load-menu save-menu
            print-menu print-menu-inline close-menu)
 (lazy-menu (texmacs menus edit-menu) edit-menu)
