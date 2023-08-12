@@ -36,11 +36,11 @@
 
   <assign|key-sunny-color|#c0c0c0>
 
-  <assign|key-pressed-color|#606090>
+  <assign|key-pressed-color|#606080>
 
-  <assign|key-pressed-shadow-color|#202020>
+  <assign|key-pressed-shadow-color|#202030>
 
-  <assign|key-pressed-sunny-color|#a0a0a0>
+  <assign|key-pressed-sunny-color|#a0a0d0>
 
   <assign|key-text-color|white>
 
