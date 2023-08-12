@@ -26,7 +26,7 @@
 
   <use-package|course|gui-keyboard>
 
-  <assign|font|Lucida Grande>
+  <assign|font|Fira>
 
   \;
 </body>
