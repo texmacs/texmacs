@@ -1220,10 +1220,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define window-tools-table (make-ahash-table))
+(tm-define lazy-tool-table (make-ahash-table))
 
-(tm-widget (texmacs-side-tool win tool)
-  (division "title"
-    (text (string-append "Missing '" (object->string (car tool)) "' tool"))))
+(define-public-macro (lazy-tool module . tools)
+  `(for (tool ',tools)
+     (if (pair? tool) (set! tool (car tool)))
+     ;;(display* "Lazy tool " tool ", " ',module "\n")
+     (ahash-set! lazy-tool-table tool ',module)))
+
+(define (lazy-tool-force . tools)
+  (for (tool tools)
+    (if (pair? tool) (set! tool (car tool)))
+    ;;(display* "Loading tool " tool "\n")
+    (and-with module (ahash-ref lazy-tool-table tool)
+      (eval `(use-modules ,module)))
+    (ahash-remove! lazy-tool-table tool)))
 
 (tm-define (window->tools win . pos-l)
   (if (null? pos-l) (list)
@@ -1237,11 +1248,13 @@
     (show-side-tools n show?)))
 
 (tm-define (set-window-tools win pos l)
+  (apply lazy-tool-force l)
   (ahash-set! window-tools-table (list win pos) l)
   (let* ((l0 (window->tools win :transient-right :right :bottom-right))
          (l1 (window->tools win :transient-left :left :bottom-left)))
     (notify-side-tools 0 (nnull? l0))
-    (notify-side-tools 1 (nnull? l1))))
+    (notify-side-tools 1 (nnull? l1))
+    (keyboard-focus-on "canvas")))
 
 (tm-define (set-window-tool win pos tool)
   (set-window-tools win pos (list tool)))
@@ -1278,6 +1291,17 @@
           (set-window-tools win pos (list-remove l tool))
           (set-window-tools win pos (cons tool l))))))
 
+(tm-define (tool-close pos tool . opt-win)
+  (if (== pos :any)
+      (for (pos* (list :transient-right :right :bottom-right
+                       :transient-left :left :bottom-left))
+        (apply tool-close (cons* pos* tool opt-win)))
+      (let* ((win (if (null? opt-win) (current-window) (car opt-win)))
+             (l (window->tools win pos))
+             (f (list-filter l (lambda (t) (!= (car t) tool)))))
+        (when (!= f l)
+          (set-window-tools win pos f)))))
+
 (tm-define (no-active-tools? pos . opt-win)
   (with win (if (null? opt-win) (current-window) (car opt-win))
     (with l (window->tools win pos)
@@ -1287,6 +1311,10 @@
   (:check-mark "v" no-active-tools?)
   (with win (if (null? opt-win) (current-window) (car opt-win))
     (set-window-tools win pos (list))))
+
+(tm-widget (texmacs-side-tool win tool)
+  (division "title"
+    (text (string-append "Missing '" (object->string (car tool)) "' tool"))))
 
 (tm-define-macro (tm-tool* tool name . body)
   (cond ((or (npair? tool) (npair? (cdr tool)))
@@ -1299,7 +1327,11 @@
              (tm-widget (texmacs-side-tool ,(cadr tool) tool)
                (:require (== (car tool) ',(car tool)))
                (division "title"
-                 (text ,(cadr name)))
+                 (hlist
+                   (text ,(cadr name))
+                   >>
+                   (division "plain"
+                     ("x" (tool-close :any ',(car tool) ,(cadr tool))))))
                (dynamic (,(car tool) ,(cadr tool)
                          ,@(map (lambda (i) `(list-ref tool ,(- i 1)))
                                 (.. 2 (length tool)))))
