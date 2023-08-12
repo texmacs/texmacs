@@ -100,7 +100,15 @@
   (== (get-preference "database tool") "on"))
 
 (define-public (side-tools?)
-  (visible-side-tools? 0))
+  (== (get-preference "side tools") "on"))
+
+(define-public (left-tools?)
+  (== (get-preference "left tools") "on"))
+
+(define-public (has-side-tools? n)
+  (cond ((== n 0) (side-tools?))
+        ((== n 1) (left-tools?))
+        (else #f)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mode related

@@ -209,7 +209,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (texmacs-left-tools win)
-  (for (tool (window->tools win :left))
+  (for (tool (window->tools win :transient-left :left))
     (dynamic (texmacs-side-tool win tool)))
   ===
   (glue #t #t 300 1)
@@ -217,7 +217,7 @@
     (dynamic (texmacs-side-tool win tool))))
 
 (tm-widget (texmacs-side-tools win)
-  (for (tool (window->tools win :transient :right))
+  (for (tool (window->tools win :transient-right :right))
     (dynamic (texmacs-side-tool win tool)))
   ===
   (glue #t #t 300 1)
