@@ -119,6 +119,8 @@
   (assuming (side-tools?)
     ---
     (group "Experimental side tools")
+    ("Reset left" (close-tools :left))
+    ("Reset right" (close-tools :right))
     ("Buffer left" (tool-select :left 'buffer-tool))
     ("Buffer right" (tool-select :right 'buffer-tool))
     ("Context" (tool-select :right 'context-tool))

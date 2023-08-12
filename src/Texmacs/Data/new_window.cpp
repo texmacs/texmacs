@@ -86,8 +86,8 @@ new_window (bool map_flag= true, tree geom= "") {
   if (get_preference ("focus dependent icons") == "on") mask += 8;
   if (get_preference ("user provided icons") == "on") mask += 16;
   if (get_preference ("status bar") == "on") mask += 32;
-  if (get_preference ("side tools") == "on") mask += 64;
-  if (get_preference ("left tools") == "on") mask += 128;
+  //if (get_preference ("side tools") == "on") mask += 64;
+  //if (get_preference ("left tools") == "on") mask += 128;
   if (get_preference ("bottom tools") == "on") mask += 256;
   if (get_preference ("extra tools") == "on") mask += 512;
   url* id= tm_new<url> (url_none ());
