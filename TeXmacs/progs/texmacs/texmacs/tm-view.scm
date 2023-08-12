@@ -34,10 +34,11 @@
   (show-footer (== val "on")))
 
 (define (notify-side-tools var val)
-  (cond ((== var "side tools")
-         (show-side-tools 0 (== val "on")))
-        ((== var "left tools")
-         (show-side-tools 1 (== val "on")))))
+  (when (== val "off")
+    (cond ((== var "side tools")
+           (show-side-tools 0 (== val "on")))
+          ((== var "left tools")
+           (show-side-tools 1 (== val "on"))))))
 
 (define (notify-bottom-tools var val)
   (cond ((== var "bottom tools")
@@ -98,8 +99,8 @@
 
 (tm-define (toggle-visible-side-tools n)
   (:synopsis "Toggle the visibility of the @n-th side tools.")
-  (:check-mark "v" visible-side-tools?)
-  (with val (not (visible-side-tools? n))
+  (:check-mark "v" has-side-tools?)
+  (with val (not (has-side-tools? n))
     (with var (if (== n 0) "side tools" "left tools")
       (if (and (== (windows-number) 1) (in? n (list 0 1)))
           (set-boolean-preference var val)

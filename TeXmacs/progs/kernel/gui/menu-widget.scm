@@ -1232,13 +1232,21 @@
           (or (and tools (nnull? tools) tools)
               (apply window->tools (cons win pos-r)))))))
 
+(define (notify-side-tools n show?)
+  (when (!= show? (visible-side-tools? n))
+    (show-side-tools n show?)))
+
 (tm-define (set-window-tools win pos l)
-  (ahash-set! window-tools-table (list win pos) l))
+  (ahash-set! window-tools-table (list win pos) l)
+  (let* ((l0 (window->tools win :transient-right :right :bottom-right))
+         (l1 (window->tools win :transient-left :left :bottom-left)))
+    (notify-side-tools 0 (nnull? l0))
+    (notify-side-tools 1 (nnull? l1))))
 
 (tm-define (set-window-tool win pos tool)
   (set-window-tools win pos (list tool)))
 
-(tm-define (tool-active? tool pos . opt-win)
+(tm-define (tool-active? pos tool . opt-win)
   (when (func? tool 'quote)
     (set! tool (cadr tool)))
   (when (string? tool)
@@ -1269,6 +1277,16 @@
       (if (in? tool l)
           (set-window-tools win pos (list-remove l tool))
           (set-window-tools win pos (cons tool l))))))
+
+(tm-define (no-active-tools? pos . opt-win)
+  (with win (if (null? opt-win) (current-window) (car opt-win))
+    (with l (window->tools win pos)
+      (null? l))))
+
+(tm-define (close-tools pos . opt-win)
+  (:check-mark "v" no-active-tools?)
+  (with win (if (null? opt-win) (current-window) (car opt-win))
+    (set-window-tools win pos (list))))
 
 (tm-define-macro (tm-tool* tool name . body)
   (cond ((or (npair? tool) (npair? (cdr tool)))
