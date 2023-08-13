@@ -955,7 +955,7 @@
 
 (tm-define (menu-expand p)
   (:type (-> object object))
-  (:synopsis "Expand links and conditional menus in menu @p.")
+  (:synopsis "Expand links and conditional menus in menu @p")
   ;;(display* "Expand " p "\n")
   (cond ((npair? p) (replace-procedures p))
         ((string? (car p)) p)
@@ -981,7 +981,7 @@
 
 (tm-define (cache-menu? r)
   (:type (-> object bool))
-  (:synopsis "Cache expanded menu @r.")
+  (:synopsis "Cache expanded menu @r")
   (cond ((symbol? r) (!= r 'input))
         ((pair? r)
          (and (cache-menu? (car r))
@@ -1053,7 +1053,7 @@
           (else (make-menu-bad-format p style)))))
 
 (tm-define (make-menu-widget p style)
-  (:synopsis "Transform a menu into a widget.")
+  (:synopsis "Transform a menu into a widget")
   (:argument p "a scheme object which represents the menu")
   (:argument style "menu style")
   ((wrap-catch make-menu-main) p style))
@@ -1301,6 +1301,9 @@
              (f (list-filter l (lambda (t) (!= (car t) tool)))))
         (when (!= f l)
           (set-window-tools win pos f)))))
+
+(tm-define ((tool-quit tool . opt-win) . args)
+  (apply tool-close (cons* :any tool opt-win)))
 
 (tm-define (no-active-tools? pos . opt-win)
   (with win (if (null? opt-win) (current-window) (car opt-win))

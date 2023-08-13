@@ -159,8 +159,9 @@
 (define (property-rewrite l)
   `(property-set! ,@l (list ,@cur-conds)))
 
-(define ((define-property which) opt decl)
-  (set! cur-props (cons `(',(ca*adr decl) ,which ',opt) cur-props))
+(define ((define-property . l) opt decl)
+  (for (which l)
+    (set! cur-props (cons `(',(ca*adr decl) ,which ',opt) cur-props)))
   decl)
 
 (define ((define-property* which) opt decl)
@@ -196,6 +197,7 @@
 
 (ahash-set! define-option-table :type (define-property :type))
 (ahash-set! define-option-table :synopsis (define-property :synopsis))
+(ahash-set! define-option-table :synopsis* (define-property :synopsis :synopsis*))
 (ahash-set! define-option-table :returns (define-property :returns))
 (ahash-set! define-option-table :note (define-property :note))
 (ahash-set! define-option-table :argument define-option-argument)

@@ -91,11 +91,17 @@
         // //
         ("Ok" (quit))))))
 
-(tm-define (open-source-tree-preferences)
+(tm-define (open-source-tree-preferences-window)
   (:interactive #t)
   (with u (current-buffer)
     (dialogue-window (source-tree-preferences-editor u) noop
                      "Document source tree preferences")))
+
+(tm-define (open-source-tree-preferences)
+  (:interactive #t)
+  (if (side-tools?)
+      (tool-select :transient-right 'source-tree-preferences-tool)
+      (open-source-tree-preferences-window)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document -> Paragraph
@@ -556,10 +562,16 @@
         // //
         ("Ok" (quit))))))
 
-(tm-define (open-document-metadata)
+(tm-define (open-document-metadata-window)
   (:interactive #t)
   (let* ((u (current-buffer)))
     (dialogue-window (document-metadata-editor u) noop "Document metadata")))
+
+(tm-define (open-document-metadata)
+  (:interactive #t)
+  (if (side-tools?)
+      (tool-select :transient-right 'document-metadata-tool)
+      (open-document-metadata-window)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document -> Color
@@ -591,7 +603,13 @@
         // //
         ("Ok" (quit))))))
 
-(tm-define (open-document-colors)
+(tm-define (open-document-colors-window)
   (:interactive #t)
   (with u (current-buffer)
     (dialogue-window (document-colors-picker u) noop "Document colors")))
+
+(tm-define (open-document-colors)
+  (:interactive #t)
+  (if (side-tools?)
+      (tool-select :transient-right 'document-colors-tool)
+      (open-document-colors-window)))

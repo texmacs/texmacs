@@ -124,13 +124,6 @@
     (-> "Test"
         ("Sections" (tool-select :right 'sections-tool))
         ("Subsections" (tool-select :right 'subsections-tool)))
-    (-> "Format"
-        ("Paragraph" (tool-select :right 'format-paragraph-tool)))
-    (-> "Document"
-        ("Paragraph" (tool-select :right 'document-paragraph-tool))
-        ("Page" (tool-select :right 'document-page-tool)))
-    (-> "Preferences"
-        ("General" (tool-select :right 'preferences-tool)))
     ;;(-> "Color"
     ;;    ("Color" (tool-select :right '(color-tool "Background color")))
     ;;    ("Pattern" (tool-select :right '(pattern-tool "Background pattern")))

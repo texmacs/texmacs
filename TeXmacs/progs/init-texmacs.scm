@@ -35,6 +35,8 @@
   `(define-public provide-public
     tm-define tm-menu menu-bind tm-widget ,@macro-keywords))
 
+(define tm-interactive-hook tm-interactive)
+
 (define old-read read)
 (define (new-read port)
   "A redefined reader which stores line number and file name in symbols."
@@ -216,6 +218,9 @@
            format-paragraph-tool
            document-paragraph-tool document-page-tool
            sections-tool subsections-tool)
+(lazy-tool (generic document-tools)
+           source-tree-preferences-tool
+           document-metadata-tool document-colors-tool)
 (lazy-tool (generic pattern-tools)
            color-tool pattern-tool gradient-tool picture-tool)
 (tm-property (open-search) (:interactive #t))
