@@ -28,13 +28,13 @@
 
 (tm-define (script-keep-input?) script-keep-input-flag?)
 (tm-define (toggle-keep-input)
-  (:synopsis "Toggle whether we keep the input of evaluations.")
+  (:synopsis "Toggle whether we keep the input of evaluations")
   (:check-mark "v" script-keep-input?)
   (toggle! script-keep-input-flag?))
 
 (tm-define (script-eval-math?) script-eval-math-flag?)
 (tm-define (toggle-eval-math)
-  (:synopsis "Toggle whether we evaluate the innermost non-selected formulas.")
+  (:synopsis "Toggle whether we evaluate the innermost non-selected formulas")
   (:check-mark "v" script-eval-math?)
   (toggle! script-eval-math-flag?))
 

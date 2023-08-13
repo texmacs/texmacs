@@ -40,21 +40,21 @@
 
 (define (navigation-bidirectional?) navigation-bidirectional-links?)
 (tm-define (navigation-toggle-bidirectional)
-  (:synopsis "Toggle whether we may follow links in both directions.")
+  (:synopsis "Toggle whether we may follow links in both directions")
   (:check-mark "v" navigation-bidirectional?)
   (set-boolean-preference "bidirectional navigation"
                           (not navigation-bidirectional-links?)))
 
 (define (navigation-external?) navigation-external-links?)
 (tm-define (navigation-toggle-external)
-  (:synopsis "Toggle whether we may follow links defined in other loci.")
+  (:synopsis "Toggle whether we may follow links defined in other loci")
   (:check-mark "v" navigation-external?)
   (set-boolean-preference "external navigation"
                           (not navigation-external-links?)))
 
 (define (navigation-build-link-pages?) navigation-link-pages?)
 (tm-define (navigation-toggle-build-link-pages)
-  (:synopsis "Toggle whether we generate link pages.")
+  (:synopsis "Toggle whether we generate link pages")
   (:check-mark "v" navigation-build-link-pages?)
   (set-boolean-preference "link pages"
                           (not navigation-link-pages?)))
@@ -62,7 +62,7 @@
 (define (navigation-allow-type? type)
   (not (ahash-ref navigation-blocked-types type)))
 (tm-define (navigation-toggle-type type)
-  (:synopsis "Toggle whether we may follow links of a given @type.")
+  (:synopsis "Toggle whether we may follow links of a given @type")
   (:check-mark "v" navigation-allow-type?)
   (ahash-set! navigation-blocked-types type
               (not (ahash-ref navigation-blocked-types type))))
@@ -72,7 +72,7 @@
     (null? (list-difference (current-link-types)
                             (map car (list-filter l cdr))))))
 (tm-define (navigation-allow-no-types)
-  (:synopsis "Disallow any link types from being followed.")
+  (:synopsis "Disallow any link types from being followed")
   (:check-mark "v" navigation-allow-no-types?)
   (for-each (cut ahash-set! navigation-blocked-types <> #t)
             (current-link-types)))
@@ -81,7 +81,7 @@
   (with l (ahash-table->list navigation-blocked-types)
     (null? (list-filter l cdr))))
 (tm-define (navigation-allow-all-types)
-  (:synopsis "Allow all link types to be followed.")
+  (:synopsis "Allow all link types to be followed")
   (:check-mark "v" navigation-allow-all-types?)
   (set! navigation-blocked-types (make-ahash-table)))
 
@@ -157,7 +157,7 @@
     f3))
 
 (tm-define (exact-link-list t filter?)
-  (:synopsis "Build possibly filtered link list for the tree @t.")
+  (:synopsis "Build possibly filtered link list for the tree @t")
   (:argument t "Build link list for this tree")
   (:argument filter? "Filter on navigation mode?")
   ;;(display* "t     : " t "\n")
@@ -169,7 +169,7 @@
     (if filter? (filter-link-list l "hover") l)))
 
 (tm-define (upward-link-list t filter?)
-  (:synopsis "Build possibly filtered link list for @t and its ancestors.")
+  (:synopsis "Build possibly filtered link list for @t and its ancestors")
   (:argument t "Build link list for this tree and its ancestors")
   (:argument filter? "Filter on navigation mode?")
   (if (or (not t) (null? (tree->path t))) '()
@@ -178,7 +178,7 @@
             (append l (upward-link-list (tree-up t) filter?))))))
 
 (tm-define (complete-link-list t filter?)
-  (:synopsis "Build possibly filtered link list for @t and its descendants.")
+  (:synopsis "Build possibly filtered link list for @t and its descendants")
   (:argument t "Build link list for this tree and its descendants")
   (:argument filter? "Filter on navigation mode?")
   (with l (exact-link-list t filter?)
@@ -203,12 +203,12 @@
             (append r (link-active-upwards-sub (tree-up t) active-ids))))))
 
 (tm-define (link-active-upwards t)
-  (:synopsis "Return active ancestor trees for the tree @t.")
+  (:synopsis "Return active ancestor trees for the tree @t")
   (with l (upward-link-list t #t)
     (link-active-upwards-sub t (map link-item-id l))))
 
 (tm-define (link-active-ids l)
-  (:synopsis "Return list of identifiers in @l which admit an active link.")
+  (:synopsis "Return list of identifiers in @l which admit an active link")
   (with r (filter-link-list (ids->link-list l) "hover")
     (list-remove-duplicates (map link-item-id r))))
 
@@ -497,7 +497,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (go-to-id id . opt-from)
-  (:synopsis "Jump to the first locus with a given identifier @id.")
+  (:synopsis "Jump to the first locus with a given identifier @id")
   (:argument opt-from "Optional path for the cursor history")
   (with l (id->trees id)
     (if (nnull? l)
@@ -597,7 +597,7 @@
 
 (define the-navigation-list '())
 (tm-define (navigation-list-follow-xtyped xtype)
-  (:synopsis "Follow the first link with given @type in @the-navigation-list.")
+  (:synopsis "Follow the first link with given @type in @the-navigation-list")
   (:argument xtype "Link type")
   (:proposals xtype (navigation-list-xtypes the-navigation-list))
   (and-with hit (navigation-list-first-xtype the-navigation-list xtype)
@@ -605,7 +605,7 @@
     (navigation-item-follow hit)))
 
 (tm-define (navigation-list-follow nl)
-  (:synopsis "Follow one of the links in the navigation list @nl.")
+  (:synopsis "Follow one of the links in the navigation list @nl")
   (with types (navigation-list-types nl)
     (if (and (>= (length types) 2) (in? "automatic" types))
         (with auto-nl (navigation-list-filter nl "automatic" #t #f)
@@ -621,13 +621,13 @@
              (interactive navigation-list-follow-xtyped))))))
 
 (tm-define (link-follow-ids ids event)
-  (:synopsis "Follow one of the links for identifiers in @ids.")
+  (:synopsis "Follow one of the links for identifiers in @ids")
   (navigation-list-follow
    (link-list->navigation-list
     (filter-link-list (ids->link-list ids) event))))
 
 (tm-define (locus-link-follow)
-  (:synopsis "Follow one of the links in the current locus.")
+  (:synopsis "Follow one of the links in the current locus")
   (let* ((ts (link-active-upwards (cursor-tree)))
          (ids (append-map tree->ids ts)))
     (link-follow-ids ids "click")))
