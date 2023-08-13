@@ -95,7 +95,7 @@
       ("Reset" (begin (reset-retina-preferences) (cmd "ok"))) // //
       ("Ok" (cmd "ok")))))
 
-(tm-define (open-retina-settings)
+(tm-define (open-retina-settings-window)
   (:interactive #t)
   (dialogue-window retina-settings-widget
     (lambda (answer)
@@ -104,3 +104,9 @@
     (if (os-macos?)
 	"Retina screen settings"
 	"High resolution screen settings")))
+
+(tm-define (open-retina-settings)
+  (:interactive #t)
+  (if (side-tools?)
+      (tool-select :transient-right 'retina-settings-tool)
+      (open-retina-settings-window)))
