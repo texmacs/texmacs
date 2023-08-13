@@ -56,18 +56,18 @@
 
 (define (save-aux-enabled?) (== (get-env "save-aux") "true"))
 (tm-define (toggle-save-aux)
-  (:synopsis "Toggle whether we save auxiliary data.")
+  (:synopsis "Toggle whether we save auxiliary data")
   (:check-mark "v" save-aux-enabled?)
   (let ((new (if (== (get-env "save-aux") "true") "false" "true")))
     (init-env "save-aux" new)))
 
 (tm-define (toggle-show-kbd)
-  (:synopsis "Toggle whether we show keyboard presses.")
+  (:synopsis "Toggle whether we show keyboard presses")
   (:check-mark "v" get-show-kbd)
   (set-show-kbd (not (get-show-kbd))))
 
 (tm-define (clear-font-cache)
-  (:synopsis "Clear font cache under TEXMACS_HOME_PATH.")
+  (:synopsis "Clear font cache under TEXMACS_HOME_PATH")
   (map system-remove
     (list
       "$TEXMACS_HOME_PATH/system/cache/font_cache.scm"

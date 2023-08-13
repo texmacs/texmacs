@@ -112,7 +112,7 @@
        r)))
 
 (tm-define (buffer-copy buf u)
-  (:synopsis "Creates a copy of @buf in @u and return @u.")
+  (:synopsis "Creates a copy of @buf in @u and return @u")
   (with-buffer buf
     (let* ((styles (get-style-list))
            (init (get-all-inits))

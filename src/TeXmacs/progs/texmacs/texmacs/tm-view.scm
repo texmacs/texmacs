@@ -82,7 +82,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (toggle-visible-header)
-  (:synopsis "Toggle the visibility of the window's header.")
+  (:synopsis "Toggle the visibility of the window's header")
   (:check-mark "v" visible-header?)
   (with val (not (visible-header?))
     (if (and (== (windows-number) 1) (os-macos?))
@@ -90,7 +90,7 @@
         (show-header val))))
 
 (tm-define (toggle-visible-footer)
-  (:synopsis "Toggle the visibility of the window's footer.")
+  (:synopsis "Toggle the visibility of the window's footer")
   (:check-mark "v" visible-footer?)
   (with val (not (visible-footer?))
     (if (== (windows-number) 1)
@@ -98,7 +98,7 @@
         (show-footer val))))
 
 (tm-define (toggle-visible-side-tools n)
-  (:synopsis "Toggle the visibility of the @n-th side tools.")
+  (:synopsis "Toggle the visibility of the @n-th side tools")
   (:check-mark "v" has-side-tools?)
   (with val (not (has-side-tools? n))
     (with var (if (== n 0) "side tools" "left tools")
@@ -107,7 +107,7 @@
           (show-side-tools n val)))))
 
 (tm-define (toggle-visible-bottom-tools n)
-  (:synopsis "Toggle the visibility of the bottom tools.")
+  (:synopsis "Toggle the visibility of the bottom tools")
   (:check-mark "v" visible-bottom-tools?)
   (with val (not (visible-bottom-tools? n))
     (with var (if (== n 0) "bottom tools" "extra tools")
@@ -116,7 +116,7 @@
           (show-bottom-tools n val)))))
 
 (tm-define (toggle-visible-icon-bar n)
-  (:synopsis "Toggle the visibility of the @n-th icon bar.")
+  (:synopsis "Toggle the visibility of the @n-th icon bar")
   (:check-mark "v" visible-icon-bar?)
   (let* ((val (not (visible-icon-bar? n)))
          (var (cond ((== n 0) "main icon bar")
@@ -133,7 +133,7 @@
 (define saved-informative-flags "default")
 
 (tm-define (toggle-full-screen-mode)
-  (:synopsis "Toggle full screen mode.")
+  (:synopsis "Toggle full screen mode")
   (:check-mark "v" full-screen?)
   (if (full-screen?)
       (begin
@@ -148,7 +148,7 @@
         (fit-to-screen))))
 
 (tm-define (toggle-full-screen-edit-mode)
-  (:synopsis "Toggle full screen edit mode.")
+  (:synopsis "Toggle full screen edit mode")
   (:check-mark "v" full-screen-edit?)
   (let* ((old (full-screen?))
 	 (new (not (full-screen-edit?))))
@@ -161,7 +161,7 @@
 (define panorama-revert (make-ahash-table))
 (define (panorama-mode?) (== (get-init-page-rendering) "panorama"))
 (tm-define (toggle-panorama-mode)
-  (:synopsis "Toggle panorama screen rendering.")
+  (:synopsis "Toggle panorama screen rendering")
   (:check-mark "v" panorama-mode?)
   (if (panorama-mode?)
       (with old (or (ahash-ref panorama-revert (current-buffer)) "paper")
@@ -171,7 +171,7 @@
         (init-page-rendering "panorama"))))
 
 (tm-define (toggle-remote-control-mode)
-  (:synopsis "Toggle remote keyboard control mode.")
+  (:synopsis "Toggle remote keyboard control mode")
   (:check-mark "v" remote-control-mode?)
   (set! remote-control-flag? (not remote-control-flag?)))
 
@@ -271,6 +271,6 @@
   (get-boolean-preference "snap to pages"))
 
 (tm-define (toggle-snap-to-pages)
-  (:synopsis "Toggle page snapping.")
+  (:synopsis "Toggle page snapping")
   (:check-mark "v" snap-to-pages?)
   (toggle-preference "snap to pages"))

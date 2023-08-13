@@ -154,7 +154,7 @@
 
 (tm-define (gpg-set-cipher-algorithm val)
   (:interactive #t)
-  (:synopsis "Set GnuPG cipher algorithm for passphrase encryption")
+  (:synopsis "Set GnuPG cipher algorithm")
   (:argument val "GnuPG cipher algorithm")
   (when (member val (list "AES192" "AES256"))
     (set-preference "gpg cipher algorithm" val)))

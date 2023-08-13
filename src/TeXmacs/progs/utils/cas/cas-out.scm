@@ -346,7 +346,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (cas->stree x)
-  (:synopsis "Convert mathematical expression @x into TeXmacs tree.")
+  (:synopsis "Convert mathematical expression @x into TeXmacs tree")
   (let* ((y1 (cas-normal-opposites x))
 	 (y2 (cas-normal-inverses y1))
 	 (y3 (cas-normal-associative y2 '+))
