@@ -114,16 +114,19 @@
 	name)))
 
 (tm-property (print-to-file name)
+  (:synopsis "Print to file")
   (:argument name print-file "File name")
   (:default  name (propose-postscript-name)))
 
 (tm-property (print-pages first last)
+  (:synopsis "Print page selection")
   (:argument  first "First page")
   (:proposals first (list "1" ""))
   (:argument  last "Last page")
   (:proposals last  (list (number->string (get-page-count)) "")))
 
 (tm-property (print-pages-to-file name first last)
+  (:synopsis "Print page selection to file")
   (:argument  name print-file "File name")
   (:default   name (propose-postscript-name))
   (:argument  first "First page")

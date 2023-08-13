@@ -23,7 +23,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (set-manual-path p)
-  (:argument p "Path to plug-in binaries")
+  (:synopsis* "Set path to plug-in binaries")
+  (:argument p "Path")
   (:proposals p (if (cpp-has-preference? "manual path")
                     (list (get-preference "manual path"))
                     (list)))
@@ -476,6 +477,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (make-session lan ses)
+  (:synopsis "Insert session")
+  (:argument lan "Language")
+  (:argument ses "Session identifier")
   (let* ((ban `(output (document "")))
 	 (l (if (session-math-input? lan ses) 'input-math 'input))
 	 (p (plugin-prompt lan ses))

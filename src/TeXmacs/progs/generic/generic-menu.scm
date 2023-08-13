@@ -850,6 +850,59 @@
         (dynamic (focus-customizable-icons-item var name mode))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Hook for interactive commands
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define interactive-tool-table (make-ahash-table))
+
+(tm-define (set-interactive-tool-arg win fun i val)
+  (ahash-set! interactive-tool-table (list win fun i) val))
+
+(tm-define (get-interactive-tool-arg win fun i)
+  (ahash-ref interactive-tool-table (list win fun i)))
+
+(tm-define (get-interactive-tool-arg* win fun i vals)
+  (when (not (get-interactive-tool-arg win fun i))
+    (with default (if (null? vals) "" (car vals))
+      (set-interactive-tool-arg win fun i default)))
+  (get-interactive-tool-arg win fun i))
+
+(tm-define (interactive-tool-arg win fun args i)
+  (with (var type . vals) (list-ref args i)
+    `(item (text ,var)
+       (enum (set-interactive-tool-arg ',win ',fun ,i answer)
+             ',(rcons vals "")
+             (get-interactive-tool-arg* ',win ',fun ,i ',vals)
+             "12em"))))
+
+(tm-tool (interactive-tool win fun args)
+  (:name (interactive-title (cadr tool)))
+  ;; FIXME: replace by more robust implementation,
+  ;; by not relying on implicit 'tool' argument
+  (dynamic
+   (eval
+    `(menu-dynamic
+       (aligned
+         ,@(map (cut interactive-tool-arg win fun args <>)
+                (.. 0 (length args))))
+       ======
+       (explicit-buttons
+         (hlist
+           >>>
+           ("Ok" (let* ((get (cut get-interactive-tool-arg ',win ',fun <>))
+                        (vals (map get (.. 0 (length ',args)))))
+                   (apply ',fun vals)
+                   (tool-close :any 'interactive-tool ',win)))))))))
+  
+(tm-define (tm-interactive-new fun args)
+  ;;(display* "interactive " fun ", " args "\n")
+  (if (side-tools?)
+      (tool-select :transient-right (list 'interactive-tool fun args))
+      (tm-interactive fun args)))
+
+(set! tm-interactive-hook tm-interactive-new)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Immediately load document-menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
