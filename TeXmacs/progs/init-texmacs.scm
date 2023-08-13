@@ -171,13 +171,7 @@
 (use-modules (texmacs menus main-menu))
 (lazy-define (texmacs menus file-menu) recent-file-list recent-directory-list)
 (lazy-define (texmacs menus view-menu) set-bottom-bar test-bottom-bar?)
-(lazy-tool (texmacs menus preferences-tools)
-           general-preferences-tool keyboard-preferences-tool
-           math-preferences-tool html-preferences-tool
-           latex-preferences-tool bibtex-preferences-tool
-           verbatim-preferences-tool pdf-preferences-tool
-           image-preferences-tool security-preferences-tool
-           misc-preferences-tool experimental-preferences-tool)
+(lazy-tool (texmacs menus preferences-tools) preferences-tool)
 (tm-define (notify-set-attachment name key val) (noop))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
@@ -221,8 +215,6 @@
 (lazy-tool (generic format-tools)
            format-paragraph-tool
            document-paragraph-tool document-page-tool
-           document-breaking-tool document-margins-tool
-           document-headers-tool
            sections-tool subsections-tool)
 (lazy-tool (generic pattern-tools)
            color-tool pattern-tool gradient-tool picture-tool)

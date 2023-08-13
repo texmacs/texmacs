@@ -128,24 +128,9 @@
         ("Paragraph" (tool-select :right 'format-paragraph-tool)))
     (-> "Document"
         ("Paragraph" (tool-select :right 'document-paragraph-tool))
-        ("Page" (tool-select :right 'document-page-tool))
-        ("Breaking" (tool-select :right 'document-breaking-tool))
-        ("Margins" (tool-select :right 'document-margins-tool))
-        ("Headers" (tool-select :right 'document-headers-tool)))
+        ("Page" (tool-select :right 'document-page-tool)))
     (-> "Preferences"
-        ("General" (tool-select :right 'general-preferences-tool))
-        ("Keyboard" (tool-select :right 'keyboard-preferences-tool))
-        ("Mathematics" (tool-select :right 'math-preferences-tool))
-        (-> "Converters"
-            ("Html" (tool-select :right 'html-preferences-tool))
-            ("LaTeX" (tool-select :right 'latex-preferences-tool))
-            ("BibTeX" (tool-select :right 'bibtex-preferences-tool))
-            ("Verbatim" (tool-select :right 'verbatim-preferences-tool))
-            ("Pdf" (tool-select :right 'pdf-preferences-tool))
-            ("Images" (tool-select :right 'image-preferences-tool)))
-        ("Security" (tool-select :right 'security-preferences-tool))
-        ("Miscellaneous" (tool-select :right 'misc-preferences-tool))
-        ("Experimental" (tool-select :right 'experimental-preferences-tool)))
+        ("General" (tool-select :right 'preferences-tool)))
     ;;(-> "Color"
     ;;    ("Color" (tool-select :right '(color-tool "Background color")))
     ;;    ("Pattern" (tool-select :right '(pattern-tool "Background pattern")))
