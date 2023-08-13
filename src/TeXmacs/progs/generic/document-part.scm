@@ -45,7 +45,7 @@
 
 (define (buffer-master?) (== (get-init "project-flag") "true"))
 (tm-define (buffer-toggle-master)
-  (:synopsis "Toggle using current buffer as master file of project.")
+  (:synopsis "Toggle using current buffer as master file of project")
   (:check-mark "v" buffer-master?)
   (init-env "project-flag"
             (if (== (get-init "project-flag") "true") "false" "true")))

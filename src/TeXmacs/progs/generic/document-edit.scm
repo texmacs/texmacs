@@ -33,7 +33,7 @@
   (== (get-env "preamble") "true"))
 
 (tm-define (toggle-source-mode)
-  (:synopsis "Toggle source code editing mode.")
+  (:synopsis "Toggle source code editing mode")
   (:check-mark "v" in-source-mode?)
   (let ((new (if (string=? (get-env "preamble") "true") "false" "true")))
     (init-env "preamble" new)))
@@ -361,7 +361,7 @@
   (== (get-env "page-show-hf") "true"))
 
 (tm-define (toggle-visible-header-and-footer)
-  (:synopsis "Toggle visibility of headers and footers in 'page' paper mode.")
+  (:synopsis "Toggle visibility of headers and footers in 'page' paper mode")
   (:check-mark "v" visible-header-and-footer?)
   (init-env "page-show-hf"
             (if (== (get-env "page-show-hf") "true") "false" "true")))
@@ -370,7 +370,7 @@
   (== (get-env "page-width-margin") "true"))
 
 (tm-define (toggle-page-width-margin)
-  (:synopsis "Toggle mode for determining margins from paragraph width.")
+  (:synopsis "Toggle mode for determining margins from paragraph width")
   (:check-mark "v" page-width-margin?)
   (init-env "page-width-margin" (if (page-width-margin?) "false" "true")))
 
@@ -378,7 +378,7 @@
   (== (get-env "page-screen-margin") "false"))
 
 (tm-define (toggle-page-screen-margin)
-  (:synopsis "Toggle mode for using special margins for screen editing.")
+  (:synopsis "Toggle mode for using special margins for screen editing")
   (:check-mark "v" not-page-screen-margin?)
   (init-env "page-screen-margin"
             (if (not-page-screen-margin?) "true" "false")))
@@ -387,7 +387,7 @@
   (test-init? "page-odd" "1cm"))
 
 (tm-define (toggle-reduced-margins)
-  (:synopsis "Toggle mode for using reduced margins to save paper.")
+  (:synopsis "Toggle mode for using reduced margins to save paper")
   (:check-mark "v" reduced-margins?)
   (cond ((has-style-package? "reduced-margins")
          (remove-style-package "reduced-margins"))
