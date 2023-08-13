@@ -338,7 +338,7 @@
   (and-with val (get-field-contents (footer-buffer))
     (apply-page-settings-one u settings 'set-this-page-footer val)))
 
-(tm-widget ((page-formatter u style settings) quit)
+(tm-widget ((page-formatter u style settings flag?) quit)
   (padded
     (centered
       (aligned
@@ -358,15 +358,25 @@
     ======
     (bold (text "This page header"))
     ===
-    (resize "600px" "60px"
-      (texmacs-input `(document ,(get-tag-arg u 'set-this-page-header))
-                     `(style (tuple ,@style)) (header-buffer)))
+    (assuming flag?
+      (resize "600px" "60px"
+        (texmacs-input `(document ,(get-tag-arg u 'set-this-page-header))
+                       `(style (tuple ,@style)) (header-buffer))))
+    (assuming (not flag?)
+      (resize "330px" "60px"
+        (texmacs-input `(document ,(get-tag-arg u 'set-this-page-header))
+                       `(style (tuple ,@style)) (header-buffer))))
     === ===
     (bold (text "This page footer"))
     ===
-    (resize "600px" "60px"
-      (texmacs-input `(document ,(get-tag-arg u 'set-this-page-footer))
-                     `(style (tuple ,@style)) (footer-buffer)))
+    (assuming flag?
+      (resize "600px" "60px"
+        (texmacs-input `(document ,(get-tag-arg u 'set-this-page-footer))
+                       `(style (tuple ,@style)) (footer-buffer))))
+    (assuming (not flag?)
+      (resize "330px" "60px"
+        (texmacs-input `(document ,(get-tag-arg u 'set-this-page-footer))
+                       `(style (tuple ,@style)) (footer-buffer))))
     ======
     (explicit-buttons
       (hlist
@@ -378,7 +388,7 @@
         >>>
         ("Ok" (apply-page-settings u settings) (quit))))))
 
-(tm-define (open-page-format)
+(tm-define (open-page-format-window)
   (:interactive #t)
   (let* ((u  (current-buffer))
          (st (list-remove-duplicates (rcons (get-style-list) "macro-editor")))
@@ -386,12 +396,19 @@
     (and-with doc (tree-innermost 'document)
       (and-with par (tree-down doc)
         (collect-settings par t)))
-    (dialogue-window (page-formatter u st t)
+    (dialogue-window (page-formatter u st t #t)
                      noop "Page format"
                      (header-buffer) (footer-buffer))))
 
-;;(tm-define (open-page-format)
-;;  (:interactive #t)
-;;  (if (side-tools?)
-;;      (tool-select :transient-right 'format-page-tool)
-;;      (open-page-format-window)))
+(tm-define (open-page-format)
+  (:interactive #t)
+  (if (side-tools?)
+      (let* ((u  (current-buffer))
+             (st (list-remove-duplicates
+                  (rcons (get-style-list) "macro-editor")))
+             (t  (make-ahash-table)))
+        (and-with doc (tree-innermost 'document)
+          (and-with par (tree-down doc)
+            (collect-settings par t)))
+        (tool-select :transient-right (list 'format-page-tool u st t)))
+      (open-page-format-window)))

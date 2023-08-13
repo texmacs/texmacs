@@ -104,7 +104,8 @@
   (noop))
 
 (tm-define (set-main-style style)
-  (:argument style "Main document style")
+  (:synopsis* "Set main document style")
+  (:argument style "Style")
   (:default  style "generic")
   (:check-mark "v" has-main-style?)
   (:balloon style-get-documentation)
@@ -124,7 +125,8 @@
   (not (has-style-package? pack)))
 
 (tm-define (add-style-package pack)
-  (:argument pack "Add package")
+  (:synopsis* "Add style package")
+  (:argument pack "Package")
   (:check-mark "v" has-style-package?)
   (:balloon style-get-documentation)
   (set-style-list (append (get-style-list) (list pack))))
