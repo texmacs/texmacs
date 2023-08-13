@@ -34,7 +34,8 @@
   cdaaar cdaadr cdadar cdaddr cddaar cddadr cdddar cddddr
   cons list append length reverse
   texmacs-version texmacs-version-release*
-  display display*)
+  display display*
+  refresh-now)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Secure evaluation
@@ -98,8 +99,9 @@
   (cond ,secure-cond?)
   (if ,secure-args?)
   (lambda ,secure-lambda?)
-  (with ,secure-with)
-  (or ,secure-args?))
+  (or ,secure-args?)
+  (set! ,secure-args?)
+  (with ,secure-with))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface

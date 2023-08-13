@@ -514,7 +514,7 @@
         (padded
           (dynamic (page-formatter-headers u style quit)))))))
 
-(tm-define (open-document-page-format)
+(tm-define (open-document-page-format-window)
   (:interactive #t)
   (let* ((u  (current-buffer))
          (st (list-remove-duplicates (rcons (get-style-list) "macro-editor"))))
@@ -522,6 +522,12 @@
            (cons* (document-page-formatter u st)
                   noop "Document page format"
                   (header-buffers)))))
+
+(tm-define (open-document-page-format)
+  (:interactive #t)
+  (if (side-tools?)
+      (tool-select :transient-right 'document-page-tool)
+      (open-document-page-format-window)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document -> Metadata
