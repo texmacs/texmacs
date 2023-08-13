@@ -296,7 +296,7 @@
     (open-buffer-in-window name (buffer-get name) "")))
 
 (tm-define (docgrep-in-doc-secure what)
-  (:synopsis "Search in documentation. Secure routine to use in 'action tags.")
+  (:synopsis "Search in documentation. Secure routine to use in 'action tags")
   (:secure #t)
   (docgrep-new-window what))
 

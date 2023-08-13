@@ -30,7 +30,7 @@
 
 (tm-define (bibtex->texmacs bib)
   (:type (-> stree stree))
-  (:synopsis "Convert a parsed BibTeX stree @t into a TeXmacs stree.")
+  (:synopsis "Convert a parsed BibTeX stree @t into a TeXmacs stree")
   (let* ((snippet? (not (func? bib '!file 1)))
 	 (body (if snippet? bib (cadr bib))))
     body))

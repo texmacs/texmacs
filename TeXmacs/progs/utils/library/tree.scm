@@ -80,7 +80,7 @@
 
 (tm-define (tree-set-diff ref t)
   (:type (-> tree content void))
-  (:synopsis "Assign @ref with @t.")
+  (:synopsis "Assign @ref with @t")
   (let* ((p (tree->path ref))
 	 (l (tree-common-left ref t))
 	 (r (tree-common-right (tm-range ref l (tm-length ref))
@@ -126,7 +126,7 @@
 		   (tree-insert-node! ref pos merged))))))))
 
 (tm-define-macro (tree-set-diff! ref t)
-  (:synopsis "Assign @ref with @t.")
+  (:synopsis "Assign @ref with @t")
   `(begin
      (set! ,ref (tree-set-diff ,ref ,t))
      ,ref))
@@ -136,7 +136,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tree-ref t . l)
-  (:synopsis "Access a subtree of @t according to @l.")
+  (:synopsis "Access a subtree of @t according to @l")
   (cond ((not (tree? t)) #f)
 	;; NOTE: the following special cases are treated fast,
 	((null? l) t)
@@ -196,12 +196,12 @@
 	(else (tree-set-sub-error t l))))
 
 (tm-define (tree-set t . args)
-  (:synopsis "Set a subtree of @t to a new value according to @l.")
+  (:synopsis "Set a subtree of @t to a new value according to @l")
   (with r (reverse args)
     (tree-set-sub t (reverse (cdr r)) (car r))))
 
 (tm-define-macro (tree-set! t . l)
-  (:synopsis "Set a subtree of @t to a new value according to @l.")
+  (:synopsis "Set a subtree of @t to a new value according to @l")
   (if (list-1? l)
       `(if (tree-active? ,t)
 	   (tree-set-diff! ,t ,@l)
@@ -232,13 +232,13 @@
   (:type (-> symbol tree)
 	 (-> (list symbol) tree)
 	 (-> (-> bool) tree))
-  (:synopsis "Search upwards from the cursor position.")
+  (:synopsis "Search upwards from the cursor position")
   (with p ((if (null? opt-flag) cDDr cDr) (cursor-path))
     (tree-search-upwards (path->tree p) x)))
 
 (tm-define (inside-which l)
   (:type (-> (list symbol) symbol))
-  (:synopsis "Get innermost node type among possibilities in @l.")
+  (:synopsis "Get innermost node type among possibilities in @l")
   (with t (tree-innermost l)
     (and t (tree-label t))))
 
@@ -282,7 +282,7 @@
     (and st (in? (tree-label st) ls))))
 
 (tm-define (tree->path t . l)
-  (:synopsis "Get the position of the tree @t.")
+  (:synopsis "Get the position of the tree @t")
   (if (null? l) (tree-get-path t)
       (with i (cAr l)
 	(if (or (== i :start) (== i :end) (integer? i))
@@ -296,13 +296,13 @@
 	      (and u (tree->path u)))))))
 
 (tm-define (tree-cursor-path t . l)
-  (:synopsis "Retrieve the current cursor position relative to the tree @t.")
+  (:synopsis "Retrieve the current cursor position relative to the tree @t")
   (let* ((p (apply tree->path (cons t l)))
 	 (c (cursor-path)))
     (and p (list-starts? c p) (list-tail c (length p)))))
 
 (tm-define (tree-go-to t . l)
-  (:synopsis "Go to a position determined by @l inside the tree @t.")
+  (:synopsis "Go to a position determined by @l inside the tree @t")
   (with p (apply tree->path (cons t l))
     (if p (go-to p))))
 

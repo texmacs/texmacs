@@ -73,7 +73,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (doc-scm-cache)
-  (:synopsis "Url of the cache with the collected scheme documentation.")
+  (:synopsis "Url of the cache with the collected scheme documentation")
   (with pref (get-preference "doc:doc-scm-cache")
     (if (and (!= pref "default") (url-exists? (system->url pref)))
         (system->url pref)
@@ -166,7 +166,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (doc-collect-explains basedir fname)
-  (:synopsis "Parse @fname in @basedir and its sub-branches, collecting docs.")
+  (:synopsis "Parse @fname in @basedir and its sub-branches, collecting docs")
   (set! _scm_ (doc-scm-cache))
   (set! _macro_ (doc-macro-cache))
   (parse-branch `(branch (dummy) ,fname) basedir))
@@ -179,7 +179,7 @@
     (doc-collect-explains path file)))
 
 (tm-define (doc-collect-all lan)
-  (:synopsis "Collect all explain tags available in the documentation.")
+  (:synopsis "Collect all explain tags available in the documentation")
   (with loc (string-take (language-to-locale lan) 2)
    (doc-collect-sub "devel/scheme" "scheme" loc)
    (doc-collect-sub "devel/plugin" "plugin" loc)
@@ -193,7 +193,7 @@
                 (string-append "(" lan ")"))))
 
 (tm-define (doc-check-cache)
-  (:synopsis "Ensure that the documentation cache is built.")
+  (:synopsis "Ensure that the documentation cache is built")
   (let  ((t (get-preference "doc:collect-timestamp"))
          (lan (get-output-language))
          (langs (get-preference "doc:collect-languages")))
