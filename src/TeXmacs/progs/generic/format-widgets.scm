@@ -389,3 +389,9 @@
     (dialogue-window (page-formatter u st t)
                      noop "Page format"
                      (header-buffer) (footer-buffer))))
+
+;;(tm-define (open-page-format)
+;;  (:interactive #t)
+;;  (if (side-tools?)
+;;      (tool-select :transient-right 'format-page-tool)
+;;      (open-page-format-window)))

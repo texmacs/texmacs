@@ -1312,7 +1312,7 @@
   (with win (if (null? opt-win) (current-window) (car opt-win))
     (set-window-tools win pos (list))))
 
-(tm-widget (texmacs-side-tool win tool)
+(tm-widget (texmacs-side-tool win tool . opts)
   (division "title"
     (text (string-append "Missing '" (object->string (car tool)) "' tool"))))
 
@@ -1324,14 +1324,15 @@
         (else
           `(begin
              (tm-widget ,tool ,@body)
-             (tm-widget (texmacs-side-tool ,(cadr tool) tool)
+             (tm-widget (texmacs-side-tool ,(cadr tool) tool . opts)
                (:require (== (car tool) ',(car tool)))
-               (division "title"
-                 (hlist
-                   (text ,(cadr name))
-                   >>
-                   (division "plain"
-                     ("x" (tool-close :any ',(car tool) ,(cadr tool))))))
+               (if (in? :title opts)
+                   (division "title"
+                     (hlist
+                       (text ,(cadr name))
+                       >>
+                       (division "plain"
+                         ("x" (tool-close :any ',(car tool) ,(cadr tool)))))))
                (dynamic (,(car tool) ,(cadr tool)
                          ,@(map (lambda (i) `(list-ref tool ,(- i 1)))
                                 (.. 2 (length tool)))))

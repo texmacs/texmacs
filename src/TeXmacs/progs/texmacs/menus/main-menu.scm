@@ -210,19 +210,19 @@
 
 (tm-widget (texmacs-left-tools win)
   (for (tool (window->tools win :transient-left :left))
-    (dynamic (texmacs-side-tool win tool)))
+    (dynamic (texmacs-side-tool win tool :title)))
   ===
   (glue #t #t 300 1)
   (for (tool (window->tools win :bottom-left))
-    (dynamic (texmacs-side-tool win tool))))
+    (dynamic (texmacs-side-tool win tool :title))))
 
 (tm-widget (texmacs-side-tools win)
   (for (tool (window->tools win :transient-right :right))
-    (dynamic (texmacs-side-tool win tool)))
+    (dynamic (texmacs-side-tool win tool :title)))
   ===
   (glue #t #t 300 1)
   (for (tool (window->tools win :bottom-right))
-    (dynamic (texmacs-side-tool win tool))))
+    (dynamic (texmacs-side-tool win tool :title))))
 
 (tm-tool* (buffer-tool win)
   (:name "Open documents")

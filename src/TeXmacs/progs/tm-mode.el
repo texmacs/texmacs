@@ -61,7 +61,7 @@
     with-remote-context with-identifier-context
     speech-symbols
     user-ask
-    tab icon-tab form item meti refreshable division
+    tab icon-tab section-tab form item meti refreshable division
     $when $let $let* $for $refreshable $division
     tmfs-load-handler tmfs-save-handler
     tmfs-autosave-handler tmfs-remove-handler tmfs-wrap-handler
@@ -94,6 +94,7 @@
     speech-map speech-map-wildcard
     speech-adjust speech-reduce speech-collection
     user-confirm user-url
+    section-tabs
     resize cached
     $with))
 
