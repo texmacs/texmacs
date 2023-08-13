@@ -28,7 +28,7 @@
 
 (define (debug-backtrace-errors?) (in? 'backtrace (debug-options)))
 (tm-define (debug-toggle-backtrace-errors)
-  (:synopsis "Toggle scheme backtracing of errors.")
+  (:synopsis "Toggle scheme backtracing of errors")
   (:check-mark "v" debug-backtrace-errors?)
   (if (debug-backtrace-errors?)
       (debug-disable 'backtrace 'debug)
