@@ -28,6 +28,13 @@
 (tm-define toolbar-db-active? #f)
 (tm-define toolbar-animate-active? #f)
 
+(tm-define (extra-bottom-tools?)
+  (or toolbar-search-active?
+      toolbar-replace-active?
+      toolbar-spell-active?
+      toolbar-db-active?
+      toolbar-animate-active?))
+
 (tm-widget (texmacs-bottom-toolbars)
   (if toolbar-search-active?
       (link search-toolbar))
@@ -89,7 +96,7 @@
          (set! toolbar-db-active? val))
         ((== which "animate")
          (set! toolbar-animate-active? val)))
-  (show-bottom-tools 0 val))
+  (update-bottom-tools))
 
 (tm-define (toggle-bottom-bar which)
   (:check-mark "*" test-bottom-bar?)

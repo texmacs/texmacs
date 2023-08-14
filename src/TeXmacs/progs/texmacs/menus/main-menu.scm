@@ -224,13 +224,19 @@
   (for (tool (window->tools win :bottom-right))
     (dynamic (texmacs-side-tool win tool :title))))
 
-(tm-widget (texmacs-extra-tools win)
+(tm-widget (texmacs-bottom-tools win)
   (with tools (window->tools win :transient-bottom :bottom)
+    (if (not (qt-gui?)) (glue #f #f 0 2))
+    (link texmacs-bottom-toolbars)
     (for (tool tools)
       (dynamic (texmacs-side-tool win tool :title)))
     (if (with-keyboard-tool?)
-        (if (nnull? tools) ---)
-        (dynamic (custom-keyboard-toolbar)))))
+        (if (or (extra-bottom-tools?) (nnull? tools)) ---)
+        (dynamic (custom-keyboard-toolbar)))
+    (if (not (qt-gui?)) (glue #f #f 0 1) ---)))
+
+(tm-widget (texmacs-extra-tools win)
+  (text "Deprecated"))
 
 (tm-tool* (buffer-tool win)
   (:name "Open documents")
@@ -254,20 +260,6 @@
     (horizontal
       ((eval (symbol->string (tree-label t)))
        (tree-select t)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The TeXmacs bottom tools
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-widget (texmacs-bottom-tools)
-  (if (qt-gui?)
-      (link texmacs-bottom-toolbars))
-  (if (not (qt-gui?))
-      (glue #f #f 0 2)
-      (horizontal
-        (link texmacs-bottom-toolbars))
-      (glue #f #f 0 1)
-      ---))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The mode dependent icon bar

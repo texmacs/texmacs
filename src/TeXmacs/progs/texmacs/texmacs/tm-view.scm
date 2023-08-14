@@ -64,7 +64,6 @@
   ("status bar" "on" notify-status-bar)
   ("side tools" "off" notify-side-tools)
   ("left tools" "off" notify-side-tools)
-  ("extra tools" "off" notify-bottom-tools)
   ("zoom factor" "1" notify-zoom-factor)
   ("snap to pages" "off" noop)
   ("ir-up" "home" notify-remote-control)
