@@ -20,9 +20,9 @@
     </src-license>
   </src-title>>
 
-  <assign|window-bars|false>
+  <assign|xwindow-bars|false>
 
-  <assign|scroll-bars|false>
+  <assign|xscroll-bars|false>
 </body>
 
 <\initial>
