@@ -398,7 +398,7 @@
     "24" "28" "32" "36" "40" "48" "64" "72" "96"
     "128" "144" "192"))
 
-(tm-widget (font-family-selector)
+(tm-widget (font-family-selector specs)
   (vertical
     (bold (text "Family"))
     ===
@@ -408,7 +408,7 @@
                 (selected-families)
                 selector-font-family)))))
 
-(tm-widget (font-style-selector)
+(tm-widget (font-style-selector specs)
   (vertical
     (bold (text "Style"))
     ===
@@ -418,7 +418,10 @@
                 (selected-styles selector-font-family)
                 selector-font-style)))))
 
-(tm-widget (font-size-selector)
+(tm-widget (font-style-selector*)
+  (dynamic (font-style-selector #f)))
+
+(tm-widget (font-size-selector specs)
   (vertical
     (bold (text "Size"))
     ===
@@ -428,13 +431,13 @@
                 (font-default-sizes)
                 selector-font-size)))))
 
-(tm-widget (font-sample-text)
+(tm-widget (font-sample-text specs)
   (texmacs-output
     `(with "bg-color" "white"
        ,(selector-font-demo-text))
     '(style "generic")))
 
-(tm-widget (font-properties-selector)
+(tm-widget (font-properties-selector specs)
   (vertical
     (horizontal
       (glue #f #f 0 0)
@@ -517,28 +520,28 @@
   (cond ((== which "slant") "0")
 	(else "1")))
 
-(tm-widget (font-effect-selector which)
+(tm-widget (font-effect-selector specs which)
   (enum (selector-customize-set! which answer)
         (font-effect-defaults which)
         (selector-customize-get which (font-effect-default which)) "50px"))
 
-(tm-widget (font-effects-selector)
+(tm-widget (font-effects-selector specs)
   (vertical
     (aligned
       (item (text "Slant:")
-        (dynamic (font-effect-selector "slant")))
+        (dynamic (font-effect-selector specs "slant")))
       (item (text "Embold:")
-        (dynamic (font-effect-selector "embold")))
+        (dynamic (font-effect-selector specs "embold")))
       (item (text "Double stroke:")
-        (dynamic (font-effect-selector "embbb")))
+        (dynamic (font-effect-selector specs "embbb")))
       (item (text "Extended:")
-        (dynamic (font-effect-selector "hextended")))
+        (dynamic (font-effect-selector specs "hextended")))
       ;;(item (text "Extend vertically:")
-      ;;  (dynamic (font-effect-selector "vextended")))
+      ;;  (dynamic (font-effect-selector specs "vextended")))
       (item (text "Magnify horizontally:")
-        (dynamic (font-effect-selector "hmagnify")))
+        (dynamic (font-effect-selector specs "hmagnify")))
       (item (text "Magnify vertically:")
-        (dynamic (font-effect-selector "vmagnify"))))
+        (dynamic (font-effect-selector specs "vmagnify"))))
     (horizontal (glue #f #t 0 0))))
 
 (define (default-subfonts-list which)
@@ -552,42 +555,42 @@
 	(append l (list ""))
 	(append l (list which "")))))
 
-(tm-widget (subfont-selector which)
+(tm-widget (subfont-selector specs which)
   (enum (selector-customize-set!* which answer)
 	(default-subfonts (selector-customize-get* which "Default"))
         (selector-customize-get* which "Default") "160px"))
 
-(tm-widget (font-variant-selector)
+(tm-widget (font-variant-selector specs)
   (vertical
     (aligned
       (item (text "Bold:")
-        (dynamic (subfont-selector "bold")))
+        (dynamic (subfont-selector specs "bold")))
       (item (text "Italic:")
-        (dynamic (subfont-selector "italic")))
+        (dynamic (subfont-selector specs "italic")))
       (item (text "Small capitals:")
-        (dynamic (subfont-selector "smallcaps")))
+        (dynamic (subfont-selector specs "smallcaps")))
       (item (text "Sans serif:")
-        (dynamic (subfont-selector "sansserif")))
+        (dynamic (subfont-selector specs "sansserif")))
       (item (text "Typewriter:")
-        (dynamic (subfont-selector "typewriter"))))
+        (dynamic (subfont-selector specs "typewriter"))))
     (horizontal (glue #f #t 0 0))))
 
-(tm-widget (font-math-selector)
+(tm-widget (font-math-selector specs)
   (vertical
     (aligned
       (item (text "Mathematics:")
-        (dynamic (subfont-selector "math")))
+        (dynamic (subfont-selector specs "math")))
       (item (text "Greek:")
-        (dynamic (subfont-selector "greek")))
+        (dynamic (subfont-selector specs "greek")))
       (item (text "Blackboard bold:")
-        (dynamic (subfont-selector "bbb")))
+        (dynamic (subfont-selector specs "bbb")))
       (item (text "Calligraphic:")
-        (dynamic (subfont-selector "cal")))
+        (dynamic (subfont-selector specs "cal")))
       (item (text "Fraktur:")
-        (dynamic (subfont-selector "frak"))))
+        (dynamic (subfont-selector specs "frak"))))
     (horizontal (glue #f #t 0 0))))
 
-(tm-widget (font-customized-selector)
+(tm-widget (font-customized-selector specs)
   (assuming (selector-customize?)
     === === ===
     (hlist
@@ -595,16 +598,16 @@
       >>>)
     ===
     (horizontal
-      (link font-effects-selector)
+      (dynamic (font-effects-selector specs))
       >>>
-      (link font-variant-selector)
+      (dynamic (font-variant-selector specs))
       >>>
-      (link font-math-selector))
+      (dynamic (font-math-selector specs)))
     === === ===)
   (assuming (not (selector-customize?))
     === === ===))
 
-(tm-widget (font-customization-dialog quit)
+(tm-widget ((font-customization-dialog specs) quit)
   (padded
     === === ===
     (hlist
@@ -612,15 +615,15 @@
       >>>)
     ===
     (horizontal
-      (link font-effects-selector)
+      (dynamic (font-effects-selector specs))
       >>>
-      (link font-variant-selector)
+      (dynamic (font-variant-selector specs))
       >>>
-      (link font-math-selector))
+      (dynamic (font-math-selector specs)))
     === === ===
     (explicit-buttons (hlist >>> ("Done" (quit))))))
 
-(tm-widget (font-selector-demo)
+(tm-widget (font-selector-demo specs)
   (hlist
     (bold (text "Sample text"))
     (text (selector-font-simulate-comment))
@@ -628,28 +631,31 @@
   ===
   (resize "880px" "225px"
     (scrollable
-      (link font-sample-text))))
+      (dynamic (font-sample-text specs)))))
+
+(tm-widget (font-selector-demo*)
+  (dynamic (font-selector-demo #f)))
 
 (tm-define (font-import name)
   (font-database-extend-local name)
   (refresh-now "font-family-selector")
   (refresh-now "font-size-selector"))
 
-(tm-widget ((font-selector flag?) quit)
+(tm-widget ((font-selector specs flag?) quit)
   (padded
     (horizontal
       (refreshable "font-family-selector"
-        (link font-family-selector))
+        (dynamic (font-family-selector specs)))
       ///
-      (refresh font-style-selector auto)
+      (refresh font-style-selector* auto)
       ///
       (refreshable "font-size-selector"
-        (link font-size-selector))
+        (dynamic (font-size-selector specs)))
       ///
-      (link font-properties-selector))
+      (dynamic (font-properties-selector specs)))
     (refreshable "font-customized-selector"
-      (link font-customized-selector))
-    (refresh font-selector-demo auto)
+      (dynamic (font-customized-selector specs)))
+    (refresh font-selector-demo* auto)
     === ===
     (explicit-buttons
       (hlist
@@ -664,7 +670,7 @@
         >>>
         (assuming (not (selector-customize?))
           ("Advanced"
-           (dialogue-window font-customization-dialog
+           (dialogue-window (font-customization-dialog specs)
                             noop "Advanced font selector")) // //)
         ("Import" (choose-file font-import "Import font" "")) // //
         (if flag?
@@ -685,12 +691,12 @@
 (tm-define (open-font-selector)
   (:interactive #t)
   (selector-initialize-font get-env)
-  (dialogue-window (font-selector #f) make-multi-with "Font selector"))
+  (dialogue-window (font-selector #f #f) make-multi-with "Font selector"))
 
 (tm-define (open-document-font-selector)
   (:interactive #t)
   (selector-initialize-font get-init)
-  (dialogue-window (font-selector #t) init-multi "Document font selector"))
+  (dialogue-window (font-selector #f #t) init-multi "Document font selector"))
 
 (define ((prefixed-get-init prefix) var)
   (if (init-has? (string-append prefix var))
@@ -706,4 +712,4 @@
   (let* ((getter (prefixed-get-init prefix))
          (setter (prefixed-init-multi prefix)))
     (selector-initialize-font getter)
-    (dialogue-window (font-selector #t) setter "Font selector")))
+    (dialogue-window (font-selector #f #t) setter "Font selector")))
