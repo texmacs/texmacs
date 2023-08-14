@@ -419,7 +419,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   extraTools->setFeatures (QDockWidget::NoDockWidgetFeatures);
   extraTools->setFloating (false);
   extraTools->setTitleBarWidget (new QWidget()); // Disables title bar
-  extraTools->setMinimumHeight (10);             // Avoids warning
+  //extraTools->setMinimumHeight (10);             // Avoids warning
   extraTools->setContentsMargins (3, 6, 3, -2);  // Hacks hacks hacks... :(
   mw->addDockWidget (Qt::BottomDockWidgetArea, extraTools);
 
@@ -1093,6 +1093,13 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       if (old_qwidget) old_qwidget->deleteLater();
       extraTools->setWidget (new_qwidget);
       update_visibility();
+#if (QT_VERSION >= 0x050000)
+      QList<QDockWidget*> l1;
+      l1.append ((QDockWidget*) extraTools);
+      QList<int> l2;
+      l2.append (0);
+      mw->resizeDocks (l1, l2, Qt::Vertical);
+#endif
       new_qwidget->show();
     }
       break;

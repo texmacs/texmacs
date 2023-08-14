@@ -1247,13 +1247,20 @@
   (when (!= show? (visible-side-tools? n))
     (show-side-tools n show?)))
 
+(define (notify-bottom-tools n show?)
+  (when (!= show? (visible-bottom-tools? n))
+    (show-bottom-tools n show?)))
+
 (tm-define (set-window-tools win pos l)
   (apply lazy-tool-force l)
   (ahash-set! window-tools-table (list win pos) l)
   (let* ((l0 (window->tools win :transient-right :right :bottom-right))
-         (l1 (window->tools win :transient-left :left :bottom-left)))
+         (l1 (window->tools win :transient-left :left :bottom-left))
+         (l2 (window->tools win :transient-bottom :bottom)))
     (notify-side-tools 0 (nnull? l0))
     (notify-side-tools 1 (nnull? l1))
+    (notify-bottom-tools 1 (or (nnull? l2)
+                               (== (get-preference "keyboard tool") "on")))
     (keyboard-focus-on "canvas")))
 
 (tm-define (set-window-tool win pos tool)
@@ -1294,7 +1301,8 @@
 (tm-define (tool-close pos tool . opt-win)
   (if (== pos :any)
       (for (pos* (list :transient-right :right :bottom-right
-                       :transient-left :left :bottom-left))
+                       :transient-left :left :bottom-left
+                       :transient-bottom :bottom))
         (apply tool-close (cons* pos* tool opt-win)))
       (let* ((win (if (null? opt-win) (current-window) (car opt-win)))
              (l (window->tools win pos))
@@ -1329,7 +1337,7 @@
              (tm-widget ,tool ,@body)
              (tm-widget (texmacs-side-tool ,(cadr tool) tool . opts)
                (:require (== (car tool) ',(car tool)))
-               (if (in? :title opts)
+               (if (and (in? :title opts) ,(cadr name))
                    (division "title"
                      (hlist
                        (text ,(cadr name))
