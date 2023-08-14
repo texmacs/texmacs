@@ -624,7 +624,7 @@
   ;; standard Mac OS keyboard shortcuts
   ("macos ;" (interactive-spell))
   ("macos ?" (interactive docgrep-in-doc))
-  ("macos ," (interactive open-preferences))
+  ("macos ," (open-preferences))
   ("macos [" (cursor-history-backward))
   ("macos ]" (cursor-history-forward))
   ("macos _" (make 'nbhyph))

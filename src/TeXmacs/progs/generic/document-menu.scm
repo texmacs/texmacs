@@ -876,7 +876,7 @@
   (-> "Update" (link document-update-menu))
   ---
   (if (new-fonts?)
-      ("Font" (interactive open-document-font-selector)))
+      ("Font" (open-document-font-selector)))
   (if (not (new-fonts?))
       (-> "Font" (link document-full-font-menu)))
   ("Paragraph" (open-document-paragraph-format))

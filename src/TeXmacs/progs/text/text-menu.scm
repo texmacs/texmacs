@@ -44,7 +44,7 @@
 
 (menu-bind compressed-text-format-menu
   (if (new-fonts?)
-      ("Font" (interactive open-font-selector)))
+      ("Font" (open-font-selector)))
   (if (not (new-fonts?))
       (-> "Font" (link text-font-menu)))
   ("Paragraph" (open-paragraph-format))
@@ -490,7 +490,7 @@
 (menu-bind automatic-menu
   ("Table of contents" (make-aux "table-of-contents" "toc-prefix" "toc"))
   (assuming (get-boolean-preference "gui:new bibliography dialogue")
-    ("Bibliography" (interactive open-bibliography-inserter)))
+    ("Bibliography" (open-bibliography-inserter)))
   (assuming (not (get-boolean-preference "gui:new bibliography dialogue"))
     (if (with-database-tool?)
         ("Bibliography" (make-database-bib)))
