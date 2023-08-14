@@ -588,7 +588,7 @@
       (cached (string-append "edit-" var) (synchronize win var)
         (resize "330px" "60px"
           (texmacs-input `(document ,(initial-get-tree u var))
-                         `(style (tuple ,@style))
+                         `(style (tuple ,@style "gui-base"))
                          (header-buffer win var))))))
   ====== ===
   (hlist
