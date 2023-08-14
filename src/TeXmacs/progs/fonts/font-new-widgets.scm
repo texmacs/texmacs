@@ -34,6 +34,16 @@
       (cond ((== var :family) "TeXmacs Computer Modern")
             ((== var :style) "Regular")
             ((== var :size) "10")
+            ;;;
+            ((== var :weight) "Any")
+            ((== var :slant) "Any")
+            ((== var :stretch) "Any")
+            ((== var :serif) "Any")
+            ((== var :spacing) "Any")
+            ((== var :case) "Any")
+            ((== var :device) "Any")
+            ((== var :category) "Any")
+            ((== var :glyphs) "Any")
             (else #f))))
 
 (tm-define (selector-get specs var)
@@ -167,7 +177,7 @@
   (logical-font-patch
     (logical-font-public (selector-get specs :family)
                          (selector-get specs :style))
-    (selected-properties)))
+    (selected-properties specs)))
 
 (define (selector-initialize-font specs getter)
   (let* ((fam (font-family-main (getter "font")))
@@ -182,7 +192,7 @@
     (selector-set specs :family (car fn))
     (selector-set specs :style (cadr fn))
     (selector-set specs :size sz)
-    (selector-initialize-search)
+    (selector-initialize-search specs)
     (selector-initialize-customize getter)))
 
 (tm-define (selector-get-changes specs getter)
@@ -212,7 +222,7 @@
          (sh  (logical-font-shape fn))
          (lf  (logical-font-private fam var ser sh))
          (fn2 (logical-font-search lf))
-         (sel (string-recompose (selected-properties) " ")))
+         (sel (string-recompose (selected-properties specs) " ")))
     ;;(display* "fn = " fn "\n")
     ;;(display* "lf = " lf "\n")
     ;;(display* "fn2= " fn2 "\n")
@@ -247,58 +257,48 @@
 ;; Global state for font searching
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define selector-search-weight "Any")
-(tm-define selector-search-slant "Any")
-(tm-define selector-search-stretch "Any")
-(tm-define selector-search-serif "Any")
-(tm-define selector-search-spacing "Any")
-(tm-define selector-search-case "Any")
-(tm-define selector-search-device "Any")
-(tm-define selector-search-category "Any")
-(tm-define selector-search-glyphs "Any")
+(define (selector-initialize-search specs)
+  (selector-set specs :weight "Any")
+  (selector-set specs :slant "Any")
+  (selector-set specs :stretch "Any")
+  (selector-set specs :serif "Any")
+  (selector-set specs :spacing "Any")
+  (selector-set specs :case "Any")
+  (selector-set specs :device "Any")
+  (selector-set specs :category "Any")
+  (selector-set specs :glyphs "Any"))
 
-(define (selector-initialize-search)
-  (set! selector-search-weight "Any")
-  (set! selector-search-slant "Any")
-  (set! selector-search-stretch "Any")
-  (set! selector-search-serif "Any")
-  (set! selector-search-spacing "Any")
-  (set! selector-search-case "Any")
-  (set! selector-search-device "Any")
-  (set! selector-search-category "Any")
-  (set! selector-search-glyphs "Any"))
-
-(define (selector-search-glyphs-decoded)
-  (with s selector-search-glyphs
+(define (selector-search-glyphs-decoded specs)
+  (with s (selector-get specs :glyphs)
     (cond ((== s "ASCII") "Ascii")
           ((== s "Math Symbols") "MathSymbols")
           ((== s "Math Extra") "MathExtra")
           ((== s "Math Letters") "MathLetters")
           (else s))))
 
-(define (selected-properties)
-  (with l (list selector-search-weight
-                selector-search-slant
-                selector-search-stretch
-                selector-search-serif
-                selector-search-spacing
-                selector-search-case
-                selector-search-device
-                selector-search-category
-                (selector-search-glyphs-decoded))
+(define (selected-properties specs)
+  (with l (list (selector-get specs :weight)
+                (selector-get specs :slant)
+                (selector-get specs :stretch)
+                (selector-get specs :serif)
+                (selector-get specs :spacing)
+                (selector-get specs :case)
+                (selector-get specs :device)
+                (selector-get specs :category)
+                (selector-search-glyphs-decoded specs))
     (list-filter l (cut != <> "Any"))))
 
-(tm-define-macro (selector-search-set! var val)
+(tm-define-macro (selector-set* specs var val)
   `(begin
-     (set! ,var ,val)
+     (selector-set ,specs ,var ,val)
      (delayed
        (refresh-now "font-family-selector"))))
 
-(tm-define (selected-families)
-  (search-font-families (selected-properties)))
+(tm-define (selected-families specs)
+  (search-font-families (selected-properties specs)))
 
-(tm-define (selected-styles family)
-  (search-font-styles family (selected-properties)))
+(tm-define (selected-styles specs family)
+  (search-font-styles family (selected-properties specs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global state for font customization
@@ -425,7 +425,7 @@
     (resize "300px" "350px"
       (scrollable
         (choice (selector-set specs :family answer)
-                (selected-families)
+                (selected-families specs)
                 (selector-get specs :family))))))
 
 (tm-widget (font-style-selector specs)
@@ -435,7 +435,7 @@
     (resize "200px" "350px"
       (scrollable
         (choice (selector-set specs :style answer)
-                (selected-styles (selector-get specs :family))
+                (selected-styles specs (selector-get specs :family))
                 (selector-get specs :style))))))
 
 (tm-widget (font-style-selector*)
@@ -475,47 +475,47 @@
       ;;        (selector-get specs :style) "150px"))
       ;;(item ====== ======)
       (item (text "Weight:")
-        (enum (selector-search-set! selector-search-weight answer)
+        (enum (selector-set* specs :weight answer)
               '("Any" "Thin" "Light" "Medium" "Bold" "Black")
-              selector-search-weight "150px"))
+              (selector-get specs :weight) "150px"))
       (item (text "Slant:")
-        (enum (selector-search-set! selector-search-slant answer)
+        (enum (selector-set* specs :slant answer)
               '("Any" "Normal" "Italic" "Oblique")
-              selector-search-slant "150px"))
+              (selector-get specs :slant) "150px"))
       (item (text "Stretch:")
-        (enum (selector-search-set! selector-search-stretch answer)
+        (enum (selector-set* specs :stretch answer)
               '("Any" "Condensed" "Unextended" "Wide")
-              selector-search-stretch "150px"))
+              (selector-get specs :stretch) "150px"))
       (item (text "Case:")
-        (enum (selector-search-set! selector-search-case answer)
+        (enum (selector-set* specs :case answer)
               '("Any" "Mixed" "Small Capitals")
-              selector-search-case "150px"))
+              (selector-get specs :case) "150px"))
       (item ====== ======)
       (item (text "Serif:")
-        (enum (selector-search-set! selector-search-serif answer)
+        (enum (selector-set* specs :serif answer)
               '("Any" "Serif" "Sans Serif")
-              selector-search-serif "150px"))
+              (selector-get specs :serif) "150px"))
       (item (text "Spacing:")
-        (enum (selector-search-set! selector-search-spacing answer)
+        (enum (selector-set* specs :spacing answer)
               '("Any" "Proportional" "Monospaced")
-              selector-search-spacing "150px"))
+              (selector-get specs :spacing) "150px"))
       (item (text "Device:")
-        (enum (selector-search-set! selector-search-device answer)
+        (enum (selector-set* specs :device answer)
               '("Any" "Print" "Typewriter" "Digital"
 		"Pen" "Art Pen" "Chalk" "Marker")
-              selector-search-device "150px"))
+              (selector-get specs :device) "150px"))
       (item (text "Category:")
-        (enum (selector-search-set! selector-search-category answer)
+        (enum (selector-set* specs :category answer)
               '("Any" "Ancient" "Attached" "Calligraphic" "Comic"
                 "Decorative" "Distorted" "Gothic" "Handwritten" "Initials"
                 "Medieval" "Miscellaneous" "Outline" "Retro" "Scifi" "Title")
-              selector-search-category "150px"))
+              (selector-get specs :category) "150px"))
       (item ====== ======)
       (item (text "Glyphs:")
-        (enum (selector-search-set! selector-search-glyphs answer)
+        (enum (selector-set* specs :glyphs answer)
               '("Any" "ASCII" "Latin" "Greek" "Cyrillic"
                 "CJK" "Hangul" "Math Symbols" "Math Extra" "Math Letters")
-              selector-search-glyphs "150px")))
+              (selector-get specs :glyphs) "150px")))
     (horizontal (glue #f #t 0 0))
     ;;(horizontal
     ;;  >>>
