@@ -100,4 +100,4 @@
       (-> "Preferences"
           (link preferences-menu)))
   (if (use-popups?)
-      ("Preferences" (interactive open-preferences))))
+      ("Preferences" (open-preferences))))

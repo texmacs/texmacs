@@ -130,6 +130,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (open-bibliography-inserter)
+  (:interactive #t)
   (set! bibwid-buffer (current-buffer))
   (let ((u (current-bib-file #f))
         (s (current-bib-style #f))
