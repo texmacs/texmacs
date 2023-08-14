@@ -224,6 +224,14 @@
   (for (tool (window->tools win :bottom-right))
     (dynamic (texmacs-side-tool win tool :title))))
 
+(tm-widget (texmacs-extra-tools win)
+  (with tools (window->tools win :transient-bottom :bottom)
+    (for (tool tools)
+      (dynamic (texmacs-side-tool win tool :title)))
+    (if (with-keyboard-tool?)
+        (if (nnull? tools) ---)
+        (dynamic (custom-keyboard-toolbar)))))
+
 (tm-tool* (buffer-tool win)
   (:name "Open documents")
   (hlist
@@ -260,10 +268,6 @@
         (link texmacs-bottom-toolbars))
       (glue #f #f 0 1)
       ---))
-
-(tm-widget (texmacs-extra-tools)
-  (if (with-keyboard-tool?)
-      (dynamic (custom-keyboard-toolbar))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The mode dependent icon bar
