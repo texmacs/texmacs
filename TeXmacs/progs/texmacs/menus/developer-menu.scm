@@ -32,9 +32,12 @@
 ;; Customized keyboards
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (notify-keyboard-tool var val)
+  (update-bottom-tools))
+
 (define-preferences
   ("custom keyboard" "" (lambda args (noop)))
-  ("keyboard tool" "off" (lambda args (noop))))
+  ("keyboard tool" "off" notify-keyboard-tool))
 
 (tm-define (set-custom-keyboard kbd)
   (with s (serialize-texmacs-snippet kbd)
@@ -66,7 +69,6 @@
   (:check-mark "*" has-custom-keyboard?)
   (with on? (not (has-custom-keyboard?))
     (set-boolean-preference "keyboard tool" on?)
-    (set-boolean-preference "extra tools" on?)
     (refresh-now "custom-keyboard")))
 
 (tm-widget (custom-keyboard-widget cmd)

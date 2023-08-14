@@ -647,7 +647,9 @@
           (else (cancel-alt-selection "alternate")))))
 
 (tm-widget (search-toolbar)
+  ===
   (hlist
+    //
     (text "Search: ") //
     ;;(resize "0.5w" "24px"
     ;;  (texmacs-input `(document "")
@@ -673,7 +675,9 @@
      (toolbar-search-end)
      (open-search))
     ((balloon (icon "tm_close_tool.xpm") "Close search tool")
-      (toolbar-search-end))))
+     (toolbar-search-end))
+    //)
+  ===)
 
 (tm-define (toolbar-search-start)
   (:interactive #t)
@@ -681,7 +685,7 @@
   (set! search-filter-out? #f)
   (set! toolbar-search-active? #t)
   (set! toolbar-replace-active? #f)
-  (show-bottom-tools 0 #t)
+  (update-bottom-tools)
   (search-toolbar-search "")
   (wait-for-toolbar)
   (notify-bar-change)
@@ -698,7 +702,7 @@
   (set! search-filter-out? #f)
   (set! toolbar-search-active? #f)
   (set! toolbar-replace-active? #f)
-  (show-bottom-tools 0 #f)
+  (update-bottom-tools)
   (set! search-serial (+ search-serial 1))
   (set! pending-key-strokes "")
   (set! current-search #f)
@@ -740,7 +744,9 @@
           (else (perform-search*)))))
 
 (tm-widget (replace-toolbar)
+  ===
   (hlist
+    //
     (text "Replace: ") //
     (input (search-toolbar-keypress answer #t) "replace-what"
            (list (or current-search pending-key-strokes)) "15em")
@@ -772,7 +778,9 @@
      (toolbar-search-end)
      (open-replace))
     ((balloon (icon "tm_close_tool.xpm") "Close replace tool")
-      (toolbar-search-end))))
+     (toolbar-search-end))
+    //)
+  ===)
 
 (tm-define (toolbar-replace-start)
   (:interactive #t)
@@ -780,7 +788,7 @@
   (set! search-filter-out? #f)
   (set! toolbar-search-active? #f)
   (set! toolbar-replace-active? #t)
-  (show-bottom-tools 0 #t)
+  (update-bottom-tools)
   (search-toolbar-search "")
   (wait-for-toolbar)
   (notify-bar-change)

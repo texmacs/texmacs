@@ -146,8 +146,7 @@
       (when toolbar-spell-active?
         ;; FIXME: the following is quite a dirty hack to get the focus right
         (when (qt-gui?)
-          (show-bottom-tools 0 #f)
-          (show-bottom-tools 0 #t))
+          (update-bottom-tools))
         (update-menus)
         (delayed
           (:idle 1)
@@ -464,7 +463,9 @@
            (spell-follow-suggestion (- (string->number key) 1))))))
 
 (tm-widget (spell-toolbar)
+  (glue #f #f 0 1)
   (hlist
+    //
     ((balloon (icon "tm_right.xpm") "Accept during this pass")
      (spell-accept-word))
     ((balloon (icon "tm_add.xpm") "Permanently add to dictionary")
@@ -495,7 +496,9 @@
      (toolbar-spell-end)
      (open-spell))
     ((balloon (icon "tm_close_tool.xpm") "Close spell tool")
-      (toolbar-spell-end))))
+     (toolbar-spell-end))
+    //)
+  (glue #f #f 0 1))
 
 (tm-define (toolbar-spell-start)
   (:interactive #t)
@@ -504,7 +507,7 @@
   (set! spell-focus-hack? #t)
   (set! spell-correct-string "")
   (set! spell-suggestions (list))
-  (show-bottom-tools 0 #t)
+  (update-bottom-tools)
   (set! spell-corrected 0)
   (set! spell-accepted 0)
   (set! spell-inserted 0)
@@ -527,7 +530,7 @@
   (set! spell-focus-hack? #t)
   (set! spell-correct-string "")
   (set! spell-suggestions (list))
-  (show-bottom-tools 0 #f)
+  (update-bottom-tools)
   (set! spell-serial (+ spell-serial 1))
   (when toolbar-db-active?
     (db-show-toolbar))
