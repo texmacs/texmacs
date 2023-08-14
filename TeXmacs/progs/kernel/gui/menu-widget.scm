@@ -1243,6 +1243,28 @@
           (or (and tools (nnull? tools) tools)
               (apply window->tools (cons win pos-r)))))))
 
+(define (find-positions tool win l)
+  (if (null? l) l
+      (with r (find-positions tool win (cdr l))
+        (with (x . t) l
+          (with (key val) x
+            (with (key-win key-pos) key
+              (if (and (== key-win win) (== val tool))
+                  (cons key-pos r)
+                  r)))))))
+
+(tm-define (tool->positions tool win)
+  (with l (ahash-table->list window-tools-table)
+    (find-positions tool win l)))
+
+(tm-define (tool-bottom? tool win)
+  (with l (tool->positions tool win)
+    (or (in? :transient-bottom l)
+        (in? :bottom l))))
+
+(tm-define (tool-side? tool win)
+  (not (tool-bottom? tool win)))
+
 (define (notify-side-tools n show?)
   (when (!= show? (visible-side-tools? n))
     (show-side-tools n show?)))
@@ -1327,28 +1349,60 @@
   (division "title"
     (text (string-append "Missing '" (object->string (car tool)) "' tool"))))
 
-(tm-define-macro (tm-tool* tool name . body)
-  (cond ((or (npair? tool) (npair? (cdr tool)))
-         (texmacs-error "tm-tool" "tool name ~S should be a pair" tool))
-        ((not (func? name :name 1))
-         (texmacs-error "tm-tool" "~S should be of the form (:name :1)" name))
-        (else
-          `(begin
-             (tm-widget ,tool ,@body)
-             (tm-widget (texmacs-side-tool ,(cadr tool) tool . opts)
-               (:require (== (car tool) ',(car tool)))
-               (if (and (in? :title opts) ,(cadr name))
-                   (division "title"
-                     (hlist
-                       (text ,(cadr name))
-                       >>
-                       (division "plain"
-                         ("x" (tool-close :any ',(car tool) ,(cadr tool)))))))
-               (dynamic (,(car tool) ,(cadr tool)
-                         ,@(map (lambda (i) `(list-ref tool ,(- i 1)))
-                                (.. 2 (length tool)))))
-               ======)
-             ))))
+(define (get-name-tool body)
+  (cond ((null? body) #f)
+        ((keyword? (car body)) (get-name-tool (cdr body)))
+        ((func? (car body) :name 1) (cadar body))
+        ((not (and (pair? (car body)) (keyword? (caar body)))) #f)
+        (else (get-name-tool (cdr body)))))
 
-(tm-define-macro (tm-tool tool name . body)
-  `(tm-tool* ,tool ,name (centered ,@body)))
+(define (finalize-tool body pos)
+  (cond ((null? body) (lambda (x) x))
+        ((and (== (car body) :side-centered) (== pos :side))
+         (with finalize (finalize-tool (cdr body) pos)
+           (lambda (x) `(centered ,(finalize x)))))
+        ((and (== (car body) :bottom-indent) (== pos :bottom))
+         (with finalize (finalize-tool (cdr body) pos)
+           (lambda (x) `(hlist // // (vlist === ,(finalize x) ===) // //))))
+        ((or (keyword? (car body))
+             (and (pair? (car body)) (keyword? (caar body))))
+         (finalize-tool (cdr body) pos))
+        (else (lambda (x) x))))
+
+(define (preprocess-tool body)
+  (cond ((null? body) body)
+        ((or (keyword? (car body))
+             (and (pair? (car body)) (keyword? (caar body))))
+         (preprocess-tool (cdr body)))
+        (else body)))
+
+(tm-define-macro (tm-tool* tool . obody)
+  (let* ((name (get-name-tool obody))
+         (finalize-side (finalize-tool obody :side))
+         (finalize-bottom (finalize-tool obody :bottom))
+         (body (preprocess-tool obody)))
+    ;;(display* "body = " body "\n")
+    `(begin
+       (tm-widget ,tool ,@body)
+       (tm-widget (texmacs-side-tool ,(cadr tool) tool . opts)
+         (:require (== (car tool) ',(car tool)))
+         (if (and (in? :title opts) ,name)
+             (division "title"
+               (hlist
+                 (text ,name)
+                 >>
+                 (division "plain"
+                   ("x" (tool-close :any ',(car tool) ,(cadr tool)))))))
+         (assuming (tool-side? tool win)
+           ,(finalize-side
+             `(dynamic (,(car tool) ,(cadr tool)
+                        ,@(map (lambda (i) `(list-ref tool ,(- i 1)))
+                               (.. 2 (length tool)))))))
+         (assuming (tool-bottom? tool win)
+           ,(finalize-bottom
+             `(dynamic (,(car tool) ,(cadr tool)
+                        ,@(map (lambda (i) `(list-ref tool ,(- i 1)))
+                               (.. 2 (length tool)))))))))))
+
+(tm-define-macro (tm-tool tool . body)
+  `(tm-tool* ,tool :side-centered :bottom-indent ,@body))
