@@ -1054,6 +1054,13 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       if (old_qwidget) old_qwidget->deleteLater();
       sideTools->setWidget (new_qwidget);
       update_visibility();
+#if (QT_VERSION >= 0x050000)
+      QList<QDockWidget*> l1;
+      l1.append ((QDockWidget*) extraTools);
+      QList<int> l2;
+      l2.append (1);
+      mainwindow()->resizeDocks (l1, l2, Qt::Horizontal);
+#endif
       new_qwidget->show();
     }
       break;
@@ -1067,6 +1074,13 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       if (old_qwidget) old_qwidget->deleteLater();
       leftTools->setWidget (new_qwidget);
       update_visibility();
+#if (QT_VERSION >= 0x050000)
+      QList<QDockWidget*> l1;
+      l1.append ((QDockWidget*) extraTools);
+      QList<int> l2;
+      l2.append (1);
+      mainwindow()->resizeDocks (l1, l2, Qt::Horizontal);
+#endif
       new_qwidget->show();
     }
       break;
@@ -1080,6 +1094,13 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       if (old_qwidget) old_qwidget->deleteLater();
       bottomTools->setWidget (new_qwidget);
       update_visibility();
+#if (QT_VERSION >= 0x050000)
+      QList<QDockWidget*> l1;
+      l1.append ((QDockWidget*) extraTools);
+      QList<int> l2;
+      l2.append (1);
+      mainwindow()->resizeDocks (l1, l2, Qt::Vertical);
+#endif
       new_qwidget->show();
     }
       break;
@@ -1097,8 +1118,8 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       QList<QDockWidget*> l1;
       l1.append ((QDockWidget*) extraTools);
       QList<int> l2;
-      l2.append (0);
-      mw->resizeDocks (l1, l2, Qt::Vertical);
+      l2.append (1);
+      mainwindow()->resizeDocks (l1, l2, Qt::Vertical);
 #endif
       new_qwidget->show();
     }
