@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|gui-button>
+  <use-package|gui-base|gui-button>
 
   <\active*>
     <\src-comment>

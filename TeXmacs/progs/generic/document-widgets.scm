@@ -482,7 +482,7 @@
         ===
         (resize "600px" "60px"
           (texmacs-input `(document ,(initial-get-tree u var))
-                         `(style (tuple ,@style))
+                         `(style (tuple ,@style "gui-base"))
                          (header-buffer var)))
         ===)))
   === ===
