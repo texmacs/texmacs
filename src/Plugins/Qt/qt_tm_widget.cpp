@@ -411,7 +411,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   bottomTools->setFeatures (QDockWidget::NoDockWidgetFeatures);
   bottomTools->setFloating (false);
   bottomTools->setTitleBarWidget (new QWidget()); // Disables title bar
-  bottomTools->setMinimumHeight (10);             // Avoids warning
+  //bottomTools->setMinimumHeight (10);             // Avoids warning
   bottomTools->setContentsMargins (3, 6, 3, -2);  // Hacks hacks hacks... :(
   mw->addDockWidget (Qt::BottomDockWidgetArea, bottomTools);
 
