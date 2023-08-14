@@ -20,6 +20,28 @@
         (generic document-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Settings management
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define selector-table (make-ahash-table))
+
+(tm-define (selector-set specs var val)
+  ;;(display* "Set " specs ", " var  " <- " val "\n")
+  (ahash-set! selector-table (list specs var) val))
+
+(tm-define (selector-get* specs var)
+  (or (ahash-ref selector-table (list specs var))
+      (cond ((== var :family) "TeXmacs Computer Modern")
+            ((== var :style) "Regular")
+            ((== var :size) "10")
+            (else #f))))
+
+(tm-define (selector-get specs var)
+  (with val (selector-get* specs var)
+    ;;(display* "Get " specs ", " var " -> " val "\n")
+    val))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Font samples
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -141,16 +163,13 @@
 ;; Global state of font selector
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define selector-font-family "TeXmacs Computer Modern")
-(tm-define selector-font-style "Regular")
-(tm-define selector-font-size "10")
-
-(tm-define (selector-get-font)
+(tm-define (selector-get-font specs)
   (logical-font-patch
-    (logical-font-public selector-font-family selector-font-style)
+    (logical-font-public (selector-get specs :family)
+                         (selector-get specs :style))
     (selected-properties)))
 
-(define (selector-initialize-font getter)
+(define (selector-initialize-font specs getter)
   (let* ((fam (font-family-main (getter "font")))
          (var (getter "font-family"))
          (ser (getter "font-series"))
@@ -160,21 +179,21 @@
          (fn  (logical-font-search-exact lf)))
     ;;(display* "lf= " lf "\n")
     ;;(display* "fn= " fn "\n")
-    (set! selector-font-family (car fn))
-    (set! selector-font-style (cadr fn))
-    (set! selector-font-size sz)
+    (selector-set specs :family (car fn))
+    (selector-set specs :style (cadr fn))
+    (selector-set specs :size sz)
     (selector-initialize-search)
     (selector-initialize-customize getter)))
 
-(tm-define (selector-get-changes getter)
-  (if (== selector-font-style "Unknown")
+(tm-define (selector-get-changes specs getter)
+  (if (== (selector-get specs :style) "Unknown")
       (list)
-      (with fn (selector-get-font)
+      (with fn (selector-get-font specs)
         (with l '()
           (when (!= (selector-font-effects) (getter "font-effects"))
             (set! l (cons* "font-effects" (selector-font-effects) l)))
-          (when (!= selector-font-size (getter "font-base-size"))
-            (set! l (cons* "font-base-size" selector-font-size l)))
+          (when (!= (selector-get specs :size) (getter "font-base-size"))
+            (set! l (cons* "font-base-size" (selector-get specs :size) l)))
           (when (!= (logical-font-shape fn) (getter "font-shape"))
             (set! l (cons* "font-shape" (logical-font-shape fn) l)))
           (when (!= (logical-font-series fn) (getter "font-series"))
@@ -185,8 +204,8 @@
             (set! l (cons* "font" (logical-font-family* fn) l)))
           l))))
 
-(define (selector-font-simulate-comment)
-  (let* ((fn  (selector-get-font))
+(define (selector-font-simulate-comment specs)
+  (let* ((fn  (selector-get-font specs))
 	 (fam (logical-font-family fn))
          (var (logical-font-variant fn))
          (ser (logical-font-series fn))
@@ -197,29 +216,30 @@
     ;;(display* "fn = " fn "\n")
     ;;(display* "lf = " lf "\n")
     ;;(display* "fn2= " fn2 "\n")
-    (if (and (== selector-font-family (car fn2))
-             (== selector-font-style (cadr fn2))
+    (if (and (== (selector-get specs :family) (car fn2))
+             (== (selector-get specs :style) (cadr fn2))
              (== sel ""))
         ""
-        (string-append "  (" selector-font-family " " selector-font-style
+        (string-append "  (" (selector-get specs :family)
+                       " " (selector-get specs :style)
                        (if (== sel "") "" " + ") sel
                        " -> " (car fn2) " " (cadr fn2) ")"))))
 
-(define (selector-font-demo-text)
-  (with fn (selector-get-font)
+(define (selector-font-demo-text specs)
+  (with fn (selector-get-font specs)
     ;;(display* "Font: " fn "\n")
     ;;(display* "Internal font: " (logical-font-family* fn)
     ;;          ", " (logical-font-variant fn)
     ;;          ", " (logical-font-series fn)
     ;;          ", " (logical-font-shape fn)
-    ;;          ", " selector-font-size "\n")
+    ;;          ", " (selector-get specs :size) "\n")
     `(document
        (with
          "font" ,(logical-font-family* fn)
          "font-family" ,(logical-font-variant fn)
          "font-series" ,(logical-font-series fn)
          "font-shape" ,(logical-font-shape fn)
-         "font-base-size" ,selector-font-size
+         "font-base-size" ,(selector-get specs :size)
          "font-effects" ,(selector-font-effects)
          ,sample-text))))
 
@@ -404,9 +424,9 @@
     ===
     (resize "300px" "350px"
       (scrollable
-        (choice (set! selector-font-family answer)
+        (choice (selector-set specs :family answer)
                 (selected-families)
-                selector-font-family)))))
+                (selector-get specs :family))))))
 
 (tm-widget (font-style-selector specs)
   (vertical
@@ -414,12 +434,12 @@
     ===
     (resize "200px" "350px"
       (scrollable
-        (choice (set! selector-font-style answer)
-                (selected-styles selector-font-family)
-                selector-font-style)))))
+        (choice (selector-set specs :style answer)
+                (selected-styles (selector-get specs :family))
+                (selector-get specs :style))))))
 
 (tm-widget (font-style-selector*)
-  (dynamic (font-style-selector #f)))
+  (dynamic (font-style-selector :todo)))
 
 (tm-widget (font-size-selector specs)
   (vertical
@@ -427,14 +447,14 @@
     ===
     (resize "75px" "350px"
       (scrollable
-        (choice (set! selector-font-size answer)
+        (choice (selector-set specs :size answer)
                 (font-default-sizes)
-                selector-font-size)))))
+                (selector-get specs :size))))))
 
 (tm-widget (font-sample-text specs)
   (texmacs-output
     `(with "bg-color" "white"
-       ,(selector-font-demo-text))
+       ,(selector-font-demo-text specs))
     '(style "generic")))
 
 (tm-widget (font-properties-selector specs)
@@ -446,13 +466,13 @@
     ===
     (aligned
       ;;(item (text "Base family:")
-      ;;  (enum (set! selector-font-family answer)
+      ;;  (enum (selector-set specs :family answer)
       ;;        (font-database-families)
-      ;;        selector-font-family "150px"))
+      ;;        (selector-get specs :family) "150px"))
       ;;(item (text "Base style:")
-      ;;  (enum (set! selector-font-style answer)
-      ;;        (font-database-styles selector-font-family)
-      ;;        selector-font-style "150px"))
+      ;;  (enum (selector-set specs :style answer)
+      ;;        (font-database-styles (selector-get specs :family))
+      ;;        (selector-get specs :style) "150px"))
       ;;(item ====== ======)
       (item (text "Weight:")
         (enum (selector-search-set! selector-search-weight answer)
@@ -626,7 +646,7 @@
 (tm-widget (font-selector-demo specs)
   (hlist
     (bold (text "Sample text"))
-    (text (selector-font-simulate-comment))
+    (text (selector-font-simulate-comment specs))
     >>>)
   ===
   (resize "880px" "225px"
@@ -634,7 +654,7 @@
       (dynamic (font-sample-text specs)))))
 
 (tm-widget (font-selector-demo*)
-  (dynamic (font-selector-demo #f)))
+  (dynamic (font-selector-demo :todo)))
 
 (tm-define (font-import name)
   (font-database-extend-local name)
@@ -679,24 +699,26 @@
                (init-default "font" "font-base-size" "math-font" "prog-font"
                              "font-family" "font-series" "font-shape"
                              "font-effects")
-               (selector-initialize-font get-init)
+               (selector-initialize-font specs get-init)
                (refresh-now "font-family-selector")
                (refresh-now "font-size-selector")
                (refresh-now "font-customized-selector")))
             // //
-            ("Ok" (quit (selector-get-changes get-init))))
+            ("Ok" (quit (selector-get-changes specs get-init))))
         (if (not flag?)
-            ("Ok" (quit (selector-get-changes get-env))))))))
+            ("Ok" (quit (selector-get-changes specs get-env))))))))
 
 (tm-define (open-font-selector)
   (:interactive #t)
-  (selector-initialize-font get-env)
-  (dialogue-window (font-selector #f #f) make-multi-with "Font selector"))
+  (selector-initialize-font :todo get-env)
+  (dialogue-window (font-selector :todo #f)
+                   make-multi-with "Font selector"))
 
 (tm-define (open-document-font-selector)
   (:interactive #t)
-  (selector-initialize-font get-init)
-  (dialogue-window (font-selector #f #t) init-multi "Document font selector"))
+  (selector-initialize-font :todo get-init)
+  (dialogue-window (font-selector :todo #t)
+                   init-multi "Document font selector"))
 
 (define ((prefixed-get-init prefix) var)
   (if (init-has? (string-append prefix var))
@@ -711,5 +733,6 @@
 (tm-define (open-document-other-font-selector prefix)
   (let* ((getter (prefixed-get-init prefix))
          (setter (prefixed-init-multi prefix)))
-    (selector-initialize-font getter)
-    (dialogue-window (font-selector #f #t) setter "Font selector")))
+    (selector-initialize-font :todo getter)
+    (dialogue-window (font-selector :todo #t)
+                     setter "Font selector")))
