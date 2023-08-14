@@ -361,22 +361,22 @@
     (assuming flag?
       (resize "600px" "60px"
         (texmacs-input `(document ,(get-tag-arg u 'set-this-page-header))
-                       `(style (tuple ,@style)) (header-buffer))))
+                       `(style (tuple ,@style "gui-base")) (header-buffer))))
     (assuming (not flag?)
       (resize "330px" "60px"
         (texmacs-input `(document ,(get-tag-arg u 'set-this-page-header))
-                       `(style (tuple ,@style)) (header-buffer))))
+                       `(style (tuple ,@style "gui-base")) (header-buffer))))
     === ===
     (bold (text "This page footer"))
     ===
     (assuming flag?
       (resize "600px" "60px"
         (texmacs-input `(document ,(get-tag-arg u 'set-this-page-footer))
-                       `(style (tuple ,@style)) (footer-buffer))))
+                       `(style (tuple ,@style "gui-base")) (footer-buffer))))
     (assuming (not flag?)
       (resize "330px" "60px"
         (texmacs-input `(document ,(get-tag-arg u 'set-this-page-footer))
-                       `(style (tuple ,@style)) (footer-buffer))))
+                       `(style (tuple ,@style "gui-base")) (footer-buffer))))
     ======
     (explicit-buttons
       (hlist
