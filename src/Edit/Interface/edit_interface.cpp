@@ -116,14 +116,15 @@ edit_interface_rep::resume () {
   SERVER (menu_icons (3, "(horizontal (link texmacs-extra-icons))"));
   array<url> a= buffer_to_windows (buf->buf->name);
   if (N(a) > 0) {
-    string win = "(string->url \"" * as_string (a[0]) * "\")"; 
+    string win = "(string->url \"" * as_string (a[0]) * "\")";
     string ldyn= "(dynamic (texmacs-left-tools " * win * "))";
     string rdyn= "(dynamic (texmacs-side-tools " * win * "))";
+    string bdyn= "(dynamic (texmacs-extra-tools " * win * "))";
     SERVER (side_tools (1, "(vertical " * ldyn * ")"));
     SERVER (side_tools (0, "(vertical " * rdyn * ")"));
+    SERVER (bottom_tools (1, "(vertical " * bdyn * ")"));
   }
   SERVER (bottom_tools (0, "(vertical (link texmacs-bottom-tools))"));
-  SERVER (bottom_tools (1, "(vertical (dynamic (custom-keyboard-toolbar)))"));
   cur_sb= 2;
   env_change= env_change & (~THE_FREEZE);
   notify_change (THE_FOCUS + THE_EXTENTS);
@@ -624,11 +625,12 @@ edit_interface_rep::update_menus () {
     string win = "(string->url \"" * as_string (a[0]) * "\")";
     string ldyn= "(dynamic (texmacs-left-tools " * win * "))";
     string rdyn= "(dynamic (texmacs-side-tools " * win * "))";
+    string bdyn= "(dynamic (texmacs-extra-tools " * win * "))";
     SERVER (side_tools (1, "(vertical " * ldyn * ")"));
     SERVER (side_tools (0, "(vertical " * rdyn * ")"));
+    SERVER (bottom_tools (1, "(vertical " * bdyn * ")"));
   }
   SERVER (bottom_tools (0, "(vertical (link texmacs-bottom-tools))"));
-  SERVER (bottom_tools (1, "(vertical (dynamic (custom-keyboard-toolbar)))"));
   set_footer ();
   if (has_current_window ()) {
     array<url> ws= buffer_to_windows (

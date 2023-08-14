@@ -897,7 +897,7 @@
 (tm-define (tm-interactive-new fun args)
   ;;(display* "interactive " fun ", " args "\n")
   (if (side-tools?)
-      (tool-select :transient-right (list 'interactive-tool fun args))
+      (tool-select :transient-bottom (list 'interactive-tool fun args))
       (tm-interactive fun args)))
 
 (set! tm-interactive-hook tm-interactive-new)
