@@ -1247,8 +1247,8 @@
   (if (null? l) l
       (with r (find-positions tool win (cdr l))
         (with (x . t) l
-          (with (key val) x
-            (with (key-win key-pos) key
+          (with (key val) (if (list-2? x) x (list "" ""))
+            (with (key-win key-pos) (if (list-2? key) key (list "" ""))
               (if (and (== key-win win) (== val tool))
                   (cons key-pos r)
                   r)))))))
