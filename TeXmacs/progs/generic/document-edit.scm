@@ -88,15 +88,18 @@
       (when (!= new (get-init-env var))
         (set-init-env var new)))))
 
-(define (init-multi* l)
-  (when (and (nnull? l) (nnull? (cdr l)))
-    (init-env (car l) (cadr l))
-    (init-multi* (cddr l))))
-
 (tm-define (init-multi l)
-  (if (and (list-2? l) (== (car l) "font"))
-      (init-font (cadr l))
-      (init-multi* l)))
+  (when (and (nnull? l) (nnull? (cdr l)))
+    (cond ((and (== (car l) "font") (== (cadr l) :default))
+           (remove-font-packages)
+           (init-default "font"))
+          ((== (car l) "font")
+           (init-font (cadr l)))
+          ((== (cadr l) :default)
+           (init-default (car l)))
+          (else
+           (init-env (car l) (cadr l))))
+    (init-multi (cddr l))))
 
 (tm-define (test-init-font? val . opts)
   (== (font-family-main (get-init "font")) val))
