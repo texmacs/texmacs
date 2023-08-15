@@ -74,7 +74,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget ((gpg-widget-error-decrypted fingerprint) cmd)
-  (resize ("400px" "700px" "9999px") ("100px" "100px" "100px") 
+  (resize '("400px" "700px" "9999px") '("100px" "100px" "100px") 
   (padded
     (centered (bold (text
       (string-append "Unknown GnuPG recipient " fingerprint))))
@@ -388,7 +388,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget ((gpg-widget-import-public-keys-from-buffer fingerprints) cmd)
-  (resize ("500px" "500px" "9999px") ("200px" "200px" "9999px") 
+  (resize '("500px" "500px" "9999px") '("200px" "200px" "9999px") 
   (scrollable
     (padded
       (aligned
@@ -405,7 +405,7 @@
       (cmd "Ok"))))
 
 (tm-widget (gpg-widget-no-new-public-key-from-buffer cmd)
-  (resize ("400px" "400px" "400px") ("100px" "100px" "100px") 
+  (resize '("400px" "400px" "400px") '("100px" "100px" "100px") 
   (padded
     (centered (bold (text "No new public key in document!")))
     ===
