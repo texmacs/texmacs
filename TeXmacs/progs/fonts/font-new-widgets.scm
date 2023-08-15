@@ -630,7 +630,8 @@
 (tm-widget (font-effect-selector specs which)
   (enum (selector-customize-set! specs which answer)
         (font-effect-defaults which)
-        (selector-customize-get specs which (font-effect-default which)) "50px"))
+        (selector-customize-get
+         specs which (font-effect-default which)) "50px"))
 
 (tm-widget (font-effects-selector specs)
   (vertical
@@ -747,6 +748,10 @@
   (refresh-now "font-size-selector")
   (refresh-now "font-selector-demo"))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main widgets
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (tm-widget ((font-selector specs global?) quit)
   (padded
     (horizontal
@@ -787,43 +792,6 @@
             ("Ok" (quit (selector-get-changes specs get-init))))
         (if (not global?)
             ("Ok" (quit (selector-get-changes specs get-env))))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; High level window interface
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (open-font-selector-window)
-  (:interactive #t)
-  (selector-initialize-font :window get-env)
-  (dialogue-window (font-selector :window #f)
-                   make-multi-with "Font selector"))
-
-(tm-define (open-document-font-selector-window)
-  (:interactive #t)
-  (selector-initialize-font :window get-init)
-  (dialogue-window (font-selector :window #t)
-                   init-multi "Document font selector"))
-
-(define ((prefixed-get-init prefix) var)
-  (if (init-has? (string-append prefix var))
-      (get-init (string-append prefix var))
-      (get-init var)))
-
-(define ((prefixed-init-multi prefix) l)
-  (when (and (nnull? l) (nnull? (cdr l)))
-    (init-env (string-append prefix (car l)) (cadr l))
-    ((prefixed-init-multi prefix) (cddr l))))
-
-(tm-define (open-document-other-font-selector-window prefix)
-  (let* ((getter (prefixed-get-init prefix))
-         (setter (prefixed-init-multi prefix)))
-    (selector-initialize-font :window getter)
-    (dialogue-window (font-selector :window #t)
-                     setter "Font selector")))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; High level tool interface
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-tool* (font-tool win name getter setter global?)
   (:name name)
@@ -866,6 +834,43 @@
                 ("Import font" (choose-file font-import "Import font" ""))
                 ("Scan disk for more fonts" (scan-disk-for-fonts))
                 ("Clear font cache" (clear-font-cache))))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; High level window interface
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (open-font-selector-window)
+  (:interactive #t)
+  (selector-initialize-font :window get-env)
+  (dialogue-window (font-selector :window #f)
+                   make-multi-with "Font selector"))
+
+(tm-define (open-document-font-selector-window)
+  (:interactive #t)
+  (selector-initialize-font :window get-init)
+  (dialogue-window (font-selector :window #t)
+                   init-multi "Document font selector"))
+
+(define ((prefixed-get-init prefix) var)
+  (if (init-has? (string-append prefix var))
+      (get-init (string-append prefix var))
+      (get-init var)))
+
+(define ((prefixed-init-multi prefix) l)
+  (when (and (nnull? l) (nnull? (cdr l)))
+    (init-env (string-append prefix (car l)) (cadr l))
+    ((prefixed-init-multi prefix) (cddr l))))
+
+(tm-define (open-document-other-font-selector-window prefix)
+  (let* ((getter (prefixed-get-init prefix))
+         (setter (prefixed-init-multi prefix)))
+    (selector-initialize-font :window getter)
+    (dialogue-window (font-selector :window #t)
+                     setter "Font selector")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; High level tool interface
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (open-font-tool name getter setter global?)
   (let* ((win (current-window))
