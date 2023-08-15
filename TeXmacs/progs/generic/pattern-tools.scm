@@ -454,19 +454,19 @@
   )
 
 (tm-tool (pattern-tool win name)
-  (:name (cadr tool))  ;; NOTE: 'tool' is an implicit argument
+  (:name name)
   (let* ((key (list :pattern name win))
          (u (window->buffer win)))
     (dynamic (pattern-selector-tool key u))))
 
 (tm-tool (gradient-tool win name)
-  (:name (cadr tool))  ;; NOTE: 'tool' is an implicit argument
+  (:name name)
   (let* ((key (list :gradient name win))
          (u (window->buffer win)))
     (dynamic (pattern-selector-tool key u))))
 
 (tm-tool (picture-tool win name)
-  (:name (cadr tool))  ;; NOTE: 'tool' is an implicit argument
+  (:name name)
   (let* ((key (list :picture name win))
          (u (window->buffer win)))
     (dynamic (pattern-selector-tool key u))))
