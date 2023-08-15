@@ -97,6 +97,11 @@
     ;;(display* "Get " specs ", " var " -> " r "\n")
     r))
 
+(tm-define (selector-clean specs)
+  (with (getter setter . other) specs
+    (for (var all-vars)
+      (ahash-remove! selector-table (selkey specs var)))))
+
 (tm-define (selector-restore specs global?)
   (when global? ;; NOTE: non global => ':default' values not yet implemented
     (with vars (list "font" "font-base-size" "math-font" "prog-font"
@@ -831,12 +836,14 @@
 (tm-define (open-font-selector-window)
   (:interactive #t)
   (with specs (list get-env make-multi-with #f)
+    (selector-clean specs)
     (dialogue-window (font-selector specs #f)
                      make-multi-with "Font selector")))
 
 (tm-define (open-document-font-selector-window)
   (:interactive #t)
   (with specs (list get-init init-multi #t)
+    (selector-clean specs)
     (dialogue-window (font-selector specs #t)
                      init-multi "Document font selector")))
 
@@ -854,6 +861,7 @@
   (let* ((getter (prefixed-get-init prefix))
          (setter (prefixed-init-multi prefix))
          (specs (list getter setter #t)))
+    (selector-clean specs)
     (dialogue-window (font-selector specs #t)
                      setter "Font selector")))
 
@@ -865,23 +873,24 @@
   (let* ((win (current-window))
          (specs (list getter setter global? win))
          (tool `(font-tool ,name ,getter ,setter ,global?)))
+    (selector-clean specs)
     (tool-select :transient-right tool win)))
 
 (tm-define (open-font-selector)
   (:interactive #t)
-  (if (and #f (side-tools?))
+  (if (side-tools?)
       (open-font-tool "Font" get-env make-multi-with #f)
       (open-font-selector-window)))
 
 (tm-define (open-document-font-selector)
   (:interactive #t)
-  (if (and #f (side-tools?))
+  (if (side-tools?)
       (open-font-tool "Document font" get-init init-multi #t)
       (open-document-font-selector-window)))
 
 (tm-define (open-document-other-font-selector prefix)
   (:interactive #t)
-  (if (and #f (side-tools?))
+  (if (side-tools?)
       (let* ((getter (prefixed-get-init prefix))
              (setter (prefixed-init-multi prefix)))
         (open-font-tool "Font selector" getter setter #t))
