@@ -716,16 +716,20 @@
         (if (not flag?)
             ("Ok" (quit (selector-get-changes specs get-env))))))))
 
-(tm-define (open-font-selector)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; High level window interface
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (open-font-selector-window)
   (:interactive #t)
-  (selector-initialize-font :todo get-env)
-  (dialogue-window (font-selector :todo #f)
+  (selector-initialize-font :window get-env)
+  (dialogue-window (font-selector :window #f)
                    make-multi-with "Font selector"))
 
-(tm-define (open-document-font-selector)
+(tm-define (open-document-font-selector-window)
   (:interactive #t)
-  (selector-initialize-font :todo get-init)
-  (dialogue-window (font-selector :todo #t)
+  (selector-initialize-font :window get-init)
+  (dialogue-window (font-selector :window #t)
                    init-multi "Document font selector"))
 
 (define ((prefixed-get-init prefix) var)
@@ -738,9 +742,59 @@
     (init-env (string-append prefix (car l)) (cadr l))
     ((prefixed-init-multi prefix) (cddr l))))
 
-(tm-define (open-document-other-font-selector prefix)
+(tm-define (open-document-other-font-selector-window prefix)
   (let* ((getter (prefixed-get-init prefix))
          (setter (prefixed-init-multi prefix)))
-    (selector-initialize-font :todo getter)
-    (dialogue-window (font-selector :todo #t)
+    (selector-initialize-font :window getter)
+    (dialogue-window (font-selector :window #t)
                      setter "Font selector")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; High level tool interface
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-tool (font-tool win name getter global?)
+  (:name (cadr tool))  ;; NOTE: 'tool' is an implicit argument
+  (with specs (list win getter global?)
+    (refreshable "font-family-selector"
+      (dynamic (font-family-selector specs)))
+    (horizontal
+      (refreshable "font-style-selector"
+        (dynamic (font-style-selector specs)))
+      ///
+      (refreshable "font-size-selector"
+        (dynamic (font-size-selector specs)))
+      >>>)
+    ;;(dynamic (font-properties-selector specs)))
+    ;;(refreshable "font-customized-selector"
+    ;;  (dynamic (font-customized-selector specs)))
+    ;;(refreshable "font-selector-demo"
+    ;;  (dynamic (font-selector-demo specs))))
+    ))
+
+(tm-define (open-font-tool name getter setter global?)
+  (let* ((win (current-window))
+         (specs (list win getter global?))
+         (tool `(font-tool ,name ,getter ,global?)))
+    (selector-initialize-font specs getter)
+    (tool-select :transient-right tool win)))
+
+(tm-define (open-font-selector)
+  (:interactive #t)
+  (if (and #f (side-tools?))
+      (open-font-tool "Font" get-env make-multi-with #f)
+      (open-font-selector-window)))
+
+(tm-define (open-document-font-selector)
+  (:interactive #t)
+  (if (and #f (side-tools?))
+      (open-font-tool "Document font" get-init init-multi #t)
+      (open-document-font-selector-window)))
+
+(tm-define (open-document-other-font-selector prefix)
+  (:interactive #t)
+  (if (and #f (side-tools?))
+      (let* ((getter (prefixed-get-init prefix))
+             (setter (prefixed-init-multi prefix)))
+        (open-font-tool "Font selector" getter setter #t))
+      (open-document-other-font-selector prefix-window)))
