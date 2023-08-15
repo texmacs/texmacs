@@ -26,9 +26,13 @@
 
 (define selector-table (make-ahash-table))
 
+(define (selkey specs var)
+  (with win (if (list-4? specs) (cadddr specs) (current-window))
+    (list specs var (window->buffer win))))
+
 (tm-define (selector-set* specs var val)
   ;;(display* "Set " specs ", " var " <- " val "\n")
-  (ahash-set! selector-table (list specs var) val)
+  (ahash-set! selector-table (selkey specs var) val)
   (refresh-now "font-style-selector")
   (refresh-now "font-selector-demo"))
 
@@ -44,20 +48,20 @@
 (tm-define (selector-set specs var val)
   ;;(display* "Set " specs ", " var " <- " val "\n")
   (when (!= val (selector-get specs var))
-    (ahash-set! selector-table (list specs var) val)
+    (ahash-set! selector-table (selkey specs var) val)
     (selector-notify specs)
     (refresh-now "font-style-selector")
     (refresh-now "font-selector-demo")))    
 
 (tm-define (selector-reset* specs var)
   ;;(display* "Reset " specs ", " var "\n")
-  (ahash-remove! selector-table (list specs var))
+  (ahash-remove! selector-table (selkey specs var))
   (refresh-now "font-style-selector")
   (refresh-now "font-selector-demo"))
 
 (tm-define (selector-reset specs var)
   ;;(display* "Reset " specs ", " var "\n")
-  (ahash-remove! selector-table (list specs var))
+  (ahash-remove! selector-table (selkey specs var))
   (selector-notify specs)
   (refresh-now "font-style-selector")
   (refresh-now "font-selector-demo"))
@@ -80,7 +84,7 @@
 
 (tm-define (selector-get* specs var)
   ;;(display* "Get " specs ", " var "\n")
-  (or (ahash-ref selector-table (list specs var))
+  (or (ahash-ref selector-table (selkey specs var))
       (cond ((== var :family) (car (initial-font-data specs)))
             ((== var :style) (cadr (initial-font-data specs)))
             ((== var :size) (caddr (initial-font-data specs)))
@@ -100,7 +104,7 @@
                      "font-effects")
       (with (getter setter . other) specs
         (for (var all-vars)
-          (ahash-remove! selector-table (list specs var)))
+          (ahash-remove! selector-table (selkey specs var)))
         (for (var vars)
           (setter (list var :default))))
       (keyboard-focus-on "canvas")
