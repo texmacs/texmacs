@@ -891,7 +891,7 @@
     (tool-close :any 'interactive-tool win)))
 
 (tm-tool (interactive-tool win fun args)
-  (:name (interactive-title (cadr tool)))  ;; 'tool' is an implicit argument
+  (:name (interactive-title fun))
   (dynamic
    (eval
     (let* ((side? (tool-side? `(interactive-tool ,fun ,args) win))
