@@ -754,7 +754,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-tool (font-tool win name getter global?)
-  (:name (cadr tool))  ;; NOTE: 'tool' is an implicit argument
+  (:name name)
   (with specs (list win getter global?)
     (refreshable "font-family-selector"
       (dynamic (font-family-selector specs)))

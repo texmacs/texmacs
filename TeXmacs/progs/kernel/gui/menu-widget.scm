@@ -1361,12 +1361,16 @@
   (division "title"
     (text (string-append "Missing '" (object->string (car tool)) "' tool"))))
 
-(define (get-name-tool body)
+(define (get-name-tool tool body)
   (cond ((null? body) #f)
-        ((keyword? (car body)) (get-name-tool (cdr body)))
-        ((func? (car body) :name 1) (cadar body))
+        ((keyword? (car body)) (get-name-tool tool (cdr body)))
+        ((and (func? (car body) :name 1) (null? (cddr tool))) (cadar body))
+        ((func? (car body) :name 1)
+         ;;(display* "Name = "
+         ;;          `(with (,@(cddr tool)) (cdr tool) ,(cadar body)) "\n")
+         `(with (,@(cddr tool)) (cdr tool) ,(cadar body)))
         ((not (and (pair? (car body)) (keyword? (caar body)))) #f)
-        (else (get-name-tool (cdr body)))))
+        (else (get-name-tool tool (cdr body)))))
 
 (define (finalize-tool body pos)
   (cond ((null? body) (lambda (x) x))
@@ -1391,7 +1395,7 @@
         (else body)))
 
 (tm-define-macro (tm-tool* tool . obody)
-  (let* ((name (get-name-tool obody))
+  (let* ((name (get-name-tool tool obody))
          (finalize-side (finalize-tool obody :side))
          (finalize-bottom (finalize-tool obody :bottom))
          (body (preprocess-tool obody)))
