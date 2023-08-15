@@ -75,6 +75,13 @@
       "$TEXMACS_HOME_PATH/fonts/font-features.scm"
       "$TEXMACS_HOME_PATH/fonts/font-characteristics.scm")))
 
+(tm-define (scan-disk-for-fonts)
+  (:interactive #t)
+  (:synopsis "Scan disk for more fonts")
+  (system-wait "Full search for more fonts on your system"
+               "(can be long)")
+  (font-database-build-local))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscellaneous
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

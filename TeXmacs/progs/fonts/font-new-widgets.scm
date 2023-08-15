@@ -17,7 +17,8 @@
   (:use (kernel gui menu-widget)
         (fonts font-sample)
         (generic format-edit)
-        (generic document-edit)))
+        (generic document-edit)
+        (utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Settings management
@@ -36,7 +37,10 @@
     (with (win getter setter global?) specs
       (with changes (selector-get-changes specs getter)
         (when (nnull? changes)
-          (setter changes))))))
+          (setter changes)
+          ;;(with-window win (update-menus))
+          (keyboard-focus-on "canvas")
+          )))))
 
 (tm-define (selector-set specs var val)
   ;;(display* "Set " specs ", " var " <- " val "\n")
@@ -59,7 +63,8 @@
   (refresh-now "font-style-selector")
   (refresh-now "font-selector-demo"))
 
-(tm-define (selector-get* specs var)
+(tm-define (selector-get specs var)
+  ;;(display* "Get " specs ", " var "\n")
   (or (ahash-ref selector-table (list specs var))
       (cond ((== var :family) "TeXmacs Computer Modern")
             ((== var :style) "Regular")
@@ -76,10 +81,30 @@
             ((== var :glyphs) "Any")
             (else #f))))
 
-(tm-define (selector-get specs var)
-  (with val (selector-get* specs var)
-    ;;(display* "Get " specs ", " var " -> " val "\n")
-    val))
+(tm-define (selector-restore specs global?)
+  (when global? ;; NOTE: non global => ':default' values not yet implemented
+    (with vars (list "font" "font-base-size" "math-font" "prog-font"
+                     "font-family" "font-series" "font-shape"
+                     "font-effects")
+      (if (list? specs)
+          (with (win getter setter global?) specs
+            (for (var vars)
+              (ahash-remove! selector-table (list specs var))
+              (setter (list var :default)))
+            (keyboard-focus-on "canvas")
+            (delayed
+              (:idle 1)
+              (selector-initialize-font specs getter)
+              (refresh-now "font-family-selector")
+              (refresh-now "font-size-selector")
+              (refresh-now "font-customized-selector")))
+          (begin
+            (apply init-default vars)
+            (selector-initialize-font specs get-init)
+            (selector-notify specs)
+            (refresh-now "font-family-selector")
+            (refresh-now "font-size-selector")
+            (refresh-now "font-customized-selector"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Font samples
@@ -266,6 +291,14 @@
   (with (fn1 fn1+ fn2) (selector-font-simulate-data specs)
     (if (and (== fn1 fn1+) (== fn1 fn2)) ""
         (string-append "  (" fn1+ " -> " fn2 ")"))))
+
+(tm-widget (selector-font-simulate-widget specs)
+  (with (fn1 fn1+ fn2) (selector-font-simulate-data specs)
+    (assuming (or (!= fn1 fn1+) (!= fn1 fn2))
+      (division "discrete"
+        (aligned
+          (item (bold (text "Requested:")) (text fn1+))
+          (item (bold (text "Replaced by:")) (text fn2)))))))
 
 (define (selector-font-demo-text specs)
   (with fn (selector-get-font specs)
@@ -714,7 +747,7 @@
   (refresh-now "font-size-selector")
   (refresh-now "font-selector-demo"))
 
-(tm-widget ((font-selector specs flag?) quit)
+(tm-widget ((font-selector specs global?) quit)
   (padded
     (horizontal
       (refreshable "font-family-selector"
@@ -748,19 +781,11 @@
            (dialogue-window (font-customization-dialog specs)
                             noop "Advanced font selector")) // //)
         ("Import" (choose-file font-import "Import font" "")) // //
-        (if flag?
-            ("Reset"
-             (begin
-               (init-default "font" "font-base-size" "math-font" "prog-font"
-                             "font-family" "font-series" "font-shape"
-                             "font-effects")
-               (selector-initialize-font specs get-init)
-               (refresh-now "font-family-selector")
-               (refresh-now "font-size-selector")
-               (refresh-now "font-customized-selector")))
+        (if global?
+            ("Reset" (selector-restore specs global?))
             // //
             ("Ok" (quit (selector-get-changes specs get-init))))
-        (if (not flag?)
+        (if (not global?)
             ("Ok" (quit (selector-get-changes specs get-env))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -810,23 +835,37 @@
             ===
             (refreshable "font-family-selector"
               (dynamic (font-family-selector* specs)))
-            === ===
+            ===
             (horizontal
               (refreshable "font-style-selector"
                 (dynamic (font-style-selector* specs)))
               >>>
               (refreshable "font-size-selector"
                 (dynamic (font-size-selector* specs))))))
+        (assuming global?
+          (division "discrete"
+            (hlist
+              >> ("Restore defaults" (selector-restore specs global?)))
+            ===))
         ======
         (section-tabs "font-tool-tabs" win
           (section-tab "Filters"
-            (centered (dynamic (font-properties-selector* specs))))
+            (centered (dynamic (font-properties-selector* specs)))
+            ======
+            (refreshable "font-selector-demo"
+              (dynamic (selector-font-simulate-widget specs))))
           (section-tab "Effects"
             (centered (dynamic (font-effects-selector specs))))
-          (section-tab "Variants"
+         (section-tab "Variants"
             (centered (dynamic (font-variant-selector specs))))
           (section-tab "Mathematics"
-            (centered (dynamic (font-math-selector specs)))))))))
+            (centered (dynamic (font-math-selector specs))))
+          (section-tab "More"
+            (division "plain"
+              (padded
+                ("Import font" (choose-file font-import "Import font" ""))
+                ("Scan disk for more fonts" (scan-disk-for-fonts))
+                ("Clear font cache" (clear-font-cache))))))))))
 
 (tm-define (open-font-tool name getter setter global?)
   (let* ((win (current-window))
