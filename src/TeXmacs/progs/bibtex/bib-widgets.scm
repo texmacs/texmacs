@@ -82,7 +82,7 @@
   (bibwid-set-filename bibwid-url))
 
 (tm-widget (bibwid-preview)
-  (resize ("520px" "520px" "9999px") ("100px" "100px" "9999px")
+  (resize '("520px" "520px" "9999px") '("100px" "100px" "9999px")
     (scrollable 
       (refreshable "bibwid-preview"
         (texmacs-output

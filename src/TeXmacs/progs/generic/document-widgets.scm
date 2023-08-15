@@ -20,7 +20,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (select-style-among-widget l)
-  (resize ("300px" "300px" "300px") ("200px" "300px" "1000px")
+  (resize '("300px" "300px" "300px") '("200px" "300px" "1000px")
     (scrollable
       (choice (set-main-style answer) l "generic"))))
 

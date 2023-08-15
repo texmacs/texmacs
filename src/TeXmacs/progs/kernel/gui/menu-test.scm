@@ -100,12 +100,12 @@
   (hlist
     //
     (hsplit
-      (resize ("100px" "200px" "400px") ("50px" "100px" "150px")
+      (resize '("100px" "200px" "400px") '("50px" "100px" "150px")
         (scrollable
           (choice (display* answer "\n")
                   '("First" "Second" "Third" "Fourth" "Fifth" "Sixth")
                   "Third")))
-      (resize ("100px" "200px" "400px") ("50px" "100px" "150px")
+      (resize '("100px" "200px" "400px") '("50px" "100px" "150px")
         (scrollable
           (choices (display* answer "\n")
                    '("First" "Second" "Third" "Fourth" "Fifth" "Sixth")
@@ -159,7 +159,7 @@
         (text "Toggle here")))))
 
 (tm-widget (widget10)
-  (resize ("150px" "400px" "9000px") ("300px" "600px" "9000px")
+  (resize '("150px" "400px" "9000px") '("300px" "600px" "9000px")
     (vertical
       (bold (text "Testing tree-view"))
       ===

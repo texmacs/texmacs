@@ -598,11 +598,13 @@
 
 (define (make-resize p style)
   "Make @(resize :%2 :menu-item-list) item."
-  (with (tag w h . items) p
-    (with inner (make-menu-items (list (cons 'vertical items)) style #f)
-      (with (w1 w2 w3 hpos) (decode-resize w "left")
-        (with (h1 h2 h3 vpos) (decode-resize h "top")
-          (widget-resize (car inner) style w1 h1 w2 h2 w3 h3 hpos vpos))))))
+  (with (tag w-cmd h-cmd . items) p
+    (let ((w (w-cmd))
+          (h (h-cmd)))
+      (with inner (make-menu-items (list (cons 'vertical items)) style #f)
+        (with (w1 w2 w3 hpos) (decode-resize w "left")
+          (with (h1 h2 h3 vpos) (decode-resize h "top")
+            (widget-resize (car inner) style w1 h1 w2 h2 w3 h3 hpos vpos)))))))
 
 (define (make-hsplit p style)
   "Make @(hsplit :menu-item :menu-item) item."
@@ -852,6 +854,11 @@
   (with dyn (eval (cadr p))
     (if dyn (menu-expand dyn) p)))
 
+(define (menu-expand-resize p)
+  "Expand resize menu @p."
+  (with (tag h-cmd v-cmd . items) p
+    (cons* 'resize (h-cmd) (v-cmd) (menu-expand-list items))))
+
 (define (menu-expand-if p)
   "Expand conditional menu @p."
   (with (tag pred? . items) p
@@ -1028,7 +1035,7 @@
   (=> ,replace-procedures)
   (tile ,replace-procedures)
   (scrollable ,(lambda (p) `(scrollable ,@(menu-expand-list (cdr p)))))
-  (resize ,(lambda (p) `(resize ,@(menu-expand-list (cdr p)))))
+  (resize ,menu-expand-resize)
   (hsplit ,(lambda (p) `(hsplit ,@(menu-expand-list (cdr p)))))
   (vsplit ,(lambda (p) `(vsplit ,@(menu-expand-list (cdr p)))))
   (ink ,replace-procedures)
@@ -1155,7 +1162,7 @@
 
 (tm-widget ((system-error-widget cmd out err) done)
   (padded
-    (resize ("300px" "600px" "1200px") ("275px" "400px" "600px")
+    (resize '("300px" "600px" "1200px") '("275px" "400px" "600px")
       (centered (bold (text "Input command")))  
       (scrollable
 	(for (x (string-decompose cmd "\n"))
