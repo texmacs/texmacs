@@ -190,7 +190,7 @@
     (horizontal
       (vertical
         (refreshable "plots-list"
-          (resize ("100px" "100px" "100px") ("400px" "400px" "400px")
+          (resize '("100px" "100px" "100px") '("400px" "400px" "400px")
             (choice (when (string? answer)
                       (set! name answer)
                       (set-plot-name u lan ses gt name)

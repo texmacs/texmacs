@@ -79,7 +79,7 @@
 	 (email "")
 	 (comment "")
 	 (passphrase ""))
-  (resize ("550px" "550px" "9999px") ("250px" "250px" "9999px")
+  (resize '("550px" "550px" "9999px") '("250px" "250px" "9999px")
     (padded
       (refreshable "gpg-refreshable-gen-key"
       (if (== err "weak passphrase") (centered
@@ -153,7 +153,7 @@
 				     ", " (gpg-get-key-fingerprint k))))
 	 (keys (gpg-public-keys))
 	 (sels gpg-widget-selected-public-key-fingerprints))
-    (resize ("700px" "700px" "9999px") ("200px" "200px" "9999px") 
+    (resize '("700px" "700px" "9999px") '("200px" "200px" "9999px") 
       (padded
 	(scrollable
 	  (padded
@@ -647,7 +647,7 @@
 
 (tm-widget (gpg-widget-manage-keys)
   (padded
-    (resize ("700px" "700px" "9999px") ("300px" "400px" "9999px")
+    (resize '("700px" "700px" "9999px") '("300px" "400px" "9999px")
       (tabs
 	(tab (text "Secret keys")
 	  (centered

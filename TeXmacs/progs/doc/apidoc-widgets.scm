@@ -81,11 +81,11 @@
 (tm-define (doc-widget where key)
   (cond ((== where "scheme")
          (menu-dynamic
-           (resize ("300px" "600px" "9999px") ("200px" "300px" "9999px")
+           (resize '("300px" "600px" "9999px") '("200px" "300px" "9999px")
              (texmacs-input ($doc-explain-scm key) '(style "tmdoc") #f))))
         ((== where "macros")
          (menu-dynamic
-           (resize ("300px" "600px" "9999px") ("200px" "300px" "9999px")
+           (resize '("300px" "600px" "9999px") '("200px" "300px" "9999px")
              (texmacs-input ($doc-explain-macro key) '(style "tmdoc") #f))))
         (else
           (menu-dynamic ("ERROR: unknown documentation set" (help-win-hide))))))
@@ -139,7 +139,7 @@
            '())))
 
 (tm-widget (symbol-doc-widget)
-  (resize ("200px" "400px" "9000px") ("100px" "200px" "3000px")
+  (resize '("200px" "400px" "9000px") '("100px" "200px" "3000px")
     (texmacs-input ($doc-explain-scm mw-symbol) '(style "tmdoc") #f)))
 
 (tm-widget (symbol-doc-buttons)
@@ -171,7 +171,7 @@
    (hsplit
      ; HACK: placing the resize outermost resizes to minimal size
      ;        (vertical size is still set to min!)
-     (resize ("200px" "300px" "4000px") ("300px" "500px" "4000px")
+     (resize '("200px" "300px" "4000px") '("300px" "500px" "4000px")
        (link module-list-widget))
        (refresh module-symbols-widget auto))))
 
@@ -192,7 +192,7 @@
 (tm-widget (symbol-browser-widget)
   (vertical
    (bold (text "Symbol"))
-   (resize ("200px" "350px" "4000px") ("300px" "600px" "4000px")
+   (resize '("200px" "350px" "4000px") '("300px" "600px" "4000px")
      (filtered-choice (begin (set! clw-string answer)
                              (set! clw-string-filter filter))
                       (list-sort (scheme-completions-dump) string<?)
