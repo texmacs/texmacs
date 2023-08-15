@@ -26,8 +26,12 @@
 (define selector-table (make-ahash-table))
 
 (tm-define (selector-set specs var val)
-  ;;(display* "Set " specs ", " var  " <- " val "\n")
+  ;;(display* "Set " specs ", " var " <- " val "\n")
   (ahash-set! selector-table (list specs var) val))
+
+(tm-define (selector-reset specs var)
+  ;;(display* "Reset " specs ", " var "\n")
+  (ahash-remove! selector-table (list specs var)))
 
 (tm-define (selector-get* specs var)
   (or (ahash-ref selector-table (list specs var))
@@ -313,16 +317,14 @@
       (reset-preference "advanced font customization"))
   (refresh-now "font-customized-selector"))
 
-(tm-define selector-customize-table (make-ahash-table))
-
 (tm-define (selector-customize-get specs which default)
-  (or (ahash-ref selector-customize-table which) default))
+  (or (selector-get specs which) default))
 
 (tm-define (selector-customize-set! specs which val)
   (if (or (== val "") (== val "default") (== val "Default")
 	  (== val (font-effect-default which)))
-      (ahash-remove! selector-customize-table which)
-      (ahash-set! selector-customize-table which val)))
+      (selector-reset specs which)
+      (selector-set specs which val)))
 
 (tm-define (selector-customize-get* specs which default)
   (with val (selector-customize-get specs which default)
@@ -344,25 +346,29 @@
 (define (selector-initialize-customize specs getter)
   (let* ((fam  (getter "font"))
          (effs (getter "font-effects")))
-    (set! selector-customize-table (make-ahash-table))
+    (for (var '("bold" "italic" "smallcaps" "sansserif"
+                "typewriter" "math" "greek" "bbb" "cal" "frak"
+                "embold" "embbb"
+                "slant" "hmagnify" "vmagnify" "hextended" "vextended"))
+      (selector-reset specs var))
     (for (kv (string-tokenize-by-char fam #\,))
       (with l (string-tokenize-by-char kv #\=)
 	(when (== (length l) 2)
 	  (with (var val) l
 	    (when (in? var '("bold" "italic" "smallcaps" "sansserif"
 			     "typewriter" "math" "greek" "bbb" "cal" "frak"))
-	      (ahash-set! selector-customize-table var val))))))
+	      (selector-set specs var val))))))
     (for (kv (string-tokenize-by-char effs #\,))
       (with l (string-tokenize-by-char kv #\=)
 	(when (== (length l) 2)
 	  (with (var val) l
 	    (cond ((== var "bold")
-		   (ahash-set! selector-customize-table "embold" val))
+		   (selector-set specs "embold" val))
 		  ((== var "bbb")
-		   (ahash-set! selector-customize-table "embbb" val))
+		   (selector-set specs "embbb" val))
 		  ((in? var '("slant" "hmagnify" "vmagnify"
 			      "hextended" "vextended"))
-		   (ahash-set! selector-customize-table var val)))))))))
+		   (selector-set specs var val)))))))))
 
 (define (logical-font-family* specs fn)
   (let* ((fam   (logical-font-family fn))
