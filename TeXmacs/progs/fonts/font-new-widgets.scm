@@ -27,11 +27,15 @@
 
 (tm-define (selector-set specs var val)
   ;;(display* "Set " specs ", " var " <- " val "\n")
-  (ahash-set! selector-table (list specs var) val))
+  (ahash-set! selector-table (list specs var) val)
+  (refresh-now "font-style-selector")
+  (refresh-now "font-selector-demo"))
 
 (tm-define (selector-reset specs var)
   ;;(display* "Reset " specs ", " var "\n")
-  (ahash-remove! selector-table (list specs var)))
+  (ahash-remove! selector-table (list specs var))
+  (refresh-now "font-style-selector")
+  (refresh-now "font-selector-demo"))
 
 (tm-define (selector-get* specs var)
   (or (ahash-ref selector-table (list specs var))
@@ -444,9 +448,6 @@
                 (selected-styles specs (selector-get specs :family))
                 (selector-get specs :style))))))
 
-(tm-widget (font-style-selector*)
-  (dynamic (font-style-selector :todo)))
-
 (tm-widget (font-size-selector specs)
   (vertical
     (bold (text "Size"))
@@ -659,13 +660,12 @@
     (scrollable
       (dynamic (font-sample-text specs)))))
 
-(tm-widget (font-selector-demo*)
-  (dynamic (font-selector-demo :todo)))
-
 (tm-define (font-import name)
   (font-database-extend-local name)
   (refresh-now "font-family-selector")
-  (refresh-now "font-size-selector"))
+  (refresh-now "font-style-selector")
+  (refresh-now "font-size-selector")
+  (refresh-now "font-selector-demo"))
 
 (tm-widget ((font-selector specs flag?) quit)
   (padded
@@ -673,7 +673,8 @@
       (refreshable "font-family-selector"
         (dynamic (font-family-selector specs)))
       ///
-      (refresh font-style-selector* auto)
+      (refreshable "font-style-selector"
+        (dynamic (font-style-selector specs)))
       ///
       (refreshable "font-size-selector"
         (dynamic (font-size-selector specs)))
@@ -681,7 +682,8 @@
       (dynamic (font-properties-selector specs)))
     (refreshable "font-customized-selector"
       (dynamic (font-customized-selector specs)))
-    (refresh font-selector-demo* auto)
+    (refreshable "font-selector-demo"
+      (dynamic (font-selector-demo specs)))
     === ===
     (explicit-buttons
       (hlist
