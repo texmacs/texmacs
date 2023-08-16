@@ -1339,20 +1339,21 @@
           (set-window-tools win pos (list-remove l tool))
           (set-window-tools win pos (cons tool l))))))
 
-(tm-define (tool-close pos tool . opt-win)
+(tm-define (tool-close pos tool quit . opt-win)
   (if (== pos :any)
       (for (pos* (list :transient-right :right :bottom-right
                        :transient-left :left :bottom-left
                        :transient-bottom :bottom))
-        (apply tool-close (cons* pos* tool opt-win)))
+        (apply tool-close (cons* pos* tool quit opt-win)))
       (let* ((win (if (null? opt-win) (current-window) (car opt-win)))
              (l (window->tools win pos))
              (f (list-filter l (lambda (t) (!= (car t) tool)))))
         (when (!= f l)
+          (when quit (quit))
           (set-window-tools win pos f)))))
 
-(tm-define ((tool-quit tool . opt-win) . args)
-  (apply tool-close (cons* :any tool opt-win)))
+(tm-define ((tool-quit tool quit . opt-win) . args)
+  (apply tool-close (cons* :any tool quit opt-win)))
 
 (tm-define (no-active-tools? pos . opt-win)
   (with win (if (null? opt-win) (current-window) (car opt-win))
@@ -1379,6 +1380,15 @@
         ((not (and (pair? (car body)) (keyword? (caar body)))) #f)
         (else (get-name-tool tool (cdr body)))))
 
+(define (get-quit-tool tool body)
+  (cond ((null? body) #f)
+        ((keyword? (car body)) (get-quit-tool tool (cdr body)))
+        ((func? (car body) :quit 1)
+         `(with (,@(cddr tool)) (cdr tool)
+            (lambda () ,(cadar body))))
+        ((not (and (pair? (car body)) (keyword? (caar body)))) #f)
+        (else (get-quit-tool tool (cdr body)))))
+
 (define (finalize-tool body pos)
   (cond ((null? body) (lambda (x) x))
         ((and (== (car body) :side-centered) (== pos :side))
@@ -1403,6 +1413,7 @@
 
 (tm-define-macro (tm-tool* tool . obody)
   (let* ((name (get-name-tool tool obody))
+         (quit (get-quit-tool tool obody))
          (finalize-side (finalize-tool obody :side))
          (finalize-bottom (finalize-tool obody :bottom))
          (body (preprocess-tool obody)))
@@ -1417,7 +1428,7 @@
                  (text ,name)
                  >>
                  (division "plain"
-                   ("x" (tool-close :any ',(car tool) ,(cadr tool)))))))
+                   ("x" (tool-close :any ',(car tool) ,quit ,(cadr tool)))))))
          (assuming (tool-side? tool win)
            ,(finalize-side
              `(dynamic (,(car tool) ,(cadr tool)

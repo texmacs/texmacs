@@ -706,6 +706,7 @@
 "tree-export"
 "tree-load-style"
 "buffer-focus"
+"buffer-focus*"
 "view-list"
 "buffer->views"
 "current-view-url"

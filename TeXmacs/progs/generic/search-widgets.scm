@@ -516,7 +516,7 @@
       ((balloon (icon "tm_close_tool.xpm") "Close search tool")
        (quit)))))
 
-(tm-define (open-search)
+(tm-define (open-search-window)
   (:interactive #t)
   (when (not (inside-search-buffer?))
     (let* ((u (current-buffer))
@@ -532,6 +532,62 @@
       (dialogue-window (search-widget u st init aux)
                        (search-cancel u)
                        "Search" aux))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Search tool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-tool* (search-tool win u style init aux)
+  (:name "Search")
+  (:quit (begin (buffer-focus* u) ((search-cancel u))))
+  ===
+  (horizontal
+    //
+    (vertical
+      (resize "360px" "60px"
+        (texmacs-input `(with ,@init (document ""))
+                       `(style (tuple ,@style)) aux))
+      ===
+      (hlist
+        ((balloon (icon "tm_search_first.xpm") "First occurrence")
+         (search-extreme-match #f))
+        ((balloon (icon "tm_search_previous.xpm") "Previous occurrence")
+         (search-next-match #f))
+        ((balloon (icon "tm_search_next.xpm") "Next occurrence")
+         (search-next-match #t))
+        ((balloon (icon "tm_search_last.xpm") "Last occurrence")
+         (search-extreme-matche #t))
+        >>>
+        (=> (balloon (icon "tm_preferences.xpm") "Search preferences")
+            (link search-preferences-menu))
+        ((check (balloon (icon "tm_filter.xpm")
+                         "Only show paragraphs with hits")
+                "v" (search-filter-enabled?))
+         (search-toggle-filter)))
+      ===)
+    //))
+
+(tm-define (open-search-tool)
+  (:interactive #t)
+  (when (not (inside-search-buffer?))
+    (let* ((u (current-buffer))
+           (st (list-remove-duplicates
+                (rcons (get-style-list) "macro-editor")))
+           (init (get-main-attrs get-env))
+           (aux (search-buffer))
+           (tool (list 'search-tool u st init aux)))
+      (buffer-set-master aux u)
+      (set! search-window (current-window))
+      (set-search-reference (cursor-path))
+      (set-search-filter)
+      (set! search-filter-out? #f)
+      (if (tool-active? :bottom-right tool)
+          (buffer-focus* aux)
+          (begin
+            (tool-select :bottom-right tool)
+            (delayed
+              (:pause 250)
+              (buffer-focus* aux)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search and replace widget
@@ -887,10 +943,11 @@
 (tm-define (interactive-search)
   (:interactive #t)
   (set-boolean-preference "search-and-replace" #f)
-  (if (and (get-boolean-preference "toolbar search")
-	   (not (buffer-aux? (current-buffer))))
-      (toolbar-search-start)
-      (open-search)))
+  (cond ((and (get-boolean-preference "toolbar search")
+              (not (buffer-aux? (current-buffer))))
+         (toolbar-search-start))
+        ;;((side-tools?) (open-search-tool))
+        (else (open-search-window))))
 
 (tm-define (interactive-replace)
   (:interactive #t)

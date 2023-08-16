@@ -858,7 +858,7 @@
 (tm-define (set-interactive-tool-arg win fun i val)
   (if val
       (ahash-set! interactive-tool-table (list win fun i) val)
-      (tool-close :any 'interactive-tool win)))
+      (tool-close :any 'interactive-tool #f win)))
 
 (tm-define (get-interactive-tool-arg win fun i)
   (ahash-ref interactive-tool-table (list win fun i)))
@@ -877,7 +877,7 @@
                          (string-append "interactive-"
                                         (number->string (+ ,i 1))))
                         (interactive-ok ',win ',fun ',args)))
-                  (tool-close :any 'interactive-tool ',win))
+                  (tool-close :any 'interactive-tool #f ',win))
               ,(interactive-retype type i)
               ',(rcons vals "") ,w))))
 
@@ -888,7 +888,7 @@
     (apply fun vals)
     (with learn (map cons (map number->string inds) vals)
       (learn-interactive fun learn))
-    (tool-close :any 'interactive-tool win)))
+    (tool-close :any 'interactive-tool #f win)))
 
 (tm-tool (interactive-tool win fun args)
   (:name (interactive-title fun))
