@@ -940,7 +940,7 @@ relay_box_rep::operator tree () {
 
 tree
 relay_box_rep::message (tree type, SI x, SI y, rectangles& rs) {
-  if (N(args) == 0 || args[0] == "" || !is_atomic (args[0])) return;
+  if (N(args) == 0 || args[0] == "" || !is_atomic (args[0])) return "";
   array<object> objs;
   objs << symbol_object (args[0]->label);
   objs << object (type) << object ((int) x) << object ((int) y);
