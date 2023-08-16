@@ -537,6 +537,11 @@
 ;; Search tool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (search-document)
+  (if (buffer-exists? (search-buffer))
+      (buffer->tree (search-buffer))
+      `(document "")))
+
 (tm-tool* (search-tool win u style init aux)
   (:name "Search")
   (:quit (begin (buffer-focus* u) ((search-cancel u))))
@@ -545,7 +550,7 @@
     //
     (vertical
       (resize "360px" "60px"
-        (texmacs-input `(with ,@init (document ""))
+        (texmacs-input `(with ,@init ,(search-document))
                        `(style (tuple ,@style)) aux))
       ===
       (hlist
@@ -661,6 +666,74 @@
       (dialogue-window (replace-widget u st init saux raux)
                        (search-cancel u)
                        "Search and replace" saux raux))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Replace tool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-tool* (replace-tool win u style init saux raux)
+  (:name "Search and replace")
+  (:quit (begin (buffer-focus* u) ((search-cancel u))))
+  ===
+  (horizontal
+    //
+    (vertical
+      (resize "360px" "60px"
+        (texmacs-input `(with ,@init (document ""))
+                       `(style (tuple ,@style)) saux))
+      === ===
+      (resize "360px" "60px"
+        (texmacs-input `(with ,@init (document ""))
+                       `(style (tuple ,@style)) raux))
+      === ===
+      (hlist
+        ((balloon (icon "tm_search_first.xpm") "First occurrence")
+         (search-extreme-match #f))
+        ((balloon (icon "tm_search_previous.xpm") "Previous occurrence")
+         (search-next-match #f))
+        ((balloon (icon "tm_search_next.xpm") "Next occurrence")
+         (search-next-match #t))
+        ((balloon (icon "tm_search_last.xpm") "Last occurrence")
+         (search-extreme-match #t))
+        // // //
+        ((balloon (icon "tm_replace_one.xpm") "Replace one occurrence")
+         (replace-one))
+        ((balloon (icon "tm_replace_all.xpm") "Replace all further occurrences")
+         (replace-all))
+        >>>
+        (=> (balloon (icon "tm_preferences.xpm")
+                     "Search and replace preferences")
+            (link replace-preferences-menu))
+        ((check (balloon (icon "tm_filter.xpm")
+                         "Only show paragraphs with hits")
+                "v" (search-filter-enabled?))
+         (search-toggle-filter)))
+      ===)
+    //))
+
+(tm-define (open-replace-tool)
+  (:interactive #t)
+  (when (not (inside-search-buffer?))
+    (let* ((u (current-buffer))
+           (st (list-remove-duplicates
+                (rcons (get-style-list) "macro-editor")))
+           (init (get-main-attrs get-env))
+           (saux (search-buffer))
+           (raux (replace-buffer))
+           (tool (list 'replace-tool u st init saux raux)))
+      (buffer-set-master saux u)
+      (buffer-set-master raux u)
+      (set! search-window (current-window))
+      (set-search-reference (cursor-path))
+      (set-search-filter)
+      (set! search-filter-out? #f)
+      (if (tool-active? :bottom-right tool)
+          (buffer-focus* saux)
+          (begin
+            (tool-select :bottom-right tool)
+            (delayed
+              (:pause 250)
+              (buffer-focus* saux)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search toolbar
@@ -946,13 +1019,14 @@
   (cond ((and (get-boolean-preference "toolbar search")
               (not (buffer-aux? (current-buffer))))
          (toolbar-search-start))
-        ;;((side-tools?) (open-search-tool))
+        ((side-tools?) (open-search-tool))
         (else (open-search-window))))
 
 (tm-define (interactive-replace)
   (:interactive #t)
   (set-boolean-preference "search-and-replace" #t)
-  (if (and (get-boolean-preference "toolbar replace")
-	   (not (buffer-aux? (current-buffer))))
-      (toolbar-replace-start)
-      (open-replace)))
+  (cond ((and (get-boolean-preference "toolbar replace")
+              (not (buffer-aux? (current-buffer))))
+         (toolbar-replace-start))
+        ((side-tools?) (open-replace-tool))
+        (else (open-replace))))
