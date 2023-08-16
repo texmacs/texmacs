@@ -1,4 +1,4 @@
-<TeXmacs|1.99.15>
+<TeXmacs|2.1.2>
 
 <style|source>
 
@@ -21,6 +21,14 @@
   </src-title>>
 
   <use-module|(source macro-edit)>
+
+  <\active*>
+    <\src-comment>
+      Style customizations
+    </src-comment>
+  </active*>
+
+  <assign|par-first|0spc>
 
   <\active*>
     <\src-comment>

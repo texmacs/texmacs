@@ -26,4 +26,4 @@
             (lambda (answer)
               (when (== answer "ok")
                 (notify-restart))
-              (tool-close :any 'retina-settings-tool win)))))
+              (tool-close :any 'retina-settings-tool #f win)))))

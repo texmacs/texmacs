@@ -216,7 +216,7 @@
 (tm-tool* (format-page-tool win u st t)
   (:name "This page format")
   (dynamic ((page-formatter u st t #f)
-            (tool-quit 'format-page-tool win))))
+            (tool-quit 'format-page-tool #f win))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global Page format

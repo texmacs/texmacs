@@ -9331,6 +9331,19 @@ tmg_buffer_focus (tmscm arg1) {
 }
 
 tmscm
+tmg_buffer_focus_dot (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-focus*");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= var_focus_on_buffer (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_view_list () {
   // TMSCM_DEFER_INTS;
   array_url out= get_all_views ();
@@ -10800,6 +10813,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-export",  tmg_tree_export, 3, 0, 0);
   tmscm_install_procedure ("tree-load-style",  tmg_tree_load_style, 1, 0, 0);
   tmscm_install_procedure ("buffer-focus",  tmg_buffer_focus, 1, 0, 0);
+  tmscm_install_procedure ("buffer-focus*",  tmg_buffer_focus_dot, 1, 0, 0);
   tmscm_install_procedure ("view-list",  tmg_view_list, 0, 0, 0);
   tmscm_install_procedure ("buffer->views",  tmg_buffer_2views, 1, 0, 0);
   tmscm_install_procedure ("current-view-url",  tmg_current_view_url, 0, 0, 0);
