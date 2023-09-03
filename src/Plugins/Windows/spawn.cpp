@@ -10,9 +10,9 @@
 ******************************************************************************/
 
 #include <errno.h>
+#include <windows.h>
 #include "array.hpp"
 #include "spawn.hpp"
-#include <windows.h>
 
 Channel::Channel (int s):sz(s) {
  origin= -1; saved= -1; fd= -1;toBeClosed= -1; str= NULL; tid= 0; 
@@ -100,7 +100,7 @@ bkgread (void *thatv) {
   return (cnt);
 }
 
-spawn_system::spawn_system (array<Channel> &ch, char *name, 
+spawn_system::spawn_system (::array<Channel> &ch, char *name, 
       const char *const *args):channel(ch) {
   for (int i=0; i < N(channel); ++i) channel[i].redirect();
   pid=_spawnvp (_P_NOWAIT,name, args);
