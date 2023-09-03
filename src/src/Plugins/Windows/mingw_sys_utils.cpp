@@ -20,9 +20,9 @@ _unix_system_warn (pid_t pid, ::string which, ::string msg) {
 }
 
 int
-mingw_system (array< ::string> arg,
-	    array<int> fd_in, array< ::string> str_in,
-      array<int> fd_out, array< ::string*> str_out) {
+mingw_system (::array< ::string> arg,
+	    ::array<int> fd_in, ::array< ::string> str_in,
+      ::array<int> fd_out, ::array< ::string*> str_out) {
 	// Run command arg[0] with arguments arg[i], i >= 1.
   // str_in[i] is sent to the file descriptor fd_in[i].
   // str_out[i] is filled from the file descriptor fd_out[i].
@@ -33,7 +33,7 @@ mingw_system (array< ::string> arg,
   int n_in= N (fd_in), n_out= N (fd_out);
   ASSERT(N(str_in)  == n_in, "size mismatch");
   ASSERT(N(str_out) == n_out, "size mismatch");
-  array<Channel> ch (n_in + n_out);
+  ::array<Channel> ch (n_in + n_out);
 
   for (int i= 0; i < n_in; i++) {
     int fd= fd_in[i];
@@ -46,7 +46,7 @@ mingw_system (array< ::string> arg,
     else ch[i + n_in].Init(Channel::CHOUT);
   }
 
-  array< ::string> arg_= arg;
+  ::array< ::string> arg_= arg;
   for (int j= 0; j < N(arg); j++)
     for (int i= 0; i < n_in; i++)
       if (fd_in[i] < 0) {
@@ -56,7 +56,7 @@ mingw_system (array< ::string> arg,
           as_string (ch[i].getPipe ()));
       }
   debug_io << "unix_system, launching: " << arg_ << "\n"; 
-  array<char*> _arg;
+  ::array<char*> _arg;
   for (int j= 0; j < N(arg_); j++)
     _arg << as_charp (arg_[j]);
   _arg << (char*) NULL;
@@ -73,11 +73,11 @@ mingw_system (array< ::string> arg,
 
   // receive data from spawn process
   // class string is not thread safe, use std::string instead
-  array<std::string> str(n_out);
+  ::array<std::string> str(n_out);
   for (int i= 0; i < n_out; i++) ch[i + n_in].read(&str[i]);
 
   // send data to spawn process
-  array<int> pos_in (n_in);
+  ::array<int> pos_in (n_in);
   for (int i= 0; i < n_in; i++) pos_in[i]= 0;
   time_t last_wait_time= texmacs_time ();
 
