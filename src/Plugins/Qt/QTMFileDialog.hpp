@@ -75,6 +75,7 @@ public:
 
 public slots:
   void setImage (const QString&);
+  void clear_dim();
 
 public:
   QTMImagePreview (QWidget* parent= 0);
