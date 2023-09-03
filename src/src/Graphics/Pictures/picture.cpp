@@ -188,6 +188,7 @@ picture_cache_reset () {
   picture_blacklist= hashmap<tree,int> ();
   picture_cache= hashmap<tree,picture> ();
   picture_stamp= hashmap<tree,int> ();
+  clearall_imgbox_cache() ;
 #ifdef QTTEXMACS
   qt_clean_picture_cache ();
 #endif
