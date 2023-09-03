@@ -57,9 +57,12 @@
 #endif
 
 typedef struct { int w; int h; int xmin; int ymin;} imgbox ;
-hashmap<tree,imgbox> img_box;
+static hashmap<tree,imgbox> img_box;
+
 // cache for storing image sizes
 // (for ps/eps we also store the image offset so that we have the full bbox info)
+
+
 
 /******************************************************************************
 * Loading xpm pixmaps
@@ -259,6 +262,11 @@ set_imgbox_cache(tree t, int w, int h, int xmin, int ymin){
 void
 clear_imgbox_cache(tree t){
     img_box->reset (t);
+}
+
+void
+clearall_imgbox_cache() {
+  img_box = hashmap<tree,imgbox> ();
 }
 /******************************************************************************
 * Getting the original size of an image, using internal plug-ins if possible
