@@ -80,7 +80,7 @@ AC_DEFUN([TM_DEBUG],[
   #    STD_DEBUG_FLAGS="-fno-exceptions"
   #fi
 
-  STD_DEBUG_FLAGS="-fno-rtti"
+  #STD_DEBUG_FLAGS="-fno-rtti"  #disabling because of bug 60931
   if test "$enable_cocoa" = "yes"; then
       STD_DEBUG_FLAGS=""
   fi
