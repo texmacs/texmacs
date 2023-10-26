@@ -89,6 +89,7 @@
 (menu-bind presentation-popup-menu
   ("Presentation mode" (toggle-full-screen-mode))
   ("Show panorama" (toggle-panorama-mode))
+  ("Show all slides" (toggle-slideshow-mode))
   ("Remote control" (toggle-remote-control-mode)))
 
 (menu-bind texmacs-popup-menu
