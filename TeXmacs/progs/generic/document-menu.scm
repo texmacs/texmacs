@@ -616,7 +616,8 @@
   ("Screen" (init-page-rendering "automatic"))
   ("Beamer" (init-page-rendering "beamer"))
   ("Book" (init-page-rendering "book"))
-  ("Panorama" (init-page-rendering "panorama")))
+  ("Panorama" (init-page-rendering "panorama"))
+  ("Slideshow" (init-page-rendering "slideshow")))
 
 (menu-bind page-layout-menu
   ("Margins as on paper" (toggle-page-screen-margin))

@@ -261,7 +261,8 @@
     (aligned
       (item (text "Page rendering:")
         (enum (window-set-page-rendering win (encode-rendering answer))
-              '("paper" "papyrus" "screen" "beamer" "book" "panorama")
+              '("paper" "papyrus" "screen" "beamer" "book"
+                "panorama" "slideshow")
               (decode-rendering (window-get-page-rendering win)) "10em"))
       (item (text "Page type:")
         (enum (begin
