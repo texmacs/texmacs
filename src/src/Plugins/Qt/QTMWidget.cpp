@@ -192,6 +192,8 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_widget _tmwid)
   if (DEBUG_QT)
     debug_qt << "Creating " << from_qstring(objectName()) << " of widget "
              << (tm_widget() ? tm_widget()->type_as_string() : "NULL") << LF;
+  //part 1/2 of the fix for 43373
+  QApplication::postEvent(this, new QFocusEvent(QEvent::FocusIn, Qt::OtherFocusReason));
 }
 
 QTMWidget::~QTMWidget () {
@@ -828,6 +830,11 @@ QTMWidget::focusInEvent (QFocusEvent * event) {
     the_gui->process_keyboard_focus (tm_widget(), true, texmacs_time());
   }
   QTMScrollView::focusInEvent (event);
+  // part 2/2 of the fix for bug 43373.
+  if (!isActiveWindow()) activateWindow();
+  if (isActiveWindow() && !hasFocus()) setFocus (Qt::OtherFocusReason);
+    //=> this will send us back here...
+    //This redundancy is weird but definitely needed to properly get focus with Qt >= 5.15. Qt bug?
 }
 
 void
