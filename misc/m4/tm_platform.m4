@@ -235,11 +235,13 @@ AC_DEFUN([TM_PLATFORM],[
       AC_MSG_RESULT(a supported GNU/Linux host)
       AC_DEFINE([OS_GNU_LINUX],[1],[OS type])
       CONFIG_OS="GNU_LINUX"
+      LINUX_COMMON
     ;;
     *-linux*)
       AC_MSG_RESULT(a generic GNU/Linux host)
       AC_DEFINE([OS_GNU_LINUX],[1],[OS type])
       CONFIG_OS="GNU_LINUX"
+      LINUX_COMMON
     ;;
     *)
       AC_MSG_RESULT(a generic host)
