@@ -228,9 +228,8 @@
   (:secure #t)
   (:synopsis "Interactive passphrase encryption")
   (with cb (lambda (x) (tm-gpg-passphrase-encrypt t x))
-    (dialogue-window gpg-widget-ask-new-passphrase
-      (lambda (action) (tm-gpg-command-passphrase-encrypt cb action))
-      "Passphrase encryption")))
+    (gpg-ask-new-passphrase
+      (lambda (action) (tm-gpg-command-passphrase-encrypt cb action)))))
 
 (tm-define (tm-gpg-dialogue-passphrase-encrypt-block!)
   (:secure #t)
@@ -254,11 +253,10 @@
 (tm-define (tm-gpg-dialogue-passphrase-encrypt-all)
   (:secure #t)
   (:synopsis "Interactive passphrase encryption")
-  (dialogue-window gpg-widget-ask-new-passphrase
-    (lambda (action)
-      (tm-gpg-command-passphrase-encrypt
-       tm-gpg-passphrase-encrypt-all action))
-      "Passphrase encryption"))
+  (gpg-ask-new-passphrase
+   (lambda (action)
+     (tm-gpg-command-passphrase-encrypt
+      tm-gpg-passphrase-encrypt-all action))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Decrypt
@@ -358,11 +356,9 @@
   (:secure #t)
   (:synopsis "Interactive passphrase decryption")
   (with cb (lambda (x) (tm-gpg-passphrase-decrypt t x))
-    (dialogue-window 
-     (gpg-widget-ask-standalone-passphrase
-      (lambda (x) (gpg-decryptable? (tree->string (tree-ref t 0)) x)))
-     (lambda (action) (tm-gpg-command-passphrase-decrypt cb action))
-     "Passphrase decryption")))
+    (gpg-ask-ask-standalone-passphrase
+     (lambda (x) (gpg-decryptable? (tree->string (tree-ref t 0)) x))
+     (lambda (action) (tm-gpg-command-passphrase-decrypt cb action)))))
 
 (tm-define (tm-gpg-dialogue-passphrase-decrypt-block!)
   (:secure #t)
@@ -472,16 +468,15 @@
 
 ;; Enable/disable encryption
 (tm-define (tm-gpg-dialogue-passphrase-buffer-set-encryption)
-  (dialogue-window gpg-widget-ask-new-passphrase
-    (lambda (action)
-      (when (and (list? action) (nnull? action) (== (first action) "Ok"))
-	(gpg-set-buffer-passphrase (current-buffer) (second action))
-	(init-env "encryption" "gpg-passphrase")
-	(delayed
-	  (:idle 1)
-	  (save-buffer)
-	  (autosave-buffer (current-buffer)))))
-    "Passphrase encryption"))
+  (gpg-ask-new-passphrase
+   (lambda (action)
+     (when (and (list? action) (nnull? action) (== (first action) "Ok"))
+       (gpg-set-buffer-passphrase (current-buffer) (second action))
+       (init-env "encryption" "gpg-passphrase")
+       (delayed
+         (:idle 1)
+         (save-buffer)
+         (autosave-buffer (current-buffer)))))))
 
 (tm-define (tm-gpg-passphrase-buffer-unset-encryption)
   (init-env "encryption" "")
@@ -566,13 +561,12 @@
 					     ,(url-concretize name)))
 		(if (and passphrase (decryptable? passphrase))
 		    (decrypt passphrase)
-		    (dialogue-window 
-		     (gpg-widget-ask-standalone-passphrase decryptable?)
+                    (gpg-ask-standalone-passphrase
+                     decryptable?
 		     (lambda (action)
 		       (when (and (list? action) (nnull? action)
 				  (== (first action) "Ok"))
-			 (decrypt (second action))))
-		     "Passphrase decryption")))))))))
+			 (decrypt (second action)))))))))))))
 
 ;; Save as
 (tm-define (save-buffer-as-main new-name . args)

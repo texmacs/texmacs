@@ -306,6 +306,52 @@
 		       (refresh-now
 			"gpg-refreshable-ask-new-passphrase"))))))))))))
 
+(tm-tool* (gpg-tool-ask-new-passphrase win cmd)
+  (:name "Enter new passphrase for encryption")
+  (refreshable "gpg-refreshable-ask-new-passphrase"
+    (padded
+      (glue #f #f 300 0)
+      (form "Ask new passphrase"
+        (aligned
+          (item (text "New passphrase:")
+            (form-input "passphrase1" "password" '("") "16em"))
+          (item (text "Retype passphrase:")
+            (form-input "passphrase2" "password" '("") "16em")))
+        ===
+        (division "plain"
+          (hlist
+            >>
+            ("Encrypt"
+             (let* ((n (length (form-values)))
+                    (passwd1 (if (and (> n 0)
+                                      (string? (first (form-values))))
+                                 (first (form-values)) ""))
+                    (passwd2 (if (and (> n 1)
+                                      (string? (second (form-values))))
+                                 (second (form-values)) "")))
+               (global-set :gpg-mismatch (!= passwd1 passwd2))
+               (global-set :gpg-empty (== passwd1 ""))
+               (if (or (!= passwd1 passwd2) (== passwd1 ""))
+                   (refresh-now* win "gpg-refreshable-ask-new-passphrase")
+                   (begin
+                     (cmd (list "Ok" passwd1))
+                     (tool-close :any 'gpg-tool-ask-new-passphrase
+                                 noop win))))))))
+      ===
+      (assuming (global-ref :gpg-mismatch)
+        (bold (text "Passphrases mismatch")))
+      (assuming (global-ref :gpg-empty)
+        (bold (text "Wrong empty passphrase"))))))
+
+(tm-define (gpg-ask-new-passphrase cmd)
+  (global-set :gpg-mismatch #f)
+  (global-set :gpg-empty #f)
+  (if (side-tools?)
+      (tool-select :transient-right
+                   (list 'gpg-tool-ask-new-passphrase cmd))
+      (dialogue-window gpg-widget-ask-new-passphrase cmd
+                       "Passphrase encryption")))
+
 (define (gpg-command-passphrase-encrypt data callback action)
   (when (and (list? action) (nnull? action) (== (first action) "Ok"))
     (callback (gpg-passphrase-encrypt data (second action)))))
@@ -313,9 +359,8 @@
 (tm-define (gpg-dialogue-passphrase-encrypt data callback)
   (:secure #t)
   (:synopsis "Interactive GnuPG passphrase encryption")
-  (dialogue-window gpg-widget-ask-new-passphrase
-    (lambda (x) (gpg-command-passphrase-encrypt data callback x))
-    "Passphrase encryption"))
+  (gpg-ask-new-passphrase
+   (lambda (x) (gpg-command-passphrase-encrypt data callback x))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Passphrase decryption
@@ -346,6 +391,43 @@
                  (refresh-now
 		  "gpg-refreshable-ask-standalone-passphrase"))))))))))))))
 
+(tm-tool* (gpg-tool-ask-standalone-passphrase win check cmd)
+  (:name "Enter passphrase for decryption")
+  (refreshable "gpg-refreshable-ask-standalone-passphrase"
+    (padded
+      (glue #f #f 300 0)
+      (form "Ask standalone passphrase"
+        (form-input "passphrase" "password" '() "16em")
+        ===
+        (division "plain"
+          (hlist
+            >>
+            ("Decrypt"
+             (with n (length (form-values))
+               (if (and (> n 0) (string? (first (form-values))))
+                   (let* ((passphrase (first (form-values)))
+                          (ok? (check passphrase)))
+                     (global-set :gpg-mismatch (not ok?))
+                     (if (not ok?)
+                         (refresh-now*
+                          win "gpg-refreshable-ask-standalone-passphrase")
+                         (begin
+                           (cmd (list "Ok" passphrase))
+                           (tool-close
+                            :any 'gpg-tool-ask-standalone-passphrase
+                            noop win))))))))))
+      ===
+      (assuming (global-ref :gpg-mismatch)
+        (bold (text "Wrong passphrase"))))))
+
+(tm-define (gpg-ask-standalone-passphrase check cmd)
+  (global-set :gpg-mismatch #f)
+  (if (side-tools?)
+      (tool-select :transient-right
+                   (list 'gpg-tool-ask-standalone-passphrase check cmd))
+      (dialogue-window (gpg-widget-ask-standalone-passphrase check) cmd
+                       "Passphrase encryption")))
+
 (define (gpg-command-passphrase-decrypt data callback action)
   (when (and (list? action) (nnull? action) (== (first action) "Ok"))
     (callback (gpg-passphrase-decrypt data (second action)))))
@@ -353,11 +435,9 @@
 (tm-define (gpg-dialogue-passphrase-decrypt data callback)
   (:secure #t)
   (:synopsis "Interactive GnuPG passphrase decryption")
-  (dialogue-window
-   (gpg-widget-ask-standalone-passphrase
-     (lambda (x) (gpg-decryptable? data x)))
-    (lambda (x) (gpg-command-passphrase-decrypt data callback x))
-    "Passphrase encryption"))
+  (gpg-ask-standalone-passphrase
+   (lambda (x) (gpg-decryptable? data x))
+   (lambda (x) (gpg-command-passphrase-decrypt data callback x))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Secret key manager
