@@ -131,6 +131,7 @@
           (tm->stree (tree-descendant-env bt (cDr p) "language" lan))))))
 
 (define (spell-focus-on sel)
+  ;;(display* "spell-focus-on " sel "\n")
   (selection-set-range-set sel)
   (and-with ss (selection->string sel)
     (let* ((lan (spell-get-language sel))
@@ -143,6 +144,10 @@
       (set! spell-correct-string ss)
       (set! spell-suggestions l)
       (refresh-now "spell-suggestions")
+      (when (side-tools?)
+        (with-buffer (spell-master-buffer)
+          (update-menus))
+        (buffer-focus* (spell-buffer)))
       (when toolbar-spell-active?
         ;; FIXME: the following is quite a dirty hack to get the focus right
         (when (qt-gui?)
@@ -360,13 +365,18 @@
       (cons (string-append (number->string i) ": " (car l))
             (prefix-suggestions (+ i 1) (cdr l)))))
 
+(tm-define (spell-document)
+  (if (buffer-exists? (spell-buffer))
+      (buffer->tree (spell-buffer))
+      `(document "")))
+
 (tm-widget ((spell-widget u style init aux) quit)
   (padded
     (hlist
       (vlist
         (with dummy (set! spell-quit quit)
           (resize "400px" "75px"
-            (texmacs-input `(with ,@init (document ""))
+            (texmacs-input `(with ,@init ,(spell-document))
                            `(style (tuple ,@style)) aux)))
         (glue #t #t 0 0)
         (explicit-buttons
@@ -401,6 +411,48 @@
                   (prefix-suggestions 1 spell-suggestions)
                   ""))))))
 
+(tm-tool* (spell-tool win u style init aux)
+  (division "title"
+    (with quit (lambda ()
+                 (buffer-focus u)
+                 (spell-cancel))
+      (hlist (text "Spell checker") >>
+             (division "plain"
+               ("x" (tool-close :any 'spell-tool quit win))))))
+  (centered
+    (with dummy (set! spell-quit quit)
+      (resize "350px" "75px"
+        (texmacs-input `(with ,@init ,(spell-document))
+                       `(style (tuple ,@style)) aux)))
+    ======
+    (explicit-buttons
+      (aligned
+        (meti (hlist // (text "Accept during this pass"))
+          ("Tab" (spell-accept-word)))
+        (meti (hlist // (text "Permanently insert into dictionary"))
+          (" + " (spell-insert-word)))))
+    ======
+    (hlist
+      >>>
+      ((balloon (icon "tm_search_first.xpm") "First error")
+       (spell-extreme-match #f))
+      ((balloon (icon "tm_search_previous.xpm") "Previous error")
+       (spell-next-match #f))
+      ((balloon (icon "tm_search_next.xpm") "Next error")
+       (spell-next-match #t))
+      ((balloon (icon "tm_search_last.xpm") "Last error")
+       (spell-extreme-match #t))))
+  (refreshable "spell-suggestions"
+    (assuming (nnull? spell-suggestions)
+      ======
+      (division "title"
+        (text "Suggestions"))
+      (centered
+        (resize "350px" "225px"
+          (choice (spell-follow-suggestion answer)
+                  (prefix-suggestions 1 spell-suggestions)
+                  ""))))))
+
 (define (get-main-attrs getter)
   (list "mode" (getter "mode")
         "language" (getter "language")
@@ -423,7 +475,8 @@
     (let* ((u (current-buffer))
            (st (embedded-style-list))
            (init (get-main-attrs get-env))
-           (aux (spell-buffer)))
+           (aux (spell-buffer))
+           (tool (list 'spell-tool u st init aux)))
       (buffer-set-master aux u)
       (set! spell-window (current-window))
       (set-spell-reference (cursor-path))
@@ -432,12 +485,16 @@
       (set! spell-corrected 0)
       (set! spell-accepted 0)
       (set! spell-inserted 0)
+      (when (not (buffer-exists? aux))
+        (buffer-set-body aux `(document "")))
       (delayed
         (:idle 100)
         (perform-spell))
-      (dialogue-window (spell-widget u st init aux)
-                       spell-cancel
-                       "Spell" aux))))
+      (if (side-tools?)
+          (tool-focus :right tool aux)
+          (dialogue-window (spell-widget u st init aux)
+                           spell-cancel
+                           "Spell" aux)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Spell toolbar
