@@ -572,8 +572,7 @@
 
 (tm-widget (page-headers-tool win)
   (let* ((u (window->buffer win))
-         (style (list-remove-duplicates
-                 (rcons (get-style-list) "macro-editor"))))
+         (style (embedded-style-list "macro-editor")))
     (for (var header-parameters)
       ======
       (text (eval (parameter-name var)))

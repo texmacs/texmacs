@@ -381,7 +381,7 @@
 (tm-define (open-page-format-window)
   (:interactive #t)
   (let* ((u  (current-buffer))
-         (st (list-remove-duplicates (rcons (get-style-list) "macro-editor")))
+         (st (embedded-style-list "macro-editor"))
          (t  (make-ahash-table)))
     (and-with doc (tree-innermost 'document)
       (and-with par (tree-down doc)
@@ -394,8 +394,7 @@
   (:interactive #t)
   (if (side-tools?)
       (let* ((u  (current-buffer))
-             (st (list-remove-duplicates
-                  (rcons (get-style-list) "macro-editor")))
+             (st (embedded-style-list "macro-editor"))
              (t  (make-ahash-table)))
         (and-with doc (tree-innermost 'document)
           (and-with par (tree-down doc)

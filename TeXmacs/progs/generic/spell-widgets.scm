@@ -421,7 +421,7 @@
   (when (not (inside-spell-buffer?))
     (multi-spell-start)
     (let* ((u (current-buffer))
-           (st (get-style-list))
+           (st (embedded-style-list))
            (init (get-main-attrs get-env))
            (aux (spell-buffer)))
       (buffer-set-master aux u)

@@ -555,8 +555,7 @@
   (:interactive #t)
   (when (not (inside-search-buffer?))
     (let* ((u (current-buffer))
-           (st (list-remove-duplicates
-                (rcons (get-style-list) "macro-editor")))
+           (st (embedded-style-list "macro-editor"))
            (init (get-main-attrs get-env))
            (aux (search-buffer))
            (tool (list 'search-tool u st init aux)))
@@ -674,8 +673,7 @@
   (:interactive #t)
   (when (not (inside-search-buffer?))
     (let* ((u (current-buffer))
-           (st (list-remove-duplicates
-                (rcons (get-style-list) "macro-editor")))
+           (st (embedded-style-list "macro-editor"))
            (init (get-main-attrs get-env))
            (saux (search-buffer))
            (raux (replace-buffer))
