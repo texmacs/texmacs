@@ -99,16 +99,14 @@
           ("Remove" (and-with sh (get-shortcut u)
                       (global-set u :sh "")
                       (remove-user-shortcut sh)
-                      (refresh-now "shortcuts-list")
-                      (with-window win (update-menus))))
+                      (refresh-now* win "shortcuts-list")))
           // //
           ("Clear" (set-shortcut u ""))
           // //
           ("Apply" (and-with sh (get-shortcut u)
                      (global-set u :sh sh)
                      (set-user-shortcut sh (global-ref u :cmd))
-                     (refresh-now "shortcuts-list")
-                     (with-window win (update-menus))))))))
+                     (refresh-now* win "shortcuts-list")))))))
   ===
   (division "plain"
     (division "title"
@@ -122,8 +120,7 @@
                     (global-set u :sh sh)
                     (global-set u :cmd cmd)
                     (set-shortcut u sh)
-                    (refresh-now "current-shortcut")
-                    (with-window win (update-menus)))
+                    (refresh-now* win "current-shortcut"))
                   (map encode-shortcut (user-shortcuts-list))
                   (encode-shortcut (global-ref u :sh))))))))
 
