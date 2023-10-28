@@ -226,6 +226,7 @@
 
 (tm-define (tm-gpg-dialogue-passphrase-encrypt t)
   (:secure #t)
+  (:interactive #t)
   (:synopsis "Interactive passphrase encryption")
   (with cb (lambda (x) (tm-gpg-passphrase-encrypt t x))
     (gpg-ask-new-passphrase
@@ -252,6 +253,7 @@
 
 (tm-define (tm-gpg-dialogue-passphrase-encrypt-all)
   (:secure #t)
+  (:interactive #t)
   (:synopsis "Interactive passphrase encryption")
   (gpg-ask-new-passphrase
    (lambda (action)
@@ -354,6 +356,7 @@
 
 (tm-define (tm-gpg-dialogue-passphrase-decrypt t)
   (:secure #t)
+  (:interactive #t)
   (:synopsis "Interactive passphrase decryption")
   (with cb (lambda (x) (tm-gpg-passphrase-decrypt t x))
     (gpg-ask-ask-standalone-passphrase
@@ -468,6 +471,7 @@
 
 ;; Enable/disable encryption
 (tm-define (tm-gpg-dialogue-passphrase-buffer-set-encryption)
+  (:interactive #t)
   (gpg-ask-new-passphrase
    (lambda (action)
      (when (and (list? action) (nnull? action) (== (first action) "Ok"))
@@ -543,6 +547,7 @@
     ("Close" (cmd))))
 
 (tm-define (tm-gpg-dialogue-passphrase-decrypt-buffer name)
+  (:interactive #t)
   (if (not (supports-gpg?))
       (dialogue-window
        (gpg-widget-error-decrypt-setup-message name)
