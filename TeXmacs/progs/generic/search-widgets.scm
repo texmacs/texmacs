@@ -587,14 +587,19 @@
   ("Disable case sensitivity"
    (toggle-search-preference "case-insensitive-match")))
 
+(tm-define (replace-document)
+  (if (buffer-exists? (replace-buffer))
+      (buffer->tree (replace-buffer))
+      `(document "")))
+
 (tm-widget ((replace-widget u style init saux raux) quit)
   (padded
     (resize "600px" "100px"
-      (texmacs-input `(with ,@init (document ""))
+      (texmacs-input `(with ,@init ,(search-document))
                      `(style (tuple ,@style)) saux))
     === ===
     (resize "600px" "100px"
-      (texmacs-input `(with ,@init (document ""))
+      (texmacs-input `(with ,@init ,(replace-document))
                      `(style (tuple ,@style)) raux))
     === ===
     (hlist
@@ -633,11 +638,11 @@
     //
     (vertical
       (resize "360px" "60px"
-        (texmacs-input `(with ,@init (document ""))
+        (texmacs-input `(with ,@init ,(search-document))
                        `(style (tuple ,@style)) saux))
       === ===
       (resize "360px" "60px"
-        (texmacs-input `(with ,@init (document ""))
+        (texmacs-input `(with ,@init ,(replace-document))
                        `(style (tuple ,@style)) raux))
       === ===
       (hlist
