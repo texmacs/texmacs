@@ -488,10 +488,15 @@
   ("Disable case sensitivity"
    (toggle-search-preference "case-insensitive-match")))
 
+(tm-define (search-document)
+  (if (buffer-exists? (search-buffer))
+      (buffer->tree (search-buffer))
+      `(document "")))
+
 (tm-widget ((search-widget u style init aux) quit)
   (padded
     (resize "600px" "100px"
-      (texmacs-input `(with ,@init (document ""))
+      (texmacs-input `(with ,@init ,(search-document))
                      `(style (tuple ,@style)) aux))
     ===
     (hlist
@@ -516,35 +521,9 @@
       ((balloon (icon "tm_close_tool.xpm") "Close search tool")
        (quit)))))
 
-(tm-define (open-search-window)
-  (:interactive #t)
-  (when (not (inside-search-buffer?))
-    (let* ((u (current-buffer))
-           (st (list-remove-duplicates
-                (rcons (get-style-list) "macro-editor")))
-           (init (get-main-attrs get-env))
-           (aux (search-buffer)))
-      (buffer-set-master aux u)
-      (set! search-window (current-window))
-      (set-search-reference (cursor-path))
-      (set-search-filter)
-      (set! search-filter-out? #f)
-      (dialogue-window (search-widget u st init aux)
-                       (search-cancel u)
-                       "Search" aux))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Search tool
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (search-document)
-  (if (buffer-exists? (search-buffer))
-      (buffer->tree (search-buffer))
-      `(document "")))
-
 (tm-tool* (search-tool win u style init aux)
   (:name "Search")
-  (:quit (begin (buffer-focus* u) ((search-cancel u))))
+  (:quit (begin (buffer-focus u) ((search-cancel u))))
   ===
   (horizontal
     //
@@ -572,7 +551,7 @@
       ===)
     //))
 
-(tm-define (open-search-tool)
+(tm-define (open-search)
   (:interactive #t)
   (when (not (inside-search-buffer?))
     (let* ((u (current-buffer))
@@ -586,13 +565,11 @@
       (set-search-reference (cursor-path))
       (set-search-filter)
       (set! search-filter-out? #f)
-      (if (tool-active? :bottom-right tool)
-          (buffer-focus* aux)
-          (begin
-            (tool-select :bottom-right tool)
-            (delayed
-              (:pause 250)
-              (buffer-focus* aux)))))))
+      (if (side-tools?)
+          (tool-focus :bottom-right tool aux)
+          (dialogue-window (search-widget u st init aux)
+                           (search-cancel u)
+                           "Search" aux)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search and replace widget
@@ -648,32 +625,9 @@
       ((balloon (icon "tm_close_tool.xpm") "Close replace tool")
        (quit)))))
 
-(tm-define (open-replace)
-  (:interactive #t)
-  (when (not (inside-search-buffer?))
-    (let* ((u (current-buffer))
-           (st (list-remove-duplicates
-                (rcons (get-style-list) "macro-editor")))
-           (init (get-main-attrs get-env))
-           (saux (search-buffer))
-           (raux (replace-buffer)))
-      (buffer-set-master saux u)
-      (buffer-set-master raux u)
-      (set! search-window (current-window))
-      (set-search-reference (cursor-path))
-      (set-search-filter)
-      (set! search-filter-out? #f)
-      (dialogue-window (replace-widget u st init saux raux)
-                       (search-cancel u)
-                       "Search and replace" saux raux))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Replace tool
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (tm-tool* (replace-tool win u style init saux raux)
   (:name "Search and replace")
-  (:quit (begin (buffer-focus* u) ((search-cancel u))))
+  (:quit (begin (buffer-focus u) ((search-cancel u))))
   ===
   (horizontal
     //
@@ -711,7 +665,7 @@
       ===)
     //))
 
-(tm-define (open-replace-tool)
+(tm-define (open-replace)
   (:interactive #t)
   (when (not (inside-search-buffer?))
     (let* ((u (current-buffer))
@@ -727,13 +681,11 @@
       (set-search-reference (cursor-path))
       (set-search-filter)
       (set! search-filter-out? #f)
-      (if (tool-active? :bottom-right tool)
-          (buffer-focus* saux)
-          (begin
-            (tool-select :bottom-right tool)
-            (delayed
-              (:pause 250)
-              (buffer-focus* saux)))))))
+      (if (side-tools?)
+          (tool-focus :bottom-right tool saux)
+          (dialogue-window (replace-widget u st init saux raux)
+                           (search-cancel u)
+                           "Search and replace" saux raux)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search toolbar
@@ -1016,17 +968,15 @@
 (tm-define (interactive-search)
   (:interactive #t)
   (set-boolean-preference "search-and-replace" #f)
-  (cond ((and (get-boolean-preference "toolbar search")
-              (not (buffer-aux? (current-buffer))))
-         (toolbar-search-start))
-        ((side-tools?) (open-search-tool))
-        (else (open-search-window))))
+  (if (and (get-boolean-preference "toolbar search")
+           (not (buffer-aux? (current-buffer))))
+      (toolbar-search-start)
+      (open-search)))
 
 (tm-define (interactive-replace)
   (:interactive #t)
   (set-boolean-preference "search-and-replace" #t)
-  (cond ((and (get-boolean-preference "toolbar replace")
-              (not (buffer-aux? (current-buffer))))
-         (toolbar-replace-start))
-        ((side-tools?) (open-replace-tool))
-        (else (open-replace))))
+  (if (and (get-boolean-preference "toolbar replace")
+           (not (buffer-aux? (current-buffer))))
+      (toolbar-replace-start)
+      (open-replace)))

@@ -60,14 +60,6 @@
 (tm-define (window-id win)
   (url->string (url-tail win)))
 
-(define tool-key-table (make-ahash-table))
-
-(tm-define (tool-ref key)
-  (ahash-ref tool-key-table key))
-
-(tm-define (tool-set key val)
-  (ahash-set! tool-key-table key val))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Paragraph properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -123,7 +115,7 @@
                   (cons-new (window-get-env win "par-columns-sep" mode)
                             '("1fn" "2fn" "3fn" ""))
                   (window-get-env win "par-columns-sep" mode) "10em"))))
-      (assuming (tool-ref (list win mode "advanced paragraph"))
+      (assuming (global-ref win mode :advanced)
         (item ====== ======)
         (item === ===)
         (item (text "Line breaking:")
@@ -196,16 +188,16 @@
           ("Restore defaults"
            (apply window-reset-init (cons win paragraph-parameters))))
         >>
-        (assuming (not (tool-ref (list win mode "advanced paragraph")))
+        (assuming (not (global-ref win mode :advanced))
           ("Show advanced settings"
            (begin
-             (tool-set (list win mode "advanced paragraph") #t)
+             (global-set win mode :advanced #t)
              (refresh-now "paragraph tool")
              (update-menus))))
-        (assuming (tool-ref (list win mode "advanced paragraph"))
+        (assuming (global-ref win mode :advanced)
           ("Hide advanced settings"
            (begin
-             (tool-set (list win mode "advanced paragraph") #f)
+             (global-set win mode :advanced #f)
              (refresh-now "paragraph tool")
              (update-menus))))))))
 
