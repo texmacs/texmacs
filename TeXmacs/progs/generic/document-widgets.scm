@@ -523,7 +523,7 @@
 (tm-define (open-document-page-format-window)
   (:interactive #t)
   (let* ((u  (current-buffer))
-         (st (list-remove-duplicates (rcons (get-style-list) "macro-editor"))))
+         (st (embedded-style-list "macro-editor")))
     (apply dialogue-window
            (cons* (document-page-formatter u st)
                   noop "Document page format"
