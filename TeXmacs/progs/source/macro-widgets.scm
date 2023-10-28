@@ -288,19 +288,23 @@
   (:interactive #t)
   (when (can-create-context-macro?)
     (if (symbol? l) (set! l (symbol->string l)))
+    (set! macro-current-mode "Source")
     (let* ((b (current-buffer-url))
 	   (u (string-append "tmfs://aux/edit-" l))
 	   (packs (get-style-list))
 	   (styps (list-remove-duplicates
 		   (append packs (list "macro-editor"))))
            (body (add-context (tree-up (cursor-tree)) `(arg "body")))
-	   (def `(assign ,l (inactive* (macro "body" ,body)))))
-      (set! macro-current-mode "Source")
-      (and-with doc (build-macro-document* l def)
-	(dialogue-window (macro-editor u styps doc "Source")
-			 (lambda x (noop))
-			 "Macro editor")
-	(buffer-set-master u b)))))
+	   (def `(assign ,l (inactive* (macro "body" ,body))))
+           (doc (build-macro-document* l def))
+           (tool (list 'macro-tool u styps doc "Source")))
+      (when doc
+	(buffer-set-master u b)
+        (if (side-tools?)
+            (tool-focus :right tool u)
+            (dialogue-window (macro-editor u styps doc "Source")
+                             (lambda x (noop))
+                             "Macro editor"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Table macros
@@ -340,6 +344,7 @@
   (when (can-create-table-macro?)
     (position-inside-table)
     (if (symbol? l) (set! l (symbol->string l)))
+    (set! macro-current-mode "Source")
     (let* ((b (current-buffer-url))
 	   (u (string-append "tmfs://aux/edit-" l))
 	   (packs (get-style-list))
@@ -351,13 +356,16 @@
 		     (with sel (tm->stree (selection-tree))
 		       (tformat-subst-selection sel tf))
 		     tf))
-	   (def `(assign ,l (inactive* (macro "body" ,body)))))
-      (set! macro-current-mode "Source")
-      (and-with doc (build-macro-document* l def)
-	(dialogue-window (macro-editor u styps doc "Source")
-			 (lambda x (noop))
-			 "Macro editor")
-	(buffer-set-master u b)))))
+	   (def `(assign ,l (inactive* (macro "body" ,body))))
+           (doc (build-macro-document* l def))
+           (tool (list 'macro-tool u styps doc "Source")))
+      (when doc
+	(buffer-set-master u b)
+        (if (side-tools?)
+            (tool-focus :right tool u)
+            (dialogue-window (macro-editor u styps doc "Source")
+                             (lambda x (noop))
+                             "Macro editor"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Editing a macro chosen from the list of all defined macros
