@@ -114,6 +114,7 @@ class box_widget_rep: public simple_widget_rep {
 public:
   box_widget_rep (box b, color bg, bool trans, double zoom, SI dw, SI dh);
   operator tree ();
+  bool is_embedded_widget ();
 
   void handle_get_size_hint (SI& w, SI& h);
   void handle_repaint (renderer ren, SI x1, SI y1, SI x2, SI y2);
@@ -131,6 +132,11 @@ box_widget_rep::box_widget_rep
 
 box_widget_rep::operator tree () {
   return tree (TUPLE, "box", (tree) b);
+}
+
+bool
+box_widget_rep::is_embedded_widget () {
+  return true;
 }
 
 void
