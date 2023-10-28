@@ -588,7 +588,7 @@
       (:idle 1)
       (cursor-after
        (cond ((== what "all") 
-              (generate-all-aux) (inclusions-gc) (wait-update-current-buffer))
+              (generate-all-aux) (inclusions-gc) (picture-gc) (wait-update-current-buffer))
              ((== what "bibliography")
               (generate-all-aux) (wait-update-current-buffer))
              ((== what "buffer") 
