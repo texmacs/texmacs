@@ -1223,7 +1223,19 @@
   (notify-now "Restart TeXmacs in order to let changes take effect"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Side tools
+;; Attaching global information to widgets and tools
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define global-key-table (make-ahash-table))
+
+(tm-define (global-ref . key)
+  (ahash-ref global-key-table key))
+
+(tm-define (global-set . key-val)
+  (ahash-set! global-key-table (cDr key-val) (cAr key-val)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Attaching side tools to windows
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define window-tools-table (make-ahash-table))
@@ -1326,7 +1338,17 @@
     (set! tool (list tool)))
   (with win (if (null? opt-win) (current-window) (car opt-win))
     (set-window-tool win pos tool)))
-  
+
+(tm-define (tool-focus pos tool u)
+  (:check-mark "v" tool-active?)
+  (if (tool-active? pos tool)
+      (buffer-focus* u)
+      (begin
+        (tool-select pos tool)
+        (delayed
+          (:pause 250)
+          (buffer-focus* u)))))
+
 (tm-define (tool-toggle pos tool . opt-win)
   (:check-mark "v" tool-active?)
   (when (string? tool)
@@ -1364,6 +1386,10 @@
   (:check-mark "v" no-active-tools?)
   (with win (if (null? opt-win) (current-window) (car opt-win))
     (set-window-tools win pos (list))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Defining side tools
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (texmacs-side-tool win tool . opts)
   (division "title"
