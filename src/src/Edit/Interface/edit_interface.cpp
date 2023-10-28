@@ -1132,6 +1132,13 @@ edit_interface_rep::is_editor_widget () {
   return true;
 }
 
+bool
+edit_interface_rep::is_embedded_widget () {
+  string name= as_string (buf->buf->name);
+  return starts (name, "tmfs://aux/");
+  // FIXME: could be made more robust: test should not be based on file name
+}
+
 void
 edit_interface_rep::handle_get_size_hint (SI& w, SI& h) {
   gui_root_extents (w, h);
