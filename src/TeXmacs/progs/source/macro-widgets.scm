@@ -15,7 +15,8 @@
   (:use (source macro-edit)
 	(version version-edit) ;; FIXME: for selection-trees
 	(generic format-edit)
-        (generic document-part)))
+        (generic document-part)
+        (utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Major operation mode
@@ -373,6 +374,13 @@
             (build-macro-document macro-current-macro))
   (refresh-now "macros-editor-documentation"))
 
+(tm-define (macros-editor-select* win u macro filter)
+  (macros-editor-select u macro filter)
+  (with-window win (update-menus)))
+
+(tm-define (macros-editor-has-help?)
+  (tmdoc-search-tag (string->symbol macro-current-macro)))
+
 (tm-define (macros-editor-current-help)
   (with doc (tmdoc-search-tag (string->symbol macro-current-macro))
     (if doc (tm->stree doc)
@@ -426,6 +434,46 @@
 	// //
 	("Ok" (macro-apply u) (quit))))))
 
+(tm-tool* (macros-tool win u packs l)
+  (division "title"
+    (with quit (lambda ()
+                 (terminate-macro-editor)
+                 (buffer-focus (buffer-get-master u)))
+      (hlist (text "Macro selector") >>
+             (division "plain"
+               ("x" (tool-close :any 'macros-tool quit win))))))
+  (centered
+    (resize "250px" "150px"
+      (filtered-choice (macros-editor-select* win u answer filter) l
+                       macro-current-macro macro-current-filter)))
+  === ======
+  (division "title"
+    (text "Macro editor"))
+  (centered
+    (resize "400px" "200px"
+      (texmacs-input (build-macro-document macro-current-macro)
+                     `(style (tuple ,@packs)) u))
+    ======
+    (division "plain"
+      (hlist
+        (refreshable "macro-editor-mode"
+          (enum (set-macro-mode u answer)
+                '("Text" "Source" "Mathematics")
+                (get-macro-mode) "8em"))
+        >>
+        ("Apply" (macro-apply u)))))
+  (refreshable "macros-editor-documentation"
+    (assuming (macros-editor-has-help?)
+      ====== ======
+      (division "title"
+        (text "Documentation"))
+      (centered
+        (resize "400px" "300px"
+          (texmacs-output
+           `(document
+              (mini-paragraph "476guipx" ,(macros-editor-current-help)))
+           '(style (tuple "tmdoc" "side-tools"))))))))
+  
 (define (get-key key-val)
   (tree->string (tree-ref key-val 0)))
 
@@ -446,9 +494,12 @@
   (let* ((b (current-buffer-url))
 	 (u (string->url "tmfs://aux/macro-editor"))
 	 (names (all-defined-macros))
-         (styps (embedded-style-list "macro-editor")))
+         (styps (embedded-style-list "macro-editor"))
+         (tool (list 'macros-tool u styps names)))
     (set! macro-current-mode "Text")
-    (dialogue-window (macros-editor u styps names)
-		     (lambda x (terminate-macro-editor))
-		     "Macros editor" u)
-    (buffer-set-master u b)))
+    (buffer-set-master u b)
+    (if (side-tools?)
+        (tool-focus :right tool u)
+        (dialogue-window (macros-editor u styps names)
+                         (lambda x (terminate-macro-editor))
+                         "Macros editor" u))))
