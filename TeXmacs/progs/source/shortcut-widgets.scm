@@ -67,6 +67,8 @@
                         (remove-user-shortcut sh)
                         (refresh-now "shortcuts-list")))
             // //
+            ("Clear" (set-shortcut u ""))
+            // //
             ("Apply" (and-with sh (get-shortcut u)
                        (global-set u :sh sh)
                        (set-user-shortcut sh (global-ref u :cmd))
@@ -84,13 +86,13 @@
     (vertical
       (aligned
         (item (text "Shortcut")
-          (resize "200px" "30px"
+          (resize "250px" "30px"
             (texmacs-input `(document (preview-shortcut ,(global-ref u :sh)))
                            `(style (tuple "generic" "shortcut-editor")) u)))
         (item (text "Command")
           (refreshable "current-shortcut"
             (input (global-set u :cmd answer) "string"
-                   (list (global-ref u :cmd) "") "200px"))))
+                   (list (global-ref u :cmd) "") "250px"))))
       ======
       (division "plain"
         (hlist >>
@@ -99,6 +101,8 @@
                       (remove-user-shortcut sh)
                       (refresh-now "shortcuts-list")
                       (with-window win (update-menus))))
+          // //
+          ("Clear" (set-shortcut u ""))
           // //
           ("Apply" (and-with sh (get-shortcut u)
                      (global-set u :sh sh)
