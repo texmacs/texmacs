@@ -314,9 +314,18 @@ concater_rep::typeset_mark (tree t, path ip) {
         }
       }
 
-      marker (descend (valip, 0));
-      typeset (t[1], descend (ip, 1));
-      marker (descend (valip, right_index (value)));
+      if (is_func (t, VAR_MARK)) {
+        if (is_nil (valip) && valip->item >= 0)
+          marker (descend (valip->next, 0));
+        typeset (t[1], descend (ip, 1));
+        if (is_nil (valip) && valip->item >= 0)
+          marker (descend (valip->next, 1));
+      }
+      else {
+        marker (descend (valip, 0));
+        typeset (t[1], descend (ip, 1));
+        marker (descend (valip, right_index (value)));
+      }
     }
   else typeset (t[1], descend (ip, 1));
 }

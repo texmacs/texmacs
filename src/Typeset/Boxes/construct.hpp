@@ -136,6 +136,7 @@ box control_box (path ip, tree t, font fn);
 box control_box (path ip, box b, font fn);
 box control_box (path ip, lazy lz, font fn);
 
+box concat_box (path ip, array<box> bs);
 box concat_box (path ip, array<box> bs, array<SI> spc, bool indent= false);
 box phrase_box (path ip, array<box> bs, array<SI> spc);
 box stack_box (path ip, array<box> bs, array<SI> spc);
