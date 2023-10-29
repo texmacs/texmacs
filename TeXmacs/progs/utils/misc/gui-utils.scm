@@ -64,3 +64,23 @@
       (key-press s)
       (if (not (emu-active-modifier? "Lock"))
           (set! emu-modifier-table (make-ahash-table))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Table markup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (gui-hlist-item t)
+  `(cell (document ,t)))
+
+(tm-define (gui-hlist-table tag t)
+  (:secure #t)
+  (with label (if (tm-atomic? tag) (string->symbol (tm->string tag)) 'stack)
+    `(,label (table (row ,@(map gui-hlist-item (tree-children t)))))))
+
+(define (gui-vlist-item t)
+  `(row (cell (document ,t))))
+
+(tm-define (gui-vlist-table tag t)
+  (:secure #t)
+  (with label (if (tm-atomic? tag) (string->symbol (tm->string tag)) 'stack)
+    `(,label (table ,@(map gui-vlist-item (tree-children t))))))

@@ -488,6 +488,7 @@ concater_rep::typeset (tree t, path ip) {
     typeset_executable (t, ip);
     break;
   case MARK:
+  case VAR_MARK:
     typeset_mark (t, ip);
     break;
   case EXPAND_AS:
