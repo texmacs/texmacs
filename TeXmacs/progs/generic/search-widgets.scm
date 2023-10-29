@@ -523,7 +523,7 @@
 
 (tm-tool* (search-tool win u style init aux)
   (:name "Search")
-  (:quit (begin (buffer-focus u) ((search-cancel u))))
+  (:quit ((search-cancel u)))
   ===
   (horizontal
     //
@@ -631,7 +631,7 @@
 
 (tm-tool* (replace-tool win u style init saux raux)
   (:name "Search and replace")
-  (:quit (begin (buffer-focus u) ((search-cancel u))))
+  (:quit ((search-cancel u)))
   ===
   (horizontal
     //

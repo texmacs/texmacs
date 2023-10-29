@@ -194,9 +194,7 @@
 
 (tm-tool* (macro-tool win u packs doc mode)
   (:name "Edit macro")
-  (:quit (begin
-           (terminate-macro-editor)
-           (buffer-focus (buffer-get-master u))))
+  (:quit (terminate-macro-editor))
   ===
   (horizontal
     //

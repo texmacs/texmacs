@@ -32,7 +32,6 @@
 
 (tm-tool* (db-preferences-tool win)
   (:name "TeXmacs database preferences")
-  (:quit (buffer-focus (window->buffer win)))
   (padded
     (aligned
       (meti (hlist // (text "Import bibliographies when opening files"))
@@ -159,7 +158,6 @@
 
 (tm-tool* (db-search-tool win name db kind quit)
   (:name name)
-  (:quit (quit #f))
   (padded
     (let* ((quit* (lambda (x)
                     (quit x)
@@ -299,7 +297,6 @@
 
 (tm-tool* (db-identities-tool win)
   (:name "Identity editor")
-  (:quit (buffer-focus (window->buffer win)))
   (padded
     (vlist (dynamic (db-identity-info win))))
   ======

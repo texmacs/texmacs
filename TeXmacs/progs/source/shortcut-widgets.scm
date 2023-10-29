@@ -81,7 +81,6 @@
 
 (tm-tool* (shortcuts-tool win u)
   (:name "Edit keyboard shortcut")
-  (:quit (buffer-focus (buffer-get-master u)))
   (padded
     (vertical
       (aligned
