@@ -46,6 +46,7 @@ is_long_arg (tree t, int i) {
   case DPAGES:
   case WITH:
   case MARK:
+  case VAR_MARK:
   case MACRO:
   case XMACRO:
   case CELL:

@@ -149,6 +149,17 @@ lazy_surround_rep::produce (lazy_type request, format fm) {
     format ret_fm= make_format_vstream (width, before, after);
     return par->produce (request, ret_fm);
   }
+  /*
+  else if (request == LAZY_BOX) {
+    box ret= (box) lazy_rep::produce (request, fm);
+    array<box> bs;
+    for (int i=0; i<N(a); i++) bs << a[i]->b;
+    bs << ret;
+    for (int i=0; i<N(b); i++) bs << b[i]->b;
+    ret= concat_box (ret->ip, bs);
+    return make_lazy_box (ret);
+  }
+  */
   return lazy_rep::produce (request, fm);
 }
 
@@ -452,13 +463,20 @@ make_lazy_mark (edit_env env, tree t, path ip) {
 	  valip= descend (valip, nr);
 	}
       }
-      if (is_compound (value)) {
+      if (is_func (t, VAR_MARK)) {
+        if (!is_nil (valip) && valip->item >= 0) {
+          a= typeset_marker (env, descend (valip->next, 0));
+          b= typeset_marker (env, descend (valip->next, 1));
+        }
+      }
+      else if (is_compound (value)) {
 	a= typeset_marker (env, descend (valip, 0));
 	b= typeset_marker (env, descend (valip, 1));
       }
     }
 
   lazy par= make_lazy (env, t[1], descend (ip, 1));
+  lazy ret= lazy_surround (a, b, par, ip);
   return lazy_surround (a, b, par, ip);
 }
 
@@ -646,6 +664,7 @@ make_lazy (edit_env env, tree t, path ip) {
   case ARG:
     return make_lazy_argument (env, t, ip);
   case MARK:
+  case VAR_MARK:
     return make_lazy_mark (env, t, ip);
   case EXPAND_AS:
     return make_lazy_expand_as (env, t, ip);
