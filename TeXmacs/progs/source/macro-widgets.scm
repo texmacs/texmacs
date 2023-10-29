@@ -433,13 +433,8 @@
 	("Ok" (macro-apply u) (quit))))))
 
 (tm-tool* (macros-tool win u packs l)
-  (division "title"
-    (with quit (lambda ()
-                 (terminate-macro-editor)
-                 (buffer-focus (buffer-get-master u)))
-      (hlist (text "Macro selector") >>
-             (division "plain"
-               ("x" (tool-close :any 'macros-tool quit win))))))
+  (:name "Macro selector")
+  (:quit (terminate-macro-editor))
   (centered
     (resize "250px" "150px"
       (filtered-choice (macros-editor-select* win u answer filter) l

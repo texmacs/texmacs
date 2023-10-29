@@ -412,13 +412,8 @@
                   ""))))))
 
 (tm-tool* (spell-tool win u style init aux)
-  (division "title"
-    (with quit (lambda ()
-                 (buffer-focus u)
-                 (spell-cancel))
-      (hlist (text "Spell checker") >>
-             (division "plain"
-               ("x" (tool-close :any 'spell-tool quit win))))))
+  (:name "Spelling error")
+  (:quit (spell-cancel))
   (centered
     (with dummy (set! spell-quit quit)
       (resize "350px" "75px"
