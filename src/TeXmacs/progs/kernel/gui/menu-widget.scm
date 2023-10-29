@@ -1372,6 +1372,7 @@
              (f (list-filter l (lambda (t) (!= (car t) tool)))))
         (when (!= f l)
           (when quit (quit))
+          (buffer-focus (window->buffer win))
           (set-window-tools win pos f)))))
 
 (tm-define ((tool-quit tool quit . opt-win) . args)
