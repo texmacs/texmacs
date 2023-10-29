@@ -96,7 +96,7 @@
   `(if (not ,cond?) (begin ,@body)))
 
 (define-public-macro (with var val . body)
-  (if (pair? var)
+  (if (or (pair? var) (null? var))
       `(apply (lambda ,var ,@body) ,val)
       `(let ((,var ,val)) ,@body)))
 

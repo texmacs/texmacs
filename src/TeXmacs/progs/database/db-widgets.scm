@@ -25,10 +25,19 @@
 
 (tm-widget (db-preferences-widget)
   (padded
-      (aligned
-        (meti (hlist // (text "Automatically import bibliographies when opening files") >>)
-          (toggle (set-boolean-preference "auto bib import" answer)
-                  (get-boolean-preference "auto bib import"))))))
+    (aligned
+      (meti (hlist // (text "Automatically import bibliographies when opening files") >>)
+        (toggle (set-boolean-preference "auto bib import" answer)
+                (get-boolean-preference "auto bib import"))))))
+
+(tm-tool* (db-preferences-tool win)
+  (:name "TeXmacs database preferences")
+  (:quit (buffer-focus (window->buffer win)))
+  (padded
+    (aligned
+      (meti (hlist // (text "Import bibliographies when opening files"))
+        (toggle (set-boolean-preference "auto bib import" answer)
+                (get-boolean-preference "auto bib import"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Pretty printing with cache
@@ -146,6 +155,27 @@
 	(resize "750px" "500px"
 	  (texmacs-input `(document ,@(db-search-results db kind query))
 			 `(style (tuple ,(db-get-style kind)))
+			 (db-search-results-buffer)))))))
+
+(tm-tool* (db-search-tool win name db kind quit)
+  (:name name)
+  (:quit (quit #f))
+  (padded
+    (let* ((quit* (lambda (x)
+                    (quit x)
+                    (buffer-focus (window->buffer win))
+                    (tool-close :any 'db-search-tool noop win)))
+           (dummy (set! db-quit-search quit*))
+	   (query ""))
+      (hlist
+	(text "Search:") // //
+	(input (set! query (db-search-keypress db kind answer query))
+	       "search-database" (list "") "300px"))
+      === ===
+      (refreshable "db-search-results"
+	(resize "400px" "600px"
+	  (texmacs-input `(document ,@(db-search-results db kind query))
+			 `(style (tuple ,(db-get-style kind) "side-tools"))
 			 (db-search-results-buffer)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -268,10 +298,8 @@
         >>))))
 
 (tm-tool* (db-identities-tool win)
-  (division "title"
-    (hlist (text "Current identity") >>
-           (division "plain"
-             ("x" (tool-close :any 'db-identities-tool noop win)))))
+  (:name "Identity editor")
+  (:quit (buffer-focus (window->buffer win)))
   (padded
     (vlist (dynamic (db-identity-info win))))
   ======
@@ -313,12 +341,16 @@
   (db-reset)
   (set! db-search-cache (make-ahash-table))
   (set! db-result-cache (make-ahash-table))
-  (dialogue-window (db-search-widget db kind)
-		   (lambda args
-		     (set! db-quit-search ignore)
-		     (apply call-back args))
-		   name (db-search-results-buffer)))
+  (let* ((quit (lambda args
+                 (set! db-quit-search ignore)
+                 (apply call-back args)))
+         (aux (db-search-results-buffer)))
+    (if (side-tools?)
+        (tool-select :transient-right (list 'db-search-tool name db kind quit))
+        (dialogue-window (db-search-widget db kind) quit name aux))))
 
 (tm-define (open-db-preferences)
   (:interactive #t)
-  (top-window db-preferences-widget "TeXmacs database preferences"))
+  (if (side-tools?)
+      (tool-select :transient-right (list 'db-preferences-tool))
+      (top-window db-preferences-widget "TeXmacs database preferences")))
