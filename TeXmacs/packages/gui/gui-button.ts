@@ -44,6 +44,18 @@
 
   <\active*>
     <\src-comment>
+      Atomic markup
+    </src-comment>
+  </active*>
+
+  <assign|icon|<macro|name|<image|<find-file|$TEXMACS_PATH/misc/pixmaps/modern/32x32/table|$TEXMACS_PATH/misc/pixmaps/modern/24x24/main|$TEXMACS_PATH/misc/pixmaps/modern/20x20/mode|$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus|$TEXMACS_DOC_PATH/images/pixmaps|$TEXMACS_HOME_PATH/doc/images/pixmaps|$TEXMACS_PATH/doc/images/pixmaps|<arg|name>>||50%||-10%>>>
+
+  <assign|monochrome|<macro|w|h|col|<resize|<raw-table|<tformat|<twith|table-valign|b>|<cwith|1|-1|1|-1|cell-background|<arg|col>>|<cwith|1|-1|1|-1|cell-width|<arg|w>>|<cwith|1|-1|1|-1|cell-hmode|exact>|<cwith|1|-1|1|-1|cell-height|<arg|h>>|<cwith|1|-1|1|-1|cell-vmode|exact>|<table|<row|<\cell>
+    \;
+  </cell>>>>>||0px||<arg|h>>>>
+
+  <\active*>
+    <\src-comment>
       Buttons that can trigger a scheme action
     </src-comment>
   </active*>
@@ -56,7 +68,7 @@
 
   \;
 
-  <assign|action-button*|<macro|x|cmd|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<action-button-pressed*|<arg|x>>|gui-on-select|<arg|cmd>>|mouse-over|<relay|<action-button-hover*|<arg|x>>|gui-on-select|<arg|cmd>>|<relay|<action-button-normal*|<arg|x>>|gui-on-select|<arg|cmd>>>>>>
+  <assign|action-button*|<macro|x|cmd|<mark*|<arg|x>|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<action-button-pressed*|<arg|x>>|gui-on-select|<arg|cmd>>|mouse-over|<relay|<action-button-hover*|<arg|x>>|gui-on-select|<arg|cmd>>|<relay|<action-button-normal*|<arg|x>>|gui-on-select|<arg|cmd>>>>>>>
 
   <drd-props|action-button*|arity|2|accessible|0>
 
@@ -68,7 +80,7 @@
 
   <assign|action-button-pressed|<macro|x|cmd|<action-button-pressed*|<arg|x><htab|0mm>|<arg|cmd>>>>
 
-  <assign|action-button|<macro|x|cmd|<action-button*|<arg|x><htab|0mm>|<arg|cmd>>>>
+  <assign|action-button|<macro|x|cmd|<mark*|<arg|x>|<action-button*|<arg|x><htab|0mm>|<arg|cmd>>>>>
 
   <\active*>
     <\src-comment>
@@ -104,7 +116,7 @@
     </src-comment>
   </active*>
 
-  <assign|raw-table|<macro|body|<tformat|<cwith|1|-1|1|-1|cell-vcorrect|n>|<cwith|1|-1|1|-1|cell-halign|l>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0spc>|<cwith|1|-1|1|-1|cell-tsep|0spc>|<arg|body>>>>
+  <assign|raw-table|<macro|body|<tformat|<twith|table-valign|T>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<cwith|1|-1|1|-1|cell-halign|l>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0spc>|<cwith|1|-1|1|-1|cell-tsep|0spc>|<arg|body>>>>
 
   <assign|hlist|<xmacro|items|<extern|gui-hlist-table|raw-table|<quote-arg|items>>>>
 
