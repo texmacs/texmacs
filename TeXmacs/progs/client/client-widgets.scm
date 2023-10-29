@@ -116,9 +116,16 @@
 					    (ahash-ref t "email"))
 		     (quit))))))))))
 
+(tm-tool* (remote-account-tool win)
+  (:name "Create remote account")
+  (with quit (lambda () (tool-close :any 'remote-account-tool noop win))
+    (dynamic (remote-account-widget quit))))
+
 (tm-define (open-remote-account-creator)
   (:interactive #t)
-  (dialogue-window remote-account-widget noop "Create remote account"))
+  (if (side-tools?)
+      (tool-select :transient-right (list 'remote-account-tool))
+      (dialogue-window remote-account-widget noop "Create remote account")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Create account after licence agreement
@@ -183,8 +190,7 @@
      (when (== ret "invalid password")
        (with server (client-find-server server-name)
          (client-logout server))
-       (dialogue-window (remote-login-widget server-name pseudo #t)
-                        noop "Remote login")))))
+       (open-remote-login* server-name pseudo #t)))))
 
 (tm-widget ((remote-login-widget server-name pseudo retry?) quit)
   (padded
@@ -213,8 +219,21 @@
       ======
       (bottom-buttons
 	>>
-        ("Cancel" (quit)) // //
+        (assuming (not (side-tools?))
+          ("Cancel" (quit)) // //)
 	("Ok" (apply client-login-home (form-values)) (quit))))))
+
+(tm-tool* (remote-login-tool win server-name pseudo retry?)
+  (:name "Remote login")
+  (with quit (lambda () (tool-close :any 'remote-login-tool noop win))
+    (dynamic ((remote-login-widget server-name pseudo retry?) quit))))
+
+(tm-define (open-remote-login* server-name pseudo retry?)
+  (if (side-tools?)
+      (tool-select :transient-right (list 'remote-login-tool
+                                          server-name pseudo retry?))
+      (dialogue-window (remote-login-widget server-name pseudo retry?)
+                       noop "Remote login")))
 
 (tm-define (open-remote-login server-name pseudo)
   (:interactive #t)
@@ -222,8 +241,7 @@
     (with passwd (wallet-get (list "remote" server-name pseudo))
       (if passwd
           (client-login-home server-name pseudo passwd)
-          (dialogue-window (remote-login-widget server-name pseudo #f)
-                           noop "Remote login")))))
+          (open-remote-login* server-name pseudo #f)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; File browser
