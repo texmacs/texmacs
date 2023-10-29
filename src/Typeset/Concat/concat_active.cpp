@@ -82,7 +82,7 @@ void
 concater_rep::typeset_dynamic_case (tree t, path ip) {
   // This method must be kept consistent with edit_env_rep::exec(tree)
   // in ../Env/env_exec.cpp
-  if (N(t)<2) {
+  if (N(t)<1) {
     typeset_executable (t, ip);
     return;
   }
