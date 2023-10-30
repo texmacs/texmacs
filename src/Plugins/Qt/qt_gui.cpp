@@ -71,9 +71,9 @@ Q_IMPORT_PLUGIN(qico)
 Q_IMPORT_PLUGIN(qsvg)
 #endif
 
-#ifdef WIN32
-Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
-#endif
+//#ifdef WIN32 
+//Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
+//#endif
 #ifdef QT_MAC_USE_COCOA
 Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin)
 #endif

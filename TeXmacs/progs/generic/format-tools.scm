@@ -210,6 +210,15 @@
              (update-menus))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; This page format tool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-tool* (format-page-tool win u st t)
+  (:name "This page format")
+  (dynamic ((page-formatter u st t #f)
+            (tool-quit 'format-page-tool #f win))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global Page format
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -577,20 +586,16 @@
       (text (eval (parameter-name var)))
       ===
       (cached (string-append "edit-" var) (synchronize win var)
-        (resize "400px" "60px"
+        (resize "330px" "60px"
           (texmacs-input `(document ,(initial-get-tree u var))
-                         `(style (tuple ,@style))
+                         `(style (tuple ,@style "gui-base"))
                          (header-buffer win var))))))
   ====== ===
   (hlist
-    (text "Insert:")
-    // //
     ("Tab" (when (editing-headers? win) (make-htab "5mm")))
-    // //
     ("Page number" (when (editing-headers? win) (make 'page-the-page)))
     >>>
     ("Restore" (apply window-reset-init (cons win header-parameters)))
-    // //
     ("Apply"
      (apply-headers-settings win (window->buffer win))
      (with-window win (update-menus)))))
@@ -607,23 +612,19 @@
   (:name "Global paragraph format")
   (dynamic (paragraph-basic-tool win :global)))
 
-(tm-tool (document-page-tool win)
-  (:name "Page format")
-  (dynamic (page-format-tool win)))
+(tm-tool* (document-page-tool win)
+  (:name "Global page format")
+  (section-tabs "document-page-tabs" win
+    (section-tab "Format" ===
+      (centered (dynamic (page-format-tool win))))
+    (section-tab "Breaking" ===
+      (centered (dynamic (page-breaking-tool win))))
+    (section-tab "Margins" ===
+      (centered (dynamic (page-margins-tool win))))
+    (section-tab "Headers" ===
+      (centered (dynamic (page-headers-tool win))))))
 
-(tm-tool (document-breaking-tool win)
-  (:name "Page breaking")
-  (dynamic (page-breaking-tool win)))
-
-(tm-tool (document-margins-tool win)
-  (:name "Page margins")
-  (dynamic (page-margins-tool win)))
-
-(tm-tool (document-headers-tool win)
-  (:name "Page headers and footers")
-  (dynamic (page-headers-tool win)))
-
-(tm-widget (texmacs-side-tool win tool)
+(tm-widget (texmacs-side-tool win tool . opts)
   (:require (== (car tool) 'sections-tool))
   (division "sections"
     (hlist
@@ -639,7 +640,7 @@
     (dynamic (page-headers-tool win))
     ======))
 
-(tm-widget (texmacs-side-tool win tool)
+(tm-widget (texmacs-side-tool win tool . opts)
   (:require (== (car tool) 'subsections-tool))
   (division "sections"
     (hlist

@@ -13,6 +13,7 @@
 #include <QPainter>
 #include <QLineEdit>
 #include <QIntValidator>
+#include <QValidator>
 #include <QMimeData>
 #include <QUrl>
 #include <QDrag>
@@ -91,6 +92,12 @@ simple_input (string s, QLineEdit* ledit, QWidget* parent= 0) {
 
 QTMImagePreview::QTMImagePreview (QWidget* parent)
   : QWidget (parent) {
+  QRegExp rxpos("^[+]?([0-9]*[.])?[0-9]+([a-z]*|%)$");
+  //we could explicitly list all accepted lengths...
+  QValidator *validator1 = new QRegExpValidator(rxpos, this);
+  QRegExp rx("^[+-]?([0-9]*[.])?[0-9]+([a-z]*|%)$");
+  QValidator *validator2 = new QRegExpValidator(rx, this);
+  
   QVBoxLayout* vbox= new QVBoxLayout (this);
   vbox->addStretch ();
   image= new QLabel (this);
@@ -99,12 +106,18 @@ QTMImagePreview::QTMImagePreview (QWidget* parent)
   vbox->addWidget (image);
   vbox->addSpacing (10);
   wid= new QLineEdit (this);
+  wid->setValidator(validator1);
   vbox->addWidget (simple_input ("Width:", wid, this));
+  connect(wid, SIGNAL(textEdited(const QString)), this, SLOT(clear_dim()));
   hei= new QLineEdit (this);
+  hei->setValidator(validator1);
   vbox->addWidget (simple_input ("Height:", hei, this));
+  connect(hei, SIGNAL(textEdited(const QString)), this, SLOT(clear_dim()));
   xps= new QLineEdit (this);
+  xps->setValidator(validator2);  
   vbox->addWidget (simple_input ("X-position:", xps, this));
   yps= new QLineEdit (this);
+  yps->setValidator(validator2);
   vbox->addWidget (simple_input ("Y-position:", yps, this));
   vbox->addStretch ();
   vbox->addStretch ();
@@ -113,6 +126,15 @@ QTMImagePreview::QTMImagePreview (QWidget* parent)
   setMaximumWidth (225);
   setImage (0);
 }
+
+void
+QTMImagePreview::clear_dim(){
+BEGIN_SLOT
+  if (wid->isModified() && !(hei->isModified())) hei->setText("");
+  else if (hei->isModified() && !(wid->isModified())) wid->setText("");
+END_SLOT    
+};
+
 
 void 
 QTMImagePreview::setImage (const QString& file) { 	  //generate thumbnail

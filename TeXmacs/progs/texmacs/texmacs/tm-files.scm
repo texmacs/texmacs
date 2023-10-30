@@ -112,7 +112,7 @@
        r)))
 
 (tm-define (buffer-copy buf u)
-  (:synopsis "Creates a copy of @buf in @u and return @u.")
+  (:synopsis "Creates a copy of @buf in @u and return @u")
   (with-buffer buf
     (let* ((styles (get-style-list))
            (init (get-all-inits))
@@ -283,6 +283,9 @@
 (tm-define (save-buffer-as new-name . args)
   (:argument new-name texmacs-file "Save as")
   (:default  new-name (propose-name-buffer))
+  (when (string? new-name)
+    (set! new-name (string-replace new-name ":" "-"))
+    (set! new-name (string-replace new-name ";" "-")))
   (with opts (if (x-gui?) args (cons :overwrite args))
     (apply save-buffer-as-main (cons new-name opts))))
 
@@ -309,7 +312,10 @@
 
 (tm-define (export-buffer-main name to fm opts)
   ;;(display* "export-buffer-main " name ", " to ", " fm "\n")
-  (if (string? to) (set! to (url-relative (buffer-get-master name) to)))
+  (when (string? to)
+    (set! to (string-replace to ":" "-"))
+    (set! to (string-replace to ";" "-"))
+    (set! to (url-relative (buffer-get-master name) to)))
   (if (url? name) (set! current-save-source name))
   (if (url? to) (set! current-save-target to))
   (export-buffer-check-permissions name to fm opts))

@@ -107,6 +107,7 @@
 
 (tm-define (tmweb-insert-classifiers main sub)
   (:interactive #t)
+  (:synopsis "Insert classifiers")
   (:argument main "Main classification")
   (:argument sub "Subclassification")
   (init-env "tmweb-main" main)

@@ -112,8 +112,11 @@ get_bounding_rectangle (tree t) {
   selection sel= ed->search_selection (p * start (t), p * end (t));
   SI sz= ed->get_pixel_size ();
   double sf= ((double) sz) / 256.0;
-  rectangle selr= least_upper_bound (sel->rs) / sf;
-  rectangle r= translate (selr, wr->x1, wr->y2);
+  rectangle r (0, 0, 0, 0);
+  if (!is_nil (sel->rs)) {
+    rectangle selr= least_upper_bound (sel->rs) / sf;
+    r= translate (selr, wr->x1, wr->y2);
+  }
   array<int> ret;
   ret << (r->x1) << (r->y1) << (r->x2) << (r->y2);
   //ret << (r->x1/PIXEL) << (r->y1/PIXEL) << (r->x2/PIXEL) << (r->y2/PIXEL);

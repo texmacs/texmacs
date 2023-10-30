@@ -5451,6 +5451,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(buffer-focus* <scm-arg|url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|var_focus_on_buffer> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
     <scm|(view-list)>
 <explain-synopsis|no synopsis>
   <|explain>
@@ -8711,6 +8719,14 @@ source code.
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|show_tree> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(show-box)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|show_box> which returns
     <scm|void>.
   </explain>
 

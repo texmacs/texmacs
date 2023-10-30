@@ -295,7 +295,7 @@
 
 (tm-define (gallina->texmacs gallina)
   (:type (-> stree stree))
-  (:synopsis "Convert a parsed Gallina stree @t into a TeXmacs stree.")
+  (:synopsis "Convert a parsed Gallina stree @t into a TeXmacs stree")
   (let* ((snippet? (not (func? gallina '!file 1)))
 	 (body (if snippet? gallina (cadr gallina)))
 	 (tm (filter (lambda (x) (!= x "\n")) (gallinatm-as-serial body))))

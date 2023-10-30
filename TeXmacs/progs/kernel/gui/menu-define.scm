@@ -530,6 +530,50 @@
        (module-load ',module))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Section tabs
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define section-tab-table (make-ahash-table))
+
+(tm-define (section-tab-ref name key)
+  (or (ahash-ref section-tab-table (list name key)) 0))
+
+(tm-define (section-tab-set name key val)
+  (ahash-set! section-tab-table (list name key) val)
+  (refresh-now name)
+  (keyboard-focus-on "canvas"))
+
+(define (make-section-tab* name key ts i j)
+  (let* ((t (list-ref ts j))
+         (title (cadr t)))
+    (if (== i j)
+        `(class "section-active-tab" (,title (noop)))
+        `(,title (section-tab-set ,name ,key ,j)))))
+
+(define (make-section-tab name key ts i)
+  (with t (list-ref ts i)
+    (require-format t '(section-tab :%1 :*))
+    `(assuming (== (section-tab-ref ,name ,key) ,i)
+       (division "section-tabs"
+         ===
+         (hlist
+           ,@(map (lambda (j) (make-section-tab* name key ts i j))
+                  (.. 0 (length ts)))
+           >>>))
+       ,@(cddr t))))
+
+(define (gui-make-section-tabs x)
+  (require-format x '(section-tabs :%2 :*))
+  (with (tag name key . ts) x
+    `(menu-dynamic
+       (refreshable ,name
+         ,@(map (lambda (i) (make-section-tab name key ts i))
+                (.. 0 (length ts)))))))
+
+(extend-table gui-make-table
+  (section-tabs ,gui-make-section-tabs))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic color pickers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

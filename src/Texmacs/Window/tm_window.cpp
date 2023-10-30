@@ -169,6 +169,7 @@ texmacs_window_widget (widget wid, tree geom) {
   bool custom= is_tuple (geom) && N (geom) >= 2;
 #ifndef QTTEXMACS
   if (use_side_tools) { w += 200; h += 100; }
+  if (use_left_tools) { w += 200; h += 100; }
 #endif
   if (custom) {
     w= as_int (geom[0]);
@@ -412,7 +413,8 @@ tm_window_rep::side_tools (int which, string tools) {
   eval ("(lazy-initialize-force)");
   widget w;
   if (get_menu_widget (10 + which, tools, w)) {
-    if (which == 0) set_side_tools (wid, w);
+    if      (which == 0) set_side_tools (wid, w);
+    else if (which == 1) set_left_tools (wid, w);
   }
 }
 
@@ -421,7 +423,8 @@ tm_window_rep::bottom_tools (int which, string tools) {
   eval ("(lazy-initialize-force)");
   widget w;
   if (get_menu_widget (20 + which, tools, w)) {
-    if (which == 0) set_bottom_tools (wid, w);
+    if      (which == 0) set_bottom_tools (wid, w);
+    else if (which == 1) set_extra_tools (wid, w);
   }
 }
 
@@ -440,12 +443,14 @@ tm_window_rep::set_icon_bar_flag (int which, bool flag) {
 
 void
 tm_window_rep::set_side_tools_flag (int which, bool flag) {
-  if (which == 0) set_side_tools_visibility (wid, flag);
+  if      (which == 0) set_side_tools_visibility (wid, flag);
+  else if (which == 1) set_left_tools_visibility (wid, flag);
 }
 
 void
 tm_window_rep::set_bottom_tools_flag (int which, bool flag) {
-  if (which == 0) set_bottom_tools_visibility (wid, flag);
+  if      (which == 0) set_bottom_tools_visibility (wid, flag);
+  else if (which == 1) set_extra_tools_visibility (wid, flag);
 }
 
 bool
@@ -464,13 +469,15 @@ tm_window_rep::get_icon_bar_flag (int which) {
 
 bool
 tm_window_rep::get_side_tools_flag (int which) {
-  if (which == 0) return get_side_tools_visibility (wid);
+  if      (which == 0) return get_side_tools_visibility (wid);
+  else if (which == 1) return get_left_tools_visibility (wid);
   else return false;
 }
 
 bool
 tm_window_rep::get_bottom_tools_flag (int which) {
-  if (which == 0) return get_bottom_tools_visibility (wid);
+  if      (which == 0) return get_bottom_tools_visibility (wid);
+  else if (which == 1) return get_extra_tools_visibility (wid);
   else return false;
 }
 

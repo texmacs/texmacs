@@ -1,4 +1,4 @@
-<TeXmacs|1.99.19>
+<TeXmacs|2.1.2>
 
 <style|source>
 
@@ -270,9 +270,9 @@
 
   \;
 
-  <assign|big-imbr|<macro|ind|str|<math-ordinary|<rigid|-<space|-0.5spc><around*|<left|\<langle\>|1>||<right|.>><rsub|<shift|<arg|ind>||-0.2em>>><space|0.6spc><arg|str>>>>
+  <assign|big-imbr|<macro|ind|str|<math-ordinary|<rigid|-<space|-0.8spc><around*|<left|\<langle\>|1>||<right|.>><rsub|<shift|<arg|ind>||-0.2em>>><space|0.6spc><arg|str>>>>
 
-  <assign|Big-imbr|<macro|ind|str|<math-ordinary|<below|<rigid|<shift|<with|magnification|<times|1.297|<value|magnification>>|-<space|-0.5spc><around*|<left|\<langle\>|1>||<right|.>>>||-0.1em>>|<shift|<arg|ind>||-0.1em>>
+  <assign|Big-imbr|<macro|ind|str|<math-ordinary|<below|<rigid|<shift|<with|magnification|<times|1.297|<value|magnification>>|-<space|-0.8spc><around*|<left|\<langle\>|1>||<right|.>>>||-0.1em>>|<shift|<arg|ind>||-0.1em>>
   <arg|str>>>>
 
   <\active*>

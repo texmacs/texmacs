@@ -225,11 +225,25 @@
     (if (and file line column)
         (let ((lno (number->string line))
               (cno (number->string column)))
-          `(hlink ,(string-append (url->system (url-tail file)) ":" lno)
-                  ,(string-append file "?line=" lno "&column=" cno
-                                       "&select=" (symbol->string s))))
+;          `(hlink ,(string-append (url->system (url-tail file)) ":" lno)
+;                  ,(string-append file "?line=" lno "&column=" cno
+;                                       "&select=" (symbol->string s)))
+; hlink not working in alt-window?? replace with action :
+          `(action ,(string-append (url->system (url-tail file)) ":" lno)
+                  ,(string-append "(show-def \"" file "\" " lno " " cno
+                                       " \"" (symbol->string s)"\")")))
         "")))
-  
+
+(tm-define (show-def file line col w)
+  (:secure #t)
+  ;(display* file "\n" line " " col "\n" w "\n")
+  ;FIXME column is zero (sometimes, at least): cannot use it
+  (load-buffer-in-new-window file) 
+  (go-to-line line)
+  (select-line)
+  (select-word w (path->tree (selection-path)) col))
+
+
 (tm-define ($doc-symbol-properties sym)
   (with defs (or (symbol-property sym 'defs) '((#f #f #f)))
     `(concat 
@@ -243,8 +257,8 @@
     (if (list? prop) (car prop) (replace "No synopsis available"))))
 
 (tm-define ($doc-symbol-code sym)
-  `(folded-explain
-     (document (with "color" "dark green" (em ,(replace "Definition..."))))
+  `(document ; used to be folded-explain but caused bug 61989
+     (with "font-series" "bold" "color" "dark green" (em ,(replace "Definition:")))
      (scm-code
        (document
         ,(cond ((and (tm-exported? sym) (procedure? (eval sym)))
@@ -282,7 +296,7 @@
     (open-buffer-in-window name (buffer-get name) "")))
 
 (tm-define (docgrep-in-doc-secure what)
-  (:synopsis "Search in documentation. Secure routine to use in 'action tags.")
+  (:synopsis "Search in documentation. Secure routine to use in 'action tags")
   (:secure #t)
   (docgrep-new-window what))
 

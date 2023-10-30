@@ -85,8 +85,13 @@
   (insert t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Special customizations inside equation environments
+;; Special customizations inside formulas and equations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (kbd-enter t shift?)
+  (:require (tree-is? t 'math))
+  (go-end-of 'math)
+  (insert-return))
 
 (tm-define (kbd-enter t shift?)
   (:require (tree-is? t 'equation))

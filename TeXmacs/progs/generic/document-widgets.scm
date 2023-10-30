@@ -20,7 +20,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (select-style-among-widget l)
-  (resize ("300px" "300px" "300px") ("200px" "300px" "1000px")
+  (resize '("300px" "300px" "300px") '("200px" "300px" "1000px")
     (scrollable
       (choice (set-main-style answer) l "generic"))))
 
@@ -91,23 +91,35 @@
         // //
         ("Ok" (quit))))))
 
-(tm-define (open-source-tree-preferences)
+(tm-define (open-source-tree-preferences-window)
   (:interactive #t)
   (with u (current-buffer)
     (dialogue-window (source-tree-preferences-editor u) noop
                      "Document source tree preferences")))
 
+(tm-define (open-source-tree-preferences)
+  (:interactive #t)
+  (if (side-tools?)
+      (tool-select :transient-right 'source-tree-preferences-tool)
+      (open-source-tree-preferences-window)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document -> Paragraph
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (open-document-paragraph-format)
+(tm-define (open-document-paragraph-format-window)
   (:interactive #t)
   (let* ((old (get-init-table paragraph-parameters))
          (new (get-init-table paragraph-parameters))
          (u   (current-buffer)))
     (dialogue-window (paragraph-formatter old new init-multi u #t)
                      noop "Document paragraph format")))
+
+(tm-define (open-document-paragraph-format)
+  (:interactive #t)
+  (if (side-tools?)
+      (tool-select :transient-right 'document-paragraph-tool)
+      (open-document-paragraph-format-window)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document -> Page / Format
@@ -470,7 +482,7 @@
         ===
         (resize "600px" "60px"
           (texmacs-input `(document ,(initial-get-tree u var))
-                         `(style (tuple ,@style))
+                         `(style (tuple ,@style "gui-base"))
                          (header-buffer var)))
         ===)))
   === ===
@@ -508,7 +520,7 @@
         (padded
           (dynamic (page-formatter-headers u style quit)))))))
 
-(tm-define (open-document-page-format)
+(tm-define (open-document-page-format-window)
   (:interactive #t)
   (let* ((u  (current-buffer))
          (st (list-remove-duplicates (rcons (get-style-list) "macro-editor"))))
@@ -516,6 +528,12 @@
            (cons* (document-page-formatter u st)
                   noop "Document page format"
                   (header-buffers)))))
+
+(tm-define (open-document-page-format)
+  (:interactive #t)
+  (if (side-tools?)
+      (tool-select :transient-right 'document-page-tool)
+      (open-document-page-format-window)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document -> Metadata
@@ -544,10 +562,16 @@
         // //
         ("Ok" (quit))))))
 
-(tm-define (open-document-metadata)
+(tm-define (open-document-metadata-window)
   (:interactive #t)
   (let* ((u (current-buffer)))
     (dialogue-window (document-metadata-editor u) noop "Document metadata")))
+
+(tm-define (open-document-metadata)
+  (:interactive #t)
+  (if (side-tools?)
+      (tool-select :transient-right 'document-metadata-tool)
+      (open-document-metadata-window)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document -> Color
@@ -579,7 +603,13 @@
         // //
         ("Ok" (quit))))))
 
-(tm-define (open-document-colors)
+(tm-define (open-document-colors-window)
   (:interactive #t)
   (with u (current-buffer)
     (dialogue-window (document-colors-picker u) noop "Document colors")))
+
+(tm-define (open-document-colors)
+  (:interactive #t)
+  (if (side-tools?)
+      (tool-select :transient-right 'document-colors-tool)
+      (open-document-colors-window)))

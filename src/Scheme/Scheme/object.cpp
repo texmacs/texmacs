@@ -94,6 +94,10 @@ object list_object (object obj1, object obj2) {
   return cons (obj1, cons (obj2, null_object ())); }
 object list_object (object obj1, object obj2, object obj3) {
   return cons (obj1, cons (obj2, cons (obj3, null_object ()))); }
+object as_list_object (array<object> objs) {
+  object r= null_object ();
+  for (int i=N(objs)-1; i>=0; i--) r= cons (objs[i], r);
+  return r; }
 object symbol_object (string s) {
   return tmscm_to_object ( symbol_to_tmscm (s) ); }
 object car (object obj) {

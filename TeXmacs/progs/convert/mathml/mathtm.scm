@@ -615,5 +615,5 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (mathml->tree s)
-  (:synopsis "Convert the MathML @s into a document fragment.")
+  (:synopsis "Convert the MathML @s into a document fragment")
   (mathtm-as-serial (parse-xml s)))

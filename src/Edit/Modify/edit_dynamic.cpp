@@ -130,7 +130,8 @@ edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
       insert_tree (t, p);
       return;
     }
-    if ((block_macro && (!table_macro)) ||
+    if ((block_macro && (!table_macro) &&
+         l != INCLUDE && l != VAR_INCLUDE) ||
         (l == make_tree_label ("footnote")) ||
         (l == make_tree_label ("footnote-anchor")) ||
         (l == make_tree_label ("note-footnote")) ||

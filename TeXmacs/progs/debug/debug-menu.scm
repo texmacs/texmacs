@@ -28,7 +28,7 @@
 
 (define (debug-backtrace-errors?) (in? 'backtrace (debug-options)))
 (tm-define (debug-toggle-backtrace-errors)
-  (:synopsis "Toggle scheme backtracing of errors.")
+  (:synopsis "Toggle scheme backtracing of errors")
   (:check-mark "v" debug-backtrace-errors?)
   (if (debug-backtrace-errors?)
       (debug-disable 'backtrace 'debug)
@@ -61,6 +61,7 @@
       ("Open on warnings" (toggle-preference "open console on warnings")))
   (-> "Status"
       ("Tree" (show-tree))
+      ("Box" (show-box))
       ("Path" (show-path))
       ("Cursors" (show-cursor))
       ("Selection" (show-selection))

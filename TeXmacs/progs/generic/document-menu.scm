@@ -876,7 +876,7 @@
   (-> "Update" (link document-update-menu))
   ---
   (if (new-fonts?)
-      ("Font" (interactive open-document-font-selector)))
+      ("Font" (open-document-font-selector)))
   (if (not (new-fonts?))
       (-> "Font" (link document-full-font-menu)))
   ("Paragraph" (open-document-paragraph-format))
@@ -1090,9 +1090,12 @@
       (dynamic (focus-customizable-icons-item
                 "bg-color" "Background color" :global)))
     (assuming (is-background-picture? (get-init-tree "bg-color"))
-      ((balloon (icon "tm_camera.xpm") "Select background picture")
-       (with bg (tree->stree (get-init-tree "bg-color"))
-         (open-background-picture-selector setter bg))))))
+      (=> (balloon (icon "tm_camera.xpm") "Select background picture")
+          (when (init-has? "bg-color")
+            ("Restore default background" (init-default "bg-color")))
+          ("Select background picture"
+           (with bg (tree->stree (get-init-tree "bg-color"))
+             (open-background-picture-selector setter bg)))))))
 
 (tm-define (current-page-icon)
   (cond ((test-init? "page-orientation" "landscape")
