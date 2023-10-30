@@ -117,8 +117,7 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   else if (sm == "hangmobanjiao") protrusion += HANGMOBANJIAO;
   else if (sm == "kaiming") protrusion += KAIMING;
 
-  tree dec= env->read (ATOM_DECORATIONS);
-  if (N(dec) > 0) decs << tuple ("0", dec);
+  init_decs= env->read (ATOM_DECORATIONS);
 }
 
 lazy_paragraph_rep::~lazy_paragraph_rep () {
@@ -649,6 +648,11 @@ lazy_paragraph_rep::line_unit (path start, path end, bool break_flag,
 void
 lazy_paragraph_rep::line_end (space spc, int penalty) {
   if (N(items) == 0) return;
+  if (N(decs) == 0 || decs[0][1] == tree (DATOMS)) {
+    tree dec= init_decs;
+    if (N(dec) > 0) decs= ::append (tuple ("0", dec), decs);
+    init_decs= tree (DATOMS);
+  }
   if (N(decs) != 0) handle_decorations ();
   // cout << items << ", " << spc << ", " << penalty << LF;
   if (N(notes) != 0) {

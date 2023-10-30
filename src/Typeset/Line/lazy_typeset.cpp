@@ -197,8 +197,14 @@ make_lazy_formatting (edit_env env, tree t, path ip, string v) {
   array<line_item> a;
   array<line_item> b;
   if (v != CELL_FORMAT) {
-    a= typeset_marker (env, descend (ip, 0));
-    b= typeset_marker (env, descend (ip, 1));
+    a << typeset_marker (env, descend (ip, 0));
+    if (is_func (t, DATOMS)) {
+      box ab= empty_box (decorate (ip), 0, 0, 0, env->fn->yx);
+      box bb= empty_box (decorate (ip), 0, 0, 0, env->fn->yx);
+      a << line_item (CONTROL_ITEM, OP_SKIP, ab, HYPH_INVALID, t (0, N(t)-1));
+      b << line_item (CONTROL_ITEM, OP_SKIP, bb, HYPH_INVALID, tree (L(t)));
+    }
+    b << typeset_marker (env, descend (ip, 1));
   }
   lazy par= make_lazy (env, t[last], descend (ip, last));
   env->local_end (v, old_format);
