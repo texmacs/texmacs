@@ -171,7 +171,12 @@
 	  ".ornament { border-width: 1px; border-style: solid;"
 	  " border-color: black; display: inline-block; padding: 0.2em; } "
 	  ".right-tab { float: right; position: relative; top: -1em; } "
-	  ".no-breaks { white-space: nowrap; } "))
+	  ".no-breaks { white-space: nowrap; } "
+	  ".underline { text-decoration: underline; } "
+	  ".overline { text-decoration: overline; } "
+	  ".strike-through { text-decoration: line-through; } "
+	  "del { text-decoration: line-through wavy red; } "
+	  ".fill-out { text-decoration: underline dotted; } "))
 	(mathml "math { font-family: cmr, times, verdana } "))
     (if tmhtml-mathml? (string-append html mathml) html)))
 
@@ -277,7 +282,7 @@
     `(h:html
       (h:head
        (h:title ,@(tmhtml title))
-       (h:meta (@ (name "generator")
+       (h:meta (@ (charset "utf-8") (name "generator") 
 		  (content ,(string-append "TeXmacs " (texmacs-version)))))
        ,css
        ,@xhead)
@@ -690,6 +695,24 @@
 
 (define (tmhtml-repeat l)
   (tmhtml (car l)))
+
+(define (tmhtml-underline l)
+   `((h:span (@ (class "underline")) ,@(tmhtml (cAr l)) )))
+
+(define (tmhtml-overline l)
+   `((h:span (@ (class "overline")) ,@(tmhtml (cAr l)) )))
+
+(define (tmhtml-strike-through l)
+   `((h:span (@ (class "strike-through")) ,@(tmhtml (cAr l)) )))
+   
+(define (tmhtml-deleted l)
+   `((h:del ,@(tmhtml (cAr l)) )))
+
+(define (tmhtml-marked l)
+   `((h:mark ,@(tmhtml (cAr l)) )))
+   
+(define (tmhtml-fill-out l)
+   `((h:span (@ (class "fill-out")) ,@(tmhtml (cAr l)) )))
 
 (define (tmhtml-datoms l)
   (tmhtml (cAr l)))
@@ -1877,6 +1900,12 @@
   (repeat tmhtml-repeat)
   (repeat* tmhtml-repeat)
   (float tmhtml-float)
+  (underline tmhtml-underline)
+  (overline tmhtml-overline)
+  (strike-through tmhtml-strike-through)
+  (deleted tmhtml-deleted)
+  (marked tmhtml-marked)
+  (fill-out tmhtml-fill-out)
   (datoms tmhtml-datoms)
   (dlines tmhtml-datoms)
   (dpages tmhtml-datoms)
