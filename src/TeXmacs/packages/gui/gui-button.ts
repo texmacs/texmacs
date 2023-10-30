@@ -122,9 +122,29 @@
 
   <assign|vlist|<xmacro|items|<extern|gui-vlist-table|raw-table|<quote-arg|items>>>>
 
+  <assign|tiled|<xmacro|items|<extern|gui-tiled|raw-table|<quote-arg|items>>>>
+
   <drd-props|hlist|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|vlist|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|tiled|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <\active*>
+    <\src-comment>
+      User input
+    </src-comment>
+  </active*>
+
+  <assign|choice-list|<xmacro|items|<extern|gui-choice-list|vlist|menu-button|menu-button-pressed|<quote-arg|items>>>>
+
+  <assign|check-list|<xmacro|items|<extern|gui-check-list|vlist|menu-button|menu-button-pressed|<quote-arg|items>>>>
+
+  <drd-props|choice-list|arity|<tuple|repeat|2|1>|accessible|all>
+
+  <drd-props|check-list|arity|<tuple|repeat|2|1>|accessible|all>
+
+  \;
 </body>
 
 <\initial>
