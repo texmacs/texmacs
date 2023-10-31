@@ -816,6 +816,21 @@ typeset_concat_or_table (edit_env env, tree t, path ip) {
 }
 
 array<page_item>
+typeset_stack (edit_env env, tree t, path ip, SI width,
+	       array<line_item> a, array<line_item> b, stack_border& sb)
+{
+  // cout << "Typeset stack " << t << "\n";
+  lazy_paragraph par (env, ip);
+  par->a= a;
+  par->a << typeset_concat_or_table (env, t, ip);
+  par->a << b;
+  par->width= width;
+  par->format_paragraph ();
+  sb= par->sss->sb;
+  return par->sss->l;
+}
+
+array<page_item>
 typeset_stack (edit_env env, tree t, path ip,
 	       array<line_item> a, array<line_item> b, stack_border& sb)
 {

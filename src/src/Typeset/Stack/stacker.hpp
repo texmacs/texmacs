@@ -54,6 +54,9 @@ public:
 
 typedef stacker_rep* stacker;
 
+array<page_item> typeset_stack (edit_env env, tree t, path ip, SI width,
+				array<line_item> a, array<line_item> b,
+				stack_border& sb);
 array<page_item> typeset_stack (edit_env env, tree t, path ip,
 				array<line_item> a, array<line_item> b,
 				stack_border& sb);

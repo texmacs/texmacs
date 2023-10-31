@@ -51,7 +51,8 @@ format_vstream_rep::equal (format fm) {
 }
 
 format_vstream_rep::operator tree () {
-  return tuple ("format vstream");
+  return tuple ("format vstream", as_string (width),
+                as_string (N(before)), as_string (N(after)));
 }
 
 bool
@@ -62,5 +63,6 @@ query_vstream_width_rep::equal (format fm) {
 }
 
 query_vstream_width_rep::operator tree () {
-  return tuple ("query vstream width");
+  return tuple ("query vstream width",
+                as_string (N(before)), as_string (N(after)));
 }
