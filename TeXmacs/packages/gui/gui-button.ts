@@ -128,17 +128,23 @@
 
   <assign|raw-table|<macro|body|<tformat|<twith|table-valign|T>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<cwith|1|-1|1|-1|cell-halign|l>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0spc>|<cwith|1|-1|1|-1|cell-tsep|0spc>|<arg|body>>>>
 
+  <assign|raw-table*|<macro|body|<raw-table|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<arg|body>>>>>
+
   <assign|hlist|<xmacro|items|<extern|gui-hlist-table|raw-table|<quote-arg|items>>>>
 
   <assign|vlist|<xmacro|items|<extern|gui-vlist-table|raw-table|<quote-arg|items>>>>
 
   <assign|tiled|<xmacro|items|<extern|gui-tiled|raw-table|<quote-arg|items>>>>
 
+  <assign|tiled*|<xmacro|items|<extern|gui-tiled|raw-table*|<quote-arg|items>>>>
+
   <drd-props|hlist|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|vlist|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|tiled|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|tiled*|arity|<tuple|repeat|1|1>|accessible|all>
 
   <\active*>
     <\src-comment>
@@ -178,11 +184,11 @@
     </src-comment>
   </active*>
 
-  <assign|wide-raw-table|<macro|body|<tformat|<twith|table-valign|T>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<cwith|1|-1|1|-1|cell-halign|l>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0spc>|<cwith|1|-1|1|-1|cell-tsep|0spc>|<cwith|1|-1|1|-1|cell-background|<value|gui-bg-color>>|<arg|body>>>>
+  <assign|wide-raw-table|<macro|body|<raw-table|<tformat|<twith|table-width|1par>|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-background|<value|gui-bg-color>>|<arg|body>>>>>
 
-  <assign|wide-raw-cell|<macro|body|<wide-raw-table|<tformat|<table|<row|<\cell>
+  <assign|wide-raw-cell|<style-with|src-compact|all|<macro|body|<wide-raw-table|<tformat|<table|<row|<\cell>
     <arg|body>
-  </cell>>>>>>>
+  </cell>>>>>>>>
 
   <assign|title-style|<macro|body|<with|gui-bg-color|<value|gui-title-bg-color>|<wide-raw-cell|<large|<arg|body>>>>>>
 
