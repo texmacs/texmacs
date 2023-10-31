@@ -209,3 +209,26 @@
                          (:idle 1)
                          (secure-eval (string->object cmd*))))))
           (gui-input-relay type fun key time))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Tabs
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tab-select name)
+  (:secure #t)
+  (when (tree->path name)
+    (and-with passive (tm-ref name :up)
+      (and-with nr (tree-index passive)
+        (and-with names (tm-ref passive :up)
+          (and-with bodies (tm-ref names :up 1)
+            (when (tm-func? bodies 'document 1)
+              (set! bodies (tree-ref bodies 0)))
+            (and-with activate (tm-ref bodies nr)
+              (when (and (tm-is? passive 'passive-tab)
+                         (tm-is? bodies 'switch))
+                (for (t (tm-children names))
+                  (tree-assign-node t 'passive-tab))
+                (tree-assign-node (tm-ref names nr) 'active-tab)
+                (for (t (tm-children bodies))
+                  (tree-assign-node t 'hidden))
+                (tree-assign-node (tm-ref bodies nr) 'shown)))))))))
