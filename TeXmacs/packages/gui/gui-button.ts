@@ -84,11 +84,11 @@
 
   \;
 
-  <assign|action-button-normal|<macro|x|cmd|<action-button-normal*|<arg|x><htab|0mm>|<arg|cmd>>>>
+  <assign|action-button-normal|<macro|x|<action-button-normal*|<arg|x><htab|0mm>>>>
 
-  <assign|action-button-hover|<macro|x|cmd|<action-button-hover*|<arg|x><htab|0mm>|<arg|cmd>>>>
+  <assign|action-button-hover|<macro|x|<action-button-hover*|<arg|x><htab|0mm>>>>
 
-  <assign|action-button-pressed|<macro|x|cmd|<action-button-pressed*|<arg|x><htab|0mm>|<arg|cmd>>>>
+  <assign|action-button-pressed|<macro|x|<action-button-pressed*|<arg|x><htab|0mm>>>>
 
   <assign|action-button|<macro|x|cmd|<mark*|<arg|x>|<action-button*|<arg|x><htab|0mm>|<arg|cmd>>>>>
 
@@ -112,11 +112,11 @@
 
   \;
 
-  <assign|menu-button-normal|<macro|x|cmd|<menu-button-normal*|<arg|x><htab|0mm>|<arg|cmd>>>>
+  <assign|menu-button-normal|<macro|x|<menu-button-normal*|<arg|x><htab|0mm>>>>
 
-  <assign|menu-button-hover|<macro|x|cmd|<menu-button-hover*|<arg|x><htab|0mm>|<arg|cmd>>>>
+  <assign|menu-button-hover|<macro|x|<menu-button-hover*|<arg|x><htab|0mm>>>>
 
-  <assign|menu-button-pressed|<macro|x|cmd|<menu-button-pressed*|<arg|x><htab|0mm>|<arg|cmd>>>>
+  <assign|menu-button-pressed|<macro|x|<menu-button-pressed*|<arg|x><htab|0mm>>>>
 
   <assign|menu-button|<macro|x|cmd|<mark*|<arg|x>|<menu-button*|<arg|x><htab|0mm>|<arg|cmd>>>>>
 
@@ -180,9 +180,46 @@
 
   <\active*>
     <\src-comment>
+      Tabs
+    </src-comment>
+  </active*>
+
+  <assign|tabs|<macro|names|bodies|<quasi|<vlist|<unquote|<arg|names>>|<unquote|<arg|bodies>>>>>>
+
+  <assign|tabs|<\macro|names|bodies>
+    <wide-raw-table|<tformat|<cwith|1|1|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-bsep|1spc>|<cwith|1|1|1|1|cell-tsep|1spc>|<table|<row|<cell|<arg|names>>>|<row|<\cell>
+      <arg|bodies>
+    </cell>>>>>
+  </macro>>
+
+  <assign|tabs-bar|<value|hlist>>
+
+  <assign|tabs-body|<macro|body|<arg|body>>>
+
+  <assign|active-tab|<macro|name|<arg|name> >>
+
+  <assign|passive-tab|<macro|name|<action|<greyed|<arg|name>
+  >|tab-select|<arg|name>>>>
+
+  <drd-props|tabs|arity|2|accessible|all>
+
+  <drd-props|tabs-bar|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <\active*>
+    <\src-comment>
       Styling
     </src-comment>
   </active*>
+
+  <assign|text-opaque|<macro|body|<arg|body>>>
+
+  <assign|text-center|<macro|body|<center|<arg|body>>>>
+
+  <assign|text-button|<macro|body|<menu-button-normal|<arg|body>>>>
+
+  <assign|text-pressed|<macro|body|<menu-button-pressed|<arg|body>>>>
+
+  \;
 
   <assign|wide-raw-table|<macro|body|<raw-table|<tformat|<twith|table-width|1par>|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-background|<value|gui-bg-color>>|<arg|body>>>>>
 
