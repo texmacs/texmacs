@@ -317,6 +317,8 @@ edit_interface_rep::update_mouse_loci () {
   locus_new_rects= rectangles ();
   mouse_ids= list<string> ();
   if (!is_nil (ids1 * ids2) && !has_changed (THE_FOCUS)) {
+    ids1= as_list_string (call ("link-mouse-ids", object (ids1)));
+    ids2= as_list_string (call ("link-mouse-ids", object (ids2)));
     list<tree> l= as_list_tree (call ("link-active-upwards", object (mt)));
     while (!is_nil (l)) {
       tree lt= l->item;
@@ -328,9 +330,12 @@ edit_interface_rep::update_mouse_loci () {
     ids1= as_list_string (call ("link-active-ids", object (ids1)));
     ids2= as_list_string (call ("link-active-ids", object (ids2)));
     if (is_nil (ids1)) rs1= rectangles ();
+    if (is_nil (ids2)) rs2= rectangles ();
     // FIXME: we should keep track which id corresponds to which rectangle
-    locus_new_rects= rs1 * rs2;
-    mouse_ids= ids1 * ids2;
+    if (!is_nil (ids1 * ids2)) {
+      locus_new_rects= rs1 * rs2;
+      mouse_ids= ids1 * ids2;
+    }
   }
   if (locus_new_rects != locus_rects) notify_change (THE_LOCUS);
 #ifdef USE_EXCEPTIONS

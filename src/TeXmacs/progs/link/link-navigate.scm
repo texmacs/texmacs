@@ -142,10 +142,11 @@
 (define (filter-on-type item)
   (navigation-allow-type? (link-item-type item)))
 
-(define (filter-on-event event)
-  (lambda (item)
+(define ((filter-on-event event) item)
+  (with type (link-item-type item)
     ;;(display* "Filter: " item " on " event "\n")
-    (or (and (== event "click") (!= (link-item-type item) "mouse-over"))
+    ;;(display* "Filter: " type " on " event "\n")
+    (or (and (== event "click") (nin? type (list "focus" "mouse-over")))
         (== event "hover")
         (== (link-item-type item) event))))
 
@@ -155,6 +156,12 @@
          (f2 (list-filter f1 filter-on-type))
          (f3 (list-filter f2 (filter-on-event event))))
     f3))
+
+(define ((exclude-type type) item)
+  (!= (link-item-type item) type))
+
+(define (exclude-link-list l type)
+  (list-filter l (exclude-type type)))
 
 (tm-define (exact-link-list t filter?)
   (:synopsis "Build possibly filtered link list for the tree @t")
@@ -210,6 +217,11 @@
 (tm-define (link-active-ids l)
   (:synopsis "Return list of identifiers in @l which admit an active link")
   (with r (filter-link-list (ids->link-list l) "hover")
+    (list-remove-duplicates (map link-item-id r))))
+
+(tm-define (link-mouse-ids l)
+  (:synopsis "Only keep mouse event identifiers")
+  (with r (exclude-link-list (ids->link-list l) "focus")
     (list-remove-duplicates (map link-item-id r))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
