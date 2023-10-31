@@ -141,7 +141,7 @@
                (new (if (== tag 'choice-list) val
                         (check-toggle old val all))))
           (tree-set (tree-ref u 1) new)
-          (when (tree-is? u :up 'input-popup)
+          (when (tree-in? u :up '(input-popup input-list))
             (tree-set (tree-ref u :up 3) new)))
         (let* ((c   (as-string (tree-ref u 0) "(noop)"))
                (val (tree->stree (tree-ref u 1)))
@@ -201,7 +201,7 @@
     (and-with t* (tree-innermost gui-input-context?)
       (when (and (tree? t) (== (tree->path t) (tree->path t*)))
         (let* ((type (tree->stree (tree-ref t 0)))
-               (cmd  (tree->stree (tree-ref t 1)))
+               (cmd  (as-string (tree->stree (tree-ref t 1)) "(noop)"))
                (val  (object->string (tree->stree (tree-ref t 3))))
                (cmd* (string-append "(with answer '" val " " cmd ")"))
                (fun  (lambda ()

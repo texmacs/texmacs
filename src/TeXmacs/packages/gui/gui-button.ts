@@ -44,6 +44,8 @@
 
   <assign|gui-input-color|white>
 
+  <assign|gui-input-list-color|>
+
   <assign|gui-input-sunny-color|#b0b0b0>
 
   <assign|gui-input-shadow-color|#707070>
@@ -160,9 +162,13 @@
 
   <assign|input-popup|<macro|type|cmd|width|x|y|<input-field|<arg|type>|<arg|cmd>|<arg|width>|<focus-balloon|<arg|x>|<arg|y>|left|Bottom>>>>
 
+  <assign|input-list|<macro|type|cmd|width|x|y|<with|gui-input-color|<value|gui-input-list-color>|<input-field|<arg|type>|<arg|cmd>|<arg|width>|<popup-balloon|<arg|x>|<arg|y>|left|Bottom>>>>>
+
   <drd-props|input-field|arity|4|accessible|3>
 
   <drd-props|input-popup|arity|5|accessible|3>
+
+  <drd-props|input-list|arity|5|accessible|none>
 
   \;
 </body>
