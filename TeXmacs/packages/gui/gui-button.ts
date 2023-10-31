@@ -42,6 +42,12 @@
 
   <assign|button-bg-color|white>
 
+  <assign|gui-input-color|white>
+
+  <assign|gui-input-sunny-color|#b0b0b0>
+
+  <assign|gui-input-shadow-color|#707070>
+
   <\active*>
     <\src-comment>
       Atomic markup
@@ -132,7 +138,7 @@
 
   <\active*>
     <\src-comment>
-      User input
+      Choice lists
     </src-comment>
   </active*>
 
@@ -143,6 +149,20 @@
   <drd-props|choice-list|arity|<tuple|repeat|2|1>|accessible|all>
 
   <drd-props|check-list|arity|<tuple|repeat|2|1>|accessible|all>
+
+  <\active*>
+    <\src-comment>
+      Input fields
+    </src-comment>
+  </active*>
+
+  <assign|input-field|<macro|type|cmd|width|x|<with|ornament-corner|30%|ornament-color|<value|gui-input-color>|ornament-shadow-color|<value|gui-input-shadow-color>|ornament-sunny-color|<value|gui-input-sunny-color>|<ornament|<if|<equal|<arg|width>|>|<arg|x>|<clipped|<arg|x>|||<arg|width>|>>>>>>
+
+  <assign|input-popup|<macro|type|cmd|width|x|y|<input-field|<arg|type>|<arg|cmd>|<arg|width>|<focus-balloon|<arg|x>|<arg|y>|left|Bottom>>>>
+
+  <drd-props|input-field|arity|4|accessible|3>
+
+  <drd-props|input-popup|arity|5|accessible|3>
 
   \;
 </body>
