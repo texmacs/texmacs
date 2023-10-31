@@ -26,6 +26,16 @@
 
   <\active*>
     <\src-comment>
+      Customizations
+    </src-comment>
+  </active*>
+
+  <assign|font|Linux Biolinum>
+
+  <assign|font-base-size|8>
+
+  <\active*>
+    <\src-comment>
       GUI color scheme
     </src-comment>
   </active*>
@@ -58,7 +68,7 @@
     </src-comment>
   </active*>
 
-  <assign|icon|<macro|name|<image|<find-file|$TEXMACS_PATH/misc/pixmaps/modern/32x32/table|$TEXMACS_PATH/misc/pixmaps/modern/24x24/main|$TEXMACS_PATH/misc/pixmaps/modern/20x20/mode|$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus|$TEXMACS_DOC_PATH/images/pixmaps|$TEXMACS_HOME_PATH/doc/images/pixmaps|$TEXMACS_PATH/doc/images/pixmaps|<arg|name>>||50%||-10%>>>
+  <assign|icon|<macro|name|<style-with|src-compact|none|<image|<style-with|src-compact|none|<find-file|$TEXMACS_PATH/misc/pixmaps/modern/32x32/table|$TEXMACS_PATH/misc/pixmaps/modern/32x32/settings|$TEXMACS_PATH/misc/pixmaps/modern/24x24/main|$TEXMACS_PATH/misc/pixmaps/modern/20x20/mode|$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus|$TEXMACS_DOC_PATH/images/pixmaps|$TEXMACS_HOME_PATH/doc/images/pixmaps|$TEXMACS_PATH/doc/images/pixmaps|<arg|name>>>||50%||-10%>>>>
 
   <assign|monochrome|<macro|w|h|col|<resize|<raw-table|<tformat|<twith|table-valign|b>|<cwith|1|-1|1|-1|cell-background|<arg|col>>|<cwith|1|-1|1|-1|cell-width|<arg|w>>|<cwith|1|-1|1|-1|cell-hmode|exact>|<cwith|1|-1|1|-1|cell-height|<arg|h>>|<cwith|1|-1|1|-1|cell-vmode|exact>|<table|<row|<\cell>
     \;
