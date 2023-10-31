@@ -140,7 +140,9 @@
                (all (cddr (tree->stree u)))
                (new (if (== tag 'choice-list) val
                         (check-toggle old val all))))
-          (tree-set (tree-ref u 1) new))
+          (tree-set (tree-ref u 1) new)
+          (when (tree-is? u :up 'input-popup)
+            (tree-set (tree-ref u :up 3) new)))
         (let* ((c   (as-string (tree-ref u 0) "(noop)"))
                (val (tree->stree (tree-ref u 1)))
                (sel (if (func? val 'tuple) (cdr val) val))
@@ -178,3 +180,32 @@
          (on? (lambda (x) (in? (tm->stree x) sel)))
          (f "gui-on-choice 'check-list"))
     `(,list-tag ,@(map (cut gui-choice-item <> f on? off-tag on-tag) args))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Input fields
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (gui-input-context? t)
+  (tree-in? t '(input-field input-popup)))
+
+(tm-define (gui-input-relay type fun key time)
+  ;;(display* "Relay " type ", " key ", " time "\n")
+  (when (== key "return")
+    (fun)))
+
+(tm-define (keyboard-press key time)
+  (:require (tree-innermost gui-input-context?))
+  (with t (tree-innermost gui-input-context?)
+    (when (!= key "return")
+      (former key time))
+    (and-with t* (tree-innermost gui-input-context?)
+      (when (and (tree? t) (== (tree->path t) (tree->path t*)))
+        (let* ((type (tree->stree (tree-ref t 0)))
+               (cmd  (tree->stree (tree-ref t 1)))
+               (val  (object->string (tree->stree (tree-ref t 3))))
+               (cmd* (string-append "(with answer '" val " " cmd ")"))
+               (fun  (lambda ()
+                       (delayed
+                         (:idle 1)
+                         (secure-eval (string->object cmd*))))))
+          (gui-input-relay type fun key time))))))
