@@ -202,6 +202,18 @@
 
   <assign|discrete-style|<macro|body|<small|<arg|body>>>>
 
+  <\active*>
+    <\src-comment>
+      Resizing
+    </src-comment>
+  </active*>
+
+  <assign|minipar|<macro|body|w|h|<raw-table|<tformat|<cwith|1|1|1|1|cell-width|<arg|w>>|<cwith|1|1|1|1|cell-hmode|exact>|<cwith|1|1|1|1|cell-height|<arg|h>>|<cwith|1|1|1|1|cell-vmode|exact>|<cwith|1|1|1|1|cell-valign|T>|<table|<row|<\cell>
+    <arg|body>
+  </cell>>>>>>>
+
+  <assign|minipar*|<macro|body|w|h|<clipped|<minipar|<arg|body>|<arg|w>|<arg|h>>||<minus|1t|<arg|h>>|<plus|1l|<arg|w>>|>>>
+
   \;
 </body>
 
