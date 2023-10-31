@@ -50,6 +50,8 @@
 
   <assign|gui-input-shadow-color|#707070>
 
+  <assign|gui-title-bg-color|#c0c0c0>
+
   <\active*>
     <\src-comment>
       Atomic markup
@@ -169,6 +171,30 @@
   <drd-props|input-popup|arity|5|accessible|3>
 
   <drd-props|input-list|arity|5|accessible|none>
+
+  <\active*>
+    <\src-comment>
+      Styling
+    </src-comment>
+  </active*>
+
+  <assign|wide-raw-table|<macro|body|<tformat|<twith|table-valign|T>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<cwith|1|-1|1|-1|cell-halign|l>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0spc>|<cwith|1|-1|1|-1|cell-tsep|0spc>|<cwith|1|-1|1|-1|cell-background|<value|gui-bg-color>>|<arg|body>>>>
+
+  <assign|wide-raw-cell|<macro|body|<wide-raw-table|<tformat|<table|<row|<\cell>
+    <arg|body>
+  </cell>>>>>>>
+
+  <assign|title-style|<macro|body|<with|gui-bg-color|<value|gui-title-bg-color>|<wide-raw-cell|<large|<arg|body>>>>>>
+
+  <assign|section-style|<macro|body|<with|gui-bg-color|<value|gui-title-bg-color>|<wide-raw-cell|<arg|body>>>>>
+
+  <assign|subsection-style|<macro|body|<with|gui-bg-color|<value|gui-title-bg-color>|<wide-raw-cell|<arg|body>>>>>
+
+  <assign|section-tabs-style|<macro|body|<arg|body>>>
+
+  <assign|plain-style|<macro|body|<normal-size|<arg|body>>>>
+
+  <assign|discrete-style|<macro|body|<small|<arg|body>>>>
 
   \;
 </body>
