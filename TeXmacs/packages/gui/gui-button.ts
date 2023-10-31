@@ -30,7 +30,7 @@
     </src-comment>
   </active*>
 
-  <assign|font|Linux Biolinum>
+  <assign|font|<extern|gui-system-font>>
 
   <assign|font-base-size|8>
 
