@@ -210,7 +210,7 @@ public:
       window_by_name(name->t)= path (win_id, window_by_name[name->t]); }
   void apply ();
   tm_ostream& print (tm_ostream& out) {
-    return out << "Close_Embedded widget command"; }
+    return out << "<command close_embedded>"; }
 };
 
 void
@@ -559,7 +559,7 @@ class ia_command_rep: public command_rep {
 public:
   ia_command_rep (tm_window_rep* win2): win (win2) {}
   void apply () { win->interactive_return (); }
-  tm_ostream& print (tm_ostream& out) { return out << "tm_window command"; }
+  tm_ostream& print (tm_ostream& out) { return out << "<command ia>"; }
 };
 
 bool

@@ -531,6 +531,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(command-apply <scm-arg|command>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|apply> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(exec-delayed <scm-arg|object>)>
 <explain-synopsis|no synopsis>
   <|explain>
