@@ -700,9 +700,9 @@ make_lazy (edit_env env, tree t, path ip) {
     return make_lazy_argument (env, t, ip);
   case MAP_ARGS:
     // FIXME: we might want to merge make_lazy_rewrite and make_lazy_eval
-    // 'map_args' should really be implemented using make_lazy_rewrite,
-    // but make_lazy_eval leads to better locality of updates for 'screens'
-    return make_lazy_eval (env, t, ip);
+    // 'map_args' is implemented using 'eval' for bridges,
+    // but agreeing on a single choice would be better
+    return make_lazy_rewrite (env, t, ip);
   case MARK:
   case VAR_MARK:
     return make_lazy_mark (env, t, ip);
