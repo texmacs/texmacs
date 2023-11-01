@@ -531,7 +531,15 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(command-apply <scm-arg|command>)>
+    <scm|(command-eval <scm-arg|command>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|eval> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(command-apply <scm-arg|command> <scm-arg|object>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|apply> which returns
