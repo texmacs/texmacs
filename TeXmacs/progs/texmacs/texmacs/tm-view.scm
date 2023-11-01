@@ -64,6 +64,7 @@
   ("status bar" "on" notify-status-bar)
   ("side tools" "off" notify-side-tools)
   ("left tools" "off" notify-side-tools)
+  ("markup gui" "off" noop)
   ("zoom factor" "1" notify-zoom-factor)
   ("snap to pages" "off" noop)
   ("ir-up" "home" notify-remote-control)
@@ -128,6 +129,12 @@
     (when (and (os-macos?) (== n 0)
                (get-boolean-preference "use unified toolbar"))
       (notify-now "Restart TeXmacs to avoid potential visual artefacts"))))
+
+(tm-define (toggle-markup-gui)
+  (:synopsis "Toggle graphical user interface through TeXmacs markup")
+  (:check-mark "v" has-markup-gui?)
+  (with val (not (has-markup-gui?))
+    (set-boolean-preference "markup gui" val)))
 
 (define saved-informative-flags "default")
 

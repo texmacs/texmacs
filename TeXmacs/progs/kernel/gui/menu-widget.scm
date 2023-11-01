@@ -1065,6 +1065,11 @@
   (:argument style "menu style")
   ((wrap-catch make-menu-main) p style))
 
+(tm-define (make-menu-widget* p style)
+  (if (has-markup-gui?)
+      (make-menu-widget** p style)
+      (make-menu-widget p style)))
+
 (define (decode-options opts)
   (let* ((bufs (list))
          (qcmd noop))
@@ -1097,7 +1102,7 @@
            (qui (object->command (lambda () (qqq) (del))))
            (men (menu-promise))
            (scm (list 'vertical men))
-           (wid (make-menu-widget scm 0)))
+           (wid (make-menu-widget* scm 0)))
       (alt-window-create-quit win wid (translate name) qui)
       (alt-window-show win))))
 
@@ -1110,7 +1115,7 @@
            (lbd (lambda x (apply cmd x) (del)))
            (men (menu-promise lbd))
            (scm (list 'vertical men))
-           (wid (make-menu-widget scm 0)))
+           (wid (make-menu-widget* scm 0)))
       (alt-window-create-quit win wid (translate name) qui)
       (alt-window-show win))))
 
