@@ -176,7 +176,7 @@
     </src-comment>
   </active*>
 
-  <assign|raw-table|<macro|body|<tformat|<twith|table-valign|T>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<cwith|1|-1|1|-1|cell-halign|l>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0spc>|<cwith|1|-1|1|-1|cell-tsep|0spc>|<arg|body>>>>
+  <assign|raw-table|<macro|body|<tformat|<twith|table-valign|T>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<cwith|1|-1|1|-1|cell-halign|l>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0spc>|<cwith|1|-1|1|-1|cell-tsep|0spc>|<cwith|1|-1|1|-1|cell-hpart|0>|<cwith|1|-1|1|-1|cell-vpart|0>|<arg|body>>>>
 
   <assign|raw-table*|<macro|body|<raw-table|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<arg|body>>>>>
 
