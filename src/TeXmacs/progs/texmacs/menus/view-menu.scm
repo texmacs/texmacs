@@ -148,7 +148,8 @@
   ("Status bar" (toggle-visible-footer))
   (if (with-developer-tool?)
       ("Left side tools" (toggle-visible-side-tools 1))
-      ("Right side tools" (toggle-visible-side-tools 0)))
+      ("Right side tools" (toggle-visible-side-tools 0))
+      ("GUI through markup" (toggle-markup-gui)))
   ---
   ("Search toolbar" (toggle-bottom-bar "search"))
   ("Replace toolbar" (toggle-bottom-bar "replace"))
