@@ -93,7 +93,7 @@
   (markup-text text 0 col transparent?))
 
 (tm-define (markup-balloon body balloon)
-  `(help-baloon ,body ,balloon "right" ""))
+  `(help-balloon ,body ,balloon "right" ""))
 
 (tm-define (markup-xpm u)
   (let* ((s (url->string u))
@@ -103,10 +103,10 @@
 
 (tm-define (markup-glue hext? vext? w h)
   (let* ((ws  (string-append (number->string (quotient w 256)) "px"))
-         (hs  (string-append (number->string (quotient h 256)) "px"))
-         (spc `(space ,ws "0px" ,hs)))
-    (if (not hext?) spc
-        `(concat ,spc (htab "0px")))))
+         (hs  (string-append (number->string (quotient h 256)) "px")))
+    `(glue ,(if hext? "true" "false")
+           ,(if vext? "true" "false")
+           ,ws ,hs)))
 
 (tm-define (markup-color col hext? vext? w h)
   (let* ((ws  (string-append (number->string w) "px"))
