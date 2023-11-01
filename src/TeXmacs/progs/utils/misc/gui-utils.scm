@@ -45,6 +45,18 @@
              (update-menus)
              "done"))))
 
+(tm-define (gui-on-toggle type x y cmd)
+  (:secure #t)
+  ;;(display* "gui-on-toggle " type ", " x ", " y ", " cmd "\n")  
+  (let* ((val (tm-ref cmd :up 0))
+         (new (object->string (and val (tm-equal? val "false")))))
+    (when (and (== (tm->stree type) "select") val)
+      (cond ((tm-equal? val "true") (tree-assign! val "false"))
+            ((tm-equal? val "false") (tree-assign! val "true"))))
+    (and-let* ((cmd* (tm->stree cmd))
+               (ncmd (string-append "(with answer " new " " cmd* ")")))
+      (gui-on-select type x y ncmd))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard emulation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
