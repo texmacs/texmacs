@@ -81,6 +81,9 @@
   (and (persistent-has? dir key)
        (persistent-get dir key)))
 
+(define-public (sourcify x)
+  (if (and (procedure? x) (procedure-source x)) (procedure-source x) x))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Common programming constructs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

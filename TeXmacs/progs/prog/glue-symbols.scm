@@ -93,6 +93,7 @@
 "math-group-members"
 "math-symbol-type"
 "object->command"
+"command-apply"
 "exec-delayed"
 "exec-delayed-pause"
 "protected-call"

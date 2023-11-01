@@ -475,7 +475,8 @@ print_blackbox (SCM blackbox_smob, SCM port, scm_print_state *pstate) {
     s= "<promise-widget>";
   }
   else if (type_ == type_helper<command>::id) {
-    s= "<command>";
+    command cmd= tmscm_to_command (blackbox_smob);
+    s= print_to_string<command> (cmd);
   }
   else if (type_ == type_helper<url>::id) {
     url u= tmscm_to_url (blackbox_smob);
