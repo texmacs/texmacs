@@ -39,7 +39,8 @@ ABSTRACT_NULL_CODE(command);
 inline tm_ostream& command_rep::print (tm_ostream& out) {
   return out << "<command>"; }
 inline void command::operator () (void) { rep->apply(); }
-inline void apply (command cmd) { cmd (); }
+inline void eval (command cmd) { cmd (); }
+void apply (command cmd, object args);
 inline bool operator == (command cmd1, command cmd2) {
   return cmd1.rep == cmd2.rep; }
 inline tm_ostream& operator << (tm_ostream& out, command cmd) {
