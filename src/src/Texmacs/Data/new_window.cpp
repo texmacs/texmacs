@@ -74,7 +74,8 @@ public:
     object cmd= list_object (symbol_object ("safely-kill-window"),
                              object (*id));
     exec_delayed (scheme_cmd (cmd)); }
-  tm_ostream& print (tm_ostream& out) { return out << "kill window"; }
+  tm_ostream& print (tm_ostream& out) {
+    return out << "<command kill_window>"; }
 };
 
 url

@@ -120,4 +120,6 @@ extern tm_ostream debug_updater;
 
 extern tm_ostream std_bench;
 
+tm_ostream string_ostream (string& buf);
+
 #endif // defined OUT_STREAM_HPP
