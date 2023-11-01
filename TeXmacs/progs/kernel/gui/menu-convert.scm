@@ -105,10 +105,9 @@
     `(icon ,i)))
 
 (tm-define (markup-glue hext? vext? w h)
-  (let* ((ws  (string-append (number->string w) "px"))
-         (hs  (string-append (number->string h) "px"))
-         ;;(spc `(space ,ws "0px" ,hs)))
-         (spc `(space "0px" "0px" "0px")))
+  (let* ((ws  (string-append (number->string (quotient w 256)) "px"))
+         (hs  (string-append (number->string (quotient h 256)) "px"))
+         (spc `(space ,ws "0px" ,hs)))
     (if (not hext?) spc
         `(concat ,spc (htab "0px")))))
 
@@ -760,7 +759,6 @@
 
 (define (build-resize p style)
   "Make @(resize :%2 :menu-item-list) item."
-  (display* "build-resize " p ", " style "\n")
   (with (tag w-cmd h-cmd . items) p
     (let ((w (w-cmd))
           (h (h-cmd)))
@@ -1026,7 +1024,7 @@
          (tmi `(texmacs-input ,(lambda () doc)
                               ,(lambda () sty)
                               ,(lambda () "tmfs://aux/gui")))
-         (rsz `(resize ,(lambda () "1200px") ,(lambda () "800px") ,tmi))
+         (rsz `(resize ,(lambda () "800px") ,(lambda () "600px") ,tmi))
          (w (list 'vertical (list rsz))))
     ;;(display* "doc = " doc "\n")
     (make-menu-widget w style)))
