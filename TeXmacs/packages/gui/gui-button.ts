@@ -80,9 +80,11 @@
     </src-comment>
   </active*>
 
+  <assign|gui-contour|<macro|body|<with|shadow-recolor|<value|gui-blur-color>|<drop-contour|<arg|body>>>>>
+
   <assign|action-button-normal*|<macro|x|<with|ornament-corner|30%|ornament-color|<value|gui-bg-color>|ornament-shadow-color|<value|gui-shadow-color>|ornament-sunny-color|<value|gui-sunny-color>|<ornament|<arg|x>>>>>
 
-  <assign|action-button-hover*|<macro|x|<with|shadow-recolor|<value|gui-blur-color>|<drop-contour|<with|ornament-corner|30%|ornament-color|<value|gui-bg-color>|ornament-shadow-color|<value|gui-shadow-color>|ornament-sunny-color|<value|gui-sunny-color>|<ornament|<arg|x>>>>>>>
+  <assign|action-button-hover*|<macro|x|<gui-contour|<with|ornament-corner|30%|ornament-color|<value|gui-bg-color>|ornament-shadow-color|<value|gui-shadow-color>|ornament-sunny-color|<value|gui-sunny-color>|<ornament|<arg|x>>>>>>
 
   <assign|action-button-pressed*|<macro|x|<with|ornament-corner|30%|ornament-color|<value|gui-bg-color>|ornament-sunny-color|<value|gui-shadow-color>|ornament-shadow-color|<value|gui-sunny-color>|<ornament|<arg|x>>>>>
 
@@ -147,6 +149,26 @@
   <assign|with-explicit-buttons|<macro|body|<with|menu-button-normal*|<value|menu-button-xnormal*>|menu-button-hover*|<value|menu-button-xhover*>|<arg|body>>>>
 
   <assign|with-pressed-buttons|<macro|body|<with|menu-button-normal*|<value|menu-button-xpressed*>|menu-button-hover*|<value|menu-button-pressed*>|menu-button-pressed*|<value|menu-button-xhover*>|<arg|body>>>>
+
+  <\active*>
+    <\src-comment>
+      Toggles
+    </src-comment>
+  </active*>
+
+  <assign|toggle-off|<macro|<math|\<box\>>>>
+
+  <assign|toggle-on|<macro|<math|\<blacksquare\>>>>
+
+  <assign|toggle-off-hover|<gui-contour|<toggle-off>>>
+
+  <assign|toggle-on-hover|<gui-contour|<toggle-on>>>
+
+  <assign|toggle-on-button|<macro|on|cmd|<mark*|<arg|x>|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<toggle-off-hover>|gui-on-toggle|<arg|cmd>>|mouse-over|<relay|<toggle-on-hover>|gui-on-toggle|<arg|cmd>>|<relay|<toggle-on>|gui-on-toggle|<arg|cmd>>>>>>>
+
+  <assign|toggle-off-button|<macro|on|cmd|<mark*|<arg|x>|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<toggle-on-hover>|gui-on-toggle|<arg|cmd>>|mouse-over|<relay|<toggle-off-hover>|gui-on-toggle|<arg|cmd>>|<relay|<toggle-off>|gui-on-toggle|<arg|cmd>>>>>>>
+
+  <assign|toggle-button|<macro|on|cmd|<compound|<if|<arg|on>|<value|toggle-on-button>|<value|toggle-off-button>>|<arg|on>|<arg|cmd>>>>
 
   <\active*>
     <\src-comment>
