@@ -140,7 +140,7 @@
 
   <assign|raw-table*|<macro|body|<raw-table|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<arg|body>>>>>
 
-  <assign|raw-table**|<macro|body|<raw-table*|<tformat|<cwith|2|-1|1|-1|cell-tsep|1spc>|<arg|body>>>>>
+  <assign|align-table|<macro|body|<raw-table*|<tformat|<cwith|2|-1|1|-1|cell-tsep|1spc>|<cwith|1|-1|1|1|cell-rsep|1spc>|<arg|body>>>>>
 
   <assign|hlist|<xmacro|items|<extern|gui-hlist-table|raw-table|<quote-arg|items>>>>
 
@@ -150,7 +150,7 @@
 
   <assign|tiled*|<xmacro|items|<extern|gui-tiled|raw-table*|<quote-arg|items>>>>
 
-  <assign|tiled**|<xmacro|items|<extern|gui-tiled|raw-table**|<quote-arg|items>>>>
+  <assign|align-tiled|<xmacro|items|<extern|gui-tiled|align-table|<quote-arg|items>>>>
 
   <drd-props|hlist|arity|<tuple|repeat|1|1>|accessible|all>
 
@@ -158,7 +158,7 @@
 
   <drd-props|tiled|arity|<tuple|repeat|1|1>|accessible|all>
 
-  <drd-props|tiled*|arity|<tuple|repeat|1|1>|accessible|all>
+  <drd-props|align-tiled|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|tiled**|arity|<tuple|repeat|1|1>|accessible|all>
 
@@ -212,10 +212,9 @@
 
   <assign|xtabs-body|<macro|body|<arg|body>>>
 
-  <assign|active-tab|<macro|name|<arg|name> >>
+  <assign|active-tab|<macro|name|<arg|name><space|1em>>>
 
-  <assign|passive-tab|<macro|name|<action|<greyed|<arg|name>
-  >|tab-select|<arg|name>>>>
+  <assign|passive-tab|<macro|name|<action|<greyed|<arg|name><space|1em>>|tab-select|<arg|name>>>>
 
   <drd-props|tabs|arity|2|accessible|all>
 

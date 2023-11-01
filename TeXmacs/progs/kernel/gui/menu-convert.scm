@@ -156,7 +156,7 @@
       (cons* (car l) (car r) (alternate (cdr l) (cdr r)))))
 
 (tm-define (markup-aligned l-list r-list)
-  `(tiled** "2" ,@(alternate l-list r-list)))
+  `(align-tiled "2" ,@(alternate l-list r-list)))
 
 (tm-define (markup-menu-button text cmd check shortcut style)
   ;; TODO: handle 'shortcut' and 'style'
