@@ -58,7 +58,7 @@
     (:pause 250)
     (when (and tooltip-unmap? (== tooltip-unmap? tooltip-win))
       (tooltip-unmap))))
-  
+
 (tm-define (keyboard-press key time)
   (:require (and tooltip-win (not tooltip-unmap?)))
   (when (== (cAr tooltip-settings) "keyboard")
