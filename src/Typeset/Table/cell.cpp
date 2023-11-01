@@ -35,6 +35,11 @@ cell_rep::typeset (tree fm, tree t, path iq) {
     T= table (env, 2);
     T->typeset (t[0], descend (iq, 0));
   }
+  else if (is_func (t, DOCUMENT, 1) && is_func (t[0], SUBTABLE, 1)) {
+    lsep= rsep= bsep= tsep= 0;
+    T= table (env, 2);
+    T->typeset (t[0][0], descend (descend (iq, 0), 0));
+  }
   else {
     if (hyphen == "n") {
       b= typeset_as_concat (env, t, iq);
