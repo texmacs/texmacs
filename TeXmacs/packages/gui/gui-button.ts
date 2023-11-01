@@ -140,6 +140,8 @@
 
   <assign|raw-table*|<macro|body|<raw-table|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<arg|body>>>>>
 
+  <assign|raw-table**|<macro|body|<raw-table*|<tformat|<cwith|2|-1|1|-1|cell-tsep|1spc>|<arg|body>>>>>
+
   <assign|hlist|<xmacro|items|<extern|gui-hlist-table|raw-table|<quote-arg|items>>>>
 
   <assign|vlist|<xmacro|items|<extern|gui-vlist-table|raw-table|<quote-arg|items>>>>
@@ -148,6 +150,8 @@
 
   <assign|tiled*|<xmacro|items|<extern|gui-tiled|raw-table*|<quote-arg|items>>>>
 
+  <assign|tiled**|<xmacro|items|<extern|gui-tiled|raw-table**|<quote-arg|items>>>>
+
   <drd-props|hlist|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|vlist|arity|<tuple|repeat|1|1>|accessible|all>
@@ -155,6 +159,8 @@
   <drd-props|tiled|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|tiled*|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|tiled**|arity|<tuple|repeat|1|1>|accessible|all>
 
   <\active*>
     <\src-comment>
@@ -176,7 +182,7 @@
     </src-comment>
   </active*>
 
-  <assign|input-field|<macro|type|cmd|width|x|<with|ornament-corner|30%|ornament-color|<value|gui-input-color>|ornament-shadow-color|<value|gui-input-shadow-color>|ornament-sunny-color|<value|gui-input-sunny-color>|<ornament|<if|<equal|<arg|width>|>|<arg|x>|<clipped|<arg|x>|||<arg|width>|>>>>>>
+  <assign|input-field|<macro|type|cmd|width|x|<with|ornament-corner|30%|ornament-color|<value|gui-input-color>|ornament-shadow-color|<value|gui-input-shadow-color>|ornament-sunny-color|<value|gui-input-sunny-color>|<ornament|<if|<equal|<arg|width>|>|<inflate|<arg|x>>|<clipped|<inflate|<arg|x>>|||<arg|width>|>>>>>>
 
   <assign|input-popup|<macro|type|cmd|width|x|y|<input-field|<arg|type>|<arg|cmd>|<arg|width>|<focus-balloon|<arg|x>|<arg|y>|left|Bottom>>>>
 
@@ -194,8 +200,6 @@
     </src-comment>
   </active*>
 
-  <assign|tabs|<macro|names|bodies|<quasi|<vlist|<unquote|<arg|names>>|<unquote|<arg|bodies>>>>>>
-
   <assign|tabs|<\macro|names|bodies>
     <wide-raw-table|<tformat|<cwith|1|1|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-bsep|1spc>|<cwith|1|1|1|1|cell-tsep|1spc>|<table|<row|<cell|<arg|names>>>|<row|<\cell>
       <arg|bodies>
@@ -204,7 +208,9 @@
 
   <assign|tabs-bar|<value|hlist>>
 
-  <assign|tabs-body|<macro|body|<arg|body>>>
+  <assign|tabs-body|<value|switch>>
+
+  <assign|xtabs-body|<macro|body|<arg|body>>>
 
   <assign|active-tab|<macro|name|<arg|name> >>
 
@@ -214,6 +220,8 @@
   <drd-props|tabs|arity|2|accessible|all>
 
   <drd-props|tabs-bar|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|tabs-body|arity|<tuple|repeat|1|1>|accessible|all>
 
   <\active*>
     <\src-comment>

@@ -106,7 +106,7 @@
   (let* ((r (map (lambda (x) "") (.. (length l) cols)))
          (a (append l r)))
     `(row ,@(map gui-tile-item a))))
-  
+
 (define (gui-tiled-rows l cols)
   (if (> (length l) cols)
       (cons (gui-tiled-row (sublist l 0 cols) cols)
@@ -234,7 +234,7 @@
               (set! bodies (tree-ref bodies 0)))
             (and-with activate (tm-ref bodies nr)
               (when (and (tm-is? passive 'passive-tab)
-                         (tm-is? bodies 'switch))
+                         (tm-in? bodies '(tabs-body switch)))
                 (for (t (tm-children names))
                   (tree-assign-node t 'passive-tab))
                 (tree-assign-node (tm-ref names nr) 'active-tab)
