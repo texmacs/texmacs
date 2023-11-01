@@ -27,6 +27,11 @@ command::operator () (object args) {
   rep->apply (args);
 }
 
+void
+apply (command cmd, object args) {
+  cmd (args);
+}
+
 /******************************************************************************
 * standard commands without arguments
 ******************************************************************************/

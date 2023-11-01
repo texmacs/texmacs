@@ -714,13 +714,28 @@ tmg_object_2command (tmscm arg1) {
 }
 
 tmscm
-tmg_command_apply (tmscm arg1) {
-  TMSCM_ASSERT_COMMAND (arg1, TMSCM_ARG1, "command-apply");
+tmg_command_eval (tmscm arg1) {
+  TMSCM_ASSERT_COMMAND (arg1, TMSCM_ARG1, "command-eval");
 
   command in1= tmscm_to_command (arg1);
 
   // TMSCM_DEFER_INTS;
-  apply (in1);
+  eval (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_command_apply (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_COMMAND (arg1, TMSCM_ARG1, "command-apply");
+  TMSCM_ASSERT_OBJECT (arg2, TMSCM_ARG2, "command-apply");
+
+  command in1= tmscm_to_command (arg1);
+  object in2= tmscm_to_object (arg2);
+
+  // TMSCM_DEFER_INTS;
+  apply (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
@@ -10211,7 +10226,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("math-group-members",  tmg_math_group_members, 1, 0, 0);
   tmscm_install_procedure ("math-symbol-type",  tmg_math_symbol_type, 1, 0, 0);
   tmscm_install_procedure ("object->command",  tmg_object_2command, 1, 0, 0);
-  tmscm_install_procedure ("command-apply",  tmg_command_apply, 1, 0, 0);
+  tmscm_install_procedure ("command-eval",  tmg_command_eval, 1, 0, 0);
+  tmscm_install_procedure ("command-apply",  tmg_command_apply, 2, 0, 0);
   tmscm_install_procedure ("exec-delayed",  tmg_exec_delayed, 1, 0, 0);
   tmscm_install_procedure ("exec-delayed-pause",  tmg_exec_delayed_pause, 1, 0, 0);
   tmscm_install_procedure ("protected-call",  tmg_protected_call, 1, 0, 0);
