@@ -164,6 +164,11 @@
           ((pressed? style) `(with-pressed-buttons ,but))
           (else but))))
 
+(tm-define (markup-toggle cmd* on? style)
+  ;; TODO: handle inert style
+  (with cmd (unary-mangled cmd*)
+    `(toggle-button ,(if on? "true" "false") ,cmd)))
+
 (tm-define (markup-tabs names bodies)
   `(tabs (tabs-bar
           (active-tab ,(car names))
@@ -178,11 +183,6 @@
 (tm-define (markup-icon-tabs icons names bodies)
   (with combined (map attach-icon icons names)
     (markup-tabs combined bodies)))
-
-(tm-define (markup-toggle cmd* on? style)
-  ;; TODO: handle inert style
-  (with cmd (unary-mangled cmd*)
-    `(attach-script (button-box ,(if on? "true" "false")) ,cmd)))
 
 (tm-define (markup-input cmd* type props style width)
   ;; TODO: handle inert style
@@ -1020,7 +1020,7 @@
 
 (tm-define (make-menu-widget** p style)
   (let* ((doc (build-menu-widget p style))
-         (sty `(style (tuple ,"course" ,"gui-button")))
+         (sty `(style (tuple ,"generic" ,"gui-button")))
          (tmi `(texmacs-input ,(lambda () doc)
                               ,(lambda () sty)
                               ,(lambda () "tmfs://aux/gui")))
