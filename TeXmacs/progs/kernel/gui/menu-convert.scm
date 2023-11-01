@@ -68,6 +68,7 @@
 (tm-define (markup-empty) "")
 
 (tm-define (markup-text text style col transparent?)
+  ;;(display* "Text " text ", " style ", " col ", " transparent? "\n")
   (when (mini? style)
     (set! text `(small ,text)))
   (when (or (greyed? style)
@@ -83,10 +84,6 @@
     (set! text `(text-opaque ,text)))
   (when (center? style)
     (set! text `(text-center ,text)))
-  (when (button? style)
-    (set! text `(text-button ,text)))
-  (when (pressed? style)
-    (set! text `(text-pressed ,text)))
   `(inflate ,text))
 
 (tm-define (markup-menu-group text style)
@@ -159,10 +156,13 @@
   `(align-tiled "2" ,@(alternate l-list r-list)))
 
 (tm-define (markup-menu-button text cmd check shortcut style)
-  ;; TODO: handle 'shortcut' and 'style'
+  ;; TODO: handle 'shortcut'
   ;; TODO: handle inert style
-  (with body (markup-text text style (color "black") #t)
-    `(menu-button ,body ,(nullary-mangled cmd))))
+  (let* ((body (markup-text text style (color "black") #t))
+         (but `(menu-button ,body ,(nullary-mangled cmd))))
+    (cond ((button?  style) `(with-explicit-buttons ,but))
+          ((pressed? style) `(with-pressed-buttons ,but))
+          (else but))))
 
 (tm-define (markup-tabs names bodies)
   `(tabs (tabs-bar

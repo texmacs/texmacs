@@ -108,11 +108,11 @@
     </src-comment>
   </active*>
 
-  <assign|menu-button-normal*|<macro|x|<with|ornament-shape|classic|ornament-border|1ln|ornament-vpadding|2ln|ornament-color|<value|gui-bg-color>|ornament-shadow-color|<value|gui-bg-color>|ornament-sunny-color|<value|gui-bg-color>|<ornament|<space|0cm|-0.2em|0.8em><arg|x>>>>>
+  <assign|menu-button-normal*|<macro|x|<with|ornament-shape|classic|ornament-border|1ln|ornament-vpadding|2ln|ornament-color|<value|gui-bg-color>|ornament-shadow-color|<value|gui-bg-color>|ornament-sunny-color|<value|gui-bg-color>|<ornament|<space|0cm|-0.3em|0.9em><arg|x>>>>>
 
-  <assign|menu-button-hover*|<macro|x|<with|ornament-shape|classic|ornament-border|1ln|ornament-vpadding|2ln|ornament-color|<value|gui-select-color>|ornament-shadow-color|<value|gui-select-color>|ornament-sunny-color|<value|gui-select-color>|<ornament|<space|0cm|-0.2em|0.8em><arg|x>>>>>
+  <assign|menu-button-hover*|<macro|x|<with|ornament-shape|classic|ornament-border|1ln|ornament-vpadding|2ln|ornament-color|<value|gui-select-color>|ornament-shadow-color|<value|gui-select-color>|ornament-sunny-color|<value|gui-select-color>|<ornament|<space|0cm|-0.3em|0.9em><arg|x>>>>>
 
-  <assign|menu-button-pressed*|<macro|x|<with|ornament-shape|classic|ornament-border|1ln|ornament-vpadding|2ln|ornament-color|<value|gui-select-color>|ornament-shadow-color|<value|gui-sunny-color>|ornament-sunny-color|<value|gui-shadow-color>|<ornament|<space|0cm|-0.2em|0.8em><arg|x>>>>>
+  <assign|menu-button-pressed*|<macro|x|<with|ornament-shape|classic|ornament-border|1ln|ornament-vpadding|2ln|ornament-color|<value|gui-select-color>|ornament-shadow-color|<value|gui-sunny-color>|ornament-sunny-color|<value|gui-shadow-color>|<ornament|<space|0cm|-0.3em|0.9em><arg|x>>>>>
 
   \;
 
@@ -129,6 +129,24 @@
   <assign|menu-button-pressed|<macro|x|<menu-button-pressed*|<arg|x><htab|0mm>>>>
 
   <assign|menu-button|<macro|x|cmd|<mark*|<arg|x>|<menu-button*|<arg|x><htab|0mm>|<arg|cmd>>>>>
+
+  <\active*>
+    <\src-comment>
+      Alternate menu buttons
+    </src-comment>
+  </active*>
+
+  <assign|menu-button-xnormal*|<macro|x|<with|ornament-shape|classic|ornament-border|1ln|ornament-vpadding|2ln|ornament-shadow-color|<value|gui-shadow-color>|ornament-sunny-color|<value|gui-sunny-color>|<ornament|<space|0cm|-0.3em|0.9em><arg|x>>>>>
+
+  <assign|menu-button-xhover*|<macro|x|<with|ornament-shape|classic|ornament-border|1ln|ornament-vpadding|2ln|ornament-color|<value|gui-select-color>|ornament-shadow-color|<value|gui-shadow-color>|ornament-sunny-color|<value|gui-sunny-color>|<ornament|<space|0cm|-0.3em|0.9em><arg|x>>>>>
+
+  <assign|menu-button-xpressed*|<macro|x|<with|ornament-shape|classic|ornament-border|1ln|ornament-vpadding|2ln|ornament-shadow-color|<value|gui-sunny-color>|ornament-sunny-color|<value|gui-shadow-color>|<ornament|<space|0cm|-0.3em|0.9em><arg|x>>>>>
+
+  \;
+
+  <assign|with-explicit-buttons|<macro|body|<with|menu-button-normal*|<value|menu-button-xnormal*>|menu-button-hover*|<value|menu-button-xhover*>|<arg|body>>>>
+
+  <assign|with-pressed-buttons|<macro|body|<with|menu-button-normal*|<value|menu-button-xpressed*>|menu-button-hover*|<value|menu-button-pressed*>|menu-button-pressed*|<value|menu-button-xhover*>|<arg|body>>>>
 
   <\active*>
     <\src-comment>
@@ -232,9 +250,9 @@
 
   <assign|text-center|<macro|body|<center|<arg|body>>>>
 
-  <assign|text-button|<macro|body|<menu-button-normal|<arg|body>>>>
+  <assign|text-button|<macro|body|<menu-button-normal*|<arg|body>>>>
 
-  <assign|text-pressed|<macro|body|<menu-button-pressed|<arg|body>>>>
+  <assign|text-pressed|<macro|body|<menu-button-pressed*|<arg|body>>>>
 
   \;
 
