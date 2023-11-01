@@ -182,6 +182,8 @@
 
   <assign|align-table|<macro|body|<raw-table*|<tformat|<cwith|2|-1|1|-1|cell-tsep|1spc>|<cwith|1|-1|1|1|cell-rsep|1spc>|<arg|body>>>>>
 
+  <assign|glue|<macro|hext|vext|w|h|<space|<arg|w>|0px|<arg|h>><if|<arg|hext>|<htab|0px>>>>
+
   <assign|hlist|<xmacro|items|<extern|gui-hlist-table|raw-table|<quote-arg|items>>>>
 
   <assign|vlist|<xmacro|items|<extern|gui-vlist-table|raw-table|<quote-arg|items>>>>

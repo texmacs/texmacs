@@ -87,7 +87,7 @@
           (set! emu-modifier-table (make-ahash-table))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Table markup
+;; Lists via tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (as-symbol x fall-back)
@@ -95,21 +95,65 @@
 (define (as-string x fall-back)
   (if (tm-atomic? x) (tm->string x) fall-back))
 
-(define (gui-hlist-item t)
-  `(cell (document ,t)))
+(define (gui-hlist-pair t pos)
+  (if (tm-func? t 'glue 4)
+      (let* ((col  (number->string (+ pos 1)))
+             (cw   (list 'cwith "1" "1" col col))
+             (ext? (tm-is? (tm-ref t 0) "true"))
+             (w    (tm->stree (tm-ref t 2)))
+             (h    (tm->stree (tm-ref t 3))))
+        (cons `((,@cw "cell-width" ,w)
+                (,@cw "cell-hmode" "exact")
+                (,@cw "cell-height" ,h)
+                (,@cw "cell-vmode" "exact")
+                (,@cw "cell-valign" "t")
+                ,@(if ext? (list `(,@cw "cell-hpart" "1")) (list)))
+              ""))
+      (cons (list) `(cell (document ,t)))))
+
+(define (gui-hlist-pairs l pos)
+  (if (null? l) l
+      (let* ((head (gui-hlist-pair  (car l) pos))
+             (tail (gui-hlist-pairs (cdr l) (+ pos 1))))
+        (cons head tail))))
 
 (tm-define (gui-hlist-table tag* t)
   (:secure #t)
-  (with tag (as-symbol tag* 'stack)
-    `(,tag (table (row ,@(map gui-hlist-item (tree-children t)))))))
+  (let* ((tag   (as-symbol tag* 'stack))
+         (pairs (gui-hlist-pairs (tree-children t) 0)))
+    `(,tag (tformat ,@(map car pairs) (table (row ,@(map cdr pairs)))))))
 
-(define (gui-vlist-item t)
-  `(row (cell (document ,t))))
+(define (gui-vlist-pair t pos)
+  (if (tm-func? t 'glue 4)
+      (let* ((row  (number->string (+ pos 1)))
+             (cw   (list 'cwith row row "1" "1"))
+             (ext? (tm-is? (tm-ref t 1) "true"))
+             (w    (tm->stree (tm-ref t 2)))
+             (h    (tm->stree (tm-ref t 3))))
+        (cons `((,@cw "cell-width" ,w)
+                (,@cw "cell-hmode" "exact")
+                (,@cw "cell-height" ,h)
+                (,@cw "cell-vmode" "exact")
+                (,@cw "cell-valign" "t")
+                ,@(if ext? (list `(,@cw "cell-vpart" "1")) (list)))
+              `(row "")))
+      (cons (list) `(row (cell (document ,t))))))
+
+(define (gui-vlist-pairs l pos)
+  (if (null? l) l
+      (let* ((head (gui-vlist-pair  (car l) pos))
+             (tail (gui-vlist-pairs (cdr l) (+ pos 1))))
+        (cons head tail))))
 
 (tm-define (gui-vlist-table tag* t)
   (:secure #t)
-  (with tag (as-symbol tag* 'stack)
-    `(,tag (table ,@(map gui-vlist-item (tree-children t))))))
+  (let* ((tag   (as-symbol tag* 'stack))
+         (pairs (gui-vlist-pairs (tree-children t) 0)))
+    `(,tag (tformat ,@(map car pairs) (table ,@(map cdr pairs))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Tiles
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (gui-tile-item t)
   `(cell (document ,t)))
