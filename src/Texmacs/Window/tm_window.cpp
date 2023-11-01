@@ -142,6 +142,17 @@ tm_window_rep::tm_window_rep (widget wid2, tree geom):
   zoomf= retina_zoom * get_server () -> get_default_zoom_factor ();
 }
 
+double
+get_doc_zoom_factor (tree doc) {
+  if (is_compound (doc))
+    for (int i=0; i<N(doc); i++)
+      if (is_compound (doc[i], "initial") || is_func (doc[i], COLLECTION))
+        return get_doc_zoom_factor (doc[i]);
+      else if (is_func (doc[i], ASSOCIATE, 2) && doc[i][0] == ZOOM_FACTOR)
+        return as_double (doc[i][1]);
+  return -1.0;
+}
+
 tm_window_rep::tm_window_rep (tree doc, command quit):
   win (texmacs_widget (0, quit)),
   wid (win), id (url_none ()),
@@ -149,8 +160,9 @@ tm_window_rep::tm_window_rep (tree doc, command quit):
   menu_current (object ()), menu_cache (widget ()),
   text_ptr (NULL)
 {
-  (void) doc;
-  zoomf= retina_zoom * get_server () -> get_default_zoom_factor ();
+  zoomf= retina_zoom * get_doc_zoom_factor (doc);
+  if (zoomf < 0.0)
+    zoomf= retina_zoom * get_server () -> get_default_zoom_factor ();
 }
 
 tm_window_rep::~tm_window_rep () {
@@ -285,8 +297,11 @@ enrich_embedded_document (tree body, tree style) {
     for (int i=0; i+2<N(orig); i+=2)
       if (is_atomic (orig[i]))
         initial (orig[i]->label)= orig[i+1];
-  initial (DPI)= "720";
-  initial (ZOOM_FACTOR)= (retina_zoom==1? "1.2": "1.8");
+  //initial (DPI)= "720";
+  //initial (ZOOM_FACTOR)= (retina_zoom==1? "1.2": "1.8");
+  initial (DPI)= "600";
+  initial (ZOOM_FACTOR)= (retina_zoom==2? "1.0": "1.2");
+  // TODO: to be carefully checked for all operating systems
   initial ("no-zoom")= "true";
   tree doc (DOCUMENT);
   doc << compound ("TeXmacs", TEXMACS_VERSION);
