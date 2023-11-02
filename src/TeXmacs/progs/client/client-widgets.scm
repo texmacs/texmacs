@@ -63,13 +63,13 @@
                        (car (tm-servers)) "280px"))
 	  (item (text "Pseudo:")
 	    (form-input "pseudo" "string"
-			(list (get-user-info "pseudo")) "300px"))
+			(list (get-user-info "pseudo")) "280px"))
 	  (item (text "Full name:")
 	    (form-input "name" "string"
-			(list (get-user-info "name")) "300px"))
+			(list (get-user-info "name")) "280px"))
 	  (item (text "Email:")
 	    (form-input "email" "string"
-			(list (get-user-info "email")) "300px")))
+			(list (get-user-info "email")) "280px")))
 	====== ======
 	(aligned
 	  (item (toggle (set-password? answer) use-password?)
@@ -80,9 +80,9 @@
 	  (when use-password?
 	    (aligned
 	      (item (text "Password:")
-		(form-input "password" "password" (list "") "300px"))
+		(form-input "password" "password" (list "") "280px"))
 	      (item (text "Repeat:")
-		(form-input "repeat" "password" (list "") "300px")))))
+		(form-input "repeat" "password" (list "") "280px")))))
 	====== ======
 	(when #f
 	  (aligned
@@ -212,10 +212,10 @@
                        "280px")))
 	(item (text "Pseudo:")
 	  (form-input "pseudo" "string"
-		      (list pseudo) "300px"))
+		      (list pseudo) "280px"))
 	(item (text "Password:")
 	  (form-input "name" "password"
-		      (list "") "300px")))
+		      (list "") "280px")))
       ======
       (bottom-buttons
 	>>

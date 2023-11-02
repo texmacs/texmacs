@@ -234,6 +234,8 @@
     </src-comment>
   </active*>
 
+  <assign|input-area|<macro|x|<with|ornament-corner|30%|ornament-color|<value|gui-input-color>|ornament-shadow-color|<value|gui-input-shadow-color>|ornament-sunny-color|<value|gui-input-sunny-color>|<ornament|<arg|x>>>>>
+
   <assign|input-field|<macro|type|cmd|width|x|<with|ornament-corner|30%|ornament-color|<value|gui-input-color>|ornament-shadow-color|<value|gui-input-shadow-color>|ornament-sunny-color|<value|gui-input-sunny-color>|<ornament|<if|<equal|<arg|width>|>|<inflate|<arg|x>>|<clipped|<inflate|<arg|x>>|||<arg|width>|>>>>>>
 
   <assign|input-popup|<macro|type|cmd|width|x|y|<input-field|<arg|type>|<arg|cmd>|<arg|width>|<focus-balloon|<arg|x>|<arg|y>|left|Bottom>>>>
