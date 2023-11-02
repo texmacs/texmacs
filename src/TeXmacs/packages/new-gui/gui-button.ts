@@ -40,6 +40,8 @@
     </src-comment>
   </active*>
 
+  <assign|bg-color|#e0e0e0>
+
   <assign|gui-bg-color|#e0e0e0>
 
   <assign|gui-sunny-color|white>
@@ -280,11 +282,11 @@
 
   \;
 
-  <assign|wide-raw-table|<macro|body|<raw-table|<tformat|<twith|table-width|1par>|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-background|<value|gui-bg-color>>|<arg|body>>>>>
+  <assign|wide-raw-table|<macro|body|<raw-table|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-background|<value|gui-bg-color>>|<arg|body>>>>>
 
-  <assign|wide-raw-cell|<style-with|src-compact|all|<macro|body|<wide-raw-table|<tformat|<table|<row|<\cell>
+  <assign|wide-raw-cell|<style-with|src-compact|all|<macro|body|<with|bg-color|<value|gui-bg-color>|<wide-raw-table|<tformat|<table|<row|<\cell>
     <arg|body>
-  </cell>>>>>>>>
+  </cell>>>>>>>>>
 
   <assign|title-style|<macro|body|<with|gui-bg-color|<value|gui-title-bg-color>|<wide-raw-cell|<large|<arg|body>>>>>>
 
@@ -309,6 +311,14 @@
   </cell>>>>>>>
 
   <assign|minipar*|<macro|body|w|h|<clipped|<minipar|<arg|body>|<arg|w>|<arg|h>>||<minus|1t|<arg|h>>|<plus|1l|<arg|w>>|>>>
+
+  <\active*>
+    <\src-comment>
+      Encapsulation
+    </src-comment>
+  </active*>
+
+  <assign|top-widget|<macro|body|<wide-raw-cell|<arg|body>>>>
 
   \;
 </body>
