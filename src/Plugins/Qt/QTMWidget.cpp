@@ -1019,10 +1019,16 @@ QTMWidget::wheelEvent(QWheelEvent *event) {
                               mstate, texmacs_time (), data);
   }
   else if (QApplication::keyboardModifiers() == Qt::ControlModifier) {
-    if (event->delta() > 0)
-      call ("zoom-in", object (sqrt (sqrt (2.0))));
-    else
-      call ("zoom-out", object (sqrt (sqrt (2.0))));
+    if (event->delta() > 0) {
+      //double x= exp (((double) event->delta ()) / 500.0);
+      //call ("zoom-in", object (x));
+      call ("zoom-in", object (sqrt (sqrt (sqrt (sqrt (2.0))))));
+    }
+    else {
+      //double x= exp (-((double) event->delta ()) / 500.0);
+      //call ("zoom-out", object (x));
+      call ("zoom-out", object (sqrt (sqrt (sqrt (sqrt (2.0))))));
+    }
   }
   else QAbstractScrollArea::wheelEvent (event);
 }
