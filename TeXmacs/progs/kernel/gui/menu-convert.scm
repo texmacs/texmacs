@@ -1018,9 +1018,15 @@
   (:argument style "menu style")
   ((wrap-catch build-menu-main) p style))
 
+(define (get-gui-style)
+  (with theme (get-preference "gui theme")
+    (if (in? theme '("bright" "dark"))
+        (string-append "gui-" theme)
+        "gui-button")))
+
 (tm-define (make-menu-widget** p style)
   (let* ((doc (build-menu-widget p style))
-         (sty `(style (tuple ,"generic" ,"gui-button")))
+         (sty `(style (tuple ,"generic" ,(get-gui-style))))
          (tmo `(texmacs-output ,(lambda () `(top-widget ,doc))
                                ,(lambda () sty)))
          (tmi `(texmacs-input ,(lambda () `(top-widget ,doc))
