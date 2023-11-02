@@ -40,6 +40,12 @@
     </src-comment>
   </active*>
 
+  <assign|color|black>
+
+  <assign|locus-color|black>
+
+  <assign|visited-color|black>
+
   <assign|bg-color|#e0e0e0>
 
   <assign|gui-bg-color|#e0e0e0>
@@ -83,6 +89,8 @@
   </active*>
 
   <assign|gui-contour|<macro|body|<with|shadow-recolor|<value|gui-blur-color>|<drop-contour|<arg|body>>>>>
+
+  <assign|gui-contour*|<macro|body|<with|shadow-recolor|<value|gui-blur-color>|shadow-plain|true|<drop-contour|<arg|body>>>>>
 
   <assign|action-button-normal*|<macro|x|<with|ornament-corner|30%|ornament-color|<value|gui-bg-color>|ornament-shadow-color|<value|gui-shadow-color>|ornament-sunny-color|<value|gui-sunny-color>|<ornament|<arg|x>>>>>
 
@@ -162,9 +170,9 @@
 
   <assign|toggle-on|<macro|<math|\<blacksquare\>>>>
 
-  <assign|toggle-off-hover|<gui-contour|<toggle-off>>>
+  <assign|toggle-off-hover|<gui-contour*|<toggle-off>>>
 
-  <assign|toggle-on-hover|<gui-contour|<toggle-on>>>
+  <assign|toggle-on-hover|<gui-contour*|<toggle-on>>>
 
   <assign|toggle-on-button|<macro|on|cmd|<mark*|<arg|x>|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<toggle-off-hover>|gui-on-toggle|<arg|cmd>>|mouse-over|<relay|<toggle-on-hover>|gui-on-toggle|<arg|cmd>>|<relay|<toggle-on>|gui-on-toggle|<arg|cmd>>>>>>>
 
