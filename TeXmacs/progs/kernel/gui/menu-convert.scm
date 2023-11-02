@@ -187,10 +187,13 @@
 (tm-define (markup-input cmd* type props style width)
   ;; TODO: handle inert style
   (with cmd (unary-mangled cmd*)
-    (if (null? props)
-        `(input-field ,type ,cmd ,width "")
-        `(input-popup ,type ,cmd ,width ""
-                      (choice-list ,cmd "" ,@props)))))
+    (cond ((null? props)
+           `(input-field ,type ,cmd ,width ""))
+          ((null? (cdr props))
+           `(input-field ,type ,cmd ,width ,(car props)))
+          (else
+           `(input-popup ,type ,cmd ,width ,(car props)
+                         (choice-list ,cmd ,(car props) ,@props))))))
 
 (tm-define (markup-enum cmd* props val style width)
   ;; TODO: handle inert style
@@ -241,7 +244,9 @@
   (body-promise))
 
 (tm-define (markup-resize body style w1 h1 w2 h2 w3 h3 hpos vpos)
-  `(minipar* ,body ,w2 ,h2))
+  (if (tm-func? body 'input-area 1)
+      `(input-area (minipar* ,(tm-ref body 0) ,w2 ,h2))
+      `(minipar* ,body ,w2 ,h2)))
 
 (tm-define (markup-extend body items)
   body)
@@ -266,7 +271,7 @@
 
 (tm-define (markup-texmacs-input body style u)
   ;; TODO: url mirroring according to 'u'
-  (markup-with-packages (decode-packages style) body))
+  `(input-area ,(markup-with-packages (decode-packages style) body)))
 
 (tm-define (markup-color-picker cmd background? proposals) "Color picker")
 (tm-define (markup-tree-view cmd data data-roles) "Tree view")
