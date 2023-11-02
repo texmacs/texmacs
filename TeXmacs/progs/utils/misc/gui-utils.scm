@@ -40,6 +40,7 @@
              (delayed
                (:idle 1)
                (when (string? cmd)
+                 ;;(display* "gui-on-select " cmd "\n")
                  (secure-eval (string->object cmd)))
                (close-tooltip))
              (update-menus)
@@ -238,9 +239,13 @@
                                    " " c ")")))
           (delayed
             (:idle 1)
+            ;;(display* "gui-on-choice: " cmd "\n")
             (secure-eval (string->object cmd))
             (keyboard-focus-on "canvas")
-            (update-menus)))))))
+            (delayed
+              (:pause 25)
+              (close-tooltip)
+              (update-menus))))))))
 
 (tm-define (gui-choice-list list-tag* off-tag* on-tag* t)
   (:secure #t)
@@ -295,7 +300,12 @@
                (fun  (lambda ()
                        (delayed
                          (:idle 1)
-                         (secure-eval (string->object cmd*))))))
+                         ;;(display* "keyboard-press: " cmd* "\n")
+                         (secure-eval (string->object cmd*))
+                         (delayed
+                           (:pause 25)
+                           (close-tooltip)
+                           (update-menus))))))
           (gui-input-relay type fun key time))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
