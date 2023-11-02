@@ -216,20 +216,6 @@
 
   <\active*>
     <\src-comment>
-      Choice lists
-    </src-comment>
-  </active*>
-
-  <assign|choice-list|<xmacro|items|<extern|gui-choice-list|vlist|menu-button|menu-button-pressed|<quote-arg|items>>>>
-
-  <assign|check-list|<xmacro|items|<extern|gui-check-list|vlist|menu-button|menu-button-pressed|<quote-arg|items>>>>
-
-  <drd-props|choice-list|arity|<tuple|repeat|2|1>|accessible|all>
-
-  <drd-props|check-list|arity|<tuple|repeat|2|1>|accessible|all>
-
-  <\active*>
-    <\src-comment>
       Input fields
     </src-comment>
   </active*>
@@ -247,6 +233,22 @@
   <drd-props|input-popup|arity|5|accessible|3>
 
   <drd-props|input-list|arity|5|accessible|none>
+
+  <\active*>
+    <\src-comment>
+      Choice lists
+    </src-comment>
+  </active*>
+
+  <assign|with-input-list-style|<macro|body|<with|gui-bg-color|<value|gui-input-color>|<input-area|<arg|body>>>>>
+
+  <assign|choice-list|<xmacro|items|<with-input-list-style|<extern|gui-choice-list|vlist|menu-button|menu-button-pressed|<quote-arg|items>>>>>
+
+  <assign|check-list|<xmacro|items|<with-input-list-style|<extern|gui-check-list|vlist|menu-button|menu-button-pressed|<quote-arg|items>>>>>
+
+  <drd-props|choice-list|arity|<tuple|repeat|2|1>|accessible|all>
+
+  <drd-props|check-list|arity|<tuple|repeat|2|1>|accessible|all>
 
   <\active*>
     <\src-comment>
@@ -312,7 +314,7 @@
     <arg|body>
   </cell>>>>>>>>>
 
-  <assign|title-style|<macro|body|<with|gui-bg-color|<value|gui-title-bg-color>|<wide-padded-cell|<large|<arg|body>>>>>>
+  <assign|title-style|<macro|body|<with|gui-bg-color|<value|gui-title-bg-color>|<wide-padded-cell|<with|embold-strength|1.25|<embold|<sharp-size|<arg|body>>>>>>>>
 
   <assign|section-style|<macro|body|<with|gui-bg-color|<value|gui-title-bg-color>|<wide-padded-cell|<arg|body>>>>>
 

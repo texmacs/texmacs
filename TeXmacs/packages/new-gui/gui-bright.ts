@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package|gui-dark|1.0>
+    <src-package|gui-bright|1.0>
 
     <\src-purpose>
-      Dark theme
+      Bright theme
     </src-purpose>
 
     <src-copyright|2023|Joris van der Hoeven>
@@ -34,9 +34,9 @@
 
   <assign|visited-color|black>
 
-  <assign|bg-color|#e0e0e0>
+  <assign|bg-color|#e8e8e8>
 
-  <assign|gui-bg-color|#e0e0e0>
+  <assign|gui-bg-color|#e8e8e8>
 
   <assign|gui-sunny-color|white>
 
