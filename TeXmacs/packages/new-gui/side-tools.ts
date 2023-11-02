@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <assign|magnification|0.8>
+  <assign|magnification|0.86667>
 
   \;
 </body>

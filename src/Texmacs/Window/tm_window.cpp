@@ -294,30 +294,13 @@ enrich_embedded_document (tree body, tree style) {
   initial (PAGE_SCREEN_RIGHT)= "4px";
   initial (PAGE_SCREEN_TOP)= "2px";
   initial (PAGE_SCREEN_BOT)= "2px";
-
-  /*
-  initial (PAGE_WIDTH_MARGIN)= "true";
-  initial (PAR_WIDTH)= "400px";
-  initial (PAR_WIDTH)= "400px";
-  initial (PAGE_MEDIUM)= "papyrus";
-  initial (PAGE_TYPE)= "user";
-  initial (PAGE_WIDTH)= "400px";
-  initial (PAGE_HEIGHT)= "800px";
-  initial (PAGE_ODD)= "0px";
-  initial (PAGE_EVEN)= "0px";
-  initial (PAGE_RIGHT)= "0px";
-  initial (PAGE_TOP)= "0px";
-  initial (PAGE_BOT)= "0px";
-  initial (PAGE_SCREEN_LEFT)= "0px";
-  initial (PAGE_SCREEN_RIGHT)= "0px";
-  initial (PAGE_SCREEN_TOP)= "0px";
-  initial (PAGE_SCREEN_BOT)= "0px";
-  */
   
   if (is_func (orig, WITH))
     for (int i=0; i+2<N(orig); i+=2)
-      if (is_atomic (orig[i]))
+      if (is_atomic (orig[i])) {
+        //cout << "Set " << orig[i] << " = " << orig[i+1] << LF;
         initial (orig[i]->label)= orig[i+1];
+      }
   //initial (DPI)= "720";
   //initial (ZOOM_FACTOR)= (retina_zoom==1? "1.2": "1.8");
   initial (DPI)= "600";
