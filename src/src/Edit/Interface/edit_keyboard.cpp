@@ -390,7 +390,7 @@ edit_interface_rep::handle_keypress (string key, time_t t) {
     else
       call ("keyboard-press", object (gkey), object ((double) t));
     update_focus_loci ();
-    if (!is_nil (focus_ids))
+    if (!is_nil (focus_ids) && got_focus)
       call ("link-follow-ids", object (focus_ids), object ("focus"));
     notify_change (THE_DECORATIONS);
     end_editing ();

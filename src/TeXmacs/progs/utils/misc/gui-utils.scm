@@ -28,6 +28,13 @@
 ;; Call-backs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (focus-on-canvas)
+  (with mas (buffer-get-master (current-buffer))
+    (if (not mas) (keyboard-focus-on "canvas")
+        (begin
+          (buffer-focus* mas)
+          (keyboard-focus-on "canvas")))))
+
 (tm-define (gui-on-select type x y cmd)
   (:secure #t)
   ;;(display* "gui-on-select " type ", " x ", " y ", " cmd "\n")
@@ -36,7 +43,7 @@
   (or (and (in? type (list "click" "drag")) "done")
       (and (== type "select")
            (begin
-             (keyboard-focus-on "canvas")
+             (focus-on-canvas)
              (delayed
                (:idle 1)
                (when (string? cmd)
@@ -228,24 +235,21 @@
                (old (tree->stree (tree-ref u 1)))
                (all (cddr (tree->stree u)))
                (new (if (== tag 'choice-list) val
-                        (check-toggle old val all))))
-          (tree-set (tree-ref u 1) new)
-          (when (tree-in? u :up '(input-popup input-list))
-            (tree-set (tree-ref u :up 3) new)))
-        (let* ((c   (as-string (tree-ref u 0) "(noop)"))
-               (val (tree->stree (tree-ref u 1)))
-               (sel (if (func? val 'tuple) (cdr val) val))
+                        (check-toggle old val all)))
+               (sel (if (func? new 'tuple) (cdr new) new))
+               (c   (as-string (tree-ref u 0) "(noop)"))
                (cmd (string-append "(with answer '" (object->string sel)
                                    " " c ")")))
+          (focus-on-canvas)
+          (close-tooltip)
+          (tree-set (tree-ref u 1) new)
+          (when (tree-in? u :up '(input-popup input-list))
+            (tree-set (tree-ref u :up 3) new))
           (delayed
             (:idle 1)
             ;;(display* "gui-on-choice: " cmd "\n")
-            (secure-eval (string->object cmd))
-            (keyboard-focus-on "canvas")
-            (delayed
-              (:pause 25)
-              (close-tooltip)
-              (update-menus))))))))
+            (secure-eval (string->object cmd)))
+          (update-menus))))))
 
 (tm-define (gui-choice-list list-tag* off-tag* on-tag* t)
   (:secure #t)
