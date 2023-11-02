@@ -408,20 +408,24 @@ tm_window_rep::get_menu_widget (int which, string menu, widget& w) {
   //cout << "xmenu= " << xmenu << "\n";
   if (menu_cache->contains (xmenu)) {
     //if (menu_current[which] == xmenu) cout << "Same " << menu << "\n";
+    //cout << which << " -> cached? " << (menu_current[which] == xmenu) << LF;
     if (menu_current[which] == xmenu) return false;
     menu_current (which)= xmenu;
     //cout << "Cached " << menu << "\n";
     w= menu_cache [xmenu];
     return true;
   }
+  //else cout << which << " -> compute" << LF;
   menu_current (which)= xmenu;
   //cout << "Compute " << menu << "\n";
   object umenu= eval ("'" * menu);
   if (which == 10 || which == 11) w= make_menu_widget (umenu, 400, 1000);
   else w= make_menu_widget (umenu);
   if (menu_caching)
-    if (as_bool (call ("cache-menu?", xmenu)))
+    if (as_bool (call ("cache-menu?", xmenu))) {
+      //cout << which << " -> cached" << LF;
       menu_cache (xmenu)= w;
+    }
   return true;
 }
 
