@@ -405,16 +405,19 @@ tm_window_rep::get_menu_widget (int which, string menu, widget& w) {
   }
   object xmenu= call ("menu-expand", eval ("'" * menu));
   the_drd= old_drd;
+  //if (which == 10) cout << "xmenu= " << xmenu << "\n";
   //cout << "xmenu= " << xmenu << "\n";
   if (menu_cache->contains (xmenu)) {
     //if (menu_current[which] == xmenu) cout << "Same " << menu << "\n";
     //cout << which << " -> cached? " << (menu_current[which] == xmenu) << LF;
+    //if (which == 10) cout << which << " -> cached? " << (menu_current[which] == xmenu) << LF;
     if (menu_current[which] == xmenu) return false;
     menu_current (which)= xmenu;
     //cout << "Cached " << menu << "\n";
     w= menu_cache [xmenu];
     return true;
   }
+  //else if (which == 10) cout << which << " -> compute" << LF;
   //else cout << which << " -> compute" << LF;
   menu_current (which)= xmenu;
   //cout << "Compute " << menu << "\n";
@@ -422,7 +425,8 @@ tm_window_rep::get_menu_widget (int which, string menu, widget& w) {
   if (which == 10 || which == 11) w= make_menu_widget (umenu, 400, 1000);
   else w= make_menu_widget (umenu);
   if (menu_caching)
-    if (as_bool (call ("cache-menu?", xmenu))) {
+    if (which >= 10 || as_bool (call ("cache-menu?", xmenu))) {
+      //if (which == 10) cout << which << " -> cached" << LF;
       //cout << which << " -> cached" << LF;
       menu_cache (xmenu)= w;
     }
