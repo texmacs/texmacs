@@ -407,8 +407,8 @@
         === ===
         (horizontal
           (glue #t #f 0 0)
-          (resize "500px" "220px"
-            (refreshable "macros-editor-documentation"
+          (refreshable "macros-editor-documentation"
+            (resize "500px" "220px"
               (texmacs-output
                `(document
                   (mini-paragraph "476guipx" ,(macros-editor-current-help)))
@@ -464,7 +464,7 @@
         (resize "400px" "300px"
           (texmacs-output
            `(document
-              (mini-paragraph "476guipx" ,(macros-editor-current-help)))
+              (mini-paragraph "376guipx" ,(macros-editor-current-help)))
            '(style (tuple "tmdoc" "side-tools"))))))))
   
 (define (get-key key-val)
