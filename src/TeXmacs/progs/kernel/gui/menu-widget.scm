@@ -1065,9 +1065,9 @@
   (:argument style "menu style")
   ((wrap-catch make-menu-main) p style))
 
-(tm-define (make-menu-widget* p style)
+(tm-define (make-menu-widget* p style . opt-size)
   (if (has-markup-gui?)
-      (make-menu-widget** p style)
+      (apply make-menu-widget** (cons* p style opt-size))
       (make-menu-widget p style)))
 
 (define (decode-options opts)

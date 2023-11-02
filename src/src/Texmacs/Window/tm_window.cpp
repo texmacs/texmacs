@@ -23,6 +23,7 @@ int geometry_x= 0  , geometry_y= 0;
 
 widget texmacs_window_widget (widget wid, tree geom);
 widget make_menu_widget (object menu);
+widget make_menu_widget (object menu, int w, int h);
 void refresh_size (widget wid, bool exact);
 
 static int last_window_handle= 0;
@@ -293,6 +294,26 @@ enrich_embedded_document (tree body, tree style) {
   initial (PAGE_SCREEN_RIGHT)= "4px";
   initial (PAGE_SCREEN_TOP)= "2px";
   initial (PAGE_SCREEN_BOT)= "2px";
+
+  /*
+  initial (PAGE_WIDTH_MARGIN)= "true";
+  initial (PAR_WIDTH)= "400px";
+  initial (PAR_WIDTH)= "400px";
+  initial (PAGE_MEDIUM)= "papyrus";
+  initial (PAGE_TYPE)= "user";
+  initial (PAGE_WIDTH)= "400px";
+  initial (PAGE_HEIGHT)= "800px";
+  initial (PAGE_ODD)= "0px";
+  initial (PAGE_EVEN)= "0px";
+  initial (PAGE_RIGHT)= "0px";
+  initial (PAGE_TOP)= "0px";
+  initial (PAGE_BOT)= "0px";
+  initial (PAGE_SCREEN_LEFT)= "0px";
+  initial (PAGE_SCREEN_RIGHT)= "0px";
+  initial (PAGE_SCREEN_TOP)= "0px";
+  initial (PAGE_SCREEN_BOT)= "0px";
+  */
+  
   if (is_func (orig, WITH))
     for (int i=0; i+2<N(orig); i+=2)
       if (is_atomic (orig[i]))
@@ -396,7 +417,8 @@ tm_window_rep::get_menu_widget (int which, string menu, widget& w) {
   menu_current (which)= xmenu;
   //cout << "Compute " << menu << "\n";
   object umenu= eval ("'" * menu);
-  w= make_menu_widget (umenu);
+  if (which == 10 || which == 11) w= make_menu_widget (umenu, 400, 1000);
+  else w= make_menu_widget (umenu);
   if (menu_caching)
     if (as_bool (call ("cache-menu?", xmenu)))
       menu_cache (xmenu)= w;
