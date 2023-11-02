@@ -918,15 +918,15 @@
 (define (menu-expand-choice p)
   "Expand choice item @p."
   `(,(car p) ,(replace-procedures (cadr p))
-             ,(caddr p)
+             ,((caddr p))
              ,((cadddr p))))
 
 (define (menu-expand-filtered-choice p)
   "Expand filtered choice item @p."
   `(,(car p) ,(replace-procedures (cadr p))
-             ,(caddr p)
+             :proposals ;; ,((caddr p))
              ,((cadddr p))
-             ,(car (cddddr p))))
+             ,(replace-procedures (car (cddddr p)))))
 
 (define (menu-expand-color-input p)
   "Expand color-input menu item @p."
