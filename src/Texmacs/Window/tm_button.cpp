@@ -65,6 +65,8 @@ initialize_environment (edit_env& env, tree doc, drd_info& drd) {
   for (int i=0; i<N(init); i++)
     if (is_func (init[i], ASSOCIATE, 2) && is_atomic (init[i][0]))
       env->write (init[i][0]->label, init[i][1]);
+  // env->write (PAGE_WIDTH_MARGIN, "true");
+  // env->write (PAR_WIDTH, "400px");
   // env->write (DPI, "720");
   // env->write (ZOOM_FACTOR, "1.2");
   // env->write (PAGE_TYPE, "a5");

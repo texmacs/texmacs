@@ -276,6 +276,20 @@
 
   <\active*>
     <\src-comment>
+      Encapsulation
+    </src-comment>
+  </active*>
+
+  <assign|wide-raw-table|<macro|body|<raw-table|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-background|<value|gui-bg-color>>|<arg|body>>>>>
+
+  <assign|wide-raw-cell|<style-with|src-compact|all|<macro|body|<with|bg-color|<value|gui-bg-color>|<wide-raw-table|<tformat|<table|<row|<\cell>
+    <arg|body>
+  </cell>>>>>>>>>
+
+  <assign|top-widget|<macro|body|<wide-raw-cell|<arg|body>>>>
+
+  <\active*>
+    <\src-comment>
       Styling
     </src-comment>
   </active*>
@@ -290,17 +304,17 @@
 
   \;
 
-  <assign|wide-raw-table|<macro|body|<raw-table|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-background|<value|gui-bg-color>>|<arg|body>>>>>
+  <assign|wide-padded-table|<macro|body|<wide-raw-table|<tformat|<cwith|1|-1|1|-1|cell-vcorrect|a>|<cwith|1|-1|1|-1|cell-lsep|1spc>|<cwith|1|-1|1|-1|cell-rsep|1spc>|<cwith|1|-1|1|-1|cell-tsep|2ln>|<cwith|1|-1|1|-1|cell-bsep|2ln>|<arg|body>>>>>
 
-  <assign|wide-raw-cell|<style-with|src-compact|all|<macro|body|<with|bg-color|<value|gui-bg-color>|<wide-raw-table|<tformat|<table|<row|<\cell>
+  <assign|wide-padded-cell|<style-with|src-compact|all|<macro|body|<with|bg-color|<value|gui-bg-color>|<wide-padded-table|<tformat|<table|<row|<\cell>
     <arg|body>
   </cell>>>>>>>>>
 
-  <assign|title-style|<macro|body|<with|gui-bg-color|<value|gui-title-bg-color>|<wide-raw-cell|<large|<arg|body>>>>>>
+  <assign|title-style|<macro|body|<with|gui-bg-color|<value|gui-title-bg-color>|<wide-padded-cell|<large|<arg|body>>>>>>
 
-  <assign|section-style|<macro|body|<with|gui-bg-color|<value|gui-title-bg-color>|<wide-raw-cell|<arg|body>>>>>
+  <assign|section-style|<macro|body|<with|gui-bg-color|<value|gui-title-bg-color>|<wide-padded-cell|<arg|body>>>>>
 
-  <assign|subsection-style|<macro|body|<with|gui-bg-color|<value|gui-title-bg-color>|<wide-raw-cell|<arg|body>>>>>
+  <assign|subsection-style|<macro|body|<with|gui-bg-color|<value|gui-title-bg-color>|<wide-padded-cell|<arg|body>>>>>
 
   <assign|section-tabs-style|<macro|body|<arg|body>>>
 
@@ -320,13 +334,7 @@
 
   <assign|minipar*|<macro|body|w|h|<clipped|<minipar|<arg|body>|<arg|w>|<arg|h>>||<minus|1t|<arg|h>>|<plus|1l|<arg|w>>|>>>
 
-  <\active*>
-    <\src-comment>
-      Encapsulation
-    </src-comment>
-  </active*>
-
-  <assign|top-widget|<macro|body|<wide-raw-cell|<arg|body>>>>
+  \;
 
   \;
 </body>
