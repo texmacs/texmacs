@@ -583,14 +583,15 @@
                          `(style (tuple ,@style "gui-base"))
                          (header-buffer win var))))))
   ====== ===
-  (hlist
-    ("Tab" (when (editing-headers? win) (make-htab "5mm")))
-    ("Page number" (when (editing-headers? win) (make 'page-the-page)))
-    >>>
-    ("Restore" (apply window-reset-init (cons win header-parameters)))
-    ("Apply"
-     (apply-headers-settings win (window->buffer win))
-     (with-window win (update-menus)))))
+  (division "plain"
+    (hlist
+      ("Tab" (when (editing-headers? win) (make-htab "5mm")))
+      ("Page number" (when (editing-headers? win) (make 'page-the-page)))
+      >>>
+      ("Restore" (apply window-reset-init (cons win header-parameters)))
+      ("Apply"
+       (apply-headers-settings win (window->buffer win))
+       (with-window win (update-menus))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Public tools
