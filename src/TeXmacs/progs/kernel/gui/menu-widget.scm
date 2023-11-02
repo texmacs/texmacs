@@ -246,20 +246,22 @@
 (define (attach-resize t)
   (if (not global-resize) t
       (with (w1 w2 w3 wpos h1 h2 h3 hpos) global-resize
-        `(with "page-medium" "papyrus"
-               "page-type" "user"
-               "page-width" ,w2
-               "page-height" ,h2
-               "page-odd" "4px"
-               "page-even" "4px"
-               "page-right" "4px"
-               "page-top" "2px"
-               "page-bot" "2px"
-               "page-screen-left" "4px"
-               "page-screen-right" "4px"
-               "page-screen-top" "2px"
-               "page-screen-bot" "2px"
-               ,t))))
+        (with attrs (list "page-medium" "papyrus"
+                          "page-type" "user"
+                          "page-width" w2
+                          "page-height" h2
+                          "page-odd" "4px"
+                          "page-even" "4px"
+                          "page-right" "4px"
+                          "page-top" "2px"
+                          "page-bot" "2px"
+                          "page-screen-left" "4px"
+                          "page-screen-right" "4px"
+                          "page-screen-top" "2px"
+                          "page-screen-bot" "2px")
+          (if (tm-is? t 'with)
+              `(with ,@attrs ,@(cDr (tm-children t)) ,(cAr (tm-children t)))
+              `(with ,@attrs ,t))))))
 
 (define (make-texmacs-output p style)
   "Make @(texmacs-output :%2) item."
