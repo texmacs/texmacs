@@ -1025,9 +1025,9 @@
 
 (define (get-gui-style)
   (with theme (get-preference "gui theme")
-    (if (in? theme '("bright" "dark"))
-        (string-append "gui-" theme)
-        "gui-button")))
+    (cond ((== theme "light") "gui-bright")
+          ((== theme "dark") "gui-dark")
+          (else "gui-button"))))
 
 (tm-define (make-menu-widget** p style . opt-size)
   (let* ((cur (current-buffer))
