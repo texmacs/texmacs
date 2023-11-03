@@ -43,7 +43,7 @@
          (lambda ()
            ;;(display* "present: " present "\n")
            (if (> (length present) 2)
-               (list (list (caar present) `(concat ,@(cdar present) "-" ,@(cdAr present))))
+               (list (list (caar present) `(concat ,@(cdar present) "" ,@(cdAr present))))
                present))))
     (if (null? old)
         (if (null? present)
