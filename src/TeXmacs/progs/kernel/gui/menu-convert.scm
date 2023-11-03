@@ -221,6 +221,8 @@
 
 (tm-define (markup-filtered-choice cmd proposals selected filter)
   ;; TODO: do not ignore the filter
+  (when (null? proposals)
+    (set! proposals (list "")))
   (markup-choice cmd proposals selected))
 
 (tm-define (object->promise-markup obj) obj)
@@ -241,7 +243,7 @@
 
 (tm-define (markup-refresh wid kind)
   (lazy-initialize-force)
-  (with x (menu-expand `(vertical (link ,(string->symbol wid))))
+  (with x `(vertical (link ,(string->symbol wid)))
     (build-menu-widget x 0)))
 
 (tm-define (markup-refreshable body-promise kind)
