@@ -208,10 +208,14 @@
                          (choice-list ,cmd ,val ,@props))))))
 
 (tm-define (markup-choice cmd* proposals selected)
+  (when (null? proposals)
+    (set! proposals (list "")))
   (with cmd (unary-mangled cmd*)
     `(choice-list ,cmd ,selected ,@proposals)))
 
 (tm-define (markup-choices cmd* proposals selected)
+  (when (null? proposals)
+    (set! proposals (list "")))
   (with cmd (unary-mangled cmd*)
     `(check-list ,cmd (tuple ,@selected) ,@proposals)))
 
