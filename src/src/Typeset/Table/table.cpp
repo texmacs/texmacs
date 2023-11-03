@@ -376,18 +376,14 @@ blow_up (SI* w, SI* l, SI* r, SI* W, SI* L, SI* R,
          SI room, double* part, int n)
 {
   int i;
-  double total= sum (part, n);
-  if (total <= 0)
-    for (i=0; i<n; i++) part[i]= 1;
-  int nr_ext= 0;
   for (i=0; i<n; i++)
-    if (w[i] != W[i] && part[i] > 0)
-      nr_ext++;
-  if (nr_ext != 0)
-    for (i=0; i<n; i++)
-      if (w[i] == W[i])
-        part[i]= 0;
-  total= sum (part, n);
+    if (w[i] >= W[i] || part[i] < 0)
+      part[i]= 0;
+  double total= sum (part, n);
+  if (total <= 0) {
+    for (i=0; i<n; i++) part[i]= 1;
+    total= (double) n;
+  }
 
   STACK_NEW_ARRAY (Part, double, n);
   for (i=0; i<n; i++) Part[i]= part[i];
@@ -510,12 +506,12 @@ table_rep::position_columns () {
       if (hmode == "max") computed_width= max (width, min_width);
       hextra= max (computed_width - min_width, 0);
       //for (int i=0; i<nr_cols; i++)
-      //cout << "Column " << i << ": " << (Mw[i]>>8) << "; "
-      //<< (Lw[i]>>8) << ", " << (Rw[i]>>8) << "\n";
+      //  cout << "Column " << i << ": " << (Mw[i]>>8) << "; "
+      //       << (Lw[i]>>8) << ", " << (Rw[i]>>8) << "\n";
       blow_up (mw, lw, rw, Mw, Lw, Rw, hextra, part, nr_cols);
       //for (int i=0; i<nr_cols; i++)
-      //cout << "Column " << i << ": " << (mw[i]>>8) << "; "
-      //<< (lw[i]>>8) << ", " << (rw[i]>>8) << "\n";
+      //  cout << "Column " << i << ": " << (mw[i]>>8) << "; "
+      //       << (lw[i]>>8) << ", " << (rw[i]>>8) << "\n";
       STACK_DELETE_ARRAY (part);
       STACK_DELETE_ARRAY (Mw);
       STACK_DELETE_ARRAY (Lw);
@@ -574,7 +570,7 @@ table_rep::compute_width (SI& tmw, SI& tlw, SI& trw) {
 ******************************************************************************/
 
 void
-table_rep::compute_heights (SI* mh, SI* bh, SI* th) {
+table_rep::compute_heights (SI* mh, SI* bh, SI* th, SI xh) {
   int i, j;
   for (i=0; i<nr_rows; i++)
     mh[i]= bh[i]= th[i]= 0;
@@ -584,7 +580,7 @@ table_rep::compute_heights (SI* mh, SI* bh, SI* th) {
       cell C= T[i][j];
       if ((!is_nil (C)) && (C->row_span==1)) {
         SI cmh, cbh, cth;
-        C->compute_height (cmh, cbh, cth);
+        C->compute_height (cmh, cbh, cth, xh);
         mh[i]= max (mh[i], cmh);
         bh[i]= max (bh[i], cbh);
         th[i]= max (th[i], cth);
@@ -597,7 +593,7 @@ table_rep::compute_heights (SI* mh, SI* bh, SI* th) {
       cell C= T[i][j];
       if ((!is_nil (C)) && (C->row_span!=1)) {
         SI cmh, cbh, cth;
-        C->compute_height (cmh, cbh, cth);
+        C->compute_height (cmh, cbh, cth, xh);
         SI tot= sum (mh+i, C->row_span);
         if (cmh > tot) mh[i] += cmh - tot;
       }
@@ -622,27 +618,34 @@ table_rep::position_rows () {
   STACK_NEW_ARRAY (bh, SI, nr_rows);
   STACK_NEW_ARRAY (th, SI, nr_rows);
 
-  compute_heights (mh, bh, th);
+  compute_heights (mh, bh, th, 0);
   if (vmode != "auto") {
     SI min_height= sum (mh, nr_rows);
     SI vextra= height - min_height;
     if (vextra > 0) {
-      int i;
       STACK_NEW_ARRAY (part, double, nr_rows);
       STACK_NEW_ARRAY (Mh, SI, nr_rows);
       STACK_NEW_ARRAY (Bh, SI, nr_rows);
       STACK_NEW_ARRAY (Th, SI, nr_rows);
       compute_vertical_parts (part);
-      for (i=0; i<nr_rows; i++) {
-        Mh[i]= mh[i];
-        Bh[i]= bh[i];
-        Th[i]= th[i];
-      }
+      vextra= max (height - min_height, 0);
+      compute_heights (Mh, Bh, Th, vextra);
+      SI max_height= sum (Mh, nr_rows);
       SI computed_height= height;
-      if (vmode == "min") computed_height= min (height, min_height);
+      if (vmode == "min") computed_height= min (height, max_height);
       if (vmode == "max") computed_height= max (height, min_height);
       vextra= max (computed_height - min_height, 0);
+      //for (int i=0; i<nr_rows; i++)
+      //  cout << "Row " << i << ": "
+      //       << (mh[i]>>8) << "; "
+      //       << (bh[i]>>8) << ", " << (th[i]>>8) << "\n"
+      //       << "     : "
+      //       << (Mh[i]>>8) << "; "
+      //       << (Bh[i]>>8) << ", " << (Th[i]>>8) << "\n";
       blow_up (mh, bh, th, Mh, Bh, Th, vextra, part, nr_rows);
+      //for (int i=0; i<nr_rows; i++)
+      //  cout << "Row " << i << ": " << (mh[i]>>8) << "; "
+      //       << (bh[i]>>8) << ", " << (th[i]>>8) << "\n";
       STACK_DELETE_ARRAY (part);
       STACK_DELETE_ARRAY (Mh);
       STACK_DELETE_ARRAY (Bh);
@@ -701,7 +704,7 @@ table_rep::position_rows () {
 }
 
 void
-table_rep::compute_height (SI& tmh, SI& tbh, SI& tth) {
+table_rep::compute_height (SI& tmh, SI& tbh, SI& tth, SI xh) {
   position_rows ();
   tmh= y2 - y1;
   tbh= -y1;

@@ -77,8 +77,8 @@ public:
   void compute_widths (SI* Mw, SI* Lw, SI* Rw, bool large);
   void compute_horizontal_parts (double* parts);
   void position_columns ();
-  void compute_height (SI& mh, SI& bh, SI& th);
-  void compute_heights (SI* mh, SI* bh, SI* th);
+  void compute_height (SI& mh, SI& bh, SI& th, SI xh);
+  void compute_heights (SI* mh, SI* bh, SI* th, SI xh);
   void compute_vertical_parts (double* parts);
   void position_rows ();
   void finish_horizontal ();
@@ -148,7 +148,7 @@ public:
   void format_cell (tree fm);
   void format_item (tree with);
   void compute_width (SI& mw, SI& lw, SI& rw, bool large);
-  void compute_height (SI& mh, SI& bh, SI& th);
+  void compute_height (SI& mh, SI& bh, SI& th, SI xh);
   void position_horizontally (SI offset, SI mw, SI lw, SI rw);
   void position_vertically (SI offset, SI mh, SI bh, SI th);
   void swell_padding ();
