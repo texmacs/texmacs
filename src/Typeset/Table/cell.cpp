@@ -314,7 +314,7 @@ cell_rep::compute_width (SI& mw, SI& lw, SI& rw, bool large) {
 }
 
 void
-cell_rep::compute_height (SI& mh, SI& bh, SI& th) {
+cell_rep::compute_height (SI& mh, SI& bh, SI& th, SI xh) {
   char align_c= '\0'; if (N (valign) != 0) align_c= valign[0];
   if (is_nil (T)) {
     bh= th= mh= 0;
@@ -327,7 +327,7 @@ cell_rep::compute_height (SI& mh, SI& bh, SI& th) {
   }
   else {
     if (N (T->valign) != 0) align_c= T->valign[0];
-    T->compute_height (mh, bh, th);
+    T->compute_height (mh, bh, th, xh);
     if (is_upcase (align_c)) {
       bh += bborder;
       th += tborder;
@@ -339,6 +339,7 @@ cell_rep::compute_height (SI& mh, SI& bh, SI& th) {
   if (vmode == "exact") mh= height;
   else if (vmode == "max") mh= max (height, mh);
   else if (vmode == "min") mh= min (height, mh);
+  mh += xh;
   if (mh < bh + th) {
     SI d= bh + th - mh;
     if (align_c == 'B' || align_c == 'O') th -= d;
