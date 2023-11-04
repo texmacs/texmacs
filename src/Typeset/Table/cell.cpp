@@ -41,6 +41,7 @@ cell_rep::typeset (tree fm, tree t, path iq) {
     T->typeset (t[0][0], descend (descend (iq, 0), 0));
   }
   else {
+    //cout << "Cell " << t << ", " << hyphen << LF;
     if (hyphen == "n") {
       b= typeset_as_concat (env, t, iq);
       if (vcorrect != "n") {
@@ -265,7 +266,9 @@ cell_rep::compute_width (SI& mw, SI& lw, SI& rw, bool large) {
     if (N (T->halign) > 0) align_c= T->halign[0];
     else align_c= '\0';
     lr_flag= is_upcase (align_c);
-    T->compute_width (mw, lw, rw);
+    //cout << "Width table" << LF << INDENT;
+    T->compute_width (mw, lw, rw, large);
+    //cout << UNINDENT << "Got width" << LF;
     if (lr_flag) {
       lw += lborder;
       rw += rborder;
@@ -275,7 +278,9 @@ cell_rep::compute_width (SI& mw, SI& lw, SI& rw, bool large) {
   }
   else if (!is_nil (lz) && large) {
     lw= rw= 0;
+    //cout << "Query" << LF << INDENT;
     format fm= lz->query (LAZY_BOX, make_query_vstream_width (0, 0));
+    //cout << UNINDENT << "Queried" << LF;
     format_width fw= (format_width) fm;
     mw= fw->width + lsep + rsep + lborder + rborder;
     if (lr_flag) {
@@ -284,7 +289,7 @@ cell_rep::compute_width (SI& mw, SI& lw, SI& rw, bool large) {
     }
   }
   else {
-    //cout << "  b= " << b << LF;
+    //cout << "  b= " << b << ", " << !is_nil (lz) << LF;
     lw= rw= mw= 0;
     if (lr_flag) {
       if (N (halign) == 1) {
@@ -415,7 +420,9 @@ cell_rep::finish_horizontal () {
   int v= hyphen == "t"? 1: (hyphen == "c"? 0: -1);
   SI  d= ((vcorrect == "b") || (vcorrect == "a"))? -env->fn->y1: 0;
   SI  h= ((vcorrect == "t") || (vcorrect == "a"))?  env->fn->y2: 0;
+  //cout << "Produce" << LF << INDENT;
   b= (box) lz->produce (LAZY_BOX, make_format_cell (w, v, d, h));
+  //cout << UNINDENT << "Produced " << b << LF;
   if (swell > 0) swell_padding ();
 }
 
