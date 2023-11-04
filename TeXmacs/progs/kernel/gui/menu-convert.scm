@@ -258,9 +258,13 @@
   (body-promise))
 
 (tm-define (markup-resize body style w1 h1 w2 h2 w3 h3 hpos vpos)
-  (if (tm-func? body 'input-area 1)
-      `(input-area (minipar* ,(tm-ref body 0) ,w2 ,h2))
-      `(minipar* ,body ,w2 ,h2)))
+  (let* ((ww w2)
+         (hh (if (string? h2) (string-append "-" h2) `(minus ,h2)))
+         ;;(cv (lambda (x) `(minipar* ,x ,w2 ,h2)))
+         (cv (lambda (x) `(canvas "0px" ,hh ,ww "0px" "0%" "0%" ,x))))
+    (if (tm-func? body 'input-area 1)
+        `(input-area ,(cv (tm-ref body 0)))
+        (cv body))))
 
 (tm-define (markup-extend body items)
   body)
