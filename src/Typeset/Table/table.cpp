@@ -413,7 +413,7 @@ sum (double* a, int n) {
 
 static void
 blow_up (SI* w, SI* l, SI* r, SI* W, SI* L, SI* R,
-         SI room, double* part, int n)
+         SI room, double* part, int n, bool vert)
 {
   int i;
   for (i=0; i<n; i++)
@@ -457,7 +457,7 @@ blow_up (SI* w, SI* l, SI* r, SI* W, SI* L, SI* R,
   for (i=0; i<n; i++) {
     SI extra = (SI) ((part[i]/total) * room);
     w[i] += extra;
-    if (L[i] + R[i] >= w[i]) {
+    if (L[i] + R[i] >= w[i] && !vert) {
       SI s= l[i] + r[i];
       SI S= L[i] + R[i];
       double lambda= ((double) (w[i] - s)) / ((double) (S - s));
@@ -469,6 +469,7 @@ blow_up (SI* w, SI* l, SI* r, SI* W, SI* L, SI* R,
       r[i]= R[i];
     }
   }
+
   STACK_DELETE_ARRAY (Part);
 }
 
@@ -556,7 +557,7 @@ table_rep::position_columns (bool large) {
       //       << "          "
       //       << (Mw[i]>>8) << "; "
       //       << (Lw[i]>>8) << ", " << (Rw[i]>>8) << LF;
-      blow_up (mw, lw, rw, Mw, Lw, Rw, hextra, part, nr_cols);
+      blow_up (mw, lw, rw, Mw, Lw, Rw, hextra, part, nr_cols, false);
       //for (int i=0; i<nr_cols; i++)
       //  cout << "Column " << i << ": " << (mw[i]>>8) << "; "
       //       << (lw[i]>>8) << ", " << (rw[i]>>8) << LF;
@@ -681,6 +682,8 @@ table_rep::position_rows () {
       vextra= max (height - min_height, 0);
       //cout << "height = " << (height>>8) << LF;
       //cout << "vextra = " << (vextra>>8) << LF;
+      //for (int i=0; i<nr_rows; i++)
+      //  cout << "Part " << i << " = " << part[i] << LF;
       compute_heights (Mh, Bh, Th, vextra);
       SI max_height= sum (Mh, nr_rows);
       SI computed_height= height;
@@ -694,7 +697,7 @@ table_rep::position_rows () {
       //       << "     : "
       //       << (Mh[i]>>8) << "; "
       //       << (Bh[i]>>8) << ", " << (Th[i]>>8) << LF;
-      blow_up (mh, bh, th, Mh, Bh, Th, vextra, part, nr_rows);
+      blow_up (mh, bh, th, Mh, Bh, Th, vextra, part, nr_rows, true);
       //for (int i=0; i<nr_rows; i++)
       //  cout << "Row " << i << ": " << (mh[i]>>8) << "; "
       //       << (bh[i]>>8) << ", " << (th[i]>>8) << LF;
