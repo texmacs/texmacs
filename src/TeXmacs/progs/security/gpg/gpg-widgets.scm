@@ -347,7 +347,7 @@
   (global-set :gpg-mismatch #f)
   (global-set :gpg-empty #f)
   (if (side-tools?)
-      (tool-select :transient-right
+      (tool-select :right
                    (list 'gpg-tool-ask-new-passphrase cmd))
       (dialogue-window gpg-widget-ask-new-passphrase cmd
                        "Passphrase encryption")))
@@ -423,7 +423,7 @@
 (tm-define (gpg-ask-standalone-passphrase check cmd)
   (global-set :gpg-mismatch #f)
   (if (side-tools?)
-      (tool-select :transient-right
+      (tool-select :right
                    (list 'gpg-tool-ask-standalone-passphrase check cmd))
       (dialogue-window (gpg-widget-ask-standalone-passphrase check) cmd
                        "Passphrase encryption")))

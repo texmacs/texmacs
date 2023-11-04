@@ -215,7 +215,7 @@
 (tm-define (open-paragraph-format)
   (:interactive #t)
   (if (side-tools?)
-      (tool-select :transient-right 'format-paragraph-tool)
+      (tool-select :right 'format-paragraph-tool)
       (open-paragraph-format-window)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -399,5 +399,5 @@
         (and-with doc (tree-innermost 'document)
           (and-with par (tree-down doc)
             (collect-settings par t)))
-        (tool-select :transient-right (list 'format-page-tool u st t)))
+        (tool-select :right (list 'format-page-tool u st t)))
       (open-page-format-window)))
