@@ -84,6 +84,46 @@ table_rep::typeset (tree t, path iq) {
 }
 
 void
+table_rep::typeset_subtable (tree t, path iq, hashmap<string,tree> cvar) {
+  ip= iq;
+  array<tree> inh;
+  if (cvar->contains (CELL_LSEP))
+    inh << tree (CWITH, "1", "-1", "1", "1",
+                 CELL_LSEP, cvar[CELL_LSEP]);
+  if (cvar->contains (CELL_RSEP))
+    inh << tree (CWITH, "1", "-1", "-1", "-1",
+                 CELL_RSEP, cvar[CELL_RSEP]);
+  if (cvar->contains (CELL_BSEP))
+    inh << tree (CWITH, "-1", "-1", "1", "-1",
+                 CELL_BSEP, cvar[CELL_BSEP]);
+  if (cvar->contains (CELL_TSEP))
+    inh << tree (CWITH, "1", "1", "1", "-1",
+                 CELL_TSEP, cvar[CELL_TSEP]);
+  if (cvar->contains (CELL_VCORRECT))
+    inh << tree (CWITH, "1", "-1", "1", "-1",
+                 CELL_VCORRECT, cvar[CELL_VCORRECT]);
+  if (cvar->contains (CELL_HYPHEN))
+    inh << tree (CWITH, "1", "-1", "1", "-1",
+                 CELL_HYPHEN, cvar[CELL_HYPHEN]);
+  if (cvar->contains (CELL_BLOCK))
+    inh << tree (CWITH, "1", "-1", "1", "-1",
+                 CELL_BLOCK, cvar[CELL_BLOCK]);
+  if (cvar->contains (CELL_SWELL))
+    inh << tree (CWITH, "1", "-1", "1", "-1",
+                 CELL_SWELL, cvar[CELL_SWELL]);
+  tree old_format= env->local_begin (CELL_FORMAT, tree (TFORMAT));
+  tree new_format= tree (TFORMAT, inh);
+  while (is_func (t, TFORMAT)) {
+    new_format= new_format * t (0, N(t)-1);
+    iq        = descend (iq, N(t)-1);
+    t         = t[N(t)-1];
+  }
+  format_table (new_format);
+  typeset_table (new_format, t, iq);
+  env->local_end (CELL_FORMAT, old_format);  
+}
+
+void
 table_rep::typeset_table (tree fm, tree t, path ip) {
   int i;
   nr_rows= N(t);
