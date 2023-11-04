@@ -33,12 +33,12 @@ cell_rep::typeset (tree fm, tree t, path iq) {
   if (is_func (t, SUBTABLE, 1)) {
     lsep= rsep= bsep= tsep= 0;
     T= table (env, 2);
-    T->typeset (t[0], descend (iq, 0));
+    T->typeset_subtable (t[0], descend (iq, 0), var);
   }
   else if (is_func (t, DOCUMENT, 1) && is_func (t[0], SUBTABLE, 1)) {
     lsep= rsep= bsep= tsep= 0;
     T= table (env, 2);
-    T->typeset (t[0][0], descend (descend (iq, 0), 0));
+    T->typeset_subtable (t[0][0], descend (descend (iq, 0), 0), var);
   }
   else {
     //cout << "Cell " << t << ", " << hyphen << LF;
