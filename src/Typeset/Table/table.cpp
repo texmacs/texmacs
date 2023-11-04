@@ -130,7 +130,6 @@ table_rep::typeset_row (int i, tree fm, tree t, path ip) {
 * Subtables
 ******************************************************************************/
 
-extern tree the_et;
 bool is_subtable_macro (edit_env env, tree t, array<tree>& xfm);
 
 bool
