@@ -438,6 +438,7 @@ blow_up (SI* w, SI* l, SI* r, SI* W, SI* L, SI* R,
 
 void
 table_rep::compute_widths (SI* Mw, SI* Lw, SI* Rw, bool large) {
+  //cout << "Compute widths " << large << LF << INDENT;
   int i, j;
   for (j=0; j<nr_cols; j++)
     Mw[j]= Lw[j]= Rw[j]= 0;
@@ -449,7 +450,7 @@ table_rep::compute_widths (SI* Mw, SI* Lw, SI* Rw, bool large) {
         SI cmw, clw, crw;
         C->compute_width (cmw, clw, crw, large);
         //cout << i << ", " << j << ": "
-        //<< (cmw>>8) << "; " << (clw>>8) << ", " << (crw>>8) << LF;
+        //     << (cmw>>8) << "; " << (clw>>8) << ", " << (crw>>8) << LF;
         Mw[j]= max (Mw[j], cmw);
         Lw[j]= max (Lw[j], clw);
         Rw[j]= max (Rw[j], crw);
@@ -467,6 +468,7 @@ table_rep::compute_widths (SI* Mw, SI* Lw, SI* Rw, bool large) {
         if (cmw > tot) Mw[j] += cmw - tot;
       }
     }
+  //cout << UNINDENT << "Computed widths" << LF;
 }
 
 void
@@ -482,14 +484,14 @@ table_rep::compute_horizontal_parts (double* part) {
 }
 
 void
-table_rep::position_columns () {
+table_rep::position_columns (bool large) {
   //cout << HRULE << LF;
-  //cout << "Position columns " << (width >> 8) << LF;
-  compute_widths (mw, lw, rw, hmode == "auto");
+  //cout << "Position columns " << (width >> 8) << ", " << large << LF << INDENT;
+  compute_widths (mw, lw, rw, hmode == "auto" && large);
   //for (int i=0; i<nr_cols; i++)
-  //cout << "Column " << i << ": " << (mw[i]>>8) << "; "
-  //<< (lw[i]>>8) << ", " << (rw[i]>>8) << LF;
-  if (hmode != "auto") {
+  //  cout << "Column " << i << ": " << (mw[i]>>8) << "; "
+  //       << (lw[i]>>8) << ", " << (rw[i]>>8) << LF;
+  if (hmode != "auto" && large) {
     SI min_width= sum (mw, nr_cols);
     SI hextra= width - min_width;
     //cout << "Extra horizontal " << (hextra >> 8) << LF;
@@ -499,6 +501,8 @@ table_rep::position_columns () {
       STACK_NEW_ARRAY (Lw, SI, nr_cols);
       STACK_NEW_ARRAY (Rw, SI, nr_cols);
       compute_horizontal_parts (part);
+      //for (int i=0; i<nr_cols; i++)
+      //  cout << "Part " << i << "= " << part[i] << LF;
       compute_widths (Mw, Lw, Rw, true);
       SI max_width= sum (Mw, nr_cols);
       SI computed_width= width;
@@ -506,7 +510,11 @@ table_rep::position_columns () {
       if (hmode == "max") computed_width= max (width, min_width);
       hextra= max (computed_width - min_width, 0);
       //for (int i=0; i<nr_cols; i++)
-      //  cout << "Column " << i << ": " << (Mw[i]>>8) << "; "
+      //  cout << "Column " << i << ": "
+      //       << (mw[i]>>8) << "; "
+      //       << (lw[i]>>8) << ", " << (rw[i]>>8) << LF
+      //       << "          "
+      //       << (Mw[i]>>8) << "; "
       //       << (Lw[i]>>8) << ", " << (Rw[i]>>8) << LF;
       blow_up (mw, lw, rw, Mw, Lw, Rw, hextra, part, nr_cols);
       //for (int i=0; i<nr_cols; i++)
@@ -527,7 +535,7 @@ table_rep::position_columns () {
         if (!is_nil (C->T)) {
           C->T->width= mw[j]- C->lborder- C->rborder;
           C->T->hmode= "exact";
-          C->T->position_columns ();
+          C->T->position_columns (large);
         }
         else if (C->hyphen != "n")
           C->width= mw[j];
@@ -555,11 +563,12 @@ table_rep::position_columns () {
   x1= xoff- lborder- lsep;
   for (j=0; j<nr_cols; j++) xoff += mw[j];
   x2= xoff+ rborder+ rsep;
+  //cout << UNINDENT << "Positioned columns" << LF;
 }
 
 void
-table_rep::compute_width (SI& tmw, SI& tlw, SI& trw) {
-  position_columns ();
+table_rep::compute_width (SI& tmw, SI& tlw, SI& trw, bool large) {
+  position_columns (large);
   tmw= x2 - x1;
   tlw= -x1;
   trw= x2;
@@ -852,7 +861,7 @@ lazy_table_rep::query (lazy_type request, format fm) {
   //cout << "  par= " << T->env->as_length ("1par") << LF;
   if ((request == LAZY_BOX) && (fm->type == QUERY_VSTREAM_WIDTH)) {
     SI tmw, tlw, trw;
-    T->compute_width (tmw, tlw, trw);
+    T->compute_width (tmw, tlw, trw, true);
     return make_format_width (max (tmw, 1));
   }
   return lazy_rep::query (request, fm);
@@ -871,7 +880,7 @@ lazy_table_rep::produce (lazy_type request, format fm) {
       if (ends (s, "par"))
         T->width= max ((SI) (as_double (s (0, N(s)-3)) * fs->width), 1);
     }
-    T->position_columns ();
+    T->position_columns (true);
     T->finish_horizontal ();
     T->position_rows ();
     array<box> bs= T->var_finish ();
@@ -908,7 +917,7 @@ typeset_as_table (edit_env env, tree t, path ip) {
   T->handle_decorations ();
   T->handle_span ();
   T->merge_borders ();
-  T->position_columns ();
+  T->position_columns (true);
   T->finish_horizontal ();
   T->position_rows ();
   T->finish ();
@@ -922,7 +931,7 @@ typeset_as_var_table (edit_env env, tree t, path ip) {
   T->handle_decorations ();
   T->handle_span ();
   T->merge_borders ();
-  T->position_columns ();
+  T->position_columns (true);
   T->finish_horizontal ();
   T->position_rows ();
   return T->var_finish ();
