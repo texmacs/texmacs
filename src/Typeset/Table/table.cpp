@@ -40,7 +40,7 @@ table_rep::~table_rep () {
 void
 table_rep::display (bool flag) {
   int i, j;
-  if (flag) cout << "---------------------------------------------------------------------------\n";
+  if (flag) cout << HRULE << LF;
   else cout << "{ ";
   for (i=0; i<nr_rows; i++) {
     cout << "[ ";
@@ -60,10 +60,10 @@ table_rep::display (bool flag) {
         }
       }
     cout << " ]";
-    if (flag) cout << "\n";
+    if (flag) cout << LF;
     else if (i<nr_rows-1) cout << ", ";
   }
-  if (flag) cout << "---------------------------------------------------------------------------\n";
+  if (flag) cout << HRULE << LF;
   else cout << " }";
 }
 
@@ -449,7 +449,7 @@ table_rep::compute_widths (SI* Mw, SI* Lw, SI* Rw, bool large) {
         SI cmw, clw, crw;
         C->compute_width (cmw, clw, crw, large);
         //cout << i << ", " << j << ": "
-        //<< (cmw>>8) << "; " << (clw>>8) << ", " << (crw>>8) << "\n";
+        //<< (cmw>>8) << "; " << (clw>>8) << ", " << (crw>>8) << LF;
         Mw[j]= max (Mw[j], cmw);
         Lw[j]= max (Lw[j], clw);
         Rw[j]= max (Rw[j], crw);
@@ -483,16 +483,16 @@ table_rep::compute_horizontal_parts (double* part) {
 
 void
 table_rep::position_columns () {
-  //cout << "-------------------------------------\n";
-  //cout << "Position columns " << (width >> 8) << "\n";
+  //cout << HRULE << LF;
+  //cout << "Position columns " << (width >> 8) << LF;
   compute_widths (mw, lw, rw, hmode == "auto");
   //for (int i=0; i<nr_cols; i++)
   //cout << "Column " << i << ": " << (mw[i]>>8) << "; "
-  //<< (lw[i]>>8) << ", " << (rw[i]>>8) << "\n";
+  //<< (lw[i]>>8) << ", " << (rw[i]>>8) << LF;
   if (hmode != "auto") {
     SI min_width= sum (mw, nr_cols);
     SI hextra= width - min_width;
-    //cout << "Extra horizontal " << (hextra >> 8) << "\n";
+    //cout << "Extra horizontal " << (hextra >> 8) << LF;
     if (hextra > 0) {
       STACK_NEW_ARRAY (part, double, nr_cols);
       STACK_NEW_ARRAY (Mw, SI, nr_cols);
@@ -507,11 +507,11 @@ table_rep::position_columns () {
       hextra= max (computed_width - min_width, 0);
       //for (int i=0; i<nr_cols; i++)
       //  cout << "Column " << i << ": " << (Mw[i]>>8) << "; "
-      //       << (Lw[i]>>8) << ", " << (Rw[i]>>8) << "\n";
+      //       << (Lw[i]>>8) << ", " << (Rw[i]>>8) << LF;
       blow_up (mw, lw, rw, Mw, Lw, Rw, hextra, part, nr_cols);
       //for (int i=0; i<nr_cols; i++)
       //  cout << "Column " << i << ": " << (mw[i]>>8) << "; "
-      //       << (lw[i]>>8) << ", " << (rw[i]>>8) << "\n";
+      //       << (lw[i]>>8) << ", " << (rw[i]>>8) << LF;
       STACK_DELETE_ARRAY (part);
       STACK_DELETE_ARRAY (Mw);
       STACK_DELETE_ARRAY (Lw);
@@ -638,14 +638,14 @@ table_rep::position_rows () {
       //for (int i=0; i<nr_rows; i++)
       //  cout << "Row " << i << ": "
       //       << (mh[i]>>8) << "; "
-      //       << (bh[i]>>8) << ", " << (th[i]>>8) << "\n"
+      //       << (bh[i]>>8) << ", " << (th[i]>>8) << LF
       //       << "     : "
       //       << (Mh[i]>>8) << "; "
-      //       << (Bh[i]>>8) << ", " << (Th[i]>>8) << "\n";
+      //       << (Bh[i]>>8) << ", " << (Th[i]>>8) << LF;
       blow_up (mh, bh, th, Mh, Bh, Th, vextra, part, nr_rows);
       //for (int i=0; i<nr_rows; i++)
       //  cout << "Row " << i << ": " << (mh[i]>>8) << "; "
-      //       << (bh[i]>>8) << ", " << (th[i]>>8) << "\n";
+      //       << (bh[i]>>8) << ", " << (th[i]>>8) << LF;
       STACK_DELETE_ARRAY (part);
       STACK_DELETE_ARRAY (Mh);
       STACK_DELETE_ARRAY (Bh);
@@ -847,9 +847,9 @@ EXTEND_NULL_CODE(lazy,lazy_table);
 
 format
 lazy_table_rep::query (lazy_type request, format fm) {
-  //cout << "Query= " << request << "\n";
-  //cout << "  format= " << fm << "\n";
-  //cout << "  par= " << T->env->as_length ("1par") << "\n";
+  //cout << "Query= " << request << LF;
+  //cout << "  format= " << fm << LF;
+  //cout << "  par= " << T->env->as_length ("1par") << LF;
   if ((request == LAZY_BOX) && (fm->type == QUERY_VSTREAM_WIDTH)) {
     SI tmw, tlw, trw;
     T->compute_width (tmw, tlw, trw);
@@ -860,9 +860,9 @@ lazy_table_rep::query (lazy_type request, format fm) {
 
 lazy
 lazy_table_rep::produce (lazy_type request, format fm) {
-  //cout << "produce= " << request << "\n";
-  //cout << "  format= " << fm << "\n";
-  //cout << "  par= " << T->env->as_length ("1par") << "\n";
+  //cout << "produce= " << request << LF;
+  //cout << "  format= " << fm << LF;
+  //cout << "  par= " << T->env->as_length ("1par") << LF;
   if (request == type) return this;
   if (request == LAZY_VSTREAM) {
     if (fm->type == FORMAT_VSTREAM) {
