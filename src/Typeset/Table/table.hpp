@@ -66,6 +66,7 @@ public:
   void display (bool flag= true);
 
   void typeset (tree t, path ip);
+  void typeset_subtable (tree t, path iq, hashmap<string,tree> cvar);
   void typeset_table (tree fm, tree t, path ip);
   void typeset_row (int i, tree fm, tree t, path ip);
   void format_table (tree fm);
