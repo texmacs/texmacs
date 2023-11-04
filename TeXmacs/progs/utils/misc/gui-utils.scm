@@ -128,7 +128,7 @@
                    ,@(if ext? (list `(,@cw "cell-hpart" "1")) (list)))
                  "")))
         ((tm-func? t 'vlist)
-         (with rew (gui-vlist-table "raw-table" t)
+         (with rew (gui-vlist-table* "raw-table" t)
            (cons (list) `(cell (subtable (tformat ,@subtable-format
                                                   ,@(cdr rew)))))))
         (else (cons (list) `(cell (document ,t))))))
@@ -139,14 +139,25 @@
              (tail (gui-hlist-pairs (cdr l) (+ pos 1))))
         (cons head tail))))
 
-(tm-define (gui-hlist-table tag* t)
-  (:secure #t)
+(tm-define (gui-hlist-table* tag* t)
   (let* ((tag   (as-symbol tag* 'stack))
          (pairs (gui-hlist-pairs (tree-children t) 0)))
     ;;(display* "gui-hlist-table " (tm->stree tag*) ", " (tm->stree t) "\n")
     ;;(for (p pairs)
     ;;  (display* "---> " p "\n"))
     `(,tag (tformat ,@(append-map car pairs) (table (row ,@(map cdr pairs)))))))
+
+(tm-define (gui-hlist-table tag* t)
+  (:secure #t)
+  (let* ((stretch? (lambda (cw)
+                     (and (tm-func? cw 'cwith 6)
+                          (tm-equal? (tm-ref cw 4) "cell-hpart"))))
+         (r (gui-hlist-table* tag* t)))
+    (if (list-or (map stretch? (cDr (tm-children (tm-ref r 0)))))
+        `(,(tm-label r) (tformat (twith "table-width" "1par")
+                                 (twith "table-hmode" "exact")
+                                 ,@(tm-children (tm-ref r 0))))
+        r)))
 
 (define (gui-vlist-pair t pos)
   (cond ((tm-func? t 'glue 4)
@@ -164,7 +175,7 @@
                    ,@(if ext? (list `(,@cw "cell-vpart" "1")) (list)))
                  `(row ""))))
         ((tm-func? t 'hlist)
-         (with rew (gui-hlist-table "raw-table" t)
+         (with rew (gui-hlist-table* "raw-table" t)
            (cons (list) `(row (cell (subtable (tformat ,@subtable-format
                                                        ,@(cdr rew))))))))
         (else (cons (list) `(row (cell (document ,t)))))))
@@ -175,7 +186,7 @@
              (tail (gui-vlist-pairs (cdr l) (+ pos 1))))
         (cons head tail))))
 
-(tm-define (gui-vlist-table tag* t)
+(tm-define (gui-vlist-table* tag* t)
   (:secure #t)
   (let* ((tag   (as-symbol tag* 'stack))
          (pairs (gui-vlist-pairs (tree-children t) 0)))
@@ -183,6 +194,13 @@
     ;;(for (p pairs)
     ;;  (display* "===> " p "\n"))
     `(,tag (tformat ,@(append-map car pairs) (table ,@(map cdr pairs))))))
+
+
+(tm-define (gui-vlist-table tag* t)
+  (:secure #t)
+  (let* ((r (gui-vlist-table* tag* t)))
+    ;;(display* "r= " r "\n")
+    r))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tiles
