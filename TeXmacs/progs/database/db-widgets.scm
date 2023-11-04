@@ -343,11 +343,11 @@
                  (apply call-back args)))
          (aux (db-search-results-buffer)))
     (if (side-tools?)
-        (tool-select :transient-right (list 'db-search-tool name db kind quit))
+        (tool-select :right (list 'db-search-tool name db kind quit))
         (dialogue-window (db-search-widget db kind) quit name aux))))
 
 (tm-define (open-db-preferences)
   (:interactive #t)
   (if (side-tools?)
-      (tool-select :transient-right (list 'db-preferences-tool))
+      (tool-select :right (list 'db-preferences-tool))
       (top-window db-preferences-widget "TeXmacs database preferences")))

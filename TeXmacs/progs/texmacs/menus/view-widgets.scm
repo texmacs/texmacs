@@ -108,5 +108,5 @@
 (tm-define (open-retina-settings)
   (:interactive #t)
   (if (side-tools?)
-      (tool-select :transient-right 'retina-settings-tool)
+      (tool-select :right 'retina-settings-tool)
       (open-retina-settings-window)))

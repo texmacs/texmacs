@@ -100,7 +100,7 @@
 (tm-define (open-source-tree-preferences)
   (:interactive #t)
   (if (side-tools?)
-      (tool-select :transient-right 'source-tree-preferences-tool)
+      (tool-select :right 'source-tree-preferences-tool)
       (open-source-tree-preferences-window)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -118,7 +118,7 @@
 (tm-define (open-document-paragraph-format)
   (:interactive #t)
   (if (side-tools?)
-      (tool-select :transient-right 'document-paragraph-tool)
+      (tool-select :right 'document-paragraph-tool)
       (open-document-paragraph-format-window)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -532,7 +532,7 @@
 (tm-define (open-document-page-format)
   (:interactive #t)
   (if (side-tools?)
-      (tool-select :transient-right 'document-page-tool)
+      (tool-select :right 'document-page-tool)
       (open-document-page-format-window)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -570,7 +570,7 @@
 (tm-define (open-document-metadata)
   (:interactive #t)
   (if (side-tools?)
-      (tool-select :transient-right 'document-metadata-tool)
+      (tool-select :right 'document-metadata-tool)
       (open-document-metadata-window)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -611,5 +611,5 @@
 (tm-define (open-document-colors)
   (:interactive #t)
   (if (side-tools?)
-      (tool-select :transient-right 'document-colors-tool)
+      (tool-select :right 'document-colors-tool)
       (open-document-colors-window)))
