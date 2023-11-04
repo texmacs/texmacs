@@ -124,7 +124,7 @@
 (tm-define (open-remote-account-creator)
   (:interactive #t)
   (if (side-tools?)
-      (tool-select :transient-right (list 'remote-account-tool))
+      (tool-select :right (list 'remote-account-tool))
       (dialogue-window remote-account-widget noop "Create remote account")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -230,8 +230,8 @@
 
 (tm-define (open-remote-login* server-name pseudo retry?)
   (if (side-tools?)
-      (tool-select :transient-right (list 'remote-login-tool
-                                          server-name pseudo retry?))
+      (tool-select :right (list 'remote-login-tool
+                                server-name pseudo retry?))
       (dialogue-window (remote-login-widget server-name pseudo retry?)
                        noop "Remote login")))
 

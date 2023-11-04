@@ -59,5 +59,5 @@
 (tm-define (open-page-setup)
   (:interactive #t)
   (if (side-tools?)
-      (tool-select :transient-right 'page-setup-tool)
+      (tool-select :right 'page-setup-tool)
       (open-page-setup-window)))

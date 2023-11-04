@@ -874,7 +874,7 @@
          (specs (list getter setter global? win))
          (tool `(font-tool ,name ,getter ,setter ,global?)))
     (selector-clean specs)
-    (tool-select :transient-right tool win)))
+    (tool-select :right tool win)))
 
 (tm-define (open-font-selector)
   (:interactive #t)
