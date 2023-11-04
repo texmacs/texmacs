@@ -114,6 +114,7 @@
   ("latex command" "pdflatex" notify-latex-command)
   ("bibtex command" "bibtex" notify-bibtex-command)
   ("scripting language" "none" notify-scripting-language)
+  ("speech" "off" noop)
   ("database tool" "off" notify-tool)
   ("debugging tool" "off" notify-tool)
   ("developer tool" "off" notify-tool)
