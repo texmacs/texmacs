@@ -663,6 +663,7 @@ table_rep::compute_vertical_parts (double* part) {
 
 void
 table_rep::position_rows () {
+  //cout << "Position rows" << LF << INDENT;
   STACK_NEW_ARRAY (mh, SI, nr_rows);
   STACK_NEW_ARRAY (bh, SI, nr_rows);
   STACK_NEW_ARRAY (th, SI, nr_rows);
@@ -678,6 +679,8 @@ table_rep::position_rows () {
       STACK_NEW_ARRAY (Th, SI, nr_rows);
       compute_vertical_parts (part);
       vextra= max (height - min_height, 0);
+      //cout << "height = " << (height>>8) << LF;
+      //cout << "vextra = " << (vextra>>8) << LF;
       compute_heights (Mh, Bh, Th, vextra);
       SI max_height= sum (Mh, nr_rows);
       SI computed_height= height;
@@ -707,7 +710,7 @@ table_rep::position_rows () {
     for (j=0; j<nr_cols; j++) {
       cell C= T[i][j];
       if ((!is_nil (C)) && (!is_nil (C->T))) {
-        C->T->height= mh[j]- C->bborder- C->tborder;
+        C->T->height= mh[i]- C->bborder- C->tborder;
         C->T->vmode = "exact";
         C->T->position_rows ();
       }
@@ -750,6 +753,7 @@ table_rep::position_rows () {
   STACK_DELETE_ARRAY (mh);
   STACK_DELETE_ARRAY (bh);
   STACK_DELETE_ARRAY (th);
+  //cout << UNINDENT << "Positioned rows" << LF;
 }
 
 void
