@@ -73,10 +73,10 @@ public:
   void handle_decorations ();
   void handle_span ();
   void merge_borders ();
-  void compute_width (SI& tmw, SI& tlw, SI& trw);
+  void compute_width (SI& tmw, SI& tlw, SI& trw, bool large);
   void compute_widths (SI* Mw, SI* Lw, SI* Rw, bool large);
   void compute_horizontal_parts (double* parts);
-  void position_columns ();
+  void position_columns (bool large);
   void compute_height (SI& mh, SI& bh, SI& th, SI xh);
   void compute_heights (SI* mh, SI* bh, SI* th, SI xh);
   void compute_vertical_parts (double* parts);
