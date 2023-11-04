@@ -84,46 +84,6 @@ table_rep::typeset (tree t, path iq) {
 }
 
 void
-table_rep::typeset_subtable (tree t, path iq, hashmap<string,tree> cvar) {
-  ip= iq;
-  array<tree> inh;
-  if (cvar->contains (CELL_LSEP))
-    inh << tree (CWITH, "1", "-1", "1", "1",
-                 CELL_LSEP, cvar[CELL_LSEP]);
-  if (cvar->contains (CELL_RSEP))
-    inh << tree (CWITH, "1", "-1", "-1", "-1",
-                 CELL_RSEP, cvar[CELL_RSEP]);
-  if (cvar->contains (CELL_BSEP))
-    inh << tree (CWITH, "-1", "-1", "1", "-1",
-                 CELL_BSEP, cvar[CELL_BSEP]);
-  if (cvar->contains (CELL_TSEP))
-    inh << tree (CWITH, "1", "1", "1", "-1",
-                 CELL_TSEP, cvar[CELL_TSEP]);
-  if (cvar->contains (CELL_VCORRECT))
-    inh << tree (CWITH, "1", "-1", "1", "-1",
-                 CELL_VCORRECT, cvar[CELL_VCORRECT]);
-  if (cvar->contains (CELL_HYPHEN))
-    inh << tree (CWITH, "1", "-1", "1", "-1",
-                 CELL_HYPHEN, cvar[CELL_HYPHEN]);
-  if (cvar->contains (CELL_BLOCK))
-    inh << tree (CWITH, "1", "-1", "1", "-1",
-                 CELL_BLOCK, cvar[CELL_BLOCK]);
-  if (cvar->contains (CELL_SWELL))
-    inh << tree (CWITH, "1", "-1", "1", "-1",
-                 CELL_SWELL, cvar[CELL_SWELL]);
-  tree old_format= env->local_begin (CELL_FORMAT, tree (TFORMAT));
-  tree new_format= tree (TFORMAT, inh);
-  while (is_func (t, TFORMAT)) {
-    new_format= new_format * t (0, N(t)-1);
-    iq        = descend (iq, N(t)-1);
-    t         = t[N(t)-1];
-  }
-  format_table (new_format);
-  typeset_table (new_format, t, iq);
-  env->local_end (CELL_FORMAT, old_format);  
-}
-
-void
 table_rep::typeset_table (tree fm, tree t, path ip) {
   int i;
   nr_rows= N(t);
@@ -164,6 +124,117 @@ table_rep::typeset_row (int i, tree fm, tree t, path ip) {
     if (hyphen == "y") C->row_span= 1;
   }
   STACK_DELETE_ARRAY (subformat);
+}
+
+/******************************************************************************
+* Subtables
+******************************************************************************/
+
+extern tree the_et;
+bool is_subtable_macro (edit_env env, tree t, array<tree>& xfm);
+
+bool
+is_subtable_macro_body (edit_env env, tree t, array<tree>& xfm) {
+  //cout << "Subtable macro body? " << t << LF;
+  if (is_func (t, TFORMAT)) {
+    xfm << A (t (0, N(t) - 1));
+    return is_subtable_macro_body (env, t[N(t)-1], xfm);
+  }
+  else if (is_func (t, DOCUMENT, 1))
+    return is_subtable_macro_body (env, t[0], xfm);
+  else if (is_func (t, ARG)) return true;
+  else {
+    if (!is_subtable_macro (env, t, xfm)) return false;
+    return is_subtable_macro_body (env, t[0], xfm);
+  }
+}
+
+bool
+is_subtable_macro (edit_env env, tree t, array<tree>& xfm) {
+  //cout << "Subtable macro? " << t << LF;
+  if (!is_compound (t) || N(t) != 1) return false;
+  if (!env->provides (as_string (L(t)))) return false;
+  tree def= env->read (as_string (L(t)));
+  if (!is_func (def, MACRO, 2)) return false;
+  return is_subtable_macro_body (env, def[1], xfm);
+}
+
+tree
+inherited_format (hashmap<string,tree> cvar) {
+  array<tree> inh;
+  if (cvar->contains (CELL_LSEP))
+    inh << tree (CWITH, "1", "-1", "1", "1",
+                 CELL_LSEP, cvar[CELL_LSEP]);
+  if (cvar->contains (CELL_RSEP))
+    inh << tree (CWITH, "1", "-1", "-1", "-1",
+                 CELL_RSEP, cvar[CELL_RSEP]);
+  if (cvar->contains (CELL_BSEP))
+    inh << tree (CWITH, "-1", "-1", "1", "-1",
+                 CELL_BSEP, cvar[CELL_BSEP]);
+  if (cvar->contains (CELL_TSEP))
+    inh << tree (CWITH, "1", "1", "1", "-1",
+                 CELL_TSEP, cvar[CELL_TSEP]);
+  if (cvar->contains (CELL_VCORRECT))
+    inh << tree (CWITH, "1", "-1", "1", "-1",
+                 CELL_VCORRECT, cvar[CELL_VCORRECT]);
+  if (cvar->contains (CELL_HYPHEN))
+    inh << tree (CWITH, "1", "-1", "1", "-1",
+                 CELL_HYPHEN, cvar[CELL_HYPHEN]);
+  if (cvar->contains (CELL_BLOCK))
+    inh << tree (CWITH, "1", "-1", "1", "-1",
+                 CELL_BLOCK, cvar[CELL_BLOCK]);
+  if (cvar->contains (CELL_SWELL))
+    inh << tree (CWITH, "1", "-1", "1", "-1",
+                 CELL_SWELL, cvar[CELL_SWELL]);
+  return tree (TFORMAT, inh);
+}
+
+
+void
+table_rep::typeset_subtable (tree t, path iq, hashmap<string,tree> cvar) {
+  ip= iq;
+
+  bool plain_flag= true;
+  tree new_format= tree (TFORMAT);
+  while (is_func (t, TFORMAT)) {
+    new_format= new_format * t (0, N(t)-1);
+    iq        = descend (iq, N(t)-1);
+    t         = t[N(t)-1];
+  }
+
+  if (is_func (t, TABLE, 1) &&
+      is_func (t[0], ROW, 1) &&
+      is_func (t[0][0], CELL, 1)) {
+    path siq= descend (descend (descend (iq, 0), 0), 0);
+    tree st = t[0][0][0];
+    if (is_func (st, DOCUMENT, 1)) {
+      siq= descend (siq, 0);
+      st = st[0];
+    }
+    array<tree> xfm;
+    if (is_subtable_macro (env, st, xfm)) {
+      new_format << xfm;
+      iq= descend (siq, 0);
+      t = st[0];
+      plain_flag= false;
+    }
+  }
+
+  if (plain_flag) {
+    tree inh_format= inherited_format (cvar);
+    new_format= inh_format * new_format;
+  }
+  
+  while (is_func (t, TFORMAT)) {
+    new_format= new_format * t (0, N(t)-1);
+    iq        = descend (iq, N(t)-1);
+    t         = t[N(t)-1];
+  }
+
+  tree old_format= env->local_begin (CELL_FORMAT, tree (TFORMAT));
+  format_table (new_format);
+  typeset_table (new_format, t, iq);
+  env->local_end (CELL_FORMAT, old_format);
 }
 
 /******************************************************************************
