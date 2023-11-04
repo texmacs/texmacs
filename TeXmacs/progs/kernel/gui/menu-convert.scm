@@ -235,10 +235,18 @@
   (with popup (popup*)
     `(popup-balloon ,button ,popup "Right" "top")))
 
+(define (make-division tag body)
+  (cond ((and (tm-in? body '(hlist vlist))
+              (in? tag '(plain-style discrete-style)))
+         `(,(tm-car body)
+           ,@(map (cut make-division tag <>) (tm-children body))))
+        ((tm-is? body 'glue) body)
+        (else `(,tag ,body))))
+
 (tm-define (markup-division type body)
   (if (in? type (list "title" "section" "subsection" "section-tabs"
                       "plain" "discrete"))
-      `(,(string->symbol (string-append type "-style")) ,body)
+      (make-division (string->symbol (string-append type "-style")) body)
       body))
 
 (tm-define (markup-refresh wid kind)
