@@ -89,6 +89,8 @@ edit_math_rep::make_script (bool sup, bool right) {
 
     if (is_format (p))
       FAILED ("bad cursor position");
+    if (t == "" && is_script (subtree (et, path_up (p))))
+      return;
     if (is_script (t, flag) && (flag==right) && (L(t)==s)) {
       go_to_end (p * 0);
       return;
