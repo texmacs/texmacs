@@ -547,6 +547,10 @@ set (TeXmacs_MacOS_SRCS
 ### Determine TeXmacs_Libraries
 ### --------------------------------------------------------------------
 
+if (APPLE AND EXISTS /opt/homebrew/lib)
+  link_directories (/opt/homebrew/lib)
+endif ()
+
 set (TeXmacs_Libraries
   ${Guile_LIBRARIES}
   ${ZLIB_LIBRARIES}
@@ -587,6 +591,10 @@ if (TEXMACS_GUI MATCHES "Qt.*")
     # Homebrew installs Qt5 in /usr/local/opt/qt5
     if (APPLE AND EXISTS /usr/local/opt/qt5)
       list (APPEND CMAKE_PREFIX_PATH "/usr/local/opt/qt5")
+    endif ()
+
+    if (APPLE AND EXISTS /opt/homebrew/opt/qt5/)
+      list (APPEND CMAKE_PREFIX_PATH "/opt/homebrew/opt/qt5/")
     endif ()
 
     if (WIN32 AND EXISTS ${QT_CMAKE_DIR})
