@@ -149,6 +149,17 @@ lazy_surround_rep::produce (lazy_type request, format fm) {
     format ret_fm= make_format_vstream (width, before, after);
     return par->produce (request, ret_fm);
   }
+  /*
+  else if (request == LAZY_BOX) {
+    box ret= (box) lazy_rep::produce (request, fm);
+    array<box> bs;
+    for (int i=0; i<N(a); i++) bs << a[i]->b;
+    bs << ret;
+    for (int i=0; i<N(b); i++) bs << b[i]->b;
+    ret= concat_box (ret->ip, bs);
+    return make_lazy_box (ret);
+  }
+  */
   return lazy_rep::produce (request, fm);
 }
 
@@ -168,11 +179,40 @@ add_markers (edit_env env, lazy par, path ip) {
 * Hidden
 ******************************************************************************/
 
-lazy
-make_lazy_hidden (edit_env env, tree t, path ip) {
-  (void) make_lazy (env, t[0], descend (ip, 0));
-  return lazy_document (env, tree (DOCUMENT), ip);
+lazy_hidden_rep::lazy_hidden_rep (edit_env env2, tree t2, path ip2):
+  lazy_rep (LAZY_HIDDEN, ip2), env (env2), t (t2), ip (ip2) {}
+
+format
+lazy_hidden_rep::query (lazy_type request, format fm) {
+  if ((request == LAZY_BOX) && (fm->type == QUERY_VSTREAM_WIDTH))
+    return make_format_width (0);
+  return lazy_rep::query (request, fm);
 }
+
+lazy
+lazy_hidden_rep::produce (lazy_type request, format fm) {
+  if (request == type) return this;
+  if (request == LAZY_VSTREAM) {
+    format_vstream fvs= (format_vstream) fm; 
+    stack_border temp_sb;
+    array<page_item> temp_l=
+      typeset_stack (env, t, ip, fvs->width,
+                     fvs->before, fvs->after, temp_sb);
+    int i=0, n= N(temp_l);
+    for (i=0; i<n; i++)
+      if (temp_l[i]->type != PAGE_CONTROL_ITEM) {
+        box b= temp_l[i]->b;
+        temp_l[i]->type= PAGE_HIDDEN_ITEM;
+        temp_l[i]->b   = resize_box (ip, b, b->x1, 0, b->x2, 0);
+        temp_l[i]->spc = space (0, 0, 0);
+      }
+    return lazy_vstream (ip, "", temp_l, temp_sb);
+  }
+  return lazy_rep::produce (request, fm);
+}
+
+void
+lazy_hidden_rep::propagate () {}
 
 /******************************************************************************
 * Formatting
@@ -186,8 +226,14 @@ make_lazy_formatting (edit_env env, tree t, path ip, string v) {
   array<line_item> a;
   array<line_item> b;
   if (v != CELL_FORMAT) {
-    a= typeset_marker (env, descend (ip, 0));
-    b= typeset_marker (env, descend (ip, 1));
+    a << typeset_marker (env, descend (ip, 0));
+    if (is_func (t, DATOMS)) {
+      box ab= empty_box (decorate (ip), 0, 0, 0, env->fn->yx);
+      box bb= empty_box (decorate (ip), 0, 0, 0, env->fn->yx);
+      a << line_item (CONTROL_ITEM, OP_SKIP, ab, HYPH_INVALID, t (0, N(t)-1));
+      b << line_item (CONTROL_ITEM, OP_SKIP, bb, HYPH_INVALID, tree (L(t)));
+    }
+    b << typeset_marker (env, descend (ip, 1));
   }
   lazy par= make_lazy (env, t[last], descend (ip, last));
   env->local_end (v, old_format);
@@ -452,13 +498,20 @@ make_lazy_mark (edit_env env, tree t, path ip) {
 	  valip= descend (valip, nr);
 	}
       }
-      if (is_compound (value)) {
+      if (is_func (t, VAR_MARK)) {
+        if (!is_nil (valip) && valip->item >= 0) {
+          a= typeset_marker (env, descend (valip->next, 0));
+          b= typeset_marker (env, descend (valip->next, 1));
+        }
+      }
+      else if (is_compound (value)) {
 	a= typeset_marker (env, descend (valip, 0));
 	b= typeset_marker (env, descend (valip, 1));
       }
     }
 
   lazy par= make_lazy (env, t[1], descend (ip, 1));
+  lazy ret= lazy_surround (a, b, par, ip);
   return lazy_surround (a, b, par, ip);
 }
 
@@ -629,8 +682,8 @@ make_lazy (edit_env env, tree t, path ip) {
     return lazy_document (env, t, ip);
   case SURROUND:
     return lazy_surround (env, t, ip);
-    //case HIDDEN:
-    //return make_lazy_hidden (env, t, ip);
+  case HIDDEN:
+    return lazy_hidden (env, t, ip);
   case DATOMS:
     return make_lazy_formatting (env, t, ip, ATOM_DECORATIONS);
   case DLINES:
@@ -645,7 +698,13 @@ make_lazy (edit_env env, tree t, path ip) {
     return make_lazy_with (env, t, ip);
   case ARG:
     return make_lazy_argument (env, t, ip);
+  case MAP_ARGS:
+    // FIXME: we might want to merge make_lazy_rewrite and make_lazy_eval
+    // 'map_args' is implemented using 'eval' for bridges,
+    // but agreeing on a single choice would be better
+    return make_lazy_rewrite (env, t, ip);
   case MARK:
+  case VAR_MARK:
     return make_lazy_mark (env, t, ip);
   case EXPAND_AS:
     return make_lazy_expand_as (env, t, ip);
@@ -692,3 +751,13 @@ make_lazy (edit_env env, tree t, path ip) {
     else return make_lazy_compound (env, t, ip);
   }
 }
+
+/*
+lazy
+make_lazy (edit_env env, tree t, path ip) {
+  cout << "Make lazy " << t << LF << INDENT;
+  lazy r= make_lazy_sub (env, t, ip);
+  cout << UNINDENT << "Made lazy" << LF;
+  return r;
+}
+*/

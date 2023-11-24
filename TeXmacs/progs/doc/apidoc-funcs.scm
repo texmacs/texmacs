@@ -257,8 +257,12 @@
     (if (list? prop) (car prop) (replace "No synopsis available"))))
 
 (tm-define ($doc-symbol-code sym)
-  `(document ; used to be folded-explain but caused bug 61989
-     (with "font-series" "bold" "color" "dark green" (em ,(replace "Definition:")))
+  ;; Changed because of bug 61989
+  ;;`(folded-explain
+  ;;  (document (with "color" "dark green" (em ,(replace "Definition..."))))
+  `(document
+     (with "font-series" "bold" "color" "dark green"
+           (em ,(replace "Definition:")))
      (scm-code
        (document
         ,(cond ((and (tm-exported? sym) (procedure? (eval sym)))

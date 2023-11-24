@@ -23,6 +23,7 @@ int geometry_x= 0  , geometry_y= 0;
 
 widget texmacs_window_widget (widget wid, tree geom);
 widget make_menu_widget (object menu);
+widget make_menu_widget (object menu, int w, int h);
 void refresh_size (widget wid, bool exact);
 
 static int last_window_handle= 0;
@@ -142,6 +143,17 @@ tm_window_rep::tm_window_rep (widget wid2, tree geom):
   zoomf= retina_zoom * get_server () -> get_default_zoom_factor ();
 }
 
+double
+get_doc_zoom_factor (tree doc) {
+  if (is_compound (doc))
+    for (int i=0; i<N(doc); i++)
+      if (is_compound (doc[i], "initial") || is_func (doc[i], COLLECTION))
+        return get_doc_zoom_factor (doc[i]);
+      else if (is_func (doc[i], ASSOCIATE, 2) && doc[i][0] == ZOOM_FACTOR)
+        return as_double (doc[i][1]);
+  return -1.0;
+}
+
 tm_window_rep::tm_window_rep (tree doc, command quit):
   win (texmacs_widget (0, quit)),
   wid (win), id (url_none ()),
@@ -149,8 +161,9 @@ tm_window_rep::tm_window_rep (tree doc, command quit):
   menu_current (object ()), menu_cache (widget ()),
   text_ptr (NULL)
 {
-  (void) doc;
-  zoomf= retina_zoom * get_server () -> get_default_zoom_factor ();
+  zoomf= retina_zoom * get_doc_zoom_factor (doc);
+  if (zoomf < 0.0)
+    zoomf= retina_zoom * get_server () -> get_default_zoom_factor ();
 }
 
 tm_window_rep::~tm_window_rep () {
@@ -210,7 +223,7 @@ public:
       window_by_name(name->t)= path (win_id, window_by_name[name->t]); }
   void apply ();
   tm_ostream& print (tm_ostream& out) {
-    return out << "Close_Embedded widget command"; }
+    return out << "<command close_embedded>"; }
 };
 
 void
@@ -281,12 +294,18 @@ enrich_embedded_document (tree body, tree style) {
   initial (PAGE_SCREEN_RIGHT)= "4px";
   initial (PAGE_SCREEN_TOP)= "2px";
   initial (PAGE_SCREEN_BOT)= "2px";
+  
   if (is_func (orig, WITH))
     for (int i=0; i+2<N(orig); i+=2)
-      if (is_atomic (orig[i]))
+      if (is_atomic (orig[i])) {
+        //cout << "Set " << orig[i] << " = " << orig[i+1] << LF;
         initial (orig[i]->label)= orig[i+1];
-  initial (DPI)= "720";
-  initial (ZOOM_FACTOR)= (retina_zoom==1? "1.2": "1.8");
+      }
+  //initial (DPI)= "720";
+  //initial (ZOOM_FACTOR)= (retina_zoom==1? "1.2": "1.8");
+  initial (DPI)= "600";
+  initial (ZOOM_FACTOR)= (retina_zoom==2? "1.0": "1.2");
+  // TODO: to be carefully checked for all operating systems
   initial ("no-zoom")= "true";
   tree doc (DOCUMENT);
   doc << compound ("TeXmacs", TEXMACS_VERSION);
@@ -369,22 +388,33 @@ tm_window_rep::get_menu_widget (int which, string menu, widget& w) {
   }
   object xmenu= call ("menu-expand", eval ("'" * menu));
   the_drd= old_drd;
+  //if (which == 10) cout << "xmenu= " << xmenu << "\n";
   //cout << "xmenu= " << xmenu << "\n";
   if (menu_cache->contains (xmenu)) {
     //if (menu_current[which] == xmenu) cout << "Same " << menu << "\n";
+    //if (which == 10) cout << which << " -> cached? " << (menu_current[which] == xmenu) << LF;
+    //cout << which << " -> cached? " << (menu_current[which] == xmenu) << LF;
     if (menu_current[which] == xmenu) return false;
-    menu_current (which)= xmenu;
-    //cout << "Cached " << menu << "\n";
-    w= menu_cache [xmenu];
-    return true;
+    if (which < 10) {
+      menu_current (which)= xmenu;
+      //cout << "Cached " << menu << "\n";
+      w= menu_cache [xmenu];
+      return true;
+    }
   }
+  //if (which == 10) cout << which << " -> compute" << LF;
+  //cout << which << " -> compute" << LF;
   menu_current (which)= xmenu;
   //cout << "Compute " << menu << "\n";
   object umenu= eval ("'" * menu);
-  w= make_menu_widget (umenu);
+  if (which == 10 || which == 11) w= make_menu_widget (umenu, 400, 1000);
+  else w= make_menu_widget (umenu);
   if (menu_caching)
-    if (as_bool (call ("cache-menu?", xmenu)))
+    if (which >= 10 || as_bool (call ("cache-menu?", xmenu))) {
+      //if (which == 10) cout << which << " -> cached" << LF;
+      //cout << which << " -> cached" << LF;
       menu_cache (xmenu)= w;
+    }
   return true;
 }
 
@@ -559,7 +589,7 @@ class ia_command_rep: public command_rep {
 public:
   ia_command_rep (tm_window_rep* win2): win (win2) {}
   void apply () { win->interactive_return (); }
-  tm_ostream& print (tm_ostream& out) { return out << "tm_window command"; }
+  tm_ostream& print (tm_ostream& out) { return out << "<command ia>"; }
 };
 
 bool

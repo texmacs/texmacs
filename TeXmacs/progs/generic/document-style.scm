@@ -55,6 +55,12 @@
           ((and (pair? t) (== (car t) 'tuple)) (cdr t))
           (else (texmacs-error "get-style-list ""invalid style ~S" t)))))
 
+(tm-define (embedded-style-list . xpacks)
+  (when (side-tools?)
+    (set! xpacks (rcons xpacks "side-tools")))
+  (with l (get-style-list)
+    (list-remove-duplicates (append l xpacks))))
+
 (define (normalize-style-list* l)
   (cond ((null? l) l)
         ((list-find (cdr l) (cut style-overrides? <> (car l)))

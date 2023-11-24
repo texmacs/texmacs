@@ -329,7 +329,8 @@ init_std_drd () {
   init (COPY_THEME, "copy-theme", repeat (1, 1) -> variable (0));
   init (APPLY_THEME, "apply-theme", fixed (1) -> variable (0));
   init (SELECT_THEME, "select-theme", repeat (1, 1) -> variable (0));
-  init (MARK, "mark", fixed (2));
+  init (MARK, "mark", fixed (1, 1, BIFORM) -> accessible (1));
+  init (VAR_MARK, "mark*", fixed (1, 1, BIFORM) -> accessible (1));
   init (EXPAND_AS, "expand-as", fixed (2));
   init (EVAL, "eval", fixed (1) -> name ("evaluate"));
   init (QUOTE, "quote", fixed (1) -> regular (0));

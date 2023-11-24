@@ -271,6 +271,11 @@
        (and (not (url-none? ,buf))
             (with-buffer ,buf ,@body)))))
 
+
+(tm-define (refresh-now* win what)
+  (refresh-now what)
+  (with-window win (update-menus)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search and replace
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

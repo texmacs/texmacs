@@ -38,7 +38,8 @@
 	     description description-compact description-dash
 	     description-aligned description-long description-paragraphs item*
 	     strong em dfn code* samp kbd var abbr acronym
-	     verbatim code tt
+	     verbatim code tt underline overline strike-through
+	     deleted marked fill-out
 	     hidden-title doc-title-block
 	     equation* equation-lab equations-base
              wide-float draw-over draw-under

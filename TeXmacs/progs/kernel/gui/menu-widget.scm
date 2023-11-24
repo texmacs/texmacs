@@ -243,15 +243,36 @@
   ;;(widget-text s style (color "black") #t)
   (widget-text (translate s) style (color "black") #f))
 
+(define (attach-resize t)
+  (if (not global-resize) t
+      (with (w1 w2 w3 wpos h1 h2 h3 hpos) global-resize
+        (with attrs (list "page-medium" "papyrus"
+                          "page-type" "user"
+                          "page-width" w2
+                          "page-height" h2
+                          "page-odd" "4px"
+                          "page-even" "4px"
+                          "page-right" "4px"
+                          "page-top" "2px"
+                          "page-bot" "2px"
+                          "page-screen-left" "4px"
+                          "page-screen-right" "4px"
+                          "page-screen-top" "2px"
+                          "page-screen-bot" "2px")
+          (if (tm-is? t 'with)
+              `(with ,@attrs ,@(cDr (tm-children t)) ,(cAr (tm-children t)))
+              `(with ,@attrs ,t))))))
+
 (define (make-texmacs-output p style)
   "Make @(texmacs-output :%2) item."
   (with (tag t tmstyle) p
-    (widget-texmacs-output (t) (tmstyle))))
+    (widget-texmacs-output (attach-resize (t)) (tmstyle))))
 
 (define (make-texmacs-input p style)
   "Make @(texmacs-input :%3) item."
   (with (tag t tmstyle name) p
-    (widget-texmacs-input (t) (tmstyle) (or (name) (url-none)))))
+    (widget-texmacs-input (attach-resize (t)) (tmstyle)
+                          (or (name) (url-none)))))
 
 (define (make-menu-input p style)
   "Make @(input :%1 :string? :%1 :string?) menu item."
@@ -596,15 +617,19 @@
         ((list-4? x) x)
         (else (make-menu-error "bad length in " (object->string x)))))
 
+(define global-resize #f)
+
 (define (make-resize p style)
   "Make @(resize :%2 :menu-item-list) item."
   (with (tag w-cmd h-cmd . items) p
     (let ((w (w-cmd))
           (h (h-cmd)))
-      (with inner (make-menu-items (list (cons 'vertical items)) style #f)
-        (with (w1 w2 w3 hpos) (decode-resize w "left")
-          (with (h1 h2 h3 vpos) (decode-resize h "top")
-            (widget-resize (car inner) style w1 h1 w2 h2 w3 h3 hpos vpos)))))))
+      (with (w1 w2 w3 hpos) (decode-resize w "left")
+        (with (h1 h2 h3 vpos) (decode-resize h "top")
+          (with-global global-resize (list w1 w2 w3 hpos h1 h2 h3 hpos)
+            (with inner (make-menu-items (list (cons 'vertical items)) style #f)
+              (widget-resize (car inner) style
+                             w1 h1 w2 h2 w3 h3 hpos vpos))))))))
 
 (define (make-hsplit p style)
   "Make @(hsplit :menu-item :menu-item) item."
@@ -918,15 +943,15 @@
 (define (menu-expand-choice p)
   "Expand choice item @p."
   `(,(car p) ,(replace-procedures (cadr p))
-             ,(caddr p)
+             ,((caddr p))
              ,((cadddr p))))
 
 (define (menu-expand-filtered-choice p)
   "Expand filtered choice item @p."
   `(,(car p) ,(replace-procedures (cadr p))
-             ,(caddr p)
+             :proposals ;; ,((caddr p))
              ,((cadddr p))
-             ,(car (cddddr p))))
+             ,(replace-procedures (car (cddddr p)))))
 
 (define (menu-expand-color-input p)
   "Expand color-input menu item @p."
@@ -965,7 +990,7 @@
   (:synopsis "Expand links and conditional menus in menu @p")
   ;;(display* "Expand " p "\n")
   (cond ((npair? p) (replace-procedures p))
-        ((string? (car p)) p)
+        ((string? (car p)) (list (car p)))
         ((symbol? (car p))
          (with result (ahash-ref menu-expand-table (car p))
            (if result ((car result) p) p)))
@@ -1020,7 +1045,7 @@
   (vertical ,(lambda (p) `(vertical ,@(menu-expand-list (cdr p)))))
   (hlist ,(lambda (p) `(hlist ,@(menu-expand-list (cdr p)))))
   (vlist ,(lambda (p) `(vlist ,@(menu-expand-list (cdr p)))))
-  (division ,(lambda (p) `(division ,(cadr p) ,@(menu-expand-list (cddr p)))))
+  (division ,(lambda (p) `(division ,((cadr p)) ,@(menu-expand-list (cddr p)))))
   (class ,(lambda (p) `(class ,(cadr p) ,@(menu-expand-list (cddr p)))))
   (aligned ,(lambda (p) `(aligned ,@(menu-expand-list (cdr p)))))
   (aligned-item ,(lambda (p) `(aligned-item ,@(menu-expand-list (cdr p)))))
@@ -1065,6 +1090,12 @@
   (:argument style "menu style")
   ((wrap-catch make-menu-main) p style))
 
+(tm-define (make-menu-widget* p style . opt-size)
+  (set! global-resize #f)
+  (if (has-markup-gui?)
+      (apply make-menu-widget** (cons* p style opt-size))
+      (make-menu-widget p style)))
+
 (define (decode-options opts)
   (let* ((bufs (list))
          (qcmd noop))
@@ -1097,7 +1128,7 @@
            (qui (object->command (lambda () (qqq) (del))))
            (men (menu-promise))
            (scm (list 'vertical men))
-           (wid (make-menu-widget scm 0)))
+           (wid (make-menu-widget* scm 0)))
       (alt-window-create-quit win wid (translate name) qui)
       (alt-window-show win))))
 
@@ -1110,7 +1141,7 @@
            (lbd (lambda x (apply cmd x) (del)))
            (men (menu-promise lbd))
            (scm (list 'vertical men))
-           (wid (make-menu-widget scm 0)))
+           (wid (make-menu-widget* scm 0)))
       (alt-window-create-quit win wid (translate name) qui)
       (alt-window-show win))))
 
@@ -1223,7 +1254,19 @@
   (notify-now "Restart TeXmacs in order to let changes take effect"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Side tools
+;; Attaching global information to widgets and tools
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define global-key-table (make-ahash-table))
+
+(tm-define (global-ref . key)
+  (ahash-ref global-key-table key))
+
+(tm-define (global-set . key-val)
+  (ahash-set! global-key-table (cDr key-val) (cAr key-val)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Attaching side tools to windows
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define window-tools-table (make-ahash-table))
@@ -1326,7 +1369,17 @@
     (set! tool (list tool)))
   (with win (if (null? opt-win) (current-window) (car opt-win))
     (set-window-tool win pos tool)))
-  
+
+(tm-define (tool-focus pos tool u)
+  (:check-mark "v" tool-active?)
+  (if (tool-active? pos tool)
+      (buffer-focus* u)
+      (begin
+        (tool-select pos tool)
+        (delayed
+          (:pause 250)
+          (buffer-focus* u)))))
+
 (tm-define (tool-toggle pos tool . opt-win)
   (:check-mark "v" tool-active?)
   (when (string? tool)
@@ -1350,6 +1403,7 @@
              (f (list-filter l (lambda (t) (!= (car t) tool)))))
         (when (!= f l)
           (when quit (quit))
+          (buffer-focus (window->buffer win))
           (set-window-tools win pos f)))))
 
 (tm-define ((tool-quit tool quit . opt-win) . args)
@@ -1364,6 +1418,10 @@
   (:check-mark "v" no-active-tools?)
   (with win (if (null? opt-win) (current-window) (car opt-win))
     (set-window-tools win pos (list))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Defining side tools
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (texmacs-side-tool win tool . opts)
   (division "title"

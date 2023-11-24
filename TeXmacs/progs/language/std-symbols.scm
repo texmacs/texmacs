@@ -70,7 +70,7 @@
     "<Longleftarrowlim>" "<Longrightarrowlim>" "<Longleftrightarrowlim>")
   
   (define Imply-symbol
-    Imply-nolim-symbol Imply-symbol)
+    Imply-nolim-symbol Imply-lim-symbol)
 
   (define Or-symbol
     (:type infix)

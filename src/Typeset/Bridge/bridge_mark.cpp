@@ -165,7 +165,11 @@ bridge_mark_rep::my_typeset (int desired_status) {
 	  valip= descend (valip, nr);
 	}
       }
-      if (is_compound (value))
+      if (is_func (st, VAR_MARK)) {
+        if (!is_nil (valip) && valip->item >= 0)
+          ttt->insert_marker (st, valip->next);
+      }
+      else if (is_compound (value))
 	ttt->insert_marker (st, valip);
     }
 

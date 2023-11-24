@@ -100,7 +100,7 @@
 (tm-define (open-source-tree-preferences)
   (:interactive #t)
   (if (side-tools?)
-      (tool-select :transient-right 'source-tree-preferences-tool)
+      (tool-select :right 'source-tree-preferences-tool)
       (open-source-tree-preferences-window)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -118,7 +118,7 @@
 (tm-define (open-document-paragraph-format)
   (:interactive #t)
   (if (side-tools?)
-      (tool-select :transient-right 'document-paragraph-tool)
+      (tool-select :right 'document-paragraph-tool)
       (open-document-paragraph-format-window)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -523,7 +523,7 @@
 (tm-define (open-document-page-format-window)
   (:interactive #t)
   (let* ((u  (current-buffer))
-         (st (list-remove-duplicates (rcons (get-style-list) "macro-editor"))))
+         (st (embedded-style-list "macro-editor")))
     (apply dialogue-window
            (cons* (document-page-formatter u st)
                   noop "Document page format"
@@ -532,7 +532,7 @@
 (tm-define (open-document-page-format)
   (:interactive #t)
   (if (side-tools?)
-      (tool-select :transient-right 'document-page-tool)
+      (tool-select :right 'document-page-tool)
       (open-document-page-format-window)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -545,13 +545,13 @@
       (aligned
         (item (text "Title:")
           (input (initial-set u "global-title" answer) "string"
-                 (list (buffer-get-metadata u "title")) "30em"))
+                 (list (buffer-get-metadata u "title")) "24em"))
         (item (text "Author:")
           (input (initial-set u "global-author" answer) "string"
-                 (list (buffer-get-metadata u "author")) "30em"))
+                 (list (buffer-get-metadata u "author")) "24em"))
         (item (text "Subject:")
           (input (initial-set u "global-subject" answer) "string"
-                 (list (buffer-get-metadata u "subject")) "30em"))))
+                 (list (buffer-get-metadata u "subject")) "24em"))))
     ======
     (explicit-buttons
       (hlist
@@ -570,7 +570,7 @@
 (tm-define (open-document-metadata)
   (:interactive #t)
   (if (side-tools?)
-      (tool-select :transient-right 'document-metadata-tool)
+      (tool-select :right 'document-metadata-tool)
       (open-document-metadata-window)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -611,5 +611,5 @@
 (tm-define (open-document-colors)
   (:interactive #t)
   (if (side-tools?)
-      (tool-select :transient-right 'document-colors-tool)
+      (tool-select :right 'document-colors-tool)
       (open-document-colors-window)))

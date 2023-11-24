@@ -82,6 +82,8 @@
   (math-group-members math_group_members (array_string string))
   (math-symbol-type math_symbol_type (string string))
   (object->command as_command (command object))
+  (command-eval eval (void command))
+  (command-apply apply (void command object))
   (exec-delayed exec_delayed (void object))
   (exec-delayed-pause exec_delayed_pause (void object))
   (protected-call protected_call (void object))

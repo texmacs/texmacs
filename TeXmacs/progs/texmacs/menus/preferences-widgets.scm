@@ -914,5 +914,5 @@
 (tm-define (open-preferences)
   (:interactive #t)
   (if (side-tools?)
-      (tool-select :transient-right 'preferences-tool)
+      (tool-select :right 'preferences-tool)
       (open-preferences-window)))

@@ -122,6 +122,33 @@ std_ostream_rep::flush () {
 }
 
 /******************************************************************************
+* String streams
+******************************************************************************/
+
+class string_ostream_rep: public tm_ostream_rep {
+public:
+  string* buf;
+
+public:
+  string_ostream_rep (string* buf);
+  ~string_ostream_rep ();
+
+  bool is_writable () const;
+  void write (const char*);
+};
+
+string_ostream_rep::string_ostream_rep (string* buf2): buf (buf2) {}
+string_ostream_rep::~string_ostream_rep () {}
+bool string_ostream_rep::is_writable () const { return true; }
+void string_ostream_rep::write (const char* s) { (*buf) << s; }
+
+
+tm_ostream
+string_ostream (string& buf) {
+  return (tm_ostream_rep*) tm_new<string_ostream_rep> (&buf);
+}
+
+/******************************************************************************
 * Buffered streams
 ******************************************************************************/
 

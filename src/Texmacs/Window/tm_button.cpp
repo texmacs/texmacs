@@ -65,6 +65,8 @@ initialize_environment (edit_env& env, tree doc, drd_info& drd) {
   for (int i=0; i<N(init); i++)
     if (is_func (init[i], ASSOCIATE, 2) && is_atomic (init[i][0]))
       env->write (init[i][0]->label, init[i][1]);
+  // env->write (PAGE_WIDTH_MARGIN, "true");
+  // env->write (PAR_WIDTH, "400px");
   // env->write (DPI, "720");
   // env->write (ZOOM_FACTOR, "1.2");
   // env->write (PAGE_TYPE, "a5");
@@ -114,6 +116,7 @@ class box_widget_rep: public simple_widget_rep {
 public:
   box_widget_rep (box b, color bg, bool trans, double zoom, SI dw, SI dh);
   operator tree ();
+  bool is_embedded_widget ();
 
   void handle_get_size_hint (SI& w, SI& h);
   void handle_repaint (renderer ren, SI x1, SI y1, SI x2, SI y2);
@@ -131,6 +134,11 @@ box_widget_rep::box_widget_rep
 
 box_widget_rep::operator tree () {
   return tree (TUPLE, "box", (tree) b);
+}
+
+bool
+box_widget_rep::is_embedded_widget () {
+  return true;
 }
 
 void

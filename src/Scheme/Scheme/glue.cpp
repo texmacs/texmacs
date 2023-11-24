@@ -596,7 +596,7 @@ command_to_tmscm (command o) {
   return blackbox_to_tmscm (close_box<command> (o));
 }
 
-static command
+command
 tmscm_to_command (tmscm o) {
   return open_box<command> (tmscm_to_blackbox (o));
 }

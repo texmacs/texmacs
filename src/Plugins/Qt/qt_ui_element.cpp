@@ -62,7 +62,7 @@ public:
     }
   }
   
-  tm_ostream& print (tm_ostream& out) { return out << "qt_key_command_rep"; }
+  tm_ostream& print (tm_ostream& out) { return out << "<command qt_key>"; }
 };
 
 
@@ -83,7 +83,7 @@ public:
   qt_toggle_command_rep(QCheckBox* w, command c) : qwid(w), cmd(c) { }
   void apply () { if (qwid) cmd (list_object (object (qwid->isChecked()))); }
 
-  tm_ostream& print (tm_ostream& out) { return out << "Toggle"; }
+  tm_ostream& print (tm_ostream& out) { return out << "<command qt_toggle>"; }
 };
 
 /*! Ad-hoc command to be used with enum widgets.
@@ -103,7 +103,7 @@ public:
       cmd (list_object (object (from_qstring(qwid->currentText()))));
   }
   
-  tm_ostream& print (tm_ostream& out) { return out << "Enum"; }
+  tm_ostream& print (tm_ostream& out) { return out << "<command qt_enum>"; }
 };
 
 
