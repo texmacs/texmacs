@@ -1,4 +1,4 @@
-<TeXmacs|1.99.15>
+<TeXmacs|2.1.2>
 
 <style|<tuple|source|std>>
 
@@ -36,17 +36,17 @@
     </src-comment>
   </active*>
 
-  <assign|math-up|<macro|x|<rigid|<text|<with|font-family|rm|font-shape|right|<arg|x>>>>>>
+  <assign|math-up|<macro|x|<text|<with|font-family|rm|font-shape|right|<arg|x>>>>>
 
-  <assign|math-ss|<macro|x|<rigid|<text|<with|font-family|ss|font-shape|right|<arg|x>>>>>>
+  <assign|math-ss|<macro|x|<text|<with|font-family|ss|font-shape|right|<arg|x>>>>>
 
-  <assign|math-tt|<macro|x|<rigid|<text|<with|font-family|tt|font-shape|right|<arg|x>>>>>>
+  <assign|math-tt|<macro|x|<text|<with|font-family|tt|font-shape|right|<arg|x>>>>>
 
-  <assign|math-bf|<macro|x|<rigid|<text|<with|font-family|rm|font-series|bold|font-shape|right|<arg|x>>>>>>
+  <assign|math-bf|<macro|x|<text|<with|font-family|rm|font-series|bold|font-shape|right|<arg|x>>>>>
 
-  <assign|math-it|<macro|x|<rigid|<text|<with|font-family|rm|font-shape|italic|<arg|x>>>>>>
+  <assign|math-it|<macro|x|<text|<with|font-family|rm|font-shape|italic|<arg|x>>>>>
 
-  <assign|math-sl|<macro|x|<rigid|<text|<with|font-family|rm|font-shape|slanted|<arg|x>>>>>>
+  <assign|math-sl|<macro|x|<text|<with|font-family|rm|font-shape|slanted|<arg|x>>>>>
 
   <drd-props|math-up|syntax|<macro|x|x>>
 
