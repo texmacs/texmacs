@@ -6,13 +6,13 @@
   <tmdoc-title|GNU <TeXmacs> \<#7528\>\<#6237\>\<#624B\>\<#518C\>>
 
   <\traverse>
-    <branch|\<#5F00\>\<#59CB\>\<#4F7F\>\<#7528\>|start/man-getting-started.zh.tmml>
+    <branch|\<#5F00\>\<#59CB\>\<#4F7F\>\<#7528\>|start/man-getting-started.zh.tm>
 
     <branch|\<#64B0\>\<#5199\>\<#7B80\>\<#5355\>\<#7684\>\<#6587\>\<#6863\>|text/man-text.zh.tm>
 
     <branch|\<#6570\>\<#5B66\>\<#516C\>\<#5F0F\>|math/man-math.zh.tm>
 
-    <branch|\<#8868\>\<#683C\>\<#5904\>\<#7406\>|table/man-table.zh.tmml>
+    <branch|\<#8868\>\<#683C\>\<#5904\>\<#7406\>|table/man-table.zh.tm>
 
     <branch|\<#94FE\>\<#63A5\>\<#548C\>\<#5185\>\<#5BB9\>\<#81EA\>\<#52A8\>\<#751F\>\<#6210\>|links/man-links.zh.tm>
 
