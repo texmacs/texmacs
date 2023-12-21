@@ -5,11 +5,18 @@
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 2.1 to 2.1.3>
+  <section|Changes from version 2.1 to 2.1.4>
 
   <\itemize>
     <item>Headless option for running <TeXmacs> as a window-less script
-    (2.1.3).
+    (2.1.4).
+
+    <item>Improved subtables (2.1.4).
+
+    <item>Progress towards side tools, experimental (2.1.4).
+
+    <item>Progress towards markup driven graphical user interface,
+    experimental (2.1.4).
 
     <item>Support for basic gestures (2.1.3).
 
