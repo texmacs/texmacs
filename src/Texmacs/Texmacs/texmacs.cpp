@@ -333,7 +333,7 @@ TeXmacs_main (int argc, char** argv) {
         retina_iman  = true;
         retina_icons = 2;
       }
-      else if ((s == "-c") || (s == "-convert")) {
+      else if ((s == "-c") || (s == "-convert") || (s == "-C")) {
         i+=2;
         if (i<argc) {
           url in  ("$PWD", argv[i-1]);
@@ -356,7 +356,7 @@ TeXmacs_main (int argc, char** argv) {
                (s == "-delete-style-cache") || (s == "-delete-file-cache") ||
                (s == "-delete-doc-cache") || (s == "-delete-plugin-cache") ||
                (s == "-delete-server-data") || (s == "-delete-databases") ||
-	       (s == "-headless"));
+	       (s == "-headless") || (s == "-H"));
       else if (s == "-build-manual") {
         if ((++i)<argc)
           extra_init_cmd << "(build-manual "
@@ -377,11 +377,12 @@ TeXmacs_main (int argc, char** argv) {
         cout << "\n";
         cout << "Options for TeXmacs:\n\n";
         cout << "  -b [file]  Specify scheme buffers initialization file\n";
-        cout << "  -c [i] [o] Convert file 'i' into file 'o'\n";
+        cout << "  -C [i] [o] Convert file 'i' into file 'o'\n";
         cout << "  -d         For debugging purposes\n";
         cout << "  -fn [font] Set the default TeX font\n";
         cout << "  -g [geom]  Set geometry of window in pixels\n";
         cout << "  -h         Display this help message\n";
+        cout << "  -H         Run TeXmacs in headless mode\n";
         cout << "  -i [file]  Specify scheme initialization file\n";
         cout << "  -p         Get the TeXmacs path\n";
         cout << "  -q         Shortcut for -x \"(quit-TeXmacs)\"\n";
@@ -399,6 +400,7 @@ TeXmacs_main (int argc, char** argv) {
       }
     }
   if (flag) debug (DEBUG_FLAG_AUTO, true);
+  if (headless_mode) my_init_cmds= my_init_cmds * " (quit-TeXmacs)";
 
   // Further options via environment variables
   if (get_env ("TEXMACS_RETINA") == "off") {
@@ -632,7 +634,7 @@ immediate_options (int argc, char** argv) {
       system ("rm -rf", url ("$TEXMACS_HOME_PATH/users"));
     }
 #ifdef QTTEXMACS
-    else if (s == "-headless")
+    else if (s == "-headless" || s == "-H" || s == "-C")
       headless_mode= true;
 #endif
     else if (s == "-log-file" && i + 1 < argc) {
