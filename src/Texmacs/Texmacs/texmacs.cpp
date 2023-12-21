@@ -347,6 +347,19 @@ TeXmacs_main (int argc, char** argv) {
         i++;
         if (i<argc) my_init_cmds= (my_init_cmds * " ") * argv[i];
       }
+      else if (s == "-W" || s == "-build-website" ||
+	       s == "-U" || s == "-update-website") {
+        i+=2;
+        if (i<argc) {
+	  string cmd= "tmweb-convert-dir";
+	  if (s == "-U" || s == "-update-website") cmd = "tmweb-update-dir";
+          url in  ("$PWD", argv[i-1]);
+          url out ("$PWD", argv[ i ]);
+          my_init_cmds= my_init_cmds * " " *
+            "(" * cmd * " " * scm_quote (as_string (in)) *
+            " " * scm_quote (as_string (out)) * ")";
+        }
+      }
       else if (s == "-server") start_server_flag= true;
       else if (s == "-log-file") i++;
       else if ((s == "-Oc") || (s == "-no-char-clipping")) char_clip= false;
@@ -391,6 +404,7 @@ TeXmacs_main (int argc, char** argv) {
         cout << "  -S         Rerun TeXmacs setup program before starting\n";
         cout << "  -v         Display current TeXmacs version\n";
         cout << "  -V         Show some informative messages\n";
+        cout << "  -W [i] [o] Recursively convert directory into website\n";
         cout << "  -x [cmd]   Execute scheme command\n";
         cout << "  -Oc        TeX characters bitmap clipping off\n";
         cout << "  +Oc        TeX characters bitmap clipping on (default)\n";
@@ -473,7 +487,9 @@ TeXmacs_main (int argc, char** argv) {
       where= " :new-window";
       exec_delayed (scheme_cmd (cmd));
     }
-    if      ((s == "-c") || (s == "-convert")) i+=2;
+    if      ((s == "-c") || (s == "-convert") || (s == "-C") ||
+	     (s == "-W") || (s == "-build-website") ||
+	     (s == "-U") || (s == "-update-website")) i+=2;
     else if ((s == "-b") || (s == "-initialize-buffer") ||
              (s == "-fn") || (s == "-font") ||
              (s == "-i") || (s == "-initialize") ||
@@ -634,7 +650,9 @@ immediate_options (int argc, char** argv) {
       system ("rm -rf", url ("$TEXMACS_HOME_PATH/users"));
     }
 #ifdef QTTEXMACS
-    else if (s == "-headless" || s == "-H" || s == "-C")
+    else if (s == "-headless" || s == "-H" || s == "-C" ||
+	     s == "-build-website" || s == "-W" ||
+	     s == "-update-website" || s == "-U")
       headless_mode= true;
 #endif
     else if (s == "-log-file" && i + 1 < argc) {
