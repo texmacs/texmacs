@@ -3,7 +3,7 @@
 """
 *******************************************************************************
 * Texmacs extension for Inkscape
-* COPYRIGHT  : (C) 2012-2022 Philippe JOYEZ
+* COPYRIGHT  : (C) 2012-2023 Philippe JOYEZ
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -49,6 +49,7 @@ Part of the code was directly copied from textext.py. Thank you Pauli!
 
 import os, glob, platform, time, shutil
 import inkex, tempfile, subprocess
+from inkex import load_svg
 #from xml.etree import ElementTree as etree
 from lxml import etree
 
@@ -130,9 +131,9 @@ tm_no_style=""
 # Inkscape plugin functionality
 #------------------------------------------------------------------------------
 
-class Texmacs(inkex.Effect):
+class Texmacs(inkex.EffectExtension):
     def __init__(self):
-        inkex.Effect.__init__(self)
+        inkex.EffectExtension.__init__(self)
         self.tmp_path = tempfile.mkdtemp()
         self.tmp_base = 'inkscape_edit_tmp.tm'
         self.tmp_name = os.path.join(self.tmp_path,self.tmp_base)
@@ -155,16 +156,19 @@ class Texmacs(inkex.Effect):
 
         svg_name = self.tmp_name + ".svg" #if successful texmacs creates that svg file
         if os.path.isfile(svg_name):
-           f = open(svg_name, 'r')
-           tree = etree.parse(f)
-           f.close()
-           #inkex.debug("file read  "+svg_name)
-           root = tree.getroot()
-           new_node = root.find('{%s}g' % SVG_NS)
-
-           # -- Replace
-           self.replace_node(old_node, new_node)
-
+            with open(svg_name, "r") as fhl:
+                svgroot: inkex.SvgDocumentElement = load_svg(fhl).getroot()
+                new_node = svgroot.find('{%s}g' % SVG_NS)
+                try: # only v >= 1.2
+                    new_node.set_random_ids(
+                            backlinks=True, blacklist=self.svg.get_ids()
+                        )
+                except :
+                    pass
+      
+                # -- Replace
+                self.replace_node(old_node, new_node)
+    
         #finish : cleanup
         self.remove_temp_files()
 
