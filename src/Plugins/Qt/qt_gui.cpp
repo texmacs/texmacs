@@ -426,6 +426,7 @@ void qt_gui_rep::set_mouse_pointer (string curs_name, string mask_name)
 
 void
 qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
+  if (headless_mode) return;
   if (DEBUG_QT)
     debug_qt << "show_wait_indicator \"" << message << "\"\"" << arg << "\"\n";
 
