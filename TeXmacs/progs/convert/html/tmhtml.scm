@@ -1217,7 +1217,7 @@
 	(else (tmhtml-width-part (cdr attrl)))))
 
 (define (tmhtml-width-replace attrl sum)
-  (with part (tmhtml-width-part attrl)
+  (with part (tmhtml-width-part (reverse attrl))
     (if (== part 0) attrl
 	(with l (list-filter attrl (lambda (x) (!= (car x) "cell-width")))
 	  (with w (number->htmlstring (/ part sum))
