@@ -1217,14 +1217,14 @@
 	(else (tmhtml-width-part (cdr attrl)))))
 
 (define (tmhtml-width-replace attrl sum)
-  (with part (tmhtml-width-part attrl)
+  (with part (tmhtml-width-part (reverse attrl))
     (if (== part 0) attrl
 	(with l (list-filter attrl (lambda (x) (!= (car x) "cell-width")))
 	  (with w (number->htmlstring (/ part sum))
 	    (cons (list "cell-width" (string-append w "par")) l))))))
 
 (define (tmhtml-make-cells l cellf)
-  (let* ((partl (map tmhtml-width-part cellf))
+  (let* ((partl (map tmhtml-width-part (map reverse cellf)))
 	 (sum (apply + partl)))
     (if (!= sum 0) (set! cellf (map (cut tmhtml-width-replace <> sum) cellf)))
     (tmhtml-make-cells-bis l cellf)))
