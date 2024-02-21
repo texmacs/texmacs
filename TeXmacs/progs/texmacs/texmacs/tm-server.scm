@@ -212,11 +212,12 @@
         (else (do-kill-window))))
 
 (tm-define (safely-quit-TeXmacs)
-  (with l (filter buffer-modified? (buffer-list))
+  (let* ((m (filter buffer-modified? (buffer-list)))
+	 (l (filter (non buffer-aux?) m)))
     (if (null? l)
         (quit-TeXmacs)
         (begin
-          (when (not (buffer-modified? (current-buffer)))
+          (when (nin? (current-buffer) l)
             ;; FIXME: focus on window with buffer, if any
             (switch-to-buffer (car l)))
           (user-confirm "There are unsaved documents. Really quit?" #f  
