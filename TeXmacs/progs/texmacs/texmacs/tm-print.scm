@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (texmacs texmacs tm-print)
-  (:use (texmacs texmacs tm-files)))
+  (:use (texmacs texmacs tm-files) (utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Try to obtain the papersize in this order from
@@ -134,6 +134,15 @@
           (new-tree (pdf-replace-linked-path cur-tree cur-url)))
     (buffer-rename tem-url new-url)
     (buffer-copy cur-url new-url)
+    ;; copy also attachments and auxiliary data
+    (with-buffer cur-url
+      (let* ((attl (list-attachments)) 
+             (atts (map get-attachment attl))
+             (auxl (list-auxiliaries))
+             (auxs (map get-auxiliary auxl)))
+        (with-buffer new-url
+          (for-each set-attachment attl atts)
+          (for-each set-auxiliary auxl auxs))))
     (buffer-save new-url)
     (pdf-make-attachments fname linked-file-with-main fname)))
 
