@@ -46,6 +46,9 @@ public:
 
   EStatusCode AttachToAllPage (PDFAttachment* inAttachment);
 
+  virtual bool
+  IsCatalogUpdateRequiredForModifiedFile (PDFParser* inModifiderFileParser);
+
   virtual EStatusCode
   OnCatalogWrite (CatalogInformation* inCatalogInformation,
                   DictionaryContext*  inCatalogDictionaryContext,
@@ -60,6 +63,7 @@ private:
   EStatusCodeAndObjectIDType WriteAttachment (PDFAttachment* inAttachment);
   void                       CleanupAttachment ();
 };
+
 bool
 pdf_hummus_make_attachments (url pdf_path, array<url> attachment_paths,
                              url out_path) {
@@ -80,17 +84,17 @@ pdf_hummus_make_attachments (url pdf_path, array<url> attachment_paths,
   }
 
   PDFWriter   pdfWriter;
+  PDFAttachmentWriter attachmentWriter (&pdfWriter);
   EStatusCode status;
   do {
     status= pdfWriter.ModifyPDF (as_charp (as_string (pdf_path)), ePDFVersion16,
-                                 as_charp (as_string (out_path)));
+                                 as_charp (as_string (out_path)), LogConfiguration(true, false, "PDFWriterLog.txt"));
 
     if (status != eSuccess) {
       if (DEBUG_CONVERT)
         debug_convert << "ModifyPDF fail to open " << pdf_path << LF;
       break;
     }
-    PDFAttachmentWriter attachmentWriter (&pdfWriter);
     for (int i= 0; i < (int) N (attachment_paths); i++) {
       string          attachment_path= as_string (attachment_paths[i]);
       InputFileStream tm_file_stream;
@@ -124,7 +128,6 @@ pdf_hummus_make_attachments (url pdf_path, array<url> attachment_paths,
       else {
         if (DEBUG_CONVERT)
           debug_convert << "success to attach " << attachment_path << "\n";
-        continue;
       }
     }
     status= pdfWriter.EndPDF ();
@@ -179,6 +182,13 @@ PDFAttachmentWriter::PDFAttachmentWriter (PDFWriter* inPDFWriter) {
   ListenOnCatalogWrite ();
 }
 
+bool 
+PDFAttachmentWriter::IsCatalogUpdateRequiredForModifiedFile (PDFParser* inModifiderFileParser) {
+  (void) inModifiderFileParser;
+  // we require to write a catalog only if we have attachments to add
+  return (N (mAttachment) != 0); 
+}
+
 void
 PDFAttachmentWriter::ListenOnCatalogWrite () {
   mPDFWriter->GetDocumentContext ().AddDocumentContextExtender (this);
@@ -197,6 +207,9 @@ PDFAttachmentWriter::OnCatalogWrite (
     DictionaryContext*  inCatalogDictionaryContext,
     ObjectsContext*     inPDFWriterObjectContext,
     DocumentContext*    inPDFWriterDocumentContext) {
+
+  if (DEBUG_CONVERT) debug_convert << "Populating the EmbeddedFiles dictionary\n";
+
   if (N (mAttachment) == 0) return eSuccess;
 
   inCatalogDictionaryContext->WriteKey ("Names");
