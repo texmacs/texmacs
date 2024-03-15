@@ -55,24 +55,25 @@ extract_attachments_from_pdf (url pdf_path, list<url>& names) {
 
     PDFObjectCastPtr<PDFDictionary> d_1 (catalog->QueryDirectObject ("Names"));
     if (!d_1) {
-      if (DEBUG_CONVERT) debug_convert << "Can't find d1. fail\n";
+      if (DEBUG_CONVERT) debug_convert << "Can't find Names dictionary. fail\n";
       status= PDFHummus::eFailure;
       break;
     }
-    PDFObjectCastPtr<PDFDictionary> d_2 (
-        d_1->QueryDirectObject ("EmbeddedFiles"));
+
+    PDFObjectCastPtr<PDFDictionary> d_2 (d_1->QueryDirectObject ("EmbeddedFiles"));
     if (!d_2) {
-      if (DEBUG_CONVERT) debug_convert << "Can't find d2. fail\n";
+      if (DEBUG_CONVERT) debug_convert << "Can't find /Names/EmbeddedFiles dictionary. fail\n";
       status= PDFHummus::eFailure;
       break;
     }
 
     PDFObjectCastPtr<PDFArray> arr (d_2->QueryDirectObject ("Names"));
     if (!arr) {
-      if (DEBUG_CONVERT) debug_convert << "Can't find arr. fail\n";
+      if (DEBUG_CONVERT) debug_convert << "Can't find /Names/EmbeddedFiles/Names array. fail\n";
       status= PDFHummus::eFailure;
       break;
     }
+
     unsigned long n= arr->GetLength ();
     // Every two elements in the array represent an attachment
     if (n == 0) {
@@ -152,7 +153,7 @@ extract_attachments_from_pdf (url pdf_path, list<url>& names) {
       names= names * attachment_path;
       delete streamReader;
     }
-  } while (0);
+  } while (false);
   if (status == PDFHummus::eFailure) return false;
   else return true;
 }
@@ -214,10 +215,10 @@ get_url_image_or_include_tree (tree t, url path) {
     return pre_url;
   }
   else {
-    if (DEBUG_CONVERT)
-      debug_convert << t << " image or include tree format wrong\n" << LF;
-    return url ();
+    if (is_func(t, INCLUDE) && (DEBUG_CONVERT))
+      debug_convert << t << " include tree format wrong\n" << LF;
   }
+  return url ();
 }
 
 // Pass in a tree with style label.
@@ -267,7 +268,8 @@ get_linked_file_paths (tree t, url path) {
   array<url> tm_and_linked_file;
   string     label= get_label (t);
   if (label == "image" || label == "include") {
-    tm_and_linked_file << get_url_image_or_include_tree (t, path);
+    url incl_url= get_url_image_or_include_tree (t, path);
+    if (incl_url != url ()) tm_and_linked_file << incl_url;
     return tm_and_linked_file;
   }
   if (label == "style") return get_url_style_tree (t, path);
@@ -305,8 +307,8 @@ replace_url_image_or_include_tree (tree t, url path) {
     t[0]->label= string (name);
   }
   else {
-    if (DEBUG_CONVERT)
-      debug_convert << t << " image or include tree format wrong\n" << LF;
+    if (is_func(t, INCLUDE) && (DEBUG_CONVERT))
+      debug_convert << t << " include tree format wrong\n" << LF;
   }
   return t;
 }
