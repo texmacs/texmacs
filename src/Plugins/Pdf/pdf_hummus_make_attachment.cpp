@@ -19,7 +19,7 @@
 #include "PDFWriter/SafeBufferMacrosDefs.h"
 #include "PDFWriter/Trace.h"
 #include "file.hpp"
-//#include "tm_debug.hpp"
+
 using namespace PDFHummus;
 using namespace IOBasicTypes;
 
@@ -68,27 +68,27 @@ bool
 pdf_hummus_make_attachments (url pdf_path, array<url> attachment_paths,
                              url out_path) {
   if (N (attachment_paths) == 0) {
-    if (DEBUG_CONVERT) debug_convert << "N (attachment_paths) is 0\n";
+    if (DEBUG_CONVERT) debug_convert << "N (attachment_paths) is 0" << LF;
     return false;
   }
   for (int i= 0; i < N (attachment_paths); i++) {
     if (!is_regular (attachment_paths[i])) {
       if (DEBUG_CONVERT)
-        debug_convert << attachment_paths[i] << " is not regular\n";
+        debug_convert << attachment_paths[i] << " is not regular" << LF;
       return false;
     }
   }
   if (!is_regular (pdf_path)) {
-    if (DEBUG_CONVERT) debug_convert << pdf_path << " is not regular\n";
+    if (DEBUG_CONVERT) debug_convert << pdf_path << " is not regular" << LF;
     return false;
   }
 
-  PDFWriter   pdfWriter;
+  PDFWriter           pdfWriter;
   PDFAttachmentWriter attachmentWriter (&pdfWriter);
-  EStatusCode status;
+  EStatusCode         status;
   do {
     status= pdfWriter.ModifyPDF (as_charp (as_string (pdf_path)), ePDFVersion16,
-                                 as_charp (as_string (out_path)), LogConfiguration(true, false, "PDFWriterLog.txt"));
+                                 as_charp (as_string (out_path)));
 
     if (status != eSuccess) {
       if (DEBUG_CONVERT)
@@ -102,12 +102,12 @@ pdf_hummus_make_attachments (url pdf_path, array<url> attachment_paths,
 
       if (status != PDFHummus::eSuccess) {
         if (DEBUG_CONVERT)
-          debug_convert << "failed to open " << attachment_path << "\n";
+          debug_convert << "failed to open " << attachment_path << LF;
         continue;
       }
       else {
         if (DEBUG_CONVERT)
-          debug_convert << "success to open " << attachment_path << "\n";
+          debug_convert << "success to open " << attachment_path << LF;
       }
 
       LongFilePositionType file_size= tm_file_stream.GetFileSize ();
@@ -122,23 +122,23 @@ pdf_hummus_make_attachments (url pdf_path, array<url> attachment_paths,
       status= attachmentWriter.AttachToAllPage (aAttachment);
       if (status != eSuccess) {
         if (DEBUG_CONVERT)
-          debug_convert << "fail to attach " << attachment_path << "\n";
+          debug_convert << "fail to attach " << attachment_path << LF;
         continue;
       }
       else {
         if (DEBUG_CONVERT)
-          debug_convert << "success to attach " << attachment_path << "\n";
+          debug_convert << "success to attach " << attachment_path << LF;
       }
     }
     status= pdfWriter.EndPDF ();
   } while (false);
 
   if (eSuccess == status) {
-    if (DEBUG_CONVERT) debug_convert << "Succeeded in creating PDF file\n";
+    if (DEBUG_CONVERT) debug_convert << "Succeeded in creating PDF file" << LF;
     return true;
   }
   else {
-    if (DEBUG_CONVERT) debug_convert << "Failed in creating PDF file\n";
+    if (DEBUG_CONVERT) debug_convert << "Failed in creating PDF file" << LF;
     return false;
   }
 }
@@ -152,7 +152,7 @@ PDFAttachment::PDFAttachment (string attachment_path) {
   InputFileStream tm_file_stream;
   EStatusCode     status= tm_file_stream.Open (as_charp (attachment_path));
   if (status != PDFHummus::eSuccess) {
-    if (DEBUG_CONVERT) debug_convert << "failed to open tm\n";
+    if (DEBUG_CONVERT) debug_convert << "failed to open tm" << LF;
     return;
   }
 
@@ -182,11 +182,12 @@ PDFAttachmentWriter::PDFAttachmentWriter (PDFWriter* inPDFWriter) {
   ListenOnCatalogWrite ();
 }
 
-bool 
-PDFAttachmentWriter::IsCatalogUpdateRequiredForModifiedFile (PDFParser* inModifiderFileParser) {
+bool
+PDFAttachmentWriter::IsCatalogUpdateRequiredForModifiedFile (
+    PDFParser* inModifiderFileParser) {
   (void) inModifiderFileParser;
   // we require to write a catalog only if we have attachments to add
-  return (N (mAttachment) != 0); 
+  return (N (mAttachment) != 0);
 }
 
 void
@@ -208,7 +209,8 @@ PDFAttachmentWriter::OnCatalogWrite (
     ObjectsContext*     inPDFWriterObjectContext,
     DocumentContext*    inPDFWriterDocumentContext) {
 
-  if (DEBUG_CONVERT) debug_convert << "Populating the EmbeddedFiles dictionary\n";
+  if (DEBUG_CONVERT)
+    debug_convert << "Populating the EmbeddedFiles dictionary" << LF;
 
   if (N (mAttachment) == 0) return eSuccess;
 
