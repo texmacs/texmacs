@@ -235,6 +235,25 @@
 ;; The File menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (wrapped-import-pdf-embeded-with-tm tem-pdf)
+  (let* ((tem-dir (url-temp-dir))
+         (tem-tm (url-append tem-dir "tem.tm"))
+         (tem-tm2 (url-append tem-dir "extracted.tm")))
+    (if (extract-attachments tem-pdf)
+        (begin
+          (string-save
+            (serialize-texmacs
+              (pdf-replace-linked-path
+                (tree-import (url-relative tem-tm (pdf-get-attached-main-tm tem-pdf)) "texmacs")
+                tem-pdf))
+            tem-tm2)
+          (load-buffer tem-tm2))
+        (begin
+          (notify-now "Can not extract attachments from PDF")
+          (texmacs-error "pdf" "Can not extract attachments from PDF")))))
+
+
+
 (menu-bind file-menu
   ("New" (new-document))
   ("Load" (open-document))
@@ -251,11 +270,14 @@
   (link print-menu)
   ---
   (-> "Import"
-      (link import-import-menu))
+      (link import-import-menu)
+      ---
+      ("Pdf with embedded document" (choose-file wrapped-import-pdf-embeded-with-tm "Import pdf file" "pdf")))
   (-> "Export"
       (link export-export-menu)
       ---
       ("Pdf" (choose-file wrapped-print-to-file "Save pdf file" "pdf"))
+      ("Pdf with embedded document" (choose-file wrapped-print-to-pdf-embeded-with-tm "Save pdf file" "pdf"))
       ("Postscript"
        (choose-file wrapped-print-to-file "Save postscript file" "postscript"))
       (when (selection-active-any?)

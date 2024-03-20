@@ -648,7 +648,7 @@
 (tm-define (parse-html-snippet s)
   (htmltm-parse s))
 
-(tm-define (parse-html-document s)
+(tm-define ( parse-html-documents)
   `(!file ,(htmltm-parse s)))
 
 (define (convert-html-texmacs html)
