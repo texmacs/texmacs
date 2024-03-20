@@ -7231,6 +7231,15 @@ tmg_url_temp () {
 }
 
 tmscm
+tmg_url_temp_dir () {
+  // TMSCM_DEFER_INTS;
+  url out= url_temp_dir ();
+  // TMSCM_ALLOW_INTS;
+
+  return url_to_tmscm (out);
+}
+
+tmscm
 tmg_url_scratch (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "url-scratch");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "url-scratch");
@@ -10160,6 +10169,94 @@ tmg_bib_abbreviate (tmscm arg1, tmscm arg2, tmscm arg3) {
   return scheme_tree_to_tmscm (out);
 }
 
+tmscm
+tmg_extract_attachments (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "extract-attachments");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= scm_extract_attachments (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_pdf_make_attachments (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "pdf-make-attachments");
+  TMSCM_ASSERT_ARRAY_URL (arg2, TMSCM_ARG2, "pdf-make-attachments");
+  TMSCM_ASSERT_URL (arg3, TMSCM_ARG3, "pdf-make-attachments");
+
+  url in1= tmscm_to_url (arg1);
+  array_url in2= tmscm_to_array_url (arg2);
+  url in3= tmscm_to_url (arg3);
+
+  // TMSCM_DEFER_INTS;
+  bool out= pdf_hummus_make_attachments (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_pdf_get_linked_file_paths (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "pdf-get-linked-file-paths");
+  TMSCM_ASSERT_URL (arg2, TMSCM_ARG2, "pdf-get-linked-file-paths");
+
+  tree in1= tmscm_to_tree (arg1);
+  url in2= tmscm_to_url (arg2);
+
+  // TMSCM_DEFER_INTS;
+  array_url out= get_linked_file_paths (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return array_url_to_tmscm (out);
+}
+
+tmscm
+tmg_pdf_replace_linked_path (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "pdf-replace-linked-path");
+  TMSCM_ASSERT_URL (arg2, TMSCM_ARG2, "pdf-replace-linked-path");
+
+  tree in1= tmscm_to_tree (arg1);
+  url in2= tmscm_to_url (arg2);
+
+  // TMSCM_DEFER_INTS;
+  tree out= replace_with_relative_path (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
+tmg_pdf_get_attached_main_tm (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "pdf-get-attached-main-tm");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  url out= get_main_tm (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return url_to_tmscm (out);
+}
+
+tmscm
+tmg_array_url_append (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "array-url-append");
+  TMSCM_ASSERT_ARRAY_URL (arg2, TMSCM_ARG2, "array-url-append");
+
+  url in1= tmscm_to_url (arg1);
+  array_url in2= tmscm_to_array_url (arg2);
+
+  // TMSCM_DEFER_INTS;
+  array_url out= append (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return array_url_to_tmscm (out);
+}
+
 void
 initialize_glue_basic () {
   tmscm_install_procedure ("texmacs-version-release",  tmg_texmacs_version_release, 1, 0, 0);
@@ -10697,6 +10794,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("url-size",  tmg_url_size, 1, 0, 0);
   tmscm_install_procedure ("url-last-modified",  tmg_url_last_modified, 1, 0, 0);
   tmscm_install_procedure ("url-temp",  tmg_url_temp, 0, 0, 0);
+  tmscm_install_procedure ("url-temp-dir",  tmg_url_temp_dir, 0, 0, 0);
   tmscm_install_procedure ("url-scratch",  tmg_url_scratch, 3, 0, 0);
   tmscm_install_procedure ("url-scratch?",  tmg_url_scratchP, 1, 0, 0);
   tmscm_install_procedure ("url-cache-invalidate",  tmg_url_cache_invalidate, 1, 0, 0);
@@ -10905,4 +11003,10 @@ initialize_glue_basic () {
   tmscm_install_procedure ("bib-empty?",  tmg_bib_emptyP, 2, 0, 0);
   tmscm_install_procedure ("bib-field",  tmg_bib_field, 2, 0, 0);
   tmscm_install_procedure ("bib-abbreviate",  tmg_bib_abbreviate, 3, 0, 0);
+  tmscm_install_procedure ("extract-attachments",  tmg_extract_attachments, 1, 0, 0);
+  tmscm_install_procedure ("pdf-make-attachments",  tmg_pdf_make_attachments, 3, 0, 0);
+  tmscm_install_procedure ("pdf-get-linked-file-paths",  tmg_pdf_get_linked_file_paths, 2, 0, 0);
+  tmscm_install_procedure ("pdf-replace-linked-path",  tmg_pdf_replace_linked_path, 2, 0, 0);
+  tmscm_install_procedure ("pdf-get-attached-main-tm",  tmg_pdf_get_attached_main_tm, 1, 0, 0);
+  tmscm_install_procedure ("array-url-append",  tmg_array_url_append, 2, 0, 0);
 }
