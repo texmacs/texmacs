@@ -600,6 +600,7 @@
   (url-size file_size (int url))
   (url-last-modified last_modified (int url))
   (url-temp url_temp (url))
+  (url-temp-dir url_temp_dir (url))
   (url-scratch url_scratch (url string string int))
   (url-scratch? is_scratch (bool url))
   (url-cache-invalidate web_cache_invalidate (void url))
@@ -834,4 +835,15 @@
   (bib-empty? bib_empty (bool scheme_tree string))
   (bib-field bib_field (scheme_tree scheme_tree string))
   (bib-abbreviate bib_abbreviate
-		  (scheme_tree scheme_tree scheme_tree scheme_tree)))
+		  (scheme_tree scheme_tree scheme_tree scheme_tree))
+      
+  ;; pdf-tm support
+  (extract-attachments scm_extract_attachments (bool url))
+  (pdf-make-attachments pdf_hummus_make_attachments (bool url array_url url))
+  (pdf-get-linked-file-paths get_linked_file_paths (array_url tree url))
+  (pdf-replace-linked-path replace_with_relative_path (tree tree url))
+  (pdf-get-attached-main-tm get_main_tm (url url))
+  
+  ;; utilities
+  (array-url-append append (array_url url array_url))
+  )

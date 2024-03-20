@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (texmacs texmacs tm-print)
-  (:use (texmacs texmacs tm-files)))
+  (:use (texmacs texmacs tm-files) (utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Try to obtain the papersize in this order from
@@ -102,6 +102,49 @@
         (switch-to-buffer cur)
         (buffer-close buf))
       (print-to-file fname)))
+
+(tm-define (wrapped-print-to-pdf-embeded-with-tm fname)
+    (unless (string=? (url-suffix fname) "pdf")
+      (texmacs-error "Wrapped-print-to-pdf-embeded-with-tm" "fname is not a pdf"))
+    (if (screens-buffer?)
+      (let* ((cur (current-buffer))
+             (buf (buffer-new)))
+        (buffer-copy cur buf)
+        (buffer-set-master buf cur)
+        (switch-to-buffer buf)
+        (set-drd cur)
+        (dynamic-make-slides)
+        (print-to-file fname)
+        (unless (attach-doc-to-exported-pdf fname)
+          (notify-now "Fail to attach tm to pdf"))
+        (switch-to-buffer cur)
+        (buffer-close buf))
+      (begin
+      (print-to-file fname)
+      (unless (attach-doc-to-exported-pdf fname)
+          (notify-now "Fail to attach tm to pdf")))))
+
+(tm-define (attach-doc-to-exported-pdf fname)
+  (let* ((tem-url (buffer-new))
+         (new-url (url-relative tem-url (string-append (url-basename fname) ".tm")))
+         (cur-url (current-buffer-url))
+         (cur-tree (buffer-get cur-url))
+         (linked-file (pdf-get-linked-file-paths cur-tree cur-url))
+         (linked-file-with-main (array-url-append new-url linked-file))
+         (new-tree (pdf-replace-linked-path cur-tree cur-url)))
+    (buffer-rename tem-url new-url)
+    (buffer-copy cur-url new-url)
+    ;; copy also attachments and auxiliary data
+    (with-buffer cur-url
+      (let* ((attl (list-attachments)) 
+             (atts (map get-attachment attl))
+             (auxl (list-auxiliaries))
+             (auxs (map get-auxiliary auxl)))
+        (with-buffer new-url
+          (for-each set-attachment attl atts)
+          (for-each set-auxiliary auxl auxs))))
+    (buffer-save new-url)
+    (pdf-make-attachments fname linked-file-with-main fname)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Printing commands
