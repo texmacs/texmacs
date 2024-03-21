@@ -39,4 +39,3 @@ class CaptureStdout:
             except Exception as e:
                 traceback.print_exc (file = os.sys.stdout, limit = 0)
             return capt.getOutput()
-
