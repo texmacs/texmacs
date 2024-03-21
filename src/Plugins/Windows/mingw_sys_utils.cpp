@@ -13,6 +13,8 @@
 #include "analyze.hpp"
 #include "tm_timer.hpp"
 #include "spawn.hpp"
+#include "Windows/win-utf8-compat.hpp"
+
 
 static void
 _unix_system_warn (pid_t pid, ::string which, ::string msg) {
@@ -107,4 +109,28 @@ mingw_system (::array< ::string> arg,
   for (int i= 0; i < n_out; ++i)
     (*(str_out[i])) << ::string(str[i].data (), str[i].length ()); 
   return (wret);
+}
+
+namespace sys_utils {
+
+#ifndef SECURITY_WIN32
+#define SECURITY_WIN32
+#endif
+#include <basetsd.h>
+#include <wtypesbase.h>
+#include <ntsecapi.h>
+#include <secext.h>
+
+  ::string mingw_get_username () {
+    const int MAX_LEN= 100;
+    WCHAR buffer[MAX_LEN];
+    DWORD len;
+
+    // This API must be called twice, otherwise it returns an empty use name
+    GetUserNameExW (NameDisplay, buffer, &len);
+    GetUserNameExW (NameDisplay, buffer, &len);
+
+    if (len == 0) return ::string ("");
+    else return ::string (nowide::narrow(buffer).c_str());
+  }
 }
