@@ -33,7 +33,8 @@
   cdaaar cdaadr cdadar cdaddr cddaar cddadr cdddar cddddr
   cons list append length reverse
   texmacs-version texmacs-version-release*
-  display display*)
+  display display*
+  refresh-now)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Secure evaluation
@@ -57,6 +58,12 @@
 
 (define (secure-lambda? args env)
   (secure-args? (cdr args) (local-env env (car args))))
+
+(define (secure-with args env)
+  (and (>= (length args) 3)
+       (symbol? (car args))
+       (secure-expr? (cadr args) env)
+       (secure-args? (cddr args) (local-env env (list (car args))))))
 
 (define (secure-quasiquote? args env)
   (cond ((npair? args) #t)
@@ -91,7 +98,9 @@
   (cond ,secure-cond?)
   (if ,secure-args?)
   (lambda ,secure-lambda?)
-  (or ,secure-args?))
+  (or ,secure-args?)
+  (set! ,secure-args?)
+  (with ,secure-with))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
@@ -101,3 +110,7 @@
   "Test whether it is secure to evaluate the expression @expr"
   (or (secure-expr? expr '())
       (and (lazy-plugin-force) (secure-expr? expr '()))))
+
+(define-public (secure-eval expr)
+  "Evaluate @expr only when it is secure to do so"
+  (and (secure? expr) (eval expr)))

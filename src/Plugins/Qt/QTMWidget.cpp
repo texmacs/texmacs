@@ -192,12 +192,20 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_widget _tmwid)
   if (DEBUG_QT)
     debug_qt << "Creating " << from_qstring(objectName()) << " of widget "
              << (tm_widget() ? tm_widget()->type_as_string() : "NULL") << LF;
+  //part 1/2 of the fix for 43373
+  if (!isEmbedded ())
+    QApplication::postEvent(this, new QFocusEvent(QEvent::FocusIn, Qt::OtherFocusReason));
 }
 
 QTMWidget::~QTMWidget () {
   if (DEBUG_QT)
     debug_qt << "Destroying " << from_qstring(objectName()) << " of widget "
              << (tm_widget() ? tm_widget()->type_as_string() : "NULL") << LF;
+}
+
+bool
+QTMWidget::isEmbedded () const {
+  return tm_widget() -> is_embedded_widget ();
 }
 
 qt_simple_widget_rep*
@@ -529,7 +537,7 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     if (!done) {
       if (DEBUG_QT)
         debug_qt << "IM committing: " << commit_string.toUtf8().data() << LF;
-      if (preediting && get_preference ("speech", "off") == "off")
+      if (preediting || get_preference ("speech", "off") == "off")
         for (int i = 0; i < commit_string.size(); ++i)
           kbdEvent (0, Qt::NoModifier, commit_string[i]);
       else {
@@ -828,6 +836,13 @@ QTMWidget::focusInEvent (QFocusEvent * event) {
     the_gui->process_keyboard_focus (tm_widget(), true, texmacs_time());
   }
   QTMScrollView::focusInEvent (event);
+  // part 2/2 of the fix for bug 43373.
+  if (!isEmbedded ()) {
+    if (!isActiveWindow()) activateWindow();
+    if (isActiveWindow() && !hasFocus()) setFocus (Qt::OtherFocusReason);
+    //=> this will send us back here...
+    //This redundancy is weird but definitely needed to properly get focus with Qt >= 5.15. Qt bug?
+  }
 }
 
 void
@@ -1004,10 +1019,16 @@ QTMWidget::wheelEvent(QWheelEvent *event) {
                               mstate, texmacs_time (), data);
   }
   else if (QApplication::keyboardModifiers() == Qt::ControlModifier) {
-    if (event->delta() > 0)
-      call ("zoom-in", object (sqrt (sqrt (2.0))));
-    else
-      call ("zoom-out", object (sqrt (sqrt (2.0))));
+    if (event->delta() > 0) {
+      //double x= exp (((double) event->delta ()) / 500.0);
+      //call ("zoom-in", object (x));
+      call ("zoom-in", object (sqrt (sqrt (sqrt (sqrt (2.0))))));
+    }
+    else {
+      //double x= exp (-((double) event->delta ()) / 500.0);
+      //call ("zoom-out", object (x));
+      call ("zoom-out", object (sqrt (sqrt (sqrt (sqrt (2.0))))));
+    }
   }
   else QAbstractScrollArea::wheelEvent (event);
 }

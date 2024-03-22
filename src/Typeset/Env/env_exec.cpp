@@ -254,6 +254,10 @@ edit_env_rep::exec (tree t) {
     if (N(t) < 2)
       return tree (ERROR, "invalid mark");
     return tree (MARK, copy (t[0]), exec (t[1]));
+  case VAR_MARK:
+    if (N(t) < 2)
+      return tree (ERROR, "invalid mark*");
+    return tree (VAR_MARK, copy (t[0]), exec (t[1]));
   case EXPAND_AS:
     if (N(t) < 2)
       return tree (ERROR, "invalid expand-as");
@@ -2337,6 +2341,7 @@ edit_env_rep::exec_until (tree t, path p) {
     exec_until_compound (t, p);
     return;
   case MARK:
+  case VAR_MARK:
     if (p->item == 1) exec_until (t[1], p->next);
     return;
   case STYLE_WITH:
@@ -2537,6 +2542,7 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
     (void) exec (t);
     return false;
   case MARK:
+  case VAR_MARK:
     return exec_until_mark (t, p, var, level);
   case EVAL:
     return exec_until (exec (t), p, var, level);

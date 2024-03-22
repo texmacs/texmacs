@@ -24,7 +24,7 @@
   (== version-grain w))
 
 (tm-define (version-set-grain w)
-  (:synopsis "Set versioning grain.")
+  (:synopsis "Set versioning grain")
   (:argument w "detailed")
   (:check-mark "*" version-test-grain?)
   (set-preference "versioning grain" w)

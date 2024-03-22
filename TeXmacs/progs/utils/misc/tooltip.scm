@@ -58,7 +58,7 @@
     (:pause 250)
     (when (and tooltip-unmap? (== tooltip-unmap? tooltip-win))
       (tooltip-unmap))))
-  
+
 (tm-define (keyboard-press key time)
   (:require (and tooltip-win (not tooltip-unmap?)))
   (when (== (cAr tooltip-settings) "keyboard")
@@ -74,10 +74,19 @@
            (dx (quotient (abs (- xx mx)) 256))
            (dy (quotient (abs (- yy my)) 256))
            (d  (* 5 256)))
+      ;;(display* "  Type        " type "\n")
+      ;;(display* "  Shift       "
+      ;;          (quotient (inexact->exact (round (/ sx (/ 5.0 zf)))) 256) ", "
+      ;;          (quotient (inexact->exact (round (/ sy (/ 5.0 zf)))) 256) "\n")
+      ;;(display* "  Zoom        " zf "\n")
+      ;;(display* "  Decoded as  " (quotient xx 256) ", " (quotient yy 256) "\n")
+      ;;(display* "  Bottom left " (quotient x1 256) ", " (quotient y1 256) "\n")
+      ;;(display* "  Top right   " (quotient x2 256) ", " (quotient y2 256) "\n")
+      ;;(display* "  Delta       " dx ", " dy "\n")
       (when (or (!= key "move")
                 (< xx (- x1 d)) (> xx (+ x2 d))
                 (< yy (- y1 d)) (> yy (+ y2 d))
-                (> dx 10) (> dy 10))
+                (and (== type "mouse") (or (> dx 10) (> dy 10))))
         (when (!= type "keyboard")
           (tooltip-delayed-unmap)))))
   (former key x y mods time data))
@@ -137,7 +146,7 @@
   (with (bw bh) bsz
     (with (sw sh) ssz
       (with (mx my) mpos
-        (cond ((== type "mouse")
+        (cond ((in? type '("mouse" "mouse*"))
                (tooltip-position x1 y1 x2 y2 wx wy bsz ssz mpos
                                  (string-append "mouse-" ha)
                                  (string-append "mouse-" va)

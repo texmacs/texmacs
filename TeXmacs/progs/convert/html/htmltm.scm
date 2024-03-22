@@ -648,7 +648,7 @@
 (tm-define (parse-html-snippet s)
   (htmltm-parse s))
 
-(tm-define (parse-html-document s)
+(tm-define ( parse-html-documents)
   `(!file ,(htmltm-parse s)))
 
 (define (convert-html-texmacs html)
@@ -664,5 +664,5 @@
 
 (tm-define (html->texmacs html)
   (:type (-> stree stree))
-  (:synopsis "Convert a parsed HTML stree @t into a TeXmacs stree.")
+  (:synopsis "Convert a parsed HTML stree @t into a TeXmacs stree")
   (tree->stree (clean-html (convert-html-texmacs html))))

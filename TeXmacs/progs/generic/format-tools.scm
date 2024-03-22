@@ -60,14 +60,6 @@
 (tm-define (window-id win)
   (url->string (url-tail win)))
 
-(define tool-key-table (make-ahash-table))
-
-(tm-define (tool-ref key)
-  (ahash-ref tool-key-table key))
-
-(tm-define (tool-set key val)
-  (ahash-set! tool-key-table key val))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Paragraph properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -123,7 +115,7 @@
                   (cons-new (window-get-env win "par-columns-sep" mode)
                             '("1fn" "2fn" "3fn" ""))
                   (window-get-env win "par-columns-sep" mode) "10em"))))
-      (assuming (tool-ref (list win mode "advanced paragraph"))
+      (assuming (global-ref win mode :advanced)
         (item ====== ======)
         (item === ===)
         (item (text "Line breaking:")
@@ -196,18 +188,27 @@
           ("Restore defaults"
            (apply window-reset-init (cons win paragraph-parameters))))
         >>
-        (assuming (not (tool-ref (list win mode "advanced paragraph")))
+        (assuming (not (global-ref win mode :advanced))
           ("Show advanced settings"
            (begin
-             (tool-set (list win mode "advanced paragraph") #t)
+             (global-set win mode :advanced #t)
              (refresh-now "paragraph tool")
              (update-menus))))
-        (assuming (tool-ref (list win mode "advanced paragraph"))
+        (assuming (global-ref win mode :advanced)
           ("Hide advanced settings"
            (begin
-             (tool-set (list win mode "advanced paragraph") #f)
+             (global-set win mode :advanced #f)
              (refresh-now "paragraph tool")
              (update-menus))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; This page format tool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-tool* (format-page-tool win u st t)
+  (:name "This page format")
+  (dynamic ((page-formatter u st t #f)
+            (tool-quit 'format-page-tool #f win))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global Page format
@@ -252,7 +253,8 @@
     (aligned
       (item (text "Page rendering:")
         (enum (window-set-page-rendering win (encode-rendering answer))
-              '("paper" "papyrus" "screen" "beamer" "book" "panorama")
+              '("paper" "papyrus" "screen" "beamer" "book"
+                "panorama" "slideshow")
               (decode-rendering (window-get-page-rendering win)) "10em"))
       (item (text "Page type:")
         (enum (begin
@@ -570,30 +572,26 @@
 
 (tm-widget (page-headers-tool win)
   (let* ((u (window->buffer win))
-         (style (list-remove-duplicates
-                 (rcons (get-style-list) "macro-editor"))))
+         (style (embedded-style-list "macro-editor")))
     (for (var header-parameters)
       ======
       (text (eval (parameter-name var)))
       ===
       (cached (string-append "edit-" var) (synchronize win var)
-        (resize "400px" "60px"
+        (resize "330px" "60px"
           (texmacs-input `(document ,(initial-get-tree u var))
-                         `(style (tuple ,@style))
+                         `(style (tuple ,@style "gui-base"))
                          (header-buffer win var))))))
   ====== ===
-  (hlist
-    (text "Insert:")
-    // //
-    ("Tab" (when (editing-headers? win) (make-htab "5mm")))
-    // //
-    ("Page number" (when (editing-headers? win) (make 'page-the-page)))
-    >>>
-    ("Restore" (apply window-reset-init (cons win header-parameters)))
-    // //
-    ("Apply"
-     (apply-headers-settings win (window->buffer win))
-     (with-window win (update-menus)))))
+  (division "plain"
+    (hlist
+      ("Tab" (when (editing-headers? win) (make-htab "5mm")))
+      ("Page number" (when (editing-headers? win) (make 'page-the-page)))
+      >>>
+      ("Restore" (apply window-reset-init (cons win header-parameters)))
+      ("Apply"
+       (apply-headers-settings win (window->buffer win))
+       (with-window win (update-menus))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Public tools
@@ -607,23 +605,19 @@
   (:name "Global paragraph format")
   (dynamic (paragraph-basic-tool win :global)))
 
-(tm-tool (document-page-tool win)
-  (:name "Page format")
-  (dynamic (page-format-tool win)))
+(tm-tool* (document-page-tool win)
+  (:name "Global page format")
+  (section-tabs "document-page-tabs" win
+    (section-tab "Format" ===
+      (centered (dynamic (page-format-tool win))))
+    (section-tab "Breaking" ===
+      (centered (dynamic (page-breaking-tool win))))
+    (section-tab "Margins" ===
+      (centered (dynamic (page-margins-tool win))))
+    (section-tab "Headers" ===
+      (centered (dynamic (page-headers-tool win))))))
 
-(tm-tool (document-breaking-tool win)
-  (:name "Page breaking")
-  (dynamic (page-breaking-tool win)))
-
-(tm-tool (document-margins-tool win)
-  (:name "Page margins")
-  (dynamic (page-margins-tool win)))
-
-(tm-tool (document-headers-tool win)
-  (:name "Page headers and footers")
-  (dynamic (page-headers-tool win)))
-
-(tm-widget (texmacs-side-tool win tool)
+(tm-widget (texmacs-side-tool win tool . opts)
   (:require (== (car tool) 'sections-tool))
   (division "sections"
     (hlist
@@ -639,7 +633,7 @@
     (dynamic (page-headers-tool win))
     ======))
 
-(tm-widget (texmacs-side-tool win tool)
+(tm-widget (texmacs-side-tool win tool . opts)
   (:require (== (car tool) 'subsections-tool))
   (division "sections"
     (hlist

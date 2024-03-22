@@ -1352,6 +1352,8 @@
 ((KpMath Bold) (Greek MathSymbols MathLetters mono=no sans=no slant=0 italic=no case=mixed regular=yes ex=74 em=212 lvw=31 lhw=10 uvw=33 uhw=12 fillp=43 vcnt=39 lasprat=120 pasprat=105 loasc=164 lodes=163 dides=104))
 ((KpMath Light) (Greek MathSymbols MathLetters mono=no sans=no slant=0 italic=no case=mixed regular=yes ex=73 em=209 lvw=17 lhw=6 uvw=19 uhw=8 fillp=28 vcnt=25 lasprat=116 pasprat=100 loasc=164 lodes=160 dides=104))
 ((KpMath Regular) (Greek MathSymbols MathLetters mono=no sans=no slant=0 italic=no case=mixed regular=yes ex=74 em=206 lvw=21 lhw=8 uvw=22 uhw=9 fillp=32 vcnt=29 lasprat=115 pasprat=100 loasc=162 lodes=159 dides=104))
+((KpMath Sans) (Greek MathSymbols MathLetters mono=no sans=yes slant=0 italic=no case=mixed regular=yes ex=74 em=174 lvw=18 lhw=12 uvw=20 uhw=13 fillp=37 vcnt=30 lasprat=112 pasprat=93 loasc=145 lodes=143 dides=102))
+((KpMath SansBold) (Greek MathSymbols MathLetters mono=no sans=yes slant=0 italic=no case=mixed regular=yes ex=74 em=187 lvw=24 lhw=16 uvw=27 uhw=17 fillp=45 vcnt=37 lasprat=118 pasprat=100 loasc=145 lodes=144 dides=102))
 ((KpMath Semibold) (Greek MathSymbols MathLetters mono=no sans=no slant=0 italic=no case=mixed regular=yes ex=75 em=209 lvw=26 lhw=9 uvw=29 uhw=10 fillp=38 vcnt=34 lasprat=118 pasprat=101 loasc=161 lodes=161 dides=104))
 ((KpMathSans Regular) (Greek MathSymbols MathLetters mono=no sans=yes slant=0 italic=no case=mixed regular=yes ex=74 em=174 lvw=18 lhw=12 uvw=20 uhw=13 fillp=37 vcnt=30 lasprat=112 pasprat=93 loasc=145 lodes=143 dides=102))
 ((KpMono Bold) (Ascii Latin mono=yes sans=yes slant=0 italic=no case=mixed regular=yes ex=75 em=117 lvw=22 lhw=9 uvw=24 uhw=13 fillp=44 vcnt=36 lasprat=117 pasprat=87 loasc=142 lodes=144 dides=104))

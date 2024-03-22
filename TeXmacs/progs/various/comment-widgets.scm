@@ -42,7 +42,7 @@
   (and-let* ((c (tm->stree (tree-innermost any-comment-context? #t)))
              (b (current-buffer-url))
              (u (string->url "tmfs://aux/edit-comment"))
-             (packs (get-style-list))
+             (packs (embedded-style-list))
              (pre (document-get-preamble (buffer-tree)))
              (inits* (map cdr (cdr (tm->stree (get-all-inits)))))
              (inits (list-filter inits* allow-init?))

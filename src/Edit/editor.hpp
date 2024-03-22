@@ -609,6 +609,7 @@ public:
   virtual path the_shifted_path () = 0;
   virtual path the_buffer_path () = 0;
   virtual void show_tree () = 0;
+  virtual void show_box () = 0;
   virtual void show_env () = 0;
   virtual void show_path () = 0;
   virtual void show_cursor () = 0;

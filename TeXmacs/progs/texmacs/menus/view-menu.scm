@@ -28,6 +28,13 @@
 (tm-define toolbar-db-active? #f)
 (tm-define toolbar-animate-active? #f)
 
+(tm-define (extra-bottom-tools?)
+  (or toolbar-search-active?
+      toolbar-replace-active?
+      toolbar-spell-active?
+      toolbar-db-active?
+      toolbar-animate-active?))
+
 (tm-widget (texmacs-bottom-toolbars)
   (if toolbar-search-active?
       (link search-toolbar))
@@ -89,7 +96,7 @@
          (set! toolbar-db-active? val))
         ((== which "animate")
          (set! toolbar-animate-active? val)))
-  (show-bottom-tools 0 val))
+  (update-bottom-tools))
 
 (tm-define (toggle-bottom-bar which)
   (:check-mark "*" test-bottom-bar?)
@@ -109,6 +116,7 @@
   ("Full screen mode"  (toggle-full-screen-edit-mode))
   ("Presentation mode" (toggle-full-screen-mode))
   ("Show panorama" (toggle-panorama-mode))
+  ("Show all slides" (toggle-slideshow-mode))
   ("Remote control" (toggle-remote-control-mode))
   (assuming (os-macos?)
     ("Retina settings" (open-retina-settings)))
@@ -139,7 +147,9 @@
         ("User provided icons" (toggle-visible-icon-bar 3)))
   ("Status bar" (toggle-visible-footer))
   (if (with-developer-tool?)
-      ("Side tools" (toggle-visible-side-tools 0)))
+      ("Left side tools" (toggle-visible-side-tools 1))
+      ("Right side tools" (toggle-visible-side-tools 0))
+      ("GUI through markup" (toggle-markup-gui)))
   ---
   ("Search toolbar" (toggle-bottom-bar "search"))
   ("Replace toolbar" (toggle-bottom-bar "replace"))

@@ -240,9 +240,12 @@
 ;; Functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (compose g f)
-  "Compose the functions @f and @g"
-  (lambda x (g (apply f x))))
+
+(cond-expand (guile-3)
+  (else
+    (define-public (compose g f)
+      "Compose the functions @f and @g"
+      (lambda x (g (apply f x))))))
 
 (define-public (non pred?)
   "Return the negation of @pred?."

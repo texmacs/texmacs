@@ -488,6 +488,7 @@ concater_rep::typeset (tree t, path ip) {
     typeset_executable (t, ip);
     break;
   case MARK:
+  case VAR_MARK:
     typeset_mark (t, ip);
     break;
   case EXPAND_AS:
@@ -678,6 +679,9 @@ concater_rep::typeset (tree t, path ip) {
   case HLINK:
   case ACTION:
     typeset_compound (t, ip);
+    break;
+  case RELAY:
+    typeset_relay (t, ip);
     break;
   case SET_BINDING:
     typeset_set_binding (t, ip);

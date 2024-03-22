@@ -102,6 +102,8 @@ glyph move        (glyph gl, SI x, SI y);
 glyph bar_right   (glyph gl1, glyph gl2);
 glyph bar_bottom  (glyph gl1, glyph gl2);
 glyph copy        (glyph gl);
+glyph junc_left   (glyph gl, int jw);
+glyph junc_right  (glyph gl, int jw);
 glyph simplify    (glyph gl);
 glyph padded      (glyph gl, int l, int t, int r, int b);
 glyph clip        (glyph gl, SI x1, SI y1, SI x2, SI y3);

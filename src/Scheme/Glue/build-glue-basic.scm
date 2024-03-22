@@ -82,6 +82,8 @@
   (math-group-members math_group_members (array_string string))
   (math-symbol-type math_symbol_type (string string))
   (object->command as_command (command object))
+  (command-eval eval (void command))
+  (command-apply apply (void command object))
   (exec-delayed exec_delayed (void object))
   (exec-delayed-pause exec_delayed_pause (void object))
   (protected-call protected_call (void object))
@@ -598,6 +600,7 @@
   (url-size file_size (int url))
   (url-last-modified last_modified (int url))
   (url-temp url_temp (url))
+  (url-temp-dir url_temp_dir (url))
   (url-scratch url_scratch (url string string int))
   (url-scratch? is_scratch (bool url))
   (url-cache-invalidate web_cache_invalidate (void url))
@@ -762,6 +765,7 @@
   (tree-export export_tree (bool tree url string))
   (tree-load-style load_style_tree (tree string))
   (buffer-focus focus_on_buffer (bool url))
+  (buffer-focus* var_focus_on_buffer (bool url))
 
   (view-list get_all_views (array_url))
   (buffer->views buffer_to_views (array_url url))
@@ -831,4 +835,15 @@
   (bib-empty? bib_empty (bool scheme_tree string))
   (bib-field bib_field (scheme_tree scheme_tree string))
   (bib-abbreviate bib_abbreviate
-		  (scheme_tree scheme_tree scheme_tree scheme_tree)))
+		  (scheme_tree scheme_tree scheme_tree scheme_tree))
+      
+  ;; pdf-tm support
+  (extract-attachments scm_extract_attachments (bool url))
+  (pdf-make-attachments pdf_hummus_make_attachments (bool url array_url url))
+  (pdf-get-linked-file-paths get_linked_file_paths (array_url tree url))
+  (pdf-replace-linked-path replace_with_relative_path (tree tree url))
+  (pdf-get-attached-main-tm get_main_tm (url url))
+  
+  ;; utilities
+  (array-url-append append (array_url url array_url))
+  )

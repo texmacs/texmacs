@@ -57,9 +57,12 @@
 #endif
 
 typedef struct { int w; int h; int xmin; int ymin;} imgbox ;
-hashmap<tree,imgbox> img_box;
+static hashmap<tree,imgbox> img_box;
+
 // cache for storing image sizes
 // (for ps/eps we also store the image offset so that we have the full bbox info)
+
+
 
 /******************************************************************************
 * Loading xpm pixmaps
@@ -260,6 +263,11 @@ void
 clear_imgbox_cache(tree t){
     img_box->reset (t);
 }
+
+void
+clearall_imgbox_cache() {
+  img_box = hashmap<tree,imgbox> ();
+}
 /******************************************************************************
 * Getting the original size of an image, using internal plug-ins if possible
 ******************************************************************************/
@@ -428,10 +436,10 @@ image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
     qt_image_to_eps (image, eps, w_pt, h_pt, dpi);
     return;
   }
-  if ((s != "svg") && (s != "pnm") && call_scm_converter(image, eps)) return;
+  // if ((s != "svg") && (s != "pnm") && call_scm_converter(image, eps)) return;
   // if s is in {"jpg","jpeg","tif","gif","png","pnm"} then scheme converters
   // would return the call here (see init_images.scm) causing an infinite loop.
-  // Except pnm,the others are treated by qt.
+  // Except pnm,the others are treated by qt. NO LONGER TRUE with QT5 (depends on qt plugins) -- disabling this dangerous call
 #endif
   call_imagemagick_convert (image, eps, w_pt, h_pt, dpi);
 }
@@ -586,7 +594,7 @@ imagemagick_image_size(url image, int& w, int& h, bool pt_units) {
 #ifdef OS_MINGW
     cmd = sys_concretize(resolve_in_path(cmd));
 #endif
-    cmd << " -ping -format \"%w %h %x\\n%y\""; 
+    cmd << " -ping -format \"%w %h %x %U\\n%y\"";
     string sz= eval_system (cmd, image);
     int w_px, h_px, ok= true, pos= 0;
     string unit;

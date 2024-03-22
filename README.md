@@ -1,3 +1,22 @@
+# Build
+Arch user can use `aur/texmacs-guile3-git`. To build and install this package on
+ubuntu22 (ubuntu20 packaged an early version of guile3, newer ubuntu may be
+okay):
+
+```bash
+sudo apt update
+sudo apt install -y git cmake g++ guile-3.0 guile-3.0-dev libfreetype-dev \
+  qtbase5-dev libqt5svg5-dev libfreetype-dev libsqlite-dev libjpeg-dev \
+  libgmp-dev libltdl-dev libsqlite3-dev
+git clone https://github.com/hammerfunctor/texmacs.git texmacs-guile3 && cd texmacs-guile3
+cmake -Bbuild \
+  -DCMAKE_BUILD_TYPE=RELEASE \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -DBUILD_PRIO_GUILE3=YES
+cd build && make -j4
+sudo make install
+```
+
 # GNU TeXmacs
 [![Join the chat at https://gitter.im/texmacs/Lobby](https://badges.gitter.im/texmacs/Lobby.svg)](https://gitter.im/texmacs/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
