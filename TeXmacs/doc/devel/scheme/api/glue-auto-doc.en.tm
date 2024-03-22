@@ -4299,6 +4299,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(url-temp-dir)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|url_temp_dir> which returns
+    <scm|url>.
+  </explain>
+
+  <\explain>
     <scm|(url-scratch <scm-arg|string> <scm-arg|string> <scm-arg|int>)>
 <explain-synopsis|no synopsis>
   <|explain>
@@ -5960,6 +5968,54 @@ source code.
   <|explain>
     Calls the <c++> function <cpp|bib_abbreviate> which returns
     <scm|scheme_tree>.
+  </explain>
+
+  <\explain>
+    <scm|(extract-attachments <scm-arg|url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|scm_extract_attachments> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
+    <scm|(pdf-make-attachments <scm-arg|url> <scm-arg|array_url> <scm-arg|url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|pdf_hummus_make_attachments> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
+    <scm|(pdf-get-linked-file-paths <scm-arg|tree> <scm-arg|url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_linked_file_paths> which returns
+    <scm|array_url>.
+  </explain>
+
+  <\explain>
+    <scm|(pdf-replace-linked-path <scm-arg|tree> <scm-arg|url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|replace_with_relative_path> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
+    <scm|(pdf-get-attached-main-tm <scm-arg|url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_main_tm> which returns
+    <scm|url>.
+  </explain>
+
+  <\explain>
+    <scm|(array-url-append <scm-arg|url> <scm-arg|array_url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|append> which returns
+    <scm|array_url>.
   </explain>
 
   <\explain>
