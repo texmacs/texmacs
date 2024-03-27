@@ -1,4 +1,4 @@
-<TeXmacs|2.1.2>
+<TeXmacs|2.1.4>
 
 <style|<tuple|tmweb2|old-dots|old-lengths>>
 
@@ -40,23 +40,17 @@
   </cell>>|<row|<cell|<item-pic|../images/small-download.png>>|<\cell>
     <strong|Downloading <TeXmacs>>
 
-    Depending on the version of your GNU/<name|Linux> system, download one of
-    the following static binary distributions of GNU <TeXmacs>:
-
-    <\itemize>
-      <item><hlink|<TeXmacs> package for 32 bit GNU/<name|Linux>
-      distributions|<merge|https://www.texmacs.org/Download/ftp/tmftp/generic/|<TeXmacs-version-release|devel>|-B.tar.gz>>.
-
-      <item><hlink|<TeXmacs> package for 64 bit GNU/<name|Linux>
-      distributions|<merge|https://www.texmacs.org/Download/ftp/tmftp/generic/|<TeXmacs-version-release|devel>|-C.tar.gz>>.
-
-      <item>If the above packages do not work on your computer, then you may
-      try our <hlink|alternate <TeXmacs> package|<merge|https://www.texmacs.org/Download/ftp/tmftp/generic/|<TeXmacs-version-release|devel>|-A.tar.gz>>,
-      which should be suitable for older systems.
-    </itemize>
-
-    Notice that we only provide static binary packages for Intel or AMD based
+    Download the <hlink|<TeXmacs> package for 64 bit GNU/<name|Linux>
+    distributions|<merge|https://www.texmacs.org/Download/ftp/tmftp/generic/|<TeXmacs-version-release|devel>|-C.tar.gz>>.
+    Note that we only provide static binary packages for Intel or AMD based
     PC's.
+
+    For some older GNU/<name|Linux> distributions, you may try our
+    <hlink|package for 32 bit GNU/<name|Linux>
+    distributions|https://www.texmacs.org/Download/ftp/tmftp/generic/TeXmacs-2.1.1-B.tar.gz>
+    for the older version 2.1.1 of <TeXmacs>. For very old \ GNU/<name|Linux>
+    distributions you may finally try our <hlink|alternate <TeXmacs>
+    package|https://www.texmacs.org/Download/ftp/tmftp/generic/TeXmacs-2.1.1-A.tar.gz>.
   </cell>>|<row|<cell|<item-pic|../images/TeXmacs.png>>|<\cell>
     <strong|Unpacking <TeXmacs>>
 
