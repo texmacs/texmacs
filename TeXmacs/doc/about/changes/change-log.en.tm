@@ -1,4 +1,4 @@
-<TeXmacs|2.1.2>
+<TeXmacs|2.1.4>
 
 <style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
@@ -12,6 +12,8 @@
     (2.1.4).
 
     <item>Improved subtables (2.1.4).
+
+    <item>Added an AppImage for <TeXmacs> (2.1.4).
 
     <item>Progress towards side tools, experimental (2.1.4).
 
