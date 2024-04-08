@@ -76,12 +76,7 @@ qt_window_widget_rep::~qt_window_widget_rep ()
   if (DEBUG_QT)
     debug_qt << "Deleting qt_window_widget " << id << "\n";
   if (qwid) {
-#if defined(OS_MACOS)
     qwid->deleteLater(); // this caused bug 61884
-#else
-    notify_window_destroy (get_nickname ());
-    delete qwid;
-#endif
   }
 }
 
