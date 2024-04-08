@@ -101,7 +101,7 @@ clean_exit_on_segfault (int sig_num) {
 ******************************************************************************/
 
 void TeXmacs_init_font() {
-#ifdef QTTEXMACS && qt_no_fontconfig
+#if defined(QTTEXMACS) && defined(qt_no_fontconfig)
      string default_font_dir = get_env ("TEXMACS_PATH") * "/fonts/truetype/stix";
      string current_qt_qpa_fontdir = get_env ("QT_QPA_FONTDIR");
      if (is_empty(current_qt_qpa_fontdir)) {
