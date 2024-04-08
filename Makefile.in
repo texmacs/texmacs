@@ -470,7 +470,7 @@ MACOS_BUNDLE: TEXMACS
 	@echo ----------------------------------------------------
 	@echo TeXmacs has been bundled in $(MACOS_PACKAGE_APP)
 	@if test -n "@SIGNID@";then \
-		codesign --deep -s @SIGNID@ $(MACOS_PACKAGE_APP) &&\
+		codesign --timestamp --deep -s @SIGNID@ $(MACOS_PACKAGE_APP) &&\
 		echo "Bundle successfully signed" || echo "Signing failed"; fi
 
 
