@@ -58,6 +58,10 @@
 
 #if (QT_VERSION >= 0x050000)
 #include <QtPlugin>
+
+#ifdef qt_static_plugin_xcb
+Q_IMPORT_PLUGIN(QXcbIntegrationPlugin)
+#endif
 #ifdef qt_static_plugin_qjpeg
 Q_IMPORT_PLUGIN(qjpeg)
 #endif

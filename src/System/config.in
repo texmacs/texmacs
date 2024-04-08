@@ -266,6 +266,9 @@
 /* Guile string size type */
 #undef guile_str_size_t
 
+/* Qt without fontconfig */
+#undef qt_no_fontconfig
+
 /* If there is a static plugin qgif */
 #undef qt_static_plugin_qgif
 
@@ -277,3 +280,6 @@
 
 /* If there is a static plugin qsvg */
 #undef qt_static_plugin_qsvg
+
+/* If Qt is statically linked */
+#undef qt_static_plugin_xcb

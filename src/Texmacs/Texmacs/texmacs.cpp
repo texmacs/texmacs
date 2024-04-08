@@ -100,6 +100,16 @@ clean_exit_on_segfault (int sig_num) {
 * Texmacs paths
 ******************************************************************************/
 
+void TeXmacs_init_font() {
+#ifdef QTTEXMACS && qt_no_fontconfig
+     string default_font_dir = get_env ("TEXMACS_PATH") * "/fonts/truetype/stix";
+     string current_qt_qpa_fontdir = get_env ("QT_QPA_FONTDIR");
+     if (is_empty(current_qt_qpa_fontdir)) {
+         set_env("QT_QPA_FONTDIR", default_font_dir);
+     }
+#endif
+}
+
 void
 TeXmacs_init_paths (int& argc, char** argv) {
   (void) argc; (void) argv;
@@ -698,7 +708,11 @@ main (int argc, char** argv) {
 #if defined(OS_MACOS) && !defined(__arm64__)
   if (theme == "default") theme= "";  
 #else
+#ifdef qt_no_fontconfig
+  if (theme == "default") theme= "native";
+#else
   if (theme == "default") theme= "light";
+#endif
 #endif
   if (theme == "light")
     tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-light.css";
@@ -731,6 +745,7 @@ main (int argc, char** argv) {
     qtmapp= new QTMApplication (argc, argv);
 #endif
   TeXmacs_init_paths (argc, argv);
+  TeXmacs_init_font  ();
 #ifdef QTTEXMACS
   if (!headless_mode)
     qtmapp->set_window_icon("/misc/images/texmacs-512.png");
