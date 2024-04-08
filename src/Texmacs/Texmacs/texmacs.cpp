@@ -461,7 +461,7 @@ TeXmacs_main (int argc, char** argv) {
   string unify = (gui_version () == "qt4"? string ("on"): string ("off"));
   string mini  = (os_macos ()? string ("off"): string ("on"));
   if (tm_style_sheet != "") mini= "off";
-  #ifdef OS_MACOS && QT_VERSION <= QT_VERSION_CHECK(5, 15, 9)
+  #if defined(OS_MACOS) && QT_VERSION <= QT_VERSION_CHECK(5, 15, 9)
   use_native_menubar = get_preference ("use native menubar", native) == "force";
   #else
   use_native_menubar = get_preference ("use native menubar", native) == "on" || get_preference ("use native menubar", native) == "force";
