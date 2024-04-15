@@ -101,6 +101,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("alias")= c;
   t ("and")= c;
   t ("assume")= d;
+  t ("assuming")= d;
   t ("autofold")= d;
   t ("automap")= c;
   t ("begin")= c;
