@@ -37,13 +37,13 @@
 
 (tm-define (embedded-suffix t)
   (and (embedded-image-context? t)
-       (let* ((f (tm->string (tm-ref t 0 1)))
+       (let* ((f (cork->utf8 (tm->string (tm-ref t 0 1))))
               (s (url-suffix f)))
          (if (== s "") f s))))
 
 (tm-define (embedded-propose t nr)
   (and (embedded-image-context? t)
-       (let* ((f (tm->string (tm-ref t 0 1)))
+       (let* ((f (cork->utf8 (tm->string (tm-ref t 0 1))))
               (s (url-suffix f))
               (c (current-buffer))
               (r (url->string (url-basename (url-tail c))))

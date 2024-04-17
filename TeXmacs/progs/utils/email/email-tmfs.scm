@@ -140,9 +140,9 @@
   (system "mmail --pop-retrieve"))
 
 (tm-define (email-settings server user pass)
+  (:synopsis "Specify email settings")
   (:argument server "Pop server")
   (:argument user "User name")
   (:argument pass "Password")
-  (:interactive #t)
   (with s (string-append server "\n" user "\n" pass "\n")
     (string-save s "~/MMail/inbox.info")))

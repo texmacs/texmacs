@@ -44,7 +44,7 @@
              (python-code ,tmpy-help-source)))))
 
 (tm-widget (tmpy-help-widget close)
-  (resize ("400px" "800px" "4000px") ("300px" "600px" "4000px")
+  (resize '("400px" "800px" "4000px") '("300px" "600px" "4000px")
     (refreshable "tmpy-help-widget-content"
       (scrollable
         (texmacs-output 

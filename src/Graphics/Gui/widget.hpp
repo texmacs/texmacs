@@ -76,6 +76,7 @@ operator << (tm_ostream& out, widget w) {
 }
 
 extern bool use_side_tools;
+extern bool use_left_tools;
 
 /******************************************************************************
 * Widget style parameters
@@ -265,6 +266,8 @@ widget refreshable_widget (object prom, string kind= "any");
 
 // bool simple_widget_rep::is_editor_widget ();
 //   should return true for editor widgets only
+// bool simple_widget_rep::is_embedded_widget ();
+//   should return true for embedded editor widgets only
 // void simple_widget_rep::handle_get_size_hint (SI& w, SI& h);
 //   propose a size for the widget
 // void simple_widget_rep::handle_notify_resize (SI w, SI h);

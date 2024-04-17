@@ -83,6 +83,14 @@ bool  is_id     (string s);
 void  set_wait_handler (void (*) (string, string, int));
 void  system_wait (string message, string argument= "", int level= 0);
 
+template<typename C> inline string
+print_to_string (C x) {
+  string buf;
+  tm_ostream out= string_ostream (buf);
+  out << x;
+  return buf;
+}
+
 /******************************************************************************
 * C-style strings with automatic memory management
 ******************************************************************************/

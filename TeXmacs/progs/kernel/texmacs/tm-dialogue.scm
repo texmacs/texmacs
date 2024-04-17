@@ -235,11 +235,16 @@
             (compute-interactive-arg-list fun (cdr l)))))
 
 (tm-define (compute-interactive-args fun)
-  (with s-fun (procedure-symbol-name fun)
-    (with args (property s-fun :arguments)
-      (if (not args)
-        (compute-interactive-args-try-hard s-fun)
-        (compute-interactive-arg-list s-fun args)))))
+  (let* ((args (property fun :arguments))
+         (syn* (property fun :synopsis*)))
+    (cond ((not args)
+           (compute-interactive-args-try-hard fun))
+          ((and (not (side-tools?)) (list-1? syn*) (string? (car syn*)))
+           (let* ((type (compute-interactive-arg-type fun (car args)))
+                  (prop (compute-interactive-arg-proposals fun (car args)))
+                  (tail (compute-interactive-arg-list fun (cdr args))))
+             (cons (cons (car syn*) (cons type prop)) tail)))
+          (else (compute-interactive-arg-list fun args)))))
 
 (define (build-interactive-arg s)
   (cond ((string-ends? s ":") s)
@@ -269,7 +274,15 @@
   (lazy-define-force fun)
   (if (null? args) (set! args (compute-interactive-args fun)))
   (with fun-args (build-interactive-args fun args 0 #t)
-    (tm-interactive fun fun-args)))
+    (tm-interactive-hook fun fun-args)))
+
+(tm-define (interactive-title fun)
+  (let* ((val (property fun :synopsis))
+         (name (procedure-name fun))
+         (name* (and name (symbol->string name))))
+    (or (and (list-1? val) (string? (car val)) (car val))
+        (and name (string-append "Interactive command '" name* "'"))
+        "Interactive command")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Store learned arguments from one session to another

@@ -660,6 +660,13 @@ phrase_box_rep::display (renderer ren) {
 ******************************************************************************/
 
 box
+concat_box (path ip, array<box> bs) {
+  array<SI> spc;
+  for (int i=0; i<N(bs); i++) spc << 0;
+  return tm_new<concat_box_rep> (ip, bs, spc, false);
+}
+
+box
 concat_box (path ip, array<box> bs, array<SI> spc, bool indent) {
   return tm_new<concat_box_rep> (ip, bs, spc, indent);
 }

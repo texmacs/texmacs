@@ -85,6 +85,72 @@ rsup_adjust_ecrm (hashmap<string,double>& t) {
 }
 
 void
+lsub_adjust_ecss (hashmap<string,double>& t) {
+  adjust_char (t, "A", -0.02);
+  adjust_char (t, "C", 0.03);
+  adjust_char (t, "G", 0.03);
+  adjust_char (t, "J", -0.02);
+  adjust_char (t, "O", 0.01);
+  adjust_char (t, "T", 0.1);
+  adjust_char (t, "V", 0.05);
+  adjust_char (t, "W", 0.03);
+  adjust_char (t, "Y", 0.1);
+  // TODO: lowercase
+}
+
+void
+lsup_adjust_ecss (hashmap<string,double>& t) {
+  adjust_char (t, "A", 0.05);
+  adjust_char (t, "J", 0.05);
+  adjust_char (t, "V", -0.02);
+  adjust_char (t, "W", -0.02);
+  adjust_char (t, "X", -0.02);
+  adjust_char (t, "Y", -0.02);
+  // TODO: lowercase
+}
+
+void
+rsub_adjust_ecss (hashmap<string,double>& t) {
+  adjust_char (t, "A", 0.05);
+  adjust_char (t, "C", 0.03);
+  adjust_char (t, "E", 0.05);
+  adjust_char (t, "F", -0.03);
+  adjust_char (t, "I", 0.03);
+  adjust_char (t, "J", 0.03);
+  adjust_char (t, "K", 0.05);
+  adjust_char (t, "L", 0.05);
+  adjust_char (t, "P", -0.07);
+  adjust_char (t, "Q", 0.02);
+  adjust_char (t, "R", 0.05);
+  adjust_char (t, "T", -0.1);
+  adjust_char (t, "V", -0.05);
+  adjust_char (t, "W", -0.03);
+  adjust_char (t, "X", 0.05);
+  adjust_char (t, "Y", -0.1);
+  adjust_char (t, "Z", 0.05);
+  // TODO: lowercase
+}
+  
+void
+rsup_adjust_ecss (hashmap<string,double>& t) {
+  adjust_char (t, "A", -0.02);
+  adjust_char (t, "B", 0.02);
+  adjust_char (t, "D", 0.02);
+  adjust_char (t, "E", 0.02);
+  adjust_char (t, "F", 0.03);
+  adjust_char (t, "G", 0.02);
+  adjust_char (t, "I", 0.02);
+  adjust_char (t, "J", 0.02);
+  adjust_char (t, "L", -0.1);
+  adjust_char (t, "O", 0.03);
+  adjust_char (t, "P", 0.02);
+  adjust_char (t, "Q", 0.03);
+  adjust_char (t, "R", 0.02);
+  adjust_char (t, "S", 0.01);
+  // TODO: lowercase
+}
+
+void
 lsub_adjust_cmr (hashmap<string,double>& t) {
   lsub_adjust_ecrm (t);
 }
@@ -416,6 +482,34 @@ rsup_ecrm_table () {
   static hashmap<string,double> rsup_ecrm (0.0);
   if (N (rsup_ecrm) == 0) rsup_adjust_ecrm (rsup_ecrm);
   return rsup_ecrm;
+}
+
+hashmap<string,double>
+lsub_ecss_table () {
+  static hashmap<string,double> lsub_ecss (0.0);
+  if (N (lsub_ecss) == 0) lsub_adjust_ecss (lsub_ecss);
+  return lsub_ecss;
+}
+
+hashmap<string,double>
+lsup_ecss_table () {
+  static hashmap<string,double> lsup_ecss (0.0);
+  if (N (lsup_ecss) == 0) lsup_adjust_ecss (lsup_ecss);
+  return lsup_ecss;
+}
+
+hashmap<string,double>
+rsub_ecss_table () {
+  static hashmap<string,double> rsub_ecss (0.0);
+  if (N (rsub_ecss) == 0) rsub_adjust_ecss (rsub_ecss);
+  return rsub_ecss;
+}
+
+hashmap<string,double>
+rsup_ecss_table () {
+  static hashmap<string,double> rsup_ecss (0.0);
+  if (N (rsup_ecss) == 0) rsup_adjust_ecss (rsup_ecss);
+  return rsup_ecss;
 }
 
 hashmap<string,double>

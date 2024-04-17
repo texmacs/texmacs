@@ -116,8 +116,10 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   visibility[3] = (mask & 8)   == 8;   // focus
   visibility[4] = (mask & 16)  == 16;  // user
   visibility[5] = (mask & 32)  == 32;  // footer
-  visibility[6] = (mask & 64)  == 64;  // side tools #0
-  visibility[7] = (mask & 128) == 128; // bottom tools
+  visibility[6] = (mask & 64)  == 64;  // right side tools
+  visibility[7] = (mask & 128) == 128; // left side tools
+  visibility[8] = (mask & 256) == 256; // bottom tools
+  visibility[9] = (mask & 512) == 512; // extra bottom tools
 
   // general setup for main window
   
@@ -208,7 +210,9 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   userToolBar   = new QToolBar ("user toolbar", mw);
   
   bottomTools   = new QDockWidget ("bottom tools", mw);
+  extraTools    = new QDockWidget ("extra tools", mw);
   sideTools     = new QDockWidget ("side tools", 0);
+  leftTools     = new QDockWidget ("left tools", 0);
     // HACK: Wrap the dock in a "fake" window widget (last parameter = true) to
     // have clicks report the right position.
   static int cnt=0;
@@ -222,7 +226,9 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     focusToolBar->setStyle (qtmstyle ());
     userToolBar->setStyle (qtmstyle ());
     sideTools->setStyle (qtmstyle ());
+    leftTools->setStyle (qtmstyle ());
     bottomTools->setStyle (qtmstyle ());
+    extraTools->setStyle (qtmstyle ());
   }
   
   {
@@ -320,7 +326,9 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   focusToolBar->setObjectName ("focusToolBar");
   userToolBar->setObjectName ("userToolBar");
   bottomTools->setObjectName ("bottomTools");
+  extraTools->setObjectName ("extraTools");
   sideTools->setObjectName ("sideTools");
+  leftTools->setObjectName ("leftTools");
 
 #ifdef UNIFIED_TOOLBAR
 
@@ -398,15 +406,29 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   sideTools->setTitleBarWidget (new QWidget()); // Disables title bar
   mw->addDockWidget (Qt::RightDockWidgetArea, sideTools);
 
+  leftTools->setAllowedAreas (Qt::AllDockWidgetAreas);
+  leftTools->setFeatures (QDockWidget::DockWidgetMovable |
+                         QDockWidget::DockWidgetFloatable);
+  leftTools->setFloating (false);
+  leftTools->setTitleBarWidget (new QWidget()); // Disables title bar
+  mw->addDockWidget (Qt::LeftDockWidgetArea, leftTools);
+
   bottomTools->setAllowedAreas (Qt::BottomDockWidgetArea);
   bottomTools->setFeatures (QDockWidget::NoDockWidgetFeatures);
   bottomTools->setFloating (false);
   bottomTools->setTitleBarWidget (new QWidget()); // Disables title bar
-  bottomTools->setMinimumHeight (10);             // Avoids warning
+  //bottomTools->setMinimumHeight (10);             // Avoids warning
   bottomTools->setContentsMargins (3, 6, 3, -2);  // Hacks hacks hacks... :(
   mw->addDockWidget (Qt::BottomDockWidgetArea, bottomTools);
 
-  
+  extraTools->setAllowedAreas (Qt::BottomDockWidgetArea);
+  extraTools->setFeatures (QDockWidget::NoDockWidgetFeatures);
+  extraTools->setFloating (false);
+  extraTools->setTitleBarWidget (new QWidget()); // Disables title bar
+  //extraTools->setMinimumHeight (10);             // Avoids warning
+  extraTools->setContentsMargins (3, 6, 3, -2);  // Hacks hacks hacks... :(
+  mw->addDockWidget (Qt::BottomDockWidgetArea, extraTools);
+
     // FIXME? add DockWidgetClosable and connect the close signal
     // to the scheme code
     //  QObject::connect(sideDock, SIGNAL(closeEvent()), 
@@ -423,7 +445,9 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   focusToolBar->setVisible (false);
   userToolBar->setVisible (false);
   sideTools->setVisible (false);
+  leftTools->setVisible (false);
   bottomTools->setVisible (false);
+  extraTools->setVisible (false);
   mainwindow()->statusBar()->setVisible (true);
 #ifndef Q_OS_MAC
   mainwindow()->menuBar()->setVisible (false);
@@ -493,7 +517,9 @@ qt_tm_widget_rep::update_visibility () {
   bool old_focusVisibility = focusToolBar->isVisible();
   bool old_userVisibility = userToolBar->isVisible();
   bool old_sideVisibility = sideTools->isVisible();
+  bool old_leftVisibility = leftTools->isVisible();
   bool old_bottomVisibility = bottomTools->isVisible();
+  bool old_extraVisibility = extraTools->isVisible();
   bool old_statusVisibility = mainwindow()->statusBar()->isVisible();
 
   bool new_mainVisibility = visibility[1] && visibility[0];
@@ -502,7 +528,9 @@ qt_tm_widget_rep::update_visibility () {
   bool new_userVisibility = visibility[4] && visibility[0];
   bool new_statusVisibility = visibility[5];
   bool new_sideVisibility = visibility[6];
-  bool new_bottomVisibility = visibility[7];
+  bool new_leftVisibility = visibility[7];
+  bool new_bottomVisibility = visibility[8];
+  bool new_extraVisibility = visibility[9];
   
   if ( XOR(old_mainVisibility,  new_mainVisibility) )
     mainToolBar->setVisible (new_mainVisibility);
@@ -514,8 +542,12 @@ qt_tm_widget_rep::update_visibility () {
     userToolBar->setVisible (new_userVisibility);
   if ( XOR(old_sideVisibility,  new_sideVisibility) )
     sideTools->setVisible (new_sideVisibility);
+  if ( XOR(old_leftVisibility,  new_leftVisibility) )
+    leftTools->setVisible (new_leftVisibility);
   if ( XOR(old_bottomVisibility,  new_bottomVisibility) )
     bottomTools->setVisible (new_bottomVisibility);
+  if ( XOR(old_extraVisibility,  new_extraVisibility) )
+    extraTools->setVisible (new_extraVisibility);
   if ( XOR(old_statusVisibility,  new_statusVisibility) )
     mainwindow()->statusBar()->setVisible (new_statusVisibility);
 
@@ -686,10 +718,24 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       update_visibility();
     }
       break;
-    case SLOT_BOTTOM_TOOLS_VISIBILITY:
+    case SLOT_LEFT_TOOLS_VISIBILITY:
     {
       check_type<bool>(val, s);
       visibility[7] = open_box<bool> (val);
+      update_visibility();
+    }
+      break;
+    case SLOT_BOTTOM_TOOLS_VISIBILITY:
+    {
+      check_type<bool>(val, s);
+      visibility[8] = open_box<bool> (val);
+      update_visibility();
+    }
+      break;
+    case SLOT_EXTRA_TOOLS_VISIBILITY:
+    {
+      check_type<bool>(val, s);
+      visibility[9] = open_box<bool> (val);
       update_visibility();
     }
       break;
@@ -824,9 +870,18 @@ qt_tm_widget_rep::query (slot s, int type_id) {
     case SLOT_SIDE_TOOLS_VISIBILITY:
       check_type_id<bool> (type_id, s);
       return close_box<bool> (visibility[6]);
-    case SLOT_BOTTOM_TOOLS_VISIBILITY:
+
+    case SLOT_LEFT_TOOLS_VISIBILITY:
       check_type_id<bool> (type_id, s);
       return close_box<bool> (visibility[7]);
+
+    case SLOT_BOTTOM_TOOLS_VISIBILITY:
+      check_type_id<bool> (type_id, s);
+      return close_box<bool> (visibility[8]);
+      
+    case SLOT_EXTRA_TOOLS_VISIBILITY:
+      check_type_id<bool> (type_id, s);
+      return close_box<bool> (visibility[9]);
       
     case SLOT_INTERACTIVE_INPUT:
     {
@@ -1005,19 +1060,73 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       if (old_qwidget) old_qwidget->deleteLater();
       sideTools->setWidget (new_qwidget);
       update_visibility();
+#if (QT_VERSION >= 0x050000)
+      QList<QDockWidget*> l1;
+      l1.append ((QDockWidget*) extraTools);
+      QList<int> l2;
+      l2.append (1);
+      mainwindow()->resizeDocks (l1, l2, Qt::Horizontal);
+#endif
+      new_qwidget->show();
+    }
+      break;
+
+    case SLOT_LEFT_TOOLS:
+      check_type_void (index, s);
+    {
+      left_tools_widget = concrete (w);
+      QWidget* new_qwidget = left_tools_widget->as_qwidget();
+      QWidget* old_qwidget = leftTools->widget();
+      if (old_qwidget) old_qwidget->deleteLater();
+      leftTools->setWidget (new_qwidget);
+      update_visibility();
+#if (QT_VERSION >= 0x050000)
+      QList<QDockWidget*> l1;
+      l1.append ((QDockWidget*) extraTools);
+      QList<int> l2;
+      l2.append (1);
+      mainwindow()->resizeDocks (l1, l2, Qt::Horizontal);
+#endif
       new_qwidget->show();
     }
       break;
 
     case SLOT_BOTTOM_TOOLS:
       check_type_void (index, s);
-    {   
+    {
       bottom_tools_widget = concrete (w);
       QWidget* new_qwidget = bottom_tools_widget->as_qwidget();
       QWidget* old_qwidget = bottomTools->widget();
       if (old_qwidget) old_qwidget->deleteLater();
       bottomTools->setWidget (new_qwidget);
       update_visibility();
+#if (QT_VERSION >= 0x050000)
+      QList<QDockWidget*> l1;
+      l1.append ((QDockWidget*) extraTools);
+      QList<int> l2;
+      l2.append (1);
+      mainwindow()->resizeDocks (l1, l2, Qt::Vertical);
+#endif
+      new_qwidget->show();
+    }
+      break;
+      
+    case SLOT_EXTRA_TOOLS:
+      check_type_void (index, s);
+    {
+      extra_tools_widget = concrete (w);
+      QWidget* new_qwidget = extra_tools_widget->as_qwidget();
+      QWidget* old_qwidget = extraTools->widget();
+      if (old_qwidget) old_qwidget->deleteLater();
+      extraTools->setWidget (new_qwidget);
+      update_visibility();
+#if (QT_VERSION >= 0x050000)
+      QList<QDockWidget*> l1;
+      l1.append ((QDockWidget*) extraTools);
+      QList<int> l2;
+      l2.append (1);
+      mainwindow()->resizeDocks (l1, l2, Qt::Vertical);
+#endif
       new_qwidget->show();
     }
       break;
@@ -1122,7 +1231,9 @@ qt_tm_embedded_widget_rep::send (slot s, blackbox val) {
     case SLOT_USER_ICONS_VISIBILITY:
     case SLOT_FOOTER_VISIBILITY:
     case SLOT_SIDE_TOOLS_VISIBILITY:
+    case SLOT_LEFT_TOOLS_VISIBILITY:
     case SLOT_BOTTOM_TOOLS_VISIBILITY:
+    case SLOT_EXTRA_TOOLS_VISIBILITY:
     case SLOT_LEFT_FOOTER:
     case SLOT_RIGHT_FOOTER:
     case SLOT_SCROLLBARS_VISIBILITY:
@@ -1181,7 +1292,9 @@ qt_tm_embedded_widget_rep::query (slot s, int type_id) {
     case SLOT_USER_ICONS_VISIBILITY:
     case SLOT_FOOTER_VISIBILITY:
     case SLOT_SIDE_TOOLS_VISIBILITY:
+    case SLOT_LEFT_TOOLS_VISIBILITY:
     case SLOT_BOTTOM_TOOLS_VISIBILITY:
+    case SLOT_EXTRA_TOOLS_VISIBILITY:
       check_type_id<bool> (type_id, s);
       return close_box<bool> (false);
 
@@ -1232,7 +1345,9 @@ qt_tm_embedded_widget_rep::write (slot s, blackbox index, widget w) {
     case SLOT_FOCUS_ICONS:
     case SLOT_USER_ICONS:
     case SLOT_SIDE_TOOLS:
+    case SLOT_LEFT_TOOLS:
     case SLOT_BOTTOM_TOOLS:
+    case SLOT_EXTRA_TOOLS:
     case SLOT_INTERACTIVE_INPUT:
     case SLOT_INTERACTIVE_PROMPT:
     default:

@@ -186,6 +186,6 @@ public:
     }
   }
   
-  tm_ostream& print (tm_ostream& out) { return out << "Choice"; }
+  tm_ostream& print (tm_ostream& out) { return out << "<command qt_choice>"; }
 };
 #endif // defined QT_UI_ELEMENT_HPP

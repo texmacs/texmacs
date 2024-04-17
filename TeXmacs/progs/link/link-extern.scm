@@ -137,7 +137,7 @@
           (load-buffer (car l)))))
 
 (tm-define (resolve-id id)
-  (:synopsis "Load file which contains locus with a given @id.")
+  (:synopsis "Load file which contains locus with a given @id")
   (let* ((not-loaded? (lambda (u) (not (ahash-ref already-loaded-table u))))
 	 (l1 (id->locations id))
 	 (l2 (list-filter l1 not-loaded?)))

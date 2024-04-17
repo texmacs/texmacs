@@ -102,7 +102,21 @@
   (== (get-preference "database tool") "on"))
 
 (define-public (side-tools?)
-  (visible-side-tools? 0))
+  (and (== (get-preference "side tools") "on")
+       (== (get-preference "developer tool") "on")))
+
+(define-public (left-tools?)
+  (and (== (get-preference "left tools") "on")
+       (== (get-preference "developer tool") "on")))
+
+(define-public (has-side-tools? n)
+  (cond ((== n 0) (side-tools?))
+        ((== n 1) (left-tools?))
+        (else #f)))
+
+(define-public (has-markup-gui?)
+  (and (== (get-preference "markup gui") "on")
+       (== (get-preference "developer tool") "on")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mode related
@@ -277,6 +291,7 @@
   (with-remote-tool% (== (get-preference "remote tool") "on"))
   (with-source-tool% (== (get-preference "source tool") "on"))
   (with-versioning-tool% (== (get-preference "versioning tool") "on"))
+  (with-keyboard-tool% (== (get-preference "keyboard tool") "on"))
   (in-presentation% (or (style-has? "beamer-style")
                         (== (get-preference "presentation tool") "on")
                         (inside? 'screens)) in-beamer%)

@@ -35,6 +35,8 @@
   `(define-public provide-public
     tm-define tm-menu menu-bind tm-widget ,@macro-keywords))
 
+(define tm-interactive-hook tm-interactive)
+
 (define old-read read)
 (define (new-read port)
   "A redefined reader which stores line number and file name in symbols."
@@ -119,6 +121,7 @@
                  (kernel old-gui old-gui-factory)
                  (kernel old-gui old-gui-form)
                  (kernel old-gui old-gui-test))
+(lazy-define (kernel gui menu-convert) make-menu-widget**)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
@@ -137,6 +140,7 @@
 (use-modules (utils handwriting handwriting))
 (lazy-tmfs-handler (utils automate auto-tmfs) automate)
 (lazy-define (utils automate auto-tmfs) auto-load-help)
+(lazy-define (utils misc gui-keyboard) get-keyboard)
 (lazy-keyboard (utils automate auto-kbd) in-auto?)
 (define supports-email? (url-exists-in-path? "mmail"))
 (if supports-email? (use-modules (utils email email-tmfs)))
@@ -158,7 +162,8 @@
 (use-modules (texmacs keyboard config-kbd))
 (lazy-keyboard (texmacs keyboard prefix-kbd) always?)
 (lazy-keyboard (texmacs keyboard latex-kbd) always?)
-(lazy-menu (texmacs menus file-menu) file-menu go-menu
+(lazy-menu (texmacs menus file-menu)
+           file-menu go-menu buffer-go-menu
            new-file-menu load-menu save-menu
            print-menu print-menu-inline close-menu)
 (lazy-menu (texmacs menus edit-menu) edit-menu)
@@ -169,6 +174,8 @@
 (use-modules (texmacs menus main-menu))
 (lazy-define (texmacs menus file-menu) recent-file-list recent-directory-list)
 (lazy-define (texmacs menus view-menu) set-bottom-bar test-bottom-bar?)
+(lazy-tool (texmacs menus preferences-tools) preferences-tool)
+(lazy-tool (texmacs menus view-tools) retina-settings-tool)
 (tm-define (notify-set-attachment name key val) (noop))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
@@ -209,6 +216,15 @@
 (lazy-define (generic document-widgets) open-source-tree-preferences
              open-document-paragraph-format open-document-page-format
              open-document-metadata open-document-colors)
+(lazy-tool (generic format-tools)
+           format-paragraph-tool format-page-tool
+           document-paragraph-tool document-page-tool
+           sections-tool subsections-tool)
+(lazy-tool (generic document-tools)
+           source-tree-preferences-tool
+           document-metadata-tool document-colors-tool)
+(lazy-tool (generic pattern-tools)
+           color-tool pattern-tool gradient-tool picture-tool)
 (tm-property (open-search) (:interactive #t))
 (tm-property (open-replace) (:interactive #t))
 (tm-property (open-paragraph-format) (:interactive #t))
@@ -473,7 +489,8 @@
 
 ;(display "Booting debugging and developer facilities\n")
 (lazy-menu (debug debug-menu) debug-menu)
-(lazy-menu (texmacs menus developer-menu) developer-menu)
+(lazy-menu (texmacs menus developer-menu)
+           developer-menu custom-keyboard-toolbar)
 (lazy-define (debug debug-widgets) notify-debug-message
              open-debug-console open-error-messages)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")

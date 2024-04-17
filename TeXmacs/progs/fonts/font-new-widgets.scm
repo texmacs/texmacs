@@ -17,7 +17,109 @@
   (:use (kernel gui menu-widget)
         (fonts font-sample)
         (generic format-edit)
-        (generic document-edit)))
+        (generic document-edit)
+        (utils library cursor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Settings management
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define selector-table (make-ahash-table))
+
+(define (selkey specs var)
+  (with win (if (list-4? specs) (cadddr specs) (current-window))
+    (list specs var (window->buffer win))))
+
+(tm-define (selector-set* specs var val)
+  ;;(display* "Set " specs ", " var " <- " val "\n")
+  (ahash-set! selector-table (selkey specs var) val)
+  (refresh-now "font-style-selector")
+  (refresh-now "font-selector-demo"))
+
+(tm-define (selector-notify specs)
+  (with (getter setter . other) specs
+    (with changes (selector-get-changes specs getter)
+      (when (nnull? changes)
+        (setter changes)
+        ;;(with-window win (update-menus))
+        (keyboard-focus-on "canvas")
+        ))))
+
+(tm-define (selector-set specs var val)
+  ;;(display* "Set " specs ", " var " <- " val "\n")
+  (when (!= val (selector-get specs var))
+    (ahash-set! selector-table (selkey specs var) val)
+    (selector-notify specs)
+    (refresh-now "font-style-selector")
+    (refresh-now "font-selector-demo")))    
+
+(tm-define (selector-reset* specs var)
+  ;;(display* "Reset " specs ", " var "\n")
+  (ahash-remove! selector-table (selkey specs var))
+  (refresh-now "font-style-selector")
+  (refresh-now "font-selector-demo"))
+
+(tm-define (selector-reset specs var)
+  ;;(display* "Reset " specs ", " var "\n")
+  (ahash-remove! selector-table (selkey specs var))
+  (selector-notify specs)
+  (refresh-now "font-style-selector")
+  (refresh-now "font-selector-demo"))
+
+(define font-vars
+  (list :family :style :size))
+
+(define filter-vars
+  (list :weight :slant :stretch
+        :serif :spacing :case
+        :device :category :glyphs))
+
+(define customize-vars
+  (list "bold" "italic" "smallcaps" "sansserif"
+        "typewriter" "math" "greek" "bbb" "cal" "frak"
+        "embold" "embbb"
+        "slant" "hmagnify" "vmagnify" "hextended" "vextended"))
+
+(define all-vars (append font-vars filter-vars customize-vars))
+
+(tm-define (selector-get* specs var)
+  ;;(display* "Get " specs ", " var "\n")
+  (or (ahash-ref selector-table (selkey specs var))
+      (cond ((== var :family) (car (initial-font-data specs)))
+            ((== var :style) (cadr (initial-font-data specs)))
+            ((== var :size) (caddr (initial-font-data specs)))
+            ((in? var filter-vars) "Any")
+            ((in? var customize-vars) (initial-customize-get specs var))
+            (else #f))))
+
+(tm-define (selector-get specs var)
+  (with r (selector-get* specs var)
+    ;;(display* "Get " specs ", " var " -> " r "\n")
+    r))
+
+(tm-define (selector-clean specs)
+  (with (getter setter . other) specs
+    (for (var all-vars)
+      (ahash-remove! selector-table (selkey specs var)))))
+
+(tm-define (selector-restore specs global?)
+  (when global? ;; NOTE: non global => ':default' values not yet implemented
+    (with vars (list "font" "font-base-size" "math-font" "prog-font"
+                     "font-family" "font-series" "font-shape"
+                     "font-effects")
+      (with (getter setter . other) specs
+        (for (var all-vars)
+          (ahash-remove! selector-table (selkey specs var)))
+        (for (var vars)
+          (setter (list var :default))))
+      (keyboard-focus-on "canvas")
+      (delayed
+        (:pause 250)
+        (refresh-now "font-family-selector")
+        (refresh-now "font-style-selector")
+        (refresh-now "font-size-selector")
+        (refresh-now "font-customized-selector")
+        (refresh-now "font-selector-demo")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Font samples
@@ -141,144 +243,128 @@
 ;; Global state of font selector
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define selector-font-family "TeXmacs Computer Modern")
-(tm-define selector-font-style "Regular")
-(tm-define selector-font-size "10")
-
-(tm-define (selector-get-font)
-  (logical-font-patch
-    (logical-font-public selector-font-family selector-font-style)
-    (selected-properties)))
-
-(define (selector-initialize-font getter)
-  (let* ((fam (font-family-main (getter "font")))
+(define (initial-font-data specs)
+  (let* ((getter (car specs))
+         (fam (font-family-main (getter "font")))
          (var (getter "font-family"))
          (ser (getter "font-series"))
          (sh  (getter "font-shape"))
          (sz  (getter "font-base-size"))
          (lf  (logical-font-private fam var ser sh))
          (fn  (logical-font-search-exact lf)))
-    ;;(display* "lf= " lf "\n")
-    ;;(display* "fn= " fn "\n")
-    (set! selector-font-family (car fn))
-    (set! selector-font-style (cadr fn))
-    (set! selector-font-size sz)
-    (selector-initialize-search)
-    (selector-initialize-customize getter)))
+    (list (or (car fn) "TeXmacs Computer Modern")
+          (or (cadr fn) "Regular")
+          (or sz "10"))))
 
-(tm-define (selector-get-changes getter)
-  (if (== selector-font-style "Unknown")
+(tm-define (selector-get-font specs)
+  (logical-font-patch
+    (logical-font-public (selector-get specs :family)
+                         (selector-get specs :style))
+    (selected-properties specs)))
+
+(tm-define (selector-get-changes specs getter)
+  (if (== (selector-get specs :style) "Unknown")
       (list)
-      (with fn (selector-get-font)
+      (with fn (selector-get-font specs)
         (with l '()
-          (when (!= (selector-font-effects) (getter "font-effects"))
-            (set! l (cons* "font-effects" (selector-font-effects) l)))
-          (when (!= selector-font-size (getter "font-base-size"))
-            (set! l (cons* "font-base-size" selector-font-size l)))
+          (when (!= (selector-font-effects specs) (getter "font-effects"))
+            (set! l (cons* "font-effects" (selector-font-effects specs) l)))
+          (when (!= (selector-get specs :size) (getter "font-base-size"))
+            (set! l (cons* "font-base-size" (selector-get specs :size) l)))
           (when (!= (logical-font-shape fn) (getter "font-shape"))
             (set! l (cons* "font-shape" (logical-font-shape fn) l)))
           (when (!= (logical-font-series fn) (getter "font-series"))
             (set! l (cons* "font-series" (logical-font-series fn) l)))
           (when (!= (logical-font-variant fn) (getter "font-family"))
             (set! l (cons* "font-family" (logical-font-variant fn) l)))
-          (when (!= (logical-font-family* fn) (getter "font"))
-            (set! l (cons* "font" (logical-font-family* fn) l)))
+          (when (!= (logical-font-family* specs fn) (getter "font"))
+            (set! l (cons* "font" (logical-font-family* specs fn) l)))
           l))))
 
-(define (selector-font-simulate-comment)
-  (let* ((fn  (selector-get-font))
+(define (selector-font-simulate-data specs)
+  (let* ((fn  (selector-get-font specs))
 	 (fam (logical-font-family fn))
          (var (logical-font-variant fn))
          (ser (logical-font-series fn))
          (sh  (logical-font-shape fn))
          (lf  (logical-font-private fam var ser sh))
          (fn2 (logical-font-search lf))
-         (sel (string-recompose (selected-properties) " ")))
+         (fn1 (list (selector-get specs :family) (selector-get specs :style)))
+         (sel (string-recompose (selected-properties specs) " "))
+         (nm1 (string-append (car fn1) " " (cadr fn1)))
+         (nm2 (string-append (car fn2) " " (cadr fn2)))
+         (nm+ (if (== sel "") nm1 (string-append nm1 " + " sel))))
     ;;(display* "fn = " fn "\n")
     ;;(display* "lf = " lf "\n")
     ;;(display* "fn2= " fn2 "\n")
-    (if (and (== selector-font-family (car fn2))
-             (== selector-font-style (cadr fn2))
-             (== sel ""))
-        ""
-        (string-append "  (" selector-font-family " " selector-font-style
-                       (if (== sel "") "" " + ") sel
-                       " -> " (car fn2) " " (cadr fn2) ")"))))
+    (list nm1 nm+ nm2)))
 
-(define (selector-font-demo-text)
-  (with fn (selector-get-font)
+(define (selector-font-simulate-comment specs)
+  (with (fn1 fn1+ fn2) (selector-font-simulate-data specs)
+    (if (and (== fn1 fn1+) (== fn1 fn2)) ""
+        (string-append "  (" fn1+ " -> " fn2 ")"))))
+
+(tm-widget (selector-font-simulate-widget specs)
+  (with (fn1 fn1+ fn2) (selector-font-simulate-data specs)
+    (assuming (or (!= fn1 fn1+) (!= fn1 fn2))
+      (division "discrete"
+        (aligned
+          (item (bold (text "Requested:")) (text fn1+))
+          (item (bold (text "Replaced by:")) (text fn2)))))))
+
+(define (selector-font-demo-text specs)
+  (with fn (selector-get-font specs)
     ;;(display* "Font: " fn "\n")
-    ;;(display* "Internal font: " (logical-font-family* fn)
+    ;;(display* "Internal font: " (logical-font-family* specs fn)
     ;;          ", " (logical-font-variant fn)
     ;;          ", " (logical-font-series fn)
     ;;          ", " (logical-font-shape fn)
-    ;;          ", " selector-font-size "\n")
+    ;;          ", " (selector-get specs :size) "\n")
     `(document
        (with
-         "font" ,(logical-font-family* fn)
+         "font" ,(logical-font-family* specs fn)
          "font-family" ,(logical-font-variant fn)
          "font-series" ,(logical-font-series fn)
          "font-shape" ,(logical-font-shape fn)
-         "font-base-size" ,selector-font-size
-         "font-effects" ,(selector-font-effects)
+         "font-base-size" ,(selector-get specs :size)
+         "font-effects" ,(selector-font-effects specs)
          ,sample-text))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global state for font searching
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define selector-search-weight "Any")
-(tm-define selector-search-slant "Any")
-(tm-define selector-search-stretch "Any")
-(tm-define selector-search-serif "Any")
-(tm-define selector-search-spacing "Any")
-(tm-define selector-search-case "Any")
-(tm-define selector-search-device "Any")
-(tm-define selector-search-category "Any")
-(tm-define selector-search-glyphs "Any")
-
-(define (selector-initialize-search)
-  (set! selector-search-weight "Any")
-  (set! selector-search-slant "Any")
-  (set! selector-search-stretch "Any")
-  (set! selector-search-serif "Any")
-  (set! selector-search-spacing "Any")
-  (set! selector-search-case "Any")
-  (set! selector-search-device "Any")
-  (set! selector-search-category "Any")
-  (set! selector-search-glyphs "Any"))
-
-(define (selector-search-glyphs-decoded)
-  (with s selector-search-glyphs
+(define (selector-search-glyphs-decoded specs)
+  (with s (selector-get specs :glyphs)
     (cond ((== s "ASCII") "Ascii")
           ((== s "Math Symbols") "MathSymbols")
           ((== s "Math Extra") "MathExtra")
           ((== s "Math Letters") "MathLetters")
           (else s))))
 
-(define (selected-properties)
-  (with l (list selector-search-weight
-                selector-search-slant
-                selector-search-stretch
-                selector-search-serif
-                selector-search-spacing
-                selector-search-case
-                selector-search-device
-                selector-search-category
-                (selector-search-glyphs-decoded))
+(define (selected-properties specs)
+  (with l (list (selector-get specs :weight)
+                (selector-get specs :slant)
+                (selector-get specs :stretch)
+                (selector-get specs :serif)
+                (selector-get specs :spacing)
+                (selector-get specs :case)
+                (selector-get specs :device)
+                (selector-get specs :category)
+                (selector-search-glyphs-decoded specs))
     (list-filter l (cut != <> "Any"))))
 
-(tm-define-macro (selector-search-set! var val)
+(tm-define-macro (selector-set* specs var val)
   `(begin
-     (set! ,var ,val)
+     (selector-set ,specs ,var ,val)
      (delayed
        (refresh-now "font-family-selector"))))
 
-(tm-define (selected-families)
-  (search-font-families (selected-properties)))
+(tm-define (selected-families specs)
+  (search-font-families (selected-properties specs)))
 
-(tm-define (selected-styles family)
-  (search-font-styles family (selected-properties)))
+(tm-define (selected-styles specs family)
+  (search-font-styles family (selected-properties specs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global state for font customization
@@ -293,19 +379,17 @@
       (reset-preference "advanced font customization"))
   (refresh-now "font-customized-selector"))
 
-(tm-define selector-customize-table (make-ahash-table))
+(tm-define (selector-customize-get specs which default)
+  (or (selector-get specs which) default))
 
-(tm-define (selector-customize-get which default)
-  (or (ahash-ref selector-customize-table which) default))
-
-(tm-define (selector-customize-set! which val)
+(tm-define (selector-customize-set! specs which val)
   (if (or (== val "") (== val "default") (== val "Default")
 	  (== val (font-effect-default which)))
-      (ahash-remove! selector-customize-table which)
-      (ahash-set! selector-customize-table which val)))
+      (selector-reset specs which)
+      (selector-set specs which val)))
 
-(tm-define (selector-customize-get* which default)
-  (with val (selector-customize-get which default)
+(tm-define (selector-customize-get* specs which default)
+  (with val (selector-customize-get specs which default)
     (cond ((== val "roman") "TeXmacs Computer Modern")
           ((== val "bonum") "TeX Gyre Bonum")
           ((== val "pagella") "TeX Gyre Pagella")
@@ -313,49 +397,46 @@
           ((== val "termes") "TeX Gyre Termes")
           (else val))))
 
-(tm-define (selector-customize-set!* which val)
+(tm-define (selector-customize-set!* specs which val)
   (cond ((== val "TeXmacs Computer Modern") (set! val "roman"))
         ((== val "TeX Gyre Bonum") (set! val "bonum"))
         ((== val "TeX Gyre Pagella") (set! val "pagella"))
         ((== val "TeX Gyre Schola") (set! val "schola"))
         ((== val "TeX Gyre Termes") (set! val "termes")))
-  (selector-customize-set! which val))
+  (selector-customize-set! specs which val))
 
-(define (selector-initialize-customize getter)
-  (let* ((fam  (getter "font"))
-         (effs (getter "font-effects")))
-    (set! selector-customize-table (make-ahash-table))
+(define (initial-customize-get specs var)
+  (let* ((getter (car specs))
+         (fam    (getter "font"))
+         (effs   (getter "font-effects"))
+         (rval   #f))
     (for (kv (string-tokenize-by-char fam #\,))
       (with l (string-tokenize-by-char kv #\=)
 	(when (== (length l) 2)
-	  (with (var val) l
-	    (when (in? var '("bold" "italic" "smallcaps" "sansserif"
-			     "typewriter" "math" "greek" "bbb" "cal" "frak"))
-	      (ahash-set! selector-customize-table var val))))))
+	  (with (var2 val) l
+            (when (== var var2)
+              (set! rval val))))))
     (for (kv (string-tokenize-by-char effs #\,))
       (with l (string-tokenize-by-char kv #\=)
 	(when (== (length l) 2)
-	  (with (var val) l
-	    (cond ((== var "bold")
-		   (ahash-set! selector-customize-table "embold" val))
-		  ((== var "bbb")
-		   (ahash-set! selector-customize-table "embbb" val))
-		  ((in? var '("slant" "hmagnify" "vmagnify"
-			      "hextended" "vextended"))
-		   (ahash-set! selector-customize-table var val)))))))))
+	  (with (var2 val) l
+	    (cond ((== var2 "bold") (if (== var "embold") (set! rval val)))
+		  ((== var2 "bbb") (if (== var "embbb") (set! rval val)))
+		  ((== var2 var) (set! rval val)))))))
+    rval))
 
-(define (logical-font-family* fn)
+(define (logical-font-family* specs fn)
   (let* ((fam   (logical-font-family fn))
-         (bf    (selector-customize-get "bold" #f))
-         (it    (selector-customize-get "italic" #f))
-         (sc    (selector-customize-get "smallcaps" #f))
-         (ss    (selector-customize-get "sansserif" #f))
-         (tt    (selector-customize-get "typewriter" #f))
-         (math  (selector-customize-get "math" #f))
-         (greek (selector-customize-get "greek" #f))
-         (bbb   (selector-customize-get "bbb" #f))
-         (cal   (selector-customize-get "cal" #f))
-         (frak  (selector-customize-get "frak" #f)))
+         (bf    (selector-customize-get specs "bold" #f))
+         (it    (selector-customize-get specs "italic" #f))
+         (sc    (selector-customize-get specs "smallcaps" #f))
+         (ss    (selector-customize-get specs "sansserif" #f))
+         (tt    (selector-customize-get specs "typewriter" #f))
+         (math  (selector-customize-get specs "math" #f))
+         (greek (selector-customize-get specs "greek" #f))
+         (bbb   (selector-customize-get specs "bbb" #f))
+         (cal   (selector-customize-get specs "cal" #f))
+         (frak  (selector-customize-get specs "frak" #f)))
     (if bf    (set! fam (string-append "bold=" bf "," fam)))
     (if it    (set! fam (string-append "italic=" it "," fam)))
     (if sc    (set! fam (string-append "smallcaps=" sc "," fam)))
@@ -368,15 +449,15 @@
     (if frak  (set! fam (string-append "frak="frak  "," fam)))
     fam))
 
-(define (selector-font-effects)
+(define (selector-font-effects specs)
   (let* ((effs   (list))
-         (embold (selector-customize-get "embold" #f))
-         (embbb  (selector-customize-get "embbb" #f))
-         (slant  (selector-customize-get "slant" #f))
-         (hmag   (selector-customize-get "hmagnify" #f))
-         (vmag   (selector-customize-get "vmagnify" #f))
-         (hext   (selector-customize-get "hextended" #f))
-         (vext   (selector-customize-get "vextended" #f)))
+         (embold (selector-customize-get specs "embold" #f))
+         (embbb  (selector-customize-get specs "embbb" #f))
+         (slant  (selector-customize-get specs "slant" #f))
+         (hmag   (selector-customize-get specs "hmagnify" #f))
+         (vmag   (selector-customize-get specs "vmagnify" #f))
+         (hext   (selector-customize-get specs "hextended" #f))
+         (vext   (selector-customize-get specs "vextended" #f)))
     (with add (lambda (var val)
 		(when val
 		  (set! effs (rcons effs (string-append var "=" val)))))
@@ -398,108 +479,131 @@
     "24" "28" "32" "36" "40" "48" "64" "72" "96"
     "128" "144" "192"))
 
-(tm-widget (font-family-selector)
+(tm-define (font-default-sizes*)
+  '("5" "6" "7" "8" "9" "10" "11" "12" "14" "16" "18" "20" "24" ""))
+
+(tm-widget (font-family-selector* specs)
+  (resize "300px" "350px"
+    (scrollable
+      (choice (selector-set specs :family answer)
+              (selected-families specs)
+              (selector-get specs :family)))))
+
+(tm-widget (font-family-selector specs)
   (vertical
     (bold (text "Family"))
     ===
-    (resize "300px" "350px"
-      (scrollable
-        (choice (set! selector-font-family answer)
-                (selected-families)
-                selector-font-family)))))
+    (dynamic (font-family-selector* specs))))
 
-(tm-widget (font-style-selector)
+(tm-widget (font-style-selector specs)
   (vertical
     (bold (text "Style"))
     ===
     (resize "200px" "350px"
       (scrollable
-        (choice (set! selector-font-style answer)
-                (selected-styles selector-font-family)
-                selector-font-style)))))
+        (choice (selector-set specs :style answer)
+                (selected-styles specs (selector-get specs :family))
+                (selector-get specs :style))))))
 
-(tm-widget (font-size-selector)
+(tm-widget (font-style-selector* specs)
+  (hlist
+    (bold (text "Style")) // //
+    (enum (selector-set specs :style answer)
+          (selected-styles specs (selector-get specs :family))
+          (selector-get specs :style) "10em")))
+
+(tm-widget (font-size-selector specs)
   (vertical
     (bold (text "Size"))
     ===
     (resize "75px" "350px"
       (scrollable
-        (choice (set! selector-font-size answer)
+        (choice (selector-set specs :size answer)
                 (font-default-sizes)
-                selector-font-size)))))
+                (selector-get specs :size))))))
 
-(tm-widget (font-sample-text)
+(tm-widget (font-size-selector* specs)
+  (hlist
+    (bold (text "Size")) // //
+    (enum (selector-set specs :size answer)
+          (font-default-sizes*)
+          (selector-get specs :size) "3em")))
+
+(tm-widget (font-sample-text specs)
   (texmacs-output
     `(with "bg-color" "white"
-       ,(selector-font-demo-text))
+       ,(selector-font-demo-text specs))
     '(style "generic")))
 
-(tm-widget (font-properties-selector)
+(tm-widget (font-properties-selector* specs)
+  (aligned
+    ;;(item (text "Base family:")
+    ;;  (enum (selector-set specs :family answer)
+    ;;        (font-database-families)
+    ;;        (selector-get specs :family) "150px"))
+    ;;(item (text "Base style:")
+    ;;  (enum (selector-set specs :style answer)
+    ;;        (font-database-styles (selector-get specs :family))
+    ;;        (selector-get specs :style) "150px"))
+    ;;(item ====== ======)
+    (item (text "Weight:")
+      (enum (selector-set* specs :weight answer)
+            '("Any" "Thin" "Light" "Medium" "Bold" "Black")
+            (selector-get specs :weight) "150px"))
+    (item (text "Slant:")
+      (enum (selector-set* specs :slant answer)
+            '("Any" "Normal" "Italic" "Oblique")
+            (selector-get specs :slant) "150px"))
+    (item (text "Stretch:")
+      (enum (selector-set* specs :stretch answer)
+            '("Any" "Condensed" "Unextended" "Wide")
+            (selector-get specs :stretch) "150px"))
+    (item (text "Case:")
+      (enum (selector-set* specs :case answer)
+            '("Any" "Mixed" "Small Capitals")
+            (selector-get specs :case) "150px"))
+    (item ====== ======)
+    (item (text "Serif:")
+      (enum (selector-set* specs :serif answer)
+            '("Any" "Serif" "Sans Serif")
+            (selector-get specs :serif) "150px"))
+    (item (text "Spacing:")
+      (enum (selector-set* specs :spacing answer)
+            '("Any" "Proportional" "Monospaced")
+            (selector-get specs :spacing) "150px"))
+    (item (text "Device:")
+      (enum (selector-set* specs :device answer)
+            '("Any" "Print" "Typewriter" "Digital"
+              "Pen" "Art Pen" "Chalk" "Marker")
+            (selector-get specs :device) "150px"))
+    (item (text "Category:")
+      (enum (selector-set* specs :category answer)
+            '("Any" "Ancient" "Attached" "Calligraphic" "Comic"
+              "Decorative" "Distorted" "Gothic" "Handwritten" "Initials"
+              "Medieval" "Miscellaneous" "Outline" "Retro" "Scifi" "Title")
+            (selector-get specs :category) "150px"))
+    (item ====== ======)
+    (item (text "Glyphs:")
+      (enum (selector-set* specs :glyphs answer)
+            '("Any" "ASCII" "Latin" "Greek" "Cyrillic"
+              "CJK" "Hangul" "Math Symbols" "Math Extra" "Math Letters")
+            (selector-get specs :glyphs) "150px")))
+  (horizontal (glue #f #t 0 0))
+  ;;(horizontal
+  ;;  >>>
+  ;;  (toggle (selector-customize! answer) (selector-customize?)) ///
+  ;;  (text "Advanced customizations")
+  ;;  >>>)
+  )
+
+(tm-widget (font-properties-selector specs)
   (vertical
     (horizontal
       (glue #f #f 0 0)
       (bold (text "Filter"))
       (glue #f #f 0 0))
     ===
-    (aligned
-      ;;(item (text "Base family:")
-      ;;  (enum (set! selector-font-family answer)
-      ;;        (font-database-families)
-      ;;        selector-font-family "150px"))
-      ;;(item (text "Base style:")
-      ;;  (enum (set! selector-font-style answer)
-      ;;        (font-database-styles selector-font-family)
-      ;;        selector-font-style "150px"))
-      ;;(item ====== ======)
-      (item (text "Weight:")
-        (enum (selector-search-set! selector-search-weight answer)
-              '("Any" "Thin" "Light" "Medium" "Bold" "Black")
-              selector-search-weight "150px"))
-      (item (text "Slant:")
-        (enum (selector-search-set! selector-search-slant answer)
-              '("Any" "Normal" "Italic" "Oblique")
-              selector-search-slant "150px"))
-      (item (text "Stretch:")
-        (enum (selector-search-set! selector-search-stretch answer)
-              '("Any" "Condensed" "Unextended" "Wide")
-              selector-search-stretch "150px"))
-      (item (text "Case:")
-        (enum (selector-search-set! selector-search-case answer)
-              '("Any" "Mixed" "Small Capitals")
-              selector-search-case "150px"))
-      (item ====== ======)
-      (item (text "Serif:")
-        (enum (selector-search-set! selector-search-serif answer)
-              '("Any" "Serif" "Sans Serif")
-              selector-search-serif "150px"))
-      (item (text "Spacing:")
-        (enum (selector-search-set! selector-search-spacing answer)
-              '("Any" "Proportional" "Monospaced")
-              selector-search-spacing "150px"))
-      (item (text "Device:")
-        (enum (selector-search-set! selector-search-device answer)
-              '("Any" "Print" "Typewriter" "Digital"
-		"Pen" "Art Pen" "Chalk" "Marker")
-              selector-search-device "150px"))
-      (item (text "Category:")
-        (enum (selector-search-set! selector-search-category answer)
-              '("Any" "Ancient" "Attached" "Calligraphic" "Comic"
-                "Decorative" "Distorted" "Gothic" "Handwritten" "Initials"
-                "Medieval" "Miscellaneous" "Outline" "Retro" "Scifi" "Title")
-              selector-search-category "150px"))
-      (item ====== ======)
-      (item (text "Glyphs:")
-        (enum (selector-search-set! selector-search-glyphs answer)
-              '("Any" "ASCII" "Latin" "Greek" "Cyrillic"
-                "CJK" "Hangul" "Math Symbols" "Math Extra" "Math Letters")
-              selector-search-glyphs "150px")))
-    (horizontal (glue #f #t 0 0))
-    ;;(horizontal
-    ;;  >>>
-    ;;  (toggle (selector-customize! answer) (selector-customize?)) ///
-    ;;  (text "Advanced customizations")
-    ;;  >>>)
-    ))
+    (dynamic (font-properties-selector* specs))))
 
 (define (font-effect-defaults which)
   (cond ((== which "embold")
@@ -517,28 +621,29 @@
   (cond ((== which "slant") "0")
 	(else "1")))
 
-(tm-widget (font-effect-selector which)
-  (enum (selector-customize-set! which answer)
+(tm-widget (font-effect-selector specs which)
+  (enum (selector-customize-set! specs which answer)
         (font-effect-defaults which)
-        (selector-customize-get which (font-effect-default which)) "50px"))
+        (selector-customize-get
+         specs which (font-effect-default which)) "50px"))
 
-(tm-widget (font-effects-selector)
+(tm-widget (font-effects-selector specs)
   (vertical
     (aligned
       (item (text "Slant:")
-        (dynamic (font-effect-selector "slant")))
+        (dynamic (font-effect-selector specs "slant")))
       (item (text "Embold:")
-        (dynamic (font-effect-selector "embold")))
+        (dynamic (font-effect-selector specs "embold")))
       (item (text "Double stroke:")
-        (dynamic (font-effect-selector "embbb")))
+        (dynamic (font-effect-selector specs "embbb")))
       (item (text "Extended:")
-        (dynamic (font-effect-selector "hextended")))
+        (dynamic (font-effect-selector specs "hextended")))
       ;;(item (text "Extend vertically:")
-      ;;  (dynamic (font-effect-selector "vextended")))
+      ;;  (dynamic (font-effect-selector specs "vextended")))
       (item (text "Magnify horizontally:")
-        (dynamic (font-effect-selector "hmagnify")))
+        (dynamic (font-effect-selector specs "hmagnify")))
       (item (text "Magnify vertically:")
-        (dynamic (font-effect-selector "vmagnify"))))
+        (dynamic (font-effect-selector specs "vmagnify"))))
     (horizontal (glue #f #t 0 0))))
 
 (define (default-subfonts-list which)
@@ -552,42 +657,42 @@
 	(append l (list ""))
 	(append l (list which "")))))
 
-(tm-widget (subfont-selector which)
-  (enum (selector-customize-set!* which answer)
-	(default-subfonts (selector-customize-get* which "Default"))
-        (selector-customize-get* which "Default") "160px"))
+(tm-widget (subfont-selector specs which)
+  (enum (selector-customize-set!* specs which answer)
+	(default-subfonts (selector-customize-get* specs which "Default"))
+        (selector-customize-get* specs which "Default") "160px"))
 
-(tm-widget (font-variant-selector)
+(tm-widget (font-variant-selector specs)
   (vertical
     (aligned
       (item (text "Bold:")
-        (dynamic (subfont-selector "bold")))
+        (dynamic (subfont-selector specs "bold")))
       (item (text "Italic:")
-        (dynamic (subfont-selector "italic")))
+        (dynamic (subfont-selector specs "italic")))
       (item (text "Small capitals:")
-        (dynamic (subfont-selector "smallcaps")))
+        (dynamic (subfont-selector specs "smallcaps")))
       (item (text "Sans serif:")
-        (dynamic (subfont-selector "sansserif")))
+        (dynamic (subfont-selector specs "sansserif")))
       (item (text "Typewriter:")
-        (dynamic (subfont-selector "typewriter"))))
+        (dynamic (subfont-selector specs "typewriter"))))
     (horizontal (glue #f #t 0 0))))
 
-(tm-widget (font-math-selector)
+(tm-widget (font-math-selector specs)
   (vertical
     (aligned
       (item (text "Mathematics:")
-        (dynamic (subfont-selector "math")))
+        (dynamic (subfont-selector specs "math")))
       (item (text "Greek:")
-        (dynamic (subfont-selector "greek")))
+        (dynamic (subfont-selector specs "greek")))
       (item (text "Blackboard bold:")
-        (dynamic (subfont-selector "bbb")))
+        (dynamic (subfont-selector specs "bbb")))
       (item (text "Calligraphic:")
-        (dynamic (subfont-selector "cal")))
+        (dynamic (subfont-selector specs "cal")))
       (item (text "Fraktur:")
-        (dynamic (subfont-selector "frak"))))
+        (dynamic (subfont-selector specs "frak"))))
     (horizontal (glue #f #t 0 0))))
 
-(tm-widget (font-customized-selector)
+(tm-widget (font-customized-selector specs)
   (assuming (selector-customize?)
     === === ===
     (hlist
@@ -595,16 +700,16 @@
       >>>)
     ===
     (horizontal
-      (link font-effects-selector)
+      (dynamic (font-effects-selector specs))
       >>>
-      (link font-variant-selector)
+      (dynamic (font-variant-selector specs))
       >>>
-      (link font-math-selector))
+      (dynamic (font-math-selector specs)))
     === === ===)
   (assuming (not (selector-customize?))
     === === ===))
 
-(tm-widget (font-customization-dialog quit)
+(tm-widget ((font-customization-dialog specs) quit)
   (padded
     === === ===
     (hlist
@@ -612,44 +717,52 @@
       >>>)
     ===
     (horizontal
-      (link font-effects-selector)
+      (dynamic (font-effects-selector specs))
       >>>
-      (link font-variant-selector)
+      (dynamic (font-variant-selector specs))
       >>>
-      (link font-math-selector))
+      (dynamic (font-math-selector specs)))
     === === ===
     (explicit-buttons (hlist >>> ("Done" (quit))))))
 
-(tm-widget (font-selector-demo)
+(tm-widget (font-selector-demo specs)
   (hlist
     (bold (text "Sample text"))
-    (text (selector-font-simulate-comment))
+    (text (selector-font-simulate-comment specs))
     >>>)
   ===
   (resize "880px" "225px"
     (scrollable
-      (link font-sample-text))))
+      (dynamic (font-sample-text specs)))))
 
 (tm-define (font-import name)
   (font-database-extend-local name)
   (refresh-now "font-family-selector")
-  (refresh-now "font-size-selector"))
+  (refresh-now "font-style-selector")
+  (refresh-now "font-size-selector")
+  (refresh-now "font-selector-demo"))
 
-(tm-widget ((font-selector flag?) quit)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main widgets
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget ((font-selector specs global?) quit)
   (padded
     (horizontal
       (refreshable "font-family-selector"
-        (link font-family-selector))
+        (dynamic (font-family-selector specs)))
       ///
-      (refresh font-style-selector auto)
+      (refreshable "font-style-selector"
+        (dynamic (font-style-selector specs)))
       ///
       (refreshable "font-size-selector"
-        (link font-size-selector))
+        (dynamic (font-size-selector specs)))
       ///
-      (link font-properties-selector))
+      (dynamic (font-properties-selector specs)))
     (refreshable "font-customized-selector"
-      (link font-customized-selector))
-    (refresh font-selector-demo auto)
+      (dynamic (font-customized-selector specs)))
+    (refreshable "font-selector-demo"
+      (promise (menu-dynamic (dynamic (font-selector-demo specs)))))
     === ===
     (explicit-buttons
       (hlist
@@ -664,33 +777,75 @@
         >>>
         (assuming (not (selector-customize?))
           ("Advanced"
-           (dialogue-window font-customization-dialog
+           (dialogue-window (font-customization-dialog specs)
                             noop "Advanced font selector")) // //)
         ("Import" (choose-file font-import "Import font" "")) // //
-        (if flag?
-            ("Reset"
-             (begin
-               (init-default "font" "font-base-size" "math-font" "prog-font"
-                             "font-family" "font-series" "font-shape"
-                             "font-effects")
-               (selector-initialize-font get-init)
-               (refresh-now "font-family-selector")
-               (refresh-now "font-size-selector")
-               (refresh-now "font-customized-selector")))
+        (if global?
+            ("Reset" (selector-restore specs global?))
             // //
-            ("Ok" (quit (selector-get-changes get-init))))
-        (if (not flag?)
-            ("Ok" (quit (selector-get-changes get-env))))))))
+            ("Ok" (quit (selector-get-changes specs get-init))))
+        (if (not global?)
+            ("Ok" (quit (selector-get-changes specs get-env))))))))
 
-(tm-define (open-font-selector)
-  (:interactive #t)
-  (selector-initialize-font get-env)
-  (dialogue-window (font-selector #f) make-multi-with "Font selector"))
+(tm-tool* (font-tool win name getter setter global?)
+  (:name name)
+  (with tool `(font-tool ,name ,getter ,setter ,global?)
+    (with specs (list getter setter global? win)
+      (with wide? (tool-bottom? tool win)
+        (centered
+          (vertical
+            ===
+            (refreshable "font-family-selector"
+              (dynamic (font-family-selector* specs)))
+            ===
+            (horizontal
+              (refreshable "font-style-selector"
+                (dynamic (font-style-selector* specs)))
+              >>>
+              (refreshable "font-size-selector"
+                (dynamic (font-size-selector* specs))))))
+        (assuming global?
+          (division "discrete"
+            (hlist
+              >> ("Restore defaults" (selector-restore specs global?)))
+            ===))
+        ======
+        (section-tabs "font-tool-tabs" win
+          (section-tab "Filters"
+            (centered (dynamic (font-properties-selector* specs)))
+            ======
+            (refreshable "font-selector-demo"
+              (dynamic (selector-font-simulate-widget specs))))
+          (section-tab "Effects"
+            (centered (dynamic (font-effects-selector specs))))
+         (section-tab "Variants"
+            (centered (dynamic (font-variant-selector specs))))
+          (section-tab "Mathematics"
+            (centered (dynamic (font-math-selector specs))))
+          (section-tab "More"
+            (division "plain"
+              (padded
+                ("Import font" (choose-file font-import "Import font" ""))
+                ("Scan disk for more fonts" (scan-disk-for-fonts))
+                ("Clear font cache" (clear-font-cache))))))))))
 
-(tm-define (open-document-font-selector)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; High level window interface
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (open-font-selector-window)
   (:interactive #t)
-  (selector-initialize-font get-init)
-  (dialogue-window (font-selector #t) init-multi "Document font selector"))
+  (with specs (list get-env make-multi-with #f)
+    (selector-clean specs)
+    (dialogue-window (font-selector specs #f)
+                     make-multi-with "Font selector")))
+
+(tm-define (open-document-font-selector-window)
+  (:interactive #t)
+  (with specs (list get-init init-multi #t)
+    (selector-clean specs)
+    (dialogue-window (font-selector specs #t)
+                     init-multi "Document font selector")))
 
 (define ((prefixed-get-init prefix) var)
   (if (init-has? (string-append prefix var))
@@ -702,8 +857,41 @@
     (init-env (string-append prefix (car l)) (cadr l))
     ((prefixed-init-multi prefix) (cddr l))))
 
-(tm-define (open-document-other-font-selector prefix)
+(tm-define (open-document-other-font-selector-window prefix)
   (let* ((getter (prefixed-get-init prefix))
-         (setter (prefixed-init-multi prefix)))
-    (selector-initialize-font getter)
-    (dialogue-window (font-selector #t) setter "Font selector")))
+         (setter (prefixed-init-multi prefix))
+         (specs (list getter setter #t)))
+    (selector-clean specs)
+    (dialogue-window (font-selector specs #t)
+                     setter "Font selector")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; High level tool interface
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (open-font-tool name getter setter global?)
+  (let* ((win (current-window))
+         (specs (list getter setter global? win))
+         (tool `(font-tool ,name ,getter ,setter ,global?)))
+    (selector-clean specs)
+    (tool-select :right tool win)))
+
+(tm-define (open-font-selector)
+  (:interactive #t)
+  (if (side-tools?)
+      (open-font-tool "Font" get-env make-multi-with #f)
+      (open-font-selector-window)))
+
+(tm-define (open-document-font-selector)
+  (:interactive #t)
+  (if (side-tools?)
+      (open-font-tool "Document font" get-init init-multi #t)
+      (open-document-font-selector-window)))
+
+(tm-define (open-document-other-font-selector prefix)
+  (:interactive #t)
+  (if (side-tools?)
+      (let* ((getter (prefixed-get-init prefix))
+             (setter (prefixed-init-multi prefix)))
+        (open-font-tool "Font selector" getter setter #t))
+      (open-document-other-font-selector prefix-window)))

@@ -40,6 +40,7 @@ public:
   
   QTMWidget (QWidget* _parent=0, qt_widget _tmwid=0);
   virtual ~QTMWidget ();
+  virtual bool isEmbedded () const;
   
   virtual QSize	sizeHint () const;
   virtual void scrollContentsBy (int dx, int dy);

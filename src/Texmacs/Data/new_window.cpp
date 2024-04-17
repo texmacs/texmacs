@@ -74,7 +74,8 @@ public:
     object cmd= list_object (symbol_object ("safely-kill-window"),
                              object (*id));
     exec_delayed (scheme_cmd (cmd)); }
-  tm_ostream& print (tm_ostream& out) { return out << "kill window"; }
+  tm_ostream& print (tm_ostream& out) {
+    return out << "<command kill_window>"; }
 };
 
 url
@@ -86,8 +87,10 @@ new_window (bool map_flag= true, tree geom= "") {
   if (get_preference ("focus dependent icons") == "on") mask += 8;
   if (get_preference ("user provided icons") == "on") mask += 16;
   if (get_preference ("status bar") == "on") mask += 32;
-  if (get_preference ("side tools") == "on") mask += 64;
-  if (get_preference ("bottom tools") == "on") mask += 128;
+  //if (get_preference ("side tools") == "on") mask += 64;
+  //if (get_preference ("left tools") == "on") mask += 128;
+  if (get_preference ("bottom tools") == "on") mask += 256;
+  if (get_preference ("extra tools") == "on") mask += 512;
   url* id= tm_new<url> (url_none ());
   command quit= tm_new<kill_window_command_rep> (id);
   tm_window win= tm_new<tm_window_rep> (texmacs_widget (mask, quit), geom);

@@ -71,9 +71,9 @@ Q_IMPORT_PLUGIN(qico)
 Q_IMPORT_PLUGIN(qsvg)
 #endif
 
-#ifdef WIN32 
-Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
-#endif
+//#ifdef WIN32 
+//Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
+//#endif
 #ifdef QT_MAC_USE_COCOA
 Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin)
 #endif
@@ -426,6 +426,7 @@ void qt_gui_rep::set_mouse_pointer (string curs_name, string mask_name)
 
 void
 qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
+  if (headless_mode) return;
   if (DEBUG_QT)
     debug_qt << "show_wait_indicator \"" << message << "\"\"" << arg << "\"\n";
   
