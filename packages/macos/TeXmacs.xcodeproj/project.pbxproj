@@ -520,6 +520,14 @@
 		9C0B4B4810A8CC110097A335 /* table.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49ED10A8CC110097A335 /* table.cpp */; };
 		9C0B4BDE10A8D9370097A335 /* TeXmacs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9C0B430010A8CB4E0097A335 /* TeXmacs */; };
 		9C1359F912BAB07700680742 /* qt_simple_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DEECC01289A694002ACC66 /* qt_simple_widget.cpp */; };
+		9C1645B22BCFF7F800ABADE0 /* pdf_hummus_make_attachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1645AF2BCFF7F800ABADE0 /* pdf_hummus_make_attachment.cpp */; };
+		9C1645B32BCFF7F800ABADE0 /* pdf_hummus_make_attachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1645AF2BCFF7F800ABADE0 /* pdf_hummus_make_attachment.cpp */; };
+		9C1645B42BCFF7F800ABADE0 /* pdf_hummus_make_attachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1645AF2BCFF7F800ABADE0 /* pdf_hummus_make_attachment.cpp */; };
+		9C1645B52BCFF7F800ABADE0 /* pdf_hummus_make_attachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1645AF2BCFF7F800ABADE0 /* pdf_hummus_make_attachment.cpp */; };
+		9C1645B62BCFF7F800ABADE0 /* pdf_hummus_extract_attachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1645B02BCFF7F800ABADE0 /* pdf_hummus_extract_attachment.cpp */; };
+		9C1645B72BCFF7F800ABADE0 /* pdf_hummus_extract_attachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1645B02BCFF7F800ABADE0 /* pdf_hummus_extract_attachment.cpp */; };
+		9C1645B82BCFF7F800ABADE0 /* pdf_hummus_extract_attachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1645B02BCFF7F800ABADE0 /* pdf_hummus_extract_attachment.cpp */; };
+		9C1645B92BCFF7F800ABADE0 /* pdf_hummus_extract_attachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1645B02BCFF7F800ABADE0 /* pdf_hummus_extract_attachment.cpp */; };
 		9C1D126810D102B300232476 /* qt_pipe_link.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1D126510D102B300232476 /* qt_pipe_link.cpp */; };
 		9C1D126910D102B300232476 /* QTMPipeLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1D126610D102B300232476 /* QTMPipeLink.cpp */; };
 		9C21A02221C116660035B5B3 /* font_spacing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C21A02121C116660035B5B3 /* font_spacing.cpp */; };
@@ -755,7 +763,6 @@
 		9C3BF69427CE64900075D26D /* ispell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B488010A8CC100097A335 /* ispell.cpp */; };
 		9C3BF69527CE64900075D26D /* mac_app.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B488610A8CC100097A335 /* mac_app.mm */; };
 		9C3BF69627CE64900075D26D /* string_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CACE31C242BD54F00D0B7CA /* string_parser.cpp */; };
-		9C3BF69727CE64900075D26D /* pdf_hummus_renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4914651B1801C1AA000E6455 /* pdf_hummus_renderer.cpp */; };
 		9C3BF69827CE64900075D26D /* mac_images.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B488810A8CC100097A335 /* mac_images.mm */; };
 		9C3BF69927CE64900075D26D /* mac_spellservice.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B488A10A8CC100097A335 /* mac_spellservice.mm */; };
 		9C3BF69A27CE64900075D26D /* load_pk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B488C10A8CC100097A335 /* load_pk.cpp */; };
@@ -3111,6 +3118,10 @@
 		9C0B49EE10A8CC110097A335 /* table.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = table.hpp; sourceTree = "<group>"; };
 		9C0B49EF10A8CC110097A335 /* typesetter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = typesetter.hpp; sourceTree = "<group>"; };
 		9C0B4B4F10A8CC6D0097A335 /* makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = makefile; path = src/makefile; sourceTree = "<group>"; };
+		9C1645AE2BCFF7F800ABADE0 /* pdf_hummus_make_attachment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pdf_hummus_make_attachment.hpp; sourceTree = "<group>"; };
+		9C1645AF2BCFF7F800ABADE0 /* pdf_hummus_make_attachment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pdf_hummus_make_attachment.cpp; sourceTree = "<group>"; };
+		9C1645B02BCFF7F800ABADE0 /* pdf_hummus_extract_attachment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pdf_hummus_extract_attachment.cpp; sourceTree = "<group>"; };
+		9C1645B12BCFF7F800ABADE0 /* pdf_hummus_extract_attachment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pdf_hummus_extract_attachment.hpp; sourceTree = "<group>"; };
 		9C19A57714FD624700738BD2 /* build-glue */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "build-glue"; sourceTree = "<group>"; };
 		9C19A57814FD624700738BD2 /* build-glue-basic.scm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "build-glue-basic.scm"; sourceTree = "<group>"; };
 		9C19A57914FD624700738BD2 /* build-glue-editor.scm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "build-glue-editor.scm"; sourceTree = "<group>"; };
@@ -5547,6 +5558,10 @@
 		9C82C0FF11ED2CC200BC4BBE /* Pdf */ = {
 			isa = PBXGroup;
 			children = (
+				9C1645B02BCFF7F800ABADE0 /* pdf_hummus_extract_attachment.cpp */,
+				9C1645B12BCFF7F800ABADE0 /* pdf_hummus_extract_attachment.hpp */,
+				9C1645AF2BCFF7F800ABADE0 /* pdf_hummus_make_attachment.cpp */,
+				9C1645AE2BCFF7F800ABADE0 /* pdf_hummus_make_attachment.hpp */,
 				9C520FED2028A88D00A2B5B6 /* LibAesgm */,
 				4914651D1801C1AA000E6455 /* PDFWriter */,
 				4914651C1801C1AA000E6455 /* pdf_hummus_renderer.hpp */,
@@ -6390,6 +6405,7 @@
 				9C0B4A3B10A8CC110097A335 /* widget.cpp in Sources */,
 				9C0B4A3C10A8CC110097A335 /* math_tree.cpp in Sources */,
 				9C4A74181D22C3A000572468 /* poor_distorted.cpp in Sources */,
+				9C1645B22BCFF7F800ABADE0 /* pdf_hummus_make_attachment.cpp in Sources */,
 				9C4A07C1255B36CB0029D8B4 /* preprocessor_parser.cpp in Sources */,
 				9C0B4A3D10A8CC110097A335 /* test_math.cpp in Sources */,
 				9C0B4A3E10A8CC110097A335 /* basic_renderer.cpp in Sources */,
@@ -6588,6 +6604,7 @@
 				9C0B4B4610A8CC110097A335 /* stacker.cpp in Sources */,
 				9C0B4B4710A8CC110097A335 /* cell.cpp in Sources */,
 				9C0B4B4810A8CC110097A335 /* table.cpp in Sources */,
+				9C1645B62BCFF7F800ABADE0 /* pdf_hummus_extract_attachment.cpp in Sources */,
 				9C99F04910AD8B0400B2113D /* QTMScrollView.cpp in Sources */,
 				9C1D126810D102B300232476 /* qt_pipe_link.cpp in Sources */,
 				9C1D126910D102B300232476 /* QTMPipeLink.cpp in Sources */,
@@ -6857,7 +6874,6 @@
 				9C3BF69427CE64900075D26D /* ispell.cpp in Sources */,
 				9C3BF69527CE64900075D26D /* mac_app.mm in Sources */,
 				9C3BF69627CE64900075D26D /* string_parser.cpp in Sources */,
-				9C3BF69727CE64900075D26D /* pdf_hummus_renderer.cpp in Sources */,
 				9C3BF69827CE64900075D26D /* mac_images.mm in Sources */,
 				9C3BF69927CE64900075D26D /* mac_spellservice.mm in Sources */,
 				9C3BF69A27CE64900075D26D /* load_pk.cpp in Sources */,
@@ -6866,6 +6882,7 @@
 				9C3BF69D27CE64900075D26D /* tex_files.cpp in Sources */,
 				9C3BF69E27CE64900075D26D /* tex_font.cpp in Sources */,
 				9C3BF69F27CE64900075D26D /* true_color.cpp in Sources */,
+				9C1645B92BCFF7F800ABADE0 /* pdf_hummus_extract_attachment.cpp in Sources */,
 				9C3BF6A027CE64900075D26D /* tex_init.cpp in Sources */,
 				9C3BF6A127CE64900075D26D /* tex_rubber_font.cpp in Sources */,
 				9C3BF6A227CE64900075D26D /* latex_recover.cpp in Sources */,
@@ -6982,6 +6999,7 @@
 				9C3BF71027CE64900075D26D /* rubber_assemble_font.cpp in Sources */,
 				9C3BF71127CE64900075D26D /* lazy_gui.cpp in Sources */,
 				9C3BF71227CE64900075D26D /* lazy_paragraph.cpp in Sources */,
+				9C1645B52BCFF7F800ABADE0 /* pdf_hummus_make_attachment.cpp in Sources */,
 				9C3BF71327CE64900075D26D /* lazy_typeset.cpp in Sources */,
 				9C3BF71427CE64900075D26D /* tm_timer.cpp in Sources */,
 				9C3BF71527CE64900075D26D /* lazy_vstream.cpp in Sources */,
@@ -7346,6 +7364,7 @@
 				9CCC74AC10D303D900E88D90 /* texmacs_client.cpp in Sources */,
 				9CCC74AD10D303D900E88D90 /* texmacs_server.cpp in Sources */,
 				9CCC74AE10D303D900E88D90 /* tm_link.cpp in Sources */,
+				9C1645B42BCFF7F800ABADE0 /* pdf_hummus_make_attachment.cpp in Sources */,
 				9C33F4352412C1E000F73F5A /* adjust_libertine.cpp in Sources */,
 				9CCC74AF10D303D900E88D90 /* data_cache.cpp in Sources */,
 				9CCC74B010D303D900E88D90 /* fast_alloc.cpp in Sources */,
@@ -7494,6 +7513,7 @@
 				492ED6D1150FD27D00DB0FB5 /* new_style.cpp in Sources */,
 				493D309C15190AEA00A19C3D /* new_buffer.cpp in Sources */,
 				49F251D6151B70840091FF99 /* persistent.cpp in Sources */,
+				9C1645B82BCFF7F800ABADE0 /* pdf_hummus_extract_attachment.cpp in Sources */,
 				4906929D151B743F006645F4 /* new_view.cpp in Sources */,
 				49F9FA151573BA86006C7258 /* new_project.cpp in Sources */,
 				49F9FA181573BA86006C7258 /* new_window.cpp in Sources */,
@@ -7620,6 +7640,7 @@
 				49FB1B081CB30D6000B983F3 /* poor_smallcaps.cpp in Sources */,
 				9CD4E62110B14AB300E0DD5C /* edit_complete.cpp in Sources */,
 				9C33F43E2412C20100F73F5A /* superposed_font.cpp in Sources */,
+				9C1645B72BCFF7F800ABADE0 /* pdf_hummus_extract_attachment.cpp in Sources */,
 				9CD4E62210B14AB300E0DD5C /* edit_cursor.cpp in Sources */,
 				9C52102B2028B86900A2B5B6 /* font_wide.cpp in Sources */,
 				9CD4E62310B14AB300E0DD5C /* edit_footer.cpp in Sources */,
@@ -7728,6 +7749,7 @@
 				9C33F43B2412C20100F73F5A /* recolored_font.cpp in Sources */,
 				9CD4E69510B14AB300E0DD5C /* language.cpp in Sources */,
 				9CD4E69610B14AB300E0DD5C /* math_language.cpp in Sources */,
+				9C1645B32BCFF7F800ABADE0 /* pdf_hummus_make_attachment.cpp in Sources */,
 				4934A46B18C5D00000BF1E6A /* conservative_totex.cpp in Sources */,
 				9CD4E69710B14AB300E0DD5C /* mathemagix_language.cpp in Sources */,
 				9CD4E69810B14AB300E0DD5C /* scheme_language.cpp in Sources */,

@@ -356,6 +356,19 @@ texmacs_widget_rep::handle_set_widget (set_widget_event ev) {
       }
     } // use_side_tools
   }
+  else if (ev->which == "left tools") {
+    if (use_side_tools) {
+      wk_widget side=
+        resize_widget (ev->w, 0, "200px", "", "200px", "", "200px", "",
+                       "left", "top");
+      THIS ["middle"] << set_widget ("left", side);
+      if (attached ()) {
+        side << emit_attach_window (win);
+        THIS ["middle"] << emit_reposition ();
+        THIS ["middle"] ["left"] << emit_invalidate_all ();
+      }
+    } // use_side_tools
+  }
   else if (ev->which == "bottom tools") {
     wk_widget bottom= ev->w;
     THIS ["bottom"] << set_widget ("tools", bottom);
@@ -364,6 +377,18 @@ texmacs_widget_rep::handle_set_widget (set_widget_event ev) {
       THIS << emit_reposition ();
       THIS ["bottom"] << emit_invalidate_all ();
     }
+  }
+  else if (ev->which == "extra tools") {
+    wk_widget extra= ev->w;
+    //FIXME: implement this
+#if 0
+    THIS ["bottom"] << set_widget ("tools", bottom);
+    if (attached ()) {
+      bottom << emit_attach_window (win);
+      THIS << emit_reposition ();
+      THIS ["bottom"] << emit_invalidate_all ();
+    }
+#endif
   }
   else if (ev->which == "interactive prompt")
     set_subwidget (THIS ["footer"] ["interactive"], "left", ev->w);
