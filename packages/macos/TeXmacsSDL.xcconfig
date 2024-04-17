@@ -2,7 +2,7 @@
 #include "Base"
 
 OTHER_CFLAGS = -DSDLTEXMACS -DMUPDF_RENDERER $(TM_CPPFLAGS)
-OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) $(TM_CXXFREETYPE) $(TM_CXXGUILE) $(TM_CXXPDF)
-OTHER_LDFLAGS = -Wl,-stack_size,0x1000000,-headerpad_max_install_names $(TM_LDFLAGS) $(TM_LIBS) -lSDL2
-PRODUCT_NAME = TeXmacsQt
+OTHER_CPLUSPLUSFLAGS = -std=c++11 $(OTHER_CFLAGS) $(TM_CXXFREETYPE) $(TM_CXXGUILE) $(TM_CXXPDF) -I/opt/homebrew/Cellar/sdl2/2.30.2/include -I/Users/mgubi/t/mupdf/usr/include
+OTHER_LDFLAGS = -L/Users/mgubi/t/mupdf/usr/lib -Wl,-stack_size,0x1000000,-headerpad_max_install_names $(TM_LDFLAGS) $(TM_LIBS) -L/opt/homebrew/Cellar/sdl2/2.30.2/lib -lSDL2 -lmupdf -lmupdf-third
+PRODUCT_NAME = TeXmacsSDL
 

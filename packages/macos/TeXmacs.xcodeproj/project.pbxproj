@@ -3183,6 +3183,10 @@
 		9C4A74111D22C38200572468 /* raster_random.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = raster_random.cpp; sourceTree = "<group>"; };
 		9C4A74171D22C3A000572468 /* poor_distorted.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = poor_distorted.cpp; sourceTree = "<group>"; };
 		9C4B87A512AE5BD100F8571A /* packrat_serializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = packrat_serializer.cpp; sourceTree = "<group>"; };
+		9C4DD393298FF35A00DD5B59 /* wasm_gui.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = wasm_gui.cpp; sourceTree = "<group>"; };
+		9C4DD394298FF35A00DD5B59 /* wasm_window.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = wasm_window.hpp; sourceTree = "<group>"; };
+		9C4DD395298FF35A00DD5B59 /* wasm_gui.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = wasm_gui.hpp; sourceTree = "<group>"; };
+		9C4DD396298FF35A00DD5B59 /* wasm_window.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = wasm_window.cpp; sourceTree = "<group>"; };
 		9C4DE77A1475AA9A00F41E44 /* glue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = glue.cpp; sourceTree = "<group>"; };
 		9C4DE77B1475AA9A00F41E44 /* glue.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = glue.hpp; sourceTree = "<group>"; };
 		9C4FCFF5150F73100087378D /* new_document.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = new_document.cpp; sourceTree = "<group>"; };
@@ -4439,6 +4443,7 @@
 		9C0B484710A8CC100097A335 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				9C4DD392298FF35A00DD5B59 /* wasm */,
 				9C3BF40627CE63570075D26D /* SDL */,
 				9CBAC91227AC8641008E1893 /* MuPDF */,
 				9C0B484810A8CC100097A335 /* Axel */,
@@ -5420,6 +5425,17 @@
 				9C3BF7E427CE64E10075D26D /* sdl_window.hpp */,
 			);
 			path = SDL;
+			sourceTree = "<group>";
+		};
+		9C4DD392298FF35A00DD5B59 /* wasm */ = {
+			isa = PBXGroup;
+			children = (
+				9C4DD393298FF35A00DD5B59 /* wasm_gui.cpp */,
+				9C4DD394298FF35A00DD5B59 /* wasm_window.hpp */,
+				9C4DD395298FF35A00DD5B59 /* wasm_gui.hpp */,
+				9C4DD396298FF35A00DD5B59 /* wasm_window.cpp */,
+			);
+			path = wasm;
 			sourceTree = "<group>";
 		};
 		9C4FCFF4150F73100087378D /* Document */ = {
