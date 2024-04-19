@@ -246,6 +246,8 @@ remote_time (Uint32 t) {
 #define SDLK_ISO_Left_Tab 0xFE20
 #endif
 
+//FIXME: in SDL we do not need different maps for lower and upper keys since alphabetical characters are ignored
+
 hashmap<int,string>          lower_key;
 hashmap<int,string>          upper_key;
 
@@ -867,18 +869,62 @@ lookup_mouse (Uint8 button) {
 
 static string
 lookup_key (SDL_Keysym *key) {
-  const char* str= SDL_GetKeyName (key->sym);
-  string r(str, strlen(str));
-  r= utf8_to_cork (r);
-  if (contains_unicode_char (r)) return r;
-//  string s=r;
   string s= ((key->mod & KMOD_SHIFT) ? upper_key [key->sym] : lower_key [key->sym]);
-  if ((N(s)>=2) && (s[0]=='K') && (s[1]=='-')) s= s (2, N(s));
-
+  if ((N(s)>=2) && (s[0]=='K') && (s[1]=='-')) s= s (2, N(s)); // remove keypad prefix
+  // If we have a single character with any modifier apart from shift and alt we ignore the keypress
+  // why? shift and alt are used to extend the keyboard and they might possibly generate textinput events.
+  // In order not to duplicate keypresses it is simpler to ignore them.
+  if ((N(s) == 1) && !(key->mod & ~KMOD_SHIFT & ~KMOD_ALT)) return "";
   if (key->mod & KMOD_CTRL) s= "C-" * s;
   if (key->mod & KMOD_ALT)  s= "A-" * s;
   if (key->mod & KMOD_GUI)  s= "M-" * s;
   cout << "key press: " << s << LF;
+  return s;
+}
+
+/* Print modifier info */
+static string PrintModifiers (SDL_Keysym *key){
+  string s;
+  s << " Modifers: [" << as_string (key->mod) << " ";
+  
+  /* If there are none then say so and return. */
+  if( key->mod == KMOD_NONE ){
+    s << "None\n";
+    return s;
+  }
+  
+  /* Check for the presence of each SDLMod value */
+  /* This looks messy, but there really isn't    */
+  /* a clearer way.                              */
+  if( key->mod & KMOD_NUM ) s << "NUMLOCK ";
+  if( key->mod & KMOD_CAPS ) s << "CAPSLOCK ";
+  if( key->mod & KMOD_LCTRL ) s << "LCTRL ";
+  if( key->mod & KMOD_RCTRL ) s << "RCTRL ";
+  if( key->mod & KMOD_RSHIFT ) s << "RSHIFT ";
+  if( key->mod & KMOD_LSHIFT ) s << "LSHIFT ";
+  if( key->mod & KMOD_RALT ) s << "RALT ";
+  if( key->mod & KMOD_LALT ) s << "LALT ";
+  if( key->mod & KMOD_RGUI ) s << "RGUI ";
+  if( key->mod & KMOD_LGUI ) s << "LGUI ";
+  if( key->mod & KMOD_CTRL ) s << "CTRL ";
+  if( key->mod & KMOD_SHIFT ) s << "SHIFT ";
+  if( key->mod & KMOD_ALT ) s << "ALT ";
+  if( key->mod & KMOD_GUI ) s << "GUI ";
+  s << "]";
+  return s;
+}
+
+/* Print all information about a key event */
+static string PrintKeyInfo( SDL_KeyboardEvent *key ){
+  string s;
+  /* Is it a release or a press? */
+  s <<  (key->type == SDL_KEYUP ? "Release:- " : "Press:- ");
+  /* Print the hardware scancode first */
+  s << "Scancode: " << as_hexadecimal(key->keysym.scancode);
+  /* Print the name of the key */
+  s << ", Name: " << SDL_GetKeyName( key->keysym.sym );
+  /* Print modifier info */
+  s << PrintModifiers (&(key->keysym));
   return s;
 }
 
@@ -1044,22 +1090,37 @@ sdl_gui_rep::process_event (SDL_Event *event) {
     case SDL_KEYDOWN:
     {
       SDL_Log("Keydown: %s key acting as %s key", SDL_GetScancodeName(event->key.keysym.scancode), SDL_GetKeyName(event->key.keysym.sym));
+      cout << PrintKeyInfo (&(event->key)) << LF;
       unmap_balloon ();
       sdl_window win= get_window_from_ID (event->key.windowID);
       if (win == NULL) break;
       string key= lookup_key (&event->key.keysym);
+      if (N(key) == 0) break; // the keypress will generate a textinput event, so we avoid to duplicate
       //cout << "Press " << key << " at " << (time_t) ev->xkey.time
       //<< " (" << texmacs_time() << ")\n";
+      if (N(key)>0) win->key_event (key);
+      break;
+    } // case SDL_KEYDOWN:
+    case SDL_TEXTINPUT:
+    {
+      unmap_balloon ();
+      sdl_window win= get_window_from_ID (event->text.windowID);
+      if (win == NULL) break;
+      SDL_Log("TextInput: \'%s\'", event->text.text);
+      // we currenlty assume that the text from the event is always a single logical character
+      //FIXME: check the assumption or handle the general situation
+      string key (utf8_to_cork (string (event->text.text)));
+      if (key[0] == '<') key = key (1,N(key)-1);
       kbd_count++;
       synchronize_time (event->key.timestamp);
       if (texmacs_time () - remote_time (event->key.timestamp) < 100 ||
           (kbd_count & 15) == 0)
         request_partial_redraw= true;
-      //cout << "key   : " << key << "\n";
+      cout << "textinput: " << key << LF;
       //cout << "redraw: " << request_partial_redraw << "\n";
-      if (N(key)>0) win->key_event (key);
+      win->key_event (key);
       break;
-    } // case SDL_KEYDOWN:
+    } // case SDL_TEXTINPUT:
   } // switch (event->type)
 }
 
