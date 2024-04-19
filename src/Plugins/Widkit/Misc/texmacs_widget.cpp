@@ -440,10 +440,14 @@ texmacs_widget_rep::handle_set_string (set_string_event ev) {
     set_subwidget_flag (THIS ["header"] ["user"], ev->s == "on");
   else if (ev->which == "side tools")
     /*set_side_tools_flag (ev->s == "on")*/;
+  else if (ev->which == "left tools")
+    ; //FIXME: add implementation
   else if (ev->which == "bottom tools") {
     if (ev->s != "on") send_keyboard_focus (abstract (THIS ["canvas"]));
     set_subwidget_flag (THIS ["bottom"], ev->s == "on");
   }
+  else if (ev->which == "extra tools")
+    ; //FIXME: add implementation
   else if (ev->which == "interactive mode")
     set_footer_mode (ev->s == "on"? 1: (footer_flag? 0: 2));
   else if (ev->which == "footer flag") set_footer_flag (ev->s == "on");
