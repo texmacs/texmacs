@@ -175,11 +175,11 @@ void
 popup_button_rep::handle_mouse (mouse_event ev) {
   string type= ev->type;
   SI x= ev->x, y= ev->y;
-
+  
   consistent ("handle_mouse (start)");
-
+  
   bool old_inside= inside;
-
+  
   if (type == "leave") {
     inside= false;
     if (require_map) {
@@ -187,7 +187,7 @@ popup_button_rep::handle_mouse (mouse_event ev) {
       require_map= false;
     }
   }
-
+  
   /*************************** button is inactive ****************************/
   else if (!status) {
     consistent ("handle_mouse (1)");
@@ -198,54 +198,54 @@ popup_button_rep::handle_mouse (mouse_event ev) {
       require_map= true;
     }
   }
-
+  
   /**************************** button is active *****************************/
   else {
     bool inside_popup=
-      ((where == east) && (x > w-12*PIXEL)) ||
-      ((where == south) && (y<0)) ||
-      ((where == south_east) && (y<0));
+    ((where == east) && (x > w-12*PIXEL)) ||
+    ((where == south) && (y<0)) ||
+    ((where == south_east) && (y<0));
     inside=
-      (y>=0) && (y<h) && (x>=0) && (x<w);
+    (y>=0) && (y<h) && (x>=0) && (x<w);
     status=
-      (inside || ((!stick) && inside_popup)) &&
-      (ev->pressed ("left") || ev->pressed ("right"));
-
+    (inside || ((!stick) && inside_popup)) &&
+    (ev->pressed ("left") || ev->pressed ("right"));
+    
     // activate
     if (status) {
       if (inside_popup) {
-	if (require_map) map_popup ();
-	if (status) {
-	  consistent ("handle_mouse (2)");
-	  popup_w << set_integer ("stick", 0);
-	  wk_grab_pointer (popup_w);
-	}
+        if (require_map) map_popup ();
+        if (status) {
+          consistent ("handle_mouse (2)");
+          popup_w << set_integer ("stick", 0);
+          wk_grab_pointer (popup_w);
+        }
       }
     }
-
+    
     // stick or deactivate
     else {
       if (inside /* && false */) {
-	status= true;
-	if (require_map) { map_popup (); stick= true; }
-	if (status) {
-	  consistent ("handle_mouse (3)");
-	  popup_w << set_integer ("stick", 1);
-	  wk_grab_pointer (popup_w);
-	}
+        status= true;
+        if (require_map) { map_popup (); stick= true; }
+        if (status) {
+          consistent ("handle_mouse (3)");
+          popup_w << set_integer ("stick", 1);
+          wk_grab_pointer (popup_w);
+        }
       }
       else {
-	if (require_map) require_map= false;
-	else unmap_popup ();
+        if (require_map) require_map= false;
+        else unmap_popup ();
       }
     }
   }
-
+  
   if (inside != old_inside && attached ())
     this << emit_invalidate_all ();
-
+  
   consistent ("handle_mouse (*)");
-
+  
   /**************************** wait to be mapped ****************************/
   if (require_map) {
     time_t now;
@@ -255,7 +255,7 @@ popup_button_rep::handle_mouse (mouse_event ev) {
     } while ((now-entered_at) < MAP_DELAY);
     map_popup ();
   }
-
+  
   consistent ("handle_mouse (end)");
 }
 
