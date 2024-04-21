@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : sdl_gui.hpp
-* DESCRIPTION: Graphical user interface for SDL
+* DESCRIPTION: Graphical user interface for SDL2
 * COPYRIGHT  : (C) 2022 Massimiliano Gubinelli
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
@@ -115,8 +115,9 @@ public:
   void event_loop ();
   bool run_gui ();
   
-  /************************** windowing interface *******************************/
-  void create_window (int id, string name, int x, int y, int w, int h, bool popup);
+  /************************** windowing interface *****************************/
+  void create_window (int id, string name, int x, int y,
+                      int w, int h, bool popup);
   void destroy_window (int id);
 
   void focussed_window (int id);
@@ -125,7 +126,8 @@ public:
   void set_window_position (int id, int x, int y);
   void get_window_size (int id, int& w, int& h);
   void set_window_size (int id, int w, int h);
-  void set_window_limits (int id, int min_w, int min_h, int max_w, int max_h);
+  void set_window_limits (int id, int min_w, int min_h,
+                          int max_w, int max_h);
   void set_window_title (int id, string name);
   void set_window_visibility (int id, bool show);
   void set_window_fullscreen (int id, bool full);

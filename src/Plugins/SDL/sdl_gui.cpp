@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : sdl_gui.cpp
-* DESCRIPTION: Graphical user interface for SDL
+* DESCRIPTION: Graphical user interface for SDL2
 * COPYRIGHT  : (C) 2022 Massimiliano Gubinelli
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
@@ -53,7 +53,7 @@ get_Window (widget w) {
     FAILED ("widget is not attached to a window");
   }
 //  sdl_window w2= (sdl_window)id_to_window [id];
-  SDL_Window* win= id_to_Window[id];
+  SDL_Window* win= id_to_Window [id];
   return win;
 }
 
@@ -72,17 +72,19 @@ sdl_gui_rep::sdl_gui_rep (int& argc2, char** argv2)
 
   the_gui= this;
   
-  if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0) {
-          SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
+  if (SDL_Init (SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
+          SDL_Log ("Unable to initialize SDL: %s", SDL_GetError());
     exit(-1);
   }
+  
+  SDL_SetHint (SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
   
   screen_width= 600;
   screen_height= 600;
   set_retina_factor (2);
 
   SDL_Rect r;
-  if (SDL_GetDisplayBounds(0, &r) != 0) {
+  if (SDL_GetDisplayBounds (0, &r) != 0) {
       SDL_Log("SDL_GetDisplayBounds failed: %s", SDL_GetError());
   } else {
     screen_width= r.w;
@@ -94,7 +96,7 @@ sdl_gui_rep::sdl_gui_rep (int& argc2, char** argv2)
 }
 
 sdl_gui_rep::~sdl_gui_rep () {
-  SDL_Quit();
+  SDL_Quit ();
 }
 
 void
@@ -115,7 +117,7 @@ void sdl_gui_rep::update_mouse_state (Uint32 mask) {
   int x, y;
 
   Uint32 buttons= SDL_GetGlobalMouseState (&x, &y);
-  SDL_Keymod mods= SDL_GetModState();
+  SDL_Keymod mods= SDL_GetModState ();
 
 //  buttons ^= mask;
   
@@ -126,8 +128,9 @@ void sdl_gui_rep::update_mouse_state (Uint32 mask) {
   if ((buttons & SDL_BUTTON_X1MASK) != 0) state += 8;
   if ((buttons & SDL_BUTTON_X2MASK) != 0) state += 16;
   if ((mods & KMOD_SHIFT) != 0) state += 256;
-  if ((mods & KMOD_CTRL)  != 0) state += 1024;
-  if ((mods & KMOD_ALT)  != 0)  state += 2048;
+  if ((mods & KMOD_CTRL)  != 0) state += 1024 + 4;
+  if ((mods & KMOD_ALT)  != 0)  state += 2048 + 2;
+  if ((mods & KMOD_GUI)  != 0)  state += 4096;
 //  if ((mods & KMOD_CAPS)  != 0) state += 1024;
   mouse_state= state;
 }
@@ -195,6 +198,7 @@ sdl_gui_rep::release_mouse_grab () {
     sdl_window grab_win= get_sdl_window (new_widget);
     notify_mouse_grab (new_widget, true);
     SDL_Window *w= id_to_Window [grab_win->id];
+    SDL_CaptureMouse (SDL_FALSE);
     SDL_RaiseWindow (w);
     SDL_CaptureMouse (SDL_TRUE);
     // SDL_SetWindowGrab (grab_win->win, SDL_TRUE);
@@ -246,7 +250,8 @@ remote_time (Uint32 t) {
 #define SDLK_ISO_Left_Tab 0xFE20
 #endif
 
-//FIXME: in SDL we do not need different maps for lower and upper keys since alphabetical characters are ignored
+//FIXME: in SDL we do not need different maps for lower and upper keys
+//FIXME: since alphabetical characters are ignored
 
 hashmap<int,string>          lower_key;
 hashmap<int,string>          upper_key;
@@ -648,7 +653,7 @@ initialize_keyboard () {
   Map (SDLK_CANCEL, "cancel");
 
   // Control keys
-  map (SDLK_SPACE, "space");
+ //map (SDLK_SPACE, "space"); // space generates textinput events
   map (SDLK_RETURN, "return");
   map (SDLK_BACKSPACE, "backspace");
   map (SDLK_DELETE, "delete");
@@ -843,7 +848,7 @@ void
 sdl_gui_rep::event_loop () {
 #if __EMSCRIPTEN__
 #else
-  while (nr_windows>0 || number_of_servers () != 0) {
+  while (nr_windows > 0 || number_of_servers () != 0) {
     run_gui ();
   }
 #endif
@@ -858,21 +863,24 @@ get_window_from_ID (Uint32 ID) {
 }
 
 static string
-lookup_mouse (Uint8 button) {
-  if (button == SDL_BUTTON_LEFT)   return "left";
-  if (button == SDL_BUTTON_MIDDLE) return "middle";
-  if (button == SDL_BUTTON_RIGHT)  return "right";
-  if (button == SDL_BUTTON_X1)     return "extra1";
-  if (button == SDL_BUTTON_X2)     return "extra2";
-  return "button-error";
+mouse_decode (unsigned int mstate) {
+  if (mstate & 2) return "middle";
+  else if (mstate & 4) return "right";
+  else if (mstate & 1) return "left";
+  else if (mstate & 8) return "up";
+  else if (mstate & 16) return "down";
+  return "unknown";
 }
 
 static string
 lookup_key (SDL_Keysym *key) {
-  string s= ((key->mod & KMOD_SHIFT) ? upper_key [key->sym] : lower_key [key->sym]);
+  string s= ((key->mod & KMOD_SHIFT) ? upper_key [key->sym]
+                                     : lower_key [key->sym]);
   if ((N(s)>=2) && (s[0]=='K') && (s[1]=='-')) s= s (2, N(s)); // remove keypad prefix
-  // If we have a single character with any modifier apart from shift and alt we ignore the keypress
-  // why? shift and alt are used to extend the keyboard and they might possibly generate textinput events.
+  // If we have a single character with any modifier apart from shift and alt
+  // we ignore the keypress
+  // why? shift and alt are used to extend the keyboard and they might possibly
+  // generate textinput events.
   // In order not to duplicate keypresses it is simpler to ignore them.
   if ((N(s) == 1) && !(key->mod & ~KMOD_SHIFT & ~KMOD_ALT)) return "";
   if (key->mod & KMOD_CTRL) s= "C-" * s;
@@ -934,6 +942,7 @@ sdl_gui_rep::process_event (SDL_Event *event) {
     case SDL_WINDOWEVENT:
     {
       sdl_window win= get_window_from_ID (event->window.windowID);
+
       if (win == NULL) break;
       switch (event->window.event) {
         case SDL_WINDOWEVENT_SHOWN:
@@ -980,13 +989,12 @@ sdl_gui_rep::process_event (SDL_Event *event) {
         {
           // FIXME: not quite right
           int x,y, ox,oy;
-          update_mouse_state ();
+          //update_mouse_state ();
           SDL_GetGlobalMouseState (&x, &y);
           SDL_Window *sdl_win= id_to_Window (win->id);
           SDL_GetWindowPosition (sdl_win, &ox, &oy);
           x -= ox; y -= oy;
           win->mouse_event ("enter", x, y, event->window.timestamp);
-
         }
           break;
         case SDL_WINDOWEVENT_LEAVE:
@@ -995,13 +1003,12 @@ sdl_gui_rep::process_event (SDL_Event *event) {
         {
           // FIXME: not quite right
           int x,y, ox,oy;
-          update_mouse_state ();
+          //update_mouse_state ();
           SDL_GetGlobalMouseState (&x, &y);
           SDL_Window *sdl_win= id_to_Window (win->id);
           SDL_GetWindowPosition (sdl_win, &ox, &oy);
           x -= ox; y -= oy;
           win->mouse_event ("leave", x, y, event->window.timestamp);
-
         }
           break;
         case SDL_WINDOWEVENT_FOCUS_GAINED:
@@ -1046,20 +1053,27 @@ sdl_gui_rep::process_event (SDL_Event *event) {
 #endif
       cout << "new mouse state " << mouse_state << LF;
       sdl_window win= get_window_from_ID (event->button.windowID);
+      //win = is_nil (grab_ptr) ? win : get_sdl_window (grab_ptr->item);
       if (win == NULL) break;
       unmap_balloon ();
-      string action = event->button.type == SDL_MOUSEBUTTONDOWN ? "press-" : "release-";
+      string action = (event->button.type == SDL_MOUSEBUTTONDOWN ?
+                       "press-" : "release-")
+                    //* mouse_decode (mouse_state);
+      * string(event->button.button & SDL_BUTTON_LMASK ? "left" : "right");
+      cout << action << LF;
 //      set_button_state (event->button.state ^ get_button_mask (&ev->xbutton));
-      win->mouse_event (action * lookup_mouse (event->button.button),
-            event->button.x, event->button.y,  texmacs_time ());
+      win->mouse_event (action, event->button.x, event->button.y,
+                        texmacs_time ());
       break;
     } // case SDL_MOUSEBUTTONDOWN:
     case SDL_MOUSEWHEEL:
     {
       SDL_Log("Window %d got wheel event event %f %f",
-              event->window.windowID, event->wheel.preciseX, event->wheel.preciseY);
+              event->window.windowID,
+              event->wheel.preciseX, event->wheel.preciseY);
 
       sdl_window win= get_window_from_ID (event->button.windowID);
+     // win = is_nil (grab_ptr) ? win : get_sdl_window (grab_ptr->item);
       if (win == NULL) break;
       unmap_balloon ();
       update_mouse_state ();
@@ -1079,9 +1093,10 @@ sdl_gui_rep::process_event (SDL_Event *event) {
     case SDL_MOUSEMOTION:
     {
       unmap_balloon ();
-      update_mouse_state ();
+      //update_mouse_state ();
       sdl_window win= get_window_from_ID (event->motion.windowID);
       if (win == NULL) break;
+//      win = is_nil (grab_ptr) ? win : get_sdl_window (grab_ptr->item);
 //      set_button_state (event->button.state ^ get_button_mask (&ev->xbutton));
       win->mouse_event ("move",
             event->motion.x, event->motion.y, event->motion.timestamp);
@@ -1089,16 +1104,20 @@ sdl_gui_rep::process_event (SDL_Event *event) {
     } // case SDL_MOUSEMOTION:
     case SDL_KEYDOWN:
     {
-      SDL_Log("Keydown: %s key acting as %s key", SDL_GetScancodeName(event->key.keysym.scancode), SDL_GetKeyName(event->key.keysym.sym));
+      SDL_Log("Keydown: %s key acting as %s key",
+              SDL_GetScancodeName(event->key.keysym.scancode),
+              SDL_GetKeyName(event->key.keysym.sym));
       cout << PrintKeyInfo (&(event->key)) << LF;
       unmap_balloon ();
       sdl_window win= get_window_from_ID (event->key.windowID);
       if (win == NULL) break;
       string key= lookup_key (&event->key.keysym);
-      if (N(key) == 0) break; // the keypress will generate a textinput event, so we avoid to duplicate
+      // some keypress will generate a textinput event,
+      // so we avoid to duplicate
+      if (N(key) == 0) break;
+      win->key_event (key);
       //cout << "Press " << key << " at " << (time_t) ev->xkey.time
       //<< " (" << texmacs_time() << ")\n";
-      if (N(key)>0) win->key_event (key);
       break;
     } // case SDL_KEYDOWN:
     case SDL_TEXTINPUT:
@@ -1107,7 +1126,8 @@ sdl_gui_rep::process_event (SDL_Event *event) {
       sdl_window win= get_window_from_ID (event->text.windowID);
       if (win == NULL) break;
       SDL_Log("TextInput: \'%s\'", event->text.text);
-      // we currenlty assume that the text from the event is always a single logical character
+      // we currenlty assume that the text from the event is always
+      // a single logical character
       //FIXME: check the assumption or handle the general situation
       string key (utf8_to_cork (string (event->text.text)));
       if (key[0] == '<') key = key (1,N(key)-1);
@@ -1359,7 +1379,8 @@ sdl_gui_rep::default_font (bool tt, bool mini, bool bold) {
 }
 
 void
-sdl_gui_rep::create_window (int id, string name, int x, int y, int w, int h, bool popup) {
+sdl_gui_rep::create_window (int id, string name,
+                            int x, int y, int w, int h, bool popup) {
   SDL_Window *win= NULL;
   c_string c_name (name);
   if (popup) {
@@ -1427,7 +1448,8 @@ sdl_gui_rep::set_window_size (int id, int w, int h) {
 }
 
 void
-sdl_gui_rep::set_window_limits (int id, int min_w, int min_h, int max_w, int max_h) {
+sdl_gui_rep::set_window_limits (int id, int min_w, int min_h,
+                                        int max_w, int max_h) {
   SDL_Window* win= id_to_Window [id];
   SDL_SetWindowMaximumSize (win, max_w, max_h);
   SDL_SetWindowMinimumSize (win, min_w, min_h);
@@ -1514,8 +1536,8 @@ sdl_gui_rep::sync_window (int id, picture backing_store) {
   destrect.x= 0; destrect.y= 0;
   destrect.w= surf->w*2; destrect.h= surf->h*2;
   SDL_RenderClear (sdl_ren);
-  SDL_RenderCopy (sdl_ren, tex, &srcrect, &srcrect);
-  //    SDL_RenderCopy (sdl_ren, tex, NULL, NULL);
+  //SDL_RenderCopy (sdl_ren, tex, &srcrect, &srcrect);
+  SDL_RenderCopy (sdl_ren, tex, NULL, NULL);
   SDL_DestroyTexture (tex);
   unsigned char *p= (unsigned char*)surf->pixels;
   SDL_FreeSurface (surf);

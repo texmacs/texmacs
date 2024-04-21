@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : sdl_window.hpp
-* DESCRIPTION: Windows under SDL
+* DESCRIPTION: Windows under SDL2
 * COPYRIGHT  : (C) 2022  Massimiliano Gubinelli
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
