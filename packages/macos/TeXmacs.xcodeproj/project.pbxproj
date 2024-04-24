@@ -1719,7 +1719,6 @@
 		9CCC74E710D303D900E88D90 /* concat_text.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49B510A8CC110097A335 /* concat_text.cpp */; };
 		9CCC74E7298A7AB20071E179 /* curve_extras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC74E6298A7AB20071E179 /* curve_extras.cpp */; };
 		9CCC74E810D303D900E88D90 /* concater.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49B610A8CC110097A335 /* concater.cpp */; };
-		9CCC74E8298A7AB20071E179 /* curve_extras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC74E6298A7AB20071E179 /* curve_extras.cpp */; };
 		9CCC74E910D303D900E88D90 /* env.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49B910A8CC110097A335 /* env.cpp */; };
 		9CCC74E9298A7AB20071E179 /* curve_extras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC74E6298A7AB20071E179 /* curve_extras.cpp */; };
 		9CCC74EA10D303D900E88D90 /* env_default.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49BA10A8CC110097A335 /* env_default.cpp */; };
@@ -1727,14 +1726,12 @@
 		9CCC74EC10D303D900E88D90 /* env_inactive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49BC10A8CC110097A335 /* env_inactive.cpp */; };
 		9CCC74EC298A7AE10071E179 /* tree_math_stats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC74EB298A7AE10071E179 /* tree_math_stats.cpp */; };
 		9CCC74ED10D303D900E88D90 /* env_length.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49BD10A8CC110097A335 /* env_length.cpp */; };
-		9CCC74ED298A7AE10071E179 /* tree_math_stats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC74EB298A7AE10071E179 /* tree_math_stats.cpp */; };
 		9CCC74EE10D303D900E88D90 /* env_semantics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49BE10A8CC110097A335 /* env_semantics.cpp */; };
 		9CCC74EE298A7AE10071E179 /* tree_math_stats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC74EB298A7AE10071E179 /* tree_math_stats.cpp */; };
 		9CCC74EF10D303D900E88D90 /* format.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49C110A8CC110097A335 /* format.cpp */; };
 		9CCC74F010D303D900E88D90 /* formatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49C310A8CC110097A335 /* formatter.cpp */; };
 		9CCC74F0298A7AFF0071E179 /* case_boxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC74EF298A7AFF0071E179 /* case_boxes.cpp */; };
 		9CCC74F110D303D900E88D90 /* line_item.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49C410A8CC110097A335 /* line_item.cpp */; };
-		9CCC74F1298A7AFF0071E179 /* case_boxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC74EF298A7AFF0071E179 /* case_boxes.cpp */; };
 		9CCC74F210D303D900E88D90 /* page_item.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49C610A8CC110097A335 /* page_item.cpp */; };
 		9CCC74F2298A7AFF0071E179 /* case_boxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC74EF298A7AFF0071E179 /* case_boxes.cpp */; };
 		9CCC74F810D303D900E88D90 /* lazy_gui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0B49D710A8CC110097A335 /* lazy_gui.cpp */; };
@@ -7600,7 +7597,6 @@
 				9C5210132028B7B000A2B5B6 /* adjust_stix.cpp in Sources */,
 				4934A46E18C5D00000BF1E6A /* tracked_fromtex.cpp in Sources */,
 				9CD4E5F910B14AB300E0DD5C /* parsetex.cpp in Sources */,
-				9CCC74E8298A7AB20071E179 /* curve_extras.cpp in Sources */,
 				9CD4E5FA10B14AB300E0DD5C /* fromtm.cpp in Sources */,
 				9CD4E5FB10B14AB300E0DD5C /* totm.cpp in Sources */,
 				9CD4E5FC10B14AB300E0DD5C /* upgradetm.cpp in Sources */,
@@ -7631,7 +7627,6 @@
 				9CD4E61010B14AB300E0DD5C /* converter.cpp in Sources */,
 				9CD4E61C10B14AB300E0DD5C /* tree_correct.cpp in Sources */,
 				9CD4E61D10B14AB300E0DD5C /* tree_cursor.cpp in Sources */,
-				9CCC74ED298A7AE10071E179 /* tree_math_stats.cpp in Sources */,
 				4973E9A218BC945F001F74F0 /* r_language.cpp in Sources */,
 				9C4A740D1D22BEF500572468 /* player.cpp in Sources */,
 				9CD4E61E10B14AB300E0DD5C /* tree_traverse.cpp in Sources */,
@@ -7921,7 +7916,6 @@
 				9C722C1E10D2FBD300C41915 /* unix_sys_utils.cpp in Sources */,
 				9C25EABD1D2A9EE800D7F2D5 /* new_breaker.cpp in Sources */,
 				9C060A9D10FC6D8B00C51583 /* tm_ostream.cpp in Sources */,
-				9CCC74F1298A7AFF0071E179 /* case_boxes.cpp in Sources */,
 				9C6061EB112442BD00054149 /* gs_utilities.cpp in Sources */,
 				9CFEB3F911D79783005C12C4 /* bibtex_functions.cpp in Sources */,
 				9CFEB40211D79AF6005C12C4 /* parsebib.cpp in Sources */,
