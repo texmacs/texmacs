@@ -584,13 +584,14 @@ if (TEXMACS_GUI MATCHES "Qt.*")
     )
     include (${QT_USE_FILE})
   elseif (TEXMACS_GUI STREQUAL "Qt6")
-    find_package (Qt6 COMPONENTS Core Gui Widgets PrintSupport Core5Compat REQUIRED)
-    set (QT_LIBRARIES Qt6::Core Qt6::Gui Qt6::Widgets Qt6::PrintSupport Qt6::Core5Compat)
+    find_package (Qt6 COMPONENTS Svg Core Gui Widgets PrintSupport Core5Compat REQUIRED)
+    set (QT_LIBRARIES Qt6::Svg Qt6::Core Qt6::Gui Qt6::Widgets Qt6::PrintSupport Qt6::Core5Compat)
   
     set (TeXmacs_Include_Dirs
       ${TeXmacs_Include_Dirs}
       ${Qt6Core_INCLUDE_DIRS}
       ${Qt6Gui_INCLUDE_DIRS}
+      ${Qt6Svg_INCLUDE_DIRS}
       ${Qt6Widgets_INCLUDE_DIRS}
       ${Qt6PrintSupport_INCLUDE_DIRS}
       ${Qt6Core5Compat_INCLUDE_DIRS}
