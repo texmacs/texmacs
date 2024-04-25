@@ -49,7 +49,7 @@ bool
 QTMPipeLink::launchCmd () {
   if (state () != QProcess::NotRunning) killProcess (1000);
   //FIXME: is UTF8 the right encoding here?
-  QProcess::start(utf8_to_qstring(cmd));
+  startCommand (utf8_to_qstring (cmd));
   bool r= waitForStarted ();
   if (r) {
     connect (this, SIGNAL(readyReadStandardOutput ()), SLOT(readErrOut ()));
