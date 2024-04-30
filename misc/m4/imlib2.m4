@@ -26,15 +26,14 @@ AC_DEFUN([LC_IMLIB2],[
       LIBS=`imlib2-config --libs`
       AC_CHECK_HEADER(Imlib2.h,
       AC_MSG_CHECKING(for imlib2)
-      AC_TRY_LINK(
-  [
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[
   #include <X11/Xlib.h>
   #include <Imlib2.h>
   #include <stdio.h>
   #include <string.h>
-  ],[
+  ]], [[
       Imlib_Image image= imlib_load_image("");
-  ],[
+  ]])],[
       AC_MSG_RESULT(yes)
       AC_DEFINE(USE_IMLIB2, 1, [Use imlib2 library])
       IMLIB2_CFLAGS="$CPPFLAGS"

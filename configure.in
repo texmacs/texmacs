@@ -36,7 +36,7 @@ AC_PROG_CC([clang gcc])
 AC_PROG_CXX([clang++ g++])
 AC_PROG_OBJC([clang gcc])
 AC_PROG_OBJCXX([clang++ g++])
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
 AH_TEMPLATE([OLD_GNU_COMPILER],[Use g++ strictly prior to g++ 3.0])
 AC_MSG_CHECKING(whether GNU C++ compiler is default)
 case "$GXX" in
@@ -136,7 +136,7 @@ CPPFLAGS="$CPPFLAGS -include config.h"
 # Done
 #--------------------------------------------------------------------
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
 src/makefile
 misc/admin/admin.makefile
@@ -156,5 +156,6 @@ packages/windows/TeXmacs.iss:packages/windows/TeXmacs.iss.in
 packages/windows/resource.rc:packages/windows/resource.rc.in 
 packages/debian/changelog:packages/debian/changelog.in 
 packages/debian/control:packages/debian/control.in
-src/System/tm_configure.hpp:src/System/tm_configure.in 
+src/System/tm_configure.hpp:src/System/tm_configure.in
 ])
+AC_OUTPUT
