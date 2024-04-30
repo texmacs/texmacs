@@ -13,12 +13,11 @@ AC_DEFUN([LC_SQL],[
       LIBS=`pkg-config --libs sqlite3`
       AC_CHECK_HEADER(sqlite3.h,
       AC_MSG_CHECKING(for sqlite3)
-      AC_TRY_LINK(
-  [
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[
   #include <sqlite3.h>
-  ],[
+  ]], [[
       int res= sqlite3_threadsafe ();
-  ],[
+  ]])],[
       AC_MSG_RESULT(yes)
       AC_DEFINE(USE_SQLITE3, 1, [Use sqlite3 library])
       SQLITE3_CFLAGS="$CPPFLAGS"
