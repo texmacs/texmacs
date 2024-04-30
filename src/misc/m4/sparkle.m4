@@ -29,12 +29,11 @@ AC_DEFUN([LC_SPARKLE],[
       AC_LANG_PUSH([C])
       LC_SCATTER_FLAGS([-I $with_sparkle/include -L $with_sparkle/Release -lwinsparkle],[SPARKLE])
       LC_SET_FLAGS([SPARKLE])
-      AC_TRY_LINK(
-  [
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[
   #include <winsparkle.h>
-  ],[
+  ]], [[
   win_sparkle_init();
-  ],[ sparkle_ok=1
+  ]])],[ sparkle_ok=1
       WINSPARKLE_PATH="$with_sparkle"
       WINSPARKLE_DLL="WinSparkle*.dll"
       AC_SUBST(WINSPARKLE_DLL)
@@ -48,13 +47,12 @@ AC_DEFUN([LC_SPARKLE],[
       AC_LANG_PUSH([Objective C])
       LC_SCATTER_FLAGS([-I$with_sparkle/Sparkle.framework/Headers -F$with_sparkle -framework Sparkle -Wl,-rpath,$with_sparkle],[SPARKLE])
       LC_SET_FLAGS([SPARKLE])
-      AC_TRY_LINK(
-  [
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[
   #include <Cocoa/Cocoa.h>
   #include "Sparkle.h"
-  ],[
+  ]], [[
   SUUpdater* updater;
-  ],[ sparkle_ok=1
+  ]])],[ sparkle_ok=1
       AC_SUBST([CONFIG_SPARKLE],[Updater])
   ],[AC_MSG_ERROR([Can't use WinSparkle])])
       AC_LANG_POP([Objective C])

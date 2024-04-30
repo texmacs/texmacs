@@ -2336,38 +2336,6 @@ fi
 
 } # ac_fn_cxx_try_cpp
 
-# ac_fn_cxx_check_header_preproc LINENO HEADER VAR
-# ------------------------------------------------
-# Tests whether HEADER exists and can be preprocessed (in isolation), setting
-# the cache variable VAR accordingly.
-ac_fn_cxx_check_header_preproc ()
-{
-  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
-printf %s "checking for $2... " >&6; }
-if eval test \${$3+y}
-then :
-  printf %s "(cached) " >&6
-else $as_nop
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <$2>
-_ACEOF
-if ac_fn_cxx_try_cpp "$LINENO"
-then :
-  eval "$3=yes"
-else $as_nop
-  eval "$3=no"
-fi
-rm -f conftest.err conftest.i conftest.$ac_ext
-fi
-eval ac_res=\$$3
-	       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-printf "%s\n" "$ac_res" >&6; }
-  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
-
-} # ac_fn_cxx_check_header_preproc
-
 # ac_fn_c_try_link LINENO
 # -----------------------
 # Try to link conftest.$ac_ext, and return whether this succeeded.
@@ -11478,8 +11446,18 @@ then
 
 
   unset ICONV_CFLAGS;unset ICONV_CXXFLAGS;unset ICONV_CPPFLAGS;unset ICONV_LDFLAGS;unset ICONV_LIBS; # no previous iconv definition allowed
-  ac_fn_cxx_check_header_preproc "$LINENO" "iconv.h" "ac_cv_header_iconv_h"
-if test "x$ac_cv_header_iconv_h" = xyes
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include<iconv.h>
+int
+main (void)
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_cpp "$LINENO"
 then :
 
     _LC_ICONV_DEPEND=$(<$_LC_ICONV_TEMP)
@@ -13456,8 +13434,18 @@ printf "%s\n" "$as_me: WARNING: Try to force default location" >&2;}
 
 
   unset ICONV_CFLAGS;unset ICONV_CXXFLAGS;unset ICONV_CPPFLAGS;unset ICONV_LDFLAGS;unset ICONV_LIBS; # no previous iconv definition allowed
-  ac_fn_cxx_check_header_preproc "$LINENO" "iconv.h" "ac_cv_header_iconv_h"
-if test "x$ac_cv_header_iconv_h" = xyes
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include<iconv.h>
+int
+main (void)
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_cpp "$LINENO"
 then :
 
     _LC_ICONV_DEPEND=$(<$_LC_ICONV_TEMP)
@@ -15810,7 +15798,7 @@ else $as_nop
 printf "%s\n" "$as_me: WARNING: Use --with-iconv=iconv_base_path (i.e /usr/local) to specify your icon location" >&2;}
 
 fi
-
+rm -f conftest.err conftest.i conftest.$ac_ext
   unset ${!_LC_ICONV_*}
 
 
@@ -15833,7 +15821,7 @@ else $as_nop
 printf "%s\n" "$as_me: WARNING: Use --with-iconv=iconv_base_path (i.e /usr/local) to specify your icon location" >&2;}
 
 fi
-
+rm -f conftest.err conftest.i conftest.$ac_ext
   unset ${!_LC_ICONV_*}
 
 else { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: absence of iconv may crash HTML import or prevent the build" >&5

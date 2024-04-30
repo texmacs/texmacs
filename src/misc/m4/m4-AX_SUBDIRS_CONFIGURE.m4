@@ -166,7 +166,7 @@ AC_DEFUN([AX_SUBDIRS_CONFIGURE],
   AC_REQUIRE([AC_DISABLE_OPTION_CHECKING])
   AC_REQUIRE([AC_CONFIG_AUX_DIR_DEFAULT])
   AS_LITERAL_IF([$1], [],
-      [AC_DIAGNOSE([syntax], [$0: you should use literals])])
+      [m4_warn([syntax],[$0: you should use literals])])
 
   m4_foreach(subdir_path, [$1],
   [
