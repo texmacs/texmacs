@@ -79,7 +79,10 @@ AC_DEFUN([LC_WITH_QT],[
       ;;
   esac
 
-  AC_PATH_PROGS([QMAKE], [qmake qmake-qt4 qmake-qt5 qmake-qt6 qmake6], [echo]) 
+  AC_PATH_PROGS([QMAKE], [qmake qmake-qt4 qmake-qt5 qmake-qt6 qmake6], [missing])
+  if test "x$QMAKE" = "xmissing"; then
+    AC_MSG_ERROR([Cannot find qmake, qmake-qt4, qmake-qt5, qmake-qt6, or qmake6, for using a Qt library])
+  fi
   case $qt_find_method.$($QMAKE -query QT_VERSION 2>/dev/null) in
   autotroll.4.* | autotrollstatic.4.*)
     AC_MSG_NOTICE([Qt4 found])
@@ -87,7 +90,7 @@ AC_DEFUN([LC_WITH_QT],[
     ;;
   autotroll.5.*)
     AC_MSG_NOTICE([Qt5 found])
-    AS_IF([test $CONFIG_OS == MACOS],[xtraPlug=+macextras],[unset xtraPlug])
+    AS_IF([test "x$CONFIG_OS" = "xMACOS"],[xtraPlug=+macextras],[unset xtraPlug])
     AT_WITH_QT([$xtralibs +printsupport +svg $xtraPlug],[+exceptions],[
       LIBS += $LDFLAGS
       QTPLUGIN = qjpeg qgif qico qsvg
@@ -95,7 +98,7 @@ AC_DEFUN([LC_WITH_QT],[
     ;;
   autotrollstatic.5.*)
     AC_MSG_NOTICE([Qt5 found])
-    AS_IF([test $CONFIG_OS == MACOS],[xtraPlug=+macextras],[unset xtraPlug])
+    AS_IF([test "x$CONFIG_OS" = "xMACOS"],[xtraPlug=+macextras],[unset xtraPlug])
     AT_WITH_QT([$xtralibs +core +gui +printsupport +svg $xtraPlug],[+exceptions],[
       LIBS += $LDFLAGS
       QTPLUGIN += qjpeg qgif qico qsvg qxcb
@@ -125,7 +128,7 @@ AC_DEFUN([LC_WITH_QT],[
     AC_ARG_VAR([QMAKE], [Qt Makefile generator command])
     AX_PATH_TOOLS([QMAKE], [qmake qmake-qt$QT_MAJOR qmake$QT_MAJOR], [missing],
                   [$QT_DIR:$QT_PATH:$PATH:$tmp_qt_paths])
-    if test x"$QMAKE" = xmissing; then
+    if test "x$QMAKE" = xmissing; then
       AX_INSTEAD_IF([$4], [Cannot find qmake. Try --with-qt=PATH.])
       break
     fi
@@ -134,7 +137,7 @@ AC_DEFUN([LC_WITH_QT],[
     AC_ARG_VAR([MOC], [Qt Meta Object Compiler command])
     AX_PATH_TOOLS([MOC], [moc moc-qt$QT_MAJOR moc$QT_MAJOR], [missing],
                   [$QT_PATH:$PATH:$tmp_qt_paths])
-    if test x"$MOC" = xmissing; then
+    if test "x$MOC" = "xmissing"; then
       AX_INSTEAD_IF([$4],
     [Cannot find moc (Meta Object Compiler). Try --with-qt=PATH.])
       break
@@ -144,7 +147,7 @@ AC_DEFUN([LC_WITH_QT],[
     AC_ARG_VAR([UIC], [Qt User Interface Compiler command])
     AX_PATH_TOOLS([UIC], [uic uic-qt$QT_MAJOR uic$QT_MAJOR], [missing],
                   [$QT_PATH:$PATH:$tmp_qt_paths])
-    if test x"$UIC" = xmissing; then
+    if test "x$UIC" = "xmissing"; then
       AX_INSTEAD_IF([$4],
   [Cannot find uic (User Interface Compiler). Try --with-qt=PATH.])
       break
@@ -152,8 +155,9 @@ AC_DEFUN([LC_WITH_QT],[
 
     # Find rcc (Qt Resource Compiler).
     AC_ARG_VAR([RCC], [Qt Resource Compiler command])
-    AX_PATH_TOOLS([RCC], [rcc rcc-qt$QT_MAJOR rcc$QT_MAJOR], [false], [$QT_PATH:$PATH:$tmp_qt_paths])
-    if test x"$UIC" = xfalse; then
+    AX_PATH_TOOLS([RCC], [rcc rcc-qt$QT_MAJOR rcc$QT_MAJOR], [missing],
+                  [$QT_PATH:$PATH:$tmp_qt_paths])
+    if test "x$RCC" = "xmissing"; then
       AC_MSG_WARN([Cannot find rcc (Qt Resource Compiler). Try --with-qt=PATH.])
     fi
 
@@ -168,10 +172,10 @@ AC_DEFUN([LC_WITH_QT],[
     AC_MSG_RESULT([$at_darwin])
 
     # If we don't know the path to Qt, guess it from the path to qmake.
-    if test x"$QT_PATH" = x; then
+    if test "x$QT_PATH" = "x"; then
       QT_PATH=`dirname "$QMAKE"`
     fi
-    if test x"$QT_PATH" = x; then
+    if test "x$QT_PATH" = "x"; then
       AX_INSTEAD_IF([$4],
                     [Cannot find your Qt installation. Try --with-qt=PATH.])
       break
@@ -189,7 +193,7 @@ AC_DEFUN([LC_WITH_QT],[
 
     QT_PACKAGES="Qt${QT_MAJOR}Core$QT_PKGCONFIG_SUFFIX Qt${QT_MAJOR}Gui$QT_PKGCONFIG_SUFFIX Qt${QT_MAJOR}Widgets$QT_PKGCONFIG_SUFFIX Qt${QT_MAJOR}Svg$QT_PKGCONFIG_SUFFIX Qt${QT_MAJOR}PrintSupport$QT_PKGCONFIG_SUFFIX"
 
-    AS_IF([test $CONFIG_OS == MACOS],[QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}MacExtras$QT_PKGCONFIG_SUFFIX"])
+    AS_IF([test "x$CONFIG_OS" = "xMACOS"],[QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}MacExtras$QT_PKGCONFIG_SUFFIX"])
 
     # Set QT_DEFINES, QT_CXXFLAGS, QT_INCPATH, QT_LIBS, QT_LDFLAGS and QT_VERSION
     QT_DEFINES=`$PKG_CONFIG --cflags-only-I $QT_PACKAGES`
@@ -228,13 +232,13 @@ AC_DEFUN([LC_WITH_QT],[
 
   QT_VERSION=`$QMAKE -query QT_VERSION`
   QT_MAJOR=${QT_VERSION%%.*}
-  test $QT_MAJOR -eq 5 && LC_APPEND_FLAG([-std=c++11],[QT_CXXFLAGS])
-  test $QT_MAJOR -eq 6 && LC_APPEND_FLAG([-std=c++17],[QT_CXXFLAGS])
+  test "0$QT_MAJOR" -eq 5 && LC_APPEND_FLAG([-std=c++11],[QT_CXXFLAGS])
+  test "0$QT_MAJOR" -eq 6 && LC_APPEND_FLAG([-std=c++17],[QT_CXXFLAGS])
 
   LC_GET_ARG_VALUE([CXXFLAGS], [-mmacosx-version-min], [CXXMACOSX_VERSION_MIN])
-  AS_IF([test -n $CXXMACOSX_VERSION_MIN],[
+  AS_IF([test -n "$CXXMACOSX_VERSION_MIN"],[
     LC_GET_ARG_VALUE([QT_CXXFLAGS], [-mmacosx-version-min], [QTMACOSX_VERSION_MIN])
-    AS_IF([test -n $QTMACOSX_VERSION_MIN],[
+    AS_IF([test -n "$QTMACOSX_VERSION_MIN"],[
       AS_IF([cmp_dot_number $CXXMACOSX_VERSION_MIN $QTMACOSX_VERSION_MIN],[
         m4_foreach(_tmp1,[[QT_CXXFLAGS],[QT_CPPFLAGS],[QT_LDFLAGS]],[
           STRIP_ARG(_tmp1,[-mmacosx-version-min=$QTMACOSX_VERSION_MIN])
