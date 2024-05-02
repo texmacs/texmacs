@@ -174,7 +174,7 @@ edit_incl     := $(scheme_incl) \
   $(call incl_flags,Edit/Editor Edit/Interface Edit/Modify)
 texmacs_incl  := $(scheme_incl)
 pdf_incl      := $(system_incl) \
-  $(call incl_flags,Plugins/Pdf/LibAesgm)
+  $(call incl_flags,Plugins/Pdf/LibAesgm Texmacs/Data)
 freetype_incl := $(system_incl)
 
 ###############################################################################
