@@ -151,8 +151,11 @@ typedef std::vector<EncodingsInfo*> EncodingsInfoVector;
 
 
 
-
+#if __cplusplus >= 201703L
+class StringLess
+#else
 class StringLess : public std::binary_function<const char*,const char*,bool>
+#endif
 {
 public:
 	bool operator( ) (const char* left, 
