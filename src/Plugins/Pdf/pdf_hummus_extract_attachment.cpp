@@ -11,7 +11,7 @@
 
 #include "analyze.hpp"
 #include "file.hpp"
-#include "Texmacs/Data/new_buffer.hpp"
+#include "new_buffer.hpp"
 #include "sys_utils.hpp"
 
 #include "PDFWriter/InputFileStream.h"
