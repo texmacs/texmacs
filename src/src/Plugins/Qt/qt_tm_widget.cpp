@@ -122,28 +122,11 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   visibility[9] = (mask & 512) == 512; // extra bottom tools
 
   // general setup for main window
-  
+
   QMainWindow* mw= mainwindow ();
-  if (tm_style_sheet == "") {
+  if (tm_style_sheet == "")
     mw->setStyle (qtmstyle ());
-    mw->menuBar()->setStyle (qtmstyle ());
-  }
-
-#ifdef Q_OS_MAC
-  if (!use_native_menubar) {
-    mw->menuBar()->setNativeMenuBar(false);
-    if (tm_style_sheet != "") {
-      int min_h= (int) floor (28 * retina_scale);
-      mw->menuBar()->setMinimumHeight (min_h);
-    }
-  }
-#else
-  if (tm_style_sheet != "") {
-    int min_h= (int) floor (28 * retina_scale);
-    mw->menuBar()->setMinimumHeight (min_h);
-  }
-#endif
-
+ 
   // there is a bug in the early implementation of toolbars in Qt 4.6
   // which has been fixed in 4.6.2 (at least)
   // this is why we change dimension of icons
@@ -916,6 +899,25 @@ qt_tm_widget_rep::install_main_menu () {
   QList<QAction*>* src = main_menu_widget->get_qactionlist();
   if (!src) return;
   QMenuBar* dest = mainwindow()->menuBar();
+
+  if (tm_style_sheet == "")
+    dest->setStyle (qtmstyle ());
+
+#ifdef Q_OS_MAC
+  if (!use_native_menubar) {
+    dest->setNativeMenuBar(false);
+    if (tm_style_sheet != "") {
+      int min_h= (int) floor (28 * retina_scale);
+      dest->setMinimumHeight (min_h);
+    }
+  }
+#else
+  if (tm_style_sheet != "") {
+    int min_h= (int) floor (28 * retina_scale);
+    dest->setMinimumHeight (min_h);
+  }
+#endif
+
   dest->clear();
   for (int i = 0; i < src->count(); i++) {
     QAction* a = (*src)[i];
