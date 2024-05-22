@@ -257,7 +257,11 @@ QTMWidget::resizeEventBis (QResizeEvent *event) {
 void
 QTMWidget::paintEvent (QPaintEvent* event) {
   QPainter p (surface());
+#if QT_VERSION >= 0x060000
+  QVector<QRect> rects (1, event->region().boundingRect());
+#else
   QVector<QRect> rects = event->region().rects();
+#endif
   for (int i = 0; i < rects.count(); ++i) {
     QRect qr = rects.at (i);
     p.drawPixmap (QRect (qr.x(), qr.y(), qr.width(), qr.height()),
@@ -427,7 +431,11 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
                ((int) (unsigned char) r[0]) < 32 ||
                ((int) (unsigned char) r[0]) >= 128) &&
               key >= 32 && key < 128 &&
+#if QT_VERSION >= 0x060000
+              ((mods & (Qt::MetaModifier | Qt::ControlModifier)) == 0)) {
+#else
               ((mods & (Qt::MetaModifier + Qt::ControlModifier)) == 0)) {
+#endif
             if ((mods & Qt::ShiftModifier) == 0 && key >= 65 && key <= 90)
               key += 32;
             qtcomposemap (key)= r;
@@ -464,7 +472,11 @@ mouse_state (QMouseEvent* event, bool flag) {
   Qt::KeyboardModifiers kstate= event->modifiers ();
   if (flag) bstate= bstate | tstate;
   if ((bstate & Qt::LeftButton     ) != 0) i += 1;
-  if ((bstate & Qt::MidButton      ) != 0) i += 2;
+#if QT_VERSION < 0x060000
+    if ((bstate & Qt::MidButton      ) != 0) i += 2;
+#else
+    if ((bstate & Qt::MiddleButton   ) != 0) i += 2;
+#endif
   if ((bstate & Qt::RightButton    ) != 0) i += 4;
   if ((bstate & Qt::XButton1       ) != 0) i += 8;
   if ((bstate & Qt::XButton2       ) != 0) i += 16;
@@ -597,10 +609,20 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
 QVariant 
 QTMWidget::inputMethodQuery (Qt::InputMethodQuery query) const {
   switch (query) {
+#if QT_VERSION < 0x060000
     case Qt::ImMicroFocus : {
       const QPoint &topleft= cursor_pos - tm_widget()->backing_pos + surface()->geometry().topLeft();
       return QVariant (QRect (topleft, QSize (5, 5)));
     }
+#else
+    case Qt::ImEnabled : {
+      return QVariant (true);
+    }
+    case Qt::ImCursorRectangle : {
+      const QPoint &topleft= cursor_pos - tm_widget()->backing_pos + surface()->geometry().topLeft();
+      return QVariant (QRect (topleft, QSize (5, 5)));
+    }
+#endif // TODO : Correctly implement input methods
     default:
       return QWidget::inputMethodQuery (query);
   }
@@ -650,7 +672,11 @@ tablet_state (QTabletEvent* event, bool flag) {
   Qt::MouseButton  tstate= event->button ();
   if (flag) bstate= bstate | tstate;
   if ((bstate & Qt::LeftButton     ) != 0) i += 1;
+#if QT_VERSION < 0x060000
   if ((bstate & Qt::MidButton      ) != 0) i += 2;
+#else
+  if ((bstate & Qt::MiddleButton   ) != 0) i += 2;
+#endif
   if ((bstate & Qt::RightButton    ) != 0) i += 4;
   if ((bstate & Qt::XButton1       ) != 0) i += 8;
   if ((bstate & Qt::XButton2       ) != 0) i += 16;
@@ -974,7 +1000,11 @@ wheel_state (QWheelEvent* event) {
   Qt::MouseButtons bstate= event->buttons ();
   Qt::KeyboardModifiers kstate= event->modifiers ();
   if ((bstate & Qt::LeftButton     ) != 0) i += 1;
+#if QT_VERSION < 0x060000
   if ((bstate & Qt::MidButton      ) != 0) i += 2;
+#else
+  if ((bstate & Qt::MiddleButton   ) != 0) i += 2;
+#endif
   if ((bstate & Qt::RightButton    ) != 0) i += 4;
   if ((bstate & Qt::XButton1       ) != 0) i += 8;
   if ((bstate & Qt::XButton2       ) != 0) i += 16;
@@ -1000,7 +1030,7 @@ QTMWidget::wheelEvent(QWheelEvent *event) {
   if (as_bool (call ("wheel-capture?"))) {
 #if (QT_VERSION >= 0x060000)
     QPointF pos  = event->position();
-    QPoint  point= QPointF (pos.x(), pos.y()) + origin();
+    QPoint  point= QPointF (pos.x(), pos.y()).toPoint () + origin();
 #else
     QPoint  point= event->pos() + origin();
 #endif
@@ -1019,7 +1049,11 @@ QTMWidget::wheelEvent(QWheelEvent *event) {
                               mstate, texmacs_time (), data);
   }
   else if (QApplication::keyboardModifiers() == Qt::ControlModifier) {
+#if QT_VERSION >= 0x060000
+    if (event->pixelDelta().ry() > 0) {
+#else
     if (event->delta() > 0) {
+#endif
       //double x= exp (((double) event->delta ()) / 500.0);
       //call ("zoom-in", object (x));
       call ("zoom-in", object (sqrt (sqrt (sqrt (sqrt (2.0))))));

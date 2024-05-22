@@ -20,6 +20,9 @@
 #include "QTMMenuHelper.hpp"
 #include <QPixmap>
 #include <QLayout>
+#if QT_VERSION >= 0x060000
+#include <algorithm>
+#endif
 
 
 #ifdef USE_CAIRO
@@ -150,7 +153,11 @@ qt_simple_widget_rep::reapply_sent_slots () {
   t_slot_entry sorted_slots[slot_id__LAST];
   for (int i = 0; i < slot_id__LAST; ++i)
     sorted_slots[i] = sent_slots[i];
+#if QT_VERSION < 0x060000
   qSort (&sorted_slots[0], &sorted_slots[slot_id__LAST]);
+#else
+  std::sort (&sorted_slots[0], &sorted_slots[slot_id__LAST]);
+#endif
   
   for (int i = 0; i < slot_id__LAST; ++i)
     if (sorted_slots[i].seq >= 0)

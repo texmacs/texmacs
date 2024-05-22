@@ -99,8 +99,13 @@ public:
    */
   virtual QList<QPair<QString,QString> > availablePrinters() = 0;
   
+#if QT_VERSION >= 0x060000
+  static QString qtPaperSizeToQString (const QPageSize::PageSizeId&);
+  static QPageSize::PageSizeId qStringToQtPaperSize(const QString&);
+#else
   static QString qtPaperSizeToQString(const QPrinter::PaperSize);
   static QPrinter::PaperSize qStringToQtPaperSize(const QString&);
+#endif
 
 signals:
   void doneReading();

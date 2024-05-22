@@ -23,7 +23,7 @@ void init_palette (QApplication* app);
 void init_style_sheet (QApplication* app);
 void set_standard_style_sheet (QWidget *w);
 
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) && QT_VERSION < 0x060000 
 
 #include <QMacPasteboardMime>
 
@@ -106,8 +106,8 @@ public:
  */
 class QTMApplication: public QApplication {
   Q_OBJECT
-  
-#ifdef Q_OS_MAC
+
+#if defined(Q_OS_MAC) && QT_VERSION < 0x060000 
   QMacPasteboardMimePDF mac_pasteboard_mime_pdf;
 #endif
   
@@ -153,6 +153,7 @@ public:
     }
     return false;
   }
+
 };
 
 class QTMCoreApplication: public QCoreApplication {
