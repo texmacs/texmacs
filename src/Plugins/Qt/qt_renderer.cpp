@@ -324,7 +324,11 @@ qt_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   decode (x2, y2);
   if ((x1>=x2) || (y1<=y2)) return;
   QBrush br (to_qcolor (bg_brush->get_color ()));
+#if QT_VERSION < 0x060000
   painter->setRenderHints (0);
+#else
+  painter->setRenderHints (QPainter::Antialiasing, false); 
+#endif
   painter->fillRect (x1, y2, x2-x1, y1-y2, br);       
 }
 
@@ -350,7 +354,11 @@ qt_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
   decode (x2, y2);
 
   QBrush br (to_qcolor (pen->get_color ()));
+#if QT_VERSION < 0x060000
   painter->setRenderHints (0);
+#else
+  painter->setRenderHints (QPainter::Antialiasing, false); 
+#endif
   painter->fillRect (x1, y2, x2-x1, y1-y2, br);       
 }
 
@@ -449,7 +457,11 @@ qt_renderer_rep::draw_clipped (QImage *im, int w, int h, SI x, SI y) {
   decode (x2, y2);
   y--; // top-left origin to bottom-left origin conversion
        // clear(x1,y1,x2,y2);
+#if QT_VERSION < 0x060000
   painter->setRenderHints (0);
+#else
+  painter->setRenderHints (QPainter::Antialiasing, false); 
+#endif
   painter->drawImage (x, y, *im);
 }
 
@@ -462,7 +474,11 @@ qt_renderer_rep::draw_clipped (QTMPixmapOrImage *im, int w, int h, SI x, SI y) {
   decode (x , y );
   y--; // top-left origin to bottom-left origin conversion
   // clear(x1,y1,x2,y2);
+#if QT_VERSION < 0x060000
   painter->setRenderHints (0);
+#else
+  painter->setRenderHints (QPainter::Antialiasing, false); 
+#endif
   painter->drawPixmap (x, y, w, h, *(im->QPixmap_ptr ()));
 }
 
