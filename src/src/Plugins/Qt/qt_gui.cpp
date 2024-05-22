@@ -29,7 +29,9 @@
 #include "qt_simple_widget.hpp"
 #include "qt_window_widget.hpp"
 
+#if QT_VERSION < 0x060000
 #include <QDesktopWidget>
+#endif
 #include <QClipboard>
 #include <QBuffer>
 #include <QFileOpenEvent>
@@ -45,7 +47,7 @@
 #include <QLibraryInfo>
 #include <QImage>
 #include <QUrl>
-#include <QDesktopWidget>
+//#include <QDesktopWidget>
 #include <QApplication>
 
 #include "QTMGuiHelper.hpp"
@@ -202,7 +204,11 @@ needing_update (false)
 void
 qt_gui_rep::get_extents (SI& width, SI& height) {
   coord2 size = headless_mode ? coord2 (480, 320)
+#if QT_VERSION < 0x060000
     : from_qsize (QApplication::desktop()->size());
+#else
+    : from_qsize (QGuiApplication::primaryScreen()->size()); // todo : improve this
+#endif
   width  = size.x1;
   height = size.x2;
 }
@@ -352,7 +358,7 @@ qt_gui_rep::set_selection (string key, tree t,
   cb->clear (mode);
   
   c_string selection (s);
-  cb->setText (QString::fromLatin1 (selection), mode);
+  cb->setText (QString::fromLatin1 (selection, N(s)), mode);
   QMimeData *md = new QMimeData;
   
   if (format == "verbatim" || format == "default") {
@@ -376,21 +382,21 @@ qt_gui_rep::set_selection (string key, tree t,
       enc = get_locale_charset ();
     
     if (enc == "utf-8" || enc == "UTF-8")
-      md->setText (QString::fromUtf8 (selection));
+      md->setText (QString::fromUtf8 (selection, N(s)));
     else if (enc == "iso-8859-1" || enc == "ISO-8859-1")
-      md->setText (QString::fromLatin1 (selection));
+      md->setText (QString::fromLatin1 (selection, N(s)));
     else
-      md->setText (QString::fromLatin1 (selection));
+      md->setText (QString::fromLatin1 (selection, N(s)));
   }
   else if (format == "latex") {
     string enc = get_preference ("texmacs->latex:encoding"); 
     if (enc == "utf-8" || enc == "UTF-8" || enc == "cork")
       md->setText (to_qstring (string (selection)));
     else
-      md->setText (QString::fromLatin1 (selection));
+      md->setText (QString::fromLatin1 (selection, N(s)));
   }
   else
-    md->setText (QString::fromLatin1 (selection));
+    md->setText (QString::fromLatin1 (selection, N(s)));
   cb->setMimeData (md, mode);
     // according to the docs, ownership of mimedata is transferred to clipboard
     // so no memory leak here
@@ -495,7 +501,9 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
     waitWindow->close();
   }
   qApp->processEvents();
-  QApplication::flush();
+#if QT_VERSION < 0x060000
+	QApplication::flush();
+#endif
   
   wid->qwid->activateWindow ();
   send_keyboard_focus (wid);
@@ -807,10 +815,10 @@ qt_gui_rep::add_event (const queued_event& ev) {
 void
 qt_gui_rep::update () {
 #ifdef QT_CPU_FIX
-  int std_delay= 1;
+  time_t std_delay= 1;
   tm_sleep ();
 #else
-  int std_delay= 90 / 6;
+  time_t std_delay= 90 / 6;
 #endif
 
   if (updating) {
@@ -889,7 +897,7 @@ qt_gui_rep::update () {
   
   time_t delay = delayed_commands.lapse - texmacs_time();
   if (needing_update) delay = 0;
-  else                delay = max (0, min (std_delay, delay));
+  else                delay = std::max ((time_t)0, std::min (std_delay, delay));
   if (postpone_treatment) delay= 9; // NOTE: force occasional display
  
   updatetimer->start (delay);

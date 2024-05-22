@@ -69,7 +69,9 @@ QTMScrollView::QTMScrollView (QWidget *_parent):
   p_surface = new QTMSurface (_viewport, this);
   p_surface->setAttribute(Qt::WA_NoSystemBackground);
   p_surface->setAttribute(Qt::WA_StaticContents); 
+#if QT_VERSION < 0x060000
   p_surface->setAttribute(Qt::WA_MacNoClickThrough);
+#endif
   p_surface->setAutoFillBackground(false);
   p_surface->setBackgroundRole(QPalette::NoRole);
   p_surface->setAttribute(Qt::WA_OpaquePaintEvent);

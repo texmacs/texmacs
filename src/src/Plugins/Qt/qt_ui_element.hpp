@@ -180,7 +180,11 @@ public:
         l = "";
       
       if (filtered)
+#if QT_VERSION >= 0x060000
+        cmd (list_object (l, from_qstring (qwid->filter()->filterRegularExpression().pattern())));
+#else
         cmd (list_object (l, from_qstring (qwid->filter()->filterRegExp().pattern())));
+#endif
       else
         cmd (list_object (l));
     }

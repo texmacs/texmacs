@@ -110,7 +110,12 @@ AC_DEFUN([LC_WITH_QT],[
     AC_DEFINE([qt_no_fontconfig],[1],[Qt without fontconfig])
     ;;
   autotroll.6.* | autotrollstatic.6.*)
-    AC_MSG_ERROR([Qt6 is not supported with autotroll. Try --with-qt-find-method=pkgconfig])
+    AC_MSG_NOTICE([Qt6 found])
+    AS_IF([test $CONFIG_OS == MACOS],[],[unset xtraPlug])
+    AT_WITH_QT([$xtralibs +printsupport +svg $xtraPlug],[+exceptions],[
+      LIBS += $LDFLAGS
+      QTPLUGIN = qjpeg qgif qico qsvg
+    ],AC_MSG_ERROR([Cannot find a working Qt library]))
     ;;
   pkgconfig.*) 
     QT_VERSION=`$QMAKE -query QT_VERSION`
