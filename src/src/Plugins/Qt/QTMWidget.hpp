@@ -76,6 +76,8 @@ protected:
   virtual void wheelEvent(QWheelEvent *event);
   virtual QVariant inputMethodQuery (Qt::InputMethodQuery query) const;
 
+  void showEvent (QShowEvent *event) override;
+
 };
 
 #endif // QTMWIDGET_HPP

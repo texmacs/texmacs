@@ -85,6 +85,7 @@ QTMScrollView::QTMScrollView (QWidget *_parent):
 
 void 
 QTMScrollView::setOrigin ( QPoint newOrigin ) {
+  if (!isVisible()) return;
   if (newOrigin.x() != p_origin.x())
     QAbstractScrollArea::horizontalScrollBar()->setSliderPosition(newOrigin.x());
   if (newOrigin.y() != p_origin.y())
