@@ -1066,3 +1066,7 @@ QTMWidget::wheelEvent(QWheelEvent *event) {
   }
   else QAbstractScrollArea::wheelEvent (event);
 }
+
+void QTMWidget::showEvent (QShowEvent *event) {
+  the_gui->force_update();
+}
