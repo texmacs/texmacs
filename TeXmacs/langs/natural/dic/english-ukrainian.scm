@@ -2,6 +2,7 @@
 ("abbreviated authors" "скорочені автори")
 ("abbreviation" "абревіатура")
 ("about" "про")
+("apropos" "про")
 ("about menu" "меню Про")
 ("above" "зверху")
 ("abreviated authors" "скорочені автори")

@@ -6,6 +6,7 @@
 ("TeX" "TeX")
 ("abbreviation" "съкращение")
 ("about" "за")
+("apropos" "за")
 ("about menu" "меню за")
 ("above" "отгоре")
 ("abstract" "абстракт")

@@ -2,6 +2,7 @@
 ("a series" "")
 ("abbreviation" "줄임말")
 ("about" "...에 관하여")
+("apropos" "...에 관하여")
 ("about menu" "메뉴에 관하여")
 ("above" "")
 ("abstract" "요약")
