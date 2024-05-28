@@ -1,6 +1,6 @@
-<TeXmacs|1.99.2>
+<TeXmacs|2.1.4>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|Welcome to GNU <TeXmacs>>
@@ -28,8 +28,8 @@
     documentation about the <TeXmacs> format, its primitives and environment
     variables, and the standard style files.
 
-    <item>The <hlink|<menu|Help|About>|../../about/about.en.tm> menu contains
-    more information about <TeXmacs>, like information about its
+    <item>The <hlink|<menu|Help|Apropos>|../../about/about.en.tm> menu
+    contains more information about <TeXmacs>, like information about its
     <hlink|authors|../../about/authors/authors.en.tm>, how to <hlink|contact
     us|../../about/authors/contact.en.tm>, and
     <hlink|changes|../../about/changes/changes.en.tm> in different versions
@@ -63,7 +63,7 @@
   source code has also been documented in <hlink|<menu|Help|Source
   code>|../../devel/source/source.en.tm>.
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2002|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -72,3 +72,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

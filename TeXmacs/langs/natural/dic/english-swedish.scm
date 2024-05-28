@@ -2,6 +2,7 @@
 ("LaTeX" "LaTeX")
 ("TeX" "TeX")
 ("about" "om")
+("apropos" "om")
 ("above" "över")
 ("abstract" "abstract")
 ("accent" "accent")
