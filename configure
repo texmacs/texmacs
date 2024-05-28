@@ -762,6 +762,7 @@ GUILE_CFLAGS
 GUILE_CPP
 GUILE_CXX
 GUILE_DATA_PATH
+GUILE_EMBEDDED_DIR
 DIRGUILE
 GUILE_CONFIG
 GUILE_STATIC
@@ -8137,7 +8138,19 @@ fi
 
 
 
-  if test "$location" = "embedded"
+  GUILE_EMBEDDED_VERSION="1.6"
+  GUILE_EMBEDDED_DIR="tm-guile168"
+
+  if test "$location" = "embedded18"
+then :
+
+    GUILE_EMBEDDED_VERSION="1.8"
+    GUILE_EMBEDDED_DIR="tm-guile188"
+
+
+fi
+
+  if test "$location" = "embedded" || test "$location" = "embedded18"
 then :
   unset location
 elif test -z $location
@@ -8200,6 +8213,8 @@ fi
   if test -n "$GUILE_CONFIG"
 then :
 
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: using guile-config: $GUILE_CONFIG" >&5
+printf "%s\n" "$as_me: using guile-config: $GUILE_CONFIG" >&6;}
     GUILE_CONFIG=$(type -p $GUILE_CONFIG)
     LC_WITH_GUILE_tmp1="$($GUILE_CONFIG link)"
     LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 $($GUILE_CONFIG compile)"
@@ -8815,16 +8830,17 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$LC_WITH_GUILE_tmp2/$GUILE
 
     unset LC_WITH_GUILE_tmp1 LC_WITH_GUILE_tmp2
 
-elif test -z "$location" -a -d tm-guile168
+elif test -z "$location" -a -d tm-guile188
 then :
 
       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: use embedded guile" >&5
 printf "%s\n" "$as_me: use embedded guile" >&6;}
-      MKGUILE=tm-guile168/build/lib/libguile.a
+      MKGUILE=tm-guile188/build/lib/libguile.a
 
-      DIRGUILE=tm-guile168
+      DIRGUILE=tm-guile188
 
       CLNGUILE=CLNGUILE
+
 
       LC_WITH_GUILE_use_embedded_guile=1
 
@@ -8835,7 +8851,7 @@ printf "%s\n" "$as_me: use embedded guile" >&6;}
 
 
 
-    ax_dir="tm-guile168"
+    ax_dir="tm-guile188"
 
                     # Do not complain, so a configure script can configure whichever parts of a
     # large source tree are present.
@@ -8931,14 +8947,14 @@ ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
            fi
 
       # New options that must replace existing options.
-      ax_candidate="--prefix=$(pwd)/tm-guile168/build"
+      ax_candidate="--prefix=$(pwd)/tm-guile188/build"
            ax_candidate_flag="${ax_candidate%%=*}"
            ax_candidate_content="${ax_candidate#*=}"
            if test "x$ax_candidate" != "x" -a "x$ax_candidate_flag" != "x"; then
              if echo "$ax_args" | grep -- "${ax_candidate_flag}=" >/dev/null 2>&1; then
                ax_args=$(echo $ax_args | sed "s,${ax_candidate_flag}=[^']*,${ax_candidate},")
              else
-               as_fn_append ax_args " '--prefix=$(pwd)/tm-guile168/build'"
+               as_fn_append ax_args " '--prefix=$(pwd)/tm-guile188/build'"
              fi
            fi
 
@@ -8961,15 +8977,15 @@ printf "%s\n" "$as_me: WARNING: could not find source tree for $ax_dir" >&2;}
 
 
 
-      GUILE_STATIC='$(shell ../tm-guile168/guile-config/guile-config link)'
+      GUILE_STATIC='$(shell ../'$GUILE_EMBEDDED_DIR'/guile-config/guile-config link)'
 
 
-  if [[ "-I$(pwd)/tm-guile168/build/include" =~ $(echo '^-Wl,') ]]
-  then GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile168/build/include"
-  elif [[ "-I$(pwd)/tm-guile168/build/include" =~ $(echo '^-l') ]]
+  if [[ "-I$(pwd)/tm-guile188/build/include" =~ $(echo '^-Wl,') ]]
+  then GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile188/build/include"
+  elif [[ "-I$(pwd)/tm-guile188/build/include" =~ $(echo '^-l') ]]
   then
   unset STRIP_ALL_ARGS_list
-  for STRIP_ALL_ARGS_arg in "-I$(pwd)/tm-guile168/build/include"
+  for STRIP_ALL_ARGS_arg in "-I$(pwd)/tm-guile188/build/include"
   do  while [[ $GUILE_CPPFLAGS != $STRIP_ALL_ARGS_list ]]
       do STRIP_ALL_ARGS_list=$GUILE_CPPFLAGS
 
@@ -8990,22 +9006,22 @@ printf "%s\n" "$as_me: WARNING: could not find source tree for $ax_dir" >&2;}
   done
   unset ${!STRIP_ALL_ARGS_*}
 
-       GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile168/build/include"
+       GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile188/build/include"
   else
-    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])-I$(pwd)/tm-guile168/build/include($|[[:space:]])") ]]
-    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I$(pwd)/tm-guile168/build/include" >&5
-printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$(pwd)/tm-guile168/build/include" >&2;}
-    else GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile168/build/include"
+    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])-I$(pwd)/tm-guile188/build/include($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I$(pwd)/tm-guile188/build/include" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$(pwd)/tm-guile188/build/include" >&2;}
+    else GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile188/build/include"
     fi
   fi
 
 
-  if [[ "-I$(pwd)/tm-guile168/build/include/guile" =~ $(echo '^-Wl,') ]]
-  then GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile168/build/include/guile"
-  elif [[ "-I$(pwd)/tm-guile168/build/include/guile" =~ $(echo '^-l') ]]
+  if [[ "-I$(pwd)/tm-guile188/build/include/guile" =~ $(echo '^-Wl,') ]]
+  then GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile188/build/include/guile"
+  elif [[ "-I$(pwd)/tm-guile188/build/include/guile" =~ $(echo '^-l') ]]
   then
   unset STRIP_ALL_ARGS_list
-  for STRIP_ALL_ARGS_arg in "-I$(pwd)/tm-guile168/build/include/guile"
+  for STRIP_ALL_ARGS_arg in "-I$(pwd)/tm-guile188/build/include/guile"
   do  while [[ $GUILE_CPPFLAGS != $STRIP_ALL_ARGS_list ]]
       do STRIP_ALL_ARGS_list=$GUILE_CPPFLAGS
 
@@ -9026,17 +9042,17 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$(pwd)/tm-guile168/build/i
   done
   unset ${!STRIP_ALL_ARGS_*}
 
-       GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile168/build/include/guile"
+       GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile188/build/include/guile"
   else
-    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])-I$(pwd)/tm-guile168/build/include/guile($|[[:space:]])") ]]
-    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I$(pwd)/tm-guile168/build/include/guile" >&5
-printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$(pwd)/tm-guile168/build/include/guile" >&2;}
-    else GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile168/build/include/guile"
+    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])-I$(pwd)/tm-guile188/build/include/guile($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I$(pwd)/tm-guile188/build/include/guile" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$(pwd)/tm-guile188/build/include/guile" >&2;}
+    else GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile188/build/include/guile"
     fi
   fi
 
-      GUILE_VERSION=1.6
-      GUILE_DATA_PATH=$(pwd)/tm-guile168/build/share/guile/${GUILE_VERSION}
+      GUILE_VERSION=$GUILE_EMBEDDED_VERSION
+      GUILE_DATA_PATH=$(pwd)/tm-guile188/build/share/guile/${GUILE_VERSION}
 
 else $as_nop
   as_fn_error $? "cannot find guile-config; is Guile installed?" "$LINENO" 5
@@ -35706,7 +35722,7 @@ LIBOBJS=$ac_libobjs
 LTLIBOBJS=$ac_ltlibobjs
 
 
-      ax_dir="tm-guile168"
+      ax_dir="tm-guile188"
 
       # Convert the path to the subdirectory into a shell variable name.
       ax_var=$(printf "$ax_dir" | tr -c "0-9a-zA-Z_" "_")
