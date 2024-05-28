@@ -61,13 +61,23 @@ AC_DEFUN([LC_WITH_GUILE],[
   AC_SUBST([CLNGUILE])
   AC_SUBST([GUILE_STATIC])
   
-  AS_IF(test "$location" = "embedded", [unset location], test -z $location,[
+  GUILE_EMBEDDED_VERSION="1.6"
+  GUILE_EMBEDDED_DIR="tm-guile168"
+  
+  AS_IF(test "$location" = "embedded18", [
+    GUILE_EMBEDDED_VERSION="1.8"
+    GUILE_EMBEDDED_DIR="tm-guile188"
+    m4_define([embedded_guile],[tm-guile188])
+  ])
+
+  AS_IF(test "$location" = "embedded" || test "$location" = "embedded18", [unset location], test -z $location,[
     # build the prefered guile version search line
     m4_define(configlist, m4_split(m4_combine([ ],[guile],[],[18],[1.8],[16],[1.6],[1],[],[20],[2.0],[2])))
     AC_CHECK_PROGS(GUILE_CONFIG, m4_combine([ ],[configlist],[-],[config]))
   ],[GUILE_CONFIG=$location])
   
   AS_IF(test -n "$GUILE_CONFIG",[
+    AC_MSG_NOTICE([using guile-config: $GUILE_CONFIG])
     GUILE_CONFIG=$(type -p $GUILE_CONFIG)
     LC_WITH_GUILE_tmp1="$($GUILE_CONFIG link)"
     LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 $($GUILE_CONFIG compile)"
@@ -97,16 +107,17 @@ AC_DEFUN([LC_WITH_GUILE],[
       AC_SUBST([MKGUILE],[embedded_guile/build/lib/libguile.a])
       AC_SUBST([DIRGUILE],embedded_guile)
       AC_SUBST([CLNGUILE],[CLNGUILE])
+      AC_SUBST([GUILE_EMBEDDED_DIR])
       $0_use_embedded_guile=1
       AX_SUBDIRS_CONFIGURE([embedded_guile],
         [[--without-guile-readline]],
         [--disable-shared],[--prefix=$(pwd)/embedded_guile/build],
         [--with-tmrepo=])
-      GUILE_STATIC='$(shell ../tm-guile168/guile-config/guile-config link)'
+      GUILE_STATIC='$(shell ../'$GUILE_EMBEDDED_DIR'/guile-config/guile-config link)'
       AC_SUBST([GUILE_STATIC])
       LC_APPEND_FLAG([-I$(pwd)/embedded_guile/build/include],[GUILE_CPPFLAGS])
       LC_APPEND_FLAG([-I$(pwd)/embedded_guile/build/include/guile],[GUILE_CPPFLAGS])
-      GUILE_VERSION=1.6
+      GUILE_VERSION=$GUILE_EMBEDDED_VERSION
       GUILE_DATA_PATH=$(pwd)/embedded_guile/build/share/guile/${GUILE_VERSION}
     ],[AC_MSG_ERROR([cannot find guile-config; is Guile installed?])
   ])
