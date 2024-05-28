@@ -5,6 +5,7 @@
 ("TeX" "TeX")
 ("abbreviation" "prescurtare")
 ("about" "despre")
+("apropos" "despre")
 ("about menu" "despre")
 ("above" "deasupra")
 ("abstract" "rezumat")

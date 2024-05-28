@@ -4,6 +4,7 @@
 ("a modifier" "modyfikator a")
 ("abbreviation" "skrót")
 ("about" "o mnie")
+("apropos" "o mnie")
 ("about menu" "o menu")
 ("above" "ponad")
 ("abstract" "streszczenie")

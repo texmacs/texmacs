@@ -2,6 +2,7 @@
 ("a series" "")
 ("abbreviation" "省略表現")
 ("about" "以下について")
+("apropos" "以下について")
 ("about menu" "メニューについて")
 ("above" "")
 ("abstract" "要約")

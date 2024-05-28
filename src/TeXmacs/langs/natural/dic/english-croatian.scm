@@ -7,6 +7,7 @@
 ("abreviated authors" "skra¢ena imena autora")
 ("abbreviation" "kratica")
 ("about" "o programu")
+("apropos" "o programu")
 ("about menu" "izbornik o programu")
 ("above" "iznad")
 ("abstract" "saºetak")

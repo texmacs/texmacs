@@ -7,6 +7,7 @@
 ("abbreviated authors" "autori skrátene")
 ("abbreviation" "skratka")
 ("about" "o")
+("apropos" "o")
 ("about menu" "o TeXmacse")
 ("above" "nad")
 ("abstract" "abstrakt")

@@ -6,6 +6,7 @@
 ("TeX" "TeX")
 ("abbreviation" "lyhenne")
 ("about" "tietoja")
+("apropos" "tietoja")
 ("about menu" "tietoja-menu")
 ("above" "yläpuolelle")
 ("abstract" "tiivistelmä")
