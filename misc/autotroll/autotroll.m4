@@ -199,6 +199,10 @@ dnl Memo: AC_ARG_WITH(package, help-string, [if-given], [if-not-given])
   test -d /opt/local/libexec/qt4-mac/bin \
     && tmp_qt_paths="$tmp_qt_paths:/opt/local/libexec/qt4-mac/bin"
 
+  # Path to which homebrew (Mac) installs Qt moc executable.
+  test -d /opt/homebrew/share/qt/libexec \
+    && tmp_qt_paths="$tmp_qt_paths:/opt/homebrew/share/qt/libexec"
+
   # Find qmake.
   AC_ARG_VAR([QMAKE], [Qt Makefile generator command])
   AX_PATH_TOOLS([QMAKE], [qmake qmake-qt5 qmake-qt4 qmake-qt3], [missing],
