@@ -1,0 +1,3274 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004, 2006, 2007, 2008
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node SRFI Support
+@section SRFI Support Modules
+@cindex SRFI
+
+SRFI is an acronym for Scheme Request For Implementation.  The SRFI
+documents define a lot of syntactic and procedure extensions to standard
+Scheme as defined in R5RS.
+
+Guile has support for a number of SRFIs.  This chapter gives an overview
+over the available SRFIs and some usage hints.  For complete
+documentation, design rationales and further examples, we advise you to
+get the relevant SRFI documents from the SRFI home page
+@url{http://srfi.schemers.org}.
+
+@menu
+* About SRFI Usage::            What to know about Guile's SRFI support.
+* SRFI-0::                      cond-expand
+* SRFI-1::                      List library.
+* SRFI-2::                      and-let*.
+* SRFI-4::                      Homogeneous numeric vector datatypes.
+* SRFI-6::                      Basic String Ports.
+* SRFI-8::                      receive.
+* SRFI-9::                      define-record-type.
+* SRFI-10::                     Hash-Comma Reader Extension.
+* SRFI-11::                     let-values and let*-values.
+* SRFI-13::                     String library.
+* SRFI-14::                     Character-set library.
+* SRFI-16::                     case-lambda
+* SRFI-17::                     Generalized set!
+* SRFI-19::                     Time/Date library.
+* SRFI-26::                     Specializing parameters
+* SRFI-31::                     A special form `rec' for recursive evaluation
+* SRFI-34::                     Exception handling.
+* SRFI-35::                     Conditions.
+* SRFI-37::                     args-fold program argument processor
+* SRFI-39::                     Parameter objects
+* SRFI-55::                     Requiring Features.
+* SRFI-60::                     Integers as bits.
+* SRFI-61::                     A more general `cond' clause
+* SRFI-69::                     Basic hash tables.
+* SRFI-88::                     Keyword objects.
+@end menu
+
+
+@node About SRFI Usage
+@subsection About SRFI Usage
+
+@c FIXME::martin: Review me!
+
+SRFI support in Guile is currently implemented partly in the core
+library, and partly as add-on modules.  That means that some SRFIs are
+automatically available when the interpreter is started, whereas the
+other SRFIs require you to use the appropriate support module
+explicitly.
+
+There are several reasons for this inconsistency.  First, the feature
+checking syntactic form @code{cond-expand} (@pxref{SRFI-0}) must be
+available immediately, because it must be there when the user wants to
+check for the Scheme implementation, that is, before she can know that
+it is safe to use @code{use-modules} to load SRFI support modules.  The
+second reason is that some features defined in SRFIs had been
+implemented in Guile before the developers started to add SRFI
+implementations as modules (for example SRFI-6 (@pxref{SRFI-6})).  In
+the future, it is possible that SRFIs in the core library might be
+factored out into separate modules, requiring explicit module loading
+when they are needed.  So you should be prepared to have to use
+@code{use-modules} someday in the future to access SRFI-6 bindings.  If
+you want, you can do that already.  We have included the module
+@code{(srfi srfi-6)} in the distribution, which currently does nothing,
+but ensures that you can write future-safe code.
+
+Generally, support for a specific SRFI is made available by using
+modules named @code{(srfi srfi-@var{number})}, where @var{number} is the
+number of the SRFI needed.  Another possibility is to use the command
+line option @code{--use-srfi}, which will load the necessary modules
+automatically (@pxref{Invoking Guile}).
+
+
+@node SRFI-0
+@subsection SRFI-0 - cond-expand
+@cindex SRFI-0
+
+This SRFI lets a portable Scheme program test for the presence of
+certain features, and adapt itself by using different blocks of code,
+or fail if the necessary features are not available.  There's no
+module to load, this is in the Guile core.
+
+A program designed only for Guile will generally not need this
+mechanism, such a program can of course directly use the various
+documented parts of Guile.
+
+@deffn syntax cond-expand (feature body@dots{}) @dots{}
+Expand to the @var{body} of the first clause whose @var{feature}
+specification is satisfied.  It is an error if no @var{feature} is
+satisfied.
+
+Features are symbols such as @code{srfi-1}, and a feature
+specification can use @code{and}, @code{or} and @code{not} forms to
+test combinations.  The last clause can be an @code{else}, to be used
+if no other passes.
+
+For example, define a private version of @code{alist-cons} if SRFI-1
+is not available.
+
+@example
+(cond-expand (srfi-1
+              )
+             (else
+              (define (alist-cons key val alist)
+                (cons (cons key val) alist))))
+@end example
+
+Or demand a certain set of SRFIs (list operations, string ports,
+@code{receive} and string operations), failing if they're not
+available.
+
+@example
+(cond-expand ((and srfi-1 srfi-6 srfi-8 srfi-13)
+              ))
+@end example
+@end deffn
+
+@noindent
+The Guile core has the following features,
+
+@example
+guile
+r5rs
+srfi-0
+srfi-4
+srfi-6
+srfi-13
+srfi-14
+@end example
+
+Other SRFI feature symbols are defined once their code has been loaded
+with @code{use-modules}, since only then are their bindings available.
+
+The @samp{--use-srfi} command line option (@pxref{Invoking Guile}) is
+a good way to load SRFIs to satisfy @code{cond-expand} when running a
+portable program.
+
+Testing the @code{guile} feature allows a program to adapt itself to
+the Guile module system, but still run on other Scheme systems.  For
+example the following demands SRFI-8 (@code{receive}), but also knows
+how to load it with the Guile mechanism.
+
+@example
+(cond-expand (srfi-8
+              )
+             (guile
+              (use-modules (srfi srfi-8))))
+@end example
+
+It should be noted that @code{cond-expand} is separate from the
+@code{*features*} mechanism (@pxref{Feature Tracking}), feature
+symbols in one are unrelated to those in the other.
+
+
+@node SRFI-1
+@subsection SRFI-1 - List library
+@cindex SRFI-1
+@cindex list
+
+@c FIXME::martin: Review me!
+
+The list library defined in SRFI-1 contains a lot of useful list
+processing procedures for construction, examining, destructuring and
+manipulating lists and pairs.
+
+Since SRFI-1 also defines some procedures which are already contained
+in R5RS and thus are supported by the Guile core library, some list
+and pair procedures which appear in the SRFI-1 document may not appear
+in this section.  So when looking for a particular list/pair
+processing procedure, you should also have a look at the sections
+@ref{Lists} and @ref{Pairs}.
+
+@menu
+* SRFI-1 Constructors::         Constructing new lists.
+* SRFI-1 Predicates::           Testing list for specific properties.
+* SRFI-1 Selectors::            Selecting elements from lists.
+* SRFI-1 Length Append etc::    Length calculation and list appending.
+* SRFI-1 Fold and Map::         Higher-order list processing.
+* SRFI-1 Filtering and Partitioning::  Filter lists based on predicates.
+* SRFI-1 Searching::            Search for elements.
+* SRFI-1 Deleting::             Delete elements from lists.
+* SRFI-1 Association Lists::    Handle association lists.
+* SRFI-1 Set Operations::       Use lists for representing sets.
+@end menu
+
+@node SRFI-1 Constructors
+@subsubsection Constructors
+@cindex list constructor
+
+@c FIXME::martin: Review me!
+
+New lists can be constructed by calling one of the following
+procedures.
+
+@deffn {Scheme Procedure} xcons d a
+Like @code{cons}, but with interchanged arguments.  Useful mostly when
+passed to higher-order procedures.
+@end deffn
+
+@deffn {Scheme Procedure} list-tabulate n init-proc
+Return an @var{n}-element list, where each list element is produced by
+applying the procedure @var{init-proc} to the corresponding list
+index.  The order in which @var{init-proc} is applied to the indices
+is not specified.
+@end deffn
+
+@deffn {Scheme Procedure} list-copy lst
+Return a new list containing the elements of the list @var{lst}.
+
+This function differs from the core @code{list-copy} (@pxref{List
+Constructors}) in accepting improper lists too.  And if @var{lst} is
+not a pair at all then it's treated as the final tail of an improper
+list and simply returned.
+@end deffn
+
+@deffn {Scheme Procedure} circular-list elt1 elt2 @dots{}
+Return a circular list containing the given arguments @var{elt1}
+@var{elt2} @dots{}.
+@end deffn
+
+@deffn {Scheme Procedure} iota count [start step]
+Return a list containing @var{count} numbers, starting from
+@var{start} and adding @var{step} each time.  The default @var{start}
+is 0, the default @var{step} is 1.  For example,
+
+@example
+(iota 6)        @result{} (0 1 2 3 4 5)
+(iota 4 2.5 -2) @result{} (2.5 0.5 -1.5 -3.5)
+@end example
+
+This function takes its name from the corresponding primitive in the
+APL language.
+@end deffn
+
+
+@node SRFI-1 Predicates
+@subsubsection Predicates
+@cindex list predicate
+
+@c FIXME::martin: Review me!
+
+The procedures in this section test specific properties of lists.
+
+@deffn {Scheme Procedure} proper-list? obj
+Return @code{#t} if @var{obj} is a proper list, or @code{#f}
+otherwise.  This is the same as the core @code{list?} (@pxref{List
+Predicates}).
+
+A proper list is a list which ends with the empty list @code{()} in
+the usual way.  The empty list @code{()} itself is a proper list too.
+
+@example
+(proper-list? '(1 2 3))  @result{} #t
+(proper-list? '())       @result{} #t
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} circular-list? obj
+Return @code{#t} if @var{obj} is a circular list, or @code{#f}
+otherwise.
+
+A circular list is a list where at some point the @code{cdr} refers
+back to a previous pair in the list (either the start or some later
+point), so that following the @code{cdr}s takes you around in a
+circle, with no end.
+
+@example
+(define x (list 1 2 3 4))
+(set-cdr! (last-pair x) (cddr x))
+x @result{} (1 2 3 4 3 4 3 4 ...)
+(circular-list? x)  @result{} #t
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} dotted-list? obj
+Return @code{#t} if @var{obj} is a dotted list, or @code{#f}
+otherwise.
+
+A dotted list is a list where the @code{cdr} of the last pair is not
+the empty list @code{()}.  Any non-pair @var{obj} is also considered a
+dotted list, with length zero.
+
+@example
+(dotted-list? '(1 2 . 3))  @result{} #t
+(dotted-list? 99)          @result{} #t
+@end example
+@end deffn
+
+It will be noted that any Scheme object passes exactly one of the
+above three tests @code{proper-list?}, @code{circular-list?} and
+@code{dotted-list?}.  Non-lists are @code{dotted-list?}, finite lists
+are either @code{proper-list?} or @code{dotted-list?}, and infinite
+lists are @code{circular-list?}.
+
+@sp 1
+@deffn {Scheme Procedure} null-list? lst
+Return @code{#t} if @var{lst} is the empty list @code{()}, @code{#f}
+otherwise.  If something else than a proper or circular list is passed
+as @var{lst}, an error is signalled.  This procedure is recommended
+for checking for the end of a list in contexts where dotted lists are
+not allowed.
+@end deffn
+
+@deffn {Scheme Procedure} not-pair? obj
+Return @code{#t} is @var{obj} is not a pair, @code{#f} otherwise.
+This is shorthand notation @code{(not (pair? @var{obj}))} and is
+supposed to be used for end-of-list checking in contexts where dotted
+lists are allowed.
+@end deffn
+
+@deffn {Scheme Procedure} list= elt= list1 @dots{}
+Return @code{#t} if all argument lists are equal, @code{#f} otherwise.
+List equality is determined by testing whether all lists have the same
+length and the corresponding elements are equal in the sense of the
+equality predicate @var{elt=}.  If no or only one list is given,
+@code{#t} is returned.
+@end deffn
+
+
+@node SRFI-1 Selectors
+@subsubsection Selectors
+@cindex list selector
+
+@c FIXME::martin: Review me!
+
+@deffn {Scheme Procedure} first pair
+@deffnx {Scheme Procedure} second pair
+@deffnx {Scheme Procedure} third pair
+@deffnx {Scheme Procedure} fourth pair
+@deffnx {Scheme Procedure} fifth pair
+@deffnx {Scheme Procedure} sixth pair
+@deffnx {Scheme Procedure} seventh pair
+@deffnx {Scheme Procedure} eighth pair
+@deffnx {Scheme Procedure} ninth pair
+@deffnx {Scheme Procedure} tenth pair
+These are synonyms for @code{car}, @code{cadr}, @code{caddr}, @dots{}.
+@end deffn
+
+@deffn {Scheme Procedure} car+cdr pair
+Return two values, the @sc{car} and the @sc{cdr} of @var{pair}.
+@end deffn
+
+@deffn {Scheme Procedure} take lst i
+@deffnx {Scheme Procedure} take! lst i
+Return a list containing the first @var{i} elements of @var{lst}.
+
+@code{take!} may modify the structure of the argument list @var{lst}
+in order to produce the result.
+@end deffn
+
+@deffn {Scheme Procedure} drop lst i
+Return a list containing all but the first @var{i} elements of
+@var{lst}.
+@end deffn
+
+@deffn {Scheme Procedure} take-right lst i
+Return the a list containing the @var{i} last elements of @var{lst}.
+The return shares a common tail with @var{lst}.
+@end deffn
+
+@deffn {Scheme Procedure} drop-right lst i
+@deffnx {Scheme Procedure} drop-right! lst i
+Return the a list containing all but the @var{i} last elements of
+@var{lst}.
+
+@code{drop-right} always returns a new list, even when @var{i} is
+zero.  @code{drop-right!} may modify the structure of the argument
+list @var{lst} in order to produce the result.
+@end deffn
+
+@deffn {Scheme Procedure} split-at lst i
+@deffnx {Scheme Procedure} split-at! lst i
+Return two values, a list containing the first @var{i} elements of the
+list @var{lst} and a list containing the remaining elements.
+
+@code{split-at!} may modify the structure of the argument list
+@var{lst} in order to produce the result.
+@end deffn
+
+@deffn {Scheme Procedure} last lst
+Return the last element of the non-empty, finite list @var{lst}.
+@end deffn
+
+
+@node SRFI-1 Length Append etc
+@subsubsection Length, Append, Concatenate, etc.
+
+@c FIXME::martin: Review me!
+
+@deffn {Scheme Procedure} length+ lst
+Return the length of the argument list @var{lst}.  When @var{lst} is a
+circular list, @code{#f} is returned.
+@end deffn
+
+@deffn {Scheme Procedure} concatenate list-of-lists
+@deffnx {Scheme Procedure} concatenate! list-of-lists
+Construct a list by appending all lists in @var{list-of-lists}.
+
+@code{concatenate!} may modify the structure of the given lists in
+order to produce the result.
+
+@code{concatenate} is the same as @code{(apply append
+@var{list-of-lists})}.  It exists because some Scheme implementations
+have a limit on the number of arguments a function takes, which the
+@code{apply} might exceed.  In Guile there is no such limit.
+@end deffn
+
+@deffn {Scheme Procedure} append-reverse rev-head tail
+@deffnx {Scheme Procedure} append-reverse! rev-head tail
+Reverse @var{rev-head}, append @var{tail} to it, and return the
+result.  This is equivalent to @code{(append (reverse @var{rev-head})
+@var{tail})}, but its implementation is more efficient.
+
+@example
+(append-reverse '(1 2 3) '(4 5 6)) @result{} (3 2 1 4 5 6)
+@end example
+
+@code{append-reverse!} may modify @var{rev-head} in order to produce
+the result.
+@end deffn
+
+@deffn {Scheme Procedure} zip lst1 lst2 @dots{}
+Return a list as long as the shortest of the argument lists, where
+each element is a list.  The first list contains the first elements of
+the argument lists, the second list contains the second elements, and
+so on.
+@end deffn
+
+@deffn {Scheme Procedure} unzip1 lst
+@deffnx {Scheme Procedure} unzip2 lst
+@deffnx {Scheme Procedure} unzip3 lst
+@deffnx {Scheme Procedure} unzip4 lst
+@deffnx {Scheme Procedure} unzip5 lst
+@code{unzip1} takes a list of lists, and returns a list containing the
+first elements of each list, @code{unzip2} returns two lists, the
+first containing the first elements of each lists and the second
+containing the second elements of each lists, and so on.
+@end deffn
+
+@deffn {Scheme Procedure} count pred lst1 @dots{} lstN
+Return a count of the number of times @var{pred} returns true when
+called on elements from the given lists.
+
+@var{pred} is called with @var{N} parameters @code{(@var{pred}
+@var{elem1} @dots{} @var{elemN})}, each element being from the
+corresponding @var{lst1} @dots{} @var{lstN}.  The first call is with
+the first element of each list, the second with the second element
+from each, and so on.
+
+Counting stops when the end of the shortest list is reached.  At least
+one list must be non-circular.
+@end deffn
+
+
+@node SRFI-1 Fold and Map
+@subsubsection Fold, Unfold & Map
+@cindex list fold
+@cindex list map
+
+@c FIXME::martin: Review me!
+
+@deffn {Scheme Procedure} fold proc init lst1 @dots{} lstN
+@deffnx {Scheme Procedure} fold-right proc init lst1 @dots{} lstN
+Apply @var{proc} to the elements of @var{lst1} @dots{} @var{lstN} to
+build a result, and return that result.
+
+Each @var{proc} call is @code{(@var{proc} @var{elem1} @dots{}
+@var{elemN} @var{previous})}, where @var{elem1} is from @var{lst1},
+through @var{elemN} from @var{lstN}.  @var{previous} is the return
+from the previous call to @var{proc}, or the given @var{init} for the
+first call.  If any list is empty, just @var{init} is returned.
+
+@code{fold} works through the list elements from first to last.  The
+following shows a list reversal and the calls it makes,
+
+@example
+(fold cons '() '(1 2 3))
+
+(cons 1 '())
+(cons 2 '(1))
+(cons 3 '(2 1)
+@result{} (3 2 1)
+@end example
+
+@code{fold-right} works through the list elements from last to first,
+ie.@: from the right.  So for example the following finds the longest
+string, and the last among equal longest,
+
+@example
+(fold-right (lambda (str prev)
+              (if (> (string-length str) (string-length prev))
+                  str
+                  prev))
+            ""
+            '("x" "abc" "xyz" "jk"))
+@result{} "xyz"
+@end example
+
+If @var{lst1} through @var{lstN} have different lengths, @code{fold}
+stops when the end of the shortest is reached; @code{fold-right}
+commences at the last element of the shortest.  Ie.@: elements past
+the length of the shortest are ignored in the other @var{lst}s.  At
+least one @var{lst} must be non-circular.
+
+@code{fold} should be preferred over @code{fold-right} if the order of
+processing doesn't matter, or can be arranged either way, since
+@code{fold} is a little more efficient.
+
+The way @code{fold} builds a result from iterating is quite general,
+it can do more than other iterations like say @code{map} or
+@code{filter}.  The following for example removes adjacent duplicate
+elements from a list,
+
+@example
+(define (delete-adjacent-duplicates lst)
+  (fold-right (lambda (elem ret)
+                (if (equal? elem (first ret))
+                    ret
+                    (cons elem ret)))
+              (list (last lst))
+              lst))
+(delete-adjacent-duplicates '(1 2 3 3 4 4 4 5))
+@result{} (1 2 3 4 5)
+@end example
+
+Clearly the same sort of thing can be done with a @code{for-each} and
+a variable in which to build the result, but a self-contained
+@var{proc} can be re-used in multiple contexts, where a
+@code{for-each} would have to be written out each time.
+@end deffn
+
+@deffn {Scheme Procedure} pair-fold proc init lst1 @dots{} lstN
+@deffnx {Scheme Procedure} pair-fold-right proc init lst1 @dots{} lstN
+The same as @code{fold} and @code{fold-right}, but apply @var{proc} to
+the pairs of the lists instead of the list elements.
+@end deffn
+
+@deffn {Scheme Procedure} reduce proc default lst
+@deffnx {Scheme Procedure} reduce-right proc default lst
+@code{reduce} is a variant of @code{fold}, where the first call to
+@var{proc} is on two elements from @var{lst}, rather than one element
+and a given initial value.
+
+If @var{lst} is empty, @code{reduce} returns @var{default} (this is
+the only use for @var{default}).  If @var{lst} has just one element
+then that's the return value.  Otherwise @var{proc} is called on the
+elements of @var{lst}.
+
+Each @var{proc} call is @code{(@var{proc} @var{elem} @var{previous})},
+where @var{elem} is from @var{lst} (the second and subsequent elements
+of @var{lst}), and @var{previous} is the return from the previous call
+to @var{proc}.  The first element of @var{lst} is the @var{previous}
+for the first call to @var{proc}.
+
+For example, the following adds a list of numbers, the calls made to
+@code{+} are shown.  (Of course @code{+} accepts multiple arguments
+and can add a list directly, with @code{apply}.)
+
+@example
+(reduce + 0 '(5 6 7)) @result{} 18
+
+(+ 6 5)  @result{} 11
+(+ 7 11) @result{} 18
+@end example
+
+@code{reduce} can be used instead of @code{fold} where the @var{init}
+value is an ``identity'', meaning a value which under @var{proc}
+doesn't change the result, in this case 0 is an identity since
+@code{(+ 5 0)} is just 5.  @code{reduce} avoids that unnecessary call.
+
+@code{reduce-right} is a similar variation on @code{fold-right},
+working from the end (ie.@: the right) of @var{lst}.  The last element
+of @var{lst} is the @var{previous} for the first call to @var{proc},
+and the @var{elem} values go from the second last.
+
+@code{reduce} should be preferred over @code{reduce-right} if the
+order of processing doesn't matter, or can be arranged either way,
+since @code{reduce} is a little more efficient.
+@end deffn
+
+@deffn {Scheme Procedure} unfold p f g seed [tail-gen]
+@code{unfold} is defined as follows:
+
+@lisp
+(unfold p f g seed) =
+   (if (p seed) (tail-gen seed)
+       (cons (f seed)
+             (unfold p f g (g seed))))
+@end lisp
+
+@table @var
+@item p
+Determines when to stop unfolding.
+
+@item f
+Maps each seed value to the corresponding list element.
+
+@item g
+Maps each seed value to next seed valu.
+
+@item seed
+The state value for the unfold.
+
+@item tail-gen
+Creates the tail of the list; defaults to @code{(lambda (x) '())}.
+@end table
+
+@var{g} produces a series of seed values, which are mapped to list
+elements by @var{f}.  These elements are put into a list in
+left-to-right order, and @var{p} tells when to stop unfolding.
+@end deffn
+
+@deffn {Scheme Procedure} unfold-right p f g seed [tail]
+Construct a list with the following loop.
+
+@lisp
+(let lp ((seed seed) (lis tail))
+   (if (p seed) lis
+       (lp (g seed)
+           (cons (f seed) lis))))
+@end lisp
+
+@table @var
+@item p
+Determines when to stop unfolding.
+
+@item f
+Maps each seed value to the corresponding list element.
+
+@item g
+Maps each seed value to next seed valu.
+
+@item seed
+The state value for the unfold.
+
+@item tail-gen
+Creates the tail of the list; defaults to @code{(lambda (x) '())}.
+@end table
+
+@end deffn
+
+@deffn {Scheme Procedure} map f lst1 lst2 @dots{}
+Map the procedure over the list(s) @var{lst1}, @var{lst2}, @dots{} and
+return a list containing the results of the procedure applications.
+This procedure is extended with respect to R5RS, because the argument
+lists may have different lengths.  The result list will have the same
+length as the shortest argument lists.  The order in which @var{f}
+will be applied to the list element(s) is not specified.
+@end deffn
+
+@deffn {Scheme Procedure} for-each f lst1 lst2 @dots{}
+Apply the procedure @var{f} to each pair of corresponding elements of
+the list(s) @var{lst1}, @var{lst2}, @dots{}.  The return value is not
+specified.  This procedure is extended with respect to R5RS, because
+the argument lists may have different lengths.  The shortest argument
+list determines the number of times @var{f} is called.  @var{f} will
+be applied to the list elements in left-to-right order.
+
+@end deffn
+
+@deffn {Scheme Procedure} append-map f lst1 lst2 @dots{}
+@deffnx {Scheme Procedure} append-map! f lst1 lst2 @dots{}
+Equivalent to
+
+@lisp
+(apply append (map f clist1 clist2 ...))
+@end lisp
+
+and
+
+@lisp
+(apply append! (map f clist1 clist2 ...))
+@end lisp
+
+Map @var{f} over the elements of the lists, just as in the @code{map}
+function. However, the results of the applications are appended
+together to make the final result. @code{append-map} uses
+@code{append} to append the results together; @code{append-map!} uses
+@code{append!}.
+
+The dynamic order in which the various applications of @var{f} are
+made is not specified.
+@end deffn
+
+@deffn {Scheme Procedure} map! f lst1 lst2 @dots{}
+Linear-update variant of @code{map} -- @code{map!} is allowed, but not
+required, to alter the cons cells of @var{lst1} to construct the
+result list.
+
+The dynamic order in which the various applications of @var{f} are
+made is not specified. In the n-ary case, @var{lst2}, @var{lst3},
+@dots{} must have at least as many elements as @var{lst1}.
+@end deffn
+
+@deffn {Scheme Procedure} pair-for-each f lst1 lst2 @dots{}
+Like @code{for-each}, but applies the procedure @var{f} to the pairs
+from which the argument lists are constructed, instead of the list
+elements.  The return value is not specified.
+@end deffn
+
+@deffn {Scheme Procedure} filter-map f lst1 lst2 @dots{}
+Like @code{map}, but only results from the applications of @var{f}
+which are true are saved in the result list.
+@end deffn
+
+
+@node SRFI-1 Filtering and Partitioning
+@subsubsection Filtering and Partitioning
+@cindex list filter
+@cindex list partition
+
+@c FIXME::martin: Review me!
+
+Filtering means to collect all elements from a list which satisfy a
+specific condition.  Partitioning a list means to make two groups of
+list elements, one which contains the elements satisfying a condition,
+and the other for the elements which don't.
+
+The @code{filter} and @code{filter!} functions are implemented in the
+Guile core, @xref{List Modification}.
+
+@deffn {Scheme Procedure} partition pred lst
+@deffnx {Scheme Procedure} partition! pred lst
+Split @var{lst} into those elements which do and don't satisfy the
+predicate @var{pred}.
+
+The return is two values (@pxref{Multiple Values}), the first being a
+list of all elements from @var{lst} which satisfy @var{pred}, the
+second a list of those which do not.
+
+The elements in the result lists are in the same order as in @var{lst}
+but the order in which the calls @code{(@var{pred} elem)} are made on
+the list elements is unspecified.
+
+@code{partition} does not change @var{lst}, but one of the returned
+lists may share a tail with it.  @code{partition!} may modify
+@var{lst} to construct its return.
+@end deffn
+
+@deffn {Scheme Procedure} remove pred lst
+@deffnx {Scheme Procedure} remove! pred lst
+Return a list containing all elements from @var{lst} which do not
+satisfy the predicate @var{pred}.  The elements in the result list
+have the same order as in @var{lst}.  The order in which @var{pred} is
+applied to the list elements is not specified.
+
+@code{remove!} is allowed, but not required to modify the structure of
+the input list.
+@end deffn
+
+
+@node SRFI-1 Searching
+@subsubsection Searching
+@cindex list search
+
+@c FIXME::martin: Review me!
+
+The procedures for searching elements in lists either accept a
+predicate or a comparison object for determining which elements are to
+be searched.
+
+@deffn {Scheme Procedure} find pred lst
+Return the first element of @var{lst} which satisfies the predicate
+@var{pred} and @code{#f} if no such element is found.
+@end deffn
+
+@deffn {Scheme Procedure} find-tail pred lst
+Return the first pair of @var{lst} whose @sc{car} satisfies the
+predicate @var{pred} and @code{#f} if no such element is found.
+@end deffn
+
+@deffn {Scheme Procedure} take-while pred lst
+@deffnx {Scheme Procedure} take-while! pred lst
+Return the longest initial prefix of @var{lst} whose elements all
+satisfy the predicate @var{pred}.
+
+@code{take-while!} is allowed, but not required to modify the input
+list while producing the result.
+@end deffn
+
+@deffn {Scheme Procedure} drop-while pred lst
+Drop the longest initial prefix of @var{lst} whose elements all
+satisfy the predicate @var{pred}.
+@end deffn
+
+@deffn {Scheme Procedure} span pred lst
+@deffnx {Scheme Procedure} span! pred lst
+@deffnx {Scheme Procedure} break pred lst
+@deffnx {Scheme Procedure} break! pred lst
+@code{span} splits the list @var{lst} into the longest initial prefix
+whose elements all satisfy the predicate @var{pred}, and the remaining
+tail.  @code{break} inverts the sense of the predicate.
+
+@code{span!} and @code{break!} are allowed, but not required to modify
+the structure of the input list @var{lst} in order to produce the
+result.
+
+Note that the name @code{break} conflicts with the @code{break}
+binding established by @code{while} (@pxref{while do}).  Applications
+wanting to use @code{break} from within a @code{while} loop will need
+to make a new define under a different name.
+@end deffn
+
+@deffn {Scheme Procedure} any pred lst1 lst2 @dots{} lstN
+Test whether any set of elements from @var{lst1} @dots{} lstN
+satisfies @var{pred}.  If so the return value is the return from the
+successful @var{pred} call, or if not the return is @code{#f}.
+
+Each @var{pred} call is @code{(@var{pred} @var{elem1} @dots{}
+@var{elemN})} taking an element from each @var{lst}.  The calls are
+made successively for the first, second, etc elements of the lists,
+stopping when @var{pred} returns non-@code{#f}, or when the end of the
+shortest list is reached.
+
+The @var{pred} call on the last set of elements (ie.@: when the end of
+the shortest list has been reached), if that point is reached, is a
+tail call.
+@end deffn
+
+@deffn {Scheme Procedure} every pred lst1 lst2 @dots{} lstN
+Test whether every set of elements from @var{lst1} @dots{} lstN
+satisfies @var{pred}.  If so the return value is the return from the
+final @var{pred} call, or if not the return is @code{#f}.
+
+Each @var{pred} call is @code{(@var{pred} @var{elem1} @dots{}
+@var{elemN})} taking an element from each @var{lst}.  The calls are
+made successively for the first, second, etc elements of the lists,
+stopping if @var{pred} returns @code{#f}, or when the end of any of
+the lists is reached.
+
+The @var{pred} call on the last set of elements (ie.@: when the end of
+the shortest list has been reached) is a tail call.
+
+If one of @var{lst1} @dots{} @var{lstN} is empty then no calls to
+@var{pred} are made, and the return is @code{#t}.
+@end deffn
+
+@deffn {Scheme Procedure} list-index pred lst1 @dots{} lstN
+Return the index of the first set of elements, one from each of
+@var{lst1}@dots{}@var{lstN}, which satisfies @var{pred}.
+
+@var{pred} is called as @code{(@var{pred} elem1 @dots{} elemN)}.
+Searching stops when the end of the shortest @var{lst} is reached.
+The return index starts from 0 for the first set of elements.  If no
+set of elements pass then the return is @code{#f}.
+
+@example
+(list-index odd? '(2 4 6 9))      @result{} 3
+(list-index = '(1 2 3) '(3 1 2))  @result{} #f
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} member x lst [=]
+Return the first sublist of @var{lst} whose @sc{car} is equal to
+@var{x}.  If @var{x} does not appear in @var{lst}, return @code{#f}.
+
+Equality is determined by @code{equal?}, or by the equality predicate
+@var{=} if given.  @var{=} is called @code{(= @var{x} elem)},
+ie.@: with the given @var{x} first, so for example to find the first
+element greater than 5,
+
+@example
+(member 5 '(3 5 1 7 2 9) <) @result{} (7 2 9)
+@end example
+
+This version of @code{member} extends the core @code{member}
+(@pxref{List Searching}) by accepting an equality predicate.
+@end deffn
+
+
+@node SRFI-1 Deleting
+@subsubsection Deleting
+@cindex list delete
+
+@deffn {Scheme Procedure} delete x lst [=]
+@deffnx {Scheme Procedure} delete! x lst [=]
+Return a list containing the elements of @var{lst} but with those
+equal to @var{x} deleted.  The returned elements will be in the same
+order as they were in @var{lst}.
+
+Equality is determined by the @var{=} predicate, or @code{equal?} if
+not given.  An equality call is made just once for each element, but
+the order in which the calls are made on the elements is unspecified.
+
+The equality calls are always @code{(= x elem)}, ie.@: the given @var{x}
+is first.  This means for instance elements greater than 5 can be
+deleted with @code{(delete 5 lst <)}.
+
+@code{delete} does not modify @var{lst}, but the return might share a
+common tail with @var{lst}.  @code{delete!} may modify the structure
+of @var{lst} to construct its return.
+
+These functions extend the core @code{delete} and @code{delete!}
+(@pxref{List Modification}) in accepting an equality predicate.  See
+also @code{lset-difference} (@pxref{SRFI-1 Set Operations}) for
+deleting multiple elements from a list.
+@end deffn
+
+@deffn {Scheme Procedure} delete-duplicates lst [=]
+@deffnx {Scheme Procedure} delete-duplicates! lst [=]
+Return a list containing the elements of @var{lst} but without
+duplicates.
+
+When elements are equal, only the first in @var{lst} is retained.
+Equal elements can be anywhere in @var{lst}, they don't have to be
+adjacent.  The returned list will have the retained elements in the
+same order as they were in @var{lst}.
+
+Equality is determined by the @var{=} predicate, or @code{equal?} if
+not given.  Calls @code{(= x y)} are made with element @var{x} being
+before @var{y} in @var{lst}.  A call is made at most once for each
+combination, but the sequence of the calls across the elements is
+unspecified.
+
+@code{delete-duplicates} does not modify @var{lst}, but the return
+might share a common tail with @var{lst}.  @code{delete-duplicates!}
+may modify the structure of @var{lst} to construct its return.
+
+In the worst case, this is an @math{O(N^2)} algorithm because it must
+check each element against all those preceding it.  For long lists it
+is more efficient to sort and then compare only adjacent elements.
+@end deffn
+
+
+@node SRFI-1 Association Lists
+@subsubsection Association Lists
+@cindex association list
+@cindex alist
+
+@c FIXME::martin: Review me!
+
+Association lists are described in detail in section @ref{Association
+Lists}.  The present section only documents the additional procedures
+for dealing with association lists defined by SRFI-1.
+
+@deffn {Scheme Procedure} assoc key alist [=]
+Return the pair from @var{alist} which matches @var{key}.  This
+extends the core @code{assoc} (@pxref{Retrieving Alist Entries}) by
+taking an optional @var{=} comparison procedure.
+
+The default comparison is @code{equal?}.  If an @var{=} parameter is
+given it's called @code{(@var{=} @var{key} @var{alistcar})}, ie. the
+given target @var{key} is the first argument, and a @code{car} from
+@var{alist} is second.
+
+For example a case-insensitive string lookup,
+
+@example
+(assoc "yy" '(("XX" . 1) ("YY" . 2)) string-ci=?)
+@result{} ("YY" . 2)
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} alist-cons key datum alist
+Cons a new association @var{key} and @var{datum} onto @var{alist} and
+return the result.  This is equivalent to
+
+@lisp
+(cons (cons @var{key} @var{datum}) @var{alist})
+@end lisp
+
+@code{acons} (@pxref{Adding or Setting Alist Entries}) in the Guile
+core does the same thing.
+@end deffn
+
+@deffn {Scheme Procedure} alist-copy alist
+Return a newly allocated copy of @var{alist}, that means that the
+spine of the list as well as the pairs are copied.
+@end deffn
+
+@deffn {Scheme Procedure} alist-delete key alist [=]
+@deffnx {Scheme Procedure} alist-delete! key alist [=]
+Return a list containing the elements of @var{alist} but with those
+elements whose keys are equal to @var{key} deleted.  The returned
+elements will be in the same order as they were in @var{alist}.
+
+Equality is determined by the @var{=} predicate, or @code{equal?} if
+not given.  The order in which elements are tested is unspecified, but
+each equality call is made @code{(= key alistkey)}, ie. the given
+@var{key} parameter is first and the key from @var{alist} second.
+This means for instance all associations with a key greater than 5 can
+be removed with @code{(alist-delete 5 alist <)}.
+
+@code{alist-delete} does not modify @var{alist}, but the return might
+share a common tail with @var{alist}.  @code{alist-delete!} may modify
+the list structure of @var{alist} to construct its return.
+@end deffn
+
+
+@node SRFI-1 Set Operations
+@subsubsection Set Operations on Lists
+@cindex list set operation
+
+Lists can be used to represent sets of objects.  The procedures in
+this section operate on such lists as sets.
+
+Note that lists are not an efficient way to implement large sets.  The
+procedures here typically take time @math{@var{m}@cross{}@var{n}} when
+operating on @var{m} and @var{n} element lists.  Other data structures
+like trees, bitsets (@pxref{Bit Vectors}) or hash tables (@pxref{Hash
+Tables}) are faster.
+
+All these procedures take an equality predicate as the first argument.
+This predicate is used for testing the objects in the list sets for
+sameness.  This predicate must be consistent with @code{eq?}
+(@pxref{Equality}) in the sense that if two list elements are
+@code{eq?} then they must also be equal under the predicate.  This
+simply means a given object must be equal to itself.
+
+@deffn {Scheme Procedure} lset<= = list1 list2 @dots{}
+Return @code{#t} if each list is a subset of the one following it.
+Ie.@: @var{list1} a subset of @var{list2}, @var{list2} a subset of
+@var{list3}, etc, for as many lists as given.  If only one list or no
+lists are given then the return is @code{#t}.
+
+A list @var{x} is a subset of @var{y} if each element of @var{x} is
+equal to some element in @var{y}.  Elements are compared using the
+given @var{=} procedure, called as @code{(@var{=} xelem yelem)}.
+
+@example
+(lset<= eq?)                      @result{} #t
+(lset<= eqv? '(1 2 3) '(1))       @result{} #f
+(lset<= eqv? '(1 3 2) '(4 3 1 2)) @result{} #t
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} lset= = list1 list2 @dots{}
+Return @code{#t} if all argument lists are set-equal.  @var{list1} is
+compared to @var{list2}, @var{list2} to @var{list3}, etc, for as many
+lists as given.  If only one list or no lists are given then the
+return is @code{#t}.
+
+Two lists @var{x} and @var{y} are set-equal if each element of @var{x}
+is equal to some element of @var{y} and conversely each element of
+@var{y} is equal to some element of @var{x}.  The order of the
+elements in the lists doesn't matter.  Element equality is determined
+with the given @var{=} procedure, called as @code{(@var{=} xelem
+yelem)}, but exactly which calls are made is unspecified.
+
+@example
+(lset= eq?)                      @result{} #t
+(lset= eqv? '(1 2 3) '(3 2 1))   @result{} #t
+(lset= string-ci=? '("a" "A" "b") '("B" "b" "a")) @result{} #t
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} lset-adjoin = list elem1 @dots{}
+Add to @var{list} any of the given @var{elem}s not already in the
+list.  @var{elem}s are @code{cons}ed onto the start of @var{list} (so
+the return shares a common tail with @var{list}), but the order
+they're added is unspecified.
+
+The given @var{=} procedure is used for comparing elements, called as
+@code{(@var{=} listelem elem)}, ie.@: the second argument is one of
+the given @var{elem} parameters.
+
+@example
+(lset-adjoin eqv? '(1 2 3) 4 1 5) @result{} (5 4 1 2 3)
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} lset-union = list1 list2 @dots{}
+@deffnx {Scheme Procedure} lset-union! = list1 list2 @dots{}
+Return the union of the argument list sets.  The result is built by
+taking the union of @var{list1} and @var{list2}, then the union of
+that with @var{list3}, etc, for as many lists as given.  For one list
+argument that list itself is the result, for no list arguments the
+result is the empty list.
+
+The union of two lists @var{x} and @var{y} is formed as follows.  If
+@var{x} is empty then the result is @var{y}.  Otherwise start with
+@var{x} as the result and consider each @var{y} element (from first to
+last).  A @var{y} element not equal to something already in the result
+is @code{cons}ed onto the result.
+
+The given @var{=} procedure is used for comparing elements, called as
+@code{(@var{=} relem yelem)}.  The first argument is from the result
+accumulated so far, and the second is from the list being union-ed in.
+But exactly which calls are made is otherwise unspecified.
+
+Notice that duplicate elements in @var{list1} (or the first non-empty
+list) are preserved, but that repeated elements in subsequent lists
+are only added once.
+
+@example
+(lset-union eqv?)                          @result{} ()
+(lset-union eqv? '(1 2 3))                 @result{} (1 2 3)
+(lset-union eqv? '(1 2 1 3) '(2 4 5) '(5)) @result{} (5 4 1 2 1 3)
+@end example
+
+@code{lset-union} doesn't change the given lists but the result may
+share a tail with the first non-empty list.  @code{lset-union!} can
+modify all of the given lists to form the result.
+@end deffn
+
+@deffn {Scheme Procedure} lset-intersection = list1 list2 @dots{}
+@deffnx {Scheme Procedure} lset-intersection! = list1 list2 @dots{}
+Return the intersection of @var{list1} with the other argument lists,
+meaning those elements of @var{list1} which are also in all of
+@var{list2} etc.  For one list argument, just that list is returned.
+
+The test for an element of @var{list1} to be in the return is simply
+that it's equal to some element in each of @var{list2} etc.  Notice
+this means an element appearing twice in @var{list1} but only once in
+each of @var{list2} etc will go into the return twice.  The return has
+its elements in the same order as they were in @var{list1}.
+
+The given @var{=} procedure is used for comparing elements, called as
+@code{(@var{=} elem1 elemN)}.  The first argument is from @var{list1}
+and the second is from one of the subsequent lists.  But exactly which
+calls are made and in what order is unspecified.
+
+@example
+(lset-intersection eqv? '(x y))                        @result{} (x y)
+(lset-intersection eqv? '(1 2 3) '(4 3 2))             @result{} (2 3)
+(lset-intersection eqv? '(1 1 2 2) '(1 2) '(2 1) '(2)) @result{} (2 2)
+@end example
+
+The return from @code{lset-intersection} may share a tail with
+@var{list1}.  @code{lset-intersection!} may modify @var{list1} to form
+its result.
+@end deffn
+
+@deffn {Scheme Procedure} lset-difference = list1 list2 @dots{}
+@deffnx {Scheme Procedure} lset-difference! = list1 list2 @dots{}
+Return @var{list1} with any elements in @var{list2}, @var{list3} etc
+removed (ie.@: subtracted).  For one list argument, just that list is
+returned.
+
+The given @var{=} procedure is used for comparing elements, called as
+@code{(@var{=} elem1 elemN)}.  The first argument is from @var{list1}
+and the second from one of the subsequent lists.  But exactly which
+calls are made and in what order is unspecified.
+
+@example
+(lset-difference eqv? '(x y))             @result{} (x y)
+(lset-difference eqv? '(1 2 3) '(3 1))    @result{} (2)
+(lset-difference eqv? '(1 2 3) '(3) '(2)) @result{} (1)
+@end example
+
+The return from @code{lset-difference} may share a tail with
+@var{list1}.  @code{lset-difference!} may modify @var{list1} to form
+its result.
+@end deffn
+
+@deffn {Scheme Procedure} lset-diff+intersection = list1 list2 @dots{}
+@deffnx {Scheme Procedure} lset-diff+intersection! = list1 list2 @dots{}
+Return two values (@pxref{Multiple Values}), the difference and
+intersection of the argument lists as per @code{lset-difference} and
+@code{lset-intersection} above.
+
+For two list arguments this partitions @var{list1} into those elements
+of @var{list1} which are in @var{list2} and not in @var{list2}.  (But
+for more than two arguments there can be elements of @var{list1} which
+are neither part of the difference nor the intersection.)
+
+One of the return values from @code{lset-diff+intersection} may share
+a tail with @var{list1}.  @code{lset-diff+intersection!} may modify
+@var{list1} to form its results.
+@end deffn
+
+@deffn {Scheme Procedure} lset-xor = list1 list2 @dots{}
+@deffnx {Scheme Procedure} lset-xor! = list1 list2 @dots{}
+Return an XOR of the argument lists.  For two lists this means those
+elements which are in exactly one of the lists.  For more than two
+lists it means those elements which appear in an odd number of the
+lists.
+
+To be precise, the XOR of two lists @var{x} and @var{y} is formed by
+taking those elements of @var{x} not equal to any element of @var{y},
+plus those elements of @var{y} not equal to any element of @var{x}.
+Equality is determined with the given @var{=} procedure, called as
+@code{(@var{=} e1 e2)}.  One argument is from @var{x} and the other
+from @var{y}, but which way around is unspecified.  Exactly which
+calls are made is also unspecified, as is the order of the elements in
+the result.
+
+@example
+(lset-xor eqv? '(x y))             @result{} (x y)
+(lset-xor eqv? '(1 2 3) '(4 3 2))  @result{} (4 1)
+@end example
+
+The return from @code{lset-xor} may share a tail with one of the list
+arguments.  @code{lset-xor!} may modify @var{list1} to form its
+result.
+@end deffn
+
+
+@node SRFI-2
+@subsection SRFI-2 - and-let*
+@cindex SRFI-2
+
+@noindent
+The following syntax can be obtained with
+
+@lisp
+(use-modules (srfi srfi-2))
+@end lisp
+
+@deffn {library syntax} and-let* (clause @dots{}) body @dots{}
+A combination of @code{and} and @code{let*}.
+
+Each @var{clause} is evaluated in turn, and if @code{#f} is obtained
+then evaluation stops and @code{#f} is returned.  If all are
+non-@code{#f} then @var{body} is evaluated and the last form gives the
+return value, or if @var{body} is empty then the result is @code{#t}.
+Each @var{clause} should be one of the following,
+
+@table @code
+@item (symbol expr)
+Evaluate @var{expr}, check for @code{#f}, and bind it to @var{symbol}.
+Like @code{let*}, that binding is available to subsequent clauses.
+@item (expr)
+Evaluate @var{expr} and check for @code{#f}.
+@item symbol
+Get the value bound to @var{symbol} and check for @code{#f}.
+@end table
+
+Notice that @code{(expr)} has an ``extra'' pair of parentheses, for
+instance @code{((eq? x y))}.  One way to remember this is to imagine
+the @code{symbol} in @code{(symbol expr)} is omitted.
+
+@code{and-let*} is good for calculations where a @code{#f} value means
+termination, but where a non-@code{#f} value is going to be needed in
+subsequent expressions.
+
+The following illustrates this, it returns text between brackets
+@samp{[...]} in a string, or @code{#f} if there are no such brackets
+(ie.@: either @code{string-index} gives @code{#f}).
+
+@example
+(define (extract-brackets str)
+  (and-let* ((start (string-index str #\[))
+             (end   (string-index str #\] start)))
+    (substring str (1+ start) end)))
+@end example
+
+The following shows plain variables and expressions tested too.
+@code{diagnostic-levels} is taken to be an alist associating a
+diagnostic type with a level.  @code{str} is printed only if the type
+is known and its level is high enough.
+
+@example
+(define (show-diagnostic type str)
+  (and-let* (want-diagnostics
+             (level (assq-ref diagnostic-levels type))
+             ((>= level current-diagnostic-level)))
+    (display str)))
+@end example
+
+The advantage of @code{and-let*} is that an extended sequence of
+expressions and tests doesn't require lots of nesting as would arise
+from separate @code{and} and @code{let*}, or from @code{cond} with
+@code{=>}.
+
+@end deffn
+
+
+@node SRFI-4
+@subsection SRFI-4 - Homogeneous numeric vector datatypes
+@cindex SRFI-4
+
+The SRFI-4 procedures and data types are always available, @xref{Uniform
+Numeric Vectors}.
+
+@node SRFI-6
+@subsection SRFI-6 - Basic String Ports
+@cindex SRFI-6
+
+SRFI-6 defines the procedures @code{open-input-string},
+@code{open-output-string} and @code{get-output-string}.  These
+procedures are included in the Guile core, so using this module does not
+make any difference at the moment.  But it is possible that support for
+SRFI-6 will be factored out of the core library in the future, so using
+this module does not hurt, after all.
+
+@node SRFI-8
+@subsection SRFI-8 - receive
+@cindex SRFI-8
+
+@code{receive} is a syntax for making the handling of multiple-value
+procedures easier.  It is documented in @xref{Multiple Values}.
+
+
+@node SRFI-9
+@subsection SRFI-9 - define-record-type
+@cindex SRFI-9
+@cindex record
+
+This SRFI is a syntax for defining new record types and creating
+predicate, constructor, and field getter and setter functions.  In
+Guile this is simply an alternate interface to the core record
+functionality (@pxref{Records}).  It can be used with,
+
+@example
+(use-modules (srfi srfi-9))
+@end example
+
+@deffn {library syntax} define-record-type type @* (constructor fieldname @dots{}) @* predicate @* (fieldname accessor [modifier]) @dots{}
+@sp 1
+Create a new record type, and make various @code{define}s for using
+it.  This syntax can only occur at the top-level, not nested within
+some other form.
+
+@var{type} is bound to the record type, which is as per the return
+from the core @code{make-record-type}.  @var{type} also provides the
+name for the record, as per @code{record-type-name}.
+
+@var{constructor} is bound to a function to be called as
+@code{(@var{constructor} fieldval @dots{})} to create a new record of
+this type.  The arguments are initial values for the fields, one
+argument for each field, in the order they appear in the
+@code{define-record-type} form.
+
+The @var{fieldname}s provide the names for the record fields, as per
+the core @code{record-type-fields} etc, and are referred to in the
+subsequent accessor/modifier forms.
+
+@var{predictate} is bound to a function to be called as
+@code{(@var{predicate} obj)}.  It returns @code{#t} or @code{#f}
+according to whether @var{obj} is a record of this type.
+
+Each @var{accessor} is bound to a function to be called
+@code{(@var{accessor} record)} to retrieve the respective field from a
+@var{record}.  Similarly each @var{modifier} is bound to a function to
+be called @code{(@var{modifier} record val)} to set the respective
+field in a @var{record}.
+@end deffn
+
+@noindent
+An example will illustrate typical usage,
+
+@example
+(define-record-type employee-type
+  (make-employee name age salary)
+  employee?
+  (name    get-employee-name)
+  (age     get-employee-age    set-employee-age)
+  (salary  get-employee-salary set-employee-salary))
+@end example
+
+This creates a new employee data type, with name, age and salary
+fields.  Accessor functions are created for each field, but no
+modifier function for the name (the intention in this example being
+that it's established only when an employee object is created).  These
+can all then be used as for example,
+
+@example
+employee-type @result{} #<record-type employee-type>
+
+(define fred (make-employee "Fred" 45 20000.00))
+
+(employee? fred)        @result{} #t
+(get-employee-age fred) @result{} 45
+(set-employee-salary fred 25000.00)  ;; pay rise
+@end example
+
+The functions created by @code{define-record-type} are ordinary
+top-level @code{define}s.  They can be redefined or @code{set!} as
+desired, exported from a module, etc.
+
+
+@node SRFI-10
+@subsection SRFI-10 - Hash-Comma Reader Extension
+@cindex SRFI-10
+
+@cindex hash-comma
+@cindex #,()
+This SRFI implements a reader extension @code{#,()} called hash-comma.
+It allows the reader to give new kinds of objects, for use both in
+data and as constants or literals in source code.  This feature is
+available with
+
+@example
+(use-modules (srfi srfi-10))
+@end example
+
+@noindent
+The new read syntax is of the form
+
+@example
+#,(@var{tag} @var{arg}@dots{})
+@end example
+
+@noindent
+where @var{tag} is a symbol and the @var{arg}s are objects taken as
+parameters.  @var{tag}s are registered with the following procedure.
+
+@deffn {Scheme Procedure} define-reader-ctor tag proc
+Register @var{proc} as the constructor for a hash-comma read syntax
+starting with symbol @var{tag}, ie. @nicode{#,(@var{tag} arg@dots{})}.
+@var{proc} is called with the given arguments @code{(@var{proc}
+arg@dots{})} and the object it returns is the result of the read.
+@end deffn
+
+@noindent
+For example, a syntax giving a list of @var{N} copies of an object.
+
+@example
+(define-reader-ctor 'repeat
+  (lambda (obj reps)
+    (make-list reps obj)))
+
+(display '#,(repeat 99 3))
+@print{} (99 99 99)
+@end example
+
+Notice the quote @nicode{'} when the @nicode{#,( )} is used.  The
+@code{repeat} handler returns a list and the program must quote to use
+it literally, the same as any other list.  Ie.
+
+@example
+(display '#,(repeat 99 3))
+@result{}
+(display '(99 99 99))
+@end example
+
+When a handler returns an object which is self-evaluating, like a
+number or a string, then there's no need for quoting, just as there's
+no need when giving those directly as literals.  For example an
+addition,
+
+@example
+(define-reader-ctor 'sum
+  (lambda (x y)
+    (+ x y)))
+(display #,(sum 123 456)) @print{} 579
+@end example
+
+A typical use for @nicode{#,()} is to get a read syntax for objects
+which don't otherwise have one.  For example, the following allows a
+hash table to be given literally, with tags and values, ready for fast
+lookup.
+
+@example
+(define-reader-ctor 'hash
+  (lambda elems
+    (let ((table (make-hash-table)))
+      (for-each (lambda (elem)
+                  (apply hash-set! table elem))
+                elems)
+      table)))
+
+(define (animal->family animal)
+  (hash-ref '#,(hash ("tiger" "cat")
+                     ("lion"  "cat")
+                     ("wolf"  "dog"))
+            animal))
+
+(animal->family "lion") @result{} "cat"
+@end example
+
+Or for example the following is a syntax for a compiled regular
+expression (@pxref{Regular Expressions}).
+
+@example
+(use-modules (ice-9 regex))
+
+(define-reader-ctor 'regexp make-regexp)
+
+(define (extract-angs str)
+  (let ((match (regexp-exec '#,(regexp "<([A-Z0-9]+)>") str)))
+    (and match
+         (match:substring match 1))))
+
+(extract-angs "foo <BAR> quux") @result{} "BAR"
+@end example
+
+@sp 1
+@nicode{#,()} is somewhat similar to @code{define-macro}
+(@pxref{Macros}) in that handler code is run to produce a result, but
+@nicode{#,()} operates at the read stage, so it can appear in data for
+@code{read} (@pxref{Scheme Read}), not just in code to be executed.
+
+Because @nicode{#,()} is handled at read-time it has no direct access
+to variables etc.  A symbol in the arguments is just a symbol, not a
+variable reference.  The arguments are essentially constants, though
+the handler procedure can use them in any complicated way it might
+want.
+
+Once @code{(srfi srfi-10)} has loaded, @nicode{#,()} is available
+globally, there's no need to use @code{(srfi srfi-10)} in later
+modules.  Similarly the tags registered are global and can be used
+anywhere once registered.
+
+There's no attempt to record what previous @nicode{#,()} forms have
+been seen, if two identical forms occur then two calls are made to the
+handler procedure.  The handler might like to maintain a cache or
+similar to avoid making copies of large objects, depending on expected
+usage.
+
+In code the best uses of @nicode{#,()} are generally when there's a
+lot of objects of a particular kind as literals or constants.  If
+there's just a few then some local variables and initializers are
+fine, but that becomes tedious and error prone when there's a lot, and
+the anonymous and compact syntax of @nicode{#,()} is much better.
+
+
+@node SRFI-11
+@subsection SRFI-11 - let-values
+@cindex SRFI-11
+
+@findex let-values
+@findex let*-values
+This module implements the binding forms for multiple values
+@code{let-values} and @code{let*-values}.  These forms are similar to
+@code{let} and @code{let*} (@pxref{Local Bindings}), but they support
+binding of the values returned by multiple-valued expressions.
+
+Write @code{(use-modules (srfi srfi-11))} to make the bindings
+available.
+
+@lisp
+(let-values (((x y) (values 1 2))
+             ((z f) (values 3 4)))
+   (+ x y z f))
+@result{}
+10
+@end lisp
+
+@code{let-values} performs all bindings simultaneously, which means that
+no expression in the binding clauses may refer to variables bound in the
+same clause list.  @code{let*-values}, on the other hand, performs the
+bindings sequentially, just like @code{let*} does for single-valued
+expressions.
+
+
+@node SRFI-13
+@subsection SRFI-13 - String Library
+@cindex SRFI-13
+
+The SRFI-13 procedures are always available, @xref{Strings}.
+
+@node SRFI-14
+@subsection SRFI-14 - Character-set Library
+@cindex SRFI-14
+
+The SRFI-14 data type and procedures are always available,
+@xref{Character Sets}.
+
+@node SRFI-16
+@subsection SRFI-16 - case-lambda
+@cindex SRFI-16
+@cindex variable arity
+@cindex arity, variable
+
+@c FIXME::martin: Review me!
+
+@findex case-lambda
+The syntactic form @code{case-lambda} creates procedures, just like
+@code{lambda}, but has syntactic extensions for writing procedures of
+varying arity easier.
+
+The syntax of the @code{case-lambda} form is defined in the following
+EBNF grammar.
+
+@example
+@group
+<case-lambda>
+   --> (case-lambda <case-lambda-clause>)
+<case-lambda-clause>
+   --> (<formals> <definition-or-command>*)
+<formals>
+   --> (<identifier>*)
+     | (<identifier>* . <identifier>)
+     | <identifier>
+@end group
+@end example
+
+The value returned by a @code{case-lambda} form is a procedure which
+matches the number of actual arguments against the formals in the
+various clauses, in order.  @dfn{Formals} means a formal argument list
+just like with @code{lambda} (@pxref{Lambda}). The first matching clause
+is selected, the corresponding values from the actual parameter list are
+bound to the variable names in the clauses and the body of the clause is
+evaluated.  If no clause matches, an error is signalled.
+
+The following (silly) definition creates a procedure @var{foo} which
+acts differently, depending on the number of actual arguments.  If one
+argument is given, the constant @code{#t} is returned, two arguments are
+added and if more arguments are passed, their product is calculated.
+
+@lisp
+(define foo (case-lambda
+              ((x) #t)
+              ((x y) (+ x y))
+              (z
+                (apply * z))))
+(foo 'bar)
+@result{}
+#t
+(foo 2 4)
+@result{}
+6
+(foo 3 3 3)
+@result{}
+27
+(foo)
+@result{}
+1
+@end lisp
+
+The last expression evaluates to 1 because the last clause is matched,
+@var{z} is bound to the empty list and the following multiplication,
+applied to zero arguments, yields 1.
+
+
+@node SRFI-17
+@subsection SRFI-17 - Generalized set!
+@cindex SRFI-17
+
+This SRFI implements a generalized @code{set!}, allowing some
+``referencing'' functions to be used as the target location of a
+@code{set!}.  This feature is available from
+
+@example
+(use-modules (srfi srfi-17))
+@end example
+
+@noindent
+For example @code{vector-ref} is extended so that
+
+@example
+(set! (vector-ref vec idx) new-value)
+@end example
+
+@noindent
+is equivalent to
+
+@example
+(vector-set! vec idx new-value)
+@end example
+
+The idea is that a @code{vector-ref} expression identifies a location,
+which may be either fetched or stored.  The same form is used for the
+location in both cases, encouraging visual clarity.  This is similar
+to the idea of an ``lvalue'' in C.
+
+The mechanism for this kind of @code{set!} is in the Guile core
+(@pxref{Procedures with Setters}).  This module adds definitions of
+the following functions as procedures with setters, allowing them to
+be targets of a @code{set!},
+
+@quotation
+@nicode{car}, @nicode{cdr}, @nicode{caar}, @nicode{cadr},
+@nicode{cdar}, @nicode{cddr}, @nicode{caaar}, @nicode{caadr},
+@nicode{cadar}, @nicode{caddr}, @nicode{cdaar}, @nicode{cdadr},
+@nicode{cddar}, @nicode{cdddr}, @nicode{caaaar}, @nicode{caaadr},
+@nicode{caadar}, @nicode{caaddr}, @nicode{cadaar}, @nicode{cadadr},
+@nicode{caddar}, @nicode{cadddr}, @nicode{cdaaar}, @nicode{cdaadr},
+@nicode{cdadar}, @nicode{cdaddr}, @nicode{cddaar}, @nicode{cddadr},
+@nicode{cdddar}, @nicode{cddddr}
+
+@nicode{string-ref}, @nicode{vector-ref}
+@end quotation
+
+The SRFI specifies @code{setter} (@pxref{Procedures with Setters}) as
+a procedure with setter, allowing the setter for a procedure to be
+changed, eg.@: @code{(set! (setter foo) my-new-setter-handler)}.
+Currently Guile does not implement this, a setter can only be
+specified on creation (@code{getter-with-setter} below).
+
+@defun getter-with-setter
+The same as the Guile core @code{make-procedure-with-setter}
+(@pxref{Procedures with Setters}).
+@end defun
+
+
+@node SRFI-19
+@subsection SRFI-19 - Time/Date Library
+@cindex SRFI-19
+@cindex time
+@cindex date
+
+This is an implementation of the SRFI-19 time/date library.  The
+functions and variables described here are provided by
+
+@example
+(use-modules (srfi srfi-19))
+@end example
+
+@strong{Caution}: The current code in this module incorrectly extends
+the Gregorian calendar leap year rule back prior to the introduction
+of those reforms in 1582 (or the appropriate year in various
+countries).  The Julian calendar was used prior to 1582, and there
+were 10 days skipped for the reform, but the code doesn't implement
+that.
+
+This will be fixed some time.  Until then calculations for 1583
+onwards are correct, but prior to that any day/month/year and day of
+the week calculations are wrong.
+
+@menu
+* SRFI-19 Introduction::        
+* SRFI-19 Time::                
+* SRFI-19 Date::                
+* SRFI-19 Time/Date conversions::  
+* SRFI-19 Date to string::      
+* SRFI-19 String to date::      
+@end menu
+
+@node SRFI-19 Introduction
+@subsubsection SRFI-19 Introduction
+
+@cindex universal time
+@cindex atomic time
+@cindex UTC
+@cindex TAI
+This module implements time and date representations and calculations,
+in various time systems, including universal time (UTC) and atomic
+time (TAI).
+
+For those not familiar with these time systems, TAI is based on a
+fixed length second derived from oscillations of certain atoms.  UTC
+differs from TAI by an integral number of seconds, which is increased
+or decreased at announced times to keep UTC aligned to a mean solar
+day (the orbit and rotation of the earth are not quite constant).
+
+@cindex leap second
+So far, only increases in the TAI
+@tex
+$\leftrightarrow$
+@end tex
+@ifnottex
+<->
+@end ifnottex
+UTC difference have been needed.  Such an increase is a ``leap
+second'', an extra second of TAI introduced at the end of a UTC day.
+When working entirely within UTC this is never seen, every day simply
+has 86400 seconds.  But when converting from TAI to a UTC date, an
+extra 23:59:60 is present, where normally a day would end at 23:59:59.
+Effectively the UTC second from 23:59:59 to 00:00:00 has taken two TAI
+seconds.
+
+@cindex system clock
+In the current implementation, the system clock is assumed to be UTC,
+and a table of leap seconds in the code converts to TAI.  See comments
+in @file{srfi-19.scm} for how to update this table.
+
+@cindex julian day
+@cindex modified julian day
+Also, for those not familiar with the terminology, a @dfn{Julian Day}
+is a real number which is a count of days and fraction of a day, in
+UTC, starting from -4713-01-01T12:00:00Z, ie.@: midday Monday 1 Jan
+4713 B.C.  A @dfn{Modified Julian Day} is the same, but starting from
+1858-11-17T00:00:00Z, ie.@: midnight 17 November 1858 UTC.  That time
+is julian day 2400000.5.
+
+@c  The SRFI-1 spec says -4714-11-24T12:00:00Z (November 24, -4714 at
+@c  noon, UTC), but this is incorrect.  It looks like it might have
+@c  arisen from the code incorrectly treating years a multiple of 100
+@c  but not 400 prior to 1582 as non-leap years, where instead the Julian
+@c  calendar should be used so all multiples of 4 before 1582 are leap
+@c  years.
+
+
+@node SRFI-19 Time
+@subsubsection SRFI-19 Time
+@cindex time
+
+A @dfn{time} object has type, seconds and nanoseconds fields
+representing a point in time starting from some epoch.  This is an
+arbitrary point in time, not just a time of day.  Although times are
+represented in nanoseconds, the actual resolution may be lower.
+
+The following variables hold the possible time types.  For instance
+@code{(current-time time-process)} would give the current CPU process
+time.
+
+@defvar time-utc
+Universal Coordinated Time (UTC).
+@cindex UTC
+@end defvar
+
+@defvar time-tai
+International Atomic Time (TAI).
+@cindex TAI
+@end defvar
+
+@defvar time-monotonic
+Monotonic time, meaning a monotonically increasing time starting from
+an unspecified epoch.
+
+Note that in the current implementation @code{time-monotonic} is the
+same as @code{time-tai}, and unfortunately is therefore affected by
+adjustments to the system clock.  Perhaps this will change in the
+future.
+@end defvar
+
+@defvar time-duration
+A duration, meaning simply a difference between two times.
+@end defvar
+
+@defvar time-process
+CPU time spent in the current process, starting from when the process
+began.
+@cindex process time
+@end defvar
+
+@defvar time-thread
+CPU time spent in the current thread.  Not currently implemented.
+@cindex thread time
+@end defvar
+
+@sp 1
+@defun time? obj
+Return @code{#t} if @var{obj} is a time object, or @code{#f} if not.
+@end defun
+
+@defun make-time type nanoseconds seconds
+Create a time object with the given @var{type}, @var{seconds} and
+@var{nanoseconds}.
+@end defun
+
+@defun time-type time
+@defunx time-nanosecond time
+@defunx time-second time
+@defunx set-time-type! time type
+@defunx set-time-nanosecond! time nsec
+@defunx set-time-second! time sec
+Get or set the type, seconds or nanoseconds fields of a time object.
+
+@code{set-time-type!} merely changes the field, it doesn't convert the
+time value.  For conversions, see @ref{SRFI-19 Time/Date conversions}.
+@end defun
+
+@defun copy-time time
+Return a new time object, which is a copy of the given @var{time}.
+@end defun
+
+@defun current-time [type]
+Return the current time of the given @var{type}.  The default
+@var{type} is @code{time-utc}.
+
+Note that the name @code{current-time} conflicts with the Guile core
+@code{current-time} function (@pxref{Time}).  Applications wanting to
+use both will need to use a different name for one of them.
+@end defun
+
+@defun time-resolution [type]
+Return the resolution, in nanoseconds, of the given time @var{type}.
+The default @var{type} is @code{time-utc}.
+@end defun
+
+@defun time<=? t1 t2
+@defunx time<? t1 t2
+@defunx time=? t1 t2
+@defunx time>=? t1 t2
+@defunx time>? t1 t2
+Return @code{#t} or @code{#f} according to the respective relation
+between time objects @var{t1} and @var{t2}.  @var{t1} and @var{t2}
+must be the same time type.
+@end defun
+
+@defun time-difference t1 t2
+@defunx time-difference! t1 t2
+Return a time object of type @code{time-duration} representing the
+period between @var{t1} and @var{t2}.  @var{t1} and @var{t2} must be
+the same time type.
+
+@code{time-difference} returns a new time object,
+@code{time-difference!} may modify @var{t1} to form its return.
+@end defun
+
+@defun add-duration time duration
+@defunx add-duration! time duration
+@defunx subtract-duration time duration
+@defunx subtract-duration! time duration
+Return a time object which is @var{time} with the given @var{duration}
+added or subtracted.  @var{duration} must be a time object of type
+@code{time-duration}.
+
+@code{add-duration} and @code{subtract-duration} return a new time
+object.  @code{add-duration!} and @code{subtract-duration!} may modify
+the given @var{time} to form their return.
+@end defun
+
+
+@node SRFI-19 Date
+@subsubsection SRFI-19 Date
+@cindex date
+
+A @dfn{date} object represents a date in the Gregorian calendar and a
+time of day on that date in some timezone.
+
+The fields are year, month, day, hour, minute, second, nanoseconds and
+timezone.  A date object is immutable, its fields can be read but they
+cannot be modified once the object is created.
+
+@defun date? obj
+Return @code{#t} if @var{obj} is a date object, or @code{#f} if not.
+@end defun
+
+@defun make-date nsecs seconds minutes hours date month year zone-offset
+Create a new date object.
+@c
+@c  FIXME: What can we say about the ranges of the values.  The
+@c  current code looks it doesn't normalize, but expects then in their
+@c  usual range already.
+@c
+@end defun
+
+@defun date-nanosecond date
+Nanoseconds, 0 to 999999999.
+@end defun
+
+@defun date-second date
+Seconds, 0 to 59, or 60 for a leap second.  60 is never seen when working
+entirely within UTC, it's only when converting to or from TAI.
+@end defun
+
+@defun date-minute date
+Minutes, 0 to 59.
+@end defun
+
+@defun date-hour date
+Hour, 0 to 23.
+@end defun
+
+@defun date-day date
+Day of the month, 1 to 31 (or less, according to the month).
+@end defun
+
+@defun date-month date
+Month, 1 to 12.
+@end defun
+
+@defun date-year date
+Year, eg.@: 2003.  Dates B.C.@: are negative, eg.@: @math{-46} is 46
+B.C.  There is no year 0, year @math{-1} is followed by year 1.
+@end defun
+
+@defun date-zone-offset date
+Time zone, an integer number of seconds east of Greenwich.
+@end defun
+
+@defun date-year-day date
+Day of the year, starting from 1 for 1st January.
+@end defun
+
+@defun date-week-day date
+Day of the week, starting from 0 for Sunday.
+@end defun
+
+@defun date-week-number date dstartw
+Week of the year, ignoring a first partial week.  @var{dstartw} is the
+day of the week which is taken to start a week, 0 for Sunday, 1 for
+Monday, etc.
+@c
+@c  FIXME: The spec doesn't say whether numbering starts at 0 or 1.
+@c  The code looks like it's 0, if that's the correct intention.
+@c
+@end defun
+
+@c  The SRFI text doesn't actually give the default for tz-offset, but
+@c  the reference implementation has the local timezone and the
+@c  conversions functions all specify that, so it should be ok to
+@c  document it here.
+@c
+@defun current-date [tz-offset]
+Return a date object representing the current date/time, in UTC offset
+by @var{tz-offset}.  @var{tz-offset} is seconds east of Greenwich and
+defaults to the local timezone.
+@end defun
+
+@defun current-julian-day
+@cindex julian day
+Return the current Julian Day.
+@end defun
+
+@defun current-modified-julian-day
+@cindex modified julian day
+Return the current Modified Julian Day.
+@end defun
+
+
+@node SRFI-19 Time/Date conversions
+@subsubsection SRFI-19 Time/Date conversions
+@cindex time conversion
+@cindex date conversion
+
+@defun date->julian-day date
+@defunx date->modified-julian-day date
+@defunx date->time-monotonic date
+@defunx date->time-tai date
+@defunx date->time-utc date
+@end defun
+@defun julian-day->date jdn [tz-offset]
+@defunx julian-day->time-monotonic jdn
+@defunx julian-day->time-tai jdn
+@defunx julian-day->time-utc jdn
+@end defun
+@defun modified-julian-day->date jdn [tz-offset]
+@defunx modified-julian-day->time-monotonic jdn
+@defunx modified-julian-day->time-tai jdn
+@defunx modified-julian-day->time-utc jdn
+@end defun
+@defun time-monotonic->date time [tz-offset]
+@defunx time-monotonic->time-tai time
+@defunx time-monotonic->time-tai! time
+@defunx time-monotonic->time-utc time
+@defunx time-monotonic->time-utc! time
+@end defun
+@defun time-tai->date time [tz-offset]
+@defunx time-tai->julian-day time
+@defunx time-tai->modified-julian-day time
+@defunx time-tai->time-monotonic time
+@defunx time-tai->time-monotonic! time
+@defunx time-tai->time-utc time
+@defunx time-tai->time-utc! time
+@end defun
+@defun time-utc->date time [tz-offset]
+@defunx time-utc->julian-day time
+@defunx time-utc->modified-julian-day time
+@defunx time-utc->time-monotonic time
+@defunx time-utc->time-monotonic! time
+@defunx time-utc->time-tai time
+@defunx time-utc->time-tai! time
+@sp 1
+Convert between dates, times and days of the respective types.  For
+instance @code{time-tai->time-utc} accepts a @var{time} object of type
+@code{time-tai} and returns an object of type @code{time-utc}.
+
+The @code{!} variants may modify their @var{time} argument to form
+their return.  The plain functions create a new object.
+
+For conversions to dates, @var{tz-offset} is seconds east of
+Greenwich.  The default is the local timezone, at the given time, as
+provided by the system, using @code{localtime} (@pxref{Time}).
+
+On 32-bit systems, @code{localtime} is limited to a 32-bit
+@code{time_t}, so a default @var{tz-offset} is only available for
+times between Dec 1901 and Jan 2038.  For prior dates an application
+might like to use the value in 1902, though some locations have zone
+changes prior to that.  For future dates an application might like to
+assume today's rules extend indefinitely.  But for correct daylight
+savings transitions it will be necessary to take an offset for the
+same day and time but a year in range and which has the same starting
+weekday and same leap/non-leap (to support rules like last Sunday in
+October).
+@end defun
+
+@node SRFI-19 Date to string
+@subsubsection SRFI-19 Date to string
+@cindex date to string
+@cindex string, from date
+
+@defun date->string date [format]
+Convert a date to a string under the control of a format.
+@var{format} should be a string containing @samp{~} escapes, which
+will be expanded as per the following conversion table.  The default
+@var{format} is @samp{~c}, a locale-dependent date and time.
+
+Many of these conversion characters are the same as POSIX
+@code{strftime} (@pxref{Time}), but there are some extras and some
+variations.
+
+@multitable {MMMM} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
+@item @nicode{~~} @tab literal ~
+@item @nicode{~a} @tab locale abbreviated weekday, eg.@: @samp{Sun}
+@item @nicode{~A} @tab locale full weekday, eg.@: @samp{Sunday}
+@item @nicode{~b} @tab locale abbreviated month, eg.@: @samp{Jan}
+@item @nicode{~B} @tab locale full month, eg.@: @samp{January}
+@item @nicode{~c} @tab locale date and time, eg.@: @*
+@samp{Fri Jul 14 20:28:42-0400 2000}
+@item @nicode{~d} @tab day of month, zero padded, @samp{01} to @samp{31}
+
+@c  Spec says d/m/y, reference implementation says m/d/y.
+@c  Apparently the reference code was the intention, but would like to
+@c  see an errata published for the spec before contradicting it here.
+@c
+@c  @item @nicode{~D} @tab date @nicode{~d/~m/~y}
+
+@item @nicode{~e} @tab day of month, blank padded, @samp{ 1} to @samp{31}
+@item @nicode{~f} @tab seconds and fractional seconds,
+with locale decimal point, eg.@: @samp{5.2}
+@item @nicode{~h} @tab same as @nicode{~b}
+@item @nicode{~H} @tab hour, 24-hour clock, zero padded, @samp{00} to @samp{23}
+@item @nicode{~I} @tab hour, 12-hour clock, zero padded, @samp{01} to @samp{12}
+@item @nicode{~j} @tab day of year, zero padded, @samp{001} to @samp{366}
+@item @nicode{~k} @tab hour, 24-hour clock, blank padded, @samp{ 0} to @samp{23}
+@item @nicode{~l} @tab hour, 12-hour clock, blank padded, @samp{ 1} to @samp{12}
+@item @nicode{~m} @tab month, zero padded, @samp{01} to @samp{12}
+@item @nicode{~M} @tab minute, zero padded, @samp{00} to @samp{59}
+@item @nicode{~n} @tab newline
+@item @nicode{~N} @tab nanosecond, zero padded, @samp{000000000} to @samp{999999999}
+@item @nicode{~p} @tab locale AM or PM
+@item @nicode{~r} @tab time, 12 hour clock, @samp{~I:~M:~S ~p}
+@item @nicode{~s} @tab number of full seconds since ``the epoch'' in UTC
+@item @nicode{~S} @tab second, zero padded @samp{00} to @samp{60} @*
+(usual limit is 59, 60 is a leap second)
+@item @nicode{~t} @tab horizontal tab character
+@item @nicode{~T} @tab time, 24 hour clock, @samp{~H:~M:~S}
+@item @nicode{~U} @tab week of year, Sunday first day of week,
+@samp{00} to @samp{52}
+@item @nicode{~V} @tab week of year, Monday first day of week,
+@samp{01} to @samp{53}
+@item @nicode{~w} @tab day of week, 0 for Sunday, @samp{0} to @samp{6}
+@item @nicode{~W} @tab week of year, Monday first day of week,
+@samp{00} to @samp{52}
+
+@c  The spec has ~x as an apparent duplicate of ~W, and ~X as a locale
+@c  date.  The reference code has ~x as the locale date and ~X as a
+@c  locale time.  The rule is apparently that the code should be
+@c  believed, but would like to see an errata for the spec before
+@c  contradicting it here.
+@c
+@c  @item @nicode{~x} @tab week of year, Monday as first day of week,
+@c  @samp{00} to @samp{53}
+@c  @item @nicode{~X} @tab locale date, eg.@: @samp{07/31/00}
+
+@item @nicode{~y} @tab year, two digits, @samp{00} to @samp{99}
+@item @nicode{~Y} @tab year, full, eg.@: @samp{2003}
+@item @nicode{~z} @tab time zone, RFC-822 style
+@item @nicode{~Z} @tab time zone symbol (not currently implemented)
+@item @nicode{~1} @tab ISO-8601 date, @samp{~Y-~m-~d}
+@item @nicode{~2} @tab ISO-8601 time+zone, @samp{~k:~M:~S~z}
+@item @nicode{~3} @tab ISO-8601 time, @samp{~k:~M:~S}
+@item @nicode{~4} @tab ISO-8601 date/time+zone, @samp{~Y-~m-~dT~k:~M:~S~z}
+@item @nicode{~5} @tab ISO-8601 date/time, @samp{~Y-~m-~dT~k:~M:~S}
+@end multitable
+@end defun
+
+Conversions @samp{~D}, @samp{~x} and @samp{~X} are not currently
+described here, since the specification and reference implementation
+differ.
+
+Currently Guile doesn't implement any localizations for the above, all
+outputs are in English, and the @samp{~c} conversion is POSIX
+@code{ctime} style @samp{~a ~b ~d ~H:~M:~S~z ~Y}.  This may change in
+the future.
+
+
+@node SRFI-19 String to date
+@subsubsection SRFI-19 String to date
+@cindex string to date
+@cindex date, from string
+
+@c  FIXME: Can we say what happens when an incomplete date is
+@c  converted?  Ie. fields left as 0, or what?  The spec seems to be
+@c  silent on this.
+
+@defun string->date input template
+Convert an @var{input} string to a date under the control of a
+@var{template} string.  Return a newly created date object.
+
+Literal characters in @var{template} must match characters in
+@var{input} and @samp{~} escapes must match the input forms described
+in the table below.  ``Skip to'' means characters up to one of the
+given type are ignored, or ``no skip'' for no skipping.  ``Read'' is
+what's then read, and ``Set'' is the field affected in the date
+object.
+
+For example @samp{~Y} skips input characters until a digit is reached,
+at which point it expects a year and stores that to the year field of
+the date.
+
+@multitable {MMMM} {@nicode{char-alphabetic?}} {MMMMMMMMMMMMMMMMMMMMMMMMM} {@nicode{date-zone-offset}}
+@item
+@tab Skip to
+@tab Read
+@tab Set
+
+@item @nicode{~~}
+@tab no skip
+@tab literal ~
+@tab nothing
+
+@item @nicode{~a}
+@tab @nicode{char-alphabetic?}
+@tab locale abbreviated weekday name
+@tab nothing
+
+@item @nicode{~A}
+@tab @nicode{char-alphabetic?}
+@tab locale full weekday name
+@tab nothing
+
+@c  Note that the SRFI spec says that ~b and ~B don't set anything,
+@c  but that looks like a mistake.  The reference implementation sets
+@c  the month field, which seems sensible and is what we describe
+@c  here.
+
+@item @nicode{~b}
+@tab @nicode{char-alphabetic?}
+@tab locale abbreviated month name
+@tab @nicode{date-month}
+
+@item @nicode{~B}
+@tab @nicode{char-alphabetic?}
+@tab locale full month name
+@tab @nicode{date-month}
+
+@item @nicode{~d}
+@tab @nicode{char-numeric?}
+@tab day of month
+@tab @nicode{date-day}
+
+@item @nicode{~e}
+@tab no skip
+@tab day of month, blank padded
+@tab @nicode{date-day}
+
+@item @nicode{~h}
+@tab same as @samp{~b}
+
+@item @nicode{~H}
+@tab @nicode{char-numeric?}
+@tab hour
+@tab @nicode{date-hour}
+
+@item @nicode{~k}
+@tab no skip
+@tab hour, blank padded
+@tab @nicode{date-hour}
+
+@item @nicode{~m}
+@tab @nicode{char-numeric?}
+@tab month
+@tab @nicode{date-month}
+
+@item @nicode{~M}
+@tab @nicode{char-numeric?}
+@tab minute
+@tab @nicode{date-minute}
+
+@item @nicode{~S}
+@tab @nicode{char-numeric?}
+@tab second
+@tab @nicode{date-second}
+
+@item @nicode{~y}
+@tab no skip
+@tab 2-digit year
+@tab @nicode{date-year} within 50 years
+
+@item @nicode{~Y}
+@tab @nicode{char-numeric?}
+@tab year
+@tab @nicode{date-year}
+
+@item @nicode{~z}
+@tab no skip
+@tab time zone
+@tab date-zone-offset
+@end multitable
+
+Notice that the weekday matching forms don't affect the date object
+returned, instead the weekday will be derived from the day, month and
+year.
+
+Currently Guile doesn't implement any localizations for the above,
+month and weekday names are always expected in English.  This may
+change in the future.
+@end defun
+
+
+@node SRFI-26
+@subsection SRFI-26 - specializing parameters
+@cindex SRFI-26
+@cindex parameter specialize
+@cindex argument specialize
+@cindex specialize parameter
+
+This SRFI provides a syntax for conveniently specializing selected
+parameters of a function.  It can be used with,
+
+@example
+(use-modules (srfi srfi-26))
+@end example
+
+@deffn {library syntax} cut slot @dots{}
+@deffnx {library syntax} cute slot @dots{}
+Return a new procedure which will make a call (@var{slot} @dots{}) but
+with selected parameters specialized to given expressions.
+
+An example will illustrate the idea.  The following is a
+specialization of @code{write}, sending output to
+@code{my-output-port},
+
+@example
+(cut write <> my-output-port)
+@result{}
+(lambda (obj) (write obj my-output-port))
+@end example
+
+The special symbol @code{<>} indicates a slot to be filled by an
+argument to the new procedure.  @code{my-output-port} on the other
+hand is an expression to be evaluated and passed, ie.@: it specializes
+the behaviour of @code{write}.
+
+@table @nicode
+@item <>
+A slot to be filled by an argument from the created procedure.
+Arguments are assigned to @code{<>} slots in the order they appear in
+the @code{cut} form, there's no way to re-arrange arguments.
+
+The first argument to @code{cut} is usually a procedure (or expression
+giving a procedure), but @code{<>} is allowed there too.  For example,
+
+@example
+(cut <> 1 2 3)
+@result{}
+(lambda (proc) (proc 1 2 3))
+@end example
+
+@item <...>
+A slot to be filled by all remaining arguments from the new procedure.
+This can only occur at the end of a @code{cut} form.
+
+For example, a procedure taking a variable number of arguments like
+@code{max} but in addition enforcing a lower bound,
+
+@example
+(define my-lower-bound 123)
+
+(cut max my-lower-bound <...>)
+@result{}
+(lambda arglist (apply max my-lower-bound arglist))
+@end example
+@end table
+
+For @code{cut} the specializing expressions are evaluated each time
+the new procedure is called.  For @code{cute} they're evaluated just
+once, when the new procedure is created.  The name @code{cute} stands
+for ``@code{cut} with evaluated arguments''.  In all cases the
+evaluations take place in an unspecified order.
+
+The following illustrates the difference between @code{cut} and
+@code{cute},
+
+@example
+(cut format <> "the time is ~s" (current-time))
+@result{}
+(lambda (port) (format port "the time is ~s" (current-time)))
+
+(cute format <> "the time is ~s" (current-time))
+@result{}
+(let ((val (current-time)))
+  (lambda (port) (format port "the time is ~s" val))
+@end example
+
+(There's no provision for a mixture of @code{cut} and @code{cute}
+where some expressions would be evaluated every time but others
+evaluated only once.)
+
+@code{cut} is really just a shorthand for the sort of @code{lambda}
+forms shown in the above examples.  But notice @code{cut} avoids the
+need to name unspecialized parameters, and is more compact.  Use in
+functional programming style or just with @code{map}, @code{for-each}
+or similar is typical.
+
+@example
+(map (cut * 2 <>) '(1 2 3 4))         
+
+(for-each (cut write <> my-port) my-list)  
+@end example
+@end deffn
+
+@node SRFI-31
+@subsection SRFI-31 - A special form `rec' for recursive evaluation
+@cindex SRFI-31
+@cindex recursive expression
+@findex rec
+
+SRFI-31 defines a special form that can be used to create
+self-referential expressions more conveniently.  The syntax is as
+follows:
+
+@example
+@group
+<rec expression> --> (rec <variable> <expression>)
+<rec expression> --> (rec (<variable>+) <body>)
+@end group
+@end example
+
+The first syntax can be used to create self-referential expressions,
+for example:
+
+@lisp
+  guile> (define tmp (rec ones (cons 1 (delay ones))))
+@end lisp
+
+The second syntax can be used to create anonymous recursive functions:
+
+@lisp
+  guile> (define tmp (rec (display-n item n)
+                       (if (positive? n)
+                           (begin (display n) (display-n (- n 1))))))
+  guile> (tmp 42 3)
+  424242
+  guile>
+@end lisp
+
+
+@node SRFI-34
+@subsection SRFI-34 - Exception handling for programs
+
+@cindex SRFI-34
+Guile provides an implementation of
+@uref{http://srfi.schemers.org/srfi-34/srfi-34.html, SRFI-34's exception
+handling mechanisms} as an alternative to its own built-in mechanisms
+(@pxref{Exceptions}).  It can be made available as follows:
+
+@lisp
+(use-modules (srfi srfi-34))
+@end lisp
+
+@c FIXME: Document it.
+
+
+@node SRFI-35
+@subsection SRFI-35 - Conditions
+
+@cindex SRFI-35
+@cindex conditions
+@cindex exceptions
+
+@uref{http://srfi.schemers.org/srfi-35/srfi-35.html, SRFI-35} implements
+@dfn{conditions}, a data structure akin to records designed to convey
+information about exceptional conditions between parts of a program.  It
+is normally used in conjunction with SRFI-34's @code{raise}:
+
+@lisp
+(raise (condition (&message
+                    (message "An error occurred"))))
+@end lisp
+
+Users can define @dfn{condition types} containing arbitrary information.
+Condition types may inherit from one another.  This allows the part of
+the program that handles (or ``catches'') conditions to get accurate
+information about the exceptional condition that arose.
+
+SRFI-35 conditions are made available using:
+
+@lisp
+(use-modules (srfi srfi-35))
+@end lisp
+
+The procedures available to manipulate condition types are the
+following:
+
+@deffn {Scheme Procedure} make-condition-type id parent field-names
+Return a new condition type named @var{id}, inheriting from
+@var{parent}, and with the fields whose names are listed in
+@var{field-names}.  @var{field-names} must be a list of symbols and must
+not contain names already used by @var{parent} or one of its supertypes.
+@end deffn
+
+@deffn {Scheme Procedure} condition-type? obj
+Return true if @var{obj} is a condition type.
+@end deffn
+
+Conditions can be created and accessed with the following procedures:
+
+@deffn {Scheme Procedure} make-condition type . field+value
+Return a new condition of type @var{type} with fields initialized as
+specified by @var{field+value}, a sequence of field names (symbols) and
+values as in the following example:
+
+@lisp
+(let ((&ct (make-condition-type 'foo &condition '(a b c))))
+  (make-condition &ct 'a 1 'b 2 'c 3))
+@end lisp
+
+Note that all fields of @var{type} and its supertypes must be specified.
+@end deffn
+
+@deffn {Scheme Procedure} make-compound-condition . conditions
+Return a new compound condition composed of @var{conditions}.  The
+returned condition has the type of each condition of @var{conditions}
+(per @code{condition-has-type?}).
+@end deffn
+
+@deffn {Scheme Procedure} condition-has-type? c type
+Return true if condition @var{c} has type @var{type}.
+@end deffn
+
+@deffn {Scheme Procedure} condition-ref c field-name
+Return the value of the field named @var{field-name} from condition @var{c}.
+
+If @var{c} is a compound condition and several underlying condition
+types contain a field named @var{field-name}, then the value of the
+first such field is returned, using the order in which conditions were
+passed to @var{make-compound-condition}.
+@end deffn
+
+@deffn {Scheme Procedure} extract-condition c type
+Return a condition of condition type @var{type} with the field values
+specified by @var{c}.
+
+If @var{c} is a compound condition, extract the field values from the
+subcondition belonging to @var{type} that appeared first in the call to
+@code{make-compound-condition} that created the the condition.
+@end deffn
+
+Convenience macros are also available to create condition types and
+conditions.
+
+@deffn {library syntax} define-condition-type type supertype predicate field-spec...
+Define a new condition type named @var{type} that inherits from
+@var{supertype}.  In addition, bind @var{predicate} to a type predicate
+that returns true when passed a condition of type @var{type} or any of
+its subtypes.  @var{field-spec} must have the form @code{(field
+accessor)} where @var{field} is the name of field of @var{type} and
+@var{accessor} is the name of a procedure to access field @var{field} in
+conditions of type @var{type}.
+
+The example below defines condition type @code{&foo}, inheriting from
+@code{&condition} with fields @code{a}, @code{b} and @code{c}:
+
+@lisp
+(define-condition-type &foo &condition
+  foo-condition?
+  (a  foo-a)
+  (b  foo-b)
+  (c  foo-c))
+@end lisp
+@end deffn
+
+@deffn {library syntax} condition type-field-bindings...
+Return a new condition, or compound condition, initialized according to
+@var{type-field-bindings}.  Each @var{type-field-binding} must have the
+form @code{(type field-specs...)}, where @var{type} is the name of a
+variable bound to condition type; each @var{field-spec} must have the
+form @code{(field-name value)} where @var{field-name} is a symbol
+denoting the field being initialized to @var{value}.  As for
+@code{make-condition}, all fields must be specified.
+
+The following example returns a simple condition:
+
+@lisp
+(condition (&message (message "An error occurred")))
+@end lisp
+
+The one below returns a compound condition:
+
+@lisp
+(condition (&message (message "An error occurred"))
+           (&serious))
+@end lisp
+@end deffn
+
+Finally, SRFI-35 defines a several standard condition types.
+
+@defvar &condition
+This condition type is the root of all condition types.  It has no
+fields.
+@end defvar
+
+@defvar &message
+A condition type that carries a message describing the nature of the
+condition to humans.
+@end defvar
+
+@deffn {Scheme Procedure} message-condition? c
+Return true if @var{c} is of type @code{&message} or one of its
+subtypes.
+@end deffn
+
+@deffn {Scheme Procedure} condition-message c
+Return the message associated with message condition @var{c}.
+@end deffn
+
+@defvar &serious
+This type describes conditions serious enough that they cannot safely be
+ignored.  It has no fields.
+@end defvar
+
+@deffn {Scheme Procedure} serious-condition? c
+Return true if @var{c} is of type @code{&serious} or one of its
+subtypes.
+@end deffn
+
+@defvar &error
+This condition describes errors, typically caused by something that has
+gone wrong in the interaction of the program with the external world or
+the user.
+@end defvar
+
+@deffn {Scheme Procedure} error? c
+Return true if @var{c} is of type @code{&error} or one of its subtypes.
+@end deffn
+
+
+@node SRFI-37
+@subsection SRFI-37 - args-fold
+@cindex SRFI-37
+
+This is a processor for GNU @code{getopt_long}-style program
+arguments.  It provides an alternative, less declarative interface
+than @code{getopt-long} in @code{(ice-9 getopt-long)}
+(@pxref{getopt-long,,The (ice-9 getopt-long) Module}).  Unlike
+@code{getopt-long}, it supports repeated options and any number of
+short and long names per option.  Access it with:
+
+@lisp
+(use-modules (srfi srfi-37))
+@end lisp
+
+@acronym{SRFI}-37 principally provides an @code{option} type and the
+@code{args-fold} function.  To use the library, create a set of
+options with @code{option} and use it as a specification for invoking
+@code{args-fold}.
+
+Here is an example of a simple argument processor for the typical
+@samp{--version} and @samp{--help} options, which returns a backwards
+list of files given on the command line:
+
+@lisp
+(args-fold (cdr (program-arguments))
+           (let ((display-and-exit-proc
+                  (lambda (msg)
+                    (lambda (opt name arg loads)
+                      (display msg) (quit)))))
+             (list (option '(#\v "version") #f #f
+                           (display-and-exit-proc "Foo version 42.0\n"))
+                   (option '(#\h "help") #f #f
+                           (display-and-exit-proc
+                            "Usage: foo scheme-file ..."))))
+           (lambda (opt name arg loads)
+             (error "Unrecognized option `~A'" name))
+           (lambda (op loads) (cons op loads))
+           '())
+@end lisp
+
+@deffn {Scheme Procedure} option names required-arg? optional-arg? processor
+Return an object that specifies a single kind of program option.
+
+@var{names} is a list of command-line option names, and should consist of
+characters for traditional @code{getopt} short options and strings for
+@code{getopt_long}-style long options.
+
+@var{required-arg?} and @var{optional-arg?} are mutually exclusive;
+one or both must be @code{#f}.  If @var{required-arg?}, the option
+must be followed by an argument on the command line, such as
+@samp{--opt=value} for long options, or an error will be signalled.
+If @var{optional-arg?}, an argument will be taken if available.
+
+@var{processor} is a procedure that takes at least 3 arguments, called
+when @code{args-fold} encounters the option: the containing option
+object, the name used on the command line, and the argument given for
+the option (or @code{#f} if none).  The rest of the arguments are
+@code{args-fold} ``seeds'', and the @var{processor} should return
+seeds as well.
+@end deffn
+
+@deffn {Scheme Procedure} option-names opt
+@deffnx {Scheme Procedure} option-required-arg? opt
+@deffnx {Scheme Procedure} option-optional-arg? opt
+@deffnx {Scheme Procedure} option-processor opt
+Return the specified field of @var{opt}, an option object, as
+described above for @code{option}.
+@end deffn
+
+@deffn {Scheme Procedure} args-fold args options unrecognized-option-proc operand-proc seeds @dots{}
+Process @var{args}, a list of program arguments such as that returned
+by @code{(cdr (program-arguments))}, in order against @var{options}, a
+list of option objects as described above.  All functions called take
+the ``seeds'', or the last multiple-values as multiple arguments,
+starting with @var{seeds}, and must return the new seeds.  Return the
+final seeds.
+
+Call @code{unrecognized-option-proc}, which is like an option object's
+processor, for any options not found in @var{options}.
+
+Call @code{operand-proc} with any items on the command line that are
+not named options.  This includes arguments after @samp{--}.  It is
+called with the argument in question, as well as the seeds.
+@end deffn
+
+
+@node SRFI-39
+@subsection SRFI-39 - Parameters
+@cindex SRFI-39
+@cindex parameter object
+@tindex Parameter
+
+This SRFI provides parameter objects, which implement dynamically
+bound locations for values.  The functions below are available from
+
+@example
+(use-modules (srfi srfi-39))
+@end example
+
+A parameter object is a procedure.  Called with no arguments it
+returns its value, called with one argument it sets the value.
+
+@example
+(define my-param (make-parameter 123))
+(my-param) @result{} 123
+(my-param 456)
+(my-param) @result{} 456
+@end example
+
+The @code{parameterize} special form establishes new locations for
+parameters, those new locations having effect within the dynamic scope
+of the @code{parameterize} body.  Leaving restores the previous
+locations, or re-entering through a saved continuation will again use
+the new locations.
+
+@example
+(parameterize ((my-param 789))
+  (my-param) @result{} 789
+  )
+(my-param) @result{} 456
+@end example
+
+Parameters are like dynamically bound variables in other Lisp dialets.
+They allow an application to establish parameter settings (as the name
+suggests) just for the execution of a particular bit of code,
+restoring when done.  Examples of such parameters might be
+case-sensitivity for a search, or a prompt for user input.
+
+Global variables are not as good as parameter objects for this sort of
+thing.  Changes to them are visible to all threads, but in Guile
+parameter object locations are per-thread, thereby truely limiting the
+effect of @code{parameterize} to just its dynamic execution.
+
+Passing arguments to functions is thread-safe, but that soon becomes
+tedious when there's more than a few or when they need to pass down
+through several layers of calls before reaching the point they should
+affect.  And introducing a new setting to existing code is often
+easier with a parameter object than adding arguments.
+
+
+@sp 1
+@defun make-parameter init [converter]
+Return a new parameter object, with initial value @var{init}.
+
+A parameter object is a procedure.  When called @code{(param)} it
+returns its value, or a call @code{(param val)} sets its value.  For
+example,
+
+@example
+(define my-param (make-parameter 123))
+(my-param) @result{} 123
+
+(my-param 456)
+(my-param) @result{} 456
+@end example
+
+If a @var{converter} is given, then a call @code{(@var{converter}
+val)} is made for each value set, its return is the value stored.
+Such a call is made for the @var{init} initial value too.
+
+A @var{converter} allows values to be validated, or put into a
+canonical form.  For example,
+
+@example
+(define my-param (make-parameter 123
+                   (lambda (val)
+                     (if (not (number? val))
+                         (error "must be a number"))
+                     (inexact->exact val))))
+(my-param 0.75)
+(my-param) @result{} 3/4
+@end example
+@end defun
+
+@deffn {library syntax} parameterize ((param value) @dots{}) body @dots{}
+Establish a new dynamic scope with the given @var{param}s bound to new
+locations and set to the given @var{value}s.  @var{body} is evaluated
+in that environment, the result is the return from the last form in
+@var{body}.
+
+Each @var{param} is an expression which is evaluated to get the
+parameter object.  Often this will just be the name of a variable
+holding the object, but it can be anything that evaluates to a
+parameter.
+
+The @var{param} expressions and @var{value} expressions are all
+evaluated before establishing the new dynamic bindings, and they're
+evaluated in an unspecified order.
+
+For example,
+
+@example
+(define prompt (make-parameter "Type something: "))
+(define (get-input)
+  (display (prompt))
+  ...)
+
+(parameterize ((prompt "Type a number: "))
+  (get-input)
+  ...)
+@end example
+@end deffn
+
+@deffn {Parameter object} current-input-port [new-port]
+@deffnx {Parameter object} current-output-port [new-port]
+@deffnx {Parameter object} current-error-port [new-port]
+This SRFI extends the core @code{current-input-port} and
+@code{current-output-port}, making them parameter objects.  The
+Guile-specific @code{current-error-port} is extended too, for
+consistency.  (@pxref{Default Ports}.)
+
+This is an upwardly compatible extension, a plain call like
+@code{(current-input-port)} still returns the current input port, and
+@code{set-current-input-port} can still be used.  But the port can now
+also be set with @code{(current-input-port my-port)} and bound
+dynamically with @code{parameterize}.
+@end deffn
+
+@defun with-parameters* param-list value-list thunk
+Establish a new dynamic scope, as per @code{parameterize} above,
+taking parameters from @var{param-list} and corresponding values from
+@var{values-list}.  A call @code{(@var{thunk})} is made in the new
+scope and the result from that @var{thunk} is the return from
+@code{with-parameters*}.
+
+This function is a Guile-specific addition to the SRFI, it's similar
+to the core @code{with-fluids*} (@pxref{Fluids and Dynamic States}).
+@end defun
+
+
+@sp 1
+Parameter objects are implemented using fluids (@pxref{Fluids and
+Dynamic States}), so each dynamic state has it's own parameter
+locations.  That includes the separate locations when outside any
+@code{parameterize} form.  When a parameter is created it gets a
+separate initial location in each dynamic state, all initialized to
+the given @var{init} value.
+
+As alluded to above, because each thread usually has a separate
+dynamic state, each thread has it's own locations behind parameter
+objects, and changes in one thread are not visible to any other.  When
+a new dynamic state or thread is created, the values of parameters in
+the originating context are copied, into new locations.
+
+SRFI-39 doesn't specify the interaction between parameter objects and
+threads, so the threading behaviour described here should be regarded
+as Guile-specific.
+
+
+@node SRFI-55
+@subsection SRFI-55 - Requiring Features
+@cindex SRFI-55
+
+SRFI-55 provides @code{require-extension} which is a portable
+mechanism to load selected SRFI modules.  This is implemented in the
+Guile core, there's no module needed to get SRFI-55 itself.
+
+@deffn {library syntax} require-extension clause@dots{}
+Require each of the given @var{clause} features, throwing an error if
+any are unavailable.
+
+A @var{clause} is of the form @code{(@var{identifier} arg...)}.  The
+only @var{identifier} currently supported is @code{srfi} and the
+arguments are SRFI numbers.  For example to get SRFI-1 and SRFI-6,
+
+@example
+(require-extension (srfi 1 6))
+@end example
+
+@code{require-extension} can only be used at the top-level.
+
+A Guile-specific program can simply @code{use-modules} to load SRFIs
+not already in the core, @code{require-extension} is for programs
+designed to be portable to other Scheme implementations.
+@end deffn
+
+
+@node SRFI-60
+@subsection SRFI-60 - Integers as Bits
+@cindex SRFI-60
+@cindex integers as bits
+@cindex bitwise logical
+
+This SRFI provides various functions for treating integers as bits and
+for bitwise manipulations.  These functions can be obtained with,
+
+@example
+(use-modules (srfi srfi-60))
+@end example
+
+Integers are treated as infinite precision twos-complement, the same
+as in the core logical functions (@pxref{Bitwise Operations}).  And
+likewise bit indexes start from 0 for the least significant bit.  The
+following functions in this SRFI are already in the Guile core,
+
+@quotation
+@code{logand},
+@code{logior},
+@code{logxor},
+@code{lognot},
+@code{logtest},
+@code{logcount},
+@code{integer-length},
+@code{logbit?},
+@code{ash}
+@end quotation
+
+@sp 1
+@defun bitwise-and n1 ...
+@defunx bitwise-ior n1 ...
+@defunx bitwise-xor n1 ...
+@defunx bitwise-not n
+@defunx any-bits-set? j k
+@defunx bit-set? index n
+@defunx arithmetic-shift n count
+@defunx bit-field n start end
+@defunx bit-count n
+Aliases for @code{logand}, @code{logior}, @code{logxor},
+@code{lognot}, @code{logtest}, @code{logbit?}, @code{ash},
+@code{bit-extract} and @code{logcount} respectively.
+
+Note that the name @code{bit-count} conflicts with @code{bit-count} in
+the core (@pxref{Bit Vectors}).
+@end defun
+
+@defun bitwise-if mask n1 n0
+@defunx bitwise-merge mask n1 n0
+Return an integer with bits selected from @var{n1} and @var{n0}
+according to @var{mask}.  Those bits where @var{mask} has 1s are taken
+from @var{n1}, and those where @var{mask} has 0s are taken from
+@var{n0}.
+
+@example
+(bitwise-if 3 #b0101 #b1010) @result{} 9
+@end example
+@end defun
+
+@defun log2-binary-factors n
+@defunx first-set-bit n
+Return a count of how many factors of 2 are present in @var{n}.  This
+is also the bit index of the lowest 1 bit in @var{n}.  If @var{n} is
+0, the return is @math{-1}.
+
+@example
+(log2-binary-factors 6) @result{} 1
+(log2-binary-factors -8) @result{} 3
+@end example
+@end defun
+
+@defun copy-bit index n newbit
+Return @var{n} with the bit at @var{index} set according to
+@var{newbit}.  @var{newbit} should be @code{#t} to set the bit to 1,
+or @code{#f} to set it to 0.  Bits other than at @var{index} are
+unchanged in the return.
+
+@example
+(copy-bit 1 #b0101 #t) @result{} 7
+@end example
+@end defun
+
+@defun copy-bit-field n newbits start end
+Return @var{n} with the bits from @var{start} (inclusive) to @var{end}
+(exclusive) changed to the value @var{newbits}.
+
+The least significant bit in @var{newbits} goes to @var{start}, the
+next to @math{@var{start}+1}, etc.  Anything in @var{newbits} past the
+@var{end} given is ignored.
+
+@example
+(copy-bit-field #b10000 #b11 1 3) @result{} #b10110
+@end example
+@end defun
+
+@defun rotate-bit-field n count start end
+Return @var{n} with the bit field from @var{start} (inclusive) to
+@var{end} (exclusive) rotated upwards by @var{count} bits.
+
+@var{count} can be positive or negative, and it can be more than the
+field width (it'll be reduced modulo the width).
+
+@example
+(rotate-bit-field #b0110 2 1 4) @result{} #b1010
+@end example
+@end defun
+
+@defun reverse-bit-field n start end
+Return @var{n} with the bits from @var{start} (inclusive) to @var{end}
+(exclusive) reversed.
+
+@example
+(reverse-bit-field #b101001 2 4) @result{} #b100101
+@end example
+@end defun
+
+@defun integer->list n [len]
+Return bits from @var{n} in the form of a list of @code{#t} for 1 and
+@code{#f} for 0.  The least significant @var{len} bits are returned,
+and the first list element is the most significant of those bits.  If
+@var{len} is not given, the default is @code{(integer-length @var{n})}
+(@pxref{Bitwise Operations}).
+
+@example
+(integer->list 6)   @result{} (#t #t #f)
+(integer->list 1 4) @result{} (#f #f #f #t)
+@end example
+@end defun
+   
+@defun list->integer lst
+@defunx booleans->integer bool@dots{}
+Return an integer formed bitwise from the given @var{lst} list of
+booleans, or for @code{booleans->integer} from the @var{bool}
+arguments.
+
+Each boolean is @code{#t} for a 1 and @code{#f} for a 0.  The first
+element becomes the most significant bit in the return.
+
+@example
+(list->integer '(#t #f #t #f)) @result{} 10
+@end example
+@end defun
+
+
+@node SRFI-61
+@subsection SRFI-61 - A more general @code{cond} clause
+
+This SRFI extends RnRS @code{cond} to support test expressions that
+return multiple values, as well as arbitrary definitions of test
+success.  SRFI 61 is implemented in the Guile core; there's no module
+needed to get SRFI-61 itself.  Extended @code{cond} is documented in
+@ref{if cond case,, Simple Conditional Evaluation}.
+
+
+@node SRFI-69
+@subsection SRFI-69 - Basic hash tables
+@cindex SRFI-69
+
+This is a portable wrapper around Guile's built-in hash table and weak
+table support.  @xref{Hash Tables}, for information on that built-in
+support.  Above that, this hash-table interface provides association
+of equality and hash functions with tables at creation time, so
+variants of each function are not required, as well as a procedure
+that takes care of most uses for Guile hash table handles, which this
+SRFI does not provide as such.
+
+Access it with:
+
+@lisp
+(use-modules (srfi srfi-69))
+@end lisp
+
+@menu
+* SRFI-69 Creating hash tables::  
+* SRFI-69 Accessing table items::  
+* SRFI-69 Table properties::    
+* SRFI-69 Hash table algorithms::  
+@end menu
+
+@node SRFI-69 Creating hash tables
+@subsubsection Creating hash tables
+
+@deffn {Scheme Procedure} make-hash-table [equal-proc hash-proc #:weak weakness start-size]
+Create and answer a new hash table with @var{equal-proc} as the
+equality function and @var{hash-proc} as the hashing function.
+
+By default, @var{equal-proc} is @code{equal?}.  It can be any
+two-argument procedure, and should answer whether two keys are the
+same for this table's purposes.
+
+My default @var{hash-proc} assumes that @code{equal-proc} is no
+coarser than @code{equal?}  unless it is literally @code{string-ci=?}.
+If provided, @var{hash-proc} should be a two-argument procedure that
+takes a key and the current table size, and answers a reasonably good
+hash integer between 0 (inclusive) and the size (exclusive).
+
+@var{weakness} should be @code{#f} or a symbol indicating how ``weak''
+the hash table is:
+
+@table @code
+@item #f
+An ordinary non-weak hash table.  This is the default.
+
+@item key
+When the key has no more non-weak references at GC, remove that entry.
+
+@item value
+When the value has no more non-weak references at GC, remove that
+entry.
+
+@item key-or-value
+When either has no more non-weak references at GC, remove the
+association.
+@end table
+
+As a legacy of the time when Guile couldn't grow hash tables,
+@var{start-size} is an optional integer argument that specifies the
+approximate starting size for the hash table, which will be rounded to
+an algorithmically-sounder number.
+@end deffn
+
+By @dfn{coarser} than @code{equal?}, we mean that for all @var{x} and
+@var{y} values where @code{(@var{equal-proc} @var{x} @var{y})},
+@code{(equal? @var{x} @var{y})} as well.  If that does not hold for
+your @var{equal-proc}, you must provide a @var{hash-proc}.
+
+In the case of weak tables, remember that @dfn{references} above
+always refers to @code{eq?}-wise references.  Just because you have a
+reference to some string @code{"foo"} doesn't mean that an association
+with key @code{"foo"} in a weak-key table @emph{won't} be collected;
+it only counts as a reference if the two @code{"foo"}s are @code{eq?},
+regardless of @var{equal-proc}.  As such, it is usually only sensible
+to use @code{eq?} and @code{hashq} as the equivalence and hash
+functions for a weak table.  @xref{Weak References}, for more
+information on Guile's built-in weak table support.
+
+@deffn {Scheme Procedure} alist->hash-table alist [equal-proc hash-proc #:weak weakness start-size]
+As with @code{make-hash-table}, but initialize it with the
+associations in @var{alist}.  Where keys are repeated in @var{alist},
+the leftmost association takes precedence.
+@end deffn
+
+@node SRFI-69 Accessing table items
+@subsubsection Accessing table items
+
+@deffn {Scheme Procedure} hash-table-ref table key [default-thunk]
+@deffnx {Scheme Procedure} hash-table-ref/default table key default
+Answer the value associated with @var{key} in @var{table}.  If
+@var{key} is not present, answer the result of invoking the thunk
+@var{default-thunk}, which signals an error instead by default.
+
+@code{hash-table-ref/default} is a variant that requires a third
+argument, @var{default}, and answers @var{default} itself instead of
+invoking it.
+@end deffn
+
+@deffn {Scheme Procedure} hash-table-set! table key new-value
+Set @var{key} to @var{new-value} in @var{table}.
+@end deffn
+
+@deffn {Scheme Procedure} hash-table-delete! table key
+Remove the association of @var{key} in @var{table}, if present.  If
+absent, do nothing.
+@end deffn
+
+@deffn {Scheme Procedure} hash-table-exists? table key
+Answer whether @var{key} has an association in @var{table}.
+@end deffn
+
+@deffn {Scheme Procedure} hash-table-update! table key modifier [default-thunk]
+@deffnx {Scheme Procedure} hash-table-update!/default table key modifier default
+Replace @var{key}'s associated value in @var{table} by invoking
+@var{modifier} with one argument, the old value.
+
+If @var{key} is not present, and @var{default-thunk} is provided,
+invoke it with no arguments to get the ``old value'' to be passed to
+@var{modifier} as above.  If @var{default-thunk} is not provided in
+such a case, signal an error.
+
+@code{hash-table-update!/default} is a variant that requires the
+fourth argument, which is used directly as the ``old value'' rather
+than as a thunk to be invoked to retrieve the ``old value''.
+@end deffn
+
+@node SRFI-69 Table properties
+@subsubsection Table properties
+
+@deffn {Scheme Procedure} hash-table-size table
+Answer the number of associations in @var{table}.  This is guaranteed
+to run in constant time for non-weak tables.
+@end deffn
+
+@deffn {Scheme Procedure} hash-table-keys table
+Answer an unordered list of the keys in @var{table}.
+@end deffn
+
+@deffn {Scheme Procedure} hash-table-values table
+Answer an unordered list of the values in @var{table}.
+@end deffn
+
+@deffn {Scheme Procedure} hash-table-walk table proc
+Invoke @var{proc} once for each association in @var{table}, passing
+the key and value as arguments.
+@end deffn
+
+@deffn {Scheme Procedure} hash-table-fold table proc init
+Invoke @code{(@var{proc} @var{key} @var{value} @var{previous})} for
+each @var{key} and @var{value} in @var{table}, where @var{previous} is
+the result of the previous invocation, using @var{init} as the first
+@var{previous} value.  Answer the final @var{proc} result.
+@end deffn
+
+@deffn {Scheme Procedure} hash-table->alist table
+Answer an alist where each association in @var{table} is an
+association in the result.
+@end deffn
+
+@node SRFI-69 Hash table algorithms
+@subsubsection Hash table algorithms
+
+Each hash table carries an @dfn{equivalence function} and a @dfn{hash
+function}, used to implement key lookups.  Beginning users should
+follow the rules for consistency of the default @var{hash-proc}
+specified above.  Advanced users can use these to implement their own
+equivalence and hash functions for specialized lookup semantics.
+
+@deffn {Scheme Procedure} hash-table-equivalence-function hash-table
+@deffnx {Scheme Procedure} hash-table-hash-function hash-table
+Answer the equivalence and hash function of @var{hash-table}, respectively.
+@end deffn
+
+@deffn {Scheme Procedure} hash obj [size]
+@deffnx {Scheme Procedure} string-hash obj [size]
+@deffnx {Scheme Procedure} string-ci-hash obj [size]
+@deffnx {Scheme Procedure} hash-by-identity obj [size]
+Answer a hash value appropriate for equality predicate @code{equal?},
+@code{string=?}, @code{string-ci=?}, and @code{eq?}, respectively.
+@end deffn
+
+@code{hash} is a backwards-compatible replacement for Guile's built-in
+@code{hash}.
+
+@node SRFI-88
+@subsection SRFI-88 Keyword Objects
+@cindex SRFI-88
+@cindex keyword objects
+
+@uref{http://srfi.schemers.org/srfi-88/srfi-88.html, SRFI-88} provides
+@dfn{keyword objects}, which are equivalent to Guile's keywords
+(@pxref{Keywords}).  SRFI-88 keywords can be entered using the
+@dfn{postfix keyword syntax}, which consists of an identifier followed
+by @code{:} (@pxref{Reader options, @code{postfix} keyword syntax}).
+SRFI-88 can be made available with:
+
+@example
+(use-modules (srfi srfi-88))
+@end example
+
+Doing so installs the right reader option for keyword syntax, using
+@code{(read-set! keywords 'postfix)}.  It also provides the procedures
+described below.
+
+@deffn {Scheme Procedure} keyword? obj
+Return @code{#t} if @var{obj} is a keyword.  This is the same procedure
+as the same-named built-in procedure (@pxref{Keyword Procedures,
+@code{keyword?}}).
+
+@example
+(keyword? foo:)         @result{} #t
+(keyword? 'foo:)        @result{} #t
+(keyword? "foo")        @result{} #f
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} keyword->string kw
+Return the name of @var{kw} as a string, i.e., without the trailing
+colon.  The returned string may not be modified, e.g., with
+@code{string-set!}.
+
+@example
+(keyword->string foo:)  @result{} "foo"
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} string->keyword str
+Return the keyword object whose name is @var{str}.
+
+@example
+(keyword->string (string->keyword "a b c"))     @result{} "a b c"
+@end example
+@end deffn
+
+
+@c srfi-modules.texi ends here
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

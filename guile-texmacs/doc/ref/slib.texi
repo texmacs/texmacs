@@ -1,0 +1,122 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004, 2007
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node SLIB
+@section SLIB
+@cindex SLIB
+
+Before the SLIB facilities can be used, the following Scheme expression
+must be executed:
+
+@smalllisp
+(use-modules (ice-9 slib))
+@end smalllisp
+
+@findex require
+@code{require} can then be used in the usual way (@pxref{Require,,,
+slib, The SLIB Manual}).  For example,
+
+@example
+(use-modules (ice-9 slib))
+(require 'primes)
+(prime? 13)
+@result{} #t
+@end example
+
+A few Guile core functions are overridden by the SLIB setups; for
+example the SLIB version of @code{delete-file} returns a boolean
+indicating success or failure, whereas the Guile core version throws
+an error for failure.  In general (and as might be expected) when SLIB
+is loaded it's the SLIB specifications that are followed.
+
+@menu
+* SLIB installation::
+* JACAL::
+@end menu
+
+@node SLIB installation
+@subsection SLIB installation
+
+The following procedure works, e.g., with SLIB version 3a3
+(@pxref{Installation, SLIB installation,, slib, The SLIB Portable Scheme
+Library}):
+
+@enumerate
+@item
+Unpack SLIB and install it using @code{make install} from its directory.
+By default, this will install SLIB in @file{/usr/local/lib/slib/}.
+Running @code{make installinfo} installs its documentation, by default
+under @file{/usr/local/info/}.
+
+@item
+Define the @code{SCHEME_LIBRARY_PATH} environment variable:
+
+@example
+$ SCHEME_LIBRARY_PATH=/usr/local/lib/slib/
+$ export SCHEME_LIBRARY_PATH
+@end example
+
+Alternatively, you can create a symlink in the Guile directory to SLIB,
+e.g.:
+
+@example
+ln -s /usr/local/lib/slib /usr/local/share/guile/1.8/slib
+@end example
+
+@item
+Use Guile to create the catalog file, e.g.,:
+
+@example
+# guile
+guile> (use-modules (ice-9 slib))
+guile> (require 'new-catalog)
+guile> (quit)
+@end example
+
+The catalog data should now be in
+@file{/usr/local/share/guile/1.8/slibcat}.
+
+If instead you get an error such as:
+
+@example
+Unbound variable: scheme-implementation-type
+@end example
+
+then a solution is to get a newer version of Guile,
+or to modify @file{ice-9/slib.scm} to use @code{define-public} for the
+offending variables.
+
+@end enumerate
+
+@node JACAL
+@subsection JACAL
+@cindex JACAL
+
+@cindex Jaffer, Aubrey
+@cindex symbolic math
+@cindex math -- symbolic
+Jacal is a symbolic math package written in Scheme by Aubrey Jaffer.
+It is usually installed as an extra package in SLIB.
+
+You can use Guile's interface to SLIB to invoke Jacal:
+
+@smalllisp
+(use-modules (ice-9 slib))
+(slib:load "math")
+(math)
+@end smalllisp
+
+@noindent
+For complete documentation on Jacal, please read the Jacal manual.  If
+it has been installed on line, you can look at @ref{Top, , Jacal, jacal,
+JACAL Symbolic Mathematics System}.  Otherwise you can find it on the web at
+@url{http://www-swiss.ai.mit.edu/~jaffer/JACAL.html}
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

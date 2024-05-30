@@ -1,0 +1,48 @@
+#! /bin/sh
+# Usage: benchmark-guile [-i GUILE-INTERPRETER] [GUILE-BENCHMARK-ARGS]
+# If `-i GUILE-INTERPRETER' is omitted, use ${top_builddir}/pre-inst-guile.
+# See ${top_srcdir}/benchmark-suite/guile-benchmark for documentation on GUILE-BENCHMARK-ARGS.
+#
+# Example invocations:
+# ./benchmark-guile
+# ./benchmark-guile numbers.bm
+# ./benchmark-guile -i /usr/local/bin/guile
+# ./benchmark-guile -i /usr/local/bin/guile numbers.bm
+
+set -e
+
+top_builddir=@top_builddir_absolute@
+top_srcdir=@top_srcdir_absolute@
+
+BENCHMARK_SUITE_DIR=${top_srcdir}/benchmark-suite
+
+if [ x"$1" = x-i ] ; then
+    guile=$2
+    shift
+    shift
+else
+    guile=${top_builddir}/pre-inst-guile
+fi
+
+GUILE_LOAD_PATH=$BENCHMARK_SUITE_DIR
+export GUILE_LOAD_PATH
+
+if [ -f "$guile" -a -x "$guile" ] ; then
+    echo Benchmarking $guile ... "$@"
+    echo with GUILE_LOAD_PATH=$GUILE_LOAD_PATH
+else
+    echo ERROR: Cannot execute $guile
+    exit 1
+fi
+
+# documentation searching ignores GUILE_LOAD_PATH.
+if [ ! -f guile-procedures.txt ] ; then
+   @LN_S@ libguile/guile-procedures.txt .
+fi
+
+exec $guile \
+    -e main -s "$BENCHMARK_SUITE_DIR/guile-benchmark" \
+    --benchmark-suite "$BENCHMARK_SUITE_DIR/benchmarks" \
+    --log-file benchmark-guile.log "$@"
+
+# benchmark-guile ends here

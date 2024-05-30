@@ -1,0 +1,274 @@
+;;;; getopt-long.test --- long options processing -*- scheme -*-
+;;;; Thien-Thi Nguyen <ttn@gnu.org> --- August 2001
+;;;;
+;;;; 	Copyright (C) 2001, 2006 Free Software Foundation, Inc.
+;;;;
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;;
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;;
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(use-modules (test-suite lib)
+             (ice-9 getopt-long)
+             (ice-9 regex))
+
+(defmacro deferr (name-frag re)
+  (let ((name (symbol-append 'exception: name-frag)))
+    `(define ,name (cons 'misc-error ,re))))
+
+(deferr no-such-option              "^no such option")
+(deferr option-predicate-failed     "^option predicate failed")
+(deferr option-does-not-support-arg "^option does not support argument")
+(deferr option-must-be-specified    "^option must be specified")
+(deferr option-must-have-arg        "^option must be specified with argument")
+
+(with-test-prefix "exported procs"
+  (pass-if "`option-ref' defined"  (defined? 'option-ref))
+  (pass-if "`getopt-long' defined" (defined? 'getopt-long)))
+
+(with-test-prefix "specifying predicate"
+
+  (define (test1 . args)
+    (getopt-long args
+                 `((test (value #t)
+                         (predicate ,(lambda (x)
+                                       (string-match "^[0-9]+$" x)))))))
+
+  (pass-if "valid arg"
+           (equal? (test1 "foo" "bar" "--test=123")
+                   '((() "bar") (test . "123"))))
+
+  (pass-if-exception "invalid arg"
+                     exception:option-predicate-failed
+                     (test1 "foo" "bar" "--test=foo"))
+
+  (pass-if-exception "option has no arg"
+                     exception:option-must-have-arg
+                     (test1 "foo" "bar" "--test"))
+
+  )
+
+(with-test-prefix "not specifying predicate"
+
+  (define (test2 . args)
+    (getopt-long args `((test (value #t)))))
+
+  (pass-if "option has arg"
+           (equal? (test2 "foo" "bar" "--test=foo")
+                   '((() "bar") (test . "foo"))))
+
+  (pass-if "option has no arg"
+           (equal? (test2 "foo" "bar")
+                   '((() "bar"))))
+
+  )
+
+(with-test-prefix "value optional"
+
+  (define (test3 . args)
+    (getopt-long args '((foo (value optional) (single-char #\f))
+                        (bar))))
+
+  (pass-if "long option `foo' w/ arg, long option `bar'"
+           (equal? (test3 "prg" "--foo" "fooval" "--bar")
+                   '((()) (bar . #t) (foo . "fooval"))))
+
+  (pass-if "short option `foo' w/ arg, long option `bar'"
+           (equal? (test3 "prg" "-f" "fooval" "--bar")
+                   '((()) (bar . #t) (foo . "fooval"))))
+
+  (pass-if "short option `foo', long option `bar', no args"
+           (equal? (test3 "prg" "-f" "--bar")
+                   '((()) (bar . #t) (foo . #t))))
+
+  (pass-if "long option `foo', long option `bar', no args"
+           (equal? (test3 "prg" "--foo" "--bar")
+                   '((()) (bar . #t) (foo . #t))))
+
+  (pass-if "long option `bar', short option `foo', no args"
+           (equal? (test3 "prg" "--bar" "-f")
+                   '((()) (foo . #t) (bar . #t))))
+
+  (pass-if "long option `bar', long option `foo', no args"
+           (equal? (test3 "prg" "--bar" "--foo")
+                   '((()) (foo . #t) (bar . #t))))
+
+  )
+
+(with-test-prefix "option-ref"
+
+  (define (test4 option-arg . args)
+    (equal? option-arg (option-ref (getopt-long
+                                    (cons "prog" args)
+                                    '((foo
+                                       (value optional)
+                                       (single-char #\f))
+                                      (bar)))
+                                   'foo #f)))
+
+  (pass-if "option-ref `--foo 4'"
+           (test4 "4" "--foo" "4"))
+
+  (pass-if "option-ref `-f 4'"
+           (test4 "4" "-f" "4"))
+
+  (pass-if "option-ref `-f4'"
+           (test4 "4" "-f4"))
+
+  (pass-if "option-ref `--foo=4'"
+           (test4 "4" "--foo=4"))
+
+  )
+
+(with-test-prefix "required"
+
+  (define (test5 args specs)
+    (getopt-long (cons "foo" args) specs))
+
+  (pass-if "not mentioned, not given"
+           (equal? (test5 '() '())
+                   '((()))))
+
+  (pass-if-exception "not mentioned, given"
+                     exception:no-such-option
+                     (test5 '("--req") '((something))))
+
+  (pass-if "not specified required, not given"
+           (equal? (test5 '() '((req (required? #f))))
+                   '((()))))
+
+  (pass-if "not specified required, given anyway"
+           (equal? (test5 '("--req") '((req (required? #f))))
+                   '((()) (req . #t))))
+
+  (pass-if "not specified required, but w/ value, given anyway w/ \"=\" val"
+           (equal? (test5 '("--req=7") '((req (required? #f) (value #t))))
+                   '((()) (req . "7"))))
+
+  (pass-if "not specified required, but w/ value, given anyway w/ non-\"=\" val"
+           (equal? (test5 '("--req" "7") '((req (required? #f) (value #t))))
+                   '((()) (req . "7"))))
+
+  (pass-if-exception "specified required, not given"
+                     exception:option-must-be-specified
+                     (test5 '() '((req (required? #t)))))
+
+  )
+
+(with-test-prefix "specified no-value, given anyway"
+
+  (define (test6 args specs)
+    (getopt-long (cons "foo" args) specs))
+
+  (pass-if-exception "using \"=\" syntax"
+                     exception:option-does-not-support-arg
+                     (test6 '("--maybe=yes") '((maybe))))
+
+  )
+
+(with-test-prefix "specified arg required"
+
+  (define (test7 args)
+    (getopt-long (cons "foo" args) '((hmm (value #t) (single-char #\H))
+                                     (ignore))))
+
+  (pass-if "short opt, arg given"
+           (equal? (test7 '("-H" "99"))
+                   '((()) (hmm . "99"))))
+
+  (pass-if "long non-\"=\" opt, arg given"
+           (equal? (test7 '("--hmm" "100"))
+                   '((()) (hmm . "100"))))
+
+  (pass-if "long \"=\" opt, arg given"
+           (equal? (test7 '("--hmm=101"))
+                   '((()) (hmm . "101"))))
+
+  (pass-if-exception "short opt, arg not given"
+                     exception:option-must-have-arg
+                     (test7 '("-H")))
+
+  (pass-if-exception "long non-\"=\" opt, arg not given (next arg an option)"
+                     exception:option-must-have-arg
+                     (test7 '("--hmm" "--ignore")))
+
+  (pass-if-exception "long \"=\" opt, arg not given"
+                     exception:option-must-have-arg
+                     (test7 '("--hmm")))
+
+  )
+
+(with-test-prefix "apples-blimps-catalexis example"
+
+  (define (test8 . args)
+    (equal? (sort (getopt-long (cons "foo" args)
+                               '((apples    (single-char #\a))
+                                 (blimps    (single-char #\b) (value #t))
+                                 (catalexis (single-char #\c) (value #t))))
+                  (lambda (a b)
+                    (cond ((null? (car a)) #t)
+                          ((null? (car b)) #f)
+                          (else (string<? (symbol->string (car a))
+                                          (symbol->string (car b)))))))
+            '((())
+              (apples . #t)
+              (blimps . "bang")
+              (catalexis . "couth"))))
+
+  (pass-if "normal 1" (test8 "-a" "-b" "bang" "-c" "couth"))
+  (pass-if "normal 2" (test8 "-ab" "bang" "-c" "couth"))
+  (pass-if "normal 3" (test8 "-ac" "couth" "-b" "bang"))
+
+  (pass-if-exception "bad ordering causes missing option"
+                     exception:option-must-have-arg
+                     (test8 "-abc" "couth" "bang"))
+
+  )
+
+(with-test-prefix "multiple occurrances"
+
+  (define (test9 . args)
+    (equal? (getopt-long (cons "foo" args)
+                         '((inc (single-char #\I) (value #t))
+                           (foo (single-char #\f))))
+            '((()) (inc . "2") (foo . #t) (inc . "1"))))
+
+  ;; terminology:
+  ;; sf -- single-char free
+  ;; sa -- single-char abutted
+  ;; lf -- long free
+  ;; la -- long abutted (using "=")
+
+  (pass-if "sf/sf" (test9 "-I" "1" "-f" "-I" "2"))
+  (pass-if "sa/sa" (test9 "-I1" "-f" "-I2"))
+  (pass-if "sf/sa" (test9 "-I" "1" "-f" "-I2"))
+  (pass-if "sa/sf" (test9 "-I1" "-f" "-I" "2"))
+
+  (pass-if "lf/lf" (test9 "--inc" "1" "-f" "--inc" "2"))
+  (pass-if "la/la" (test9 "--inc=1" "-f" "--inc=2"))
+  (pass-if "lf/la" (test9 "--inc" "1" "-f" "--inc=2"))
+  (pass-if "la/lf" (test9 "--inc=1" "-f" "--inc" "2"))
+
+  (pass-if "sf/lf" (test9 "-I" "1" "-f" "--inc" "2"))
+  (pass-if "lf/sf" (test9 "--inc" "1" "-f" "-I" "2"))
+  (pass-if "sf/la" (test9 "-I" "1" "-f" "--inc=2"))
+  (pass-if "la/sf" (test9 "--inc=1" "-f" "-I" "2"))
+
+  (pass-if "sa/lf" (test9 "-I1" "-f" "--inc" "2"))
+  (pass-if "lf/sa" (test9 "--inc" "1" "-f" "-I2"))
+  (pass-if "sa/la" (test9 "-I1" "-f" "--inc=2"))
+  (pass-if "la/sa" (test9 "--inc=1" "-f" "-I2"))
+
+  )
+
+;;; getopt-long.test ends here

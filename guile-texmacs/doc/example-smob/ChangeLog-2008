@@ -1,0 +1,56 @@
+2008-01-22  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* COPYING: Removed.
+
+2004-09-24  Marius Vollmer  <mvo@zagadka.de>
+
+	* image-type.c: Updated from manual.
+
+2002-02-28  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* image-type.c (image_tag): Changed type to scm_t_bits.
+	(make_image): Use scm_gc_malloc instead of scm_must_malloc.
+	(free_image): Use scm_gc_free instead of free.  Return zero.
+
+2001-05-30  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* image-type.c: Adapted to new typing and naming convention.
+
+2001-04-26  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* image-type.c (make_image): Don't need to use SCM_NIMP before
+	SCM_STRINGP.
+	(clear_image): Use SCM_SMOB_PREDICATE.
+	(clear_image, mark_image, free_image, print_image): Use
+	SCM_SMOB_DATA rather than SCM_CDR.
+
+2000-06-20  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* image-type.c: Removed unused scm_smobfuns structure.
+	(init_image_type): Use standard smob type interface.
+
+Fri Jun 25 22:21:04 1999  Greg Badros  <gjb@cs.washington.edu>
+
+	* image-type.c:  Updated example to use scm_make_smob_type_mfpe,
+	SCM_RETURN_NEWSMOB, SCM_NEWSMOB function and macros.
+	
+1998-10-19  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* image-type.c, myguile.c: Terminate copyright comments.
+
+	* COPYING: New file.
+	* image-type.c myguile.c: Add copyright notice.
+
+1998-10-16  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* Makefile (myguile): Fix link command, to put the Guile libraries
+	after the object files.  The old command worked on my machine, but
+	I don't see how.
+
+1998-10-15  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	Created this directory for the Guile 1.3 release.  Thanks to Jay
+	Glascoe for suggesting that we provide a complete, buildable
+	example!
+	* ChangeLog, Makefile, README, image-type.c, image-type.h,
+	myguile: New files.

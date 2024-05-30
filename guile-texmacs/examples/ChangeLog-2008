@@ -1,0 +1,155 @@
+2008-01-22  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* compat/compat.h: Update copyright statement to LGPL.
+
+2002-11-17  Mikael Djurfeldt  <mdj@linnaeus>
+
+	* README: Added description of compat.
+
+	* compat/acconfig.h, compat/acinclude.m4, compat.h, configure.in:
+	New files.
+
+2001-07-24  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	All examples are now built and tested on `make installcheck'
+	rather than `make check'.
+
+2001-07-19  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* box-dynamic-module/Makefile.am, box-dynamic/Makefile.am,
+	box-module/Makefile.am, box/Makefile.am: Use $(top_srcdir) to get
+	at GUILE_LOAD_PATH, and $(top_builddir) for the guile and
+	guile-config programs and for the link paths.  Add check.test to
+	EXTRA_DIST.
+
+	* box-dynamic-module/Makefile.am, box-dynamic/Makefile.am,
+	box-module/Makefile.am, box/Makefile.am: Add -L../../qt to LIBS.
+
+2001-07-19  Rob Browning  <rlb@defaultvalue.org>
+
+	* box-module/.cvsignore: add .deps
+
+	* box/.cvsignore: add .deps.
+
+2001-07-17  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* box-module/Makefile.am (TESTS): New variable.
+	Create `box' on `make all'.
+
+	* box-module/check.test, box-dynamic-module/check.test,
+	* box-dynamic/check.test: New files.
+
+	* box-dynamic/Makefile.am (libbox): Create box library on `make
+	all'.
+	(TESTS): New variable.
+
+	* box/Makefile.am (TESTS): New variable.  
+	Create `box' program on `make all', use freshly built Guile for
+	building.
+
+	* box/check.test: New file.
+
+	* modules/check.test, safe/check.test, scripts/check.test: Set
+	GUILE_LOAD_PATH to make the tests run without installed Guile.
+
+2001-07-16  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* scripts/check.test: Add check for guile interpreter.
+	Fix bug: Use `$guile' everywhere.  Thanks to Martin Grabmueller.
+
+2001-07-16  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* modules/check.test, safe/check.test: New files.
+
+	* modules/Makefile.am (TESTS), safe/Makefile.am (TESTS): New
+	variables.
+
+2001-07-14  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* scripts/check.test: New file.
+
+	* Makefile.am (TESTS): New var.
+
+2001-07-14  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* modules/main: Use :renamer for specifying renaming procedure.
+
+2001-07-10  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* scripts/hello (display-version, display-help): Fix comment; nfc.
+
+2001-07-09  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* box-dynamic/README: Corrected sample session.
+
+	* box-module/box.c, box-dynamic-module/box.c, box-dynamic/box.c
+	* box/box.c: scm_bits_t -> scm_t_bits.
+
+2001-06-18  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* box-dynamic-module/README: Use a better example for box-map, as
+	suggested by Thomas Wawrzinek.
+
+2001-06-14  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* scripts/README, scripts/hello.scm, safe/untrusted.scm,
+	safe/evil.scm, safe/README, modules/README, modules/main,
+	modules/module-0.scm, modules/module-1.scm, modules/module-2.scm:
+	Minor cleanup.
+
+	* README: Added intro stuff, restructured a bit.
+
+	* box-dynamic/README, box-module/README, box/README: Cleanup and
+	restructuring.
+
+	* box-dynamic-module/box-mixed.scm: New file, demonstrating usage
+	of extension library functionality, but without exporting
+	procedures from the library.
+
+	Thanks to Thomas Wawrzinek for the idea and example code!
+
+	* box-dynamic-module/box-module.scm: Add comments, export
+	make-box, box-ref, box-set!.
+
+	* box-dynamic-module/README: Integrate new module (box-mixed),
+	restructure and cleanup a bit.
+
+2001-06-06  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* box-dynamic-module/box-module.scm: New file.
+
+2001-06-05  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* box-dynamic-module: New directory, implements the box type in a
+	shared library and places the definitions in a C-only module.
+
+	Thanks to Thomas Wawrzinek for this, too!
+
+	* box-dynamic/box.c, box/box.c, box-dynamic-module/box.c,
+	box-module/box.c (mark_box): Fixed typo in comment.
+
+2001-06-01  Rob Browning  <rlb@cs.utexas.edu>
+
+	* .cvsignore: here and in all subdirectories listing Makefile and
+	Makefile.in.
+
+2001-05-31  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* box-dynamic: New directory, implements the box type in a shared
+	library (aka extension)
+
+	Thanks to Thomas Wawrzinek for patching box.c into an extension!
+
+2001-05-30  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* box-module: New directory, similar to box, but defines the
+	primitives in a module (box-module) instead of defining them
+	globally.
+
+	* safe: New directory, explaining some aspects of using safe
+	environments for evaluation.
+
+2001-05-29  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* New directory for Guile example code.
+

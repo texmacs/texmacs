@@ -1,0 +1,108 @@
+;;;; srfi-69.test --- Test suite for SRFI 69 -*- scheme -*-
+;;;;
+;;;; 	Copyright (C) 2007 Free Software Foundation, Inc.
+;;;;
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;;
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;;
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(define-module (test-srfi-69)
+  #:use-module (test-suite lib)
+  #:use-module (srfi srfi-69)
+  #:use-module (srfi srfi-1)
+  #:use-module (srfi srfi-26))
+
+(define (string-ci-assoc-equal? left right)
+  "Answer whether LEFT and RIGHT are equal, being associations of
+case-insensitive strings to `equal?'-tested values."
+  (and (string-ci=? (car left) (car right))
+       (equal? (cdr left) (cdr right))))
+
+(with-test-prefix "SRFI-69"
+
+  (pass-if "small alist<->hash tables round-trip"
+    (let* ((start-alist '((a . 1) (b . 2) (c . 3) (a . 42)))
+	   (ht (alist->hash-table start-alist eq?))
+	   (end-alist (hash-table->alist ht)))
+      (and (= 3 (hash-table-size ht))
+	   (lset= equal? end-alist (take start-alist 3))
+	   (= 1 (hash-table-ref ht 'a))
+	   (= 2 (hash-table-ref ht 'b))
+	   (= 3 (hash-table-ref ht 'c)))))
+
+  (pass-if "string-ci=? tables work by default"
+    (let ((ht (alist->hash-table '(("xY" . 2) ("abc" . 54)) string-ci=?)))
+      (hash-table-set! ht "XY" 42)
+      (hash-table-set! ht "qqq" 100)
+      (and (= 54 (hash-table-ref ht "ABc"))
+	   (= 42 (hash-table-ref ht "xy"))
+	   (= 3 (hash-table-size ht))
+	   (lset= string-ci-assoc-equal?
+		  '(("xy" . 42) ("abc" . 54) ("qqq" . 100))
+		  (hash-table->alist ht)))))
+
+  (pass-if-exception "Bad weakness arg to mht signals an error"
+		     '(misc-error . "^Invalid weak hash table type")
+    (make-hash-table equal? hash #:weak 'key-and-value))
+
+  (pass-if "empty hash tables are empty"
+    (null? (hash-table->alist (make-hash-table eq?))))
+
+  (pass-if "hash-table-ref uses default"
+    (equal? '(4)
+	    (hash-table-ref (alist->hash-table '((a . 1)) eq?)
+			    'b (cut list (+ 2 2)))))
+
+  (pass-if "hash-table-delete! deletes present assocs, ignores others"
+    (let ((ht (alist->hash-table '((a . 1) (b . 2)) eq?)))
+      (hash-table-delete! ht 'c)
+      (and (= 2 (hash-table-size ht))
+	   (begin
+	     (hash-table-delete! ht 'a)
+	     (= 1 (hash-table-size ht)))
+	   (lset= equal? '((b . 2)) (hash-table->alist ht)))))
+
+  (pass-if "alist->hash-table does not require linear stack space"
+    (eqv? 99999
+	  (hash-table-ref (alist->hash-table
+			   (unfold-right (cut >= <> 100000)
+					 (lambda (s) `(x . ,s)) 1+ 0)
+			   eq?)
+			  'x)))
+
+  (pass-if "hash-table-walk ignores return values"
+    (let ((ht (alist->hash-table '((a . 1) (b . 2) (c . 3)) eq?)))
+      (for-each (cut hash-table-walk ht <>)
+		(list (lambda (k v) (values))
+		      (lambda (k v) (values 1 2 3))))
+      #t))
+
+  (pass-if "hash-table-update! modifies existing binding"
+    (let ((ht (alist->hash-table '((a . 1)) eq?)))
+      (hash-table-update! ht 'a 1+)
+      (hash-table-update! ht 'a (cut + 4 <>) (lambda () 42))
+      (and (= 1 (hash-table-size ht))
+	   (lset= equal? '((a . 6)) (hash-table->alist ht)))))
+
+  (pass-if "hash-table-update! creates new binding when appropriate"
+    (let ((ht (make-hash-table eq?)))
+      (hash-table-update! ht 'b 1+ (lambda () 42))
+      (hash-table-update! ht 'b (cut + 10 <>))
+      (and (= 1 (hash-table-size ht))
+	   (lset= equal? '((b . 53)) (hash-table->alist ht)))))
+
+  (pass-if "can use all arguments, including size"
+    (hash-table? (make-hash-table equal? hash #:weak 'key 31)))
+
+)

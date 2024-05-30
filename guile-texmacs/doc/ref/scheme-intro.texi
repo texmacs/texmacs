@@ -1,0 +1,41 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@node Guile Scheme
+@section Guile's Implementation of Scheme
+
+Guile's core language is Scheme, which is specified and described in the
+series of reports known as @dfn{RnRS}.  @dfn{RnRS} is shorthand for the
+@iftex
+@dfn{Revised$^n$ Report on the Algorithmic Language Scheme}.
+@end iftex
+@ifnottex
+@dfn{Revised^n Report on the Algorithmic Language Scheme}.
+@end ifnottex
+The current latest revision of RnRS is version 5
+(@pxref{Top,R5RS,,r5rs}), and Guile 1.4 is fully compliant with the
+Scheme specification in this revision.
+
+But Guile, like most Scheme implementations, also goes beyond R5RS in
+many ways, because R5RS does not give specifications (or even
+recommendations) regarding many issues that are important in practical
+programming.  Some of the areas where Guile extends R5RS are:
+
+@itemize @bullet
+@item
+Guile's interactive documentation system
+
+@item
+Guile's support for POSIX-compliant network programming
+
+@item
+GOOPS -- Guile's framework for object oriented programming.
+@end itemize
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

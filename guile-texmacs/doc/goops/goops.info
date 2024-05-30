@@ -1,0 +1,3619 @@
+This is goops.info, produced by makeinfo version 4.13 from goops.texi.
+
+INFO-DIR-SECTION The Algorithmic Language Scheme
+START-INFO-DIR-ENTRY
+* GOOPS: (goops).               The GOOPS reference manual.
+END-INFO-DIR-ENTRY
+
+This file documents GOOPS, an object oriented extension for Guile.
+
+Copyright (C) 1999, 2000, 2001, 2003, 2006 Free Software Foundation
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+
+File: goops.info,  Node: Top,  Next: Introduction,  Prev: (dir),  Up: (dir)
+
+* Menu:
+
+* Introduction::
+* Getting Started::
+* Reference Manual::
+* MOP Specification::
+
+* Tutorial::
+
+* Concept Index::
+* Function and Variable Index::
+
+
+File: goops.info,  Node: Introduction,  Next: Getting Started,  Prev: Top,  Up: Top
+
+1 Introduction
+**************
+
+GOOPS is the object oriented extension to Guile. Its implementation is
+derived from STk-3.99.3 by Erick Gallesio and version 1.3 of Gregor
+Kiczales `Tiny-Clos'.  It is very close in spirit to CLOS, the Common
+Lisp Object System (`CLtL2') but is adapted for the Scheme language.
+While GOOPS is not compatible with any of these systems, GOOPS contains
+a compatibility module which allows for execution of STKlos programs.
+
+Briefly stated, the GOOPS extension gives the user a full object
+oriented system with multiple inheritance and generic functions with
+multi-method dispatch.  Furthermore, the implementation relies on a true
+meta object protocol, in the spirit of the one defined for CLOS
+(`Gregor Kiczales: A Metaobject Protocol').
+
+
+File: goops.info,  Node: Getting Started,  Next: Reference Manual,  Prev: Introduction,  Up: Top
+
+2 Getting Started
+*****************
+
+* Menu:
+
+* Running GOOPS::
+
+Examples of some basic GOOPS functionality.
+
+* Methods::
+* User-defined types::
+* Asking for the type of an object::
+
+See further in the GOOPS tutorial available in this distribution in
+info (goops.info) and texinfo format.
+
+
+File: goops.info,  Node: Running GOOPS,  Next: Methods,  Prev: Getting Started,  Up: Getting Started
+
+2.0.1 Running GOOPS
+-------------------
+
+  1. Type
+
+          guile-oops
+
+     You should now be at the Guile prompt ("guile> ").
+
+  2. Type
+
+          (use-modules (oop goops))
+
+     to load GOOPS.  (If your system supports dynamic loading, you
+     should be able to do this not only from `guile-oops' but from an
+     arbitrary Guile interpreter.)
+
+We're now ready to try some basic GOOPS functionality.
+
+
+File: goops.info,  Node: Methods,  Next: User-defined types,  Prev: Running GOOPS,  Up: Getting Started
+
+2.0.2 Methods
+-------------
+
+     (define-method (+ (x <string>) (y <string>))
+       (string-append x y))
+
+     (+ 1 2) --> 3
+     (+ "abc" "de") --> "abcde"
+
+
+File: goops.info,  Node: User-defined types,  Next: Asking for the type of an object,  Prev: Methods,  Up: Getting Started
+
+2.0.3 User-defined types
+------------------------
+
+     (define-class <2D-vector> ()
+       (x #:init-value 0 #:accessor x-component #:init-keyword #:x)
+       (y #:init-value 0 #:accessor y-component #:init-keyword #:y))
+
+     (use-modules (ice-9 format))
+
+     (define-method (write (obj <2D-vector>) port)
+       (display (format #f "<~S, ~S>" (x-component obj) (y-component obj))
+                port))
+
+     (define v (make <2D-vector> #:x 3 #:y 4))
+
+     v --> <3, 4>
+
+     (define-method (+ (x <2D-vector>) (y <2D-vector>))
+       (make <2D-vector>
+             #:x (+ (x-component x) (x-component y))
+             #:y (+ (y-component x) (y-component y))))
+
+     (+ v v) --> <6, 8>
+
+
+File: goops.info,  Node: Asking for the type of an object,  Prev: User-defined types,  Up: Getting Started
+
+2.0.4 Types
+-----------
+
+     (class-of v) --> #<<class> <2D-vector> 40241ac0>
+     <2D-vector>  --> #<<class> <2D-vector> 40241ac0>
+     (class-of 1) --> #<<class> <integer> 401b2a98>
+     <integer>    --> #<<class> <integer> 401b2a98>
+
+     (is-a? v <2D-vector>) --> #t
+
+
+File: goops.info,  Node: Reference Manual,  Next: MOP Specification,  Prev: Getting Started,  Up: Top
+
+3 Reference Manual
+******************
+
+This chapter is the GOOPS reference manual.  It aims to describe all the
+syntax, procedures, options and associated concepts that a typical
+application author would need to understand in order to use GOOPS
+effectively in their application.  It also describes what is meant by
+the GOOPS "metaobject protocol" (aka "MOP"), and indicates how authors
+can use the metaobject protocol to customize the behaviour of GOOPS
+itself.
+
+For a detailed specification of the GOOPS metaobject protocol, see
+*note MOP Specification::.
+
+* Menu:
+
+* Introductory Remarks::
+* Defining New Classes::
+* Creating Instances::
+* Accessing Slots::
+* Creating Generic Functions::
+* Adding Methods to Generic Functions::
+* Invoking Generic Functions::
+* Redefining a Class::
+* Changing the Class of an Instance::
+* Introspection::
+* Miscellaneous Functions::
+
+
+File: goops.info,  Node: Introductory Remarks,  Next: Defining New Classes,  Up: Reference Manual
+
+3.1 Introductory Remarks
+========================
+
+GOOPS is an object-oriented programming system based on a "metaobject
+protocol" derived from the ones used in CLOS (the Common Lisp Object
+System), tiny-clos (a small Scheme implementation of a subset of CLOS
+functionality) and STKlos.
+
+GOOPS can be used by application authors at a basic level without any
+need to understand what the metaobject protocol (aka "MOP") is and how
+it works.  On the other hand, the MOP underlies even the customizations
+that application authors are likely to make use of very quickly -- such
+as defining an `initialize' method to customize the initialization of
+instances of an application-defined class -- and an understanding of
+the MOP makes it much easier to explain such customizations in a precise
+way.  And in the long run, understanding the MOP is the key both to
+understanding GOOPS at a deeper level and to taking full advantage of
+GOOPS' power, by customizing the behaviour of GOOPS itself.
+
+Each of the following sections of the reference manual is arranged such
+that the most basic usage is introduced first, and then subsequent
+subsections discuss the related internal functions and metaobject
+protocols, finishing with a description of how to customize that area of
+functionality.
+
+These introductory remarks continue with a few words about metaobjects
+and the MOP.  Readers who do not want to be bothered yet with the MOP
+and customization could safely skip this subsection on a first reading,
+and should correspondingly skip subsequent subsections that are
+concerned with internals and customization.
+
+In general, this reference manual assumes familiarity with standard
+object oriented concepts and terminology.  However, some of the terms
+used in GOOPS are less well known, so the Terminology subsection
+provides definitions for these terms.
+
+* Menu:
+
+* Metaobjects and the Metaobject Protocol::
+* Terminology::
+
+
+File: goops.info,  Node: Metaobjects and the Metaobject Protocol,  Next: Terminology,  Up: Introductory Remarks
+
+3.1.1 Metaobjects and the Metaobject Protocol
+---------------------------------------------
+
+The conceptual building blocks of GOOPS are classes, slot definitions,
+instances, generic functions and methods.  A class is a grouping of
+inheritance relations and slot definitions.  An instance is an object
+with slots that are allocated following the rules implied by its class's
+superclasses and slot definitions.  A generic function is a collection
+of methods and rules for determining which of those methods to apply
+when the generic function is invoked.  A method is a procedure and a set
+of specializers that specify the type of arguments to which the
+procedure is applicable.
+
+Of these entities, GOOPS represents classes, generic functions and
+methods as "metaobjects".  In other words, the values in a GOOPS
+program that describe classes, generic functions and methods, are
+themselves instances (or "objects") of special GOOPS classes that
+encapsulate the behaviour, respectively, of classes, generic functions,
+and methods.
+
+(The other two entities are slot definitions and instances.  Slot
+definitions are not strictly instances, but every slot definition is
+associated with a GOOPS class that specifies the behaviour of the slot
+as regards accessibility and protection from garbage collection.
+Instances are of course objects in the usual sense, and there is no
+benefit from thinking of them as metaobjects.)
+
+The "metaobject protocol" (aka "MOP") is the specification of the
+generic functions which determine the behaviour of these metaobjects and
+the circumstances in which these generic functions are invoked.
+
+For a concrete example of what this means, consider how GOOPS calculates
+the set of slots for a class that is being defined using
+`define-class'.  The desired set of slots is the union of the new
+class's direct slots and the slots of all its superclasses.  But
+`define-class' itself does not perform this calculation.  Instead,
+there is a method of the `initialize' generic function that is
+specialized for instances of type `<class>', and it is this method that
+performs the slot calculation.
+
+`initialize' is a generic function which GOOPS calls whenever a new
+instance is created, immediately after allocating memory for a new
+instance, in order to initialize the new instance's slots.  The sequence
+of steps is as follows.
+
+   * `define-class' uses `make' to make a new instance of the
+     `<class>', passing as initialization arguments the superclasses,
+     slot definitions and class options that were specified in the
+     `define-class' form.
+
+   * `make' allocates memory for the new instance, and then invokes the
+     `initialize' generic function to initialize the new instance's
+     slots.
+
+   * The `initialize' generic function applies the method that is
+     specialized for instances of type `<class>', and this method
+     performs the slot calculation.
+
+In other words, rather than being hardcoded in `define-class', the
+behaviour of class definition is encapsulated by generic function
+methods that are specialized for the class `<class>'.
+
+It is possible to create a new class that inherits from `<class>',
+which is called a "metaclass", and to write a new `initialize' method
+that is specialized for instances of the new metaclass.  Then, if the
+`define-class' form includes a `#:metaclass' class option whose value
+is the new metaclass, the class that is defined by the `define-class'
+form will be an instance of the new metaclass rather than of the
+default `<class>', and will be defined in accordance with the new
+`initialize' method.  Thus the default slot calculation, as well as any
+other aspect of the new class's relationship with its superclasses, can
+be modified or overridden.
+
+In a similar way, the behaviour of generic functions can be modified or
+overridden by creating a new class that inherits from the standard
+generic function class `<generic>', writing appropriate methods that
+are specialized to the new class, and creating new generic functions
+that are instances of the new class.
+
+The same is true for method metaobjects.  And the same basic mechanism
+allows the application class author to write an `initialize' method
+that is specialized to their application class, to initialize instances
+of that class.
+
+Such is the power of the MOP.  Note that `initialize' is just one of a
+large number of generic functions that can be customized to modify the
+behaviour of application objects and classes and of GOOPS itself.  Each
+subsequent section of the reference manual covers a particular area of
+GOOPS functionality, and describes the generic functions that are
+relevant for customization of that area.
+
+We conclude this subsection by emphasizing a point that may seem
+obvious, but contrasts with the corresponding situation in some other
+MOP implementations, such as CLOS.  The point is simply that an
+identifier which represents a GOOPS class or generic function is a
+variable with a first-class value, the value being an instance of class
+`<class>' or `<generic>'.  (In CLOS, on the other hand, a class
+identifier is a symbol that indexes the corresponding class metaobject
+in a separate namespace for classes.)  This is, of course, simply an
+extension of the tendency in Scheme to avoid the unnecessary use of, on
+the one hand, syntactic forms that require unevaluated arguments and,
+on the other, separate identifier namespaces (e.g. for class names),
+but it is worth noting that GOOPS conforms fully to this Schemely
+principle.
+
+
+File: goops.info,  Node: Terminology,  Prev: Metaobjects and the Metaobject Protocol,  Up: Introductory Remarks
+
+3.1.2 Terminology
+-----------------
+
+It is assumed that the reader is already familiar with standard object
+orientation concepts such as classes, objects/instances,
+inheritance/subclassing, generic functions and methods, encapsulation
+and polymorphism.
+
+This section explains some of the less well known concepts and
+terminology that GOOPS uses, which are assumed by the following sections
+of the reference manual.
+
+* Menu:
+
+* Metaclass::
+* Class Precedence List::
+* Accessor::
+
+
+File: goops.info,  Node: Metaclass,  Next: Class Precedence List,  Up: Terminology
+
+3.1.2.1 Metaclass
+.................
+
+A "metaclass" is the class of an object which represents a GOOPS class.
+Put more succinctly, a metaclass is a class's class.
+
+Most GOOPS classes have the metaclass `<class>' and, by default, any
+new class that is created using `define-class' has the metaclass
+`<class>'.
+
+But what does this really mean?  To find out, let's look in more detail
+at what happens when a new class is created using `define-class':
+
+     (define-class <my-class> (<object>) . slots)
+
+GOOPS actually expands the `define-class' form to something like this
+
+     (define <my-class> (class (<object>) . slots))
+
+and thence to
+
+     (define <my-class>
+       (make <class> #:supers (list <object>) #:slots slots))
+
+In other words, the value of `<my-class>' is in fact an instance of the
+class `<class>' with slot values specifying the superclasses and slot
+definitions for the class `<my-class>'.  (`#:supers' and `#:slots' are
+initialization keywords for the `dsupers' and `dslots' slots of the
+`<class>' class.)
+
+In order to take advantage of the full power of the GOOPS metaobject
+protocol (*note MOP Specification::), it is sometimes desirable to
+create a new class with a metaclass other than the default `<class>'.
+This is done by writing:
+
+     (define-class <my-class2> (<object>)
+        slot ...
+        #:metaclass <my-metaclass>)
+
+GOOPS expands this to something like:
+
+     (define <my-class2>
+       (make <my-metaclass> #:supers (list <object>) #:slots slots))
+
+In this case, the value of `<my-class2>' is an instance of the more
+specialized class `<my-metaclass>'.  Note that `<my-metaclass>' itself
+must previously have been defined as a subclass of `<class>'.  For a
+full discussion of when and how it is useful to define new metaclasses,
+see *note MOP Specification::.
+
+Now let's make an instance of `<my-class2>':
+
+     (define my-object (make <my-class2> ...))
+
+All of the following statements are correct expressions of the
+relationships between `my-object', `<my-class2>', `<my-metaclass>' and
+`<class>'.
+
+   * `my-object' is an instance of the class `<my-class2>'.
+
+   * `<my-class2>' is an instance of the class `<my-metaclass>'.
+
+   * `<my-metaclass>' is an instance of the class `<class>'.
+
+   * The class of `my-object' is `<my-class2>'.
+
+   * The metaclass of `my-object' is `<my-metaclass>'.
+
+   * The class of `<my-class2>' is `<my-metaclass>'.
+
+   * The metaclass of `<my-class2>' is `<class>'.
+
+   * The class of `<my-metaclass>' is `<class>'.
+
+   * The metaclass of `<my-metaclass>' is `<class>'.
+
+   * `<my-class2>' is not a metaclass, since it is does not inherit from
+     `<class>'.
+
+   * `<my-metaclass>' is a metaclass, since it inherits from `<class>'.
+
+
+File: goops.info,  Node: Class Precedence List,  Next: Accessor,  Prev: Metaclass,  Up: Terminology
+
+3.1.2.2 Class Precedence List
+.............................
+
+The "class precedence list" of a class is the list of all direct and
+indirect superclasses of that class, including the class itself.
+
+In the absence of multiple inheritance, the class precedence list is
+ordered straightforwardly, beginning with the class itself and ending
+with `<top>'.
+
+For example, given this inheritance hierarchy:
+
+     (define-class <invertebrate> (<object>) ...)
+     (define-class <echinoderm> (<invertebrate>) ...)
+     (define-class <starfish> (<echinoderm>) ...)
+
+the class precedence list of <starfish> would be
+
+     (<starfish> <echinoderm> <invertebrate> <object> <top>)
+
+With multiple inheritance, the algorithm is a little more complicated.
+A full description is provided by the GOOPS Tutorial: see *note Class
+precedence list::.
+
+"Class precedence list" is often abbreviated, in documentation and
+Scheme variable names, to "cpl".
+
+
+File: goops.info,  Node: Accessor,  Prev: Class Precedence List,  Up: Terminology
+
+3.1.2.3 Accessor
+................
+
+An "accessor" is a generic function with both reference and setter
+methods.
+
+     (define-accessor perimeter)
+
+Reference methods for an accessor are defined in the same way as generic
+function methods.
+
+     (define-method (perimeter (s <square>))
+       (* 4 (side-length s)))
+
+Setter methods for an accessor are defined by specifying "(setter
+<accessor-name>)" as the first parameter of the `define-method' call.
+
+     (define-method ((setter perimeter) (s <square>) (n <number>))
+       (set! (side-length s) (/ n 4)))
+
+Once an appropriate setter method has been defined in this way, it can
+be invoked using the generalized `set!' syntax, as in:
+
+     (set! (perimeter s1) 18.3)
+
+
+File: goops.info,  Node: Defining New Classes,  Next: Creating Instances,  Prev: Introductory Remarks,  Up: Reference Manual
+
+3.2 Defining New Classes
+========================
+
+[ *fixme* Somewhere in this manual there needs to be an introductory
+discussion about GOOPS classes, generic functions and methods, covering
+
+   * how classes encapsulate related items of data in "slots"
+
+   * why it is that, unlike in C++ and Java, a class does not
+     encapsulate the methods that act upon the class (at least not in
+     the C++/Java sense)
+
+   * how generic functions provide a more general solution that
+     provides for dispatch on all argument types, and avoids
+     idiosyncracies like C++'s friend classes
+
+   * how encapsulation in the sense of data- and code-hiding, or of
+     distinguishing interface from implementation, is treated in Guile
+     as an orthogonal concept to object orientation, and is the
+     responsibility of the module system.
+
+Some of this is covered in the Tutorial chapter, in *note Generic
+functions and methods:: - perhaps the best solution would be to expand
+the discussion there. ]
+
+* Menu:
+
+* Basic Class Definition::
+* Class Options::
+* Slot Options::
+* Class Definition Internals::
+* Customizing Class Definition::
+* STKlos Compatibility::
+
+
+File: goops.info,  Node: Basic Class Definition,  Next: Class Options,  Up: Defining New Classes
+
+3.2.1 Basic Class Definition
+----------------------------
+
+New classes are defined using the `define-class' syntax, with arguments
+that specify the classes that the new class should inherit from, the
+direct slots of the new class, and any required class options.
+
+ -- syntax: define-class name (super ...) slot-definition ... . options
+     Define a class called NAME that inherits from SUPERs, with direct
+     slots defined by SLOT-DEFINITIONs and class options OPTIONS.  The
+     newly created class is bound to the variable name NAME in the
+     current environment.
+
+     Each SLOT-DEFINITION is either a symbol that names the slot or a
+     list,
+
+          (SLOT-NAME-SYMBOL . SLOT-OPTIONS)
+
+     where SLOT-NAME-SYMBOL is a symbol and SLOT-OPTIONS is a list with
+     an even number of elements.  The even-numbered elements of
+     SLOT-OPTIONS (counting from zero) are slot option keywords; the
+     odd-numbered elements are the corresponding values for those
+     keywords.
+
+     OPTIONS is a similarly structured list containing class option
+     keywords and corresponding values.
+
+The standard GOOPS class and slot options are described in the following
+subsections: see *note Class Options:: and *note Slot Options::.
+
+Example 1.  Define a class that combines two pre-existing classes by
+inheritance but adds no new slots.
+
+     (define-class <combined> (<tree> <bicycle>))
+
+Example 2.  Define a `regular-polygon' class with slots for side length
+and number of sides that have default values and can be accessed via
+the generic functions `side-length' and `num-sides'.
+
+     (define-class <regular-polygon> ()
+       (sl #:init-value 1 #:accessor side-length)
+       (ns #:init-value 5 #:accessor num-sides))
+
+Example 3.  Define a class whose behavior (and that of its instances) is
+customized via an application-defined metaclass.
+
+     (define-class <tcpip-fsm> ()
+       (s #:init-value #f #:accessor state)
+       ...
+       #:metaclass <finite-state-class>)
+
+
+File: goops.info,  Node: Class Options,  Next: Slot Options,  Prev: Basic Class Definition,  Up: Defining New Classes
+
+3.2.2 Class Options
+-------------------
+
+ -- class option: #:metaclass metaclass
+     The `#:metaclass' class option specifies the metaclass of the class
+     being defined.  METACLASS must be a class that inherits from
+     `<class>'.  For an introduction to the use of metaclasses, see
+     *note Metaobjects and the Metaobject Protocol:: and *note
+     Metaclass::.
+
+     If the `#:metaclass' option is absent, GOOPS reuses or constructs a
+     metaclass for the new class by calling `ensure-metaclass' (*note
+     ensure-metaclass: Class Definition Internals.).
+
+ -- class option: #:name name
+     The `#:name' class option specifies the new class's name.  This
+     name is used to identify the class whenever related objects - the
+     class itself, its instances and its subclasses - are printed.
+
+     If the `#:name' option is absent, GOOPS uses the first argument to
+     `define-class' as the class name.
+
+ -- class option: #:environment environment
+     *fixme* Not sure about this one, but I think that the
+     `#:environment' option specifies the environment in which the
+     class's getters and setters are computed and evaluated.
+
+     If the `#:environment' option is not specified, the class's
+     environment defaults to the top-level environment in which the
+     `define-class' form appears.
+
+
+File: goops.info,  Node: Slot Options,  Next: Class Definition Internals,  Prev: Class Options,  Up: Defining New Classes
+
+3.2.3 Slot Options
+------------------
+
+ -- slot option: #:allocation allocation
+     The `#:allocation' option tells GOOPS how to allocate storage for
+     the slot.  Possible values for ALLOCATION are
+
+        * `#:instance'
+
+          Indicates that GOOPS should create separate storage for this
+          slot in each new instance of the containing class (and its
+          subclasses).
+
+        * `#:class'
+
+          Indicates that GOOPS should create storage for this slot that
+          is shared by all instances of the containing class (and its
+          subclasses).  In other words, a slot in class C with
+          allocation `#:class' is shared by all INSTANCEs for which
+          `(is-a? INSTANCE C)'.
+
+        * `#:each-subclass'
+
+          Indicates that GOOPS should create storage for this slot that
+          is shared by all _direct_ instances of the containing class,
+          and that whenever a subclass of the containing class is
+          defined, GOOPS should create a new storage for the slot that
+          is shared by all _direct_ instances of the subclass.  In
+          other words, a slot with allocation `#:each-subclass' is
+          shared by all instances with the same `class-of'.
+
+        * `#:virtual'
+
+          Indicates that GOOPS should not allocate storage for this
+          slot.  The slot definition must also include the `#:slot-ref'
+          and `#:slot-set!' options to specify how to reference and set
+          the value for this slot.
+
+     The default value is `#:instance'.
+
+     Slot allocation options are processed when defining a new class by
+     the generic function `compute-get-n-set', which is specialized by
+     the class's metaclass.  Hence new types of slot allocation can be
+     implemented by defining a new metaclass and a method for
+     `compute-get-n-set' that is specialized for the new metaclass.  For
+     an example of how to do this, see *note Customizing Class
+     Definition::.
+
+ -- slot option: #:slot-ref getter
+ -- slot option: #:slot-set! setter
+     The `#:slot-ref' and `#:slot-set!' options must be specified if
+     the slot allocation is `#:virtual', and are ignored otherwise.
+
+     GETTER should be a closure taking a single INSTANCE parameter that
+     returns the current slot value.  SETTER should be a closure taking
+     two parameters - INSTANCE and NEW-VAL - that sets the slot value
+     to NEW-VAL.
+
+ -- slot option: #:getter getter
+ -- slot option: #:setter setter
+ -- slot option: #:accessor accessor
+     These options, if present, tell GOOPS to create generic function
+     and method definitions that can be used to get and set the slot
+     value more conveniently than by using `slot-ref' and `slot-set!'.
+
+     GETTER specifies a generic function to which GOOPS will add a
+     method for getting the slot value.  SETTER specifies a generic
+     function to which GOOPS will add a method for setting the slot
+     value.  ACCESSOR specifies an accessor to which GOOPS will add
+     methods for both getting and setting the slot value.
+
+     So if a class includes a slot definition like this:
+
+          (c #:getter get-count #:setter set-count #:accessor count)
+
+     GOOPS defines generic function methods such that the slot value
+     can be referenced using either the getter or the accessor -
+
+          (let ((current-count (get-count obj))) ...)
+          (let ((current-count (count obj))) ...)
+
+     - and set using either the setter or the accessor -
+
+          (set-count obj (+ 1 current-count))
+          (set! (count obj) (+ 1 current-count))
+
+     Note that
+
+        * with an accessor, the slot value is set using the generalized
+          `set!' syntax
+
+        * in practice, it is unusual for a slot to use all three of
+          these options: read-only, write-only and read-write slots
+          would typically use only `#:getter', `#:setter' and
+          `#:accessor' options respectively.
+
+     If the specified names are already bound in the top-level
+     environment to values that cannot be upgraded to generic
+     functions, those values are overwritten during evaluation of the
+     `define-class' that contains the slot definition.  For details,
+     see *note ensure-generic: Generic Function Internals.
+
+ -- slot option: #:init-value init-value
+ -- slot option: #:init-form init-form
+ -- slot option: #:init-thunk init-thunk
+ -- slot option: #:init-keyword init-keyword
+     These options provide various ways to specify how to initialize the
+     slot's value at instance creation time.  INIT-VALUE is a fixed
+     value (shared across all new instances of the class).  INIT-THUNK
+     is a procedure of no arguments that is called when a new instance
+     is created and should return the desired initial slot value.
+     INIT-FORM is an unevaluated expression that gets evaluated when a
+     new instance is created and should return the desired initial slot
+     value.  INIT-KEYWORD is a keyword that can be used to pass an
+     initial slot value to `make' when creating a new instance.
+
+     Note that, since an `init-value' value is shared across all
+     instances of a class, you should only use it when the initial
+     value is an immutable value, like a constant.  If you want to
+     initialize a slot with a fresh, independently mutable value, you
+     should use `init-thunk' or `init-form' instead.  Consider the
+     following example.
+
+          (define-class <chbouib> ()
+            (hashtab #:init-value (make-hash-table)))
+
+     Here only one hash table is created and all instances of
+     `<chbouib>' have their `hashtab' slot refer to it.  In order to
+     have each instance of `<chbouib>' refer to a new hash table, you
+     should instead write:
+
+          (define-class <chbouib> ()
+            (hashtab #:init-thunk make-hash-table))
+
+     or:
+
+          (define-class <chbouib> ()
+            (hashtab #:init-form (make-hash-table)))
+
+     If more than one of these options is specified for the same slot,
+     the order of precedence, highest first is
+
+        * `#:init-keyword', if INIT-KEYWORD is present in the options
+          passed to `make'
+
+        * `#:init-thunk', `#:init-form' or `#:init-value'.
+
+     If the slot definition contains more than one initialization
+     option of the same precedence, the later ones are ignored.  If a
+     slot is not initialized at all, its value is unbound.
+
+     In general, slots that are shared between more than one instance
+     are only initialized at new instance creation time if the slot
+     value is unbound at that time.  However, if the new instance
+     creation specifies a valid init keyword and value for a shared
+     slot, the slot is re-initialized regardless of its previous value.
+
+     Note, however, that the power of GOOPS' metaobject protocol means
+     that everything written here may be customized or overridden for
+     particular classes!  The slot initializations described here are
+     performed by the least specialized method of the generic function
+     `initialize', whose signature is
+
+          (define-method (initialize (object <object>) initargs) ...)
+
+     The initialization of instances of any given class can be
+     customized by defining a `initialize' method that is specialized
+     for that class, and the author of the specialized method may
+     decide to call `next-method' - which will result in a call to the
+     next less specialized `initialize' method - at any point within the
+     specialized code, or maybe not at all.  In general, therefore, the
+     initialization mechanisms described here may be modified or
+     overridden by more specialized code, or may not be supported at
+     all for particular classes.
+
+
+File: goops.info,  Node: Class Definition Internals,  Next: Customizing Class Definition,  Prev: Slot Options,  Up: Defining New Classes
+
+3.2.4 Class Definition Internals
+--------------------------------
+
+Implementation notes: `define-class' expands to an expression which
+
+   * checks that it is being evaluated only at top level
+
+   * defines any accessors that are implied by the SLOT-DEFINITIONs
+
+   * uses `class' to create the new class (*note class: Class
+     Definition Internals.)
+
+   * checks for a previous class definition for NAME and, if found,
+     handles the redefinition by invoking `class-redefinition' (*note
+     Redefining a Class::).
+
+ -- syntax: class name (super ...) slot-definition ... . options
+     Return a newly created class that inherits from SUPERs, with
+     direct slots defined by SLOT-DEFINITIONs and class options
+     OPTIONS.  For the format of SLOT-DEFINITIONs and OPTIONS, see
+     *note define-class: Basic Class Definition.
+
+Implementation notes: `class' expands to an expression which
+
+   * processes the class and slot definition options to check that they
+     are well-formed, to convert the `#:init-form' option to an
+     `#:init-thunk' option, to supply a default environment parameter
+     (the current top-level environment) and to evaluate all the bits
+     that need to be evaluated
+
+   * calls `make-class' to create the class with the processed and
+     evaluated parameters.
+
+ -- procedure: make-class supers slots . options
+     Return a newly created class that inherits from SUPERS, with
+     direct slots defined by SLOTS and class options OPTIONS.  For the
+     format of SLOTS and OPTIONS, see *note define-class: Basic Class
+     Definition, except note that for `make-class', SLOTS and OPTIONS
+     are separate list parameters: SLOTS here is a list of slot
+     definitions.
+
+Implementation notes: `make-class'
+
+   * adds `<object>' to the SUPERS list if SUPERS is empty or if none
+     of the classes in SUPERS have `<object>' in their class precedence
+     list
+
+   * defaults the `#:environment', `#:name' and `#:metaclass' options,
+     if they are not specified by OPTIONS, to the current top-level
+     environment, the unbound value, and `(ensure-metaclass SUPERS)'
+     respectively (*note ensure-metaclass: Class Definition Internals.)
+
+   * checks for duplicate classes in SUPERS and duplicate slot names in
+     SLOTS, and signals an error if there are any duplicates
+
+   * calls `make', passing the metaclass as the first parameter and all
+     other parameters as option keywords with values.
+
+ -- procedure: ensure-metaclass supers env
+     Return a metaclass suitable for a class that inherits from the
+     list of classes in SUPERS.  The returned metaclass is the union by
+     inheritance of the metaclasses of the classes in SUPERS.
+
+     In the simplest case, where all the SUPERS are straightforward
+     classes with metaclass `<class>', the returned metaclass is just
+     `<class>'.
+
+     For a more complex example, suppose that SUPERS contained one
+     class with metaclass `<operator-class>' and one with metaclass
+     `<foreign-object-class>'.  Then the returned metaclass would be a
+     class that inherits from both `<operator-class>' and
+     `<foreign-object-class>'.
+
+     If SUPERS is the empty list, `ensure-metaclass' returns the
+     default GOOPS metaclass `<class>'.
+
+     GOOPS keeps a list of the metaclasses created by
+     `ensure-metaclass', so that each required type of metaclass only
+     has to be created once.
+
+     The `env' parameter is ignored.
+
+ -- procedure: ensure-metaclass-with-supers meta-supers
+     `ensure-metaclass-with-supers' is an internal procedure used by
+     `ensure-metaclass' (*note ensure-metaclass: Class Definition
+     Internals.).  It returns a metaclass that is the union by
+     inheritance of the metaclasses in META-SUPERS.
+
+The internals of `make', which is ultimately used to create the new
+class object, are described in *note Customizing Instance Creation::,
+which covers the creation and initialization of instances in general.
+
+
+File: goops.info,  Node: Customizing Class Definition,  Next: STKlos Compatibility,  Prev: Class Definition Internals,  Up: Defining New Classes
+
+3.2.5 Customizing Class Definition
+----------------------------------
+
+During the initialization of a new class, GOOPS calls a number of
+generic functions with the newly allocated class instance as the first
+argument.  Specifically, GOOPS calls the generic function
+
+   * (initialize CLASS ...)
+
+where CLASS is the newly allocated class instance, and the default
+`initialize' method for arguments of type `<class>' calls the generic
+functions
+
+   * (compute-cpl CLASS)
+
+   * (compute-slots CLASS)
+
+   * (compute-get-n-set CLASS SLOT-DEF), for each of the slot
+     definitions returned by `compute-slots'
+
+   * (compute-getter-method CLASS SLOT-DEF), for each of the slot
+     definitions returned by `compute-slots' that includes a `#:getter'
+     or `#:accessor' slot option
+
+   * (compute-setter-method CLASS SLOT-DEF), for each of the slot
+     definitions returned by `compute-slots' that includes a `#:setter'
+     or `#:accessor' slot option.
+
+If the metaclass of the new class is something more specialized than the
+default `<class>', then the type of CLASS in the calls above is more
+specialized than `<class>', and hence it becomes possible to define
+generic function methods, specialized for the new class's metaclass,
+that can modify or override the default behaviour of `initialize',
+`compute-cpl' or `compute-get-n-set'.
+
+`compute-cpl' computes the class precedence list ("CPL") for the new
+class (*note Class precedence list::), and returns it as a list of
+class objects.  The CPL is important because it defines a superclass
+ordering that is used, when a generic function is invoked upon an
+instance of the class, to decide which of the available generic function
+methods is the most specific.  Hence `compute-cpl' could be customized
+in order to modify the CPL ordering algorithm for all classes with a
+special metaclass.
+
+The default CPL algorithm is encapsulated by the `compute-std-cpl'
+procedure, which is in turn called by the default `compute-cpl' method.
+
+ -- procedure: compute-std-cpl class
+     Compute and return the class precedence list for CLASS according
+     to the algorithm described in *note Class precedence list::.
+
+`compute-slots' computes and returns a list of all slot definitions for
+the new class.  By default, this list includes the direct slot
+definitions from the `define-class' form, plus the slot definitions
+that are inherited from the new class's superclasses.  The default
+`compute-slots' method uses the CPL computed by `compute-cpl' to
+calculate this union of slot definitions, with the rule that slots
+inherited from superclasses are shadowed by direct slots with the same
+name.  One possible reason for customizing `compute-slots' would be to
+implement an alternative resolution strategy for slot name conflicts.
+
+`compute-get-n-set' computes the low-level closures that will be used
+to get and set the value of a particular slot, and returns them in a
+list with two elements.
+
+The closures returned depend on how storage for that slot is allocated.
+The standard `compute-get-n-set' method, specialized for classes of
+type `<class>', handles the standard GOOPS values for the
+`#:allocation' slot option (*note allocation: Slot Options.).  By
+defining a new `compute-get-n-set' method for a more specialized
+metaclass, it is possible to support new types of slot allocation.
+
+Suppose you wanted to create a large number of instances of some class
+with a slot that should be shared between some but not all instances of
+that class - say every 10 instances should share the same slot storage.
+The following example shows how to implement and use a new type of slot
+allocation to do this.
+
+     (define-class <batched-allocation-metaclass> (<class>))
+
+     (let ((batch-allocation-count 0)
+           (batch-get-n-set #f))
+       (define-method (compute-get-n-set (class <batched-allocation-metaclass>) s)
+         (case (slot-definition-allocation s)
+           ((#:batched)
+            ;; If we've already used the same slot storage for 10 instances,
+            ;; reset variables.
+            (if (= batch-allocation-count 10)
+                (begin
+                  (set! batch-allocation-count 0)
+                  (set! batch-get-n-set #f)))
+            ;; If we don't have a current pair of get and set closures,
+            ;; create one.  make-closure-variable returns a pair of closures
+            ;; around a single Scheme variable - see goops.scm for details.
+            (or batch-get-n-set
+                (set! batch-get-n-set (make-closure-variable)))
+            ;; Increment the batch allocation count.
+            (set! batch-allocation-count (+ batch-allocation-count 1))
+            batch-get-n-set)
+
+           ;; Call next-method to handle standard allocation types.
+           (else (next-method)))))
+
+     (define-class <class-using-batched-slot> ()
+       ...
+       (c #:allocation #:batched)
+       ...
+       #:metaclass <batched-allocation-metaclass>)
+
+The usage of `compute-getter-method' and `compute-setter-method' is
+described in *note MOP Specification::.
+
+`compute-cpl' and `compute-get-n-set' are called by the standard
+`initialize' method for classes whose metaclass is `<class>'.  But
+`initialize' itself can also be modified, by defining an `initialize'
+method specialized to the new class's metaclass.  Such a method could
+complete override the standard behaviour, by not calling
+`(next-method)' at all, but more typically it would perform additional
+class initialization steps before and/or after calling `(next-method)'
+for the standard behaviour.
+
+
+File: goops.info,  Node: STKlos Compatibility,  Prev: Customizing Class Definition,  Up: Defining New Classes
+
+3.2.6 STKlos Compatibility
+--------------------------
+
+If the STKlos compatibility module is loaded, `define-class' is
+overwritten by a STKlos-specific definition; the standard GOOPS
+definition of `define-class' remains available in
+`standard-define-class'.
+
+ -- syntax: standard-define-class name (super ...) slot-definition ...
+          . options
+     `standard-define-class' is equivalent to the standard GOOPS
+     `define-class'.
+
+
+File: goops.info,  Node: Creating Instances,  Next: Accessing Slots,  Prev: Defining New Classes,  Up: Reference Manual
+
+3.3 Creating Instances
+======================
+
+* Menu:
+
+* Basic Instance Creation::
+* Customizing Instance Creation::
+
+
+File: goops.info,  Node: Basic Instance Creation,  Next: Customizing Instance Creation,  Up: Creating Instances
+
+3.3.1 Basic Instance Creation
+-----------------------------
+
+To create a new instance of any GOOPS class, use the generic function
+`make' or `make-instance', passing the required class and any
+appropriate instance initialization arguments as keyword and value
+pairs.  Note that `make' and `make-instances' are aliases for each
+other - their behaviour is identical.
+
+ -- generic: make
+ -- method: make (class <class>) . initargs
+     Create and return a new instance of class CLASS, initialized using
+     INITARGS.
+
+     In theory, INITARGS can have any structure that is understood by
+     whatever methods get applied when the `initialize' generic function
+     is applied to the newly allocated instance.
+
+     In practice, specialized `initialize' methods would normally call
+     `(next-method)', and so eventually the standard GOOPS `initialize'
+     methods are applied.  These methods expect INITARGS to be a list
+     with an even number of elements, where even-numbered elements
+     (counting from zero) are keywords and odd-numbered elements are
+     the corresponding values.
+
+     GOOPS processes initialization argument keywords automatically for
+     slots whose definition includes the `#:init-keyword' option (*note
+     init-keyword: Slot Options.).  Other keyword value pairs can only
+     be processed by an `initialize' method that is specialized for the
+     new instance's class.  Any unprocessed keyword value pairs are
+     ignored.
+
+ -- generic: make-instance
+ -- method: make-instance (class <class>) . initargs
+     `make-instance' is an alias for `make'.
+
+
+File: goops.info,  Node: Customizing Instance Creation,  Prev: Basic Instance Creation,  Up: Creating Instances
+
+3.3.2 Customizing Instance Creation
+-----------------------------------
+
+`make' itself is a generic function.  Hence the `make' invocation
+itself can be customized in the case where the new instance's metaclass
+is more specialized than the default `<class>', by defining a `make'
+method that is specialized to that metaclass.
+
+Normally, however, the method for classes with metaclass `<class>' will
+be applied.  This method calls two generic functions:
+
+   * (allocate-instance CLASS . INITARGS)
+
+   * (initialize INSTANCE . INITARGS)
+
+`allocate-instance' allocates storage for and returns the new instance,
+uninitialized.  You might customize `allocate-instance', for example,
+if you wanted to provide a GOOPS wrapper around some other object
+programming system.
+
+To do this, you would create a specialized metaclass, which would act as
+the metaclass for all classes and instances from the other system.  Then
+define an `allocate-instance' method, specialized to that metaclass,
+which calls a Guile primitive C function, which in turn allocates the
+new instance using the interface of the other object system.
+
+In this case, for a complete system, you would also need to customize a
+number of other generic functions like `make' and `initialize', so that
+GOOPS knows how to make classes from the other system, access instance
+slots, and so on.
+
+`initialize' initializes the instance that is returned by
+`allocate-instance'.  The standard GOOPS methods perform
+initializations appropriate to the instance class.
+
+   * At the least specialized level, the method for instances of type
+     `<object>' performs internal GOOPS instance initialization, and
+     initializes the instance's slots according to the slot definitions
+     and any slot initialization keywords that appear in INITARGS.
+
+   * The method for instances of type `<class>' calls `(next-method)',
+     then performs the class initializations described in *note
+     Customizing Class Definition::.
+
+   * and so on for generic functions, method, operator classes ...
+
+Similarly, you can customize the initialization of instances of any
+application-defined class by defining an `initialize' method
+specialized to that class.
+
+Imagine a class whose instances' slots need to be initialized at
+instance creation time by querying a database.  Although it might be
+possible to achieve this a combination of `#:init-thunk' keywords and
+closures in the slot definitions, it is neater to write an `initialize'
+method for the class that queries the database once and initializes all
+the dependent slot values according to the results.
+
+
+File: goops.info,  Node: Accessing Slots,  Next: Creating Generic Functions,  Prev: Creating Instances,  Up: Reference Manual
+
+3.4 Accessing Slots
+===================
+
+The definition of a slot contains at the very least a slot name, and may
+also contain various slot options, including getter, setter and/or
+accessor functions for the slot.
+
+It is always possible to access slots by name, using the various
+"slot-ref" and "slot-set!" procedures described in the following
+subsections.  For example,
+
+     (define-class <my-class> ()      ;; Define a class with slots
+       (count #:init-value 0)         ;; named "count" and "cache".
+       (cache #:init-value '())
+       ...)
+
+     (define inst (make <my-class>))  ;; Make an instance of this class.
+
+     (slot-set! inst 'count 5)        ;; Set the value of the "count"
+                                      ;; slot to 5.
+
+     (slot-set! inst 'cache           ;; Modify the value of the
+       (cons (cons "^it" "It")        ;; "cache" slot.
+             (slot-ref inst 'cache)))
+
+If a slot definition includes a getter, setter or accessor function,
+these can be used instead of `slot-ref' and `slot-set!' to access the
+slot.
+
+     (define-class <adv-class> ()     ;; Define a new class whose slots
+       (count #:setter set-count)     ;; use a getter, a setter and
+       (cache #:accessor cache)       ;; an accessor.
+       (csize #:getter cache-size)
+       ...)
+
+     (define inst (make <adv-class>)) ;; Make an instance of this class.
+
+     (set-count inst 5)               ;; Set the value of the "count"
+                                      ;; slot to 5.
+
+     (set! (cache inst)               ;; Modify the value of the
+       (cons (cons "^it" "It")        ;; "cache" slot.
+             (cache inst)))
+
+     (let ((size (cache-size inst)))  ;; Get the value of the "csize"
+       ...)                           ;; slot.
+
+Whichever of these methods is used to access slots, GOOPS always calls
+the low-level "getter" and "setter" closures for the slot to get and
+set its value.  These closures make sure that the slot behaves
+according to the `#:allocation' type that was specified in the slot
+definition (*note allocation: Slot Options.).  (For more about these
+closures, see *note compute-get-n-set: Customizing Class Definition.)
+
+* Menu:
+
+* Instance Slots::
+* Class Slots::
+* Handling Slot Access Errors::
+
+
+File: goops.info,  Node: Instance Slots,  Next: Class Slots,  Up: Accessing Slots
+
+3.4.1 Instance Slots
+--------------------
+
+Any slot, regardless of its allocation, can be queried, referenced and
+set using the following four primitive procedures.
+
+ -- primitive procedure: slot-exists? obj slot-name
+     Return `#t' if OBJ has a slot with name SLOT-NAME, otherwise `#f'.
+
+ -- primitive procedure: slot-bound? obj slot-name
+     Return `#t' if the slot named SLOT-NAME in OBJ has a value,
+     otherwise `#f'.
+
+     `slot-bound?' calls the generic function `slot-missing' if OBJ
+     does not have a slot called SLOT-NAME (*note slot-missing:
+     Handling Slot Access Errors.).
+
+ -- primitive procedure: slot-ref obj slot-name
+     Return the value of the slot named SLOT-NAME in OBJ.
+
+     `slot-ref' calls the generic function `slot-missing' if OBJ does
+     not have a slot called SLOT-NAME (*note slot-missing: Handling
+     Slot Access Errors.).
+
+     `slot-ref' calls the generic function `slot-unbound' if the named
+     slot in OBJ does not have a value (*note slot-unbound: Handling
+     Slot Access Errors.).
+
+ -- primitive procedure: slot-set! obj slot-name value
+     Set the value of the slot named SLOT-NAME in OBJ to VALUE.
+
+     `slot-set!' calls the generic function `slot-missing' if OBJ does
+     not have a slot called SLOT-NAME (*note slot-missing: Handling
+     Slot Access Errors.).
+
+GOOPS stores information about slots in class metaobjects.  Internally,
+all of these procedures work by looking up the slot definition for the
+slot named SLOT-NAME in the class metaobject for `(class-of OBJ)', and
+then using the slot definition's "getter" and "setter" closures to get
+and set the slot value.
+
+The next four procedures differ from the previous ones in that they take
+the class metaobject as an explicit argument, rather than assuming
+`(class-of OBJ)'.  Therefore they allow you to apply the "getter" and
+"setter" closures of a slot definition in one class to an instance of a
+different class.
+
+[ *fixme* I have no idea why this is useful!  Perhaps when a slot in
+`(class-of OBJ)' shadows a slot with the same name in one of its
+superclasses?  There should be an enlightening example here. ]
+
+ -- primitive procedure: slot-exists-using-class? class obj slot-name
+     Return `#t' if the class metaobject CLASS has a slot definition
+     for a slot with name SLOT-NAME, otherwise `#f'.
+
+ -- primitive procedure: slot-bound-using-class? class obj slot-name
+     Return `#t' if applying `slot-ref-using-class' to the same
+     arguments would call the generic function `slot-unbound', otherwise
+     `#f'.
+
+     `slot-bound-using-class?' calls the generic function
+     `slot-missing' if CLASS does not have a slot definition for a slot
+     called SLOT-NAME (*note slot-missing: Handling Slot Access
+     Errors.).
+
+ -- primitive procedure: slot-ref-using-class class obj slot-name
+     Apply the "getter" closure for the slot named SLOT-NAME in CLASS
+     to OBJ, and return its result.
+
+     `slot-ref-using-class' calls the generic function `slot-missing'
+     if CLASS does not have a slot definition for a slot called
+     SLOT-NAME (*note slot-missing: Handling Slot Access Errors.).
+
+     `slot-ref-using-class' calls the generic function `slot-unbound'
+     if the application of the "getter" closure to OBJ returns an
+     unbound value (*note slot-unbound: Handling Slot Access Errors.).
+
+ -- primitive procedure: slot-set-using-class! class obj slot-name value
+     Apply the "setter" closure for the slot named SLOT-NAME in CLASS
+     to OBJ and VALUE.
+
+     `slot-set-using-class!' calls the generic function `slot-missing'
+     if CLASS does not have a slot definition for a slot called
+     SLOT-NAME (*note slot-missing: Handling Slot Access Errors.).
+
+
+File: goops.info,  Node: Class Slots,  Next: Handling Slot Access Errors,  Prev: Instance Slots,  Up: Accessing Slots
+
+3.4.2 Class Slots
+-----------------
+
+Slots whose allocation is per-class rather than per-instance can be
+referenced and set without needing to specify any particular instance.
+
+ -- procedure: class-slot-ref class slot-name
+     Return the value of the slot named SLOT-NAME in class CLASS.  The
+     named slot must have `#:class' or `#:each-subclass' allocation
+     (*note allocation: Slot Options.).
+
+     If there is no such slot with `#:class' or `#:each-subclass'
+     allocation, `class-slot-ref' calls the `slot-missing' generic
+     function with arguments CLASS and SLOT-NAME.  Otherwise, if the
+     slot value is unbound, `class-slot-ref' calls the `slot-missing'
+     generic function, with the same arguments.
+
+ -- procedure: class-slot-set! class slot-name value
+     Set the value of the slot named SLOT-NAME in class CLASS to VALUE.
+     The named slot must have `#:class' or `#:each-subclass' allocation
+     (*note allocation: Slot Options.).
+
+     If there is no such slot with `#:class' or `#:each-subclass'
+     allocation, `class-slot-ref' calls the `slot-missing' generic
+     function with arguments CLASS and SLOT-NAME.
+
+
+File: goops.info,  Node: Handling Slot Access Errors,  Prev: Class Slots,  Up: Accessing Slots
+
+3.4.3 Handling Slot Access Errors
+---------------------------------
+
+GOOPS calls one of the following generic functions when a "slot-ref" or
+"slot-set!" call specifies a non-existent slot name, or tries to
+reference a slot whose value is unbound.
+
+ -- generic: slot-missing
+ -- method: slot-missing (class <class>) slot-name
+ -- method: slot-missing (class <class>) (object <object>) slot-name
+ -- method: slot-missing (class <class>) (object <object>) slot-name
+          value
+     When an application attempts to reference or set a class or
+     instance slot by name, and the slot name is invalid for the
+     specified CLASS or OBJECT, GOOPS calls the `slot-missing' generic
+     function.
+
+     The default methods all call `goops-error' with an appropriate
+     message.
+
+ -- generic: slot-unbound
+ -- method: slot-unbound (object <object>)
+ -- method: slot-unbound (class <class>) slot-name
+ -- method: slot-unbound (class <class>) (object <object>) slot-name
+     When an application attempts to reference a class or instance
+     slot, and the slot's value is unbound, GOOPS calls the
+     `slot-unbound' generic function.
+
+     The default methods all call `goops-error' with an appropriate
+     message.
+
+
+File: goops.info,  Node: Creating Generic Functions,  Next: Adding Methods to Generic Functions,  Prev: Accessing Slots,  Up: Reference Manual
+
+3.5 Creating Generic Functions
+==============================
+
+A generic function is a collection of methods, with rules for
+determining which of the methods should be applied for any given
+invocation of the generic function.
+
+GOOPS represents generic functions as metaobjects of the class
+`<generic>' (or one of its subclasses).
+
+* Menu:
+
+* Basic Generic Function Creation::
+* Generic Function Internals::
+* Extending Guiles Primitives::
+
+
+File: goops.info,  Node: Basic Generic Function Creation,  Next: Generic Function Internals,  Up: Creating Generic Functions
+
+3.5.1 Basic Generic Function Creation
+-------------------------------------
+
+The following forms may be used to bind a variable to a generic
+function.  Depending on that variable's pre-existing value, the generic
+function may be created empty - with no methods - or it may contain
+methods that are inferred from the pre-existing value.
+
+It is not, in general, necessary to use `define-generic' or
+`define-accessor' before defining methods for the generic function
+using `define-method', since `define-method' will automatically
+interpolate a `define-generic' call, or upgrade an existing generic to
+an accessor, if that is implied by the `define-method' call.  Note in
+particular that, if the specified variable already has a _generic
+function_ value, `define-generic' and `define-accessor' will _discard_
+it!  Obviously it is application-dependent whether this is desirable or
+not.
+
+If, for example, you wanted to extend `+' for a class representing a
+new numerical type, you probably want to inherit any existing methods
+for `+' and so should not use `define-generic'.  If, on the other hand,
+you do not want to risk inheriting methods whose behaviour might
+surprise you, you can use `define-generic' or `define-accessor' to wipe
+the slate clean.
+
+ -- syntax: define-generic symbol
+     Create a generic function with name SYMBOL and bind it to the
+     variable SYMBOL.
+
+     If the variable SYMBOL was previously bound to a Scheme procedure
+     (or procedure-with-setter), the old procedure (and setter) is
+     incorporated into the new generic function as its default
+     procedure (and setter).  Any other previous value that was bound
+     to SYMBOL, including an existing generic function, is overwritten
+     by the new generic function.
+
+ -- syntax: define-accessor symbol
+     Create an accessor with name SYMBOL and bind it to the variable
+     SYMBOL.
+
+     If the variable SYMBOL was previously bound to a Scheme procedure
+     (or procedure-with-setter), the old procedure (and setter) is
+     incorporated into the new accessor as its default procedure (and
+     setter).  Any other previous value that was bound to SYMBOL,
+     including an existing generic function or accessor, is overwritten
+     by the new definition.
+
+It is sometimes tempting to use GOOPS accessors with short names.  For
+example, it is tempting to use the name `x' for the x-coordinate in
+vector packages.
+
+Assume that we work with a graphical package which needs to use two
+independent vector packages for 2D and 3D vectors respectively.  If
+both packages export `x' we will encounter a name collision.
+
+This can be resolved automagically with the duplicates handler
+`merge-generics' which gives the module system license to merge all
+generic functions sharing a common name:
+
+     (define-module (math 2D-vectors)
+       :use-module (oop goops)
+       :export (x y ...))
+
+     (define-module (math 3D-vectors)
+       :use-module (oop goops)
+       :export (x y z ...))
+
+     (define-module (my-module)
+       :use-module (math 2D-vectors)
+       :use-module (math 3D-vectors)
+       :duplicates merge-generics)
+
+The generic function `x' in `(my-module)' will now share methods with
+`x' in both imported modules.
+
+There will, in fact, now be three distinct generic functions named `x':
+`x' in `(2D-vectors)', `x' in `(3D-vectors)', and `x' in `(my-module)'.
+The last function will be an `<extended-generic>', extending the
+previous two functions.
+
+Let's call the imported generic functions the "ancestor functions".
+The generic function `x' in `(my-module)' is, in turn, a "descendant
+function" of the imported functions, extending its ancestors.
+
+For any generic function G, the applicable methods are selected from
+the union of the methods of the descendant functions, the methods of G
+itself and the methods of the ancestor functions.
+
+This, ancestor functions share methods with their descendants and vice
+versa.  This implies that `x' in `(math 2D-vectors)' will share the
+methods of `x' in `(my-module)' and vice versa, while `x' in `(math
+2D-vectors)' doesn't share the methods of `x' in `(math 3D-vectors)',
+thus preserving modularity.
+
+Sharing is dynamic, so that adding new methods to a descendant implies
+adding it to the ancestor.
+
+If duplicates checking is desired in the above example, the following
+form of the `:duplicates' option can be used instead:
+
+       :duplicates (merge-generics check)
+
+
+File: goops.info,  Node: Generic Function Internals,  Next: Extending Guiles Primitives,  Prev: Basic Generic Function Creation,  Up: Creating Generic Functions
+
+3.5.2 Generic Function Internals
+--------------------------------
+
+`define-generic' calls `ensure-generic' to upgrade a pre-existing
+procedure value, or `make' with metaclass `<generic>' to create a new
+generic function.
+
+`define-accessor' calls `ensure-accessor' to upgrade a pre-existing
+procedure value, or `make-accessor' to create a new accessor.
+
+ -- procedure: ensure-generic old-definition [name]
+     Return a generic function with name NAME, if possible by using or
+     upgrading OLD-DEFINITION.  If unspecified, NAME defaults to `#f'.
+
+     If OLD-DEFINITION is already a generic function, it is returned
+     unchanged.
+
+     If OLD-DEFINITION is a Scheme procedure or procedure-with-setter,
+     `ensure-generic' returns a new generic function that uses
+     OLD-DEFINITION for its default procedure and setter.
+
+     Otherwise `ensure-generic' returns a new generic function with no
+     defaults and no methods.
+
+ -- procedure: make-generic [name]
+     Return a new generic function with name `(car NAME)'.  If
+     unspecified, NAME defaults to `#f'.
+
+`ensure-generic' calls `make' with metaclasses `<generic>' and
+`<generic-with-setter>', depending on the previous value of the
+variable that it is trying to upgrade.
+
+`make-generic' is a simple wrapper for `make' with metaclass
+`<generic>'.
+
+ -- procedure: ensure-accessor proc [name]
+     Return an accessor with name NAME, if possible by using or
+     upgrading PROC.  If unspecified, NAME defaults to `#f'.
+
+     If PROC is already an accessor, it is returned unchanged.
+
+     If PROC is a Scheme procedure, procedure-with-setter or generic
+     function, `ensure-accessor' returns an accessor that reuses the
+     reusable elements of PROC.
+
+     Otherwise `ensure-accessor' returns a new accessor with no defaults
+     and no methods.
+
+ -- procedure: make-accessor [name]
+     Return a new accessor with name `(car NAME)'.  If unspecified,
+     NAME defaults to `#f'.
+
+`ensure-accessor' calls `make' with metaclass `<generic-with-setter>',
+as well as calls to `ensure-generic', `make-accessor' and (tail
+recursively) `ensure-accessor'.
+
+`make-accessor' calls `make' twice, first with metaclass `<generic>' to
+create a generic function for the setter, then with metaclass
+`<generic-with-setter>' to create the accessor, passing the setter
+generic function as the value of the `#:setter' keyword.
+
+
+File: goops.info,  Node: Extending Guiles Primitives,  Prev: Generic Function Internals,  Up: Creating Generic Functions
+
+3.5.3 Extending Guile's Primitives
+----------------------------------
+
+When GOOPS is loaded, many of Guile's primitive procedures can be
+extended by giving them a generic function definition that operates in
+conjunction with their normal C-coded implementation.  For primitives
+that are extended in this way, the result from the user- or
+application-level point of view is that the extended primitive behaves
+exactly like a generic function with the C-coded implementation as its
+default method.
+
+The `generic-capability?' predicate should be used to determine whether
+a particular primitive is extensible in this way.
+
+ -- primitive procedure: generic-capability? primitive
+     Return `#t' if PRIMITIVE can be extended by giving it a generic
+     function definition, otherwise `#f'.
+
+Even when a primitive procedure is extensible like this, its generic
+function definition is not created until it is needed by a call to
+`define-method', or until the application explicitly requests it by
+calling `enable-primitive-generic!'.
+
+ -- primitive procedure: enable-primitive-generic! primitive
+     Force the creation of a generic function definition for PRIMITIVE.
+
+Once the generic function definition for a primitive has been created,
+it can be retrieved using `primitive-generic-generic'.
+
+ -- primitive procedure: primitive-generic-generic primitive
+     Return the generic function definition of PRIMITIVE.
+
+     `primitive-generic-generic' raises an error if PRIMITIVE is not a
+     primitive with generic capability, or if its generic capability
+     has not yet been enabled, whether implicitly (by `define-method')
+     or explicitly (by `enable-primitive-generic!').
+
+Note that the distinction between, on the one hand, primitives with
+additional generic function definitions and, on the other hand, generic
+functions with a default method, may disappear when GOOPS is fully
+integrated into the core of Guile.  Consequently, the procedures
+described in this section may disappear as well.
+
+
+File: goops.info,  Node: Adding Methods to Generic Functions,  Next: Invoking Generic Functions,  Prev: Creating Generic Functions,  Up: Reference Manual
+
+3.6 Adding Methods to Generic Functions
+=======================================
+
+* Menu:
+
+* Basic Method Definition::
+* Method Definition Internals::
+
+
+File: goops.info,  Node: Basic Method Definition,  Next: Method Definition Internals,  Up: Adding Methods to Generic Functions
+
+3.6.1 Basic Method Definition
+-----------------------------
+
+To add a method to a generic function, use the `define-method' form.
+
+ -- syntax: define-method (generic parameter ...) . body
+     Define a method for the generic function or accessor GENERIC with
+     parameters PARAMETERs and body BODY.
+
+     GENERIC is a generic function.  If GENERIC is a variable which is
+     not yet bound to a generic function object, the expansion of
+     `define-method' will include a call to `define-generic'.  If
+     GENERIC is `(setter GENERIC-WITH-SETTER)', where
+     GENERIC-WITH-SETTER is a variable which is not yet bound to a
+     generic-with-setter object, the expansion will include a call to
+     `define-accessor'.
+
+     Each PARAMETER must be either a symbol or a two-element list
+     `(SYMBOL CLASS)'.  The symbols refer to variables in the BODY that
+     will be bound to the parameters supplied by the caller when
+     calling this method.  The CLASSes, if present, specify the
+     possible combinations of parameters to which this method can be
+     applied.
+
+     BODY is the body of the method definition.
+
+`define-method' expressions look a little like normal Scheme procedure
+definitions of the form
+
+     (define (name formals ...) . body)
+
+The most important difference is that each formal parameter, apart from
+the possible "rest" argument, can be qualified by a class name:
+`FORMAL' becomes `(FORMAL CLASS)'.  The meaning of this qualification
+is that the method being defined will only be applicable in a
+particular generic function invocation if the corresponding argument is
+an instance of `CLASS' (or one of its subclasses).  If more than one of
+the formal parameters is qualified in this way, then the method will
+only be applicable if each of the corresponding arguments is an
+instance of its respective qualifying class.
+
+Note that unqualified formal parameters act as though they are qualified
+by the class `<top>', which GOOPS uses to mean the superclass of all
+valid Scheme types, including both primitive types and GOOPS classes.
+
+For example, if a generic function method is defined with PARAMETERs
+`((s1 <square>) (n <number>))', that method is only applicable to
+invocations of its generic function that have two parameters where the
+first parameter is an instance of the `<square>' class and the second
+parameter is a number.
+
+If a generic function is invoked with a combination of parameters for
+which there is no applicable method, GOOPS raises an error.  For more
+about invocation error handling, and generic function invocation in
+general, see *note Invoking Generic Functions::.
+
+
+File: goops.info,  Node: Method Definition Internals,  Prev: Basic Method Definition,  Up: Adding Methods to Generic Functions
+
+3.6.2 Method Definition Internals
+---------------------------------
+
+`define-method'
+
+   * checks the form of the first parameter, and applies the following
+     steps to the accessor's setter if it has the `(setter ...)' form
+
+   * interpolates a call to `define-generic' or `define-accessor' if a
+     generic function is not already defined with the supplied name
+
+   * calls `method' with the PARAMETERs and BODY, to make a new method
+     instance
+
+   * calls `add-method!' to add this method to the relevant generic
+     function.
+
+ -- syntax: method (parameter ...) . body
+     Make a method whose specializers are defined by the classes in
+     PARAMETERs and whose procedure definition is constructed from the
+     PARAMETER symbols and BODY forms.
+
+     The PARAMETER and BODY parameters should be as for `define-method'
+     (*note define-method: Basic Method Definition.).
+
+`method'
+
+   * extracts formals and specializing classes from the PARAMETERs,
+     defaulting the class for unspecialized parameters to `<top>'
+
+   * creates a closure using the formals and the BODY forms
+
+   * calls `make' with metaclass `<method>' and the specializers and
+     closure using the `#:specializers' and `#:procedure' keywords.
+
+ -- procedure: make-method specializers procedure
+     Make a method using SPECIALIZERS and PROCEDURE.
+
+     SPECIALIZERS should be a list of classes that specifies the
+     parameter combinations to which this method will be applicable.
+
+     PROCEDURE should be the closure that will applied to the generic
+     function parameters when this method is invoked.
+
+`make-method' is a simple wrapper around `make' with metaclass
+`<method>'.
+
+ -- generic: add-method! target method
+     Generic function for adding method METHOD to TARGET.
+
+ -- method: add-method! (generic <generic>) (method <method>)
+     Add method METHOD to the generic function GENERIC.
+
+ -- method: add-method! (proc <procedure>) (method <method>)
+     If PROC is a procedure with generic capability (*note
+     generic-capability?: Extending Guiles Primitives.), upgrade it to a
+     primitive generic and add METHOD to its generic function
+     definition.
+
+ -- method: add-method! (pg <primitive-generic>) (method <method>)
+     Add method METHOD to the generic function definition of PG.
+
+     Implementation: `(add-method! (primitive-generic-generic pg)
+     method)'.
+
+ -- method: add-method! (whatever <top>) (method <method>)
+     Raise an error indicating that WHATEVER is not a valid generic
+     function.
+
+
+File: goops.info,  Node: Invoking Generic Functions,  Next: Redefining a Class,  Prev: Adding Methods to Generic Functions,  Up: Reference Manual
+
+3.7 Invoking Generic Functions
+==============================
+
+When a variable with a generic function definition appears as the first
+element of a list that is being evaluated, the Guile evaluator tries to
+apply the generic function to the arguments obtained by evaluating the
+remaining elements of the list.  [ *fixme* How do I put this in a more
+Schemely and less Lispy way? ]
+
+Usually a generic function contains several method definitions, with
+varying degrees of formal parameter specialization (*note
+define-method: Basic Method Definition.).  So it is necessary to sort
+these methods by specificity with respect to the supplied arguments,
+and then apply the most specific method definition.  Less specific
+methods may be applied subsequently if a method that is being applied
+calls `next-method'.
+
+* Menu:
+
+* Determining Which Methods to Apply::
+* Handling Invocation Errors::
+
+
+File: goops.info,  Node: Determining Which Methods to Apply,  Next: Handling Invocation Errors,  Up: Invoking Generic Functions
+
+3.7.1 Determining Which Methods to Apply
+----------------------------------------
+
+[ *fixme*  Sorry - this is the area of GOOPS that I understand least of
+all, so I'm afraid I have to pass on this section.  Would some other
+kind person consider filling it in? ]
+
+ -- generic: apply-generic
+ -- method: apply-generic (gf <generic>) args
+
+ -- generic: compute-applicable-methods
+ -- method: compute-applicable-methods (gf <generic>) args
+
+ -- generic: sort-applicable-methods
+ -- method: sort-applicable-methods (gf <generic>) methods args
+
+ -- generic: method-more-specific?
+ -- method: method-more-specific? (m1 <method>) (m2 <method>) args
+
+ -- generic: apply-method
+ -- method: apply-method (gf <generic>) methods build-next args
+
+ -- generic: apply-methods
+ -- method: apply-methods (gf <generic>) (l <list>) args
+
+
+File: goops.info,  Node: Handling Invocation Errors,  Prev: Determining Which Methods to Apply,  Up: Invoking Generic Functions
+
+3.7.2 Handling Invocation Errors
+--------------------------------
+
+ -- generic: no-method
+ -- method: no-method (gf <generic>) args
+     When an application invokes a generic function, and no methods at
+     all have been defined for that generic function, GOOPS calls the
+     `no-method' generic function.  The default method calls
+     `goops-error' with an appropriate message.
+
+ -- generic: no-applicable-method
+ -- method: no-applicable-method (gf <generic>) args
+     When an application applies a generic function to a set of
+     arguments, and no methods have been defined for those argument
+     types, GOOPS calls the `no-applicable-method' generic function.
+     The default method calls `goops-error' with an appropriate message.
+
+ -- generic: no-next-method
+ -- method: no-next-method (gf <generic>) args
+     When a generic function method calls `(next-method)' to invoke the
+     next less specialized method for that generic function, and no less
+     specialized methods have been defined for the current generic
+     function arguments, GOOPS calls the `no-next-method' generic
+     function.  The default method calls `goops-error' with an
+     appropriate message.
+
+
+File: goops.info,  Node: Redefining a Class,  Next: Changing the Class of an Instance,  Prev: Invoking Generic Functions,  Up: Reference Manual
+
+3.8 Redefining a Class
+======================
+
+Suppose that a class `<my-class>' is defined using `define-class'
+(*note define-class: Basic Class Definition.), with slots that have
+accessor functions, and that an application has created several
+instances of `<my-class>' using `make' (*note make: Basic Instance
+Creation.).  What then happens if `<my-class>' is redefined by calling
+`define-class' again?
+
+* Menu:
+
+* Default Class Redefinition Behaviour::
+* Customizing Class Redefinition::
+
+
+File: goops.info,  Node: Default Class Redefinition Behaviour,  Next: Customizing Class Redefinition,  Up: Redefining a Class
+
+3.8.1 Default Class Redefinition Behaviour
+------------------------------------------
+
+GOOPS' default answer to this question is as follows.
+
+   * All existing direct instances of `<my-class>' are converted to be
+     instances of the new class.  This is achieved by preserving the
+     values of slots that exist in both the old and new definitions,
+     and initializing the values of new slots in the usual way (*note
+     make: Basic Instance Creation.).
+
+   * All existing subclasses of `<my-class>' are redefined, as though
+     the `define-class' expressions that defined them were re-evaluated
+     following the redefinition of `<my-class>', and the class
+     redefinition process described here is applied recursively to the
+     redefined subclasses.
+
+   * Once all of its instances and subclasses have been updated, the
+     class metaobject previously bound to the variable `<my-class>' is
+     no longer needed and so can be allowed to be garbage collected.
+
+To keep things tidy, GOOPS also needs to do a little housekeeping on
+methods that are associated with the redefined class.
+
+   * Slot accessor methods for slots in the old definition should be
+     removed from their generic functions.  They will be replaced by
+     accessor methods for the slots of the new class definition.
+
+   * Any generic function method that uses the old `<my-class>'
+     metaobject as one of its formal parameter specializers must be
+     updated to refer to the new `<my-class>' metaobject.  (Whenever a
+     new generic function method is defined, `define-method' adds the
+     method to a list stored in the class metaobject for each class
+     used as a formal parameter specializer, so it is easy to identify
+     all the methods that must be updated when a class is redefined.)
+
+If this class redefinition strategy strikes you as rather
+counter-intuitive, bear in mind that it is derived from similar
+behaviour in other object systems such as CLOS, and that experience in
+those systems has shown it to be very useful in practice.
+
+Also bear in mind that, like most of GOOPS' default behaviour, it can
+be customized...
+
+
+File: goops.info,  Node: Customizing Class Redefinition,  Prev: Default Class Redefinition Behaviour,  Up: Redefining a Class
+
+3.8.2 Customizing Class Redefinition
+------------------------------------
+
+When `define-class' notices that a class is being redefined, it
+constructs the new class metaobject as usual, and then invokes the
+`class-redefinition' generic function with the old and new classes as
+arguments.  Therefore, if the old or new classes have metaclasses other
+than the default `<class>', class redefinition behaviour can be
+customized by defining a `class-redefinition' method that is
+specialized for the relevant metaclasses.
+
+ -- generic: class-redefinition
+     Handle the class redefinition from OLD-CLASS to NEW-CLASS, and
+     return the new class metaobject that should be bound to the
+     variable specified by `define-class''s first argument.
+
+ -- method: class-redefinition (old-class <class>) (new-class <class>)
+     Implements GOOPS' default class redefinition behaviour, as
+     described in *note Default Class Redefinition Behaviour::.
+     Returns the metaobject for the new class definition.
+
+An alternative class redefinition strategy could be to leave all
+existing instances as instances of the old class, but accepting that the
+old class is now "nameless", since its name has been taken over by the
+new definition.  In this strategy, any existing subclasses could also
+be left as they are, on the understanding that they inherit from a
+nameless superclass.
+
+This strategy is easily implemented in GOOPS, by defining a new
+metaclass, that will be used as the metaclass for all classes to which
+the strategy should apply, and then defining a `class-redefinition'
+method that is specialized for this metaclass:
+
+     (define-class <can-be-nameless> (<class>))
+
+     (define-method (class-redefinition (old <can-be-nameless>) (new <class>))
+       new)
+
+When customization can be as easy as this, aren't you glad that GOOPS
+implements the far more difficult strategy as its default!
+
+Finally, note that, if `class-redefinition' itself is not customized,
+the default `class-redefinition' method invokes three further generic
+functions that could be individually customized:
+
+   * (remove-class-accessors! OLD-CLASS)
+
+   * (update-direct-method! METHOD OLD-CLASS NEW-CLASS)
+
+   * (update-direct-subclass! SUBCLASS OLD-CLASS NEW-CLASS)
+
+and the default methods for these generic functions invoke further
+generic functions, and so on...  The detailed protocol for all of these
+is described in *note MOP Specification::.
+
+
+File: goops.info,  Node: Changing the Class of an Instance,  Next: Introspection,  Prev: Redefining a Class,  Up: Reference Manual
+
+3.9 Changing the Class of an Instance
+=====================================
+
+You can change the class of an existing instance by invoking the
+generic function `change-class' with two arguments: the instance and
+the new class.
+
+ -- generic: change-class
+
+The default method for `change-class' decides how to implement the
+change of class by looking at the slot definitions for the instance's
+existing class and for the new class.  If the new class has slots with
+the same name as slots in the existing class, the values for those slots
+are preserved.  Slots that are present only in the existing class are
+discarded.  Slots that are present only in the new class are initialized
+using the corresponding slot definition's init function (*note
+slot-init-function: Classes.).
+
+ -- method: change-class (obj <object>) (new <class>)
+     Modify instance OBJ to make it an instance of class NEW.
+
+     The value of each of OBJ's slots is preserved only if a similarly
+     named slot exists in NEW; any other slot values are discarded.
+
+     The slots in NEW that do not correspond to any of OBJ's
+     pre-existing slots are initialized according to NEW's slot
+     definitions' init functions.
+
+Customized change of class behaviour can be implemented by defining
+`change-class' methods that are specialized either by the class of the
+instances to be modified or by the metaclass of the new class.
+
+When a class is redefined (*note Redefining a Class::), and the default
+class redefinition behaviour is not overridden, GOOPS (eventually)
+invokes the `change-class' generic function for each existing instance
+of the redefined class.
+
+
+File: goops.info,  Node: Introspection,  Next: Miscellaneous Functions,  Prev: Changing the Class of an Instance,  Up: Reference Manual
+
+3.10 Introspection
+==================
+
+"Introspection", also known as "reflection", is the name given to the
+ability to obtain information dynamically about GOOPS metaobjects.  It
+is perhaps best illustrated by considering an object oriented language
+that does not provide any introspection, namely C++.
+
+Nothing in C++ allows a running program to obtain answers to the
+following types of question:
+
+   * What are the data members of this object or class?
+
+   * What classes does this class inherit from?
+
+   * Is this method call virtual or non-virtual?
+
+   * If I invoke `Employee::adjustHoliday()', what class contains the
+     `adjustHoliday()' method that will be applied?
+
+In C++, answers to such questions can only be determined by looking at
+the source code, if you have access to it.  GOOPS, on the other hand,
+includes procedures that allow answers to these questions -- or their
+GOOPS equivalents -- to be obtained dynamically, at run time.
+
+* Menu:
+
+* Classes::
+* Slots::
+* Instances::
+* Generic Functions::
+* Generic Function Methods::
+
+
+File: goops.info,  Node: Classes,  Next: Slots,  Up: Introspection
+
+3.10.1 Classes
+--------------
+
+ -- primitive procedure: class-name class
+     Return the name of class CLASS.  This is the value of the CLASS
+     metaobject's `name' slot.
+
+ -- primitive procedure: class-direct-supers class
+     Return a list containing the direct superclasses of CLASS.  This
+     is the value of the CLASS metaobject's `direct-supers' slot.
+
+ -- primitive procedure: class-direct-slots class
+     Return a list containing the slot definitions of the direct slots
+     of CLASS.  This is the value of the CLASS metaobject's
+     `direct-slots' slot.
+
+ -- primitive procedure: class-direct-subclasses class
+     Return a list containing the direct subclasses of CLASS.  This is
+     the value of the CLASS metaobject's `direct-subclasses' slot.
+
+ -- primitive procedure: class-direct-methods class
+     Return a list of all the generic function methods that use CLASS
+     as a formal parameter specializer.  This is the value of the CLASS
+     metaobject's `direct-methods' slot.
+
+ -- primitive procedure: class-precedence-list class
+     Return the class precedence list for class CLASS (*note Class
+     precedence list::).  This is the value of the CLASS metaobject's
+     `cpl' slot.
+
+ -- primitive procedure: class-slots class
+     Return a list containing the slot definitions for all CLASS's
+     slots, including any slots that are inherited from superclasses.
+     This is the value of the CLASS metaobject's `slots' slot.
+
+ -- primitive procedure: class-environment class
+     Return the value of CLASS's `environment' slot.  [ *fixme*  I
+     don't know what this value is used for. ]
+
+ -- procedure: class-subclasses class
+     Return a list of all subclasses of CLASS.
+
+ -- procedure: class-methods class
+     Return a list of all methods that use CLASS or a subclass of CLASS
+     as one of its formal parameter specializers.
+
+
+File: goops.info,  Node: Slots,  Next: Instances,  Prev: Classes,  Up: Introspection
+
+3.10.2 Slots
+------------
+
+ -- procedure: class-slot-definition class slot-name
+     Return the slot definition for the slot named SLOT-NAME in class
+     CLASS.  SLOT-NAME should be a symbol.
+
+ -- procedure: slot-definition-name slot-def
+     Extract and return the slot name from SLOT-DEF.
+
+ -- procedure: slot-definition-options slot-def
+     Extract and return the slot options from SLOT-DEF.
+
+ -- procedure: slot-definition-allocation slot-def
+     Extract and return the slot allocation option from SLOT-DEF.  This
+     is the value of the `#:allocation' keyword (*note allocation: Slot
+     Options.), or `#:instance' if the `#:allocation' keyword is absent.
+
+ -- procedure: slot-definition-getter slot-def
+     Extract and return the slot getter option from SLOT-DEF.  This is
+     the value of the `#:getter' keyword (*note getter: Slot Options.),
+     or `#f' if the `#:getter' keyword is absent.
+
+ -- procedure: slot-definition-setter slot-def
+     Extract and return the slot setter option from SLOT-DEF.  This is
+     the value of the `#:setter' keyword (*note setter: Slot Options.),
+     or `#f' if the `#:setter' keyword is absent.
+
+ -- procedure: slot-definition-accessor slot-def
+     Extract and return the slot accessor option from SLOT-DEF.  This
+     is the value of the `#:accessor' keyword (*note accessor: Slot
+     Options.), or `#f' if the `#:accessor' keyword is absent.
+
+ -- procedure: slot-definition-init-value slot-def
+     Extract and return the slot init-value option from SLOT-DEF.  This
+     is the value of the `#:init-value' keyword (*note init-value: Slot
+     Options.), or the unbound value if the `#:init-value' keyword is
+     absent.
+
+ -- procedure: slot-definition-init-form slot-def
+     Extract and return the slot init-form option from SLOT-DEF.  This
+     is the value of the `#:init-form' keyword (*note init-form: Slot
+     Options.), or the unbound value if the `#:init-form' keyword is
+     absent.
+
+ -- procedure: slot-definition-init-thunk slot-def
+     Extract and return the slot init-thunk option from SLOT-DEF.  This
+     is the value of the `#:init-thunk' keyword (*note init-thunk: Slot
+     Options.), or `#f' if the `#:init-thunk' keyword is absent.
+
+ -- procedure: slot-definition-init-keyword slot-def
+     Extract and return the slot init-keyword option from SLOT-DEF.
+     This is the value of the `#:init-keyword' keyword (*note
+     init-keyword: Slot Options.), or `#f' if the `#:init-keyword'
+     keyword is absent.
+
+ -- procedure: slot-init-function class slot-name
+     Return the initialization function for the slot named SLOT-NAME in
+     class CLASS.  SLOT-NAME should be a symbol.
+
+     The returned initialization function incorporates the effects of
+     the standard `#:init-thunk', `#:init-form' and `#:init-value' slot
+     options.  These initializations can be overridden by the
+     `#:init-keyword' slot option or by a specialized `initialize'
+     method, so, in general, the function returned by
+     `slot-init-function' may be irrelevant.  For a fuller discussion,
+     see *note init-value: Slot Options.
+
+
+File: goops.info,  Node: Instances,  Next: Generic Functions,  Prev: Slots,  Up: Introspection
+
+3.10.3 Instances
+----------------
+
+ -- primitive procedure: class-of value
+     Return the GOOPS class of any Scheme VALUE.
+
+ -- primitive procedure: instance? object
+     Return `#t' if OBJECT is any GOOPS instance, otherwise `#f'.
+
+ -- procedure: is-a? object class
+     Return `#t' if OBJECT is an instance of CLASS or one of its
+     subclasses.
+
+Implementation notes: `is-a?' uses `class-of' and
+`class-precedence-list' to obtain the class precedence list for OBJECT.
+
+
+File: goops.info,  Node: Generic Functions,  Next: Generic Function Methods,  Prev: Instances,  Up: Introspection
+
+3.10.4 Generic Functions
+------------------------
+
+ -- primitive procedure: generic-function-name gf
+     Return the name of generic function GF.
+
+ -- primitive procedure: generic-function-methods gf
+     Return a list of the methods of generic function GF.  This is the
+     value of the GF metaobject's `methods' slot.
+
+
+File: goops.info,  Node: Generic Function Methods,  Prev: Generic Functions,  Up: Introspection
+
+3.10.5 Generic Function Methods
+-------------------------------
+
+ -- primitive procedure: method-generic-function method
+     Return the generic function that METHOD belongs to.  This is the
+     value of the METHOD metaobject's `generic-function' slot.
+
+ -- primitive procedure: method-specializers method
+     Return a list of METHOD's formal parameter specializers .  This is
+     the value of the METHOD metaobject's `specializers' slot.
+
+ -- primitive procedure: method-procedure method
+     Return the procedure that implements METHOD.  This is the value of
+     the METHOD metaobject's `procedure' slot.
+
+ -- generic: method-source
+ -- method: method-source (m <method>)
+     Return an expression that prints to show the definition of method
+     M.
+
+          (define-generic cube)
+
+          (define-method (cube (n <number>))
+            (* n n n))
+
+          (map method-source (generic-function-methods cube))
+          =>
+          ((method ((n <number>)) (* n n n)))
+
+
+File: goops.info,  Node: Miscellaneous Functions,  Prev: Introspection,  Up: Reference Manual
+
+3.11 Miscellaneous Functions
+============================
+
+* Menu:
+
+* Administrative Functions::
+* Error Handling::
+* Object Comparisons::
+* Cloning Objects::
+* Write and Display::
+
+
+File: goops.info,  Node: Administrative Functions,  Next: Error Handling,  Up: Miscellaneous Functions
+
+3.11.1 Administration Functions
+-------------------------------
+
+This section describes administrative, non-technical GOOPS functions.
+
+ -- primitive: goops-version
+     Return the current GOOPS version as a string, for example "0.2".
+
+
+File: goops.info,  Node: Error Handling,  Next: Object Comparisons,  Prev: Administrative Functions,  Up: Miscellaneous Functions
+
+3.11.2 Error Handling
+---------------------
+
+The procedure `goops-error' is called to raise an appropriate error by
+the default methods of the following generic functions:
+
+   * `slot-missing' (*note slot-missing: Handling Slot Access Errors.)
+
+   * `slot-unbound' (*note slot-unbound: Handling Slot Access Errors.)
+
+   * `no-method' (*note no-method: Handling Invocation Errors.)
+
+   * `no-applicable-method' (*note no-applicable-method: Handling
+     Invocation Errors.)
+
+   * `no-next-method' (*note no-next-method: Handling Invocation
+     Errors.)
+
+If you customize these functions for particular classes or metaclasses,
+you may still want to use `goops-error' to signal any error conditions
+that you detect.
+
+ -- procedure: goops-error format-string . args
+     Raise an error with key `goops-error' and error message constructed
+     from FORMAT-STRING and ARGS.  Error message formatting is as done
+     by `scm-error'.
+
+
+File: goops.info,  Node: Object Comparisons,  Next: Cloning Objects,  Prev: Error Handling,  Up: Miscellaneous Functions
+
+3.11.3 Object Comparisons
+-------------------------
+
+ -- generic: eqv?
+ -- method: eqv? ((x <top>) (y <top>))
+ -- generic: equal?
+ -- method: equal? ((x <top>) (y <top>))
+ -- generic: =
+ -- method: = ((x <number>) (y <number>))
+     Generic functions and default (unspecialized) methods for
+     comparing two GOOPS objects.
+
+     The default method for `eqv?' returns `#t' for all values that are
+     equal in the sense defined by R5RS and the Guile reference manual,
+     otherwise `#f'.  The default method for `equal?' returns `#t' or
+     `#f' in the sense defined by R5RS and the Guile reference manual.
+     If no such comparison is defined, `equal?' returns the result of a
+     call to `eqv?'.  The default method for = returns `#t' if X and Y
+     are numerically equal, otherwise `#f'.
+
+     Application class authors may wish to define specialized methods
+     for `eqv?', `equal?' and `=' that compare instances of the same
+     class for equality in whatever sense is useful to the application.
+     Such methods will only be called if the arguments have the same
+     class and the result of the comparison isn't defined by R5RS and
+     the Guile reference manual.
+
+
+File: goops.info,  Node: Cloning Objects,  Next: Write and Display,  Prev: Object Comparisons,  Up: Miscellaneous Functions
+
+3.11.4 Cloning Objects
+----------------------
+
+ -- generic: shallow-clone
+ -- method: shallow-clone (self <object>)
+     Return a "shallow" clone of SELF.  The default method makes a
+     shallow clone by allocating a new instance and copying slot values
+     from self to the new instance.  Each slot value is copied either
+     as an immediate value or by reference.
+
+ -- generic: deep-clone
+ -- method: deep-clone (self <object>)
+     Return a "deep" clone of SELF.  The default method makes a deep
+     clone by allocating a new instance and copying or cloning slot
+     values from self to the new instance.  If a slot value is an
+     instance (satisfies `instance?'), it is cloned by calling
+     `deep-clone' on that value.  Other slot values are copied either
+     as immediate values or by reference.
+
+
+File: goops.info,  Node: Write and Display,  Prev: Cloning Objects,  Up: Miscellaneous Functions
+
+3.11.5 Write and Display
+------------------------
+
+ -- primitive generic: write object port
+ -- primitive generic: display object port
+     When GOOPS is loaded, `write' and `display' become generic
+     functions with special methods for printing
+
+        * objects - instances of the class `<object>'
+
+        * foreign objects - instances of the class `<foreign-object>'
+
+        * classes - instances of the class `<class>'
+
+        * generic functions - instances of the class `<generic>'
+
+        * methods - instances of the class `<method>'.
+
+     `write' and `display' print non-GOOPS values in the same way as
+     the Guile primitive `write' and `display' functions.
+
+
+File: goops.info,  Node: MOP Specification,  Next: Tutorial,  Prev: Reference Manual,  Up: Top
+
+4 MOP Specification
+*******************
+
+For an introduction to metaobjects and the metaobject protocol, see
+*note Metaobjects and the Metaobject Protocol::.
+
+The aim of the MOP specification in this chapter is to specify all the
+customizable generic function invocations that can be made by the
+standard GOOPS syntax, procedures and methods, and to explain the
+protocol for customizing such invocations.
+
+A generic function invocation is customizable if the types of the
+arguments to which it is applied are not all determined by the lexical
+context in which the invocation appears.  For example,
+
+   * the `(initialize INSTANCE INITARGS)' invocation in the default
+     `make-instance' method is customizable, because the type of the
+     `INSTANCE' argument is determined by the class that was passed to
+     `make-instance'.
+
+   * the `(make <generic> #:name ',name)' invocation in `define-generic'
+     is not customizable, because all of its arguments have lexically
+     determined types.
+
+When using this rule to decide whether a given generic function
+invocation is customizable, we ignore arguments that are expected to be
+handled in method definitions as a single "rest" list argument.
+
+For each customizable generic function invocation, the "invocation
+protocol" is explained by specifying
+
+   * what, conceptually, the applied method is intended to do
+
+   * what assumptions, if any, the caller makes about the applied
+     method's side effects
+
+   * what the caller expects to get as the applied method's return
+     value.
+
+* Menu:
+
+* Class Definition::
+* Instance Creation::
+* Class Redefinition::
+* Method Definition::
+* Generic Function Invocation::
+
+
+File: goops.info,  Node: Class Definition,  Next: Instance Creation,  Up: MOP Specification
+
+4.1 Class Definition
+====================
+
+`define-class' (syntax)
+
+   * `class' (syntax)
+
+        * `make-class' (procedure)
+
+             * `make METACLASS ...' (generic)
+
+               METACLASS is the metaclass of the class being defined,
+               either taken from the `#:metaclass' class option or
+               computed by `ensure-metaclass'.  The applied method must
+               create and return the fully initialized class metaobject
+               for the new class definition.
+
+
+   * `class-redefinition OLD-CLASS NEW-CLASS' (generic)
+
+     `define-class' calls `class-redefinition' if the variable
+     specified by its first argument already held a GOOPS class
+     definition.  OLD-CLASS and NEW-CLASS are the old and new class
+     metaobjects.  The applied method should perform whatever is
+     necessary to handle the redefinition, and should return the class
+     metaobject that is to be bound to `define-class''s variable.  The
+     default class redefinition protocol is described in *note Class
+     Redefinition::.
+
+The `(make METACLASS ...)' invocation above will create an class
+metaobject with metaclass METACLASS.  By default, this metaobject will
+be initialized by the `initialize' method that is specialized for
+instances of type `<class>'.
+
+`initialize <class> INITARGS' (method)
+
+   * `compute-cpl CLASS' (generic)
+
+     The applied method should compute and return the class precedence
+     list for CLASS as a list of class metaobjects.  When `compute-cpl'
+     is called, the following CLASS metaobject slots have all been
+     initialized: `name', `direct-supers', `direct-slots',
+     `direct-subclasses' (empty), `direct-methods'.  The value returned
+     by `compute-cpl' will be stored in the `cpl' slot.
+
+   * `compute-slots CLASS' (generic)
+
+     The applied method should compute and return the slots (union of
+     direct and inherited) for CLASS as a list of slot definitions.
+     When `compute-slots' is called, all the CLASS metaobject slots
+     mentioned for `compute-cpl' have been initialized, plus the
+     following: `cpl', `redefined' (`#f'), `environment'.  The value
+     returned by `compute-slots' will be stored in the `slots' slot.
+
+   * `compute-get-n-set CLASS SLOT-DEF' (generic)
+
+     `initialize' calls `compute-get-n-set' for each slot computed by
+     `compute-slots'.  The applied method should compute and return a
+     pair of closures that, respectively, get and set the value of the
+     specified slot.  The get closure should have arity 1 and expect a
+     single argument that is the instance whose slot value is to be
+     retrieved.  The set closure should have arity 2 and expect two
+     arguments, where the first argument is the instance whose slot
+     value is to be set and the second argument is the new value for
+     that slot.  The closures should be returned in a two element list:
+     `(list GET SET)'.
+
+     The closures returned by `compute-get-n-set' are stored as part of
+     the value of the CLASS metaobject's `getters-n-setters' slot.
+     Specifically, the value of this slot is a list with the same
+     number of elements as there are slots in the class, and each
+     element looks either like
+
+          `(SLOT-NAME-SYMBOL INIT-FUNCTION . INDEX)'
+
+     or like
+
+          `(SLOT-NAME-SYMBOL INIT-FUNCTION GET SET)'
+
+     Where the get and set closures are replaced by INDEX, the slot is
+     an instance slot and INDEX is the slot's index in the underlying
+     structure: GOOPS knows how to get and set the value of such slots
+     and so does not need specially constructed get and set closures.
+     Otherwise, GET and SET are the closures returned by
+     `compute-get-n-set'.
+
+     The structure of the `getters-n-setters' slot value is important
+     when understanding the next customizable generic functions that
+     `initialize' calls...
+
+   * `compute-getter-method CLASS GNS' (generic)
+
+     `initialize' calls `compute-getter-method' for each of the class's
+     slots (as determined by `compute-slots') that includes a
+     `#:getter' or `#:accessor' slot option.  GNS is the element of the
+     CLASS metaobject's `getters-n-setters' slot that specifies how the
+     slot in question is referenced and set, as described above under
+     `compute-get-n-set'.  The applied method should create and return
+     a method that is specialized for instances of type CLASS and uses
+     the get closure to retrieve the slot's value.  [ *fixme  Need to
+     insert something here about checking that the value is not
+     unbound. ] `initialize' uses `add-method!' to add the returned
+     method to the generic function named by the slot definition's
+     `#:getter' or `#:accessor' option.
+
+   * `compute-setter-method CLASS GNS' (generic)
+
+     `compute-setter-method' is invoked with the same arguments as
+     `compute-getter-method', for each of the class's slots that
+     includes a `#:setter' or `#:accessor' slot option.  The applied
+     method should create and return a method that is specialized for
+     instances of type CLASS and uses the set closure to set the slot's
+     value.  `initialize' then uses `add-method!' to add the returned
+     method to the generic function named by the slot definition's
+     `#:setter' or `#:accessor' option.
+
+
+File: goops.info,  Node: Instance Creation,  Next: Class Redefinition,  Prev: Class Definition,  Up: MOP Specification
+
+4.2 Instance Creation
+=====================
+
+`make <class> . INITARGS' (method)
+
+   * `allocate-instance CLASS INITARGS' (generic)
+
+     The applied `allocate-instance' method should allocate storage for
+     a new instance of class CLASS and return the uninitialized
+     instance.
+
+   * `initialize INSTANCE INITARGS' (generic)
+
+     INSTANCE is the uninitialized instance returned by
+     `allocate-instance'.  The applied method should initialize the new
+     instance in whatever sense is appropriate for its class.  The
+     method's return value is ignored.
+
+
+File: goops.info,  Node: Class Redefinition,  Next: Method Definition,  Prev: Instance Creation,  Up: MOP Specification
+
+4.3 Class Redefinition
+======================
+
+The default `class-redefinition' method, specialized for classes with
+the default metaclass `<class>', has the following internal protocol.
+
+`class-redefinition (OLD <CLASS>) (NEW <CLASS>)' (method)
+
+   * `remove-class-accessors! OLD' (generic)
+
+   * `update-direct-method! METHOD OLD NEW' (generic)
+
+   * `update-direct-subclass! SUBCLASS OLD NEW' (generic)
+
+This protocol cleans up things that the definition of the old class
+once changed and modifies things to work with the new class.
+
+The default `remove-class-accessors!' method removes the accessor
+methods of the old class from all classes which they specialize.
+
+The default `update-direct-method!' method substitutes the new class
+for the old in all methods specialized to the old class.
+
+The default `update-direct-subclass!' method invokes
+`class-redefinition' recursively to handle the redefinition of
+subclasses.
+
+When a class is redefined, any existing instance of the redefined class
+will be modified for the new class definition before the next time that
+any of the instance's slot is referenced or set.  GOOPS modifies each
+instance by calling the generic function `change-class'.
+
+The default `change-class' method copies slot values from the old to
+the modified instance, and initializes new slots, as described in *note
+Changing the Class of an Instance::.  After doing so, it makes a
+generic function invocation that can be used to customize the instance
+update algorithm.
+
+`change-class (OLD-INSTANCE <OBJECT>) (NEW <CLASS>)' (method)
+
+   * `update-instance-for-different-class OLD-INSTANCE NEW-INSTANCE'
+     (generic)
+
+     `change-class' invokes `update-instance-for-different-class' as
+     the last thing that it does before returning.  The applied method
+     can make any further adjustments to NEW-INSTANCE that are required
+     to complete or modify the change of class.  The return value from
+     the applied method is ignored.
+
+     The default `update-instance-for-different-class' method does
+     nothing.
+
+
+File: goops.info,  Node: Method Definition,  Next: Generic Function Invocation,  Prev: Class Redefinition,  Up: MOP Specification
+
+4.4 Method Definition
+=====================
+
+`define-method' (syntax)
+
+   * `add-method! TARGET METHOD' (generic)
+
+     `define-method' invokes the `add-method!' generic function to
+     handle adding the new method to a variety of possible targets.
+     GOOPS includes methods to handle TARGET as
+
+        * a generic function (the most common case)
+
+        * a procedure
+
+        * a primitive generic (*note Extending Guiles Primitives::)
+
+     By defining further methods for `add-method!', you can
+     theoretically handle adding methods to further types of target.
+
+
+File: goops.info,  Node: Generic Function Invocation,  Prev: Method Definition,  Up: MOP Specification
+
+4.5 Generic Function Invocation
+===============================
+
+[ *fixme* Description required here. ]
+
+`apply-generic'
+
+   * `no-method'
+
+   * `compute-applicable-methods'
+
+   * `sort-applicable-methods'
+
+   * `apply-methods'
+
+   * `no-applicable-method'
+
+`sort-applicable-methods'
+
+   * `method-more-specific?'
+
+`apply-methods'
+
+   * `apply-method'
+
+`next-method'
+
+   * `no-next-method'
+
+
+File: goops.info,  Node: Tutorial,  Next: Concept Index,  Prev: MOP Specification,  Up: Top
+
+5 Tutorial
+**********
+
+This is chapter was originally written by Erick Gallesio as an appendix
+for the STk reference manual, and subsequently adapted to GOOPS.
+
+* Menu:
+
+* Copyright::
+* Intro::
+* Class definition and instantiation::
+* Inheritance::
+* Generic functions::
+
+
+File: goops.info,  Node: Copyright,  Next: Intro,  Prev: Tutorial,  Up: Tutorial
+
+5.1 Copyright
+=============
+
+Original attribution:
+
+STk Reference manual (Appendix: An Introduction to STklos)
+
+Copyright © 1993-1999 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
+Permission to use, copy, modify, distribute,and license this software
+and its documentation for any purpose is hereby granted, provided that
+existing copyright notices are retained in all copies and that this
+notice is included verbatim in any distributions.  No written
+agreement, license, or royalty fee is required for any of the
+authorized uses.  This software is provided "AS IS" without express or
+implied warranty.
+
+Adapted for use in Guile with the authors permission
+
+
+File: goops.info,  Node: Intro,  Next: Class definition and instantiation,  Prev: Copyright,  Up: Tutorial
+
+5.2 Introduction
+================
+
+GOOPS is the object oriented extension to Guile. Its implementation is
+derived from STk-3.99.3 by Erick Gallesio and version 1.3 of the Gregor
+Kiczales `Tiny-Clos'.  It is very close to CLOS, the Common Lisp Object
+System (`CLtL2') but is adapted for the Scheme language.
+
+Briefly stated, the GOOPS extension gives the user a full object
+oriented system with multiple inheritance and generic functions with
+multi-method dispatch.  Furthermore, the implementation relies on a true
+meta object protocol, in the spirit of the one defined for CLOS
+(`Gregor Kiczales: A Metaobject Protocol').
+
+The purpose of this tutorial is to introduce briefly the GOOPS package
+and in no case will it replace the GOOPS reference manual (which needs
+to be urgently written now ...).
+
+Note that the operations described in this tutorial resides in modules
+that may need to be imported before being available.  The main module is
+imported by evaluating:
+
+     (use-modules (oop goops))
+
+
+File: goops.info,  Node: Class definition and instantiation,  Next: Inheritance,  Prev: Intro,  Up: Tutorial
+
+5.3 Class definition and instantiation
+======================================
+
+* Menu:
+
+* Class definition::
+
+
+File: goops.info,  Node: Class definition,  Prev: Class definition and instantiation,  Up: Class definition and instantiation
+
+5.3.1 Class definition
+----------------------
+
+A new class is defined with the `define-class'(1) macro. The syntax of
+`define-class' is close to CLOS `defclass':
+
+     (define-class CLASS (SUPERCLASS ...)
+        SLOT-DESCRIPTION ...
+        CLASS-OPTION ...)
+
+Class options will not be discussed in this tutorial.  The list of
+SUPERCLASSes specifies which classes to inherit properties from CLASS
+(see *note Inheritance:: for more details).  A SLOT-DESCRIPTION gives
+the name of a slot and, eventually, some "properties" of this slot
+(such as its initial value, the function which permit to access its
+value, ...). Slot descriptions will be discussed in *note Slot
+description::.  
+
+As an example, let us define a type for representation of complex
+numbers in terms of real numbers. This can be done with the following
+class definition:
+
+     (define-class  <complex> (<number>)
+        r i)
+
+This binds the variable `<complex>'(2) to a new class whose instances
+contain two slots. These slots are called `r' an `i' and we suppose here
+that they contain respectively the real part and the imaginary part of a
+complex number. Note that this class inherits from `<number>' which is
+a pre-defined class.  (`<number>' is the direct super class of the
+pre-defined class `<complex>' which, in turn, is the super class of
+`<real>' which is the super of `<integer>'.)(3).
+
+---------- Footnotes ----------
+
+(1) Don't forget to import the `(oop goops)' module
+
+(2) `<complex>' is in fact a builtin class in GOOPS.  Because of this,
+GOOPS will create a new class.  The old class will still serve as the
+type for Guile's native complex numbers.
+
+(3) With the new definition of `<complex>', a `<real>' is not a
+`<complex>' since `<real>' inherits from ` <number>' rather than
+`<complex>'. In practice, inheritance could be modified _a posteriori_,
+if needed. However, this necessitates some knowledge of the meta object
+protocol and it will not be shown in this document
+
+
+File: goops.info,  Node: Inheritance,  Next: Generic functions,  Prev: Class definition and instantiation,  Up: Tutorial
+
+5.4 Inheritance
+===============
+
+* Menu:
+
+* Class hierarchy and inheritance of slots::
+* Instance creation and slot access::
+* Slot description::
+* Class precedence list::
+
+
+File: goops.info,  Node: Class hierarchy and inheritance of slots,  Next: Instance creation and slot access,  Prev: Inheritance,  Up: Inheritance
+
+5.4.1 Class hierarchy and inheritance of slots
+----------------------------------------------
+
+Inheritance is specified upon class definition. As said in the
+introduction, GOOPS supports multiple inheritance.  Here are some class
+definitions:
+
+     (define-class A () a)
+     (define-class B () b)
+     (define-class C () c)
+     (define-class D (A B) d a)
+     (define-class E (A C) e c)
+     (define-class F (D E) f)
+
+`A', `B', `C' have a null list of super classes. In this case, the
+system will replace it by the list which only contains `<object>', the
+root of all the classes defined by `define-class'. `D', `E', `F' use
+multiple inheritance: each class inherits from two previously defined
+classes.  Those class definitions define a hierarchy which is shown in
+Figure 1.  In this figure, the class `<top>' is also shown; this class
+is the super class of all Scheme objects. In particular, `<top>' is the
+super class of all standard Scheme types.
+
+      [image src="hierarchy.png" text="          <top>
+               / \\\\\\_____________________
+              /   \\\\___________          \\
+             /     \\           \\          \\
+         <object>  <pair>  <procedure>  <number>
+         /  |  \\                           |
+        /   |   \\                          |
+       A    B    C                      <complex>
+       |\\__/__   |                         |
+        \\ /   \\ /                          |
+         D     E                         <real>
+          \\   /                            |
+            F                              |
+                                        <integer>
+     " ]
+                           _Fig 1: A class hierarchy_
+
+The set of slots of a given class is calculated by taking the union of
+the slots of all its super class. For instance, each instance of the
+class D, defined before will have three slots (`a', `b' and `d'). The
+slots of a class can be obtained by the `class-slots' primitive.  For
+instance,
+
+     (class-slots A) => ((a))
+     (class-slots E) => ((a) (e) (c))
+     (class-slots F) => ((e) (c) (b) (d) (a) (f))
+
+_Note: _ The order of slots is not significant.
+
+
+File: goops.info,  Node: Instance creation and slot access,  Next: Slot description,  Prev: Class hierarchy and inheritance of slots,  Up: Inheritance
+
+5.4.2 Instance creation and slot access
+---------------------------------------
+
+Creation of an instance of a previously defined class can be done with
+the `make' procedure. This procedure takes one mandatory parameter
+which is the class of the instance which must be created and a list of
+optional arguments. Optional arguments are generally used to initialize
+some slots of the newly created instance. For instance, the following
+form
+
+     (define c (make <complex>))
+
+will create a new `<complex>' object and will bind it to the `c' Scheme
+variable.
+
+Accessing the slots of the new complex number can be done with the
+`slot-ref' and the `slot-set!'  primitives. `Slot-set!' primitive
+permits to set the value of an object slot and `slot-ref' permits to
+get its value.
+
+     (slot-set! c 'r 10)
+     (slot-set! c 'i 3)
+     (slot-ref c 'r) => 10
+     (slot-ref c 'i) => 3
+
+Using the `describe' function is a simple way to see all the slots of
+an object at one time: this function prints all the slots of an object
+on the standard output.
+
+First load the module `(oop goops describe)':
+
+     `(use-modules (oop goops describe))'
+
+The expression
+
+     (describe c)
+
+will now print the following information on the standard output:
+
+     #<<complex> 401d8638> is an instance of class <complex>
+     Slots are:
+          r = 10
+          i = 3
+
+
+File: goops.info,  Node: Slot description,  Next: Class precedence list,  Prev: Instance creation and slot access,  Up: Inheritance
+
+5.4.3 Slot description
+----------------------
+
+When specifying a slot, a set of options can be given to the system.
+Each option is specified with a keyword. The list of authorized
+keywords is given below:
+
+   * `#:init-value' permits to supply a default value for the slot. This
+     default value is obtained by evaluating the form given after the
+     `#:init-form' in the global environment, at class definition time.  
+
+   * `#:init-thunk' permits to supply a thunk that will provide a
+     default value for the slot. The value is obtained by evaluating the
+     thunk a instance creation time.  
+
+   * `#:init-keyword' permits to specify the keyword for initializing a
+     slot. The init-keyword may be provided during instance creation
+     (i.e. in the `make' optional parameter list). Specifying such a
+     keyword during instance initialization will supersede the default
+     slot initialization possibly given with `#:init-form'.  
+
+   * `#:getter' permits to supply the name for the slot getter. The
+     name binding is done in the environment of the `define-class'
+     macro.  
+
+   * `#:setter' permits to supply the name for the slot setter. The
+     name binding is done in the environment of the `define-class'
+     macro.  
+
+   * `#:accessor' permits to supply the name for the slot accessor. The
+     name binding is done in the global environment. An accessor
+     permits to get and set the value of a slot. Setting the value of a
+     slot is done with the extended version of `set!'.  
+
+   * `#:allocation' permits to specify how storage for the slot is
+     allocated. Three kinds of allocation are provided.  They are
+     described below:
+
+        - `#:instance' indicates that each instance gets its own
+          storage for the slot. This is the default.
+
+        - `#:class' indicates that there is one storage location used
+          by all the direct and indirect instances of the class. This
+          permits to define a kind of global variable which can be
+          accessed only by (in)direct instances of the class which
+          defines this slot.
+
+        - `#:each-subclass' indicates that there is one storage
+          location used by all the direct instances of the class. In
+          other words, if two classes are not siblings in the class
+          hierarchy, they will not see the same value.
+
+        - `#:virtual' indicates that no storage will be allocated for
+          this slot.  It is up to the user to define a getter and a
+          setter function for this slot. Those functions must be
+          defined with the `#:slot-ref' and `#:slot-set!' options. See
+          the example below.  
+
+To illustrate slot description, we shall redefine the `<complex>' class
+seen before. A definition could be:
+
+     (define-class <complex> (<number>)
+        (r #:init-value 0 #:getter get-r #:setter set-r! #:init-keyword #:r)
+        (i #:init-value 0 #:getter get-i #:setter set-i! #:init-keyword #:i))
+
+With this definition, the `r' and `i' slot are set to 0 by default.
+Value of a slot can also be specified by calling `make' with the `#:r'
+and `#:i' keywords. Furthermore, the generic functions `get-r' and
+`set-r!' (resp. `get-i' and `set-i!') are automatically defined by the
+system to read and write the `r' (resp. `i') slot.
+
+     (define c1 (make <complex> #:r 1 #:i 2))
+     (get-r c1) => 1
+     (set-r! c1 12)
+     (get-r c1) => 12
+     (define c2 (make <complex> #:r 2))
+     (get-r c2) => 2
+     (get-i c2) => 0
+
+Accessors provide an uniform access for reading and writing an object
+slot.  Writing a slot is done with an extended form of `set!' which is
+close to the Common Lisp `setf' macro. So, another definition of the
+previous `<complex>' class, using the `#:accessor' option, could be:
+
+     (define-class <complex> (<number>)
+        (r #:init-value 0 #:accessor real-part #:init-keyword #:r)
+        (i #:init-value 0 #:accessor imag-part #:init-keyword #:i))
+
+Using this class definition, reading the real part of the `c' complex
+can be done with:
+     (real-part c)
+and setting it to the value contained in the `new-value' variable can
+be done using the extended form of `set!'.
+     (set! (real-part c) new-value)
+
+Suppose now that we have to manipulate complex numbers with rectangular
+coordinates as well as with polar coordinates. One solution could be to
+have a definition of complex numbers which uses one particular
+representation and some conversion functions to pass from one
+representation to the other.  A better solution uses virtual slots. A
+complete definition of the `<complex>' class using virtual slots is
+given in Figure 2.
+
+          (define-class <complex> (<number>)
+             ;; True slots use rectangular coordinates
+             (r #:init-value 0 #:accessor real-part #:init-keyword #:r)
+             (i #:init-value 0 #:accessor imag-part #:init-keyword #:i)
+             ;; Virtual slots access do the conversion
+             (m #:accessor magnitude #:init-keyword #:magn
+                #:allocation #:virtual
+                #:slot-ref (lambda (o)
+                            (let ((r (slot-ref o 'r)) (i (slot-ref o 'i)))
+                              (sqrt (+ (* r r) (* i i)))))
+                #:slot-set! (lambda (o m)
+                              (let ((a (slot-ref o 'a)))
+                                (slot-set! o 'r (* m (cos a)))
+                                (slot-set! o 'i (* m (sin a))))))
+             (a #:accessor angle #:init-keyword #:angle
+                #:allocation #:virtual
+                #:slot-ref (lambda (o)
+                            (atan (slot-ref o 'i) (slot-ref o 'r)))
+                #:slot-set! (lambda(o a)
+                             (let ((m (slot-ref o 'm)))
+                                (slot-set! o 'r (* m (cos a)))
+                                (slot-set! o 'i (* m (sin a)))))))
+       _Fig 2: A `<complex>' number class definition using virtual slots_
+
+
+
+
+This class definition implements two real slots (`r' and `i'). Values
+of the `m' and `a' virtual slots are calculated from real slot values.
+Reading a virtual slot leads to the application of the function defined
+in the `#:slot-ref' option. Writing such a slot leads to the
+application of the function defined in the `#:slot-set!' option.  For
+instance, the following expression
+
+     (slot-set! c 'a 3)
+
+permits to set the angle of the `c' complex number. This expression
+conducts, in fact, to the evaluation of the following expression
+
+     ((lambda o m)
+         (let ((m (slot-ref o 'm)))
+            (slot-set! o 'r (* m (cos a)))
+            (slot-set! o 'i (* m (sin a))))
+       c 3)
+
+A more complete example is given below:
+
+          (define c (make <complex> #:r 12 #:i 20))
+          (real-part c) => 12
+          (angle c) => 1.03037682652431
+          (slot-set! c 'i 10)
+          (set! (real-part c) 1)
+          (describe c) =>
+                    #<<complex> 401e9b58> is an instance of class <complex>
+                    Slots are:
+                         r = 1
+                         i = 10
+                         m = 10.0498756211209
+                         a = 1.47112767430373
+
+Since initialization keywords have been defined for the four slots, we
+can now define the `make-rectangular' and `make-polar' standard Scheme
+primitives.
+
+     (define make-rectangular
+        (lambda (x y) (make <complex> #:r x #:i y)))
+
+     (define make-polar
+        (lambda (x y) (make <complex> #:magn x #:angle y)))
+
+
+File: goops.info,  Node: Class precedence list,  Prev: Slot description,  Up: Inheritance
+
+5.4.4 Class precedence list
+---------------------------
+
+A class may have more than one superclass.  (1) With single inheritance
+(one superclass), it is easy to order the super classes from most to
+least specific. This is the rule:
+
+     Rule 1: Each class is more specific than its superclasses.
+
+With multiple inheritance, ordering is harder. Suppose we have
+
+     (define-class X ()
+        (x #:init-value 1))
+
+     (define-class Y ()
+        (x #:init-value 2))
+
+     (define-class Z (X Y)
+        (...))
+
+In this case, the `Z' class is more specific than the `X' or `Y' class
+for instances of `Z'. However, the `#:init-value' specified in `X' and
+`Y' leads to a problem: which one overrides the other?  The rule in
+GOOPS, as in CLOS, is that the superclasses listed earlier are more
+specific than those listed later.  So:
+
+     Rule 2: For a given class, superclasses listed earlier are more
+             specific than those listed later.
+
+These rules are used to compute a linear order for a class and all its
+superclasses, from most specific to least specific.  This order is
+called the "class precedence list" of the class. Given these two rules,
+we can claim that the initial form for the `x' slot of previous example
+is 1 since the class `X' is placed before `Y' in class precedence list
+of `Z'.
+
+These two rules are not always enough to determine a unique order,
+however, but they give an idea of how things work.  Taking the `F'
+class shown in Figure 1, the class precedence list is
+
+     (f d e a c b <object> <top>)
+
+However, it is usually considered a bad idea for programmers to rely on
+exactly what the order is.  If the order for some superclasses is
+important, it can be expressed directly in the class definition.
+
+The precedence list of a class can be obtained by the function
+`class-precedence-list'. This function returns a ordered list whose
+first element is the most specific class. For instance,
+
+     (class-precedence-list B) => (#<<class> B 401b97c8>
+                                          #<<class> <object> 401e4a10>
+                                          #<<class> <top> 4026a9d8>)
+
+However, this result is not too much readable; using the function
+`class-name' yields a clearer result:
+
+     (map class-name (class-precedence-list B)) => (B <object> <top>)
+
+---------- Footnotes ----------
+
+(1) This section is an adaptation of Jeff Dalton's (J.Dalton@ed.ac.uk)
+`Brief introduction to CLOS'
+
+
+File: goops.info,  Node: Generic functions,  Prev: Inheritance,  Up: Tutorial
+
+5.5 Generic functions
+=====================
+
+* Menu:
+
+* Generic functions and methods::
+* Next-method::
+* Example::
+
+
+File: goops.info,  Node: Generic functions and methods,  Next: Next-method,  Prev: Generic functions,  Up: Generic functions
+
+5.5.1 Generic functions and methods
+-----------------------------------
+
+Neither GOOPS nor CLOS use the message mechanism for methods as most
+Object Oriented language do. Instead, they use the notion of "generic
+functions".  A generic function can be seen as a methods "tanker". When
+the evaluator requested the application of a generic function, all the
+methods of this generic function will be grabbed and the most specific
+among them will be applied. We say that a method M is _more specific_
+than a method M' if the class of its parameters are more specific than
+the M' ones.  To be more precise, when a generic function must be
+"called" the system will:
+
+  1. search among all the generic function those which are applicable
+
+  2. sort the list of applicable methods in the "most specific" order
+
+  3. call the most specific method of this list (i.e. the first method
+     of the sorted methods list).
+
+The definition of a generic function is done with the `define-generic'
+macro. Definition of a new method is done with the `define-method'
+macro.  Note that `define-method' automatically defines the generic
+function if it has not been defined before. Consequently, most of the
+time, the `define-generic' needs not be used.  Consider the following
+definitions:
+
+     (define-generic G)
+     (define-method  (G (a <integer>) b) 'integer)
+     (define-method  (G (a <real>) b) 'real)
+     (define-method  (G a b) 'top)
+
+The `define-generic' call defines G as a generic function. Note that
+the signature of the generic function is not given upon definition,
+contrarily to CLOS. This will permit methods with different signatures
+for a given generic function, as we shall see later. The three next
+lines define methods for the G generic function. Each method uses a
+sequence of "parameter specializers" that specify when the given method
+is applicable. A specializer permits to indicate the class a parameter
+must belong to (directly or indirectly) to be applicable. If no
+specializer is given, the system defaults it to `<top>'. Thus, the
+first method definition is equivalent to
+
+     (define-method (G (a <integer>) (b <top>)) 'integer)
+
+Now, let us look at some possible calls to generic function G:
+
+     (G 2 3)    => integer
+     (G 2 #t)   => integer
+     (G 1.2 'a) => real
+     (G #t #f)  => top
+     (G 1 2 3)  => error (since no method exists for 3 parameters)
+
+The preceding methods use only one specializer per parameter list. Of
+course, each parameter can use a specializer. In this case, the
+parameter list is scanned from left to right to determine the
+applicability of a method. Suppose we declare now
+
+     (define-method (G (a <integer>) (b <number>))  'integer-number)
+     (define-method (G (a <integer>) (b <real>))    'integer-real)
+     (define-method (G (a <integer>) (b <integer>)) 'integer-integer)
+     (define-method (G a (b <number>))              'top-number)
+
+In this case,
+
+     (G 1 2)   => integer-integer
+     (G 1 1.0) => integer-real
+     (G 1 #t)  => integer
+     (G 'a 1)  => top-number
+
+
+File: goops.info,  Node: Next-method,  Next: Example,  Prev: Generic functions and methods,  Up: Generic functions
+
+5.5.2 Next-method
+-----------------
+
+When you call a generic function, with a particular set of arguments,
+GOOPS builds a list of all the methods that are applicable to those
+arguments and orders them by how closely the method definitions match
+the actual argument types.  It then calls the method at the top of this
+list.  If the selected method's code wants to call on to the next method
+in this list, it can do so by using `next-method'.
+
+     (define-method (Test (a <integer>)) (cons 'integer (next-method)))
+     (define-method (Test (a <number>))  (cons 'number  (next-method)))
+     (define-method (Test a)             (list 'top))
+
+With these definitions,
+
+     (Test 1)   => (integer number top)
+     (Test 1.0) => (number top)
+     (Test #t)  => (top)
+
+`next-method' is always called as just `(next-method)'.  The arguments
+for the next method call are always implicit, and always the same as
+for the original method call.
+
+If you want to call on to a method with the same name but with a
+different set of arguments (as you might with overloaded methods in C++,
+for example), you do not use `next-method', but instead simply write
+the new call as usual:
+
+     (define-method (Test (a <number>) min max)
+       (if (and (>= a min) (<= a max))
+           (display "Number is in range\n"))
+       (Test a))
+
+     (Test 2 1 10)
+     -|
+     Number is in range
+     =>
+     (integer number top)
+
+(You should be careful in this case that the `Test' calls do not lead
+to an infinite recursion, but this consideration is just the same as in
+Scheme code in general.)
+
+
+File: goops.info,  Node: Example,  Prev: Next-method,  Up: Generic functions
+
+5.5.3 Example
+-------------
+
+In this section we shall continue to define operations on the
+`<complex>' class defined in Figure 2. Suppose that we want to use it
+to implement complex numbers completely. For instance a definition for
+the addition of two complexes could be
+
+     (define-method (new-+ (a <complex>) (b <complex>))
+       (make-rectangular (+ (real-part a) (real-part b))
+                         (+ (imag-part a) (imag-part b))))
+
+To be sure that the `+' used in the method `new-+' is the standard
+addition we can do:
+
+     (define-generic new-+)
+
+     (let ((+ +))
+       (define-method (new-+ (a <complex>) (b <complex>))
+         (make-rectangular (+ (real-part a) (real-part b))
+                           (+ (imag-part a) (imag-part b)))))
+
+The `define-generic' ensures here that `new-+' will be defined in the
+global environment. Once this is done, we can add methods to the
+generic function `new-+' which make a closure on the `+' symbol.  A
+complete writing of the `new-+' methods is shown in Figure 3.
+
+          (define-generic new-+)
+
+          (let ((+ +))
+
+            (define-method (new-+ (a <real>) (b <real>)) (+ a b))
+
+            (define-method (new-+ (a <real>) (b <complex>))
+              (make-rectangular (+ a (real-part b)) (imag-part b)))
+
+            (define-method (new-+ (a <complex>) (b <real>))
+              (make-rectangular (+ (real-part a) b) (imag-part a)))
+
+            (define-method (new-+ (a <complex>) (b <complex>))
+              (make-rectangular (+ (real-part a) (real-part b))
+                                (+ (imag-part a) (imag-part b))))
+
+            (define-method (new-+ (a <number>))  a)
+
+            (define-method (new-+) 0)
+
+            (define-method (new-+ . args)
+              (new-+ (car args)
+                (apply new-+ (cdr args)))))
+
+          (set! + new-+)
+
+             _Fig 3: Extending `+' for dealing with complex numbers_
+
+
+
+
+We use here the fact that generic function are not obliged to have the
+same number of parameters, contrarily to CLOS.  The four first methods
+implement the dyadic addition. The fifth method says that the addition
+of a single element is this element itself. The sixth method says that
+using the addition with no parameter always return 0. The last method
+takes an arbitrary number of parameters(1).  This method acts as a kind
+of `reduce': it calls the dyadic addition on the _car_ of the list and
+on the result of applying it on its rest.  To finish, the `set!'
+permits to redefine the `+' symbol to our extended addition.
+
+
+
+
+To terminate our implementation (integration?) of  complex numbers, we
+can redefine standard Scheme predicates in the following manner:
+
+     (define-method (complex? c <complex>) #t)
+     (define-method (complex? c)           #f)
+
+     (define-method (number? n <number>) #t)
+     (define-method (number? n)          #f)
+     ...
+     ...
+
+Standard primitives in which complex numbers are involved could also be
+redefined in the same manner.
+
+---------- Footnotes ----------
+
+(1) The parameter list for a `define-method' follows the conventions
+used for Scheme procedures. In particular it can use the dot notation
+or a symbol to denote an arbitrary number of parameters
+
+
+File: goops.info,  Node: Concept Index,  Next: Function and Variable Index,  Prev: Tutorial,  Up: Top
+
+Concept Index
+=============
+
+ [index ]
+* Menu:
+
+* accessor:                              Slot description.     (line 35)
+* class:                                 Class definition.     (line  9)
+* default slot value:                    Slot description.     (line 12)
+* generic function:                      Generic functions and methods.
+                                                               (line 16)
+* getter:                                Slot description.     (line 26)
+* instance:                              Instance creation and slot access.
+                                                               (line 13)
+* keyword:                               Slot description.     (line 10)
+* loading:                               Intro.                (line 26)
+* main module:                           Intro.                (line 26)
+* parameter specializers:                Generic functions and methods.
+                                                               (line 46)
+* preparing:                             Intro.                (line 26)
+* setter:                                Slot description.     (line 30)
+* slot:                                  Class definition.     (line 19)
+* top level environment:                 Slot description.     (line 12)
+
+
+File: goops.info,  Node: Function and Variable Index,  Prev: Concept Index,  Up: Top
+
+Function and Variable Index
+===========================
+
+ [index ]
+* Menu:
+
+* #:accessor <1>:                        Slot description.    (line  35)
+* #:accessor:                            Slot Options.        (line  64)
+* #:allocation <1>:                      Slot description.    (line  59)
+* #:allocation:                          Slot Options.        (line   7)
+* #:class:                               Slot description.    (line  59)
+* #:each-subclass:                       Slot description.    (line  59)
+* #:environment:                         Class Options.       (line  26)
+* #:getter <1>:                          Slot description.    (line  26)
+* #:getter:                              Slot Options.        (line  62)
+* #:init-form:                           Slot Options.        (line 107)
+* #:init-keyword <1>:                    Slot description.    (line  22)
+* #:init-keyword:                        Slot Options.        (line 109)
+* #:init-thunk <1>:                      Slot description.    (line  16)
+* #:init-thunk:                          Slot Options.        (line 108)
+* #:init-value <1>:                      Slot description.    (line  12)
+* #:init-value:                          Slot Options.        (line 106)
+* #:instance:                            Slot description.    (line  59)
+* #:metaclass:                           Class Options.       (line   7)
+* #:name:                                Class Options.       (line  18)
+* #:setter <1>:                          Slot description.    (line  30)
+* #:setter:                              Slot Options.        (line  63)
+* #:slot-ref <1>:                        Slot description.    (line  59)
+* #:slot-ref:                            Slot Options.        (line  52)
+* #:slot-set! <1>:                       Slot description.    (line  59)
+* #:slot-set!:                           Slot Options.        (line  53)
+* #:virtual:                             Slot description.    (line  59)
+* (oop goops):                           Intro.               (line  26)
+* =:                                     Object Comparisons.  (line  11)
+* add-method!:                           Method Definition Internals.
+                                                              (line  51)
+* apply-generic:                         Determining Which Methods to Apply.
+                                                              (line  11)
+* apply-method:                          Determining Which Methods to Apply.
+                                                              (line  23)
+* apply-methods:                         Determining Which Methods to Apply.
+                                                              (line  26)
+* change-class:                          Changing the Class of an Instance.
+                                                              (line  11)
+* class:                                 Class Definition Internals.
+                                                              (line  20)
+* class-direct-methods:                  Classes.             (line  24)
+* class-direct-slots:                    Classes.             (line  15)
+* class-direct-subclasses:               Classes.             (line  20)
+* class-direct-supers:                   Classes.             (line  11)
+* class-environment:                     Classes.             (line  39)
+* class-methods:                         Classes.             (line  46)
+* class-name:                            Classes.             (line   7)
+* class-of:                              Instances.           (line   7)
+* class-precedence-list:                 Classes.             (line  29)
+* class-redefinition:                    Customizing Class Redefinition.
+                                                              (line  15)
+* class-slot-definition:                 Slots.               (line   7)
+* class-slot-ref:                        Class Slots.         (line  10)
+* class-slot-set!:                       Class Slots.         (line  21)
+* class-slots:                           Classes.             (line  34)
+* class-subclasses:                      Classes.             (line  43)
+* compute-applicable-methods:            Determining Which Methods to Apply.
+                                                              (line  14)
+* compute-std-cpl:                       Customizing Class Definition.
+                                                              (line  51)
+* deep-clone:                            Cloning Objects.     (line  14)
+* default slot value:                    Slot description.    (line  16)
+* define-accessor:                       Basic Generic Function Creation.
+                                                              (line  40)
+* define-class <1>:                      Class definition.    (line   9)
+* define-class:                          Basic Class Definition.
+                                                              (line  11)
+* define-generic <1>:                    Generic functions and methods.
+                                                              (line  27)
+* define-generic:                        Basic Generic Function Creation.
+                                                              (line  29)
+* define-method <1>:                     Generic functions and methods.
+                                                              (line  27)
+* define-method:                         Basic Method Definition.
+                                                              (line   9)
+* display:                               Write and Display.   (line   8)
+* enable-primitive-generic!:             Extending Guiles Primitives.
+                                                              (line  27)
+* ensure-accessor:                       Generic Function Internals.
+                                                              (line  39)
+* ensure-generic:                        Generic Function Internals.
+                                                              (line  14)
+* ensure-metaclass:                      Class Definition Internals.
+                                                              (line  62)
+* ensure-metaclass-with-supers:          Class Definition Internals.
+                                                              (line  86)
+* equal?:                                Object Comparisons.  (line   9)
+* eqv?:                                  Object Comparisons.  (line   7)
+* generic-capability?:                   Extending Guiles Primitives.
+                                                              (line  18)
+* generic-function-methods:              Generic Functions.   (line  10)
+* generic-function-name:                 Generic Functions.   (line   7)
+* goops-error:                           Error Handling.      (line  26)
+* goops-version:                         Administrative Functions.
+                                                              (line   9)
+* instance?:                             Instances.           (line  10)
+* is-a?:                                 Instances.           (line  13)
+* make <1>:                              Instance creation and slot access.
+                                                              (line  13)
+* make:                                  Basic Instance Creation.
+                                                              (line  13)
+* make-accessor:                         Generic Function Internals.
+                                                              (line  52)
+* make-class:                            Class Definition Internals.
+                                                              (line  37)
+* make-generic:                          Generic Function Internals.
+                                                              (line  28)
+* make-instance:                         Basic Instance Creation.
+                                                              (line  36)
+* make-method:                           Method Definition Internals.
+                                                              (line  39)
+* method:                                Method Definition Internals.
+                                                              (line  21)
+* method-generic-function:               Generic Function Methods.
+                                                              (line   7)
+* method-more-specific?:                 Determining Which Methods to Apply.
+                                                              (line  20)
+* method-procedure:                      Generic Function Methods.
+                                                              (line  15)
+* method-source:                         Generic Function Methods.
+                                                              (line  19)
+* method-specializers:                   Generic Function Methods.
+                                                              (line  11)
+* no-applicable-method:                  Handling Invocation Errors.
+                                                              (line  14)
+* no-method:                             Handling Invocation Errors.
+                                                              (line   7)
+* no-next-method:                        Handling Invocation Errors.
+                                                              (line  21)
+* primitive-generic-generic:             Extending Guiles Primitives.
+                                                              (line  33)
+* set!:                                  Slot description.    (line  35)
+* shallow-clone:                         Cloning Objects.     (line   7)
+* slot-bound-using-class?:               Instance Slots.      (line  59)
+* slot-bound?:                           Instance Slots.      (line  13)
+* slot-definition-accessor:              Slots.               (line  32)
+* slot-definition-allocation:            Slots.               (line  17)
+* slot-definition-getter:                Slots.               (line  22)
+* slot-definition-init-form:             Slots.               (line  43)
+* slot-definition-init-keyword:          Slots.               (line  54)
+* slot-definition-init-thunk:            Slots.               (line  49)
+* slot-definition-init-value:            Slots.               (line  37)
+* slot-definition-name:                  Slots.               (line  11)
+* slot-definition-options:               Slots.               (line  14)
+* slot-definition-setter:                Slots.               (line  27)
+* slot-exists-using-class?:              Instance Slots.      (line  55)
+* slot-exists?:                          Instance Slots.      (line  10)
+* slot-init-function:                    Slots.               (line  60)
+* slot-missing:                          Handling Slot Access Errors.
+                                                              (line  11)
+* slot-ref <1>:                          Instance creation and slot access.
+                                                              (line  23)
+* slot-ref:                              Instance Slots.      (line  21)
+* slot-ref-using-class:                  Instance Slots.      (line  69)
+* slot-set! <1>:                         Instance creation and slot access.
+                                                              (line  23)
+* slot-set!:                             Instance Slots.      (line  32)
+* slot-set-using-class!:                 Instance Slots.      (line  81)
+* slot-unbound:                          Handling Slot Access Errors.
+                                                              (line  24)
+* sort-applicable-methods:               Determining Which Methods to Apply.
+                                                              (line  17)
+* standard-define-class:                 STKlos Compatibility.
+                                                              (line  13)
+* write:                                 Write and Display.   (line   7)
+
+
+
+Tag Table:
+Node: Top522
+Node: Introduction756
+Node: Getting Started1611
+Node: Running GOOPS2001
+Node: Methods2513
+Node: User-defined types2780
+Node: Asking for the type of an object3596
+Node: Reference Manual3979
+Node: Introductory Remarks4954
+Node: Metaobjects and the Metaobject Protocol6967
+Node: Terminology12581
+Node: Metaclass13175
+Node: Class Precedence List15966
+Node: Accessor16996
+Node: Defining New Classes17799
+Node: Basic Class Definition19082
+Node: Class Options21161
+Node: Slot Options22599
+Node: Class Definition Internals30434
+Node: Customizing Class Definition34523
+Node: STKlos Compatibility40217
+Node: Creating Instances40767
+Node: Basic Instance Creation41009
+Node: Customizing Instance Creation42710
+Node: Accessing Slots45416
+Node: Instance Slots47794
+Node: Class Slots51587
+Node: Handling Slot Access Errors52854
+Node: Creating Generic Functions54169
+Node: Basic Generic Function Creation54755
+Node: Generic Function Internals59290
+Node: Extending Guiles Primitives61824
+Node: Adding Methods to Generic Functions63945
+Node: Basic Method Definition64253
+Node: Method Definition Internals67003
+Node: Invoking Generic Functions69651
+Node: Determining Which Methods to Apply70686
+Node: Handling Invocation Errors71635
+Node: Redefining a Class72954
+Node: Default Class Redefinition Behaviour73593
+Node: Customizing Class Redefinition75847
+Node: Changing the Class of an Instance78399
+Node: Introspection80161
+Node: Classes81350
+Node: Slots83280
+Node: Instances86467
+Node: Generic Functions87039
+Node: Generic Function Methods87478
+Node: Miscellaneous Functions88559
+Node: Administrative Functions88838
+Node: Error Handling89180
+Node: Object Comparisons90242
+Node: Cloning Objects91549
+Node: Write and Display92488
+Node: MOP Specification93267
+Node: Class Definition95035
+Node: Instance Creation100417
+Node: Class Redefinition101105
+Node: Method Definition103271
+Node: Generic Function Invocation103978
+Node: Tutorial104475
+Node: Copyright104842
+Node: Intro105582
+Node: Class definition and instantiation106693
+Node: Class definition106915
+Ref: Class definition-Footnote-1108443
+Ref: Class definition-Footnote-2108496
+Ref: Class definition-Footnote-3108679
+Node: Inheritance109004
+Node: Class hierarchy and inheritance of slots109301
+Node: Instance creation and slot access111595
+Node: Slot description113093
+Node: Class precedence list120688
+Ref: Class precedence list-Footnote-1123112
+Node: Generic functions123213
+Node: Generic functions and methods123411
+Node: Next-method126570
+Node: Example128258
+Ref: Example-Footnote-1131355
+Node: Concept Index131551
+Node: Function and Variable Index132949
+
+End Tag Table

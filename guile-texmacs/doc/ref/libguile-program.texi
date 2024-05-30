@@ -1,0 +1,788 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004, 2005
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Programming Overview
+@section An Overview of Guile Programming
+
+Guile is designed as an extension language interpreter that is
+straightforward to integrate with applications written in C (and C++).
+The big win here for the application developer is that Guile
+integration, as the Guile web page says, ``lowers your project's
+hacktivation energy.''  Lowering the hacktivation energy means that you,
+as the application developer, @emph{and your users}, reap the benefits
+that flow from being able to extend the application in a high level
+extension language rather than in plain old C.
+
+In abstract terms, it's difficult to explain what this really means and
+what the integration process involves, so instead let's begin by jumping
+straight into an example of how you might integrate Guile into an
+existing program, and what you could expect to gain by so doing.  With
+that example under our belts, we'll then return to a more general
+analysis of the arguments involved and the range of programming options
+available.
+
+@menu
+* Extending Dia::               How one might extend Dia using Guile.
+* Scheme vs C::                 Why Scheme is more hackable than C.
+* Testbed Example::             Example: using Guile in a testbed.
+* Programming Options::         Options for Guile programming.
+* User Programming::            How about application users?
+@end menu
+
+
+@node Extending Dia
+@subsection How One Might Extend Dia Using Guile
+
+Dia is a free software program for drawing schematic diagrams like flow
+charts and floor plans (@uref{http://www.gnome.org/projects/dia/}).
+This section conducts the thought
+experiment of adding Guile to Dia.  In so doing, it aims to illustrate
+several of the steps and considerations involved in adding Guile to
+applications in general.
+
+@menu
+* Dia Objective::               Deciding why you want to add Guile.
+* Dia Steps::                   Four steps required to add Guile.
+* Dia Smobs::                   How to represent Dia data in Scheme.
+* Dia Primitives::              Writing Guile primitives for Dia.
+* Dia Hook::                    Providing a hook for Scheme evaluation.
+* Dia Structure::               Overall structure for adding Guile.
+* Dia Advanced::                Going further with Dia and Guile.
+@end menu
+
+
+@node Dia Objective
+@subsubsection Deciding Why You Want to Add Guile
+
+First off, you should understand why you want to add Guile to Dia at
+all, and that means forming a picture of what Dia does and how it does
+it.  So, what are the constituents of the Dia application?
+
+@itemize @bullet
+@item
+Most importantly, the @dfn{application domain objects} --- in other
+words, the concepts that differentiate Dia from another application such
+as a word processor or spreadsheet: shapes, templates, connectors,
+pages, plus the properties of all these things.
+
+@item
+The code that manages the graphical face of the application, including
+the layout and display of the objects above.
+
+@item
+The code that handles input events, which indicate that the application
+user is wanting to do something.
+@end itemize
+
+@noindent
+(In other words, a textbook example of the @dfn{model - view -
+controller} paradigm.)
+
+Next question: how will Dia benefit once the Guile integration is
+complete?  Several (positive!) answers are possible here, and the choice
+is obviously up to the application developers.  Still, one answer is
+that the main benefit will be the ability to manipulate Dia's
+application domain objects from Scheme.
+
+Suppose that Dia made a set of procedures available in Scheme,
+representing the most basic operations on objects such as shapes,
+connectors, and so on.  Using Scheme, the application user could then
+write code that builds upon these basic operations to create more
+complex procedures.  For example, given basic procedures to enumerate
+the objects on a page, to determine whether an object is a square, and
+to change the fill pattern of a single shape, the user can write a
+Scheme procedure to change the fill pattern of all squares on the
+current page:
+
+@lisp
+(define (change-squares'-fill-pattern new-pattern)
+  (for-each-shape current-page
+    (lambda (shape)
+      (if (square? shape)
+          (change-fill-pattern shape new-pattern)))))
+@end lisp
+
+
+@node Dia Steps
+@subsubsection Four Steps Required to Add Guile
+
+Assuming this objective, four steps are needed to achieve it.
+
+First, you need a way of representing your application-specific objects
+--- such as @code{shape} in the previous example --- when they are
+passed into the Scheme world.  Unless your objects are so simple that
+they map naturally into builtin Scheme data types like numbers and
+strings, you will probably want to use Guile's @dfn{SMOB} interface to
+create a new Scheme data type for your objects.
+
+Second, you need to write code for the basic operations like
+@code{for-each-shape} and @code{square?} such that they access and
+manipulate your existing data structures correctly, and then make these
+operations available as @dfn{primitives} on the Scheme level.
+
+Third, you need to provide some mechanism within the Dia application
+that a user can hook into to cause arbitrary Scheme code to be
+evaluated.
+
+Finally, you need to restructure your top-level application C code a
+little so that it initializes the Guile interpreter correctly and
+declares your @dfn{SMOBs} and @dfn{primitives} to the Scheme world.
+
+The following subsections expand on these four points in turn.
+
+
+@node Dia Smobs
+@subsubsection How to Represent Dia Data in Scheme
+
+For all but the most trivial applications, you will probably want to
+allow some representation of your domain objects to exist on the Scheme
+level.  This is where the idea of SMOBs comes in, and with it issues of
+lifetime management and garbage collection.
+
+To get more concrete about this, let's look again at the example we gave
+earlier of how application users can use Guile to build higher-level
+functions from the primitives that Dia itself provides.
+
+@lisp
+(define (change-squares'-fill-pattern new-pattern)
+  (for-each-shape current-page
+    (lambda (shape)
+      (if (square? shape)
+          (change-fill-pattern shape new-pattern)))))
+@end lisp
+
+Consider what is stored here in the variable @code{shape}.  For each
+shape on the current page, the @code{for-each-shape} primitive calls
+@code{(lambda (shape) @dots{})} with an argument representing that
+shape.  Question is: how is that argument represented on the Scheme
+level?  The issues are as follows.
+
+@itemize @bullet
+@item
+Whatever the representation, it has to be decodable again by the C code
+for the @code{square?} and @code{change-fill-pattern} primitives.  In
+other words, a primitive like @code{square?} has somehow to be able to
+turn the value that it receives back into something that points to the
+underlying C structure describing a shape.
+
+@item
+The representation must also cope with Scheme code holding on to the
+value for later use.  What happens if the Scheme code stores
+@code{shape} in a global variable, but then that shape is deleted (in a
+way that the Scheme code is not aware of), and later on some other
+Scheme code uses that global variable again in a call to, say,
+@code{square?}?
+
+@item
+The lifetime and memory allocation of objects that exist @emph{only} in
+the Scheme world is managed automatically by Guile's garbage collector
+using one simple rule: when there are no remaining references to an
+object, the object is considered dead and so its memory is freed.  But
+for objects that exist in both C and Scheme, the picture is more
+complicated; in the case of Dia, where the @code{shape} argument passes
+transiently in and out of the Scheme world, it would be quite wrong the
+@strong{delete} the underlying C shape just because the Scheme code has
+finished evaluation.  How do we avoid this happening?
+@end itemize
+
+One resolution of these issues is for the Scheme-level representation of
+a shape to be a new, Scheme-specific C structure wrapped up as a SMOB.
+The SMOB is what is passed into and out of Scheme code, and the
+Scheme-specific C structure inside the SMOB points to Dia's underlying C
+structure so that the code for primitives like @code{square?} can get at
+it.
+
+To cope with an underlying shape being deleted while Scheme code is
+still holding onto a Scheme shape value, the underlying C structure
+should have a new field that points to the Scheme-specific SMOB.  When a
+shape is deleted, the relevant code chains through to the
+Scheme-specific structure and sets its pointer back to the underlying
+structure to NULL.  Thus the SMOB value for the shape continues to
+exist, but any primitive code that tries to use it will detect that the
+underlying shape has been deleted because the underlying structure
+pointer is NULL.
+
+So, to summarize the steps involved in this resolution of the problem
+(and assuming that the underlying C structure for a shape is
+@code{struct dia_shape}):
+
+@itemize @bullet
+@item
+Define a new Scheme-specific structure that @emph{points} to the
+underlying C structure:
+
+@lisp
+struct dia_guile_shape
+@{
+  struct dia_shape * c_shape;   /* NULL => deleted */
+@}
+@end lisp
+
+@item
+Add a field to @code{struct dia_shape} that points to its @code{struct
+dia_guile_shape} if it has one ---
+
+@lisp
+struct dia_shape
+@{
+  @dots{}
+  struct dia_guile_shape * guile_shape;
+@}
+@end lisp
+
+@noindent
+--- so that C code can set @code{guile_shape->c_shape} to NULL when the
+underlying shape is deleted.
+
+@item
+Wrap @code{struct dia_guile_shape} as a SMOB type.
+
+@item
+Whenever you need to represent a C shape onto the Scheme level, create a
+SMOB instance for it, and pass that.
+
+@item
+In primitive code that receives a shape SMOB instance, check the
+@code{c_shape} field when decoding it, to find out whether the
+underlying C shape is still there.
+@end itemize
+
+As far as memory management is concerned, the SMOB values and their
+Scheme-specific structures are under the control of the garbage
+collector, whereas the underlying C structures are explicitly managed in
+exactly the same way that Dia managed them before we thought of adding
+Guile.
+
+When the garbage collector decides to free a shape SMOB value, it calls
+the @dfn{SMOB free} function that was specified when defining the shape
+SMOB type.  To maintain the correctness of the @code{guile_shape} field
+in the underlying C structure, this function should chain through to the
+underlying C structure (if it still exists) and set its
+@code{guile_shape} field to NULL.
+
+For full documentation on defining and using SMOB types, see
+@ref{Defining New Types (Smobs)}.
+
+
+@node Dia Primitives
+@subsubsection Writing Guile Primitives for Dia
+
+Once the details of object representation are decided, writing the
+primitive function code that you need is usually straightforward.
+
+A primitive is simply a C function whose arguments and return value are
+all of type @code{SCM}, and whose body does whatever you want it to do.
+As an example, here is a possible implementation of the @code{square?}
+primitive:
+
+@lisp
+#define FUNC_NAME "square?"
+static SCM square_p (SCM shape)
+@{
+  struct dia_guile_shape * guile_shape;
+
+  /* Check that arg is really a shape SMOB. */
+  SCM_VALIDATE_SHAPE (SCM_ARG1, shape);
+
+  /* Access Scheme-specific shape structure. */
+  guile_shape = SCM_SMOB_DATA (shape);
+
+  /* Find out if underlying shape exists and is a
+     square; return answer as a Scheme boolean. */
+  return scm_from_bool (guile_shape->c_shape &&
+                        (guile_shape->c_shape->type == DIA_SQUARE));
+@}
+#undef FUNC_NAME
+@end lisp
+
+Notice how easy it is to chain through from the @code{SCM shape}
+parameter that @code{square_p} receives --- which is a SMOB --- to the
+Scheme-specific structure inside the SMOB, and thence to the underlying
+C structure for the shape.
+
+In this code, @code{SCM_SMOB_DATA} and @code{scm_from_bool} are from
+the standard Guile API.  @code{SCM_VALIDATE_SHAPE} is a macro that you
+should define as part of your SMOB definition: it checks that the
+passed parameter is of the expected type.  This is needed to guard
+against Scheme code using the @code{square?} procedure incorrectly, as
+in @code{(square? "hello")}; Scheme's latent typing means that usage
+errors like this must be caught at run time.
+
+Having written the C code for your primitives, you need to make them
+available as Scheme procedures by calling the @code{scm_c_define_gsubr}
+function.  @code{scm_c_define_gsubr} (@pxref{Primitive Procedures}) takes arguments that
+specify the Scheme-level name for the primitive and how many required,
+optional and rest arguments it can accept.  The @code{square?} primitive
+always requires exactly one argument, so the call to make it available
+in Scheme reads like this:
+
+@lisp
+scm_c_define_gsubr ("square?", 1, 0, 0, square_p);
+@end lisp
+
+For where to put this call, see the subsection after next on the
+structure of Guile-enabled code (@pxref{Dia Structure}).
+
+
+@node Dia Hook
+@subsubsection Providing a Hook for the Evaluation of Scheme Code
+
+To make the Guile integration useful, you have to design some kind of
+hook into your application that application users can use to cause their
+Scheme code to be evaluated.
+
+Technically, this is straightforward; you just have to decide on a
+mechanism that is appropriate for your application.  Think of Emacs, for
+example: when you type @kbd{@key{ESC} :}, you get a prompt where you can
+type in any Elisp code, which Emacs will then evaluate.  Or, again like
+Emacs, you could provide a mechanism (such as an init file) to allow
+Scheme code to be associated with a particular key sequence, and
+evaluate the code when that key sequence is entered.
+
+In either case, once you have the Scheme code that you want to evaluate,
+as a null terminated string, you can tell Guile to evaluate it by
+calling the @code{scm_c_eval_string} function.
+
+
+@node Dia Structure
+@subsubsection Top-level Structure of Guile-enabled Dia
+
+Let's assume that the pre-Guile Dia code looks structurally like this:
+
+@itemize @bullet
+@item
+@code{main ()}
+
+@itemize @bullet
+@item
+do lots of initialization and setup stuff
+@item
+enter Gtk main loop
+@end itemize
+@end itemize
+
+When you add Guile to a program, one (rather technical) requirement is
+that Guile's garbage collector needs to know where the bottom of the C
+stack is.  The easiest way to ensure this is to use
+@code{scm_boot_guile} like this:
+
+@itemize @bullet
+@item
+@code{main ()}
+
+@itemize @bullet
+@item
+do lots of initialization and setup stuff
+@item
+@code{scm_boot_guile (argc, argv, inner_main, NULL)}
+@end itemize
+
+@item
+@code{inner_main ()}
+
+@itemize @bullet
+@item
+define all SMOB types
+@item
+export primitives to Scheme using @code{scm_c_define_gsubr}
+@item
+enter Gtk main loop
+@end itemize
+@end itemize
+
+In other words, you move the guts of what was previously in your
+@code{main} function into a new function called @code{inner_main}, and
+then add a @code{scm_boot_guile} call, with @code{inner_main} as a
+parameter, to the end of @code{main}.
+
+Assuming that you are using SMOBs and have written primitive code as
+described in the preceding subsections, you also need to insert calls to
+declare your new SMOBs and export the primitives to Scheme.  These
+declarations must happen @emph{inside} the dynamic scope of the
+@code{scm_boot_guile} call, but also @emph{before} any code is run that
+could possibly use them --- the beginning of @code{inner_main} is an
+ideal place for this.
+
+
+@node Dia Advanced
+@subsubsection Going Further with Dia and Guile
+
+The steps described so far implement an initial Guile integration that
+already gives a lot of additional power to Dia application users.  But
+there are further steps that you could take, and it's interesting to
+consider a few of these.
+
+In general, you could progressively move more of Dia's source code from
+C into Scheme.  This might make the code more maintainable and
+extensible, and it could open the door to new programming paradigms that
+are tricky to effect in C but straightforward in Scheme.
+
+A specific example of this is that you could use the guile-gtk package,
+which provides Scheme-level procedures for most of the Gtk+ library, to
+move the code that lays out and displays Dia objects from C to Scheme.
+
+As you follow this path, it naturally becomes less useful to maintain a
+distinction between Dia's original non-Guile-related source code, and
+its later code implementing SMOBs and primitives for the Scheme world.
+
+For example, suppose that the original source code had a
+@code{dia_change_fill_pattern} function:
+
+@lisp
+void dia_change_fill_pattern (struct dia_shape * shape,
+                              struct dia_pattern * pattern)
+@{
+  /* real pattern change work */
+@}
+@end lisp
+
+During initial Guile integration, you add a @code{change_fill_pattern}
+primitive for Scheme purposes, which accesses the underlying structures
+from its SMOB values and uses @code{dia_change_fill_pattern} to do the
+real work:
+
+@lisp
+SCM change_fill_pattern (SCM shape, SCM pattern)
+@{
+  struct dia_shape * d_shape;
+  struct dia_pattern * d_pattern;
+
+  @dots{}
+
+  dia_change_fill_pattern (d_shape, d_pattern);
+
+  return SCM_UNSPECIFIED;
+@}
+@end lisp
+
+At this point, it makes sense to keep @code{dia_change_fill_pattern} and
+@code{change_fill_pattern} separate, because
+@code{dia_change_fill_pattern} can also be called without going through
+Scheme at all, say because the user clicks a button which causes a
+C-registered Gtk+ callback to be called.
+
+But, if the code for creating buttons and registering their callbacks is
+moved into Scheme (using guile-gtk), it may become true that
+@code{dia_change_fill_pattern} can no longer be called other than
+through Scheme.  In which case, it makes sense to abolish it and move
+its contents directly into @code{change_fill_pattern}, like this:
+
+@lisp
+SCM change_fill_pattern (SCM shape, SCM pattern)
+@{
+  struct dia_shape * d_shape;
+  struct dia_pattern * d_pattern;
+
+  @dots{}
+
+  /* real pattern change work */
+
+  return SCM_UNSPECIFIED;
+@}
+@end lisp
+
+So further Guile integration progressively @emph{reduces} the amount of
+functional C code that you have to maintain over the long term.
+
+A similar argument applies to data representation.  In the discussion of
+SMOBs earlier, issues arose because of the different memory management
+and lifetime models that normally apply to data structures in C and in
+Scheme.  However, with further Guile integration, you can resolve this
+issue in a more radical way by allowing all your data structures to be
+under the control of the garbage collector, and kept alive by references
+from the Scheme world.  Instead of maintaining an array or linked list
+of shapes in C, you would instead maintain a list in Scheme.
+
+Rather like the coalescing of @code{dia_change_fill_pattern} and
+@code{change_fill_pattern}, the practical upshot of such a change is
+that you would no longer have to keep the @code{dia_shape} and
+@code{dia_guile_shape} structures separate, and so wouldn't need to
+worry about the pointers between them.  Instead, you could change the
+SMOB definition to wrap the @code{dia_shape} structure directly, and
+send @code{dia_guile_shape} off to the scrap yard.  Cut out the middle
+man!
+
+Finally, we come to the holy grail of Guile's free software / extension
+language approach.  Once you have a Scheme representation for
+interesting Dia data types like shapes, and a handy bunch of primitives
+for manipulating them, it suddenly becomes clear that you have a bundle
+of functionality that could have far-ranging use beyond Dia itself.  In
+other words, the data types and primitives could now become a library,
+and Dia becomes just one of the many possible applications using that
+library --- albeit, at this early stage, a rather important one!
+
+In this model, Guile becomes just the glue that binds everything
+together.  Imagine an application that usefully combined functionality
+from Dia, Gnumeric and GnuCash --- it's tricky right now, because no
+such application yet exists; but it'll happen some day @dots{}
+
+
+@node Scheme vs C
+@subsection Why Scheme is More Hackable Than C
+
+Underlying Guile's value proposition is the assumption that programming
+in a high level language, specifically Guile's implementation of Scheme,
+is necessarily better in some way than programming in C.  What do we
+mean by this claim, and how can we be so sure?
+
+One class of advantages applies not only to Scheme, but more generally
+to any interpretable, high level, scripting language, such as Emacs
+Lisp, Python, Ruby, or @TeX{}'s macro language.  Common features of all
+such languages, when compared to C, are that:
+
+@itemize @bullet
+@item
+They lend themselves to rapid and experimental development cycles,
+owing usually to a combination of their interpretability and the
+integrated development environment in which they are used.
+
+@item
+They free developers from some of the low level bookkeeping tasks
+associated with C programming, notably memory management.
+
+@item
+They provide high level features such as container objects and exception
+handling that make common programming tasks easier.
+@end itemize
+
+In the case of Scheme, particular features that make programming easier
+--- and more fun! --- are its powerful mechanisms for abstracting parts
+of programs (closures --- @pxref{About Closure}) and for iteration
+(@pxref{while do}).
+
+The evidence in support of this argument is empirical: the huge amount
+of code that has been written in extension languages for applications
+that support this mechanism.  Most notable are extensions written in
+Emacs Lisp for GNU Emacs, in @TeX{}'s macro language for @TeX{}, and in
+Script-Fu for the Gimp, but there is increasingly now a significant code
+eco-system for Guile-based applications as well, such as Lilypond and
+GnuCash.  It is close to inconceivable that similar amounts of
+functionality could have been added to these applications just by
+writing new code in their base implementation languages.
+
+
+@node Testbed Example
+@subsection Example: Using Guile for an Application Testbed
+
+As an example of what this means in practice, imagine writing a testbed
+for an application that is tested by submitting various requests (via a
+C interface) and validating the output received.  Suppose further that
+the application keeps an idea of its current state, and that the
+``correct'' output for a given request may depend on the current
+application state.  A complete ``white box''@footnote{A @dfn{white box}
+test plan is one that incorporates knowledge of the internal design of
+the application under test.} test plan for this application would aim to
+submit all possible requests in each distinguishable state, and validate
+the output for all request/state combinations.
+
+To write all this test code in C would be very tedious.  Suppose instead
+that the testbed code adds a single new C function, to submit an
+arbitrary request and return the response, and then uses Guile to export
+this function as a Scheme procedure.  The rest of the testbed can then
+be written in Scheme, and so benefits from all the advantages of
+programming in Scheme that were described in the previous section.
+
+(In this particular example, there is an additional benefit of writing
+most of the testbed in Scheme.  A common problem for white box testing
+is that mistakes and mistaken assumptions in the application under test
+can easily be reproduced in the testbed code.  It is more difficult to
+copy mistakes like this when the testbed is written in a different
+language from the application.)
+
+
+@node Programming Options
+@subsection A Choice of Programming Options
+
+The preceding arguments and example point to a model of Guile
+programming that is applicable in many cases.  According to this model,
+Guile programming involves a balance between C and Scheme programming,
+with the aim being to extract the greatest possible Scheme level benefit
+from the least amount of C level work.
+
+The C level work required in this model usually consists of packaging
+and exporting functions and application objects such that they can be
+seen and manipulated on the Scheme level.  To help with this, Guile's C
+language interface includes utility features that aim to make this kind
+of integration very easy for the application developer.  These features
+are documented later in this part of the manual: see REFFIXME.
+
+This model, though, is really just one of a range of possible
+programming options.  If all of the functionality that you need is
+available from Scheme, you could choose instead to write your whole
+application in Scheme (or one of the other high level languages that
+Guile supports through translation), and simply use Guile as an
+interpreter for Scheme.  (In the future, we hope that Guile will also be
+able to compile Scheme code, so lessening the performance gap between C
+and Scheme code.)  Or, at the other end of the C--Scheme scale, you
+could write the majority of your application in C, and only call out to
+Guile occasionally for specific actions such as reading a configuration
+file or executing a user-specified extension.  The choices boil down to
+two basic questions:
+
+@itemize @bullet
+@item
+Which parts of the application do you write in C, and which in Scheme
+(or another high level translated language)?
+
+@item
+How do you design the interface between the C and Scheme parts of your
+application?
+@end itemize
+
+These are of course design questions, and the right design for any given
+application will always depend upon the particular requirements that you
+are trying to meet.  In the context of Guile, however, there are some
+generally applicable considerations that can help you when designing
+your answers.
+
+@menu
+* Available Functionality::     What functionality is already available?
+* Basic Constraints::           Functional and performance constraints.
+* Style Choices::               Your preferred programming style.
+* Program Control::             What controls program execution?
+@end menu
+
+
+@node Available Functionality
+@subsubsection What Functionality is Already Available?
+
+Suppose, for the sake of argument, that you would prefer to write your
+whole application in Scheme.  Then the API available to you consists of:
+
+@itemize @bullet
+@item
+standard Scheme
+
+@item
+plus the extensions to standard Scheme provided by
+Guile in its core distribution
+
+@item
+plus any additional functionality that you or others have packaged so
+that it can be loaded as a Guile Scheme module.
+@end itemize
+
+A module in the last category can either be a pure Scheme module --- in
+other words a collection of utility procedures coded in Scheme --- or a
+module that provides a Scheme interface to an extension library coded in
+C --- in other words a nice package where someone else has done the work
+of wrapping up some useful C code for you.  The set of available modules
+is growing quickly and already includes such useful examples as
+@code{(gtk gtk)}, which makes Gtk+ drawing functions available in
+Scheme, and @code{(database postgres)}, which provides SQL access to a
+Postgres database.
+
+Given the growing collection of pre-existing modules, it is quite
+feasible that your application could be implemented by combining a
+selection of these modules together with new application code written in
+Scheme.
+
+If this approach is not enough, because the functionality that your
+application needs is not already available in this form, and it is
+impossible to write the new functionality in Scheme, you will need to
+write some C code.  If the required function is already available in C
+(e.g. in a library), all you need is a little glue to connect it to the
+world of Guile.  If not, you need both to write the basic code and to
+plumb it into Guile.
+
+In either case, two general considerations are important.  Firstly, what
+is the interface by which the functionality is presented to the Scheme
+world?  Does the interface consist only of function calls (for example,
+a simple drawing interface), or does it need to include @dfn{objects} of
+some kind that can be passed between C and Scheme and manipulated by
+both worlds.  Secondly, how does the lifetime and memory management of
+objects in the C code relate to the garbage collection governed approach
+of Scheme objects?  In the case where the basic C code is not already
+written, most of the difficulties of memory management can be avoided by
+using Guile's C interface features from the start.
+
+For the full documentation on writing C code for Guile and connecting
+existing C code to the Guile world, see REFFIXME.
+
+
+@node Basic Constraints
+@subsubsection Functional and Performance Constraints
+
+
+@node Style Choices
+@subsubsection Your Preferred Programming Style
+
+
+@node Program Control
+@subsubsection What Controls Program Execution?
+
+
+@node User Programming
+@subsection How About Application Users?
+
+So far we have considered what Guile programming means for an
+application developer.  But what if you are instead @emph{using} an
+existing Guile-based application, and want to know what your
+options are for programming and extending this application?
+
+The answer to this question varies from one application to another,
+because the options available depend inevitably on whether the
+application developer has provided any hooks for you to hang your own
+code on and, if there are such hooks, what they allow you to
+do.@footnote{Of course, in the world of free software, you always have
+the freedom to modify the application's source code to your own
+requirements.  Here we are concerned with the extension options that the
+application has provided for without your needing to modify its source
+code.}  For example@dots{}
+
+@itemize @bullet
+@item
+If the application permits you to load and execute any Guile code, the
+world is your oyster.  You can extend the application in any way that
+you choose.
+
+@item
+A more cautious application might allow you to load and execute Guile
+code, but only in a @dfn{safe} environment, where the interface
+available is restricted by the application from the standard Guile API.
+
+@item
+Or a really fearful application might not provide a hook to really
+execute user code at all, but just use Scheme syntax as a convenient way
+for users to specify application data or configuration options.
+@end itemize
+
+In the last two cases, what you can do is, by definition, restricted by
+the application, and you should refer to the application's own manual to
+find out your options.
+
+The most well known example of the first case is Emacs, with its
+extension language Emacs Lisp: as well as being a text editor, Emacs
+supports the loading and execution of arbitrary Emacs Lisp code.  The
+result of such openness has been dramatic: Emacs now benefits from
+user-contributed Emacs Lisp libraries that extend the basic editing
+function to do everything from reading news to psychoanalysis and
+playing adventure games.  The only limitation is that extensions are
+restricted to the functionality provided by Emacs's built-in set of
+primitive operations.  For example, you can interact and display data by
+manipulating the contents of an Emacs buffer, but you can't pop-up and
+draw a window with a layout that is totally different to the Emacs
+standard.
+
+This situation with a Guile application that supports the loading of
+arbitrary user code is similar, except perhaps even more so, because
+Guile also supports the loading of extension libraries written in C.
+This last point enables user code to add new primitive operations to
+Guile, and so to bypass the limitation present in Emacs Lisp.
+
+At this point, the distinction between an application developer and an
+application user becomes rather blurred.  Instead of seeing yourself as
+a user extending an application, you could equally well say that you are
+developing a new application of your own using some of the primitive
+functionality provided by the original application.  As such, all the
+discussions of the preceding sections of this chapter are relevant to
+how you can proceed with developing your extension.
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

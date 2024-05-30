@@ -1,0 +1,132 @@
+;;;; srfi-39.test --- -*- scheme -*-
+;;;;
+;;;; Copyright (C) 2004, 2005, 2006, 2008 Free Software Foundation, Inc.
+;;;; 
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;; 
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(define-module (test-srfi-39)
+  #:use-module (test-suite lib)
+  #:use-module (srfi srfi-34)
+  #:use-module (srfi srfi-39)
+  #:duplicates (last) ;; avoid warning about srfi-34 replacing `raise'
+  )
+
+(define a (make-parameter 3))
+(define b (make-parameter 4))
+
+(define (check a b a-val b-val)
+  (and (eqv? (a) a-val)) (eqv? (b) b-val))
+
+(define c (make-parameter 2 (lambda (x) (if (< x 10) x 10))))
+(define d (make-parameter 15 (lambda (x) (if (< x 10) x 10))))
+
+(with-test-prefix "SRFI-39"
+
+  (pass-if "test 1"
+    (check a b 3 4))
+
+  (pass-if "test 2"
+    (parameterize ((a 2) (b 1))
+      (and (check a b 2 1)
+	   (parameterize ((b 8))
+	     (check a b 2 8)))))
+
+  (pass-if "test 3"
+    (check a b 3 4))
+
+  (pass-if "test 4"
+    (check c d 2 10))
+
+  (pass-if "test 5"
+    (parameterize ((a 0) (b 1) (c 98) (d 9))
+      (and (check a b 0 1)
+           (check c d 10 9)
+           (parameterize ((c (a)) (d (b)))
+	     (and (check a b 0 1)
+		  (check c d 0 1))))))
+
+  (pass-if "SRFI-34"
+    (let ((inside? (make-parameter #f)))
+      (call/cc (lambda (return)
+                 (with-exception-handler
+                  (lambda (c)
+                    ;; This handler should be called in the dynamic
+                    ;; environment installed by `parameterize'.
+                    (return (inside?)))
+                  (lambda ()
+                    (parameterize ((inside? #t))
+                      (raise 'some-exception)))))))))
+
+(let ()
+  (define (test-ports param new-port new-port-2)
+    (let ((old-port (param)))
+
+      (pass-if "new value"
+	(parameterize ((param new-port))
+	  (eq? (param) new-port)))
+
+      (pass-if "set value"
+	(parameterize ((param old-port))
+	  (param new-port)
+	  (eq? (param) new-port)))
+
+      (pass-if "old restored"
+	(parameterize ((param new-port))
+	  #f)
+	(eq? (param) old-port))
+
+      (pass-if "throw exit"
+	(catch 'bail
+	  (lambda ()
+	    (parameterize ((param new-port))
+	      (throw 'bail)))
+	  (lambda args #f))
+	(eq? (param) old-port))
+
+      (pass-if "call/cc re-enter"
+	(let ((cont  #f)
+	      (count 0)
+	      (port  #f)
+	      (good  #t))
+	  (parameterize ((param new-port))
+	    (call/cc (lambda (k) (set! cont k)))
+	    (set! count (1+ count))
+	    (set! port (param))
+	    (if (= 1 count) (param new-port-2)))
+	  (set! good (and good (eq? (param) old-port)))
+	  (case count
+	    ((1)
+	     (set! good (and good (eq? port new-port)))
+	     ;; re-entering should give new-port-2 left there last time
+	     (cont))
+	    ((2)
+	     (set! good (and good (eq? port new-port-2)))))
+	  good))
+
+      (pass-if "original unchanged"
+	(eq? (param) old-port))))
+
+  (with-test-prefix "current-input-port"
+    (test-ports current-input-port
+		(open-input-string "xyz") (open-input-string "xyz")))
+
+  (with-test-prefix "current-output-port"
+    (test-ports current-output-port
+		(open-output-string) (open-output-string)))
+
+  (with-test-prefix "current-error-port"
+    (test-ports current-error-port
+		(open-output-string) (open-output-string))))

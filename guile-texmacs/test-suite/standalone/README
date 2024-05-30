@@ -1,0 +1,29 @@
+-*-text-*-
+
+These tests use the standard automake TESTS mechanism.  Tests should
+be listed in TESTS in Makefile.am, and should exit with 0 on success,
+non-zero on failure, and 77 if the result should be ignored.  See the
+automake info pages for more information.
+
+If you want to use a scheme script, prefix it as follows:
+
+  #!/bin/sh
+  exec guile -s "$0" "$@"
+  !#
+
+Makefile.am will arrange for all tests (scripts or executables) to be
+run under pre-inst-guile-env so that the PATH, LD_LIBRARY_PATH, and
+GUILE_LOAD_PATH will be augmented appropriately.
+
+The Makefile.am has an example of creating a shared library to be used
+from a test scheme script as well.
+
+You can also create standalone executables that include your own code,
+are linked against libguile, and that run a given test script (or
+scripts).  One way to do this is to create the binary, make sure it
+calls scm_shell (argc, argv) as its final action, and put this bit at
+the top of your test script:
+
+  #!./my-test-binary -s
+  !#
+

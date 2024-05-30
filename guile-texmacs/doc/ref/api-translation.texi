@@ -1,0 +1,54 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Translation
+@section Support for Translating Other Languages
+
+[Describe translation framework.]
+
+@menu
+* Emacs Lisp Support::          Helper primitives for Emacs Lisp.
+@end menu
+
+
+@node Emacs Lisp Support
+@subsection Emacs Lisp Support
+
+@deffn {Scheme Procedure} nil-car x
+@deffnx {C Function} scm_nil_car (x)
+Return the car of @var{x}, but convert it to LISP nil if it
+is Scheme's end-of-list.
+@end deffn
+
+@deffn {Scheme Procedure} nil-cdr x
+@deffnx {C Function} scm_nil_cdr (x)
+Return the cdr of @var{x}, but convert it to LISP nil if it
+is Scheme's end-of-list.
+@end deffn
+
+@deffn {Scheme Procedure} nil-cons x y
+@deffnx {C Function} scm_nil_cons (x, y)
+Create a new cons cell with @var{x} as the car and @var{y} as
+the cdr, but convert @var{y} to Scheme's end-of-list if it is
+a Lisp nil.
+@end deffn
+
+@deffn {Scheme Procedure} nil-eq x y
+Compare @var{x} and @var{y} and return Lisp's t if they are
+@code{eq?}, return Lisp's nil otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} null x
+@deffnx {C Function} scm_null (x)
+Return Lisp's @code{t} if @var{x} is nil in the LISP sense,
+return Lisp's nil otherwise.
+@end deffn
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

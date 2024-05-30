@@ -1,0 +1,197 @@
+;;;; srfi-19.test --- test suite for SRFI-19 -*- scheme -*-
+;;;; Matthias Koeppe <mkoeppe@mail.math.uni-magdeburg.de> --- June 2001
+;;;;
+;;;; 	Copyright (C) 2001, 2003, 2004, 2005, 2006, 2007 Free Software Foundation, Inc.
+;;;;
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;;
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;;
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+;; SRFI-19 overrides current-date, so we have to do the test in a
+;; separate module, or later tests will fail.
+
+(define-module (test-suite test-srfi-19)
+  :duplicates (last)  ;; avoid warning about srfi-19 replacing `current-time'
+  :use-module (test-suite lib)
+  :use-module (srfi srfi-19)
+  :use-module (ice-9 format))
+
+(define (with-tz* tz thunk)
+  "Temporarily set the TZ environment variable to the passed string
+value and call THUNK."
+  (let ((old-tz #f))
+    (dynamic-wind
+	(lambda ()
+	  (set! old-tz (getenv "TZ"))
+	  (putenv (format "TZ=~A" tz)))
+	thunk
+	(lambda ()
+	  (if old-tz
+	      (putenv (format "TZ=~A" old-tz))
+	      (putenv "TZ"))))))
+
+(defmacro with-tz (tz . body)
+  `(with-tz* ,tz (lambda () ,@body)))
+
+(define (test-integral-time-structure date->time)
+  "Test whether the given DATE->TIME procedure creates a time
+structure with integral seconds.  (The seconds shall be maintained as
+integers, or precision may go away silently.  The SRFI-19 reference
+implementation was not OK for Guile in this respect because of Guile's
+incomplete numerical tower implementation.)"
+  (pass-if (format "~A makes integer seconds"
+		   date->time)
+	   (exact? (time-second
+		    (date->time (make-date 0 0 0 12 1 6 2001 0))))))
+
+(define (test-time->date time->date date->time)
+  (pass-if (format "~A works"
+		   time->date)
+	   (begin
+	     (time->date (date->time (make-date 0 0 0 12 1 6 2001 0)))
+	     #t)))
+
+(define (test-dst time->date date->time)
+  (pass-if (format "~A respects local DST if no TZ-OFFSET given"
+		   time->date)
+	   (let ((time (date->time (make-date 0 0 0 12 1 6 2001 0))))
+	     ;; on 2001-06-01, there should be 4 hours zone offset
+	     ;; between EST (EDT) and GMT
+	     (= (date-zone-offset
+		 (with-tz "EST5EDT"
+		   (time->date time)))
+		-14400))))
+
+(define-macro (test-time-conversion a b)
+  (let* ((a->b-sym (symbol-append a '-> b))
+	 (b->a-sym (symbol-append b '-> a)))
+    `(pass-if (format "~A and ~A work and are inverses of each other"
+		      ',a->b-sym ',b->a-sym)
+	      (let ((time (make-time ,a 12345 67890123)))
+		(time=? time (,b->a-sym (,a->b-sym time)))))))
+
+(define (test-time-comparison cmp a b)
+  (pass-if (format #f "~A works" cmp)
+           (cmp a b)))
+
+(define (test-time-arithmetic op a b res)
+  (pass-if (format #f "~A works" op)
+           (time=? (op a b) res)))
+
+;; return true if time objects X and Y are equal
+(define (time-equal? x y)
+  (and (eq?  (time-type x)       (time-type y))
+       (eqv? (time-second x)     (time-second y))
+       (eqv? (time-nanosecond x) (time-nanosecond y))))
+
+(with-test-prefix "SRFI date/time library"
+  ;; check for typos and silly errors
+  (pass-if "date-zone-offset is defined"
+	   (and (defined? 'date-zone-offset)
+		date-zone-offset
+		#t))
+  (pass-if "add-duration is defined"
+	   (and (defined? 'add-duration)
+		add-duration
+		#t))
+  (pass-if "(current-time time-tai) works"
+	   (time? (current-time time-tai)))
+  (pass-if "(current-time time-process) works"
+           (time? (current-time time-process)))
+  (test-time-conversion time-utc time-tai)
+  (test-time-conversion time-utc time-monotonic)
+  (test-time-conversion time-tai time-monotonic)
+  (pass-if "string->date works"
+	   (begin (string->date "2001-06-01@14:00" "~Y-~m-~d@~H:~M")
+		  #t))
+  ;; check for code paths where reals were passed to quotient, which
+  ;; doesn't work in Guile (and is unspecified in R5RS)
+  (test-time->date time-utc->date date->time-utc)
+  (test-time->date time-tai->date date->time-tai)
+  (test-time->date time-monotonic->date date->time-monotonic)
+  (pass-if "Fractional nanoseconds are handled"
+	   (begin (make-time time-duration 1000000000.5 0) #t))
+  ;; the seconds in a time shall be maintained as integers, or
+  ;; precision may silently go away
+  (test-integral-time-structure date->time-utc)
+  (test-integral-time-structure date->time-tai)
+  (test-integral-time-structure date->time-monotonic)
+  ;; check for DST and zone related problems
+  (pass-if "date->time-utc is the inverse of time-utc->date"
+	   (let ((time (date->time-utc
+			(make-date 0 0 0 14 1 6 2001 7200))))
+	     (time=? time
+		     (date->time-utc (time-utc->date time 7200)))))
+  (test-dst time-utc->date date->time-utc)
+  (test-dst time-tai->date date->time-tai)
+  (test-dst time-monotonic->date date->time-monotonic)
+  (test-dst julian-day->date date->julian-day)
+  (test-dst modified-julian-day->date date->modified-julian-day)
+
+  (pass-if "`date->julian-day' honors timezone"
+    (let ((now (current-date -14400)))
+      (time=? (date->time-utc (julian-day->date (date->julian-day now)))
+              (date->time-utc now))))
+
+  (pass-if "string->date respects local DST if no time zone is read"
+	   (time=? (date->time-utc
+		    (with-tz "EST5EDT"
+		      (string->date "2001-06-01@08:00" "~Y-~m-~d@~H:~M")))
+		   (date->time-utc
+		    (make-date 0 0 0 12 1 6 2001 0))))
+  ;; check time comparison procedures
+  (let* ((time1 (make-time time-monotonic 0 0))
+         (time2 (make-time time-monotonic 0 0))
+         (time3 (make-time time-monotonic 385907 998360432))
+         (time4 (make-time time-monotonic 385907 998360432)))
+    (test-time-comparison time<=? time1 time3)
+    (test-time-comparison time<?  time1 time3)
+    (test-time-comparison time=?  time1 time2)
+    (test-time-comparison time>=? time3 time3)
+    (test-time-comparison time>?  time3 time2))
+  ;; check time arithmetic procedures
+  (let* ((time1 (make-time time-monotonic 0 0))
+         (time2 (make-time time-monotonic 385907 998360432))
+         (diff (time-difference time2 time1)))
+    (test-time-arithmetic add-duration time1 diff time2)
+    (test-time-arithmetic subtract-duration time2 diff time1))
+
+  (with-test-prefix "date->time-tai"
+    ;; leap second 1 Jan 1999, 1 second of UTC in make-date is out as 2
+    ;; seconds of TAI in date->time-tai
+    (pass-if "31dec98 23:59:59"
+      (time-equal? (make-time time-tai 0 915148830)
+		   (date->time-tai (make-date 0 59 59 23 31 12 1998 0))))
+    (pass-if "1jan99 0:00:00"
+      (time-equal? (make-time time-tai 0 915148832)
+		   (date->time-tai (make-date 0 0  0  0   1  1 1999 0))))
+
+    ;; leap second 1 Jan 2006, 1 second of UTC in make-date is out as 2
+    ;; seconds of TAI in date->time-tai
+    (pass-if "31dec05 23:59:59"
+      (time-equal? (make-time time-tai 0 1136073631)
+		   (date->time-tai (make-date 0 59 59 23 31 12 2005 0))))
+    (pass-if "1jan06 0:00:00"
+      (time-equal? (make-time time-tai 0 1136073633)
+		   (date->time-tai (make-date 0 0  0  0   1  1 2006 0)))))
+
+  (with-test-prefix "date-week-number"
+    (pass-if (= 0 (date-week-number (make-date 0 0 0 0 1 1 1984 0) 0)))
+    (pass-if (= 0 (date-week-number (make-date 0 0 0 0 7 1 1984 0) 0)))
+    (pass-if (= 1 (date-week-number (make-date 0 0 0 0 8 1 1984 0) 0)))))
+
+
+;; Local Variables:
+;; eval: (put 'with-tz 'scheme-indent-function 1)
+;; End:

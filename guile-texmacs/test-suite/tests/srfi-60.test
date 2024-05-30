@@ -1,0 +1,436 @@
+;;;; srfi-60.test --- Test suite for Guile's SRFI-60 functions. -*- scheme -*-
+;;;;
+;;;; Copyright 2005, 2006 Free Software Foundation, Inc.
+;;;;
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;;
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;;
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(define-module (test-srfi-60)
+  #:duplicates (last)  ;; avoid warning about srfi-60 replacing `bit-count'
+  #:use-module (test-suite lib)
+  #:use-module (srfi srfi-60))
+
+
+(pass-if "cond-expand srfi-60"
+  (cond-expand (srfi-60 #t)
+	       (else    #f)))
+
+;;
+;; logand
+;;
+
+(with-test-prefix "logand"
+  (pass-if (eqv? 6 (logand 14 6))))
+
+;;
+;; bitwise-and
+;;
+
+(with-test-prefix "bitwise-and"
+  (pass-if (eqv? 6 (bitwise-and 14 6))))
+
+;;
+;; logior
+;;
+
+(with-test-prefix "logior"
+  (pass-if (eqv? 14 (logior 10 12))))
+
+;;
+;; bitwise-ior
+;;
+
+(with-test-prefix "bitwise-ior"
+  (pass-if (eqv? 14 (bitwise-ior 10 12))))
+
+;;
+;; logxor
+;;
+
+(with-test-prefix "logxor"
+  (pass-if (eqv? 6 (logxor 10 12))))
+
+;;
+;; bitwise-xor
+;;
+
+(with-test-prefix "bitwise-xor"
+  (pass-if (eqv? 6 (bitwise-xor 10 12))))
+
+;;
+;; lognot
+;;
+
+(with-test-prefix "lognot"
+  (pass-if (eqv? -1 (lognot 0)))
+  (pass-if (eqv? 0 (lognot -1))))
+
+;;
+;; bitwise-not
+;;
+
+(with-test-prefix "bitwise-not"
+  (pass-if (eqv? -1 (bitwise-not 0)))
+  (pass-if (eqv? 0 (bitwise-not -1))))
+
+;;
+;; bitwise-if
+;;
+
+(with-test-prefix "bitwise-if"
+  (pass-if (eqv? 9 (bitwise-if 3 1 8)))
+  (pass-if (eqv? 0 (bitwise-if 3 8 1))))
+
+;;
+;; bitwise-merge
+;;
+
+(with-test-prefix "bitwise-merge"
+  (pass-if (eqv? 9 (bitwise-merge 3 1 8)))
+  (pass-if (eqv? 0 (bitwise-merge 3 8 1))))
+
+;;
+;; logtest
+;;
+
+(with-test-prefix "logtest"
+  (pass-if (eq? #t (logtest 3 6)))
+  (pass-if (eq? #f (logtest 3 12))))
+
+;;
+;; any-bits-set?
+;;
+
+(with-test-prefix "any-bits-set?"
+  (pass-if (eq? #t (any-bits-set? 3 6)))
+  (pass-if (eq? #f (any-bits-set? 3 12))))
+
+;;
+;; logcount
+;;
+
+(with-test-prefix "logcount"
+  (pass-if (eqv? 2 (logcount 12))))
+
+;;
+;; bit-count
+;;
+
+(with-test-prefix "bit-count"
+  (pass-if (eqv? 2 (bit-count 12))))
+
+;;
+;; integer-length
+;;
+
+(with-test-prefix "integer-length"
+  (pass-if (eqv? 0 (integer-length 0)))
+  (pass-if (eqv? 8 (integer-length 128)))
+  (pass-if (eqv? 8 (integer-length 255)))
+  (pass-if (eqv? 9 (integer-length 256))))
+
+;;
+;; log2-binary-factors
+;;
+
+(with-test-prefix "log2-binary-factors"
+  (pass-if (eqv? -1 (log2-binary-factors 0)))
+  (pass-if (eqv? 0 (log2-binary-factors 1)))
+  (pass-if (eqv? 0 (log2-binary-factors 3)))
+  (pass-if (eqv? 2 (log2-binary-factors 4)))
+  (pass-if (eqv? 1 (log2-binary-factors 6)))
+  (pass-if (eqv? 0 (log2-binary-factors -1)))
+  (pass-if (eqv? 1 (log2-binary-factors -2)))
+  (pass-if (eqv? 0 (log2-binary-factors -3)))
+  (pass-if (eqv? 2 (log2-binary-factors -4)))
+  (pass-if (eqv? 128 (log2-binary-factors #x100000000000000000000000000000000))))
+
+;;
+;; first-set-bit
+;;
+
+(with-test-prefix "first-set-bit"
+  (pass-if (eqv? -1 (first-set-bit 0)))
+  (pass-if (eqv? 0 (first-set-bit 1)))
+  (pass-if (eqv? 0 (first-set-bit 3)))
+  (pass-if (eqv? 2 (first-set-bit 4)))
+  (pass-if (eqv? 1 (first-set-bit 6)))
+  (pass-if (eqv? 0 (first-set-bit -1)))
+  (pass-if (eqv? 1 (first-set-bit -2)))
+  (pass-if (eqv? 0 (first-set-bit -3)))
+  (pass-if (eqv? 2 (first-set-bit -4))))
+
+;;
+;; logbit?
+;;
+
+(with-test-prefix "logbit?"
+  (pass-if (eq? #t (logbit? 0 1)))
+  (pass-if (eq? #f (logbit? 1 1)))
+  (pass-if (eq? #f (logbit? 1 8)))
+  (pass-if (eq? #t (logbit? 1000 -1))))
+
+;;
+;; bit-set?
+;;
+
+(with-test-prefix "bit-set?"
+  (pass-if (eq? #t (bit-set? 0 1)))
+  (pass-if (eq? #f (bit-set? 1 1)))
+  (pass-if (eq? #f (bit-set? 1 8)))
+  (pass-if (eq? #t (bit-set? 1000 -1))))
+
+;;
+;; copy-bit
+;;
+
+(with-test-prefix "copy-bit"
+  (pass-if (eqv? 0 (copy-bit 0 0 #f)))
+  (pass-if (eqv? 0 (copy-bit 30 0 #f)))
+  (pass-if (eqv? 0 (copy-bit 31 0 #f)))
+  (pass-if (eqv? 0 (copy-bit 62 0 #f)))
+  (pass-if (eqv? 0 (copy-bit 63 0 #f)))
+  (pass-if (eqv? 0 (copy-bit 128 0 #f)))
+
+  (pass-if (eqv? -1 (copy-bit 0 -1 #t)))
+  (pass-if (eqv? -1 (copy-bit 30 -1 #t)))
+  (pass-if (eqv? -1 (copy-bit 31 -1 #t)))
+  (pass-if (eqv? -1 (copy-bit 62 -1 #t)))
+  (pass-if (eqv? -1 (copy-bit 63 -1 #t)))
+  (pass-if (eqv? -1 (copy-bit 128 -1 #t)))
+
+  (pass-if (eqv? 1 (copy-bit 0 0 #t)))
+  (pass-if (eqv? #x106 (copy-bit 8 6 #t)))
+  (pass-if (eqv? 6 (copy-bit 8 6 #f)))
+  (pass-if (eqv? -2 (copy-bit 0 -1 #f)))
+
+  (pass-if "bignum becomes inum"
+    (eqv? 0 (copy-bit 128 #x100000000000000000000000000000000 #f)))
+
+  ;; bignums unchanged
+  (pass-if (eqv? #x100000000000000000000000000000000
+		 (copy-bit 128 #x100000000000000000000000000000000 #t)))
+  (pass-if (eqv? #x100000000000000000000000000000000
+		 (copy-bit 64 #x100000000000000000000000000000000 #f)))
+  (pass-if (eqv? #x-100000000000000000000000000000000
+		 (copy-bit 64 #x-100000000000000000000000000000000 #f)))
+  (pass-if (eqv? #x-100000000000000000000000000000000
+		 (copy-bit 256 #x-100000000000000000000000000000000 #t))))
+
+;;
+;; bit-field
+;;
+
+(with-test-prefix "bit-field"
+  (pass-if (eqv? 0 (bit-field 6 0 1)))
+  (pass-if (eqv? 3 (bit-field 6 1 3)))
+  (pass-if (eqv? 1 (bit-field 6 2 999)))
+  (pass-if (eqv? 1 (bit-field #x100000000000000000000000000000000 128 129))))
+
+;;
+;; copy-bit-field
+;;
+
+(with-test-prefix "copy-bit-field"
+  (pass-if (eqv? #b111 (copy-bit-field #b110 1 0 1)))
+  (pass-if (eqv? #b110 (copy-bit-field #b110 1 1 2)))
+  (pass-if (eqv? #b010 (copy-bit-field #b110 1 1 3))))
+
+;;
+;; ash
+;;
+
+(with-test-prefix "ash"
+  (pass-if (eqv? 2 (ash 1 1)))
+  (pass-if (eqv? 0 (ash 1 -1))))
+
+;;
+;; arithmetic-shift
+;;
+
+(with-test-prefix "arithmetic-shift"
+  (pass-if (eqv? 2 (arithmetic-shift 1 1)))
+  (pass-if (eqv? 0 (arithmetic-shift 1 -1))))
+
+;;
+;; rotate-bit-field
+;;
+
+(with-test-prefix "rotate-bit-field"
+  (pass-if (eqv? #b110  (rotate-bit-field #b110 1 1 2)))
+  (pass-if (eqv? #b1010 (rotate-bit-field #b110 1 2 4)))
+  (pass-if (eqv? #b1011 (rotate-bit-field #b0111 -1 1 4)))
+
+  (pass-if (eqv? #b0  (rotate-bit-field #b0 128 0 256)))
+  (pass-if (eqv? #b1  (rotate-bit-field #b1 128 1 256)))
+  (pass-if
+      (eqv? #x100000000000000000000000000000000
+	    (rotate-bit-field #x100000000000000000000000000000000 128 0 64)))
+  (pass-if
+      (eqv? #x100000000000000000000000000000008
+	    (rotate-bit-field #x100000000000000000000000000000001 3 0 64)))
+  (pass-if
+      (eqv? #x100000000000000002000000000000000
+	    (rotate-bit-field #x100000000000000000000000000000001 -3 0 64)))
+
+  (pass-if (eqv? #b110 (rotate-bit-field #b110 0 0 10)))
+  (pass-if (eqv? #b110 (rotate-bit-field #b110 0 0 256)))
+
+  (pass-if "bignum becomes inum"
+    (eqv? 1 (rotate-bit-field #x100000000000000000000000000000000 1 0 129))))
+
+;;
+;; reverse-bit-field
+;;
+
+(with-test-prefix "reverse-bit-field"
+  (pass-if (eqv? 6 (reverse-bit-field 6 1 3)))
+  (pass-if (eqv? 12 (reverse-bit-field 6 1 4)))
+
+  (pass-if (eqv? #x80000000 (reverse-bit-field 1 0 32)))
+  (pass-if (eqv? #x40000000 (reverse-bit-field 1 0 31)))
+  (pass-if (eqv? #x20000000 (reverse-bit-field 1 0 30)))
+
+  (pass-if (eqv? (logior (ash -1 32) #xFBFFFFFF)
+		 (reverse-bit-field -2 0 27)))
+  (pass-if (eqv? (logior (ash -1 32) #xF7FFFFFF)
+		 (reverse-bit-field -2 0 28)))
+  (pass-if (eqv? (logior (ash -1 32) #xEFFFFFFF)
+		 (reverse-bit-field -2 0 29)))
+  (pass-if (eqv? (logior (ash -1 32) #xDFFFFFFF)
+		 (reverse-bit-field -2 0 30)))
+  (pass-if (eqv? (logior (ash -1 32) #xBFFFFFFF)
+		 (reverse-bit-field -2 0 31)))
+  (pass-if (eqv? (logior (ash -1 32) #x7FFFFFFF)
+		 (reverse-bit-field -2 0 32)))
+
+  (pass-if "bignum becomes inum"
+    (eqv? 5 (reverse-bit-field #x140000000000000000000000000000000 0 129))))
+
+;;
+;; integer->list
+;;
+
+(with-test-prefix "integer->list"
+  (pass-if (equal? '(#t #t #f) (integer->list 6)))
+  (pass-if (equal? '(#f #t #t #f) (integer->list 6 4)))
+  (pass-if (equal? '(#t #f) (integer->list 6 2)))
+
+  (pass-if "zeros above top of positive inum"
+    (equal? '(#f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		 #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		 #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		 #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		 #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		 #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		 #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		 #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #t)
+	    (integer->list 1 128)))
+
+  (pass-if "ones above top of negative inum"
+    (equal? '(#t #t #t #t #t #t #t #t #t #t #t #t #t #t #t #t
+		 #t #t #t #t #t #t #t #t #t #t #t #t #t #t #t #t
+		 #t #t #t #t #t #t #t #t #t #t #t #t #t #t #t #t
+		 #t #t #t #t #t #t #t #t #t #t #t #t #t #t #t #t
+		 #t #t #t #t #t #t #t #t #t #t #t #t #t #t #t #t
+		 #t #t #t #t #t #t #t #t #t #t #t #t #t #t #t #t
+		 #t #t #t #t #t #t #t #t #t #t #t #t #t #t #t #t
+		 #t #t #t #t #t #t #t #t #t #t #t #t #t #t #t #t)
+	    (integer->list -1 128)))
+
+  (pass-if (equal? '(#t
+		     #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		     #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		     #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		     #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		     #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		     #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		     #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		     #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f)
+		   (integer->list #x100000000000000000000000000000000))))
+
+;;
+;; list->integer
+;;
+
+(with-test-prefix "list->integer"
+  (pass-if (eqv? 6 (list->integer '(#t #t #f))))
+  (pass-if (eqv? 6 (list->integer '(#f #t #t #f))))
+  (pass-if (eqv? 2 (list->integer '(#t #f))))
+
+  (pass-if "leading #f's"
+    (eqv? 1 (list->integer
+	     '(#f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		  #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		  #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		  #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		  #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		  #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		  #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		  #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #t))))
+
+  (pass-if (eqv? #x100000000000000000000000000000000
+		 (list->integer
+		  '(#t
+		    #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		    #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		    #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		    #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		    #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		    #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		    #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f
+		    #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f #f))))
+
+  (pass-if (eqv? #x03FFFFFF (list->integer '(#t #t
+						#t #t #t #t #t #t #t #t
+						#t #t #t #t #t #t #t #t
+						#t #t #t #t #t #t #t #t))))
+  (pass-if (eqv? #x07FFFFFF (list->integer '(#t #t #t
+						#t #t #t #t #t #t #t #t
+						#t #t #t #t #t #t #t #t
+						#t #t #t #t #t #t #t #t))))
+  (pass-if (eqv? #x0FFFFFFF (list->integer '(#t #t #t #t
+						#t #t #t #t #t #t #t #t
+						#t #t #t #t #t #t #t #t
+						#t #t #t #t #t #t #t #t))))
+  (pass-if (eqv? #x1FFFFFFF (list->integer '(#t #t #t #t #t
+						#t #t #t #t #t #t #t #t
+						#t #t #t #t #t #t #t #t
+						#t #t #t #t #t #t #t #t))))
+  (pass-if (eqv? #x3FFFFFFF (list->integer '(#t #t #t #t #t #t
+						#t #t #t #t #t #t #t #t
+						#t #t #t #t #t #t #t #t
+						#t #t #t #t #t #t #t #t))))
+  (pass-if (eqv? #x7FFFFFFF (list->integer '(#t #t #t #t #t #t #t
+						#t #t #t #t #t #t #t #t
+						#t #t #t #t #t #t #t #t
+						#t #t #t #t #t #t #t #t))))
+  (pass-if (eqv? #xFFFFFFFF (list->integer '(#t #t #t #t #t #t #t #t
+						#t #t #t #t #t #t #t #t
+						#t #t #t #t #t #t #t #t
+						#t #t #t #t #t #t #t #t))))
+  (pass-if (eqv? #x1FFFFFFFF (list->integer '(#t
+					      #t #t #t #t #t #t #t #t
+					      #t #t #t #t #t #t #t #t
+					      #t #t #t #t #t #t #t #t
+					      #t #t #t #t #t #t #t #t)))))
+
+;;
+;; list->integer
+;;
+
+(with-test-prefix "list->integer"
+  (pass-if (eqv? 0 (booleans->integer)))
+  (pass-if (eqv? 6 (booleans->integer #t #t #f))))

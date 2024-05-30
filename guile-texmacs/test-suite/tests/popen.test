@@ -1,0 +1,210 @@
+;;;; popen.test --- exercise ice-9/popen.scm      -*- scheme -*-
+;;;;
+;;;; Copyright 2003, 2006 Free Software Foundation, Inc.
+;;;;
+;;;; This library is free software; you can redistribute it and/or
+;;;; modify it under the terms of the GNU Lesser General Public
+;;;; License as published by the Free Software Foundation; either
+;;;; version 2.1 of the License, or (at your option) any later version.
+;;;; 
+;;;; This library is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;;;; Lesser General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU Lesser General Public
+;;;; License along with this library; if not, write to the Free Software
+;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-ice-9-popen)
+  #:use-module (test-suite lib)
+  #:use-module (ice-9 popen))
+
+
+;; read from PORT until eof is reached, return what's read as a string
+(define (read-string-to-eof port)
+  (do ((lst '() (cons c lst))
+       (c (read-char port) (read-char port)))
+      ((eof-object? c)
+       (list->string (reverse! lst)))))
+
+;; call (THUNK), with SIGPIPE set to SIG_IGN so that an EPIPE error is
+;; generated rather than a SIGPIPE signal
+(define (with-epipe thunk)
+  (dynamic-wind
+      (lambda ()
+	(sigaction SIGPIPE SIG_IGN))
+      thunk
+      restore-signals))
+
+
+;;
+;; open-input-pipe
+;;
+
+(with-test-prefix "open-input-pipe"
+  
+  (pass-if-exception "no args" exception:wrong-num-args
+    (open-input-pipe))
+  
+  (pass-if "port?"
+    (port? (open-input-pipe "echo hello")))
+  
+  (pass-if "echo hello"
+    (string=? "hello\n" (read-string-to-eof (open-input-pipe "echo hello"))))
+  
+  ;; exercise file descriptor setups when stdin is the same as stderr  
+  (pass-if "stdin==stderr"
+    (let ((port (open-file "/dev/null" "r+")))
+      (with-input-from-port port
+	(lambda ()
+	  (with-error-to-port port
+	    (lambda ()
+	      (open-input-pipe "echo hello"))))))
+    #t)
+  
+  ;; exercise file descriptor setups when stdout is the same as stderr  
+  (pass-if "stdout==stderr"
+    (let ((port (open-file "/dev/null" "r+")))
+      (with-output-to-port port
+	(lambda ()
+	  (with-error-to-port port
+	    (lambda ()
+	      (open-input-pipe "echo hello"))))))
+    #t)
+  
+  (pass-if "open-input-pipe process gets (current-input-port) as stdin"
+    (let* ((p2c (pipe))
+           (port (with-input-from-port (car p2c)
+                   (lambda ()
+                     (open-input-pipe "read line && echo $line")))))
+      (display "hello\n" (cdr p2c))
+      (force-output (cdr p2c))
+      (let ((result (eq? (read port) 'hello)))
+	(close-port (cdr p2c))
+	(close-pipe port)
+	result)))
+
+  ;; After the child closes stdout (which it indicates here by writing
+  ;; "closed" to stderr), the parent should see eof.  In Guile 1.6.4
+  ;; and earlier a duplicate of stdout existed in the child, meaning
+  ;; eof was not seen.
+  ;;
+  ;; Note that the objective here is to test that the parent sees EOF
+  ;; while the child is still alive.  (It is obvious that the parent
+  ;; must see EOF once the child has died.)  The use of the `p2c'
+  ;; pipe, and `echo closed' and `read' in the child, allows us to be
+  ;; sure that we are testing what the parent sees at a point where
+  ;; the child has closed stdout but is still alive.
+  (pass-if "no duplicate"
+    (let* ((c2p (pipe))
+	   (p2c (pipe))
+	   (port (with-error-to-port (cdr c2p)
+		   (lambda ()
+		     (with-input-from-port (car p2c)
+		       (lambda ()
+			 (open-input-pipe
+			  "exec 1>/dev/null; echo closed 1>&2; exec 2>/dev/null; read")))))))
+      (close-port (cdr c2p))   ;; write side
+      (let ((result (eof-object? (read-char port))))
+	(display "hello!\n" (cdr p2c))
+	(force-output (cdr p2c))
+	(close-pipe port)
+	result)))
+
+  )
+
+;;
+;; open-output-pipe
+;;
+
+(with-test-prefix "open-output-pipe"
+  
+  (pass-if-exception "no args" exception:wrong-num-args
+    (open-output-pipe))
+  
+  (pass-if "port?"
+    (port? (open-output-pipe "exit 0")))
+  
+  ;; exercise file descriptor setups when stdin is the same as stderr  
+  (pass-if "stdin==stderr"
+    (let ((port (open-file "/dev/null" "r+")))
+      (with-input-from-port port
+	(lambda ()
+	  (with-error-to-port port
+	    (lambda ()
+	      (open-output-pipe "exit 0"))))))
+    #t)
+  
+  ;; exercise file descriptor setups when stdout is the same as stderr
+  (pass-if "stdout==stderr"
+    (let ((port (open-file "/dev/null" "r+")))
+      (with-output-to-port port
+	(lambda ()
+	  (with-error-to-port port
+	    (lambda ()
+	      (open-output-pipe "exit 0"))))))
+    #t)
+  
+  ;; After the child closes stdin (which it indicates here by writing
+  ;; "closed" to stderr), the parent should see a broken pipe.  We
+  ;; setup to see this as EPIPE (rather than SIGPIPE).  In Guile 1.6.4
+  ;; and earlier a duplicate of stdin existed in the child, preventing
+  ;; the broken pipe occurring.
+  ;;
+  ;; Note that the objective here is to test that the parent sees a
+  ;; broken pipe while the child is still alive.  (It is obvious that
+  ;; the parent will see a broken pipe once the child has died.)  The
+  ;; use of the `c2p' pipe, and the repeated `echo closed' in the
+  ;; child, allows us to be sure that we are testing what the parent
+  ;; sees at a point where the child has closed stdin but is still
+  ;; alive.
+  ;;
+  ;; Note that `with-epipe' must apply only to the parent and not to
+  ;; the child process; we rely on the child getting SIGPIPE, to
+  ;; terminate it (and avoid leaving a zombie).
+  (pass-if "no duplicate"
+    (let* ((c2p (pipe))
+	   (port (with-error-to-port (cdr c2p)
+		   (lambda ()
+		     (open-output-pipe
+		      "exec 0</dev/null; while true; do echo closed 1>&2; done")))))
+      (close-port (cdr c2p))   ;; write side
+      (with-epipe
+       (lambda ()
+	 (let ((result
+		(and (char? (read-char (car c2p))) ;; wait for child to do its thing
+		     (catch 'system-error
+			    (lambda ()
+			      (write-char #\x port)
+			      (force-output port)
+			      #f)
+			    (lambda (key name fmt args errno-list)
+			      (= (car errno-list) EPIPE))))))
+	   ;; Now close our reading end of the pipe.  This should give
+	   ;; the child a broken pipe and so allow it to exit.
+	   (close-port (car c2p))
+	   (close-pipe port)
+	   result)))))
+
+  )
+
+;;
+;; close-pipe
+;;
+
+(with-test-prefix "close-pipe"
+  
+  (pass-if-exception "no args" exception:wrong-num-args
+    (close-pipe))
+  
+  (pass-if "exit 0"
+    (let ((st (close-pipe (open-output-pipe "exit 0"))))
+      (and (status:exit-val st)
+	   (= 0 (status:exit-val st)))))
+  
+  (pass-if "exit 1"
+    (let ((st (close-pipe (open-output-pipe "exit 1"))))
+      (and (status:exit-val st)
+	   (= 1 (status:exit-val st))))))
+

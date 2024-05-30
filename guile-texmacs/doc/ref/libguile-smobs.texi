@@ -1,0 +1,699 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004, 2005
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@node Defining New Types (Smobs)
+@section Defining New Types (Smobs)
+
+@dfn{Smobs} are Guile's mechanism for adding new primitive types to
+the system.  The term ``smob'' was coined by Aubrey Jaffer, who says
+it comes from ``small object'', referring to the fact that they are
+quite limited in size: they can hold just one pointer to a larger
+memory block plus 16 extra bits.
+
+To define a new smob type, the programmer provides Guile with some
+essential information about the type --- how to print it, how to
+garbage collect it, and so on --- and Guile allocates a fresh type tag
+for it.  The programmer can then use @code{scm_c_define_gsubr} to make
+a set of C functions visible to Scheme code that create and operate on
+these objects.
+
+(You can find a complete version of the example code used in this
+section in the Guile distribution, in @file{doc/example-smob}.  That
+directory includes a makefile and a suitable @code{main} function, so
+you can build a complete interactive Guile shell, extended with the
+datatypes described here.)
+
+@menu
+* Describing a New Type::       
+* Creating Instances::          
+* Type checking::                
+* Garbage Collecting Smobs::    
+* Garbage Collecting Simple Smobs::  
+* Remembering During Operations::  
+* Double Smobs::
+* The Complete Example::          
+@end menu
+
+@node Describing a New Type
+@subsection Describing a New Type
+
+To define a new type, the programmer must write four functions to
+manage instances of the type:
+
+@table @code
+@item mark
+Guile will apply this function to each instance of the new type it
+encounters during garbage collection.  This function is responsible for
+telling the collector about any other @code{SCM} values that the object
+has stored.  The default smob mark function does nothing.
+@xref{Garbage Collecting Smobs}, for more details.
+
+@item free
+Guile will apply this function to each instance of the new type that is
+to be deallocated.  The function should release all resources held by
+the object.  This is analogous to the Java finalization method-- it is
+invoked at an unspecified time (when garbage collection occurs) after
+the object is dead.  The default free function frees the smob data (if
+the size of the struct passed to @code{scm_make_smob_type} is non-zero)
+using @code{scm_gc_free}.  @xref{Garbage Collecting Smobs}, for more
+details.
+
+This function operates while the heap is in an inconsistent state and
+must therefore be careful.  @xref{Smobs}, for details about what this
+function is allowed to do.
+
+@item print
+Guile will apply this function to each instance of the new type to print
+the value, as for @code{display} or @code{write}.  The default print
+function prints @code{#<NAME ADDRESS>} where @code{NAME} is the first
+argument passed to @code{scm_make_smob_type}.  For more information on
+printing, see @ref{Port Data}.
+
+@item equalp
+If Scheme code asks the @code{equal?} function to compare two instances
+of the same smob type, Guile calls this function.  It should return
+@code{SCM_BOOL_T} if @var{a} and @var{b} should be considered
+@code{equal?}, or @code{SCM_BOOL_F} otherwise.  If @code{equalp} is
+@code{NULL}, @code{equal?} will assume that two instances of this type are
+never @code{equal?} unless they are @code{eq?}.
+
+@end table
+
+To actually register the new smob type, call @code{scm_make_smob_type}.
+It returns a value of type @code{scm_t_bits} which identifies the new
+smob type.
+
+The four special functions described above are registered by calling
+one of @code{scm_set_smob_mark}, @code{scm_set_smob_free},
+@code{scm_set_smob_print}, or @code{scm_set_smob_equalp}, as
+appropriate.  Each function is intended to be used at most once per
+type, and the call should be placed immediately following the call to
+@code{scm_make_smob_type}.
+
+There can only be at most 256 different smob types in the system.
+Instead of registering a huge number of smob types (for example, one
+for each relevant C struct in your application), it is sometimes
+better to register just one and implement a second layer of type
+dispatching on top of it.  This second layer might use the 16 extra
+bits to extend its type, for example.
+
+Here is how one might declare and register a new type representing
+eight-bit gray-scale images:
+
+@example
+#include <libguile.h>
+
+struct image @{
+  int width, height;
+  char *pixels;
+
+  /* The name of this image */
+  SCM name;
+
+  /* A function to call when this image is
+     modified, e.g., to update the screen,
+     or SCM_BOOL_F if no action necessary */
+  SCM update_func;
+@};
+
+static scm_t_bits image_tag;
+
+void
+init_image_type (void)
+@{
+  image_tag = scm_make_smob_type ("image", sizeof (struct image));
+  scm_set_smob_mark (image_tag, mark_image);
+  scm_set_smob_free (image_tag, free_image);
+  scm_set_smob_print (image_tag, print_image);
+@}
+@end example
+
+
+@node Creating Instances
+@subsection Creating Instances
+
+Normally, smobs can have one @emph{immediate} word of data.  This word
+stores either a pointer to an additional memory block that holds the
+real data, or it might hold the data itself when it fits.  The word is
+large enough for a @code{SCM} value, a pointer to @code{void}, or an
+integer that fits into a @code{size_t} or @code{ssize_t}.
+
+You can also create smobs that have two or three immediate words, and
+when these words suffice to store all data, it is more efficient to use
+these super-sized smobs instead of using a normal smob plus a memory
+block.  @xref{Double Smobs}, for their discussion.
+
+Guile provides functions for managing memory which are often helpful
+when implementing smobs.  @xref{Memory Blocks}.
+
+To retrieve the immediate word of a smob, you use the macro
+@code{SCM_SMOB_DATA}.  It can be set with @code{SCM_SET_SMOB_DATA}.
+The 16 extra bits can be accessed with @code{SCM_SMOB_FLAGS} and
+@code{SCM_SET_SMOB_FLAGS}.
+
+The two macros @code{SCM_SMOB_DATA} and @code{SCM_SET_SMOB_DATA} treat
+the immediate word as if it were of type @code{scm_t_bits}, which is
+an unsigned integer type large enough to hold a pointer to
+@code{void}.  Thus you can use these macros to store arbitrary
+pointers in the smob word.
+
+When you want to store a @code{SCM} value directly in the immediate
+word of a smob, you should use the macros @code{SCM_SMOB_OBJECT} and
+@code{SCM_SET_SMOB_OBJECT} to access it.
+
+Creating a smob instance can be tricky when it consists of multiple
+steps that allocate resources and might fail.  It is recommended that
+you go about creating a smob in the following way:
+
+@itemize
+@item
+Allocate the memory block for holding the data with
+@code{scm_gc_malloc}.
+@item
+Initialize it to a valid state without calling any functions that might
+cause a non-local exits.  For example, initialize pointers to NULL.
+Also, do not store @code{SCM} values in it that must be protected.
+Initialize these fields with @code{SCM_BOOL_F}.
+
+A valid state is one that can be safely acted upon by the @emph{mark}
+and @emph{free} functions of your smob type.
+@item
+Create the smob using @code{SCM_NEWSMOB}, passing it the initialized
+memory block.  (This step will always succeed.)
+@item
+Complete the initialization of the memory block by, for example,
+allocating additional resources and making it point to them.
+@end itemize
+
+This procedure ensures that the smob is in a valid state as soon as it
+exists, that all resources that are allocated for the smob are
+properly associated with it so that they can be properly freed, and
+that no @code{SCM} values that need to be protected are stored in it
+while the smob does not yet competely exist and thus can not protect
+them.
+
+Continuing the example from above, if the global variable
+@code{image_tag} contains a tag returned by @code{scm_make_smob_type},
+here is how we could construct a smob whose immediate word contains a
+pointer to a freshly allocated @code{struct image}:
+
+@example
+SCM
+make_image (SCM name, SCM s_width, SCM s_height)
+@{
+  SCM smob;
+  struct image *image;
+  int width = scm_to_int (s_width);
+  int height = scm_to_int (s_height);
+
+  /* Step 1: Allocate the memory block.
+   */
+  image = (struct image *) scm_gc_malloc (sizeof (struct image), "image");
+
+  /* Step 2: Initialize it with straight code.
+   */
+  image->width = width;
+  image->height = height;
+  image->pixels = NULL;
+  image->name = SCM_BOOL_F;
+  image->update_func = SCM_BOOL_F;
+
+  /* Step 3: Create the smob.
+   */
+  SCM_NEWSMOB (smob, image_tag, image);
+
+  /* Step 4: Finish the initialization.
+   */
+  image->name = name;
+  image->pixels = scm_gc_malloc (width * height, "image pixels");
+
+  return smob;
+@}
+@end example
+
+Let us look at what might happen when @code{make_image} is called.
+
+The conversions of @var{s_width} and @var{s_height} to @code{int}s might
+fail and signal an error, thus causing a non-local exit.  This is not a
+problem since no resources have been allocated yet that would have to be
+freed.
+
+The allocation of @var{image} in step 1 might fail, but this is likewise
+no problem.
+
+Step 2 can not exit non-locally.  At the end of it, the @var{image}
+struct is in a valid state for the @code{mark_image} and
+@code{free_image} functions (see below).
+
+Step 3 can not exit non-locally either.  This is guaranteed by Guile.
+After it, @var{smob} contains a valid smob that is properly initialized
+and protected, and in turn can properly protect the Scheme values in its
+@var{image} struct.
+
+But before the smob is completely created, @code{SCM_NEWSMOB} might
+cause the garbage collector to run.  During this garbage collection, the
+@code{SCM} values in the @var{image} struct would be invisible to Guile.
+It only gets to know about them via the @code{mark_image} function, but
+that function can not yet do its job since the smob has not been created
+yet.  Thus, it is important to not store @code{SCM} values in the
+@var{image} struct until after the smob has been created.
+
+Step 4, finally, might fail and cause a non-local exit.  In that case,
+the complete creation of the smob has not been successful, but it does
+nevertheless exist in a valid state.  It will eventually be freed by
+the garbage collector, and all the resources that have been allocated
+for it will be correctly freed by @code{free_image}.
+
+@node Type checking
+@subsection Type checking
+
+Functions that operate on smobs should check that the passed
+@code{SCM} value indeed is a suitable smob before accessing its data.
+They can do this with @code{scm_assert_smob_type}.
+
+For example, here is a simple function that operates on an image smob,
+and checks the type of its argument.
+
+@example
+SCM
+clear_image (SCM image_smob)
+@{
+  int area;
+  struct image *image;
+
+  scm_assert_smob_type (image_tag, image_smob);
+
+  image = (struct image *) SCM_SMOB_DATA (image_smob);
+  area = image->width * image->height;
+  memset (image->pixels, 0, area);
+
+  /* Invoke the image's update function.
+   */
+  if (scm_is_true (image->update_func))
+    scm_call_0 (image->update_func);
+
+  scm_remember_upto_here_1 (image_smob);
+
+  return SCM_UNSPECIFIED;
+@}
+@end example
+
+See @ref{Remembering During Operations} for an explanation of the call
+to @code{scm_remember_upto_here_1}.
+
+
+@node Garbage Collecting Smobs
+@subsection Garbage Collecting Smobs
+
+Once a smob has been released to the tender mercies of the Scheme
+system, it must be prepared to survive garbage collection.  Guile calls
+the @emph{mark} and @emph{free} functions of the smob to manage this.
+
+As described in more detail elsewhere (@pxref{Conservative GC}), every
+object in the Scheme system has a @dfn{mark bit}, which the garbage
+collector uses to tell live objects from dead ones.  When collection
+starts, every object's mark bit is clear.  The collector traces pointers
+through the heap, starting from objects known to be live, and sets the
+mark bit on each object it encounters.  When it can find no more
+unmarked objects, the collector walks all objects, live and dead, frees
+those whose mark bits are still clear, and clears the mark bit on the
+others.
+
+The two main portions of the collection are called the @dfn{mark phase},
+during which the collector marks live objects, and the @dfn{sweep
+phase}, during which the collector frees all unmarked objects.
+
+The mark bit of a smob lives in a special memory region.  When the
+collector encounters a smob, it sets the smob's mark bit, and uses the
+smob's type tag to find the appropriate @emph{mark} function for that
+smob.  It then calls this @emph{mark} function, passing it the smob as
+its only argument.
+
+The @emph{mark} function is responsible for marking any other Scheme
+objects the smob refers to.  If it does not do so, the objects' mark
+bits will still be clear when the collector begins to sweep, and the
+collector will free them.  If this occurs, it will probably break, or at
+least confuse, any code operating on the smob; the smob's @code{SCM}
+values will have become dangling references.
+
+To mark an arbitrary Scheme object, the @emph{mark} function calls
+@code{scm_gc_mark}.
+
+Thus, here is how we might write @code{mark_image}:
+
+@example
+@group
+SCM
+mark_image (SCM image_smob)
+@{
+  /* Mark the image's name and update function.  */
+  struct image *image = (struct image *) SCM_SMOB_DATA (image_smob);
+
+  scm_gc_mark (image->name);
+  scm_gc_mark (image->update_func);
+
+  return SCM_BOOL_F;
+@}
+@end group
+@end example
+
+Note that, even though the image's @code{update_func} could be an
+arbitrarily complex structure (representing a procedure and any values
+enclosed in its environment), @code{scm_gc_mark} will recurse as
+necessary to mark all its components.  Because @code{scm_gc_mark} sets
+an object's mark bit before it recurses, it is not confused by
+circular structures.
+
+As an optimization, the collector will mark whatever value is returned
+by the @emph{mark} function; this helps limit depth of recursion during
+the mark phase.  Thus, the code above should really be written as:
+@example
+@group
+SCM
+mark_image (SCM image_smob)
+@{
+  /* Mark the image's name and update function.  */
+  struct image *image = (struct image *) SCM_SMOB_DATA (image_smob);
+
+  scm_gc_mark (image->name);
+  return image->update_func;
+@}
+@end group
+@end example
+
+
+Finally, when the collector encounters an unmarked smob during the sweep
+phase, it uses the smob's tag to find the appropriate @emph{free}
+function for the smob.  It then calls that function, passing it the smob
+as its only argument.
+
+The @emph{free} function must release any resources used by the smob.
+However, it must not free objects managed by the collector; the
+collector will take care of them.  For historical reasons, the return
+type of the @emph{free} function should be @code{size_t}, an unsigned
+integral type; the @emph{free} function should always return zero.
+
+Here is how we might write the @code{free_image} function for the image
+smob type:
+@example
+size_t
+free_image (SCM image_smob)
+@{
+  struct image *image = (struct image *) SCM_SMOB_DATA (image_smob);
+
+  scm_gc_free (image->pixels, image->width * image->height, "image pixels");
+  scm_gc_free (image, sizeof (struct image), "image");
+
+  return 0;
+@}
+@end example
+
+During the sweep phase, the garbage collector will clear the mark bits
+on all live objects.  The code which implements a smob need not do this
+itself.
+
+There is no way for smob code to be notified when collection is
+complete.
+
+It is usually a good idea to minimize the amount of processing done
+during garbage collection; keep the @emph{mark} and @emph{free}
+functions very simple.  Since collections occur at unpredictable times,
+it is easy for any unusual activity to interfere with normal code.
+
+
+@node Garbage Collecting Simple Smobs
+@subsection Garbage Collecting Simple Smobs
+
+It is often useful to define very simple smob types --- smobs which have
+no data to mark, other than the cell itself, or smobs whose immediate
+data word is simply an ordinary Scheme object, to be marked recursively.
+Guile provides some functions to handle these common cases; you can use
+this function as your smob type's @emph{mark} function, if your smob's
+structure is simple enough.
+
+If the smob refers to no other Scheme objects, then no action is
+necessary; the garbage collector has already marked the smob cell
+itself.  In that case, you can use zero as your mark function.
+
+If the smob refers to exactly one other Scheme object via its first
+immediate word, you can use @code{scm_markcdr} as its mark function.
+Its definition is simply:
+
+@smallexample
+SCM
+scm_markcdr (SCM obj)
+@{
+  return SCM_SMOB_OBJECT (obj);
+@}
+@end smallexample
+
+@node Remembering During Operations
+@subsection Remembering During Operations
+@cindex remembering
+
+It's important that a smob is visible to the garbage collector
+whenever its contents are being accessed.  Otherwise it could be freed
+while code is still using it.
+
+For example, consider a procedure to convert image data to a list of
+pixel values.
+
+@example
+SCM
+image_to_list (SCM image_smob)
+@{
+  struct image *image;
+  SCM lst;
+  int i;
+
+  scm_assert_smob_type (image_tag, image_smob);
+
+  image = (struct image *) SCM_SMOB_DATA (image_smob);
+  lst = SCM_EOL;
+  for (i = image->width * image->height - 1; i >= 0; i--)
+    lst = scm_cons (scm_from_char (image->pixels[i]), lst);
+
+  scm_remember_upto_here_1 (image_smob);
+  return lst;
+@}
+@end example
+
+In the loop, only the @code{image} pointer is used and the C compiler
+has no reason to keep the @code{image_smob} value anywhere.  If
+@code{scm_cons} results in a garbage collection, @code{image_smob} might
+not be on the stack or anywhere else and could be freed, leaving the
+loop accessing freed data.  The use of @code{scm_remember_upto_here_1}
+prevents this, by creating a reference to @code{image_smob} after all
+data accesses.
+
+There's no need to do the same for @code{lst}, since that's the return
+value and the compiler will certainly keep it in a register or
+somewhere throughout the routine.
+
+The @code{clear_image} example previously shown (@pxref{Type checking})
+also used @code{scm_remember_upto_here_1} for this reason.
+
+It's only in quite rare circumstances that a missing
+@code{scm_remember_upto_here_1} will bite, but when it happens the
+consequences are serious.  Fortunately the rule is simple: whenever
+calling a Guile library function or doing something that might, ensure
+that the @code{SCM} of a smob is referenced past all accesses to its
+insides.  Do this by adding an @code{scm_remember_upto_here_1} if
+there are no other references.
+
+In a multi-threaded program, the rule is the same.  As far as a given
+thread is concerned, a garbage collection still only occurs within a
+Guile library function, not at an arbitrary time.  (Guile waits for all
+threads to reach one of its library functions, and holds them there
+while the collector runs.)
+
+@node Double Smobs
+@subsection Double Smobs
+
+Smobs are called smob because they are small: they normally have only
+room for one @code{void*} or @code{SCM} value plus 16 bits.  The
+reason for this is that smobs are directly implemented by using the
+low-level, two-word cells of Guile that are also used to implement
+pairs, for example.  (@pxref{Data Representation} for the details.)
+One word of the two-word cells is used for @code{SCM_SMOB_DATA} (or
+@code{SCM_SMOB_OBJECT}), the other contains the 16-bit type tag and
+the 16 extra bits.
+
+In addition to the fundamental two-word cells, Guile also has
+four-word cells, which are appropriately called @dfn{double cells}.
+You can use them for @dfn{double smobs} and get two more immediate
+words of type @code{scm_t_bits}.
+
+A double smob is created with @code{SCM_NEWSMOB2} or
+@code{SCM_NEWSMOB3} instead of @code{SCM_NEWSMOB}.  Its immediate
+words can be retrieved as @code{scm_t_bits} with
+@code{SCM_SMOB_DATA_2} and @code{SCM_SMOB_DATA_3} in addition to
+@code{SCM_SMOB_DATA}.  Unsurprisingly, the words can be set to
+@code{scm_t_bits} values with @code{SCM_SET_SMOB_DATA_2} and
+@code{SCM_SET_SMOB_DATA_3}.
+
+Of course there are also @code{SCM_SMOB_OBJECT_2},
+@code{SCM_SMOB_OBJECT_3}, @code{SCM_SET_SMOB_OBJECT_2}, and
+@code{SCM_SET_SMOB_OBJECT_3}.
+
+@node The Complete Example
+@subsection The Complete Example
+
+Here is the complete text of the implementation of the image datatype,
+as presented in the sections above.  We also provide a definition for
+the smob's @emph{print} function, and make some objects and functions
+static, to clarify exactly what the surrounding code is using.
+
+As mentioned above, you can find this code in the Guile distribution, in
+@file{doc/example-smob}.  That directory includes a makefile and a
+suitable @code{main} function, so you can build a complete interactive
+Guile shell, extended with the datatypes described here.)
+
+@example
+/* file "image-type.c" */
+
+#include <stdlib.h>
+#include <libguile.h>
+
+static scm_t_bits image_tag;
+
+struct image @{
+  int width, height;
+  char *pixels;
+
+  /* The name of this image */
+  SCM name;
+
+  /* A function to call when this image is
+     modified, e.g., to update the screen,
+     or SCM_BOOL_F if no action necessary */
+  SCM update_func;
+@};
+
+static SCM
+make_image (SCM name, SCM s_width, SCM s_height)
+@{
+  SCM smob;
+  struct image *image;
+  int width = scm_to_int (s_width);
+  int height = scm_to_int (s_height);
+
+  /* Step 1: Allocate the memory block.
+   */
+  image = (struct image *) scm_gc_malloc (sizeof (struct image), "image");
+
+  /* Step 2: Initialize it with straight code.
+   */
+  image->width = width;
+  image->height = height;
+  image->pixels = NULL;
+  image->name = SCM_BOOL_F;
+  image->update_func = SCM_BOOL_F;
+
+  /* Step 3: Create the smob.
+   */
+  SCM_NEWSMOB (smob, image_tag, image);
+
+  /* Step 4: Finish the initialization.
+   */
+  image->name = name;
+  image->pixels = scm_gc_malloc (width * height, "image pixels");
+
+  return smob;
+@}
+
+SCM
+clear_image (SCM image_smob)
+@{
+  int area;
+  struct image *image;
+
+  scm_assert_smob_type (image_tag, image_smob);
+
+  image = (struct image *) SCM_SMOB_DATA (image_smob);
+  area = image->width * image->height;
+  memset (image->pixels, 0, area);
+
+  /* Invoke the image's update function.
+   */
+  if (scm_is_true (image->update_func))
+    scm_call_0 (image->update_func);
+
+  scm_remember_upto_here_1 (image_smob);
+
+  return SCM_UNSPECIFIED;
+@}
+
+static SCM
+mark_image (SCM image_smob)
+@{
+  /* Mark the image's name and update function.  */
+  struct image *image = (struct image *) SCM_SMOB_DATA (image_smob);
+
+  scm_gc_mark (image->name);
+  return image->update_func;
+@}
+
+static size_t
+free_image (SCM image_smob)
+@{
+  struct image *image = (struct image *) SCM_SMOB_DATA (image_smob);
+
+  scm_gc_free (image->pixels, image->width * image->height, "image pixels");
+  scm_gc_free (image, sizeof (struct image), "image");
+
+  return 0;
+@}
+
+static int
+print_image (SCM image_smob, SCM port, scm_print_state *pstate)
+@{
+  struct image *image = (struct image *) SCM_SMOB_DATA (image_smob);
+
+  scm_puts ("#<image ", port);
+  scm_display (image->name, port);
+  scm_puts (">", port);
+
+  /* non-zero means success */
+  return 1;
+@}
+
+void
+init_image_type (void)
+@{
+  image_tag = scm_make_smob_type ("image", sizeof (struct image));
+  scm_set_smob_mark (image_tag, mark_image);
+  scm_set_smob_free (image_tag, free_image);
+  scm_set_smob_print (image_tag, print_image);
+
+  scm_c_define_gsubr ("clear-image", 1, 0, 0, clear_image);
+  scm_c_define_gsubr ("make-image", 3, 0, 0, make_image);
+@}
+@end example
+
+Here is a sample build and interaction with the code from the
+@file{example-smob} directory, on the author's machine:
+
+@example
+zwingli:example-smob$ make CC=gcc
+gcc `guile-config compile`   -c image-type.c -o image-type.o
+gcc `guile-config compile`   -c myguile.c -o myguile.o
+gcc image-type.o myguile.o `guile-config link` -o myguile
+zwingli:example-smob$ ./myguile
+guile> make-image
+#<primitive-procedure make-image>
+guile> (define i (make-image "Whistler's Mother" 100 100))
+guile> i
+#<image Whistler's Mother>
+guile> (clear-image i)
+guile> (clear-image 4)
+ERROR: In procedure clear-image in expression (clear-image 4):
+ERROR: Wrong type (expecting image): 4
+ABORT: (wrong-type-arg)
+ 
+Type "(backtrace)" to get more information.
+guile> 
+@end example

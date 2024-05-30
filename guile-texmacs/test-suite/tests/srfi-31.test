@@ -1,0 +1,38 @@
+;;;; srfi-31.test --- Test suite for Guile's SRFI-31 functions. -*- scheme -*-
+;;;;
+;;;; Copyright (C) 2004, 2006 Free Software Foundation, Inc.
+;;;;
+;;;; This library is free software; you can redistribute it and/or
+;;;; modify it under the terms of the GNU Lesser General Public
+;;;; License as published by the Free Software Foundation; either
+;;;; version 2.1 of the License, or (at your option) any later version.
+;;;; 
+;;;; This library is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;;;; Lesser General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU Lesser General Public
+;;;; License along with this library; if not, write to the Free Software
+;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-srfi-31)
+  #:use-module (test-suite lib)
+  #:use-module (srfi srfi-31))
+
+(with-test-prefix "rec special form"
+
+  (pass-if-exception "bogus variable" '(misc-error . ".*")
+    (rec #:foo))
+
+  (pass-if "rec expressions"
+    (let ((ones-list (rec ones (cons 1 (delay ones)))))
+      (and (= 1 (car ones-list))
+           (= 1 (car (force (cdr ones-list)))))))
+
+  (pass-if "rec functions"
+    (let ((test-func (rec (add-upto n)
+                       (if (positive? n)
+                           (+ n (add-upto (- n 1)))
+                           0))))
+      (= 15 (test-func 5)))))

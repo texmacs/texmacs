@@ -1,0 +1,425 @@
+;;;; socket.test --- test socket functions     -*- scheme -*-
+;;;;
+;;;; Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Free Software Foundation, Inc.
+;;;;
+;;;; This library is free software; you can redistribute it and/or
+;;;; modify it under the terms of the GNU Lesser General Public
+;;;; License as published by the Free Software Foundation; either
+;;;; version 2.1 of the License, or (at your option) any later version.
+;;;; 
+;;;; This library is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;;;; Lesser General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU Lesser General Public
+;;;; License along with this library; if not, write to the Free Software
+;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-socket)
+  #:use-module (test-suite lib))
+
+
+
+;;;
+;;; htonl
+;;;
+
+(if (defined? 'htonl)
+    (with-test-prefix "htonl"
+
+      (pass-if "0" (eqv? 0 (htonl 0)))
+
+      (pass-if-exception "-1" exception:out-of-range
+        (htonl -1))
+
+      ;; prior to guile 1.6.9 and 1.8.1, systems with 64-bit longs didn't detect
+      ;; an overflow for values 2^32 <= x < 2^63
+      (pass-if-exception "2^32" exception:out-of-range
+        (htonl (ash 1 32)))
+
+      (pass-if-exception "2^1024" exception:out-of-range
+        (htonl (ash 1 1024)))))
+
+
+;;;
+;;; inet-ntop
+;;;
+
+(if (defined? 'inet-ntop)
+    (with-test-prefix "inet-ntop"
+
+      (with-test-prefix "ipv6"
+	(pass-if "0"
+	  (string? (inet-ntop AF_INET6 0)))
+
+	(pass-if "2^128-1"
+	  (string? (inet-ntop AF_INET6 (1- (ash 1 128)))))
+
+	(pass-if-exception "-1" exception:out-of-range
+	  (inet-ntop AF_INET6 -1))
+
+	(pass-if-exception "2^128" exception:out-of-range
+	  (inet-ntop AF_INET6 (ash 1 128)))
+
+	(pass-if-exception "2^1024" exception:out-of-range
+	  (inet-ntop AF_INET6 (ash 1 1024))))))
+
+;;;
+;;; inet-pton
+;;;
+
+(if (defined? 'inet-pton)
+    (with-test-prefix "inet-pton"
+
+      (with-test-prefix "ipv6"
+	(pass-if "00:00:00:00:00:00:00:00"
+	  (eqv? 0 (inet-pton AF_INET6 "00:00:00:00:00:00:00:00")))
+
+	(pass-if "0:0:0:0:0:0:0:1"
+	  (eqv? 1 (inet-pton AF_INET6 "0:0:0:0:0:0:0:1")))
+
+	(pass-if "::1"
+	  (eqv? 1 (inet-pton AF_INET6 "::1")))
+
+	(pass-if "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF"
+	  (eqv? #xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+		(inet-pton AF_INET6
+			   "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF")))
+
+	(pass-if "F000:0000:0000:0000:0000:0000:0000:0000"
+	  (eqv? #xF0000000000000000000000000000000
+		(inet-pton AF_INET6
+			   "F000:0000:0000:0000:0000:0000:0000:0000")))
+
+	(pass-if "0F00:0000:0000:0000:0000:0000:0000:0000"
+	  (eqv? #x0F000000000000000000000000000000
+		(inet-pton AF_INET6
+			   "0F00:0000:0000:0000:0000:0000:0000:0000")))
+
+	(pass-if "0000:0000:0000:0000:0000:0000:0000:00F0"
+	  (eqv? #xF0
+		(inet-pton AF_INET6
+			   "0000:0000:0000:0000:0000:0000:0000:00F0"))))))
+
+(if (defined? 'inet-ntop)
+    (with-test-prefix "inet-ntop"
+
+      (with-test-prefix "ipv4"
+	(pass-if "127.0.0.1"
+	  (equal? "127.0.0.1" (inet-ntop AF_INET INADDR_LOOPBACK))))
+
+      (if (defined? 'AF_INET6)
+	  (with-test-prefix "ipv6"
+	    (pass-if "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF"
+	      (string-ci=? "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF"
+			   (inet-ntop AF_INET6 (- (expt 2 128) 1))))
+
+	    (pass-if "::1"
+	      (equal? "::1" (inet-ntop AF_INET6 1)))))))
+
+
+;;;
+;;; make-socket-address
+;;;
+
+(with-test-prefix "make-socket-address"
+  (if (defined? 'AF_INET)
+      (pass-if "AF_INET"
+	(let ((sa (make-socket-address AF_INET 123456 80)))
+	  (and (= (sockaddr:fam  sa) AF_INET)
+	       (= (sockaddr:addr sa) 123456)
+	       (= (sockaddr:port sa) 80)))))
+
+  (if (defined? 'AF_INET6)
+      (pass-if "AF_INET6"
+	;; Since the platform doesn't necessarily support `scopeid', we won't
+        ;; test it.
+	(let ((sa* (make-socket-address AF_INET6 123456 80 1))
+	      (sa+ (make-socket-address AF_INET6 123456 80)))
+	  (and (= (sockaddr:fam  sa*) (sockaddr:fam  sa+) AF_INET6)
+	       (= (sockaddr:addr sa*) (sockaddr:addr sa+) 123456)
+	       (= (sockaddr:port sa*) (sockaddr:port sa+) 80)
+	       (= (sockaddr:flowinfo sa*) 1)))))
+
+  (if (defined? 'AF_UNIX)
+      (pass-if "AF_UNIX"
+	(let ((sa (make-socket-address AF_UNIX "/tmp/unix-socket")))
+	  (and (= (sockaddr:fam sa) AF_UNIX)
+	       (string=? (sockaddr:path sa) "/tmp/unix-socket"))))))
+
+;;;
+;;; ntohl
+;;;
+
+(if (defined? 'ntohl)
+    (with-test-prefix "ntohl"
+
+      (pass-if "0" (eqv? 0 (ntohl 0)))
+
+      (pass-if-exception "-1" exception:out-of-range
+        (ntohl -1))
+
+      ;; prior to guile 1.6.9 and 1.8.1, systems with 64-bit longs didn't detect
+      ;; an overflow for values 2^32 <= x < 2^63
+      (pass-if-exception "2^32" exception:out-of-range
+        (ntohl (ash 1 32)))
+
+      (pass-if-exception "2^1024" exception:out-of-range
+        (ntohl (ash 1 1024)))))
+
+
+
+;;;
+;;; AF_UNIX sockets and `make-socket-address'
+;;;
+
+(define %tmpdir
+  ;; Honor `$TMPDIR', which tmpnam(3) doesn't do.
+  (or (getenv "TMPDIR") "/tmp"))
+
+(define %curdir
+  ;; Remember the current working directory.
+  (getcwd))
+
+;; Temporarily cd to %TMPDIR.  The goal is to work around path name
+;; limitations, which can lead to exceptions like:
+;;
+;;  (misc-error "scm_to_sockaddr"
+;;              "unix address path too long: ~A"
+;;              ("/tmp/nix-build-fb7bph4ifh0vr3ihigm702dzffdnapfj-guile-coverage-1.9.5.drv-0/guile-test-socket-1258553296-77619")
+;;              #f)
+(chdir %tmpdir)
+
+(define (temp-file-path)
+  ;; Return a temporary file name, assuming the current directory is %TMPDIR.
+  (string-append "guile-test-socket-"
+                 (number->string (current-time)) "-"
+                 (number->string (random 100000))))
+
+
+(if (defined? 'AF_UNIX)
+    (with-test-prefix "AF_UNIX/SOCK_DGRAM"
+
+      ;; testing `bind' and `sendto' and datagram sockets
+
+      (let ((server-socket (socket AF_UNIX SOCK_DGRAM 0))
+	    (server-bound? #f)
+	    (path (temp-file-path)))
+
+	(pass-if "bind"
+	  (catch 'system-error
+	    (lambda ()
+	      (bind server-socket AF_UNIX path)
+	      (set! server-bound? #t)
+	      #t)
+	    (lambda args
+	      (let ((errno (system-error-errno args)))
+		(cond ((= errno EADDRINUSE) (throw 'unresolved))
+		      (else (apply throw args)))))))
+
+	(pass-if "bind/sockaddr"
+	  (let* ((sock (socket AF_UNIX SOCK_STREAM 0))
+		 (path (temp-file-path))
+		 (sockaddr (make-socket-address AF_UNIX path)))
+	    (catch 'system-error
+	      (lambda ()
+		(bind sock sockaddr)
+		(false-if-exception (delete-file path))
+		#t)
+	      (lambda args
+		(let ((errno (system-error-errno args)))
+		  (cond ((= errno EADDRINUSE) (throw 'unresolved))
+			(else (apply throw args))))))))
+
+	(pass-if "sendto"
+	  (if (not server-bound?)
+	      (throw 'unresolved)
+	      (let ((client (socket AF_UNIX SOCK_DGRAM 0)))
+		(> (sendto client "hello" AF_UNIX path) 0))))
+
+	(pass-if "sendto/sockaddr"
+	  (if (not server-bound?)
+	      (throw 'unresolved)
+	      (let ((client (socket AF_UNIX SOCK_DGRAM 0))
+		    (sockaddr (make-socket-address AF_UNIX path)))
+		(> (sendto client "hello" sockaddr) 0))))
+
+	(false-if-exception (delete-file path)))))
+
+
+(if (defined? 'AF_UNIX)
+    (with-test-prefix "AF_UNIX/SOCK_STREAM"
+
+      ;; testing `bind', `listen' and `connect' on stream-oriented sockets
+
+      (let ((server-socket (socket AF_UNIX SOCK_STREAM 0))
+	    (server-bound? #f)
+	    (server-listening? #f)
+	    (server-pid #f)
+	    (path (temp-file-path)))
+
+	(pass-if "bind"
+	  (catch 'system-error
+	    (lambda ()
+	      (bind server-socket AF_UNIX path)
+	      (set! server-bound? #t)
+	      #t)
+	    (lambda args
+	      (let ((errno (system-error-errno args)))
+		(cond ((= errno EADDRINUSE) (throw 'unresolved))
+		      (else (apply throw args)))))))
+
+	(pass-if "bind/sockaddr"
+	  (let* ((sock (socket AF_UNIX SOCK_STREAM 0))
+		 (path (temp-file-path))
+		 (sockaddr (make-socket-address AF_UNIX path)))
+	    (catch 'system-error
+	      (lambda ()
+		(bind sock sockaddr)
+		(false-if-exception (delete-file path))
+		#t)
+	      (lambda args
+		(let ((errno (system-error-errno args)))
+		  (cond ((= errno EADDRINUSE) (throw 'unresolved))
+			(else (apply throw args))))))))
+
+	(pass-if "listen"
+	  (if (not server-bound?)
+	      (throw 'unresolved)
+	      (begin
+		(listen server-socket 123)
+		(set! server-listening? #t)
+		#t)))
+
+	(if server-listening?
+	    (let ((pid (primitive-fork)))
+	      ;; Spawn a server process.
+	      (case pid
+		((-1) (throw 'unresolved))
+		((0)   ;; the kid:  serve two connections and exit
+		 (let serve ((conn
+			      (false-if-exception (accept server-socket)))
+			     (count 1))
+		   (if (not conn)
+		       (exit 1)
+		       (if (> count 0)
+			   (serve (false-if-exception (accept server-socket))
+				  (- count 1)))))
+		 (exit 0))
+		(else  ;; the parent
+		 (set! server-pid pid)
+		 #t))))
+
+	(pass-if "connect"
+	  (if (not server-pid)
+	      (throw 'unresolved)
+	      (let ((s (socket AF_UNIX SOCK_STREAM 0)))
+		(connect s AF_UNIX path)
+		#t)))
+
+	(pass-if "connect/sockaddr"
+	  (if (not server-pid)
+	      (throw 'unresolved)
+	      (let ((s (socket AF_UNIX SOCK_STREAM 0)))
+		(connect s (make-socket-address AF_UNIX path))
+		#t)))
+
+	(pass-if "accept"
+	  (if (not server-pid)
+	      (throw 'unresolved)
+	      (let ((status (cdr (waitpid server-pid))))
+		(eq? 0 (status:exit-val status)))))
+
+	(false-if-exception (delete-file path))
+
+	#t)))
+
+
+(if (defined? 'AF_INET6)
+    (with-test-prefix "AF_INET6/SOCK_STREAM"
+
+      ;; testing `bind', `listen' and `connect' on stream-oriented sockets
+
+      (let ((server-socket (socket AF_INET6 SOCK_STREAM 0))
+	    (server-bound? #f)
+	    (server-listening? #f)
+	    (server-pid #f)
+	    (ipv6-addr 1)		; ::1
+	    (server-port 8889)
+	    (client-port 9998))
+
+	(pass-if "bind"
+	  (catch 'system-error
+	    (lambda ()
+	      (bind server-socket AF_INET6 ipv6-addr server-port)
+	      (set! server-bound? #t)
+	      #t)
+	    (lambda args
+	      (let ((errno (system-error-errno args)))
+		(cond ((= errno EADDRINUSE) (throw 'unresolved))
+		      (else (apply throw args)))))))
+
+	(pass-if "bind/sockaddr"
+	  (let* ((sock (socket AF_INET6 SOCK_STREAM 0))
+		 (sockaddr (make-socket-address AF_INET6 ipv6-addr client-port)))
+	    (catch 'system-error
+	      (lambda ()
+		(bind sock sockaddr)
+		#t)
+	      (lambda args
+		(let ((errno (system-error-errno args)))
+		  (cond ((= errno EADDRINUSE) (throw 'unresolved))
+			(else (apply throw args))))))))
+
+	(pass-if "listen"
+	  (if (not server-bound?)
+	      (throw 'unresolved)
+	      (begin
+		(listen server-socket 123)
+		(set! server-listening? #t)
+		#t)))
+
+	(if server-listening?
+	    (let ((pid (primitive-fork)))
+	      ;; Spawn a server process.
+	      (case pid
+		((-1) (throw 'unresolved))
+		((0)   ;; the kid:  serve two connections and exit
+		 (let serve ((conn
+			      (false-if-exception (accept server-socket)))
+			     (count 1))
+		   (if (not conn)
+		       (exit 1)
+		       (if (> count 0)
+			   (serve (false-if-exception (accept server-socket))
+				  (- count 1)))))
+		 (exit 0))
+		(else  ;; the parent
+		 (set! server-pid pid)
+		 #t))))
+
+	(pass-if "connect"
+	  (if (not server-pid)
+	      (throw 'unresolved)
+	      (let ((s (socket AF_INET6 SOCK_STREAM 0)))
+		(connect s AF_INET6 ipv6-addr server-port)
+		#t)))
+
+	(pass-if "connect/sockaddr"
+	  (if (not server-pid)
+	      (throw 'unresolved)
+	      (let ((s (socket AF_INET6 SOCK_STREAM 0)))
+		(connect s (make-socket-address AF_INET6 ipv6-addr server-port))
+		#t)))
+
+	(pass-if "accept"
+	  (if (not server-pid)
+	      (throw 'unresolved)
+	      (let ((status (cdr (waitpid server-pid))))
+		(eq? 0 (status:exit-val status)))))
+
+	#t)))
+
+;; Switch back to the previous directory.
+(false-if-exception (chdir %curdir))

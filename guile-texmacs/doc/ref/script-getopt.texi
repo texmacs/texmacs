@@ -1,0 +1,94 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Command Line Handling
+@section Handling Command Line Options and Arguments
+
+@c This chapter was written and contributed by Martin Grabmueller.
+
+The ability to accept and handle command line arguments is very
+important when writing Guile scripts to solve particular problems, such
+as extracting information from text files or interfacing with existing
+command line applications.  This chapter describes how Guile makes
+command line arguments available to a Guile script, and the utilities
+that Guile provides to help with the processing of command line
+arguments.
+
+When a Guile script is invoked, Guile makes the command line arguments
+accessible via the procedure @code{command-line}, which returns the
+arguments as a list of strings.
+
+For example, if the script
+
+@example
+#! /usr/local/bin/guile -s
+!#
+(write (command-line))
+(newline)
+@end example
+
+@noindent
+is saved in a file @file{cmdline-test.scm} and invoked using the command
+line @code{./cmdline-test.scm bar.txt -o foo -frumple grob}, the output
+is
+
+@example
+("./cmdline-test.scm" "bar.txt" "-o" "foo" "-frumple" "grob")
+@end example
+
+If the script invocation includes a @code{-e} option, specifying a
+procedure to call after loading the script, Guile will call that
+procedure with @code{(command-line)} as its argument.  So a script that
+uses @code{-e} doesn't need to refer explicitly to @code{command-line}
+in its code.  For example, the script above would have identical
+behaviour if it was written instead like this:
+
+@example
+#! /usr/local/bin/guile \
+-e main -s
+!#
+(define (main args)
+  (write args)
+  (newline))
+@end example
+
+(Note the use of the meta switch @code{\} so that the script invocation
+can include more than one Guile option: @xref{The Meta Switch}.)
+
+These scripts use the @code{#!} POSIX convention so that they can be
+executed using their own file names directly, as in the example command
+line @code{./cmdline-test.scm bar.txt -o foo -frumple grob}.  But they
+can also be executed by typing out the implied Guile command line in
+full, as in:
+
+@example
+$ guile -s ./cmdline-test.scm bar.txt -o foo -frumple grob
+@end example
+
+@noindent
+or
+
+@example
+$ guile -e main -s ./cmdline-test2.scm bar.txt -o foo -frumple grob
+@end example
+
+Even when a script is invoked using this longer form, the arguments that
+the script receives are the same as if it had been invoked using the
+short form.  Guile ensures that the @code{(command-line)} or @code{-e}
+arguments are independent of how the script is invoked, by stripping off
+the arguments that Guile itself processes.
+
+A script is free to parse and handle its command line arguments in any
+way that it chooses.  Where the set of possible options and arguments is
+complex, however, it can get tricky to extract all the options, check
+the validity of given arguments, and so on.  This task can be greatly
+simplified by taking advantage of the module @code{(ice-9 getopt-long)},
+which is distributed with Guile, @xref{getopt-long}.
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

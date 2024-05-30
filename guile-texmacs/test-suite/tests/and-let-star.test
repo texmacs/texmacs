@@ -1,0 +1,78 @@
+;;;; and-let-star.test --- Tests for Guile and-let-star module. -*- scheme -*-
+;;;;
+;;;; Copyright (C) 2004, 2006 Free Software Foundation, Inc.
+;;;;
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;;
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;;
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-and-let-star)
+  #:use-module (test-suite lib)
+  #:use-module (ice-9 and-let-star))
+
+;;;
+;;; and-let*
+;;;
+
+(with-test-prefix "and-let*"
+
+  (pass-if "cond-expand srfi-2"
+    (cond-expand (srfi-2 #t)
+		 (else   #f)))
+
+  (with-test-prefix "no bindings"
+
+    (pass-if "no result expression (gives #t)"
+      (and-let* ()))
+
+    (pass-if "result expression"
+      (and-let* ()
+	#t))
+
+    (pass-if "two result expressions"
+      (and-let* ()
+	#f
+	#t)))
+
+  (with-test-prefix "one binding"
+
+    (pass-if "no result expression (gives #t)"
+      (and-let* ((x 123))))
+
+    (pass-if "result expression"
+      (and-let* ((x 123))
+	#t))
+
+    (pass-if "result variable"
+      (and-let* ((x #t))
+	x))
+
+    (pass-if "two result expressions"
+      (and-let* ((x 123))
+	#f
+	#t)))
+
+  (with-test-prefix "one test"
+
+    (pass-if "no result expression (gives #t)"
+      (and-let* (( 123))))
+
+    (pass-if "result expression"
+      (and-let* (( 123))
+	#t))
+
+    (pass-if "two result expressions"
+      (and-let* (( 123))
+	#f
+	#t))))

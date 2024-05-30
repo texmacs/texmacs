@@ -1,0 +1,190 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004, 2005
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@node Linking Programs With Guile
+@section Linking Programs With Guile
+
+This section covers the mechanics of linking your program with Guile
+on a typical POSIX system.
+
+The header file @code{<libguile.h>} provides declarations for all of
+Guile's functions and constants.  You should @code{#include} it at the
+head of any C source file that uses identifiers described in this
+manual.  Once you've compiled your source files, you need to link them
+against the Guile object code library, @code{libguile}.
+
+On most systems, you should not need to tell the compiler and linker
+explicitly where they can find @file{libguile.h} and @file{libguile}.
+When Guile has been installed in a peculiar way, or when you are on a
+peculiar system, things might not be so easy and you might need to pass
+additional @code{-I} or @code{-L} options to the compiler.  Guile
+provides the utility program @code{guile-config} to help you find the
+right values for these options.  You would typically run
+@code{guile-config} during the configuration phase of your program and
+use the obtained information in the Makefile.
+
+@menu
+* Guile Initialization Functions::  What to call first.
+* A Sample Guile Main Program::  Sources and makefiles.
+@end menu
+
+
+@node Guile Initialization Functions
+@subsection Guile Initialization Functions
+
+To initialize Guile, you can use one of several functions.  The first,
+@code{scm_with_guile}, is the most portable way to initialize Guile.  It
+will initialize Guile when necessary and then call a function that you
+can specify.  Multiple threads can call @code{scm_with_guile}
+concurrently and it can also be called more than once in a given thread.
+The global state of Guile will survive from one call of
+@code{scm_with_guile} to the next.  Your function is called from within
+@code{scm_with_guile} since the garbage collector of Guile needs to know
+where the stack of each thread is.
+
+A second function, @code{scm_init_guile}, initializes Guile for the
+current thread.  When it returns, you can use the Guile API in the
+current thread.  This function employs some non-portable magic to learn
+about stack bounds and might thus not be available on all platforms.
+
+One common way to use Guile is to write a set of C functions which
+perform some useful task, make them callable from Scheme, and then link
+the program with Guile.  This yields a Scheme interpreter just like
+@code{guile}, but augmented with extra functions for some specific
+application --- a special-purpose scripting language.
+
+In this situation, the application should probably process its
+command-line arguments in the same manner as the stock Guile
+interpreter.  To make that straightforward, Guile provides the
+@code{scm_boot_guile} and @code{scm_shell} function.
+
+@node A Sample Guile Main Program
+@subsection A Sample Guile Main Program
+
+Here is @file{simple-guile.c}, source code for a @code{main} and an
+@code{inner_main} function that will produce a complete Guile
+interpreter.
+
+@example
+/* simple-guile.c --- how to start up the Guile
+   interpreter from C code.  */
+
+/* Get declarations for all the scm_ functions.  */
+#include <libguile.h>
+
+static void
+inner_main (void *closure, int argc, char **argv)
+@{
+  /* module initializations would go here */
+  scm_shell (argc, argv);
+@}
+
+int
+main (int argc, char **argv)
+@{
+  scm_boot_guile (argc, argv, inner_main, 0);
+  return 0; /* never reached */
+@}
+@end example
+
+The @code{main} function calls @code{scm_boot_guile} to initialize
+Guile, passing it @code{inner_main}.  Once @code{scm_boot_guile} is
+ready, it invokes @code{inner_main}, which calls @code{scm_shell} to
+process the command-line arguments in the usual way.
+
+Here is a Makefile which you can use to compile the above program.  It
+uses @code{guile-config} to learn about the necessary compiler and
+linker flags.
+@example
+# Use GCC, if you have it installed.
+CC=gcc
+
+# Tell the C compiler where to find <libguile.h>
+CFLAGS=`guile-config compile`
+
+# Tell the linker what libraries to use and where to find them.
+LIBS=`guile-config link`
+
+simple-guile: simple-guile.o
+        $@{CC@} simple-guile.o $@{LIBS@} -o simple-guile
+
+simple-guile.o: simple-guile.c
+        $@{CC@} -c $@{CFLAGS@} simple-guile.c
+@end example
+
+If you are using the GNU Autoconf package to make your application more
+portable, Autoconf will settle many of the details in the Makefile above
+automatically, making it much simpler and more portable; we recommend
+using Autoconf with Guile.  Guile also provides the @code{GUILE_FLAGS}
+macro for autoconf that performs all necessary checks.  Here is a
+@file{configure.in} file for @code{simple-guile} that uses this macro.
+Autoconf can use this file as a template to generate a @code{configure}
+script.  In order for Autoconf to find the @code{GUILE_FLAGS} macro, you
+will need to run @code{aclocal} first (@pxref{Invoking aclocal,,,
+automake, GNU Automake}).
+
+@example
+AC_INIT(simple-guile.c)
+
+# Find a C compiler.
+AC_PROG_CC
+
+# Check for Guile
+GUILE_FLAGS
+
+# Generate a Makefile, based on the results.
+AC_OUTPUT(Makefile)
+@end example
+
+Here is a @code{Makefile.in} template, from which the @code{configure}
+script produces a Makefile customized for the host system:
+@example
+# The configure script fills in these values.
+CC=@@CC@@
+CFLAGS=@@GUILE_CFLAGS@@
+LIBS=@@GUILE_LDFLAGS@@
+
+simple-guile: simple-guile.o
+        $@{CC@} simple-guile.o $@{LIBS@} -o simple-guile
+simple-guile.o: simple-guile.c
+        $@{CC@} -c $@{CFLAGS@} simple-guile.c
+@end example
+
+The developer should use Autoconf to generate the @file{configure}
+script from the @file{configure.in} template, and distribute
+@file{configure} with the application.  Here's how a user might go about
+building the application:
+
+@example
+$ ls
+Makefile.in     configure*      configure.in    simple-guile.c
+$ ./configure
+creating cache ./config.cache
+checking for gcc... (cached) gcc
+checking whether the C compiler (gcc  ) works... yes
+checking whether the C compiler (gcc  ) is a cross-compiler... no
+checking whether we are using GNU C... (cached) yes
+checking whether gcc accepts -g... (cached) yes
+checking for Guile... yes
+creating ./config.status
+creating Makefile
+$ make
+gcc -c -I/usr/local/include simple-guile.c
+gcc simple-guile.o -L/usr/local/lib -lguile -lqthreads -lpthread -lm -o simple-guile
+$ ./simple-guile
+guile> (+ 1 2 3)
+6
+guile> (getpwnam "jimb")
+#("jimb" "83Z7d75W2tyJQ" 4008 10 "Jim Blandy" "/u/jimb"
+  "/usr/local/bin/bash")
+guile> (exit)
+$
+@end example
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

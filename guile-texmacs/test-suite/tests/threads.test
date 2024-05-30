@@ -1,0 +1,168 @@
+;;;; threads.test --- Tests for Guile threading.    -*- scheme -*-
+;;;;
+;;;; Copyright 2003, 2006 Free Software Foundation, Inc.
+;;;;
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;;
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;;
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(use-modules (ice-9 threads)
+	     (test-suite lib))
+
+(if (provided? 'threads)
+    (begin
+
+      (with-test-prefix "parallel"
+	(pass-if "no forms"
+	  (call-with-values
+	      (lambda ()
+		(parallel))
+	    (lambda ()
+	      #t)))
+
+	(pass-if "1"
+	  (call-with-values
+	      (lambda ()
+		(parallel 1))
+	    (lambda (x)
+	      (equal? x 1))))
+
+	(pass-if "1 2"
+	  (call-with-values
+	      (lambda ()
+		(parallel 1 2))
+	    (lambda (x y)
+	      (and (equal? x 1)
+		   (equal? y 2)))))
+
+	(pass-if "1 2 3"
+	  (call-with-values
+	      (lambda ()
+		(parallel 1 2 3))
+	    (lambda (x y z)
+	      (and (equal? x 1)
+		   (equal? y 2)
+		   (equal? z 3))))))
+
+      ;;
+      ;; n-par-for-each
+      ;;
+
+      (with-test-prefix "n-par-for-each"
+
+	(pass-if "0 in limit 10"
+	  (n-par-for-each 10 noop '())
+	  #t)
+
+	(pass-if "6 in limit 10"
+	  (let ((v (make-vector 6 #f)))
+	    (n-par-for-each 10 (lambda (n)
+				 (vector-set! v n #t))
+			    '(0 1 2 3 4 5))
+	    (equal? v '#(#t #t #t #t #t #t))))
+
+	(pass-if "6 in limit 1"
+	  (let ((v (make-vector 6 #f)))
+	    (n-par-for-each 1 (lambda (n)
+				(vector-set! v n #t))
+			    '(0 1 2 3 4 5))
+	    (equal? v '#(#t #t #t #t #t #t))))
+
+	(pass-if "6 in limit 2"
+	  (let ((v (make-vector 6 #f)))
+	    (n-par-for-each 2 (lambda (n)
+				(vector-set! v n #t))
+			    '(0 1 2 3 4 5))
+	    (equal? v '#(#t #t #t #t #t #t))))
+
+	(pass-if "6 in limit 3"
+	  (let ((v (make-vector 6 #f)))
+	    (n-par-for-each 3 (lambda (n)
+				(vector-set! v n #t))
+			    '(0 1 2 3 4 5))
+	    (equal? v '#(#t #t #t #t #t #t)))))
+
+      ;;
+      ;; n-for-each-par-map
+      ;;
+
+      (with-test-prefix "n-for-each-par-map"
+
+	(pass-if "0 in limit 10"
+	  (n-for-each-par-map 10 noop noop '())
+	  #t)
+
+	(pass-if "6 in limit 10"
+	  (let ((result '()))
+	    (n-for-each-par-map 10
+				(lambda (n) (set! result (cons n result)))
+				(lambda (n) (* 2 n))
+				'(0 1 2 3 4 5))
+	    (equal? result '(10 8 6 4 2 0))))
+
+	(pass-if "6 in limit 1"
+	  (let ((result '()))
+	    (n-for-each-par-map 1
+				(lambda (n) (set! result (cons n result)))
+				(lambda (n) (* 2 n))
+				'(0 1 2 3 4 5))
+	    (equal? result '(10 8 6 4 2 0))))
+
+	(pass-if "6 in limit 2"
+	  (let ((result '()))
+	    (n-for-each-par-map 2
+				(lambda (n) (set! result (cons n result)))
+				(lambda (n) (* 2 n))
+				'(0 1 2 3 4 5))
+	    (equal? result '(10 8 6 4 2 0))))
+
+	(pass-if "6 in limit 3"
+	  (let ((result '()))
+	    (n-for-each-par-map 3
+				(lambda (n) (set! result (cons n result)))
+				(lambda (n) (* 2 n))
+				'(0 1 2 3 4 5))
+	    (equal? result '(10 8 6 4 2 0)))))
+
+      ;;
+      ;; thread joining
+      ;;
+
+      (with-test-prefix "joining"
+
+	;; scm_join_thread has a SCM_TICK in the middle of it, to
+	;; allow asyncs to run (including signal delivery).  We used
+	;; to have a bug whereby if the joined thread terminated at
+	;; the same time as the joining thread is in this SCM_TICK,
+	;; scm_join_thread would not notice and would hang forever.
+	;; So in this test we are setting up the following sequence of
+	;; events.
+        ;;   T=0  other thread is created and starts running
+	;;   T=2  main thread sets up an async that will sleep for 10 seconds
+        ;;   T=2  main thread calls join-thread, which will...
+        ;;   T=2  ...call the async, which starts sleeping
+        ;;   T=5  other thread finishes its work and terminates
+        ;;   T=7  async completes, main thread continues inside join-thread.
+	(pass-if "don't hang when joined thread terminates in SCM_TICK"
+	  (let ((other-thread (make-thread sleep 5)))
+	    (letrec ((delay-count 10)
+		     (aproc (lambda ()
+			      (set! delay-count (- delay-count 1))
+			      (if (zero? delay-count)
+				  (sleep 5)
+				  (system-async-mark aproc)))))
+	      (sleep 2)
+	      (system-async-mark aproc)
+	      (join-thread other-thread)))
+	  #t))))

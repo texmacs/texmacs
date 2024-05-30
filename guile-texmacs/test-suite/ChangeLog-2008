@@ -1,0 +1,2604 @@
+2008-08-19  Ludovic Courtès  <ludo@gnu.org>
+
+	* tests/goops.test (object update)[changing class, `hell' in
+	`goops.c' grows as expected]: New tests.
+
+2008-07-06  Ludovic Courtès  <ludo@gnu.org>
+
+	* standalone/test-asmobs, standalone/test-bad-identifiers,
+	standalone/test-require-extension, standalone/test-system-cmds:
+	Invoke `guile' with `-q'.
+
+2008-06-02  Ludovic Courtès  <ludo@gnu.org>
+
+	* standalone/test-conversion.c: Support systems whose
+	<inttypes.h> doesn't define `PRIiMAX'.  Reported by Peter
+	O'Gorman <pogma@thewrittenword.com>.
+
+2008-04-28  Ludovic Courtès  <ludo@gnu.org>
+
+	* tests/srfi-1.test (partition)[with improper list]: New test.
+	(partition!)[with improper list]: New test.
+
+2008-04-26  Ludovic Courtès  <ludo@gnu.org>
+
+	* standalone/Makefile.am (TESTS): Only add
+	`test-with-guile-module' when `BUILD_PTHREAD_SUPPORT' is true.
+	Reported by Alain Guibert <alguibert+bts@free.fr>.
+
+2008-04-26  Ludovic Courtès  <ludo@gnu.org>
+
+	* tests/srfi-35.test (cond-expand): New test.
+
+2008-04-26  Ludovic Courtès  <ludo@gnu.org>
+
+	* Makefile.am (SCM_TESTS): Add `tests/srfi-88.test'.
+	* tests/srfi-88.test: New file.
+
+2008-04-15  Ludovic Courtès  <ludo@gnu.org>
+
+	* tests/reader.test (read-options)[prefix non-keywords, postfix
+	keywords, `:' is not a postfix keyword (per SRFI-88)]: New tests.
+
+2008-04-13  Ludovic Courtès  <ludo@gnu.org>
+
+	* tests/goops.test (defining classes)[interaction with
+	`struct-ref', interaction with `struct-set!']: New test.  Checks
+	the interaction of `struct-ref' with "light structs", fixed on
+	2008-04-10 (commit 4650d115020924e8da5547d4c346cbe5cd01029e).
+
+2008-04-06  Ludovic Courtès  <ludo@gnu.org>
+
+	* standalone/test-asmobs-lib.c, standalone/test-conversion.c,
+	standalone/test-gh.c, standalone/test-list.c,
+	standalone/test-num2integral.c, standalone/test-round.c: Make
+	sure "config.h" is included first; use angle brackets for
+	<config.h> and <libguile.h>.
+
+2008-03-13  Ludovic Courtès  <ludo@gnu.org>
+
+	* tests/socket.test (temp-file-path): New.  Replace calls to
+	`tmpnam' with calls to `temp-file-path', so that `$TMPDIR' is
+	honored.
+	* standalone/test-unwind.c (check_ports): Honor `$TMPDIR'.
+
+2008-03-12  Ludovic Courtès  <ludo@gnu.org>
+
+	* tests/srfi-37.test (short options without arguments): New
+	test.
+
+2008-02-23  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* standalone/test-with-guile-module.c: Updated to GNU coding
+	standards; added standard license statement.
+
+2008-02-15  Ludovic Courtès  <ludo@gnu.org>
+
+	* tests/gc.test (gc): Add hack to clean up the stack so that the
+	test passes on SPARC.
+
+2008-02-01  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* standalone/Makefile.am: Add stanza for test-with-guile-module.
+
+	* standalone/test-with-guile-module.c: New test.
+
+2008-01-22  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* COPYING: Removed.
+
+2008-01-18  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* tests/hash.test: New "hashx" test supplied by Gregory Marton;
+	prior to today's fix in libguile/hashtab.c, this caused a
+	segmentation fault.
+
+2007-12-29  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* standalone/test-bad-identifiers: New test.
+	(top level): Explain the point of this test.
+
+	* standalone/Makefile.am (check_SCRIPTS, TESTS): Add it.
+
+2007-12-13  Stephen Compall  <s11@member.fsf.org>
+
+	* tests/srfi-69.test (SRFI-69)[can use all arguments, including
+	size]: New test.
+
+2007-12-03  Stephen Compall  <s11@member.fsf.org>
+
+	* tests/srfi-69.test: New file.
+	* Makefile.am: Add it.
+
+2007-10-19  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* tests/eval.test (promises)[unmemoizing a promise]: New test.
+
+	* tests/continuations.test ("continuations"): Use
+	with-debugging-evaluator.
+
+	* standalone/test-use-srfi: Use -q to avoid picking up the user's
+	~/.guile file
+
+	* lib.scm (with-debugging-evaluator*, with-debugging-evaluator):
+	New utilities.
+
+2007-10-17  Ludovic Courtès  <ludo@gnu.org>
+
+	* tests/reader.test (reading)[CR recognized as a token
+	delimiter]: New test.
+
+2007-10-10  Ludovic Courtès  <ludo@gnu.org>
+
+	* standalone/test-conversion.c: Include <inttypes.h> where
+	available.  Use `PRIiMAX' and `PRIuMAX' to print
+	`scm_t_u?intmax'.  Fixes warnings on x86_64.  Reported by Poor
+	Yorick <org.gnu.lists.guile-user@pooryorick.com>.
+
+	* standalone/Makefile.am (test_cflags): Removed reference to
+	`libguile-ltdl'.
+
+2007-09-03  Ludovic Courtès  <ludo@gnu.org>
+
+	* tests/reader.test (reading)[block comment finishing sexp]: New
+	test.
+
+2007-08-23  Ludovic Courtès  <ludo@gnu.org>
+
+	* tests/reader.test (read-options)[positions on quote]: New
+	test, proposed by Kevin Ryde.
+
+2007-08-23  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/ports.test (port-for-each): New test for passing freed cell,
+	marked as unresolved since problem not yet fixed.
+
+2007-08-11  Ludovic Courtès  <ludo@gnu.org>
+
+	* tests/reader.test: Added a proper header and `define-module'.
+	(exception:unterminated-block-comment,
+	exception:unknown-character-name,
+	exception:unknown-sharp-object, exception:eof-in-string,
+	exception:illegal-escape, with-read-options): New.
+	(reading)[block comment, unprintable symbol]: New tests.
+	(exceptions): New test prefix.
+	(read-options): New test prefix.
+
+2007-08-11  Ludovic Courtès  <ludo@gnu.org>
+
+	* tests/srfi-35.test: New file.
+	* Makefile.am (SCM_TESTS): Added `tests/srfi-35.test'.
+
+2007-08-08  Ludovic Courtès  <ludo@gnu.org>
+
+	* tests/srfi-9.test (exception:not-a-record): Removed.
+	(accessor)[get-x on number, get-y on number]: Expect
+	`exception:wrong-type-arg' instead of `exception:not-a-record'.
+	(modifier)[set-y! on number]: Likewise
+
+2007-07-25  Ludovic Courtès  <ludo@gnu.org>
+
+	* tests/srfi-17.test (%some-variable): New.
+	(set!)[target uses macro]: New test prefix.  The
+	"(set! (@@ ...) 1)" test is in accordance with Marius Vollmer's
+	change in `libguile' dated 2003-11-17.
+
+2007-07-18  Stephen Compall  <s11@member.fsf.org>
+
+	* tests/syntax.test: Add SRFI-61 `cond' tests.
+
+	* tests/srfi-37.test: New file.
+	* Makefile.am: Add it.
+
+2007-07-11  Ludovic Courtès  <ludo@gnu.org>
+
+	* tests/goops.test (defining methods): New test prefix.
+
+2007-07-09  Ludovic Courtès  <ludo@gnu.org>
+
+	* tests/srfi-19.test (`time-utc->julian-day' honors timezone):
+	New.  Suggested by Jon Wilson <j85wilson@fastmail.fm>.
+
+2007-06-26  Ludovic Courtès  <ludo@gnu.org>
+
+	* tests/socket.test (htonl): Only executed if `htonl' is defined.
+	(ntohl): Likewise.  Reported by Marijn Schouten (hkBst)
+	<hkBst@gentoo.org>.
+
+2007-06-13  Ludovic Courtès  <ludo@chbouib.org>
+
+	* tests/syntax.test (top-level define)[binding is created before
+	expression is evaluated]: Moved to "internal define", using `let'
+	instead of `begin'.  The test was not necessarily valid for
+	top-level defines, according to Section 5.2.1 or R5RS.
+	[redefinition]: New.
+
+2007-06-12  Ludovic Courtès  <ludo@chbouib.org>
+
+	* tests/socket.test: Renamed module to `(test-suite test-socket)'.
+	(inet-ntop): New test prefix.
+
+2007-06-07  Ludovic Courtès  <ludovic.courtes@laas.fr>
+
+	* lib.scm (exception:system-error): New variable.
+
+	* tests/posix.test (ttyname): New test prefix.  Catches a bug
+	reported by Dan McMahill.
+
+2007-05-09  Ludovic Courtès  <ludo@chbouib.org>
+
+	* tests/srfi-19.test ((current-time time-tai) works): Use `time?'.
+	((current-time time-process) works): New test, catches a bug
+	reported by Scott Shedden.
+
+2007-03-08  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/structs.test (make-struct): Exercise the error check on tail
+	array size != 0 when layout spec doesn't have tail array.
+	(make-vtable): Exercise this.
+
+2007-02-22  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/structs.test (make-struct): New test of type check on a "u"
+	field, which had been causing an abort().
+
+2007-02-20  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* standalone/Makefile.am (check_SCRIPTS): Add test-use-srfi, so
+	that it gets into the distribution.
+
+2007-01-27  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/ports.test (port-line): Check not truncated to "int" on 64-bit
+	systems.
+
+2007-01-25  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/sort.test (stable-sort): New test, exercising empty list
+	input.  As reported by Ales Hvezda.
+
+	* tests/time.test (gmtime in another thread): Catch #t all errors from
+	gmtime in the thread, since it can be a system error not a scheme
+	out-of-range on 64-bit systems.  Reported by Marijn Schouten.
+
+2007-01-19  Ludovic Courtès  <ludovic.courtes@laas.fr>
+
+	* tests/eval.test (values): New test prefix.  Values are structs,
+	and `equal?' on structs with `s' fields used to yield infinite
+	recursion.
+	* tests/structs.test (equal?): New test prefix.  Added tests that
+	used to show the infinite recursion problem.
+
+2007-01-16  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/regexp.test (regexp-exec): Further tests, in particular #\nul
+	in input and bad flags args which had been provoking abort()s.
+	* lib.scm (exception:string-contains-nul): New exception pattern.
+
+2006-12-13  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/eval.test: Exercise top-level define setting procedure-name.
+	* tests/srfi-17.test (car): Check procedure-name property.
+
+	* tests/numbers.test (*): Exercise multiply by exact 0 giving exact 0.
+
+2006-12-12  Ludovic Courtès  <ludovic.courtes@laas.fr>
+
+	* tests/unif.test (syntax): New test prefix.  Check syntax for
+	negative lower bounds and negative lengths (reported by Gyula
+	Szavai) as well as `array-in-bounds?'.
+
+2006-12-09  Kevin Ryde  <user42@zip.com.au>
+
+	* standalone/test-use-srfi: New test.
+	* standalone/Makefile.am (TESTS): Add it.
+
+2006-12-03  Kevin Ryde  <user42@zip.com.au>
+
+	* standalone/Makefile.am (.x): Change from %.c %.x style to .c.x style
+	since the former is a GNU make extension.  (Rule now as per
+	libguile/Makefile.am.)
+
+	* standalone/Makefile.am (test_cflags): Change from := to plain =, as
+	the former is not portable (according to automake).
+
+2006-12-02  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (min, max): Correction to big/real and real/big
+	tests, `big*5' will round on a 64-bit system.  And use `eqv?' to
+	ensure intended exact vs inexact is checked.  Reported by Aaron
+	M. Ucko, Debian bug 396119.
+
+2006-11-29  Ludovic Courtès  <ludovic.courtes@laas.fr>
+
+	* test-suite/tests/vectors.test: Use `define-module'.
+	(vector->list): New test prefix.  "Shared array" test contributed
+	by Szavai Gyula.
+
+2006-10-26  Ludovic Courtès  <ludovic.courtes@laas.fr>
+
+	* tests/srfi-14.test (Latin-1)[char-set:punctuation]: Fixed a
+	typo: `thrown' instead of `throw'.
+
+2006-10-05  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/ftw.test: New file.
+	* Makefile.am (SCM_TESTS): Add it.
+
+2006-10-03  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/eval.test (apply): New tests, exercising scm_tc7_subr_2o which
+	had lacked some arg count checking.
+
+2006-09-26  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/ports.test (seek): New tests.
+	(truncate-file): More tests.
+
+2006-09-23  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (exp, log, log10, sqrt): New tests.
+
+	* tests/format.test, tests/srfi-1.test: Use define-module to prevent
+	redefined funcs in those modules extending on to subsequent tests.
+
+	* tests/time.test (gmtime, strptime): Remove the "unresolved" throws,
+	the error+thread tests seem ok now (previously were upset by something
+	leaking out of syntax.test).
+
+2006-09-20  Ludovic Courtès  <ludovic.courtes@laas.fr>
+
+	* tests/srfi-14.test: Use `define-module'.  Use modules `(srfi
+	srfi-1)' and `(test-suite lib)'.
+	(string->char-set, standard char sets (ASCII), Latin-1 (8-bit
+	charset)): New test prefixes.
+	(every?, find-latin1-locale): New procedures.
+	(%latin1): New variable.
+
+2006-09-08  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/format.test (~f): Test leading zeros bugfix.
+
+2006-08-25  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/popen.test (open-input-pipe, open-output-pipe): In the "no
+	duplicate" tests, close parent side of signalling pipe, to hopefully
+	generate an error instead of a hang if something bad in the child
+	means it doesn't write anything.
+
+2006-08-22  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-9.test: More tests, in particular check for exceptions on
+	wrong record types passed to accessor and modifier funcs.
+
+2006-07-25  Kevin Ryde  <user42@zip.com.au>
+
+	* standalone/test-conversion.c, standalone/test-gh.c,
+	standalone/test-list.c, standalone/test-num2integral.c,
+	standalone/test-round.c: Use scm_boot_guile rather than
+	scm_init_guile, for the benefit of those systems where we can't
+	implement the latter.  Reported by Claes Wallin.
+
+	* standalone/test-require-extension: Use "&& exit 1" instead of "!" to
+	invert the sense of exit statuses, as the latter doesn't work on
+	Solaris 10.  Reported by Claes Wallin.
+
+2006-07-24  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/socket.test (htonl, ntohl): New tests.
+
+2006-07-06  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/time.test (localtime, mktime, strptime): More tests.
+
+2006-06-13  Ludovic Courtès  <ludovic.courtes@laas.fr>
+
+	* Makefile.am (SCM_TESTS): Added `tests/structs.test'.
+	* tests/structs.test: New file.
+	* lib.scm (exception:struct-set!-denied): New.
+	(exception:miscellaneous-error): New.
+
+2006-05-30  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/unif.test ("vector equal? one-dimensional array"): New.
+
+2006-05-28  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (number->string): Disable 11.333 and 1.324e44
+	tests, as these can't be expected to come out precisely in the current
+	implementation, and in fact don't under gcc 4.  Reported by Hector
+	Herrera.
+
+	* tests/srfi-1.test (append-reverse, append-reverse!): New tests.
+
+2006-05-28  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/ports.test, tests/filesys.test: Delete test file after all
+	tests have run in order to make "make distcheck" work.
+
+2006-05-20  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-1.test (assoc): A few tests, in particular "=" argument
+	order which had been wrong.
+
+	* tests/srfi-60.test (test-srfi-60): Use #:duplicates (last) to
+	suppress warning about replacing bit-count.
+
+2006-05-09  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (exact->inexact): Test fractions big/big.
+
+	* tests/threads.test (n-par-for-each, n-for-each-par-map): New tests.
+
+2006-04-17  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/filesys.test (lstat): Allow for test-symlink not existing yet.
+
+2006-04-16  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/filesys.test (lstat, stat): New tests.
+	* tests/ports.test (truncate-file): New tests.
+
+2006-03-28  Kevin Ryde  <user42@zip.com.au>
+
+	* Makefile.am (SCM_TESTS): Remove slib.test, it fails with current
+	slib and the ice-9 slib module is due for revision soon.
+
+2006-03-19  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/unif.test (make-shared-array): Another test which failed in
+	1.8.0 but is ok now.
+
+2006-03-05  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/unif.test (make-shared-array): Add example usages from the
+	manual, two of which currently fail.
+
+2006-03-04  Ludovic Courtès  <ludovic.courtes@laas.fr>
+
+	* test-suite/tests/modules.test: New file.
+	* test-suite/Makefile.am (SCM_TESTS): Added it.
+
+2006-02-26  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/filesys.test (opendir etc): Exercise a little.
+
+	* tests/strings.test (string<?, string-ci<?, string<=?, string-ci<=?,
+	string>?, string-ci>?, string>=?, string-ci>=?): Check ordering is the
+	same as char<? etc.  Use a define-module to keep private test bits
+	private.
+	* tests/srfi-13.test (string-compare, string-compare-ci): Ditto.
+
+	* tests/unif.test (array-set!): Exercise bitvector case, which had
+	been seg faulting.
+
+2006-02-07  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/poe.test (pure-funcq): New tests.
+
+2006-02-04  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* tests/exceptions.test: 19 new test cases.
+	(throw-test): New macro for testing catches and throw handlers.
+
+2006-02-04  Kevin Ryde  <user42@zip.com.au>
+
+	* standalone/test-list.c: New file.
+	* standalone/Makefile.am: Add test-list.c
+
+	* tests/srfi-1.test: Use the equal proc argument, so we exercise the
+	srfi-1 version of the code.  Without such an argument srfi-1.c passes
+	the job to the core scm_delete.
+
+2006-01-29  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/time.test: Replaced 'futures' with threads.
+
+2005-11-30  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-13.test (string-append/shared): New tests.
+
+2005-11-24  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-1.test (lset-difference!): More tests.
+
+2005-10-27  Ludovic Courtès  <ludovic.courtes@laas.fr>
+
+	* tests/socket.test (make-socket-address): New tests.
+	(connect, bind, sendto): Exercise sockaddr object.
+
+2005-10-24  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/time.test (strftime %Z): Disable this test, its assumptions
+	about %Z are not valid on NetBSD.
+
+2005-08-19  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-19.test (date->time-tai): New tests, exercising new
+	leap-second.
+
+2005-08-15  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* tests/eval.test ("letrec init evaluation"): New paranoid test.
+
+	* tests/r5rs_pitfall.test (1.1): Now passes.
+
+2005-08-12  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-1.test (lset-difference, lset-difference,
+	lset-diff+intersection, lset-diff+intersection, lset-intersection):
+	Exercise equality procedure arg order (already correct in these procs,
+	but had been wrong in other lset ones).
+
+2005-08-06  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-13.test (string-every, string-tabulate, string-trim,
+	string-trim-right, string-trim-both, string-index, string-index-right,
+	string-skip, string-skip-right, string-count, string-filter,
+	string-delete, string-map, string-map!, string-for-each,
+	string-for-each-index): Further tests, mainly to exercise new
+	trampolines for proc calls.
+
+2005-08-01  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/weaks.test: Do not fail when the GC does not collect an
+	object, report it as 'unresolved'.
+
+	* tests/guardians.test: Adapted to new (original) semantics.  test
+	guardingobjects multiple times.
+	
+2005-06-12  Marius Vollmer  <mvo@zagadka.de>
+
+	* standalone/test-gh.c: Do nothing when deprecated things are
+	disabled.
+
+2005-06-10  Han-Wen Nienhuys  <hanwen@xs4all.nl>
+
+	* tests/gc.test ("gc"): add a test to verify that modules are
+	garbage collected.
+
+2005-06-11  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-13.test (string-filter): A few more tests.
+
+2005-06-10  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/unif.test (array-index-map!): Add a test failing in the
+	current code.
+
+2005-06-06  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/strings.test (string-split): Try splitting on an 8-bit char.
+
+	* tests/unif.test (array-in-bounds?): Add a test failing in the
+	current code.
+	
+2005-05-07  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-1.test (car+cdr, fold, last, list-index, list-tabulate,
+	not-pair?, xcons): New tests.
+
+2005-05-04  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-1.test (break!, drop-right!, drop-while, eighth, fifth,
+	ninth, seventh, sixth, span!, take!, take-while, take-while!, tenth):
+	New tests.
+
+	* tests/unif.test (make-shared-array): Add failing case shared of
+	shared.
+
+2005-04-30  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (/): Further tests.
+
+2005-04-25  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/ramap.test (array-map!): Further tests.
+
+2005-04-23  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/hash.test (hashx-remove!): New tests.
+
+	* tests/list.test (list, make-list, cons*): New tests.
+
+	* tests/numbers.test (numerator, denominator): New tests.
+
+	* tests/srfi-1.test (concatenate, concatenate!, count, filter-map,
+	lset-adjoin): More tests.
+
+2005-04-14  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (1+, 1-): New tests.
+
+2005-04-11  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-13.test (string-concatenate, string-concatenate/shared):
+	New tests.
+
+2005-04-02  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (round): Add some fraction cases.
+
+	* tests/srfi-1.test (lset-union): More tests.
+
+2005-03-26  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-13.test (string-index): Exercise 8-bit char in string.
+
+2005-03-18  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-1.test (filter-map): More tests.
+
+	* tests/srfi-17.test: A few more tests from the 1.6 branch.
+
+2005-03-16  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-1.test (drop-right, partition!, split-at, split-at!,
+	take-right): New tests.
+
+2005-03-14  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-1.test (find, find-tail, lset-union): New tests.
+	(lset-adjoin): Corrections to some tests.
+
+2005-03-13  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (=): Exercise inum/flonum cases that used to
+	round on 64-bit systems.
+
+	* tests/numbers.test (logior): New tests, exercising negative bignums
+	reducing to inum.
+
+	* tests/srfi-60.test: New file.
+	* Makefile.am (SCM_TESTS): Add it.
+
+2005-03-02  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* tests/threads.test: Only test when 'threads are provided.
+
+2005-02-21  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (string->number): Exercise polar form with
+	invalid angle.
+
+2005-02-18  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-1.test (lset-adjoin): Amend tests to expect duplicates
+	among args cast out.
+
+2005-02-12  Rob Browning  <rlb@defaultvalue.org>
+
+	* standalone/test-require-extension: new test script.
+
+	* standalone/Makefile.am (check_SCRIPTS): add test-require-extension.
+	(TESTS): add test-require-extension.
+
+2005-02-12  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-1.test (reduce, reduce-right): New tests.
+
+2005-02-11  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/fractions.test (ash): Remove tests of ash on fractions, not
+	supported after scm_ash rewrite.
+
+2005-02-04  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-1.test (list=): New tests.
+
+2005-01-29  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (ash): New tests.
+
+	* tests/srfi-1.test (lset-adjoin, remove, remove!): New tests.
+
+2005-01-28  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/syntax.test (while): Tests running in empty environment are
+	now "unresolved" due to workaround in while implementation.
+
+2005-01-24  Kevin Ryde  <user42@zip.com.au>
+
+	* standalone/test-unwind.c (check_cont): Cast rewindable to long, to
+	avoid warning from gcc 3.4 on 64-bit systems about casting int
+	(32-bits) to pointer (64-bits).
+
+	* tests/srfi-1.test (lset=, member): New tests.
+
+2005-01-12  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-39.test (current-input-port, current-output-port,
+	current-error-port): New tests.
+
+2005-01-10  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/unif.test (exception:wrong-num-indices): New, use it for
+	array-set! tests with wrong number of indices.
+
+2005-01-07  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/srfi-4.test: Use (test-suite lib) module.
+
+2005-01-06  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* tests/unif.test (have-llvect?): Removed, Scheme code will always
+	have u64 and s64 uniform vectors.
+
+2005-01-05  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/unif.test: Use *unspecified* instead of #f to get an
+	uninitialized array.
+
+2005-01-04  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/ramap.test: New file, test array-map!.
+	* Makefile.am (SCM_TESTS): Add it.
+
+2005-01-02  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/unif.test: Rewritten for new 'typed' approach to uniform
+	arrays.
+
+	* tests/sort.test: New tests, especially for sorting non-contigous
+	and negative-incrementing vectors.
+
+2005-01-02  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-39.test: Use define-module to keep bindings from
+	subsequent tests, use test-suite lib for stand-alone checking.
+
+	* Makefile.am (SCM_TESTS): Add srfi-39.test.
+
+2004-12-27  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* tests/continuations.test (continuations): Moved continuation /
+	stack tests here, and added save and restore of debug options.
+
+2004-12-23  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* tests/eval.test: News tests for making stacks from
+	continuations.  From Neil Jerram.
+
+2004-12-10  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/socket.test (inet-pton): New tests.
+
+2004-12-06  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-1.test (alist-copy, alist-delete, break, span): New
+	tests.
+
+2004-12-05  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-1.test (append-map, filter-map): New tests.
+
+2004-11-12  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* tests/unif.test: Replaced uniform-array-set1! with just
+	array-set!.  Do not check improper index lists, which can't arise
+	with uarray-set!.  Use "#s16()" instead of "#h()".
+
+2004-10-27  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* tests/unif.test: Removed tests that tried to store a character
+	into a byte vector, which no longer works.  Characters are not
+	bytes.
+
+2004-10-03  Dirk Herrmann  <dirk@dirk-herrmanns-seiten.de>
+
+	* tests/syntax.test: Added tests for unmemoization.
+
+2004-09-30  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* tests/strings.test (string-set!): Explicitely construct
+	read-only string.  String literals are not yet read-only.
+
+2004-09-29  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* tests/unif.test (array-equal?): New test.
+
+2004-09-29  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/regexp.test (match:string): New tests.
+
+2004-09-26  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/optargs.test (let-keywords, let-keywords*, let-optional,
+	let-optional*): Add tests of internal defines when no bindings.
+
+2004-09-25  Marius Vollmer  <mvo@zagadka.de>
+
+	* standalone/Makefile.am (AM_LDFLAGS, LD_FLAGS): Use AM_LDFLAGS
+	instead of LDFLAGS; the latter is a user variable.
+
+2004-09-24  Marius Vollmer  <mvo@zagadka.de>
+
+	* standalone/Makefile.am (test_cflags, LDFLAGS): Include
+	GUILE_CFLAGS.
+
+2004-09-23  Marius Vollmer  <mvo@zagadka.de>
+
+	* lib.scm (exception:out-of-range, exception:wrong-type-arg):
+	Accept new wording.
+
+2004-09-22  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/ports.test ("string ports"): Copy string literal so that
+	it can be modified.
+	* tests/srfi-13.test ("string-copy!"): Likewise.
+	* tests/strings.test ("substring/shared"): Likewise.
+
+2004-09-09  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/streams.test: New file.
+
+2004-09-08  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* tests/fractions.test: Don't expect (expt 1/2 2.0) to yield an
+	exact result, use (expt 1/2 2) instead.
+
+2004-09-08  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/ports.test (port-column): Further tests, of new \a \b \r.
+
+2004-09-07  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (integer-expt): New tests, of infinite exponents.
+	(integer?): Exercise nan and +/-inf.
+
+	* tests/time.test (gmtime, strptime): New tests, but unresolved.
+	(internal-time-units-per-second): New test.
+
+2004-09-02  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/format.test (~@d): New tests.
+	New tests of excess arguments now ignored.
+
+2004-09-01  Han-Wen Nienhuys <hanwen@cs.uu.nl>, Kevin Ryde <user42@zip.com.au>
+
+	* tests/gc.test: Exercise record in weak-values hash table, exposing a
+	problem in 1.6.4 gc, but believed fixed by other changes in the head.
+
+2004-08-27  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* tests/srfi-13.test (module-peek): Removed, this kluge is no
+	longer necessary.
+
+2004-08-27  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/regexp.test (regexp-quote): New tests.
+
+	* tests/srfi-31.test: Use define-module to keep bindings out of
+	further tests.  Use-module (test-suite lib) for stand-alone operation.
+	(rec): Exercise bad args.
+
+2004-08-25  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/and-let-star.test: More tests, in particular exercise #t
+	result on empty body.
+
+2004-08-25  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/strings.test: Two more tests for double indirect substring
+	modification.
+
+2004-08-23  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* lib.scm (exception:used-before-define): New.
+	* tests/syntax.test ("letrec"): Use it.
+
+2004-08-20  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/posix.test (mkstemp!): New tests.
+
+2004-08-20  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/strings.test: Two tests for substring/shared.  Also, use
+	(test-suite lib).
+
+2004-08-19  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* standalone/test-conversion.c, standalone/test-gh.c,
+	standalone/test-unwind.c: Avoid the use of discouraged or
+	deprecated things.
+
+2004-08-18  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/and-let-star.test, tests/arbiters.test, tests/receive.test:
+	New files.
+	* Makefile.am (SCM_TESTS): Add them.
+
+	* tests/fractions.test (fractions): Correction, equal? 3/4 .75 should
+	be #f, according to R5RS.
+
+2004-08-15  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/srfi-39.test: New, from Jose A Ortega Ruiz.  Thanks!
+
+2004-08-14  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-13.test (string-any, string-every): Exercise char and
+	charset predicate cases.
+
+2004-08-10  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* standalone/test-conversion.c (test_locale_strings): New.
+
+	* standalone/test-round.c: Replaced all uses of scm_round with
+	scm_c_round.
+
+2004-08-09  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/slib.test: New file.
+	* Makefile.am (SCM_TESTS): Add it.
+
+2004-08-06  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/unif.test (array-set!): Exercise byte array range checks.
+	(uniform-vector-ref): Exercise byte returns.
+	(array-fill!): Exercise byte range and type checks.
+
+2004-08-03  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* standalone/test-num2integral.c: Only perform the tests when the
+	disabled features are enabled.
+
+	* standalone/test-conversion.c (test_to_double, test_from_double):
+	New tests.
+
+2004-08-02  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-13.test (string-every): Check empty string case.
+
+2004-07-31  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/filesys.test: New file, exercising copy-file.
+	* Makefile.am (SCM_TESTS): Add it.
+
+2004-07-29  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* standalone/test-conversion.c: Many more tests for the integer
+	conversion functions.
+
+2004-07-28  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/regexp.test (make-regexp): Exercise flags args validation.
+
+	* tests/unif.test (array-set!): Exercise svect value range check.
+
+2004-07-24  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/common-list.test: Use define-module, to as not to import
+	common-list into subsequent tests (eg. srfi-1 where `every' provokes a
+	warning).
+
+	* tests/srfi-19.test, tests/srfi-34.test: Use #:duplicates (last) to
+	suppress warnings about current-time and raise replacing core bindings.
+
+2004-05-25  Matthias Koeppe  <mkoeppe@mail.math.uni-magdeburg.de>
+
+	* tests/format.test (~{): Test no arbitrary iteration limit.
+
+2004-07-10  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* standalone/test-conversion.c (test_is_signed_integer,
+	test_is_unsigned_integer): Expect inexact integers to fail.
+
+2004-07-10  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/hash.test: New file.
+	* Makefile.am (SCM_TESTS): Add it.
+
+2004-07-08  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* standalone/test-unwind.c: Use scm_from_int instead of
+	SCM_MAKINUM and scm_is_eq instead SCM_EQ_P.
+
+2004-07-07  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* standalone/test-conversion.c: Don't define SCM_T_INTMAX_MIN,
+	etc, they are now provided by libuile.h.
+	(test_int_sizes): New.
+	
+2004-07-06  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* standalone/test-num2integral.c, standalone/test-unwind.c:
+	Replaced all uses of deprecated SCM_FALSEP, SCM_NFALSEP, SCM_BOOL,
+	SCM_NEGATE_BOOL, and SCM_BOOLP with scm_is_false, scm_is_true,
+	scm_from_bool, and scm_is_bool, respectively.
+
+	* standalone/Makefile.am: Added test-conversion to the TESTS.
+
+	* standalone/test-conversion.c: New file.
+
+2004-06-20  Rob Browning  <rlb@defaultvalue.org>
+
+	* tests/srfi-31.test: new test for SRFI-31.
+
+	* Makefile.am (SCM_TESTS): add tests/srfi-31.scm.
+
+2004-06-15  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* tests/numbers.test (number->string): Some results might differ
+	between versions of Guile compiled optimized and unoptimized.
+	Both results are accepted now.
+
+2004-05-29  Dirk Herrmann  <dirk@dirk-herrmanns-seiten.de>
+
+	* tests/syntax.test: Added various tests to check that
+	unmemoization works correctly.
+
+2004-05-30  Kevin Ryde  <user42@zip.com.au>
+
+	* lib.scm (exception:numerical-overflow): New define.
+	* tests/numbers.test (modulo-expt): Use it and
+	exception:wrong-type-arg, avoiding empty "" regexp which is invalid on
+	BSD.  Reported by Andreas Vögele.
+
+2004-05-29  Dirk Herrmann  <dirk@dirk-herrmanns-seiten.de>
+
+	* standalone/test-asmobs-lib.c: Fixed include statement.
+
+2004-05-24  Dirk Herrmann  <dirk@dirk-herrmanns-seiten.de>
+
+	* tests/goops.test: Wrap tests in module (test-suite
+	test-<file-name without .test>).  Remove calls to deprecated macro
+	`undefine'.
+
+2004-05-10  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/numbers.test (number->string): Added tests for
+	non-radix-10 floating point conversions.
+
+2004-05-10  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (logbit?): New tests.
+
+2004-05-09  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-19.test (test-dst, string->date local DST): Test with
+	"EST5EDT" instead of "CET", since HP-UX doesn't know CET.  Reported by
+	Andreas Vögele.
+
+2004-05-03  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/time.test (strftime): Force tm:isdst to 0 for the test, for
+	the benefit of HP-UX.  Reported by Andreas Vögele.
+	Use set-tm:zone rather than a hard coded vector offset.
+
+2004-04-29  Dirk Herrmann  <dirk@dirk-herrmanns-seiten.de>
+
+	* tests/elisp.test: Wrap tests in module (test-suite
+	test-<file-name without .test>), following a practice that was
+	used on a couple of files already.
+
+2004-04-28  Kevin Ryde  <user42@zip.com.au>
+
+	* standalone/test-num2integral.c (test_long_long): Exercise
+	out-of-range errors on various cases.
+	(test_ulong_long): New function, split from test_long_long and
+	similarly exercising out-of-range.
+
+2004-04-26  Dirk Herrmann  <dirk@dirk-herrmanns-seiten.de>
+
+	* tests/syntax.test: Add test case to check the correct handling
+	of define expressions.
+
+2004-04-25  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/socket.test: New file, exercising inet-ntop.
+	* Makefile.am (SCM_TESTS): Add it.
+
+2004-04-24  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-11.test: New file.
+	* Makefile.am (SCM_TESTS): Add it.
+
+2004-04-22  Kevin Ryde  <user42@zip.com.au>
+
+	* standalone/test-round.c: New file, exercising scm_round.
+	* standalone/Makefile.am: Add it.
+
+2004-04-15  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (max, min): Exercise some inum/frac, frac/inum,
+	big/frac, frac/big and frac/frac cases.
+
+	* tests/numbers.test (min): Correction, test "documented? min" not
+	"documented? max".
+
+2004-04-06  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (quotient, remainder): Exercise inum/big at and
+	near special case inum == fixnum-min, big == -fixnum-min.
+
+2004-03-26  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (min, max): Check inexactness of big/real and
+	real/big combinations, collect up tests under arg types for clarity.
+
+2004-03-26  Eric Hanchrow <offby1@blarg.net>
+	
+	* tests/numbers.test (modulo-expt): New tests.
+
+2004-03-24  Dirk Herrmann  <dirk@dirk-herrmanns-seiten.de>
+
+	* tests/eval.test: Added tests which reflect the recent fixes to
+	copy-tree.
+
+2004-02-29  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/posix.test (execl, execlp, execle): Exercise errors where
+	program not found.  [But disabled, due to problems with threading.]
+
+2004-02-22  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (max, min): Exercise some complex num cases.
+
+2004-02-18  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/fractions.test: Added copyright notice of Michael Stoll,
+	who probably wrote the original CLISP code.
+
+2004-02-18  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/fractions.test: Remove 1/3 == 1.0/3.0, not true.
+
+	* tests/numbers.test (=): Exercise frac+real and frac+complex.
+
+2004-02-17  Marius Vollmer  <mvo@zagadka.de>
+
+	* Makefile.am (SCM_TESTS): Added test/fractions.test.
+
+2004-02-12  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/unif.test (array?, array-fill!, array-prototype): Add tests.
+
+2004-01-23  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/r5rs_pitfall.scm: Removed again.  I was confused.  The
+	file added to SCM_TESTS was r5rs_pitfall.test, not
+	r5rs_pitfall.scm.
+
+2004-01-23  Dirk Herrmann  <dirk@dirk-herrmanns-seiten.de>
+
+	* tests/syntax.test: Added test for unmemoizing internal defines.
+
+2004-01-21  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/srfi-26.test: New.
+	* Makefile.am (SCM_TESTS): Added it.
+
+2004-01-11  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/r5rs_pitfall.scm: New.
+	* Makefile.am (SCM_TESTS): Added it.
+	
+2004-01-11  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/exceptions.test (false-if-exception): Disable tests on
+	referencing expansion environment, reverted.
+
+2004-01-07  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* standalone/test-unwind.c: Adapted to 'frame' renamings.
+	(check_fluid): New.
+
+	* Makefile.am (SCM_TESTS): Added continuations.test.
+
+2004-01-07  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (<): Add tests inum/bignum/flonum/frac with frac.
+
+	* tests/q.test: New file.
+	(q-pop!): Exercise this, in particular the "not/null?" bug reported by
+	Richard Todd.
+	* Makefile.am (SCM_TESTS): Add q.test.
+
+	* tests/unif.test: New file.
+	(uniform-array-set1!): Exercise this, in particular previous segv on
+	improper arg list.
+	* Makefile.am (SCM_TESTS): Add unif.test.
+
+2004-01-06  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* standalone/test-unwind.c (close_port, delete_file, check_ports):
+	New.
+
+2004-01-03  Marius Vollmer  <mvo@zagadka.de>
+
+	* standalone/test-unwind.c: New test, for the frames stuff.
+	* standalone/Makefile.am: Compile and run it.
+
+2004-01-04  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/exceptions.test (false-if-exception): Add tests.
+
+2003-11-30  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/syntax.test: It's "#\\space", not "#\space".
+
+2003-11-21  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/numbers.test: #e1.2 is now exactly 12/10.  Expect
+	exceptions when calling inexact? with a non-number.
+
+2003-12-03  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/fractions.test: Exercise most-negative-fixnum over -ve of
+	most-negative-fixnum.
+
+	* tests/fractions.test (real-part): Expect fraction return, not
+	converted to flonum.
+
+	* tests/numbers.test (abs): Add a few more tests.
+
+	* tests/srfi-1.test (count): New tests.
+
+2003-12-01  Mikael Djurfeldt  <mdj@chunk.mit.edu>
+
+	* standalone/Makefile.am (snarfcppopts): Added -I$(top_srcdir).
+
+2003-11-19  Rob Browning  <rlb@defaultvalue.org>
+
+	* standalone/test-system-cmds: new test.
+
+	* standalone/Makefile.am (check_SCRIPTS): add test-system-cmds.
+	(TESTS): add test-system-cmds.
+
+2003-11-18  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* tests/numbers.test ("string->number"): Expect exact rationals
+	for things like "1/2" and "#e1.2".
+	("inexact->exact"): Expect overflow error for infs and nans.
+
+	* tests/fractions.test: New file from Bill Schottstaedt.  Thanks!
+
+	* tests/bit-operations.test (fixnum-bit): Round the result so that
+	fixnum-bit really is an integer.
+
+2003-11-17  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/srfi-17.test: Expect a "Bad variable" error for (set! #f
+	1).
+
+2003-11-15  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/syntax.test: Tests that check for the correct handling of
+	internal defines with begin work now.
+
+2003-11-15  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/syntax.test: Fixed test that checks for the correct
+	handling of macros in the context of internal defines.
+
+2003-11-15  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/bit-operations.test: Use (test-suite lib), for the benefit of
+	standalone execution.
+
+2003-11-09  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/optargs.test: Wrap tests in module (test-suite
+	test-<file-name without .test>).  Rewrite test to be R5RS
+	conforming.
+
+	* tests/syntax.test: Added test to check correct handling of
+	internal defines.
+
+2003-11-08  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/syntax.test (exception:missing-body-expr): New.
+
+	Renamed section 'define' to 'top-level define' and added a new
+	section 'internal define' with some tests.
+
+2003-11-01  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/syntax.test (exception:missing/extra-expr-misc): Removed.
+
+	(exception:illegal-empty-combination): New.
+
+	(exception:missing/extra-expr): Unified capitalization.
+
+	Adapted test for '()' to the new way of error reporting.
+
+2003-10-19  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test: Use define-module to hide helper defines.
+	(dbl-mant-dig, ash-flo): New helpers.
+	(exact->inexact): New tests.
+
+2003-10-18  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/syntax.test (exception:bad-var): Removed.
+
+	Adapted tests for 'set!' to the new way of error reporting.
+
+2003-10-18  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/dynamic-scope.test (exception:missing-expr): Introduced
+	temporarily until all memoizers use the new way of error
+	reporting.
+
+2003-10-18  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/syntax.test (exception:missing/extra-expr,
+	exception:missing/extra-expr-misc): Renamed
+	exception:missing/extra-expr to exception:missing/extra-expr-misc.
+
+	(exception:missing/extra-expr-syntax,
+	exception:missing/extra-expr): Renamed
+	exception:missing/extra-expr-syntax to
+	exception:missing/extra-expr.
+
+2003-10-18  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* lib.scm (exception:bad-variable): New.
+
+	* tests/syntax.test (exception:bad-binding,
+	exception:duplicate-binding): New.
+
+	(exception:duplicate-bindings): Removed.
+
+	Adapted tests for 'let', 'let*' and 'letrec' to the new way of
+	error reporting.
+
+2003-10-12  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/syntax.test (define exception:bad-formal, define
+	exception:duplicate-formal): New.
+
+	(exception:duplicate-formals): Removed.
+
+	(exception:bad-formals): Adapted to the new way of error
+	reporting.
+
+	Adapted tests for 'lambda' to the new way of error reporting.
+
+2003-10-11  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/syntax.test (exception:missing/extra-expr-syntax): Fixed
+	to be unaware of whether line number information is given or not.
+
+2003-10-11  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/syntax.test (exception:missing/extra-expr-syntax): New,
+	introduced temporarily until all memoizers use the new way of
+	error reporting.
+
+	Adapted tests for 'if' to the new way of error reporting.
+
+2003-10-11  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/syntax.test (exception:missing-expr,
+	exception:extra-expr): New.
+
+	Adapted tests for 'begin' to the new way of error
+	reporting.
+
+2003-10-11  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/syntax.test (exception:misplaced-else-clause,
+	exception:bad-cond-clause): New.
+
+	(exception:bad/missing-clauses, exception:extra-case-clause):
+	Removed.
+
+	Adapted tests for 'case' and 'cond' to the new way of error
+	reporting.
+
+	The tests that check if cond is hygienic pass now.
+
+2003-10-11  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/syntax.test: Fixed and activated test of empty case label
+	support.
+
+2003-10-11  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/syntax.test (exception:bad-expression,
+	exception:missing-clauses, exception:bad-case-clause,
+	exception:extra-case-clause, exception:bad-case-labels): New.
+
+	Added some tests and adapted tests for 'case' to the new way of
+	error reporting.
+
+2003-10-10  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* lib.scm (run-test-exception): Handle syntax errors.
+
+2003-10-10  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/numbers.test (inexact->exact): Use corrent argument order
+	for pass-if-exception.  Use "+inf.0" instead of "+.inf", etc.
+
+2003-10-09  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (inexact->exact): New tests.
+
+	* tests/poe.test: New file.
+	* Makefile.am: Add it.
+
+2003-10-07  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* lib.scm (exception:missing-expression): New.
+
+	* tests/dynamic-scope.test, tests/eval.test,
+	tests/r5rs_pitfall.test, tests/srfi-17.test, tests/syncase.test:
+	Wrap tests in module (test-suite test-<file-name without .test>),
+	following a practice that was used on a couple of files already.
+
+	* tests/dynamic-scope.test (exception:duplicate-binding,
+	exception:bad-binding): New.
+
+	* tests/dynamic-scope.test, tests/srfi-17.test, tests/syntax.test:
+	Execute syntactically wrong tests using eval.  With the upcoming
+	new memoizer this is necessary in order to postpone the syntax
+	check to the actual evaluation of the syntactically wrong form.
+
+	* tests/syntax.test: Added some test cases and modified one test
+	case.
+
+2003-10-02  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/ports.test (call-with-output-string): Test proc closing port.
+
+2003-09-22  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* guile-test: Wrapped in module (test-suite guile-test).
+
+	(main data-file-name test-file-name): Exported.
+
+	((guile-user)::main): New function, wrapper for function
+	(test-suite guile-test)::main.
+
+	* tests/load.test: Wrapped in module (test-suite test-load).
+
+	* tests/ports.test: Wrapped in module (test-suite test-ports).
+
+	* tests/r4rs.test: Wrapped in module (test-suite test-r4rs).
+	Added comments about the required structure of the file itself,
+	since it is subject to some tests.  Removed some now unnecessary
+	undefine operations.
+
+	* tests/syntax.test: Wrapped in module (test-suite test-syntax)
+
+2003-09-19  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/popen.test: New file.
+	* Makefile.am (SCM_TESTS): Add it.
+
+2003-09-17  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/numbers.test (equal?): Added tests.
+
+	* tests/numbers.test (=): Fixed and added some bignum related
+	tests.
+
+2003-08-30  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (logcount): Add tests.
+
+2003-08-23  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-1.test (list-copy): New tests.
+
+	* tests/srfi-19.test (date-week-number): Add tests.
+
+2003-08-22  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (-): Exercise bignum - inum.
+
+2003-08-17  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/syntax.test (while): Exercise break and continue from
+	recursive nested loops.
+
+2003-08-14  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/syntax.test (while): New tests.
+
+2003-08-10  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/numbers.test: Eliminated misuses of expect-fail.  It
+	should only be used in cases, where guile has a known bug.  It
+	should not be used in cases where an expression is expected to
+	return #f as its correct result.
+
+2003-08-09  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srcprop.test: New file.
+	* Makefile.am (SCM_TESTS): Add it.
+
+2003-07-29  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-1.test (concatenate, concatenate!): New tests.
+	(length+): New tests.
+
+	* tests/srfi-34.test: Check cond-expand srfi-34.
+
+2003-07-24  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (angle): New tests.
+
+2003-07-18  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (*): Add complex/bignum test.
+
+2003-07-14  Matthias Koeppe  <mkoeppe@mail.math.uni-magdeburg.de>
+
+	* tests/srfi-1.test (partition): Add tests.
+
+2003-07-08  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (make-polar, magnitude): New tests.
+
+	* tests/srfi-1.test (delete, delete!): Add more tests.
+	(delete-duplicates, delete-duplicates!): New tests.
+
+2003-06-21  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (truncate, round, asinh, acosh, atanh): Add some
+	tests.
+	
+2003-06-19  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/posix.test: New file, exercising putenv, setenv, unsetenv.
+	* tests/threads.test: New file, exercising parallel.
+	* Makefile.am (SCM_TESTS): Add them.
+
+2003-06-07  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/srfi-6.test: New file.
+	* Makefile.am (SCM_TESTS): Add it.
+
+2003-06-05  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/chars.test: Fixed test comment.  The bug that this test
+	detects was actually introduced by my patch from 2003-05-31.
+
+2003-06-05  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/chars.test: Added test, attempting to apply a character.
+	This test will only pass if the other changes that are submitted
+	together with this patch are also applied.
+
+2003-06-05  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (logcount): Add a few more tests, to exercise
+	recent scm_logcount change.
+
+	* tests/reader.test (reading): Test bad # error message is formattable.
+	
+2003-06-01  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/pairs.test: Added.
+
+2003-06-01  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/vectors.test: Added.
+
+2003-06-01  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/guardians.test: Uses module (ice-9 weak-vector).
+
+2003-05-30  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* lib.scm: Documented the short form for pass-if and expect-fail.
+
+	(pass-if, expect-fail): Simplified.
+
+2003-05-30  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (max, min): Add tests involving NaNs.
+
+2003-05-29  Stefan Jahn  <stefan@lkcc.org>
+
+	* standalone/Makefile.am: Setup to build on mingw32.
+
+2003-05-27  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/elisp.test: Added missing quote around vector constants.
+
+2003-05-25  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/r5rs_pitfall.test: Test 2.1 now passes.
+
+2003-05-13  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (=, <, max, min): Add tests of bignum/inf
+	combinations.
+
+	* tests/srfi-1.test (delete, delete!): Test predicate call arg order.
+
+2003-05-10  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (=, <): Add tests involving NaNs.
+
+	* tests/numbers.test (integer-length): Exercise some negatives, in
+	particular -2^n which is ...11100..00.
+
+	* tests/numbers.test (gcd): Exercise bignum/inum with a bignum not
+	fitting a ulong.
+
+	* tests/srfi-1.test: New file, exercising take and drop.
+	* Makefile.am (SCM_TESTS): Add it.
+
+2003-05-06  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/numbers.test (-): Add test for negative inum subtract bignum.
+	(logcount): New tests, exercising some negatives.
+	
+2003-05-03  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/r5rs_pitfall.test: New.  Thanks to Dale P. Smith for
+	pointing us to these tests.
+
+2003-04-30  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* Makefile.am (SCM_TESTS): Add tests/srfi-34.test.
+
+	* tests/srfi-34.test: New file.
+
+2003-04-23  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/syntax.test: Modified some tests to use eval when
+	providing bad syntax.  Otherwise, the memoizer will report an
+	error immediately after reading the form, without even the chance
+	to get the pass-if-exception mechanism started.
+
+2003-04-23  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/guardians.test: Added some more elaborate and
+	sophisticated tests for the guardian functionality.
+
+2003-04-21  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/sort.test: Added.  Both tests in that file did fail (one
+	even with a segfault) with CVS guile before the recent changes to
+	sort.c.
+
+2003-04-17  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* tests/goops.test: Added tests for correctness of class
+	precedence list in all basic classes and tests for eqv? and
+	equal?.
+
+2003-04-15  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* tests/goops.test: Added tests for class redefinition, object
+	update and active slots.
+
+2003-04-14  Rob Browning  <rlb@defaultvalue.org>
+
+	* standalone/test-asmobs-lib.c (libtest_asmobs_init): include
+	test-asmobs-lib.x rather than test-asmobs-lib.x.c.
+
+	* standalone/Makefile.am: change from .c.x to .x to be consistent
+	with the rest of guile.
+
+2003-04-09  Han-Wen Nienhuys  <hanwen@cs.uu.nl>
+
+	* standalone/Makefile.am (snarfcppopts): use DEFAULT_INCLUDES
+	instead of INCLUDES
+
+2003-04-07  Rob Browning  <rlb@defaultvalue.org>
+
+	* Makefile.am (SUBDIRS): add standalone.
+
+	* guile-test: added "Running test FOO" output by default.  There
+	may be a good reason to remove this, but the output can be helpful
+	in determining where a failure occurred.
+
+	* standalone/test-num2integral.c: new test -- one new regression
+	check.
+
+	* standalone/test-gh.c: new test code (migrated from
+	tests/c-api/) -- a trivial start.
+
+	* standalone/test-asmobs-lib.c: new test script (migrated from
+	tests/asmobs/).
+
+	* standalone/test-asmobs: new test script.
+
+	* standalone/README: new file.
+
+	* standalone/Makefile.am: new file.
+
+	* standalone/.cvsignore: new file.
+
+	* tests/asmobs/Makefile: removed (functionality is now in standalone/).
+
+	* tests/asmobs/README: removed (functionality is now in standalone/).
+
+	* tests/asmobs/asmobs-test.scm: removed (functionality is now in
+	standalone/).
+
+	* tests/asmobs/asmobs.c: removed (functionality is now in standalone/).
+
+	* tests/asmobs/: removed (functionality is now in standalone/).
+
+	* tests/c-api/strings.c: add a note to the source about this code
+	being unused.
+
+2003-04-05  Marius Vollmer  <mvo@zagadka.de>
+
+        * Changed license terms to the plain LGPL thru-out.
+
+2003-03-24  Rob Browning  <rlb@defaultvalue.org>
+
+	* tests/numbers.test: added tests (some simple) for various funcs.
+	("odd?"): added tests.
+	("even?"): added tests.
+	("nan?"): added tests.
+	("abs"): added tests.
+	("lcm"): added tests.
+	("number->string"): added tests.
+	("number?"): added tests.
+	("complex?"): added tests.
+	("real?"): added tests.
+	("rational?"): added tests.
+	("integer?"): added tests.
+	("inexact?"): added tests.
+	("="): added tests.
+	("zero?"): added tests.
+	("positive?"): added tests.
+	("negative?"): added tests.
+
+	* lib.scm (pass-if): allow really simple tests where the test code
+	is also the name like (pass-if (even? 2)).
+	(expect-fail): allow really simple tests where the test code is
+	also the test name like (expect-fail (even? 2)).
+
+2003-03-19  Marius Vollmer  <mvo@zagadka.de>
+
+	* tests/format.test ("format basic output"): Added test for "~F"
+	from Matthias Koeppe.
+
+2003-02-19  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* tests/elisp.test: Use module (ice-9 weak-vector).
+
+	* tests/weaks.test: Use module (ice-9 weak-vector).
+
+2002-12-08  Rob Browning  <rlb@defaultvalue.org>
+
+	* tests/version.test: test (effective-version).
+
+2002-11-06  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* tests/options.test: New.
+
+2002-10-04  Rob Browning  <rlb@defaultvalue.org>
+
+	* tests/numbers.test ("expt"): add tests.
+
+2002-09-09  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* Makefile.am (dist-hook): Do not distribute CVS directories.
+	Thanks to Greg Troxel!
+
+2002-08-06  Han-Wen Nienhuys  <hanwen@cs.uu.nl>
+
+	* tests/reader.test: change misc-error in read-error.
+
+2002-07-13  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/goops.test: Added tests for define-generic and
+	define-accessor.
+
+2002-07-13  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/goops.test: Added tests for define-class.
+
+2002-05-07  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* tests/numbers.test (/): Expect divison by an inexact zero to
+	yield +inf.0.
+
+2002-05-06  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* tests/regexp.test (regexp-substitute/global): Do not test with
+	empty regexp.  Empty regexps do not work on NetBSD.
+
+	* tests/syncase.test (basic syncase macro): Added.
+
+2002-04-26  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* tests/srfi-13.test (string-tokenize): Updated for fixed
+	semantics.
+
+2002-04-16  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* Makefile.am (SCM_TESTS_DIRS, dist-hook): New, distribute
+	directories manually.
+
+2002-02-09  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* guile-test (main): Handle `--flag-unresolved'.  No longer set
+	exit value to #f unconditionally on UNRESOLVED results.
+	(for-each-file): Do not recurse into "CVS" or "RCS" subdirs.
+
+2002-02-08  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* tests/elisp.test: Add tests of Elisp expression evaluation.
+
+2002-01-25  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* tests/load.test: New test; for search-path with Elisp
+	nil-terminated lists for PATH and EXTENSIONS.
+
+	* tests/elisp.test: More tests for Scheme primitives that should
+	accept Elisp nil-terminated lists.
+
+2002-01-24  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* tests/elisp.test: More new tests for the Elisp nil value.
+
+2002-01-22  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* Makefile.am (SCM_TESTS): Added elisp.test.
+
+	* tests/elisp.test: New file.
+
+2001-11-22  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/numbers.test: Added more division by zero tests.
+
+2001-11-22  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/numbers.test: Added division by zero tests.
+
+2001-11-17  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/syntax.test: Added some tests, updated some others with
+	respect to recent changes in eval.c.  Further, extracted test
+	cases for guile's extended set! functionality to srfi-17.test.
+
+	* tests/srfi-17.test:  New file.
+
+2001-11-04  Stefan Jahn  <stefan@lkcc.org>
+
+	* tests/ports.test: Run (close-port) before (delete-file) if
+	necessary/advisory.
+
+2001-10-26  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/eval.test:  Added tests for promises.
+
+2001-10-21  Mikael Djurfeldt  <mdj@linnaeus>
+
+	* lib.scm: Move module the system directives `export',
+	  `export-syntax', `re-export' and `re-export-syntax' into the
+	  `define-module' form.  This is the recommended way of exporting
+	  bindings.
+
+2001-10-18  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/syntax.test:  Added test cases for 'cond =>' syntax with
+	else clause.  Changed some tests and comments related to the
+	'case' form to reflect recent changes in the implementation.
+
+2001-10-14  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/syntax.test:  Added test cases for 'lambda' syntax.
+
+2001-10-13  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/syntax.test:  Added test cases for 'case' syntax.
+
+2001-10-13  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/numbers.test:  Added a test case that checks if valid
+	number strings are transformed correctly by string->number.
+
+2001-09-21  Rob Browning  <rlb@defaultvalue.org>
+
+	* tests/numbers.test (fixnum-bit): compute dynamically.
+
+	* tests/bit-operations.test (fixnum-bit): compute dynamically.
+
+2001-09-07  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* tests/getopt-long.test ("apples-blimps-catalexis example",
+	"multiple occurances"): New top-level sections.
+
+2001-08-31  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/numbers.test:  Made some of the patterns better readable.
+
+2001-08-25  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* tests/srfi-19.test (test-time-comparision,
+	test-time-arithmatic): New procs.
+
+	Add time comparison tests using new procs.
+	Thanks to Alex Shinn.
+
+2001-08-25  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* tests/dynamic-scope.test: New file.
+
+2001-08-24  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* tests/srfi-13.test (string-for-each, string-for-each-index):
+	Add tests.  (Thanks to Alex Shinn.)
+
+2001-08-22  Mikael Djurfeldt  <mdj@linnaeus.mit.edu>
+
+	* tests/srfi-13.test (string-map): Swapped order of string and
+	proc args to conform with the srfi.  (Thanks to Alex Shinn.)
+
+2001-08-12  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* tests/getopt-long.test (exception:no-such-option,
+	exception:option-does-not-support-arg,
+	exception:option-must-be-specified,
+	exception:option-must-have-arg, exception:not-enough-args):
+	New vars.
+
+	("option-ref", "required", "specified no value, given anyway",
+	"specified arg required"): New top-level sections.
+
+2001-08-11  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/numbers.test:  Added Some syntax tests for
+	string->number.
+
+2001-08-09  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* Makefile.am (TESTS): Do not call the variable "TESTS", call it
+	"SCM_TESTS".  This has special meaning to automake.  How many
+	tries left to get this right, mvo?
+
+2001-08-08  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* Makefile.am (TESTS): List tests explicitely instead of using a
+	wildcard.  Wildcards don't seem to work for VPATH "make dist"s.
+
+2001-08-07  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* Makefile.am: New file, to control distribution of the
+	test-suite.
+
+2001-08-02  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* tests/getopt-long.test: New file.
+
+2001-08-01  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* lib.scm (run-test-exception): Add special handling for
+	`error'-generated exceptions, which pass key `misc-error' and
+	leave messages unformatted.
+
+2001-07-18  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* tests/alist.test, tests/bit-operations.test,
+	tests/common-list.test, tests/environments.test, tests/eval.test,
+	tests/gc.test, tests/hooks.test, tests/import.test,
+	tests/interp.test, tests/list.test, tests/load.test,
+	tests/numbers.test, tests/ports.test, tests/r4rs.test,
+	tests/version.test, tests/weaks.test, lib.scm, guile-test: Updated
+	copyright notice.
+
+2001-07-16  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* tests/srfi-14.test: New file.
+
+2001-07-13  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* tests/import.test: New file.
+
+2001-06-30  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/goops.test:  Started with some real tests.
+
+2001-06-30  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* guile-test:  Use module (ice-9 rdelim).
+
+2001-06-27  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* tests/srfi-4.test: New file.
+
+2001-06-16  Marius Vollmer  <mvo@zagadka.ping.de>
+
+        Thanks to Matthias Köppe!
+
+	* tests/ports.test: New test for output port line counts.
+	* tests/format.test, tests/optargs.test, tests/srfi-19.test: New
+	files.
+
+2001-05-28  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* tests/symbols.test ("gensym"): New tests for long gensym
+	prefices and embedded NULs in prefices.
+
+2001-05-21  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* test/goops.test, test/syncase.test: New, minimal tests.
+
+2001-05-19  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* tests/version.test: Updated test for new micro version stuff.
+
+2001-05-16  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* tests/srfi-13.test: More tests.
+
+2001-05-10  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* tests/srfi-10.test: New file.
+
+	* tests/srfi-9.test: New file.
+
+	* tests/srfi-13.test: Added some more tests.
+
+2001-05-09  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* tests/eval.test: ("evaluator" "memoization"): New test
+	prefix block.
+	("transparency"): New "evaluator memoization" test.
+
+2001-05-08  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* tests/srfi-13.test: Added module access kludge, and uncommented
+	some tests depending on this.
+
+2001-05-07  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* tests/srfi-13.test: New file testing the SRFI string library.
+
+2001-04-26  Gary Houston  <ghouston@arglist.com>
+
+	* tests/r4rs.test: delete files tmp1, tmp2, tmp3 after the tests
+	have run.
+
+	* tests/ports.test (test-file), tests/load.test (temp-dir):
+	redefined using data-file-name instead of tmpnam.  the test files
+	will be created in the build directory instead of /var/tmp or
+	whereever tmpnam puts them.
+
+2001-04-02  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/symbols.c:  Added some tests.
+
+2001-03-19  Gary Houston  <ghouston@arglist.com>
+
+	* tests/r4rs.test: use test-file-name to locate r4rs.test,
+	not data-file-name.
+
+	* guile-test: define tmp-dir, the location where r4rs.test will
+	create it's temporary files.
+	(data-file-name): use tmp-dir.  this must be under build-dir,
+	not src-dir.
+
+2001-03-18  Gary Houston  <ghouston@arglist.com>
+
+	* guile-test: use #!/bogus-path/..., not #!/home/dirk/... in the
+	first line.
+
+2001-03-12  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/syntax.test:  Added a test for let* bindings and
+	re-arranged and slightly improved the existing one.
+
+2001-03-09  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* tests/syntax.test ("let*"): Changed the `duplicate bindings'
+	test, dups are allowed in `let*' and are now expected to pass.
+
+2001-03-05  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* lib.scm (run-test-exception):  Preserve the original error's
+	stack for re-throwing.
+
+2001-03-04  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* tests/syntax.test ("let,duplicate bindings", "let*,duplicate
+	bindings", "letrec,duplicate bindings"): Expect to pass, bug has
+	been fixed.
+
+2001-03-03  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* tests/syntax.test ("duplicate formals"): New category, move
+	appropriate tests here.  Expect them to pass.
+	("empty parentheses"): Expect to pass, bug has been fixed.
+
+	* tests/alist.test: Use "'()" instead of "()" in all places
+	where the empty list is meant.
+
+2001-03-01  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* lib.scm (exception:unbound-var, exception:wrong-num-args):  New
+	exported constants.
+
+	* tests/r4rs.test:  Make sure that no bindings for x and y exist
+	after the file is loaded.
+
+	* tests/syntax.test:  New file.
+
+	* tests/exceptions.test, tests/syntax.test, tests/eval.test:
+	Moved the test cases that are related to guile's syntactic forms
+	from tests/exceptions.test to tests/syntax.test.  Moved tests
+	related to evaluation and application to tests/eval.test.
+
+	* tests/exceptions.test:  Added some test cases that check guile's
+	exception handling.
+
+2001-03-01  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/exceptions.test, tests/numbers.test:  Moved the number
+	related test cases from tests/exceptions.test to
+	tests/numbers.test.
+
+	* tests/numbers.test:  Added a test case.
+
+2001-03-01  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/symbols.test:  New file.
+
+	(exception:immutable-string):  New constant.  Currently, this is a
+	dummy since guile does not have immutable strings.
+
+	* tests/exceptions.test, tests/strings.test, tests/symbols.test:
+	Moved the string related test cases from tests/exceptions.test to
+	tests/strings.test and the symbol related test cases to
+	tests/symbols.test.
+
+	* tests/strings.test:  Copyright notice updated.  Added a couple
+	of test cases.
+
+	(exception:immutable-string):  New constant.  Currently, this is a
+	dummy since guile does not have immutable strings.
+
+2001-02-28  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/exceptions.test:  Use expect-fail-exception to indicate
+	test cases where exceptions should occur, but don't.
+
+	(exception:bad-bindings, exception:bad-formals, exception:bad-var,
+	exception:missing/extra-expr):  New constants.
+
+2001-02-28  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/reader.test, tests/exceptions.test:  Moved the reader
+	related test cases from tests/exceptions.test to
+	tests/reader.test.
+
+	* tests/reader.test (exception:eof, exception:unexpected-rparen):
+	New constants.
+
+	* tests/exceptions.test (read-string, x:eof, x:unexpected-rparen):
+	Removed.
+
+2001-02-28  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* lib.scm (signals-error?, signals-error?*):  Removed.
+
+2001-02-28  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* lib.scm:  Added comment about new convenience functions/macros
+	to test for exceptions.
+
+	(exception:out-of-range, exception:wrong-type-arg):  New exported
+	constants.
+
+	(run-test-exception):  New function.
+
+	(pass-if-exception, expect-fail-exception):  New exported macros.
+
+	* tests/environments.test:  Fixed tests that were checking for
+	exceptions when set!ing an unbound symbol.
+
+	(exception:unbound-symbol):  New constant.
+
+	* tests/hooks.test (catch-error-returning-true, pass-if-not,
+	catch-error-returning-false), tests/weaks.test
+	(catch-error-returning-true, pass-if-not,
+	catch-error-returning-false):  Removed.  The macro pass-if-not was
+	not used.  The macro catch-error-returning-false is unnecessary
+	since exceptions are caught by the test-suite anyway.  The
+	functionality of catch-error-returning-true is provided by the new
+	convenience macro pass-if-exception.
+
+	* tests/hooks.test (exception:wrong-num-hook-args):  New constant.
+	Maybe a standard wrong-num-arg exception should be thrown instead
+	of a misc-error?
+
+	* tests/reader.test (try-to-read):  Replaced by read-string.
+
+	(read-string):  New function.
+
+	* tests/alist.test, tests/environments.test, tests/eval.test,
+	tests/hooks.test, tests/list.test, tests/ports.test,
+	tests/reader.test, tests/strings.test, tests/weaks.test:  Replace
+	tests for exceptions with the new convenience macros.
+
+2001-02-28  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/alist.test:  Remove redundant test name prefix.
+
+2001-02-28  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* lib.scm (pass-if):  Tests shall return a boolean value.
+
+	* tests/bit-operations.test (documented?), tests/common-list.test
+	(documented?), tests/environments.test (documented?),
+	tests/eval.test (documented?), tests/gc.test (documented?),
+	tests/numbers.test (documented?), tests/guardians.test,
+	tests/hooks.test, tests/interp.test, tests/weaks.test:  Make sure
+	that tests return a boolean value.
+
+	* tests/list.test (documented?):  New function, replace all checks
+	for documentation with calls to this function.
+
+2001-02-27  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* lib.scm (data-file):  Remove from export list.
+
+2001-02-22  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* tests/exceptions.test (syntax lambda): Renamed from (lambda).
+	(syntax lambda cond-arrow-proc): Renamed from (lambda cond-arrow-proc).
+	(syntax reading): New section.
+	(syntax let*): New section.
+	(syntax letrec): New section.
+	(syntax set!): New section.
+	(syntax misc): New section.
+	(bindings unbound): New section.
+	(bindings immutable-modification): New section.
+	(bindings let): New section.
+	(bindings let*): New section.
+	(bindings letrec): New section.
+
+	* tests/exceptions.test: New file.
+
+2001-02-08  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* guile-test: Use (ice-9 and-let-star) instead of (ice-9
+	and-let*).
+
+2001-01-26  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	This patch fixes things that I have broken with the last one :-(
+
+	* guile-test (test-suite):  New variable.
+
+	(data-file-name):  New function.  Has the same purpose as the
+	former function data-file from lib.scm.  Moved here in order to
+	have all file name handling at the same place.  In contrast to the
+	former 'data-file function, it is not checked whether a file
+	exists.  This allows to use this function also for file names of
+	files that are still to be created.
+
+	(test-file-name):  Use the global 'test-suite variable.
+
+	(main):  Initialize 'test-suite instead of a local variable.
+
+	* lib.scm:  Don't import paths any more.
+
+	(data-file):  Removed.  Resurrected with a sligtly different
+	functionality as 'data-file-name' in guile-test.
+
+	* r4rs.scm:  For all references to temporary file, make use of
+	data-file-name.
+
+2001-01-26  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	The following patch was sent by Thien-Thi Nguyen and a little bit
+	modified by me.
+
+	* guile-test:  Usage and installation comments improved.  Added
+	support for --test-suite and --debug command line options.
+
+	(default-test-suite):  Added to allow for simplified
+	configurability.  No need to load the paths file any more.
+
+	(enable-debug-mode):  New function.  Will be called when the
+	--debug command line option is given.
+
+	(test-root):  Removed.  The test directory has to be fully given.
+	This allows for arbitrarily named test directories.
+
+	(test-file-name, enumerate-tets):  Take the test directory as a
+	paramter instead of using the global variable 'test-root'.
+
+	(main):  Handle the new command line options.  Return an exit code
+	depending on whether all tests came out as expected.
+
+	* README:  Updated.
+
+	* paths.scm:  Removed.
+
+2001-01-24  Gary Houston  <ghouston@arglist.com>
+
+	* tests/ports.test: include (ice-9 rdelim) module.
+
+2001-01-18  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/numbers.test:  Converted to do real boundary testing.
+
+2001-01-17  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/bit-operations.test:  Added.
+
+2000-11-03  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/gc.test:  Added.
+
+2000-10-30  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/strings.test:  string=? is fixed.
+
+2000-10-13  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/list.test:  Removed references to sloppy-mem(q|v|ber)
+
+2000-09-26  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/strings.test:  Added a test to help remember that string=?
+	and friends need fixing.
+
+2000-09-12  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/environments.test:  For tests that rely on garbage
+	collection, conservative scanning can be a problem.  Add a comment
+	for these tests and make them turn out unresolved if things don't
+	work as expected.
+
+2000-09-05  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/environments.test:  Finished and cleaned up the tests for
+	the leaf environments.  Added a complete set of testcases for the
+	leaf environment based eval environments.  Started with the tests
+	for the import environments.
+
+2000-08-25  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/environments.test:  Added.
+
+2000-08-21  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* lib.scm (pass-if, expect-fail):  Generalized to allow a sequence
+	of expressions.
+
+	* tests/eval.test:  Fix documentation test.
+
+2000-06-30  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/list.test:  Added tests for list-ref, list-set! and
+	list-cdr-set!
+
+2000-06-21  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/common-list.test:  Added.
+
+2000-06-21  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/eval.test:  Added.
+
+2000-06-16  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/list.test:  Use cons* instead of list*.
+
+2000-06-13  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* tests/numbers.test, tests/list.test: Updated for new
+	documentation module.
+
+2000-05-26  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/hooks.test:  make-hook-with-name is deprecated.
+
+2000-05-08  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* tests/list.test, tests/numbers.test:  Added.
+
+2000-05-08  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* guile-test:  Eliminate use of catch-test-errors.
+
+	* lib.scm:  Adopted a couple of nice ideas from Greg.
+
+	(pass, fail, expect-failure, expect-failure-if,
+	expect-failure-if*, catch-test-errors, catch-test-errors*,
+	expected-failure-fluid, pessimist?):  Removed.
+
+	(run-test, expect-fail, result-tags, important-result-tags):
+	Added.
+
+	(report, make-count-reporter, print-counts, make-log-reporter,
+	full-reporter, user-reporter):  Reporters take two mandatory
+	arguments and make use of the tag descriptions in result-tags and
+	important-result-tags.
+
+	* tests/alist.test, tests/hooks.test, tests/ports.test,
+	tests/weaks.test:  Don't use catch-test-errors and
+	expect-failure-if.
+
+2000-05-05  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* mambo.test:  Removed dummy file.
+
+2000-03-31  Gary Houston  <ghouston@arglist.com>
+
+	* tests/ports.test (non-blocking-I/O): a couple more details:
+	a) combine the O_NONBLOCK flag with the default flags instead
+	of replacing them.  b) check EWOULDBLOCK as well as EAGAIN.
+
+2000-03-22  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* lib.scm: Doc fixes.
+
+Sun Jan 16 14:01:51 2000  Greg J. Badros  <gjb@cs.washington.edu>
+
+	* paths.scm: Assume that ~/guile-core/test-suite is the location
+	of the test suite now.
+
+	* tests/version.test: Added -- version.c had 0% coverage before,
+	now at 100%.
+
+	* tests/chars.test: Added -- needed test of char-is-both?.
+
+1999-12-22  Greg Harvey <Greg.Harvey@thezone.net>
+
+	* tests/weaks.test, tests/hooks.test: Added.
+
+1999-12-18  Greg Harvey <Greg.Harvey@thezone.net>
+
+	* tests/alist.test: Added.
+
+Fri Dec 17 12:14:10 1999  Greg J. Badros  <gjb@cs.washington.edu>
+
+	* tests/c-api.test: Refine the list of files that are checked in
+	the seek-offset-test.  Was just using files that end in "c", but
+	that caught the new ".doc" files, too, so make sure that files end
+	in ".c" before requiring that they include unistd.h if they
+	reference SEEK_(SET|CUR|END).
+
+1999-10-24  Gary Houston  <ghouston@freewire.co.uk>
+
+	* tests/ports.test ("string ports"): test seeking/unreading from
+	an input string and seeking an output string.
+
+1999-10-20  Gary Houston  <ghouston@freewire.co.uk>
+
+	* tests/ports.test: in seek/tell test on input port, also test
+	that ftell doesn't discard unread chars.
+
+1999-10-18  Gary Houston  <ghouston@freewire.co.uk>
+
+	* tests/ports.test: add seek/tell tests for unidirectional ports.
+
+1999-09-25  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* tests/reader.test: Check that number->string checks its radix
+	properly.
+
+1999-09-20  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* tests/ports.test: Check that our input functions cope when
+	current-input-port is closed.
+
+	* tests/regexp.test: Check regexp-substitute/global when there are
+	no matches.  (Duh.)
+
+1999-09-15  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* tests/c-api.test: New file.  Add test to check that all source
+	files which use SEEK_SET, SEEK_CUR, and SEEK_END include unistd.h.
+
+1999-09-14  Gary Houston  <ghouston@freewire.co.uk>
+
+	* tests/ports.test: test non-blocking I/O.
+
+1999-09-11  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* tests/strings.test: Add test for substring-move! argument checking.
+
+	* lib.scm (signals-error?, signals-error?*): New macro and function.
+	* tests/reader.test: Use them.
+
+	* tests/interp.test: Add copyright notice.
+
+	* tests/reader.test: New test file.
+
+	* tests/regexp.test: New test file.
+
+1999-09-06  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* tests/interp.test: Added tests for evaluation of closure bodies.
+
+1999-09-03  James Blandy  <jimb@mule.m17n.org>
+
+	* tests/multilingual.nottest: New file, which we will turn into a
+	test file once we actually have multilingual support to test.
+
+	* tests/load.test: New test file.
+
+1999-08-30  James Blandy  <jimb@mule.m17n.org>
+
+	* tests/strings.test: New test file.
+
+1999-08-29  Gary Houston  <ghouston@easynet.co.uk>
+
+	* tests/ports.test: test unread-char and unread-string.
+
+1999-08-19  Gary Houston  <ghouston@easynet.co.uk>
+
+	* tests/ports.test: test line-buffering of fports.
+
+1999-08-18  Gary Houston  <ghouston@easynet.co.uk>
+
+	* tests/ports.test: tests for NUL and non-ASCII chars to fports.
+
+1999-08-12  Gary Houston  <ghouston@easynet.co.uk>
+
+	* tests/ports.test: lseek -> seek.
+
+1999-08-04  Gary Houston  <ghouston@easynet.co.uk>
+
+	* tests/ports.test: tests for buffered and unbuffered input/output
+	fports with seeking.
+
+1999-08-01  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* tests/r4rs.test (SECTION 3 4): Each element of type-matrix
+	corresponds to an example object, not a predicate.  Aubrey
+	probably never noticed this because SCM doesn't check the lengths
+	of the arguments to for-each and map...
+
+	* tests/ports.test: Add some regression tests for char-ready?.
+
+1999-07-19  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* tests/ports.test: Fix copyright years.
+
+	* tests/guardians.test: New test file.
+
+	* tests/ports.test ("read-delimited!"): New tests.
+
+1999-06-19  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* tests/interp.test: New file.
+
+1999-06-15  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* tests/time.test: New test file.
+
+	* tests/r4rs.test: New set of tests, taken from Guile's test
+	script, taken from SCM.
+
+	* tests/ports.test: Group the string port tests under a new
+	test name prefix.
+
+	* tests/ports.test ("line counter"): Check the final column, too.
+
+	* lib.scm: Import (test-suite paths).
+	(data-file): New exported function.
+
+1999-06-12  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* tests/ports.test ("line counter"): Add test for correct column
+	at EOF.
+
+1999-06-09  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* tests/ports.test ("line counter"): Verify that we do eventually
+	get EOF on the port --- don't just read forever.
+
+	* lib.scm (full-reporter): The test name is the cadr of the
+	result, not the cdr.  I'm not macho enough to handle run-time
+	typechecking.
+
+	* lib.scm (print-counts): XFAILS are "expected failures", not
+	"unexpected failures."
+
+	* lib.scm, guile-test, paths.scm: Log begins.
+
+
+;; Local Variables:
+;; coding: utf-8
+;; End:

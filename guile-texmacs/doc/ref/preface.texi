@@ -1,0 +1,191 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@node Preface
+@chapter Preface
+
+This reference manual documents Guile, GNU's Ubiquitous Intelligent
+Language for Extensions.  It describes how to use Guile in many useful
+and interesting ways.
+
+This is edition @value{MANUAL-EDITION} of the reference manual, and
+corresponds to Guile version @value{VERSION}.
+
+@menu
+* Manual Layout::               
+* Manual Conventions::          
+* Contributors::                
+* Guile License::               
+@end menu
+
+
+@node Manual Layout
+@section Layout of this Manual
+
+The manual is divided into five chapters.
+
+@table @strong
+@item Chapter 1: Introduction to Guile
+This part provides an overview of what Guile is and how you can use
+it.  A whirlwind tour shows how Guile can be used interactively and as
+a script interpreter, how to link Guile into your own applications,
+and how to write modules of interpreted and compiled code for use with
+Guile.  Everything introduced here is documented again and in full by
+the later parts of the manual.  This part also explains how to obtain
+and install new versions of Guile, and how to report bugs effectively.
+
+@item Chapter 2: Programming in Scheme
+This part provides an overview over programming in Scheme with Guile.
+It covers how to invoke the @code{guile} program from the command-line
+and how to write scripts in Scheme.  It also gives an introduction
+into the basic ideas of Scheme itself and to the various extensions
+that Guile offers beyond standard Scheme.
+
+@item Chapter 3: Programming in C
+This part provides an overview of how to use Guile in a C program.  It
+discusses the fundamental concepts that you need to understand to
+access the features of Guile, such as dynamic types and the garbage
+collector.  It explains in a tutorial like manner how to define new
+data types and functions for the use by Scheme programs.
+
+@item Chapter 4: Guile API Reference
+This part of the manual documents the Guile @acronym{API} in
+functionality-based groups with the Scheme and C interfaces presented
+side by side.
+
+@item Chapter 5: Guile Modules
+Describes some important modules, distributed as part of the Guile
+distribution, that extend the functionality provided by the Guile
+Scheme core.
+
+@end table
+
+
+@node Manual Conventions
+@section Conventions used in this Manual
+
+We use some conventions in this manual.
+
+@itemize @bullet
+
+@item
+For some procedures, notably type predicates, we use @dfn{iff} to mean
+``if and only if''.  The construct is usually something like: `Return
+@var{val} iff @var{condition}', where @var{val} is usually
+``@nicode{#t}'' or ``non-@nicode{#f}''.  This typically means that
+@var{val} is returned if @var{condition} holds, and that @samp{#f} is
+returned otherwise.  To clarify: @var{val} will @strong{only} be
+returned when @var{condition} is true.
+@cindex iff
+
+@item
+In examples and procedure descriptions and all other places where the
+evaluation of Scheme expression is shown, we use some notation for
+denoting the output and evaluation results of expressions.
+
+The symbol @samp{@result{}} is used to tell which value is returned by
+an evaluation:
+
+@lisp
+(+ 1 2)
+@result{} 3
+@end lisp
+
+Some procedures produce some output besides returning a value.  This
+is denoted by the symbol @samp{@print{}}.
+
+@lisp
+(begin (display 1) (newline) 'hooray)
+@print{} 1
+@result{} hooray
+@end lisp
+
+As you can see, this code prints @samp{1} (denoted by
+@samp{@print{}}), and returns @code{hooray} (denoted by
+@samp{@result{}}).  Do not confuse the two.
+
+@c Add other conventions here.
+
+@end itemize
+
+@node Contributors
+@section Contributors to this Manual
+
+The Guile reference and tutorial manuals were written and edited
+largely by Mark Galassi and Jim Blandy.  In particular, Jim wrote the
+original tutorial on Guile's data representation and the C API for
+accessing Guile objects.
+
+Significant portions were contributed by Gary Houston (contributions
+to POSIX system calls and networking, expect, I/O internals and
+extensions, slib installation, error handling) and Tim Pierce
+(sections on script interpreter triggers, alists, function tracing).
+
+Tom Lord contributed a great deal of material with early Guile
+snapshots; although most of this text has been rewritten, all of it
+was important, and some of the structure remains.
+
+Aubrey Jaffer wrote the SCM Scheme implementation and manual upon
+which the Guile program and manual are based.  Some portions of the
+SCM and SLIB manuals have been included here verbatim.
+
+Since Guile 1.4, Neil Jerram has been maintaining and improving the
+reference manual.  Among other contributions, he wrote the Basic
+Ideas chapter, developed the tools for keeping the manual in sync
+with snarfed libguile docstrings, and reorganized the structure so as
+to accommodate docstrings for all Guile's primitives.
+
+Martin Grabmueller has made substantial contributions throughout the
+reference manual in preparation for the Guile 1.6 release, including
+filling out a lot of the documentation of Scheme data types, control
+mechanisms and procedures.  In addition, he wrote the documentation
+for Guile's SRFI modules and modules associated with the Guile REPL.
+
+@node Guile License
+@section The Guile License
+@cindex copying
+@cindex GPL
+@cindex LGPL
+@cindex license
+
+Guile is Free Software.  Guile is copyrighted, not public domain, and
+there are restrictions on its distribution or redistribution, but
+these restrictions are designed to permit everything a cooperating
+person would want to do.
+
+@itemize @bullet
+@item
+The Guile library (libguile) and supporting files are published under
+the terms of the GNU Lesser General Public License version 2.1.  See
+the file @file{COPYING.LIB}.
+
+@item
+The Guile readline module is published under the terms of the GNU
+General Public License version 2.  See the file @file{COPYING}.
+
+@item
+The manual you're now reading is published under the terms of the GNU
+Free Documentation License (@pxref{GNU Free Documentation License}).
+@end itemize
+
+C code linking to the Guile library is subject to terms of that
+library.  Basically such code may be published on any terms, provided
+users can re-link against a new or modified version of Guile.
+
+C code linking to the Guile readline module is subject to the terms of
+that module.  Basically such code must be published on Free terms.
+
+Scheme level code written to be run by Guile (but not derived from
+Guile itself) is not resticted in any way, and may be published on any
+terms.  We encourage authors to publish on Free terms.
+
+You must be aware there is no warranty whatsoever for Guile.  This is
+described in full in the licenses.
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

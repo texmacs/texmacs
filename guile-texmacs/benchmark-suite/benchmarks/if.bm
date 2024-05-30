@@ -1,0 +1,51 @@
+(with-benchmark-prefix "if-<expr>-then-else"
+
+  (benchmark "executing then" 330000
+    (if (quote #t) #t #f))
+
+  (benchmark "executing else" 330000
+    (if (quote #f) #t #f)))
+
+(with-benchmark-prefix "if-<expr>-then"
+
+  (benchmark "executing then" 330000
+    (if (quote #t) #t))
+
+  (benchmark "executing else" 330000
+    (if (quote #f) #t)))
+
+(with-benchmark-prefix "if-<iloc>-then-else"
+
+  (let ((x #t))
+    (benchmark "executing then" 330000
+      (if x #t #f)))
+
+  (let ((x #f))
+    (benchmark "executing else" 330000
+      (if x #t #f))))
+
+(with-benchmark-prefix "if-<iloc>-then"
+
+  (let ((x #t))
+    (benchmark "executing then" 330000
+      (if x #t)))
+
+  (let ((x #f))
+    (benchmark "executing else" 330000
+      (if x #t))))
+
+(with-benchmark-prefix "if-<bool>-then-else"
+
+  (benchmark "executing then" 330000
+    (if #t #t #f))
+
+  (benchmark "executing else" 330000
+    (if #f #t #f)))
+
+(with-benchmark-prefix "if-<bool>-then"
+
+  (benchmark "executing then" 330000
+    (if #t #t))
+
+  (benchmark "executing else" 330000
+    (if #f #t)))

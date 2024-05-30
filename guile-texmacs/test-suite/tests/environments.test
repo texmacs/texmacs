@@ -1,0 +1,1045 @@
+;;;; environments.test                                    -*- scheme -*-
+;;;; Copyright (C) 2000, 2001, 2006 Free Software Foundation, Inc.
+;;;;
+;;;; This library is free software; you can redistribute it and/or
+;;;; modify it under the terms of the GNU Lesser General Public
+;;;; License as published by the Free Software Foundation; either
+;;;; version 2.1 of the License, or (at your option) any later version.
+;;;; 
+;;;; This library is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;;;; Lesser General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU Lesser General Public
+;;;; License along with this library; if not, write to the Free Software
+;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+(use-modules (ice-9 documentation))
+
+
+;;;
+;;; miscellaneous
+;;;
+
+(define exception:unbound-symbol
+  (cons 'misc-error "^Symbol .* not bound in environment"))
+
+(define (documented? object)
+  (not (not (object-documentation object))))
+
+(define (folder sym val res)
+  (cons (cons sym val) res))
+
+(define (make-observer-func)
+  (let* ((counter 0))
+    (lambda args
+      (if (null? args) 
+	  counter
+	  (set! counter (+ counter 1))))))
+
+(define (make-erroneous-observer-func)
+  (let* ((func (make-observer-func)))
+    (lambda args
+      (if (null? args) 
+	  (func)
+	  (begin 
+	    (func args)
+	    (error))))))
+
+;;;
+;;; leaf-environments
+;;;
+
+(with-test-prefix "leaf-environments"
+
+  (with-test-prefix "leaf-environment?"
+
+    (pass-if "documented?"
+      (documented? leaf-environment?))
+
+    (pass-if "non-environment-object"
+      (not (leaf-environment? #f))))
+
+
+  (with-test-prefix "make-leaf-environment"
+
+    (pass-if "documented?"
+      (documented? make-leaf-environment))
+
+    (pass-if "produces an environment"
+      (environment? (make-leaf-environment)))
+
+    (pass-if "produces a leaf-environment"
+      (leaf-environment? (make-leaf-environment)))
+
+    (pass-if "produces always a new environment"
+      (not (eq? (make-leaf-environment) (make-leaf-environment)))))
+
+
+  (with-test-prefix "bound, define, ref, set!, cell"
+
+    (pass-if "symbols are unbound by default"
+      (let* ((env (make-leaf-environment)))
+	(and (not (environment-bound? env 'a))
+	     (not (environment-bound? env 'b))
+	     (not (environment-bound? env 'c)))))
+
+    (pass-if "symbol is bound after define"
+      (let* ((env (make-leaf-environment)))
+	(environment-bound? env 'a)
+	(environment-define env 'a #t)
+	(environment-bound? env 'a)))
+
+    (pass-if "ref a defined symbol"
+      (let* ((env (make-leaf-environment)))
+	(environment-bound? env 'a)
+	(environment-bound? env 'b)
+	(environment-define env 'a #t)
+	(environment-define env 'b #f)
+	(and (environment-ref env 'a)
+	     (not (environment-ref env 'b)))))
+
+    (pass-if "set! a defined symbol"
+      (let* ((env (make-leaf-environment)))
+	(environment-define env 'a #t)
+	(environment-define env 'b #f)
+	(environment-ref env 'a)
+	(environment-ref env 'b)
+	(environment-set! env 'a #f)
+	(environment-set! env 'b #t)
+	(and (not (environment-ref env 'a))
+	     (environment-ref env 'b))))
+
+    (pass-if "get a read-only cell"
+      (let* ((env (make-leaf-environment)))
+	(environment-define env 'a #t)
+	(let* ((cell (environment-cell env 'a #f)))
+	  (and (cdr cell)
+	       (begin
+		 (environment-set! env 'a #f)
+		 (not (cdr cell)))))))
+
+    (pass-if "a read-only cell gets rebound after define"
+      (let* ((env (make-leaf-environment)))
+	(environment-define env 'a #t)
+	(let* ((cell (environment-cell env 'a #f)))
+	  (environment-define env 'a #f)
+	  (not (eq? (environment-cell env 'a #f) cell)))))
+
+    (pass-if "get a writable cell"
+      (let* ((env (make-leaf-environment)))
+	(environment-define env 'a #t)
+	(let* ((readable (environment-cell env 'a #f))
+	       (writable (environment-cell env 'a #t)))
+	  (and (eq? readable writable)
+	       (begin
+		 (environment-set! env 'a #f)
+		 (not (cdr writable)))
+	       (begin
+		 (set-cdr! writable #t)
+		 (environment-ref env 'a))
+	       (begin
+		 (set-cdr! (environment-cell env 'a #t) #f)
+		 (not (cdr writable)))))))
+
+    (pass-if "a writable cell gets rebound after define"
+      (let* ((env (make-leaf-environment)))
+	(environment-define env 'a #t)
+	(let* ((cell (environment-cell env 'a #t)))
+	  (environment-define env 'a #f)
+	  (not (eq? (environment-cell env 'a #t) cell)))))
+
+    (pass-if-exception "reference an unbound symbol"
+      exception:unbound-symbol
+      (environment-ref (make-leaf-environment) 'a))
+
+    (pass-if-exception "set! an unbound symbol"
+      exception:unbound-symbol
+      (environment-set! (make-leaf-environment) 'a #f))
+
+    (pass-if-exception "get a readable cell for an unbound symbol"
+      exception:unbound-symbol
+      (environment-cell (make-leaf-environment) 'a #f))
+
+    (pass-if-exception "get a writable cell for an unbound symbol"
+      exception:unbound-symbol
+      (environment-cell (make-leaf-environment) 'a #t)))
+
+
+  (with-test-prefix "undefine"
+
+    (pass-if "undefine a defined symbol"
+      (let* ((env (make-leaf-environment)))
+	(environment-define env 'a 1)
+	(environment-ref env 'a)
+	(environment-undefine env 'a)
+	(not (environment-bound? env 'a))))
+
+    (pass-if "undefine an already undefined symbol"
+      (environment-undefine (make-leaf-environment) 'a)
+      #t))
+
+
+  (with-test-prefix "fold"
+
+    (pass-if "empty environment"
+      (let* ((env (make-leaf-environment)))
+	(eq? 'success (environment-fold env folder 'success))))
+
+    (pass-if "one symbol"
+      (let* ((env (make-leaf-environment)))
+	(environment-define env 'a #t)
+	(equal? '((a . #t)) (environment-fold env folder '()))))
+
+    (pass-if "two symbols"
+      (let* ((env (make-leaf-environment)))
+	(environment-define env 'a #t)
+	(environment-define env 'b #f)
+	(let ((folded (environment-fold env folder '())))
+	  (or (equal? folded '((a . #t) (b . #f)))
+	      (equal? folded '((b . #f) (a . #t))))))))
+
+
+  (with-test-prefix "observe"
+
+    (pass-if "observe an environment"
+      (let* ((env (make-leaf-environment)))
+	(environment-observe env (make-observer-func))
+	#t))
+
+    (pass-if "observe an environment twice"
+      (let* ((env (make-leaf-environment))
+	     (observer-1 (environment-observe env (make-observer-func)))
+	     (observer-2 (environment-observe env (make-observer-func))))
+	(not (eq? observer-1 observer-2))))
+
+    (pass-if "definition of an undefined symbol"
+      (let* ((env (make-leaf-environment))
+	     (func (make-observer-func)))
+	(environment-observe env func)
+	(environment-define env 'a 1)
+	(eqv? (func) 1)))
+
+    (pass-if "definition of an already defined symbol"
+      (let* ((env (make-leaf-environment)))
+	(environment-define env 'a 1)
+	(let* ((func (make-observer-func)))
+	  (environment-observe env func)
+	  (environment-define env 'a 1)
+	  (eqv? (func) 1))))
+
+    (pass-if "set!ing of a defined symbol"
+      (let* ((env (make-leaf-environment)))
+	(environment-define env 'a 1)
+	(let* ((func (make-observer-func)))
+	  (environment-observe env func)
+	  (environment-set! env 'a 1)
+	  (eqv? (func) 0))))
+
+    (pass-if "undefining a defined symbol"
+      (let* ((env (make-leaf-environment)))
+	(environment-define env 'a 1)
+	(let* ((func (make-observer-func)))
+	  (environment-observe env func)
+	  (environment-undefine env 'a)
+	  (eqv? (func) 1))))
+
+    (pass-if "undefining an already undefined symbol"
+      (let* ((env (make-leaf-environment))
+	     (func (make-observer-func)))
+	(environment-observe env func)
+	(environment-undefine env 'a)
+	(eqv? (func) 0)))
+
+    (pass-if "unobserve an active observer"
+      (let* ((env (make-leaf-environment))
+	     (func (make-observer-func))
+	     (observer (environment-observe env func)))
+	(environment-unobserve observer)
+	(environment-define env 'a 1)
+	(eqv? (func) 0)))
+
+    (pass-if "unobserve an inactive observer"
+      (let* ((env (make-leaf-environment))
+	     (func (make-observer-func))
+	     (observer (environment-observe env func)))
+	(environment-unobserve observer)
+	(environment-unobserve observer)
+	#t)))
+
+
+  (with-test-prefix "observe-weak"
+
+    (pass-if "observe an environment"
+      (let* ((env (make-leaf-environment)))
+	(environment-observe-weak env (make-observer-func))
+	#t))
+
+    (pass-if "observe an environment twice"
+      (let* ((env (make-leaf-environment))
+	     (observer-1 (environment-observe-weak env (make-observer-func)))
+	     (observer-2 (environment-observe-weak env (make-observer-func))))
+	(not (eq? observer-1 observer-2))))
+
+    (pass-if "definition of an undefined symbol"
+      (let* ((env (make-leaf-environment))
+	     (func (make-observer-func)))
+	(environment-observe-weak env func)
+	(environment-define env 'a 1)
+	(eqv? (func) 1)))
+
+    (pass-if "definition of an already defined symbol"
+      (let* ((env (make-leaf-environment)))
+	(environment-define env 'a 1)
+	(let* ((func (make-observer-func)))
+	  (environment-observe-weak env func)
+	  (environment-define env 'a 1)
+	  (eqv? (func) 1))))
+
+    (pass-if "set!ing of a defined symbol"
+      (let* ((env (make-leaf-environment)))
+	(environment-define env 'a 1)
+	(let* ((func (make-observer-func)))
+	  (environment-observe-weak env func)
+	  (environment-set! env 'a 1)
+	  (eqv? (func) 0))))
+
+    (pass-if "undefining a defined symbol"
+      (let* ((env (make-leaf-environment)))
+	(environment-define env 'a 1)
+	(let* ((func (make-observer-func)))
+	  (environment-observe-weak env func)
+	  (environment-undefine env 'a)
+	  (eqv? (func) 1))))
+
+    (pass-if "undefining an already undefined symbol"
+      (let* ((env (make-leaf-environment))
+	     (func (make-observer-func)))
+	(environment-observe-weak env func)
+	(environment-undefine env 'a)
+	(eqv? (func) 0)))
+
+    (pass-if "unobserve an active observer"
+      (let* ((env (make-leaf-environment))
+	     (func (make-observer-func))
+	     (observer (environment-observe-weak env func)))
+	(environment-unobserve observer)
+	(environment-define env 'a 1)
+	(eqv? (func) 0)))
+
+    (pass-if "unobserve an inactive observer"
+      (let* ((env (make-leaf-environment))
+	     (func (make-observer-func))
+	     (observer (environment-observe-weak env func)))
+	(environment-unobserve observer)
+	(environment-unobserve observer)
+	#t))
+
+    (pass-if "weak observer gets collected"
+      (gc)
+      (let* ((env (make-leaf-environment))
+	     (func (make-observer-func)))
+	(environment-observe-weak env func)
+	(gc)
+	(environment-define env 'a 1)
+	(if (not (eqv? (func) 0))
+	    (throw 'unresolved) ; note: conservative scanning
+	    #t))))
+
+
+  (with-test-prefix "erroneous observers"
+
+    (pass-if "update continues after error"
+      (let* ((env (make-leaf-environment))
+	     (func-1 (make-erroneous-observer-func))
+	     (func-2 (make-erroneous-observer-func)))
+	(environment-observe env func-1)
+	(environment-observe env func-2)
+	(catch #t
+	  (lambda () 
+	    (environment-define env 'a 1)
+	    #f)
+	  (lambda args
+	    (and (eq? (func-1) 1) 
+		 (eq? (func-2) 1))))))))
+
+
+;;;
+;;; leaf-environment based eval-environments
+;;;
+
+(with-test-prefix "leaf-environment based eval-environments"
+
+  (with-test-prefix "eval-environment?"
+
+    (pass-if "documented?"
+      (documented? eval-environment?))
+
+    (pass-if "non-environment-object"
+      (not (eval-environment? #f)))
+
+    (pass-if "leaf-environment-object"
+      (not (eval-environment? (make-leaf-environment)))))
+
+
+  (with-test-prefix "make-eval-environment"
+
+    (pass-if "documented?"
+      (documented? make-eval-environment))
+
+    (let* ((local (make-leaf-environment))
+	   (imported (make-leaf-environment)))
+
+      (pass-if "produces an environment"
+	(environment? (make-eval-environment local imported)))
+
+      (pass-if "produces an eval-environment"
+	(eval-environment? (make-eval-environment local imported)))
+
+      (pass-if "produces always a new environment"
+	(not (eq? (make-eval-environment local imported)
+		  (make-eval-environment local imported))))))
+
+
+  (with-test-prefix "eval-environment-local"
+
+    (pass-if "documented?"
+      (documented? eval-environment-local))
+
+    (pass-if "returns local"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(eq? (eval-environment-local env) local))))
+
+
+  (with-test-prefix "eval-environment-imported"
+
+    (pass-if "documented?"
+      (documented? eval-environment-imported))
+
+    (pass-if "returns imported"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(eq? (eval-environment-imported env) imported))))
+
+
+  (with-test-prefix "bound, define, ref, set!, cell"
+
+    (pass-if "symbols are unbound by default"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(and (not (environment-bound? env 'a))
+	     (not (environment-bound? env 'b))
+	     (not (environment-bound? env 'c)))))
+
+    (with-test-prefix "symbols bound in imported"
+
+      (pass-if "binding is visible"
+	(let* ((local (make-leaf-environment))
+	       (imported (make-leaf-environment))
+	       (env (make-eval-environment local imported)))
+	  (environment-bound? env 'a)
+	  (environment-define imported 'a #t)
+	  (environment-bound? env 'a)))
+
+      (pass-if "ref works"
+	(let* ((local (make-leaf-environment))
+	       (imported (make-leaf-environment))
+	       (env (make-eval-environment local imported)))
+	  (environment-bound? env 'a)
+	  (environment-define imported 'a #t)
+	  (environment-ref env 'a)))
+
+      (pass-if "set! works"
+	(let* ((local (make-leaf-environment))
+	       (imported (make-leaf-environment))
+	       (env (make-eval-environment local imported)))
+	  (environment-define imported 'a #f)
+	  (environment-set! env 'a #t)
+	  (environment-ref imported 'a)))
+
+      (pass-if "cells are passed through"
+	(let* ((local (make-leaf-environment))
+	       (imported (make-leaf-environment))
+	       (env (make-eval-environment local imported)))
+	  (environment-define imported 'a #t)
+	  (let* ((imported-cell (environment-cell imported 'a #f))
+		 (env-cell (environment-cell env 'a #f)))
+	    (eq? env-cell imported-cell)))))
+
+    (with-test-prefix "symbols bound in local"
+
+      (pass-if "binding is visible"
+	(let* ((local (make-leaf-environment))
+	       (imported (make-leaf-environment))
+	       (env (make-eval-environment local imported)))
+	  (environment-bound? env 'a)
+	  (environment-define local 'a #t)
+	  (environment-bound? env 'a)))
+
+      (pass-if "ref works"
+	(let* ((local (make-leaf-environment))
+	       (imported (make-leaf-environment))
+	       (env (make-eval-environment local imported)))
+	  (environment-define local 'a #t)
+	  (environment-ref env 'a)))
+
+      (pass-if "set! works"
+	(let* ((local (make-leaf-environment))
+	       (imported (make-leaf-environment))
+	       (env (make-eval-environment local imported)))
+	  (environment-define local 'a #f)
+	  (environment-set! env 'a #t)
+	  (environment-ref local 'a)))
+
+      (pass-if "cells are passed through"
+	(let* ((local (make-leaf-environment))
+	       (imported (make-leaf-environment))
+	       (env (make-eval-environment local imported)))
+	  (environment-define local 'a #t)
+	  (let* ((local-cell (environment-cell local 'a #f))
+		 (env-cell (environment-cell env 'a #f)))
+	    (eq? env-cell local-cell)))))
+
+    (with-test-prefix "symbols bound in local and imported"
+
+      (pass-if "binding is visible"
+	(let* ((local (make-leaf-environment))
+	       (imported (make-leaf-environment))
+	       (env (make-eval-environment local imported)))
+	  (environment-bound? env 'a)
+	  (environment-define imported 'a #t)
+	  (environment-define local 'a #f)
+	  (environment-bound? env 'a)))
+
+      (pass-if "ref works"
+	(let* ((local (make-leaf-environment))
+	       (imported (make-leaf-environment))
+	       (env (make-eval-environment local imported)))
+	  (environment-define imported 'a #f)
+	  (environment-define local 'a #t)
+	  (environment-ref env 'a)))
+
+      (pass-if "set! changes local"
+	(let* ((local (make-leaf-environment))
+	       (imported (make-leaf-environment))
+	       (env (make-eval-environment local imported)))
+	  (environment-define imported 'a #f)
+	  (environment-define local 'a #f)
+	  (environment-set! env 'a #t)
+	  (environment-ref local 'a)))
+
+      (pass-if "set! does not touch imported"
+	(let* ((local (make-leaf-environment))
+	       (imported (make-leaf-environment))
+	       (env (make-eval-environment local imported)))
+	  (environment-define imported 'a #t)
+	  (environment-define local 'a #t)
+	  (environment-set! env 'a #f)
+	  (environment-ref imported 'a)))
+
+      (pass-if "cells from local are passed through"
+	(let* ((local (make-leaf-environment))
+	       (imported (make-leaf-environment))
+	       (env (make-eval-environment local imported)))
+	  (environment-define local 'a #t)
+	  (let* ((local-cell (environment-cell local 'a #f))
+		 (env-cell (environment-cell env 'a #f)))
+	    (eq? env-cell local-cell)))))
+
+    (with-test-prefix "defining symbols"
+
+      (pass-if "symbols are bound in local after define"
+	(let* ((local (make-leaf-environment))
+	       (imported (make-leaf-environment))
+	       (env (make-eval-environment local imported)))
+	  (environment-define env 'a #t)
+	  (environment-bound? local 'a)))
+
+      (pass-if "cells in local get rebound after define"
+	(let* ((local (make-leaf-environment))
+	       (imported (make-leaf-environment))
+	       (env (make-eval-environment local imported)))
+	  (environment-define env 'a #f)
+	  (let* ((old-cell (environment-cell local 'a #f)))
+	    (environment-define env 'a #f)
+	    (let* ((new-cell (environment-cell local 'a #f)))
+	      (not (eq? new-cell old-cell))))))
+
+      (pass-if "cells in imported get shadowed after define"
+	(let* ((local (make-leaf-environment))
+	       (imported (make-leaf-environment))
+	       (env (make-eval-environment local imported)))
+	  (environment-define imported 'a #f)
+	  (environment-define env 'a #t)
+	  (environment-ref local 'a))))
+
+    (let* ((local (make-leaf-environment))
+	   (imported (make-leaf-environment))
+	   (env (make-eval-environment local imported)))
+
+      (pass-if-exception "reference an unbound symbol"
+	exception:unbound-symbol
+	(environment-ref env 'b))
+
+      (pass-if-exception "set! an unbound symbol"
+	exception:unbound-symbol
+	(environment-set! env 'b #f))
+
+      (pass-if-exception "get a readable cell for an unbound symbol"
+	exception:unbound-symbol
+	(environment-cell env 'b #f))
+
+      (pass-if-exception "get a writable cell for an unbound symbol"
+	exception:unbound-symbol
+	(environment-cell env 'b #t))))
+
+  (with-test-prefix "eval-environment-set-local!"
+
+    (pass-if "documented?"
+      (documented? eval-environment-set-local!))
+
+    (pass-if "new binding becomes visible"
+      (let* ((old-local (make-leaf-environment))
+	     (new-local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment old-local imported)))
+	(environment-bound? env 'a)
+	(environment-define new-local 'a #t)
+	(eval-environment-set-local! env new-local)
+	(environment-bound? env 'a)))
+
+    (pass-if "existing binding is replaced"
+      (let* ((old-local (make-leaf-environment))
+	     (new-local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment old-local imported)))
+	(environment-define old-local 'a #f)
+	(environment-ref env 'a)
+	(environment-define new-local 'a #t)
+	(eval-environment-set-local! env new-local)
+	(environment-ref env 'a)))
+
+    (pass-if "undefined binding is removed"
+      (let* ((old-local (make-leaf-environment))
+	     (new-local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment old-local imported)))
+	(environment-define old-local 'a #f)
+	(environment-ref env 'a)
+	(eval-environment-set-local! env new-local)
+	(not (environment-bound? env 'a))))
+
+    (pass-if "binding in imported remains shadowed"
+      (let* ((old-local (make-leaf-environment))
+	     (new-local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment old-local imported)))
+	(environment-define imported 'a #f)
+	(environment-define old-local 'a #f)
+	(environment-ref env 'a)
+	(environment-define new-local 'a #t)
+	(eval-environment-set-local! env new-local)
+	(environment-ref env 'a)))
+
+    (pass-if "binding in imported gets shadowed"
+      (let* ((old-local (make-leaf-environment))
+	     (new-local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment old-local imported)))
+	(environment-define imported 'a #f)
+	(environment-ref env 'a)
+	(environment-define new-local 'a #t)
+	(eval-environment-set-local! env new-local)
+	(environment-ref env 'a)))
+
+    (pass-if "binding in imported becomes visible"
+      (let* ((old-local (make-leaf-environment))
+	     (new-local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment old-local imported)))
+	(environment-define imported 'a #t)
+	(environment-define old-local 'a #f)
+	(environment-ref env 'a)
+	(eval-environment-set-local! env new-local)
+	(environment-ref env 'a))))
+
+  (with-test-prefix "eval-environment-set-imported!"
+
+    (pass-if "documented?"
+      (documented? eval-environment-set-imported!))
+
+    (pass-if "new binding becomes visible"
+      (let* ((local (make-leaf-environment))
+	     (old-imported (make-leaf-environment))
+	     (new-imported (make-leaf-environment))
+	     (env (make-eval-environment local old-imported)))
+	(environment-bound? env 'a)
+	(environment-define new-imported 'a #t)
+	(eval-environment-set-imported! env new-imported)
+	(environment-bound? env 'a)))
+
+    (pass-if "existing binding is replaced"
+      (let* ((local (make-leaf-environment))
+	     (old-imported (make-leaf-environment))
+	     (new-imported (make-leaf-environment))
+	     (env (make-eval-environment local old-imported)))
+	(environment-define old-imported 'a #f)
+	(environment-ref env 'a)
+	(environment-define new-imported 'a #t)
+	(eval-environment-set-imported! env new-imported)
+	(environment-ref env 'a)))
+
+    (pass-if "undefined binding is removed"
+      (let* ((local (make-leaf-environment))
+	     (old-imported (make-leaf-environment))
+	     (new-imported (make-leaf-environment))
+	     (env (make-eval-environment local old-imported)))
+	(environment-define old-imported 'a #f)
+	(environment-ref env 'a)
+	(eval-environment-set-imported! env new-imported)
+	(not (environment-bound? env 'a))))
+
+    (pass-if "binding in imported remains shadowed"
+      (let* ((local (make-leaf-environment))
+	     (old-imported (make-leaf-environment))
+	     (new-imported (make-leaf-environment))
+	     (env (make-eval-environment local old-imported)))
+	(environment-define local 'a #t)
+	(environment-define old-imported 'a #f)
+	(environment-ref env 'a)
+	(environment-define new-imported 'a #t)
+	(eval-environment-set-imported! env new-imported)
+	(environment-ref env 'a)))
+
+    (pass-if "binding in imported gets shadowed"
+      (let* ((local (make-leaf-environment))
+	     (old-imported (make-leaf-environment))
+	     (new-imported (make-leaf-environment))
+	     (env (make-eval-environment local old-imported)))
+	(environment-define local 'a #t)
+	(environment-ref env 'a)
+	(environment-define new-imported 'a #f)
+	(eval-environment-set-imported! env new-imported)
+	(environment-ref env 'a))))
+
+  (with-test-prefix "undefine"
+
+    (pass-if "undefine an already undefined symbol"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(environment-undefine env 'a)
+	#t))
+
+    (pass-if "undefine removes a binding from local"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(environment-define local 'a #t)
+	(environment-undefine env 'a)
+	(not (environment-bound? local 'a))))
+
+    (pass-if "undefine does not influence imported"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(environment-define imported 'a #t)
+	(environment-undefine env 'a)
+	(environment-bound? imported 'a)))
+
+    (pass-if "undefine an imported symbol does not undefine it"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(environment-define imported 'a #t)
+	(environment-undefine env 'a)
+	(environment-bound? env 'a)))
+
+    (pass-if "undefine unshadows an imported symbol"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(environment-define imported 'a #t)
+	(environment-define local 'a #f)
+	(environment-undefine env 'a)
+	(environment-ref env 'a))))
+
+  (with-test-prefix "fold"
+
+    (pass-if "empty environment"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(eq? 'success (environment-fold env folder 'success))))
+
+    (pass-if "one symbol in local"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(environment-define local 'a #t)
+	(equal? '((a . #t)) (environment-fold env folder '()))))
+
+    (pass-if "one symbol in imported"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(environment-define imported 'a #t)
+	(equal? '((a . #t)) (environment-fold env folder '()))))
+
+    (pass-if "shadowed symbol"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(environment-define local 'a #t)
+	(environment-define imported 'a #f)
+	(equal? '((a . #t)) (environment-fold env folder '()))))
+
+    (pass-if "one symbol each"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(environment-define local 'a #t)
+	(environment-define imported 'b #f)
+	(let ((folded (environment-fold env folder '())))
+	  (or (equal? folded '((a . #t) (b . #f)))
+	      (equal? folded '((b . #f) (a . #t))))))))
+
+
+  (with-test-prefix "observe"
+
+    (pass-if "observe an environment"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(environment-observe env (make-observer-func))
+	#t))
+
+    (pass-if "observe an environment twice"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported))
+	     (observer-1 (environment-observe env (make-observer-func)))
+	     (observer-2 (environment-observe env (make-observer-func))))
+	(not (eq? observer-1 observer-2))))
+
+    (pass-if "definition of an undefined symbol"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported))
+	     (func (make-observer-func)))
+	(environment-observe env func)
+	(environment-define env 'a 1)
+	(eqv? (func) 1)))
+
+    (pass-if "definition of an already defined symbol"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(environment-define env 'a 1)
+	(let* ((func (make-observer-func)))
+	  (environment-observe env func)
+	  (environment-define env 'a 1)
+	  (eqv? (func) 1))))
+
+    (pass-if "set!ing of a defined symbol"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(environment-define env 'a 1)
+	(let* ((func (make-observer-func)))
+	  (environment-observe env func)
+	  (environment-set! env 'a 1)
+	  (eqv? (func) 0))))
+
+    (pass-if "undefining a defined symbol"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(environment-define env 'a 1)
+	(let* ((func (make-observer-func)))
+	  (environment-observe env func)
+	  (environment-undefine env 'a)
+	  (eqv? (func) 1))))
+
+    (pass-if "undefining an already undefined symbol"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported))
+	     (func (make-observer-func)))
+	(environment-observe env func)
+	(environment-undefine env 'a)
+	(eqv? (func) 0)))
+
+    (pass-if "unobserve an active observer"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported))
+	     (func (make-observer-func))
+	     (observer (environment-observe env func)))
+	(environment-unobserve observer)
+	(environment-define env 'a 1)
+	(eqv? (func) 0)))
+
+    (pass-if "unobserve an inactive observer"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported))
+	     (func (make-observer-func))
+	     (observer (environment-observe env func)))
+	(environment-unobserve observer)
+	(environment-unobserve observer)
+	#t)))
+
+
+  (with-test-prefix "observe-weak"
+
+    (pass-if "observe an environment"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(environment-observe-weak env (make-observer-func))
+	#t))
+
+    (pass-if "observe an environment twice"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported))
+	     (observer-1 (environment-observe-weak env (make-observer-func)))
+	     (observer-2 (environment-observe-weak env (make-observer-func))))
+	(not (eq? observer-1 observer-2))))
+
+    (pass-if "definition of an undefined symbol"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported))
+	     (func (make-observer-func)))
+	(environment-observe-weak env func)
+	(environment-define env 'a 1)
+	(eqv? (func) 1)))
+
+    (pass-if "definition of an already defined symbol"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(environment-define env 'a 1)
+	(let* ((func (make-observer-func)))
+	  (environment-observe-weak env func)
+	  (environment-define env 'a 1)
+	  (eqv? (func) 1))))
+
+    (pass-if "set!ing of a defined symbol"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(environment-define env 'a 1)
+	(let* ((func (make-observer-func)))
+	  (environment-observe-weak env func)
+	  (environment-set! env 'a 1)
+	  (eqv? (func) 0))))
+
+    (pass-if "undefining a defined symbol"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(environment-define env 'a 1)
+	(let* ((func (make-observer-func)))
+	  (environment-observe-weak env func)
+	  (environment-undefine env 'a)
+	  (eqv? (func) 1))))
+
+    (pass-if "undefining an already undefined symbol"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported))
+	     (func (make-observer-func)))
+	(environment-observe-weak env func)
+	(environment-undefine env 'a)
+	(eqv? (func) 0)))
+
+    (pass-if "unobserve an active observer"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported))
+	     (func (make-observer-func))
+	     (observer (environment-observe-weak env func)))
+	(environment-unobserve observer)
+	(environment-define env 'a 1)
+	(eqv? (func) 0)))
+
+    (pass-if "unobserve an inactive observer"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported))
+	     (func (make-observer-func))
+	     (observer (environment-observe-weak env func)))
+	(environment-unobserve observer)
+	(environment-unobserve observer)
+	#t))
+
+    (pass-if "weak observer gets collected"
+      (gc)
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported))
+	     (func (make-observer-func)))
+	(environment-observe-weak env func)
+	(gc)
+	(environment-define env 'a 1)
+	(if (not (eqv? (func) 0))
+	    (throw 'unresolved) ; note: conservative scanning
+	    #t))))
+
+
+  (with-test-prefix "erroneous observers"
+
+    (pass-if "update continues after error"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported))
+	     (func-1 (make-erroneous-observer-func))
+	     (func-2 (make-erroneous-observer-func)))
+	(environment-observe env func-1)
+	(environment-observe env func-2)
+	(catch #t
+	  (lambda () 
+	    (environment-define env 'a 1)
+	    #f)
+	  (lambda args
+	    (and (eq? (func-1) 1) 
+		 (eq? (func-2) 1))))))))
+
+
+;;;
+;;; leaf-environment based import-environments
+;;;
+
+(with-test-prefix "leaf-environment based import-environments"
+
+  (with-test-prefix "import-environment?"
+
+    (pass-if "documented?"
+      (documented? import-environment?))
+
+    (pass-if "non-environment-object"
+      (not (import-environment? #f)))
+
+    (pass-if "leaf-environment-object"
+      (not (import-environment? (make-leaf-environment))))
+
+    (pass-if "eval-environment-object"
+      (let* ((local (make-leaf-environment))
+	     (imported (make-leaf-environment))
+	     (env (make-eval-environment local imported)))
+	(not (import-environment? (make-leaf-environment))))))
+
+
+  (with-test-prefix "make-import-environment"
+
+    (pass-if "documented?"
+      (documented? make-import-environment))))
+

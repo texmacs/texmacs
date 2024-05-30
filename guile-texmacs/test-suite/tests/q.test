@@ -1,0 +1,93 @@
+;;;; q.test --- test (ice-9 q) module -*- scheme -*-
+;;;; 
+;;;; Copyright 2004, 2006 Free Software Foundation, Inc.
+;;;; 
+;;;; This library is free software; you can redistribute it and/or
+;;;; modify it under the terms of the GNU Lesser General Public
+;;;; License as published by the Free Software Foundation; either
+;;;; version 2.1 of the License, or (at your option) any later version.
+;;;; 
+;;;; This library is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;;;; Lesser General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU Lesser General Public
+;;;; License along with this library; if not, write to the Free Software
+;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-ice-9-q)
+  #:use-module (test-suite lib)
+  #:use-module (ice-9 q))
+
+
+;; Call (THUNK) and return #t if it throws 'q-empty, or #f it not.
+(define (true-if-catch-q-empty thunk)
+  (catch 'q-empty
+    (lambda ()
+      (thunk)
+      #f)
+    (lambda args
+      #t)))
+
+
+;;;
+;;; q-pop!
+;;;
+
+(with-test-prefix "q-pop!"
+
+  (with-test-prefix "no elems"
+    (let ((q (make-q)))
+      (pass-if "empty" (true-if-catch-q-empty
+			(lambda ()
+			  (q-pop! q))))
+      (pass-if "valid at end" (q? q))))
+
+  (with-test-prefix "one elem"
+    (let ((x (cons 1 2))
+	  (q (make-q)))
+      (q-push! q x)
+
+      (pass-if "x" (eq? x (q-pop! q)))
+      (pass-if "valid after x" (q? q))
+      (pass-if "empty" (true-if-catch-q-empty
+			(lambda ()
+			  (q-pop! q))))
+      (pass-if "valid at end" (q? q))))
+
+  (with-test-prefix "two elems"
+    (let ((x (cons 1 2))
+	  (y (cons 3 4))
+	  (q (make-q)))
+      (q-push! q x)
+      (q-push! q y)
+
+      (pass-if "y" (eq? y (q-pop! q)))
+      (pass-if "valid after y" (q? q))
+      (pass-if "x" (eq? x (q-pop! q)))
+      (pass-if "valid after x" (q? q))
+      (pass-if "empty" (true-if-catch-q-empty
+			(lambda ()
+			  (q-pop! q))))
+      (pass-if "valid at end" (q? q))))
+
+  (with-test-prefix "three elems"
+    (let ((x (cons 1 2))
+	  (y (cons 3 4))
+	  (z (cons 5 6))
+	  (q (make-q)))
+      (q-push! q x)
+      (q-push! q y)
+      (q-push! q z)
+
+      (pass-if "z" (eq? z (q-pop! q)))
+      (pass-if "valid after z" (q? q))
+      (pass-if "y" (eq? y (q-pop! q)))
+      (pass-if "valid after y" (q? q))
+      (pass-if "x" (eq? x (q-pop! q)))
+      (pass-if "valid after x" (q? q))
+      (pass-if "empty" (true-if-catch-q-empty
+			(lambda ()
+			  (q-pop! q))))
+      (pass-if "valid at end" (q? q)))))

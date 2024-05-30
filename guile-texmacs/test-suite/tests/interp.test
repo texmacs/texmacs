@@ -1,0 +1,53 @@
+;;;; interp.test --- tests for bugs in the Guile interpreter -*- scheme -*-
+;;;;
+;;;; 	Copyright (C) 1999, 2001, 2006 Free Software Foundation, Inc.
+;;;; 
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;; 
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(pass-if "Internal defines 1"
+	 (letrec ((foo (lambda (arg)
+			 (or arg (and (procedure? foo)
+				      (foo 99))))))
+	   (define bar (foo #f))
+	   (= (foo #f) 99)))
+
+(pass-if "Internal defines 2"
+	 (letrec ((foo 77)
+		  (bar #f)
+		  (retfoo (lambda () foo)))
+	   (define baz (retfoo))
+	   (= (retfoo) 77)))
+
+;; Test that evaluation of closure bodies works as it should
+
+(with-test-prefix "closure bodies"
+  (with-test-prefix "eval"
+    (pass-if "expansion"
+	     ;; we really want exactly #f back from the closure
+	     (not ((lambda () (define ret #f) ret))))
+    (pass-if "iloc escape"
+	     (not (let* ((x #f)
+			 (foo (lambda () x)))
+		    (foo) ; causes memoization of x
+		    (foo)))))
+  (with-test-prefix "apply"
+    (pass-if "expansion"
+	     (not (catch #t (lambda () (define ret #f) ret) (lambda a #t))))
+    (pass-if "iloc escape"
+	     (not (let* ((x #f)
+			 (foo (lambda () x)))
+		    (foo)
+		    (catch #t foo (lambda a #t)))))))

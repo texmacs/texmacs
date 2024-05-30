@@ -1,0 +1,820 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004, 2008
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Scheduling
+@section Threads, Mutexes, Asyncs and Dynamic Roots
+
+[FIXME: This is pasted in from Tom Lord's original guile.texi chapter
+plus the Cygnus programmer's manual; it should be *very* carefully
+reviewed and largely reorganized.]
+
+@menu
+* Arbiters::                    Synchronization primitives.
+* Asyncs::                      Asynchronous procedure invocation.
+* Continuation Barriers::       Protection from non-local control flow.
+* Threads::                     Multiple threads of execution.
+* Mutexes and Condition Variables:: Synchronization primitives.
+* Blocking::                    How to block properly in guile mode.
+* Critical Sections::           Avoiding concurrency and reentries.
+* Fluids and Dynamic States::   Thread-local variables, etc.
+* Parallel Forms::              Parallel execution of forms.
+@end menu
+
+
+@node Arbiters
+@subsection Arbiters
+@cindex arbiters
+
+Arbiters are synchronization objects, they can be used by threads to
+control access to a shared resource.  An arbiter can be locked to
+indicate a resource is in use, and unlocked when done.
+
+An arbiter is like a light-weight mutex (@pxref{Mutexes and Condition
+Variables}).  It uses less memory and may be faster, but there's no
+way for a thread to block waiting on an arbiter, it can only test and
+get the status returned.
+
+@deffn {Scheme Procedure} make-arbiter name
+@deffnx {C Function} scm_make_arbiter (name)
+Return an object of type arbiter and name @var{name}. Its
+state is initially unlocked.  Arbiters are a way to achieve
+process synchronization.
+@end deffn
+
+@deffn {Scheme Procedure} try-arbiter arb
+@deffnx {C Function} scm_try_arbiter (arb)
+@deffnx {C Function} scm_try_arbiter (arb)
+If @var{arb} is unlocked, then lock it and return @code{#t}.
+If @var{arb} is already locked, then do nothing and return
+@code{#f}.
+@end deffn
+
+@deffn {Scheme Procedure} release-arbiter arb
+@deffnx {C Function} scm_release_arbiter (arb)
+If @var{arb} is locked, then unlock it and return @code{#t}.  If
+@var{arb} is already unlocked, then do nothing and return @code{#f}.
+
+Typical usage is for the thread which locked an arbiter to later
+release it, but that's not required, any thread can release it.
+@end deffn
+
+
+@node Asyncs
+@subsection Asyncs
+
+@cindex asyncs
+@cindex user asyncs
+@cindex system asyncs
+
+Asyncs are a means of deferring the excution of Scheme code until it is
+safe to do so.
+
+Guile provides two kinds of asyncs that share the basic concept but are
+otherwise quite different: system asyncs and user asyncs.  System asyncs
+are integrated into the core of Guile and are executed automatically
+when the system is in a state to allow the execution of Scheme code.
+For example, it is not possible to execute Scheme code in a POSIX signal
+handler, but such a signal handler can queue a system async to be
+executed in the near future, when it is safe to do so.
+
+System asyncs can also be queued for threads other than the current one.
+This way, you can cause threads to asynchronously execute arbitrary
+code.
+
+User asyncs offer a convenient means of queueing procedures for future
+execution and triggering this execution.  They will not be executed
+automatically.
+
+@menu
+* System asyncs::               
+* User asyncs::                 
+@end menu
+
+@node System asyncs
+@subsubsection System asyncs
+
+To cause the future asynchronous execution of a procedure in a given
+thread, use @code{system-async-mark}.
+
+Automatic invocation of system asyncs can be temporarily disabled by
+calling @code{call-with-blocked-asyncs}.  This function works by
+temporarily increasing the @emph{async blocking level} of the current
+thread while a given procedure is running.  The blocking level starts
+out at zero, and whenever a safe point is reached, a blocking level
+greater than zero will prevent the execution of queued asyncs.
+
+Analogously, the procedure @code{call-with-unblocked-asyncs} will
+temporarily decrease the blocking level of the current thread.  You
+can use it when you want to disable asyncs by default and only allow
+them temporarily.
+
+In addition to the C versions of @code{call-with-blocked-asyncs} and
+@code{call-with-unblocked-asyncs}, C code can use
+@code{scm_dynwind_block_asyncs} and @code{scm_dynwind_unblock_asyncs}
+inside a @dfn{dynamic context} (@pxref{Dynamic Wind}) to block or
+unblock system asyncs temporarily.
+
+@deffn {Scheme Procedure} system-async-mark proc [thread]
+@deffnx {C Function} scm_system_async_mark (proc)
+@deffnx {C Function} scm_system_async_mark_for_thread (proc, thread)
+Mark @var{proc} (a procedure with zero arguments) for future execution
+in @var{thread}.  When @var{proc} has already been marked for
+@var{thread} but has not been executed yet, this call has no effect.
+When @var{thread} is omitted, the thread that called
+@code{system-async-mark} is used.
+
+This procedure is not safe to be called from signal handlers.  Use
+@code{scm_sigaction} or @code{scm_sigaction_for_thread} to install
+signal handlers.
+@end deffn
+
+@c  FIXME: The use of @deffnx for scm_c_call_with_blocked_asyncs and
+@c  scm_c_call_with_unblocked_asyncs puts "void" into the function
+@c  index.  Would prefer to use @deftypefnx if makeinfo allowed that,
+@c  or a @deftypefn with an empty return type argument if it didn't
+@c  introduce an extra space.
+
+@deffn {Scheme Procedure} call-with-blocked-asyncs proc
+@deffnx {C Function} scm_call_with_blocked_asyncs (proc)
+@deffnx {C Function} {void *} scm_c_call_with_blocked_asyncs (void * (*proc) (void *data), void *data)
+@findex scm_c_call_with_blocked_asyncs
+Call @var{proc} and block the execution of system asyncs by one level
+for the current thread while it is running.  Return the value returned
+by @var{proc}.  For the first two variants, call @var{proc} with no
+arguments; for the third, call it with @var{data}.
+@end deffn
+
+@deffn {Scheme Procedure} call-with-unblocked-asyncs proc
+@deffnx {C Function} scm_call_with_unblocked_asyncs (proc)
+@deffnx {C Function} {void *} scm_c_call_with_unblocked_asyncs (void *(*p) (void *d), void *d)
+@findex scm_c_call_with_unblocked_asyncs
+Call @var{proc} and unblock the execution of system asyncs by one
+level for the current thread while it is running.  Return the value
+returned by @var{proc}.  For the first two variants, call @var{proc}
+with no arguments; for the third, call it with @var{data}.
+@end deffn
+
+@deftypefn {C Function} void scm_dynwind_block_asyncs ()
+This function must be used inside a pair of calls to
+@code{scm_dynwind_begin} and @code{scm_dynwind_end} (@pxref{Dynamic
+Wind}).  During the dynwind context, asyncs are blocked by one level.
+@end deftypefn
+
+@deftypefn {C Function} void scm_dynwind_unblock_asyncs ()
+This function must be used inside a pair of calls to
+@code{scm_dynwind_begin} and @code{scm_dynwind_end} (@pxref{Dynamic
+Wind}).  During the dynwind context, asyncs are unblocked by one
+level.
+@end deftypefn
+
+@node User asyncs
+@subsubsection User asyncs
+
+A user async is a pair of a thunk (a parameterless procedure) and a
+mark.  Setting the mark on a user async will cause the thunk to be
+executed when the user async is passed to @code{run-asyncs}.  Setting
+the mark more than once is satisfied by one execution of the thunk.
+
+User asyncs are created with @code{async}.  They are marked with
+@code{async-mark}.
+
+@deffn {Scheme Procedure} async thunk
+@deffnx {C Function} scm_async (thunk)
+Create a new user async for the procedure @var{thunk}.
+@end deffn
+
+@deffn {Scheme Procedure} async-mark a
+@deffnx {C Function} scm_async_mark (a)
+Mark the user async @var{a} for future execution.
+@end deffn
+
+@deffn {Scheme Procedure} run-asyncs list_of_a
+@deffnx {C Function} scm_run_asyncs (list_of_a)
+Execute all thunks from the marked asyncs of the list @var{list_of_a}.
+@end deffn
+
+@node Continuation Barriers
+@subsection Continuation Barriers
+
+The non-local flow of control caused by continuations might sometimes
+not be wanted.  You can use @code{with-continuation-barrier} etc to
+errect fences that continuations can not pass.
+
+@deffn {Scheme Procedure} with-continuation-barrier proc
+@deffnx {C Function} scm_with_continuation_barrier (proc)
+Call @var{proc} and return its result.  Do not allow the invocation of
+continuations that would leave or enter the dynamic extent of the call
+to @code{with-continuation-barrier}.  Such an attempt causes an error
+to be signaled.
+
+Throws (such as errors) that are not caught from within @var{proc} are
+caught by @code{with-continuation-barrier}.  In that case, a short
+message is printed to the current error port and @code{#f} is returned.
+
+Thus, @code{with-continuation-barrier} returns exactly once.
+@end deffn
+
+@deftypefn {C Function} {void *} scm_c_with_continuation_barrier (void *(*func) (void *), void *data)
+Like @code{scm_with_continuation_barrier} but call @var{func} on
+@var{data}.  When an error is caught, @code{NULL} is returned.
+@end deftypefn
+
+@node Threads
+@subsection Threads
+@cindex threads
+@cindex Guile threads
+@cindex POSIX threads
+
+@deffn {Scheme Procedure} all-threads
+@deffnx {C Function} scm_all_threads ()
+Return a list of all threads.
+@end deffn
+
+@deffn {Scheme Procedure} current-thread
+@deffnx {C Function} scm_current_thread ()
+Return the thread that called this function.
+@end deffn
+
+@c begin (texi-doc-string "guile" "call-with-new-thread")
+@deffn {Scheme Procedure} call-with-new-thread thunk [handler]
+Call @code{thunk} in a new thread and with a new dynamic state,
+returning the new thread.  The procedure @var{thunk} is called via
+@code{with-continuation-barrier}.
+
+When @var{handler} is specified, then @var{thunk} is called from
+within a @code{catch} with tag @code{#t} that has @var{handler} as its
+handler.  This catch is established inside the continuation barrier.
+
+Once @var{thunk} or @var{handler} returns, the return value is made
+the @emph{exit value} of the thread and the thread is terminated.
+@end deffn
+
+@deftypefn {C Function} SCM scm_spawn_thread (scm_t_catch_body body, void *body_data, scm_t_catch_handler handler, void *handler_data)
+Call @var{body} in a new thread, passing it @var{body_data}, returning
+the new thread.  The function @var{body} is called via
+@code{scm_c_with_continuation_barrier}.
+
+When @var{handler} is non-@code{NULL}, @var{body} is called via
+@code{scm_internal_catch} with tag @code{SCM_BOOL_T} that has
+@var{handler} and @var{handler_data} as the handler and its data.  This
+catch is established inside the continuation barrier.
+
+Once @var{body} or @var{handler} returns, the return value is made the
+@emph{exit value} of the thread and the thread is terminated.
+@end deftypefn
+
+@c begin (texi-doc-string "guile" "join-thread")
+@deffn {Scheme Procedure} join-thread thread
+@deffnx {C Function} scm_join_thread (thread)
+Wait for @var{thread} to terminate and return its exit value.  Threads
+that have not been created with @code{call-with-new-thread} or
+@code{scm_spawn_thread} have an exit value of @code{#f}.
+@end deffn
+
+@deffn {Scheme Procedure} thread-exited? thread
+@deffnx {C Function} scm_thread_exited_p (thread)
+Return @code{#t} iff @var{thread} has exited.
+@end deffn
+
+@c begin (texi-doc-string "guile" "yield")
+@deffn {Scheme Procedure} yield
+If one or more threads are waiting to execute, calling yield forces an
+immediate context switch to one of them. Otherwise, yield has no effect.
+@end deffn
+
+Higher level thread procedures are available by loading the
+@code{(ice-9 threads)} module.  These provide standardized
+thread creation.
+
+@deffn macro make-thread proc [args@dots{}]
+Apply @var{proc} to @var{args} in a new thread formed by
+@code{call-with-new-thread} using a default error handler that display
+the error to the current error port.  The @var{args@dots{}}
+expressions are evaluated in the new thread.
+@end deffn
+
+@deffn macro begin-thread first [rest@dots{}]
+Evaluate forms @var{first} and @var{rest} in a new thread formed by
+@code{call-with-new-thread} using a default error handler that display
+the error to the current error port.
+@end deffn
+
+@node Mutexes and Condition Variables
+@subsection Mutexes and Condition Variables
+@cindex mutex
+@cindex condition variable
+
+A mutex is a thread synchronization object, it can be used by threads
+to control access to a shared resource.  A mutex can be locked to
+indicate a resource is in use, and other threads can then block on the
+mutex to wait for the resource (or can just test and do something else
+if not available).  ``Mutex'' is short for ``mutual exclusion''.
+
+There are two types of mutexes in Guile, ``standard'' and
+``recursive''.  They're created by @code{make-mutex} and
+@code{make-recursive-mutex} respectively, the operation functions are
+then common to both.
+
+Note that for both types of mutex there's no protection against a
+``deadly embrace''.  For instance if one thread has locked mutex A and
+is waiting on mutex B, but another thread owns B and is waiting on A,
+then an endless wait will occur (in the current implementation).
+Acquiring requisite mutexes in a fixed order (like always A before B)
+in all threads is one way to avoid such problems.
+
+@sp 1
+@deffn {Scheme Procedure} make-mutex
+@deffnx {C Function} scm_make_mutex ()
+Return a new standard mutex.  It is initially unlocked.
+@end deffn
+
+@deffn {Scheme Procedure} make-recursive-mutex
+@deffnx {C Function} scm_make_recursive_mutex ()
+Create a new recursive mutex.  It is initialloy unlocked.
+@end deffn
+
+@deffn {Scheme Procedure} lock-mutex mutex
+@deffnx {C Function} scm_lock_mutex (mutex)
+Lock @var{mutex}.  If the mutex is already locked by another thread
+then block and return only when @var{mutex} has been acquired.
+
+For standard mutexes (@code{make-mutex}), and error is signalled if
+the thread has itself already locked @var{mutex}.
+
+For a recursive mutex (@code{make-recursive-mutex}), if the thread has
+itself already locked @var{mutex}, then a further @code{lock-mutex}
+call increments the lock count.  An additional @code{unlock-mutex}
+will be required to finally release.
+
+When a system async (@pxref{System asyncs}) is activated for a thread
+blocked in @code{lock-mutex}, the wait is interrupted and the async is
+executed.  When the async returns, the wait resumes.
+@end deffn
+
+@deftypefn {C Function} void scm_dynwind_lock_mutex (SCM mutex)
+Arrange for @var{mutex} to be locked whenever the current dynwind
+context is entered and to be unlocked when it is exited.
+@end deftypefn
+
+@deffn {Scheme Procedure} try-mutex mx
+@deffnx {C Function} scm_try_mutex (mx)
+Try to lock @var{mutex} as per @code{lock-mutex}.  If @var{mutex} can
+be acquired immediately then this is done and the return is @code{#t}.
+If @var{mutex} is locked by some other thread then nothing is done and
+the return is @code{#f}.
+@end deffn
+
+@deffn {Scheme Procedure} unlock-mutex mutex
+@deffnx {C Function} scm_unlock_mutex (mutex)
+Unlock @var{mutex}.  An error is signalled if @var{mutex} is not
+locked by the calling thread.
+@end deffn
+
+@deffn {Scheme Procedure} make-condition-variable
+@deffnx {C Function} scm_make_condition_variable ()
+Return a new condition variable.
+@end deffn
+
+@deffn {Scheme Procedure} wait-condition-variable condvar mutex [time]
+@deffnx {C Function} scm_wait_condition_variable (condvar, mutex, time)
+Wait until @var{condvar} has been signalled.  While waiting,
+@var{mutex} is atomically unlocked (as with @code{unlock-mutex}) and
+is locked again when this function returns.  When @var{time} is given,
+it specifies a point in time where the waiting should be aborted.  It
+can be either a integer as returned by @code{current-time} or a pair
+as returned by @code{gettimeofday}.  When the waiting is aborted,
+@code{#f} is returned.  When the condition variable has in fact been
+signalled, @code{#t} is returned.  The mutex is re-locked in any case
+before @code{wait-condition-variable} returns.
+
+When a system async is activated for a thread that is blocked in a
+call to @code{wait-condition-variable}, the waiting is interrupted,
+the mutex is locked, and the async is executed.  When the async
+returns, the mutex is unlocked again and the waiting is resumed.  When
+the thread block while re-acquiring the mutex, execution of asyncs is
+blocked.
+@end deffn
+
+@deffn {Scheme Procedure} signal-condition-variable condvar
+@deffnx {C Function} scm_signal_condition_variable (condvar)
+Wake up one thread that is waiting for @var{condvar}.
+@end deffn
+
+@deffn {Scheme Procedure} broadcast-condition-variable condvar
+@deffnx {C Function} scm_broadcast_condition_variable (condvar)
+Wake up all threads that are waiting for @var{condvar}.
+@end deffn
+
+@sp 1
+The following are higher level operations on mutexes.  These are
+available from
+
+@example
+(use-modules (ice-9 threads))
+@end example
+
+@deffn macro with-mutex mutex [body@dots{}]
+Lock @var{mutex}, evaluate the @var{body} forms, then unlock
+@var{mutex}.  The return value is the return from the last @var{body}
+form.
+
+The lock, body and unlock form the branches of a @code{dynamic-wind}
+(@pxref{Dynamic Wind}), so @var{mutex} is automatically unlocked if an
+error or new continuation exits @var{body}, and is re-locked if
+@var{body} is re-entered by a captured continuation.
+@end deffn
+
+@deffn macro monitor body@dots{}
+Evaluate the @var{body} forms, with a mutex locked so only one thread
+can execute that code at any one time.  The return value is the return
+from the last @var{body} form.
+
+Each @code{monitor} form has its own private mutex and the locking and
+evaluation is as per @code{with-mutex} above.  A standard mutex
+(@code{make-mutex}) is used, which means @var{body} must not
+recursively re-enter the @code{monitor} form.
+
+The term ``monitor'' comes from operating system theory, where it
+means a particular bit of code managing access to some resource and
+which only ever executes on behalf of one process at any one time.
+@end deffn
+
+
+@node Blocking
+@subsection Blocking in Guile Mode
+
+A thread must not block outside of a libguile function while it is in
+guile mode.  The following functions can be used to temporily leave
+guile mode or to perform some common blocking operations in a supported
+way.
+
+@deftypefn {C Function} {void *} scm_without_guile (void *(*func) (void *), void *data)
+Leave guile mode, call @var{func} on @var{data}, enter guile mode and
+return the result of calling @var{func}.
+
+While a thread has left guile mode, it must not call any libguile
+functions except @code{scm_with_guile} or @code{scm_without_guile} and
+must not use any libguile macros.  Also, local variables of type
+@code{SCM} that are allocated while not in guile mode are not
+protected from the garbage collector.
+
+When used from non-guile mode, calling @code{scm_without_guile} is
+still allowed: it simply calls @var{func}.  In that way, you can leave
+guile mode without having to know whether the current thread is in
+guile mode or not.
+@end deftypefn
+
+@deftypefn {C Function} int scm_pthread_mutex_lock (pthread_mutex_t *mutex)
+Like @code{pthread_mutex_lock}, but leaves guile mode while waiting for
+the mutex.
+@end deftypefn
+
+@deftypefn  {C Function} int scm_pthread_cond_wait (pthread_cond_t *cond, pthread_mutex_t *mutex)
+@deftypefnx {C Function} int scm_pthread_cond_timedwait (pthread_cond_t *cond, pthread_mutex_t *mutex, struct timespec *abstime)
+Like @code{pthread_cond_wait} and @code{pthread_cond_timedwait}, but
+leaves guile mode while waiting for the condition variable.
+@end deftypefn
+
+@deftypefn {C Function} int scm_std_select (int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout)
+Like @code{select} but leaves guile mode while waiting.  Also, the
+delivery of a system async causes this function to be interrupted with
+error code @code{EINTR}.
+@end deftypefn
+
+@deftypefn {C Function} {unsigned int} scm_std_sleep ({unsigned int} seconds)
+Like @code{sleep}, but leaves guile mode while sleeping.  Also, the
+delivery of a system async causes this function to be interrupted.
+@end deftypefn
+
+@deftypefn {C Function} {unsigned long} scm_std_usleep ({unsigned long} usecs)
+Like @code{usleep}, but leaves guile mode while sleeping.  Also, the
+delivery of a system async causes this function to be interrupted.
+@end deftypefn
+
+
+@node Critical Sections
+@subsection Critical Sections
+
+@deffn  {C Macro} SCM_CRITICAL_SECTION_START
+@deffnx {C Macro} SCM_CRITICAL_SECTION_END
+These two macros can be used to delimit a critical section.
+Syntactically, they are both statements and need to be followed
+immediately by a semicolon.
+
+Executing @code{SCM_CRITICAL_SECTION_START} will lock a recursive
+mutex and block the executing of system asyncs.  Executing
+@code{SCM_CRITICAL_SECTION_END} will unblock the execution of system
+asyncs and unlock the mutex.  Thus, the code that executes between
+these two macros can only be executed in one thread at any one time
+and no system asyncs will run.  However, because the mutex is a
+recursive one, the code might still be reentered by the same thread.
+You must either allow for this or avoid it, both by careful coding.
+
+On the other hand, critical sections delimited with these macros can
+be nested since the mutex is recursive.
+
+You must make sure that for each @code{SCM_CRITICAL_SECTION_START},
+the corresponding @code{SCM_CRITICAL_SECTION_END} is always executed.
+This means that no non-local exit (such as a signalled error) might
+happen, for example.
+@end deffn
+
+@deftypefn {C Function} void scm_dynwind_critical_section (SCM mutex)
+Call @code{scm_dynwind_lock_mutex} on @var{mutex} and call
+@code{scm_dynwind_block_asyncs}.  When @var{mutex} is false, a recursive
+mutex provided by Guile is used instead.
+
+The effect of a call to @code{scm_dynwind_critical_section} is that
+the current dynwind context (@pxref{Dynamic Wind}) turns into a
+critical section.  Because of the locked mutex, no second thread can
+enter it concurrently and because of the blocked asyncs, no system
+async can reenter it from the current thread.
+
+When the current thread reenters the critical section anyway, the kind
+of @var{mutex} determines what happens: When @var{mutex} is recursive,
+the reentry is allowed.  When it is a normal mutex, an error is
+signalled.
+@end deftypefn
+
+
+@node Fluids and Dynamic States
+@subsection Fluids and Dynamic States
+
+@cindex fluids
+
+A @emph{fluid} is an object that can store one value per @emph{dynamic
+state}.  Each thread has a current dynamic state, and when accessing a
+fluid, this current dynamic state is used to provide the actual value.
+In this way, fluids can be used for thread local storage, but they are
+in fact more flexible: dynamic states are objects of their own and can
+be made current for more than one thread at the same time, or only be
+made current temporarily, for example.
+
+Fluids can also be used to simulate the desirable effects of
+dynamically scoped variables.  Dynamically scoped variables are useful
+when you want to set a variable to a value during some dynamic extent
+in the execution of your program and have them revert to their
+original value when the control flow is outside of this dynamic
+extent.  See the description of @code{with-fluids} below for details.
+
+New fluids are created with @code{make-fluid} and @code{fluid?} is
+used for testing whether an object is actually a fluid.  The values
+stored in a fluid can be accessed with @code{fluid-ref} and
+@code{fluid-set!}.
+
+@deffn {Scheme Procedure} make-fluid
+@deffnx {C Function} scm_make_fluid ()
+Return a newly created fluid.
+Fluids are objects that can hold one
+value per dynamic state.  That is, modifications to this value are
+only visible to code that executes with the same dynamic state as
+the modifying code.  When a new dynamic state is constructed, it
+inherits the values from its parent.  Because each thread normally executes
+with its own dynamic state, you can use fluids for thread local storage.
+@end deffn
+
+@deffn {Scheme Procedure} fluid? obj
+@deffnx {C Function} scm_fluid_p (obj)
+Return @code{#t} iff @var{obj} is a fluid; otherwise, return
+@code{#f}.
+@end deffn
+
+@deffn {Scheme Procedure} fluid-ref fluid
+@deffnx {C Function} scm_fluid_ref (fluid)
+Return the value associated with @var{fluid} in the current
+dynamic root.  If @var{fluid} has not been set, then return
+@code{#f}.
+@end deffn
+
+@deffn {Scheme Procedure} fluid-set! fluid value
+@deffnx {C Function} scm_fluid_set_x (fluid, value)
+Set the value associated with @var{fluid} in the current dynamic root.
+@end deffn
+
+@code{with-fluids*} temporarily changes the values of one or more fluids,
+so that the given procedure and each procedure called by it access the
+given values.  After the procedure returns, the old values are restored.
+
+@deffn {Scheme Procedure} with-fluid* fluid value thunk
+@deffnx {C Function} scm_with_fluid (fluid, value, thunk)
+Set @var{fluid} to @var{value} temporarily, and call @var{thunk}.
+@var{thunk} must be a procedure with no argument.
+@end deffn
+
+@deffn {Scheme Procedure} with-fluids* fluids values thunk
+@deffnx {C Function} scm_with_fluids (fluids, values, thunk)
+Set @var{fluids} to @var{values} temporary, and call @var{thunk}.
+@var{fluids} must be a list of fluids and @var{values} must be the
+same number of their values to be applied.  Each substitution is done
+in the order given.  @var{thunk} must be a procedure with no argument.
+it is called inside a @code{dynamic-wind} and the fluids are
+set/restored when control enter or leaves the established dynamic
+extent.
+@end deffn
+
+@deffn {Scheme Macro} with-fluids ((fluid value) ...) body...
+Execute @var{body...} while each @var{fluid} is set to the
+corresponding @var{value}.  Both @var{fluid} and @var{value} are
+evaluated and @var{fluid} must yield a fluid.  @var{body...} is
+executed inside a @code{dynamic-wind} and the fluids are set/restored
+when control enter or leaves the established dynamic extent.
+@end deffn
+
+@deftypefn {C Function} SCM scm_c_with_fluids (SCM fluids, SCM vals, SCM (*cproc)(void *), void *data)
+@deftypefnx {C Function} SCM scm_c_with_fluid (SCM fluid, SCM val, SCM (*cproc)(void *), void *data)
+The function @code{scm_c_with_fluids} is like @code{scm_with_fluids}
+except that it takes a C function to call instead of a Scheme thunk.
+
+The function @code{scm_c_with_fluid} is similar but only allows one
+fluid to be set instead of a list.
+@end deftypefn
+
+@deftypefn {C Function} void scm_dynwind_fluid (SCM fluid, SCM val)
+This function must be used inside a pair of calls to
+@code{scm_dynwind_begin} and @code{scm_dynwind_end} (@pxref{Dynamic
+Wind}).  During the dynwind context, the fluid @var{fluid} is set to
+@var{val}.
+
+More precisely, the value of the fluid is swapped with a `backup'
+value whenever the dynwind context is entered or left.  The backup
+value is initialized with the @var{val} argument.
+@end deftypefn
+
+@deffn {Scheme Procedure} make-dynamic-state [parent]
+@deffnx {C Function} scm_make_dynamic_state (parent)
+Return a copy of the dynamic state object @var{parent}
+or of the current dynamic state when @var{parent} is omitted.
+@end deffn
+
+@deffn {Scheme Procedure} dynamic-state? obj
+@deffnx {C Function} scm_dynamic_state_p (obj)
+Return @code{#t} if @var{obj} is a dynamic state object;
+return @code{#f} otherwise.
+@end deffn
+
+@deftypefn {C Procedure} int scm_is_dynamic_state (SCM obj)
+Return non-zero if @var{obj} is a dynamic state object;
+return zero otherwise.
+@end deftypefn
+
+@deffn {Scheme Procedure} current-dynamic-state
+@deffnx {C Function} scm_current_dynamic_state ()
+Return the current dynamic state object.
+@end deffn
+
+@deffn {Scheme Procedure} set-current-dynamic-state state
+@deffnx {C Function} scm_set_current_dynamic_state (state)
+Set the current dynamic state object to @var{state}
+and return the previous current dynamic state object.
+@end deffn
+
+@deffn {Scheme Procedure} with-dynamic-state state proc
+@deffnx {C Function} scm_with_dynamic_state (state, proc)
+Call @var{proc} while @var{state} is the current dynamic
+state object.
+@end deffn
+
+@deftypefn {C Procedure} void scm_dynwind_current_dynamic_state (SCM state)
+Set the current dynamic state to @var{state} for the current dynwind
+context.
+@end deftypefn
+
+@deftypefn {C Procedure} {void *} scm_c_with_dynamic_state (SCM state, void *(*func)(void *), void *data)
+Like @code{scm_with_dynamic_state}, but call @var{func} with
+@var{data}.
+@end deftypefn
+
+@c @node Futures
+@c @subsection Futures
+@c @cindex futures
+
+@c -- Futures are disabled for the time being, see futures.h for an
+@c -- explanation.
+
+@c Futures are a convenient way to run a calculation in a new thread, and
+@c only wait for the result when it's actually needed.
+
+@c Futures are similar to promises (@pxref{Delayed Evaluation}), in that
+@c they allow mainline code to continue immediately.  But @code{delay}
+@c doesn't evaluate at all until forced, whereas @code{future} starts
+@c immediately in a new thread.
+
+@c @deffn {syntax} future expr
+@c Begin evaluating @var{expr} in a new thread, and return a ``future''
+@c object representing the calculation.
+@c @end deffn
+
+@c @deffn {Scheme Procedure} make-future thunk
+@c @deffnx {C Function} scm_make_future (thunk)
+@c Begin evaluating the call @code{(@var{thunk})} in a new thread, and
+@c return a ``future'' object representing the calculation.
+@c @end deffn
+
+@c @deffn {Scheme Procedure} future-ref f
+@c @deffnx {C Function} scm_future_ref (f)
+@c Return the value computed by the future @var{f}.  If @var{f} has not
+@c yet finished executing then wait for it to do so.
+@c @end deffn
+
+
+@node Parallel Forms
+@subsection Parallel forms
+@cindex parallel forms
+
+The functions described in this section are available from
+
+@example
+(use-modules (ice-9 threads))
+@end example
+
+@deffn syntax parallel expr1 @dots{} exprN
+Evaluate each @var{expr} expression in parallel, each in its own thread.
+Return the results as a set of @var{N} multiple values
+(@pxref{Multiple Values}).
+@end deffn
+
+@deffn syntax letpar ((var1 expr1) @dots{} (varN exprN)) body@dots{}
+Evaluate each @var{expr} in parallel, each in its own thread, then bind
+the results to the corresponding @var{var} variables and evaluate
+@var{body}.
+
+@code{letpar} is like @code{let} (@pxref{Local Bindings}), but all the
+expressions for the bindings are evaluated in parallel.
+@end deffn
+
+@deffn {Scheme Procedure} par-map proc lst1 @dots{} lstN
+@deffnx {Scheme Procedure} par-for-each proc lst1 @dots{} lstN
+Call @var{proc} on the elements of the given lists.  @code{par-map}
+returns a list comprising the return values from @var{proc}.
+@code{par-for-each} returns an unspecified value, but waits for all
+calls to complete.
+
+The @var{proc} calls are @code{(@var{proc} @var{elem1} @dots{}
+@var{elemN})}, where each @var{elem} is from the corresponding
+@var{lst}.  Each @var{lst} must be the same length.  The calls are
+made in parallel, each in its own thread.
+
+These functions are like @code{map} and @code{for-each} (@pxref{List
+Mapping}), but make their @var{proc} calls in parallel.
+@end deffn
+
+@deffn {Scheme Procedure} n-par-map n proc lst1 @dots{} lstN
+@deffnx {Scheme Procedure} n-par-for-each n proc lst1 @dots{} lstN
+Call @var{proc} on the elements of the given lists, in the same way as
+@code{par-map} and @code{par-for-each} above, but use no more than
+@var{n} threads at any one time.  The order in which calls are
+initiated within that threads limit is unspecified.
+
+These functions are good for controlling resource consumption if
+@var{proc} calls might be costly, or if there are many to be made.  On
+a dual-CPU system for instance @math{@var{n}=4} might be enough to
+keep the CPUs utilized, and not consume too much memory.
+@end deffn
+
+@deffn {Scheme Procedure} n-for-each-par-map n sproc pproc lst1 @dots{} lstN
+Apply @var{pproc} to the elements of the given lists, and apply
+@var{sproc} to each result returned by @var{pproc}.  The final return
+value is unspecified, but all calls will have been completed before
+returning.
+
+The calls made are @code{(@var{sproc} (@var{pproc} @var{elem1} @dots{}
+@var{elemN}))}, where each @var{elem} is from the corresponding
+@var{lst}.  Each @var{lst} must have the same number of elements.
+
+The @var{pproc} calls are made in parallel, in separate threads.  No more
+than @var{n} threads are used at any one time.  The order in which
+@var{pproc} calls are initiated within that limit is unspecified.
+
+The @var{sproc} calls are made serially, in list element order, one at
+a time.  @var{pproc} calls on later elements may execute in parallel
+with the @var{sproc} calls.  Exactly which thread makes each
+@var{sproc} call is unspecified.
+
+This function is designed for individual calculations that can be done
+in parallel, but with results needing to be handled serially, for
+instance to write them to a file.  The @var{n} limit on threads
+controls system resource usage when there are many calculations or
+when they might be costly.
+
+It will be seen that @code{n-for-each-par-map} is like a combination
+of @code{n-par-map} and @code{for-each},
+
+@example
+(for-each sproc (n-par-map n pproc lst1 ... lstN))
+@end example
+
+@noindent
+But the actual implementation is more efficient since each @var{sproc}
+call, in turn, can be initiated once the relevant @var{pproc} call has
+completed, it doesn't need to wait for all to finish.
+@end deffn
+
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

@@ -1,0 +1,5 @@
+(define (callee continuation)
+  (continuation #t))
+
+(benchmark "call/cc" 300
+  (call-with-current-continuation callee))

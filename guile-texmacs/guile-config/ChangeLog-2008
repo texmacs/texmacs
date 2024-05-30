@@ -1,0 +1,229 @@
+2008-06-02  Ludovic Courtès  <ludo@gnu.org>
+
+	* guile-config.in (build-link): Show `-L' before `-lguile'.
+	Reported by Peter O'Gorman <pogma@thewrittenword.com>.
+
+2008-01-22  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* COPYING: Removed.
+
+2007-01-04  Kevin Ryde  <user42@zip.com.au>
+
+	* Makefile.am (guile-config): Use "|" as the sed delimiter, for the
+	benefit of DOS systems where $(bindir) might include a drive letter
+	like "c:".  Reported by Cesar Strauss.
+
+2006-09-19  Rob Browning  <rlb@defaultvalue.org>
+
+	* guile-config.in (build-link): Restore the removal of "/usr/lib"
+	(in addition to "/usr/lib/" from any -L arguments).
+
+2005-02-10  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* guile-config.in (build-link): Replaced -lguile-ltdl with -lltdl.
+
+2004-10-08  Han-Wen Nienhuys  <hanwen@xs4all.nl>
+
+	* guile-config.in: remove display-separated.
+	(build-link): cleanup.
+	(build-compile): remove space between -I and path.
+
+2004-09-24  Marius Vollmer  <mvo@zagadka.de>
+
+	* guile-config.in (build-link, build-compile): Include CFLAGS in
+	output.  This is needed to get "-pthread" into the builds, for
+	example.
+
+	* Makefile.am (EXTRA_DIST): Removed qthreads.m4.
+
+2003-04-05  Marius Vollmer  <mvo@zagadka.de>
+
+	* Changed license terms to the plain LGPL thru-out.
+
+2002-10-14  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* guile-config.in (build-link): Include "-lguile-ltdl" in link
+	flags.
+
+2002-07-17  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* qthreads.m4: Added configuration for ARM.
+
+2002-04-26  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* Makefile.am (EXTRA_DIST): Added qthreads.m4.
+	* qthreads.m4: Moved here from top directory.
+
+2002-03-12  Rob Browning  <rlb@defaultvalue.org>
+
+	* guile-config.in (build-link): don't output -L/usr/lib.
+	(build-compile): don't output -I/usr/include.
+
+2002-03-03  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* guile.m4 (GUILE_PROGS): In docstring, change `are' to `is'.
+
+2002-01-02  Thien-Thi Nguyen  <ttn@glug.org>
+
+	* guile.m4: Rewrite comments in texi.
+
+	(GUILE_FLAGS): Rewrite.
+	Thanks to Alexandre Duret-Lutz.
+
+2001-12-28  Thien-Thi Nguyen  <ttn@glug.org>
+
+	* guile.m4 (GUILE_PROGS, GUILE_SITE_DIR, GUILE_CHECK,
+	GUILE_MODULE_EXPORTS, GUILE_MODULE_REQUIRED_EXPORTS): New macros.
+
+	(GUILE_MODULE_CHECK): Renamed from AC_GUILE_MODULE_CHECK.
+	Rewritten to expect `description' as a present-tense verb phrase.
+
+	(GUILE_MODULE_AVAILABLE, GUILE_MODULE_REQUIRED): Renamed likewise.
+
+2001-12-28  Thien-Thi Nguyen  <ttn@glug.org>
+
+	* guile.m4: Update copyright.
+	Add index in header comments.
+
+	(AC_GUILE_MODULE_CHECK, AC_GUILE_MODULE_AVAILABLE,
+	AC_GUILE_MODULE_REQUIRED): New macros.
+
+2001-07-18  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* guile-config.in, Makefile.am: Updated copyright notice.
+
+2001-05-28  Gary Houston  <ghouston@arglist.com>
+
+	* Makefile.am: let guile-config depend on libguile/libpath.h,
+	so that it will be rebuilt if configure --prefix changes.
+
+2001-03-07  Mikael Djurfeldt  <mdj@linnaeus.mit.edu>
+
+	* guile-config.in (build-link): Really reverted the change of
+	2001-03-05.
+
+2001-03-06  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* guile-config.in (build-link): Reverted the previous patch.
+
+2001-03-05  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* guile-config.in (build-link): Fixed duplicate binding bug
+	reported by Ralf Mattes.
+
+2000-11-28  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* guile-config.in (build-link):  Use substring instead of
+	make-shared-substring.
+
+2000-11-01  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* guile-config.in (display-line-port):  Make sure all output is
+	sent to the given port.  Thanks to I. N. Golubev for the patch.
+
+2000-01-12  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* Makefile.am (EXTRA_DIST): Added "guile.m4".
+
+1999-10-05  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* guile.m4: Moved here from top-level directory; see the ChangeLog
+	entry there.
+	* Makefile.am (aclocaldir, aclocal_DATA): New variables, ensuring
+	that guile.m4 gets installed.
+
+	* Makefile.in: Deleted from CVS repository.  Run the autogen.sh
+	script to create generated files like this one.
+
+1999-09-11  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* Makefile.in: Regenerated.
+
+1998-07-29  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* guile-config.in (build-link): Correct non-RnRS usage of internal
+	defines.
+
+1999-04-17  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* Makefile.in: Regenerated.
+
+1998-10-19  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* COPYING: New file.
+	* Makefile.in: Regenerated.
+
+1998-10-09  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* guile-config.in: Add copyright notice.
+
+1998-10-07  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* guile-config.in (build-link): It isn't.  Revert the change.
+
+	* guile-config.in (build-link): Include a -R flag in the output
+	from link.  Not sure if this is the right thing to do.
+
+1998-10-05  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* guile-config.in (build-compile, help-compile, usage-compile):
+	New functions to implement new subcommand.
+
+	* guile-config.in: Redo the help system, so that each subcommand
+	defines its own usage text, as well as its help text.
+
+	* guile-config.in (build-link): Include a -L option in the output
+	from `guile-config link', indicating where libguile was installed.
+	(Thanks to Greg Troxel.)
+
+1998-10-03  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* guile-config.in: Don't import ice-9 regex; that's not available
+	on all systems.  Maybe someday we'll have our own...
+	(set-program-name!): Use basename.
+	(build-link): Use basename and stock string functions, instead of
+	string-match.
+	(Bug report from Greg Troxel --- thanks!)
+
+	* Directory renamed to guile-config from build.
+	* guile-config.in: Renamed from build-guile.in, for consistency
+ 	with the analogous script for GTK, called gtk-config.
+	* Makefile.am, .cvsignore: References to `build-guile' replaced
+	with `guile-config'.
+
+1998-07-29  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* Makefile.in: Regenerated using the last public version of
+	automake, not the hacked Cygnus version.
+
+1998-07-28  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* Makefile.in: Regenerated, after removing Totoro kludge.
+
+1998-07-26  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* Makefile.in: Rebuilt, for config changes in parent dir.
+
+1998-01-05  Tim Pierce  <twp@skepsis.com>
+
+	* .cvsignore: New file.
+
+Mon Oct  6 11:45:59 1997  Jim Blandy  <jimb@totoro.red-bean.com>
+
+	* build-guile.in: Try to return an appropriate exit status.
+
+	* build-guile.in: Rearranged to use a table of subcommands, and
+ 	include per-subcommand help.
+
+	* build-guile.in: New "info" subcommand, for easy access to Guile
+ 	build variables.
+
+Mon Sep 29 23:53:14 1997  Jim Blandy  <jimb@totoro.red-bean.com>
+
+	* Makefile.in: Regenerated with automake 1.2c.
+
+Sat Sep 27 23:15:26 1997  Jim Blandy  <jimb@totoro.red-bean.com>
+
+	* New directory --- the build-guile command, intended to help
+	people build Guile-based applications.
+	* Makefile.am, Makefile.in, build-guile.in: New files.

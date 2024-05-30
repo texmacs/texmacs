@@ -1,0 +1,42 @@
+#!/bin/sh
+exec guile -q -s "$0" "$@"
+!#
+
+(define (test-system-cmd)
+  (if (not (boolean? (system)))
+      (begin
+        (simple-format
+         #t
+         "test-system-cmds: (system) did not return a boolean\n")
+        (exit 1)))
+  
+  (let ((rs (status:exit-val (system "guile -c '(exit 42)'"))))
+    (if (not (= 42 rs))
+        (begin
+          (simple-format
+           #t
+           "test-system-cmds: system exit status was ~S rather than 42\n"
+           rs)
+          (exit 1)))))
+
+(define (test-system*-cmd)
+  (let ((rs (status:exit-val (system* "guile" "-c" "(exit 42)"))))
+    (if (not (= 42 rs))
+        (begin
+          (simple-format
+           #t
+           "test-system-cmds: system* exit status was ~S rather than 42\n"
+           rs)
+          (exit 1)))))
+
+(if (defined? 'system)
+    (test-system-cmd))
+
+(if (defined? 'system*)
+    (test-system*-cmd))
+     
+(exit 0)
+
+;; Local Variables:
+;; mode: scheme
+;; End:

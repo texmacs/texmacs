@@ -1,0 +1,85 @@
+2008-04-17  Ludovic Courtès  <ludo@gnu.org>
+
+	* Makefile.am (SCM_BENCHMARKS): Add `benchmarks/read.bm'.
+	* benchmarks/read.bm: New file.
+
+2008-01-22  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* COPYING: Removed.
+
+2006-05-02  Marius Vollmer  <mvo@zagadka.de>
+
+	* Makefile.am (SCM_BENCHMARKS_DIRS, dist-hook): Removed, they are
+	no longer needed and lead to unclean tarballs.
+
+2004-01-23  Dirk Herrmann  <dirk@dirk-herrmanns-seiten.de>
+
+	* lib.scm: Extracted '/i' to toplevel.  Print the guile version
+	number before the benchmarks are run.  Print the framework-time
+	per iteration as an inexact number.
+
+2004-01-06  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* lib.scm (print-result, print-user-result): Handle exact
+	fractions.
+
+2003-05-27  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* lib.scm: Fix some typos in the documentation.
+
+2002-09-14  Rob Browning  <rlb@defaultvalue.org>
+
+	* .cvsignore: new file.
+
+2002-07-26  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* Makefile.am (SCM_BENCHMARKS): List the real benchmarks, not foo
+	and bar.
+	(SCM_BENCHMARKS_DIRS): Uncommented, with an empty value.
+	(dist-hook): Use quotes so that an empty SCM_BENCHMARKS_DIRS works.
+	
+2002-07-21  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* lib.scm (print-result, print-user-result): Changed the
+	reporter's outputs to use symbols rather than strings to document
+	the individual values.  Thanks to Neil Jerram for the suggestion.
+
+2002-07-21  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* benchmarks/0-reference.bm:  Added as a reference benchmark to be
+	used to calibrate iteration counts.
+
+	* lib.scm: Added documentation.  Added some initialization
+	messages.
+
+	(benchmark-time-base, benchmark-total-time, benchmark-user-time,
+	benchmark-system-time, benchmark-frame-time, benchmark-core-time,
+	benchmark-user-time\interpreter, benchmark-core-time\interpreter):
+	Exported.
+
+	(benchmark-time-base, time-base): Renamed time-base to
+	benchmark-time-base and introduced new time-base as a short-cut.
+
+	(total-time, benchmark-total-time, user-time, benchmark-user-time,
+	system-time, benchmark-system-time, frame-time,
+	benchmark-frame-time, benchmark-time, benchmark-core-time,
+	user-time\interpreter, benchmark-user-time\interpreter,
+	benchmark-time\interpreter, benchmark-core-time\interpreter,
+	print-result, print-user-result):  Renamed <foo>-time to
+	benchmark-<foo>-time.  Exceptions: benchmark-time and
+	benchmark-time\interpreter were renamed to benchmark-core-time and
+	benchmark-core-time\interpreter, respectively.
+
+2002-07-20  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* COPYING, README, Makefile.am, lib.scm, guile-benchmark:  Copied
+	from the test-suite directory, renamed and adapted for use with
+	benchmarks.
+
+	* benchmarks/logand.bm, benchmarks/continuations.bm,
+	benchmarks/if.bm:  Added as initial fairly stupid examples for
+	benchmarks.
+
+2002-07-20  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* Log begins.

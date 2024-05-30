@@ -1,0 +1,186 @@
+;;;; ramap.test --- test array mapping functions -*- scheme -*-
+;;;; 
+;;;; Copyright (C) 2004, 2005, 2006 Free Software Foundation, Inc.
+;;;;
+;;;; This library is free software; you can redistribute it and/or
+;;;; modify it under the terms of the GNU Lesser General Public
+;;;; License as published by the Free Software Foundation; either
+;;;; version 2.1 of the License, or (at your option) any later version.
+;;;; 
+;;;; This library is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;;;; Lesser General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU Lesser General Public
+;;;; License along with this library; if not, write to the Free Software
+;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-ramap)
+  #:use-module (test-suite lib))
+
+;;;
+;;; array-index-map!
+;;;
+
+(with-test-prefix "array-index-map!"
+
+  (pass-if (let ((nlst '()))
+	     (array-index-map! (make-array #f '(1 1))
+			       (lambda (n)
+				 (set! nlst (cons n nlst))))
+	     (equal? nlst '(1)))))
+
+;;;
+;;; array-map!
+;;;
+
+(with-test-prefix "array-map!"
+
+  (pass-if-exception "no args" exception:wrong-num-args
+    (array-map!))
+
+  (pass-if-exception "one arg" exception:wrong-num-args
+    (array-map! (make-array #f 5)))
+
+  (with-test-prefix "no sources"
+
+    (pass-if "closure 0"
+      (array-map! (make-array #f 5) (lambda () #f))
+      #t)
+
+    (pass-if-exception "closure 1" exception:wrong-num-args
+      (array-map! (make-array #f 5) (lambda (x) #f)))
+
+    (pass-if-exception "closure 2" exception:wrong-num-args
+      (array-map! (make-array #f 5) (lambda (x y) #f)))
+
+    (pass-if-exception "subr_1" exception:wrong-num-args
+      (array-map! (make-array #f 5) length))
+
+    (pass-if-exception "subr_2" exception:wrong-num-args
+      (array-map! (make-array #f 5) logtest))
+
+    (pass-if-exception "subr_2o" exception:wrong-num-args
+      (array-map! (make-array #f 5) number->string))
+
+    (pass-if-exception "dsubr" exception:wrong-num-args
+      (array-map! (make-array #f 5) $sqrt))
+
+    (pass-if "rpsubr"
+      (let ((a (make-array 'foo 5)))
+	(array-map! a =)
+	(equal? a (make-array #t 5))))
+
+    (pass-if "asubr"
+      (let ((a (make-array 'foo 5)))
+	(array-map! a +)
+	(equal? a (make-array 0 5))))
+
+    ;; in Guile 1.6.4 and earlier this resulted in a segv
+    (pass-if "noop"
+      (array-map! (make-array #f 5) noop)
+      #t))
+
+  (with-test-prefix "one source"
+
+    (pass-if-exception "closure 0" exception:wrong-num-args
+      (array-map! (make-array #f 5) (lambda () #f)
+		  (make-array #f 5)))
+
+    (pass-if "closure 1"
+      (let ((a (make-array #f 5)))
+	(array-map! a (lambda (x) 'foo) (make-array #f 5))
+	(equal? a (make-array 'foo 5))))
+
+    (pass-if-exception "closure 2" exception:wrong-num-args
+      (array-map! (make-array #f 5) (lambda (x y) #f)
+		  (make-array #f 5)))
+
+    (pass-if "subr_1"
+      (let ((a (make-array #f 5)))
+	(array-map! a length (make-array '(x y z) 5))
+	(equal? a (make-array 3 5))))
+
+    (pass-if-exception "subr_2" exception:wrong-num-args
+      (array-map! (make-array #f 5) logtest
+		  (make-array 999 5)))
+
+    (pass-if "subr_2o"
+      (let ((a (make-array #f 5)))
+	(array-map! a number->string (make-array 99 5))
+	(equal? a (make-array "99" 5))))
+
+    (pass-if "dsubr"
+      (let ((a (make-array #f 5)))
+	(array-map! a $sqrt (make-array 16.0 5))
+	(equal? a (make-array 4.0 5))))
+
+    (pass-if "rpsubr"
+      (let ((a (make-array 'foo 5)))
+	(array-map! a = (make-array 0 5))
+	(equal? a (make-array #t 5))))
+
+    (pass-if "asubr"
+      (let ((a (make-array 'foo 5)))
+	(array-map! a - (make-array 99 5))
+	(equal? a (make-array -99 5))))
+
+    ;; in Guile 1.6.5 and 1.6.6 this was an error
+    (pass-if "1+"
+      (let ((a (make-array #f 5)))
+	(array-map! a 1+ (make-array 123 5))
+	(equal? a (make-array 124 5)))))
+
+  (with-test-prefix "two sources"
+
+    (pass-if-exception "closure 0" exception:wrong-num-args
+      (array-map! (make-array #f 5) (lambda () #f)
+		  (make-array #f 5) (make-array #f 5)))
+
+    (pass-if-exception "closure 1" exception:wrong-num-args
+      (array-map! (make-array #f 5) (lambda (x) #f)
+		  (make-array #f 5) (make-array #f 5)))
+
+    (pass-if "closure 2"
+      (let ((a (make-array #f 5)))
+	(array-map! a (lambda (x y) 'foo)
+		    (make-array #f 5) (make-array #f 5))
+	(equal? a (make-array 'foo 5))))
+
+    (pass-if-exception "subr_1" exception:wrong-type-arg
+      (array-map! (make-array #f 5) length
+		  (make-array #f 5) (make-array #f 5)))
+
+    (pass-if "subr_2"
+      (let ((a (make-array 'foo 5)))
+	(array-map! a logtest
+		    (make-array 999 5) (make-array 999 5))
+	(equal? a (make-array #t 5))))
+
+    (pass-if "subr_2o"
+      (let ((a (make-array #f 5)))
+	(array-map! a number->string
+		    (make-array 32 5) (make-array 16 5))
+	(equal? a (make-array "20" 5))))
+
+    (pass-if "dsubr"
+      (let ((a (make-array #f 5)))
+	(array-map! a $sqrt
+		    (make-array 16.0 5) (make-array 16.0 5))
+	(equal? a (make-array 4.0 5))))
+
+    (pass-if "rpsubr"
+      (let ((a (make-array 'foo 5)))
+	(array-map! a = (make-array 99 5) (make-array 77 5))
+	(equal? a (make-array #f 5))))
+
+    (pass-if "asubr"
+      (let ((a (make-array 'foo 5)))
+	(array-map! a - (make-array 99 5) (make-array 11 5))
+	(equal? a (make-array 88 5))))
+
+    (pass-if "+"
+      (let ((a (make-array #f 4)))
+	(array-map! a + #(1 2 3 4) #(5 6 7 8))
+	(equal? a #(6 8 10 12))))))

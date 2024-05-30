@@ -1,0 +1,757 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2008
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Options and Config
+@section Configuration, Features and Runtime Options
+
+Why is my Guile different from your Guile?  There are three kinds of
+possible variation:
+
+@itemize @bullet
+@item
+build differences --- different versions of the Guile source code,
+installation directories, configuration flags that control pieces of
+functionality being included or left out, etc.
+
+@item
+differences in dynamically loaded code --- behaviour and features
+provided by modules that can be dynamically loaded into a running Guile
+
+@item
+different runtime options --- some of the options that are provided for
+controlling Guile's behaviour may be set differently.
+@end itemize
+
+Guile provides ``introspective'' variables and procedures to query all
+of these possible variations at runtime.  For runtime options, it also
+provides procedures to change the settings of options and to obtain
+documentation on what the options mean.
+
+@menu
+* Build Config::                Build and installation configuration.
+* Feature Tracking::            Available features in the Guile process.
+* Runtime Options::             Controlling Guile's runtime behaviour.
+@end menu
+
+
+@node Build Config
+@subsection Configuration, Build and Installation
+
+The following procedures and variables provide information about how
+Guile was configured, built and installed on your system.
+
+@deffn {Scheme Procedure} version
+@deffnx {Scheme Procedure} effective-version
+@deffnx {Scheme Procedure} major-version
+@deffnx {Scheme Procedure} minor-version
+@deffnx {Scheme Procedure} micro-version
+@deffnx {C Function} scm_version ()
+@deffnx {C Function} scm_effective_version ()
+@deffnx {C Function} scm_major_version ()
+@deffnx {C Function} scm_minor_version ()
+@deffnx {C Function} scm_micro_version ()
+Return a string describing Guile's full version number, effective
+version number, major, minor or micro version number, respectively.
+The @code{effective-version} function returns the version name that
+should remain unchanged during a stable series.  Currently that means
+that it omits the micro version.  The effective version should be used
+for items like the versioned share directory name
+i.e. @file{/usr/share/guile/1.6/}
+
+@lisp
+(version) @result{} "1.6.0"
+(effective-version) @result{} "1.6"
+(major-version) @result{} "1"
+(minor-version) @result{} "6"
+(micro-version) @result{} "0"
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} %package-data-dir
+@deffnx {C Function} scm_sys_package_data_dir ()
+Return the name of the directory under which Guile Scheme files in
+general are stored.  On Unix-like systems, this is usually
+@file{/usr/local/share/guile} or @file{/usr/share/guile}.
+@end deffn
+
+@deffn {Scheme Procedure} %library-dir
+@deffnx {C Function} scm_sys_library_dir ()
+Return the name of the directory where the Guile Scheme files that
+belong to the core Guile installation (as opposed to files from a 3rd
+party package) are installed.  On Unix-like systems, this is usually
+@file{/usr/local/share/guile/<GUILE_EFFECTIVE_VERSION>} or
+@file{/usr/share/guile/<GUILE_EFFECTIVE_VERSION>}, for example:
+@file{/usr/local/share/guile/1.6}.
+@end deffn
+
+@deffn {Scheme Procedure} %site-dir
+@deffnx {C Function} scm_sys_site_dir ()
+Return the name of the directory where Guile Scheme files specific to
+your site should be installed.  On Unix-like systems, this is usually
+@file{/usr/local/share/guile/site} or @file{/usr/share/guile/site}.
+@end deffn
+
+@cindex GUILE_LOAD_PATH
+@defvar %load-path
+List of directories which should be searched for Scheme modules and
+libraries.  @code{%load-path} is initialized when Guile starts up to
+@code{(list (%site-dir) (%library-dir) (%package-data-dir))},
+prepended with the contents of the GUILE_LOAD_PATH environment variable,
+if it is set.
+@end defvar
+
+@deffn {Scheme Procedure} parse-path path [tail]
+@deffnx {C Function} scm_parse_path (path, tail)
+Parse @var{path}, which is expected to be a colon-separated
+string, into a list and return the resulting list with
+@var{tail} appended. If @var{path} is @code{#f}, @var{tail}
+is returned.
+@end deffn
+
+@deffn {Scheme Procedure} search-path path filename [extensions]
+@deffnx {C Function} scm_search_path (path, filename, extensions)
+Search @var{path} for a directory containing a file named
+@var{filename}. The file must be readable, and not a directory.
+If we find one, return its full filename; otherwise, return
+@code{#f}.  If @var{filename} is absolute, return it unchanged.
+If given, @var{extensions} is a list of strings; for each
+directory in @var{path}, we search for @var{filename}
+concatenated with each @var{extension}.
+@end deffn
+
+@defvar %guile-build-info
+Alist of information collected during the building of a particular
+Guile.  Entries can be grouped into one of several categories:
+directories, env vars, and versioning info.
+
+Briefly, here are the keys in @code{%guile-build-info}, by group:
+
+@cindex @code{srcdir}
+@cindex @code{top_srcdir}
+@cindex @code{prefix}
+@cindex @code{exec_prefix}
+@cindex @code{bindir}
+@cindex @code{sbindir}
+@cindex @code{libexecdir}
+@cindex @code{datadir}
+@cindex @code{sysconfdir}
+@cindex @code{sharedstatedir}
+@cindex @code{localstatedir}
+@cindex @code{libdir}
+@cindex @code{infodir}
+@cindex @code{mandir}
+@cindex @code{includedir}
+@cindex @code{pkgdatadir}
+@cindex @code{pkglibdir}
+@cindex @code{pkgincludedir}
+@table @asis
+@item   directories
+srcdir, top_srcdir, prefix, exec_prefix, bindir, sbindir, libexecdir,
+datadir, sysconfdir, sharedstatedir, localstatedir, libdir, infodir,
+mandir, includedir, pkgdatadir, pkglibdir, pkgincludedir
+@cindex @code{LIBS}
+@item   env vars
+LIBS
+@cindex @code{guileversion}
+@cindex @code{libguileinterface}
+@cindex @code{buildstamp}
+@item   versioning info
+guileversion, libguileinterface, buildstamp
+@end table
+
+Values are all strings.  The value for @code{LIBS} is typically found
+also as a part of "guile-config link" output.  The value for
+@code{guileversion} has form X.Y.Z, and should be the same as returned
+by @code{(version)}.  The value for @code{libguileinterface} is
+libtool compatible and has form CURRENT:REVISION:AGE
+(@pxref{Versioning,, Library interface versions, libtool, GNU
+Libtool}).  The value for @code{buildstamp} is the output of the
+date(1) command.
+
+In the source, @code{%guile-build-info} is initialized from
+libguile/libpath.h, which is completely generated, so deleting this file
+before a build guarantees up-to-date values for that build.
+@end defvar
+
+
+@node Feature Tracking
+@subsection Feature Tracking
+
+Guile has a Scheme level variable @code{*features*} that keeps track to
+some extent of the features that are available in a running Guile.
+@code{*features*} is a list of symbols, for example @code{threads}, each
+of which describes a feature of the running Guile process.
+
+@defvar *features*
+A list of symbols describing available features of the Guile process.
+@end defvar
+
+You shouldn't modify the @code{*features*} variable directly using
+@code{set!}.  Instead, see the procedures that are provided for this
+purpose in the following subsection.
+
+@menu
+* Feature Manipulation::        Checking for and advertising features.
+* Common Feature Symbols::      Commonly available features.
+@end menu
+
+
+@node Feature Manipulation
+@subsubsection Feature Manipulation
+
+To check whether a particular feature is available, use the
+@code{provided?} procedure:
+
+@deffn {Scheme Procedure} provided? feature
+@deffnx {Deprecated Scheme Procedure} feature? feature
+Return @code{#t} if the specified @var{feature} is available, otherwise
+@code{#f}.
+@end deffn
+
+To advertise a feature from your own Scheme code, you can use the
+@code{provide} procedure:
+
+@deffn {Scheme Procedure} provide feature
+Add @var{feature} to the list of available features in this Guile
+process.
+@end deffn
+
+For C code, the equivalent function takes its feature name as a
+@code{char *} argument for convenience:
+
+@deftypefn {C Function} void scm_add_feature (const char *str)
+Add a symbol with name @var{str} to the list of available features in
+this Guile process.
+@end deftypefn
+
+
+@node Common Feature Symbols
+@subsubsection Common Feature Symbols
+
+In general, a particular feature may be available for one of two
+reasons.  Either because the Guile library was configured and compiled
+with that feature enabled --- i.e. the feature is built into the library
+on your system.  Or because some C or Scheme code that was dynamically
+loaded by Guile has added that feature to the list.
+
+In the first category, here are the features that the current version of
+Guile may define (depending on how it is built), and what they mean.
+
+@table @code
+@item array
+Indicates support for arrays (@pxref{Arrays}).
+
+@item array-for-each
+Indicates availability of @code{array-for-each} and other array mapping
+procedures (@pxref{Arrays}).
+
+@item char-ready?
+Indicates that the @code{char-ready?} function is available
+(@pxref{Reading}).
+
+@item complex
+Indicates support for complex numbers.
+
+@item current-time
+Indicates availability of time-related functions: @code{times},
+@code{get-internal-run-time} and so on (@pxref{Time}).
+
+@item debug-extensions
+Indicates that the debugging evaluator is available, together with the
+options for controlling it.
+
+@item delay
+Indicates support for promises (@pxref{Delayed Evaluation}).
+
+@item EIDs
+Indicates that the @code{geteuid} and @code{getegid} really return
+effective user and group IDs (@pxref{Processes}).
+
+@item inexact
+Indicates support for inexact numbers.
+
+@item i/o-extensions
+Indicates availability of the following extended I/O procedures:
+@code{ftell}, @code{redirect-port}, @code{dup->fdes}, @code{dup2},
+@code{fileno}, @code{isatty?}, @code{fdopen},
+@code{primitive-move->fdes} and @code{fdes->ports} (@pxref{Ports and
+File Descriptors}).
+
+@item net-db
+Indicates availability of network database functions:
+@code{scm_gethost}, @code{scm_getnet}, @code{scm_getproto},
+@code{scm_getserv}, @code{scm_sethost}, @code{scm_setnet}, @code{scm_setproto},
+@code{scm_setserv}, and their `byXXX' variants (@pxref{Network
+Databases}).
+
+@item posix
+Indicates support for POSIX functions: @code{pipe}, @code{getgroups},
+@code{kill}, @code{execl} and so on (@pxref{POSIX}).
+
+@item random
+Indicates availability of random number generation functions:
+@code{random}, @code{copy-random-state}, @code{random-uniform} and so on
+(@pxref{Random}).
+
+@item reckless
+Indicates that Guile was built with important checks omitted --- you
+should never see this!
+
+@item regex
+Indicates support for POSIX regular expressions using
+@code{make-regexp}, @code{regexp-exec} and friends (@pxref{Regexp
+Functions}).
+
+@item socket
+Indicates availability of socket-related functions: @code{socket},
+@code{bind}, @code{connect} and so on (@pxref{Network Sockets and
+Communication}).
+
+@item sort
+Indicates availability of sorting and merging functions
+(@pxref{Sorting}).
+
+@item system
+Indicates that the @code{system} function is available
+(@pxref{Processes}).
+
+@item threads
+Indicates support for multithreading (@pxref{Threads}).
+
+@item values
+Indicates support for multiple return values using @code{values} and
+@code{call-with-values} (@pxref{Multiple Values}).
+@end table
+
+Available features in the second category depend, by definition, on what
+additional code your Guile process has loaded in.  The following table
+lists features that you might encounter for this reason.
+
+@table @code
+@item defmacro
+Indicates that the @code{defmacro} macro is available (@pxref{Macros}).
+
+@item describe
+Indicates that the @code{(oop goops describe)} module has been loaded,
+which provides a procedure for describing the contents of GOOPS
+instances.
+
+@item readline
+Indicates that Guile has loaded in Readline support, for command line
+editing (@pxref{Readline Support}).
+
+@item record
+Indicates support for record definition using @code{make-record-type}
+and friends (@pxref{Records}).
+@end table
+
+Although these tables may seem exhaustive, it is probably unwise in
+practice to rely on them, as the correspondences between feature symbols
+and available procedures/behaviour are not strictly defined.  If you are
+writing code that needs to check for the existence of some procedure, it
+is probably safer to do so directly using the @code{defined?} procedure
+than to test for the corresponding feature using @code{provided?}.
+
+
+@node Runtime Options
+@subsection Runtime Options
+
+Guile's runtime behaviour can be modified by setting options.  For
+example, is the language that Guile accepts case sensitive, or should
+the debugger automatically show a backtrace on error?
+
+Guile has two levels of interface for managing options: a low-level
+control interface, and a user-level interface which allows the enabling
+or disabling of options.
+
+Moreover, the options are classified in groups according to whether they
+configure @emph{reading}, @emph{printing}, @emph{debugging} or
+@emph{evaluating}.
+
+@menu
+* Low level options interfaces::
+* User level options interfaces::
+* Reader options::
+* Printing options::
+* Debugger options::
+* Evaluator options::
+* Evaluator trap options::
+* Examples of option use::
+@end menu
+
+
+@node Low level options interfaces
+@subsubsection Low Level Options Interfaces
+
+@deffn {Scheme Procedure} read-options-interface [setting]
+@deffnx {Scheme Procedure} eval-options-interface [setting]
+@deffnx {Scheme Procedure} print-options-interface [setting]
+@deffnx {Scheme Procedure} debug-options-interface [setting]
+@deffnx {Scheme Procedure} evaluator-traps-interface [setting]
+@deffnx {C Function} scm_read_options (setting)
+@deffnx {C Function} scm_eval_options_interface (setting)
+@deffnx {C Function} scm_print_options (setting)
+@deffnx {C Function} scm_debug_options (setting)
+@deffnx {C Function} scm_evaluator_traps (setting)
+If one of these procedures is called with no arguments (or with
+@code{setting == SCM_UNDEFINED} in C code), it returns a list describing
+the current setting of the read, eval, print, debug or evaluator traps
+options respectively.  The setting of a boolean option is indicated
+simply by the presence or absence of the option symbol in the list.  The
+setting of a non-boolean option is indicated by the presence of the
+option symbol immediately followed by the option's current value.
+
+If called with a list argument, these procedures interpret the list as
+an option setting and modify the relevant options accordingly.  [FIXME
+--- this glosses over a lot of details!]
+
+If called with any other argument, such as @code{'help}, these
+procedures return a list of entries like @code{(@var{OPTION-SYMBOL}
+@var{DEFAULT-VALUE} @var{DOC-STRING})}, with each entry giving the
+default value and documentation for each option symbol in the relevant
+set of options.
+@end deffn
+
+
+@node User level options interfaces
+@subsubsection User Level Options Interfaces
+
+@c @deftp {Data type} scm_option
+@c @code{scm_option} is used to represent run time options.  It can be a
+@c @emph{boolean} type, in which case the option will be set by the strings
+@c @code{"yes"} and @code{"no"}.  It can be a
+@c @end deftp
+
+@c NJFIXME
+@deffn {Scheme Procedure} <group>-options [arg]
+@deffnx {Scheme Procedure} read-options [arg]
+@deffnx {Scheme Procedure} print-options [arg]
+@deffnx {Scheme Procedure} debug-options [arg]
+@deffnx {Scheme Procedure} traps [arg]
+These functions list the options in their group.  The optional argument
+@var{arg} is a symbol which modifies the form in which the options are
+presented.
+
+With no arguments, @code{<group>-options} returns the values of the
+options in that particular group.  If @var{arg} is @code{'help}, a
+description of each option is given.  If @var{arg} is @code{'full},
+programmers' options are also shown.
+
+@var{arg} can also be a list representing the state of all options.  In
+this case, the list contains single symbols (for enabled boolean
+options) and symbols followed by values.
+@end deffn
+[FIXME: I don't think 'full is ever any different from 'help.  What's
+up?]
+
+@c NJFIXME
+@deffn {Scheme Procedure} <group>-enable option-symbol
+@deffnx {Scheme Procedure} read-enable option-symbol
+@deffnx {Scheme Procedure} print-enable option-symbol
+@deffnx {Scheme Procedure} debug-enable option-symbol
+@deffnx {Scheme Procedure} trap-enable option-symbol
+These functions set the specified @var{option-symbol} in their options
+group.  They only work if the option is boolean, and throw an error
+otherwise.
+@end deffn
+
+@c NJFIXME
+@deffn {Scheme Procedure} <group>-disable option-symbol
+@deffnx {Scheme Procedure} read-disable option-symbol
+@deffnx {Scheme Procedure} print-disable option-symbol
+@deffnx {Scheme Procedure} debug-disable option-symbol
+@deffnx {Scheme Procedure} trap-disable option-symbol
+These functions turn off the specified @var{option-symbol} in their
+options group.  They only work if the option is boolean, and throw an
+error otherwise.
+@end deffn
+
+@c NJFIXME
+@deffn syntax <group>-set! option-symbol value
+@deffnx syntax read-set! option-symbol value
+@deffnx syntax print-set! option-symbol value
+@deffnx syntax debug-set! option-symbol value
+@deffnx syntax trap-set! option-symbol value
+These functions set a non-boolean @var{option-symbol} to the specified
+@var{value}.
+@end deffn
+
+
+@node Reader options
+@subsubsection Reader options
+@cindex options - read
+@cindex read options
+
+Here is the list of reader options generated by typing
+@code{(read-options 'full)} in Guile.  You can also see the default
+values.
+
+@smalllisp
+keywords         #f      Style of keyword recognition: #f, 'prefix or 'postfix
+case-insensitive no      Convert symbols to lower case.
+positions        yes     Record positions of source code expressions.
+copy             no      Copy source code expressions.
+@end smalllisp
+
+Notice that while Standard Scheme is case insensitive, to ease
+translation of other Lisp dialects, notably Emacs Lisp, into Guile,
+Guile is case-sensitive by default.
+
+To make Guile case insensitive, you can type
+
+@smalllisp
+(read-enable 'case-insensitive)
+@end smalllisp
+
+@node Printing options
+@subsubsection Printing options
+
+Here is the list of print options generated by typing
+@code{(print-options 'full)} in Guile.  You can also see the default
+values.
+
+@smallexample
+quote-keywordish-symbols reader How to print symbols that have a colon
+                                as their first or last character. The
+                                value '#f' does not quote the colons;
+                                '#t' quotes them; 'reader' quotes
+                                them when the reader option
+                                'keywords' is not '#f'.
+
+highlight-prefix         @{      The string to print before highlighted values.
+highlight-suffix         @}      The string to print after highlighted values.
+
+source                   no     Print closures with source.
+closure-hook             #f     Hook for printing closures.
+@end smallexample
+
+
+@node Evaluator options
+@subsubsection Evaluator options
+
+These are the evaluator options with their default values, as they are
+printed by typing @code{(eval-options 'full)} in Guile.
+
+@smallexample
+stack           22000   Size of thread stacks (in machine words).
+@end smallexample
+
+
+@node Evaluator trap options
+@subsubsection Evaluator trap options
+[FIXME: These flags, together with their corresponding handlers, are not
+user level options.  Probably this entire section should be moved to the
+documentation about the low-level programmer debugging interface.]
+
+Here is the list of evaluator trap options generated by typing
+@code{(traps 'full)} in Guile.  You can also see the default values.
+
+@smallexample
+exit-frame      no      Trap when exiting eval or apply.
+apply-frame     no      Trap when entering apply.
+enter-frame     no      Trap when eval enters new frame.
+traps		yes	Enable evaluator traps.
+@end smallexample
+
+@deffn apply-frame-handler key cont tailp
+Called when a procedure is being applied.
+
+Called if:
+
+@itemize @bullet
+@item
+evaluator traps are enabled [traps interface], and
+@item
+either
+@itemize @minus
+@item
+@code{apply-frame} is enabled [traps interface], or
+@item
+trace mode is on [debug-options interface], and the procedure being
+called has the trace property enabled.
+@end itemize
+@end itemize
+
+@var{cont} is a ``debug object'', which means that it can be passed to
+@code{make-stack} to discover the stack at the point of the trap.  The
+apply frame handler's code can capture a restartable continuation if it
+wants to by using @code{call-with-current-continuation} in the usual way.
+
+@var{tailp} is true if this is a tail call
+@end deffn
+
+@deffn exit-frame-handler key cont retval
+Called when a value is returned from a procedure.
+
+Called if:
+
+@itemize @bullet
+@item
+evaluator traps are enabled [traps interface], and
+@item
+either
+@itemize @minus
+@item
+ @code{exit-frame} is enabled [traps interface], or
+@item
+trace mode is on [debug-options interface], and the procedure being
+called has the trace property enabled.
+@end itemize
+@end itemize
+
+@var{cont} is a ``debug object'', which means that it can be passed to
+@code{make-stack} to discover the stack at the point of the trap.  The
+exit frame handler's code can capture a restartable continuation if it
+wants to by using @code{call-with-current-continuation} in the usual
+way.
+
+@var{retval} is the return value.
+@end deffn
+
+@deffn {Scheme Procedure} with-traps thunk
+@deffnx {C Function} scm_with_traps (thunk)
+Call @var{thunk} with traps enabled.
+@end deffn
+
+@deffn {Scheme Procedure} debug-object? obj
+@deffnx {C Function} scm_debug_object_p (obj)
+Return @code{#t} if @var{obj} is a debug object.
+@end deffn
+
+@node Debugger options
+@subsubsection Debugger options
+
+Here is the list of print options generated by typing
+@code{(debug-options 'full)} in Guile.  You can also see the default
+values.
+
+@smallexample
+stack           20000   Stack size limit (0 = no check).
+debug           yes     Use the debugging evaluator.
+backtrace       no      Show backtrace on error.
+depth           20      Maximal length of printed backtrace.
+maxdepth        1000    Maximal number of stored backtrace frames.
+frames          3       Maximum number of tail-recursive frames in backtrace.
+indent          10      Maximal indentation in backtrace.
+backwards       no      Display backtrace in anti-chronological order.
+procnames       yes     Record procedure names at definition.
+trace           no      *Trace mode.
+breakpoints     no      *Check for breakpoints.
+cheap           yes     *This option is now obsolete.  Setting it has no effect.
+@end smallexample
+
+@subsubheading Stack overflow
+
+@cindex overflow, stack
+@cindex stack overflow
+Stack overflow errors are caused by a computation trying to use more
+stack space than has been enabled by the @code{stack} option.  They are
+reported like this:
+
+@lisp
+(non-tail-recursive-factorial 500)
+@print{}
+ERROR: Stack overflow
+ABORT: (stack-overflow)
+@end lisp
+
+If you get an error like this, you can either try rewriting your code to
+use less stack space, or increase the maximum stack size.  To increase
+the maximum stack size, use @code{debug-set!}, for example:
+
+@lisp
+(debug-set! stack 200000)
+@result{}
+(show-file-name #t stack 200000 debug backtrace depth 20 maxdepth 1000 frames 3 indent 10 width 79 procnames cheap)
+
+(non-tail-recursive-factorial 500)
+@result{}
+122013682599111006870123878542304692625357434@dots{}
+@end lisp
+
+If you prefer to try rewriting your code, you may be able to save stack
+space by making some of your procedures @dfn{tail recursive}
+(@pxref{Tail Calls}).
+
+
+@node Examples of option use
+@subsubsection Examples of option use
+
+Here is an example of a session in which some read and debug option
+handling procedures are used.  In this example, the user
+
+@enumerate
+@item
+Notices that the symbols @code{abc} and @code{aBc} are not the same
+@item
+Examines the @code{read-options}, and sees that @code{case-insensitive}
+is set to ``no''.
+@item
+Enables @code{case-insensitive}
+@item
+Verifies that now @code{aBc} and @code{abc} are the same
+@item
+Disables @code{case-insensitive} and enables debugging @code{backtrace}
+@item
+Reproduces the error of displaying @code{aBc} with backtracing enabled
+[FIXME: this last example is lame because there is no depth in the
+backtrace.  Need to give a better example, possibly putting debugging
+option examples in a separate session.]
+@end enumerate
+
+
+@smalllisp
+guile> (define abc "hello")
+guile> abc
+"hello"
+guile> aBc
+ERROR: In expression aBc:
+ERROR: Unbound variable: aBc
+ABORT: (misc-error)
+
+Type "(backtrace)" to get more information.
+guile> (read-options 'help)
+keywords	#f	Style of keyword recognition: #f, 'prefix or 'postfix
+case-insensitive	no	Convert symbols to lower case.
+positions	yes	Record positions of source code expressions.
+copy		no	Copy source code expressions.
+guile> (debug-options 'help)
+stack		20000	Stack size limit (0 = no check).
+debug		yes	Use the debugging evaluator.
+backtrace	no	Show backtrace on error.
+depth		20	Maximal length of printed backtrace.
+maxdepth	1000	Maximal number of stored backtrace frames.
+frames		3	Maximum number of tail-recursive frames in backtrace.
+indent		10	Maximal indentation in backtrace.
+backwards	no	Display backtrace in anti-chronological order.
+procnames	yes	Record procedure names at definition.
+trace		no	*Trace mode.
+breakpoints	no	*Check for breakpoints.
+cheap		yes	*This option is now obsolete.  Setting it has no effect.
+guile> (read-enable 'case-insensitive)
+(keywords #f case-insensitive positions)
+guile> aBc
+"hello"
+guile> (read-disable 'case-insensitive)
+(keywords #f positions)
+guile> (debug-enable 'backtrace)
+(stack 20000 debug backtrace depth 20 maxdepth 1000 frames 3 indent 10 procnames cheap)
+guile> aBc
+
+Backtrace:
+0* aBc
+
+ERROR: In expression aBc:
+ERROR: Unbound variable: aBc
+ABORT: (misc-error)
+guile>
+@end smalllisp
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

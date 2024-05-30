@@ -1,0 +1,324 @@
+;;;; srfi-35.test --- Test suite for SRFI-35               -*- Scheme -*-
+;;;; Ludovic Courtès <ludo@gnu.org>
+;;;;
+;;;; 	Copyright (C) 2007, 2008, 2009 Free Software Foundation, Inc.
+;;;;
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;;
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;;
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(define-module (test-srfi-35)
+  :use-module (test-suite lib)
+  :use-module (srfi srfi-35))
+
+
+(with-test-prefix "cond-expand"
+  (pass-if "srfi-35"
+    (cond-expand (srfi-35 #t)
+                 (else    #f))))
+
+
+(with-test-prefix "condition types"
+  (pass-if "&condition"
+    (condition-type? &condition))
+
+  (pass-if "make-condition-type"
+    (condition-type? (make-condition-type 'foo &condition '(a b))))
+
+  (pass-if "struct-vtable-name"
+    (let ((ct  (make-condition-type 'chbouib &condition '(a b))))
+      (eq? 'chbouib (struct-vtable-name ct)))))
+
+
+
+(with-test-prefix "conditions"
+
+  (pass-if "&condition"
+    (let ((c (make-condition &condition)))
+      (and (condition? c)
+           (condition-has-type? c &condition))))
+
+  (pass-if "simple condition"
+    (let* ((ct (make-condition-type 'chbouib &condition '(a b)))
+           (c  (make-condition ct 'b 1 'a 0)))
+      (and (condition? c)
+           (condition-has-type? c ct))))
+
+  (pass-if "simple condition with inheritance"
+    (let* ((top (make-condition-type 'foo &condition '(a b)))
+           (ct  (make-condition-type 'bar top '(c d)))
+           (c   (make-condition ct 'a 1 'b 2 'c 3 'd 4)))
+      (and (condition? c)
+           (condition-has-type? c ct)
+           (condition-has-type? c top))))
+
+  (pass-if "condition-ref"
+    (let* ((ct (make-condition-type 'chbouib &condition '(a b)))
+           (c  (make-condition ct 'b 1 'a 0)))
+      (and (eq? (condition-ref c 'a) 0)
+           (eq? (condition-ref c 'b) 1))))
+
+  (pass-if "condition-ref with inheritance"
+    (let* ((top (make-condition-type 'foo &condition '(a b)))
+           (ct  (make-condition-type 'bar top '(c d)))
+           (c   (make-condition ct 'b 1 'a 0 'd 3 'c 2)))
+      (and (eq? (condition-ref c 'a) 0)
+           (eq? (condition-ref c 'b) 1)
+           (eq? (condition-ref c 'c) 2)
+           (eq? (condition-ref c 'd) 3))))
+
+  (pass-if "extract-condition"
+    (let* ((ct (make-condition-type 'chbouib &condition '(a b)))
+           (c  (make-condition ct 'b 1 'a 0)))
+      (equal? c (extract-condition c ct)))))
+
+
+(with-test-prefix "compound conditions"
+  (pass-if "condition-has-type?"
+    (let* ((t1 (make-condition-type 'foo &condition '(a b)))
+           (t2 (make-condition-type 'bar &condition '(c d)))
+           (c1 (make-condition t1 'a 0 'b 1))
+           (c2 (make-condition t2 'c 2 'd 3))
+           (c  (make-compound-condition c1 c2)))
+      (and (condition? c)
+           (condition-has-type? c t1)
+           (condition-has-type? c t2))))
+
+  (pass-if "condition-ref"
+    (let* ((t1 (make-condition-type 'foo &condition '(a b)))
+           (t2 (make-condition-type 'bar &condition '(c d)))
+           (c1 (make-condition t1 'a 0 'b 1))
+           (c2 (make-condition t2 'c 2 'd 3))
+           (c  (make-compound-condition c1 c2)))
+      (equal? (map (lambda (field)
+                     (condition-ref c field))
+                   '(a b c d))
+              '(0 1 2 3))))
+
+  (pass-if "condition-ref with same-named fields"
+    (let* ((t1 (make-condition-type 'foo &condition '(a b)))
+           (t2 (make-condition-type 'bar &condition '(a c d)))
+           (c1 (make-condition t1 'a 0 'b 1))
+           (c2 (make-condition t2 'a -1 'c 2 'd 3))
+           (c  (make-compound-condition c1 c2)))
+      (equal? (map (lambda (field)
+                     (condition-ref c field))
+                   '(a b c d))
+              '(0 1 2 3))))
+
+  (pass-if "extract-condition"
+    (let* ((t1 (make-condition-type 'foo &condition '(a b)))
+           (t2 (make-condition-type 'bar &condition '(c d)))
+           (c1 (make-condition t1 'a 0 'b 1))
+           (c2 (make-condition t2 'c 2 'd 3))
+           (c  (make-compound-condition c1 c2)))
+      (and (equal? c1 (extract-condition c t1))
+           (equal? c2 (extract-condition c t2)))))
+
+  (pass-if "extract-condition with same-named fields"
+    (let* ((t1 (make-condition-type 'foo &condition '(a b)))
+           (t2 (make-condition-type 'bar &condition '(a c)))
+           (c1 (make-condition t1 'a 0  'b 1))
+           (c2 (make-condition t2 'a -1 'c 2))
+           (c  (make-compound-condition c1 c2)))
+      (and (equal? c1 (extract-condition c t1))
+           (equal? c2 (extract-condition c t2))))))
+
+
+
+(with-test-prefix "syntax"
+  (pass-if "define-condition-type"
+    (let ((m (current-module)))
+      (eval '(define-condition-type &chbouib &condition
+               chbouib?
+               (one   chbouib-one)
+               (two   chbouib-two))
+            m)
+      (eval '(and (condition-type? &chbouib)
+                  (procedure? chbouib?)
+                  (let ((c (make-condition &chbouib 'one 1 'two 2)))
+                    (and (condition? c)
+                         (chbouib? c)
+                         (eq? (chbouib-one c) 1)
+                         (eq? (chbouib-two c) 2))))
+            m)))
+
+  (pass-if "condition"
+    (let* ((t (make-condition-type 'chbouib &condition '(a b)))
+           (c (condition (t (b 2) (a 1)))))
+      (and (condition? c)
+           (condition-has-type? c t)
+           (equal? (map (lambda (f)
+                          (condition-ref c f))
+                        '(a b))
+                   '(1 2)))))
+
+  (pass-if-exception "condition with missing fields"
+    exception:miscellaneous-error
+    (let ((t (make-condition-type 'chbouib &condition '(a b c))))
+      (condition (t (a 1) (b 2)))))
+
+  (pass-if "compound condition"
+    (let* ((t1 (make-condition-type 'foo &condition '(a b)))
+           (t2 (make-condition-type 'bar &condition '(c d)))
+           (c1 (make-condition t1 'a 0 'b 1))
+           (c2 (make-condition t2 'c 2 'd 3))
+           (c  (condition (t1 (a 0) (b 1))
+                          (t2 (c 2) (d 3)))))
+      (and (equal? c1 (extract-condition c t1))
+           (equal? c2 (extract-condition c t2))))))
+
+
+;;;
+;;; Examples from the SRFI.
+;;;
+
+(define-condition-type &c &condition
+  c?
+  (x c-x))
+
+(define-condition-type &c1 &c
+  c1?
+  (a c1-a))
+
+(define-condition-type &c2 &c
+  c2?
+  (b c2-b))
+
+(define v1
+  (make-condition &c1 'x "V1" 'a "a1"))
+
+(define v2
+  (condition (&c2 (x "V2") (b "b2"))))
+
+(define v3
+  (condition (&c1 (x "V3/1") (a "a3"))
+             (&c2 (b "b3"))))
+
+(define v4
+  (make-compound-condition v1 v2))
+
+(define v5
+  (make-compound-condition v2 v3))
+
+
+(with-test-prefix "examples"
+
+  (pass-if "v1"
+    (condition? v1))
+
+  (pass-if "(c? v1)"
+    (c? v1))
+
+  (pass-if "(c1? v1)"
+    (c1? v1))
+
+  (pass-if "(not (c2? v1))"
+    (not (c2? v1)))
+
+  (pass-if "(c-x v1)"
+    (equal? (c-x v1) "V1"))
+
+  (pass-if "(c1-a v1)"
+    (equal? (c1-a v1) "a1"))
+
+
+  (pass-if "v2"
+    (condition? v2))
+
+  (pass-if "(c? v2)"
+    (c? v2))
+
+  (pass-if "(c2? v2)"
+    (c2? v2))
+
+  (pass-if "(not (c1? v2))"
+    (not (c1? v2)))
+
+  (pass-if "(c-x v2)"
+    (equal? (c-x v2) "V2"))
+
+  (pass-if "(c2-b v2)"
+    (equal? (c2-b v2) "b2"))
+
+
+  (pass-if "v3"
+    (condition? v3))
+
+  (pass-if "(c? v3)"
+    (c? v3))
+
+  (pass-if "(c1? v3)"
+    (c1? v3))
+
+  (pass-if "(c2? v3)"
+    (c2? v3))
+
+  (pass-if "(c-x v3)"
+    (equal? (c-x v3) "V3/1"))
+
+  (pass-if "(c1-a v3)"
+    (equal? (c1-a v3) "a3"))
+
+  (pass-if "(c2-b v3)"
+    (equal? (c2-b v3) "b3"))
+
+
+  (pass-if "v4"
+    (condition? v4))
+
+  (pass-if "(c? v4)"
+    (c? v4))
+
+  (pass-if "(c1? v4)"
+    (c1? v4))
+
+  (pass-if "(c2? v4)"
+    (c2? v4))
+
+  (pass-if "(c-x v4)"
+    (equal? (c-x v4) "V1"))
+
+  (pass-if "(c1-a v4)"
+    (equal? (c1-a v4) "a1"))
+
+  (pass-if "(c2-b v4)"
+    (equal? (c2-b v4) "b2"))
+
+
+  (pass-if "v5"
+    (condition? v5))
+
+  (pass-if "(c? v5)"
+    (c? v5))
+
+  (pass-if "(c1? v5)"
+    (c1? v5))
+
+  (pass-if "(c2? v5)"
+    (c2? v5))
+
+  (pass-if "(c-x v5)"
+    (equal? (c-x v5) "V2"))
+
+  (pass-if "(c1-a v5)"
+    (equal? (c1-a v5) "a3"))
+
+  (pass-if "(c2-b v5)"
+    (equal? (c2-b v5) "b2")))
+
+
+;;; Local Variables:
+;;; coding: latin-1
+;;; End:

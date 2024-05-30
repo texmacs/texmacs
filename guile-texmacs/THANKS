@@ -1,0 +1,121 @@
+Contributors since the last release:
+
+	    Rob Browning
+        Ludovic Courtès
+         Julian Graham
+         Stefan Jahn
+           Neil Jerram
+        Gregory Marton
+        Antoine Mathys
+      Thien-Thi Nguyen
+        Han-Wen Nienhuys
+         Jose A Ortega Ruiz
+	  Kevin Ryde
+	   Bill Schottstaedt
+        Richard Todd
+
+Sponsors since the last release:
+
+      The Linux Developers Group
+
+For fixes or providing information which led to a fix:
+
+          David Allouche
+	 Martin Baulig
+        Fabrice Bauzac
+        Sylvain Beucler
+          Carlo Bramini
+            Rob Browning
+         Adrian Bunk
+        Michael Carmack
+        Stephen Compall
+          Brian Crowder
+    Christopher Cramer
+          David Diffenbaugh
+          Hyper Division
+      Alexandre Duret-Lutz
+           Nils Durner
+         John W Eaton
+	Clinton Ebadi
+          David Fang
+          Barry Fishman
+        Charles Gagnon
+          Peter Gavin
+           Eric Gillespie, Jr
+         Didier Godefroy
+  Panicz Maciej Godek
+           John Goerzen
+           Mike Gran
+         Szavai Gyula
+         Roland Haeder
+	   Sven Hartrumpf
+	   Eric Hanchrow
+	   Judy Hawkins
+            Sam Hocevar
+	Patrick Horgan
+           Ales Hvezda
+          Peter Ivanyi
+       Wolfgang Jaehrling
+         Aubrey Jaffer
+           Paul Jarc
+          Steve Juranich
+        Richard Kim
+          Bruce Korb
+           René Köcher
+       Matthias Köppe
+           Matt Kraai
+         Daniel Kraft
+            Jay Krell
+           Jeff Long
+	  Marco Maggi
+        Gregory Marton
+      Kjetil S. Matheussen
+        Antoine Mathys
+            Dan McMahill
+          Roger Mc Murtrie
+          Scott McPeak
+            Tim Mooney
+        Han-Wen Nienhuys
+            Jan Nieuwenhuizen
+         Hrvoje Nikšić
+         Stefan Nordhausen
+         Roland Orre
+	  Peter O'Gorman
+         Pieter Pareit
+           Jack Pavlovsky
+           Arno Peters
+	    Ron Peterson
+          David Pirotte
+            Ken Raeburn
+        Andreas Rottmann
+           Hugh Sasse
+         Werner Scheinast
+	   Bill Schottstaedt
+	  Frank Schwidom
+         Thiemo Seufer
+          Scott Shedden
+           Alex Shinn
+         Daniel Skarda
+          Cesar Strauss
+         Rainer Tammer
+        Richard Todd
+          Issac Trotts
+           Greg Troxel
+       Aaron M. Ucko
+        Stephen Uitti
+        Momchil Velikov
+	  Linas Vepstas
+     Panagiotis Vossos
+        Neil W. Van Dyke
+          Aaron VanDevender
+	Andreas Vögele
+        Michael Talbot-Wilson
+        Michael Tuexen
+            Jon Wilson
+           Andy Wingo
+          Keith Wright
+
+
+;; Local Variables:
+;; coding: utf-8
+;; End:

@@ -1,0 +1,1120 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C) 2006, 2010
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@node Using Guile Interactively
+@section Using Guile Interactively
+
+When you start up Guile by typing just @code{guile}, without a
+@code{-c} argument or the name of a script to execute, you get an
+interactive interpreter where you can enter Scheme expressions, and
+Guile will evaluate them and print the results for you.  Here are some
+simple examples.
+
+@lisp
+guile> (+ 3 4 5)
+12
+guile> (display "Hello world!\n")
+Hello world!
+guile> (values 'a 'b)
+a
+b
+@end lisp
+
+@noindent
+This mode of use is called a @dfn{REPL}, which is short for
+``Read-Eval-Print Loop'', because the Guile interpreter first reads the
+expression that you have typed, then evaluates it, and then prints the
+result.
+
+@menu
+* Readline::
+* Value Historyx::
+* Error Handling::
+* Interactive Debugger::        Using the interactive debugger.
+@end menu
+
+
+@node Readline
+@subsection Readline
+
+To make it easier for you to repeat and vary previously entered
+expressions, or to edit the expression that you're typing in, Guile
+can use the GNU Readline library.  This is not enabled by default
+because of licensing reasons, but all you need to activate Readline is
+the following pair of lines.
+
+@lisp
+guile> (use-modules (ice-9 readline))
+guile> (activate-readline)
+@end lisp
+
+It's a good idea to put these two lines (without the ``guile>''
+prompts) in your @file{.guile} file.  Guile reads this file when it
+starts up interactively, so anything in this file has the same effect
+as if you type it in by hand at the ``guile>'' prompt.
+
+
+@node Value Historyx
+@subsection Value History
+
+Just as Readline helps you to reuse a previous input line, @dfn{value
+history} allows you to use the @emph{result} of a previous evaluation
+in a new expression.  When value history is enabled, each evaluation
+result is automatically assigned to the next in the sequence of
+variables @code{$1}, @code{$2}, @dots{}, and you can then use these
+variables in subsequent expressions.
+
+@lisp
+guile> (iota 10)
+$1 = (0 1 2 3 4 5 6 7 8 9)
+guile> (apply * (cdr $1))
+$2 = 362880
+guile> (sqrt $2)
+$3 = 602.3952191045344
+guile> (cons $2 $1)
+$4 = (362880 0 1 2 3 4 5 6 7 8 9)
+@end lisp
+
+To enable value history, type @code{(use-modules (ice-9 history))} at
+the Guile prompt, or add this to your @file{.guile} file.  (It is not
+enabled by default, to avoid the possibility of conflicting with some
+other use you may have for the variables @code{$1}, @code{$2},
+@dots{}, and also because it prevents the stored evaluation results
+from being garbage collected, which some people may not want.)
+
+
+@node Error Handling
+@subsection Error Handling
+
+When code being evaluated from the REPL hits an error, Guile remembers
+the execution context where the error occurred and can give you three
+levels of information about what the error was and exactly where it
+occurred.
+
+By default, Guile displays only the first level, which is the most
+immediate information about where and why the error occurred, for
+example:
+
+@lisp
+(make-string (* 4 (+ 3 #\s)) #\space)
+@print{}
+standard input:2:19: In procedure + in expression (+ 3 #\s):
+standard input:2:19: Wrong type argument: #\s
+ABORT: (wrong-type-arg)
+
+Type "(backtrace)" to get more information
+or "(debug)" to enter the debugger.
+@end lisp
+
+@noindent
+However, as the message above says, you can obtain more information
+about the context of the error by typing @code{(backtrace)} or
+@code{(debug)}.
+
+@code{(backtrace)} displays the Scheme call stack at the point where the
+error occurred:
+
+@lisp
+(backtrace)
+@print{}
+Backtrace:
+In standard input:
+   2: 0* [make-string ...
+   2: 1*  [* 4 ...
+   2: 2*   [+ 3 #\s]
+
+Type "(debug-enable 'backtrace)" if you would like a backtrace
+automatically if an error occurs in the future.
+@end lisp
+
+@noindent
+In a more complex scenario than this one, this can be extremely useful
+for understanding where and why the error occurred.  You can make Guile
+show the backtrace automatically by adding @code{(debug-enable
+'backtrace)} to your @file{.guile}.
+
+@code{(debug)} takes you into Guile's interactive debugger, which
+provides commands that allow you to
+
+@itemize @bullet
+@item
+display the Scheme call stack at the point where the error occurred
+(the @code{backtrace} command --- see @ref{Display Backtrace})
+
+@item
+move up and down the call stack, to see in detail the expression being
+evaluated, or the procedure being applied, in each @dfn{frame} (the
+@code{up}, @code{down}, @code{frame}, @code{position}, @code{info args}
+and @code{info frame} commands --- see @ref{Frame Selection} and
+@ref{Frame Information})
+
+@item
+examine the values of variables and expressions in the context of each
+frame (the @code{evaluate} command --- see @ref{Frame Evaluation}).
+@end itemize
+
+@noindent
+The interactive debugger is documented further in the following section.
+
+
+@node Interactive Debugger
+@subsection Using the Interactive Debugger
+
+Guile's interactive debugger is a command line application that
+accepts commands from you for examining the stack and, if stopped at a
+trap, for continuing program execution in various ways.  Unlike in the
+normal Guile REPL, commands are typed mostly without parentheses.
+
+When you first enter the debugger, it introduces itself with a message
+like this:
+
+@lisp
+This is the Guile debugger -- for help, type `help'.
+There are 3 frames on the stack.
+
+Frame 2 at standard input:36:19
+        [+ 3 #\s]
+debug> 
+@end lisp
+
+@noindent
+``debug>'' is the debugger's prompt, and a reminder that you are not in
+the normal Guile REPL.  In case you find yourself in the debugger by
+mistake, the @code{quit} command will return you to the REPL.  
+
+@deffn {Debugger Command} quit
+Exit the debugger.
+@end deffn
+
+The other available commands are described in the following subsections.
+
+@menu
+* Display Backtrace::           backtrace.
+* Frame Selection::             up, down, frame.
+* Frame Information::           info args, info frame, position.
+* Frame Evaluation::            evaluate.
+* Stepping and Continuing::     step, next, (trace-)finish, continue.
+@end menu
+
+
+@node Display Backtrace
+@subsubsection Display Backtrace
+
+The @code{backtrace} command, which can also be invoked as @code{bt} or
+@code{where}, displays the call stack (aka backtrace) at the point where
+the debugger was entered:
+
+@lisp
+debug> bt
+In standard input:
+  36: 0* [make-string ...
+  36: 1*  [* 4 ...
+  36: 2*   [+ 3 #\s]
+@end lisp
+
+@deffn {Debugger Command} backtrace [count]
+@deffnx {Debugger Command} bt [count]
+@deffnx {Debugger Command} where [count]
+Print backtrace of all stack frames, or of the innermost @var{count}
+frames.  With a negative argument, print the outermost -@var{count}
+frames.  If the number of frames isn't explicitly given, the debug
+option @code{depth} determines the maximum number of frames printed.
+@end deffn
+
+The format of the displayed backtrace is the same as for the
+@code{display-backtrace} procedure (@pxref{Examining the Stack}).
+
+
+@node Frame Selection
+@subsubsection Frame Selection
+
+A call stack consists of a sequence of stack @dfn{frames}, with each
+frame describing one level of the nested evaluations and applications
+that the program was executing when it hit a breakpoint or an error.
+Frames are numbered such that frame 0 is the outermost --- i.e. the
+operation on the call stack that began least recently --- and frame N-1
+the innermost (where N is the total number of frames on the stack).
+
+When you enter the debugger, the innermost frame is selected, which
+means that the commands for getting information about the ``current''
+frame, or for evaluating expressions in the context of the current
+frame, will do so by default with respect to the innermost frame.  To
+select a different frame, so that these operations will apply to it
+instead, use the @code{up}, @code{down} and @code{frame} commands like
+this:
+
+@lisp
+debug> up
+Frame 1 at standard input:36:14
+        [* 4 ...
+debug> frame 0
+Frame 0 at standard input:36:1
+        [make-string ...
+debug> down
+Frame 1 at standard input:36:14
+        [* 4 ...
+@end lisp
+
+@deffn {Debugger Command} up [n]
+Move @var{n} frames up the stack.  For positive @var{n}, this
+advances toward the outermost frame, to lower frame numbers, to
+frames that have existed longer.  @var{n} defaults to one.
+@end deffn
+
+@deffn {Debugger Command} down [n]
+Move @var{n} frames down the stack.  For positive @var{n}, this
+advances toward the innermost frame, to higher frame numbers, to frames
+that were created more recently.  @var{n} defaults to one.
+@end deffn
+
+@deffn {Debugger Command} frame [n]
+Select and print a stack frame.  With no argument, print the selected
+stack frame.  (See also ``info frame''.)  An argument specifies the
+frame to select; it must be a stack-frame number.
+@end deffn
+
+
+@node Frame Information
+@subsubsection Frame Information
+
+The following commands return detailed information about the currently
+selected frame.
+
+@deffn {Debugger Command} {info frame}
+Display a verbose description of the selected frame.  The information
+that this command provides is equivalent to what can be deduced from the
+one line summary for the frame that appears in a backtrace, but is
+presented and explained more clearly.
+@end deffn
+
+@deffn {Debugger Command} {info args}
+Display the argument variables of the current stack frame.  Arguments
+can also be seen in the backtrace, but are presented more clearly by
+this command.
+@end deffn
+
+@deffn {Debugger Command} position
+Display the name of the source file that the current expression comes
+from, and the line and column number of the expression's opening
+parenthesis within that file.  This information is only available when
+the @code{positions} read option is enabled (@pxref{Reader options}).
+@end deffn
+
+
+@node Frame Evaluation
+@subsubsection Frame Evaluation
+
+The @code{evaluate} command is most useful for querying the value of a
+variable, either global or local, in the environment of the selected
+stack frame, but it can be used more generally to evaluate any
+expression.
+
+@deffn {Debugger Command} evaluate expression
+Evaluate an expression in the environment of the selected stack frame.
+The expression must appear on the same line as the command, however it
+may be continued over multiple lines.
+@end deffn
+
+
+@node Stepping and Continuing
+@subsubsection Single Stepping and Continuing Execution
+
+The commands in this subsection all apply only when the stack is
+@dfn{continuable} --- in other words when it makes sense for the program
+that the stack comes from to continue running.  Usually this means that
+the program stopped because of a trap or a breakpoint.
+
+@deffn {Debugger Command} step [n]
+Tell the debugged program to do @var{n} more steps from its current
+position.  One @dfn{step} means executing until the next frame entry or
+exit of any kind.  @var{n} defaults to 1.
+@end deffn
+
+@deffn {Debugger Command} next [n]
+Tell the debugged program to do @var{n} more steps from its current
+position, but only counting frame entries and exits where the
+corresponding source code comes from the same file as the current stack
+frame.  (See @ref{Step Traps} for the details of how this works.)  If
+the current stack frame has no source code, the effect of this command
+is the same as of @code{step}.  @var{n} defaults to 1.
+@end deffn
+
+@deffn {Debugger Command} finish
+Tell the program being debugged to continue running until the completion
+of the current stack frame, and at that time to print the result and
+reenter the command line debugger.
+@end deffn
+
+@deffn {Debugger Command} continue
+Tell the program being debugged to continue running.  (In fact this is
+the same as the @code{quit} command, because it exits the debugger
+command loop and so allows whatever code it was that invoked the
+debugger to continue.)
+@end deffn
+
+
+@node Using Guile in Emacs
+@section Using Guile in Emacs
+
+@cindex GDS
+@cindex Emacs
+There are several options for working on Guile Scheme code in Emacs.
+The simplest are to use Emacs's standard @code{scheme-mode} for
+editing code, and to run the interpreter when you need it by typing
+``guile'' at the prompt of a @code{*shell*} buffer, but there are
+Emacs libraries available which add various bells and whistles to
+this.  The following diagram shows these libraries and how they relate
+to each other, with the arrows indicating ``builds on'' or
+``extends''.  For example, the Quack library builds on cmuscheme,
+which in turn builds on the standard scheme mode.
+
+@example
+            scheme
+               ^
+               |
+         .-----+-----.
+         |           |
+     cmuscheme    xscheme
+         ^
+         |
+   .-----+-----.
+   |           |
+ Quack        GDS
+@end example
+
+@dfn{scheme}, written by Bill Rozas and Dave Love, is Emacs's standard
+mode for Scheme code files.  It provides Scheme-sensitive syntax
+highlighting, parenthesis matching, indentation and so on.
+
+@dfn{cmuscheme}, written by Olin Shivers, provides a comint-based Scheme
+interaction buffer, so that you can run an interpreter more directly
+than with the @code{*shell*} buffer approach by typing @kbd{M-x
+run-scheme}.  It also extends @code{scheme-mode} so that there are key
+presses for sending selected bits of code from a Scheme buffer to this
+interpreter.  This means that when you are writing some code and want to
+check what an expression evaluates to, you can easily select that code
+and send it to the interpreter for evaluation, then switch to the
+interpreter to see what the result is.  cmuscheme is included in the
+standard Emacs distribution.
+
+@dfn{Quack}, written by Neil Van Dyke, adds a number of incremental
+improvements to the scheme/cmuscheme combination: convenient menu
+entries for looking up Scheme-related references (such as the SRFIs);
+enhanced indentation rules that are customized for particular Scheme
+interpreters, including Guile; an enhanced version of the
+@code{run-scheme} command that knows the names of the common Scheme
+interpreters and remembers which one you used last time; and so on.
+Quack is available from @uref{http://www.neilvandyke.org/quack}.
+
+@dfn{GDS}, written by Neil Jerram, also builds on the scheme/cmuscheme
+combination, but with a change to the way that Scheme code fragments
+are sent to the interpreter for evaluation.  cmuscheme and Quack send
+code fragments to the interpreter's standard input, on the assumption
+that the interpreter is expecting to read Scheme expressions there,
+and then monitor the interpreter's standard output to infer what the
+result of the evaluation is.  GDS doesn't use standard input and
+output like this.  Instead, it sets up a socket connection between the
+Scheme interpreter and Emacs, and sends and receives messages using a
+simple protocol through this socket.  The messages include requests to
+evaluate Scheme code, and responses conveying the results of an
+evaluation, thus providing similar function to cmuscheme or Quack.
+They also include requests for stack exploration and debugging, which
+go beyond what cmuscheme or Quack can do.  The price of this extra
+power, however, is that GDS is Guile-specific.  GDS requires the
+Scheme interpreter to run some GDS-specific library code; currently
+this code is written as a Guile module and uses features that are
+specific to Guile.  GDS is now included in the Guile distribution; for
+previous Guile releases (1.8.4 and earlier) it can be obtained as part
+of the @code{guile-debugging} package from
+@uref{http://www.ossau.uklinux.net/guile}.
+
+Finally, @dfn{xscheme} is similar to cmuscheme --- in that it starts up
+a Scheme interaction process and sends commands to that process's
+standard input --- and to GDS --- in that it has support beyond
+cmuscheme or Quack for exploring the Scheme stack when an error has
+occurred --- but is implemented specifically for MIT/GNU Scheme.  Hence
+it isn't really relevant to Guile work in Emacs, except as a reference
+for useful features that could be implemented in one of the other
+libraries mentioned here.
+
+In summary, the best current choice for working on Guile code in Emacs
+is either Quack or GDS, depending on which of these libraries' features
+you find most important.  For more information on Quack, please see the
+website referenced above.  GDS is documented further in the rest of this
+section.
+
+@menu
+* GDS Introduction::
+* GDS Architecture::
+* GDS Getting Started::
+* Working with GDS in Scheme Buffers::
+* Displaying the Scheme Stack::
+* Continuing Execution::
+* Associating Buffers with Clients::
+* An Example GDS Session::
+@end menu
+
+
+@node GDS Introduction
+@subsection GDS Introduction
+
+GDS aims to allow you to work on Guile Scheme code in the same kind of
+way that Emacs allows you to work on Emacs Lisp code: providing easy
+access to help, evaluating arbitrary fragments of code, a nice debugging
+interface, and so on.  The thinking behind the GDS library is that you
+will usually be doing one of two things.
+
+@enumerate
+@item
+Writing or editing code.  The code will be in a normal Emacs Scheme mode
+buffer, and GDS extends Scheme mode to add keystrokes and menu items for
+the things that are likely to be useful to you when working on code:
+
+@itemize
+@item
+completing the identifier at point, with respect to the set of variable
+names that are known to the associated Guile process
+@item
+accessing Guile's built in ``help'' and ``apropos'' commands
+@item
+evaluating fragments of code to check what they do, with the results
+popping up in a temporary Emacs window.
+@end itemize
+
+@item
+Debugging a Guile Scheme program.  When your program hits an error or
+stops at a trap, GDS shows you the relevant code and the Scheme stack,
+and makes it easy to
+
+@itemize
+@item
+look at the values of local variables
+@item
+see what is happening at all levels of the Scheme stack
+@item
+continue execution, either normally or step by step.
+@end itemize
+
+The presentation makes it very easy to move up and down the stack,
+showing whenever possible the source code for each frame in another
+Emacs buffer.  It also provides convenient keystrokes for telling Guile
+what to do next; for example, you can select a stack frame and tell
+Guile to run until that frame completes, at which point GDS will display
+the frame's return value.
+@end enumerate
+
+GDS can provide these facilities for any number of Guile Scheme programs
+(which we often refer to as ``clients'') at once, and these programs can
+be started either independently of GDS, including outside Emacs, or
+specifically @emph{by} GDS.
+
+Communication between each Guile client program and GDS uses a TCP
+socket, which means that it is orthogonal to any other interfaces that
+the client program has.  In particular GDS does not interfere with a
+program's standard input and output.
+
+
+@node GDS Architecture
+@subsection GDS Architecture
+
+In order to understand the following documentation fully it will help to
+have a picture in mind of how GDS works, so we briefly describe that
+here.  GDS consists of three components.
+
+@itemize
+@item
+The GDS @dfn{interface} code is written in Emacs Lisp and runs inside
+Emacs.  This code, consisting of the installed files @file{gds.el} and
+@file{gds-server.el}, is responsible for displaying information from
+Guile in Emacs windows, and for responding to Emacs commands and
+keystrokes by sending instructions back to the Guile program being
+worked on.
+
+@item
+The GDS @dfn{server} code is written in Scheme and runs as an Emacs
+inferior process.  It acts as a multiplexer between the (possibly
+multiple) Guile programs being debugged and the interface code running
+in Emacs.  The server code is the installed file
+@file{gds-server.scm}.
+
+@item
+The GDS @dfn{client} code is written in Scheme (installed file
+@file{gds-client.scm}), and must be loaded as a module by each Guile
+program that wants to use GDS in any way.
+@end itemize
+
+@noindent
+The following diagram shows how these components are connected to each
+other.
+
+@example
++----------------+
+| Program #1     |
+|                |
+| +------------+ |
+| | GDS Client |-_
+| +------------+ |-_                       +-------------------+
++----------------+  -_TCP                  | Emacs             |
+                      -_                   |                   |
+                        -_+------------+   | +---------------+ |
+                         _| GDS Server |-----| GDS Interface | |
++----------------+     _- +------------+   | +---------------+ |
+| Program #2     |   _-                    +-------------------+
+|                | _- TCP
+| +------------+ _-
+| | GDS Client |-|
+| +------------+ |
++----------------+
+@end example
+
+@cindex TCP, use of
+The data exchanged between client and server components, and between
+server and interface, is a sequence of sexps (parenthesised expressions)
+that are designed so as to be directly readable by both Scheme and Emacs
+Lisp.  The use of a TCP connection means that the server and Emacs
+interface can theoretically be on a different computer from the client
+programs, but in practice there are currently two problems with
+this.  Firstly the GDS API doesn't provide any way of specifying a
+non-local server to connect to, and secondly there is no security or
+authentication mechanism in the GDS protocol.  These are issues that
+should be addressed in the future.
+
+      
+@node GDS Getting Started
+@subsection Getting Started with GDS
+
+To enable the use of GDS in your own Emacs sessions, simply add
+
+@lisp
+(require 'gds)
+@end lisp
+
+@noindent
+somewhere in your @file{.emacs} file.  This will cause Emacs to load the
+GDS Emacs Lisp code when starting up, and to start the inferior GDS
+server process so that it is ready and waiting for any Guile programs
+that want to use GDS.
+
+The Scheme side of GDS is systematically installed with Guile, whereas
+the Emacs Lisp side (the @file{gds-server.el}, @file{gds-scheme.el}, and
+@file{gds.el} files) is only installed if Emacs was detected at
+@command{configure}-time.  Before using GDS, make sure these files are
+installed and are in Emacs' load path (@pxref{Lisp Libraries,
+@code{load-path},, emacs, GNU Emacs Manual}).
+
+(If GDS's Scheme code is not installed in one of the locations in
+Guile's load path, you may find that the server process fails to start.
+When this happens you will see an error message from Emacs:
+
+@lisp
+error in process filter: Wrong type argument: listp, Backtrace:
+@end lisp
+
+@noindent
+and the @code{gds-debug} buffer will contain a Scheme backtrace ending
+with the message:
+
+@lisp
+no code for module (ice-9 gds-server)
+@end lisp
+
+@noindent
+The solution for this is to customize the Emacs variable
+@code{gds-scheme-directory} so that it specifies where the GDS Scheme
+code is installed.  Then either restart Emacs or type @kbd{M-x
+gds-run-debug-server} to try starting the GDS server process again.)
+
+For evaluations, help and completion from Scheme code buffers that you
+are working on, this is all you need.  The first time you do any of
+these things, GDS will automatically start a new Guile client program as
+an Emacs subprocess.  This Guile program does nothing but wait for and
+act on instructions from GDS, and we refer to it as a @dfn{utility}
+Guile client.  Over time this utility client will accumulate the code
+that you ask it to evaluate, and you can also tell it to load complete
+files or modules by sending it @code{load} or @code{use-modules}
+expressions.
+
+When you want to use GDS to work on an independent Guile
+application, you need to add something to that application's Scheme code
+to cause it to connect to and interact with GDS at the right times.  The
+following subsections describe the ways of doing this.
+
+@subsubsection Invoking GDS when an Exception Occurs
+
+One option is to use GDS to catch and display any exceptions that
+are thrown by the application's code.  If you already have a
+@code{lazy-catch} or @code{with-throw-handler} around the area of code
+that you want to monitor, you just need to add the following to the
+handler code:
+
+@lisp
+(gds-debug-trap (throw->trap-context key args))
+@end lisp
+
+@noindent
+where @code{key} and @code{args} are the first and rest arguments that
+Guile passes to the handler.  (In other words, they assume the handler
+signature @code{(lambda (key . args) @dots{})}.)  With Guile 1.8 or
+later, you can also do this with a @code{catch}, by adding this same
+code to the catch's pre-unwind handler.
+
+If you don't already have any of these, insert a whole
+@code{with-throw-handler} expression (or @code{lazy-catch} if your Guile
+is pre-1.8) around the code of interest like this:
+
+@lisp
+(with-throw-handler #t
+  (lambda ()
+    ;; Protected code here.
+    )
+  (lambda (key . args)
+    (gds-debug-trap (throw->trap-context key args))))
+@end lisp
+
+Either way, you will need to use the @code{(ice-9 gds-client)} and
+@code{(ice-9 debugging traps)} modules.
+
+Two special cases of this are the lazy-catch that the Guile REPL code
+uses to catch exceptions in user code, and the lazy-catch inside the
+@code{stack-catch} utility procedure that is provided by the
+@code{(ice-9 stack-catch)} module.  Both of these use a handler called
+@code{lazy-handler-dispatch} (defined in @file{boot-9.scm}), which you
+can hook into such that it calls GDS to display the stack when an
+exception occurs.  To do this, use the @code{on-lazy-handler-dispatch}
+procedure as follows.
+
+@lisp
+(use-modules (ice-9 gds-client)
+             (ice-9 debugging traps))
+(on-lazy-handler-dispatch gds-debug-trap)
+@end lisp
+
+@noindent
+After this the program will use GDS to display the stack whenever it
+hits an exception that is protected by a @code{lazy-catch} using
+@code{lazy-handler-dispatch}.
+
+@subsubsection Accepting GDS Instructions at Any Time
+
+In addition to setting an exception handler as described above, a
+Guile program can in principle set itself up to accept new
+instructions from GDS at any time, not just when it has stopped at an
+exception.  This would allow the GDS user to evaluate code in the
+context of the running program, without having to wait for the program
+to stop first.
+
+@lisp
+(use-modules (ice-9 gds-client))
+(gds-accept-input #t)
+@end lisp
+
+@code{gds-accept-input} causes the calling program to loop processing
+instructions from GDS, until GDS sends the @code{continue} instruction.
+This blocks the thread that calls it, however, so it will normally be
+more practical for the program to set up a dedicated GDS thread and call
+@code{gds-accept-input} from that thread.
+
+For @code{select}-driven applications, an alternative approach would be
+for the GDS client code to provide an API which allowed the application
+to
+
+@itemize
+@item
+discover the file descriptors (or Scheme ports) that are used for
+receiving instruction from the GDS front end, so that it could include
+these in its @code{select} call
+
+@item
+call the GDS instruction handler when @code{select} indicated data
+available for reading on those descriptors/ports.
+@end itemize
+
+@noindent
+This approach is not yet implemented, though.
+
+@subsubsection Utility Guile Implementation
+
+The ``utility'' Guile client mentioned above is a simple combination
+of the mechanisms that we have just described.  In fact the code for
+the utility Guile client is essentially just this:
+
+@lisp
+(use-modules (ice-9 gds-client))
+(named-module-use! '(guile-user) '(ice-9 session))
+(gds-accept-input #f))
+@end lisp
+
+The @code{named-module-use!} line ensures that the client can process
+@code{help} and @code{apropos} expressions, to implement lookups in
+Guile's online help.  The @code{#f} parameter to
+@code{gds-accept-input} means that the @code{continue} instruction
+will not cause the instruction loop to exit, which makes sense here
+because the utility client has nothing to do except to process GDS
+instructions.
+
+The utility client does not use @code{on-lazy-handler-dispatch} at its
+top level, because it has its own mechanism for catching and reporting
+exceptions in the code that it is asked to evaluate.  This mechanism
+summarizes the exception and gives the user a button they can click to
+see the full stack, so the end result is very similar to what
+@code{on-lazy-handler-dispatch} provides.  Deep inside
+@code{gds-accept-input}, in the part that handles evaluating
+expressions from Emacs, the GDS client code uses
+@code{throw->trap-context} and @code{gds-debug-trap} to implement
+this.
+
+
+@node Working with GDS in Scheme Buffers
+@subsection Working with GDS in Scheme Buffers
+
+The following subsections describe the facilities and key sequences that
+GDS provides for working on code in @code{scheme-mode} buffers.
+
+@menu
+* Access to Guile Help and Completion::
+* Evaluating Scheme Code::
+@end menu
+
+
+@node Access to Guile Help and Completion
+@subsubsection Access to Guile Help and Completion
+
+The following keystrokes provide fast and convenient access to Guile's
+built in help, and to completion with respect to the set of defined and
+accessible symbols.
+
+@table @kbd
+@item C-h g
+@findex gds-help-symbol
+Get Guile help for a particular symbol, with the same results as if
+you had typed @code{(help SYMBOL)} into the Guile REPL
+(@code{gds-help-symbol}).  The symbol to query defaults to the word at
+or before the cursor but can also be entered or edited in the
+minibuffer.  The available help is popped up in a temporary Emacs
+window.
+
+@item C-h G
+@findex gds-apropos
+List all accessible Guile symbols matching a given regular expression,
+with the same results as if you had typed @code{(apropos REGEXP)} into
+the Guile REPL (@code{gds-apropos}).  The regexp to query defaults to
+the word at or before the cursor but can also be entered or edited in
+the minibuffer.  The list of matching symbols is popped up in a
+temporary Emacs window.
+
+@item M-@key{TAB}
+@findex gds-complete-symbol
+Try to complete the symbol at the cursor by matching it against the
+set of all defined and accessible bindings in the associated Guile
+process (@code{gds-complete-symbol}).  If there are any extra
+characters that can be definitively added to the symbol at point, they
+are inserted.  Otherwise, if there are any completions available, they
+are popped up in a temporary Emacs window, where one of them can be
+selected using either @kbd{@key{RET}} or the mouse.
+@end table
+
+
+@node Evaluating Scheme Code
+@subsubsection Evaluating Scheme Code
+
+The following keystrokes and commands provide various ways of sending
+code to a Guile client process for evaluation.
+
+@table @kbd
+@item M-C-x
+@findex gds-eval-defun
+Evaluate the ``top level defun'' that the cursor is in, in other words
+the smallest balanced expression which includes the cursor and whose
+opening parenthesis is in column 0 (@code{gds-eval-defun}).
+
+@item C-x C-e
+@findex gds-eval-last-sexp
+Evaluate the expression that ends just before the cursor
+(@code{gds-eval-last-sexp}).  This is designed so that it is easy to
+evaluate an expression that you have just finished typing.
+
+@item C-c C-e
+@findex gds-eval-expression
+Read a Scheme expression using the minibuffer, and evaluate that
+expression (@code{gds-eval-expression}).
+
+@item C-c C-r
+@findex gds-eval-region
+Evaluate the Scheme code in the marked region of the current buffer
+(@code{gds-eval-region}).  Note that GDS does not check whether the
+region contains a balanced expression, or try to expand the region so
+that it does; it uses the region exactly as it is.
+@end table
+
+If you type @kbd{C-u} before one of these commands, GDS will
+immediately pop up a Scheme stack buffer, showing the requested
+evaluation, so that you can single step through it.  (This is achieved
+by setting a @code{<source-trap>} trap at the start of the requested
+evaluation; see @ref{Source Traps} for more on how those work.)  The
+Scheme stack display, and the options for continuing through the code,
+are described in the next two sections.
+
+
+@node Displaying the Scheme Stack
+@subsection Displaying the Scheme Stack
+
+When you specify @code{gds-debug-trap} as the behaviour for a trap and
+the Guile program concerned hits that trap, GDS displays the stack and
+the relevant Scheme source code in Emacs, allowing you to explore the
+state of the program and then decide what to do next.  The same
+applies if the program calls @code{(on-lazy-handler-dispatch
+gds-debug-trap)} and then throws an exception that passes through
+@code{lazy-handler-dispatch}, except that in this case you can only
+explore; it isn't possible to continue normal execution after an
+exception.
+
+The following commands are available in the stack buffer for exploring
+the state of the program.
+
+@table @asis
+@item @kbd{u}, @kbd{C-p}, @kbd{@key{up}}
+@findex gds-up
+Select the stack frame one up from the currently selected frame
+(@code{gds-up}).  GDS displays stack frames with the innermost at the
+top, so moving ``up'' means selecting a more ``inner'' frame.
+
+@item @kbd{d}, @kbd{C-n}, @kbd{@key{down}}
+@findex gds-down
+Select the stack frame one down from the currently selected frame
+(@code{gds-down}).  GDS displays stack frames with the innermost at the
+top, so moving ``down'' means selecting a more ``outer'' frame.
+
+@item @kbd{@key{RET}}
+@findex gds-select-stack-frame
+Select the stack frame at point (@code{gds-select-stack-frame}).  This
+is useful after clicking somewhere in the stack trace with the mouse.
+@end table
+
+Selecting a frame means that GDS will display the source code
+corresponding to that frame in the adjacent window, and that
+subsequent frame-sensitive commands, such as @code{gds-evaluate} (see
+below) and @code{gds-step-over} (@pxref{Continuing Execution}), will
+refer to that frame.
+
+@table @kbd
+@item e
+@findex gds-evaluate
+Evaluate a variable or expression in the local environment of the
+selected stack frame (@code{gds-evaluate}).  The result is displayed in
+the echo area.
+
+@item I
+@findex gds-frame-info
+Show summary information about the selected stack frame
+(@code{gds-frame-info}).  This includes what type of frame it is, the
+associated expression, and the frame's source location, if any.
+
+@item A
+@findex gds-frame-args
+For an application frame, display the frame's arguments
+(@code{gds-frame-args}).
+
+@item S
+@findex gds-proc-source
+For an application frame, show the Scheme source code of the procedure
+being called (@code{gds-proc-source}).  The source code (where
+available) is displayed in the echo area.
+@end table
+
+@kbd{S} (@code{gds-proc-source}) is useful when the procedure being
+called was created by an anonymous @code{(lambda @dots{})} expression.
+Such procedures appear in the stack trace as @code{<procedure #f
+(@dots{})>}, which doesn't give you much clue as to what will happen
+next.  @kbd{S} will show you the procedure's code, which is usually
+enough for you to identify it.
+
+
+@node Continuing Execution
+@subsection Continuing Execution
+
+If it makes sense to continue execution from the stack which is being
+displayed, GDS provides the following further commands in the stack
+buffer.
+
+@table @asis
+@item @kbd{g}, @kbd{c}, @kbd{q}
+@findex gds-go
+Tell the program to continue running (@code{gds-go}).  It may of course
+stop again if it hits another trap, or another occurrence of the same
+trap.
+
+The multiple keystrokes reflect that you can think of this as ``going'',
+``continuing'' or ``quitting'' (in the sense of quitting the GDS
+display).
+
+@item @kbd{@key{SPC}}
+@findex gds-step-file
+Tell the program to do a single-step to the next entry or exit of a
+frame whose code comes from the same source file as the selected stack
+frame (@code{gds-step-file}).
+
+In other words, you can hit @kbd{@key{SPC}} repeatedly to step through
+the code in a given file, automatically stepping @emph{over} any
+evaluations or procedure calls that use code from other files (or from
+no file).
+
+If the selected stack frame has no source, the effect of this command is
+the same as that of @kbd{i}, described next.
+
+@item @kbd{i}
+@findex gds-step-into
+Tell the debugged program to do a single-step to the next frame entry or
+exit of any kind (@code{gds-step-into}).  @kbd{i} therefore steps
+through code at the most detailed level possible.
+
+@item @kbd{o}
+@findex gds-step-over
+Tell the debugged program to continue running until the selected stack
+frame completes, and then to display its result (@code{gds-step-over}).
+Note that the program may stop before then if it hits another trap; in
+this case the trap telling it to stop when the marked frame completes
+remains in place and so will still fire at the appropriate point.
+@end table
+
+
+@node Associating Buffers with Clients
+@subsection Associating Buffers with Clients
+
+The first time that you use one of GDS's evaluation, help or completion
+commands from a given Scheme mode buffer, GDS will ask which Guile
+client program you want to use for the operation, or if you want to
+start up a new ``utility'' client.  After that GDS considers the buffer
+to be ``associated'' with the selected client, and so sends all further
+requests to that client, but you can override this by explicitly
+associating the buffer with a different client, or by removing the
+default association.
+
+@table @kbd
+@item M-x gds-associate-buffer
+Associate (or re-associate) the current buffer with a particular Guile
+client program.  The available clients are listed, and you can also
+choose to start up a new ``utility'' client for this buffer to associate
+with.
+
+@item M-x gds-dissociate-buffer
+Dissociate the current buffer from its client, if any.  This means that
+the next time you use an evaluation, help or completion command, GDS
+will ask you again which client to send the request to.
+@end table
+
+When a buffer is associated with a client program, the buffer's modeline
+shows whether the client is currently able to accept instruction from
+GDS.  This is done by adding one of the following suffixes to the
+``Scheme'' major mode indicator:
+
+@table @asis
+@item :ready
+The client program (or one of its threads, if multithreaded) is
+currently ready to accept instruction from GDS.  In other words, if you
+send it a help or evaluation request, you should see the result pretty
+much immediately.
+
+@item :running
+The client program is not currently able to accept instruction from
+GDS.  This means that it (or all of its threads, if multithreaded) is
+busy, or waiting for input other than from GDS.
+
+@item :debug
+The client program (or one of its threads, if multithreaded) is stopped
+in ``debugging mode'' with GDS displaying the stack for a trap or
+exception.  It is waiting for instruction from GDS on what to do next.
+@end table
+
+
+@node An Example GDS Session
+@subsection An Example GDS Session
+
+Create a file, @file{testgds.scm} say, for experimenting with GDS and
+Scheme code, and type this into it:
+
+@lisp
+(use-modules (ice-9 debugging traps)
+             (ice-9 gds-client)
+             (ice-9 debugging example-fns))
+(install-trap (make <procedure-trap>
+                #:behaviour gds-debug-trap
+                #:procedure fact1))
+@end lisp
+
+@noindent
+Now select all of this code and type @kbd{C-c C-r} to send the selected
+region to Guile for evaluation.  GDS will ask you which Guile process to
+use; unless you know that you already have another Guile application
+running and connected to GDS, choose the ``Start a new Guile'' option,
+which starts one of the ``utility'' processes described in @ref{GDS
+Getting Started}.
+
+The results of the evaluation pop up in a window like this:
+
+@lisp
+(use-modules (ice-9 debugging traps)\n    @dots{}
+
+;;; Evaluating subexpression 1 in current module (guile-user)
+ @result{} no (or unspecified) value
+
+;;; Evaluating subexpression 2 in current module (guile-user)
+ @result{} no (or unspecified) value
+
+--:**  *Guile Evaluation*     (Scheme:ready)--All------------
+@end lisp
+
+@noindent
+this tells you that the evaluation was successful but that the return
+values were unspecified.  Its effect was to load a module of example
+functions and set a trap on one of these functions, @code{fact1}, that
+calculates the factorial of its argument.
+
+If you now call @code{fact1}, you can see the trap and GDS's stack
+display in action.  To do this add
+
+@lisp
+(fact1 4)
+@end lisp
+
+@noindent
+to your @file{testgds.scm} buffer and type @kbd{C-x C-e} (which
+evaluates the expression that the cursor is just after the end of).
+The result should be that a GDS stack window like the following
+appears:
+
+@lisp
+Calling procedure:
+=> s  [fact1 4]
+   s  [primitive-eval (fact1 4)]
+
+
+--:**  PID 28729         (Guile-Debug)--All------------
+@end lisp
+
+This stack tells you that Guile is about to call the @code{fact1}
+procedure, with argument 4, and you can step through this call in
+detail by pressing @kbd{i} once and then @kbd{@key{SPC}}
+(@pxref{Continuing Execution}).
+
+(@kbd{i} is needed as the first keystroke rather than @kbd{@key{SPC}},
+because the aim here is to step through code in the @code{(ice-9
+debugging example-fns)} module, whose source file is
+@file{@dots{}/ice-9/debugging/example-fns.scm}, but the initial
+@code{(fact1 4)} call comes from the Guile session, whose ``source
+file'' Guile presents as @file{standard input}.  If the user starts by
+pressing @kbd{@key{SPC}} instead of @kbd{i}, the effect is that the
+program runs until it hits the first recursive call @code{(fact1 (- n
+1))}, where it stops because of the trap on @code{fact1} firing again.
+At this point, the source file @emph{is}
+@file{@dots{}/ice-9/debugging/example-fns.scm}, because the recursive
+@code{(fact1 (- n 1))} call comes from code in that file, so further
+pressing of @kbd{@key{SPC}} successfully single-steps through this
+file.)
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

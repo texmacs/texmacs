@@ -1,0 +1,85 @@
+;;;; srfi-6.test --- test suite for SRFI-6   -*- scheme -*-
+;;;;
+;;;; 	Copyright (C) 2003, 2006 Free Software Foundation, Inc.
+;;;;
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;;
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;;
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(use-modules (test-suite lib))
+
+;; use #:select to see that the bindings we expect are indeed exported
+(use-modules ((srfi srfi-6)
+	      #:select ((open-input-string  . open-input-string)
+			(open-output-string . open-output-string)
+			(get-output-string  . get-output-string))))
+
+
+(with-test-prefix "open-input-string"
+  
+  (pass-if "eof on empty"
+    (let ((port (open-input-string "")))
+      (eof-object? (read-char port))))
+  
+  (pass-if "read-char"
+    (let ((port (open-input-string "xyz")))
+      (and (char=? #\x (read-char port))
+	   (char=? #\y (read-char port))
+	   (char=? #\z (read-char port))
+	   (eof-object? (read-char port)))))
+  
+  (with-test-prefix "unread-char"
+    
+    (pass-if "one char"
+      (let ((port (open-input-string "")))
+	(unread-char #\x port)
+	(and (char=? #\x (read-char port))
+	     (eof-object? (read-char port)))))
+    
+    (pass-if "after eof"
+      (let ((port (open-input-string "")))
+	(and (eof-object? (read-char port))
+	     (begin
+	       (unread-char #\x port)
+	       (and (char=? #\x (read-char port))
+		    (eof-object? (read-char port)))))))
+    
+    (pass-if "order"
+      (let ((port (open-input-string "")))
+	(unread-char #\x port)
+	(unread-char #\y port)
+	(unread-char #\z port)
+	(and (char=? #\z (read-char port))
+	     (char=? #\y (read-char port))
+	     (char=? #\x (read-char port))
+	     (eof-object? (read-char port)))))))
+
+
+(with-test-prefix "open-output-string"
+
+  (pass-if "empty"
+    (let ((port (open-output-string)))
+      (string=? "" (get-output-string port))))
+  
+  (pass-if "xyz"
+    (let ((port (open-output-string)))
+      (display "xyz" port)
+      (string=? "xyz" (get-output-string port))))
+  
+  (pass-if "seek"
+    (let ((port (open-output-string)))
+      (display "abcdef" port)
+      (seek port 2 SEEK_SET)
+      (display "--" port)
+      (string=? "ab--ef" (get-output-string port)))))

@@ -1,0 +1,1532 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004, 2006
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Pretty Printing
+@section Pretty Printing
+
+@c FIXME::martin: Review me!
+
+@cindex pretty printing
+The module @code{(ice-9 pretty-print)} provides the procedure
+@code{pretty-print}, which provides nicely formatted output of Scheme
+objects.  This is especially useful for deeply nested or complex data
+structures, such as lists and vectors.
+
+The module is loaded by simply saying.
+
+@lisp
+(use-modules (ice-9 pretty-print))
+@end lisp
+
+This makes the procedure @code{pretty-print} available.  As an example
+how @code{pretty-print} will format the output, see the following:
+
+@lisp
+(pretty-print '(define (foo) (lambda (x)
+(cond ((zero? x) #t) ((negative? x) -x) (else
+(if (= x 1) 2 (* x x x)))))))
+@print{}
+(define (foo)
+  (lambda (x)
+    (cond ((zero? x) #t)
+          ((negative? x) -x)
+          (else (if (= x 1) 2 (* x x x))))))
+@end lisp
+
+@deffn {Scheme Procedure} pretty-print obj [port] [keyword-options]
+Print the textual representation of the Scheme object @var{obj} to
+@var{port}.  @var{port} defaults to the current output port, if not
+given.
+
+The further @var{keyword-options} are keywords and parameters as
+follows,
+
+@table @asis
+@item @nicode{#:display?} @var{flag}
+If @var{flag} is true then print using @code{display}.  The default is
+@code{#f} which means use @code{write} style.  (@pxref{Writing})
+
+@item @nicode{#:per-line-prefix} @var{string}
+Print the given @var{string} as a prefix on each line.  The default is
+no prefix.
+
+@item @nicode{#:width} @var{columns}
+Print within the given @var{columns}.  The default is 79.
+@end table
+@end deffn
+
+
+@page
+@node Formatted Output
+@section Formatted Output
+@cindex formatted output
+
+@c  For reference, in this section escapes like ~a are given in
+@c  @nicode, to give code font in TeX etc, but leave them unadorned in
+@c  Info.
+@c
+@c  The idea is to reduce clutter around what's shown, and avoid any
+@c  possible confusion over whether the ` ' quotes are part of what
+@c  should be entered.  (In particular for instance of course ' is
+@c  meaningful in a format string, introducing a char parameter).
+
+The @code{format} function is a powerful way to print numbers, strings
+and other objects together with literal text under the control of a
+format string.  This function is available from
+
+@example
+(use-modules (ice-9 format))
+@end example
+
+A format string is generally more compact and easier than using just
+the standard procedures like @code{display}, @code{write} and
+@code{newline}.  Parameters in the output string allow various output
+styles, and parameters can be taken from the arguments for runtime
+flexibility.
+
+@code{format} is similar to the Common Lisp procedure of the same
+name, but it's not identical and doesn't have quite all the features
+found in Common Lisp.
+
+C programmers will note the similarity between @code{format} and
+@code{printf}, though escape sequences are marked with @nicode{~}
+instead of @nicode{%}, and are more powerful.
+
+@sp 1
+@deffn {Scheme Procedure} format dest fmt [args@dots{}]
+Write output specified by the @var{fmt} string to @var{dest}.
+@var{dest} can be an output port, @code{#t} for
+@code{current-output-port} (@pxref{Default Ports}), a number for
+@code{current-error-port}, or @code{#f} to return the output as a
+string.
+
+@var{fmt} can contain literal text to be output, and @nicode{~}
+escapes.  Each escape has the form
+
+@example
+~ [param [, param@dots{}] [:] [@@] code
+@end example
+
+@nicode{code} is a character determining the escape sequence.  The
+@nicode{:} and @nicode{@@} characters are optional modifiers, one or
+both of which change the way various codes operate.  Optional
+parameters are accepted by some codes too.  Parameters have the
+following forms,
+
+@table @asis
+@item @nicode{[+/-]number}
+An integer, with optional @nicode{+} or @nicode{-}.
+@item @nicode{'}  (apostrophe)
+The following character in the format string, for instance @nicode{'z}
+for @nicode{z}.
+@item @nicode{v}
+The next function argument as the parameter.  @nicode{v} stands for
+``variable'', a parameter can be calculated at runtime and included in
+the arguments.  Upper case @nicode{V} can be used too.
+@item @nicode{#}
+The number of arguments remaining.  (See @nicode{~*} below for some
+usages.)
+@end table
+
+Parameters are separated by commas (@nicode{,}).  A parameter can be
+left empty to keep its default value when supplying later parameters.
+
+@sp 1
+The following escapes are available.  The code letters are not
+case-sensitive, upper and lower case are the same.
+
+@table @asis
+@item @nicode{~a}
+@itemx @nicode{~s}
+Object output.  Parameters: @var{minwidth}, @var{padinc},
+@var{minpad}, @var{padchar}.
+
+@nicode{~a} outputs an argument like @code{display}, @nicode{~s}
+outputs an argument like @code{write} (@pxref{Writing}).  
+
+@example
+(format #t "~a" "foo") @print{} foo
+(format #t "~s" "foo") @print{} "foo"
+@end example
+
+@nicode{~:a} and @nicode{~:s} put objects that don't have an external
+representation in quotes like a string.
+
+@example
+(format #t "~:a" car) @print{} "#<primitive-procedure car>"
+@end example
+
+If the output is less than @var{minwidth} characters (default 0), it's
+padded on the right with @var{padchar} (default space).  @nicode{~@@a}
+and @nicode{~@@s} put the padding on the left instead.
+
+@example
+(format #f "~5a" 'abc)       @result{} "abc  "
+(format #f "~5,,,'-@@a" 'abc) @result{} "--abc"
+@end example
+
+@var{minpad} is a minimum for the padding then plus a multiple of
+@var{padinc}.  Ie.@: the padding is @math{@var{minpad} + @var{N} *
+@var{padinc}}, where @var{n} is the smallest integer making the total
+object plus padding greater than or equal to @var{minwidth}.  The
+default @var{minpad} is 0 and the default @var{padinc} is 1 (imposing
+no minimum or multiple).
+
+@example
+(format #f "~5,1,4a" 'abc) @result{} "abc    "
+@end example
+
+@item @nicode{~c}
+Character.  Parameter: @var{charnum}.
+
+Output a character.  The default is to simply output, as per
+@code{write-char} (@pxref{Writing}).  @nicode{~@@c} prints in
+@code{write} style.  @nicode{~:c} prints control characters (ASCII 0
+to 31) in @nicode{^X} form.
+
+@example
+(format #t "~c" #\z)        @print{} z
+(format #t "~@@c" #\z)       @print{} #\z
+(format #t "~:c" #\newline) @print{} ^J
+@end example
+
+If the @var{charnum} parameter is given then an argument is not taken
+but instead the character is @code{(integer->char @var{charnum})}
+(@pxref{Characters}).  This can be used for instance to output
+characters given by their ASCII code.
+
+@example
+(format #t "~65c")  @print{} A
+@end example
+
+@item @nicode{~d}
+@itemx @nicode{~x}
+@itemx @nicode{~o}
+@itemx @nicode{~b}
+Integer.  Parameters: @var{minwidth}, @var{padchar}, @var{commachar},
+@var{commawidth}.
+
+Output an integer argument as a decimal, hexadecimal, octal or binary
+integer (respectively).
+
+@example
+(format #t "~d" 123) @print{} 123
+@end example
+
+@nicode{~@@d} etc shows a @nicode{+} sign is shown on positive
+numbers.
+
+@c  FIXME: "+" is not shown on zero, unlike in Common Lisp.  Should
+@c  that be changed in the code, or is it too late and should just be
+@c  documented that way?
+
+@example
+(format #t "~@@b" 12) @print{} +1100
+@end example
+
+If the output is less than the @var{minwidth} parameter (default no
+minimum), it's padded on the left with the @var{padchar} parameter
+(default space).
+
+@example
+(format #t "~5,'*d" 12)   @print{} ***12
+(format #t "~5,'0d" 12)   @print{} 00012
+(format #t "~3d"    1234) @print{} 1234
+@end example
+
+@nicode{~:d} adds commas (or the @var{commachar} parameter) every
+three digits (or the @var{commawidth} parameter many).
+
+@example
+(format #t "~:d" 1234567)         @print{} 1,234,567
+(format #t "~10,'*,'/,2:d" 12345) @print{} ***1/23/45
+@end example
+
+Hexadecimal @nicode{~x} output is in lower case, but the @nicode{~(}
+and @nicode{~)} case conversion directives described below can be used
+to get upper case.
+
+@example
+(format #t "~x"       65261) @print{} feed
+(format #t "~:@@(~x~)" 65261) @print{} FEED
+@end example
+
+@item @nicode{~r}
+Integer in words, roman numerals, or a specified radix.  Parameters:
+@var{radix}, @var{minwidth}, @var{padchar}, @var{commachar},
+@var{commawidth}.
+
+With no parameters output is in words as a cardinal like ``ten'', or
+@nicode{~:r} prints an ordinal like ``tenth''.
+
+@example
+(format #t "~r" 9)  @print{} nine        ;; cardinal
+(format #t "~r" -9) @print{} minus nine  ;; cardinal
+(format #t "~:r" 9) @print{} ninth       ;; ordinal
+@end example
+
+And also with no parameters, @nicode{~@@r} gives roman numerals and
+@nicode{~:@@r} gives old roman numerals.  In old roman numerals
+there's no ``subtraction'', so 9 is @nicode{VIIII} instead of
+@nicode{IX}.  In both cases only positive numbers can be output.
+
+@example
+(format #t "~@@r" 89)  @print{} LXXXIX     ;; roman
+(format #t "~:@@r" 89) @print{} LXXXVIIII  ;; old roman
+@end example
+
+When a parameter is given it means numeric output in the specified
+@var{radix}.  The modifiers and parameters following the radix are the
+same as described for @nicode{~d} etc above.
+
+@example
+(format #f "~3r" 27)   @result{} "1000"    ;; base 3
+(format #f "~3,5r" 26) @result{} "  222"   ;; base 3 width 5
+@end example
+
+@item @nicode{~f}
+Fixed-point float.  Parameters: @var{width}, @var{decimals},
+@var{scale}, @var{overflowchar}, @var{padchar}.
+
+Output a number or number string in fixed-point format, ie.@: with a
+decimal point.
+
+@example
+(format #t "~f" 5)      @print{} 5.0
+(format #t "~f" "123")  @print{} 123.0
+(format #t "~f" "1e-1") @print{} 0.1
+@end example
+
+@nicode{~@@f} prints a @nicode{+} sign on positive numbers (including
+zero).
+
+@example
+(format #t "~@@f" 0) @print{} +0.0
+@end example
+
+If the output is less than @var{width} characters it's padded on the
+left with @var{padchar} (space by default).  If the output equals or
+exceeds @var{width} then there's no padding.  The default for
+@var{width} is no padding.
+
+@example
+(format #f "~6f" -1.5)      @result{} "  -1.5"
+(format #f "~6,,,,'*f" 23)  @result{} "**23.0"
+(format #f "~6f" 1234567.0) @result{} "1234567.0"
+@end example
+
+@var{decimals} is how many digits to print after the decimal point,
+with the value rounded or padded with zeros as necessary.  (The
+default is to output as many decimals as required.)
+
+@example
+(format #t "~1,2f" 3.125) @print{} 3.13
+(format #t "~1,2f" 1.5)   @print{} 1.50
+@end example
+
+@var{scale} is a power of 10 applied to the value, moving the decimal
+point that many places.  A positive @var{scale} increases the value
+shown, a negative decreases it.
+
+@example
+(format #t "~,,2f" 1234)  @print{} 123400.0
+(format #t "~,,-2f" 1234) @print{} 12.34
+@end example
+
+If @var{overflowchar} and @var{width} are both given and if the output
+would exceed @var{width}, then that many @var{overflowchar}s are
+printed instead of the value.
+
+@example
+(format #t "~5,,,'xf" 12345) @print{} 12345
+(format #t "~4,,,'xf" 12345) @print{} xxxx
+@end example
+
+@item @nicode{~e}
+Exponential float.  Parameters: @var{width}, @var{mantdigits},
+@var{expdigits}, @var{intdigits}, @var{overflowchar}, @var{padchar},
+@var{expchar}.
+
+Output a number or number string in exponential notation.
+
+@example
+(format #t "~e" 5000.25) @print{} 5.00025E+3
+(format #t "~e" "123.4") @print{} 1.234E+2
+(format #t "~e" "1e4")   @print{} 1.0E+4
+@end example
+
+@nicode{~@@e} prints a @nicode{+} sign on positive numbers (including
+zero).  (This is for the mantissa, a @nicode{+} or @nicode{-} sign is
+always shown on the exponent.)
+
+@example
+(format #t "~@@e" 5000.0) @print{} +5.0E+3
+@end example
+
+If the output is less than @var{width} characters it's padded on the
+left with @var{padchar} (space by default).  The default for
+@var{width} is to output with no padding.
+
+@example
+(format #f "~10e" 1234.0)     @result{} "  1.234E+3"
+(format #f "~10,,,,,'*e" 0.5) @result{} "****5.0E-1"
+@end example
+
+@c  FIXME: Describe what happens when the number is bigger than WIDTH.
+@c  There seems to be a bit of dodginess about this, or some deviation
+@c  from Common Lisp.
+
+@var{mantdigits} is the number of digits shown in the mantissa after
+the decimal point.  The value is rounded or trailing zeros are added
+as necessary.  The default @var{mantdigits} is to show as much as
+needed by the value.
+
+@example
+(format #f "~,3e" 11111.0) @result{} "1.111E+4"
+(format #f "~,8e" 123.0)   @result{} "1.23000000E+2"
+@end example
+
+@var{expdigits} is the minimum number of digits shown for the
+exponent, with leading zeros added if necessary.  The default for
+@var{expdigits} is to show only as many digits as required.  At least
+1 digit is always shown.
+
+@example
+(format #f "~,,1e" 1.0e99) @result{} "1.0E+99"
+(format #f "~,,6e" 1.0e99) @result{} "1.0E+000099"
+@end example
+
+@var{intdigits} (default 1) is the number of digits to show before the
+decimal point in the mantissa.  @var{intdigits} can be zero, in which
+case the integer part is a single @nicode{0}, or it can be negative,
+in which case leading zeros are shown after the decimal point.
+
+@c  FIXME: When INTDIGITS is 0, Common Lisp format apparently only
+@c  shows the single 0 digit if it fits in WIDTH.  format.scm seems to
+@c  show it always.  Is it meant to?
+
+@example
+(format #t "~,,,3e" 12345.0)  @print{} 123.45E+2
+(format #t "~,,,0e" 12345.0)  @print{} 0.12345E+5
+(format #t "~,,,-3e" 12345.0) @print{} 0.00012345E+8
+@end example
+
+@c  FIXME: MANTDIGITS with negative INTDIGITS doesn't match CL spec,
+@c  believe the spec says it ought to still show mantdigits+1 sig
+@c  figures, ie. leading zeros don't count towards MANTDIGITS, but it
+@c  seems to just treat MANTDIGITS as how many digits after the
+@c  decimal point.
+
+If @var{overflowchar} is given then @var{width} is a hard limit.  If
+the output would exceed @var{width} then instead that many
+@var{overflowchar}s are printed.
+
+@example
+(format #f "~6,,,,'xe" 100.0) @result{} "1.0E+2"
+(format #f "~3,,,,'xe" 100.0) @result{} "xxx"
+@end example
+
+@var{expchar} is the exponent marker character (default @nicode{E}).
+
+@example
+(format #t "~,,,,,,'ee" 100.0) @print{} 1.0e+2
+@end example
+
+@item @nicode{~g}
+General float.  Parameters: @var{width}, @var{mantdigits},
+@var{expdigits}, @var{intdigits}, @var{overflowchar}, @var{padchar},
+@var{expchar}.
+
+Output a number or number string in either exponential format the same
+as @nicode{~e}, or fixed-point format like @nicode{~f} but aligned
+where the mantissa would have been and followed by padding where the
+exponent would have been.
+
+@c  FIXME: The default MANTDIGITS is apparently max(needed,min(n,7))
+@c  where 10^(n-1)<=abs(x)<=10^n.  But the Common Lisp spec seems to
+@c  ask for "needed" to be without leading or trailing zeros, whereas
+@c  format.scm seems to include trailing zeros, ending up with it
+@c  using fixed format for bigger values than it should.
+
+Fixed-point is used when the absolute value is 0.1 or more and it
+takes no more space than the mantissa in exponential format, ie.@:
+basically up to @var{mantdigits} digits.
+
+@example
+(format #f "~12,4,2g" 999.0)    @result{} "   999.0    "
+(format #f "~12,4,2g" "100000") @result{} "  1.0000E+05"
+@end example
+
+The parameters are interpreted as per @nicode{~e} above.  When
+fixed-point is used, the @var{decimals} parameter to @nicode{~f} is
+established from @var{mantdigits}, so as to give a total
+@math{@var{mantdigits}+1} figures.
+
+@item @nicode{~$}
+Monetary style fixed-point float.  Parameters: @var{decimals},
+@var{intdigits}, @var{width}, @var{padchar}.
+
+@c  For reference, fmtdoc.txi from past versions of slib showed the
+@c  INTDIGITS parameter as SCALE.  That looks like a typo, in the code
+@c  and in the Common Lisp spec it's a minimum digits for the integer
+@c  part, it isn't a power of 10 like in ~f.
+
+Output a number or number string in fixed-point format, ie.@: with a
+decimal point.  @var{decimals} is the number of decimal places to
+show, default 2.
+
+@example
+(format #t "~$" 5)       @print{} 5.00
+(format #t "~4$" "2.25") @print{} 2.2500
+(format #t "~4$" "1e-2") @print{} 0.0100
+@end example
+
+@nicode{~@@$} prints a @nicode{+} sign on positive numbers (including
+zero).
+
+@example
+(format #t "~@@$" 0) @print{} +0.00
+@end example
+
+@var{intdigits} is a minimum number of digits to show in the integer
+part of the value (default 1).
+
+@example
+(format #t "~,3$" 9.5)   @print{} 009.50
+(format #t "~,0$" 0.125) @print{} .13
+@end example
+
+If the output is less than @var{width} characters (default 0), it's
+padded on the left with @var{padchar} (default space).  @nicode{~:$}
+puts the padding after the sign.
+
+@example
+(format #f "~,,8$" -1.5)   @result{} "   -1.50"
+(format #f "~,,8:$" -1.5)  @result{} "-   1.50"
+(format #f "~,,8,'.:@@$" 3) @result{} "+...3.00"
+@end example
+
+Note that floating point for dollar amounts is generally not a good
+idea, because a cent @math{0.01} cannot be represented exactly in the
+binary floating point Guile uses, which leads to slowly accumulating
+rounding errors.  Keeping values as cents (or fractions of a cent) in
+integers then printing with the scale option in @nicode{~f} may be a
+better approach.
+
+@c  For reference, fractions don't work with ~$ (or any of the float
+@c  conversions) currently.  If they did work then we could perhaps
+@c  suggest keeping dollar amounts as rationals, which would of course
+@c  give exact cents.  An integer as cents is probably still a better
+@c  recommendation though, since it forces one to think about where
+@c  and when rounding can or should occur.
+
+@item @nicode{~i}
+Complex fixed-point float.  Parameters: @var{width}, @var{decimals},
+@var{scale}, @var{overflowchar}, @var{padchar}.
+
+@c  For reference, in Common Lisp ~i is an indent, but slib fmtdoc.txi
+@c  described it as complex number output, so we keep that.
+
+Output the argument as a complex number, with both real and imaginary
+part shown (even if one or both are zero).
+
+The parameters and modifiers are the same as for fixed-point
+@nicode{~f} described above.  The real and imaginary parts are both
+output with the same given parameters and modifiers, except that for
+the imaginary part the @nicode{@@} modifier is always enabled, so as
+to print a @nicode{+} sign between the real and imaginary parts.
+
+@example
+(format #t "~i" 1)  @print{} 1.0+0.0i
+@end example
+
+@item @nicode{~p}
+Plural.  No parameters.
+
+Output nothing if the argument is 1, or @samp{s} for any other
+value.
+
+@example
+(format #t "enter name~p" 1) @print{} enter name
+(format #t "enter name~p" 2) @print{} enter names
+@end example
+
+@nicode{~@@p} prints @samp{y} for 1 or @samp{ies} otherwise.
+
+@example
+(format #t "pupp~@@p" 1) @print{} puppy
+(format #t "pupp~@@p" 2) @print{} puppies
+@end example
+
+@nicode{~:p} re-uses the preceding argument instead of taking a new
+one, which can be convenient when printing some sort of count.
+
+@example
+(format #t "~d cat~:p" 9)   @print{} 9 cats
+(format #t "~d pupp~:@@p" 5) @print{} 5 puppies
+@end example
+
+@nicode{~p} is designed for English plurals and there's no attempt to
+support other languages.  @nicode{~[} conditionals (below) may be able
+to help.  When using @code{gettext} to translate messages
+@code{ngettext} is probably best though
+(@pxref{Internationalization}).
+
+@item @nicode{~y}
+Pretty print.  No parameters.
+
+Output an argument with @code{pretty-print} (@pxref{Pretty Printing}).
+
+@item @nicode{~?}
+@itemx @nicode{~k}
+Sub-format.  No parameters.
+
+Take a format string argument and a second argument which is a list of
+arguments for that string, and output the result.
+
+@example
+(format #t "~?" "~d ~d" '(1 2))    @print{} 1 2
+@end example
+
+@nicode{~@@?} takes arguments for the sub-format directly rather than
+in a list.
+
+@example
+(format #t "~@@? ~s" "~d ~d" 1 2 "foo") @print{} 1 2 "foo"
+@end example
+
+@nicode{~?} and @nicode{~k} are the same, @nicode{~k} is provided for
+T-Scheme compatibility.
+
+@item @nicode{~*}
+Argument jumping.  Parameter: @var{N}.
+
+Move forward @var{N} arguments (default 1) in the argument list.
+@nicode{~:*} moves backwards.  (@var{N} cannot be negative.)
+
+@example
+(format #f "~d ~2*~d" 1 2 3 4) @result{} "1 4"
+(format #f "~d ~:*~d" 6)       @result{} "6 6"
+@end example
+
+@nicode{~@@*} moves to argument number @var{N}.  The first argument is
+number 0 (and that's the default for @var{N}).
+
+@example
+(format #f "~d~d again ~@@*~d~d" 1 2) @result{} "12 again 12"
+(format #f "~d~d~d ~1@@*~d~d" 1 2 3)  @result{} "123 23"
+@end example
+
+A @nicode{#} move to the end followed by a @nicode{:} modifier move
+back can be used for an absolute position relative to the end of the
+argument list, a reverse of what the @nicode{@@} modifier does.
+
+@example
+(format #t "~#*~2:*~a" 'a 'b 'c 'd)   @print{} c
+@end example
+
+At the end of the format string the current argument postion doesn't
+matter, any further arguments are ignored.
+
+@item @nicode{~t}
+Advance to a column position.  Parameters: @var{colnum}, @var{colinc},
+@var{padchar}.
+
+Output @var{padchar} (space by default) to move to the given
+@var{colnum} column.  The start of the line is column 0, the default
+for @var{colnum} is 1.
+
+@example
+(format #f "~tX")  @result{} " X"
+(format #f "~3tX") @result{} "   X"
+@end example
+
+If the current column is already past @var{colnum}, then the move is
+to there plus a multiple of @var{colinc}, ie.@: column
+@math{@var{colnum} + @var{N} * @var{colinc}} for the smallest @var{N}
+which makes that value greater than or equal to the current column.
+The default @var{colinc} is 1 (which means no further move).
+
+@example
+(format #f "abcd~2,5,'.tx") @result{} "abcd...x"
+@end example
+
+@nicode{~@@t} takes @var{colnum} as an offset from the current column.
+@var{colnum} many pad characters are output, then further padding to
+make the current column a multiple of @var{colinc}, if it isn't
+already so.
+
+@example
+(format #f "a~3,5'*@@tx") @result{} "a****x"
+@end example
+
+@nicode{~t} is implemented using @code{port-column} (@pxref{Reading}),
+so it works even there has been other output before @code{format}.
+
+@item @nicode{~~}
+Tilde character.  Parameter: @var{n}.
+
+Output a tilde character @nicode{~}, or @var{n} many if a parameter is
+given.  Normally @nicode{~} introduces an escape sequence, @nicode{~~}
+is the way to output a literal tilde.
+
+@item @nicode{~%}
+Newline.  Parameter: @var{n}.
+
+Output a newline character, or @var{n} many if a parameter is given.
+A newline (or a few newlines) can of course be output just by
+including them in the format string.
+
+@item @nicode{~&}
+Start a new line.  Parameter: @var{n}.
+
+Output a newline if not already at the start of a line.  With a
+parameter, output that many newlines, but with the first only if not
+already at the start of a line.  So for instance 3 would be a newline
+if not already at the start of a line, and 2 further newlines.
+
+@item @nicode{~_}
+Space character.  Parameter: @var{n}.
+
+@c  For reference, in Common Lisp ~_ is a conditional newline, but
+@c  slib fmtdoc.txi described it as a space, so we keep that.
+
+Output a space character, or @var{n} many if a parameter is given.
+
+With a variable parameter this is one way to insert runtime calculated
+padding (@nicode{~t} or the various field widths can do similar
+things).
+
+@example
+(format #f "~v_foo" 4) @result{} "    foo"
+@end example
+
+@item @nicode{~/}
+Tab character.  Parameter: @var{n}.
+
+Output a tab character, or @var{n} many if a parameter is given.
+
+@item @nicode{~|}
+Formfeed character.  Parameter: @var{n}.
+
+Output a formfeed character, or @var{n} many if a parameter is given.
+
+@item @nicode{~!}
+Force output.  No parameters.
+
+At the end of output, call @code{force-output} to flush any buffers on
+the destination (@pxref{Writing}).  @nicode{~!} can occur anywhere in
+the format string, but the force is done at the end of output.
+
+When output is to a string (destination @code{#f}), @nicode{~!} does
+nothing.
+
+@item @nicode{~newline}  (ie.@: newline character)
+Continuation line.  No parameters.
+
+Skip this newline and any following whitespace in the format string,
+ie.@: don't send it to the output.  This can be used to break up a
+long format string for readability, but not print the extra
+whitespace.
+
+@example
+(format #f "abc~
+            ~d def~
+            ~d" 1 2) @result{} "abc1 def2"
+@end example
+
+@nicode{~:newline} skips the newline but leaves any further whitespace
+to be printed normally.
+
+@nicode{~@@newline} prints the newline then skips following
+whitespace.
+
+@item @nicode{~(} @nicode{~)}
+Case conversion.  No parameters.
+
+Between @nicode{~(} and @nicode{~)} the case of all output is changed.
+The modifiers on @nicode{~(} control the conversion.
+
+@itemize @w{}
+@item
+@nicode{~(} --- lower case.
+@c
+@c  FIXME: The : and @ modifiers are not yet documented because the
+@c  code applies string-capitalize and string-capitalize-first to each
+@c  separate format:out-str call, which has various subtly doubtful
+@c  effects.  And worse they're applied to individual characters,
+@c  including literal characters in the format string, which has the
+@c  silly effect of being always an upcase.
+@c
+@c  The Common Lisp spec is apparently for the capitalization to be
+@c  applied in one hit to the whole of the output between ~( and ~).
+@c  (This can no doubt be implemented without accumulating all that
+@c  text, just by keeping a state or the previous char to tell whether
+@c  within a word.)
+@c
+@c  @item
+@c  @nicode{:} --- first letter of each word upper case, the rest lower
+@c  case, as per the @code{string-capitalize} function (@pxref{Alphabetic
+@c  Case Mapping}).
+@c  @item
+@c  @nicode{@@} --- first letter of just the first word upper case, the
+@c  rest lower case.
+@c
+@item
+@nicode{~:@@(} --- upper case.
+@end itemize
+
+For example,
+
+@example
+(format #t "~(Hello~)")   @print{} hello
+(format #t "~:@@(Hello~)") @print{} HELLO
+@end example
+
+In the future it's intended the modifiers @nicode{:} and @nicode{@@}
+alone will capitalize the first letters of words, as per Common Lisp
+@code{format}, but the current implementation of this is flawed and
+not recommended for use.
+
+Case conversions do not nest, currently.  This might change in the
+future, but if it does then it will be to Common Lisp style where the
+outermost conversion has priority, overriding inner ones (making those
+fairly pointless).
+
+@item @nicode{~@{} @nicode{~@}}
+Iteration.  Parameter: @var{maxreps} (for @nicode{~@{}).
+
+The format between @nicode{~@{} and @nicode{~@}} is iterated.  The
+modifiers to @nicode{~@{} determine how arguments are taken.  The
+default is a list argument with each iteration successively consuming
+elements from it.  This is a convenient way to output a whole list.
+
+@example
+(format #t "~@{~d~@}"     '(1 2 3))       @print{} 123
+(format #t "~@{~s=~d ~@}" '("x" 1 "y" 2)) @print{} "x"=1 "y"=2
+@end example
+
+@nicode{~:@{} takes a single argument which is a list of lists, each
+of those contained lists gives the arguments for the iterated format.
+
+@c  @print{} on a new line here to avoid overflowing page width in DVI
+@example
+(format #t "~:@{~dx~d ~@}" '((1 2) (3 4) (5 6)))
+@print{} 1x2 3x4 5x6
+@end example
+
+@nicode{~@@@{} takes arguments directly, with each iteration
+successively consuming arguments.
+
+@example
+(format #t "~@@@{~d~@}"     1 2 3)       @print{} 123
+(format #t "~@@@{~s=~d ~@}" "x" 1 "y" 2) @print{} "x"=1 "y"=2
+@end example
+
+@nicode{~:@@@{} takes list arguments, one argument for each iteration,
+using that list for the format.
+
+@c  @print{} on a new line here to avoid overflowing page width in DVI
+@example
+(format #t "~:@@@{~dx~d ~@}" '(1 2) '(3 4) '(5 6))
+@print{} 1x2 3x4 5x6
+@end example
+
+Iterating stops when there are no more arguments or when the
+@var{maxreps} parameter to @nicode{~@{} is reached (default no
+maximum).
+
+@example
+(format #t "~2@{~d~@}" '(1 2 3 4)) @print{} 12
+@end example
+
+If the format between @nicode{~@{} and @nicode{~@}} is empty, then a
+format string argument is taken (before iteration argument(s)) and
+used instead.  This allows a sub-format (like @nicode{~?} above) to be
+iterated.
+
+@example
+(format #t "~@{~@}" "~d" '(1 2 3)) @print{} 123
+@end example
+
+@c  FIXME: What is the @nicode{:} modifier to ~} meant to do?  The
+@c  Common Lisp spec says it's a minimum of 1 iteration, but the
+@c  format.scm code seems to merely make it have MAXREPS default to 1.
+
+Iterations can be nested, an inner iteration operates in the same way
+as described, but of course on the arguments the outer iteration
+provides it.  This can be used to work into nested list structures.
+For example in the following the inner @nicode{~@{~d~@}x} is applied
+to @code{(1 2)} then @code{(3 4 5)} etc.
+
+@example
+(format #t "~@{~@{~d~@}x~@}" '((1 2) (3 4 5))) @print{} 12x345x
+@end example
+
+See also @nicode{~^} below for escaping from iteration.
+
+@item @nicode{~[} @nicode{~;} @nicode{~]}
+Conditional.  Parameter: @var{selector}.
+
+A conditional block is delimited by @nicode{~[} and @nicode{~]}, and
+@nicode{~;} separates clauses within the block.  @nicode{~[} takes an
+integer argument and that number clause is used.  The first clause is
+number 0.
+
+@example
+(format #f "~[peach~;banana~;mango~]" 1)  @result{} "banana"
+@end example
+
+The @var{selector} parameter can be used for the clause number,
+instead of taking an argument.
+
+@example
+(format #f "~2[peach~;banana~;mango~]") @result{} "mango"
+@end example
+
+If the clause number is out of range then nothing is output.  Or the
+last clause can be @nicode{~:;} to use that for a number out of range.
+
+@example
+(format #f "~[banana~;mango~]"         99) @result{} ""
+(format #f "~[banana~;mango~:;fruit~]" 99) @result{} "fruit"
+@end example
+
+@nicode{~:[} treats the argument as a flag, and expects two clauses.
+The first is used if the argument is @code{#f} or the second
+otherwise.
+
+@example
+(format #f "~:[false~;not false~]" #f)   @result{} "false"
+(format #f "~:[false~;not false~]" 'abc) @result{} "not false"
+
+(let ((n 3))
+  (format #t "~d gnu~:[s are~; is~] here" n (= 1 n)))
+@print{} 3 gnus are here
+@end example
+
+@nicode{~@@[} also treats the argument as a flag, and expects one
+clause.  If the argument is @code{#f} then no output is produced and
+the argument is consumed, otherwise the clause is used and the
+argument is not consumed, it's left for the clause.  This can be used
+for instance to suppress output if @code{#f} means something not
+available.
+
+@example
+(format #f "~@@[temperature=~d~]" 27) @result{} "temperature=27"
+(format #f "~@@[temperature=~d~]" #f) @result{} ""
+@end example
+
+@item @nicode{~^}
+Escape.  Parameters: @var{val1}, @var{val2}, @var{val3}.
+
+Stop formatting if there are no more arguments.  This can be used for
+instance to have a format string adapt to a variable number of
+arguments.
+
+@example
+(format #t "~d~^ ~d" 1)   @print{} 1
+(format #t "~d~^ ~d" 1 2) @print{} 1 2
+@end example
+
+Within a @nicode{~@{} @nicode{~@}} iteration, @nicode{~^} stops the
+current iteration step if there are no more arguments to that step,
+but continuing with possible further steps and the rest of the format.
+This can be used for instance to avoid a separator on the last
+iteration, or to adapt to variable length argument lists.
+
+@example
+(format #f "~@{~d~^/~@} go"    '(1 2 3))     @result{} "1/2/3 go"
+(format #f "~:@{ ~d~^~d~@} go" '((1) (2 3))) @result{} " 1 23 go"
+@end example
+
+@c  For reference, format.scm doesn't implement that Common Lisp ~:^
+@c  modifier which stops the entire iterating of ~:{ or ~@:{.
+
+@c  FIXME: Believe the Common Lisp spec is for ~^ within ~[ ~]
+@c  conditional to terminate the whole format (or iteration step if in
+@c  an iteration).  But format.scm seems to terminate just the
+@c  conditional form.
+@c
+@c      (format #f "~[abc~^def~;ghi~] blah" 0)
+@c      @result{} "abc blah"                    ;; looks wrong
+
+@c  FIXME: Believe the Common Lisp spec is for ~^ within ~( ~) to end
+@c  that case conversion and then also terminate the whole format (or
+@c  iteration step if in an iteration).  But format.scm doesn't seem
+@c  to do that quite right.
+@c
+@c      (format #f "~d ~^ ~d" 1)      @result{} "1 "
+@c      (format #f "~(~d ~^ ~d~)" 1)  @result{} ERROR
+
+Within a @nicode{~?} sub-format, @nicode{~^} operates just on that
+sub-format.  If it terminates the sub-format then the originating
+format will still continue.
+
+@example
+(format #t "~? items" "~d~^ ~d" '(1))   @print{} 1 items
+(format #t "~? items" "~d~^ ~d" '(1 2)) @print{} 1 2 items
+@end example
+
+The parameters to @nicode{~^} (which are numbers) change the condition
+used to terminate.  For a single parameter, termination is when that
+value is zero (notice this makes plain @nicode{~^} equivalent to
+@nicode{~#^}).  For two parameters, termination is when those two are
+equal.  For three parameters, termination is when @math{@var{val1}
+@le{} @var{val2}} and @math{@var{val2} @le{} @var{val3}}.
+
+@c  FIXME: Good examples of these?
+
+@item @nicode{~q}
+Inquiry message.  Insert a copyright message into the output.
+
+@nicode{~:q} inserts the format implementation version.
+@end table
+
+@sp 1
+It's an error if there are not enough arguments for the escapes in the
+format string, but any excess arguments are ignored.
+
+Iterations @nicode{~@{} @nicode{~@}} and conditionals @nicode{~[}
+@nicode{~;} @nicode{~]} can be nested, but must be properly nested,
+meaning the inner form must be entirely within the outer form.  So
+it's not possible, for instance, to try to conditionalize the endpoint
+of an iteration.
+
+@example
+(format #t "~@{ ~[ ... ~] ~@}" ...)       ;; good
+(format #t "~@{ ~[ ... ~@} ... ~]" ...)   ;; bad
+@end example
+
+The same applies to case conversions @nicode{~(} @nicode{~)}, they
+must properly nest with respect to iterations and conditionals (though
+currently a case conversion cannot nest within another case
+conversion).
+
+When a sub-format (@nicode{~?}) is used, that sub-format string must
+be self-contained.  It cannot for instance give a @nicode{~@{} to
+begin an iteration form and have the @nicode{~@}} up in the
+originating format, or similar.
+@end deffn
+
+@sp 1
+Guile contains a @code{format} procedure even when the module
+@code{(ice-9 format)} is not loaded.  The default @code{format} is
+@code{simple-format} (@pxref{Writing}), it doesn't support all escape
+sequences documented in this section, and will signal an error if you
+try to use one of them.  The reason for two versions is that the full
+@code{format} is fairly large and requires some time to load.
+@code{simple-format} is often adequate too.
+
+
+@node File Tree Walk
+@section File Tree Walk
+@cindex file tree walk
+
+The functions in this section traverse a tree of files and
+directories, in a fashion similar to the C @code{ftw} and @code{nftw}
+routines (@pxref{Working with Directory Trees,,, libc, GNU C Library
+Reference Manual}).
+
+@example
+(use-modules (ice-9 ftw))
+@end example
+@sp 1
+
+@defun ftw startname proc ['hash-size n]
+Walk the filesystem tree descending from @var{startname}, calling
+@var{proc} for each file and directory.
+
+Hard links and symbolic links are followed.  A file or directory is
+reported to @var{proc} only once, and skipped if seen again in another
+place.  One consequence of this is that @code{ftw} is safe against
+circularly linked directory structures.
+
+Each @var{proc} call is @code{(@var{proc} filename statinfo flag)} and
+it should return @code{#t} to continue, or any other value to stop.
+
+@var{filename} is the item visited, being @var{startname} plus a
+further path and the name of the item.  @var{statinfo} is the return
+from @code{stat} (@pxref{File System}) on @var{filename}.  @var{flag}
+is one of the following symbols,
+
+@table @code
+@item regular
+@var{filename} is a file, this includes special files like devices,
+named pipes, etc.
+
+@item directory
+@var{filename} is a directory.
+
+@item invalid-stat
+An error occurred when calling @code{stat}, so nothing is known.
+@var{statinfo} is @code{#f} in this case.
+
+@item directory-not-readable
+@var{filename} is a directory, but one which cannot be read and hence
+won't be recursed into.
+
+@item symlink
+@var{filename} is a dangling symbolic link.  Symbolic links are
+normally followed and their target reported, the link itself is
+reported if the target does not exist.
+@end table
+
+The return value from @code{ftw} is @code{#t} if it ran to completion,
+or otherwise the non-@code{#t} value from @var{proc} which caused the
+stop.
+
+Optional argument symbol @code{hash-size} and an integer can be given
+to set the size of the hash table used to track items already visited.
+(@pxref{Hash Table Reference})
+
+@c  Actually, it's probably safe to escape from ftw, just need to
+@c  check it.
+@c
+In the current implementation, returning non-@code{#t} from @var{proc}
+is the only valid way to terminate @code{ftw}.  @var{proc} must not
+use @code{throw} or similar to escape.
+@end defun
+
+
+@defun nftw startname proc ['chdir] ['depth] ['hash-size n] ['mount] ['physical]
+Walk the filesystem tree starting at @var{startname}, calling
+@var{proc} for each file and directory.  @code{nftw} has extra
+features over the basic @code{ftw} described above.
+
+Like @code{ftw}, hard links and symbolic links are followed.  A file
+or directory is reported to @var{proc} only once, and skipped if seen
+again in another place.  One consequence of this is that @code{nftw}
+is safe against circular linked directory structures.
+
+Each @var{proc} call is @code{(@var{proc} filename statinfo flag
+base level)} and it should return @code{#t} to continue, or any
+other value to stop.
+
+@var{filename} is the item visited, being @var{startname} plus a
+further path and the name of the item.  @var{statinfo} is the return
+from @code{stat} on @var{filename} (@pxref{File System}).  @var{base}
+is an integer offset into @var{filename} which is where the basename
+for this item begins.  @var{level} is an integer giving the directory
+nesting level, starting from 0 for the contents of @var{startname} (or
+that item itself if it's a file).  @var{flag} is one of the following
+symbols,
+
+@table @code
+@item regular
+@var{filename} is a file, including special files like devices, named
+pipes, etc.
+
+@item directory
+@var{filename} is a directory.
+
+@item directory-processed
+@var{filename} is a directory, and its contents have all been visited.
+This flag is given instead of @code{directory} when the @code{depth}
+option below is used.
+
+@item invalid-stat
+An error occurred when applying @code{stat} to @var{filename}, so
+nothing is known about it.  @var{statinfo} is @code{#f} in this case.
+
+@item directory-not-readable
+@var{filename} is a directory, but one which cannot be read and hence
+won't be recursed into.
+
+@item stale-symlink
+@var{filename} is a dangling symbolic link.  Links are normally
+followed and their target reported, the link itself is reported if its
+target does not exist.
+
+@item symlink
+When the @code{physical} option described below is used, this
+indicates @var{filename} is a symbolic link whose target exists (and
+is not being followed).
+@end table
+
+The following optional arguments can be given to modify the way
+@code{nftw} works.  Each is passed as a symbol (and @code{hash-size}
+takes a following integer value).
+
+@table @asis
+@item @code{chdir}
+Change to the directory containing the item before calling @var{proc}.
+When @code{nftw} returns the original current directory is restored.
+
+Under this option, generally the @var{base} parameter to each
+@var{proc} call should be used to pick out the base part of the
+@var{filename}.  The @var{filename} is still a path but with a changed
+directory it won't be valid (unless the @var{startname} directory was
+absolute).
+
+@item @code{depth}
+Visit files ``depth first'', meaning @var{proc} is called for the
+contents of each directory before it's called for the directory
+itself.  Normally a directory is reported first, then its contents.
+
+Under this option, the @var{flag} to @var{proc} for a directory is
+@code{directory-processed} instead of @code{directory}.
+
+@item @code{hash-size @var{n}}
+Set the size of the hash table used to track items already visited.
+(@pxref{Hash Table Reference})
+
+@item @code{mount}
+Don't cross a mount point, meaning only visit items on the same
+filesystem as @var{startname} (ie.@: the same @code{stat:dev}).
+
+@item @code{physical}
+Don't follow symbolic links, instead report them to @var{proc} as
+@code{symlink}.  Dangling links (those whose target doesn't exist) are
+still reported as @code{stale-symlink}.
+@end table
+
+The return value from @code{nftw} is @code{#t} if it ran to
+completion, or otherwise the non-@code{#t} value from @var{proc} which
+caused the stop.
+
+@c  For reference, one reason not to esacpe is that the current
+@c  directory is not saved and restored with dynamic-wind.  Maybe
+@c  changing that would be enough to allow escaping.
+@c
+In the current implementation, returning non-@code{#t} from @var{proc}
+is the only valid way to terminate @code{ftw}.  @var{proc} must not
+use @code{throw} or similar to escape.
+@end defun
+
+
+@node Queues
+@section Queues
+@cindex queues
+@tindex Queues
+
+@noindent
+The functions in this section are provided by
+
+@example
+(use-modules (ice-9 q))
+@end example
+
+This module implements queues holding arbitrary scheme objects and
+designed for efficient first-in / first-out operations.
+
+@code{make-q} creates a queue, and objects are entered and removed
+with @code{enq!} and @code{deq!}.  @code{q-push!} and @code{q-pop!}
+can be used too, treating the front of the queue like a stack.
+
+@sp 1
+
+@deffn {Scheme Procedure} make-q
+Return a new queue.
+@end deffn
+
+@deffn {Scheme Procedure} q? obj
+Return @code{#t} if @var{obj} is a queue, or @code{#f} if not.
+
+Note that queues are not a distinct class of objects but are
+implemented with cons cells.  For that reason certain list structures
+can get @code{#t} from @code{q?}.
+@end deffn
+
+@deffn {Scheme Procedure} enq! q obj
+Add @var{obj} to the rear of @var{q}, and return @var{q}.
+@end deffn
+
+@deffn {Scheme Procedure} deq! q
+@deffnx {Scheme Procedure} q-pop! q
+Remove and return the front element from @var{q}.  If @var{q} is
+empty, a @code{q-empty} exception is thrown.
+
+@code{deq!} and @code{q-pop!} are the same operation, the two names
+just let an application match @code{enq!} with @code{deq!}, or
+@code{q-push!} with @code{q-pop!}.
+@end deffn
+
+@deffn {Scheme Procedure} q-push! q obj
+Add @var{obj} to the front of @var{q}, and return @var{q}.
+@end deffn
+
+@deffn {Scheme Procedure} q-length q
+Return the number of elements in @var{q}.
+@end deffn
+
+@deffn {Scheme Procedure} q-empty? q
+Return true if @var{q} is empty.
+@end deffn
+
+@deffn {Scheme Procedure} q-empty-check q
+Throw a @code{q-empty} exception if @var{q} is empty.
+@end deffn
+
+@deffn {Scheme Procedure} q-front q
+Return the first element of @var{q} (without removing it).  If @var{q}
+is empty, a @code{q-empty} exception is thrown.
+@end deffn
+
+@deffn {Scheme Procedure} q-rear q
+Return the last element of @var{q} (without removing it).  If @var{q}
+is empty, a @code{q-empty} exception is thrown.
+@end deffn
+
+@deffn {Scheme Procedure} q-remove! q obj
+Remove all occurences of @var{obj} from @var{q}, and return @var{q}.
+@var{obj} is compared to queue elements using @code{eq?}.
+@end deffn
+
+@sp 1
+@cindex @code{q-empty}
+The @code{q-empty} exceptions described above are thrown just as
+@code{(throw 'q-empty)}, there's no message etc like an error throw.
+
+A queue is implemented as a cons cell, the @code{car} containing a
+list of queued elements, and the @code{cdr} being the last cell in
+that list (for ease of enqueuing).
+
+@example
+(@var{list} . @var{last-cell})
+@end example
+
+@noindent
+If the queue is empty, @var{list} is the empty list and
+@var{last-cell} is @code{#f}.
+
+An application can directly access the queue list if desired, for
+instance to search the elements or to insert at a specific point.
+
+@deffn {Scheme Procedure} sync-q! q
+Recompute the @var{last-cell} field in @var{q}.
+
+All the operations above maintain @var{last-cell} as described, so
+normally there's no need for @code{sync-q!}.  But if an application
+modifies the queue @var{list} then it must either maintain
+@var{last-cell} similarly, or call @code{sync-q!} to recompute it.
+@end deffn
+
+
+@node Streams
+@section Streams
+@cindex streams
+
+A stream represents a sequence of values, each of which is calculated
+only when required.  This allows large or even infinite sequences to
+be represented and manipulated with familiar operations like ``car'',
+``cdr'', ``map'' or ``fold''.  In such manipulations only as much as
+needed is actually held in memory at any one time.  The functions in
+this section are available from
+
+@example
+(use-modules (ice-9 streams))
+@end example
+
+Streams are implemented using promises (@pxref{Delayed Evaluation}),
+which is how the underlying calculation of values is made only when
+needed, and the values then retained so the calculation is not
+repeated.
+
+@noindent
+Here is a simple example producing a stream of all odd numbers,
+
+@example
+(define odds (make-stream (lambda (state)
+                            (cons state (+ state 2)))
+                          1))
+(stream-car odds)              @result{} 1
+(stream-car (stream-cdr odds)) @result{} 3
+@end example
+
+@noindent
+@code{stream-map} could be used to derive a stream of odd squares,
+
+@example
+(define (square n) (* n n))
+(define oddsquares (stream-map square odds))
+@end example
+
+These are infinite sequences, so it's not possible to convert them to
+a list, but they could be printed (infinitely) with for example
+
+@example
+(stream-for-each (lambda (n sq)
+                   (format #t "~a squared is ~a\n" n sq))
+                 odds oddsquares)
+@print{}
+1 squared is 1
+3 squared is 9
+5 squared is 25
+7 squared is 49
+@dots{}
+@end example
+
+@sp 1
+@defun make-stream proc initial-state
+Return a new stream, formed by calling @var{proc} successively.
+
+Each call is @code{(@var{proc} @var{state})}, it should return a pair,
+the @code{car} being the value for the stream, and the @code{cdr}
+being the new @var{state} for the next call.  For the first call
+@var{state} is the given @var{initial-state}.  At the end of the
+stream, @var{proc} should return some non-pair object.
+@end defun
+
+@defun stream-car stream
+Return the first element from @var{stream}.  @var{stream} must not be
+empty.
+@end defun
+
+@defun stream-cdr stream
+Return a stream which is the second and subsequent elements of
+@var{stream}.  @var{stream} must not be empty.
+@end defun
+
+@defun stream-null? stream
+Return true if @var{stream} is empty.
+@end defun
+
+@defun list->stream list
+@defunx vector->stream vector
+Return a stream with the contents of @var{list} or @var{vector}.
+
+@var{list} or @var{vector} should not be modified subsequently, since
+it's unspecified whether changes there will be reflected in the stream
+returned.
+@end defun
+
+@defun port->stream port readproc
+Return a stream which is the values obtained by reading from
+@var{port} using @var{readproc}.  Each read call is
+@code{(@var{readproc} @var{port})}, and it should return an EOF object
+(@pxref{Reading}) at the end of input.
+
+For example a stream of characters from a file,
+
+@example
+(port->stream (open-input-file "/foo/bar.txt") read-char)
+@end example
+@end defun
+
+@defun stream->list stream
+Return a list which is the entire contents of @var{stream}.
+@end defun
+
+@defun stream->reversed-list stream
+Return a list which is the entire contents of @var{stream}, but in
+reverse order.
+@end defun
+
+@defun stream->list&length stream
+Return two values (@pxref{Multiple Values}), being firstly a list
+which is the entire contents of @var{stream}, and secondly the number
+of elements in that list.
+@end defun
+
+@defun stream->reversed-list&length stream
+Return two values (@pxref{Multiple Values}) being firstly a list which
+is the entire contents of @var{stream}, but in reverse order, and
+secondly the number of elements in that list.
+@end defun
+
+@defun stream->vector stream
+Return a vector which is the entire contents of @var{stream}.
+@end defun
+
+@defun stream-fold proc init stream0 @dots{} streamN
+Apply @var{proc} successively over the elements of the given streams,
+from first to last until the end of the shortest stream is reached.
+Return the result from the last @var{proc} call.
+
+Each call is @code{(@var{proc} elem0 @dots{} elemN prev)}, where each
+@var{elem} is from the corresponding @var{stream}.  @var{prev} is the
+return from the previous @var{proc} call, or the given @var{init} for
+the first call.
+@end defun
+
+@defun stream-for-each proc stream0 @dots{} streamN
+Call @var{proc} on the elements from the given @var{stream}s.  The
+return value is unspecified.
+
+Each call is @code{(@var{proc} elem0 @dots{} elemN)}, where each
+@var{elem} is from the corresponding @var{stream}.
+@code{stream-for-each} stops when it reaches the end of the shortest
+@var{stream}.
+@end defun
+
+@defun stream-map proc stream0 @dots{} streamN
+Return a new stream which is the results of applying @var{proc} to the
+elements of the given @var{stream}s.
+
+Each call is @code{(@var{proc} elem0 @dots{} elemN)}, where each
+@var{elem} is from the corresponding @var{stream}.  The new stream
+ends when the end of the shortest given @var{stream} is reached.
+@end defun
+
+
+@node Buffered Input
+@section Buffered Input
+@cindex Buffered input
+@cindex Line continuation
+
+The following functions are provided by
+
+@example
+(use-modules (ice-9 buffered-input))
+@end example
+
+A buffered input port allows a reader function to return chunks of
+characters which are to be handed out on reading the port.  A notion
+of further input for an application level logical expression is
+maintained too, and passed through to the reader.
+
+@defun make-buffered-input-port reader
+Create an input port which returns characters obtained from the given
+@var{reader} function.  @var{reader} is called (@var{reader} cont),
+and should return a string or an EOF object.
+
+The new port gives precisely the characters returned by @var{reader},
+nothing is added, so if any newline characters or other separators are
+desired they must come from the reader function.
+
+The @var{cont} parameter to @var{reader} is @code{#f} for initial
+input, or @code{#t} when continuing an expression.  This is an
+application level notion, set with
+@code{set-buffered-input-continuation?!} below.  If the user has
+entered a partial expression then it allows @var{reader} for instance
+to give a different prompt to show more is required.
+@end defun
+
+@defun make-line-buffered-input-port reader
+@cindex Line buffered input
+Create an input port which returns characters obtained from the
+specified @var{reader} function, similar to
+@code{make-buffered-input-port} above, but where @var{reader} is
+expected to be a line-oriented.
+
+@var{reader} is called (@var{reader} cont), and should return a string
+or an EOF object as above.  Each string is a line of input without a
+newline character, the port code inserts a newline after each string.
+@end defun
+
+@defun set-buffered-input-continuation?! port cont
+Set the input continuation flag for a given buffered input
+@var{port}.
+
+An application uses this by calling with a @var{cont} flag of
+@code{#f} when beginning to read a new logical expression.  For
+example with the Scheme @code{read} function (@pxref{Scheme Read}),
+
+@example
+(define my-port (make-buffered-input-port my-reader))
+
+(set-buffered-input-continuation?! my-port #f)
+(let ((obj (read my-port)))
+  ...
+@end example
+@end defun
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

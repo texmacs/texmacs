@@ -1,0 +1,158 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Internationalization
+@section Support for Internationalization
+
+Guile provides an interface to GNU @code{gettext} for translating
+message strings (@pxref{Introduction,,, gettext, GNU @code{gettext}
+utilities}).
+
+Messages are collected in domains, so different libraries and programs
+maintain different message catalogues.  The @var{domain} parameter in
+the functions below is a string (it becomes part of the message
+catalog filename).
+
+When @code{gettext} is not available, or if Guile was configured
+@samp{--without-nls}, dummy functions doing no translation are
+provided.
+
+@deffn {Scheme Procedure} gettext msg [domain [category]]
+@deffnx {C Function} scm_gettext (msg, domain, category)
+Return the translation of @var{msg} in @var{domain}.  @var{domain} is
+optional and defaults to the domain set through @code{textdomain}
+below.  @var{category} is optional and defaults to @code{LC_MESSAGES}
+(@pxref{Locales}).
+
+Normal usage is for @var{msg} to be a literal string.
+@command{xgettext} can extract those from the source to form a message
+catalogue ready for translators (@pxref{xgettext Invocation,, Invoking
+the @command{xgettext} Program, gettext, GNU @code{gettext}
+utilities}).
+
+@example
+(display (gettext "You are in a maze of twisty passages."))
+@end example
+
+@code{_} is a commonly used shorthand, an application can make that an
+alias for @code{gettext}.  Or a library can make a definition that
+uses its specific @var{domain} (so an application can change the
+default without affecting the library).
+
+@example
+(define (_ msg) (gettext msg "mylibrary"))
+(display (_ "File not found."))
+@end example
+
+@code{_} is also a good place to perhaps strip disambiguating extra
+text from the message string, as for instance in @ref{GUI program
+problems,, How to use @code{gettext} in GUI programs, gettext, GNU
+@code{gettext} utilities}.
+@end deffn
+
+@deffn {Scheme Procedure} ngettext msg msgplural n [domain [category]]
+@deffnx {C Function} scm_ngettext (msg, msgplural, n, domain, category)
+Return the translation of @var{msg}/@var{msgplural} in @var{domain},
+with a plural form chosen appropriately for the number @var{n}.
+@var{domain} is optional and defaults to the domain set through
+@code{textdomain} below.  @var{category} is optional and defaults to
+@code{LC_MESSAGES} (@pxref{Locales}).
+
+@var{msg} is the singular form, and @var{msgplural} the plural.  When
+no translation is available, @var{msg} is used if @math{@var{n} = 1},
+or @var{msgplural} otherwise.  When translated, the message catalogue
+can have a different rule, and can have more than two possible forms.
+
+As per @code{gettext} above, normal usage is for @var{msg} and
+@var{msgplural} to be literal strings, since @command{xgettext} can
+extract them from the source to build a message catalogue.  For
+example,
+
+@example
+(define (done n)
+  (format #t (ngettext "~a file processed\n"
+                       "~a files processed\n" n)
+             n))
+
+(done 1) @print{} 1 file processed
+(done 3) @print{} 3 files processed
+@end example
+
+It's important to use @code{ngettext} rather than plain @code{gettext}
+for plurals, since the rules for singular and plural forms in English
+are not the same in other languages.  Only @code{ngettext} will allow
+translators to give correct forms (@pxref{Plural forms,, Additional
+functions for plural forms, gettext, GNU @code{gettext} utilities}).
+@end deffn
+
+@deffn {Scheme Procedure} textdomain [domain]
+@deffnx {C Function} scm_textdomain (domain)
+Get or set the default gettext domain.  When called with no parameter
+the current domain is returned.  When called with a parameter,
+@var{domain} is set as the current domain, and that new value
+returned.  For example,
+
+@example
+(textdomain "myprog")
+@result{} "myprog"
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} bindtextdomain domain [directory]
+@deffnx {C Function} scm_bindtextdomain (domain, directory)
+Get or set the directory under which to find message files for
+@var{domain}.  When called without a @var{directory} the current
+setting is returned.  When called with a @var{directory},
+@var{directory} is set for @var{domain} and that new setting returned.
+For example,
+
+@example
+(bindtextdomain "myprog" "/my/tree/share/locale")
+@result{} "/my/tree/share/locale"
+@end example
+
+When using Autoconf/Automake, an application should arrange for the
+configured @code{localedir} to get into the program (by substituting,
+or by generating a config file) and set that for its domain.  This
+ensures the catalogue can be found even when installed in a
+non-standard location.
+@end deffn
+
+@deffn {Scheme Procedure} bind-textdomain-codeset domain [encoding]
+@deffnx {C Function} scm_bind_textdomain_codeset (domain, encoding)
+Get or set the text encoding to be used by @code{gettext} for messages
+from @var{domain}.  @var{encoding} is a string, the name of a coding
+system, for instance @nicode{"8859_1"}.  (On a Unix/POSIX system the
+@command{iconv} program can list all available encodings.)
+
+When called without an @var{encoding} the current setting is returned,
+or @code{#f} if none yet set.  When called with an @var{encoding}, it
+is set for @var{domain} and that new setting returned.  For example,
+
+@example
+(bind-textdomain-codeset "myprog")
+@result{} #f
+(bind-textdomain-codeset "myprog" "latin-9")
+@result{} "latin-9"
+@end example
+
+The encoding requested can be different from the translated data file,
+messages will be recoded as necessary.  But note that when there is no
+translation, @code{gettext} returns its @var{msg} unchanged, ie.@:
+without any recoding.  For that reason source message strings are best
+as plain ASCII.
+
+Currently Guile has no understanding of multi-byte characters, and
+string functions won't recognise character boundaries in multi-byte
+strings.  An application will at least be able to pass such strings
+through to some output though.  Perhaps this will change in the
+future.
+@end deffn
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

@@ -1,0 +1,2610 @@
+Wed Apr  5 14:32:51 1995  Gary Houston  <ghouston@actrix.gen.nz>
+
+	* unix.c, ioext.c, posix.c, sys.c: Scheme name changes, 
+	  semantic cleanups, the port table, missing system calls 
+	  and coding cleanups from ghouston@actrix.gen.nz
+
+Thu Mar 16 14:37:38 1995  Tom Lord  <lord@x1.cygnus.com>
+
+	* guile.c: fixed the gcc-specific definition of the macro "AT(x)".
+
+	* guile.c (gscm_init_from_fn): Parameterize what init functions
+	get called (see guile_ks, below).
+
+	* guile-mini.c (guile_mini): a minimalist alternative to guile_ks.
+
+	* guile-ks.c (guile_ks): factor out the call to optional inits to
+	a separate file so you can link against libguile without getting
+	the kitchen sink.
+
+	* Ginit.scm (try-load of "ScmInit.scm"): Be robust in the absense
+	of a binding for the environment varialbe HOME.  Try
+	 (getpw (geteuid)) or just use "/".
+	
+
+Thu Mar  9 15:35:20 1995  Tom Lord  <lord@x1.cygnus.com>
+
+	* gmain.c (main): Print additional error message if init file
+	  can't be opened.
+
+	* guile.c (initialize_gscm): Report an error if the 
+	  init file can't be opened.
+
+Thu Mar 23 23:22:59 1995  Aubrey Jaffer  (jaffer@jacal)
+
+	* scm.texi (I/O-Extensions): Finished.
+
+	* Init.scm (scm:load): `loading' messages now indented.
+
+Sat Mar  4 20:58:51 1995  Aubrey Jaffer  (jaffer@jacal)
+
+	* scm.texi: documentation finished for "posix.c" and "unix.c".
+
+	* posix.c (scm_getgroups): added.
+
+	* posix.c (makfrom0str): According to glibc.info, some field in
+	structures like pwent may have NULL pointers.  Changed makfrom0str
+	to return BOOL_F in this case.
+
+Thu Mar  2 12:52:25 1995  Aubrey Jaffer  (jaffer@jacal)
+
+	* time.c: CLKTCK set from CLOCKS_PER_SEC, if available.  Metaware
+	HighC ported.
+
+	* scm.h: USE_ANSI_PROTOTYPES now controls prototypes (was
+	__STDC__).  This allows an overly fussy compiler to still have
+	__STDC__.
+
+	From: dorai@ses.com (Dorai Sitaram)
+	* ioext.c (l_utime): include files fixed for __EMX__
+
+Sun Feb 26 23:46:18 1995  Tom Lord  <lord@x1.cygnus.com>
+
+	* repl.c (scm_app_wdr): Like scm_apply, but takes an error function.
+	  The caller's continuation is never captured or escaped.
+	  The error function is invoked as with scm_cwdr.
+
+Sun Feb 26 21:03:04 1995  Aubrey Jaffer  (jaffer@jacal)
+
+	* sys.c (gc_mark gc_sweep): tc7_ssymbol now gets GCed because it
+	gets used for non-GCed strings in scm_evalstr scm_loadstr.
+	(mkstrport cwos cwis): changed so caller's name is passed into
+	mkstrport().
+
+	* repl.c
+	(scm_eval_string scm_evalstr scm_load_string scm_loadstr): added
+	for easier C to scheme callbacks.
+	(loadport): variable added so lreadr() and flush_ws()
+	increment linum only when reading from the correct port.
+	(def_err_response): now handles ARGn for argument numbers > 5 and
+	unknown position arguments.
+
+	* dynl.c: Dynamic Linking now sets and restores *load-pathname*
+	around the init_ call.
+
+Sat Feb 25 11:03:56 1995  Aubrey Jaffer  (jaffer@jacal)
+
+	* scm.c (lsystem getenv softtype ed vms_debug): moved from scl.c.
+	(add_feature): moved from repl.c.
+	(features): init table removed (caused multiple symbols).
+
+Fri Feb 24 23:48:03 1995  Aubrey Jaffer  (jaffer@jacal)
+
+	* scm.c (scm_init_extensions COMPILED_INITS): Added so that
+	statically linked, compiled code can be initialized *after* most
+	of Init.scm has loaded.
+
+Wed Feb 22 15:54:01 1995  Aubrey Jaffer  (jaffer@jacal)
+
+	* subr.c (append): Added check for bad arguments and fixed errobj.
+
+Sun Feb 19 01:31:59 1995  Aubrey Jaffer  (jaffer@jacal)
+
+	* ioext.c (exec execp): changed so that 2nd arguments is argv[0]
+	(like posix) and renamed to execl and execlp.
+	(execv execvp): added.
+
+Sat Feb 11 17:30:14 1995  Aubrey Jaffer  (jaffer@jacal)
+
+	* ioext.c (lexec): moved from repl.c and scm.c.
+	(lexecp i_exec l_putenv): added.
+
+	* posix.c (open_pipe l_open_input_pipe l_open_output_pipe
+	prinpipe):  moved from ioext.c.
+	(l_fork): added.
+
+Fri Feb 10 10:50:03 1995  Aubrey Jaffer  (jaffer@jacal)
+
+	* scl.c (num2long long2num): moved here from subr.c.
+	(num2ulong): fixed (< to >=) bug.
+
+	* unif.c (aset array2list array_ref cvref): uniform integers and
+	unsigned integer arrays now handle full size integers (and
+	inexacts) using num2long, num2ulong, long2num, and ulong2num when
+	INUMS_ONLY is not defined.
+
+	* scmfig.h (INUMS_ONLY): defined when INUMs are the only numbers.
+
+Wed Feb  8 17:57:26 1995  Tom Lord  (lord@x1.cygnus.com)
+
+	* Ginit.scm (stand-alone-repl): Use new function (rooted-repl)
+	  (rooted-repl):  new function
+
+Tue Jan 31 16:46:26 1995  Tom Lord  (lord@x1.cygnus.com)
+
+	* repl.c (lreadr): compare string constant names
+	  in a case insensative way.
+
+	  (scm_lread): Take an optional parameter CASEP.
+	  If specified and not #f, then symbols are read
+	  in a case sensative way.
+
+	  If not specified, the state variable default_case_i is checked
+	  (a C int, either 0 or 1).  The state variable hasn't been
+	  exposed and so is constant and depends on compile-time flags --
+	  but in the future it might be made more explicit if there is a
+	  need.
+
+Sun Jan 29 23:22:40 1995  Aubrey Jaffer  (jaffer@jacal)
+
+	* scm.texi (Overview): scm.1 converted to texinfo format and
+	incorporated.
+
+Sat Jan 28 23:11:40 1995  Tom Lord  (lord@x1.cygnus.com)
+
+	* repl.c (compiled-library-path): return the value of the
+	  compile-time cpp macro "LIBRARY_PATH" or #f.
+
+	* Ginit.scm: use the above path to find slib on unix.
+	  This solution should be generalized.
+
+Fri Jan 27 19:58:27 1995  Tom Lord  (lord@x1.cygnus.com)
+
+	* sys.c (gc_sweep): Fixed a gc bug that caused circular free-lists
+	  resulting in Cells that thought they were free long after they
+	  were allocated for some nefarious purpose or other.
+
+	* Makefile.in (manifest): ship all pieces of the info manual.
+	  Typos fixes from ghouston.
+
+Thu Jan 26 01:52:00 1995  Tom Lord  <lord@x1.cygnus.com>
+
+	From: cessu@cs.hut.fi (Kenneth Oksanen)
+
+	* configure.in: 
+	  AC_CHECK_LIB(nsl, gethostent)
+	  AC_CHECK_LIB(ucb, bzero)
+	  AC_CHECK_LIB(socket, socket)
+	  AC_CHECK_LIB(bsd, bzero)
+
+
+ 	From: brent@jade.ssd.csd.harris.com (Brent Benson)
+
+	* gmain.c: line 31: In ANSI C, string literals cannot span multiple
+	  source lines.
+
+  	* guile.c: line 592: The two cases in the ifdef are reversed, AT(X)
+	  should expand to nothing if you are *not* using GNUC.
+
+	* ioext.c: line 29: On my system it is necessary to 
+	  include <unistd.h> *before* <sys/stat.h> in order to 
+	  have the correct types defined.
+
+	* ioext.c: line 194: Declaration of popen conflicts with my system's
+	  popen() defined in <unistd.h>.  Let the header file provide the
+	  prototype!!
+
+Sun Jan 22 11:13:58 1995  Aubrey Jaffer  (jaffer@jacal)
+
+	* scm.texi (Internals): code.doc converted to texinfo format.
+	Much added and reorganized.  code.doc removed.
+
+Thu Jan 19 00:40:11 1995  Aubrey Jaffer  (jaffer@jacal)
+
+	* subr.c (logbitp logtest): added.
+
+Mon Jan 16 01:42:20 1995  Tom Lord  <lord@x1.cygnus.com>
+
+	* repl.c (scm_repl): takes two arguments now (prompt and top-level).
+	Callable from Scheme.
+
+	* sys.c (scm_init_storage): only use stdin if scm_take_stdin is true.
+	Otherwise, use an empty string port. If using stdin, make it 
+	unbuffered.
+
+Sun Jan 15 21:51:37 1995  Tom Lord  <lord@x1.cygnus.com>
+
+	* sys.c (scm_mkarray, scm_free_array, mark_arrays): support for 
+	C programs.  malloc/free style interface to allcoating
+	protected storage of type SCM*.
+
+Sun Jan 15 17:49:43 1995  Tom Lord  (lord@x1.cygnus.com)
+
+	* guile.c: new file.  Friendly C interface for Guile.
+	  (see file GUILE)
+
+	* repl.c (scm_cwdr): added call-with-dynamic-root (see scm.texi).
+
+Sat Jan 14 23:35:21 1995  Tom Lord  (lord@x1.cygnus.com)
+
+	* repl.c, subr.c: re-arrangement, commenting
+	  of source in preparation for pulling repls apart
+	  for libguile.
+
+Wed Jan 11 14:45:17 1995  Aubrey Jaffer  (jaffer@jacal)
+
+	* scl.c (num2ulong): checks for bignum sign and magnitude added.
+
+	* subr.c (logand logior logxor lognot): lognot restriction to
+	INUMs removed.  Logand, logior, and logxor now will work for up to
+	32 bit signed numbers.
+
+Tue Jan 10 13:19:52 1995  Aubrey Jaffer  (jaffer@jacal)
+
+	* repl.c (def_err_response): Circuitous call to quit() replaced
+	with exit(EXIT_FAILURE);
+	(everr): Now calls def_err_response() in interrupt frame if
+	errjmp_bad or there are dynwinds to do.  This prevents silent
+	failure in batch mode.
+
+
+Mon Jan  9 00:12:14 1995  Aubrey Jaffer  (jaffer@jacal)
+
+	* repl.c (handle_it): Now discards possibly used top freelist cell
+	for GC safety.  Also now just punts if errjmp_bad.
+
+	* scm.texi: converted from MANUAL.  GUILE documentation merged in.
+
+Sat Jan  7 13:51:04 1995  Miles Bader  (miles@eskimo.com)
+
+	* mrequire.scm: New file: Wrapper for slib require/provide that
+	makes it modular (that is, each slib package is loaded into its
+	own module, and sees only other modules that it requires).
+
+	* defmod.scm: Allow use-interface in the default module.
+
+	* libguile.scm: Put symbols common to both guile and scm
+	interfaces into the internal interface `EXTRA' (which is included
+	by both).  Other random shuffling, mostly to make slib happy.
+
+	* modops.scm (extend-interface, export-interface, export): Add
+	another operation type, #f, which turns off automatic exporting of
+	the current source interface when finishing up with it.  This is
+	used by export-interface to prevent trying to export all symbols.
+
+	* modops.scm (import): No longer signal an error when trying to
+	export a whole module, as we want to do this sometimes.
+
+	* Ginit.scm: No longer try to load require.scm, or depend on it;
+	In the case of getopt, we just load it manually.  Also make
+	defmacro module-safe.
+
+Sat Jan  7 01:54:11 1995  Tom Lord  <lord@x1.cygnus.com>
+
+	* sys.c (scm_intern_obarray_soft): Reserve room for symbol slots.
+
+	* sys.c (scm_makstr, scm_makfromstr): added an extra parameter SLOTS.
+	The parameter means:
+		0: same as the old behavior
+		1: not useful
+		> 1: allocate SLOTS - 1 extra slots in the string storage.
+
+	The base address of SLOTS, an array of SCM, is at SLOTS(obj).
+	This is for symbol slots, and later for procedure slots.
+	If you use this in the constructor for your new type (usually
+	done by creating a string and then invoking SETLENGTH to change
+	its type), you are responsible for making sure slot contents
+	are properly gc'ed.
+
+	Callers of these were fixed as well.
+
+Tue Jan  3 14:30:34 1995  Miles Bader  (miles@eskimo.com)
+
+	* modops.scm, extlibs.scm, libguile.scm, defmod.scm: New files:
+	    These implement the user-level module system.
+
+	* sys.c (scm_sym2vcell): Add another argument: definedp, which is
+	    passed as additional argument to the lookup-thunk (if any).
+	    If this argument is BOOL_T, this lookup is for a define (which
+	    has somewhat different semantics for modules); otherwise it
+	    should be satisfied with an existing variable.  If the thunk
+	    returns BOOL_F (meaning there was no such variable), sym2vcell
+	    returns BOOL_F as well.
+	* eval.c (scm_lookupcar, scm_m_define): Use the new sym2vcell param.
+	* variable.c (scm_builtin_var): Use the new sym2vcell param.
+
+	* eval.c (scm_top_level_env): New function: return an environment
+	    using the given top-level-lookup thunk.
+	* eval.c (scm_eval2): Use scm_top_level_env.
+	* eval.c (scm_eval): Use an env with a top-level lookup thunk from
+	    scm_top_level_lookup_thunk_var (aka *top-level-lookup-thunk*).
+	* eval.c (scm_neval): New function: just like scm_eval, but may
+	    destroy its argument.  Known in scheme as eval!.
+
+	* repl.c (scm_repl, scm_tryload, lreadr): Use scm_neval, not eval_3.
+
+	* Ginit.scm (make-module): Use the new definition of top-level thunks.
+	* Ginit.scm (set-current-module): Set *top-level-lookup-thunk* too.
+	* Ginit.scm: Trash all the repl stuff; we just use the C repl now.
+	    Load the user module system.
+
+	* Makefile.in: Install the user-module implementation files.
+
+Mon Jan  2 16:27:25 1995  Miles Bader  (miles@eskimo.com)
+
+	* Ginit.scm (repl:repl): Have the guile repl redefine try-load
+	   instead of load, as this is the SCM primitive.
+	(module-for-each): Write module-for-each.
+	(module-search): Make this recurse into each module use-list
+	   entry, as per the low-level module spec.
+	(define-macro): Make this function usable by modules that don't
+	   have access to the internals of the guile module.
+
+Sun Jan  1 22:30:25 1995  Tom Lord  <lord@x1.cygnus.com>
+
+	* repl.c (scm_iprin1), subr.c (scm_lock_vector, scm_unlock_vector,
+	scm_lvector_ref, scm_lvector_set):
+
+	Added locked vectors.  See N
+
+Sat Dec 31 15:45:22 1994  Miles Bader <miles@eskimo.com>
+
+	* Ginit.scm: 
+	Add define-macro, delq!.
+
+	Add a module print-function, and some new name fields 
+	to the module that the modops code uses to make modules 
+	print nicely (e.g., #<interface guile/module 7a89c>)
+
+
+	* eval.c(ceval): Here's a patch that makes closures & subrs 
+	self-evaluating.  
+
+
+Wed Dec 28 00:31:22 1994  Tom Lord  <lord@cygnus.com>
+
+	* scm.c (raise): use kill not raise, since it is more portable.
+
+Wed Dec 21 05:18:47 1994  Tom Lord  <lord@x1.cygnus.com>
+
+	* eval.c (scm_eval2): Two argument eval.  The 
+	second argument is #f or a proc returning a variable.
+
+Fri Dec  9 00:40:26 1994  Tom Lord  <lord@x1.cygnus.com>
+
+	* eval.c (scm_fasl_eval): eval without copying the source form.
+	This is just a temporary hack.
+
+Sun Dec  4 21:50:37 1994  Tom Lord  <lord@x1.cygnus.com>
+
+	* eval.c (scm_ceval): Added special forms LITERAL-VARIABLE-SET!
+	and LITERAL-VARIABLE-REF.  The first argument of each is a 
+	variable object (see variable.c).  The second argument
+	of set! is an expression.  They do what you'd expect.
+	-SET! returns UNSPECIFIED.
+
+	Note that one can not read a form which uses literal-variable* 
+	correctly because there is no way to read a variable object.
+	These forms exist for the sake of the module system.
+
+Fri Dec  2 19:52:40 1994  Tom Lord  (lord@x1.cygnus.com)
+
+	* subr.c (string->obarray-symbol, intern-symbol, unintern-symbol,
+	          symbol-set!, symbol-binding)
+	  Multiple obarrays.
+
+	* variable.c (scm_make_variable, scm_variable_{ref,set}
+	  Implemented variables.  Variables are anonymous
+	  objects holding one settable value.
+
+Wed Nov 30 04:31:18 1994  Tom Lord  (lord@x1.cygnus.com)
+
+	* *.[ch]: renamed all global identifiers to have the prefix scm_.
+
+	* sys.c (gc_sweep, scm_mark_locations, scm_init_heap):
+	  
+	   Modified gc to allow objects of any multiple of sizeof(CELLPTR).
+	   In addition, each heap segment gets to specify a freelist (which
+	   may be shared).
+	  
+	   new function: scm_alloc_obj
+	   new vars: scm_heap_table (replaces hplims)
+	             scm_n_heap_segs (replaces (hpims_ind / 2))
+
+Thu Oct 27 12:57:02 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	From: Jerry D. Hedden <hedden@esdsdf.dnet.ge.com>
+	* ioext.c: conditional code for vms and version (3.6) of Aztec C.
+	* pi.scm ((e digits)): Modified 'bigpi' for slight speed
+	improvement.  Added function to calculate digits of 'e'.
+
+Wed Oct 26 11:22:05 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	From: Gary Houston <ghouston@actrix.gen.nz>
+	* scl.c (round): Now rounds as described in R4RS.
+
+	* test.scm (test-inexact): test cases for round.
+
+Tue Oct 25 00:02:27 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* sys.c	(grow_throw lthrow dynthrow): now pass arrays, check
+	for adequate growth, and clear out register windows (on sparc).
+
+Mon Oct 24 01:05:34 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* ioext.c (ttyname fileno): added.
+
+Sat Oct 22 12:12:57 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* unix.c (symlink readlink lstat): added.
+
+	* scmfig.h repl.c sys.c (IO_EXTENSIONS): flag removed.
+
+	* ioext.c (read-line read-line! file-position, file-set-position
+	reopen-file open-pipe opendir readdir rewinddir closedir chdir
+	umask rename-file isatty? access chmod mkdir rmdir stat utime
+	raise): moved from "repl.c" and "sys.c".
+
+Fri Oct 21 21:19:13 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	From: Radey Shouman <shouman@ccwf.cc.utexas.edu>
+	* unif.c (ra2contig): now has a second parameter to indicate
+	whether copying is necessary or not.  Eliminates gratuitous copy
+	by UNIFORM-ARRAY-READ! when called with a noncontiguous array.
+
+	(array_map): more liberal check on when ARRAY-MAP! can use
+	array-ified asubrs.
+
+Thu Oct 20 18:00:35 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* sys.c (opendir readdir rewinddir closedir reopen-file): added
+	under IO_EXTENSIONS.
+
+Wed Oct 19 14:18:26 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* eval.c (badargsp): added under ifndef RECKLESS to check @apply
+	and apply() arg counts.
+
+Tue Oct 18 00:02:10 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* unix.c (mknod acct nice sync): added.
+
+	* socket.c (socket bind! gethost connect! listen! accept): added.
+
+	* time.c (utime): added under IO_EXTENSIONS.
+
+Mon Oct 17 23:49:06 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* sys.c (getcwd umask access chmod mkdir rmdir): added
+	under IO_EXTENSIONS.
+
+	* scm.c (l_pause): added if SIGALRM defined.
+	(l_sleep): added if SIGALRM not defined.
+
+	* scl.c (num2ulong): added.  Used in "time.c"
+
+Sun Oct 16 22:41:04 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* sys.c (access chmod): Posix access added under IO_EXTENSIONS.
+
+Fri Oct 14 09:45:32 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* posix.c (chown link pipe waitpid, kill, getpw, getgr, get*id,
+	set*id): added.
+
+	* time.c (l_raise l_getpid): added
+	* subr.c (ulong2big):
+	* scl.c (ulong2num): useful routines for system call data
+	conversion moved from "time.c".
+
+Thu Sep 22 14:48:16 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* subr.c (big2inum): (more accruately) renamed from big2long.
+
+Tue Sep  6 22:22:16 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	From: rshouman@hpcf.cc.utexas.edu (Radey Shouman)
+	Date: Mon, 29 Aug 1994 11:36:46 +0600
+	* unif.c: This is a large patch, but also a bit larger than it
+	appears -- I moved a few function definitions around to eliminate
+	gratuitous forward references.
+
+	* unif.c repl.c (raprin1): Combined print routine for arrays with
+	that for uves.
+
+	* unif.c (UNIFORM-VECTOR-READ! and -WRITE): work with general
+	arrays, by copying when necessary, renamed them to
+	UNIFORM-ARRAY-READ! and -WRITE.
+
+	* unif.c (ARRAY-CONTENTS): Generalized so that it returns a 1-d
+	array even when the stride in the last dimension is greater than
+	one, gave it an optional second argument STRICT, which makes it
+	behave as it did before, returning an array/vector only if the
+	contents are contiguous in memory.
+
+	* unif.c (ARRAY-CONTIGUOUS?) Eliminated. Instead, use
+		(lambda (ra) (array? (array-contents ra #t)))
+
+	* unif.c code.doc (ramapc): unrolls arrays mapping into one loop
+	if possible, to make this quick, changed the format of the array
+	CAR, now uses one bit to indicate that an array is contiguous --
+	this still allows a ridiculous number of dimensions.
+
+	* scm.h (DSUBRF): dsubrs are mapped directly, to allow this I
+	moved the typedef for dsubr and #define for DSUBRF to scm.h
+
+	* unif.c (ARRAY-MAP!) taught something about subrs, now most subrs
+	may be mapped without going through apply(), saving time and
+	reducing consing.  +, -, *, /, =, <, <=, >, and >= are mapped
+	directly as special cases -- for uniform arrays this is nearly as
+	fast as the equivalent C, and doesnt' cons.  I've made sure that
+	+, -, *, and / vectorize on the CRAY, this may be wasted effort
+	but the effort is not great.
+
+	* unif.c (ARRAY-COPY!) now copies many arrays of differing types
+	to each other without going through the aref/aset, e.g. float ->
+	double, double -> complex, integer -> float ...  This should make
+	array type coercions for arithmetic faster.
+
+	* unif.c (TRANSPOSE-ARRAY) Added, which returns a shared array
+	that is the transpose of its first argument.  I think this does
+	what an APL:TRANSPOSE would.
+
+	* unif.c (ENCLOSE-ARRAY) Added, this returns an array that looks
+	like an array of shared arrays, the difference being that the
+	shared arrays are not actually allocated until referenced.
+	Internally, the contents of an enclosed array is another array.
+	The main reason for this is to allow a reasonably efficient
+	implementation of APL:COMPRESS, EXPAND, and INDEXING.  In order to
+	actually make an array of shared arrays, just use ARRAY-COPY!.
+
+	* unif.c (cvref): Created internal version of aref(), cvref() that
+	doesn't do error checking; Thus speeding things up.  Profiling of
+	SCM running array code revealed that aref() was taking a
+	surprising fraction of the CPU time
+
+	TO DO:
+
+	The mechanism for looking up the vectorized functions is a little
+	kludgy, I was tempted to steal some of the CAR of the subr type to
+	encode an offset into a table of vectorized functions, but this
+	would make it more likely that dynamically loaded subrs lose thier
+	names.
+
+	It is almost possible to write APL:+ and friends now, it is just
+	necessary to figure out the appropriate type of the returned array
+	and allocate it, and to promote scalar arguments to arrays (with
+	increments 0).
+
+	This doesn't include vectorized REAL-PART, IMAG-PART,
+	MAKE-RECTANGULAR ...
+
+	I think some C support for APL:REDUCE and maybe INNER-PRODUCT will
+	be needed for a reasonably fast APL.scm
+
+	unif.c is getting quite big, time to split it up?
+
+
+Mon Sep  5 22:44:50 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* Init.scm repl.c (quit): code was not using return values
+	correctly.
+
+Sun Aug 21 01:02:48 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* record.c (init_record): remaining record functions moved into C
+	code.
+	* eval.c sys.c: compiled closures now conditional under CCLO.
+
+Sat Aug 20 23:03:36 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	From: rshouman@chpc.utexas.edu (Radey Shouman)
+	* eval.c (ceval apply):
+	* sys.c (makcclo): tc7_cclo, compiled closures, now supported.
+	* record.c (init_record): C implementation of slib "Record"s using
+	CCLO.
+	* scm.h subr.c (QUOTIENT MODULO REMAINDER): fixes a bug for
+	bignums with DIGSTOOBIG defined.  Also, changed the return type of
+	longdigs() to void, since that value is no longer used anywhere.
+
+Mon Aug  1 11:16:56 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* time.c (curtime): replaces get-universal-time.  Other time
+	functions removed (SLIB support more complete).
+
+	* subr.c (divbigbig): fixed (modulo -2177452800 86400) => 86400
+	bug.  Also added to test.scm.
+
+Sun Jul 24 16:09:48 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* dynl.c (init_dynl): *feature* dld:dyncm added for dynamically
+	(ldso) linked libc.sa and libm.sa (under Linux).
+
+Fri Jul 15 12:53:48 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* unif.c (array-fill!): bug with increment in default clause fixed.
+	Fast string support added.
+
+	From: rshouman@chpc.utexas.edu (Radey Shouman)
+	* unif.c (array-fill! array-for-each): bug fixes.
+
+Sun Jul 10 01:51:00 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* scm.c (run_scm init_scm): "-a" heap allocation argument supported.
+
+	* Makefile (proto.h): removed.
+
+	From: Drew Whitehouse, Drew.Whitehouse@anu.edu.au
+	* scm.h (P): Conditionalized ANSI'fied version of the scm.h.
+
+Sun Jun 26 12:41:59 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* Link.scm (usr:lib lib): Now checks for shared libraries
+	(lib*.sa) first.
+
+Thu Jun 23 19:45:53 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* scl.c scm.c: Support for compilation under Turbo C++ for Windows
+	 (system and exec disabled) added under C flag "_Windows".
+
+Sat Jun 18 11:47:17 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* test.scm ((test-delay)): added.
+	((test-bignum)): added and called automatically if bignums
+	suported.  test-inexact called automatically if inexacts
+	supported.
+
+Mon Jun  6 09:26:35 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* Init.scm (trace untrace): moved to SLIB/trace.scm.
+
+Thu May 12 00:01:20 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* Link.scm: Autoload for hobbit now does (provide 'hobbit).  This
+	allows hobbit to know if it is self compiling (although reloads of
+	hobbit will not be quite right).
+	((compile file . args)): removed.
+
+	* makefile.unix (proto.h): removed.
+
+	* Transcen.scm: compile-allnumbers HOBBIT declaration added.
+	Init.scm will now load compiled Transcen.o.
+
+	* scm.h: HOBBIT section removed.
+
+	* README (SLIB): Now strongly recommends getting SLIB and lists
+	ftp sites.
+
+	* eval.c (m_delay): fixed bug with multiple sets of (delay x).
+
+Thu Apr 28 22:41:41 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* unif.c (makflo): shortcut for single precision float arrays
+	added.
+
+Fri Apr 15 00:54:14 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	From: rshouman@chpc.utexas.edu (Radey Shouman)
+	* unif.c: no longer uses pointer comparisons in loops.  Should
+	fix problems on 8086 processors.
+	* unif.c (make_sh_array): Fixes MAKE-SHARED-ARRAY so that shared
+	arrays with only 1 element in some direction may still be
+	ARRAY-CONTIGUOUS?
+	(uve_write uve_read): Fixes bug in UNIFORM-ARRAY-WRITE,
+	UNIFORM-ARRAY_READ!.  Now they do the right thing for shared
+	bit-arrays not starting at the beginning of their contents vector.
+	(array_contents ARRAY-SIMPLE?): ARRAY-CONTENTS may now return a
+	shared, contiguous, 1-d array, instead of a vector, if the array
+	cannot access all of the contents vector.  ARRAY-SIMPLE? removed.
+	(array-fill!): a replacement and generalization of
+	UNIFORM-VECTOR-FILL!.
+	(raequal): Combines with uve_equal(), providing also ARRAY-EQUAL?
+	ARRAY-EQUAL? is equivalent to EQUAL? if all its arguments are
+	uniform vectors or if all are arrays.  It differs from EQUAL? in
+	that a shared, 1-d array may be ARRAY-EQUAL? to a uniform vector.
+	  for example
+	  (define sh (make-shared-array '#(0 1 2 3) list '(0 1))) ==> #1(0 1)
+	  (equal? '#(0 1) sh)       ==> #F
+	  (array-equal? '#(0 1) sh) ==> #T
+	(list2ura): Combines list2uve() and list2ura().
+
+Thu Apr 14 23:26:54 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* time.c (LACK_FTIME LACK_TIMES): defined for vms.
+
+Mon Apr  4 10:39:47 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* eval.c (copytree): now copies vectors as well.
+
+	* repl.c (quit): now accepts #t and #f values.
+
+Sun Apr  3 23:30:14 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* repl.c (repl): call to my_time() moved to not include READ time.
+
+	* time.c (mytime): now prefers to use times() over clock().
+	Compilation constant CLOCKS_PER_SEC doesn't scale when a binary is
+	moved between machines.
+
+Thu Mar 31 16:22:53 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* Init.scm (*SCM-VERSION*): added.
+
+	* Makefile (intro): Added message for those who just make.
+	Cleaned up and reorganized Makefile.
+
+	* patchlvl.h (PATCHLEVEL): removed.  Whole version now just in
+	SCMVERSION.
+
+Wed Mar 23 00:09:51 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	From: rshouman@chpc.utexas.edu (Radey Shouman)
+	* repl.c (iprin1): Characters higher than 127 print as
+	#\<octal-number>.
+
+	* Init.scm ((read:array digit port)): added.  Most # syntax
+	handled in read:sharp.
+
+	* unif.c (clist2uve clist2array): removed.
+
+Fri Mar 11 15:10:53 1994  Radey Shouman  (rshouman@chpc.utexas.edu)
+
+	* sys.c (sfgetc): can now return EOF.
+
+Mon Mar  7 17:07:26 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* patchlvl.h (SCMVERSION): 4e0
+
+	* scmfig.h: was config.h (too generic).
+
+	* scm.c (main run_scm) repl.c (repl_driver init_init): now take
+	initpath argument.  IMPLINIT now used in scm.c
+
+Sun Feb 27 00:27:45 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* eval.c (ceval m_cont IM_CONT): @call-with-current-continuation
+	special form for tail recursive call-with-current-continuation
+	added.  call_cc() routine removed.
+
+Fri Feb 25 01:55:06 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* eval.c (ceval m_apply IM_APPLY apply:nconc-to-last): @apply
+	special form for tail-recursive apply added.  ISYMs reactivated.
+
+Mon Feb 21 14:42:12 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* crs.c (nodelay): added.  In NODELAY mode WGETCH returns
+	eof-object when no input is ready.
+
+	* Init.scm ((read:sharp c port)): defined to handle #', #+, and
+	#-.
+
+	* repl.c (lreadr): Now calls out to Scheme function read:sharp
+	when encountering unknown #<char>.
+
+Tue Feb 15 01:08:10 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	From: Shiro KAWAI <kawai@sail.t.u-tokyo.ac.jp>
+	* eval.c (ceval apply): under flag CAUTIOUS, checks for applying
+	to non-lists added.
+
+Sat Feb 12 21:23:01 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* sys.c (sym2vcell intern sysintern): now use internal strhash().
+
+	* scl.c sys.c (hash hashv hashq strhash()): added.
+
+Sat Feb  5 01:24:35 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* scm.h (ARRAY_NDIM): #define ARRAY_NDIM NUMDIGS changed to
+	#define ARRAY_NDIM(x) NUMDIGS(x) to correct problem on Next.
+
+Fri Feb  4 23:15:21 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	From: rshouman@chpc.utexas.edu (Radey Shouman)
+	* unif.c: 0d arrays added.  Serial array mapping functions and
+	ARRAY-SIMPLE? added.
+
+Thu Feb  3 12:42:18 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* scm.h (LENGTH): now does unsigned shift.
+
+Wed Feb  2 23:40:25 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* Link.scm (*catalog*): catalog entries for db (wb),
+	turtle-graphics, curses, regex, rev2-procedures, and
+	rev3-procedures added.
+
+Sun Jan 30 19:25:24 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	From: rshouman@chpc.utexas.edu (Radey Shouman)
+	* sys.c eval.c setjump.h setjump.s (longjump setjump): full
+	continuations now work on Cray YMP.
+
+Thu Jan 27 01:09:13 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	* dynl.c MANUAL Init.scm (init_dynl): dynamic linking modified for
+	modern linux.
+
+Sat Jan 22 17:58:55 1994  Aubrey Jaffer  (jaffer@jacal)
+
+	From: ucs3028@aberdeen.ac.uk (Al Slater)
+	* makefile.acorn repl.c (set_erase): Port to acorn archimedes.
+	This uses Huw Rogers free unix function call library for the
+	archimedes - this is very very widely available and should pose no
+	problem to anyone trying to find it - its on every archimedes ftp
+	site.
+
+	From: hugh@cosc.canterbury.ac.nz (Hugh Emberson)
+	* dynl.c Link.scm: Dynamic Linking with SunOS.
+
+Thu Jan  6 22:12:51 1994    (jaffer at jacal)
+
+	* sys.c (gc_mark mark_locations): now externally callable.
+
+Sun Jan  2 19:32:59 1994    (jaffer at jacal)
+
+	From: fred@sce.carleton.ca (Fred J Kaudel)
+	* unif.c (ra_matchp ramapc): patch to unif.c avoids two problems
+	(K&R C does not allow initialization of "automatic" arrays or
+	structures).  This was not use in 4d2 or previously, and the
+	following patch ensures that such initialization only occurs for
+	ANSI C compilers (Note that K&R C compilers need to explicitly
+	assign the values).
+
+Sat Dec 18 23:55:30 1993    (jaffer at jacal)
+
+	* scm.1 scm.doc (FEATURES): improved and updated manual page.
+
+	* repl.c (BRACKETS_AS_PARENS): controls whether [ and ] are read
+	as ( and ) in forms.
+
+Wed Dec  8 23:13:09 1993    (jaffer at jacal)
+
+	From: rshouman@chpc.utexas.edu (Radey Shouman)
+	* unif.c: More array fixes and functions.
+
+Tue Dec  7 00:44:23 1993    (jaffer at jacal)
+
+	* dynl.c (dld_stub): removed since dld is working better on Linux.
+
+Wed Dec  1 15:27:44 1993    (jaffer at jacal)
+
+	* scm.h (SNAME): explicit cast added to get rid of compiler
+	warnings.
+
+	From: bh@anarres.CS.Berkeley.EDU (Brian Harvey)
+	* repl.c (repl) output newlines when more than one form on a line
+	for Borland C.
+
+	From: rshouman@chpc.utexas.edu (Radey Shouman)
+	* unif.c: More array fixes and documentation.
+
+Mon Nov 29 01:06:21 1993  Aubrey Jaffer  (jaffer at montreux)
+
+	From: rshouman@chpc.utexas.edu (Radey Shouman)
+	* unif.c: More array functions (need documentation).
+
+Sun Nov 28 01:34:22 1993    (jaffer at jacal)
+
+	* scm.h (SNAME): returns a pointer to nullstr if offset is 0.
+
+	* subr.c eval.c (make_synt make_subr): now check that offset from
+	heap_org hack works for each subr.  If not, 0 is used.
+
+	* Link.scm (compile-file): compiles SCM file to object suitable
+	for LOAD.
+
+	* Link.scm: initialization file created with Scheme code for
+	compilation and	linking.  LOAD now automatically loads SCM object
+	files.
+
+	* dynl.c Init.scm: dynamic linking now works under DLD on Linux.
+	Wb, crs, and sc2 can by dynamically loaded.
+
+Thu Nov 25 22:58:36 1993    (jaffer at jacal)
+
+	* sys.c (ltmpnam): return value of mktemp call tested in accord
+	with HP-UX documentation (returns "" on error).
+
+	* config.h (SYSCALLDEF): removed.  Macro I/O calls (getc, putc)
+	replaced with function versions.  Control-C interrupts should work
+	while pending input on all systems again.
+
+Tue Nov 23 01:18:35 1993    (jaffer at jacal)
+
+	From: dorai@cs.rice.edu (Dorai Sitaram)
+	* repl.c sys.c time.c config.h: MWC (Mark Williams C) support.
+
+Sun Nov  7 10:58:53 1993    (jaffer at jacal)
+
+	From: "Greg Wilson" <Greg.Wilson@cs.anu.edu.au>
+	* scm.c config.h (TICKS ticks tick-interrupt): if TICKS is
+	#defined, ticks and tick-interrupt work like alarm and
+	alarm-interrupt, but with units of evaluation rather than units of
+	time.
+
+Mon Nov  1 18:47:04 1993    (jaffer at jacal)
+
+	* unif.c (uniform-vector-ref => array-ref): integrated arrays
+	with uniform-vectors.  Strings, vectors, and uniform-vectors
+	now just special case of arrays (to the user).
+
+Fri Oct 29 01:26:53 1993    (jaffer at jacal)
+
+	* unif.c (rasmob tc16_array): arrays are now a smob.
+
+Thu Oct 28 01:21:43 1993    (jaffer at jacal)
+
+	* sys.c repl.c (igc gc_start): GC message gives reason for GC.
+
+Wed Oct 27 10:03:00 1993    (jaffer at jacal)
+
+	* config.h (SICP): flag makes (eq? '() '#f) and changes other
+	things in order to make SCM more compatible with Abelson and
+	Sussman's book.
+
+	* sys.c (gc_mark gc_sweep mark_locations): GC bug fixed.  GC from
+	must_malloc would collect the tc_free_cell already allocated.
+
+	* sys.c setjump.h (must_malloc must_realloc INIT_MALLOC_LIMIT):
+	modified to call igc when malloc usage exceeds mtrigger (idea from
+	hugh@ear.MIT.EDU, Hugh Secker-Walker).
+
+	From: Jerry D. Hedden
+	* pi.scm (bigpi): bignum version of pi calculator.
+
+Tue Oct 26 18:41:33 1993    (jaffer at jacal)
+
+	* repl.c (room): added procedure for printing storage statistics.
+
+Sun Oct 24 22:40:15 1993    (jaffer at jacal)
+
+	* config.h eval.c scl.c (STACK_LIMIT CHECK_STACK): added.
+	* sys.c (stack_check): added.
+
+Sat Oct 23 00:08:30 1993    (jaffer at jacal)
+
+	* sys.c (mallocated): added to keep track of non-heap usage.
+
+	* sys.c (igc): fixed interrupt vulnerabilities around gc.
+
+Sun Oct 17 13:06:11 1993    (jaffer at jacal)
+
+	* repl.c (exit_report): added.  Prints cumulative times if
+	(verbose > 2).  Called from free_storage().
+
+	* repl.c (repl): fixed CRDYP(stdin) BUG!  Transcripts should work
+	again.  Other annoying CR behaviour fixed.
+
+	* time.c (init_time your_base my_base): now not reset when
+	restarting so timing numbers for restarting are correct.
+
+	* scm.h (sys_protects): rearranged.
+	* sys.c (tmp_errp): now a statically allocated global variable,
+	used by init_storage and free_storage.
+	* scm.h sys.c (tc16_fport, tc16_pupe, tc16_strport, tc16_sfport):
+	now #defines (which must correspond to order of newptob calls).
+
+Sun Oct  3 20:38:09 1993  Bryan O'Sullivan  (bos@scrg.cs.tcd.ie)
+
+	* README.unix configure configure.in scmconfig.h.in
+	mkinstalldirs Makefile.in acconfig-1.5.h: SCM can now be built
+	using GNU autoconf.  Put in scmconfig4c5.tar.gz
+
+Sun Oct  3 00:33:57 1993    (jaffer at jacal)
+
+	* MANUAL (bit-count bit-position bit-set*! bit-count*
+	bit-invert!): (from unif.c) are now documented.
+
+	* sys.c (fixconfig): added 3rd argument to distinguish between
+	setjump.h and config.h.
+	* setjump.h config.h: moved IN_SYS stuff from config.h to
+	setjump.h.
+	* config.h (HAVE_CONFIG_H): User config preferences now taken
+	from "scmconfig.h" if HAVE_CONFIG_H is defined.
+	* config.h (EXIT_SUCCESS EXIT_FAILURE): fixed for VMS.
+
+Sat Oct  2 00:34:38 1993    (jaffer at jacal)
+
+	From: rshouman@hermes.chpc.utexas.edu (Radey Shouman)
+	* unif.c repl.c: added read and write syntax for uniform vectors.
+	* unif.c (uniform-vector->list list->uniform-vector): created.
+	* time.c (time_in_msec): conditionalized for wide range of CLKTCK
+	values.
+	* config.h (BITSPERDIG POINTERS_MUNGED)
+	* scm.h (PTR2SCM SCM2PTR)
+	* scl.c (DIGSTOOBIG)
+	    Ported SCM to Unicos, the Cray operating system.
+
+	From: schwab@ls5.informatik.uni-dortmund.de (Andreas Schwab)
+	* scl.c (dblprec): set from DBL_DIG, if available.
+
+Fri Oct  1 21:43:58 1993    (jaffer at jacal)
+
+	* unif.c (bit-position): now returns #f when item is not found.
+	Now returns #f when 3rd argument is length of 2nd argument
+	(instead of error).
+
+Fri Sep 24 14:30:47 1993    (jaffer at jacal)
+
+	* sys.c (free_storage): fixed bug where growth_mon was being
+	called after the port cell had been freed.  gc_end now also
+	called at end.
+
+Tue Sep 21 23:46:05 1993    (jaffer at jacal)
+
+	* Init.scm scm.c: Restored old command line behaviour (loading all
+	command line arguments) for case when first command line argument
+	does not have leading `-'.
+
+	* sys.c (mode_bits): abstracted from open_file and mksfpt.
+
+	* scm.h (*FPORTP): series of predicates added for operations which
+	only work on some fports.
+
+	* sys.c crs.c: ungetc removed from ptobfuns structure and
+	soft-ports.
+
+Mon Sep 20 23:53:25 1993    (jaffer at jacal)
+
+	* sys.c (make-soft-port): Soft-ports added, allowing Scheme
+	i/o extensions.
+
+Sun Sep 19 22:55:28 1993    (jaffer at jacal)
+
+	* 4c4: released.
+	* Init.scm scm.c scm.1: command line proccessing totally
+	rewritten.  Thanks to Scott Schwartz
+	<schwartz@groucho.cs.psu.edu> for help with this.
+
+Mon Sep 13 21:45:52 1993    (jaffer at jacal)
+
+	From: pegelow@moorea.uni-muenster.de (Ulrich Pegelow)
+	* scl.c (add1): finally a way to fool optimizing gcc to not use
+	extra precision registers.
+
+Sun Sep 12 18:46:02 1993    (jaffer at jacal)
+
+	* sys.c (pwrite): added to stubbify fwrite to fix bug on VMS.
+	* config.h: moved flags to top per suggestions from Bryan
+	O'Sullivan (bos@scrg.cs.tcd.ie).
+
+Fri Sep 10 11:42:27 1993    (jaffer at jacal)
+
+	* repl.c config.h (EXIT_SUCCESS EXIT_ERROR): added.  Values
+	returned by SCM program.
+
+Thu Sep  9 13:09:28 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	From: Vincent Manis <manis@cs.ubc.ca>
+	* sys.c (stwrite init_types add_final): fixed declarations.
+
+Mon Sep	 6 16:10:50 1993  Bryan O'Sullivan  (bos@scrg.cs.tcd.ie)
+
+	* README: changed the build and installation instructions to bring
+	them up to date with reality.
+
+Sun Sep	 5 23:08:54 1993  Bryan O'Sullivan  (bos@scrg.cs.tcd.ie)
+
+	* Wrote autoconf script to support GNU Autoconf configuration
+	to make scm easier to build.
+
+	* Created Makefile.in; a radical overhaul of Makefile to remove
+	some of the brokenness and allow cross-compilation and use of
+	autoconf.
+
+Sat Sep  4 23:00:49 1993    (jaffer at jacal)
+
+	* 4c3: released.
+	* sys.c (grow_throw): removed use of memset for SPARC machines.
+
+Sat Sep  4 18:09:59 1993  Bryan O'Sullivan  (bos@scrg.cs.tcd.ie)
+
+	* time.c: added SVR4 to the list of LACK_FTIME systems, because
+	most all SVR4 BSD-compatibility stuff is a total mess.
+
+	* config.h: changed definition of STDC_HEADERS so it does the
+	Right Thing on systems which run GCC but don't have header files
+	with prototypes.
+
+	* makefile.unix: added a note for SVR4 users.
+
+Tue Aug 31 18:30:53 1993    (jaffer at jacal)
+
+	* eval.c (m_define): if verbose >= 5 warnings are issued for all
+	top-level redefinitions.
+
+Mon Aug 30 16:24:26 1993    (jaffer at jacal)
+
+	* scm.c sys.c (finals num_finals add_final): Finalization calls
+	now dynamically, incrementally, defined.
+
+Thu Aug 26 12:38:27 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* 4c2: fixed declaration problems in PTOB with K&R C.
+
+Sun Aug 22 23:02:51 1993    (jaffer at jacal)
+
+	* split.scm: code which directs input, output, and diagnostic
+	output to separate windows (using curses functions defined in
+	crs.c).
+
+Sat Aug 21 16:46:33 1993    (jaffer at jacal)
+
+	* Init.scm (output-port-height): added if not already defined.
+	output-port-width also made conditional.
+
+	* sys.c (tc16_strport): string ports created.
+
+Thu Aug 19 11:37:07 1993    (jaffer at jacal)
+
+	* sys.c (init_types): freecell, floats, and bignums now have SMOB
+	entries.  gc_sweep and gc_mark still inline codes for bignums and
+	floats.
+
+	* sys.c repl.c code.doc: Ports now an extensible type.
+	Indirection suggested by Shen <sls@aero.org>.
+
+Mon Aug 16 01:20:26 1993    (jaffer at jacal)
+
+	* crs.c: curses support created.
+
+Sun Aug 15 16:56:36 1993    (jaffer at jacal)
+
+	* rgx.c sys.c (mark0 equal0): mark0 moved to sys.c.  equal0
+	created.
+
+Fri Jun 25 01:16:31 1993    (jaffer at jacal)
+
+	* QUICKREF: added.
+
+Tue Jun 22 00:40:58 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* repl.c (ungetted): replaced with CRDYP(stdin) to fix recently
+	introduced transcript bug.
+
+Sun Jun 20 22:29:32 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* config.h (NOSETBUF): setbuf() now conditionalized on NOSETBUF.
+
+	* Init.scm (defmacro): now copies the results of macro expansion
+	in order to avoid capture of memoized code by macros like:
+	(defmacro f (x) `(list '= ',x ,x)).
+
+Wed Jun  2 23:32:05 1993  Aubrey Jaffer  (jaffer at caddr)
+
+	* eval.c (map for-each): now check that arguments are lists.
+
+Mon May 31 23:05:19 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* Init.scm (trace untrace): now defmacros which handle (trace) and
+	(untrace) as in Common Lisp.
+
+Wed May  5 01:17:37 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	From: Roland Orre  <orre@sans.kth.se>
+	* all: internal output functions now take SCM ports instead of
+	FILE* in preparation for string-ports.
+
+Tue May  4 17:49:49 1993  Aubrey Jaffer  (jaffer at wbtree)
+
+	* makefile.unix (escm.a): created scm "ar" file and used for
+	dbscm.
+
+Sun Apr 25 21:35:46 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* sys.c (free_storage): i++ moved out of CELL_* in response to:
+From: john kozak <jkozak@cix.compulink.co.uk>
+Minor bug report: around line 10 of routine "free_storage" you do calls
+to CELL_UP and CELL_DOWN with arguments having side-effects: with the
+PROT386switch defined in config.h these args are evaluated twice...
+
+Sun Apr 11 22:56:19 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* eval.c (IM_DEFINE): added.  Internal defines are no longer
+	turned into LETRECS.
+
+Wed Apr  7 13:32:53 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	Jerry D. Hedden <HEDDEN@ESDSDF.dnet.ge.com>
+	* scl.c (idbl2str): fix for bug introduced by removing +'s.
+
+Tue Mar 23 15:37:12 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* scl.c (idbl2str): now prints positivie infinity as +#.# again
+	(instead of #.#).
+
+Mon Mar 22 01:38:02 1993  Aubrey Jaffer  (jaffer at montreux)
+
+	* subr.c (quotient): renamed to lquotient to avoid conflict with
+	HP-UX 9.01.
+
+Fri Mar 19 01:21:08 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* sys.c repl.c: #ifndef THINK_C #include <sys/ioctl.h>
+	* time.c (lstat): #ifndef THINK_C. ThinkC 5.0.1 lacked.
+
+Mon Mar 15 23:35:32 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	From: jhowland@ariel.cs.trinity.edu (Dr. John E. Howland)
+	* scl.c (idbl2str iflo2str big2str): leading + eliminated on
+	output and number->string.
+
+Wed Mar 10 00:58:32 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* repl.c scm.h (CRDYP CLRDY CGETUN CUNGET): cleaned up ungetc hack.
+
+	* scm.c repl.c (exec): added.
+
+Sun Mar  7 22:44:23 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* repl.c (def_err_response): now will print errobjs if they are
+	immediates, symbols, ports, procedures, or numbers.
+
+Fri Mar  5 23:15:54 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* repl.c (repl): now gives repl_report() for initialization.
+
+	* Init.scm (defvar): added.
+
+	From: Roland Orre  <orre@sans.kth.se>
+	* repl.c (lungetc): no longer calls ungetc.  Fixed problem that
+	many systems had with ungetc on unbuffered ports (setbuf(0)).
+
+Thu Mar  4 13:51:12 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	From: Stephen Schissler
+	* makefile.wcc: Watcom support added.
+
+Wed Mar  3 23:11:08 1993  Aubrey Jaffer  (jaffer at montreux)
+
+	* sys.c scm.h (dynwinds): made a sys_protect.
+
+Mon Feb 15 11:30:50 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* Init.scm (defmacro macroexpand macroexpand1 macro? gensym):
+	added.
+
+	* repl.c (stdin): setbuf not done for __TURBOC__==1.
+
+	* makefile.bor: now has method to build turtegr.exe.
+
+	* eval.c (ceval): Memoizing macros now can return any legal Scheme
+	expression.
+
+Sat Feb 13 18:01:13 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* subr.c (mkbig adjbig): now check for bignum size.
+
+	* Init.scm: reorganized so site-specific information is at the
+	head.
+
+	* repl.c (errno): changed from set-errno now returns value.
+
+	* subr.c (intexpt): now handles bignum exponents.
+
+	From: "David J. Fiander" <davidf@golem.waterloo.on.ca>
+	* time.c makefile.unix subr.c: SCO Unix and XENIX patches.
+
+Fri Feb 12 22:18:57 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* Init.scm (WITH-INPUT-FROM-PORT WITH-OUTPUT-TO-PORT
+	WITH-ERROR-TO-PORT): added.
+
+	* subr.c (ash): fixed for case (ash 2 40) where INUM arguments
+	make a bignum result.
+
+	* repl.c (lreadr): \ followed by a newline in a string is ignored.
+
+	From: Scott Schwartz <schwartz@groucho.cs.psu.edu>
+	* repl.c (lreadr): Can now read \0\f\n\r\t\a\v in strings.
+
+Thu Feb 11 01:25:50 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* Init.scm (with-input-from-file with-output-to-file
+	with-error-to-file): now use dynamic-wind.
+
+Sun Feb  7 22:51:08 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* eval.c (ceval): fixed bug with non-memoizing macro returning an
+	IMP.
+
+Sat Feb  6 01:22:27 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* (current-error-port with-error-to-file): add.
+
+Fri Feb  5 00:51:23 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* time.c (stat): added.
+
+	From: rnelson@wsuaix.csc.wsu.edu (roger nelson)
+	* dmakefile: support for DICE C on Amiga.
+
+Thu Feb  4 01:55:30 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* sys.c (open-file) makes unbuffered if isatty.
+
+	* repl.c (char-ready?) added.
+
+Mon Feb  1 15:24:18 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* subr.c (logor): changed to LOGIOR to be compatible with common
+	Lisp.
+
+	* eval.c (bodycheck): now checks for empty bodies.
+
+Sun Jan 31 01:01:11 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* time.c (get-universal-time decode-universal-time): now use
+	bignums.
+
+Tue Jan 26 00:17:06 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* sys.c (mark_locations): now length argument in terms of
+	STACKITEM.  Does both alignments in one pass.
+
+Mon Jan 25 12:13:40 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	From: soravi@Athena.MIT.EDU
+	* makefile.emx: for OS/2
+
+Sun Jan 24 18:46:32 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	From: stevev@miser.uoregon.edu (Steve VanDevender)
+	* scl.c (big2str): now faster because it divides by as many 10s as
+	fit in a BIGDIG.
+
+Sat Jan 23 00:23:53 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	From: stevev@miser.uoregon.edu (Steve VanDevender):
+	* config.h (INUM MAKINUM): shift optimization for TURBOC.
+
+Fri Jan 22 00:46:58 1993  Aubrey Jaffer  (jaffer at montreux)
+
+	From: hanche@ams.sunysb.edu (Harald Hanche-Olsen)
+	* unif.c (uniform-vector?): added.
+
+Tue Jan 19 00:27:04 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	From: stevev@miser.uoregon.edu (Steve VanDevender)
+	* subr.c scl.c config.h: bignum bug fixes for MSDOS.
+
+Mon Jan 18 01:15:24 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* subr.c (ash lognot intlength logcount bitextract): now handle
+	bignums.
+
+Sun Jan 17 10:42:44 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* sys.c (close_port): can now close pipes as well.
+
+	* subr.c (adjbig normbig divide quotient): fixed more divide bugs.
+
+	* subr.c (even? odd?): fixed problem with bignums.
+
+Sat Jan 16 00:02:05 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* subr.c (divbigbig): Fixed last divide bug?
+
+Fri Jan 15 00:07:27 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* rgx.c (regmatch?): added.  Debugged for both HP-UX and GNU
+	regex-0.11.  Documentation added to MANUAL.
+
+Thu Jan 14 11:54:52 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* patchlvl.h (SCMVERSION): moved from config.h.
+
+	* scl.c (product): fixed missing {} bug.
+
+	From: HEDDEN@esdsdf.dnet.ge.com
+	* scl.c (lmin lmax) bignum versions.
+
+Wed Jan 13 01:40:51 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	* released scm4b0.
+
+	* subr.c: fixed bignum bugs found by jacal.
+
+	* code cleanup.
+
+	From: HEDDEN@esdsdf.dnet.ge.com
+	* subr.c (lgcd quotent modulo lremainder): Bignum versions.
+	* subr.c (divbigbig): new version.
+
+Sun Jan  3 00:29:35 1993  Aubrey Jaffer  (jaffer at camelot)
+
+	From: stevev@miser.uoregon.edu (Steve VanDevender)
+	* Re-port to BorlandC v2.0
+
+	* sys.c (must_realloc): added
+
+	* config.h subr.c (BIGRAD pseudolong): now insensitive to ratio of
+	sizeof(long)/sizeof(BIGDIG).
+
+Mon Dec 21 23:20:47 1992  Aubrey Jaffer  (jaffer at camelot)
+
+	From: Scott Schwartz <schwartz@groucho.cs.psu.edu>
+	* rgx.c: created SCM interface to regex and regexp routines.
+
+	From: HEDDEN@esdsdf.dnet.ge.com
+	* subr.c scl.c: Now just one mulbigbig and addbigbig routine.
+
+	from: soravi@Athena.MIT.EDU
+	* README: directions for compiling SCM under OS/2 2.0.
+
+Wed Dec  9 15:34:30 1992  Aubrey Jaffer  (jaffer at camelot)
+
+	* eval.c (tc7_subr_2x): eliminated.  All comparison subrs now
+	rpsubrs.
+
+	* scm.h: Changed SUBR numbers.  This improves HP-UX interpretation
+	speed (why?).
+
+	* eval.c (PURE_FUNCTIONAL): removed.  Can now be done in
+	initialization code.
+
+	* eval.c (tc7_rpsubr): added type for transitive comparison
+	operators.  Suprisingly, this slows down (pi 100 5).
+
+Mon Dec  7 16:15:47 1992  Aubrey Jaffer  (jaffer at camelot)
+
+	* subr.c (logand logor logxor lognot ash logcount integer-length
+	bit-extract): added.
+
+	From: HEDDEN@esdsdf.dnet.ge.com
+	* scl.c: lots more numeric improvements and code reductions.
+
+Mon Nov 30 12:25:54 1992  Aubrey Jaffer  (jaffer at camelot)
+
+	* scm.h (IDINC ICDR IDIST): enlarged depth count in ILOCs.
+
+Sun Nov 29 01:10:18 1992  Aubrey Jaffer  (jaffer at camelot)
+
+	* subr.c scl.c: most arithmetic operations will now return
+	bignums.
+
+	* config.h (FIXABLE POSFIXABLE NEGFIXABLE): added.
+
+	* sys.c (object-hash object-unhash): now use bignums.
+
+	* scl.c (big2str istr2int): bignum i/o implemented.
+
+	* unif.c: subr2s were incorrectly initialized as lsubr2s.
+
+Tue Nov 24 14:02:52 1992  Aubrey Jaffer  (jaffer at camelot)
+
+	* eval.c (ceval): added unmemocar calls to error handling when
+	possible.
+
+	* scl.c (idbl2str): added back NAN and infinity support.
+
+	* eval.c (syntax_mem): replaced with individual macros.
+	* eval.c (procedure->syntax procedure->macro
+	procedure->memoizing-macro): All syntactic keywords are now
+	tc7_symbol.  User definable macros added.
+	* sys.c: ISYMs no longer in symhash.  ISYMs cannot be read.
+	init_isyms merged into init_eval.
+
+Sat Nov 21 00:39:31 1992  Aubrey Jaffer  (jaffer at camelot)
+
+	* makefile.unix (check): now exits with error code.
+
+	* sys.c (init_isyms): eliminated.  ISYMS now inited in init_eval.
+
+Fri Nov 20 16:14:06 1992  Aubrey Jaffer  (jaffer at camelot)
+
+	* released scm4a13
+
+	* repl.c: longjmps now dowinds() first.
+
+	* setjump.h: now has all setjmp related definitions.
+
+	* Init.scm (trace untrace): use new macro system.
+
+	* eval.c (defined? procedure->macro procedure->memoizing-macro
+	make_synt): macro system added.  defined? uses it.
+
+	From: HEDDEN@esdsdf.dnet.ge.com
+	* scl.c: fixes for several transcendental functions.
+
+Thu Nov 19 01:14:38 1992  Aubrey Jaffer  (jaffer at camelot)
+
+	* repl.c sys.c: errjmp replaced with JMPBUF(rootcont).
+
+Sun Nov 15 01:49:00 1992  Aubrey Jaffer  (jaffer at camelot)
+
+	From: HEDDEN@esdsdf.dnet.ge.com
+	* scl.c (istr2int istr2flo istring2number string2number): new
+	versions.
+
+Thu Nov 12 23:00:04 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* Init.scm (load): now prints out actual filename found in mesasge
+	;done loading ...
+
+Wed Nov 11 01:01:59 1992  Aubrey Jaffer  (jaffer at camelot)
+
+	* repl.c (def_err_response): ARG1 error with errobj==UNDEFINED
+	becomes WNA error.
+
+	From: HEDDEN@esdsdf.dnet.ge.com (Jerry D. Hedden)
+	* scl.c (difference divide): Now are asubrs.
+
+	* Init.scm (*features*): fixed to correspond to SLIB conventions.
+
+Mon Nov  9 12:03:58 1992  Aubrey Jaffer  (jaffer at camelot)
+
+	* scl.h test.scm: (string->number "i") and "3I" and "3.3I" fixed
+	to return #f.  Tests added to test.scm.
+
+Fri Nov  6 16:39:38 1992  Aubrey Jaffer  (jaffer at camelot)
+
+	* scm.h (rootcont): sysprotect added.
+
+	From: Vincent Manis <manis@cs.ubc.ca>
+	* scm.h: __cplusplus prototype support.
+
+Thu Nov  5 00:39:50 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* eval.c (lookupcar): now checks for UNDEFINED in local bindings
+	becuase LETREC inits to UNDEFINED.
+
+	* sys.c (dynamic-wind): added.
+
+	* config.h eval.c (ceval): CAUTIOUS mode added.
+
+	From: hugh@ear.MIT.EDU (Hugh Secker-Walker)
+	* eval.c (ceval): internal defines now transformed to letrecs.
+
+Sun Oct 25 12:27:23 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* repl.c (read-line read-line!): created.
+
+Sat Oct 24 18:36:23 1992  Aubrey Jaffer  (jaffer at camelot)
+
+	* repl.c (lreadparen): now tail-recursive.
+
+	* eval.c (copy-tree eval): added.  dummy_cell replaced with a
+	cons(obj,UNDEFINED).
+
+Thu Oct 22 21:26:53 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* repl.c (set-errno!): changed to set-errno.
+
+Thu Oct 15 00:49:20 1992  Aubrey Jaffer  (jaffer at camelot)
+
+	* sys.c (must_free): must_free created.  Pointers are set to 0.
+	It detects objects being freed twice.
+
+Wed Oct 14 23:57:43 1992  Aubrey Jaffer  (jaffer at camelot)
+
+	* scm.c (run_scm): Now has INITS and FINALS.
+
+	* scm.c (init_signals ignore_signals unignore_signals
+	restore_signals): siginterrupt() for ultix.
+
+Fri Oct  9 14:25:06 1992  Aubrey Jaffer  (jaffer at camelot)
+
+	* all: put in explicit casts to (unsigned char *) and (long) to
+	satisfy lint.
+
+	* sys.c (gc): all to gc_end was during deferred interrupts,
+	causing problems with verbose=3 and interrupts during GC.
+
+	* config.h(SYSCALLDEF): fixed so that test on errno occurs before
+	ALLOW_INTS (and possible call to user code).
+
+Sun Oct  4 01:45:25 1992  Aubrey Jaffer  (jaffer at camelot)
+
+	* eval.c (syntax_mem): removed gratuitous cons.
+
+	* eval.c repl.c scm.h: Reduced static string use.  Added peephole
+	optimizations for AND and OR.
+
+	From: hugh@ear.MIT.EDU (Hugh Secker-Walker)
+	* eval.c repl.c scm.h (syntax_mem):  syntax forms are now memoized
+	so that syntax checks are done only once.  Interpreter is now
+	smaller and faster and uses less stack space.  Modifications to
+	code are now made under DEFER_INTS as they always should have
+	been.
+
+Wed Sep 30 22:06:24 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* scl.c subr.c scm.h config.h: Started adding bignum code.
+
+Sun Sep 27 22:59:59 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* repl.c (restart): added.
+
+	* sys.c (freeall): finished.
+
+	* scm.h (tc7_symbol): split into tc7_ssymbol and tc7_msymbol to
+	distinguish between non-GCable and GCable symbols.
+
+Wed Sep 23 00:36:23 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* repl.c (peek_char lungetc): added workaround for TURBOC 1.0
+	problem with ungetc inside SYSCALLDEF macro.
+
+	* repl.c (iprin1): uses ttyname for #<stream ..> if available.
+
+	* Init.scm: now sets verbose to 0 if stdin or stdout is not a tty.
+
+	* repl.c (isatty?): added.
+
+	* repl.c (verbose): levels bumped up by 1.  verbose == 0 means no
+	prompt.
+
+	* makefile.djg config.h (GNUDOS -> GO32): flags changed for djgpp108.
+
+Wed Aug 26 21:46:26 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* test.scm: put in (test #f < 1 3 2) and (test #f >= 1 3 2).
+
+	* scl.c (leqp greqp): put back in.  (not (< 1 3 2)) does not imply
+	(>= 1 3 2).
+
+	* makefile.unix: tar and shar files now created in subdirectory.
+
+	* config.h time.c: Linux support added.
+
+	* repl.c: Greatly improved VMS interrupt support.
+
+	* eval.c (ceval): I_LET now changes to I_LETSTAR for single clause
+	unnamed lets.y
+
+	* (tc7_lsubr_2n): removed.
+
+Fri Jul 31 00:24:50 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* unif.c (bit-position): fixed;  I am sure I had done these
+	changes before.  Also corrected some error messages.
+
+	From: campbell@redsox.bsw.com (Larry Campbell)
+	* scm.h subr.c sys.c (equalp): smobfuns now include equalp.
+
+Mon Jul 20 16:44:30 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	From: Stephen Adams <S.R.Adams@ecs.southampton.ac.uk>
+	* eval.c scm.h subr.c (BOOL_NOT) macro added to fix ^ bug in
+	BorlandC.  This was fixed previously as well.
+
+	From: campbell@redsox.bsw.com (Larry Campbell)
+	* unif.c (vector-set-length!): was always typing to tc7_vector.
+
+Sat Jul 18 01:07:33 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* subr.c sys.c (make_vector init_storage resizuve): mallocs and
+	reallocs are now always > 0.
+
+	* time.c (get_univ_time): bypassed mktime() for (__TURBOC__ == 1).
+
+Mon Jul 13 22:27:04 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* repl.c (lreadr): now ignores first line of port if begins with "#!"
+
+	* scl.c (lesseqp greqp): removed; changed to use tc7_lsubr_2n.
+
+	* scm.h eval.c (tc7_lsubr_2n): type added.  Other subr types
+	rearranged.
+
+Sat Jul 11 23:47:18 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* scm.h sys.c repl.c eval.c code.doc (newsmob smobs smobfuns): now
+	support	dynamically added smob types.  Promises moved to eval.c.
+	Promises and arbiters are now newsmobs.
+
+	* makefile.unix repl.c scl.c (floprint): moved from repl.c to
+	scl.c.  The only files which care about -DFLOATS are now scl.c,
+	eval.c, scm.c, and unif.c.
+
+	* sys.c scm.h (init_storage): now uses variable num_protects
+	instead of #define NUM_PROTECTS.
+
+Tue Jul  7 00:00:57 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	From: Ulf_Moeller@hh2.maus.de (Ulf Moeller)
+	* Init.scm config.h makefile.prj: support for the ATARI-ST with
+	Turbo C added.
+
+Tue Jun 30 23:45:50 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* unif.c (make-uniform-vector uniform-vector-set!
+	uniform-vector-ref): added.
+
+Tue Jun 23 11:49:13 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* scm.h sys.c code.doc: rearranged tc7 codes and added bvect,
+	ivect, uvect, fvect, dvect, cvect, and cclo.
+
+	* scm.h sys.c eval.c repl.c code.doc: Changed symbols to be
+	tc7_symbol.
+
+Sat Jun  6 22:27:40 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	From: campbell@redsox.bsw.com (Larry Campbell)
+	* scl.c (divide): divide by 0 and Exact-only divides of non
+	multiples now cause exception in RECKLESS mode.
+
+Wed May 27 16:02:58 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* config.h scl.c (NUMBUFLEN): split into INTBUFLEN and FLOBUFLEN
+	and made proportional to size of numeric types.
+
+	From: fred@sce.carleton.ca (Fred J Kaudel)
+	* makefile.ast scm.c Init.scm: minor chages for ATARI ST support.
+
+	* test.scm (test-inexact): created.
+
+Thu May 21 11:43:41 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* patchlvl.h (PATCHLEVEL): 5
+
+	From: hugh@ear.mit.edu (Hugh Secker-Walker)
+	* config.h: better wording for heap allocation strategy
+	explanation.
+
+Wed May 20 00:31:18 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	From S.R.Adams@ecs.southampton.ac.uk
+	* subr.c (stci_leqp st_leqp): reversed order of ^ clauses to avoid
+	Borland 3.0 bug.
+
+	* sys.c (gc_sweep): missing i-=2; added when splicing out segment.
+
+	* MANUAL time.c (get-universal-time decode-universal-time): half
+	hearted attempt to add these.  Needs bignums.
+
+Wed May 13 14:01:07 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* sys.c (gc_mark): improved tail recursivness for CONSes.
+
+	* repl.c (growth_mon): now prints out the hplims table if
+	verbose>3.
+
+	* sys.c (init_heap_seg): Serious bug in growing hplims fixed.
+	num_heap_segs eliminated; hplims are realloced whenever grown.
+
+Tue May 12 15:36:17 1992  Aubrey Jaffer  (jaffer at train)
+
+	* config.h sys.c (alloc_some_heap expmem):  expmem captures
+	whether the INIT_HEAP_SIZE allocation was successful.  If so,
+	alloc_some_heap uses exponential heap allocation instead of
+	HEAP_SEG_SIZE.
+
+Mon May 11 15:29:04 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* sys.c (gc_sweep init_heap_seg heap_org): Empty heap segments
+	are now freed.
+
+	* sc2.c (STR_EXTENSIONS): renamed REV2_PROCEDURES and R2RS and
+	R3RS functions put into sc2.c.
+
+Sun May 10 01:34:11 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* scm.c (ignore_interrupts unignore_interrupts): added for
+	system, edt$edit, and popen to use.
+
+	* repl.c (lwrite display newline write_char): Close pipe if EPIPE.
+
+	* repl.c (file_set_position): now errs on ESPIPE.
+
+	* scm.c (SIGPIPE): now ignored (errs come back as EPIPE).
+
+Sat May  9 17:52:36 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	From: Stephen Adams <S.R.Adams@ecs.southampton.ac.uk>
+	* config.h (PROT386): PROT386 added.  PTR_LT and CELL_UP modified.
+
+Fri May  8 17:57:22 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	From: hugh@ear.mit.edu (Hugh Secker-Walker)
+	* Init.scm (last-pair append!): last-pair is faster version.
+	Append! corrected for null first arg.  (getenv "HOME") now gets
+	a "/" added if not present.
+
+	* config.scm (MIN_GC_YIELD): now proportional to HEAP_SEG_SIZE.
+
+	* README: setting environment variables corrected.
+
+	* subr.c (length): error message now has arg if not a list.
+
+	* sys.c (open-pipe): now turns off interrupts before forking.
+
+	* scl.c (lsystem): now turns off interrupts before forking.
+
+	* scm.c (ignore_signals): created.
+
+Sat May  2 01:02:16 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* Init.c (WITH-INPUT-FROM-FILE WITH-OUTPUT-TO-FILE): defined in
+	terms of current-input-port and current-output-port.  Bug in
+	open-input-pipe and open-output-pipe fixed.
+
+	* sys.c repl.c (current-input-port current-output-port): moved
+	from sys.c to repl.c.  set-current-input-port and
+	set-current-output-port added to repl.c.
+
+Mon Apr 13 22:51:32 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* patchlvl.h: (PATCHLEVEL): released scm4a1.
+
+	* makefile.* VMSBUILD.COM VMSGCC.COM: compile time.h.
+
+	* scm.c (alrm_signal int_signal): now save and restore errno so
+	SYSCALL will work correctly across interrupts.
+
+Sun Apr 12 01:44:10 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* patchlvl.h: (PATCHLEVEL): released scm4a0.
+
+	* repl.c (lread): tok_buf now local to each invocation of read.
+	This makes READ interruptable and reentrant.
+
+	* sys.c MANUAL (STRING-SET-LENGTH! STRING-VECTOR-LENGTH!): created.
+
+	* sys.c repl.c (grow_tok_buf tok_buf tok_buf_len): moved to repl.c
+
+	* repl.c (lfwrite): now emulated for VMS.
+
+	* repl.c scl.c (num_buf): now local to all routines that use it.
+
+	* time.h: created by moving time functions from repl.c.  Read and
+	write functions were moved from sys.c to repl.c.
+
+	* sys.c repl.c (DEFER_INTS ALLOW_INTS CHECK_INTS): totally
+	rewritten.  SIGALRM and SIGINT now execute at interrupt level.
+	Interrupts deferred only for protected code sections, not for
+	reads and writes.
+
+	* sys.c repl.c (SYSCALL): created to reexecute system calls
+	interrupted (EINTR) by SIGALRM and SIGINT.
+
+	* sys.c scl.c (flo0): 0.0 is now always flo0.
+
+	* repl.c sys.c (TRANSCRIPT-ON TRANSCRIPT-OFF): added.  This
+	required shadowing putc, fputs, fwrite, and getc with lputc,
+	lputs, lfwrite, and lgetc.
+
+Sun Apr  5 00:27:33 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	From: HEDDEN@esdsdf.dnet.ge.com (Jerry D. Hedden)
+	* scl.c (eqp lessp greaterp lesseqp greatereqp):
+	Comparisons with inexact numbers was not being performed
+	correctly.  For example, (< 1.0 2.0 1.5) would yield #t.  What was
+	missing was a line x=y; in the inexact comparison sections of
+	lessp(), greaterp(), lesseqp() and greatereqp().  In addition, I
+	modified these routines and eqp() to allow for mixed arithmetic
+	types.
+
+Sat Apr  4 00:17:29 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* scm.h code.doc: tc7_bignum => tc7_spare.  Added tc16_bigpos and
+	tc16_bigneg.  SMOBS reordered.  tc16_record added.
+
+	* scm.h repl.c sys.c (make-arbiter try-arbiter release-arbiter):
+	added.  tc16_arbiter added.
+
+Fri Apr  3 01:25:35 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* sys.c config.h (TEMPTEMPLATE): created in config.h.
+
+	* scm.h: removed long aliases for C versions of Scheme functions.
+
+	* sys.c eval.c scm.h: (delay force makprom): added.  Also added
+	tc16_promise data type.
+
+	* Init.scm (trace untrace): added autoloads and read macros.
+
+	From: T. Kurt Bond, tkb@mtnet2.wvnet.edu
+	* sys.c (template): correct template for VMS.
+
+Tue Mar 31 01:50:12 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* sys.c config.h Init.scm (open-file open-pipe): created and
+	expressed other open functions in terms of.  Bracketed all i/o
+	system calls with DEFER and ALLOW _SIGINTS.
+
+Sat Mar 28 00:24:01 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* sys.c MANUAL (#.): read macro syntax added.  Balanced comments
+	also documented.
+
+Fri Mar 27 22:53:26 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* sys.c (iprin1): changed printed representation for unreadable
+	objects from #[...] to #<...>.
+
+	From: brh@aquila.ahse.cdc.com (brian r hanson x6009):
+	* scm.h config.h (NCELLP PTR_LT): fixes for 64 bit pointers on
+	nosve.
+
+Fri Mar 20 01:36:08 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* Released scm3c13
+
+	* code.doc: corrected some minor inconsistencies and added a
+	section "To add a package of new procedures to scm".
+
+Sun Mar 15 19:44:45 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* Init.scm: now loads <program-name>_INIT_PATH when <program-name>
+	is not "SCM".
+
+	* config.h (PTR_LT): (x < y) => ((x) < (y))
+
+Wed Mar  4 01:53:15 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* Released scm3c12.
+
+	* scm.h code.doc eval.c sys.c (IXSYM): Eliminated Immediate IXSYM
+	type.
+
+Tue Mar  3 00:58:18 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* eval.c config.c (ceval DEFINED? SYNTAX_EXTENSIONS): added
+	DEFINED? to ceval conditional on SYNTAX_EXTENSIONS.
+
+	From: Andrew Wilcox <andrew@astro.psu.edu>
+	* makefile.unix scm.c (main init_scm display_banner init_signals
+	restore_signals run_scm): RTL support.
+
+Mon Mar  2 19:05:29 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* subr.c (make-string): now checks for ARG1 >= 0.
+
+Fri Feb 28 00:13:00 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* patchlvl.h (PATCHLEVEL): 12
+
+	* Init.scm: loads JCAL if scm is invoked with name JCAL, JACAL,
+	jcal or jacal.
+
+	* Init.scm (ABS): set to MAGNITUDE if FLOATS are supported.
+
+	* gc_mark gc: no longer assume sizeof(short) == 2.
+
+	* config.h (CELL_UP CELL_DN): no longer assume sizeof(CELL) == 8.
+
+	From: Brian Hanson, Control Data Corporation.  brh@ahse.cdc.com
+	* scl.c config.h repl.c: partial port to Control Data NOS/VE.
+
+	From: fred@sce.carleton.ca (Fred J Kaudel)
+	* repl.c Init.scm makefile.ast: Port to Atari-ST
+
+	* sys.c scm.h eval.c (throw): renamed to lthrow to avoid conflict
+	with Gnu CC.
+
+Mon Feb 10 14:31:24 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* sys.c (delete-file rename-file): added.
+
+	* sys.c (chdir): now returns #f instead of error.
+
+	* Init.scm: Calls to PROVIDED? inlined so no longer dependent on
+	SLIB being loaded.  (set! ABS MAGNITUDE) if inexacts supported.
+	Support for slib1b3 added.
+
+	* sys.c (alloc_some_heap): fixed bugs.  One fix from
+	bowles@is.s.u-tokyo.ac.jp.
+
+	* eval.c (ceval):  fixed bug with internal (define foo bar) where
+	bar is a global.  Put badfun2: back in for better error reporting.
+
+	* patchlvl.h (PATCHLEVEL): 11
+
+Mon Jan 20 16:19:04 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* config.c (INITS): comments added.
+
+	From: T. Kurt Bond, tkb@mtnet2.wvnet.edu
+	* VMSGCC.COM VMSMAKE.COM: now take arguments.
+
+	From: "Fred Bayer" <bayerf@lan.informatik.tu-muenchen.de>
+	* makefile.aztec repl.c: Aztec C (makefile) port.
+
+Fri Jan 17 16:36:07 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* sys.c (gc init_storage stack_size): stack_size now of type
+	sizet.  init_storage no longer uses it.  gc() now uses it instead
+	of pointer to local.  This fixes bug with gcc -O.
+
+	* sys.c (cons cons2 cons2r):  &w;&x;&y; removed because of above
+	fix.
+
+Thu Jan 16 22:33:00 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* scl.c (real-part): added.
+
+Wed Jan 15 13:06:39 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	From: "Fred Bayer" <bayerf@lan.informatik.tu-muenchen.de>
+	* scl.c repl.c scm.c config.c: Port for AMIGA
+
+	* scm.h (REALP): fixed for SINGLES not defined.
+
+Sat Jan 11 20:20:40 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* patchlvl.h (PATCHLEVEL): 8 released.
+
+	* README: added hints for EDITING SCHEME CODE.
+
+	* repl.c (SIGRETTYPE): now int for __TURBOC__.
+
+	* makefile.tur makefile.djg: created.
+
+	* config.h: DJGPP (__GO32__) support added.
+
+	* scm.h (memv): definition added.
+
+Sun Jan  5 00:33:44 1992  Aubrey Jaffer  (jaffer at Ivan)
+
+	* repl.c makefile.* (main): INITS added.
+
+	* scl.c: fixed ASSERT statements with mismatched ARGn and
+	arguments.
+
+Thu Dec 19 19:16:50 1991  Aubrey Jaffer  (jaffer at train)
+
+	* sys.c (cons cons2 cons2r): added fix for gcc -O bug.
+
+	* repl.c (LACK_FTIME LACK_TIMES): more messing with these.
+
+	* sys.c config.o (HAVE_PIPE): created.
+
+	* config.h (FLT_RADIX): now #ifdef FLT_RADIX rather than __STDC__.
+	Needed for DJGCC.
+
+	* sys.c (DBLMANT_DIG DBL_FLOAT_DIG): now tested for directly
+	rather than STDC_INCLUDES.
+
+	* makefile.unix (subr.o): explicit compilation line added.
+
+	* scl.c (truncate -> ltrunc):  Name conflict with DJGCC libraries.
+
+Sun Dec  8 23:31:04 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* eval.c (apply): added check for number of args to closures.
+
+Sat Dec  7 01:30:46 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* patchlvl.h (PATCHLEVEL): 7
+
+	* sys.c (chdir): THINK_C doesn't support;
+
+	* repl.c: SVR2 needs <time.h> instead of <sys/time.h>
+
+	* repl.c: SVR2 needs LACK_FTIME
+
+	* repl.c: #include <sys/timeb.h> now automatic ifndef LACK_FTIME.
+
+Mon Dec  2 15:42:11 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* patchlvl.h (PATCHLEVEL): 5
+
+	* sys.c (intern sysintern): made strings and hash unsigned.  Fixed
+	bug with characters > 128 in symbols.
+
+	* scl.c (eqv? memv assv): created if FLOATS is #defined.  From
+	boopsy!mike@maccs.dcss.mcmaster.ca (Michael A. Borza).
+
+Mon Dec  2 11:37:11 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* patchlvl.h (PATCHLEVEL): 4
+
+	* sys.c (gc_sweep): usaage of pclose() now conditional on unix.
+
+	* MANUAL (chdir): documented.
+
+   from T. Kurt Bond, Adminisoft, Inc. <tkb@MTNET2.WVNET.EDU>:
+
+	* repl.c sys.c (errno): VMS GNU C uses a special hack in <errno.h>
+	to get the link-time attributes for the errno variable to match
+	those the VMS C run-time library expects (it makes errno a
+	preprocessor define so that the variable that the compiler sees
+	has a special form that the assember then interprets), so if it is
+	VMS and __GNUC__ is defined <errno.h> needs included.
+
+	* setjump.h (SETJUMP LONGJUMP): SETJUMP and LONGJUMP changed to
+	setjump and longjump. The VMS linker is case-indifferent.  VMS GNU
+	C mangles variable names that have upper case letters in them to
+	preserve their uniqueness.
+
+	* sys.c (iprint iprin1): Now inline putc loops instead of calls to
+	fwrite for VMS. The VMS `fwrite' has been enhanced to work with
+	VMS's Record Management Sevice, RMS.  Part of this enhancement is
+	to treat each call to `fwrite' as producing a separate record.
+	This works fine if you are writing to a stream_LF file or an
+	actual terminal screen, but if you are writing to a file that has
+	implied carriage control (such as a batch log file, or a mailbox
+	used for subprocess communication), which is a more common file
+	organization for RMS, each call to `fwrite' has a newline appended
+	to it.  This causes much of the output to be incorrectly split
+	across lines.
+
+	* vmsgcc.com: created.
+
+Sun Dec  1 00:33:42 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* patchlvl.h (PATCHLEVEL): 3 released.
+
+	* Init.scm (rev2-procedures): all now supported.
+
+	* Init.scm sys.c MANUAL (flush): flush changed to force-output to
+	be compatible with Common Lisp.
+
+	* sys.c (chdir): added.
+
+Wed Nov 27 09:37:20 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* patchlvl.h (PATCHLEVEL): 2
+
+	* repl.c (set-errno! perror): added.
+
+	* sys.c (gc): FLUSH_REGISTER_WINDOWS call added.
+
+	* sys.c (open-input-pipe open-output-pipe close-pipe): added.
+
+Mon Nov 25 13:02:13 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* patchlvl.h (PATCHLEVEL): 1
+
+	* sys.c (flush): added.
+
+	* repl.c (mytime): macro was missing ().  CLKTCK now defaults to 60.
+
+	* README Init.scm subr.c scm.c repl.c scl.c: From Yasuaki Honda,
+	honda@csl.SONY.co.jp, support for Macintosh running Think C.
+
+Sun Nov 24 15:30:51 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* scl.c (str2flo): fixed parsing of -1-i.
+
+	* repl.c (repl_driver): from jjc@jclark.com, now checks that
+	s_response is non-NULL before INTERNing.
+
+	* subr.c (equal): Now correct for inexacts.  Need to do eqv.
+
+	* scm.h (REALPART): fixed pixel C compiler bug with doubles inside
+	`?' conditionals.
+
+	* scl.c (zerop): now checks imaginary half of complex number.
+
+Tue Nov 19 00:10:59 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* version scm3c0
+
+	* documentation: changed revised^3.99 to revised^4.
+
+	* example.scm: created from Scheme^4 spec.
+
+	* makefile.msc: -Ox changed to -Oxp to fix over-enthusiastic float
+	optimizations.
+
+	* Init.scm (ed): defined.
+
+	* repl.c (def_err_response): UNDEFINED objects don't print out.
+
+Sun Nov 17 23:11:03 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* scl.c (vms-debug): now returns UNSPECIFIED.
+
+	* repl.c MANUAL (restart_repl): RESTART-REPL changed to ABORT.
+
+	* repl.c (err_ctrl_c):now clears sig_pending.
+
+Wed Nov 13 23:51:36 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* config.h: removed #ifdef sparc #define STDC_HEADERS
+
+	* makefile.bor: added extra '\' to filepath.
+
+	* repl.c (everr): fixed bug with ARGx.
+
+	* repl.c (errmsgs def_err_response): cleaned up error messages.
+
+Sun Nov 10 23:10:24 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* released scm3b7
+
+Mon Nov  4 18:36:49 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* patchlvl.h (PATCHLEVEL): 6
+
+	* sys.c (idbl2str): tests for Not-a-Number and Infinity added.
+
+	* repl.c scm.h: response system rewritten and integrated with
+	error system.
+
+	* scl.c (/): now returns inexacts if integer arguments do not
+	divide evenly.
+
+Mon Oct 28 23:44:16 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* makefile.unix: can now make float (scm) and integer-only (escm)
+	versions in same directory.
+
+	* repl.c (*sigint-response* *arithmetic-response* restart-repl):
+	responses for signals added.
+
+	* scl.c (lmin lmax sum difference product divide expt exp log):
+	now take mixed types.  expt available in non-FLOATS compilation.
+
+	* repl.c (get-decoded-time): added.  Includes and time functions
+	reorganized.
+
+	* sys.c (object-hash object-unhash): added.
+
+Tue Oct 15 00:45:35 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* repl.c Init.scm (*features*): moved constant features into
+	Init.scm.  Moved tests for numeric features to slib/require.scm.
+
+	* release scm3b1.
+
+	* config.h (ANSI_INCLUDES): redid include files.
+
+	* subr.c scl.c: moved all FLOAT conditionals from subr.c to scl.c.
+
+Wed Oct  9 00:28:54 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* release scm3a13.
+
+	* patchlvl.h (PATCHLEVEL): 13
+
+	* Init.scm: "vicinity.scm" changed to "require.scm"
+
+Mon Oct  7 00:34:07 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* test.scm: test of redefining built-in symbol and extra ')'
+	removed.
+
+	* scm.doc makefile.unix: scm.doc created from scm.1 in
+	makefile.unix.
+
+	* VMSBUILD.COM setjump.asm setjump.h (setjmp longjmp jmp_buf): put
+	in from comp.sources.reviewed in order to let VMS have full
+	continuations.  VMSBUILD.COM is a compile script.
+
+Fri Oct  4 00:05:54 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* scl.c(sleep): removed; not supported by MSC (although could be
+	written).
+
+	* scm.h config.h (size_t): moved to config.h.
+
+	* sys.c (f_getc): -> lgetc for vax, getc otherwise.
+
+	* patchlvl.h (PATCHLEVEL): 12
+
+Mon Sep 30 01:14:48 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* scl.c(sleep): created.
+
+	* repl.c(internal-time-units-per-second get=internal-run-time):
+	created
+
+	* repl.c: created from scm.c (shuffled around lots of functions).
+
+Sat Sep 28 00:22:30 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* scm.c config.h (char-code-limit most-positive-fixnum
+	most-negative-fixnum): created.
+
+Tue Sep 24 01:21:43 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* scm.c (software-type); created.
+
+	* scm.c config.h (terms, list-file, library-vicinity,
+	program-vicinity, user-vicinity, make-vicinity, sub-vicinity):
+	moved to Init.scm and library.
+
+	* scm.c config.h Makefile (PROGPATH): changed to IMPLPATH.
+
+	* Init.scm: created
+
+Fri Sep 20 13:22:08 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* patchlvl.h (PATCHLEVEL): 5
+
+	* all: changed declarations to size_t where appropriate.  scm.h
+	test preprocessor flag _SIZE_T to determine if already declared.
+	size_t should greatly enhance portability to Macintosh and other
+	machines.
+
+Tue Sep 17 01:15:31 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* scm.c (tmpnam): support for mktemp added.
+
+Mon Sep 16 14:06:26 1991  Aubrey Jaffer  (jaffer at train)
+
+	* scm.c (implementation-vicinity): added.  (program-vicinity) now
+	returns undefined if called not within a load.
+
+	* sys.c (call-with-io-file): removed.
+
+	* scm.c (tmpnam): added.
+
+	* scm.c config.h (tmporary-vicinity): removed.
+
+Sun Sep 15 22:21:30 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* subr.c scm.h (remainder): renamed to lremainder to avoid
+	conflict with math.h on SunOS4.1 (from bevan@cs.man.ac.uk).
+
+Sat Sep  7 22:27:49 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* scm.c (program-arguments load): program-arguments created.
+
+	* scm.c (getenv): added getenv and used for program-vicinity and
+	library-vicinity.
+
+	* scm.c (program-vicinity): fixed if load_name is NULL.
+
+	* scl.c config.h (substring-move-left! substring-move-right!):
+	added under STR_EXTENSIONS flag.
+
+Wed Aug 28 22:59:20 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* Sending scm3a to comp.sources.reviewed
+
+	* scm.c (main): prints out feature list at startup.
+
+	* subr.c (eqp lessp greaterp lesseqp greatereqp): now work for
+	floats.
+
+	* scl.c (sum difference divide product): moved to scl.c and
+	now work for floats.
+
+	* all: all masks with low bits explicity cast to (int).
+
+Sat Aug 17 00:39:06 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* sys.c subr.c scl.c (iint2str istr2int istring2number istr2flo
+	iflo2str idbl2str): number I/O and conversion to strings rewritten.
+
+	* sys.c (gc_mark): continuations now marked SHORT_ALIGNed. (from
+	Craig Lawson).
+
+	* added QuickC support from Craig Lawson.
+
+Tue Jul 30 01:08:52 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* config.h: #ifdef pyr added.
+
+	* scm.c MANUAL: vicinity functions added.
+
+Tue Jul 16 00:51:23 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* scl.c sys.c: float functions added.
+
+	* Documentation reorganized according to comp.sources.reviewed
+	guidelines.
+
+	* sys.c config.h (open_input_file open_output_file open_rw_file):
+	file mode string moved to defines in config.h
+
+Thu Jul 11 23:30:03 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* sys.c config.h (EBCDIC ASCII) moved to config.h
+
+	* subr.c config.h (BADIVSGNS) moved to config.h
+
+	* scm.h config.h (SRS) moved to config.h
+
+Sun Jul  7 23:49:26 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* all: started adding comp.sources.reviewed corrections and
+	suggestions.
+
+	* scm.c patchlvl.h (main): PATCHLEVEL now printed in banner.
+
+	* subr.c sys.c: read_integer removed. istring2number created.
+	lread and string2number now both use istring2number.
+
+Fri Jun  7 13:43:40 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* VERSION scm2e sent to comp.sources.reviewed
+
+	* public.lic: renamed COPYING.
+
+	* scm.c (gc_status): gc_status renamed prolixity.  Now returns old
+	value of verbose.  Can take 0 arguments.
+
+	* sys.c (lreadr): added #| common lisp style |# balanced comments.
+
+	* scm.h scm.c sys.c (I/O functions): combined **PORTP and OPENP to
+	become OP**PORTP.
+
+	* scm.h sys.c (gc_sweep): moved OPENP to bit in upper half word of
+	port cells.
+
+Sat May 25 00:04:45 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* scm.c (stack_start_ptr, repl_driver, main, err functions):
+	exits removed from all err functions.  all escapes through
+	repl_driver.
+
+	* scm.c README (verbose): Now has graded verbosity.
+
+	* scm.c README (quit): Now takes optional argument which is return
+	value.
+
+Wed May 22 01:40:17 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* code.doc scm.h eval.c (ceval): Rearanged immediate type codes to
+	create IXSYMs (immediate extension syms) to allow more than 15
+	special forms.  ILOCs now work with up to 32767 in one environment
+	frame.  Dispatch is slightly faster for ILOCs in function position.
+	ICHRs can be up to 24 bits.
+
+Fri May 10 00:16:32 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* scm.h sys.c (gc_mark, gc_sweep): GCMARK moved to bit 8 of CAR
+	for some datatypes.
+
+Wed May  1 14:11:05 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* patch1 MESSAGE SENT.
+
+	* sys.c (lreadr) from jclark@bugs.specialix.co.uk.jjc: removed
+	order evaluation bug when growing tok_buf.
+
+Fri Apr 26 10:39:41 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* scm2d RELEASED
+
+	* sys.c (closure) no longer calls ilength (ECONS problem).  Added
+	ASSERT before call to closure in eval.
+
+Thu Apr 25 09:53:40 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* scm.c (error): created.
+
+Wed Apr 24 16:58:06 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* utils.scm: created.
+
+	* makefile (name8s): code from dmason works in makefile.
+
+	* eval.c (evalcar): fixed errobj on (else 3 4) error.
+	Inlined function application in (cond ((foo => fun))).
+
+	* sys.c (lprin1): change looped putcs to fwrite.
+
+Wed Apr 24 01:54:09 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* sys.c (lreadr): fixed assert for "eof in string".
+
+	* subr.c (lgcd): changed to work with borland C.
+
+	* eval.c (eval): added checks to LAMBDA and LET.
+
+	* eval.c (apply): now checks for null arg1 in lsubr.
+
+Fri Apr 12 00:09:03 1991  Aubrey Jaffer  (jaffer at kleph)
+
+	* config.h scm.h (SCMPTR): created to correct address arithmetic
+	on stack bounds under Borland C++.  Borland C++ now runs scm2c.
+
+Wed Apr 10 21:38:09 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* sys.c (open_io_file, cw_io_file, file_position, file_set_pos,
+	read_to_str) created (IO_EXTENSIONS)
+
+	* config.h (IO_EXTENSIONS): defined
+
+	* sys.c scm.c: lprin1f changed to iprin1
+
+Wed Apr 10 12:58:59 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* sys.c (intern): line 850: for(i = alen;0 <= --i;)changed to
+				    for(i = alen;0 < --i;).
+	This fixed b_pos and v_pos mapping to the same symbol.
+
+Wed Apr  4 00:00:00 1991  Aubrey Jaffer  (jaffer at kleph.ai.mit.edu)
+
+	* released scm2b
+
+Wed Apr  3 22:51:39 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* all files: eliminated types tc7_subr_2n and tc7_subr_2xn.
+	Replaced with tc7_subr_2o and tc7_subr_1o so that all subr calls
+	can be checked for number of arguments.
+
+Tue Apr  2 23:11:15 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* code.doc: cleaned up.
+
+Mon Apr  1 14:27:22 1991  Aubrey Jaffer  (jaffer at Ivan)
+
+	* eval.c (ceval): fixed nasty tail recursion bug at carloop:.
+
+	* scm.c (everr): still fixing error reporting.
+
+	* eval.c subr.c: added flag PURE_FUNCTIONAL which removes side
+	effect special forms and functions.
+
+	* subr.c (substring): now allows first index to be equal to length
+	of string
+
+	* sys.c (lprin1f): dispatches on TYP16 of smobs.
+
+	* scm.h: fixed typo in unused function defs.
+
+Mon Mar 28 00:00:00 1991  Aubrey Jaffer  (jaffer at zohar.ai.mit.edu)
+
+	* scm2a released: too many changes to record.  See code.doc.
+
+Mon Feb 18 21:48:24 1991  Aubrey Jaffer  (jaffer at foxkid)
+
+	* scm.h: types reformatted (TYP6 -> TYP7).
+
+	* eval.c (ceval): Now dispatch directly on ISYMs in ceval.
+
+Fri Feb 15 23:39:48 1991  Aubrey Jaffer  (jaffer at foxkid)
+
+	* sys.c: #include <malloc.h> not done for VMS
+
+Wed Feb 13 17:49:33 1991  Aubrey Jaffer  (jaffer at foxkid)
+
+	* scm.c scl.c: added unsigned declarations to some char *
+	definitions in order to fix characters having negative codes.
+
+	* scm.h (MAKISYM, MAKFLAG, ICHR, MAKICHR, MAKINUM): Now cast to
+	long so that their calls don't have to.  Changing MAKICHR fixed
+	problem in scl.c (string2list) on IBMPC.
+
+	* subr.c (quotient): support for `/' reintroduced; required by
+	r3.99rs but not IEEE.
+
+	* subr.c (char functions): added isascii tests for
+	char-alphabetic, char-numeric?, char-whitespace?,
+	char-upper-case?, and char-lower-case?.  Added test against
+	char_code_limit to int2char.
+
+	* subr.c (s_char_alphap): is subr_1 not lsubr.
+
+	* test.scm: added tests for char-alphabetic, char-numeric?,
+	char-whitespace?, char-upper-case?, and char-lower-case?.
+
+	* sys.c: most `return;'s eliminated to reduce warning messages.
+	Substituted breaks and reordered switch and if clauses.
+
+Sun Feb  3 23:12:34 1991  Aubrey Jaffer  (jaffer at foxkid)
+
+	* scm1-2: released.
+
+	* sys.c (read-char peek-char) added code for EOF.
+
+	* test.scm (leaf-eq?) added and file "cont.scm" removed.  I/O
+	tests added.
+
+	* sys.c (I/O functions) now check for input and output ports
+	rather than just ports.
+
+	* sys.c (lprin1f): occurences of stdout changed to f.  Newlines
+	after printing port removed.
+
+Thu Jan 31 22:52:39 1991  Aubrey Jaffer  (jaffer at foxkid)
+
+	* subr.c (quotient): support for `/' removed; not required.
+
+	* scm.c (wta): message for OUTOFRANGE fixed.
+
+Mon Jan 28 12:45:55 1991  Aubrey Jaffer  (jaffer at foxkid)
+
+	* eval.c (apply): added checks for number of arguments.
+
+	* scm.h (CHECK_SIGINT): checks for blocked SIGINT.
+
+	* sys.c (lprin1): added blocking and testing for SIGINT so that
+	output won't hang on VMS.
+
+	* scm.c (repl): added fflush call.
+
+	* scm.c (err_head, wta): added fflush calls to error routines so
+	that error message come out in proper order.
+

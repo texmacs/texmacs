@@ -1,0 +1,319 @@
+2004-11-09  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* snarf-check-and-output-texi (process-multiline-directive): Allow
+	the fname attribute to a sequence of strings and append them all
+	to form the fname.  This is needed for string literals like
+	"u8""vector?".
+
+2004-09-08  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* Makefile.am (scripts_sources): Added snarf-guile-m4-docs.
+
+2004-08-06  Kevin Ryde  <user42@zip.com.au>
+
+	* scripts/read-rfc822 (parse-message): Correction to header
+	continuation, loop with read-line not cdr lines.
+
+2002-12-08  Rob Browning  <rlb@defaultvalue.org>
+
+	* Makefile.am (subpkgdatadir): VERSION -> GUILE_EFFECTIVE_VERSION.
+
+2002-10-26  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* lint (lint): Add message telling resolved module name.
+
+2002-10-05  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* snarf-check-and-output-texi (end-multiline): Use '*function-name*'
+	instead of nonexisting 'name'.
+
+2002-10-04  Rob Browning  <rlb@defaultvalue.org>
+
+	* summarize-guile-TODO (as-leaf): make #\: a char-set.
+
+2002-05-18  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* api-diff (group-diff): Also output +N and -N adds and subs
+	details, respectively.
+
+2002-05-13  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* read-rfc822: New script.
+
+	* Makefile.am (scripts_sources): Add api-diff and read-rfc822.
+
+	* scan-api (scan-api): No longer include timestamp.
+
+2002-05-11  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* scan-api (scan-api): Fix bug: No longer omit `C' and `Scheme' in
+	groups in the presence of the grouper.
+
+	* api-diff: Use modules (ice-9 format), (ice-9 getopt-long).
+	Autoload module (srfi srfi-13).
+	No longer export `diff-alists'.
+
+	(diff, diff-alists, display-list): Remove.
+	(put, get, read-api-alist-file, hang-by-the-roots, diff?,
+	diff+note!, group-diff): New procs.
+	(api-diff): Rewrite.
+
+2002-05-10  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* scan-api (add-props): New proc.
+	(make-grok-proc): Renamed from `make-grok-hook'.
+	(make-members-proc): Renamed from `make-members-hook'.
+	(make-grouper): Renamed from `make-grouping-hook'.  Update callers.
+	Add handling for multiple grouping-defs files.
+	(scan-api): Add handling for multiple grouping-defs files.
+	Cache `symbol->string' result; adjust `sort' usage.
+
+2002-05-09  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* scan-api (scan-C!): Use more robust regexp.
+
+2002-05-08  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* scan-api: New script.
+	(scan-api): Handle case where `grouping-hook' is #f.
+
+	Remove top-level `debug-enable' form.
+	Add TODO comment; nfc.
+
+	* Makefile.am (scripts_sources): Add "scan-api".
+
+2002-04-30  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* summarize-guile-TODO (make-display-item):
+	Hoist some lambdas; nfc.
+
+2002-04-29  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* summarize-guile-TODO: Fix commentary typo; nfc.
+
+2002-04-08  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* summarize-guile-TODO: Use (ice-9 getopt-long).
+	Autoload (ice-9 common-list).
+
+	(select-items): New proc.
+	(make-display-item): New proc.
+	(display-item): Delete.
+	(display-items): Use `make-display-item'.
+	(summarize-guile-TODO): Add option handling.
+
+2002-04-07  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* summarize-guile-TODO: Add "Bugs" section to commentary.
+	Autoload (srfi srfi-13) on `string-tokenize'.
+
+	(as-leaf): New proc.
+	(hang-by-the-leaves): Use `as-leaf'.
+	(read-TODO-file): Expand regexp and specs
+	to handle "D", "X" and "N%".  Fix regexp
+	to make isolating `who' easier.
+	(display-item): Handle "D", "X" and "N%".
+
+2002-04-06  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* summarize-guile-TODO: New script.
+
+	* Makefile.am (scripts_sources): Add "summarize-guile-TODO".
+
+2002-04-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* read-text-outline (display-outline-tree): No longer export this proc.
+
+	(*depth-cue-rx*, *subm-number*, *level-divisor*, >>,
+	display-outline-tree): Delete these vars and procs.
+
+	(??, msub, ??-predicates, make-line-parser,
+	make-text-outline-reader): New procs.
+
+	(make-text-outline-reader): Export.
+	(read-text-outline-silently): Rewrite
+	using `make-text-outline-reader'.
+
+2002-04-04  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* lint: New script.
+
+	* Makefile.am (scripts_sources): Add "lint".
+
+2002-04-02  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* PROGRAM: Update copyright; nfc.
+
+	* read-text-outline: New script.
+
+	* Makefile.am (scripts_sources): Add "read-text-outline".
+
+	* read-text-outline (read-text-outline-silently):
+	Move `tp' inside `loop'; nfc.
+
+2002-03-12  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* snarf-check-and-output-texi (snarf-check-and-output-texi): If
+	supplied, the `--manual' flag arrives as a string, not a symbol,
+	so test for it as such.
+
+2002-03-03  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* snarf-guile-m4-docs (display-texi): Strip off `# ' from start of
+	docstring lines if possible, rather than just `#'.
+
+2002-02-26  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* Makefile.am: Update path to pre-inst-guile automake frag.
+
+2002-02-22  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* api-diff: New script.
+
+2002-02-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* Include $(top_srcdir)/pre-inst-guile.am.
+
+	(overview): Use $(preinstguiletool).
+
+2002-01-11  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* Makefile.am (scripts_sources): Add autofrisk.
+
+	* autofrisk: New script.
+
+	* frisk: Fix typo in commentary; nfc.
+
+	* use2dot: Autoload module (ice-9 getopt-long).
+	Use module (srfi srfi-13).
+	Export `use2dot'.
+
+	(string-append/separator, mapconcat): Delete.
+	(vv): Now take list of pairs, and return the mapping..
+	(>>header): Use `string-join'.
+	(>>): New proc.
+	(use2dot): Use `getopt-long'.  Use `>>'.
+
+2002-01-08  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* Makefile.am (scripts_sources): Add frisk.
+	(list): New target.
+	(overview): Also report module interfaces.
+
+	* use2dot: Rewrite using (scripts frisk).
+
+	* frisk: Initial revision.
+
+2002-01-02  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* snarf-guile-m4-docs: New script.
+
+2001-11-28  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* punify (write-punily): Handle symbols w/ ":" prefix specially.
+
+	* use2dot (ferret): New proc.
+	(grok): Use `ferret'.
+
+2001-11-16  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* snarf-check-and-output-texi: Change generated @deffn categories
+	from "function" and "primitive" to "C Function" and "Scheme
+	Procedure".
+	(end-multiline): Take out @findex generation again; not needed
+	since index entries are implicit in @deffn forms.
+
+	These changes add a @deffnx C function declaration and function
+	index entries for each Guile primitive to the copy of the doc
+	snarf output that is used for reference manual synchronization.
+	Online help is unchanged.
+
+	* snarf-check-and-output-texi (*manual-flag*,
+	snarf-check-and-output-texi): Handle `--manual' invocation arg
+	passed through from libguile/Makefile.am.
+	(*c-function-name*, begin-multiline, do-command): Pick out C
+	function name from snarfed token stream.
+	(end-multiline): Add @deffnx C declaration and function index
+	entries to output.
+	(*primitive-deffnx-signature*, *primitive-deffnx-sig-length*):
+	Fluff to help insert the C declaration after any "@deffnx
+	primitive" lines in the snarfed docstring.
+
+2001-10-05  Thien-Thi Nguyen  <ttn@glug.org>
+
+	* read-scheme-source (quoted?, clump): New procs, exported.
+
+2001-09-30  Thien-Thi Nguyen  <ttn@glug.org>
+
+	* display-commentary (module-name->filename-frag,
+	display-module-commentary): New procs.
+	(display-commentary): Also handle refs that look like module
+	names.
+
+2001-08-25  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* Makefile.am (AUTOMAKE_OPTIONS): Change "foreign" to "gnu".
+
+2001-08-07  Michael Livshin  <mlivshin@bigfoot.com>
+
+	* snarf-check-and-output-texi: print optional args in a prettier
+	manner.
+
+2001-08-01  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* PROGRAM, README, display-commentary, doc-snarf,
+	generate-autoload, punify, read-scheme-source,
+	snarf-check-and-output-texi, use2dot:
+	In boilerplate, use -l$0.
+	Thanks to Daniel Skarda.
+
+2001-07-22  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* generate-autoload (autoload-info):
+	Also handle `defmacro-public' forms.
+
+2001-07-14  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* PROGRAM, display-commentary, doc-snarf, generate-autoload,
+	punify, read-scheme-source, snarf-check-and-output-texi, use2dot:
+	Re-add authorship info.
+
+2001-07-12  Michael Livshin  <mlivshin@bigfoot.com>
+
+	* snarf-check-and-output-texi (do-argpos): complain to the stderr,
+	not stdout.  thanks to Dale P. Smith!
+	(nice-sig): cosmetic fix.
+
+2001-07-09  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* PROGRAM, generate-autoload, use2dot, punify, display-commentary,
+	doc-snarf, read-scheme-source, snarf-check-and-output-texi:
+	Remove authorship info.
+
+2001-06-25  Michael Livshin  <mlivshin@bigfoot.com>
+
+	* snarf-check-and-output-texi: rewrite.
+
+2001-05-31  Michael Livshin  <mlivshin@bigfoot.com>
+
+	* snarf-check-and-output-texi: new file.
+
+	* Makefile.am (scripts_sources): add snarf-check-and-output-texi.
+
+2001-05-14  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* PROGRAM, display-commentary, doc-snarf, generate-autoload,
+	punify, read-scheme-source, use2dot: Move author tag outside
+	commentary; nfc.
+
+2001-05-08  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* read-scheme-source: New file
+
+	* Makefile.am (scripts_sources): Add read-scheme-source.
+
+2001-04-29  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* Makefile.am, PROGRAM, README, display-commentary,
+	doc-snarf, generate-autoload, punify, use2dot: New file
+

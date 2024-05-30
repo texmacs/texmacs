@@ -1,0 +1,161 @@
+;;;; structs.test --- Test suite for Guile's structures.   -*- Scheme -*-
+;;;; Ludovic Courtès <ludovic.courtes@laas.fr>, 2006-06-12.
+;;;;
+;;;; Copyright (C) 2006, 2007 Free Software Foundation, Inc.
+;;;;
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;;
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;;
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-structs)
+  :use-module (test-suite lib))
+
+
+
+;;;
+;;; Struct example taken from the reference manual (by Tom Lord).
+;;;
+
+(define ball-root (make-vtable-vtable "pr" 0))
+
+(define (make-ball-type ball-color)
+  (make-struct ball-root 0
+	       (make-struct-layout "pw")
+	       (lambda (ball port)
+		 (format port "#<a ~A ball owned by ~A>"
+			 (color ball)
+			 (owner ball)))
+	       ball-color))
+
+(define (color ball) (struct-ref (struct-vtable ball) vtable-offset-user))
+(define (owner ball) (struct-ref ball 0))
+(define (set-owner! ball owner) (struct-set! ball 0 owner))
+
+(define red (make-ball-type 'red))
+(define green (make-ball-type 'green))
+
+(define (make-ball type owner) (make-struct type 0 owner))
+
+
+
+;;;
+;;; Test suite.
+;;;
+
+(with-test-prefix "low-level struct procedures"
+
+  (pass-if "constructors"
+     (and (struct-vtable? ball-root)
+	  (struct-vtable? red)
+	  (struct-vtable? green)))
+
+  (pass-if "vtables"
+     (and (eq? (struct-vtable red) ball-root)
+	  (eq? (struct-vtable green) ball-root)
+	  (eq? (struct-vtable (make-ball red "Bob")) red)
+
+	  ;; end of the vtable tower
+	  (eq? (struct-vtable ball-root) ball-root)))
+
+  (pass-if-exception "write-access denied"
+     exception:struct-set!-denied
+
+     ;; The first field of instances of BALL-ROOT is read-only.
+     (struct-set! red vtable-offset-user "blue"))
+
+  (pass-if "write-access granted"
+     (set-owner! (make-ball red "Bob") "Fred")
+     #t)
+
+  (pass-if "struct-set!"
+     (let ((ball (make-ball green "Bob")))
+       (set-owner! ball "Bill")
+       (string=? (owner ball) "Bill"))))
+
+
+(with-test-prefix "equal?"
+
+  (pass-if "simple structs"
+     (let* ((vtable (make-vtable-vtable "pr" 0))
+            (s1     (make-struct vtable 0 "hello"))
+            (s2     (make-struct vtable 0 "hello")))
+       (equal? s1 s2)))
+
+  (pass-if "more complex structs"
+     (let ((first (make-ball red (string-copy "Bob")))
+           (second (make-ball red (string-copy "Bob"))))
+       (equal? first second)))
+
+  (pass-if "not-equal?"
+     (not (or (equal? (make-ball red "Bob") (make-ball green "Bob"))
+	      (equal? (make-ball red "Bob") (make-ball red "Bill"))))))
+
+
+;;
+;; make-struct
+;;
+
+(define exception:bad-tail
+  (cons 'misc-error "tail array not allowed unless"))
+
+(with-test-prefix "make-struct"
+
+  ;; in guile 1.8.1 and earlier, this caused an error throw out of an
+  ;; SCM_CRITICAL_SECTION_START / SCM_CRITICAL_SECTION_END, which abort()ed
+  ;; the program
+  ;;
+  (pass-if-exception "wrong type for `u' field" exception:wrong-type-arg
+    (let* ((vv (make-vtable-vtable "" 0))
+	   (v  (make-struct vv 0 (make-struct-layout "uw"))))
+      (make-struct v 0 'x)))
+
+  ;; In guile 1.8.1 and earlier, and 1.6.8 and earlier, there was no check
+  ;; on a tail array being created without an R/W/O type for it.  This left
+  ;; it uninitialized by scm_struct_init(), resulting in garbage getting
+  ;; into an SCM when struct-ref read it (and attempting to print a garbage
+  ;; SCM can cause a segv).
+  ;;
+  (pass-if-exception "no R/W/O for tail array" exception:bad-tail
+    (let* ((vv (make-vtable-vtable "" 0))
+	   (v  (make-struct vv 0 (make-struct-layout "pw"))))
+      (make-struct v 123 'x))))
+
+;;
+;; make-vtable
+;;
+
+(with-test-prefix "make-vtable"
+
+  (pass-if "without printer"
+    (let* ((vtable (make-vtable "pwpr"))
+	   (struct (make-struct vtable 0 'x 'y)))
+      (and (eq? 'x (struct-ref struct 0))
+	   (eq? 'y (struct-ref struct 1)))))
+
+  (pass-if "with printer"
+    (let ()
+      (define (print struct port)
+	(display "hello" port))
+	
+      (let* ((vtable (make-vtable "pwpr" print))
+	     (struct (make-struct vtable 0 'x 'y))
+	     (str    (call-with-output-string
+		      (lambda (port)
+			(display struct port)))))
+	 (equal? str "hello")))))
+
+
+;;; Local Variables:
+;;; coding: latin-1
+;;; End:

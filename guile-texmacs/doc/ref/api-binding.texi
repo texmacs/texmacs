@@ -1,0 +1,283 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Binding Constructs
+@section Definitions and Variable Bindings
+
+@c FIXME::martin: Review me!
+
+Scheme supports the definition of variables in different contexts.
+Variables can be defined at the top level, so that they are visible in
+the entire program, and variables can be defined locally to procedures
+and expressions.  This is important for modularity and data abstraction.
+
+@menu
+* Top Level::                   Top level variable definitions.
+* Local Bindings::              Local variable bindings.
+* Internal Definitions::        Internal definitions.
+* Binding Reflection::          Querying variable bindings.
+@end menu
+
+
+@node Top Level
+@subsection Top Level Variable Definitions
+
+@cindex variable definition
+
+On the top level of a program (i.e. when not inside the body of a
+procedure definition or a @code{let}, @code{let*} or @code{letrec}
+expression), a definition of the form
+
+@lisp
+(define a @var{value})
+@end lisp
+
+@noindent
+defines a variable called @code{a} and sets it to the value @var{value}.
+
+If the variable already exists, because it has already been created by a
+previous @code{define} expression with the same name, its value is
+simply changed to the new @var{value}.  In this case, then, the above
+form is completely equivalent to
+
+@lisp
+(set! a @var{value})
+@end lisp
+
+@noindent
+This equivalence means that @code{define} can be used interchangeably
+with @code{set!} to change the value of variables at the top level of
+the REPL or a Scheme source file.  It is useful during interactive
+development when reloading a Scheme file that you have modified, because
+it allows the @code{define} expressions in that file to work as expected
+both the first time that the file is loaded and on subsequent occasions.
+
+Note, though, that @code{define} and @code{set!} are not always
+equivalent.  For example, a @code{set!} is not allowed if the named
+variable does not already exist, and the two expressions can behave
+differently in the case where there are imported variables visible from
+another module.
+
+@deffn {Scheme Syntax} define name value
+Create a top level variable named @var{name} with value @var{value}.
+If the named variable already exists, just change its value.  The return
+value of a @code{define} expression is unspecified.
+@end deffn
+
+The C API equivalents of @code{define} are @code{scm_define} and
+@code{scm_c_define}, which differ from each other in whether the
+variable name is specified as a @code{SCM} symbol or as a
+null-terminated C string.
+
+@deffn {C Function} scm_define (sym, value)
+@deffnx {C Function} scm_c_define (const char *name, value)
+C equivalents of @code{define}, with variable name specified either by
+@var{sym}, a symbol, or by @var{name}, a null-terminated C string.  Both
+variants return the new or preexisting variable object.
+@end deffn
+
+@code{define} (when it occurs at top level), @code{scm_define} and
+@code{scm_c_define} all create or set the value of a variable in the top
+level environment of the current module.  If there was not already a
+variable with the specified name belonging to the current module, but a
+similarly named variable from another module was visible through having
+been imported, the newly created variable in the current module will
+shadow the imported variable, such that the imported variable is no
+longer visible.
+
+Attention: Scheme definitions inside local binding constructs
+(@pxref{Local Bindings}) act differently (@pxref{Internal Definitions}).
+
+
+@node Local Bindings
+@subsection Local Variable Bindings
+
+@c FIXME::martin: Review me!
+
+@cindex local bindings
+@cindex local variables
+
+As opposed to definitions at the top level, which are visible in the
+whole program (or current module, when Guile modules are used), it is
+also possible to define variables which are only visible in a
+well-defined part of the program.  Normally, this part of a program
+will be a procedure or a subexpression of a procedure.
+
+With the constructs for local binding (@code{let}, @code{let*} and
+@code{letrec}), the Scheme language has a block structure like most
+other programming languages since the days of @sc{Algol 60}.  Readers
+familiar to languages like C or Java should already be used to this
+concept, but the family of @code{let} expressions has a few properties
+which are well worth knowing.
+
+The first local binding construct is @code{let}.  The other constructs
+@code{let*} and @code{letrec} are specialized versions for usage where
+using plain @code{let} is a bit inconvenient.
+
+@deffn syntax let bindings body
+@var{bindings} has the form
+
+@lisp
+((@var{variable1} @var{init1}) @dots{})
+@end lisp
+
+that is zero or more two-element lists of a variable and an arbitrary
+expression each.  All @var{variable} names must be distinct.
+
+A @code{let} expression is evaluated as follows.
+
+@itemize @bullet
+@item
+All @var{init} expressions are evaluated.
+
+@item
+New storage is allocated for the @var{variables}.
+
+@item
+The values of the @var{init} expressions are stored into the variables.
+
+@item
+The expressions in @var{body} are evaluated in order, and the value of
+the last expression is returned as the value of the @code{let}
+expression.
+
+@item
+The storage for the @var{variables} is freed.
+@end itemize
+
+The @var{init} expressions are not allowed to refer to any of the
+@var{variables}.
+@end deffn
+
+@deffn syntax let* bindings body
+Similar to @code{let}, but the variable bindings are performed
+sequentially, that means that all @var{init} expression are allowed to
+use the variables defined on their left in the binding list.
+
+A @code{let*} expression can always be expressed with nested @code{let}
+expressions.
+
+@lisp
+(let* ((a 1) (b a))
+   b)
+@equiv{}
+(let ((a 1))
+  (let ((b a))
+    b))
+@end lisp
+@end deffn
+
+@deffn syntax letrec bindings body
+Similar to @code{let}, but it is possible to refer to the @var{variable}
+from lambda expression created in any of the @var{inits}.  That is,
+procedures created in the @var{init} expression can recursively refer to
+the defined variables.
+
+@lisp
+(letrec ((even?
+          (lambda (n)
+              (if (zero? n)
+                  #t
+                  (odd? (- n 1)))))
+         (odd?
+          (lambda (n)
+              (if (zero? n)
+                  #f
+                  (even? (- n 1))))))
+  (even? 88))
+@result{}
+#t
+@end lisp
+@end deffn
+
+There is also an alternative form of the @code{let} form, which is used
+for expressing iteration.  Because of the use as a looping construct,
+this form (the @dfn{named let}) is documented in the section about
+iteration (@pxref{while do, Iteration})
+
+@node Internal Definitions
+@subsection Internal definitions
+
+@c FIXME::martin: Review me!
+
+A @code{define} form which appears inside the body of a @code{lambda},
+@code{let}, @code{let*}, @code{letrec} or equivalent expression is
+called an @dfn{internal definition}.  An internal definition differs
+from a top level definition (@pxref{Top Level}), because the definition
+is only visible inside the complete body of the enclosing form.  Let us
+examine the following example.
+
+@lisp
+(let ((frumble "froz"))
+   (define banana (lambda () (apple 'peach)))
+   (define apple (lambda (x) x))
+   (banana))
+@result{}
+peach
+@end lisp
+
+Here the enclosing form is a @code{let}, so the @code{define}s in the
+@code{let}-body are internal definitions.  Because the scope of the
+internal definitions is the @strong{complete} body of the
+@code{let}-expression, the @code{lambda}-expression which gets bound
+to the variable @code{banana} may refer to the variable @code{apple},
+even though it's definition appears lexically @emph{after} the definition
+of @code{banana}.  This is because a sequence of internal definition
+acts as if it were a @code{letrec} expression.
+
+@lisp
+(let ()
+  (define a 1)
+  (define b 2)
+  (+ a b))
+@end lisp
+
+@noindent
+is equivalent to
+
+@lisp
+(let ()
+  (letrec ((a 1) (b 2))
+    (+ a b)))
+@end lisp
+
+Another noteworthy difference to top level definitions is that within
+one group of internal definitions all variable names must be distinct.
+That means where on the top level a second define for a given variable
+acts like a @code{set!}, an exception is thrown for internal definitions
+with duplicate bindings.
+
+@c FIXME::martin: The following is required by R5RS, but Guile does not
+@c   signal an error.  Document it anyway, saying that Guile is sloppy?
+
+@c  Internal definitions are only allowed at the beginning of the body of an
+@c  enclosing expression.  They may not be mixed with other expressions.
+
+@c  @lisp
+@c  (let ()
+@c    (define a 1)
+@c    a
+@c    (define b 2)
+@c    b)
+@c  @end lisp
+
+@node Binding Reflection
+@subsection Querying variable bindings
+
+Guile provides a procedure for checking whether a symbol is bound in the
+top level environment.
+
+@c NJFIXME explain [env]
+@deffn {Scheme Procedure} defined? sym [env]
+@deffnx {C Function} scm_defined_p (sym, env)
+Return @code{#t} if @var{sym} is defined in the lexical environment @var{env}.  When @var{env} is not specified, look in the top-level environment as defined by the current module.
+@end deffn
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

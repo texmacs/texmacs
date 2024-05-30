@@ -1,0 +1,26 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node The Scheme shell (scsh)
+@section The Scheme shell (scsh)
+@cindex SCSH
+@cindex Scheme Shell
+
+An incomplete port of the Scheme shell (scsh) is available for Guile
+as a separate package.  The current status of guile-scsh can be found at
+@url{http://arglist.com/guile/}.
+
+For information about scsh see
+@url{http://www.scsh.net/}.
+
+The closest emulation of scsh can be obtained by running:
+
+@smalllisp
+(load-from-path "scsh/init")
+@end smalllisp
+
+See the USAGE file supplied with guile-scsh for more details.

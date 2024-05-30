@@ -1,0 +1,102 @@
+;;;; arbiters.test --- test arbiters functions -*- scheme -*-
+;;;; 
+;;;; Copyright (C) 2004, 2006 Free Software Foundation, Inc.
+;;;; 
+;;;; This library is free software; you can redistribute it and/or
+;;;; modify it under the terms of the GNU Lesser General Public
+;;;; License as published by the Free Software Foundation; either
+;;;; version 2.1 of the License, or (at your option) any later version.
+;;;; 
+;;;; This library is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;;;; Lesser General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU Lesser General Public
+;;;; License along with this library; if not, write to the Free Software
+;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-arbiters)
+  #:use-module (test-suite lib))
+
+;;;
+;;; arbiter display
+;;;
+
+(with-test-prefix "arbiter display"
+  ;; nothing fancy, just exercise the printing code
+
+  (pass-if "never locked"
+    (let ((arb  (make-arbiter "foo"))
+	  (port (open-output-string)))
+      (display arb port)
+      #t))
+
+  (pass-if "locked"
+    (let ((arb  (make-arbiter "foo"))
+	  (port (open-output-string)))
+      (try-arbiter arb)
+      (display arb port)
+      #t))
+
+  (pass-if "unlocked"
+    (let ((arb  (make-arbiter "foo"))
+	  (port (open-output-string)))
+      (try-arbiter arb)
+      (release-arbiter arb)
+      (display arb port)
+      #t)))
+
+;;;
+;;; try-arbiter
+;;;
+
+(with-test-prefix "try-arbiter"
+
+  (pass-if "lock"
+    (let ((arb (make-arbiter "foo")))
+      (try-arbiter arb)))
+
+  (pass-if "already locked"
+    (let ((arb (make-arbiter "foo")))
+      (try-arbiter arb)
+      (not (try-arbiter arb))))
+
+  (pass-if "already locked twice"
+    (let ((arb (make-arbiter "foo")))
+      (try-arbiter arb)
+      (try-arbiter arb)
+      (not (try-arbiter arb)))))
+
+;;;
+;;; release-arbiter
+;;;
+
+(with-test-prefix "release-arbiter"
+
+  (pass-if "lock"
+    (let ((arb (make-arbiter "foo")))
+      (try-arbiter arb)
+      (release-arbiter arb)))
+
+  (pass-if "never locked"
+    (let ((arb (make-arbiter "foo")))
+      (not (release-arbiter arb))))
+
+  (pass-if "never locked twice"
+    (let ((arb (make-arbiter "foo")))
+      (release-arbiter arb)
+      (not (release-arbiter arb))))
+
+  (pass-if "already unlocked"
+    (let ((arb (make-arbiter "foo")))
+      (try-arbiter arb)
+      (release-arbiter arb)
+      (not (release-arbiter arb))))
+
+  (pass-if "already unlocked twice"
+    (let ((arb (make-arbiter "foo")))
+      (try-arbiter arb)
+      (release-arbiter arb)
+      (release-arbiter arb)
+      (not (release-arbiter arb)))))

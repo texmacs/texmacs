@@ -1,0 +1,1196 @@
+;;;; syntax.test --- test suite for Guile's syntactic forms    -*- scheme -*-
+;;;;
+;;;; Copyright (C) 2001,2003,2004, 2005, 2006 Free Software Foundation, Inc.
+;;;; 
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;; 
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-syntax)
+  :use-module (test-suite lib))
+
+
+(define exception:bad-expression
+  (cons 'syntax-error "Bad expression"))
+
+(define exception:missing/extra-expr
+  (cons 'syntax-error "Missing or extra expression"))
+(define exception:missing-expr
+  (cons 'syntax-error "Missing expression"))
+(define exception:missing-body-expr
+  (cons 'syntax-error "Missing body expression"))
+(define exception:extra-expr
+  (cons 'syntax-error "Extra expression"))
+(define exception:illegal-empty-combination
+  (cons 'syntax-error "Illegal empty combination"))
+
+(define exception:bad-bindings
+  (cons 'syntax-error "Bad bindings"))
+(define exception:bad-binding
+  (cons 'syntax-error "Bad binding"))
+(define exception:duplicate-binding
+  (cons 'syntax-error "Duplicate binding"))
+(define exception:bad-body
+  (cons 'misc-error "^bad body"))
+(define exception:bad-formals
+  (cons 'syntax-error "Bad formals"))
+(define exception:bad-formal
+  (cons 'syntax-error "Bad formal"))
+(define exception:duplicate-formal
+  (cons 'syntax-error "Duplicate formal"))
+
+(define exception:missing-clauses
+  (cons 'syntax-error "Missing clauses"))
+(define exception:misplaced-else-clause
+  (cons 'syntax-error "Misplaced else clause"))
+(define exception:bad-case-clause
+  (cons 'syntax-error "Bad case clause"))
+(define exception:bad-case-labels
+  (cons 'syntax-error "Bad case labels"))
+(define exception:bad-cond-clause
+  (cons 'syntax-error "Bad cond clause"))
+
+
+(with-test-prefix "expressions"
+
+  (with-test-prefix "Bad argument list"
+
+    (pass-if-exception "improper argument list of length 1"
+      exception:wrong-num-args
+      (eval '(let ((foo (lambda (x y) #t)))
+	       (foo . 1))
+	    (interaction-environment)))
+
+    (pass-if-exception "improper argument list of length 2"
+      exception:wrong-num-args
+      (eval '(let ((foo (lambda (x y) #t)))
+	       (foo 1 . 2))
+	    (interaction-environment))))
+
+  (with-test-prefix "missing or extra expression"
+
+    ;; R5RS says:
+    ;; *Note:* In many dialects of Lisp, the empty combination, (),
+    ;; is a legitimate expression.  In Scheme, combinations must
+    ;; have at least one subexpression, so () is not a syntactically
+    ;; valid expression.
+
+    ;; Fixed on 2001-3-3
+    (pass-if-exception "empty parentheses \"()\""
+      exception:illegal-empty-combination
+      (eval '()
+	    (interaction-environment)))))
+
+(with-test-prefix "quote"
+  #t)
+
+(with-test-prefix "quasiquote"
+
+  (with-test-prefix "unquote"
+
+    (pass-if "repeated execution"
+      (let ((foo (let ((i 0)) (lambda () (set! i (+ i 1)) `(,i)))))
+	(and (equal? (foo) '(1)) (equal? (foo) '(2))))))
+
+  (with-test-prefix "unquote-splicing"
+
+    (pass-if-exception "extra arguments"
+      exception:missing/extra-expr
+      (quasiquote ((unquote-splicing (list 1 2) (list 3 4)))))))
+
+(with-test-prefix "begin"
+
+  (pass-if "legal (begin)"
+    (begin)
+    #t)
+
+  (with-test-prefix "unmemoization"
+
+    (pass-if "normal begin"
+      (let ((foo (lambda () (if (= 1 1) (begin (+ 1) (+ 2))))))
+        (foo) ; make sure, memoization has been performed
+        (equal? (procedure-source foo)
+                '(lambda () (if (= 1 1) (begin (+ 1) (+ 2)))))))
+
+    (pass-if "redundant nested begin"
+      (let ((foo (lambda () (if (= 1 1) (begin (+ 1) (begin (+ 2) (+ 3)))))))
+        (foo) ; make sure, memoization has been performed
+        (equal? (procedure-source foo)
+                '(lambda () (if (= 1 1) (begin (+ 1) (begin (+ 2) (+ 3))))))))
+
+    (pass-if "redundant begin at start of body"
+      (let ((foo (lambda () (begin (+ 1) (+ 2))))) ; should be optimized
+        (foo) ; make sure, memoization has been performed
+        (equal? (procedure-source foo)
+                '(lambda () (begin (+ 1) (+ 2)))))))
+
+  (expect-fail-exception "illegal (begin)"
+    exception:bad-body
+    (if #t (begin))
+    #t))
+
+(with-test-prefix "lambda"
+
+  (with-test-prefix "unmemoization"
+
+    (pass-if "normal lambda"
+      (let ((foo (lambda () (lambda (x y) (+ x y)))))
+        ((foo) 1 2) ; make sure, memoization has been performed
+        (equal? (procedure-source foo)
+                '(lambda () (lambda (x y) (+ x y))))))
+
+    (pass-if "lambda with documentation"
+      (let ((foo (lambda () (lambda (x y) "docstring" (+ x y)))))
+        ((foo) 1 2) ; make sure, memoization has been performed
+        (equal? (procedure-source foo)
+                '(lambda () (lambda (x y) "docstring" (+ x y)))))))
+
+  (with-test-prefix "bad formals"
+
+    (pass-if-exception "(lambda)"
+      exception:missing-expr
+      (eval '(lambda)
+	    (interaction-environment)))
+
+    (pass-if-exception "(lambda . \"foo\")"
+      exception:bad-expression
+      (eval '(lambda . "foo")
+	    (interaction-environment)))
+
+    (pass-if-exception "(lambda \"foo\")"
+      exception:missing-expr
+      (eval '(lambda "foo")
+	    (interaction-environment)))
+
+    (pass-if-exception "(lambda \"foo\" #f)"
+      exception:bad-formals
+      (eval '(lambda "foo" #f)
+	    (interaction-environment)))
+
+    (pass-if-exception "(lambda (x 1) 2)"
+      exception:bad-formal
+      (eval '(lambda (x 1) 2)
+	    (interaction-environment)))
+
+    (pass-if-exception "(lambda (1 x) 2)"
+      exception:bad-formal
+      (eval '(lambda (1 x) 2)
+	    (interaction-environment)))
+
+    (pass-if-exception "(lambda (x \"a\") 2)"
+      exception:bad-formal
+      (eval '(lambda (x "a") 2)
+	    (interaction-environment)))
+
+    (pass-if-exception "(lambda (\"a\" x) 2)"
+      exception:bad-formal
+      (eval '(lambda ("a" x) 2)
+	    (interaction-environment))))
+
+  (with-test-prefix "duplicate formals"
+
+    ;; Fixed on 2001-3-3
+    (pass-if-exception "(lambda (x x) 1)"
+      exception:duplicate-formal
+      (eval '(lambda (x x) 1)
+	    (interaction-environment)))
+
+    ;; Fixed on 2001-3-3
+    (pass-if-exception "(lambda (x x x) 1)"
+      exception:duplicate-formal
+      (eval '(lambda (x x x) 1)
+	    (interaction-environment))))
+
+  (with-test-prefix "bad body"
+
+    (pass-if-exception "(lambda ())"
+      exception:missing-expr
+      (eval '(lambda ())
+	    (interaction-environment)))))
+
+(with-test-prefix "let"
+
+  (with-test-prefix "unmemoization"
+
+    (pass-if "normal let"
+      (let ((foo (lambda () (let ((i 1) (j 2)) (+ i j)))))
+        (foo) ; make sure, memoization has been performed
+        (equal? (procedure-source foo)
+                '(lambda () (let ((i 1) (j 2)) (+ i j)))))))
+
+  (with-test-prefix "bindings"
+
+    (pass-if-exception "late binding"
+      exception:unbound-var
+      (let ((x 1) (y x)) y)))
+
+  (with-test-prefix "bad bindings"
+
+    (pass-if-exception "(let)"
+      exception:missing-expr
+      (eval '(let)
+	    (interaction-environment)))
+
+    (pass-if-exception "(let 1)"
+      exception:missing-expr
+      (eval '(let 1)
+	    (interaction-environment)))
+
+    (pass-if-exception "(let (x))"
+      exception:missing-expr
+      (eval '(let (x))
+	    (interaction-environment)))
+
+    (pass-if-exception "(let ((x)))"
+      exception:missing-expr
+      (eval '(let ((x)))
+	    (interaction-environment)))
+
+    (pass-if-exception "(let (x) 1)"
+      exception:bad-binding
+      (eval '(let (x) 1)
+	    (interaction-environment)))
+
+    (pass-if-exception "(let ((x)) 3)"
+      exception:bad-binding
+      (eval '(let ((x)) 3)
+	    (interaction-environment)))
+
+    (pass-if-exception "(let ((x 1) y) x)"
+      exception:bad-binding
+      (eval '(let ((x 1) y) x)
+	    (interaction-environment)))
+
+    (pass-if-exception "(let ((1 2)) 3)"
+      exception:bad-variable
+      (eval '(let ((1 2)) 3)
+	    (interaction-environment))))
+
+  (with-test-prefix "duplicate bindings"
+
+    (pass-if-exception "(let ((x 1) (x 2)) x)"
+      exception:duplicate-binding
+      (eval '(let ((x 1) (x 2)) x)
+	    (interaction-environment))))
+
+  (with-test-prefix "bad body"
+
+    (pass-if-exception "(let ())"
+      exception:missing-expr
+      (eval '(let ())
+	    (interaction-environment)))
+
+    (pass-if-exception "(let ((x 1)))"
+      exception:missing-expr
+      (eval '(let ((x 1)))
+	    (interaction-environment)))))
+
+(with-test-prefix "named let"
+
+  (with-test-prefix "initializers"
+
+    (pass-if "evaluated in outer environment"
+      (let ((f -))
+	(eqv? (let f ((n (f 1))) n) -1))))
+
+  (with-test-prefix "bad bindings"
+
+    (pass-if-exception "(let x (y))"
+      exception:missing-expr
+      (eval '(let x (y))
+	    (interaction-environment))))
+
+  (with-test-prefix "bad body"
+
+    (pass-if-exception "(let x ())"
+      exception:missing-expr
+      (eval '(let x ())
+	    (interaction-environment)))
+
+    (pass-if-exception "(let x ((y 1)))"
+      exception:missing-expr
+      (eval '(let x ((y 1)))
+	    (interaction-environment)))))
+
+(with-test-prefix "let*"
+
+  (with-test-prefix "unmemoization"
+
+    (pass-if "normal let*"
+      (let ((foo (lambda () (let* ((x 1) (y 2)) (+ x y)))))
+        (foo) ; make sure, memoization has been performed
+        (equal? (procedure-source foo)
+                '(lambda () (let* ((x 1) (y 2)) (+ x y))))))
+
+    (pass-if "let* without bindings"
+      (let ((foo (lambda () (let ((x 1) (y 2))
+                              (let* ()
+                                (and (= x 1) (= y 2)))))))
+        (foo) ; make sure, memoization has been performed
+        (equal? (procedure-source foo)
+                '(lambda () (let ((x 1) (y 2))
+                              (let* ()
+                                (and (= x 1) (= y 2)))))))))
+
+  (with-test-prefix "bindings"
+
+    (pass-if "(let* ((x 1) (x 2)) ...)"
+      (let* ((x 1) (x 2))
+	(= x 2)))
+
+    (pass-if "(let* ((x 1) (x x)) ...)"
+      (let* ((x 1) (x x))
+	(= x 1)))
+
+    (pass-if "(let ((x 1) (y 2)) (let* () ...))"
+      (let ((x 1) (y 2))
+        (let* ()
+          (and (= x 1) (= y 2))))))
+
+  (with-test-prefix "bad bindings"
+
+    (pass-if-exception "(let*)"
+      exception:missing-expr
+      (eval '(let*)
+	    (interaction-environment)))
+
+    (pass-if-exception "(let* 1)"
+      exception:missing-expr
+      (eval '(let* 1)
+	    (interaction-environment)))
+
+    (pass-if-exception "(let* (x))"
+      exception:missing-expr
+      (eval '(let* (x))
+	    (interaction-environment)))
+
+    (pass-if-exception "(let* (x) 1)"
+      exception:bad-binding
+      (eval '(let* (x) 1)
+	    (interaction-environment)))
+
+    (pass-if-exception "(let* ((x)) 3)"
+      exception:bad-binding
+      (eval '(let* ((x)) 3)
+	    (interaction-environment)))
+
+    (pass-if-exception "(let* ((x 1) y) x)"
+      exception:bad-binding
+      (eval '(let* ((x 1) y) x)
+	    (interaction-environment)))
+
+    (pass-if-exception "(let* x ())"
+      exception:bad-bindings
+      (eval '(let* x ())
+	    (interaction-environment)))
+
+    (pass-if-exception "(let* x (y))"
+      exception:bad-bindings
+      (eval '(let* x (y))
+	    (interaction-environment)))
+
+    (pass-if-exception "(let* ((1 2)) 3)"
+      exception:bad-variable
+      (eval '(let* ((1 2)) 3)
+	    (interaction-environment))))
+
+  (with-test-prefix "bad body"
+
+    (pass-if-exception "(let* ())"
+      exception:missing-expr
+      (eval '(let* ())
+	    (interaction-environment)))
+
+    (pass-if-exception "(let* ((x 1)))"
+      exception:missing-expr
+      (eval '(let* ((x 1)))
+	    (interaction-environment)))))
+
+(with-test-prefix "letrec"
+
+  (with-test-prefix "unmemoization"
+
+    (pass-if "normal letrec"
+      (let ((foo (lambda () (letrec ((i 1) (j 2)) (+ i j)))))
+        (foo) ; make sure, memoization has been performed
+        (equal? (procedure-source foo)
+                '(lambda () (letrec ((i 1) (j 2)) (+ i j)))))))
+
+  (with-test-prefix "bindings"
+
+    (pass-if-exception "initial bindings are undefined"
+      exception:used-before-defined
+      (let ((x 1))
+	(letrec ((x 1) (y x)) y))))
+
+  (with-test-prefix "bad bindings"
+
+    (pass-if-exception "(letrec)"
+      exception:missing-expr
+      (eval '(letrec)
+	    (interaction-environment)))
+
+    (pass-if-exception "(letrec 1)"
+      exception:missing-expr
+      (eval '(letrec 1)
+	    (interaction-environment)))
+
+    (pass-if-exception "(letrec (x))"
+      exception:missing-expr
+      (eval '(letrec (x))
+	    (interaction-environment)))
+
+    (pass-if-exception "(letrec (x) 1)"
+      exception:bad-binding
+      (eval '(letrec (x) 1)
+	    (interaction-environment)))
+
+    (pass-if-exception "(letrec ((x)) 3)"
+      exception:bad-binding
+      (eval '(letrec ((x)) 3)
+	    (interaction-environment)))
+
+    (pass-if-exception "(letrec ((x 1) y) x)"
+      exception:bad-binding
+      (eval '(letrec ((x 1) y) x)
+	    (interaction-environment)))
+
+    (pass-if-exception "(letrec x ())"
+      exception:bad-bindings
+      (eval '(letrec x ())
+	    (interaction-environment)))
+
+    (pass-if-exception "(letrec x (y))"
+      exception:bad-bindings
+      (eval '(letrec x (y))
+	    (interaction-environment)))
+
+    (pass-if-exception "(letrec ((1 2)) 3)"
+      exception:bad-variable
+      (eval '(letrec ((1 2)) 3)
+	    (interaction-environment))))
+
+  (with-test-prefix "duplicate bindings"
+
+    (pass-if-exception "(letrec ((x 1) (x 2)) x)"
+      exception:duplicate-binding
+      (eval '(letrec ((x 1) (x 2)) x)
+	    (interaction-environment))))
+
+  (with-test-prefix "bad body"
+
+    (pass-if-exception "(letrec ())"
+      exception:missing-expr
+      (eval '(letrec ())
+	    (interaction-environment)))
+
+    (pass-if-exception "(letrec ((x 1)))"
+      exception:missing-expr
+      (eval '(letrec ((x 1)))
+	    (interaction-environment)))))
+
+(with-test-prefix "if"
+
+  (with-test-prefix "unmemoization"
+
+    (pass-if "normal if"
+      (let ((foo (lambda (x) (if x (+ 1) (+ 2)))))
+        (foo #t) ; make sure, memoization has been performed
+        (foo #f) ; make sure, memoization has been performed
+        (equal? (procedure-source foo)
+                '(lambda (x) (if x (+ 1) (+ 2))))))
+
+    (pass-if "if without else"
+      (let ((foo (lambda (x) (if x (+ 1)))))
+        (foo #t) ; make sure, memoization has been performed
+        (foo #f) ; make sure, memoization has been performed
+        (equal? (procedure-source foo)
+                '(lambda (x) (if x (+ 1))))))
+
+    (pass-if "if #f without else"
+      (let ((foo (lambda () (if #f #f))))
+        (foo) ; make sure, memoization has been performed
+        (equal? (procedure-source foo)
+                `(lambda () (if #f #f))))))
+
+  (with-test-prefix "missing or extra expressions"
+
+    (pass-if-exception "(if)"
+      exception:missing/extra-expr
+      (eval '(if)
+	    (interaction-environment)))
+
+    (pass-if-exception "(if 1 2 3 4)"
+      exception:missing/extra-expr
+      (eval '(if 1 2 3 4)
+	    (interaction-environment)))))
+
+(with-test-prefix "cond"
+
+  (with-test-prefix "cond is hygienic"
+
+    (pass-if "bound 'else is handled correctly"
+      (eq? (let ((else 'ok)) (cond (else))) 'ok))
+
+    (with-test-prefix "bound '=> is handled correctly"
+
+      (pass-if "#t => 'ok"
+        (let ((=> 'foo))
+          (eq? (cond (#t => 'ok)) 'ok)))
+
+      (pass-if "else =>"
+        (let ((=> 'foo))
+          (eq? (cond (else =>)) 'foo)))
+
+      (pass-if "else => identity"
+        (let ((=> 'foo))
+          (eq? (cond (else => identity)) identity)))))
+
+  (with-test-prefix "SRFI-61"
+
+    (pass-if "always available"
+      (cond-expand (srfi-61 #t) (else #f)))
+
+    (pass-if "single value consequent"
+      (eq? 'ok (cond (#t identity => (lambda (x) 'ok)) (else #f))))
+
+    (pass-if "single value alternate"
+      (eq? 'ok (cond (#t not => (lambda (x) #f)) (else 'ok))))
+
+    (pass-if-exception "doesn't affect standard =>"
+      exception:wrong-num-args
+      (cond ((values 1 2) => (lambda (x y) #t))))
+
+    (pass-if "multiple values consequent"
+      (equal? '(2 1) (cond ((values 1 2)
+			    (lambda (one two)
+			      (and (= 1 one) (= 2 two))) =>
+			    (lambda (one two) (list two one)))
+			   (else #f))))
+
+    (pass-if "multiple values alternate"
+      (eq? 'ok (cond ((values 2 3 4)
+		      (lambda args (equal? '(1 2 3) args)) =>
+		      (lambda (x y z) #f))
+		     (else 'ok))))
+
+    (pass-if "zero values"
+      (eq? 'ok (cond ((values) (lambda () #t) => (lambda () 'ok))
+		     (else #f))))
+
+    (pass-if "bound => is handled correctly"
+      (let ((=> 'ok))
+	(eq? 'ok (cond (#t identity =>) (else #f)))))
+
+    (pass-if-exception "missing recipient"
+      '(syntax-error . "Missing recipient")
+      (cond (#t identity =>)))
+
+    (pass-if-exception "extra recipient"
+      '(syntax-error . "Extra expression")
+      (cond (#t identity => identity identity))))
+
+  (with-test-prefix "unmemoization"
+
+    (pass-if "normal clauses"
+      (let ((foo (lambda (x) (cond ((= x 1) 'bar) ((= x 2) 'baz)))))
+        (foo 1) ; make sure, memoization has been performed
+        (foo 2) ; make sure, memoization has been performed
+        (equal? (procedure-source foo)
+                '(lambda (x) (cond ((= x 1) 'bar) ((= x 2) 'baz))))))
+
+    (pass-if "else"
+      (let ((foo (lambda () (cond (else 'bar)))))
+        (foo) ; make sure, memoization has been performed
+        (equal? (procedure-source foo)
+                '(lambda () (cond (else 'bar))))))
+
+    (pass-if "=>"
+      (let ((foo (lambda () (cond (#t => identity)))))
+        (foo) ; make sure, memoization has been performed
+        (equal? (procedure-source foo)
+                '(lambda () (cond (#t => identity)))))))
+
+  (with-test-prefix "bad or missing clauses"
+
+    (pass-if-exception "(cond)"
+      exception:missing-clauses
+      (eval '(cond)
+	    (interaction-environment)))
+
+    (pass-if-exception "(cond #t)"
+      exception:bad-cond-clause
+      (eval '(cond #t)
+	    (interaction-environment)))
+
+    (pass-if-exception "(cond 1)"
+      exception:bad-cond-clause
+      (eval '(cond 1)
+	    (interaction-environment)))
+
+    (pass-if-exception "(cond 1 2)"
+      exception:bad-cond-clause
+      (eval '(cond 1 2)
+	    (interaction-environment)))
+
+    (pass-if-exception "(cond 1 2 3)"
+      exception:bad-cond-clause
+      (eval '(cond 1 2 3)
+	    (interaction-environment)))
+
+    (pass-if-exception "(cond 1 2 3 4)"
+      exception:bad-cond-clause
+      (eval '(cond 1 2 3 4)
+	    (interaction-environment)))
+
+    (pass-if-exception "(cond ())"
+      exception:bad-cond-clause
+      (eval '(cond ())
+	    (interaction-environment)))
+
+    (pass-if-exception "(cond () 1)"
+      exception:bad-cond-clause
+      (eval '(cond () 1)
+	    (interaction-environment)))
+
+    (pass-if-exception "(cond (1) 1)"
+      exception:bad-cond-clause
+      (eval '(cond (1) 1)
+	    (interaction-environment))))
+
+  (with-test-prefix "wrong number of arguments"
+
+    (pass-if-exception "=> (lambda (x y) #t)"
+      exception:wrong-num-args
+      (cond (1 => (lambda (x y) #t))))))
+
+(with-test-prefix "case"
+
+  (pass-if "clause with empty labels list"
+    (case 1 (() #f) (else #t)))
+
+  (with-test-prefix "case is hygienic"
+
+    (pass-if-exception "bound 'else is handled correctly"
+      exception:bad-case-labels
+      (eval '(let ((else #f)) (case 1 (else #f)))
+            (interaction-environment))))
+
+  (with-test-prefix "unmemoization"
+
+    (pass-if "normal clauses"
+      (let ((foo (lambda (x) (case x ((1) 'bar) ((2) 'baz) (else 'foobar)))))
+        (foo 1) ; make sure, memoization has been performed
+        (foo 2) ; make sure, memoization has been performed
+        (foo 3) ; make sure, memoization has been performed
+        (equal? (procedure-source foo)
+                '(lambda (x) (case x ((1) 'bar) ((2) 'baz) (else 'foobar))))))
+
+    (pass-if "empty labels"
+      (let ((foo (lambda (x) (case x ((1) 'bar) (() 'baz) (else 'foobar)))))
+        (foo 1) ; make sure, memoization has been performed
+        (foo 2) ; make sure, memoization has been performed
+        (foo 3) ; make sure, memoization has been performed
+        (equal? (procedure-source foo)
+                '(lambda (x) (case x ((1) 'bar) (() 'baz) (else 'foobar)))))))
+
+  (with-test-prefix "bad or missing clauses"
+
+    (pass-if-exception "(case)"
+      exception:missing-clauses
+      (eval '(case)
+	    (interaction-environment)))
+
+    (pass-if-exception "(case . \"foo\")"
+      exception:bad-expression
+      (eval '(case . "foo")
+	    (interaction-environment)))
+
+    (pass-if-exception "(case 1)"
+      exception:missing-clauses
+      (eval '(case 1)
+	    (interaction-environment)))
+
+    (pass-if-exception "(case 1 . \"foo\")"
+      exception:bad-expression
+      (eval '(case 1 . "foo")
+	    (interaction-environment)))
+
+    (pass-if-exception "(case 1 \"foo\")"
+      exception:bad-case-clause
+      (eval '(case 1 "foo")
+	    (interaction-environment)))
+
+    (pass-if-exception "(case 1 ())"
+      exception:bad-case-clause
+      (eval '(case 1 ())
+	    (interaction-environment)))
+
+    (pass-if-exception "(case 1 (\"foo\"))"
+      exception:bad-case-clause
+      (eval '(case 1 ("foo"))
+	    (interaction-environment)))
+
+    (pass-if-exception "(case 1 (\"foo\" \"bar\"))"
+      exception:bad-case-labels
+      (eval '(case 1 ("foo" "bar"))
+	    (interaction-environment)))
+
+    (pass-if-exception "(case 1 ((2) \"bar\") . \"foo\")"
+      exception:bad-expression
+      (eval '(case 1 ((2) "bar") . "foo")
+	    (interaction-environment)))
+
+    (pass-if-exception "(case 1 ((2) \"bar\") (else))"
+      exception:bad-case-clause
+      (eval '(case 1 ((2) "bar") (else))
+	    (interaction-environment)))
+
+    (pass-if-exception "(case 1 (else #f) . \"foo\")"
+      exception:bad-expression
+      (eval '(case 1 (else #f) . "foo")
+	    (interaction-environment)))
+
+    (pass-if-exception "(case 1 (else #f) ((1) #t))"
+      exception:misplaced-else-clause
+      (eval '(case 1 (else #f) ((1) #t))
+	    (interaction-environment)))))
+
+(with-test-prefix "top-level define"
+
+  (pass-if "redefinition"
+    (let ((m (make-module)))
+      (beautify-user-module! m)
+
+      ;; The previous value of `round' must still be visible at the time the
+      ;; new `round' is defined.  According to R5RS (Section 5.2.1), `define'
+      ;; should behave like `set!' in this case (except that in the case of
+      ;; Guile, we respect module boundaries).
+      (eval '(define round round) m)
+      (eq? (module-ref m 'round) round)))
+
+  (with-test-prefix "currying"
+
+    (pass-if "(define ((foo)) #f)"
+      (eval '(begin
+               (define ((foo)) #t)
+               ((foo)))
+            (interaction-environment))))
+
+  (with-test-prefix "unmemoization"
+
+    (pass-if "definition unmemoized without prior execution"
+      (eval '(begin 
+               (define (blub) (cons ('(1 . 2)) 2))
+               (equal?
+                 (procedure-source blub)
+                 '(lambda () (cons ('(1 . 2)) 2))))
+            (interaction-environment)))
+
+    (pass-if "definition with documentation unmemoized without prior execution"
+      (eval '(begin 
+               (define (blub) "Comment" (cons ('(1 . 2)) 2))
+               (equal?
+                 (procedure-source blub)
+                 '(lambda () "Comment" (cons ('(1 . 2)) 2))))
+            (interaction-environment))))
+
+  (with-test-prefix "missing or extra expressions"
+
+    (pass-if-exception "(define)"
+      exception:missing-expr
+      (eval '(define)
+	    (interaction-environment)))))
+
+(with-test-prefix "internal define"
+
+  (pass-if "internal defines become letrec"
+    (eval '(let ((a identity) (b identity) (c identity))
+             (define (a x) (if (= x 0) 'a (b (- x 1))))
+             (define (b x) (if (= x 0) 'b (c (- x 1))))
+             (define (c x) (if (= x 0) 'c (a (- x 1))))
+             (and (eq? 'a (a 0) (a 3))
+                  (eq? 'b (a 1) (a 4))
+                  (eq? 'c (a 2) (a 5))))
+          (interaction-environment)))
+
+  (pass-if "binding is created before expression is evaluated"
+    ;; Internal defines are equivalent to `letrec' (R5RS, Section 5.2.2).
+    (= (eval '(let ()
+                (define foo
+                  (begin
+                    (set! foo 1)
+                    (+ foo 1)))
+                foo)
+             (interaction-environment))
+       2))
+
+  (pass-if "internal defines with begin"
+    (false-if-exception
+     (eval '(let ((a identity) (b identity) (c identity))
+              (define (a x) (if (= x 0) 'a (b (- x 1))))
+              (begin
+                (define (b x) (if (= x 0) 'b (c (- x 1)))))
+              (define (c x) (if (= x 0) 'c (a (- x 1))))
+              (and (eq? 'a (a 0) (a 3))
+                   (eq? 'b (a 1) (a 4))
+                   (eq? 'c (a 2) (a 5))))
+           (interaction-environment))))
+
+  (pass-if "internal defines with empty begin"
+    (false-if-exception
+     (eval '(let ((a identity) (b identity) (c identity))
+              (define (a x) (if (= x 0) 'a (b (- x 1))))
+              (begin)
+              (define (b x) (if (= x 0) 'b (c (- x 1))))
+              (define (c x) (if (= x 0) 'c (a (- x 1))))
+              (and (eq? 'a (a 0) (a 3))
+                   (eq? 'b (a 1) (a 4))
+                   (eq? 'c (a 2) (a 5))))
+           (interaction-environment))))
+
+  (pass-if "internal defines with macro application"
+    (false-if-exception
+     (eval '(begin
+              (defmacro my-define forms
+                (cons 'define forms))
+              (let ((a identity) (b identity) (c identity))
+                (define (a x) (if (= x 0) 'a (b (- x 1))))
+                (my-define (b x) (if (= x 0) 'b (c (- x 1))))
+                (define (c x) (if (= x 0) 'c (a (- x 1))))
+                (and (eq? 'a (a 0) (a 3))
+                     (eq? 'b (a 1) (a 4))
+                     (eq? 'c (a 2) (a 5)))))
+           (interaction-environment))))
+
+  (pass-if-exception "missing body expression"
+    exception:missing-body-expr
+    (eval '(let () (define x #t))
+          (interaction-environment)))
+
+  (pass-if "unmemoization"
+    (eval '(begin
+             (define (foo) 
+               (define (bar)
+                 'ok)
+               (bar))
+             (foo)
+             (equal?
+              (procedure-source foo)
+              '(lambda () (letrec ((bar (lambda () (quote ok)))) (bar)))))
+          (interaction-environment))))
+
+(with-test-prefix "do"
+
+  (with-test-prefix "unmemoization"
+
+    (pass-if "normal case"
+      (let ((foo (lambda () (do ((i 1 (+ i 1)) (j 2))
+                                ((> i 9) (+ i j))
+                              (identity i)))))
+        (foo) ; make sure, memoization has been performed
+        (equal? (procedure-source foo)
+                '(lambda () (do ((i 1 (+ i 1)) (j 2))
+                                ((> i 9) (+ i j))
+                              (identity i))))))
+
+    (pass-if "reduced case"
+      (let ((foo (lambda () (do ((i 1 (+ i 1)) (j 2 j)) ; redundant step for j
+                                ((> i 9) (+ i j))
+                              (identity i)))))
+        (foo) ; make sure, memoization has been performed
+        (equal? (procedure-source foo)
+                '(lambda () (do ((i 1 (+ i 1)) (j 2)) ; no redundancy here
+                                ((> i 9) (+ i j))
+                              (identity i))))))))
+
+(with-test-prefix "set!"
+
+  (with-test-prefix "unmemoization"
+
+    (pass-if "normal set!"
+      (let ((foo (lambda (x) (set! x (+ 1 x)))))
+        (foo 1) ; make sure, memoization has been performed
+        (equal? (procedure-source foo)
+                '(lambda (x) (set! x (+ 1 x)))))))
+
+  (with-test-prefix "missing or extra expressions"
+
+    (pass-if-exception "(set!)"
+      exception:missing/extra-expr
+      (eval '(set!)
+	    (interaction-environment)))
+
+    (pass-if-exception "(set! 1)"
+      exception:missing/extra-expr
+      (eval '(set! 1)
+	    (interaction-environment)))
+
+    (pass-if-exception "(set! 1 2 3)"
+      exception:missing/extra-expr
+      (eval '(set! 1 2 3)
+	    (interaction-environment))))
+
+  (with-test-prefix "bad variable"
+
+    (pass-if-exception "(set! \"\" #t)"
+      exception:bad-variable
+      (eval '(set! "" #t)
+	    (interaction-environment)))
+
+    (pass-if-exception "(set! 1 #t)"
+      exception:bad-variable
+      (eval '(set! 1 #t)
+	    (interaction-environment)))
+
+    (pass-if-exception "(set! #t #f)"
+      exception:bad-variable
+      (eval '(set! #t #f)
+	    (interaction-environment)))
+
+    (pass-if-exception "(set! #f #t)"
+      exception:bad-variable
+      (eval '(set! #f #t)
+	    (interaction-environment)))
+
+    (pass-if-exception "(set! #\\space #f)"
+      exception:bad-variable
+      (eval '(set! #\space #f)
+	    (interaction-environment)))))
+
+(with-test-prefix "quote"
+
+  (with-test-prefix "missing or extra expression"
+
+    (pass-if-exception "(quote)"
+      exception:missing/extra-expr
+      (eval '(quote)
+	    (interaction-environment)))
+
+    (pass-if-exception "(quote a b)"
+      exception:missing/extra-expr
+      (eval '(quote a b)
+	    (interaction-environment)))))
+
+(with-test-prefix "while"
+  
+  (define (unreachable)
+    (error "unreachable code has been reached!"))
+  
+  ;; Return a new procedure COND which when called (COND) will return #t the
+  ;; first N times, then #f, then any further call is an error.  N=0 is
+  ;; allowed, in which case #f is returned by the first call.
+  (define (make-iterations-cond n)
+    (lambda ()
+      (cond ((not n)
+	     (error "oops, condition re-tested after giving false"))
+	    ((= 0 n)
+	     (set! n #f)
+	     #f)
+	    (else
+	     (set! n (1- n))
+	     #t))))
+  
+
+  (pass-if-exception "too few args" exception:wrong-num-args
+    (eval '(while) (interaction-environment)))
+  
+  (with-test-prefix "empty body"
+    (do ((n 0 (1+ n)))
+	((> n 5))
+      (pass-if n
+	(let ((cond (make-iterations-cond n)))
+	  (while (cond)))
+	#t)))
+  
+  (pass-if "initially false"
+    (while #f
+      (unreachable))
+    #t)
+  
+  (with-test-prefix "in empty environment"
+
+    ;; an environment with no bindings at all
+    (define empty-environment
+      (make-module 1))
+
+    ;; these tests are 'unresolved because to work with ice-9 syncase it was
+    ;; necessary to drop the unquote from `do' in the implementation, and
+    ;; unfortunately that makes `while' depend on its evaluation environment
+      
+    (pass-if "empty body"
+      (throw 'unresolved)
+      (eval `(,while #f)
+	    empty-environment)
+      #t)
+    
+    (pass-if "initially false"
+      (throw 'unresolved)
+      (eval `(,while #f
+	       #f)
+	    empty-environment)
+      #t)
+    
+    (pass-if "iterating"
+      (throw 'unresolved)
+      (let ((cond (make-iterations-cond 3)))
+	(eval `(,while (,cond)
+		 123 456)
+	      empty-environment))
+      #t))
+  
+  (with-test-prefix "iterations"
+    (do ((n 0 (1+ n)))
+	((> n 5))
+      (pass-if n
+	(let ((cond (make-iterations-cond n))
+	      (i    0))
+	  (while (cond)
+	    (set! i (1+ i)))
+	  (= i n)))))
+  
+  (with-test-prefix "break"
+    
+    (pass-if-exception "too many args" exception:wrong-num-args
+      (while #t
+	(break 1)))
+    
+    (with-test-prefix "from cond"
+      (pass-if "first"
+	(while (begin
+		 (break)
+		 (unreachable))
+	  (unreachable))
+	#t)
+      
+      (do ((n 0 (1+ n)))
+	  ((> n 5))
+	(pass-if n
+	  (let ((cond (make-iterations-cond n))
+		(i    0))
+	    (while (if (cond)
+		       #t
+		       (begin
+			 (break)
+			 (unreachable)))
+	      (set! i (1+ i)))
+	    (= i n)))))
+    
+    (with-test-prefix "from body"
+      (pass-if "first"
+	(while #t
+	  (break)
+	  (unreachable))
+	#t)
+      
+      (do ((n 0 (1+ n)))
+	  ((> n 5))
+	(pass-if n
+	  (let ((cond (make-iterations-cond n))
+		(i    0))
+	    (while #t
+	      (if (not (cond))
+		  (begin
+		    (break)
+		    (unreachable)))
+	      (set! i (1+ i)))
+	    (= i n)))))
+    
+    (pass-if "from nested"
+      (while #t
+	(let ((outer-break break))
+	  (while #t
+	    (outer-break)
+	    (unreachable)))
+	(unreachable))
+      #t)
+    
+    (pass-if "from recursive"
+      (let ((outer-break #f))
+	(define (r n)
+	  (while #t
+	    (if (eq? n 'outer)
+		(begin
+		  (set! outer-break break)
+		  (r 'inner))
+		(begin
+		  (outer-break)
+		  (unreachable))))
+	  (if (eq? n 'inner)
+	      (error "broke only from inner loop")))
+	(r 'outer))
+      #t))
+  
+  (with-test-prefix "continue"
+    
+    (pass-if-exception "too many args" exception:wrong-num-args
+      (while #t
+	(continue 1)))
+    
+    (with-test-prefix "from cond"
+      (do ((n 0 (1+ n)))
+	  ((> n 5))
+	(pass-if n
+	  (let ((cond (make-iterations-cond n))
+		(i    0))
+	    (while (if (cond)
+		       (begin
+			 (set! i (1+ i))
+			 (continue)
+			 (unreachable))
+		       #f)
+	      (unreachable))
+	    (= i n)))))
+    
+    (with-test-prefix "from body"
+      (do ((n 0 (1+ n)))
+	  ((> n 5))
+	(pass-if n
+	  (let ((cond (make-iterations-cond n))
+		(i    0))
+	    (while (cond)
+	      (set! i (1+ i))
+	      (continue)
+	      (unreachable))
+	    (= i n)))))
+    
+    (pass-if "from nested"
+      (let ((cond (make-iterations-cond 3)))
+	(while (cond)
+	  (let ((outer-continue continue))
+	    (while #t
+	      (outer-continue)
+	      (unreachable)))))
+      #t)
+    
+    (pass-if "from recursive"
+      (let ((outer-continue #f))
+	(define (r n)
+	  (let ((cond  (make-iterations-cond 3))
+		(first #t))
+	    (while (begin
+		     (if (and (not first)
+			      (eq? n 'inner))
+			 (error "continued only to inner loop"))
+		     (cond))
+	      (set! first #f)
+	      (if (eq? n 'outer)
+		  (begin
+		    (set! outer-continue continue)
+		    (r 'inner))
+		  (begin
+		    (outer-continue)
+		    (unreachable))))))
+	(r 'outer))
+      #t)))

@@ -1,0 +1,413 @@
+;;;; eval.test --- tests guile's evaluator     -*- scheme -*-
+;;;; Copyright (C) 2000, 2001, 2006, 2007, 2009 Free Software Foundation, Inc.
+;;;;
+;;;; This library is free software; you can redistribute it and/or
+;;;; modify it under the terms of the GNU Lesser General Public
+;;;; License as published by the Free Software Foundation; either
+;;;; version 2.1 of the License, or (at your option) any later version.
+;;;; 
+;;;; This library is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;;;; Lesser General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU Lesser General Public
+;;;; License along with this library; if not, write to the Free Software
+;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-eval)
+  :use-module (test-suite lib)
+  :use-module ((srfi srfi-1) :select (unfold count))
+  :use-module (ice-9 documentation))
+
+
+(define exception:bad-expression
+  (cons 'syntax-error "Bad expression"))
+
+
+;;;
+;;; miscellaneous
+;;;
+
+(define (documented? object)
+  (not (not (object-documentation object))))
+
+
+;;;
+;;; memoization
+;;;
+
+(with-test-prefix "memoization"
+
+  (with-test-prefix "copy-tree"
+
+    (pass-if "(#t . #(#t))"
+      (let* ((foo (cons #t (vector #t)))
+             (bar (copy-tree foo)))
+        (vector-set! (cdr foo) 0 #f)
+        (equal? bar '(#t . #(#t)))))
+
+    (pass-if-exception "circular lists in forms"
+      exception:bad-expression
+      (let ((foo (list #f)))
+        (set-cdr! foo foo)
+        (copy-tree foo))))
+
+  (pass-if "transparency"
+    (let ((x '(begin 1)))
+      (eval x (current-module))
+      (equal? '(begin 1) x))))
+
+
+;;;
+;;; eval
+;;;
+
+(with-test-prefix "evaluator"
+
+  (with-test-prefix "symbol lookup"
+
+    (with-test-prefix "top level"
+
+      (with-test-prefix "unbound"
+
+	(pass-if-exception "variable reference"
+	  exception:unbound-var
+	  x)
+
+	(pass-if-exception "procedure"
+	  exception:unbound-var
+	  (x)))))
+
+  (with-test-prefix "parameter error"
+
+    ;; This is currently a bug in guile:
+    ;; Macros are accepted as function parameters.
+    ;; Functions that 'apply' macros are rewritten!!!
+
+    (expect-fail-exception "macro as argument"
+      exception:wrong-type-arg
+      (let ((f (lambda (p a b) (p a b))))
+	(f and #t #t)))
+
+    (expect-fail-exception "passing macro as parameter"
+      exception:wrong-type-arg
+      (let* ((f (lambda (p a b) (p a b)))
+	     (foo (procedure-source f)))
+	(f and #t #t)
+	(equal? (procedure-source f) foo)))
+
+    ))
+
+;;;
+;;; call
+;;;
+
+(with-test-prefix "call"
+
+  (with-test-prefix "wrong number of arguments"
+
+    (pass-if-exception "((lambda () #f) 1)"
+      exception:wrong-num-args
+      ((lambda () #f) 1))
+
+    (pass-if-exception "((lambda (x) #f))"
+      exception:wrong-num-args
+      ((lambda (x) #f)))
+
+    (pass-if-exception "((lambda (x) #f) 1 2)"
+      exception:wrong-num-args
+      ((lambda (x) #f) 1 2))
+
+    (pass-if-exception "((lambda (x y) #f))"
+      exception:wrong-num-args
+      ((lambda (x y) #f)))
+
+    (pass-if-exception "((lambda (x y) #f) 1)"
+      exception:wrong-num-args
+      ((lambda (x y) #f) 1))
+
+    (pass-if-exception "((lambda (x y) #f) 1 2 3)"
+      exception:wrong-num-args
+      ((lambda (x y) #f) 1 2 3))
+
+    (pass-if-exception "((lambda (x . rest) #f))"
+      exception:wrong-num-args
+      ((lambda (x . rest) #f)))
+
+    (pass-if-exception "((lambda (x y . rest) #f))"
+      exception:wrong-num-args
+      ((lambda (x y . rest) #f)))
+
+    (pass-if-exception "((lambda (x y . rest) #f) 1)"
+      exception:wrong-num-args
+      ((lambda (x y . rest) #f) 1))))
+
+;;;
+;;; apply
+;;;
+
+(with-test-prefix "apply"
+
+  (with-test-prefix "scm_tc7_subr_2o"
+
+    ;; prior to guile 1.6.9 and 1.8.1 this called the function with
+    ;; SCM_UNDEFIEND, which in the case of make-vector resulted in
+    ;; wrong-type-arg, instead of the intended wrong-num-args
+    (pass-if-exception "0 args" exception:wrong-num-args
+      (apply make-vector '()))
+
+    (pass-if "1 arg"
+      (vector? (apply make-vector '(1))))
+
+    (pass-if "2 args"
+      (vector? (apply make-vector '(1 2))))
+
+    ;; prior to guile 1.6.9 and 1.8.1 this error wasn't detected
+    (pass-if-exception "3 args" exception:wrong-num-args
+      (apply make-vector '(1 2 3)))))
+
+;;;
+;;; map
+;;;
+
+(with-test-prefix "map"
+
+  ;; Is documentation available?
+
+  (expect-fail "documented?"
+    (documented? map))
+
+  (with-test-prefix "argument error"
+
+    (with-test-prefix "non list argument"
+      #t)
+
+    (with-test-prefix "different length lists"
+
+      (pass-if-exception "first list empty"
+	exception:out-of-range
+	(map + '() '(1)))
+
+      (pass-if-exception "second list empty"
+	exception:out-of-range
+	(map + '(1) '()))
+
+      (pass-if-exception "first list shorter"
+	exception:out-of-range
+	(map + '(1) '(2 3)))
+
+      (pass-if-exception "second list shorter"
+	exception:out-of-range
+	(map + '(1 2) '(3)))
+    )))
+
+;;;
+;;; define with procedure-name
+;;;
+
+(define old-procnames-flag (memq 'procnames (debug-options)))
+(debug-enable 'procnames)
+
+;; names are only set on top-level procedures (currently), so these can't be
+;; hidden in a let
+;;
+(define foo-closure (lambda () "hello"))
+(define bar-closure foo-closure)
+(define foo-pws (make-procedure-with-setter car set-car!))
+(define bar-pws foo-pws)
+
+(with-test-prefix "define set procedure-name"
+
+  (pass-if "closure"
+    (eq? 'foo-closure (procedure-name bar-closure)))
+
+  (pass-if "procedure-with-setter"
+    (eq? 'foo-pws (pk (procedure-name bar-pws)))))
+
+(if old-procnames-flag
+    (debug-enable 'procnames)
+    (debug-disable 'procnames))
+
+;;;
+;;; promises
+;;;
+
+(with-test-prefix "promises"
+
+  (with-test-prefix "basic promise behaviour"
+
+    (pass-if "delay gives a promise"
+      (promise? (delay 1)))
+
+    (pass-if "force evaluates a promise"
+      (eqv? (force (delay (+ 1 2))) 3))
+
+    (pass-if "a forced promise is a promise"
+      (let ((p (delay (+ 1 2))))
+	(force p)
+	(promise? p)))
+
+    (pass-if "forcing a forced promise works"
+      (let ((p (delay (+ 1 2))))
+	(force p)
+	(eqv? (force p) 3)))
+
+    (pass-if "a promise is evaluated once"
+      (let* ((x 1)
+	     (p (delay (+ x 1))))
+	(force p)
+	(set! x (+ x 1))
+	(eqv? (force p) 2)))
+
+    (pass-if "a promise may call itself"
+      (define p
+	(let ((x 0))
+	  (delay 
+	    (begin 
+	      (set! x (+ x 1))
+	      (if (> x 1) x (force p))))))
+      (eqv? (force p) 2))
+
+    (pass-if "a promise carries its environment"
+      (let* ((x 1) (p #f))
+	(let* ((x 2))
+	  (set! p (delay (+ x 1))))
+	(eqv? (force p) 3)))
+
+    (pass-if "a forced promise does not reference its environment"
+      (let* ((g (make-guardian))
+	     (p #f))
+	(let* ((x (cons #f #f)))
+	  (g x)
+	  (set! p (delay (car x))))
+	(force p)
+	(gc)
+	(if (not (equal? (g) (cons #f #f)))
+	    (throw 'unresolved)
+	    #t))))
+
+  (with-test-prefix "extended promise behaviour"
+
+    (pass-if-exception "forcing a non-promise object is not supported"
+      exception:wrong-type-arg
+      (force 1))
+
+    (pass-if-exception "implicit forcing is not supported"
+      exception:wrong-type-arg
+      (+ (delay (* 3 7)) 13))
+
+    ;; Tests that require the debugging evaluator...
+    (with-debugging-evaluator
+
+      (pass-if "unmemoizing a promise"
+        (display-backtrace
+	 (let ((stack #f))
+	   (false-if-exception (lazy-catch #t
+					   (lambda ()
+					     (let ((f (lambda (g) (delay (g)))))
+					       (force (f error))))
+					   (lambda _
+					     (set! stack (make-stack #t)))))
+	   stack)
+	 (%make-void-port "w"))
+	#t))))
+
+
+;;;
+;;; stacks
+;;;
+
+(define (stack->frames stack)
+  ;; Return the list of frames comprising STACK.
+  (unfold (lambda (i)
+            (>= i (stack-length stack)))
+          (lambda (i)
+            (stack-ref stack i))
+          1+
+          0))
+
+(with-test-prefix "stacks"
+  (with-debugging-evaluator
+
+    (pass-if "stack involving a subr"
+      ;; The subr involving the error must appear exactly once on the stack.
+      (catch 'result
+        (lambda ()
+          (start-stack 'foo
+            (lazy-catch 'wrong-type-arg
+              (lambda ()
+                ;; Trigger a `wrong-type-arg' exception.
+                (fluid-ref 'not-a-fluid))
+              (lambda _
+                (let* ((stack  (make-stack #t))
+                       (frames (stack->frames stack)))
+                  (throw 'result
+                         (count (lambda (frame)
+                                  (and (frame-procedure? frame)
+                                       (eq? (frame-procedure frame)
+                                            fluid-ref)))
+                                frames)))))))
+        (lambda (key result)
+          (= 1 result))))
+
+    (pass-if "stack involving a gsubr"
+      ;; The gsubr involving the error must appear exactly once on the stack.
+      ;; This is less obvious since gsubr application may require an
+      ;; additional `SCM_APPLY ()' call, which should not be visible to the
+      ;; application.
+      (catch 'result
+        (lambda ()
+          (start-stack 'foo
+            (lazy-catch 'wrong-type-arg
+              (lambda ()
+                ;; Trigger a `wrong-type-arg' exception.
+                (hashq-ref 'wrong 'type 'arg))
+              (lambda _
+                (let* ((stack  (make-stack #t))
+                       (frames (stack->frames stack)))
+                  (throw 'result
+                         (count (lambda (frame)
+                                  (and (frame-procedure? frame)
+                                       (eq? (frame-procedure frame)
+                                            hashq-ref)))
+                                frames)))))))
+        (lambda (key result)
+          (= 1 result))))))
+
+;;;
+;;; letrec init evaluation
+;;;
+
+(with-test-prefix "letrec init evaluation"
+
+  (pass-if "lots of inits calculated in correct order"
+    (equal? (letrec ((a 'a) (b 'b) (c 'c) (d 'd)
+		     (e 'e) (f 'f) (g 'g) (h 'h)
+		     (i 'i) (j 'j) (k 'k) (l 'l)
+		     (m 'm) (n 'n) (o 'o) (p 'p)
+		     (q 'q) (r 'r) (s 's) (t 't)
+		     (u 'u) (v 'v) (w 'w) (x 'x)
+		     (y 'y) (z 'z))
+	      (list a b c d e f g h i j k l m
+		    n o p q r s t u v w x y z))
+	    '(a b c d e f g h i j k l m
+	      n o p q r s t u v w x y z))))
+
+;;;
+;;; values
+;;;
+
+(with-test-prefix "values"
+
+  (pass-if "single value"
+    (equal? 1 (values 1)))
+
+  (pass-if "call-with-values"
+    (equal? (call-with-values (lambda () (values 1 2 3 4)) list)
+            '(1 2 3 4)))
+
+  (pass-if "equal?"
+    (equal? (values 1 2 3 4) (values 1 2 3 4))))
+
+;;; eval.test ends here

@@ -1,0 +1,259 @@
+;;;; strings.test --- test suite for Guile's string functions    -*- scheme -*-
+;;;; Jim Blandy <jimb@red-bean.com> --- August 1999
+;;;;
+;;;; Copyright (C) 1999, 2001, 2004, 2005, 2006, 2008 Free Software Foundation, Inc.
+;;;; 
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;; 
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(define-module (test-strings)
+  #:use-module (test-suite lib))
+
+
+(define exception:read-only-string
+  (cons 'misc-error "^string is read-only"))
+
+;; Create a string from integer char values, eg. (string-ints 65) => "A"
+(define (string-ints . args)
+  (apply string (map integer->char args)))
+
+
+;;
+;; string=?
+;;
+
+(with-test-prefix "string=?"
+
+  (pass-if "respects 1st parameter's string length"
+    (not (string=? "foo\0" "foo")))
+
+  (pass-if "respects 2nd paramter's string length"
+    (not (string=? "foo" "foo\0")))
+
+  (with-test-prefix "wrong argument type"
+
+    (pass-if-exception "1st argument symbol"
+      exception:wrong-type-arg
+      (string=? 'a "a"))
+
+    (pass-if-exception "2nd argument symbol"
+      exception:wrong-type-arg
+      (string=? "a" 'b))))
+
+;;
+;; string<?
+;;
+
+(with-test-prefix "string<?"
+
+  (pass-if "respects string length"
+    (and (not (string<? "foo\0a" "foo\0a"))
+	 (string<? "foo\0a" "foo\0b")))
+
+  (with-test-prefix "wrong argument type"
+
+    (pass-if-exception "1st argument symbol"
+      exception:wrong-type-arg
+      (string<? 'a "a"))
+
+    (pass-if-exception "2nd argument symbol"
+      exception:wrong-type-arg
+      (string<? "a" 'b)))
+
+  (pass-if "same as char<?"
+    (eq? (char<? (integer->char 0) (integer->char 255))
+	 (string<? (string-ints 0) (string-ints 255)))))
+
+;;
+;; string-ci<?
+;;
+
+(with-test-prefix "string-ci<?"
+
+  (pass-if "respects string length"
+    (and (not (string-ci<? "foo\0a" "foo\0a"))
+	 (string-ci<? "foo\0a" "foo\0b")))
+
+  (with-test-prefix "wrong argument type"
+
+    (pass-if-exception "1st argument symbol"
+      exception:wrong-type-arg
+      (string-ci<? 'a "a"))
+
+    (pass-if-exception "2nd argument symbol"
+      exception:wrong-type-arg
+      (string-ci<? "a" 'b)))
+
+  (pass-if "same as char-ci<?"
+    (eq? (char-ci<? (integer->char 0) (integer->char 255))
+	 (string-ci<? (string-ints 0) (string-ints 255)))))
+
+;;
+;; string<=?
+;;
+
+(with-test-prefix "string<=?"
+
+  (pass-if "same as char<=?"
+    (eq? (char<=? (integer->char 0) (integer->char 255))
+	 (string<=? (string-ints 0) (string-ints 255)))))
+
+;;
+;; string-ci<=?
+;;
+
+(with-test-prefix "string-ci<=?"
+
+  (pass-if "same as char-ci<=?"
+    (eq? (char-ci<=? (integer->char 0) (integer->char 255))
+	 (string-ci<=? (string-ints 0) (string-ints 255)))))
+
+;;
+;; string>?
+;;
+
+(with-test-prefix "string>?"
+
+  (pass-if "same as char>?"
+    (eq? (char>? (integer->char 0) (integer->char 255))
+	 (string>? (string-ints 0) (string-ints 255)))))
+
+;;
+;; string-ci>?
+;;
+
+(with-test-prefix "string-ci>?"
+
+  (pass-if "same as char-ci>?"
+    (eq? (char-ci>? (integer->char 0) (integer->char 255))
+	 (string-ci>? (string-ints 0) (string-ints 255)))))
+
+;;
+;; string>=?
+;;
+
+(with-test-prefix "string>=?"
+
+  (pass-if "same as char>=?"
+    (eq? (char>=? (integer->char 0) (integer->char 255))
+	 (string>=? (string-ints 0) (string-ints 255)))))
+
+;;
+;; string-ci>=?
+;;
+
+(with-test-prefix "string-ci>=?"
+
+  (pass-if "same as char-ci>=?"
+    (eq? (char-ci>=? (integer->char 0) (integer->char 255))
+	 (string-ci>=? (string-ints 0) (string-ints 255)))))
+
+;;
+;; string-ref
+;;
+
+(with-test-prefix "string-ref"
+
+  (pass-if-exception "empty string"
+    exception:out-of-range
+    (string-ref "" 0))
+
+  (pass-if-exception "empty string and non-zero index"
+    exception:out-of-range
+    (string-ref "" 123))
+
+  (pass-if-exception "out of range"
+    exception:out-of-range
+    (string-ref "hello" 123))
+
+  (pass-if-exception "negative index"
+    exception:out-of-range
+    (string-ref "hello" -1))
+
+  (pass-if "regular string"
+    (char=? (string-ref "GNU Guile" 4) #\G)))
+
+;;
+;; string-set!
+;;
+
+(with-test-prefix "string-set!"
+
+  (pass-if-exception "empty string"
+    exception:out-of-range
+    (string-set! (string-copy "") 0 #\x))
+
+  (pass-if-exception "empty string and non-zero index"
+    exception:out-of-range
+    (string-set! (string-copy "") 123 #\x))
+
+  (pass-if-exception "out of range"
+    exception:out-of-range
+    (string-set! (string-copy "hello") 123 #\x))
+
+  (pass-if-exception "negative index"
+    exception:out-of-range
+    (string-set! (string-copy "hello") -1 #\x))
+
+  (pass-if-exception "read-only string"
+    exception:read-only-string
+    (string-set! (substring/read-only "abc" 0) 1 #\space))
+
+  (pass-if "regular string"
+    (let ((s (string-copy "GNU guile")))
+      (string-set! s 4 #\G)
+      (char=? (string-ref s 4) #\G))))
+
+
+(with-test-prefix "string-split"
+
+  ;; in guile 1.6.7 and earlier, character >=128 wasn't matched in the string
+  (pass-if "char 255"
+    (equal? '("a" "b")
+	    (string-split (string #\a (integer->char 255) #\b)
+			  (integer->char 255)))))
+
+(with-test-prefix "substring-move!"
+
+  (pass-if-exception "substring-move! checks start and end correctly"
+    exception:out-of-range
+    (substring-move! "sample" 3 0 "test" 3)))
+
+(with-test-prefix "substring/shared"
+
+  (pass-if "modify indirectly"
+    (let ((str (string-copy "foofoofoo")))
+      (string-upcase! (substring/shared str 3 6))
+      (string=? str "fooFOOfoo")))
+
+  (pass-if "modify cow indirectly"
+    (let* ((str1 (string-copy "foofoofoo"))
+	   (str2 (string-copy str1)))
+      (string-upcase! (substring/shared str2 3 6))
+      (and (string=? str1 "foofoofoo")
+	   (string=? str2 "fooFOOfoo"))))
+
+  (pass-if "modify double indirectly"
+    (let* ((str1 (string-copy "foofoofoo"))
+	   (str2 (substring/shared str1 2 7)))
+      (string-upcase! (substring/shared str2 1 4))
+      (string=? str1 "fooFOOfoo")))
+
+  (pass-if "modify cow double indirectly"
+    (let* ((str1 "foofoofoo")
+	   (str2 (substring str1 2 7)))
+      (string-upcase! (substring/shared str2 1 4))
+      (and (string=? str1 "foofoofoo")
+	   (string=? str2 "oFOOf")))))

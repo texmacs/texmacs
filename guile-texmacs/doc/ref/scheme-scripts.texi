@@ -1,0 +1,529 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004, 2005
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Guile Scripting
+@section Guile Scripting
+
+Like AWK, Perl, or any shell, Guile can interpret script files.  A Guile
+script is simply a file of Scheme code with some extra information at
+the beginning which tells the operating system how to invoke Guile, and
+then tells Guile how to handle the Scheme code.
+
+@menu
+* The Top of a Script File::    How to start a Guile script.
+* Invoking Guile::              Command line options understood by Guile.
+* The Meta Switch::             Passing complex argument lists to Guile
+                                from shell scripts.
+* Command Line Handling::       Accessing the command line from a script.
+* Scripting Examples::
+@end menu
+
+
+@node The Top of a Script File
+@subsection The Top of a Script File
+
+The first line of a Guile script must tell the operating system to use
+Guile to evaluate the script, and then tell Guile how to go about doing
+that.  Here is the simplest case:
+
+@itemize @bullet
+
+@item
+The first two characters of the file must be @samp{#!}.
+
+The operating system interprets this to mean that the rest of the line
+is the name of an executable that can interpret the script.  Guile,
+however, interprets these characters as the beginning of a multi-line
+comment, terminated by the characters @samp{!#} on a line by themselves.
+(This is an extension to the syntax described in R5RS, added to support
+shell scripts.)
+
+@item
+Immediately after those two characters must come the full pathname to
+the Guile interpreter.  On most systems, this would be
+@samp{/usr/local/bin/guile}.
+
+@item
+Then must come a space, followed by a command-line argument to pass to
+Guile; this should be @samp{-s}.  This switch tells Guile to run a
+script, instead of soliciting the user for input from the terminal.
+There are more elaborate things one can do here; see @ref{The Meta
+Switch}.
+
+@item
+Follow this with a newline.
+
+@item
+The second line of the script should contain only the characters
+@samp{!#} --- just like the top of the file, but reversed.  The
+operating system never reads this far, but Guile treats this as the end
+of the comment begun on the first line by the @samp{#!} characters.
+
+@item
+The rest of the file should be a Scheme program.
+
+@end itemize
+
+Guile reads the program, evaluating expressions in the order that they
+appear.  Upon reaching the end of the file, Guile exits.
+
+
+@node Invoking Guile
+@subsection Invoking Guile
+@cindex invocation
+
+Here we describe Guile's command-line processing in detail.  Guile
+processes its arguments from left to right, recognizing the switches
+described below.  For examples, see @ref{Scripting Examples}.
+
+@table @code
+
+@item -s @var{script} @var{arg...}
+Read and evaluate Scheme source code from the file @var{script}, as the
+@code{load} function would.  After loading @var{script}, exit.  Any
+command-line arguments @var{arg...} following @var{script} become the
+script's arguments; the @code{command-line} function returns a list of
+strings of the form @code{(@var{script} @var{arg...})}.
+
+@item -c @var{expr} @var{arg...}
+Evaluate @var{expr} as Scheme code, and then exit.  Any command-line
+arguments @var{arg...} following @var{expr} become command-line arguments; the
+@code{command-line} function returns a list of strings of the form
+@code{(@var{guile} @var{arg...})}, where @var{guile} is the path of the
+Guile executable.
+
+@item -- @var{arg...}
+Run interactively, prompting the user for expressions and evaluating
+them.  Any command-line arguments @var{arg...} following the @code{--}
+become command-line arguments for the interactive session; the
+@code{command-line} function returns a list of strings of the form
+@code{(@var{guile} @var{arg...})}, where @var{guile} is the path of the
+Guile executable.
+
+@item -L @var{directory}
+Add @var{directory} to the front of Guile's module load path.  The
+given directories are searched in the order given on the command line
+and before any directories in the GUILE_LOAD_PATH environment
+variable.  Paths added here are @emph{not} in effect during execution
+of the user's @file{.guile} file.
+
+@item -l @var{file}
+Load Scheme source code from @var{file}, and continue processing the
+command line.
+
+@item -e @var{function}
+Make @var{function} the @dfn{entry point} of the script.  After loading
+the script file (with @code{-s}) or evaluating the expression (with
+@code{-c}), apply @var{function} to a list containing the program name
+and the command-line arguments --- the list provided by the
+@code{command-line} function.
+
+A @code{-e} switch can appear anywhere in the argument list, but Guile
+always invokes the @var{function} as the @emph{last} action it performs.
+This is weird, but because of the way script invocation works under
+POSIX, the @code{-s} option must always come last in the list.
+
+The @var{function} is most often a simple symbol that names a function
+that is defined in the script.  It can also be of the form @code{(@@
+@var{module-name} @var{symbol})} and in that case, the symbol is
+looked up in the module named @var{module-name}.
+
+For compatibility with some versions of Guile 1.4, you can also use the
+form @code{(symbol ...)} (that is, a list of only symbols that doesn't
+start with @code{@@}), which is equivalent to @code{(@@ (symbol ...)
+main)}, or @code{(symbol ...)  symbol} (that is, a list of only symbols
+followed by a symbol), which is equivalent to @code{(@@ (symbol ...)
+symbol)}.  We recommend to use the equivalent forms directly since they
+corresponf to the @code{(@@ ...)}  read syntax that can be used in
+normal code, @xref{Using Guile Modules}.
+
+@xref{Scripting Examples}.
+
+@item -ds
+Treat a final @code{-s} option as if it occurred at this point in the
+command line; load the script here.
+
+This switch is necessary because, although the POSIX script invocation
+mechanism effectively requires the @code{-s} option to appear last, the
+programmer may well want to run the script before other actions
+requested on the command line.  For examples, see @ref{Scripting
+Examples}.
+
+@item \
+Read more command-line arguments, starting from the second line of the
+script file.  @xref{The Meta Switch}.
+
+@item --emacs
+Assume Guile is running as an inferior process of Emacs, and use a
+special protocol to communicate with Emacs's Guile interaction mode.
+This switch sets the global variable use-emacs-interface to @code{#t}.
+
+This switch is still experimental.
+
+@item --use-srfi=@var{list}
+The option @code{--use-srfi} expects a comma-separated list of numbers,
+each representing a SRFI number to be loaded into the interpreter
+before starting evaluating a script file or the REPL.  Additionally,
+the feature identifier for the loaded SRFIs is recognized by
+`cond-expand' when using this option.
+
+@example
+guile --use-srfi=8,13
+@end example
+
+@item --debug
+Start with the debugging evaluator and enable backtraces.  Using the
+debugging evaluator will give you better error messages but it will
+slow down execution.  By default, the debugging evaluator is only used
+when entering an interactive session.  When executing a script with
+@code{-s} or @code{-c}, the normal, faster evaluator is used by default.
+
+@vnew{1.8}
+@item --no-debug
+Do not use the debugging evaluator, even when entering an interactive
+session.
+
+@item -h@r{, }--help
+Display help on invoking Guile, and then exit.
+
+@item -v@r{, }--version
+Display the current version of Guile, and then exit.
+
+@end table
+
+
+@node The Meta Switch
+@subsection The Meta Switch
+
+Guile's command-line switches allow the programmer to describe
+reasonably complicated actions in scripts.  Unfortunately, the POSIX
+script invocation mechanism only allows one argument to appear on the
+@samp{#!} line after the path to the Guile executable, and imposes
+arbitrary limits on that argument's length.  Suppose you wrote a script
+starting like this:
+@example
+#!/usr/local/bin/guile -e main -s
+!#
+(define (main args)
+  (map (lambda (arg) (display arg) (display " "))
+       (cdr args))
+  (newline))
+@end example
+The intended meaning is clear: load the file, and then call @code{main}
+on the command-line arguments.  However, the system will treat
+everything after the Guile path as a single argument --- the string
+@code{"-e main -s"} --- which is not what we want.
+
+As a workaround, the meta switch @code{\} allows the Guile programmer to
+specify an arbitrary number of options without patching the kernel.  If
+the first argument to Guile is @code{\}, Guile will open the script file
+whose name follows the @code{\}, parse arguments starting from the
+file's second line (according to rules described below), and substitute
+them for the @code{\} switch.
+
+Working in concert with the meta switch, Guile treats the characters
+@samp{#!} as the beginning of a comment which extends through the next
+line containing only the characters @samp{!#}.  This sort of comment may
+appear anywhere in a Guile program, but it is most useful at the top of
+a file, meshing magically with the POSIX script invocation mechanism.
+
+Thus, consider a script named @file{/u/jimb/ekko} which starts like this:
+@example
+#!/usr/local/bin/guile \
+-e main -s
+!#
+(define (main args)
+        (map (lambda (arg) (display arg) (display " "))
+             (cdr args))
+        (newline))
+@end example
+
+Suppose a user invokes this script as follows:
+@example
+$ /u/jimb/ekko a b c
+@end example
+
+Here's what happens:
+@itemize @bullet
+
+@item
+the operating system recognizes the @samp{#!} token at the top of the
+file, and rewrites the command line to:
+@example
+/usr/local/bin/guile \ /u/jimb/ekko a b c
+@end example
+This is the usual behavior, prescribed by POSIX.
+
+@item
+When Guile sees the first two arguments, @code{\ /u/jimb/ekko}, it opens
+@file{/u/jimb/ekko}, parses the three arguments @code{-e}, @code{main},
+and @code{-s} from it, and substitutes them for the @code{\} switch.
+Thus, Guile's command line now reads:
+@example
+/usr/local/bin/guile -e main -s /u/jimb/ekko a b c
+@end example
+
+@item
+Guile then processes these switches: it loads @file{/u/jimb/ekko} as a
+file of Scheme code (treating the first three lines as a comment), and
+then performs the application @code{(main "/u/jimb/ekko" "a" "b" "c")}.
+
+@end itemize
+
+
+When Guile sees the meta switch @code{\}, it parses command-line
+argument from the script file according to the following rules:
+@itemize @bullet
+
+@item
+Each space character terminates an argument.  This means that two
+spaces in a row introduce an argument @code{""}.
+
+@item
+The tab character is not permitted (unless you quote it with the
+backslash character, as described below), to avoid confusion.
+
+@item
+The newline character terminates the sequence of arguments, and will
+also terminate a final non-empty argument.  (However, a newline
+following a space will not introduce a final empty-string argument;
+it only terminates the argument list.)
+
+@item
+The backslash character is the escape character.  It escapes backslash,
+space, tab, and newline.  The ANSI C escape sequences like @code{\n} and
+@code{\t} are also supported.  These produce argument constituents; the
+two-character combination @code{\n} doesn't act like a terminating
+newline.  The escape sequence @code{\@var{NNN}} for exactly three octal
+digits reads as the character whose ASCII code is @var{NNN}.  As above,
+characters produced this way are argument constituents.  Backslash
+followed by other characters is not allowed.
+
+@end itemize
+
+
+@node Command Line Handling
+@subsection Command Line Handling
+
+@c This section was written and contributed by Martin Grabmueller.
+
+The ability to accept and handle command line arguments is very
+important when writing Guile scripts to solve particular problems, such
+as extracting information from text files or interfacing with existing
+command line applications.  This chapter describes how Guile makes
+command line arguments available to a Guile script, and the utilities
+that Guile provides to help with the processing of command line
+arguments.
+
+When a Guile script is invoked, Guile makes the command line arguments
+accessible via the procedure @code{command-line}, which returns the
+arguments as a list of strings.
+
+For example, if the script
+
+@example
+#! /usr/local/bin/guile -s
+!#
+(write (command-line))
+(newline)
+@end example
+
+@noindent
+is saved in a file @file{cmdline-test.scm} and invoked using the command
+line @code{./cmdline-test.scm bar.txt -o foo -frumple grob}, the output
+is
+
+@example
+("./cmdline-test.scm" "bar.txt" "-o" "foo" "-frumple" "grob")
+@end example
+
+If the script invocation includes a @code{-e} option, specifying a
+procedure to call after loading the script, Guile will call that
+procedure with @code{(command-line)} as its argument.  So a script that
+uses @code{-e} doesn't need to refer explicitly to @code{command-line}
+in its code.  For example, the script above would have identical
+behaviour if it was written instead like this:
+
+@example
+#! /usr/local/bin/guile \
+-e main -s
+!#
+(define (main args)
+  (write args)
+  (newline))
+@end example
+
+(Note the use of the meta switch @code{\} so that the script invocation
+can include more than one Guile option: @xref{The Meta Switch}.)
+
+These scripts use the @code{#!} POSIX convention so that they can be
+executed using their own file names directly, as in the example command
+line @code{./cmdline-test.scm bar.txt -o foo -frumple grob}.  But they
+can also be executed by typing out the implied Guile command line in
+full, as in:
+
+@example
+$ guile -s ./cmdline-test.scm bar.txt -o foo -frumple grob
+@end example
+
+@noindent
+or
+
+@example
+$ guile -e main -s ./cmdline-test2.scm bar.txt -o foo -frumple grob
+@end example
+
+Even when a script is invoked using this longer form, the arguments that
+the script receives are the same as if it had been invoked using the
+short form.  Guile ensures that the @code{(command-line)} or @code{-e}
+arguments are independent of how the script is invoked, by stripping off
+the arguments that Guile itself processes.
+
+A script is free to parse and handle its command line arguments in any
+way that it chooses.  Where the set of possible options and arguments is
+complex, however, it can get tricky to extract all the options, check
+the validity of given arguments, and so on.  This task can be greatly
+simplified by taking advantage of the module @code{(ice-9 getopt-long)},
+which is distributed with Guile, @xref{getopt-long}.
+
+
+@node Scripting Examples
+@subsection Scripting Examples
+
+To start with, here are some examples of invoking Guile directly:
+
+@table @code
+
+@item guile -- a b c
+Run Guile interactively; @code{(command-line)} will return @*
+@code{("/usr/local/bin/guile" "a" "b" "c")}.
+
+@item guile -s /u/jimb/ex2 a b c
+Load the file @file{/u/jimb/ex2}; @code{(command-line)} will return @*
+@code{("/u/jimb/ex2" "a" "b" "c")}.
+
+@item guile -c '(write %load-path) (newline)'
+Write the value of the variable @code{%load-path}, print a newline,
+and exit.
+
+@item guile -e main -s /u/jimb/ex4 foo
+Load the file @file{/u/jimb/ex4}, and then call the function
+@code{main}, passing it the list @code{("/u/jimb/ex4" "foo")}.
+
+@item guile -l first -ds -l last -s script
+Load the files @file{first}, @file{script}, and @file{last}, in that
+order.  The @code{-ds} switch says when to process the @code{-s}
+switch.  For a more motivated example, see the scripts below.
+
+@end table
+
+
+Here is a very simple Guile script:
+@example
+#!/usr/local/bin/guile -s
+!#
+(display "Hello, world!")
+(newline)
+@end example
+The first line marks the file as a Guile script.  When the user invokes
+it, the system runs @file{/usr/local/bin/guile} to interpret the script,
+passing @code{-s}, the script's filename, and any arguments given to the
+script as command-line arguments.  When Guile sees @code{-s
+@var{script}}, it loads @var{script}.  Thus, running this program
+produces the output:
+@example
+Hello, world!
+@end example
+
+Here is a script which prints the factorial of its argument:
+@example
+#!/usr/local/bin/guile -s
+!#
+(define (fact n)
+  (if (zero? n) 1
+    (* n (fact (- n 1)))))
+
+(display (fact (string->number (cadr (command-line)))))
+(newline)
+@end example
+In action:
+@example
+$ fact 5
+120
+$
+@end example
+
+However, suppose we want to use the definition of @code{fact} in this
+file from another script.  We can't simply @code{load} the script file,
+and then use @code{fact}'s definition, because the script will try to
+compute and display a factorial when we load it.  To avoid this problem,
+we might write the script this way:
+
+@example
+#!/usr/local/bin/guile \
+-e main -s
+!#
+(define (fact n)
+  (if (zero? n) 1
+    (* n (fact (- n 1)))))
+
+(define (main args)
+  (display (fact (string->number (cadr args))))
+  (newline))
+@end example
+This version packages the actions the script should perform in a
+function, @code{main}.  This allows us to load the file purely for its
+definitions, without any extraneous computation taking place.  Then we
+used the meta switch @code{\} and the entry point switch @code{-e} to
+tell Guile to call @code{main} after loading the script.
+@example
+$ fact 50
+30414093201713378043612608166064768844377641568960512000000000000
+@end example
+
+Suppose that we now want to write a script which computes the
+@code{choose} function: given a set of @var{m} distinct objects,
+@code{(choose @var{n} @var{m})} is the number of distinct subsets
+containing @var{n} objects each.  It's easy to write @code{choose} given
+@code{fact}, so we might write the script this way:
+@example
+#!/usr/local/bin/guile \
+-l fact -e main -s
+!#
+(define (choose n m)
+  (/ (fact m) (* (fact (- m n)) (fact n))))
+
+(define (main args)
+  (let ((n (string->number (cadr args)))
+        (m (string->number (caddr args))))
+    (display (choose n m))
+    (newline)))
+@end example
+
+The command-line arguments here tell Guile to first load the file
+@file{fact}, and then run the script, with @code{main} as the entry
+point.  In other words, the @code{choose} script can use definitions
+made in the @code{fact} script.  Here are some sample runs:
+@example
+$ choose 0 4
+1
+$ choose 1 4
+4
+$ choose 2 4
+6
+$ choose 3 4
+4
+$ choose 4 4
+1
+$ choose 50 100
+100891344545564193334812497256
+@end example
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

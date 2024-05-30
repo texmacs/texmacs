@@ -1,0 +1,82 @@
+;;;; srfi-9.test --- Test suite for Guile's SRFI-9 functions. -*- scheme -*-
+;;;; Martin Grabmueller, 2001-05-10
+;;;;
+;;;; Copyright (C) 2001, 2006, 2007 Free Software Foundation, Inc.
+;;;; 
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;; 
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-numbers)
+  #:use-module (test-suite lib)
+  #:use-module (srfi srfi-9))
+
+
+(define-record-type :foo (make-foo x) foo? 
+  (x get-x) (y get-y set-y!))
+
+(define-record-type :bar (make-bar i j) bar? 
+  (i get-i) (i get-j set-j!))
+
+(define f (make-foo 1))
+(set-y! f 2)
+
+(define b (make-bar 123 456))
+
+(with-test-prefix "constructor"
+
+  (pass-if-exception "foo 0 args" exception:wrong-num-args
+     (make-foo))
+  (pass-if-exception "foo 2 args" exception:wrong-num-args
+     (make-foo 1 2)))
+
+(with-test-prefix "predicate"
+
+  (pass-if "pass"
+     (foo? f))
+  (pass-if "fail wrong record type"
+     (eq? #f (foo? b)))
+  (pass-if "fail number"
+     (eq? #f (foo? 123))))
+
+(with-test-prefix "accessor"
+
+  (pass-if "get-x"
+     (= 1 (get-x f)))
+  (pass-if "get-y"
+     (= 2 (get-y f)))
+
+  (pass-if-exception "get-x on number" exception:wrong-type-arg
+     (get-x 999))
+  (pass-if-exception "get-y on number" exception:wrong-type-arg
+     (get-y 999))
+
+  ;; prior to guile 1.6.9 and 1.8.1 this wan't enforced
+  (pass-if-exception "get-x on bar" exception:wrong-type-arg
+     (get-x b))
+  (pass-if-exception "get-y on bar" exception:wrong-type-arg
+     (get-y b)))
+
+(with-test-prefix "modifier"
+
+  (pass-if "set-y!"
+     (set-y! f #t)
+     (eq? #t (get-y f)))
+
+  (pass-if-exception "set-y! on number" exception:wrong-type-arg
+     (set-y! 999 #t))
+
+  ;; prior to guile 1.6.9 and 1.8.1 this wan't enforced
+  (pass-if-exception "set-y! on bar" exception:wrong-type-arg
+     (set-y! b 99)))

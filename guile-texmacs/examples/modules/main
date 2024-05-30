@@ -1,0 +1,52 @@
+#! /usr/local/bin/guile -s
+!#
+;;; examples/modules/main -- Module system demo.
+
+;;; Commentary:
+
+;;; The main demo program for the modules subdirectory.
+;;;
+;;; This program shows how all the new fancy module import features
+;;; are to be used.
+
+;;; Author: Martin Grabmueller
+;;; Date: 2001-05-29
+
+;;; Code:
+
+(define-module (main)
+  ;; The module 0 is imported completely.
+  ;;
+  :use-module (module-0)
+
+  ;; Module 1 is imported completely, too, but the procedure names are
+  ;; prefixed with the module name.
+  ;;
+  :use-module ((module-1) :renamer (symbol-prefix-proc 'module-1:))
+
+  ;; From module 2, only the procedure `braz' is imported, so that the
+  ;; procedures `foo' and `bar' also exported by that module don't
+  ;; clash with the definitions of module 0.
+  ;;
+  :use-module ((module-2) :select (braz))
+  
+  ;; Import the bindings from module 2 again, now renaming them by
+  ;; explicitly mentioning the original and new names.
+  ;;
+  :use-module ((module-2) :select ((braz . m-2:braz) (foo . m-2:foo))))
+
+;;
+;; Now call the various imported procedures.
+;;
+
+(foo)
+(bar)
+(module-1:foo)
+(module-1:bar)
+(braz)
+(m-2:braz)
+(m-2:foo)
+
+;; Local variables:
+;; mode: scheme
+;; End:

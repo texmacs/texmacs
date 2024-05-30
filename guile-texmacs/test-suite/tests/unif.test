@@ -1,0 +1,560 @@
+;;;; unif.test --- tests guile's uniform arrays     -*- scheme -*-
+;;;;
+;;;; Copyright 2004, 2006 Free Software Foundation, Inc.
+;;;;
+;;;; This library is free software; you can redistribute it and/or
+;;;; modify it under the terms of the GNU Lesser General Public
+;;;; License as published by the Free Software Foundation; either
+;;;; version 2.1 of the License, or (at your option) any later version.
+;;;; 
+;;;; This library is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;;;; Lesser General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU Lesser General Public
+;;;; License along with this library; if not, write to the Free Software
+;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-unif)
+  #:use-module (test-suite lib))
+
+;;;
+;;; array?
+;;;
+
+(define exception:wrong-num-indices
+  (cons 'misc-error "^wrong number of indices.*"))
+
+(define exception:length-non-negative
+  (cons 'read-error ".*array length must be non-negative.*"))
+
+
+(with-test-prefix "array?"
+
+  (let ((bool     (make-typed-array 'b    #t  '(5 6)))
+	(char     (make-typed-array 'a    #\a '(5 6)))
+	(byte     (make-typed-array 'u8   0   '(5 6)))
+	(short    (make-typed-array 's16  0   '(5 6)))
+	(ulong    (make-typed-array 'u32  0   '(5 6)))
+	(long     (make-typed-array 's32  0   '(5 6)))
+	(longlong (make-typed-array 's64  0   '(5 6)))
+	(float    (make-typed-array 'f32  0   '(5 6)))
+	(double   (make-typed-array 'f64  0   '(5 6)))
+	(complex  (make-typed-array 'c64  0   '(5 6)))
+	(scm      (make-typed-array #t    0   '(5 6))))
+
+    (with-test-prefix "is bool"
+      (pass-if (eq? #t (typed-array? bool     'b)))
+      (pass-if (eq? #f (typed-array? char     'b)))
+      (pass-if (eq? #f (typed-array? byte     'b)))
+      (pass-if (eq? #f (typed-array? short    'b)))
+      (pass-if (eq? #f (typed-array? ulong    'b)))
+      (pass-if (eq? #f (typed-array? long     'b)))
+      (pass-if (eq? #f (typed-array? longlong 'b)))
+      (pass-if (eq? #f (typed-array? float    'b)))
+      (pass-if (eq? #f (typed-array? double   'b)))
+      (pass-if (eq? #f (typed-array? complex  'b)))
+      (pass-if (eq? #f (typed-array? scm      'b))))
+
+    (with-test-prefix "is char"
+      (pass-if (eq? #f (typed-array? bool     'a)))
+      (pass-if (eq? #t (typed-array? char     'a)))
+      (pass-if (eq? #f (typed-array? byte     'a)))
+      (pass-if (eq? #f (typed-array? short    'a)))
+      (pass-if (eq? #f (typed-array? ulong    'a)))
+      (pass-if (eq? #f (typed-array? long     'a)))
+      (pass-if (eq? #f (typed-array? longlong 'a)))
+      (pass-if (eq? #f (typed-array? float    'a)))
+      (pass-if (eq? #f (typed-array? double   'a)))
+      (pass-if (eq? #f (typed-array? complex  'a)))
+      (pass-if (eq? #f (typed-array? scm      'a))))
+
+    (with-test-prefix "is byte"
+      (pass-if (eq? #f (typed-array? bool     'u8)))
+      (pass-if (eq? #f (typed-array? char     'u8)))
+      (pass-if (eq? #t (typed-array? byte     'u8)))
+      (pass-if (eq? #f (typed-array? short    'u8)))
+      (pass-if (eq? #f (typed-array? ulong    'u8)))
+      (pass-if (eq? #f (typed-array? long     'u8)))
+      (pass-if (eq? #f (typed-array? longlong 'u8)))
+      (pass-if (eq? #f (typed-array? float    'u8)))
+      (pass-if (eq? #f (typed-array? double   'u8)))
+      (pass-if (eq? #f (typed-array? complex  'u8)))
+      (pass-if (eq? #f (typed-array? scm      'u8))))
+
+    (with-test-prefix "is short"
+      (pass-if (eq? #f (typed-array? bool     's16)))
+      (pass-if (eq? #f (typed-array? char     's16)))
+      (pass-if (eq? #f (typed-array? byte     's16)))
+      (pass-if (eq? #t (typed-array? short    's16)))
+      (pass-if (eq? #f (typed-array? ulong    's16)))
+      (pass-if (eq? #f (typed-array? long     's16)))
+      (pass-if (eq? #f (typed-array? longlong 's16)))
+      (pass-if (eq? #f (typed-array? float    's16)))
+      (pass-if (eq? #f (typed-array? double   's16)))
+      (pass-if (eq? #f (typed-array? complex  's16)))
+      (pass-if (eq? #f (typed-array? scm      's16))))
+
+    (with-test-prefix "is ulong"
+      (pass-if (eq? #f (typed-array? bool     'u32)))
+      (pass-if (eq? #f (typed-array? char     'u32)))
+      (pass-if (eq? #f (typed-array? byte     'u32)))
+      (pass-if (eq? #f (typed-array? short    'u32)))
+      (pass-if (eq? #t (typed-array? ulong    'u32)))
+      (pass-if (eq? #f (typed-array? long     'u32)))
+      (pass-if (eq? #f (typed-array? longlong 'u32)))
+      (pass-if (eq? #f (typed-array? float    'u32)))
+      (pass-if (eq? #f (typed-array? double   'u32)))
+      (pass-if (eq? #f (typed-array? complex  'u32)))
+      (pass-if (eq? #f (typed-array? scm      'u32))))
+
+    (with-test-prefix "is long"
+      (pass-if (eq? #f (typed-array? bool     's32)))
+      (pass-if (eq? #f (typed-array? char     's32)))
+      (pass-if (eq? #f (typed-array? byte     's32)))
+      (pass-if (eq? #f (typed-array? short    's32)))
+      (pass-if (eq? #f (typed-array? ulong    's32)))
+      (pass-if (eq? #t (typed-array? long     's32)))
+      (pass-if (eq? #f (typed-array? longlong 's32)))
+      (pass-if (eq? #f (typed-array? float    's32)))
+      (pass-if (eq? #f (typed-array? double   's32)))
+      (pass-if (eq? #f (typed-array? complex  's32)))
+      (pass-if (eq? #f (typed-array? scm      's32))))
+
+    (with-test-prefix "is long long"
+      (pass-if (eq? #f (typed-array? bool     's64)))
+      (pass-if (eq? #f (typed-array? char     's64)))
+      (pass-if (eq? #f (typed-array? byte     's64)))
+      (pass-if (eq? #f (typed-array? short    's64)))
+      (pass-if (eq? #f (typed-array? ulong    's64)))
+      (pass-if (eq? #f (typed-array? long     's64)))
+      (pass-if (eq? #t (typed-array? longlong 's64)))
+      (pass-if (eq? #f (typed-array? float    's64)))
+      (pass-if (eq? #f (typed-array? double   's64)))
+      (pass-if (eq? #f (typed-array? complex  's64)))
+      (pass-if (eq? #f (typed-array? scm      's64))))
+
+    (with-test-prefix "is float"
+      (pass-if (eq? #f (typed-array? bool     'f32)))
+      (pass-if (eq? #f (typed-array? char     'f32)))
+      (pass-if (eq? #f (typed-array? byte     'f32)))
+      (pass-if (eq? #f (typed-array? short    'f32)))
+      (pass-if (eq? #f (typed-array? ulong    'f32)))
+      (pass-if (eq? #f (typed-array? long     'f32)))
+      (pass-if (eq? #f (typed-array? longlong 'f32)))
+      (pass-if (eq? #t (typed-array? float    'f32)))
+      (pass-if (eq? #f (typed-array? double   'f32)))
+      (pass-if (eq? #f (typed-array? complex  'f32)))
+      (pass-if (eq? #f (typed-array? scm      'f32))))
+
+    (with-test-prefix "is double"
+      (pass-if (eq? #f (typed-array? bool     'f64)))
+      (pass-if (eq? #f (typed-array? char     'f64)))
+      (pass-if (eq? #f (typed-array? byte     'f64)))
+      (pass-if (eq? #f (typed-array? short    'f64)))
+      (pass-if (eq? #f (typed-array? ulong    'f64)))
+      (pass-if (eq? #f (typed-array? long     'f64)))
+      (pass-if (eq? #f (typed-array? longlong 'f64)))
+      (pass-if (eq? #f (typed-array? float    'f64)))
+      (pass-if (eq? #t (typed-array? double   'f64)))
+      (pass-if (eq? #f (typed-array? complex  'f64)))
+      (pass-if (eq? #f (typed-array? scm      'f64))))
+
+    (with-test-prefix "is complex"
+      (pass-if (eq? #f (typed-array? bool     'c64)))
+      (pass-if (eq? #f (typed-array? char     'c64)))
+      (pass-if (eq? #f (typed-array? byte     'c64)))
+      (pass-if (eq? #f (typed-array? short    'c64)))
+      (pass-if (eq? #f (typed-array? ulong    'c64)))
+      (pass-if (eq? #f (typed-array? long     'c64)))
+      (pass-if (eq? #f (typed-array? longlong 'c64)))
+      (pass-if (eq? #f (typed-array? float    'c64)))
+      (pass-if (eq? #f (typed-array? double   'c64)))
+      (pass-if (eq? #t (typed-array? complex  'c64)))
+      (pass-if (eq? #f (typed-array? scm      'c64))))
+
+    (with-test-prefix "is scm"
+      (pass-if (eq? #f (typed-array? bool     #t)))
+      (pass-if (eq? #f (typed-array? char     #t)))
+      (pass-if (eq? #f (typed-array? byte     #t)))
+      (pass-if (eq? #f (typed-array? short    #t)))
+      (pass-if (eq? #f (typed-array? ulong    #t)))
+      (pass-if (eq? #f (typed-array? long     #t)))
+      (pass-if (eq? #f (typed-array? longlong #t)))
+      (pass-if (eq? #f (typed-array? float    #t)))
+      (pass-if (eq? #f (typed-array? double   #t)))
+      (pass-if (eq? #f (typed-array? complex  #t)))
+      (pass-if (eq? #t (typed-array? scm      #t))))))
+
+;;;
+;;; array-equal?
+;;;
+
+(with-test-prefix "array-equal?"
+
+  (pass-if "#s16(...)"
+    (array-equal? #s16(1 2 3) #s16(1 2 3))))
+
+;;;
+;;; array-fill!
+;;;
+
+(with-test-prefix "array-fill!"
+
+  (with-test-prefix "bool"
+    (let ((a (make-bitvector 1 #t)))
+      (pass-if "#f" (array-fill! a #f) #t)
+      (pass-if "#t" (array-fill! a #t) #t)))
+
+  (with-test-prefix "char"
+    (let ((a (make-string 1 #\a)))
+      (pass-if "x" (array-fill! a #\x) #t)))
+
+  (with-test-prefix "byte"
+    (let ((a (make-s8vector 1 0)))
+      (pass-if "0"    (array-fill! a 0)    #t)
+      (pass-if "127" (array-fill! a 127)   #t)
+      (pass-if "-128" (array-fill! a -128) #t)
+      (pass-if-exception "128" exception:out-of-range
+	(array-fill! a 128))
+      (pass-if-exception "-129" exception:out-of-range
+	(array-fill! a -129))
+      (pass-if-exception "symbol" exception:wrong-type-arg
+	(array-fill! a 'symbol))))
+
+  (with-test-prefix "short"
+    (let ((a (make-s16vector 1 0)))
+      (pass-if "0"    (array-fill! a 0)    #t)
+      (pass-if "123"  (array-fill! a 123)  #t)
+      (pass-if "-123" (array-fill! a -123) #t)))
+
+  (with-test-prefix "ulong"
+    (let ((a (make-u32vector 1 1)))
+      (pass-if "0"    (array-fill! a 0)   #t)
+      (pass-if "123"  (array-fill! a 123) #t)
+      (pass-if-exception "-123" exception:out-of-range
+	(array-fill! a -123) #t)))
+
+  (with-test-prefix "long"
+    (let ((a (make-s32vector 1 -1)))
+      (pass-if "0"    (array-fill! a 0)    #t)
+      (pass-if "123"  (array-fill! a 123)  #t)
+      (pass-if "-123" (array-fill! a -123) #t)))
+
+  (with-test-prefix "float"
+    (let ((a (make-f32vector 1 1.0)))
+      (pass-if "0.0"    (array-fill! a 0)      #t)
+      (pass-if "123.0"  (array-fill! a 123.0)  #t)
+      (pass-if "-123.0" (array-fill! a -123.0) #t)
+      (pass-if "0"      (array-fill! a 0)      #t)
+      (pass-if "123"    (array-fill! a 123)    #t)
+      (pass-if "-123"   (array-fill! a -123)   #t)
+      (pass-if "5/8"    (array-fill! a 5/8)    #t)))
+
+  (with-test-prefix "double"
+    (let ((a (make-f64vector 1 1/3)))
+      (pass-if "0.0"    (array-fill! a 0)      #t)
+      (pass-if "123.0"  (array-fill! a 123.0)  #t)
+      (pass-if "-123.0" (array-fill! a -123.0) #t)
+      (pass-if "0"      (array-fill! a 0)      #t)
+      (pass-if "123"    (array-fill! a 123)    #t)
+      (pass-if "-123"   (array-fill! a -123)   #t)
+      (pass-if "5/8"    (array-fill! a 5/8)    #t))))
+
+;;;
+;;; array-in-bounds?
+;;;
+
+(with-test-prefix "array-in-bounds?"
+
+  (pass-if (let ((a (make-array #f '(425 425))))
+	     (eq? #f (array-in-bounds? a 0)))))
+
+;;;
+;;; array-prototype
+;;;
+
+(with-test-prefix "array-type"
+
+  (with-test-prefix "on make-foo-vector"
+
+    (pass-if "bool"
+      (eq? 'b (array-type (make-bitvector 1))))
+
+    (pass-if "char"
+      (eq? 'a (array-type (make-string 1))))
+
+    (pass-if "byte"
+      (eq? 'u8 (array-type (make-u8vector 1))))
+
+    (pass-if "short"
+      (eq? 's16 (array-type (make-s16vector 1))))
+
+    (pass-if "ulong"
+      (eq? 'u32 (array-type (make-u32vector 1))))
+
+    (pass-if "long"
+      (eq? 's32 (array-type (make-s32vector 1))))
+
+    (pass-if "long long"
+      (eq? 's64 (array-type (make-s64vector 1))))
+
+    (pass-if "float"
+      (eq? 'f32 (array-type (make-f32vector 1))))
+
+    (pass-if "double"
+      (eq? 'f64 (array-type (make-f64vector 1))))
+
+    (pass-if "complex"
+      (eq? 'c64 (array-type (make-c64vector 1))))
+
+    (pass-if "scm"
+      (eq? #t (array-type (make-vector 1)))))
+
+  (with-test-prefix "on make-typed-array"
+
+    (let ((types '(b a u8 s8 u16 s16 u32 s32 u64 u64 f32 f64 c32 c64)))
+      (for-each (lambda (type)
+		  (pass-if (symbol->string type)
+		     (eq? type
+			  (array-type (make-typed-array type 
+							*unspecified* 
+							'(5 6))))))
+		types))))
+
+;;;
+;;; array-set!
+;;;
+
+(with-test-prefix "array-set!"
+
+  (with-test-prefix "bitvector"
+
+    ;; in Guile 1.8.0 a bug in bitvector_set() caused a segv in array-set!
+    ;; on a bitvector like the following
+    (let ((a (make-bitvector 1)))
+      (pass-if "one elem set #t"
+	(begin
+	  (array-set! a #t 0)
+	  (eq? #t (array-ref a 0))))
+      (pass-if "one elem set #f"
+	(begin
+	  (array-set! a #f 0)
+	  (eq? #f (array-ref a 0))))))
+
+  (with-test-prefix "byte"
+
+    (let ((a (make-s8vector 1)))
+
+      (pass-if "-128"
+	(begin (array-set! a -128 0) #t))
+      (pass-if "0"
+	(begin (array-set! a 0 0) #t))
+      (pass-if "127"
+	(begin (array-set! a 127 0) #t))
+      (pass-if-exception "-129" exception:out-of-range
+	(begin (array-set! a -129 0) #t))
+      (pass-if-exception "128" exception:out-of-range
+	(begin (array-set! a 128 0) #t))))
+
+  (with-test-prefix "short"
+
+    (let ((a (make-s16vector 1)))
+      ;; true if n can be array-set! into a
+      (define (fits? n)
+	(false-if-exception (begin (array-set! a n 0) #t)))
+
+      (with-test-prefix "store/fetch"
+	;; Check array-ref gives back what was put with array-set!.
+	;; In Guile 1.6.4 and earlier, array-set! only demanded an inum and
+	;; would silently truncate to a short.
+
+	(do ((n 1 (1+ (* 2 n))))  ;; n=2^k-1
+	    ((not (fits? n)))
+	  (array-set! a n 0)
+	  (pass-if n
+	    (= n (array-ref a 0))))
+
+	(do ((n -1 (* 2 n)))      ;; -n=2^k
+	    ((not (fits? n)))
+	  (array-set! a n 0)
+	  (pass-if n
+	    (= n (array-ref a 0))))))))
+
+;;;
+;;; array-set!
+;;;
+
+(with-test-prefix "array-set!"
+
+  (with-test-prefix "one dim"
+    (let ((a (make-array #f '(3 5))))
+      (pass-if "start"
+	(array-set! a 'y 3)
+	#t)
+      (pass-if "end"
+	(array-set! a 'y 5)
+	#t)
+      (pass-if-exception "start-1" exception:out-of-range
+	(array-set! a 'y 2))
+      (pass-if-exception "end+1" exception:out-of-range
+	(array-set! a 'y 6))
+      (pass-if-exception "two indexes" exception:out-of-range
+	(array-set! a 'y 6 7))))
+
+  (with-test-prefix "two dim"
+    (let ((a (make-array #f '(3 5) '(7 9))))
+      (pass-if "start"
+	(array-set! a 'y 3 7)
+	#t)
+      (pass-if "end"
+	(array-set! a 'y 5 9)
+	#t)
+      (pass-if-exception "start i-1" exception:out-of-range
+	(array-set! a 'y 2 7))
+      (pass-if-exception "end i+1" exception:out-of-range
+	(array-set! a 'y 6 9))
+      (pass-if-exception "one index" exception:wrong-num-indices
+	(array-set! a 'y 4))
+      (pass-if-exception "three indexes" exception:wrong-num-indices
+	(array-set! a 'y 4 8 0)))))
+
+;;;
+;;; make-shared-array
+;;;
+
+(define exception:mapping-out-of-range
+  (cons 'misc-error "^mapping out of range"))  ;; per scm_make_shared_array
+
+(with-test-prefix "make-shared-array"
+
+  ;; this failed in guile 1.8.0
+  (pass-if "vector unchanged"
+    (let* ((a (make-array #f '(0 7)))
+	   (s (make-shared-array a list '(0 7))))
+      (array-equal? a s)))
+
+  (pass-if-exception "vector, high too big" exception:mapping-out-of-range
+    (let* ((a (make-array #f '(0 7))))
+      (make-shared-array a list '(0 8))))
+
+  (pass-if-exception "vector, low too big" exception:out-of-range
+    (let* ((a (make-array #f '(0 7))))
+      (make-shared-array a list '(-1 7))))
+
+  (pass-if "truncate columns"
+    (array-equal? (make-shared-array #2((a b c) (d e f) (g h i)) list 3 2)
+		  #2((a b) (d e) (g h))))
+
+  (pass-if "pick one column"
+    (array-equal? (make-shared-array #2((a b c) (d e f) (g h i))
+				     (lambda (i) (list i 2))
+				     '(0 2))
+		  #(c f i)))
+
+  (pass-if "diagonal"
+    (array-equal? (make-shared-array #2((a b c) (d e f) (g h i))
+				     (lambda (i) (list i i))
+				     '(0 2))
+		  #(a e i)))
+
+  ;; this failed in guile 1.8.0
+  (pass-if "2 dims from 1 dim"
+    (array-equal? (make-shared-array #1(a b c d e f g h i j k l)
+				     (lambda (i j) (list (+ (* i 3) j)))
+				     4 3)
+		  #2((a b c) (d e f) (g h i) (j k l))))
+
+  (pass-if "reverse columns"
+    (array-equal? (make-shared-array #2((a b c) (d e f) (g h i))
+				     (lambda (i j) (list i (- 2 j)))
+				     3 3)
+		  #2((c b a) (f e d) (i h g))))
+
+  (pass-if "fixed offset, 0 based becomes 1 based"
+    (let* ((x #2((a b c) (d e f) (g h i)))
+	   (y (make-shared-array x
+				 (lambda (i j) (list (1- i) (1- j)))
+				 '(1 3) '(1 3))))
+      (and (eq? (array-ref x 0 0) 'a)
+	   (eq? (array-ref y 1 1) 'a))))
+
+  ;; this failed in guile 1.8.0
+  (pass-if "stride every third element"
+    (array-equal? (make-shared-array #1(a b c d e f g h i j k l)
+				     (lambda (i) (list (* i 3)))
+				     4)
+		  #1(a d g j)))
+
+  (pass-if "shared of shared"
+    (let* ((a  #2((1 2 3) (4 5 6) (7 8 9)))
+	   (s1 (make-shared-array a (lambda (i) (list i 1)) 3))
+	   (s2 (make-shared-array s1 list '(1 2))))
+      (and (eqv? 5 (array-ref s2 1))
+	   (eqv? 8 (array-ref s2 2))))))
+
+;;;
+;;; uniform-vector-ref
+;;;
+
+(with-test-prefix "uniform-vector-ref"
+
+  (with-test-prefix "byte"
+
+    (let ((a (make-s8vector 1)))
+
+      (pass-if "0"
+	(begin
+	  (array-set! a 0 0)
+	  (= 0 (uniform-vector-ref a 0))))
+      (pass-if "127"
+	(begin
+	  (array-set! a 127 0)
+	  (= 127 (uniform-vector-ref a 0))))
+      (pass-if "-128"
+	(begin
+	  (array-set! a -128 0)
+	  (= -128 (uniform-vector-ref a 0)))))))
+
+;;;
+;;; syntax
+;;;
+
+(with-test-prefix "syntax"
+
+  (pass-if "rank and lower bounds"
+    ;; uniform u32 array of rank 2 with index ranges 2..3 and 7..8.
+    (let ((a '#2u32@2@7((1 2) (3 4))))
+      (and (array? a)
+           (typed-array? a 'u32)
+           (= (array-rank a) 2)
+           (let loop ((bounds '((2 7) (2 8) (3 7) (3 8)))
+                      (result #t))
+             (if (null? bounds)
+                 result
+                 (and result
+                      (loop (cdr bounds)
+                            (apply array-in-bounds? a (car bounds)))))))))
+
+  (pass-if "negative lower bound"
+     (let ((a '#1@-3(a b)))
+       (and (array? a)
+            (= (array-rank a) 1)
+            (array-in-bounds? a -3) (array-in-bounds? a -2)
+            (eq? 'a (array-ref a -3))
+            (eq? 'b (array-ref a -2)))))
+
+  (pass-if-exception "negative length" exception:length-non-negative
+     (with-input-from-string "'#1:-3(#t #t)" read)))
+
+
+;;;
+;;; equal? with vector and one-dimensional array
+;;;
+
+(pass-if "vector equal? one-dimensional array"
+  (equal? (make-shared-array #2((a b c) (d e f) (g h i))
+			     (lambda (i) (list i i))
+			     '(0 2))
+	  #(a e i)))

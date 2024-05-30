@@ -1,0 +1,238 @@
+#!/bin/sh
+
+# must be run from this directory
+guile=${GUILE-../libguile/guile}
+if [ -x $guile ] ; then
+    :
+else
+    echo could not find guile interpreter.
+    echo '(are you running this script from' `dirname $0` '?)'
+    echo GUILE env var: ${GUILE-not set}
+    exit 1
+fi
+
+if test "X$srcdir" = X; then
+    srcdir=.
+fi
+
+set -e
+
+#
+# simple-hello.scm
+#
+$guile -s $srcdir/scripts/simple-hello.scm > TMP
+cat <<EOF | diff -u - TMP
+Hello, World!
+EOF
+rm -f TMP
+
+#
+# hello
+#
+$guile -s $srcdir/scripts/hello > TMP
+echo "Hello, World!" | diff -u - TMP
+rm -f TMP
+
+$guile -s $srcdir/scripts/hello --version > TMP
+echo "hello 0.0.1" | diff -u - TMP
+rm -f TMP
+
+$guile -s $srcdir/scripts/hello --help > TMP
+cat <<EOF | diff -u - TMP
+Usage: hello [options...]
+  --help, -h           Show this usage information
+  --version, -v        Show version information
+EOF
+rm -f TMP
+
+#
+# fact
+#
+case `$guile -s $srcdir/scripts/fact 5` in 120) ;; *) echo $0: error: fact 5 ;; esac
+
+
+#
+# ./box/box test #1
+#
+./box/box -c '(let ((b (make-box))) (display b) (newline))' > TMP
+cat <<EOF | diff -u - TMP
+#<box #f>
+EOF
+rm -f TMP
+
+#
+# ./box/box test #2
+#
+./box/box -c '(let ((b (make-box))) (display b) (newline) (box-set! b 1) (display b) (newline))' > TMP
+cat <<EOF | diff -u - TMP
+#<box #f>
+#<box 1>
+EOF
+rm -f TMP
+
+#
+# ./box/box test #3
+#
+./box/box -c '(let ((b (make-box))) (display b) (newline) (box-set! b 1) (display b) (newline) (display (box-ref b)) (newline))' > TMP
+cat <<EOF | diff -u - TMP
+#<box #f>
+#<box 1>
+1
+EOF
+rm -f TMP
+
+
+
+#
+# ./box-module/box test #1
+#
+./box-module/box -c '(begin (use-modules (box-module)) (let ((b (make-box))) (display b) (newline)))' > TMP
+cat <<EOF | diff -u - TMP
+#<box #f>
+EOF
+rm -f TMP
+
+#
+# ./box-module/box test #2
+#
+./box-module/box -c '(begin (use-modules (box-module)) (let ((b (make-box))) (display b) (newline) (box-set! b 1) (display b) (newline)))' > TMP
+cat <<EOF | diff -u - TMP
+#<box #f>
+#<box 1>
+EOF
+rm -f TMP
+
+#
+# ./box-module/box test #3
+#
+./box-module/box -c '(begin (use-modules (box-module)) (let ((b (make-box))) (display b) (newline) (box-set! b 1) (display b) (newline) (display (box-ref b)) (newline)))' > TMP
+cat <<EOF | diff -u - TMP
+#<box #f>
+#<box 1>
+1
+EOF
+rm -f TMP
+
+
+#
+# ./box-dynamic/box test #1
+#
+$guile -c '(begin (load-extension "libbox" "scm_init_box") (let ((b (make-box))) (display b) (newline)))' > TMP
+cat <<EOF | diff -u - TMP
+#<box #f>
+EOF
+rm -f TMP
+
+#
+# ./box-dynamic/box test #2
+#
+$guile -c '(begin (load-extension "libbox" "scm_init_box") (let ((b (make-box))) (display b) (newline) (box-set! b 1) (display b) (newline)))' > TMP
+cat <<EOF | diff -u - TMP
+#<box #f>
+#<box 1>
+EOF
+rm -f TMP
+
+#
+# ./box-dynamic/box test #3
+#
+$guile -c '(begin (load-extension "libbox" "scm_init_box") (let ((b (make-box))) (display b) (newline) (box-set! b 1) (display b) (newline) (display (box-ref b)) (newline)))' > TMP
+cat <<EOF | diff -u - TMP
+#<box #f>
+#<box 1>
+1
+EOF
+rm -f TMP
+
+
+#
+# ./box-dynamic-module/box test #1
+#
+$guile -L $srcdir/box-dynamic-module \
+  -c '(begin (use-modules (box-module)) (let ((b (make-box))) (display b) (newline)))' > TMP
+cat <<EOF | diff -u - TMP
+#<box #f>
+EOF
+rm -f TMP
+
+#
+# ./box-dynamic-module/box test #2
+#
+$guile -L $srcdir/box-dynamic-module \
+  -c '(begin (use-modules (box-module)) (let ((b (make-box))) (display b) (newline) (box-set! b 1) (display b) (newline)))' > TMP
+cat <<EOF | diff -u - TMP
+#<box #f>
+#<box 1>
+EOF
+rm -f TMP
+
+#
+# ./box-dynamic-module/box test #3
+#
+$guile -L $srcdir/box-dynamic-module \
+  -c '(begin (use-modules (box-module)) (let ((b (make-box))) (display b) (newline) (box-set! b 1) (display b) (newline) (display (box-ref b)) (newline)))' > TMP
+cat <<EOF | diff -u - TMP
+#<box #f>
+#<box 1>
+1
+EOF
+rm -f TMP
+
+#
+# ./box-dynamic-module/box test #4
+#
+$guile -L $srcdir/box-dynamic-module \
+  -c '(begin (use-modules (box-mixed)) (let ((b (make-box-list 1 2 3))) (display b) (newline) (display (box-map 1+ b)) (newline)))' > TMP
+cat <<EOF | diff -u - TMP
+(#<box 1> #<box 2> #<box 3>)
+(#<box 2> #<box 3> #<box 4>)
+EOF
+rm -f TMP
+
+
+
+#
+# ./main test
+#
+$guile -L $srcdir/modules -s $srcdir/modules/main > TMP
+cat <<EOF | diff -u - TMP
+module-0 foo
+module-0 bar
+module-1 foo
+module-1 bar
+module-2 braz
+module-2 braz
+module-2 foo
+EOF
+rm -f TMP
+
+
+#
+# ./safe untrusted.scm
+#
+$guile -s $srcdir/safe/safe $srcdir/safe/untrusted.scm > TMP
+cat <<EOF | diff -u - TMP
+1
+1
+2
+6
+24
+120
+720
+5040
+40320
+362880
+3628800
+EOF
+rm -f TMP
+
+#
+# ./safe evil.scm
+#
+$guile -s $srcdir/safe/safe $srcdir/safe/evil.scm > TMP
+cat <<EOF | diff -u - TMP
+** Exception: (unbound-variable #f "Unbound variable: ~S" (open-input-file) #f)
+EOF
+rm -f TMP
+
+# check.test ends here

@@ -1,0 +1,339 @@
+-*-text-*-
+Guile Hacking Guide
+Copyright (c) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2008 Free software Foundation, Inc.
+
+   Permission is granted to anyone to make or distribute verbatim copies
+   of this document as received, in any medium, provided that the
+   copyright notice and permission notice are preserved,
+   and that the distributor grants the recipient permission
+   for further redistribution as permitted by this notice.
+
+   Permission is granted to distribute modified versions
+   of this document, or of portions of it,
+   under the above conditions, provided also that they
+   carry prominent notices stating who last changed them,
+   and that any new or changed statements about the activities
+   of the Free Software Foundation are approved by the Foundation.
+
+
+What to Hack =========================================================
+
+You can hack whatever you want, thank GNU.
+
+However, to see what others have indicated as their interest (and avoid
+potential wasteful duplication of effort), see file TODO.  Note that
+the version you find may be out of date; a CVS checkout is recommended:
+see below for details (see also the files ANON-CVS and SNAPSHOTS).
+
+It's also a good idea to join the guile-devel@gnu.org mailing list.
+See http://www.gnu.org/software/guile/mail/mail.html for more info.
+
+
+Hacking It Yourself ==================================================
+
+When Guile is obtained from Git, a few extra steps must be taken
+before the usual configure, make, make install.  You will need to have
+up-to-date versions of the tools as listed below, correctly installed.
+
+Sometimes older or newer versions will work.  (See below for versions
+to avoid.)
+
+Then you must run the autogen.sh script, as described below.
+
+The same procedure can be used to regenerate the files in released
+versions of Guile.  In that case the headers of the original generated
+files (e.g., configure, Makefile.in, ltmain.sh) can be used to
+identify which tool versions may be required.
+
+Autoconf --- a system for automatically generating `configure'
+	scripts from templates which list the non-portable features a
+	program would like to use.  Available in
+	"ftp://ftp.gnu.org/pub/gnu/autoconf"
+
+Automake --- a system for automatically generating Makefiles that
+	conform to the (rather Byzantine) GNU coding standards.  The
+	nice thing is that it takes care of hairy targets like 'make
+	dist' and 'make distclean', and automatically generates
+	Makefile dependencies.  Automake is available in
+	"ftp://ftp.gnu.org/pub/gnu/automake"
+
+libtool --- a system for managing the zillion hairy options needed
+	on various systems to produce shared libraries.  Available in
+	"ftp://ftp.gnu.org/pub/gnu/libtool".  Version 1.5.26 (or
+	later) is needed for correct AIX support.
+
+gettext --- a system for rigging a program so that it can output its
+        messages in the local tongue.  Guile presently only exports
+        the gettext functionality to Scheme, it does not use it
+        itself.
+
+flex --- a scanner generator.  It's probably not essential to have the
+        latest version.
+
+One false move and you will be lost in a little maze of automatically
+generated files, all different.
+
+Here is the authoritative list of tool/version/platform tuples that
+have been known to cause problems, and a short description of the problem.
+
+- automake 1.4 adds extraneous rules to the top-level Makefile if
+  you specify specific Makefiles to rebuild on the command line.
+
+- automake 1.4-p4 (debian "1:1.4-p4-1.1") all platforms
+  automake "include" facility does not recognize filenames w/ "-".
+
+- libtool 1.4 uses acconfig.h, which is deprecated by newest autoconf
+  (which constructs the equivalent through 3rd arg of AC_DEFINE forms).
+
+- autoreconf from autoconf prior to 2.59 will run gettextize, which
+  will mess up the Guile tree.
+
+- (add here.)
+
+
+Sample GDB Initialization File=========================================
+
+Here is a sample .gdbinit posted by Bill Schottstaedt (modified to
+use `set' instead of `call' in some places):
+
+  define gp
+  set gdb_print($arg0)
+  print gdb_output
+  end
+  document gp
+  Executes (object->string arg)
+  end
+
+  define ge
+  call gdb_read($arg0)
+  call gdb_eval(gdb_result)
+  set gdb_print(gdb_result)
+  print gdb_output
+  end
+  document ge
+  Executes (print (eval (read arg))): ge "(+ 1 2)" => 3
+  end
+
+  define gh
+  call g_help(scm_str2symbol($arg0), 20)
+  set gdb_print($1)
+  print gdb_output
+  end
+  document gh
+  Prints help string for arg: gh "enved-target"
+  end
+
+Bill further writes:
+
+  so in gdb if you see something useless like:
+
+  #32 0x081ae8f4 in scm_primitive_load (filename=1112137128) at load.c:129
+
+  You can get the file name with gp:
+
+  (gdb) gp 1112137128
+  $1 = 0x40853fac "\"/home/bil/test/share/guile/1.5.0/ice-9/session.scm\""
+
+
+Contributing Your Changes ============================================
+
+- If you have put together a change that meets the coding standards
+described below, we encourage you to submit it to Guile.  Post your
+patch to guile-devel@gnu.org.
+
+- We prefer patches generated using 'git format-patch'.
+
+- Provide a description in the commit message, like so:
+
+  1-line description of change
+
+  More extensive discussion of your change.  Document why you are
+  changing things.
+
+  * filename (function name): file specific change comments.
+
+- For proper credit, also make sure you update the AUTHORS file
+(for new files for which you've assigned copyright to the FSF), or
+the THANKS file (for everything else).
+
+
+Coding standards =====================================================
+
+- As for any part of Project GNU, changes to Guile should follow the
+GNU coding standards.  The standards are available via anonymous FTP
+from prep.ai.mit.edu, as /pub/gnu/standards/standards.texi and
+make-stds.texi.
+
+- The Guile tree should compile without warnings under the following
+GCC switches, which are the default in the current configure script:
+
+    -O2 -Wall -Wpointer-arith -Wmissing-prototypes
+
+To make sure of this, you can use the --enable-error-on-warning option
+to configure.  This option will make GCC fail if it hits a warning.
+
+Note that the warnings generated vary from one version of GCC to the
+next, and from one architecture to the next (apparently).  To provide
+a concrete common standard, Guile should compile without warnings from
+GCC 2.7.2.3 in a Red Hat 5.2 i386 Linux machine.  Furthermore, each
+developer should pursue any additional warnings noted by on their
+compiler.  This means that people using more stringent compilers will
+have more work to do, and assures that everyone won't switch to the
+most lenient compiler they can find.  :)
+
+- If you add code which uses functions or other features that are not
+entirely portable, please make sure the rest of Guile will still
+function properly on systems where they are missing.  This usually
+entails adding a test to configure.in, and then adding #ifdefs to your
+code to disable it if the system's features are missing.
+
+- The normal way of removing a function, macro or variable is to mark
+it as "deprecated", keep it for a while, and remove it in a later
+release.  If a function or macro is marked as "deprecated" it
+indicates that people shouldn't use it in new programs, and should try
+to remove it in old.  Make sure that an alternative exists unless it
+is our purpose to remove functionality.  Don't deprecate definitions
+if it is unclear when they will be removed.  (This is to ensure that a
+valid way of implementing some functionality always exists.)
+
+When deprecating a definition, always follow this procedure:
+
+1. Mark the definition using
+
+   #if (SCM_DEBUG_DEPRECATED == 0)
+   ...
+   #endif
+
+   or, for Scheme code, wrap it using
+
+   (begin-deprecated
+      ...)
+
+2. Make the deprecated code issue a warning when it is used, by using
+   scm_c_issue_deprecation_warning (in C) or issue-deprecation-warning
+   (in Scheme).
+
+3. Write a comment at the definition explaining how a programmer can
+   manage without the deprecated definition.
+
+4. Add an entry that the definition has been deprecated in NEWS and
+   explain what do do instead.
+
+5. In file TODO, there is a list of releases with reminders about what
+   to do at each release.  Add a reminder about the removal of the
+   deprecated defintion at the appropriate release.
+
+- Write commit messages for functions written in C using the
+functions' C names, and write entries for functions written in Scheme
+using the functions' Scheme names.  For example, 
+
+  * foo.c: Moved scm_procedure_documentation from eval.c.
+
+is preferred over
+
+  * foo.c: Moved procedure-documentation from eval.c.
+
+Changes like adding this line are special:
+
+    SCM_PROC (s_map_in_order, "map-in-order", 2, 0, 1, scm_map);
+
+Since the change here is about the name itself --- we're adding a new
+alias for scm_map that guarantees the order in which we process list
+elements, but we're not changing scm_map at all --- it's appropriate
+to use the Scheme name in the commit message.
+
+- Make sure you have papers from people before integrating their
+changes or contributions.  This is very frustrating, but very
+important to do right.  From maintain.texi, "Information for
+Maintainers of GNU Software":
+
+    When incorporating changes from other people, make sure to follow the
+    correct procedures.  Doing this ensures that the FSF has the legal
+    right to distribute and defend GNU software.
+
+    For the sake of registering the copyright on later versions ofthe
+    software you need to keep track of each person who makes significant
+    changes.  A change of ten lines or so, or a few such changes, in a
+    large program is not significant.
+
+    *Before* incorporating significant changes, make sure that the person
+    has signed copyright papers, and that the Free Software Foundation has
+    received them.
+
+If you receive contributions you want to use from someone, let me know
+and I'll take care of the administrivia.  Put the contributions aside
+until we have the necessary papers.
+
+Once you accept a contribution, be sure to keep the files AUTHORS and
+THANKS uptodate.
+
+- When you make substantial changes to a file, add the current year to
+the list of years in the copyright notice at the top of the file.
+
+- When you get bug reports or patches from people, be sure to list
+them in THANKS.
+
+
+Naming conventions =================================================
+
+We use certain naming conventions to structure the considerable number
+of global identifiers.  All identifiers should be either all lower
+case or all upper case.  Syllables are separated by underscores `_'.
+All non-static identifiers should start with scm_ or SCM_.  Then might
+follow zero or more syllables giving the category of the identifier.
+The currently used category identifiers are
+
+    t   - type name
+
+    c,C - something with a interface suited for C use.  This is used
+          to name functions that behave like Scheme primitives but
+          have a more C friendly calling convention.
+
+    i,I - internal to libguile.  It is global, but not considered part
+          of the libguile API.
+
+    f   - a SCM variable pointing to a Scheme function object.
+
+    F   - a bit mask for a flag.
+
+    m   - a macro transformer procedure
+
+    n,N - a count of something
+
+    s   - a constant C string
+
+    k   - a SCM variable pointing to a keyword.
+
+  sym   - a SCM variable pointing to a symbol.
+
+  var   - a SCM variable pointing to a variable object.
+
+The follwing syllables also have a technical meaning:
+
+  str   - this denotes a zero terminated C string
+
+  mem   - a C string with an explicit count
+
+
+See also the file `devel/names.text'.
+
+
+Helpful hints ========================================================
+
+- [From Mikael Djurfeldt] When working on the Guile internals, it is
+quite often practical to implement a scheme-level procedure which
+helps you examine the feature you're working on.
+
+Examples of such procedures are: pt-size, debug-hand and
+current-pstate.
+
+I've now put #ifdef GUILE_DEBUG around all such procedures, so that
+they are not compiled into the "normal" Guile library.  Please do the
+same when you add new procedures/C functions for debugging purpose.
+
+You can define the GUILE_DEBUG flag by passing --enable-guile-debug to
+the configure script.
+
+
+Jim Blandy, and others
+

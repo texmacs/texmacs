@@ -1,0 +1,341 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@node getopt-long
+@section The (ice-9 getopt-long) Module
+
+The @code{(ice-9 getopt-long)} module exports two procedures:
+@code{getopt-long} and @code{option-ref}.
+
+@itemize @bullet
+@item
+@code{getopt-long} takes a list of strings --- the command line
+arguments --- and an @dfn{option specification}.  It parses the command
+line arguments according to the option specification and returns a data
+structure that encapsulates the results of the parsing.
+
+@item
+@code{option-ref} then takes the parsed data structure and a specific
+option's name, and returns information about that option in particular.
+@end itemize
+
+To make these procedures available to your Guile script, include the
+expression @code{(use-modules (ice-9 getopt-long))} somewhere near the
+top, before the first usage of @code{getopt-long} or @code{option-ref}.
+
+@menu
+* getopt-long Example::         A short getopt-long example.
+* Option Specification::        How to write an option specification.
+* Command Line Format::         The expected command line format.
+* getopt-long Reference::       Full documentation for @code{getopt-long}.
+* option-ref Reference::        Full documentation for @code{option-ref}.
+@end menu
+
+
+@node getopt-long Example
+@subsection A Short getopt-long Example
+
+This section illustrates how @code{getopt-long} is used by presenting
+and dissecting a simple example.  The first thing that we need is an
+@dfn{option specification} that tells @code{getopt-long} how to parse
+the command line.  This specification is an association list with the
+long option name as the key.  Here is how such a specification might
+look:
+
+@lisp
+(define option-spec
+  '((version (single-char #\v) (value #f))
+    (help    (single-char #\h) (value #f))))
+@end lisp
+
+This alist tells @code{getopt-long} that it should accept two long
+options, called @emph{version} and @emph{help}, and that these options
+can also be selected by the single-letter abbreviations @emph{v} and
+@emph{h}, respectively.  The @code{(value #f)} clauses indicate that
+neither of the options accepts a value.
+
+With this specification we can use @code{getopt-long} to parse a given
+command line:
+
+@lisp
+(define options (getopt-long (command-line) option-spec))
+@end lisp
+
+After this call, @code{options} contains the parsed command line and is
+ready to be examined by @code{option-ref}.  @code{option-ref} is called
+like this:
+
+@lisp
+(option-ref options 'help #f)
+@end lisp
+
+@noindent
+It expects the parsed command line, a symbol indicating the option to
+examine, and a default value.  The default value is returned if the
+option was not present in the command line, or if the option was present
+but without a value; otherwise the value from the command line is
+returned.  Usually @code{option-ref} is called once for each possible
+option that a script supports.
+
+The following example shows a main program which puts all this together
+to parse its command line and figure out what the user wanted.
+
+@lisp
+(define (main args)
+  (let* ((option-spec '((version (single-char #\v) (value #f))
+                        (help    (single-char #\h) (value #f))))
+         (options (getopt-long args option-spec))
+         (help-wanted (option-ref options 'help #f))
+         (version-wanted (option-ref options 'version #f)))
+    (if (or version-wanted help-wanted)
+        (begin
+          (if version-wanted
+              (display "getopt-long-example version 0.3\n"))
+          (if help-wanted
+              (display "\
+getopt-long-example [options]
+  -v, --version    Display version
+  -h, --help       Display this help
+")))
+        (begin
+          (display "Hello, World!") (newline)))))
+@end lisp
+
+
+@node Option Specification
+@subsection How to Write an Option Specification
+
+An option specification is an association list (@pxref{Association
+Lists}) with one list element for each supported option. The key of each
+list element is a symbol that names the option, while the value is a
+list of option properties:
+
+@lisp
+OPTION-SPEC ::=  '( (OPT-NAME1 (PROP-NAME PROP-VALUE) @dots{})
+                    (OPT-NAME2 (PROP-NAME PROP-VALUE) @dots{})
+                    (OPT-NAME3 (PROP-NAME PROP-VALUE) @dots{})
+                    @dots{}
+                  )
+@end lisp
+
+Each @var{opt-name} specifies the long option name for that option.  For
+example, a list element with @var{opt-name} @code{background} specifies
+an option that can be specified on the command line using the long
+option @code{--background}.  Further information about the option ---
+whether it takes a value, whether it is required to be present in the
+command line, and so on --- is specified by the option properties.
+
+In the example of the preceding section, we already saw that a long
+option name can have a equivalent @dfn{short option} character.  The
+equivalent short option character can be set for an option by specifying
+a @code{single-char} property in that option's property list.  For
+example, a list element like @code{'(output (single-char #\o) @dots{})}
+specifies an option with long name @code{--output} that can also be
+specified by the equivalent short name @code{-o}.
+
+The @code{value} property specifies whether an option requires or
+accepts a value.  If the @code{value} property is set to @code{#t}, the
+option requires a value: @code{getopt-long} will signal an error if the
+option name is present without a corresponding value.  If set to
+@code{#f}, the option does not take a value; in this case, a non-option
+word that follows the option name in the command line will be treated as
+a non-option argument.  If set to the symbol @code{optional}, the option
+accepts a value but does not require one: a non-option word that follows
+the option name in the command line will be interpreted as that option's
+value.  If the option name for an option with @code{'(value optional)}
+is immediately followed in the command line by @emph{another} option
+name, the value for the first option is implicitly @code{#t}.
+
+The @code{required?} property indicates whether an option is required to
+be present in the command line.  If the @code{required?}  property is
+set to @code{#t}, @code{getopt-long} will signal an error if the option
+is not specified.
+
+Finally, the @code{predicate} property can be used to constrain the
+possible values of an option.  If used, the @code{predicate} property
+should be set to a procedure that takes one argument --- the proposed
+option value as a string --- and returns either @code{#t} or @code{#f}
+according as the proposed value is or is not acceptable.  If the
+predicate procedure returns @code{#f}, @code{getopt-long} will signal an
+error.
+
+By default, options do not have single-character equivalents, are not
+required, and do not take values.  Where the list element for an option
+includes a @code{value} property but no @code{predicate} property, the
+option values are unconstrained.
+
+
+@node Command Line Format
+@subsection Expected Command Line Format
+
+In order for @code{getopt-long} to correctly parse a command line, that
+command line must conform to a standard set of rules for how command
+line options are specified.  This section explains what those rules
+are.
+
+@code{getopt-long} splits a given command line into several pieces.  All
+elements of the argument list are classified to be either options or
+normal arguments.  Options consist of two dashes and an option name
+(so-called @dfn{long} options), or of one dash followed by a single
+letter (@dfn{short} options).
+
+Options can behave as switches, when they are given without a value, or
+they can be used to pass a value to the program.  The value for an
+option may be specified using an equals sign, or else is simply the next
+word in the command line, so the following two invocations are
+equivalent:
+
+@example
+$ ./foo.scm --output=bar.txt
+$ ./foo.scm --output bar.txt
+@end example
+
+Short options can be used instead of their long equivalents and can be
+grouped together after a single dash.  For example, the following
+commands are equivalent.
+
+@example
+$ ./foo.scm --version --help
+$ ./foo.scm -v --help
+$ ./foo.scm -vh
+@end example
+
+If an option requires a value, it can only be grouped together with other
+short options if it is the last option in the group; the value is the
+next argument.  So, for example, with the following option
+specification ---
+
+@lisp
+((apples    (single-char #\a))
+ (blimps    (single-char #\b) (value #t))
+ (catalexis (single-char #\c) (value #t)))
+@end lisp
+
+@noindent
+--- the following command lines would all be acceptable:
+
+@example
+$ ./foo.scm -a -b bang -c couth
+$ ./foo.scm -ab bang -c couth
+$ ./foo.scm -ac couth -b bang
+@end example
+
+But the next command line is an error, because @code{-b} is not the last
+option in its combination, and because a group of short options cannot
+include two options that both require values:
+
+@example
+$ ./foo.scm -abc couth bang
+@end example
+
+If an option's value is optional, @code{getopt-long} decides whether the
+option has a value by looking at what follows it in the argument list.
+If the next element is a string, and it does not appear to be an option
+itself, then that string is the option's value.
+
+If the option @code{--} appears in the argument list, argument parsing
+stops there and subsequent arguments are returned as ordinary arguments,
+even if they resemble options.  So, with the command line
+
+@example
+$ ./foo.scm --apples "Granny Smith" -- --blimp Goodyear
+@end example
+
+@noindent
+@code{getopt-long} will recognize the @code{--apples} option as having
+the value "Granny Smith", but will not treat @code{--blimp} as an
+option.  The strings @code{--blimp} and @code{Goodyear} will be returned
+as ordinary argument strings.
+
+
+@node getopt-long Reference
+@subsection Reference Documentation for @code{getopt-long}
+
+@deffn {Scheme Procedure} getopt-long args grammar
+Parse the command line given in @var{args} (which must be a list of
+strings) according to the option specification @var{grammar}.
+
+The @var{grammar} argument is expected to be a list of this form:
+
+@code{((@var{option} (@var{property} @var{value}) @dots{}) @dots{})}
+
+where each @var{option} is a symbol denoting the long option, but
+without the two leading dashes (e.g. @code{version} if the option is
+called @code{--version}).
+
+For each option, there may be list of arbitrarily many property/value
+pairs.  The order of the pairs is not important, but every property may
+only appear once in the property list.  The following table lists the
+possible properties:
+
+@table @asis
+@item @code{(single-char @var{char})}
+Accept @code{-@var{char}} as a single-character equivalent to
+@code{--@var{option}}.  This is how to specify traditional Unix-style
+flags.
+@item @code{(required? @var{bool})} 
+If @var{bool} is true, the option is required.  @code{getopt-long} will
+raise an error if it is not found in @var{args}.
+@item @code{(value @var{bool})}
+If @var{bool} is @code{#t}, the option accepts a value; if it is
+@code{#f}, it does not; and if it is the symbol @code{optional}, the
+option may appear in @var{args} with or without a value.
+@item @code{(predicate @var{func})}
+If the option accepts a value (i.e. you specified @code{(value #t)} for
+this option), then @code{getopt-long} will apply @var{func} to the
+value, and throw an exception if it returns @code{#f}.  @var{func}
+should be a procedure which accepts a string and returns a boolean
+value; you may need to use quasiquotes to get it into @var{grammar}.
+@end table
+@end deffn
+
+@code{getopt-long}'s @var{args} parameter is expected to be a list of
+strings like the one returned by @code{command-line}, with the first
+element being the name of the command.  Therefore @code{getopt-long}
+ignores the first element in @var{args} and starts argument
+interpretation with the second element.
+
+@code{getopt-long} signals an error if any of the following conditions
+hold.
+
+@itemize @bullet
+@item
+The option grammar has an invalid syntax.
+
+@item
+One of the options in the argument list was not specified by the
+grammar.
+
+@item
+A required option is omitted.
+
+@item
+An option which requires an argument did not get one.
+
+@item
+An option that doesn't accept an argument does get one (this can only
+happen using the long option @code{--opt=@var{value}} syntax).
+
+@item
+An option predicate fails.
+@end itemize
+
+
+@node option-ref Reference
+@subsection Reference Documentation for @code{option-ref}
+
+@deffn {Scheme Procedure} option-ref options key default
+Search @var{options} for a command line option named @var{key} and
+return its value, if found.  If the option has no value, but was given,
+return @code{#t}.  If the option was not given, return @var{default}.
+@var{options} must be the result of a call to @code{getopt-long}.
+@end deffn
+
+@code{option-ref} always succeeds, either by returning the requested
+option value from the command line, or the default value.
+
+The special key @code{'()} can be used to get a list of all
+non-option arguments.

@@ -1,0 +1,401 @@
+2008-04-14  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* primitives/symprop.scm (get): Use lambda->nil.
+
+	* primitives/strings.scm (aset): New primitive.
+
+	* internals/load.scm (load): Use in-vicinity (instead of
+	string-append) to add a slash if needed.
+
+2004-02-08  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* primitives/Makefile.am (TAGS_FILES), internals/Makefile.am
+	(TAGS_FILES), Makefile.am (TAGS_FILES): Use this variable instead
+	of ETAGS_ARGS so that TAGS can be built using separate build
+	directory.
+
+2003-11-01  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* internals/format.scm (format), internals/signal.scm (error),
+	internals/load.scm (load): Export using #:replace to avoid
+	duplicate binding warnings.
+
+2003-01-05  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* primitives/Makefile.am (elisp_sources): Added char-table.scm.
+
+2002-12-28  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* base.scm (lang): Use char-table module.
+
+	* primitives/char-table.scm (lang): New (stub definitions).
+
+2002-12-08  Rob Browning  <rlb@defaultvalue.org>
+
+	* Makefile.am (subpkgdatadir): VERSION -> GUILE_EFFECTIVE_VERSION.
+
+	* primitives/Makefile.am (subpkgdatadir): VERSION ->
+	GUILE_EFFECTIVE_VERSION.
+
+	* internals/Makefile.am (subpkgdatadir): VERSION ->
+	GUILE_EFFECTIVE_VERSION.
+
+2002-02-13  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* base.scm (load-emacs): Add optional parameters for specifying an
+	alternative load path, and for debugging this.  (Thanks to
+	Thien-Thi Nguyen!)
+
+	* primitives/syntax.scm (setq): Use `set'.
+
+	* internals/set.scm (set): Fixed to support variables that are
+	imported from other modules.
+
+2002-02-12  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* transform.scm (scheme): Use set-current-module to ensure
+	expected behaviour of resolve-module.
+
+2002-02-08  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* STATUS: New file.
+
+	* README: Updated.
+
+	* interface.scm (translate-elisp): New exported procedure.
+	(elisp-function): Symbol var is `obj', not `symbol'.
+	
+	* internals/lambda.scm, primitives/fns.scm: Fix confusion between
+	interactive-spec and interactive-specification.
+	
+	* internals/lambda.scm (transform-lambda), primitives/syntax.scm
+	(defmacro): Bind unspecified optional and rest arguments to #nil,
+	not #f.
+
+	* internals/null.scm (->nil, lambda->nil): New, exported.
+	(null): Use ->nil.
+
+	* primitives/features.scm (featurep), primitives/fns.scm
+	(fboundp, subrp): Use ->nil.
+
+	* internals/lists.scm (cons, setcdr, memq, member, assq, assoc):
+	Simplified.
+	(car, cdr): Return #nil rather than #f.
+
+	* primitives/load.scm (current-load-list), primitives/pure.scm
+	(purify-flag): Set to #nil, not #f.
+
+	* primitives/match.scm (string-match): Return #nil rather than #f.
+
+	* primitives/numbers.scm (integerp, numberp),
+	primitives/strings.scm (string-lessp, stringp): Use lambda->nil.
+
+	* primitives/symprop.scm (boundp): Use ->nil.
+	(symbolp, local-variable-if-set-p): Return #nil rather than #f.
+
+	* primitives/syntax.scm (prog1, prog2): Mangle variable names
+	further to lessen possibility of conflicts.
+	(if, and, or, cond): Return #nil rather than #f.
+	(cond): Return #t rather than t (which is undefined).
+	(let, let*): Bind uninitialized variables to #nil, not #f.
+	
+	* transform.scm: Resolve inconsistency in usage of `map', and add
+	an explanatory note.  Also cleaned up use of subsidiary
+	transformation functions.  Also use cons-source wherever possible.
+	(transform-datum, transform-quote): New.
+	(transform-quasiquote): Renamed from `transform-inside-qq'.
+	(transform-application): Apply `transform-quote' to application
+	args.
+	(cars->nil): Removed.
+	
+	* internals/null.scm (null), primitives/lists.scm (cons, car, cdr,
+	setcdr, memq, member, assq, assoc, nth): Update to take into
+	account new libguile support for Elisp nil value.
+
+2002-02-06  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* example.el (time): New macro, for performance measurement.
+	Accompanying comment compares results for Guile and Emacs.
+	
+	* transform.scm (scheme): New macro.
+	(transformer): New implementation of `scheme' escape that doesn't
+	rely on (lang elisp base) importing Guile bindings.
+
+	* base.scm: No longer import anything from (guile).
+	(load-emacs): Add scheme form to ensure that keywords
+	read option is set correctly.
+
+	* primitives/syntax.scm (defmacro, let, let*): Unquote uses of
+	`@bind' in transformed code.
+	(if): Unquote uses of `nil-cond' in transformed code.
+
+	* internals/lambda.scm (transform-lambda): Unquote use of `@bind'
+	in transformed code.
+
+	* transform.scm (transformer-macro): Don't quote `list' in
+	transformed code.
+	(transform-application): Don't quote `@fop' in transformed code.
+	(transformer): No need to treat `@bind' and `@fop' as special
+	cases in input to the transformer.
+
+2002-02-04  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* primitives/syntax.scm (parse-formals, transform-lambda,
+	interactive-spec, set-not-subr!, transform-lambda/interactive):
+	Move into internals/lambda.scm so that these can also be used
+	by...
+	
+	* internals/fset.scm (elisp-apply): Use `eval' and 
+	`transform-lambda/interactive' to turn a quoted lambda expression
+	into a Scheme procedure.
+
+	* transform.scm (m-quasiquote): Don't quote `quasiquote' in
+	transformed code.
+	(transformer): Transform '() to #nil.
+
+2002-02-03  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* internals/Makefile.am (elisp_sources): Add lambda.scm.
+
+	* internals/lambda.scm (lang): New file.
+
+2002-02-01  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* transform.scm (transformer), primitives/syntax.scm (let*):
+	Unquote uses of `begin' in transformed code.
+
+2002-01-29  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* transform.scm (transform-1, transform-2, transform-3,
+	transform-list): Removed (unused).
+	
+	* transform.scm, primitives/syntax.scm: Add commas everywhere
+	before use of (guile) primitives in generated code, so that (lang
+	elisp base) doesn't have to import bindings from (guile).
+	
+	* base.scm: Move use-modules expressions inside the define-module,
+	and add #:pure so that we don't import bindings from (guile).
+
+2002-01-25  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* transform.scm (transform-application): Preserve source
+	properties of original elisp expression by using cons-source.
+
+	* transform.scm: Don't handle special forms specially in the
+	translator.  Instead, define them as macros in ...
+	
+	* primitives/syntax.scm: New file; special form definitions.
+
+	* primitives/fns.scm (run-hooks): Rewritten correctly.
+
+	* primitives/symprop.scm (symbol-value): Use `value'.
+
+	* internals/set.scm (value): New function.
+
+	* primitives/fns.scm: Use (lang elisp internals null), as null is
+	no longer a primitive.  Change generated #f values to %nil.
+
+	* internals/null.scm (null): Handle nil symbol.
+
+	* primitives/lists.scm (memq, member, assq, assoc): Handle all
+	possible nil values.
+
+	* transform.scm (transformer): Translate `nil' and `t' to #nil and
+	#t.
+
+	* base.scm: Remove setting of 'language read-option.
+
+2001-11-03  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* README (Resources): Fill in missing URLs.
+
+2001-11-02  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* Makefile.am (elisp_sources): Added base.scm, example.el,
+	interface.scm; removed emacs.scm.
+
+	* README: Updated accordingly.
+
+	* internals/load.scm (load): Avoid using `load-path' if the
+	supplied file name begins with a slash.
+	
+	* internals/fset.scm: Support export of defuns, defmacros and
+	defvars to a module specified by the fluid `elisp-export-module'.
+	This allows us to automate the importing of Elisp definitions into
+	Scheme.
+	
+	* example.el: New file: example code for `load-elisp-file'.
+
+	* interface.scm: New file - mechanisms to exchange definitions
+	between Scheme and Elisp.
+
+	Following changes try to make the Elisp evaluation module less
+	Emacs-dependent; in other words, so that it isn't necessary to try
+	to load the whole Emacs environment before evaluating basic
+	non-Emacs-specific Elisp code.
+	
+	* variables.scm, internals/evaluation.scm: Changed (lang elisp
+	emacs) to (lang elisp base).
+	
+	* emacs.scm (lang): Removed.
+
+	* base.scm (lang): New file (non-emacs-specific replacement for
+	emacs.scm).
+
+2001-10-28  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* primitives/symprop.scm (symbol-name): New primitive.
+
+	* primitives/strings.scm (stringp): New primitive.
+
+	* primitives/pure.scm (purify-flag): New variable.
+
+	* primitives/numbers.scm (numberp): New primitive.
+
+	* internals/fset.scm (fset): Set procedure and macro name
+	properties usefully to match Elisp symbol names.  Also bind Elisp
+	function definition variables to similarly named symbols in the
+	(lang elisp variables) module.
+
+	* transform.scm (transformer, m-unwind-protect): Added support for
+	`unwind-protect'.
+	(m-quasiquote): Use 'quasiquote rather than 'quote.
+	(transform-lambda, m-defmacro): When no rest arguments, set the
+	rest parameter to '() rather than #f.  It shouldn't make any
+	difference, but it feels more right.
+
+	* README: Enlarged description of current status.
+
+	* Makefile.am (elisp_sources): Added variables.scm.
+
+	* variables.scm: New file.
+
+2001-10-26  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* buffers.scm, calling.scm: Removed.  These should have
+	disappeared during the reorganization described below, but I
+	missed them by mistake.
+	
+	* primitives/symprop.scm (set, boundp, symbol-value): Changed to
+	use (module-xx the-elisp-module ...) rather than (local-xx ...).
+	(symbolp): Accept either symbols or keywords.
+	(set-default, default-boundp, default-value,
+	local-variable-if-set-p): New.
+
+	* primitives/match.scm (string-match, match-data): Store last
+	match data in Emacs rather than Guile form, to simplify
+	implementation of ...
+	(set-match-data, store-match-data): New.
+
+	* primitives/load.scm (autoload, current-load-list): New.  (But
+	autoload is just stubbed, not properly implemented.)
+
+	* primitives/lists.scm (nth, listp, consp, nconc): New.
+
+	* primitives/fns.scm (byte-code-function-p, run-hooks): New.
+
+	* transform.scm (transform-application, transformer-macro): New
+	scheme for transforming procedure arguments while leaving macro
+	args untransformed.  (See also associated change in libguile.)
+	(m-defconst): Simplified, now uses m-setq.
+
+	* Makefile.am: Changed so that it only deals with files directly
+	in this directory; otherwise files don't install cleanly.
+
+	* internals/Makefile.am, primitives/Makefile.am,
+	internals/.cvsignore, primitives/.cvsignore: New files.
+
+2001-10-26  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* transform.scm (transformer): New handling for (1) quasiquoting
+	syntax like "(` ...)" as well as the more normal "` ..."; (2)
+	`function'; (3) interactive specification in lambda body.
+	Simplied handling for `setq'.
+	(transform-inside-qq): Fixed to handle improper as well as proper
+	lists.
+	(transform-lambda/interactive): New; wraps transform-lambda to
+	handle setting of various procedure properties.
+	(transform-lambda, m-defmacro): Changed `args' and `num-args' to
+	`%--args' and `%--num-args' in the hope of avoiding lexical
+	vs. dynamic name clashes.
+	(m-and): Use #f instead of '() where a condition fails.
+
+	Plus big hierarchy reorganization, in which most of the previous
+	occupants of lang/elisp moved to lang/elisp/primitives, with some
+	internal processing being split out into lang/elisp/internals.
+	The upshot looks like this:
+
+	* internals/trace.scm, internals/set.scm, internals/load.scm,
+	internals/fset.scm, internals/signal.scm, internals/time.scm,
+	internals/format.scm, internals/null.scm,
+	internals/evaluation.scm, primitives/buffers.scm,
+	primitives/features.scm, primitives/format.scm,
+	primitives/time.scm, primitives/guile.scm, primitives/keymaps.scm,
+	primitives/lists.scm, primitives/load.scm, primitives/match.scm,
+	primitives/numbers.scm, primitives/pure.scm, primitives/read.scm,
+	primitives/signal.scm, primitives/strings.scm,
+	primitives/symprop.scm, primitives/system.scm, primitives/fns.scm:
+	New files.
+
+	* features.scm, format.scm, fset.scm, guile.scm, keymaps.scm,
+	lists.scm, load.scm, match.scm, numbers.scm, pure.scm, read.scm,
+	signal.scm, strings.scm, symprop.scm, system.scm, time.scm,
+	trace.scm: Removed files.
+	
+2001-10-23  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* match.scm (string-match): New implementation using new
+	`make-emacs-regexp' primitive; old workaround implementation
+	renamed to `string-match-workaround'.
+
+2001-10-21  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* transform.scm (m-defun, m-defmacro, m-let, m-defvar,
+	m-defconst): Use more selective tracing mechanism (provided by new
+	file trace.scm).
+	
+	* symprop.scm (get, boundp), transform.scm (transform-lambda,
+	m-defmacro): Remove unnecessary uses of nil-ify and t-ify.
+	
+	* match.scm (string-match): Workaround Guile/libc regex
+	parenthesis bug.
+
+	* emacs.scm: Move elisp primitive definitions into more specific
+	files, so that emacs.scm contains only overall code.
+
+	* Makefile.am: Added new files.
+	
+	* numbers.scm, trace.scm, time.scm, pure.scm, system.scm,
+	read.scm, calling.scm, guile.scm: New files.
+
+2001-10-20  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* Makefile.am (elisp_sources): Added match.scm and strings.scm.
+
+	* match.scm, strings.scm: New files.
+
+2001-10-19  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* transform.scm: Replace uses of `nil' by `#f' or `'()'.
+
+	* Makefile.am (elisp_sources): Added lists.scm.
+
+	* load.scm (the-elisp-module): Corrected (lang elisp emacs) module
+	name.
+
+	* lists.scm (lang): New file containing list-related primitives.
+
+	* emacs.scm: Corrected module name.
+
+2001-10-19  Neil Jerram  <neil@ossau.uklinux.net>
+
+	Initial implementation of an Emacs Lisp translator, based on
+	transformer code originally written by Mikael Djurfeldt.
+	
+	* Makefile.am, .cvsignore: New.
+
+	* ChangeLog, README, buffers.scm, emacs.scm, features.scm,
+	format.scm, fset.scm, keymaps.scm, load.scm, signal.scm,
+	symprop.scm, transform.scm: New files.
+	
+

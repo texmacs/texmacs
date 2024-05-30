@@ -1,0 +1,112 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node API Overview
+@section Overview of the Guile API
+
+Guile's application programming interface (@dfn{API}) makes
+functionality available that an application developer can use in either
+C or Scheme programming.  The interface consists of @dfn{elements} that
+may be macros, functions or variables in C, and procedures, variables,
+syntax or other types of object in Scheme.
+
+Many elements are available to both Scheme and C, in a form that is
+appropriate.  For example, the @code{assq} Scheme procedure is also
+available as @code{scm_assq} to C code.  These elements are documented
+only once, addressing both the Scheme and C aspects of them.
+
+The Scheme name of an element is related to its C name in a regular
+way.  Also, a C function takes its parameters in a systematic way.
+
+Normally, the name of a C function can be derived given its Scheme name,
+using some simple textual transformations:
+
+@itemize @bullet
+
+@item
+Replace @code{-} (hyphen) with @code{_} (underscore).
+
+@item
+Replace @code{?} (question mark) with @code{_p}.
+
+@item
+Replace @code{!} (exclamation point) with @code{_x}.
+
+@item
+Replace internal @code{->} with @code{_to_}.
+
+@item
+Replace @code{<=} (less than or equal) with @code{_leq}.
+
+@item
+Replace @code{>=} (greater than or equal) with @code{_geq}.
+
+@item
+Replace @code{<} (less than) with @code{_less}.
+
+@item
+Replace @code{>} (greater than) with @code{_gr}.
+
+@item
+Prefix with @code{scm_}.
+
+@end itemize
+
+@c Here is an Emacs Lisp command that prompts for a Scheme function name and
+@c inserts the corresponding C function name into the buffer.
+
+@c @example
+@c (defun insert-scheme-to-C (name &optional use-gh)
+@c   "Transforms Scheme NAME, a string, to its C counterpart, and inserts it.
+@c Prefix arg non-nil means use \"gh_\" prefix, otherwise use \"scm_\" prefix."
+@c   (interactive "sScheme name: \nP")
+@c   (let ((transforms '(("-"  . "_")
+@c                       ("?"  . "_p")
+@c                       ("!"  . "_x")
+@c                       ("->" . "_to_")
+@c                       ("<=" . "_leq")
+@c                       (">=" . "_geq")
+@c                       ("<"  . "_less")
+@c                       (">"  . "_gr")
+@c                       ("@@"  . "at"))))
+@c     (while transforms
+@c       (let ((trigger (concat "\\(.*\\)"
+@c                              (regexp-quote (caar transforms))
+@c                              "\\(.*\\)"))
+@c             (sub (cdar transforms))
+@c             (m nil))
+@c         (while (setq m (string-match trigger name))
+@c           (setq name (concat (match-string 1 name)
+@c                              sub
+@c                              (match-string 2 name)))))
+@c       (setq transforms (cdr transforms))))
+@c   (insert (if use-gh "gh_" "scm_") name))
+@c @end example
+
+A C function always takes a fixed number of arguments of type
+@code{SCM}, even when the corresponding Scheme function takes a
+variable number.
+
+For some Scheme functions, some last arguments are optional; the
+corresponding C function must always be invoked with all optional
+arguments specified.  To get the effect as if an argument has not been
+specified, pass @code{SCM_UNDEFINED} as its value.  You can not do
+this for an argument in the middle; when one argument is
+@code{SCM_UNDEFINED} all the ones following it must be
+@code{SCM_UNDEFINED} as well.
+
+Some Scheme functions take an arbitrary number of @emph{rest}
+arguments; the corresponding C function must be invoked with a list of
+all these arguments.  This list is always the last argument of the C
+function.
+
+These two variants can also be combined.
+
+The type of the return value of a C function that corresponds to a
+Scheme function is always @code{SCM}.  In the descriptions below,
+types are therefore often omitted bot for the return value and for the
+arguments.

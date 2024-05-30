@@ -1,0 +1,5142 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004, 2006, 2007, 2008
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Simple Data Types
+@section Simple Generic Data Types
+
+This chapter describes those of Guile's simple data types which are
+primarily used for their role as items of generic data.  By
+@dfn{simple} we mean data types that are not primarily used as
+containers to hold other data --- i.e.@: pairs, lists, vectors and so on.
+For the documentation of such @dfn{compound} data types, see
+@ref{Compound Data Types}.
+
+@c One of the great strengths of Scheme is that there is no straightforward
+@c distinction between ``data'' and ``functionality''.  For example,
+@c Guile's support for dynamic linking could be described:
+
+@c @itemize @bullet
+@c @item
+@c either in a ``data-centric'' way, as the behaviour and properties of the
+@c ``dynamically linked object'' data type, and the operations that may be
+@c applied to instances of this type
+
+@c @item
+@c or in a ``functionality-centric'' way, as the set of procedures that
+@c constitute Guile's support for dynamic linking, in the context of the
+@c module system.
+@c @end itemize
+
+@c The contents of this chapter are, therefore, a matter of judgment.  By
+@c @dfn{generic}, we mean to select those data types whose typical use as
+@c @emph{data} in a wide variety of programming contexts is more important
+@c than their use in the implementation of a particular piece of
+@c @emph{functionality}.  The last section of this chapter provides
+@c references for all the data types that are documented not here but in a
+@c ``functionality-centric'' way elsewhere in the manual.
+
+@menu
+* Booleans::                    True/false values.
+* Numbers::                     Numerical data types.
+* Characters::                  Single characters.
+* Character Sets::              Sets of characters.
+* Strings::                     Sequences of characters.
+* Regular Expressions::         Pattern matching and substitution.
+* Symbols::                     Symbols.
+* Keywords::                    Self-quoting, customizable display keywords.
+* Other Types::                 "Functionality-centric" data types.
+@end menu
+
+
+@node Booleans
+@subsection Booleans
+@tpindex Booleans
+
+The two boolean values are @code{#t} for true and @code{#f} for false.
+
+Boolean values are returned by predicate procedures, such as the general
+equality predicates @code{eq?}, @code{eqv?} and @code{equal?}
+(@pxref{Equality}) and numerical and string comparison operators like
+@code{string=?} (@pxref{String Comparison}) and @code{<=}
+(@pxref{Comparison}).
+
+@lisp
+(<= 3 8)
+@result{} #t
+
+(<= 3 -3)
+@result{} #f
+
+(equal? "house" "houses")
+@result{} #f
+
+(eq? #f #f)
+@result{}
+#t
+@end lisp
+
+In test condition contexts like @code{if} and @code{cond} (@pxref{if
+cond case}), where a group of subexpressions will be evaluated only if a
+@var{condition} expression evaluates to ``true'', ``true'' means any
+value at all except @code{#f}.
+
+@lisp
+(if #t "yes" "no")
+@result{} "yes"
+
+(if 0 "yes" "no")
+@result{} "yes"
+
+(if #f "yes" "no")
+@result{} "no"
+@end lisp
+
+A result of this asymmetry is that typical Scheme source code more often
+uses @code{#f} explicitly than @code{#t}: @code{#f} is necessary to
+represent an @code{if} or @code{cond} false value, whereas @code{#t} is
+not necessary to represent an @code{if} or @code{cond} true value.
+
+It is important to note that @code{#f} is @strong{not} equivalent to any
+other Scheme value.  In particular, @code{#f} is not the same as the
+number 0 (like in C and C++), and not the same as the ``empty list''
+(like in some Lisp dialects).
+
+In C, the two Scheme boolean values are available as the two constants
+@code{SCM_BOOL_T} for @code{#t} and @code{SCM_BOOL_F} for @code{#f}.
+Care must be taken with the false value @code{SCM_BOOL_F}: it is not
+false when used in C conditionals.  In order to test for it, use
+@code{scm_is_false} or @code{scm_is_true}.
+
+@rnindex not
+@deffn {Scheme Procedure} not x
+@deffnx {C Function} scm_not (x)
+Return @code{#t} if @var{x} is @code{#f}, else return @code{#f}.
+@end deffn
+
+@rnindex boolean?
+@deffn {Scheme Procedure} boolean? obj
+@deffnx {C Function} scm_boolean_p (obj)
+Return @code{#t} if @var{obj} is either @code{#t} or @code{#f}, else
+return @code{#f}.
+@end deffn
+
+@deftypevr {C Macro} SCM SCM_BOOL_T
+The @code{SCM} representation of the Scheme object @code{#t}.
+@end deftypevr
+
+@deftypevr {C Macro} SCM SCM_BOOL_F
+The @code{SCM} representation of the Scheme object @code{#f}.
+@end deftypevr
+
+@deftypefn {C Function} int scm_is_true (SCM obj)
+Return @code{0} if @var{obj} is @code{#f}, else return @code{1}.
+@end deftypefn
+
+@deftypefn {C Function} int scm_is_false (SCM obj)
+Return @code{1} if @var{obj} is @code{#f}, else return @code{0}.
+@end deftypefn
+
+@deftypefn {C Function} int scm_is_bool (SCM obj)
+Return @code{1} if @var{obj} is either @code{#t} or @code{#f}, else
+return @code{0}.
+@end deftypefn
+
+@deftypefn {C Function} SCM scm_from_bool (int val)
+Return @code{#f} if @var{val} is @code{0}, else return @code{#t}.
+@end deftypefn
+
+@deftypefn {C Function} int scm_to_bool (SCM val)
+Return @code{1} if @var{val} is @code{SCM_BOOL_T}, return @code{0}
+when @var{val} is @code{SCM_BOOL_F}, else signal a `wrong type' error.
+
+You should probably use @code{scm_is_true} instead of this function
+when you just want to test a @code{SCM} value for trueness.
+@end deftypefn
+
+@node Numbers
+@subsection Numerical data types
+@tpindex Numbers
+
+Guile supports a rich ``tower'' of numerical types --- integer,
+rational, real and complex --- and provides an extensive set of
+mathematical and scientific functions for operating on numerical
+data.  This section of the manual documents those types and functions.
+
+You may also find it illuminating to read R5RS's presentation of numbers
+in Scheme, which is particularly clear and accessible: see
+@ref{Numbers,,,r5rs,R5RS}.
+
+@menu
+* Numerical Tower::             Scheme's numerical "tower".
+* Integers::                    Whole numbers.
+* Reals and Rationals::         Real and rational numbers.
+* Complex Numbers::             Complex numbers.
+* Exactness::                   Exactness and inexactness.
+* Number Syntax::               Read syntax for numerical data.
+* Integer Operations::          Operations on integer values.
+* Comparison::                  Comparison predicates.
+* Conversion::                  Converting numbers to and from strings.
+* Complex::                     Complex number operations.
+* Arithmetic::                  Arithmetic functions.
+* Scientific::                  Scientific functions.
+* Primitive Numerics::          Primitive numeric functions.
+* Bitwise Operations::          Logical AND, OR, NOT, and so on.
+* Random::                      Random number generation.
+@end menu
+
+
+@node Numerical Tower
+@subsubsection Scheme's Numerical ``Tower''
+@rnindex number?
+
+Scheme's numerical ``tower'' consists of the following categories of
+numbers:
+
+@table @dfn
+@item integers
+Whole numbers, positive or negative; e.g.@: --5, 0, 18.
+
+@item rationals
+The set of numbers that can be expressed as @math{@var{p}/@var{q}}
+where @var{p} and @var{q} are integers; e.g.@: @math{9/16} works, but
+pi (an irrational number) doesn't. These include integers
+(@math{@var{n}/1}).
+
+@item real numbers
+The set of numbers that describes all possible positions along a
+one-dimensional line. This includes rationals as well as irrational
+numbers.
+
+@item complex numbers
+The set of numbers that describes all possible positions in a two
+dimensional space. This includes real as well as imaginary numbers
+(@math{@var{a}+@var{b}i}, where @var{a} is the @dfn{real part},
+@var{b} is the @dfn{imaginary part}, and @math{i} is the square root of
+@minus{}1.)
+@end table
+
+It is called a tower because each category ``sits on'' the one that
+follows it, in the sense that every integer is also a rational, every
+rational is also real, and every real number is also a complex number
+(but with zero imaginary part).
+
+In addition to the classification into integers, rationals, reals and
+complex numbers, Scheme also distinguishes between whether a number is
+represented exactly or not.  For example, the result of
+@m{2\sin(\pi/4),2*sin(pi/4)} is exactly @m{\sqrt{2},2^(1/2)}, but Guile
+can represent neither @m{\pi/4,pi/4} nor @m{\sqrt{2},2^(1/2)} exactly.
+Instead, it stores an inexact approximation, using the C type
+@code{double}.
+
+Guile can represent exact rationals of any magnitude, inexact
+rationals that fit into a C @code{double}, and inexact complex numbers
+with @code{double} real and imaginary parts.
+
+The @code{number?} predicate may be applied to any Scheme value to
+discover whether the value is any of the supported numerical types.
+
+@deffn {Scheme Procedure} number? obj
+@deffnx {C Function} scm_number_p (obj)
+Return @code{#t} if @var{obj} is any kind of number, else @code{#f}.
+@end deffn
+
+For example:
+
+@lisp
+(number? 3)
+@result{} #t
+
+(number? "hello there!")
+@result{} #f
+
+(define pi 3.141592654)
+(number? pi)
+@result{} #t
+@end lisp
+
+@deftypefn {C Function} int scm_is_number (SCM obj)
+This is equivalent to @code{scm_is_true (scm_number_p (obj))}.
+@end deftypefn
+
+The next few subsections document each of Guile's numerical data types
+in detail.
+
+@node Integers
+@subsubsection Integers
+
+@tpindex Integer numbers
+
+@rnindex integer?
+
+Integers are whole numbers, that is numbers with no fractional part,
+such as 2, 83, and @minus{}3789.
+
+Integers in Guile can be arbitrarily big, as shown by the following
+example.
+
+@lisp
+(define (factorial n)
+  (let loop ((n n) (product 1))
+    (if (= n 0)
+        product
+        (loop (- n 1) (* product n)))))
+
+(factorial 3)
+@result{} 6
+
+(factorial 20)
+@result{} 2432902008176640000
+
+(- (factorial 45))
+@result{} -119622220865480194561963161495657715064383733760000000000
+@end lisp
+
+Readers whose background is in programming languages where integers are
+limited by the need to fit into just 4 or 8 bytes of memory may find
+this surprising, or suspect that Guile's representation of integers is
+inefficient.  In fact, Guile achieves a near optimal balance of
+convenience and efficiency by using the host computer's native
+representation of integers where possible, and a more general
+representation where the required number does not fit in the native
+form.  Conversion between these two representations is automatic and
+completely invisible to the Scheme level programmer.
+
+The infinities @samp{+inf.0} and @samp{-inf.0} are considered to be
+inexact integers.  They are explained in detail in the next section,
+together with reals and rationals.
+
+C has a host of different integer types, and Guile offers a host of
+functions to convert between them and the @code{SCM} representation.
+For example, a C @code{int} can be handled with @code{scm_to_int} and
+@code{scm_from_int}.  Guile also defines a few C integer types of its
+own, to help with differences between systems.
+
+C integer types that are not covered can be handled with the generic
+@code{scm_to_signed_integer} and @code{scm_from_signed_integer} for
+signed types, or with @code{scm_to_unsigned_integer} and
+@code{scm_from_unsigned_integer} for unsigned types.
+
+Scheme integers can be exact and inexact.  For example, a number
+written as @code{3.0} with an explicit decimal-point is inexact, but
+it is also an integer.  The functions @code{integer?} and
+@code{scm_is_integer} report true for such a number, but the functions
+@code{scm_is_signed_integer} and @code{scm_is_unsigned_integer} only
+allow exact integers and thus report false.  Likewise, the conversion
+functions like @code{scm_to_signed_integer} only accept exact
+integers.
+
+The motivation for this behavior is that the inexactness of a number
+should not be lost silently.  If you want to allow inexact integers,
+you can explicitly insert a call to @code{inexact->exact} or to its C
+equivalent @code{scm_inexact_to_exact}.  (Only inexact integers will
+be converted by this call into exact integers; inexact non-integers
+will become exact fractions.)
+
+@deffn {Scheme Procedure} integer? x
+@deffnx {C Function} scm_integer_p (x)
+Return @code{#t} if @var{x} is an exact or inexact integer number, else
+@code{#f}.
+
+@lisp
+(integer? 487)
+@result{} #t
+
+(integer? 3.0)
+@result{} #t
+
+(integer? -3.4)
+@result{} #f
+
+(integer? +inf.0)
+@result{} #t
+@end lisp
+@end deffn
+
+@deftypefn {C Function} int scm_is_integer (SCM x)
+This is equivalent to @code{scm_is_true (scm_integer_p (x))}.
+@end deftypefn
+
+@defvr  {C Type} scm_t_int8
+@defvrx {C Type} scm_t_uint8
+@defvrx {C Type} scm_t_int16
+@defvrx {C Type} scm_t_uint16
+@defvrx {C Type} scm_t_int32
+@defvrx {C Type} scm_t_uint32
+@defvrx {C Type} scm_t_int64
+@defvrx {C Type} scm_t_uint64
+@defvrx {C Type} scm_t_intmax
+@defvrx {C Type} scm_t_uintmax
+The C types are equivalent to the corresponding ISO C types but are
+defined on all platforms, with the exception of @code{scm_t_int64} and
+@code{scm_t_uint64}, which are only defined when a 64-bit type is
+available.  For example, @code{scm_t_int8} is equivalent to
+@code{int8_t}.
+
+You can regard these definitions as a stop-gap measure until all
+platforms provide these types.  If you know that all the platforms
+that you are interested in already provide these types, it is better
+to use them directly instead of the types provided by Guile.
+@end defvr
+
+@deftypefn  {C Function} int scm_is_signed_integer (SCM x, scm_t_intmax min, scm_t_intmax max)
+@deftypefnx {C Function} int scm_is_unsigned_integer (SCM x, scm_t_uintmax min, scm_t_uintmax max)
+Return @code{1} when @var{x} represents an exact integer that is
+between @var{min} and @var{max}, inclusive.
+
+These functions can be used to check whether a @code{SCM} value will
+fit into a given range, such as the range of a given C integer type.
+If you just want to convert a @code{SCM} value to a given C integer
+type, use one of the conversion functions directly.
+@end deftypefn
+
+@deftypefn  {C Function} scm_t_intmax scm_to_signed_integer (SCM x, scm_t_intmax min, scm_t_intmax max)
+@deftypefnx {C Function} scm_t_uintmax scm_to_unsigned_integer (SCM x, scm_t_uintmax min, scm_t_uintmax max)
+When @var{x} represents an exact integer that is between @var{min} and
+@var{max} inclusive, return that integer.  Else signal an error,
+either a `wrong-type' error when @var{x} is not an exact integer, or
+an `out-of-range' error when it doesn't fit the given range.
+@end deftypefn
+
+@deftypefn  {C Function} SCM scm_from_signed_integer (scm_t_intmax x)
+@deftypefnx {C Function} SCM scm_from_unsigned_integer (scm_t_uintmax x)
+Return the @code{SCM} value that represents the integer @var{x}.  This
+function will always succeed and will always return an exact number.
+@end deftypefn
+
+@deftypefn  {C Function} char scm_to_char (SCM x)
+@deftypefnx {C Function} {signed char} scm_to_schar (SCM x)
+@deftypefnx {C Function} {unsigned char} scm_to_uchar (SCM x)
+@deftypefnx {C Function} short scm_to_short (SCM x)
+@deftypefnx {C Function} {unsigned short} scm_to_ushort (SCM x)
+@deftypefnx {C Function} int scm_to_int (SCM x)
+@deftypefnx {C Function} {unsigned int} scm_to_uint (SCM x)
+@deftypefnx {C Function} long scm_to_long (SCM x)
+@deftypefnx {C Function} {unsigned long} scm_to_ulong (SCM x)
+@deftypefnx {C Function} {long long} scm_to_long_long (SCM x)
+@deftypefnx {C Function} {unsigned long long} scm_to_ulong_long (SCM x)
+@deftypefnx {C Function} size_t scm_to_size_t (SCM x)
+@deftypefnx {C Function} ssize_t scm_to_ssize_t (SCM x)
+@deftypefnx {C Function} scm_t_int8 scm_to_int8 (SCM x)
+@deftypefnx {C Function} scm_t_uint8 scm_to_uint8 (SCM x)
+@deftypefnx {C Function} scm_t_int16 scm_to_int16 (SCM x)
+@deftypefnx {C Function} scm_t_uint16 scm_to_uint16 (SCM x)
+@deftypefnx {C Function} scm_t_int32 scm_to_int32 (SCM x)
+@deftypefnx {C Function} scm_t_uint32 scm_to_uint32 (SCM x)
+@deftypefnx {C Function} scm_t_int64 scm_to_int64 (SCM x)
+@deftypefnx {C Function} scm_t_uint64 scm_to_uint64 (SCM x)
+@deftypefnx {C Function} scm_t_intmax scm_to_intmax (SCM x)
+@deftypefnx {C Function} scm_t_uintmax scm_to_uintmax (SCM x)
+When @var{x} represents an exact integer that fits into the indicated
+C type, return that integer.  Else signal an error, either a
+`wrong-type' error when @var{x} is not an exact integer, or an
+`out-of-range' error when it doesn't fit the given range.
+
+The functions @code{scm_to_long_long}, @code{scm_to_ulong_long},
+@code{scm_to_int64}, and @code{scm_to_uint64} are only available when
+the corresponding types are.
+@end deftypefn
+
+@deftypefn  {C Function} SCM scm_from_char (char x)
+@deftypefnx {C Function} SCM scm_from_schar (signed char x)
+@deftypefnx {C Function} SCM scm_from_uchar (unsigned char x)
+@deftypefnx {C Function} SCM scm_from_short (short x)
+@deftypefnx {C Function} SCM scm_from_ushort (unsigned short x)
+@deftypefnx {C Function} SCM scm_from_int (int  x)
+@deftypefnx {C Function} SCM scm_from_uint (unsigned int x)
+@deftypefnx {C Function} SCM scm_from_long (long x)
+@deftypefnx {C Function} SCM scm_from_ulong (unsigned long x)
+@deftypefnx {C Function} SCM scm_from_long_long (long long x)
+@deftypefnx {C Function} SCM scm_from_ulong_long (unsigned long long x)
+@deftypefnx {C Function} SCM scm_from_size_t (size_t x)
+@deftypefnx {C Function} SCM scm_from_ssize_t (ssize_t x)
+@deftypefnx {C Function} SCM scm_from_int8 (scm_t_int8 x)
+@deftypefnx {C Function} SCM scm_from_uint8 (scm_t_uint8 x)
+@deftypefnx {C Function} SCM scm_from_int16 (scm_t_int16 x)
+@deftypefnx {C Function} SCM scm_from_uint16 (scm_t_uint16 x)
+@deftypefnx {C Function} SCM scm_from_int32 (scm_t_int32 x)
+@deftypefnx {C Function} SCM scm_from_uint32 (scm_t_uint32 x)
+@deftypefnx {C Function} SCM scm_from_int64 (scm_t_int64 x)
+@deftypefnx {C Function} SCM scm_from_uint64 (scm_t_uint64 x)
+@deftypefnx {C Function} SCM scm_from_intmax (scm_t_intmax x)
+@deftypefnx {C Function} SCM scm_from_uintmax (scm_t_uintmax x)
+Return the @code{SCM} value that represents the integer @var{x}.
+These functions will always succeed and will always return an exact
+number.
+@end deftypefn
+
+@deftypefn {C Function} void scm_to_mpz (SCM val, mpz_t rop)
+Assign @var{val} to the multiple precision integer @var{rop}.
+@var{val} must be an exact integer, otherwise an error will be
+signalled.  @var{rop} must have been initialized with @code{mpz_init}
+before this function is called.  When @var{rop} is no longer needed
+the occupied space must be freed with @code{mpz_clear}.
+@xref{Initializing Integers,,, gmp, GNU MP Manual}, for details.
+@end deftypefn
+
+@deftypefn {C Function} SCM scm_from_mpz (mpz_t val)
+Return the @code{SCM} value that represents @var{val}.
+@end deftypefn
+
+@node Reals and Rationals
+@subsubsection Real and Rational Numbers
+@tpindex Real numbers
+@tpindex Rational numbers
+
+@rnindex real?
+@rnindex rational?
+
+Mathematically, the real numbers are the set of numbers that describe
+all possible points along a continuous, infinite, one-dimensional line.
+The rational numbers are the set of all numbers that can be written as
+fractions @var{p}/@var{q}, where @var{p} and @var{q} are integers.
+All rational numbers are also real, but there are real numbers that
+are not rational, for example @m{\sqrt2, the square root of 2}, and
+@m{\pi,pi}.
+
+Guile can represent both exact and inexact rational numbers, but it
+can not represent irrational numbers.  Exact rationals are represented
+by storing the numerator and denominator as two exact integers.
+Inexact rationals are stored as floating point numbers using the C
+type @code{double}.
+
+Exact rationals are written as a fraction of integers.  There must be
+no whitespace around the slash:
+
+@lisp
+1/2
+-22/7
+@end lisp
+
+Even though the actual encoding of inexact rationals is in binary, it
+may be helpful to think of it as a decimal number with a limited
+number of significant figures and a decimal point somewhere, since
+this corresponds to the standard notation for non-whole numbers.  For
+example:
+
+@lisp
+0.34
+-0.00000142857931198
+-5648394822220000000000.0
+4.0
+@end lisp
+
+The limited precision of Guile's encoding means that any ``real'' number
+in Guile can be written in a rational form, by multiplying and then dividing
+by sufficient powers of 10 (or in fact, 2).  For example,
+@samp{-0.00000142857931198} is the same as @minus{}142857931198 divided by
+100000000000000000.  In Guile's current incarnation, therefore, the
+@code{rational?} and @code{real?} predicates are equivalent.
+
+
+Dividing by an exact zero leads to a error message, as one might
+expect.  However, dividing by an inexact zero does not produce an
+error.  Instead, the result of the division is either plus or minus
+infinity, depending on the sign of the divided number.
+
+The infinities are written @samp{+inf.0} and @samp{-inf.0},
+respectivly.  This syntax is also recognized by @code{read} as an
+extension to the usual Scheme syntax.
+
+Dividing zero by zero yields something that is not a number at all:
+@samp{+nan.0}.  This is the special `not a number' value.
+
+On platforms that follow @acronym{IEEE} 754 for their floating point
+arithmetic, the @samp{+inf.0}, @samp{-inf.0}, and @samp{+nan.0} values
+are implemented using the corresponding @acronym{IEEE} 754 values.
+They behave in arithmetic operations like @acronym{IEEE} 754 describes
+it, i.e., @code{(= +nan.0 +nan.0)} @result{} @code{#f}.
+
+The infinities are inexact integers and are considered to be both even
+and odd.  While @samp{+nan.0} is not @code{=} to itself, it is
+@code{eqv?} to itself.
+
+To test for the special values, use the functions @code{inf?} and
+@code{nan?}.
+
+@deffn {Scheme Procedure} real? obj
+@deffnx {C Function} scm_real_p (obj)
+Return @code{#t} if @var{obj} is a real number, else @code{#f}.  Note
+that the sets of integer and rational values form subsets of the set
+of real numbers, so the predicate will also be fulfilled if @var{obj}
+is an integer number or a rational number.
+@end deffn
+
+@deffn {Scheme Procedure} rational? x
+@deffnx {C Function} scm_rational_p (x)
+Return @code{#t} if @var{x} is a rational number, @code{#f} otherwise.
+Note that the set of integer values forms a subset of the set of
+rational numbers, i. e. the predicate will also be fulfilled if
+@var{x} is an integer number.
+
+Since Guile can not represent irrational numbers, every number
+satisfying @code{real?} also satisfies @code{rational?} in Guile.
+@end deffn
+
+@deffn {Scheme Procedure} rationalize x eps
+@deffnx {C Function} scm_rationalize (x, eps)
+Returns the @emph{simplest} rational number differing
+from @var{x} by no more than @var{eps}.  
+
+As required by @acronym{R5RS}, @code{rationalize} only returns an
+exact result when both its arguments are exact.  Thus, you might need
+to use @code{inexact->exact} on the arguments.
+
+@lisp
+(rationalize (inexact->exact 1.2) 1/100)
+@result{} 6/5
+@end lisp
+
+@end deffn
+
+@deffn  {Scheme Procedure} inf? x
+@deffnx {C Function} scm_inf_p (x)
+Return @code{#t} if @var{x} is either @samp{+inf.0} or @samp{-inf.0},
+@code{#f} otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} nan? x
+@deffnx {C Function} scm_nan_p (x)
+Return @code{#t} if @var{x} is @samp{+nan.0}, @code{#f} otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} nan
+@deffnx {C Function} scm_nan ()
+Return NaN.
+@end deffn
+
+@deffn {Scheme Procedure} inf
+@deffnx {C Function} scm_inf ()
+Return Inf.
+@end deffn
+
+@deffn {Scheme Procedure} numerator x
+@deffnx {C Function} scm_numerator (x)
+Return the numerator of the rational number @var{x}.
+@end deffn
+
+@deffn {Scheme Procedure} denominator x
+@deffnx {C Function} scm_denominator (x)
+Return the denominator of the rational number @var{x}.
+@end deffn
+
+@deftypefn  {C Function} int scm_is_real (SCM val)
+@deftypefnx {C Function} int scm_is_rational (SCM val)
+Equivalent to @code{scm_is_true (scm_real_p (val))} and
+@code{scm_is_true (scm_rational_p (val))}, respectively.
+@end deftypefn
+
+@deftypefn {C Function} double scm_to_double (SCM val)
+Returns the number closest to @var{val} that is representable as a
+@code{double}.  Returns infinity for a @var{val} that is too large in
+magnitude.  The argument @var{val} must be a real number.
+@end deftypefn
+
+@deftypefn {C Function} SCM scm_from_double (double val)
+Return the @code{SCM} value that representats @var{val}.  The returned
+value is inexact according to the predicate @code{inexact?}, but it
+will be exactly equal to @var{val}.
+@end deftypefn
+
+@node Complex Numbers
+@subsubsection Complex Numbers
+@tpindex Complex numbers
+
+@rnindex complex?
+
+Complex numbers are the set of numbers that describe all possible points
+in a two-dimensional space.  The two coordinates of a particular point
+in this space are known as the @dfn{real} and @dfn{imaginary} parts of
+the complex number that describes that point.
+
+In Guile, complex numbers are written in rectangular form as the sum of
+their real and imaginary parts, using the symbol @code{i} to indicate
+the imaginary part.
+
+@lisp
+3+4i
+@result{}
+3.0+4.0i
+
+(* 3-8i 2.3+0.3i)
+@result{}
+9.3-17.5i
+@end lisp
+
+@cindex polar form
+@noindent
+Polar form can also be used, with an @samp{@@} between magnitude and
+angle,
+
+@lisp
+1@@3.141592 @result{} -1.0      (approx)
+-1@@1.57079 @result{} 0.0-1.0i  (approx)
+@end lisp
+
+Guile represents a complex number with a non-zero imaginary part as a
+pair of inexact rationals, so the real and imaginary parts of a
+complex number have the same properties of inexactness and limited
+precision as single inexact rational numbers.  Guile can not represent
+exact complex numbers with non-zero imaginary parts.
+
+@deffn {Scheme Procedure} complex? z
+@deffnx {C Function} scm_complex_p (z)
+Return @code{#t} if @var{x} is a complex number, @code{#f}
+otherwise.  Note that the sets of real, rational and integer
+values form subsets of the set of complex numbers, i. e. the
+predicate will also be fulfilled if @var{x} is a real,
+rational or integer number.
+@end deffn
+
+@deftypefn {C Function} int scm_is_complex (SCM val)
+Equivalent to @code{scm_is_true (scm_complex_p (val))}.
+@end deftypefn
+
+@node Exactness
+@subsubsection Exact and Inexact Numbers
+@tpindex Exact numbers
+@tpindex Inexact numbers
+
+@rnindex exact?
+@rnindex inexact?
+@rnindex exact->inexact
+@rnindex inexact->exact
+
+R5RS requires that a calculation involving inexact numbers always
+produces an inexact result.  To meet this requirement, Guile
+distinguishes between an exact integer value such as @samp{5} and the
+corresponding inexact real value which, to the limited precision
+available, has no fractional part, and is printed as @samp{5.0}.  Guile
+will only convert the latter value to the former when forced to do so by
+an invocation of the @code{inexact->exact} procedure.
+
+@deffn {Scheme Procedure} exact? z
+@deffnx {C Function} scm_exact_p (z)
+Return @code{#t} if the number @var{z} is exact, @code{#f}
+otherwise.
+
+@lisp
+(exact? 2)
+@result{} #t
+
+(exact? 0.5)
+@result{} #f
+
+(exact? (/ 2))
+@result{} #t
+@end lisp
+
+@end deffn
+
+@deffn {Scheme Procedure} inexact? z
+@deffnx {C Function} scm_inexact_p (z)
+Return @code{#t} if the number @var{z} is inexact, @code{#f}
+else.
+@end deffn
+
+@deffn {Scheme Procedure} inexact->exact z
+@deffnx {C Function} scm_inexact_to_exact (z)
+Return an exact number that is numerically closest to @var{z}, when
+there is one.  For inexact rationals, Guile returns the exact rational
+that is numerically equal to the inexact rational.  Inexact complex
+numbers with a non-zero imaginary part can not be made exact.
+
+@lisp
+(inexact->exact 0.5)
+@result{} 1/2
+@end lisp
+
+The following happens because 12/10 is not exactly representable as a
+@code{double} (on most platforms).  However, when reading a decimal
+number that has been marked exact with the ``#e'' prefix, Guile is
+able to represent it correctly.
+
+@lisp
+(inexact->exact 1.2)  
+@result{} 5404319552844595/4503599627370496
+
+#e1.2
+@result{} 6/5
+@end lisp
+
+@end deffn
+
+@c begin (texi-doc-string "guile" "exact->inexact")
+@deffn {Scheme Procedure} exact->inexact z
+@deffnx {C Function} scm_exact_to_inexact (z)
+Convert the number @var{z} to its inexact representation.
+@end deffn
+
+
+@node Number Syntax
+@subsubsection Read Syntax for Numerical Data
+
+The read syntax for integers is a string of digits, optionally
+preceded by a minus or plus character, a code indicating the
+base in which the integer is encoded, and a code indicating whether
+the number is exact or inexact.  The supported base codes are:
+
+@table @code
+@item #b
+@itemx #B
+the integer is written in binary (base 2)
+
+@item #o
+@itemx #O
+the integer is written in octal (base 8)
+
+@item #d
+@itemx #D
+the integer is written in decimal (base 10)
+
+@item #x
+@itemx #X
+the integer is written in hexadecimal (base 16)
+@end table
+
+If the base code is omitted, the integer is assumed to be decimal.  The
+following examples show how these base codes are used.
+
+@lisp
+-13
+@result{} -13
+
+#d-13
+@result{} -13
+
+#x-13
+@result{} -19
+
+#b+1101
+@result{} 13
+
+#o377
+@result{} 255
+@end lisp
+
+The codes for indicating exactness (which can, incidentally, be applied
+to all numerical values) are:
+
+@table @code
+@item #e
+@itemx #E
+the number is exact
+
+@item #i
+@itemx #I
+the number is inexact.
+@end table
+
+If the exactness indicator is omitted, the number is exact unless it
+contains a radix point.  Since Guile can not represent exact complex
+numbers, an error is signalled when asking for them.
+
+@lisp
+(exact? 1.2)
+@result{} #f
+
+(exact? #e1.2)
+@result{} #t
+
+(exact? #e+1i)
+ERROR: Wrong type argument
+@end lisp
+
+Guile also understands the syntax @samp{+inf.0} and @samp{-inf.0} for
+plus and minus infinity, respectively.  The value must be written
+exactly as shown, that is, they always must have a sign and exactly
+one zero digit after the decimal point.  It also understands
+@samp{+nan.0} and @samp{-nan.0} for the special `not-a-number' value.
+The sign is ignored for `not-a-number' and the value is always printed
+as @samp{+nan.0}.
+
+@node Integer Operations
+@subsubsection Operations on Integer Values
+@rnindex odd?
+@rnindex even?
+@rnindex quotient
+@rnindex remainder
+@rnindex modulo
+@rnindex gcd
+@rnindex lcm
+
+@deffn {Scheme Procedure} odd? n
+@deffnx {C Function} scm_odd_p (n)
+Return @code{#t} if @var{n} is an odd number, @code{#f}
+otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} even? n
+@deffnx {C Function} scm_even_p (n)
+Return @code{#t} if @var{n} is an even number, @code{#f}
+otherwise.
+@end deffn
+
+@c begin (texi-doc-string "guile" "quotient")
+@c begin (texi-doc-string "guile" "remainder")
+@deffn {Scheme Procedure} quotient n d
+@deffnx {Scheme Procedure} remainder n d
+@deffnx {C Function} scm_quotient (n, d)
+@deffnx {C Function} scm_remainder (n, d)
+Return the quotient or remainder from @var{n} divided by @var{d}.  The
+quotient is rounded towards zero, and the remainder will have the same
+sign as @var{n}.  In all cases quotient and remainder satisfy
+@math{@var{n} = @var{q}*@var{d} + @var{r}}.
+
+@lisp
+(remainder 13 4) @result{} 1
+(remainder -13 4) @result{} -1
+@end lisp
+@end deffn
+
+@c begin (texi-doc-string "guile" "modulo")
+@deffn {Scheme Procedure} modulo n d
+@deffnx {C Function} scm_modulo (n, d)
+Return the remainder from @var{n} divided by @var{d}, with the same
+sign as @var{d}.
+
+@lisp
+(modulo 13 4) @result{} 1
+(modulo -13 4) @result{} 3
+(modulo 13 -4) @result{} -3
+(modulo -13 -4) @result{} -1
+@end lisp
+@end deffn
+
+@c begin (texi-doc-string "guile" "gcd")
+@deffn {Scheme Procedure} gcd x@dots{}
+@deffnx {C Function} scm_gcd (x, y)
+Return the greatest common divisor of all arguments.
+If called without arguments, 0 is returned.
+
+The C function @code{scm_gcd} always takes two arguments, while the
+Scheme function can take an arbitrary number.
+@end deffn
+
+@c begin (texi-doc-string "guile" "lcm")
+@deffn {Scheme Procedure} lcm x@dots{}
+@deffnx {C Function} scm_lcm (x, y)
+Return the least common multiple of the arguments.
+If called without arguments, 1 is returned.
+
+The C function @code{scm_lcm} always takes two arguments, while the
+Scheme function can take an arbitrary number.
+@end deffn
+
+@deffn {Scheme Procedure} modulo-expt n k m
+@deffnx {C Function} scm_modulo_expt (n, k, m)
+Return @var{n} raised to the integer exponent
+@var{k}, modulo @var{m}.
+
+@lisp
+(modulo-expt 2 3 5)
+   @result{} 3
+@end lisp
+@end deffn
+
+@node Comparison
+@subsubsection Comparison Predicates
+@rnindex zero?
+@rnindex positive?
+@rnindex negative?
+
+The C comparison functions below always takes two arguments, while the
+Scheme functions can take an arbitrary number.  Also keep in mind that
+the C functions return one of the Scheme boolean values
+@code{SCM_BOOL_T} or @code{SCM_BOOL_F} which are both true as far as C
+is concerned.  Thus, always write @code{scm_is_true (scm_num_eq_p (x,
+y))} when testing the two Scheme numbers @code{x} and @code{y} for
+equality, for example.
+
+@c begin (texi-doc-string "guile" "=")
+@deffn {Scheme Procedure} =
+@deffnx {C Function} scm_num_eq_p (x, y)
+Return @code{#t} if all parameters are numerically equal.
+@end deffn
+
+@c begin (texi-doc-string "guile" "<")
+@deffn {Scheme Procedure} <
+@deffnx {C Function} scm_less_p (x, y)
+Return @code{#t} if the list of parameters is monotonically
+increasing.
+@end deffn
+
+@c begin (texi-doc-string "guile" ">")
+@deffn {Scheme Procedure} >
+@deffnx {C Function} scm_gr_p (x, y)
+Return @code{#t} if the list of parameters is monotonically
+decreasing.
+@end deffn
+
+@c begin (texi-doc-string "guile" "<=")
+@deffn {Scheme Procedure} <=
+@deffnx {C Function} scm_leq_p (x, y)
+Return @code{#t} if the list of parameters is monotonically
+non-decreasing.
+@end deffn
+
+@c begin (texi-doc-string "guile" ">=")
+@deffn {Scheme Procedure} >=
+@deffnx {C Function} scm_geq_p (x, y)
+Return @code{#t} if the list of parameters is monotonically
+non-increasing.
+@end deffn
+
+@c begin (texi-doc-string "guile" "zero?")
+@deffn {Scheme Procedure} zero? z
+@deffnx {C Function} scm_zero_p (z)
+Return @code{#t} if @var{z} is an exact or inexact number equal to
+zero.
+@end deffn
+
+@c begin (texi-doc-string "guile" "positive?")
+@deffn {Scheme Procedure} positive? x
+@deffnx {C Function} scm_positive_p (x)
+Return @code{#t} if @var{x} is an exact or inexact number greater than
+zero.
+@end deffn
+
+@c begin (texi-doc-string "guile" "negative?")
+@deffn {Scheme Procedure} negative? x
+@deffnx {C Function} scm_negative_p (x)
+Return @code{#t} if @var{x} is an exact or inexact number less than
+zero.
+@end deffn
+
+
+@node Conversion
+@subsubsection Converting Numbers To and From Strings
+@rnindex number->string
+@rnindex string->number
+
+@deffn {Scheme Procedure} number->string n [radix]
+@deffnx {C Function} scm_number_to_string (n, radix)
+Return a string holding the external representation of the
+number @var{n} in the given @var{radix}.  If @var{n} is
+inexact, a radix of 10 will be used.
+@end deffn
+
+@deffn {Scheme Procedure} string->number string [radix]
+@deffnx {C Function} scm_string_to_number (string, radix)
+Return a number of the maximally precise representation
+expressed by the given @var{string}. @var{radix} must be an
+exact integer, either 2, 8, 10, or 16. If supplied, @var{radix}
+is a default radix that may be overridden by an explicit radix
+prefix in @var{string} (e.g. "#o177"). If @var{radix} is not
+supplied, then the default radix is 10. If string is not a
+syntactically valid notation for a number, then
+@code{string->number} returns @code{#f}.
+@end deffn
+
+@deftypefn {C Function} SCM scm_c_locale_stringn_to_number (const char *string, size_t len, unsigned radix)
+As per @code{string->number} above, but taking a C string, as pointer
+and length.  The string characters should be in the current locale
+encoding (@code{locale} in the name refers only to that, there's no
+locale-dependent parsing).
+@end deftypefn
+
+
+@node Complex
+@subsubsection Complex Number Operations
+@rnindex make-rectangular
+@rnindex make-polar
+@rnindex real-part
+@rnindex imag-part
+@rnindex magnitude
+@rnindex angle
+
+@deffn {Scheme Procedure} make-rectangular real imaginary
+@deffnx {C Function} scm_make_rectangular (real, imaginary)
+Return a complex number constructed of the given @var{real} and
+@var{imaginary} parts.
+@end deffn
+
+@deffn {Scheme Procedure} make-polar x y
+@deffnx {C Function} scm_make_polar (x, y)
+@cindex polar form
+Return the complex number @var{x} * e^(i * @var{y}).
+@end deffn
+
+@c begin (texi-doc-string "guile" "real-part")
+@deffn {Scheme Procedure} real-part z
+@deffnx {C Function} scm_real_part (z)
+Return the real part of the number @var{z}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "imag-part")
+@deffn {Scheme Procedure} imag-part z
+@deffnx {C Function} scm_imag_part (z)
+Return the imaginary part of the number @var{z}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "magnitude")
+@deffn {Scheme Procedure} magnitude z
+@deffnx {C Function} scm_magnitude (z)
+Return the magnitude of the number @var{z}. This is the same as
+@code{abs} for real arguments, but also allows complex numbers.
+@end deffn
+
+@c begin (texi-doc-string "guile" "angle")
+@deffn {Scheme Procedure} angle z
+@deffnx {C Function} scm_angle (z)
+Return the angle of the complex number @var{z}.
+@end deffn
+
+@deftypefn  {C Function} SCM scm_c_make_rectangular (double re, double im)
+@deftypefnx {C Function} SCM scm_c_make_polar (double x, double y)
+Like @code{scm_make_rectangular} or @code{scm_make_polar},
+respectively, but these functions take @code{double}s as their
+arguments.
+@end deftypefn
+
+@deftypefn  {C Function} double scm_c_real_part (z)
+@deftypefnx {C Function} double scm_c_imag_part (z)
+Returns the real or imaginary part of @var{z} as a @code{double}.
+@end deftypefn
+
+@deftypefn  {C Function} double scm_c_magnitude (z)
+@deftypefnx {C Function} double scm_c_angle (z)
+Returns the magnitude or angle of @var{z} as a @code{double}.
+@end deftypefn
+
+
+@node Arithmetic
+@subsubsection Arithmetic Functions
+@rnindex max
+@rnindex min
+@rnindex +
+@rnindex *
+@rnindex -
+@rnindex /
+@findex 1+
+@findex 1-
+@rnindex abs
+@rnindex floor
+@rnindex ceiling
+@rnindex truncate
+@rnindex round
+
+The C arithmetic functions below always takes two arguments, while the
+Scheme functions can take an arbitrary number.  When you need to
+invoke them with just one argument, for example to compute the
+equivalent od @code{(- x)}, pass @code{SCM_UNDEFINED} as the second
+one: @code{scm_difference (x, SCM_UNDEFINED)}.
+
+@c begin (texi-doc-string "guile" "+")
+@deffn {Scheme Procedure} + z1 @dots{}
+@deffnx {C Function} scm_sum (z1, z2)
+Return the sum of all parameter values.  Return 0 if called without any
+parameters.
+@end deffn
+
+@c begin (texi-doc-string "guile" "-")
+@deffn {Scheme Procedure} - z1 z2 @dots{}
+@deffnx {C Function} scm_difference (z1, z2)
+If called with one argument @var{z1}, -@var{z1} is returned. Otherwise
+the sum of all but the first argument are subtracted from the first
+argument.
+@end deffn
+
+@c begin (texi-doc-string "guile" "*")
+@deffn {Scheme Procedure} * z1 @dots{}
+@deffnx {C Function} scm_product (z1, z2)
+Return the product of all arguments.  If called without arguments, 1 is
+returned.
+@end deffn
+
+@c begin (texi-doc-string "guile" "/")
+@deffn {Scheme Procedure} / z1 z2 @dots{}
+@deffnx {C Function} scm_divide (z1, z2)
+Divide the first argument by the product of the remaining arguments.  If
+called with one argument @var{z1}, 1/@var{z1} is returned.
+@end deffn
+
+@deffn {Scheme Procedure} 1+ z
+@deffnx {C Function} scm_oneplus (z)
+Return @math{@var{z} + 1}.
+@end deffn
+
+@deffn {Scheme Procedure} 1- z
+@deffnx {C function} scm_oneminus (z)
+Return @math{@var{z} - 1}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "abs")
+@deffn {Scheme Procedure} abs x
+@deffnx {C Function} scm_abs (x)
+Return the absolute value of @var{x}.
+
+@var{x} must be a number with zero imaginary part.  To calculate the
+magnitude of a complex number, use @code{magnitude} instead.
+@end deffn
+
+@c begin (texi-doc-string "guile" "max")
+@deffn {Scheme Procedure} max x1 x2 @dots{}
+@deffnx {C Function} scm_max (x1, x2)
+Return the maximum of all parameter values.
+@end deffn
+
+@c begin (texi-doc-string "guile" "min")
+@deffn {Scheme Procedure} min x1 x2 @dots{}
+@deffnx {C Function} scm_min (x1, x2)
+Return the minimum of all parameter values.
+@end deffn
+
+@c begin (texi-doc-string "guile" "truncate")
+@deffn {Scheme Procedure} truncate x
+@deffnx {C Function} scm_truncate_number (x)
+Round the inexact number @var{x} towards zero.
+@end deffn
+
+@c begin (texi-doc-string "guile" "round")
+@deffn {Scheme Procedure} round x
+@deffnx {C Function} scm_round_number (x)
+Round the inexact number @var{x} to the nearest integer.  When exactly
+halfway between two integers, round to the even one.
+@end deffn
+
+@c begin (texi-doc-string "guile" "floor")
+@deffn {Scheme Procedure} floor x
+@deffnx {C Function} scm_floor (x)
+Round the number @var{x} towards minus infinity.
+@end deffn
+
+@c begin (texi-doc-string "guile" "ceiling")
+@deffn {Scheme Procedure} ceiling x
+@deffnx {C Function} scm_ceiling (x)
+Round the number @var{x} towards infinity.
+@end deffn
+
+@deftypefn  {C Function} double scm_c_truncate (double x)
+@deftypefnx {C Function} double scm_c_round (double x)
+Like @code{scm_truncate_number} or @code{scm_round_number},
+respectively, but these functions take and return @code{double}
+values.
+@end deftypefn
+
+@node Scientific
+@subsubsection Scientific Functions
+
+The following procedures accept any kind of number as arguments,
+including complex numbers.
+
+@rnindex sqrt
+@c begin (texi-doc-string "guile" "sqrt")
+@deffn {Scheme Procedure} sqrt z
+Return the square root of @var{z}.  Of the two possible roots
+(positive and negative), the one with the a positive real part is
+returned, or if that's zero then a positive imaginary part.  Thus,
+
+@example
+(sqrt 9.0)       @result{} 3.0
+(sqrt -9.0)      @result{} 0.0+3.0i
+(sqrt 1.0+1.0i)  @result{} 1.09868411346781+0.455089860562227i
+(sqrt -1.0-1.0i) @result{} 0.455089860562227-1.09868411346781i
+@end example
+@end deffn
+
+@rnindex expt
+@c begin (texi-doc-string "guile" "expt")
+@deffn {Scheme Procedure} expt z1 z2
+Return @var{z1} raised to the power of @var{z2}.
+@end deffn
+
+@rnindex sin
+@c begin (texi-doc-string "guile" "sin")
+@deffn {Scheme Procedure} sin z
+Return the sine of @var{z}.
+@end deffn
+
+@rnindex cos
+@c begin (texi-doc-string "guile" "cos")
+@deffn {Scheme Procedure} cos z
+Return the cosine of @var{z}.
+@end deffn
+
+@rnindex tan
+@c begin (texi-doc-string "guile" "tan")
+@deffn {Scheme Procedure} tan z
+Return the tangent of @var{z}.
+@end deffn
+
+@rnindex asin
+@c begin (texi-doc-string "guile" "asin")
+@deffn {Scheme Procedure} asin z
+Return the arcsine of @var{z}.
+@end deffn
+
+@rnindex acos
+@c begin (texi-doc-string "guile" "acos")
+@deffn {Scheme Procedure} acos z
+Return the arccosine of @var{z}.
+@end deffn
+
+@rnindex atan
+@c begin (texi-doc-string "guile" "atan")
+@deffn {Scheme Procedure} atan z
+@deffnx {Scheme Procedure} atan y x
+Return the arctangent of @var{z}, or of @math{@var{y}/@var{x}}.
+@end deffn
+
+@rnindex exp
+@c begin (texi-doc-string "guile" "exp")
+@deffn {Scheme Procedure} exp z
+Return e to the power of @var{z}, where e is the base of natural
+logarithms (2.71828@dots{}).
+@end deffn
+
+@rnindex log
+@c begin (texi-doc-string "guile" "log")
+@deffn {Scheme Procedure} log z
+Return the natural logarithm of @var{z}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "log10")
+@deffn {Scheme Procedure} log10 z
+Return the base 10 logarithm of @var{z}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "sinh")
+@deffn {Scheme Procedure} sinh z
+Return the hyperbolic sine of @var{z}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "cosh")
+@deffn {Scheme Procedure} cosh z
+Return the hyperbolic cosine of @var{z}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "tanh")
+@deffn {Scheme Procedure} tanh z
+Return the hyperbolic tangent of @var{z}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "asinh")
+@deffn {Scheme Procedure} asinh z
+Return the hyperbolic arcsine of @var{z}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "acosh")
+@deffn {Scheme Procedure} acosh z
+Return the hyperbolic arccosine of @var{z}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "atanh")
+@deffn {Scheme Procedure} atanh z
+Return the hyperbolic arctangent of @var{z}.
+@end deffn
+
+
+@node Primitive Numerics
+@subsubsection Primitive Numeric Functions
+
+Many of Guile's numeric procedures which accept any kind of numbers as
+arguments, including complex numbers, are implemented as Scheme
+procedures that use the following real number-based primitives.  These
+primitives signal an error if they are called with complex arguments.
+
+@c begin (texi-doc-string "guile" "$abs")
+@deffn {Scheme Procedure} $abs x
+Return the absolute value of @var{x}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "$sqrt")
+@deffn {Scheme Procedure} $sqrt x
+Return the square root of @var{x}.
+@end deffn
+
+@deffn {Scheme Procedure} $expt x y
+@deffnx {C Function} scm_sys_expt (x, y)
+Return @var{x} raised to the power of @var{y}. This
+procedure does not accept complex arguments.
+@end deffn
+
+@c begin (texi-doc-string "guile" "$sin")
+@deffn {Scheme Procedure} $sin x
+Return the sine of @var{x}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "$cos")
+@deffn {Scheme Procedure} $cos x
+Return the cosine of @var{x}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "$tan")
+@deffn {Scheme Procedure} $tan x
+Return the tangent of @var{x}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "$asin")
+@deffn {Scheme Procedure} $asin x
+Return the arcsine of @var{x}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "$acos")
+@deffn {Scheme Procedure} $acos x
+Return the arccosine of @var{x}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "$atan")
+@deffn {Scheme Procedure} $atan x
+Return the arctangent of @var{x} in the range @minus{}@math{PI/2} to
+@math{PI/2}.
+@end deffn
+
+@deffn {Scheme Procedure} $atan2 x y
+@deffnx {C Function} scm_sys_atan2 (x, y)
+Return the arc tangent of the two arguments @var{x} and
+@var{y}. This is similar to calculating the arc tangent of
+@var{x} / @var{y}, except that the signs of both arguments
+are used to determine the quadrant of the result. This
+procedure does not accept complex arguments.
+@end deffn
+
+@c begin (texi-doc-string "guile" "$exp")
+@deffn {Scheme Procedure} $exp x
+Return e to the power of @var{x}, where e is the base of natural
+logarithms (2.71828@dots{}).
+@end deffn
+
+@c begin (texi-doc-string "guile" "$log")
+@deffn {Scheme Procedure} $log x
+Return the natural logarithm of @var{x}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "$sinh")
+@deffn {Scheme Procedure} $sinh x
+Return the hyperbolic sine of @var{x}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "$cosh")
+@deffn {Scheme Procedure} $cosh x
+Return the hyperbolic cosine of @var{x}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "$tanh")
+@deffn {Scheme Procedure} $tanh x
+Return the hyperbolic tangent of @var{x}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "$asinh")
+@deffn {Scheme Procedure} $asinh x
+Return the hyperbolic arcsine of @var{x}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "$acosh")
+@deffn {Scheme Procedure} $acosh x
+Return the hyperbolic arccosine of @var{x}.
+@end deffn
+
+@c begin (texi-doc-string "guile" "$atanh")
+@deffn {Scheme Procedure} $atanh x
+Return the hyperbolic arctangent of @var{x}.
+@end deffn
+
+C functions for the above are provided by the standard mathematics
+library.  Naturally these expect and return @code{double} arguments
+(@pxref{Mathematics,,, libc, GNU C Library Reference Manual}).
+
+@multitable {xx} {Scheme Procedure} {C Function}
+@item @tab Scheme Procedure @tab C Function
+
+@item @tab @code{$abs}      @tab @code{fabs}
+@item @tab @code{$sqrt}     @tab @code{sqrt}
+@item @tab @code{$sin}      @tab @code{sin}
+@item @tab @code{$cos}      @tab @code{cos}
+@item @tab @code{$tan}      @tab @code{tan}
+@item @tab @code{$asin}     @tab @code{asin}
+@item @tab @code{$acos}     @tab @code{acos}
+@item @tab @code{$atan}     @tab @code{atan}
+@item @tab @code{$atan2}    @tab @code{atan2}
+@item @tab @code{$exp}      @tab @code{exp}
+@item @tab @code{$expt}     @tab @code{pow}
+@item @tab @code{$log}      @tab @code{log}
+@item @tab @code{$sinh}     @tab @code{sinh}
+@item @tab @code{$cosh}     @tab @code{cosh}
+@item @tab @code{$tanh}     @tab @code{tanh}
+@item @tab @code{$asinh}    @tab @code{asinh}
+@item @tab @code{$acosh}    @tab @code{acosh}
+@item @tab @code{$atanh}    @tab @code{atanh}
+@end multitable
+
+@code{asinh}, @code{acosh} and @code{atanh} are C99 standard but might
+not be available on older systems.  Guile provides the following
+equivalents (on all systems).
+
+@deftypefn {C Function} double scm_asinh (double x)
+@deftypefnx {C Function} double scm_acosh (double x)
+@deftypefnx {C Function} double scm_atanh (double x)
+Return the hyperbolic arcsine, arccosine or arctangent of @var{x}
+respectively.
+@end deftypefn
+
+
+@node Bitwise Operations
+@subsubsection Bitwise Operations
+
+For the following bitwise functions, negative numbers are treated as
+infinite precision twos-complements.  For instance @math{-6} is bits
+@math{@dots{}111010}, with infinitely many ones on the left.  It can
+be seen that adding 6 (binary 110) to such a bit pattern gives all
+zeros.
+
+@deffn {Scheme Procedure} logand n1 n2 @dots{}
+@deffnx {C Function} scm_logand (n1, n2)
+Return the bitwise @sc{and} of the integer arguments.
+
+@lisp
+(logand) @result{} -1
+(logand 7) @result{} 7
+(logand #b111 #b011 #b001) @result{} 1
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} logior n1 n2 @dots{}
+@deffnx {C Function} scm_logior (n1, n2)
+Return the bitwise @sc{or} of the integer arguments.
+
+@lisp
+(logior) @result{} 0
+(logior 7) @result{} 7
+(logior #b000 #b001 #b011) @result{} 3
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} logxor n1 n2 @dots{}
+@deffnx {C Function} scm_loxor (n1, n2)
+Return the bitwise @sc{xor} of the integer arguments.  A bit is
+set in the result if it is set in an odd number of arguments.
+
+@lisp
+(logxor) @result{} 0
+(logxor 7) @result{} 7
+(logxor #b000 #b001 #b011) @result{} 2
+(logxor #b000 #b001 #b011 #b011) @result{} 1
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} lognot n
+@deffnx {C Function} scm_lognot (n)
+Return the integer which is the ones-complement of the integer
+argument, ie.@: each 0 bit is changed to 1 and each 1 bit to 0.
+
+@lisp
+(number->string (lognot #b10000000) 2)
+   @result{} "-10000001"
+(number->string (lognot #b0) 2)
+   @result{} "-1"
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} logtest j k
+@deffnx {C Function} scm_logtest (j, k)
+Test whether @var{j} and @var{k} have any 1 bits in common.  This is
+equivalent to @code{(not (zero? (logand j k)))}, but without actually
+calculating the @code{logand}, just testing for non-zero.
+
+@lisp
+(logtest #b0100 #b1011) @result{} #f
+(logtest #b0100 #b0111) @result{} #t
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} logbit? index j
+@deffnx {C Function} scm_logbit_p (index, j)
+Test whether bit number @var{index} in @var{j} is set.  @var{index}
+starts from 0 for the least significant bit.
+
+@lisp
+(logbit? 0 #b1101) @result{} #t
+(logbit? 1 #b1101) @result{} #f
+(logbit? 2 #b1101) @result{} #t
+(logbit? 3 #b1101) @result{} #t
+(logbit? 4 #b1101) @result{} #f
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} ash n cnt
+@deffnx {C Function} scm_ash (n, cnt)
+Return @var{n} shifted left by @var{cnt} bits, or shifted right if
+@var{cnt} is negative.  This is an ``arithmetic'' shift.
+
+This is effectively a multiplication by @m{2^{cnt}, 2^@var{cnt}}, and
+when @var{cnt} is negative it's a division, rounded towards negative
+infinity.  (Note that this is not the same rounding as @code{quotient}
+does.)
+
+With @var{n} viewed as an infinite precision twos complement,
+@code{ash} means a left shift introducing zero bits, or a right shift
+dropping bits.
+
+@lisp
+(number->string (ash #b1 3) 2)     @result{} "1000"
+(number->string (ash #b1010 -1) 2) @result{} "101"
+
+;; -23 is bits ...11101001, -6 is bits ...111010
+(ash -23 -2) @result{} -6
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} logcount n
+@deffnx {C Function} scm_logcount (n)
+Return the number of bits in integer @var{n}.  If @var{n} is
+positive, the 1-bits in its binary representation are counted.
+If negative, the 0-bits in its two's-complement binary
+representation are counted.  If zero, 0 is returned.
+
+@lisp
+(logcount #b10101010)
+   @result{} 4
+(logcount 0)
+   @result{} 0
+(logcount -2)
+   @result{} 1
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} integer-length n
+@deffnx {C Function} scm_integer_length (n)
+Return the number of bits necessary to represent @var{n}.
+
+For positive @var{n} this is how many bits to the most significant one
+bit.  For negative @var{n} it's how many bits to the most significant
+zero bit in twos complement form.
+
+@lisp
+(integer-length #b10101010) @result{} 8
+(integer-length #b1111)     @result{} 4
+(integer-length 0)          @result{} 0
+(integer-length -1)         @result{} 0
+(integer-length -256)       @result{} 8
+(integer-length -257)       @result{} 9
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} integer-expt n k
+@deffnx {C Function} scm_integer_expt (n, k)
+Return @var{n} raised to the power @var{k}.  @var{k} must be an exact
+integer, @var{n} can be any number.
+
+Negative @var{k} is supported, and results in @m{1/n^|k|, 1/n^abs(k)}
+in the usual way.  @math{@var{n}^0} is 1, as usual, and that includes
+@math{0^0} is 1.
+
+@lisp
+(integer-expt 2 5)   @result{} 32
+(integer-expt -3 3)  @result{} -27
+(integer-expt 5 -3)  @result{} 1/125
+(integer-expt 0 0)   @result{} 1
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} bit-extract n start end
+@deffnx {C Function} scm_bit_extract (n, start, end)
+Return the integer composed of the @var{start} (inclusive)
+through @var{end} (exclusive) bits of @var{n}.  The
+@var{start}th bit becomes the 0-th bit in the result.
+
+@lisp
+(number->string (bit-extract #b1101101010 0 4) 2)
+   @result{} "1010"
+(number->string (bit-extract #b1101101010 4 9) 2)
+   @result{} "10110"
+@end lisp
+@end deffn
+
+
+@node Random
+@subsubsection Random Number Generation
+
+Pseudo-random numbers are generated from a random state object, which
+can be created with @code{seed->random-state}.  The @var{state}
+parameter to the various functions below is optional, it defaults to
+the state object in the @code{*random-state*} variable.
+
+@deffn {Scheme Procedure} copy-random-state [state]
+@deffnx {C Function} scm_copy_random_state (state)
+Return a copy of the random state @var{state}.
+@end deffn
+
+@deffn {Scheme Procedure} random n [state]
+@deffnx {C Function} scm_random (n, state)
+Return a number in [0, @var{n}).
+
+Accepts a positive integer or real n and returns a
+number of the same type between zero (inclusive) and
+@var{n} (exclusive). The values returned have a uniform
+distribution.
+@end deffn
+
+@deffn {Scheme Procedure} random:exp [state]
+@deffnx {C Function} scm_random_exp (state)
+Return an inexact real in an exponential distribution with mean
+1.  For an exponential distribution with mean @var{u} use @code{(*
+@var{u} (random:exp))}.
+@end deffn
+
+@deffn {Scheme Procedure} random:hollow-sphere! vect [state]
+@deffnx {C Function} scm_random_hollow_sphere_x (vect, state)
+Fills @var{vect} with inexact real random numbers the sum of whose
+squares is equal to 1.0.  Thinking of @var{vect} as coordinates in
+space of dimension @var{n} @math{=} @code{(vector-length @var{vect})},
+the coordinates are uniformly distributed over the surface of the unit
+n-sphere.
+@end deffn
+
+@deffn {Scheme Procedure} random:normal [state]
+@deffnx {C Function} scm_random_normal (state)
+Return an inexact real in a normal distribution.  The distribution
+used has mean 0 and standard deviation 1.  For a normal distribution
+with mean @var{m} and standard deviation @var{d} use @code{(+ @var{m}
+(* @var{d} (random:normal)))}.
+@end deffn
+
+@deffn {Scheme Procedure} random:normal-vector! vect [state]
+@deffnx {C Function} scm_random_normal_vector_x (vect, state)
+Fills @var{vect} with inexact real random numbers that are
+independent and standard normally distributed
+(i.e., with mean 0 and variance 1).
+@end deffn
+
+@deffn {Scheme Procedure} random:solid-sphere! vect [state]
+@deffnx {C Function} scm_random_solid_sphere_x (vect, state)
+Fills @var{vect} with inexact real random numbers the sum of whose
+squares is less than 1.0.  Thinking of @var{vect} as coordinates in
+space of dimension @var{n} @math{=} @code{(vector-length @var{vect})},
+the coordinates are uniformly distributed within the unit
+@var{n}-sphere.
+@c FIXME: What does this mean, particularly the n-sphere part?
+@end deffn
+
+@deffn {Scheme Procedure} random:uniform [state]
+@deffnx {C Function} scm_random_uniform (state)
+Return a uniformly distributed inexact real random number in
+[0,1).
+@end deffn
+
+@deffn {Scheme Procedure} seed->random-state seed
+@deffnx {C Function} scm_seed_to_random_state (seed)
+Return a new random state using @var{seed}.
+@end deffn
+
+@defvar *random-state*
+The global random state used by the above functions when the
+@var{state} parameter is not given.
+@end defvar
+
+Note that the initial value of @code{*random-state*} is the same every
+time Guile starts up.  Therefore, if you don't pass a @var{state}
+parameter to the above procedures, and you don't set
+@code{*random-state*} to @code{(seed->random-state your-seed)}, where
+@code{your-seed} is something that @emph{isn't} the same every time,
+you'll get the same sequence of ``random'' numbers on every run.
+
+For example, unless the relevant source code has changed, @code{(map
+random (cdr (iota 30)))}, if the first use of random numbers since
+Guile started up, will always give:
+
+@lisp
+(map random (cdr (iota 19)))
+@result{}
+(0 1 1 2 2 2 1 2 6 7 10 0 5 3 12 5 5 12)
+@end lisp
+
+To use the time of day as the random seed, you can use code like this:
+
+@lisp
+(let ((time (gettimeofday)))
+  (set! *random-state*
+        (seed->random-state (+ (car time)
+                               (cdr time)))))
+@end lisp
+
+@noindent
+And then (depending on the time of day, of course):
+
+@lisp
+(map random (cdr (iota 19)))
+@result{}
+(0 0 1 0 2 4 5 4 5 5 9 3 10 1 8 3 14 17)
+@end lisp
+
+For security applications, such as password generation, you should use
+more bits of seed.  Otherwise an open source password generator could
+be attacked by guessing the seed@dots{} but that's a subject for
+another manual.
+
+
+@node Characters
+@subsection Characters
+@tpindex Characters
+
+In Scheme, a character literal is written as @code{#\@var{name}} where
+@var{name} is the name of the character that you want.  Printable
+characters have their usual single character name; for example,
+@code{#\a} is a lower case @code{a}.
+
+Most of the ``control characters'' (those below codepoint 32) in the
+@acronym{ASCII} character set, as well as the space, may be referred
+to by longer names: for example, @code{#\tab}, @code{#\esc},
+@code{#\stx}, and so on.  The following table describes the
+@acronym{ASCII} names for each character.
+
+@multitable @columnfractions .25 .25 .25 .25
+@item 0 = @code{#\nul}
+ @tab 1 = @code{#\soh}
+ @tab 2 = @code{#\stx}
+ @tab 3 = @code{#\etx}
+@item 4 = @code{#\eot}
+ @tab 5 = @code{#\enq}
+ @tab 6 = @code{#\ack}
+ @tab 7 = @code{#\bel}
+@item 8 = @code{#\bs}
+ @tab 9 = @code{#\ht}
+ @tab 10 = @code{#\nl}
+ @tab 11 = @code{#\vt}
+@item 12 = @code{#\np}
+ @tab 13 = @code{#\cr}
+ @tab 14 = @code{#\so}
+ @tab 15 = @code{#\si}
+@item 16 = @code{#\dle}
+ @tab 17 = @code{#\dc1}
+ @tab 18 = @code{#\dc2}
+ @tab 19 = @code{#\dc3}
+@item 20 = @code{#\dc4}
+ @tab 21 = @code{#\nak}
+ @tab 22 = @code{#\syn}
+ @tab 23 = @code{#\etb}
+@item 24 = @code{#\can}
+ @tab 25 = @code{#\em}
+ @tab 26 = @code{#\sub}
+ @tab 27 = @code{#\esc}
+@item 28 = @code{#\fs}
+ @tab 29 = @code{#\gs}
+ @tab 30 = @code{#\rs}
+ @tab 31 = @code{#\us}
+@item 32 = @code{#\sp}
+@end multitable
+
+The ``delete'' character (octal 177) may be referred to with the name
+@code{#\del}.
+
+Several characters have more than one name:
+
+@multitable {@code{#\backspace}} {Original}
+@item Alias @tab Original
+@item @code{#\space} @tab @code{#\sp}
+@item @code{#\newline} @tab @code{#\nl}
+@item @code{#\tab} @tab @code{#\ht}
+@item @code{#\backspace} @tab @code{#\bs}
+@item @code{#\return} @tab @code{#\cr}
+@item @code{#\page} @tab @code{#\np}
+@item @code{#\null} @tab @code{#\nul}
+@end multitable
+
+@rnindex char?
+@deffn {Scheme Procedure} char? x
+@deffnx {C Function} scm_char_p (x)
+Return @code{#t} iff @var{x} is a character, else @code{#f}.
+@end deffn
+
+@rnindex char=?
+@deffn {Scheme Procedure} char=? x y
+Return @code{#t} iff @var{x} is the same character as @var{y}, else @code{#f}.
+@end deffn
+
+@rnindex char<?
+@deffn {Scheme Procedure} char<? x y
+Return @code{#t} iff @var{x} is less than @var{y} in the @acronym{ASCII} sequence,
+else @code{#f}.
+@end deffn
+
+@rnindex char<=?
+@deffn {Scheme Procedure} char<=? x y
+Return @code{#t} iff @var{x} is less than or equal to @var{y} in the
+@acronym{ASCII} sequence, else @code{#f}.
+@end deffn
+
+@rnindex char>?
+@deffn {Scheme Procedure} char>? x y
+Return @code{#t} iff @var{x} is greater than @var{y} in the @acronym{ASCII}
+sequence, else @code{#f}.
+@end deffn
+
+@rnindex char>=?
+@deffn {Scheme Procedure} char>=? x y
+Return @code{#t} iff @var{x} is greater than or equal to @var{y} in the
+@acronym{ASCII} sequence, else @code{#f}.
+@end deffn
+
+@rnindex char-ci=?
+@deffn {Scheme Procedure} char-ci=? x y
+Return @code{#t} iff @var{x} is the same character as @var{y} ignoring
+case, else @code{#f}.
+@end deffn
+
+@rnindex char-ci<?
+@deffn {Scheme Procedure} char-ci<? x y
+Return @code{#t} iff @var{x} is less than @var{y} in the @acronym{ASCII} sequence
+ignoring case, else @code{#f}.
+@end deffn
+
+@rnindex char-ci<=?
+@deffn {Scheme Procedure} char-ci<=? x y
+Return @code{#t} iff @var{x} is less than or equal to @var{y} in the
+@acronym{ASCII} sequence ignoring case, else @code{#f}.
+@end deffn
+
+@rnindex char-ci>?
+@deffn {Scheme Procedure} char-ci>? x y
+Return @code{#t} iff @var{x} is greater than @var{y} in the @acronym{ASCII}
+sequence ignoring case, else @code{#f}.
+@end deffn
+
+@rnindex char-ci>=?
+@deffn {Scheme Procedure} char-ci>=? x y
+Return @code{#t} iff @var{x} is greater than or equal to @var{y} in the
+@acronym{ASCII} sequence ignoring case, else @code{#f}.
+@end deffn
+
+@rnindex char-alphabetic?
+@deffn {Scheme Procedure} char-alphabetic? chr
+@deffnx {C Function} scm_char_alphabetic_p (chr)
+Return @code{#t} iff @var{chr} is alphabetic, else @code{#f}.
+@end deffn
+
+@rnindex char-numeric?
+@deffn {Scheme Procedure} char-numeric? chr
+@deffnx {C Function} scm_char_numeric_p (chr)
+Return @code{#t} iff @var{chr} is numeric, else @code{#f}.
+@end deffn
+
+@rnindex char-whitespace?
+@deffn {Scheme Procedure} char-whitespace? chr
+@deffnx {C Function} scm_char_whitespace_p (chr)
+Return @code{#t} iff @var{chr} is whitespace, else @code{#f}.
+@end deffn
+
+@rnindex char-upper-case?
+@deffn {Scheme Procedure} char-upper-case? chr
+@deffnx {C Function} scm_char_upper_case_p (chr)
+Return @code{#t} iff @var{chr} is uppercase, else @code{#f}.
+@end deffn
+
+@rnindex char-lower-case?
+@deffn {Scheme Procedure} char-lower-case? chr
+@deffnx {C Function} scm_char_lower_case_p (chr)
+Return @code{#t} iff @var{chr} is lowercase, else @code{#f}.
+@end deffn
+
+@deffn {Scheme Procedure} char-is-both? chr
+@deffnx {C Function} scm_char_is_both_p (chr)
+Return @code{#t} iff @var{chr} is either uppercase or lowercase, else
+@code{#f}.
+@end deffn
+
+@rnindex char->integer
+@deffn {Scheme Procedure} char->integer chr
+@deffnx {C Function} scm_char_to_integer (chr)
+Return the number corresponding to ordinal position of @var{chr} in the
+@acronym{ASCII} sequence.
+@end deffn
+
+@rnindex integer->char
+@deffn {Scheme Procedure} integer->char n
+@deffnx {C Function} scm_integer_to_char (n)
+Return the character at position @var{n} in the @acronym{ASCII} sequence.
+@end deffn
+
+@rnindex char-upcase
+@deffn {Scheme Procedure} char-upcase chr
+@deffnx {C Function} scm_char_upcase (chr)
+Return the uppercase character version of @var{chr}.
+@end deffn
+
+@rnindex char-downcase
+@deffn {Scheme Procedure} char-downcase chr
+@deffnx {C Function} scm_char_downcase (chr)
+Return the lowercase character version of @var{chr}.
+@end deffn
+
+@node Character Sets
+@subsection Character Sets
+
+The features described in this section correspond directly to SRFI-14.
+
+The data type @dfn{charset} implements sets of characters
+(@pxref{Characters}).  Because the internal representation of
+character sets is not visible to the user, a lot of procedures for
+handling them are provided.
+
+Character sets can be created, extended, tested for the membership of a
+characters and be compared to other character sets.
+
+The Guile implementation of character sets currently deals only with
+8-bit characters.  In the future, when Guile gets support for
+international character sets, this will change, but the functions
+provided here will always then be able to efficiently cope with very
+large character sets.
+
+@menu
+* Character Set Predicates/Comparison::
+* Iterating Over Character Sets::  Enumerate charset elements.
+* Creating Character Sets::        Making new charsets.
+* Querying Character Sets::        Test charsets for membership etc.
+* Character-Set Algebra::          Calculating new charsets.
+* Standard Character Sets::        Variables containing predefined charsets.
+@end menu
+
+@node Character Set Predicates/Comparison
+@subsubsection Character Set Predicates/Comparison
+
+Use these procedures for testing whether an object is a character set,
+or whether several character sets are equal or subsets of each other.
+@code{char-set-hash} can be used for calculating a hash value, maybe for
+usage in fast lookup procedures.
+
+@deffn {Scheme Procedure} char-set? obj
+@deffnx {C Function} scm_char_set_p (obj)
+Return @code{#t} if @var{obj} is a character set, @code{#f}
+otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} char-set= . char_sets
+@deffnx {C Function} scm_char_set_eq (char_sets)
+Return @code{#t} if all given character sets are equal.
+@end deffn
+
+@deffn {Scheme Procedure} char-set<= . char_sets
+@deffnx {C Function} scm_char_set_leq (char_sets)
+Return @code{#t} if every character set @var{cs}i is a subset
+of character set @var{cs}i+1.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-hash cs [bound]
+@deffnx {C Function} scm_char_set_hash (cs, bound)
+Compute a hash value for the character set @var{cs}.  If
+@var{bound} is given and non-zero, it restricts the
+returned value to the range 0 @dots{} @var{bound - 1}.
+@end deffn
+
+@c ===================================================================
+
+@node Iterating Over Character Sets
+@subsubsection Iterating Over Character Sets
+
+Character set cursors are a means for iterating over the members of a
+character sets.  After creating a character set cursor with
+@code{char-set-cursor}, a cursor can be dereferenced with
+@code{char-set-ref}, advanced to the next member with
+@code{char-set-cursor-next}.  Whether a cursor has passed past the last
+element of the set can be checked with @code{end-of-char-set?}.
+
+Additionally, mapping and (un-)folding procedures for character sets are
+provided.
+
+@deffn {Scheme Procedure} char-set-cursor cs
+@deffnx {C Function} scm_char_set_cursor (cs)
+Return a cursor into the character set @var{cs}.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-ref cs cursor
+@deffnx {C Function} scm_char_set_ref (cs, cursor)
+Return the character at the current cursor position
+@var{cursor} in the character set @var{cs}.  It is an error to
+pass a cursor for which @code{end-of-char-set?} returns true.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-cursor-next cs cursor
+@deffnx {C Function} scm_char_set_cursor_next (cs, cursor)
+Advance the character set cursor @var{cursor} to the next
+character in the character set @var{cs}.  It is an error if the
+cursor given satisfies @code{end-of-char-set?}.
+@end deffn
+
+@deffn {Scheme Procedure} end-of-char-set? cursor
+@deffnx {C Function} scm_end_of_char_set_p (cursor)
+Return @code{#t} if @var{cursor} has reached the end of a
+character set, @code{#f} otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-fold kons knil cs
+@deffnx {C Function} scm_char_set_fold (kons, knil, cs)
+Fold the procedure @var{kons} over the character set @var{cs},
+initializing it with @var{knil}.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-unfold p f g seed [base_cs]
+@deffnx {C Function} scm_char_set_unfold (p, f, g, seed, base_cs)
+This is a fundamental constructor for character sets.
+@itemize @bullet
+@item @var{g} is used to generate a series of ``seed'' values
+from the initial seed: @var{seed}, (@var{g} @var{seed}),
+(@var{g}^2 @var{seed}), (@var{g}^3 @var{seed}), @dots{}
+@item @var{p} tells us when to stop -- when it returns true
+when applied to one of the seed values.
+@item @var{f} maps each seed value to a character. These
+characters are added to the base character set @var{base_cs} to
+form the result; @var{base_cs} defaults to the empty set.
+@end itemize
+@end deffn
+
+@deffn {Scheme Procedure} char-set-unfold! p f g seed base_cs
+@deffnx {C Function} scm_char_set_unfold_x (p, f, g, seed, base_cs)
+This is a fundamental constructor for character sets.
+@itemize @bullet
+@item @var{g} is used to generate a series of ``seed'' values
+from the initial seed: @var{seed}, (@var{g} @var{seed}),
+(@var{g}^2 @var{seed}), (@var{g}^3 @var{seed}), @dots{}
+@item @var{p} tells us when to stop -- when it returns true
+when applied to one of the seed values.
+@item @var{f} maps each seed value to a character. These
+characters are added to the base character set @var{base_cs} to
+form the result; @var{base_cs} defaults to the empty set.
+@end itemize
+@end deffn
+
+@deffn {Scheme Procedure} char-set-for-each proc cs
+@deffnx {C Function} scm_char_set_for_each (proc, cs)
+Apply @var{proc} to every character in the character set
+@var{cs}.  The return value is not specified.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-map proc cs
+@deffnx {C Function} scm_char_set_map (proc, cs)
+Map the procedure @var{proc} over every character in @var{cs}.
+@var{proc} must be a character -> character procedure.
+@end deffn
+
+@c ===================================================================
+
+@node Creating Character Sets
+@subsubsection Creating Character Sets
+
+New character sets are produced with these procedures.
+
+@deffn {Scheme Procedure} char-set-copy cs
+@deffnx {C Function} scm_char_set_copy (cs)
+Return a newly allocated character set containing all
+characters in @var{cs}.
+@end deffn
+
+@deffn {Scheme Procedure} char-set . rest
+@deffnx {C Function} scm_char_set (rest)
+Return a character set containing all given characters.
+@end deffn
+
+@deffn {Scheme Procedure} list->char-set list [base_cs]
+@deffnx {C Function} scm_list_to_char_set (list, base_cs)
+Convert the character list @var{list} to a character set.  If
+the character set @var{base_cs} is given, the character in this
+set are also included in the result.
+@end deffn
+
+@deffn {Scheme Procedure} list->char-set! list base_cs
+@deffnx {C Function} scm_list_to_char_set_x (list, base_cs)
+Convert the character list @var{list} to a character set.  The
+characters are added to @var{base_cs} and @var{base_cs} is
+returned.
+@end deffn
+
+@deffn {Scheme Procedure} string->char-set str [base_cs]
+@deffnx {C Function} scm_string_to_char_set (str, base_cs)
+Convert the string @var{str} to a character set.  If the
+character set @var{base_cs} is given, the characters in this
+set are also included in the result.
+@end deffn
+
+@deffn {Scheme Procedure} string->char-set! str base_cs
+@deffnx {C Function} scm_string_to_char_set_x (str, base_cs)
+Convert the string @var{str} to a character set.  The
+characters from the string are added to @var{base_cs}, and
+@var{base_cs} is returned.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-filter pred cs [base_cs]
+@deffnx {C Function} scm_char_set_filter (pred, cs, base_cs)
+Return a character set containing every character from @var{cs}
+so that it satisfies @var{pred}.  If provided, the characters
+from @var{base_cs} are added to the result.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-filter! pred cs base_cs
+@deffnx {C Function} scm_char_set_filter_x (pred, cs, base_cs)
+Return a character set containing every character from @var{cs}
+so that it satisfies @var{pred}.  The characters are added to
+@var{base_cs} and @var{base_cs} is returned.
+@end deffn
+
+@deffn {Scheme Procedure} ucs-range->char-set lower upper [error [base_cs]]
+@deffnx {C Function} scm_ucs_range_to_char_set (lower, upper, error, base_cs)
+Return a character set containing all characters whose
+character codes lie in the half-open range
+[@var{lower},@var{upper}).
+
+If @var{error} is a true value, an error is signalled if the
+specified range contains characters which are not contained in
+the implemented character range.  If @var{error} is @code{#f},
+these characters are silently left out of the resultung
+character set.
+
+The characters in @var{base_cs} are added to the result, if
+given.
+@end deffn
+
+@deffn {Scheme Procedure} ucs-range->char-set! lower upper error base_cs
+@deffnx {C Function} scm_ucs_range_to_char_set_x (lower, upper, error, base_cs)
+Return a character set containing all characters whose
+character codes lie in the half-open range
+[@var{lower},@var{upper}).
+
+If @var{error} is a true value, an error is signalled if the
+specified range contains characters which are not contained in
+the implemented character range.  If @var{error} is @code{#f},
+these characters are silently left out of the resultung
+character set.
+
+The characters are added to @var{base_cs} and @var{base_cs} is
+returned.
+@end deffn
+
+@deffn {Scheme Procedure} ->char-set x
+@deffnx {C Function} scm_to_char_set (x)
+Coerces x into a char-set. @var{x} may be a string, character or char-set. A string is converted to the set of its constituent characters; a character is converted to a singleton set; a char-set is returned as-is.
+@end deffn
+
+@c ===================================================================
+
+@node Querying Character Sets
+@subsubsection Querying Character Sets
+
+Access the elements and other information of a character set with these
+procedures.
+
+@deffn {Scheme Procedure} char-set-size cs
+@deffnx {C Function} scm_char_set_size (cs)
+Return the number of elements in character set @var{cs}.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-count pred cs
+@deffnx {C Function} scm_char_set_count (pred, cs)
+Return the number of the elements int the character set
+@var{cs} which satisfy the predicate @var{pred}.
+@end deffn
+
+@deffn {Scheme Procedure} char-set->list cs
+@deffnx {C Function} scm_char_set_to_list (cs)
+Return a list containing the elements of the character set
+@var{cs}.
+@end deffn
+
+@deffn {Scheme Procedure} char-set->string cs
+@deffnx {C Function} scm_char_set_to_string (cs)
+Return a string containing the elements of the character set
+@var{cs}.  The order in which the characters are placed in the
+string is not defined.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-contains? cs ch
+@deffnx {C Function} scm_char_set_contains_p (cs, ch)
+Return @code{#t} iff the character @var{ch} is contained in the
+character set @var{cs}.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-every pred cs
+@deffnx {C Function} scm_char_set_every (pred, cs)
+Return a true value if every character in the character set
+@var{cs} satisfies the predicate @var{pred}.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-any pred cs
+@deffnx {C Function} scm_char_set_any (pred, cs)
+Return a true value if any character in the character set
+@var{cs} satisfies the predicate @var{pred}.
+@end deffn
+
+@c ===================================================================
+
+@node Character-Set Algebra
+@subsubsection Character-Set Algebra
+
+Character sets can be manipulated with the common set algebra operation,
+such as union, complement, intersection etc.  All of these procedures
+provide side-effecting variants, which modify their character set
+argument(s).
+
+@deffn {Scheme Procedure} char-set-adjoin cs . rest
+@deffnx {C Function} scm_char_set_adjoin (cs, rest)
+Add all character arguments to the first argument, which must
+be a character set.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-delete cs . rest
+@deffnx {C Function} scm_char_set_delete (cs, rest)
+Delete all character arguments from the first argument, which
+must be a character set.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-adjoin! cs . rest
+@deffnx {C Function} scm_char_set_adjoin_x (cs, rest)
+Add all character arguments to the first argument, which must
+be a character set.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-delete! cs . rest
+@deffnx {C Function} scm_char_set_delete_x (cs, rest)
+Delete all character arguments from the first argument, which
+must be a character set.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-complement cs
+@deffnx {C Function} scm_char_set_complement (cs)
+Return the complement of the character set @var{cs}.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-union . rest
+@deffnx {C Function} scm_char_set_union (rest)
+Return the union of all argument character sets.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-intersection . rest
+@deffnx {C Function} scm_char_set_intersection (rest)
+Return the intersection of all argument character sets.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-difference cs1 . rest
+@deffnx {C Function} scm_char_set_difference (cs1, rest)
+Return the difference of all argument character sets.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-xor . rest
+@deffnx {C Function} scm_char_set_xor (rest)
+Return the exclusive-or of all argument character sets.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-diff+intersection cs1 . rest
+@deffnx {C Function} scm_char_set_diff_plus_intersection (cs1, rest)
+Return the difference and the intersection of all argument
+character sets.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-complement! cs
+@deffnx {C Function} scm_char_set_complement_x (cs)
+Return the complement of the character set @var{cs}.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-union! cs1 . rest
+@deffnx {C Function} scm_char_set_union_x (cs1, rest)
+Return the union of all argument character sets.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-intersection! cs1 . rest
+@deffnx {C Function} scm_char_set_intersection_x (cs1, rest)
+Return the intersection of all argument character sets.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-difference! cs1 . rest
+@deffnx {C Function} scm_char_set_difference_x (cs1, rest)
+Return the difference of all argument character sets.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-xor! cs1 . rest
+@deffnx {C Function} scm_char_set_xor_x (cs1, rest)
+Return the exclusive-or of all argument character sets.
+@end deffn
+
+@deffn {Scheme Procedure} char-set-diff+intersection! cs1 cs2 . rest
+@deffnx {C Function} scm_char_set_diff_plus_intersection_x (cs1, cs2, rest)
+Return the difference and the intersection of all argument
+character sets.
+@end deffn
+
+@c ===================================================================
+
+@node Standard Character Sets
+@subsubsection Standard Character Sets
+
+In order to make the use of the character set data type and procedures
+useful, several predefined character set variables exist.
+
+@cindex codeset
+@cindex charset
+@cindex locale
+
+Currently, the contents of these character sets are recomputed upon a
+successful @code{setlocale} call (@pxref{Locales}) in order to reflect
+the characters available in the current locale's codeset.  For
+instance, @code{char-set:letter} contains 52 characters under an ASCII
+locale (e.g., the default @code{C} locale) and 117 characters under an
+ISO-8859-1 (``Latin-1'') locale.
+
+@defvr {Scheme Variable} char-set:lower-case
+@defvrx {C Variable} scm_char_set_lower_case
+All lower-case characters.
+@end defvr
+
+@defvr {Scheme Variable} char-set:upper-case
+@defvrx {C Variable} scm_char_set_upper_case
+All upper-case characters.
+@end defvr
+
+@defvr {Scheme Variable} char-set:title-case
+@defvrx {C Variable} scm_char_set_title_case
+This is empty, because ASCII has no titlecase characters.
+@end defvr
+
+@defvr {Scheme Variable} char-set:letter
+@defvrx {C Variable} scm_char_set_letter
+All letters, e.g. the union of @code{char-set:lower-case} and
+@code{char-set:upper-case}.
+@end defvr
+
+@defvr {Scheme Variable} char-set:digit
+@defvrx {C Variable} scm_char_set_digit
+All digits.
+@end defvr
+
+@defvr {Scheme Variable} char-set:letter+digit
+@defvrx {C Variable} scm_char_set_letter_and_digit
+The union of @code{char-set:letter} and @code{char-set:digit}.
+@end defvr
+
+@defvr {Scheme Variable} char-set:graphic
+@defvrx {C Variable} scm_char_set_graphic
+All characters which would put ink on the paper.
+@end defvr
+
+@defvr {Scheme Variable} char-set:printing
+@defvrx {C Variable} scm_char_set_printing
+The union of @code{char-set:graphic} and @code{char-set:whitespace}.
+@end defvr
+
+@defvr {Scheme Variable} char-set:whitespace
+@defvrx {C Variable} scm_char_set_whitespace
+All whitespace characters.
+@end defvr
+
+@defvr {Scheme Variable} char-set:blank
+@defvrx {C Variable} scm_char_set_blank
+All horizontal whitespace characters, that is @code{#\space} and
+@code{#\tab}.
+@end defvr
+
+@defvr {Scheme Variable} char-set:iso-control
+@defvrx {C Variable} scm_char_set_iso_control
+The ISO control characters with the codes 0--31 and 127.
+@end defvr
+
+@defvr {Scheme Variable} char-set:punctuation
+@defvrx {C Variable} scm_char_set_punctuation
+The characters @code{!"#%&'()*,-./:;?@@[\\]_@{@}}
+@end defvr
+
+@defvr {Scheme Variable} char-set:symbol
+@defvrx {C Variable} scm_char_set_symbol
+The characters @code{$+<=>^`|~}.
+@end defvr
+
+@defvr {Scheme Variable} char-set:hex-digit
+@defvrx {C Variable} scm_char_set_hex_digit
+The hexadecimal digits @code{0123456789abcdefABCDEF}.
+@end defvr
+
+@defvr {Scheme Variable} char-set:ascii
+@defvrx {C Variable} scm_char_set_ascii
+All ASCII characters.
+@end defvr
+
+@defvr {Scheme Variable} char-set:empty
+@defvrx {C Variable} scm_char_set_empty
+The empty character set.
+@end defvr
+
+@defvr {Scheme Variable} char-set:full
+@defvrx {C Variable} scm_char_set_full
+This character set contains all possible characters.
+@end defvr
+
+@node Strings
+@subsection Strings
+@tpindex Strings
+
+Strings are fixed-length sequences of characters.  They can be created
+by calling constructor procedures, but they can also literally get
+entered at the @acronym{REPL} or in Scheme source files.
+
+@c Guile provides a rich set of string processing procedures, because text
+@c handling is very important when Guile is used as a scripting language.
+
+Strings always carry the information about how many characters they are
+composed of with them, so there is no special end-of-string character,
+like in C.  That means that Scheme strings can contain any character,
+even the @samp{#\nul} character @samp{\0}.
+
+To use strings efficiently, you need to know a bit about how Guile
+implements them.  In Guile, a string consists of two parts, a head and
+the actual memory where the characters are stored.  When a string (or
+a substring of it) is copied, only a new head gets created, the memory
+is usually not copied.  The two heads start out pointing to the same
+memory.
+
+When one of these two strings is modified, as with @code{string-set!},
+their common memory does get copied so that each string has its own
+memory and modifying one does not accidently modify the other as well.
+Thus, Guile's strings are `copy on write'; the actual copying of their
+memory is delayed until one string is written to.
+
+This implementation makes functions like @code{substring} very
+efficient in the common case that no modifications are done to the
+involved strings.
+
+If you do know that your strings are getting modified right away, you
+can use @code{substring/copy} instead of @code{substring}.  This
+function performs the copy immediately at the time of creation.  This
+is more efficient, especially in a multi-threaded program.  Also,
+@code{substring/copy} can avoid the problem that a short substring
+holds on to the memory of a very large original string that could
+otherwise be recycled.
+
+If you want to avoid the copy altogether, so that modifications of one
+string show up in the other, you can use @code{substring/shared}.  The
+strings created by this procedure are called @dfn{mutation sharing
+substrings} since the substring and the original string share
+modifications to each other.
+
+If you want to prevent modifications, use @code{substring/read-only}.
+
+Guile provides all procedures of SRFI-13 and a few more.
+
+@menu
+* String Syntax::                   Read syntax for strings.
+* String Predicates::               Testing strings for certain properties.
+* String Constructors::             Creating new string objects.
+* List/String Conversion::          Converting from/to lists of characters.
+* String Selection::                Select portions from strings.
+* String Modification::             Modify parts or whole strings.
+* String Comparison::               Lexicographic ordering predicates.
+* String Searching::                Searching in strings.
+* Alphabetic Case Mapping::         Convert the alphabetic case of strings.
+* Reversing and Appending Strings:: Appending strings to form a new string.
+* Mapping Folding and Unfolding::   Iterating over strings.
+* Miscellaneous String Operations:: Replicating, insertion, parsing, ...
+* Conversion to/from C::       
+@end menu
+
+@node String Syntax
+@subsubsection String Read Syntax
+
+@c  In the following @code is used to get a good font in TeX etc, but
+@c  is omitted for Info format, so as not to risk any confusion over
+@c  whether surrounding ` ' quotes are part of the escape or are
+@c  special in a string (they're not).
+
+The read syntax for strings is an arbitrarily long sequence of
+characters enclosed in double quotes (@nicode{"}).
+
+Backslash is an escape character and can be used to insert the
+following special characters.  @nicode{\"} and @nicode{\\} are R5RS
+standard, the rest are Guile extensions, notice they follow C string
+syntax.
+
+@table @asis
+@item @nicode{\\}
+Backslash character.
+
+@item @nicode{\"}
+Double quote character (an unescaped @nicode{"} is otherwise the end
+of the string).
+
+@item @nicode{\0}
+NUL character (ASCII 0).
+
+@item @nicode{\a}
+Bell character (ASCII 7).
+
+@item @nicode{\f}
+Formfeed character (ASCII 12).
+
+@item @nicode{\n}
+Newline character (ASCII 10).
+
+@item @nicode{\r}
+Carriage return character (ASCII 13).
+
+@item @nicode{\t}
+Tab character (ASCII 9).
+
+@item @nicode{\v}
+Vertical tab character (ASCII 11).
+
+@item @nicode{\xHH}
+Character code given by two hexadecimal digits.  For example
+@nicode{\x7f} for an ASCII DEL (127).
+@end table
+
+@noindent
+The following are examples of string literals:
+
+@lisp
+"foo"
+"bar plonk"
+"Hello World"
+"\"Hi\", he said."
+@end lisp
+
+
+@node String Predicates
+@subsubsection String Predicates
+
+The following procedures can be used to check whether a given string
+fulfills some specified property.
+
+@rnindex string?
+@deffn {Scheme Procedure} string? obj
+@deffnx {C Function} scm_string_p (obj)
+Return @code{#t} if @var{obj} is a string, else @code{#f}.
+@end deffn
+
+@deftypefn {C Function} int scm_is_string (SCM obj)
+Returns @code{1} if @var{obj} is a string, @code{0} otherwise.
+@end deftypefn
+
+@deffn {Scheme Procedure} string-null? str
+@deffnx {C Function} scm_string_null_p (str)
+Return @code{#t} if @var{str}'s length is zero, and
+@code{#f} otherwise.
+@lisp
+(string-null? "")  @result{} #t
+y                    @result{} "foo"
+(string-null? y)     @result{} #f
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} string-any char_pred s [start [end]]
+@deffnx {C Function} scm_string_any (char_pred, s, start, end)
+Check if @var{char_pred} is true for any character in string @var{s}.
+
+@var{char_pred} can be a character to check for any equal to that, or
+a character set (@pxref{Character Sets}) to check for any in that set,
+or a predicate procedure to call.
+
+For a procedure, calls @code{(@var{char_pred} c)} are made
+successively on the characters from @var{start} to @var{end}.  If
+@var{char_pred} returns true (ie.@: non-@code{#f}), @code{string-any}
+stops and that return value is the return from @code{string-any}.  The
+call on the last character (ie.@: at @math{@var{end}-1}), if that
+point is reached, is a tail call.
+
+If there are no characters in @var{s} (ie.@: @var{start} equals
+@var{end}) then the return is @code{#f}.
+@end deffn
+
+@deffn {Scheme Procedure} string-every char_pred s [start [end]]
+@deffnx {C Function} scm_string_every (char_pred, s, start, end)
+Check if @var{char_pred} is true for every character in string
+@var{s}.
+
+@var{char_pred} can be a character to check for every character equal
+to that, or a character set (@pxref{Character Sets}) to check for
+every character being in that set, or a predicate procedure to call.
+
+For a procedure, calls @code{(@var{char_pred} c)} are made
+successively on the characters from @var{start} to @var{end}.  If
+@var{char_pred} returns @code{#f}, @code{string-every} stops and
+returns @code{#f}.  The call on the last character (ie.@: at
+@math{@var{end}-1}), if that point is reached, is a tail call and the
+return from that call is the return from @code{string-every}.
+
+If there are no characters in @var{s} (ie.@: @var{start} equals
+@var{end}) then the return is @code{#t}.
+@end deffn
+
+@node String Constructors
+@subsubsection String Constructors
+
+The string constructor procedures create new string objects, possibly
+initializing them with some specified character data.  See also
+@xref{String Selection}, for ways to create strings from existing
+strings.
+
+@c FIXME::martin: list->string belongs into `List/String Conversion'
+
+@deffn {Scheme Procedure} string char@dots{}
+@rnindex string
+Return a newly allocated string made from the given character
+arguments.
+
+@example
+(string #\x #\y #\z) @result{} "xyz"
+(string)             @result{} ""
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} list->string lst
+@deffnx {C Function} scm_string (lst)
+@rnindex list->string
+Return a newly allocated string made from a list of characters.
+
+@example
+(list->string '(#\a #\b #\c)) @result{} "abc"
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} reverse-list->string lst
+@deffnx {C Function} scm_reverse_list_to_string (lst)
+Return a newly allocated string made from a list of characters, in
+reverse order.
+
+@example
+(reverse-list->string '(#\a #\B #\c)) @result{} "cBa"
+@end example
+@end deffn
+
+@rnindex make-string
+@deffn {Scheme Procedure} make-string k [chr]
+@deffnx {C Function} scm_make_string (k, chr)
+Return a newly allocated string of
+length @var{k}.  If @var{chr} is given, then all elements of
+the string are initialized to @var{chr}, otherwise the contents
+of the @var{string} are unspecified.
+@end deffn
+
+@deftypefn {C Function} SCM scm_c_make_string (size_t len, SCM chr)
+Like @code{scm_make_string}, but expects the length as a
+@code{size_t}.
+@end deftypefn
+
+@deffn {Scheme Procedure} string-tabulate proc len
+@deffnx {C Function} scm_string_tabulate (proc, len)
+@var{proc} is an integer->char procedure.  Construct a string
+of size @var{len} by applying @var{proc} to each index to
+produce the corresponding string element.  The order in which
+@var{proc} is applied to the indices is not specified.
+@end deffn
+
+@deffn {Scheme Procedure} string-join ls [delimiter [grammar]]
+@deffnx {C Function} scm_string_join (ls, delimiter, grammar)
+Append the string in the string list @var{ls}, using the string
+@var{delim} as a delimiter between the elements of @var{ls}.
+@var{grammar} is a symbol which specifies how the delimiter is
+placed between the strings, and defaults to the symbol
+@code{infix}.
+
+@table @code
+@item infix
+Insert the separator between list elements.  An empty string
+will produce an empty list.
+@item string-infix
+Like @code{infix}, but will raise an error if given the empty
+list.
+@item suffix
+Insert the separator after every list element.
+@item prefix
+Insert the separator before each list element.
+@end table
+@end deffn
+
+@node List/String Conversion
+@subsubsection List/String conversion
+
+When processing strings, it is often convenient to first convert them
+into a list representation by using the procedure @code{string->list},
+work with the resulting list, and then convert it back into a string.
+These procedures are useful for similar tasks.
+
+@rnindex string->list
+@deffn {Scheme Procedure} string->list str [start [end]]
+@deffnx {C Function} scm_substring_to_list (str, start, end)
+@deffnx {C Function} scm_string_to_list (str)
+Convert the string @var{str} into a list of characters.
+@end deffn
+
+@deffn {Scheme Procedure} string-split str chr
+@deffnx {C Function} scm_string_split (str, chr)
+Split the string @var{str} into the a list of the substrings delimited
+by appearances of the character @var{chr}.  Note that an empty substring
+between separator characters will result in an empty string in the
+result list.
+
+@lisp
+(string-split "root:x:0:0:root:/root:/bin/bash" #\:)
+@result{}
+("root" "x" "0" "0" "root" "/root" "/bin/bash")
+
+(string-split "::" #\:)
+@result{}
+("" "" "")
+
+(string-split "" #\:)
+@result{}
+("")
+@end lisp
+@end deffn
+
+
+@node String Selection
+@subsubsection String Selection
+
+Portions of strings can be extracted by these procedures.
+@code{string-ref} delivers individual characters whereas
+@code{substring} can be used to extract substrings from longer strings.
+
+@rnindex string-length
+@deffn {Scheme Procedure} string-length string
+@deffnx {C Function} scm_string_length (string)
+Return the number of characters in @var{string}.
+@end deffn
+
+@deftypefn {C Function} size_t scm_c_string_length (SCM str)
+Return the number of characters in @var{str} as a @code{size_t}.
+@end deftypefn
+
+@rnindex string-ref
+@deffn {Scheme Procedure} string-ref str k
+@deffnx {C Function} scm_string_ref (str, k)
+Return character @var{k} of @var{str} using zero-origin
+indexing. @var{k} must be a valid index of @var{str}.
+@end deffn
+
+@deftypefn {C Function} SCM scm_c_string_ref (SCM str, size_t k)
+Return character @var{k} of @var{str} using zero-origin
+indexing. @var{k} must be a valid index of @var{str}.
+@end deftypefn
+
+@rnindex string-copy
+@deffn {Scheme Procedure} string-copy str [start [end]]
+@deffnx {C Function} scm_substring_copy (str, start, end)
+@deffnx {C Function} scm_string_copy (str)
+Return a copy of the given string @var{str}.
+
+The returned string shares storage with @var{str} initially, but it is
+copied as soon as one of the two strings is modified.
+@end deffn
+
+@rnindex substring
+@deffn {Scheme Procedure} substring str start [end]
+@deffnx {C Function} scm_substring (str, start, end)
+Return a new string formed from the characters
+of @var{str} beginning with index @var{start} (inclusive) and
+ending with index @var{end} (exclusive).
+@var{str} must be a string, @var{start} and @var{end} must be
+exact integers satisfying:
+
+0 <= @var{start} <= @var{end} <= @code{(string-length @var{str})}.
+
+The returned string shares storage with @var{str} initially, but it is
+copied as soon as one of the two strings is modified.
+@end deffn
+
+@deffn {Scheme Procedure} substring/shared str start [end]
+@deffnx {C Function} scm_substring_shared (str, start, end)
+Like @code{substring}, but the strings continue to share their storage
+even if they are modified.  Thus, modifications to @var{str} show up
+in the new string, and vice versa.
+@end deffn
+
+@deffn {Scheme Procedure} substring/copy str start [end]
+@deffnx {C Function} scm_substring_copy (str, start, end)
+Like @code{substring}, but the storage for the new string is copied
+immediately.
+@end deffn
+
+@deffn {Scheme Procedure} substring/read-only str start [end]
+@deffnx {C Function} scm_substring_read_only (str, start, end)
+Like @code{substring}, but the resulting string can not be modified.
+@end deffn
+
+@deftypefn  {C Function} SCM scm_c_substring (SCM str, size_t start, size_t end)
+@deftypefnx {C Function} SCM scm_c_substring_shared (SCM str, size_t start, size_t end)
+@deftypefnx {C Function} SCM scm_c_substring_copy (SCM str, size_t start, size_t end)
+@deftypefnx {C Function} SCM scm_c_substring_read_only (SCM str, size_t start, size_t end)
+Like @code{scm_substring}, etc. but the bounds are given as a @code{size_t}.
+@end deftypefn
+
+@deffn {Scheme Procedure} string-take s n
+@deffnx {C Function} scm_string_take (s, n)
+Return the @var{n} first characters of @var{s}.
+@end deffn
+
+@deffn {Scheme Procedure} string-drop s n
+@deffnx {C Function} scm_string_drop (s, n)
+Return all but the first @var{n} characters of @var{s}.
+@end deffn
+
+@deffn {Scheme Procedure} string-take-right s n
+@deffnx {C Function} scm_string_take_right (s, n)
+Return the @var{n} last characters of @var{s}.
+@end deffn
+
+@deffn {Scheme Procedure} string-drop-right s n
+@deffnx {C Function} scm_string_drop_right (s, n)
+Return all but the last @var{n} characters of @var{s}.
+@end deffn
+
+@deffn {Scheme Procedure} string-pad s len [chr [start [end]]]
+@deffnx {Scheme Procedure} string-pad-right s len [chr [start [end]]]
+@deffnx {C Function} scm_string_pad (s, len, chr, start, end)
+@deffnx {C Function} scm_string_pad_right (s, len, chr, start, end)
+Take characters @var{start} to @var{end} from the string @var{s} and
+either pad with @var{char} or truncate them to give @var{len}
+characters.
+
+@code{string-pad} pads or truncates on the left, so for example
+
+@example
+(string-pad "x" 3)     @result{} "  x"
+(string-pad "abcde" 3) @result{} "cde"
+@end example
+
+@code{string-pad-right} pads or truncates on the right, so for example
+
+@example
+(string-pad-right "x" 3)     @result{} "x  "
+(string-pad-right "abcde" 3) @result{} "abc"
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} string-trim s [char_pred [start [end]]]
+@deffnx {Scheme Procedure} string-trim-right s [char_pred [start [end]]]
+@deffnx {Scheme Procedure} string-trim-both s [char_pred [start [end]]]
+@deffnx {C Function} scm_string_trim (s, char_pred, start, end)
+@deffnx {C Function} scm_string_trim_right (s, char_pred, start, end)
+@deffnx {C Function} scm_string_trim_both (s, char_pred, start, end)
+Trim occurrances of @var{char_pred} from the ends of @var{s}.
+
+@code{string-trim} trims @var{char_pred} characters from the left
+(start) of the string, @code{string-trim-right} trims them from the
+right (end) of the string, @code{string-trim-both} trims from both
+ends.
+
+@var{char_pred} can be a character, a character set, or a predicate
+procedure to call on each character.  If @var{char_pred} is not given
+the default is whitespace as per @code{char-set:whitespace}
+(@pxref{Standard Character Sets}).
+
+@example
+(string-trim " x ")              @result{} "x "
+(string-trim-right "banana" #\a) @result{} "banan"
+(string-trim-both ".,xy:;" char-set:punctuation)
+                  @result{} "xy"
+(string-trim-both "xyzzy" (lambda (c)
+                             (or (eqv? c #\x)
+                                 (eqv? c #\y))))
+                  @result{} "zz"
+@end example
+@end deffn
+
+@node String Modification
+@subsubsection String Modification
+
+These procedures are for modifying strings in-place.  This means that the
+result of the operation is not a new string; instead, the original string's
+memory representation is modified.
+
+@rnindex string-set!
+@deffn {Scheme Procedure} string-set! str k chr
+@deffnx {C Function} scm_string_set_x (str, k, chr)
+Store @var{chr} in element @var{k} of @var{str} and return
+an unspecified value. @var{k} must be a valid index of
+@var{str}.
+@end deffn
+
+@deftypefn {C Function} void scm_c_string_set_x (SCM str, size_t k, SCM chr)
+Like @code{scm_string_set_x}, but the index is given as a @code{size_t}.
+@end deftypefn
+
+@rnindex string-fill!
+@deffn {Scheme Procedure} string-fill! str chr [start [end]]
+@deffnx {C Function} scm_substring_fill_x (str, chr, start, end)
+@deffnx {C Function} scm_string_fill_x (str, chr)
+Stores @var{chr} in every element of the given @var{str} and
+returns an unspecified value.
+@end deffn
+
+@deffn {Scheme Procedure} substring-fill! str start end fill
+@deffnx {C Function} scm_substring_fill_x (str, start, end, fill)
+Change every character in @var{str} between @var{start} and
+@var{end} to @var{fill}.
+
+@lisp
+(define y "abcdefg")
+(substring-fill! y 1 3 #\r)
+y
+@result{} "arrdefg"
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} substring-move! str1 start1 end1 str2 start2
+@deffnx {C Function} scm_substring_move_x (str1, start1, end1, str2, start2)
+Copy the substring of @var{str1} bounded by @var{start1} and @var{end1}
+into @var{str2} beginning at position @var{start2}.
+@var{str1} and @var{str2} can be the same string.
+@end deffn
+
+@deffn {Scheme Procedure} string-copy! target tstart s [start [end]]
+@deffnx {C Function} scm_string_copy_x (target, tstart, s, start, end)
+Copy the sequence of characters from index range [@var{start},
+@var{end}) in string @var{s} to string @var{target}, beginning
+at index @var{tstart}.  The characters are copied left-to-right
+or right-to-left as needed -- the copy is guaranteed to work,
+even if @var{target} and @var{s} are the same string.  It is an
+error if the copy operation runs off the end of the target
+string.
+@end deffn
+
+
+@node String Comparison
+@subsubsection String Comparison
+
+The procedures in this section are similar to the character ordering
+predicates (@pxref{Characters}), but are defined on character sequences.
+
+The first set is specified in R5RS and has names that end in @code{?}.
+The second set is specified in SRFI-13 and the names have no ending
+@code{?}.  The predicates ending in @code{-ci} ignore the character case
+when comparing strings.
+
+@rnindex string=?
+@deffn {Scheme Procedure} string=? s1 s2
+Lexicographic equality predicate; return @code{#t} if the two
+strings are the same length and contain the same characters in
+the same positions, otherwise return @code{#f}.
+
+The procedure @code{string-ci=?} treats upper and lower case
+letters as though they were the same character, but
+@code{string=?} treats upper and lower case as distinct
+characters.
+@end deffn
+
+@rnindex string<?
+@deffn {Scheme Procedure} string<? s1 s2
+Lexicographic ordering predicate; return @code{#t} if @var{s1}
+is lexicographically less than @var{s2}.
+@end deffn
+
+@rnindex string<=?
+@deffn {Scheme Procedure} string<=? s1 s2
+Lexicographic ordering predicate; return @code{#t} if @var{s1}
+is lexicographically less than or equal to @var{s2}.
+@end deffn
+
+@rnindex string>?
+@deffn {Scheme Procedure} string>? s1 s2
+Lexicographic ordering predicate; return @code{#t} if @var{s1}
+is lexicographically greater than @var{s2}.
+@end deffn
+
+@rnindex string>=?
+@deffn {Scheme Procedure} string>=? s1 s2
+Lexicographic ordering predicate; return @code{#t} if @var{s1}
+is lexicographically greater than or equal to @var{s2}.
+@end deffn
+
+@rnindex string-ci=?
+@deffn {Scheme Procedure} string-ci=? s1 s2
+Case-insensitive string equality predicate; return @code{#t} if
+the two strings are the same length and their component
+characters match (ignoring case) at each position; otherwise
+return @code{#f}.
+@end deffn
+
+@rnindex string-ci<?
+@deffn {Scheme Procedure} string-ci<? s1 s2
+Case insensitive lexicographic ordering predicate; return
+@code{#t} if @var{s1} is lexicographically less than @var{s2}
+regardless of case.
+@end deffn
+
+@rnindex string<=?
+@deffn {Scheme Procedure} string-ci<=? s1 s2
+Case insensitive lexicographic ordering predicate; return
+@code{#t} if @var{s1} is lexicographically less than or equal
+to @var{s2} regardless of case.
+@end deffn
+
+@rnindex string-ci>?
+@deffn {Scheme Procedure} string-ci>? s1 s2
+Case insensitive lexicographic ordering predicate; return
+@code{#t} if @var{s1} is lexicographically greater than
+@var{s2} regardless of case.
+@end deffn
+
+@rnindex string-ci>=?
+@deffn {Scheme Procedure} string-ci>=? s1 s2
+Case insensitive lexicographic ordering predicate; return
+@code{#t} if @var{s1} is lexicographically greater than or
+equal to @var{s2} regardless of case.
+@end deffn
+
+@deffn {Scheme Procedure} string-compare s1 s2 proc_lt proc_eq proc_gt [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_compare (s1, s2, proc_lt, proc_eq, proc_gt, start1, end1, start2, end2)
+Apply @var{proc_lt}, @var{proc_eq}, @var{proc_gt} to the
+mismatch index, depending upon whether @var{s1} is less than,
+equal to, or greater than @var{s2}.  The mismatch index is the
+largest index @var{i} such that for every 0 <= @var{j} <
+@var{i}, @var{s1}[@var{j}] = @var{s2}[@var{j}] -- that is,
+@var{i} is the first position that does not match.
+@end deffn
+
+@deffn {Scheme Procedure} string-compare-ci s1 s2 proc_lt proc_eq proc_gt [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_compare_ci (s1, s2, proc_lt, proc_eq, proc_gt, start1, end1, start2, end2)
+Apply @var{proc_lt}, @var{proc_eq}, @var{proc_gt} to the
+mismatch index, depending upon whether @var{s1} is less than,
+equal to, or greater than @var{s2}.  The mismatch index is the
+largest index @var{i} such that for every 0 <= @var{j} <
+@var{i}, @var{s1}[@var{j}] = @var{s2}[@var{j}] -- that is,
+@var{i} is the first position that does not match.  The
+character comparison is done case-insensitively.
+@end deffn
+
+@deffn {Scheme Procedure} string= s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_eq (s1, s2, start1, end1, start2, end2)
+Return @code{#f} if @var{s1} and @var{s2} are not equal, a true
+value otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} string<> s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_neq (s1, s2, start1, end1, start2, end2)
+Return @code{#f} if @var{s1} and @var{s2} are equal, a true
+value otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} string< s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_lt (s1, s2, start1, end1, start2, end2)
+Return @code{#f} if @var{s1} is greater or equal to @var{s2}, a
+true value otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} string> s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_gt (s1, s2, start1, end1, start2, end2)
+Return @code{#f} if @var{s1} is less or equal to @var{s2}, a
+true value otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} string<= s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_le (s1, s2, start1, end1, start2, end2)
+Return @code{#f} if @var{s1} is greater to @var{s2}, a true
+value otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} string>= s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_ge (s1, s2, start1, end1, start2, end2)
+Return @code{#f} if @var{s1} is less to @var{s2}, a true value
+otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} string-ci= s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_ci_eq (s1, s2, start1, end1, start2, end2)
+Return @code{#f} if @var{s1} and @var{s2} are not equal, a true
+value otherwise.  The character comparison is done
+case-insensitively.
+@end deffn
+
+@deffn {Scheme Procedure} string-ci<> s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_ci_neq (s1, s2, start1, end1, start2, end2)
+Return @code{#f} if @var{s1} and @var{s2} are equal, a true
+value otherwise.  The character comparison is done
+case-insensitively.
+@end deffn
+
+@deffn {Scheme Procedure} string-ci< s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_ci_lt (s1, s2, start1, end1, start2, end2)
+Return @code{#f} if @var{s1} is greater or equal to @var{s2}, a
+true value otherwise.  The character comparison is done
+case-insensitively.
+@end deffn
+
+@deffn {Scheme Procedure} string-ci> s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_ci_gt (s1, s2, start1, end1, start2, end2)
+Return @code{#f} if @var{s1} is less or equal to @var{s2}, a
+true value otherwise.  The character comparison is done
+case-insensitively.
+@end deffn
+
+@deffn {Scheme Procedure} string-ci<= s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_ci_le (s1, s2, start1, end1, start2, end2)
+Return @code{#f} if @var{s1} is greater to @var{s2}, a true
+value otherwise.  The character comparison is done
+case-insensitively.
+@end deffn
+
+@deffn {Scheme Procedure} string-ci>= s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_ci_ge (s1, s2, start1, end1, start2, end2)
+Return @code{#f} if @var{s1} is less to @var{s2}, a true value
+otherwise.  The character comparison is done
+case-insensitively.
+@end deffn
+
+@deffn {Scheme Procedure} string-hash s [bound [start [end]]]
+@deffnx {C Function} scm_substring_hash (s, bound, start, end)
+Compute a hash value for @var{S}.  the optional argument @var{bound} is a non-negative exact integer specifying the range of the hash function. A positive value restricts the return value to the range [0,bound).
+@end deffn
+
+@deffn {Scheme Procedure} string-hash-ci s [bound [start [end]]]
+@deffnx {C Function} scm_substring_hash_ci (s, bound, start, end)
+Compute a hash value for @var{S}.  the optional argument @var{bound} is a non-negative exact integer specifying the range of the hash function. A positive value restricts the return value to the range [0,bound).
+@end deffn
+
+@node String Searching
+@subsubsection String Searching
+
+@deffn {Scheme Procedure} string-index s char_pred [start [end]]
+@deffnx {C Function} scm_string_index (s, char_pred, start, end)
+Search through the string @var{s} from left to right, returning
+the index of the first occurence of a character which
+
+@itemize @bullet
+@item
+equals @var{char_pred}, if it is character,
+
+@item
+satisifies the predicate @var{char_pred}, if it is a procedure,
+
+@item
+is in the set @var{char_pred}, if it is a character set.
+@end itemize
+@end deffn
+
+@deffn {Scheme Procedure} string-rindex s char_pred [start [end]]
+@deffnx {C Function} scm_string_rindex (s, char_pred, start, end)
+Search through the string @var{s} from right to left, returning
+the index of the last occurence of a character which
+
+@itemize @bullet
+@item
+equals @var{char_pred}, if it is character,
+
+@item
+satisifies the predicate @var{char_pred}, if it is a procedure,
+
+@item
+is in the set if @var{char_pred} is a character set.
+@end itemize
+@end deffn
+
+@deffn {Scheme Procedure} string-prefix-length s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_prefix_length (s1, s2, start1, end1, start2, end2)
+Return the length of the longest common prefix of the two
+strings.
+@end deffn
+
+@deffn {Scheme Procedure} string-prefix-length-ci s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_prefix_length_ci (s1, s2, start1, end1, start2, end2)
+Return the length of the longest common prefix of the two
+strings, ignoring character case.
+@end deffn
+
+@deffn {Scheme Procedure} string-suffix-length s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_suffix_length (s1, s2, start1, end1, start2, end2)
+Return the length of the longest common suffix of the two
+strings.
+@end deffn
+
+@deffn {Scheme Procedure} string-suffix-length-ci s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_suffix_length_ci (s1, s2, start1, end1, start2, end2)
+Return the length of the longest common suffix of the two
+strings, ignoring character case.
+@end deffn
+
+@deffn {Scheme Procedure} string-prefix? s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_prefix_p (s1, s2, start1, end1, start2, end2)
+Is @var{s1} a prefix of @var{s2}?
+@end deffn
+
+@deffn {Scheme Procedure} string-prefix-ci? s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_prefix_ci_p (s1, s2, start1, end1, start2, end2)
+Is @var{s1} a prefix of @var{s2}, ignoring character case?
+@end deffn
+
+@deffn {Scheme Procedure} string-suffix? s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_suffix_p (s1, s2, start1, end1, start2, end2)
+Is @var{s1} a suffix of @var{s2}?
+@end deffn
+
+@deffn {Scheme Procedure} string-suffix-ci? s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_suffix_ci_p (s1, s2, start1, end1, start2, end2)
+Is @var{s1} a suffix of @var{s2}, ignoring character case?
+@end deffn
+
+@deffn {Scheme Procedure} string-index-right s char_pred [start [end]]
+@deffnx {C Function} scm_string_index_right (s, char_pred, start, end)
+Search through the string @var{s} from right to left, returning
+the index of the last occurence of a character which
+
+@itemize @bullet
+@item
+equals @var{char_pred}, if it is character,
+
+@item
+satisifies the predicate @var{char_pred}, if it is a procedure,
+
+@item
+is in the set if @var{char_pred} is a character set.
+@end itemize
+@end deffn
+
+@deffn {Scheme Procedure} string-skip s char_pred [start [end]]
+@deffnx {C Function} scm_string_skip (s, char_pred, start, end)
+Search through the string @var{s} from left to right, returning
+the index of the first occurence of a character which
+
+@itemize @bullet
+@item
+does not equal @var{char_pred}, if it is character,
+
+@item
+does not satisify the predicate @var{char_pred}, if it is a
+procedure,
+
+@item
+is not in the set if @var{char_pred} is a character set.
+@end itemize
+@end deffn
+
+@deffn {Scheme Procedure} string-skip-right s char_pred [start [end]]
+@deffnx {C Function} scm_string_skip_right (s, char_pred, start, end)
+Search through the string @var{s} from right to left, returning
+the index of the last occurence of a character which
+
+@itemize @bullet
+@item
+does not equal @var{char_pred}, if it is character,
+
+@item
+does not satisfy the predicate @var{char_pred}, if it is a
+procedure,
+
+@item
+is not in the set if @var{char_pred} is a character set.
+@end itemize
+@end deffn
+
+@deffn {Scheme Procedure} string-count s char_pred [start [end]]
+@deffnx {C Function} scm_string_count (s, char_pred, start, end)
+Return the count of the number of characters in the string
+@var{s} which
+
+@itemize @bullet
+@item
+equals @var{char_pred}, if it is character,
+
+@item
+satisifies the predicate @var{char_pred}, if it is a procedure.
+
+@item
+is in the set @var{char_pred}, if it is a character set.
+@end itemize
+@end deffn
+
+@deffn {Scheme Procedure} string-contains s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_contains (s1, s2, start1, end1, start2, end2)
+Does string @var{s1} contain string @var{s2}?  Return the index
+in @var{s1} where @var{s2} occurs as a substring, or false.
+The optional start/end indices restrict the operation to the
+indicated substrings.
+@end deffn
+
+@deffn {Scheme Procedure} string-contains-ci s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_contains_ci (s1, s2, start1, end1, start2, end2)
+Does string @var{s1} contain string @var{s2}?  Return the index
+in @var{s1} where @var{s2} occurs as a substring, or false.
+The optional start/end indices restrict the operation to the
+indicated substrings.  Character comparison is done
+case-insensitively.
+@end deffn
+
+@node Alphabetic Case Mapping
+@subsubsection Alphabetic Case Mapping
+
+These are procedures for mapping strings to their upper- or lower-case
+equivalents, respectively, or for capitalizing strings.
+
+@deffn {Scheme Procedure} string-upcase str [start [end]]
+@deffnx {C Function} scm_substring_upcase (str, start, end)
+@deffnx {C Function} scm_string_upcase (str)
+Upcase every character in @code{str}.
+@end deffn
+
+@deffn {Scheme Procedure} string-upcase! str [start [end]]
+@deffnx {C Function} scm_substring_upcase_x (str, start, end)
+@deffnx {C Function} scm_string_upcase_x (str)
+Destructively upcase every character in @code{str}.
+
+@lisp
+(string-upcase! y)
+@result{} "ARRDEFG"
+y
+@result{} "ARRDEFG"
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} string-downcase str [start [end]]
+@deffnx {C Function} scm_substring_downcase (str, start, end)
+@deffnx {C Function} scm_string_downcase (str)
+Downcase every character in @var{str}.
+@end deffn
+
+@deffn {Scheme Procedure} string-downcase! str [start [end]]
+@deffnx {C Function} scm_substring_downcase_x (str, start, end)
+@deffnx {C Function} scm_string_downcase_x (str)
+Destructively downcase every character in @var{str}.
+
+@lisp
+y
+@result{} "ARRDEFG"
+(string-downcase! y)
+@result{} "arrdefg"
+y
+@result{} "arrdefg"
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} string-capitalize str
+@deffnx {C Function} scm_string_capitalize (str)
+Return a freshly allocated string with the characters in
+@var{str}, where the first character of every word is
+capitalized.
+@end deffn
+
+@deffn {Scheme Procedure} string-capitalize! str
+@deffnx {C Function} scm_string_capitalize_x (str)
+Upcase the first character of every word in @var{str}
+destructively and return @var{str}.
+
+@lisp
+y                      @result{} "hello world"
+(string-capitalize! y) @result{} "Hello World"
+y                      @result{} "Hello World"
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} string-titlecase str [start [end]]
+@deffnx {C Function} scm_string_titlecase (str, start, end)
+Titlecase every first character in a word in @var{str}.
+@end deffn
+
+@deffn {Scheme Procedure} string-titlecase! str [start [end]]
+@deffnx {C Function} scm_string_titlecase_x (str, start, end)
+Destructively titlecase every first character in a word in
+@var{str}.
+@end deffn
+
+@node Reversing and Appending Strings
+@subsubsection Reversing and Appending Strings
+
+@deffn {Scheme Procedure} string-reverse str [start [end]]
+@deffnx {C Function} scm_string_reverse (str, start, end)
+Reverse the string @var{str}.  The optional arguments
+@var{start} and @var{end} delimit the region of @var{str} to
+operate on.
+@end deffn
+
+@deffn {Scheme Procedure} string-reverse! str [start [end]]
+@deffnx {C Function} scm_string_reverse_x (str, start, end)
+Reverse the string @var{str} in-place.  The optional arguments
+@var{start} and @var{end} delimit the region of @var{str} to
+operate on.  The return value is unspecified.
+@end deffn
+
+@rnindex string-append
+@deffn {Scheme Procedure} string-append . args
+@deffnx {C Function} scm_string_append (args)
+Return a newly allocated string whose characters form the
+concatenation of the given strings, @var{args}.
+
+@example
+(let ((h "hello "))
+  (string-append h "world"))
+@result{} "hello world"
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} string-append/shared . ls
+@deffnx {C Function} scm_string_append_shared (ls)
+Like @code{string-append}, but the result may share memory
+with the argument strings.
+@end deffn
+
+@deffn {Scheme Procedure} string-concatenate ls
+@deffnx {C Function} scm_string_concatenate (ls)
+Append the elements of @var{ls} (which must be strings)
+together into a single string.  Guaranteed to return a freshly
+allocated string.
+@end deffn
+
+@deffn {Scheme Procedure} string-concatenate-reverse ls [final_string [end]]
+@deffnx {C Function} scm_string_concatenate_reverse (ls, final_string, end)
+Without optional arguments, this procedure is equivalent to
+
+@smalllisp
+(string-concatenate (reverse ls))
+@end smalllisp
+
+If the optional argument @var{final_string} is specified, it is
+consed onto the beginning to @var{ls} before performing the
+list-reverse and string-concatenate operations.  If @var{end}
+is given, only the characters of @var{final_string} up to index
+@var{end} are used.
+
+Guaranteed to return a freshly allocated string.
+@end deffn
+
+@deffn {Scheme Procedure} string-concatenate/shared ls
+@deffnx {C Function} scm_string_concatenate_shared (ls)
+Like @code{string-concatenate}, but the result may share memory
+with the strings in the list @var{ls}.
+@end deffn
+
+@deffn {Scheme Procedure} string-concatenate-reverse/shared ls [final_string [end]]
+@deffnx {C Function} scm_string_concatenate_reverse_shared (ls, final_string, end)
+Like @code{string-concatenate-reverse}, but the result may
+share memory with the the strings in the @var{ls} arguments.
+@end deffn
+
+@node Mapping Folding and Unfolding
+@subsubsection Mapping, Folding, and Unfolding
+
+@deffn {Scheme Procedure} string-map proc s [start [end]]
+@deffnx {C Function} scm_string_map (proc, s, start, end)
+@var{proc} is a char->char procedure, it is mapped over
+@var{s}.  The order in which the procedure is applied to the
+string elements is not specified.
+@end deffn
+
+@deffn {Scheme Procedure} string-map! proc s [start [end]]
+@deffnx {C Function} scm_string_map_x (proc, s, start, end)
+@var{proc} is a char->char procedure, it is mapped over
+@var{s}.  The order in which the procedure is applied to the
+string elements is not specified.  The string @var{s} is
+modified in-place, the return value is not specified.
+@end deffn
+
+@deffn {Scheme Procedure} string-for-each proc s [start [end]]
+@deffnx {C Function} scm_string_for_each (proc, s, start, end)
+@var{proc} is mapped over @var{s} in left-to-right order.  The
+return value is not specified.
+@end deffn
+
+@deffn {Scheme Procedure} string-for-each-index proc s [start [end]]
+@deffnx {C Function} scm_string_for_each_index (proc, s, start, end)
+Call @code{(@var{proc} i)} for each index i in @var{s}, from left to
+right.
+
+For example, to change characters to alternately upper and lower case,
+
+@example
+(define str (string-copy "studly"))
+(string-for-each-index (lambda (i)
+                         (string-set! str i
+                           ((if (even? i) char-upcase char-downcase)
+                            (string-ref str i))))
+                       str)
+str @result{} "StUdLy"
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} string-fold kons knil s [start [end]]
+@deffnx {C Function} scm_string_fold (kons, knil, s, start, end)
+Fold @var{kons} over the characters of @var{s}, with @var{knil}
+as the terminating element, from left to right.  @var{kons}
+must expect two arguments: The actual character and the last
+result of @var{kons}' application.
+@end deffn
+
+@deffn {Scheme Procedure} string-fold-right kons knil s [start [end]]
+@deffnx {C Function} scm_string_fold_right (kons, knil, s, start, end)
+Fold @var{kons} over the characters of @var{s}, with @var{knil}
+as the terminating element, from right to left.  @var{kons}
+must expect two arguments: The actual character and the last
+result of @var{kons}' application.
+@end deffn
+
+@deffn {Scheme Procedure} string-unfold p f g seed [base [make_final]]
+@deffnx {C Function} scm_string_unfold (p, f, g, seed, base, make_final)
+@itemize @bullet
+@item @var{g} is used to generate a series of @emph{seed}
+values from the initial @var{seed}: @var{seed}, (@var{g}
+@var{seed}), (@var{g}^2 @var{seed}), (@var{g}^3 @var{seed}),
+@dots{}
+@item @var{p} tells us when to stop -- when it returns true
+when applied to one of these seed values.
+@item @var{f} maps each seed value to the corresponding
+character in the result string.  These chars are assembled
+into the string in a left-to-right order.
+@item @var{base} is the optional initial/leftmost portion
+of the constructed string; it default to the empty
+string.
+@item @var{make_final} is applied to the terminal seed
+value (on which @var{p} returns true) to produce
+the final/rightmost portion of the constructed string.
+The default is nothing extra.
+@end itemize
+@end deffn
+
+@deffn {Scheme Procedure} string-unfold-right p f g seed [base [make_final]]
+@deffnx {C Function} scm_string_unfold_right (p, f, g, seed, base, make_final)
+@itemize @bullet
+@item @var{g} is used to generate a series of @emph{seed}
+values from the initial @var{seed}: @var{seed}, (@var{g}
+@var{seed}), (@var{g}^2 @var{seed}), (@var{g}^3 @var{seed}),
+@dots{}
+@item @var{p} tells us when to stop -- when it returns true
+when applied to one of these seed values.
+@item @var{f} maps each seed value to the corresponding
+character in the result string.  These chars are assembled
+into the string in a right-to-left order.
+@item @var{base} is the optional initial/rightmost portion
+of the constructed string; it default to the empty
+string.
+@item @var{make_final} is applied to the terminal seed
+value (on which @var{p} returns true) to produce
+the final/leftmost portion of the constructed string.
+It defaults to @code{(lambda (x) )}.
+@end itemize
+@end deffn
+
+@node Miscellaneous String Operations
+@subsubsection Miscellaneous String Operations
+
+@deffn {Scheme Procedure} xsubstring s from [to [start [end]]]
+@deffnx {C Function} scm_xsubstring (s, from, to, start, end)
+This is the @emph{extended substring} procedure that implements
+replicated copying of a substring of some string.
+
+@var{s} is a string, @var{start} and @var{end} are optional
+arguments that demarcate a substring of @var{s}, defaulting to
+0 and the length of @var{s}.  Replicate this substring up and
+down index space, in both the positive and negative directions.
+@code{xsubstring} returns the substring of this string
+beginning at index @var{from}, and ending at @var{to}, which
+defaults to @var{from} + (@var{end} - @var{start}).
+@end deffn
+
+@deffn {Scheme Procedure} string-xcopy! target tstart s sfrom [sto [start [end]]]
+@deffnx {C Function} scm_string_xcopy_x (target, tstart, s, sfrom, sto, start, end)
+Exactly the same as @code{xsubstring}, but the extracted text
+is written into the string @var{target} starting at index
+@var{tstart}.  The operation is not defined if @code{(eq?
+@var{target} @var{s})} or these arguments share storage -- you
+cannot copy a string on top of itself.
+@end deffn
+
+@deffn {Scheme Procedure} string-replace s1 s2 [start1 [end1 [start2 [end2]]]]
+@deffnx {C Function} scm_string_replace (s1, s2, start1, end1, start2, end2)
+Return the string @var{s1}, but with the characters
+@var{start1} @dots{} @var{end1} replaced by the characters
+@var{start2} @dots{} @var{end2} from @var{s2}.
+@end deffn
+
+@deffn {Scheme Procedure} string-tokenize s [token_set [start [end]]]
+@deffnx {C Function} scm_string_tokenize (s, token_set, start, end)
+Split the string @var{s} into a list of substrings, where each
+substring is a maximal non-empty contiguous sequence of
+characters from the character set @var{token_set}, which
+defaults to @code{char-set:graphic}.
+If @var{start} or @var{end} indices are provided, they restrict
+@code{string-tokenize} to operating on the indicated substring
+of @var{s}.
+@end deffn
+
+@deffn {Scheme Procedure} string-filter s char_pred [start [end]]
+@deffnx {C Function} scm_string_filter (s, char_pred, start, end)
+Filter the string @var{s}, retaining only those characters which
+satisfy @var{char_pred}.
+
+If @var{char_pred} is a procedure, it is applied to each character as
+a predicate, if it is a character, it is tested for equality and if it
+is a character set, it is tested for membership.
+@end deffn
+
+@deffn {Scheme Procedure} string-delete s char_pred [start [end]]
+@deffnx {C Function} scm_string_delete (s, char_pred, start, end)
+Delete characters satisfying @var{char_pred} from @var{s}.
+
+If @var{char_pred} is a procedure, it is applied to each character as
+a predicate, if it is a character, it is tested for equality and if it
+is a character set, it is tested for membership.
+@end deffn
+
+@node Conversion to/from C
+@subsubsection Conversion to/from C
+
+When creating a Scheme string from a C string or when converting a
+Scheme string to a C string, the concept of character encoding becomes
+important.
+
+In C, a string is just a sequence of bytes, and the character encoding
+describes the relation between these bytes and the actual characters
+that make up the string.  For Scheme strings, character encoding is
+not an issue (most of the time), since in Scheme you never get to see
+the bytes, only the characters.
+
+Well, ideally, anyway.  Right now, Guile simply equates Scheme
+characters and bytes, ignoring the possibility of multi-byte encodings
+completely.  This will change in the future, where Guile will use
+Unicode codepoints as its characters and UTF-8 or some other encoding
+as its internal encoding.  When you exclusively use the functions
+listed in this section, you are `future-proof'.
+
+Converting a Scheme string to a C string will often allocate fresh
+memory to hold the result.  You must take care that this memory is
+properly freed eventually.  In many cases, this can be achieved by
+using @code{scm_dynwind_free} inside an appropriate dynwind context,
+@xref{Dynamic Wind}.
+
+@deftypefn  {C Function} SCM scm_from_locale_string (const char *str)
+@deftypefnx {C Function} SCM scm_from_locale_stringn (const char *str, size_t len)
+Creates a new Scheme string that has the same contents as @var{str}
+when interpreted in the current locale character encoding.
+
+For @code{scm_from_locale_string}, @var{str} must be null-terminated.
+
+For @code{scm_from_locale_stringn}, @var{len} specifies the length of
+@var{str} in bytes, and @var{str} does not need to be null-terminated.
+If @var{len} is @code{(size_t)-1}, then @var{str} does need to be
+null-terminated and the real length will be found with @code{strlen}.
+@end deftypefn
+
+@deftypefn  {C Function} SCM scm_take_locale_string (char *str)
+@deftypefnx {C Function} SCM scm_take_locale_stringn (char *str, size_t len)
+Like @code{scm_from_locale_string} and @code{scm_from_locale_stringn},
+respectively, but also frees @var{str} with @code{free} eventually.
+Thus, you can use this function when you would free @var{str} anyway
+immediately after creating the Scheme string.  In certain cases, Guile
+can then use @var{str} directly as its internal representation.
+@end deftypefn
+
+@deftypefn  {C Function} {char *} scm_to_locale_string (SCM str)
+@deftypefnx {C Function} {char *} scm_to_locale_stringn (SCM str, size_t *lenp)
+Returns a C string in the current locale encoding with the same
+contents as @var{str}.  The C string must be freed with @code{free}
+eventually, maybe by using @code{scm_dynwind_free}, @xref{Dynamic
+Wind}.
+
+For @code{scm_to_locale_string}, the returned string is
+null-terminated and an error is signalled when @var{str} contains
+@code{#\nul} characters.
+
+For @code{scm_to_locale_stringn} and @var{lenp} not @code{NULL},
+@var{str} might contain @code{#\nul} characters and the length of the
+returned string in bytes is stored in @code{*@var{lenp}}.  The
+returned string will not be null-terminated in this case.  If
+@var{lenp} is @code{NULL}, @code{scm_to_locale_stringn} behaves like
+@code{scm_to_locale_string}.
+@end deftypefn
+
+@deftypefn {C Function} size_t scm_to_locale_stringbuf (SCM str, char *buf, size_t max_len)
+Puts @var{str} as a C string in the current locale encoding into the
+memory pointed to by @var{buf}.  The buffer at @var{buf} has room for
+@var{max_len} bytes and @code{scm_to_local_stringbuf} will never store
+more than that.  No terminating @code{'\0'} will be stored.
+
+The return value of @code{scm_to_locale_stringbuf} is the number of
+bytes that are needed for all of @var{str}, regardless of whether
+@var{buf} was large enough to hold them.  Thus, when the return value
+is larger than @var{max_len}, only @var{max_len} bytes have been
+stored and you probably need to try again with a larger buffer.
+@end deftypefn
+
+@node Regular Expressions
+@subsection Regular Expressions
+@tpindex Regular expressions
+
+@cindex regular expressions
+@cindex regex
+@cindex emacs regexp
+
+A @dfn{regular expression} (or @dfn{regexp}) is a pattern that
+describes a whole class of strings.  A full description of regular
+expressions and their syntax is beyond the scope of this manual;
+an introduction can be found in the Emacs manual (@pxref{Regexps,
+, Syntax of Regular Expressions, emacs, The GNU Emacs Manual}), or
+in many general Unix reference books.
+
+If your system does not include a POSIX regular expression library,
+and you have not linked Guile with a third-party regexp library such
+as Rx, these functions will not be available.  You can tell whether
+your Guile installation includes regular expression support by
+checking whether @code{(provided? 'regex)} returns true.
+
+The following regexp and string matching features are provided by the
+@code{(ice-9 regex)} module.  Before using the described functions,
+you should load this module by executing @code{(use-modules (ice-9
+regex))}.
+
+@menu
+* Regexp Functions::            Functions that create and match regexps.
+* Match Structures::            Finding what was matched by a regexp.
+* Backslash Escapes::           Removing the special meaning of regexp
+                                meta-characters.
+@end menu
+
+
+@node Regexp Functions
+@subsubsection Regexp Functions
+
+By default, Guile supports POSIX extended regular expressions.
+That means that the characters @samp{(}, @samp{)}, @samp{+} and
+@samp{?} are special, and must be escaped if you wish to match the
+literal characters.
+
+This regular expression interface was modeled after that
+implemented by SCSH, the Scheme Shell.  It is intended to be
+upwardly compatible with SCSH regular expressions.
+
+Zero bytes (@code{#\nul}) cannot be used in regex patterns or input
+strings, since the underlying C functions treat that as the end of
+string.  If there's a zero byte an error is thrown.
+
+Patterns and input strings are treated as being in the locale
+character set if @code{setlocale} has been called (@pxref{Locales}),
+and in a multibyte locale this includes treating multi-byte sequences
+as a single character.  (Guile strings are currently merely bytes,
+though this may change in the future, @xref{Conversion to/from C}.)
+
+@deffn {Scheme Procedure} string-match pattern str [start]
+Compile the string @var{pattern} into a regular expression and compare
+it with @var{str}.  The optional numeric argument @var{start} specifies
+the position of @var{str} at which to begin matching.
+
+@code{string-match} returns a @dfn{match structure} which
+describes what, if anything, was matched by the regular
+expression.  @xref{Match Structures}.  If @var{str} does not match
+@var{pattern} at all, @code{string-match} returns @code{#f}.
+@end deffn
+
+Two examples of a match follow.  In the first example, the pattern
+matches the four digits in the match string.  In the second, the pattern
+matches nothing.
+
+@example
+(string-match "[0-9][0-9][0-9][0-9]" "blah2002")
+@result{} #("blah2002" (4 . 8))
+
+(string-match "[A-Za-z]" "123456")
+@result{} #f
+@end example
+
+Each time @code{string-match} is called, it must compile its
+@var{pattern} argument into a regular expression structure.  This
+operation is expensive, which makes @code{string-match} inefficient if
+the same regular expression is used several times (for example, in a
+loop).  For better performance, you can compile a regular expression in
+advance and then match strings against the compiled regexp.
+
+@deffn {Scheme Procedure} make-regexp pat flag@dots{}
+@deffnx {C Function} scm_make_regexp (pat, flaglst)
+Compile the regular expression described by @var{pat}, and
+return the compiled regexp structure.  If @var{pat} does not
+describe a legal regular expression, @code{make-regexp} throws
+a @code{regular-expression-syntax} error.
+
+The @var{flag} arguments change the behavior of the compiled
+regular expression.  The following values may be supplied:
+
+@defvar regexp/icase
+Consider uppercase and lowercase letters to be the same when
+matching.
+@end defvar
+
+@defvar regexp/newline
+If a newline appears in the target string, then permit the
+@samp{^} and @samp{$} operators to match immediately after or
+immediately before the newline, respectively.  Also, the
+@samp{.} and @samp{[^...]} operators will never match a newline
+character.  The intent of this flag is to treat the target
+string as a buffer containing many lines of text, and the
+regular expression as a pattern that may match a single one of
+those lines.
+@end defvar
+
+@defvar regexp/basic
+Compile a basic (``obsolete'') regexp instead of the extended
+(``modern'') regexps that are the default.  Basic regexps do
+not consider @samp{|}, @samp{+} or @samp{?} to be special
+characters, and require the @samp{@{...@}} and @samp{(...)}
+metacharacters to be backslash-escaped (@pxref{Backslash
+Escapes}).  There are several other differences between basic
+and extended regular expressions, but these are the most
+significant.
+@end defvar
+
+@defvar regexp/extended
+Compile an extended regular expression rather than a basic
+regexp.  This is the default behavior; this flag will not
+usually be needed.  If a call to @code{make-regexp} includes
+both @code{regexp/basic} and @code{regexp/extended} flags, the
+one which comes last will override the earlier one.
+@end defvar
+@end deffn
+
+@deffn {Scheme Procedure} regexp-exec rx str [start [flags]]
+@deffnx {C Function} scm_regexp_exec (rx, str, start, flags)
+Match the compiled regular expression @var{rx} against
+@code{str}.  If the optional integer @var{start} argument is
+provided, begin matching from that position in the string.
+Return a match structure describing the results of the match,
+or @code{#f} if no match could be found.
+
+The @var{flags} argument changes the matching behavior.  The following
+flag values may be supplied, use @code{logior} (@pxref{Bitwise
+Operations}) to combine them,
+
+@defvar regexp/notbol
+Consider that the @var{start} offset into @var{str} is not the
+beginning of a line and should not match operator @samp{^}.
+
+If @var{rx} was created with the @code{regexp/newline} option above,
+@samp{^} will still match after a newline in @var{str}.
+@end defvar
+
+@defvar regexp/noteol
+Consider that the end of @var{str} is not the end of a line and should
+not match operator @samp{$}.
+
+If @var{rx} was created with the @code{regexp/newline} option above,
+@samp{$} will still match before a newline in @var{str}.
+@end defvar
+@end deffn
+
+@lisp
+;; Regexp to match uppercase letters
+(define r (make-regexp "[A-Z]*"))
+
+;; Regexp to match letters, ignoring case
+(define ri (make-regexp "[A-Z]*" regexp/icase))
+
+;; Search for bob using regexp r
+(match:substring (regexp-exec r "bob"))
+@result{} ""                  ; no match
+
+;; Search for bob using regexp ri
+(match:substring (regexp-exec ri "Bob"))
+@result{} "Bob"               ; matched case insensitive
+@end lisp
+
+@deffn {Scheme Procedure} regexp? obj
+@deffnx {C Function} scm_regexp_p (obj)
+Return @code{#t} if @var{obj} is a compiled regular expression,
+or @code{#f} otherwise.
+@end deffn
+
+@sp 1
+@deffn {Scheme Procedure} list-matches regexp str [flags]
+Return a list of match structures which are the non-overlapping
+matches of @var{regexp} in @var{str}.  @var{regexp} can be either a
+pattern string or a compiled regexp.  The @var{flags} argument is as
+per @code{regexp-exec} above.
+
+@example
+(map match:substring (list-matches "[a-z]+" "abc 42 def 78"))
+@result{} ("abc" "def")
+@end  example
+@end deffn
+
+@deffn {Scheme Procedure} fold-matches regexp str init proc [flags]
+Apply @var{proc} to the non-overlapping matches of @var{regexp} in
+@var{str}, to build a result.  @var{regexp} can be either a pattern
+string or a compiled regexp.  The @var{flags} argument is as per
+@code{regexp-exec} above.
+
+@var{proc} is called as @code{(@var{proc} match prev)} where
+@var{match} is a match structure and @var{prev} is the previous return
+from @var{proc}.  For the first call @var{prev} is the given
+@var{init} parameter.  @code{fold-matches} returns the final value
+from @var{proc}.
+
+For example to count matches,
+
+@example
+(fold-matches "[a-z][0-9]" "abc x1 def y2" 0
+              (lambda (match count)
+                (1+ count)))
+@result{} 2
+@end example
+@end deffn
+
+@sp 1
+Regular expressions are commonly used to find patterns in one string
+and replace them with the contents of another string.  The following
+functions are convenient ways to do this.
+
+@c begin (scm-doc-string "regex.scm" "regexp-substitute")
+@deffn {Scheme Procedure} regexp-substitute port match [item@dots{}]
+Write to @var{port} selected parts of the match structure @var{match}.
+Or if @var{port} is @code{#f} then form a string from those parts and
+return that.
+
+Each @var{item} specifies a part to be written, and may be one of the
+following,
+
+@itemize @bullet
+@item
+A string.  String arguments are written out verbatim.
+
+@item
+An integer.  The submatch with that number is written
+(@code{match:substring}).  Zero is the entire match.
+
+@item
+The symbol @samp{pre}.  The portion of the matched string preceding
+the regexp match is written (@code{match:prefix}).
+
+@item
+The symbol @samp{post}.  The portion of the matched string following
+the regexp match is written (@code{match:suffix}).
+@end itemize
+
+For example, changing a match and retaining the text before and after,
+
+@example
+(regexp-substitute #f (string-match "[0-9]+" "number 25 is good")
+                   'pre "37" 'post)
+@result{} "number 37 is good"
+@end example
+
+Or matching a @sc{yyyymmdd} format date such as @samp{20020828} and
+re-ordering and hyphenating the fields.
+
+@lisp
+(define date-regex "([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])")
+(define s "Date 20020429 12am.")
+(regexp-substitute #f (string-match date-regex s)
+                   'pre 2 "-" 3 "-" 1 'post " (" 0 ")")
+@result{} "Date 04-29-2002 12am. (20020429)"
+@end lisp
+@end deffn
+
+
+@c begin (scm-doc-string "regex.scm" "regexp-substitute")
+@deffn {Scheme Procedure} regexp-substitute/global port regexp target [item@dots{}]
+@cindex search and replace
+Write to @var{port} selected parts of matches of @var{regexp} in
+@var{target}.  If @var{port} is @code{#f} then form a string from
+those parts and return that.  @var{regexp} can be a string or a
+compiled regex.
+
+This is similar to @code{regexp-substitute}, but allows global
+substitutions on @var{target}.  Each @var{item} behaves as per
+@code{regexp-substitute}, with the following differences,
+
+@itemize @bullet
+@item
+A function.  Called as @code{(@var{item} match)} with the match
+structure for the @var{regexp} match, it should return a string to be
+written to @var{port}.
+
+@item
+The symbol @samp{post}.  This doesn't output anything, but instead
+causes @code{regexp-substitute/global} to recurse on the unmatched
+portion of @var{target}.
+
+This @emph{must} be supplied to perform a global search and replace on
+@var{target}; without it @code{regexp-substitute/global} returns after
+a single match and output.
+@end itemize
+
+For example, to collapse runs of tabs and spaces to a single hyphen
+each,
+
+@example
+(regexp-substitute/global #f "[ \t]+"  "this   is   the text"
+                          'pre "-" 'post)
+@result{} "this-is-the-text"
+@end example
+
+Or using a function to reverse the letters in each word,
+
+@example
+(regexp-substitute/global #f "[a-z]+"  "to do and not-do"
+  'pre (lambda (m) (string-reverse (match:substring m))) 'post)
+@result{} "ot od dna ton-od"
+@end example
+
+Without the @code{post} symbol, just one regexp match is made.  For
+example the following is the date example from
+@code{regexp-substitute} above, without the need for the separate
+@code{string-match} call.
+
+@lisp
+(define date-regex "([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])")
+(define s "Date 20020429 12am.")
+(regexp-substitute/global #f date-regex s
+                          'pre 2 "-" 3 "-" 1 'post " (" 0 ")")
+
+@result{} "Date 04-29-2002 12am. (20020429)"
+@end lisp
+@end deffn
+
+
+@node Match Structures
+@subsubsection Match Structures
+
+@cindex match structures
+
+A @dfn{match structure} is the object returned by @code{string-match} and
+@code{regexp-exec}.  It describes which portion of a string, if any,
+matched the given regular expression.  Match structures include: a
+reference to the string that was checked for matches; the starting and
+ending positions of the regexp match; and, if the regexp included any
+parenthesized subexpressions, the starting and ending positions of each
+submatch.
+
+In each of the regexp match functions described below, the @code{match}
+argument must be a match structure returned by a previous call to
+@code{string-match} or @code{regexp-exec}.  Most of these functions
+return some information about the original target string that was
+matched against a regular expression; we will call that string
+@var{target} for easy reference.
+
+@c begin (scm-doc-string "regex.scm" "regexp-match?")
+@deffn {Scheme Procedure} regexp-match? obj
+Return @code{#t} if @var{obj} is a match structure returned by a
+previous call to @code{regexp-exec}, or @code{#f} otherwise.
+@end deffn
+
+@c begin (scm-doc-string "regex.scm" "match:substring")
+@deffn {Scheme Procedure} match:substring match [n]
+Return the portion of @var{target} matched by subexpression number
+@var{n}.  Submatch 0 (the default) represents the entire regexp match.
+If the regular expression as a whole matched, but the subexpression
+number @var{n} did not match, return @code{#f}.
+@end deffn
+
+@lisp
+(define s (string-match "[0-9][0-9][0-9][0-9]" "blah2002foo"))
+(match:substring s)
+@result{} "2002"
+
+;; match starting at offset 6 in the string
+(match:substring
+  (string-match "[0-9][0-9][0-9][0-9]" "blah987654" 6))
+@result{} "7654"
+@end lisp
+
+@c begin (scm-doc-string "regex.scm" "match:start")
+@deffn {Scheme Procedure} match:start match [n]
+Return the starting position of submatch number @var{n}.
+@end deffn
+
+In the following example, the result is 4, since the match starts at
+character index 4:
+
+@lisp
+(define s (string-match "[0-9][0-9][0-9][0-9]" "blah2002foo"))
+(match:start s)
+@result{} 4
+@end lisp
+
+@c begin (scm-doc-string "regex.scm" "match:end")
+@deffn {Scheme Procedure} match:end match [n]
+Return the ending position of submatch number @var{n}.
+@end deffn
+
+In the following example, the result is 8, since the match runs between
+characters 4 and 8 (i.e. the ``2002'').
+
+@lisp
+(define s (string-match "[0-9][0-9][0-9][0-9]" "blah2002foo"))
+(match:end s)
+@result{} 8
+@end lisp
+
+@c begin (scm-doc-string "regex.scm" "match:prefix")
+@deffn {Scheme Procedure} match:prefix match
+Return the unmatched portion of @var{target} preceding the regexp match.
+
+@lisp
+(define s (string-match "[0-9][0-9][0-9][0-9]" "blah2002foo"))
+(match:prefix s)
+@result{} "blah"
+@end lisp
+@end deffn
+
+@c begin (scm-doc-string "regex.scm" "match:suffix")
+@deffn {Scheme Procedure} match:suffix match
+Return the unmatched portion of @var{target} following the regexp match.
+@end deffn
+
+@lisp
+(define s (string-match "[0-9][0-9][0-9][0-9]" "blah2002foo"))
+(match:suffix s)
+@result{} "foo"
+@end lisp
+
+@c begin (scm-doc-string "regex.scm" "match:count")
+@deffn {Scheme Procedure} match:count match
+Return the number of parenthesized subexpressions from @var{match}.
+Note that the entire regular expression match itself counts as a
+subexpression, and failed submatches are included in the count.
+@end deffn
+
+@c begin (scm-doc-string "regex.scm" "match:string")
+@deffn {Scheme Procedure} match:string match
+Return the original @var{target} string.
+@end deffn
+
+@lisp
+(define s (string-match "[0-9][0-9][0-9][0-9]" "blah2002foo"))
+(match:string s)
+@result{} "blah2002foo"
+@end lisp
+
+
+@node Backslash Escapes
+@subsubsection Backslash Escapes
+
+Sometimes you will want a regexp to match characters like @samp{*} or
+@samp{$} exactly.  For example, to check whether a particular string
+represents a menu entry from an Info node, it would be useful to match
+it against a regexp like @samp{^* [^:]*::}.  However, this won't work;
+because the asterisk is a metacharacter, it won't match the @samp{*} at
+the beginning of the string.  In this case, we want to make the first
+asterisk un-magic.
+
+You can do this by preceding the metacharacter with a backslash
+character @samp{\}.  (This is also called @dfn{quoting} the
+metacharacter, and is known as a @dfn{backslash escape}.)  When Guile
+sees a backslash in a regular expression, it considers the following
+glyph to be an ordinary character, no matter what special meaning it
+would ordinarily have.  Therefore, we can make the above example work by
+changing the regexp to @samp{^\* [^:]*::}.  The @samp{\*} sequence tells
+the regular expression engine to match only a single asterisk in the
+target string.
+
+Since the backslash is itself a metacharacter, you may force a regexp to
+match a backslash in the target string by preceding the backslash with
+itself.  For example, to find variable references in a @TeX{} program,
+you might want to find occurrences of the string @samp{\let\} followed
+by any number of alphabetic characters.  The regular expression
+@samp{\\let\\[A-Za-z]*} would do this: the double backslashes in the
+regexp each match a single backslash in the target string.
+
+@c begin (scm-doc-string "regex.scm" "regexp-quote")
+@deffn {Scheme Procedure} regexp-quote str
+Quote each special character found in @var{str} with a backslash, and
+return the resulting string.
+@end deffn
+
+@strong{Very important:} Using backslash escapes in Guile source code
+(as in Emacs Lisp or C) can be tricky, because the backslash character
+has special meaning for the Guile reader.  For example, if Guile
+encounters the character sequence @samp{\n} in the middle of a string
+while processing Scheme code, it replaces those characters with a
+newline character.  Similarly, the character sequence @samp{\t} is
+replaced by a horizontal tab.  Several of these @dfn{escape sequences}
+are processed by the Guile reader before your code is executed.
+Unrecognized escape sequences are ignored: if the characters @samp{\*}
+appear in a string, they will be translated to the single character
+@samp{*}.
+
+This translation is obviously undesirable for regular expressions, since
+we want to be able to include backslashes in a string in order to
+escape regexp metacharacters.  Therefore, to make sure that a backslash
+is preserved in a string in your Guile program, you must use @emph{two}
+consecutive backslashes:
+
+@lisp
+(define Info-menu-entry-pattern (make-regexp "^\\* [^:]*"))
+@end lisp
+
+The string in this example is preprocessed by the Guile reader before
+any code is executed.  The resulting argument to @code{make-regexp} is
+the string @samp{^\* [^:]*}, which is what we really want.
+
+This also means that in order to write a regular expression that matches
+a single backslash character, the regular expression string in the
+source code must include @emph{four} backslashes.  Each consecutive pair
+of backslashes gets translated by the Guile reader to a single
+backslash, and the resulting double-backslash is interpreted by the
+regexp engine as matching a single backslash character.  Hence:
+
+@lisp
+(define tex-variable-pattern (make-regexp "\\\\let\\\\=[A-Za-z]*"))
+@end lisp
+
+The reason for the unwieldiness of this syntax is historical.  Both
+regular expression pattern matchers and Unix string processing systems
+have traditionally used backslashes with the special meanings
+described above.  The POSIX regular expression specification and ANSI C
+standard both require these semantics.  Attempting to abandon either
+convention would cause other kinds of compatibility problems, possibly
+more severe ones.  Therefore, without extending the Scheme reader to
+support strings with different quoting conventions (an ungainly and
+confusing extension when implemented in other languages), we must adhere
+to this cumbersome escape syntax.
+
+
+@node Symbols
+@subsection Symbols
+@tpindex Symbols
+
+Symbols in Scheme are widely used in three ways: as items of discrete
+data, as lookup keys for alists and hash tables, and to denote variable
+references.
+
+A @dfn{symbol} is similar to a string in that it is defined by a
+sequence of characters.  The sequence of characters is known as the
+symbol's @dfn{name}.  In the usual case --- that is, where the symbol's
+name doesn't include any characters that could be confused with other
+elements of Scheme syntax --- a symbol is written in a Scheme program by
+writing the sequence of characters that make up the name, @emph{without}
+any quotation marks or other special syntax.  For example, the symbol
+whose name is ``multiply-by-2'' is written, simply:
+
+@lisp
+multiply-by-2
+@end lisp
+
+Notice how this differs from a @emph{string} with contents
+``multiply-by-2'', which is written with double quotation marks, like
+this:
+
+@lisp
+"multiply-by-2"
+@end lisp
+
+Looking beyond how they are written, symbols are different from strings
+in two important respects.
+
+The first important difference is uniqueness.  If the same-looking
+string is read twice from two different places in a program, the result
+is two @emph{different} string objects whose contents just happen to be
+the same.  If, on the other hand, the same-looking symbol is read twice
+from two different places in a program, the result is the @emph{same}
+symbol object both times.
+
+Given two read symbols, you can use @code{eq?} to test whether they are
+the same (that is, have the same name).  @code{eq?} is the most
+efficient comparison operator in Scheme, and comparing two symbols like
+this is as fast as comparing, for example, two numbers.  Given two
+strings, on the other hand, you must use @code{equal?} or
+@code{string=?}, which are much slower comparison operators, to
+determine whether the strings have the same contents.
+
+@lisp
+(define sym1 (quote hello))
+(define sym2 (quote hello))
+(eq? sym1 sym2) @result{} #t
+
+(define str1 "hello")
+(define str2 "hello")
+(eq? str1 str2) @result{} #f
+(equal? str1 str2) @result{} #t
+@end lisp
+
+The second important difference is that symbols, unlike strings, are not
+self-evaluating.  This is why we need the @code{(quote @dots{})}s in the
+example above: @code{(quote hello)} evaluates to the symbol named
+"hello" itself, whereas an unquoted @code{hello} is @emph{read} as the
+symbol named "hello" and evaluated as a variable reference @dots{} about
+which more below (@pxref{Symbol Variables}).
+
+@menu
+* Symbol Data::                 Symbols as discrete data.
+* Symbol Keys::                 Symbols as lookup keys.
+* Symbol Variables::            Symbols as denoting variables.
+* Symbol Primitives::           Operations related to symbols.
+* Symbol Props::                Function slots and property lists.
+* Symbol Read Syntax::          Extended read syntax for symbols.
+* Symbol Uninterned::           Uninterned symbols.
+@end menu
+
+
+@node Symbol Data
+@subsubsection Symbols as Discrete Data
+
+Numbers and symbols are similar to the extent that they both lend
+themselves to @code{eq?} comparison.  But symbols are more descriptive
+than numbers, because a symbol's name can be used directly to describe
+the concept for which that symbol stands.
+
+For example, imagine that you need to represent some colours in a
+computer program.  Using numbers, you would have to choose arbitrarily
+some mapping between numbers and colours, and then take care to use that
+mapping consistently:
+
+@lisp
+;; 1=red, 2=green, 3=purple
+
+(if (eq? (colour-of car) 1)
+    ...)
+@end lisp
+
+@noindent
+You can make the mapping more explicit and the code more readable by
+defining constants:
+
+@lisp
+(define red 1)
+(define green 2)
+(define purple 3)
+
+(if (eq? (colour-of car) red)
+    ...)
+@end lisp
+
+@noindent
+But the simplest and clearest approach is not to use numbers at all, but
+symbols whose names specify the colours that they refer to:
+
+@lisp
+(if (eq? (colour-of car) 'red)
+    ...)
+@end lisp
+
+The descriptive advantages of symbols over numbers increase as the set
+of concepts that you want to describe grows.  Suppose that a car object
+can have other properties as well, such as whether it has or uses:
+
+@itemize @bullet
+@item
+automatic or manual transmission
+@item
+leaded or unleaded fuel
+@item
+power steering (or not).
+@end itemize
+
+@noindent
+Then a car's combined property set could be naturally represented and
+manipulated as a list of symbols:
+
+@lisp
+(properties-of car1)
+@result{}
+(red manual unleaded power-steering)
+
+(if (memq 'power-steering (properties-of car1))
+    (display "Unfit people can drive this car.\n")
+    (display "You'll need strong arms to drive this car!\n"))
+@print{}
+Unfit people can drive this car.
+@end lisp
+
+Remember, the fundamental property of symbols that we are relying on
+here is that an occurrence of @code{'red} in one part of a program is an
+@emph{indistinguishable} symbol from an occurrence of @code{'red} in
+another part of a program; this means that symbols can usefully be
+compared using @code{eq?}.  At the same time, symbols have naturally
+descriptive names.  This combination of efficiency and descriptive power
+makes them ideal for use as discrete data.
+
+
+@node Symbol Keys
+@subsubsection Symbols as Lookup Keys
+
+Given their efficiency and descriptive power, it is natural to use
+symbols as the keys in an association list or hash table.
+
+To illustrate this, consider a more structured representation of the car
+properties example from the preceding subsection.  Rather than
+mixing all the properties up together in a flat list, we could use an
+association list like this:
+
+@lisp
+(define car1-properties '((colour . red)
+                          (transmission . manual)
+                          (fuel . unleaded)
+                          (steering . power-assisted)))
+@end lisp
+
+Notice how this structure is more explicit and extensible than the flat
+list.  For example it makes clear that @code{manual} refers to the
+transmission rather than, say, the windows or the locking of the car.
+It also allows further properties to use the same symbols among their
+possible values without becoming ambiguous:
+
+@lisp
+(define car1-properties '((colour . red)
+                          (transmission . manual)
+                          (fuel . unleaded)
+                          (steering . power-assisted)
+                          (seat-colour . red)
+                          (locking . manual)))
+@end lisp
+
+With a representation like this, it is easy to use the efficient
+@code{assq-XXX} family of procedures (@pxref{Association Lists}) to
+extract or change individual pieces of information:
+
+@lisp
+(assq-ref car1-properties 'fuel) @result{} unleaded
+(assq-ref car1-properties 'transmission) @result{} manual
+
+(assq-set! car1-properties 'seat-colour 'black)
+@result{}
+((colour . red)
+ (transmission . manual)
+ (fuel . unleaded)
+ (steering . power-assisted)
+ (seat-colour . black)
+ (locking . manual)))
+@end lisp
+
+Hash tables also have keys, and exactly the same arguments apply to the
+use of symbols in hash tables as in association lists.  The hash value
+that Guile uses to decide where to add a symbol-keyed entry to a hash
+table can be obtained by calling the @code{symbol-hash} procedure:
+
+@deffn {Scheme Procedure} symbol-hash symbol
+@deffnx {C Function} scm_symbol_hash (symbol)
+Return a hash value for @var{symbol}.
+@end deffn
+
+See @ref{Hash Tables} for information about hash tables in general, and
+for why you might choose to use a hash table rather than an association
+list.
+
+
+@node Symbol Variables
+@subsubsection Symbols as Denoting Variables
+
+When an unquoted symbol in a Scheme program is evaluated, it is
+interpreted as a variable reference, and the result of the evaluation is
+the appropriate variable's value.
+
+For example, when the expression @code{(string-length "abcd")} is read
+and evaluated, the sequence of characters @code{string-length} is read
+as the symbol whose name is "string-length".  This symbol is associated
+with a variable whose value is the procedure that implements string
+length calculation.  Therefore evaluation of the @code{string-length}
+symbol results in that procedure.
+
+The details of the connection between an unquoted symbol and the
+variable to which it refers are explained elsewhere.  See @ref{Binding
+Constructs}, for how associations between symbols and variables are
+created, and @ref{Modules}, for how those associations are affected by
+Guile's module system.
+
+
+@node Symbol Primitives
+@subsubsection Operations Related to Symbols
+
+Given any Scheme value, you can determine whether it is a symbol using
+the @code{symbol?} primitive:
+
+@rnindex symbol?
+@deffn {Scheme Procedure} symbol? obj
+@deffnx {C Function} scm_symbol_p (obj)
+Return @code{#t} if @var{obj} is a symbol, otherwise return
+@code{#f}.
+@end deffn
+
+@deftypefn {C Function} int scm_is_symbol (SCM val)
+Equivalent to @code{scm_is_true (scm_symbol_p (val))}.
+@end deftypefn
+
+Once you know that you have a symbol, you can obtain its name as a
+string by calling @code{symbol->string}.  Note that Guile differs by
+default from R5RS on the details of @code{symbol->string} as regards
+case-sensitivity:
+
+@rnindex symbol->string
+@deffn {Scheme Procedure} symbol->string s
+@deffnx {C Function} scm_symbol_to_string (s)
+Return the name of symbol @var{s} as a string.  By default, Guile reads
+symbols case-sensitively, so the string returned will have the same case
+variation as the sequence of characters that caused @var{s} to be
+created.
+
+If Guile is set to read symbols case-insensitively (as specified by
+R5RS), and @var{s} comes into being as part of a literal expression
+(@pxref{Literal expressions,,,r5rs, The Revised^5 Report on Scheme}) or
+by a call to the @code{read} or @code{string-ci->symbol} procedures,
+Guile converts any alphabetic characters in the symbol's name to
+lower case before creating the symbol object, so the string returned
+here will be in lower case.
+
+If @var{s} was created by @code{string->symbol}, the case of characters
+in the string returned will be the same as that in the string that was
+passed to @code{string->symbol}, regardless of Guile's case-sensitivity
+setting at the time @var{s} was created.
+
+It is an error to apply mutation procedures like @code{string-set!} to
+strings returned by this procedure.
+@end deffn
+
+Most symbols are created by writing them literally in code.  However it
+is also possible to create symbols programmatically using the following
+@code{string->symbol} and @code{string-ci->symbol} procedures:
+
+@rnindex string->symbol
+@deffn {Scheme Procedure} string->symbol string
+@deffnx {C Function} scm_string_to_symbol (string)
+Return the symbol whose name is @var{string}.  This procedure can create
+symbols with names containing special characters or letters in the
+non-standard case, but it is usually a bad idea to create such symbols
+because in some implementations of Scheme they cannot be read as
+themselves.
+@end deffn
+
+@deffn {Scheme Procedure} string-ci->symbol str
+@deffnx {C Function} scm_string_ci_to_symbol (str)
+Return the symbol whose name is @var{str}.  If Guile is currently
+reading symbols case-insensitively, @var{str} is converted to lowercase
+before the returned symbol is looked up or created.
+@end deffn
+
+The following examples illustrate Guile's detailed behaviour as regards
+the case-sensitivity of symbols:
+
+@lisp
+(read-enable 'case-insensitive)   ; R5RS compliant behaviour
+
+(symbol->string 'flying-fish)    @result{} "flying-fish"
+(symbol->string 'Martin)         @result{} "martin"
+(symbol->string
+   (string->symbol "Malvina"))   @result{} "Malvina"
+
+(eq? 'mISSISSIppi 'mississippi)  @result{} #t
+(string->symbol "mISSISSIppi")   @result{} mISSISSIppi
+(eq? 'bitBlt (string->symbol "bitBlt")) @result{} #f
+(eq? 'LolliPop
+  (string->symbol (symbol->string 'LolliPop))) @result{} #t
+(string=? "K. Harper, M.D."
+  (symbol->string
+    (string->symbol "K. Harper, M.D."))) @result{} #t
+
+(read-disable 'case-insensitive)   ; Guile default behaviour
+
+(symbol->string 'flying-fish)    @result{} "flying-fish"
+(symbol->string 'Martin)         @result{} "Martin"
+(symbol->string
+   (string->symbol "Malvina"))   @result{} "Malvina"
+
+(eq? 'mISSISSIppi 'mississippi)  @result{} #f
+(string->symbol "mISSISSIppi")   @result{} mISSISSIppi
+(eq? 'bitBlt (string->symbol "bitBlt")) @result{} #t
+(eq? 'LolliPop
+  (string->symbol (symbol->string 'LolliPop))) @result{} #t
+(string=? "K. Harper, M.D."
+  (symbol->string
+    (string->symbol "K. Harper, M.D."))) @result{} #t
+@end lisp
+
+From C, there are lower level functions that construct a Scheme symbol
+from a C string in the current locale encoding.
+
+When you want to do more from C, you should convert between symbols
+and strings using @code{scm_symbol_to_string} and
+@code{scm_string_to_symbol} and work with the strings.
+
+@deffn {C Function} scm_from_locale_symbol (const char *name)
+@deffnx {C Function} scm_from_locale_symboln (const char *name, size_t len)
+Construct and return a Scheme symbol whose name is specified by
+@var{name}.  For @code{scm_from_locale_symbol}, @var{name} must be null
+terminated; for @code{scm_from_locale_symboln} the length of @var{name} is
+specified explicitly by @var{len}.
+@end deffn
+
+@deftypefn  {C Function} SCM scm_take_locale_symbol (char *str)
+@deftypefnx {C Function} SCM scm_take_locale_symboln (char *str, size_t len)
+Like @code{scm_from_locale_symbol} and @code{scm_from_locale_symboln},
+respectively, but also frees @var{str} with @code{free} eventually.
+Thus, you can use this function when you would free @var{str} anyway
+immediately after creating the Scheme string.  In certain cases, Guile
+can then use @var{str} directly as its internal representation.
+@end deftypefn
+
+The size of a symbol can also be obtained from C:
+
+@deftypefn {C Function} size_t scm_c_symbol_length (SCM sym)
+Return the number of characters in @var{sym}.
+@end deftypefn
+
+Finally, some applications, especially those that generate new Scheme
+code dynamically, need to generate symbols for use in the generated
+code.  The @code{gensym} primitive meets this need:
+
+@deffn {Scheme Procedure} gensym [prefix]
+@deffnx {C Function} scm_gensym (prefix)
+Create a new symbol with a name constructed from a prefix and a counter
+value.  The string @var{prefix} can be specified as an optional
+argument.  Default prefix is @samp{@w{ g}}.  The counter is increased by 1
+at each call.  There is no provision for resetting the counter.
+@end deffn
+
+The symbols generated by @code{gensym} are @emph{likely} to be unique,
+since their names begin with a space and it is only otherwise possible
+to generate such symbols if a programmer goes out of their way to do
+so.  Uniqueness can be guaranteed by instead using uninterned symbols
+(@pxref{Symbol Uninterned}), though they can't be usefully written out
+and read back in.
+
+
+@node Symbol Props
+@subsubsection Function Slots and Property Lists
+
+In traditional Lisp dialects, symbols are often understood as having
+three kinds of value at once:
+
+@itemize @bullet
+@item
+a @dfn{variable} value, which is used when the symbol appears in
+code in a variable reference context
+
+@item
+a @dfn{function} value, which is used when the symbol appears in
+code in a function name position (i.e. as the first element in an
+unquoted list)
+
+@item
+a @dfn{property list} value, which is used when the symbol is given as
+the first argument to Lisp's @code{put} or @code{get} functions.
+@end itemize
+
+Although Scheme (as one of its simplifications with respect to Lisp)
+does away with the distinction between variable and function namespaces,
+Guile currently retains some elements of the traditional structure in
+case they turn out to be useful when implementing translators for other
+languages, in particular Emacs Lisp.
+
+Specifically, Guile symbols have two extra slots. for a symbol's
+property list, and for its ``function value.''  The following procedures
+are provided to access these slots.
+
+@deffn {Scheme Procedure} symbol-fref symbol
+@deffnx {C Function} scm_symbol_fref (symbol)
+Return the contents of @var{symbol}'s @dfn{function slot}.
+@end deffn
+
+@deffn {Scheme Procedure} symbol-fset! symbol value
+@deffnx {C Function} scm_symbol_fset_x (symbol, value)
+Set the contents of @var{symbol}'s function slot to @var{value}.
+@end deffn
+
+@deffn {Scheme Procedure} symbol-pref symbol
+@deffnx {C Function} scm_symbol_pref (symbol)
+Return the @dfn{property list} currently associated with @var{symbol}.
+@end deffn
+
+@deffn {Scheme Procedure} symbol-pset! symbol value
+@deffnx {C Function} scm_symbol_pset_x (symbol, value)
+Set @var{symbol}'s property list to @var{value}.
+@end deffn
+
+@deffn {Scheme Procedure} symbol-property sym prop
+From @var{sym}'s property list, return the value for property
+@var{prop}.  The assumption is that @var{sym}'s property list is an
+association list whose keys are distinguished from each other using
+@code{equal?}; @var{prop} should be one of the keys in that list.  If
+the property list has no entry for @var{prop}, @code{symbol-property}
+returns @code{#f}.
+@end deffn
+
+@deffn {Scheme Procedure} set-symbol-property! sym prop val
+In @var{sym}'s property list, set the value for property @var{prop} to
+@var{val}, or add a new entry for @var{prop}, with value @var{val}, if
+none already exists.  For the structure of the property list, see
+@code{symbol-property}.
+@end deffn
+
+@deffn {Scheme Procedure} symbol-property-remove! sym prop
+From @var{sym}'s property list, remove the entry for property
+@var{prop}, if there is one.  For the structure of the property list,
+see @code{symbol-property}.
+@end deffn
+
+Support for these extra slots may be removed in a future release, and it
+is probably better to avoid using them.  For a more modern and Schemely
+approach to properties, see @ref{Object Properties}.
+
+
+@node Symbol Read Syntax
+@subsubsection Extended Read Syntax for Symbols
+
+The read syntax for a symbol is a sequence of letters, digits, and
+@dfn{extended alphabetic characters}, beginning with a character that
+cannot begin a number.  In addition, the special cases of @code{+},
+@code{-}, and @code{...} are read as symbols even though numbers can
+begin with @code{+}, @code{-} or @code{.}.
+
+Extended alphabetic characters may be used within identifiers as if
+they were letters.  The set of extended alphabetic characters is:
+
+@example
+! $ % & * + - . / : < = > ? @@ ^ _ ~
+@end example
+
+In addition to the standard read syntax defined above (which is taken
+from R5RS (@pxref{Formal syntax,,,r5rs,The Revised^5 Report on
+Scheme})), Guile provides an extended symbol read syntax that allows the
+inclusion of unusual characters such as space characters, newlines and
+parentheses.  If (for whatever reason) you need to write a symbol
+containing characters not mentioned above, you can do so as follows.
+
+@itemize @bullet
+@item
+Begin the symbol with the characters @code{#@{},
+
+@item
+write the characters of the symbol and
+
+@item
+finish the symbol with the characters @code{@}#}.
+@end itemize
+
+Here are a few examples of this form of read syntax.  The first symbol
+needs to use extended syntax because it contains a space character, the
+second because it contains a line break, and the last because it looks
+like a number.
+
+@lisp
+#@{foo bar@}#
+
+#@{what
+ever@}#
+
+#@{4242@}#
+@end lisp
+
+Although Guile provides this extended read syntax for symbols,
+widespread usage of it is discouraged because it is not portable and not
+very readable.
+
+
+@node Symbol Uninterned
+@subsubsection Uninterned Symbols
+
+What makes symbols useful is that they are automatically kept unique.
+There are no two symbols that are distinct objects but have the same
+name.  But of course, there is no rule without exception.  In addition
+to the normal symbols that have been discussed up to now, you can also
+create special @dfn{uninterned} symbols that behave slightly
+differently.
+
+To understand what is different about them and why they might be useful,
+we look at how normal symbols are actually kept unique.
+
+Whenever Guile wants to find the symbol with a specific name, for
+example during @code{read} or when executing @code{string->symbol}, it
+first looks into a table of all existing symbols to find out whether a
+symbol with the given name already exists.  When this is the case, Guile
+just returns that symbol.  When not, a new symbol with the name is
+created and entered into the table so that it can be found later.
+
+Sometimes you might want to create a symbol that is guaranteed `fresh',
+i.e. a symbol that did not exist previously.  You might also want to
+somehow guarantee that no one else will ever unintentionally stumble
+across your symbol in the future.  These properties of a symbol are
+often needed when generating code during macro expansion.  When
+introducing new temporary variables, you want to guarantee that they
+don't conflict with variables in other people's code.
+
+The simplest way to arrange for this is to create a new symbol but
+not enter it into the global table of all symbols.  That way, no one
+will ever get access to your symbol by chance.  Symbols that are not in
+the table are called @dfn{uninterned}.  Of course, symbols that
+@emph{are} in the table are called @dfn{interned}.
+
+You create new uninterned symbols with the function @code{make-symbol}.
+You can test whether a symbol is interned or not with
+@code{symbol-interned?}.
+
+Uninterned symbols break the rule that the name of a symbol uniquely
+identifies the symbol object.  Because of this, they can not be written
+out and read back in like interned symbols.  Currently, Guile has no
+support for reading uninterned symbols.  Note that the function
+@code{gensym} does not return uninterned symbols for this reason.
+
+@deffn {Scheme Procedure} make-symbol name
+@deffnx {C Function} scm_make_symbol (name)
+Return a new uninterned symbol with the name @var{name}.  The returned
+symbol is guaranteed to be unique and future calls to
+@code{string->symbol} will not return it.
+@end deffn
+
+@deffn {Scheme Procedure} symbol-interned? symbol
+@deffnx {C Function} scm_symbol_interned_p (symbol)
+Return @code{#t} if @var{symbol} is interned, otherwise return
+@code{#f}.
+@end deffn
+
+For example:
+
+@lisp
+(define foo-1 (string->symbol "foo"))
+(define foo-2 (string->symbol "foo"))
+(define foo-3 (make-symbol "foo"))
+(define foo-4 (make-symbol "foo"))
+
+(eq? foo-1 foo-2)
+@result{} #t
+; Two interned symbols with the same name are the same object,
+
+(eq? foo-1 foo-3)
+@result{} #f
+; but a call to make-symbol with the same name returns a
+; distinct object.
+
+(eq? foo-3 foo-4)
+@result{} #f
+; A call to make-symbol always returns a new object, even for
+; the same name.
+
+foo-3
+@result{} #<uninterned-symbol foo 8085290>
+; Uninterned symbols print differently from interned symbols,
+
+(symbol? foo-3)
+@result{} #t
+; but they are still symbols,
+
+(symbol-interned? foo-3)
+@result{} #f
+; just not interned.
+@end lisp
+
+
+@node Keywords
+@subsection Keywords
+@tpindex Keywords
+
+Keywords are self-evaluating objects with a convenient read syntax that
+makes them easy to type.
+
+Guile's keyword support conforms to R5RS, and adds a (switchable) read
+syntax extension to permit keywords to begin with @code{:} as well as
+@code{#:}, or to end with @code{:}.
+
+@menu
+* Why Use Keywords?::           Motivation for keyword usage.
+* Coding With Keywords::        How to use keywords.
+* Keyword Read Syntax::         Read syntax for keywords.
+* Keyword Procedures::          Procedures for dealing with keywords.
+@end menu
+
+@node Why Use Keywords?
+@subsubsection Why Use Keywords?
+
+Keywords are useful in contexts where a program or procedure wants to be
+able to accept a large number of optional arguments without making its
+interface unmanageable.
+
+To illustrate this, consider a hypothetical @code{make-window}
+procedure, which creates a new window on the screen for drawing into
+using some graphical toolkit.  There are many parameters that the caller
+might like to specify, but which could also be sensibly defaulted, for
+example:
+
+@itemize @bullet
+@item
+color depth -- Default: the color depth for the screen
+
+@item
+background color -- Default: white
+
+@item
+width -- Default: 600
+
+@item
+height -- Default: 400
+@end itemize
+
+If @code{make-window} did not use keywords, the caller would have to
+pass in a value for each possible argument, remembering the correct
+argument order and using a special value to indicate the default value
+for that argument:
+
+@lisp
+(make-window 'default              ;; Color depth
+             'default              ;; Background color
+             800                   ;; Width
+             100                   ;; Height
+             @dots{})                  ;; More make-window arguments
+@end lisp
+
+With keywords, on the other hand, defaulted arguments are omitted, and
+non-default arguments are clearly tagged by the appropriate keyword.  As
+a result, the invocation becomes much clearer:
+
+@lisp
+(make-window #:width 800 #:height 100)
+@end lisp
+
+On the other hand, for a simpler procedure with few arguments, the use
+of keywords would be a hindrance rather than a help.  The primitive
+procedure @code{cons}, for example, would not be improved if it had to
+be invoked as
+
+@lisp
+(cons #:car x #:cdr y)
+@end lisp
+
+So the decision whether to use keywords or not is purely pragmatic: use
+them if they will clarify the procedure invocation at point of call.
+
+@node Coding With Keywords
+@subsubsection Coding With Keywords
+
+If a procedure wants to support keywords, it should take a rest argument
+and then use whatever means is convenient to extract keywords and their
+corresponding arguments from the contents of that rest argument.
+
+The following example illustrates the principle: the code for
+@code{make-window} uses a helper procedure called
+@code{get-keyword-value} to extract individual keyword arguments from
+the rest argument.
+
+@lisp
+(define (get-keyword-value args keyword default)
+  (let ((kv (memq keyword args)))
+    (if (and kv (>= (length kv) 2))
+        (cadr kv)
+        default)))
+
+(define (make-window . args)
+  (let ((depth  (get-keyword-value args #:depth  screen-depth))
+        (bg     (get-keyword-value args #:bg     "white"))
+        (width  (get-keyword-value args #:width  800))
+        (height (get-keyword-value args #:height 100))
+        @dots{})
+    @dots{}))
+@end lisp
+
+But you don't need to write @code{get-keyword-value}.  The @code{(ice-9
+optargs)} module provides a set of powerful macros that you can use to
+implement keyword-supporting procedures like this:
+
+@lisp
+(use-modules (ice-9 optargs))
+
+(define (make-window . args)
+  (let-keywords args #f ((depth  screen-depth)
+                         (bg     "white")
+                         (width  800)
+                         (height 100))
+    ...))
+@end lisp
+
+@noindent
+Or, even more economically, like this:
+
+@lisp
+(use-modules (ice-9 optargs))
+
+(define* (make-window #:key (depth  screen-depth)
+                            (bg     "white")
+                            (width  800)
+                            (height 100))
+  ...)
+@end lisp
+
+For further details on @code{let-keywords}, @code{define*} and other
+facilities provided by the @code{(ice-9 optargs)} module, see
+@ref{Optional Arguments}.
+
+
+@node Keyword Read Syntax
+@subsubsection Keyword Read Syntax
+
+Guile, by default, only recognizes a keyword syntax that is compatible
+with R5RS.  A token of the form @code{#:NAME}, where @code{NAME} has the
+same syntax as a Scheme symbol (@pxref{Symbol Read Syntax}), is the
+external representation of the keyword named @code{NAME}.  Keyword
+objects print using this syntax as well, so values containing keyword
+objects can be read back into Guile.  When used in an expression,
+keywords are self-quoting objects.
+
+If the @code{keyword} read option is set to @code{'prefix}, Guile also
+recognizes the alternative read syntax @code{:NAME}.  Otherwise, tokens
+of the form @code{:NAME} are read as symbols, as required by R5RS.
+
+@cindex SRFI-88 keyword syntax
+
+If the @code{keyword} read option is set to @code{'postfix}, Guile
+recognizes the SRFI-88 read syntax @code{NAME:} (@pxref{SRFI-88}).
+Otherwise, tokens of this form are read as symbols.
+
+To enable and disable the alternative non-R5RS keyword syntax, you use
+the @code{read-set!} procedure documented in @ref{User level options
+interfaces} and @ref{Reader options}.  Note that the @code{prefix} and
+@code{postfix} syntax are mutually exclusive.
+
+@smalllisp
+(read-set! keywords 'prefix)
+
+#:type
+@result{}
+#:type
+
+:type
+@result{}
+#:type
+
+(read-set! keywords 'postfix)
+
+type:
+@result{}
+#:type
+
+:type
+@result{}
+:type
+
+(read-set! keywords #f)
+
+#:type
+@result{}
+#:type
+
+:type
+@print{}
+ERROR: In expression :type:
+ERROR: Unbound variable: :type
+ABORT: (unbound-variable)
+@end smalllisp
+
+@node Keyword Procedures
+@subsubsection Keyword Procedures
+
+@deffn {Scheme Procedure} keyword? obj
+@deffnx {C Function} scm_keyword_p (obj)
+Return @code{#t} if the argument @var{obj} is a keyword, else
+@code{#f}.
+@end deffn
+
+@deffn {Scheme Procedure} keyword->symbol keyword
+@deffnx {C Function} scm_keyword_to_symbol (keyword)
+Return the symbol with the same name as @var{keyword}.
+@end deffn
+
+@deffn {Scheme Procedure} symbol->keyword symbol
+@deffnx {C Function} scm_symbol_to_keyword (symbol)
+Return the keyword with the same name as @var{symbol}.
+@end deffn
+
+@deftypefn {C Function} int scm_is_keyword (SCM obj)
+Equivalent to @code{scm_is_true (scm_keyword_p (@var{obj}))}.
+@end deftypefn
+
+@deftypefn {C Function} SCM scm_from_locale_keyword (const char *str)
+@deftypefnx {C Function} SCM scm_from_locale_keywordn (const char *str, size_t len)
+Equivalent to @code{scm_symbol_to_keyword (scm_from_locale_symbol
+(@var{str}))} and @code{scm_symbol_to_keyword (scm_from_locale_symboln
+(@var{str}, @var{len}))}, respectively.
+@end deftypefn
+
+@node Other Types
+@subsection ``Functionality-Centric'' Data Types
+
+Procedures and macros are documented in their own chapter: see
+@ref{Procedures and Macros}.
+
+Variable objects are documented as part of the description of Guile's
+module system: see @ref{Variables}.
+
+Asyncs, dynamic roots and fluids are described in the chapter on
+scheduling: see @ref{Scheduling}.
+
+Hooks are documented in the chapter on general utility functions: see
+@ref{Hooks}.
+
+Ports are described in the chapter on I/O: see @ref{Input and Output}.
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

@@ -1,0 +1,1506 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Control Mechanisms
+@section Controlling the Flow of Program Execution
+
+See @ref{Control Flow} for a discussion of how the more general control
+flow of Scheme affects C code.
+
+@menu
+* begin::                       Evaluating a sequence of expressions.
+* if cond case::                Simple conditional evaluation.
+* and or::                      Conditional evaluation of a sequence.
+* while do::                    Iteration mechanisms.
+* Continuations::               Continuations.
+* Multiple Values::             Returning and accepting multiple values.
+* Exceptions::                  Throwing and catching exceptions.
+* Error Reporting::             Procedures for signaling errors.
+* Dynamic Wind::                Dealing with non-local entrance/exit.
+* Handling Errors::             How to handle errors in C code.
+@end menu
+
+@node begin
+@subsection Evaluating a Sequence of Expressions
+
+@cindex begin
+@cindex sequencing
+@cindex expression sequencing
+
+The @code{begin} syntax is used for grouping several expressions
+together so that they are treated as if they were one expression.
+This is particularly important when syntactic expressions are used
+which only allow one expression, but the programmer wants to use more
+than one expression in that place.  As an example, consider the
+conditional expression below:
+
+@lisp
+(if (> x 0)
+    (begin (display "greater") (newline)))
+@end lisp
+
+If the two calls to @code{display} and @code{newline} were not embedded
+in a @code{begin}-statement, the call to @code{newline} would get
+misinterpreted as the else-branch of the @code{if}-expression.
+
+@deffn syntax begin expr1 expr2 @dots{}
+The expression(s) are evaluated in left-to-right order and the value
+of the last expression is returned as the value of the
+@code{begin}-expression.  This expression type is used when the
+expressions before the last one are evaluated for their side effects.
+
+Guile also allows the expression @code{(begin)}, a @code{begin} with no
+sub-expressions.  Such an expression returns the `unspecified' value.
+@end deffn
+
+@node if cond case
+@subsection Simple Conditional Evaluation
+
+@cindex conditional evaluation
+@cindex if
+@cindex case
+@cindex cond
+
+Guile provides three syntactic constructs for conditional evaluation.
+@code{if} is the normal if-then-else expression (with an optional else
+branch), @code{cond} is a conditional expression with multiple branches
+and @code{case} branches if an expression has one of a set of constant
+values.
+
+@deffn syntax if test consequent [alternate]
+All arguments may be arbitrary expressions.  First, @var{test} is
+evaluated.  If it returns a true value, the expression @var{consequent}
+is evaluated and @var{alternate} is ignored.  If @var{test} evaluates to
+@code{#f}, @var{alternate} is evaluated instead.  The value of the
+evaluated branch (@var{consequent} or @var{alternate}) is returned as
+the value of the @code{if} expression.
+
+When @var{alternate} is omitted and the @var{test} evaluates to
+@code{#f}, the value of the expression is not specified.
+@end deffn
+
+@deffn syntax cond clause1 clause2 @dots{}
+Each @code{cond}-clause must look like this:
+
+@lisp
+(@var{test} @var{expression} @dots{})
+@end lisp
+
+where @var{test} and @var{expression} are arbitrary expression, or like
+this
+
+@lisp
+(@var{test} => @var{expression})
+@end lisp
+
+where @var{expression} must evaluate to a procedure.
+
+The @var{test}s of the clauses are evaluated in order and as soon as one
+of them evaluates to a true values, the corresponding @var{expression}s
+are evaluated in order and the last value is returned as the value of
+the @code{cond}-expression.  For the @code{=>} clause type,
+@var{expression} is evaluated and the resulting procedure is applied to
+the value of @var{test}.  The result of this procedure application is
+then the result of the @code{cond}-expression.
+
+@cindex SRFI-61
+@cindex general cond clause
+@cindex multiple values and cond
+One additional @code{cond}-clause is available as an extension to
+standard Scheme:
+
+@lisp
+(@var{test} @var{guard} => @var{expression})
+@end lisp
+
+where @var{guard} and @var{expression} must evaluate to procedures.
+For this clause type, @var{test} may return multiple values, and
+@code{cond} ignores its boolean state; instead, @code{cond} evaluates
+@var{guard} and applies the resulting procedure to the value(s) of
+@var{test}, as if @var{guard} were the @var{consumer} argument of
+@code{call-with-values}.  Iff the result of that procedure call is a
+true value, it evaluates @var{expression} and applies the resulting
+procedure to the value(s) of @var{test}, in the same manner as the
+@var{guard} was called.
+
+The @var{test} of the last @var{clause} may be the symbol @code{else}.
+Then, if none of the preceding @var{test}s is true, the
+@var{expression}s following the @code{else} are evaluated to produce the
+result of the @code{cond}-expression.
+@end deffn
+
+@deffn syntax case key clause1 clause2 @dots{}
+@var{key} may be any expression, the @var{clause}s must have the form
+
+@lisp
+((@var{datum1} @dots{}) @var{expr1} @var{expr2} @dots{})
+@end lisp
+
+and the last @var{clause} may have the form
+
+@lisp
+(else @var{expr1} @var{expr2} @dots{})
+@end lisp
+
+All @var{datum}s must be distinct.  First, @var{key} is evaluated.  The
+the result of this evaluation is compared against all @var{datum}s using
+@code{eqv?}.  When this comparison succeeds, the expression(s) following
+the @var{datum} are evaluated from left to right, returning the value of
+the last expression as the result of the @code{case} expression.
+
+If the @var{key} matches no @var{datum} and there is an
+@code{else}-clause, the expressions following the @code{else} are
+evaluated.  If there is no such clause, the result of the expression is
+unspecified.
+@end deffn
+
+
+@node and or
+@subsection Conditional Evaluation of a Sequence of Expressions
+
+@code{and} and @code{or} evaluate all their arguments in order, similar
+to @code{begin}, but evaluation stops as soon as one of the expressions
+evaluates to false or true, respectively.
+
+@deffn syntax and expr @dots{}
+Evaluate the @var{expr}s from left to right and stop evaluation as soon
+as one expression evaluates to @code{#f}; the remaining expressions are
+not evaluated.  The value of the last evaluated expression is returned.
+If no expression evaluates to @code{#f}, the value of the last
+expression is returned.
+
+If used without expressions, @code{#t} is returned.
+@end deffn
+
+@deffn syntax or expr @dots{}
+Evaluate the @var{expr}s from left to right and stop evaluation as soon
+as one expression evaluates to a true value (that is, a value different
+from @code{#f}); the remaining expressions are not evaluated.  The value
+of the last evaluated expression is returned.  If all expressions
+evaluate to @code{#f}, @code{#f} is returned.
+
+If used without expressions, @code{#f} is returned.
+@end deffn
+
+
+@node while do
+@subsection Iteration mechanisms
+
+@cindex iteration
+@cindex looping
+@cindex named let
+
+Scheme has only few iteration mechanisms, mainly because iteration in
+Scheme programs is normally expressed using recursion.  Nevertheless,
+R5RS defines a construct for programming loops, calling @code{do}.  In
+addition, Guile has an explicit looping syntax called @code{while}.
+
+@deffn syntax do ((variable init [step]) @dots{}) (test [expr @dots{}]) body @dots{}
+Bind @var{variable}s and evaluate @var{body} until @var{test} is true.
+The return value is the last @var{expr} after @var{test}, if given.  A
+simple example will illustrate the basic form,
+
+@example
+(do ((i 1 (1+ i)))
+    ((> i 4))
+  (display i))
+@print{} 1234
+@end example
+
+@noindent
+Or with two variables and a final return value,
+
+@example
+(do ((i 1 (1+ i))
+     (p 3 (* 3 p)))
+    ((> i 4)
+     p)
+  (format #t "3**~s is ~s\n" i p))
+@print{}
+3**1 is 3
+3**2 is 9
+3**3 is 27
+3**4 is 81
+@result{}
+789
+@end example
+
+The @var{variable} bindings are established like a @code{let}, in that
+the expressions are all evaluated and then all bindings made.  When
+iterating, the optional @var{step} expressions are evaluated with the
+previous bindings in scope, then new bindings all made.
+
+The @var{test} expression is a termination condition.  Looping stops
+when the @var{test} is true.  It's evaluated before running the
+@var{body} each time, so if it's true the first time then @var{body}
+is not run at all.
+
+The optional @var{expr}s after the @var{test} are evaluated at the end
+of looping, with the final @var{variable} bindings available.  The
+last @var{expr} gives the return value, or if there are no @var{expr}s
+the return value is unspecified.
+
+Each iteration establishes bindings to fresh locations for the
+@var{variable}s, like a new @code{let} for each iteration.  This is
+done for @var{variable}s without @var{step} expressions too.  The
+following illustrates this, showing how a new @code{i} is captured by
+the @code{lambda} in each iteration (@pxref{About Closure,, The
+Concept of Closure}).
+
+@example
+(define lst '())
+(do ((i 1 (1+ i)))
+    ((> i 4))
+  (set! lst (cons (lambda () i) lst)))
+(map (lambda (proc) (proc)) lst)
+@result{}
+(4 3 2 1)
+@end example
+@end deffn
+
+@deffn syntax while cond body @dots{}
+Run a loop executing the @var{body} forms while @var{cond} is true.
+@var{cond} is tested at the start of each iteration, so if it's
+@code{#f} the first time then @var{body} is not executed at all.  The
+return value is unspecified.
+
+Within @code{while}, two extra bindings are provided, they can be used
+from both @var{cond} and @var{body}.
+
+@deffn {Scheme Procedure} break
+Break out of the @code{while} form.
+@end deffn
+
+@deffn {Scheme Procedure} continue
+Abandon the current iteration, go back to the start and test
+@var{cond} again, etc.
+@end deffn
+
+Each @code{while} form gets its own @code{break} and @code{continue}
+procedures, operating on that @code{while}.  This means when loops are
+nested the outer @code{break} can be used to escape all the way out.
+For example,
+
+@example
+(while (test1)
+  (let ((outer-break break))
+    (while (test2)
+      (if (something)
+        (outer-break #f))
+      ...)))
+@end example
+
+Note that each @code{break} and @code{continue} procedure can only be
+used within the dynamic extent of its @code{while}.  Outside the
+@code{while} their behaviour is unspecified.
+@end deffn
+
+@cindex named let
+Another very common way of expressing iteration in Scheme programs is
+the use of the so-called @dfn{named let}.
+
+Named let is a variant of @code{let} which creates a procedure and calls
+it in one step.  Because of the newly created procedure, named let is
+more powerful than @code{do}--it can be used for iteration, but also
+for arbitrary recursion.
+
+@deffn syntax let variable bindings body
+For the definition of @var{bindings} see the documentation about
+@code{let} (@pxref{Local Bindings}).
+
+Named @code{let} works as follows:
+
+@itemize @bullet
+@item
+A new procedure which accepts as many arguments as are in @var{bindings}
+is created and bound locally (using @code{let}) to @var{variable}.  The
+new procedure's formal argument names are the name of the
+@var{variables}.
+
+@item
+The @var{body} expressions are inserted into the newly created procedure.
+
+@item
+The procedure is called with the @var{init} expressions as the formal
+arguments.
+@end itemize
+
+The next example implements a loop which iterates (by recursion) 1000
+times.
+
+@lisp
+(let lp ((x 1000))
+  (if (positive? x)
+      (lp (- x 1))
+      x))
+@result{}
+0
+@end lisp
+@end deffn
+
+
+@node Continuations
+@subsection Continuations
+@cindex continuations
+
+A ``continuation'' is the code that will execute when a given function
+or expression returns.  For example, consider
+
+@example
+(define (foo)
+  (display "hello\n")
+  (display (bar)) (newline)
+  (exit))
+@end example
+
+The continuation from the call to @code{bar} comprises a
+@code{display} of the value returned, a @code{newline} and an
+@code{exit}.  This can be expressed as a function of one argument.
+
+@example
+(lambda (r)
+  (display r) (newline)
+  (exit))
+@end example
+
+In Scheme, continuations are represented as special procedures just
+like this.  The special property is that when a continuation is called
+it abandons the current program location and jumps directly to that
+represented by the continuation.
+
+A continuation is like a dynamic label, capturing at run-time a point
+in program execution, including all the nested calls that have lead to
+it (or rather the code that will execute when those calls return).
+
+Continuations are created with the following functions.
+
+@deffn {Scheme Procedure} call-with-current-continuation proc
+@deffnx {Scheme Procedure} call/cc proc
+@rnindex call-with-current-continuation
+Capture the current continuation and call @code{(@var{proc}
+@var{cont})} with it.  The return value is the value returned by
+@var{proc}, or when @code{(@var{cont} @var{value})} is later invoked,
+the return is the @var{value} passed.
+
+Normally @var{cont} should be called with one argument, but when the
+location resumed is expecting multiple values (@pxref{Multiple
+Values}) then they should be passed as multiple arguments, for
+instance @code{(@var{cont} @var{x} @var{y} @var{z})}.
+
+@var{cont} may only be used from the same side of a continuation
+barrier as it was created (@pxref{Continuation Barriers}), and in a
+multi-threaded program only from the thread in which it was created.
+
+The call to @var{proc} is not part of the continuation captured, it runs
+only when the continuation is created.  Often a program will want to
+store @var{cont} somewhere for later use; this can be done in
+@var{proc}.
+
+The @code{call} in the name @code{call-with-current-continuation}
+refers to the way a call to @var{proc} gives the newly created
+continuation.  It's not related to the way a call is used later to
+invoke that continuation.
+
+@code{call/cc} is an alias for @code{call-with-current-continuation}.
+This is in common use since the latter is rather long.
+@end deffn
+
+@deftypefn {C Function} SCM scm_make_continuation (int *first)
+Capture the current continuation as described above.  The return value
+is the new continuation, and @var{*first} is set to 1.
+
+When the continuation is invoked, @code{scm_make_continuation} will
+return again, this time returning the value (or set of multiple
+values) passed in that invocation, and with @var{*first} set to 0.
+@end deftypefn
+
+@sp 1
+@noindent
+Here is a simple example,
+
+@example
+(define kont #f)
+(format #t "the return is ~a\n"
+        (call/cc (lambda (k)
+                   (set! kont k)
+                   1)))
+@result{} the return is 1
+
+(kont 2)
+@result{} the return is 2
+@end example
+
+@code{call/cc} captures a continuation in which the value returned is
+going to be displayed by @code{format}.  The @code{lambda} stores this
+in @code{kont} and gives an initial return @code{1} which is
+displayed.  The later invocation of @code{kont} resumes the captured
+point, but this time returning @code{2}, which is displayed.
+
+When Guile is run interactively, a call to @code{format} like this has
+an implicit return back to the read-eval-print loop.  @code{call/cc}
+captures that like any other return, which is why interactively
+@code{kont} will come back to read more input.
+
+@sp 1
+C programmers may note that @code{call/cc} is like @code{setjmp} in
+the way it records at runtime a point in program execution.  A call to
+a continuation is like a @code{longjmp} in that it abandons the
+present location and goes to the recorded one.  Like @code{longjmp},
+the value passed to the continuation is the value returned by
+@code{call/cc} on resuming there.  However @code{longjmp} can only go
+up the program stack, but the continuation mechanism can go anywhere.
+
+When a continuation is invoked, @code{call/cc} and subsequent code
+effectively ``returns'' a second time.  It can be confusing to imagine
+a function returning more times than it was called.  It may help
+instead to think of it being stealthily re-entered and then program
+flow going on as normal.
+
+@code{dynamic-wind} (@pxref{Dynamic Wind}) can be used to ensure setup
+and cleanup code is run when a program locus is resumed or abandoned
+through the continuation mechanism.
+
+@sp 1
+Continuations are a powerful mechanism, and can be used to implement
+almost any sort of control structure, such as loops, coroutines, or
+exception handlers.
+
+However the implementation of continuations in Guile is not as
+efficient as one might hope, because Guile is designed to cooperate
+with programs written in other languages, such as C, which do not know
+about continuations.  Basically continuations are captured by a block
+copy of the stack, and resumed by copying back.
+
+For this reason, generally continuations should be used only when
+there is no other simple way to achieve the desired result, or when
+the elegance of the continuation mechanism outweighs the need for
+performance.
+
+Escapes upwards from loops or nested functions are generally best
+handled with exceptions (@pxref{Exceptions}).  Coroutines can be
+efficiently implemented with cooperating threads (a thread holds a
+full program stack but doesn't copy it around the way continuations
+do).
+
+
+@node Multiple Values
+@subsection Returning and Accepting Multiple Values
+
+@cindex multiple values
+@cindex receive
+
+Scheme allows a procedure to return more than one value to its caller.
+This is quite different to other languages which only allow
+single-value returns.  Returning multiple values is different from
+returning a list (or pair or vector) of values to the caller, because
+conceptually not @emph{one} compound object is returned, but several
+distinct values.
+
+The primitive procedures for handling multiple values are @code{values}
+and @code{call-with-values}.  @code{values} is used for returning
+multiple values from a procedure.  This is done by placing a call to
+@code{values} with zero or more arguments in tail position in a
+procedure body.  @code{call-with-values} combines a procedure returning
+multiple values with a procedure which accepts these values as
+parameters.
+
+@rnindex values
+@deffn {Scheme Procedure} values arg1 @dots{} argN
+@deffnx {C Function} scm_values (args)
+Delivers all of its arguments to its continuation.  Except for
+continuations created by the @code{call-with-values} procedure,
+all continuations take exactly one value.  The effect of
+passing no value or more than one value to continuations that
+were not created by @code{call-with-values} is unspecified.
+
+For @code{scm_values}, @var{args} is a list of arguments and the
+return is a multiple-values object which the caller can return.  In
+the current implementation that object shares structure with
+@var{args}, so @var{args} should not be modified subsequently.
+@end deffn
+
+@rnindex call-with-values
+@deffn {Scheme Procedure} call-with-values producer consumer
+Calls its @var{producer} argument with no values and a
+continuation that, when passed some values, calls the
+@var{consumer} procedure with those values as arguments.  The
+continuation for the call to @var{consumer} is the continuation
+of the call to @code{call-with-values}.
+
+@example
+(call-with-values (lambda () (values 4 5))
+                  (lambda (a b) b))
+@result{} 5
+
+@end example
+@example
+(call-with-values * -)
+@result{} -1
+@end example
+@end deffn
+
+In addition to the fundamental procedures described above, Guile has a
+module which exports a syntax called @code{receive}, which is much
+more convenient.  This is in the @code{(ice-9 receive)} and is the
+same as specified by SRFI-8 (@pxref{SRFI-8}).
+
+@lisp
+(use-modules (ice-9 receive))
+@end lisp
+
+@deffn {library syntax} receive formals expr body @dots{}
+Evaluate the expression @var{expr}, and bind the result values (zero
+or more) to the formal arguments in @var{formals}.  @var{formals} is a
+list of symbols, like the argument list in a @code{lambda}
+(@pxref{Lambda}).  After binding the variables, the expressions in
+@var{body} @dots{} are evaluated in order, the return value is the
+result from the last expression.
+
+For example getting results from @code{partition} in SRFI-1
+(@pxref{SRFI-1}),
+
+@example
+(receive (odds evens)
+    (partition odd? '(7 4 2 8 3))
+  (display odds)
+  (display " and ")
+  (display evens))
+@print{} (7 3) and (4 2 8)
+@end example
+
+@end deffn
+
+
+@node Exceptions
+@subsection Exceptions
+@cindex error handling
+@cindex exception handling
+
+A common requirement in applications is to want to jump
+@dfn{non-locally} from the depths of a computation back to, say, the
+application's main processing loop.  Usually, the place that is the
+target of the jump is somewhere in the calling stack of procedures that
+called the procedure that wants to jump back.  For example, typical
+logic for a key press driven application might look something like this:
+
+@example
+main-loop:
+  read the next key press and call dispatch-key
+
+dispatch-key:
+  lookup the key in a keymap and call an appropriate procedure,
+  say find-file
+
+find-file:
+  interactively read the required file name, then call
+  find-specified-file
+
+find-specified-file:
+  check whether file exists; if not, jump back to main-loop
+  @dots{}
+@end example
+
+The jump back to @code{main-loop} could be achieved by returning through
+the stack one procedure at a time, using the return value of each
+procedure to indicate the error condition, but Guile (like most modern
+programming languages) provides an additional mechanism called
+@dfn{exception handling} that can be used to implement such jumps much
+more conveniently.
+
+@menu
+* Exception Terminology::       Different ways to say the same thing.
+* Catch::                       Setting up to catch exceptions.
+* Throw Handlers::              Adding extra handling to a throw.
+* Lazy Catch::                  Catch without unwinding the stack.
+* Throw::                       Throwing an exception.
+* Exception Implementation::    How Guile implements exceptions.
+@end menu
+
+
+@node Exception Terminology
+@subsubsection Exception Terminology
+
+There are several variations on the terminology for dealing with
+non-local jumps.  It is useful to be aware of them, and to realize
+that they all refer to the same basic mechanism.
+
+@itemize @bullet
+@item
+Actually making a non-local jump may be called @dfn{raising an
+exception}, @dfn{raising a signal}, @dfn{throwing an exception} or
+@dfn{doing a long jump}.  When the jump indicates an error condition,
+people may talk about @dfn{signalling}, @dfn{raising} or @dfn{throwing}
+@dfn{an error}.
+
+@item
+Handling the jump at its target may be referred to as @dfn{catching} or
+@dfn{handling} the @dfn{exception}, @dfn{signal} or, where an error
+condition is involved, @dfn{error}.
+@end itemize
+
+Where @dfn{signal} and @dfn{signalling} are used, special care is needed
+to avoid the risk of confusion with POSIX signals.
+
+This manual prefers to speak of throwing and catching exceptions, since
+this terminology matches the corresponding Guile primitives.
+
+
+@node Catch
+@subsubsection Catching Exceptions
+
+@code{catch} is used to set up a target for a possible non-local jump.
+The arguments of a @code{catch} expression are a @dfn{key}, which
+restricts the set of exceptions to which this @code{catch} applies, a
+thunk that specifies the code to execute and one or two @dfn{handler}
+procedures that say what to do if an exception is thrown while executing
+the code.  If the execution thunk executes @dfn{normally}, which means
+without throwing any exceptions, the handler procedures are not called
+at all.
+
+When an exception is thrown using the @code{throw} function, the first
+argument of the @code{throw} is a symbol that indicates the type of the
+exception.  For example, Guile throws an exception using the symbol
+@code{numerical-overflow} to indicate numerical overflow errors such as
+division by zero:
+
+@lisp
+(/ 1 0)
+@result{}
+ABORT: (numerical-overflow)
+@end lisp
+
+The @var{key} argument in a @code{catch} expression corresponds to this
+symbol.  @var{key} may be a specific symbol, such as
+@code{numerical-overflow}, in which case the @code{catch} applies
+specifically to exceptions of that type; or it may be @code{#t}, which
+means that the @code{catch} applies to all exceptions, irrespective of
+their type.
+
+The second argument of a @code{catch} expression should be a thunk
+(i.e. a procedure that accepts no arguments) that specifies the normal
+case code.  The @code{catch} is active for the execution of this thunk,
+including any code called directly or indirectly by the thunk's body.
+Evaluation of the @code{catch} expression activates the catch and then
+calls this thunk.
+
+The third argument of a @code{catch} expression is a handler procedure.
+If an exception is thrown, this procedure is called with exactly the
+arguments specified by the @code{throw}.  Therefore, the handler
+procedure must be designed to accept a number of arguments that
+corresponds to the number of arguments in all @code{throw} expressions
+that can be caught by this @code{catch}.
+
+The fourth, optional argument of a @code{catch} expression is another
+handler procedure, called the @dfn{pre-unwind} handler.  It differs from
+the third argument in that if an exception is thrown, it is called,
+@emph{before} the third argument handler, in exactly the dynamic context
+of the @code{throw} expression that threw the exception.  This means
+that it is useful for capturing or displaying the stack at the point of
+the @code{throw}, or for examining other aspects of the dynamic context,
+such as fluid values, before the context is unwound back to that of the
+prevailing @code{catch}.
+
+@deffn {Scheme Procedure} catch key thunk handler [pre-unwind-handler]
+@deffnx {C Function} scm_catch_with_pre_unwind_handler (key, thunk, handler, pre_unwind_handler)
+@deffnx {C Function} scm_catch (key, thunk, handler)
+Invoke @var{thunk} in the dynamic context of @var{handler} for
+exceptions matching @var{key}.  If thunk throws to the symbol
+@var{key}, then @var{handler} is invoked this way:
+@lisp
+(handler key args ...)
+@end lisp
+
+@var{key} is a symbol or @code{#t}.
+
+@var{thunk} takes no arguments.  If @var{thunk} returns
+normally, that is the return value of @code{catch}.
+
+Handler is invoked outside the scope of its own @code{catch}.
+If @var{handler} again throws to the same key, a new handler
+from further up the call chain is invoked.
+
+If the key is @code{#t}, then a throw to @emph{any} symbol will
+match this call to @code{catch}.
+
+If a @var{pre-unwind-handler} is given and @var{thunk} throws
+an exception that matches @var{key}, Guile calls the
+@var{pre-unwind-handler} before unwinding the dynamic state and
+invoking the main @var{handler}.  @var{pre-unwind-handler} should
+be a procedure with the same signature as @var{handler}, that
+is @code{(lambda (key . args))}.  It is typically used to save
+the stack at the point where the exception occurred, but can also
+query other parts of the dynamic state at that point, such as
+fluid values.
+
+A @var{pre-unwind-handler} can exit either normally or non-locally.
+If it exits normally, Guile unwinds the stack and dynamic context
+and then calls the normal (third argument) handler.  If it exits
+non-locally, that exit determines the continuation.
+@end deffn
+
+If a handler procedure needs to match a variety of @code{throw}
+expressions with varying numbers of arguments, you should write it like
+this:
+
+@lisp
+(lambda (key . args)
+  @dots{})
+@end lisp
+
+@noindent
+The @var{key} argument is guaranteed always to be present, because a
+@code{throw} without a @var{key} is not valid.  The number and
+interpretation of the @var{args} varies from one type of exception to
+another, but should be specified by the documentation for each exception
+type.
+
+Note that, once the normal (post-unwind) handler procedure is invoked,
+the catch that led to the handler procedure being called is no longer
+active.  Therefore, if the handler procedure itself throws an exception,
+that exception can only be caught by another active catch higher up the
+call stack, if there is one.
+
+@sp 1
+@deftypefn {C Function} SCM scm_c_catch (SCM tag, scm_t_catch_body body, void *body_data, scm_t_catch_handler handler, void *handler_data, scm_t_catch_handler pre_unwind_handler, void *pre_unwind_handler_data)
+@deftypefnx {C Function} SCM scm_internal_catch (SCM tag, scm_t_catch_body body, void *body_data, scm_t_catch_handler handler, void *handler_data)
+The above @code{scm_catch_with_pre_unwind_handler} and @code{scm_catch}
+take Scheme procedures as body and handler arguments.
+@code{scm_c_catch} and @code{scm_internal_catch} are equivalents taking
+C functions.
+
+@var{body} is called as @code{@var{body} (@var{body_data})} with a catch
+on exceptions of the given @var{tag} type.  If an exception is caught,
+@var{pre_unwind_handler} and @var{handler} are called as
+@code{@var{handler} (@var{handler_data}, @var{key}, @var{args})}.
+@var{key} and @var{args} are the @code{SCM} key and argument list from
+the @code{throw}.
+
+@tpindex scm_t_catch_body
+@tpindex scm_t_catch_handler
+@var{body} and @var{handler} should have the following prototypes.
+@code{scm_t_catch_body} and @code{scm_t_catch_handler} are pointer
+typedefs for these.
+
+@example
+SCM body (void *data);
+SCM handler (void *data, SCM key, SCM args);
+@end example
+
+The @var{body_data} and @var{handler_data} parameters are passed to
+the respective calls so an application can communicate extra
+information to those functions.
+
+If the data consists of an @code{SCM} object, care should be taken
+that it isn't garbage collected while still required.  If the
+@code{SCM} is a local C variable, one way to protect it is to pass a
+pointer to that variable as the data parameter, since the C compiler
+will then know the value must be held on the stack.  Another way is to
+use @code{scm_remember_upto_here_1} (@pxref{Remembering During
+Operations}).
+@end deftypefn
+
+
+@node Throw Handlers
+@subsubsection Throw Handlers
+
+It's sometimes useful to be able to intercept an exception that is being
+thrown, but without changing where in the dynamic context that exception
+will eventually be caught.  This could be to clean up some related state
+or to pass information about the exception to a debugger, for example.
+The @code{with-throw-handler} procedure provides a way to do this.
+
+@deffn {Scheme Procedure} with-throw-handler key thunk handler
+@deffnx {C Function} scm_with_throw_handler (key, thunk, handler)
+Add @var{handler} to the dynamic context as a throw handler
+for key @var{key}, then invoke @var{thunk}.
+@end deffn
+
+@deftypefn {C Function} SCM scm_c_with_throw_handler (SCM tag, scm_t_catch_body body, void *body_data, scm_t_catch_handler handler, void *handler_data, int lazy_catch_p)
+The above @code{scm_with_throw_handler} takes Scheme procedures as body
+(thunk) and handler arguments.  @code{scm_c_with_throw_handler} is an
+equivalent taking C functions.  See @code{scm_c_catch} (@pxref{Catch})
+for a description of the parameters, the behaviour however of course
+follows @code{with-throw-handler}.
+@end deftypefn
+
+If @var{thunk} throws an exception, Guile handles that exception by
+invoking the innermost @code{catch} or throw handler whose key matches
+that of the exception.  When the innermost thing is a throw handler,
+Guile calls the specified handler procedure using @code{(apply
+@var{handler} key args)}.  The handler procedure may either return
+normally or exit non-locally.  If it returns normally, Guile passes the
+exception on to the next innermost @code{catch} or throw handler.  If it
+exits non-locally, that exit determines the continuation.
+
+The behaviour of a throw handler is very similar to that of a
+@code{catch} expression's optional pre-unwind handler.  In particular, a
+throw handler's handler procedure is invoked in the exact dynamic
+context of the @code{throw} expression, just as a pre-unwind handler is.
+@code{with-throw-handler} may be seen as a half-@code{catch}: it does
+everything that a @code{catch} would do until the point where
+@code{catch} would start unwinding the stack and dynamic context, but
+then it rethrows to the next innermost @code{catch} or throw handler
+instead.
+
+
+@node Lazy Catch
+@subsubsection Catch Without Unwinding
+
+Before version 1.8, Guile's closest equivalent to
+@code{with-throw-handler} was @code{lazy-catch}.  From version 1.8
+onwards we recommend using @code{with-throw-handler} because its
+behaviour is more useful than that of @code{lazy-catch}, but
+@code{lazy-catch} is still supported as well.
+
+A @dfn{lazy catch} is used in the same way as a normal @code{catch},
+with @var{key}, @var{thunk} and @var{handler} arguments specifying the
+exception type, normal case code and handler procedure, but differs in
+one important respect: the handler procedure is executed without
+unwinding the call stack from the context of the @code{throw} expression
+that caused the handler to be invoked.
+
+@deffn {Scheme Procedure} lazy-catch key thunk handler
+@deffnx {C Function} scm_lazy_catch (key, thunk, handler)
+This behaves exactly like @code{catch}, except that it does
+not unwind the stack before invoking @var{handler}.
+If the @var{handler} procedure returns normally, Guile
+rethrows the same exception again to the next innermost catch,
+lazy-catch or throw handler.  If the @var{handler} exits
+non-locally, that exit determines the continuation.
+@end deffn
+
+@deftypefn {C Function} SCM scm_internal_lazy_catch (SCM tag, scm_t_catch_body body, void *body_data, scm_t_catch_handler handler, void *handler_data)
+The above @code{scm_lazy_catch} takes Scheme procedures as body and
+handler arguments.  @code{scm_internal_lazy_catch} is an equivalent
+taking C functions.  See @code{scm_internal_catch} (@pxref{Catch}) for
+a description of the parameters, the behaviour however of course
+follows @code{lazy-catch}.
+@end deftypefn
+
+Typically @var{handler} is used to display a backtrace of the stack at
+the point where the corresponding @code{throw} occurred, or to save off
+this information for possible display later.
+
+Not unwinding the stack means that throwing an exception that is caught
+by a @code{lazy-catch} is @emph{almost} equivalent to calling the
+@code{lazy-catch}'s handler inline instead of each @code{throw}, and
+then omitting the surrounding @code{lazy-catch}.  In other words,
+
+@lisp
+(lazy-catch 'key
+  (lambda () @dots{} (throw 'key args @dots{}) @dots{})
+  handler)
+@end lisp
+
+@noindent
+is @emph{almost} equivalent to
+
+@lisp
+((lambda () @dots{} (handler 'key args @dots{}) @dots{}))
+@end lisp
+
+@noindent
+But why only @emph{almost}?  The difference is that with
+@code{lazy-catch} (as with normal @code{catch}), the dynamic context is
+unwound back to just outside the @code{lazy-catch} expression before
+invoking the handler.  (For an introduction to what is meant by dynamic
+context, @xref{Dynamic Wind}.)
+
+Then, when the handler @emph{itself} throws an exception, that exception
+must be caught by some kind of @code{catch} (including perhaps another
+@code{lazy-catch}) higher up the call stack.
+
+The dynamic context also includes @code{with-fluids} blocks
+(@pxref{Fluids and Dynamic States}),
+so the effect of unwinding the dynamic context can also be seen in fluid
+variable values.  This is illustrated by the following code, in which
+the normal case thunk uses @code{with-fluids} to temporarily change the
+value of a fluid:
+
+@lisp
+(define f (make-fluid))
+(fluid-set! f "top level value")
+
+(define (handler . args)
+  (cons (fluid-ref f) args))
+
+(lazy-catch 'foo
+            (lambda ()
+              (with-fluids ((f "local value"))
+                (throw 'foo)))
+            handler)
+@result{}
+("top level value" foo)
+
+((lambda ()
+   (with-fluids ((f "local value"))
+     (handler 'foo))))
+@result{}
+("local value" foo)
+@end lisp
+
+@noindent
+In the @code{lazy-catch} version, the unwinding of dynamic context
+restores @code{f} to its value outside the @code{with-fluids} block
+before the handler is invoked, so the handler's @code{(fluid-ref f)}
+returns the external value.
+
+@code{lazy-catch} is useful because it permits the implementation of
+debuggers and other reflective programming tools that need to access the
+state of the call stack at the exact point where an exception or an
+error is thrown.  For an example of this, see REFFIXME:stack-catch.
+
+It should be obvious from the above that @code{lazy-catch} is very
+similar to @code{with-throw-handler}.  In fact Guile implements
+@code{lazy-catch} in exactly the same way as @code{with-throw-handler},
+except with a flag set to say ``where there are slight differences
+between what @code{with-throw-handler} and @code{lazy-catch} would do,
+do what @code{lazy-catch} has always done''.  There are two such
+differences:
+
+@enumerate
+@item
+@code{with-throw-handler} handlers execute in the full dynamic context
+of the originating @code{throw} call.  @code{lazy-catch} handlers
+execute in the dynamic context of the @code{lazy-catch} expression,
+excepting only that the stack has not yet been unwound from the point of
+the @code{throw} call.
+
+@item
+If a @code{with-throw-handler} handler throws to a key that does not
+match the @code{with-throw-handler} expression's @var{key}, the new
+throw may be handled by a @code{catch} or throw handler that is _closer_
+to the throw than the first @code{with-throw-handler}.  If a
+@code{lazy-catch} handler throws, it will always be handled by a
+@code{catch} or throw handler that is higher up the dynamic context than
+the first @code{lazy-catch}.
+@end enumerate
+
+Here is an example to illustrate the second difference:
+
+@lisp
+(catch 'a
+  (lambda ()
+    (with-throw-handler 'b
+      (lambda ()
+        (catch 'a
+          (lambda ()
+            (throw 'b))
+          inner-handler))
+      (lambda (key . args)
+        (throw 'a))))
+  outer-handler)
+@end lisp
+
+@noindent
+This code will call @code{inner-handler} and then continue with the
+continuation of the inner @code{catch}.  If the
+@code{with-throw-handler} was changed to @code{lazy-catch}, however, the
+code would call @code{outer-handler} and then continue with the
+continuation of the outer @code{catch}.
+
+Modulo these two differences, any statements in the previous and
+following subsections about throw handlers apply to lazy catches as
+well.
+
+
+@node Throw
+@subsubsection Throwing Exceptions
+
+The @code{throw} primitive is used to throw an exception.  One argument,
+the @var{key}, is mandatory, and must be a symbol; it indicates the type
+of exception that is being thrown.  Following the @var{key},
+@code{throw} accepts any number of additional arguments, whose meaning
+depends on the exception type.  The documentation for each possible type
+of exception should specify the additional arguments that are expected
+for that kind of exception.
+
+@deffn {Scheme Procedure} throw key . args
+@deffnx {C Function} scm_throw (key, args)
+Invoke the catch form matching @var{key}, passing @var{args} to the
+@var{handler}.  
+
+@var{key} is a symbol.  It will match catches of the same symbol or of
+@code{#t}.
+
+If there is no handler at all, Guile prints an error and then exits.
+@end deffn
+
+When an exception is thrown, it will be caught by the innermost
+@code{catch} or throw handler that applies to the type of the thrown
+exception; in other words, whose @var{key} is either @code{#t} or the
+same symbol as that used in the @code{throw} expression.  Once Guile has
+identified the appropriate @code{catch} or throw handler, it handles the
+exception by applying the relevant handler procedure(s) to the arguments
+of the @code{throw}.
+
+If there is no appropriate @code{catch} or throw handler for a thrown
+exception, Guile prints an error to the current error port indicating an
+uncaught exception, and then exits.  In practice, it is quite difficult
+to observe this behaviour, because Guile when used interactively
+installs a top level @code{catch} handler that will catch all exceptions
+and print an appropriate error message @emph{without} exiting.  For
+example, this is what happens if you try to throw an unhandled exception
+in the standard Guile REPL; note that Guile's command loop continues
+after the error message:
+
+@lisp
+guile> (throw 'badex)
+<unnamed port>:3:1: In procedure gsubr-apply @dots{}
+<unnamed port>:3:1: unhandled-exception: badex
+ABORT: (misc-error)
+guile> 
+@end lisp
+
+The default uncaught exception behaviour can be observed by evaluating a
+@code{throw} expression from the shell command line:
+
+@example
+$ guile -c "(begin (throw 'badex) (display \"here\\n\"))"
+guile: uncaught throw to badex: ()
+$ 
+@end example
+
+@noindent
+That Guile exits immediately following the uncaught exception
+is shown by the absence of any output from the @code{display}
+expression, because Guile never gets to the point of evaluating that
+expression.
+
+
+@node Exception Implementation
+@subsubsection How Guile Implements Exceptions
+
+It is traditional in Scheme to implement exception systems using
+@code{call-with-current-continuation}.  Continuations
+(@pxref{Continuations}) are such a powerful concept that any other
+control mechanism --- including @code{catch} and @code{throw} --- can be
+implemented in terms of them.
+
+Guile does not implement @code{catch} and @code{throw} like this,
+though.  Why not?  Because Guile is specifically designed to be easy to
+integrate with applications written in C.  In a mixed Scheme/C
+environment, the concept of @dfn{continuation} must logically include
+``what happens next'' in the C parts of the application as well as the
+Scheme parts, and it turns out that the only reasonable way of
+implementing continuations like this is to save and restore the complete
+C stack.
+
+So Guile's implementation of @code{call-with-current-continuation} is a
+stack copying one.  This allows it to interact well with ordinary C
+code, but means that creating and calling a continuation is slowed down
+by the time that it takes to copy the C stack.
+
+The more targeted mechanism provided by @code{catch} and @code{throw}
+does not need to save and restore the C stack because the @code{throw}
+always jumps to a location higher up the stack of the code that executes
+the @code{throw}.  Therefore Guile implements the @code{catch} and
+@code{throw} primitives independently of
+@code{call-with-current-continuation}, in a way that takes advantage of
+this @emph{upwards only} nature of exceptions.
+
+
+@node Error Reporting
+@subsection Procedures for Signaling Errors
+
+Guile provides a set of convenience procedures for signaling error
+conditions that are implemented on top of the exception primitives just
+described.
+
+@deffn {Scheme Procedure} error msg args @dots{}
+Raise an error with key @code{misc-error} and a message constructed by
+displaying @var{msg} and writing @var{args}.
+@end deffn
+
+@deffn {Scheme Procedure} scm-error key subr message args data
+@deffnx {C Function} scm_error_scm (key, subr, message, args, data)
+Raise an error with key @var{key}.  @var{subr} can be a string
+naming the procedure associated with the error, or @code{#f}.
+@var{message} is the error message string, possibly containing
+@code{~S} and @code{~A} escapes.  When an error is reported,
+these are replaced by formatting the corresponding members of
+@var{args}: @code{~A} (was @code{%s} in older versions of
+Guile) formats using @code{display} and @code{~S} (was
+@code{%S}) formats using @code{write}.  @var{data} is a list or
+@code{#f} depending on @var{key}: if @var{key} is
+@code{system-error} then it should be a list containing the
+Unix @code{errno} value; If @var{key} is @code{signal} then it
+should be a list containing the Unix signal number; If
+@var{key} is @code{out-of-range} or @code{wrong-type-arg},
+it is a list containing the bad value; otherwise
+it will usually be @code{#f}.
+@end deffn
+
+@deffn {Scheme Procedure} strerror err
+@deffnx {C Function} scm_strerror (err)
+Return the Unix error message corresponding to @var{err}, an integer
+@code{errno} value.
+
+When @code{setlocale} has been called (@pxref{Locales}), the message
+is in the language and charset of @code{LC_MESSAGES}.  (This is done
+by the C library.)
+@end deffn
+
+@c begin (scm-doc-string "boot-9.scm" "false-if-exception")
+@deffn syntax false-if-exception expr
+Returns the result of evaluating its argument; however
+if an exception occurs then @code{#f} is returned instead.
+@end deffn
+@c end
+
+
+@node Dynamic Wind
+@subsection Dynamic Wind
+
+For Scheme code, the fundamental procedure to react to non-local entry
+and exits of dynamic contexts is @code{dynamic-wind}.  C code could
+use @code{scm_internal_dynamic_wind}, but since C does not allow the
+convenient construction of anonymous procedures that close over
+lexical variables, this will be, well, inconvenient.
+
+Therefore, Guile offers the functions @code{scm_dynwind_begin} and
+@code{scm_dynwind_end} to delimit a dynamic extent.  Within this
+dynamic extent, which is called a @dfn{dynwind context}, you can
+perform various @dfn{dynwind actions} that control what happens when
+the dynwind context is entered or left.  For example, you can register
+a cleanup routine with @code{scm_dynwind_unwind_handler} that is
+executed when the context is left.  There are several other more
+specialized dynwind actions as well, for example to temporarily block
+the execution of asyncs or to temporarily change the current output
+port.  They are described elsewhere in this manual.
+
+Here is an example that shows how to prevent memory leaks.
+
+@example
+
+/* Suppose there is a function called FOO in some library that you
+   would like to make available to Scheme code (or to C code that
+   follows the Scheme conventions).
+
+   FOO takes two C strings and returns a new string.  When an error has
+   occurred in FOO, it returns NULL.
+*/
+
+char *foo (char *s1, char *s2);
+
+/* SCM_FOO interfaces the C function FOO to the Scheme way of life.
+   It takes care to free up all temporary strings in the case of
+   non-local exits.
+ */
+
+SCM
+scm_foo (SCM s1, SCM s2)
+@{
+  char *c_s1, *c_s2, *c_res;
+
+  scm_dynwind_begin (0);
+
+  c_s1 = scm_to_locale_string (s1);
+
+  /* Call 'free (c_s1)' when the dynwind context is left. 
+  */
+  scm_dynwind_unwind_handler (free, c_s1, SCM_F_WIND_EXPLICITLY);
+
+  c_s2 = scm_to_locale_string (s2);
+  
+  /* Same as above, but more concisely.
+  */
+  scm_dynwind_free (c_s2);
+
+  c_res = foo (c_s1, c_s2);
+  if (c_res == NULL)
+    scm_memory_error ("foo");
+
+  scm_dynwind_end ();
+
+  return scm_take_locale_string (res);
+@}
+@end example
+
+@rnindex dynamic-wind
+@deffn {Scheme Procedure} dynamic-wind in_guard thunk out_guard
+@deffnx {C Function} scm_dynamic_wind (in_guard, thunk, out_guard)
+All three arguments must be 0-argument procedures.
+@var{in_guard} is called, then @var{thunk}, then
+@var{out_guard}.
+
+If, any time during the execution of @var{thunk}, the
+dynamic extent of the @code{dynamic-wind} expression is escaped
+non-locally, @var{out_guard} is called.  If the dynamic extent of
+the dynamic-wind is re-entered, @var{in_guard} is called.  Thus
+@var{in_guard} and @var{out_guard} may be called any number of
+times.
+
+@lisp
+(define x 'normal-binding)
+@result{} x
+(define a-cont
+  (call-with-current-continuation
+   (lambda (escape)
+     (let ((old-x x))
+       (dynamic-wind
+           ;; in-guard:
+           ;;
+           (lambda () (set! x 'special-binding))
+
+           ;; thunk
+           ;;
+           (lambda () (display x) (newline)
+                      (call-with-current-continuation escape)
+                      (display x) (newline)
+                      x)
+
+           ;; out-guard:
+           ;;
+           (lambda () (set! x old-x)))))))
+;; Prints:
+special-binding
+;; Evaluates to:
+@result{} a-cont
+x
+@result{} normal-binding
+(a-cont #f)
+;; Prints:
+special-binding
+;; Evaluates to:
+@result{} a-cont  ;; the value of the (define a-cont...)
+x
+@result{} normal-binding
+a-cont
+@result{} special-binding
+@end lisp
+@end deffn
+
+@deftp {C Type} scm_t_dynwind_flags
+This is an enumeration of several flags that modify the behavior of
+@code{scm_dynwind_begin}.  The flags are listed in the following
+table.
+
+@table @code
+@item SCM_F_DYNWIND_REWINDABLE
+The dynamic context is @dfn{rewindable}.  This means that it can be
+reentered non-locally (via the invokation of a continuation).  The
+default is that a dynwind context can not be reentered non-locally.
+@end table
+
+@end deftp
+
+@deftypefn {C Function} void scm_dynwind_begin (scm_t_dynwind_flags flags)
+The function @code{scm_dynwind_begin} starts a new dynamic context and
+makes it the `current' one.
+
+The @var{flags} argument determines the default behavior of the
+context.  Normally, use 0.  This will result in a context that can not
+be reentered with a captured continuation.  When you are prepared to
+handle reentries, include @code{SCM_F_DYNWIND_REWINDABLE} in
+@var{flags}.
+
+Being prepared for reentry means that the effects of unwind handlers
+can be undone on reentry.  In the example above, we want to prevent a
+memory leak on non-local exit and thus register an unwind handler that
+frees the memory.  But once the memory is freed, we can not get it
+back on reentry.  Thus reentry can not be allowed.
+
+The consequence is that continuations become less useful when
+non-reenterable contexts are captured, but you don't need to worry
+about that too much.
+
+The context is ended either implicitly when a non-local exit happens,
+or explicitly with @code{scm_dynwind_end}.  You must make sure that a
+dynwind context is indeed ended properly.  If you fail to call
+@code{scm_dynwind_end} for each @code{scm_dynwind_begin}, the behavior
+is undefined.
+@end deftypefn
+
+@deftypefn {C Function} void scm_dynwind_end ()
+End the current dynamic context explicitly and make the previous one
+current.
+@end deftypefn
+
+@deftp {C Type} scm_t_wind_flags
+This is an enumeration of several flags that modify the behavior of
+@code{scm_dynwind_unwind_handler} and
+@code{scm_dynwind_rewind_handler}.  The flags are listed in the
+following table.
+
+@table @code
+@item SCM_F_WIND_EXPLICITLY
+@vindex SCM_F_WIND_EXPLICITLY
+The registered action is also carried out when the dynwind context is
+entered or left locally.
+@end table
+@end deftp
+
+@deftypefn {C Function} void scm_dynwind_unwind_handler (void (*func)(void *), void *data, scm_t_wind_flags flags)
+@deftypefnx {C Function} void scm_dynwind_unwind_handler_with_scm (void (*func)(SCM), SCM data, scm_t_wind_flags flags)
+Arranges for @var{func} to be called with @var{data} as its arguments
+when the current context ends implicitly.  If @var{flags} contains
+@code{SCM_F_WIND_EXPLICITLY}, @var{func} is also called when the
+context ends explicitly with @code{scm_dynwind_end}.
+
+The function @code{scm_dynwind_unwind_handler_with_scm} takes care that
+@var{data} is protected from garbage collection.
+@end deftypefn
+
+@deftypefn {C Function} void scm_dynwind_rewind_handler (void (*func)(void *), void *data, scm_t_wind_flags flags)
+@deftypefnx {C Function} void scm_dynwind_rewind_handler_with_scm (void (*func)(SCM), SCM data, scm_t_wind_flags flags)
+Arrange for @var{func} to be called with @var{data} as its argument when
+the current context is restarted by rewinding the stack.  When @var{flags}
+contains @code{SCM_F_WIND_EXPLICITLY}, @var{func} is called immediately
+as well.
+
+The function @code{scm_dynwind_rewind_handler_with_scm} takes care that
+@var{data} is protected from garbage collection.
+@end deftypefn
+
+@deftypefn {C Function} void scm_dynwind_free (void *mem)
+Arrange for @var{mem} to be freed automatically whenever the current
+context is exited, whether normally or non-locally.
+@code{scm_dynwind_free (mem)} is an equivalent shorthand for
+@code{scm_dynwind_unwind_handler (free, mem, SCM_F_WIND_EXPLICITLY)}.
+@end deftypefn
+
+
+@node Handling Errors
+@subsection How to Handle Errors
+
+Error handling is based on @code{catch} and @code{throw}.  Errors are
+always thrown with a @var{key} and four arguments:
+
+@itemize @bullet
+@item
+@var{key}: a symbol which indicates the type of error.  The symbols used
+by libguile are listed below.
+
+@item
+@var{subr}: the name of the procedure from which the error is thrown, or
+@code{#f}.
+
+@item
+@var{message}: a string (possibly language and system dependent)
+describing the error.  The tokens @code{~A} and @code{~S} can be
+embedded within the message: they will be replaced with members of the
+@var{args} list when the message is printed.  @code{~A} indicates an
+argument printed using @code{display}, while @code{~S} indicates an
+argument printed using @code{write}.  @var{message} can also be
+@code{#f}, to allow it to be derived from the @var{key} by the error
+handler (may be useful if the @var{key} is to be thrown from both C and
+Scheme).
+
+@item
+@var{args}: a list of arguments to be used to expand @code{~A} and
+@code{~S} tokens in @var{message}.  Can also be @code{#f} if no
+arguments are required.
+
+@item
+@var{rest}: a list of any additional objects required. e.g., when the
+key is @code{'system-error}, this contains the C errno value.  Can also
+be @code{#f} if no additional objects are required.
+@end itemize
+
+In addition to @code{catch} and @code{throw}, the following Scheme
+facilities are available:
+
+@deffn {Scheme Procedure} display-error stack port subr message args rest
+@deffnx {C Function} scm_display_error (stack, port, subr, message, args, rest)
+Display an error message to the output port @var{port}.
+@var{stack} is the saved stack for the error, @var{subr} is
+the name of the procedure in which the error occurred and
+@var{message} is the actual error message, which may contain
+formatting instructions. These will format the arguments in
+the list @var{args} accordingly.  @var{rest} is currently
+ignored.
+@end deffn
+
+The following are the error keys defined by libguile and the situations
+in which they are used:
+
+@itemize @bullet
+@item
+@cindex @code{error-signal}
+@code{error-signal}: thrown after receiving an unhandled fatal signal
+such as SIGSEGV, SIGBUS, SIGFPE etc.  The @var{rest} argument in the throw
+contains the coded signal number (at present this is not the same as the
+usual Unix signal number).
+
+@item
+@cindex @code{system-error}
+@code{system-error}: thrown after the operating system indicates an
+error condition.  The @var{rest} argument in the throw contains the
+errno value.
+
+@item
+@cindex @code{numerical-overflow}
+@code{numerical-overflow}: numerical overflow.
+
+@item
+@cindex @code{out-of-range}
+@code{out-of-range}: the arguments to a procedure do not fall within the
+accepted domain.
+
+@item
+@cindex @code{wrong-type-arg}
+@code{wrong-type-arg}: an argument to a procedure has the wrong type.
+
+@item
+@cindex @code{wrong-number-of-args}
+@code{wrong-number-of-args}: a procedure was called with the wrong number
+of arguments.
+
+@item
+@cindex @code{memory-allocation-error}
+@code{memory-allocation-error}: memory allocation error.
+
+@item
+@cindex @code{stack-overflow}
+@code{stack-overflow}: stack overflow error.
+
+@item
+@cindex @code{regular-expression-syntax}
+@code{regular-expression-syntax}: errors generated by the regular
+expression library.
+
+@item
+@cindex @code{misc-error}
+@code{misc-error}: other errors.
+@end itemize
+
+
+@subsubsection C Support
+
+In the following C functions, @var{SUBR} and @var{MESSAGE} parameters
+can be @code{NULL} to give the effect of @code{#f} described above.
+
+@deftypefn {C Function} SCM scm_error (SCM @var{key}, char *@var{subr}, char *@var{message}, SCM @var{args}, SCM @var{rest})
+Throw an error, as per @code{scm-error} (@pxref{Error Reporting}).
+@end deftypefn
+
+@deftypefn {C Function} void scm_syserror (char *@var{subr})
+@deftypefnx {C Function} void scm_syserror_msg (char *@var{subr}, char *@var{message}, SCM @var{args})
+Throw an error with key @code{system-error} and supply @code{errno} in
+the @var{rest} argument.  For @code{scm_syserror} the message is
+generated using @code{strerror}.
+
+Care should be taken that any code in between the failing operation
+and the call to these routines doesn't change @code{errno}.
+@end deftypefn
+
+@deftypefn {C Function} void scm_num_overflow (char *@var{subr})
+@deftypefnx {C Function} void scm_out_of_range (char *@var{subr}, SCM @var{bad_value})
+@deftypefnx {C Function} void scm_wrong_num_args (SCM @var{proc})
+@deftypefnx {C Function} void scm_wrong_type_arg (char *@var{subr}, int @var{argnum}, SCM @var{bad_value})
+@deftypefnx {C Function} void scm_memory_error (char *@var{subr})
+Throw an error with the various keys described above.
+
+For @code{scm_wrong_num_args}, @var{proc} should be a Scheme symbol
+which is the name of the procedure incorrectly invoked.
+@end deftypefn
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

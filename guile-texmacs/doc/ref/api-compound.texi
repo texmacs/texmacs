@@ -1,0 +1,3889 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Compound Data Types
+@section Compound Data Types
+
+This chapter describes Guile's compound data types.  By @dfn{compound}
+we mean that the primary purpose of these data types is to act as
+containers for other kinds of data (including other compound objects).
+For instance, a (non-uniform) vector with length 5 is a container that
+can hold five arbitrary Scheme objects.
+
+The various kinds of container object differ from each other in how
+their memory is allocated, how they are indexed, and how particular
+values can be looked up within them.
+
+@menu
+* Pairs::                       Scheme's basic building block.
+* Lists::                       Special list functions supported by Guile.
+* Vectors::                     One-dimensional arrays of Scheme objects.
+* Uniform Numeric Vectors::     Vectors with elements of a single numeric type.
+* Bit Vectors::                 Vectors of bits.
+* Generalized Vectors::         Treating all vector-like things uniformly.
+* Arrays::                      Matrices, etc.
+* Records::                     
+* Structures::                  
+* Dictionary Types::            About dictionary types in general.
+* Association Lists::           List-based dictionaries.
+* Hash Tables::                 Table-based dictionaries.
+@end menu
+
+
+@node Pairs
+@subsection Pairs
+@tpindex Pairs
+
+Pairs are used to combine two Scheme objects into one compound object.
+Hence the name: A pair stores a pair of objects.
+
+The data type @dfn{pair} is extremely important in Scheme, just like in
+any other Lisp dialect.  The reason is that pairs are not only used to
+make two values available as one object, but that pairs are used for
+constructing lists of values.  Because lists are so important in Scheme,
+they are described in a section of their own (@pxref{Lists}).
+
+Pairs can literally get entered in source code or at the REPL, in the
+so-called @dfn{dotted list} syntax.  This syntax consists of an opening
+parentheses, the first element of the pair, a dot, the second element
+and a closing parentheses.  The following example shows how a pair
+consisting of the two numbers 1 and 2, and a pair containing the symbols
+@code{foo} and @code{bar} can be entered.  It is very important to write
+the whitespace before and after the dot, because otherwise the Scheme
+parser would not be able to figure out where to split the tokens.
+
+@lisp
+(1 . 2)
+(foo . bar)
+@end lisp
+
+But beware, if you want to try out these examples, you have to
+@dfn{quote} the expressions.  More information about quotation is
+available in the section @ref{Expression Syntax}.  The correct way
+to try these examples is as follows.
+
+@lisp
+'(1 . 2)
+@result{}
+(1 . 2)
+'(foo . bar)
+@result{}
+(foo . bar)
+@end lisp
+
+A new pair is made by calling the procedure @code{cons} with two
+arguments.  Then the argument values are stored into a newly allocated
+pair, and the pair is returned.  The name @code{cons} stands for
+"construct".  Use the procedure @code{pair?} to test whether a
+given Scheme object is a pair or not.
+
+@rnindex cons
+@deffn {Scheme Procedure} cons x y
+@deffnx {C Function} scm_cons (x, y)
+Return a newly allocated pair whose car is @var{x} and whose
+cdr is @var{y}.  The pair is guaranteed to be different (in the
+sense of @code{eq?}) from every previously existing object.
+@end deffn
+
+@rnindex pair?
+@deffn {Scheme Procedure} pair? x
+@deffnx {C Function} scm_pair_p (x)
+Return @code{#t} if @var{x} is a pair; otherwise return
+@code{#f}.
+@end deffn
+
+@deftypefn {C Function} int scm_is_pair (SCM x)
+Return 1 when @var{x} is a pair; otherwise return 0.
+@end deftypefn
+
+The two parts of a pair are traditionally called @dfn{car} and
+@dfn{cdr}.  They can be retrieved with procedures of the same name
+(@code{car} and @code{cdr}), and can be modified with the procedures
+@code{set-car!} and @code{set-cdr!}.  Since a very common operation in
+Scheme programs is to access the car of a car of a pair, or the car of
+the cdr of a pair, etc., the procedures called @code{caar},
+@code{cadr} and so on are also predefined.
+
+@rnindex car
+@rnindex cdr
+@deffn {Scheme Procedure} car pair
+@deffnx {Scheme Procedure} cdr pair
+@deffnx {C Function} scm_car (pair)
+@deffnx {C Function} scm_cdr (pair)
+Return the car or the cdr of @var{pair}, respectively.
+@end deffn
+
+@deftypefn  {C Macro} SCM SCM_CAR (SCM pair)
+@deftypefnx {C Macro} SCM SCM_CDR (SCM pair)
+These two macros are the fastest way to access the car or cdr of a
+pair; they can be thought of as compiling into a single memory
+reference.
+
+These macros do no checking at all.  The argument @var{pair} must be a
+valid pair.
+@end deftypefn
+
+@deffn  {Scheme Procedure} cddr pair
+@deffnx {Scheme Procedure} cdar pair
+@deffnx {Scheme Procedure} cadr pair
+@deffnx {Scheme Procedure} caar pair
+@deffnx {Scheme Procedure} cdddr pair
+@deffnx {Scheme Procedure} cddar pair
+@deffnx {Scheme Procedure} cdadr pair
+@deffnx {Scheme Procedure} cdaar pair
+@deffnx {Scheme Procedure} caddr pair
+@deffnx {Scheme Procedure} cadar pair
+@deffnx {Scheme Procedure} caadr pair
+@deffnx {Scheme Procedure} caaar pair
+@deffnx {Scheme Procedure} cddddr pair
+@deffnx {Scheme Procedure} cdddar pair
+@deffnx {Scheme Procedure} cddadr pair
+@deffnx {Scheme Procedure} cddaar pair
+@deffnx {Scheme Procedure} cdaddr pair
+@deffnx {Scheme Procedure} cdadar pair
+@deffnx {Scheme Procedure} cdaadr pair
+@deffnx {Scheme Procedure} cdaaar pair
+@deffnx {Scheme Procedure} cadddr pair
+@deffnx {Scheme Procedure} caddar pair
+@deffnx {Scheme Procedure} cadadr pair
+@deffnx {Scheme Procedure} cadaar pair
+@deffnx {Scheme Procedure} caaddr pair
+@deffnx {Scheme Procedure} caadar pair
+@deffnx {Scheme Procedure} caaadr pair
+@deffnx {Scheme Procedure} caaaar pair
+@deffnx {C Function} scm_cddr (pair)
+@deffnx {C Function} scm_cdar (pair)
+@deffnx {C Function} scm_cadr (pair)
+@deffnx {C Function} scm_caar (pair)
+@deffnx {C Function} scm_cdddr (pair)
+@deffnx {C Function} scm_cddar (pair)
+@deffnx {C Function} scm_cdadr (pair)
+@deffnx {C Function} scm_cdaar (pair)
+@deffnx {C Function} scm_caddr (pair)
+@deffnx {C Function} scm_cadar (pair)
+@deffnx {C Function} scm_caadr (pair)
+@deffnx {C Function} scm_caaar (pair)
+@deffnx {C Function} scm_cddddr (pair)
+@deffnx {C Function} scm_cdddar (pair)
+@deffnx {C Function} scm_cddadr (pair)
+@deffnx {C Function} scm_cddaar (pair)
+@deffnx {C Function} scm_cdaddr (pair)
+@deffnx {C Function} scm_cdadar (pair)
+@deffnx {C Function} scm_cdaadr (pair)
+@deffnx {C Function} scm_cdaaar (pair)
+@deffnx {C Function} scm_cadddr (pair)
+@deffnx {C Function} scm_caddar (pair)
+@deffnx {C Function} scm_cadadr (pair)
+@deffnx {C Function} scm_cadaar (pair)
+@deffnx {C Function} scm_caaddr (pair)
+@deffnx {C Function} scm_caadar (pair)
+@deffnx {C Function} scm_caaadr (pair)
+@deffnx {C Function} scm_caaaar (pair)
+These procedures are compositions of @code{car} and @code{cdr}, where
+for example @code{caddr} could be defined by
+
+@lisp
+(define caddr (lambda (x) (car (cdr (cdr x)))))
+@end lisp
+
+@code{cadr}, @code{caddr} and @code{cadddr} pick out the second, third
+or fourth elements of a list, respectively.  SRFI-1 provides the same
+under the names @code{second}, @code{third} and @code{fourth}
+(@pxref{SRFI-1 Selectors}).
+@end deffn
+
+@rnindex set-car!
+@deffn {Scheme Procedure} set-car! pair value
+@deffnx {C Function} scm_set_car_x (pair, value)
+Stores @var{value} in the car field of @var{pair}.  The value returned
+by @code{set-car!} is unspecified.
+@end deffn
+
+@rnindex set-cdr!
+@deffn {Scheme Procedure} set-cdr! pair value
+@deffnx {C Function} scm_set_cdr_x (pair, value)
+Stores @var{value} in the cdr field of @var{pair}.  The value returned
+by @code{set-cdr!} is unspecified.
+@end deffn
+
+
+@node Lists
+@subsection Lists
+@tpindex Lists
+
+A very important data type in Scheme---as well as in all other Lisp
+dialects---is the data type @dfn{list}.@footnote{Strictly speaking,
+Scheme does not have a real datatype @dfn{list}.  Lists are made up of
+@dfn{chained pairs}, and only exist by definition---a list is a chain
+of pairs which looks like a list.}
+
+This is the short definition of what a list is:
+
+@itemize @bullet
+@item
+Either the empty list @code{()},
+
+@item
+or a pair which has a list in its cdr.
+@end itemize
+
+@c FIXME::martin: Describe the pair chaining in more detail.
+
+@c FIXME::martin: What is a proper, what an improper list?
+@c What is a circular list?
+
+@c FIXME::martin: Maybe steal some graphics from the Elisp reference 
+@c manual?
+
+@menu
+* List Syntax::                 Writing literal lists.
+* List Predicates::             Testing lists.
+* List Constructors::           Creating new lists.
+* List Selection::              Selecting from lists, getting their length.
+* Append/Reverse::              Appending and reversing lists.
+* List Modification::           Modifying existing lists.
+* List Searching::              Searching for list elements
+* List Mapping::                Applying procedures to lists.
+@end menu
+
+@node List Syntax
+@subsubsection List Read Syntax
+
+The syntax for lists is an opening parentheses, then all the elements of
+the list (separated by whitespace) and finally a closing
+parentheses.@footnote{Note that there is no separation character between
+the list elements, like a comma or a semicolon.}.
+
+@lisp
+(1 2 3)            ; @r{a list of the numbers 1, 2 and 3}
+("foo" bar 3.1415) ; @r{a string, a symbol and a real number}
+()                 ; @r{the empty list}
+@end lisp
+
+The last example needs a bit more explanation.  A list with no elements,
+called the @dfn{empty list}, is special in some ways.  It is used for
+terminating lists by storing it into the cdr of the last pair that makes
+up a list.  An example will clear that up:
+
+@lisp
+(car '(1))
+@result{}
+1
+(cdr '(1))
+@result{}
+()
+@end lisp
+
+This example also shows that lists have to be quoted when written
+(@pxref{Expression Syntax}), because they would otherwise be
+mistakingly taken as procedure applications (@pxref{Simple
+Invocation}).
+
+
+@node List Predicates
+@subsubsection List Predicates
+
+Often it is useful to test whether a given Scheme object is a list or
+not.  List-processing procedures could use this information to test
+whether their input is valid, or they could do different things
+depending on the datatype of their arguments.
+
+@rnindex list?
+@deffn {Scheme Procedure} list? x
+@deffnx {C Function} scm_list_p (x)
+Return @code{#t} iff @var{x} is a proper list, else @code{#f}.
+@end deffn
+
+The predicate @code{null?} is often used in list-processing code to
+tell whether a given list has run out of elements.  That is, a loop
+somehow deals with the elements of a list until the list satisfies
+@code{null?}.  Then, the algorithm terminates.
+
+@rnindex null?
+@deffn {Scheme Procedure} null? x
+@deffnx {C Function} scm_null_p (x)
+Return @code{#t} iff @var{x} is the empty list, else @code{#f}.
+@end deffn
+
+@deftypefn {C Function} int scm_is_null (SCM x)
+Return 1 when @var{x} is the empty list; otherwise return 0.
+@end deftypefn
+
+
+@node List Constructors
+@subsubsection List Constructors
+
+This section describes the procedures for constructing new lists.
+@code{list} simply returns a list where the elements are the arguments,
+@code{cons*} is similar, but the last argument is stored in the cdr of
+the last pair of the list.
+
+@c  C Function scm_list(rest) used to be documented here, but it's a
+@c  no-op since it does nothing but return the list the caller must
+@c  have already created.
+@c
+@deffn {Scheme Procedure} list elem1 @dots{} elemN
+@deffnx {C Function} scm_list_1 (elem1)
+@deffnx {C Function} scm_list_2 (elem1, elem2)
+@deffnx {C Function} scm_list_3 (elem1, elem2, elem3)
+@deffnx {C Function} scm_list_4 (elem1, elem2, elem3, elem4)
+@deffnx {C Function} scm_list_5 (elem1, elem2, elem3, elem4, elem5)
+@deffnx {C Function} scm_list_n (elem1, @dots{}, elemN, @nicode{SCM_UNDEFINED})
+@rnindex list
+Return a new list containing elements @var{elem1} to @var{elemN}.
+
+@code{scm_list_n} takes a variable number of arguments, terminated by
+the special @code{SCM_UNDEFINED}.  That final @code{SCM_UNDEFINED} is
+not included in the list.  None of @var{elem1} to @var{elemN} can
+themselves be @code{SCM_UNDEFINED}, or @code{scm_list_n} will
+terminate at that point.
+@end deffn
+
+@c  C Function scm_cons_star(arg1,rest) used to be documented here,
+@c  but it's not really a useful interface, since it expects the
+@c  caller to have already consed up all but the first argument
+@c  already.
+@c
+@deffn {Scheme Procedure} cons* arg1 arg2 @dots{}
+Like @code{list}, but the last arg provides the tail of the
+constructed list, returning @code{(cons @var{arg1} (cons
+@var{arg2} (cons @dots{} @var{argn})))}.  Requires at least one
+argument.  If given one argument, that argument is returned as
+result.  This function is called @code{list*} in some other
+Schemes and in Common LISP.
+@end deffn
+
+@deffn {Scheme Procedure} list-copy lst
+@deffnx {C Function} scm_list_copy (lst)
+Return a (newly-created) copy of @var{lst}.
+@end deffn
+
+@deffn {Scheme Procedure} make-list n [init]
+Create a list containing of @var{n} elements, where each element is
+initialized to @var{init}.  @var{init} defaults to the empty list
+@code{()} if not given.
+@end deffn
+
+Note that @code{list-copy} only makes a copy of the pairs which make up
+the spine of the lists.  The list elements are not copied, which means
+that modifying the elements of the new list also modifies the elements
+of the old list.  On the other hand, applying procedures like
+@code{set-cdr!} or @code{delv!} to the new list will not alter the old
+list.  If you also need to copy the list elements (making a deep copy),
+use the procedure @code{copy-tree} (@pxref{Copying}).
+
+@node List Selection
+@subsubsection List Selection
+
+These procedures are used to get some information about a list, or to
+retrieve one or more elements of a list.
+
+@rnindex length
+@deffn {Scheme Procedure} length lst
+@deffnx {C Function} scm_length (lst)
+Return the number of elements in list @var{lst}.
+@end deffn
+
+@deffn {Scheme Procedure} last-pair lst
+@deffnx {C Function} scm_last_pair (lst)
+Return the last pair in @var{lst}, signalling an error if
+@var{lst} is circular.
+@end deffn
+
+@rnindex list-ref
+@deffn {Scheme Procedure} list-ref list k
+@deffnx {C Function} scm_list_ref (list, k)
+Return the @var{k}th element from @var{list}.
+@end deffn
+
+@rnindex list-tail
+@deffn {Scheme Procedure} list-tail lst k
+@deffnx {Scheme Procedure} list-cdr-ref lst k
+@deffnx {C Function} scm_list_tail (lst, k)
+Return the "tail" of @var{lst} beginning with its @var{k}th element.
+The first element of the list is considered to be element 0.
+
+@code{list-tail} and @code{list-cdr-ref} are identical.  It may help to
+think of @code{list-cdr-ref} as accessing the @var{k}th cdr of the list,
+or returning the results of cdring @var{k} times down @var{lst}.
+@end deffn
+
+@deffn {Scheme Procedure} list-head lst k
+@deffnx {C Function} scm_list_head (lst, k)
+Copy the first @var{k} elements from @var{lst} into a new list, and
+return it.
+@end deffn
+
+@node Append/Reverse
+@subsubsection Append and Reverse
+
+@code{append} and @code{append!} are used to concatenate two or more
+lists in order to form a new list.  @code{reverse} and @code{reverse!}
+return lists with the same elements as their arguments, but in reverse
+order.  The procedure variants with an @code{!} directly modify the
+pairs which form the list, whereas the other procedures create new
+pairs.  This is why you should be careful when using the side-effecting
+variants.
+
+@rnindex append
+@deffn {Scheme Procedure} append lst1 @dots{} lstN
+@deffnx {Scheme Procedure} append! lst1 @dots{} lstN
+@deffnx {C Function} scm_append (lstlst)
+@deffnx {C Function} scm_append_x (lstlst)
+Return a list comprising all the elements of lists @var{lst1} to
+@var{lstN}.
+
+@lisp
+(append '(x) '(y))          @result{}  (x y)
+(append '(a) '(b c d))      @result{}  (a b c d)
+(append '(a (b)) '((c)))    @result{}  (a (b) (c))
+@end lisp
+
+The last argument @var{lstN} may actually be any object; an improper
+list results if the last argument is not a proper list.
+
+@lisp
+(append '(a b) '(c . d))    @result{}  (a b c . d)
+(append '() 'a)             @result{}  a
+@end lisp
+
+@code{append} doesn't modify the given lists, but the return may share
+structure with the final @var{lstN}.  @code{append!} modifies the
+given lists to form its return.
+
+For @code{scm_append} and @code{scm_append_x}, @var{lstlst} is a list
+of the list operands @var{lst1} @dots{} @var{lstN}.  That @var{lstlst}
+itself is not modified or used in the return.
+@end deffn
+
+@rnindex reverse
+@deffn {Scheme Procedure} reverse lst
+@deffnx {Scheme Procedure} reverse! lst [newtail]
+@deffnx {C Function} scm_reverse (lst)
+@deffnx {C Function} scm_reverse_x (lst, newtail)
+Return a list comprising the elements of @var{lst}, in reverse order.
+
+@code{reverse} constructs a new list, @code{reverse!} modifies
+@var{lst} in constructing its return.
+
+For @code{reverse!}, the optional @var{newtail} is appended to to the
+result.  @var{newtail} isn't reversed, it simply becomes the list
+tail.  For @code{scm_reverse_x}, the @var{newtail} parameter is
+mandatory, but can be @code{SCM_EOL} if no further tail is required.
+@end deffn
+
+@node List Modification
+@subsubsection List Modification
+
+The following procedures modify an existing list, either by changing
+elements of the list, or by changing the list structure itself.
+
+@deffn {Scheme Procedure} list-set! list k val
+@deffnx {C Function} scm_list_set_x (list, k, val)
+Set the @var{k}th element of @var{list} to @var{val}.
+@end deffn
+
+@deffn {Scheme Procedure} list-cdr-set! list k val
+@deffnx {C Function} scm_list_cdr_set_x (list, k, val)
+Set the @var{k}th cdr of @var{list} to @var{val}.
+@end deffn
+
+@deffn {Scheme Procedure} delq item lst
+@deffnx {C Function} scm_delq (item, lst)
+Return a newly-created copy of @var{lst} with elements
+@code{eq?} to @var{item} removed.  This procedure mirrors
+@code{memq}: @code{delq} compares elements of @var{lst} against
+@var{item} with @code{eq?}.
+@end deffn
+
+@deffn {Scheme Procedure} delv item lst
+@deffnx {C Function} scm_delv (item, lst)
+Return a newly-created copy of @var{lst} with elements
+@code{eqv?} to @var{item} removed.  This procedure mirrors
+@code{memv}: @code{delv} compares elements of @var{lst} against
+@var{item} with @code{eqv?}.
+@end deffn
+
+@deffn {Scheme Procedure} delete item lst
+@deffnx {C Function} scm_delete (item, lst)
+Return a newly-created copy of @var{lst} with elements
+@code{equal?} to @var{item} removed.  This procedure mirrors
+@code{member}: @code{delete} compares elements of @var{lst}
+against @var{item} with @code{equal?}.
+
+See also SRFI-1 which has an extended @code{delete} (@ref{SRFI-1
+Deleting}), and also an @code{lset-difference} which can delete
+multiple @var{item}s in one call (@ref{SRFI-1 Set Operations}).
+@end deffn
+
+@deffn {Scheme Procedure} delq! item lst
+@deffnx {Scheme Procedure} delv! item lst
+@deffnx {Scheme Procedure} delete! item lst
+@deffnx {C Function} scm_delq_x (item, lst)
+@deffnx {C Function} scm_delv_x (item, lst)
+@deffnx {C Function} scm_delete_x (item, lst)
+These procedures are destructive versions of @code{delq}, @code{delv}
+and @code{delete}: they modify the pointers in the existing @var{lst}
+rather than creating a new list.  Caveat evaluator: Like other
+destructive list functions, these functions cannot modify the binding of
+@var{lst}, and so cannot be used to delete the first element of
+@var{lst} destructively.
+@end deffn
+
+@deffn {Scheme Procedure} delq1! item lst
+@deffnx {C Function} scm_delq1_x (item, lst)
+Like @code{delq!}, but only deletes the first occurrence of
+@var{item} from @var{lst}.  Tests for equality using
+@code{eq?}.  See also @code{delv1!} and @code{delete1!}.
+@end deffn
+
+@deffn {Scheme Procedure} delv1! item lst
+@deffnx {C Function} scm_delv1_x (item, lst)
+Like @code{delv!}, but only deletes the first occurrence of
+@var{item} from @var{lst}.  Tests for equality using
+@code{eqv?}.  See also @code{delq1!} and @code{delete1!}.
+@end deffn
+
+@deffn {Scheme Procedure} delete1! item lst
+@deffnx {C Function} scm_delete1_x (item, lst)
+Like @code{delete!}, but only deletes the first occurrence of
+@var{item} from @var{lst}.  Tests for equality using
+@code{equal?}.  See also @code{delq1!} and @code{delv1!}.
+@end deffn
+
+@deffn {Scheme Procedure} filter pred lst
+@deffnx {Scheme Procedure} filter! pred lst
+Return a list containing all elements from @var{lst} which satisfy the
+predicate @var{pred}.  The elements in the result list have the same
+order as in @var{lst}.  The order in which @var{pred} is applied to
+the list elements is not specified.
+
+@code{filter} does not change @var{lst}, but the result may share a
+tail with it.  @code{filter!} may modify @var{lst} to construct its
+return.
+@end deffn
+
+@node List Searching
+@subsubsection List Searching
+
+The following procedures search lists for particular elements.  They use
+different comparison predicates for comparing list elements with the
+object to be searched.  When they fail, they return @code{#f}, otherwise
+they return the sublist whose car is equal to the search object, where
+equality depends on the equality predicate used.
+
+@rnindex memq
+@deffn {Scheme Procedure} memq x lst
+@deffnx {C Function} scm_memq (x, lst)
+Return the first sublist of @var{lst} whose car is @code{eq?}
+to @var{x} where the sublists of @var{lst} are the non-empty
+lists returned by @code{(list-tail @var{lst} @var{k})} for
+@var{k} less than the length of @var{lst}.  If @var{x} does not
+occur in @var{lst}, then @code{#f} (not the empty list) is
+returned.
+@end deffn
+
+@rnindex memv
+@deffn {Scheme Procedure} memv x lst
+@deffnx {C Function} scm_memv (x, lst)
+Return the first sublist of @var{lst} whose car is @code{eqv?}
+to @var{x} where the sublists of @var{lst} are the non-empty
+lists returned by @code{(list-tail @var{lst} @var{k})} for
+@var{k} less than the length of @var{lst}.  If @var{x} does not
+occur in @var{lst}, then @code{#f} (not the empty list) is
+returned.
+@end deffn
+
+@rnindex member
+@deffn {Scheme Procedure} member x lst
+@deffnx {C Function} scm_member (x, lst)
+Return the first sublist of @var{lst} whose car is
+@code{equal?} to @var{x} where the sublists of @var{lst} are
+the non-empty lists returned by @code{(list-tail @var{lst}
+@var{k})} for @var{k} less than the length of @var{lst}.  If
+@var{x} does not occur in @var{lst}, then @code{#f} (not the
+empty list) is returned.
+
+See also SRFI-1 which has an extended @code{member} function
+(@ref{SRFI-1 Searching}).
+@end deffn
+
+
+@node List Mapping
+@subsubsection List Mapping
+
+List processing is very convenient in Scheme because the process of
+iterating over the elements of a list can be highly abstracted.  The
+procedures in this section are the most basic iterating procedures for
+lists.  They take a procedure and one or more lists as arguments, and
+apply the procedure to each element of the list.  They differ in their
+return value.
+
+@rnindex map
+@c begin (texi-doc-string "guile" "map")
+@deffn {Scheme Procedure} map proc arg1 arg2 @dots{}
+@deffnx {Scheme Procedure} map-in-order proc arg1 arg2 @dots{}
+@deffnx {C Function} scm_map (proc, arg1, args)
+Apply @var{proc} to each element of the list @var{arg1} (if only two
+arguments are given), or to the corresponding elements of the argument
+lists (if more than two arguments are given).  The result(s) of the
+procedure applications are saved and returned in a list.  For
+@code{map}, the order of procedure applications is not specified,
+@code{map-in-order} applies the procedure from left to right to the list
+elements.
+@end deffn
+
+@rnindex for-each
+@c begin (texi-doc-string "guile" "for-each")
+@deffn {Scheme Procedure} for-each proc arg1 arg2 @dots{}
+Like @code{map}, but the procedure is always applied from left to right,
+and the result(s) of the procedure applications are thrown away.  The
+return value is not specified.
+@end deffn
+
+See also SRFI-1 which extends these functions to take lists of unequal
+lengths (@ref{SRFI-1 Fold and Map}).
+
+@node Vectors
+@subsection Vectors
+@tpindex Vectors
+
+Vectors are sequences of Scheme objects.  Unlike lists, the length of a
+vector, once the vector is created, cannot be changed.  The advantage of
+vectors over lists is that the time required to access one element of a vector
+given its @dfn{position} (synonymous with @dfn{index}), a zero-origin number,
+is constant, whereas lists have an access time linear to the position of the
+accessed element in the list.
+
+Vectors can contain any kind of Scheme object; it is even possible to
+have different types of objects in the same vector.  For vectors
+containing vectors, you may wish to use arrays, instead.  Note, too,
+that vectors are the special case of one dimensional non-uniform arrays
+and that most array procedures operate happily on vectors
+(@pxref{Arrays}).
+
+@menu
+* Vector Syntax::               Read syntax for vectors.
+* Vector Creation::             Dynamic vector creation and validation.
+* Vector Accessors::            Accessing and modifying vector contents.
+* Vector Accessing from C::     Ways to work with vectors from C.
+@end menu
+
+
+@node Vector Syntax
+@subsubsection Read Syntax for Vectors
+
+Vectors can literally be entered in source code, just like strings,
+characters or some of the other data types.  The read syntax for vectors
+is as follows: A sharp sign (@code{#}), followed by an opening
+parentheses, all elements of the vector in their respective read syntax,
+and finally a closing parentheses.  The following are examples of the
+read syntax for vectors; where the first vector only contains numbers
+and the second three different object types: a string, a symbol and a
+number in hexadecimal notation.
+
+@lisp
+#(1 2 3)
+#("Hello" foo #xdeadbeef)
+@end lisp
+
+Like lists, vectors have to be quoted:
+
+@lisp
+'#(a b c) @result{} #(a b c)
+@end lisp
+
+@node Vector Creation
+@subsubsection Dynamic Vector Creation and Validation
+
+Instead of creating a vector implicitly by using the read syntax just
+described, you can create a vector dynamically by calling one of the
+@code{vector} and @code{list->vector} primitives with the list of Scheme
+values that you want to place into a vector.  The size of the vector
+thus created is determined implicitly by the number of arguments given.
+
+@rnindex vector
+@rnindex list->vector
+@deffn {Scheme Procedure} vector . l
+@deffnx {Scheme Procedure} list->vector l
+@deffnx {C Function} scm_vector (l)
+Return a newly allocated vector composed of the
+given arguments.  Analogous to @code{list}.
+
+@lisp
+(vector 'a 'b 'c) @result{} #(a b c)
+@end lisp
+@end deffn
+
+The inverse operation is @code{vector->list}:
+
+@rnindex vector->list
+@deffn {Scheme Procedure} vector->list v
+@deffnx {C Function} scm_vector_to_list (v)
+Return a newly allocated list composed of the elements of @var{v}.
+
+@lisp
+(vector->list '#(dah dah didah)) @result{}  (dah dah didah)
+(list->vector '(dididit dah)) @result{}  #(dididit dah)
+@end lisp
+@end deffn
+
+To allocate a vector with an explicitly specified size, use
+@code{make-vector}.  With this primitive you can also specify an initial
+value for the vector elements (the same value for all elements, that
+is):
+
+@rnindex make-vector
+@deffn {Scheme Procedure} make-vector len [fill]
+@deffnx {C Function} scm_make_vector (len, fill)
+Return a newly allocated vector of @var{len} elements.  If a
+second argument is given, then each position is initialized to
+@var{fill}.  Otherwise the initial contents of each position is
+unspecified.
+@end deffn
+
+@deftypefn {C Function} SCM scm_c_make_vector (size_t k, SCM fill)
+Like @code{scm_make_vector}, but the length is given as a @code{size_t}.
+@end deftypefn
+
+To check whether an arbitrary Scheme value @emph{is} a vector, use the
+@code{vector?} primitive:
+
+@rnindex vector?
+@deffn {Scheme Procedure} vector? obj
+@deffnx {C Function} scm_vector_p (obj)
+Return @code{#t} if @var{obj} is a vector, otherwise return
+@code{#f}.
+@end deffn
+
+@deftypefn {C Function} int scm_is_vector (SCM obj)
+Return non-zero when @var{obj} is a vector, otherwise return
+@code{zero}.
+@end deftypefn
+
+@node Vector Accessors
+@subsubsection Accessing and Modifying Vector Contents
+
+@code{vector-length} and @code{vector-ref} return information about a
+given vector, respectively its size and the elements that are contained
+in the vector.
+
+@rnindex vector-length
+@deffn {Scheme Procedure} vector-length vector
+@deffnx {C Function} scm_vector_length vector
+Return the number of elements in @var{vector} as an exact integer.
+@end deffn
+
+@deftypefn {C Function} size_t scm_c_vector_length (SCM v)
+Return the number of elements in @var{vector} as a @code{size_t}.
+@end deftypefn
+
+@rnindex vector-ref
+@deffn {Scheme Procedure} vector-ref vector k
+@deffnx {C Function} scm_vector_ref vector k
+Return the contents of position @var{k} of @var{vector}.
+@var{k} must be a valid index of @var{vector}.
+@lisp
+(vector-ref '#(1 1 2 3 5 8 13 21) 5) @result{} 8
+(vector-ref '#(1 1 2 3 5 8 13 21)
+    (let ((i (round (* 2 (acos -1)))))
+      (if (inexact? i)
+        (inexact->exact i)
+           i))) @result{} 13
+@end lisp
+@end deffn
+
+@deftypefn {C Function} SCM scm_c_vector_ref (SCM v, size_t k)
+Return the contents of position @var{k} (a @code{size_t}) of
+@var{vector}.
+@end deftypefn
+
+A vector created by one of the dynamic vector constructor procedures
+(@pxref{Vector Creation}) can be modified using the following
+procedures.
+
+@emph{NOTE:} According to R5RS, it is an error to use any of these
+procedures on a literally read vector, because such vectors should be
+considered as constants.  Currently, however, Guile does not detect this
+error.
+
+@rnindex vector-set!
+@deffn {Scheme Procedure} vector-set! vector k obj
+@deffnx {C Function} scm_vector_set_x vector k obj
+Store @var{obj} in position @var{k} of @var{vector}.
+@var{k} must be a valid index of @var{vector}.
+The value returned by @samp{vector-set!} is unspecified.
+@lisp
+(let ((vec (vector 0 '(2 2 2 2) "Anna")))
+  (vector-set! vec 1 '("Sue" "Sue"))
+  vec) @result{}  #(0 ("Sue" "Sue") "Anna")
+@end lisp
+@end deffn
+
+@deftypefn {C Function} void scm_c_vector_set_x (SCM v, size_t k, SCM obj)
+Store @var{obj} in position @var{k} (a @code{size_t}) of @var{v}.
+@end deftypefn
+
+@rnindex vector-fill!
+@deffn {Scheme Procedure} vector-fill! v fill
+@deffnx {C Function} scm_vector_fill_x (v, fill)
+Store @var{fill} in every position of @var{vector}.  The value
+returned by @code{vector-fill!} is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} vector-copy vec
+@deffnx {C Function} scm_vector_copy (vec)
+Return a copy of @var{vec}.
+@end deffn
+
+@deffn {Scheme Procedure} vector-move-left! vec1 start1 end1 vec2 start2
+@deffnx {C Function} scm_vector_move_left_x (vec1, start1, end1, vec2, start2)
+Copy elements from @var{vec1}, positions @var{start1} to @var{end1},
+to @var{vec2} starting at position @var{start2}.  @var{start1} and
+@var{start2} are inclusive indices; @var{end1} is exclusive.
+
+@code{vector-move-left!} copies elements in leftmost order.
+Therefore, in the case where @var{vec1} and @var{vec2} refer to the
+same vector, @code{vector-move-left!} is usually appropriate when
+@var{start1} is greater than @var{start2}.
+@end deffn
+
+@deffn {Scheme Procedure} vector-move-right! vec1 start1 end1 vec2 start2
+@deffnx {C Function} scm_vector_move_right_x (vec1, start1, end1, vec2, start2)
+Copy elements from @var{vec1}, positions @var{start1} to @var{end1},
+to @var{vec2} starting at position @var{start2}.  @var{start1} and
+@var{start2} are inclusive indices; @var{end1} is exclusive.
+
+@code{vector-move-right!} copies elements in rightmost order.
+Therefore, in the case where @var{vec1} and @var{vec2} refer to the
+same vector, @code{vector-move-right!} is usually appropriate when
+@var{start1} is less than @var{start2}.
+@end deffn
+
+@node Vector Accessing from C
+@subsubsection Vector Accessing from C
+
+A vector can be read and modified from C with the functions
+@code{scm_c_vector_ref} and @code{scm_c_vector_set_x}, for example.  In
+addition to these functions, there are two more ways to access vectors
+from C that might be more efficient in certain situations: you can
+restrict yourself to @dfn{simple vectors} and then use the very fast
+@emph{simple vector macros}; or you can use the very general framework
+for accessing all kinds of arrays (@pxref{Accessing Arrays from C}),
+which is more verbose, but can deal efficiently with all kinds of
+vectors (and arrays).  For vectors, you can use the
+@code{scm_vector_elements} and @code{scm_vector_writable_elements}
+functions as shortcuts.
+
+@deftypefn {C Function} int scm_is_simple_vector (SCM obj)
+Return non-zero if @var{obj} is a simple vector, else return zero.  A
+simple vector is a vector that can be used with the @code{SCM_SIMPLE_*}
+macros below.
+
+The following functions are guaranteed to return simple vectors:
+@code{scm_make_vector}, @code{scm_c_make_vector}, @code{scm_vector},
+@code{scm_list_to_vector}.
+@end deftypefn
+
+@deftypefn {C Macro} size_t SCM_SIMPLE_VECTOR_LENGTH (SCM vec)
+Evaluates to the length of the simple vector @var{vec}.  No type
+checking is done.
+@end deftypefn
+
+@deftypefn {C Macro} SCM SCM_SIMPLE_VECTOR_REF (SCM vec, size_t idx)
+Evaluates to the element at position @var{idx} in the simple vector
+@var{vec}.  No type or range checking is done.
+@end deftypefn
+
+@deftypefn {C Macro} void SCM_SIMPLE_VECTOR_SET (SCM vec, size_t idx, SCM val)
+Sets the element at position @var{idx} in the simple vector
+@var{vec} to @var{val}.  No type or range checking is done.
+@end deftypefn
+
+@deftypefn {C Function} {const SCM *} scm_vector_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+Acquire a handle for the vector @var{vec} and return a pointer to the
+elements of it.  This pointer can only be used to read the elements of
+@var{vec}.  When @var{vec} is not a vector, an error is signaled.  The
+handle mustr eventually be released with
+@code{scm_array_handle_release}.
+
+The variables pointed to by @var{lenp} and @var{incp} are filled with
+the number of elements of the vector and the increment (number of
+elements) between successive elements, respectively.  Successive
+elements of @var{vec} need not be contiguous in their underlying
+``root vector'' returned here; hence the increment is not necessarily
+equal to 1 and may well be negative too (@pxref{Shared Arrays}).
+
+The following example shows the typical way to use this function.  It
+creates a list of all elements of @var{vec} (in reverse order).
+
+@example
+scm_t_array_handle handle;
+size_t i, len;
+ssize_t inc;
+const SCM *elt;
+SCM list;
+
+elt = scm_vector_elements (vec, &handle, &len, &inc);
+list = SCM_EOL;
+for (i = 0; i < len; i++, elt += inc)
+  list = scm_cons (*elt, list);
+scm_array_handle_release (&handle);
+@end example
+
+@end deftypefn
+
+@deftypefn {C Function} {SCM *} scm_vector_writable_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+Like @code{scm_vector_elements} but the pointer can be used to modify
+the vector.
+
+The following example shows the typical way to use this function.  It
+fills a vector with @code{#t}.
+
+@example
+scm_t_array_handle handle;
+size_t i, len;
+ssize_t inc;
+SCM *elt;
+
+elt = scm_vector_writable_elements (vec, &handle, &len, &inc);
+for (i = 0; i < len; i++, elt += inc)
+  *elt = SCM_BOOL_T;
+scm_array_handle_release (&handle);
+@end example
+
+@end deftypefn
+
+@node Uniform Numeric Vectors
+@subsection Uniform Numeric Vectors
+
+A uniform numeric vector is a vector whose elements are all of a single
+numeric type.  Guile offers uniform numeric vectors for signed and
+unsigned 8-bit, 16-bit, 32-bit, and 64-bit integers, two sizes of
+floating point values, and complex floating-point numbers of these two
+sizes.
+
+Strings could be regarded as uniform vectors of characters,
+@xref{Strings}.  Likewise, bit vectors could be regarded as uniform
+vectors of bits, @xref{Bit Vectors}.  Both are sufficiently different
+from uniform numeric vectors that the procedures described here do not
+apply to these two data types.  However, both strings and bit vectors
+are generalized vectors, @xref{Generalized Vectors}, and arrays,
+@xref{Arrays}.
+
+Uniform numeric vectors are the special case of one dimensional uniform
+numeric arrays.
+
+Uniform numeric vectors can be useful since they consume less memory
+than the non-uniform, general vectors.  Also, since the types they can
+store correspond directly to C types, it is easier to work with them
+efficiently on a low level.  Consider image processing as an example,
+where you want to apply a filter to some image.  While you could store
+the pixels of an image in a general vector and write a general
+convolution function, things are much more efficient with uniform
+vectors: the convolution function knows that all pixels are unsigned
+8-bit values (say), and can use a very tight inner loop.
+
+That is, when it is written in C.  Functions for efficiently working
+with uniform numeric vectors from C are listed at the end of this
+section.
+
+Procedures similar to the vector procedures (@pxref{Vectors}) are
+provided for handling these uniform vectors, but they are distinct
+datatypes and the two cannot be inter-mixed.  If you want to work
+primarily with uniform numeric vectors, but want to offer support for
+general vectors as a convenience, you can use one of the
+@code{scm_any_to_*} functions.  They will coerce lists and vectors to
+the given type of uniform vector.  Alternatively, you can write two
+versions of your code: one that is fast and works only with uniform
+numeric vectors, and one that works with any kind of vector but is
+slower.
+
+One set of the procedures listed below is a generic one: it works with
+all types of uniform numeric vectors.  In addition to that, there is a
+set of procedures for each type that only works with that type.  Unless
+you really need to the generality of the first set, it is best to use
+the more specific functions.  They might not be that much faster, but
+their use can serve as a kind of declaration and makes it easier to
+optimize later on.
+
+The generic set of procedures uses @code{uniform} in its names, the
+specific ones use the tag from the following table.
+
+@table @nicode
+@item u8
+unsigned 8-bit integers
+
+@item s8
+signed 8-bit integers
+
+@item u16
+unsigned 16-bit integers
+
+@item s16
+signed 16-bit integers
+
+@item u32
+unsigned 32-bit integers
+
+@item s32
+signed 32-bit integers
+
+@item u64
+unsigned 64-bit integers
+
+@item s64
+signed 64-bit integers
+
+@item f32
+the C type @code{float}
+
+@item f64
+the C type @code{double}
+
+@item c32
+complex numbers in rectangular form with the real and imaginary part
+being a @code{float}
+
+@item c64
+complex numbers in rectangular form with the real and imaginary part
+being a @code{double}
+
+@end table
+
+The external representation (ie.@: read syntax) for these vectors is
+similar to normal Scheme vectors, but with an additional tag from the
+table above indiciating the vector's type.  For example,
+
+@lisp
+#u16(1 2 3)
+#f64(3.1415 2.71)
+@end lisp
+
+Note that the read syntax for floating-point here conflicts with
+@code{#f} for false.  In Standard Scheme one can write @code{(1 #f3)}
+for a three element list @code{(1 #f 3)}, but for Guile @code{(1 #f3)}
+is invalid.  @code{(1 #f 3)} is almost certainly what one should write
+anyway to make the intention clear, so this is rarely a problem.
+
+@deffn  {Scheme Procedure} uniform-vector? obj
+@deffnx {Scheme Procedure} u8vector? obj
+@deffnx {Scheme Procedure} s8vector? obj
+@deffnx {Scheme Procedure} u16vector? obj
+@deffnx {Scheme Procedure} s16vector? obj
+@deffnx {Scheme Procedure} u32vector? obj
+@deffnx {Scheme Procedure} s32vector? obj
+@deffnx {Scheme Procedure} u64vector? obj
+@deffnx {Scheme Procedure} s64vector? obj
+@deffnx {Scheme Procedure} f32vector? obj
+@deffnx {Scheme Procedure} f64vector? obj
+@deffnx {Scheme Procedure} c32vector? obj
+@deffnx {Scheme Procedure} c64vector? obj
+@deffnx {C Function} scm_uniform_vector_p (obj)
+@deffnx {C Function} scm_u8vector_p (obj)
+@deffnx {C Function} scm_s8vector_p (obj)
+@deffnx {C Function} scm_u16vector_p (obj)
+@deffnx {C Function} scm_s16vector_p (obj)
+@deffnx {C Function} scm_u32vector_p (obj)
+@deffnx {C Function} scm_s32vector_p (obj)
+@deffnx {C Function} scm_u64vector_p (obj)
+@deffnx {C Function} scm_s64vector_p (obj)
+@deffnx {C Function} scm_f32vector_p (obj)
+@deffnx {C Function} scm_f64vector_p (obj)
+@deffnx {C Function} scm_c32vector_p (obj)
+@deffnx {C Function} scm_c64vector_p (obj)
+Return @code{#t} if @var{obj} is a homogeneous numeric vector of the
+indicated type.
+@end deffn
+
+@deffn  {Scheme Procedure} make-u8vector n [value]
+@deffnx {Scheme Procedure} make-s8vector n [value]
+@deffnx {Scheme Procedure} make-u16vector n [value]
+@deffnx {Scheme Procedure} make-s16vector n [value]
+@deffnx {Scheme Procedure} make-u32vector n [value]
+@deffnx {Scheme Procedure} make-s32vector n [value]
+@deffnx {Scheme Procedure} make-u64vector n [value]
+@deffnx {Scheme Procedure} make-s64vector n [value]
+@deffnx {Scheme Procedure} make-f32vector n [value]
+@deffnx {Scheme Procedure} make-f64vector n [value]
+@deffnx {Scheme Procedure} make-c32vector n [value]
+@deffnx {Scheme Procedure} make-c64vector n [value]
+@deffnx {C Function} scm_make_u8vector n [value]
+@deffnx {C Function} scm_make_s8vector n [value]
+@deffnx {C Function} scm_make_u16vector n [value]
+@deffnx {C Function} scm_make_s16vector n [value]
+@deffnx {C Function} scm_make_u32vector n [value]
+@deffnx {C Function} scm_make_s32vector n [value]
+@deffnx {C Function} scm_make_u64vector n [value]
+@deffnx {C Function} scm_make_s64vector n [value]
+@deffnx {C Function} scm_make_f32vector n [value]
+@deffnx {C Function} scm_make_f64vector n [value]
+@deffnx {C Function} scm_make_c32vector n [value]
+@deffnx {C Function} scm_make_c64vector n [value]
+Return a newly allocated homogeneous numeric vector holding @var{n}
+elements of the indicated type.  If @var{value} is given, the vector
+is initialized with that value, otherwise the contents are
+unspecified.
+@end deffn
+
+@deffn  {Scheme Procedure} u8vector value @dots{}
+@deffnx {Scheme Procedure} s8vector value @dots{}
+@deffnx {Scheme Procedure} u16vector value @dots{}
+@deffnx {Scheme Procedure} s16vector value @dots{}
+@deffnx {Scheme Procedure} u32vector value @dots{}
+@deffnx {Scheme Procedure} s32vector value @dots{}
+@deffnx {Scheme Procedure} u64vector value @dots{}
+@deffnx {Scheme Procedure} s64vector value @dots{}
+@deffnx {Scheme Procedure} f32vector value @dots{}
+@deffnx {Scheme Procedure} f64vector value @dots{}
+@deffnx {Scheme Procedure} c32vector value @dots{}
+@deffnx {Scheme Procedure} c64vector value @dots{}
+@deffnx {C Function} scm_u8vector (values)
+@deffnx {C Function} scm_s8vector (values)
+@deffnx {C Function} scm_u16vector (values)
+@deffnx {C Function} scm_s16vector (values)
+@deffnx {C Function} scm_u32vector (values)
+@deffnx {C Function} scm_s32vector (values)
+@deffnx {C Function} scm_u64vector (values)
+@deffnx {C Function} scm_s64vector (values)
+@deffnx {C Function} scm_f32vector (values)
+@deffnx {C Function} scm_f64vector (values)
+@deffnx {C Function} scm_c32vector (values)
+@deffnx {C Function} scm_c64vector (values)
+Return a newly allocated homogeneous numeric vector of the indicated
+type, holding the given parameter @var{value}s.  The vector length is
+the number of parameters given.
+@end deffn
+
+@deffn  {Scheme Procedure} uniform-vector-length vec
+@deffnx {Scheme Procedure} u8vector-length vec
+@deffnx {Scheme Procedure} s8vector-length vec
+@deffnx {Scheme Procedure} u16vector-length vec
+@deffnx {Scheme Procedure} s16vector-length vec
+@deffnx {Scheme Procedure} u32vector-length vec
+@deffnx {Scheme Procedure} s32vector-length vec
+@deffnx {Scheme Procedure} u64vector-length vec
+@deffnx {Scheme Procedure} s64vector-length vec
+@deffnx {Scheme Procedure} f32vector-length vec
+@deffnx {Scheme Procedure} f64vector-length vec
+@deffnx {Scheme Procedure} c32vector-length vec
+@deffnx {Scheme Procedure} c64vector-length vec
+@deffnx {C Function} scm_uniform_vector_length (vec)
+@deffnx {C Function} scm_u8vector_length (vec)
+@deffnx {C Function} scm_s8vector_length (vec)
+@deffnx {C Function} scm_u16vector_length (vec)
+@deffnx {C Function} scm_s16vector_length (vec)
+@deffnx {C Function} scm_u32vector_length (vec)
+@deffnx {C Function} scm_s32vector_length (vec)
+@deffnx {C Function} scm_u64vector_length (vec)
+@deffnx {C Function} scm_s64vector_length (vec)
+@deffnx {C Function} scm_f32vector_length (vec)
+@deffnx {C Function} scm_f64vector_length (vec)
+@deffnx {C Function} scm_c32vector_length (vec)
+@deffnx {C Function} scm_c64vector_length (vec)
+Return the number of elements in @var{vec}.
+@end deffn
+
+@deffn  {Scheme Procedure} uniform-vector-ref vec i
+@deffnx {Scheme Procedure} u8vector-ref vec i
+@deffnx {Scheme Procedure} s8vector-ref vec i
+@deffnx {Scheme Procedure} u16vector-ref vec i
+@deffnx {Scheme Procedure} s16vector-ref vec i
+@deffnx {Scheme Procedure} u32vector-ref vec i
+@deffnx {Scheme Procedure} s32vector-ref vec i
+@deffnx {Scheme Procedure} u64vector-ref vec i
+@deffnx {Scheme Procedure} s64vector-ref vec i
+@deffnx {Scheme Procedure} f32vector-ref vec i
+@deffnx {Scheme Procedure} f64vector-ref vec i
+@deffnx {Scheme Procedure} c32vector-ref vec i
+@deffnx {Scheme Procedure} c64vector-ref vec i
+@deffnx {C Function} scm_uniform_vector_ref (vec i)
+@deffnx {C Function} scm_u8vector_ref (vec i)
+@deffnx {C Function} scm_s8vector_ref (vec i)
+@deffnx {C Function} scm_u16vector_ref (vec i)
+@deffnx {C Function} scm_s16vector_ref (vec i)
+@deffnx {C Function} scm_u32vector_ref (vec i)
+@deffnx {C Function} scm_s32vector_ref (vec i)
+@deffnx {C Function} scm_u64vector_ref (vec i)
+@deffnx {C Function} scm_s64vector_ref (vec i)
+@deffnx {C Function} scm_f32vector_ref (vec i)
+@deffnx {C Function} scm_f64vector_ref (vec i)
+@deffnx {C Function} scm_c32vector_ref (vec i)
+@deffnx {C Function} scm_c64vector_ref (vec i)
+Return the element at index @var{i} in @var{vec}.  The first element
+in @var{vec} is index 0.
+@end deffn
+
+@deffn  {Scheme Procedure} uniform-vector-set! vec i value
+@deffnx {Scheme Procedure} u8vector-set! vec i value
+@deffnx {Scheme Procedure} s8vector-set! vec i value
+@deffnx {Scheme Procedure} u16vector-set! vec i value
+@deffnx {Scheme Procedure} s16vector-set! vec i value
+@deffnx {Scheme Procedure} u32vector-set! vec i value
+@deffnx {Scheme Procedure} s32vector-set! vec i value
+@deffnx {Scheme Procedure} u64vector-set! vec i value
+@deffnx {Scheme Procedure} s64vector-set! vec i value
+@deffnx {Scheme Procedure} f32vector-set! vec i value
+@deffnx {Scheme Procedure} f64vector-set! vec i value
+@deffnx {Scheme Procedure} c32vector-set! vec i value
+@deffnx {Scheme Procedure} c64vector-set! vec i value
+@deffnx {C Function} scm_uniform_vector_set_x (vec i value)
+@deffnx {C Function} scm_u8vector_set_x (vec i value)
+@deffnx {C Function} scm_s8vector_set_x (vec i value)
+@deffnx {C Function} scm_u16vector_set_x (vec i value)
+@deffnx {C Function} scm_s16vector_set_x (vec i value)
+@deffnx {C Function} scm_u32vector_set_x (vec i value)
+@deffnx {C Function} scm_s32vector_set_x (vec i value)
+@deffnx {C Function} scm_u64vector_set_x (vec i value)
+@deffnx {C Function} scm_s64vector_set_x (vec i value)
+@deffnx {C Function} scm_f32vector_set_x (vec i value)
+@deffnx {C Function} scm_f64vector_set_x (vec i value)
+@deffnx {C Function} scm_c32vector_set_x (vec i value)
+@deffnx {C Function} scm_c64vector_set_x (vec i value)
+Set the element at index @var{i} in @var{vec} to @var{value}.  The
+first element in @var{vec} is index 0.  The return value is
+unspecified.
+@end deffn
+
+@deffn  {Scheme Procedure} uniform-vector->list vec
+@deffnx {Scheme Procedure} u8vector->list vec
+@deffnx {Scheme Procedure} s8vector->list vec
+@deffnx {Scheme Procedure} u16vector->list vec
+@deffnx {Scheme Procedure} s16vector->list vec
+@deffnx {Scheme Procedure} u32vector->list vec
+@deffnx {Scheme Procedure} s32vector->list vec
+@deffnx {Scheme Procedure} u64vector->list vec
+@deffnx {Scheme Procedure} s64vector->list vec
+@deffnx {Scheme Procedure} f32vector->list vec
+@deffnx {Scheme Procedure} f64vector->list vec
+@deffnx {Scheme Procedure} c32vector->list vec
+@deffnx {Scheme Procedure} c64vector->list vec
+@deffnx {C Function} scm_uniform_vector_to_list (vec)
+@deffnx {C Function} scm_u8vector_to_list (vec)
+@deffnx {C Function} scm_s8vector_to_list (vec)
+@deffnx {C Function} scm_u16vector_to_list (vec)
+@deffnx {C Function} scm_s16vector_to_list (vec)
+@deffnx {C Function} scm_u32vector_to_list (vec)
+@deffnx {C Function} scm_s32vector_to_list (vec)
+@deffnx {C Function} scm_u64vector_to_list (vec)
+@deffnx {C Function} scm_s64vector_to_list (vec)
+@deffnx {C Function} scm_f32vector_to_list (vec)
+@deffnx {C Function} scm_f64vector_to_list (vec)
+@deffnx {C Function} scm_c32vector_to_list (vec)
+@deffnx {C Function} scm_c64vector_to_list (vec)
+Return a newly allocated list holding all elements of @var{vec}.
+@end deffn
+
+@deffn  {Scheme Procedure} list->u8vector lst
+@deffnx {Scheme Procedure} list->s8vector lst
+@deffnx {Scheme Procedure} list->u16vector lst
+@deffnx {Scheme Procedure} list->s16vector lst
+@deffnx {Scheme Procedure} list->u32vector lst
+@deffnx {Scheme Procedure} list->s32vector lst
+@deffnx {Scheme Procedure} list->u64vector lst
+@deffnx {Scheme Procedure} list->s64vector lst
+@deffnx {Scheme Procedure} list->f32vector lst
+@deffnx {Scheme Procedure} list->f64vector lst
+@deffnx {Scheme Procedure} list->c32vector lst
+@deffnx {Scheme Procedure} list->c64vector lst
+@deffnx {C Function} scm_list_to_u8vector (lst)
+@deffnx {C Function} scm_list_to_s8vector (lst)
+@deffnx {C Function} scm_list_to_u16vector (lst)
+@deffnx {C Function} scm_list_to_s16vector (lst)
+@deffnx {C Function} scm_list_to_u32vector (lst)
+@deffnx {C Function} scm_list_to_s32vector (lst)
+@deffnx {C Function} scm_list_to_u64vector (lst)
+@deffnx {C Function} scm_list_to_s64vector (lst)
+@deffnx {C Function} scm_list_to_f32vector (lst)
+@deffnx {C Function} scm_list_to_f64vector (lst)
+@deffnx {C Function} scm_list_to_c32vector (lst)
+@deffnx {C Function} scm_list_to_c64vector (lst)
+Return a newly allocated homogeneous numeric vector of the indicated type,
+initialized with the elements of the list @var{lst}.
+@end deffn
+
+@deffn  {Scheme Procedure} any->u8vector obj
+@deffnx {Scheme Procedure} any->s8vector obj
+@deffnx {Scheme Procedure} any->u16vector obj
+@deffnx {Scheme Procedure} any->s16vector obj
+@deffnx {Scheme Procedure} any->u32vector obj
+@deffnx {Scheme Procedure} any->s32vector obj
+@deffnx {Scheme Procedure} any->u64vector obj
+@deffnx {Scheme Procedure} any->s64vector obj
+@deffnx {Scheme Procedure} any->f32vector obj
+@deffnx {Scheme Procedure} any->f64vector obj
+@deffnx {Scheme Procedure} any->c32vector obj
+@deffnx {Scheme Procedure} any->c64vector obj
+@deffnx {C Function} scm_any_to_u8vector (obj)
+@deffnx {C Function} scm_any_to_s8vector (obj)
+@deffnx {C Function} scm_any_to_u16vector (obj)
+@deffnx {C Function} scm_any_to_s16vector (obj)
+@deffnx {C Function} scm_any_to_u32vector (obj)
+@deffnx {C Function} scm_any_to_s32vector (obj)
+@deffnx {C Function} scm_any_to_u64vector (obj)
+@deffnx {C Function} scm_any_to_s64vector (obj)
+@deffnx {C Function} scm_any_to_f32vector (obj)
+@deffnx {C Function} scm_any_to_f64vector (obj)
+@deffnx {C Function} scm_any_to_c32vector (obj)
+@deffnx {C Function} scm_any_to_c64vector (obj)
+Return a (maybe newly allocated) uniform numeric vector of the indicated
+type, initialized with the elements of @var{obj}, which must be a list,
+a vector, or a uniform vector.  When @var{obj} is already a suitable
+uniform numeric vector, it is returned unchanged.
+@end deffn
+
+@deftypefn {C Function} int scm_is_uniform_vector (SCM uvec)
+Return non-zero when @var{uvec} is a uniform numeric vector, zero
+otherwise.
+@end deftypefn
+
+@deftypefn  {C Function} SCM scm_take_u8vector (const scm_t_uint8 *data, size_t len)
+@deftypefnx {C Function} SCM scm_take_s8vector (const scm_t_int8 *data, size_t len)
+@deftypefnx {C Function} SCM scm_take_u16vector (const scm_t_uint16 *data, size_t len)
+@deftypefnx {C Function} SCM scm_take_s168vector (const scm_t_int16 *data, size_t len)
+@deftypefnx {C Function} SCM scm_take_u32vector (const scm_t_uint32 *data, size_t len)
+@deftypefnx {C Function} SCM scm_take_s328vector (const scm_t_int32 *data, size_t len)
+@deftypefnx {C Function} SCM scm_take_u64vector (const scm_t_uint64 *data, size_t len)
+@deftypefnx {C Function} SCM scm_take_s64vector (const scm_t_int64 *data, size_t len)
+@deftypefnx {C Function} SCM scm_take_f32vector (const float *data, size_t len)
+@deftypefnx {C Function} SCM scm_take_f64vector (const double *data, size_t len)
+@deftypefnx {C Function} SCM scm_take_c32vector (const float *data, size_t len)
+@deftypefnx {C Function} SCM scm_take_c64vector (const double *data, size_t len)
+Return a new uniform numeric vector of the indicated type and length
+that uses the memory pointed to by @var{data} to store its elements.
+This memory will eventually be freed with @code{free}.  The argument
+@var{len} specifies the number of elements in @var{data}, not its size
+in bytes.
+
+The @code{c32} and @code{c64} variants take a pointer to a C array of
+@code{float}s or @code{double}s.  The real parts of the complex numbers
+are at even indices in that array, the corresponding imaginary parts are
+at the following odd index.
+@end deftypefn
+
+@deftypefn {C Function} size_t scm_c_uniform_vector_length (SCM uvec)
+Return the number of elements of @var{uvec} as a @code{size_t}.
+@end deftypefn
+
+@deftypefn  {C Function} {const void *} scm_uniform_vector_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {const scm_t_uint8 *} scm_u8vector_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {const scm_t_int8 *} scm_s8vector_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {const scm_t_uint16 *} scm_u16vector_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {const scm_t_int16 *} scm_s16vector_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {const scm_t_uint32 *} scm_u32vector_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {const scm_t_int32 *} scm_s32vector_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {const scm_t_uint64 *} scm_u64vector_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {const scm_t_int64 *} scm_s64vector_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {const float *} scm_f23vector_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {const double *} scm_f64vector_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {const float *} scm_c32vector_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {const double *} scm_c64vector_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+Like @code{scm_vector_elements} (@pxref{Vector Accessing from C}), but
+returns a pointer to the elements of a uniform numeric vector of the
+indicated kind.
+@end deftypefn
+
+@deftypefn  {C Function} {void *} scm_uniform_vector_writable_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {scm_t_uint8 *} scm_u8vector_writable_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {scm_t_int8 *} scm_s8vector_writable_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {scm_t_uint16 *} scm_u16vector_writable_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {scm_t_int16 *} scm_s16vector_writable_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {scm_t_uint32 *} scm_u32vector_writable_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {scm_t_int32 *} scm_s32vector_writable_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {scm_t_uint64 *} scm_u64vector_writable_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {scm_t_int64 *} scm_s64vector_writable_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {float *} scm_f23vector_writable_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {double *} scm_f64vector_writable_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {float *} scm_c32vector_writable_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+@deftypefnx {C Function} {double *} scm_c64vector_writable_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
+Like @code{scm_vector_writable_elements} (@pxref{Vector Accessing from
+C}), but returns a pointer to the elements of a uniform numeric vector
+of the indicated kind.
+@end deftypefn
+
+@deffn {Scheme Procedure} uniform-vector-read! uvec [port_or_fd [start [end]]]
+@deffnx {C Function} scm_uniform_vector_read_x (uvec, port_or_fd, start, end)
+Fill the elements of @var{uvec} by reading
+raw bytes from @var{port-or-fdes}, using host byte order.
+
+The optional arguments @var{start} (inclusive) and @var{end}
+(exclusive) allow a specified region to be read,
+leaving the remainder of the vector unchanged.
+
+When @var{port-or-fdes} is a port, all specified elements
+of @var{uvec} are attempted to be read, potentially blocking
+while waiting formore input or end-of-file.
+When @var{port-or-fd} is an integer, a single call to
+read(2) is made.
+
+An error is signalled when the last element has only
+been partially filled before reaching end-of-file or in
+the single call to read(2).
+
+@code{uniform-vector-read!} returns the number of elements
+read.
+
+@var{port-or-fdes} may be omitted, in which case it defaults
+to the value returned by @code{(current-input-port)}.
+@end deffn
+
+@deffn {Scheme Procedure} uniform-vector-write uvec [port_or_fd [start [end]]]
+@deffnx {C Function} scm_uniform_vector_write (uvec, port_or_fd, start, end)
+Write the elements of @var{uvec} as raw bytes to
+@var{port-or-fdes}, in the host byte order.
+
+The optional arguments @var{start} (inclusive)
+and @var{end} (exclusive) allow
+a specified region to be written.
+
+When @var{port-or-fdes} is a port, all specified elements
+of @var{uvec} are attempted to be written, potentially blocking
+while waiting for more room.
+When @var{port-or-fd} is an integer, a single call to
+write(2) is made.
+
+An error is signalled when the last element has only
+been partially written in the single call to write(2).
+
+The number of objects actually written is returned.
+@var{port-or-fdes} may be
+omitted, in which case it defaults to the value returned by
+@code{(current-output-port)}.
+@end deffn
+
+
+@node Bit Vectors
+@subsection Bit Vectors
+
+@noindent
+Bit vectors are zero-origin, one-dimensional arrays of booleans.  They
+are displayed as a sequence of @code{0}s and @code{1}s prefixed by
+@code{#*}, e.g.,
+
+@example
+(make-bitvector 8 #f) @result{}
+#*00000000
+@end example
+
+Bit vectors are are also generalized vectors, @xref{Generalized
+Vectors}, and can thus be used with the array procedures, @xref{Arrays}.
+Bit vectors are the special case of one dimensional bit arrays.
+
+@deffn {Scheme Procedure} bitvector? obj
+@deffnx {C Function} scm_bitvector_p (obj)
+Return @code{#t} when @var{obj} is a bitvector, else
+return @code{#f}.
+@end deffn
+
+@deftypefn {C Function} int scm_is_bitvector (SCM obj)
+Return @code{1} when @var{obj} is a bitvector, else return @code{0}.
+@end deftypefn
+
+@deffn {Scheme Procedure} make-bitvector len [fill]
+@deffnx {C Function} scm_make_bitvector (len, fill)
+Create a new bitvector of length @var{len} and
+optionally initialize all elements to @var{fill}.
+@end deffn
+
+@deftypefn {C Function} SCM scm_c_make_bitvector (size_t len, SCM fill)
+Like @code{scm_make_bitvector}, but the length is given as a
+@code{size_t}.
+@end deftypefn
+
+@deffn {Scheme Procedure} bitvector . bits
+@deffnx {C Function} scm_bitvector (bits)
+Create a new bitvector with the arguments as elements.
+@end deffn
+
+@deffn {Scheme Procedure} bitvector-length vec
+@deffnx {C Function} scm_bitvector_length (vec)
+Return the length of the bitvector @var{vec}.
+@end deffn
+
+@deftypefn {C Function} size_t scm_c_bitvector_length (SCM vec)
+Like @code{scm_bitvector_length}, but the length is returned as a
+@code{size_t}.
+@end deftypefn
+
+@deffn {Scheme Procedure} bitvector-ref vec idx
+@deffnx {C Function} scm_bitvector_ref (vec, idx)
+Return the element at index @var{idx} of the bitvector
+@var{vec}.
+@end deffn
+
+@deftypefn {C Function} SCM scm_c_bitvector_ref (SCM obj, size_t idx)
+Return the element at index @var{idx} of the bitvector
+@var{vec}.
+@end deftypefn
+
+@deffn {Scheme Procedure} bitvector-set! vec idx val
+@deffnx {C Function} scm_bitvector_set_x (vec, idx, val)
+Set the element at index @var{idx} of the bitvector
+@var{vec} when @var{val} is true, else clear it.
+@end deffn
+
+@deftypefn {C Function} SCM scm_c_bitvector_set_x (SCM obj, size_t idx, SCM val)
+Set the element at index @var{idx} of the bitvector
+@var{vec} when @var{val} is true, else clear it.
+@end deftypefn
+
+@deffn {Scheme Procedure} bitvector-fill! vec val
+@deffnx {C Function} scm_bitvector_fill_x (vec, val)
+Set all elements of the bitvector
+@var{vec} when @var{val} is true, else clear them.
+@end deffn
+
+@deffn {Scheme Procedure} list->bitvector list
+@deffnx {C Function} scm_list_to_bitvector (list)
+Return a new bitvector initialized with the elements
+of @var{list}.
+@end deffn
+
+@deffn {Scheme Procedure} bitvector->list vec
+@deffnx {C Function} scm_bitvector_to_list (vec)
+Return a new list initialized with the elements
+of the bitvector @var{vec}.
+@end deffn
+
+@deffn {Scheme Procedure} bit-count bool bitvector
+@deffnx {C Function} scm_bit_count (bool, bitvector)
+Return a count of how many entries in @var{bitvector} are equal to
+@var{bool}.  For example,
+
+@example
+(bit-count #f #*000111000)  @result{} 6
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} bit-position bool bitvector start
+@deffnx {C Function} scm_bit_position (bool, bitvector, start)
+Return the index of the first occurrance of @var{bool} in
+@var{bitvector}, starting from @var{start}.  If there is no @var{bool}
+entry between @var{start} and the end of @var{bitvector}, then return
+@code{#f}.  For example,
+
+@example
+(bit-position #t #*000101 0)  @result{} 3
+(bit-position #f #*0001111 3) @result{} #f
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} bit-invert! bitvector
+@deffnx {C Function} scm_bit_invert_x (bitvector)
+Modify @var{bitvector} by replacing each element with its negation.
+@end deffn
+
+@deffn {Scheme Procedure} bit-set*! bitvector uvec bool
+@deffnx {C Function} scm_bit_set_star_x (bitvector, uvec, bool)
+Set entries of @var{bitvector} to @var{bool}, with @var{uvec}
+selecting the entries to change.  The return value is unspecified.
+
+If @var{uvec} is a bit vector, then those entries where it has
+@code{#t} are the ones in @var{bitvector} which are set to @var{bool}.
+@var{uvec} and @var{bitvector} must be the same length.  When
+@var{bool} is @code{#t} it's like @var{uvec} is OR'ed into
+@var{bitvector}.  Or when @var{bool} is @code{#f} it can be seen as an
+ANDNOT.
+
+@example
+(define bv #*01000010)
+(bit-set*! bv #*10010001 #t)
+bv
+@result{} #*11010011
+@end example
+
+If @var{uvec} is a uniform vector of unsigned long integers, then
+they're indexes into @var{bitvector} which are set to @var{bool}.  
+
+@example
+(define bv #*01000010)
+(bit-set*! bv #u(5 2 7) #t)
+bv
+@result{} #*01100111
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} bit-count* bitvector uvec bool
+@deffnx {C Function} scm_bit_count_star (bitvector, uvec, bool)
+Return a count of how many entries in @var{bitvector} are equal to
+@var{bool}, with @var{uvec} selecting the entries to consider.
+
+@var{uvec} is interpreted in the same way as for @code{bit-set*!}
+above.  Namely, if @var{uvec} is a bit vector then entries which have
+@code{#t} there are considered in @var{bitvector}.  Or if @var{uvec}
+is a uniform vector of unsigned long integers then it's the indexes in
+@var{bitvector} to consider.
+
+For example,
+
+@example
+(bit-count* #*01110111 #*11001101 #t) @result{} 3
+(bit-count* #*01110111 #u(7 0 4) #f)  @result{} 2
+@end example
+@end deffn
+
+@deftypefn {C Function} {const scm_t_uint32 *} scm_bitvector_elements (SCM vec, scm_t_array_handle *handle, size_t *offp, size_t *lenp, ssize_t *incp)
+Like @code{scm_vector_elements} (@pxref{Vector Accessing from C}), but
+for bitvectors.  The variable pointed to by @var{offp} is set to the
+value returned by @code{scm_array_handle_bit_elements_offset}.  See
+@code{scm_array_handle_bit_elements} for how to use the returned
+pointer and the offset.
+@end deftypefn
+
+@deftypefn {C Function} {scm_t_uint32 *} scm_bitvector_writable_elements (SCM vec, scm_t_array_handle *handle, size_t *offp, size_t *lenp, ssize_t *incp)
+Like @code{scm_bitvector_elements}, but the pointer is good for reading
+and writing.
+@end deftypefn
+
+@node Generalized Vectors
+@subsection Generalized Vectors
+
+Guile has a number of data types that are generally vector-like:
+strings, uniform numeric vectors, bitvectors, and of course ordinary
+vectors of arbitrary Scheme values.  These types are disjoint: a
+Scheme value belongs to at most one of the four types listed above.
+
+If you want to gloss over this distinction and want to treat all four
+types with common code, you can use the procedures in this section.
+They work with the @emph{generalized vector} type, which is the union
+of the four vector-like types.
+
+@deffn {Scheme Procedure} generalized-vector? obj
+@deffnx {C Function} scm_generalized_vector_p (obj)
+Return @code{#t} if @var{obj} is a vector, string,
+bitvector, or uniform numeric vector.
+@end deffn
+
+@deffn {Scheme Procedure} generalized-vector-length v
+@deffnx {C Function} scm_generalized_vector_length (v)
+Return the length of the generalized vector @var{v}.
+@end deffn
+
+@deffn {Scheme Procedure} generalized-vector-ref v idx
+@deffnx {C Function} scm_generalized_vector_ref (v, idx)
+Return the element at index @var{idx} of the
+generalized vector @var{v}.
+@end deffn
+
+@deffn {Scheme Procedure} generalized-vector-set! v idx val
+@deffnx {C Function} scm_generalized_vector_set_x (v, idx, val)
+Set the element at index @var{idx} of the
+generalized vector @var{v} to @var{val}.
+@end deffn
+
+@deffn {Scheme Procedure} generalized-vector->list v
+@deffnx {C Function} scm_generalized_vector_to_list (v)
+Return a new list whose elements are the elements of the
+generalized vector @var{v}.
+@end deffn
+
+@deftypefn {C Function} int scm_is_generalized_vector (SCM obj)
+Return @code{1} if @var{obj} is a vector, string,
+bitvector, or uniform numeric vector; else return @code{0}.
+@end deftypefn
+
+@deftypefn {C Function} size_t scm_c_generalized_vector_length (SCM v)
+Return the length of the generalized vector @var{v}.
+@end deftypefn
+
+@deftypefn {C Function} SCM scm_c_generalized_vector_ref (SCM v, size_t idx)
+Return the element at index @var{idx} of the generalized vector @var{v}.
+@end deftypefn
+
+@deftypefn {C Function} void scm_c_generalized_vector_set_x (SCM v, size_t idx, SCM val)
+Set the element at index @var{idx} of the generalized vector @var{v}
+to @var{val}.
+@end deftypefn
+
+@deftypefn {C Function} void scm_generalized_vector_get_handle (SCM v, scm_t_array_handle *handle)
+Like @code{scm_array_get_handle} but an error is signalled when @var{v}
+is not of rank one.  You can use @code{scm_array_handle_ref} and
+@code{scm_array_handle_set} to read and write the elements of @var{v},
+or you can use functions like @code{scm_array_handle_<foo>_elements} to
+deal with specific types of vectors.
+@end deftypefn
+
+@node Arrays
+@subsection Arrays
+@tpindex Arrays
+
+@dfn{Arrays} are a collection of cells organized into an arbitrary
+number of dimensions.  Each cell can be accessed in constant time by
+supplying an index for each dimension.
+
+In the current implementation, an array uses a generalized vector for
+the actual storage of its elements.  Any kind of generalized vector
+will do, so you can have arrays of uniform numeric values, arrays of
+characters, arrays of bits, and of course, arrays of arbitrary Scheme
+values.  For example, arrays with an underlying @code{c64vector} might
+be nice for digital signal processing, while arrays made from a
+@code{u8vector} might be used to hold gray-scale images.
+
+The number of dimensions of an array is called its @dfn{rank}.  Thus,
+a matrix is an array of rank 2, while a vector has rank 1.  When
+accessing an array element, you have to specify one exact integer for
+each dimension.  These integers are called the @dfn{indices} of the
+element.  An array specifies the allowed range of indices for each
+dimension via an inclusive lower and upper bound.  These bounds can
+well be negative, but the upper bound must be greater than or equal to
+the lower bound minus one.  When all lower bounds of an array are
+zero, it is called a @dfn{zero-origin} array.
+
+Arrays can be of rank 0, which could be interpreted as a scalar.
+Thus, a zero-rank array can store exactly one object and the list of
+indices of this element is the empty list.
+
+Arrays contain zero elements when one of their dimensions has a zero
+length.  These empty arrays maintain information about their shape: a
+matrix with zero columns and 3 rows is different from a matrix with 3
+columns and zero rows, which again is different from a vector of
+length zero.
+
+Generalized vectors, such as strings, uniform numeric vectors, bit
+vectors and ordinary vectors, are the special case of one dimensional
+arrays.
+
+@menu
+* Array Syntax::                
+* Array Procedures::            
+* Shared Arrays::               
+* Accessing Arrays from C::     
+@end menu
+
+@node Array Syntax
+@subsubsection Array Syntax
+
+An array is displayed as @code{#} followed by its rank, followed by a
+tag that describes the underlying vector, optionally followed by
+information about its shape, and finally followed by the cells,
+organized into dimensions using parentheses.
+
+In more words, the array tag is of the form
+
+@example
+  #<rank><vectag><@@lower><:len><@@lower><:len>...
+@end example
+
+where @code{<rank>} is a positive integer in decimal giving the rank of
+the array.  It is omitted when the rank is 1 and the array is non-shared
+and has zero-origin (see below).  For shared arrays and for a non-zero
+origin, the rank is always printed even when it is 1 to dinstinguish
+them from ordinary vectors.
+
+The @code{<vectag>} part is the tag for a uniform numeric vector, like
+@code{u8}, @code{s16}, etc, @code{b} for bitvectors, or @code{a} for
+strings.  It is empty for ordinary vectors.
+
+The @code{<@@lower>} part is a @samp{@@} character followed by a signed
+integer in decimal giving the lower bound of a dimension.  There is one
+@code{<@@lower>} for each dimension.  When all lower bounds are zero,
+all @code{<@@lower>} parts are omitted.
+
+The @code{<:len>} part is a @samp{:} character followed by an unsigned
+integer in decimal giving the length of a dimension.  Like for the lower
+bounds, there is one @code{<:len>} for each dimension, and the
+@code{<:len>} part always follows the @code{<@@lower>} part for a
+dimension.  Lengths are only then printed when they can't be deduced
+from the nested lists of elements of the array literal, which can happen
+when at least one length is zero.
+
+As a special case, an array of rank 0 is printed as
+@code{#0<vectag>(<scalar>)}, where @code{<scalar>} is the result of
+printing the single element of the array.
+
+Thus, 
+
+@table @code
+@item #(1 2 3)
+is an ordinary array of rank 1 with lower bound 0 in dimension 0.
+(I.e., a regular vector.)
+
+@item #@@2(1 2 3)
+is an ordinary array of rank 1 with lower bound 2 in dimension 0.
+
+@item #2((1 2 3) (4 5 6))
+is a non-uniform array of rank 2; a 3@cross{}3 matrix with index ranges 0..2
+and 0..2.
+
+@item #u32(0 1 2)
+is a uniform u8 array of rank 1.
+
+@item #2u32@@2@@3((1 2) (2 3))
+is a uniform u8 array of rank 2 with index ranges 2..3 and 3..4.
+
+@item #2()
+is a two-dimensional array with index ranges 0..-1 and 0..-1, i.e. both
+dimensions have length zero.
+
+@item #2:0:2()
+is a two-dimensional array with index ranges 0..-1 and 0..1, i.e. the
+first dimension has length zero, but the second has length 2.
+
+@item #0(12)
+is a rank-zero array with contents 12.
+
+@end table
+
+@node Array Procedures
+@subsubsection Array Procedures
+
+When an array is created, the range of each dimension must be
+specified, e.g., to create a 2@cross{}3 array with a zero-based index:
+
+@example
+(make-array 'ho 2 3) @result{} #2((ho ho ho) (ho ho ho))
+@end example
+
+The range of each dimension can also be given explicitly, e.g., another
+way to create the same array:
+
+@example
+(make-array 'ho '(0 1) '(0 2)) @result{} #2((ho ho ho) (ho ho ho))
+@end example
+
+The following procedures can be used with arrays (or vectors).  An
+argument shown as @var{idx}@dots{} means one parameter for each
+dimension in the array.  A @var{idxlist} argument means a list of such
+values, one for each dimension.
+
+
+@deffn {Scheme Procedure} array? obj
+@deffnx {C Function} scm_array_p (obj, unused)
+Return @code{#t} if the @var{obj} is an array, and @code{#f} if
+not.
+
+The second argument to scm_array_p is there for historical reasons,
+but it is not used.  You should always pass @code{SCM_UNDEFINED} as
+its value.
+@end deffn
+
+@deffn {Scheme Procedure} typed-array? obj type
+@deffnx {C Function} scm_typed_array_p (obj, type)
+Return @code{#t} if the @var{obj} is an array of type @var{type}, and
+@code{#f} if not.
+@end deffn
+
+@deftypefn {C Function} int scm_is_array (SCM obj)
+Return @code{1} if the @var{obj} is an array and @code{0} if not.
+@end deftypefn
+
+@deftypefn {C Function} int scm_is_typed_array (SCM obj, SCM type)
+Return @code{0} if the @var{obj} is an array of type @var{type}, and
+@code{1} if not.
+@end deftypefn
+
+@deffn {Scheme Procedure} make-array fill bound @dots{}
+@deffnx {C Function} scm_make_array (fill, bounds)
+Equivalent to @code{(make-typed-array #t @var{fill} @var{bound} ...)}.
+@end deffn
+
+@deffn {Scheme Procedure} make-typed-array type fill bound @dots{}
+@deffnx {C Function} scm_make_typed_array (type, fill, bounds)
+Create and return an array that has as many dimensions as there are
+@var{bound}s and (maybe) fill it with @var{fill}.
+
+The underlaying storage vector is created according to @var{type},
+which must be a symbol whose name is the `vectag' of the array as
+explained above, or @code{#t} for ordinary, non-specialized arrays.
+
+For example, using the symbol @code{f64} for @var{type} will create an
+array that uses a @code{f64vector} for storing its elements, and
+@code{a} will use a string.
+
+When @var{fill} is not the special @emph{unspecified} value, the new
+array is filled with @var{fill}.  Otherwise, the initial contents of
+the array is unspecified.  The special @emph{unspecified} value is
+stored in the variable @code{*unspecified*} so that for example
+@code{(make-typed-array 'u32 *unspecified* 4)} creates a uninitialized
+@code{u32} vector of length 4.
+
+Each @var{bound} may be a positive non-zero integer @var{N}, in which
+case the index for that dimension can range from 0 through @var{N-1}; or
+an explicit index range specifier in the form @code{(LOWER UPPER)},
+where both @var{lower} and @var{upper} are integers, possibly less than
+zero, and possibly the same number (however, @var{lower} cannot be
+greater than @var{upper}).
+@end deffn
+
+@deffn {Scheme Procedure} list->array dimspec list
+Equivalent to @code{(list->typed-array #t @var{dimspec}
+@var{list})}.
+@end deffn
+
+@deffn {Scheme Procedure} list->typed-array type dimspec list
+@deffnx {C Function} scm_list_to_typed_array (type, dimspec, list)
+Return an array of the type indicated by @var{type} with elements the
+same as those of @var{list}.
+
+The argument @var{dimspec} determines the number of dimensions of the
+array and their lower bounds.  When @var{dimspec} is an exact integer,
+it gives the number of dimensions directly and all lower bounds are
+zero.  When it is a list of exact integers, then each element is the
+lower index bound of a dimension, and there will be as many dimensions
+as elements in the list.
+@end deffn
+
+@deffn {Scheme Procedure} array-type array
+Return the type of @var{array}.  This is the `vectag' used for
+printing @var{array} (or @code{#t} for ordinary arrays) and can be
+used with @code{make-typed-array} to create an array of the same kind
+as @var{array}.
+@end deffn
+
+@deffn {Scheme Procedure} array-ref array idx @dots{}
+Return the element at @code{(idx @dots{})} in @var{array}.
+
+@example
+(define a (make-array 999 '(1 2) '(3 4)))
+(array-ref a 2 4) @result{} 999
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} array-in-bounds? array idx @dots{}
+@deffnx {C Function} scm_array_in_bounds_p (array, idxlist)
+Return @code{#t} if the given index would be acceptable to
+@code{array-ref}.
+
+@example
+(define a (make-array #f '(1 2) '(3 4)))
+(array-in-bounds? a 2 3) @result{} #t
+(array-in-bounds? a 0 0) @result{} #f
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} array-set! array obj idx @dots{}
+@deffnx {C Function} scm_array_set_x (array, obj, idxlist)
+Set the element at @code{(idx @dots{})} in @var{array} to @var{obj}.
+The return value is unspecified.
+
+@example
+(define a (make-array #f '(0 1) '(0 1)))
+(array-set! a #t 1 1)
+a @result{} #2((#f #f) (#f #t))
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} enclose-array array dim1 @dots{}
+@deffnx {C Function} scm_enclose_array (array, dimlist)
+@var{dim1}, @var{dim2} @dots{} should be nonnegative integers less than
+the rank of @var{array}.  @code{enclose-array} returns an array
+resembling an array of shared arrays.  The dimensions of each shared
+array are the same as the @var{dim}th dimensions of the original array,
+the dimensions of the outer array are the same as those of the original
+array that did not match a @var{dim}.
+
+An enclosed array is not a general Scheme array.  Its elements may not
+be set using @code{array-set!}.  Two references to the same element of
+an enclosed array will be @code{equal?} but will not in general be
+@code{eq?}.  The value returned by @code{array-prototype} when given an
+enclosed array is unspecified.
+
+For example,
+
+@lisp
+(enclose-array '#3(((a b c) (d e f)) ((1 2 3) (4 5 6))) 1)
+@result{}
+#<enclosed-array (#1(a d) #1(b e) #1(c f)) (#1(1 4) #1(2 5) #1(3 6))>
+
+(enclose-array '#3(((a b c) (d e f)) ((1 2 3) (4 5 6))) 1 0)
+@result{}
+#<enclosed-array #2((a 1) (d 4)) #2((b 2) (e 5)) #2((c 3) (f 6))>
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} array-shape array
+@deffnx {Scheme Procedure} array-dimensions array
+@deffnx {C Function} scm_array_dimensions (array)
+Return a list of the bounds for each dimenson of @var{array}.
+
+@code{array-shape} gives @code{(@var{lower} @var{upper})} for each
+dimension.  @code{array-dimensions} instead returns just
+@math{@var{upper}+1} for dimensions with a 0 lower bound.  Both are
+suitable as input to @code{make-array}.
+
+For example,
+
+@example
+(define a (make-array 'foo '(-1 3) 5))
+(array-shape a)      @result{} ((-1 3) (0 4))
+(array-dimensions a) @result{} ((-1 3) 5)
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} array-rank obj
+@deffnx {C Function} scm_array_rank (obj)
+Return the rank of @var{array}.
+@end deffn
+
+@deftypefn {C Function} size_t scm_c_array_rank (SCM array)
+Return the rank of @var{array} as a @code{size_t}.
+@end deftypefn
+
+@deffn {Scheme Procedure} array->list array
+@deffnx {C Function} scm_array_to_list (array)
+Return a list consisting of all the elements, in order, of
+@var{array}.
+@end deffn
+
+@c  FIXME: Describe how the order affects the copying (it matters for
+@c  shared arrays with the same underlying root vector, presumably).
+@c
+@deffn {Scheme Procedure} array-copy! src dst
+@deffnx {Scheme Procedure} array-copy-in-order! src dst
+@deffnx {C Function} scm_array_copy_x (src, dst)
+Copy every element from vector or array @var{src} to the corresponding
+element of @var{dst}.  @var{dst} must have the same rank as @var{src},
+and be at least as large in each dimension.  The return value is
+unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} array-fill! array fill
+@deffnx {C Function} scm_array_fill_x (array, fill)
+Store @var{fill} in every element of @var{array}.  The value returned
+is unspecified.
+@end deffn
+
+@c begin (texi-doc-string "guile" "array-equal?")
+@deffn {Scheme Procedure} array-equal? array1 array2 @dots{}
+Return @code{#t} if all arguments are arrays with the same shape, the
+same type, and have corresponding elements which are either
+@code{equal?} or @code{array-equal?}.  This function differs from
+@code{equal?} (@pxref{Equality}) in that a one dimensional shared
+array may be @code{array-equal?} but not @code{equal?} to a vector or
+uniform vector.
+@end deffn
+
+@c  FIXME: array-map! accepts no source arrays at all, and in that
+@c  case makes calls "(proc)".  Is that meant to be a documented
+@c  feature?
+@c
+@c  FIXME: array-for-each doesn't say what happens if the sources have
+@c  different index ranges.  The code currently iterates over the
+@c  indices of the first and expects the others to cover those.  That
+@c  at least vaguely matches array-map!, but is is meant to be a
+@c  documented feature?
+
+@deffn {Scheme Procedure} array-map! dst proc src1 @dots{} srcN
+@deffnx {Scheme Procedure} array-map-in-order! dst proc src1 @dots{} srcN
+@deffnx {C Function} scm_array_map_x (dst, proc, srclist)
+Set each element of the @var{dst} array to values obtained from calls
+to @var{proc}.  The value returned is unspecified.
+
+Each call is @code{(@var{proc} @var{elem1} @dots{} @var{elemN})},
+where each @var{elem} is from the corresponding @var{src} array, at
+the @var{dst} index.  @code{array-map-in-order!} makes the calls in
+row-major order, @code{array-map!} makes them in an unspecified order.
+
+The @var{src} arrays must have the same number of dimensions as
+@var{dst}, and must have a range for each dimension which covers the
+range in @var{dst}.  This ensures all @var{dst} indices are valid in
+each @var{src}.
+@end deffn
+
+@deffn {Scheme Procedure} array-for-each proc src1 @dots{} srcN
+@deffnx {C Function} scm_array_for_each (proc, src1, srclist)
+Apply @var{proc} to each tuple of elements of @var{src1} @dots{}
+@var{srcN}, in row-major order.  The value returned is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} array-index-map! dst proc
+@deffnx {C Function} scm_array_index_map_x (dst, proc)
+Set each element of the @var{dst} array to values returned by calls to
+@var{proc}.  The value returned is unspecified.
+
+Each call is @code{(@var{proc} @var{i1} @dots{} @var{iN})}, where
+@var{i1}@dots{}@var{iN} is the destination index, one parameter for
+each dimension.  The order in which the calls are made is unspecified.
+
+For example, to create a @m{4\times4, 4x4} matrix representing a
+cyclic group,
+
+@tex
+\advance\leftskip by 2\lispnarrowing {
+$\left(\matrix{%
+0 & 1 & 2 & 3 \cr
+1 & 2 & 3 & 0 \cr
+2 & 3 & 0 & 1 \cr
+3 & 0 & 1 & 2 \cr
+}\right)$} \par
+@end tex
+@ifnottex
+@example
+    / 0 1 2 3 \
+    | 1 2 3 0 |
+    | 2 3 0 1 |
+    \ 3 0 1 2 /
+@end example
+@end ifnottex
+
+@example
+(define a (make-array #f 4 4))
+(array-index-map! a (lambda (i j)
+                      (modulo (+ i j) 4)))
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} uniform-array-read! ra [port_or_fd [start [end]]]
+@deffnx {C Function} scm_uniform_array_read_x (ra, port_or_fd, start, end)
+Attempt to read all elements of @var{ura}, in lexicographic order, as
+binary objects from @var{port-or-fdes}.
+If an end of file is encountered,
+the objects up to that point are put into @var{ura}
+(starting at the beginning) and the remainder of the array is
+unchanged.
+
+The optional arguments @var{start} and @var{end} allow
+a specified region of a vector (or linearized array) to be read,
+leaving the remainder of the vector unchanged.
+
+@code{uniform-array-read!} returns the number of objects read.
+@var{port-or-fdes} may be omitted, in which case it defaults to the value
+returned by @code{(current-input-port)}.
+@end deffn
+
+@deffn {Scheme Procedure} uniform-array-write v [port_or_fd [start [end]]]
+@deffnx {C Function} scm_uniform_array_write (v, port_or_fd, start, end)
+Writes all elements of @var{ura} as binary objects to
+@var{port-or-fdes}.
+
+The optional arguments @var{start}
+and @var{end} allow
+a specified region of a vector (or linearized array) to be written.
+
+The number of objects actually written is returned.
+@var{port-or-fdes} may be
+omitted, in which case it defaults to the value returned by
+@code{(current-output-port)}.
+@end deffn
+
+@node Shared Arrays
+@subsubsection Shared Arrays
+
+@deffn {Scheme Procedure} make-shared-array oldarray mapfunc bound @dots{}
+@deffnx {C Function} scm_make_shared_array (oldarray, mapfunc, boundlist)
+Return a new array which shares the storage of @var{oldarray}.
+Changes made through either affect the same underlying storage.  The
+@var{bound@dots{}} arguments are the shape of the new array, the same
+as @code{make-array} (@pxref{Array Procedures}).
+
+@var{mapfunc} translates coordinates from the new array to the
+@var{oldarray}.  It's called as @code{(@var{mapfunc} newidx1 @dots{})}
+with one parameter for each dimension of the new array, and should
+return a list of indices for @var{oldarray}, one for each dimension of
+@var{oldarray}.
+
+@var{mapfunc} must be affine linear, meaning that each @var{oldarray}
+index must be formed by adding integer multiples (possibly negative)
+of some or all of @var{newidx1} etc, plus a possible integer offset.
+The multiples and offset must be the same in each call.
+
+@sp 1
+One good use for a shared array is to restrict the range of some
+dimensions, so as to apply say @code{array-for-each} or
+@code{array-fill!} to only part of an array.  The plain @code{list}
+function can be used for @var{mapfunc} in this case, making no changes
+to the index values.  For example,
+
+@example
+(make-shared-array #2((a b c) (d e f) (g h i)) list 3 2)
+@result{} #2((a b) (d e) (g h))
+@end example
+
+The new array can have fewer dimensions than @var{oldarray}, for
+example to take a column from an array.
+
+@example
+(make-shared-array #2((a b c) (d e f) (g h i))
+                   (lambda (i) (list i 2))
+                   '(0 2))
+@result{} #1(c f i)
+@end example
+
+A diagonal can be taken by using the single new array index for both
+row and column in the old array.  For example,
+
+@example
+(make-shared-array #2((a b c) (d e f) (g h i))
+                   (lambda (i) (list i i))
+                   '(0 2))
+@result{} #1(a e i)
+@end example
+
+Dimensions can be increased by for instance considering portions of a
+one dimensional array as rows in a two dimensional array.
+(@code{array-contents} below can do the opposite, flattening an
+array.)
+
+@example
+(make-shared-array #1(a b c d e f g h i j k l)
+                   (lambda (i j) (list (+ (* i 3) j)))
+                   4 3)
+@result{} #2((a b c) (d e f) (g h i) (j k l))
+@end example
+
+By negating an index the order that elements appear can be reversed.
+The following just reverses the column order,
+
+@example
+(make-shared-array #2((a b c) (d e f) (g h i))
+                   (lambda (i j) (list i (- 2 j)))
+                   3 3)
+@result{} #2((c b a) (f e d) (i h g))
+@end example
+
+A fixed offset on indexes allows for instance a change from a 0 based
+to a 1 based array,
+
+@example
+(define x #2((a b c) (d e f) (g h i)))
+(define y (make-shared-array x
+                             (lambda (i j) (list (1- i) (1- j)))
+                             '(1 3) '(1 3)))
+(array-ref x 0 0) @result{} a
+(array-ref y 1 1) @result{} a
+@end example
+
+A multiple on an index allows every Nth element of an array to be
+taken.  The following is every third element,
+
+@example
+(make-shared-array #1(a b c d e f g h i j k l)
+                   (lambda (i) (list (* i 3)))
+                   4)
+@result{} #1(a d g j)
+@end example
+
+The above examples can be combined to make weird and wonderful
+selections from an array, but it's important to note that because
+@var{mapfunc} must be affine linear, arbitrary permutations are not
+possible.
+
+In the current implementation, @var{mapfunc} is not called for every
+access to the new array but only on some sample points to establish a
+base and stride for new array indices in @var{oldarray} data.  A few
+sample points are enough because @var{mapfunc} is linear.
+@end deffn
+
+@deffn {Scheme Procedure} shared-array-increments array
+@deffnx {C Function} scm_shared_array_increments (array)
+For each dimension, return the distance between elements in the root vector.
+@end deffn
+
+@deffn {Scheme Procedure} shared-array-offset array
+@deffnx {C Function} scm_shared_array_offset (array)
+Return the root vector index of the first element in the array.
+@end deffn
+
+@deffn {Scheme Procedure} shared-array-root array
+@deffnx {C Function} scm_shared_array_root (array)
+Return the root vector of a shared array.
+@end deffn
+
+@deffn {Scheme Procedure} array-contents array [strict]
+@deffnx {C Function} scm_array_contents (array, strict)
+If @var{array} may be @dfn{unrolled} into a one dimensional shared array
+without changing their order (last subscript changing fastest), then
+@code{array-contents} returns that shared array, otherwise it returns
+@code{#f}.  All arrays made by @code{make-array} and
+@code{make-typed-array} may be unrolled, some arrays made by
+@code{make-shared-array} may not be.
+
+If the optional argument @var{strict} is provided, a shared array will
+be returned only if its elements are stored internally contiguous in
+memory.
+@end deffn
+
+@deffn {Scheme Procedure} transpose-array array dim1 @dots{}
+@deffnx {C Function} scm_transpose_array (array, dimlist)
+Return an array sharing contents with @var{array}, but with
+dimensions arranged in a different order.  There must be one
+@var{dim} argument for each dimension of @var{array}.
+@var{dim1}, @var{dim2}, @dots{} should be integers between 0
+and the rank of the array to be returned.  Each integer in that
+range must appear at least once in the argument list.
+
+The values of @var{dim1}, @var{dim2}, @dots{} correspond to
+dimensions in the array to be returned, and their positions in the
+argument list to dimensions of @var{array}.  Several @var{dim}s
+may have the same value, in which case the returned array will
+have smaller rank than @var{array}.
+
+@lisp
+(transpose-array '#2((a b) (c d)) 1 0) @result{} #2((a c) (b d))
+(transpose-array '#2((a b) (c d)) 0 0) @result{} #1(a d)
+(transpose-array '#3(((a b c) (d e f)) ((1 2 3) (4 5 6))) 1 1 0) @result{}
+                #2((a 4) (b 5) (c 6))
+@end lisp
+@end deffn
+
+@node Accessing Arrays from C
+@subsubsection Accessing Arrays from C
+
+Arrays, especially uniform numeric arrays, are useful to efficiently
+represent large amounts of rectangularily organized information, such as
+matrices, images, or generally blobs of binary data.  It is desirable to
+access these blobs in a C like manner so that they can be handed to
+external C code such as linear algebra libraries or image processing
+routines.
+
+While pointers to the elements of an array are in use, the array itself
+must be protected so that the pointer remains valid.  Such a protected
+array is said to be @dfn{reserved}.  A reserved array can be read but
+modifications to it that would cause the pointer to its elements to
+become invalid are prevented.  When you attempt such a modification, an
+error is signalled.
+
+(This is similar to locking the array while it is in use, but without
+the danger of a deadlock.  In a multi-threaded program, you will need
+additional synchronization to avoid modifying reserved arrays.)
+
+You must take care to always unreserve an array after reserving it,
+even in the presence of non-local exits.  If a non-local exit can
+happen between these two calls, you should install a dynwind context
+that releases the array when it is left (@pxref{Dynamic Wind}).
+
+In addition, array reserving and unreserving must be properly
+paired.  For instance, when reserving two or more arrays in a certain
+order, you need to unreserve them in the opposite order.
+
+Once you have reserved an array and have retrieved the pointer to its
+elements, you must figure out the layout of the elements in memory.
+Guile allows slices to be taken out of arrays without actually making a
+copy, such as making an alias for the diagonal of a matrix that can be
+treated as a vector.  Arrays that result from such an operation are not
+stored contiguously in memory and when working with their elements
+directly, you need to take this into account.
+
+The layout of array elements in memory can be defined via a
+@emph{mapping function} that computes a scalar position from a vector of
+indices.  The scalar position then is the offset of the element with the
+given indices from the start of the storage block of the array.
+
+In Guile, this mapping function is restricted to be @dfn{affine}: all
+mapping functions of Guile arrays can be written as @code{p = b +
+c[0]*i[0] + c[1]*i[1] + ... + c[n-1]*i[n-1]} where @code{i[k]} is the
+@nicode{k}th index and @code{n} is the rank of the array.  For
+example, a matrix of size 3x3 would have @code{b == 0}, @code{c[0] ==
+3} and @code{c[1] == 1}.  When you transpose this matrix (with
+@code{transpose-array}, say), you will get an array whose mapping
+function has @code{b == 0}, @code{c[0] == 1} and @code{c[1] == 3}.
+
+The function @code{scm_array_handle_dims} gives you (indirect) access to
+the coefficients @code{c[k]}.
+
+@c XXX
+Note that there are no functions for accessing the elements of a
+character array yet.  Once the string implementation of Guile has been
+changed to use Unicode, we will provide them.
+
+@deftp {C Type} scm_t_array_handle
+This is a structure type that holds all information necessary to manage
+the reservation of arrays as explained above.  Structures of this type
+must be allocated on the stack and must only be accessed by the
+functions listed below.
+@end deftp
+
+@deftypefn {C Function} void scm_array_get_handle (SCM array, scm_t_array_handle *handle)
+Reserve @var{array}, which must be an array, and prepare @var{handle} to
+be used with the functions below.  You must eventually call
+@code{scm_array_handle_release} on @var{handle}, and do this in a
+properly nested fashion, as explained above.  The structure pointed to
+by @var{handle} does not need to be initialized before calling this
+function.
+@end deftypefn
+
+@deftypefn {C Function} void scm_array_handle_release (scm_t_array_handle *handle)
+End the array reservation represented by @var{handle}.  After a call to
+this function, @var{handle} might be used for another reservation.
+@end deftypefn
+
+@deftypefn {C Function} size_t scm_array_handle_rank (scm_t_array_handle *handle)
+Return the rank of the array represented by @var{handle}.
+@end deftypefn
+
+@deftp {C Type} scm_t_array_dim
+This structure type holds information about the layout of one dimension
+of an array.  It includes the following fields:
+
+@table @code
+@item  ssize_t lbnd
+@itemx ssize_t ubnd
+The lower and upper bounds (both inclusive) of the permissible index
+range for the given dimension.  Both values can be negative, but
+@var{lbnd} is always less than or equal to @var{ubnd}.
+
+@item ssize_t inc
+The distance from one element of this dimension to the next.  Note, too,
+that this can be negative.
+@end table
+@end deftp
+
+@deftypefn {C Function} {const scm_t_array_dim *} scm_array_handle_dims (scm_t_array_handle *handle)
+Return a pointer to a C vector of information about the dimensions of
+the array represented by @var{handle}.  This pointer is valid as long as
+the array remains reserved.  As explained above, the
+@code{scm_t_array_dim} structures returned by this function can be used
+calculate the position of an element in the storage block of the array
+from its indices.
+
+This position can then be used as an index into the C array pointer
+returned by the various @code{scm_array_handle_<foo>_elements}
+functions, or with @code{scm_array_handle_ref} and
+@code{scm_array_handle_set}.
+
+Here is how one can compute the position @var{pos} of an element given
+its indices in the vector @var{indices}:
+
+@example
+ssize_t indices[RANK];
+scm_t_array_dim *dims;
+ssize_t pos;
+size_t i;
+
+pos = 0;
+for (i = 0; i < RANK; i++)
+  @{
+    if (indices[i] < dims[i].lbnd || indices[i] > dims[i].ubnd)
+      out_of_range ();
+    pos += (indices[i] - dims[i].lbnd) * dims[i].inc;
+  @}
+@end example
+@end deftypefn
+
+@deftypefn {C Function} ssize_t scm_array_handle_pos (scm_t_array_handle *handle, SCM indices)
+Compute the position corresponding to @var{indices}, a list of
+indices.  The position is computed as described above for
+@code{scm_array_handle_dims}.  The number of the indices and their
+range is checked and an approrpiate error is signalled for invalid
+indices.
+@end deftypefn
+
+@deftypefn {C Function} SCM scm_array_handle_ref (scm_t_array_handle *handle, ssize_t pos)
+Return the element at position @var{pos} in the storage block of the
+array represented by @var{handle}.  Any kind of array is acceptable.  No
+range checking is done on @var{pos}.
+@end deftypefn
+
+@deftypefn {C Function} void scm_array_handle_set (scm_t_array_handle *handle, ssize_t pos, SCM val)
+Set the element at position @var{pos} in the storage block of the array
+represented by @var{handle} to @var{val}.  Any kind of array is
+acceptable.  No range checking is done on @var{pos}.  An error is
+signalled when the array can not store @var{val}.
+@end deftypefn
+
+@deftypefn {C Function} {const SCM *} scm_array_handle_elements (scm_t_array_handle *handle)
+Return a pointer to the elements of a ordinary array of general Scheme
+values (i.e., a non-uniform array) for reading.  This pointer is valid
+as long as the array remains reserved.
+@end deftypefn
+
+@deftypefn {C Function} {SCM *} scm_array_handle_writable_elements (scm_t_array_handle *handle)
+Like @code{scm_array_handle_elements}, but the pointer is good for
+reading and writing.
+@end deftypefn
+
+@deftypefn {C Function} {const void *} scm_array_handle_uniform_elements (scm_t_array_handle *handle)
+Return a pointer to the elements of a uniform numeric array for reading.
+This pointer is valid as long as the array remains reserved.  The size
+of each element is given by @code{scm_array_handle_uniform_element_size}.
+@end deftypefn
+
+@deftypefn {C Function} {void *} scm_array_handle_uniform_writable_elements (scm_t_array_handle *handle)
+Like @code{scm_array_handle_uniform_elements}, but the pointer is good
+reading and writing.
+@end deftypefn
+
+@deftypefn {C Function} size_t scm_array_handle_uniform_element_size (scm_t_array_handle *handle)
+Return the size of one element of the uniform numeric array represented
+by @var{handle}.
+@end deftypefn
+
+@deftypefn  {C Function} {const scm_t_uint8 *} scm_array_handle_u8_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {const scm_t_int8 *} scm_array_handle_s8_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {const scm_t_uint16 *} scm_array_handle_u16_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {const scm_t_int16 *} scm_array_handle_s16_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {const scm_t_uint32 *} scm_array_handle_u32_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {const scm_t_int32 *} scm_array_handle_s32_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {const scm_t_uint64 *} scm_array_handle_u64_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {const scm_t_int64 *} scm_array_handle_s64_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {const float *} scm_array_handle_f32_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {const double *} scm_array_handle_f64_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {const float *} scm_array_handle_c32_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {const double *} scm_array_handle_c64_elements (scm_t_array_handle *handle)
+Return a pointer to the elements of a uniform numeric array of the
+indicated kind for reading.  This pointer is valid as long as the array
+remains reserved.
+
+The pointers for @code{c32} and @code{c64} uniform numeric arrays point
+to pairs of floating point numbers.  The even index holds the real part,
+the odd index the imaginary part of the complex number.
+@end deftypefn
+
+@deftypefn {C Function} {scm_t_uint8 *} scm_array_handle_u8_writable_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {scm_t_int8 *} scm_array_handle_s8_writable_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {scm_t_uint16 *} scm_array_handle_u16_writable_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {scm_t_int16 *} scm_array_handle_s16_writable_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {scm_t_uint32 *} scm_array_handle_u32_writable_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {scm_t_int32 *} scm_array_handle_s32_writable_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {scm_t_uint64 *} scm_array_handle_u64_writable_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {scm_t_int64 *} scm_array_handle_s64_writable_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {float *} scm_array_handle_f32_writable_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {double *} scm_array_handle_f64_writable_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {float *} scm_array_handle_c32_writable_elements (scm_t_array_handle *handle)
+@deftypefnx {C Function} {double *} scm_array_handle_c64_writable_elements (scm_t_array_handle *handle)
+Like @code{scm_array_handle_<kind>_elements}, but the pointer is good
+for reading and writing.
+@end deftypefn
+
+@deftypefn {C Function} {const scm_t_uint32 *} scm_array_handle_bit_elements (scm_t_array_handle *handle)
+Return a pointer to the words that store the bits of the represented
+array, which must be a bit array.
+
+Unlike other arrays, bit arrays have an additional offset that must be
+figured into index calculations.  That offset is returned by
+@code{scm_array_handle_bit_elements_offset}.
+
+To find a certain bit you first need to calculate its position as
+explained above for @code{scm_array_handle_dims} and then add the
+offset.  This gives the absolute position of the bit, which is always a
+non-negative integer.
+
+Each word of the bit array storage block contains exactly 32 bits, with
+the least significant bit in that word having the lowest absolute
+position number.  The next word contains the next 32 bits.
+
+Thus, the following code can be used to access a bit whose position
+according to @code{scm_array_handle_dims} is given in @var{pos}:
+
+@example
+SCM bit_array;
+scm_t_array_handle handle;
+scm_t_uint32 *bits;
+ssize_t pos;
+size_t abs_pos;
+size_t word_pos, mask;
+
+scm_array_get_handle (&bit_array, &handle);
+bits = scm_array_handle_bit_elements (&handle);
+
+pos = ...
+abs_pos = pos + scm_array_handle_bit_elements_offset (&handle);
+word_pos = abs_pos / 32;
+mask = 1L << (abs_pos % 32);
+
+if (bits[word_pos] & mask)
+  /* bit is set. */
+
+scm_array_handle_release (&handle);
+@end example
+
+@end deftypefn
+
+@deftypefn {C Function} {scm_t_uint32 *} scm_array_handle_bit_writable_elements (scm_t_array_handle *handle)
+Like @code{scm_array_handle_bit_elements} but the pointer is good for
+reading and writing.  You must take care not to modify bits outside of
+the allowed index range of the array, even for contiguous arrays.
+@end deftypefn
+
+@node Records
+@subsection Records
+
+A @dfn{record type} is a first class object representing a user-defined
+data type.  A @dfn{record} is an instance of a record type.
+
+@deffn {Scheme Procedure} record? obj
+Return @code{#t} if @var{obj} is a record of any type and @code{#f}
+otherwise.
+
+Note that @code{record?} may be true of any Scheme value; there is no
+promise that records are disjoint with other Scheme types.
+@end deffn
+
+@deffn {Scheme Procedure} make-record-type type-name field-names [print]
+Create and return a new @dfn{record-type descriptor}.
+
+@var{type-name} is a string naming the type.  Currently it's only used
+in the printed representation of records, and in diagnostics.
+@var{field-names} is a list of symbols naming the fields of a record
+of the type.  Duplicates are not allowed among these symbols.
+
+@example
+(make-record-type "employee" '(name age salary))
+@end example
+
+The optional @var{print} argument is a function used by
+@code{display}, @code{write}, etc, for printing a record of the new
+type.  It's called as @code{(@var{print} record port)} and should look
+at @var{record} and write to @var{port}.
+@end deffn
+
+@deffn {Scheme Procedure} record-constructor rtd [field-names]
+Return a procedure for constructing new members of the type represented
+by @var{rtd}.  The returned procedure accepts exactly as many arguments
+as there are symbols in the given list, @var{field-names}; these are
+used, in order, as the initial values of those fields in a new record,
+which is returned by the constructor procedure.  The values of any
+fields not named in that list are unspecified.  The @var{field-names}
+argument defaults to the list of field names in the call to
+@code{make-record-type} that created the type represented by @var{rtd};
+if the @var{field-names} argument is provided, it is an error if it
+contains any duplicates or any symbols not in the default list.
+@end deffn
+
+@deffn {Scheme Procedure} record-predicate rtd
+Return a procedure for testing membership in the type represented by
+@var{rtd}.  The returned procedure accepts exactly one argument and
+returns a true value if the argument is a member of the indicated record
+type; it returns a false value otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} record-accessor rtd field-name
+Return a procedure for reading the value of a particular field of a
+member of the type represented by @var{rtd}.  The returned procedure
+accepts exactly one argument which must be a record of the appropriate
+type; it returns the current value of the field named by the symbol
+@var{field-name} in that record.  The symbol @var{field-name} must be a
+member of the list of field-names in the call to @code{make-record-type}
+that created the type represented by @var{rtd}.
+@end deffn
+
+@deffn {Scheme Procedure} record-modifier rtd field-name
+Return a procedure for writing the value of a particular field of a
+member of the type represented by @var{rtd}.  The returned procedure
+accepts exactly two arguments: first, a record of the appropriate type,
+and second, an arbitrary Scheme value; it modifies the field named by
+the symbol @var{field-name} in that record to contain the given value.
+The returned value of the modifier procedure is unspecified.  The symbol
+@var{field-name} must be a member of the list of field-names in the call
+to @code{make-record-type} that created the type represented by
+@var{rtd}.
+@end deffn
+
+@deffn {Scheme Procedure} record-type-descriptor record
+Return a record-type descriptor representing the type of the given
+record.  That is, for example, if the returned descriptor were passed to
+@code{record-predicate}, the resulting predicate would return a true
+value when passed the given record.  Note that it is not necessarily the
+case that the returned descriptor is the one that was passed to
+@code{record-constructor} in the call that created the constructor
+procedure that created the given record.
+@end deffn
+
+@deffn {Scheme Procedure} record-type-name rtd
+Return the type-name associated with the type represented by rtd.  The
+returned value is @code{eqv?} to the @var{type-name} argument given in
+the call to @code{make-record-type} that created the type represented by
+@var{rtd}.
+@end deffn
+
+@deffn {Scheme Procedure} record-type-fields rtd
+Return a list of the symbols naming the fields in members of the type
+represented by @var{rtd}.  The returned value is @code{equal?} to the
+field-names argument given in the call to @code{make-record-type} that
+created the type represented by @var{rtd}.
+@end deffn
+
+
+@node Structures
+@subsection Structures
+@tpindex Structures
+
+A @dfn{structure} is a first class data type which holds Scheme values
+or C words in fields numbered 0 upwards.  A @dfn{vtable} represents a
+structure type, giving field types and permissions, and an optional
+print function for @code{write} etc.
+
+Structures are lower level than records (@pxref{Records}) but have
+some extra features.  The vtable system allows sets of types be
+constructed, with class data.  The uninterpreted words can
+inter-operate with C code, allowing arbitrary pointers or other values
+to be stored along side usual Scheme @code{SCM} values.
+
+@menu
+* Vtables::                     
+* Structure Basics::            
+* Vtable Contents::              
+* Vtable Vtables::              
+@end menu
+
+@node Vtables, Structure Basics, Structures, Structures
+@subsubsection Vtables
+
+A vtable is a structure type, specifying its layout, and other
+information.  A vtable is actually itself a structure, but there's no
+need to worray about that initially (@pxref{Vtable Contents}.)
+
+@deffn {Scheme Procedure} make-vtable fields [print]
+Create a new vtable.
+
+@var{fields} is a string describing the fields in the structures to be
+created.  Each field is represented by two characters, a type letter
+and a permissions letter, for example @code{"pw"}.  The types are as
+follows.
+
+@itemize @bullet{}
+@item
+@code{p} -- a Scheme value.  ``p'' stands for ``protected'' meaning
+it's protected against garbage collection.
+
+@item
+@code{u} -- an arbitrary word of data (an @code{scm_t_bits}).  At the
+Scheme level it's read and written as an unsigned integer.  ``u''
+stands for ``uninterpreted'' (it's not treated as a Scheme value), or
+``unprotected'' (it's not marked during GC), or ``unsigned long'' (its
+size), or all of these things.
+
+@item
+@code{s} -- a self-reference.  Such a field holds the @code{SCM} value
+of the structure itself (a circular reference).  This can be useful in
+C code where you might have a pointer to the data array, and want to
+get the Scheme @code{SCM} handle for the structure.  In Scheme code it
+has no use.
+@end itemize
+
+The second letter for each field is a permission code,
+
+@itemize @bullet{}
+@item
+@code{w} -- writable, the field can be read and written.
+@item
+@code{r} -- read-only, the field can be read but not written.
+@item
+@code{o} -- opaque, the field can be neither read nor written at the
+Scheme level.  This can be used for fields which should only be used
+from C code.
+@item
+@code{W},@code{R},@code{O} -- a tail array, with permissions for the
+array fields as per @code{w},@code{r},@code{o}.
+@end itemize
+
+A tail array is further fields at the end of a structure.  The last
+field in the layout string might be for instance @samp{pW} to have a
+tail of writable Scheme-valued fields.  The @samp{pW} field itself
+holds the tail size, and the tail fields come after it.
+
+Here are some examples.
+
+@example
+(make-vtable "pw")      ;; one writable field
+(make-vtable "prpw")    ;; one read-only and one writable
+(make-vtable "pwuwuw")  ;; one scheme and two uninterpreted
+
+(make-vtable "prpW")    ;; one fixed then a tail array
+@end example
+
+The optional @var{print} argument is a function called by
+@code{display} and @code{write} (etc) to give a printed representation
+of a structure created from this vtable.  It's called
+@code{(@var{print} struct port)} and should look at @var{struct} and
+write to @var{port}.  The default print merely gives a form like
+@samp{#<struct ADDR:ADDR>} with a pair of machine addresses.
+
+The following print function for example shows the two fields of its
+structure.
+
+@example
+(make-vtable "prpw"
+             (lambda (struct port)
+               (display "#<")
+               (display (struct-ref 0))
+               (display " and ")
+               (display (struct-ref 1))
+               (display ">")))
+@end example
+@end deffn
+
+
+@node Structure Basics, Vtable Contents, Vtables, Structures
+@subsubsection Structure Basics
+
+This section describes the basic procedures for working with
+structures.  @code{make-struct} creates a structure, and
+@code{struct-ref} and @code{struct-set!} access write fields.
+
+@deffn {Scheme Procedure} make-struct vtable tail-size [init...]
+@deffnx {C Function} scm_make_struct (vtable, tail_size, init_list)
+Create a new structure, with layout per the given @var{vtable}
+(@pxref{Vtables}).
+
+@var{tail-size} is the size of the tail array if @var{vtable}
+specifies a tail array.  @var{tail-size} should be 0 when @var{vtable}
+doesn't specify a tail array.
+
+The optional @var{init}@dots{} arguments are initial values for the
+fields of the structure (and the tail array).  This is the only way to
+put values in read-only fields.  If there are fewer @var{init}
+arguments than fields then the defaults are @code{#f} for a Scheme
+field (type @code{p}) or 0 for an uninterpreted field (type @code{u}).
+
+Type @code{s} self-reference fields, permission @code{o} opaque
+fields, and the count field of a tail array are all ignored for the
+@var{init} arguments, ie.@: an argument is not consumed by such a
+field.  An @code{s} is always set to the structure itself, an @code{o}
+is always set to @code{#f} or 0 (with the intention that C code will
+do something to it later), and the tail count is always the given
+@var{tail-size}.
+
+For example,
+
+@example
+(define v (make-vtable "prpwpw"))
+(define s (make-struct v 0 123 "abc" 456))
+(struct-ref s 0) @result{} 123
+(struct-ref s 1) @result{} "abc"
+@end example
+
+@example
+(define v (make-vtable "prpW"))
+(define s (make-struct v 6 "fixed field" 'x 'y))
+(struct-ref s 0) @result{} "fixed field"
+(struct-ref s 1) @result{} 2    ;; tail size
+(struct-ref s 2) @result{} x    ;; tail array ...
+(struct-ref s 3) @result{} y
+(struct-ref s 4) @result{} #f
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} struct? obj
+@deffnx {C Function} scm_struct_p (obj)
+Return @code{#t} if @var{obj} is a structure, or @code{#f} if not.
+@end deffn
+
+@deffn {Scheme Procedure} struct-ref struct n
+@deffnx {C Function} scm_struct_ref (struct, n)
+Return the contents of field number @var{n} in @var{struct}.  The
+first field is number 0.
+
+An error is thrown if @var{n} is out of range, or if the field cannot
+be read because it's @code{o} opaque.
+@end deffn
+
+@deffn {Scheme Procedure} struct-set! struct n value
+@deffnx {C Function} scm_struct_set_x (struct, n, value)
+Set field number @var{n} in @var{struct} to @var{value}.  The first
+field is number 0.
+
+An error is thrown if @var{n} is out of range, or if the field cannot
+be written because it's @code{r} read-only or @code{o} opaque.  
+@end deffn
+
+@deffn {Scheme Procedure} struct-vtable struct
+@deffnx {C Function} scm_struct_vtable (struct)
+Return the vtable used by @var{struct}.
+
+This can be used to examine the layout of an unknown structure, see
+@ref{Vtable Contents}.
+@end deffn
+
+
+@node Vtable Contents, Vtable Vtables, Structure Basics, Structures
+@subsubsection Vtable Contents
+
+A vtable is itself a structure, with particular fields that hold
+information about the structures to be created.  These include the
+fields of those structures, and the print function for them.  The
+variables below allow access to those fields.
+
+@deffn {Scheme Procedure} struct-vtable? obj
+@deffnx {C Function} scm_struct_vtable_p (obj)
+Return @code{#t} if @var{obj} is a vtable structure.
+
+Note that because vtables are simply structures with a particular
+layout, @code{struct-vtable?} can potentially return true on an
+application structure which merely happens to look like a vtable.
+@end deffn
+
+@defvr {Scheme Variable} vtable-index-layout
+@defvrx {C Macro} scm_vtable_index_layout
+The field number of the layout specification in a vtable.  The layout
+specification is a symbol like @code{pwpw} formed from the fields
+string passed to @code{make-vtable}, or created by
+@code{make-struct-layout} (@pxref{Vtable Vtables}).
+
+@example
+(define v (make-vtable "pwpw" 0))
+(struct-ref v vtable-index-layout) @result{} pwpw
+@end example
+
+This field is read-only, since the layout of structures using a vtable
+cannot be changed.
+@end defvr
+
+@defvr {Scheme Variable} vtable-index-vtable
+@defvrx {C Macro} scm_vtable_index_vtable
+A self-reference to the vtable, ie.@: a type @code{s} field.  This is
+used by C code within Guile and has no use at the Scheme level.
+@end defvr
+
+@defvr {Scheme Variable} vtable-index-printer
+@defvrx {C Macro} scm_vtable_index_printer
+The field number of the printer function.  This field contains @code{#f}
+if the default print function should be used.
+
+@example
+(define (my-print-func struct port)
+  ...)
+(define v (make-vtable "pwpw" my-print-func))
+(struct-ref v vtable-index-printer) @result{} my-print-func
+@end example
+
+This field is writable, allowing the print function to be changed
+dynamically.
+@end defvr
+
+@deffn {Scheme Procedure} struct-vtable-name vtable
+@deffnx {Scheme Procedure} set-struct-vtable-name! vtable name
+@deffnx {C Function} scm_struct_vtable_name (vtable)
+@deffnx {C Function} scm_set_struct_vtable_name_x (vtable, name)
+Get or set the name of @var{vtable}.  @var{name} is a symbol and is
+used in the default print function when printing structures created
+from @var{vtable}.
+
+@example
+(define v (make-vtable "pw"))
+(set-struct-vtable-name! v 'my-name)
+
+(define s (make-struct v 0))
+(display s) @print{} #<my-name b7ab3ae0:b7ab3730>
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} struct-vtable-tag vtable
+@deffnx {C Function} scm_struct_vtable_tag (vtable)
+Return the tag of the given @var{vtable}.
+@c
+@c FIXME: what can be said about what this means?
+@c
+@end deffn
+
+
+@node Vtable Vtables,  , Vtable Contents, Structures
+@subsubsection Vtable Vtables
+
+As noted above, a vtable is a structure and that structure is itself
+described by a vtable.  Such a ``vtable of a vtable'' can be created
+with @code{make-vtable-vtable} below.  This can be used to build sets
+of related vtables, possibly with extra application fields.
+
+This second level of vtable can be a little confusing.  The ball
+example below is a typical use, adding a ``class data'' field to the
+vtables, from which instance structures are created.  The current
+implementation of Guile's own records (@pxref{Records}) does something
+similar, a record type descriptor is a vtable with room to hold the
+field names of the records to be created from it.
+
+@deffn {Scheme Procedure} make-vtable-vtable user-fields tail-size [print]
+@deffnx {C Function} scm_make_vtable_vtable (user_fields, tail_size, print_and_init_list)
+Create a ``vtable-vtable'' which can be used to create vtables.  This
+vtable-vtable is also a vtable, and is self-describing, meaning its
+vtable is itself.  The following is a simple usage.
+
+@example
+(define vt-vt (make-vtable-vtable "" 0))
+(define vt    (make-struct vt-vt 0
+                           (make-struct-layout "pwpw"))
+(define s     (make-struct vt 0 123 456))
+
+(struct-ref s 0) @result{} 123
+@end example
+
+@code{make-struct} is used to create a vtable from the vtable-vtable.
+The first initializer is a layout object (field
+@code{vtable-index-layout}), usually obtained from
+@code{make-struct-layout} (below).  An optional second initializer is
+a printer function (field @code{vtable-index-printer}), used as
+described under @code{make-vtable} (@pxref{Vtables}).
+
+@sp 1
+@var{user-fields} is a layout string giving extra fields to have in
+the vtables.  A vtable starts with some base fields as per @ref{Vtable
+Contents}, and @var{user-fields} is appended.  The @var{user-fields}
+start at field number @code{vtable-offset-user} (below), and exist in
+both the vtable-vtable and in the vtables created from it.  Such
+fields provide space for ``class data''.  For example,
+
+@example
+(define vt-of-vt (make-vtable-vtable "pw" 0))
+(define vt       (make-struct vt-of-vt 0))
+(struct-set! vt vtable-offset-user "my class data")
+@end example
+
+@var{tail-size} is the size of the tail array in the vtable-vtable
+itself, if @var{user-fields} specifies a tail array.  This should be 0
+if nothing extra is required or the format has no tail array.  The
+tail array field such as @samp{pW} holds the tail array size, as
+usual, and is followed by the extra space.
+
+@example
+(define vt-vt (make-vtable-vtable "pW" 20))
+(define my-vt-tail-start (1+ vtable-offset-user))
+(struct-set! vt-vt (+ 3 my-vt-tail-start) "data in tail")
+@end example
+
+The optional @var{print} argument is used by @code{display} and
+@code{write} (etc) to print the vtable-vtable and any vtables created
+from it.  It's called as @code{(@var{print} vtable port)} and should
+look at @var{vtable} and write to @var{port}.  The default is the
+usual structure print function, which just gives machine addresses.
+@end deffn
+
+@deffn {Scheme Procedure} make-struct-layout fields
+@deffnx {C Function} scm_make_struct_layout (fields)
+Return a structure layout symbol, from a @var{fields} string.
+@var{fields} is as described under @code{make-vtable}
+(@pxref{Vtables}).  An invalid @var{fields} string is an error.
+
+@example
+(make-struct-layout "prpW") @result{} prpW
+(make-struct-layout "blah") @result{} ERROR
+@end example
+@end deffn
+
+@defvr {Scheme Variable} vtable-offset-user
+@defvrx {C Macro} scm_vtable_offset_user
+The first field in a vtable which is available for application use.
+Such fields only exist when specified by @var{user-fields} in
+@code{make-vtable-vtable} above.
+@end defvr
+
+@sp 1
+Here's an extended vtable-vtable example, creating classes of
+``balls''.  Each class has a ``colour'', which is fixed.  Instances of
+those classes are created, and such each such ball has an ``owner'',
+which can be changed.
+
+@lisp
+(define ball-root (make-vtable-vtable "pr" 0))
+
+(define (make-ball-type ball-color)
+  (make-struct ball-root 0
+	       (make-struct-layout "pw")
+               (lambda (ball port)
+                 (format port "#<a ~A ball owned by ~A>"
+                         (color ball)
+                         (owner ball)))
+               ball-color))
+(define (color ball) (struct-ref (struct-vtable ball) vtable-offset-user))
+(define (owner ball) (struct-ref ball 0))
+
+(define red (make-ball-type 'red))
+(define green (make-ball-type 'green))
+
+(define (make-ball type owner) (make-struct type 0 owner))
+
+(define ball (make-ball green 'Nisse))
+ball @result{} #<a green ball owned by Nisse>
+@end lisp
+
+
+@node Dictionary Types
+@subsection Dictionary Types
+
+A @dfn{dictionary} object is a data structure used to index
+information in a user-defined way.  In standard Scheme, the main
+aggregate data types are lists and vectors.  Lists are not really
+indexed at all, and vectors are indexed only by number
+(e.g. @code{(vector-ref foo 5)}).  Often you will find it useful
+to index your data on some other type; for example, in a library
+catalog you might want to look up a book by the name of its
+author.  Dictionaries are used to help you organize information in
+such a way.
+
+An @dfn{association list} (or @dfn{alist} for short) is a list of
+key-value pairs.  Each pair represents a single quantity or
+object; the @code{car} of the pair is a key which is used to
+identify the object, and the @code{cdr} is the object's value.
+
+A @dfn{hash table} also permits you to index objects with
+arbitrary keys, but in a way that makes looking up any one object
+extremely fast.  A well-designed hash system makes hash table
+lookups almost as fast as conventional array or vector references.
+
+Alists are popular among Lisp programmers because they use only
+the language's primitive operations (lists, @dfn{car}, @dfn{cdr}
+and the equality primitives).  No changes to the language core are
+necessary.  Therefore, with Scheme's built-in list manipulation
+facilities, it is very convenient to handle data stored in an
+association list.  Also, alists are highly portable and can be
+easily implemented on even the most minimal Lisp systems.
+
+However, alists are inefficient, especially for storing large
+quantities of data.  Because we want Guile to be useful for large
+software systems as well as small ones, Guile provides a rich set
+of tools for using either association lists or hash tables.
+
+@node Association Lists
+@subsection Association Lists
+@tpindex Association Lists
+@tpindex Alist
+@cindex association List
+@cindex alist
+@cindex aatabase
+
+An association list is a conventional data structure that is often used
+to implement simple key-value databases.  It consists of a list of
+entries in which each entry is a pair.  The @dfn{key} of each entry is
+the @code{car} of the pair and the @dfn{value} of each entry is the
+@code{cdr}.
+
+@example
+ASSOCIATION LIST ::=  '( (KEY1 . VALUE1)
+                         (KEY2 . VALUE2)
+                         (KEY3 . VALUE3)
+                         @dots{}
+                       )
+@end example
+
+@noindent
+Association lists are also known, for short, as @dfn{alists}.
+
+The structure of an association list is just one example of the infinite
+number of possible structures that can be built using pairs and lists.
+As such, the keys and values in an association list can be manipulated
+using the general list structure procedures @code{cons}, @code{car},
+@code{cdr}, @code{set-car!}, @code{set-cdr!} and so on.  However,
+because association lists are so useful, Guile also provides specific
+procedures for manipulating them.
+
+@menu
+* Alist Key Equality::
+* Adding or Setting Alist Entries::
+* Retrieving Alist Entries::
+* Removing Alist Entries::
+* Sloppy Alist Functions::
+* Alist Example::
+@end menu
+
+@node Alist Key Equality
+@subsubsection Alist Key Equality
+
+All of Guile's dedicated association list procedures, apart from
+@code{acons}, come in three flavours, depending on the level of equality
+that is required to decide whether an existing key in the association
+list is the same as the key that the procedure call uses to identify the
+required entry.
+
+@itemize @bullet
+@item
+Procedures with @dfn{assq} in their name use @code{eq?} to determine key
+equality.
+
+@item
+Procedures with @dfn{assv} in their name use @code{eqv?} to determine
+key equality.
+
+@item
+Procedures with @dfn{assoc} in their name use @code{equal?} to
+determine key equality.
+@end itemize
+
+@code{acons} is an exception because it is used to build association
+lists which do not require their entries' keys to be unique.
+
+@node Adding or Setting Alist Entries
+@subsubsection Adding or Setting Alist Entries
+
+@code{acons} adds a new entry to an association list and returns the
+combined association list.  The combined alist is formed by consing the
+new entry onto the head of the alist specified in the @code{acons}
+procedure call.  So the specified alist is not modified, but its
+contents become shared with the tail of the combined alist that
+@code{acons} returns.
+
+In the most common usage of @code{acons}, a variable holding the
+original association list is updated with the combined alist:
+
+@example
+(set! address-list (acons name address address-list))
+@end example
+
+In such cases, it doesn't matter that the old and new values of
+@code{address-list} share some of their contents, since the old value is
+usually no longer independently accessible.
+
+Note that @code{acons} adds the specified new entry regardless of
+whether the alist may already contain entries with keys that are, in
+some sense, the same as that of the new entry.  Thus @code{acons} is
+ideal for building alists where there is no concept of key uniqueness.
+
+@example
+(set! task-list (acons 3 "pay gas bill" '()))
+task-list
+@result{}
+((3 . "pay gas bill"))
+
+(set! task-list (acons 3 "tidy bedroom" task-list))
+task-list
+@result{}
+((3 . "tidy bedroom") (3 . "pay gas bill"))
+@end example
+
+@code{assq-set!}, @code{assv-set!} and @code{assoc-set!} are used to add
+or replace an entry in an association list where there @emph{is} a
+concept of key uniqueness.  If the specified association list already
+contains an entry whose key is the same as that specified in the
+procedure call, the existing entry is replaced by the new one.
+Otherwise, the new entry is consed onto the head of the old association
+list to create the combined alist.  In all cases, these procedures
+return the combined alist.
+
+@code{assq-set!} and friends @emph{may} destructively modify the
+structure of the old association list in such a way that an existing
+variable is correctly updated without having to @code{set!} it to the
+value returned:
+
+@example
+address-list
+@result{}
+(("mary" . "34 Elm Road") ("james" . "16 Bow Street"))
+
+(assoc-set! address-list "james" "1a London Road")
+@result{}
+(("mary" . "34 Elm Road") ("james" . "1a London Road"))
+
+address-list
+@result{}
+(("mary" . "34 Elm Road") ("james" . "1a London Road"))
+@end example
+
+Or they may not:
+
+@example
+(assoc-set! address-list "bob" "11 Newington Avenue")
+@result{}
+(("bob" . "11 Newington Avenue") ("mary" . "34 Elm Road")
+ ("james" . "1a London Road"))
+
+address-list
+@result{}
+(("mary" . "34 Elm Road") ("james" . "1a London Road"))
+@end example
+
+The only safe way to update an association list variable when adding or
+replacing an entry like this is to @code{set!} the variable to the
+returned value:
+
+@example
+(set! address-list
+      (assoc-set! address-list "bob" "11 Newington Avenue"))
+address-list
+@result{}
+(("bob" . "11 Newington Avenue") ("mary" . "34 Elm Road")
+ ("james" . "1a London Road"))
+@end example
+
+Because of this slight inconvenience, you may find it more convenient to
+use hash tables to store dictionary data.  If your application will not
+be modifying the contents of an alist very often, this may not make much
+difference to you.
+
+If you need to keep the old value of an association list in a form
+independent from the list that results from modification by
+@code{acons}, @code{assq-set!}, @code{assv-set!} or @code{assoc-set!},
+use @code{list-copy} to copy the old association list before modifying
+it.
+
+@deffn {Scheme Procedure} acons key value alist
+@deffnx {C Function} scm_acons (key, value, alist)
+Add a new key-value pair to @var{alist}.  A new pair is
+created whose car is @var{key} and whose cdr is @var{value}, and the
+pair is consed onto @var{alist}, and the new list is returned.  This
+function is @emph{not} destructive; @var{alist} is not modified.
+@end deffn
+
+@deffn {Scheme Procedure} assq-set! alist key val
+@deffnx {Scheme Procedure} assv-set! alist key value
+@deffnx {Scheme Procedure} assoc-set! alist key value
+@deffnx {C Function} scm_assq_set_x (alist, key, val)
+@deffnx {C Function} scm_assv_set_x (alist, key, val)
+@deffnx {C Function} scm_assoc_set_x (alist, key, val)
+Reassociate @var{key} in @var{alist} with @var{value}: find any existing
+@var{alist} entry for @var{key} and associate it with the new
+@var{value}.  If @var{alist} does not contain an entry for @var{key},
+add a new one.  Return the (possibly new) alist.
+
+These functions do not attempt to verify the structure of @var{alist},
+and so may cause unusual results if passed an object that is not an
+association list.
+@end deffn
+
+@node Retrieving Alist Entries
+@subsubsection Retrieving Alist Entries
+@rnindex assq
+@rnindex assv
+@rnindex assoc
+
+@code{assq}, @code{assv} and @code{assoc} find the entry in an alist
+for a given key, and return the @code{(@var{key} . @var{value})} pair.
+@code{assq-ref}, @code{assv-ref} and @code{assoc-ref} do a similar
+lookup, but return just the @var{value}.
+
+@deffn {Scheme Procedure} assq key alist
+@deffnx {Scheme Procedure} assv key alist
+@deffnx {Scheme Procedure} assoc key alist
+@deffnx {C Function} scm_assq (key, alist)
+@deffnx {C Function} scm_assv (key, alist)
+@deffnx {C Function} scm_assoc (key, alist)
+Return the first entry in @var{alist} with the given @var{key}.  The
+return is the pair @code{(KEY . VALUE)} from @var{alist}.  If there's
+no matching entry the return is @code{#f}.
+
+@code{assq} compares keys with @code{eq?}, @code{assv} uses
+@code{eqv?} and @code{assoc} uses @code{equal?}.  See also SRFI-1
+which has an extended @code{assoc} (@ref{SRFI-1 Association Lists}).
+@end deffn
+
+@deffn {Scheme Procedure} assq-ref alist key
+@deffnx {Scheme Procedure} assv-ref alist key
+@deffnx {Scheme Procedure} assoc-ref alist key
+@deffnx {C Function} scm_assq_ref (alist, key)
+@deffnx {C Function} scm_assv_ref (alist, key)
+@deffnx {C Function} scm_assoc_ref (alist, key)
+Return the value from the first entry in @var{alist} with the given
+@var{key}, or @code{#f} if there's no such entry.
+
+@code{assq-ref} compares keys with @code{eq?}, @code{assv-ref} uses
+@code{eqv?} and @code{assoc-ref} uses @code{equal?}.
+
+Notice these functions have the @var{key} argument last, like other
+@code{-ref} functions, but this is opposite to what what @code{assq}
+etc above use.
+
+When the return is @code{#f} it can be either @var{key} not found, or
+an entry which happens to have value @code{#f} in the @code{cdr}.  Use
+@code{assq} etc above if you need to differentiate these cases.
+@end deffn
+
+
+@node Removing Alist Entries
+@subsubsection Removing Alist Entries
+
+To remove the element from an association list whose key matches a
+specified key, use @code{assq-remove!}, @code{assv-remove!} or
+@code{assoc-remove!} (depending, as usual, on the level of equality
+required between the key that you specify and the keys in the
+association list).
+
+As with @code{assq-set!} and friends, the specified alist may or may not
+be modified destructively, and the only safe way to update a variable
+containing the alist is to @code{set!} it to the value that
+@code{assq-remove!} and friends return.
+
+@example
+address-list
+@result{}
+(("bob" . "11 Newington Avenue") ("mary" . "34 Elm Road")
+ ("james" . "1a London Road"))
+
+(set! address-list (assoc-remove! address-list "mary"))
+address-list
+@result{}
+(("bob" . "11 Newington Avenue") ("james" . "1a London Road"))
+@end example
+
+Note that, when @code{assq/v/oc-remove!} is used to modify an
+association list that has been constructed only using the corresponding
+@code{assq/v/oc-set!}, there can be at most one matching entry in the
+alist, so the question of multiple entries being removed in one go does
+not arise.  If @code{assq/v/oc-remove!} is applied to an association
+list that has been constructed using @code{acons}, or an
+@code{assq/v/oc-set!} with a different level of equality, or any mixture
+of these, it removes only the first matching entry from the alist, even
+if the alist might contain further matching entries.  For example:
+
+@example
+(define address-list '())
+(set! address-list (assq-set! address-list "mary" "11 Elm Street"))
+(set! address-list (assq-set! address-list "mary" "57 Pine Drive"))
+address-list
+@result{}
+(("mary" . "57 Pine Drive") ("mary" . "11 Elm Street"))
+
+(set! address-list (assoc-remove! address-list "mary"))
+address-list
+@result{}
+(("mary" . "11 Elm Street"))
+@end example
+
+In this example, the two instances of the string "mary" are not the same
+when compared using @code{eq?}, so the two @code{assq-set!} calls add
+two distinct entries to @code{address-list}.  When compared using
+@code{equal?}, both "mary"s in @code{address-list} are the same as the
+"mary" in the @code{assoc-remove!} call, but @code{assoc-remove!} stops
+after removing the first matching entry that it finds, and so one of the
+"mary" entries is left in place.
+
+@deffn {Scheme Procedure} assq-remove! alist key
+@deffnx {Scheme Procedure} assv-remove! alist key
+@deffnx {Scheme Procedure} assoc-remove! alist key
+@deffnx {C Function} scm_assq_remove_x (alist, key)
+@deffnx {C Function} scm_assv_remove_x (alist, key)
+@deffnx {C Function} scm_assoc_remove_x (alist, key)
+Delete the first entry in @var{alist} associated with @var{key}, and return
+the resulting alist.
+@end deffn
+
+@node Sloppy Alist Functions
+@subsubsection Sloppy Alist Functions
+
+@code{sloppy-assq}, @code{sloppy-assv} and @code{sloppy-assoc} behave
+like the corresponding non-@code{sloppy-} procedures, except that they
+return @code{#f} when the specified association list is not well-formed,
+where the non-@code{sloppy-} versions would signal an error.
+
+Specifically, there are two conditions for which the non-@code{sloppy-}
+procedures signal an error, which the @code{sloppy-} procedures handle
+instead by returning @code{#f}.  Firstly, if the specified alist as a
+whole is not a proper list:
+
+@example
+(assoc "mary" '((1 . 2) ("key" . "door") . "open sesame"))
+@result{}
+ERROR: In procedure assoc in expression (assoc "mary" (quote #)):
+ERROR: Wrong type argument in position 2 (expecting association list): ((1 . 2) ("key" . "door") . "open sesame")
+
+(sloppy-assoc "mary" '((1 . 2) ("key" . "door") . "open sesame"))
+@result{}
+#f
+@end example
+
+@noindent
+Secondly, if one of the entries in the specified alist is not a pair:
+
+@example
+(assoc 2 '((1 . 1) 2 (3 . 9)))
+@result{}
+ERROR: In procedure assoc in expression (assoc 2 (quote #)):
+ERROR: Wrong type argument in position 2 (expecting association list): ((1 . 1) 2 (3 . 9))
+
+(sloppy-assoc 2 '((1 . 1) 2 (3 . 9)))
+@result{}
+#f
+@end example
+
+Unless you are explicitly working with badly formed association lists,
+it is much safer to use the non-@code{sloppy-} procedures, because they
+help to highlight coding and data errors that the @code{sloppy-}
+versions would silently cover up.
+
+@deffn {Scheme Procedure} sloppy-assq key alist
+@deffnx {C Function} scm_sloppy_assq (key, alist)
+Behaves like @code{assq} but does not do any error checking.
+Recommended only for use in Guile internals.
+@end deffn
+
+@deffn {Scheme Procedure} sloppy-assv key alist
+@deffnx {C Function} scm_sloppy_assv (key, alist)
+Behaves like @code{assv} but does not do any error checking.
+Recommended only for use in Guile internals.
+@end deffn
+
+@deffn {Scheme Procedure} sloppy-assoc key alist
+@deffnx {C Function} scm_sloppy_assoc (key, alist)
+Behaves like @code{assoc} but does not do any error checking.
+Recommended only for use in Guile internals.
+@end deffn
+
+@node Alist Example
+@subsubsection Alist Example
+
+Here is a longer example of how alists may be used in practice.
+
+@lisp
+(define capitals '(("New York" . "Albany")
+                   ("Oregon"   . "Salem")
+                   ("Florida"  . "Miami")))
+
+;; What's the capital of Oregon?
+(assoc "Oregon" capitals)       @result{} ("Oregon" . "Salem")
+(assoc-ref capitals "Oregon")   @result{} "Salem"
+
+;; We left out South Dakota.
+(set! capitals
+      (assoc-set! capitals "South Dakota" "Pierre"))
+capitals
+@result{} (("South Dakota" . "Pierre")
+    ("New York" . "Albany")
+    ("Oregon" . "Salem")
+    ("Florida" . "Miami"))
+
+;; And we got Florida wrong.
+(set! capitals
+      (assoc-set! capitals "Florida" "Tallahassee"))
+capitals
+@result{} (("South Dakota" . "Pierre")
+    ("New York" . "Albany")
+    ("Oregon" . "Salem")
+    ("Florida" . "Tallahassee"))
+
+;; After Oregon secedes, we can remove it.
+(set! capitals
+      (assoc-remove! capitals "Oregon"))
+capitals
+@result{} (("South Dakota" . "Pierre")
+    ("New York" . "Albany")
+    ("Florida" . "Tallahassee"))
+@end lisp
+
+@node Hash Tables
+@subsection Hash Tables
+@tpindex Hash Tables
+
+Hash tables are dictionaries which offer similar functionality as
+association lists: They provide a mapping from keys to values.  The
+difference is that association lists need time linear in the size of
+elements when searching for entries, whereas hash tables can normally
+search in constant time.  The drawback is that hash tables require a
+little bit more memory, and that you can not use the normal list
+procedures (@pxref{Lists}) for working with them.
+
+Guile provides two types of hashtables.  One is an abstract data type
+that can only be manipulated with the functions in this section.  The
+other type is concrete: it uses a normal vector with alists as
+elements.  The advantage of the abstract hash tables is that they will
+be automatically resized when they become too full or too empty.
+
+@menu
+* Hash Table Examples::         Demonstration of hash table usage.
+* Hash Table Reference::        Hash table procedure descriptions.
+@end menu
+
+
+@node Hash Table Examples
+@subsubsection Hash Table Examples
+
+For demonstration purposes, this section gives a few usage examples of
+some hash table procedures, together with some explanation what they do.
+
+First we start by creating a new hash table with 31 slots, and
+populate it with two key/value pairs.
+
+@lisp
+(define h (make-hash-table 31))
+
+;; This is an opaque object
+h
+@result{}
+#<hash-table 0/31>
+
+;; We can also use a vector of alists.
+(define h (make-vector 7 '()))
+
+h
+@result{}
+#(() () () () () () ())
+
+;; Inserting into a hash table can be done with hashq-set!
+(hashq-set! h 'foo "bar")
+@result{}
+"bar"
+
+(hashq-set! h 'braz "zonk")
+@result{}
+"zonk"
+
+;; Or with hash-create-handle!
+(hashq-create-handle! h 'frob #f)
+@result{}
+(frob . #f)
+
+;; The vector now contains three elements in the alists and the frob
+;; entry is at index (hashq 'frob).
+h
+@result{}
+#(() () () () ((frob . #f) (braz . "zonk")) () ((foo . "bar")))
+
+(hashq 'frob)
+@result{}
+4
+
+@end lisp
+
+You can get the value for a given key with the procedure
+@code{hashq-ref}, but the problem with this procedure is that you
+cannot reliably determine whether a key does exists in the table.  The
+reason is that the procedure returns @code{#f} if the key is not in
+the table, but it will return the same value if the key is in the
+table and just happens to have the value @code{#f}, as you can see in
+the following examples.
+
+@lisp
+(hashq-ref h 'foo)
+@result{}
+"bar"
+
+(hashq-ref h 'frob)
+@result{}
+#f
+
+(hashq-ref h 'not-there)
+@result{}
+#f
+@end lisp
+
+Better is to use the procedure @code{hashq-get-handle}, which makes a
+distinction between the two cases.  Just like @code{assq}, this
+procedure returns a key/value-pair on success, and @code{#f} if the
+key is not found.
+
+@lisp
+(hashq-get-handle h 'foo)
+@result{}
+(foo . "bar")
+
+(hashq-get-handle h 'not-there)
+@result{}
+#f
+@end lisp
+
+There is no procedure for calculating the number of key/value-pairs in
+a hash table, but @code{hash-fold} can be used for doing exactly that.
+
+@lisp
+(hash-fold (lambda (key value seed) (+ 1 seed)) 0 h)
+@result{}
+3
+@end lisp
+
+@node Hash Table Reference
+@subsubsection Hash Table Reference
+
+@c  FIXME: Describe in broad terms what happens for resizing, and what
+@c  the initial size means for this.
+
+Like the association list functions, the hash table functions come in
+several varieties, according to the equality test used for the keys.
+Plain @code{hash-} functions use @code{equal?}, @code{hashq-}
+functions use @code{eq?}, @code{hashv-} functions use @code{eqv?}, and
+the @code{hashx-} functions use an application supplied test.
+
+A single @code{make-hash-table} creates a hash table suitable for use
+with any set of functions, but it's imperative that just one set is
+then used consistently, or results will be unpredictable.
+
+Hash tables are implemented as a vector indexed by a hash value formed
+from the key, with an association list of key/value pairs for each
+bucket in case distinct keys hash together.  Direct access to the
+pairs in those lists is provided by the @code{-handle-} functions.
+The abstract kind of hash tables hide the vector in an opaque object
+that represents the hash table, while for the concrete kind the vector
+@emph{is} the hashtable.
+
+When the number of table entries in an abstract hash table goes above
+a threshold, the vector is made larger and the entries are rehashed,
+to prevent the bucket lists from becoming too long and slowing down
+accesses.  When the number of entries goes below a threshold, the
+vector is shrunk to save space.
+
+A abstract hash table is created with @code{make-hash-table}.  To
+create a vector that is suitable as a hash table, use
+@code{(make-vector @var{size} '())}, for example.
+
+For the @code{hashx-} ``extended'' routines, an application supplies a
+@var{hash} function producing an integer index like @code{hashq} etc
+below, and an @var{assoc} alist search function like @code{assq} etc
+(@pxref{Retrieving Alist Entries}).  Here's an example of such
+functions implementing case-insensitive hashing of string keys,
+
+@example
+(use-modules (srfi srfi-1)
+             (srfi srfi-13))
+
+(define (my-hash str size)
+  (remainder (string-hash-ci str) size))
+(define (my-assoc str alist)
+  (find (lambda (pair) (string-ci=? str (car pair))) alist))
+
+(define my-table (make-hash-table))
+(hashx-set! my-hash my-assoc my-table "foo" 123)
+
+(hashx-ref my-hash my-assoc my-table "FOO")
+@result{} 123
+@end example
+
+In a @code{hashx-} @var{hash} function the aim is to spread keys
+across the vector, so bucket lists don't become long.  But the actual
+values are arbitrary as long as they're in the range 0 to
+@math{@var{size}-1}.  Helpful functions for forming a hash value, in
+addition to @code{hashq} etc below, include @code{symbol-hash}
+(@pxref{Symbol Keys}), @code{string-hash} and @code{string-hash-ci}
+(@pxref{String Comparison}), and @code{char-set-hash}
+(@pxref{Character Set Predicates/Comparison}).
+
+@sp 1
+@deffn {Scheme Procedure} make-hash-table [size]
+Create a new abstract hash table object, with an optional minimum
+vector @var{size}.
+
+When @var{size} is given, the table vector will still grow and shrink
+automatically, as described above, but with @var{size} as a minimum.
+If an application knows roughly how many entries the table will hold
+then it can use @var{size} to avoid rehashing when initial entries are
+added.
+@end deffn
+
+@deffn {Scheme Procedure} hash-table? obj
+@deffnx {C Function} scm_hash_table_p (obj)
+Return @code{#t} if @var{obj} is a abstract hash table object.
+@end deffn
+
+@deffn {Scheme Procedure} hash-clear! table
+@deffnx {C Function} scm_hash_clear_x (table)
+Remove all items from @var{table} (without triggering a resize).
+@end deffn
+
+@deffn {Scheme Procedure} hash-ref table key [dflt]
+@deffnx {Scheme Procedure} hashq-ref table key [dflt]
+@deffnx {Scheme Procedure} hashv-ref table key [dflt]
+@deffnx {Scheme Procedure} hashx-ref hash assoc table key [dflt]
+@deffnx {C Function} scm_hash_ref (table, key, dflt)
+@deffnx {C Function} scm_hashq_ref (table, key, dflt)
+@deffnx {C Function} scm_hashv_ref (table, key, dflt)
+@deffnx {C Function} scm_hashx_ref (hash, assoc, table, key, dflt)
+Lookup @var{key} in the given hash @var{table}, and return the
+associated value.  If @var{key} is not found, return @var{dflt}, or
+@code{#f} if @var{dflt} is not given.
+@end deffn
+
+@deffn {Scheme Procedure} hash-set! table key val
+@deffnx {Scheme Procedure} hashq-set! table key val
+@deffnx {Scheme Procedure} hashv-set! table key val
+@deffnx {Scheme Procedure} hashx-set! hash assoc table key val
+@deffnx {C Function} scm_hash_set_x (table, key, val)
+@deffnx {C Function} scm_hashq_set_x (table, key, val)
+@deffnx {C Function} scm_hashv_set_x (table, key, val)
+@deffnx {C Function} scm_hashx_set_x (hash, assoc, table, key, val)
+Associate @var{val} with @var{key} in the given hash @var{table}.  If
+@var{key} is already present then it's associated value is changed.
+If it's not present then a new entry is created.
+@end deffn
+
+@deffn {Scheme Procedure} hash-remove! table key
+@deffnx {Scheme Procedure} hashq-remove! table key
+@deffnx {Scheme Procedure} hashv-remove! table key
+@deffnx {Scheme Procedure} hashx-remove! hash assoc table key
+@deffnx {C Function} scm_hash_remove_x (table, key)
+@deffnx {C Function} scm_hashq_remove_x (table, key)
+@deffnx {C Function} scm_hashv_remove_x (table, key)
+@deffnx {C Function} scm_hashx_remove_x (hash, assoc, table, key)
+Remove any association for @var{key} in the given hash @var{table}.
+If @var{key} is not in @var{table} then nothing is done.
+@end deffn
+
+@deffn {Scheme Procedure} hash key size
+@deffnx {Scheme Procedure} hashq key size
+@deffnx {Scheme Procedure} hashv key size
+@deffnx {C Function} scm_hash (key, size)
+@deffnx {C Function} scm_hashq (key, size)
+@deffnx {C Function} scm_hashv (key, size)
+Return a hash value for @var{key}.  This is a number in the range
+@math{0} to @math{@var{size}-1}, which is suitable for use in a hash
+table of the given @var{size}.
+
+Note that @code{hashq} and @code{hashv} may use internal addresses of
+objects, so if an object is garbage collected and re-created it can
+have a different hash value, even when the two are notionally
+@code{eq?}.  For instance with symbols,
+
+@example
+(hashq 'something 123)   @result{} 19
+(gc)
+(hashq 'something 123)   @result{} 62
+@end example
+
+In normal use this is not a problem, since an object entered into a
+hash table won't be garbage collected until removed.  It's only if
+hashing calculations are somehow separated from normal references that
+its lifetime needs to be considered.
+@end deffn
+
+@deffn {Scheme Procedure} hash-get-handle table key
+@deffnx {Scheme Procedure} hashq-get-handle table key
+@deffnx {Scheme Procedure} hashv-get-handle table key
+@deffnx {Scheme Procedure} hashx-get-handle hash assoc table key
+@deffnx {C Function} scm_hash_get_handle (table, key)
+@deffnx {C Function} scm_hashq_get_handle (table, key)
+@deffnx {C Function} scm_hashv_get_handle (table, key)
+@deffnx {C Function} scm_hashx_get_handle (hash, assoc, table, key)
+Return the @code{(@var{key} . @var{value})} pair for @var{key} in the
+given hash @var{table}, or @code{#f} if @var{key} is not in
+@var{table}.
+@end deffn
+
+@deffn {Scheme Procedure} hash-create-handle! table key init
+@deffnx {Scheme Procedure} hashq-create-handle! table key init
+@deffnx {Scheme Procedure} hashv-create-handle! table key init
+@deffnx {Scheme Procedure} hashx-create-handle! hash assoc table key init
+@deffnx {C Function} scm_hash_create_handle_x (table, key, init)
+@deffnx {C Function} scm_hashq_create_handle_x (table, key, init)
+@deffnx {C Function} scm_hashv_create_handle_x (table, key, init)
+@deffnx {C Function} scm_hashx_create_handle_x (hash, assoc, table, key, init)
+Return the @code{(@var{key} . @var{value})} pair for @var{key} in the
+given hash @var{table}.  If @var{key} is not in @var{table} then
+create an entry for it with @var{init} as the value, and return that
+pair.
+@end deffn
+
+@deffn {Scheme Procedure} hash-map->list proc table
+@deffnx {Scheme Procedure} hash-for-each proc table
+@deffnx {C Function} scm_hash_map_to_list (proc, table)
+@deffnx {C Function} scm_hash_for_each (proc, table)
+Apply @var{proc} to the entries in the given hash @var{table}.  Each
+call is @code{(@var{proc} @var{key} @var{value})}.  @code{hash-map->list}
+returns a list of the results from these calls, @code{hash-for-each}
+discards the results and returns an unspecified value.
+
+Calls are made over the table entries in an unspecified order, and for
+@code{hash-map->list} the order of the values in the returned list is
+unspecified.  Results will be unpredictable if @var{table} is modified
+while iterating.
+
+For example the following returns a new alist comprising all the
+entries from @code{mytable}, in no particular order.
+
+@example
+(hash-map->list cons mytable)
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} hash-for-each-handle proc table
+@deffnx {C Function} scm_hash_for_each_handle (proc, table)
+Apply @var{proc} to the entries in the given hash @var{table}.  Each
+call is @code{(@var{proc} @var{handle})}, where @var{handle} is a
+@code{(@var{key} . @var{value})} pair. Return an unspecified value.
+
+@code{hash-for-each-handle} differs from @code{hash-for-each} only in
+the argument list of @var{proc}.
+@end deffn
+
+@deffn {Scheme Procedure} hash-fold proc init table
+@deffnx {C Function} scm_hash_fold (proc, init, table)
+Accumulate a result by applying @var{proc} to the elements of the
+given hash @var{table}.  Each call is @code{(@var{proc} @var{key}
+@var{value} @var{prior-result})}, where @var{key} and @var{value} are
+from the @var{table} and @var{prior-result} is the return from the
+previous @var{proc} call.  For the first call, @var{prior-result} is
+the given @var{init} value.
+
+Calls are made over the table entries in an unspecified order.
+Results will be unpredictable if @var{table} is modified while
+@code{hash-fold} is running.
+
+For example, the following returns a count of how many keys in
+@code{mytable} are strings.
+
+@example
+(hash-fold (lambda (key value prior)
+             (if (string? key) (1+ prior) prior))
+           0 mytable)
+@end example
+@end deffn
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

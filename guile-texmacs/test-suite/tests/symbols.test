@@ -1,0 +1,90 @@
+;;;; symbols.test --- test suite for Guile's symbols    -*- scheme -*-
+;;;;
+;;;; Copyright (C) 2001, 2006, 2008 Free Software Foundation, Inc.
+;;;; 
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;; 
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-symbols)
+  #:use-module (test-suite lib)
+  #:use-module (ice-9 documentation))
+
+
+;;;
+;;; miscellaneous
+;;;
+
+(define exception:immutable-string
+  (cons 'misc-error "^string is read-only"))
+
+(define (documented? object)
+  (not (not (object-documentation object))))
+
+
+;;;
+;;; symbol?
+;;;
+
+(with-test-prefix "symbol?"
+
+  (pass-if "documented?"
+    (documented? symbol?))
+
+  (pass-if "string"
+    (not (symbol? "foo")))
+
+  (pass-if "symbol"
+    (symbol? 'foo)))
+
+
+;;;
+;;; symbol->string
+;;;
+
+(with-test-prefix "symbol->string"
+
+  (pass-if-exception "result is an immutable string"
+    exception:immutable-string
+    (string-set! (symbol->string 'abc) 1 #\space)))
+
+
+;;;
+;;; gensym
+;;;
+
+(with-test-prefix "gensym"
+
+  (pass-if "documented?"
+    (documented? gensym))
+
+  (pass-if "produces a symbol"
+    (symbol? (gensym)))
+
+  (pass-if "produces a fresh symbol"
+    (not (eq? (gensym) (gensym))))
+
+  (pass-if "accepts a string prefix"
+    (symbol? (gensym "foo")))
+
+  (pass-if-exception "does not accept a symbol prefix"
+    exception:wrong-type-arg
+    (gensym 'foo))
+
+  (pass-if "accepts long prefices"
+    (symbol? (gensym (make-string 4000 #\!))))
+
+  (pass-if "accepts embedded NULs"
+    (> (string-length (symbol->string (gensym "foo\0bar\0braz\0foo\0bar\0braz\0foo\0bar\0braz\0foo\0bar\0braz\0foo\0bar\0braz\0foo\0bar\0braz\0"))) 6)))
+

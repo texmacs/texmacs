@@ -1,0 +1,128 @@
+;;;; load.test --- test LOAD and path searching functions  -*- scheme -*-
+;;;; Jim Blandy <jimb@red-bean.com> --- September 1999
+;;;;
+;;;; 	Copyright (C) 1999, 2001, 2006 Free Software Foundation, Inc.
+;;;; 
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;; 
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-load)
+  :use-module (test-suite lib)
+  :use-module (test-suite guile-test))
+
+(define temp-dir (data-file-name "load-test.dir"))
+
+(define (create-tree parent tree)
+  (let loop ((parent parent)
+	     (tree tree))
+    (if (pair? tree)
+	(let ((elt (car tree)))
+	  (cond
+
+	   ;; A string means to create an empty file with that name.
+	   ((string? elt)
+	    (close-port (open-file (string-append parent "/" elt) "w")))
+
+	   ;; A list means to create a directory, and then create files
+	   ;; within it.
+	   ((pair? elt)
+	    (let ((dirname (string-append parent "/" (car elt))))
+	      (mkdir dirname)
+	      (loop dirname (cdr elt))))
+
+	   (else
+	    (error "create-tree: bad tree structure")))
+
+	  (loop parent (cdr tree))))))
+
+(define (delete-tree tree)
+  (cond
+   ((file-is-directory? tree)
+    (let ((dir (opendir tree)))
+      (let loop ()
+	(let ((entry (readdir dir)))
+	  (cond
+	   ((member entry '("." ".."))
+	    (loop))
+	   ((not (eof-object? entry))
+	    (let ((name (string-append tree "/" entry)))
+	      (delete-tree name)
+	      (loop))))))
+      (closedir dir)
+      (rmdir tree)))
+   ((file-exists? tree)
+    (delete-file tree))
+   (else
+    (error "delete-tree: can't delete " tree))))
+
+(define (try-search-with-extensions path input extensions expected)
+  (let ((test-name (call-with-output-string
+		    (lambda (port)
+		      (display "search-path for " port)
+		      (write input port)
+		      (if (pair? extensions)
+			  (begin
+			    (display " with extensions " port)
+			    (write extensions port)))
+		      (display " yields " port)
+		      (write expected port)))))
+    (let ((result (search-path path input extensions)))
+      (pass-if test-name
+	       (equal? (if (string? expected)
+			   (string-append temp-dir "/" expected)
+			   expected)
+		       result)))))
+
+(define (try-search path input expected)
+  (try-search-with-extensions path input '() expected))
+
+;; Create a bunch of files for use in testing.
+(mkdir temp-dir)
+(create-tree temp-dir
+	     '(("dir1" "foo.scm" "bar.scm" "ugly.scm.scm"
+		("subdir1"))
+	       ("dir2" "foo.scm" "baz.scm" "baz.ss" "ugly.scm.ss")
+	       ("dir3" "ugly.scm" "ugly.ss.scm")))
+
+;; Try some searches without extensions.
+(define path (list
+	      (string-append temp-dir "/dir1")
+	      (string-append temp-dir "/dir2")
+	      (string-append temp-dir "/dir3")))
+
+(try-search path "foo.scm"  "dir1/foo.scm")
+(try-search path "bar.scm"  "dir1/bar.scm")
+(try-search path "baz.scm"  "dir2/baz.scm")
+(try-search path "baz.ss"   "dir2/baz.ss")
+(try-search path "ugly.scm" "dir3/ugly.scm")
+(try-search path "subdir1"  #f)
+
+(define extensions '(".ss" ".scm" ""))
+(try-search-with-extensions path "foo" 	    extensions "dir1/foo.scm")
+(try-search-with-extensions path "bar" 	    extensions "dir1/bar.scm")
+(try-search-with-extensions path "baz" 	    extensions "dir2/baz.ss")
+(try-search-with-extensions path "ugly.scm" extensions "dir3/ugly.scm")
+(try-search-with-extensions path "ugly.ss"  extensions #f)
+
+(if (defined? '%nil)
+    ;; Check that search-path accepts Elisp nil-terminated lists for
+    ;; PATH and EXTENSIONS.
+    (with-test-prefix "elisp-nil"
+      (set-cdr! (last-pair path) %nil)
+      (set-cdr! (last-pair extensions) %nil)
+      (try-search-with-extensions path "ugly.scm" extensions "dir3/ugly.scm")
+      (try-search-with-extensions path "ugly.ss"  extensions #f)))
+      
+(delete-tree temp-dir)

@@ -1,0 +1,35 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Further Reading
+@section Further Reading
+
+@itemize @bullet
+
+@item
+The website @url{http://www.schemers.org} is a good starting point for
+all things Scheme.
+
+@item
+Dorai Sitaram's online Scheme tutorial, @dfn{Teach Yourself Scheme in
+Fixnum Days}, at
+@url{http://www.ccs.neu.edu/home/dorai/t-y-scheme/t-y-scheme.html}.
+Includes a nice explanation of continuations.
+
+@item
+The complete text of @dfn{Structure and Interpretation of Computer
+Programs}, the classic introduction to computer science and Scheme by
+Hal Abelson, Jerry Sussman and Julie Sussman, is now available online at
+@url{http://mitpress.mit.edu/sicp/sicp.html}.  This site also provides
+teaching materials related to the book, and all the source code used in
+the book, in a form suitable for loading and running.
+@end itemize
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

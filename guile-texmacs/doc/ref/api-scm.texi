@@ -1,0 +1,45 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+
+@node The SCM Type
+@section The SCM Type
+
+Guile represents all Scheme values with the single C type @code{SCM}.
+For an introduction to this topic, @xref{Dynamic Types}.
+
+@deftp {C Type} SCM
+@code{SCM} is the user level abstract C type that is used to represent
+all of Guile's Scheme objects, no matter what the Scheme object type is.
+No C operation except assignment is guaranteed to work with variables of
+type @code{SCM}, so you should only use macros and functions to work
+with @code{SCM} values.  Values are converted between C data types and
+the @code{SCM} type with utility functions and macros.
+@end deftp
+@cindex SCM data type
+
+@deftp {C Type} scm_t_bits
+@code{scm_t_bits} is an unsigned integral data type that is guaranteed
+to be large enough to hold all information that is required to
+represent any Scheme object.  While this data type is mostly used to
+implement Guile's internals, the use of this type is also necessary to
+write certain kinds of extensions to Guile.
+@end deftp
+
+@deftp {C Type} scm_t_signed_bits
+This is a signed integral type of the same size as @code{scm_t_bits}.
+@end deftp
+
+@deftypefn {C Macro} scm_t_bits SCM_UNPACK (SCM @var{x})
+Transforms the @code{SCM} value @var{x} into its representation as an
+integral type.  Only after applying @code{SCM_UNPACK} it is possible to
+access the bits and contents of the @code{SCM} value.
+@end deftypefn
+
+@deftypefn {C Macro} SCM SCM_PACK (scm_t_bits @var{x})
+Takes a valid integral representation of a Scheme object and transforms
+it into its representation as a @code{SCM} value.
+@end deftypefn

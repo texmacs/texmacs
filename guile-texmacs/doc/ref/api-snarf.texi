@@ -1,0 +1,143 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+
+@node Snarfing Macros
+@section Snarfing Macros
+@cindex guile-snarf recognized macros
+@cindex guile-snarf deprecated macros
+
+The following macros do two different things: when compiled normally,
+they expand in one way; when processed during snarfing, they cause the
+@code{guile-snarf} program to pick up some initialization code,
+@xref{Function Snarfing}.
+
+The descriptions below use the term `normally' to refer to the case
+when the code is compiled normally, and `while snarfing' when the code
+is processed by @code{guile-snarf}.
+
+@deffn {C Macro} SCM_SNARF_INIT (code)
+
+Normally, @code{SCM_SNARF_INIT} expands to nothing; while snarfing, it
+causes @var{code} to be included in the initialization action file,
+followed by a semicolon.
+
+This is the fundamental macro for snarfing initialization actions.
+The more specialized macros below use it internally.
+@end deffn
+
+
+@deffn {C Macro} SCM_DEFINE (c_name, scheme_name, req, opt, var, arglist, docstring)
+
+Normally, this macro expands into
+
+@smallexample
+static const char s_@var{c_name}[] = @var{scheme_name};
+SCM
+@var{c_name} @var{arglist}
+@end smallexample
+
+While snarfing, it causes
+
+@smallexample
+scm_c_define_gsubr (s_@var{c_name}, @var{req}, @var{opt}, @var{var},
+                    @var{c_name});
+@end smallexample
+
+to be added to the initialization actions.  Thus, you can use it to
+declare a C function named @var{c_name} that will be made available to
+Scheme with the name @var{scheme_name}.
+
+Note that the @var{arglist} argument must have parentheses around it.
+@end deffn
+
+@deffn {C Macro} SCM_SYMBOL (c_name, scheme_name)
+@deffnx {C Macro} SCM_GLOBAL_SYMBOL (c_name, scheme_name)
+Normally, these macros expand into
+
+@smallexample
+static SCM @var{c_name}
+@end smallexample
+
+or
+
+@smallexample
+SCM @var{c_name}
+@end smallexample
+
+respectively.  While snarfing, they both expand into the
+initialization code
+
+@smallexample
+@var{c_name} = scm_permanent_object (scm_from_locale_symbol (@var{scheme_name}));
+@end smallexample
+
+Thus, you can use them declare a static or global variable of type
+@code{SCM} that will be initialized to the symbol named
+@var{scheme_name}.
+@end deffn
+
+@deffn {C Macro} SCM_KEYWORD (c_name, scheme_name)
+@deffnx {C Macro} SCM_GLOBAL_KEYWORD (c_name, scheme_name)
+Normally, these macros expand into
+
+@smallexample
+static SCM @var{c_name}
+@end smallexample
+
+or
+
+@smallexample
+SCM @var{c_name}
+@end smallexample
+
+respectively.  While snarfing, they both expand into the
+initialization code
+
+@smallexample
+@var{c_name} = scm_permanent_object (scm_c_make_keyword (@var{scheme_name}));
+@end smallexample
+
+Thus, you can use them declare a static or global variable of type
+@code{SCM} that will be initialized to the keyword named
+@var{scheme_name}.
+@end deffn
+
+@deffn {C Macro} SCM_VARIABLE (c_name, scheme_name)
+@deffnx {C Macro} SCM_GLOBAL_VARIABLE (c_name, scheme_name)
+These macros are equivalent to @code{SCM_VARIABLE_INIT} and
+@code{SCM_GLOBAL_VARIABLE_INIT}, respectively, with a @var{value} of
+@code{SCM_BOOL_F}.
+@end deffn
+
+@deffn {C Macro} SCM_VARIABLE_INIT (c_name, scheme_name, value)
+@deffnx {C Macro} SCM_GLOBAL_VARIABLE_INIT (c_name, scheme_name, value)
+
+Normally, these macros expand into
+
+@smallexample
+static SCM @var{c_name}
+@end smallexample
+
+or
+
+@smallexample
+SCM @var{c_name}
+@end smallexample
+
+respectively.  While snarfing, they both expand into the
+initialization code
+
+@smallexample
+@var{c_name} = scm_permanent_object (scm_c_define (@var{scheme_name}, @var{value}));
+@end smallexample
+
+Thus, you can use them declare a static or global C variable of type
+@code{SCM} that will be initialized to the object representing the
+Scheme variable named @var{scheme_name} in the current module.  The
+variable will be defined when it doesn't already exist.  It is always
+set to @var{value}.
+@end deffn

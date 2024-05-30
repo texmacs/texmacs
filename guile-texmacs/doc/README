@@ -1,0 +1,33 @@
+This directory contains documentation on the Guile core.         -*-text-*-
+
+The documentation consists of the following manuals.
+
+- The Guile Tutorial (guile-tut.texi) contains a tutorial introduction
+  to using Guile.
+
+- The Guile Reference Manual (guile.texi) contains (or is intended to
+  contain) reference documentation on all aspects of Guile.
+
+- The GOOPS Manual (goops.texi) contains both tutorial-style and
+  reference documentation for using GOOPS, Guile's Object Oriented
+  Programming System.
+
+- The Revised^5 Report on the Algorithmic Language Scheme (r5rs.texi).
+
+Please be aware that this is all very much work in progress (apart
+from the Revised^5 Report).  Bug reports and contributions are
+welcome!
+
+The file `oldfmt.c' contains a function which can be used by
+application writers to support both old-style and new-style error
+format strings.
+
+The `sources' directory includes some stuff relevant to the Guile
+reference manual, and which may eventually be folded in to it.  It's
+not immediately relevant, however, which is why it's not in this
+directory.
+
+The Revised^4 Report (r4rs.texi) is no longer in this distribution, as
+it is completely superseded by the Revised^5 Report.  If you need to
+consult R4RS, it is still widely available, for example at
+http://www-swiss.ai.mit.edu/projects/info/SchemeDocs/r4rs/.

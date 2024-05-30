@@ -1,0 +1,618 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004, 2005
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node General Libguile Concepts
+@section General concepts for using libguile
+
+When you want to embed the Guile Scheme interpreter into your program or
+library, you need to link it against the @file{libguile} library
+(@pxref{Linking Programs With Guile}).  Once you have done this, your C
+code has access to a number of data types and functions that can be used
+to invoke the interpreter, or make new functions that you have written
+in C available to be called from Scheme code, among other things.
+
+Scheme is different from C in a number of significant ways, and Guile
+tries to make the advantages of Scheme available to C as well.  Thus, in
+addition to a Scheme interpreter, libguile also offers dynamic types,
+garbage collection, continuations, arithmetic on arbitrary sized
+numbers, and other things.
+
+The two fundamental concepts are dynamic types and garbage collection.
+You need to understand how libguile offers them to C programs in order
+to use the rest of libguile.  Also, the more general control flow of
+Scheme caused by continuations needs to be dealt with.
+
+Running asynchronous signal handlers and multi-threading is known to C
+code already, but there are of course a few additional rules when using
+them together with libguile.
+
+@menu
+* Dynamic Types::               Dynamic Types.
+* Garbage Collection::          Garbage Collection.
+* Control Flow::                Control Flow.
+* Asynchronous Signals::        Asynchronous Signals
+* Multi-Threading::             Multi-Threading
+@end menu
+
+@node Dynamic Types
+@subsection Dynamic Types
+
+Scheme is a dynamically-typed language; this means that the system
+cannot, in general, determine the type of a given expression at compile
+time.  Types only become apparent at run time.  Variables do not have
+fixed types; a variable may hold a pair at one point, an integer at the
+next, and a thousand-element vector later.  Instead, values, not
+variables, have fixed types.
+
+In order to implement standard Scheme functions like @code{pair?} and
+@code{string?} and provide garbage collection, the representation of
+every value must contain enough information to accurately determine its
+type at run time.  Often, Scheme systems also use this information to
+determine whether a program has attempted to apply an operation to an
+inappropriately typed value (such as taking the @code{car} of a string).
+
+Because variables, pairs, and vectors may hold values of any type,
+Scheme implementations use a uniform representation for values --- a
+single type large enough to hold either a complete value or a pointer
+to a complete value, along with the necessary typing information.
+
+In Guile, this uniform representation of all Scheme values is the C type
+@code{SCM}.  This is an opaque type and its size is typically equivalent
+to that of a pointer to @code{void}.  Thus, @code{SCM} values can be
+passed around efficiently and they take up reasonably little storage on
+their own.
+
+The most important rule is: You never access a @code{SCM} value
+directly; you only pass it to functions or macros defined in libguile.
+
+As an obvious example, although a @code{SCM} variable can contain
+integers, you can of course not compute the sum of two @code{SCM} values
+by adding them with the C @code{+} operator.  You must use the libguile
+function @code{scm_sum}.
+
+Less obvious and therefore more important to keep in mind is that you
+also cannot directly test @code{SCM} values for trueness.  In Scheme,
+the value @code{#f} is considered false and of course a @code{SCM}
+variable can represent that value.  But there is no guarantee that the
+@code{SCM} representation of @code{#f} looks false to C code as well.
+You need to use @code{scm_is_true} or @code{scm_is_false} to test a
+@code{SCM} value for trueness or falseness, respectively.
+
+You also can not directly compare two @code{SCM} values to find out
+whether they are identical (that is, whether they are @code{eq?} in
+Scheme terms).  You need to use @code{scm_is_eq} for this.
+
+The one exception is that you can directly assign a @code{SCM} value to
+a @code{SCM} variable by using the C @code{=} operator.
+
+The following (contrived) example shows how to do it right.  It
+implements a function of two arguments (@var{a} and @var{flag}) that
+returns @var{a}+1 if @var{flag} is true, else it returns @var{a}
+unchanged.
+
+@example
+SCM
+my_incrementing_function (SCM a, SCM flag)
+@{
+  SCM result;
+
+  if (scm_is_true (flag))
+    result = scm_sum (a, scm_from_int (1));
+  else
+    result = a;
+
+  return result;
+@}
+@end example
+
+Often, you need to convert between @code{SCM} values and approriate C
+values.  For example, we needed to convert the integer @code{1} to its
+@code{SCM} representation in order to add it to @var{a}.  Libguile
+provides many function to do these conversions, both from C to
+@code{SCM} and from @code{SCM} to C.
+
+The conversion functions follow a common naming pattern: those that make
+a @code{SCM} value from a C value have names of the form
+@code{scm_from_@var{type} (@dots{})} and those that convert a @code{SCM}
+value to a C value use the form @code{scm_to_@var{type} (@dots{})}.
+
+However, it is best to avoid converting values when you can.  When you
+must combine C values and @code{SCM} values in a computation, it is
+often better to convert the C values to @code{SCM} values and do the
+computation by using libguile functions than to the other way around
+(converting @code{SCM} to C and doing the computation some other way).
+
+As a simple example, consider this version of
+@code{my_incrementing_function} from above:
+
+@example
+SCM
+my_other_incrementing_function (SCM a, SCM flag)
+@{
+  int result;
+
+  if (scm_is_true (flag))
+    result = scm_to_int (a) + 1;
+  else
+    result = scm_to_int (a);
+
+  return scm_from_int (result);
+@}
+@end example
+
+This version is much less general than the original one: it will only
+work for values @var{A} that can fit into a @code{int}.  The original
+function will work for all values that Guile can represent and that
+@code{scm_sum} can understand, including integers bigger than @code{long
+long}, floating point numbers, complex numbers, and new numerical types
+that have been added to Guile by third-party libraries.
+
+Also, computing with @code{SCM} is not necessarily inefficient.  Small
+integers will be encoded directly in the @code{SCM} value, for example,
+and do not need any additional memory on the heap.  See @ref{Data
+Representation} to find out the details.
+
+Some special @code{SCM} values are available to C code without needing
+to convert them from C values:
+
+@multitable {Scheme value} {C representation}
+@item Scheme value @tab C representation
+@item @nicode{#f}  @tab @nicode{SCM_BOOL_F}
+@item @nicode{#t}  @tab @nicode{SCM_BOOL_T}
+@item @nicode{()}  @tab @nicode{SCM_EOL}
+@end multitable
+
+In addition to @code{SCM}, Guile also defines the related type
+@code{scm_t_bits}.  This is an unsigned integral type of sufficient
+size to hold all information that is directly contained in a
+@code{SCM} value.  The @code{scm_t_bits} type is used internally by
+Guile to do all the bit twiddling explained in @ref{Data
+Representation}, but you will encounter it occasionally in low-level
+user code as well.
+
+
+@node Garbage Collection
+@subsection Garbage Collection
+
+As explained above, the @code{SCM} type can represent all Scheme values.
+Some values fit entirely into a @code{SCM} value (such as small
+integers), but other values require additional storage in the heap (such
+as strings and vectors).  This additional storage is managed
+automatically by Guile.  You don't need to explicitly deallocate it
+when a @code{SCM} value is no longer used.
+
+Two things must be guaranteed so that Guile is able to manage the
+storage automatically: it must know about all blocks of memory that have
+ever been allocated for Scheme values, and it must know about all Scheme
+values that are still being used.  Given this knowledge, Guile can
+periodically free all blocks that have been allocated but are not used
+by any active Scheme values.  This activity is called @dfn{garbage
+collection}.
+
+It is easy for Guile to remember all blocks of memory that it has
+allocated for use by Scheme values, but you need to help it with finding
+all Scheme values that are in use by C code.
+
+You do this when writing a SMOB mark function, for example
+(@pxref{Garbage Collecting Smobs}).  By calling this function, the
+garbage collector learns about all references that your SMOB has to
+other @code{SCM} values.
+
+Other references to @code{SCM} objects, such as global variables of type
+@code{SCM} or other random data structures in the heap that contain
+fields of type @code{SCM}, can be made visible to the garbage collector
+by calling the functions @code{scm_gc_protect} or
+@code{scm_permanent_object}.  You normally use these funtions for long
+lived objects such as a hash table that is stored in a global variable.
+For temporary references in local variables or function arguments, using
+these functions would be too expensive.
+
+These references are handled differently: Local variables (and function
+arguments) of type @code{SCM} are automatically visible to the garbage
+collector.  This works because the collector scans the stack for
+potential references to @code{SCM} objects and considers all referenced
+objects to be alive.  The scanning considers each and every word of the
+stack, regardless of what it is actually used for, and then decides
+whether it could possibly be a reference to a @code{SCM} object.  Thus,
+the scanning is guaranteed to find all actual references, but it might
+also find words that only accidentally look like references.  These
+`false positives' might keep @code{SCM} objects alive that would
+otherwise be considered dead.  While this might waste memory, keeping an
+object around longer than it strictly needs to is harmless.  This is why
+this technique is called ``conservative garbage collection''.  In
+practice, the wasted memory seems to be no problem.
+
+The stack of every thread is scanned in this way and the registers of
+the CPU and all other memory locations where local variables or function
+parameters might show up are included in this scan as well.
+
+The consequence of the conservative scanning is that you can just
+declare local variables and function parameters of type @code{SCM} and
+be sure that the garbage collector will not free the corresponding
+objects.
+
+However, a local variable or function parameter is only protected as
+long as it is really on the stack (or in some register).  As an
+optimization, the C compiler might reuse its location for some other
+value and the @code{SCM} object would no longer be protected.  Normally,
+this leads to exactly the right behabvior: the compiler will only
+overwrite a reference when it is no longer needed and thus the object
+becomes unprotected precisely when the reference disappears, just as
+wanted.
+
+There are situations, however, where a @code{SCM} object needs to be
+around longer than its reference from a local variable or function
+parameter.  This happens, for example, when you retrieve some pointer
+from a smob and work with that pointer directly.  The reference to the
+@code{SCM} smob object might be dead after the pointer has been
+retrieved, but the pointer itself (and the memory pointed to) is still
+in use and thus the smob object must be protected.  The compiler does
+not know about this connection and might overwrite the @code{SCM}
+reference too early.
+
+To get around this problem, you can use @code{scm_remember_upto_here_1}
+and its cousins.  It will keep the compiler from overwriting the
+reference.  For a typical example of its use, see @ref{Remembering
+During Operations}.
+
+@node Control Flow
+@subsection Control Flow
+
+Scheme has a more general view of program flow than C, both locally and
+non-locally.
+
+Controlling the local flow of control involves things like gotos, loops,
+calling functions and returning from them.  Non-local control flow
+refers to situations where the program jumps across one or more levels
+of function activations without using the normal call or return
+operations.
+
+The primitive means of C for local control flow is the @code{goto}
+statement, together with @code{if}.  Loops done with @code{for},
+@code{while} or @code{do} could in principle be rewritten with just
+@code{goto} and @code{if}.  In Scheme, the primitive means for local
+control flow is the @emph{function call} (together with @code{if}).
+Thus, the repetition of some computation in a loop is ultimately
+implemented by a function that calls itself, that is, by recursion.
+
+This approach is theoretically very powerful since it is easier to
+reason formally about recursion than about gotos.  In C, using
+recursion exclusively would not be practical, though, since it would eat
+up the stack very quickly.  In Scheme, however, it is practical:
+function calls that appear in a @dfn{tail position} do not use any
+additional stack space (@pxref{Tail Calls}).
+
+A function call is in a tail position when it is the last thing the
+calling function does.  The value returned by the called function is
+immediately returned from the calling function.  In the following
+example, the call to @code{bar-1} is in a tail position, while the
+call to @code{bar-2} is not.  (The call to @code{1-} in @code{foo-2}
+is in a tail position, though.)
+
+@lisp
+(define (foo-1 x)
+  (bar-1 (1- x)))
+
+(define (foo-2 x)
+  (1- (bar-2 x)))
+@end lisp
+
+Thus, when you take care to recurse only in tail positions, the
+recursion will only use constant stack space and will be as good as a
+loop constructed from gotos.
+
+Scheme offers a few syntactic abstractions (@code{do} and @dfn{named}
+@code{let}) that make writing loops slightly easier.
+
+But only Scheme functions can call other functions in a tail position:
+C functions can not.  This matters when you have, say, two functions
+that call each other recursively to form a common loop.  The following
+(unrealistic) example shows how one might go about determing whether a
+non-negative integer @var{n} is even or odd.
+
+@lisp
+(define (my-even? n)
+  (cond ((zero? n) #t)
+        (else (my-odd? (1- n)))))
+
+(define (my-odd? n)
+  (cond ((zero? n) #f)
+        (else (my-even? (1- n)))))
+@end lisp
+
+Because the calls to @code{my-even?} and @code{my-odd?} are in tail
+positions, these two procedures can be applied to arbitrary large
+integers without overflowing the stack.  (They will still take a lot
+of time, of course.)
+
+However, when one or both of the two procedures would be rewritten in
+C, it could no longer call its companion in a tail position (since C
+does not have this concept).  You might need to take this
+consideration into account when deciding which parts of your program
+to write in Scheme and which in C.
+
+In addition to calling functions and returning from them, a Scheme
+program can also exit non-locally from a function so that the control
+flow returns directly to an outer level.  This means that some functions
+might not return at all.
+
+Even more, it is not only possible to jump to some outer level of
+control, a Scheme program can also jump back into the middle of a
+function that has already exited.  This might cause some functions to
+return more than once.
+
+In general, these non-local jumps are done by invoking
+@dfn{continuations} that have previously been captured using
+@code{call-with-current-continuation}.  Guile also offers a slightly
+restricted set of functions, @code{catch} and @code{throw}, that can
+only be used for non-local exits.  This restriction makes them more
+efficient.  Error reporting (with the function @code{error}) is
+implemented by invoking @code{throw}, for example.  The functions
+@code{catch} and @code{throw} belong to the topic of @dfn{exceptions}.
+
+Since Scheme functions can call C functions and vice versa, C code can
+experience the more general control flow of Scheme as well.  It is
+possible that a C function will not return at all, or will return more
+than once.  While C does offer @code{setjmp} and @code{longjmp} for
+non-local exits, it is still an unusual thing for C code.  In
+contrast, non-local exits are very common in Scheme, mostly to report
+errors.
+
+You need to be prepared for the non-local jumps in the control flow
+whenever you use a function from @code{libguile}: it is best to assume
+that any @code{libguile} function might signal an error or run a pending
+signal handler (which in turn can do arbitrary things).
+
+It is often necessary to take cleanup actions when the control leaves a
+function non-locally.  Also, when the control returns non-locally, some
+setup actions might be called for.  For example, the Scheme function
+@code{with-output-to-port} needs to modify the global state so that
+@code{current-output-port} returns the port passed to
+@code{with-output-to-port}.  The global output port needs to be reset to
+its previous value when @code{with-output-to-port} returns normally or
+when it is exited non-locally.  Likewise, the port needs to be set again
+when control enters non-locally.
+
+Scheme code can use the @code{dynamic-wind} function to arrange for
+the setting and resetting of the global state.  C code can use the
+corresponding @code{scm_internal_dynamic_wind} function, or a
+@code{scm_dynwind_begin}/@code{scm_dynwind_end} pair together with
+suitable 'dynwind actions' (@pxref{Dynamic Wind}).
+
+Instead of coping with non-local control flow, you can also prevent it
+by erecting a @emph{continuation barrier}, @xref{Continuation
+Barriers}.  The function @code{scm_c_with_continuation_barrier}, for
+example, is guaranteed to return exactly once.
+
+@node Asynchronous Signals
+@subsection Asynchronous Signals
+
+You can not call libguile functions from handlers for POSIX signals, but
+you can register Scheme handlers for POSIX signals such as
+@code{SIGINT}.  These handlers do not run during the actual signal
+delivery.  Instead, they are run when the program (more precisely, the
+thread that the handler has been registered for) reaches the next
+@emph{safe point}.
+
+The libguile functions themselves have many such safe points.
+Consequently, you must be prepared for arbitrary actions anytime you
+call a libguile function.  For example, even @code{scm_cons} can contain
+a safe point and when a signal handler is pending for your thread,
+calling @code{scm_cons} will run this handler and anything might happen,
+including a non-local exit although @code{scm_cons} would not ordinarily
+do such a thing on its own.
+
+If you do not want to allow the running of asynchronous signal handlers,
+you can block them temporarily with @code{scm_dynwind_block_asyncs}, for
+example.  See @xref{System asyncs}.
+
+Since signal handling in Guile relies on safe points, you need to make
+sure that your functions do offer enough of them.  Normally, calling
+libguile functions in the normal course of action is all that is needed.
+But when a thread might spent a long time in a code section that calls
+no libguile function, it is good to include explicit safe points.  This
+can allow the user to interrupt your code with @key{C-c}, for example.
+
+You can do this with the macro @code{SCM_TICK}.  This macro is
+syntactically a statement.  That is, you could use it like this:
+
+@example
+while (1)
+  @{
+    SCM_TICK;
+    do_some_work ();
+  @}
+@end example
+
+Frequent execution of a safe point is even more important in multi
+threaded programs, @xref{Multi-Threading}.
+
+@node Multi-Threading
+@subsection Multi-Threading
+
+Guile can be used in multi-threaded programs just as well as in
+single-threaded ones.
+
+Each thread that wants to use functions from libguile must put itself
+into @emph{guile mode} and must then follow a few rules.  If it doesn't
+want to honor these rules in certain situations, a thread can
+temporarily leave guile mode (but can no longer use libguile functions
+during that time, of course).
+
+Threads enter guile mode by calling @code{scm_with_guile},
+@code{scm_boot_guile}, or @code{scm_init_guile}.  As explained in the
+reference documentation for these functions, Guile will then learn about
+the stack bounds of the thread and can protect the @code{SCM} values
+that are stored in local variables.  When a thread puts itself into
+guile mode for the first time, it gets a Scheme representation and is
+listed by @code{all-threads}, for example.
+
+While in guile mode, a thread promises to reach a safe point
+reasonably frequently (@pxref{Asynchronous Signals}).  In addition to
+running signal handlers, these points are also potential rendezvous
+points of all guile mode threads where Guile can orchestrate global
+things like garbage collection.  Consequently, when a thread in guile
+mode blocks and does no longer frequent safe points, it might cause
+all other guile mode threads to block as well.  To prevent this from
+happening, a guile mode thread should either only block in libguile
+functions (who know how to do it right), or should temporarily leave
+guile mode with @code{scm_without_guile}.
+
+For some common blocking operations, Guile provides convenience
+functions.  For example, if you want to lock a pthread mutex while in
+guile mode, you might want to use @code{scm_pthread_mutex_lock} which is
+just like @code{pthread_mutex_lock} except that it leaves guile mode
+while blocking.
+
+
+All libguile functions are (intended to be) robust in the face of
+multiple threads using them concurrently.  This means that there is no
+risk of the internal data structures of libguile becoming corrupted in
+such a way that the process crashes.
+
+A program might still produce non-sensical results, though.  Taking
+hashtables as an example, Guile guarantees that you can use them from
+multiple threads concurrently and a hashtable will always remain a valid
+hashtable and Guile will not crash when you access it.  It does not
+guarantee, however, that inserting into it concurrently from two threads
+will give useful results: only one insertion might actually happen, none
+might happen, or the table might in general be modified in a totally
+arbitrary manner.  (It will still be a valid hashtable, but not the one
+that you might have expected.)  Guile might also signal an error when it
+detects a harmful race condition.
+
+Thus, you need to put in additional synchronizations when multiple
+threads want to use a single hashtable, or any other mutable Scheme
+object.
+
+When writing C code for use with libguile, you should try to make it
+robust as well.  An example that converts a list into a vector will help
+to illustrate.  Here is a correct version:
+
+@example
+SCM
+my_list_to_vector (SCM list)
+@{
+  SCM vector = scm_make_vector (scm_length (list), SCM_UNDEFINED);
+  size_t len, i;
+
+  len = SCM_SIMPLE_VECTOR_LENGTH (vector);
+  i = 0;
+  while (i < len && scm_is_pair (list))
+    @{
+      SCM_SIMPLE_VECTOR_SET (vector, i, SCM_CAR (list));
+      list = SCM_CDR (list);
+      i++;
+    @}
+
+  return vector;
+@}
+@end example
+
+The first thing to note is that storing into a @code{SCM} location
+concurrently from multiple threads is guaranteed to be robust: you don't
+know which value wins but it will in any case be a valid @code{SCM}
+value.
+
+But there is no guarantee that the list referenced by @var{list} is not
+modified in another thread while the loop iterates over it.  Thus, while
+copying its elements into the vector, the list might get longer or
+shorter.  For this reason, the loop must check both that it doesn't
+overrun the vector (@code{SCM_SIMPLE_VECTOR_SET} does no range-checking)
+and that it doesn't overrung the list (@code{SCM_CAR} and @code{SCM_CDR}
+likewise do no type checking).
+
+It is safe to use @code{SCM_CAR} and @code{SCM_CDR} on the local
+variable @var{list} once it is known that the variable contains a pair.
+The contents of the pair might change spontaneously, but it will always
+stay a valid pair (and a local variable will of course not spontaneously
+point to a different Scheme object).
+
+Likewise, a simple vector such as the one returned by
+@code{scm_make_vector} is guaranteed to always stay the same length so
+that it is safe to only use SCM_SIMPLE_VECTOR_LENGTH once and store the
+result.  (In the example, @var{vector} is safe anyway since it is a
+fresh object that no other thread can possibly know about until it is
+returned from @code{my_list_to_vector}.)
+
+Of course the behavior of @code{my_list_to_vector} is suboptimal when
+@var{list} does indeed get asynchronously lengthened or shortened in
+another thread.  But it is robust: it will always return a valid vector.
+That vector might be shorter than expected, or its last elements might
+be unspecified, but it is a valid vector and if a program wants to rule
+out these cases, it must avoid modifying the list asynchronously.
+
+Here is another version that is also correct:
+
+@example
+SCM
+my_pedantic_list_to_vector (SCM list)
+@{
+  SCM vector = scm_make_vector (scm_length (list), SCM_UNDEFINED);
+  size_t len, i;
+
+  len = SCM_SIMPLE_VECTOR_LENGTH (vector);
+  i = 0;
+  while (i < len)
+    @{
+      SCM_SIMPLE_VECTOR_SET (vector, i, scm_car (list));
+      list = scm_cdr (list);
+      i++;
+    @}
+
+  return vector;
+@}
+@end example
+
+This version uses the type-checking and thread-robust functions
+@code{scm_car} and @code{scm_cdr} instead of the faster, but less robust
+macros @code{SCM_CAR} and @code{SCM_CDR}.  When the list is shortened
+(that is, when @var{list} holds a non-pair), @code{scm_car} will throw
+an error.  This might be preferable to just returning a half-initialized
+vector.
+
+The API for accessing vectors and arrays of various kinds from C takes a
+slightly different approach to thread-robustness.  In order to get at
+the raw memory that stores the elements of an array, you need to
+@emph{reserve} that array as long as you need the raw memory.  During
+the time an array is reserved, its elements can still spontaneously
+change their values, but the memory itself and other things like the
+size of the array are guaranteed to stay fixed.  Any operation that
+would change these parameters of an array that is currently reserved
+will signal an error.  In order to avoid these errors, a program should
+of course put suitable synchronization mechanisms in place.  As you can
+see, Guile itself is again only concerned about robustness, not about
+correctness: without proper synchronization, your program will likely
+not be correct, but the worst consequence is an error message.
+
+Real thread-safeness often requires that a critical section of code is
+executed in a certain restricted manner.  A common requirement is that
+the code section is not entered a second time when it is already being
+executed.  Locking a mutex while in that section ensures that no other
+thread will start executing it, blocking asyncs ensures that no
+asynchronous code enters the section again from the current thread,
+and the error checking of Guile mutexes guarantees that an error is
+signalled when the current thread accidentally reenters the critical
+section via recursive function calls.
+
+Guile provides two mechanisms to support critical sections as outlined
+above.  You can either use the macros
+@code{SCM_CRITICAL_SECTION_START} and @code{SCM_CRITICAL_SECTION_END}
+for very simple sections; or use a dynwind context together with a
+call to @code{scm_dynwind_critical_section}.
+
+The macros only work reliably for critical sections that are
+guaranteed to not cause a non-local exit.  They also do not detect an
+accidental reentry by the current thread.  Thus, you should probably
+only use them to delimit critical sections that do not contain calls
+to libguile functions or to other external functions that might do
+complicated things.
+
+The function @code{scm_dynwind_critical_section}, on the other hand,
+will correctly deal with non-local exits because it requires a dynwind
+context.  Also, by using a separate mutex for each critical section,
+it can detect accidental reentries.

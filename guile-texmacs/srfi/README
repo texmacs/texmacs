@@ -1,0 +1,100 @@
+This directory includes most of Guile's SRFI support.       -*- text -*-
+
+For more details about what SRFI means, and what the various numbers
+stand for, please refer to the SRFI homepage at
+
+  http://srfi.schemers.org
+
+SRFI-0: cond-expand
+
+  Supported by default, no module required.
+
+SRFI-1: List Library
+
+  A full toolbox of list processing procedures.  (use-modules (srfi
+  srfi-1)) will make them available for use.
+
+SRFI-2: and-let*
+
+  (use-modules (srfi srfi-2)) to make and-let* available.
+
+SRFI-4: Homogeneous numeric vector datatypes
+
+SRFI-6: open-input-string, open-output-string and get-output-string
+
+  (use-modules (srfi srfi-6)) to make these available. (Currently,
+  these procedures are available without using the module, but the
+  procedures might be factored out of the core library in the
+  future.)
+
+SRFI-8: receive
+
+  (use-modules (srfi srfi-8)) to make receive available.
+
+SRFI-9: define-record-type
+
+  A mechanism for defining record types.  (use-modules (srfi srfi-9))
+  makes this syntactic form available.
+
+SRFI-10: #,()
+
+  The hash-comma reader extension.  (use-modules (srfi srfi-10))
+  activates the extension.
+
+SRFI-11: let-values and let-values*
+
+  Syntactic extensions for handling multiple values.  (use-modules
+  (srfi srfi-11)) makes these syntactic forms available.
+
+SRFI-13: string library
+
+  A lot of (more or less) useful string processing procedures.
+  (use-modules (srfi srfi-13)) loads the procedures.
+
+SRFI-14: character-set library
+
+  Character-set library.  (use-modules (srfi srfi-14)) loads the
+  procedures and standard variables.
+
+SRFI-16: case-lambda
+
+  Syntactic form which permits writing functions acting different
+  according to the number of arguments passed.  (use-modules (srfi
+  srfi-16)) makes this syntactic form available.
+
+SRFI-17: Generalized set!
+
+  Guile supports generalized set! by default, but this module makes it
+  fully compliant to the SRFI.  (use-modules (srfi srfi-17)) loads the
+  procedures.
+
+SRFI-19: Time Data Types and Procedures
+
+  A lot of data types and procedures for dealing with times and
+  dates.  (use-modules (srfi srfi-19)) loads the procedures.
+
+SRFI-23: Error reporting mechanism
+
+  Guile fully supports this SRFI.  No need to load any module.
+
+SRFI-26: Notation for Specializing Parameters without Currying
+
+  Exports: cut, cute.
+
+SRFI-31: A special form for recursive evaluation
+
+  Exports: rec.
+
+SRFI-34: Exception Handling for Programs
+
+  Exports: with-exception-handler, raise.
+  Exports syntax: guard.
+
+SRFI-39: Parameter objects
+
+  Exports: make-parameter, with-parameters*.
+  Exports syntax: parameterize.
+
+SRFI-55: require-extension
+
+  Supported by default, no module required.

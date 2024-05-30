@@ -1,0 +1,15 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+
+sitedir=@sitedir@
+libguileinterface=@LIBGUILE_INTERFACE@
+
+Name: GNU Guile
+Description: GNU's Ubiquitous Intelligent Language for Extension
+Version: @GUILE_VERSION@
+Libs: -L${libdir} -lguile @GUILE_LIBS@
+Cflags: -I${includedir} @GUILE_CFLAGS@

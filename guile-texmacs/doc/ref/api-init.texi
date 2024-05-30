@@ -1,0 +1,110 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004, 2007
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+
+@node Initialization
+@section Initializing Guile
+@cindex Initializing Guile
+
+Each thread that wants to use functions from the Guile API needs to
+put itself into guile mode with either @code{scm_with_guile} or
+@code{scm_init_guile}.  The global state of Guile is initialized
+automatically when the first thread enters guile mode.
+
+When a thread wants to block outside of a Guile API function, it
+should leave guile mode temporarily with @code{scm_without_guile},
+@xref{Blocking}.
+
+Threads that are created by @code{call-with-new-thread} or
+@code{scm_spawn_thread} start out in guile mode so you don't need to
+initialize them.
+
+@deftypefn {C Function} {void *} scm_with_guile (void *(*func)(void *), void *data)
+Call @var{func}, passing it @var{data} and return what @var{func}
+returns.  While @var{func} is running, the current thread is in guile
+mode and can thus use the Guile API.
+
+When @code{scm_with_guile} is called from guile mode, the thread remains
+in guile mode when @code{scm_with_guile} returns.
+
+Otherwise, it puts the current thread into guile mode and, if needed,
+gives it a Scheme representation that is contained in the list returned
+by @code{all-threads}, for example.  This Scheme representation is not
+removed when @code{scm_with_guile} returns so that a given thread is
+always represented by the same Scheme value during its lifetime, if at
+all.
+
+When this is the first thread that enters guile mode, the global state
+of Guile is initialized before calling @code{func}.
+
+The function @var{func} is called via
+@code{scm_with_continuation_barrier}; thus, @code{scm_with_guile}
+returns exactly once.
+
+When @code{scm_with_guile} returns, the thread is no longer in guile
+mode (except when @code{scm_with_guile} was called from guile mode, see
+above).  Thus, only @code{func} can store @code{SCM} variables on the
+stack and be sure that they are protected from the garbage collector.
+See @code{scm_init_guile} for another approach at initializing Guile
+that does not have this restriction.
+
+It is OK to call @code{scm_with_guile} while a thread has temporarily
+left guile mode via @code{scm_without_guile}.  It will then simply
+temporarily enter guile mode again.
+@end deftypefn
+
+@deftypefn {C Function} void scm_init_guile ()
+Arrange things so that all of the code in the current thread executes as
+if from within a call to @code{scm_with_guile}.  That is, all functions
+called by the current thread can assume that @code{SCM} values on their
+stack frames are protected from the garbage collector (except when the
+thread has explicitly left guile mode, of course).
+
+When @code{scm_init_guile} is called from a thread that already has been
+in guile mode once, nothing happens.  This behavior matters when you
+call @code{scm_init_guile} while the thread has only temporarily left
+guile mode: in that case the thread will not be in guile mode after
+@code{scm_init_guile} returns.  Thus, you should not use
+@code{scm_init_guile} in such a scenario.
+
+When a uncaught throw happens in a thread that has been put into guile
+mode via @code{scm_init_guile}, a short message is printed to the
+current error port and the thread is exited via @code{scm_pthread_exit
+(NULL)}.  No restrictions are placed on continuations.
+
+The function @code{scm_init_guile} might not be available on all
+platforms since it requires some stack-bounds-finding magic that might
+not have been ported to all platforms that Guile runs on.  Thus, if you
+can, it is better to use @code{scm_with_guile} or its variation
+@code{scm_boot_guile} instead of this function.
+@end deftypefn
+
+@deftypefn {C Function} void scm_boot_guile (int @var{argc}, char **@var{argv}, void (*@var{main_func}) (void *@var{data}, int @var{argc}, char **@var{argv}), void *@var{data})
+Enter guile mode as with @code{scm_with_guile} and call @var{main_func},
+passing it @var{data}, @var{argc}, and @var{argv} as indicated.  When
+@var{main_func} returns, @code{scm_boot_guile} calls @code{exit (0)};
+@code{scm_boot_guile} never returns.  If you want some other exit value,
+have @var{main_func} call @code{exit} itself.  If you don't want to exit
+at all, use @code{scm_with_guile} instead of @code{scm_boot_guile}.
+
+The function @code{scm_boot_guile} arranges for the Scheme
+@code{command-line} function to return the strings given by @var{argc}
+and @var{argv}.  If @var{main_func} modifies @var{argc} or @var{argv},
+it should call @code{scm_set_program_arguments} with the final list, so
+Scheme code will know which arguments have been processed
+(@pxref{Runtime Environment}).
+@end deftypefn
+
+@deftypefn {C Function} void scm_shell (int @var{argc}, char **@var{argv})
+Process command-line arguments in the manner of the @code{guile}
+executable.  This includes loading the normal Guile initialization
+files, interacting with the user or running any scripts or expressions
+specified by @code{-s} or @code{-e} options, and then exiting.
+@xref{Invoking Guile}, for more details.
+
+Since this function does not return, you must do all
+application-specific initialization before calling this function.
+@end deftypefn

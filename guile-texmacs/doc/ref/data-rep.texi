@@ -1,0 +1,1347 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@c essay \input texinfo
+@c essay @c -*-texinfo-*-
+@c essay @c %**start of header
+@c essay @setfilename data-rep.info
+@c essay @settitle Data Representation in Guile
+@c essay @c %**end of header
+
+@c essay @include version.texi
+
+@c essay @dircategory The Algorithmic Language Scheme
+@c essay @direntry
+@c essay * data-rep: (data-rep).  Data Representation in Guile --- how to use
+@c essay                 Guile objects in your C code.
+@c essay @end direntry
+
+@c essay @setchapternewpage off
+
+@c essay @ifinfo
+@c essay Data Representation in Guile
+
+@c essay Copyright (C) 1998, 1999, 2000, 2003, 2006 Free Software Foundation
+
+@c essay Permission is granted to make and distribute verbatim copies of
+@c essay this manual provided the copyright notice and this permission notice
+@c essay are preserved on all copies.
+
+@c essay @ignore
+@c essay Permission is granted to process this file through TeX and print the
+@c essay results, provided the printed document carries copying permission
+@c essay notice identical to this one except for the removal of this paragraph
+@c essay (this paragraph not being relevant to the printed manual).
+@c essay @end ignore
+
+@c essay Permission is granted to copy and distribute modified versions of this
+@c essay manual under the conditions for verbatim copying, provided that the entire
+@c essay resulting derived work is distributed under the terms of a permission
+@c essay notice identical to this one.
+
+@c essay Permission is granted to copy and distribute translations of this manual
+@c essay into another language, under the above conditions for modified versions,
+@c essay except that this permission notice may be stated in a translation approved
+@c essay by the Free Software Foundation.
+@c essay @end ifinfo
+
+@c essay @titlepage
+@c essay @sp 10
+@c essay @comment The title is printed in a large font.
+@c essay @title Data Representation in Guile
+@c essay @subtitle $Id: data-rep.texi,v 1.19.2.1 2006-02-12 13:42:50 mvo Exp $
+@c essay @subtitle For use with Guile @value{VERSION}
+@c essay @author Jim Blandy
+@c essay @author Free Software Foundation
+@c essay @author @email{jimb@@red-bean.com}
+@c essay @c The following two commands start the copyright page.
+@c essay @page
+@c essay @vskip 0pt plus 1filll
+@c essay @vskip 0pt plus 1filll
+@c essay Copyright @copyright{} 1998, 2006 Free Software Foundation
+
+@c essay Permission is granted to make and distribute verbatim copies of
+@c essay this manual provided the copyright notice and this permission notice
+@c essay are preserved on all copies.
+
+@c essay Permission is granted to copy and distribute modified versions of this
+@c essay manual under the conditions for verbatim copying, provided that the entire
+@c essay resulting derived work is distributed under the terms of a permission
+@c essay notice identical to this one.
+
+@c essay Permission is granted to copy and distribute translations of this manual
+@c essay into another language, under the above conditions for modified versions,
+@c essay except that this permission notice may be stated in a translation approved
+@c essay by Free Software Foundation.
+@c essay @end titlepage
+
+@c essay @c @smallbook
+@c essay @c @finalout
+@c essay @headings double
+
+
+@c essay @node Top, Data Representation in Scheme, (dir), (dir)
+@c essay @top Data Representation in Guile
+
+@c essay @ifinfo
+@c essay This essay is meant to provide the background necessary to read and
+@c essay write C code that manipulates Scheme values in a way that conforms to
+@c essay libguile's interface.  If you would like to write or maintain a
+@c essay Guile-based application in C or C++, this is the first information you
+@c essay need.
+
+@c essay In order to make sense of Guile's @code{SCM_} functions, or read
+@c essay libguile's source code, it's essential to have a good grasp of how Guile
+@c essay actually represents Scheme values.  Otherwise, a lot of the code, and
+@c essay the conventions it follows, won't make very much sense.
+
+@c essay We assume you know both C and Scheme, but we do not assume you are
+@c essay familiar with Guile's C interface.
+@c essay @end ifinfo
+
+
+@node Data Representation
+@appendix Data Representation in Guile
+
+@strong{by Jim Blandy}
+
+[Due to the rather non-orthogonal and performance-oriented nature of the
+SCM interface, you need to understand SCM internals *before* you can use
+the SCM API.  That's why this chapter comes first.]
+
+[NOTE: this is Jim Blandy's essay almost entirely unmodified.  It has to
+be adapted to fit this manual smoothly.]
+
+In order to make sense of Guile's SCM_ functions, or read libguile's
+source code, it's essential to have a good grasp of how Guile actually
+represents Scheme values.  Otherwise, a lot of the code, and the
+conventions it follows, won't make very much sense.  This essay is meant
+to provide the background necessary to read and write C code that
+manipulates Scheme values in a way that is compatible with libguile.
+
+We assume you know both C and Scheme, but we do not assume you are
+familiar with Guile's implementation.
+
+@menu
+* Data Representation in Scheme::       Why things aren't just totally
+                                        straightforward, in general terms.
+* How Guile does it::                   How to write C code that manipulates
+                                        Guile values, with an explanation
+                                        of Guile's garbage collector.
+@end menu
+
+@node Data Representation in Scheme
+@section Data Representation in Scheme
+
+Scheme is a latently-typed language; this means that the system cannot,
+in general, determine the type of a given expression at compile time.
+Types only become apparent at run time.  Variables do not have fixed
+types; a variable may hold a pair at one point, an integer at the next,
+and a thousand-element vector later.  Instead, values, not variables,
+have fixed types.
+
+In order to implement standard Scheme functions like @code{pair?} and
+@code{string?} and provide garbage collection, the representation of
+every value must contain enough information to accurately determine its
+type at run time.  Often, Scheme systems also use this information to
+determine whether a program has attempted to apply an operation to an
+inappropriately typed value (such as taking the @code{car} of a string).
+
+Because variables, pairs, and vectors may hold values of any type,
+Scheme implementations use a uniform representation for values --- a
+single type large enough to hold either a complete value or a pointer
+to a complete value, along with the necessary typing information.
+
+The following sections will present a simple typing system, and then
+make some refinements to correct its major weaknesses.  However, this is
+not a description of the system Guile actually uses.  It is only an
+illustration of the issues Guile's system must address.  We provide all
+the information one needs to work with Guile's data in @ref{How Guile
+does it}.
+
+
+@menu
+* A Simple Representation::     
+* Faster Integers::             
+* Cheaper Pairs::               
+* Guile Is Hairier::            
+@end menu
+
+@node A Simple Representation
+@subsection A Simple Representation
+
+The simplest way to meet the above requirements in C would be to
+represent each value as a pointer to a structure containing a type
+indicator, followed by a union carrying the real value.  Assuming that
+@code{SCM} is the name of our universal type, we can write:
+
+@example
+enum type @{ integer, pair, string, vector, ... @};
+
+typedef struct value *SCM;
+
+struct value @{
+  enum type type;
+  union @{
+    int integer;
+    struct @{ SCM car, cdr; @} pair;
+    struct @{ int length; char *elts; @} string;
+    struct @{ int length; SCM  *elts; @} vector;
+    ...
+  @} value;
+@};
+@end example
+with the ellipses replaced with code for the remaining Scheme types.
+
+This representation is sufficient to implement all of Scheme's
+semantics.  If @var{x} is an @code{SCM} value:
+@itemize @bullet
+@item
+  To test if @var{x} is an integer, we can write @code{@var{x}->type == integer}.
+@item
+  To find its value, we can write @code{@var{x}->value.integer}.
+@item
+  To test if @var{x} is a vector, we can write @code{@var{x}->type == vector}.
+@item
+  If we know @var{x} is a vector, we can write
+  @code{@var{x}->value.vector.elts[0]} to refer to its first element.
+@item
+  If we know @var{x} is a pair, we can write
+  @code{@var{x}->value.pair.car} to extract its car.
+@end itemize
+
+
+@node Faster Integers
+@subsection Faster Integers
+
+Unfortunately, the above representation has a serious disadvantage.  In
+order to return an integer, an expression must allocate a @code{struct
+value}, initialize it to represent that integer, and return a pointer to
+it.  Furthermore, fetching an integer's value requires a memory
+reference, which is much slower than a register reference on most
+processors.  Since integers are extremely common, this representation is
+too costly, in both time and space.  Integers should be very cheap to
+create and manipulate.
+
+One possible solution comes from the observation that, on many
+architectures, structures must be aligned on a four-byte boundary.
+(Whether or not the machine actually requires it, we can write our own
+allocator for @code{struct value} objects that assures this is true.)
+In this case, the lower two bits of the structure's address are known to
+be zero.
+
+This gives us the room we need to provide an improved representation
+for integers.  We make the following rules:
+@itemize @bullet
+@item
+If the lower two bits of an @code{SCM} value are zero, then the SCM
+value is a pointer to a @code{struct value}, and everything proceeds as
+before.
+@item
+Otherwise, the @code{SCM} value represents an integer, whose value
+appears in its upper bits.
+@end itemize
+
+Here is C code implementing this convention:
+@example
+enum type @{ pair, string, vector, ... @};
+
+typedef struct value *SCM;
+
+struct value @{
+  enum type type;
+  union @{
+    struct @{ SCM car, cdr; @} pair;
+    struct @{ int length; char *elts; @} string;
+    struct @{ int length; SCM  *elts; @} vector;
+    ...
+  @} value;
+@};
+
+#define POINTER_P(x) (((int) (x) & 3) == 0)
+#define INTEGER_P(x) (! POINTER_P (x))
+
+#define GET_INTEGER(x)  ((int) (x) >> 2)
+#define MAKE_INTEGER(x) ((SCM) (((x) << 2) | 1))
+@end example
+
+Notice that @code{integer} no longer appears as an element of @code{enum
+type}, and the union has lost its @code{integer} member.  Instead, we
+use the @code{POINTER_P} and @code{INTEGER_P} macros to make a coarse
+classification of values into integers and non-integers, and do further
+type testing as before.
+
+Here's how we would answer the questions posed above (again, assume
+@var{x} is an @code{SCM} value):
+@itemize @bullet
+@item
+  To test if @var{x} is an integer, we can write @code{INTEGER_P (@var{x})}.
+@item
+  To find its value, we can write @code{GET_INTEGER (@var{x})}.
+@item
+  To test if @var{x} is a vector, we can write:
+@example
+  @code{POINTER_P (@var{x}) && @var{x}->type == vector}
+@end example
+  Given the new representation, we must make sure @var{x} is truly a
+  pointer before we dereference it to determine its complete type.
+@item
+  If we know @var{x} is a vector, we can write
+  @code{@var{x}->value.vector.elts[0]} to refer to its first element, as
+  before.
+@item
+  If we know @var{x} is a pair, we can write
+  @code{@var{x}->value.pair.car} to extract its car, just as before.
+@end itemize
+
+This representation allows us to operate more efficiently on integers
+than the first.  For example, if @var{x} and @var{y} are known to be
+integers, we can compute their sum as follows:
+@example
+MAKE_INTEGER (GET_INTEGER (@var{x}) + GET_INTEGER (@var{y}))
+@end example
+Now, integer math requires no allocation or memory references.  Most
+real Scheme systems actually use an even more efficient representation,
+but this essay isn't about bit-twiddling.  (Hint: what if pointers had
+@code{01} in their least significant bits, and integers had @code{00}?)
+
+
+@node Cheaper Pairs
+@subsection Cheaper Pairs
+
+However, there is yet another issue to confront.  Most Scheme heaps
+contain more pairs than any other type of object; Jonathan Rees says
+that pairs occupy 45% of the heap in his Scheme implementation, Scheme
+48.  However, our representation above spends three @code{SCM}-sized
+words per pair --- one for the type, and two for the @sc{car} and
+@sc{cdr}.  Is there any way to represent pairs using only two words?
+
+Let us refine the convention we established earlier.  Let us assert
+that:
+@itemize @bullet
+@item
+  If the bottom two bits of an @code{SCM} value are @code{#b00}, then
+  it is a pointer, as before.
+@item
+  If the bottom two bits are @code{#b01}, then the upper bits are an
+  integer.  This is a bit more restrictive than before.
+@item
+  If the bottom two bits are @code{#b10}, then the value, with the bottom
+  two bits masked out, is the address of a pair.
+@end itemize
+
+Here is the new C code:
+@example
+enum type @{ string, vector, ... @};
+
+typedef struct value *SCM;
+
+struct value @{
+  enum type type;
+  union @{
+    struct @{ int length; char *elts; @} string;
+    struct @{ int length; SCM  *elts; @} vector;
+    ...
+  @} value;
+@};
+
+struct pair @{
+  SCM car, cdr;
+@};
+
+#define POINTER_P(x) (((int) (x) & 3) == 0)
+
+#define INTEGER_P(x)  (((int) (x) & 3) == 1)
+#define GET_INTEGER(x)  ((int) (x) >> 2)
+#define MAKE_INTEGER(x) ((SCM) (((x) << 2) | 1))
+
+#define PAIR_P(x) (((int) (x) & 3) == 2)
+#define GET_PAIR(x) ((struct pair *) ((int) (x) & ~3))
+@end example
+
+Notice that @code{enum type} and @code{struct value} now only contain
+provisions for vectors and strings; both integers and pairs have become
+special cases.  The code above also assumes that an @code{int} is large
+enough to hold a pointer, which isn't generally true.
+
+
+Our list of examples is now as follows:
+@itemize @bullet
+@item
+  To test if @var{x} is an integer, we can write @code{INTEGER_P
+  (@var{x})}; this is as before.
+@item
+  To find its value, we can write @code{GET_INTEGER (@var{x})}, as
+  before.
+@item
+  To test if @var{x} is a vector, we can write:
+@example
+  @code{POINTER_P (@var{x}) && @var{x}->type == vector}
+@end example
+  We must still make sure that @var{x} is a pointer to a @code{struct
+  value} before dereferencing it to find its type.
+@item
+  If we know @var{x} is a vector, we can write
+  @code{@var{x}->value.vector.elts[0]} to refer to its first element, as
+  before.
+@item
+  We can write @code{PAIR_P (@var{x})} to determine if @var{x} is a
+  pair, and then write @code{GET_PAIR (@var{x})->car} to refer to its
+  car.
+@end itemize
+
+This change in representation reduces our heap size by 15%.  It also
+makes it cheaper to decide if a value is a pair, because no memory
+references are necessary; it suffices to check the bottom two bits of
+the @code{SCM} value.  This may be significant when traversing lists, a
+common activity in a Scheme system.
+
+Again, most real Scheme systems use a slightly different implementation;
+for example, if GET_PAIR subtracts off the low bits of @code{x}, instead
+of masking them off, the optimizer will often be able to combine that
+subtraction with the addition of the offset of the structure member we
+are referencing, making a modified pointer as fast to use as an
+unmodified pointer.
+
+
+@node Guile Is Hairier
+@subsection Guile Is Hairier
+
+We originally started with a very simple typing system --- each object
+has a field that indicates its type.  Then, for the sake of efficiency
+in both time and space, we moved some of the typing information directly
+into the @code{SCM} value, and left the rest in the @code{struct value}.
+Guile itself employs a more complex hierarchy, storing finer and finer
+gradations of type information in different places, depending on the
+object's coarser type.
+
+In the author's opinion, Guile could be simplified greatly without
+significant loss of efficiency, but the simplified system would still be
+more complex than what we've presented above.
+
+
+@node How Guile does it
+@section How Guile does it
+
+Here we present the specifics of how Guile represents its data.  We
+don't go into complete detail; an exhaustive description of Guile's
+system would be boring, and we do not wish to encourage people to write
+code which depends on its details anyway.  We do, however, present
+everything one need know to use Guile's data.
+
+This section is in limbo.  It used to document the 'low-level' C API
+of Guile that was used both by clients of libguile and by libguile
+itself.
+
+In the future, clients should only need to look into the sections
+@ref{Programming in C} and @ref{API Reference}.  This section will in
+the end only contain stuff about the internals of Guile.
+
+@menu
+* General Rules::               
+* Conservative GC::          
+* Immediates vs Non-immediates::  
+* Immediate Datatypes::         
+* Non-immediate Datatypes::     
+* Signalling Type Errors::      
+* Unpacking the SCM type::
+@end menu
+
+@node General Rules
+@subsection General Rules
+
+Any code which operates on Guile datatypes must @code{#include} the
+header file @code{<libguile.h>}.  This file contains a definition for
+the @code{SCM} typedef (Guile's universal type, as in the examples
+above), and definitions and declarations for a host of macros and
+functions that operate on @code{SCM} values.
+
+All identifiers declared by @code{<libguile.h>} begin with @code{scm_}
+or @code{SCM_}.
+
+@c [[I wish this were true, but I don't think it is at the moment. -JimB]]
+@c Macros do not evaluate their arguments more than once, unless documented
+@c to do so.
+
+The functions described here generally check the types of their
+@code{SCM} arguments, and signal an error if their arguments are of an
+inappropriate type.  Macros generally do not, unless that is their
+specified purpose.  You must verify their argument types beforehand, as
+necessary.
+
+Macros and functions that return a boolean value have names ending in
+@code{P} or @code{_p} (for ``predicate'').  Those that return a negated
+boolean value have names starting with @code{SCM_N}.  For example,
+@code{SCM_IMP (@var{x})} is a predicate which returns non-zero iff
+@var{x} is an immediate value (an @code{IM}).  @code{SCM_NCONSP
+(@var{x})} is a predicate which returns non-zero iff @var{x} is
+@emph{not} a pair object (a @code{CONS}).
+
+
+@node Conservative GC
+@subsection Conservative Garbage Collection
+
+Aside from the latent typing, the major source of constraints on a
+Scheme implementation's data representation is the garbage collector.
+The collector must be able to traverse every live object in the heap, to
+determine which objects are not live.
+
+There are many ways to implement this, but Guile uses an algorithm
+called @dfn{mark and sweep}.  The collector scans the system's global
+variables and the local variables on the stack to determine which
+objects are immediately accessible by the C code.  It then scans those
+objects to find the objects they point to, @i{et cetera}.  The collector
+sets a @dfn{mark bit} on each object it finds, so each object is
+traversed only once.  This process is called @dfn{tracing}.
+
+When the collector can find no unmarked objects pointed to by marked
+objects, it assumes that any objects that are still unmarked will never
+be used by the program (since there is no path of dereferences from any
+global or local variable that reaches them) and deallocates them.
+
+In the above paragraphs, we did not specify how the garbage collector
+finds the global and local variables; as usual, there are many different
+approaches.  Frequently, the programmer must maintain a list of pointers
+to all global variables that refer to the heap, and another list
+(adjusted upon entry to and exit from each function) of local variables,
+for the collector's benefit.
+
+The list of global variables is usually not too difficult to maintain,
+since global variables are relatively rare.  However, an explicitly
+maintained list of local variables (in the author's personal experience)
+is a nightmare to maintain.  Thus, Guile uses a technique called
+@dfn{conservative garbage collection}, to make the local variable list
+unnecessary.
+
+The trick to conservative collection is to treat the stack as an
+ordinary range of memory, and assume that @emph{every} word on the stack
+is a pointer into the heap.  Thus, the collector marks all objects whose
+addresses appear anywhere in the stack, without knowing for sure how
+that word is meant to be interpreted.
+
+Obviously, such a system will occasionally retain objects that are
+actually garbage, and should be freed.  In practice, this is not a
+problem.  The alternative, an explicitly maintained list of local
+variable addresses, is effectively much less reliable, due to programmer
+error.
+
+To accommodate this technique, data must be represented so that the
+collector can accurately determine whether a given stack word is a
+pointer or not.  Guile does this as follows:
+
+@itemize @bullet
+@item
+Every heap object has a two-word header, called a @dfn{cell}.  Some
+objects, like pairs, fit entirely in a cell's two words; others may
+store pointers to additional memory in either of the words.  For
+example, strings and vectors store their length in the first word, and a
+pointer to their elements in the second.
+
+@item
+Guile allocates whole arrays of cells at a time, called @dfn{heap
+segments}.  These segments are always allocated so that the cells they
+contain fall on eight-byte boundaries, or whatever is appropriate for
+the machine's word size.  Guile keeps all cells in a heap segment
+initialized, whether or not they are currently in use.
+
+@item
+Guile maintains a sorted table of heap segments.
+@end itemize
+
+Thus, given any random word @var{w} fetched from the stack, Guile's
+garbage collector can consult the table to see if @var{w} falls within a
+known heap segment, and check @var{w}'s alignment.  If both tests pass,
+the collector knows that @var{w} is a valid pointer to a cell,
+intentional or not, and proceeds to trace the cell.
+
+Note that heap segments do not contain all the data Guile uses; cells
+for objects like vectors and strings contain pointers to other memory
+areas.  However, since those pointers are internal, and not shared among
+many pieces of code, it is enough for the collector to find the cell,
+and then use the cell's type to find more pointers to trace.
+
+
+@node Immediates vs Non-immediates
+@subsection Immediates vs Non-immediates
+
+Guile classifies Scheme objects into two kinds: those that fit entirely
+within an @code{SCM}, and those that require heap storage.
+
+The former class are called @dfn{immediates}.  The class of immediates
+includes small integers, characters, boolean values, the empty list, the
+mysterious end-of-file object, and some others.
+
+The remaining types are called, not surprisingly, @dfn{non-immediates}.
+They include pairs, procedures, strings, vectors, and all other data
+types in Guile.
+
+@deftypefn Macro int SCM_IMP (SCM @var{x})
+Return non-zero iff @var{x} is an immediate object.
+@end deftypefn
+
+@deftypefn Macro int SCM_NIMP (SCM @var{x})
+Return non-zero iff @var{x} is a non-immediate object.  This is the
+exact complement of @code{SCM_IMP}, above.
+@end deftypefn
+
+Note that for versions of Guile prior to 1.4 it was necessary to use the
+@code{SCM_NIMP} macro before calling a finer-grained predicate to
+determine @var{x}'s type, such as @code{SCM_CONSP} or
+@code{SCM_VECTORP}.  This is no longer required: the definitions of all
+Guile type predicates now include a call to @code{SCM_NIMP} where
+necessary.
+
+
+@node Immediate Datatypes
+@subsection Immediate Datatypes
+
+The following datatypes are immediate values; that is, they fit entirely
+within an @code{SCM} value.  The @code{SCM_IMP} and @code{SCM_NIMP}
+macros will distinguish these from non-immediates; see @ref{Immediates
+vs Non-immediates} for an explanation of the distinction.
+
+Note that the type predicates for immediate values work correctly on any
+@code{SCM} value; you do not need to call @code{SCM_IMP} first, to
+establish that a value is immediate.
+
+@menu
+* Integer Data::                    
+* Character Data::                  
+* Boolean Data::                    
+* Unique Values::               
+@end menu
+
+@node Integer Data
+@subsubsection Integers
+
+Here are functions for operating on small integers, that fit within an
+@code{SCM}.  Such integers are called @dfn{immediate numbers}, or
+@dfn{INUMs}.  In general, INUMs occupy all but two bits of an
+@code{SCM}.
+
+Bignums and floating-point numbers are non-immediate objects, and have
+their own, separate accessors.  The functions here will not work on
+them.  This is not as much of a problem as you might think, however,
+because the system never constructs bignums that could fit in an INUM,
+and never uses floating point values for exact integers.
+
+@deftypefn Macro int SCM_INUMP (SCM @var{x})
+Return non-zero iff @var{x} is a small integer value.
+@end deftypefn
+
+@deftypefn Macro int SCM_NINUMP (SCM @var{x})
+The complement of SCM_INUMP.
+@end deftypefn
+
+@deftypefn Macro int SCM_INUM (SCM @var{x})
+Return the value of @var{x} as an ordinary, C integer.  If @var{x}
+is not an INUM, the result is undefined.
+@end deftypefn
+
+@deftypefn Macro SCM SCM_MAKINUM (int @var{i})
+Given a C integer @var{i}, return its representation as an @code{SCM}.
+This function does not check for overflow.
+@end deftypefn
+
+
+@node Character Data
+@subsubsection Characters
+
+Here are functions for operating on characters.
+
+@deftypefn Macro int SCM_CHARP (SCM @var{x})
+Return non-zero iff @var{x} is a character value.
+@end deftypefn
+
+@deftypefn Macro {unsigned int} SCM_CHAR (SCM @var{x})
+Return the value of @code{x} as a C character.  If @var{x} is not a
+Scheme character, the result is undefined.
+@end deftypefn
+
+@deftypefn Macro SCM SCM_MAKE_CHAR (int @var{c})
+Given a C character @var{c}, return its representation as a Scheme
+character value.
+@end deftypefn
+
+
+@node Boolean Data
+@subsubsection Booleans
+
+Booleans are represented as two specific immediate SCM values,
+@code{SCM_BOOL_T} and @code{SCM_BOOL_F}.  @xref{Booleans}, for more
+information.
+
+@node Unique Values
+@subsubsection Unique Values
+
+The immediate values that are neither small integers, characters, nor
+booleans are all unique values --- that is, datatypes with only one
+instance.
+
+@deftypefn Macro SCM SCM_EOL
+The Scheme empty list object, or ``End Of List'' object, usually written
+in Scheme as @code{'()}.
+@end deftypefn
+
+@deftypefn Macro SCM SCM_EOF_VAL
+The Scheme end-of-file value.  It has no standard written
+representation, for obvious reasons.
+@end deftypefn
+
+@deftypefn Macro SCM SCM_UNSPECIFIED
+The value returned by expressions which the Scheme standard says return
+an ``unspecified'' value.
+
+This is sort of a weirdly literal way to take things, but the standard
+read-eval-print loop prints nothing when the expression returns this
+value, so it's not a bad idea to return this when you can't think of
+anything else helpful.
+@end deftypefn
+
+@deftypefn Macro SCM SCM_UNDEFINED
+The ``undefined'' value.  Its most important property is that is not
+equal to any valid Scheme value.  This is put to various internal uses
+by C code interacting with Guile.
+
+For example, when you write a C function that is callable from Scheme
+and which takes optional arguments, the interpreter passes
+@code{SCM_UNDEFINED} for any arguments you did not receive.
+
+We also use this to mark unbound variables.
+@end deftypefn
+
+@deftypefn Macro int SCM_UNBNDP (SCM @var{x})
+Return true if @var{x} is @code{SCM_UNDEFINED}.  Apply this to a
+symbol's value to see if it has a binding as a global variable.
+@end deftypefn
+
+
+@node Non-immediate Datatypes
+@subsection Non-immediate Datatypes 
+
+A non-immediate datatype is one which lives in the heap, either because
+it cannot fit entirely within a @code{SCM} word, or because it denotes a
+specific storage location (in the nomenclature of the Revised^5 Report
+on Scheme).
+
+The @code{SCM_IMP} and @code{SCM_NIMP} macros will distinguish these
+from immediates; see @ref{Immediates vs Non-immediates}.
+
+Given a cell, Guile distinguishes between pairs and other non-immediate
+types by storing special @dfn{tag} values in a non-pair cell's car, that
+cannot appear in normal pairs.  A cell with a non-tag value in its car
+is an ordinary pair.  The type of a cell with a tag in its car depends
+on the tag; the non-immediate type predicates test this value.  If a tag
+value appears elsewhere (in a vector, for example), the heap may become
+corrupted.
+
+Note how the type information for a non-immediate object is split
+between the @code{SCM} word and the cell that the @code{SCM} word points
+to.  The @code{SCM} word itself only indicates that the object is
+non-immediate --- in other words stored in a heap cell.  The tag stored
+in the first word of the heap cell indicates more precisely the type of
+that object.
+
+The type predicates for non-immediate values work correctly on any
+@code{SCM} value; you do not need to call @code{SCM_NIMP} first, to
+establish that a value is non-immediate.
+
+@menu
+* Pair Data::                       
+* Vector Data::                     
+* Procedures::                  
+* Closures::                    
+* Subrs::                       
+* Port Data::                       
+@end menu
+
+
+@node Pair Data
+@subsubsection Pairs
+
+Pairs are the essential building block of list structure in Scheme.  A
+pair object has two fields, called the @dfn{car} and the @dfn{cdr}.
+
+It is conventional for a pair's @sc{car} to contain an element of a
+list, and the @sc{cdr} to point to the next pair in the list, or to
+contain @code{SCM_EOL}, indicating the end of the list.  Thus, a set of
+pairs chained through their @sc{cdr}s constitutes a singly-linked list.
+Scheme and libguile define many functions which operate on lists
+constructed in this fashion, so although lists chained through the
+@sc{car}s of pairs will work fine too, they may be less convenient to
+manipulate, and receive less support from the community.
+
+Guile implements pairs by mapping the @sc{car} and @sc{cdr} of a pair
+directly into the two words of the cell.
+
+
+@deftypefn Macro int SCM_CONSP (SCM @var{x})
+Return non-zero iff @var{x} is a Scheme pair object.
+@end deftypefn
+
+@deftypefn Macro int SCM_NCONSP (SCM @var{x})
+The complement of SCM_CONSP.
+@end deftypefn
+
+@deftypefun SCM scm_cons (SCM @var{car}, SCM @var{cdr})
+Allocate (``CONStruct'') a new pair, with @var{car} and @var{cdr} as its
+contents.
+@end deftypefun
+
+The macros below perform no type checking.  The results are undefined if
+@var{cell} is an immediate.  However, since all non-immediate Guile
+objects are constructed from cells, and these macros simply return the
+first element of a cell, they actually can be useful on datatypes other
+than pairs.  (Of course, it is not very modular to use them outside of
+the code which implements that datatype.)
+
+@deftypefn Macro SCM SCM_CAR (SCM @var{cell})
+Return the @sc{car}, or first field, of @var{cell}.
+@end deftypefn
+
+@deftypefn Macro SCM SCM_CDR (SCM @var{cell})
+Return the @sc{cdr}, or second field, of @var{cell}.
+@end deftypefn
+
+@deftypefn Macro void SCM_SETCAR (SCM @var{cell}, SCM @var{x})
+Set the @sc{car} of @var{cell} to @var{x}.
+@end deftypefn
+
+@deftypefn Macro void SCM_SETCDR (SCM @var{cell}, SCM @var{x})
+Set the @sc{cdr} of @var{cell} to @var{x}.
+@end deftypefn
+
+@deftypefn Macro SCM SCM_CAAR (SCM @var{cell})
+@deftypefnx Macro SCM SCM_CADR (SCM @var{cell})
+@deftypefnx Macro SCM SCM_CDAR (SCM @var{cell}) @dots{}
+@deftypefnx Macro SCM SCM_CDDDDR (SCM @var{cell})
+Return the @sc{car} of the @sc{car} of @var{cell}, the @sc{car} of the
+@sc{cdr} of @var{cell}, @i{et cetera}.
+@end deftypefn
+
+
+@node Vector Data
+@subsubsection Vectors, Strings, and Symbols
+
+Vectors, strings, and symbols have some properties in common.  They all
+have a length, and they all have an array of elements.  In the case of a
+vector, the elements are @code{SCM} values; in the case of a string or
+symbol, the elements are characters.
+
+All these types store their length (along with some tagging bits) in the
+@sc{car} of their header cell, and store a pointer to the elements in
+their @sc{cdr}.  Thus, the @code{SCM_CAR} and @code{SCM_CDR} macros
+are (somewhat) meaningful when applied to these datatypes.
+
+@deftypefn Macro int SCM_VECTORP (SCM @var{x})
+Return non-zero iff @var{x} is a vector.
+@end deftypefn
+
+@deftypefn Macro int SCM_STRINGP (SCM @var{x})
+Return non-zero iff @var{x} is a string.
+@end deftypefn
+
+@deftypefn Macro int SCM_SYMBOLP (SCM @var{x})
+Return non-zero iff @var{x} is a symbol.
+@end deftypefn
+
+@deftypefn Macro int SCM_VECTOR_LENGTH (SCM @var{x})
+@deftypefnx Macro int SCM_STRING_LENGTH (SCM @var{x})
+@deftypefnx Macro int SCM_SYMBOL_LENGTH (SCM @var{x})
+Return the length of the object @var{x}.  The result is undefined if
+@var{x} is not a vector, string, or symbol, respectively.
+@end deftypefn
+
+@deftypefn Macro {SCM *} SCM_VECTOR_BASE (SCM @var{x})
+Return a pointer to the array of elements of the vector @var{x}.
+The result is undefined if @var{x} is not a vector.
+@end deftypefn
+
+@deftypefn Macro {char *} SCM_STRING_CHARS (SCM @var{x})
+@deftypefnx Macro {char *} SCM_SYMBOL_CHARS (SCM @var{x})
+Return a pointer to the characters of @var{x}.  The result is undefined
+if @var{x} is not a symbol or string, respectively.
+@end deftypefn
+
+There are also a few magic values stuffed into memory before a symbol's
+characters, but you don't want to know about those.  What cruft!
+
+Note that @code{SCM_VECTOR_BASE}, @code{SCM_STRING_CHARS} and
+@code{SCM_SYMBOL_CHARS} return pointers to data within the respective
+object.  Care must be taken that the object is not garbage collected
+while that data is still being accessed.  This is the same as for a
+smob, @xref{Remembering During Operations}.
+
+
+@node Procedures
+@subsubsection Procedures
+
+Guile provides two kinds of procedures: @dfn{closures}, which are the
+result of evaluating a @code{lambda} expression, and @dfn{subrs}, which
+are C functions packaged up as Scheme objects, to make them available to
+Scheme programmers.
+
+(There are actually other sorts of procedures: compiled closures, and
+continuations; see the source code for details about them.)
+
+@deftypefun SCM scm_procedure_p (SCM @var{x})
+Return @code{SCM_BOOL_T} iff @var{x} is a Scheme procedure object, of
+any sort.  Otherwise, return @code{SCM_BOOL_F}.
+@end deftypefun
+
+
+@node Closures
+@subsubsection Closures
+
+[FIXME: this needs to be further subbed, but texinfo has no subsubsub]
+
+A closure is a procedure object, generated as the value of a
+@code{lambda} expression in Scheme.  The representation of a closure is
+straightforward --- it contains a pointer to the code of the lambda
+expression from which it was created, and a pointer to the environment
+it closes over.
+
+In Guile, each closure also has a property list, allowing the system to
+store information about the closure.  I'm not sure what this is used for
+at the moment --- the debugger, maybe?
+
+@deftypefn Macro int SCM_CLOSUREP (SCM @var{x})
+Return non-zero iff @var{x} is a closure.
+@end deftypefn
+
+@deftypefn Macro SCM SCM_PROCPROPS (SCM @var{x})
+Return the property list of the closure @var{x}.  The results are
+undefined if @var{x} is not a closure.
+@end deftypefn
+
+@deftypefn Macro void SCM_SETPROCPROPS (SCM @var{x}, SCM @var{p})
+Set the property list of the closure @var{x} to @var{p}.  The results
+are undefined if @var{x} is not a closure.
+@end deftypefn
+
+@deftypefn Macro SCM SCM_CODE (SCM @var{x})
+Return the code of the closure @var{x}.  The result is undefined if
+@var{x} is not a closure.
+
+This function should probably only be used internally by the
+interpreter, since the representation of the code is intimately
+connected with the interpreter's implementation.
+@end deftypefn
+
+@deftypefn Macro SCM SCM_ENV (SCM @var{x})
+Return the environment enclosed by @var{x}.
+The result is undefined if @var{x} is not a closure.
+
+This function should probably only be used internally by the
+interpreter, since the representation of the environment is intimately
+connected with the interpreter's implementation.
+@end deftypefn
+
+
+@node Subrs
+@subsubsection Subrs
+
+[FIXME: this needs to be further subbed, but texinfo has no subsubsub]
+
+A subr is a pointer to a C function, packaged up as a Scheme object to
+make it callable by Scheme code.  In addition to the function pointer,
+the subr also contains a pointer to the name of the function, and
+information about the number of arguments accepted by the C function, for
+the sake of error checking.
+
+There is no single type predicate macro that recognizes subrs, as
+distinct from other kinds of procedures.  The closest thing is
+@code{scm_procedure_p}; see @ref{Procedures}.
+
+@deftypefn Macro {char *} SCM_SNAME (@var{x})
+Return the name of the subr @var{x}.  The result is undefined if
+@var{x} is not a subr.
+@end deftypefn
+
+@deftypefun SCM scm_c_define_gsubr (char *@var{name}, int @var{req}, int @var{opt}, int @var{rest}, SCM (*@var{function})())
+Create a new subr object named @var{name}, based on the C function
+@var{function}, make it visible to Scheme the value of as a global
+variable named @var{name}, and return the subr object.
+
+The subr object accepts @var{req} required arguments, @var{opt} optional
+arguments, and a @var{rest} argument iff @var{rest} is non-zero.  The C
+function @var{function} should accept @code{@var{req} + @var{opt}}
+arguments, or @code{@var{req} + @var{opt} + 1} arguments if @code{rest}
+is non-zero.
+
+When a subr object is applied, it must be applied to at least @var{req}
+arguments, or else Guile signals an error.  @var{function} receives the
+subr's first @var{req} arguments as its first @var{req} arguments.  If
+there are fewer than @var{opt} arguments remaining, then @var{function}
+receives the value @code{SCM_UNDEFINED} for any missing optional
+arguments.
+
+If @var{rst} is non-zero, then any arguments after the first
+@code{@var{req} + @var{opt}} are packaged up as a list and passed as
+@var{function}'s last argument.  @var{function} must not modify that
+list.  (Because when subr is called through @code{apply} the list is
+directly from the @code{apply} argument, which the caller will expect
+to be unchanged.)
+
+Note that subrs can actually only accept a predefined set of
+combinations of required, optional, and rest arguments.  For example, a
+subr can take one required argument, or one required and one optional
+argument, but a subr can't take one required and two optional arguments.
+It's bizarre, but that's the way the interpreter was written.  If the
+arguments to @code{scm_c_define_gsubr} do not fit one of the predefined
+patterns, then @code{scm_c_define_gsubr} will return a compiled closure
+object instead of a subr object.
+@end deftypefun
+
+
+@node Port Data
+@subsubsection Ports
+
+Haven't written this yet, 'cos I don't understand ports yet.
+
+
+@node Signalling Type Errors
+@subsection Signalling Type Errors
+
+Every function visible at the Scheme level should aggressively check the
+types of its arguments, to avoid misinterpreting a value, and perhaps
+causing a segmentation fault.  Guile provides some macros to make this
+easier.
+
+@deftypefn Macro void SCM_ASSERT (int @var{test}, SCM @var{obj}, unsigned int @var{position}, const char *@var{subr})
+If @var{test} is zero, signal a ``wrong type argument'' error,
+attributed to the subroutine named @var{subr}, operating on the value
+@var{obj}, which is the @var{position}'th argument of @var{subr}.
+@end deftypefn
+
+@deftypefn Macro int SCM_ARG1
+@deftypefnx Macro int SCM_ARG2
+@deftypefnx Macro int SCM_ARG3
+@deftypefnx Macro int SCM_ARG4
+@deftypefnx Macro int SCM_ARG5
+@deftypefnx Macro int SCM_ARG6
+@deftypefnx Macro int SCM_ARG7
+One of the above values can be used for @var{position} to indicate the
+number of the argument of @var{subr} which is being checked.
+Alternatively, a positive integer number can be used, which allows to
+check arguments after the seventh.  However, for parameter numbers up to
+seven it is preferable to use @code{SCM_ARGN} instead of the
+corresponding raw number, since it will make the code easier to
+understand.
+@end deftypefn
+
+@deftypefn Macro int SCM_ARGn
+Passing a value of zero or @code{SCM_ARGn} for @var{position} allows to
+leave it unspecified which argument's type is incorrect.  Again,
+@code{SCM_ARGn} should be preferred over a raw zero constant.
+@end deftypefn
+
+
+@node Unpacking the SCM type
+@subsection Unpacking the SCM Type
+
+The previous sections have explained how @code{SCM} values can refer to
+immediate and non-immediate Scheme objects.  For immediate objects, the
+complete object value is stored in the @code{SCM} word itself, while for
+non-immediates, the @code{SCM} word contains a pointer to a heap cell,
+and further information about the object in question is stored in that
+cell.  This section describes how the @code{SCM} type is actually
+represented and used at the C level.
+
+In fact, there are two basic C data types to represent objects in
+Guile: @code{SCM} and @code{scm_t_bits}.
+
+@menu
+* Relationship between SCM and scm_t_bits::
+* Immediate objects::
+* Non-immediate objects::
+* Allocating Cells::
+* Heap Cell Type Information::
+* Accessing Cell Entries::
+* Basic Rules for Accessing Cell Entries::
+@end menu
+
+
+@node Relationship between SCM and scm_t_bits
+@subsubsection Relationship between @code{SCM} and @code{scm_t_bits}
+
+A variable of type @code{SCM} is guaranteed to hold a valid Scheme
+object.  A variable of type @code{scm_t_bits}, on the other hand, may
+hold a representation of a @code{SCM} value as a C integral type, but
+may also hold any C value, even if it does not correspond to a valid
+Scheme object.
+
+For a variable @var{x} of type @code{SCM}, the Scheme object's type
+information is stored in a form that is not directly usable.  To be able
+to work on the type encoding of the scheme value, the @code{SCM}
+variable has to be transformed into the corresponding representation as
+a @code{scm_t_bits} variable @var{y} by using the @code{SCM_UNPACK}
+macro.  Once this has been done, the type of the scheme object @var{x}
+can be derived from the content of the bits of the @code{scm_t_bits}
+value @var{y}, in the way illustrated by the example earlier in this
+chapter (@pxref{Cheaper Pairs}).  Conversely, a valid bit encoding of a
+Scheme value as a @code{scm_t_bits} variable can be transformed into the
+corresponding @code{SCM} value using the @code{SCM_PACK} macro.
+
+@node Immediate objects
+@subsubsection Immediate objects
+
+A Scheme object may either be an immediate, i.e. carrying all necessary
+information by itself, or it may contain a reference to a @dfn{cell}
+with additional information on the heap.  Although in general it should
+be irrelevant for user code whether an object is an immediate or not,
+within Guile's own code the distinction is sometimes of importance.
+Thus, the following low level macro is provided:
+
+@deftypefn Macro int SCM_IMP (SCM @var{x})
+A Scheme object is an immediate if it fulfills the @code{SCM_IMP}
+predicate, otherwise it holds an encoded reference to a heap cell.  The
+result of the predicate is delivered as a C style boolean value.  User
+code and code that extends Guile should normally not be required to use
+this macro.
+@end deftypefn
+
+@noindent
+Summary:
+@itemize @bullet
+@item
+Given a Scheme object @var{x} of unknown type, check first
+with @code{SCM_IMP (@var{x})} if it is an immediate object.
+@item
+If so, all of the type and value information can be determined from the
+@code{scm_t_bits} value that is delivered by @code{SCM_UNPACK
+(@var{x})}.
+@end itemize
+
+
+@node Non-immediate objects
+@subsubsection Non-immediate objects
+
+A Scheme object of type @code{SCM} that does not fulfill the
+@code{SCM_IMP} predicate holds an encoded reference to a heap cell.
+This reference can be decoded to a C pointer to a heap cell using the
+@code{SCM2PTR} macro.  The encoding of a pointer to a heap cell into a
+@code{SCM} value is done using the @code{PTR2SCM} macro.
+
+@c (FIXME:: this name should be changed)
+@deftypefn Macro (scm_t_cell *) SCM2PTR (SCM @var{x})
+Extract and return the heap cell pointer from a non-immediate @code{SCM}
+object @var{x}.
+@end deftypefn
+
+@c (FIXME:: this name should be changed)
+@deftypefn Macro SCM PTR2SCM (scm_t_cell * @var{x})
+Return a @code{SCM} value that encodes a reference to the heap cell
+pointer @var{x}.
+@end deftypefn
+
+Note that it is also possible to transform a non-immediate @code{SCM}
+value by using @code{SCM_UNPACK} into a @code{scm_t_bits} variable.
+However, the result of @code{SCM_UNPACK} may not be used as a pointer to
+a @code{scm_t_cell}: only @code{SCM2PTR} is guaranteed to transform a
+@code{SCM} object into a valid pointer to a heap cell.  Also, it is not
+allowed to apply @code{PTR2SCM} to anything that is not a valid pointer
+to a heap cell.
+
+@noindent
+Summary:  
+@itemize @bullet
+@item
+Only use @code{SCM2PTR} on @code{SCM} values for which @code{SCM_IMP} is
+false!
+@item
+Don't use @code{(scm_t_cell *) SCM_UNPACK (@var{x})}!  Use @code{SCM2PTR
+(@var{x})} instead!
+@item
+Don't use @code{PTR2SCM} for anything but a cell pointer!
+@end itemize
+
+@node Allocating Cells
+@subsubsection Allocating Cells
+
+Guile provides both ordinary cells with two slots, and double cells
+with four slots.  The following two function are the most primitive
+way to allocate such cells.
+
+If the caller intends to use it as a header for some other type, she
+must pass an appropriate magic value in @var{word_0}, to mark it as a
+member of that type, and pass whatever value as @var{word_1}, etc that
+the type expects.  You should generally not need these functions,
+unless you are implementing a new datatype, and thoroughly understand
+the code in @code{<libguile/tags.h>}.
+
+If you just want to allocate pairs, use @code{scm_cons}.
+
+@deftypefn Function SCM scm_cell (scm_t_bits word_0, scm_t_bits word_1)
+Allocate a new cell, initialize the two slots with @var{word_0} and
+@var{word_1}, and return it.
+
+Note that @var{word_0} and @var{word_1} are of type @code{scm_t_bits}.
+If you want to pass a @code{SCM} object, you need to use
+@code{SCM_UNPACK}.
+@end deftypefn
+
+@deftypefn Function SCM scm_double_cell (scm_t_bits word_0, scm_t_bits word_1, scm_t_bits word_2, scm_t_bits word_3)
+Like @code{scm_cell}, but allocates a double cell with four
+slots.
+@end deftypefn
+
+@node Heap Cell Type Information
+@subsubsection Heap Cell Type Information
+
+Heap cells contain a number of entries, each of which is either a scheme
+object of type @code{SCM} or a raw C value of type @code{scm_t_bits}.
+Which of the cell entries contain Scheme objects and which contain raw C
+values is determined by the first entry of the cell, which holds the
+cell type information.
+
+@deftypefn Macro scm_t_bits SCM_CELL_TYPE (SCM @var{x})
+For a non-immediate Scheme object @var{x}, deliver the content of the
+first entry of the heap cell referenced by @var{x}.  This value holds
+the information about the cell type.
+@end deftypefn
+
+@deftypefn Macro void SCM_SET_CELL_TYPE (SCM @var{x}, scm_t_bits @var{t})
+For a non-immediate Scheme object @var{x}, write the value @var{t} into
+the first entry of the heap cell referenced by @var{x}.  The value
+@var{t} must hold a valid cell type.
+@end deftypefn
+
+
+@node Accessing Cell Entries
+@subsubsection Accessing Cell Entries
+
+For a non-immediate Scheme object @var{x}, the object type can be
+determined by reading the cell type entry using the @code{SCM_CELL_TYPE}
+macro.  For each different type of cell it is known which cell entries
+hold Scheme objects and which cell entries hold raw C data.  To access
+the different cell entries appropriately, the following macros are
+provided.
+
+@deftypefn Macro scm_t_bits SCM_CELL_WORD (SCM @var{x}, unsigned int @var{n})
+Deliver the cell entry @var{n} of the heap cell referenced by the
+non-immediate Scheme object @var{x} as raw data.  It is illegal, to
+access cell entries that hold Scheme objects by using these macros.  For
+convenience, the following macros are also provided.
+@itemize @bullet
+@item
+SCM_CELL_WORD_0 (@var{x}) @result{} SCM_CELL_WORD (@var{x}, 0)
+@item
+SCM_CELL_WORD_1 (@var{x}) @result{} SCM_CELL_WORD (@var{x}, 1)
+@item
+@dots{}
+@item
+SCM_CELL_WORD_@var{n} (@var{x}) @result{} SCM_CELL_WORD (@var{x}, @var{n})
+@end itemize
+@end deftypefn
+
+@deftypefn Macro SCM SCM_CELL_OBJECT (SCM @var{x}, unsigned int @var{n})
+Deliver the cell entry @var{n} of the heap cell referenced by the
+non-immediate Scheme object @var{x} as a Scheme object.  It is illegal,
+to access cell entries that do not hold Scheme objects by using these
+macros.  For convenience, the following macros are also provided.
+@itemize @bullet
+@item
+SCM_CELL_OBJECT_0 (@var{x}) @result{} SCM_CELL_OBJECT (@var{x}, 0)
+@item
+SCM_CELL_OBJECT_1 (@var{x}) @result{} SCM_CELL_OBJECT (@var{x}, 1)
+@item
+@dots{}
+@item
+SCM_CELL_OBJECT_@var{n} (@var{x}) @result{} SCM_CELL_OBJECT (@var{x},
+@var{n})
+@end itemize
+@end deftypefn
+
+@deftypefn Macro void SCM_SET_CELL_WORD (SCM @var{x}, unsigned int @var{n}, scm_t_bits @var{w})
+Write the raw C value @var{w} into entry number @var{n} of the heap cell
+referenced by the non-immediate Scheme value @var{x}.  Values that are
+written into cells this way may only be read from the cells using the
+@code{SCM_CELL_WORD} macros or, in case cell entry 0 is written, using
+the @code{SCM_CELL_TYPE} macro.  For the special case of cell entry 0 it
+has to be made sure that @var{w} contains a cell type information which
+does not describe a Scheme object.  For convenience, the following
+macros are also provided.
+@itemize @bullet
+@item
+SCM_SET_CELL_WORD_0 (@var{x}, @var{w}) @result{} SCM_SET_CELL_WORD
+(@var{x}, 0, @var{w})
+@item
+SCM_SET_CELL_WORD_1 (@var{x}, @var{w}) @result{} SCM_SET_CELL_WORD
+(@var{x}, 1, @var{w})
+@item
+@dots{}
+@item
+SCM_SET_CELL_WORD_@var{n} (@var{x}, @var{w}) @result{} SCM_SET_CELL_WORD
+(@var{x}, @var{n}, @var{w})
+@end itemize
+@end deftypefn
+
+@deftypefn Macro void SCM_SET_CELL_OBJECT (SCM @var{x}, unsigned int @var{n}, SCM @var{o})
+Write the Scheme object @var{o} into entry number @var{n} of the heap
+cell referenced by the non-immediate Scheme value @var{x}.  Values that
+are written into cells this way may only be read from the cells using
+the @code{SCM_CELL_OBJECT} macros or, in case cell entry 0 is written,
+using the @code{SCM_CELL_TYPE} macro.  For the special case of cell
+entry 0 the writing of a Scheme object into this cell is only allowed
+if the cell forms a Scheme pair.  For convenience, the following macros
+are also provided.
+@itemize @bullet
+@item
+SCM_SET_CELL_OBJECT_0 (@var{x}, @var{o}) @result{} SCM_SET_CELL_OBJECT
+(@var{x}, 0, @var{o})
+@item
+SCM_SET_CELL_OBJECT_1 (@var{x}, @var{o}) @result{} SCM_SET_CELL_OBJECT
+(@var{x}, 1, @var{o})
+@item
+@dots{}
+@item
+SCM_SET_CELL_OBJECT_@var{n} (@var{x}, @var{o}) @result{}
+SCM_SET_CELL_OBJECT (@var{x}, @var{n}, @var{o})
+@end itemize
+@end deftypefn
+
+@noindent
+Summary:
+@itemize @bullet
+@item
+For a non-immediate Scheme object @var{x} of unknown type, get the type
+information by using @code{SCM_CELL_TYPE (@var{x})}.
+@item
+As soon as the cell type information is available, only use the
+appropriate access methods to read and write data to the different cell
+entries.
+@end itemize
+
+
+@node Basic Rules for Accessing Cell Entries
+@subsubsection Basic Rules for Accessing Cell Entries
+
+For each cell type it is generally up to the implementation of that type
+which of the corresponding cell entries hold Scheme objects and which
+hold raw C values.  However, there is one basic rule that has to be
+followed: Scheme pairs consist of exactly two cell entries, which both
+contain Scheme objects.  Further, a cell which contains a Scheme object
+in it first entry has to be a Scheme pair.  In other words, it is not
+allowed to store a Scheme object in the first cell entry and a non
+Scheme object in the second cell entry.
+
+@c Fixme:shouldn't this rather be SCM_PAIRP / SCM_PAIR_P ?
+@deftypefn Macro int SCM_CONSP (SCM @var{x})
+Determine, whether the Scheme object @var{x} is a Scheme pair,
+i.e. whether @var{x} references a heap cell consisting of exactly two
+entries, where both entries contain a Scheme object.  In this case, both
+entries will have to be accessed using the @code{SCM_CELL_OBJECT}
+macros.  On the contrary, if the @code{SCM_CONSP} predicate is not
+fulfilled, the first entry of the Scheme cell is guaranteed not to be a
+Scheme value and thus the first cell entry must be accessed using the
+@code{SCM_CELL_WORD_0} macro.
+@end deftypefn
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

@@ -1,0 +1,62 @@
+;;; read.bm --- Exercise the reader.               -*- Scheme -*-
+;;;
+;;; Copyright (C) 2008 Free Software Foundation, Inc.
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2, or (at your option)
+;;; any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this software; see the file COPYING.  If not, write to
+;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;; Boston, MA 02110-1301 USA
+
+(define-module (benchmarks read)
+  :use-module (benchmark-suite lib))
+
+
+(define %files-to-load
+  ;; Various large Scheme files.
+  (map %search-load-path
+       '("ice-9/boot-9.scm"  "ice-9/common-list.scm"
+	 "ice-9/format.scm"  "ice-9/optargs.scm"
+	 "ice-9/session.scm" "ice-9/getopt-long.scm"
+         "ice-9/psyntax.pp")))
+
+(define (load-file-with-reader file-name reader buffering)
+  (with-input-from-file file-name
+    (lambda ()
+      (apply setvbuf (current-input-port) buffering)
+      (let loop ((sexp (reader)))
+        (if (eof-object? sexp)
+            #t
+	    (loop (reader)))))))
+
+(define (exercise-read buffering)
+  (for-each (lambda (file)
+		      (load-file-with-reader file read buffering))
+            %files-to-load))
+
+
+(with-benchmark-prefix "read"
+
+  (benchmark "_IONBF" 5  ;; this one is very slow
+    (exercise-read (list _IONBF)))
+
+  (benchmark "_IOLBF" 100
+    (exercise-read (list _IOLBF)))
+
+  (benchmark "_IOFBF 4096" 100
+    (exercise-read (list _IOFBF 4096)))
+
+  (benchmark "_IOFBF 8192" 100
+    (exercise-read (list _IOFBF 8192)))
+
+  (benchmark "_IOFBF 16384" 100
+    (exercise-read (list _IOFBF 16384))))

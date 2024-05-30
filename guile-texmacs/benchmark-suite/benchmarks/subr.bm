@@ -1,0 +1,66 @@
+;;; subr.bm --- Measure the subr invocation cost.     -*- Scheme -*-
+;;;
+;;; Copyright (C) 2009 Free Software Foundation, Inc.
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2, or (at your option)
+;;; any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this software; see the file COPYING.  If not, write to
+;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;; Boston, MA 02110-1301 USA
+
+(define-module (benchmarks subrs)
+  :use-module (benchmark-suite lib))
+
+
+(define hook1 (make-hook 1))
+(define hook3 (make-hook 3))
+
+(with-benchmark-prefix "subr invocation"
+
+  (benchmark "simple subr" 700000
+    ;; 1 required argument, 0 optional arguments, no rest.
+    (1+ 0))
+
+  (benchmark "generic subr" 700000
+    ;; 2 required arguments, 4 optional arguments, no rest.
+
+    ;; In Guile 1.8 and earlier, such subrs are implemented as "compiled
+    ;; closures" (cclos).  There, when a cclo/gsubr is called, the evaluator
+    ;; goes through `SCM_APPLY ()' and conses the arguments, which is more
+    ;; costly than the invocation of a "simple subr".
+    (string= "foo" "bar"))
+
+  (benchmark "generic subr with rest arg" 700000
+    ;; 1 required argument, 0 optional arguments, 1 rest.
+    (run-hook hook1 1))
+
+  (benchmark "generic subr with rest arg and 3+ parameters" 700000
+    ;; 1 required argument, 0 optional arguments, 1 rest.
+
+    ;; The evaluator considers calls with 3 and more parameters as a general
+    ;; form and always stores the arguments into a list.
+    (run-hook hook3 1 2 3)))
+
+
+(with-benchmark-prefix "subr application"
+
+  (benchmark "simple subr" 700000
+    (apply 1+ '(0)))
+
+  (benchmark "generic subr" 700000
+    (apply string= "foo" '("bar")))
+
+  (benchmark "generic subr with rest arg" 700000
+    (apply run-hook hook1 '(1)))
+
+  (benchmark "generic subr with rest arg and 3+ parameters" 700000
+    (run-hook hook3 1 2 '(3))))

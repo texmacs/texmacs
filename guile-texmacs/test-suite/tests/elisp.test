@@ -1,0 +1,334 @@
+;;;; elisp.test --- tests guile's elisp support     -*- scheme -*-
+;;;; Copyright (C) 2002, 2003, 2006 Free Software Foundation, Inc.
+;;;;
+;;;; This library is free software; you can redistribute it and/or
+;;;; modify it under the terms of the GNU Lesser General Public
+;;;; License as published by the Free Software Foundation; either
+;;;; version 2.1 of the License, or (at your option) any later version.
+;;;; 
+;;;; This library is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;;;; Lesser General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU Lesser General Public
+;;;; License along with this library; if not, write to the Free Software
+;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-elisp)
+  :use-module (test-suite lib)
+  :use-module (ice-9 weak-vector))
+
+;;;
+;;; elisp
+;;;
+
+(if (defined? '%nil)
+
+    (with-test-prefix "scheme"
+
+      (with-test-prefix "nil value is a boolean"
+
+        (pass-if "boolean?"
+          (boolean? %nil))
+
+	)
+
+      (with-test-prefix "nil value is false"
+
+        (pass-if "not"
+          (eq? (not %nil) #t))
+
+        (pass-if "if"
+	  (if %nil #f #t))
+
+	(pass-if "and"
+          (eq? (and %nil #t) #f))
+
+        (pass-if "or"
+          (eq? (or %nil #f) #f))
+
+        (pass-if "cond"
+          (cond (%nil #f) (else #t)))
+
+	(pass-if "do"
+	  (call-with-current-continuation
+	    (lambda (exit)
+	      (do ((i 0 (+ i 1)))
+		  (%nil (exit #f))
+		(if (> i 10)
+		    (exit #t))))))
+
+	)
+
+      (with-test-prefix "nil value as an empty list"
+
+	(pass-if "list?"
+          (list? %nil))
+
+	(pass-if "null?"
+          (null? %nil))
+
+	(pass-if "sort"
+          (eq? (sort %nil <) %nil))
+
+	)
+
+      (with-test-prefix "lists formed using nil value"
+
+	(pass-if "list?"
+          (list? (cons 'a %nil)))
+
+        (pass-if "length of %nil"
+          (= (length %nil) 0))
+
+        (pass-if "length"
+          (= (length (cons 'a (cons 'b (cons 'c %nil)))) 3))
+
+        (pass-if "length (with backquoted list)"
+          (= (length `(a b c . ,%nil)) 3))
+
+	(pass-if "write (%nil)"
+          (string=? (with-output-to-string
+		      (lambda () (write %nil)))
+		    "#nil"))		; Hmmm... should be "()" ?
+
+	(pass-if "display (%nil)"
+          (string=? (with-output-to-string
+		      (lambda () (display %nil)))
+		    "#nil"))		; Ditto.
+
+	(pass-if "write (list)"
+          (string=? (with-output-to-string
+		      (lambda () (write (cons 'a %nil))))
+		    "(a)"))
+
+	(pass-if "display (list)"
+          (string=? (with-output-to-string
+		      (lambda () (display (cons 'a %nil))))
+		    "(a)"))
+
+	(pass-if "assq"
+          (and (equal? (assq 1 `((1 one) (2 two) . ,%nil))
+		       '(1 one))
+	       (equal? (assq 3 `((1 one) (2 two) . ,%nil))
+		       #f)))
+
+	(pass-if "assv"
+          (and (equal? (assv 1 `((1 one) (2 two) . ,%nil))
+		       '(1 one))
+	       (equal? (assv 3 `((1 one) (2 two) . ,%nil))
+		       #f)))
+
+	(pass-if "assoc"
+          (and (equal? (assoc 1 `((1 one) (2 two) . ,%nil))
+		       '(1 one))
+	       (equal? (assoc 3 `((1 one) (2 two) . ,%nil))
+		       #f)))
+
+	(pass-if "with-fluids*"
+          (let ((f (make-fluid))
+                (g (make-fluid)))
+            (with-fluids* (cons f (cons g %nil))
+			  '(3 4)
+			  (lambda ()
+			    (and (eq? (fluid-ref f) 3)
+				 (eq? (fluid-ref g) 4))))))
+
+	(pass-if "append!"
+	  (let ((a (copy-tree '(1 2 3)))
+		(b (copy-tree `(4 5 6 . ,%nil)))
+		(c (copy-tree '(7 8 9)))
+		(d (copy-tree `(a b c . ,%nil))))
+	    (equal? (append! a b c d)
+		    `(1 2 3 4 5 6 7 8 9 a b c . ,%nil))))
+
+	(pass-if "last-pair"
+	  (equal? (last-pair `(1 2 3 4 5 . ,%nil))
+		  (cons 5 %nil)))
+
+	(pass-if "reverse"
+	  (equal? (reverse `(1 2 3 4 5 . ,%nil))
+		  '(5 4 3 2 1)))	; Hmmm... is this OK, or
+					; should it be
+					; `(5 4 3 2 1 . ,%nil) ?
+
+	(pass-if "reverse!"
+          (equal? (reverse! (copy-tree `(1 2 3 4 5 . ,%nil)))
+		  '(5 4 3 2 1)))	; Ditto.
+
+	(pass-if "list-ref"
+          (eq? (list-ref `(0 1 2 3 4 . ,%nil) 4) 4))
+
+	(pass-if-exception "list-ref"
+	  exception:out-of-range
+          (eq? (list-ref `(0 1 2 3 4 . ,%nil) 6) 6))
+
+	(pass-if "list-set!"
+	  (let ((l (copy-tree `(0 1 2 3 4 . ,%nil))))
+	    (list-set! l 4 44)
+	    (= (list-ref l 4) 44)))
+
+	(pass-if-exception "list-set!"
+	  exception:out-of-range
+	  (let ((l (copy-tree `(0 1 2 3 4 . ,%nil))))
+	    (list-set! l 6 44)
+	    (= (list-ref l 6) 44)))
+
+	(pass-if "list-cdr-set!"
+	  (let ((l (copy-tree `(0 1 2 3 4 . ,%nil))))
+	    (and (begin
+		   (list-cdr-set! l 4 44)
+		   (equal? l '(0 1 2 3 4 . 44)))
+		 (begin
+		   (list-cdr-set! l 3 `(new . ,%nil))
+		   (equal? l `(0 1 2 3 new . ,%nil))))))
+
+	(pass-if-exception "list-cdr-set!"
+	  exception:out-of-range
+	  (let ((l (copy-tree `(0 1 2 3 4 . ,%nil))))
+	    (list-cdr-set! l 6 44)))
+
+        (pass-if "memq"
+          (equal? (memq 'c `(a b c d . ,%nil)) `(c d . ,%nil)))
+
+        (pass-if "memv"
+          (equal? (memv 'c `(a b c d . ,%nil)) `(c d . ,%nil)))
+
+        (pass-if "member"
+          (equal? (member "c" `("a" "b" "c" "d" . ,%nil)) `("c" "d" . ,%nil)))
+
+	(pass-if "list->vector"
+          (equal? '#(1 2 3) (list->vector `(1 2 3 . ,%nil))))
+
+	(pass-if "list->vector"
+          (equal? '#(1 2 3) (list->vector `(1 2 3 . ,%nil))))
+
+	(pass-if "list->weak-vector"
+          (equal? (weak-vector 1 2 3) (list->weak-vector `(1 2 3 . ,%nil))))
+
+	(pass-if "sorted?"
+	  (and (sorted? `(1 2 3 . ,%nil) <)
+	       (not (sorted? `(1 6 3 . ,%nil) <))))
+
+	(pass-if "merge"
+          (equal? (merge '(1 4 7 10)
+			 (merge `(2 5 8 11 . ,%nil)
+				`(3 6 9 12 . ,%nil)
+				<)
+			 <)
+		  `(1 2 3 4 5 6 7 8 9 10 11 12 . ,%nil)))
+
+	(pass-if "merge!"
+          (equal? (merge! (copy-tree '(1 4 7 10))
+			  (merge! (copy-tree `(2 5 8 11 . ,%nil))
+				  (copy-tree `(3 6 9 12 . ,%nil))
+				  <)
+			 <)
+		  `(1 2 3 4 5 6 7 8 9 10 11 12 . ,%nil)))
+
+	(pass-if "sort"
+          (equal? (sort `(1 5 3 8 4 . ,%nil) <) '(1 3 4 5 8)))
+
+	(pass-if "stable-sort"
+          (equal? (stable-sort `(1 5 3 8 4 . ,%nil) <) '(1 3 4 5 8)))
+
+	(pass-if "sort!"
+          (equal? (sort! (copy-tree `(1 5 3 8 4 . ,%nil)) <)
+		  '(1 3 4 5 8)))
+
+	(pass-if "stable-sort!"
+          (equal? (stable-sort! (copy-tree `(1 5 3 8 4 . ,%nil)) <)
+		  '(1 3 4 5 8)))
+
+	)
+
+      (with-test-prefix "value preservation"
+
+        (pass-if "car"
+          (eq? (car (cons %nil 'a)) %nil))
+
+        (pass-if "cdr"
+          (eq? (cdr (cons 'a %nil)) %nil))
+
+        (pass-if "vector-ref"
+          (eq? (vector-ref (vector %nil) 0) %nil))
+
+	)
+
+      ))
+
+(if (defined? '%nil)
+    (use-modules (lang elisp interface)))
+
+(if (defined? '%nil)
+
+    (with-test-prefix "elisp"
+
+      (define (elisp-pass-if expr expected)
+	(pass-if (with-output-to-string
+		  (lambda ()
+		    (write expr)))
+		 (let ((calc (with-output-to-string
+			      (lambda ()
+				(write (eval-elisp expr))))))
+		   (string=? calc expected))))
+      
+      (elisp-pass-if '(and #f) "#f")
+      (elisp-pass-if '(and #t) "#t")
+      (elisp-pass-if '(and nil) "#nil")
+      (elisp-pass-if '(and t) "#t")
+      (elisp-pass-if '(and) "#t")
+      (elisp-pass-if '(cond (nil t) (t 3)) "3")
+      (elisp-pass-if '(cond (nil t) (t)) "#t")
+      (elisp-pass-if '(cond (nil)) "#nil")
+      (elisp-pass-if '(cond) "#nil")
+      (elisp-pass-if '(if #f 'a 'b) "b")
+      (elisp-pass-if '(if #t 'a 'b) "a")
+      (elisp-pass-if '(if '() 'a 'b) "b")
+      (elisp-pass-if '(if nil 'a 'b) "b")
+      (elisp-pass-if '(if nil 1 2 3 4) "4")
+      (elisp-pass-if '(if nil 1 2) "2")
+      (elisp-pass-if '(if nil 1) "#nil")
+      (elisp-pass-if '(if t 1 2) "1")
+      (elisp-pass-if '(if t 1) "1")
+      (elisp-pass-if '(let (a) a) "#nil")
+      (elisp-pass-if '(let* (a) a) "#nil")
+      (elisp-pass-if '(let* ((a 1) (b (* a 2))) b) "2")
+      (elisp-pass-if '(memq '() '(())) "(())")
+      (elisp-pass-if '(memq '() '(nil)) "(#nil)")
+      (elisp-pass-if '(memq '() '(t)) "#nil")
+      (elisp-pass-if '(memq nil '(())) "(())")
+      (elisp-pass-if '(memq nil '(nil)) "(#nil)")
+      (elisp-pass-if '(memq nil (list nil)) "(#nil)")
+      (elisp-pass-if '(null '#f) "#t")
+      (elisp-pass-if '(null '()) "#t")
+      (elisp-pass-if '(null 'nil) "#t")
+      (elisp-pass-if '(null nil) "#t")
+      (elisp-pass-if '(or 1 2 3) "1")
+      (elisp-pass-if '(or nil t nil) "#t")
+      (elisp-pass-if '(or nil) "#nil")
+      (elisp-pass-if '(or t nil t) "#t")
+      (elisp-pass-if '(or t) "#t")
+      (elisp-pass-if '(or) "#nil")
+      (elisp-pass-if '(prog1 1 2 3) "1")
+      (elisp-pass-if '(prog2 1 2 3) "2")
+      (elisp-pass-if '(progn 1 2 3) "3")
+      (elisp-pass-if '(while nil 1) "#nil")
+      
+      (elisp-pass-if '(defun testf (x y &optional o &rest r) (list x y o r)) "testf")
+      (elisp-pass-if '(testf 1 2) "(1 2 #nil #nil)")
+      (elisp-pass-if '(testf 1 2 3 4 5 56) "(1 2 3 (4 5 56))")
+      ;; NB `lambda' in Emacs is self-quoting, but that's only after
+      ;; loading the macro definition of lambda in subr.el.
+      (elisp-pass-if '(function (lambda (x y &optional o &rest r) (list x y o r))) "(lambda (x y &optional o &rest r) (list x y o r))")
+      (elisp-pass-if '(funcall (lambda (x y &optional o &rest r) (list x y o r)) 1 2 3 4) "(1 2 3 (4))")
+      (elisp-pass-if '(apply (lambda (x y &optional o &rest r) (list x y o r)) 1 2 3 nil) "(1 2 3 #nil)")
+
+      (elisp-pass-if '(setq x 3) "3")
+      (elisp-pass-if '(defvar x 4) "x")
+      (elisp-pass-if 'x "3")
+
+      ))
+
+;;; elisp.test ends here

@@ -1,0 +1,14 @@
+# -*-shell-script-*-
+
+# This file contains the shared library versioning information.  Right
+# now, for this to work properly, you'll also need to add AC_SUBST
+# calls to the right place in configure.in, add the right
+# -version-info statement to your Makefile.am, and add a call to
+# source this file from configure.in.  Later we may automate more of
+# this.
+
+LIBGUILEREADLINE_MAJOR=17
+LIBGUILEREADLINE_INTERFACE_CURRENT=17
+LIBGUILEREADLINE_INTERFACE_REVISION=3
+LIBGUILEREADLINE_INTERFACE_AGE=0
+LIBGUILEREADLINE_INTERFACE="${LIBGUILEREADLINE_INTERFACE_CURRENT}:${LIBGUILEREADLINE_INTERFACE_REVISION}:${LIBGUILEREADLINE_INTERFACE_AGE}"

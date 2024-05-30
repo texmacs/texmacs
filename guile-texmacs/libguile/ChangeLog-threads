@@ -1,0 +1,251 @@
+Some of the thread support code (threads.c, coop.c, etc.) used to live
+in a separate directory called threads.  In April 1997, that dir was
+merged with libguile; this is the ChangeLog from the old directory.
+
+Please put new entries in the ordinary ChangeLog.
+
+Mon Feb 24 21:48:12 1997  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* configure.in: Added AM_MAINTAINER_MODE
+
+Fri Feb 21 23:52:16 1997  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* Makefile.am (modincludedir, modinclude_HEADERS): Added until
+	libthreads is integrated into libguile, otherwise people who try
+	to use Guile from an independent application will have trouble
+	finding libguile/../threads/threads.h.
+
+Sat Jan 11 18:35:39 1997  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* Makefile.am (noinst_HEADERS): Added coop-defs.h so that it gets
+ 	distributed.
+
+Tue Jan  7 14:05:35 1997  Mikael Djurfeldt  <mdj@kenneth>
+
+	* coop-defs.h: Added includes which define `time_t'.
+
+Sun Jan  5 15:07:07 1997  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* Makefile.am (EXTRA_DIST): Add .cvsignore.
+
+	* Makefile.am (libthreads_a_SOURCES): Add threads.h.  I think this
+	is right...
+	(noinst_HEADERS): Remove it from here.
+	* Makefile.in: Rebuilt.
+
+Thu Jan  2 15:15:16 1997  Mikael Djurfeldt  <mdj@kenneth>
+
+	These changes separates threads declarations which everybody wants
+ 	to see (coop-defs.h) from declarations internal to the threads
+ 	module (coop-threads.h), thereby solving the "-I ../qt" problem.
+	(This is not the final solution.  All files in the threads
+ 	directory should be moved into libguile since 1. it is too tightly
+ 	interconnected with libguile internals to be a separate module and
+ 	2. it is actually quite small.  When doing this, things can be
+ 	organized in a more natural way.)
+
+	* coop-defs.h: New file.
+	
+	* coop-threads.c: Added #include "coop-threads.h"
+
+	* coop-threads.h: Moved coop_t struct and threads macros to
+	coop-defs.h.  Added #include "coop-defs.h".
+
+	* threads.h: Changed #include "coop-threads.h" --> #include
+	"coop-defs.h".
+
+Mon Dec  9 17:20:39 1996  Tom Tromey  <tromey@cygnus.com>
+
+	* Makefile.am (.c.x): Use guile-snarf.
+	(INCLUDES): Search for headers in libguile source and build
+	directories.
+
+Mon Dec  2 20:37:07 1996  Tom Tromey  <tromey@cygnus.com>
+
+	* PLUGIN/greet: Removed.
+	* Makefile.am, aclocal.m4: New files.
+	* configure.in: Updated for Automake.
+
+Sun Nov 10 18:21:00 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* Makefile.in (uninstall_threads): rmdir -f isn't portable;
+	use rm -rf instead.
+
+Sun Nov 10 17:41:21 1996  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* Makefile.in, configure.in: When threads are disabled,
+ 	short-circuit the `install' and `uninstall' Makefile targets too.
+
+Sat Nov  2 21:29:33 1996  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* threads.c: Added #include "dynwind.h".
+	Added scheme level procedure `single-active-thread?'.
+
+	* mit-pthreads.c, mit-pthreads.h: Port completed but untested.
+
+	* coop-threads.h: Increased SCM_THREAD_SWITCH_COUNT from 10 to 50
+	to decrease overhead at the cost of granularity.
+
+	* coop.c, coop-threads.h: Made coop_global_runq and
+	coop_global_sleepq visible globally.
+
+	* coop-threads.c (scm_single_thread_p): New function.
+
+Thu Oct 24 22:37:03 1996  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* threads.c: #include "dynwind.h"
+
+	* coop-threads.c (scm_threads_mark_stacks): Removed unused
+ 	variable.
+
+	* coop.c (coop_qput, coop_all_qput, coop_all_qremove): Removed
+ 	unused variable.
+
+Wed Oct  9 19:46:00 1996  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* Makefile.in: Doc fixes.
+
+	* Makefile.in (ancillary): Corrected spelling from `ancillery'.
+	
+	* Makefile.in (source, h_files, ancillary): Updated to describe
+	the actual contents of the tree.
+	(PLUGIN_distfiles): New variable.
+	(dist-dir): New target, to create a sub-tree of a distribution.
+	
+	* Makefile.in (all): Depend on @target_all@ instead of
+ 	libthreads.a, so the configure script can make this makefile do
+ 	nothing when threads aren't in use.
+	* configure.in: If we using cooperative threads, then let
+	@target_all@ expand to libthreads.a; otherwise, let it expand to
+	the empty string.
+
+Sat Oct  5 18:40:09 1996  Mikael Djurfeldt  <mdj@kenneth>
+
+	* threads.c, threads.h (scm_init_threads, scm_threads_init): Added
+	stack base pointer argument so that main thread can be initialized
+	properly.
+
+	* configure.in: Added lines to set default -g flag in CFLAGS and
+	LDFLAGS.
+
+	* coop-threads.c: Added argument checking to scheme level
+	procedures.  Change the way threads are launched.
+
+	* threads.h: Added #include "procs.h"
+	Added macros SCM_THREADP, SCM_MUTEXP and SCM_CONDVARP.
+
+Wed Oct  2 14:36:44 1996  Mikael Djurfeldt  <mdj@woody.nada.kth.se>
+
+	* coop-threads.c (scm_threads_free_thread, scm_threads_free_mutex,
+ 	scm_threads_free_condvar):  free --> scm_must_free
+
+	* coop-threads.h: Added macros SCM_THREAD_LOCAL_DATA and
+	SCM_SET_THREAD_LOCAL_DATA.
+	
+Tue Oct  1 00:05:54 1996  Mikael Djurfeldt  <mdj@woody.nada.kth.se>
+
+	* coop-threads.c (scm_threads_mark_stacks): scm_save_regs_gc_mark
+	is already in root state (should it really?).  Don't allocate it
+	locally; Remove extra argument to scm_mark_locations.
+
+	* coop-threads.h: Changed #include <qt.h> --> #include "../qt/qt.h"
+	(SCM_THREAD_INITIALIZE_STORAGE, SCM_DEFER_INTS, SCM_ALLOW_INTS,
+ 	SCM_REDEFER_INTS, SCM_REALLOW_INTS, scm_coop_create_info_type):
+ 	Removed; Declaration of scm_coop_create_info removed.  Added
+ 	definition of SCM_THREADS_SWITCHING_CODE.
+
+	* coop-threads.c: Removed gscm_type objects.  Renamed all
+ 	  gscm_threads_<type>_die --> scm_threads_free_<type> and let them
+ 	  return freed size as smob freeing code normally does.  Removed
+ 	  thread creation mutex and thread creation info structure.
+	(gscm_threads_thread_equal, gscm_pthread_delete_info,
+ 	 scm_threads_init): Removed.
+	(scm_threads_init_coop_threads): Removed allocation of thread
+ 	  local data.  Removed initialization of thread creation mutex.
+  	  Renamed scm_threads_init_coop_threads --> scm_threads_init.
+	(scm_threads_mark_stacks): Mark root object instead of local
+ 	  protects.
+	(launch_thread): thunk and handler is passed as a scheme list.
+  	  Call scm_with_new_root instead of scm_with_dynamic_root.  Let
+ 	  scm_with_new_root care about thread local variables.  Removed
+ 	  unlocking of creation mutex.
+	(scm_call_with_new_thread): Remove initialization of create info
+ 	  structure and locking of creation mutex.  Do smob allocation.
+	(scm_join_thread): Extract thread data in a new way.
+	(scm_make_mutex): Do smob allocation.
+	(scm_lock_mutex, scm_unlock_mutex): Extract thread data in a new
+ 	way.
+	(scm_make_condition_variable): Do smob allocation.
+	(scm_wait_condition_variable, scm_signal_condition_variable):
+ 	Extract thread data in a new way.
+
+	* threads.c: Don't use files "no-threads.[hc]".  Removed old code
+ 	for creation of thread, mutex and condition-variable objects.
+  	Added smobs instead.  Use scm_threads_free_<type> for freeing.
+	(scm_init_threads): Moved scm_add_feature ("threads") to
+ 	feature.c.
+	
+	* threads.h: Added declaration of scm_init_threads.  Added macro
+ 	selectors SCM_THREAD_DATA, SCM_MUTEX_DATA and SCM_CONDVAR_DATA.
+
+	* coop-threads.c, coop-threads.h, coop.c, fsu-pthreads.h,
+	mit-pthreads.c, mit-pthreads.h, threads.c, threads.h: Replaced
+	"gscm" --> "scm" everywhere.  Lots of name changes to concord with
+	new Guile.
+
+Thu Apr  4 10:19:56 1996  Tom Tromey  <tromey@creche.cygnus.com>
+
+	Fixed CFLAGS usage:
+	* Makefile.in (XCFLAGS): New macro.
+	(.c.x): Use it.
+	(.c.o): Ditto.
+	* configure.in: Use DEFS, not X_CFLAGS.
+
+Fri Mar 29 17:08:14 1996  Anthony Green  <green@snuffle.cygnus.com>
+
+	* no-threads.c (gscm_threads_init_all): This function is now 
+	found in libguile.
+
+Fri Mar 29 16:52:27 1996  Tom Tromey  <tromey@creche.cygnus.com>
+
+	* configure.in (CFLAGS): Use "test !=", not "! test".
+
+Fri Mar 29 11:51:18 1996  Anthony Green  <green@snuffle.cygnus.com>
+
+	* Makefile.in (install): make install now works properly.
+
+Thu Mar 28 07:52:11 1996  Anthony Green  <green@csk3.cygnus.com>
+
+	* mit-pthreads.c: dynwinds set to BOOL_T for new threads.
+	Added dummy yield function.
+
+Tue Mar 26 15:17:42 1996  Anthony Green  (green@gerbil.cygnus.com)
+
+	* coop.c: Added new sleep() function. Behaves properly
+	among multiple cooperative threads. Replaces system call.
+
+Mon Mar 25 11:05:41 1996  Anthony Green  (green@gerbil.cygnus.com)
+
+	* coop.c (COOP_STKSIZE): Boosted default stack size.
+
+	* coop-threads.c: Moved declaration of scm_coop_create_info
+	to avoid multiple definitions at link time.
+
+Sun Mar 24 23:04:29 1996  Anthony Green  (green@gerbil.cygnus.com)
+
+        * configure: Rebuilt
+	* configure.in: Upgraded thread library/include support.
+
+Tue Mar 19 12:44:26 1996  Anthony Green  (green@gerbil.cygnus.com)
+
+	* coop.c, coop-threads.h coop-threads.c: Major cleanup of
+        cooperative threading code.
+
+Tue Feb 13 15:45:39 1996  Anthony Green  <green@hoser.cygnus.com>
+
+	* mit-pthreads.h: Defined pthread aware SCM_DEFER_INTS and friends.
+
+Mon Feb 12 19:59:55 1996  Anthony Green  <green@hoser.cygnus.com>
+
+	* threads.c, no-threads.c, mit-pthreads.c, threads.scm: Creation.
+

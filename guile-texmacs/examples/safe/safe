@@ -1,0 +1,85 @@
+#! /usr/local/bin/guile -s
+!#
+;;; examples/safe/safe -- Example for safe (sand-boxed) evaluation.
+
+;;; Commentary:
+
+;;; This is a demo program for evaluating arbitrary (untrusted) Scheme
+;;; code in a controlled, safe environment.  Evaluation in safe
+;;; environments restricts the evaluated code's access to some given
+;;; primitives, which are considered `safe', that means which cannot
+;;; do any harm to the world outside of Guile (creating/deleting files
+;;; etc.)
+;;;
+;;; *Note* that the files in this directory are only suitable for
+;;; demonstration purposes, if you have to implement safe evaluation
+;;; mechanisms in important environments, you will have to do more
+;;; than shown here -- for example disabling input/output operations.
+
+;;; Author: Martin Grabmueller
+;;; Date: 2001-05-30
+
+;;; Code:
+
+;; Safe module creation is implemented in this module:
+;;
+(use-modules (ice-9 safe))
+
+;; This is the main program.  It expects one parameter in the format
+;; returned by (command-line) and expects that exactly one file name
+;; is passed in this list (after the script name, which is passed as
+;; the 0th parameter.)
+;;
+;; The given file is opened for reading, one expression after the
+;; other is read and evaluated in a safe environment.  All exceptions
+;; caused by this evaluation are caught and printed out.
+;;
+(define (main cmd-line)
+
+  ;; Internal definition of the procedure which prints usage
+  ;; information.
+  ;;
+  (define (display-help)
+    (display "Usage: safe FILENAME")
+    (newline)
+    (quit 1))
+
+  ;; Check that we received exactly one command line argument after
+  ;; the script name
+  ;;
+  (if (not (= (length cmd-line) 2))
+    (display-help)
+    (let ((port (open-input-file (cadr cmd-line)))
+
+	  ;; Create the safe module.
+	  (safe-module (make-safe-module)))
+
+      ;; Read one expression a time.
+      (let lp ((expr (read port)))
+	;; End of file? -> Return.
+	(if (eof-object? expr)
+	  #t
+	  (catch #t
+	    (lambda ()
+	      ;; Evaluate the expression in the safe environment.
+	      (eval expr safe-module)
+	      ;; ... and read the next expression if no error occured.
+	      (lp (read port)))
+
+	    ;; Handle exceptions.  This procedure will be called when an
+	    ;; error occurs while evaluating the expression.  It just
+	    ;; prints out a message telling so and returns from the
+	    ;; evaluation loop, thus terminating the program.
+	    ;;
+	    (lambda args
+	      (display "** Exception: ")
+	      (write args)
+	      (newline))))))))
+
+;; Start the main program.
+;;
+(main (command-line))
+
+;; Local variables:
+;; mode: scheme
+;; End:

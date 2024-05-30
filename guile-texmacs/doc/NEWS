@@ -1,0 +1,44 @@
+Guile-doc NEWS --- history of user-visible changes.  -*- text -*-
+Copyright (C) 1997, 2001, 2006 Free Software Foundation, Inc.
+See the end for copying conditions.
+
+
+Changes since Guile 1.3.4:
+
+* It's now possible to build HTML documentation as well as Info
+
+The guile-doc distribution now supports building HTML versions of the
+Guile tutorial and reference manual, in addition to the standard Info
+documentation.  To enable this, include the `--enable-html' option
+when you run `./configure':
+
+     ./configure --enable-html
+
+HTML documentation is installed in $(prefix)/html/guile-$(VERSION).
+
+
+Changes since Guile 1.0 (Sun 5 Jan 1997):
+
+* The current documentation approach, recommended by Jim Blandy, is to
+have: (*) a tutorial with the pedagogical style of guile-user, and a
+non-dry reference manual in the style of the most excellent GNU libc
+reference manual: the reference manual should be complete, but at the
+same time it should have an introductory screen for each major topic,
+which can be referenced if the user goes "up" a level in the info
+documentation.
+
+
+Copyright information:
+
+Copyright (C) 1996,1997, 2006 Free Software Foundation, Inc.
+
+   Permission is granted to anyone to make or distribute verbatim copies
+   of this document as received, in any medium, provided that the
+   copyright notice and this permission notice are preserved,
+   thus giving the recipient permission to redistribute in turn.
+
+   Permission is granted to distribute modified versions
+   of this document, or of portions of it,
+   under the above conditions, provided also that they
+   carry prominent notices stating who last changed them.
+

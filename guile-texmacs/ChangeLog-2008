@@ -1,0 +1,3315 @@
+2008-08-20  Ludovic Courtès  <ludo@gnu.org>
+
+	* configure.in: Use `AC_USE_SYSTEM_EXTENSIONS' instead of the
+	obsolete `AC_AIX', `AC_ISC_POSIX' and `AC_MINIX'.  As a side
+	effect, this will define `_POSIX_PTHREAD_SEMANTICS' on Solaris,
+	which provides a standard-conforming version of `readdir_r ()'
+	for instance; it also allows the use of Autoconf 2.62.
+
+2008-08-14  Ludovic Courtès  <ludo@gnu.org>
+
+	* configure.in: Remove incorrect and pointless
+	`AC_CONFIG_MACRO_DIR' invocation.  Reported as Gentoo bug
+	#220339.
+
+2008-08-07  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* configure.in (SCM_I_GSC_STACK_GROWS_UP): Remove use of
+	AC_CACHE_CHECK, which was inadvertently causing
+	SCM_I_GSC_STACK_GROWS_UP _always_ to be 0.
+
+2008-07-17  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* configure.in: Update stack direction test to be like that in
+        Autoconf _AC_LIBOBJ_ALLOCA and Gnulib; specifically in involving a
+        function calling itself.
+
+2008-07-16  Ludovic Courtès  <ludo@gnu.org>
+
+	* configure.in: Look for `struct dirent64' and `readdir64_r ()',
+	not available on HP-UX 11.11.
+
+2008-07-06  Ludovic Courtès  <ludo@gnu.org>
+
+	* configure.in: Update to Autoconf 2.61.
+
+2008-06-28  Ludovic Courtès  <ludo@gnu.org>
+
+	* configure.in: Use Automake with `-Wall -Wno-override'.
+
+2008-05-07  Ludovic Courtès  <ludo@gnu.org>
+
+	Guile 1.8.5 released.
+
+	* GUILE-VERSION (LIBGUILE_INTERFACE_CURRENT): Increment due to
+	the addition of an inlined version of `scm getc ()' and friends.
+	(LIBGUILE_INTERFACE_AGE): Increment.
+	(LIBGUILE_INTERFACE_REVISION): Zeroed.
+	(LIBGUILE_SRFI_SRFI_1_INTERFACE_REVISION): Increment.
+
+2008-05-04  Ludovic Courtès  <ludo@gnu.org>
+
+	Add `pkg-config' support.  Suggested by Aaron VanDevender, Greg
+	Troxel, and others.
+
+	* configure.in: Substitute `sitedir', produce `guile-1.8.pc'.
+	* Makefile.am (EXTRA_DIST): Add `guile-1.8.pc.in'.
+	(pkgconfigdir, pkgconfig_DATA): New.
+
+2008-04-26  Ludovic Courtès  <ludo@gnu.org>
+
+	* configure.in (BUILD_PTHREAD_SUPPORT): New Automake
+	conditional.
+
+2008-04-26  Ludovic Courtès  <ludo@gnu.org>
+
+	* Makefile.am (EXTRA_DIST): Remove `ANON-CVS' and `SNAPSHOTS'.
+
+2008-03-12  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* configure.in (AC_CONFIG_FILES): Add emacs/Makefile and
+	ice-9/debugging/Makefile.
+
+	* Makefile.am (SUBDIRS): Add emacs.
+
+2008-02-23  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* FAQ: New file.
+
+	* Makefile.am (EXTRA_DIST): Add FAQ
+
+2008-02-22  Ludovic Courtès  <ludo@gnu.org>
+
+	* configure.in: Check whether `strncasecmp' is declared.
+
+2008-02-16  Ludovic Courtès  <ludo@gnu.org>
+
+	Guile 1.8.4 released.
+
+	* GUILE-VERSION (LIBGUILE_INTERFACE_REVISION): Increment.
+	(GUILE_MICRO_VERSION): Increment.
+
+	* configure.in (GUILE_CFLAGS): Include `$CPPFLAGS' since they
+	may include required `-I' flags (e.g., `-I/path/to/gmp'), so
+	that "guile-config compile" reports all the needed flags.
+
+2008-02-15  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* autogen.sh: Copy versions of config.guess and config.sub from
+	Guile CVS to build-aux and guile-readline.
+
+2008-02-14  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* HACKING: Note need for libtool >= 1.5.26.
+
+	* config.rpath, build-aux/config.rpath: Updated to latest upstream
+	version.
+
+	* config.guess, config.sub: 2008-01-07 versions added to Guile
+	CVS, to ensure that Guile developers are using new enough versions
+	(in particular for AIX 6.1 support).
+
+2008-02-11  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* configure.in (--without-64-calls): Use AC_MSG_CHECKING and
+	AC_MSG_RESULT instead of just echo.
+	(GUILE_I): New programs to try using _Complex_I or 1.0fi for the
+	imaginary unit.
+
+2008-02-06  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* configure.in: Default to --without-64-calls for
+	powerpc-ibm-aix*.  Thanks to Rainer Tammer for reporting that the
+	64 calls are a problem on that OS.
+
+2008-02-06  Ludovic Courtès  <ludo@gnu.org>
+
+	* NEWS: Mention Sun Studio compilation fix.
+
+2008-02-05  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* configure.in (--without-64-calls): New option.
+
+2008-01-30  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* pre-inst-guile.in (dyld_prefix), pre-inst-guile-env.in
+	(dyld_prefix): Construct and export dyld_prefix in a similar way
+	to ltdl_prefix, to allow pre-install dynamic linking to work on
+	MacOS.  Thanks to Roger Mc Murtrie for reporting this problem.
+
+2008-01-22  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* README: Should say version 1.8.3, not 1.8.2.
+
+	* LICENSE: Change COPYING.LIB to COPYING.LESSER.
+
+	* COPYING.LESSER: Renamed, previously COPYING.LIB.
+
+	* COPYING: Removed.
+
+	* libguile.h: Update copyright statement to LGPL.
+
+2007-12-04  Ludovic Courtès  <ludo@gnu.org>
+
+	* NEWS: Mention `accept' and `scm_c_{read,write}' bug fixes.
+
+2007-12-03  Ludovic Courtès  <ludo@gnu.org>
+
+	* NEWS: Add SRFI-69.
+
+2007-10-17  Ludovic Courtès  <ludo@gnu.org>
+
+	* NEWS: Mention reader bug-fix.
+
+2007-10-16  Ludovic Courtès  <ludo@gnu.org>
+
+	Guile 1.8.3 released.
+
+	* GUILE-VERSION (GUILE_MICRO_VERSION): Incremented.
+	(LIBGUILE_INTERFACE_REVISION): Incremented.
+
+2007-10-10  Ludovic Courtès  <ludo@gnu.org>
+
+	* configure.in (SCM_I_GSC_NEED_BRACES_ON_PTHREAD_ONCE_INIT):
+	New substituted variable.
+	Use `-Werror' when using GCC and checking for
+	`PTHREAD_ONCE_INIT'.  Add check for braces around
+	`PTHREAD_MUTEX_INITIALIZER'.
+	* NEWS: Mention build fix for IRIX.
+
+2007-10-02  Ludovic Courtès  <ludo@gnu.org>
+
+	* NEWS: Mention `(ice-9 slib)' fix and threading fix.
+
+2007-09-03  Ludovic Courtès  <ludo@gnu.org>
+
+	* NEWS: Mention alignment-related bug fixes.
+
+2007-09-03  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (AC_CHECK_FUNCS): Add clog and cexp.
+
+2007-09-02  Ludovic Courtès  <ludo@gnu.org>
+
+	* NEWS: Mention memory leak fix in `make-socket-address'.
+
+2007-09-01  Ludovic Courtès  <ludo@gnu.org>
+
+	* NEWS: Mention duplicate binding warnings to stderr.
+
+2007-08-23  Ludovic Courtès  <ludo@gnu.org>
+
+	* NEWS: Mention Solaris bug fixes.
+
+2007-08-11  Ludovic Courtès  <ludo@gnu.org>
+
+	* NEWS: Mention SRFI-35 and the new reader.
+
+	* configure.in: Check for <strings.h> and `strncasecmp ()'.
+
+2007-08-08  Ludovic Courtès  <ludo@gnu.org>
+
+	* NEWS: Mention changes to `record-accessor' and
+	`record-modifier'.
+
+2007-08-03  Ludovic Courtès  <ludo@gnu.org>
+
+	* configure.in: Use `build-aux' as `AC_CONFIG_AUX_DIR', and `m4'
+	as `AC_CONFIG_MACRO_DIR'.  Use Automake's `gnu' and `check-news'
+	options.
+
+2007-07-25  Ludovic Courtès  <ludo@gnu.org>
+
+	* NEWS: Mention bug fix for "(set! 'x #f)".
+
+2007-07-18  Ludovic Courtès  <ludo@gnu.org>
+
+	* NEWS: Mention SRFI-37.
+
+2007-07-15  Ludovic Courtès  <ludo@gnu.org>
+
+	Guile 1.8.2 released.
+
+	* NEWS: Mention HP-UX/IA64 build fixes.
+
+	* THANKS: Added people who reported bugs or sent patches since
+	1.8.1.  Converted to UTF-8.
+
+	* README: Updated version number.
+
+	* Makefile.am (EXTRA_DIST): Removed `BUGS' (was outdated).
+
+	* ANON-CVS, HACKING, SNAPSHOTS: New, from the `workbook'
+	directory of the CVS repository.
+
+	* autogen.sh: Removed dependency on the `workbook' CVS
+	directory.
+
+	* GUILE-VERSION (GUILE_MICRO_VERSION): Set to 2.
+	(LIBGUILE_INTERFACE_CURRENT): Incremented due to new symbols.
+	(LIBGUILE_INTERFACE_REVISION): Set to 0.
+	(LIBGUILE_INTERFACE_AGE): Incremented.
+	(LIBGUILE_SRFI_SRFI_60_INTERFACE_REVISION): Incremented due to
+	bug fixes.
+
+2007-07-11  Ludovic Courtès  <ludo@gnu.org>
+
+	* NEWS: Mention GOOPS `method-more-specific?' bug fix.
+
+2007-07-09  Ludovic Courtès  <ludo@gnu.org>
+
+	* NEWS: Mention SRFI-19 `date->julian-day' bug fix.
+
+2007-06-26  Ludovic Courtès  <ludo@gnu.org>
+
+	* NEWS: Mention fixed memory leaks.
+
+2007-06-13  Ludovic Courtès  <ludo@chbouib.org>
+
+	* NEWS: Mention top-level define incompatible change.
+
+2007-06-12  Ludovic Courtès  <ludo@chbouib.org>
+
+	* NEWS: Mention `inet-ntop' bug fix.
+
+2007-05-09  Ludovic Courtès  <ludo@chbouib.org>
+
+	* NEWS: Mention SRFI-19 `time-process' bug fix.
+
+2007-02-20  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* config.rpath (Module): New (from gettext package).
+
+	* INSTALL: New upstream version.
+
+	* ABOUT-NLS: New upstream version.
+
+2007-01-28  Neil Jerram  <neil@ossau.uklinux.net>
+
+	IA64 HP-UX patch from Hrvoje Nikšić.  (Thanks!)
+	
+	* configure.in: New check for uca lib (needed for IA64 on HP-UX).
+
+2007-01-23  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (isinf, isnan): Use a volatile global to stop gcc
+	optimizing out the test.  In particular this fixes solaris where there
+	isn't an isinf or isnan (though gcc still optimizes as if there is).
+	Reported by Hugh Sasse.
+	(AC_C_VOLATILE): New.
+
+2007-01-22  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (AC_INIT): Don't use "echo -n", it's not portable and
+	in particular fails on solaris (resulting in literal "-n"s going into
+	the output, making the resulting configure unusable).  Reported by
+	Hugh Sasse.
+
+2006-12-27  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (pthread_get_stackaddr_np, pthread_sigmask): New tests.
+
+2006-12-24  Han-Wen Nienhuys  <hanwen@lilypond.org>
+
+	* autogen.sh (mscripts): only execute render-bugs if it exists.
+
+2006-12-23  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (-lm): No need to suppress libm on mingw, it's not
+	needed because it's empty, but including it does no harm.
+	(-lm): Look for "cos" instead of "main", since cos and friends are the
+	purpose of looking for libm.
+	(winsock etc): Test $host = *-*-mingw* rather than $MINGW32, autoconf
+	regards the latter as obsolete.
+	(AC_MINGW32): Remove test, $MINGW32 now unused.
+	(uint32_t): Look at HAVE_NETDB_H rather than hard-coding __MINGW32__
+	in the test program.
+
+2006-12-15  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (process.h, pipe, _pipe): New checks.
+
+2006-12-14  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (struct timespec, pthread.h): Look for struct timespec
+	in <pthread.h> as well as <time.h>, it's in pthread.h on mingw.
+	Reported by Nils Durner.
+
+2006-12-03  Kevin Ryde  <user42@zip.com.au>
+
+	* Makefile.am (AUTOMAKE_OPTIONS): Bump to automake 1.10 required, so
+	that config.rpath from gettext will go into the dist (and give an
+	error if not).
+
+	* configure.in (AM_PROG_CC_C_O): New macro, needed by automake 1.10
+	for per-target cflags in libguile/Makefile.am.
+
+2006-11-08  Ludovic Courtès  <ludovic.courtes@laas.fr>
+
+	* configure.in: Pass `bug-guile@gnu.org' as a third argument to
+	`AC_INIT'.
+
+2006-10-06  Rob Browning  <rlb@defaultvalue.org>
+
+	Guile 1.8.1 released.
+
+	* GUILE-VERSION (GUILE_MICRO_VERSION): Increment for release.
+	(LIBGUILE_INTERFACE_REVISION): Increment for release.
+	(LIBGUILE_SRFI_SRFI_1_INTERFACE_REVISION): Increment for release.
+	(LIBGUILE_SRFI_SRFI_4_INTERFACE_REVISION): Increment for release.
+	(LIBGUILE_SRFI_SRFI_13_14_INTERFACE_REVISION): Increment for release.
+	(LIBGUILE_SRFI_SRFI_60_INTERFACE_REVISION): Increment for release.
+
+	* Makefile.am (EXTRA_DIST): Add LICENSE.
+
+2006-09-28  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (chsize, ftruncate, truncate): New tests, for mingw.
+
+2006-09-27  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (clog10): New test, not in mingw.
+
+2006-09-23  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (complex.h, complex double, csqrt): New tests.
+
+2006-09-20  Ludovic Courtès  <ludovic.courtes@laas.fr>
+
+	* configure.in: Check for `isblank ()'.
+
+	* NEWS: Mentioned the interaction between `setlocale' and SRFI-14
+	standard char sets.
+
+2006-08-22  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in: Test if need braces around PTHREAD_ONCE_INIT, set
+	AC_OUTPUT of SCM_I_GSC_NEED_BRACES_ON_PTHREAD_ONCE_INIT.
+
+2006-07-25  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (AC_CHECK_FUNCS): Add pthread_getattr_np.
+
+2006-07-24  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (AC_CHECK_DECLS): Add sethostname for Solaris 10.
+	(AC_CHECK_FUNCS): Remove dirfd, it's a macro.
+	Reported by Claes Wallin.
+	
+2006-06-25  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (AC_CHECK_MEMBERS): Test struct tm.tm_gmtoff.
+
+2006-06-13  Ludovic Courtès  <ludovic.courtes@laas.fr>
+
+	* NEWS: Mentioned the new behavior of `equal?' for structures.
+
+2006-06-06  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* acinclude.m4 (ACX_PTHREAD): Update to latest definition from
+	autoconf macro archive, to fix pthread linking problem on Solaris
+	10, reported by Charles Gagnon.
+
+2006-05-28  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (isnan): Remove "#ifdef __MINGW32__, #define isnan
+	_isnan".  Mingw provides isnan as a macro (in math.h), the test
+	already detects it just fine with no special case.
+
+2006-05-26  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (AC_CHECK_FUNCS): Add ioctl.
+	(pthread_attr_getstack): Restrict test to pthreads case, to avoid
+	AC_TRY_RUN when cross-compiling --without-threads.
+
+2006-05-20  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (S_ISLNK): Remove test, leave it to #ifdef in the .c
+	files.
+	
+2006-05-16  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (struct stat st_blocks): Change AC_STRUCT_ST_BLOCKS to
+	a plain AC_CHECK_MEMBERS, we don't want AC_LIBOBJ(fileblocks) which
+	the former gives.  Remove the commented-out code that was to have
+	munged fileblocks out of LIBOBJS.  This fixes mingw, where the lack of
+	st_blocks and absense of the fileblocks.c replacement caused build
+	failure.  Reported by "The Senator".
+	(struct stat st_rdev, st_blksize): Combine into a single
+	AC_CHECK_MEMBERS.
+
+2006-04-18  Rob Browning  <rlb@defaultvalue.org>
+
+	* configure.in: Add AC_CONFIG_AUX_DIR([.]) as suggested in the
+	autotools documentation.
+
+2006-04-16  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (stat64, off_t): New tests.
+
+2006-03-31  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (socklen_t): Enhance test for this type, coping with
+	need for <sys/socket.h> on MacOS X.  Reported by Michael Tuexen and
+	Jay Cotton.
+
+2006-03-26  Marius Vollmer  <mvo@zagadka.de>
+
+	* configure.in: Added check that defines
+	PTHREAD_ATTR_GETSTACK_WORKS when pthread_attr_getstack works for
+	the main thread.
+
+2006-02-26  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (AC_CHECK_FUNCS): Add dirfd.
+
+2006-02-20  Marius Vollmer  <mvo@zagadka.de>
+
+	Released 1.8.0.
+
+	* GUILE-VERSION: Set version.
+
+2006-02-06  Marius Vollmer  <mvo@zagadka.de>
+
+	Branched for 1.8 series.
+
+	* GUILE-VERSION: Bumped version numbers.
+	
+	* configure.in: Removed --enable-arrays option.
+
+2005-12-14  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* NEWS: Remove entry claiming that breakpoints have been added,
+	because breakpoints are now implemented outside the core distro.
+	Add entries on obsolescence of the 'cheap option and on tweaking
+	support in evaluator trap calls.  Finally, correct outline level
+	of item about make-keyword-from-dash-symbol.
+
+2005-07-09  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* configure.in (AC_CONFIG_FILES): Removed emacs/Makefile and
+	ice-9/debugger/breakpoints/Makefile.
+
+	* Makefile.am (SUBDIRS): Removed emacs.
+
+2005-06-05  Marius Vollmer  <mvo@zagadka.de>
+
+	From  Jan Nieuwenhuizen <janneke@gnu.org>.  Thanks!
+
+	* configure.in: Add tests for socklen_t and ip_mreq.
+
+2005-03-13  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in, GUILE-VERSION (LIBGUILE_SRFI_SRFI_60): New defines.
+
+2005-03-09  Marius Vollmer  <mvo@zagadka.de>
+
+	Guile 1.7.2 has been released.
+	
+	* GUILE-VERSION (GUILE_MICRO_VERSION): Incremented to "2".
+
+2005-03-08  Marius Vollmer  <mvo@zagadka.de>
+
+	libltdl is no longer distributed.  We expect it to be installed
+	already.
+	
+	* configure.in: Do not call AC_LIBLTDL_INSTALLABLE.  Use
+	AC_CHECK_LIB instead. Do not subst LTDLINCL and LIBLTDL.  Do not
+	add "-DLIBLTDL_DLL_IMPORT" on MINGW32.
+
+	* Makefile.am (SUBDIRS): Removed libltdl.
+
+	* README: Talk about required external packages.
+
+	* autogen.sh: Do not call libtoolize.
+
+2005-03-02  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* configure.in: Do not check for fast or recursive mutexes.  Check
+	for pthread_attr_getstack.
+	(SCM_I_GSC_USE_COOP_THREADS): Dot not subst.
+	(pthread_mutexattr_settype): Do not check for it.
+	
+2005-02-28  Marius Vollmer  <mvo@zagadka.de>
+
+	* autogen.sh: Add '--verbose' option to autoreconf invocation.
+	Thanks to Bruno Haible.
+
+2005-01-02  Marius Vollmer  <mvo@zagadka.de>
+
+	* configure.in (SCM_I_GSC_HAVE_ARRAYS): Removed '--disable-arrays'
+	option.
+
+2004-11-28  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (AC_SUBST): Correction, LTDLINC should be LTDLINCL, the
+	latter is what libtool defines.
+
+2004-10-27  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* libguile.h: Include "libguile/srfi-4.h".
+
+2004-10-25  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* autogen.sh: Added explicit invocation of libtoolize before
+	autoreconf so that libltdl/ is updated as well.
+
+2004-10-22  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+        Removed usage of libguile-ltdl.
+	
+	* configure.in: Call AC_LIBLTDL_INSTALLABLE instead of
+	AC_LIB_LTDL.
+	(AC_CONFIG_SUBDIRS): Added libltdl.
+	(DLPREOPEN, LTDLINC, LIBLTDL): Moved AC_SUBST near other libtool
+	stuff.  Also subst LTDLINC instead of INCLTDL.
+	(AC_CONFIG_FILES): Removed libguile-ltdl/Makefile and
+	libguile-ltdl/upstream/Makefile.
+
+	* Makefile.am (SUBDIRS): Replaced libguile-ltdl with libltdl.
+
+2004-09-28  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* ABOUT-NLS: New, from gettext 0.14.1.
+
+	* configure.in: Do use AM_GNU_GETTEXT, since gettextize is not run
+	with autoconf 2.59.
+
+2004-09-25  Marius Vollmer  <mvo@zagadka.de>
+
+	* configure.in: Do not use AM_GNU_GETTEXT for now, it causes
+	gettextize to run during autogen.sh, which we do not want.
+	Explicitely check for libintl, gettext, bindtextdomain, and
+	textdomain instead.
+	
+2004-09-24  Marius Vollmer  <mvo@zagadka.de>
+
+	* libguile.h: Include <gmp.h> outside of extern "C" block.
+	(Note that numbers.h still includes gmp.h to make it
+	self-contained.)
+	
+	* configure.in: Do not include PTHREAD_CFLAGS in CFLAGS, CFLAGS is
+	for the user and is often overwritten temporarily.
+	(GUILE_CFLAGS): New, include PTHREAD_CFLAGS here.
+	(GUILE_LIBS): Remove THREAD_LIBS_INSTALLED, which is unused now.
+	
+2004-09-22  Marius Vollmer  <mvo@zagadka.de>
+
+ 	* configure.in: Add AM_GNU_GETTEXT invocation.  From Bruno Haible.
+ 
+2004-09-21  Marius Vollmer  <mvo@zagadka.de>
+
+	* acinclude.m4 (ACX_PTHREAD): New.
+	* configure.in: Use it instead of simply looking for -lpthread.
+	Thanks to Andreas Vögele!
+	
+2004-09-08  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* configure.in: Fail when alloca can not be found natively.
+
+2004-09-03  Stefan Jahn  <stefan@lkcc.org>
+
+	* configure.in (isinf): Let configure find the isinf() function
+	on MinGW32 systems.
+
+2004-08-27  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (AC_CHECK_MEMBERS): Add struct sockaddr.sin_len and
+	struct sockaddr_in6.sin6_len.  Reported by Michael Tuexen.
+
+2004-08-27  Marius Vollmer  <mvo@zagadka.de>
+
+	Guile 1.7.1 as been released.
+
+2004-08-26  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* GUILE-VERSION: Bumped all versions for the 1.7.1 release.  Added
+	LIBGUILE_*_MAJOR variables for inclusion in the names of shared
+	libraries such as "libguile-srfi-srfi-1-v-MAJOR.la".  Removed
+	LIBQTHREADS_*.
+	* configure.in: Updated for the new set of variables defined in
+	GUILE-VERSION.
+	
+2004-08-25  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* libguile.h: Include srfi-13.h and srfi-14.h, do not include
+	strop.h.
+
+2004-08-02  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* README: Document the new --disable-discouraged option.
+
+	* configure.in (SCM_I_GSC_ENABLE_DISCOURAGED): New, for the new
+	--enable-discouraged option.
+
+	* libguile.h: Include libguile/discouraged.h.
+
+2004-07-29  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* configure.in: Bugfix: logic in detecting ptrdiff_t was inverted;
+	assume ptrdiff_t is available when its size is non-zero, not when
+	it is zero.  Do no longer define SCM_I_GSC_*_LIMITS macros.  Check
+	for sizes of size_t and intmax_t.
+
+2004-07-09  Marius Vollmer  <mvo@zagadka.de>
+
+	* configure.in: Bugfix: set SCM_I_GSC_T_UINTMAX, not
+	SCM_I_GSC_T_INTMAX in two places.  Thanks to Andreas Vögele!
+
+2004-07-07  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* configure.in: When checking for suitable types for scm_t_int8,
+	etc, try int8_t first, so that we pick them up when they are
+	defined.  Also, substitute limit macros like INT8_MIN into the
+	configure header for all these types.
+
+2004-07-05  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (isinf, isnan): Detect macro versions as well as
+	functions, since C99 specifies them as macros and that's all HP-UX
+	has.  Reported by Andreas Voegele.
+
+2004-06-28  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* configure.in: Removed code for --enable-htmldoc; support for
+	HTML is now included in automake.
+
+2004-06-16  Rob Browning  <rlb@defaultvalue.org>
+
+	* pre-inst-guile.in: modify to handle move of readline.scm to
+	ice-9 subdir of guile-readline.
+
+	* pre-inst-guile-env.in: modify to handle move of readline.scm to
+	ice-9 subdir of guile-readline.
+
+	* configure.in: move package and version args to AC_INIT as is now
+	recommended.  This also requires m4_esyscmd to read GUILE-VERSION
+	given the way AC_INIT handles its args.
+
+2004-04-22  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (AC_CHECK_HEADERS): Add fenv.h.
+	(AC_CHECK_FUNCS): Add fesetround.
+
+2004-04-18  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (AC_CHECK_FUNCS): Add readdir_r.
+
+2004-03-23  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (AC_CHECK_FUNCS): Add sysconf.
+	(AC_CHECK_HEADERS): Add netdb.h and sys/param.h.
+
+2004-03-21  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (AC_CHECK_FUNCS): Add gmtime_r.
+
+2004-03-14  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (strptime): Use #define _GNU_SOURCE to get the
+	prototype from glibc, use AC_CHECK_DECLS rather than AC_EGREP_HEADER.
+
+2004-02-29  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in: Use AC_COPYRIGHT and AH_TOP to get copyright notice
+	into generated configure and config.h.in.
+
+	* configure.in (AC_CHECK_FUNCS): Add DINFINITY and DQNAN.
+
+2004-02-21  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (crypt): Test with AC_SEARCH_LIBS, for the benefit of
+	HP-UX.  Define HAVE_CRYPT rather than HAVE_LIBCRYPT.  Reported by
+	Andreas Voegele.
+
+2004-02-18  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (AC_CHECK_HEADERS): Add crt_externs.h.
+	(AC_CHECK_FUNCS): Add _NSGetEnviron.
+
+2004-02-15  Mikael Djurfeldt  <mdj@chunk.mit.edu>
+
+	* configure.in: Use AC_PROG_LIBTOOL instead of AM_PROG_LIBTOOL.
+
+2004-01-25  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* configure.in (GUILE_FUNC_DECLARED), acinclude.m4
+	(GUILE_STRUCT_UTIMBUF, GUILE_NAMED_CHECK_FUNC): Correctly quote
+	macros being defined.
+
+2003-12-26  Marius Vollmer  <mvo@zagadka.de>
+
+	* configure.in: Find a suitable type for the new scm_t_intmax and
+	scm_t_uintmax.
+
+2003-11-17  Rob Browning  <rlb@defaultvalue.org>
+
+	* configure.in: rewrite ALLOCA related code as multiple lines so
+	it doesn't break with current autoconf substitutions.
+
+2003-11-15  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (--with-guile-for-build): Remove this option, it's not
+	normal style for --with.
+	(GUILE_FOR_BUILD): Use AC_ARG_VAR.
+	* README (Cross building Guile): Describe GUILE_FOR_BUILD rather than
+	--with-guile-for-build.
+
+2003-11-11  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* .cvsignore: Add elisp-comp.
+
+2003-10-30  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* configure.in (AC_CONFIG_FILES): Add `emacs/Makefile'.
+	(AM_PATH_LISPDIR): Added.
+
+	* Makefile.am (SUBDIRS): Add `emacs'.
+
+2003-07-27  Marius Vollmer  <mvo@zagadka.de>
+
+	* configure.in: Look for sched_yield in -lrt; this is needed for
+	Solaris.  Thanks to Matthias Koeppe!
+	(setgroups): Check for it.
+
+	* configure.in (__libc_stack_end): Actually use the value in
+	__libc_stack_end for something so that the access doesn't get
+	optimized away.  Thanks to Matthias Koeppe!
+
+2003-07-08  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (AC_CHECK_FUNCS): Add sincos.
+
+2003-06-21  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (AC_CHECK_FUNCS): Add asinh, acosh, atanh and trunc.
+
+2003-06-19  Marius Vollmer  <mvo@zagadka.de>
+
+	* configure.in: use "-Werror" only with GCC.  Thanks to Matthias
+	Koeppe!
+
+2003-06-19  Kevin Ryde  <user42@zip.com.au>
+
+	* README (Guile Documentation): Update to manuals now available,
+	remove notes about the reference manual being in progress.
+
+2003-06-14  Stefan Jahn  <stefan@lkcc.org>
+
+	* configure.in: Checking for __int64 as possible candidate for
+	the SCM_I_GSC_T_INT64 define.
+
+2003-05-30  Stefan Jahn  <stefan@lkcc.org>
+
+	* configure.in: Checking for unsetenv().
+
+2003-05-29  Stefan Jahn  <stefan@lkcc.org>
+
+	* configure.in: Removed -lm check and added a cached check for
+	__libc_stack_end to get it building for mingw32 hosts.
+
+2003-05-19  Kevin Ryde  <user42@zip.com.au>
+
+	* README (Cross building Guile): Remove --with-cc-for-build in favour
+	of CC_FOR_BUILD.
+
+2003-05-16  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (--with-cc-for-build): Remove this option, CC_FOR_BUILD
+	variable is more or less standard, and is adequate for the task.
+
+2003-05-12  Kevin Ryde  <user42@zip.com.au>
+
+	* configure.in (CC_FOR_BUILD): Use AC_ARG_VAR.
+
+	* configure.in (SCM_SINGLES): Use AC_CHECK_SIZEOF(float), to
+	eliminate guess-yes when cross compiling.
+
+	* configure.in (SCM_I_GSC_STACK_GROWS_UP): Fix missing comma in
+	AC_TRY_RUN.
+
+2003-04-20  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* libguile.h: Removed uses of DEBUG_EXTENSIONS to fix compile
+	errors with --disable-deprecated.
+
+2003-04-07  Rob Browning  <rlb@defaultvalue.org>
+
+	* pre-inst-guile-env.in: new script -- can be used to run commands
+	in an envt set up using the development libs, Guile, etc.
+
+	* configure.in: handle pre-inst-guile-env and add
+	test-suite/standalone/Makefile.
+
+2003-04-06  Marius Vollmer  <mvo@zagadka.de>
+
+	* configure.in: Check for mpz_import, which is required but only
+	available in GMP 4.1.
+
+2003-04-05  Marius Vollmer  <mvo@zagadka.de>
+
+	* Changed license terms to the plain LGPL thru-out.
+
+2003-04-04  Rob Browning  <rlb@defaultvalue.org>
+
+	* configure.in: add GMP test (require GMP).
+
+2003-03-26  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* libguile.h: Include "libguile/deprecated.h".
+
+2003-03-25  Rob Browning  <rlb@defaultvalue.org>
+
+	* configure.in: big overhaul to shift us to have separate private,
+	config.h, and public, scmconfig.h, configuration headers.  Added a
+	fair amount of code to track down new required types: scm_t_uint8,
+	scm_t_uint16, scm_t_uint32, scm_t_int8, scm_t_int16, scm_t_int32,
+	and to detect optional types scm_t_uint64, scm_t_in64, long long,
+	unsigned long long, scm_t_ptrdiff, intptr_t, and uintptr_t.
+	(SCM_I_GSC_T_PTRDIFF): gen-scmconfig.h.in AC_SUBST var.
+	(SCM_I_GSC_NEEDS_INTTYPES_H): gen-scmconfig.h.in AC_SUBST var.
+	(SCM_I_GSC_NEEDS_STDINT_H): gen-scmconfig.h.in AC_SUBST var.
+	(SCM_I_GSC_T_UINT8): gen-scmconfig.h.in AC_SUBST var.
+	(SCM_I_GSC_T_UINT16): gen-scmconfig.h.in AC_SUBST var.
+	(SCM_I_GSC_T_UINT32): gen-scmconfig.h.in AC_SUBST var.
+	(SCM_I_GSC_T_UINT64): gen-scmconfig.h.in AC_SUBST var.
+	(SCM_I_GSC_T_INT8): gen-scmconfig.h.in AC_SUBST var.
+	(SCM_I_GSC_T_INT16): gen-scmconfig.h.in AC_SUBST var.
+	(SCM_I_GSC_T_INT32): gen-scmconfig.h.in AC_SUBST var.
+	(SCM_I_GSC_T_INT64): gen-scmconfig.h.in AC_SUBST var.
+	(USE_PTHREAD_THREADS): removed - handled by gen-scmconfig.c.
+	(USE_NULL_THREADS): removed - handled by gen-scmconfig.c.
+	(USE_COOP_THREADS): removed - handled by gen-scmconfig.c.
+	(SCM_I_GSC_USE_PTHREAD_THREADS): gen-scmconfig.h.in AC_SUBST var.
+	(SCM_I_GSC_USE_NULL_THREADS): gen-scmconfig.h.in AC_SUBST var.
+	(SCM_I_GSC_USE_COOP_THREADS): gen-scmconfig.h.in AC_SUBST var.
+	(STACK_GROWS_UP): removed - handled by gen-scmconfig.c.
+	(SCM_I_GSC_STACK_GROWS_UP): gen-scmconfig.h.in AC_SUBST var.
+	(GUILE_DEBUG_FREELIST): removed - handled by gen-scmconfig.c.
+	(SCM_I_GSC_GUILE_DEBUG_FREELIST): gen-scmconfig.h.in AC_SUBST var.
+	(GUILE_DEBUG): removed - handled by gen-scmconfig.c.
+	(SCM_I_GSC_GUILE_DEBUG): gen-scmconfig.h.in AC_SUBST var.
+	(SCM_ENABLE_DEPRECATED): removed - handled by gen-scmconfig.c.
+	(SCM_I_GSC_ENABLE_DEPRECATED): gen-scmconfig.h.in AC_SUBST var.
+	(HAVE_ARRAYS): removed - handled by gen-scmconfig.c.
+	(SCM_I_GSC_HAVE_ARRAYS): gen-scmconfig.h.in AC_SUBST var.
+	(SCM_ENABLE_ELISP): removed - handled by gen-scmconfig.c.
+	(SCM_I_GSC_ENABLE_ELISP): gen-scmconfig.h.in AC_SUBST var.
+	(SCM_I_GSC_C_INLINE): gen-scmconfig.h.in AC_SUBST var.
+	(DEBUG_EXTENSIONS): removed - handled by gen-scmconfig.c.
+	(READER_EXTENSIONS): removed - handled by gen-scmconfig.c.
+	(USE_THREADS): removed - handled by gen-scmconfig.c.
+	(GUILE_ISELECT): removed - handled by gen-scmconfig.c.
+	(DYNAMIC_LINKING): removed - handled by gen-scmconfig.c.
+
+	* README: merge information from INSTALL and remove at least some
+	of the stale bits.
+
+	* LICENSE: new file -- we should change this to the LGPL soon and
+	add COPYING.LIB to the distribution.
+
+	* autogen.sh: call autoreconf with --force.  This may fix the
+	"order" problem below without having to have two calls.
+
+	* INSTALL: use the automake installed INSTALL file.  The Guile
+	specific instructions are now in README.
+
+2003-03-21  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* autogen.sh: Invoke autoreconf twice since the required files do
+	not seem to be generated in the right order.  XXX - investigate
+	further.
+
+2003-03-19  Marius Vollmer  <mvo@zagadka.de>
+
+	* guile-tools.in (guileversion): Use $GUILE_EFFECTIVE_VERSION
+	instead of $GUILE_VERSION.  Thanks to Kevin Ryde!
+
+2003-02-27  Rob Browning  <rlb@defaultvalue.org>
+
+	* configure.in (AC_CONFIG_SRCDIR): use GUILE-VERSION.
+	(AM_CONFIG_HEADER): change to config.h
+
+	* Makefile.am (EXTRA_DIST): remove $(ACLOCAL).
+	(ACLOCAL_AMFLAGS): replaces ACLOCAL.
+
+	* autogen.sh: switch to autoreconf -- see how it goes.  remove
+	call to guile-aclocal.sh -- we now do the same thing with an
+	automake setting.
+
+	* guile-aclocal.sh: deleted in favor of ACLOCAL_AMFLAGS in
+	Makefile.am.
+
+2003-02-26  Rob Browning  <rlb@defaultvalue.org>
+
+	* configure.in: change our config header from libguile/scmconfig.h
+	to be the traditional ./config.h.  libguile/scmconfig.h is now
+	built from that during the build process.  More changes coming...
+
+2003-01-23  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* libguile.h: #include "futures.h"
+
+2002-12-16  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* configure.in: Test if pthread.h declares
+	pthread_mutexattr_settype ().
+
+2002-12-15  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* configure.in (SCM_MUTEX_FAST, SCM_MUTEX_RECURSIVE): Test for
+	ways to get fast and recursive mutexes.
+
+2002-12-10  Mikael Djurfeldt  <mdj@kvast.blakulla.net>
+
+	* configure.in (_THREAD_SAFE): Define when pthreads are enabled in
+	order to get thread safe versions of glibc functions.
+
+2002-12-09  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* configure.in: Temporarily replaced "copt" threads option with new
+	option "pthreads".
+	(USE_PTHREAD_THREADS): Define if pthreads configured.
+
+2002-12-08  Rob Browning  <rlb@defaultvalue.org>
+
+	* configure.in (GUILE_EFFECTIVE_VERSION): AC_SUBST it.
+	(AC_CONFIG_FILES): separate out the files that need to be chmodded
+	at the end of config.status.  Our "default" approach using
+	AC_CONFIG_COMMANDS quit working (and would have needed to be
+	changed to AC_CONFIG_COMMANDS(,,CMDS) rather than our previous
+	AC_CONFIG_COMMANDS(default,CMDS), but I the new approach, using
+	per-file AC_CONFIG_FILES calls appears to be more "correct" in the
+	current autoconf docs.
+
+	* GUILE-VERSION (GUILE_EFFECTIVE_VERSION): new variable.
+
+2002-12-02  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* Makefile.am (SUBDIRS): Removed qt.
+
+	* configure.in: Do not configure QTHREADS.  Do not define
+	USE_COOP_THREADS.  Changed logic for thread package selection so
+	that the default is "coop-pthread" when -lpthread is found, "null"
+	otherwise.
+
+2002-12-01  Mikael Djurfeldt  <mdj@linnaeus>
+
+	* GUILE-VERSION: Added versioning info for srfi 1.
+
+	* configure.in (LIBGUILE_SRFI_SRFI_1_INTERFACE_CURRENT,
+	LIBGUILE_SRFI_SRFI_1_INTERFACE_REVISION,
+	LIBGUILE_SRFI_SRFI_1_INTERFACE_AGE,
+	LIBGUILE_SRFI_SRFI_1_INTERFACE): New AC_SUBST.
+
+2002-11-10  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* configure.in (USE_THREADS, GUILE_ISELECT): Define always.  We
+	define them with AC_DEFINE and not in some header file so that
+	they are visible exactly in the same way as they used to be.
+
+2002-11-03  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* configure.in: Do not add "threads.o" to the libobjs, it is now
+	always compiled.
+	(USE_THREADS, GUILE_ISELECT): Do not define.
+
+2002-10-27  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* configure.in: Handle thread package "coop-pthread" with alias
+	"copt" and define USE_COPT_THREADS when it is selected.
+	Always define GUILE_ISELECT.
+
+2002-10-26  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* configure.in (AC_CONFIG_FILES): Add ice-9/debugger/Makefile and
+	ice-9/debugger/breakpoints/Makefile.
+
+2002-10-21  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* configure.in: Changed logic in thread support configuration such
+	that --with-threads=no is equivalent to --with-threads=null.  On
+	platforms that are not supported by QuickThreads, we also use the
+	null-threads.  Thus, USE_THREADS is always defined now.
+
+2002-10-16  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* configure.in: Shuffled around and extended the thread
+	configuration code to allow the "null" thread package to be
+	selected.  Define USE_NULL_THREADS in that case.
+
+2002-10-13  Gary Houston  <ghouston@arglist.com>
+
+	* autogen.sh (ac_version): try automake 1.7 too.
+
+2002-10-05  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* autogen.sh: Make sure that $autoheader is always set.  When we
+	would use the plain "autoconf", $autoheader would end up empty and
+	libguile/scmconfig.h.in would not be updated.
+
+2002-10-04  Rob Browning  <rlb@defaultvalue.org>
+
+	* libltdl: moved to libguile-ltdl.
+
+	* Makefile.am (SUBDIRS): remove libltdl.
+
+	* autogen.sh: remove support for libltdl sub-configure.
+	(ac_version): widen support check to any 2.5?  autoconf version.
+	2.54 is out now.
+
+	* configure.in: turn on -Werror by default.  We're now clean.  I'd
+	like to stay that way.  If we want, we can turn it off by default
+	when we make the stable release, but I caught a lot of bugs this
+	way.  Accomodate libguile-ltdl -- therea are some ltdl things that
+	are commented out now INCLTDL and LIBLTDL.  I think we may not
+	need them anymore, but I'll leave them until we're sure.  We also
+	killed off the libltdl dir and related options including the
+	AC_CONFIG_SUBDIRS.  I also added some explicit tests for some
+	headers and functions that weren't listed but were in
+	scmconfig.h.in. though this may have been unnecessary.
+
+2002-10-04  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* configure.in: Use AC_LIBLTDL_CONVENIENCE instead of
+	AC_LIBLTDL_INSTALLABLE.
+
+2002-10-03  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* autogen.sh: Do not instruct libtoolize to copy libltdl into our
+	sources.  Do not patch it.  We have our own version now that is
+	only being used as a convenience library.
+
+2002-08-24  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* configure.in: Check for __libc_stack_end.
+
+2002-08-05  Han-Wen Nienhuys  <hanwen@cs.uu.nl>
+
+	* configure.in: add snprintf
+
+2002-08-04  Han-Wen  <hanwen@cs.uu.nl>
+
+	* NEWS: add entries for GC and vector WB.
+
+2002-07-22  Han-Wen  <hanwen@cs.uu.nl>
+
+	* autogen.sh (mscripts): find and check version number of
+	automake. Complain if 1.6 is not found.
+
+2002-07-20  Han-Wen  <hanwen@cs.uu.nl>
+
+	* autogen.sh (mscripts): find and check version number of
+	autoconf. Complain if 2.53 is not found.
+
+2002-07-20  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* benchmark-guile.in:  Copied from check-guile.in and adapted for
+	use with benchmarks.
+
+	* Makefile.am:  Recurse into the benchmark-suite subdir.
+
+	* configure.in:  Added benchmarking files.
+
+2002-07-12  Gary Houston  <ghouston@arglist.com>
+
+	* configure.in: check dynamic linking before modules.  Add dynl.c
+	if dynamic linking is available, i.e., unless --with-modules=no
+	was given to configure.
+
+2002-07-09  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* autogen.sh: Patch libltdl/ltdl.c to avoid a nasty bug in
+	libtool-1.4.2.
+
+2002-07-07  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* autogen.sh: Do not copy INSTALL from workbook since it is not
+	uniform across branches.
+	* INSTALL: Re-added to repository.
+	
+	Crosscompiling and Cygwin fixes from Jan Nieuwenhuizen.  Thanks!
+	
+	* autogen.sh: Only fix libltdl/configure.in if it exists.  Current
+	libtool CVS does not need this fix.
+
+	* configure.in (AC_LIBTOOL_WIN32_DLL): Add for shared Cygwin
+	build.
+	Add --with-cc-for-build option to re-enable cross building.
+	Add --with-guile-for-build option to re-enable cross building.
+
+2002-06-30  Gary Houston  <ghouston@arglist.com>
+
+	* autogen.sh: Changed the path to the scripts directory.
+	In libltdl, run aclocal before autoconf and automake: this
+	eliminated various warnings after upgrading to newer automake.
+
+2002-05-22  Marius Vollmer  <mvo@zagadka.ping.de>
+
+        From John W. Eaton <jwe@bevo.che.wisc.edu>
+
+	* configure.in (AC_CHECK_FUNCS): Check for copysign.
+
+2002-05-10  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* libguile.h: Added inclusion of "extensions.h".
+
+2002-05-06  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* configure.in: Include <sys/types.h> before <netinet/in.h> when
+	checking vor IPv6.  This is for NetBSD 1.5.  Thanks to Greg
+	Troxel!
+
+	From John W. Eaton.
+	
+	* configure.in (AC_CHECK_HEADERS): Check for floatingpoint.h
+	ieeefp.h, and nan.h.
+	(AC_CHECK_FUNCS): Check for finite, isinf, and isnan.
+
+2002-05-01  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* autogen.sh: Add call to $mscripts/render-bugs
+	to create BUGS file.
+
+	* BUGS: bye bye
+
+2002-04-27  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* Makefile.am (EXTRA_DIST): Remove qthreads.m4.
+
+2002-04-26  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* guile-aclocal.sh: Replaced with a simple invocation of "aclocal
+	-I guile-config".  This works as of automake 1.5.
+	* qthreads.m4: Moved to guile-config/.
+
+2002-04-18  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+        * autogen.sh: Call automake twice for guile-core so that two
+	copies of mdate-sh get a chance of being installed (one in
+	doc/ref/ and one in doc/tutorial/).
+
+2002-04-16  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* Makefile.am (AUTOMAKE_OPTIONS): New, to request version 1.5.
+	(EXTRA_DIST): Don't distribute acconfig.h, which is gone.
+	(dist-hook): Removed.
+	(DISTCLEANFILES): Added check-guile.log.
+	(EXTRA_DIST): Don't distribute TODO.
+
+	* configure.in: Bump required autoconf version to 2.53.  Move uses
+	of AC_LIBOBJ after AC_PROG_CC.  AC_LIBOBJ needs OBJEXT which is
+	set by AC_PROG_CC.
+
+2002-04-10  Rob Browning  <rlb@defaultvalue.org>
+
+	* configure.in: updates for new autoconf -- add definitions to
+	AC_DEFINE calls, and convert occurences of LIBOBJS to AC_LIBOBJ
+	calls.
+
+	* acinclude.m4: add definitions to AC_DEFINE calls for new
+	autoconf.
+
+	* acconfig.h: removed -- newer autoconf doesn't like it, and now
+	we don't need it.
+
+	* .cvsignore: add autom4te.cache and pre-inst-guile.
+
+2002-04-03  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* RELEASE: bye bye
+
+2002-03-31  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* Makefile.am: Update copyright.
+	(dist-hook): Add, including related am/maintainers-dirs,
+	surrounded by "if MAINTAINER_MODE".
+
+	* TODO: bye bye
+
+	* autogen.sh: Add usage comment.
+	Add workbook specification.
+	Add dist-files symlinking.
+
+	* ANON-CVS, HACKING, INSTALL, SNAPSHOTS: bye bye
+
+2002-03-06  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* guile-tools.in: Handle "--source" option.
+
+2002-03-04  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* configure.in (top_srcdir_absolute): New AC_SUBST var.
+
+	* pre-inst-guile.in, check-guile.in (top_srcdir):
+	Use `top_srcdir_absolute' AC_SUBST var.
+
+	* pre-inst-guile.in (top_srcdir): Fix ref bug: Force absolute.
+
+2002-02-27  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* pre-inst-guile.in: Typofix; nfc.
+
+2002-02-27  Stefan Jahn  <stefan@lkcc.org>
+
+	* Makefile.am (SUBDIRS): Added the `am' directory.
+
+2002-02-26  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* pre-inst-guile.in: New file.
+
+	* pre-inst-guile, pre-inst-guile.am: bye bye
+
+	* configure.in (top_builddir_absolute): New AC_SUBST var.
+	(AC_CONFIG_FILES): Add am/Makefile, pre-inst-guile.
+	(AC_CONFIG_COMMANDS): Also chmod +x pre-inst-guile.
+
+	* check-guile.in (top_builddir): Use AC_SUBST var
+	`top_builddir_absolute'.
+	(guile): Look for pre-inst-guile in $top_builddir.
+
+	* Makefile.am (EXTRA_DIST): Remove pre-inst-guile,
+	pre-inst-guile.am.
+
+2002-02-24  Rob Browning  <rlb@defaultvalue.org>
+
+	* GUILE-VERSION: move all but guile-readline library versioning
+	information here.  guile-readline is still standalone.  Bump
+	CURRENT interfaces to 15 to allow some headroom for 1.6 release at
+	Thi-Thien's request.
+
+	* configure.in: AC_SUBST the centralized shared lib versioning
+	variables from ./GUILE-VERSION.
+	(LIBQTHREADS_INTERFACE_CURRENT): new AC_SUBST.
+	(LIBQTHREADS_INTERFACE_REVISION): new AC_SUBST.
+	(LIBQTHREADS_INTERFACE_AGE): new AC_SUBST.
+	(LIBQTHREADS_INTERFACE): new AC_SUBST.
+	(LIBGUILE_INTERFACE_CURRENT): new AC_SUBST.
+	(LIBGUILE_INTERFACE_REVISION): new AC_SUBST.
+	(LIBGUILE_INTERFACE_AGE): new AC_SUBST.
+	(LIBGUILE_INTERFACE): new AC_SUBST.
+	(LIBGUILE_SRFI_SRFI_4_INTERFACE_CURRENT): new AC_SUBST.
+	(LIBGUILE_SRFI_SRFI_4_INTERFACE_REVISION): new AC_SUBST.
+	(LIBGUILE_SRFI_SRFI_4_INTERFACE_AGE): new AC_SUBST.
+	(LIBGUILE_SRFI_SRFI_4_INTERFACE): new AC_SUBST.
+	(LIBGUILE_SRFI_SRFI_13_14_INTERFACE_CURRENT): new AC_SUBST.
+	(LIBGUILE_SRFI_SRFI_13_14_INTERFACE_REVISION): new AC_SUBST.
+	(LIBGUILE_SRFI_SRFI_13_14_INTERFACE_AGE): new AC_SUBST.
+	(LIBGUILE_SRFI_SRFI_13_14_INTERFACE): new AC_SUBST.
+
+	* autogen.sh: make absolutely sure we can't have stale files from
+	old versions lying around the libltdl dir since libtoolize
+	doesn't.  Also hack libltdl's configure.in to require autoconf 2.5
+	so the main tree and libltdl can't get out of sync again.
+
+	* RELEASE: update release building instructions.
+
+2002-02-21  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* acinclude.m4 (GUILE_HEADER_LIBC_WITH_UNISTD): Use [] rather than
+	"" for multiword string.  Thanks to Christopher Cramer for
+	pointing this out.
+
+2002-02-11  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* acconfig.h (GUILE_DEBUG_MALLOC): Refer to scm_gc_malloc, etc,
+	instead of to scm_must_malloc.
+
+2002-02-07  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* Makefile.am (EXTRA_DIST): Added pre-inst-guile and
+	pre-inst-guile.am.
+
+2002-02-05  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* pre-inst-guile.am, pre-inst-guile: New files.
+
+	* check-guile.in (srcdir): Delete var.
+	(top_builddir, top_srcdir, guile_opts): New vars.
+
+	Use "set -e".
+	No longer set LTDL_LIBRARY_PATH.
+	Use ${top_srcdir}/pre-inst-guile instead of libguile/guile.
+
+	* configure.in (libguile/guile-snarf-docs-texi): Remove
+	from `AC_CONFIG_FILES' and `AC_CONFIG_COMMANDS'.
+
+	* check-guile.in (top_builddir): Fix bug: Use cwd.
+	(TEST_SUITE_DIR): Fix bug: Use `top_srcdir'.
+	(GUILE_LOAD_PATH): No longer include $top_srcdir.
+
+	* pre-inst-guile: Fix bug: Use ":" in `case' pattern to prevent
+	prefix aliasing.
+
+2002-01-31  Stefan Jahn  <stefan@lkcc.org>
+
+	* configure.in: Add -DLIBLTDL_DLL_IMPORT to INCLTDL when using
+	`libltdl.dll'.
+
+2002-01-28  Stefan Jahn  <stefan@lkcc.org>
+
+	* configure.in (guile_cv_have_uint32_t): Look also in
+	`stdint.h' for uint32_t.
+
+2002-01-13  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* Makefile.am (SUBDIRS): Added lang.
+
+	* configure.in (AC_CONFIG_FILES): Added Makefiles in lang,
+	lang/elisp, lang/elisp/internals and lang/elisp/primitives.
+
+2002-01-11  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* acconfig.h (SCM_ENABLE_ELISP): New conditional.
+
+	* configure.in (SCM_ENABLE_ELISP): Define this conditional (or
+	not) according to absence (or presence) of `--disable-elisp'
+	in the configure args.
+
+2001-12-31  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* TODO: Added two items.
+
+2001-12-26  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* configure.in (HAVE_MAKEINFO): Check for the makeinfo program and
+	set this conditional accordingly.
+
+2001-12-01  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* README: Fix virulent typo.
+
+2001-11-25  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* acconfig.h (HAVE_INLINE): Added template.
+	* configure.in (HAVE_INLINE): Define it when the compiler supports
+	inline functions.
+
+	* libguile.h: Include "libguile/inline.h".
+
+2001-11-22  Gary Houston  <ghouston@arglist.com>
+
+	* HACKING: Modified the Hacking It Yourself section.  Removed the
+	version numbers from the tools.
+	HACKING, README, ANON-CVS: updates.
+
+2001-11-21  Gary Houston  <ghouston@arglist.com>
+
+	* HACKING: Removed reference to no longer practiced * in ChangeLog
+	convention.
+
+2001-11-19  Thien-Thi Nguyen  <ttn@glug.org>
+
+	* BUGS (11): Set "fixed: no-need".
+
+	* TODO (write emacs/patch.el): New item, self-assigned.
+
+2001-11-19  Rob Browning  <rlb@defaultvalue.org>
+
+	* configure.in: switch to AC_LIBLTDL_INSTALLABLE so we'll use the
+	system libltdl when it's available.  Aside from the normal reasons
+	to prefer installed shared libs, this means other apps that link
+	with libguile and also use libltdl will be more likely to work
+	right.
+
+2001-11-17  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* BUGS (4): Set "fixed: 2001-11-17 (1.7.x)".
+
+2001-11-15  Thien-Thi Nguyen  <ttn@glug.org>
+
+	* guile-tools.in: Handle command "list" specially: list scripts dir.
+
+	(help): Make more informative.
+
+2001-11-12  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* autogen.sh: Recurse into libltdl directory and invoke autoconf
+	there.
+
+2001-11-11  Thien-Thi Nguyen  <ttn@glug.org>
+
+	* HACKING: Restrict documentation change log
+	waiver to only apply to ChangeLog files.
+
+2001-11-12  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* configure.in: Check for sizes of short, size_t, uintptr_t, and
+	ptrdiff_t.  Checking for a size also checks automatically for the
+	existence of the type, so we don't check for the existence of
+	uintptr_t, ptrdiff_t and long long ourselves.
+
+2001-11-10  Thien-Thi Nguyen  <ttn@glug.org>
+
+	* BUGS (11): New.
+
+2001-11-07  Stefan Jahn  <stefan@lkcc.org>
+
+	* configure.in: Include `win32-socket.o' in the list of object
+	files if networking is enabled on Win32.
+
+2001-11-06  Thien-Thi Nguyen  <ttn@glug.org>
+
+	* TODO (sync srfi-modules.texi): New, done.
+
+	* BUGS (9, 10): New.
+
+2001-11-04  Stefan Jahn  <stefan@lkcc.org>
+
+	* NEWS: Corrected remarks about SCM_API.
+
+	* configure.in: Defining USE_DLL_IMPORT definition to indicate
+	usage of DLL import macros in `libguile/__scm.h'.
+	(LIBOBJS): Removed `fileblocks.o' from the list	of object files.
+	Somehow Jim Blandy's patch from 1997 did not survive.
+
+2001-11-02  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	Support for native Win32.  Thanks to Stefan Jahn!
+
+        * check-guile.in: Replaced `ln -s' by `@LN_S@' to supports
+        build systems which do not have symbolic links.
+        * configure.in: Define AC_LIBTOOL_WIN32_DLL to build clean dlls
+        on Win32 platforms.
+        Checking for `ws2_32.dll', `winsock2.h', add `win32-uname.o'
+	and `win32-dirent.o' and define extra compiler flags necessary
+	to build clean dlls.
+        Check for `regcomp()' inside `-lregex'.
+
+2001-10-26  Thien-Thi Nguyen  <ttn@glug.org>
+
+	* BUGS (7, 8): New.
+
+2001-10-25  Thien-Thi Nguyen  <ttn@glug.org>
+
+	* BUGS: Expand on file format description.
+
+	(1): Update "fixed" field.
+	(2, 3, 4, 5, 6): New.
+
+2001-10-14  Gary Houston  <ghouston@arglist.com>
+
+	* configure.in: include sys/types.h when testing uint32_t.
+	thanks to Bill Schottstaedt.
+
+2001-10-14  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* configure.in: Do not use an absolute path for <unistd.h> when
+	checking for return type of usleep.  Thanks to Michael Carmack.
+
+2001-09-30  Thien-Thi Nguyen  <ttn@glug.org>
+
+	* BUGS: New file.
+	* Makefile.am (EXTRA_DIST): Add BUGS file.
+
+2001-09-25  Thien-Thi Nguyen  <ttn@glug.org>
+
+	* TODO: Add bugfix item to "Eventually".
+
+2001-09-20  Rob Browning  <rlb@defaultvalue.org>
+
+	* configure.in (AC_CONFIG_FILES): add libguile/version.h.
+
+2001-09-11  Rob Browning  <rlb@defaultvalue.org>
+
+	* RELEASE: Deleted Ian Grant and Julian Satchell's addresses from
+	the testing list since they're no longer functional.
+
+2001-09-04  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* TODO:
+	Use outline mode instead of text.
+	Reword protocol explanation.
+	Add "make error-signalling functions more consistent" to Eventually.
+	Move some C-related GOOPS tasks to 1.8.0, take ownership.
+
+2001-08-31  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* HACKING (Sample GDB Initialization File): New section.
+
+	* TODO (1.8.0): Add "move .gdbinit" entry.
+
+2001-08-31  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* TODO:  Added some points, and eliminated all done items.
+
+	* acconfig.h, configure.in (SCM_DEBUG_DEPRECATED,
+	SCM_ENABLE_DEPRECATED):  Renamed SCM_DEBUG_DEPRECATED to
+	SCM_ENABLE_DEPRECATED with the logic reversed.
+
+2001-08-31  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* libguile.h:  Removed bogus comment, rearranged includes, removed
+	deprecated definitions.
+
+	(LIBGUILEH, SCM_LIBGUILE_H):  Renamed <foo>H to SCM_<foo>_H.
+
+2001-08-30  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* HACKING: Mention libtool ./configure-regeneration requirement.
+
+2001-08-27  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* check-guile.in: Do not include ".libs" in LTDL_LIBRARY_PATH,
+	libltdl provides it itself.
+
+2001-08-24  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* configure.in (AC_CONFIG_FILES): Add per-manual doc directory
+	Makefiles.
+
+2001-08-15  Rob Browning  <rlb@defaultvalue.org>
+
+	* configure.in
+	(LIBGUILE_INTERFACE_CURRENT): use libtool versioning scheme.
+	(LIBGUILE_INTERFACE_REVISION): use libtool versioning scheme.
+	(LIBGUILE_INTERFACE_AGE): use libtool versioning scheme.
+	(LIBGUILE_INTERFACE): use libtool versioning scheme.
+	(LIBGUILEQTHREADS_INTERFACE_CURRENT): use libtool versioning scheme.
+	(LIBGUILEQTHREADS_INTERFACE_REVISION): use libtool versioning scheme.
+	(LIBGUILEQTHREADS_INTERFACE_AGE): use libtool versioning scheme.
+	(LIBGUILEQTHREADS_INTERFACE): use libtool versioning scheme.
+
+	* GUILE-VERSION (GUILE_MINOR_VERSION): bump for new unstable.
+	(GUILE_MICRO_VERSION): reset for new unstable.
+	(LIBGUILE_INTERFACE_CURRENT): use libtool versioning scheme.
+	(LIBGUILE_INTERFACE_REVISION): use libtool versioning scheme.
+	(LIBGUILE_INTERFACE_AGE): use libtool versioning scheme.
+	(LIBGUILE_INTERFACE): use libtool versioning scheme.
+	(LIBGUILEQTHREADS_INTERFACE_CURRENT): use libtool versioning scheme.
+	(LIBGUILEQTHREADS_INTERFACE_REVISION): use libtool versioning scheme.
+	(LIBGUILEQTHREADS_INTERFACE_AGE): use libtool versioning scheme.
+	(LIBGUILEQTHREADS_INTERFACE): use libtool versioning scheme.
+
+2001-08-07  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* Makefile.am (EXTRA_DIST, SUBDIRS): Move test-suite from
+	EXTRA_DIST to SUBDIRS.
+
+	* configure.in: Added "test-suite/Makefile".
+
+2001-08-01  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* configure.in: Added `--disable-linuxthreads' option and do not
+	define GUILE_PTHREAD_COMPAT nor link with -lpthread when it is
+	given.  Thanks to Cris Cramer!
+
+2001-07-23  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* Makefile.am (SUBDIRS): Build libguile before ice-9.
+
+2001-07-22  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* configure.in: Check for "inttypes.h".
+
+2001-07-19  Rob Browning  <rlb@defaultvalue.org>
+
+	* configure.in: add checks for setitimer and getitimer.
+	Add --enable-error-on-warning.
+
+2001-07-18  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* INSTALL, Makefile.am, configure.in: Updated copyright notice.
+
+2001-07-15  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* HACKING: Remove onerous authorship-info deletion clause.
+
+2001-07-13  Keisuke Nishida  <knishida@nurs.or.jp>
+
+	* autogen.sh: Call libtoolize with --force.
+
+2001-07-10  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* INSTALL: Point to HACKING for tool versions.
+
+2001-07-08  Rob Browning  <rlb@defaultvalue.org>
+
+	* TODO: updated to include relevant itemized post-1.6-RELEASE
+	tasks that are distributable so we can check them off as they are
+	done, and delete 1.6.0 tasks.
+
+	* RELEASE: add a note that the RELEASE instructions are out of
+	date now that we're using branches.
+
+	* AUTHORS: add "many files throughout" for myself.
+
+2001-06-28  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* README: Also mention guile-tools.
+
+	* README: Mention libguile-srfi-*, oop/*, scripts/* and srfi/*.
+
+2001-06-27  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* RELEASE: Move todo items to file TODO.
+
+	* TODO: Initial revision
+
+	* Makefile.am (EXTRA_DIST): Add TODO.
+
+	* HACKING: Refer to TODO and SNAPSHOTS.
+	No longer refer to devel/tasks.text.
+
+	* SNAPSHOTS: Fix reference bug; recommended tool
+	versions are in HACKING.
+
+	* TODO: Add completion and ownership protocol to header comments.
+
+	* RELEASE: Add TODO-processing to spiffing checklist.
+
+	* HACKING: Update deprecation procedure to refer to TODO.
+
+2001-06-27  Michael Livshin  <mlivshin@bigfoot.com>
+
+	* autogen.sh: don't run flex here.
+
+	* HACKING: clarify that newer versions of flex should be just
+	fine.
+
+2001-06-26  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* HACKING, ANON-CVS: Removed mentioning of guile-doc CVS module.
+
+	* configure.in: Added some header and function checks.
+
+2001-06-25  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* autogen.sh: Quoting fix for `--enable-maintainer-mode'.
+
+2001-06-25  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* autogen.sh: Added message about what to do next.  Tell them to
+	use `--enable-maintainer-mode'.
+
+2001-06-25  Michael Livshin  <mlivshin@bigfoot.com>
+
+	* HACKING: mention flex.
+
+	* autogen.sh: generate libguile/c-tokenize.c.
+
+2001-06-20  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* libguile.h: Removed inclusion of libguile/tag.h.
+
+2001-06-16  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* libguile.h (scm_cond_t, scm_key_t, scm_mutex_t): Only define
+	these when using threads.
+
+2001-06-14  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* libguile.h: Added deprecated section with the olde type names.
+
+	* configure.in: Check for header <stdint.h>.  Check for uintptr_t
+	type.  Use AC_CHECK_TYPES for this.  Do not caus ptrdiff_t to be
+	`#defined'.
+
+	* acconfig.h (ptrdiff_t): Removed.
+
+2001-06-05  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* configure.in: Generate examples/box-dynamic-module/Makefile.
+
+2001-06-03  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* configure.in (AC_CONFIG_FILES, AC_CONFIG_COMMANDS): Add
+	guile-snarf.
+
+2001-06-02  Rob Browning  <rlb@cs.utexas.edu>
+
+	* configure.in: changes for autoconf 2.50.
+	(AC_PREREQ): require at least autoconf 2.50.
+	(AC_INIT): no longer takes an arg.
+	(AC_CONFIG_SRCDIR): takes arg AC_INIT used to take.
+	(AC_STRUCT_ST_RDEV): changed -> AC_CHECK_MEMBERS.
+	(AC_STRUCT_ST_BLKSIZE): deprecated -> AC_CHECK_MEMBERS.
+	(AC_STRUCT_ST_BLOCKS): use it rather than our version.
+	(AC_CONFIG_FILES): now generated files go here, not in AC_OUTPUT.
+	(AC_CONFIG_COMMANDS): now actions go here, not in AC_OUTPUT.
+	(AC_OUTPUT): no longer takes args.
+
+	* acinclude.m4: AC_LANG not a variable now -- use __cplusplus
+	unconditionally .
+
+2001-06-02  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* configure.in: Check for mkstemp via AC_REPLACE_FUNCS.  Thanks to
+	I. N. Golubev!
+
+2001-06-01  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* configure.in: Generate examples/box-dynamic/Makefile.
+
+2001-05-31  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* Makefile.am (EXTRA_DIST): New subdirectory `examples'.
+
+	* configure.in: Added all Makefiles in the `examples' directory to
+	AC_OUTPUT.
+
+2001-05-31  Michael Livshin  <mlivshin@bigfoot.com>
+
+	* configure.in: generate guile-snarf-docs & guile-snarf-docs-texi.
+	don't generate guile-snarf.awk.
+
+	* Makefile.am (EXTRA_DIST): add test-suite.
+
+2001-05-28  Michael Livshin  <mlivshin@bigfoot.com>
+
+	* check-guile.in: fix to be runnable when srcdir!=builddir.
+
+2001-05-26  Michael Livshin  <mlivshin@bigfoot.com>
+
+	revert the controversial part of the 2001-05-23 changes
+
+2001-05-23  Michael Livshin  <mlivshin@bigfoot.com>
+
+	* configure.in: configury for SCM_[U]BITS_T, some more sizeofs.
+	also, make sure that the integral type choosen to represent an SCM
+	has exactly the same size as a void pointer.
+
+	* acconfig.h: add undefs for SCM_BITS_T, SCM_UBITS_T,
+	SCM_SIZEOF_BITS_T, ptrdiff_t.
+
+2001-05-16  Rob Browning  <rlb@cs.utexas.edu>
+
+	* configure.in: add AC_SUBST for GUILE_MICRO_VERSION.
+
+	* GUILE-VERSION
+	(GUILE_VERSION): now MAJOR.MINOR.MICRO
+	(GUILE_MICRO_VERSION): new variable, records final revision.
+	i.e. the 5 in 1.6.5.  MINOR_VERSION is now just the middle number,
+	i.e. the 6.
+
+2001-05-16  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* acconfig.h, configure.in:  Renamed
+	GUILE_WARN_DEPRECATED_DEFAULT to SCM_WARN_DEPRECATED_DEFAULT.
+
+2001-05-15  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* acinclude.m4: Removed copy of "libtool.m4".
+
+2001-05-14  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* configure.in (SCM_DEBUG_DEPRECATED):  Always defined.
+
+2001-05-13  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* AUTHORS (Martin Grabmueller, Thien-Thi Nguyen): Update.
+
+	* HACKING: Update copyright.
+	Add blurb pointing to devel/tasks.text.
+
+2001-05-11  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* check-guile.in: For SRFI testing, set and export env
+	var `LTDL_LIBRARY_PATH'.
+
+2001-05-07  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* AUTHORS: Add docs-related authorship details.
+
+2001-05-05  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* configure.in (--enable-deprecated): Recognize "shutup" option
+	argument and turn it into the default warning level "no".
+
+2001-05-05  Gary Houston  <ghouston@arglist.com>
+
+	* acconfig.h: add HAVE_IPV6.
+	* configure.in: check whether we can compile with IPv6 support.
+
+2001-05-04  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* guile-tools.in: New file.
+
+	* configure.in (AC_OUTPUT): Add guile-tools, and make
+	executable.
+
+	* Makefile.am (bin_SCRIPTS): New var.
+
+2001-05-04  Gary Houston  <ghouston@arglist.com>
+
+	* configure.in: check whether uint32_t is defined when netdb.h
+	is included.
+	acconfig.h: added HAVE_UINT32_T.
+
+2001-05-02  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* configure.in: Added handling of `--enable-deprecated'.
+
+	* acconfig.h (SCM_DEBUG_DEPRECATED,
+	GUILE_WARN_DEPRECATED_DEFAULT): Added.
+
+2001-04-29  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* Makefile.am (SUBDIRS): Add "scripts".
+
+	* configure.in (AC_OUTPUT): Add scripts/Makefile.
+
+2001-04-29  Gary Houston  <ghouston@arglist.com>
+
+	* libguile.h: include rw.h.
+
+2001-04-27  Rob Browning  <rlb@cs.utexas.edu>
+
+	* GUILE-VERSION (GUILE_MINOR_VERSION): change to 5.0, switching to
+	the new odd/even ustable/stable version numbering scheme.
+	(LIBGUILEQTHREADS_MAJOR_VERSION): change to 10 to match Debian and
+	libguile.  In the future, libguile and libguileqthreads may not
+	stay in sync.  This still doesn't appear to affect
+	libguileqthreads, but we'll fix that next.
+
+2001-04-25  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* configure.in: Don't treat srfi directory specially, just create
+	the Makefile there (thanks to Neil Jerram for the patch).
+
+2001-04-23  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* Makefile.am (SUBDIRS): Added `srfi'.
+
+	* configure.in: Added subdirectory `srfi' to build process.
+
+	* libguile.h: Added inclusion of `values.h'.
+
+2001-04-22  Gary Houston  <ghouston@arglist.com>
+
+	* configure.in: check for inet_pton and inet_ntop.
+
+2001-04-20  Gary Houston  <ghouston@arglist.com>
+
+	* acconfig.h: include HAVE_SIN6_SCOPE_ID.
+	* configure.in: check for sin6_scope_id in sockaddr_in6.
+
+2001-04-19  Mikael Djurfeldt  <mdj@linnaeus.mit.edu>
+
+	* RELEASE: Added deprecated macro SCM_ARRAY_CONTIGUOUS
+
+2001-04-17  Gary Houston  <ghouston@arglist.com>
+
+	* configure.in: run the autoconf BIGENDIAN check.
+
+2001-04-12  Niibe Yutaka  <gniibe@m17n.org>
+
+	* GUILE-VERSION (LIBGUILEQTHREADS_MAJOR_VERSION,
+	LIBGUILEQTHREADS_MINOR_VERSION, LIBGUILEQTHREADS_REVISION_VERSION,
+	LIBGUILEQTHREADS_VERSION): Added libguileqthreads version info.
+
+	* configure.in: Likewise.
+
+2001-04-11  Keisuke Nishida  <kxn30@po.cwru.edu>
+
+	* configure.in (AC_CHECK_FUNCS): Don't check bzero.
+	(GUILE_FUNC_DECLARED): Removed checking of bzero.
+	Thanks to NIIBE Yutaka.
+
+2001-04-10  Mikael Djurfeldt  <mdj@linnaeus.mit.edu>
+
+	* Undeprecated scm_init_oop_goopscore_module.
+
+2001-03-25  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* check-guile.in: Fix sh standard conformance bug: Replace
+	"test -e" with "test -f".  Thanks to Alexander Klimov.
+
+2001-03-19  Gary Houston  <ghouston@arglist.com>
+
+	* check-guile.in: rename $parent to $srcdir.  if it's equal to "."
+	set it to `pwd`.
+
+	* check-guile.in: 16 documentation tests were failing if "make
+	check" was run before Guile had been installed with the current
+	--prefix.  made various changes to the script so that it runs
+	without a cd to the test-suite directory.  For the -i option,
+	don't point GUILE_LOAD_PATH to the current directory, but let it
+	use it's own scheme library.
+
+2001-03-18  Gary Houston  <ghouston@arglist.com>
+
+	* check-guile.in: use @srcdir@ instead of @test_suite_dir@.  use
+	the current directory (build dir) not srcdir to find guile
+	executable.  otherwise "make check" doesn't work with a separate
+	build directory.  create the test log in
+	$build_dir/check-guile.log instead of in srcdir/test-suite
+	directory.
+	* configure.in: don't define or substitute test_suite_dir.
+
+2001-03-17  Gary Houston  <ghouston@arglist.com>
+
+	* configure.in: don't append threads.doc to EXTRA_DOT_DOC_FILES,
+	since EXTRA_DOT_DOC_FILES is redefined later.  define
+	EXTRA_DOT_X_FILES and hand it to AC_SUBST.
+
+2001-03-09  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* configure.in: Added header checks for crypt.h, sys/resource.h
+	and sys/file.h, function checks for chroot, flock, getlogin,
+	cuserid, getpriority, setpriority, getpass, sethostname,
+	gethostname, and for crypt() in libcrypt.
+
+2001-03-09  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* configure.in (htmldoc): Merge handling of `--enable-htmldoc'
+	option from guile-doc/configure.in.
+
+2001-03-06  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* libguile.h: Removed #include "libguile/dump.h".
+
+2001-02-02  Keisuke Nishida  <kxn30@po.cwru.edu>
+
+	* libguile.h: Added #include "libguile/dump.h".
+
+2001-01-29  Mikael Djurfeldt  <mdj@linnaeus.mit.edu>
+
+	* libguile.h: Added #include "libguile/rdelim.h".
+
+2001-01-26  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	The following patch was sent by Thien-Thi Nguyen.
+
+	* check-guile.in:  New file.
+
+	* Makefile.am:  Add TESTS rule.
+
+	* configure.in:  Add support for "make check".
+
+2000-11-21  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* acconfig.h:  Removed bogus #ifndef.  Thanks to Lars J. Aas.
+
+2000-10-25  Mikael Djurfeldt  <mdj@linnaeus.mit.edu>
+
+	* GUILE-VERSION (LIBGUILE_MAJOR_VERSION): Incremented major
+	version number to 10 due to the merge of GOOPS.
+
+	* oop: New directory.
+
+2000-09-20  Keisuke Nishida  <kxn30@po.cwru.edu>
+
+	* libguile.h: #include "libguile/properties.h".
+
+2000-09-17  Gary Houston  <ghouston@arglist.com>
+
+	* configure.in, acconfig.h: remove the GCSE test: it doesn't seem
+	to be reliable on all platforms.
+
+2000-08-18  Gary Houston  <ghouston@arglist.com>
+
+	* acconfig.h: added BROKEN_GCSE.
+	* configure.in: check for a gcc GCSE optimisation bug.
+
+2000-07-31  Gary Houston  <ghouston@arglist.com>
+
+	* acconfig.h: added HAVE_H_ERRNO
+	* configure.in: removed some dnl'd & obsolete cygwin stuff.
+	added a test for h_errno.
+
+2000-06-21  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* Guile 1.4 released.
+
+2000-06-20  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* GUILE-VERSION: Changed to work also when included by a Makefile
+	(e.g. debian/rules).  (Thanks to Karl M. Hegbloom.)
+	(LIBGUILE_MAJOR_VERSION): Bumped to 9.
+	(GUILE_MINOR_VERSION): Bumped to 4.
+
+2000-06-12  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* libguile.h: Removed #include "libguile/kw.h".
+
+	* Makefile.am (ACLOCAL): Define as ./guile-aclocal.sh.
+	(The rule will cd to $(top_srcdir).)
+
+	* configure.in (EXTRA_DOT_DOC_FILES): Create from LIBOBJS and
+	substitute it into libguile/Makefile.
+
+	* HACKING: Updated recommended libtool version to be 1.3.5.
+
+	* RELEASE: Say that we should update HACKING to reflect the
+	versions of the tools we're using rather than README.
+
+2000-06-02  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* NOTES: Removed.
+
+	* TODO: Moved to devel/.
+
+2000-06-01  Craig Brozefsky  <craig@red-bean.com>
+
+	* GUILE-VERSION: added defnitions for LIBGUILE_MAJOR_VERSION,
+	LIBGUILE_MINOR_VERSION, LIBGUILE_REVISION_VERSION so that we now
+	define libguile.so version in a well-lit place.
+
+	* configure.in: added AC_SUBST lines for the new LIBGUILE version
+	variables.
+
+2000-06-01  Michael Livshin  <mlivshin@bigfoot.com>
+
+	* autogen.sh: call ./guile-aclocal.sh instead of aclocal.
+
+	* guile-aclocal.sh: new file, works around aclocal problems.
+
+2000-05-30  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* acconfig.h (USE_FSU_PTHREADS, USE_MIT_PTHREADS,
+	USE_PCTHREADS_PTHREADS):  Removed.
+
+2000-05-01  Gary Houston  <ghouston@arglist.com>
+
+	* Makefile.am: add include_HEADERS.
+	libguile.h: moved from libguile directory.  maybe libguile.h should
+	be installed in $prefix/include/libguile/libguile.h instead?
+
+2000-04-21  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* qthreads.m4: Removed THREADS_CPPFLAGS.
+
+	* acinclude.m4: Removed qthreads macros.  They are provided in
+	qthreads.m4, so these were redundant.
+
+	* acconfig.h (GUILE_DEBUG_MALLOC): New.
+
+	* configure.in: New --enable-debug-malloc configuration option.
+
+2000-03-29  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* acconfig.h (GUILE_PTHREAD_COMPAT): New config variable.
+
+	* configure.in: Enable workaround for COOP-linuxthreads
+	compatibility on Linux systems.
+
+2000-03-19  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* devel: New directory.  Intended to carry documentation related
+	to Guile development (as opposed to the doc directory which
+	contains documentation related to the use of the current Guile).
+	This directory (devel) is not included in the Guile distribution,
+	but is accessible via anonymous CVS.
+
+2000-03-13  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* configure.in: Don't add iselect.o to LIBOBJS.
+
+2000-03-13  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* configure.in: Added end-tag for local variables.  (Thanks to
+	Thien-Thi Nguyen.)
+
+2000-03-12  Gary Houston  <ghouston@arglist.com>
+
+	* README (Guile Documentation, About This Distribution): updated.
+
+2000-03-12  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* configure.in (ac_cv_struct_timespec): Added test for struct
+	timespec.
+
+	* acconfig.h (HAVE_STRUCT_TIMESPEC): Added.
+
+2000-01-25  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* autogen.sh: Call libtoolize.  Pass --add-missing option to
+	automake.  Do not decent into libltdl directory.  The libltdl
+	directory is now populated by libtoolize and does not need any
+	further autogeneration.
+
+2000-01-23  Gary Houston  <ghouston@arglist.com>
+
+	* configure.in: check for fchown.
+
+Tue Jan 18 12:55:15 2000  Mikael Djurfeldt  <mdj@r11n07-s.pdc.kth.se>
+
+	* acinclude.m4 (AC_LIBLTDL_CONVENIENCE): Add $(top_srcdir)/libltdl
+	instead of $(top_builddir)/libltdl to includepath.
+
+2000-01-18  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* emacs: New subdirectory for elisp tools.
+
+2000-01-15  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* README, HACKING: Moved "Hacking it yourself" section from README
+	to HACKING.  Updated recommended libtool version to be 1.3.4.
+
+2000-01-14  Gary Houston  <ghouston@arglist.com>
+
+	* configure.in: needs to have --disable-networking, not
+	--disable-net.
+
+2000-01-12  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* libltdl/acconfig.h: New file: Needed by autogen.sh.
+
+Tue Jan 11 13:42:35 2000  Greg J. Badros  <gjb@cs.washington.edu>
+
+	* autogen.sh: Added messages as we run autogen in subdirectories.
+
+	* configure.in: Output libugile/guile-func-name-check script, and
+	chmod +x it.
+
+2000-01-11  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* libltdl/autogen.sh: New file.
+	* autogen.sh: Invoke libltdl/autogen.sh.
+
+2000-01-09  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	Finally applied the libltdl patch from Thomas Tanner, with slight
+	modifications.  All code copied from the libtool package is from
+	libtool-1.3.4.
+
+	* configure.in: Make "--with-modules=yes" the default.  Do not
+	clear INCLTDL, LIBLTDL prior to processing "--with-modules".
+
+    1999-07-25  Thomas Tanner  <tanner@ffii.org>
+
+	    * Makefile.am: add libltdl to SUBDIRS, automake automatically
+	      includes ltconfig, ltmain.sh and acconfig.h in EXTRA_DIST
+	    * acinclude.m4: remove GUILE_DLSYM_USCORE, add libtool.m4
+	      (no need to install libtool any more)
+	    * configure.in: replace --enable-dynamic-linking with
+	      --with-modules, required modules can be specified using
+	      --with-modules="/path/to/mod.la" and will be linked
+	      statically on platforms that don't support dynamic loading,
+	      configure libltdl, configure libtool for dlopening
+	    * libltdl: added using libtoolize -c --ltdl
+
+2000-01-09  Gary Houston  <ghouston@arglist.com>
+
+	* configure.in: check whether localtime caches TZ.  copied from
+	Emacs 20.5.
+	* acconfig.h: add LOCALTIME_CACHE.
+
+Tue Dec 14 09:12:22 1999  Greg J. Badros  <gjb@cs.washington.edu>
+
+	* configure.in: Make it be guile-snarf.awk, since we'll be
+	switching names for guile-doc-snarf.  (I wouldn't have changed
+	this, but I was getting ready to commit this way when the below
+	change was committed).
+
+1999-12-14  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* configure.in: Create guile-doc-snarf.awk.
+
+1999-12-12  Greg J. Badros  <gjb@cs.washington.edu>
+
+	* configure.in: Create guile-doc-snarf, chmod +x that script after
+	AC_OUTPUTted.
+
+1999-12-10  Greg J. Badros  <gjb@cs.washington.edu>
+
+	* NEWS: More complete description for --enable-debug-freelist.
+
+1999-12-09  Gary Houston  <ghouston@freewire.co.uk>
+
+	* configure.in (CFLAGS): don't add -Wpointer-arith, since it
+	causes numerous spurious warnings with recent gcc and/or glibc
+	versions.
+
+1999-11-19  Gary Houston  <ghouston@freewire.co.uk>
+
+	* acconfig.h: add HAVE_ARRAYS.
+
+	* configure.in: add --disable-arrays option, probably temporary.
+
+1999-11-17  Gary Houston  <ghouston@freewire.co.uk>
+
+	* configure.in: check for hstrerror.
+
+1999-10-05  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* autogen.sh: Don't call autoreconf at all; it's not reliable.
+	Instead, call the various tools explicitly.  Invoke
+	guile-readline's autogen.sh script.
+
+	Straighten up the situation regarding guile.m4 and qthreads.m4.
+
+	We can't have .m4 files which are installed where aclocal can
+	see them, but also used by guile's own configure.in, because
+	aclocal will read both copies, complain about duplicate macro
+	definitions, and refuse to generate aclocal.m4 at all.  This
+	happens if you invoke it as `aclocal -I .', as autoreconf does.
+	This is probably a flaw in the autotools, but Guile doesn't need
+	that flaw fixed immediately.
+
+	guile.m4 is intended for use by people linking against guile, so
+	it needs to be installed.  But Guile itself doesn't use it.  So
+	move guile.m4 into guile-config.  That makes sense, since
+	guile.m4's GUILE_FLAGS macro is just an easy way to call
+	guile-config.
+
+	qthreads.m4 is indented to help configure a qthreads tree.  It's
+	only useful to a package which actually includes a qthreads tree,
+	and it's intimately related to that tree, so it's not useful to
+	install this.  So don't install it.
+
+	* guile.m4: Moved to guile-config.
+	* Makefile.am (aclocaldir, aclocal_DATA): Delete.
+	(EXTRA_DIST): Move qthreads.m4 here.
+
+	Don't store generated files in the repository any more.  Instead,
+	require people to run autogen.sh on trees from snapshots and CVS.
+	* Makefile.in, aclocal.m4, configure: Deleted.
+	* autogen.sh: New file.
+	* ANON-CVS, SNAPSHOTS: Updated instructions.
+
+1999-10-02  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* acconfig.h (HAVE_POSIX, HAVE_NETWORKING): Add comments.
+
+1999-09-27  Greg J. Badros  <gjb@cs.washington.edu>
+
+	* configure.in:  Added --enable-debug-freelist option.
+
+	* acconfig.h: Added GUILE_DEBUG_FREELIST.
+
+1999-09-23  Gary Houston  <ghouston@freewire.co.uk>
+
+	* acconfig.h: add HAVE_POSIX, HAVE_NETWORKING.  remove FD_SETTER,
+	FILE_CNT_FIELD, FILE_CNT_GPTR, FILE_CNT_READPTR.
+
+	* configure.in: new options --disable-posix, --disable-net
+	and --disable-regex
+	export HAVE_POSIX and HAVE_NETWORKING definitions.
+	don't add regex-posix.o to LIBOBJS if regex disabled.
+
+	LIBOBJS: add filesys.c, posix.c, net_db.c, socket.c,
+	conditionally.
+
+1999-09-25  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* Guile 1.3.4 released.
+
+1999-09-22  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* configure.in: Call AM_PROG_CC_STDC before AM_PROG_LIBTOOL, so
+	libtool knows how to get ANSI C behavior from the compiler.
+	* configure: Regenerated.
+
+1999-09-20  Gary Houston  <ghouston@freewire.co.uk>
+
+	* configure.in: check availability of siginterrupt.
+
+1999-09-18  Gary Houston  <ghouston@freewire.co.uk>
+
+	* configure.in: use AC_SYS_RESTARTABLE_SYSCALLS instead of
+	testing for SA_RESTART.
+
+1999-09-12  Mikael Djurfeldt  <mdj@mdj-pc.nada.kth.se>
+
+	* configure.in: Removed ice-9/version.scm from AC_OUTPUT.
+
+1999-09-11  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* configure.in (GUILE_STAMP): Don't set this variable, or
+	substitute it into anything.  Full explanation in ice-9/ChangeLog.
+	* configure, Makefile.in: Regenerated.
+
+1999-09-06  James Blandy  <jimb@mule.m17n.org>
+
+	Propagate the changes of 2 Sept the rest of the way through.
+	* configure: Regenerated.
+	* Makefile.in: Regenerated.  Not sure why this diff is so big.
+
+1999-09-02  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* acinclude.m4 (GUILE_HEADER_LIBC_WITH_UNISTD): Fix typo in
+	variable name.  (Thanks to Bill Schottstaedt.)
+	* aclocal.m4: Regenerated.
+
+1999-09-02  Mikael Djurfeldt  <mdj@mdj-pc.nada.kth.se>
+
+	* configure.in: Test for presence of function on_exit.
+
+1999-09-01  James Blandy  <jimb@mule.m17n.org>
+
+	* configure.in: Use AC_REPLACE_FUNCS to grab libguile/memmove.c if
+	the system doesn't have memmove.  Don't test for memmove and bcopy
+	with AC_CHECK_FUNCS.
+	* configure: Regenerated.
+
+1999-08-30  Mikael Djurfeldt  <mdj@mdj-pc.nada.kth.se>
+
+	* configure.in: Test for atexit.
+
+1999-08-29  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* acinclude.m4: Updated.  (Thanks to Karl Eichwalder.)
+
+	* configure.in: Test for presence of S_ISLNK in sys/stat.h.
+	(Thanks to Bernard Urban.)
+	Test for memmove and bcopy.  (Thanks to
+	suzukis@file.phys.tohoku.ac.jp.)
+
+	* acconfig.h: Added HAVE_S_ISLNK.
+
+1999-08-20  James Blandy  <jimb@mule.m17n.org>
+
+	* Guile 1.3.2 released.
+
+	* Makefile.in: Regenerated.
+
+1999-07-24  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* README, config.guess, config.sub, liconfig, ltmain.sh: Switched
+	to libtool-1.3.3.
+
+1999-07-22  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	Added guile-readline subdirectory with the removed readline
+	support.
+	* guile-readline: New directory, see ChangeLog there.
+	* configure.in: Cause configure to descend into guile-readline
+	dir.
+	* Makefile.am: Likewise for make.
+	* NEWS: Explain how to activate the readline support.
+	* configure, Makefile.in: Regenerated.
+
+1999-07-19  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	Fixes for EMX from Mikael Ståldal.
+
+	* configure.in: Check for <io.h>.
+	* configure: Regenerated.
+
+1999-07-18  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* qthreads.m4 (QTHREADS_CONFIGURE): 'alpha' in a configuration
+	name can have suffixes, like alphaev56-unknown-linux-gnu.
+	* aclocal.m4, configure: Rebuilt.
+	(Thanks to Sebastien Villemot.)
+
+1999-07-04  Gary Houston  <ghouston@easynet.co.uk>
+
+	* configure.in: don't check for ways to violate stdio abstraction.
+
+1999-05-02  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* configure.in (AC_CHECK_FUNCS): Fill in list of functions that
+	libguile/net_db.h wants to use.  (Add setprotoent, setservent.)
+
+1999-04-17  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	Remove all automatic readline support, to avoid copyright
+	confusion.
+	* INSTALL: Update text.
+	* NEWS: Explain the situation.
+	* configure.in: Remove configury for readline and its supporting
+	libraries.
+	* configure: Regenerated.
+
+	* README: Change URL's for automake and autoconf.
+
+	* Makefile.in, configure: Regenerated with autoconf 2.13, automake
+	1.4, libtool 1.2f (1.385 1999/03/15 17:24:54).  I've upgraded to
+	all the right tools, according to README, but I'm still getting
+	different results than Mikael is.  Hmm.
+
+1999-03-22  Mikael Djurfeldt  <mdj@barbara.nada.kth.se>
+
+	* New libtool: 1.2f
+	* ltmain.sh, ltconfig, config.guess, config.sub: New versions.
+	* README: Mention new version number of libtool.
+
+1999-03-04  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	New automake: 1.4
+	* config.guess, config.sub, install-sh, mdate-sh, missing,
+	mkinstalldirs: New versions.
+	* Makefile.in, aclocal.m4, configure: Regenerated.
+	* README: Mention new version numbers on autoconf and automake.
+
+1999-02-12  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* configure.in: Add --with-readline flag.
+	* configure: Rebuilt.
+
+1999-02-09  Maciej Stachowiak  <mstachow@alum.mit.edu>
+
+	* NEWS: Added entry for optargs module.
+
+1999-02-06  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* configure: Regenerated using autoconf 2.12.
+
+1999-01-26  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* configure.in: Removed test AC_C_BIGENDIAN.  (This test was
+	considered to encourage bad coding style.)
+
+1999-01-21  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* configure.in: Added test AC_C_BIGENDIAN.
+
+1999-01-11  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* configure.in: Remove quotes around ac_cv_lib_readline_main and
+ 	ac_cv_var_rl_getc_function.  They should both always be set to
+	non-null values; this way, we get error messages.
+	* configure: Regenerated.
+
+1999-01-10  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* configure.in: Cite the variable ac_cv_lib_readline_main, not
+	ac_cv_lib_readline_readline; the latter isn't set any more, since
+	we look for 'main' in libreadline now.  Add quotes around
+	reference to the variable references, too, so this will work even
+	when a variable's value is the empty string.
+	* configure: Regenerated.
+
+1999-01-07  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* acconfig.h: Added HAVE_LONG_LONGS.
+
+	* configure.in: Added AC_CHECK_SIZEOF(long), AC_CHECK_SIZEOF(int);
+	Added check for long longs.
+
+1998-12-14  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* configure.in: Check for tgoto in ncurses, then termcap.
+  	S.u.S.E. Linux doesn't have a termcap.  (Thanks to Karl
+ 	Eichwalder.)
+	* configure: Regenerated.
+
+1998-10-24  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* configure.in: Call AM_PROG_CC_STDC, to see what flags we should
+	pass the compiler to make it support ANSI.  (Thanks to Bernard
+	Urban.)
+	* aclocal.m4, configure: Regenerated.
+
+1998-10-20  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* Guile 1.3 released.
+
+1998-10-19  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* GUILE-VERSION: Bump to 1.3.
+
+	* Makefile.am (EXTRA_DIST): Don't omit ANON-CVS and SNAPSHOTS.
+	* Makefile.in: Regenerated.
+
+1998-10-16  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* qthreads.m4 (QTHREADS_CONFIGURE): On NetBSD, pass through a flag
+ 	to the Makefile which explicitly tells it to pass assembly files
+ 	through the preprocessor.  (Thanks to Perry Metzger.)
+	* aclocal.m4, configure, Makefile.in: Regenerated.
+
+1998-10-14  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* configure.in: Define SCM_SINGLES whenever a float can fit in a
+	long, not only when a float is the same size as a long.  This gets
+	us SCM_SINGLES defined on alphas.  (Thanks to Clark McGrew.)
+	* configure: Regenerated.
+
+	* configure.in: Construct libguile/versiondat.h here; see
+	log entry in libguile/ChangeLog for details.
+	* configure: Regenerated.
+
+	* configure.in: Allow tabs and whitespace between `void' and
+	`usleep'.  (Thanks to Harvey J. Stein.)
+	* configure: Regenerated.
+
+	Don't redefine sleep/usleep.
+	* configure.in: Remove tests for usleep's argument type; we only
+	need that if we're going to replace it.
+
+	* acconfig.h (USLEEP_ARG_TYPE): Delete.  All the other SLEEP
+	garbage is needed just to use usleep and sleep without compiler
+	warnings.
+	* configure: Regenerated.
+
+1998-10-12  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* configure: Regenerated.
+
+	* configure.in (GUILE_FUNC_DECLARED): Name the cache variables
+	starting with guile_cv_; ac_cv_ is autoconf's namespace.
+
+	The type of the argument to usleep varies from system to system,
+	as does the return type.  We really shouldn't be redefining usleep
+	at all, but I don't have time to clean that up before the 1.3
+	release.  It's on the schedule for afterwards.
+	* configure.in: Cache results from usleep return value test.
+	Test for the type of the usleep argument, and cache that too.
+	* acconfig.h (USLEEP_ARG_TYPE): New macro.
+
+1998-10-11  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* acconfig.h (HAVE_RL_GETC_FUNCTION): Fix this entry.
+
+1998-10-10  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* GUILE-VERSION: bump to 1.2.91, since we're doing snapshots again.
+
+	* Guile 1.2.90 released --- beta.
+	* GUILE-VERSION: Set to 1.2.90.  This would appear to be a
+ 	regression from 1.3a, but everyone knows that the next release is
+ 	1.3, I want to switch to a more coherent version numbering system,
+ 	and now is the time.
+
+1998-10-09  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* configure.in: Call AC_C_INLINE, so we can use inline happily in
+	libguile.
+	* configure: Regenerated.
+
+1998-10-07  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* configure.in: Don't forget to #define HAVE_RL_GETC_FUNCTION if
+	we do find the rl_getc_function variable in the readline library;
+	AC_CHECK_FUNCS used to do this for us, but we're not using it any
+	more.
+	* acconfig.h: Add an entry for HAVE_RL_GETC_FUNCTION.
+
+	* configure.in: Properly test for the presence of rl_getc_function;
+	it's a variable, not a function.
+	* configure: Regenerated.
+
+	* doc: New subdirectory.
+	* Makefile.am (SUBDIRS): List it.
+	* configure.in (AC_OUTPUT): Build its Makefile.
+	* configure, Makefile.in: Regenerated.
+
+	* guile.m4 (GUILE_FLAGS): New macro.
+
+	* guile.m4 (AM_INIT_GUILE_MODULE): Deleted; it doesn't do anything
+ 	terribly helpful any more, nobody's using it, and this is not
+ 	really the way I want to handle modules anyway.
+
+1998-10-03  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* configure.in (FD_SETTER, FILE_CNT_GPTR): New cases for SCO's
+	stdio implementation.  (Thanks to David Tillman.)
+	* configure: Rebuilt.
+
+	* guile-config: Renamed from `build'.
+	* Makefile.am (SUBDIRS): Mention `guile-config', not `build'.
+	* configure.in: Create `guile-config/Makefile.in', not
+	`build/Makefile.in'.  Doc fix, too.
+
+	* qthreads.m4: Doc fix.
+	* Makefile.in, aclocal.m4, configure: Regeneranegerederadea.
+
+1998-10-03    <jimb@savonarola.red-bean.com>
+
+	* configure.in: Check for a missing `sleep' declaration.
+	* acconfig.h (MISSING_SLEEP_DECL): Provide some text for this.
+	* configure: Regenerated.
+
+	* configure.in: Don't use the canonical host name to decide
+	whether `bzero' and `usleep' have declarations --- that's going
+	back to the bad old days before autoconf.  Remove the call to
+	AC_CANONICAL_HOST and the subsequent case statement.
+	(GUILE_FUNC_DECLARED): New m4 macro.  Use it to check for
+	declarations for `bzero', `usleep', and (new!) `strptime'.
+	* acconfig.h: (DECLARE_BZERO, DECLARE_USLEEP): Removed.
+	(MISSING_BZERO_DECL, MISSING_USLEEP_DECL, MISSING_STRPTIME_DECL):
+	Added.  I think this naming convention is more consistent with the
+	rest of autoconf; names generally describes the system, not what
+	the package should do to accomodate the system.
+	* configure: Regenerated.
+
+1998-09-05  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* configure.in: Remove --disable-debug option.  The debugging
+	support is pretty stable now, and it's confusing people.
+	* configure: Regenerated.
+
+	* HACKING: Remove -Wstrict-prototypes from the list of requested
+	flags (to match 1998-07-30 change).
+
+1998-07-30  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* configure.in: Don't use -Wstrict-prototypes after all.
+	* configure: Regenerated.
+
+1998-07-29  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	* configure.in: Request more warnings.
+	* configure: Regenerated.
+	* HACKING: Ask people not to make changes that introduce those
+	warnings.  Now I have to go through the code and actually bring it
+	up to standards... :(
+
+	* Makefile.in, aclocal.m4, configure: Regenerated using the last
+ 	public version of automake, not the hacked Cygnus version.
+	* config.guess, config.sub, ltconfig, ltmain.sh: New versions from
+ 	libtool.
+
+	* configure.in, qthreads.m4: Display a message about how the
+ 	threads configuration went.
+	* aclocal.m4, configure: Regenerated.
+
+1998-07-28  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	Remove the TOTORO kludge.  We're not doing snapshots any more, so
+	totoro is completely uninvolved.  (Poor Totoro!)
+	* configure.in: Remove code to check the hostname and #define
+	TOTORO.
+	* acconfig.h: Remove comments for TOTORO symbol.
+	* configure, Makefile.in: Regenerated.
+
+	* qthreads.m4 (QTHREADS_CONFIGURE): We *can* use AC_REQUIRE here
+	to get AC_PROG_LN_S.
+	* aclocal.m4, configure: Regenerated.
+
+1998-07-26  Jim Blandy  <jimb@zwingli.cygnus.com>
+
+	Clean up thread configuration.
+	* qthreads.m4: New file, which knows how to configure the qthreads
+	library.
+	* configure.in: Replace all thread package selection code.  Do the
+ 	--with-threads argument processing here.  Enable the appropriate
+ 	thread interface files in libguile.  Remove all qthreads
+ 	configuration code; call QTHREADS_CONFIGURE instead.  Set
+ 	GUILE_LIBS using the info provided by QTHREADS_CONFIGURE.
+	* threads.m4: Removed; not used any more.
+	* Makefile.am (aclocal_DATA): Mention qthreads.m4, not threads.m4.
+	* Makefile.in, aclocal.m4, configure: Rgnrtd.  (Sv th vwls!)
+	Note that these were regenerated with the tools available from
+	Cygnus's source tree, which have patches not available to the
+	general public.  I'm not sure this was a good idea; feel free to
+	revert them to the latest released versions of the tools.
+
+	Upgrade to the version of libtool available at Cygnus.  See note
+	above.
+	* config.guess, config.sub, ltconfig, ltmain.sh: Upgraded.
+
+1998-07-12  Mikael Djurfeldt  <mdj@barbara.nada.kth.se>
+
+	* configure.in: Changed variable HOSTNAME --> PROG_HOSTNAME in
+	totoro kludge.
+
+Sat Jul 11 21:54:29 1998  Mikael Djurfeldt  <mdj@totoro.red-bean.com>
+
+	* acconfig.h, configure.in: Define TOTORO if configuring on
+ 	totoro.red-bean.com.
+
+	* configure.in: Check for strdup.
+
+1998-05-19  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* configure.in: Check for rl_cleanup_after_signal.
+
+1998-05-11  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* configure.in: Added test for rl_getc_function.  Warn if
+	libreadline is found but not this function.
+
+1998-05-06  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* configure.in: Replaced some AC_CHECK_FUNC --> AC_CHECK_FUNCS so
+	that suitable HAVE_<function name> symbols get defined.
+
+1998-04-25  Mikael Djurfeldt  <mdj@kenneth>
+
+	* configure.in: Define USLEEP_RETURNS_VOID on some systems.
+	(Thanks to Julian Satchell.)
+
+1998-04-20  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* configure.in: Check for usleep;  Define DECLARE_BZERO and
+	DECLARE_USLEEP on Solaris 2.5 since it supplies those functions
+	without declaring them.
+
+	* acconfig.h: Added DECLARE_BZERO, DECLARE_USLEEP
+
+1998-04-19  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* configure.in: Define HAVE_DLOPEN also when HAVE_LIBDL is
+	defined.
+
+1998-04-18  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* configure.in (GUILE_LIBS): New variable.  Contains libraries
+	which libguile needs to be linked with.  Substituted into
+	libpath.h.
+
+	* threads.m4 (threads_package): Don't add $LDFLAGS and $LIBS to
+	$cy_cv_threads_libs.
+
+1998-04-11  Mikael Djurfeldt  <mdj@kenneth>
+
+	New libtool: 1.2
+	* ltconfig, ltmain.sh, config.sub, config.guess: Updated.
+	New automake: 1.3
+	* Makefile.in, aclocal.m4, configure: Regenerated.
+	* README: Mention new version numbers on libtool and automake.
+
+1997-12-11  Tim Pierce  <twp@skepsis.com>
+
+	* HACKING: Note that SSH is mandatory for CVS access.
+
+Sun Dec  7 06:11:24 1997  Gary Houston  <ghouston@actrix.gen.nz>
+
+	* README: using Automake 1.2d
+	* configure.in: AC_CHECK_FUNCS: add "system".
+
+1997-12-01  Tim Pierce  <twp@skepsis.com>
+
+	* acconfig.h: Add USCORE.
+
+1997-11-27  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* configure.in: Added code to enable GUILE_ISELECT on systems
+	which have the necessary functions (gettimeofday, select).
+
+	* acconfig.h: Added GUILE_ISELECT.
+
+1997-11-24  Tim Pierce  <twp@twp.tezcat.com>
+
+	* acinclude.m4: Assume dlsym does not add underscore if
+ 	cross-compiling.
+	* aclocal.m4, configure: Regenderated.
+
+1997-11-21  Tim Pierce  <twp@twp.tezcat.com>
+
+	* acinclude.m4 (GUILE_DLSYM_USCORE): New macro, thanks Dan Hagerty
+	<hag@ai.mit.edu>.
+	* configure.in: Use it.
+	* configure: Regenerated.
+	* acconfig.h (DLSYM_ADDS_USCORE): New #define.
+
+1997-10-26  Mikael Djurfeldt  <mdj@nada.kth.se>
+
+	* README (libtool): Tell people to use version 1.0e.
+
+Sat Oct 25 02:50:43 1997  Jim Blandy  <jimb@totoro.red-bean.com>
+
+	Call the QuickThreads library libqthreads.a, not libqt.a.  The old
+	name conflicts with the Qt user interface toolkit.
+	* threads.m4 (CY_AC_WITH_THREADS): Use new library name.
+	* configure.in: Same.
+	* aclocal.m4, configure: Regenerated.
+
+Thu Oct 23 00:58:06 1997  Jim Blandy  <jimb@totoro.red-bean.com>
+
+	* configure.in: Check for the readline library, and the termcap
+	library (on which readline relies).
+	* configure: Regenerated.
+
+Wed Oct 22 16:55:57 1997  Jim Blandy  <jimb@totoro.red-bean.com>
+
+	New libtool: 1.0e
+	* ltconfig, ltmain.sh, config.sub, config.guess: Updated.
+	* configure, aclocal.m4: Regenerated.
+
+1997-10-02  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	Make dynamic linking work on Dec Unix. (Thanks to Clark McGrew)
+	* configure.in: Check whether dlopen can be found without -ldl.
+
+Mon Sep 29 23:52:52 1997  Jim Blandy  <jimb@totoro.red-bean.com>
+
+	* Makefile.in: Regenerated with automake 1.2c.
+
+Sat Sep 27 23:01:58 1997  Jim Blandy  <jimb@totoro.red-bean.com>
+
+	* Makefile.am: Add new `build' subdirectory to SUBDIRS.
+	* configure.in: Add build/Makefile to AC_OUTPUT clause.
+	* Makefile.in, configure: Regenerated.
+
+	* Makefile.in, aclocal.m4: Regenerated with automake 1.2a.
+
+Tue Sep 16 00:19:46 1997  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* README, ltconfig, ltmain.sh: New libtool: 1.0c.
+
+Thu Sep 11 11:28:24 1997  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* ltmain.sh: Added a missing '\' before \n on line 32.
+
+Thu Aug 28 23:40:43 1997  Jim Blandy  <jimb@totoro.red-bean.com>
+
+	New libtool: 1.0b.
+	* ltconfig, ltmain.sh, config.guess: Freshly libtoolized.
+	* Makefile.in, aclocal.m4, configure: Regenerated, salamander-style.
+
+Wed Aug 27 11:35:09 1997  Jim Blandy  <jimb@totoro.red-bean.com>
+
+	* Makefile.in: Regenerated, so it uses "tar", not "gtar".
+
+	* configure.in: Use the QuickThreads assembler fragment with Irix
+	dynamic linking support for Irix 6 as well as Irix 5.  Thanks to
+	Jesse Glick.
+	* configure: Regenerated.
+
+Sun Aug 24 15:51:12 1997  Mikael Djurfeldt  <mdj@kenneth>
+
+	* acinclude.m4 (GUILE_NAMED_CHECK_FUNC): New macro: Tagged test,
+	so that test for the same function can be performed multiple
+	times.
+
+	* configure.in (AC_CHECK_HEADERS): Test for rxposix.h,
+	rx/rxposix.h.  Add library rx only if regcomp can't be found
+	without it.
+
+	* acconfig.h (HAVE_REGCOMP): Added it here since autoheader misses
+	it for some reason!
+
+Fri Aug 22 21:21:49 1997  Jim Blandy  <jimb@totoro.red-bean.com>
+
+	* THANKS: New file.
+	* Makefile.in, aclocal.m4, configure: Regenerated.
+
+Wed Jul 23 20:24:27 1997  Mikael Djurfeldt  <djurf@zafir.e.kth.se>
+
+	* configure.in: Added thread support for the alpha architecture.
+	configure: Regenerated.
+
+Thu Jul 17 07:56:05 1997  Gary Houston  <ghouston@actrix.gen.nz>
+
+	* configure.in: use AC_CHECK_FUNCS for sethostent etc.,
+	so scmconfig.h is updated with the test results.  this may
+	disable one of the cygwin hacks.
+
+Fri Jul 11 00:18:19 1997  Jim Blandy  <jimb@floss.red-bean.com>
+
+	Changes to compile under gnu-win32, from Marcus Daniels:
+	* configure.in: When sys/un.h exists, define HAVE_UNIX_DOMAIN_SOCKETS
+	to indicate that Unix domain sockets will work.
+	Check for socketpair, getgroups, setwent, pause, and tzset
+	(cygwin currently lacks these them).
+	Check for sethostent endhostent getnetent setnetent endnetent
+	getprotoent endprotoent getservent endservent getnetbyaddr
+	getnetbyname inet_lnaof inet_makeaddr inet_netof (cygwin currently
+	lacks them).  In the case of cygwin, temporarily prefix these
+	functions with "cygwin32_", the way that netdb.h does.
+	Don't define HAVE_REGCOMP unless both regcomp and regex.h are
+	available (cygwin b18 came distributed without a working regex.h
+	file).
+	* acconfig.h (HAVE_UNIX_DOMAIN_SOCKETS): Add this.
+	* configure: Regenerated.
+
+Wed Jul  2 12:28:40 1997  Tim Pierce  <twp@twp.tezcat.com>
+
+	* ltmain.sh: Remove any trailing colon on $shlibpath_var
+	(i.e. LD_LIBRARY_PATH) for braindamaged linkers that choke on it.
+	Patch sent to bug-libtool.
+
+Sat Jun 28 16:13:43 1997  Tim Pierce  <twp@twp.tezcat.com>
+
+	* configure.in: Add alloca.o explicitly to LIBOBJS (thanks Eric
+	Backus for reporting this problem and suggesting a fix).
+	* configure: Regenerated.
+
+Thu Jun 26 20:43:31 1997  Jim Blandy  <jimb@floss.red-bean.com>
+
+	* Guile 1.2 released.
+
+	* configure.in: Check for librx after libm; fundamentals need to
+	come first.
+	* configure: Regenerated.
+
+Tue Jun 24 13:34:20 1997  Tim Pierce  <twpierce@bio-5.bsd.uchicago.edu>
+
+	* aclocal.m4 (AM_PATH_PROG_LD): Change `ac_cv_path_LD' typo to
+	`am_cv_path_LD'.
+	* configure: Regenerated.
+
+Sun Jun 22 15:43:07 1997  Jim Blandy  <jimb@floss.red-bean.com>
+
+	Try to detect when people are using one version of libguile and a
+	different version of ice-9.  People have been skewing things and
+	sending in bug reports.
+	* configure.in: Provide libguile its version information through a
+ 	separate header file generated by the Makefile, not through
+ 	scmconfig.h.
+	(GUILE_MAJOR_VERSION, GUILE_MINOR_VERSION, GUILE_VERSION):
+	AC_SUBST these, instead of AC_DEFINE'ing them.
+	(GUILE_STAMP): New AC_SUBST: the time we configured the tree.
+	(AC_OUTPUT): Create ice-9/version.scm.
+	* acconfig.h (GUILE_MAJOR_VERSION, GUILE_MINOR_VERSION,
+	GUILE_VERSION): Deleted.
+	* Makefile.in: Regenerated.
+
+	* aclocal.m4: Regenerated, using the libtool 0.9h m4 macros.
+
+	* Makefile.am (EXTRA_DIST): Include acconfig.h in the
+	distribution.
+	* Makefile.in: Regenerated.
+
+Sat Jun 21 00:14:07 1997  Jim Blandy  <jimb@floss.red-bean.com>
+
+	* ltmain.sh (line 1191): Don't forget 'test' in if statement.
+
+	* ltconfig, ltmain.sh: libtoolized, using libtool 0.9h.
+
+Wed Jun 11 00:34:01 1997  Jim Blandy  <jimb@floss.red-bean.com>
+
+	* ltconfig, ltmain.sh, config.guess: New files from libtool 0.9g.
+
+	* configure.in: By default, include functions in Guile to allow
+ 	linking with dynamic libraries at run-time.  In other words,
+	--enable-dynamic-linking is now the default.
+	* configure: Rebuilt.
+
+	* configure.in: Remove space between AC_CHECK_LIB and opening
+	paren in check for Rx.
+	* configure: Regenerated.
+
+	* configure.in: Remove all mention of xtra_PLUGIN_guile_libs.
+	It's never used.
+	* configure, Makefile.in: Regenerated.
+
+Tue Jun 10 23:37:12 1997  Jim Blandy  <jimb@floss.red-bean.com>
+
+	* configure.in: Move checks for libraries (-lm, -lnsl, -lsocket,
+	-dl, -dld) before checks for functions.
+	* configure: Regenerated.
+
+Mon Jun  9 02:35:46 1997  Tim Pierce  <twp@twp.tezcat.com>
+
+	* config.guess: New copy from autoconf-2.12, which recognizes
+	OpenBSD.
+
+Tue Jun  3 16:34:19 1997  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* configure.in: Check for Rx, so we will use its routines (which I
+	pretty much trust) if it is installed.
+	* configure: Regenerated.
+
+Sat May 31 03:48:45 1997  Gary Houston  <ghouston@actrix.gen.nz>
+
+	* acconfig.h: mention HAVE_RESTARTS.
+	* configure.in: check for sigaction and restartable system calls.
+
+Tue May 27 22:47:52 1997  Tim Pierce  <twp@twp.tezcat.com>
+
+	* configure.in: Check for presence of regcomp.
+	* configure: Regenerated.
+
+Mon May 26 12:14:20 1997  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* COPYING: New address for FSF.
+
+	* configure.in: We don't need to add fileblocks.o to LIBOBJS if
+ 	struct stat doesn't have the st_blocks field.  We take care of
+ 	that case in the code.  Replace AC_STRUCT_ST_BLOCKS with its
+ 	definition, edited appropriately.  (Bernard URBAN)
+	* configure: Regenerated.
+
+Sat May 17 13:49:28 1997  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* configure.in: Don't link against -lnsl or -lsocket unless we
+	actually need to.  This causes trouble on Irix.  (Thanks to Larry
+	Schwimmer.)
+
+	* config.sub: Get newer version, that recognizes the i686.
+
+Fri May 16 17:26:10 1997  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* README: Changed Mikael's threads work attribution in order
+	to sooth Anthony's enormous, but wounded, ego.
+
+Fri May 16 17:26:53 1997  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	Just kidding!!!
+
+Fri May 16 04:24:48 1997  Jim Blandy  <jimb@floss.cyclic.com>
+
+	Guile 1.1 released.
+	* GUILE-VERSION: Bump to 1.1.
+
+Tue May 13 16:34:40 1997  Jim Blandy  <jimb@floss.cyclic.com>
+
+	Switch to automake-1.1p.
+	* Makefile.in, aclocal.m4, configure: Regenerated.
+
+Mon May 12 18:29:45 1997  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* threads.m4: Copy Anthony's change here, so it'll actually
+	survive.
+
+Thu May  8 11:48:40 1997  Anthony Green  <green@hoser.cygnus.com>
+
+	* aclocal.m4: Fixes for building with coop threads in a
+	seperate compilation directory.
+	* configure: Rebuilt.
+
+Fri May  2 16:24:15 1997  Jim Blandy  <jimb@floss.cyclic.com>
+
+	Upgrade to libtool 0.9e.
+	* ltconfig, ltmain.sh, config.guess, config.sub: New versions,
+	supplied by libtool.
+
+	* configure.in: When configuring qt, sunos needs the underscore
+	files; Solaris and Linux both need the normal files.
+	* configure: Reebilt.
+
+Thu May  1 15:35:49 1997  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* configure.in: Get the paths for qt's md files right, so it can
+ 	build correctly when using a separate compilation directory.
+	* configure: Regenerated.
+
+Thu Apr 24 01:20:34 1997  Jim Blandy  <jimb@floss.cyclic.com>
+
+	Get threads to work again.
+	* Makefile.am (SUBDIRS): List libguile last, so qt gets built
+	first.
+	* Makefile.in: Regenerated.
+	* aclocal.m4, configure: Regenerate, with modern definition of
+ 	CY_AC_WITH_THREADS.  Where did the old text come from?  Creepy...
+
+	Reduced Guile distribution: one configure script, no plugins.
+	* configure.in: Merged the old text from qt/configure.in and
+	libguile/configure.in; Tom Tromey says automake only wants one
+	configure.in script.  This seems fishy, but...
+	* Makefile.am: List the subdirectories explicitly; no more PLUGIN
+	gubbish.
+	* acconfig.h, acinclude.m4: Moved here from libguile, since
+	libguile's configure script lives here now.
+	* AUTHORS, INSTALL, README: Updated.
+	* Makefile.in, aclocal.m4 configure: Regenerated.  Just like
+	amputated amphibian limbs.
+
+Tue Apr 22 16:57:38 1997  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* newdoc/ref/Makefile.am (dist_texis): Distribute the index files.
+	* newdoc/ref/Makefile.in: Regenerated.
+
+Mon Apr 14 18:51:25 1997  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* threads.m4 (CY_AC_WITH_THREADS): When using coop threads, no
+	need to link against libthreads; the files it used to contain
+	are now a part of libguile.
+
+Sun Apr 13 22:14:10 1997  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* guile.m4: Revert change of Mar 15, and use the new 'no-define'
+	argument to the AM_INIT_AUTOMAKE macro.
+
+Fri Apr 11 15:43:07 1997  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* ltconfig, ltmain.sh: Upgraded libtool files to 0.9d.
+	* README: Say where to find libtool 0.9d.
+
+Wed Apr  9 17:51:13 1997  Jim Blandy  <jimb@floss.cyclic.com>
+
+	Changes to work with automake-1.1n, which has better libtool
+	support.  Also use libtool 0.8.
+	* README: Note new version numbers for automake and libtool.
+	* missing: New file required by new automake.
+	* Makefile.in: Regenerated.
+
+Sat Apr  5 16:48:38 1997  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* newdoc/ref/scheme.texi (set-object-property!): Fix function name.
+
+	* Makefile.am: Omit doc subtree.
+	* configure.in: Omit makefiles in doc subtree.
+	* Makefile.in, configure: Rebuilt.
+
+Sat Mar 15 01:11:44 1997  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* guile.m4 (AM_INIT_GUILE_MODULE): Replaced AM_INIT_AUTOMAKE macro
+ 	with its definition and commented out definition of PACKAGE.  This
+ 	changed seemed necessary after having removed PACKAGE from
+ 	libguile/acconfig.h.
+
+Mon Feb 24 21:43:26 1997  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* ltconfig, ltmain.sh: New versions from libtool-0.9.
+
+	* configure.in: Added AM_MAINTAINER_MODE
+
+Fri Feb  7 17:57:46 1997  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* config.sub, config.guess: New versions, that handle i686, etc.
+
+Thu Jan 23 07:06:15 1997  Mark Galassi  <rosalia@papageno.lanl.gov>
+
+	* newdoc/tutorial/guile-tut.texi: started checking in the Guile
+	tutorial rewrite, but have not merged much into it yet.
+
+Tue Jan 21 17:28:40 1997  Mark Galassi  <rosalia@sarastro.lanl.gov>
+
+	* newdoc/ref/guile-ref.texi: started checking in parts of the
+	reference manual re-write.
+
+Sat Jan 11 14:40:17 1997  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* ltconfig, ltmain.sh: New files for libtool support. libguile,
+ 	rx, gh and gtcltk-lib can now be build as shared libraries.
+	* Makefile.am (EXTRA_DIST): Added ltconfig and ltmain.sh
+
+Sun Jan  5 16:57:10 1997  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* Guile 1.0 released.  This is the first release by the Free
+	Software Foundation; Cygnus has also released earlier versions of
+	Guile.
+
+	* GUILE-VERSION: Updated version number.
+	* NEWS: Added comments for all the user-visible changes marked in
+	the ChangeLogs.
+	* README: Updated for release.
+
+Thu Dec 12 00:14:32 1996  Gary Houston  <ghouston@actrix.gen.nz>
+
+	* scsh: new directory.
+
+Mon Dec  2 17:33:04 1996  Tom Tromey  <tromey@cygnus.com>
+
+	* configure.in: Generate doc/guile-programmer/Makefile and
+	doc/guile-user/Makefile.
+
+Sat Nov 30 23:45:54 1996  Tom Tromey  <tromey@cygnus.com>
+
+	* aclocal.m4: Now automatically generated by aclocal.
+	* threads.m4: New file.
+	* guile.m4: New file.
+	* Makefile.am, doc/Makefile.am: New files.
+	* configure.in: Updated for Automake.  Avoid excessively verbose
+	"greet" messages.
+
+Wed Oct 16 07:32:14 1996  Mark Galassi  <rosalia@sarastro.lanl.gov>
+
+	* lgh: directory renamed to gh, along with all prefixes of the
+	high level library procedures.
+
+Thu Oct 10 14:37:43 1996  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* Makefile.in (TAGS tags): Find the source files in $srcdir.
+
+Wed Oct  9 19:37:14 1996  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* Makefile.in (DISTFILES): Add AUTHORS and aclocal.m4.
+
+Tue Oct  1 00:13:55 1996  Mikael Djurfeldt  <mdj@woody.nada.kth.se>
+
+	* configure.in: Added some configuration magic from the Cygnus
+	distribution.
+
+	* aclocal.m4: New file.  For now used for thread support
+ 	configuration.
+
+Fri Sep 13 14:39:30 1996  Mark Galassi  <rosalia@sarastro.lanl.gov>
+
+	* Makefile.in (DISTFILES): added mkinstalldirs to the DISTFILES
+
+	* PLUGIN: changed the PLUGIN/REQ files in the ice-9 and lgh
+	directories, to arrange for lgh to the last thing
+	configured/built.
+
+Wed Sep 11 21:11:33 1996  Mark Galassi  <rosalia@nis.lanl.gov>
+
+	* lgh/: added the directory in which I implement the high level
+	libguile library (lgh_) for this release of Guile.  See the
+	ChangeLog in there for further details.
+
+Wed Sep 11 16:12:53 1996  Mark Galassi  <rosalia@sarastro.lanl.gov>
+
+	* doc/ (guile-user and guile-programmer): added the guile-user and
+	guile-programmer directories which contain the user and programmer
+	manuals.  See the ChangeLog entries there for detail.
+
+Wed Sep 11 14:33:49 1996  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* Makefile.in (distclean): Don't forget to delete doc/Makefile.
+
+	* Makefile.in (distclean): Don't forget to delete
+	config.build-subdirs.
+
+Thu Sep  5 17:36:15 1996  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* Makefile.in (tags): New name for `TAGS' target, which will
+	always run the commands.
+
+Thu Sep  5 09:56:50 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* README: Doc fixes.
+
+Fri Aug 30 16:56:27 1996  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* Makefile.in (TAGS): Produce a single tags file for all of Guile.
+
+Thu Aug 15 19:03:03 1996  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* configure.in: Check for -ldl, so the check for Tcl won't fail
+ 	spuriously.
+
+Thu Aug 15 01:29:29 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	Change the way we decide whether to build gtcltk-lib, so that it's
+	omitted from the build process when appropriate, but never from
+	the dist process.
+	* configure.in: Don't edit all_subdirs depending on the
+ 	availability of Tk; let that be the list of all PLUGIN
+ 	subdirectories present, as it used to be.  Instead, edit a new
+ 	variable, build_subdirs; write its final value, the list of
+ 	subdirs we do want to compile in, to config.build-subdirs.
+  	Substitute that into the top-level Makefile too.
+	* Makefile.in (subdirs): Set this to @build_subdirs@, so we only
+	recurse on the subdirectories we should build.
+	(distdirs): Set this to @existingdirs@, so it includes the subdirs
+	we decided not to build.
+
+	* doc/gtcltk.texi: File resurrected from old Guile releases.
+	* doc/Makefile.in (info): Build the gtcltk documentation.
+	(DIST_FILES): Include it in the distribution.
+
+	* configure.in: If we can find the library for tcl7.5, build
+ 	gtcltk-lib.  Call AC_PROG_CC, to help run that test with the right
+ 	compiler (not sure this is necessary).
+
+Mon Aug 12 15:09:37 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* NEWS: Fix bug reporting address.
+
+Fri Aug  9 15:58:42 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* AUTHORS: New file, in accordance with the GNU maintainers'
+ 	standards.
+
+Tue Aug  6 14:40:44 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* README: Renamed from ANNOUNCE; include bug report address,
+	description, and short tour.
+ 	* INSTALL: Renamed from BUILDING.
+	* NEWS: New file.
+	* Makefile.in (DISTFILES): Update appropriately.
+
+Thu Aug  1 02:31:53 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* doc/Makefile.in: Added pattern targets for creating DVI and
+	PostScript files.
+	(%.ps, %.dvi, %.txt): New targets.
+	(DVIPS, TEXI2DVI): New variables.
+
+	* GUILE-VERSION: Updated to 1.0b3.
+
+	Rehashed distribution system, in preparation for nightly
+	snapshots.  Other changes in subdirectories.
+	* Makefile.in (dist): Rewritten --- the old target was out of
+ 	date, dependent on files that we don't have, and relied on GNU
+ 	tar.  The new target is simpler.
+	(VERSION, srcdir, dist_dirs): New variables.
+	(DISTFILES): Renamed from localfiles.  Added GUILE-VERSION and
+	TODO.
+	(localtreats): Variable removed.  We don't have this file.
+	(info): cd to doc and make info there; don't make info in every
+	${subdir}; those Makefiles don't know what to do.
+	(distname, distdir, treats, announcefile): Variables removed.
+	(manifest-file): Target removed.
+	(dist-dir): New target, responsible for distributable files in
+	this directory.
+	(GZIP, GZIP_EXT, TAR_VERBOSE, DIST_NAME): New variables,
+	controlling the 'dist' target.
+	* configure.in: Substitute GUILE-VERSION into the top-level
+	Makefile.  Build doc/Makefile from doc/Makefile.in.
+
+	* doc/Makefile.in: New file.
+
+
+;; Local Variables:
+;; coding: utf-8
+;; End:

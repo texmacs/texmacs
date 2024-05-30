@@ -1,0 +1,290 @@
+;;;; time.test --- test suite for Guile's time functions     -*- scheme -*-
+;;;; Jim Blandy <jimb@red-bean.com> --- June 1999, 2004
+;;;;
+;;;; 	Copyright (C) 1999, 2004, 2006, 2007, 2009 Free Software Foundation, Inc.
+;;;; 
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;; 
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-time)
+  #:use-module (test-suite lib)
+  #:use-module (ice-9 threads))
+
+;;;
+;;; gmtime
+;;;
+
+(with-test-prefix "gmtime"
+
+  (for-each (lambda (t)
+	      (pass-if (list "in another thread after error" t)
+		(or (provided? 'threads) (throw 'unsupported))
+
+		(alarm 5)
+		(false-if-exception (gmtime t))
+		(join-thread (begin-thread (catch #t
+					     (lambda () (gmtime t))
+					     (lambda args #f))))
+		(alarm 0)
+		#t))
+
+	    ;; time values that might provoke an error from libc
+	    ;; on 32-bit glibc all values (which fit) are fine
+	    ;; on 64-bit glibc apparently 2^63 can overflow a 32-bit tm_year
+	    (list (1- (ash 1 31)) (1- (ash 1 63))
+		  -1 (- (ash 1 31)) (- (ash 1 63)))))
+
+;;;
+;;; internal-time-units-per-second
+;;;
+
+(with-test-prefix "internal-time-units-per-second"
+
+  ;; Check that sleep 1 gives about internal-time-units-per-second worth of
+  ;; elapsed time from times:clock.  This mainly ensures
+  ;; internal-time-units-per-second correctly indicates CLK_TCK units.
+  ;;
+  (pass-if "versus times and sleep"
+    (or (defined? 'times) (throw 'unsupported))
+    
+    (let ((old (times)))
+      (sleep 1)
+      (let* ((new (times))
+	     (elapsed (- (tms:clock new) (tms:clock old))))
+	(<= (* 0.5 internal-time-units-per-second)
+	    elapsed
+	    (* 2 internal-time-units-per-second))))))
+
+;;;
+;;; localtime
+;;;
+
+(with-test-prefix "localtime"
+
+  ;; gmtoff is calculated with some explicit code, try to exercise that
+  ;; here, looking at cases where the localtime and gmtime are within the same
+  ;; day, or crossing midnight, or crossing new year
+
+  (pass-if "gmtoff of EST+5 at GMT 10:00am on 10 Jan 2000"
+    (let ((tm (gmtime 0)))
+      (set-tm:hour tm 10)
+      (set-tm:mday tm 10)
+      (set-tm:mon  tm 0)
+      (set-tm:year tm 100)
+      (let* ((t  (car (mktime tm "GMT")))
+	     (tm (localtime t "EST+5")))
+	(eqv? (* 5 3600) (tm:gmtoff tm)))))
+
+  ;; crossing forward over day boundary
+  (pass-if "gmtoff of EST+5 at GMT 3am on 10 Jan 2000"
+    (let ((tm (gmtime 0)))
+      (set-tm:hour tm 3)
+      (set-tm:mday tm 10)
+      (set-tm:mon  tm 0)
+      (set-tm:year tm 100)
+      (let* ((t  (car (mktime tm "GMT")))
+	     (tm (localtime t "EST+5")))
+	(eqv? (* 5 3600) (tm:gmtoff tm)))))
+
+  ;; crossing backward over day boundary
+  (pass-if "gmtoff of AST-10 at GMT 10pm on 10 Jan 2000"
+    (let ((tm (gmtime 0)))
+      (set-tm:hour tm 22)
+      (set-tm:mday tm 10)
+      (set-tm:mon  tm 0)
+      (set-tm:year tm 100)
+      (let* ((t  (car (mktime tm "GMT")))
+	     (tm (localtime t "AST-10")))
+	(eqv? (* -10 3600) (tm:gmtoff tm)))))
+
+  ;; crossing forward over year boundary
+  (pass-if "gmtoff of EST+5 at GMT 3am on 1 Jan 2000"
+    (let ((tm (gmtime 0)))
+      (set-tm:hour tm 3)
+      (set-tm:mday tm 1)
+      (set-tm:mon  tm 0)
+      (set-tm:year tm 100)
+      (let* ((t  (car (mktime tm "GMT")))
+	     (tm (localtime t "EST+5")))
+	(eqv? (* 5 3600) (tm:gmtoff tm)))))
+
+  ;; crossing backward over day boundary
+  (pass-if "gmtoff of AST-10 at GMT 10pm on 31 Dec 2000"
+    (let ((tm (gmtime 0)))
+      (set-tm:hour tm 22)
+      (set-tm:mday tm 31)
+      (set-tm:mon  tm 11)
+      (set-tm:year tm 100)
+      (let* ((t  (car (mktime tm "GMT")))
+	     (tm (localtime t "AST-10")))
+	(eqv? (* -10 3600) (tm:gmtoff tm))))))
+
+;;;
+;;; mktime
+;;;
+
+(with-test-prefix "mktime"
+
+  ;; gmtoff is calculated with some explicit code, try to exercise that
+  ;; here, looking at cases where the mktime and gmtime are within the same
+  ;; day, or crossing midnight, or crossing new year
+
+  (pass-if "gmtoff of EST+5 at 10:00am on 10 Jan 2000"
+    (let ((tm (gmtime 0)))
+      (set-tm:hour tm 10)
+      (set-tm:mday tm 10)
+      (set-tm:mon  tm 0)
+      (set-tm:year tm 100)
+      (let ((tm (cdr (mktime tm "EST+5"))))
+	(eqv? (* 5 3600) (tm:gmtoff tm)))))
+
+  ;; crossing forward over day boundary
+  (pass-if "gmtoff of EST+5 at 10:00pm on 10 Jan 2000"
+    (let ((tm (gmtime 0)))
+      (set-tm:hour tm 22)
+      (set-tm:mday tm 10)
+      (set-tm:mon  tm 0)
+      (set-tm:year tm 100)
+      (let ((tm (cdr (mktime tm "EST+5"))))
+	(eqv? (* 5 3600) (tm:gmtoff tm)))))
+
+  ;; crossing backward over day boundary
+  (pass-if "gmtoff of AST-10 at 3:00am on 10 Jan 2000"
+    (let ((tm (gmtime 0)))
+      (set-tm:hour tm 3)
+      (set-tm:mday tm 10)
+      (set-tm:mon  tm 0)
+      (set-tm:year tm 100)
+      (let ((tm (cdr (mktime tm "AST-10"))))
+	(eqv? (* -10 3600) (tm:gmtoff tm)))))
+
+  ;; crossing forward over year boundary
+  (pass-if "gmtoff of EST+5 at 10:00pm on 31 Dec 2000"
+    (let ((tm (gmtime 0)))
+      (set-tm:hour tm 22)
+      (set-tm:mday tm 31)
+      (set-tm:mon  tm 11)
+      (set-tm:year tm 100)
+      (let ((tm (cdr (mktime tm "EST+5"))))
+	(eqv? (* 5 3600) (tm:gmtoff tm)))))
+
+  ;; crossing backward over day boundary
+  (pass-if "gmtoff of AST-10 at 3:00am on 1 Jan 2000"
+    (let ((tm (gmtime 0)))
+      (set-tm:hour tm 3)
+      (set-tm:mday tm 1)
+      (set-tm:mon  tm 0)
+      (set-tm:year tm 100)
+      (let ((tm (cdr (mktime tm "AST-10"))))
+	(eqv? (* -10 3600) (tm:gmtoff tm))))))
+
+;;;
+;;; strftime
+;;;
+
+(with-test-prefix "strftime"
+
+  ;; Note we must force isdst to get the ZOW zone name out of %Z on HP-UX.
+  ;; If localtime is in daylight savings then it will decide there's no
+  ;; daylight savings zone name for the fake ZOW, and come back empty.
+  ;;
+  ;; This test is disabled because on NetBSD %Z doesn't look at the tm_zone
+  ;; field in struct tm passed by guile.  That behaviour is reasonable
+  ;; enough since that field is not in C99 so a C99 program won't know it
+  ;; has to be set.  For the details on that see
+  ;;
+  ;;     http://www.netbsd.org/cgi-bin/query-pr-single.pl?number=21722
+  ;;
+  ;; Not sure what to do about this in guile, it'd be nice for %Z to look at
+  ;; tm:zone everywhere.
+  ;;
+  ;;
+  ;; (pass-if "strftime %Z doesn't return garbage"
+  ;; 	 (let ((t (localtime (current-time))))
+  ;; 	   (set-tm:zone t "ZOW")
+  ;; 	   (set-tm:isdst t 0)
+  ;; 	   (string=? (strftime "%Z" t)
+  ;; 		     "ZOW")))
+
+  (with-test-prefix "C99 %z format"
+
+    ;; C99 spec is empty string if no zone determinable
+    ;;
+    ;; On pre-C99 systems not sure what to expect if %z unsupported, probably
+    ;; "%z" unchanged in C99 if timezone.  On AIX and Tru64 5.1b, it returns
+    ;; a string such as "GMT" or "EST", instead of "+0000" or "-0500".  See
+    ;; https://savannah.gnu.org/bugs/index.php?24130 for details.
+    ;;
+    (define have-strftime-%z
+      (equal? (strftime "%z" (gmtime 0)) "+0000"))
+
+    ;; %z here is quite possibly affected by the same tm:gmtoff vs current
+    ;; zone as %Z above is, so in the following tests we make them the same.
+
+    (pass-if "GMT"
+      (or have-strftime-%z (throw 'unsupported))
+      (putenv "TZ=GMT+0")
+      (tzset)
+      (let ((tm (localtime 86400)))
+	(string=? "+0000" (strftime "%z" tm))))
+
+    ;; prior to guile 1.6.9 and 1.8.1 this test failed, getting "+0500",
+    ;; because we didn't adjust for tm:gmtoff being west of Greenwich versus
+    ;; tm_gmtoff being east of Greenwich
+    (pass-if "EST+5"
+      (or have-strftime-%z (throw 'unsupported))
+      (putenv "TZ=EST+5")
+      (tzset)
+      (let ((tm (localtime 86400)))
+	(string=? "-0500" (strftime "%z" tm))))))
+
+;;;
+;;; strptime
+;;;
+
+(with-test-prefix "strptime"
+
+  (pass-if "in another thread after error"
+    (or (defined? 'strptime) (throw 'unsupported))
+    (or (provided? 'threads) (throw 'unsupported))
+
+    (alarm 5)
+    (false-if-exception
+     (strptime "%a" "nosuchday"))
+    (join-thread (begin-thread (strptime "%d" "1")))
+    (alarm 0)
+    #t)
+
+  (with-test-prefix "GNU %s format"
+
+    ;; "%s" to parse a count of seconds since 1970 is a GNU extension
+    (define have-strptime-%s
+      (false-if-exception (strptime "%s" "0")))
+
+    (pass-if "gmtoff on GMT"
+      (or have-strptime-%s (throw 'unsupported))
+      (putenv "TZ=GMT+0")
+      (tzset)
+      (let ((tm (car (strptime "%s" "86400"))))
+	(eqv? 0 (tm:gmtoff tm))))
+
+    ;; prior to guile 1.6.9 and 1.8.1 we didn't pass tm_gmtoff back from
+    ;; strptime
+    (pass-if "gmtoff on EST+5"
+      (or have-strptime-%s (throw 'unsupported))
+      (putenv "TZ=EST+5")
+      (tzset)
+      (let ((tm (car (strptime "%s" "86400"))))
+	(eqv? (* 5 3600) (tm:gmtoff tm))))))

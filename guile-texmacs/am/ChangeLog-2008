@@ -1,0 +1,18 @@
+2002-04-10  Rob Browning  <rlb@defaultvalue.org>
+
+	* .cvsignore: add Makefile and Makefile.in.
+
+2002-04-01  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* maintainer-dirs: Remove "if MAINTAINER_MODE" conditional.
+
+2002-03-30  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* maintainer-dirs: New file.
+
+	* Makefile.am (am_frags): Add "maintainer-dirs".
+
+2002-02-26  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* pre-inst-guile, Makefile.am, README: New files.
+

@@ -1,0 +1,115 @@
+#!/bin/sh
+
+# 	Copyright (C) 2001, 2003, 2006, 2008 Free Software Foundation, Inc.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this software; see the file COPYING.  If not, write to
+# the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+# Boston, MA 02110-1301 USA
+
+# Usage: See `help' func below.
+#
+# TODO
+# - handle pre-install invocation
+# - "full" option processing (but see comment below)
+#
+# Author: Thien-Thi Nguyen
+
+help ()
+{
+    cat <<EOF
+Usage: guile-tools --version
+       guile-tools --help
+       guile-tools [OPTION] PROGRAM [ARGS]
+
+If PROGRAM is "list" or omitted, display contents of scripts dir, otherwise
+PROGRAM is run w/ ARGS.  Options (only one of which may be used at a time):
+ --scriptsdir DIR    -- Look in DIR for scripts
+ --guileversion VERS -- Look in $pkgdatadir/VERS/scripts for scripts
+ --source            -- Display PROGRAM source (ignore ARGS) to stdout
+
+Default scripts dir: $default_scriptsdir
+EOF
+}
+
+prefix="@prefix@"
+datarootdir="@datarootdir@"
+pkgdatadir="@datadir@/@PACKAGE@"
+guileversion="@GUILE_EFFECTIVE_VERSION@"
+default_scriptsdir=$pkgdatadir/$guileversion/scripts
+
+# pre-install invocation frob
+mydir=`dirname $0`
+if [ -d "$mydir/scripts" -a -f "$mydir/scripts/Makefile.am" ] ; then
+    default_scriptsdir=`(cd $mydir/scripts ; pwd)`
+fi
+
+# option processing -- basically, you can override either the script dir
+# completely, or just the guile version.  we choose implementation simplicity
+# over orthogonality.
+
+case x"$1" in
+x--version)
+    echo $0 $guileversion
+    exit 0
+    ;;
+x--help)
+    help
+    exit 0
+    ;;
+esac
+
+if [ x"$1" = x--scriptsdir ] ; then
+    user_scriptsdir=$2
+    shift
+    shift
+elif [ x"$1" = x--guileversion ] ; then
+    user_scriptsdir=$pkgdatadir/$2/scripts
+    shift
+    shift
+fi
+
+scriptsdir=${user_scriptsdir-$default_scriptsdir}
+
+if [ ! -d $scriptsdir ] ; then
+    echo $0: no such directory: $scriptsdir
+    exit 1
+fi
+
+if [ x"$1" = x -o x"$1" = xlist ] ; then
+    ls $scriptsdir
+    exit 0
+fi
+
+if [ x"$1" = x--source ] ; then
+    if [ x"$2" = x ] ; then echo $0: need to specify program ; exit 1 ; fi
+    if [ -x $scriptsdir/$2 ] ; then
+        cat $scriptsdir/$2
+        exit 0
+    else
+        echo $0: no such program: $2
+        exit 1
+    fi
+fi
+
+program=$scriptsdir/$1
+shift
+
+if [ -x $program ] ; then
+    exec $program "$@"
+else
+    echo $0: no such program: $program
+    exit 1
+fi
+
+# guile-tools ends here

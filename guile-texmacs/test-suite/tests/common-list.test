@@ -1,0 +1,219 @@
+;;;; common-list.test --- tests guile's common list functions -*- scheme -*-
+;;;; Copyright (C) 2000, 2001, 2004, 2006 Free Software Foundation, Inc.
+;;;; 
+;;;; This library is free software; you can redistribute it and/or
+;;;; modify it under the terms of the GNU Lesser General Public
+;;;; License as published by the Free Software Foundation; either
+;;;; version 2.1 of the License, or (at your option) any later version.
+;;;; 
+;;;; This library is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;;;; Lesser General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU Lesser General Public
+;;;; License along with this library; if not, write to the Free Software
+;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-common-list)
+  #:use-module (test-suite lib)
+  #:use-module (ice-9 documentation)
+  #:use-module (ice-9 common-list))
+
+
+;;;
+;;; miscellaneous
+;;;
+
+
+(define (documented? object)
+  (not (not (object-documentation object))))
+
+
+;;;
+;;; intersection
+;;;
+
+(with-test-prefix "intersection"
+
+  (pass-if "documented?" 
+    (documented? intersection))
+
+  (pass-if "both arguments empty"
+    (eq? (intersection '() '()) '()))
+
+  (pass-if "first argument empty"
+    (eq? (intersection '() '(1)) '()))
+
+  (pass-if "second argument empty"
+    (eq? (intersection '(1) '()) '()))
+
+  (pass-if "disjoint arguments"
+    (eq? (intersection '(1) '(2)) '()))
+
+  (pass-if "equal arguments"
+    (equal? (intersection '(1) '(1)) '(1)))
+
+  (pass-if "reverse argument order"
+    (equal? (intersection '(1 2 3) '(3 2 1)) '(1 2 3)))
+
+  (pass-if "multiple matches in first list"
+    (equal? (intersection '(1 1 2 2 3) '(3 2 1)) '(1 1 2 2 3)))
+
+  (pass-if "multiple matches in second list"
+    (equal? (intersection '(1 2 3) '(3 3 2 2 1)) '(1 2 3)))
+
+  (pass-if "mixed arguments"
+    (equal? (intersection '(1 2 3 5 7 8 10) '(1 3 4 7 8 9)) '(1 3 7 8)))
+
+  )
+
+
+;;;
+;;; set-difference
+;;;
+
+(with-test-prefix "set-difference"
+
+  (pass-if "documented?" 
+    (documented? set-difference))
+
+  (pass-if "both arguments empty"
+    (eq? (set-difference '() '()) '()))
+
+  (pass-if "first argument empty"
+    (eq? (set-difference '() '(1)) '()))
+
+  (pass-if "second argument empty"
+    (equal? (set-difference '(1) '()) '(1)))
+
+  (pass-if "disjoint arguments"
+    (equal? (set-difference '(1) '(2)) '(1)))
+
+  (pass-if "equal arguments"
+    (eq? (set-difference '(1) '(1)) '()))
+
+  (pass-if "reverse argument order"
+    (eq? (set-difference '(1 2 3) '(3 2 1)) '()))
+
+  (pass-if "multiple matches in first list"
+    (eq? (set-difference '(1 1 2 2 3) '(3 2 1)) '()))
+
+  (pass-if "multiple matches in second list"
+    (eq? (set-difference '(1 2 3) '(3 3 2 2 1)) '()))
+
+  (pass-if "mixed arguments"
+    (equal? (set-difference '(1 2 3 5 7 8 10) '(1 3 4 7 8 9)) '(2 5 10)))
+
+  )
+
+
+;;;
+;;; remove-if
+;;;
+
+(with-test-prefix "remove-if"
+
+  (pass-if "documented?" 
+    (documented? remove-if))
+
+  (pass-if "empty list, remove all"
+    (eq? (remove-if (lambda (x) #t) '()) '()))
+
+  (pass-if "empty list, remove none"
+    (eq? (remove-if (lambda (x) #f) '()) '()))
+
+  (pass-if "non-empty list, remove all"
+    (eq? (remove-if (lambda (x) #t) '(1 2 3 4)) '()))
+
+  (pass-if "non-empty list, remove none"
+    (equal? (remove-if (lambda (x) #f) '(1 2 3 4)) '(1 2 3 4)))
+
+  (pass-if "non-empty list, remove some"
+    (equal? (remove-if odd? '(1 2 3 4)) '(2 4)))
+
+  )
+
+
+;;;
+;;; remove-if-not
+;;;
+
+
+(with-test-prefix "remove-if-not"
+
+  (pass-if "documented?" 
+    (documented? remove-if-not))
+
+  (pass-if "empty list, remove all"
+    (eq? (remove-if-not (lambda (x) #f) '()) '()))
+
+  (pass-if "empty list, remove none"
+    (eq? (remove-if-not (lambda (x) #t) '()) '()))
+
+  (pass-if "non-empty list, remove all"
+    (eq? (remove-if-not (lambda (x) #f) '(1 2 3 4)) '()))
+
+  (pass-if "non-empty list, remove none"
+    (equal? (remove-if-not (lambda (x) #t) '(1 2 3 4)) '(1 2 3 4)))
+
+  (pass-if "non-empty list, remove some"
+    (equal? (remove-if-not odd? '(1 2 3 4)) '(1 3)))
+
+  )
+
+
+;;;
+;;; delete-if!
+;;;
+
+
+(with-test-prefix "delete-if!"
+
+  (pass-if "documented?" 
+    (documented? delete-if!))
+
+  (pass-if "empty list, remove all"
+    (eq? (delete-if! (lambda (x) #t) '()) '()))
+
+  (pass-if "empty list, remove none"
+    (eq? (delete-if! (lambda (x) #f) '()) '()))
+
+  (pass-if "non-empty list, remove all"
+    (eq? (delete-if! (lambda (x) #t) '(1 2 3 4)) '()))
+
+  (pass-if "non-empty list, remove none"
+    (equal? (delete-if! (lambda (x) #f) '(1 2 3 4)) '(1 2 3 4)))
+
+  (pass-if "non-empty list, remove some"
+    (equal? (delete-if! odd? '(1 2 3 4)) '(2 4)))
+
+  )
+
+
+;;;
+;;; delete-if-not!
+;;;
+
+
+(with-test-prefix "delete-if-not!"
+
+  (pass-if "documented?" 
+    (documented? delete-if-not!))
+
+  (pass-if "empty list, remove all"
+    (eq? (delete-if-not! (lambda (x) #f) '()) '()))
+
+  (pass-if "empty list, remove none"
+    (eq? (delete-if-not! (lambda (x) #t) '()) '()))
+
+  (pass-if "non-empty list, remove all"
+    (eq? (delete-if-not! (lambda (x) #f) '(1 2 3 4)) '()))
+
+  (pass-if "non-empty list, remove none"
+    (equal? (delete-if-not! (lambda (x) #t) '(1 2 3 4)) '(1 2 3 4)))
+
+  (pass-if "non-empty list, remove some"
+    (equal? (delete-if-not! odd? '(1 2 3 4)) '(1 3)))
+
+  )

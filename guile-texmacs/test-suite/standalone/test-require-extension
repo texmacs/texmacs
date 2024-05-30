@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -e
+
+# expect these to throw errors, if they succeed it's wrong
+#
+# (Note the syntax "! guile -c ..." isn't used here, because that doesn't
+# work on Solaris 10.)
+#
+guile -q -c '(require-extension 7)' 2>/dev/null            && exit 1
+guile -q -c '(require-extension (blarg))' 2>/dev/null      && exit 1
+guile -q -c '(require-extension (srfi "foo"))' 2>/dev/null && exit 1
+
+# expect these to succeed
+guile -q -c '(require-extension (srfi 1)) (exit (procedure? take-right))'
+guile -q -c '(require-extension (srfi))'
+
+exit 0

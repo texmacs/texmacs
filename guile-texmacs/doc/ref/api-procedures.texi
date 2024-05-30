@@ -1,0 +1,877 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Procedures and Macros
+@section Procedures and Macros
+
+@menu
+* Lambda::                      Basic procedure creation using lambda.
+* Primitive Procedures::        Procedures defined in C.
+* Optional Arguments::          Handling keyword, optional and rest arguments.
+* Procedure Properties::        Procedure properties and meta-information.
+* Procedures with Setters::     Procedures with setters.
+* Macros::                      Lisp style macro definitions.
+* Syntax Rules::                Support for R5RS @code{syntax-rules}.
+* Syntax Case::                 Support for the @code{syntax-case} system.
+* Internal Macros::             Guile's internal representation.
+@end menu
+
+
+@node Lambda
+@subsection Lambda: Basic Procedure Creation
+@cindex lambda
+
+@c FIXME::martin: Review me!
+
+A @code{lambda} expression evaluates to a procedure.  The environment
+which is in effect when a @code{lambda} expression is evaluated is
+enclosed in the newly created procedure, this is referred to as a
+@dfn{closure} (@pxref{About Closure}).
+
+When a procedure created by @code{lambda} is called with some actual
+arguments, the environment enclosed in the procedure is extended by
+binding the variables named in the formal argument list to new locations
+and storing the actual arguments into these locations.  Then the body of
+the @code{lambda} expression is evaluation sequentially.  The result of
+the last expression in the procedure body is then the result of the
+procedure invocation.
+
+The following examples will show how procedures can be created using
+@code{lambda}, and what you can do with these procedures.
+
+@lisp
+(lambda (x) (+ x x))       @result{} @r{a procedure}
+((lambda (x) (+ x x)) 4)   @result{} 8
+@end lisp
+
+The fact that the environment in effect when creating a procedure is
+enclosed in the procedure is shown with this example:
+
+@lisp
+(define add4
+  (let ((x 4))
+    (lambda (y) (+ x y))))
+(add4 6)                   @result{} 10
+@end lisp
+
+
+@deffn syntax lambda formals body
+@var{formals} should be a formal argument list as described in the
+following table.
+
+@table @code
+@item (@var{variable1} @dots{})
+The procedure takes a fixed number of arguments; when the procedure is
+called, the arguments will be stored into the newly created location for
+the formal variables.
+@item @var{variable}
+The procedure takes any number of arguments; when the procedure is
+called, the sequence of actual arguments will converted into a list and
+stored into the newly created location for the formal variable.
+@item (@var{variable1} @dots{} @var{variablen} . @var{variablen+1})
+If a space-delimited period precedes the last variable, then the
+procedure takes @var{n} or more variables where @var{n} is the number
+of formal arguments before the period.  There must be at least one
+argument before the period.  The first @var{n} actual arguments will be
+stored into the newly allocated locations for the first @var{n} formal
+arguments and the sequence of the remaining actual arguments is
+converted into a list and the stored into the location for the last
+formal argument.  If there are exactly @var{n} actual arguments, the
+empty list is stored into the location of the last formal argument.
+@end table
+
+The list in @var{variable} or @var{variablen+1} is always newly
+created and the procedure can modify it if desired.  This is the case
+even when the procedure is invoked via @code{apply}, the required part
+of the list argument there will be copied (@pxref{Fly Evaluation,,
+Procedures for On the Fly Evaluation}).
+
+@var{body} is a sequence of Scheme expressions which are evaluated in
+order when the procedure is invoked.
+@end deffn
+
+@node Primitive Procedures
+@subsection Primitive Procedures
+@cindex primitives
+@cindex primitive procedures
+
+Procedures written in C can be registered for use from Scheme,
+provided they take only arguments of type @code{SCM} and return
+@code{SCM} values.  @code{scm_c_define_gsubr} is likely to be the most
+useful mechanism, combining the process of registration
+(@code{scm_c_make_gsubr}) and definition (@code{scm_define}).
+
+@deftypefun SCM scm_c_make_gsubr (const char *name, int req, int opt, int rst, fcn)
+Register a C procedure @var{FCN} as a ``subr'' --- a primitive
+subroutine that can be called from Scheme.  It will be associated with
+the given @var{name} but no environment binding will be created.  The
+arguments @var{req}, @var{opt} and @var{rst} specify the number of
+required, optional and ``rest'' arguments respectively.  The total
+number of these arguments should match the actual number of arguments
+to @var{fcn}.  The number of rest arguments should be 0 or 1.
+@code{scm_c_make_gsubr} returns a value of type @code{SCM} which is a
+``handle'' for the procedure.
+@end deftypefun
+
+@deftypefun SCM scm_c_define_gsubr (const char *name, int req, int opt, int rst, fcn)
+Register a C procedure @var{FCN}, as for @code{scm_c_make_gsubr}
+above, and additionally create a top-level Scheme binding for the
+procedure in the ``current environment'' using @code{scm_define}.
+@code{scm_c_define_gsubr} returns a handle for the procedure in the
+same way as @code{scm_c_make_gsubr}, which is usually not further
+required.
+@end deftypefun
+
+@code{scm_c_make_gsubr} and @code{scm_c_define_gsubr} automatically
+use @code{scm_c_make_subr} and also @code{scm_makcclo} if necessary.
+It is advisable to use the gsubr variants since they provide a
+slightly higher-level abstraction of the Guile implementation.
+
+@node Optional Arguments
+@subsection Optional Arguments
+
+@c FIXME::martin: Review me!
+
+Scheme procedures, as defined in R5RS, can either handle a fixed number
+of actual arguments, or a fixed number of actual arguments followed by
+arbitrarily many additional arguments.  Writing procedures of variable
+arity can be useful, but unfortunately, the syntactic means for handling
+argument lists of varying length is a bit inconvenient.  It is possible
+to give names to the fixed number of argument, but the remaining
+(optional) arguments can be only referenced as a list of values
+(@pxref{Lambda}).
+
+Guile comes with the module @code{(ice-9 optargs)}, which makes using
+optional arguments much more convenient.  In addition, this module
+provides syntax for handling keywords in argument lists
+(@pxref{Keywords}).
+
+Before using any of the procedures or macros defined in this section,
+you have to load the module @code{(ice-9 optargs)} with the statement:
+
+@cindex @code{optargs}
+@lisp
+(use-modules (ice-9 optargs))
+@end lisp
+
+@menu
+* let-optional Reference::      Locally binding optional arguments.
+* let-keywords Reference::      Locally binding keywords arguments.
+* lambda* Reference::           Creating advanced argument handling procedures.
+* define* Reference::           Defining procedures and macros.
+@end menu
+
+
+@node let-optional Reference
+@subsubsection let-optional Reference
+
+@c FIXME::martin: Review me!
+
+The syntax @code{let-optional} and @code{let-optional*} are for
+destructuring rest argument lists and giving names to the various list
+elements.  @code{let-optional} binds all variables simultaneously, while
+@code{let-optional*} binds them sequentially, consistent with @code{let}
+and @code{let*} (@pxref{Local Bindings}).
+
+@deffn {library syntax} let-optional rest-arg (binding @dots{}) expr @dots{}
+@deffnx {library syntax} let-optional* rest-arg (binding @dots{}) expr @dots{}
+These two macros give you an optional argument interface that is very
+@dfn{Schemey} and introduces no fancy syntax. They are compatible with
+the scsh macros of the same name, but are slightly extended. Each of
+@var{binding} may be of one of the forms @var{var} or @code{(@var{var}
+@var{default-value})}. @var{rest-arg} should be the rest-argument of the
+procedures these are used from.  The items in @var{rest-arg} are
+sequentially bound to the variable names are given. When @var{rest-arg}
+runs out, the remaining vars are bound either to the default values or
+@code{#f} if no default value was specified. @var{rest-arg} remains
+bound to whatever may have been left of @var{rest-arg}.
+
+After binding the variables, the expressions @var{expr} @dots{} are
+evaluated in order.
+@end deffn
+
+
+@node let-keywords Reference
+@subsubsection let-keywords Reference
+
+@code{let-keywords} and @code{let-keywords*} extract values from
+keyword style argument lists, binding local variables to those values
+or to defaults.
+
+@deffn {library syntax} let-keywords args allow-other-keys? (binding @dots{})  body @dots{}
+@deffnx {library syntax} let-keywords* args allow-other-keys? (binding @dots{})  body @dots{}
+@var{args} is evaluated and should give a list of the form
+@code{(#:keyword1 value1 #:keyword2 value2 @dots{})}.  The
+@var{binding}s are variables and default expressions, with the
+variables to be set (by name) from the keyword values.  The @var{body}
+forms are then evaluated and the last is the result.  An example will
+make the syntax clearest,
+
+@example
+(define args '(#:xyzzy "hello" #:foo "world"))
+
+(let-keywords args #t
+      ((foo  "default for foo")
+       (bar  (string-append "default" "for" "bar")))
+  (display foo)
+  (display ", ")
+  (display bar))
+@print{} world, defaultforbar
+@end example
+
+The binding for @code{foo} comes from the @code{#:foo} keyword in
+@code{args}.  But the binding for @code{bar} is the default in the
+@code{let-keywords}, since there's no @code{#:bar} in the args.
+
+@var{allow-other-keys?} is evaluated and controls whether unknown
+keywords are allowed in the @var{args} list.  When true other keys are
+ignored (such as @code{#:xyzzy} in the example), when @code{#f} an
+error is thrown for anything unknown.
+
+@code{let-keywords} is like @code{let} (@pxref{Local Bindings}) in
+that all bindings are made at once, the defaults expressions are
+evaluated (if needed) outside the scope of the @code{let-keywords}.
+
+@code{let-keywords*} is like @code{let*}, each binding is made
+successively, and the default expressions see the bindings previously
+made.  This is the style used by @code{lambda*} keywords
+(@pxref{lambda* Reference}).  For example,
+
+@example
+(define args '(#:foo 3))
+
+(let-keywords* args #f
+      ((foo  99)
+       (bar  (+ foo 6)))
+  (display bar))
+@print{} 9
+@end example
+
+The expression for each default is only evaluated if it's needed,
+ie. if the keyword doesn't appear in @var{args}.  So one way to make a
+keyword mandatory is to throw an error of some sort as the default.
+
+@example
+(define args '(#:start 7 #:finish 13))
+
+(let-keywords* args #t
+      ((start 0)
+       (stop  (error "missing #:stop argument")))
+  ...)
+@result{} ERROR: missing #:stop argument
+@end example
+@end deffn
+
+
+@node lambda* Reference
+@subsubsection lambda* Reference
+
+When using optional and keyword argument lists, @code{lambda} for
+creating a procedure then @code{let-optional} or @code{let-keywords}
+is a bit lengthy.  @code{lambda*} combines the features of those
+macros into a single convenient syntax.
+
+@deffn {library syntax} lambda* ([var@dots{}] @* [#:optional vardef@dots{}] @* [#:key  vardef@dots{} [#:allow-other-keys]] @* [#:rest var | . var]) @* body
+@sp 1
+Create a procedure which takes optional and/or keyword arguments
+specified with @code{#:optional} and @code{#:key}.  For example,
+
+@lisp
+(lambda* (a b #:optional c d . e) '())
+@end lisp
+
+is a procedure with fixed arguments @var{a} and @var{b}, optional
+arguments @var{c} and @var{d}, and rest argument @var{e}.  If the
+optional arguments are omitted in a call, the variables for them are
+bound to @code{#f}.
+
+@code{lambda*} can also take keyword arguments.  For example, a procedure
+defined like this:
+
+@lisp
+(lambda* (#:key xyzzy larch) '())
+@end lisp
+
+can be called with any of the argument lists @code{(#:xyzzy 11)},
+@code{(#:larch 13)}, @code{(#:larch 42 #:xyzzy 19)}, @code{()}.
+Whichever arguments are given as keywords are bound to values (and
+those not given are @code{#f}).
+
+Optional and keyword arguments can also have default values to take
+when not present in a call, by giving a two-element list of variable
+name and expression.  For example in
+
+@lisp
+(lambda* (foo #:optional (bar 42) #:key (baz 73))
+     (list foo bar baz))
+@end lisp
+
+@var{foo} is a fixed argument, @var{bar} is an optional argument with
+default value 42, and baz is a keyword argument with default value 73.
+Default value expressions are not evaluated unless they are needed,
+and until the procedure is called.
+
+Normally it's an error if a call has keywords other than those
+specified by @code{#:key}, but adding @code{#:allow-other-keys} to the
+definition (after the keyword argument declarations) will ignore
+unknown keywords.
+
+If a call has a keyword given twice, the last value is used.  For
+example,
+
+@lisp
+((lambda* (#:key (heads 0) (tails 0))
+   (display (list heads tails)))
+ #:heads 37 #:tails 42 #:heads 99)
+@print{} (99 42)
+@end lisp
+
+@code{#:rest} is a synonym for the dotted syntax rest argument.  The
+argument lists @code{(a . b)} and @code{(a #:rest b)} are equivalent
+in all respects.  This is provided for more similarity to DSSSL,
+MIT-Scheme and Kawa among others, as well as for refugees from other
+Lisp dialects.
+
+When @code{#:key} is used together with a rest argument, the keyword
+parameters in a call all remain in the rest list.  This is the same as
+Common Lisp.  For example,
+
+@lisp
+((lambda* (#:key (x 0) #:allow-other-keys #:rest r)
+   (display r))
+ #:x 123 #:y 456)
+@print{} (#:x 123 #:y 456)
+@end lisp
+
+@code{#:optional} and @code{#:key} establish their bindings
+successively, from left to right, as per @code{let-optional*} and
+@code{let-keywords*}.  This means default expressions can refer back
+to prior parameters, for example
+
+@lisp
+(lambda* (start #:optional (end (+ 10 start)))
+  (do ((i start (1+ i)))
+      ((> i end))
+    (display i)))
+@end lisp
+@end deffn
+
+
+@node define* Reference
+@subsubsection define* Reference
+
+@c FIXME::martin: Review me!
+
+Just like @code{define} has a shorthand notation for defining procedures
+(@pxref{Lambda Alternatives}), @code{define*} is provided as an
+abbreviation of the combination of @code{define} and @code{lambda*}.
+
+@code{define*-public} is the @code{lambda*} version of
+@code{define-public}; @code{defmacro*} and @code{defmacro*-public} exist
+for defining macros with the improved argument list handling
+possibilities.  The @code{-public} versions not only define the
+procedures/macros, but also export them from the current module.
+
+@deffn {library syntax} define* formals body
+@deffnx {library syntax} define*-public formals body
+@code{define*} and @code{define*-public} support optional arguments with
+a similar syntax to @code{lambda*}. They also support arbitrary-depth
+currying, just like Guile's define. Some examples:
+
+@lisp
+(define* (x y #:optional a (z 3) #:key w . u)
+   (display (list y z u)))
+@end lisp
+defines a procedure @code{x} with a fixed argument @var{y}, an optional
+argument @var{a}, another optional argument @var{z} with default value 3,
+a keyword argument @var{w}, and a rest argument @var{u}.
+
+@lisp
+(define-public* ((foo #:optional bar) #:optional baz) '())
+@end lisp
+
+This illustrates currying. A procedure @code{foo} is defined, which,
+when called with an optional argument @var{bar}, returns a procedure
+that takes an optional argument @var{baz}.
+
+Of course, @code{define*[-public]} also supports @code{#:rest} and
+@code{#:allow-other-keys} in the same way as @code{lambda*}.
+@end deffn
+
+@deffn {library syntax} defmacro* name formals body
+@deffnx {library syntax} defmacro*-public name formals body
+These are just like @code{defmacro} and @code{defmacro-public} except that they
+take @code{lambda*}-style extended parameter lists, where @code{#:optional},
+@code{#:key}, @code{#:allow-other-keys} and @code{#:rest} are allowed with the usual
+semantics. Here is an example of a macro with an optional argument:
+
+@lisp
+(defmacro* transmorgify (a #:optional b)
+    (a 1))
+@end lisp
+@end deffn
+
+
+@node Procedure Properties
+@subsection Procedure Properties and Meta-information
+
+@c FIXME::martin: Review me!
+
+Procedures always have attached the environment in which they were
+created and information about how to apply them to actual arguments.  In
+addition to that, properties and meta-information can be stored with
+procedures.  The procedures in this section can be used to test whether
+a given procedure satisfies a condition; and to access and set a
+procedure's property.
+
+The first group of procedures are predicates to test whether a Scheme
+object is a procedure, or a special procedure, respectively.
+@code{procedure?} is the most general predicates, it returns @code{#t}
+for any kind of procedure.  @code{closure?} does not return @code{#t}
+for primitive procedures, and @code{thunk?} only returns @code{#t} for
+procedures which do not accept any arguments.
+
+@rnindex procedure?
+@deffn {Scheme Procedure} procedure? obj
+@deffnx {C Function} scm_procedure_p (obj)
+Return @code{#t} if @var{obj} is a procedure.
+@end deffn
+
+@deffn {Scheme Procedure} closure? obj
+@deffnx {C Function} scm_closure_p (obj)
+Return @code{#t} if @var{obj} is a closure.
+@end deffn
+
+@deffn {Scheme Procedure} thunk? obj
+@deffnx {C Function} scm_thunk_p (obj)
+Return @code{#t} if @var{obj} is a thunk.
+@end deffn
+
+@c FIXME::martin: Is that true?
+@cindex procedure properties
+Procedure properties are general properties to be attached to
+procedures.  These can be the name of a procedure or other relevant
+information, such as debug hints.
+
+@deffn {Scheme Procedure} procedure-name proc
+@deffnx {C Function} scm_procedure_name (proc)
+Return the name of the procedure @var{proc}
+@end deffn
+
+@deffn {Scheme Procedure} procedure-source proc
+@deffnx {C Function} scm_procedure_source (proc)
+Return the source of the procedure @var{proc}.
+@end deffn
+
+@deffn {Scheme Procedure} procedure-environment proc
+@deffnx {C Function} scm_procedure_environment (proc)
+Return the environment of the procedure @var{proc}.
+@end deffn
+
+@deffn {Scheme Procedure} procedure-properties proc
+@deffnx {C Function} scm_procedure_properties (proc)
+Return @var{obj}'s property list.
+@end deffn
+
+@deffn {Scheme Procedure} procedure-property obj key
+@deffnx {C Function} scm_procedure_property (obj, key)
+Return the property of @var{obj} with name @var{key}.
+@end deffn
+
+@deffn {Scheme Procedure} set-procedure-properties! proc alist
+@deffnx {C Function} scm_set_procedure_properties_x (proc, alist)
+Set @var{obj}'s property list to @var{alist}.
+@end deffn
+
+@deffn {Scheme Procedure} set-procedure-property! obj key value
+@deffnx {C Function} scm_set_procedure_property_x (obj, key, value)
+In @var{obj}'s property list, set the property named @var{key} to
+@var{value}.
+@end deffn
+
+@cindex procedure documentation
+Documentation for a procedure can be accessed with the procedure
+@code{procedure-documentation}.
+
+@deffn {Scheme Procedure} procedure-documentation proc
+@deffnx {C Function} scm_procedure_documentation (proc)
+Return the documentation string associated with @code{proc}.  By
+convention, if a procedure contains more than one expression and the
+first expression is a string constant, that string is assumed to contain
+documentation for that procedure.
+@end deffn
+
+
+@node Procedures with Setters
+@subsection Procedures with Setters
+
+@c FIXME::martin: Review me!
+
+@c FIXME::martin: Document `operator struct'.
+
+@cindex procedure with setter
+@cindex setter
+A @dfn{procedure with setter} is a special kind of procedure which
+normally behaves like any accessor procedure, that is a procedure which
+accesses a data structure.  The difference is that this kind of
+procedure has a so-called @dfn{setter} attached, which is a procedure
+for storing something into a data structure.
+
+Procedures with setters are treated specially when the procedure appears
+in the special form @code{set!} (REFFIXME).  How it works is best shown
+by example.
+
+Suppose we have a procedure called @code{foo-ref}, which accepts two
+arguments, a value of type @code{foo} and an integer.  The procedure
+returns the value stored at the given index in the @code{foo} object.
+Let @code{f} be a variable containing such a @code{foo} data
+structure.@footnote{Working definitions would be:
+@lisp
+(define foo-ref vector-ref)
+(define foo-set! vector-set!)
+(define f (make-vector 2 #f))
+@end lisp
+}
+
+@lisp
+(foo-ref f 0)       @result{} bar
+(foo-ref f 1)       @result{} braz
+@end lisp
+
+Also suppose that a corresponding setter procedure called
+@code{foo-set!} does exist.
+
+@lisp
+(foo-set! f 0 'bla)
+(foo-ref f 0)       @result{} bla
+@end lisp
+
+Now we could create a new procedure called @code{foo}, which is a
+procedure with setter, by calling @code{make-procedure-with-setter} with
+the accessor and setter procedures @code{foo-ref} and @code{foo-set!}.
+Let us call this new procedure @code{foo}.
+
+@lisp
+(define foo (make-procedure-with-setter foo-ref foo-set!))
+@end lisp
+
+@code{foo} can from now an be used to either read from the data
+structure stored in @code{f}, or to write into the structure.
+
+@lisp
+(set! (foo f 0) 'dum)
+(foo f 0)          @result{} dum
+@end lisp
+
+@deffn {Scheme Procedure} make-procedure-with-setter procedure setter
+@deffnx {C Function} scm_make_procedure_with_setter (procedure, setter)
+Create a new procedure which behaves like @var{procedure}, but
+with the associated setter @var{setter}.
+@end deffn
+
+@deffn {Scheme Procedure} procedure-with-setter? obj
+@deffnx {C Function} scm_procedure_with_setter_p (obj)
+Return @code{#t} if @var{obj} is a procedure with an
+associated setter procedure.
+@end deffn
+
+@deffn {Scheme Procedure} procedure proc
+@deffnx {C Function} scm_procedure (proc)
+Return the procedure of @var{proc}, which must be either a
+procedure with setter, or an operator struct.
+@end deffn
+
+@deffn {Scheme Procedure} setter proc
+Return the setter of @var{proc}, which must be either a procedure with
+setter or an operator struct.
+@end deffn
+
+
+@node Macros
+@subsection Lisp Style Macro Definitions
+
+@cindex macros
+@cindex transformation
+Macros are objects which cause the expression that they appear in to be
+transformed in some way @emph{before} being evaluated.  In expressions
+that are intended for macro transformation, the identifier that names
+the relevant macro must appear as the first element, like this:
+
+@lisp
+(@var{macro-name} @var{macro-args} @dots{})
+@end lisp
+
+In Lisp-like languages, the traditional way to define macros is very
+similar to procedure definitions.  The key differences are that the
+macro definition body should return a list that describes the
+transformed expression, and that the definition is marked as a macro
+definition (rather than a procedure definition) by the use of a
+different definition keyword: in Lisp, @code{defmacro} rather than
+@code{defun}, and in Scheme, @code{define-macro} rather than
+@code{define}.
+
+@fnindex defmacro
+@fnindex define-macro
+Guile supports this style of macro definition using both @code{defmacro}
+and @code{define-macro}.  The only difference between them is how the
+macro name and arguments are grouped together in the definition:
+
+@lisp
+(defmacro @var{name} (@var{args} @dots{}) @var{body} @dots{})
+@end lisp
+
+@noindent
+is the same as
+
+@lisp
+(define-macro (@var{name} @var{args} @dots{}) @var{body} @dots{})
+@end lisp
+
+@noindent
+The difference is analogous to the corresponding difference between
+Lisp's @code{defun} and Scheme's @code{define}.
+
+@code{false-if-exception}, from the @file{boot-9.scm} file in the Guile
+distribution, is a good example of macro definition using
+@code{defmacro}:
+
+@lisp
+(defmacro false-if-exception (expr)
+  `(catch #t
+          (lambda () ,expr)
+          (lambda args #f)))
+@end lisp
+
+@noindent
+The effect of this definition is that expressions beginning with the
+identifier @code{false-if-exception} are automatically transformed into
+a @code{catch} expression following the macro definition specification.
+For example:
+
+@lisp
+(false-if-exception (open-input-file "may-not-exist"))
+@equiv{}
+(catch #t
+       (lambda () (open-input-file "may-not-exist"))
+       (lambda args #f))
+@end lisp
+
+
+@node Syntax Rules
+@subsection The R5RS @code{syntax-rules} System
+@cindex R5RS syntax-rules system
+
+R5RS defines an alternative system for macro and syntax transformations
+using the keywords @code{define-syntax}, @code{let-syntax},
+@code{letrec-syntax} and @code{syntax-rules}.
+
+The main difference between the R5RS system and the traditional macros
+of the previous section is how the transformation is specified.  In
+R5RS, rather than permitting a macro definition to return an arbitrary
+expression, the transformation is specified in a pattern language that
+
+@itemize @bullet
+@item
+does not require complicated quoting and extraction of components of the
+source expression using @code{caddr} etc.
+
+@item
+is designed such that the bindings associated with identifiers in the
+transformed expression are well defined, and such that it is impossible
+for the transformed expression to construct new identifiers.
+@end itemize
+
+@noindent
+The last point is commonly referred to as being @dfn{hygienic}: the R5RS
+@code{syntax-case} system provides @dfn{hygienic macros}.
+
+For example, the R5RS pattern language for the @code{false-if-exception}
+example of the previous section looks like this:
+
+@lisp
+(syntax-rules ()
+  ((_ expr)
+   (catch #t
+          (lambda () expr)
+          (lambda args #f))))
+@end lisp
+
+@cindex @code{syncase}
+In Guile, the @code{syntax-rules} system is provided by the @code{(ice-9
+syncase)} module.  To make these facilities available in your code,
+include the expression @code{(use-syntax (ice-9 syncase))} (@pxref{Using
+Guile Modules}) before the first usage of @code{define-syntax} etc.  If
+you are writing a Scheme module, you can alternatively include the form
+@code{#:use-syntax (ice-9 syncase)} in your @code{define-module}
+declaration (@pxref{Creating Guile Modules}).
+
+@menu
+* Pattern Language::            The @code{syntax-rules} pattern language.
+* Define-Syntax::               Top level syntax definitions.
+* Let-Syntax::                  Local syntax definitions.
+@end menu
+
+
+@node Pattern Language
+@subsubsection The @code{syntax-rules} Pattern Language
+
+
+@node Define-Syntax
+@subsubsection Top Level Syntax Definitions
+
+define-syntax:  The gist is
+
+  (define-syntax <keyword> <transformer-spec>)
+
+makes the <keyword> into a macro so that
+
+  (<keyword> ...)
+
+expands at _compile_ or _read_ time (i.e. before any
+evaluation begins) into some expression that is
+given by the <transformer-spec>.
+
+
+@node Let-Syntax
+@subsubsection Local Syntax Definitions
+
+
+@node Syntax Case
+@subsection Support for the @code{syntax-case} System
+
+
+
+@node Internal Macros
+@subsection Internal Representation of Macros and Syntax
+
+Internally, Guile uses three different flavors of macros.  The three
+flavors are called @dfn{acro} (or @dfn{syntax}), @dfn{macro} and
+@dfn{mmacro}.
+
+Given the expression
+
+@lisp
+(foo @dots{})
+@end lisp
+
+@noindent
+with @code{foo} being some flavor of macro, one of the following things
+will happen when the expression is evaluated.
+
+@itemize @bullet
+@item
+When @code{foo} has been defined to be an @dfn{acro}, the procedure used
+in the acro definition of @code{foo} is passed the whole expression and
+the current lexical environment, and whatever that procedure returns is
+the value of evaluating the expression.  You can think of this a
+procedure that receives its argument as an unevaluated expression.
+
+@item
+When @code{foo} has been defined to be a @dfn{macro}, the procedure used
+in the macro definition of @code{foo} is passed the whole expression and
+the current lexical environment, and whatever that procedure returns is
+evaluated again.  That is, the procedure should return a valid Scheme
+expression.
+
+@item
+When @code{foo} has been defined to be a @dfn{mmacro}, the procedure
+used in the mmacro definition of `foo' is passed the whole expression
+and the current lexical environment, and whatever that procedure returns
+replaces the original expression.  Evaluation then starts over from the
+new expression that has just been returned.
+@end itemize
+
+The key difference between a @dfn{macro} and a @dfn{mmacro} is that the
+expression returned by a @dfn{mmacro} procedure is remembered (or
+@dfn{memoized}) so that the expansion does not need to be done again
+next time the containing code is evaluated.
+
+The primitives @code{procedure->syntax}, @code{procedure->macro} and
+@code{procedure->memoizing-macro} are used to construct acros, macros
+and mmacros respectively.  However, if you do not have a very special
+reason to use one of these primitives, you should avoid them: they are
+very specific to Guile's current implementation and therefore likely to
+change.  Use @code{defmacro}, @code{define-macro} (@pxref{Macros}) or
+@code{define-syntax} (@pxref{Syntax Rules}) instead.  (In low level
+terms, @code{defmacro}, @code{define-macro} and @code{define-syntax} are
+all implemented as mmacros.)
+
+@deffn {Scheme Procedure} procedure->syntax code
+@deffnx {C Function} scm_makacro (code)
+Return a macro which, when a symbol defined to this value appears as the
+first symbol in an expression, returns the result of applying @var{code}
+to the expression and the environment.
+@end deffn
+
+@deffn {Scheme Procedure} procedure->macro code
+@deffnx {C Function} scm_makmacro (code)
+Return a macro which, when a symbol defined to this value appears as the
+first symbol in an expression, evaluates the result of applying
+@var{code} to the expression and the environment.  For example:
+
+@lisp
+(define trace
+  (procedure->macro
+    (lambda (x env)
+      `(set! ,(cadr x) (tracef ,(cadr x) ',(cadr x))))))
+
+(trace @i{foo})
+@equiv{}
+(set! @i{foo} (tracef @i{foo} '@i{foo})).
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} procedure->memoizing-macro code
+@deffnx {C Function} scm_makmmacro (code)
+Return a macro which, when a symbol defined to this value appears as the
+first symbol in an expression, evaluates the result of applying
+@var{code} to the expression and the environment.
+@code{procedure->memoizing-macro} is the same as
+@code{procedure->macro}, except that the expression returned by
+@var{code} replaces the original macro expression in the memoized form
+of the containing code.
+@end deffn
+
+In the following primitives, @dfn{acro} flavor macros are referred to
+as @dfn{syntax transformers}.
+
+@deffn {Scheme Procedure} macro? obj
+@deffnx {C Function} scm_macro_p (obj)
+Return @code{#t} if @var{obj} is a regular macro, a memoizing macro or a
+syntax transformer.
+@end deffn
+
+@deffn {Scheme Procedure} macro-type m
+@deffnx {C Function} scm_macro_type (m)
+Return one of the symbols @code{syntax}, @code{macro} or
+@code{macro!}, depending on whether @var{m} is a syntax
+transformer, a regular macro, or a memoizing macro,
+respectively.  If @var{m} is not a macro, @code{#f} is
+returned.
+@end deffn
+
+@deffn {Scheme Procedure} macro-name m
+@deffnx {C Function} scm_macro_name (m)
+Return the name of the macro @var{m}.
+@end deffn
+
+@deffn {Scheme Procedure} macro-transformer m
+@deffnx {C Function} scm_macro_transformer (m)
+Return the transformer of the macro @var{m}.
+@end deffn
+
+@deffn {Scheme Procedure} cons-source xorig x y
+@deffnx {C Function} scm_cons_source (xorig, x, y)
+Create and return a new pair whose car and cdr are @var{x} and @var{y}.
+Any source properties associated with @var{xorig} are also associated
+with the new pair.
+@end deffn
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

@@ -1,0 +1,32 @@
+							       -*- outline -*-
+
+* Overview
+
+This directory includes examples which show how to write and use Guile
+modules in Scheme programs.
+
+The descriptions below assume that you have a working copy of Guile
+installed and available with the standard installation prefix
+`/usr/local'.
+
+
+* Included Examples
+
+
+** main
+
+  The main program, which uses the modules described below to perform
+  some actions.  Module usage and selective importing as well as
+  renaming is demonstrated here.n
+
+  $ ./main
+
+  or
+
+  guile -s main
+
+** module-0.scm, module-1.scm, module-2.scm
+ 
+  Two modules which export several procedure, some of which have the
+  same names (so that renaming/selection is required for proper
+  importing).

@@ -1,0 +1,1355 @@
+This is guile-tut.info, produced by makeinfo version 4.13 from
+guile-tut.texi.
+
+INFO-DIR-SECTION The Algorithmic Language Scheme
+START-INFO-DIR-ENTRY
+* Guile Tutorial: (guile-tut).  The Guile tutorial.
+END-INFO-DIR-ENTRY
+
+
+File: guile-tut.info,  Node: Top,  Next: Jump Start,  Up: (dir)
+
+Guile Tutorial
+**************
+
+  This file gives a tutorial introduction to Guile.
+
+  Copyright (C) 1997, 2004, 2006 Free Software Foundation
+
+  Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+  Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+  Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the author.
+
+* Menu:
+
+* Jump Start::
+* Introduction::
+* Using Guile to program in Scheme::
+* Guile in a Library::
+* Regular Expression Support::
+* UNIX System Programming::
+* Where to find more Guile/Scheme resources::
+* Concept Index::
+* Procedure and Macro Index::
+* Variable Index::
+* Type Index::
+
+
+File: guile-tut.info,  Node: Jump Start,  Next: Introduction,  Prev: Top,  Up: Top
+
+1 Jump Start
+************
+
+Before giving an overview of Guile, I present some simple commands and
+programs that you can type to get going immediately.
+
+  Start by invoking the Guile interpreter.  Usually you do this by just
+typing `guile'.  Then type (or paste) the following expressions at the
+prompt; the interpreter's response is preceded (in this manual) by =>.
+
+     <shell-prompt> guile
+
+     (+ 20 35)
+     => 55
+     (define (recursive-factorial n)
+       (if (zero? n)
+           1
+           (* n (recursive-factorial (- n 1)))))
+     (recursive-factorial 5)
+     => 120
+     (quit)
+
+  In this example we did some simple arithmetic `(+ 20 35)' and got the
+answer `55'.  Then we coded the classic (and rather wasteful) factorial
+algorithm and computed the factorial of `55'.  Finally we quit with
+`(quit)'.
+
+  We can find out about some of Scheme's nice features by asking for the
+factorial of some big number, say `500'.  On some systems the correct
+answer will be returned (I do not indicate calling and leaving the
+guile session anymore).
+
+     (recursive-factorial 500)
+     => 1220136825991110068701238785423046926253574342803192842192413588
+        3858453731538819976054964475022032818630136164771482035841633787
+        2207817720048078520515932928547790757193933060377296085908627042
+        9174547882424912726344305670173270769461062802310452644218878789
+        4657547771498634943677810376442740338273653974713864778784954384
+        8959553753799042324106127132698432774571554630997720278101456108
+        1188373709531016356324432987029563896628911658974769572087926928
+        8712817800702651745077684107196243903943225364226052349458501299
+        1857150124870696156814162535905669342381300885624924689156412677
+        5654481886506593847951775360894005745238940335798476363944905313
+        0623237490664450488246650759467358620746379251842004593696929810
+        2226397195259719094521782333175693458150855233282076282002340262
+        6907898342451712006207714640979456116127629145951237229913340169
+        5523638509428855920187274337951730145863575708283557801587354327
+        6888868012039988238470215146760544540766353598417443048012893831
+        3896881639487469658817504506926365338175055478128640000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        00000000000000000000000000000000000000000000000
+
+  The result is an example of Scheme's _bignumbers_.  However, there
+are operating environments that provide (by default) too little stack
+space.  They will instead produce an error message like this:
+
+     (recursive-factorial 500)
+     -|
+     ERROR: Stack overflow
+     ABORT: (stack-overflow)
+
+  Rather than enlarging the system's stack, we can implement the
+algorithm such that it does not consume increasing stack space.  This
+is called a _tail recursive_ implementation.  The following definition
+is tail recursive and so should work on all systems.
+
+     (define (tail-recursive-factorial n)
+       (define (loop k l)
+         (if (zero? k) l
+     	(loop (- k 1) (* k l))))
+       (loop n 1))
+
+     (tail-recursive-factorial 500)
+     => 1220136825991110068701238785423046926253574342803192842192413588
+             ;; ... skipped
+
+  This is the most basic use of Guile: a simple Scheme interpreter.  In
+the rest of this tutorial I will show you how Guile has many facets: it
+is also an _extensible_ interpreter (to which many features can be
+easilly added) and an _embeddable_ interpreter (which can be invoked
+from your C programs).
+
+
+File: guile-tut.info,  Node: Introduction,  Next: Using Guile to program in Scheme,  Prev: Jump Start,  Up: Top
+
+2 Introduction
+**************
+
+"Guile" (which can stand for _GNU Ubiquitous Intelligent Language
+Extension_) is the GNU extension language.  It started out as an
+embeddable Scheme interpreter, and has rapidly evolved into a
+kitchen-sink package including a standalone Scheme interpreter, an
+embeddable Scheme interpreter, several graphics options, other languages
+that can be used along with Scheme (for now just _ctax_ and _Tcl_), and
+hooks for much more.
+
+* Menu:
+
+* What are scripting and extension languages::
+* History of Guile and its motivations::
+* How to characterize Guile::
+
+
+File: guile-tut.info,  Node: What are scripting and extension languages,  Next: History of Guile and its motivations,  Up: Introduction
+
+2.1 What are scripting and extension languages
+==============================================
+
+A "scripting language" is a programming language which serves as glue
+between other system programs.  In the UNIX world, the traditional
+scripting language is the _Bourne shell_, which allows many UNIX
+commands to be executed in sequence, or in a pipeline.  Traditional UNIX
+commands are cleverly written to work well when put together in a
+script.
+
+  Other examples of UNIX scripting languages are AWK, Perl, Scsh (the
+Scheme Shell: a Scheme interpreter enhanced to do good scripting),
+Python, Tcl, Java ...  
+
+  UNIX programmers noticed, more than 25 years ago, that scripting
+languages can do serious work, so the Bourne shell was written to have
+variables, operators and control structures, just like a full-featured
+programming language.  
+
+  What scripting languages have, that traditional programming languages
+do not, is the ability to easily run an external program (or a pipeline
+of external programs) and use the returned values and output from that
+program in useful ways.
+
+  An "extension language" is a programming language interpreter offered
+by an application program, so that users can write macros or even
+full-fledged programs to extend the original application.  Extension
+languages have a C interface (it is usually C, but it could be any
+other compiled language), and can be given access to the C data
+structures.  Likewise, there are C routines to access the extension
+language data structures.
+
+  Extension languages abound in the software world, even though the name
+_extension language_ is seldom used.  Examples are: 
+
+   * Emacs Lisp, the language used to program and customize GNU Emacs.  
+
+   * Tcl, John Ousterhout's general-purpose scripting and extension
+     language.  
+
+   * The Lotus 1-2-3 macro language (any spreadsheet macro language,
+     really).  I mention this one first because it is a classic, even
+     though it is seldom used any more.  
+
+   * Other spreadsheet and database macro languages.
+
+   * The Dominion empire-style game's _exec_ files.  
+
+   * Any syntax for a ".*rc" file you might have used.  Almost all
+     programs end up parsing some kind of startup or configuration
+     file.  The syntax for those can get pretty involved, thus
+     justifying calling them "extension languages".  The _fvwm_ window
+     manager, for example, parses a rather elaborate `.fvwmrc' file.
+
+   * Brent Benson's libscheme.a, an embeddable Scheme interpreter.  
+
+   * Guile, the GNU extension language, which is the subject of this
+     tutorial.
+
+
+  One lesson we can learn from looking at classical large software
+applications is that "writers of large programs" always end up throwing
+in some kind of parser for configuration or scripting.
+
+  Of the examples listed above, Emacs Lisp, Tcl, Libscheme and Guile
+have an important property: they are not added as an afterthought for a
+specific application.  They are general-purpose languages which a user
+can learn (even in college courses) and then use to customize the
+application program.
+
+  This is a recent and (in my opinion) very exciting direction in
+large-program software engineering: program designers can link in the
+Guile or Tcl library from the very beginning, and tell their users "You
+want to customize this program?  Just use Scheme (or Tcl, or whatever
+language), which you already know!"  
+
+
+File: guile-tut.info,  Node: History of Guile and its motivations,  Next: How to characterize Guile,  Prev: What are scripting and extension languages,  Up: Introduction
+
+2.2 History of Guile and its motivations
+========================================
+
+A few separate threads of events led to the development of Guile.
+
+  In the fall of 1994, Richard Stallman, director of the GNU project,
+posted an article with the subject "Why you should not use Tcl", in
+which he argued that Tcl is inadequate as an extension language.  This
+generated a flurry of flames (available in the hypermail archive
+(`http://www.vanderburg.org/Tcl/war/') *The Tcl War*).  
+
+  The result was that Stallman then proposed his design for the GNU
+Extension Language, first called GEL and then renamed Guile.  The
+discussion triggered by that article is also available in a hypermail
+archive, `http://www.vanderburg.org/Tcl/war2/'.
+
+  One interesting feature of this GNU Extension Language plan was that
+users should have a _choice_ of languages to use in extending their
+program.  The basic language would be a slightly modified Scheme, and
+translators would be written to convert other languages (like Tcl,
+Python, Perl, C-like languages ...) into Scheme.
+
+  Tom Lord started working on this project immediately, taking Aubrey
+Jaffer's small and portable implementation of Scheme, SCM, and making it
+into an embeddable interpreter: callable from C and allowing new Scheme
+procedures to be written in C.  
+
+  In the spring of 1995, the guile-ii snapshot was released.  This made
+it possible to start writing code in C and Scheme using the guile
+facilities.
+
+  The guile-iii snapshot was released the summer of 1995, and it had
+fixed enough problems so that the access to Scheme data structures from
+C was almost complete.
+
+  After this, Cygnus Support added many features to Guile and finished
+implementing others, so that Guile acquired thread support, a regular
+expression matcher, a Tk interface, an interface to the SGI OpenGL
+graphics system, an _applet_ formalism, and some other packages.  This
+was all in the Cygnus Guile r0.3 and r0.4 releases.  
+
+  Meanwhile, Tom Lord left the project after having produced a divergent
+version of Guile: 1.0b2.  The Free Software Foundation hired Jim Blandy
+to coordinate Guile development.  The FSF released its first version of
+Guile in January 1997.  In the future, many of the Cygnus packages will
+be re-integrated into Guile.  
+
+
+File: guile-tut.info,  Node: How to characterize Guile,  Prev: History of Guile and its motivations,  Up: Introduction
+
+2.3 How to characterize Guile
+=============================
+
+I have already mentioned that Guile has become a kitchen sink package;
+here you can see how Guile freely takes new commands and constructs from
+the portable Scheme library _slib_, the _Tk_ widget set, a posix
+library (useful for UNIX systems programming), the regular expression
+library _rx_, and many more ...  
+
+  So Guile has many more primitive procedures available to it than those
+specified in *note Revised(5) Report on the Algorithmic Language
+Scheme: (r5rs)Standard Procedures.  On top of that, Guile will interpret
+almost all standard Scheme programs.  The only incompatible difference
+between the basic Guile language and R5RS Scheme is that Guile is case
+sensitive, whereas R5RS is case insensitive.  We hope that few people
+have written Scheme programs that depend on case insensitivity.  
+
+  Here is a possible view of the _sum of the parts_ in Guile: 
+     guile   =       standard Scheme (R5RS)
+             PLUS    extensions to R5RS offered by SCM
+             PLUS    some extra primitives offered by Guile (catch/throw)
+             PLUS    portable Scheme library (SLIB)
+             PLUS    embeddable Scheme interpreter library (libguile)
+             PLUS    Tk toolkit
+             PLUS    threads
+             PLUS    Posix library
+             PLUS    Regular expression library (rx)
+             PLUS    Tcl library
+
+
+File: guile-tut.info,  Node: Using Guile to program in Scheme,  Next: Guile in a Library,  Prev: Introduction,  Up: Top
+
+3 Using Guile to program in Scheme
+**********************************
+
+In this section I give a tutorial introduction to programming in Scheme,
+with a slant toward the interesting things that can be done in Guile.
+
+  This section will try to touch on many of the interesting and cool
+aspects of Guile, showing you how new types of problems can be solved
+with Guile.  Note that using Guile as a library with `libguile.a' is
+described in its own chapter (*note Guile in a Library::).  Also note
+that some small examples are given in *note Jump Start::.
+
+  To get started you need to know how to program in "Scheme" (a dialect
+of LISP).  Fortunately Scheme is a small, clean language and is not
+hard to learn.  It is also used in many undergraduate courses to
+introduce computer programming.  
+
+  I will not try to teach you Scheme here (although you might end up
+learning by example), since there are many good books on the subject,
+listed in *note Where to find more Guile/Scheme resources::. (1)
+
+3.0.1 Hello World
+-----------------
+
+Our first program is the typical Scheme "hello world" program.  Put the
+following code in a file called `hello.scm' (this can be find in
+`examples/scheme/hello.scm').
+
+     #!/usr/local/bin/guile -s
+     !#
+
+     (display "hello world")
+     (newline)
+
+  Then run guile on it.  One way to do so is to start up guile and load
+this file:
+
+     <shell-prompt> guile
+     guile> (load "hello")
+
+  Another way is to make the file executable and execute it directly.
+Notice how Guile recognizes a `-s' option which tells it to run a
+script and then exit.  Guile also has a new type of block comment
+enclosed by `#!' and `!#', so that you can make executable Scheme
+scripts with the standard UNIX `#!' mechanism.
+
+  In the given example, the first line is used to invoke the Guile
+interpreter (make sure you correct the path if you installed Guile in
+something other than /usr/local/bin).  Once Guile is invoked on this
+file, it will understand that the first line is a comment.  The comment
+is then terminated with `!#' on the second line so as to not interfere
+with the execution mechanism.
+
+3.0.2 A bunch of operations in Scheme
+-------------------------------------
+
+Here is some code you can type at the `guile>' prompt to see some of
+the Scheme data types at work (mostly lists and vectors).  I have
+inserted brief comments _before_ each line of code explaining what
+happens.
+
+     ;; make a list and bind it to the symbol `ls'
+     guile> (define ls (list 1 2 3 4 5 6 7))
+            =>
+     ;; display the list
+     guile> ls
+            => (1 2 3 4 5 6 7)
+     ;; ask if `ls' is a vector; `#f' means it is not
+     guile> (vector? ls)
+            => #f
+     ;; ask if `ls' is a list; `#t' means it is
+     guile> (list? ls)
+            => #t
+     ;; ask for the length of `ls'
+     guile> (length ls)
+            => 7
+     ;; pick out the first element of the list
+     guile> (car ls)
+            => 1
+     ;; pick the rest of the list without the first element
+     guile> (cdr ls)
+            => (2 3 4 5 6 7)
+     ;; this should pick out the 3rd element of the list
+     guile> (car (cdr (cdr ls)))
+            => 3
+     ;; a shorthand for doing the same thing
+     guile> (caddr ls)
+            => 3
+     ;; append the given list onto `ls', print the result
+     ;; *NOTE_* the original list `ls' is _not_ modified
+     guile> (append ls (list 8 9 10))
+            => (1 2 3 4 5 6 7 8 9 10)
+     guile> (reverse ls)
+            => (7 6 5 4 3 2 1)
+     ;; ask if 12 is in the list -- it obviously is not
+     guile> (memq 12 ls)
+            => #f
+     ;; ask if 4 is in the list -- returns the list from 4 on.
+     ;; Notice that the result will behave as true in conditionals
+     guile> (memq 4 ls)
+            => (4 5 6 7)
+     ;; an `if' statement using the aforementioned result
+     guile> (if (memq 4 ls)
+                (display "hey, it's true!\n")
+                (display "dude, it's false\n"))
+            hey, it's true!-|
+            =>
+     guile> (if (memq 12 ls)
+                (display "hey, it's true!\n")
+                (display "dude, it's false\n"))
+            dude, it's false-|
+            =>
+     guile> (memq 4 (reverse ls))
+            => (4 3 2 1)
+     ;; make a smaller list `ls2' to work with
+     guile> (define ls2 (list 2 3 4))
+     ;; make a list in which the function `sin' has been
+     ;; applied to all elements of `ls2'
+     guile> (map sin ls2)
+            => (0.909297426825682 0.141120008059867 -0.756802495307928)
+     ;; make a list in which the squaring function has been
+     ;; applied to all elements of `ls'
+     guile> (map (lambda (n) (* n n)) ls)
+            => (1 4 9 16 25 36 49)
+
+     ;; make a vector and bind it to the symbol `v'
+     guile> (define v '#(1 2 3 4 5 6 7))
+     guile> v
+            => #(1 2 3 4 5 6 7)
+     guile> (vector? v)
+            => #t
+     guile> (list? v)
+            => #f
+     guile> (vector-length v)
+            => 7
+     ;; vector-ref allows you to pick out elements by index
+     guile> (vector-ref v 2)
+            => 3
+     ;; play around with the vector: make it into a list, reverse
+     ;; the list, go back to a vector and take the second element
+     guile> (vector-ref (list->vector (reverse (vector->list v))) 2)
+            => 5
+     ;; this demonstrates that the entries in a vector do not have
+     ;; to be of uniform type
+     guile> (vector-set! v 4 "hi there")
+            => "hi there"
+     guile> v
+            => #(1 2 3 4 "hi there" 6 7)
+
+3.0.3 Using recursion to process lists
+--------------------------------------
+
+Here are some typical examples of using recursion to process a list.
+
+     ;; this is a rather trivial way of reversing a list
+     (define (my-reverse l)
+       (if (null? l)
+           l
+           (append (my-reverse (cdr l)) (list (car l)))))
+     (my-reverse '(27 32 33 40))
+     => (40 33 32 27)
+
+3.0.4 Processing matrices
+-------------------------
+
+Suppose you have a matrix represented as a list of lists:
+
+     (define m
+       (list
+        (list 7 2 1 3 2 8 5 3 6)
+        (list 4 1 1 1 3 8 9 8 1)
+        (list 5 5 4 8 1 8 2 2 4)))
+
+  Then you could apply a certain function to each element of the matrix
+in the following manner:
+     ;; apply the function func to the matrix m element-by-element;
+     ;; return a matrix with the result.
+     (define (process-matrix m func)
+       (map (lambda (l)
+              (map func l))
+            m))
+  Notice that I have used the Scheme `map' procedure because I am
+interested in the matrix that results from the application of `func',
+rather than in the side effects associated with applying `func'.
+
+  This could be invoked with `(process-matrix m sin)' or
+`(process-matrix m (lambda (x) (* x x)))'; for example:
+
+     (process-matrix m (lambda (x) (* x x)))
+     => ((49 4 1 9 4 64 25 9 36) (16 1 1 1 9 64 81 64 1) (25 25 16 64 1 64 4 4 16))
+
+  To print a representation of the matrix, we could define a generalized
+routine:
+     ;; proc is a procedure to represent the single element,
+     ;; row-proc is a procedure that is invoked after each row.
+     ;; Example: proc could be (lambda (x) (begin (display x) (display " ")))
+     ;; and row-proc could be (lambda (l) (display "\n"))
+     (define (represent-matrix m proc row-proc)
+       (for-each (lambda (l)
+                   (begin
+                     (for-each proc l)
+                     (row-proc l)))
+                 m))
+  
+  And then invoke it with
+     (represent-matrix m
+                       (lambda (x) (begin (display x) (display " ")))
+                       (lambda (l) (begin (display "\n"))))
+     7 2 1 3 2 8 5 3 6-|
+     4 1 1 1 3 8 9 8 1-|
+     5 5 4 8 1 8 2 2 4-|
+
+  Now we write a helper routine that uses Scheme "closures" to make
+objects with state that then receive messages to draw little squares.  
+
+  But let us take it one step at a time.  I will start by showing you a
+simple example of object in Scheme.  The object I make here represents a
+cell, which could be a cell in a matrix.  The cell responds to commands
+to draw itself, to return the next cell, and so forth.  _Guile does not
+currently have a Tk interface, so I will leave the hooks for graphical
+rendering.  In a future release of Guile I will add graphical rendering
+messages to the cell object._
+
+     ;; cell-object.scm: routines for creating and manipulating cell objects
+
+     ;; (the-x, the-y) is the initial position of the cell.
+     ;; the-color is a string representing a color; must be something Tk can grok.
+     ;; square-size is the size of the square that gets drawn.
+     ;; (sizex, sizey) is the size of the matrix.
+     (define (MAKE-CELL the-x the-y the-color square-size sizex sizey)
+       (define (get-x) the-x)
+       (define (get-y) the-y)
+
+       (define (set-x! new-x)
+         (set! the-x new-x)
+         the-x)
+       (define (set-y! new-y)
+         (set! the-y new-y)
+         the-y)
+       (define (get-color) the-color)
+       (define (set-color! new-color)
+         (set! the-color new-color)
+         the-color)
+       (define (next!)
+         (set! the-x (+ the-x 1))
+         (if (>= the-x sizex)
+     	(begin
+     	  (set! the-x 0)
+     	  (set! the-y (+ the-y 1))))
+     	(if (>= the-y sizey)
+     	    (begin
+     	      (display "CELL next!: value of y is too big; not changing it\n")
+     	      (set! the-y (- the-y 1))))
+     	(cons the-x the-y))
+       (define (draw)
+         (let* ((x0 (* the-x square-size))
+     	   (y0 (* the-y square-size))
+     	   (x1 (+ x0 square-size))
+     	   (y1 (+ y0 square-size)))
+           (display "I should draw a ")
+           (display the-color)
+           (display " rectangle with corners at ")
+           (display x0) (display y0) (display x1) (display y1)
+           ))
+
+       ;; self is the dispatch procedure
+       (define (self message)
+         (case message
+           ((x)            get-x)
+           ((y)            get-y)
+           ((set-x!)       set-x!)
+           ((set-y!)       set-y!)
+           ((color)        get-color)
+           ((set-color!)   set-color!)
+           ((next!)        next!)
+           ((draw)         draw)
+           (else (error "CELL: Unknown message -> " message))))
+       ;; and now return the dispatch procedure
+       self
+       )
+  
+  What does this procedure do?  It returns another procedure (`self')
+which receives a message (x, y, set-x!, set-y!, ...)  and takes an
+action to return or modify its state.  The state consists of the values
+of variables `the-x', `the-y', `the-color' and so forth.
+
+  Here are some examples of how to use MAKE-CELL and the cell object it
+creates:
+     (define c (MAKE-CELL 0 0 "red" 10 7 9))
+
+     ;; retrieve the x and y coordinates
+     ((c 'x))
+     => 0
+     ((c 'y))
+     => 0
+     ;; change the x coordinate
+     ((c 'set-x!) 5)
+     => 5
+     ((c 'x))
+     => 5
+     ;; change the color
+     ((c 'color))
+     => "red"
+     ((c 'set-color!) "green")
+     => "green"
+     ((c 'color))
+     => "green"
+     ;; now use the next! message to move to the next cell
+     ((c 'next!))
+     => (6 . 0)
+     ((c 'x))
+     => 6
+     ((c 'y))
+     => 0
+     ;; now make things wrap around
+     ((c 'next!))
+     => (0 . 1)
+     ((c 'next!))
+     => (1 . 1)
+     ((c 'next!))
+     => (2 . 1)
+     ((c 'x))
+     => 2
+     ((c 'y))
+     => 1
+
+  You will notice that expressions like `(c 'next)' return procedures
+that do the job, so we have to use extra parentheses to make the job
+happen.  This syntax is rather awkward; one way around it is to define a
+`send' procedure:
+
+     ;; send makes object syntax a bit easier; instead of saying
+     ;;     ((my-cell 'set-x!) 4)
+     ;; you can say
+     ;;     (send my-cell 'set-x! 4)
+     (define (send obj . args)
+       (let ((first-eval (apply obj (list (car args)))))
+         (if (null? (cdr args))
+     	(first-eval)
+     	(apply first-eval (cdr args)))))
+  
+  You can see that `send' passes the message to the object, making sure
+that things are evaluated the proper number of times.  You can now type:
+
+     (define c2 (MAKE-CELL 0 0 "red" 10 7 9))
+     (send c2 'x)
+     => 0
+     (send c2 'set-x! 5)
+     => 5
+     (send c2 'color)
+     => "red"
+     (send c2 'set-color! "green")
+     => "green"
+     (send c2 'next!)
+     => (1 . 0)
+     (send c2 'x)
+     => 1
+     (send c2 'y)
+     => 0
+
+  This is the simplest way of implementing objects in Scheme, but it
+does not really allow for full _object-oriented programming_ (for
+example, there is no inheritance).  But it is useful for _object-based
+programming_.
+
+  Guile comes with a couple more complete object-oriented extensions to
+Scheme: these are part of slib (*note Object: (slib)Object. and *note
+Yasos: (slib)Yasos.).
+
+  ---------- Footnotes ----------
+
+  (1) To get started, look at the books `Simply Scheme' and `The Little
+Schemer' from that list.
+
+
+File: guile-tut.info,  Node: Guile in a Library,  Next: Regular Expression Support,  Prev: Using Guile to program in Scheme,  Up: Top
+
+4 Guile in a Library
+********************
+
+In the previous chapters Guile was used to write programs entirely in
+Scheme, and no C code was seen; but I have been claiming _ad nauseam_
+that Guile is an _extension_ language.  Here we see how that is done,
+and how that can be useful.  
+
+* Menu:
+
+* Two world views::
+* What is libguile::
+* How to get started with libguile::
+* More interesting programming with libguile::
+* Further examples::
+
+
+File: guile-tut.info,  Node: Two world views,  Next: What is libguile,  Up: Guile in a Library
+
+4.1 Two world views
+===================
+
+In this manual, I usually jump into examples and explain them as you
+type in the code; here I will digress and ramble for a few paragraphs to
+set some concepts straight, and then let you type (or paste) in fun
+examples.
+
+  In 1995, I implemented a large program, "Gnudl", using Guile quite
+extensively.  In the design phase of Gnudl, I found I had to make a
+choice: should the fundamental data structures be C or Scheme data
+structures?  
+
+  Guile allows C to see its data structures (scalar types, lists,
+vectors, strings ...).  C also allows Guile to see its data structures.
+As a large program designer, you have to decide which of those
+capabilities to use.  You have two main choices:
+
+  1. You can write your software mostly in Scheme.  In this case, your C
+     software will mostly parse the Scheme code with Guile calls, and
+     provide some new primitive procedures to be used by Scheme.  This
+     is what Gnudl does.
+
+  2. You can write your software mostly in C, occasionally allowing
+     Scheme code to be parsed by Guile, either to allow the user to
+     modify data structures, or to parse a configuration file, ...
+
+  Mixing the two approaches seems unwise: the overall layout would be
+confusing.  But who knows?  There might be problems that are best solved
+by a hybrid approach.  Please let me know if you think of such a
+problem.
+
+  If you use the former approach, we will say that the "master world"
+is Scheme, and the C routines serve Scheme and access Scheme data
+structures.  In the latter case, the master world is C, and Scheme
+routines serve the C code and access C data structures.
+
+  In both approaches the `libguile.a' library is the same, but a
+predominantly different set of routines will be used.  When we go
+through examples of libguile use, we will point out which is the master
+world in order to clarify these two approaches.
+
+
+File: guile-tut.info,  Node: What is libguile,  Next: How to get started with libguile,  Prev: Two world views,  Up: Guile in a Library
+
+4.2 What is libguile
+====================
+
+"Libguile" is the library which allows C programs to start a Scheme
+interpreter and execute Scheme code.  There are also facilities in
+libguile to make C data structures available to Scheme, and vice versa.
+
+  The interface provided by the libguile C library is somewhat specific
+to the implementation of the Scheme interpreter.  This low-level
+libguile interface is usually referred to as the `scm_' interface,
+since its public calls (API) all have the `scm_' prefix.
+
+  There is also a higher-level libguile interface, which is usually
+referred to as the `gh_' interface (libGuile High).  Its public calls
+all have the `gh_' prefix.  The `gh_' library interface is designed to
+hide the implementation details, thus making it easier to assimilate
+and portable to other underlying Scheme implementations.
+
+  People extending Guile by adding bindings to C libraries (like OpenGL
+or Rx) are encouraged to use the `gh_' interface, so their work will be
+portable to other Scheme systems.  The `gh_' interface should be more
+stable, because it is simpler.
+
+  The `scm_' interface is necessary if you want to poke into the
+innards of Scheme data structures, or do anything else that is not
+offered by the `gh_' interface.  It is not covered in this tutorial,
+but is covered extensively in *note Data Representation in Guile:
+(guile)Data representation.
+
+  This chapter gives a gentle introduction to the `gh_' interface,
+presenting some _hello world_-style programs which I wrote while
+teaching myself to use libguile.  
+
+  The `Guile Programmer's Manual' gives more examples of programs
+written using libguile, illustrating diverse applications.  You can also
+consult my _Gnudl_ documentation at
+`http://nis-www.lanl.gov/~rosalia/mydocs/' to see a large scale project
+that uses C and Scheme code together.
+
+
+File: guile-tut.info,  Node: How to get started with libguile,  Next: More interesting programming with libguile,  Prev: What is libguile,  Up: Guile in a Library
+
+4.3 How to get started with libguile
+====================================
+
+Here is an elementary first program, `learn0', to get going with
+libguile.  The program (which uses Scheme as a master world) is in a
+single source file, `learn0.c':
+
+     /* test the new libgh.a (Guile High-level library) with a trivial
+        program */
+
+     #include <stdio.h>
+
+     #include <guile/gh.h>
+
+     void main_prog(int argc, char *argv[]);
+
+     main(int argc, char *argv[])
+     {
+       gh_enter(argc, argv, main_prog);
+     }
+
+     void main_prog(int argc, char *argv[])
+     {
+       int done;
+       char input_str[200];
+
+       gh_eval_str("(display \"hello Guile\")");
+       gh_eval_str("(newline)");
+
+       /* for fun, evaluate some simple Scheme expressions here */
+       gh_eval_str("(define (square x) (* x x))");
+       gh_eval_str("(define (fact n) (if (= n 1) 1 (* n (fact (- n 1)))))");
+       gh_eval_str("(square 9)");
+
+       /* now sit in a Scheme eval loop: I input the expressions, have
+          Guile evaluate them, and then get another expression. */
+       done = 0;
+       fputs("learn0> ", stdout);
+       while (fgets(input_str, 199, stdin) != NULL) {
+         gh_eval_str(input_str);
+         fputs("\nlearn0> ", stdout);
+       }
+
+       exit(0);
+     }
+
+  If you name this program `learn0.c', it can now be compiled with:
+     gcc -g -c learn0.c -o learn0.o
+     gcc -o learn0 learn0.o -lguile -lm
+
+  The program is simple: it creates a Scheme interpreter, passes a
+couple of strings to it that define new Scheme functions `square' and
+`factorial', and then a couple of strings that invoke those functions.
+
+  It then goes into a read-eval-print-loop (REPL), so you could type
+one-line Scheme expressions to it and have them evaluated.  For example:
+     <shell-prompt> ./learn0
+     hello Guile
+     learn0> (display (sin 1.3))
+     963.558185417193e-3
+     learn0> (display (fact 10))
+     3628800
+     learn0> (quit)
+     <shell-prompt>
+
+  You should notice the key steps involved in this `learn0' program:
+
+  1. `#include <guile/gh.h>'
+
+  2. You need to invoke the initialization routine `gh_enter()'.  This
+     starts up a Scheme interpreter, handling many
+     implementation-specific details.
+
+  3. Your main() function should be almost empty: the real main program
+     goes in a separate function main_prog() which is passed to
+     gh_enter().  This rather arcane convention is due to the way
+     Guile's garbage collector works: the whole program has to run in
+     the dynamic context of `gh_enter()'.
+
+  4. You pass strings to the Scheme interpreter with the `gh_eval_str()'
+     routine.
+
+  5. You link your program with `-lguile'.
+
+
+File: guile-tut.info,  Node: More interesting programming with libguile,  Next: Further examples,  Prev: How to get started with libguile,  Up: Guile in a Library
+
+4.4 More interesting programming with libguile
+==============================================
+
+The `learn0' program shows how you can invoke Scheme commands from a C
+program.  This is not such a great achievement: the same could have
+been done by opening a pipe to SCM or any other Scheme interpreter.
+
+  A true extension language must allow "callbacks".  Callbacks allow
+you to write C routines that can be invoked as Scheme procedures, thus
+adding new primitive procedures to Scheme.  This also means that a
+Scheme procedure can modify a C data structure.
+
+  Guile allows you to define new Scheme procedures in C, and provides a
+mechanism to go back and forth between C and Scheme data types.
+
+  Here is a second program, `learn1', which demonstrates these
+features.  It is split into three source files: `learn1.c',
+`c_builtins.h' and `c_builtins.c'.  I am including the code here.
+
+  Notice that `learn1' uses a Scheme master world, and the C routines
+in `c_builtins.c' are simply adding new primitives to Scheme.
+
+* Menu:
+
+* learn1.c::
+* c_builtins.h::
+* c_builtins.c::
+* What learn1 is doing::
+* Compiling and running learn1::
+
+
+File: guile-tut.info,  Node: learn1.c,  Next: c_builtins.h,  Up: More interesting programming with libguile
+
+4.4.1 learn1.c
+--------------
+
+Here is `learn1.c':
+     #include <stdio.h>
+
+     #include <guile/gh.h>
+
+     #include "c_builtins.h"
+
+     void main_prog(int argc, char *argv[]);
+
+     main(int argc, char *argv[])
+     {
+       gh_enter(argc, argv, main_prog);
+     }
+
+     void main_prog(int argc, char *argv[])
+     {
+       char input_str[200];		/* ugly hack: assume strlen(line) < 200 */
+       int done;
+
+       /* for fun, evaluate some simple Scheme expressions here */
+       gh_eval_str("(define (square x) (* x x))");
+       gh_eval_str("(define (fact n) (if (= n 1) 1 (* n (fact (- n 1)))))");
+       gh_eval_str("(square 9)");
+       gh_eval_str("(fact 100)");
+
+       /* now try to define some new builtins, coded in C, so that they are
+          available in Scheme. */
+       gh_new_procedure1_0("c-factorial", c_factorial);
+       gh_new_procedure1_0("c-sin", c_sin);
+       gh_new_procedure1_0("v-t", vector_test);
+
+       /* now sit in a Scheme eval loop: I input the expressions, have
+          Guile evaluate them, and then get another expression.  */
+       done = 0;
+       fputs("learn1> ", stdout);
+       while (!done) {
+         if (gets(input_str) == NULL) {
+           done = 1;
+         } else {
+           gh_eval_str(input_str);
+           fputs("learn1> ", stdout);
+         }
+       }
+
+       exit(0);
+     }
+
+
+File: guile-tut.info,  Node: c_builtins.h,  Next: c_builtins.c,  Prev: learn1.c,  Up: More interesting programming with libguile
+
+4.4.2 c_builtins.h
+------------------
+
+Here is `c_builtins.h':
+     /* builtin function prototypes */
+
+     #include <guile/gh.h>
+
+     SCM c_factorial(SCM n);
+     SCM c_sin(SCM n);
+     SCM vector_test(SCM s_length);
+
+
+File: guile-tut.info,  Node: c_builtins.c,  Next: What learn1 is doing,  Prev: c_builtins.h,  Up: More interesting programming with libguile
+
+4.4.3 c_builtins.c
+------------------
+
+Here is `c_builtins.c':
+     #include <stdio.h>
+     #include <math.h>
+
+     #include <guile/gh.h>
+
+     #include "c_builtins.h"
+
+     /* this is a factorial routine in C, made to be callable by Scheme */
+     SCM c_factorial(SCM s_n)
+     {
+       int i;
+       unsigned long result = 1, n;
+
+       n = gh_scm2ulong(s_n);
+
+       gh_defer_ints();
+       for (i = 1; i <= n; ++i) {
+         result = result*i;
+       }
+       gh_allow_ints();
+       return gh_ulong2scm(result);
+     }
+
+     /* a sin routine in C, callable from Scheme.  it is named c_sin() to
+        distinguish it from the default Scheme sin function */
+     SCM c_sin(SCM s_x)
+     {
+       double x = gh_scm2double(s_x);
+
+       return gh_double2scm(sin(x));
+     }
+
+     /* play around with vectors in Guile: this routine creates a vector of
+        the given length, initializes it all to zero except element 2 which
+        is set to 1.9.  */
+     SCM vector_test(SCM s_length)
+     {
+       SCM xvec;
+
+       c_length = gh_scm2ulong(s_length);
+       printf("requested length for vector: %ld\n", gh_scm2ulong(s_length));
+
+       /* create a vector */
+       xvec = gh_make_vector(s_length, gh_double2scm(0.0));
+       /* set the second element in it */
+       gh_vector_set_x(xvec, gh_int2scm(2), gh_double2scm(1.9));
+
+       return xvec;
+     }
+
+
+File: guile-tut.info,  Node: What learn1 is doing,  Next: Compiling and running learn1,  Prev: c_builtins.c,  Up: More interesting programming with libguile
+
+4.4.4 What learn1 is doing
+--------------------------
+
+If you compare learn1 to learn0, you will find that learn1 uses a new
+Guile construct: the function `gh_new_procedure()', and its siblings:
+
+       /* now try to define some new builtins, coded in C, so that they are
+          available in Scheme. */
+       gh_new_procedure1_0("c-factorial", c_factorial);
+       gh_new_procedure1_0("c-sin", c_sin);
+       gh_new_procedure1_0("v-t", vector_test);
+
+  It is clear that `gh_new_procedure()' adds a new builtin routine
+written in C which can be invoked from Scheme.  We can now revise our
+checklist for programming with libguile, so it includes adding
+callbacks.  
+
+  1. `#include <guile/gh.h>'
+
+  2. You need to invoke the initialization routine `gh_enter()'.  This
+     starts up a Scheme interpreter, handling many details.
+
+  3. Your main() function should be almost empty: the real main program
+     goes in a separate function main_prog() which is passed to
+     gh_enter().  This rather arcane convention is due to the way
+     Guile's garbage collector works: the whole program has to run in
+     the dynamic context of `gh_enter()'.
+
+  4. You pass strings to the Scheme interpreter with the `gh_eval_str()'
+     routine.
+
+  5. *[new]* You can now define new builtin Scheme functions; i.e.
+     define new builtin Scheme functions, with the `gh_new_procedure()'
+     routine.
+
+  6. You pass strings to the Scheme interpreter with the
+     `gh_eval_str()' routine.
+
+  7. You link your program with `-lguile'.
+
+  I breezed by the issue of how to write your C routines that are
+registered to be called from Scheme.  This is non-trivial, and is
+discussed at length in the `Guile Programmer's Manual'.
+
+
+File: guile-tut.info,  Node: Compiling and running learn1,  Prev: What learn1 is doing,  Up: More interesting programming with libguile
+
+4.4.5 Compiling and running learn1
+----------------------------------
+
+     gcc -g -c learn1.c -o learn1.o
+     gcc -g -c c_builtins.c -o c_builtins.o
+     gcc -o learn1 learn1.o c_builtins.o -lguile -lm
+
+  If you run `learn1', it will prompt you for a one-line Scheme
+expression, just as `learn0' did.  The difference is that you can use
+the new C builtin procedures (`c-factorial', `c-sin', `v-t').
+
+     <shell-prompt> ./learn1
+     welcome to Guile
+     hello Guile
+     learn1> (display (c-factorial 6))
+     720
+     learn1> (display (c-factorial 20))
+     2192834560
+     learn1> (display (c-factorial 100))
+     0
+     learn1> (display (c-sin 1.5))
+     0.997494986604054
+     learn1> (display (v-t 10))
+     requested length for vector: 10
+     #(0.0 0.0 1.9 0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+     learn1> (display (v-t 15))
+     requested length for vector: 15
+     #(0.0 0.0 1.9 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+     learn1> (quit)
+     <shell-prompt>
+
+  As you see, taking `(c-factorial 100)' does not use bignumbers and
+returns a bogus answer.
+
+
+File: guile-tut.info,  Node: Further examples,  Prev: More interesting programming with libguile,  Up: Guile in a Library
+
+4.5 Further examples
+====================
+
+Further "idealized" examples are included in the `doc/examples/c'
+distribution.  They include programs to:
+
+   * Parse a startup file (C is the master world).
+
+   * Set up initial conditions for an n-body simulation (C is the master
+     world).
+
+   * Implement a Scheme interpreter with all of Guile's goodies, _plus_
+     the readline library _and_ a fast Fourier transform routine
+     provided in C (Scheme is the master world).
+
+
+File: guile-tut.info,  Node: Regular Expression Support,  Next: UNIX System Programming,  Prev: Guile in a Library,  Up: Top
+
+5 Regular Expression Support
+****************************
+
+
+File: guile-tut.info,  Node: UNIX System Programming,  Next: Where to find more Guile/Scheme resources,  Prev: Regular Expression Support,  Up: Top
+
+6 UNIX System Programming
+*************************
+
+
+File: guile-tut.info,  Node: Where to find more Guile/Scheme resources,  Next: Concept Index,  Prev: UNIX System Programming,  Up: Top
+
+7 Where to find more Guile/Scheme resources
+*******************************************
+
+
+File: guile-tut.info,  Node: Concept Index,  Next: Procedure and Macro Index,  Prev: Where to find more Guile/Scheme resources,  Up: Top
+
+Concept Index
+*************
+
+ [index ]
+* Menu:
+
+* Benson, Brent:                         What are scripting and extension languages.
+                                                              (line  57)
+* bignumbers:                            Jump Start.          (line  30)
+* Blandy, Jim:                           History of Guile and its motivations.
+                                                              (line  48)
+* Bourne shell:                          What are scripting and extension languages.
+                                                              (line  20)
+* builtin functions:                     More interesting programming with libguile.
+                                                              (line   6)
+* callback:                              More interesting programming with libguile.
+                                                              (line   6)
+* case sensitivity:                      How to characterize Guile.
+                                                              (line  18)
+* cell-object:                           Using Guile to program in Scheme.
+                                                              (line 283)
+* closures:                              Using Guile to program in Scheme.
+                                                              (line 216)
+* Cygnus Support:                        History of Guile and its motivations.
+                                                              (line  42)
+* Dominion:                              What are scripting and extension languages.
+                                                              (line  49)
+* Emacs Lisp:                            What are scripting and extension languages.
+                                                              (line  38)
+* extending C programs:                  Guile in a Library.  (line   9)
+* extension languages:                   What are scripting and extension languages.
+                                                              (line   6)
+* extension languages - examples:        What are scripting and extension languages.
+                                                              (line  36)
+* extensions to R5RS:                    How to characterize Guile.
+                                                              (line  20)
+* extensions to standard Scheme:         How to characterize Guile.
+                                                              (line  20)
+* Free Software Foundation:              History of Guile and its motivations.
+                                                              (line  48)
+* Galassi, Mark:                         Two world views.     (line  14)
+* gh interface:                          What is libguile.    (line   6)
+* GNU Data Language:                     Two world views.     (line  14)
+* GNU project:                           History of Guile and its motivations.
+                                                              (line  12)
+* gnudl:                                 Two world views.     (line  14)
+* hello world <1>:                       What is libguile.    (line  34)
+* hello world:                           Using Guile to program in Scheme.
+                                                              (line  27)
+* Jaffer, Aubrey:                        History of Guile and its motivations.
+                                                              (line  28)
+* large programs:                        What are scripting and extension languages.
+                                                              (line  77)
+* learn0:                                How to get started with libguile.
+                                                              (line   6)
+* learn1:                                More interesting programming with libguile.
+                                                              (line   6)
+* libguile <1>:                          What is libguile.    (line   6)
+* libguile:                              Guile in a Library.  (line   9)
+* libguile - step by step:               What learn1 is doing.
+                                                              (line  18)
+* libscheme:                             What are scripting and extension languages.
+                                                              (line  57)
+* lisp dialects:                         Using Guile to program in Scheme.
+                                                              (line  18)
+* list processing:                       Using Guile to program in Scheme.
+                                                              (line 155)
+* Lord, Tom:                             History of Guile and its motivations.
+                                                              (line  28)
+* Lotus 1-2-3:                           What are scripting and extension languages.
+                                                              (line  45)
+* master world:                          Two world views.     (line   6)
+* object-based programming:              Using Guile to program in Scheme.
+                                                              (line 363)
+* object-oriented programming:           Using Guile to program in Scheme.
+                                                              (line 363)
+* objects:                               Using Guile to program in Scheme.
+                                                              (line 215)
+* POSIX:                                 How to characterize Guile.
+                                                              (line  10)
+* primitive procedures:                  What learn1 is doing.
+                                                              (line   6)
+* recursion:                             Using Guile to program in Scheme.
+                                                              (line 155)
+* registering C functions:               What learn1 is doing.
+                                                              (line   6)
+* registering callbacks:                 What learn1 is doing.
+                                                              (line   6)
+* report on Scheme:                      How to characterize Guile.
+                                                              (line  18)
+* Revised(5) Report on the Algorithmic Language Scheme: How to characterize Guile.
+                                                              (line  18)
+* rx:                                    How to characterize Guile.
+                                                              (line  10)
+* Scheme extensions:                     How to characterize Guile.
+                                                              (line  20)
+* Scheme language - definition:          How to characterize Guile.
+                                                              (line  18)
+* Scheme language - report:              How to characterize Guile.
+                                                              (line  18)
+* Scheme programming tutorial:           Using Guile to program in Scheme.
+                                                              (line   6)
+* scm interface:                         What is libguile.    (line   6)
+* scripting languages:                   What are scripting and extension languages.
+                                                              (line   6)
+* scripting languages - examples:        What are scripting and extension languages.
+                                                              (line  15)
+* slib:                                  How to characterize Guile.
+                                                              (line  10)
+* Stallman, Richard:                     History of Guile and its motivations.
+                                                              (line  12)
+* syntactic closures:                    Using Guile to program in Scheme.
+                                                              (line 216)
+* Tcl <1>:                               History of Guile and its motivations.
+                                                              (line  12)
+* Tcl:                                   What are scripting and extension languages.
+                                                              (line  41)
+* Tk:                                    How to characterize Guile.
+                                                              (line  10)
+* tutorial on Scheme programming:        Using Guile to program in Scheme.
+                                                              (line   6)
+
+
+File: guile-tut.info,  Node: Procedure and Macro Index,  Next: Variable Index,  Prev: Concept Index,  Up: Top
+
+Procedure and Macro Index
+*************************
+
+This is an alphabetical list of all the procedures and macros in
+Dominion.
+
+ [index ]
+* Menu:
+
+* MAKE-CELL:                             Using Guile to program in Scheme.
+                                                              (line 283)
+* represent-matrix:                      Using Guile to program in Scheme.
+                                                              (line 206)
+* send:                                  Using Guile to program in Scheme.
+                                                              (line 343)
+
+
+File: guile-tut.info,  Node: Variable Index,  Next: Type Index,  Prev: Procedure and Macro Index,  Up: Top
+
+Variable Index
+**************
+
+This is an alphabetical list of the major global variables in Dominion.
+
+ [index ]
+* Menu:
+
+File: guile-tut.info,  Node: Type Index,  Prev: Variable Index,  Up: Top
+
+Type Index
+**********
+
+This is an alphabetical list of the major data structures in Dominion.
+
+ [index ]
+* Menu:
+
+
+Tag Table:
+Node: Top222
+Node: Jump Start1374
+Node: Introduction4985
+Node: What are scripting and extension languages5686
+Node: History of Guile and its motivations9223
+Node: How to characterize Guile11677
+Node: Using Guile to program in Scheme13205
+Ref: Using Guile to program in Scheme-Footnote-126037
+Node: Guile in a Library26135
+Node: Two world views26712
+Node: What is libguile28716
+Node: How to get started with libguile30700
+Node: More interesting programming with libguile33540
+Node: learn1.c34840
+Node: c_builtins.h36294
+Node: c_builtins.c36646
+Node: What learn1 is doing38152
+Node: Compiling and running learn140021
+Node: Further examples41229
+Node: Regular Expression Support41831
+Node: UNIX System Programming42018
+Node: Where to find more Guile/Scheme resources42222
+Node: Concept Index42449
+Node: Procedure and Macro Index51204
+Node: Variable Index51912
+Node: Type Index52146
+
+End Tag Table

@@ -1,0 +1,12 @@
+Index
+
+gud-guile.el --- Support for debugging guile internals
+guile-c.el --- Guile C editing commands
+guile-scheme.el --- Guile Scheme editing mode
+guile.el --- Emacs Guile interface
+multistring.el --- editing multiline strings.
+patch.el --- mail/apply a patch
+ppexpand.el --- temporarily expanding macros in a pretty way.
+update-changelog.el --- stitch rcs2log output to ChangeLog
+
+Generated using: for f in *.el ; do sed -e 's/^....//g' -e '1q' $f ; done

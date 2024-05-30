@@ -1,0 +1,61 @@
+;;;; procprop.test --- Procedure properties               -*- Scheme -*-
+;;;; Ludovic Courtès <ludo@gnu.org>
+;;;;
+;;;; 	Copyright (C) 2009 Free Software Foundation, Inc.
+;;;;
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;;
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;;
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(define-module (test-procpop)
+  :use-module (test-suite lib))
+
+
+(with-test-prefix "procedure-name"
+  (pass-if "simple subr"
+    (eq? 'display (procedure-name display)))
+
+  (pass-if "gsubr"
+    (eq? 'hashq-ref (procedure-name hashq-ref))))
+
+
+(with-test-prefix "procedure-arity"
+  (pass-if "simple subr"
+    (equal? (procedure-property display 'arity)
+            '(1 1 #f)))
+
+  (pass-if "gsubr"
+    (equal? (procedure-property hashq-ref 'arity)
+            '(2 1 #f)))
+
+  (pass-if "port-closed?"
+    (equal? (procedure-property port-closed? 'arity)
+            '(1 0 #f)))
+
+  (pass-if "apply"
+    (equal? (procedure-property apply 'arity)
+            '(1 0 #t)))
+
+  (pass-if "cons*"
+    (equal? (procedure-property cons* 'arity)
+            '(1 0 #t)))
+
+  (pass-if "list"
+    (equal? (procedure-property list 'arity)
+            '(0 0 #t))))
+
+
+;;; Local Variables:
+;;; coding: latin-1
+;;; End:

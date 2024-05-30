@@ -1,0 +1,250 @@
+;;;; regexp.test --- test Guile's regular expression functions -*- scheme -*-
+;;;; Jim Blandy <jimb@red-bean.com> --- September 1999
+;;;;
+;;;; 	Copyright (C) 1999, 2004, 2006, 2007, 2008 Free Software Foundation, Inc.
+;;;; 
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;; 
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-regexp)
+  #:use-module (test-suite lib)
+  #:use-module (ice-9 regex))
+
+
+;;; Run a regexp-substitute or regexp-substitute/global test, once
+;;; providing a real port and once providing #f, requesting direct
+;;; string output.
+(define (vary-port func expected . args)
+  (pass-if "port is string port"
+	   (equal? expected
+		   (call-with-output-string
+		    (lambda (port)
+		      (apply func port args)))))
+  (pass-if "port is #f"
+	   (equal? expected
+		   (apply func #f args))))
+
+(define (object->string obj)
+  (call-with-output-string
+   (lambda (port)
+     (write obj port))))
+
+;;;
+;;; make-regexp
+;;;
+
+(with-test-prefix "make-regexp"
+
+  (pass-if-exception "no args" exception:wrong-num-args
+    (make-regexp))
+
+  (pass-if-exception "bad pat arg" exception:wrong-type-arg
+    (make-regexp 'blah))
+
+  ;; in guile prior to 1.6.5 make-regex didn't validate its flags args
+  (pass-if-exception "bad arg 2" exception:wrong-type-arg
+    (make-regexp "xyz" 'abc))
+
+  (pass-if-exception "bad arg 3" exception:wrong-type-arg
+    (make-regexp "xyz" regexp/icase 'abc)))
+
+;;;
+;;; match:string
+;;;
+
+(with-test-prefix "match:string"
+
+  (pass-if "foo"
+    (string=? "foo" (match:string (string-match ".*" "foo"))))
+
+  (pass-if "foo offset 1"
+    (string=? "foo" (match:string (string-match ".*" "foo" 1)))))
+
+;;;
+;;; regexp-exec
+;;;
+
+(with-test-prefix "regexp-exec"
+
+  (pass-if-exception "non-integer offset" exception:wrong-type-arg
+    (let ((re (make-regexp "ab+")))
+      (regexp-exec re "aaaabbbb" 1.5 'bogus-flags-arg)))
+
+  (pass-if-exception "non-string input" exception:wrong-type-arg
+    (let ((re (make-regexp "ab+")))
+      (regexp-exec re 'not-a-string)))
+
+  (pass-if-exception "non-string input, with offset" exception:wrong-type-arg
+    (let ((re (make-regexp "ab+")))
+      (regexp-exec re 'not-a-string 5)))
+
+  ;; in guile 1.8.1 and earlier, a #\nul character in the input string was
+  ;; only detected in a critical section, and the resulting error throw
+  ;; abort()ed the program
+  (pass-if-exception "nul in input" exception:string-contains-nul
+    (let ((re (make-regexp "ab+")))
+      (regexp-exec re (string #\a #\b (integer->char 0)))))
+
+  ;; in guile 1.8.1 and earlier, a bogus flags argument was only detected
+  ;; inside a critical section, and the resulting error throw abort()ed the
+  ;; program
+  (pass-if-exception "non-integer flags" exception:wrong-type-arg
+    (let ((re (make-regexp "ab+")))
+      (regexp-exec re "aaaabbbb" 0 'bogus-flags-arg))))      
+
+;;;
+;;; fold-matches
+;;;
+
+(with-test-prefix "fold-matches"
+
+  (pass-if "without flags"
+    (equal? '("hello")
+            (fold-matches "^[a-z]+$" "hello" '()
+                          (lambda (match result)
+                            (cons (match:substring match)
+                                  result)))))
+
+  (pass-if "with flags"
+    ;; Prior to 1.8.6, passing an additional flag would not work.
+    (null?
+     (fold-matches "^[a-z]+$" "hello" '()
+                   (lambda (match result)
+                     (cons (match:substring match)
+                           result))
+                   (logior regexp/notbol regexp/noteol)))))
+
+
+;;;
+;;; regexp-quote
+;;;
+
+(with-test-prefix "regexp-quote"
+
+  (pass-if-exception "no args" exception:wrong-num-args
+    (regexp-quote))
+
+  (pass-if-exception "bad string arg" exception:wrong-type-arg
+    (regexp-quote 'blah))
+
+  (let ((lst `((regexp/basic    ,regexp/basic)
+	       (regexp/extended ,regexp/extended)))
+	;; string of all characters, except #\nul which doesn't work because
+	;; it's the usual end-of-string for the underlying C regexec()
+	(allchars (list->string (map integer->char
+				     (cdr (iota char-code-limit))))))
+    (for-each
+     (lambda (elem)
+       (let ((name (car  elem))
+	     (flag (cadr elem)))
+
+	 (with-test-prefix name
+
+	   ;; try on each individual character, except #\nul
+	   (do ((i 1 (1+ i)))
+	       ((>= i char-code-limit))
+	     (let* ((c (integer->char i))
+		    (s (string c))
+		    (q (regexp-quote s)))
+	       (pass-if (list "char" i c s q)
+		 (let ((m (regexp-exec (make-regexp q flag) s)))
+		   (and (= 0 (match:start m))
+			(= 1 (match:end m)))))))
+
+	   ;; try on pattern "aX" where X is each character, except #\nul
+	   ;; this exposes things like "?" which are special only when they
+	   ;; follow a pattern to repeat or whatever ("a" in this case)
+	   (do ((i 1 (1+ i)))
+	       ((>= i char-code-limit))
+	     (let* ((c (integer->char i))
+		    (s (string #\a c))
+		    (q (regexp-quote s)))
+	       (pass-if (list "string \"aX\"" i c s q)
+		 (let ((m (regexp-exec (make-regexp q flag) s)))
+		   (and (= 0 (match:start m))
+			(= 2 (match:end m)))))))
+
+	   (pass-if "string of all chars"
+	     (let ((m (regexp-exec (make-regexp (regexp-quote allchars)
+						flag) allchars)))
+	       (and (= 0 (match:start m))
+		    (= (string-length allchars) (match:end m))))))))
+     lst)))
+
+;;;
+;;; regexp-substitute
+;;;
+
+(with-test-prefix "regexp-substitute"
+  (let ((match
+	 (string-match "patleft(sub1)patmid(sub2)patright"
+		       "contleftpatleftsub1patmidsub2patrightcontright")))
+    (define (try expected . args)
+      (with-test-prefix (object->string args)
+	(apply vary-port regexp-substitute expected match args)))
+
+    (try "")
+    (try "string1" "string1")
+    (try "string1string2" "string1" "string2")
+    (try "patleftsub1patmidsub2patright" 0)
+    (try "hi-patleftsub1patmidsub2patright-bye" "hi-" 0 "-bye")
+    (try "sub1" 1)
+    (try "hi-sub1-bye" "hi-" 1 "-bye")
+    (try "hi-sub2-bye" "hi-" 2 "-bye")
+    (try "contleft" 'pre)
+    (try "contright" 'post)
+    (try "contrightcontleft" 'post 'pre)
+    (try "contrightcontleftcontrightcontleft" 'post 'pre 'post 'pre)
+    (try "contrightsub2sub1contleft" 'post 2 1 'pre)
+    (try "foosub1sub1sub1sub1bar" "foo" 1 1 1 1 "bar")))
+
+(with-test-prefix "regexp-substitute/global"
+  
+  (define (try expected . args)
+    (with-test-prefix (object->string args)
+      (apply vary-port regexp-substitute/global expected args)))
+
+  (try "hi" "a(x*)b" "ab" "hi")
+  (try ""   "a(x*)b" "ab" 1)
+  (try "xx" "a(x*)b" "axxb" 1)
+  (try "xx" "a(x*)b" "_axxb_" 1)
+  (try "pre" "a(x*)b" "preaxxbpost" 'pre)
+  (try "post" "a(x*)b" "preaxxbpost" 'post)
+  (try "string" "x" "string" 'pre "y" 'post)
+  (try "4" "a(x*)b" "_axxb_" (lambda (m)
+				(number->string (match:end m 1))))
+
+  (try "_aybycyd_" "x+" "_axbxxcxxxd_" 'pre "y" 'post)
+
+  ;; This should not go into an infinite loop, just because the regexp
+  ;; can match the empty string.  This test also kind of beats on our
+  ;; definition of where a null string can match.
+  (try "y_yaybycydy_y" "x*" "_axbxxcxxxd_" 'pre "y" 'post)
+
+  ;; These kind of bother me.  The extension from regexp-substitute to
+  ;; regexp-substitute/global is only natural if your item list
+  ;; includes both pre and post.  If those are required, why bother
+  ;; to include them at all?
+  (try "4:7:12:_" "a(x*)b" "_axxbaxbaxxxb_"
+       (lambda (m) (number->string (match:end m 1))) ":"
+       'post)
+  (try "4:10:19:_:19:10:4" "a(x*)b" "_axxbaxxxxbaxxxxxxxb_"
+       (lambda (m) (number->string (match:end m 1))) ":"
+       'post
+       ":" (lambda (m) (number->string (match:end m 1))))
+
+  ;; Jan Nieuwenhuizen's bug, 2 Sep 1999
+  (try "" "_" (make-string 500 #\_)
+       'post))

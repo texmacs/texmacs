@@ -1,0 +1,271 @@
+;;;; guardians.test --- test suite for Guile Guardians     -*- scheme -*-
+;;;; Jim Blandy <jimb@red-bean.com> --- July 1999
+;;;;
+;;;; 	Copyright (C) 1999, 2001, 2006 Free Software Foundation, Inc.
+;;;; 
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;; 
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+;;; These tests make some questionable assumptions.
+;;; - They assume that a GC will find all dead objects, so they
+;;;   will become flaky if we have a generational GC.
+;;; - They assume that objects won't be saved by the guardian until
+;;;   they explicitly invoke GC --- in other words, they assume that GC
+;;;   won't happen too often.
+
+(define-module (test-guardians)
+  :use-module (test-suite lib)
+  :use-module (ice-9 documentation)
+  :use-module (ice-9 weak-vector))
+
+
+;;;
+;;; miscellaneous
+;;;
+
+(define (documented? object)
+  (not (not (object-documentation object))))
+
+
+(gc)
+
+;;; Who guards the guardian?
+(gc)
+(define g2 (make-guardian))
+(g2 (list 'g2-garbage))
+(define g3 (make-guardian))
+(g3 (list 'g3-garbage))
+(g3 g2)
+(pass-if "g2-garbage not collected yet" (equal? (g2) #f))
+(pass-if "g3-garbage not collected yet" (equal? (g3) #f))
+(set! g2 #f)
+(gc)
+(let ((seen-g3-garbage #f)
+      (seen-g2 #f)
+      (seen-something-else #f))
+  (let loop ()
+    (let ((saved (g3)))
+      (if saved
+	  (begin
+	    (cond
+	     ((equal? saved '(g3-garbage)) (set! seen-g3-garbage #t))
+	     ((procedure? saved) (set! seen-g2 saved))
+	     (else (pk saved) (set! seen-something-else #t)))
+	    (loop)))))
+  (pass-if "g3-garbage saved" (or seen-g3-garbage (throw 'unresolved)))
+  (pass-if "g2-saved" (or (procedure? seen-g2) (throw 'unresolved)))
+  (pass-if "nothing else saved" (not seen-something-else))
+  (pass-if "g2-garbage saved" (or (and (procedure? seen-g2)
+				       (equal? (seen-g2) '(g2-garbage)))
+				  (throw 'unresolved))))
+
+(with-test-prefix "standard guardian functionality"
+
+  (with-test-prefix "make-guardian"
+
+    (pass-if "documented?"
+      (documented? make-guardian))
+
+    (pass-if "returns procedure"
+      (procedure? (make-guardian)))
+
+    (pass-if "returns new procedure each time"
+      (not (equal? (make-guardian) (make-guardian)))))
+
+  (with-test-prefix "empty guardian"
+
+    (pass-if "returns #f"
+      (eq? ((make-guardian)) #f))
+
+    (pass-if "returns always #f"
+      (let ((g (make-guardian)))
+	(and (eq? (g) #f)
+	     (begin (gc) (eq? (g) #f))
+	     (begin (gc) (eq? (g) #f))))))
+
+  (with-test-prefix "guarding independent objects"
+
+    (pass-if "guarding immediate"
+      (let ((g (make-guardian)))
+	(g #f)
+	(and (eq? (g) #f)
+	     (begin (gc) (eq? (g) #f))
+	     (begin (gc) (eq? (g) #f)))))
+
+    (pass-if "guarding non-immediate"
+      (let ((g (make-guardian)))
+	(gc)
+	(g (cons #f #f))
+	(if (not (eq? (g) #f))
+	    (throw 'unresolved)
+	    (begin
+	      (gc)
+	      (if (not (equal? (g) (cons #f #f)))
+		  (throw 'unresolved)
+		  (eq? (g) #f))))))
+
+    (pass-if "guarding two non-immediates"
+      (let ((g (make-guardian)))
+	(gc)
+	(g (cons #f #f))
+	(g (cons #t #t))
+	(if (not (eq? (g) #f))
+	    (throw 'unresolved)
+	    (begin
+	      (gc)
+	      (let ((l (list (g) (g))))
+		(if (not (or (equal? l (list (cons #f #f) (cons #t #t)))
+			     (equal? l (list (cons #t #t) (cons #f #f)))))
+		    (throw 'unresolved)
+		    (eq? (g) #f)))))))
+
+    (pass-if "re-guarding non-immediates"
+      (let ((g (make-guardian)))
+	(gc)
+	(g (cons #f #f))
+	(if (not (eq? (g) #f))
+	    (throw 'unresolved)
+	    (begin
+	      (gc)
+	      (let ((p (g)))
+		(if (not (equal? p (cons #f #f)))
+		    (throw 'unresolved)
+		    (begin
+		      (g p)
+		      (set! p #f)
+		      (gc)
+		      (if (not (equal? (g) (cons #f #f)))
+			  (throw 'unresolved)
+			  (eq? (g) #f)))))))))
+
+    (pass-if "guarding living non-immediate"
+      (let ((g (make-guardian))
+	    (p (cons #f #f)))
+	(g p)
+	(if (not (eq? (g) #f))
+	    (throw 'fail)
+	    (begin
+	      (gc)
+	      (not (eq? (g) p)))))))
+
+  (with-test-prefix "guarding weakly referenced objects"
+
+    (pass-if "guarded weak vector element gets returned from guardian"
+      (let ((g (make-guardian))
+	    (v (weak-vector #f)))
+	(gc)
+	(let ((p (cons #f #f)))
+	  (g p)
+	  (vector-set! v 0 p))
+	(if (not (eq? (g) #f))
+	    (throw 'unresolved)
+	    (begin
+	      (gc)
+	      (if (not (equal? (g) (cons #f #f)))
+		  (throw 'unresolved)
+		  (eq? (g) #f))))))
+
+    (pass-if "guarded element of weak vector gets eventually removed from weak vector"
+      (let ((g (make-guardian))
+	    (v (weak-vector #f)))
+	(gc)
+	(let ((p (cons #f #f)))
+	  (g p)
+	  (vector-set! v 0 p))
+	(begin
+	  (gc)
+	  (if (not (equal? (g) (cons #f #f)))
+	      (throw 'unresolved)
+	      (begin
+		(gc)
+		(or (not (vector-ref v 0))
+		    (throw 'unresolved))))))))
+
+  (with-test-prefix "guarding weak containers"
+
+    (pass-if "element of guarded weak vector gets collected"
+      (let ((g (make-guardian))
+	    (v (weak-vector (cons #f #f))))
+	(g v)
+	(gc)
+	(if (equal? (vector-ref v 0) (cons #f #f))
+	    (throw 'unresolved)
+	    #t))))
+
+  (with-test-prefix "guarding guardians"
+    #t)
+
+  (with-test-prefix "guarding dependent objects"
+
+    ;; We don't make any guarantees about the order objects are
+    ;; returned from guardians and therefore we skip the following
+    ;; test.
+
+    (if #f
+	(pass-if "guarding vector and element"
+          (let ((g (make-guardian)))
+	    (gc)
+	    (let ((p (cons #f #f)))
+	      (g p)
+	      (g (vector p)))
+	    (if (not (eq? (g) #f))
+		(throw 'unresolved)
+		(begin
+		  (gc)
+		  (if (not (equal? (g) (vector (cons #f #f))))
+		      (throw 'unresolved)
+		      (if (not (eq? (g) #f))
+			  (throw 'unresolved)
+			  (begin
+			    (gc)
+			    (if (not (equal? (g) (cons #f #f)))
+				(throw 'unresolved)
+				(eq? (g) #f)))))))))))
+
+  (with-test-prefix "guarding objects more than once"
+
+    (pass-if "guarding twice in one guardian"
+       (let ((g (make-guardian)))
+	 (gc)
+	 (let ((p (cons #f #f)))
+	   (g p)
+	   (g p))
+	 (if (not (eq? (g) #f))
+	     (throw 'unresolved)
+	     (begin
+	       (gc)
+	       (or (and (and=> (g) (lambda (o) (equal? o (cons #f #f))))
+			(and=> (g) (lambda (o) (equal? o (cons #f #f)))))
+		   (throw 'unresolved))))))
+
+    (pass-if "guarding twice in two guardians"
+       (let ((g (make-guardian))
+	     (h (make-guardian)))
+	 (gc)
+	 (let ((p (cons #f #f)))
+	   (g p)
+	   (h p))
+	 (if (not (eq? (g) #f))
+	     (throw 'unresolved)
+	     (begin
+	       (gc)
+	       (or (and (and=> (g) (lambda (o) (equal? o (cons #f #f))))
+			(and=> (h) (lambda (o) (equal? o (cons #f #f)))))
+		   (throw 'unresolved)))))))
+
+  (with-test-prefix "guarding cyclic dependencies"
+    #t)
+
+  )

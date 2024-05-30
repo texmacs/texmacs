@@ -1,0 +1,397 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Miscellaneous Tools
+@chapter Miscellaneous Tools
+
+Programming is more fun with a good tools.  This chapter describes snarfing
+tools, and the @code{guile-tools} program which can be used to invoke the rest
+of the tools (which are self-documenting).  Some of these are used in Guile
+development, too.  Imagine that!
+
+@menu
+* Snarfing::                    Grepping the source in various ways.
+* Executable Modules::          Modules callable via guile-tools.
+@end menu
+
+@c ---------------------------------------------------------------------------
+@node Snarfing
+@section Snarfing
+@cindex snarfing
+
+Because it's easier to maintain documentation, code, and other metainfo in one
+source file than in many files, there have evolved many methods for grepping
+source to lift and separate these kinds of info, in the process generating
+docs or fragments of source or what have you.  This is known generally as
+@dfn{snarfing}, which comes from the verb ``to snarf'', here meaning ``to
+unceremoniously extract information from a somewhat unwilling source.''
+
+This section documents the installed program @code{guile-snarf} which does
+@dfn{init snarfing}, and also touches upon guile's doc snarfing process which
+is not yet finalized (i.e., doc snarfing programs are not installed at this
+time).
+
+@menu
+* Init Snarfing with guile-snarf::      Exposing C subrs and friends to Scheme.
+* Doc Snarfing::                        Generating GDFv2 or texi from source.
+@end menu
+
+@c ---------------------------------------------------------------------------
+@node Init Snarfing with guile-snarf
+@subsection Init Snarfing with guile-snarf
+@c NOTE: This node and two subnodes are adapted from ../sources/snarf.texi.
+@cindex snarfing, init
+@cindex primitive functions
+@cindex subrs, defining
+
+When writing C code for use with Guile, you typically define a set of C
+functions, and then make some of them visible to the Scheme world by
+calling the @code{scm_c_define_gsubr} function; a C function published in
+this way is called a @dfn{subr}.  If you have many subrs to publish, it
+can sometimes be annoying to keep the list of calls to
+@code{scm_c_define_gsubr} in sync with the list of function definitions.
+Frequently, a programmer will define a new subr in C, recompile the
+application, and then discover that the Scheme interpreter cannot see
+the subr, because of a missed call to @code{scm_c_define_gsubr}.
+
+Guile provides the @code{guile-snarf} command to manage this problem.
+Using this tool, you can keep all the information needed to define the
+subr alongside the function definition itself; @code{guile-snarf} will
+extract this information from your source code, and automatically
+generate a file of calls to @code{scm_c_define_gsubr} which you can
+@code{#include} into an initialization function.
+
+@menu
+* How guile-snarf works::           Using @code{guile-snarf}, with example.
+* Macros guile-snarf recognizes::   How to mark up code for @code{guile-snarf}.
+* Writing your own snarfing macros:: How to define new things to snarf.
+@end menu
+
+@c ---------------------------------------------------------------------------
+@node How guile-snarf works
+@subsubsection How guile-snarf works
+@cindex guile-snarf invocation
+@cindex guile-snarf example
+
+Usage: guile-snarf [-o @var{outfile}] [@var{cpp-args} ...]
+
+The @code{guile-snarf} program will extract initialization actions to
+@var{outfile} or to standard output when no @var{outfile} has been
+specified or when @var{outfile} is @code{-}.  The C preprocessor is
+called with @var{cpp-args} (which usually include an input file) and
+the output is filtered to extract the initialization actions.
+
+If there are errors during processing, @var{outfile} is deleted and the
+program exits with non-zero status.
+
+During snarfing, the pre-processor macro @code{SCM_MAGIC_SNARFER} is
+defined.  You could use this to avoid including snarfer output files
+that don't yet exist by writing code like this:
+
+@smallexample
+#ifndef SCM_MAGIC_SNARFER
+#include "foo.x"
+#endif
+@end smallexample
+
+If the environment variable @code{CPP} is set, use its value instead of the
+C pre-processor determined at Guile configure-time.
+
+@xref{Macros guile-snarf recognizes}, for a list of the special (some would
+say magic) cpp macros you can use, including the list of deprecated macros.
+
+For example, here is how you might define a new subr called
+@code{clear-image}, implemented by the C function @code{clear_image}:
+
+@example
+@group
+#include <libguile.h>
+
+SCM_DEFINE (clear_image, "clear-image", 1, 0, 0,
+            (SCM image_smob),
+            "Clear the image.")
+#define FUNC_NAME s_clear_image
+@{
+  /* C code to clear the image in @code{image_smob}... */
+@}
+#undef FUNC_NAME
+
+void
+init_image_type ()
+@{
+#include "image-type.x"
+@}
+@end group
+@end example
+
+The @code{SCM_DEFINE} declaration says that the C function
+@code{clear_image} implements a Scheme subr called @code{clear-image},
+which takes one required argument (of type @code{SCM} and named
+@code{image_smob}), no optional arguments, and no rest argument.
+@xref{Doc Snarfing}, for info on the docstring.
+
+This works in concert with @code{FUNC_NAME} to also define a static
+array of characters named @code{s_clear_image}, initialized to the
+string "clear-image".  The body of @code{clear_image} may use the array
+in error messages, instead of writing out the literal string; this may
+save string space on some systems.
+
+Assuming the text above lives in a file named @file{image-type.c}, you will
+need to execute the following command to prepare this file for compilation:
+
+@example
+guile-snarf -o image-type.x image-type.c
+@end example
+
+This scans @file{image-type.c} for @code{SCM_DEFINE}
+declarations, and writes to @file{image-type.x} the output:
+
+@example
+scm_c_define_gsubr (s_clear_image, 1, 0, 0, (SCM (*)() ) clear_image);
+@end example
+
+When compiled normally, @code{SCM_DEFINE} is a macro which expands to
+a declaration of the @code{s_clear_image} string and the function
+header for @code{clear_image}.
+
+Note that the output file name matches the @code{#include} from the
+input file.  Also, you still need to provide all the same information
+you would if you were using @code{scm_c_define_gsubr} yourself, but you
+can place the information near the function definition itself, so it is
+less likely to become incorrect or out-of-date.
+
+If you have many files that @code{guile-snarf} must process, you should
+consider using a fragment like the following in your Makefile:
+
+@example
+snarfcppopts = $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
+.SUFFIXES: .x
+.c.x:
+	guile-snarf -o $@@ $< $(snarfcppopts)
+@end example
+
+This tells make to run @code{guile-snarf} to produce each needed
+@file{.x} file from the corresponding @file{.c} file.
+
+The program @code{guile-snarf} passes its command-line arguments
+directly to the C preprocessor, which it uses to extract the
+information it needs from the source code. this means you can pass
+normal compilation flags to @code{guile-snarf} to define preprocessor
+symbols, add header file directories, and so on.
+
+@c ---------------------------------------------------------------------------
+@node Macros guile-snarf recognizes
+@subsubsection Macros guile-snarf recognizes
+@cindex guile-snarf recognized macros
+@cindex guile-snarf deprecated macros
+
+Here are the macros you can use in your source code from which
+@code{guile-snarf} can construct initialization code:
+
+@example
+/* procedures */
+SCM_DEFINE (FNAME, PRIMNAME, REQ, OPT, VAR, ARGLIST, DOCSTRING)
+
+SCM_PROC (RANAME, STR, REQ, OPT, VAR, CFN)
+SCM_REGISTER_PROC (RANAME, STR, REQ, OPT, VAR, CFN)
+
+SCM_GPROC (RANAME, STR, REQ, OPT, VAR, CFN, GF)
+
+/* everything else */
+SCM_SYMBOL (c_name, scheme_name)
+SCM_GLOBAL_SYMBOL (c_name, scheme_name)
+
+SCM_KEYWORD (c_name, scheme_name)
+SCM_GLOBAL_KEYWORD (c_name, scheme_name)
+
+SCM_VARIABLE (c_name, scheme_name)
+SCM_GLOBAL_VARIABLE (c_name, scheme_name)
+
+SCM_VARIABLE_INIT (c_name, scheme_name, init_val)
+SCM_GLOBAL_VARIABLE_INIT (c_name, scheme_name, init_val)
+@end example
+
+@c i like things dense, but maybe someone else will reformat this
+@c into an easier-to-read list.  also, all-upcase to me is a form
+@c of quoting, so @var{} is not necessary there. --ttn
+REQ and OPT are numbers indicating required and optional argument
+counts, respectively; VAR is a number that, if non-zero, means the
+function will accept any remaining arguments as a list; DOCSTRING is a
+string (use @code{\n\} at eol for multi-line); FNAME is a C-language
+identifier, CFN and GF and @var{c_name} likewise; PRIMNAME is a string
+denoting the name available to Scheme code, STR and @var{scheme_name}
+likewise; RANAME is the name of the static string (must match that
+declared by the associated definition of cpp macro @var{FUNC_NAME});
+ARGLIST is an argument list (in parentheses); and lastly, @var{init_val}
+is a expression suitable for initializing a new variable.
+
+For procedures, you can use @code{SCM_DEFINE} for most purposes.  Use
+@code{SCM_PROC} along with @code{SCM_REGISTER_PROC} when you don't
+want to be bothered with docstrings.  Use @code{SCM_GPROC} for generic
+functions (@pxref{Creating Generic Functions,,, goops, GOOPS}).  All
+procedures are declared with return type @code{SCM}.
+
+For everything else, use the appropriate macro (@code{SCM_SYMBOL} for
+symbols, and so on).  Without "_GLOBAL_", the declarations are
+@code{static}.
+
+All these macros should be used at top-level, outside function bodies.
+Also, it's a good idea to define @var{FUNC_NAME} immediately after using
+@code{SCM_DEFINE} (and similar), and then the function body, and then
+@code{#undef FUNC_NAME}.
+
+@xref{How guile-snarf works}, and also libguile source, for examples.
+@xref{Subrs}, for details on argument passing and how to write C
+functions.
+
+@c ---------------------------------------------------------------------------
+@node Writing your own snarfing macros
+@subsubsection Writing your own snarfing macros
+
+When you want to use the general snarfing machanism, but none of the
+provided macros fits your need, you can use the macro
+@code{SCM_SNARF_INIT}.
+
+For example, the @code{SCM_SYMBOL} macro can be defined like this:
+
+@example
+#define SCM_SYMBOL(c_name, scheme_name) \
+static SCM c_name \
+SCM_SNARF_INIT(c_name = scm_permanent_object (scm_str2symbol (scheme_name)))
+@end example
+
+@defmac SCM_SNARF_INIT (code)
+When processed normally, @code{SCM_SNARF_INIT} expands to nothing;
+when processed by the snarfer, it causes @var{code} to be included in
+the initialization action file, followed by a semicolon.
+@end defmac
+
+@c ---------------------------------------------------------------------------
+@node Doc Snarfing
+@subsection Doc Snarfing
+
+In addition to init snarfing (@pxref{Init Snarfing with guile-snarf}),
+the libguile sources are also subject to doc snarfing, by programs that
+are included in the distribution (but not installed at this time).  The
+output is the file @file{guile-procedures.txt} which is installed, and
+subsequently used by module @code{(ice-9 documentation)}.
+
+Here is a list of what does what according to @file{libguile/Makefile.am}:
+
+@itemize
+@item guile-snarf-docs runs cpp defining SCM_MAGIC_SNARF_DOCS
+@item guile_filter_doc_snarfage parses guile-snarf-docs output to produce .doc
+@item ../scripts/snarf-check-and-output-texi makes guile.texi
+@item ../scripts/snarf-check-and-output-texi makes guile-procedures.txt
+@item guile-func-name-check checks source snarf-syntax integrity (optional?)
+@item guile-doc-snarf calls guile-snarf-docs (to make .doc) and guile-snarf
+@end itemize
+
+Note that for guile-1.4, a completely different approach was used!  All this
+is rather byzantine, so for now @emph{NO} doc snarfing programs are installed.
+
+[fixme: Document further once doc snarfing is tamed somewhat. --ttn]
+
+@c ---------------------------------------------------------------------------
+@node Executable Modules
+@section Executable Modules
+@cindex guile-tools
+@cindex modules, executable
+@cindex executable modules
+@cindex scripts
+
+When Guile is installed, in addition to the @code{(ice-9 FOO)} modules,
+a set of @dfn{executable modules} @code{(scripts BAR)} is also installed.
+Each is a regular Scheme module that has some additional packaging so
+that it can be called as a program in its own right, from the shell.  For this
+reason, we sometimes use the term @dfn{script} in this context to mean the
+same thing.
+
+@c wow look at this hole^!  variable-width font users eat your heart out.
+
+As a convenience, the @code{guile-tools} wrapper program is installed along w/
+@code{guile}; it knows where a particular module is installed and calls it
+passing its args to the program.  The result is that you need not augment your
+PATH.  Usage is straightforward:
+
+@example
+guile-tools --help
+guile-tools --version
+guile-tools [OPTION] PROGRAM [ARGS ...]
+
+If PROGRAM is "list" or omitted, display contents of scripts dir, otherwise
+PROGRAM is run w/ ARGS.  Options (only one of which may be used at a time):
+ --scriptsdir DIR    -- Look in DIR for scripts
+ --guileversion VERS -- Look in $pkgdatadir/VERS/scripts for scripts
+ --source            -- Display PROGRAM source (ignore ARGS) to stdout
+@end example
+
+The modules are self-documenting.  For example, to see the documentation for
+@code{lint}, use one (or both) of the shell commands:
+
+@example
+guile-tools display-commentary '(scripts lint)'
+guile-tools --source lint
+@end example
+
+The rest of this section describes the packaging that goes into creating an
+executable module.  Feel free to skip to the next chapter.
+
+@subsection Writing Executable Modules
+
+@c adapted from scripts/README
+
+See template file @code{PROGRAM} for a quick start.
+
+Programs must follow the @dfn{executable module} convention, documented here:
+
+@itemize
+
+@item
+The file name must not end in ".scm".
+
+@item
+The file must be executable (chmod +x).
+
+@item
+The module name must be "(scripts PROGRAM)".  A procedure named PROGRAM w/
+signature "(PROGRAM . args)" must be exported.  Basically, use some variant
+of the form:
+
+@example
+(define-module (scripts PROGRAM)
+  :export (PROGRAM))
+@end example
+
+Feel free to export other definitions useful in the module context.
+
+@item
+There must be the alias:
+
+@example
+(define main PROGRAM)
+@end example
+
+However, `main' must NOT be exported.
+
+@item
+The beginning of the file must use the following invocation sequence:
+
+@example
+#!/bin/sh
+main='(module-ref (resolve-module '\''(scripts PROGRAM)) '\'main')'
+exec $@{GUILE-guile@} -l $0 -c "(apply $main (cdr (command-line)))" "$@@"
+!#
+@end example
+
+@end itemize
+
+Following these conventions allows the program file to be used as module
+@code{(scripts PROGRAM)} in addition to as a standalone executable.  Please
+also include a helpful Commentary section w/ some usage info.
+
+@c tools.texi ends here

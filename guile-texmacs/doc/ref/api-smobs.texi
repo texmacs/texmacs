@@ -1,0 +1,198 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Smobs
+@section Smobs
+
+This chapter contains reference information related to defining and
+working with smobs.  See @ref{Defining New Types (Smobs)} for a
+tutorial-like introduction to smobs.
+
+@deftypefun scm_t_bits scm_make_smob_type (const char *name, size_t size)
+This function adds a new smob type, named @var{name}, with instance size
+@var{size}, to the system.  The return value is a tag that is used in
+creating instances of the type.
+
+If @var{size} is 0, the default @emph{free} function will do nothing.
+
+If @var{size} is not 0, the default @emph{free} function will
+deallocate the memory block pointed to by @code{SCM_SMOB_DATA} with
+@code{scm_gc_free}.  The @var{WHAT} parameter in the call to
+@code{scm_gc_free} will be @var{NAME}.
+
+Default values are provided for the @emph{mark}, @emph{free},
+@emph{print}, and @emph{equalp} functions, as described in
+@ref{Defining New Types (Smobs)}.  If you want to customize any of
+these functions, the call to @code{scm_make_smob_type} should be
+immediately followed by calls to one or several of
+@code{scm_set_smob_mark}, @code{scm_set_smob_free},
+@code{scm_set_smob_print}, and/or @code{scm_set_smob_equalp}.
+@end deftypefun
+
+@deftypefn {C Function} void scm_set_smob_mark (scm_t_bits tc, SCM (*mark) (SCM obj))
+This function sets the smob marking procedure for the smob type specified by
+the tag @var{tc}. @var{tc} is the tag returned by @code{scm_make_smob_type}.
+
+The @var{mark} procedure must cause @code{scm_gc_mark} to be called
+for every @code{SCM} value that is directly referenced by the smob
+instance @var{obj}.  One of these @code{SCM} values can be returned
+from the procedure and Guile will call @code{scm_gc_mark} for it.
+This can be used to avoid deep recursions for smob instances that form
+a list.
+
+It must not call any libguile function or macro except
+@code{scm_gc_mark}, @code{SCM_SMOB_FLAGS}, @code{SCM_SMOB_DATA},
+@code{SCM_SMOB_DATA_2}, and @code{SCM_SMOB_DATA_3}.
+@end deftypefn
+
+@deftypefn {C Function} void scm_set_smob_free (scm_t_bits tc, size_t (*free) (SCM obj))
+This function sets the smob freeing procedure for the smob type
+specified by the tag @var{tc}. @var{tc} is the tag returned by
+@code{scm_make_smob_type}.
+
+The @var{free} procedure must deallocate all resources that are
+directly associated with the smob instance @var{OBJ}.  It must assume
+that all @code{SCM} values that it references have already been freed
+and are thus invalid.
+
+It must also not call any libguile function or macro except
+@code{scm_gc_free}, @code{SCM_SMOB_FLAGS}, @code{SCM_SMOB_DATA},
+@code{SCM_SMOB_DATA_2}, and @code{SCM_SMOB_DATA_3}.
+
+The @var{free} procedure must return 0.
+@end deftypefn
+
+@deftypefn {C Function} void scm_set_smob_print (scm_t_bits tc, int (*print) (SCM obj, SCM port, scm_print_state* pstate))
+This function sets the smob printing procedure for the smob type
+specified by the tag @var{tc}. @var{tc} is the tag returned by
+@code{scm_make_smob_type}.
+
+The @var{print} procedure should output a textual representation of
+the smob instance @var{obj} to @var{port}, using information in
+@var{pstate}.
+
+The textual representation should be of the form @code{#<name ...>}.
+This ensures that @code{read} will not interpret it as some other
+Scheme value.
+
+It is often best to ignore @var{pstate} and just print to @var{port}
+with @code{scm_display}, @code{scm_write}, @code{scm_simple_format},
+and @code{scm_puts}.
+@end deftypefn
+
+@deftypefn {C Function} void scm_set_smob_equalp (scm_t_bits tc, SCM (*equalp) (SCM obj1, SCM obj1))
+This function sets the smob equality-testing predicate for the smob
+type specified by the tag @var{tc}. @var{tc} is the tag returned by
+@code{scm_make_smob_type}.
+
+The @var{equalp} procedure should return @code{SCM_BOOL_T} when
+@var{obj1} is @code{equal?} to @var{obj2}.  Else it should return
+@var{SCM_BOOL_F}.  Both @var{obj1} and @var{obj2} are instances of the
+smob type @var{tc}.
+@end deftypefn
+
+@deftypefn {C Function} void scm_assert_smob_type (scm_t_bits tag, SCM val)
+When @var{val} is a smob of the type indicated by @var{tag}, do nothing.
+Else, signal an error.
+@end deftypefn
+
+@deftypefn {C Macro} int SCM_SMOB_PREDICATE (scm_t_bits tag, SCM exp)
+Return true iff @var{exp} is a smob instance of the type indicated by
+@var{tag}.  The expression @var{exp} can be evaluated more than once,
+so it shouldn't contain any side effects.
+@end deftypefn
+
+@deftypefn {C Macro} void SCM_NEWSMOB (SCM value, scm_t_bits tag, void *data)
+@deftypefnx {C Macro} void SCM_NEWSMOB2 (SCM value, scm_t_bits tag, void *data, void *data2)
+@deftypefnx {C Macro} void SCM_NEWSMOB3 (SCM value, scm_t_bits tag, void *data, void *data2, void *data3)
+Make @var{value} contain a smob instance of the type with tag
+@var{tag} and smob data @var{data}, @var{data2}, and @var{data3}, as
+appropriate.
+
+The @var{tag} is what has been returned by @code{scm_make_smob_type}.
+The initial values @var{data}, @var{data2}, and @var{data3} are of
+type @code{scm_t_bits}; when you want to use them for @code{SCM}
+values, these values need to be converted to a @code{scm_t_bits} first
+by using @code{SCM_UNPACK}.
+
+The flags of the smob instance start out as zero.
+@end deftypefn
+
+Since it is often the case (e.g., in smob constructors) that you will
+create a smob instance and return it, there is also a slightly specialized
+macro for this situation:
+
+@deftypefn {C Macro} {} SCM_RETURN_NEWSMOB (scm_t_bits tag, void *data)
+@deftypefnx {C Macro} {} SCM_RETURN_NEWSMOB2 (scm_t_bits tag, void *data1, void *data2)
+@deftypefnx {C Macro} {} SCM_RETURN_NEWSMOB3 (scm_t_bits tag, void *data1, void *data2, void *data3)
+This macro expands to a block of code that creates a smob instance of
+the type with tag @var{tag} and smob data @var{data}, @var{data2}, and
+@var{data3}, as with @code{SCM_NEWSMOB}, etc., and causes the
+surrounding function to return that @code{SCM} value.  It should be
+the last piece of code in a block.
+@end deftypefn
+
+@deftypefn {C Macro} scm_t_bits SCM_SMOB_FLAGS (SCM obj)
+Return the 16 extra bits of the smob @var{obj}.  No meaning is
+predefined for these bits, you can use them freely.
+@end deftypefn
+
+@deftypefn {C Macro} scm_t_bits SCM_SET_SMOB_FLAGS (SCM obj, scm_t_bits flags)
+Set the 16 extra bits of the smob @var{obj} to @var{flags}.  No
+meaning is predefined for these bits, you can use them freely.
+@end deftypefn
+
+@deftypefn {C Macro} scm_t_bits SCM_SMOB_DATA (SCM obj)
+@deftypefnx {C Macro} scm_t_bits SCM_SMOB_DATA_2 (SCM obj)
+@deftypefnx {C Macro} scm_t_bits SCM_SMOB_DATA_3 (SCM obj)
+Return the first (second, third) immediate word of the smob @var{obj}
+as a @code{scm_t_bits} value.  When the word contains a @code{SCM}
+value, use @code{SCM_SMOB_OBJECT} (etc.) instead.
+@end deftypefn
+
+@deftypefn {C Macro} void SCM_SET_SMOB_DATA (SCM obj, scm_t_bits val)
+@deftypefnx {C Macro} void SCM_SET_SMOB_DATA_2 (SCM obj, scm_t_bits val)
+@deftypefnx {C Macro} void SCM_SET_SMOB_DATA_3 (SCM obj, scm_t_bits val)
+Set the first (second, third) immediate word of the smob @var{obj} to
+@var{val}.  When the word should be set to a @code{SCM} value, use
+@code{SCM_SMOB_SET_OBJECT} (etc.) instead.
+@end deftypefn
+
+@deftypefn {C Macro} SCM SCM_SMOB_OBJECT (SCM obj)
+@deftypefnx {C Macro} SCM SCM_SMOB_OBJECT_2 (SCM obj)
+@deftypefnx {C Macro} SCM SCM_SMOB_OBJECT_3 (SCM obj)
+Return the first (second, third) immediate word of the smob @var{obj}
+as a @code{SCM} value.  When the word contains a @code{scm_t_bits}
+value, use @code{SCM_SMOB_DATA} (etc.) instead.
+@end deftypefn
+
+@deftypefn {C Macro} void SCM_SET_SMOB_OBJECT (SCM obj, SCM val)
+@deftypefnx {C Macro} void SCM_SET_SMOB_OBJECT_2 (SCM obj, SCM val)
+@deftypefnx {C Macro} void SCM_SET_SMOB_OBJECT_3 (SCM obj, SCM val)
+Set the first (second, third) immediate word of the smob @var{obj} to
+@var{val}.  When the word should be set to a @code{scm_t_bits} value, use
+@code{SCM_SMOB_SET_DATA} (etc.) instead.
+@end deftypefn
+
+@deftypefn {C Macro} {SCM *} SCM_SMOB_OBJECT_LOC (SCM obj)
+@deftypefnx {C Macro} {SCM *} SCM_SMOB_OBJECT_2_LOC (SCM obj)
+@deftypefnx {C Macro} {SCM *} SCM_SMOB_OBJECT_3_LOC (SCM obj)
+Return a pointer to the first (second, third) immediate word of the
+smob @var{obj}.  Note that this is a pointer to @code{SCM}.  If you
+need to work with @code{scm_t_bits} values, use @code{SCM_PACK} and
+@code{SCM_UNPACK}, as appropriate.
+@end deftypefn
+
+@deftypefun SCM scm_markcdr (SCM @var{x})
+Mark the references in the smob @var{x}, assuming that @var{x}'s first
+data word contains an ordinary Scheme object, and @var{x} refers to no
+other objects.  This function simply returns @var{x}'s first data word.
+@end deftypefun
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

@@ -1,0 +1,2905 @@
+\input texinfo
+@c -*-texinfo-*-
+@c %**start of header
+@setfilename goops.info
+@settitle Goops Manual
+@set goops
+@setchapternewpage odd
+@paragraphindent 0
+@c %**end of header
+
+@set VERSION 0.3
+
+@dircategory The Algorithmic Language Scheme
+@direntry
+* GOOPS: (goops).               The GOOPS reference manual.
+@end direntry
+
+@macro goops
+GOOPS
+@end macro
+
+@macro guile
+Guile
+@end macro
+
+@ifinfo
+This file documents GOOPS, an object oriented extension for Guile.
+
+Copyright (C) 1999, 2000, 2001, 2003, 2006 Free Software Foundation
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+@end ifinfo
+
+@c  This title page illustrates only one of the
+@c  two methods of forming a title page.
+
+@titlepage
+@title Goops Manual
+@subtitle For use with GOOPS @value{VERSION}
+
+@c AUTHORS
+
+@c The GOOPS tutorial was written by Christian Lynbech and Mikael
+@c Djurfeldt, who also wrote GOOPS itself.  The GOOPS reference manual
+@c and MOP documentation were written by Neil Jerram and reviewed by
+@c Mikael Djurfeldt.
+
+@author Christian Lynbech
+@author @email{chl@@tbit.dk}
+@author
+@author Mikael Djurfeldt
+@author @email{djurfeldt@@nada.kth.se}
+@author
+@author Neil Jerram
+@author @email{neil@@ossau.uklinux.net}
+
+@c  The following two commands
+@c  start the copyright page.
+@page
+@vskip 0pt plus 1filll
+Copyright @copyright{} 1999, 2006 Free Software Foundation
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+@end titlepage
+
+@node Top, Introduction, (dir), (dir)
+
+@menu
+* Introduction::
+* Getting Started::
+* Reference Manual::
+* MOP Specification::
+
+* Tutorial::
+
+* Concept Index::
+* Function and Variable Index::
+@end menu
+
+@iftex
+@chapter Preliminaries
+@end iftex
+
+@node Introduction, Getting Started, Top, Top
+@iftex
+@section Introduction
+@end iftex
+@ifnottex
+@chapter Introduction
+@end ifnottex
+
+@goops{} is the object oriented extension to @guile{}. Its
+implementation is derived from @w{STk-3.99.3} by Erick Gallesio and
+version 1.3 of Gregor Kiczales @cite{Tiny-Clos}.  It is very close in
+spirit to CLOS, the Common Lisp Object System (@cite{CLtL2}) but is
+adapted for the Scheme language.  While GOOPS is not compatible with any
+of these systems, GOOPS contains a compatibility module which allows for
+execution of STKlos programs.
+
+Briefly stated, the @goops{} extension gives the user a full object
+oriented system with multiple inheritance and generic functions with
+multi-method dispatch.  Furthermore, the implementation relies on a true
+meta object protocol, in the spirit of the one defined for CLOS
+(@cite{Gregor Kiczales: A Metaobject Protocol}).
+
+@node Getting Started, Reference Manual, Introduction, Top
+@iftex
+@section Getting Started
+@end iftex
+@ifnottex
+@chapter Getting Started
+@end ifnottex
+
+@menu
+* Running GOOPS::
+
+Examples of some basic GOOPS functionality.
+
+* Methods::
+* User-defined types::
+* Asking for the type of an object::
+
+See further in the GOOPS tutorial available in this distribution in
+info (goops.info) and texinfo format.
+@end menu
+
+@node Running GOOPS, Methods, Getting Started, Getting Started
+@subsection Running GOOPS
+
+@enumerate
+@item
+Type
+
+@smalllisp
+guile-oops
+@end smalllisp
+
+You should now be at the Guile prompt ("guile> ").
+
+@item
+Type
+
+@smalllisp
+(use-modules (oop goops))
+@end smalllisp
+
+to load GOOPS.  (If your system supports dynamic loading, you
+should be able to do this not only from `guile-oops' but from an
+arbitrary Guile interpreter.)
+@end enumerate
+
+We're now ready to try some basic GOOPS functionality.
+
+@node Methods, User-defined types, Running GOOPS, Getting Started
+@subsection Methods
+
+@smalllisp
+@group
+(define-method (+ (x <string>) (y <string>))
+  (string-append x y))
+
+(+ 1 2) --> 3
+(+ "abc" "de") --> "abcde"
+@end group
+@end smalllisp
+
+@node User-defined types, Asking for the type of an object, Methods, Getting Started
+@subsection User-defined types
+
+@smalllisp
+(define-class <2D-vector> ()
+  (x #:init-value 0 #:accessor x-component #:init-keyword #:x)
+  (y #:init-value 0 #:accessor y-component #:init-keyword #:y))
+
+@group
+(use-modules (ice-9 format))
+
+(define-method (write (obj <2D-vector>) port)
+  (display (format #f "<~S, ~S>" (x-component obj) (y-component obj))
+           port))
+
+(define v (make <2D-vector> #:x 3 #:y 4))
+
+v --> <3, 4>
+@end group
+
+@group
+(define-method (+ (x <2D-vector>) (y <2D-vector>))
+  (make <2D-vector>
+        #:x (+ (x-component x) (x-component y))
+        #:y (+ (y-component x) (y-component y))))
+
+(+ v v) --> <6, 8>
+@end group
+@end smalllisp
+
+@node Asking for the type of an object, , User-defined types, Getting Started
+@subsection Types
+
+@example
+(class-of v) --> #<<class> <2D-vector> 40241ac0>
+<2D-vector>  --> #<<class> <2D-vector> 40241ac0>
+(class-of 1) --> #<<class> <integer> 401b2a98>
+<integer>    --> #<<class> <integer> 401b2a98>
+
+(is-a? v <2D-vector>) --> #t
+@end example
+
+@node Reference Manual, MOP Specification, Getting Started, Top
+@chapter Reference Manual
+
+This chapter is the GOOPS reference manual.  It aims to describe all the
+syntax, procedures, options and associated concepts that a typical
+application author would need to understand in order to use GOOPS
+effectively in their application.  It also describes what is meant by
+the GOOPS ``metaobject protocol'' (aka ``MOP''), and indicates how
+authors can use the metaobject protocol to customize the behaviour of
+GOOPS itself.
+
+For a detailed specification of the GOOPS metaobject protocol, see
+@ref{MOP Specification}.
+
+@menu
+* Introductory Remarks::
+* Defining New Classes::
+* Creating Instances::
+* Accessing Slots::
+* Creating Generic Functions::
+* Adding Methods to Generic Functions::
+* Invoking Generic Functions::
+* Redefining a Class::
+* Changing the Class of an Instance::
+* Introspection::
+* Miscellaneous Functions::
+@end menu
+
+@node Introductory Remarks
+@section Introductory Remarks
+
+GOOPS is an object-oriented programming system based on a ``metaobject
+protocol'' derived from the ones used in CLOS (the Common Lisp Object
+System), tiny-clos (a small Scheme implementation of a subset of CLOS
+functionality) and STKlos.
+
+GOOPS can be used by application authors at a basic level without any
+need to understand what the metaobject protocol (aka ``MOP'') is and how
+it works.  On the other hand, the MOP underlies even the customizations
+that application authors are likely to make use of very quickly --- such
+as defining an @code{initialize} method to customize the initialization
+of instances of an application-defined class --- and an understanding of
+the MOP makes it much easier to explain such customizations in a precise
+way.  And in the long run, understanding the MOP is the key both to
+understanding GOOPS at a deeper level and to taking full advantage of
+GOOPS' power, by customizing the behaviour of GOOPS itself.
+
+Each of the following sections of the reference manual is arranged
+such that the most basic usage is introduced first, and then subsequent
+subsections discuss the related internal functions and metaobject
+protocols, finishing with a description of how to customize that area of
+functionality.
+
+These introductory remarks continue with a few words about metaobjects
+and the MOP.  Readers who do not want to be bothered yet with the MOP
+and customization could safely skip this subsection on a first reading,
+and should correspondingly skip subsequent subsections that are
+concerned with internals and customization.
+
+In general, this reference manual assumes familiarity with standard
+object oriented concepts and terminology.  However, some of the terms
+used in GOOPS are less well known, so the Terminology subsection
+provides definitions for these terms.
+
+@menu
+* Metaobjects and the Metaobject Protocol::
+* Terminology::
+@end menu
+
+@node Metaobjects and the Metaobject Protocol
+@subsection Metaobjects and the Metaobject Protocol
+
+The conceptual building blocks of GOOPS are classes, slot definitions,
+instances, generic functions and methods.  A class is a grouping of
+inheritance relations and slot definitions.  An instance is an object
+with slots that are allocated following the rules implied by its class's
+superclasses and slot definitions.  A generic function is a collection
+of methods and rules for determining which of those methods to apply
+when the generic function is invoked.  A method is a procedure and a set
+of specializers that specify the type of arguments to which the
+procedure is applicable.
+
+Of these entities, GOOPS represents classes, generic functions and
+methods as ``metaobjects''.  In other words, the values in a GOOPS
+program that describe classes, generic functions and methods, are
+themselves instances (or ``objects'') of special GOOPS classes that
+encapsulate the behaviour, respectively, of classes, generic functions,
+and methods.
+
+(The other two entities are slot definitions and instances.  Slot
+definitions are not strictly instances, but every slot definition is
+associated with a GOOPS class that specifies the behaviour of the slot
+as regards accessibility and protection from garbage collection.
+Instances are of course objects in the usual sense, and there is no
+benefit from thinking of them as metaobjects.)
+
+The ``metaobject protocol'' (aka ``MOP'') is the specification of the
+generic functions which determine the behaviour of these metaobjects and
+the circumstances in which these generic functions are invoked.
+
+For a concrete example of what this means, consider how GOOPS calculates
+the set of slots for a class that is being defined using
+@code{define-class}.  The desired set of slots is the union of the new
+class's direct slots and the slots of all its superclasses.  But
+@code{define-class} itself does not perform this calculation.  Instead,
+there is a method of the @code{initialize} generic function that is
+specialized for instances of type @code{<class>}, and it is this method
+that performs the slot calculation.
+
+@code{initialize} is a generic function which GOOPS calls whenever a new
+instance is created, immediately after allocating memory for a new
+instance, in order to initialize the new instance's slots.  The sequence
+of steps is as follows.
+
+@itemize @bullet
+@item
+@code{define-class} uses @code{make} to make a new instance of the
+@code{<class>}, passing as initialization arguments the superclasses,
+slot definitions and class options that were specified in the
+@code{define-class} form.
+
+@item
+@code{make} allocates memory for the new instance, and then invokes the
+@code{initialize} generic function to initialize the new instance's
+slots.
+
+@item
+The @code{initialize} generic function applies the method that is
+specialized for instances of type @code{<class>}, and this method
+performs the slot calculation.
+@end itemize
+
+In other words, rather than being hardcoded in @code{define-class}, the
+behaviour of class definition is encapsulated by generic function
+methods that are specialized for the class @code{<class>}.
+
+It is possible to create a new class that inherits from @code{<class>},
+which is called a ``metaclass'', and to write a new @code{initialize}
+method that is specialized for instances of the new metaclass.  Then, if
+the @code{define-class} form includes a @code{#:metaclass} class option
+whose value is the new metaclass, the class that is defined by the
+@code{define-class} form will be an instance of the new metaclass rather
+than of the default @code{<class>}, and will be defined in accordance
+with the new @code{initialize} method.  Thus the default slot
+calculation, as well as any other aspect of the new class's relationship
+with its superclasses, can be modified or overridden.
+
+In a similar way, the behaviour of generic functions can be modified or
+overridden by creating a new class that inherits from the standard
+generic function class @code{<generic>}, writing appropriate methods
+that are specialized to the new class, and creating new generic
+functions that are instances of the new class.
+
+The same is true for method metaobjects.  And the same basic mechanism
+allows the application class author to write an @code{initialize} method
+that is specialized to their application class, to initialize instances
+of that class.
+
+Such is the power of the MOP.  Note that @code{initialize} is just one
+of a large number of generic functions that can be customized to modify
+the behaviour of application objects and classes and of GOOPS itself.
+Each subsequent section of the reference manual covers a particular area
+of GOOPS functionality, and describes the generic functions that are
+relevant for customization of that area.
+
+We conclude this subsection by emphasizing a point that may seem
+obvious, but contrasts with the corresponding situation in some other
+MOP implementations, such as CLOS.  The point is simply that an
+identifier which represents a GOOPS class or generic function is a
+variable with a first-class value, the value being an instance of class
+@code{<class>} or @code{<generic>}.  (In CLOS, on the other hand, a
+class identifier is a symbol that indexes the corresponding class
+metaobject in a separate namespace for classes.)  This is, of course,
+simply an extension of the tendency in Scheme to avoid the unnecessary
+use of, on the one hand, syntactic forms that require unevaluated
+arguments and, on the other, separate identifier namespaces (e.g. for
+class names), but it is worth noting that GOOPS conforms fully to this
+Schemely principle.
+
+@node Terminology
+@subsection Terminology
+
+It is assumed that the reader is already familiar with standard object
+orientation concepts such as classes, objects/instances,
+inheritance/subclassing, generic functions and methods, encapsulation
+and polymorphism.
+
+This section explains some of the less well known concepts and
+terminology that GOOPS uses, which are assumed by the following sections
+of the reference manual.
+
+@menu
+* Metaclass::
+* Class Precedence List::
+* Accessor::
+@end menu
+
+@node Metaclass
+@subsubsection Metaclass
+
+A @dfn{metaclass} is the class of an object which represents a GOOPS
+class.  Put more succinctly, a metaclass is a class's class.
+
+Most GOOPS classes have the metaclass @code{<class>} and, by default,
+any new class that is created using @code{define-class} has the
+metaclass @code{<class>}.
+
+But what does this really mean?  To find out, let's look in more detail
+at what happens when a new class is created using @code{define-class}:
+
+@example
+(define-class <my-class> (<object>) . slots)
+@end example
+
+GOOPS actually expands the @code{define-class} form to something like
+this
+
+@example
+(define <my-class> (class (<object>) . slots))
+@end example
+
+and thence to
+
+@example
+(define <my-class>
+  (make <class> #:supers (list <object>) #:slots slots))
+@end example
+
+In other words, the value of @code{<my-class>} is in fact an instance of
+the class @code{<class>} with slot values specifying the superclasses
+and slot definitions for the class @code{<my-class>}.  (@code{#:supers}
+and @code{#:slots} are initialization keywords for the @code{dsupers}
+and @code{dslots} slots of the @code{<class>} class.)
+
+In order to take advantage of the full power of the GOOPS metaobject
+protocol (@pxref{MOP Specification}), it is sometimes desirable to
+create a new class with a metaclass other than the default
+@code{<class>}.  This is done by writing:
+
+@example
+(define-class <my-class2> (<object>)
+   slot @dots{}
+   #:metaclass <my-metaclass>)
+@end example
+
+GOOPS expands this to something like:
+
+@example
+(define <my-class2>
+  (make <my-metaclass> #:supers (list <object>) #:slots slots))
+@end example
+
+In this case, the value of @code{<my-class2>} is an instance of the more
+specialized class @code{<my-metaclass>}.  Note that
+@code{<my-metaclass>} itself must previously have been defined as a
+subclass of @code{<class>}.  For a full discussion of when and how it is
+useful to define new metaclasses, see @ref{MOP Specification}.
+
+Now let's make an instance of @code{<my-class2>}:
+
+@example
+(define my-object (make <my-class2> ...))
+@end example
+
+All of the following statements are correct expressions of the
+relationships between @code{my-object}, @code{<my-class2>},
+@code{<my-metaclass>} and @code{<class>}.
+
+@itemize @bullet
+@item
+@code{my-object} is an instance of the class @code{<my-class2>}.
+
+@item
+@code{<my-class2>} is an instance of the class @code{<my-metaclass>}.
+
+@item
+@code{<my-metaclass>} is an instance of the class @code{<class>}.
+
+@item
+The class of @code{my-object} is @code{<my-class2>}.
+
+@item
+The metaclass of @code{my-object} is @code{<my-metaclass>}.
+
+@item
+The class of @code{<my-class2>} is @code{<my-metaclass>}.
+
+@item
+The metaclass of @code{<my-class2>} is @code{<class>}.
+
+@item
+The class of @code{<my-metaclass>} is @code{<class>}.
+
+@item
+The metaclass of @code{<my-metaclass>} is @code{<class>}.
+
+@item
+@code{<my-class2>} is not a metaclass, since it is does not inherit from
+@code{<class>}.
+
+@item
+@code{<my-metaclass>} is a metaclass, since it inherits from
+@code{<class>}.
+@end itemize
+
+@node Class Precedence List
+@subsubsection Class Precedence List
+
+The @dfn{class precedence list} of a class is the list of all direct and
+indirect superclasses of that class, including the class itself.
+
+In the absence of multiple inheritance, the class precedence list is
+ordered straightforwardly, beginning with the class itself and ending
+with @code{<top>}.
+
+For example, given this inheritance hierarchy:
+
+@example
+(define-class <invertebrate> (<object>) @dots{})
+(define-class <echinoderm> (<invertebrate>) @dots{})
+(define-class <starfish> (<echinoderm>) @dots{})
+@end example
+
+the class precedence list of <starfish> would be
+
+@example
+(<starfish> <echinoderm> <invertebrate> <object> <top>)
+@end example
+
+With multiple inheritance, the algorithm is a little more complicated.
+A full description is provided by the GOOPS Tutorial: see @ref{Class
+precedence list}.
+
+``Class precedence list'' is often abbreviated, in documentation and
+Scheme variable names, to @dfn{cpl}.
+
+@node Accessor
+@subsubsection Accessor
+
+An @dfn{accessor} is a generic function with both reference and setter
+methods.
+
+@example
+(define-accessor perimeter)
+@end example
+
+Reference methods for an accessor are defined in the same way as generic
+function methods.
+
+@example
+(define-method (perimeter (s <square>))
+  (* 4 (side-length s)))
+@end example
+
+Setter methods for an accessor are defined by specifying ``(setter
+<accessor-name>)'' as the first parameter of the @code{define-method}
+call.
+
+@example
+(define-method ((setter perimeter) (s <square>) (n <number>))
+  (set! (side-length s) (/ n 4)))
+@end example
+
+Once an appropriate setter method has been defined in this way, it can
+be invoked using the generalized @code{set!} syntax, as in:
+
+@example
+(set! (perimeter s1) 18.3)
+@end example
+
+@node Defining New Classes
+@section Defining New Classes
+
+[ *fixme* Somewhere in this manual there needs to be an introductory
+discussion about GOOPS classes, generic functions and methods, covering
+
+@itemize @bullet
+@item
+how classes encapsulate related items of data in @dfn{slots}
+
+@item
+why it is that, unlike in C++ and Java, a class does not encapsulate the
+methods that act upon the class (at least not in the C++/Java sense)
+
+@item
+how generic functions provide a more general solution that provides for
+dispatch on all argument types, and avoids idiosyncracies like C++'s
+friend classes
+
+@item
+how encapsulation in the sense of data- and code-hiding, or of
+distinguishing interface from implementation, is treated in Guile as an
+orthogonal concept to object orientation, and is the responsibility of
+the module system.
+@end itemize
+
+Some of this is covered in the Tutorial chapter, in @ref{Generic
+functions and methods} - perhaps the best solution would be to expand
+the discussion there. ]
+
+@menu
+* Basic Class Definition::
+* Class Options::
+* Slot Options::
+* Class Definition Internals::
+* Customizing Class Definition::
+* STKlos Compatibility::
+@end menu
+
+@node Basic Class Definition
+@subsection Basic Class Definition
+
+New classes are defined using the @code{define-class} syntax, with
+arguments that specify the classes that the new class should inherit
+from, the direct slots of the new class, and any required class options.
+
+@deffn syntax define-class name (super @dots{}) slot-definition @dots{} . options
+Define a class called @var{name} that inherits from @var{super}s, with
+direct slots defined by @var{slot-definition}s and class options
+@var{options}.  The newly created class is bound to the variable name
+@var{name} in the current environment.
+
+Each @var{slot-definition} is either a symbol that names the slot or a
+list,
+
+@example
+(@var{slot-name-symbol} . @var{slot-options})
+@end example
+
+where @var{slot-name-symbol} is a symbol and @var{slot-options} is a
+list with an even number of elements.  The even-numbered elements of
+@var{slot-options} (counting from zero) are slot option keywords; the
+odd-numbered elements are the corresponding values for those keywords.
+
+@var{options} is a similarly structured list containing class option
+keywords and corresponding values.
+@end deffn
+
+The standard GOOPS class and slot options are described in the following
+subsections: see @ref{Class Options} and @ref{Slot Options}.
+
+Example 1.  Define a class that combines two pre-existing classes by
+inheritance but adds no new slots.
+
+@example
+(define-class <combined> (<tree> <bicycle>))
+@end example
+
+Example 2.  Define a @code{regular-polygon} class with slots for side
+length and number of sides that have default values and can be accessed
+via the generic functions @code{side-length} and @code{num-sides}.
+
+@example
+(define-class <regular-polygon> ()
+  (sl #:init-value 1 #:accessor side-length)
+  (ns #:init-value 5 #:accessor num-sides))
+@end example
+
+Example 3.  Define a class whose behavior (and that of its instances) is
+customized via an application-defined metaclass.
+
+@example
+(define-class <tcpip-fsm> ()
+  (s #:init-value #f #:accessor state)
+  ...
+  #:metaclass <finite-state-class>)
+@end example
+
+@node Class Options
+@subsection Class Options
+
+@deffn {class option} #:metaclass metaclass
+The @code{#:metaclass} class option specifies the metaclass of the class
+being defined.  @var{metaclass} must be a class that inherits from
+@code{<class>}.  For an introduction to the use of metaclasses, see
+@ref{Metaobjects and the Metaobject Protocol} and @ref{Metaclass}.
+
+If the @code{#:metaclass} option is absent, GOOPS reuses or constructs a
+metaclass for the new class by calling @code{ensure-metaclass}
+(@pxref{Class Definition Internals,, ensure-metaclass}).
+@end deffn
+
+@deffn {class option} #:name name
+The @code{#:name} class option specifies the new class's name.  This
+name is used to identify the class whenever related objects - the class
+itself, its instances and its subclasses - are printed.
+
+If the @code{#:name} option is absent, GOOPS uses the first argument to
+@code{define-class} as the class name.
+@end deffn
+
+@deffn {class option} #:environment environment
+*fixme* Not sure about this one, but I think that the
+@code{#:environment} option specifies the environment in which the
+class's getters and setters are computed and evaluated.
+
+If the @code{#:environment} option is not specified, the class's
+environment defaults to the top-level environment in which the
+@code{define-class} form appears.
+@end deffn
+
+@node Slot Options
+@subsection Slot Options
+
+@deffn {slot option} #:allocation allocation
+The @code{#:allocation} option tells GOOPS how to allocate storage for
+the slot.  Possible values for @var{allocation} are
+
+@itemize @bullet
+@item @code{#:instance}
+
+Indicates that GOOPS should create separate storage for this slot in
+each new instance of the containing class (and its subclasses).
+
+@item @code{#:class}
+
+Indicates that GOOPS should create storage for this slot that is shared
+by all instances of the containing class (and its subclasses).  In other
+words, a slot in class @var{C} with allocation @code{#:class} is shared
+by all @var{instance}s for which @code{(is-a? @var{instance} @var{c})}.
+
+@item @code{#:each-subclass}
+
+Indicates that GOOPS should create storage for this slot that is shared
+by all @emph{direct} instances of the containing class, and that
+whenever a subclass of the containing class is defined, GOOPS should
+create a new storage for the slot that is shared by all @emph{direct}
+instances of the subclass.  In other words, a slot with allocation
+@code{#:each-subclass} is shared by all instances with the same
+@code{class-of}.
+
+@item @code{#:virtual}
+
+Indicates that GOOPS should not allocate storage for this slot.  The
+slot definition must also include the @code{#:slot-ref} and
+@code{#:slot-set!} options to specify how to reference and set the value
+for this slot.
+@end itemize
+
+The default value is @code{#:instance}.
+
+Slot allocation options are processed when defining a new class by the
+generic function @code{compute-get-n-set}, which is specialized by the
+class's metaclass.  Hence new types of slot allocation can be
+implemented by defining a new metaclass and a method for
+@code{compute-get-n-set} that is specialized for the new metaclass.  For
+an example of how to do this, see @ref{Customizing Class Definition}.
+@end deffn
+
+@deffn {slot option} #:slot-ref getter
+@deffnx {slot option} #:slot-set! setter
+The @code{#:slot-ref} and @code{#:slot-set!} options must be specified
+if the slot allocation is @code{#:virtual}, and are ignored otherwise.
+
+@var{getter} should be a closure taking a single @var{instance} parameter
+that returns the current slot value.  @var{setter} should be a closure
+taking two parameters - @var{instance} and @var{new-val} - that sets the
+slot value to @var{new-val}.
+@end deffn
+
+@deffn {slot option} #:getter getter
+@deffnx {slot option} #:setter setter
+@deffnx {slot option} #:accessor accessor
+These options, if present, tell GOOPS to create generic function and
+method definitions that can be used to get and set the slot value more
+conveniently than by using @code{slot-ref} and @code{slot-set!}.
+
+@var{getter} specifies a generic function to which GOOPS will add a
+method for getting the slot value.  @var{setter} specifies a generic
+function to which GOOPS will add a method for setting the slot value.
+@var{accessor} specifies an accessor to which GOOPS will add methods for
+both getting and setting the slot value.
+
+So if a class includes a slot definition like this:
+
+@example
+(c #:getter get-count #:setter set-count #:accessor count)
+@end example
+
+GOOPS defines generic function methods such that the slot value can be
+referenced using either the getter or the accessor -
+
+@example
+(let ((current-count (get-count obj))) @dots{})
+(let ((current-count (count obj))) @dots{})
+@end example
+
+- and set using either the setter or the accessor -
+
+@example
+(set-count obj (+ 1 current-count))
+(set! (count obj) (+ 1 current-count))
+@end example
+
+Note that
+
+@itemize @bullet
+@item
+with an accessor, the slot value is set using the generalized
+@code{set!} syntax
+
+@item
+in practice, it is unusual for a slot to use all three of these options:
+read-only, write-only and read-write slots would typically use only
+@code{#:getter}, @code{#:setter} and @code{#:accessor} options
+respectively.
+@end itemize
+
+If the specified names are already bound in the top-level environment to
+values that cannot be upgraded to generic functions, those values are
+overwritten during evaluation of the @code{define-class} that contains
+the slot definition.  For details, see @ref{Generic Function Internals,,
+ensure-generic}.
+@end deffn
+
+@deffn {slot option} #:init-value init-value
+@deffnx {slot option} #:init-form init-form
+@deffnx {slot option} #:init-thunk init-thunk
+@deffnx {slot option} #:init-keyword init-keyword
+These options provide various ways to specify how to initialize the
+slot's value at instance creation time.  @var{init-value} is a fixed
+value (shared across all new instances of the class).
+@var{init-thunk} is a procedure of no arguments that is called
+when a new instance is created and should return the desired initial
+slot value.  @var{init-form} is an unevaluated expression that gets
+evaluated when a new instance is created and should return the desired
+initial slot value.  @var{init-keyword} is a keyword that can be used
+to pass an initial slot value to @code{make} when creating a new
+instance.
+
+Note that, since an @code{init-value} value is shared across all
+instances of a class, you should only use it when the initial value is
+an immutable value, like a constant.  If you want to initialize a slot
+with a fresh, independently mutable value, you should use
+@code{init-thunk} or @code{init-form} instead.  Consider the following
+example.
+
+@example
+(define-class <chbouib> ()
+  (hashtab #:init-value (make-hash-table)))
+@end example
+
+@noindent
+Here only one hash table is created and all instances of
+@code{<chbouib>} have their @code{hashtab} slot refer to it.  In order
+to have each instance of @code{<chbouib>} refer to a new hash table, you
+should instead write:
+
+@example
+(define-class <chbouib> ()
+  (hashtab #:init-thunk make-hash-table))
+@end example
+
+@noindent
+or:
+
+@example
+(define-class <chbouib> ()
+  (hashtab #:init-form (make-hash-table)))
+@end example
+
+If more than one of these options is specified for the same slot, the
+order of precedence, highest first is
+
+@itemize @bullet
+@item
+@code{#:init-keyword}, if @var{init-keyword} is present in the options
+passed to @code{make}
+
+@item
+@code{#:init-thunk}, @code{#:init-form} or @code{#:init-value}.
+@end itemize
+
+If the slot definition contains more than one initialization option of
+the same precedence, the later ones are ignored.  If a slot is not
+initialized at all, its value is unbound.
+
+In general, slots that are shared between more than one instance are
+only initialized at new instance creation time if the slot value is
+unbound at that time.  However, if the new instance creation specifies
+a valid init keyword and value for a shared slot, the slot is
+re-initialized regardless of its previous value.
+
+Note, however, that the power of GOOPS' metaobject protocol means that
+everything written here may be customized or overridden for particular
+classes!  The slot initializations described here are performed by the least
+specialized method of the generic function @code{initialize}, whose
+signature is
+
+@example
+(define-method (initialize (object <object>) initargs) ...)
+@end example
+
+The initialization of instances of any given class can be customized by
+defining a @code{initialize} method that is specialized for that class,
+and the author of the specialized method may decide to call
+@code{next-method} - which will result in a call to the next less
+specialized @code{initialize} method - at any point within the
+specialized code, or maybe not at all.  In general, therefore, the
+initialization mechanisms described here may be modified or overridden by
+more specialized code, or may not be supported at all for particular
+classes.
+@end deffn
+
+@node Class Definition Internals
+@subsection Class Definition Internals
+
+Implementation notes: @code{define-class} expands to an expression which
+
+@itemize @bullet
+@item
+checks that it is being evaluated only at top level
+
+@item
+defines any accessors that are implied by the @var{slot-definition}s
+
+@item
+uses @code{class} to create the new class (@pxref{Class Definition
+Internals,, class})
+
+@item
+checks for a previous class definition for @var{name} and, if found,
+handles the redefinition by invoking @code{class-redefinition}
+(@pxref{Redefining a Class}).
+@end itemize
+
+@deffn syntax class name (super @dots{}) slot-definition @dots{} . options
+Return a newly created class that inherits from @var{super}s, with
+direct slots defined by @var{slot-definition}s and class options
+@var{options}.  For the format of @var{slot-definition}s and
+@var{options}, see @ref{Basic Class Definition,, define-class}.
+@end deffn
+
+Implementation notes: @code{class} expands to an expression which
+
+@itemize @bullet
+@item
+processes the class and slot definition options to check that they are
+well-formed, to convert the @code{#:init-form} option to an
+@code{#:init-thunk} option, to supply a default environment parameter
+(the current top-level environment) and to evaluate all the bits that
+need to be evaluated
+
+@item
+calls @code{make-class} to create the class with the processed and
+evaluated parameters.
+@end itemize
+
+@deffn procedure make-class supers slots . options
+Return a newly created class that inherits from @var{supers}, with
+direct slots defined by @var{slots} and class options @var{options}.
+For the format of @var{slots} and @var{options}, see @ref{Basic Class
+Definition,, define-class}, except note that for @code{make-class},
+@var{slots} and @var{options} are separate list parameters: @var{slots}
+here is a list of slot definitions.
+@end deffn
+
+Implementation notes: @code{make-class}
+
+@itemize @bullet
+@item
+adds @code{<object>} to the @var{supers} list if @var{supers} is empty
+or if none of the classes in @var{supers} have @code{<object>} in their
+class precedence list
+
+@item
+defaults the @code{#:environment}, @code{#:name} and @code{#:metaclass}
+options, if they are not specified by @var{options}, to the current
+top-level environment, the unbound value, and @code{(ensure-metaclass
+@var{supers})} respectively (@pxref{Class Definition Internals,,
+ensure-metaclass})
+
+@item
+checks for duplicate classes in @var{supers} and duplicate slot names in
+@var{slots}, and signals an error if there are any duplicates
+
+@item
+calls @code{make}, passing the metaclass as the first parameter and all
+other parameters as option keywords with values.
+@end itemize
+
+@deffn procedure ensure-metaclass supers env
+Return a metaclass suitable for a class that inherits from the list of
+classes in @var{supers}.  The returned metaclass is the union by
+inheritance of the metaclasses of the classes in @var{supers}.
+
+In the simplest case, where all the @var{supers} are straightforward
+classes with metaclass @code{<class>}, the returned metaclass is just
+@code{<class>}.
+
+For a more complex example, suppose that @var{supers} contained one
+class with metaclass @code{<operator-class>} and one with metaclass
+@code{<foreign-object-class>}.  Then the returned metaclass would be a
+class that inherits from both @code{<operator-class>} and
+@code{<foreign-object-class>}.
+
+If @var{supers} is the empty list, @code{ensure-metaclass} returns the
+default GOOPS metaclass @code{<class>}.
+
+GOOPS keeps a list of the metaclasses created by
+@code{ensure-metaclass}, so that each required type of metaclass only
+has to be created once.
+
+The @code{env} parameter is ignored.
+@end deffn
+
+@deffn procedure ensure-metaclass-with-supers meta-supers
+@code{ensure-metaclass-with-supers} is an internal procedure used by
+@code{ensure-metaclass} (@pxref{Class Definition Internals,,
+ensure-metaclass}).  It returns a metaclass that is the union by
+inheritance of the metaclasses in @var{meta-supers}.
+@end deffn
+
+The internals of @code{make}, which is ultimately used to create the new
+class object, are described in @ref{Customizing Instance Creation},
+which covers the creation and initialization of instances in general.
+
+@node Customizing Class Definition
+@subsection Customizing Class Definition
+
+During the initialization of a new class, GOOPS calls a number of generic
+functions with the newly allocated class instance as the first
+argument.  Specifically, GOOPS calls the generic function
+
+@itemize @bullet
+@item
+(initialize @var{class} @dots{})
+@end itemize
+
+where @var{class} is the newly allocated class instance, and the default
+@code{initialize} method for arguments of type @code{<class>} calls the
+generic functions
+
+@itemize @bullet
+@item
+(compute-cpl @var{class})
+
+@item
+(compute-slots @var{class})
+
+@item
+(compute-get-n-set @var{class} @var{slot-def}), for each of the slot
+definitions returned by @code{compute-slots}
+
+@item
+(compute-getter-method @var{class} @var{slot-def}), for each of the
+slot definitions returned by @code{compute-slots} that includes a
+@code{#:getter} or @code{#:accessor} slot option
+
+@item
+(compute-setter-method @var{class} @var{slot-def}), for each of the
+slot definitions returned by @code{compute-slots} that includes a
+@code{#:setter} or @code{#:accessor} slot option.
+@end itemize
+
+If the metaclass of the new class is something more specialized than the
+default @code{<class>}, then the type of @var{class} in the calls above
+is more specialized than @code{<class>}, and hence it becomes possible
+to define generic function methods, specialized for the new class's
+metaclass, that can modify or override the default behaviour of
+@code{initialize}, @code{compute-cpl} or @code{compute-get-n-set}.
+
+@code{compute-cpl} computes the class precedence list (``CPL'') for the
+new class (@pxref{Class precedence list}), and returns it as a list of
+class objects.  The CPL is important because it defines a superclass
+ordering that is used, when a generic function is invoked upon an
+instance of the class, to decide which of the available generic function
+methods is the most specific.  Hence @code{compute-cpl} could be
+customized in order to modify the CPL ordering algorithm for all classes
+with a special metaclass.
+
+The default CPL algorithm is encapsulated by the @code{compute-std-cpl}
+procedure, which is in turn called by the default @code{compute-cpl}
+method.
+
+@deffn procedure compute-std-cpl class
+Compute and return the class precedence list for @var{class} according
+to the algorithm described in @ref{Class precedence list}.
+@end deffn
+
+@code{compute-slots} computes and returns a list of all slot definitions
+for the new class.  By default, this list includes the direct slot
+definitions from the @code{define-class} form, plus the slot definitions
+that are inherited from the new class's superclasses.  The default
+@code{compute-slots} method uses the CPL computed by @code{compute-cpl}
+to calculate this union of slot definitions, with the rule that slots
+inherited from superclasses are shadowed by direct slots with the same
+name.  One possible reason for customizing @code{compute-slots} would be
+to implement an alternative resolution strategy for slot name conflicts.
+
+@code{compute-get-n-set} computes the low-level closures that will be
+used to get and set the value of a particular slot, and returns them in
+a list with two elements.
+
+The closures returned depend on how storage for that slot is allocated.
+The standard @code{compute-get-n-set} method, specialized for classes of
+type @code{<class>}, handles the standard GOOPS values for the
+@code{#:allocation} slot option (@pxref{Slot Options,, allocation}).  By
+defining a new @code{compute-get-n-set} method for a more specialized
+metaclass, it is possible to support new types of slot allocation.
+
+Suppose you wanted to create a large number of instances of some class
+with a slot that should be shared between some but not all instances of
+that class - say every 10 instances should share the same slot storage.
+The following example shows how to implement and use a new type of slot
+allocation to do this.
+
+@example
+(define-class <batched-allocation-metaclass> (<class>))
+
+(let ((batch-allocation-count 0)
+      (batch-get-n-set #f))
+  (define-method (compute-get-n-set (class <batched-allocation-metaclass>) s)
+    (case (slot-definition-allocation s)
+      ((#:batched)
+       ;; If we've already used the same slot storage for 10 instances,
+       ;; reset variables.
+       (if (= batch-allocation-count 10)
+           (begin
+             (set! batch-allocation-count 0)
+             (set! batch-get-n-set #f)))
+       ;; If we don't have a current pair of get and set closures,
+       ;; create one.  make-closure-variable returns a pair of closures
+       ;; around a single Scheme variable - see goops.scm for details.
+       (or batch-get-n-set
+           (set! batch-get-n-set (make-closure-variable)))
+       ;; Increment the batch allocation count.
+       (set! batch-allocation-count (+ batch-allocation-count 1))
+       batch-get-n-set)
+
+      ;; Call next-method to handle standard allocation types.
+      (else (next-method)))))
+
+(define-class <class-using-batched-slot> ()
+  ...
+  (c #:allocation #:batched)
+  ...
+  #:metaclass <batched-allocation-metaclass>)
+@end example
+
+The usage of @code{compute-getter-method} and @code{compute-setter-method}
+is described in @ref{MOP Specification}.
+
+@code{compute-cpl} and @code{compute-get-n-set} are called by the
+standard @code{initialize} method for classes whose metaclass is
+@code{<class>}.  But @code{initialize} itself can also be modified, by
+defining an @code{initialize} method specialized to the new class's
+metaclass.  Such a method could complete override the standard
+behaviour, by not calling @code{(next-method)} at all, but more
+typically it would perform additional class initialization steps before
+and/or after calling @code{(next-method)} for the standard behaviour.
+
+@node STKlos Compatibility
+@subsection STKlos Compatibility
+
+If the STKlos compatibility module is loaded, @code{define-class} is
+overwritten by a STKlos-specific definition; the standard GOOPS
+definition of @code{define-class} remains available in
+@code{standard-define-class}.
+
+@deffn syntax standard-define-class name (super @dots{}) slot-definition @dots{} . options
+@code{standard-define-class} is equivalent to the standard GOOPS
+@code{define-class}.
+@end deffn
+
+@node Creating Instances
+@section Creating Instances
+
+@menu
+* Basic Instance Creation::
+* Customizing Instance Creation::
+@end menu
+
+@node Basic Instance Creation
+@subsection Basic Instance Creation
+
+To create a new instance of any GOOPS class, use the generic function
+@code{make} or @code{make-instance}, passing the required class and any
+appropriate instance initialization arguments as keyword and value
+pairs.  Note that @code{make} and @code{make-instances} are aliases for
+each other - their behaviour is identical.
+
+@deffn generic make
+@deffnx method make (class <class>) . initargs
+Create and return a new instance of class @var{class}, initialized using
+@var{initargs}.
+
+In theory, @var{initargs} can have any structure that is understood by
+whatever methods get applied when the @code{initialize} generic function
+is applied to the newly allocated instance.
+
+In practice, specialized @code{initialize} methods would normally call
+@code{(next-method)}, and so eventually the standard GOOPS
+@code{initialize} methods are applied.  These methods expect
+@var{initargs} to be a list with an even number of elements, where
+even-numbered elements (counting from zero) are keywords and
+odd-numbered elements are the corresponding values.
+
+GOOPS processes initialization argument keywords automatically for slots
+whose definition includes the @code{#:init-keyword} option (@pxref{Slot
+Options,, init-keyword}).  Other keyword value pairs can only be
+processed by an @code{initialize} method that is specialized for the new
+instance's class.  Any unprocessed keyword value pairs are ignored.
+@end deffn
+
+@deffn generic make-instance
+@deffnx method make-instance (class <class>) . initargs
+@code{make-instance} is an alias for @code{make}.
+@end deffn
+
+@node Customizing Instance Creation
+@subsection Customizing Instance Creation
+
+@code{make} itself is a generic function.  Hence the @code{make}
+invocation itself can be customized in the case where the new instance's
+metaclass is more specialized than the default @code{<class>}, by
+defining a @code{make} method that is specialized to that metaclass.
+
+Normally, however, the method for classes with metaclass @code{<class>}
+will be applied.  This method calls two generic functions:
+
+@itemize @bullet
+@item
+(allocate-instance @var{class} . @var{initargs})
+
+@item
+(initialize @var{instance} . @var{initargs})
+@end itemize
+
+@code{allocate-instance} allocates storage for and returns the new
+instance, uninitialized.  You might customize @code{allocate-instance},
+for example, if you wanted to provide a GOOPS wrapper around some other
+object programming system.
+
+To do this, you would create a specialized metaclass, which would act as
+the metaclass for all classes and instances from the other system.  Then
+define an @code{allocate-instance} method, specialized to that
+metaclass, which calls a Guile primitive C function, which in turn
+allocates the new instance using the interface of the other object
+system.
+
+In this case, for a complete system, you would also need to customize a
+number of other generic functions like @code{make} and
+@code{initialize}, so that GOOPS knows how to make classes from the
+other system, access instance slots, and so on.
+
+@code{initialize} initializes the instance that is returned by
+@code{allocate-instance}.  The standard GOOPS methods perform
+initializations appropriate to the instance class.
+
+@itemize @bullet
+@item
+At the least specialized level, the method for instances of type
+@code{<object>} performs internal GOOPS instance initialization, and
+initializes the instance's slots according to the slot definitions and
+any slot initialization keywords that appear in @var{initargs}.
+
+@item
+The method for instances of type @code{<class>} calls
+@code{(next-method)}, then performs the class initializations described
+in @ref{Customizing Class Definition}.
+
+@item
+and so on for generic functions, method, operator classes @dots{}
+@end itemize
+
+Similarly, you can customize the initialization of instances of any
+application-defined class by defining an @code{initialize} method
+specialized to that class.
+
+Imagine a class whose instances' slots need to be initialized at
+instance creation time by querying a database.  Although it might be
+possible to achieve this a combination of @code{#:init-thunk} keywords
+and closures in the slot definitions, it is neater to write an
+@code{initialize} method for the class that queries the database once
+and initializes all the dependent slot values according to the results.
+
+@node Accessing Slots
+@section Accessing Slots
+
+The definition of a slot contains at the very least a slot name, and may
+also contain various slot options, including getter, setter and/or
+accessor functions for the slot.
+
+It is always possible to access slots by name, using the various
+``slot-ref'' and ``slot-set!'' procedures described in the following
+subsections.  For example,
+
+@example
+(define-class <my-class> ()      ;; Define a class with slots
+  (count #:init-value 0)         ;; named "count" and "cache".
+  (cache #:init-value '())
+  @dots{})
+
+(define inst (make <my-class>))  ;; Make an instance of this class.
+
+(slot-set! inst 'count 5)        ;; Set the value of the "count"
+                                 ;; slot to 5.
+
+(slot-set! inst 'cache           ;; Modify the value of the
+  (cons (cons "^it" "It")        ;; "cache" slot.
+        (slot-ref inst 'cache)))
+@end example
+
+If a slot definition includes a getter, setter or accessor function,
+these can be used instead of @code{slot-ref} and @code{slot-set!} to
+access the slot.
+
+@example
+(define-class <adv-class> ()     ;; Define a new class whose slots
+  (count #:setter set-count)     ;; use a getter, a setter and
+  (cache #:accessor cache)       ;; an accessor.
+  (csize #:getter cache-size)
+  @dots{})
+
+(define inst (make <adv-class>)) ;; Make an instance of this class.
+
+(set-count inst 5)               ;; Set the value of the "count"
+                                 ;; slot to 5.
+
+(set! (cache inst)               ;; Modify the value of the
+  (cons (cons "^it" "It")        ;; "cache" slot.
+        (cache inst)))
+
+(let ((size (cache-size inst)))  ;; Get the value of the "csize"
+  @dots{})                           ;; slot.
+@end example
+
+Whichever of these methods is used to access slots, GOOPS always calls
+the low-level @dfn{getter} and @dfn{setter} closures for the slot to get
+and set its value.  These closures make sure that the slot behaves
+according to the @code{#:allocation} type that was specified in the slot
+definition (@pxref{Slot Options,, allocation}).  (For more about these
+closures, see @ref{Customizing Class Definition,, compute-get-n-set}.)
+
+@menu
+* Instance Slots::
+* Class Slots::
+* Handling Slot Access Errors::
+@end menu
+
+@node Instance Slots
+@subsection Instance Slots
+
+Any slot, regardless of its allocation, can be queried, referenced and
+set using the following four primitive procedures.
+
+@deffn {primitive procedure} slot-exists? obj slot-name
+Return @code{#t} if @var{obj} has a slot with name @var{slot-name},
+otherwise @code{#f}.
+@end deffn
+
+@deffn {primitive procedure} slot-bound? obj slot-name
+Return @code{#t} if the slot named @var{slot-name} in @var{obj} has a
+value, otherwise @code{#f}.
+
+@code{slot-bound?} calls the generic function @code{slot-missing} if
+@var{obj} does not have a slot called @var{slot-name} (@pxref{Handling
+Slot Access Errors, slot-missing}).
+@end deffn
+
+@deffn {primitive procedure} slot-ref obj slot-name
+Return the value of the slot named @var{slot-name} in @var{obj}.
+
+@code{slot-ref} calls the generic function @code{slot-missing} if
+@var{obj} does not have a slot called @var{slot-name} (@pxref{Handling
+Slot Access Errors, slot-missing}).
+
+@code{slot-ref} calls the generic function @code{slot-unbound} if the
+named slot in @var{obj} does not have a value (@pxref{Handling Slot
+Access Errors, slot-unbound}).
+@end deffn
+
+@deffn {primitive procedure} slot-set! obj slot-name value
+Set the value of the slot named @var{slot-name} in @var{obj} to @var{value}.
+
+@code{slot-set!} calls the generic function @code{slot-missing} if
+@var{obj} does not have a slot called @var{slot-name} (@pxref{Handling
+Slot Access Errors, slot-missing}).
+@end deffn
+
+GOOPS stores information about slots in class metaobjects.  Internally,
+all of these procedures work by looking up the slot definition for the
+slot named @var{slot-name} in the class metaobject for @code{(class-of
+@var{obj})}, and then using the slot definition's ``getter'' and
+``setter'' closures to get and set the slot value.
+
+The next four procedures differ from the previous ones in that they take
+the class metaobject as an explicit argument, rather than assuming
+@code{(class-of @var{obj})}.  Therefore they allow you to apply the
+``getter'' and ``setter'' closures of a slot definition in one class to
+an instance of a different class.
+
+[ *fixme* I have no idea why this is useful!  Perhaps when a slot in
+@code{(class-of @var{obj})} shadows a slot with the same name in one of
+its superclasses?  There should be an enlightening example here. ]
+
+@deffn {primitive procedure} slot-exists-using-class? class obj slot-name
+Return @code{#t} if the class metaobject @var{class} has a slot
+definition for a slot with name @var{slot-name}, otherwise @code{#f}.
+@end deffn
+
+@deffn {primitive procedure} slot-bound-using-class? class obj slot-name
+Return @code{#t} if applying @code{slot-ref-using-class} to the same
+arguments would call the generic function @code{slot-unbound}, otherwise
+@code{#f}.
+
+@code{slot-bound-using-class?} calls the generic function
+@code{slot-missing} if @var{class} does not have a slot definition for a
+slot called @var{slot-name} (@pxref{Handling Slot Access Errors,
+slot-missing}).
+@end deffn
+
+@deffn {primitive procedure} slot-ref-using-class class obj slot-name
+Apply the ``getter'' closure for the slot named @var{slot-name} in
+@var{class} to @var{obj}, and return its result.
+
+@code{slot-ref-using-class} calls the generic function
+@code{slot-missing} if @var{class} does not have a slot definition for a
+slot called @var{slot-name} (@pxref{Handling Slot Access Errors,
+slot-missing}).
+
+@code{slot-ref-using-class} calls the generic function
+@code{slot-unbound} if the application of the ``getter'' closure to
+@var{obj} returns an unbound value (@pxref{Handling Slot Access Errors,
+slot-unbound}).
+@end deffn
+
+@deffn {primitive procedure} slot-set-using-class! class obj slot-name value
+Apply the ``setter'' closure for the slot named @var{slot-name} in
+@var{class} to @var{obj} and @var{value}.
+
+@code{slot-set-using-class!} calls the generic function
+@code{slot-missing} if @var{class} does not have a slot definition for a
+slot called @var{slot-name} (@pxref{Handling Slot Access Errors,
+slot-missing}).
+@end deffn
+
+@node Class Slots
+@subsection Class Slots
+
+Slots whose allocation is per-class rather than per-instance can be
+referenced and set without needing to specify any particular instance.
+
+@deffn procedure class-slot-ref class slot-name
+Return the value of the slot named @var{slot-name} in class @var{class}.
+The named slot must have @code{#:class} or @code{#:each-subclass}
+allocation (@pxref{Slot Options,, allocation}).
+
+If there is no such slot with @code{#:class} or @code{#:each-subclass}
+allocation, @code{class-slot-ref} calls the @code{slot-missing} generic
+function with arguments @var{class} and @var{slot-name}.  Otherwise, if
+the slot value is unbound, @code{class-slot-ref} calls the
+@code{slot-missing} generic function, with the same arguments.
+@end deffn
+
+@deffn procedure class-slot-set! class slot-name value
+Set the value of the slot named @var{slot-name} in class @var{class} to
+@var{value}.  The named slot must have @code{#:class} or
+@code{#:each-subclass} allocation (@pxref{Slot Options,, allocation}).
+
+If there is no such slot with @code{#:class} or @code{#:each-subclass}
+allocation, @code{class-slot-ref} calls the @code{slot-missing} generic
+function with arguments @var{class} and @var{slot-name}.
+@end deffn
+
+@node Handling Slot Access Errors
+@subsection Handling Slot Access Errors
+
+GOOPS calls one of the following generic functions when a ``slot-ref''
+or ``slot-set!'' call specifies a non-existent slot name, or tries to
+reference a slot whose value is unbound.
+
+@deffn generic slot-missing
+@deffnx method slot-missing (class <class>) slot-name
+@deffnx method slot-missing (class <class>) (object <object>) slot-name
+@deffnx method slot-missing (class <class>) (object <object>) slot-name value
+When an application attempts to reference or set a class or instance
+slot by name, and the slot name is invalid for the specified @var{class}
+or @var{object}, GOOPS calls the @code{slot-missing} generic function.
+
+The default methods all call @code{goops-error} with an appropriate
+message.
+@end deffn
+
+@deffn generic slot-unbound
+@deffnx method slot-unbound (object <object>)
+@deffnx method slot-unbound (class <class>) slot-name
+@deffnx method slot-unbound (class <class>) (object <object>) slot-name
+When an application attempts to reference a class or instance slot, and
+the slot's value is unbound, GOOPS calls the @code{slot-unbound} generic
+function.
+
+The default methods all call @code{goops-error} with an appropriate
+message.
+@end deffn
+
+@node Creating Generic Functions
+@section Creating Generic Functions
+
+A generic function is a collection of methods, with rules for
+determining which of the methods should be applied for any given
+invocation of the generic function.
+
+GOOPS represents generic functions as metaobjects of the class
+@code{<generic>} (or one of its subclasses).
+
+@menu
+* Basic Generic Function Creation::
+* Generic Function Internals::
+* Extending Guiles Primitives::
+@end menu
+
+@node Basic Generic Function Creation
+@subsection Basic Generic Function Creation
+
+The following forms may be used to bind a variable to a generic
+function.  Depending on that variable's pre-existing value, the generic
+function may be created empty - with no methods - or it may contain
+methods that are inferred from the pre-existing value.
+
+It is not, in general, necessary to use @code{define-generic} or
+@code{define-accessor} before defining methods for the generic function
+using @code{define-method}, since @code{define-method} will
+automatically interpolate a @code{define-generic} call, or upgrade an
+existing generic to an accessor, if that is implied by the
+@code{define-method} call.  Note in particular that,
+if the specified variable already has a @emph{generic function} value,
+@code{define-generic} and @code{define-accessor} will @emph{discard} it!
+Obviously it is application-dependent whether this is desirable or not.
+
+If, for example, you wanted to extend @code{+} for a class representing
+a new numerical type, you probably want to inherit any existing methods
+for @code{+} and so should not use @code{define-generic}.  If, on the
+other hand, you do not want to risk inheriting methods whose behaviour
+might surprise you, you can use @code{define-generic} or
+@code{define-accessor} to wipe the slate clean.
+
+@deffn syntax define-generic symbol
+Create a generic function with name @var{symbol} and bind it to the
+variable @var{symbol}.
+
+If the variable @var{symbol} was previously bound to a Scheme procedure
+(or procedure-with-setter), the old procedure (and setter) is
+incorporated into the new generic function as its default procedure (and
+setter).  Any other previous value that was bound to @var{symbol},
+including an existing generic function, is overwritten by the new
+generic function.
+@end deffn
+
+@deffn syntax define-accessor symbol
+Create an accessor with name @var{symbol} and bind it to the variable
+@var{symbol}.
+
+If the variable @var{symbol} was previously bound to a Scheme procedure
+(or procedure-with-setter), the old procedure (and setter) is
+incorporated into the new accessor as its default procedure (and
+setter).  Any other previous value that was bound to @var{symbol},
+including an existing generic function or accessor, is overwritten by
+the new definition.
+@end deffn
+
+It is sometimes tempting to use GOOPS accessors with short names.  For
+example, it is tempting to use the name @code{x} for the x-coordinate
+in vector packages.
+
+Assume that we work with a graphical package which needs to use two
+independent vector packages for 2D and 3D vectors respectively.  If
+both packages export @code{x} we will encounter a name collision.
+
+This can be resolved automagically with the duplicates handler
+@code{merge-generics} which gives the module system license to merge
+all generic functions sharing a common name:
+
+@smalllisp
+(define-module (math 2D-vectors)
+  :use-module (oop goops)
+  :export (x y ...))
+		  
+(define-module (math 3D-vectors)
+  :use-module (oop goops)
+  :export (x y z ...))
+
+(define-module (my-module)
+  :use-module (math 2D-vectors)
+  :use-module (math 3D-vectors)
+  :duplicates merge-generics)
+@end smalllisp
+
+The generic function @code{x} in @code{(my-module)} will now share
+methods with @code{x} in both imported modules.
+
+There will, in fact, now be three distinct generic functions named
+@code{x}: @code{x} in @code{(2D-vectors)}, @code{x} in
+@code{(3D-vectors)}, and @code{x} in @code{(my-module)}.  The last
+function will be an @code{<extended-generic>}, extending the previous
+two functions.
+
+Let's call the imported generic functions the "ancestor functions".
+The generic function @code{x} in @code{(my-module)} is, in turn, a
+"descendant function" of the imported functions, extending its
+ancestors.
+
+For any generic function G, the applicable methods are selected from
+the union of the methods of the descendant functions, the methods of G
+itself and the methods of the ancestor functions.
+
+This, ancestor functions share methods with their descendants and vice
+versa.  This implies that @code{x} in @code{(math 2D-vectors)} will
+share the methods of @code{x} in @code{(my-module)} and vice versa,
+while @code{x} in @code{(math 2D-vectors)} doesn't share the methods
+of @code{x} in @code{(math 3D-vectors)}, thus preserving modularity.
+
+Sharing is dynamic, so that adding new methods to a descendant implies
+adding it to the ancestor.
+
+If duplicates checking is desired in the above example, the following
+form of the @code{:duplicates} option can be used instead:
+
+@smalllisp
+  :duplicates (merge-generics check)
+@end smalllisp
+
+@node Generic Function Internals
+@subsection Generic Function Internals
+
+@code{define-generic} calls @code{ensure-generic} to upgrade a
+pre-existing procedure value, or @code{make} with metaclass
+@code{<generic>} to create a new generic function.
+
+@code{define-accessor} calls @code{ensure-accessor} to upgrade a
+pre-existing procedure value, or @code{make-accessor} to create a new
+accessor.
+
+@deffn procedure ensure-generic old-definition [name]
+Return a generic function with name @var{name}, if possible by using or
+upgrading @var{old-definition}.  If unspecified, @var{name} defaults to
+@code{#f}.
+
+If @var{old-definition} is already a generic function, it is returned
+unchanged.
+
+If @var{old-definition} is a Scheme procedure or procedure-with-setter,
+@code{ensure-generic} returns a new generic function that uses
+@var{old-definition} for its default procedure and setter.
+
+Otherwise @code{ensure-generic} returns a new generic function with no
+defaults and no methods.
+@end deffn
+
+@deffn procedure make-generic [name]
+Return a new generic function with name @code{(car @var{name})}.  If
+unspecified, @var{name} defaults to @code{#f}.
+@end deffn
+
+@code{ensure-generic} calls @code{make} with metaclasses
+@code{<generic>} and @code{<generic-with-setter>}, depending on the
+previous value of the variable that it is trying to upgrade.
+
+@code{make-generic} is a simple wrapper for @code{make} with metaclass
+@code{<generic>}.
+
+@deffn procedure ensure-accessor proc [name]
+Return an accessor with name @var{name}, if possible by using or
+upgrading @var{proc}.  If unspecified, @var{name} defaults to @code{#f}.
+
+If @var{proc} is already an accessor, it is returned unchanged.
+
+If @var{proc} is a Scheme procedure, procedure-with-setter or generic
+function, @code{ensure-accessor} returns an accessor that reuses the
+reusable elements of @var{proc}.
+
+Otherwise @code{ensure-accessor} returns a new accessor with no defaults
+and no methods.
+@end deffn
+
+@deffn procedure make-accessor [name]
+Return a new accessor with name @code{(car @var{name})}.  If
+unspecified, @var{name} defaults to @code{#f}.
+@end deffn
+
+@code{ensure-accessor} calls @code{make} with
+metaclass @code{<generic-with-setter>}, as well as calls to
+@code{ensure-generic}, @code{make-accessor} and (tail recursively)
+@code{ensure-accessor}.
+
+@code{make-accessor} calls @code{make} twice, first
+with metaclass @code{<generic>} to create a generic function for the
+setter, then with metaclass @code{<generic-with-setter>} to create the
+accessor, passing the setter generic function as the value of the
+@code{#:setter} keyword.
+
+@node Extending Guiles Primitives
+@subsection Extending Guile's Primitives
+
+When GOOPS is loaded, many of Guile's primitive procedures can be
+extended by giving them a generic function definition that operates
+in conjunction with their normal C-coded implementation.  For
+primitives that are extended in this way, the result from the user-
+or application-level point of view is that the extended primitive
+behaves exactly like a generic function with the C-coded implementation
+as its default method.
+
+The @code{generic-capability?} predicate should be used to determine
+whether a particular primitive is extensible in this way.
+
+@deffn {primitive procedure} generic-capability? primitive
+Return @code{#t} if @var{primitive} can be extended by giving it a
+generic function definition, otherwise @code{#f}.
+@end deffn
+
+Even when a primitive procedure is extensible like this, its generic
+function definition is not created until it is needed by a call to
+@code{define-method}, or until the application explicitly requests it
+by calling @code{enable-primitive-generic!}.
+
+@deffn {primitive procedure} enable-primitive-generic! primitive
+Force the creation of a generic function definition for
+@var{primitive}.
+@end deffn
+
+Once the generic function definition for a primitive has been created,
+it can be retrieved using @code{primitive-generic-generic}.
+
+@deffn {primitive procedure} primitive-generic-generic primitive
+Return the generic function definition of @var{primitive}.
+
+@code{primitive-generic-generic} raises an error if @var{primitive}
+is not a primitive with generic capability, or if its generic capability
+has not yet been enabled, whether implicitly (by @code{define-method})
+or explicitly (by @code{enable-primitive-generic!}).
+@end deffn
+
+Note that the distinction between, on the one hand, primitives with
+additional generic function definitions and, on the other hand, generic
+functions with a default method, may disappear when GOOPS is fully
+integrated into the core of Guile.  Consequently, the
+procedures described in this section may disappear as well.
+
+@node Adding Methods to Generic Functions
+@section Adding Methods to Generic Functions
+
+@menu
+* Basic Method Definition::
+* Method Definition Internals::
+@end menu
+
+@node Basic Method Definition
+@subsection Basic Method Definition
+
+To add a method to a generic function, use the @code{define-method} form.
+
+@deffn syntax define-method (generic parameter @dots{}) . body
+Define a method for the generic function or accessor @var{generic} with
+parameters @var{parameter}s and body @var{body}.
+
+@var{generic} is a generic function.  If @var{generic} is a variable
+which is not yet bound to a generic function object, the expansion of
+@code{define-method} will include a call to @code{define-generic}.  If
+@var{generic} is @code{(setter @var{generic-with-setter})}, where
+@var{generic-with-setter} is a variable which is not yet bound to a
+generic-with-setter object, the expansion will include a call to
+@code{define-accessor}.
+
+Each @var{parameter} must be either a symbol or a two-element list
+@code{(@var{symbol} @var{class})}.  The symbols refer to variables in
+the @var{body} that will be bound to the parameters supplied by the
+caller when calling this method.  The @var{class}es, if present,
+specify the possible combinations of parameters to which this method
+can be applied.
+
+@var{body} is the body of the method definition.
+@end deffn
+
+@code{define-method} expressions look a little like normal Scheme
+procedure definitions of the form
+
+@example
+(define (name formals @dots{}) . body)
+@end example
+
+The most important difference is that each formal parameter, apart from the
+possible ``rest'' argument, can be qualified by a class name:
+@code{@var{formal}} becomes @code{(@var{formal} @var{class})}.  The
+meaning of this qualification is that the method being defined
+will only be applicable in a particular generic function invocation if
+the corresponding argument is an instance of @code{@var{class}} (or one of
+its subclasses).  If more than one of the formal parameters is qualified
+in this way, then the method will only be applicable if each of the
+corresponding arguments is an instance of its respective qualifying class.
+
+Note that unqualified formal parameters act as though they are qualified
+by the class @code{<top>}, which GOOPS uses to mean the superclass of
+all valid Scheme types, including both primitive types and GOOPS classes.
+
+For example, if a generic function method is defined with
+@var{parameter}s @code{((s1 <square>) (n <number>))}, that method is
+only applicable to invocations of its generic function that have two
+parameters where the first parameter is an instance of the
+@code{<square>} class and the second parameter is a number.
+
+If a generic function is invoked with a combination of parameters for which
+there is no applicable method, GOOPS raises an error.  For more about
+invocation error handling, and generic function invocation in general,
+see @ref{Invoking Generic Functions}.
+
+@node Method Definition Internals
+@subsection Method Definition Internals
+
+@code{define-method}
+
+@itemize @bullet
+@item
+checks the form of the first parameter, and applies the following steps
+to the accessor's setter if it has the @code{(setter @dots{})} form
+
+@item
+interpolates a call to @code{define-generic} or @code{define-accessor}
+if a generic function is not already defined with the supplied name
+
+@item
+calls @code{method} with the @var{parameter}s and @var{body}, to make a
+new method instance
+
+@item
+calls @code{add-method!} to add this method to the relevant generic
+function.
+@end itemize
+
+@deffn syntax method (parameter @dots{}) . body
+Make a method whose specializers are defined by the classes in
+@var{parameter}s and whose procedure definition is constructed from the
+@var{parameter} symbols and @var{body} forms.
+
+The @var{parameter} and @var{body} parameters should be as for
+@code{define-method} (@pxref{Basic Method Definition,, define-method}).
+@end deffn
+
+@code{method}
+
+@itemize @bullet
+@item
+extracts formals and specializing classes from the @var{parameter}s,
+defaulting the class for unspecialized parameters to @code{<top>}
+
+@item
+creates a closure using the formals and the @var{body} forms
+
+@item
+calls @code{make} with metaclass @code{<method>} and the specializers
+and closure using the @code{#:specializers} and @code{#:procedure}
+keywords.
+@end itemize
+
+@deffn procedure make-method specializers procedure
+Make a method using @var{specializers} and @var{procedure}.
+
+@var{specializers} should be a list of classes that specifies the
+parameter combinations to which this method will be applicable.
+
+@var{procedure} should be the closure that will applied to the generic
+function parameters when this method is invoked.
+@end deffn
+
+@code{make-method} is a simple wrapper around @code{make} with metaclass
+@code{<method>}.
+
+@deffn generic add-method! target method
+Generic function for adding method @var{method} to @var{target}.
+@end deffn
+
+@deffn method add-method! (generic <generic>) (method <method>)
+Add method @var{method} to the generic function @var{generic}.
+@end deffn
+
+@deffn method add-method! (proc <procedure>) (method <method>)
+If @var{proc} is a procedure with generic capability (@pxref{Extending
+Guiles Primitives,, generic-capability?}), upgrade it to a
+primitive generic and add @var{method} to its generic function
+definition.
+@end deffn
+
+@deffn method add-method! (pg <primitive-generic>) (method <method>)
+Add method @var{method} to the generic function definition of @var{pg}.
+
+Implementation: @code{(add-method! (primitive-generic-generic pg) method)}.
+@end deffn
+
+@deffn method add-method! (whatever <top>) (method <method>)
+Raise an error indicating that @var{whatever} is not a valid generic
+function.
+@end deffn
+
+@node Invoking Generic Functions
+@section Invoking Generic Functions
+
+When a variable with a generic function definition appears as the first
+element of a list that is being evaluated, the Guile evaluator tries
+to apply the generic function to the arguments obtained by evaluating
+the remaining elements of the list.  [ *fixme* How do I put this in a
+more Schemely and less Lispy way? ]
+
+Usually a generic function contains several method definitions, with
+varying degrees of formal parameter specialization (@pxref{Basic
+Method Definition,, define-method}).  So it is necessary to sort these
+methods by specificity with respect to the supplied arguments, and then
+apply the most specific method definition.  Less specific methods
+may be applied subsequently if a method that is being applied calls
+@code{next-method}.
+
+@menu
+* Determining Which Methods to Apply::
+* Handling Invocation Errors::
+@end menu
+
+@node Determining Which Methods to Apply
+@subsection Determining Which Methods to Apply
+
+[ *fixme*  Sorry - this is the area of GOOPS that I understand least of
+all, so I'm afraid I have to pass on this section.  Would some other
+kind person consider filling it in? ]
+
+@deffn generic apply-generic
+@deffnx method apply-generic (gf <generic>) args
+@end deffn
+
+@deffn generic compute-applicable-methods
+@deffnx method compute-applicable-methods (gf <generic>) args
+@end deffn
+
+@deffn generic sort-applicable-methods
+@deffnx method sort-applicable-methods (gf <generic>) methods args
+@end deffn
+
+@deffn generic method-more-specific?
+@deffnx method method-more-specific? (m1 <method>) (m2 <method>) args
+@end deffn
+
+@deffn generic apply-method
+@deffnx method apply-method (gf <generic>) methods build-next args
+@end deffn
+
+@deffn generic apply-methods
+@deffnx method apply-methods (gf <generic>) (l <list>) args
+@end deffn
+
+@node Handling Invocation Errors
+@subsection Handling Invocation Errors
+
+@deffn generic no-method
+@deffnx method no-method (gf <generic>) args
+When an application invokes a generic function, and no methods at all
+have been defined for that generic function, GOOPS calls the
+@code{no-method} generic function.  The default method calls
+@code{goops-error} with an appropriate message.
+@end deffn
+
+@deffn generic no-applicable-method
+@deffnx method no-applicable-method (gf <generic>) args
+When an application applies a generic function to a set of arguments,
+and no methods have been defined for those argument types, GOOPS calls
+the @code{no-applicable-method} generic function.  The default method
+calls @code{goops-error} with an appropriate message.
+@end deffn
+
+@deffn generic no-next-method
+@deffnx method no-next-method (gf <generic>) args
+When a generic function method calls @code{(next-method)} to invoke the
+next less specialized method for that generic function, and no less
+specialized methods have been defined for the current generic function
+arguments, GOOPS calls the @code{no-next-method} generic function.  The
+default method calls @code{goops-error} with an appropriate message.
+@end deffn
+
+@node Redefining a Class
+@section Redefining a Class
+
+Suppose that a class @code{<my-class>} is defined using @code{define-class}
+(@pxref{Basic Class Definition,, define-class}), with slots that have
+accessor functions, and that an application has created several instances
+of @code{<my-class>} using @code{make} (@pxref{Basic Instance Creation,,
+make}).  What then happens if @code{<my-class>} is redefined by calling
+@code{define-class} again?
+
+@menu
+* Default Class Redefinition Behaviour::
+* Customizing Class Redefinition::
+@end menu
+
+@node Default Class Redefinition Behaviour
+@subsection Default Class Redefinition Behaviour
+
+GOOPS' default answer to this question is as follows.
+
+@itemize @bullet
+@item
+All existing direct instances of @code{<my-class>} are converted to be
+instances of the new class.  This is achieved by preserving the values
+of slots that exist in both the old and new definitions, and initializing the
+values of new slots in the usual way (@pxref{Basic Instance Creation,,
+make}).
+
+@item
+All existing subclasses of @code{<my-class>} are redefined, as though
+the @code{define-class} expressions that defined them were re-evaluated
+following the redefinition of @code{<my-class>}, and the class
+redefinition process described here is applied recursively to the
+redefined subclasses.
+
+@item
+Once all of its instances and subclasses have been updated, the class
+metaobject previously bound to the variable @code{<my-class>} is no
+longer needed and so can be allowed to be garbage collected.
+@end itemize
+
+To keep things tidy, GOOPS also needs to do a little housekeeping on
+methods that are associated with the redefined class.
+
+@itemize @bullet
+@item
+Slot accessor methods for slots in the old definition should be removed
+from their generic functions.  They will be replaced by accessor methods
+for the slots of the new class definition.
+
+@item
+Any generic function method that uses the old @code{<my-class>} metaobject
+as one of its formal parameter specializers must be updated to refer to
+the new @code{<my-class>} metaobject.  (Whenever a new generic function
+method is defined, @code{define-method} adds the method to a list stored
+in the class metaobject for each class used as a formal parameter
+specializer, so it is easy to identify all the methods that must be
+updated when a class is redefined.)
+@end itemize
+
+If this class redefinition strategy strikes you as rather counter-intuitive,
+bear in mind that it is derived from similar behaviour in other object
+systems such as CLOS, and that experience in those systems has shown it to be
+very useful in practice.
+
+Also bear in mind that, like most of GOOPS' default behaviour, it can
+be customized@dots{}
+
+@node Customizing Class Redefinition
+@subsection Customizing Class Redefinition
+
+When @code{define-class} notices that a class is being redefined,
+it constructs the new class metaobject as usual, and then invokes the
+@code{class-redefinition} generic function with the old and new classes
+as arguments.  Therefore, if the old or new classes have metaclasses
+other than the default @code{<class>}, class redefinition behaviour can
+be customized by defining a @code{class-redefinition} method that is
+specialized for the relevant metaclasses.
+
+@deffn generic class-redefinition
+Handle the class redefinition from @var{old-class} to @var{new-class},
+and return the new class metaobject that should be bound to the
+variable specified by @code{define-class}'s first argument.
+@end deffn
+
+@deffn method class-redefinition (old-class <class>) (new-class <class>)
+Implements GOOPS' default class redefinition behaviour, as described in
+@ref{Default Class Redefinition Behaviour}.  Returns the metaobject
+for the new class definition.
+@end deffn
+
+An alternative class redefinition strategy could be to leave all
+existing instances as instances of the old class, but accepting that the
+old class is now ``nameless'', since its name has been taken over by the
+new definition.  In this strategy, any existing subclasses could also
+be left as they are, on the understanding that they inherit from a nameless
+superclass.
+
+This strategy is easily implemented in GOOPS, by defining a new metaclass,
+that will be used as the metaclass for all classes to which the strategy
+should apply, and then defining a @code{class-redefinition} method that
+is specialized for this metaclass:
+
+@example
+(define-class <can-be-nameless> (<class>))
+
+(define-method (class-redefinition (old <can-be-nameless>) (new <class>))
+  new)
+@end example
+
+When customization can be as easy as this, aren't you glad that GOOPS
+implements the far more difficult strategy as its default!
+
+Finally, note that, if @code{class-redefinition} itself is not customized,
+the default @code{class-redefinition} method invokes three further
+generic functions that could be individually customized:
+
+@itemize @bullet
+@item
+(remove-class-accessors! @var{old-class})
+
+@item
+(update-direct-method! @var{method} @var{old-class} @var{new-class})
+
+@item
+(update-direct-subclass! @var{subclass} @var{old-class} @var{new-class})
+@end itemize
+
+and the default methods for these generic functions invoke further
+generic functions, and so on@dots{}  The detailed protocol for all of these
+is described in @ref{MOP Specification}.
+
+@node Changing the Class of an Instance
+@section Changing the Class of an Instance
+
+You can change the class of an existing instance by invoking the
+generic function @code{change-class} with two arguments: the instance
+and the new class.
+
+@deffn generic change-class
+@end deffn
+
+The default method for @code{change-class} decides how to implement the
+change of class by looking at the slot definitions for the instance's
+existing class and for the new class.  If the new class has slots with
+the same name as slots in the existing class, the values for those slots
+are preserved.  Slots that are present only in the existing class are
+discarded.  Slots that are present only in the new class are initialized
+using the corresponding slot definition's init function (@pxref{Classes,,
+slot-init-function}).
+
+@deffn {method} change-class (obj <object>) (new <class>)
+Modify instance @var{obj} to make it an instance of class @var{new}.
+
+The value of each of @var{obj}'s slots is preserved only if a similarly named
+slot exists in @var{new}; any other slot values are discarded.
+
+The slots in @var{new} that do not correspond to any of @var{obj}'s
+pre-existing slots are initialized according to @var{new}'s slot definitions'
+init functions.
+@end deffn
+
+Customized change of class behaviour can be implemented by defining
+@code{change-class} methods that are specialized either by the class
+of the instances to be modified or by the metaclass of the new class.
+
+When a class is redefined (@pxref{Redefining a Class}), and the default
+class redefinition behaviour is not overridden, GOOPS (eventually)
+invokes the @code{change-class} generic function for each existing
+instance of the redefined class.
+
+@node Introspection
+@section Introspection
+
+@dfn{Introspection}, also known as @dfn{reflection}, is the name given
+to the ability to obtain information dynamically about GOOPS metaobjects.
+It is perhaps best illustrated by considering an object oriented language
+that does not provide any introspection, namely C++.
+
+Nothing in C++ allows a running program to obtain answers to the following
+types of question:
+
+@itemize @bullet
+@item
+What are the data members of this object or class?
+
+@item
+What classes does this class inherit from?
+
+@item
+Is this method call virtual or non-virtual?
+
+@item
+If I invoke @code{Employee::adjustHoliday()}, what class contains the
+@code{adjustHoliday()} method that will be applied?
+@end itemize
+
+In C++, answers to such questions can only be determined by looking at
+the source code, if you have access to it.  GOOPS, on the other hand,
+includes procedures that allow answers to these questions --- or their
+GOOPS equivalents --- to be obtained dynamically, at run time.
+
+@menu
+* Classes::
+* Slots::
+* Instances::
+* Generic Functions::
+* Generic Function Methods::
+@end menu
+
+@node Classes
+@subsection Classes
+
+@deffn {primitive procedure} class-name class
+Return the name of class @var{class}.
+This is the value of the @var{class} metaobject's @code{name} slot.
+@end deffn
+
+@deffn {primitive procedure} class-direct-supers class
+Return a list containing the direct superclasses of @var{class}.
+This is the value of the @var{class} metaobject's
+@code{direct-supers} slot.
+@end deffn
+
+@deffn {primitive procedure} class-direct-slots class
+Return a list containing the slot definitions of the direct slots of
+@var{class}.
+This is the value of the @var{class} metaobject's @code{direct-slots}
+slot.
+@end deffn
+
+@deffn {primitive procedure} class-direct-subclasses class
+Return a list containing the direct subclasses of @var{class}.
+This is the value of the @var{class} metaobject's
+@code{direct-subclasses} slot.
+@end deffn
+
+@deffn {primitive procedure} class-direct-methods class
+Return a list of all the generic function methods that use @var{class}
+as a formal parameter specializer.
+This is the value of the @var{class} metaobject's @code{direct-methods}
+slot.
+@end deffn
+
+@deffn {primitive procedure} class-precedence-list class
+Return the class precedence list for class @var{class} (@pxref{Class
+precedence list}).
+This is the value of the @var{class} metaobject's @code{cpl} slot.
+@end deffn
+
+@deffn {primitive procedure} class-slots class
+Return a list containing the slot definitions for all @var{class}'s slots,
+including any slots that are inherited from superclasses.
+This is the value of the @var{class} metaobject's @code{slots} slot.
+@end deffn
+
+@deffn {primitive procedure} class-environment class
+Return the value of @var{class}'s @code{environment} slot.
+[ *fixme*  I don't know what this value is used for. ]
+@end deffn
+
+@deffn procedure class-subclasses class
+Return a list of all subclasses of @var{class}.
+@end deffn
+
+@deffn procedure class-methods class
+Return a list of all methods that use @var{class} or a subclass of
+@var{class} as one of its formal parameter specializers.
+@end deffn
+
+@node Slots
+@subsection Slots
+
+@deffn procedure class-slot-definition class slot-name
+Return the slot definition for the slot named @var{slot-name} in class
+@var{class}.  @var{slot-name} should be a symbol.
+@end deffn
+
+@deffn procedure slot-definition-name slot-def
+Extract and return the slot name from @var{slot-def}.
+@end deffn
+
+@deffn procedure slot-definition-options slot-def
+Extract and return the slot options from @var{slot-def}.
+@end deffn
+
+@deffn procedure slot-definition-allocation slot-def
+Extract and return the slot allocation option from @var{slot-def}.  This
+is the value of the @code{#:allocation} keyword (@pxref{Slot Options,,
+allocation}), or @code{#:instance} if the @code{#:allocation} keyword is
+absent.
+@end deffn
+
+@deffn procedure slot-definition-getter slot-def
+Extract and return the slot getter option from @var{slot-def}.  This is
+the value of the @code{#:getter} keyword (@pxref{Slot Options,,
+getter}), or @code{#f} if the @code{#:getter} keyword is absent.
+@end deffn
+
+@deffn procedure slot-definition-setter slot-def
+Extract and return the slot setter option from @var{slot-def}.  This is
+the value of the @code{#:setter} keyword (@pxref{Slot Options,,
+setter}), or @code{#f} if the @code{#:setter} keyword is absent.
+@end deffn
+
+@deffn procedure slot-definition-accessor slot-def
+Extract and return the slot accessor option from @var{slot-def}.  This
+is the value of the @code{#:accessor} keyword (@pxref{Slot Options,,
+accessor}), or @code{#f} if the @code{#:accessor} keyword is absent.
+@end deffn
+
+@deffn procedure slot-definition-init-value slot-def
+Extract and return the slot init-value option from @var{slot-def}.  This
+is the value of the @code{#:init-value} keyword (@pxref{Slot Options,,
+init-value}), or the unbound value if the @code{#:init-value} keyword is
+absent.
+@end deffn
+
+@deffn procedure slot-definition-init-form slot-def
+Extract and return the slot init-form option from @var{slot-def}.  This
+is the value of the @code{#:init-form} keyword (@pxref{Slot Options,,
+init-form}), or the unbound value if the @code{#:init-form} keyword is
+absent.
+@end deffn
+
+@deffn procedure slot-definition-init-thunk slot-def
+Extract and return the slot init-thunk option from @var{slot-def}.  This
+is the value of the @code{#:init-thunk} keyword (@pxref{Slot Options,,
+init-thunk}), or @code{#f} if the @code{#:init-thunk} keyword is absent.
+@end deffn
+
+@deffn procedure slot-definition-init-keyword slot-def
+Extract and return the slot init-keyword option from @var{slot-def}.
+This is the value of the @code{#:init-keyword} keyword (@pxref{Slot
+Options,, init-keyword}), or @code{#f} if the @code{#:init-keyword}
+keyword is absent.
+@end deffn
+
+@deffn procedure slot-init-function class slot-name
+Return the initialization function for the slot named @var{slot-name} in
+class @var{class}.  @var{slot-name} should be a symbol.
+
+The returned initialization function incorporates the effects of the
+standard @code{#:init-thunk}, @code{#:init-form} and @code{#:init-value}
+slot options.  These initializations can be overridden by the
+@code{#:init-keyword} slot option or by a specialized @code{initialize}
+method, so, in general, the function returned by
+@code{slot-init-function} may be irrelevant.  For a fuller discussion,
+see @ref{Slot Options,, init-value}.
+@end deffn
+
+@node Instances
+@subsection Instances
+
+@deffn {primitive procedure} class-of value
+Return the GOOPS class of any Scheme @var{value}.
+@end deffn
+
+@deffn {primitive procedure} instance? object
+Return @code{#t} if @var{object} is any GOOPS instance, otherwise
+@code{#f}.
+@end deffn
+
+@deffn procedure is-a? object class
+Return @code{#t} if @var{object} is an instance of @var{class} or one of
+its subclasses.
+@end deffn
+
+Implementation notes: @code{is-a?} uses @code{class-of} and
+@code{class-precedence-list} to obtain the class precedence list for
+@var{object}.
+
+@node Generic Functions
+@subsection Generic Functions
+
+@deffn {primitive procedure} generic-function-name gf
+Return the name of generic function @var{gf}.
+@end deffn
+
+@deffn {primitive procedure} generic-function-methods gf
+Return a list of the methods of generic function @var{gf}.
+This is the value of the @var{gf} metaobject's @code{methods} slot.
+@end deffn
+
+@node Generic Function Methods
+@subsection Generic Function Methods
+
+@deffn {primitive procedure} method-generic-function method
+Return the generic function that @var{method} belongs to.
+This is the value of the @var{method} metaobject's
+@code{generic-function} slot.
+@end deffn
+
+@deffn {primitive procedure} method-specializers method
+Return a list of @var{method}'s formal parameter specializers .
+This is the value of the @var{method} metaobject's
+@code{specializers} slot.
+@end deffn
+
+@deffn {primitive procedure} method-procedure method
+Return the procedure that implements @var{method}.
+This is the value of the @var{method} metaobject's
+@code{procedure} slot.
+@end deffn
+
+@deffn generic method-source
+@deffnx method method-source (m <method>)
+Return an expression that prints to show the definition of method
+@var{m}.
+
+@example
+(define-generic cube)
+
+(define-method (cube (n <number>))
+  (* n n n))
+
+(map method-source (generic-function-methods cube))
+@result{}
+((method ((n <number>)) (* n n n)))
+@end example
+@end deffn
+
+@node Miscellaneous Functions
+@section Miscellaneous Functions
+
+@menu
+* Administrative Functions::
+* Error Handling::
+* Object Comparisons::
+* Cloning Objects::
+* Write and Display::
+@end menu
+
+@node Administrative Functions
+@subsection Administration Functions
+
+This section describes administrative, non-technical GOOPS functions.
+
+@deffn primitive goops-version
+Return the current GOOPS version as a string, for example ``0.2''.
+@end deffn
+
+@node Error Handling
+@subsection Error Handling
+
+The procedure @code{goops-error} is called to raise an appropriate error
+by the default methods of the following generic functions:
+
+@itemize @bullet
+@item
+@code{slot-missing} (@pxref{Handling Slot Access Errors,, slot-missing})
+
+@item
+@code{slot-unbound} (@pxref{Handling Slot Access Errors,, slot-unbound})
+
+@item
+@code{no-method} (@pxref{Handling Invocation Errors,, no-method})
+
+@item
+@code{no-applicable-method} (@pxref{Handling Invocation Errors,,
+no-applicable-method})
+
+@item
+@code{no-next-method} (@pxref{Handling Invocation Errors,,
+no-next-method})
+@end itemize
+
+If you customize these functions for particular classes or metaclasses,
+you may still want to use @code{goops-error} to signal any error
+conditions that you detect.
+
+@deffn procedure goops-error format-string . args
+Raise an error with key @code{goops-error} and error message constructed
+from @var{format-string} and @var{args}.  Error message formatting is
+as done by @code{scm-error}.
+@end deffn
+
+@node Object Comparisons
+@subsection Object Comparisons
+
+@deffn generic eqv?
+@deffnx method eqv? ((x <top>) (y <top>))
+@deffnx generic equal?
+@deffnx method equal? ((x <top>) (y <top>))
+@deffnx generic =
+@deffnx method = ((x <number>) (y <number>))
+Generic functions and default (unspecialized) methods for comparing two
+GOOPS objects.
+
+The default method for @code{eqv?} returns @code{#t} for all values
+that are equal in the sense defined by R5RS and the Guile reference
+manual, otherwise @code{#f}.  The default method for @code{equal?}
+returns @code{#t} or @code{#f} in the sense defined by R5RS and the
+Guile reference manual.  If no such comparison is defined,
+@code{equal?} returns the result of a call to @code{eqv?}.  The
+default method for = returns @code{#t} if @var{x} and @var{y} are
+numerically equal, otherwise @code{#f}.
+
+Application class authors may wish to define specialized methods for
+@code{eqv?}, @code{equal?} and @code{=} that compare instances of the
+same class for equality in whatever sense is useful to the
+application.  Such methods will only be called if the arguments have
+the same class and the result of the comparison isn't defined by R5RS
+and the Guile reference manual.
+@end deffn
+
+@node Cloning Objects
+@subsection Cloning Objects
+
+@deffn generic shallow-clone
+@deffnx method shallow-clone (self <object>)
+Return a ``shallow'' clone of @var{self}.  The default method makes a
+shallow clone by allocating a new instance and copying slot values from
+self to the new instance.  Each slot value is copied either as an
+immediate value or by reference.
+@end deffn
+
+@deffn generic deep-clone
+@deffnx method deep-clone (self <object>)
+Return a ``deep'' clone of @var{self}.  The default method makes a deep
+clone by allocating a new instance and copying or cloning slot values
+from self to the new instance.  If a slot value is an instance
+(satisfies @code{instance?}), it is cloned by calling @code{deep-clone}
+on that value.  Other slot values are copied either as immediate values
+or by reference.
+@end deffn
+
+@node Write and Display
+@subsection Write and Display
+
+@deffn {primitive generic} write object port
+@deffnx {primitive generic} display object port
+When GOOPS is loaded, @code{write} and @code{display} become generic
+functions with special methods for printing
+
+@itemize @bullet
+@item
+objects - instances of the class @code{<object>}
+
+@item
+foreign objects - instances of the class @code{<foreign-object>}
+
+@item
+classes - instances of the class @code{<class>}
+
+@item
+generic functions - instances of the class @code{<generic>}
+
+@item
+methods - instances of the class @code{<method>}.
+@end itemize
+
+@code{write} and @code{display} print non-GOOPS values in the same way
+as the Guile primitive @code{write} and @code{display} functions.
+@end deffn
+
+@node MOP Specification, Tutorial, Reference Manual, Top
+@chapter MOP Specification
+
+For an introduction to metaobjects and the metaobject protocol,
+see @ref{Metaobjects and the Metaobject Protocol}.
+
+The aim of the MOP specification in this chapter is to specify all the
+customizable generic function invocations that can be made by the standard
+GOOPS syntax, procedures and methods, and to explain the protocol for
+customizing such invocations.
+
+A generic function invocation is customizable if the types of the arguments
+to which it is applied are not all determined by the lexical context in
+which the invocation appears.  For example,
+
+@itemize @bullet
+@item
+the @code{(initialize @var{instance} @var{initargs})} invocation in the
+default @code{make-instance} method is customizable, because the type of the
+@code{@var{instance}} argument is determined by the class that was passed to
+@code{make-instance}.
+
+@item
+the @code{(make <generic> #:name ',name)} invocation in @code{define-generic}
+is not customizable, because all of its arguments have lexically determined
+types.
+@end itemize
+
+When using this rule to decide whether a given generic function invocation
+is customizable, we ignore arguments that are expected to be handled in
+method definitions as a single ``rest'' list argument.
+
+For each customizable generic function invocation, the @dfn{invocation
+protocol} is explained by specifying
+
+@itemize @bullet
+@item
+what, conceptually, the applied method is intended to do
+
+@item
+what assumptions, if any, the caller makes about the applied method's side
+effects
+
+@item
+what the caller expects to get as the applied method's return value.
+@end itemize
+
+@menu
+* Class Definition::
+* Instance Creation::
+* Class Redefinition::
+* Method Definition::
+* Generic Function Invocation::
+@end menu
+
+@node Class Definition
+@section Class Definition
+
+@code{define-class} (syntax)
+
+@itemize @bullet
+@item
+@code{class} (syntax)
+
+@itemize @bullet
+@item
+@code{make-class} (procedure)
+
+@itemize @bullet
+@item
+@code{make @var{metaclass} @dots{}} (generic)
+
+@var{metaclass} is the metaclass of the class being defined, either
+taken from the @code{#:metaclass} class option or computed by
+@code{ensure-metaclass}.  The applied method must create and return the
+fully initialized class metaobject for the new class definition.
+@end itemize
+
+@end itemize
+
+@item
+@code{class-redefinition @var{old-class} @var{new-class}} (generic)
+
+@code{define-class} calls @code{class-redefinition} if the variable
+specified by its first argument already held a GOOPS class definition.
+@var{old-class} and @var{new-class} are the old and new class metaobjects.
+The applied method should perform whatever is necessary to handle the
+redefinition, and should return the class metaobject that is to be bound
+to @code{define-class}'s variable.  The default class redefinition
+protocol is described in @ref{Class Redefinition}.
+@end itemize
+
+The @code{(make @var{metaclass} @dots{})} invocation above will create
+an class metaobject with metaclass @var{metaclass}.  By default, this
+metaobject will be initialized by the @code{initialize} method that is
+specialized for instances of type @code{<class>}.
+
+@code{initialize <class> @var{initargs}} (method)
+
+@itemize @bullet
+@item
+@code{compute-cpl @var{class}} (generic)
+
+The applied method should compute and return the class precedence list
+for @var{class} as a list of class metaobjects.  When @code{compute-cpl}
+is called, the following @var{class} metaobject slots have all been
+initialized: @code{name}, @code{direct-supers}, @code{direct-slots},
+@code{direct-subclasses} (empty), @code{direct-methods}.  The value
+returned by @code{compute-cpl} will be stored in the @code{cpl} slot.
+
+@item
+@code{compute-slots @var{class}} (generic)
+
+The applied method should compute and return the slots (union of direct
+and inherited) for @var{class} as a list of slot definitions.  When
+@code{compute-slots} is called, all the @var{class} metaobject slots
+mentioned for @code{compute-cpl} have been initialized, plus the
+following: @code{cpl}, @code{redefined} (@code{#f}), @code{environment}.
+The value returned by @code{compute-slots} will be stored in the
+@code{slots} slot.
+
+@item
+@code{compute-get-n-set @var{class} @var{slot-def}} (generic)
+
+@code{initialize} calls @code{compute-get-n-set} for each slot computed
+by @code{compute-slots}.  The applied method should compute and return a
+pair of closures that, respectively, get and set the value of the specified
+slot.  The get closure should have arity 1 and expect a single argument
+that is the instance whose slot value is to be retrieved.  The set closure
+should have arity 2 and expect two arguments, where the first argument is
+the instance whose slot value is to be set and the second argument is the
+new value for that slot.  The closures should be returned in a two element
+list: @code{(list @var{get} @var{set})}.
+
+The closures returned by @code{compute-get-n-set} are stored as part of
+the value of the @var{class} metaobject's @code{getters-n-setters} slot.
+Specifically, the value of this slot is a list with the same number of
+elements as there are slots in the class, and each element looks either like
+
+@example
+@code{(@var{slot-name-symbol} @var{init-function} . @var{index})}
+@end example
+
+or like
+
+@example
+@code{(@var{slot-name-symbol} @var{init-function} @var{get} @var{set})}
+@end example
+
+Where the get and set closures are replaced by @var{index}, the slot is
+an instance slot and @var{index} is the slot's index in the underlying
+structure: GOOPS knows how to get and set the value of such slots and so
+does not need specially constructed get and set closures.  Otherwise,
+@var{get} and @var{set} are the closures returned by @code{compute-get-n-set}.
+
+The structure of the @code{getters-n-setters} slot value is important when
+understanding the next customizable generic functions that @code{initialize}
+calls@dots{}
+
+@item
+@code{compute-getter-method @var{class} @var{gns}} (generic)
+
+@code{initialize} calls @code{compute-getter-method} for each of the class's
+slots (as determined by @code{compute-slots}) that includes a
+@code{#:getter} or @code{#:accessor} slot option.  @var{gns} is the
+element of the @var{class} metaobject's @code{getters-n-setters} slot that
+specifies how the slot in question is referenced and set, as described
+above under @code{compute-get-n-set}.  The applied method should create
+and return a method that is specialized for instances of type @var{class}
+and uses the get closure to retrieve the slot's value.  [ *fixme  Need
+to insert something here about checking that the value is not unbound. ]
+@code{initialize} uses @code{add-method!} to add the returned method to
+the generic function named by the slot definition's @code{#:getter} or
+@code{#:accessor} option.
+
+@item
+@code{compute-setter-method @var{class} @var{gns}} (generic)
+
+@code{compute-setter-method} is invoked with the same arguments as
+@code{compute-getter-method}, for each of the class's slots that includes
+a @code{#:setter} or @code{#:accessor} slot option.  The applied method
+should create and return a method that is specialized for instances of
+type @var{class} and uses the set closure to set the slot's value.
+@code{initialize} then uses @code{add-method!} to add the returned method
+to the generic function named by the slot definition's @code{#:setter}
+or @code{#:accessor} option.
+@end itemize
+
+@node Instance Creation
+@section Instance Creation
+
+@code{make <class> . @var{initargs}} (method)
+
+@itemize @bullet
+@item
+@code{allocate-instance @var{class} @var{initargs}} (generic)
+
+The applied @code{allocate-instance} method should allocate storage for
+a new instance of class @var{class} and return the uninitialized instance.
+
+@item
+@code{initialize @var{instance} @var{initargs}} (generic)
+
+@var{instance} is the uninitialized instance returned by
+@code{allocate-instance}.  The applied method should initialize the new
+instance in whatever sense is appropriate for its class.  The method's
+return value is ignored.
+@end itemize
+
+@node Class Redefinition
+@section Class Redefinition
+
+The default @code{class-redefinition} method, specialized for classes
+with the default metaclass @code{<class>}, has the following internal
+protocol.
+
+@code{class-redefinition @var{(old <class>)} @var{(new <class>)}}
+(method)
+
+@itemize @bullet
+@item
+@code{remove-class-accessors! @var{old}} (generic)
+
+@item
+@code{update-direct-method! @var{method} @var{old} @var{new}} (generic)
+
+@item
+@code{update-direct-subclass! @var{subclass} @var{old} @var{new}} (generic)
+@end itemize
+
+This protocol cleans up things that the definition of the old class
+once changed and modifies things to work with the new class.
+
+The default @code{remove-class-accessors!} method removes the
+accessor methods of the old class from all classes which they
+specialize.
+
+The default @code{update-direct-method!} method substitutes the new
+class for the old in all methods specialized to the old class.
+
+The default @code{update-direct-subclass!} method invokes
+@code{class-redefinition} recursively to handle the redefinition of
+subclasses.
+
+When a class is redefined, any existing instance of the redefined class
+will be modified for the new class definition before the next time that
+any of the instance's slot is referenced or set.  GOOPS modifies each
+instance by calling the generic function @code{change-class}.
+
+The default @code{change-class} method copies slot values from the old
+to the modified instance, and initializes new slots, as described in
+@ref{Changing the Class of an Instance}.  After doing so, it makes a
+generic function invocation that can be used to customize the instance
+update algorithm.
+
+@code{change-class @var{(old-instance <object>)} @var{(new <class>)}} (method)
+
+@itemize @bullet
+@item
+@code{update-instance-for-different-class @var{old-instance} @var{new-instance}} (generic)
+
+@code{change-class} invokes @code{update-instance-for-different-class}
+as the last thing that it does before returning.  The applied method can
+make any further adjustments to @var{new-instance} that are required to
+complete or modify the change of class.  The return value from the
+applied method is ignored.
+
+The default @code{update-instance-for-different-class} method does
+nothing.
+@end itemize
+
+@node Method Definition
+@section Method Definition
+
+@code{define-method} (syntax)
+
+@itemize @bullet
+@item
+@code{add-method! @var{target} @var{method}} (generic)
+
+@code{define-method} invokes the @code{add-method!} generic function to
+handle adding the new method to a variety of possible targets.  GOOPS
+includes methods to handle @var{target} as
+
+@itemize @bullet
+@item
+a generic function (the most common case)
+
+@item
+a procedure
+
+@item
+a primitive generic (@pxref{Extending Guiles Primitives})
+@end itemize
+
+By defining further methods for @code{add-method!}, you can
+theoretically handle adding methods to further types of target.
+@end itemize
+
+@node Generic Function Invocation
+@section Generic Function Invocation
+
+[ *fixme* Description required here. ]
+
+@code{apply-generic}
+
+@itemize @bullet
+@item
+@code{no-method}
+
+@item
+@code{compute-applicable-methods}
+
+@item
+@code{sort-applicable-methods}
+
+@item
+@code{apply-methods}
+
+@item
+@code{no-applicable-method}
+@end itemize
+
+@code{sort-applicable-methods}
+
+@itemize @bullet
+@item
+@code{method-more-specific?}
+@end itemize
+
+@code{apply-methods}
+
+@itemize @bullet
+@item
+@code{apply-method}
+@end itemize
+
+@code{next-method}
+
+@itemize @bullet
+@item
+@code{no-next-method}
+@end itemize
+
+@node Tutorial, Concept Index, MOP Specification, Top
+@chapter Tutorial
+@include goops-tutorial.texi
+
+@node     Concept Index, Function and Variable Index, Tutorial, Top
+@unnumberedsec Concept Index
+
+@printindex cp
+
+@node Function and Variable Index,  , Concept Index, Top
+@unnumberedsec Function and Variable Index
+
+@printindex fn
+
+@summarycontents
+@contents
+@bye

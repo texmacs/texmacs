@@ -1,0 +1,841 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Utility Functions
+@section General Utility Functions
+
+@c FIXME::martin: Review me!
+
+This chapter contains information about procedures which are not cleanly
+tied to a specific data type.  Because of their wide range of
+applications, they are collected in a @dfn{utility} chapter.
+
+@menu
+* Equality::                    When are two values `the same'?
+* Object Properties::           A modern interface to object properties.
+* Sorting::                     Sort utility procedures.
+* Copying::                     Copying deep structures.
+* General Conversion::          Converting objects to strings.
+* Hooks::                       User-customizable event lists.
+@end menu
+
+
+@node Equality
+@subsection Equality
+@cindex sameness
+@cindex equality
+
+There are three kinds of core equality predicates in Scheme, described
+below.  The same kinds of comparisons arise in other functions, like
+@code{memq} and friends (@pxref{List Searching}).
+
+For all three tests, objects of different types are never equal.  So
+for instance a list and a vector are not @code{equal?}, even if their
+contents are the same.  Exact and inexact numbers are considered
+different types too, and are hence not equal even if their values are
+the same.
+
+@code{eq?} tests just for the same object (essentially a pointer
+comparison).  This is fast, and can be used when searching for a
+particular object, or when working with symbols or keywords (which are
+always unique objects).
+
+@code{eqv?} extends @code{eq?} to look at the value of numbers and
+characters.  It can for instance be used somewhat like @code{=}
+(@pxref{Comparison}) but without an error if one operand isn't a
+number.
+
+@code{equal?} goes further, it looks (recursively) into the contents
+of lists, vectors, etc.  This is good for instance on lists that have
+been read or calculated in various places and are the same, just not
+made up of the same pairs.  Such lists look the same (when printed),
+and @code{equal?} will consider them the same.
+
+@sp 1
+@deffn {Scheme Procedure} eq? x y
+@deffnx {C Function} scm_eq_p (x, y)
+@rnindex eq?
+Return @code{#t} if @var{x} and @var{y} are the same object, except
+for numbers and characters.  For example,
+
+@example
+(define x (vector 1 2 3))
+(define y (vector 1 2 3))
+
+(eq? x x)  @result{} #t
+(eq? x y)  @result{} #f
+@end example
+
+Numbers and characters are not equal to any other object, but the
+problem is they're not necessarily @code{eq?} to themselves either.
+This is even so when the number comes directly from a variable,
+
+@example
+(let ((n (+ 2 3)))
+  (eq? n n))       @result{} *unspecified*
+@end example
+
+Generally @code{eqv?} below should be used when comparing numbers or
+characters.  @code{=} (@pxref{Comparison}) or @code{char=?}
+(@pxref{Characters}) can be used too.
+
+It's worth noting that end-of-list @code{()}, @code{#t}, @code{#f}, a
+symbol of a given name, and a keyword of a given name, are unique
+objects.  There's just one of each, so for instance no matter how
+@code{()} arises in a program, it's the same object and can be
+compared with @code{eq?},
+
+@example
+(define x (cdr '(123)))
+(define y (cdr '(456)))
+(eq? x y) @result{} #t
+
+(define x (string->symbol "foo"))
+(eq? x 'foo) @result{} #t
+@end example
+@end deffn
+
+@deftypefn {C Function} int scm_is_eq (SCM x, SCM y)
+Return @code{1} when @var{x} and @var{y} are equal in the sense of
+@code{eq?}, otherwise return @code{0}.
+
+@findex ==
+The @code{==} operator should not be used on @code{SCM} values, an
+@code{SCM} is a C type which cannot necessarily be compared using
+@code{==} (@pxref{The SCM Type}).
+@end deftypefn
+
+@sp 1
+@deffn {Scheme Procedure} eqv? x y
+@deffnx {C Function} scm_eqv_p (x, y)
+@rnindex eqv?
+Return @code{#t} if @var{x} and @var{y} are the same object, or for
+characters and numbers the same value.
+
+On objects except characters and numbers, @code{eqv?} is the same as
+@code{eq?} above, it's true if @var{x} and @var{y} are the same
+object.
+
+If @var{x} and @var{y} are numbers or characters, @code{eqv?} compares
+their type and value.  An exact number is not @code{eqv?} to an
+inexact number (even if their value is the same).
+
+@example
+(eqv? 3 (+ 1 2)) @result{} #t
+(eqv? 1 1.0)     @result{} #f
+@end example
+@end deffn
+
+@sp 1
+@deffn {Scheme Procedure} equal? x y
+@deffnx {C Function} scm_equal_p (x, y)
+@rnindex equal?
+Return @code{#t} if @var{x} and @var{y} are the same type, and their
+contents or value are equal.
+
+For a pair, string, vector, array or structure, @code{equal?} compares the
+contents, and does so using using the same @code{equal?} recursively,
+so a deep structure can be traversed.
+
+@example
+(equal? (list 1 2 3) (list 1 2 3))   @result{} #t
+(equal? (list 1 2 3) (vector 1 2 3)) @result{} #f
+@end example
+
+For other objects, @code{equal?} compares as per @code{eqv?} above,
+which means characters and numbers are compared by type and value (and
+like @code{eqv?}, exact and inexact numbers are not @code{equal?},
+even if their value is the same).
+
+@example
+(equal? 3 (+ 1 2)) @result{} #t
+(equal? 1 1.0)     @result{} #f
+@end example
+
+Hash tables are currently only compared as per @code{eq?}, so two
+different tables are not @code{equal?}, even if their contents are the
+same.
+
+@code{equal?} does not support circular data structures, it may go
+into an infinite loop if asked to compare two circular lists or
+similar.
+
+New application-defined object types (@pxref{Defining New Types
+(Smobs)}) have an @code{equalp} handler which is called by
+@code{equal?}.  This lets an application traverse the contents or
+control what is considered @code{equal?} for two objects of such a
+type.  If there's no such handler, the default is to just compare as
+per @code{eq?}.
+@end deffn
+
+
+@node Object Properties
+@subsection Object Properties
+
+It's often useful to associate a piece of additional information with a
+Scheme object even though that object does not have a dedicated slot
+available in which the additional information could be stored.  Object
+properties allow you to do just that.
+
+Guile's representation of an object property is a procedure-with-setter
+(@pxref{Procedures with Setters}) that can be used with the generalized
+form of @code{set!} (REFFIXME) to set and retrieve that property for any
+Scheme object.  So, setting a property looks like this:
+
+@lisp
+(set! (my-property obj1) value-for-obj1)
+(set! (my-property obj2) value-for-obj2)
+@end lisp
+
+@noindent
+And retrieving values of the same property looks like this:
+
+@lisp
+(my-property obj1)
+@result{}
+value-for-obj1
+
+(my-property obj2)
+@result{}
+value-for-obj2
+@end lisp
+
+To create an object property in the first place, use the
+@code{make-object-property} procedure:
+
+@lisp
+(define my-property (make-object-property))
+@end lisp
+
+@deffn {Scheme Procedure} make-object-property
+Create and return an object property.  An object property is a
+procedure-with-setter that can be called in two ways.  @code{(set!
+(@var{property} @var{obj}) @var{val})} sets @var{obj}'s @var{property}
+to @var{val}.  @code{(@var{property} @var{obj})} returns the current
+setting of @var{obj}'s @var{property}.
+@end deffn
+
+A single object property created by @code{make-object-property} can
+associate distinct property values with all Scheme values that are
+distinguishable by @code{eq?} (including, for example, integers).
+
+Internally, object properties are implemented using a weak key hash
+table.  This means that, as long as a Scheme value with property values
+is protected from garbage collection, its property values are also
+protected.  When the Scheme value is collected, its entry in the
+property table is removed and so the (ex-) property values are no longer
+protected by the table.
+
+@menu
+* Property Primitives::         Low level property implementation.
+* Old-fashioned Properties::    An older approach to properties.
+@end menu
+
+
+@node Property Primitives
+@subsubsection Low Level Property Implementation.
+
+@deffn {Scheme Procedure} primitive-make-property not-found-proc
+@deffnx {C Function} scm_primitive_make_property (not_found_proc)
+Create a @dfn{property token} that can be used with
+@code{primitive-property-ref} and @code{primitive-property-set!}.
+See @code{primitive-property-ref} for the significance of
+@var{not-found-proc}.
+@end deffn
+
+@deffn {Scheme Procedure} primitive-property-ref prop obj
+@deffnx {C Function} scm_primitive_property_ref (prop, obj)
+Return the property @var{prop} of @var{obj}.
+
+When no value has yet been associated with @var{prop} and @var{obj},
+the @var{not-found-proc} from @var{prop} is used.  A call
+@code{(@var{not-found-proc} @var{prop} @var{obj})} is made and the
+result set as the property value.  If @var{not-found-proc} is
+@code{#f} then @code{#f} is the property value.
+@end deffn
+
+@deffn {Scheme Procedure} primitive-property-set! prop obj val
+@deffnx {C Function} scm_primitive_property_set_x (prop, obj, val)
+Set the property @var{prop} of @var{obj} to @var{val}.
+@end deffn
+
+@deffn {Scheme Procedure} primitive-property-del! prop obj
+@deffnx {C Function} scm_primitive_property_del_x (prop, obj)
+Remove any value associated with @var{prop} and @var{obj}.
+@end deffn
+
+
+@node Old-fashioned Properties
+@subsubsection An Older Approach to Properties
+
+Traditionally, Lisp systems provide a different object property
+interface to that provided by @code{make-object-property}, in which the
+object property that is being set or retrieved is indicated by a symbol.
+
+Guile includes this older kind of interface as well, but it may well be
+removed in a future release, as it is less powerful than
+@code{make-object-property} and so increases the size of the Guile
+library for no benefit.  (And it is trivial to write a compatibility
+layer in Scheme.)
+
+@deffn {Scheme Procedure} object-properties obj
+@deffnx {C Function} scm_object_properties (obj)
+Return @var{obj}'s property list.
+@end deffn
+
+@deffn {Scheme Procedure} set-object-properties! obj alist
+@deffnx {C Function} scm_set_object_properties_x (obj, alist)
+Set @var{obj}'s property list to @var{alist}.
+@end deffn
+
+@deffn {Scheme Procedure} object-property obj key
+@deffnx {C Function} scm_object_property (obj, key)
+Return the property of @var{obj} with name @var{key}.
+@end deffn
+
+@deffn {Scheme Procedure} set-object-property! obj key value
+@deffnx {C Function} scm_set_object_property_x (obj, key, value)
+In @var{obj}'s property list, set the property named @var{key}
+to @var{value}.
+@end deffn
+
+
+@node Sorting
+@subsection Sorting
+
+@c FIXME::martin: Review me!
+
+@cindex sorting
+@cindex sorting lists
+@cindex sorting vectors
+
+Sorting is very important in computer programs.  Therefore, Guile comes
+with several sorting procedures built-in.  As always, procedures with
+names ending in @code{!} are side-effecting, that means that they may
+modify their parameters in order to produce their results.
+
+The first group of procedures can be used to merge two lists (which must
+be already sorted on their own) and produce sorted lists containing
+all elements of the input lists.
+
+@deffn {Scheme Procedure} merge alist blist less
+@deffnx {C Function} scm_merge (alist, blist, less)
+Merge two already sorted lists into one.
+Given two lists @var{alist} and @var{blist}, such that
+@code{(sorted? alist less?)} and @code{(sorted? blist less?)},
+return a new list in which the elements of @var{alist} and
+@var{blist} have been stably interleaved so that
+@code{(sorted? (merge alist blist less?) less?)}.
+Note:  this does _not_ accept vectors.
+@end deffn
+
+@deffn {Scheme Procedure} merge! alist blist less
+@deffnx {C Function} scm_merge_x (alist, blist, less)
+Takes two lists @var{alist} and @var{blist} such that
+@code{(sorted? alist less?)} and @code{(sorted? blist less?)} and
+returns a new list in which the elements of @var{alist} and
+@var{blist} have been stably interleaved so that
+ @code{(sorted? (merge alist blist less?) less?)}.
+This is the destructive variant of @code{merge}
+Note:  this does _not_ accept vectors.
+@end deffn
+
+The following procedures can operate on sequences which are either
+vectors or list.  According to the given arguments, they return sorted
+vectors or lists, respectively.  The first of the following procedures
+determines whether a sequence is already sorted, the other sort a given
+sequence.  The variants with names starting with @code{stable-} are
+special in that they maintain a special property of the input sequences:
+If two or more elements are the same according to the comparison
+predicate, they are left in the same order as they appeared in the
+input.
+
+@deffn {Scheme Procedure} sorted? items less
+@deffnx {C Function} scm_sorted_p (items, less)
+Return @code{#t} iff @var{items} is a list or a vector such that
+for all 1 <= i <= m, the predicate @var{less} returns true when
+applied to all elements i - 1 and i
+@end deffn
+
+@deffn {Scheme Procedure} sort items less
+@deffnx {C Function} scm_sort (items, less)
+Sort the sequence @var{items}, which may be a list or a
+vector.  @var{less} is used for comparing the sequence
+elements.  This is not a stable sort.
+@end deffn
+
+@deffn {Scheme Procedure} sort! items less
+@deffnx {C Function} scm_sort_x (items, less)
+Sort the sequence @var{items}, which may be a list or a
+vector.  @var{less} is used for comparing the sequence
+elements.  The sorting is destructive, that means that the
+input sequence is modified to produce the sorted result.
+This is not a stable sort.
+@end deffn
+
+@deffn {Scheme Procedure} stable-sort items less
+@deffnx {C Function} scm_stable_sort (items, less)
+Sort the sequence @var{items}, which may be a list or a
+vector. @var{less} is used for comparing the sequence elements.
+This is a stable sort.
+@end deffn
+
+@deffn {Scheme Procedure} stable-sort! items less
+@deffnx {C Function} scm_stable_sort_x (items, less)
+Sort the sequence @var{items}, which may be a list or a
+vector. @var{less} is used for comparing the sequence elements.
+The sorting is destructive, that means that the input sequence
+is modified to produce the sorted result.
+This is a stable sort.
+@end deffn
+
+The procedures in the last group only accept lists or vectors as input,
+as their names indicate.
+
+@deffn {Scheme Procedure} sort-list items less
+@deffnx {C Function} scm_sort_list (items, less)
+Sort the list @var{items}, using @var{less} for comparing the
+list elements. This is a stable sort.
+@end deffn
+
+@deffn {Scheme Procedure} sort-list! items less
+@deffnx {C Function} scm_sort_list_x (items, less)
+Sort the list @var{items}, using @var{less} for comparing the
+list elements. The sorting is destructive, that means that the
+input list is modified to produce the sorted result.
+This is a stable sort.
+@end deffn
+
+@deffn {Scheme Procedure} restricted-vector-sort! vec less startpos endpos
+@deffnx {C Function} scm_restricted_vector_sort_x (vec, less, startpos, endpos)
+Sort the vector @var{vec}, using @var{less} for comparing
+the vector elements.  @var{startpos} (inclusively) and
+@var{endpos} (exclusively) delimit
+the range of the vector which gets sorted.  The return value
+is not specified.
+@end deffn
+
+
+@node Copying
+@subsection Copying Deep Structures
+
+@c FIXME::martin: Review me!
+
+The procedures for copying lists (@pxref{Lists}) only produce a flat
+copy of the input list, and currently Guile does not even contain
+procedures for copying vectors.  @code{copy-tree} can be used for these
+application, as it does not only copy the spine of a list, but also
+copies any pairs in the cars of the input lists.
+
+@deffn {Scheme Procedure} copy-tree obj
+@deffnx {C Function} scm_copy_tree (obj)
+Recursively copy the data tree that is bound to @var{obj}, and return a
+the new data structure.  @code{copy-tree} recurses down the
+contents of both pairs and vectors (since both cons cells and vector
+cells may point to arbitrary objects), and stops recursing when it hits
+any other object.
+@end deffn
+
+
+@node General Conversion
+@subsection General String Conversion
+
+@c FIXME::martin: Review me!
+
+When debugging Scheme programs, but also for providing a human-friendly
+interface, a procedure for converting any Scheme object into string
+format is very useful.  Conversion from/to strings can of course be done
+with specialized procedures when the data type of the object to convert
+is known, but with this procedure, it is often more comfortable.
+
+@code{object->string} converts an object by using a print procedure for
+writing to a string port, and then returning the resulting string.
+Converting an object back from the string is only possible if the object
+type has a read syntax and the read syntax is preserved by the printing
+procedure.
+
+@deffn {Scheme Procedure} object->string obj [printer]
+@deffnx {C Function} scm_object_to_string (obj, printer)
+Return a Scheme string obtained by printing @var{obj}.
+Printing function can be specified by the optional second
+argument @var{printer} (default: @code{write}).
+@end deffn
+
+
+@node Hooks
+@subsection Hooks
+@tpindex Hooks
+
+A hook is a list of procedures to be called at well defined points in
+time.  Typically, an application provides a hook @var{h} and promises
+its users that it will call all of the procedures in @var{h} at a
+defined point in the application's processing.  By adding its own
+procedure to @var{h}, an application user can tap into or even influence
+the progress of the application.
+
+Guile itself provides several such hooks for debugging and customization
+purposes: these are listed in a subsection below.
+
+When an application first creates a hook, it needs to know how many
+arguments will be passed to the hook's procedures when the hook is run.
+The chosen number of arguments (which may be none) is declared when the
+hook is created, and all the procedures that are added to that hook must
+be capable of accepting that number of arguments.
+
+A hook is created using @code{make-hook}.  A procedure can be added to
+or removed from a hook using @code{add-hook!} or @code{remove-hook!},
+and all of a hook's procedures can be removed together using
+@code{reset-hook!}.  When an application wants to run a hook, it does so
+using @code{run-hook}.
+
+@menu
+* Hook Example::                Hook usage by example.
+* Hook Reference::              Reference of all hook procedures.
+* C Hooks::                     Hooks for use from C code.
+* GC Hooks::                    Garbage collection hooks.
+* REPL Hooks::                  Hooks into the Guile REPL.
+@end menu
+
+
+@node Hook Example
+@subsubsection Hook Usage by Example
+
+Hook usage is shown by some examples in this section.  First, we will
+define a hook of arity 2 --- that is, the procedures stored in the hook
+will have to accept two arguments.
+
+@lisp
+(define hook (make-hook 2))
+hook
+@result{} #<hook 2 40286c90>
+@end lisp
+
+Now we are ready to add some procedures to the newly created hook with
+@code{add-hook!}.  In the following example, two procedures are added,
+which print different messages and do different things with their
+arguments.
+
+@lisp
+(add-hook! hook (lambda (x y)
+                    (display "Foo: ")
+                    (display (+ x y))
+                    (newline)))
+(add-hook! hook (lambda (x y)
+                    (display "Bar: ")
+                    (display (* x y))
+                    (newline)))
+@end lisp
+
+Once the procedures have been added, we can invoke the hook using
+@code{run-hook}.
+
+@lisp
+(run-hook hook 3 4)
+@print{} Bar: 12
+@print{} Foo: 7
+@end lisp
+
+Note that the procedures are called in the reverse of the order with
+which they were added.  This is because the default behaviour of
+@code{add-hook!} is to add its procedure to the @emph{front} of the
+hook's procedure list.  You can force @code{add-hook!} to add its
+procedure to the @emph{end} of the list instead by providing a third
+@code{#t} argument on the second call to @code{add-hook!}.
+
+@lisp
+(add-hook! hook (lambda (x y)
+                    (display "Foo: ")
+                    (display (+ x y))
+                    (newline)))
+(add-hook! hook (lambda (x y)
+                    (display "Bar: ")
+                    (display (* x y))
+                    (newline))
+                    #t)             ; @r{<- Change here!}
+
+(run-hook hook 3 4)
+@print{} Foo: 7
+@print{} Bar: 12
+@end lisp
+
+
+@node Hook Reference
+@subsubsection Hook Reference
+
+When you create a hook with @code{make-hook}, you must specify the arity
+of the procedures which can be added to the hook.  If the arity is not
+given explicitly as an argument to @code{make-hook}, it defaults to
+zero.  All procedures of a given hook must have the same arity, and when
+the procedures are invoked using @code{run-hook}, the number of
+arguments passed must match the arity specified at hook creation time.
+
+The order in which procedures are added to a hook matters.  If the third
+parameter to @code{add-hook!} is omitted or is equal to @code{#f}, the
+procedure is added in front of the procedures which might already be on
+that hook, otherwise the procedure is added at the end.  The procedures
+are always called from the front to the end of the list when they are
+invoked via @code{run-hook}.
+
+The ordering of the list of procedures returned by @code{hook->list}
+matches the order in which those procedures would be called if the hook
+was run using @code{run-hook}.
+
+Note that the C functions in the following entries are for handling
+@dfn{Scheme-level} hooks in C.  There are also @dfn{C-level} hooks which
+have their own interface (@pxref{C Hooks}).
+
+@deffn {Scheme Procedure} make-hook [n_args]
+@deffnx {C Function} scm_make_hook (n_args)
+Create a hook for storing procedure of arity @var{n_args}.
+@var{n_args} defaults to zero.  The returned value is a hook
+object to be used with the other hook procedures.
+@end deffn
+
+@deffn {Scheme Procedure} hook? x
+@deffnx {C Function} scm_hook_p (x)
+Return @code{#t} if @var{x} is a hook, @code{#f} otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} hook-empty? hook
+@deffnx {C Function} scm_hook_empty_p (hook)
+Return @code{#t} if @var{hook} is an empty hook, @code{#f}
+otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} add-hook! hook proc [append_p]
+@deffnx {C Function} scm_add_hook_x (hook, proc, append_p)
+Add the procedure @var{proc} to the hook @var{hook}. The
+procedure is added to the end if @var{append_p} is true,
+otherwise it is added to the front.  The return value of this
+procedure is not specified.
+@end deffn
+
+@deffn {Scheme Procedure} remove-hook! hook proc
+@deffnx {C Function} scm_remove_hook_x (hook, proc)
+Remove the procedure @var{proc} from the hook @var{hook}.  The
+return value of this procedure is not specified.
+@end deffn
+
+@deffn {Scheme Procedure} reset-hook! hook
+@deffnx {C Function} scm_reset_hook_x (hook)
+Remove all procedures from the hook @var{hook}.  The return
+value of this procedure is not specified.
+@end deffn
+
+@deffn {Scheme Procedure} hook->list hook
+@deffnx {C Function} scm_hook_to_list (hook)
+Convert the procedure list of @var{hook} to a list.
+@end deffn
+
+@deffn {Scheme Procedure} run-hook hook . args
+@deffnx {C Function} scm_run_hook (hook, args)
+Apply all procedures from the hook @var{hook} to the arguments
+@var{args}.  The order of the procedure application is first to
+last.  The return value of this procedure is not specified.
+@end deffn
+
+If, in C code, you are certain that you have a hook object and well
+formed argument list for that hook, you can also use
+@code{scm_c_run_hook}, which is identical to @code{scm_run_hook} but
+does no type checking.
+
+@deftypefn {C Function} void scm_c_run_hook (SCM hook, SCM args)
+The same as @code{scm_run_hook} but without any type checking to confirm
+that @var{hook} is actually a hook object and that @var{args} is a
+well-formed list matching the arity of the hook.
+@end deftypefn
+
+For C code, @code{SCM_HOOKP} is a faster alternative to
+@code{scm_hook_p}:
+
+@deftypefn {C Macro} int SCM_HOOKP (x)
+Return 1 if @var{x} is a Scheme-level hook, 0 otherwise.
+@end deftypefn
+
+
+@subsubsection Handling Scheme-level hooks from C code
+
+Here is an example of how to handle Scheme-level hooks from C code using
+the above functions.
+
+@example
+if (scm_is_true (scm_hook_p (obj)))
+  /* handle Scheme-level hook using C functions */
+  scm_reset_hook_x (obj);
+else
+  /* do something else (obj is not a hook) */
+@end example
+
+
+@node C Hooks
+@subsubsection Hooks For C Code.
+
+The hooks already described are intended to be populated by Scheme-level
+procedures.  In addition to this, the Guile library provides an
+independent set of interfaces for the creation and manipulation of hooks
+that are designed to be populated by functions implemented in C.
+
+The original motivation here was to provide a kind of hook that could
+safely be invoked at various points during garbage collection.
+Scheme-level hooks are unsuitable for this purpose as running them could
+itself require memory allocation, which would then invoke garbage
+collection recursively @dots{}  However, it is also the case that these
+hooks are easier to work with than the Scheme-level ones if you only
+want to register C functions with them.  So if that is mainly what your
+code needs to do, you may prefer to use this interface.
+
+To create a C hook, you should allocate storage for a structure of type
+@code{scm_t_c_hook} and then initialize it using @code{scm_c_hook_init}.
+
+@deftp {C Type} scm_t_c_hook
+Data type for a C hook.  The internals of this type should be treated as
+opaque.
+@end deftp
+
+@deftp {C Enum} scm_t_c_hook_type
+Enumeration of possible hook types, which are:
+
+@table @code
+@item SCM_C_HOOK_NORMAL
+@vindex SCM_C_HOOK_NORMAL
+Type of hook for which all the registered functions will always be called.
+@item SCM_C_HOOK_OR
+@vindex SCM_C_HOOK_OR
+Type of hook for which the sequence of registered functions will be
+called only until one of them returns C true (a non-NULL pointer).
+@item SCM_C_HOOK_AND
+@vindex SCM_C_HOOK_AND
+Type of hook for which the sequence of registered functions will be
+called only until one of them returns C false (a NULL pointer).
+@end table
+@end deftp
+
+@deftypefn {C Function} void scm_c_hook_init (scm_t_c_hook *hook, void *hook_data, scm_t_c_hook_type type)
+Initialize the C hook at memory pointed to by @var{hook}.  @var{type}
+should be one of the values of the @code{scm_t_c_hook_type} enumeration,
+and controls how the hook functions will be called.  @var{hook_data} is
+a closure parameter that will be passed to all registered hook functions
+when they are called.
+@end deftypefn
+
+To add or remove a C function from a C hook, use @code{scm_c_hook_add}
+or @code{scm_c_hook_remove}.  A hook function must expect three
+@code{void *} parameters which are, respectively:
+
+@table @var
+@item hook_data
+The hook closure data that was specified at the time the hook was
+initialized by @code{scm_c_hook_init}.
+
+@item func_data
+The function closure data that was specified at the time that that
+function was registered with the hook by @code{scm_c_hook_add}.
+
+@item data
+The call closure data specified by the @code{scm_c_hook_run} call that
+runs the hook.
+@end table
+
+@deftp {C Type} scm_t_c_hook_function
+Function type for a C hook function: takes three @code{void *}
+parameters and returns a @code{void *} result.
+@end deftp
+
+@deftypefn {C Function} void scm_c_hook_add (scm_t_c_hook *hook, scm_t_c_hook_function func, void *func_data, int appendp)
+Add function @var{func}, with function closure data @var{func_data}, to
+the C hook @var{hook}.  The new function is appended to the hook's list
+of functions if @var{appendp} is non-zero, otherwise prepended.
+@end deftypefn
+
+@deftypefn {C Function} void scm_c_hook_remove (scm_t_c_hook *hook, scm_t_c_hook_function func, void *func_data)
+Remove function @var{func}, with function closure data @var{func_data},
+from the C hook @var{hook}.  @code{scm_c_hook_remove} checks both
+@var{func} and @var{func_data} so as to allow for the same @var{func}
+being registered multiple times with different closure data.
+@end deftypefn
+
+Finally, to invoke a C hook, call the @code{scm_c_hook_run} function
+specifying the hook and the call closure data for this run:
+
+@deftypefn {C Function} {void *} scm_c_hook_run (scm_t_c_hook *hook, void *data)
+Run the C hook @var{hook} will call closure data @var{data}.  Subject to
+the variations for hook types @code{SCM_C_HOOK_OR} and
+@code{SCM_C_HOOK_AND}, @code{scm_c_hook_run} calls @var{hook}'s
+registered functions in turn, passing them the hook's closure data, each
+function's closure data, and the call closure data.
+
+@code{scm_c_hook_run}'s return value is the return value of the last
+function to be called.
+@end deftypefn
+
+
+@node GC Hooks
+@subsubsection Hooks for Garbage Collection
+
+Whenever Guile performs a garbage collection, it calls the following
+hooks in the order shown.
+
+@defvr {C Hook} scm_before_gc_c_hook
+C hook called at the very start of a garbage collection, after setting
+@code{scm_gc_running_p} to 1, but before entering the GC critical
+section.
+
+If garbage collection is blocked because @code{scm_block_gc} is
+non-zero, GC exits early soon after calling this hook, and no further
+hooks will be called.
+@end defvr
+
+@defvr {C Hook} scm_before_mark_c_hook
+C hook called before beginning the mark phase of garbage collection,
+after the GC thread has entered a critical section.
+@end defvr
+
+@defvr {C Hook} scm_before_sweep_c_hook
+C hook called before beginning the sweep phase of garbage collection.
+This is the same as at the end of the mark phase, since nothing else
+happens between marking and sweeping.
+@end defvr
+
+@defvr {C Hook} scm_after_sweep_c_hook
+C hook called after the end of the sweep phase of garbage collection,
+but while the GC thread is still inside its critical section.
+@end defvr
+
+@defvr {C Hook} scm_after_gc_c_hook
+C hook called at the very end of a garbage collection, after the GC
+thread has left its critical section.
+@end defvr
+
+@defvr {Scheme Hook} after-gc-hook
+@vindex scm_after_gc_hook
+Scheme hook with arity 0.  This hook is run asynchronously
+(@pxref{Asyncs}) soon after the GC has completed and any other events
+that were deferred during garbage collection have been processed.  (Also
+accessible from C with the name @code{scm_after_gc_hook}.)
+@end defvr
+
+All the C hooks listed here have type @code{SCM_C_HOOK_NORMAL}, are
+initialized with hook closure data NULL, are are invoked by
+@code{scm_c_hook_run} with call closure data NULL.
+
+@cindex guardians, testing for GC'd objects
+The Scheme hook @code{after-gc-hook} is particularly useful in
+conjunction with guardians (@pxref{Guardians}).  Typically, if you are
+using a guardian, you want to call the guardian after garbage collection
+to see if any of the objects added to the guardian have been collected.
+By adding a thunk that performs this call to @code{after-gc-hook}, you
+can ensure that your guardian is tested after every garbage collection
+cycle.
+
+
+@node REPL Hooks
+@subsubsection Hooks into the Guile REPL
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

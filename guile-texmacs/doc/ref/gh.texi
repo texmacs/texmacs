@@ -1,0 +1,1201 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node GH
+@section GH: A Portable C to Scheme Interface
+@cindex libguile - gh
+@cindex gh
+@cindex gh - reference manual
+
+This chapter shows how to use the GH interface to call Guile from your
+application's C code, and to add new Scheme level procedures to Guile
+whose behaviour is specified by application specific code written in C.
+
+Note, however, that the GH interface is now deprecated, and developers
+are encouraged to switch to using the scm interface instead.  Therefore,
+for each GH feature, this chapter also documents how to achieve
+the same result using the scm interface.
+
+@menu
+* GH deprecation::              Why the GH interface is now deprecated.
+* Transitioning away from GH::
+* GH preliminaries::            
+* Data types and constants defined by GH::  
+* Starting and controlling the interpreter::  
+* Error messages::              
+* Executing Scheme code::       
+* Defining new Scheme procedures in C::  
+* Converting data between C and Scheme::  
+* Type predicates::             
+* Equality predicates::         
+* Memory allocation and garbage collection::  
+* Calling Scheme procedures from C::  
+@end menu
+
+
+@node GH deprecation
+@subsection Why the GH Interface is Now Deprecated
+
+Historically, the GH interface was the product of a practical problem
+and a neat idea.  The practical problem was that the interface of the
+@code{scm_} functions with which Guile itself was written (inherited
+from Aubrey Jaffer's SCM) was so closely tied to the (rather arcane)
+details of the internal data representation that it was extremely
+difficult to write a Guile extension using these functions.  The neat
+idea was to define a high level language extension interface in such a
+way that other extension language projects, not just Guile, would be
+able to provide an implementation of that interface; then applications
+using this interface could be compiled with whichever of the various
+available implementations they chose.  So the GH interface was created,
+and advertised both as the recommended interface for application
+developers wishing to use Guile, and as a portable high level interface
+that could theoretically be implemented by other extension language
+projects.
+
+Time passed, and various things changed.  Crucially, an enormous number
+of improvements were made to the @code{scm_} interface that Guile itself
+uses in its implementation, with the result that it is now both easy and
+comfortable to write a Guile extension with this interface.  At the same
+time, the contents of the GH interface were somewhat neglected by the
+core Guile developers, such that some key operations --- such as smob
+creation and management --- are simply not possible using GH alone.
+Finally, the idea of multiple implementations of the GH interface did
+not really crystallize (apart, I believe, from a short lived
+implementation by the MzScheme project).
+
+For all these reasons, the Guile developers have decided to deprecate
+the GH interface --- which means that support for GH will be completely
+removed after the next few releases --- and to focus only on the
+@code{scm_} interface, with additions to ensure that it is as easy to
+use in all respects as GH was.
+
+It remains an open question whether a deep kind of interface portability
+would be useful for extension language-based applications, and it may
+still be an interesting project to attempt to define a corresponding
+GH-like interface, but the Guile developers no longer plan to try to do
+this as part of the core Guile project.
+
+@node Transitioning away from GH
+@subsection Transitioning away from GH
+
+The following table summarizes how to transition from the GH to the
+scm interface.  The replacements that are recommended are not always
+completely equivalent to the GH functionality that they should
+replace.  Therefore, you should read the reference documentation of
+the replacements carefully if you are not yet familiar with them.
+
+@table @asis
+@item Header file
+Use @code{#include <libguile.h>} instead of @code{#include
+<guile/gh.h>}.
+
+@item Compiling and Linking
+Use @code{guile-config} to pick up the flags required to compile C or
+C++ code that uses @code{libguile}, like so
+
+@smallexample
+$(CC) -o prog.o -c prog.c `guile-config compile`
+@end smallexample
+
+If you are using libtool to link your executables, just use
+@code{-lguile} in your link command.  Libtool will expand this into
+the needed linker options automatically.  If you are not using
+libtool, use the @code{guile-config} program to query the needed
+options explicitly.  A linker command like
+
+@smallexample
+$(CC) -o prog prog.o `guile-config link`
+@end smallexample
+
+should be all that is needed.  To link shared libraries that will be
+used as Guile Extensions, use libtool to control both the compilation
+and the link stage.
+
+@item The @code{SCM} type
+No change: the scm interface also uses this type to represent an
+arbitrary Scheme value.
+
+@item @code{SCM_BOOL_F} and @code{SCM_BOOL_T}
+No change.
+
+@item @code{SCM_UNSPECIFIED} and @code{SCM_UNDEFINED}
+No change.
+
+@item @code{gh_enter}
+Use @code{scm_boot_guile} instead, but note that @code{scm_boot_guile}
+has a slightly different calling convention from @code{gh_enter}:
+@code{scm_boot_guile}, and the main program function that you specify
+for @code{scm_boot_guile} to call, both take an additional @var{closure}
+parameter.  @ref{Guile Initialization Functions} for more details.
+
+@item @code{gh_repl}
+Use @code{scm_shell} instead.
+
+@item @code{gh_init}
+Use @code{scm_init_guile} instead.
+
+@item @code{gh_catch}
+Use @code{scm_internal_catch} instead.
+
+@item @code{gh_eval_str}
+Use @code{scm_c_eval_string} instead.
+
+@item @code{gh_eval_str_with_catch}
+Use @code{scm_c_eval_string} together with @code{scm_internal_catch}
+instead.
+
+@item @code{gh_eval_str_with_standard_handler}
+Use @code{scm_c_eval_string} together with @code{scm_internal_catch}
+and @code{scm_handle_by_message_no_exit} instead.
+
+@item @code{gh_eval_str_with_stack_saving_handler}
+Use @code{scm_c_eval_string} together with
+@code{scm_internal_stack_catch} and
+@code{scm_handle_by_message_no_exit} instead.
+
+@item @code{gh_eval_file} or @code{gh_load}
+Use @code{scm_c_primitive_load} instead.
+
+@item @code{gh_eval_file_with_catch}
+Use @code{scm_c_primitive_load} together with
+@code{scm_internal_catch} instead.
+
+@item @code{gh_eval_file_with_standard_handler}
+Use @code{scm_c_primitive_load} together with
+@code{scm_internal_catch} and @code{scm_handle_by_message_no_exit}
+instead.
+
+@item  @code{gh_new_procedure}
+@itemx @code{gh_new_procedure0_0}
+@itemx @code{gh_new_procedure0_1}
+@itemx @code{gh_new_procedure0_2}
+@itemx @code{gh_new_procedure1_0}
+@itemx @code{gh_new_procedure1_1}
+@itemx @code{gh_new_procedure1_2}
+@itemx @code{gh_new_procedure2_0}
+@itemx @code{gh_new_procedure2_1}
+@itemx @code{gh_new_procedure2_2}
+@itemx @code{gh_new_procedure3_0} 
+@itemx @code{gh_new_procedure4_0} 
+@itemx @code{gh_new_procedure5_0} 
+Use @code{scm_c_define_gsubr} instead, but note that the arguments are
+in a different order: for @code{scm_c_define_gsubr} the C function
+pointer is the last argument.  @ref{A Sample Guile Extension} for an
+example.
+
+@item @code{gh_defer_ints} and @code{gh_allow_ints}
+Use @code{SCM_CRITICAL_SECTION_START} and
+@code{SCM_CRITICAL_SECTION_END} instead.  Note that these macros are
+used without parentheses, as in @code{SCM_DEFER_INTS;}.
+
+@item @code{gh_bool2scm}
+Use @code{scm_from_bool} instead.
+
+@item @code{gh_int2scm}
+Use @code{scm_from_int} instead.
+
+@item @code{gh_ulong2scm}
+Use @code{scm_from_ulong} instead.
+
+@item @code{gh_long2scm}
+Use @code{scm_from_long} instead.
+
+@item @code{gh_double2scm}
+Use @code{scm_make_real} instead.
+
+@item @code{gh_char2scm}
+Use @code{SCM_MAKE_CHAR} instead.
+
+@item @code{gh_str2scm}
+Use @code{scm_from_locale_stringn} instead.
+
+@item @code{gh_str02scm}
+Use @code{scm_from_locale_string} instead.
+
+@item @code{gh_set_substr}
+Use @code{scm_string_copy_x}.
+
+@item @code{gh_symbol2scm}
+Use @code{scm_from_locale_symbol} instead.
+
+@item  @code{gh_ints2scm}
+@itemx @code{gh_doubles2scm}
+@itemx @code{gh_chars2byvect}
+@itemx @code{gh_shorts2svect}
+@itemx @code{gh_longs2ivect}
+@itemx @code{gh_ulongs2uvect}
+@itemx @code{gh_floats2fvect}
+@itemx @code{gh_doubles2dvect}
+Use the uniform numeric vector function, @xref{Uniform Numeric
+Vectors}.
+
+@item @code{gh_scm2bool}
+Use @code{scm_is_true} or @code{scm_to_bool} instead.
+
+@item @code{gh_scm2int}
+Use @code{scm_to_int} instead.
+
+@item @code{gh_scm2ulong}
+Use @code{scm_to_ulong} instead.
+
+@item @code{gh_scm2long}
+Use @code{scm_to_long} instead.
+
+@item @code{gh_scm2double}
+Use @code{scm_to_double} instead.
+
+@item @code{gh_scm2char}
+Use @code{scm_to_char} instead.
+
+@item @code{gh_scm2newstr}
+Use @code{scm_to_locale_string} or similar instead.
+
+@item @code{gh_get_substr}
+Use @code{scm_c_substring} together with @code{scm_to_locale_string}
+or similar instead.
+
+@item @code{gh_symbol2newstr}
+Use @code{scm_symbol_to_string} together with @code{scm_to_locale_string} or similar instead.
+
+@item @code{gh_scm2chars}
+Use @code{scm_from_locale_string} (or similar) or the uniform numeric
+vector functions (@pxref{Uniform Numeric Vectors}) instead.
+
+@item  @code{gh_scm2shorts}
+@itemx @code{gh_scm2longs}
+@itemx @code{gh_scm2floats}
+@itemx @code{gh_scm2doubles}
+Use the uniform numeric vector function, @xref{Uniform Numeric
+Vectors}.
+
+@item @code{gh_boolean_p}
+Use @code{scm_is_bool} instead.
+
+@item @code{gh_symbol_p}
+Use @code{scm_is_symbol} instead.
+
+@item @code{gh_char_p}
+Replace @code{gh_char_p (@var{obj})} with
+@example
+scm_is_true (scm_char_p (@var{obj}))
+@end example
+
+@item @code{gh_vector_p}
+Replace @code{gh_vector_p (@var{obj})} with
+@example
+scm_is_true (scm_vector_p (@var{obj}))
+@end example
+
+@item @code{gh_pair_p}
+Replace @code{gh_pair_p (@var{obj})} with
+@example
+scm_is_true (scm_pair_p (@var{obj}))
+@end example
+
+@item @code{gh_number_p}
+Use @code{scm_is_number} instead.
+
+@item @code{gh_string_p}
+Use @code{scm_is_string} instead.
+
+@item @code{gh_procedure_p}
+Replace @code{gh_procedure_p (@var{obj})} by
+@example
+scm_is_true (scm_procedure_p (@var{obj}))
+@end example
+
+@item @code{gh_list_p}
+Replace @code{gh_list_p (@var{obj})} with
+@example
+scm_is_true (scm_list_p (@var{obj}))
+@end example
+
+@item @code{gh_inexact_p}
+Replace @code{gh_inexact_p (@var{obj})} with
+@example
+scm_is_true (scm_inexact_p (@var{obj}))
+@end example
+
+@item @code{gh_exact_p}
+Replace @code{gh_exact_p (@var{obj})} with
+@example
+scm_is_true (scm_exact_p (@var{obj}))
+@end example
+
+@item @code{gh_eq_p}
+Use @code{scm_is_eq} instead.
+
+@item @code{gh_eqv_p}
+Replace @code{gh_eqv_p (@var{x}, @var{y})} with
+@example
+scm_is_true (scm_eqv_p (@var{x}, @var{y}))
+@end example
+
+@item @code{gh_equal_p}
+Replace @code{gh_equal_p (@var{x}, @var{y})} with
+@example
+scm_is_true (scm_equal_p (@var{x}, @var{y}))
+@end example
+
+@item @code{gh_string_equal_p}
+Replace @code{gh_string_equal_p (@var{x}, @var{y})} with
+@example
+scm_is_true (scm_string_equal_p (@var{x}, @var{y}))
+@end example
+
+@item @code{gh_null_p}
+Use @code{scm_is_null} instead.
+
+@item @code{gh_not}
+Use @code{scm_not} instead.
+
+@item @code{gh_make_string}
+Use @code{scm_make_string} instead.
+
+@item @code{gh_string_length}
+Use @code{scm_string_length} instead.
+
+@item @code{gh_string_ref}
+Use @code{scm_string_ref} instead.
+
+@item @code{gh_string_set_x}
+Use @code{scm_string_set_x} instead.
+
+@item @code{gh_substring}
+Use @code{scm_substring} instead.
+
+@item @code{gh_string_append}
+Use @code{scm_string_append} instead.
+
+@item @code{gh_cons}
+Use @code{scm_cons} instead.
+
+@item @code{gh_car} and @code{gh_cdr}
+Use @code{scm_car} and @code{scm_cdr} instead.
+
+@item @code{gh_cxxr} and @code{gh_cxxxr}
+(Where each x is either @samp{a} or @samp{d}.)  Use the corresponding
+@code{scm_cxxr} or @code{scm_cxxxr} function instead.
+
+@item @code{gh_set_car_x} and @code{gh_set_cdr_x}
+Use @code{scm_set_car_x} and @code{scm_set_cdr_x} instead.
+
+@item @code{gh_list}
+Use @code{scm_list_n} instead.
+
+@item @code{gh_length}
+Replace @code{gh_length (@var{lst})} with
+@example
+scm_to_size_t (scm_length (@var{lst}))
+@end example
+
+@item @code{gh_append}
+Use @code{scm_append} instead.
+
+@item @code{gh_append2}, @code{gh_append3}, @code{gh_append4}
+Replace @code{gh_append@var{N} (@var{l1}, @dots{}, @var{lN})} by
+@example
+scm_append (scm_list_n (@var{l1}, @dots{}, @var{lN}, SCM_UNDEFINED))
+@end example
+
+@item @code{gh_reverse}
+Use @code{scm_reverse} instead.
+
+@item @code{gh_list_tail} and @code{gh_list_ref}
+Use @code{scm_list_tail} and @code{scm_list_ref} instead.
+
+@item @code{gh_memq}, @code{gh_memv} and @code{gh_member}
+Use @code{scm_memq}, @code{scm_memv} and @code{scm_member} instead.
+
+@item @code{gh_assq}, @code{gh_assv} and @code{gh_assoc}
+Use @code{scm_assq}, @code{scm_assv} and @code{scm_assoc} instead.
+
+@item @code{gh_make_vector}
+Use @code{scm_make_vector} instead.
+
+@item @code{gh_vector} or @code{gh_list_to_vector}
+Use @code{scm_vector} instead.
+
+@item @code{gh_vector_ref} and @code{gh_vector_set_x}
+Use @code{scm_vector_ref} and @code{scm_vector_set_x} instead.
+
+@item @code{gh_vector_length}
+Use @code{scm_c_vector_length} instead.
+
+@item @code{gh_uniform_vector_length}
+Use @code{scm_c_uniform_vector_length} instead.
+
+@item @code{gh_uniform_vector_ref}
+Use @code{scm_c_uniform_vector_ref} instead.
+
+@item @code{gh_vector_to_list}
+Use @code{scm_vector_to_list} instead.
+
+@item @code{gh_apply}
+Use @code{scm_apply_0} instead.
+
+@item  @code{gh_call0}
+@itemx @code{gh_call1}
+@itemx @code{gh_call2}
+@itemx @code{gh_call3}
+Use @code{scm_call_0}, @code{scm_call_1}, etc instead.
+
+@item  @code{gh_display}
+@itemx @code{gh_write}
+@itemx @code{gh_newline}
+Use @code{scm_display (obj, scm_current_output_port ())} instead, etc.
+
+@item @code{gh_lookup}
+Use @code{scm_variable_ref (scm_c_lookup (name))} instead.
+
+@item @code{gh_module_lookup}
+Use @code{scm_variable_ref (scm_c_module_lookup (module, name))} instead.
+
+@end table
+
+@node GH preliminaries
+@subsection GH preliminaries
+
+To use gh, you must have the following toward the beginning of your C
+source:
+@smallexample
+#include <guile/gh.h>
+@end smallexample
+@cindex gh - headers
+
+When you link, you will have to add at least @code{-lguile} to the list
+of libraries.  If you are using more of Guile than the basic Scheme
+interpreter, you will have to add more libraries.
+@cindex gh - linking
+
+
+@node Data types and constants defined by GH
+@subsection Data types and constants defined by GH
+
+The following C constants and data types are defined in gh:
+
+@code{SCM} is a C data type used to store all Scheme data, no matter what the
+Scheme type.  Values are converted between C data types and the SCM type
+with utility functions described below (@pxref{Converting data between C
+and Scheme}).  [FIXME: put in references to Jim's essay and so forth.]
+
+@defvr Constant SCM_BOOL_T
+@defvrx Constant SCM_BOOL_F
+The @emph{Scheme} values returned by many boolean procedures in
+libguile.
+
+This can cause confusion because they are different from 0 and 1.  In
+testing a boolean function in libguile programming, you must always make
+sure that you check the spec: @code{gh_} and @code{scm_} functions will
+usually return @code{SCM_BOOL_T} and @code{SCM_BOOL_F}, but other C
+functions usually can be tested against 0 and 1, so programmers' fingers
+tend to just type @code{if (boolean_function()) @{ ... @}}
+@end defvr
+
+@defvr Constant SCM_UNSPECIFIED
+This is a SCM value that is not the same as any legal Scheme value.  It
+is the value that a Scheme function returns when its specification says
+that its return value is unspecified.
+@end defvr
+
+@defvr Constant SCM_UNDEFINED
+This is another SCM value that is not the same as any legal Scheme
+value.  It is the value used to mark variables that do not yet have a
+value, and it is also used in C to terminate functions with variable
+numbers of arguments, such as @code{gh_list()}.
+@end defvr
+
+
+@node Starting and controlling the interpreter
+@subsection Starting and controlling the interpreter
+@cindex libguile - start interpreter
+
+In almost every case, your first @code{gh_} call will be:
+
+@deftypefun void gh_enter (int @var{argc}, char *@var{argv}[], void (*@var{main_prog})())
+Starts up a Scheme interpreter with all the builtin Scheme primitives.
+@code{gh_enter()} never exits, and the user's code should all be in the
+@code{@var{main_prog}()} function.  @code{argc} and @code{argv} will be
+passed to @var{main_prog}.
+
+@deftypefun void main_prog (int @var{argc}, char *@var{argv}[])
+This is the user's main program.  It will be invoked by
+@code{gh_enter()} after Guile has been started up.
+@end deftypefun
+
+Note that you can use @code{gh_repl} inside @code{gh_enter} (in other
+words, inside the code for @code{main-prog}) if you want the program to
+be controlled by a Scheme read-eval-print loop.
+@end deftypefun
+
+@cindex read eval print loop -- from the gh_ interface
+@cindex REPL -- from the gh_ interface
+A convenience routine which enters the Guile interpreter with the
+standard Guile read-eval-print loop (@dfn{REPL}) is:
+
+@deftypefun void gh_repl (int @var{argc}, char *@var{argv}[])
+Enters the Scheme interpreter giving control to the Scheme REPL.
+Arguments are processed as if the Guile program @file{guile} were being
+invoked.
+
+Note that @code{gh_repl} should be used @emph{inside} @code{gh_enter},
+since any Guile interpreter calls are meaningless unless they happen in
+the context of the interpreter.
+
+Also note that when you use @code{gh_repl}, your program will be
+controlled by Guile's REPL (which is written in Scheme and has many
+useful features).  Use straight C code inside @code{gh_enter} if you
+want to maintain execution control in your C program.
+@end deftypefun
+
+You will typically use @code{gh_enter} and @code{gh_repl} when you
+want a Guile interpreter enhanced by your own libraries, but otherwise
+quite normal.  For example, to build a Guile--derived program that
+includes some random number routines @dfn{GSL} (GNU Scientific Library),
+you would write a C program that looks like this:
+
+@smallexample
+#include <guile/gh.h>
+#include <gsl_ran.h>
+
+/* random number suite */
+SCM gw_ran_seed(SCM s)
+@{
+  gsl_ran_seed(gh_scm2int(s));
+  return SCM_UNSPECIFIED;
+@}
+
+SCM gw_ran_random()
+@{
+  SCM x;
+
+  x = gh_ulong2scm(gsl_ran_random());
+  return x;
+@}
+
+SCM gw_ran_uniform()
+@{
+  SCM x;
+
+  x = gh_double2scm(gsl_ran_uniform());
+  return x;
+@}
+SCM gw_ran_max()
+@{
+  return gh_double2scm(gsl_ran_max());
+@}
+
+void
+init_gsl()
+@{
+  /* random number suite */
+  gh_new_procedure("gsl-ran-seed", gw_ran_seed, 1, 0, 0);
+  gh_new_procedure("gsl-ran-random", gw_ran_random, 0, 0, 0);
+  gh_new_procedure("gsl-ran-uniform", gw_ran_uniform, 0, 0, 0);
+  gh_new_procedure("gsl-ran-max", gw_ran_max, 0, 0, 0);
+@}
+
+void
+main_prog (int argc, char *argv[])
+@{
+  init_gsl();
+
+  gh_repl(argc, argv);
+@}
+
+int
+main (int argc, char *argv[])
+@{
+  gh_enter (argc, argv, main_prog);
+@}
+@end smallexample
+
+Then, supposing the C program is in @file{guile-gsl.c}, you could
+compile it with @kbd{gcc -o guile-gsl guile-gsl.c -lguile -lgsl}.
+
+The resulting program @file{guile-gsl} would have new primitive
+procedures @code{gsl-ran-random}, @code{gsl-ran-gaussian} and so forth.
+
+
+@node Error messages
+@subsection Error messages
+@cindex libguile - error messages
+@cindex error messages in libguile
+
+[FIXME: need to fill this based on Jim's new mechanism]
+
+
+@node Executing Scheme code
+@subsection Executing Scheme code
+@cindex libguile - executing Scheme
+@cindex executing Scheme
+
+Once you have an interpreter running, you can ask it to evaluate Scheme
+code.  There are two calls that implement this:
+
+@deftypefun SCM gh_eval_str (char *@var{scheme_code})
+This asks the interpreter to evaluate a single string of Scheme code,
+and returns the result of the last expression evaluated.
+
+Note that the line of code in @var{scheme_code} must be a well formed
+Scheme expression.  If you have many lines of code before you balance
+parentheses, you must either concatenate them into one string, or use
+@code{gh_eval_file()}.
+@end deftypefun
+
+@deftypefun SCM gh_eval_file (char *@var{fname})
+@deftypefunx SCM gh_load (char *@var{fname})
+@code{gh_eval_file} is completely analogous to @code{gh_eval_str()},
+except that a whole file is evaluated instead of a string.
+@code{gh_eval_file} returns @code{SCM_UNSPECIFIED}.
+
+@code{gh_load} is identical to @code{gh_eval_file} (it's a macro that
+calls @code{gh_eval_file} on its argument).  It is provided to start
+making the @code{gh_} interface match the R5RS Scheme procedures
+closely.
+@end deftypefun
+
+
+@node Defining new Scheme procedures in C
+@subsection Defining new Scheme procedures in C
+@cindex libguile - new procedures
+@cindex new procedures
+@cindex procedures, new
+@cindex new primitives
+@cindex primitives, new
+
+The real interface between C and Scheme comes when you can write new
+Scheme procedures in C.  This is done through the routine
+
+
+@deftypefn {Libguile high} SCM gh_new_procedure (char *@var{proc_name}, SCM (*@var{fn})(), int @var{n_required_args}, int @var{n_optional_args}, int @var{restp})
+@code{gh_new_procedure} defines a new Scheme procedure.  Its Scheme name
+will be @var{proc_name}, it will be implemented by the C function
+(*@var{fn})(), it will take at least @var{n_required_args} arguments,
+and at most @var{n_optional_args} extra arguments.
+
+When the @var{restp} parameter is 1, the procedure takes a final
+argument: a list of remaining parameters.
+
+@code{gh_new_procedure} returns an SCM value representing the procedure.
+
+The C function @var{fn} should have the form
+@deftypefn {Libguile high} SCM fn (SCM @var{req1}, SCM @var{req2}, ..., SCM @var{opt1},  SCM @var{opt2}, ...,  SCM @var{rest_args})
+The arguments are all passed as SCM values, so the user will have to use
+the conversion functions to convert to standard C types.
+
+Examples of C functions used as new Scheme primitives can be found in
+the sample programs @code{learn0} and @code{learn1}.
+@end deftypefn
+
+@end deftypefn
+
+@strong{Rationale:} this is the correct way to define new Scheme
+procedures in C.  The ugly mess of arguments is required because of how
+C handles procedures with variable numbers of arguments.
+
+@strong{NB:} what about documentation strings?
+
+@cartouche
+There are several important considerations to be made when writing the C
+routine @code{(*fn)()}.
+
+First of all the C routine has to return type @code{SCM}.
+
+Second, all arguments passed to the C function will be of type
+@code{SCM}.
+
+Third: the C routine is now subject to Scheme flow control, which means
+that it could be interrupted at any point, and then reentered.  This
+means that you have to be very careful with operations such as
+allocating memory, modifying static data @dots{}
+
+Fourth: to get around the latter issue, you can use
+@code{GH_DEFER_INTS} and @code{GH_ALLOW_INTS}.
+@end cartouche
+
+@defmac GH_DEFER_INTS
+@defmacx GH_ALLOW_INTS
+These macros disable and re-enable Scheme's flow control.  They 
+@end defmac
+
+
+@c [??? have to do this right; maybe using subsections, or maybe creating a
+@c section called Flow control issues...]
+
+@c [??? Go into exhaustive detail with examples of the various possible
+@c combinations of required and optional args...]
+
+
+@node Converting data between C and Scheme
+@subsection Converting data between C and Scheme
+@cindex libguile - converting data
+@cindex data conversion
+@cindex converting data
+
+Guile provides mechanisms to convert data between C and Scheme.  This
+allows new builtin procedures to understand their arguments (which are
+of type @code{SCM}) and return values of type @code{SCM}.
+
+
+@menu
+* C to Scheme::                 
+* Scheme to C::                 
+@end menu
+
+@node C to Scheme
+@subsubsection C to Scheme
+
+@deftypefun SCM gh_bool2scm (int @var{x})
+Returns @code{#f} if @var{x} is zero, @code{#t} otherwise.
+@end deftypefun
+
+@deftypefun SCM gh_ulong2scm (unsigned long @var{x})
+@deftypefunx SCM gh_long2scm (long @var{x})
+@deftypefunx SCM gh_double2scm (double @var{x})
+@deftypefunx SCM gh_char2scm (char @var{x})
+Returns a Scheme object with the value of the C quantity @var{x}.
+@end deftypefun
+
+@deftypefun SCM gh_str2scm (char *@var{s}, int @var{len})
+Returns a new Scheme string with the (not necessarily null-terminated) C
+array @var{s} data.
+@end deftypefun
+
+@deftypefun SCM gh_str02scm (char *@var{s})
+Returns a new Scheme string with the null-terminated C string @var{s}
+data.
+@end deftypefun
+
+@deftypefun SCM gh_set_substr (char *@var{src}, SCM @var{dst}, int @var{start}, int @var{len})
+Copy @var{len} characters at @var{src} into the @emph{existing} Scheme
+string @var{dst}, starting at @var{start}.  @var{start} is an index into
+@var{dst}; zero means the beginning of the string.
+
+If @var{start} + @var{len} is off the end of @var{dst}, signal an
+out-of-range error.
+@end deftypefun
+
+@deftypefun SCM gh_symbol2scm (char *@var{name})
+Given a null-terminated string @var{name}, return the symbol with that
+name.
+@end deftypefun
+
+@deftypefun SCM gh_ints2scm (int *@var{dptr}, int @var{n})
+@deftypefunx SCM gh_doubles2scm (double *@var{dptr}, int @var{n})
+Make a scheme vector containing the @var{n} ints or doubles at memory
+location @var{dptr}.
+@end deftypefun
+
+@deftypefun SCM gh_chars2byvect (char *@var{dptr}, int @var{n})
+@deftypefunx SCM gh_shorts2svect (short *@var{dptr}, int @var{n})
+@deftypefunx SCM gh_longs2ivect (long *@var{dptr}, int @var{n})
+@deftypefunx SCM gh_ulongs2uvect (ulong *@var{dptr}, int @var{n})
+@deftypefunx SCM gh_floats2fvect (float *@var{dptr}, int @var{n})
+@deftypefunx SCM gh_doubles2dvect (double *@var{dptr}, int @var{n})
+Make a scheme uniform vector containing the @var{n} chars, shorts,
+longs, unsigned longs, floats or doubles at memory location @var{dptr}.
+@end deftypefun
+
+
+
+@node Scheme to C
+@subsubsection Scheme to C
+
+@deftypefun int gh_scm2bool (SCM @var{obj})
+@deftypefunx {unsigned long} gh_scm2ulong (SCM @var{obj})
+@deftypefunx long gh_scm2long (SCM @var{obj})
+@deftypefunx double gh_scm2double (SCM @var{obj})
+@deftypefunx int gh_scm2char (SCM @var{obj})
+These routines convert the Scheme object to the given C type.
+@end deftypefun
+
+@deftypefun {char *} gh_scm2newstr (SCM @var{str}, size_t *@var{lenp})
+Given a Scheme string @var{str}, return a pointer to a new copy of its
+contents, followed by a null byte.  If @var{lenp} is non-null, set
+@code{*@var{lenp}} to the string's length.
+
+This function uses malloc to obtain storage for the copy; the caller is
+responsible for freeing it.
+
+Note that Scheme strings may contain arbitrary data, including null
+characters.  This means that null termination is not a reliable way to
+determine the length of the returned value.  However, the function
+always copies the complete contents of @var{str}, and sets @var{*lenp}
+to the true length of the string (when @var{lenp} is non-null).
+@end deftypefun
+
+
+@deftypefun void gh_get_substr (SCM str, char *return_str, int *lenp)
+Copy @var{len} characters at @var{start} from the Scheme string
+@var{src} to memory at @var{dst}.  @var{start} is an index into
+@var{src}; zero means the beginning of the string.  @var{dst} has
+already been allocated by the caller.
+
+If @var{start} + @var{len} is off the end of @var{src}, signal an
+out-of-range error.
+@end deftypefun
+
+@deftypefun {char *} gh_symbol2newstr (SCM @var{sym}, int *@var{lenp})
+Takes a Scheme symbol and returns a string of the form
+@code{"'symbol-name"}.  If @var{lenp} is non-null, the string's length
+is returned in @code{*@var{lenp}}.
+
+This function uses malloc to obtain storage for the returned string; the
+caller is responsible for freeing it.
+@end deftypefun
+
+@deftypefun {char *} gh_scm2chars (SCM @var{vector}, chars *@var{result})
+@deftypefunx {short *} gh_scm2shorts (SCM @var{vector}, short *@var{result})
+@deftypefunx {long *} gh_scm2longs (SCM @var{vector}, long *@var{result})
+@deftypefunx {float *} gh_scm2floats (SCM @var{vector}, float *@var{result})
+@deftypefunx {double *} gh_scm2doubles (SCM @var{vector}, double *@var{result})
+Copy the numbers in @var{vector} to the array pointed to by @var{result}
+and return it.  If @var{result} is NULL, allocate a double array large
+enough.
+
+@var{vector} can be an ordinary vector, a weak vector, or a signed or
+unsigned uniform vector of the same type as the result array.  For
+chars, @var{vector} can be a string or substring.  For floats and
+doubles, @var{vector} can contain a mix of inexact and integer values.
+
+If @var{vector} is of unsigned type and contains values too large to fit
+in the signed destination array, those values will be wrapped around,
+that is, data will be copied as if the destination array was unsigned.
+@end deftypefun
+
+
+@node Type predicates
+@subsection Type predicates
+
+These C functions mirror Scheme's type predicate procedures with one
+important difference.  The C routines return C boolean values (0 and 1)
+instead of @code{SCM_BOOL_T} and @code{SCM_BOOL_F}.
+
+The Scheme notational convention of putting a @code{?} at the end of
+predicate procedure names is mirrored in C by placing @code{_p} at the
+end of the procedure.  For example, @code{(pair? ...)} maps to
+@code{gh_pair_p(...)}.
+
+@deftypefun int gh_boolean_p (SCM @var{val})
+Returns 1 if @var{val} is a boolean, 0 otherwise.
+@end deftypefun
+
+@deftypefun int gh_symbol_p (SCM @var{val})
+Returns 1 if @var{val} is a symbol, 0 otherwise.
+@end deftypefun
+
+@deftypefun int gh_char_p (SCM @var{val})
+Returns 1 if @var{val} is a char, 0 otherwise.
+@end deftypefun
+
+@deftypefun int gh_vector_p (SCM @var{val})
+Returns 1 if @var{val} is a vector, 0 otherwise.
+@end deftypefun
+
+@deftypefun int gh_pair_p (SCM @var{val})
+Returns 1 if @var{val} is a pair, 0 otherwise.
+@end deftypefun
+
+@deftypefun int gh_procedure_p (SCM @var{val})
+Returns 1 if @var{val} is a procedure, 0 otherwise.
+@end deftypefun
+
+@deftypefun int gh_list_p (SCM @var{val})
+Returns 1 if @var{val} is a list, 0 otherwise.
+@end deftypefun
+
+@deftypefun int gh_inexact_p (SCM @var{val})
+Returns 1 if @var{val} is an inexact number, 0 otherwise.
+@end deftypefun
+
+@deftypefun int gh_exact_p (SCM @var{val})
+Returns 1 if @var{val} is an exact number, 0 otherwise.
+@end deftypefun
+
+
+@node Equality predicates
+@subsection Equality predicates
+
+These C functions mirror Scheme's equality predicate procedures with one
+important difference.  The C routines return C boolean values (0 and 1)
+instead of @code{SCM_BOOL_T} and @code{SCM_BOOL_F}.
+
+The Scheme notational convention of putting a @code{?} at the end of
+predicate procedure names is mirrored in C by placing @code{_p} at the
+end of the procedure.  For example, @code{(equal? ...)} maps to
+@code{gh_equal_p(...)}.
+
+@deftypefun int gh_eq_p (SCM x, SCM y)
+Returns 1 if @var{x} and @var{y} are equal in the sense of Scheme's
+@code{eq?} predicate, 0 otherwise.
+@end deftypefun
+
+@deftypefun int gh_eqv_p (SCM x, SCM y)
+Returns 1 if @var{x} and @var{y} are equal in the sense of Scheme's
+@code{eqv?} predicate, 0 otherwise.
+@end deftypefun
+
+@deftypefun int gh_equal_p (SCM x, SCM y)
+Returns 1 if @var{x} and @var{y} are equal in the sense of Scheme's
+@code{equal?} predicate, 0 otherwise.
+@end deftypefun
+
+@deftypefun int gh_string_equal_p (SCM @var{s1}, SCM @var{s2})
+Returns 1 if the strings @var{s1} and @var{s2} are equal, 0 otherwise.
+@end deftypefun
+
+@deftypefun int gh_null_p (SCM @var{l})
+Returns 1 if @var{l} is an empty list or pair; 0 otherwise.
+@end deftypefun
+
+
+@node Memory allocation and garbage collection
+@subsection Memory allocation and garbage collection
+
+@c [FIXME: flesh this out with some description of garbage collection in
+@c scm/guile]
+
+@c @deftypefun SCM gh_mkarray (int size)
+@c Allocate memory for a Scheme object in a garbage-collector-friendly
+@c manner.
+@c @end deftypefun
+
+
+@node Calling Scheme procedures from C
+@subsection Calling Scheme procedures from C
+
+Many of the Scheme primitives are available in the @code{gh_}
+interface; they take and return objects of type SCM, and one could
+basically use them to write C code that mimics Scheme code.
+
+I will list these routines here without much explanation, since what
+they do is the same as documented in @ref{Standard procedures, R5RS, ,
+r5rs, R5RS}.  But I will point out that when a procedure takes a
+variable number of arguments (such as @code{gh_list}), you should pass
+the constant @var{SCM_UNDEFINED} from C to signify the end of the list.
+
+@deftypefun SCM gh_define (char *@var{name}, SCM @var{val})
+Corresponds to the Scheme @code{(define name val)}: it binds a value to
+the given name (which is a C string).  Returns the new object.
+@end deftypefun
+
+@heading Pairs and lists
+
+@deftypefun SCM gh_cons (SCM @var{a}, SCM @var{b})
+@deftypefunx SCM gh_list (SCM l0, SCM l1, ... , SCM_UNDEFINED)
+These correspond to the Scheme @code{(cons a b)} and @code{(list l0 l1
+...)} procedures.  Note that @code{gh_list()} is a C macro that invokes
+@code{scm_list_n()}.
+@end deftypefun
+
+@deftypefun SCM gh_car (SCM @var{obj})
+@deftypefunx SCM gh_cdr (SCM @var{obj})
+@dots{}
+
+@deftypefunx SCM gh_c[ad][ad][ad][ad]r (SCM @var{obj})
+These correspond to the Scheme @code{(caadar ls)} procedures etc @dots{}
+@end deftypefun
+
+@deftypefun SCM gh_set_car_x (SCM @var{pair}, SCM @var{value})
+Modifies the CAR of @var{pair} to be @var{value}.  This is equivalent to
+the Scheme procedure @code{(set-car! ...)}.
+@end deftypefun
+
+@deftypefun SCM gh_set_cdr_x (SCM @var{pair}, SCM @var{value})
+Modifies the CDR of @var{pair} to be @var{value}.  This is equivalent to
+the Scheme procedure @code{(set-cdr! ...)}.
+@end deftypefun
+
+@deftypefun {unsigned long} gh_length (SCM @var{ls})
+Returns the length of the list.
+@end deftypefun
+
+@deftypefun SCM gh_append (SCM @var{args})
+@deftypefunx SCM gh_append2 (SCM @var{l1}, SCM @var{l2})
+@deftypefunx SCM gh_append3 (SCM @var{l1}, SCM @var{l2}, @var{l3})
+@deftypefunx SCM gh_append4 (SCM @var{l1}, SCM @var{l2}, @var{l3}, @var{l4})
+@code{gh_append()} takes @var{args}, which is a list of lists
+@code{(list1 list2 ...)}, and returns a list containing all the elements
+of the individual lists.
+
+A typical invocation of @code{gh_append()} to append 5 lists together
+would be
+@smallexample
+  gh_append(gh_list(l1, l2, l3, l4, l5, SCM_UNDEFINED));
+@end smallexample
+
+The functions @code{gh_append2()}, @code{gh_append2()},
+@code{gh_append3()} and @code{gh_append4()} are convenience routines to
+make it easier for C programs to form the list of lists that goes as an
+argument to @code{gh_append()}.
+@end deftypefun
+
+@deftypefun SCM gh_reverse (SCM @var{ls})
+Returns a new list that has the same elements as @var{ls} but in the
+reverse order.  Note that this is implemented as a macro which calls
+@code{scm_reverse()}.
+@end deftypefun
+
+@deftypefun SCM gh_list_tail (SCM @var{ls}, SCM @var{k})
+Returns the sublist of @var{ls} with the last @var{k} elements.
+@end deftypefun
+
+@deftypefun SCM gh_list_ref (SCM @var{ls}, SCM @var{k})
+Returns the @var{k}th element of the list @var{ls}.
+@end deftypefun
+
+@deftypefun SCM gh_memq (SCM @var{x}, SCM @var{ls})
+@deftypefunx SCM gh_memv (SCM @var{x}, SCM @var{ls})
+@deftypefunx SCM gh_member (SCM @var{x}, SCM @var{ls})
+These functions return the first sublist of @var{ls} whose CAR is
+@var{x}.  They correspond to @code{(memq x ls)}, @code{(memv x ls)} and
+@code{(member x ls)}, and hence use (respectively) @code{eq?},
+@code{eqv?} and @code{equal?} to do comparisons.
+
+If @var{x} does not appear in @var{ls}, the value @code{SCM_BOOL_F} (not
+the empty list) is returned.
+
+Note that these functions are implemented as macros which call
+@code{scm_memq()}, @code{scm_memv()} and @code{scm_member()}
+respectively.
+@end deftypefun
+
+@deftypefun SCM gh_assq (SCM @var{x}, SCM @var{alist})
+@deftypefunx SCM gh_assv (SCM @var{x}, SCM @var{alist})
+@deftypefunx SCM gh_assoc (SCM @var{x}, SCM @var{alist})
+These functions search an @dfn{association list} (list of pairs)
+@var{alist} for the first pair whose CAR is @var{x}, and they return
+that pair.
+
+If no pair in @var{alist} has @var{x} as its CAR, the value
+@code{SCM_BOOL_F} (not the empty list) is returned.
+
+Note that these functions are implemented as macros which call
+@code{scm_assq()}, @code{scm_assv()} and @code{scm_assoc()}
+respectively.
+@end deftypefun
+
+
+@heading Symbols
+
+@c @deftypefun SCM gh_symbol (SCM str, SCM len)
+@c @deftypefunx SCM gh_tmp_symbol (SCM str, SCM len)
+@c Takes the given string @var{str} of length @var{len} and returns a
+@c symbol corresponding to that string.
+@c @end deftypefun
+
+
+@heading Vectors
+
+@deftypefun SCM gh_make_vector (SCM @var{n}, SCM @var{fill})
+@deftypefunx SCM gh_vector (SCM @var{ls})
+@deftypefunx SCM gh_vector_ref (SCM @var{v}, SCM @var{i})
+@deftypefunx SCM gh_vector_set (SCM @var{v}, SCM @var{i}, SCM @var{val})
+@deftypefunx {unsigned long} gh_vector_length (SCM @var{v})
+@deftypefunx SCM gh_list_to_vector (SCM @var{ls})
+These correspond to the Scheme @code{(make-vector n fill)},
+@code{(vector a b c ...)} @code{(vector-ref v i)} @code{(vector-set v i
+value)} @code{(vector-length v)} @code{(list->vector ls)} procedures.
+
+The correspondence is not perfect for @code{gh_vector}: this routine
+takes a list @var{ls} instead of the individual list elements, thus
+making it identical to @code{gh_list_to_vector}.
+
+There is also a difference in gh_vector_length: the value returned is a
+C @code{unsigned long} instead of an SCM object.
+@end deftypefun
+
+
+@heading Procedures
+
+@c @deftypefun SCM gh_make_subr (SCM (*@var{fn})(), int @var{req}, int @var{opt}, int @var{restp}, char *@var{sym})
+@c Make the C function @var{fn} available to Scheme programs.  The function
+@c will be bound to the symbol @var{sym}.  The arguments @var{req},
+@c @var{opt} and @var{restp} describe @var{fn}'s calling conventions.  The
+@c function must take @var{req} required arguments and may take @var{opt}
+@c optional arguments.  Any optional arguments which are not supplied by
+@c the caller will be bound to @var{SCM_UNSPECIFIED}.  If @var{restp} is
+@c non-zero, it means that @var{fn} may be called with an arbitrary number
+@c of arguments, and that any extra arguments supplied by the caller will
+@c be passed to @var{fn} as a list.  The @var{restp} argument is exactly
+@c like Scheme's @code{(lambda (arg1 arg2 . arglist))} calling convention.
+@c 
+@c For example, the procedure @code{read-line}, which takes optional
+@c @var{port} and @var{handle-delim} arguments, would be declared like so:
+@c 
+@c @example
+@c SCM scm_read_line (SCM port, SCM handle_delim);
+@c gh_make_subr (scm_read_line, 0, 2, 0, "read-line");
+@c @end example
+@c 
+@c The @var{req} argument to @code{gh_make_subr} is 0 to indicate that
+@c there are no required arguments, so @code{read-line} may be called
+@c without any arguments at all.  The @var{opt} argument is 2, to indicate
+@c that both the @var{port} and @var{handle_delim} arguments to
+@c @code{scm_read_line} are optional, and will be bound to
+@c @code{SCM_UNSPECIFIED} if the calling program does not supply them.
+@c Because the @var{restp} argument is 0, this function may not be called
+@c with more than two arguments.
+@c @end deftypefun
+
+@deftypefun SCM gh_apply (SCM proc, SCM args)
+Call the Scheme procedure @var{proc}, with the elements of @var{args} as
+arguments.  @var{args} must be a proper list.  
+@end deftypefun
+
+@deftypefun SCM gh_call0 (SCM proc)
+@deftypefunx SCM gh_call1 (SCM proc, SCM arg)
+@deftypefunx SCM gh_call2 (SCM proc, SCM arg1, SCM arg2)
+@deftypefunx SCM gh_call3 (SCM proc, SCM arg1, SCM arg2, SCM arg3)
+Call the Scheme procedure @var{proc} with no arguments
+(@code{gh_call0}), one argument (@code{gh_call1}), and so on.  You can
+get the same effect by wrapping the arguments up into a list, and
+calling @code{gh_apply}; Guile provides these functions for convenience.
+@end deftypefun
+
+
+@deftypefun SCM gh_catch (SCM key, SCM thunk, SCM handler)
+@deftypefunx SCM gh_throw (SCM key, SCM args)
+Corresponds to the Scheme @code{catch} and @code{throw} procedures,
+which in Guile are provided as primitives.
+@end deftypefun
+
+@c [FIXME: must add the I/O section in gscm.h]
+
+@deftypefun SCM gh_is_eq (SCM a, SCM b)
+@deftypefunx SCM gh_is_eqv (SCM a, SCM b)
+@deftypefunx SCM gh_is_equal (SCM a, SCM b)
+These correspond to the Scheme @code{eq?}, @code{eqv?} and @code{equal?}
+predicates.
+@end deftypefun
+
+@deftypefun int gh_obj_length (SCM @var{obj})
+Returns the raw object length.
+@end deftypefun
+
+@heading Data lookup
+
+For now I just include Tim Pierce's comments from the @file{gh_data.c}
+file; it should be organized into a documentation of the two functions
+here.
+
+@smallexample
+/* Data lookups between C and Scheme
+
+   Look up a symbol with a given name, and return the object to which
+   it is bound.  gh_lookup examines the Guile top level, and
+   gh_module_lookup checks the module name space specified by the
+   `vec' argument.
+
+   The return value is the Scheme object to which SNAME is bound, or
+   SCM_UNDEFINED if SNAME is not bound in the given context. [FIXME:
+   should this be SCM_UNSPECIFIED?  Can a symbol ever legitimately be
+   bound to SCM_UNDEFINED or SCM_UNSPECIFIED?  What is the difference?
+   -twp] */
+@end smallexample
+

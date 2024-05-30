@@ -1,0 +1,115 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004, 2005, 2006
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@node Linking Guile with Libraries
+@section Linking Guile with Libraries
+
+The previous section has briefly explained how to write programs that
+make use of an embedded Guile interpreter.  But sometimes, all you
+want to do is make new primitive procedures and data types available
+to the Scheme programmer.  Writing a new version of @code{guile} is
+inconvenient in this case and it would in fact make the life of the
+users of your new features needlessly hard.
+
+For example, suppose that there is a program @code{guile-db} that is a
+version of Guile with additional features for accessing a database.
+People who want to write Scheme programs that use these features would
+have to use @code{guile-db} instead of the usual @code{guile} program.
+Now suppose that there is also a program @code{guile-gtk} that extends
+Guile with access to the popular Gtk+ toolkit for graphical user
+interfaces.  People who want to write GUIs in Scheme would have to use
+@code{guile-gtk}.  Now, what happens when you want to write a Scheme
+application that uses a GUI to let the user access a database?  You
+would have to write a @emph{third} program that incorporates both the
+database stuff and the GUI stuff.  This might not be easy (because
+@code{guile-gtk} might be a quite obscure program, say) and taking this
+example further makes it easy to see that this approach can not work in
+practice.
+
+It would have been much better if both the database features and the GUI
+feature had been provided as libraries that can just be linked with
+@code{guile}.  Guile makes it easy to do just this, and we encourage you
+to make your extensions to Guile available as libraries whenever
+possible.
+
+You write the new primitive procedures and data types in the normal
+fashion, and link them into a shared library instead of into a
+stand-alone program.  The shared library can then be loaded dynamically
+by Guile.
+
+@menu
+* A Sample Guile Extension::
+@end menu
+
+
+@node A Sample Guile Extension
+@subsection A Sample Guile Extension
+
+This section explains how to make the Bessel functions of the C library
+available to Scheme.  First we need to write the appropriate glue code
+to convert the arguments and return values of the functions from Scheme
+to C and back.  Additionally, we need a function that will add them to
+the set of Guile primitives.  Because this is just an example, we will
+only implement this for the @code{j0} function.
+
+Consider the following file @file{bessel.c}.
+
+@smallexample
+#include <math.h>
+#include <libguile.h>
+
+SCM
+j0_wrapper (SCM x)
+@{
+  return scm_make_real (j0 (scm_num2dbl (x, "j0")));
+@}
+
+void
+init_bessel ()
+@{
+  scm_c_define_gsubr ("j0", 1, 0, 0, j0_wrapper);
+@}
+@end smallexample
+
+This C source file needs to be compiled into a shared library.  Here is
+how to do it on GNU/Linux:
+
+@smallexample
+gcc -shared -o libguile-bessel.so -fPIC bessel.c
+@end smallexample
+
+For creating shared libraries portably, we recommend the use of GNU
+Libtool (@pxref{Top, , Introduction, libtool, GNU Libtool}).
+
+A shared library can be loaded into a running Guile process with the
+function @code{load-extension}.  In addition to the name of the
+library to load, this function also expects the name of a function from
+that library that will be called to initialize it.  For our example,
+we are going to call the function @code{init_bessel} which will make
+@code{j0_wrapper} available to Scheme programs with the name
+@code{j0}.  Note that we do not specify a filename extension such as
+@file{.so} when invoking @code{load-extension}.  The right extension for
+the host platform will be provided automatically.
+
+@smalllisp
+(load-extension "libguile-bessel" "init_bessel")
+(j0 2)
+@result{} 0.223890779141236
+@end smalllisp
+
+For this to work, @code{load-extension} must be able to find
+@file{libguile-bessel}, of course.  It will look in the places that
+are usual for your operating system, and it will additionally look
+into the directories listed in the @code{LTDL_LIBRARY_PATH}
+environment variable.
+
+To see how these Guile extensions via shared libraries relate to the
+module system, @xref{Putting Extensions into Modules}.
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

@@ -1,0 +1,364 @@
+;;;; bit-operations.test --- bitwise operations on numbers -*- scheme -*-
+;;;; Copyright (C) 2000, 2001, 2003, 2006, 2009 Free Software Foundation, Inc.
+;;;;
+;;;; This library is free software; you can redistribute it and/or
+;;;; modify it under the terms of the GNU Lesser General Public
+;;;; License as published by the Free Software Foundation; either
+;;;; version 2.1 of the License, or (at your option) any later version.
+;;;; 
+;;;; This library is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;;;; Lesser General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU Lesser General Public
+;;;; License along with this library; if not, write to the Free Software
+;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+(define-module (test-bit-operations)
+  :use-module (test-suite lib)
+  :use-module (ice-9 documentation))
+
+
+;;;
+;;; miscellaneous
+;;;
+
+(define (run-tests name-proc test-proc arg-sets)
+  (for-each
+   (lambda (arg-set)
+     (pass-if (apply name-proc arg-set)
+       (apply test-proc arg-set)))
+   arg-sets))
+
+(define (documented? object)
+  (not (not (object-documentation object))))
+
+(define fixnum-bit
+  (inexact->exact (round (+ (/ (log (+ most-positive-fixnum 1)) (log 2)) 1))))
+
+(define fixnum-min most-negative-fixnum)
+(define fixnum-max most-positive-fixnum)
+
+(with-test-prefix "bit-extract"
+
+  (pass-if "documented?"
+    (documented? bit-extract))
+
+  (with-test-prefix "extract from zero"
+
+    (run-tests
+     (lambda (a b c d)
+       (string-append "single bit " (number->string b)))
+     (lambda (a b c d)
+       (= (bit-extract a b c) d))
+     (list
+      (list 0 0 1 0)
+      (list 0 1 2 0)
+      (list 0 (+ fixnum-bit -2) (+ fixnum-bit -1) 0)
+      (list 0 (+ fixnum-bit -1) (+ fixnum-bit  0) 0)
+      (list 0 (+ fixnum-bit  0) (+ fixnum-bit  1) 0)
+      (list 0 (+ fixnum-bit  1) (+ fixnum-bit  2) 0)))
+
+    (run-tests
+     (lambda (a b c d)
+       (string-append "fixnum-bit - 1 bits starting at " (number->string b)))
+     (lambda (a b c d)
+       (= (bit-extract a b c) d))
+     (list
+      (list 0 0 (+ fixnum-bit -1) 0)
+      (list 0 1 (+ fixnum-bit  0) 0)
+      (list 0 2 (+ fixnum-bit  1) 0)
+      (list 0 (+ fixnum-bit -2) (+ fixnum-bit fixnum-bit -3) 0)
+      (list 0 (+ fixnum-bit -1) (+ fixnum-bit fixnum-bit -2) 0)
+      (list 0 (+ fixnum-bit  0) (+ fixnum-bit fixnum-bit -1) 0)
+      (list 0 (+ fixnum-bit  1) (+ fixnum-bit fixnum-bit  0) 0)))
+
+    (run-tests
+     (lambda (a b c d)
+       (string-append "fixnum-bit bits starting at " (number->string b)))
+     (lambda (a b c d)
+       (= (bit-extract a b c) d))
+     (list
+      (list 0 0 (+ fixnum-bit  0) 0)
+      (list 0 1 (+ fixnum-bit  1) 0)
+      (list 0 2 (+ fixnum-bit  2) 0)
+      (list 0 (+ fixnum-bit -2) (+ fixnum-bit fixnum-bit -2) 0)
+      (list 0 (+ fixnum-bit -1) (+ fixnum-bit fixnum-bit -1) 0)
+      (list 0 (+ fixnum-bit  0) (+ fixnum-bit fixnum-bit  0) 0)
+      (list 0 (+ fixnum-bit  1) (+ fixnum-bit fixnum-bit  1) 0)))
+
+    (run-tests
+     (lambda (a b c d)
+       (string-append "fixnum-bit + 1 bits starting at " (number->string b)))
+     (lambda (a b c d)
+       (= (bit-extract a b c) d))
+     (list
+      (list 0 0 (+ fixnum-bit  1) 0)
+      (list 0 1 (+ fixnum-bit  2) 0)
+      (list 0 2 (+ fixnum-bit  3) 0)
+      (list 0 (+ fixnum-bit -2) (+ fixnum-bit fixnum-bit -1) 0)
+      (list 0 (+ fixnum-bit -1) (+ fixnum-bit fixnum-bit  0) 0)
+      (list 0 (+ fixnum-bit  0) (+ fixnum-bit fixnum-bit  1) 0)
+      (list 0 (+ fixnum-bit  1) (+ fixnum-bit fixnum-bit  2) 0))))
+
+  (with-test-prefix "extract from fixnum-max"
+
+    (run-tests
+     (lambda (a b c d)
+       (string-append "single bit " (number->string b)))
+     (lambda (a b c d)
+       (= (bit-extract a b c) d))
+     (list
+      (list fixnum-max 0 1 1)
+      (list fixnum-max 1 2 1)
+      (list fixnum-max (+ fixnum-bit -2) (+ fixnum-bit -1) 1)
+      (list fixnum-max (+ fixnum-bit -1) (+ fixnum-bit  0) 0)
+      (list fixnum-max (+ fixnum-bit  0) (+ fixnum-bit  1) 0)
+      (list fixnum-max (+ fixnum-bit  1) (+ fixnum-bit  2) 0)))
+
+    (run-tests
+     (lambda (a b c d)
+       (string-append "fixnum-bit - 1 bits starting at " (number->string b)))
+     (lambda (a b c d)
+       (= (bit-extract a b c) d))
+     (list
+      (list fixnum-max 0 (+ fixnum-bit -1) (ash fixnum-max  0))
+      (list fixnum-max 1 (+ fixnum-bit  0) (ash fixnum-max -1))
+      (list fixnum-max 2 (+ fixnum-bit  1) (ash fixnum-max -2))
+      (list fixnum-max (+ fixnum-bit -2) (+ fixnum-bit fixnum-bit -3) 1)
+      (list fixnum-max (+ fixnum-bit -1) (+ fixnum-bit fixnum-bit -2) 0)
+      (list fixnum-max (+ fixnum-bit  0) (+ fixnum-bit fixnum-bit -1) 0)
+      (list fixnum-max (+ fixnum-bit  1) (+ fixnum-bit fixnum-bit  0) 0)))
+
+    (run-tests
+     (lambda (a b c d)
+       (string-append "fixnum-bit bits starting at " (number->string b)))
+     (lambda (a b c d)
+       (= (bit-extract a b c) d))
+     (list
+      (list fixnum-max 0 (+ fixnum-bit  0) (ash fixnum-max  0))
+      (list fixnum-max 1 (+ fixnum-bit  1) (ash fixnum-max -1))
+      (list fixnum-max 2 (+ fixnum-bit  2) (ash fixnum-max -2))
+      (list fixnum-max (+ fixnum-bit -2) (+ fixnum-bit fixnum-bit -2) 1)
+      (list fixnum-max (+ fixnum-bit -1) (+ fixnum-bit fixnum-bit -1) 0)
+      (list fixnum-max (+ fixnum-bit  0) (+ fixnum-bit fixnum-bit  0) 0)
+      (list fixnum-max (+ fixnum-bit  1) (+ fixnum-bit fixnum-bit  1) 0)))
+
+    (run-tests
+     (lambda (a b c d)
+       (string-append "fixnum-bit + 1 bits starting at " (number->string b)))
+     (lambda (a b c d)
+       (= (bit-extract a b c) d))
+     (list
+      (list fixnum-max 0 (+ fixnum-bit  1) (ash fixnum-max  0))
+      (list fixnum-max 1 (+ fixnum-bit  2) (ash fixnum-max -1))
+      (list fixnum-max 2 (+ fixnum-bit  3) (ash fixnum-max -2))
+      (list fixnum-max (+ fixnum-bit -2) (+ fixnum-bit fixnum-bit -1) 1)
+      (list fixnum-max (+ fixnum-bit -1) (+ fixnum-bit fixnum-bit  0) 0)
+      (list fixnum-max (+ fixnum-bit  0) (+ fixnum-bit fixnum-bit  1) 0)
+      (list fixnum-max (+ fixnum-bit  1) (+ fixnum-bit fixnum-bit  2) 0))))
+
+  (with-test-prefix "extract from fixnum-max + 1"
+
+    (run-tests
+     (lambda (a b c d)
+       (string-append "single bit " (number->string b)))
+     (lambda (a b c d)
+       (= (bit-extract a b c) d))
+     (list
+      (list (+ fixnum-max 1) 0 1 0)
+      (list (+ fixnum-max 1) 1 2 0)
+      (list (+ fixnum-max 1) (+ fixnum-bit -2) (+ fixnum-bit -1) 0)
+      (list (+ fixnum-max 1) (+ fixnum-bit -1) (+ fixnum-bit  0) 1)
+      (list (+ fixnum-max 1) (+ fixnum-bit  0) (+ fixnum-bit  1) 0)
+      (list (+ fixnum-max 1) (+ fixnum-bit  1) (+ fixnum-bit  2) 0)))
+
+    (run-tests
+     (lambda (a b c d)
+       (string-append "fixnum-bit - 1 bits starting at " (number->string b)))
+     (lambda (a b c d)
+       (= (bit-extract a b c) d))
+     (list
+      (list (+ fixnum-max 1) 0 (+ fixnum-bit -1) (ash 0 (- fixnum-bit 1)))
+      (list (+ fixnum-max 1) 1 (+ fixnum-bit  0) (ash 1 (- fixnum-bit 2)))
+      (list (+ fixnum-max 1) 2 (+ fixnum-bit  1) (ash 1 (- fixnum-bit 3)))
+      (list (+ fixnum-max 1) (+ fixnum-bit -2) (+ fixnum-bit fixnum-bit -3) 2)
+      (list (+ fixnum-max 1) (+ fixnum-bit -1) (+ fixnum-bit fixnum-bit -2) 1)
+      (list (+ fixnum-max 1) (+ fixnum-bit  0) (+ fixnum-bit fixnum-bit -1) 0)
+      (list (+ fixnum-max 1) (+ fixnum-bit  1) (+ fixnum-bit fixnum-bit  0) 0)))
+
+    (run-tests
+     (lambda (a b c d)
+       (string-append "fixnum-bit bits starting at " (number->string b)))
+     (lambda (a b c d)
+       (= (bit-extract a b c) d))
+     (list
+      (list (+ fixnum-max 1) 0 (+ fixnum-bit  0) (ash 1 (- fixnum-bit 1)))
+      (list (+ fixnum-max 1) 1 (+ fixnum-bit  1) (ash 1 (- fixnum-bit 2)))
+      (list (+ fixnum-max 1) 2 (+ fixnum-bit  2) (ash 1 (- fixnum-bit 3)))
+      (list (+ fixnum-max 1) (+ fixnum-bit -2) (+ fixnum-bit fixnum-bit -2) 2)
+      (list (+ fixnum-max 1) (+ fixnum-bit -1) (+ fixnum-bit fixnum-bit -1) 1)
+      (list (+ fixnum-max 1) (+ fixnum-bit  0) (+ fixnum-bit fixnum-bit  0) 0)
+      (list (+ fixnum-max 1) (+ fixnum-bit  1) (+ fixnum-bit fixnum-bit  1) 0)))
+
+    (run-tests
+     (lambda (a b c d)
+       (string-append "fixnum-bit + 1 bits starting at " (number->string b)))
+     (lambda (a b c d)
+       (= (bit-extract a b c) d))
+     (list
+      (list (+ fixnum-max 1) 0 (+ fixnum-bit  1) (ash 1 (- fixnum-bit 1)))
+      (list (+ fixnum-max 1) 1 (+ fixnum-bit  2) (ash 1 (- fixnum-bit 2)))
+      (list (+ fixnum-max 1) 2 (+ fixnum-bit  3) (ash 1 (- fixnum-bit 3)))
+      (list (+ fixnum-max 1) (+ fixnum-bit -2) (+ fixnum-bit fixnum-bit -1) 2)
+      (list (+ fixnum-max 1) (+ fixnum-bit -1) (+ fixnum-bit fixnum-bit  0) 1)
+      (list (+ fixnum-max 1) (+ fixnum-bit  0) (+ fixnum-bit fixnum-bit  1) 0)
+      (list (+ fixnum-max 1) (+ fixnum-bit  1) (+ fixnum-bit fixnum-bit  2) 0))))
+
+  (with-test-prefix "extract from fixnum-min"
+
+    (run-tests
+     (lambda (a b c d)
+       (string-append "single bit " (number->string b)))
+     (lambda (a b c d)
+       (= (bit-extract a b c) d))
+     (list
+      (list fixnum-min 0 1 0)
+      (list fixnum-min 1 2 0)
+      (list fixnum-min (+ fixnum-bit -2) (+ fixnum-bit -1) 0)
+      (list fixnum-min (+ fixnum-bit -1) (+ fixnum-bit  0) 1)
+      (list fixnum-min (+ fixnum-bit  0) (+ fixnum-bit  1) 1)
+      (list fixnum-min (+ fixnum-bit  1) (+ fixnum-bit  2) 1)))
+
+    (run-tests
+     (lambda (a b c d)
+       (string-append "fixnum-bit - 1 bits starting at " (number->string b)))
+     (lambda (a b c d)
+       (= (bit-extract a b c) d))
+     (list
+      (list fixnum-min 0 (+ fixnum-bit -1) (ash 0 (- fixnum-bit 1)))
+      (list fixnum-min 1 (+ fixnum-bit  0) (ash 1 (- fixnum-bit 2)))
+      (list fixnum-min 2 (+ fixnum-bit  1) (ash 3 (- fixnum-bit 3)))
+      (list fixnum-min (+ fixnum-bit -2) (+ fixnum-bit fixnum-bit -3)
+            (- (ash 1	(- fixnum-bit 1)) 2))
+      (list fixnum-min (+ fixnum-bit -1) (+ fixnum-bit fixnum-bit -2)
+            (- (ash 1	(- fixnum-bit 1)) 1))
+      (list fixnum-min (+ fixnum-bit  0) (+ fixnum-bit fixnum-bit -1)
+            (- (ash 1	(- fixnum-bit 1)) 1))
+      (list fixnum-min (+ fixnum-bit  1) (+ fixnum-bit fixnum-bit  0)
+            (- (ash 1	(- fixnum-bit 1)) 1))))
+
+    (run-tests
+     (lambda (a b c d)
+       (string-append "fixnum-bit bits starting at " (number->string b)))
+     (lambda (a b c d)
+       (= (bit-extract a b c) d))
+     (list
+      (list fixnum-min 0 (+ fixnum-bit  0) (ash 1 (- fixnum-bit 1)))
+      (list fixnum-min 1 (+ fixnum-bit  1) (ash 3 (- fixnum-bit 2)))
+      (list fixnum-min 2 (+ fixnum-bit  2) (ash 7 (- fixnum-bit 3)))
+      (list fixnum-min (+ fixnum-bit -2) (+ fixnum-bit fixnum-bit -2)
+            (- (ash 1	fixnum-bit) 2))
+      (list fixnum-min (+ fixnum-bit -1) (+ fixnum-bit fixnum-bit -1)
+            (- (ash 1	fixnum-bit) 1))
+      (list fixnum-min (+ fixnum-bit  0) (+ fixnum-bit fixnum-bit  0)
+            (- (ash 1	fixnum-bit) 1))
+      (list fixnum-min (+ fixnum-bit  1) (+ fixnum-bit fixnum-bit  1)
+            (- (ash 1	fixnum-bit) 1))))
+
+    (run-tests
+     (lambda (a b c d)
+       (string-append "fixnum-bit + 1 bits starting at " (number->string b)))
+     (lambda (a b c d)
+       (= (bit-extract a b c) d))
+     (list
+      (list fixnum-min 0 (+ fixnum-bit  1) (ash  3 (- fixnum-bit 1)))
+      (list fixnum-min 1 (+ fixnum-bit  2) (ash  7 (- fixnum-bit 2)))
+      (list fixnum-min 2 (+ fixnum-bit  3) (ash 15 (- fixnum-bit 3)))
+      (list fixnum-min (+ fixnum-bit -2) (+ fixnum-bit fixnum-bit -1)
+            (- (ash 1 (+ fixnum-bit 1)) 2))
+      (list fixnum-min (+ fixnum-bit -1) (+ fixnum-bit fixnum-bit  0)
+            (- (ash 1 (+ fixnum-bit 1)) 1))
+      (list fixnum-min (+ fixnum-bit  0) (+ fixnum-bit fixnum-bit  1)
+            (- (ash 1 (+ fixnum-bit 1)) 1))
+      (list fixnum-min (+ fixnum-bit  1) (+ fixnum-bit fixnum-bit  2)
+            (- (ash 1 (+ fixnum-bit 1)) 1)))))
+
+  (with-test-prefix "extract from fixnum-min - 1"
+
+    (run-tests
+     (lambda (a b c d)
+       (string-append "single bit " (number->string b)))
+     (lambda (a b c d)
+       (= (bit-extract a b c) d))
+     (list
+      (list (- fixnum-min 1) 0 1 1)
+      (list (- fixnum-min 1) 1 2 1)
+      (list (- fixnum-min 1) (+ fixnum-bit -2) (+ fixnum-bit -1) 1)
+      (list (- fixnum-min 1) (+ fixnum-bit -1) (+ fixnum-bit  0) 0)
+      (list (- fixnum-min 1) (+ fixnum-bit  0) (+ fixnum-bit  1) 1)
+      (list (- fixnum-min 1) (+ fixnum-bit  1) (+ fixnum-bit  2) 1)))
+
+    (run-tests
+     (lambda (a b c d)
+       (string-append "fixnum-bit - 1 bits starting at " (number->string b)))
+     (lambda (a b c d)
+       (= (bit-extract a b c) d))
+     (list
+      (list (- fixnum-min 1) 0 (+ fixnum-bit -1)
+            (- (ash 1 (- fixnum-bit 1)) 1 (ash 0 (- fixnum-bit 1))))
+      (list (- fixnum-min 1) 1 (+ fixnum-bit  0)
+            (- (ash 1 (- fixnum-bit 1)) 1 (ash 1 (- fixnum-bit 2))))
+      (list (- fixnum-min 1) 2 (+ fixnum-bit  1)
+            (- (ash 1 (- fixnum-bit 1)) 1 (ash 1 (- fixnum-bit 3))))
+      (list (- fixnum-min 1) (+ fixnum-bit -2)
+            (+ fixnum-bit fixnum-bit -3) (- (ash 1 (- fixnum-bit 1)) 3))
+      (list (- fixnum-min 1) (+ fixnum-bit -1)
+            (+ fixnum-bit fixnum-bit -2) (- (ash 1 (- fixnum-bit 1)) 2))
+      (list (- fixnum-min 1) (+ fixnum-bit  0)
+            (+ fixnum-bit fixnum-bit -1) (- (ash 1 (- fixnum-bit 1)) 1))
+      (list (- fixnum-min 1) (+ fixnum-bit  1)
+            (+ fixnum-bit fixnum-bit  0) (- (ash 1 (- fixnum-bit 1)) 1))))
+
+    (run-tests
+     (lambda (a b c d)
+       (string-append "fixnum-bit bits starting at " (number->string b)))
+     (lambda (a b c d)
+       (= (bit-extract a b c) d))
+     (list
+      (list (- fixnum-min 1) 0 (+ fixnum-bit  0)
+            (- (ash 1 fixnum-bit) 1 (ash 1 (- fixnum-bit 1))))
+      (list (- fixnum-min 1) 1 (+ fixnum-bit  1)
+            (- (ash 1 fixnum-bit) 1 (ash 1 (- fixnum-bit 2))))
+      (list (- fixnum-min 1) 2 (+ fixnum-bit  2)
+            (- (ash 1 fixnum-bit) 1 (ash 1 (- fixnum-bit 3))))
+      (list (- fixnum-min 1) (+ fixnum-bit -2)
+            (+ fixnum-bit fixnum-bit -2) (- (ash 1 fixnum-bit) 3))
+      (list (- fixnum-min 1) (+ fixnum-bit -1)
+            (+ fixnum-bit fixnum-bit -1) (- (ash 1 fixnum-bit) 2))
+      (list (- fixnum-min 1) (+ fixnum-bit  0)
+            (+ fixnum-bit fixnum-bit  0) (- (ash 1 fixnum-bit) 1))
+      (list (- fixnum-min 1) (+ fixnum-bit  1)
+            (+ fixnum-bit fixnum-bit  1) (- (ash 1 fixnum-bit) 1))))
+
+    (run-tests
+     (lambda (a b c d)
+       (string-append "fixnum-bit + 1 bits starting at " (number->string b)))
+     (lambda (a b c d)
+       (= (bit-extract a b c) d))
+     (list
+      (list (- fixnum-min 1) 0 (+ fixnum-bit  1)
+            (- (ash 1 (+ fixnum-bit 1)) 1 (ash 1 (- fixnum-bit 1))))
+      (list (- fixnum-min 1) 1 (+ fixnum-bit  2)
+            (- (ash 1 (+ fixnum-bit 1)) 1 (ash 1 (- fixnum-bit 2))))
+      (list (- fixnum-min 1) 2 (+ fixnum-bit  3)
+            (- (ash 1 (+ fixnum-bit 1)) 1 (ash 1 (- fixnum-bit 3))))
+      (list (- fixnum-min 1) (+ fixnum-bit -2)
+            (+ fixnum-bit fixnum-bit -1) (- (ash 1 (+ fixnum-bit 1)) 3))
+      (list (- fixnum-min 1) (+ fixnum-bit -1)
+            (+ fixnum-bit fixnum-bit  0) (- (ash 1 (+ fixnum-bit 1)) 2))
+      (list (- fixnum-min 1) (+ fixnum-bit  0)
+            (+ fixnum-bit fixnum-bit  1) (- (ash 1 (+ fixnum-bit 1)) 1))
+      (list (- fixnum-min 1) (+ fixnum-bit  1)
+            (+ fixnum-bit fixnum-bit  2) (- (ash 1 (+ fixnum-bit 1)) 1))))))

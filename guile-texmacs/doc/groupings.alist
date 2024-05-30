@@ -1,0 +1,176 @@
+;;; groupings.alist					 -*-scheme-*-
+
+;; 	Copyright (C) 2002, 2006 Free Software Foundation, Inc.
+;;
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation; either version 2, or
+;; (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this software; see the file COPYING.  If not, write to
+;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;; Boston, MA 02110-1301 USA
+
+;;; Commentary:
+
+;; This file describes interface element groupings.
+;; See (scripts scan-api) commentary for more info.
+;; NOTE: Order matters; put simple ones first, composites after.
+;;
+;; TODO: Add goops, add math, etc etc.
+;;       Group `guile-C-API' needs much more serious thought.
+
+;;; Code:
+
+(
+
+ ;; Integrity checks
+
+ (C+scheme
+  (description "in both groups `scheme' and `C' -- should be empty!")
+  (grok () (lambda (x)
+             (and (in-group? x 'Scheme)
+                  (in-group? x 'C)))))
+
+ ;; Embedded foreign libraries
+
+ (embedded-libltdl
+  (description "begins with lt_ -- should become empty over time")
+  (grok () (lambda (x)
+             (name-prefix? x "lt_"))))
+
+ ;; By name
+
+ (libguile-internal
+  (description "begins with scm_i_")
+  (grok () (lambda (x)
+             (name-prefix? x "scm_i_"))))
+
+ (gdb
+  (description "begins with gdb_")
+  (grok () (lambda (x)
+             (name-prefix? x "gdb_"))))
+
+ (coop
+  (description "begins with coop_")
+  (grok () (lambda (x)
+             (name-prefix? x "coop_"))))
+
+ (gh
+  (description "begins with gh_")
+  (grok () (lambda (x)
+             (name-prefix? x "gh_"))))
+
+ (g-fdes
+  (description "begins with g and ends with fds")
+  (grok () (lambda (x)
+             (name-prefix? x "g.+fds$"))))
+
+ (r-fdes
+  (description "begins with r and ends with fds")
+  (grok () (lambda (x)
+             (name-prefix? x "r.+fds$"))))
+
+ (scm
+  (description "begins with scm_")
+  (grok () (lambda (x)
+             (name-prefix? x "scm_"))))
+
+ (k
+  (description "constants")
+  (grok () (lambda (x)
+             (name-prefix? x "[_A-Z0-9]+$"))))
+
+ (POSIX
+  (description "POSIX support")
+  (members                              ; from docs
+
+   ;; ports and file descriptors
+   port-revealed set-port-revealed! fileno port->fdes fdopen fdes->ports
+   fdes->inport fdes->outport primitive-move->fdes move->fdes
+   release-port-handle fsync open open-fdes close close-fdes unread-char
+   unread-string pipe dup->fdes dup->inport dup->outport dup dup->port
+   duplicate-port redirect-port dup2 port-mode close-all-ports-except
+   port-for-each setvbuf fcntl flock select
+   O_RDONLY O_WRONLY O_RDWR O_APPEND O_CREAT _IONBF _IOLBF _IOFBF
+   F_DUPFD F_GETFD F_SETFD F_GETFL F_SETFL F_GETOWN F_SETOWN FD_CLOEXEC
+   LOCK_SH LOCK_EX LOCK_UN LOCK_NB
+
+   ;; file system
+   access? stat lstat readlink chown chmod utime delete-file copy-file
+   rename-file link symlink mkdir rmdir opendir directory-stream? readdir
+   rewinddir closedir sync mknod tmpnam mkstemp! dirname basename
+   R_OK W_OK X_OK F_OK
+   stat:perms stat:type stat:blocks stat:blksize stat:ctime stat:mtime
+   stat:atime stat:size stat:rdev stat:gid stat:uid stat:nlink stat:mode
+   stat:ino stat:dev
+
+   ;; user information
+   passwd:name passwd:passwd passwd:uid passwd:gid passwd:gecos passwd:dir
+   passwd:shell group:name group:passwd group:gid group:mem
+   getpwuid getpwnam name setpwent getpwent endpwent setpw getpw getgrgid
+   getgrnam setgrent getgrent endgrent setgr getgr cuserid getlogin
+
+   ;; time
+   tm:sec set-tm:sec tm:min set-tm:min tm:hour set-tm:hour tm:mday set-tm:mday
+   tm:mon set-tm:mon tm:year set-tm:year tm:wday set-tm:wday tm:yday
+   set-tm:yday tm:isdst set-tm:isdst tm:gmtoff set-tm:gmtoff tm:zone
+   set-tm:zone tms:clock tms:utime tms:stime tms:cutime tms:cstime
+   current-time gettimeofday localtime gmtime mktime tzset strftime strptime
+   times get-internal-real-time get-internal-run-time
+
+   ;; runtime environment
+   program-arguments command-line getenv setenv environ putenv
+
+   ;; proceses
+   chdir getcwd umask chroot getpid getgroups getppid getuid getgid geteuid
+   getegid setuid setgid seteuid setegid getpgrp setpgid setsid waitpid
+   status:exit-val status:term-sig status:stop-sig system primitive-exit execl
+   execlp execle primitive-fork nice setpriority getpriority
+   WNOHANG WUNTRACED
+
+   ;; signals
+   kill raise sigaction restore-signals alarm pause sleep usleep setitimer
+   getitimer SIGHUP SIGINT
+
+   ;; terminals and ptys
+   isatty? ttyname ctermid tcgetpgrp tcsetpgrp
+
+   ;; pipes -- not included because they are in (ice-9 popen)
+
+   ;; system identification
+   utsname:sysname utsname:nodename utsname:release utsname:version
+   utsname:machine uname gethostname sethostname software-type
+
+   ;; locales
+   setlocale
+   LC_ALL LC_COLLATE LC_CTYPE LC_MESSAGES LC_MONETARY LC_NUMERIC LC_TIME
+
+   ;; encryption
+   crypt getpass))
+
+ (math
+  (description "math functions")
+  (members $abs $acos $acosh $asin $asinh $atan $atan2 $atanh $cos $cosh
+           $exp $expt $log $sin $sinh $sqrt $tan $tanh))
+
+ ;; By composition (these must be AFTER their constituent groupings)
+
+ (guile-C-API
+  (description "the official guile API available to C programs")
+  (grok () (lambda (x)
+             (and (in-group? x 'C)
+                  (or (in-group? x 'gh)
+                      (in-group? x 'coop)
+                      (in-group? x 'gdb))))))
+
+ ;; Add new grouping descriptions here.
+ )
+
+;;; groupings.alist ends here

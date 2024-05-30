@@ -1,0 +1,1905 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004, 2007
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Debugging
+@section Debugging Infrastructure
+
+@cindex Debugging
+In order to understand Guile's debugging facilities, you first need to
+understand a little about how the evaluator works and what the Scheme
+stack is.  With that in place we explain the low level trap calls that
+the evaluator can be configured to make, and the trap and breakpoint
+infrastructure that builds on top of those calls.
+
+@menu
+* Evaluation Model::            Evaluation and the Scheme stack.
+* Debug on Error::              Debugging when an error occurs.
+* Traps::
+* Debugging Examples::
+@end menu
+
+@node Evaluation Model
+@subsection Evaluation and the Scheme Stack
+
+The idea of the Scheme stack is central to a lot of debugging.  It
+always exists implicitly, as a result of the way that the Guile
+evaluator works, and can be summoned into concrete existence as a
+first-class Scheme value by the @code{make-stack} call, so that an
+introspective Scheme program -- such as a debugger -- can present it in
+some way and allow the user to query its details.  The first thing to
+understand, therefore, is how the workings of the evaluator build up the
+stack.
+
+@cindex Evaluations
+@cindex Applications
+Broadly speaking, the evaluator performs @dfn{evaluations} and
+@dfn{applications}.  An evaluation means that it is looking at a source
+code expression like @code{(+ x 5)} or @code{(if msg (loop))}, deciding
+whether the top level of the expression is a procedure call, macro,
+builtin syntax, or whatever, and doing some appropriate processing in
+each case.  (In the examples here, @code{(+ x 5)} would normally be a
+procedure call, and @code{(if msg (loop))} builtin syntax.)  For a
+procedure call, ``appropriate processing'' includes evaluating the
+procedure's arguments, as that must happen before the procedure itself
+can be called.  An application means calling a procedure once its
+arguments have been calculated.
+
+@cindex Stack
+@cindex Frames
+@cindex Stack frames
+Typically evaluations and applications alternate with each other, and
+together they form a @dfn{stack} of operations pending completion.  This
+is because, on the one hand, evaluation of an expression like @code{(+ x
+5)} requires --- once its arguments have been calculated --- an
+application (in this case, of the procedure @code{+}) before it can
+complete and return a result, and, on the other hand, the application of
+a procedure written in Scheme involves evaluating the sequence of
+expressions that constitute that procedure's code.  Each level on this
+stack is called a @dfn{frame}.
+
+Therefore, when an error occurs in a running program, or the program
+hits a breakpoint, or in fact at any point that the programmer chooses,
+its state at that point can be represented by a @dfn{stack} of all the
+evaluations and procedure applications that are logically in progress at
+that time, each of which is known as a @dfn{frame}.  The programmer can
+learn more about the program's state at that point by inspecting the
+stack and its frames.
+
+@menu
+* Capturing the Stack or Innermost Stack Frame::
+* Examining the Stack::
+* Examining Stack Frames::
+* Source Properties::           Remembering the source of an expression.
+* Decoding Memoized Source Expressions::
+* Starting a New Stack::
+@end menu
+
+@node Capturing the Stack or Innermost Stack Frame
+@subsubsection Capturing the Stack or Innermost Stack Frame
+
+A Scheme program can use the @code{make-stack} primitive anywhere in its
+code, with first arg @code{#t}, to construct a Scheme value that
+describes the Scheme stack at that point.
+
+@lisp
+(make-stack #t)
+@result{}
+#<stack 805c840:808d250>
+@end lisp
+
+@deffn {Scheme Procedure} make-stack obj . args
+@deffnx {C Function} scm_make_stack (obj, args)
+Create a new stack. If @var{obj} is @code{#t}, the current
+evaluation stack is used for creating the stack frames,
+otherwise the frames are taken from @var{obj} (which must be
+either a debug object or a continuation).
+
+@var{args} should be a list containing any combination of
+integer, procedure and @code{#t} values.
+
+These values specify various ways of cutting away uninteresting
+stack frames from the top and bottom of the stack that
+@code{make-stack} returns.  They come in pairs like this:
+@code{(@var{inner_cut_1} @var{outer_cut_1} @var{inner_cut_2}
+@var{outer_cut_2} @dots{})}.
+
+Each @var{inner_cut_N} can be @code{#t}, an integer, or a
+procedure.  @code{#t} means to cut away all frames up to but
+excluding the first user module frame.  An integer means to cut
+away exactly that number of frames.  A procedure means to cut
+away all frames up to but excluding the application frame whose
+procedure matches the specified one.
+
+Each @var{outer_cut_N} can be an integer or a procedure.  An
+integer means to cut away that number of frames.  A procedure
+means to cut away frames down to but excluding the application
+frame whose procedure matches the specified one.
+
+If the @var{outer_cut_N} of the last pair is missing, it is
+taken as 0.
+@end deffn
+
+@deffn {Scheme Procedure} last-stack-frame obj
+@deffnx {C Function} scm_last_stack_frame (obj)
+Return the last (innermost) frame of @var{obj}, which must be
+either a debug object or a continuation.
+@end deffn
+
+
+@node Examining the Stack
+@subsubsection Examining the Stack
+
+@deffn {Scheme Procedure} stack? obj
+@deffnx {C Function} scm_stack_p (obj)
+Return @code{#t} if @var{obj} is a calling stack.
+@end deffn
+
+@deffn {Scheme Procedure} stack-id stack
+@deffnx {C Function} scm_stack_id (stack)
+Return the identifier given to @var{stack} by @code{start-stack}.
+@end deffn
+
+@deffn {Scheme Procedure} stack-length stack
+@deffnx {C Function} scm_stack_length (stack)
+Return the length of @var{stack}.
+@end deffn
+
+@deffn {Scheme Procedure} stack-ref stack index
+@deffnx {C Function} scm_stack_ref (stack, index)
+Return the @var{index}'th frame from @var{stack}.
+@end deffn
+
+@deffn {Scheme Procedure} display-backtrace stack port [first [depth [highlights]]]
+@deffnx {C Function} scm_display_backtrace_with_highlights (stack, port, first, depth, highlights)
+@deffnx {C Function} scm_display_backtrace (stack, port, first, depth)
+Display a backtrace to the output port @var{port}.  @var{stack}
+is the stack to take the backtrace from, @var{first} specifies
+where in the stack to start and @var{depth} how many frames
+to display.  @var{first} and @var{depth} can be @code{#f},
+which means that default values will be used.
+If @var{highlights} is given it should be a list; the elements
+of this list will be highlighted wherever they appear in the
+backtrace.
+@end deffn
+
+
+@node Examining Stack Frames
+@subsubsection Examining Stack Frames
+
+@deffn {Scheme Procedure} frame? obj
+@deffnx {C Function} scm_frame_p (obj)
+Return @code{#t} if @var{obj} is a stack frame.
+@end deffn
+
+@deffn {Scheme Procedure} frame-number frame
+@deffnx {C Function} scm_frame_number (frame)
+Return the frame number of @var{frame}.
+@end deffn
+
+@deffn {Scheme Procedure} frame-previous frame
+@deffnx {C Function} scm_frame_previous (frame)
+Return the previous frame of @var{frame}, or @code{#f} if
+@var{frame} is the first frame in its stack.
+@end deffn
+
+@deffn {Scheme Procedure} frame-next frame
+@deffnx {C Function} scm_frame_next (frame)
+Return the next frame of @var{frame}, or @code{#f} if
+@var{frame} is the last frame in its stack.
+@end deffn
+
+@deffn {Scheme Procedure} frame-source frame
+@deffnx {C Function} scm_frame_source (frame)
+Return the source of @var{frame}.
+@end deffn
+
+@deffn {Scheme Procedure} frame-procedure? frame
+@deffnx {C Function} scm_frame_procedure_p (frame)
+Return @code{#t} if a procedure is associated with @var{frame}.
+@end deffn
+
+@deffn {Scheme Procedure} frame-procedure frame
+@deffnx {C Function} scm_frame_procedure (frame)
+Return the procedure for @var{frame}, or @code{#f} if no
+procedure is associated with @var{frame}.
+@end deffn
+
+@deffn {Scheme Procedure} frame-arguments frame
+@deffnx {C Function} scm_frame_arguments (frame)
+Return the arguments of @var{frame}.
+@end deffn
+
+@deffn {Scheme Procedure} frame-evaluating-args? frame
+@deffnx {C Function} scm_frame_evaluating_args_p (frame)
+Return @code{#t} if @var{frame} contains evaluated arguments.
+@end deffn
+
+@deffn {Scheme Procedure} frame-overflow? frame
+@deffnx {C Function} scm_frame_overflow_p (frame)
+Return @code{#t} if @var{frame} is an overflow frame.
+@end deffn
+
+@deffn {Scheme Procedure} frame-real? frame
+@deffnx {C Function} scm_frame_real_p (frame)
+Return @code{#t} if @var{frame} is a real frame.
+@end deffn
+
+@deffn {Scheme Procedure} display-application frame [port [indent]]
+@deffnx {C Function} scm_display_application (frame, port, indent)
+Display a procedure application @var{frame} to the output port
+@var{port}. @var{indent} specifies the indentation of the
+output.
+@end deffn
+
+
+@node Source Properties
+@subsubsection Source Properties
+
+@cindex source properties
+As Guile reads in Scheme code from file or from standard input, it
+remembers the file name, line number and column number where each
+expression begins.  These pieces of information are known as the
+@dfn{source properties} of the expression.  If an expression undergoes
+transformation --- for example, if there is a syntax transformer in
+effect, or the expression is a macro call --- the source properties are
+copied from the untransformed to the transformed expression so that, if
+an error occurs when evaluating the transformed expression, Guile's
+debugger can point back to the file and location where the expression
+originated.
+
+The way that source properties are stored means that Guile can only
+associate source properties with parenthesized expressions, and not, for
+example, with individual symbols, numbers or strings.  The difference
+can be seen by typing @code{(xxx)} and @code{xxx} at the Guile prompt
+(where the variable @code{xxx} has not been defined):
+
+@example
+guile> (xxx)
+standard input:2:1: In expression (xxx):
+standard input:2:1: Unbound variable: xxx
+ABORT: (unbound-variable)
+guile> xxx
+<unnamed port>: In expression xxx:
+<unnamed port>: Unbound variable: xxx
+ABORT: (unbound-variable)
+@end example
+
+@noindent
+In the latter case, no source properties were stored, so the best that
+Guile could say regarding the location of the problem was ``<unnamed
+port>''.
+
+The recording of source properties is controlled by the read option
+named ``positions'' (@pxref{Reader options}).  This option is switched
+@emph{on} by default, together with the debug options ``debug'' and
+``backtrace'' (@pxref{Debugger options}), when Guile is run
+interactively; all these options are @emph{off} by default when Guile
+runs a script non-interactively.
+
+The following procedures can be used to access and set the source
+properties of read expressions.
+
+@deffn {Scheme Procedure} set-source-properties! obj plist
+@deffnx {C Function} scm_set_source_properties_x (obj, plist)
+Install the association list @var{plist} as the source property
+list for @var{obj}.
+@end deffn
+
+@deffn {Scheme Procedure} set-source-property! obj key datum
+@deffnx {C Function} scm_set_source_property_x (obj, key, datum)
+Set the source property of object @var{obj}, which is specified by
+@var{key} to @var{datum}.  Normally, the key will be a symbol.
+@end deffn
+
+@deffn {Scheme Procedure} source-properties obj
+@deffnx {C Function} scm_source_properties (obj)
+Return the source property association list of @var{obj}.
+@end deffn
+
+@deffn {Scheme Procedure} source-property obj key
+@deffnx {C Function} scm_source_property (obj, key)
+Return the source property specified by @var{key} from
+@var{obj}'s source property list.
+@end deffn
+
+In practice there are only two ways that you should use the ability to
+set an expression's source breakpoints.
+
+@itemize
+@item
+To set a breakpoint on an expression, use @code{(set-source-property!
+@var{expr} 'breakpoint #t)}.  If you do this, you should also set the
+@code{traps} and @code{enter-frame-handler} trap options
+(@pxref{Evaluator trap options}) and @code{breakpoints} debug option
+(@pxref{Debugger options}) appropriately, and the evaluator will then
+call your enter frame handler whenever it is about to evaluate that
+expression.
+
+@item
+To make a read or constructed expression appear to have come from a
+different source than what the expression's source properties already
+say, you can use @code{set-source-property!} to set the expression's
+@code{filename}, @code{line} and @code{column} properties.  The
+properties that you set will then show up later if that expression is
+involved in a backtrace or error report.
+@end itemize
+
+If you are looking for a way to attach arbitrary information to an
+expression other than these properties, you should use
+@code{make-object-property} instead (@pxref{Object Properties}), because
+that will avoid bloating the source property hash table, which is really
+only intended for the specific purposes described in this section.
+
+
+@node Decoding Memoized Source Expressions
+@subsubsection Decoding Memoized Source Expressions
+
+@deffn {Scheme Procedure} memoized? obj
+@deffnx {C Function} scm_memoized_p (obj)
+Return @code{#t} if @var{obj} is memoized.
+@end deffn
+
+@deffn {Scheme Procedure} unmemoize m
+@deffnx {C Function} scm_unmemoize (m)
+Unmemoize the memoized expression @var{m},
+@end deffn
+
+@deffn {Scheme Procedure} memoized-environment m
+@deffnx {C Function} scm_memoized_environment (m)
+Return the environment of the memoized expression @var{m}.
+@end deffn
+
+
+@node Starting a New Stack
+@subsubsection Starting a New Stack
+
+@deffn {Scheme Syntax} start-stack id exp
+Evaluate @var{exp} on a new calling stack with identity @var{id}.  If
+@var{exp} is interrupted during evaluation, backtraces will not display
+frames farther back than @var{exp}'s top-level form.  This macro is a
+way of artificially limiting backtraces and stack procedures, largely as
+a convenience to the user.
+@end deffn
+
+
+@node Debug on Error
+@subsection Debugging when an error occurs
+
+A common requirement is to be able to show as much useful context as
+possible when a Scheme program hits an error.  The most immediate
+information about an error is the kind of error that it is -- such as
+``division by zero'' -- and any parameters that the code which signalled
+the error chose explicitly to provide.  This information originates with
+the @code{error} or @code{throw} call (or their C code equivalents, if
+the error is detected by C code) that signals the error, and is passed
+automatically to the handler procedure of the innermost applicable
+@code{catch}, @code{lazy-catch} or @code{with-throw-handler} expression.
+
+@subsubsection Intercepting basic error information
+
+Therefore, to catch errors that occur within a chunk of Scheme code, and
+to intercept basic information about those errors, you need to execute
+that code inside the dynamic context of a @code{catch},
+@code{lazy-catch} or @code{with-throw-handler} expression, or the
+equivalent in C.  In Scheme, this means you need something like this:
+
+@lisp
+(catch #t
+       (lambda ()
+         ;; Execute the code in which
+         ;; you want to catch errors here.
+         ...)
+       (lambda (key . parameters)
+         ;; Put the code which you want
+         ;; to handle an error here.
+         ...))
+@end lisp
+
+@noindent
+The @code{catch} here can also be @code{lazy-catch} or
+@code{with-throw-handler}; see @ref{Throw Handlers} and @ref{Lazy Catch}
+for the details of how these differ from @code{catch}.  The @code{#t}
+means that the catch is applicable to all kinds of error; if you want to
+restrict your catch to just one kind of error, you can put the symbol
+for that kind of error instead of @code{#t}.  The equivalent to this in
+C would be something like this:
+
+@lisp
+SCM my_body_proc (void *body_data)
+@{
+  /* Execute the code in which
+     you want to catch errors here. */
+  ...
+@}
+
+SCM my_handler_proc (void *handler_data,
+                     SCM key,
+                     SCM parameters)
+@{
+  /* Put the code which you want
+     to handle an error here. */
+  ...
+@}
+
+@{
+  ...
+  scm_c_catch (SCM_BOOL_T,
+               my_body_proc, body_data,
+               my_handler_proc, handler_data,
+               NULL, NULL);
+  ...
+@}
+@end lisp
+
+@noindent
+Again, as with the Scheme version, @code{scm_c_catch} could be replaced
+by @code{scm_internal_lazy_catch} or @code{scm_c_with_throw_handler},
+and @code{SCM_BOOL_T} could instead be the symbol for a particular kind
+of error.
+
+@subsubsection Capturing the full error stack
+
+The other interesting information about an error is the full Scheme
+stack at the point where the error occurred; in other words what
+innermost expression was being evaluated, what was the expression that
+called that one, and so on.  If you want to write your code so that it
+captures and can display this information as well, there are three
+important things to understand.
+
+Firstly, the code in question must be executed using the debugging
+version of the evaluator, because information about the Scheme stack is
+only available at all from the debugging evaluator.  Using the debugging
+evaluator means that the debugger option (@pxref{Debugger options})
+called @code{debug} must be enabled; this can be done by running
+@code{(debug-enable 'debug)} or @code{(turn-on-debugging)} at the top
+level of your program; or by running guile with the @code{--debug}
+command line option, if your program begins life as a Scheme script.
+
+Secondly, the stack at the point of the error needs to be explicitly
+captured by a @code{make-stack} call (or the C equivalent
+@code{scm_make_stack}).  The Guile library does not do this
+``automatically'' for you, so you will need to write code with a
+@code{make-stack} or @code{scm_make_stack} call yourself.  (We emphasise
+this point because some people are misled by the fact that the Guile
+interactive REPL code @emph{does} capture and display the stack
+automatically.  But the Guile interactive REPL is itself a Scheme
+program@footnote{In effect, it is the default program which is run when
+no commands or script file are specified on the Guile command line.}
+running on top of the Guile library, and which uses @code{catch} and
+@code{make-stack} in the way we are about to describe to capture the
+stack when an error occurs.)
+
+Thirdly, in order to capture the stack effectively at the point where
+the error occurred, the @code{make-stack} call must be made before Guile
+unwinds the stack back to the location of the prevailing catch
+expression.  This means that the @code{make-stack} call must be made
+within the handler of a @code{lazy-catch} or @code{with-throw-handler}
+expression, or the optional "pre-unwind" handler of a @code{catch}.
+(For the full story of how these alternatives differ from each other,
+see @ref{Exceptions}.  The main difference is that @code{catch}
+terminates the error, whereas @code{lazy-catch} and
+@code{with-throw-handler} only intercept it temporarily and then allow
+it to continue propagating up to the next innermost handler.)
+
+So, here are some examples of how to do all this in Scheme and in C.
+For the purpose of these examples we assume that the captured stack
+should be stored in a variable, so that it can be displayed or
+arbitrarily processed later on.  In Scheme:
+
+@lisp
+(let ((captured-stack #f))
+  (catch #t
+         (lambda ()
+           ;; Execute the code in which
+           ;; you want to catch errors here.
+           ...)
+         (lambda (key . parameters)
+           ;; Put the code which you want
+           ;; to handle an error after the
+           ;; stack has been unwound here.
+           ...)
+         (lambda (key . parameters)
+           ;; Capture the stack here:
+           (set! captured-stack (make-stack #t))))
+  ...
+  (if captured-stack
+      (begin
+        ;; Display or process the captured stack.
+        ...))
+  ...)
+@end lisp
+
+@noindent
+And in C:
+
+@lisp
+SCM my_body_proc (void *body_data)
+@{
+  /* Execute the code in which
+     you want to catch errors here. */
+  ...
+@}
+
+SCM my_handler_proc (void *handler_data,
+                     SCM key,
+                     SCM parameters)
+@{
+  /* Put the code which you want
+     to handle an error after the
+     stack has been unwound here. */
+  ...
+@}
+
+SCM my_preunwind_proc (void *handler_data,
+                       SCM key,
+                       SCM parameters)
+@{
+  /* Capture the stack here: */
+  *(SCM *)handler_data = scm_make_stack (SCM_BOOL_T, SCM_EOL);
+@}
+
+@{
+  SCM captured_stack = SCM_BOOL_F;
+  ...
+  scm_c_catch (SCM_BOOL_T,
+               my_body_proc, body_data,
+               my_handler_proc, handler_data,
+               my_preunwind_proc, &captured_stack);
+  ...
+  if (captured_stack != SCM_BOOL_F)
+  @{
+    /* Display or process the captured stack. */
+    ...
+  @}
+  ...
+@}
+@end lisp
+
+@noindent
+Note that you don't have to wait until after the @code{catch} or
+@code{scm_c_catch} has returned.  You can also do whatever you like with
+the stack immediately after it has been captured in the pre-unwind
+handler, or in the normal (post-unwind) handler.  (Except that for the
+latter case in C you will need to change @code{handler_data} in the
+@code{scm_c_catch(@dots{})} call to @code{&captured_stack}, so that
+@code{my_handler_proc} has access to the captured stack.)
+
+@subsubsection Displaying or interrogating the captured stack
+
+Once you have a captured stack, you can interrogate and display its
+details in any way that you want, using the @code{stack-@dots{}} and
+@code{frame-@dots{}} API described in @ref{Examining the Stack} and
+@ref{Examining Stack Frames}.
+
+If you want to print out a backtrace in the same format that the Guile
+REPL does, you can use the @code{display-backtrace} procedure to do so.
+You can also use @code{display-application} to display an individual
+application frame -- that is, a frame that satisfies the
+@code{frame-procedure?} predicate -- in the Guile REPL format.
+
+@subsubsection What the Guile REPL does
+
+The Guile REPL code (in @file{ice-9/boot-9.scm}) uses a @code{catch}
+with a pre-unwind handler to capture the stack when an error occurs in
+an expression that was typed into the REPL, and saves the captured stack
+in a fluid (@pxref{Fluids and Dynamic States}) called
+@code{the-last-stack}.  You can then use the @code{(backtrace)} command,
+which is basically equivalent to @code{(display-backtrace (fluid-ref
+the-last-stack))}, to print out this stack at any time until it is
+overwritten by the next error that occurs.
+
+@deffn {Scheme Procedure} backtrace [highlights]
+@deffnx {C Function} scm_backtrace_with_highlights (highlights)
+@deffnx {C Function} scm_backtrace ()
+Display a backtrace of the stack saved by the last error
+to the current output port.  If @var{highlights} is given
+it should be a list; the elements of this list will be
+highlighted wherever they appear in the backtrace.
+@end deffn
+
+You can also use the @code{(debug)} command to explore the saved stack
+using an interactive command-line-driven debugger.  See @ref{Interactive
+Debugger} for more information about this.
+
+@deffn {Scheme Procedure} debug
+Invoke the Guile debugger to explore the context of the last error.
+@end deffn
+
+
+@node Traps
+@subsection Traps
+
+@cindex Traps
+@cindex Evaluator trap calls
+@cindex Breakpoints
+@cindex Trace
+@cindex Tracing
+@cindex Code coverage
+@cindex Profiling
+The low level C code of Guile's evaluator can be configured to call
+out at key points to arbitrary user-specified procedures.  These
+procedures, and the circumstances under which the evaluator calls
+them, are configured by the ``evaluator trap options'' interface
+(@pxref{Evaluator trap options}), and by the @code{trace} and
+@code{breakpoints} fields of the ``debug options'' interface
+(@pxref{Debugger options}).  In principle this allows Scheme code to
+implement any model it chooses for examining the evaluation stack as
+program execution proceeds, and for suspending execution to be resumed
+later.  Possible applications of this feature include breakpoints,
+runtime tracing, code coverage, and profiling.
+
+@cindex Trap classes
+@cindex Trap objects
+Based on these low level trap calls, Guile provides a higher level,
+object-oriented interface for the manipulation of traps.  Different
+kinds of trap are represented as GOOPS classes; for example, the
+@code{<procedure-trap>} class describes traps that are triggered by
+invocation of a specified procedure.  A particular instance of a trap
+class --- or @dfn{trap object} --- describes the condition under which
+a single trap will be triggered, and what will happen then; for
+example, an instance of @code{<procedure-trap>} whose @code{procedure}
+and @code{behaviour} slots contain @code{my-factorial} and
+@code{debug-trap} would be a trap that enters the command line
+debugger when the @code{my-factorial} procedure is invoked.
+
+The following subsections describe all this in detail, for both the
+user wanting to use traps, and the developer interested in
+understanding how the interface hangs together.
+
+
+@subsubsection A Quick Note on Terminology
+
+@cindex Trap terminology
+It feels natural to use the word ``trap'' in some form for all levels
+of the structure just described, so we need to be clear on the
+terminology we use to describe each particular level.  The terminology
+used in this subsection is as follows.
+
+@itemize @bullet
+@item
+@cindex Evaluator trap calls
+@cindex Low level trap calls
+``Low level trap calls'', or ``low level traps'', are the calls made
+directly from the C code of the Guile evaluator.
+
+@item
+@cindex Trap classes
+``Trap classes'' are self-explanatory.
+
+@item
+@cindex Trap objects
+``Trap objects'', ``trap instances'', or just ``traps'', are instances
+of a trap class, and each describe a single logical trap condition
+plus behaviour as specified by the user of this interface.
+@end itemize
+
+A good example of when it is important to be clear, is when we talk
+below of behaviours that should only happen once per low level trap.
+A single low level trap call will typically map onto the processing of
+several trap objects, so ``once per low level trap'' is significantly
+different from ``once per trap''.
+
+
+@menu
+* How to Set a Trap::
+* Specifying Trap Behaviour::
+* Trap Context::
+* Tracing Examples::
+* Tracing Configuration::
+* Tracing and (ice-9 debug)::
+* Traps Installing More Traps::
+* Common Trap Options::
+* Procedure Traps::
+* Exit Traps::
+* Entry Traps::
+* Apply Traps::
+* Step Traps::
+* Source Traps::
+* Location Traps::
+* Trap Shorthands::
+* Trap Utilities::
+@end menu
+
+
+@node How to Set a Trap
+@subsubsection How to Set a Trap
+
+@cindex Setting traps
+@cindex Installing and uninstalling traps
+Setting a trap is done in two parts.  First the trap is defined by
+creating an instance of the appropriate trap class, with slot values
+specifying the condition under which the trap will fire and the action
+to take when it fires.  Secondly the trap object thus created must be
+@dfn{installed}.
+
+To make this immediately concrete, here is an example that sets a trap
+to fire on the next application of the @code{facti} procedure, and to
+handle the trap by entering the command line debugger.
+
+@lisp
+(install-trap (make <procedure-trap>
+                #:procedure facti
+                #:single-shot #t
+                #:behaviour debug-trap))
+@end lisp
+
+@noindent
+Briefly, the elements of this incantation are as follows.  (All of
+these are described more fully in the following subsubsections.)
+
+@itemize @bullet
+@item
+@code{<procedure-trap>} is the trap class for trapping on invocation
+of a specific procedure.
+
+@item
+@code{#:procedure facti} says that the specific procedure to trap on for this
+trap object is @code{facti}.
+
+@item
+@code{#:single-shot #t} says that this trap should only fire on the
+@emph{next} invocation of @code{facti}, not on all future invocations
+(which is the default if the @code{#:single-shot} option is not
+specified).
+
+@item
+@code{#:behaviour debug-trap} says that the trap infrastructure should
+call the procedure @code{debug-trap} when this trap fires.
+
+@item
+Finally, the @code{install-trap} call installs the trap immediately.
+@end itemize
+
+@noindent
+It is of course possible for the user to define more convenient
+shorthands for setting common kinds of traps.  @xref{Trap Shorthands},
+for some examples.
+
+The ability to install, uninstall and reinstall a trap without losing
+its definition is Guile's equivalent of the disable/enable commands
+provided by debuggers like GDB.
+
+@deffn {Generic Function} install-trap trap
+Install the trap object @var{trap}, so that its behaviour will be
+executed when the conditions for the trap firing are met.
+@end deffn
+
+@deffn {Generic Function} uninstall-trap trap
+Uninstall the trap object @var{trap}, so that its behaviour will
+@emph{not} be executed even if the conditions for the trap firing are
+met.
+@end deffn
+
+
+@node Specifying Trap Behaviour
+@subsubsection Specifying Trap Behaviour
+
+@cindex Trap behaviour
+Guile provides several ``out-of-the-box'' behaviours for common needs.
+All of the following can be used directly as the value of the
+@code{#:behaviour} option when creating a trap object.
+
+@deffn {Procedure} debug-trap trap-context
+Enter Guile's command line debugger to explore the stack at
+@var{trap-context}, and to single-step or continue program execution
+from that point.
+@end deffn
+
+@deffn {Procedure} gds-debug-trap trap-context
+Use the GDS debugging interface, which displays the stack and
+corresponding source code via Emacs, to explore the stack at
+@var{trap-context} and to single-step or continue program execution
+from that point.
+@end deffn
+
+@cindex Trace
+@cindex Tracing
+@deffn {Procedure} trace-trap trap-context
+Display trace information to summarize the current @var{trap-context}.
+@end deffn
+
+@deffn {Procedure} trace-at-exit trap-context
+Install a further trap to cause the return value of the application or
+evaluation just starting (as described by @var{trap-context}) to be
+traced using @code{trace-trap}, when this application or evaluation
+completes.  The extra trap is automatically uninstalled after the
+return value has been traced.
+@end deffn
+
+@deffn {Procedure} trace-until-exit trap-context
+Install a further trap so that every step that the evaluator performs
+as part of the application or evaluation just starting (as described
+by @var{trap-context}) is traced using @code{trace-trap}.  The extra
+trap is automatically uninstalled when the application or evaluation
+is complete.  @code{trace-until-exit} can be very useful as a first
+step when all you know is that there is a bug ``somewhere in XXX or in
+something that XXX calls''.
+@end deffn
+
+@noindent
+@code{debug-trap} and @code{gds-debug-trap} are provided by the modules
+@code{(ice-9 debugger)} and @code{(ice-9 gds-client)} respectively, and
+their behaviours are fairly self-explanatory.  For more information on
+the operation of the GDS interface via Emacs, see @ref{Using Guile in
+Emacs}.  The tracing behaviours are explained more fully below.
+
+@cindex Trap context
+More generally, the @dfn{behaviour} specified for a trap can be any
+procedure that expects to be called with one @dfn{trap context}
+argument.  A trivial example would be:
+
+@lisp
+(define (report-stack-depth trap-context)
+  (display "Stack depth at the trap is: ")
+  (display (tc:depth trap-context))
+  (newline))
+@end lisp
+
+
+@node Trap Context
+@subsubsection Trap Context
+
+The @dfn{trap context} is an object that caches information about the
+low level trap call and the stack at the point of the trap, and is
+passed as the only argument to all behaviour procedures.  The
+information in the trap context can be accessed through the procedures
+beginning @code{tc:} that are exported by the @code{(ice-9 debugging
+traps)} module@footnote{Plus of course any procedures that build on
+these, such as the @code{trace/@dots{}} procedures exported by
+@code{(ice-9 debugging trace)} (@pxref{Tracing Configuration}).}; the
+most useful of these are as follows.
+
+@deffn {Generic Function} tc:type trap-context
+Indicates the type of the low level trap by returning one of the
+keywords @code{#:application}, @code{#:evaluation}, @code{#:return} or
+@code{#:error}.
+@end deffn
+
+@deffn {Generic Function} tc:return-value trap-context
+When @code{tc:type} gives @code{#:return}, this provides the value
+that is being returned.
+@end deffn
+
+@deffn {Generic Function} tc:stack trap-context
+Provides the stack at the point of the trap (as computed by
+@code{make-stack}, but cached so that the lengthy @code{make-stack}
+operation is not performed more than once for the same low level
+trap).
+@end deffn
+
+@deffn {Generic Function} tc:frame trap-context
+The innermost frame of the stack at the point of the trap.
+@end deffn
+
+@deffn {Generic Function} tc:depth trap-context
+The number of frames (including tail recursive non-real frames) in the
+stack at the point of the trap.
+@end deffn
+
+@deffn {Generic Function} tc:real-depth trap-context
+The number of real frames (that is, excluding the non-real frames that
+describe tail recursive calls) in the stack at the point of the trap.
+@end deffn
+
+
+@node Tracing Examples
+@subsubsection Tracing Examples
+
+The following examples show what tracing is and the kind of output that
+it generates.  In the first example, we define a recursive function for
+reversing a list, then watch the effect of the recursive calls by
+tracing each call and return value.
+
+@lisp
+guile> (define (rev ls)
+         (if (null? ls)
+             ls
+             (append (rev (cdr ls))
+                     (list (car ls)))))
+guile> (use-modules (ice-9 debugging traps) (ice-9 debugging trace))
+guile> (define t1 (make <procedure-trap>
+                    #:procedure rev
+                    #:behaviour (list trace-trap
+                                      trace-at-exit)))
+guile> (install-trap t1)
+guile> (rev '(a b c))
+|  2: [rev (a b c)]
+|  3: [rev (b c)]
+|  4: [rev (c)]
+|  5: [rev ()]
+|  5: =>()
+|  4: =>(c)
+|  3: =>(c b)
+|  2: =>(c b a)
+(c b a)
+@end lisp
+
+@noindent
+The number before the colon in this output (which follows @code{(ice-9
+debugging trace)}'s default output format) is the number of real frames
+on the stack.  The fact that this number increases for each recursive
+call confirms that the implementation above of @code{rev} is not
+tail-recursive.
+
+In the next example, we probe the @emph{internal} workings of
+@code{rev} in more detail by using the @code{trace-until-exit}
+behaviour.
+
+@lisp
+guile> (uninstall-trap t1)
+guile> (define t2 (make <procedure-trap>
+                    #:procedure rev
+                    #:behaviour (list trace-trap
+                                      trace-until-exit)))
+guile> (install-trap t2)
+guile> (rev '(a b))
+|  2: [rev (a b)]
+|  2: (if (null? ls) ls (append (rev (cdr ls)) (list (car ls))))
+|  3: (null? ls)
+|  3: [null? (a b)]
+|  3: =>#f
+|  2: (append (rev (cdr ls)) (list (car ls)))
+|  3: (rev (cdr ls))
+|  4: (cdr ls)
+|  4: [cdr (a b)]
+|  4: =>(b)
+|  3: [rev (b)]
+|  3: (if (null? ls) ls (append (rev (cdr ls)) (list (car ls))))
+|  4: (null? ls)
+|  4: [null? (b)]
+|  4: =>#f
+|  3: (append (rev (cdr ls)) (list (car ls)))
+|  4: (rev (cdr ls))
+|  5: (cdr ls)
+|  5: [cdr (b)]
+|  5: =>()
+|  4: [rev ()]
+|  4: (if (null? ls) ls (append (rev (cdr ls)) (list (car ls))))
+|  5: (null? ls)
+|  5: [null? ()]
+|  5: =>#t
+|  4: (list (car ls))
+|  5: (car ls)
+|  5: [car (b)]
+|  5: =>b
+|  4: [list b]
+|  4: =>(b)
+|  3: [append () (b)]
+|  3: =>(b)
+|  3: (list (car ls))
+|  4: (car ls)
+|  4: [car (a b)]
+|  4: =>a
+|  3: [list a]
+|  3: =>(a)
+|  2: [append (b) (a)]
+|  2: =>(b a)
+(b a)
+@end lisp
+
+@noindent
+The output in this case shows every step that the evaluator performs
+in evaluating @code{(rev '(a b))}.
+
+
+@node Tracing Configuration
+@subsubsection Tracing Configuration
+
+The detail of what gets printed in each trace line, and the port to
+which tracing is written, can be configured by the procedures
+@code{set-trace-layout} and @code{trace-port}, both exported by the
+@code{(ice-9 debugging trace)} module.
+
+@deffn {Procedure with Setter} trace-port
+Get or set the port to which tracing is printed.  The default is the
+value of @code{(current-output-port)} when the @code{(ice-9 debugging
+trace)} module is first loaded.
+@end deffn
+
+@deffn {Procedure} set-trace-layout format-string . arg-procs
+Layout each trace line using @var{format-string} and @var{arg-procs}.
+For each trace line, the list of values to be printed is obtained by
+calling all the @var{arg-procs}, passing the trap context as the only
+parameter to each one.  This list of values is then formatted using
+the specified @var{format-string}.
+@end deffn
+
+@noindent
+The @code{(ice-9 debugging trace)} module exports a set of arg-proc
+procedures to cover most common needs, with names beginning
+@code{trace/}.  These are all implemented on top of the @code{tc:} trap
+context accessor procedures documented in @ref{Trap Context}, and if any
+trace output not provided by the following is needed, it should be
+possible to implement based on a combination of the @code{tc:}
+procedures.
+
+@deffn {Procedure} trace/pid trap-context
+An arg-proc that returns the current process ID.
+@end deffn
+
+@deffn {Procedure} trace/stack-id trap-context
+An arg-proc that returns the stack ID of the stack in which the
+current trap occurred.
+@end deffn
+
+@deffn {Procedure} trace/stack-depth trap-context
+An arg-proc that returns the length (including non-real frames) of the
+stack at the point of the current trap.
+@end deffn
+
+@deffn {Procedure} trace/stack-real-depth trap-context
+An arg-proc that returns the length excluding non-real frames of the
+stack at the point of the current trap.
+@end deffn
+
+@deffn {Procedure} trace/stack trap-context
+An arg-proc that returns a string summarizing stack information.  This
+string includes the stack ID, real depth, and count of additional
+non-real frames, with the format @code{"~a:~a+~a"}.
+@end deffn
+
+@deffn {Procedure} trace/source-file-name trap-context
+An arg-proc that returns the name of the source file for the innermost
+stack frame, or an empty string if source is not available for the
+innermost frame.
+@end deffn
+
+@deffn {Procedure} trace/source-line trap-context
+An arg-proc that returns the line number of the source code for the
+innermost stack frame, or zero if source is not available for the
+innermost frame.
+@end deffn
+
+@deffn {Procedure} trace/source-column trap-context
+An arg-proc that returns the column number of the start of the source
+code for the innermost stack frame, or zero if source is not available
+for the innermost frame.
+@end deffn
+
+@deffn {Procedure} trace/source trap-context
+An arg-proc that returns the source location for the innermost stack
+frame.  This is a string composed of file name, line and column number
+with the format @code{"~a:~a:~a"}, or an empty string if source is not
+available for the innermost frame.
+@end deffn
+
+@deffn {Procedure} trace/type trap-context
+An arg-proc that returns a three letter abbreviation indicating the
+type of the current trap: @code{"APP"} for an application frame,
+@code{"EVA"} for an evaluation, @code{"RET"} for an exit trap, or
+@code{"ERR"} for an error (pseudo-)trap.
+@end deffn
+
+@deffn {Procedure} trace/real? trap-context
+An arg-proc that returns @code{" "} if the innermost stack frame is a
+real frame, or @code{"t"} if it is not.
+@end deffn
+
+@deffn {Procedure} trace/info trap-context
+An arg-proc that returns a string describing the expression being
+evaluated, application being performed, or return value, according to
+the current trap type.
+@end deffn
+
+@noindent
+@code{trace/stack-depth} and @code{trace/stack-real-depth} are identical
+to the trap context methods @code{tc:depth} and @code{tc:real-depth}
+described before (@pxref{Trap Context}), but renamed here for
+convenience.
+
+The default trace layout, as exhibited by the examples of the previous
+subsubsubsection, is set by this line of code from the @code{(ice-9 debugging
+traps)} module:
+
+@lisp
+(set-trace-layout "|~3@@a: ~a\n" trace/stack-real-depth trace/info)
+@end lisp
+
+@noindent
+If we rerun the first of those examples, but with trace layout
+configured to show source location and trap type in addition, the
+output looks like this:
+
+@lisp
+guile> (set-trace-layout "| ~25a ~3@@a: ~a ~a\n"
+                         trace/source
+                         trace/stack-real-depth
+                         trace/type
+                         trace/info)
+guile> (rev '(a b c))
+| standard input:29:0         2: APP [rev (a b c)]
+| standard input:4:21         3: APP [rev (b c)]
+| standard input:4:21         4: APP [rev (c)]
+| standard input:4:21         5: APP [rev ()]
+| standard input:2:9          5: RET =>()
+| standard input:4:13         4: RET =>(c)
+| standard input:4:13         3: RET =>(c b)
+| standard input:4:13         2: RET =>(c b a)
+(c b a)
+@end lisp
+
+
+@node Tracing and (ice-9 debug)
+@subsubsection Tracing and (ice-9 debug)
+
+The @code{(ice-9 debug)} module provides a tracing facility
+(@pxref{Tracing}) that is roughly similar to that described here, but
+there are important differences.
+
+@itemize @bullet
+@item
+The @code{(ice-9 debug)} trace gives a nice pictorial view of changes
+in stack depth, by using indentation like this:
+
+@lisp
+[fact1 4]
+|  [fact1 3]
+|  |  [fact1 2]
+|  |  |  [fact1 1]
+|  |  |  |  [fact1 0]
+|  |  |  |  1
+|  |  |  1
+|  |  2
+|  6
+24
+@end lisp
+
+However its output can @emph{only} show the information seen here,
+which corresponds to @code{(ice-9 debugging trace)}'s
+@code{trace/info} procedure; it cannot be configured to show other
+pieces of information about the trap context in the way that the
+@code{(ice-9 debugging trace)} implementation can.
+
+@item
+The @code{(ice-9 debug)} trace only allows the tracing of procedure
+applications and their return values, whereas the @code{(ice-9 debugging
+trace)} implementation allows any kind of trap to be traced.
+
+It's interesting to note that @code{(ice-9 debug)}'s restriction here,
+which might initially appear to be just a straightforward consequence
+of its implementation, is also somewhat dictated by its pictorial
+display.  The use of indentation in the output relies on hooking into
+the low level trap calls in such a way that the trapped application
+entries and exits exactly balance each other.  The @code{ice-9
+debugging trace} implementation allows traps to be installed such that
+entry and exit traps don't necessarily balance, which means that, in
+general, indentation diagrams like the one above don't work.
+@end itemize
+
+It isn't currently possible to use both @code{(ice-9 debug)} trace and
+@code{(ice-9 debugging trace)} in the same Guile session, because
+their settings of the low level trap options conflict with each other.
+
+
+@node Traps Installing More Traps
+@subsubsection Traps Installing More Traps
+
+Sometimes it is desirable for the behaviour at one trap to install
+further traps.  In other words, the behaviour is something like
+``Don't do much right now, but set things up to stop after two or
+three more steps'', or ``@dots{} when this frame completes''.  This is
+absolutely fine.  For example, it is easy to code a generic ``do
+so-and-so when the current frame exits'' procedure, which can be used
+wherever a trap context is available, as follows.
+
+@lisp
+(define (at-exit trap-context behaviour)
+  (install-trap (make <exit-trap>
+		  #:depth (tc:depth trap-context)
+		  #:single-shot #t
+		  #:behaviour behaviour)))
+@end lisp
+
+To continue and pin down the example, this could then be used as part
+of a behaviour whose purpose was to measure the accumulated time spent
+in and below a specified procedure.
+
+@lisp
+(define calls 0)
+(define total 0)
+
+(define accumulate-time
+  (lambda (trap-context)
+    (set! calls (+ calls 1))
+    (let ((entry (current-time)))
+      (at-exit trap-context
+        (lambda (ignored)
+          (set! total
+                (+ total (- (current-time)
+                            entry))))))))
+
+(install-trap (make <procedure-trap>
+                #:procedure my-proc
+                #:behaviour accumulate-time))
+@end lisp
+
+
+@node Common Trap Options
+@subsubsection Common Trap Options
+
+When creating any kind of trap object, settings for the trap being
+created are specified as options on the @code{make} call using syntax
+like this:
+
+@lisp
+(make <@var{trap-class}>
+  #:@var{option-keyword} @var{setting}
+  @dots{})
+@end lisp
+
+The following common options are provided by the base class
+@code{<trap>}, and so can be specified for any kind of trap.
+
+@deffn {Class} <trap>
+Base class for trap objects.
+@end deffn
+
+@deffn {Trap Option} #:condition thunk
+If not @code{#f}, this is a thunk which is called when the trap fires,
+to determine whether trap processing should proceed any further.  If
+the thunk returns @code{#f}, the trap is basically suppressed.
+Otherwise processing continues normally.  (Default value @code{#f}.)
+@end deffn
+
+@deffn {Trap Option} #:skip-count count
+A count of valid (after @code{#:condition} processing) firings of this
+trap to skip.  (Default value 0.)
+@end deffn
+
+@deffn {Trap Option} #:single-shot boolean
+If not @code{#f}, this indicates that the trap should be automatically
+uninstalled after it has successfully fired (after @code{#:condition}
+and @code{#:skip-count} processing) for the first time.  (Default
+value @code{#f}.)
+@end deffn
+
+@deffn {Trap Option} #:behaviour behaviour-proc
+A trap behaviour procedure --- as discussed in the preceding subsubsection
+--- or a list of such procedures, in which case each procedure is
+called in turn when the trap fires.  (Default value @code{'()}.)
+@end deffn
+
+@deffn {Trap Option} #:repeat-identical-behaviour boolean
+Normally, if multiple trap objects are triggered by the same low level
+trap, and they request the same behaviour, it's only actually useful
+to do that behaviour once (per low level trap); so by default multiple
+requests for the same behaviour are coalesced.  If this option is set
+other than @code{#f}, the contents of the @code{#:behaviour} option
+are uniquified so that they avoid being coalesced in this way.
+(Default value @code{#f}.)
+@end deffn
+
+
+@node Procedure Traps
+@subsubsection Procedure Traps
+
+The @code{<procedure-trap>} class implements traps that are triggered
+upon application of a specified procedure.  Instances of this class
+should use the @code{#:procedure} option to specify the procedure to
+trap on.
+
+@deffn {Class} <procedure-trap>
+Class for traps triggered by application of a specified procedure.
+@end deffn
+
+@deffn {Trap Option} #:procedure procedure
+Specifies the procedure to trap on.
+@end deffn
+
+@noindent
+Example:
+
+@lisp
+(install-trap (make <procedure-trap>
+                #:procedure my-proc
+                #:behaviour (list trace-trap
+                                  trace-until-exit)))
+@end lisp
+
+
+@node Exit Traps
+@subsubsection Exit Traps
+
+The @code{<exit-trap>} class implements traps that are triggered upon
+stack frame exit past a specified stack depth.  Instances of this
+class should use the @code{#:depth} option to specify the target stack
+depth.
+
+@deffn {Class} <exit-trap>
+Class for traps triggered by exit past a specified stack depth.
+@end deffn
+
+@deffn {Trap Option} #:depth depth
+Specifies the reference depth for the trap.
+@end deffn
+
+@noindent
+Example:
+
+@lisp
+(define (trace-at-exit trap-context)
+  (install-trap (make <exit-trap>
+		  #:depth (tc:depth trap-context)
+		  #:single-shot #t
+		  #:behaviour trace-trap)))
+@end lisp
+
+@noindent
+(This is the actual definition of the @code{trace-at-exit} behaviour.)
+
+
+@node Entry Traps
+@subsubsection Entry Traps
+
+The @code{<entry-trap>} class implements traps that are triggered upon
+any stack frame entry.  No further parameters are needed to specify an
+instance of this class, so there are no class-specific trap options.
+Note that it remains possible to use the common trap options
+(@pxref{Common Trap Options}), for example to set a trap for the
+@var{n}th next frame entry.
+
+@deffn {Class} <entry-trap>
+Class for traps triggered by any stack frame entry.
+@end deffn
+
+@noindent
+Example:
+
+@lisp
+(install-trap (make <entry-trap>
+        	#:skip-count 5
+		#:behaviour gds-debug-trap))
+@end lisp
+
+
+@node Apply Traps
+@subsubsection Apply Traps
+
+The @code{<apply-trap>} class implements traps that are triggered upon
+any procedure application.  No further parameters are needed to
+specify an instance of this class, so there are no class-specific trap
+options.  Note that it remains possible to use the common trap options
+(@pxref{Common Trap Options}), for example to set a trap for the next
+application where some condition is true.
+
+@deffn {Class} <apply-trap>
+Class for traps triggered by any procedure application.
+@end deffn
+
+@noindent
+Example:
+
+@lisp
+(install-trap (make <apply-trap>
+        	#:condition my-condition
+		#:behaviour gds-debug-trap))
+@end lisp
+
+
+@node Step Traps
+@subsubsection Step Traps
+
+The @code{<step-trap>} class implements traps that do single-stepping
+through a program's execution.  They come in two flavours, with and
+without a specified file name.  If a file name is specified, the trap
+is triggered by the next evaluation, application or frame exit
+pertaining to source code from the specified file.  If a file name is
+not specified, the trap is triggered by the next evaluation,
+application or frame exit from any file (or for code whose source
+location was not recorded), in other words by the next evaluator step
+of any kind.
+
+The design goal of the @code{<step-trap>} class is to match what a
+user would intuitively think of as single-stepping through their code,
+either through code in general (roughly corresponding to GDB's
+@code{step} command, for example), or through code from a particular
+source file (roughly corresponding to GDB's @code{next}).  Therefore
+if you are using a step trap to single-step through code and finding
+its behaviour counter-intuitive, please report that so we can improve
+it.
+
+The implementation and options of the @code{<step-trap>} class are
+complicated by the fact that it is unreliable to determine whether a
+low level frame exit trap is applicable to a specified file by
+examining the details of the reported frame.  This is a consequence of
+tail recursion, which has the effect that many frames can be removed
+from the stack at once, with only the outermost frame being reported
+by the low level trap call.  The effects of this on the
+@code{<step-trap>} class are such as to require the introduction of
+the strange-looking @code{#:exit-depth} option, for the following
+reasons.
+
+@itemize @bullet
+@item
+When stopped at the start of an application or evaluation frame, and
+it is desired to continue execution until the next ``step'' in the same
+source file, that next step could be the start of a nested application
+or evaluation frame, or --- if the procedure definition is in a
+different file, for example --- it could be the exit from the current
+frame.
+
+@item
+Because of the effects of tail recursion noted above, the current
+frame exit possibility must be expressed as frame exit past a
+specified stack depth.  When an instance of the @code{<step-trap>}
+class is installed from the context of an application or evaluation
+frame entry, the @code{#:exit-depth} option should be used to specify
+this stack depth.
+
+@item
+When stopped at a frame exit, on the other hand, we know that the next
+step must be an application or evaluation frame entry.  In this
+context the @code{#:exit-depth} option is not needed and should be
+omitted or set to @code{#f}.
+@end itemize
+
+@noindent
+When a step trap is installed without @code{#:single-shot #t}, such
+that it keeps firing, the @code{<step-trap>} code automatically
+updates its idea of the @code{#:exit-depth} setting each time, so that
+the trap always fires correctly for the following step.
+
+@deffn {Class} <step-trap>
+Class for single-stepping traps.
+@end deffn
+
+@deffn {Trap Option} #:file-name name
+If not @code{#f}, this is a string containing the name of a source
+file, and restricts the step trap to evaluation steps within that
+source file.  (Default value @code{#f}.)
+@end deffn
+
+@deffn {Trap Option} #:exit-depth depth
+If not @code{#f}, this is a positive integer implying that the next
+step may be frame exit past the stack depth @var{depth}.  See the
+discussion above for more details.  (Default value @code{#f}.)
+@end deffn
+
+@noindent
+Example:
+
+@lisp
+(install-trap (make <step-trap>
+                #:file-name (frame-file-name
+                              (stack-ref stack index))
+                #:exit-depth (- (stack-length stack)
+                                (stack-ref stack index))
+                #:single-shot #t
+                #:behaviour debug-trap))
+@end lisp
+
+
+@node Source Traps
+@subsubsection Source Traps
+
+The @code{<source-trap>} class implements traps that are attached to a
+precise source code expression, as read by the reader, and which fire
+each time that that expression is evaluated.  These traps use a low
+level Guile feature which can mark individual expressions for
+trapping, and are relatively efficient.  But it can be tricky to get
+at the source expression in the first place, and these traps are
+liable to become irrelevant if the procedure containing the expression
+is reevaluated; these issues are discussed further below.
+
+@deffn {Class} <source-trap>
+Class for traps triggered by evaluation of a specific Scheme
+expression.
+@end deffn
+
+@deffn {Trap Option} #:expression expr
+Specifies the Scheme expression to trap on.
+@end deffn
+
+@noindent
+Example:
+
+@lisp
+(display "Enter an expression: ")
+(let ((x (read)))
+  (install-trap (make <source-trap>
+                  #:expression x
+                  #:behaviour (list trace-trap
+                                    trace-at-exit)))
+  (primitive-eval x))
+@print{}
+Enter an expression: (+ 1 2 3 4 5 6)
+|  3: (+ 1 2 3 4 5 6)
+|  3: =>21
+21
+@end lisp
+
+The key point here is that the expression specified by the
+@code{#:expression} option must be @emph{exactly} (i.e. @code{eq?} to)
+what is going to be evaluated later.  It doesn't work, for example, to
+say @code{#:expression '(+ x 3)}, with the expectation that the trap
+will fire whenever evaluating any expression @code{(+ x 3)}.
+
+The @code{trap-here} macro can be used in source code to create and
+install a source trap correctly.  Take for example the factorial
+function defined in the @code{(ice-9 debugging example-fns)} module:
+
+@lisp
+(define (fact1 n)
+  (if (= n 0)
+      1
+      (* n (fact1 (- n 1)))))
+@end lisp
+
+@noindent
+To set a source trap on a particular expression --- let's say the
+expression @code{(= n 0)} --- edit the code so that the expression is
+enclosed in a @code{trap-here} macro call like this:
+
+@lisp
+(define (fact1 n)
+  (if (trap-here (= n 0) #:behaviour debug-trap)
+      1
+      (* n (fact1 (- n 1)))))
+@end lisp
+
+@deffn {Macro} trap-here expression . trap-options
+Install a source trap with options @var{trap-options} on
+@var{expression}, then return with the whole call transformed to
+@code{(begin @var{expression})}.
+@end deffn
+
+Note that if the @code{trap-here} incantation is removed, and
+@code{fact1} then redefined by reloading its source file, the effect
+of the source trap is lost, because the text ``(= n 0)'' is read again
+from scratch and becomes a new expression @code{(= n 0)} which does
+not have the ``trap here'' mark on it.
+
+If the semantics and setting of source traps seem unwieldy, location
+traps may meet your need more closely; these are described in the
+following subsubsection.
+
+
+@node Location Traps
+@subsubsection Location Traps
+
+The @code{<location-trap>} class implements traps that are triggered
+by evaluation of code at a specific source location.  When compared
+with source traps, they are easier to set, and do not become
+irrelevant when the relevant code is reloaded; but unfortunately they
+are a lot less efficient, as they require running some ``are we in the
+right place for a trap'' code on every low level frame entry trap
+call.
+
+@deffn {Class} <location-trap>
+Class for traps triggered by evaluation of code at a specific source
+location.
+@end deffn
+
+@deffn {Trap Option} #:file-regexp regexp
+A regular expression specifying the filenames that will match this
+trap.  This option must be specified when creating a location trap.
+@end deffn
+
+@deffn {Trap Option} #:line line
+The line number (0-based) of the source location at which the trap
+should be triggered.  This option must be specified when creating a
+location trap.
+@end deffn
+
+@deffn {Trap Option} #:column column
+The column number (0-based) of the source location at which the trap
+should be triggered.  This option must be specified when creating a
+location trap.
+@end deffn
+
+@noindent
+Here is an example, which matches the @code{(facti (- n 1) (* a n))}
+expression in @file{ice-9/debugging/example-fns.scm}:
+
+@lisp
+(install-trap (make <location-trap>
+                #:file-regexp "example-fns.scm"
+                #:line 11
+                #:column 6
+                #:behaviour gds-debug-trap))
+@end lisp
+
+
+@node Trap Shorthands
+@subsubsection Trap Shorthands
+
+If the code described in the preceding subsubsections for creating and
+manipulating traps seems a little long-winded, it is of course
+possible to define more convenient shorthand forms for typical usage
+patterns.  Here are some examples.
+
+@lisp
+(define (break! proc)
+  (install-trap (make <procedure-trap>
+                  #:procedure proc
+                  #:behaviour gds-debug-trap)))
+
+(define (trace! proc)
+  (install-trap (make <procedure-trap>
+                  #:procedure proc
+                  #:behaviour (list trace-trap
+                                    trace-at-exit))))
+
+(define (trace-subtree! proc)
+  (install-trap (make <procedure-trap>
+                  #:procedure proc
+                  #:behaviour (list trace-trap
+                                    trace-until-exit))))
+@end lisp
+
+Definitions like these are not provided out-of-the-box by Guile,
+because different users will have different ideas about what their
+default debugger should be, or, for example, which of the common trap
+options (@pxref{Common Trap Options}) it might be useful to expose
+through such shorthand procedures.
+
+
+@node Trap Utilities
+@subsubsection Trap Utilities
+
+@code{list-traps} can be used to print a description of all known trap
+objects.  This uses a weak value hash table, keyed by a trap index
+number.  Each trap object has its index number assigned, and is added
+to the hash table, when it is created by a @code{make @var{trap-class}
+@dots{}} call.  When a trap object is GC'd, it is automatically
+removed from the hash table, and so no longer appears in the output
+from @code{list-traps}.
+
+@deffn {Variable} all-traps
+Weak value hash table containing all known trap objects.
+@end deffn
+
+@deffn {Procedure} list-traps
+Print a description of all known trap objects.
+@end deffn
+
+The following example shows a single trap that traces applications of
+the procedure @code{facti}.
+
+@lisp
+guile> (list-traps)
+#<<procedure-trap> 100d2e30> is an instance of class <procedure-trap>
+Slots are:
+     number = 1
+     installed = #t
+     condition = #f
+     skip-count = 0
+     single-shot = #f
+     behaviour = (#<procedure trace-trap (trap-context)>)
+     repeat-identical-behaviour = #f
+     procedure = #<procedure facti (n a)>
+@end lisp
+
+When @code{all-traps} or @code{list-traps} reveals a trap that you
+want to modify but no longer have a reference to, you can retrieve the
+trap object by calling @code{get-trap} with the trap's number.  For
+example, here's how you could change the behaviour of the trap listed
+just above.
+
+@lisp
+(slot-set! (get-trap 1) 'behaviour (list debug-trap))
+@end lisp
+
+@deffn {Procedure} get-trap number
+Return the trap object with the specified @var{number}, or @code{#f}
+if there isn't one.
+@end deffn
+
+
+@node Debugging Examples
+@subsection Debugging Examples
+
+Here we present some examples of what you can do with the debugging
+facilities just described.
+
+@menu
+* Single Stepping through a Procedure's Code::
+* Profiling or Tracing a Procedure's Code::
+@end menu
+
+
+@node Single Stepping through a Procedure's Code
+@subsubsection Single Stepping through a Procedure's Code
+
+A good way to explore in detail what a Scheme procedure does is to set
+a trap on it and then single step through what it does.  To do this,
+make and install a @code{<procedure-trap>} with the @code{debug-trap}
+behaviour from @code{(ice-9 debugging ice-9-debugger-extensions)}.
+
+The following sample session illustrates this.  It assumes that the
+file @file{matrix.scm} defines a procedure @code{mkmatrix}, which is
+the one we want to explore, and another procedure @code{do-main} which
+calls @code{mkmatrix}.
+
+@lisp
+$ /usr/bin/guile -q
+guile> (use-modules (ice-9 debugger)
+                    (ice-9 debugging ice-9-debugger-extensions)
+                    (ice-9 debugging traps))
+guile> (load "matrix.scm")
+guile> (install-trap (make <procedure-trap>
+                       #:procedure mkmatrix
+                       #:behaviour debug-trap))
+guile> (do-main 4)
+This is the Guile debugger -- for help, type `help'.
+There are 3 frames on the stack.
+
+Frame 2 at matrix.scm:8:3
+        [mkmatrix]
+debug> next
+Frame 3 at matrix.scm:4:3
+        (let ((x 1)) (quote this-is-a-matric))
+debug> info frame
+Stack frame: 3
+This frame is an evaluation.
+The expression being evaluated is:
+matrix.scm:4:3:
+  (let ((x 1)) (quote this-is-a-matric))
+debug> next
+Frame 3 at matrix.scm:5:21
+        (quote this-is-a-matric)
+debug> bt
+In unknown file:
+   ?: 0* [primitive-eval (do-main 4)]
+In standard input:
+   4: 1* [do-main 4]
+In matrix.scm:
+   8: 2  [mkmatrix]
+   ...
+   5: 3  (quote this-is-a-matric)
+debug> quit
+this-is-a-matric
+guile> 
+@end lisp
+
+Or you can use Guile's Emacs interface (GDS), by using the module
+@code{(ice-9 gds-client)} instead of @code{(ice-9 debugger)} and
+@code{(ice-9 debugging ice-9-debugger-extensions)}, and changing
+@code{debug-trap} to @code{gds-debug-trap}.  Then the stack and
+corresponding source locations are displayed in Emacs instead of on
+the Guile command line.
+
+
+@node Profiling or Tracing a Procedure's Code
+@subsubsection Profiling or Tracing a Procedure's Code
+
+What if you wanted to get a trace of everything that the Guile
+evaluator does within a given procedure, but without Guile stopping
+and waiting for your input at every step?  For this requirement you
+can install a trap on the procedure, as in the previous example, but
+instead of @code{debug-trap} or @code{gds-debug-trap}, use the
+@code{trace-trap} and @code{trace-until-exit} behaviours provided by
+the @code{(ice-9 debugging trace)} module.
+
+@lisp
+guile> (use-modules (ice-9 debugging traps) (ice-9 debugging trace))
+guile> (load "matrix.scm")
+guile> (install-trap (make <procedure-trap>
+                       #:procedure mkmatrix
+                       #:behaviour (list trace-trap trace-until-exit)))
+guile> (do-main 4)
+|  2: [mkmatrix]
+|  3: [#<procedure #f (a sym definep)> #<autoload # b7c93870> define #f]
+|  3: [#<procedure #f (a sym definep)> #<autoload # b7c93870> define #f]
+|  4: (and (memq sym bindings) (let ...))
+|  5: (memq sym bindings)
+|  5: [memq define (debug)]
+|  5: =>#f
+|  3: [#<procedure #f (a sym definep)> #<autoload # b7c93870> define #f]
+|  3: [#<procedure #f (a sym definep)> #<autoload # b7c93870> define #f]
+|  4: (and (memq sym bindings) (let ...))
+|  5: (memq sym bindings)
+|  5: [memq define (debug)]
+|  5: =>#f
+|  3: [#<procedure #f (a sym definep)> #<autoload # b7c93870> let #f]
+|  3: [#<procedure #f (a sym definep)> #<autoload # b7c93870> let #f]
+|  4: (and (memq sym bindings) (let ...))
+|  5: (memq sym bindings)
+|  5: [memq let (debug)]
+|  5: =>#f
+|  3: [#<procedure #f (a sym definep)> #<autoload # b7c93870> let #f]
+|  3: [#<procedure #f (a sym definep)> #<autoload # b7c93870> let #f]
+|  4: (and (memq sym bindings) (let ...))
+|  5: (memq sym bindings)
+|  5: [memq let (debug)]
+|  5: =>#f
+|  3: [#<procedure #f (a sym definep)> #<autoload # b7c93870> let #f]
+|  3: [#<procedure #f (a sym definep)> #<autoload # b7c93870> let #f]
+|  4: (and (memq sym bindings) (let ...))
+|  5: (memq sym bindings)
+|  5: [memq let (debug)]
+|  5: =>#f
+|  2: (letrec ((yy 23)) (let ((x 1)) (quote this-is-a-matric)))
+|  3: [#<procedure #f (a sym definep)> #<autoload # b7c93870> let #f]
+|  3: [#<procedure #f (a sym definep)> #<autoload # b7c93870> let #f]
+|  4: (and (memq sym bindings) (let ...))
+|  5: (memq sym bindings)
+|  5: [memq let (debug)]
+|  5: =>#f
+|  3: [#<procedure #f (a sym definep)> #<autoload # b7c93870> let #f]
+|  3: [#<procedure #f (a sym definep)> #<autoload # b7c93870> let #f]
+|  4: (and (memq sym bindings) (let ...))
+|  5: (memq sym bindings)
+|  5: [memq let (debug)]
+|  5: =>#f
+|  3: [#<procedure #f (a sym definep)> #<autoload # b7c93870> let #f]
+|  3: [#<procedure #f (a sym definep)> #<autoload # b7c93870> let #f]
+|  4: (and (memq sym bindings) (let ...))
+|  5: (memq sym bindings)
+|  5: [memq let (debug)]
+|  5: =>#f
+|  2: (let ((x 1)) (quote this-is-a-matric))
+|  3: [#<procedure #f (a sym definep)> #<autoload # b7c93870> let #f]
+|  3: [#<procedure #f (a sym definep)> #<autoload # b7c93870> let #f]
+|  4: (and (memq sym bindings) (let ...))
+|  5: (memq sym bindings)
+|  5: [memq let (debug)]
+|  5: =>#f
+|  2: [let (let # #) (# # #)]
+|  2: [let (let # #) (# # #)]
+|  2: =>(#@@let* (x 1) #@@let (quote this-is-a-matric))
+this-is-a-matric
+guile> (do-main 4)
+|  2: [mkmatrix]
+|  2: (letrec ((yy 23)) (let* ((x 1)) (quote this-is-a-matric)))
+|  2: (let* ((x 1)) (quote this-is-a-matric))
+|  2: (quote this-is-a-matric)
+|  2: =>this-is-a-matric
+this-is-a-matric
+guile> 
+@end lisp
+
+This example shows the default configuration for how each line of trace
+output is formatted, which is:
+
+@itemize
+@item
+the character @code{|}, a visual clue that the line is a line of trace
+output, followed by
+
+@item
+a number indicating the real evaluator stack depth (where ``real'' means
+not counting tail-calls), followed by
+
+@item
+a summary of the expression being evaluated (@code{(@dots{})}), the
+procedure being called (@code{[@dots{}]}), or the value being returned
+from an evaluation or procedure call (@code{=>@dots{}}).
+@end itemize
+
+@noindent
+You can customize @code{(ice-9 debugging trace)} to show different
+information in each trace line using the @code{set-trace-layout}
+procedure.  The next example shows how to get the source location in
+each trace line instead of the stack depth.
+
+@lisp
+guile> (set-trace-layout "|~16@@a: ~a\n" trace/source trace/info)
+guile> (do-main 4)
+|  matrix.scm:7:2: [mkmatrix]
+|                : (letrec ((yy 23)) (let* ((x 1)) (quote this-is-a-matric)))
+|  matrix.scm:3:2: (let* ((x 1)) (quote this-is-a-matric))
+|  matrix.scm:4:4: (quote this-is-a-matric)
+|  matrix.scm:4:4: =>this-is-a-matric
+this-is-a-matric
+guile> 
+@end lisp
+
+(For anyone wondering why the first @code{(do-main 4)} call above
+generates lots more trace lines than the subsequent calls: these
+examples also demonstrate how the Guile evaluator ``memoizes'' code.
+When Guile evaluates a source code expression for the first time, it
+changes some parts of the expression so that they will be quicker to
+evaluate when that expression is evaluated again; this is called
+memoization.  The trace output from the first @code{(do-main 4)} call
+shows memoization steps, such as an internal define being transformed to
+a letrec.)
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

@@ -1,0 +1,271 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Autoconf Support
+@chapter Autoconf Support
+
+When Guile is installed, a pkg-config description file and a set of
+Autoconf macros is installed.  This chapter documents pkg-config and
+Autoconf support, as well as the high-level guile-tool Autofrisk.
+@xref{Top,The GNU Autoconf Manual,,autoconf}, for more info.
+
+@menu
+* Autoconf Background::         Why use autoconf?
+* Autoconf Macros::             The GUILE_* macros.
+* Using Autoconf Macros::       How to use them, plus examples.
+* Autofrisk::                   AUTOFRISK_CHECKS and AUTOFRISK_SUMMARY.
+* Using Autofrisk::             Example modules.af files.
+@end menu
+
+
+@node Autoconf Background
+@section Autoconf Background
+
+As explained elsewhere (@pxref{Top,The GNU Autoconf Manual,,autoconf}), any
+package needs configuration at build-time.  If your package uses Guile (or
+uses a package that in turn uses Guile), you probably need to know what
+specific Guile features are available and details about them.
+
+The way to do this is to write feature tests and arrange for their execution
+by the @file{configure} script, typically by adding the tests to
+@file{configure.ac}, and running @code{autoconf} to create @file{configure}.
+Users of your package then run @file{configure} in the normal way.
+
+Macros are a way to make common feature tests easy to express.  Autoconf
+provides a wide range of macros (@pxref{Existing Tests,,,autoconf}), and
+Guile installation provides Guile-specific tests in the areas of:
+program detection, compilation flags reporting, and Scheme module
+checks.
+
+
+@node Autoconf Macros
+@section Autoconf Macros
+
+@cindex pkg-config
+@cindex autoconf
+
+GNU Guile provides a @dfn{pkg-config} description file, installed as
+@file{@var{prefix}/lib/pkgconfig/guile-1.8.pc}, which contains all the
+information necessary to compile and link C applications that use Guile.
+The @code{pkg-config} program is able to read this file and provide this
+information to application programmers; it can be obtained at
+@url{http://pkg-config.freedesktop.org/}.
+
+The following command lines give respectively the C compilation and link
+flags needed to build Guile-using programs:
+
+@example
+pkg-config guile-1.8 --cflags
+pkg-config guile-1.8 --libs
+@end example
+
+To ease use of pkg-config with Autoconf, pkg-config comes with a
+convenient Autoconf macro.  The following example looks for Guile and
+sets the @code{GUILE_CFLAGS} and @code{GUILE_LIBS} variables
+accordingly, or prints an error and exits if Guile was not found:
+
+@findex PKG_CHECK_MODULES
+
+@example
+PKG_CHECK_MODULES([GUILE], [guile-1.8])
+@end example
+
+Guile comes with additional Autoconf macros providing more information,
+installed as @file{@var{prefix}/share/aclocal/guile.m4}.  Their names
+all begin with @code{GUILE_}.
+
+@c see Makefile.am
+@include autoconf-macros.texi
+
+
+@node Using Autoconf Macros
+@section Using Autoconf Macros
+
+Using the autoconf macros is straightforward: Add the macro "calls" (actually
+instantiations) to @file{configure.ac}, run @code{aclocal}, and finally,
+run @code{autoconf}.  If your system doesn't have guile.m4 installed, place
+the desired macro definitions (@code{AC_DEFUN} forms) in @file{acinclude.m4},
+and @code{aclocal} will do the right thing.
+
+Some of the macros can be used inside normal shell constructs: @code{if foo ;
+then GUILE_BAZ ; fi}, but this is not guaranteed.  It's probably a good idea
+to instantiate macros at top-level.
+
+We now include two examples, one simple and one complicated.
+
+The first example is for a package that uses libguile, and thus needs to know
+how to compile and link against it.  So we use @code{GUILE_FLAGS} to set the
+vars @code{GUILE_CFLAGS} and @code{GUILE_LDFLAGS}, which are automatically
+substituted in the Makefile.
+
+@example
+In configure.ac:
+
+  GUILE_FLAGS
+
+In Makefile.in:
+
+  GUILE_CFLAGS  = @@GUILE_CFLAGS@@
+  GUILE_LDFLAGS = @@GUILE_LDFLAGS@@
+
+  myprog.o: myprog.c
+          $(CC) -o $@ $(GUILE_CFLAGS) $<
+  myprog: myprog.o
+          $(CC) -o $@ $< $(GUILE_LDFLAGS)
+@end example
+
+The second example is for a package of Guile Scheme modules that uses an
+external program and other Guile Scheme modules (some might call this a "pure
+scheme" package).  So we use the @code{GUILE_SITE_DIR} macro, a regular
+@code{AC_PATH_PROG} macro, and the @code{GUILE_MODULE_AVAILABLE} macro.
+
+@example
+In configure.ac:
+
+  GUILE_SITE_DIR
+
+  probably_wont_work=""
+
+  # pgtype pgtable
+  GUILE_MODULE_AVAILABLE(have_guile_pg, (database postgres))
+  test $have_guile_pg = no &&
+      probably_wont_work="(my pgtype) (my pgtable) $probably_wont_work"
+
+  # gpgutils
+  AC_PATH_PROG(GNUPG,gpg)
+  test x"$GNUPG" = x &&
+      probably_wont_work="(my gpgutils) $probably_wont_work"
+
+  if test ! "$probably_wont_work" = "" ; then
+      p="         ***"
+      echo
+      echo "$p"
+      echo "$p NOTE:"
+      echo "$p The following modules probably won't work:"
+      echo "$p   $probably_wont_work"
+      echo "$p They can be installed anyway, and will work if their"
+      echo "$p dependencies are installed later.  Please see README."
+      echo "$p"
+      echo
+  fi
+
+In Makefile.in:
+
+  instdir = @@GUILE_SITE@@/my
+
+  install:
+        $(INSTALL) my/*.scm $(instdir)
+@end example
+
+
+@node Autofrisk
+@section Autofrisk
+
+The @dfn{guile-tools autofrisk} command looks for the file @file{modules.af}
+in the current directory and writes out @file{modules.af.m4} containing
+autoconf definitions for @code{AUTOFRISK_CHECKS} and @code{AUTOFRISK_SUMMARY}.
+@xref{Autoconf Background}, and @xref{Using Autoconf Macros}, for more info.
+
+The modules.af file consists of a series of configuration forms (Scheme
+lists), which have one of the following formats:
+
+@example
+  (files-glob PATTERN ...)                      ;; required
+  (non-critical-external MODULE ...)            ;; optional
+  (non-critical-internal MODULE ...)            ;; optional
+  (programs (MODULE PROG ...) ...)              ;; optional
+  (pww-varname VARNAME)                         ;; optional
+@end example
+
+@var{pattern} is a string that may contain "*" and "?" characters to be
+expanded into filenames.  @var{module} is a list of symbols naming a module,
+such as `(srfi srfi-1)'.  @var{varname} is a shell-safe name to use instead of
+@code{probably_wont_work}, the default.  This var is passed to `AC_SUBST'.
+@var{prog} is a string that names a program, such as "gpg".
+
+Autofrisk expands the @code{files-glob} pattern(s) into a list of files, scans
+each file's module definition form(s), and constructs a module dependency
+graph wherein modules defined by @code{define-module} are considered
+@dfn{internal} and the remaining, @dfn{external}.  For each external module
+that has an internal dependency, Autofrisk emits a
+@code{GUILE_MODULE_REQUIRED} check (@pxref{Autoconf Macros}), which altogether
+form the body of @code{AUTOFRISK_CHECKS}.
+
+@code{GUILE_MODULE_REQUIRED} causes the @file{configure} script to exit with
+an error message if the specified module is not available; it enforces a
+strong dependency.  You can temper dependency strength by using the
+@code{non-critical-external} and @code{non-critical-internal} configuration
+forms in modules.af.  For graph edges that touch such non-critical modules,
+Autofrisk uses @code{GUILE_MODULE_AVAILABLE}, and arranges for
+@code{AUTOFRISK_SUMMARY} to display a warning if they are not found.
+
+The shell code resulting from the expansion of @code{AUTOFRISK_CHECKS} and
+@code{AUTOFRISK_SUMMARY} uses the shell variable @code{probably_wont_work} to
+collect the names of unfound non-critical modules.  If this bothers you, use
+configuration form @code{(pww-name foo)} in modules.af.
+
+Although Autofrisk does not detect when a module uses a program (for example,
+in a @code{system} call), it can generate @code{AC_PATH_PROG} forms anyway if
+you use the @code{programs} configuration form in modules.af.  These are
+collected into @code{AUTOCONF_CHECKS}.
+
+@xref{Using Autofrisk}, for some modules.af examples.
+
+
+@node Using Autofrisk
+@section Using Autofrisk
+
+Using Autofrisk (@pxref{Autofrisk}) involves writing @file{modules.af} and
+adding two macro calls to @file{configure.in}.  Here is an example of the
+latter:
+
+@example
+AUTOFRISK_CHECKS
+AUTOFRISK_SUMMARY
+@end example
+
+Here is an adaptation of the second "GUILE_*" example (@pxref{Using Autoconf
+Macros}) that does basically the same thing.
+
+@example
+(files-glob "my/*.scm")
+(non-critical-external (database postgres))
+(programs ((my gpgutils) "gpg"))        ;; (my gpgutils) uses "gpg"
+@end example
+
+If the SRFI modules (@pxref{SRFI Support}) were a separate package, we could
+use @code{guile-tools frisk} to find out its dependencies:
+
+@example
+$ guile-tools frisk srfi/*.scm
+13 files, 18 modules (13 internal, 5 external), 9 edges
+
+x (ice-9 and-let-star)
+			 regular	(srfi srfi-2)
+x (ice-9 syncase)
+			 regular	(srfi srfi-11)
+x (ice-9 rdelim)
+			 regular	(srfi srfi-10)
+x (ice-9 receive)
+			 regular	(srfi srfi-8)
+			 regular	(srfi srfi-1)
+x (ice-9 session)
+			 regular	(srfi srfi-1)
+@end example
+
+Then, we could use the following modules.af to help configure it:
+
+@example
+(files-glob "srfi/*.scm")
+(non-critical-external          ;; relatively recent
+  (ice-9 rdelim)
+  (ice-9 receive)
+  (ice-9 and-let-star))
+(pww-varname not_fully_supported)
+@end example
+
+@c autoconf.texi ends here

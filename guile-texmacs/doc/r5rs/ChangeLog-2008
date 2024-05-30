@@ -1,0 +1,17 @@
+2004-11-05  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* r5rs.texi: Use @ifnottex instead of @ifinfo around the "Top"
+	node declaration so that html can be generated.  Use only lower
+	case inside @sc.  Move editors outside of author table, which
+	looks better in html.
+
+2001-08-27  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* Makefile.am (TEXINFO_TEX): Added; avoids shipping multiple copies of
+	texinfo.tex in a single distribution.
+
+2001-08-27  Neil Jerram  <neil@ossau.uklinux.net>
+
+	The change log for files in this directory continues backwards
+	from 2001-08-27 in ../ChangeLog, as all the Guile documentation
+	prior to this date was contained in a single directory.

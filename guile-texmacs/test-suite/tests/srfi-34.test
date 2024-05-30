@@ -1,0 +1,184 @@
+;;;; srfi-34.test --- test suite for SRFI-34 -*- scheme -*-
+;;;;
+;;;; 	Copyright (C) 2003, 2004, 2006, 2008 Free Software Foundation, Inc.
+;;;;
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;;
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;;
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-srfi-34)
+  :duplicates (last)  ;; avoid warning about srfi-34 replacing `raise'
+  :use-module (test-suite lib)
+  :use-module (srfi srfi-13)
+  :use-module (srfi srfi-34))
+
+(define (expr-prints-and-evals-to? expr printout result)
+  (let ((actual-result *unspecified*))
+    (let ((actual-printout
+	   (string-trim-both
+	    (with-output-to-string
+	      (lambda ()
+		(set! actual-result
+		      (eval expr (current-module))))))))
+      ;;(write (list actual-printout printout actual-result result))
+      ;;(newline)
+      (and (equal? actual-printout printout)
+	   (equal? actual-result result)))))
+
+(with-test-prefix "SRFI 34"
+
+  (pass-if "cond-expand"
+    (cond-expand (srfi-34 #t)
+		 (else    #f)))
+
+  (pass-if "example 1"
+	   (expr-prints-and-evals-to?
+	    '(call-with-current-continuation
+	      (lambda (k)
+		(with-exception-handler (lambda (x)
+					  (display "condition: ")
+					  (write x)
+					  (newline)
+					  (k 'exception))
+					(lambda ()
+					  (+ 1 (raise 'an-error))))))
+	    "condition: an-error"
+	    'exception))
+
+  ;; SRFI 34 specifies that the behaviour of the call/cc expression
+  ;; after printing "something went wrong" is unspecified, which is
+  ;; tricky to test for in a positive way ...  Guile behaviour at time
+  ;; of writing is to signal a "lazy-catch handler did return" error,
+  ;; which feels about right to me.
+  (pass-if "example 2"
+	   (expr-prints-and-evals-to?
+	    '(false-if-exception 
+	      (call-with-current-continuation
+	       (lambda (k)
+		 (with-exception-handler (lambda (x)
+					   (display "something went wrong")
+					   (newline)
+					   'dont-care)
+					 (lambda ()
+					   (+ 1 (raise 'an-error)))))))
+	    "something went wrong"
+	    #f))
+	   
+  (pass-if "example 3"
+	   (expr-prints-and-evals-to?
+	    '(guard (condition
+		     (else
+		      (display "condition: ")
+		      (write condition)
+		      (newline)
+		      'exception))
+		    (+ 1 (raise 'an-error)))
+	    "condition: an-error"
+	    'exception))
+
+  (pass-if "example 4"
+	   (expr-prints-and-evals-to?
+	    '(guard (condition
+		     (else
+		      (display "something went wrong")
+		      (newline)
+		      'dont-care))
+		    (+ 1 (raise 'an-error)))
+	    "something went wrong"
+	    'dont-care))
+
+  (pass-if "example 5"
+	   (expr-prints-and-evals-to?
+	    '(call-with-current-continuation
+	      (lambda (k)
+		(with-exception-handler (lambda (x)
+					  (display "reraised ") (write x) (newline)
+					  (k 'zero))
+					(lambda ()
+					  (guard (condition
+						  ((positive? condition) 'positive)
+						  ((negative? condition) 'negative))
+						 (raise 1))))))
+	    ""
+	    'positive))
+
+  (pass-if "example 6"
+	   (expr-prints-and-evals-to?
+	    '(call-with-current-continuation
+	      (lambda (k)
+		(with-exception-handler (lambda (x)
+					  (display "reraised ") (write x) (newline)
+					  (k 'zero))
+					(lambda ()
+					  (guard (condition
+						  ((positive? condition) 'positive)
+						  ((negative? condition) 'negative))
+						 (raise -1))))))
+	    ""
+	    'negative))
+
+  (pass-if "example 7"
+	   (expr-prints-and-evals-to?
+	    '(call-with-current-continuation
+	      (lambda (k)
+		(with-exception-handler (lambda (x)
+					  (display "reraised ") (write x) (newline)
+					  (k 'zero))
+					(lambda ()
+					  (guard (condition
+						  ((positive? condition) 'positive)
+						  ((negative? condition) 'negative))
+						 (raise 0))))))
+	    "reraised 0"
+	    'zero))
+
+  (pass-if "example 8"
+	   (expr-prints-and-evals-to?
+	    '(guard (condition
+		     ((assq 'a condition) => cdr)
+		     ((assq 'b condition)))
+		    (raise (list (cons 'a 42))))
+	    ""
+	    42))
+
+  (pass-if "example 9"
+	   (expr-prints-and-evals-to?
+	    '(guard (condition
+		     ((assq 'a condition) => cdr)
+		     ((assq 'b condition)))
+		    (raise (list (cons 'b 23))))
+	    ""
+	    '(b . 23)))
+
+  (pass-if "`with-exception-handler' invokes HANDLER in THUNK's dynamic env."
+           ;; In Guile 1.8.5 and earlier, unwinders would be called before
+           ;; the exception handler, which reads "The handler is called in
+           ;; the dynamic environment of the call to `raise'".
+           (call/cc
+            (lambda (return)
+              (let ((inside? #f))
+                (with-exception-handler
+                 (lambda (c)
+                   ;; This handler must be called before the unwinder below.
+                   (return inside?))
+                 (lambda ()
+                   (dynamic-wind
+                     (lambda ()
+                       (set! inside? #t))
+                     (lambda ()
+                       (raise 'some-exception))
+                     (lambda ()
+                       ;; This unwinder should not be executed before the
+                       ;; handler is called.
+                       (set! inside? #f))))))))))

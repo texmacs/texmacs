@@ -1,0 +1,77 @@
+							       -*- outline -*-
+
+* Overview
+
+This directory includes an example program for extending Guile with a
+new (and even useful) data type, putting it into a shared library, so it 
+can be called from an unmodified guile interpreter. Further, the shared 
+library defines a new guile module.
+
+
+* Build Instructions
+
+To build the example, simply type
+
+  make libbox-module
+
+in this directory.
+
+
+* The Box Data Type
+
+A box is simply an object for storing one other object in.  It can be
+used for passing parameters by reference, for example.  You simply
+store an object into a box, pass it to another procedure which can
+store a new object into it and thus return a value via the box.
+
+
+** Usage
+
+Box objects are created with `make-box', set with `box-set!' and
+examined with `box-ref'.  Note that these procedures are placed in a
+module called (box-module) and can thus only be accessed after using
+this module.  See the following example session for usage details.
+
+
+** The Module (box-module)
+
+Extend your LD_LIBRARY_PATH variable (or equivalent) to include . and
+.libs and make sure that your current working directory is the one
+this file is contained in.
+
+$ guile
+guile> (use-modules (box-module))
+guile> (define b (make-box))
+guile> b
+#<box #f>
+guile> (box-set! b '(list of values))
+guile> b
+#<box (list of values)>
+guile> (box-ref b)
+(list of values)
+guile> (quit)
+$
+
+
+** The Module (box-mixed)
+
+The following example uses the module (box-mixed), also included in
+this directory.  It uses the shared library libbox-module like the
+module (box-module) above, but does not export the procedures from
+that module.  It only implements some procedures for dealing with box
+objects.
+
+$ guile
+guile> (use-modules (box-mixed))
+guile> (define bl  (make-box-list 1 2 3)) 
+guile> bl
+(#<box 1> #<box 2> #<box 3>)
+guile> (box-map 1+ bl)
+(#<box 2> #<box 3> #<box 4>)
+guile> (quit)
+$
+
+If you like this example so much that you want to have it available
+for normal usage, install the dynamic libraries in the .libs directory
+to the directory $(prefix)/lib and the scheme file `box-module.scm' in
+a directory in your GUILE_LOAD_PATH.

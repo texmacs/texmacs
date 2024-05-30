@@ -1,0 +1,481 @@
+;;;; goops.test --- test suite for GOOPS                      -*- scheme -*-
+;;;;
+;;;; Copyright (C) 2001,2003,2004, 2006, 2008, 2009 Free Software Foundation, Inc.
+;;;; 
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;; 
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-goops)
+  #:use-module (test-suite lib)
+  #:autoload   (srfi srfi-1)    (unfold))
+
+(pass-if "GOOPS loads"
+	 (false-if-exception
+	  (begin (resolve-module '(oop goops))
+		 #t)))
+
+(use-modules (oop goops))
+
+;;; more tests here...
+
+(with-test-prefix "basic classes"
+
+  (with-test-prefix "<top>"
+
+    (pass-if "instance?"
+      (instance? <top>))
+
+    (pass-if "class-of"
+      (eq? (class-of <top>) <class>))
+
+    (pass-if "is a class?"
+      (is-a? <top> <class>))
+
+    (pass-if "class-name"
+      (eq? (class-name <top>) '<top>))
+
+    (pass-if "direct superclasses"
+      (equal? (class-direct-supers <top>) '()))
+
+    (pass-if "superclasses"
+      (equal? (class-precedence-list <top>) (list <top>)))
+
+    (pass-if "direct slots"
+      (equal? (class-direct-slots <top>) '()))
+
+    (pass-if "slots"
+      (equal? (class-slots <top>) '())))
+
+  (with-test-prefix "<object>"
+
+    (pass-if "instance?"
+      (instance? <object>))
+
+    (pass-if "class-of"
+      (eq? (class-of <object>) <class>))
+
+    (pass-if "is a class?"
+      (is-a? <object> <class>))
+
+    (pass-if "class-name"
+      (eq? (class-name <object>) '<object>))
+
+    (pass-if "direct superclasses"
+      (equal? (class-direct-supers <object>) (list <top>)))
+
+    (pass-if "superclasses"
+      (equal? (class-precedence-list <object>) (list <object> <top>)))
+
+    (pass-if "direct slots"
+      (equal? (class-direct-slots <object>) '()))
+
+    (pass-if "slots"
+      (equal? (class-slots <object>) '())))
+
+  (with-test-prefix "<class>"
+
+    (pass-if "instance?"
+      (instance? <class>))
+
+    (pass-if "class-of"
+      (eq? (class-of <class>) <class>))
+
+    (pass-if "is a class?"
+      (is-a? <class> <class>))
+
+    (pass-if "class-name"
+      (eq? (class-name <class>) '<class>))
+
+    (pass-if "direct superclass"
+      (equal? (class-direct-supers <class>) (list <object>))))
+
+  (with-test-prefix "class-precedence-list"
+    (for-each (lambda (class)
+		(run-test (if (slot-bound? class 'name)
+			      (class-name class)
+			      (with-output-to-string
+				(lambda ()
+				  (display class))))
+			  #t
+			  (lambda ()
+			    (catch #t
+				   (lambda ()
+				     (equal? (class-precedence-list class)
+					     (compute-cpl class)))
+				   (lambda args #t)))))
+	      (let ((table (make-hash-table)))
+		(let rec ((class <top>))
+		  (hash-create-handle! table class #f)
+		  (for-each rec (class-direct-subclasses class)))
+		(hash-fold (lambda (class ignore classes)
+			     (cons class classes))
+			   '()
+			   table))))
+  )
+
+(with-test-prefix "classes for built-in types"
+
+  (pass-if "subr"
+    (eq? (class-of fluid-ref) <procedure>))
+
+  (pass-if "gsubr"
+    (eq? (class-of hashq-ref) <procedure>))
+
+  (pass-if "car"
+    (eq? (class-of car) <procedure>))
+
+  (pass-if "string"
+    (eq? (class-of "foo") <string>))
+
+  (pass-if "port"
+    (is-a? (%make-void-port "w") <port>))
+
+  (pass-if "struct vtable"
+    ;; Previously, `class-of' would fail for nameless structs, i.e., structs
+    ;; for which `struct-vtable-name' is #f.
+    (is-a? (class-of (make-vtable-vtable "prprpr" 0)) <class>)))
+
+
+(with-test-prefix "defining classes"
+
+  (with-test-prefix "define-class"
+
+    (pass-if "creating a new binding"
+      (if (eval '(defined? '<foo-0>) (current-module))
+          (throw 'unresolved))
+      (eval '(define-class <foo-0> ()) (current-module))
+      (eval '(is-a? <foo-0> <class>) (current-module)))
+
+    (pass-if "overwriting a binding to a non-class"
+      (eval '(define <foo> #f) (current-module))
+      (eval '(define-class <foo> ()) (current-module))
+      (eval '(is-a? <foo> <class>) (current-module)))
+
+    (expect-fail "bad init-thunk"
+		 (catch #t
+			(lambda ()
+			  (eval '(define-class <foo> ()
+				   (x #:init-thunk (lambda (x) 1)))
+				(current-module))
+			  #t)
+			(lambda args
+			  #f)))
+
+    (pass-if "interaction with `struct-ref'"
+       (eval '(define-class <class-struct> ()
+                (foo #:init-keyword #:foo)
+                (bar #:init-keyword #:bar))
+             (current-module))
+       (eval '(let ((x (make <class-struct>
+                         #:foo 'hello
+                         #:bar 'world)))
+                (and (struct? x)
+                     (eq? (struct-ref x 0) 'hello)
+                     (eq? (struct-ref x 1) 'world)))
+             (current-module)))
+
+     (pass-if "interaction with `struct-set!'"
+       (eval '(define-class <class-struct-2> ()
+                (foo) (bar))
+             (current-module))
+       (eval '(let ((x (make <class-struct-2>)))
+                (struct-set! x 0 'hello)
+                (struct-set! x 1 'world)
+                (and (struct? x)
+                     (eq? (struct-ref x 0) 'hello)
+                     (eq? (struct-ref x 1) 'world)))
+             (current-module)))))
+
+(with-test-prefix "defining generics"
+
+  (with-test-prefix "define-generic"
+
+    (pass-if "creating a new top-level binding"
+      (if (eval '(defined? 'foo-0) (current-module))
+          (throw 'unresolved))
+      (eval '(define-generic foo-0) (current-module))
+      (eval '(and (is-a? foo-0 <generic>)
+		  (null? (generic-function-methods foo-0)))
+	    (current-module)))
+
+    (pass-if "overwriting a top-level binding to a non-generic"
+      (eval '(define (foo) #f) (current-module))
+      (eval '(define-generic foo) (current-module))
+      (eval '(and (is-a? foo <generic>)
+		  (= 1 (length (generic-function-methods foo))))
+	    (current-module)))
+
+    (pass-if "overwriting a top-level binding to a generic"
+      (eval '(define (foo) #f) (current-module))
+      (eval '(define-generic foo) (current-module))
+      (eval '(define-generic foo) (current-module))
+      (eval '(and (is-a? foo <generic>)
+		  (null? (generic-function-methods foo)))
+	    (current-module)))))
+
+(with-test-prefix "defining methods"
+
+  (pass-if "define-method"
+    (let ((m (current-module)))
+      (eval '(define-method (my-plus (s1 <string>) (s2 <string>))
+               (string-append s1 s2))
+            m)
+      (eval '(define-method (my-plus (i1 <integer>) (i2 <integer>))
+               (+ i1 i2))
+            m)
+      (eval '(and (is-a? my-plus <generic>)
+                  (= (length (generic-function-methods my-plus))
+                     2))
+            m)))
+
+  (pass-if "method-more-specific?"
+    (eval '(let* ((m+        (generic-function-methods my-plus))
+                  (m1        (car m+))
+                  (m2        (cadr m+))
+                  (arg-types (list <string> <string>)))
+             (if (memq <string> (method-specializers m1))
+                 (method-more-specific? m1 m2 arg-types)
+                 (method-more-specific? m2 m1 arg-types)))
+          (current-module)))
+
+  (pass-if-exception "method-more-specific? (failure)"
+                     exception:wrong-type-arg
+    (eval '(let* ((m+ (generic-function-methods my-plus))
+                  (m1 (car m+))
+                  (m2 (cadr m+)))
+             (method-more-specific? m1 m2 '()))
+          (current-module))))
+
+(with-test-prefix "defining accessors"
+
+  (with-test-prefix "define-accessor"
+
+    (pass-if "creating a new top-level binding"
+      (if (eval '(defined? 'foo-1) (current-module))
+          (throw 'unresolved))
+      (eval '(define-accessor foo-1) (current-module))
+      (eval '(and (is-a? foo-1 <generic-with-setter>)
+		  (null? (generic-function-methods foo-1)))
+	    (current-module)))
+
+    (pass-if "overwriting a top-level binding to a non-accessor"
+      (eval '(define (foo) #f) (current-module))
+      (eval '(define-accessor foo) (current-module))
+      (eval '(and (is-a? foo <generic-with-setter>)
+		  (= 1 (length (generic-function-methods foo))))
+	    (current-module)))
+
+    (pass-if "overwriting a top-level binding to an accessor"
+      (eval '(define (foo) #f) (current-module))
+      (eval '(define-accessor foo) (current-module))
+      (eval '(define-accessor foo) (current-module))
+      (eval '(and (is-a? foo <generic-with-setter>)
+		  (null? (generic-function-methods foo)))
+	    (current-module)))))
+
+(with-test-prefix "object update"
+  (pass-if "defining class"
+    (eval '(define-class <foo> ()
+	     (x #:accessor x #:init-value 123)
+	     (z #:accessor z #:init-value 789))
+	  (current-module))
+    (eval '(is-a? <foo> <class>) (current-module)))
+  (pass-if "making instance"
+    (eval '(define foo (make <foo>)) (current-module))
+    (eval '(and (is-a? foo <foo>) (= (x foo) 123)) (current-module)))
+  (pass-if "redefining class"
+    (eval '(define-class <foo> ()
+	     (x #:accessor x #:init-value 123)
+	     (y #:accessor y #:init-value 456)
+	     (z #:accessor z #:init-value 789))
+	  (current-module))
+    (eval '(and (= (y foo) 456) (= (z foo) 789)) (current-module)))
+
+  (pass-if "changing class"
+    (let* ((c1 (class () (the-slot #:init-keyword #:value)))
+           (c2 (class () (the-slot #:init-keyword #:value)
+                         (the-other-slot #:init-value 888)))
+           (o1 (make c1 #:value 777)))
+      (and (is-a? o1 c1)
+           (not (is-a? o1 c2))
+           (equal? (slot-ref o1 'the-slot) 777)
+           (let ((o2 (change-class o1 c2)))
+             (and (eq? o1 o2)
+                  (is-a? o2 c2)
+                  (not (is-a? o2 c1))
+                  (equal? (slot-ref o2 'the-slot) 777))))))
+
+  (pass-if "`hell' in `goops.c' grows as expected"
+    ;; This snippet yielded a segfault prior to the 2008-08-19 `goops.c'
+    ;; fix (i.e., Guile 1.8.5 and earlier).  The root of the problem was
+    ;; that `go_to_hell ()' would not reallocate enough room for the `hell'
+    ;; array, leading to out-of-bounds accesses.
+
+    (let* ((parent-class (class ()
+                           #:name '<class-that-will-be-redefined>))
+           (classes
+            (unfold (lambda (i) (>= i 20))
+                    (lambda (i)
+                      (make-class (list parent-class)
+                                  '((the-slot #:init-value #:value)
+                                    (the-other-slot))
+                                  #:name (string->symbol
+                                          (string-append "<foo-to-redefine-"
+                                                         (number->string i)
+                                                         ">"))))
+                    (lambda (i)
+                      (+ 1 i))
+                    0))
+           (objects
+            (map (lambda (class)
+                   (make class #:value 777))
+                 classes)))
+
+      (define-method (change-class (foo parent-class)
+                                   (new <class>))
+        ;; Called by `scm_change_object_class ()', via `purgatory ()'.
+        (if (null? classes)
+            (next-method)
+            (let ((class  (car classes))
+                  (object (car objects)))
+              (set! classes (cdr classes))
+              (set! objects (cdr objects))
+
+              ;; Redefine the class so that its instances are eventually
+              ;; passed to `scm_change_object_class ()'.  This leads to
+              ;; nested `scm_change_object_class ()' calls, which increases
+              ;; the size of HELL and increments N_HELL.
+              (class-redefinition class
+                                  (make-class '() (class-slots class)
+                                              #:name (class-name class)))
+
+              ;; Use `slot-ref' to trigger the `scm_change_object_class ()'
+              ;; and `go_to_hell ()' calls.
+              (slot-ref object 'the-slot)
+
+              (next-method))))
+
+
+      ;; Initiate the whole `change-class' chain.
+      (let* ((class  (car classes))
+             (object (change-class (car objects) class)))
+        (is-a? object class)))))
+
+(with-test-prefix "object comparison"
+  (pass-if "default method"
+	   (eval '(begin
+		    (define-class <c> ()
+		      (x #:accessor x #:init-keyword #:x)
+		      (y #:accessor y #:init-keyword #:y))
+		    (define o1 (make <c> #:x '(1) #:y '(2)))
+		    (define o2 (make <c> #:x '(1) #:y '(3)))
+		    (define o3 (make <c> #:x '(4) #:y '(3)))
+		    (define o4 (make <c> #:x '(4) #:y '(3)))
+		    (not (eqv? o1 o2)))
+		 (current-module)))
+  (pass-if "eqv?"
+	   (eval '(begin
+		    (define-method (eqv? (a <c>) (b <c>))
+		      (equal? (x a) (x b)))
+		    (eqv? o1 o2))
+		 (current-module)))
+  (pass-if "not eqv?"
+	   (eval '(not (eqv? o2 o3))
+		 (current-module)))
+  (pass-if "transfer eqv? => equal?"
+	   (eval '(equal? o1 o2)
+		 (current-module)))
+  (pass-if "equal?"
+	   (eval '(begin
+		    (define-method (equal? (a <c>) (b <c>))
+		      (equal? (y a) (y b)))
+		    (equal? o2 o3))
+		 (current-module)))
+  (pass-if "not equal?"
+	   (eval '(not (equal? o1 o2))
+		 (current-module)))
+  (pass-if "="
+	   (eval '(begin
+		    (define-method (= (a <c>) (b <c>))
+		      (and (equal? (x a) (x b))
+			   (equal? (y a) (y b))))
+		    (= o3 o4))
+		 (current-module)))
+  (pass-if "not ="
+	   (eval '(not (= o1 o2))
+		 (current-module)))
+  )
+
+(use-modules (oop goops active-slot))
+
+(with-test-prefix "active-slot"
+  (pass-if "defining class with active slot"
+    (eval '(begin
+	     (define z '())
+	     (define-class <bar> ()
+	       (x #:accessor x
+		  #:init-value 1
+		  #:allocation #:active
+		  #:before-slot-ref
+		  (lambda (o)
+		    (set! z (cons 'before-ref z))
+		    #t)
+		  #:after-slot-ref
+		  (lambda (o)
+		    (set! z (cons 'after-ref z)))
+		  #:before-slot-set!
+		  (lambda (o v)
+		    (set! z (cons* v 'before-set! z)))
+		  #:after-slot-set!
+		  (lambda (o v)
+		    (set! z (cons* v (x o) 'after-set! z))))
+	       #:metaclass <active-class>)
+	     (define bar (make <bar>))
+	     (x bar)
+	     (set! (x bar) 2)
+	     (equal? (reverse z)
+		     '(before-ref before-set! 1 before-ref after-ref
+		       after-set! 1 1 before-ref after-ref
+		       before-set! 2 before-ref after-ref after-set! 2 2)))
+	  (current-module))))
+
+(use-modules (oop goops composite-slot))
+
+(with-test-prefix "composite-slot"
+  (pass-if "creating instance with propagated slot"
+    (eval '(begin
+	     (define-class <a> ()
+	       (x #:accessor x #:init-keyword #:x)
+	       (y #:accessor y #:init-keyword #:y))
+	     (define-class <c> ()
+	       (o1 #:accessor o1 #:init-form (make <a> #:x 1 #:y 2))
+	       (o2 #:accessor o2 #:init-form (make <a> #:x 3 #:y 4))
+	       (x #:accessor x
+		  #:allocation #:propagated
+		  #:propagate-to '(o1 (o2 y)))
+	       #:metaclass <composite-class>)
+	     (define o (make <c>))
+	     (is-a? o <c>))
+	  (current-module)))
+  (pass-if "reading propagated slot"
+	   (eval '(= (x o) 1) (current-module)))
+  (pass-if "writing propagated slot"
+	   (eval '(begin
+		    (set! (x o) 5)
+		    (and (= (x (o1 o)) 5)
+			 (= (y (o1 o)) 2)
+			 (= (x (o2 o)) 3)
+			 (= (y (o2 o)) 5)))
+		 (current-module))))

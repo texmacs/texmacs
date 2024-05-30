@@ -1,0 +1,73 @@
+;;;; ftw.test --- exercise ice-9/ftw.scm      -*- scheme -*-
+;;;;
+;;;; Copyright 2006 Free Software Foundation, Inc.
+;;;;
+;;;; This library is free software; you can redistribute it and/or
+;;;; modify it under the terms of the GNU Lesser General Public
+;;;; License as published by the Free Software Foundation; either
+;;;; version 2.1 of the License, or (at your option) any later version.
+;;;; 
+;;;; This library is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;;;; Lesser General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU Lesser General Public
+;;;; License along with this library; if not, write to the Free Software
+;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-ice-9-ftw)
+  #:use-module (test-suite lib)
+  #:use-module (ice-9 ftw))
+
+
+;; the procedure-source checks here ensure the vector indexes we write match
+;; what ice-9/posix.scm stat:dev and stat:ino do (which in turn match
+;; libguile/filesys.c of course)
+
+(or (equal? (procedure-source stat:dev)
+	    '(lambda (f) (vector-ref f 0)))
+    (error "oops, unexpected stat:dev definition"))
+(define (stat:dev! st dev)
+  (vector-set! st 0 dev))
+
+(or (equal? (procedure-source stat:ino)
+	    '(lambda (f) (vector-ref f 1)))
+    (error "oops, unexpected stat:ino definition"))
+(define (stat:ino! st ino)
+  (vector-set! st 1 ino))
+
+
+;;
+;; visited?-proc
+;;
+
+(with-test-prefix "visited?-proc"
+
+  ;; normally internal-only
+  (let* ((visited?-proc (@@ (ice-9 ftw) visited?-proc))
+	 (visited? (visited?-proc 97))
+	 (s (stat "/")))
+
+    (define (try-visited? dev ino)
+      (stat:dev! s dev)
+      (stat:ino! s ino)
+      (visited? s))
+
+    (pass-if "0 0 - 1st" (eq? #f (try-visited? 0 0)))
+    (pass-if "0 0 - 2nd" (eq? #t (try-visited? 0 0)))
+    (pass-if "0 0 - 3rd" (eq? #t (try-visited? 0 0)))
+
+    (pass-if "0 1" (eq? #f (try-visited? 0 1)))
+    (pass-if "0 2" (eq? #f (try-visited? 0 2)))
+    (pass-if "0 3" (eq? #f (try-visited? 0 3)))
+
+    (pass-if "5 5" (eq? #f (try-visited? 5 5)))
+    (pass-if "5 7" (eq? #f (try-visited? 5 7)))
+    (pass-if "7 5" (eq? #f (try-visited? 7 5)))
+    (pass-if "7 7" (eq? #f (try-visited? 7 7)))
+
+    (pass-if "5 5 - 2nd" (eq? #t (try-visited? 5 5)))
+    (pass-if "5 7 - 2nd" (eq? #t (try-visited? 5 7)))
+    (pass-if "7 5 - 2nd" (eq? #t (try-visited? 7 5)))
+    (pass-if "7 7 - 2nd" (eq? #t (try-visited? 7 7)))))

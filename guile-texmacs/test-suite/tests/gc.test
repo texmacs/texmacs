@@ -1,0 +1,80 @@
+;;;; gc.test --- test guile's garbage collection    -*- scheme -*-
+;;;; Copyright (C) 2000, 2001, 2004, 2006, 2008 Free Software Foundation, Inc.
+;;;;
+;;;; This library is free software; you can redistribute it and/or
+;;;; modify it under the terms of the GNU Lesser General Public
+;;;; License as published by the Free Software Foundation; either
+;;;; version 2.1 of the License, or (at your option) any later version.
+;;;; 
+;;;; This library is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;;;; Lesser General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU Lesser General Public
+;;;; License along with this library; if not, write to the Free Software
+;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+(use-modules (ice-9 documentation)
+	     (test-suite lib))
+
+
+;;;
+;;; miscellaneous
+;;;
+
+
+(define (documented? object)
+  (not (not (object-documentation object))))
+
+;; In guile 1.6.4 this test bombed, due to the record in h being collected
+;; by the gc, but not removed from h, leaving "x" as a freed cell.
+;; The usual correct result here is for x to be #f, but there's always a
+;; chance gc will mark something used when it isn't, so we allow x to be a
+;; record too.
+(pass-if "weak-values versus records"
+  (let ((rec-type (make-record-type "foo" '()))
+	(h        (make-weak-value-hash-table 61)))
+    (hash-set! h "foo" ((record-constructor rec-type)))
+    (gc)
+    (let ((x (hash-ref h "foo")))
+      (or (not x)
+	  ((record-predicate rec-type) x)))))
+
+
+;;;
+;;; 
+;;;
+
+(with-test-prefix "gc"
+
+  (pass-if "after-gc-hook gets called"
+    (let* ((foo #f)
+	   (thunk (lambda () (set! foo #t))))
+      (add-hook! after-gc-hook thunk)
+      (gc)
+      (remove-hook! after-gc-hook thunk)
+      foo)))
+
+
+(with-test-prefix "gc"
+  (pass-if "Unused modules are removed"
+	   (let*
+	       ((dummy (gc))
+	        (last-count (cdr (assoc
+				  "eval-closure" (gc-live-object-stats)))))
+
+	     (for-each (lambda (x) (make-module)) (iota 1000))
+
+	     ;; XXX: This hack aims to clean up the stack to make sure we
+	     ;; don't leave a reference to one of the modules we created.  It
+	     ;; proved to be useful on SPARC:
+	     ;; http://lists.gnu.org/archive/html/guile-devel/2008-02/msg00006.html .
+             (let cleanup ((i 10))
+               (and (> i 0)
+                    (begin (cleanup (1- i)) i)))
+
+	     (gc)
+	     (gc) ;; twice: have to kill the weak vectors.
+	     (= last-count (cdr (assoc "eval-closure" (gc-live-object-stats)))))
+	   ))

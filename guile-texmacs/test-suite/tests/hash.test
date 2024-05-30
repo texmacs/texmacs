@@ -1,0 +1,288 @@
+;;;; hash.test --- test guile hashing     -*- scheme -*-
+;;;;
+;;;; Copyright (C) 2004, 2005, 2006, 2008 Free Software Foundation, Inc.
+;;;;
+;;;; This library is free software; you can redistribute it and/or
+;;;; modify it under the terms of the GNU Lesser General Public
+;;;; License as published by the Free Software Foundation; either
+;;;; version 2.1 of the License, or (at your option) any later version.
+;;;; 
+;;;; This library is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;;;; Lesser General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU Lesser General Public
+;;;; License along with this library; if not, write to the Free Software
+;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+(define-module (test-suite test-numbers)
+  #:use-module (test-suite lib)
+  #:use-module (ice-9 documentation))
+
+;;;
+;;; hash
+;;;
+
+(with-test-prefix "hash"
+  (pass-if (->bool (object-documentation hash)))
+  (pass-if-exception "hash #t -1" exception:out-of-range
+    (hash #t -1))
+  (pass-if-exception "hash #t 0" exception:out-of-range
+    (hash #t 0))
+  (pass-if (= 0 (hash #t 1)))
+  (pass-if (= 0 (hash #f 1)))
+  (pass-if (= 0 (hash noop 1))))
+
+;;;
+;;; hashv
+;;;
+
+(with-test-prefix "hashv"
+  (pass-if (->bool (object-documentation hashv)))
+  (pass-if-exception "hashv #t -1" exception:out-of-range
+    (hashv #t -1))
+  (pass-if-exception "hashv #t 0" exception:out-of-range
+    (hashv #t 0))
+  (pass-if (= 0 (hashv #t 1)))
+  (pass-if (= 0 (hashv #f 1)))
+  (pass-if (= 0 (hashv noop 1))))
+
+;;;
+;;; hashq
+;;;
+
+(with-test-prefix "hashq"
+  (pass-if (->bool (object-documentation hashq)))
+  (pass-if-exception "hashq #t -1" exception:out-of-range
+    (hashq #t -1))
+  (pass-if-exception "hashq #t 0" exception:out-of-range
+    (hashq #t 0))
+  (pass-if (= 0 (hashq #t 1)))
+  (pass-if (= 0 (hashq #f 1)))
+  (pass-if (= 0 (hashq noop 1))))
+
+;;;
+;;; make-hash-table
+;;;
+
+(with-test-prefix
+ "make-hash-table, hash-table?"
+ (pass-if-exception "make-hash-table -1" exception:out-of-range
+		    (make-hash-table -1))
+ (pass-if (hash-table? (make-hash-table 0))) ;; default
+ (pass-if (not (hash-table? 'not-a-hash-table)))
+ (pass-if (equal? "#<hash-table 0/113>" 
+		  (with-output-to-string 
+		    (lambda () (write (make-hash-table 100)))))))
+
+;;;
+;;; usual set and reference
+;;;
+
+(with-test-prefix
+ "hash-set and hash-ref"
+
+ ;; auto-resizing
+ (pass-if (let ((table (make-hash-table 1))) ;;actually makes size 31
+	    (hash-set! table 'one 1)
+	    (hash-set! table 'two #t)
+	    (hash-set! table 'three #t)
+	    (hash-set! table 'four #t)
+	    (hash-set! table 'five #t)
+	    (hash-set! table 'six #t)
+	    (hash-set! table 'seven #t)
+	    (hash-set! table 'eight #t)
+	    (hash-set! table 'nine 9)
+	    (hash-set! table 'ten #t)
+	    (hash-set! table 'eleven #t)
+	    (hash-set! table 'twelve #t)
+	    (hash-set! table 'thirteen #t)
+	    (hash-set! table 'fourteen #t)
+	    (hash-set! table 'fifteen #t)
+	    (hash-set! table 'sixteen #t)
+	    (hash-set! table 'seventeen #t)
+	    (hash-set! table 18 #t)
+	    (hash-set! table 19 #t)
+	    (hash-set! table 20 #t)
+	    (hash-set! table 21 #t)
+	    (hash-set! table 22 #t)
+	    (hash-set! table 23 #t)
+	    (hash-set! table 24 #t)
+	    (hash-set! table 25 #t)
+	    (hash-set! table 26 #t)
+	    (hash-set! table 27 #t)
+	    (hash-set! table 28 #t)
+	    (hash-set! table 29 #t)
+	    (hash-set! table 30 'thirty)
+	    (hash-set! table 31 #t)
+	    (hash-set! table 32 #t)
+	    (hash-set! table 33 'thirty-three)
+	    (hash-set! table 34 #t)
+	    (hash-set! table 35 #t)
+	    (hash-set! table 'foo 'bar)
+	    (and (equal? 1 (hash-ref table 'one)) 
+		 (equal? 9 (hash-ref table 'nine)) 
+		 (equal? 'thirty (hash-ref table 30))
+		 (equal? 'thirty-three (hash-ref table 33))
+		 (equal? 'bar (hash-ref table 'foo))
+		 (equal? "#<hash-table 36/61>" 
+			 (with-output-to-string (lambda () (write table)))))))
+
+ ;; 1 and 1 are equal? and eqv? and eq?
+ (pass-if (equal? 'foo
+		  (let ((table (make-hash-table)))
+		    (hash-set! table 1 'foo)
+		    (hash-ref table 1))))
+ (pass-if (equal? 'foo
+		  (let ((table (make-hash-table)))
+		    (hashv-set! table 1 'foo)
+		    (hashv-ref table 1))))
+ (pass-if (equal? 'foo
+		  (let ((table (make-hash-table)))
+		    (hashq-set! table 1 'foo)
+		    (hashq-ref table 1))))
+
+ ;; 1/2 and 2/4 are equal? and eqv? but not eq?
+ (pass-if (equal? 'foo
+		  (let ((table (make-hash-table)))
+		    (hash-set! table 1/2 'foo)
+		    (hash-ref table 2/4))))
+ (pass-if (equal? 'foo
+		  (let ((table (make-hash-table)))
+		    (hashv-set! table 1/2 'foo)
+		    (hashv-ref table 2/4))))
+ (pass-if (equal? #f
+		  (let ((table (make-hash-table)))
+		    (hashq-set! table 1/2 'foo)
+		    (hashq-ref table 2/4))))
+
+ ;; (list 1 2) is equal? but not eqv? or eq? to another (list 1 2)
+ (pass-if (equal? 'foo
+		  (let ((table (make-hash-table)))
+		    (hash-set! table (list 1 2) 'foo)
+		    (hash-ref table (list 1 2)))))
+ (pass-if (equal? #f
+		  (let ((table (make-hash-table)))
+		    (hashv-set! table (list 1 2) 'foo)
+		    (hashv-ref table (list 1 2)))))
+ (pass-if (equal? #f
+		  (let ((table (make-hash-table)))
+		    (hashq-set! table (list 1 2) 'foo)
+		    (hashq-ref table (list 1 2)))))
+
+ ;; ref default argument
+ (pass-if (equal? 'bar
+		  (let ((table (make-hash-table)))
+		    (hash-ref table 'foo 'bar))))
+ (pass-if (equal? 'bar
+		  (let ((table (make-hash-table)))
+		    (hashv-ref table 'foo 'bar))))
+ (pass-if (equal? 'bar
+		  (let ((table (make-hash-table)))
+		    (hashq-ref table 'foo 'bar))))
+ (pass-if (equal? 'bar
+		  (let ((table (make-hash-table)))
+		    (hashx-ref hash equal? table 'foo 'bar))))
+ 
+ ;; wrong type argument
+ (pass-if-exception "(hash-ref 'not-a-table 'key)" exception:wrong-type-arg
+		    (hash-ref 'not-a-table 'key))
+ )
+
+;;;
+;;; hashx
+;;;
+
+(with-test-prefix
+ "auto-resizing hashx"
+ ;; auto-resizing
+ (let ((table (make-hash-table 1))) ;;actually makes size 31
+   (hashx-set! hash assoc table 1/2 'equal)
+   (hashx-set! hash assoc table 1/3 'equal)
+   (hashx-set! hash assoc table 4 'equal)
+   (hashx-set! hash assoc table 1/5 'equal)
+   (hashx-set! hash assoc table 1/6 'equal)
+   (hashx-set! hash assoc table 7 'equal)
+   (hashx-set! hash assoc table 1/8 'equal)
+   (hashx-set! hash assoc table 1/9 'equal)
+   (hashx-set! hash assoc table 10 'equal)
+   (hashx-set! hash assoc table 1/11 'equal)
+   (hashx-set! hash assoc table 1/12 'equal)
+   (hashx-set! hash assoc table 13 'equal)
+   (hashx-set! hash assoc table 1/14 'equal)
+   (hashx-set! hash assoc table 1/15 'equal)
+   (hashx-set! hash assoc table 16 'equal)
+   (hashx-set! hash assoc table 1/17 'equal)
+   (hashx-set! hash assoc table 1/18 'equal)
+   (hashx-set! hash assoc table 19 'equal)
+   (hashx-set! hash assoc table 1/20 'equal)
+   (hashx-set! hash assoc table 1/21 'equal)
+   (hashx-set! hash assoc table 22 'equal)
+   (hashx-set! hash assoc table 1/23 'equal)
+   (hashx-set! hash assoc table 1/24 'equal)
+   (hashx-set! hash assoc table 25 'equal)
+   (hashx-set! hash assoc table 1/26 'equal)
+   (hashx-set! hash assoc table 1/27 'equal)
+   (hashx-set! hash assoc table 28 'equal)
+   (hashx-set! hash assoc table 1/29 'equal)
+   (hashx-set! hash assoc table 1/30 'equal)
+   (hashx-set! hash assoc table 31 'equal)
+   (hashx-set! hash assoc table 1/32 'equal)
+   (hashx-set! hash assoc table 1/33 'equal)
+   (hashx-set! hash assoc table 34 'equal)
+   (pass-if (equal? 'equal (hash-ref table 2/4)))
+   (pass-if (equal? 'equal (hash-ref table 2/6)))
+   (pass-if (equal? 'equal (hash-ref table 4)))
+   (pass-if (equal? 'equal (hashx-ref hash assoc table 2/64)))
+   (pass-if (equal? 'equal (hashx-ref hash assoc table 2/66)))
+   (pass-if (equal? 'equal (hashx-ref hash assoc table 34)))
+   (pass-if (equal? "#<hash-table 33/61>" 
+		    (with-output-to-string (lambda () (write table)))))))
+
+(with-test-prefix 
+ "hashx"
+ (pass-if (let ((table (make-hash-table)))
+	    (hashx-set! (lambda (k v) 1) 
+			(lambda (k al) (assoc 'foo al)) 
+			table 'foo 'bar)
+	    (equal? 
+	     'bar (hashx-ref (lambda (k v) 1) 
+			     (lambda (k al) (assoc 'foo al)) 
+			     table 'baz))))
+ (pass-if (let ((table (make-hash-table 31)))
+	    (hashx-set! (lambda (k v) 1) assoc table 'foo 'bar)
+	    (equal? #f
+		    (hashx-ref (lambda (k v) 2) assoc table 'foo))))
+ (pass-if (let ((table (make-hash-table)))
+	    (hashx-set! hash assoc table 'foo 'bar)
+	    (equal? #f 
+		    (hashx-ref hash (lambda (k al) #f) table 'foo))))
+ (pass-if-exception 
+  "hashx-set! (lambda (k s) 1) equal? table 'foo 'bar"
+  exception:wrong-type-arg ;; there must be a better exception than that...
+  (hashx-set! (lambda (k s) 1) (lambda (k al) #t) (make-hash-table) 'foo 'bar))
+ )
+
+
+;;;
+;;; hashx-remove!
+;;;
+(with-test-prefix "hashx-remove!"
+  (pass-if (->bool (object-documentation hashx-remove!)))
+
+  (pass-if (let ((table (make-hash-table)))
+	     (hashx-set! hashq assq table 'x 123)
+	     (hashx-remove! hashq assq table 'x)
+	     (null? (hash-map->list noop table)))))
+
+;;;
+;;; hashx
+;;;
+
+(with-test-prefix "hashx"
+  (pass-if-exception 
+   "hashx-set! (lambda (k s) 1) (lambda (k al) #t) table 'foo 'bar"
+   exception:wrong-type-arg
+   (hashx-set! (lambda (k s) 1) (lambda (k al) #t) (make-hash-table) 'foo 'bar))
+  )

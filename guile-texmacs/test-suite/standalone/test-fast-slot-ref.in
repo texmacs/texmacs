@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# Copyright (C) 2006 Free Software Foundation, Inc.
+#
+# This library is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation; either version 2.1 of the License, or (at
+# your option) any later version.
+#
+# This library is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+# License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this library; if not, write to the Free Software Foundation,
+# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+# Test for %fast-slot-ref, which was previously implemented such that
+# an out-of-range slot index could escape being properly detected, and
+# could then cause a segmentation fault.
+#
+# Prior to the change in this commit to goops.c, the following
+# sequence reliably causes a segmentation fault on my GNU/Linux when
+# executing the (%fast-slot-ref i 3) line.  For reasons as yet
+# unknown, it does not cause a segmentation fault if the same code is
+# loaded as a script; that is why we run it here using "guile -q <<EOF".
+exec guile -q -l @top_builddir_absolute@/libguile/stack-limit-calibration.scm >/dev/null 2>&1 <<EOF
+(use-modules (oop goops))
+(define-module (oop goops))
+(define-class <c> () (a #:init-value 1) (b #:init-value 2) (c #:init-value 3))
+(define i (make <c>))
+(%fast-slot-ref i 1)
+(%fast-slot-ref i 0)
+(%fast-slot-ref i 3)
+(%fast-slot-ref i -1)
+(%fast-slot-ref i 2)
+(exit 0)
+EOF

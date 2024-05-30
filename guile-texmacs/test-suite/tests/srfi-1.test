@@ -1,0 +1,2592 @@
+;;;; srfi-1.test --- Test suite for Guile's SRFI-1 functions. -*- scheme -*-
+;;;;
+;;;; Copyright 2003, 2004, 2005, 2006, 2008 Free Software Foundation, Inc.
+;;;;
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;;
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;;
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(define-module (test-srfi-1)
+  #:use-module (test-suite lib)
+  #:use-module (srfi srfi-1))
+
+
+(define (ref-delete x lst . proc)
+  "Reference implemenation of srfi-1 `delete'."
+  (set! proc (if (null? proc) equal? (car proc)))
+  (do ((ret '())
+       (lst lst (cdr lst)))
+      ((null? lst)
+       (reverse! ret))
+    (if (not (proc x (car lst)))
+	(set! ret (cons (car lst) ret)))))
+
+(define (ref-delete-duplicates lst . proc)
+  "Reference implemenation of srfi-1 `delete-duplicates'."
+  (set! proc (if (null? proc) equal? (car proc)))
+  (if (null? lst)
+      '()
+      (do ((keep '()))
+	  ((null? lst)
+	   (reverse! keep))
+	(let ((elem (car lst)))
+	  (set! keep (cons elem keep))
+	  (set! lst  (ref-delete elem lst proc))))))
+
+
+;;
+;; alist-copy
+;;
+
+(with-test-prefix "alist-copy"
+
+  ;; return a list which is the pairs making up alist A, the spine and cells
+  (define (alist-pairs a)
+    (let more ((a a)
+	       (result a))
+      (if (pair? a)
+	  (more (cdr a) (cons a result))
+	  result)))
+
+  ;; return a list of the elements common to lists X and Y, compared with eq?
+  (define (common-elements x y)
+    (if (null? x)
+	'()
+	(if (memq (car x) y)
+	    (cons (car x) (common-elements (cdr x) y))
+	    (common-elements (cdr x) y))))
+
+  ;; validate an alist-copy of OLD to NEW
+  ;; lists must be equal, and must comprise new pairs
+  (define (valid-alist-copy? old new)
+    (and (equal? old new)
+	 (null? (common-elements old new))))
+
+  (pass-if-exception "too few args" exception:wrong-num-args
+    (alist-copy))
+    
+  (pass-if-exception "too many args" exception:wrong-num-args
+    (alist-copy '() '()))
+    
+  (let ((old '()))
+    (pass-if old (valid-alist-copy? old (alist-copy old))))
+
+  (let ((old '((1 . 2))))
+    (pass-if old (valid-alist-copy? old (alist-copy old))))
+
+  (let ((old '((1 . 2) (3 . 4))))
+    (pass-if old (valid-alist-copy? old (alist-copy old))))
+
+  (let ((old '((1 . 2) (3 . 4) (5 . 6))))
+    (pass-if old (valid-alist-copy? old (alist-copy old)))))
+
+;;
+;; alist-delete
+;;
+
+(with-test-prefix "alist-delete"
+
+  (pass-if "equality call arg order"
+    (let ((good #f))
+      (alist-delete 'k '((ak . 123))
+		    (lambda (k ak)
+		      (if (and (eq? k 'k) (eq? ak 'ak))
+			  (set! good #t))))
+      good))
+
+  (pass-if "delete keys greater than 5"
+    (equal? '((4 . x) (5 . y))
+	    (alist-delete 5 '((4 . x) (5 . y) (6 . z)) <)))
+
+  (pass-if "empty"
+    (equal? '() (alist-delete 'x '())))
+
+  (pass-if "(y)"
+    (equal? '() (alist-delete 'y '((y . 1)))))
+
+  (pass-if "(n)"
+    (equal? '((n . 1)) (alist-delete 'y '((n . 1)))))
+
+  (pass-if "(y y)"
+    (equal? '() (alist-delete 'y '((y . 1) (y . 2)))))
+
+  (pass-if "(n y)"
+    (equal? '((n . 1)) (alist-delete 'y '((n . 1) (y . 2)))))
+
+  (pass-if "(y n)"
+    (equal? '((n . 2)) (alist-delete 'y '((y . 1) (n . 2)))))
+
+  (pass-if "(n n)"
+    (equal? '((n . 1) (n . 2)) (alist-delete 'y '((n . 1) (n . 2)))))
+
+  (pass-if "(y y y)"
+    (equal? '() (alist-delete 'y '((y . 1) (y . 2) (y . 3)))))
+
+  (pass-if "(n y y)"
+    (equal? '((n . 1)) (alist-delete 'y '((n . 1) (y . 2) (y . 3)))))
+
+  (pass-if "(y n y)"
+    (equal? '((n . 2)) (alist-delete 'y '((y . 1) (n . 2) (y . 3)))))
+
+  (pass-if "(n n y)"
+    (equal? '((n . 1) (n . 2)) (alist-delete 'y '((n . 1) (n . 2) (y . 3)))))
+
+  (pass-if "(y y n)"
+    (equal? '( (n . 3)) (alist-delete 'y '((y . 1) (y . 2) (n . 3)))))
+
+  (pass-if "(n y n)"
+    (equal? '((n . 1) (n . 3)) (alist-delete 'y '((n . 1) (y . 2) (n . 3)))))
+
+  (pass-if "(y n n)"
+    (equal? '((n . 2) (n . 3)) (alist-delete 'y '((y . 1) (n . 2) (n . 3)))))
+
+  (pass-if "(n n n)"
+    (equal? '((n . 1) (n . 2) (n . 3)) (alist-delete 'y '((n . 1) (n . 2) (n . 3))))))
+
+;;
+;; append-map
+;;
+
+(with-test-prefix "append-map"
+
+  (with-test-prefix "one list"
+
+    (pass-if "()"
+      (equal? '() (append-map noop '(()))))
+
+    (pass-if "(1)"
+      (equal? '(1) (append-map noop '((1)))))
+
+    (pass-if "(1 2)"
+      (equal? '(1 2) (append-map noop '((1 2)))))
+
+    (pass-if "() ()"
+      (equal? '() (append-map noop '(() ()))))
+
+    (pass-if "() (1)"
+      (equal? '(1) (append-map noop '(() (1)))))
+
+    (pass-if "() (1 2)"
+      (equal? '(1 2) (append-map noop '(() (1 2)))))
+
+    (pass-if "(1) (2)"
+      (equal? '(1 2) (append-map noop '((1) (2)))))
+
+    (pass-if "(1 2) ()"
+      (equal? '(1 2) (append-map noop '(() (1 2))))))
+
+  (with-test-prefix "two lists"
+
+    (pass-if "() / 9"
+      (equal? '() (append-map noop '(()) '(9))))
+
+    (pass-if "(1) / 9"
+      (equal? '(1) (append-map noop '((1)) '(9))))
+
+    (pass-if "() () / 9 9"
+      (equal? '() (append-map noop '(() ()) '(9 9))))
+
+    (pass-if "(1) (2) / 9"
+      (equal? '(1) (append-map noop '((1) (2)) '(9))))
+
+    (pass-if "(1) (2) / 9 9"
+      (equal? '(1 2) (append-map noop '((1) (2)) '(9 9))))))
+
+;;
+;; append-reverse
+;;
+
+(with-test-prefix "append-reverse"
+
+  ;; return a list which is the cars and cdrs of LST
+  (define (list-contents lst)
+    (if (null? lst)
+	'()
+	(cons* (car lst) (cdr lst) (list-contents (cdr lst)))))
+
+  (define (valid-append-reverse revhead tail want)
+    (let ((revhead-contents (list-contents revhead))
+	  (got              (append-reverse revhead tail)))
+      (and (equal? got want)
+	   ;; revhead unchanged
+	   (equal? revhead-contents (list-contents revhead)))))
+
+  (pass-if-exception "too few args (0)" exception:wrong-num-args
+    (append-reverse))
+
+  (pass-if-exception "too few args (1)" exception:wrong-num-args
+    (append-reverse '(x)))
+
+  (pass-if-exception "too many args (3)" exception:wrong-num-args
+    (append-reverse '() '() #f))
+
+  (pass-if (valid-append-reverse '() '()      '()))
+  (pass-if (valid-append-reverse '() '(1 2 3) '(1 2 3)))
+
+  (pass-if (valid-append-reverse '(1) '()    '(1)))
+  (pass-if (valid-append-reverse '(1) '(2)   '(1 2)))
+  (pass-if (valid-append-reverse '(1) '(2 3) '(1 2 3)))
+
+  (pass-if (valid-append-reverse '(1 2) '()    '(2 1)))
+  (pass-if (valid-append-reverse '(1 2) '(3)   '(2 1 3)))
+  (pass-if (valid-append-reverse '(1 2) '(3 4) '(2 1 3 4)))
+
+  (pass-if (valid-append-reverse '(1 2 3) '()    '(3 2 1)))
+  (pass-if (valid-append-reverse '(1 2 3) '(4)   '(3 2 1 4)))
+  (pass-if (valid-append-reverse '(1 2 3) '(4 5) '(3 2 1 4 5))))
+
+;;
+;; append-reverse!
+;;
+
+(with-test-prefix "append-reverse!"
+
+  (pass-if-exception "too few args (0)" exception:wrong-num-args
+    (append-reverse!))
+
+  (pass-if-exception "too few args (1)" exception:wrong-num-args
+    (append-reverse! '(x)))
+
+  (pass-if-exception "too many args (3)" exception:wrong-num-args
+    (append-reverse! '() '() #f))
+
+  (pass-if (equal? '()      (append-reverse! '() '())))
+  (pass-if (equal? '(1 2 3) (append-reverse! '() '(1 2 3))))
+
+  (pass-if (equal? '(1)     (append-reverse! '(1) '())))
+  (pass-if (equal? '(1 2)   (append-reverse! '(1) '(2))))
+  (pass-if (equal? '(1 2 3) (append-reverse! '(1) '(2 3))))
+
+  (pass-if (equal? '(2 1)     (append-reverse! '(1 2) '())))
+  (pass-if (equal? '(2 1 3)   (append-reverse! '(1 2) '(3))))
+  (pass-if (equal? '(2 1 3 4) (append-reverse! '(1 2) '(3 4))))
+
+  (pass-if (equal? '(3 2 1)     (append-reverse! '(1 2 3) '())))
+  (pass-if (equal? '(3 2 1 4)   (append-reverse! '(1 2 3) '(4))))
+  (pass-if (equal? '(3 2 1 4 5) (append-reverse! '(1 2 3) '(4 5)))))
+
+;;
+;; assoc
+;;
+
+(with-test-prefix "assoc"
+
+  (pass-if "not found"
+    (let ((alist '((a . 1)
+		   (b . 2)
+		   (c . 3))))
+      (eqv? #f (assoc 'z alist))))
+
+  (pass-if "found"
+    (let ((alist '((a . 1)
+		   (b . 2)
+		   (c . 3))))
+      (eqv? (second alist) (assoc 'b alist))))
+
+  ;; this was wrong in guile 1.8.0 (a gremlin newly introduced in the 1.8
+  ;; series, 1.6.x and earlier was ok)
+  (pass-if "= arg order"
+    (let ((alist '((b . 1)))
+	  (good  #f))
+      (assoc 'a alist (lambda (x y)
+			(set! good (and (eq? x 'a)
+					(eq? y 'b)))))
+      good))
+
+  ;; likewise this one bad in guile 1.8.0
+  (pass-if "srfi-1 example <"
+    (let ((alist '((1 . a)
+		   (5 . b)
+		   (6 . c))))
+      (eq? (third alist) (assoc 5 alist <)))))
+
+;;
+;; break
+;;
+
+(with-test-prefix "break"
+
+  (define (test-break lst want-v1 want-v2)
+    (call-with-values
+	(lambda ()
+	  (break negative? lst))
+      (lambda (got-v1 got-v2)
+	(and (equal? got-v1 want-v1)
+	     (equal? got-v2 want-v2)))))
+
+  (pass-if "empty"
+    (test-break '() '() '()))
+
+  (pass-if "y"
+    (test-break '(1) '(1) '()))
+
+  (pass-if "n"
+    (test-break '(-1) '() '(-1)))
+
+  (pass-if "yy"
+    (test-break '(1 2) '(1 2) '()))
+
+  (pass-if "ny"
+    (test-break '(-1 1) '() '(-1 1)))
+
+  (pass-if "yn"
+    (test-break '(1 -1) '(1) '(-1)))
+
+  (pass-if "nn"
+    (test-break '(-1 -2) '() '(-1 -2)))
+
+  (pass-if "yyy"
+    (test-break '(1 2 3) '(1 2 3) '()))
+
+  (pass-if "nyy"
+    (test-break '(-1 1 2) '() '(-1 1 2)))
+
+  (pass-if "yny"
+    (test-break '(1 -1 2) '(1) '(-1 2)))
+
+  (pass-if "nny"
+    (test-break '(-1 -2 1) '() '(-1 -2 1)))
+
+  (pass-if "yyn"
+    (test-break '(1 2 -1) '(1 2) '(-1)))
+
+  (pass-if "nyn"
+    (test-break '(-1 1 -2) '() '(-1 1 -2)))
+
+  (pass-if "ynn"
+    (test-break '(1 -1 -2) '(1) '(-1 -2)))
+
+  (pass-if "nnn"
+    (test-break '(-1 -2 -3) '() '(-1 -2 -3))))
+
+;;
+;; break!
+;;
+
+(with-test-prefix "break!"
+
+  (define (test-break! lst want-v1 want-v2)
+    (call-with-values
+	(lambda ()
+	  (break! negative? lst))
+      (lambda (got-v1 got-v2)
+	(and (equal? got-v1 want-v1)
+	     (equal? got-v2 want-v2)))))
+
+  (pass-if "empty"
+    (test-break! '() '() '()))
+
+  (pass-if "y"
+    (test-break! (list 1) '(1) '()))
+
+  (pass-if "n"
+    (test-break! (list -1) '() '(-1)))
+
+  (pass-if "yy"
+    (test-break! (list 1 2) '(1 2) '()))
+
+  (pass-if "ny"
+    (test-break! (list -1 1) '() '(-1 1)))
+
+  (pass-if "yn"
+    (test-break! (list 1 -1) '(1) '(-1)))
+
+  (pass-if "nn"
+    (test-break! (list -1 -2) '() '(-1 -2)))
+
+  (pass-if "yyy"
+    (test-break! (list 1 2 3) '(1 2 3) '()))
+
+  (pass-if "nyy"
+    (test-break! (list -1 1 2) '() '(-1 1 2)))
+
+  (pass-if "yny"
+    (test-break! (list 1 -1 2) '(1) '(-1 2)))
+
+  (pass-if "nny"
+    (test-break! (list -1 -2 1) '() '(-1 -2 1)))
+
+  (pass-if "yyn"
+    (test-break! (list 1 2 -1) '(1 2) '(-1)))
+
+  (pass-if "nyn"
+    (test-break! (list -1 1 -2) '() '(-1 1 -2)))
+
+  (pass-if "ynn"
+    (test-break! (list 1 -1 -2) '(1) '(-1 -2)))
+
+  (pass-if "nnn"
+    (test-break! (list -1 -2 -3) '() '(-1 -2 -3))))
+
+;;
+;; car+cdr
+;;
+
+(with-test-prefix "car+cdr"
+
+  (pass-if "(1 . 2)"
+    (call-with-values
+	(lambda ()
+	  (car+cdr '(1 . 2)))
+      (lambda (x y)
+	(and (eqv? x 1)
+	     (eqv? y 2))))))
+
+;;
+;; concatenate and concatenate!
+;;
+
+(let ()	
+  (define (common-tests concatenate-proc unmodified?)
+    (define (try lstlst want)
+      (let ((lstlst-copy (copy-tree lstlst))
+	    (got         (concatenate-proc lstlst)))
+	(if unmodified?
+	    (if (not (equal? lstlst lstlst-copy))
+		(error "input lists modified")))
+	(equal? got want)))
+    
+    (pass-if-exception "too few args" exception:wrong-num-args
+      (concatenate-proc))
+    
+    (pass-if-exception "too many args" exception:wrong-num-args
+      (concatenate-proc '() '()))
+
+    (pass-if-exception "number" exception:wrong-type-arg
+      (concatenate-proc 123))
+
+    (pass-if-exception "vector" exception:wrong-type-arg
+      (concatenate-proc #(1 2 3)))
+    
+    (pass-if "no lists"
+      (try '() '()))
+    
+    (pass-if (try '((1))       '(1)))
+    (pass-if (try '((1 2))     '(1 2)))
+    (pass-if (try '(() (1))    '(1)))
+    (pass-if (try '(() () (1)) '(1)))
+    
+    (pass-if (try '((1) (2)) '(1 2)))
+    (pass-if (try '(() (1 2)) '(1 2)))
+    
+    (pass-if (try '((1) 2)           '(1 . 2)))
+    (pass-if (try '((1) (2) 3)       '(1 2 . 3)))
+    (pass-if (try '((1) (2) (3 . 4)) '(1 2 3 . 4)))
+    )
+  
+  (with-test-prefix "concatenate"
+    (common-tests concatenate #t))
+  
+  (with-test-prefix "concatenate!"
+    (common-tests concatenate! #f)))
+
+;;
+;; count
+;;
+
+(with-test-prefix "count"
+  (pass-if-exception "no args" exception:wrong-num-args
+    (count))
+
+  (pass-if-exception "one arg" exception:wrong-num-args
+    (count noop))
+
+  (with-test-prefix "one list"
+    (define (or1 x)
+      x)
+
+    (pass-if "empty list" (= 0 (count or1 '())))
+
+    (pass-if-exception "pred arg count 0" exception:wrong-type-arg
+      (count (lambda () x) '(1 2 3)))
+    (pass-if-exception "pred arg count 2" exception:wrong-type-arg
+      (count (lambda (x y) x) '(1 2 3)))
+
+    (pass-if-exception "improper 1" exception:wrong-type-arg
+      (count or1 1))
+    (pass-if-exception "improper 2" exception:wrong-type-arg
+      (count or1 '(1 . 2)))
+    (pass-if-exception "improper 3" exception:wrong-type-arg
+      (count or1 '(1 2 . 3)))
+
+    (pass-if (= 0 (count or1 '(#f))))
+    (pass-if (= 1 (count or1 '(#t))))
+
+    (pass-if (= 0 (count or1 '(#f #f))))
+    (pass-if (= 1 (count or1 '(#f #t))))
+    (pass-if (= 1 (count or1 '(#t #f))))
+    (pass-if (= 2 (count or1 '(#t #t))))
+
+    (pass-if (= 0 (count or1 '(#f #f #f))))
+    (pass-if (= 1 (count or1 '(#f #f #t))))
+    (pass-if (= 1 (count or1 '(#t #f #f))))
+    (pass-if (= 2 (count or1 '(#t #f #t))))
+    (pass-if (= 3 (count or1 '(#t #t #t)))))
+
+  (with-test-prefix "two lists"
+    (define (or2 x y)
+      (or x y))
+
+    (pass-if "arg order"
+      (= 1 (count (lambda (x y)
+		    (and (= 1 x)
+			 (= 2 y)))
+		  '(1) '(2))))
+
+    (pass-if "empty lists" (= 0 (count or2 '() '())))
+
+    (pass-if-exception "pred arg count 0" exception:wrong-type-arg
+      (count (lambda () #t) '(1 2 3) '(1 2 3)))
+    (pass-if-exception "pred arg count 1" exception:wrong-type-arg
+      (count (lambda (x) x) '(1 2 3) '(1 2 3)))
+    (pass-if-exception "pred arg count 3" exception:wrong-type-arg
+      (count (lambda (x y z) x) '(1 2 3) '(1 2 3)))
+
+    (pass-if-exception "improper first 1" exception:wrong-type-arg
+      (count or2 1 '(1 2 3)))
+    (pass-if-exception "improper first 2" exception:wrong-type-arg
+      (count or2 '(1 . 2) '(1 2 3)))
+    (pass-if-exception "improper first 3" exception:wrong-type-arg
+      (count or2 '(1 2 . 3) '(1 2 3)))
+
+    (pass-if-exception "improper second 1" exception:wrong-type-arg
+      (count or2 '(1 2 3) 1))
+    (pass-if-exception "improper second 2" exception:wrong-type-arg
+      (count or2 '(1 2 3) '(1 . 2)))
+    (pass-if-exception "improper second 3" exception:wrong-type-arg
+      (count or2 '(1 2 3) '(1 2 . 3)))
+
+    (pass-if (= 0 (count or2 '(#f) '(#f))))
+    (pass-if (= 1 (count or2 '(#t) '(#f))))
+    (pass-if (= 1 (count or2 '(#f) '(#t))))
+
+    (pass-if (= 0 (count or2 '(#f #f) '(#f #f))))
+    (pass-if (= 1 (count or2 '(#t #f) '(#t #f))))
+    (pass-if (= 2 (count or2 '(#t #t) '(#f #f))))
+    (pass-if (= 2 (count or2 '(#t #f) '(#f #t))))
+
+    (with-test-prefix "stop shortest"
+      (pass-if (= 2 (count or2 '(#t #f #t) '(#f #t))))
+      (pass-if (= 2 (count or2 '(#t #f #t #t) '(#f #t))))
+      (pass-if (= 2 (count or2 '(#t #f) '(#f #t #t))))
+      (pass-if (= 2 (count or2 '(#t #f) '(#f #t #t #t))))))
+
+  (with-test-prefix "three lists"
+    (define (or3 x y z)
+      (or x y z))
+
+    (pass-if "arg order"
+      (= 1 (count (lambda (x y z)
+		    (and (= 1 x)
+			 (= 2 y)
+			 (= 3 z)))
+		  '(1) '(2) '(3))))
+
+    (pass-if "empty lists" (= 0 (count or3 '() '() '())))
+
+    ;; currently bad pred argument gives wrong-num-args when 3 or more
+    ;; lists, as opposed to wrong-type-arg for 1 or 2 lists
+    (pass-if-exception "pred arg count 0" exception:wrong-num-args
+      (count (lambda () #t) '(1 2 3) '(1 2 3) '(1 2 3)))
+    (pass-if-exception "pred arg count 2" exception:wrong-num-args
+      (count (lambda (x y) x) '(1 2 3) '(1 2 3)'(1 2 3) ))
+    (pass-if-exception "pred arg count 4" exception:wrong-num-args
+      (count (lambda (w x y z) x) '(1 2 3) '(1 2 3) '(1 2 3)))
+
+    (pass-if-exception "improper first 1" exception:wrong-type-arg
+      (count or3 1 '(1 2 3) '(1 2 3)))
+    (pass-if-exception "improper first 2" exception:wrong-type-arg
+      (count or3 '(1 . 2) '(1 2 3) '(1 2 3)))
+    (pass-if-exception "improper first 3" exception:wrong-type-arg
+      (count or3 '(1 2 . 3) '(1 2 3) '(1 2 3)))
+
+    (pass-if-exception "improper second 1" exception:wrong-type-arg
+      (count or3 '(1 2 3) 1 '(1 2 3)))
+    (pass-if-exception "improper second 2" exception:wrong-type-arg
+      (count or3 '(1 2 3) '(1 . 2) '(1 2 3)))
+    (pass-if-exception "improper second 3" exception:wrong-type-arg
+      (count or3 '(1 2 3) '(1 2 . 3) '(1 2 3)))
+
+    (pass-if-exception "improper third 1" exception:wrong-type-arg
+      (count or3 '(1 2 3) '(1 2 3) 1))
+    (pass-if-exception "improper third 2" exception:wrong-type-arg
+      (count or3 '(1 2 3) '(1 2 3) '(1 . 2)))
+    (pass-if-exception "improper third 3" exception:wrong-type-arg
+      (count or3 '(1 2 3) '(1 2 3) '(1 2 . 3)))
+
+    (pass-if (= 0 (count or3 '(#f) '(#f) '(#f))))
+    (pass-if (= 1 (count or3 '(#t) '(#f) '(#f))))
+    (pass-if (= 1 (count or3 '(#f) '(#t) '(#f))))
+    (pass-if (= 1 (count or3 '(#f) '(#f) '(#t))))
+
+    (pass-if (= 0 (count or3 '(#f #f) '(#f #f) '(#f #f))))
+
+    (pass-if (= 1 (count or3 '(#t #f) '(#f #f) '(#f #f))))
+    (pass-if (= 1 (count or3 '(#f #t) '(#f #f) '(#f #f))))
+    (pass-if (= 1 (count or3 '(#f #f) '(#t #f) '(#f #f))))
+    (pass-if (= 1 (count or3 '(#f #f) '(#f #t) '(#f #f))))
+    (pass-if (= 1 (count or3 '(#f #f) '(#f #f) '(#t #f))))
+    (pass-if (= 1 (count or3 '(#f #f) '(#f #f) '(#f #t))))
+
+    (pass-if (= 2 (count or3 '(#t #t) '(#f #f) '(#f #f))))
+    (pass-if (= 2 (count or3 '(#f #f) '(#t #t) '(#f #f))))
+    (pass-if (= 2 (count or3 '(#f #f) '(#f #f) '(#t #t))))
+    (pass-if (= 2 (count or3 '(#f #f) '(#t #f) '(#f #t))))
+
+    (with-test-prefix "stop shortest"
+      (pass-if (= 0 (count or3 '() '(#t #t #t) '(#t #t))))
+      (pass-if (= 0 (count or3 '(#t #t #t) '() '(#t #t))))
+      (pass-if (= 0 (count or3 '(#t #t #t) '(#t #t) '())))
+
+      (pass-if (= 1 (count or3 '(#t) '(#t #t #t) '(#t #t))))
+      (pass-if (= 1 (count or3 '(#t #t #t) '(#t) '(#t #t))))
+      (pass-if (= 1 (count or3 '(#t #t #t) '(#t #t) '(#t)))))
+
+    (pass-if "apply list unchanged"
+      (let ((lst (list (list 1 2) (list 3 4) (list 5 6))))
+	(and (equal? 2 (apply count or3 lst))
+	     ;; lst unmodified
+	     (equal? '((1 2) (3 4) (5 6)) lst))))))
+
+;;
+;; delete and delete!
+;;
+
+(let ()	
+  ;; Call (PROC lst) for all lists of length up to 6, with all combinations
+  ;; of elements to be retained or deleted.  Elements to retain are numbers,
+  ;; 0 upwards.  Elements to be deleted are #f.
+  (define (test-lists proc)
+    (do ((n 0 (1+ n)))
+	((>= n 6))
+      (do ((limit (ash 1 n))
+	   (i 0 (1+ i)))
+	  ((>= i limit))
+	(let ((lst '()))
+	  (do ((bit 0 (1+ bit)))
+	      ((>= bit n))
+	    (set! lst  (cons (if (logbit? bit i) bit #f) lst)))
+	  (proc lst)))))
+  
+  (define (common-tests delete-proc)
+    (pass-if-exception "too few args" exception:wrong-num-args
+      (delete-proc 0))
+    
+    (pass-if-exception "too many args" exception:wrong-num-args
+      (delete-proc 0 '() equal? 99))
+    
+    (pass-if "empty"
+      (eq? '() (delete-proc 0 '() equal?)))
+    
+    (pass-if "equal?"
+      (equal? '((1) (3))
+	      (delete-proc '(2) '((1) (2) (3)) equal?)))
+    
+    (pass-if "eq?"
+      (equal? '((1) (2) (3))
+	      (delete-proc '(2) '((1) (2) (3)) eq?)))
+    
+    (pass-if "called arg order"
+      (equal? '(1 2 3)
+	      (delete-proc 3 '(1 2 3 4 5) <))))
+  
+  (with-test-prefix "delete"
+    (common-tests delete)
+    
+    (test-lists
+     (lambda (lst)
+       (let ((lst-copy (list-copy lst)))
+	 (with-test-prefix lst-copy
+	   (pass-if "result"
+	     (equal? (delete     #f lst equal?)
+		     (ref-delete #f lst equal?)))
+	   (pass-if "non-destructive"
+	     (equal? lst-copy lst)))))))  
+  
+  (with-test-prefix "delete!"
+    (common-tests delete!)
+    
+    (test-lists
+     (lambda (lst)
+       (pass-if lst
+	 (equal? (delete!    #f lst)
+		 (ref-delete #f lst)))))))
+
+;;
+;; delete-duplicates and delete-duplicates!
+;;
+
+(let ()	
+  ;; Call (PROC lst) for all lists of length 1 <= n <= 4, with all
+  ;; combinations of numbers 1 to n in the elements
+  (define (test-lists proc)
+    (do ((n 1 (1+ n)))
+	((> n 4))
+      (do ((limit (integer-expt n n))
+	   (i 0 (1+ i)))
+	  ((>= i limit))
+	(let ((lst '()))
+	  (do ((j 0 (1+ j))
+	       (rem i (quotient rem n)))
+	      ((>= j n))
+	    (set! lst (cons (remainder rem n) lst)))
+	  (proc lst)))))
+
+  (define (common-tests delete-duplicates-proc)
+    (pass-if-exception "too few args" exception:wrong-num-args
+      (delete-duplicates-proc))
+    
+    (pass-if-exception "too many args" exception:wrong-num-args
+      (delete-duplicates-proc '() equal? 99))
+    
+    (pass-if "empty"
+      (eq? '() (delete-duplicates-proc '())))
+    
+    (pass-if "equal? (the default)"
+      (equal? '((2))
+	      (delete-duplicates-proc '((2) (2) (2)))))
+    
+    (pass-if "eq?"
+      (equal? '((2) (2) (2))
+	      (delete-duplicates-proc '((2) (2) (2)) eq?)))
+
+    (pass-if "called arg order"
+      (let ((ok #t))
+	(delete-duplicates-proc '(1 2 3 4 5)
+				(lambda (x y)
+				  (if (> x y)
+				      (set! ok #f))
+				  #f))
+	ok)))
+  
+  (with-test-prefix "delete-duplicates"
+    (common-tests delete-duplicates)
+    
+    (test-lists
+     (lambda (lst)
+       (let ((lst-copy (list-copy lst)))
+	 (with-test-prefix lst-copy
+	   (pass-if "result"
+	     (equal? (delete-duplicates     lst)
+		     (ref-delete-duplicates lst)))
+	   (pass-if "non-destructive"
+	     (equal? lst-copy lst)))))))  
+  
+  (with-test-prefix "delete-duplicates!"
+    (common-tests delete-duplicates!)
+    
+    (test-lists
+     (lambda (lst)
+       (pass-if lst
+	 (equal? (delete-duplicates!    lst)
+		 (ref-delete-duplicates lst)))))))
+
+;;
+;; drop
+;;
+
+(with-test-prefix "drop"
+  
+  (pass-if "'() 0"
+    (null? (drop '() 0)))
+  
+  (pass-if "'(a) 0"
+    (let ((lst '(a)))
+      (eq? lst
+	   (drop lst 0))))
+  
+  (pass-if "'(a b) 0"
+    (let ((lst '(a b)))
+      (eq? lst
+	   (drop lst 0))))
+  
+  (pass-if "'(a) 1"
+    (let ((lst '(a)))
+      (eq? (cdr lst)
+	   (drop lst 1))))
+  
+  (pass-if "'(a b) 1"
+    (let ((lst '(a b)))
+      (eq? (cdr lst)
+	   (drop lst 1))))
+  
+  (pass-if "'(a b) 2"
+    (let ((lst '(a b)))
+      (eq? (cddr lst)
+	   (drop lst 2))))
+  
+  (pass-if "'(a b c) 1"
+    (let ((lst '(a b c)))
+      (eq? (cddr lst)
+	   (drop lst 2))))
+  
+  (pass-if "circular '(a) 0"
+    (let ((lst (circular-list 'a)))
+      (eq? lst
+	   (drop lst 0))))
+  
+  (pass-if "circular '(a) 1"
+    (let ((lst (circular-list 'a)))
+      (eq? lst
+	   (drop lst 1))))
+  
+  (pass-if "circular '(a) 2"
+    (let ((lst (circular-list 'a)))
+      (eq? lst
+	   (drop lst 1))))
+  
+  (pass-if "circular '(a b) 1"
+    (let ((lst (circular-list 'a)))
+      (eq? (cdr lst)
+	   (drop lst 0))))
+  
+  (pass-if "circular '(a b) 2"
+    (let ((lst (circular-list 'a)))
+      (eq? lst
+	   (drop lst 1))))
+  
+  (pass-if "circular '(a b) 5"
+    (let ((lst (circular-list 'a)))
+      (eq? (cdr lst)
+	   (drop lst 5))))
+  
+  (pass-if "'(a . b) 1"
+    (eq? 'b
+	 (drop '(a . b) 1)))
+  
+  (pass-if "'(a b . c) 1"
+    (equal? 'c
+	    (drop '(a b . c) 2))))
+
+;;
+;; drop-right
+;;
+
+(with-test-prefix "drop-right"
+
+  (pass-if-exception "() -1" exception:out-of-range
+    (drop-right '() -1))
+  (pass-if (equal? '() (drop-right '() 0)))
+  (pass-if-exception "() 1" exception:wrong-type-arg
+    (drop-right '() 1))
+
+  (pass-if-exception "(1) -1" exception:out-of-range
+    (drop-right '(1) -1))
+  (pass-if (equal? '(1) (drop-right '(1) 0)))
+  (pass-if (equal? '() (drop-right '(1) 1)))
+  (pass-if-exception "(1) 2" exception:wrong-type-arg
+    (drop-right '(1) 2))
+
+  (pass-if-exception "(4 5) -1" exception:out-of-range
+    (drop-right '(4 5) -1))
+  (pass-if (equal? '(4 5) (drop-right '(4 5) 0)))
+  (pass-if (equal? '(4) (drop-right '(4 5) 1)))
+  (pass-if (equal? '() (drop-right '(4 5) 2)))
+  (pass-if-exception "(4 5) 3" exception:wrong-type-arg
+    (drop-right '(4 5) 3))
+
+  (pass-if-exception "(4 5 6) -1" exception:out-of-range
+    (drop-right '(4 5 6) -1))
+  (pass-if (equal? '(4 5 6) (drop-right '(4 5 6) 0)))
+  (pass-if (equal? '(4 5) (drop-right '(4 5 6) 1)))
+  (pass-if (equal? '(4) (drop-right '(4 5 6) 2)))
+  (pass-if (equal? '() (drop-right '(4 5 6) 3)))
+  (pass-if-exception "(4 5 6) 4" exception:wrong-type-arg
+    (drop-right '(4 5 6) 4)))
+
+;;
+;; drop-right!
+;;
+
+(with-test-prefix "drop-right!"
+
+  (pass-if-exception "() -1" exception:out-of-range
+    (drop-right! '() -1))
+  (pass-if (equal? '() (drop-right! '() 0)))
+  (pass-if-exception "() 1" exception:wrong-type-arg
+    (drop-right! '() 1))
+
+  (pass-if-exception "(1) -1" exception:out-of-range
+    (drop-right! (list 1) -1))
+  (pass-if (equal? '(1) (drop-right! (list 1) 0)))
+  (pass-if (equal? '() (drop-right! (list 1) 1)))
+  (pass-if-exception "(1) 2" exception:wrong-type-arg
+    (drop-right! (list 1) 2))
+
+  (pass-if-exception "(4 5) -1" exception:out-of-range
+    (drop-right! (list 4 5) -1))
+  (pass-if (equal? '(4 5) (drop-right! (list 4 5) 0)))
+  (pass-if (equal? '(4) (drop-right! (list 4 5) 1)))
+  (pass-if (equal? '() (drop-right! (list 4 5) 2)))
+  (pass-if-exception "(4 5) 3" exception:wrong-type-arg
+    (drop-right! (list 4 5) 3))
+
+  (pass-if-exception "(4 5 6) -1" exception:out-of-range
+    (drop-right! (list 4 5 6) -1))
+  (pass-if (equal? '(4 5 6) (drop-right! (list 4 5 6) 0)))
+  (pass-if (equal? '(4 5) (drop-right! (list 4 5 6) 1)))
+  (pass-if (equal? '(4) (drop-right! (list 4 5 6) 2)))
+  (pass-if (equal? '() (drop-right! (list 4 5 6) 3)))
+  (pass-if-exception "(4 5 6) 4" exception:wrong-type-arg
+    (drop-right! (list 4 5 6) 4)))
+
+;;
+;; drop-while
+;;
+
+(with-test-prefix "drop-while"
+  
+  (pass-if (equal? '()      (drop-while odd? '())))
+  (pass-if (equal? '()      (drop-while odd? '(1))))
+  (pass-if (equal? '()      (drop-while odd? '(1 3))))
+  (pass-if (equal? '()      (drop-while odd? '(1 3 5))))
+
+  (pass-if (equal? '(2)     (drop-while odd? '(2))))
+  (pass-if (equal? '(2)     (drop-while odd? '(1 2))))
+  (pass-if (equal? '(4)     (drop-while odd? '(1 3 4))))
+
+  (pass-if (equal? '(2 1)   (drop-while odd? '(2 1))))
+  (pass-if (equal? '(4 3)   (drop-while odd? '(1 4 3))))
+  (pass-if (equal? '(4 1 3) (drop-while odd? '(4 1 3)))))
+
+;;
+;; eighth
+;;
+
+(with-test-prefix "eighth"
+  (pass-if-exception "() -1" exception:out-of-range
+    (eighth '(a b c d e f g)))
+  (pass-if (eq? 'h (eighth '(a b c d e f g h))))
+  (pass-if (eq? 'h (eighth '(a b c d e f g h i)))))
+
+;;
+;; fifth
+;;
+
+(with-test-prefix "fifth"
+  (pass-if-exception "() -1" exception:out-of-range
+    (fifth '(a b c d)))
+  (pass-if (eq? 'e (fifth '(a b c d e))))
+  (pass-if (eq? 'e (fifth '(a b c d e f)))))
+
+;;
+;; filter-map
+;;
+
+(with-test-prefix "filter-map"
+
+  (with-test-prefix "one list"
+    (pass-if-exception "'x" exception:wrong-type-arg
+      (filter-map noop 'x))
+
+    (pass-if-exception "'(1 . x)" exception:wrong-type-arg
+      (filter-map noop '(1 . x)))
+
+    (pass-if "(1)"
+      (equal? '(1) (filter-map noop '(1))))
+
+    (pass-if "(#f)"
+      (equal? '() (filter-map noop '(#f))))
+
+    (pass-if "(1 2)"
+      (equal? '(1 2) (filter-map noop '(1 2))))
+
+    (pass-if "(#f 2)"
+      (equal? '(2) (filter-map noop '(#f 2))))
+
+    (pass-if "(#f #f)"
+      (equal? '() (filter-map noop '(#f #f))))
+
+    (pass-if "(1 2 3)"
+      (equal? '(1 2 3) (filter-map noop '(1 2 3))))
+
+    (pass-if "(#f 2 3)"
+      (equal? '(2 3) (filter-map noop '(#f 2 3))))
+
+    (pass-if "(1 #f 3)"
+      (equal? '(1 3) (filter-map noop '(1 #f 3))))
+
+    (pass-if "(1 2 #f)"
+      (equal? '(1 2) (filter-map noop '(1 2 #f)))))
+
+  (with-test-prefix "two lists"
+    (pass-if-exception "'x '(1 2 3)" exception:wrong-type-arg
+      (filter-map noop 'x '(1 2 3)))
+
+    (pass-if-exception "'(1 2 3) 'x" exception:wrong-type-arg
+      (filter-map noop '(1 2 3) 'x))
+
+    (pass-if-exception "'(1 . x) '(1 2 3)" exception:wrong-type-arg
+      (filter-map noop '(1 . x) '(1 2 3)))
+
+    (pass-if-exception "'(1 2 3) '(1 . x)" exception:wrong-type-arg
+      (filter-map noop '(1 2 3) '(1 . x)))
+
+    (pass-if "(1 2 3) (4 5 6)"
+      (equal? '(5 7 9) (filter-map + '(1 2 3) '(4 5 6))))
+
+    (pass-if "(#f 2 3) (4 5)"
+      (equal? '(2) (filter-map noop '(#f 2 3) '(4 5))))
+
+    (pass-if "(4 #f) (1 2 3)"
+      (equal? '(4) (filter-map noop '(4 #f) '(1 2 3))))
+
+    (pass-if "() (1 2 3)"
+      (equal? '() (filter-map noop '() '(1 2 3))))
+
+    (pass-if "(1 2 3) ()"
+      (equal? '() (filter-map noop '(1 2 3) '()))))
+
+  (with-test-prefix "three lists"
+    (pass-if-exception "'x '(1 2 3) '(1 2 3)" exception:wrong-type-arg
+      (filter-map noop 'x '(1 2 3) '(1 2 3)))
+
+    (pass-if-exception "'(1 2 3) 'x '(1 2 3)" exception:wrong-type-arg
+      (filter-map noop '(1 2 3) 'x '(1 2 3)))
+
+    (pass-if-exception "'(1 2 3) '(1 2 3) 'x" exception:wrong-type-arg
+      (filter-map noop '(1 2 3) '(1 2 3) 'x))
+
+    (pass-if-exception "'(1 . x) '(1 2 3) '(1 2 3)" exception:wrong-type-arg
+      (filter-map noop '(1 . x) '(1 2 3) '(1 2 3)))
+
+    (pass-if-exception "'(1 2 3) '(1 . x) '(1 2 3)" exception:wrong-type-arg
+      (filter-map noop '(1 2 3) '(1 . x) '(1 2 3)))
+
+    (pass-if-exception "'(1 2 3) '(1 2 3) '(1 . x)" exception:wrong-type-arg
+      (filter-map noop '(1 2 3) '(1 2 3) '(1 . x)))
+
+    (pass-if "(1 2 3) (4 5 6) (7 8 9)"
+      (equal? '(12 15 18) (filter-map + '(1 2 3) '(4 5 6) '(7 8 9))))
+
+    (pass-if "(#f 2 3) (4 5) (7 8 9)"
+      (equal? '(2) (filter-map noop '(#f 2 3) '(4 5) '(7 8 9))))
+
+    (pass-if "(#f 2 3) (7 8 9) (4 5)"
+      (equal? '(2) (filter-map noop '(#f 2 3) '(7 8 9) '(4 5))))
+
+    (pass-if "(4 #f) (1 2 3) (7 8 9)"
+      (equal? '(4) (filter-map noop '(4 #f) '(1 2 3) '(7 8 9))))
+
+    (pass-if "apply list unchanged"
+      (let ((lst (list (list 1 #f 2) (list 3 4 5) (list 6 7 8))))
+	(and (equal? '(1 2) (apply filter-map noop lst))
+	     ;; lst unmodified
+	     (equal? lst '((1 #f 2) (3 4 5) (6 7 8))))))))
+  
+;;
+;; find
+;;
+
+(with-test-prefix "find"
+  (pass-if (eqv? #f (find odd? '())))
+  (pass-if (eqv? #f (find odd? '(0))))
+  (pass-if (eqv? #f (find odd? '(0 2))))
+  (pass-if (eqv? 1 (find odd? '(1))))
+  (pass-if (eqv? 1 (find odd? '(0 1))))
+  (pass-if (eqv? 1 (find odd? '(0 1 2))))
+  (pass-if (eqv? 1 (find odd? '(2 0 1))))
+  (pass-if (eqv? 1 (find (lambda (x) (= 1 x)) '(2 0 1)))))
+
+;;
+;; find-tail
+;;
+
+(with-test-prefix "find-tail"
+  (pass-if (let ((lst '()))
+	     (eq? #f (find-tail odd? lst))))
+  (pass-if (let ((lst '(0)))
+	     (eq? #f (find-tail odd? lst))))
+  (pass-if (let ((lst '(0 2)))
+	     (eq? #f (find-tail odd? lst))))
+  (pass-if (let ((lst '(1)))
+	     (eq? lst (find-tail odd? lst))))
+  (pass-if (let ((lst '(1 2)))
+	     (eq? lst (find-tail odd? lst))))
+  (pass-if (let ((lst '(2 1)))
+	     (eq? (cdr lst) (find-tail odd? lst))))
+  (pass-if (let ((lst '(2 1 0)))
+	     (eq? (cdr lst) (find-tail odd? lst))))
+  (pass-if (let ((lst '(2 0 1)))
+	     (eq? (cddr lst) (find-tail odd? lst))))
+  (pass-if (let ((lst '(2 0 1)))
+	     (eq? (cddr lst) (find-tail (lambda (x) (= 1 x)) lst)))))
+
+;;
+;; fold
+;;
+
+(with-test-prefix "fold"
+  (pass-if-exception "no args" exception:wrong-num-args
+    (fold))
+
+  (pass-if-exception "one arg" exception:wrong-num-args
+    (fold 123))
+
+  (pass-if-exception "two args" exception:wrong-num-args
+    (fold 123 noop))
+
+  (with-test-prefix "one list"
+
+    (pass-if "arg order"
+      (eq? #t (fold (lambda (x prev)
+		      (and (= 1 x)
+			   (= 2 prev)))
+		    2 '(1))))
+
+    (pass-if "empty list" (= 123 (fold + 123 '())))
+
+    (pass-if-exception "proc arg count 0" exception:wrong-type-arg
+      (fold (lambda () x) 123 '(1 2 3)))
+    (pass-if-exception "proc arg count 1" exception:wrong-type-arg
+      (fold (lambda (x) x) 123 '(1 2 3)))
+    (pass-if-exception "proc arg count 3" exception:wrong-type-arg
+      (fold (lambda (x y z) x) 123 '(1 2 3)))
+
+    (pass-if-exception "improper 1" exception:wrong-type-arg
+      (fold + 123 1))
+    (pass-if-exception "improper 2" exception:wrong-type-arg
+      (fold + 123 '(1 . 2)))
+    (pass-if-exception "improper 3" exception:wrong-type-arg
+      (fold + 123 '(1 2 . 3)))
+
+    (pass-if (= 3 (fold + 1 '(2))))
+    (pass-if (= 6 (fold + 1 '(2 3))))
+    (pass-if (= 10 (fold + 1 '(2 3 4)))))
+
+  (with-test-prefix "two lists"
+
+    (pass-if "arg order"
+      (eq? #t (fold (lambda (x y prev)
+		      (and (= 1 x)
+			   (= 2 y)
+			   (= 3 prev)))
+		    3 '(1) '(2))))
+
+    (pass-if "empty lists" (= 1 (fold + 1 '() '())))
+
+    ;; currently bad proc argument gives wrong-num-args when 2 or more
+    ;; lists, as opposed to wrong-type-arg for 1 list
+    (pass-if-exception "proc arg count 2" exception:wrong-num-args
+      (fold (lambda (x prev) x) 1 '(1 2 3) '(1 2 3)))
+    (pass-if-exception "proc arg count 4" exception:wrong-num-args
+      (fold (lambda (x y z prev) x) 1 '(1 2 3) '(1 2 3)))
+
+    (pass-if-exception "improper first 1" exception:wrong-type-arg
+      (fold + 1 1 '(1 2 3)))
+    (pass-if-exception "improper first 2" exception:wrong-type-arg
+      (fold + 1 '(1 . 2) '(1 2 3)))
+    (pass-if-exception "improper first 3" exception:wrong-type-arg
+      (fold + 1 '(1 2 . 3) '(1 2 3)))
+
+    (pass-if-exception "improper second 1" exception:wrong-type-arg
+      (fold + 1 '(1 2 3) 1))
+    (pass-if-exception "improper second 2" exception:wrong-type-arg
+      (fold + 1 '(1 2 3) '(1 . 2)))
+    (pass-if-exception "improper second 3" exception:wrong-type-arg
+      (fold + 1 '(1 2 3) '(1 2 . 3)))
+
+    (pass-if (= 6 (fold + 1 '(2) '(3))))
+    (pass-if (= 15 (fold + 1 '(2 3) '(4 5))))
+    (pass-if (= 28 (fold + 1 '(2 3 4) '(5 6 7))))
+
+    (with-test-prefix "stop shortest"
+      (pass-if (= 13 (fold + 1 '(1 2 3) '(4 5))))
+      (pass-if (= 13 (fold + 1 '(4 5) '(1 2 3))))
+      (pass-if (= 11 (fold + 1 '(3 4) '(1 2 9 9))))
+      (pass-if (= 11 (fold + 1 '(1 2 9 9) '(3 4)))))
+
+    (pass-if "apply list unchanged"
+      (let ((lst (list (list 1 2) (list 3 4))))
+	(and (equal? 11 (apply fold + 1 lst))
+	     ;; lst unmodified
+	     (equal? '((1 2) (3 4)) lst)))))
+
+  (with-test-prefix "three lists"
+
+    (pass-if "arg order"
+      (eq? #t (fold (lambda (x y z prev)
+		      (and (= 1 x)
+			   (= 2 y)
+			   (= 3 z)
+			   (= 4 prev)))
+		    4 '(1) '(2) '(3))))
+
+    (pass-if "empty lists" (= 1 (fold + 1 '() '() '())))
+
+    (pass-if-exception "proc arg count 3" exception:wrong-num-args
+      (fold (lambda (x y prev) x) 1 '(1 2 3) '(1 2 3)'(1 2 3) ))
+    (pass-if-exception "proc arg count 5" exception:wrong-num-args
+      (fold (lambda (w x y z prev) x) 1 '(1 2 3) '(1 2 3) '(1 2 3)))
+
+    (pass-if-exception "improper first 1" exception:wrong-type-arg
+      (fold + 1 1 '(1 2 3) '(1 2 3)))
+    (pass-if-exception "improper first 2" exception:wrong-type-arg
+      (fold + 1 '(1 . 2) '(1 2 3) '(1 2 3)))
+    (pass-if-exception "improper first 3" exception:wrong-type-arg
+      (fold + 1 '(1 2 . 3) '(1 2 3) '(1 2 3)))
+
+    (pass-if-exception "improper second 1" exception:wrong-type-arg
+      (fold + 1 '(1 2 3) 1 '(1 2 3)))
+    (pass-if-exception "improper second 2" exception:wrong-type-arg
+      (fold + 1 '(1 2 3) '(1 . 2) '(1 2 3)))
+    (pass-if-exception "improper second 3" exception:wrong-type-arg
+      (fold + 1 '(1 2 3) '(1 2 . 3) '(1 2 3)))
+
+    (pass-if-exception "improper third 1" exception:wrong-type-arg
+      (fold + 1 '(1 2 3) '(1 2 3) 1))
+    (pass-if-exception "improper third 2" exception:wrong-type-arg
+      (fold + 1 '(1 2 3) '(1 2 3) '(1 . 2)))
+    (pass-if-exception "improper third 3" exception:wrong-type-arg
+      (fold + 1 '(1 2 3) '(1 2 3) '(1 2 . 3)))
+
+    (pass-if (= 10 (fold + 1 '(2) '(3) '(4))))
+    (pass-if (= 28 (fold + 1 '(2 5) '(3 6) '(4 7))))
+    (pass-if (= 55 (fold + 1 '(2 5 8) '(3 6 9) '(4 7 10))))
+
+    (with-test-prefix "stop shortest"
+      (pass-if (= 28 (fold + 1 '(2 5 9) '(3 6) '(4 7))))
+      (pass-if (= 28 (fold + 1 '(2 5) '(3 6 9) '(4 7))))
+      (pass-if (= 28 (fold + 1 '(2 5) '(3 6) '(4 7 9)))))
+
+    (pass-if "apply list unchanged"
+      (let ((lst (list (list 1 2) (list 3 4) (list 5 6))))
+	(and (equal? 22 (apply fold + 1 lst))
+	     ;; lst unmodified
+	     (equal? '((1 2) (3 4) (5 6)) lst))))))
+
+;;
+;; length+
+;;
+
+(with-test-prefix "length+"
+  (pass-if-exception "too few args" exception:wrong-num-args
+    (length+))
+  (pass-if-exception "too many args" exception:wrong-num-args
+    (length+ 123 456))
+  (pass-if (= 0 (length+ '())))
+  (pass-if (= 1 (length+ '(x))))
+  (pass-if (= 2 (length+ '(x y))))
+  (pass-if (= 3 (length+ '(x y z))))
+  (pass-if (not (length+ (circular-list 1))))
+  (pass-if (not (length+ (circular-list 1 2))))
+  (pass-if (not (length+ (circular-list 1 2 3)))))
+
+;;
+;; last
+;;
+
+(with-test-prefix "last"
+
+  (pass-if-exception "empty" exception:wrong-type-arg
+    (last '()))
+  (pass-if "one elem"
+    (eqv? 1 (last '(1))))
+  (pass-if "two elems"
+    (eqv? 2 (last '(1 2))))
+  (pass-if "three elems"
+    (eqv? 3 (last '(1 2 3))))
+  (pass-if "four elems"
+    (eqv? 4 (last '(1 2 3 4)))))
+
+;;
+;; list=
+;;
+
+(with-test-prefix "list="
+
+  (pass-if "no lists"
+    (eq? #t (list= eqv?)))
+
+  (with-test-prefix "one list"
+
+    (pass-if "empty"
+      (eq? #t (list= eqv? '())))
+    (pass-if "one elem"
+      (eq? #t (list= eqv? '(1))))
+    (pass-if "two elems"
+      (eq? #t (list= eqv? '(2)))))
+
+  (with-test-prefix "two lists"
+
+    (pass-if "empty / empty"
+      (eq? #t (list= eqv? '() '())))
+
+    (pass-if "one / empty"
+      (eq? #f (list= eqv? '(1) '())))
+
+    (pass-if "empty / one"
+      (eq? #f (list= eqv? '() '(1))))
+
+    (pass-if "one / one same"
+      (eq? #t (list= eqv? '(1) '(1))))
+
+    (pass-if "one / one diff"
+      (eq? #f (list= eqv? '(1) '(2))))
+
+    (pass-if "called arg order"
+      (let ((good #t))
+	(list= (lambda (x y)
+		 (set! good (and good (= (1+ x) y)))
+		 #t)
+	       '(1 3) '(2 4))
+	good)))
+
+  (with-test-prefix "three lists"
+
+    (pass-if "empty / empty / empty"
+      (eq? #t (list= eqv? '() '() '())))
+
+    (pass-if "one / empty / empty"
+      (eq? #f (list= eqv? '(1) '() '())))
+
+    (pass-if "one / one / empty"
+      (eq? #f (list= eqv? '(1) '(1) '())))
+
+    (pass-if "one / diff / empty"
+      (eq? #f (list= eqv? '(1) '(2) '())))
+
+    (pass-if "one / one / one"
+      (eq? #t (list= eqv? '(1) '(1) '(1))))
+
+    (pass-if "two / two / diff"
+      (eq? #f (list= eqv? '(1 2) '(1 2) '(1 99))))
+
+    (pass-if "two / two / two"
+      (eq? #t (list= eqv? '(1 2) '(1 2) '(1 2))))
+
+    (pass-if "called arg order"
+      (let ((good #t))
+	(list= (lambda (x y)
+		 (set! good (and good (= (1+ x) y)))
+		 #t)
+	       '(1 4) '(2 5) '(3 6))
+	good))))
+
+;;
+;; list-copy
+;;
+
+(with-test-prefix "list-copy"
+  (pass-if (equal? '()          (list-copy '())))
+  (pass-if (equal? '(1 2)       (list-copy '(1 2))))
+  (pass-if (equal? '(1 2 3)     (list-copy '(1 2 3))))
+  (pass-if (equal? '(1 2 3 4)   (list-copy '(1 2 3 4))))
+  (pass-if (equal? '(1 2 3 4 5) (list-copy '(1 2 3 4 5))))
+  
+  ;; improper lists can be copied
+  (pass-if (equal? 1              (list-copy 1)))
+  (pass-if (equal? '(1 . 2)       (list-copy '(1 . 2))))
+  (pass-if (equal? '(1 2 . 3)     (list-copy '(1 2 . 3))))
+  (pass-if (equal? '(1 2 3 . 4)   (list-copy '(1 2 3 . 4))))
+  (pass-if (equal? '(1 2 3 4 . 5) (list-copy '(1 2 3 4 . 5)))))
+
+;;
+;; list-index
+;;
+
+(with-test-prefix "list-index"
+  (pass-if-exception "no args" exception:wrong-num-args
+    (list-index))
+
+  (pass-if-exception "one arg" exception:wrong-num-args
+    (list-index noop))
+
+  (with-test-prefix "one list"
+
+    (pass-if "empty list" (eq? #f (list-index symbol? '())))
+
+    (pass-if-exception "pred arg count 0" exception:wrong-type-arg
+      (list-index (lambda () x) '(1 2 3)))
+    (pass-if-exception "pred arg count 2" exception:wrong-type-arg
+      (list-index (lambda (x y) x) '(1 2 3)))
+
+    (pass-if-exception "improper 1" exception:wrong-type-arg
+      (list-index symbol? 1))
+    (pass-if-exception "improper 2" exception:wrong-type-arg
+      (list-index symbol? '(1 . 2)))
+    (pass-if-exception "improper 3" exception:wrong-type-arg
+      (list-index symbol? '(1 2 . 3)))
+
+    (pass-if (eqv? #f (list-index symbol? '(1))))
+    (pass-if (eqv? 0 (list-index symbol? '(x))))
+
+    (pass-if (eqv? #f (list-index symbol? '(1 2))))
+    (pass-if (eqv? 0 (list-index symbol? '(x 1))))
+    (pass-if (eqv? 1 (list-index symbol? '(1 x))))
+
+    (pass-if (eqv? #f (list-index symbol? '(1 2 3))))
+    (pass-if (eqv? 0 (list-index symbol? '(x 1 2))))
+    (pass-if (eqv? 1 (list-index symbol? '(1 x 2))))
+    (pass-if (eqv? 2 (list-index symbol? '(1 2 x)))))
+
+  (with-test-prefix "two lists"
+    (define (sym1 x y)
+      (symbol? x))
+    (define (sym2 x y)
+      (symbol? y))
+
+    (pass-if "arg order"
+      (eqv? 0 (list-index (lambda (x y)
+			    (and (= 1 x)
+				 (= 2 y)))
+			  '(1) '(2))))
+
+    (pass-if "empty lists" (eqv? #f (list-index sym2 '() '())))
+
+    (pass-if-exception "pred arg count 0" exception:wrong-type-arg
+      (list-index (lambda () #t) '(1 2 3) '(1 2 3)))
+    (pass-if-exception "pred arg count 1" exception:wrong-type-arg
+      (list-index (lambda (x) x) '(1 2 3) '(1 2 3)))
+    (pass-if-exception "pred arg count 3" exception:wrong-type-arg
+      (list-index (lambda (x y z) x) '(1 2 3) '(1 2 3)))
+
+    (pass-if-exception "improper first 1" exception:wrong-type-arg
+      (list-index sym2 1 '(1 2 3)))
+    (pass-if-exception "improper first 2" exception:wrong-type-arg
+      (list-index sym2 '(1 . 2) '(1 2 3)))
+    (pass-if-exception "improper first 3" exception:wrong-type-arg
+      (list-index sym2 '(1 2 . 3) '(1 2 3)))
+
+    (pass-if-exception "improper second 1" exception:wrong-type-arg
+      (list-index sym2 '(1 2 3) 1))
+    (pass-if-exception "improper second 2" exception:wrong-type-arg
+      (list-index sym2 '(1 2 3) '(1 . 2)))
+    (pass-if-exception "improper second 3" exception:wrong-type-arg
+      (list-index sym2 '(1 2 3) '(1 2 . 3)))
+
+    (pass-if (eqv? #f (list-index sym2 '(1) '(2))))
+    (pass-if (eqv? 0  (list-index sym2 '(1) '(x))))
+
+    (pass-if (eqv? #f (list-index sym2 '(1 2) '(3 4))))
+    (pass-if (eqv? 0  (list-index sym2 '(1 2) '(x 3))))
+    (pass-if (eqv? 1  (list-index sym2 '(1 2) '(3 x))))
+
+    (pass-if (eqv? #f (list-index sym2 '(1 2 3) '(3 4 5))))
+    (pass-if (eqv? 0  (list-index sym2 '(1 2 3) '(x 3 4))))
+    (pass-if (eqv? 1  (list-index sym2 '(1 2 3) '(3 x 4))))
+    (pass-if (eqv? 2  (list-index sym2 '(1 2 3) '(3 4 x))))
+
+    (with-test-prefix "stop shortest"
+      (pass-if (eqv? #f (list-index sym1 '(1 2 x) '(4 5))))
+      (pass-if (eqv? #f (list-index sym2 '(4 5) '(1 2 x))))
+      (pass-if (eqv? #f (list-index sym1 '(3 4) '(1 2 x y))))
+      (pass-if (eqv? #f (list-index sym2 '(1 2 x y) '(3 4))))))
+
+  (with-test-prefix "three lists"
+    (define (sym1 x y z)
+      (symbol? x))
+    (define (sym2 x y z)
+      (symbol? y))
+    (define (sym3 x y z)
+      (symbol? z))
+
+    (pass-if "arg order"
+      (eqv? 0 (list-index (lambda (x y z)
+			    (and (= 1 x)
+				 (= 2 y)
+				 (= 3 z)))
+			  '(1) '(2) '(3))))
+
+    (pass-if "empty lists" (eqv? #f (list-index sym3 '() '() '())))
+
+    ;; currently bad pred argument gives wrong-num-args when 3 or more
+    ;; lists, as opposed to wrong-type-arg for 1 or 2 lists
+    (pass-if-exception "pred arg count 0" exception:wrong-num-args
+      (list-index (lambda () #t) '(1 2 3) '(1 2 3) '(1 2 3)))
+    (pass-if-exception "pred arg count 2" exception:wrong-num-args
+      (list-index (lambda (x y) x) '(1 2 3) '(1 2 3)'(1 2 3) ))
+    (pass-if-exception "pred arg count 4" exception:wrong-num-args
+      (list-index (lambda (w x y z) x) '(1 2 3) '(1 2 3) '(1 2 3)))
+
+    (pass-if-exception "improper first 1" exception:wrong-type-arg
+      (list-index sym3 1 '(1 2 3) '(1 2 3)))
+    (pass-if-exception "improper first 2" exception:wrong-type-arg
+      (list-index sym3 '(1 . 2) '(1 2 3) '(1 2 3)))
+    (pass-if-exception "improper first 3" exception:wrong-type-arg
+      (list-index sym3 '(1 2 . 3) '(1 2 3) '(1 2 3)))
+
+    (pass-if-exception "improper second 1" exception:wrong-type-arg
+      (list-index sym3 '(1 2 3) 1 '(1 2 3)))
+    (pass-if-exception "improper second 2" exception:wrong-type-arg
+      (list-index sym3 '(1 2 3) '(1 . 2) '(1 2 3)))
+    (pass-if-exception "improper second 3" exception:wrong-type-arg
+      (list-index sym3 '(1 2 3) '(1 2 . 3) '(1 2 3)))
+
+    (pass-if-exception "improper third 1" exception:wrong-type-arg
+      (list-index sym3 '(1 2 3) '(1 2 3) 1))
+    (pass-if-exception "improper third 2" exception:wrong-type-arg
+      (list-index sym3 '(1 2 3) '(1 2 3) '(1 . 2)))
+    (pass-if-exception "improper third 3" exception:wrong-type-arg
+      (list-index sym3 '(1 2 3) '(1 2 3) '(1 2 . 3)))
+
+    (pass-if (eqv? #f (list-index sym3 '(#f) '(#f) '(#f))))
+    (pass-if (eqv? 0  (list-index sym3 '(#f) '(#f) '(x))))
+
+    (pass-if (eqv? #f (list-index sym3 '(#f #f) '(#f #f) '(#f #f))))
+    (pass-if (eqv? 0  (list-index sym3 '(#f #f) '(#f #f) '(x #f))))
+    (pass-if (eqv? 1  (list-index sym3 '(#f #f) '(#f #f) '(#f x))))
+
+    (pass-if (eqv? #f (list-index sym3 '(#f #f #f) '(#f #f #f) '(#f #f #f))))
+    (pass-if (eqv? 0  (list-index sym3 '(#f #f #f) '(#f #f #f) '(x #f #f))))
+    (pass-if (eqv? 1  (list-index sym3 '(#f #f #f) '(#f #f #f) '(#f x #f))))
+    (pass-if (eqv? 2  (list-index sym3 '(#f #f #f) '(#f #f #f) '(#f #f x))))
+
+    (with-test-prefix "stop shortest"
+      (pass-if (eqv? #f (list-index sym2 '() '(x x x) '(x x))))
+      (pass-if (eqv? #f (list-index sym1 '(x x x) '() '(x x))))
+      (pass-if (eqv? #f (list-index sym2 '(x x x) '(x x) '())))
+
+      (pass-if (eqv? #f (list-index sym2 '(#t) '(#t x x) '(#t x))))
+      (pass-if (eqv? #f (list-index sym1 '(#t x x) '(#t) '(#t x))))
+      (pass-if (eqv? #f (list-index sym1 '(#t x x) '(#t x) '(#t)))))
+
+    (pass-if "apply list unchanged"
+      (let ((lst (list (list 1 2) (list 3 4) (list 5 6))))
+	(and (equal? #f (apply list-index sym3 lst))
+	     ;; lst unmodified
+	     (equal? '((1 2) (3 4) (5 6)) lst))))))
+
+;;
+;; list-tabulate
+;;
+
+(with-test-prefix "list-tabulate"
+
+  (pass-if-exception "-1" exception:out-of-range
+    (list-tabulate -1 identity))
+  (pass-if "0"
+    (equal? '() (list-tabulate 0 identity)))
+  (pass-if "1"
+    (equal? '(0) (list-tabulate 1 identity)))
+  (pass-if "2"
+    (equal? '(0 1) (list-tabulate 2 identity)))
+  (pass-if "3"
+    (equal? '(0 1 2) (list-tabulate 3 identity)))
+  (pass-if "4"
+    (equal? '(0 1 2 3) (list-tabulate 4 identity)))
+  (pass-if "string ref proc"
+    (equal? '(#\a #\b #\c #\d) (list-tabulate 4
+					      (lambda (i)
+						(string-ref "abcd" i))))))
+
+;;
+;; lset=
+;;
+
+(with-test-prefix "lset="
+
+  ;; in guile 1.6.7 and earlier, lset= incorrectly demanded at least one
+  ;; list arg
+  (pass-if "no args"
+    (eq? #t (lset= eq?)))
+
+  (with-test-prefix "one arg"
+
+    (pass-if "()"
+      (eq? #t (lset= eqv? '())))
+
+    (pass-if "(1)"
+      (eq? #t (lset= eqv? '(1))))
+
+    (pass-if "(1 2)"
+      (eq? #t (lset= eqv? '(1 2)))))
+
+  (with-test-prefix "two args"
+
+    (pass-if "() ()"
+      (eq? #t (lset= eqv? '() '())))
+
+    (pass-if "(1) (1)"
+      (eq? #t (lset= eqv? '(1) '(1))))
+
+    (pass-if "(1) (2)"
+      (eq? #f (lset= eqv? '(1) '(2))))
+
+    (pass-if "(1) (1 2)"
+      (eq? #f (lset= eqv? '(1) '(1 2))))
+
+    (pass-if "(1 2) (2 1)"
+      (eq? #t (lset= eqv? '(1 2) '(2 1))))
+
+    (pass-if "called arg order"
+      (let ((good #t))
+	(lset= (lambda (x y)
+		 (if (not (= x (1- y)))
+		     (set! good #f))
+		 #t)
+	       '(1 1) '(2 2))
+	good)))
+
+  (with-test-prefix "three args"
+
+    (pass-if "() () ()"
+      (eq? #t (lset= eqv? '() '() '())))
+
+    (pass-if "(1) (1) (1)"
+      (eq? #t (lset= eqv? '(1) '(1) '(1))))
+
+    (pass-if "(1) (1) (2)"
+      (eq? #f (lset= eqv? '(1) '(1) '(2))))
+
+    (pass-if "(1) (1) (1 2)"
+      (eq? #f (lset= eqv? '(1) '(1) '(1 2))))
+
+    (pass-if "(1 2 3) (3 2 1) (1 3 2)"
+      (eq? #t (lset= eqv? '(1 2 3) '(3 2 1) '(1 3 2))))
+
+    (pass-if "called arg order"
+      (let ((good #t))
+	(lset= (lambda (x y)
+		 (if (not (= x (1- y)))
+		     (set! good #f))
+		 #t)
+	       '(1 1) '(2 2) '(3 3))
+	good))))
+
+;;
+;; lset-adjoin
+;;
+
+(with-test-prefix "lset-adjoin"
+
+  ;; in guile 1.6.7 and earlier, lset-adjoin didn't actually use the given
+  ;; `=' procedure, all comparisons were just with `equal?
+  ;;
+  (with-test-prefix "case-insensitive ="
+
+    (pass-if "(\"x\") \"X\""
+      (equal? '("x") (lset-adjoin string-ci=? '("x") "X"))))
+
+  (pass-if "called arg order"
+    (let ((good #f))
+      (lset-adjoin (lambda (x y)
+		     (set! good (and (= x 1) (= y 2)))
+		     (= x y))
+		   '(1) 2)
+      good))
+
+  (pass-if (equal? '() (lset-adjoin = '())))
+
+  (pass-if (equal? '(1) (lset-adjoin = '() 1)))
+
+  (pass-if (equal? '(1) (lset-adjoin = '() 1 1)))
+
+  (pass-if (equal? '(2 1) (lset-adjoin = '() 1 2)))
+
+  (pass-if (equal? '(3 1 2) (lset-adjoin = '(1 2) 1 2 3 2 1)))
+
+  (pass-if "apply list unchanged"
+    (let ((lst (list 1 2)))
+      (and (equal? '(2 1 3) (apply lset-adjoin = '(3) lst))
+	   ;; lst unmodified
+	   (equal? '(1 2) lst))))
+
+  (pass-if "(1 1) 1 1"
+    (equal? '(1 1) (lset-adjoin = '(1 1) 1 1)))
+
+  ;; duplicates among args are cast out
+  (pass-if "(2) 1 1"
+    (equal? '(1 2) (lset-adjoin = '(2) 1 1))))
+
+;;
+;; lset-difference
+;;
+
+(with-test-prefix "lset-difference"
+
+  (pass-if "called arg order"
+    (let ((good #f))
+      (lset-difference (lambda (x y)
+			 (set! good (and (= x 1) (= y 2)))
+			 (= x y))
+		       '(1) '(2))
+      good)))  
+
+;;
+;; lset-difference!
+;;
+
+(with-test-prefix "lset-difference!"
+
+  (pass-if-exception "proc - num" exception:wrong-type-arg
+    (lset-difference! 123 '(4)))
+  (pass-if-exception "proc - list" exception:wrong-type-arg
+    (lset-difference! (list 1 2 3) '(4)))
+
+  (pass-if "called arg order"
+    (let ((good #f))
+      (lset-difference! (lambda (x y)
+			  (set! good (and (= x 1) (= y 2)))
+			  (= x y))
+			(list 1) (list 2))
+      good))
+
+  (pass-if (equal? '() (lset-difference! = '())))
+  (pass-if (equal? '(1) (lset-difference! = (list 1))))
+  (pass-if (equal? '(1 2) (lset-difference! = (list 1 2))))
+
+  (pass-if (equal? '() (lset-difference! = (list ) '(3))))
+  (pass-if (equal? '() (lset-difference! = (list 3) '(3))))
+  (pass-if (equal? '(1) (lset-difference! = (list 1 3) '(3))))
+  (pass-if (equal? '(1) (lset-difference! = (list 3 1) '(3))))
+  (pass-if (equal? '(1) (lset-difference! = (list 1 3 3) '(3))))
+  (pass-if (equal? '(1) (lset-difference! = (list 3 1 3) '(3))))
+  (pass-if (equal? '(1) (lset-difference! = (list 3 3 1) '(3))))
+
+  (pass-if (equal? '(1) (lset-difference! = (list 1 2 3) '(2 3))))
+  (pass-if (equal? '(1) (lset-difference! = (list 1 2 3) '(3 2))))
+  (pass-if (equal? '(1) (lset-difference! = (list 1 2 3) '(3) '(2))))
+  (pass-if (equal? '(1) (lset-difference! = (list 1 2 3) '(2) '(3))))
+  (pass-if (equal? '(1) (lset-difference! = (list 1 2 3) '(2) '(2 3))))
+  (pass-if (equal? '(1) (lset-difference! = (list 1 2 3) '(2) '(3 2))))
+
+  (pass-if (equal? '(1 2) (lset-difference! = (list 1 2 3) '(3) '(3))))
+  (pass-if (equal? '(1 2) (lset-difference! = (list 1 3 2) '(3) '(3))))
+  (pass-if (equal? '(1 2) (lset-difference! = (list 3 1 2) '(3) '(3))))
+
+  (pass-if (equal? '(1 2 3) (lset-difference! = (list 1 2 3 4) '(4))))
+  (pass-if (equal? '(1 2 3) (lset-difference! = (list 1 2 4 3) '(4))))
+  (pass-if (equal? '(1 2 3) (lset-difference! = (list 1 4 2 3) '(4))))
+  (pass-if (equal? '(1 2 3) (lset-difference! = (list 4 1 2 3) '(4))))
+
+  (pass-if (equal? '(1 2) (lset-difference! = (list 1 2 3 4) '(4) '(3))))
+  (pass-if (equal? '(1 2) (lset-difference! = (list 1 3 2 4) '(4) '(3))))
+  (pass-if (equal? '(1 2) (lset-difference! = (list 3 1 2 4) '(4) '(3))))
+  (pass-if (equal? '(1 2) (lset-difference! = (list 1 3 4 2) '(4) '(3))))
+  (pass-if (equal? '(1 2) (lset-difference! = (list 3 1 4 2) '(4) '(3))))
+  (pass-if (equal? '(1 2) (lset-difference! = (list 3 4 1 2) '(4) '(3)))))
+
+;;
+;; lset-diff+intersection
+;;
+
+(with-test-prefix "lset-diff+intersection"
+
+  (pass-if "called arg order"
+    (let ((good #f))
+      (lset-diff+intersection (lambda (x y)
+				(set! good (and (= x 1) (= y 2)))
+				(= x y))
+			      '(1) '(2))
+      good)))  
+
+;;
+;; lset-diff+intersection!
+;;
+
+(with-test-prefix "lset-diff+intersection"
+
+  (pass-if "called arg order"
+    (let ((good #f))
+      (lset-diff+intersection (lambda (x y)
+				(set! good (and (= x 1) (= y 2)))
+				(= x y))
+			      (list 1) (list 2))
+      good)))  
+
+;;
+;; lset-intersection
+;;
+
+(with-test-prefix "lset-intersection"
+
+  (pass-if "called arg order"
+    (let ((good #f))
+      (lset-intersection (lambda (x y)
+			   (set! good (and (= x 1) (= y 2)))
+			   (= x y))
+			 '(1) '(2))
+      good)))  
+
+;;
+;; lset-intersection!
+;;
+
+(with-test-prefix "lset-intersection"
+
+  (pass-if "called arg order"
+    (let ((good #f))
+      (lset-intersection (lambda (x y)
+			   (set! good (and (= x 1) (= y 2)))
+			   (= x y))
+			 (list 1) (list 2))
+      good)))  
+
+;;
+;; lset-union
+;;
+
+(with-test-prefix "lset-union"
+
+  (pass-if "no args"
+    (eq? '() (lset-union eq?)))
+
+  (pass-if "one arg"
+    (equal? '(1 2 3) (lset-union eq? '(1 2 3))))
+
+  (pass-if "'() '()"
+    (equal? '() (lset-union eq? '() '())))
+
+  (pass-if "'() '(1 2 3)"
+    (equal? '(1 2 3) (lset-union eq? '() '(1 2 3))))
+
+  (pass-if "'(1 2 3) '()"
+    (equal? '(1 2 3) (lset-union eq? '(1 2 3) '())))
+
+  (pass-if "'(1 2 3) '(4 3 5)"
+    (equal? '(5 4 1 2 3) (lset-union eq? '(1 2 3) '(4 3 5))))
+
+  (pass-if "'(1 2 3) '(4) '(3 5))"
+    (equal? '(5 4 1 2 3) (lset-union eq? '(1 2 3) '(4) '(3 5))))
+
+  ;; in guile 1.6.7 and earlier, `=' was called with the arguments the wrong
+  ;; way around
+  (pass-if "called arg order"
+    (let ((good #f))
+      (lset-union (lambda (x y)
+		    (set! good (and (= x 1) (= y 2)))
+		    (= x y))
+		  '(1) '(2))
+      good)))
+
+;;
+;; member
+;;
+
+(with-test-prefix "member"
+
+  (pass-if-exception "no args" exception:wrong-num-args
+    (member))
+
+  (pass-if-exception "one arg" exception:wrong-num-args
+    (member 1))
+
+  (pass-if "1 (1 2 3)"
+    (let ((lst '(1 2 3)))
+      (eq? lst (member 1 lst))))
+
+  (pass-if "2 (1 2 3)"
+    (let ((lst '(1 2 3)))
+      (eq? (cdr lst) (member 2 lst))))
+
+  (pass-if "3 (1 2 3)"
+    (let ((lst '(1 2 3)))
+      (eq? (cddr lst) (member 3 lst))))
+
+  (pass-if "4 (1 2 3)"
+    (let ((lst '(1 2 3)))
+      (eq? #f (member 4 lst))))
+
+  (pass-if "called arg order"
+    (let ((good #f))
+      (member 1 '(2) (lambda (x y)
+		       (set! good (and (eqv? 1 x)
+				       (eqv? 2 y)))))
+      good)))
+
+;;
+;; ninth
+;;
+
+(with-test-prefix "ninth"
+  (pass-if-exception "() -1" exception:out-of-range
+    (ninth '(a b c d e f g h)))
+  (pass-if (eq? 'i (ninth '(a b c d e f g h i))))
+  (pass-if (eq? 'i (ninth '(a b c d e f g h i j)))))
+
+
+;;
+;; not-pair?
+;;
+
+(with-test-prefix "not-pair?"
+  (pass-if "inum"
+    (eq? #t (not-pair? 123)))
+  (pass-if "pair"
+    (eq? #f (not-pair? '(x . y))))
+  (pass-if "symbol"
+    (eq? #t (not-pair? 'x))))
+
+;;
+;; take
+;;
+
+(with-test-prefix "take"
+  
+  (pass-if "'() 0"
+    (null? (take '() 0)))
+  
+  (pass-if "'(a) 0"
+    (null? (take '(a) 0)))
+  
+  (pass-if "'(a b) 0"
+    (null? (take '() 0)))
+  
+  (pass-if "'(a b c) 0"
+    (null? (take '() 0)))
+  
+  (pass-if "'(a) 1"
+    (let* ((lst '(a))
+	   (got (take lst 1)))
+      (and (equal? '(a) got)
+	   (not (eq? lst got)))))
+  
+  (pass-if "'(a b) 1"
+    (equal? '(a)
+	    (take '(a b) 1)))
+  
+  (pass-if "'(a b c) 1"
+    (equal? '(a)
+	    (take '(a b c) 1)))
+  
+  (pass-if "'(a b) 2"
+    (let* ((lst '(a b))
+	   (got (take lst 2)))
+      (and (equal? '(a b) got)
+	   (not (eq? lst got)))))
+  
+  (pass-if "'(a b c) 2"
+    (equal? '(a b)
+	    (take '(a b c) 2)))
+  
+  (pass-if "circular '(a) 0"
+    (equal? '()
+	    (take (circular-list 'a) 0)))
+  
+  (pass-if "circular '(a) 1"
+    (equal? '(a)
+	    (take (circular-list 'a) 1)))
+  
+  (pass-if "circular '(a) 2"
+    (equal? '(a a)
+	    (take (circular-list 'a) 2)))
+  
+  (pass-if "circular '(a b) 5"
+    (equal? '(a b a b a)
+	    (take (circular-list 'a 'b) 5)))
+  
+  (pass-if "'(a . b) 1"
+    (equal? '(a)
+	    (take '(a . b) 1)))
+  
+  (pass-if "'(a b . c) 1"
+    (equal? '(a)
+	    (take '(a b . c) 1)))
+  
+  (pass-if "'(a b . c) 2"
+    (equal? '(a b)
+	    (take '(a b . c) 2))))
+
+;;
+;; take-while
+;;
+
+(with-test-prefix "take-while"
+  
+  (pass-if (equal? '()      (take-while odd? '())))
+  (pass-if (equal? '(1)     (take-while odd? '(1))))
+  (pass-if (equal? '(1 3)   (take-while odd? '(1 3))))
+  (pass-if (equal? '(1 3 5) (take-while odd? '(1 3 5))))
+
+  (pass-if (equal? '()      (take-while odd? '(2))))
+  (pass-if (equal? '(1)     (take-while odd? '(1 2))))
+  (pass-if (equal? '(1 3)   (take-while odd? '(1 3 4))))
+
+  (pass-if (equal? '()      (take-while odd? '(2 1))))
+  (pass-if (equal? '(1)     (take-while odd? '(1 4 3))))
+  (pass-if (equal? '()      (take-while odd? '(4 1 3)))))
+
+;;
+;; take-while!
+;;
+
+(with-test-prefix "take-while!"
+  
+  (pass-if (equal? '()      (take-while! odd? '())))
+  (pass-if (equal? '(1)     (take-while! odd? (list 1))))
+  (pass-if (equal? '(1 3)   (take-while! odd? (list 1 3))))
+  (pass-if (equal? '(1 3 5) (take-while! odd? (list 1 3 5))))
+
+  (pass-if (equal? '()      (take-while! odd? (list 2))))
+  (pass-if (equal? '(1)     (take-while! odd? (list 1 2))))
+  (pass-if (equal? '(1 3)   (take-while! odd? (list 1 3 4))))
+
+  (pass-if (equal? '()      (take-while! odd? (list 2 1))))
+  (pass-if (equal? '(1)     (take-while! odd? (list 1 4 3))))
+  (pass-if (equal? '()      (take-while! odd? (list 4 1 3)))))
+
+;;
+;; partition
+;;
+
+(define (test-partition pred list kept-good dropped-good)
+  (call-with-values (lambda ()
+			(partition pred list))
+      (lambda (kept dropped)
+	(and (equal? kept kept-good)
+	     (equal? dropped dropped-good)))))
+
+(with-test-prefix "partition"
+		  
+  (pass-if "with dropped tail"
+    (test-partition even? '(1 2 3 4 5 6 7)
+		    '(2 4 6) '(1 3 5 7)))
+
+  (pass-if "with kept tail"
+    (test-partition even? '(1 2 3 4 5 6)
+		    '(2 4 6) '(1 3 5)))
+
+  (pass-if "with everything dropped"
+    (test-partition even? '(1 3 5 7)
+		    '() '(1 3 5 7)))
+
+  (pass-if "with everything kept"
+    (test-partition even? '(2 4 6)
+		    '(2 4 6) '()))
+
+  (pass-if "with empty list"
+    (test-partition even? '()
+		    '() '()))
+
+  (pass-if "with reasonably long list"
+    ;; the old implementation from SRFI-1 reference implementation
+    ;; would signal a stack-overflow for a list of only 500 elements!
+    (call-with-values (lambda ()
+			(partition even?
+				   (make-list 10000 1)))
+      (lambda (even odd)
+	(and (= (length odd) 10000)
+	     (= (length even) 0)))))
+
+  (pass-if-exception "with improper list"
+    exception:wrong-type-arg
+    (partition symbol? '(a b . c))))
+
+;;
+;; partition!
+;;
+
+(define (test-partition! pred list kept-good dropped-good)
+  (call-with-values (lambda ()
+			(partition! pred list))
+      (lambda (kept dropped)
+	(and (equal? kept kept-good)
+	     (equal? dropped dropped-good)))))
+
+(with-test-prefix "partition!"
+
+  (pass-if "with dropped tail"
+    (test-partition! even? (list 1 2 3 4 5 6 7)
+		     '(2 4 6) '(1 3 5 7)))
+
+  (pass-if "with kept tail"
+    (test-partition! even? (list 1 2 3 4 5 6)
+		     '(2 4 6) '(1 3 5)))
+
+  (pass-if "with everything dropped"
+    (test-partition! even? (list 1 3 5 7)
+		     '() '(1 3 5 7)))
+
+  (pass-if "with everything kept"
+    (test-partition! even? (list 2 4 6)
+		     '(2 4 6) '()))
+
+  (pass-if "with empty list"
+    (test-partition! even? '()
+		     '() '()))
+
+  (pass-if "with reasonably long list"
+    ;; the old implementation from SRFI-1 reference implementation
+    ;; would signal a stack-overflow for a list of only 500 elements!
+    (call-with-values (lambda ()
+			(partition! even?
+				    (make-list 10000 1)))
+      (lambda (even odd)
+	(and (= (length odd) 10000)
+	     (= (length even) 0)))))
+
+  (pass-if-exception "with improper list"
+    exception:wrong-type-arg
+    (partition! symbol? (cons* 'a 'b 'c))))
+
+;;
+;; reduce
+;;
+
+(with-test-prefix "reduce"
+
+  (pass-if "empty"
+    (let* ((calls '())
+	   (ret   (reduce (lambda (x prev)
+			    (set! calls (cons (list x prev) calls))
+			    x)
+			  1 '())))
+      (and (equal? calls '())
+	   (equal? ret   1))))
+
+  (pass-if "one elem"
+    (let* ((calls '())
+	   (ret   (reduce (lambda (x prev)
+			    (set! calls (cons (list x prev) calls))
+			    x)
+			  1 '(2))))
+      (and (equal? calls '())
+	   (equal? ret   2))))
+
+  (pass-if "two elems"
+    (let* ((calls '())
+	   (ret   (reduce (lambda (x prev)
+			    (set! calls (cons (list x prev) calls))
+			    x)
+			  1 '(2 3))))
+      (and (equal? calls '((3 2)))
+	   (equal? ret   3))))
+
+  (pass-if "three elems"
+    (let* ((calls '())
+	   (ret   (reduce (lambda (x prev)
+			    (set! calls (cons (list x prev) calls))
+			    x)
+			  1 '(2 3 4))))
+      (and (equal? calls '((4 3)
+			   (3 2)))
+	   (equal? ret   4))))
+
+  (pass-if "four elems"
+    (let* ((calls '())
+	   (ret   (reduce (lambda (x prev)
+			    (set! calls (cons (list x prev) calls))
+			    x)
+			  1 '(2 3 4 5))))
+      (and (equal? calls '((5 4)
+			   (4 3)
+			   (3 2)))
+	   (equal? ret   5)))))
+
+;;
+;; reduce-right
+;;
+
+(with-test-prefix "reduce-right"
+
+  (pass-if "empty"
+    (let* ((calls '())
+	   (ret   (reduce-right (lambda (x prev)
+				  (set! calls (cons (list x prev) calls))
+				  x)
+				1 '())))
+      (and (equal? calls '())
+	   (equal? ret   1))))
+
+  (pass-if "one elem"
+    (let* ((calls '())
+	   (ret   (reduce-right (lambda (x prev)
+				  (set! calls (cons (list x prev) calls))
+				  x)
+				1 '(2))))
+      (and (equal? calls '())
+	   (equal? ret   2))))
+
+  (pass-if "two elems"
+    (let* ((calls '())
+	   (ret   (reduce-right (lambda (x prev)
+				  (set! calls (cons (list x prev) calls))
+				  x)
+				1 '(2 3))))
+      (and (equal? calls '((2 3)))
+	   (equal? ret   2))))
+
+  (pass-if "three elems"
+    (let* ((calls '())
+	   (ret   (reduce-right (lambda (x prev)
+				  (set! calls (cons (list x prev) calls))
+				  x)
+				1 '(2 3 4))))
+      (and (equal? calls '((2 3)
+			   (3 4)))
+	   (equal? ret   2))))
+
+  (pass-if "four elems"
+    (let* ((calls '())
+	   (ret   (reduce-right (lambda (x prev)
+				  (set! calls (cons (list x prev) calls))
+				  x)
+				1 '(2 3 4 5))))
+      (and (equal? calls '((2 3)
+			   (3 4)
+			   (4 5)))
+	   (equal? ret   2)))))
+  
+;;
+;; remove
+;;
+
+(with-test-prefix "remove"
+
+  (pass-if (equal? '() (remove odd? '())))
+  (pass-if (equal? '() (remove odd? '(1))))
+  (pass-if (equal? '(2) (remove odd? '(2))))
+
+  (pass-if (equal? '() (remove odd? '(1 3))))
+  (pass-if (equal? '(2) (remove odd? '(2 3))))
+  (pass-if (equal? '(2) (remove odd? '(1 2))))
+  (pass-if (equal? '(2 4) (remove odd? '(2 4))))
+
+  (pass-if (equal? '() (remove odd? '(1 3 5))))
+  (pass-if (equal? '(2) (remove odd? '(2 3 5))))
+  (pass-if (equal? '(2) (remove odd? '(1 2 5))))
+  (pass-if (equal? '(2 4) (remove odd? '(2 4 5))))
+
+  (pass-if (equal? '(6) (remove odd? '(1 3 6))))
+  (pass-if (equal? '(2 6) (remove odd? '(2 3 6))))
+  (pass-if (equal? '(2 6) (remove odd? '(1 2 6))))
+  (pass-if (equal? '(2 4 6) (remove odd? '(2 4 6)))))
+
+;;
+;; remove!
+;;
+
+(with-test-prefix "remove!"
+
+  (pass-if (equal? '() (remove! odd? '())))
+  (pass-if (equal? '() (remove! odd? (list 1))))
+  (pass-if (equal? '(2) (remove! odd? (list 2))))
+
+  (pass-if (equal? '() (remove! odd? (list 1 3))))
+  (pass-if (equal? '(2) (remove! odd? (list 2 3))))
+  (pass-if (equal? '(2) (remove! odd? (list 1 2))))
+  (pass-if (equal? '(2 4) (remove! odd? (list 2 4))))
+
+  (pass-if (equal? '() (remove! odd? (list 1 3 5))))
+  (pass-if (equal? '(2) (remove! odd? (list 2 3 5))))
+  (pass-if (equal? '(2) (remove! odd? (list 1 2 5))))
+  (pass-if (equal? '(2 4) (remove! odd? (list 2 4 5))))
+
+  (pass-if (equal? '(6) (remove! odd? (list 1 3 6))))
+  (pass-if (equal? '(2 6) (remove! odd? (list 2 3 6))))
+  (pass-if (equal? '(2 6) (remove! odd? (list 1 2 6))))
+  (pass-if (equal? '(2 4 6) (remove! odd? (list 2 4 6)))))
+
+;;
+;; seventh
+;;
+
+(with-test-prefix "seventh"
+  (pass-if-exception "() -1" exception:out-of-range
+    (seventh '(a b c d e f)))
+  (pass-if (eq? 'g (seventh '(a b c d e f g))))
+  (pass-if (eq? 'g (seventh '(a b c d e f g h)))))
+
+;;
+;; sixth
+;;
+
+(with-test-prefix "sixth"
+  (pass-if-exception "() -1" exception:out-of-range
+    (sixth '(a b c d e)))
+  (pass-if (eq? 'f (sixth '(a b c d e f))))
+  (pass-if (eq? 'f (sixth '(a b c d e f g)))))
+
+;;
+;; split-at
+;;
+
+(with-test-prefix "split-at"
+
+  (define (equal-values? lst thunk)
+    (call-with-values thunk
+      (lambda got
+	(equal? lst got))))
+
+  (pass-if-exception "() -1" exception:out-of-range
+    (split-at '() -1))
+  (pass-if (equal-values? '(() ())
+			  (lambda () (split-at '() 0))))
+  (pass-if-exception "() 1" exception:wrong-type-arg
+    (split-at '() 1))
+
+  (pass-if-exception "(1) -1" exception:out-of-range
+    (split-at '(1) -1))
+  (pass-if (equal-values? '(() (1)) (lambda () (split-at '(1) 0))))
+  (pass-if (equal-values? '((1) ()) (lambda () (split-at '(1) 1))))
+  (pass-if-exception "(1) 2" exception:wrong-type-arg
+    (split-at '(1) 2))
+
+  (pass-if-exception "(4 5) -1" exception:out-of-range
+    (split-at '(4 5) -1))
+  (pass-if (equal-values? '(() (4 5)) (lambda () (split-at '(4 5) 0))))
+  (pass-if (equal-values? '((4) (5)) (lambda () (split-at '(4 5) 1))))
+  (pass-if (equal-values? '((4 5) ()) (lambda () (split-at '(4 5) 2))))
+  (pass-if-exception "(4 5) 3" exception:wrong-type-arg
+    (split-at '(4 5) 3))
+
+  (pass-if-exception "(4 5 6) -1" exception:out-of-range
+    (split-at '(4 5 6) -1))
+  (pass-if (equal-values? '(() (4 5 6)) (lambda () (split-at '(4 5 6) 0))))
+  (pass-if (equal-values? '((4) (5 6)) (lambda () (split-at '(4 5 6) 1))))
+  (pass-if (equal-values? '((4 5) (6)) (lambda () (split-at '(4 5 6) 2))))
+  (pass-if (equal-values? '((4 5 6) ()) (lambda () (split-at '(4 5 6) 3))))
+  (pass-if-exception "(4 5 6) 4" exception:wrong-type-arg
+    (split-at '(4 5 6) 4)))
+
+;;
+;; split-at!
+;;
+
+(with-test-prefix "split-at!"
+
+  (define (equal-values? lst thunk)
+    (call-with-values thunk
+      (lambda got
+	(equal? lst got))))
+
+  (pass-if-exception "() -1" exception:out-of-range
+    (split-at! '() -1))
+  (pass-if (equal-values? '(() ())
+			  (lambda () (split-at! '() 0))))
+  (pass-if-exception "() 1" exception:wrong-type-arg
+    (split-at! '() 1))
+
+  (pass-if-exception "(1) -1" exception:out-of-range
+    (split-at! (list 1) -1))
+  (pass-if (equal-values? '(() (1)) (lambda () (split-at! (list 1) 0))))
+  (pass-if (equal-values? '((1) ()) (lambda () (split-at! (list 1) 1))))
+  (pass-if-exception "(1) 2" exception:wrong-type-arg
+    (split-at! (list 1) 2))
+
+  (pass-if-exception "(4 5) -1" exception:out-of-range
+    (split-at! (list 4 5) -1))
+  (pass-if (equal-values? '(() (4 5)) (lambda () (split-at! (list 4 5) 0))))
+  (pass-if (equal-values? '((4) (5))  (lambda () (split-at! (list 4 5) 1))))
+  (pass-if (equal-values? '((4 5) ()) (lambda () (split-at! (list 4 5) 2))))
+  (pass-if-exception "(4 5) 3" exception:wrong-type-arg
+    (split-at! (list 4 5) 3))
+
+  (pass-if-exception "(4 5 6) -1" exception:out-of-range
+    (split-at! (list 4 5 6) -1))
+  (pass-if (equal-values? '(() (4 5 6)) (lambda () (split-at! (list 4 5 6) 0))))
+  (pass-if (equal-values? '((4) (5 6))  (lambda () (split-at! (list 4 5 6) 1))))
+  (pass-if (equal-values? '((4 5) (6))  (lambda () (split-at! (list 4 5 6) 2))))
+  (pass-if (equal-values? '((4 5 6) ()) (lambda () (split-at! (list 4 5 6) 3))))
+  (pass-if-exception "(4 5 6) 4" exception:wrong-type-arg
+    (split-at! (list 4 5 6) 4)))
+
+;;
+;; span
+;;
+
+(with-test-prefix "span"
+
+  (define (test-span lst want-v1 want-v2)
+    (call-with-values
+	(lambda ()
+	  (span positive? lst))
+      (lambda (got-v1 got-v2)
+	(and (equal? got-v1 want-v1)
+	     (equal? got-v2 want-v2)))))
+
+  (pass-if "empty"
+    (test-span '() '() '()))
+
+  (pass-if "y"
+    (test-span '(1) '(1) '()))
+
+  (pass-if "n"
+    (test-span '(-1) '() '(-1)))
+
+  (pass-if "yy"
+    (test-span '(1 2) '(1 2) '()))
+
+  (pass-if "ny"
+    (test-span '(-1 1) '() '(-1 1)))
+
+  (pass-if "yn"
+    (test-span '(1 -1) '(1) '(-1)))
+
+  (pass-if "nn"
+    (test-span '(-1 -2) '() '(-1 -2)))
+
+  (pass-if "yyy"
+    (test-span '(1 2 3) '(1 2 3) '()))
+
+  (pass-if "nyy"
+    (test-span '(-1 1 2) '() '(-1 1 2)))
+
+  (pass-if "yny"
+    (test-span '(1 -1 2) '(1) '(-1 2)))
+
+  (pass-if "nny"
+    (test-span '(-1 -2 1) '() '(-1 -2 1)))
+
+  (pass-if "yyn"
+    (test-span '(1 2 -1) '(1 2) '(-1)))
+
+  (pass-if "nyn"
+    (test-span '(-1 1 -2) '() '(-1 1 -2)))
+
+  (pass-if "ynn"
+    (test-span '(1 -1 -2) '(1) '(-1 -2)))
+
+  (pass-if "nnn"
+    (test-span '(-1 -2 -3) '() '(-1 -2 -3))))
+
+;;
+;; span!
+;;
+
+(with-test-prefix "span!"
+
+  (define (test-span! lst want-v1 want-v2)
+    (call-with-values
+	(lambda ()
+	  (span! positive? lst))
+      (lambda (got-v1 got-v2)
+	(and (equal? got-v1 want-v1)
+	     (equal? got-v2 want-v2)))))
+
+  (pass-if "empty"
+    (test-span! '() '() '()))
+
+  (pass-if "y"
+    (test-span! (list 1) '(1) '()))
+
+  (pass-if "n"
+    (test-span! (list -1) '() '(-1)))
+
+  (pass-if "yy"
+    (test-span! (list 1 2) '(1 2) '()))
+
+  (pass-if "ny"
+    (test-span! (list -1 1) '() '(-1 1)))
+
+  (pass-if "yn"
+    (test-span! (list 1 -1) '(1) '(-1)))
+
+  (pass-if "nn"
+    (test-span! (list -1 -2) '() '(-1 -2)))
+
+  (pass-if "yyy"
+    (test-span! (list 1 2 3) '(1 2 3) '()))
+
+  (pass-if "nyy"
+    (test-span! (list -1 1 2) '() '(-1 1 2)))
+
+  (pass-if "yny"
+    (test-span! (list 1 -1 2) '(1) '(-1 2)))
+
+  (pass-if "nny"
+    (test-span! (list -1 -2 1) '() '(-1 -2 1)))
+
+  (pass-if "yyn"
+    (test-span! (list 1 2 -1) '(1 2) '(-1)))
+
+  (pass-if "nyn"
+    (test-span! (list -1 1 -2) '() '(-1 1 -2)))
+
+  (pass-if "ynn"
+    (test-span! (list 1 -1 -2) '(1) '(-1 -2)))
+
+  (pass-if "nnn"
+    (test-span! (list -1 -2 -3) '() '(-1 -2 -3))))
+
+;;
+;; take!
+;;
+
+(with-test-prefix "take!"
+
+  (pass-if-exception "() -1" exception:out-of-range
+    (take! '() -1))
+  (pass-if (equal? '() (take! '() 0)))
+  (pass-if-exception "() 1" exception:wrong-type-arg
+    (take! '() 1))
+
+  (pass-if-exception "(1) -1" exception:out-of-range
+    (take! '(1) -1))
+  (pass-if (equal? '() (take! '(1) 0)))
+  (pass-if (equal? '(1) (take! '(1) 1)))
+  (pass-if-exception "(1) 2" exception:wrong-type-arg
+    (take! '(1) 2))
+
+  (pass-if-exception "(4 5) -1" exception:out-of-range
+    (take! '(4 5) -1))
+  (pass-if (equal? '() (take! '(4 5) 0)))
+  (pass-if (equal? '(4) (take! '(4 5) 1)))
+  (pass-if (equal? '(4 5) (take! '(4 5) 2)))
+  (pass-if-exception "(4 5) 3" exception:wrong-type-arg
+    (take! '(4 5) 3))
+
+  (pass-if-exception "(4 5 6) -1" exception:out-of-range
+    (take! '(4 5 6) -1))
+  (pass-if (equal? '() (take! '(4 5 6) 0)))
+  (pass-if (equal? '(4) (take! '(4 5 6) 1)))
+  (pass-if (equal? '(4 5) (take! '(4 5 6) 2)))
+  (pass-if (equal? '(4 5 6) (take! '(4 5 6) 3)))
+  (pass-if-exception "(4 5 6) 4" exception:wrong-type-arg
+    (take! '(4 5 6) 4)))
+
+
+;;
+;; take-right
+;;
+
+(with-test-prefix "take-right"
+
+  (pass-if-exception "() -1" exception:out-of-range
+    (take-right '() -1))
+  (pass-if (equal? '() (take-right '() 0)))
+  (pass-if-exception "() 1" exception:wrong-type-arg
+    (take-right '() 1))
+
+  (pass-if-exception "(1) -1" exception:out-of-range
+    (take-right '(1) -1))
+  (pass-if (equal? '() (take-right '(1) 0)))
+  (pass-if (equal? '(1) (take-right '(1) 1)))
+  (pass-if-exception "(1) 2" exception:wrong-type-arg
+    (take-right '(1) 2))
+
+  (pass-if-exception "(4 5) -1" exception:out-of-range
+    (take-right '(4 5) -1))
+  (pass-if (equal? '() (take-right '(4 5) 0)))
+  (pass-if (equal? '(5) (take-right '(4 5) 1)))
+  (pass-if (equal? '(4 5) (take-right '(4 5) 2)))
+  (pass-if-exception "(4 5) 3" exception:wrong-type-arg
+    (take-right '(4 5) 3))
+
+  (pass-if-exception "(4 5 6) -1" exception:out-of-range
+    (take-right '(4 5 6) -1))
+  (pass-if (equal? '() (take-right '(4 5 6) 0)))
+  (pass-if (equal? '(6) (take-right '(4 5 6) 1)))
+  (pass-if (equal? '(5 6) (take-right '(4 5 6) 2)))
+  (pass-if (equal? '(4 5 6) (take-right '(4 5 6) 3)))
+  (pass-if-exception "(4 5 6) 4" exception:wrong-type-arg
+    (take-right '(4 5 6) 4)))
+
+;;
+;; tenth
+;;
+
+(with-test-prefix "tenth"
+  (pass-if-exception "() -1" exception:out-of-range
+    (tenth '(a b c d e f g h i)))
+  (pass-if (eq? 'j (tenth '(a b c d e f g h i j))))
+  (pass-if (eq? 'j (tenth '(a b c d e f g h i j k)))))
+
+;;
+;; xcons
+;;
+
+(with-test-prefix "xcons"
+  (pass-if (equal? '(y . x) (xcons 'x 'y))))

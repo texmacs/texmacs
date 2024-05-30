@@ -1,0 +1,38 @@
+							       -*- outline -*-
+
+* Overview
+
+This directory includes examples which show how to write scripts using
+Guile.
+
+The descriptions below assume that you have a working copy of Guile
+installed and available with the standard installation prefix
+`/usr/local'.
+
+* Included Examples
+
+
+** simple-hello.scm
+
+  The simplest "Hello World!" program for Guile. Run it like this:
+
+  $ guile -s simple-hello.scm
+
+** hello
+
+  An advanced version of the script above, with command line handling
+  for the important options --help and --version.  Run it like this:
+
+  ./hello
+
+  or
+
+  guile -s hello
+
+** fact
+
+  Command-line factorial calculator.  Run it like this:
+
+  ./fact 5
+
+  to calculate the factorial of 5.

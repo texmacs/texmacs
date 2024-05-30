@@ -1,0 +1,124 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004, 2006, 2007
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Tracing
+@section Tracing
+
+The @code{(ice-9 debug)} module implements tracing of procedure
+applications.  When a procedure is @dfn{traced}, it means that every
+call to that procedure is reported to the user during a program run.
+The idea is that you can mark a collection of procedures for tracing,
+and Guile will subsequently print out a line of the form
+
+@smalllisp
+|  |  [@var{procedure} @var{args} @dots{}]
+@end smalllisp
+
+whenever a marked procedure is about to be applied to its arguments.
+This can help a programmer determine whether a function is being called
+at the wrong time or with the wrong set of arguments.
+
+In addition, the indentation of the output is useful for demonstrating
+how the traced applications are or are not tail recursive with respect
+to each other.  Thus, a trace of a non-tail recursive factorial
+implementation looks like this:
+
+@smalllisp
+[fact1 4]
+|  [fact1 3]
+|  |  [fact1 2]
+|  |  |  [fact1 1]
+|  |  |  |  [fact1 0]
+|  |  |  |  1
+|  |  |  1
+|  |  2
+|  6
+24
+@end smalllisp
+
+While a typical tail recursive implementation would look more like this:
+
+@smalllisp
+[fact2 4]
+[facti 1 4]
+[facti 4 3]
+[facti 12 2]
+[facti 24 1]
+[facti 24 0]
+24
+@end smalllisp
+
+@deffn {Scheme Procedure} trace procedure
+Enable tracing for @code{procedure}.  While a program is being run,
+Guile will print a brief report at each call to a traced procedure,
+advising the user which procedure was called and the arguments that were
+passed to it.
+@end deffn
+
+@deffn {Scheme Procedure} untrace procedure
+Disable tracing for @code{procedure}.
+@end deffn
+
+Here is another example:
+
+@lisp
+(define (rev ls)
+  (if (null? ls)
+      '()
+      (append (rev (cdr ls))
+              (cons (car ls) '())))) @result{} rev
+
+(trace rev) @result{} (rev)
+
+(rev '(a b c d e))
+@result{} [rev (a b c d e)]
+   |  [rev (b c d e)]
+   |  |  [rev (c d e)]
+   |  |  |  [rev (d e)]
+   |  |  |  |  [rev (e)]
+   |  |  |  |  |  [rev ()]
+   |  |  |  |  |  ()
+   |  |  |  |  (e)
+   |  |  |  (e d)
+   |  |  (e d c)
+   |  (e d c b)
+   (e d c b a)
+   (e d c b a)
+@end lisp
+
+Note the way Guile indents the output, illustrating the depth of
+execution at each procedure call.  This can be used to demonstrate, for
+example, that Guile implements self-tail-recursion properly:
+ 
+@lisp
+(define (rev ls sl)
+  (if (null? ls)
+      sl
+      (rev (cdr ls)
+           (cons (car ls) sl)))) @result{} rev
+ 
+(trace rev) @result{} (rev)
+ 
+(rev '(a b c d e) '())
+@result{} [rev (a b c d e) ()]
+   [rev (b c d e) (a)]
+   [rev (c d e) (b a)]
+   [rev (d e) (c b a)]
+   [rev (e) (d c b a)]
+   [rev () (e d c b a)]
+   (e d c b a)
+   (e d c b a)
+@end lisp
+ 
+Since the tail call is effectively optimized to a @code{goto} statement,
+there is no need for Guile to create a new stack frame for each
+iteration.  Tracing reveals this optimization in operation.
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

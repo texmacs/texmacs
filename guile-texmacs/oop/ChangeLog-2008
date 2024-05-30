@@ -1,0 +1,295 @@
+2008-03-18  Ludovic Courtès  <ludo@gnu.org>
+
+	* goops/util.scm (mapappend): Now an alias for SRFI-1's
+	`append-map', which is more efficient.
+	(every, any): Used and re-exported from SRFI-1.
+
+2008-03-12  Ludovic Courtès  <ludo@gnu.org>
+
+	* goops/describe.scm (describe): Provide `describe' (symbol),
+	not `"describe"' (string).  Reported by David Pirotte
+	<david@altosw.be>.
+
+2005-03-24  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* accessors.scm, simple.scm: New files.
+
+	* goops.scm (standard-define-class): Removed; Export
+	define-class as standard-define-class.
+
+2005-01-18  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* goops.scm (class-of): Changed from being re-exported to just
+	being exported.
+
+2004-02-08  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* Makefile.am, goops/Makefile.am (TAGS_FILES): Use this variable
+	instead of ETAGS_ARGS so that TAGS can be built using separate
+	build directory.
+
+2004-01-12  Marius Vollmer  <mvo@zagadka.de>
+
+	* goops.scm (compute-get-n-set): Use '#:' in error message instead
+	of ':'.  Thanks to Richard Todd!
+
+2003-04-20  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* goops.scm (compute-getters-n-setters): Allow for primitive
+	procedure thunks.  (Thanks to Neil W. Van Dyke.)
+
+2003-04-19  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* goops/dispatch.scm (cache-hashval): Corrected termination
+	condition for hashval computation.  (Previously, it made erroneous
+	assumptions about the representation of environments; Thanks to
+	Andreas Rottmann.)
+	
+2003-04-17  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* goops.scm (compute-getters-n-setters): Check for bad init-thunk.
+	(eqv?): Added default method.
+	(equal?): New default method which uses eqv?.
+
+2003-04-15  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* goops.scm (compute-getter-method): For custom getter: Check
+	boundness even if there is an init-thunk.  (The getter can return
+	#<unbound> even if the slot has been set before.)
+	(remove-class-accessors!): Also remove accessor-method from its
+	accessor.
+
+2003-04-13  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* goops.scm (compute-getters-n-setters/verify-accessors): Better
+	check of format of value returned by compute-get-n-set.
+	(compute-getters-n-setters): Extended format of slot
+	getters-n-setters to indicate position and size of slot memory
+	allocated in instances.
+
+2003-04-05  Marius Vollmer  <mvo@zagadka.de>
+
+        * Changed license terms to the plain LGPL thru-out.
+
+2003-03-19  Mikael Djurfeldt  <mdj@kvast.blakulla.net>
+
+	* goops.scm (process-class-pre-define-accessor): Temporary kludge
+	to fix a problem introduced by my previous change.
+
+2003-03-17  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* goops.scm (process-class-pre-define-generic,
+	process-class-pre-define-accessor, process-define-generic,
+	process-define-accessor): New functions.
+	(define-class-pre-definition): Use
+	process-class-pre-define-generic and
+	process-class-pre-define-accessor; Make sure not to create a new
+	local variable if the variable has been imported.
+	(define-generic): Use process-define-generic.
+	(define-accessor): Use process-define-accessor.
+
+2003-03-12  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* goops.scm (merge-generics): Make sure not to merge a gf with
+	itself.  That would be the cause of a real binding collision.
+
+2003-03-11  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* goops/util.scm (filter): Removed.  (Now supplied by core.)
+
+	* goops.scm (define-extended-generics): New syntax.
+	(<class> <operator-class> <entity-class> <entity>): Marked as
+	replacements.
+	(upgrade-accessor): Renamed from upgrade-generic-with-setter.
+	(ensure-accessor, upgrade-accessor): Rewritten to accomodate the
+	new <accessor> class.
+	(merge-accessors): Provide for merging of accessors imported from
+	different modules under the same name.
+
+2003-03-07  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* goops.scm (equal?): Define default method.
+	(merge-generics): Provide for merging of generic functions
+	imported into a module under the same name.
+
+2003-01-18  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* goops.scm (method): Construct a new copy of the constant '('())
+	for every macro invocation.
+
+2003-01-08  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* goops.scm (upgrade-generic-with-setter,
+	compute-new-list-of-methods): Use methods slot directly instead of
+	generic-function-methods.
+	(upgrade-generic-with-setter): Handle <extended-generic>:s.
+	(define-extended-generic): New syntax.
+	(make-extended-generic): New function.
+
+2002-12-08  Rob Browning  <rlb@defaultvalue.org>
+
+	* Makefile.am (subpkgdatadir): VERSION -> GUILE_EFFECTIVE_VERSION.
+
+	* goops/Makefile.am (subpkgdatadir): VERSION ->
+	GUILE_EFFECTIVE_VERSION.
+
+2002-11-16  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* goops.scm (standard-define-class):  Changed definition to form
+	a 'real' macro definition.
+
+2002-07-13  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* goops.scm (define-generic, define-accessor):  Make sure that
+	define-generic and define-accessor will continue to work when
+	mmacros are expanded before execution.
+
+2002-07-13  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* goops.scm (define-class):  Make sure that define-class will
+	continue to work when mmacros are expanded before execution.
+
+2002-07-08  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* goops.scm (define-generic, define-accessor):  Make sure that
+	implicit redefines only happen on top level.
+
+	* goops.scm (define-class, define-generic, define-accessor),
+	goops/stklos.scm (define-class):  Use mmacros instead of macros.
+
+2002-07-07  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* goops/save.scm (restore): Replaced "macro" by	mmacro.
+
+2001-10-21  Mikael Djurfeldt  <mdj@linnaeus>
+
+	* goops.scm, goops/active-slot.scm, goops/compile.scm,
+	goops/composite-slot.scm, goops/describe.scm, goops/dispatch.scm,
+	goops/old-define-method.scm, goops/save.scm, goops/util.scm: Move
+	module the system directives `export', `export-syntax',
+	`re-export' and `re-export-syntax' into the `define-module' form.
+	This is the recommended way of exporting bindings.
+
+2001-08-25  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* Makefile.am, goops/Makefile.am: (AUTOMAKE_OPTIONS): Change
+	"foreign" to "gnu".
+
+2001-07-29  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* goops/dispatch.scm (hashset-index): Renumbered, since the vcell
+	slot of structs has been removed.
+
+2001-07-18  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* goops/util.scm: Updated copyright notice.
+
+2001-07-17  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* goops/save.scm: Use `re-export' instead of `export' when
+	re-exporting `make-unbound'.
+
+2001-06-05  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* goops.scm: Use `re-export' instead of `export' when re-exporting
+	`class-of'.
+
+2001-05-19  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* goops.scm: Call `%init-goops-builtins' instead of using the
+	`(oop goops goopscore)' module.
+
+2001-05-10  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* goops/compile.scm (compile-method): Insert comment that
+	`procedure-source' can not be guaranteed to be reliable or
+	efficient.
+
+2001-05-05  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* goops.scm (initialize-object-procedure): Use
+	`valid-object-procedure?' instead of explicit tag magic.
+	(object-procedure-tags): Removed.
+	
+	* goops/util.scm (top-level-env): Use `current-module' instead of
+	the deprecated *top-level-lookup-closure*.
+
+2001-04-28  Rob Browning  <rlb@cs.utexas.edu>
+
+	* goops/save.scm (write-readably): rename list* to cons*.
+
+	* goops.scm (method): rename list* to cons*.
+
+2001-04-10  Mikael Djurfeldt  <mdj@linnaeus.mit.edu>
+
+	* goops/Makefile.am, goops/goopscore.scm: Reverted changes of
+	2001-04-03, 2001-03-09.
+
+2001-04-03  Keisuke Nishida  <kxn30@po.cwru.edu>
+
+	* goops/Makefile.am (goops_sources): Include goopscore.scm.
+	Thanks to Dale P. Smith.
+
+2001-03-29  Keisuke Nishida  <kxn30@po.cwru.edu>
+
+	* goops/goopscore.scm: New file.
+
+2001-03-09  Mikael Djurfeldt  <mdj@linnaeus.mit.edu>
+
+	* goops.scm (define-method): Only accept new syntax.
+
+	* Makefile.am: Added old-define-method.scm.
+
+	* goops/old-define-method.scm: New file.
+	
+	* goops.scm, goops/save.scm, goops/composite-slot.scm,
+	goops/active-slot.scm: Use new method syntax.
+
+2001-03-04  Mikael Djurfeldt  <mdj@linnaeus.mit.edu>
+
+	* goops/compile.scm (compile-method): Tag method closure for body
+	expansion.
+
+	* goops.scm (change-object-class): Quote empty list constants.
+	(method): Reverted previous change (enclosing body);
+	Quote empty list.
+	(initialize <method>): Supply `dummy-procedure' as default instead
+	of creating a new closure.
+	
+	* goops/internal.scm: Re-export (oop goops) without copying
+	bindings.
+
+2001-02-23  Keisuke Nishida  <kxn30@po.cwru.edu>
+
+	* goops.scm (method): Enclosed BODY by `(let () ...)'.
+	This allows local defines at the beginning of methods.
+
+2000-12-15  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* goops/save.scm (load-objects):  eval-in-module is deprecated.
+	Use eval instead.
+
+2000-11-24  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* goops.scm:  Don't export removed %logand any more.
+
+	* goops/dispatch.scm (cache-try-hash!):  Use logand instead of
+	%logand.
+
+2000-11-06  Mikael Djurfeldt  <mdj@linnaeus.mit.edu>
+
+	* goops.scm (internal-add-method!): Set n-specialized of a generic
+	function to the number of specializers regardless if it has rest
+	args or not.
+
+	* goops/dispatch.scm (method-cache-install!): Use n-specialized +
+	1 args for type matching.  (Thanks to Lars J. Aas.)
+
+2000-10-23  Mikael Djurfeldt  <mdj@linnaeus.mit.edu>
+
+	* goops.scm (goops-error): Removed use of oldfmt.
+
+
+;; Local Variables:
+;; coding: utf-8
+;; End:

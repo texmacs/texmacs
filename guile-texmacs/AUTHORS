@@ -1,0 +1,345 @@
+To find out what should go in this file, see "Information For
+Maintainers of GNU Software" (maintain.texi), the section called
+"Recording Changes".
+
+
+Aubrey Jaffer:
+is the author of SCM, the Scheme interpreter upon which Guile is
+based.  Guile started from SCM version 4e1 in November -94 and is
+still largely composed of the original SCM code.
+
+George Carrette:
+wrote files present in Siod version 2.3, released in December of 1989.
+Siod was the starting point for SCM.  The major innovations taken from
+Siod are the evaluator's use of the C-stack and being able to garbage
+collect off the C-stack
+
+Radey Shouman:
+In the subdirectory libguile, wrote:
+    gsubr.c  ramap.c  unif.c
+    gsubr.h  ramap.h  unif.h
+
+Gary Houston:
+In the subdirectory libguile, wrote:
+    rw.c
+In the subdirectory ice-9, wrote:
+    expect.scm networking.scm popen.scm posix.scm rw.scm
+In the subdirectory doc, changes to:
+    data-rep.texi   expect.texi     guile-tut.texi
+    posix.texi      r5rs.texi       scheme-io.texi
+Many other changes throughout.
+
+Jim Blandy: Many changes throughout.
+In the subdirectory libguile, wrote:
+    script.c (partially)
+In the subdirectory doc, wrote:
+    data-rep.texi   env.texi        mbapi.texi
+    mltext.texi     hacks.el
+In the subdirectory doc/example-smob, wrote:
+    image-type.c    image-type.h    myguile.c
+
+Tom Lord: Many changes throughout.
+In the subdirectory ice-9, wrote:
+    Makefile.in   configure.in  lineio.scm    poe.scm
+    boot-9.scm    hcons.scm     mapping.scm
+
+Anthony Green: wrote the following files in libguile:
+    coop-defs.h     coop-threads.h  fsu-pthreads.h  mit-pthreads.h  threads.h
+    coop-threads.c  coop.c          mit-pthreads.c  threads.c
+and ice-9/threads.scm.
+
+Mikael Djurfeldt:
+In the subdirectory ice-9, wrote:
+    documentation.scm emacs.scm stack-catch.scm
+    null.scm 	      r5rs.scm          safe-r5rs.scm safe.scm
+    receive.scm       occam-channel.scm syncase.scm
+In the subdirectory ice-9, changes to:
+    boot-9.scm        psyntax.ss        slib.scm      threads.scm
+In the subdirectory oop, wrote:
+    goops.scm
+In the subdirectory oop/goops, wrote:
+    compile.scm  dispatch.scm internal.scm old-define-method.scm save.scm
+    stklos.scm   util.scm
+In the subdirectory oop/goops, rewrote files from STKlos:
+    active-slot.scm composite-slot.scm describe.scm
+In the subdirectory libguile, wrote:
+    backtrace.c  debug.c      options.c    root.c       srcprop.c    stacks.c
+    backtrace.h  debug.h      options.h    root.h       srcprop.h    stacks.h
+    iselect.c	 gdbint.c     objects.c    objprop.c    stackchk.c   modules.c
+    iselect.h	 gdbint.h     objects.h    objprop.h    stackchk.h   modules.h
+    random.c	 futures.c    evalext.c    goops.c	hooks.c	     macros.c
+    random.h	 futures.h    evalext.h    goops.h	hooks.h	     macros.h
+    gdb_interface.h
+In the subdirectory libguile, rewrote:
+    coop-threads.c  coop.c          mit-pthreads.c  threads.c print.c
+    coop-threads.h  fsu-pthreads.h  mit-pthreads.h  threads.h print.h
+In the subdirectory srfi, wrote:
+    srfi.c
+    srfi.h
+In the subdirectory doc, wrote:
+    goops-tutorial.texi             hierarchy.eps
+    hierarchy.txt   mop.txt         oldfmt.c
+In the subdirectory doc, changes to:
+    data-rep.texi   gh.texi         goops.texi
+Many other changes throughout.
+
+Mark Galassi:
+Designed and implemented the high-level libguile API (the @code{gh_}
+interface), based largely on the defunct @code{gscm_} interface.  In the
+subdirectory libguile, wrote:
+gh.h             gh_funcs.c       gh_list.c        gh_test_repl.c
+gh_data.c        gh_init.c        gh_predicates.c
+gh_eval.c        gh_io.c          gh_test_c.c
+In the subdirectory doc, wrote:
+    appendices.texi gh.texi         guile-tut.texi
+
+Marius Vollmer: Many changes throughout.
+In the subdirectory libguile, wrote:
+    fluids.c        fluids.h       extensions.h
+    deprecation.h   deprecation.c  extensions.c
+In the subdirectory libguile, rewrote:
+    dynl.c	dynl-dl.c	dynl-shl.c
+    dynl.h	dynl-dld.c
+In the subdirectory doc, changes to:
+    data-rep.texi   intro.texi      posix.texi
+    scheme-modules.texi
+In the subdirectory ice-9, wrote
+    and-let-star-compat.scm
+
+R. Kent Dybvig:
+In the subdirectory ice-9, wrote:
+    psyntax.ss
+
+Roland Orre:
+In the subdirectory libguile, wrote:
+    sort.c
+    sort.h
+In the subdirectory ice-9, wrote:
+    session.scm
+
+Michael Livshin: Some changes throughout.
+Implemented support for double-word heap cells and converted some
+smobs to use them.
+In the subdirectory libguile, wrote:
+    guardians.c guardians.h filter-doc-snarfage.c
+    guile-snarf-docs.in guile-snarf-docs-texi.in
+In the subdirectory libguile, changed extensively:
+    gc.c gc.h
+In the subdirectory ice-9, wrote:
+    streams.scm and-let*.scm
+In the subdirectory scripts, wrote:
+    snarf-check-and-output-texi
+
+Tim Pierce:
+In the subdirectory libguile, wrote:
+    regex-posix.c
+    regex-posix.h
+In the subdirectory doc, changes to:
+    appendices.texi posix.texi
+
+Rob Browning:
+  wrote initial srfi/srfi-2.scm.
+  wrote initial srfi/srfi-6.scm.
+  wrote initial srfi/srfi-8.scm.
+  wrote initial srfi/srfi-11.scm.
+  ported srfi/srfi-19.scm to Guile.
+  and many other changes throughout.
+
+Martin Grabmueller:
+In the subdirectory libguile, changes to:
+    backtrace.c     eval.c       strorder.c   script.c
+    strop.c         strop.h      struct.c     macros.c
+    numbers.c       posix.h      posix.c      symbols.c
+    gh_data.c       strports.h   strports.c   validate.h
+    read.c
+    and many docstrings changes throughout.
+In the subdirectory srfi, wrote:
+    srfi-1.scm      srfi-9.scm     srfi-10.scm
+    srfi-13.scm     srfi-14.scm    srfi-13.c
+    srfi-14.c       srfi-13.h      srfi-14.h
+    srfi-16.scm     srfi-4.c       srfi-4.h
+    srfi-4.scm
+In the subdirectory scripts, wrote:
+    doc-snarf
+In the subdirectory doc, wrote:
+    script-getopt.texi    srfi-modules.texi
+    repl-modules.texi     misc-modules.texi
+In the subdirectory doc, changes to:
+    guile.texi      intro.texi      posix.texi
+    scheme-binding.texi             scheme-control.texi
+    scheme-data.texi                scheme-evaluation.texi
+    scheme-indices.texi             scheme-io.texi
+    scheme-memory.texi              scheme-modules.texi
+    scheme-options.texi             scheme-procedures.texi
+    scheme-scheduling.texi          scheme-utility.texi
+In the subdirectory example, wrote
+    scripts  modules     safe
+    box      box-module  box-dynamic
+In the subdirectory test-suite/tests, wrote:
+    srfi-4.test    srfi-9.test     srfi-10.test
+    srfi-13.test
+
+Will Fitzgerald:
+  wrote initial srfi/srfi-19.scm.
+
+Jost Boekemeier:
+In the subdirectory libguile, wrote:
+    environments.c, environments.h
+
+Dirk Herrmann:
+In the subdirectory doc, changes to:
+    data-rep.texi, scm.texi
+In the subdirectory libguile, rewrote:
+    environments.c, environments.h
+In the subdirectory libguile, changes to:
+    error.c, gc.c, gc.h, numbers.c, strings.c, symbols.c
+In the subdirectory test-suite, rewrote:
+    lib.scm
+In the subdirectory test-suite/tests, wrote:
+    bit-operations.test, common-list.test, environments.test, eval.test,
+    gc.test, list.test, numbers.test, symbols.test, syntax.test
+Many other changes throughout.
+
+Greg Badros:
+In the subdirectory doc, changes to:
+    data-rep.texi
+Many changes throughout.
+
+Neil Jerram:
+In the subdirectory ice-9, wrote:
+    buffered-input.scm
+In the subdirectory doc, wrote:
+    deprecated.texi   goops.texi    scheme-ideas.texi
+    scheme-reading.texi
+In the subdirectory doc, changes to:
+    appendices.texi data-rep.texi   expect.texi
+    extend.texi     gh.texi         guile-tut.texi
+    guile.texi      indices.texi    intro.texi
+    posix.texi      preface.texi    r5rs.texi
+    scheme-binding.texi             scheme-modules.texi
+    scheme-control.texi             scheme-data.texi
+    scheme-debug.texi               scheme-evaluation.texi
+    scheme-ideas.texi               scheme-indices.texi
+    scheme-intro.texi               scheme-io.texi
+    scheme-memory.texi              scheme-options.texi
+    scheme-procedures.texi          scheme-scheduling.texi
+    scheme-translation.texi         scheme-utility.texi
+    scm.texi        scripts.texi    script-getopt.texi
+In the subdirectory doc/maint, wrote:
+    docstring.el
+
+Thien-Thi Nguyen:
+In the top-level directory, wrote:
+    check-guile.in	guile-tools.in
+In the subdirectory ice-9, changes to:
+    boot-9.scm		documentation.scm	emacs.scm
+    ls.scm		session.scm		string-fun.scm
+    threads.scm		getopt-long.scm
+In the subdirectory scripts, wrote:
+    Makefile.am		PROGRAM
+    display-commentary	generate-autoload
+    punify		read-scheme-source
+    use2dot
+In the subdirectory scripts, changes to:
+    doc-snarf
+In the subdirectory libguile, changes to:
+    guile-doc-snarf.in	regex-posix.c
+In the subdirectory doc, changes to:
+    intro.texi			preface.texi
+    scheme-modules.texi		scheme-procedures.texi
+    scheme-scheduling.texi
+In the subdirectory test-suite, changes to:
+    guile-test		lib.scm
+In the subdirectory test-suite/tests, wrote:
+    exceptions.test     getopt-long.test
+In the subdirectory test-suite/tests, changes to:
+    eval.test
+
+Robert Merkel:
+In the subdirectory doc, co-wrote:
+    guile.1
+
+Marc Feeley:
+In the subdirectory doc, wrote:
+    pretty-print.scm
+
+Matthias Koeppe:
+In the subdirectory test-suite/tests, wrote:
+    format.test, srfi-19.test, optargs.test
+In the subdirectory test-suite/tests, changes to:
+    ports.test
+
+The file libguile/gc_os_dep.c is from the Boehm-Weiser conservative
+collector.  A lot of people have contributed to it, but probably not
+all to the code in gc_os_dep.c:
+
+    The SPARC specific code was contributed by Mark Weiser
+    (weiser@parc.xerox.com).  The Encore Multimax modifications were
+    supplied by Kevin Kenny (kenny@m.cs.uiuc.edu).  The adaptation to
+    the RT is largely due to Vernon Lee (scorpion@rice.edu), on
+    machines made available by IBM.  Much of the HP specific code and
+    a number of good suggestions for improving the generic code are
+    due to Walter Underwood (wunder@hp-ses.sde.hp.com).  Robert
+    Brazile (brazile@diamond.bbn.com) originally supplied the ULTRIX
+    code.  Al Dosser (dosser@src.dec.com) and Regis Cridlig
+    (Regis.Cridlig@cl.cam.ac.uk) subsequently provided updates and
+    information on variation between ULTRIX systems.  Parag Patel
+    (parag@netcom.com) supplied the A/UX code.  Jesper
+    Peterson(jep@mtiame.mtia.oz.au), Michel Schinz, and Martin
+    Tauchmann (martintauchmann@bigfoot.com) supplied the Amiga port.
+    Thomas Funke (thf@zelator.in-berlin.de(?)) and Brian D.Carlstrom
+    (bdc@clark.lcs.mit.edu) supplied the NeXT ports.  Douglas Steel
+    (doug@wg.icl.co.uk) provided ICL DRS6000 code.  Bill Janssen
+    (janssen@parc.xerox.com) supplied the SunOS dynamic loader
+    specific code. Manuel Serrano (serrano@cornas.inria.fr) supplied
+    linux and Sony News specific code.  Al Dosser provided Alpha/OSF/1
+    code.  He and Dave Detlefs(detlefs@src.dec.com) also provided
+    several generic bug fixes.  Alistair G. Crooks(agc@uts.amdahl.com)
+    supplied the NetBSD and 386BSD ports.  Jeffrey Hsu
+    (hsu@soda.berkeley.edu) provided the FreeBSD port.  Brent Benson
+    (brent@jade.ssd.csd.harris.com) ported the collector to a Motorola
+    88K processor running CX/UX (Harris NightHawk).  Ari Huttunen
+    (Ari.Huttunen@hut.fi) generalized the OS/2 port to nonIBM
+    development environments (a nontrivial task).  Patrick Beard
+    (beard@cs.ucdavis.edu) provided the initial MacOS port.  David
+    Chase, then at Olivetti Research, suggested several improvements.
+    Scott Schwartz (schwartz@groucho.cse.psu.edu) supplied some of the
+    code to save and print call stacks for leak detection on a SPARC.
+    Jesse Hull and John Ellis supplied the C++ interface code.  Zhong
+    Shao performed much of the experimentation that led to the current
+    typed allocation facility.  (His dynamic type inference code
+    hasn't made it into the released version of the collector, yet.)
+    (Blame for misinstallation of these modifications goes to the
+    first author, however.)
+
+Keisuke Nishida: [added by ttn; kei, please review]
+In the top-level directory, changes to:
+    libguile.h
+In the subdirectory ice-9, wrote:
+    channel.scm     history.scm         time.scm
+    match.scm
+In the subdirectory ice-9, changes to:
+    boot-9.scm      receive.scm         safe-r5rs.scm
+    common-list.scm
+In the subdirectory emacs, wrote:
+    guile.el        guile-scheme.el     guile-emacs.scm
+In the subdirectory libguile, changes to:
+    goops.c         vectors.h       vectors.c
+    eval.c          hashtab.h       hashtab.c
+    environments.c  smob.h          smob.c
+    keywords.c      list.c          strports.c
+    tag.c           Makefile.am     guile-snarf.awk.in
+Many other changes throughout.
+
+Stefan Jahn:
+In the subdirectory libguile, changes to:
+    continuations.h
+    continuations.c
+    gc.c
+
+John W. Eaton, based on code from AT&T Bell Laboratories and Bellcore:
+ The complex number division method in libguile/numbers.c.
+
+Gregory Marton:
+In the subdirectory test-suite/tests, changes to:
+    hash.test

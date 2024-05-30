@@ -1,0 +1,722 @@
+2008-05-07  Ludovic Courtès  <ludo@gnu.org>
+
+	* ice-9/Makefile.am (guile_pdd): Don't use `patsubst': it's GNU
+	Make and broke BSD Make as found on FreeBSD 6.2.
+
+2008-04-16  Ludovic Courtès  <ludo@gnu.org>
+
+	* configure.in (AC_INIT): Don't use "echo -n", which is not
+	available on MacOS X; use `patsubst' instead to remove the
+	newline.  Reported by Steven Wu <wus@qwest.net>.
+
+2008-02-16  Ludovic Courtès  <ludo@gnu.org>
+
+	* LIBGUILEREADLINE-VERSION
+	(LIBGUILEREADLINE_INTERFACE_REVISION): Increment for release.
+
+2008-01-29  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* readline.c (scm_init_readline): Only do init_bouncing_parens ()
+	if HAVE_RL_GET_KEYMAP.
+	(init_bouncing_parens, find_matching_paren, match_paren): Compile
+	out if ! HAVE_RL_GET_KEYMAP.
+
+	* configure.in: Add check for rl_get_keymap.
+
+2007-07-15  Ludovic Courtès  <ludo@gnu.org>
+
+	* LIBGUILEREADLINE-VERSION
+	(LIBGUILEREADLINE_INTERFACE_REVISION): Incremented for release.
+
+2007-06-26  Ludovic Courtès  <ludo@gnu.org>
+
+	* readline.c (scm_add_history): Free S after invocation of
+	`add_history ()'.
+
+2006-10-06  Rob Browning  <rlb@defaultvalue.org>
+
+	* LIBGUILEREADLINE-VERSION (LIBGUILEREADLINE_INTERFACE_REVISION):
+	Increment for release.
+
+2006-10-05  Kevin Ryde  <user42@zip.com.au>
+
+	* ice-9/readline.scm (filename-completion-function): Export this.
+
+2006-05-15  Kevin Ryde  <user42@zip.com.au>
+
+	* Makefile.am (INCLUDES): Add "-I." to pick up guile-readline-config.h
+	in snarfer.
+
+2006-04-18  Rob Browning  <rlb@defaultvalue.org>
+
+	* .cvsignore: Add guile-readline-config.h and
+	guile-readline-config.h.in.
+
+	* readline.c: Don't include Guile private header _scm.h.
+	Include new guile-readline-config.h private header.
+
+	* configure.in: Add AC_CONFIG_AUX_DIR([.]) as suggested in the
+	autotools documentation.  Add
+	AM_CONFIG_HEADER([guile-readline-config.h]) so that guile-readline
+	will have its own configure-based config.h equivalent.
+	(HAVE_RL_PRE_INPUT_HOOK): Add documentation template.
+	(GUILE_SIGWINCH_SA_RESTART_CLEARED): Add documentation template.
+
+2006-03-12  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* ice-9/readline.scm (make-completion-function): New.
+
+2006-02-06  Marius Vollmer  <mvo@zagadka.de>
+
+	* LIBGUILEREADLINE-VERSION: Bumped versions for 1.8. 
+
+2005-03-02  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* readline.c: Use scm_current_input_port instead of scm_cur_inp.
+	Use scm_std_select instead of scm_internal_select.
+
+2004-08-26  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* LIBGUILEREADLINE-VERSION: Bumped versions for the 1.7.1 release.
+	Added LIBGUILEREADLINE_MAJOR variable for inclusion in the name of
+	the shared library.
+	* configure.in: AC_SUBST it.
+	* Makefile.am: Substitute it into name of library.
+	* ice-9/readline.scm: Use new name with load-extension.
+
+2004-08-19  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* readline.c: Avoid the use of discouraged or
+	deprecated things. 
+
+2004-07-06  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* readline.c: Replaced all uses of deprecated SCM_FALSEP,
+	SCM_NFALSEP, SCM_BOOL, SCM_NEGATE_BOOL, and SCM_BOOLP with
+	scm_is_false, scm_is_true, scm_from_bool, and scm_is_bool,
+	respectively.
+
+2004-06-16  Rob Browning  <rlb@defaultvalue.org>
+
+	* configure.in: move package and version args to AC_INIT as is now
+	recommended.  This also requires m4_esyscmd to read GUILE-VERSION
+	given the way AC_INIT handles its args.  Also move "foreign"
+	indication here.
+
+	* Makefile.am: move support for readline.scm to ice-9/ subdir.
+
+	* readline.scm: moved to ./ice-9/
+
+	* .cvsignore: add ice-9 dir.
+
+	* ice-9/Makefile.am: new file.
+
+	* ice-9/readline.scm: moved here from ../
+
+	* ice-9/.cvsignore: new file.
+
+2004-02-15  Mikael Djurfeldt  <mdj@chunk.mit.edu>
+
+	* configure.in: Use AC_PROG_LIBTOOL instead of AM_PROG_LIBTOOL.
+
+2004-02-08  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* Makefile.am (TAGS_FILES): Use this variable instead of
+	ETAGS_ARGS so that TAGS can be built using separate build
+	directory.
+
+2003-05-04  Marius Vollmer  <mvo@zagadka.de>
+
+	* configure.in: When checking whether readline clears SA_RESTART,
+	let readline read from "/dev/null".  Otherwise, it might be
+	stopped when run in the background with job control, say.
+	Thanks to Michael Talbot-Wilson!
+	
+2003-04-05  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	The intended side-effect of the following change is to make the
+	prompt appear properly when debugging or running Guile in an Emacs
+	buffer.  (The readline library has some prompt magic which we were
+	expected to do ourselves when we were bold enough to provide our
+	own redisplay function---but we don't need to do that.)
+	
+	* readline.c (redisplay): Removed. (It didn't do anything other
+	than calling rl_redisplay.)
+	(scm_init_readline): Don't inititalize rl_redisplay_function.
+
+2003-03-19  Rob Browning  <rlb@defaultvalue.org>
+
+	* readline.c: add HAVE_CONFIG_H test guarding #include config.h.
+
+	* autogen.sh: add a --force when autoreconfing.  We may need to
+	change this if it doesn't work out...
+
+	* Makefile.am (ice-9/readline.scm): new target -- so readline will
+	work from the source tree when guile-readline is added to
+	GUILE_LOAD_PATH.
+	(all-local): add ice-9/readline.scm.
+	(clean-local): remove ice-9/readline at clean time.
+
+2003-02-27  Rob Browning  <rlb@defaultvalue.org>
+
+	* autogen.sh: use autoreconf.
+
+2003-01-08  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* readline.c (scm_readline): Check that scm_cur_outp is an output
+	port, not an input one.
+
+2002-12-08  Rob Browning  <rlb@defaultvalue.org>
+
+	* configure.in (GUILE_EFFECTIVE_VERSION): AC_SUBST.
+
+	* Makefile.am (ice9dir): VERSION -> GUILE_EFFECTIVE_VERSION.
+
+2002-10-27  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* readline.c (reentry_barrier_mutex): Reimplemented with
+	scm_make_mutex, etc.
+
+2002-10-21  Mikael Djurfeldt  <mdj@linnaeus>
+
+	* readline.scm (activate-readline): Look for use-emacs-interface
+	option in the guile-user module instead of the-root-module.
+
+2002-04-30  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* autogen.sh: Invoke plain aclocal instead of guile-aclocal.sh.
+	We don't need the Guile m4 macros and the previous invocation of
+	guile-aclocal.sh created the aclocal.m4 file in the wrong
+	directory (see change from 2002-04-26).
+
+2002-04-26  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* autogen.sh: Change to parent dir before invoking
+	guile-aclocal.sh.
+
+2002-04-16  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* Makefile.am (dist-hook): Make sure $(distdir)/Makefile.in is
+	writable before modifying it.
+
+2002-04-10  Rob Browning  <rlb@defaultvalue.org>
+
+	* configure.in: add definitions to AC_DEFINE calls for new
+	autoconf.
+
+	* .cvsignore: add autom4te.cache and *.c.clean.c.
+
+2002-03-24  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* Makefile.am (.c.x): Pass "-o $@" to guile-snarf.
+
+2002-03-13  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* Makefile.am (snarfcppopts): New var.
+	(.c.x): Use $(snarfcppopts). Rework guile-snarf usage.
+
+2002-02-27  Stefan Jahn  <stefan@lkcc.org>
+
+	* Makefile.am (EXTRA_DIST): Added the `LIBGUILEREADLINE-VERSION'
+	file.
+
+2002-02-25  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* configure.in (LIBGUILEREADLINE-VERSION):
+	Look for this file in $srcdir.
+
+2002-02-24  Rob Browning  <rlb@defaultvalue.org>
+
+	* configure.in: source ./LIBGUILEREADLINE-VERSION for version info
+	and then AC_SUBST the resulting variables:
+	LIBGUILEREADLINE_INTERFACE_CURRENT,
+	LIBGUILEREADLINE_INTERFACE_REVISION,
+	LIBGUILEREADLINE_INTERFACE_AGE, and
+	LIBGUILEREADLINE_INTERFACE.
+
+	* Makefile.am (libguilereadline_la_LDFLAGS): use
+	@LIBGUILEREADLINE_INTERFACE@ for version information.
+
+	* LIBGUILEREADLINE-VERSION: new file containing shared lib
+	versioning information.
+
+2002-02-12  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* Makefile.am (AUTOMAKE_OPTIONS): Replace "gnu" with "foreign".
+	This undoes the 2002-02-08 change.
+
+2002-02-08  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* Makefile.am (AUTOMAKE_OPTIONS): Replace "foreign" with "gnu".
+
+2002-01-29  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* readline.scm (with-readline-completion-function): Renamed from
+	`call-with-readline-completion-function'.
+
+2001-11-30  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* Makefile.am (EXTRA_DIST): Refer to $(ice9_DATA) rather than
+	readline.scm explicitly.
+	(ETAGS_ARGS): Added.
+
+2001-11-04  Stefan Jahn  <stefan@lkcc.org>
+
+	* configure.in (EXTRA_DEFS): Follow-up patch.  Using SCM_IMPORT
+	instead of __SCM_IMPORT__.
+
+	* readline.c (scm_readline_init_ports): Disable input/output
+	stream redirection for Win32.  The readline package for Win32
+	does not support this.  The guile-readline library works fine
+	for command line editing.
+
+	* readline.h (SCM_RL_API): Renamed __FOO__ macros into FOO.
+
+2001-11-02  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	Support for native Win32.  Thanks to Stefan Jahn!
+
+        * Makefile.am: Put `-export-dynamic -no-undefined' into LDFLAGS
+        and add the library `libguile.la' to support linkers which do not
+        allow unresolved symbols inside shared libraries.
+
+        * configure.in: Define AC_LIBTOOL_WIN32_DLL to build clean dlls
+        on Win32 platforms.
+        Define extra compiler flags necessary to build clean dlls.
+
+        * readline.c: Include `io.h' and exclude `sys/time.h' for MinGW.
+
+        * readline.h: Defintion of SCM_RL_API.  Prefixed each exported
+        symbol with SCM_RL_API.
+
+2001-08-31  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* readline.c (scm_readline, scm_add_history,
+	scm_filename_completion_function, completion_function):  Remove
+	calls to SCM_STRING_COERCE_0TERMINATION_X.  Since the substring
+	type is gone, all strings are 0-terminated anyway.
+
+2001-08-31  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* readline.scm: `feature?' is deprecated.  Use `provided?'
+	instead.
+
+2001-08-25  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* readline.scm: Use load-extension instead of explicit
+	dynamic-link/dynamic-call.  Removed ".so" extension from library
+	name.
+
+2001-08-02  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* readline.scm (call-with-readline-completion-function): New.
+
+2001-07-18  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* Makefile.am, readline.scm: Updated copyright notice.
+
+2001-07-09  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* readline.c: Remove "face-lift" comment.
+
+2001-06-30  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* readline.c (completion_function):  Use scm_list_n instead of
+	SCM_LISTn.
+
+2001-06-14  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* readline.c, readline.h: Replace "scm_*_t" with "scm_t_*".
+
+2001-06-14  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	Thanks to Matthias Köppe!
+
+	* configure.in: Check for rl_filename_completion_function.
+	* readline.c (s_scm_filename_completion_function): Use
+	rl_filename_completion_function instead of
+	filename_completion_function, if we have it.
+	(scm_init_readline): Use rl_compentry_func_t instead if Function
+	when _RL_FUNCTION_TYPEDEF is defined.
+
+	* readline.h (scm_clear_history): New prototype.
+
+2001-06-07  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* readline.c (current_input_getc):  Mark unused parameters with
+	SCM_UNUSED.
+
+2001-06-03  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* configure.in: Added AC_PREREQ(2.50) and minimally changed for
+	autoconf 2.50.  This is mostly so that the `transparent autoconf
+	wrapper' on Debian picks the right version of autoconf.
+
+2001-05-31  Michael Livshin  <mlivshin@bigfoot.com>
+
+	* Makefile.am (libguilereadline_la_SOURCES): removed readline.x
+	from here (not needed).
+	(CLEANFILES): added *.x (and removed from DISTCLEANFILES).
+	(MKDEP): copied from libguile/Makefile.am.  not that it matters
+	now, but it will if we stop using BUILT_SOURCES for some reason.
+
+2001-05-24  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	Make it compile with --disable-deprecated.
+
+	* readline.h: scm_option->scm_option_t.
+
+	* readline.c (stream_from_fport): scm_fport->scm_fport_t;
+	scm_option->scm_option_t.
+
+2001-05-23  Michael Livshin  <mlivshin@bigfoot.com>
+
+	* readline.c (strdup): make `len' a size_t.
+
+2001-05-10  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* readline.c (completion_function): Use SCM_VARIABLE_REF to access
+	scm_readline_completion_function_var.
+	(scm_init_readline): Use scm_c_define instead of scm_sysintern to
+	create scm_readline_completion_function_var.
+
+2001-04-09  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* readline.c (scm_clear_history): New function.
+	* readline.scm (readline-port): Call clear-history on exit.
+	Thanks to Utz-Uwe Haus.
+
+2001-03-09  Keisuke Nishida  <kxn30@po.cwru.edu>
+
+	* readline.c: Add #include <stdio.h>
+
+2001-03-05  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* readline.scm (make-readline-port): Rewrite using
+	make-line-buffered-input-port.
+	(activate-readline): Call set-buffered-input-continuation?!.
+
+2001-01-28  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* readline.scm (make-readline-port): PROMPT becomes PROMPT2 as
+	soon as GET-CHARACTER returns any character at all that was
+	previously read.  This makes the continuation prompt appear
+	properly for partial expressions.  Thanks to Neil Jerram!
+
+2001-01-26  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	This patch fixes a problem reported by Martin Grabmueller about
+	the impossibility to access readline's run-time options.
+
+	* readline.scm:  Added a comment about guile's behaviour if one of
+	the ports used by readline are closed.
+
+	(readline-options readline-enable readline-disable,
+	readline-set!):  These are now defined here instead of in
+	boot-9.scm.
+
+2001-01-25  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* readline.scm (set-readline-input-port!,
+	set-readline-output-port!):  Make sure that only valid port
+	parameters are passed.  Thanks to Martin Grabmueller for sending
+	a patch that formed the basis for this change.
+
+2001-01-18  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* readline.scm (make-readline-port): Make readline port
+	input-only.
+
+2000-12-12  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* readline.scm (activate-readline):  Lookup 'use-emacs-interface
+	in the-root-module.
+
+2000-11-24  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* readline.c (current_input_getc):  Use more explicit predicate
+	than SCM_NIMP.
+
+	(scm_readline, scm_readline_init_ports, completion_function):
+	Remove redundant SCM_N?IMP tests.
+
+	(scm_readline):  Fixed default input/output port parameter
+	handling.
+
+2000-11-24  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* readline.c (scm_readline, scm_add_history, completion_function,
+	scm_filename_completion_function):  Replace calls to
+	SCM_COERCE_SUBSTR with SCM_STRING_COERCE_0TERMINATION_X.
+
+	(internal_readline, scm_add_history, scm_read_history,
+	scm_write_history, scm_filename_completion_function,
+	completion_function):  Replace SCM_CHARS with SCM_STRING_CHARS.
+
+2000-11-19  Gary Houston  <ghouston@arglist.com>
+
+	* configure.in: test $ac_cv_lib_readline_readline instead of
+	$ac_cv_lib_readline_main.  Thanks to Lars J. Aas.
+
+2000-09-17  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* configure.in: Check for curses, terminfo and termlib libraries
+	in addition to ncurses and termcap.
+	Check for `readline' in libreadline, not for `main'.
+	Thanks to Albert Chin!
+
+2000-07-17  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* configure.in (rl_pre_input_hook): Don't check for this with
+	AC_CHECK_FUNCS, it doesn't work on HP/UX.  Test for it with
+	AC_TRY_LINK.
+
+2000-06-19  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* readline.c (sigwinch_enable_restart, scm_init_readline):
+	Re-enable restart for SIGWINCH signal.
+
+	* configure.in: Added test if readline clears SA_RESTART flag for
+	SIGWINCH.  (Thanks to Dale P. Smith.)
+	Check for siginterrupt and rl_pre_input_hook.
+
+2000-06-14  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* readline.c (scm_readline): Added parenthesis around && within
+	||.
+	Fixed up prototype for `reentry_barrier'.
+	Conditionally #include <unistd.h>.  (Needed for `dup'.)
+
+2000-06-13  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* Makefile.am (dist-hook): Added kludge to fix automake generated
+	dependencies in the distribution archive Makefile.
+
+2000-06-12  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* readline.scm (apropos-completion-function): Don't define and
+	install if the 'regex feature is missing.
+
+2000-06-06  Mikael Djurfeldt  <mdj@mdj.nada.kth.se>
+
+	* readline.c: Always provide scm_init_readline, also if readline
+	support is not included.  Otherwise, a strange dynamic loading
+	error will occur.  (It would be better not to install
+	libguilereadline at all.)
+
+	* readline-activator.scm (activate-readline): Report an error if
+	readline isn't provided by Guile.
+
+	* readline.scm: Report an error if readline isn't provided by
+	Guile;  Added :no-backtrace to module header.
+
+	* configure.in: Put more ink before readline version warning.
+	(Thanks to Ian Grant.)
+
+2000-06-01  Michael Livshin  <mlivshin@bigfoot.com>
+
+	* autogen.sh: call ../guile-aclocal.sh instead of aclocal
+
+2000-05-01  Gary Houston  <ghouston@arglist.com>
+
+	* readline.c: include libguile.h, not libguile/libguile.h.
+
+2000-04-21  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* *.*: Change includes so that they always use the "prefixes"
+	libguile/, qt/, guile-readline/, or libltdl/.
+
+	* Makefile.am (DEFS): Added.  automake adds -I options to DEFS,
+	and we don't want that.
+	(INCLUDES): Removed all -I options except for the root source
+	directory and the root build directory.
+
+2000-04-04  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* readline.c (scm_readline):  Must unpack SCM values to access
+	their raw contents.
+
+2000-03-19  Michael Livshin  <mlivshin@bigfoot.com>
+
+	* *.[hc]: add Emacs magic at the end of file, to ensure GNU
+ 	indentation style.
+
+2000-03-12  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* readline.c (current_input_getc): Don't pass int values through
+	SCM variables.
+	(match_paren): Bugfix: First arg to select is not number of
+	descriptors but the number of the highest descriptor + 1.
+
+Thu Mar  9 08:00:26 2000  Greg J. Badros  <gjb@cs.washington.edu>
+
+	* readline.c: scm_validate.h renamed to validate.h.
+
+Wed Mar  8 10:43:10 2000  Greg J. Badros  <gjb@cs.washington.edu>
+
+	* readline.c (match_paren): Use SELECT_TYPE, not fd_set, for type
+ 	of readset.
+
+2000-01-25  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* autogen.sh: Call libtoolize.  Pass --add-missing option to
+	automake.
+
+	* readline.scm: Only link glue code when the 'readline feature is
+	not already present.  Thanks to Clark McGrew.
+
+Tue Jan 11 17:51:40 2000  Greg J. Badros  <gjb@cs.washington.edu>
+
+	* readline.c (scm_init_readline): Drop extra argument to
+ 	scm_mutex_init as that argument should not exist.  I do not know
+	how this escaped detection for so long.
+
+2000-01-09  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* readline.c (match_paren): Changed return type to int (this is
+	the definition in readline 4) and modified code layout according
+	to GNU coding standards.
+
+Wed Jan  5 11:18:01 2000  Greg J. Badros  <gjb@cs.washington.edu>
+
+	* readline.c: Whitespace changes -- added space after
+	SCM_VALIDATE_* macros to match GNU coding standards.
+
+Wed Jan  5 11:02:40 2000  Greg J. Badros  <gjb@cs.washington.edu>
+
+	* readline.c: Rename GUILE_PROC to SCM_DEFINE.
+
+Mon Dec 13 13:57:57 1999  Greg J. Badros  <gjb@cs.washington.edu>
+
+	* readline.c: Include libguile/scm_validate.h
+
+Sun Dec 12 19:56:52 1999  Greg J. Badros  <gjb@cs.washington.edu>
+
+	* readline.c: Updated to use GUILE_PROC, SCM_VALIDATE, and have
+	(now empty) docstrings.
+
+1999-11-18  Gary Houston  <ghouston@freewire.co.uk>
+
+	* readline.c (scm_init_readline): set rl_readline_name to Guile,
+	to allow conditionals in  .inputrc.
+
+1999-10-05  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* Makefile.in, configure, aclocal.m4: Deleted from CVS repository.
+	Run the autogen.sh script to create generated files like these.
+	* autogen.sh: New script, invoked by the top-level autogen.sh.
+
+1999-09-22  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* configure.in: Call AM_PROG_CC_STDC.
+	* configure, aclocal.m4: Regenerated.
+
+1999-09-16  Mikael Djurfeldt  <mdj@mdj-pc.nada.kth.se>
+
+	* Makefile.am (.c.x): Use same rule as in libguile.
+
+1999-09-12  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* readline.h, readline.scm: Updated copyright notices.
+
+1999-09-11  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* readline.scm (activate-readline): Set (using-readline?).
+
+1999-09-11  Jim Blandy  <jimb@savonarola.red-bean.com>
+
+	* aclocal.m4: Regenerated with newer libtool macros.
+
+	* Makefile.am (DISTCLEANFILES): Get rid of .x files.
+	* Makefile.in: Regenerated.
+	(Thanks to Keisuke Nishida.)
+
+1999-09-11  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* readline.scm: Moved from ../ice-9.
+	Dynamically link libguilereadline.so.
+	(readline): Just define in this module, do not overwrite builtin
+	variable.  The builtin readline function is now named "%readline",
+	so this works.  See below.
+	(activate-readline): New function which contains the readline
+	activation code formerly found in top-repl.
+
+	* readline.c (scm_readline): Export it to Scheme as "%readline".
+
+	* configure.in: Get version from ../GUILE-VERSION and use it for
+	package version.
+
+	* Makefile.am: Do not install and distribute
+	readline-activator.scm.  Install and distribute readline.scm
+	instead.
+
+	* aclocal.m4, Makefile.in, configure, libtool: Regenerated, but
+	probably with the wrong version of the tools.
+
+1999-08-29  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	The following change makes it possible for applications to have
+	their own version of scm_readline.
+	* readline.c, readline.h (rl_cleanup_after_signal,
+	rl_free_line_state): Made global.
+	(scm_readline_init_ports): New function.
+	(scm_readline): Use scm_readline_init_ports.
+	(Thanks to Anders Holst.)
+
+	* Makefile.am: Install guile-readline/readline.h.
+
+1999-08-20  James Blandy  <jimb@mule.m17n.org>
+
+	* Makefile.in, aclocal.m4, configure: Regenerated.
+
+1999-08-17  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* configure.in (HAVE_RL_GETC_FUNCTION): Modified test to actually
+	use rl_getc_function.  Otherwise smart compilers, like gcc,
+	optimize away the reference so that no error occurs in the link
+	phase.
+
+1999-08-04  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* Makefile.am (INCLUDES): Added -I$(srcdir)/../libguile.
+	(Thanks to Greg Badros.)
+
+1999-07-24  Mikael Djurfeldt  <mdj@thalamus.nada.kth.se>
+
+	* readline.c (handle_error): Put a cosmetic newline on
+	rl_outstream on error before closing it.
+
+	* configure.in: Changed AC_MSG_ERROR into AC_MSG_WARN in case
+	readline doesn't exist on the system, so that configuration can
+	proceed normally without readline.
+
+	* readline.c: #include "libguile/_scm.h" (so that we get the
+	configuration information) and fix other includes so that they'll
+	work on a system where guile is not yet installed.
+
+	* Makefile.am (BUILT_SOURCES): Added.
+
+1999-07-23  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* Checked everything into CVS.
+
+1999-07-22  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* readline.c (stream_from_fport): New function.
+	(scm_readline): Use it to for the input and output ports.  Close
+	the streams after readline returns.
+	(handle_error): Close them also when an error occured.
+
+1999-06-17  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* readline.h, readline.c: Removed exception notice from copyright
+	statement.
+
+1999-05-16  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* Started guile-readline package.  Files are copied from old
+	guile-core package and slightly modified.
+
+;; Local Variables:
+;; coding: utf-8
+;; End:

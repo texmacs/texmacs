@@ -1,0 +1,81 @@
+#!/bin/sh
+
+#	Copyright (C) 2003, 2006, 2008 Free Software Foundation
+#
+#   This file is part of GUILE.
+#
+# This script is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+# NOTE: If you update this file, please update pre-inst-guile.in as
+# well, if appropriate.
+
+# Usage: pre-inst-guile-env [ARGS]
+
+# This script arranges for the environment to support running Guile
+# from the build tree.  The following env vars are modified (but not
+# clobbered): GUILE_LOAD_PATH, LTDL_LIBRARY_PATH, and PATH.
+
+# Example: pre-inst-guile-env guile -c '(display "hello\n")'
+# Example: ../../pre-inst-guile-env ./guile-test-foo
+
+# config
+subdirs_with_ltlibs="srfi guile-readline"       # maintain me
+
+# env (set by configure)
+top_srcdir="@top_srcdir_absolute@"
+top_builddir="@top_builddir_absolute@"
+
+[ x"$top_srcdir"   = x -o ! -d "$top_srcdir" -o \
+  x"$top_builddir" = x -o ! -d "$top_builddir" ] && {
+    echo $0: bad environment
+    echo top_srcdir=$top_srcdir
+    echo top_builddir=$top_builddir
+    exit 1
+}
+
+if [ x"$GUILE_LOAD_PATH" = x ]
+then
+    GUILE_LOAD_PATH="${top_srcdir}/guile-readline:${top_srcdir}"
+else
+  for d in "${top_srcdir}" "${top_srcdir}/guile-readline"
+  do
+    # This hair prevents double inclusion.
+    # The ":" prevents prefix aliasing.
+    case x"$GUILE_LOAD_PATH" in
+      x*${d}:*) ;;
+      *) GUILE_LOAD_PATH="${d}:$GUILE_LOAD_PATH" ;;
+    esac
+  done
+fi
+export GUILE_LOAD_PATH
+
+# handle LTDL_LIBRARY_PATH (no clobber)
+ltdl_prefix=""
+dyld_prefix=""
+for dir in $subdirs_with_ltlibs ; do
+    ltdl_prefix="${top_builddir}/${dir}:${ltdl_prefix}"
+    dyld_prefix="${top_builddir}/${dir}/.libs:${dyld_prefix}"
+done
+LTDL_LIBRARY_PATH="${ltdl_prefix}$LTDL_LIBRARY_PATH"
+export LTDL_LIBRARY_PATH
+DYLD_LIBRARY_PATH="${dyld_prefix}${top_builddir}/libguile/.libs:$DYLD_LIBRARY_PATH"
+export DYLD_LIBRARY_PATH
+
+# handle PATH (no clobber)
+PATH="${top_builddir}/guile-config:${PATH}"
+PATH="${top_builddir}/libguile:${PATH}"
+export PATH
+
+exec "$@"

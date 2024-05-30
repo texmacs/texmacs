@@ -1,0 +1,3288 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004, 2007
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@node POSIX
+@section @acronym{POSIX} System Calls and Networking
+@cindex POSIX
+
+@menu
+* Conventions::                 Conventions employed by the POSIX interface.
+* Ports and File Descriptors::  Scheme ``ports'' and Unix file descriptors
+                                  have different representations.
+* File System::                 stat, chown, chmod, etc.
+* User Information::            Retrieving a user's GECOS (/etc/passwd) entry.
+* Time::                        gettimeofday, localtime, strftime, etc.
+* Runtime Environment::         Accessing and modifying Guile's environment.
+* Processes::                   getuid, getpid, etc.
+* Signals::                     sigaction, kill, pause, alarm, setitimer, etc.
+* Terminals and Ptys::          ttyname, tcsetpgrp, etc.
+* Pipes::                       Communicating data between processes.
+* Networking::                  gethostbyaddr, getnetent, socket, bind, listen.
+* System Identification::       Obtaining information about the system.
+* Locales::                     setlocale, etc.
+* Encryption::
+@end menu
+
+@node Conventions
+@subsection @acronym{POSIX} Interface Conventions
+
+These interfaces provide access to operating system facilities.
+They provide a simple wrapping around the underlying C interfaces
+to make usage from Scheme more convenient.  They are also used
+to implement the Guile port of scsh (@pxref{The Scheme shell (scsh)}).
+
+Generally there is a single procedure for each corresponding Unix
+facility.  There are some exceptions, such as procedures implemented for
+speed and convenience in Scheme with no primitive Unix equivalent,
+e.g.@: @code{copy-file}.
+
+The interfaces are intended as far as possible to be portable across
+different versions of Unix.  In some cases procedures which can't be
+implemented on particular systems may become no-ops, or perform limited
+actions.  In other cases they may throw errors.
+
+General naming conventions are as follows:
+
+@itemize @bullet
+@item
+The Scheme name is often identical to the name of the underlying Unix
+facility.
+@item
+Underscores in Unix procedure names are converted to hyphens.
+@item
+Procedures which destructively modify Scheme data have exclamation
+marks appended, e.g., @code{recv!}.
+@item
+Predicates (returning only @code{#t} or @code{#f}) have question marks
+appended, e.g., @code{access?}.
+@item
+Some names are changed to avoid conflict with dissimilar interfaces
+defined by scsh, e.g., @code{primitive-fork}.
+@item
+Unix preprocessor names such as @code{EPERM} or @code{R_OK} are converted
+to Scheme variables of the same name (underscores are not replaced
+with hyphens).
+@end itemize
+
+Unexpected conditions are generally handled by raising exceptions.
+There are a few procedures which return a special value if they don't
+succeed, e.g., @code{getenv} returns @code{#f} if it the requested
+string is not found in the environment.  These cases are noted in
+the documentation.
+
+For ways to deal with exceptions, see @ref{Exceptions}.
+
+@cindex @code{errno}
+Errors which the C library would report by returning a null pointer or
+through some other means are reported by raising a @code{system-error}
+exception with @code{scm-error} (@pxref{Error Reporting}).  The
+@var{data} parameter is a list containing the Unix @code{errno} value
+(an integer).  For example,
+
+@example
+(define (my-handler key func fmt fmtargs data)
+  (display key) (newline)
+  (display func) (newline)
+  (apply format #t fmt fmtargs) (newline)
+  (display data) (newline))
+
+(catch 'system-error
+  (lambda () (dup2 -123 -456))
+  my-handler)
+
+@print{}
+system-error
+dup2
+Bad file descriptor
+(9)
+@end example
+
+
+@sp 1
+@defun system-error-errno arglist
+@cindex @code{errno}
+Return the @code{errno} value from a list which is the arguments to an
+exception handler.  If the exception is not a @code{system-error},
+then the return is @code{#f}.  For example,
+
+@example
+(catch
+ 'system-error
+ (lambda ()
+   (mkdir "/this-ought-to-fail-if-I'm-not-root"))
+ (lambda stuff
+   (let ((errno (system-error-errno stuff)))
+     (cond
+      ((= errno EACCES)
+       (display "You're not allowed to do that."))
+      ((= errno EEXIST)
+       (display "Already exists."))
+      (#t
+       (display (strerror errno))))
+     (newline))))
+@end example
+@end defun
+
+
+@node Ports and File Descriptors
+@subsection Ports and File Descriptors
+@cindex file descriptor
+
+Conventions generally follow those of scsh, @ref{The Scheme shell (scsh)}.
+
+File ports are implemented using low-level operating system I/O
+facilities, with optional buffering to improve efficiency; see
+@ref{File Ports}.
+
+Note that some procedures (e.g., @code{recv!}) will accept ports as
+arguments, but will actually operate directly on the file descriptor
+underlying the port.  Any port buffering is ignored, including the
+buffer which implements @code{peek-char} and @code{unread-char}.
+
+The @code{force-output} and @code{drain-input} procedures can be used
+to clear the buffers.
+
+Each open file port has an associated operating system file descriptor.
+File descriptors are generally not useful in Scheme programs; however
+they may be needed when interfacing with foreign code and the Unix
+environment.
+
+A file descriptor can be extracted from a port and a new port can be
+created from a file descriptor.  However a file descriptor is just an
+integer and the garbage collector doesn't recognize it as a reference
+to the port.  If all other references to the port were dropped, then
+it's likely that the garbage collector would free the port, with the
+side-effect of closing the file descriptor prematurely.
+
+To assist the programmer in avoiding this problem, each port has an
+associated @dfn{revealed count} which can be used to keep track of how many
+times the underlying file descriptor has been stored in other places.
+If a port's revealed count is greater than zero, the file descriptor
+will not be closed when the port is garbage collected.  A programmer
+can therefore ensure that the revealed count will be greater than
+zero if the file descriptor is needed elsewhere.
+
+For the simple case where a file descriptor is ``imported'' once to become
+a port, it does not matter if the file descriptor is closed when the
+port is garbage collected.  There is no need to maintain a revealed
+count.  Likewise when ``exporting'' a file descriptor to the external
+environment, setting the revealed count is not required provided the
+port is kept open (i.e., is pointed to by a live Scheme binding) while
+the file descriptor is in use.
+
+To correspond with traditional Unix behaviour, three file descriptors
+(0, 1, and 2) are automatically imported when a program starts up and
+assigned to the initial values of the current/standard input, output,
+and error ports, respectively.  The revealed count for each is
+initially set to one, so that dropping references to one of these
+ports will not result in its garbage collection: it could be retrieved
+with @code{fdopen} or @code{fdes->ports}.
+
+@deffn {Scheme Procedure} port-revealed port
+@deffnx {C Function} scm_port_revealed (port)
+Return the revealed count for @var{port}.
+@end deffn
+
+@deffn {Scheme Procedure} set-port-revealed! port rcount
+@deffnx {C Function} scm_set_port_revealed_x (port, rcount)
+Sets the revealed count for a @var{port} to @var{rcount}.
+The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} fileno port
+@deffnx {C Function} scm_fileno (port)
+Return the integer file descriptor underlying @var{port}.  Does
+not change its revealed count.
+@end deffn
+
+@deffn {Scheme Procedure} port->fdes port
+Returns the integer file descriptor underlying @var{port}.  As a
+side effect the revealed count of @var{port} is incremented.
+@end deffn
+
+@deffn {Scheme Procedure} fdopen fdes modes
+@deffnx {C Function} scm_fdopen (fdes, modes)
+Return a new port based on the file descriptor @var{fdes}.  Modes are
+given by the string @var{modes}.  The revealed count of the port is
+initialized to zero.  The @var{modes} string is the same as that
+accepted by @code{open-file} (@pxref{File Ports, open-file}).
+@end deffn
+
+@deffn {Scheme Procedure} fdes->ports fd
+@deffnx {C Function} scm_fdes_to_ports (fd)
+Return a list of existing ports which have @var{fdes} as an
+underlying file descriptor, without changing their revealed
+counts.
+@end deffn
+
+@deffn {Scheme Procedure} fdes->inport fdes
+Returns an existing input port which has @var{fdes} as its underlying file
+descriptor, if one exists, and increments its revealed count.
+Otherwise, returns a new input port with a revealed count of 1.
+@end deffn
+
+@deffn {Scheme Procedure} fdes->outport fdes
+Returns an existing output port which has @var{fdes} as its underlying file
+descriptor, if one exists, and increments its revealed count.
+Otherwise, returns a new output port with a revealed count of 1.
+@end deffn
+
+@deffn {Scheme Procedure} primitive-move->fdes port fd
+@deffnx {C Function} scm_primitive_move_to_fdes (port, fd)
+Moves the underlying file descriptor for @var{port} to the integer
+value @var{fdes} without changing the revealed count of @var{port}.
+Any other ports already using this descriptor will be automatically
+shifted to new descriptors and their revealed counts reset to zero.
+The return value is @code{#f} if the file descriptor already had the
+required value or @code{#t} if it was moved.
+@end deffn
+
+@deffn {Scheme Procedure} move->fdes port fdes
+Moves the underlying file descriptor for @var{port} to the integer
+value @var{fdes} and sets its revealed count to one.  Any other ports
+already using this descriptor will be automatically
+shifted to new descriptors and their revealed counts reset to zero.
+The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} release-port-handle port
+Decrements the revealed count for a port.
+@end deffn
+
+@deffn {Scheme Procedure} fsync object
+@deffnx {C Function} scm_fsync (object)
+Copies any unwritten data for the specified output file descriptor to disk.
+If @var{port/fd} is a port, its buffer is flushed before the underlying
+file descriptor is fsync'd.
+The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} open path flags [mode]
+@deffnx {C Function} scm_open (path, flags, mode)
+Open the file named by @var{path} for reading and/or writing.
+@var{flags} is an integer specifying how the file should be opened.
+@var{mode} is an integer specifying the permission bits of the file,
+if it needs to be created, before the umask (@pxref{Processes}) is
+applied.  The default is 666 (Unix itself has no default).
+
+@var{flags} can be constructed by combining variables using @code{logior}.
+Basic flags are:
+
+@defvar O_RDONLY
+Open the file read-only.
+@end defvar
+@defvar O_WRONLY
+Open the file write-only.
+@end defvar
+@defvar O_RDWR
+Open the file read/write.
+@end defvar
+@defvar O_APPEND
+Append to the file instead of truncating.
+@end defvar
+@defvar O_CREAT
+Create the file if it does not already exist.
+@end defvar
+
+@xref{File Status Flags,,,libc,The GNU C Library Reference Manual},
+for additional flags.
+@end deffn
+
+@deffn {Scheme Procedure} open-fdes path flags [mode]
+@deffnx {C Function} scm_open_fdes (path, flags, mode)
+Similar to @code{open} but return a file descriptor instead of
+a port.
+@end deffn
+
+@deffn {Scheme Procedure} close fd_or_port
+@deffnx {C Function} scm_close (fd_or_port)
+Similar to @code{close-port} (@pxref{Closing, close-port}),
+but also works on file descriptors.  A side
+effect of closing a file descriptor is that any ports using that file
+descriptor are moved to a different file descriptor and have
+their revealed counts set to zero.
+@end deffn
+
+@deffn {Scheme Procedure} close-fdes fd
+@deffnx {C Function} scm_close_fdes (fd)
+A simple wrapper for the @code{close} system call.  Close file
+descriptor @var{fd}, which must be an integer.  Unlike @code{close},
+the file descriptor will be closed even if a port is using it.  The
+return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} unread-char char [port]
+@deffnx {C Function} scm_unread_char (char, port)
+Place @var{char} in @var{port} so that it will be read by the next
+read operation on that port.  If called multiple times, the unread
+characters will be read again in ``last-in, first-out'' order (i.e.@:
+a stack).  If @var{port} is not supplied, the current input port is
+used.
+@end deffn
+
+@deffn {Scheme Procedure} unread-string str port
+Place the string @var{str} in @var{port} so that its characters will be
+read in subsequent read operations.  If called multiple times, the
+unread characters will be read again in last-in first-out order.  If
+@var{port} is not supplied, the current-input-port is used.
+@end deffn
+
+@deffn {Scheme Procedure} pipe
+@deffnx {C Function} scm_pipe ()
+@cindex pipe
+Return a newly created pipe: a pair of ports which are linked
+together on the local machine.  The @acronym{CAR} is the input
+port and the @acronym{CDR} is the output port.  Data written (and
+flushed) to the output port can be read from the input port.
+Pipes are commonly used for communication with a newly forked
+child process.  The need to flush the output port can be
+avoided by making it unbuffered using @code{setvbuf}.
+
+@defvar PIPE_BUF
+A write of up to @code{PIPE_BUF} many bytes to a pipe is atomic,
+meaning when done it goes into the pipe instantaneously and as a
+contiguous block (@pxref{Pipe Atomicity,, Atomicity of Pipe I/O, libc,
+The GNU C Library Reference Manual}).
+@end defvar
+
+Note that the output port is likely to block if too much data has been
+written but not yet read from the input port.  Typically the capacity
+is @code{PIPE_BUF} bytes.
+@end deffn
+
+The next group of procedures perform a @code{dup2}
+system call, if @var{newfd} (an
+integer) is supplied, otherwise a @code{dup}.  The file descriptor to be
+duplicated can be supplied as an integer or contained in a port.  The
+type of value returned varies depending on which procedure is used.
+
+All procedures also have the side effect when performing @code{dup2} that any
+ports using @var{newfd} are moved to a different file descriptor and have
+their revealed counts set to zero.
+
+@deffn {Scheme Procedure} dup->fdes fd_or_port [fd]
+@deffnx {C Function} scm_dup_to_fdes (fd_or_port, fd)
+Return a new integer file descriptor referring to the open file
+designated by @var{fd_or_port}, which must be either an open
+file port or a file descriptor.
+@end deffn
+
+@deffn {Scheme Procedure} dup->inport port/fd [newfd]
+Returns a new input port using the new file descriptor.
+@end deffn
+
+@deffn {Scheme Procedure} dup->outport port/fd [newfd]
+Returns a new output port using the new file descriptor.
+@end deffn
+
+@deffn {Scheme Procedure} dup port/fd [newfd]
+Returns a new port if @var{port/fd} is a port, with the same mode as the
+supplied port, otherwise returns an integer file descriptor.
+@end deffn
+
+@deffn {Scheme Procedure} dup->port port/fd mode [newfd]
+Returns a new port using the new file descriptor.  @var{mode} supplies a
+mode string for the port (@pxref{File Ports, open-file}).
+@end deffn
+
+@deffn {Scheme Procedure} duplicate-port port modes
+Returns a new port which is opened on a duplicate of the file
+descriptor underlying @var{port}, with mode string @var{modes}
+as for @ref{File Ports, open-file}.  The two ports
+will share a file position and file status flags.
+
+Unexpected behaviour can result if both ports are subsequently used
+and the original and/or duplicate ports are buffered.
+The mode string can include @code{0} to obtain an unbuffered duplicate
+port.
+
+This procedure is equivalent to @code{(dup->port @var{port} @var{modes})}.
+@end deffn
+
+@deffn {Scheme Procedure} redirect-port old new
+@deffnx {C Function} scm_redirect_port (old, new)
+This procedure takes two ports and duplicates the underlying file
+descriptor from @var{old-port} into @var{new-port}.  The
+current file descriptor in @var{new-port} will be closed.
+After the redirection the two ports will share a file position
+and file status flags.
+
+The return value is unspecified.
+
+Unexpected behaviour can result if both ports are subsequently used
+and the original and/or duplicate ports are buffered.
+
+This procedure does not have any side effects on other ports or
+revealed counts.
+@end deffn
+
+@deffn {Scheme Procedure} dup2 oldfd newfd
+@deffnx {C Function} scm_dup2 (oldfd, newfd)
+A simple wrapper for the @code{dup2} system call.
+Copies the file descriptor @var{oldfd} to descriptor
+number @var{newfd}, replacing the previous meaning
+of @var{newfd}.  Both @var{oldfd} and @var{newfd} must
+be integers.
+Unlike for @code{dup->fdes} or @code{primitive-move->fdes}, no attempt
+is made to move away ports which are using @var{newfd}.
+The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} port-mode port
+Return the port modes associated with the open port @var{port}.
+These will not necessarily be identical to the modes used when
+the port was opened, since modes such as ``append'' which are
+used only during port creation are not retained.
+@end deffn
+
+@deffn {Scheme Procedure} port-for-each proc
+@deffnx {C Function} scm_port_for_each (SCM proc)
+@deffnx {C Function} scm_c_port_for_each (void (*proc)(void *, SCM), void *data)
+Apply @var{proc} to each port in the Guile port table
+(FIXME: what is the Guile port table?)
+in turn.  The return value is unspecified.  More specifically,
+@var{proc} is applied exactly once to every port that exists in the
+system at the time @code{port-for-each} is invoked.  Changes to the
+port table while @code{port-for-each} is running have no effect as far
+as @code{port-for-each} is concerned.
+
+The C function @code{scm_port_for_each} takes a Scheme procedure
+encoded as a @code{SCM} value, while @code{scm_c_port_for_each} takes
+a pointer to a C function and passes along a arbitrary @var{data}
+cookie.
+@end deffn
+
+@deffn {Scheme Procedure} setvbuf port mode [size]
+@deffnx {C Function} scm_setvbuf (port, mode, size)
+@cindex port buffering
+Set the buffering mode for @var{port}.  @var{mode} can be:
+
+@defvar _IONBF
+non-buffered
+@end defvar
+@defvar _IOLBF
+line buffered
+@end defvar
+@defvar _IOFBF
+block buffered, using a newly allocated buffer of @var{size} bytes.
+If @var{size} is omitted, a default size will be used.
+@end defvar
+@end deffn
+
+@deffn {Scheme Procedure} fcntl port/fd cmd [value]
+@deffnx {C Function} scm_fcntl (object, cmd, value)
+Apply @var{cmd} on @var{port/fd}, either a port or file descriptor.
+The @var{value} argument is used by the @code{SET} commands described
+below, it's an integer value.
+
+Values for @var{cmd} are:
+
+@defvar F_DUPFD
+Duplicate the file descriptor, the same as @code{dup->fdes} above
+does.
+@end defvar
+
+@defvar F_GETFD
+@defvarx F_SETFD
+Get or set flags associated with the file descriptor.  The only flag
+is the following,
+
+@defvar FD_CLOEXEC
+``Close on exec'', meaning the file descriptor will be closed on an
+@code{exec} call (a successful such call).  For example to set that
+flag,
+
+@example
+(fcntl port F_SETFD FD_CLOEXEC)
+@end example
+
+Or better, set it but leave any other possible future flags unchanged,
+
+@example
+(fcntl port F_SETFD (logior FD_CLOEXEC
+                            (fcntl port F_GETFD)))
+@end example
+@end defvar
+@end defvar
+
+@defvar F_GETFL
+@defvarx F_SETFL
+Get or set flags associated with the open file.  These flags are
+@code{O_RDONLY} etc described under @code{open} above.
+
+A common use is to set @code{O_NONBLOCK} on a network socket.  The
+following sets that flag, and leaves other flags unchanged.
+
+@example
+(fcntl sock F_SETFL (logior O_NONBLOCK
+                            (fcntl sock F_GETFL)))
+@end example
+@end defvar
+
+@defvar F_GETOWN
+@defvarx F_SETOWN
+Get or set the process ID of a socket's owner, for @code{SIGIO} signals.
+@end defvar
+@end deffn
+
+@deffn {Scheme Procedure} flock file operation
+@deffnx {C Function} scm_flock (file, operation)
+@cindex file locking
+Apply or remove an advisory lock on an open file.
+@var{operation} specifies the action to be done:
+
+@defvar LOCK_SH
+Shared lock.  More than one process may hold a shared lock
+for a given file at a given time.
+@end defvar
+@defvar LOCK_EX
+Exclusive lock.  Only one process may hold an exclusive lock
+for a given file at a given time.
+@end defvar
+@defvar LOCK_UN
+Unlock the file.
+@end defvar
+@defvar LOCK_NB
+Don't block when locking.  This is combined with one of the other
+operations using @code{logior} (@pxref{Bitwise Operations}).  If
+@code{flock} would block an @code{EWOULDBLOCK} error is thrown
+(@pxref{Conventions}).
+@end defvar
+
+The return value is not specified. @var{file} may be an open
+file descriptor or an open file descriptor port.
+
+Note that @code{flock} does not lock files across NFS.
+@end deffn
+
+@deffn {Scheme Procedure} select reads writes excepts [secs [usecs]]
+@deffnx {C Function} scm_select (reads, writes, excepts, secs, usecs)
+This procedure has a variety of uses: waiting for the ability
+to provide input, accept output, or the existence of
+exceptional conditions on a collection of ports or file
+descriptors, or waiting for a timeout to occur.
+It also returns if interrupted by a signal.
+
+@var{reads}, @var{writes} and @var{excepts} can be lists or
+vectors, with each member a port or a file descriptor.
+The value returned is a list of three corresponding
+lists or vectors containing only the members which meet the
+specified requirement.  The ability of port buffers to
+provide input or accept output is taken into account.
+Ordering of the input lists or vectors is not preserved.
+
+The optional arguments @var{secs} and @var{usecs} specify the
+timeout.  Either @var{secs} can be specified alone, as
+either an integer or a real number, or both @var{secs} and
+@var{usecs} can be specified as integers, in which case
+@var{usecs} is an additional timeout expressed in
+microseconds.  If @var{secs} is omitted or is @code{#f} then
+select will wait for as long as it takes for one of the other
+conditions to be satisfied.
+
+The scsh version of @code{select} differs as follows:
+Only vectors are accepted for the first three arguments.
+The @var{usecs} argument is not supported.
+Multiple values are returned instead of a list.
+Duplicates in the input vectors appear only once in output.
+An additional @code{select!} interface is provided.
+@end deffn
+
+@node File System
+@subsection File System
+@cindex file system
+
+These procedures allow querying and setting file system attributes
+(such as owner,
+permissions, sizes and types of files); deleting, copying, renaming and
+linking files; creating and removing directories and querying their
+contents; syncing the file system and creating special files.
+
+@deffn {Scheme Procedure} access? path how
+@deffnx {C Function} scm_access (path, how)
+Test accessibility of a file under the real UID and GID of the calling
+process.  The return is @code{#t} if @var{path} exists and the
+permissions requested by @var{how} are all allowed, or @code{#f} if
+not.
+
+@var{how} is an integer which is one of the following values, or a
+bitwise-OR (@code{logior}) of multiple values.
+
+@defvar R_OK
+Test for read permission.
+@end defvar
+@defvar W_OK
+Test for write permission.
+@end defvar
+@defvar X_OK
+Test for execute permission.
+@end defvar
+@defvar F_OK
+Test for existence of the file.  This is implied by each of the other
+tests, so there's no need to combine it with them.
+@end defvar
+
+It's important to note that @code{access?} does not simply indicate
+what will happen on attempting to read or write a file.  In normal
+circumstances it does, but in a set-UID or set-GID program it doesn't
+because @code{access?} tests the real ID, whereas an open or execute
+attempt uses the effective ID.
+
+A program which will never run set-UID/GID can ignore the difference
+between real and effective IDs, but for maximum generality, especially
+in library functions, it's best not to use @code{access?} to predict
+the result of an open or execute, instead simply attempt that and
+catch any exception.
+
+The main use for @code{access?} is to let a set-UID/GID program
+determine what the invoking user would have been allowed to do,
+without the greater (or perhaps lesser) privileges afforded by the
+effective ID.  For more on this, see @ref{Testing File Access,,, libc,
+The GNU C Library Reference Manual}.
+@end deffn
+
+@findex fstat
+@deffn {Scheme Procedure} stat object
+@deffnx {C Function} scm_stat (object)
+Return an object containing various information about the file
+determined by @var{obj}.  @var{obj} can be a string containing
+a file name or a port or integer file descriptor which is open
+on a file (in which case @code{fstat} is used as the underlying
+system call).
+
+The object returned by @code{stat} can be passed as a single
+parameter to the following procedures, all of which return
+integers:
+
+@deffn {Scheme Procedure} stat:dev st
+The device number containing the file.
+@end deffn
+@deffn {Scheme Procedure} stat:ino st
+The file serial number, which distinguishes this file from all
+other files on the same device.
+@end deffn
+@deffn {Scheme Procedure} stat:mode st
+The mode of the file.  This is an integer which incorporates file type
+information and file permission bits.  See also @code{stat:type} and
+@code{stat:perms} below.
+@end deffn
+@deffn {Scheme Procedure} stat:nlink st
+The number of hard links to the file.
+@end deffn
+@deffn {Scheme Procedure} stat:uid st
+The user ID of the file's owner.
+@end deffn
+@deffn {Scheme Procedure} stat:gid st
+The group ID of the file.
+@end deffn
+@deffn {Scheme Procedure} stat:rdev st
+Device ID; this entry is defined only for character or block special
+files.  On some systems this field is not available at all, in which
+case @code{stat:rdev} returns @code{#f}.
+@end deffn
+@deffn {Scheme Procedure} stat:size st
+The size of a regular file in bytes.
+@end deffn
+@deffn {Scheme Procedure} stat:atime st
+The last access time for the file.
+@end deffn
+@deffn {Scheme Procedure} stat:mtime st
+The last modification time for the file.
+@end deffn
+@deffn {Scheme Procedure} stat:ctime st
+The last modification time for the attributes of the file.
+@end deffn
+@deffn {Scheme Procedure} stat:blksize st
+The optimal block size for reading or writing the file, in bytes.  On
+some systems this field is not available, in which case
+@code{stat:blksize} returns a sensible suggested block size.
+@end deffn
+@deffn {Scheme Procedure} stat:blocks st
+The amount of disk space that the file occupies measured in units of
+512 byte blocks.  On some systems this field is not available, in
+which case @code{stat:blocks} returns @code{#f}.
+@end deffn
+
+In addition, the following procedures return the information
+from @code{stat:mode} in a more convenient form:
+
+@deffn {Scheme Procedure} stat:type st
+A symbol representing the type of file.  Possible values are
+@samp{regular}, @samp{directory}, @samp{symlink},
+@samp{block-special}, @samp{char-special}, @samp{fifo}, @samp{socket},
+and @samp{unknown}.
+@end deffn
+@deffn {Scheme Procedure} stat:perms st
+An integer representing the access permission bits.
+@end deffn
+@end deffn
+
+@deffn {Scheme Procedure} lstat str
+@deffnx {C Function} scm_lstat (str)
+Similar to @code{stat}, but does not follow symbolic links, i.e.,
+it will return information about a symbolic link itself, not the
+file it points to.  @var{path} must be a string.
+@end deffn
+
+@deffn {Scheme Procedure} readlink path
+@deffnx {C Function} scm_readlink (path)
+Return the value of the symbolic link named by @var{path} (a
+string), i.e., the file that the link points to.
+@end deffn
+
+@findex fchown
+@findex lchown
+@deffn {Scheme Procedure} chown object owner group
+@deffnx {C Function} scm_chown (object, owner, group)
+Change the ownership and group of the file referred to by @var{object}
+to the integer values @var{owner} and @var{group}.  @var{object} can
+be a string containing a file name or, if the platform supports
+@code{fchown} (@pxref{File Owner,,,libc,The GNU C Library Reference
+Manual}), a port or integer file descriptor which is open on the file.
+The return value is unspecified.
+
+If @var{object} is a symbolic link, either the
+ownership of the link or the ownership of the referenced file will be
+changed depending on the operating system (lchown is
+unsupported at present).  If @var{owner} or @var{group} is specified
+as @code{-1}, then that ID is not changed.
+@end deffn
+
+@findex fchmod
+@deffn {Scheme Procedure} chmod object mode
+@deffnx {C Function} scm_chmod (object, mode)
+Changes the permissions of the file referred to by @var{obj}.
+@var{obj} can be a string containing a file name or a port or integer file
+descriptor which is open on a file (in which case @code{fchmod} is used
+as the underlying system call).
+@var{mode} specifies
+the new permissions as a decimal number, e.g., @code{(chmod "foo" #o755)}.
+The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} utime pathname [actime [modtime]]
+@deffnx {C Function} scm_utime (pathname, actime, modtime)
+@cindex file times
+@code{utime} sets the access and modification times for the
+file named by @var{path}.  If @var{actime} or @var{modtime} is
+not supplied, then the current time is used.  @var{actime} and
+@var{modtime} must be integer time values as returned by the
+@code{current-time} procedure.
+@lisp
+(utime "foo" (- (current-time) 3600))
+@end lisp
+will set the access time to one hour in the past and the
+modification time to the current time.
+@end deffn
+
+@findex unlink
+@deffn {Scheme Procedure} delete-file str
+@deffnx {C Function} scm_delete_file (str)
+Deletes (or ``unlinks'') the file whose path is specified by
+@var{str}.
+@end deffn
+
+@deffn {Scheme Procedure} copy-file oldfile newfile
+@deffnx {C Function} scm_copy_file (oldfile, newfile)
+Copy the file specified by @var{oldfile} to @var{newfile}.
+The return value is unspecified.
+@end deffn
+
+@findex rename
+@deffn {Scheme Procedure} rename-file oldname newname
+@deffnx {C Function} scm_rename (oldname, newname)
+Renames the file specified by @var{oldname} to @var{newname}.
+The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} link oldpath newpath
+@deffnx {C Function} scm_link (oldpath, newpath)
+Creates a new name @var{newpath} in the file system for the
+file named by @var{oldpath}.  If @var{oldpath} is a symbolic
+link, the link may or may not be followed depending on the
+system.
+@end deffn
+
+@deffn {Scheme Procedure} symlink oldpath newpath
+@deffnx {C Function} scm_symlink (oldpath, newpath)
+Create a symbolic link named @var{newpath} with the value (i.e., pointing to)
+@var{oldpath}.  The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} mkdir path [mode]
+@deffnx {C Function} scm_mkdir (path, mode)
+Create a new directory named by @var{path}.  If @var{mode} is omitted
+then the permissions of the directory file are set using the current
+umask (@pxref{Processes}).  Otherwise they are set to the decimal
+value specified with @var{mode}.  The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} rmdir path
+@deffnx {C Function} scm_rmdir (path)
+Remove the existing directory named by @var{path}.  The directory must
+be empty for this to succeed.  The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} opendir dirname
+@deffnx {C Function} scm_opendir (dirname)
+@cindex directory contents
+Open the directory specified by @var{dirname} and return a directory
+stream.
+@end deffn
+
+@deffn {Scheme Procedure} directory-stream? object
+@deffnx {C Function} scm_directory_stream_p (object)
+Return a boolean indicating whether @var{object} is a directory
+stream as returned by @code{opendir}.
+@end deffn
+
+@deffn {Scheme Procedure} readdir stream
+@deffnx {C Function} scm_readdir (stream)
+Return (as a string) the next directory entry from the directory stream
+@var{stream}.  If there is no remaining entry to be read then the
+end of file object is returned.
+@end deffn
+
+@deffn {Scheme Procedure} rewinddir stream
+@deffnx {C Function} scm_rewinddir (stream)
+Reset the directory port @var{stream} so that the next call to
+@code{readdir} will return the first directory entry.
+@end deffn
+
+@deffn {Scheme Procedure} closedir stream
+@deffnx {C Function} scm_closedir (stream)
+Close the directory stream @var{stream}.
+The return value is unspecified.
+@end deffn
+
+Here is an example showing how to display all the entries in a
+directory:
+
+@lisp
+(define dir (opendir "/usr/lib"))
+(do ((entry (readdir dir) (readdir dir)))
+    ((eof-object? entry))
+  (display entry)(newline))
+(closedir dir)
+@end lisp
+
+@deffn {Scheme Procedure} sync
+@deffnx {C Function} scm_sync ()
+Flush the operating system disk buffers.
+The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} mknod path type perms dev
+@deffnx {C Function} scm_mknod (path, type, perms, dev)
+@cindex device file
+Creates a new special file, such as a file corresponding to a device.
+@var{path} specifies the name of the file.  @var{type} should be one
+of the following symbols: @samp{regular}, @samp{directory},
+@samp{symlink}, @samp{block-special}, @samp{char-special},
+@samp{fifo}, or @samp{socket}.  @var{perms} (an integer) specifies the
+file permissions.  @var{dev} (an integer) specifies which device the
+special file refers to.  Its exact interpretation depends on the kind
+of special file being created.
+
+E.g.,
+@lisp
+(mknod "/dev/fd0" 'block-special #o660 (+ (* 2 256) 2))
+@end lisp
+
+The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} tmpnam
+@deffnx {C Function} scm_tmpnam ()
+@cindex temporary file
+Return an auto-generated name of a temporary file, a file which
+doesn't already exist.  The name includes a path, it's usually in
+@file{/tmp} but that's system dependent.
+
+Care must be taken when using @code{tmpnam}.  In between choosing the
+name and creating the file another program might use that name, or an
+attacker might even make it a symlink pointing at something important
+and causing you to overwrite that.
+
+The safe way is to create the file using @code{open} with
+@code{O_EXCL} to avoid any overwriting.  A loop can try again with
+another name if the file exists (error @code{EEXIST}).
+@code{mkstemp!} below does that.
+@end deffn
+
+@deffn {Scheme Procedure} mkstemp! tmpl
+@deffnx {C Function} scm_mkstemp (tmpl)
+@cindex temporary file
+Create a new unique file in the file system and return a new buffered
+port open for reading and writing to the file.
+
+@var{tmpl} is a string specifying where the file should be created: it
+must end with @samp{XXXXXX} and those @samp{X}s will be changed in the
+string to return the name of the file.  (@code{port-filename} on the
+port also gives the name.)
+
+POSIX doesn't specify the permissions mode of the file, on GNU and
+most systems it's @code{#o600}.  An application can use @code{chmod}
+to relax that if desired.  For example @code{#o666} less @code{umask},
+which is usual for ordinary file creation,
+
+@example
+(let ((port (mkstemp! (string-copy "/tmp/myfile-XXXXXX"))))
+  (chmod port (logand #o666 (lognot (umask))))
+  ...)
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} dirname filename
+@deffnx {C Function} scm_dirname (filename)
+Return the directory name component of the file name
+@var{filename}. If @var{filename} does not contain a directory
+component, @code{.} is returned.
+@end deffn
+
+@deffn {Scheme Procedure} basename filename [suffix]
+@deffnx {C Function} scm_basename (filename, suffix)
+Return the base name of the file name @var{filename}. The
+base name is the file name without any directory components.
+If @var{suffix} is provided, and is equal to the end of
+@var{basename}, it is removed also.
+
+@lisp
+(basename "/tmp/test.xml" ".xml")
+@result{} "test"
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} file-exists? filename
+Return @code{#t} if the file named @var{filename} exists, @code{#f} if
+not.
+@end deffn
+
+
+@node User Information
+@subsection User Information
+@cindex user information
+@cindex password file
+@cindex group file
+
+The facilities in this section provide an interface to the user and
+group database.
+They should be used with care since they are not reentrant.
+
+The following functions accept an object representing user information
+and return a selected component:
+
+@deffn {Scheme Procedure} passwd:name pw
+The name of the userid.
+@end deffn
+@deffn {Scheme Procedure} passwd:passwd pw
+The encrypted passwd.
+@end deffn
+@deffn {Scheme Procedure} passwd:uid pw
+The user id number.
+@end deffn
+@deffn {Scheme Procedure} passwd:gid pw
+The group id number.
+@end deffn
+@deffn {Scheme Procedure} passwd:gecos pw
+The full name.
+@end deffn
+@deffn {Scheme Procedure} passwd:dir pw
+The home directory.
+@end deffn
+@deffn {Scheme Procedure} passwd:shell pw
+The login shell.
+@end deffn
+@sp 1
+
+@deffn {Scheme Procedure} getpwuid uid
+Look up an integer userid in the user database.
+@end deffn
+
+@deffn {Scheme Procedure} getpwnam name
+Look up a user name string in the user database.
+@end deffn
+
+@deffn {Scheme Procedure} setpwent
+Initializes a stream used by @code{getpwent} to read from the user database.
+The next use of @code{getpwent} will return the first entry.  The
+return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} getpwent
+Read the next entry in the user database stream.  The return is a
+passwd user object as above, or @code{#f} when no more entries.
+@end deffn
+
+@deffn {Scheme Procedure} endpwent
+Closes the stream used by @code{getpwent}.  The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} setpw [arg]
+@deffnx {C Function} scm_setpwent (arg)
+If called with a true argument, initialize or reset the password data
+stream.  Otherwise, close the stream.  The @code{setpwent} and
+@code{endpwent} procedures are implemented on top of this.
+@end deffn
+
+@deffn {Scheme Procedure} getpw [user]
+@deffnx {C Function} scm_getpwuid (user)
+Look up an entry in the user database.  @var{obj} can be an integer,
+a string, or omitted, giving the behaviour of getpwuid, getpwnam
+or getpwent respectively.
+@end deffn
+
+The following functions accept an object representing group information
+and return a selected component:
+
+@deffn {Scheme Procedure} group:name gr
+The group name.
+@end deffn
+@deffn {Scheme Procedure} group:passwd gr
+The encrypted group password.
+@end deffn
+@deffn {Scheme Procedure} group:gid gr
+The group id number.
+@end deffn
+@deffn {Scheme Procedure} group:mem gr
+A list of userids which have this group as a supplementary group.
+@end deffn
+@sp 1
+
+@deffn {Scheme Procedure} getgrgid gid
+Look up an integer group id in the group database.
+@end deffn
+
+@deffn {Scheme Procedure} getgrnam name
+Look up a group name in the group database.
+@end deffn
+
+@deffn {Scheme Procedure} setgrent
+Initializes a stream used by @code{getgrent} to read from the group database.
+The next use of @code{getgrent} will return the first entry.
+The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} getgrent
+Return the next entry in the group database, using the stream set by
+@code{setgrent}.
+@end deffn
+
+@deffn {Scheme Procedure} endgrent
+Closes the stream used by @code{getgrent}.
+The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} setgr [arg]
+@deffnx {C Function} scm_setgrent (arg)
+If called with a true argument, initialize or reset the group data
+stream.  Otherwise, close the stream.  The @code{setgrent} and
+@code{endgrent} procedures are implemented on top of this.
+@end deffn
+
+@deffn {Scheme Procedure} getgr [name]
+@deffnx {C Function} scm_getgrgid (name)
+Look up an entry in the group database.  @var{obj} can be an integer,
+a string, or omitted, giving the behaviour of getgrgid, getgrnam
+or getgrent respectively.
+@end deffn
+
+In addition to the accessor procedures for the user database, the
+following shortcut procedures are also available.
+
+@deffn {Scheme Procedure} cuserid
+@deffnx {C Function} scm_cuserid ()
+Return a string containing a user name associated with the
+effective user id of the process.  Return @code{#f} if this
+information cannot be obtained.
+
+This function has been removed from the latest POSIX specification,
+Guile provides it only if the system has it.  Using @code{(getpwuid
+(geteuid))} may be a better idea.
+@end deffn
+
+@deffn {Scheme Procedure} getlogin
+@deffnx {C Function} scm_getlogin ()
+Return a string containing the name of the user logged in on
+the controlling terminal of the process, or @code{#f} if this
+information cannot be obtained.
+@end deffn
+
+
+@node Time
+@subsection Time
+@cindex time
+
+@deffn {Scheme Procedure} current-time
+@deffnx {C Function} scm_current_time ()
+Return the number of seconds since 1970-01-01 00:00:00 @acronym{UTC},
+excluding leap seconds.
+@end deffn
+
+@deffn {Scheme Procedure} gettimeofday
+@deffnx {C Function} scm_gettimeofday ()
+Return a pair containing the number of seconds and microseconds
+since 1970-01-01 00:00:00 @acronym{UTC}, excluding leap seconds.  Note:
+whether true microsecond resolution is available depends on the
+operating system.
+@end deffn
+
+The following procedures either accept an object representing a broken down
+time and return a selected component, or accept an object representing
+a broken down time and a value and set the component to the value.
+The numbers in parentheses give the usual range.
+
+@deffn {Scheme Procedure} tm:sec tm
+@deffnx {Scheme Procedure} set-tm:sec tm val
+Seconds (0-59).
+@end deffn
+@deffn {Scheme Procedure} tm:min tm
+@deffnx {Scheme Procedure} set-tm:min tm val
+Minutes (0-59).
+@end deffn
+@deffn {Scheme Procedure} tm:hour tm
+@deffnx {Scheme Procedure} set-tm:hour tm val
+Hours (0-23).
+@end deffn
+@deffn {Scheme Procedure} tm:mday tm
+@deffnx {Scheme Procedure} set-tm:mday tm val
+Day of the month (1-31).
+@end deffn
+@deffn {Scheme Procedure} tm:mon tm
+@deffnx {Scheme Procedure} set-tm:mon tm val
+Month (0-11).
+@end deffn
+@deffn {Scheme Procedure} tm:year tm
+@deffnx {Scheme Procedure} set-tm:year tm val
+Year (70-), the year minus 1900.
+@end deffn
+@deffn {Scheme Procedure} tm:wday tm
+@deffnx {Scheme Procedure} set-tm:wday tm val
+Day of the week (0-6) with Sunday represented as 0.
+@end deffn
+@deffn {Scheme Procedure} tm:yday tm
+@deffnx {Scheme Procedure} set-tm:yday tm val
+Day of the year (0-364, 365 in leap years).
+@end deffn
+@deffn {Scheme Procedure} tm:isdst tm
+@deffnx {Scheme Procedure} set-tm:isdst tm val
+Daylight saving indicator (0 for ``no'', greater than 0 for ``yes'', less than
+0 for ``unknown'').
+@end deffn
+@deffn {Scheme Procedure} tm:gmtoff tm
+@deffnx {Scheme Procedure} set-tm:gmtoff tm val
+Time zone offset in seconds west of @acronym{UTC} (-46800 to 43200).
+For example on East coast USA (zone @samp{EST+5}) this would be 18000
+(ie.@: @m{5\times60\times60,5*60*60}) in winter, or 14400
+(ie.@: @m{4\times60\times60,4*60*60}) during daylight savings.
+
+Note @code{tm:gmtoff} is not the same as @code{tm_gmtoff} in the C
+@code{tm} structure.  @code{tm_gmtoff} is seconds east and hence the
+negative of the value here.
+@end deffn
+@deffn {Scheme Procedure} tm:zone tm
+@deffnx {Scheme Procedure} set-tm:zone tm val
+Time zone label (a string), not necessarily unique.
+@end deffn
+@sp 1
+
+@deffn {Scheme Procedure} localtime time [zone]
+@deffnx {C Function} scm_localtime (time, zone)
+@cindex local time
+Return an object representing the broken down components of
+@var{time}, an integer like the one returned by
+@code{current-time}.  The time zone for the calculation is
+optionally specified by @var{zone} (a string), otherwise the
+@env{TZ} environment variable or the system default is used.
+@end deffn
+
+@deffn {Scheme Procedure} gmtime time
+@deffnx {C Function} scm_gmtime (time)
+Return an object representing the broken down components of
+@var{time}, an integer like the one returned by
+@code{current-time}.  The values are calculated for @acronym{UTC}.
+@end deffn
+
+@deffn {Scheme Procedure} mktime sbd-time [zone]
+@deffnx {C Function} scm_mktime (sbd_time, zone)
+For a broken down time object @var{sbd-time}, return a pair the
+@code{car} of which is an integer time like @code{current-time}, and
+the @code{cdr} of which is a new broken down time with normalized
+fields.
+
+@var{zone} is a timezone string, or the default is the @env{TZ}
+environment variable or the system default (@pxref{TZ Variable,,
+Specifying the Time Zone with @env{TZ}, libc, GNU C Library Reference
+Manual}).  @var{sbd-time} is taken to be in that @var{zone}.
+
+The following fields of @var{sbd-time} are used: @code{tm:year},
+@code{tm:mon}, @code{tm:mday}, @code{tm:hour}, @code{tm:min},
+@code{tm:sec}, @code{tm:isdst}.  The values can be outside their usual
+ranges.  For example @code{tm:hour} normally goes up to 23, but a
+value say 33 would mean 9 the following day.
+
+@code{tm:isdst} in @var{sbd-time} says whether the time given is with
+daylight savings or not.  This is ignored if @var{zone} doesn't have
+any daylight savings adjustment amount.
+
+The broken down time in the return normalizes the values of
+@var{sbd-time} by bringing them into their usual ranges, and using the
+actual daylight savings rule for that time in @var{zone} (which may
+differ from what @var{sbd-time} had).  The easiest way to think of
+this is that @var{sbd-time} plus @var{zone} converts to the integer
+UTC time, then a @code{localtime} is applied to get the normal
+presentation of that time, in @var{zone}.
+@end deffn
+
+@deffn {Scheme Procedure} tzset
+@deffnx {C Function} scm_tzset ()
+Initialize the timezone from the @env{TZ} environment variable
+or the system default.  It's not usually necessary to call this procedure
+since it's done automatically by other procedures that depend on the
+timezone.
+@end deffn
+
+@deffn {Scheme Procedure} strftime format tm
+@deffnx {C Function} scm_strftime (format, tm)
+@cindex time formatting
+Return a string which is broken-down time structure @var{tm} formatted
+according to the given @var{format} string.
+
+@var{format} contains field specifications introduced by a @samp{%}
+character.  See @ref{Formatting Calendar Time,,, libc, The GNU C
+Library Reference Manual}, or @samp{man 3 strftime}, for the available
+formatting.
+
+@lisp
+(strftime "%c" (localtime (current-time)))
+@result{} "Mon Mar 11 20:17:43 2002"
+@end lisp
+
+If @code{setlocale} has been called (@pxref{Locales}), month and day
+names are from the current locale and in the locale character set.
+
+Note that @samp{%Z} might print the @code{tm:zone} in @var{tm} or it
+might print just the current zone (@code{tzset} above).  A GNU system
+prints @code{tm:zone}, a strict C99 system like NetBSD prints the
+current zone.  Perhaps in the future Guile will try to get
+@code{tm:zone} used always.
+@c
+@c  The issue in the above is not just whether tm_zone exists in
+@c  struct tm, but whether libc feels it should read it.  Being a
+@c  non-C99 field, a strict C99 program won't know to set it, quite
+@c  likely leaving garbage there.  NetBSD, which has the field,
+@c  therefore takes the view that it mustn't read it.  See the PR
+@c  about this at
+@c
+@c      http://www.netbsd.org/cgi-bin/query-pr-single.pl?number=21722
+@c
+@c  Uniformly making tm:zone used on all systems (all those which have
+@c  %Z at all of course) might be nice (either mung TZ and tzset, or
+@c  mung tzname[]).  On the other hand it would make us do more than
+@c  C99 says, and we really don't want to get intimate with the gory
+@c  details of libc time funcs, no more than can be helped.
+@c
+@end deffn
+
+@deffn {Scheme Procedure} strptime format string
+@deffnx {C Function} scm_strptime (format, string)
+@cindex time parsing
+Performs the reverse action to @code{strftime}, parsing
+@var{string} according to the specification supplied in
+@var{template}.  The interpretation of month and day names is
+dependent on the current locale.  The value returned is a pair.
+The @acronym{CAR} has an object with time components
+in the form returned by @code{localtime} or @code{gmtime},
+but the time zone components
+are not usefully set.
+The @acronym{CDR} reports the number of characters from @var{string}
+which were used for the conversion.
+@end deffn
+
+@defvar internal-time-units-per-second
+The value of this variable is the number of time units per second
+reported by the following procedures.
+@end defvar
+
+@deffn {Scheme Procedure} times
+@deffnx {C Function} scm_times ()
+Return an object with information about real and processor
+time.  The following procedures accept such an object as an
+argument and return a selected component:
+
+@deffn {Scheme Procedure} tms:clock tms
+The current real time, expressed as time units relative to an
+arbitrary base.
+@end deffn
+@deffn {Scheme Procedure} tms:utime tms
+The CPU time units used by the calling process.
+@end deffn
+@deffn {Scheme Procedure} tms:stime tms
+The CPU time units used by the system on behalf of the calling
+process.
+@end deffn
+@deffn {Scheme Procedure} tms:cutime tms
+The CPU time units used by terminated child processes of the
+calling process, whose status has been collected (e.g., using
+@code{waitpid}).
+@end deffn
+@deffn {Scheme Procedure} tms:cstime tms
+Similarly, the CPU times units used by the system on behalf of
+terminated child processes.
+@end deffn
+@end deffn
+
+@deffn {Scheme Procedure} get-internal-real-time
+@deffnx {C Function} scm_get_internal_real_time ()
+Return the number of time units since the interpreter was
+started.
+@end deffn
+
+@deffn {Scheme Procedure} get-internal-run-time
+@deffnx {C Function} scm_get_internal_run_time ()
+Return the number of time units of processor time used by the
+interpreter.  Both @emph{system} and @emph{user} time are
+included but subprocesses are not.
+@end deffn
+
+@node Runtime Environment
+@subsection Runtime Environment
+
+@deffn {Scheme Procedure} program-arguments
+@deffnx {Scheme Procedure} command-line
+@deffnx {Scheme Procedure} set-program-arguments
+@deffnx {C Function} scm_program_arguments ()
+@deffnx {C Function} scm_set_program_arguments_scm (lst)
+@cindex command line
+@cindex program arguments
+Get the command line arguments passed to Guile, or set new arguments.
+
+The arguments are a list of strings, the first of which is the invoked
+program name.  This is just @nicode{"guile"} (or the executable path)
+when run interactively, or it's the script name when running a script
+with @option{-s} (@pxref{Invoking Guile}).
+
+@example
+guile -L /my/extra/dir -s foo.scm abc def
+
+(program-arguments) @result{} ("foo.scm" "abc" "def")
+@end example
+
+@code{set-program-arguments} allows a library module or similar to
+modify the arguments, for example to strip options it recognises,
+leaving the rest for the mainline.
+
+The argument list is held in a fluid, which means it's separate for
+each thread.  Neither the list nor the strings within it are copied at
+any point and normally should not be mutated.
+
+The two names @code{program-arguments} and @code{command-line} are an
+historical accident, they both do exactly the same thing.  The name
+@code{scm_set_program_arguments_scm} has an extra @code{_scm} on the
+end to avoid clashing with the C function below.
+@end deffn
+
+@deftypefn {C Function} void scm_set_program_arguments (int argc, char **argv, char *first)
+@cindex command line
+@cindex program arguments
+Set the list of command line arguments for @code{program-arguments}
+and @code{command-line} above.
+
+@var{argv} is an array of null-terminated strings, as in a C
+@code{main} function.  @var{argc} is the number of strings in
+@var{argv}, or if it's negative then a @code{NULL} in @var{argv} marks
+its end.
+
+@var{first} is an extra string put at the start of the arguments, or
+@code{NULL} for no such extra.  This is a convenient way to pass the
+program name after advancing @var{argv} to strip option arguments.
+Eg.@:
+
+@example
+@{
+  char *progname = argv[0];
+  for (argv++; argv[0] != NULL && argv[0][0] == '-'; argv++)
+    @{
+      /* munch option ... */
+    @}
+  /* remaining args for scheme level use */
+  scm_set_program_arguments (-1, argv, progname);
+@}
+@end example
+
+This sort of thing is often done at startup under
+@code{scm_boot_guile} with options handled at the C level removed.
+The given strings are all copied, so the C data is not accessed again
+once @code{scm_set_program_arguments} returns.
+@end deftypefn
+
+@deffn {Scheme Procedure} getenv nam
+@deffnx {C Function} scm_getenv (nam)
+@cindex environment
+Looks up the string @var{name} in the current environment.  The return
+value is @code{#f} unless a string of the form @code{NAME=VALUE} is
+found, in which case the string @code{VALUE} is returned.
+@end deffn
+
+@deffn {Scheme Procedure} setenv name value
+Modifies the environment of the current process, which is
+also the default environment inherited by child processes.
+
+If @var{value} is @code{#f}, then @var{name} is removed from the
+environment.  Otherwise, the string @var{name}=@var{value} is added
+to the environment, replacing any existing string with name matching
+@var{name}.
+
+The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} unsetenv name
+Remove variable @var{name} from the environment.  The
+name can not contain a @samp{=} character.
+@end deffn
+
+@deffn {Scheme Procedure} environ [env]
+@deffnx {C Function} scm_environ (env)
+If @var{env} is omitted, return the current environment (in the
+Unix sense) as a list of strings.  Otherwise set the current
+environment, which is also the default environment for child
+processes, to the supplied list of strings.  Each member of
+@var{env} should be of the form @var{NAME}=@var{VALUE} and values of
+@var{NAME} should not be duplicated.  If @var{env} is supplied
+then the return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} putenv str
+@deffnx {C Function} scm_putenv (str)
+Modifies the environment of the current process, which is
+also the default environment inherited by child processes.
+
+If @var{string} is of the form @code{NAME=VALUE} then it will be written
+directly into the environment, replacing any existing environment string
+with
+name matching @code{NAME}.  If @var{string} does not contain an equal
+sign, then any existing string with name matching @var{string} will
+be removed.
+
+The return value is unspecified.
+@end deffn
+
+
+@node Processes
+@subsection Processes
+@cindex processes
+@cindex child processes
+
+@findex cd
+@deffn {Scheme Procedure} chdir str
+@deffnx {C Function} scm_chdir (str)
+@cindex current directory
+Change the current working directory to @var{path}.
+The return value is unspecified.
+@end deffn
+
+@findex pwd
+@deffn {Scheme Procedure} getcwd
+@deffnx {C Function} scm_getcwd ()
+Return the name of the current working directory.
+@end deffn
+
+@deffn {Scheme Procedure} umask [mode]
+@deffnx {C Function} scm_umask (mode)
+If @var{mode} is omitted, returns a decimal number representing the
+current file creation mask.  Otherwise the file creation mask is set
+to @var{mode} and the previous value is returned. @xref{Setting
+Permissions,,Assigning File Permissions,libc,The GNU C Library
+Reference Manual}, for more on how to use umasks.
+
+E.g., @code{(umask #o022)} sets the mask to octal 22/decimal 18.
+@end deffn
+
+@deffn {Scheme Procedure} chroot path
+@deffnx {C Function} scm_chroot (path)
+Change the root directory to that specified in @var{path}.
+This directory will be used for path names beginning with
+@file{/}.  The root directory is inherited by all children
+of the current process.  Only the superuser may change the
+root directory.
+@end deffn
+
+@deffn {Scheme Procedure} getpid
+@deffnx {C Function} scm_getpid ()
+Return an integer representing the current process ID.
+@end deffn
+
+@deffn {Scheme Procedure} getgroups
+@deffnx {C Function} scm_getgroups ()
+Return a vector of integers representing the current
+supplementary group IDs.
+@end deffn
+
+@deffn {Scheme Procedure} getppid
+@deffnx {C Function} scm_getppid ()
+Return an integer representing the process ID of the parent
+process.
+@end deffn
+
+@deffn {Scheme Procedure} getuid
+@deffnx {C Function} scm_getuid ()
+Return an integer representing the current real user ID.
+@end deffn
+
+@deffn {Scheme Procedure} getgid
+@deffnx {C Function} scm_getgid ()
+Return an integer representing the current real group ID.
+@end deffn
+
+@deffn {Scheme Procedure} geteuid
+@deffnx {C Function} scm_geteuid ()
+Return an integer representing the current effective user ID.
+If the system does not support effective IDs, then the real ID
+is returned.  @code{(provided? 'EIDs)} reports whether the
+system supports effective IDs.
+@end deffn
+
+@deffn {Scheme Procedure} getegid
+@deffnx {C Function} scm_getegid ()
+Return an integer representing the current effective group ID.
+If the system does not support effective IDs, then the real ID
+is returned.  @code{(provided? 'EIDs)} reports whether the
+system supports effective IDs.
+@end deffn
+
+@deffn {Scheme Procedure} setgroups vec
+@deffnx {C Function} scm_setgroups (vec)
+Set the current set of supplementary group IDs to the integers in the
+given vector @var{vec}.  The return value is unspecified.
+
+Generally only the superuser can set the process group IDs
+(@pxref{Setting Groups, Setting the Group IDs,, libc, The GNU C
+Library Reference Manual}).
+@end deffn
+
+@deffn {Scheme Procedure} setuid id
+@deffnx {C Function} scm_setuid (id)
+Sets both the real and effective user IDs to the integer @var{id}, provided
+the process has appropriate privileges.
+The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} setgid id
+@deffnx {C Function} scm_setgid (id)
+Sets both the real and effective group IDs to the integer @var{id}, provided
+the process has appropriate privileges.
+The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} seteuid id
+@deffnx {C Function} scm_seteuid (id)
+Sets the effective user ID to the integer @var{id}, provided the process
+has appropriate privileges.  If effective IDs are not supported, the
+real ID is set instead---@code{(provided? 'EIDs)} reports whether the
+system supports effective IDs.
+The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} setegid id
+@deffnx {C Function} scm_setegid (id)
+Sets the effective group ID to the integer @var{id}, provided the process
+has appropriate privileges.  If effective IDs are not supported, the
+real ID is set instead---@code{(provided? 'EIDs)} reports whether the
+system supports effective IDs.
+The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} getpgrp
+@deffnx {C Function} scm_getpgrp ()
+Return an integer representing the current process group ID.
+This is the @acronym{POSIX} definition, not @acronym{BSD}.
+@end deffn
+
+@deffn {Scheme Procedure} setpgid pid pgid
+@deffnx {C Function} scm_setpgid (pid, pgid)
+Move the process @var{pid} into the process group @var{pgid}.  @var{pid} or
+@var{pgid} must be integers: they can be zero to indicate the ID of the
+current process.
+Fails on systems that do not support job control.
+The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} setsid
+@deffnx {C Function} scm_setsid ()
+Creates a new session.  The current process becomes the session leader
+and is put in a new process group.  The process will be detached
+from its controlling terminal if it has one.
+The return value is an integer representing the new process group ID.
+@end deffn
+
+@deffn {Scheme Procedure} waitpid pid [options]
+@deffnx {C Function} scm_waitpid (pid, options)
+This procedure collects status information from a child process which
+has terminated or (optionally) stopped.  Normally it will
+suspend the calling process until this can be done.  If more than one
+child process is eligible then one will be chosen by the operating system.
+
+The value of @var{pid} determines the behaviour:
+
+@table @asis
+@item @var{pid} greater than 0
+Request status information from the specified child process.
+@item @var{pid} equal to -1 or @code{WAIT_ANY}
+@vindex WAIT_ANY
+Request status information for any child process.
+@item @var{pid} equal to 0 or @code{WAIT_MYPGRP}
+@vindex WAIT_MYPGRP
+Request status information for any child process in the current process
+group.
+@item @var{pid} less than -1
+Request status information for any child process whose process group ID
+is @minus{}@var{pid}.
+@end table
+
+The @var{options} argument, if supplied, should be the bitwise OR of the
+values of zero or more of the following variables:
+
+@defvar WNOHANG
+Return immediately even if there are no child processes to be collected.
+@end defvar
+
+@defvar WUNTRACED
+Report status information for stopped processes as well as terminated
+processes.
+@end defvar
+
+The return value is a pair containing:
+
+@enumerate
+@item
+The process ID of the child process, or 0 if @code{WNOHANG} was
+specified and no process was collected.
+@item
+The integer status value.
+@end enumerate
+@end deffn
+
+The following three
+functions can be used to decode the process status code returned
+by @code{waitpid}.
+
+@deffn {Scheme Procedure} status:exit-val status
+@deffnx {C Function} scm_status_exit_val (status)
+Return the exit status value, as would be set if a process
+ended normally through a call to @code{exit} or @code{_exit},
+if any, otherwise @code{#f}.
+@end deffn
+
+@deffn {Scheme Procedure} status:term-sig status
+@deffnx {C Function} scm_status_term_sig (status)
+Return the signal number which terminated the process, if any,
+otherwise @code{#f}.
+@end deffn
+
+@deffn {Scheme Procedure} status:stop-sig status
+@deffnx {C Function} scm_status_stop_sig (status)
+Return the signal number which stopped the process, if any,
+otherwise @code{#f}.
+@end deffn
+
+@deffn {Scheme Procedure} system [cmd]
+@deffnx {C Function} scm_system (cmd)
+Execute @var{cmd} using the operating system's ``command
+processor''.  Under Unix this is usually the default shell
+@code{sh}.  The value returned is @var{cmd}'s exit status as
+returned by @code{waitpid}, which can be interpreted using the
+functions above.
+
+If @code{system} is called without arguments, return a boolean
+indicating whether the command processor is available.
+@end deffn
+
+@deffn {Scheme Procedure} system* . args
+@deffnx {C Function} scm_system_star (args)
+Execute the command indicated by @var{args}.  The first element must
+be a string indicating the command to be executed, and the remaining
+items must be strings representing each of the arguments to that
+command.
+
+This function returns the exit status of the command as provided by
+@code{waitpid}.  This value can be handled with @code{status:exit-val}
+and the related functions.
+
+@code{system*} is similar to @code{system}, but accepts only one
+string per-argument, and performs no shell interpretation.  The
+command is executed using fork and execlp.  Accordingly this function
+may be safer than @code{system} in situations where shell
+interpretation is not required.
+
+Example: (system* "echo" "foo" "bar")
+@end deffn
+
+@deffn {Scheme Procedure} primitive-exit [status]
+@deffnx {Scheme Procedure} primitive-_exit [status]
+@deffnx {C Function} scm_primitive_exit (status)
+@deffnx {C Function} scm_primitive__exit (status)
+Terminate the current process without unwinding the Scheme stack.  The
+exit status is @var{status} if supplied, otherwise zero.
+
+@code{primitive-exit} uses the C @code{exit} function and hence runs
+usual C level cleanups (flush output streams, call @code{atexit}
+functions, etc, see @ref{Normal Termination,,, libc, The GNU C Library
+Reference Manual})).
+
+@code{primitive-_exit} is the @code{_exit} system call
+(@pxref{Termination Internals,,, libc, The GNU C Library Reference
+Manual}).  This terminates the program immediately, with neither
+Scheme-level nor C-level cleanups.
+
+The typical use for @code{primitive-_exit} is from a child process
+created with @code{primitive-fork}.  For example in a Gdk program the
+child process inherits the X server connection and a C-level
+@code{atexit} cleanup which will close that connection.  But closing
+in the child would upset the protocol in the parent, so
+@code{primitive-_exit} should be used to exit without that.
+@end deffn
+
+@deffn {Scheme Procedure} execl filename . args
+@deffnx {C Function} scm_execl (filename, args)
+Executes the file named by @var{path} as a new process image.
+The remaining arguments are supplied to the process; from a C program
+they are accessible as the @code{argv} argument to @code{main}.
+Conventionally the first @var{arg} is the same as @var{path}.
+All arguments must be strings.
+
+If @var{arg} is missing, @var{path} is executed with a null
+argument list, which may have system-dependent side-effects.
+
+This procedure is currently implemented using the @code{execv} system
+call, but we call it @code{execl} because of its Scheme calling interface.
+@end deffn
+
+@deffn {Scheme Procedure} execlp filename . args
+@deffnx {C Function} scm_execlp (filename, args)
+Similar to @code{execl}, however if
+@var{filename} does not contain a slash
+then the file to execute will be located by searching the
+directories listed in the @code{PATH} environment variable.
+
+This procedure is currently implemented using the @code{execvp} system
+call, but we call it @code{execlp} because of its Scheme calling interface.
+@end deffn
+
+@deffn {Scheme Procedure} execle filename env . args
+@deffnx {C Function} scm_execle (filename, env, args)
+Similar to @code{execl}, but the environment of the new process is
+specified by @var{env}, which must be a list of strings as returned by the
+@code{environ} procedure.
+
+This procedure is currently implemented using the @code{execve} system
+call, but we call it @code{execle} because of its Scheme calling interface.
+@end deffn
+
+@deffn {Scheme Procedure} primitive-fork
+@deffnx {C Function} scm_fork ()
+Creates a new ``child'' process by duplicating the current ``parent'' process.
+In the child the return value is 0.  In the parent the return value is
+the integer process ID of the child.
+
+This procedure has been renamed from @code{fork} to avoid a naming conflict
+with the scsh fork.
+@end deffn
+
+@deffn {Scheme Procedure} nice incr
+@deffnx {C Function} scm_nice (incr)
+@cindex process priority
+Increment the priority of the current process by @var{incr}.  A higher
+priority value means that the process runs less often.
+The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} setpriority which who prio
+@deffnx {C Function} scm_setpriority (which, who, prio)
+@vindex PRIO_PROCESS
+@vindex PRIO_PGRP
+@vindex PRIO_USER
+Set the scheduling priority of the process, process group
+or user, as indicated by @var{which} and @var{who}. @var{which}
+is one of the variables @code{PRIO_PROCESS}, @code{PRIO_PGRP}
+or @code{PRIO_USER}, and @var{who} is interpreted relative to
+@var{which} (a process identifier for @code{PRIO_PROCESS},
+process group identifier for @code{PRIO_PGRP}, and a user
+identifier for @code{PRIO_USER}.  A zero value of @var{who}
+denotes the current process, process group, or user.
+@var{prio} is a value in the range [@minus{}20,20].  The default
+priority is 0; lower priorities (in numerical terms) cause more
+favorable scheduling.  Sets the priority of all of the specified
+processes.  Only the super-user may lower priorities.  The return
+value is not specified.
+@end deffn
+
+@deffn {Scheme Procedure} getpriority which who
+@deffnx {C Function} scm_getpriority (which, who)
+@vindex PRIO_PROCESS
+@vindex PRIO_PGRP
+@vindex PRIO_USER
+Return the scheduling priority of the process, process group
+or user, as indicated by @var{which} and @var{who}. @var{which}
+is one of the variables @code{PRIO_PROCESS}, @code{PRIO_PGRP}
+or @code{PRIO_USER}, and @var{who} should be interpreted depending on
+@var{which} (a process identifier for @code{PRIO_PROCESS},
+process group identifier for @code{PRIO_PGRP}, and a user
+identifier for @code{PRIO_USER}).  A zero value of @var{who}
+denotes the current process, process group, or user.  Return
+the highest priority (lowest numerical value) of any of the
+specified processes.
+@end deffn
+
+
+@node Signals
+@subsection Signals
+@cindex signal
+
+The following procedures raise, handle and wait for signals.
+
+Scheme code signal handlers are run via a system async (@pxref{System
+asyncs}), so they're called in the handler's thread at the next safe
+opportunity.  Generally this is after any currently executing
+primitive procedure finishes (which could be a long time for
+primitives that wait for an external event).
+
+@deffn {Scheme Procedure} kill pid sig
+@deffnx {C Function} scm_kill (pid, sig)
+Sends a signal to the specified process or group of processes.
+
+@var{pid} specifies the processes to which the signal is sent:
+
+@table @asis
+@item @var{pid} greater than 0
+The process whose identifier is @var{pid}.
+@item @var{pid} equal to 0
+All processes in the current process group.
+@item @var{pid} less than -1
+The process group whose identifier is -@var{pid}
+@item @var{pid} equal to -1
+If the process is privileged, all processes except for some special
+system processes.  Otherwise, all processes with the current effective
+user ID.
+@end table
+
+@var{sig} should be specified using a variable corresponding to
+the Unix symbolic name, e.g.,
+
+@defvar SIGHUP
+Hang-up signal.
+@end defvar
+
+@defvar SIGINT
+Interrupt signal.
+@end defvar
+
+A full list of signals on the GNU system may be found in @ref{Standard
+Signals,,,libc,The GNU C Library Reference Manual}.
+@end deffn
+
+@deffn {Scheme Procedure} raise sig
+@deffnx {C Function} scm_raise (sig)
+Sends a specified signal @var{sig} to the current process, where
+@var{sig} is as described for the @code{kill} procedure.
+@end deffn
+
+@deffn {Scheme Procedure} sigaction signum [handler [flags [thread]]]
+@deffnx {C Function} scm_sigaction (signum, handler, flags)
+@deffnx {C Function} scm_sigaction_for_thread (signum, handler, flags, thread)
+Install or report the signal handler for a specified signal.
+
+@var{signum} is the signal number, which can be specified using the value
+of variables such as @code{SIGINT}.
+
+If @var{handler} is omitted, @code{sigaction} returns a pair: the
+@acronym{CAR} is the current signal hander, which will be either an
+integer with the value @code{SIG_DFL} (default action) or
+@code{SIG_IGN} (ignore), or the Scheme procedure which handles the
+signal, or @code{#f} if a non-Scheme procedure handles the signal.
+The @acronym{CDR} contains the current @code{sigaction} flags for the
+handler.
+
+If @var{handler} is provided, it is installed as the new handler for
+@var{signum}.  @var{handler} can be a Scheme procedure taking one
+argument, or the value of @code{SIG_DFL} (default action) or
+@code{SIG_IGN} (ignore), or @code{#f} to restore whatever signal handler
+was installed before @code{sigaction} was first used.  When a scheme
+procedure has been specified, that procedure will run in the given
+@var{thread}.  When no thread has been given, the thread that made this
+call to @code{sigaction} is used.
+
+@var{flags} is a @code{logior} (@pxref{Bitwise Operations}) of the
+following (where provided by the system), or @code{0} for none.
+
+@defvar SA_NOCLDSTOP
+By default, @code{SIGCHLD} is signalled when a child process stops
+(ie.@: receives @code{SIGSTOP}), and when a child process terminates.
+With the @code{SA_NOCLDSTOP} flag, @code{SIGCHLD} is only signalled
+for termination, not stopping.
+
+@code{SA_NOCLDSTOP} has no effect on signals other than
+@code{SIGCHLD}.
+@end defvar
+
+@defvar SA_RESTART
+If a signal occurs while in a system call, deliver the signal then
+restart the system call (as opposed to returning an @code{EINTR} error
+from that call).
+@end defvar
+
+The return value is a pair with information about the old handler as
+described above.
+
+This interface does not provide access to the ``signal blocking''
+facility.  Maybe this is not needed, since the thread support may
+provide solutions to the problem of consistent access to data
+structures.
+@end deffn
+
+@deffn {Scheme Procedure} restore-signals
+@deffnx {C Function} scm_restore_signals ()
+Return all signal handlers to the values they had before any call to
+@code{sigaction} was made.  The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} alarm i
+@deffnx {C Function} scm_alarm (i)
+Set a timer to raise a @code{SIGALRM} signal after the specified
+number of seconds (an integer).  It's advisable to install a signal
+handler for
+@code{SIGALRM} beforehand, since the default action is to terminate
+the process.
+
+The return value indicates the time remaining for the previous alarm,
+if any.  The new value replaces the previous alarm.  If there was
+no previous alarm, the return value is zero.
+@end deffn
+
+@deffn {Scheme Procedure} pause
+@deffnx {C Function} scm_pause ()
+Pause the current process (thread?) until a signal arrives whose
+action is to either terminate the current process or invoke a
+handler procedure.  The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} sleep secs
+@deffnx {Scheme Procedure} usleep usecs
+@deffnx {C Function} scm_sleep (secs)
+@deffnx {C Function} scm_usleep (usecs)
+Wait the given period @var{secs} seconds or @var{usecs} microseconds
+(both integers).  If a signal arrives the wait stops and the return
+value is the time remaining, in seconds or microseconds respectively.
+If the period elapses with no signal the return is zero.
+
+On most systems the process scheduler is not microsecond accurate and
+the actual period slept by @code{usleep} might be rounded to a system
+clock tick boundary, which might be 10 milliseconds for instance.
+
+See @code{scm_std_sleep} and @code{scm_std_usleep} for equivalents at
+the C level (@pxref{Blocking}).
+@end deffn
+
+@deffn {Scheme Procedure} getitimer which_timer
+@deffnx {Scheme Procedure} setitimer which_timer interval_seconds interval_microseconds periodic_seconds periodic_microseconds
+@deffnx {C Function} scm_getitimer (which_timer)
+@deffnx {C Function} scm_setitimer (which_timer, interval_seconds, interval_microseconds, periodic_seconds, periodic_microseconds)
+Get or set the periods programmed in certain system timers.  These
+timers have a current interval value which counts down and on reaching
+zero raises a signal.  An optional periodic value can be set to
+restart from there each time, for periodic operation.
+@var{which_timer} is one of the following values
+
+@defvar ITIMER_REAL
+A real-time timer, counting down elapsed real time.  At zero it raises
+@code{SIGALRM}.  This is like @code{alarm} above, but with a higher
+resolution period.
+@end defvar 
+
+@defvar ITIMER_VIRTUAL
+A virtual-time timer, counting down while the current process is
+actually using CPU.  At zero it raises @code{SIGVTALRM}.
+@end defvar 
+
+@defvar ITIMER_PROF
+A profiling timer, counting down while the process is running (like
+@code{ITIMER_VIRTUAL}) and also while system calls are running on the
+process's behalf.  At zero it raises a @code{SIGPROF}.
+
+This timer is intended for profiling where a program is spending its
+time (by looking where it is when the timer goes off).
+@end defvar 
+
+@code{getitimer} returns the current timer value and its programmed
+restart value, as a list containing two pairs.  Each pair is a time in
+seconds and microseconds: @code{((@var{interval_secs}
+. @var{interval_usecs}) (@var{periodic_secs}
+. @var{periodic_usecs}))}.
+
+@code{setitimer} sets the timer values similarly, in seconds and
+microseconds (which must be integers).  The periodic value can be zero
+to have the timer run down just once.  The return value is the timer's
+previous setting, in the same form as @code{getitimer} returns.
+
+@example
+(setitimer ITIMER_REAL
+           5 500000     ;; first SIGALRM in 5.5 seconds time
+           2 0)         ;; then repeat every 2 seconds
+@end example
+
+Although the timers are programmed in microseconds, the actual
+accuracy might not be that high.
+@end deffn
+
+
+@node Terminals and Ptys
+@subsection Terminals and Ptys
+
+@deffn {Scheme Procedure} isatty? port
+@deffnx {C Function} scm_isatty_p (port)
+@cindex terminal
+Return @code{#t} if @var{port} is using a serial non--file
+device, otherwise @code{#f}.
+@end deffn
+
+@deffn {Scheme Procedure} ttyname port
+@deffnx {C Function} scm_ttyname (port)
+@cindex terminal
+Return a string with the name of the serial terminal device
+underlying @var{port}.
+@end deffn
+
+@deffn {Scheme Procedure} ctermid
+@deffnx {C Function} scm_ctermid ()
+@cindex terminal
+Return a string containing the file name of the controlling
+terminal for the current process.
+@end deffn
+
+@deffn {Scheme Procedure} tcgetpgrp port
+@deffnx {C Function} scm_tcgetpgrp (port)
+@cindex process group
+Return the process group ID of the foreground process group
+associated with the terminal open on the file descriptor
+underlying @var{port}.
+
+If there is no foreground process group, the return value is a
+number greater than 1 that does not match the process group ID
+of any existing process group.  This can happen if all of the
+processes in the job that was formerly the foreground job have
+terminated, and no other job has yet been moved into the
+foreground.
+@end deffn
+
+@deffn {Scheme Procedure} tcsetpgrp port pgid
+@deffnx {C Function} scm_tcsetpgrp (port, pgid)
+@cindex process group
+Set the foreground process group ID for the terminal used by the file
+descriptor underlying @var{port} to the integer @var{pgid}.
+The calling process
+must be a member of the same session as @var{pgid} and must have the same
+controlling terminal.  The return value is unspecified.
+@end deffn
+
+@node Pipes
+@subsection Pipes
+@cindex pipe
+
+The following procedures are similar to the @code{popen} and
+@code{pclose} system routines.  The code is in a separate ``popen''
+module:
+
+@smalllisp
+(use-modules (ice-9 popen))
+@end smalllisp
+
+@findex popen
+@deffn {Scheme Procedure} open-pipe command mode
+@deffnx {Scheme Procedure} open-pipe* mode prog [args...]
+Execute a command in a subprocess, with a pipe to it or from it, or
+with pipes in both directions.
+
+@code{open-pipe} runs the shell @var{command} using @samp{/bin/sh -c}.
+@code{open-pipe*} executes @var{prog} directly, with the optional
+@var{args} arguments (all strings).
+
+@var{mode} should be one of the following values.  @code{OPEN_READ} is
+an input pipe, ie.@: to read from the subprocess.  @code{OPEN_WRITE}
+is an output pipe, ie.@: to write to it.
+
+@defvar OPEN_READ
+@defvarx OPEN_WRITE
+@defvarx OPEN_BOTH
+@end defvar
+
+For an input pipe, the child's standard output is the pipe and
+standard input is inherited from @code{current-input-port}.  For an
+output pipe, the child's standard input is the pipe and standard
+output is inherited from @code{current-output-port}.  In all cases
+cases the child's standard error is inherited from
+@code{current-error-port} (@pxref{Default Ports}).
+
+If those @code{current-X-ports} are not files of some kind, and hence
+don't have file descriptors for the child, then @file{/dev/null} is
+used instead.
+
+Care should be taken with @code{OPEN_BOTH}, a deadlock will occur if
+both parent and child are writing, and waiting until the write
+completes before doing any reading.  Each direction has
+@code{PIPE_BUF} bytes of buffering (@pxref{Ports and File
+Descriptors}), which will be enough for small writes, but not for say
+putting a big file through a filter.
+@end deffn
+
+@deffn {Scheme Procedure} open-input-pipe command
+Equivalent to @code{open-pipe} with mode @code{OPEN_READ}.
+
+@lisp
+(let* ((port (open-input-pipe "date --utc"))
+       (str  (read-line port)))
+  (close-pipe port)
+  str)
+@result{} "Mon Mar 11 20:10:44 UTC 2002"
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} open-output-pipe command
+Equivalent to @code{open-pipe} with mode @code{OPEN_WRITE}.
+
+@lisp
+(let ((port (open-output-pipe "lpr")))
+  (display "Something for the line printer.\n" port)
+  (if (not (eqv? 0 (status:exit-val (close-pipe port))))
+      (error "Cannot print")))
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} open-input-output-pipe command
+Equivalent to @code{open-pipe} with mode @code{OPEN_BOTH}.
+@end deffn
+
+@findex pclose
+@deffn {Scheme Procedure} close-pipe port
+Close a pipe created by @code{open-pipe}, wait for the process to
+terminate, and return the wait status code.  The status is as per
+@code{waitpid} and can be decoded with @code{status:exit-val} etc
+(@pxref{Processes})
+@end deffn
+
+@sp 1
+@code{waitpid WAIT_ANY} should not be used when pipes are open, since
+it can reap a pipe's child process, causing an error from a subsequent
+@code{close-pipe}.
+
+@code{close-port} (@pxref{Closing}) can close a pipe, but it doesn't
+reap the child process.
+
+The garbage collector will close a pipe no longer in use, and reap the
+child process with @code{waitpid}.  If the child hasn't yet terminated
+the garbage collector doesn't block, but instead checks again in the
+next GC.
+
+Many systems have per-user and system-wide limits on the number of
+processes, and a system-wide limit on the number of pipes, so pipes
+should be closed explicitly when no longer needed, rather than letting
+the garbage collector pick them up at some later time.
+
+
+@node Networking
+@subsection Networking
+@cindex network
+
+@menu
+* Network Address Conversion::  
+* Network Databases::           
+* Network Socket Address::      
+* Network Sockets and Communication::  
+* Internet Socket Examples::    
+@end menu
+
+@node Network Address Conversion
+@subsubsection Network Address Conversion
+@cindex network address
+
+This section describes procedures which convert internet addresses
+between numeric and string formats.
+
+@subsubheading IPv4 Address Conversion
+@cindex IPv4
+
+An IPv4 Internet address is a 4-byte value, represented in Guile as an
+integer in host byte order, so that say ``0.0.0.1'' is 1, or
+``1.0.0.0'' is 16777216.
+
+Some underlying C functions use network byte order for addresses,
+Guile converts as necessary so that at the Scheme level its host byte
+order everywhere.
+
+@defvar INADDR_ANY
+For a server, this can be used with @code{bind} (@pxref{Network
+Sockets and Communication}) to allow connections from any interface on
+the machine.
+@end defvar
+
+@defvar INADDR_BROADCAST
+The broadcast address on the local network.
+@end defvar
+
+@defvar INADDR_LOOPBACK
+The address of the local host using the loopback device, ie.@:
+@samp{127.0.0.1}.
+@end defvar
+
+@c  INADDR_NONE is defined in the code, but serves no purpose.
+@c  inet_addr() returns it as an error indication, but that function
+@c  isn't provided, for the good reason that inet_aton() does the same
+@c  job and gives an unambiguous error indication.  (INADDR_NONE is a
+@c  valid 4-byte value, in glibc it's the same as INADDR_BROADCAST.)
+@c
+@c  @defvar INADDR_NONE
+@c  No address.
+@c  @end defvar
+
+@deffn {Scheme Procedure} inet-aton address
+@deffnx {C Function} scm_inet_aton (address)
+Convert an IPv4 Internet address from printable string
+(dotted decimal notation) to an integer.  E.g.,
+
+@lisp
+(inet-aton "127.0.0.1") @result{} 2130706433
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} inet-ntoa inetid
+@deffnx {C Function} scm_inet_ntoa (inetid)
+Convert an IPv4 Internet address to a printable
+(dotted decimal notation) string.  E.g.,
+
+@lisp
+(inet-ntoa 2130706433) @result{} "127.0.0.1"
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} inet-netof address
+@deffnx {C Function} scm_inet_netof (address)
+Return the network number part of the given IPv4
+Internet address.  E.g.,
+
+@lisp
+(inet-netof 2130706433) @result{} 127
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} inet-lnaof address
+@deffnx {C Function} scm_lnaof (address)
+Return the local-address-with-network part of the given
+IPv4 Internet address, using the obsolete class A/B/C system.
+E.g.,
+
+@lisp
+(inet-lnaof 2130706433) @result{} 1
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} inet-makeaddr net lna
+@deffnx {C Function} scm_inet_makeaddr (net, lna)
+Make an IPv4 Internet address by combining the network number
+@var{net} with the local-address-within-network number
+@var{lna}.  E.g.,
+
+@lisp
+(inet-makeaddr 127 1) @result{} 2130706433
+@end lisp
+@end deffn
+
+@subsubheading IPv6 Address Conversion
+@cindex IPv6
+
+An IPv6 Internet address is a 16-byte value, represented in Guile as
+an integer in host byte order, so that say ``::1'' is 1.
+
+@deffn {Scheme Procedure} inet-ntop family address
+@deffnx {C Function} scm_inet_ntop (family, address)
+Convert a network address from an integer to a printable string.
+@var{family} can be @code{AF_INET} or @code{AF_INET6}.  E.g.,
+
+@lisp
+(inet-ntop AF_INET 2130706433) @result{} "127.0.0.1"
+(inet-ntop AF_INET6 (- (expt 2 128) 1))
+  @result{} "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} inet-pton family address
+@deffnx {C Function} scm_inet_pton (family, address)
+Convert a string containing a printable network address to an integer
+address.  @var{family} can be @code{AF_INET} or @code{AF_INET6}.
+E.g.,
+
+@lisp
+(inet-pton AF_INET "127.0.0.1") @result{} 2130706433
+(inet-pton AF_INET6 "::1") @result{} 1
+@end lisp
+@end deffn
+
+
+@node Network Databases
+@subsubsection Network Databases
+@cindex network database
+
+This section describes procedures which query various network databases.
+Care should be taken when using the database routines since they are not
+reentrant.
+
+@subsubheading The Host Database
+@cindex @file{/etc/hosts}
+@cindex network database
+
+A @dfn{host object} is a structure that represents what is known about a
+network host, and is the usual way of representing a system's network
+identity inside software.
+
+The following functions accept a host object and return a selected
+component:
+
+@deffn {Scheme Procedure} hostent:name host
+The ``official'' hostname for @var{host}.
+@end deffn
+@deffn {Scheme Procedure} hostent:aliases host
+A list of aliases for @var{host}.
+@end deffn
+@deffn {Scheme Procedure} hostent:addrtype host
+The host address type, one of the @code{AF} constants, such as
+@code{AF_INET} or @code{AF_INET6}.
+@end deffn
+@deffn {Scheme Procedure} hostent:length host
+The length of each address for @var{host}, in bytes.
+@end deffn
+@deffn {Scheme Procedure} hostent:addr-list host
+The list of network addresses associated with @var{host}.  For
+@code{AF_INET} these are integer IPv4 address (@pxref{Network Address
+Conversion}).
+@end deffn
+
+The following procedures are used to search the host database:
+
+@deffn {Scheme Procedure} gethost [host]
+@deffnx {Scheme Procedure} gethostbyname hostname
+@deffnx {Scheme Procedure} gethostbyaddr address
+@deffnx {C Function} scm_gethost (host)
+Look up a host by name or address, returning a host object.  The
+@code{gethost} procedure will accept either a string name or an integer
+address; if given no arguments, it behaves like @code{gethostent} (see
+below).  If a name or address is supplied but the address can not be
+found, an error will be thrown to one of the keys:
+@code{host-not-found}, @code{try-again}, @code{no-recovery} or
+@code{no-data}, corresponding to the equivalent @code{h_error} values.
+Unusual conditions may result in errors thrown to the
+@code{system-error} or @code{misc_error} keys.
+
+@lisp
+(gethost "www.gnu.org")
+@result{} #("www.gnu.org" () 2 4 (3353880842))
+
+(gethostbyname "www.emacs.org")
+@result{} #("emacs.org" ("www.emacs.org") 2 4 (1073448978))
+@end lisp
+@end deffn
+
+The following procedures may be used to step through the host
+database from beginning to end.
+
+@deffn {Scheme Procedure} sethostent [stayopen]
+Initialize an internal stream from which host objects may be read.  This
+procedure must be called before any calls to @code{gethostent}, and may
+also be called afterward to reset the host entry stream.  If
+@var{stayopen} is supplied and is not @code{#f}, the database is not
+closed by subsequent @code{gethostbyname} or @code{gethostbyaddr} calls,
+possibly giving an efficiency gain.
+@end deffn
+
+@deffn {Scheme Procedure} gethostent
+Return the next host object from the host database, or @code{#f} if
+there are no more hosts to be found (or an error has been encountered).
+This procedure may not be used before @code{sethostent} has been called.
+@end deffn
+
+@deffn {Scheme Procedure} endhostent
+Close the stream used by @code{gethostent}.  The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} sethost [stayopen]
+@deffnx {C Function} scm_sethost (stayopen)
+If @var{stayopen} is omitted, this is equivalent to @code{endhostent}.
+Otherwise it is equivalent to @code{sethostent stayopen}.
+@end deffn
+
+@subsubheading The Network Database
+@cindex network database
+
+The following functions accept an object representing a network
+and return a selected component:
+
+@deffn {Scheme Procedure} netent:name net
+The ``official'' network name.
+@end deffn
+@deffn {Scheme Procedure} netent:aliases net
+A list of aliases for the network.
+@end deffn
+@deffn {Scheme Procedure} netent:addrtype net
+The type of the network number.  Currently, this returns only
+@code{AF_INET}.
+@end deffn
+@deffn {Scheme Procedure} netent:net net
+The network number.
+@end deffn
+
+The following procedures are used to search the network database:
+
+@deffn {Scheme Procedure} getnet [net]
+@deffnx {Scheme Procedure} getnetbyname net-name
+@deffnx {Scheme Procedure} getnetbyaddr net-number
+@deffnx {C Function} scm_getnet (net)
+Look up a network by name or net number in the network database.  The
+@var{net-name} argument must be a string, and the @var{net-number}
+argument must be an integer.  @code{getnet} will accept either type of
+argument, behaving like @code{getnetent} (see below) if no arguments are
+given.
+@end deffn
+
+The following procedures may be used to step through the network
+database from beginning to end.
+
+@deffn {Scheme Procedure} setnetent [stayopen]
+Initialize an internal stream from which network objects may be read.  This
+procedure must be called before any calls to @code{getnetent}, and may
+also be called afterward to reset the net entry stream.  If
+@var{stayopen} is supplied and is not @code{#f}, the database is not
+closed by subsequent @code{getnetbyname} or @code{getnetbyaddr} calls,
+possibly giving an efficiency gain.
+@end deffn
+
+@deffn {Scheme Procedure} getnetent
+Return the next entry from the network database.
+@end deffn
+
+@deffn {Scheme Procedure} endnetent
+Close the stream used by @code{getnetent}.  The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} setnet [stayopen]
+@deffnx {C Function} scm_setnet (stayopen)
+If @var{stayopen} is omitted, this is equivalent to @code{endnetent}.
+Otherwise it is equivalent to @code{setnetent stayopen}.
+@end deffn
+
+@subsubheading The Protocol Database
+@cindex @file{/etc/protocols}
+@cindex protocols
+@cindex network protocols
+
+The following functions accept an object representing a protocol
+and return a selected component:
+
+@deffn {Scheme Procedure} protoent:name protocol
+The ``official'' protocol name.
+@end deffn
+@deffn {Scheme Procedure} protoent:aliases protocol
+A list of aliases for the protocol.
+@end deffn
+@deffn {Scheme Procedure} protoent:proto protocol
+The protocol number.
+@end deffn
+
+The following procedures are used to search the protocol database:
+
+@deffn {Scheme Procedure} getproto [protocol]
+@deffnx {Scheme Procedure} getprotobyname name
+@deffnx {Scheme Procedure} getprotobynumber number
+@deffnx {C Function} scm_getproto (protocol)
+Look up a network protocol by name or by number.  @code{getprotobyname}
+takes a string argument, and @code{getprotobynumber} takes an integer
+argument.  @code{getproto} will accept either type, behaving like
+@code{getprotoent} (see below) if no arguments are supplied.
+@end deffn
+
+The following procedures may be used to step through the protocol
+database from beginning to end.
+
+@deffn {Scheme Procedure} setprotoent [stayopen]
+Initialize an internal stream from which protocol objects may be read.  This
+procedure must be called before any calls to @code{getprotoent}, and may
+also be called afterward to reset the protocol entry stream.  If
+@var{stayopen} is supplied and is not @code{#f}, the database is not
+closed by subsequent @code{getprotobyname} or @code{getprotobynumber} calls,
+possibly giving an efficiency gain.
+@end deffn
+
+@deffn {Scheme Procedure} getprotoent
+Return the next entry from the protocol database.
+@end deffn
+
+@deffn {Scheme Procedure} endprotoent
+Close the stream used by @code{getprotoent}.  The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} setproto [stayopen]
+@deffnx {C Function} scm_setproto (stayopen)
+If @var{stayopen} is omitted, this is equivalent to @code{endprotoent}.
+Otherwise it is equivalent to @code{setprotoent stayopen}.
+@end deffn
+
+@subsubheading The Service Database
+@cindex @file{/etc/services}
+@cindex services
+@cindex network services
+
+The following functions accept an object representing a service
+and return a selected component:
+
+@deffn {Scheme Procedure} servent:name serv
+The ``official'' name of the network service.
+@end deffn
+@deffn {Scheme Procedure} servent:aliases serv
+A list of aliases for the network service.
+@end deffn
+@deffn {Scheme Procedure} servent:port serv
+The Internet port used by the service.
+@end deffn
+@deffn {Scheme Procedure} servent:proto serv
+The protocol used by the service.  A service may be listed many times
+in the database under different protocol names.
+@end deffn
+
+The following procedures are used to search the service database:
+
+@deffn {Scheme Procedure} getserv [name [protocol]]
+@deffnx {Scheme Procedure} getservbyname name protocol
+@deffnx {Scheme Procedure} getservbyport port protocol
+@deffnx {C Function} scm_getserv (name, protocol)
+Look up a network service by name or by service number, and return a
+network service object.  The @var{protocol} argument specifies the name
+of the desired protocol; if the protocol found in the network service
+database does not match this name, a system error is signalled.
+
+The @code{getserv} procedure will take either a service name or number
+as its first argument; if given no arguments, it behaves like
+@code{getservent} (see below).
+
+@lisp
+(getserv "imap" "tcp")
+@result{} #("imap2" ("imap") 143 "tcp")
+
+(getservbyport 88 "udp")
+@result{} #("kerberos" ("kerberos5" "krb5") 88 "udp")
+@end lisp
+@end deffn
+
+The following procedures may be used to step through the service
+database from beginning to end.
+
+@deffn {Scheme Procedure} setservent [stayopen]
+Initialize an internal stream from which service objects may be read.  This
+procedure must be called before any calls to @code{getservent}, and may
+also be called afterward to reset the service entry stream.  If
+@var{stayopen} is supplied and is not @code{#f}, the database is not
+closed by subsequent @code{getservbyname} or @code{getservbyport} calls,
+possibly giving an efficiency gain.
+@end deffn
+
+@deffn {Scheme Procedure} getservent
+Return the next entry from the services database.
+@end deffn
+
+@deffn {Scheme Procedure} endservent
+Close the stream used by @code{getservent}.  The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} setserv [stayopen]
+@deffnx {C Function} scm_setserv (stayopen)
+If @var{stayopen} is omitted, this is equivalent to @code{endservent}.
+Otherwise it is equivalent to @code{setservent stayopen}.
+@end deffn
+
+
+@node Network Socket Address
+@subsubsection Network Socket Address
+@cindex socket address
+@cindex network socket address
+@tpindex Socket address
+
+A @dfn{socket address} object identifies a socket endpoint for
+communication.  In the case of @code{AF_INET} for instance, the socket
+address object comprises the host address (or interface on the host)
+and a port number which specifies a particular open socket in a
+running client or server process.  A socket address object can be
+created with,
+
+@deffn {Scheme Procedure} make-socket-address AF_INET ipv4addr port
+@deffnx {Scheme Procedure} make-socket-address AF_INET6 ipv6addr port [flowinfo [scopeid]]
+@deffnx {Scheme Procedure} make-socket-address AF_UNIX path
+@deffnx {C Function} scm_make_socket_address family address arglist
+Return a new socket address object.  The first argument is the address
+family, one of the @code{AF} constants, then the arguments vary
+according to the family.
+
+For @code{AF_INET} the arguments are an IPv4 network address number
+(@pxref{Network Address Conversion}), and a port number.
+
+For @code{AF_INET6} the arguments are an IPv6 network address number
+and a port number.  Optional @var{flowinfo} and @var{scopeid}
+arguments may be given (both integers, default 0).
+
+For @code{AF_UNIX} the argument is a filename (a string).
+
+The C function @code{scm_make_socket_address} takes the @var{family}
+and @var{address} arguments directly, then @var{arglist} is a list of
+further arguments, being the port for IPv4, port and optional flowinfo
+and scopeid for IPv6, or the empty list @code{SCM_EOL} for Unix
+domain.
+@end deffn
+
+@noindent
+The following functions access the fields of a socket address object,
+
+@deffn {Scheme Procedure} sockaddr:fam sa
+Return the address family from socket address object @var{sa}.  This
+is one of the @code{AF} constants (eg. @code{AF_INET}).
+@end deffn
+
+@deffn {Scheme Procedure} sockaddr:path sa
+For an @code{AF_UNIX} socket address object @var{sa}, return the
+filename.
+@end deffn
+
+@deffn {Scheme Procedure} sockaddr:addr sa
+For an @code{AF_INET} or @code{AF_INET6} socket address object
+@var{sa}, return the network address number.
+@end deffn
+
+@deffn {Scheme Procedure} sockaddr:port sa
+For an @code{AF_INET} or @code{AF_INET6} socket address object
+@var{sa}, return the port number.
+@end deffn
+
+@deffn {Scheme Procedure} sockaddr:flowinfo sa
+For an @code{AF_INET6} socket address object @var{sa}, return the
+flowinfo value.
+@end deffn
+
+@deffn {Scheme Procedure} sockaddr:scopeid sa
+For an @code{AF_INET6} socket address object @var{sa}, return the
+scope ID value.
+@end deffn
+
+@tpindex @code{struct sockaddr}
+@tpindex @code{sockaddr}
+The functions below convert to and from the C @code{struct sockaddr}
+(@pxref{Address Formats,,, libc, The GNU C Library Reference Manual}).
+That structure is a generic type, an application can cast to or from
+@code{struct sockaddr_in}, @code{struct sockaddr_in6} or @code{struct
+sockaddr_un} according to the address family.
+
+In a @code{struct sockaddr} taken or returned, the byte ordering in
+the fields follows the C conventions (@pxref{Byte Order,, Byte Order
+Conversion, libc, The GNU C Library Reference Manual}).  This means
+network byte order for @code{AF_INET} host address
+(@code{sin_addr.s_addr}) and port number (@code{sin_port}), and
+@code{AF_INET6} port number (@code{sin6_port}).  But at the Scheme
+level these values are taken or returned in host byte order, so the
+port is an ordinary integer, and the host address likewise is an
+ordinary integer (as described in @ref{Network Address Conversion}).
+
+@deftypefn {C Function} {struct sockaddr *} scm_c_make_socket_address (SCM family, SCM address, SCM args, size_t *outsize)
+Return a newly-@code{malloc}ed @code{struct sockaddr} created from
+arguments like those taken by @code{scm_make_socket_address} above.
+
+The size (in bytes) of the @code{struct sockaddr} return is stored
+into @code{*@var{outsize}}.  An application must call @code{free} to
+release the returned structure when no longer required.
+@end deftypefn
+
+@deftypefn {C Function} SCM scm_from_sockaddr (const struct sockaddr *address, unsigned address_size)
+Return a Scheme socket address object from the C @var{address}
+structure.  @var{address_size} is the size in bytes of @var{address}.
+@end deftypefn
+
+@deftypefn {C Function} {struct sockaddr *} scm_to_sockaddr (SCM address, size_t *address_size)
+Return a newly-@code{malloc}ed @code{struct sockaddr} from a Scheme
+level socket address object.
+
+The size (in bytes) of the @code{struct sockaddr} return is stored
+into @code{*@var{outsize}}.  An application must call @code{free} to
+release the returned structure when no longer required.
+@end deftypefn
+
+
+@node Network Sockets and Communication
+@subsubsection Network Sockets and Communication
+@cindex socket
+@cindex network socket
+
+Socket ports can be created using @code{socket} and @code{socketpair}.
+The ports are initially unbuffered, to make reading and writing to the
+same port more reliable.  A buffer can be added to the port using
+@code{setvbuf}; see @ref{Ports and File Descriptors}.
+
+Most systems have limits on how many files and sockets can be open, so
+it's strongly recommended that socket ports be closed explicitly when
+no longer required (@pxref{Ports}).
+
+Some of the underlying C functions take values in network byte order,
+but the convention in Guile is that at the Scheme level everything is
+ordinary host byte order and conversions are made automatically where
+necessary.
+
+@deffn {Scheme Procedure} socket family style proto
+@deffnx {C Function} scm_socket (family, style, proto)
+Return a new socket port of the type specified by @var{family},
+@var{style} and @var{proto}.  All three parameters are integers.  The
+possible values for @var{family} are as follows, where supported by
+the system,
+
+@defvar PF_UNIX
+@defvarx PF_INET
+@defvarx PF_INET6
+@end defvar
+
+The possible values for @var{style} are as follows, again where
+supported by the system,
+
+@defvar SOCK_STREAM
+@defvarx SOCK_DGRAM
+@defvarx SOCK_RAW
+@defvarx SOCK_RDM
+@defvarx SOCK_SEQPACKET
+@end defvar
+
+@var{proto} can be obtained from a protocol name using
+@code{getprotobyname} (@pxref{Network Databases}).  A value of zero
+means the default protocol, which is usually right.
+
+A socket cannot by used for communication until it has been connected
+somewhere, usually with either @code{connect} or @code{accept} below.
+@end deffn
+
+@deffn {Scheme Procedure} socketpair family style proto
+@deffnx {C Function} scm_socketpair (family, style, proto)
+Return a pair, the @code{car} and @code{cdr} of which are two unnamed
+socket ports connected to each other.  The connection is full-duplex,
+so data can be transferred in either direction between the two.
+
+@var{family}, @var{style} and @var{proto} are as per @code{socket}
+above.  But many systems only support socket pairs in the
+@code{PF_UNIX} family.  Zero is likely to be the only meaningful value
+for @var{proto}.
+@end deffn
+
+@deffn {Scheme Procedure} getsockopt sock level optname
+@deffnx {Scheme Procedure} setsockopt sock level optname value
+@deffnx {C Function} scm_getsockopt (sock, level, optname)
+@deffnx {C Function} scm_setsockopt (sock, level, optname, value)
+Get or set an option on socket port @var{sock}.  @code{getsockopt}
+returns the current value.  @code{setsockopt} sets a value and the
+return is unspecified.
+
+@var{level} is an integer specifying a protocol layer, either
+@code{SOL_SOCKET} for socket level options, or a protocol number from
+the @code{IPPROTO} constants or @code{getprotoent} (@pxref{Network
+Databases}).
+
+@defvar SOL_SOCKET
+@defvarx IPPROTO_IP
+@defvarx IPPROTO_TCP
+@defvarx IPPROTO_UDP
+@end defvar
+
+@var{optname} is an integer specifying an option within the protocol
+layer.
+
+For @code{SOL_SOCKET} level the following @var{optname}s are defined
+(when provided by the system).  For their meaning see
+@ref{Socket-Level Options,,, libc, The GNU C Library Reference
+Manual}, or @command{man 7 socket}.
+
+@defvar SO_DEBUG
+@defvarx SO_REUSEADDR
+@defvarx SO_STYLE
+@defvarx SO_TYPE
+@defvarx SO_ERROR
+@defvarx SO_DONTROUTE
+@defvarx SO_BROADCAST
+@defvarx SO_SNDBUF
+@defvarx SO_RCVBUF
+@defvarx SO_KEEPALIVE
+@defvarx SO_OOBINLINE
+@defvarx SO_NO_CHECK
+@defvarx SO_PRIORITY
+The @var{value} taken or returned is an integer.
+@end defvar
+
+@defvar SO_LINGER
+The @var{value} taken or returned is a pair of integers
+@code{(@var{ENABLE} . @var{TIMEOUT})}.  On old systems without timeout
+support (ie.@: without @code{struct linger}), only @var{ENABLE} has an
+effect but the value in Guile is always a pair.
+@end defvar
+
+@c  Note that we refer only to ``man ip'' here.  On GNU/Linux it's
+@c  ``man 7 ip'' but on NetBSD it's ``man 4 ip''.
+@c 
+For IP level (@code{IPPROTO_IP}) the following @var{optname}s are
+defined (when provided by the system).  See @command{man ip} for what
+they mean.
+
+@defvar IP_ADD_MEMBERSHIP
+@defvarx IP_DROP_MEMBERSHIP
+These can be used only with @code{setsockopt}, not @code{getsockopt}.
+@var{value} is a pair @code{(@var{MULTIADDR} . @var{INTERFACEADDR})}
+of integer IPv4 addresses (@pxref{Network Address Conversion}).
+@var{MULTIADDR} is a multicast address to be added to or dropped from
+the interface @var{INTERFACEADDR}.  @var{INTERFACEADDR} can be
+@code{INADDR_ANY} to have the system select the interface.
+@var{INTERFACEADDR} can also be an interface index number, on systems
+supporting that.
+@end defvar
+@end deffn
+
+@deffn {Scheme Procedure} shutdown sock how
+@deffnx {C Function} scm_shutdown (sock, how)
+Sockets can be closed simply by using @code{close-port}.  The
+@code{shutdown} procedure allows reception or transmission on a
+connection to be shut down individually, according to the parameter
+@var{how}:
+
+@table @asis
+@item 0
+Stop receiving data for this socket.  If further data arrives, reject it.
+@item 1
+Stop trying to transmit data from this socket.  Discard any
+data waiting to be sent.  Stop looking for acknowledgement of
+data already sent; don't retransmit it if it is lost.
+@item 2
+Stop both reception and transmission.
+@end table
+
+The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} connect sock sockaddr
+@deffnx {Scheme Procedure} connect sock AF_INET ipv4addr port
+@deffnx {Scheme Procedure} connect sock AF_INET6 ipv6addr port [flowinfo [scopeid]]
+@deffnx {Scheme Procedure} connect sock AF_UNIX path
+@deffnx {C Function} scm_connect (sock, fam, address, args)
+Initiate a connection on socket port @var{sock} to a given address.
+The destination is either a socket address object, or arguments the
+same as @code{make-socket-address} would take to make such an object
+(@pxref{Network Socket Address}).  The return value is unspecified.
+
+@example
+(connect sock AF_INET INADDR_LOOPBACK 23)
+(connect sock (make-socket-address AF_INET INADDR_LOOPBACK 23))
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} bind sock sockaddr
+@deffnx {Scheme Procedure} bind sock AF_INET ipv4addr port
+@deffnx {Scheme Procedure} bind sock AF_INET6 ipv6addr port [flowinfo [scopeid]]
+@deffnx {Scheme Procedure} bind sock AF_UNIX path
+@deffnx {C Function} scm_bind (sock, fam, address, args)
+Bind socket port @var{sock} to the given address.  The address is
+either a socket address object, or arguments the same as
+@code{make-socket-address} would take to make such an object
+(@pxref{Network Socket Address}).  The return value is unspecified.
+
+Generally a socket is only explicitly bound to a particular address
+when making a server, ie. to listen on a particular port.  For an
+outgoing connection the system will assign a local address
+automatically, if not already bound.
+
+@example
+(bind sock AF_INET INADDR_ANY 12345)
+(bind sock (make-socket-address AF_INET INADDR_ANY 12345))
+@end example
+@end deffn
+
+@deffn {Scheme Procedure} listen sock backlog
+@deffnx {C Function} scm_listen (sock, backlog)
+Enable @var{sock} to accept connection
+requests.  @var{backlog} is an integer specifying
+the maximum length of the queue for pending connections.
+If the queue fills, new clients will fail to connect until
+the server calls @code{accept} to accept a connection from
+the queue.
+
+The return value is unspecified.
+@end deffn
+
+@deffn {Scheme Procedure} accept sock
+@deffnx {C Function} scm_accept (sock)
+Accept a connection from socket port @var{sock} which has been enabled
+for listening with @code{listen} above.  If there are no incoming
+connections in the queue, wait until one is available (unless
+@code{O_NONBLOCK} has been set on the socket, @pxref{Ports and File
+Descriptors,@code{fcntl}}).
+
+The return value is a pair.  The @code{car} is a new socket port,
+connected and ready to communicate.  The @code{cdr} is a socket
+address object (@pxref{Network Socket Address}) which is where the
+remote connection is from (like @code{getpeername} below).
+
+All communication takes place using the new socket returned.  The
+given @var{sock} remains bound and listening, and @code{accept} may be
+called on it again to get another incoming connection when desired.
+@end deffn
+
+@deffn {Scheme Procedure} getsockname sock
+@deffnx {C Function} scm_getsockname (sock)
+Return a socket address object which is the where @var{sock} is bound
+locally.  @var{sock} may have obtained its local address from
+@code{bind} (above), or if a @code{connect} is done with an otherwise
+unbound socket (which is usual) then the system will have assigned an
+address.
+
+Note that on many systems the address of a socket in the
+@code{AF_UNIX} namespace cannot be read.
+@end deffn
+
+@deffn {Scheme Procedure} getpeername sock
+@deffnx {C Function} scm_getpeername (sock)
+Return a socket address object which is where @var{sock} is connected
+to, ie. the remote endpoint.
+
+Note that on many systems the address of a socket in the
+@code{AF_UNIX} namespace cannot be read.
+@end deffn
+
+@deffn {Scheme Procedure} recv! sock buf [flags]
+@deffnx {C Function} scm_recv (sock, buf, flags)
+Receive data from a socket port.
+@var{sock} must already
+be bound to the address from which data is to be received.
+@var{buf} is a string into which
+the data will be written.  The size of @var{buf} limits
+the amount of
+data which can be received: in the case of packet
+protocols, if a packet larger than this limit is encountered
+then some data
+will be irrevocably lost.
+
+@vindex MSG_OOB
+@vindex MSG_PEEK
+@vindex MSG_DONTROUTE
+The optional @var{flags} argument is a value or bitwise OR of
+@code{MSG_OOB}, @code{MSG_PEEK}, @code{MSG_DONTROUTE} etc.
+
+The value returned is the number of bytes read from the
+socket.
+
+Note that the data is read directly from the socket file
+descriptor:
+any unread buffered port data is ignored.
+@end deffn
+
+@deffn {Scheme Procedure} send sock message [flags]
+@deffnx {C Function} scm_send (sock, message, flags)
+@vindex MSG_OOB
+@vindex MSG_PEEK
+@vindex MSG_DONTROUTE
+Transmit the string @var{message} on a socket port @var{sock}.
+@var{sock} must already be bound to a destination address.  The value
+returned is the number of bytes transmitted---it's possible for this
+to be less than the length of @var{message} if the socket is set to be
+non-blocking.  The optional @var{flags} argument is a value or bitwise
+OR of @code{MSG_OOB}, @code{MSG_PEEK}, @code{MSG_DONTROUTE} etc.
+
+Note that the data is written directly to the socket
+file descriptor:
+any unflushed buffered port data is ignored.
+@end deffn
+
+@deffn {Scheme Procedure} recvfrom! sock str [flags [start [end]]]
+@deffnx {C Function} scm_recvfrom (sock, str, flags, start, end)
+Receive data from socket port @var{sock}, returning the originating
+address as well as the data.  This function is usually for datagram
+sockets, but can be used on stream-oriented sockets too.
+
+The data received is stored in the given @var{str}, the whole string
+or just the region between the optional @var{start} and @var{end}
+positions.  The size of @var{str} limits the amount of data which can
+be received.  For datagram protocols if a packet larger than this is
+received then excess bytes are irrevocably lost.
+
+The return value is a pair.  The @code{car} is the number of bytes
+read.  The @code{cdr} is a socket address object (@pxref{Network
+Socket Address}) which is where the data came from, or @code{#f} if
+the origin is unknown.
+
+@vindex MSG_OOB
+@vindex MSG_PEEK
+@vindex MSG_DONTROUTE
+The optional @var{flags} argument is a or bitwise-OR (@code{logior})
+of @code{MSG_OOB}, @code{MSG_PEEK}, @code{MSG_DONTROUTE} etc.
+
+Data is read directly from the socket file descriptor, any buffered
+port data is ignored.
+
+@c  This was linux kernel 2.6.15 and glibc 2.3.6, not sure what any
+@c  specs are supposed to say about recvfrom threading.
+@c
+On a GNU/Linux system @code{recvfrom!} is not multi-threading, all
+threads stop while a @code{recvfrom!} call is in progress.  An
+application may need to use @code{select}, @code{O_NONBLOCK} or
+@code{MSG_DONTWAIT} to avoid this.
+@end deffn
+
+@deffn {Scheme Procedure} sendto sock message sockaddr [flags]
+@deffnx {Scheme Procedure} sendto sock message AF_INET ipv4addr port [flags]
+@deffnx {Scheme Procedure} sendto sock message AF_INET6 ipv6addr port [flowinfo [scopeid [flags]]]
+@deffnx {Scheme Procedure} sendto sock message AF_UNIX path [flags]
+@deffnx {C Function} scm_sendto (sock, message, fam, address, args_and_flags)
+Transmit the string @var{message} as a datagram on socket port
+@var{sock}.  The destination is specified either as a socket address
+object, or as arguments the same as would be taken by
+@code{make-socket-address} to create such an object (@pxref{Network
+Socket Address}).
+
+The destination address may be followed by an optional @var{flags}
+argument which is a @code{logior} (@pxref{Bitwise Operations}) of
+@code{MSG_OOB}, @code{MSG_PEEK}, @code{MSG_DONTROUTE} etc.
+
+The value returned is the number of bytes transmitted --
+it's possible for
+this to be less than the length of @var{message} if the
+socket is
+set to be non-blocking.
+Note that the data is written directly to the socket
+file descriptor:
+any unflushed buffered port data is ignored.
+@end deffn
+
+The following functions can be used to convert short and long integers
+between ``host'' and ``network'' order.  Although the procedures above do
+this automatically for addresses, the conversion will still need to
+be done when sending or receiving encoded integer data from the network.
+
+@deffn {Scheme Procedure} htons value
+@deffnx {C Function} scm_htons (value)
+Convert a 16 bit quantity from host to network byte ordering.
+@var{value} is packed into 2 bytes, which are then converted
+and returned as a new integer.
+@end deffn
+
+@deffn {Scheme Procedure} ntohs value
+@deffnx {C Function} scm_ntohs (value)
+Convert a 16 bit quantity from network to host byte ordering.
+@var{value} is packed into 2 bytes, which are then converted
+and returned as a new integer.
+@end deffn
+
+@deffn {Scheme Procedure} htonl value
+@deffnx {C Function} scm_htonl (value)
+Convert a 32 bit quantity from host to network byte ordering.
+@var{value} is packed into 4 bytes, which are then converted
+and returned as a new integer.
+@end deffn
+
+@deffn {Scheme Procedure} ntohl value
+@deffnx {C Function} scm_ntohl (value)
+Convert a 32 bit quantity from network to host byte ordering.
+@var{value} is packed into 4 bytes, which are then converted
+and returned as a new integer.
+@end deffn
+
+These procedures are inconvenient to use at present, but consider:
+
+@example
+(define write-network-long
+  (lambda (value port)
+    (let ((v (make-uniform-vector 1 1 0)))
+      (uniform-vector-set! v 0 (htonl value))
+      (uniform-vector-write v port))))
+
+(define read-network-long
+  (lambda (port)
+    (let ((v (make-uniform-vector 1 1 0)))
+      (uniform-vector-read! v port)
+      (ntohl (uniform-vector-ref v 0)))))
+@end example
+
+
+@node Internet Socket Examples
+@subsubsection Network Socket Examples
+@cindex network examples
+@cindex socket examples
+
+The following give examples of how to use network sockets.
+
+@subsubheading Internet Socket Client Example
+
+@cindex socket client example
+The following example demonstrates an Internet socket client.
+It connects to the HTTP daemon running on the local machine and
+returns the contents of the root index URL.
+
+@example
+(let ((s (socket PF_INET SOCK_STREAM 0)))
+  (connect s AF_INET (inet-aton "127.0.0.1") 80)
+  (display "GET / HTTP/1.0\r\n\r\n" s)
+
+  (do ((line (read-line s) (read-line s)))
+      ((eof-object? line))
+    (display line)
+    (newline)))
+@end example
+
+
+@subsubheading Internet Socket Server Example
+
+@cindex socket server example
+The following example shows a simple Internet server which listens on
+port 2904 for incoming connections and sends a greeting back to the
+client.
+
+@example
+(let ((s (socket PF_INET SOCK_STREAM 0)))
+  (setsockopt s SOL_SOCKET SO_REUSEADDR 1)
+  ;; @r{Specific address?}
+  ;; @r{(bind s AF_INET (inet-aton "127.0.0.1") 2904)}
+  (bind s AF_INET INADDR_ANY 2904)
+  (listen s 5)
+
+  (simple-format #t "Listening for clients in pid: ~S" (getpid))
+  (newline)
+
+  (while #t
+    (let* ((client-connection (accept s))
+           (client-details (cdr client-connection))
+           (client (car client-connection)))
+      (simple-format #t "Got new client connection: ~S"
+                     client-details)
+      (newline)
+      (simple-format #t "Client address: ~S"
+                     (gethostbyaddr
+                      (sockaddr:addr client-details)))
+      (newline)
+      ;; @r{Send back the greeting to the client port}
+      (display "Hello client\r\n" client)
+      (close client))))
+@end example
+
+
+@node System Identification
+@subsection System Identification
+@cindex system name
+
+This section lists the various procedures Guile provides for accessing
+information about the system it runs on.
+
+@deffn {Scheme Procedure} uname
+@deffnx {C Function} scm_uname ()
+Return an object with some information about the computer
+system the program is running on.
+
+The following procedures accept an object as returned by @code{uname}
+and return a selected component (all of which are strings).
+
+@deffn {Scheme Procedure} utsname:sysname un
+The name of the operating system.
+@end deffn
+@deffn {Scheme Procedure} utsname:nodename un
+The network name of the computer.
+@end deffn
+@deffn {Scheme Procedure} utsname:release un
+The current release level of the operating system implementation.
+@end deffn
+@deffn {Scheme Procedure} utsname:version un
+The current version level within the release of the operating system.
+@end deffn
+@deffn {Scheme Procedure} utsname:machine un
+A description of the hardware.
+@end deffn
+@end deffn
+
+@deffn {Scheme Procedure} gethostname
+@deffnx {C Function} scm_gethostname ()
+@cindex host name
+Return the host name of the current processor.
+@end deffn
+
+@deffn {Scheme Procedure} sethostname name
+@deffnx {C Function} scm_sethostname (name)
+Set the host name of the current processor to @var{name}. May
+only be used by the superuser.  The return value is not
+specified.
+@end deffn
+
+@node Locales
+@subsection Locales
+@cindex locale
+
+@deffn {Scheme Procedure} setlocale category [locale]
+@deffnx {C Function} scm_setlocale (category, locale)
+Get or set the current locale, used for various internationalizations.
+Locales are strings, such as @samp{sv_SE}.
+
+If @var{locale} is given then the locale for the given @var{category} is set
+and the new value returned.  If @var{locale} is not given then the
+current value is returned.  @var{category} should be one of the
+following values
+
+@defvar LC_ALL
+@defvarx LC_COLLATE
+@defvarx LC_CTYPE
+@defvarx LC_MESSAGES
+@defvarx LC_MONETARY
+@defvarx LC_NUMERIC
+@defvarx LC_TIME
+@end defvar
+
+@cindex @code{LANG}
+A common usage is @samp{(setlocale LC_ALL "")}, which initializes all
+categories based on standard environment variables (@code{LANG} etc).
+For full details on categories and locale names @pxref{Locales,,
+Locales and Internationalization, libc, The GNU C Library Reference
+Manual}.
+@end deffn
+
+@node Encryption
+@subsection Encryption
+@cindex encryption
+
+Please note that the procedures in this section are not suited for
+strong encryption, they are only interfaces to the well-known and
+common system library functions of the same name.  They are just as good
+(or bad) as the underlying functions, so you should refer to your system
+documentation before using them (@pxref{crypt,, Encrypting Passwords,
+libc, The GNU C Library Reference Manual}).
+
+@deffn {Scheme Procedure} crypt key salt
+@deffnx {C Function} scm_crypt (key, salt)
+Encrypt @var{key}, with the addition of @var{salt} (both strings),
+using the @code{crypt} C library call.
+@end deffn
+
+Although @code{getpass} is not an encryption procedure per se, it
+appears here because it is often used in combination with @code{crypt}:
+
+@deffn {Scheme Procedure} getpass prompt
+@deffnx {C Function} scm_getpass (prompt)
+@cindex password
+Display @var{prompt} to the standard error output and read
+a password from @file{/dev/tty}.  If this file is not
+accessible, it reads from standard input.  The password may be
+up to 127 characters in length.  Additional characters and the
+terminating newline character are discarded.  While reading
+the password, echoing and the generation of signals by special
+characters is disabled.
+@end deffn
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

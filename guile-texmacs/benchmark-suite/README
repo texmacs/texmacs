@@ -1,0 +1,18 @@
+This directory contains some benchmarks for Guile, and some generic
+benchmarking support code.
+
+To run these benchmarks, you will need a version of Guile more recent
+than 15 Feb 1999 --- the benchmarks use the (ice-9 and-let*) and
+(ice-9 getopt-long) modules, which were added to Guile around then.
+
+For information about how to run the benchmark suite, read the usage
+instructions in the comments at the top of the guile-benchmark script.
+
+You can reference the file `lib.scm' from your own code as the module
+(benchmark-suite lib); it also has comments at the top and before each
+function explaining what's going on.
+
+Please write more Guile benchmarks, and send them to bug-guile@gnu.org.
+We'll merge them into the distribution.  All benchmark suites must be
+licensed for our use under the GPL, but I don't think we're going to
+collect assignment papers for them.

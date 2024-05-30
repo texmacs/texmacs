@@ -1,0 +1,244 @@
+;;;; alist.test --- tests guile's alists     -*- scheme -*-
+;;;; Copyright (C) 1999, 2001, 2006 Free Software Foundation, Inc.
+;;;; 
+;;;; This library is free software; you can redistribute it and/or
+;;;; modify it under the terms of the GNU Lesser General Public
+;;;; License as published by the Free Software Foundation; either
+;;;; version 2.1 of the License, or (at your option) any later version.
+;;;; 
+;;;; This library is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;;;; Lesser General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU Lesser General Public
+;;;; License along with this library; if not, write to the Free Software
+;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+(use-modules (test-suite lib))
+
+;;; (gbh) some of these are duplicated in r4rs. This is probably a bit
+;;;       more thorough, though (maybe overkill? I need it, anyway).
+;;;                        
+;;;       
+;;;       Also: it will fail on the ass*-ref & remove functions. 
+;;;       Sloppy versions should be added with the current behaviour
+;;;       (it's the only set of 'ref functions that won't cause an 
+;;;       error on an incorrect arg); they aren't actually used anywhere
+;;;       so changing's not a big deal.
+
+;;; Misc
+
+(define-macro (pass-if-not str form)
+  `(pass-if ,str (not ,form)))
+
+(define (safe-assq-ref alist elt)
+  (let ((x (assq elt alist)))
+    (if x (cdr x) x)))
+
+(define (safe-assv-ref alist elt)
+  (let ((x (assv elt alist)))
+    (if x (cdr x) x)))
+
+(define (safe-assoc-ref alist elt)
+  (let ((x (assoc elt alist)))
+    (if x (cdr x) x)))
+  
+;;; Creators, getters
+(let ((a (acons 'a 'b (acons 'c 'd (acons 'e 'f '()))))
+      (b (acons "this" "is" (acons "a" "test" '())))
+      (deformed '(a b c d e f g)))
+  (pass-if "acons"
+	   (and (equal? a '((a . b) (c . d) (e . f)))
+		(equal? b '(("this" . "is") ("a" . "test")))))
+  (pass-if "sloppy-assq"
+	   (let ((x (sloppy-assq 'c a)))
+	     (and (pair? x)
+		  (eq? (car x) 'c)
+		  (eq? (cdr x) 'd))))
+  (pass-if "sloppy-assq not"
+	   (let ((x (sloppy-assq "this" b)))
+	     (not x)))
+  (pass-if "sloppy-assv"
+	   (let ((x (sloppy-assv 'c a)))
+	     (and (pair? x)
+		  (eq? (car x) 'c)
+		  (eq? (cdr x) 'd))))
+  (pass-if "sloppy-assv not"
+	   (let ((x (sloppy-assv "this" b)))
+	     (not x)))
+  (pass-if "sloppy-assoc"
+	   (let ((x (sloppy-assoc "this" b)))
+	     (and (pair? x)
+		  (string=? (cdr x) "is"))))
+  (pass-if "sloppy-assoc not"
+	   (let ((x (sloppy-assoc "heehee" b)))
+	     (not x)))
+  (pass-if "assq"
+	   (let ((x (assq 'c a)))
+	     (and (pair? x)
+		  (eq? (car x) 'c)
+		  (eq? (cdr x) 'd))))
+  (pass-if-exception "assq deformed"
+    exception:wrong-type-arg
+    (assq 'x deformed))
+  (pass-if-not "assq not" (assq 'r a))
+  (pass-if "assv"
+	   (let ((x (assv 'a a)))
+	     (and (pair? x)
+		  (eq? (car x) 'a)
+		  (eq? (cdr x) 'b))))
+  (pass-if-exception "assv deformed"
+    exception:wrong-type-arg
+    (assv 'x deformed))
+  (pass-if-not "assv not" (assq "this" b))
+
+  (pass-if "assoc"
+	   (let ((x (assoc "this" b)))
+	     (and (pair? x)
+		  (string=? (car x) "this")
+		  (string=? (cdr x) "is"))))
+  (pass-if-exception "assoc deformed"
+    exception:wrong-type-arg
+    (assoc 'x deformed))
+  (pass-if-not "assoc not" (assoc "this isn't" b)))
+
+
+;;; Refers
+(let ((a '((foo bar) (baz quux)))
+      (b '(("one" 2 3) ("four" 5 6) ("seven" 8 9)))
+      (deformed '(thats a real sloppy assq you got there)))
+  (pass-if "assq-ref"
+	   (let ((x (assq-ref a 'foo)))
+	     (and (list? x)
+		  (eq? (car x) 'bar))))
+
+  (pass-if-not "assq-ref not" (assq-ref b "one"))
+  (pass-if "assv-ref"
+	   (let ((x (assv-ref a 'baz)))
+	     (and (list? x)
+		  (eq? (car x) 'quux))))
+
+  (pass-if-not "assv-ref not" (assv-ref b "one"))
+
+  (pass-if "assoc-ref"
+	   (let ((x (assoc-ref b "one")))
+	     (and (list? x)
+		  (eq? (car x) 2)
+		  (eq? (cadr x) 3))))
+
+
+  (pass-if-not "assoc-ref not" (assoc-ref a 'testing))
+
+  (let* ((have-sloppy-assv-ref? (defined? 'sloppy-assv-ref))) 
+
+    (pass-if-exception "assv-ref deformed"
+      exception:wrong-type-arg
+      (if (not have-sloppy-assv-ref?) (throw 'unsupported))
+      (assv-ref deformed 'sloppy))
+
+    (pass-if-exception "assoc-ref deformed"
+      exception:wrong-type-arg
+      (if (not have-sloppy-assv-ref?) (throw 'unsupported))
+      (assoc-ref deformed 'sloppy))
+
+    (pass-if-exception "assq-ref deformed"
+      exception:wrong-type-arg
+      (if (not have-sloppy-assv-ref?) (throw 'unsupported))
+      (assq-ref deformed 'sloppy))))
+
+
+;;; Setters
+(let ((a '((another . silly) (alist . test-case)))
+      (b '(("this" "one" "has") ("strings" "!")))
+      (deformed '(canada is a cold nation)))
+  (pass-if "assq-set!"
+	   (begin
+	     (set! a (assq-set! a 'another 'stupid))
+	     (let ((x (safe-assq-ref a 'another)))
+	       (and x
+		    (symbol? x) (eq? x 'stupid)))))
+
+  (pass-if "assq-set! add"
+	   (begin
+	     (set! a (assq-set! a 'fickle 'pickle))
+	     (let ((x (safe-assq-ref a 'fickle)))
+	       (and x (symbol? x)
+		    (eq? x 'pickle)))))
+
+  (pass-if "assv-set!"
+	   (begin
+	     (set! a (assv-set! a 'another 'boring))
+	     (let ((x (safe-assv-ref a 'another)))
+		   (and x
+			(eq? x 'boring)))))
+  (pass-if "assv-set! add"
+	   (begin
+	     (set! a (assv-set! a 'whistle '(while you work)))
+	     (let ((x (safe-assv-ref a 'whistle)))
+	       (and x (equal? x '(while you work))))))
+
+  (pass-if "assoc-set!"
+	   (begin
+	     (set! b (assoc-set! b "this" "has"))
+	     (let ((x (safe-assoc-ref b "this")))
+	       (and x (string? x)
+		    (string=? x "has")))))
+  (pass-if "assoc-set! add"
+	   (begin
+	     (set! b (assoc-set! b "flugle" "horn"))
+	     (let ((x (safe-assoc-ref b "flugle")))
+	       (and x (string? x)
+		    (string=? x "horn")))))
+
+  (let* ((have-sloppy-assv-ref? (defined? 'sloppy-assv-ref))) 
+
+    (pass-if-exception "assq-set! deformed"
+      exception:wrong-type-arg
+      (if (not have-sloppy-assv-ref?) (throw 'unsupported))
+      (assq-set! deformed 'cold '(very cold)))   
+
+    (pass-if-exception "assv-set! deformed"
+      exception:wrong-type-arg
+      (if (not have-sloppy-assv-ref?) (throw 'unsupported))
+      (assv-set! deformed 'canada 'Canada))
+
+    (pass-if-exception "assoc-set! deformed"
+      exception:wrong-type-arg
+      (if (not have-sloppy-assv-ref?) (throw 'unsupported))
+      (assoc-set! deformed 'canada '(Iceland hence the name)))))
+
+;;; Removers
+
+(let ((a '((a b) (c d) (e boring)))
+      (b '(("what" .  "else") ("could" . "I") ("say" . "here")))
+      (deformed 1))
+  (pass-if "assq-remove!"
+	   (begin 
+	     (set! a (assq-remove! a 'a))
+	     (equal? a '((c d) (e boring)))))
+  (pass-if "assv-remove!"
+	   (begin
+	     (set! a (assv-remove! a 'c))
+	     (equal? a '((e boring)))))
+  (pass-if "assoc-remove!"
+	   (begin
+	     (set! b (assoc-remove! b "what"))
+	     (equal? b '(("could" . "I") ("say" . "here")))))
+
+  (let* ((have-sloppy-assq-remove? (defined? 'sloppy-assq-remove))) 
+
+    (pass-if-exception "assq-remove! deformed"
+      exception:wrong-type-arg
+      (if (not have-sloppy-assq-remove?) (throw 'unsupported))
+      (assq-remove! deformed 'puddle))
+
+    (pass-if-exception "assv-remove! deformed"
+      exception:wrong-type-arg
+      (if (not have-sloppy-assq-remove?) (throw 'unsupported))
+      (assv-remove! deformed 'splashing))
+
+    (pass-if-exception "assoc-remove! deformed"
+      exception:wrong-type-arg
+      (if (not have-sloppy-assq-remove?) (throw 'unsupported))
+      (assoc-remove! deformed 'fun))))

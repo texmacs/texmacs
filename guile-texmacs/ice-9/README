@@ -1,0 +1,12 @@
+This directory contains various bits of Guile Scheme code.
+Most of these are packaged as modules, with foo.scm implementing
+the module `(ice-9 foo)'.
+
+The non-module files are:
+
+boot-9.scm	-- loaded on guile startup
+		   implements module system + lots of other stuff
+arrays.scm	-- loaded by boot-9.scm
+networking.scm	-- loaded by boot-9.scm
+posix.scm	-- loaded by boot-9.scm
+r4rs.scm	-- loaded by boot-9.scm

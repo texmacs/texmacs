@@ -1,0 +1,124 @@
+;;;; hooks.test --- tests guile's hooks implementation  -*- scheme -*-
+;;;; Copyright (C) 1999, 2001, 2006 Free Software Foundation, Inc.
+;;;; 
+;;;; This library is free software; you can redistribute it and/or
+;;;; modify it under the terms of the GNU Lesser General Public
+;;;; License as published by the Free Software Foundation; either
+;;;; version 2.1 of the License, or (at your option) any later version.
+;;;; 
+;;;; This library is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;;;; Lesser General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU Lesser General Public
+;;;; License along with this library; if not, write to the Free Software
+;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+;;;
+;;; miscellaneous
+;;;
+
+;; FIXME:  Maybe a standard wrong-num-arg exception should be thrown instead
+;; of a misc-error?  If so, the tests should be changed to expect failure.
+(define exception:wrong-num-hook-args
+  (cons 'misc-error "Hook .* requires .* arguments"))
+
+;;;
+;;; {The tests}
+;;;
+
+(let  ((proc1 (lambda (x) (+ x 1)))
+       (proc2 (lambda (x) (- x 1)))
+       (bad-proc (lambda (x y) #t)))
+  (with-test-prefix "hooks"
+   (pass-if "make-hook"
+     (make-hook 1)
+     #t)
+
+   (pass-if "add-hook!"
+     (let ((x (make-hook 1)))
+       (add-hook! x proc1)
+       (add-hook! x proc2)
+       #t))
+
+   (with-test-prefix "add-hook!"
+		     (pass-if "append"
+			      (let ((x (make-hook 1)))
+				(add-hook! x proc1)
+				(add-hook! x proc2 #t)
+				(eq? (cadr (hook->list x))
+				     proc2)))
+		     (pass-if-exception "illegal proc"
+		       exception:wrong-type-arg
+		       (let ((x (make-hook 1)))
+			 (add-hook! x bad-proc)))
+		     (pass-if-exception "illegal hook"
+		       exception:wrong-type-arg
+		       (add-hook! '(foo) proc1)))
+   (pass-if "run-hook"
+	    (let ((x (make-hook 1)))
+	      (add-hook! x proc1)
+	      (add-hook! x proc2)
+	      (run-hook x 1)
+	      #t))
+  (with-test-prefix "run-hook"
+		    (pass-if-exception "bad hook"
+		      exception:wrong-type-arg
+		      (let ((x (cons 'a 'b)))
+			(run-hook x 1)))
+		    (pass-if-exception "too many args"
+		      exception:wrong-num-hook-args
+		      (let ((x (make-hook 1)))
+			(add-hook! x proc1)
+			(add-hook! x proc2)
+			(run-hook x 1 2)))
+
+		    (pass-if 
+		     "destructive procs"
+		     (let ((x (make-hook 1))
+			   (dest-proc1 (lambda (x) 
+					 (set-car! x 
+						   'i-sunk-your-battleship)))
+			   (dest-proc2 (lambda (x) (set-cdr! x 'no-way!)))
+			   (val '(a-game-of battleship)))
+		       (add-hook! x dest-proc1)
+		       (add-hook! x dest-proc2 #t)
+		       (run-hook x val)
+		       (and (eq? (car val) 'i-sunk-your-battleship)
+			    (eq? (cdr val) 'no-way!)))))
+
+  (with-test-prefix "remove-hook!"
+		    (pass-if ""
+			     (let ((x (make-hook 1)))
+			       (add-hook! x proc1)
+			       (add-hook! x proc2)
+			       (remove-hook! x proc1)
+			       (not (memq proc1 (hook->list x)))))
+		    ; Maybe it should error, but this is probably
+		    ; more convienient
+		    (pass-if "empty hook"
+		      (let ((x (make-hook 1)))
+			(remove-hook! x proc1)
+			#t)))
+  (pass-if "hook->list"
+	   (let ((x (make-hook 1)))
+	     (add-hook! x proc1)
+	     (add-hook! x proc2)
+	     (and (memq proc1 (hook->list x))
+		  (memq proc2 (hook->list x))
+		  #t)))
+  (pass-if "reset-hook!"
+	   (let ((x (make-hook 1)))
+	     (add-hook! x proc1)
+	     (add-hook! x proc2)
+	     (reset-hook! x)
+	     (null? (hook->list x))))
+  (with-test-prefix "reset-hook!"
+		    (pass-if "empty hook"
+			     (let ((x (make-hook 1)))
+			       (reset-hook! x)
+			       #t))
+		    (pass-if-exception "bad hook"
+                      exception:wrong-type-arg
+		      (reset-hook! '(a b))))))

@@ -1,0 +1,220 @@
+#!../libguile/guile \
+-e main -s
+!#
+
+;;;; guile-benchmark --- run the Guile benchmark suite
+;;;; Adapted from code by Jim Blandy <jimb@red-bean.com> --- May 1999
+;;;;
+;;;; Copyright (C) 2002, 2006 Free Software Foundation, Inc.
+;;;;
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;;
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;;
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+
+;;;; Usage: [guile -e main -s] guile-benchmark [OPTIONS] [BENCHMARK ...]
+;;;;
+;;;; Run benchmarks from the Guile benchmark suite.  Report timing
+;;;; results to the standard output, along with a summary of all
+;;;; the results.  Record each reported benchmark outcome in the log
+;;;; file, `benchmarks.log'.
+;;;;
+;;;; Normally, guile-benchmark scans the benchmark directory, and
+;;;; executes all files whose names end in `.bm'.  (It assumes they contain
+;;;; Scheme code.)  However, you can have it execute specific benchmarks by
+;;;; listing their filenames on the command line.
+;;;;
+;;;; The option `--benchmark-suite' can be given to specify the benchmark
+;;;; directory.  If no such option is given, the benchmark directory is
+;;;; taken from the environment variable BENCHMARK_SUITE_DIR (if defined),
+;;;; otherwise a default directory that is hardcoded in this file is
+;;;; used (see "Installation" below).
+;;;;
+;;;; If present, the `--iteration-factor FACTOR' option tells
+;;;; `guile-benchmark' to multiply the number of iterations given with
+;;;; each single benchmark by the value of FACTOR.  This allows to
+;;;; reduce or increase the total time for benchmarking.
+;;;;
+;;;; If present, the `--log-file LOG' option tells `guile-benchmark' to put
+;;;; the log output in a file named LOG.
+;;;;
+;;;; If present, the `--debug' option will enable a debugging mode.
+;;;;
+;;;;
+;;;; Installation:
+;;;;
+;;;; If you change the #! line at the top of this script to point at
+;;;; the Guile interpreter you want to run, you can call this script
+;;;; as an executable instead of having to pass it as a parameter to
+;;;; guile via "guile -e main -s guile-benchmark".  Further, you can edit
+;;;; the definition of default-benchmark-suite to point to the parent
+;;;; directory of the `benchmarks' tree, which makes it unnecessary to set
+;;;; the environment variable `BENCHMARK_SUITE_DIR'.
+;;;;
+;;;;
+;;;; Shortcomings:
+;;;;
+;;;; At the moment, due to a simple-minded implementation, benchmark files
+;;;; must live in the benchmark directory, and you must specify their names
+;;;; relative to the top of the benchmark directory.  If you want to send
+;;;; me a patch that fixes this, but still leaves sane benchmark names in
+;;;; the log file, that would be great.  At the moment, all the benchmarks
+;;;; I care about are in the benchmark directory, though.
+;;;;
+;;;; It would be nice if you could specify the Guile interpreter you
+;;;; want to benchmark on the command line.  As it stands, if you want to
+;;;; change which Guile interpreter you're benchmarking, you need to edit
+;;;; the #! line at the top of this file, which is stupid.
+
+
+;;; User configurable settings:
+(define default-benchmark-suite
+  (string-append (getenv "HOME") "/bogus-path/benchmark-suite"))
+
+
+(use-modules (benchmark-suite lib)
+	     (ice-9 getopt-long)
+	     (ice-9 and-let-star)
+	     (ice-9 rdelim))
+
+
+;;; Variables that will receive their actual values later.
+(define benchmark-suite default-benchmark-suite)
+
+(define tmp-dir #f)
+
+
+;;; General utilities, that probably should be in a library somewhere.
+
+;;; Enable debugging
+(define (enable-debug-mode)
+  (write-line %load-path)
+  (set! %load-verbosely #t)
+  (debug-enable 'backtrace 'debug))
+
+;;; Traverse the directory tree at ROOT, applying F to the name of
+;;; each file in the tree, including ROOT itself.  For a subdirectory
+;;; SUB, if (F SUB) is true, we recurse into SUB.  Do not follow
+;;; symlinks.
+(define (for-each-file f root)
+
+  ;; A "hard directory" is a path that denotes a directory and is not a
+  ;; symlink.
+  (define (file-is-hard-directory? filename)
+    (eq? (stat:type (lstat filename)) 'directory))
+
+  (let visit ((root root))
+    (let ((should-recur (f root)))
+      (if (and should-recur (file-is-hard-directory? root))
+	  (let ((dir (opendir root)))
+	    (let loop ()
+	      (let ((entry (readdir dir)))
+		(cond
+		 ((eof-object? entry) #f)
+		 ((or (string=? entry ".")
+		      (string=? entry "..")
+                      (string=? entry "CVS")
+                      (string=? entry "RCS"))
+		  (loop))
+		 (else
+		  (visit (string-append root "/" entry))
+		  (loop))))))))))
+
+
+;;; The benchmark driver.
+
+
+;;; Localizing benchmark files and temporary data files.
+
+(define (data-file-name filename)
+  (in-vicinity tmp-dir filename))
+
+(define (benchmark-file-name benchmark)
+  (in-vicinity benchmark-suite benchmark))
+
+;;; Return a list of all the benchmark files in the benchmark tree.
+(define (enumerate-benchmarks benchmark-dir)
+  (let ((root-len (+ 1 (string-length benchmark-dir)))
+	(benchmarks '()))
+    (for-each-file (lambda (file)
+		     (if (has-suffix? file ".bm")
+			 (let ((short-name
+				(substring file root-len)))
+			   (set! benchmarks (cons short-name benchmarks))))
+		     #t)
+		   benchmark-dir)
+
+    ;; for-each-file presents the files in whatever order it finds
+    ;; them in the directory.  We sort them here, so they'll always
+    ;; appear in the same order.  This makes it easier to compare benchmark
+    ;; log files mechanically.
+    (sort benchmarks string<?)))
+
+(define (main args)
+  (let ((options (getopt-long args
+			      `((benchmark-suite
+				 (single-char #\t)
+				 (value #t))
+                                (iteration-factor
+                                 (single-char #\t)
+                                 (value #t))
+				(log-file
+				 (single-char #\l)
+				 (value #t))
+				(debug
+				 (single-char #\d))))))
+    (define (opt tag default)
+      (let ((pair (assq tag options)))
+	(if pair (cdr pair) default)))
+
+    (if (opt 'debug #f)
+	(enable-debug-mode))
+
+    (set! benchmark-suite
+	  (or (opt 'benchmark-suite #f)
+	      (getenv "BENCHMARK_SUITE_DIR")
+	      default-benchmark-suite))
+
+    (set! iteration-factor
+          (string->number (opt 'iteration-factor "1")))
+
+    ;; directory where temporary files are created.
+    (set! tmp-dir (getcwd))
+
+    (let* ((benchmarks
+	    (let ((foo (opt '() '())))
+	      (if (null? foo)
+		  (enumerate-benchmarks benchmark-suite)
+		  foo)))
+	   (log-file
+	    (opt 'log-file "benchmarks.log")))
+
+      ;; Open the log file.
+      (let ((log-port (open-output-file log-file)))
+
+	;; Register some reporters.
+	(register-reporter (make-log-reporter log-port))
+	(register-reporter user-reporter)
+
+	;; Run the benchmarks.
+	(for-each (lambda (benchmark)
+		    (with-benchmark-prefix benchmark
+		      (load (benchmark-file-name benchmark))))
+		  benchmarks)
+	(close-port log-port)))))
+
+
+;;; Local Variables:
+;;; mode: scheme
+;;; End:

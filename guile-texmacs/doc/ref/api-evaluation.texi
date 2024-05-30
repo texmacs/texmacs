@@ -1,0 +1,645 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004, 2005, 2006
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Read/Load/Eval
+@section Reading and Evaluating Scheme Code
+
+This chapter describes Guile functions that are concerned with reading,
+loading and evaluating Scheme code at run time.
+
+@menu
+* Scheme Syntax::               Standard and extended Scheme syntax.
+* Scheme Read::                 Reading Scheme code.
+* Fly Evaluation::              Procedures for on the fly evaluation.
+* Loading::                     Loading Scheme code from file.
+* Delayed Evaluation::          Postponing evaluation until it is needed.
+* Local Evaluation::            Evaluation in a local environment.
+* Evaluator Behaviour::         Modifying Guile's evaluator.
+@end menu
+
+
+@node Scheme Syntax
+@subsection Scheme Syntax: Standard and Guile Extensions
+
+@menu
+* Expression Syntax::
+* Comments::
+* Block Comments::
+* Case Sensitivity::
+* Keyword Syntax::
+* Reader Extensions::
+@end menu
+
+
+@node Expression Syntax
+@subsubsection Expression Syntax
+
+An expression to be evaluated takes one of the following forms.
+
+@table @nicode
+
+@item @var{symbol}
+A symbol is evaluated by dereferencing.  A binding of that symbol is
+sought and the value there used.  For example,
+
+@example
+(define x 123)
+x @result{} 123
+@end example
+
+@item (@var{proc} @var{args}@dots{})
+A parenthesised expression is a function call.  @var{proc} and each
+argument are evaluated, then the function (which @var{proc} evaluated
+to) is called with those arguments.
+
+The order in which @var{proc} and the arguments are evaluated is
+unspecified, so be careful when using expressions with side effects.
+
+@example
+(max 1 2 3) @result{} 3
+
+(define (get-some-proc)  min)
+((get-some-proc) 1 2 3) @result{} 1
+@end example
+
+The same sort of parenthesised form is used for a macro invocation,
+but in that case the arguments are not evaluated.  See the
+descriptions of macros for more on this (@pxref{Macros}, and
+@pxref{Syntax Rules}).
+
+@item @var{constant}
+Number, string, character and boolean constants evaluate ``to
+themselves'', so can appear as literals.
+
+@example
+123     @result{} 123
+99.9    @result{} 99.9
+"hello" @result{} "hello"
+#\z     @result{} #\z
+#t      @result{} #t
+@end example
+
+Note that an application must not attempt to modify literal strings,
+since they may be in read-only memory.
+
+@item (quote @var{data})
+@itemx '@var{data}
+@findex quote
+@findex '
+Quoting is used to obtain a literal symbol (instead of a variable
+reference), a literal list (instead of a function call), or a literal
+vector.  @nicode{'} is simply a shorthand for a @code{quote} form.
+For example,
+
+@example
+'x                   @result{} x
+'(1 2 3)             @result{} (1 2 3)
+'#(1 (2 3) 4)        @result{} #(1 (2 3) 4)
+(quote x)            @result{} x
+(quote (1 2 3))      @result{} (1 2 3)
+(quote #(1 (2 3) 4)) @result{} #(1 (2 3) 4)
+@end example
+
+Note that an application must not attempt to modify literal lists or
+vectors obtained from a @code{quote} form, since they may be in
+read-only memory.
+
+@item (quasiquote @var{data})
+@itemx `@var{data}
+@findex quasiquote
+@findex `
+Backquote quasi-quotation is like @code{quote}, but selected
+sub-expressions are evaluated.  This is a convenient way to construct
+a list or vector structure most of which is constant, but at certain
+points should have expressions substituted.
+
+The same effect can always be had with suitable @code{list},
+@code{cons} or @code{vector} calls, but quasi-quoting is often easier.
+
+@table @nicode
+
+@item (unquote @var{expr})
+@itemx ,@var{expr}
+@findex unquote
+@findex ,
+Within the quasiquote @var{data}, @code{unquote} or @code{,} indicates
+an expression to be evaluated and inserted.  The comma syntax @code{,}
+is simply a shorthand for an @code{unquote} form.  For example,
+
+@example
+`(1 2 ,(* 9 9) 3 4)      @result{} (1 2 81 3 4)
+`(1 (unquote (+ 1 1)) 3) @result{} (1 2 3)
+`#(1 ,(/ 12 2))          @result{} #(1 6)
+@end example
+
+@item (unquote-splicing @var{expr})
+@itemx ,@@@var{expr}
+@findex unquote-splicing
+@findex ,@@
+Within the quasiquote @var{data}, @code{unquote-splicing} or
+@code{,@@} indicates an expression to be evaluated and the elements of
+the returned list inserted.  @var{expr} must evaluate to a list.  The
+``comma-at'' syntax @code{,@@} is simply a shorthand for an
+@code{unquote-splicing} form.
+
+@example
+(define x '(2 3))
+`(1 ,@@x 4)                         @result{} (1 2 3 4)
+`(1 (unquote-splicing (map 1+ x))) @result{} (1 3 4)
+`#(9 ,@@x 9)                        @result{} #(9 2 3 9)
+@end example
+
+Notice @code{,@@} differs from plain @code{,} in the way one level of
+nesting is stripped.  For @code{,@@} the elements of a returned list
+are inserted, whereas with @code{,} it would be the list itself
+inserted.
+@end table
+
+@c
+@c  FIXME: What can we say about the mutability of a quasiquote
+@c  result?  R5RS doesn't seem to specify anything, though where it
+@c  says backquote without commas is the same as plain quote then
+@c  presumably the "fixed" portions of a quasiquote expression must be
+@c  treated as immutable.
+@c
+
+@end table
+
+
+@node Comments
+@subsubsection Comments
+
+@c FIXME::martin: Review me!
+
+Comments in Scheme source files are written by starting them with a
+semicolon character (@code{;}).  The comment then reaches up to the end
+of the line.  Comments can begin at any column, and the may be inserted
+on the same line as Scheme code.
+
+@lisp
+; Comment
+;; Comment too
+(define x 1)        ; Comment after expression
+(let ((y 1))
+  ;; Display something.
+  (display y)
+;;; Comment at left margin.
+  (display (+ y 1)))
+@end lisp
+
+It is common to use a single semicolon for comments following
+expressions on a line, to use two semicolons for comments which are
+indented like code, and three semicolons for comments which start at
+column 0, even if they are inside an indented code block.  This
+convention is used when indenting code in Emacs' Scheme mode.
+
+
+@node Block Comments
+@subsubsection Block Comments
+@cindex multiline comments
+@cindex block comments
+@cindex #!
+@cindex !#
+
+@c FIXME::martin: Review me!
+
+In addition to the standard line comments defined by R5RS, Guile has
+another comment type for multiline comments, called @dfn{block
+comments}.  This type of comment begins with the character sequence
+@code{#!} and ends with the characters @code{!#}, which must appear on a
+line of their own.  These comments are compatible with the block
+comments in the Scheme Shell @file{scsh} (@pxref{The Scheme shell
+(scsh)}).  The characters @code{#!} were chosen because they are the
+magic characters used in shell scripts for indicating that the name of
+the program for executing the script follows on the same line.
+
+Thus a Guile script often starts like this.
+
+@lisp
+#! /usr/local/bin/guile -s
+!#
+@end lisp
+
+More details on Guile scripting can be found in the scripting section
+(@pxref{Guile Scripting}).
+
+
+@node Case Sensitivity
+@subsubsection Case Sensitivity
+
+@c FIXME::martin: Review me!
+
+Scheme as defined in R5RS is not case sensitive when reading symbols.
+Guile, on the contrary is case sensitive by default, so the identifiers
+
+@lisp
+guile-whuzzy
+Guile-Whuzzy
+@end lisp
+
+are the same in R5RS Scheme, but are different in Guile.
+
+It is possible to turn off case sensitivity in Guile by setting the
+reader option @code{case-insensitive}.  More on reader options can be
+found at (@pxref{Reader options}).
+
+@lisp
+(read-enable 'case-insensitive)
+@end lisp
+
+Note that this is seldom a problem, because Scheme programmers tend not
+to use uppercase letters in their identifiers anyway.
+
+
+@node Keyword Syntax
+@subsubsection Keyword Syntax
+
+
+@node Reader Extensions
+@subsubsection Reader Extensions
+
+@deffn {Scheme Procedure} read-hash-extend chr proc
+@deffnx {C Function} scm_read_hash_extend (chr, proc)
+Install the procedure @var{proc} for reading expressions
+starting with the character sequence @code{#} and @var{chr}.
+@var{proc} will be called with two arguments:  the character
+@var{chr} and the port to read further data from. The object
+returned will be the return value of @code{read}.
+@end deffn
+
+
+@node Scheme Read
+@subsection Reading Scheme Code
+
+@rnindex read
+@deffn {Scheme Procedure} read [port]
+@deffnx {C Function} scm_read (port)
+Read an s-expression from the input port @var{port}, or from
+the current input port if @var{port} is not specified.
+Any whitespace before the next token is discarded.
+@end deffn
+
+The behaviour of Guile's Scheme reader can be modified by manipulating
+its read options.  For more information about options, @xref{User level
+options interfaces}.  If you want to know which reader options are
+available, @xref{Reader options}.
+
+@c FIXME::martin: This is taken from libguile/options.c.  Is there 
+@c actually a difference between 'help and 'full?
+
+@deffn {Scheme Procedure} read-options [setting]
+Display the current settings of the read options.  If @var{setting} is
+omitted, only a short form of the current read options is printed.
+Otherwise, @var{setting} should be one of the following symbols:
+@table @code
+@item help
+Display the complete option settings.
+@item full
+Like @code{help}, but also print programmer options.
+@end table
+@end deffn
+
+@deffn {Scheme Procedure} read-enable option-name
+@deffnx {Scheme Procedure} read-disable option-name
+@deffnx {Scheme Procedure} read-set! option-name value
+Modify the read options.  @code{read-enable} should be used with boolean
+options and switches them on, @code{read-disable} switches them off.
+@code{read-set!} can be used to set an option to a specific value.
+@end deffn
+
+@deffn {Scheme Procedure} read-options-interface [setting]
+@deffnx {C Function} scm_read_options (setting)
+Option interface for the read options. Instead of using
+this procedure directly, use the procedures @code{read-enable},
+@code{read-disable}, @code{read-set!} and @code{read-options}.
+@end deffn
+
+
+@node Fly Evaluation
+@subsection Procedures for On the Fly Evaluation
+
+@xref{Environments}.
+
+@rnindex eval
+@c ARGFIXME environment/environment specifier
+@deffn {Scheme Procedure} eval exp module_or_state
+@deffnx {C Function} scm_eval (exp, module_or_state)
+Evaluate @var{exp}, a list representing a Scheme expression,
+in the top-level environment specified by @var{module}.
+While @var{exp} is evaluated (using @code{primitive-eval}),
+@var{module} is made the current module.  The current module
+is reset to its previous value when @var{eval} returns.
+XXX - dynamic states.
+Example: (eval '(+ 1 2) (interaction-environment))
+@end deffn
+
+@rnindex interaction-environment
+@deffn {Scheme Procedure} interaction-environment
+@deffnx {C Function} scm_interaction_environment ()
+Return a specifier for the environment that contains
+implementation--defined bindings, typically a superset of those
+listed in the report.  The intent is that this procedure will
+return the environment in which the implementation would
+evaluate expressions dynamically typed by the user.
+@end deffn
+
+@deffn {Scheme Procedure} eval-string string [module]
+@deffnx {C Function} scm_eval_string (string)
+@deffnx {C Function} scm_eval_string_in_module (string, module)
+Evaluate @var{string} as the text representation of a Scheme form or
+forms, and return whatever value they produce.  Evaluation takes place
+in the given module, or in the current module when no module is given.
+While the code is evaluated, the given module is made the current one.
+The current module is restored when this procedure returns.
+@end deffn
+
+@deftypefn {C Function} SCM scm_c_eval_string (const char *string)
+@code{scm_eval_string}, but taking a C string instead of an
+@code{SCM}.
+@end deftypefn
+
+@deffn {Scheme Procedure} apply proc arg1 @dots{} argN arglst
+@deffnx {C Function} scm_apply_0 (proc, arglst)
+@deffnx {C Function} scm_apply_1 (proc, arg1, arglst)
+@deffnx {C Function} scm_apply_2 (proc, arg1, arg2, arglst)
+@deffnx {C Function} scm_apply_3 (proc, arg1, arg2, arg3, arglst)
+@deffnx {C Function} scm_apply (proc, arg, rest)
+@rnindex apply
+Call @var{proc} with arguments @var{arg1} @dots{} @var{argN} plus the
+elements of the @var{arglst} list.
+
+@code{scm_apply} takes parameters corresponding to a Scheme level
+@code{(lambda (proc arg . rest) ...)}.  So @var{arg} and all but the
+last element of the @var{rest} list make up
+@var{arg1}@dots{}@var{argN} and the last element of @var{rest} is the
+@var{arglst} list.  Or if @var{rest} is the empty list @code{SCM_EOL}
+then there's no @var{arg1}@dots{}@var{argN} and @var{arg} is the
+@var{arglst}.
+
+@var{arglst} is not modified, but the @var{rest} list passed to
+@code{scm_apply} is modified.
+@end deffn
+
+@deffn {C Function} scm_call_0 (proc)
+@deffnx {C Function} scm_call_1 (proc, arg1)
+@deffnx {C Function} scm_call_2 (proc, arg1, arg2)
+@deffnx {C Function} scm_call_3 (proc, arg1, arg2, arg3)
+@deffnx {C Function} scm_call_4 (proc, arg1, arg2, arg3, arg4)
+Call @var{proc} with the given arguments.
+@end deffn
+
+@deffn {Scheme Procedure} apply:nconc2last lst
+@deffnx {C Function} scm_nconc2last (lst)
+@var{lst} should be a list (@var{arg1} @dots{} @var{argN}
+@var{arglst}), with @var{arglst} being a list.  This function returns
+a list comprising @var{arg1} to @var{argN} plus the elements of
+@var{arglst}.  @var{lst} is modified to form the return.  @var{arglst}
+is not modified, though the return does share structure with it.
+
+This operation collects up the arguments from a list which is
+@code{apply} style parameters.
+@end deffn
+
+@deffn {Scheme Procedure} primitive-eval exp
+@deffnx {C Function} scm_primitive_eval (exp)
+Evaluate @var{exp} in the top-level environment specified by
+the current module.
+@end deffn
+
+
+@node Loading
+@subsection Loading Scheme Code from File
+
+@rnindex load
+@deffn {Scheme Procedure} load filename [reader]
+Load @var{filename} and evaluate its contents in the top-level
+environment.  The load paths are not searched.
+
+@var{reader} if provided should be either @code{#f}, or a procedure with
+the signature @code{(lambda (port) @dots{})} which reads the next
+expression from @var{port}.  If @var{reader} is @code{#f} or absent,
+Guile's built-in @code{read} procedure is used (@pxref{Scheme Read}).
+
+The @var{reader} argument takes effect by setting the value of the
+@code{current-reader} fluid (see below) before loading the file, and
+restoring its previous value when loading is complete.  The Scheme code
+inside @var{filename} can itself change the current reader procedure on
+the fly by setting @code{current-reader} fluid.
+
+If the variable @code{%load-hook} is defined, it should be bound to a
+procedure that will be called before any code is loaded.  See
+documentation for @code{%load-hook} later in this section.
+@end deffn
+
+@deffn {Scheme Procedure} load-from-path filename
+Similar to @code{load}, but searches for @var{filename} in the load
+paths.
+@end deffn
+
+@deffn {Scheme Procedure} primitive-load filename
+@deffnx {C Function} scm_primitive_load (filename)
+Load the file named @var{filename} and evaluate its contents in
+the top-level environment. The load paths are not searched;
+@var{filename} must either be a full pathname or be a pathname
+relative to the current directory.  If the  variable
+@code{%load-hook} is defined, it should be bound to a procedure
+that will be called before any code is loaded.  See the
+documentation for @code{%load-hook} later in this section.
+@end deffn
+
+@deftypefn {C Function} SCM scm_c_primitive_load (const char *filename)
+@code{scm_primitive_load}, but taking a C string instead of an
+@code{SCM}.
+@end deftypefn
+
+@deffn {Scheme Procedure} primitive-load-path filename
+@deffnx {C Function} scm_primitive_load_path (filename)
+Search @code{%load-path} for the file named @var{filename} and
+load it into the top-level environment.  If @var{filename} is a
+relative pathname and is not found in the list of search paths,
+an error is signalled.
+@end deffn
+
+@deffn {Scheme Procedure} %search-load-path filename
+@deffnx {C Function} scm_sys_search_load_path (filename)
+Search @code{%load-path} for the file named @var{filename},
+which must be readable by the current user.  If @var{filename}
+is found in the list of paths to search or is an absolute
+pathname, return its full pathname.  Otherwise, return
+@code{#f}.  Filenames may have any of the optional extensions
+in the @code{%load-extensions} list; @code{%search-load-path}
+will try each extension automatically.
+@end deffn
+
+@defvar current-reader
+@code{current-reader} holds the read procedure that is currently being
+used by the above loading procedures to read expressions (from the file
+that they are loading).  @code{current-reader} is a fluid, so it has an
+independent value in each dynamic root and should be read and set using
+@code{fluid-ref} and @code{fluid-set!} (@pxref{Fluids and Dynamic
+States}).
+@end defvar
+
+@defvar %load-hook
+A procedure to be called @code{(%load-hook @var{filename})} whenever a
+file is loaded, or @code{#f} for no such call.  @code{%load-hook} is
+used by all of the above loading functions (@code{load},
+@code{load-path}, @code{primitive-load} and
+@code{primitive-load-path}).
+
+For example an application can set this to show what's loaded,
+
+@example
+(set! %load-hook (lambda (filename)
+                   (format #t "Loading ~a ...\n" filename)))
+(load-from-path "foo.scm")
+@print{} Loading /usr/local/share/guile/site/foo.scm ...
+@end example
+@end defvar
+
+@deffn {Scheme Procedure} current-load-port
+@deffnx {C Function} scm_current_load_port ()
+Return the current-load-port.
+The load port is used internally by @code{primitive-load}.
+@end deffn
+
+@defvar %load-extensions
+A list of default file extensions for files containing Scheme code.
+@code{%search-load-path} tries each of these extensions when looking for
+a file to load.  By default, @code{%load-extensions} is bound to the
+list @code{("" ".scm")}.
+@end defvar
+
+
+@node Delayed Evaluation
+@subsection Delayed Evaluation
+@cindex delayed evaluation
+@cindex promises
+
+Promises are a convenient way to defer a calculation until its result
+is actually needed, and to run such a calculation only once.
+
+@deffn syntax delay expr
+@rnindex delay
+Return a promise object which holds the given @var{expr} expression,
+ready to be evaluated by a later @code{force}.
+@end deffn
+
+@deffn {Scheme Procedure} promise? obj
+@deffnx {C Function} scm_promise_p (obj)
+Return true if @var{obj} is a promise.
+@end deffn
+
+@rnindex force
+@deffn {Scheme Procedure} force p
+@deffnx {C Function} scm_force (p)
+Return the value obtained from evaluating the @var{expr} in the given
+promise @var{p}.  If @var{p} has previously been forced then its
+@var{expr} is not evaluated again, instead the value obtained at that
+time is simply returned.
+
+During a @code{force}, an @var{expr} can call @code{force} again on
+its own promise, resulting in a recursive evaluation of that
+@var{expr}.  The first evaluation to return gives the value for the
+promise.  Higher evaluations run to completion in the normal way, but
+their results are ignored, @code{force} always returns the first
+value.
+@end deffn
+
+
+@node Local Evaluation
+@subsection Local Evaluation
+
+[the-environment]
+
+@deffn {Scheme Procedure} local-eval exp [env]
+@deffnx {C Function} scm_local_eval (exp, env)
+Evaluate @var{exp} in its environment.  If @var{env} is supplied,
+it is the environment in which to evaluate @var{exp}.  Otherwise,
+@var{exp} must be a memoized code object (in which case, its environment
+is implicit).
+@end deffn
+
+
+@node Evaluator Behaviour
+@subsection Evaluator Behaviour
+
+@c FIXME::martin: Maybe this node name is bad, but the old name clashed with
+@c `Evaluator options' under `Options and Config'.
+
+The behaviour of Guile's evaluator can be modified by manipulating the
+evaluator options.  For more information about options, @xref{User level
+options interfaces}.  If you want to know which evaluator options are
+available, @xref{Evaluator options}.
+
+@c FIXME::martin: This is taken from libguile/options.c.  Is there 
+@c actually a difference between 'help and 'full?
+
+@deffn {Scheme Procedure} eval-options [setting]
+Display the current settings of the evaluator options.  If @var{setting}
+is omitted, only a short form of the current evaluator options is
+printed.  Otherwise, @var{setting} should be one of the following
+symbols:
+@table @code
+@item help
+Display the complete option settings.
+@item full
+Like @code{help}, but also print programmer options.
+@end table
+@end deffn
+
+@deffn {Scheme Procedure} eval-enable option-name
+@deffnx {Scheme Procedure} eval-disable option-name
+@deffnx {Scheme Procedure} eval-set! option-name value
+Modify the evaluator options.  @code{eval-enable} should be used with boolean
+options and switches them on, @code{eval-disable} switches them off.
+@code{eval-set!} can be used to set an option to a specific value.
+@end deffn
+
+@deffn {Scheme Procedure} eval-options-interface [setting]
+@deffnx {C Function} scm_eval_options_interface (setting)
+Option interface for the evaluation options. Instead of using
+this procedure directly, use the procedures @code{eval-enable},
+@code{eval-disable}, @code{eval-set!} and @code{eval-options}.
+@end deffn
+
+@c FIXME::martin: Why aren't these procedure named like the other options
+@c procedures?
+
+@deffn {Scheme Procedure} traps [setting]
+Display the current settings of the evaluator traps options.  If
+@var{setting} is omitted, only a short form of the current evaluator
+traps options is printed.  Otherwise, @var{setting} should be one of the
+following symbols:
+@table @code
+@item help
+Display the complete option settings.
+@item full
+Like @code{help}, but also print programmer options.
+@end table
+@end deffn
+
+@deffn {Scheme Procedure} trap-enable option-name
+@deffnx {Scheme Procedure} trap-disable option-name
+@deffnx {Scheme Procedure} trap-set! option-name value
+Modify the evaluator options.  @code{trap-enable} should be used with boolean
+options and switches them on, @code{trap-disable} switches them off.
+@code{trap-set!} can be used to set an option to a specific value.
+
+See @ref{Evaluator trap options} for more information on the available
+trap handlers.
+@end deffn
+
+@deffn {Scheme Procedure} evaluator-traps-interface [setting]
+@deffnx {C Function} scm_evaluator_traps (setting)
+Option interface for the evaluator trap options.
+@end deffn
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

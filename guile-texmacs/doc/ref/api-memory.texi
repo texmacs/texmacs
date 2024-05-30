@@ -1,0 +1,483 @@
+@c -*-texinfo-*-
+@c This is part of the GNU Guile Reference Manual.
+@c Copyright (C)  1996, 1997, 2000, 2001, 2002, 2003, 2004
+@c   Free Software Foundation, Inc.
+@c See the file guile.texi for copying conditions.
+
+@page
+@node Memory Management
+@section Memory Management and Garbage Collection
+
+Guile uses a @emph{garbage collector} to manage most of its objects.
+While the garbage collector is designed to be mostly invisible, you 
+sometimes need to interact with it explicitly.
+
+See @ref{Garbage Collection} for a general discussion of how garbage
+collection relates to using Guile from C.
+
+@menu
+* Garbage Collection Functions::
+* Memory Blocks::
+* Weak References::
+* Guardians::
+@end menu
+
+
+@node Garbage Collection Functions
+@subsection Function related to Garbage Collection
+
+@deffn {Scheme Procedure} gc
+@deffnx {C Function} scm_gc ()
+Scans all of SCM objects and reclaims for further use those that are
+no longer accessible.  You normally don't need to call this function
+explicitly.  It is called automatically when appropriate.
+@end deffn
+
+@deftypefn {C Function} SCM scm_gc_protect_object (SCM @var{obj})
+Protects @var{obj} from being freed by the garbage collector, when it
+otherwise might be.  When you are done with the object, call
+@code{scm_gc_unprotect_object} on the object. Calls to
+@code{scm_gc_protect}/@code{scm_gc_unprotect_object} can be nested, and
+the object remains protected until it has been unprotected as many times
+as it was protected. It is an error to unprotect an object more times
+than it has been protected. Returns the SCM object it was passed.
+@end deftypefn
+
+@deftypefn {C Function} SCM scm_gc_unprotect_object (SCM @var{obj})
+
+Unprotects an object from the garbage collector which was protected by
+@code{scm_gc_unprotect_object}. Returns the SCM object it was passed.
+@end deftypefn
+
+@deftypefn {C Function} SCM scm_permanent_object (SCM @var{obj})
+
+Similar to @code{scm_gc_protect_object} in that it causes the
+collector to always mark the object, except that it should not be
+nested (only call @code{scm_permanent_object} on an object once), and
+it has no corresponding unpermanent function. Once an object is
+declared permanent, it will never be freed. Returns the SCM object it
+was passed.
+@end deftypefn
+
+@c  NOTE: The varargs scm_remember_upto_here is deliberately not
+@c  documented, because we don't think it can be implemented as a nice
+@c  inline compiler directive or asm block.  New _3, _4 or whatever
+@c  forms could certainly be added though, if needed.
+
+@deftypefn {C Macro} void scm_remember_upto_here_1 (SCM obj)
+@deftypefnx {C Macro} void scm_remember_upto_here_2 (SCM obj1, SCM obj2)
+Create a reference to the given object or objects, so they're certain
+to be present on the stack or in a register and hence will not be
+freed by the garbage collector before this point.
+
+Note that these functions can only be applied to ordinary C local
+variables (ie.@: ``automatics'').  Objects held in global or static
+variables or some malloced block or the like cannot be protected with
+this mechanism.
+@end deftypefn
+
+@deffn {Scheme Procedure} gc-stats
+@deffnx {C Function} scm_gc_stats ()
+Return an association list of statistics about Guile's current
+use of storage.
+@end deffn
+
+@deffn {Scheme Procedure} gc-live-object-stats
+@deffnx {C Function} scm_gc_live_object_stats ()
+Return an alist of statistics of the current live objects. 
+@end deffn
+
+@deftypefun void scm_gc_mark (SCM @var{x})
+Mark the object @var{x}, and recurse on any objects @var{x} refers to.
+If @var{x}'s mark bit is already set, return immediately.  This function
+must only be called during the mark-phase of garbage collection,
+typically from a smob @emph{mark} function.
+@end deftypefun
+
+
+@node Memory Blocks
+@subsection Memory Blocks
+
+In C programs, dynamic management of memory blocks is normally done
+with the functions malloc, realloc, and free.  Guile has additional
+functions for dynamic memory allocation that are integrated into the
+garbage collector and the error reporting system.
+
+Memory blocks that are associated with Scheme objects (for example a
+smob) should be allocated and freed with @code{scm_gc_malloc} and
+@code{scm_gc_free}.  The function @code{scm_gc_malloc} will either
+return a valid pointer or signal an error.  It will also assume that
+the new memory can be freed by a garbage collection.  The garbage
+collector uses this information to decide when to try to actually
+collect some garbage.  Memory blocks allocated with
+@code{scm_gc_malloc} must be freed with @code{scm_gc_free}.
+
+For memory that is not associated with a Scheme object, you can use
+@code{scm_malloc} instead of @code{malloc}.  Like
+@code{scm_gc_malloc}, it will either return a valid pointer or signal
+an error.  However, it will not assume that the new memory block can
+be freed by a garbage collection.  The memory can be freed with
+@code{free}.
+
+There is also @code{scm_gc_realloc} and @code{scm_realloc}, to be used
+in place of @code{realloc} when appropriate, and @code{scm_gc_calloc}
+and @code{scm_calloc}, to be used in place of @code{calloc} when
+appropriate.
+
+The function @code{scm_dynwind_free} can be useful when memory should
+be freed when a dynwind context, @xref{Dynamic Wind}.
+
+For really specialized needs, take at look at
+@code{scm_gc_register_collectable_memory} and
+@code{scm_gc_unregister_collectable_memory}.
+
+@deftypefn {C Function} {void *} scm_malloc (size_t @var{size})
+@deftypefnx {C Function} {void *} scm_calloc (size_t @var{size})
+Allocate @var{size} bytes of memory and return a pointer to it.  When
+@var{size} is 0, return @code{NULL}.  When not enough memory is
+available, signal an error.  This function runs the GC to free up some
+memory when it deems it appropriate.
+
+The memory is allocated by the libc @code{malloc} function and can be
+freed with @code{free}.  There is no @code{scm_free} function to go
+with @code{scm_malloc} to make it easier to pass memory back and forth
+between different modules.  
+
+The function @code{scm_calloc} is similar to @code{scm_malloc}, but
+initializes the block of memory to zero as well.
+@end deftypefn
+
+@deftypefn {C Function} {void *} scm_realloc (void *@var{mem}, size_t @var{new_size})
+Change the size of the memory block at @var{mem} to @var{new_size} and
+return its new location.  When @var{new_size} is 0, this is the same
+as calling @code{free} on @var{mem} and @code{NULL} is returned.  When
+@var{mem} is @code{NULL}, this function behaves like @code{scm_malloc}
+and allocates a new block of size @var{new_size}.
+
+When not enough memory is available, signal an error.  This function
+runs the GC to free up some memory when it deems it appropriate.
+@end deftypefn
+
+
+
+
+@deftypefn {C Function} void scm_gc_register_collectable_memory (void *@var{mem}, size_t @var{size}, const char *@var{what})
+Informs the GC that the memory at @var{mem} of size @var{size} can
+potentially be freed during a GC.  That is, announce that @var{mem} is
+part of a GC controlled object and when the GC happens to free that
+object, @var{size} bytes will be freed along with it.  The GC will
+@strong{not} free the memory itself, it will just know that so-and-so
+much bytes of memory are associated with GC controlled objects and the
+memory system figures this into its decisions when to run a GC.
+
+@var{mem} does not need to come from @code{scm_malloc}.  You can only
+call this function once for every memory block.
+
+The @var{what} argument is used for statistical purposes.  It should
+describe the type of object that the memory will be used for so that
+users can identify just what strange objects are eating up their
+memory.
+@end deftypefn
+
+@deftypefn {C Function} void scm_gc_unregister_collectable_memory (void *@var{mem}, size_t @var{size})
+Informs the GC that the memory at @var{mem} of size @var{size} is no
+longer associated with a GC controlled object.  You must take care to
+match up every call to @code{scm_gc_register_collectable_memory} with
+a call to @code{scm_gc_unregister_collectable_memory}.  If you don't do
+this, the GC might have a wrong impression of what is going on and run
+much less efficiently than it could.
+@end deftypefn
+
+@deftypefn {C Function} {void *} scm_gc_malloc (size_t @var{size}, const char *@var{what})
+@deftypefnx {C Function} {void *} scm_gc_realloc (void *@var{mem}, size_t @var{old_size}, size_t @var{new_size}, const char *@var{what});
+@deftypefnx {C Function} {void *} scm_gc_calloc (size_t @var{size}, const char *@var{what})
+Like @code{scm_malloc}, @code{scm_realloc} or @code{scm_calloc}, but
+also call @code{scm_gc_register_collectable_memory}.  Note that you
+need to pass the old size of a reallocated memory block as well.  See
+below for a motivation.
+@end deftypefn
+
+
+@deftypefn {C Function} void scm_gc_free (void *@var{mem}, size_t @var{size}, const char *@var{what})
+Like @code{free}, but also call @code{scm_gc_unregister_collectable_memory}.
+
+Note that you need to explicitly pass the @var{size} parameter.  This
+is done since it should normally be easy to provide this parameter
+(for memory that is associated with GC controlled objects) and this
+frees us from tracking this value in the GC itself, which will keep
+the memory management overhead very low.
+@end deftypefn
+
+@deftypefn {C Function} void scm_frame_free (void *mem)
+Equivalent to @code{scm_frame_unwind_handler (free, @var{mem},
+SCM_F_WIND_EXPLICITLY)}.  That is, the memory block at @var{mem} will
+be freed when the current frame is left.
+@end deftypefn
+
+@deffn {Scheme Procedure} malloc-stats
+Return an alist ((@var{what} . @var{n}) ...) describing number
+of malloced objects.
+@var{what} is the second argument to @code{scm_gc_malloc},
+@var{n} is the number of objects of that type currently
+allocated.
+@end deffn
+
+
+@subsubsection Upgrading from scm_must_malloc et al.
+
+Version 1.6 of Guile and earlier did not have the functions from the
+previous section.  In their place, it had the functions
+@code{scm_must_malloc}, @code{scm_must_realloc} and
+@code{scm_must_free}.  This section explains why we want you to stop
+using them, and how to do this.
+
+@findex scm_must_malloc
+@findex scm_must_realloc
+@findex scm_must_calloc
+@findex scm_must_free
+The functions @code{scm_must_malloc} and @code{scm_must_realloc}
+behaved like @code{scm_gc_malloc} and @code{scm_gc_realloc} do now,
+respectively.  They would inform the GC about the newly allocated
+memory via the internal equivalent of
+@code{scm_gc_register_collectable_memory}.  However,
+@code{scm_must_free} did not unregister the memory it was about to
+free.  The usual way to unregister memory was to return its size from
+a smob free function.
+
+This disconnectedness of the actual freeing of memory and reporting
+this to the GC proved to be bad in practice.  It was easy to make
+mistakes and report the wrong size because allocating and freeing was
+not done with symmetric code, and because it is cumbersome to compute
+the total size of nested data structures that were freed with multiple
+calls to @code{scm_must_free}.  Additionally, there was no equivalent
+to @code{scm_malloc}, and it was tempting to just use
+@code{scm_must_malloc} and never to tell the GC that the memory has
+been freed.
+
+The effect was that the internal statistics kept by the GC drifted out
+of sync with reality and could even overflow in long running programs.
+When this happened, the result was a dramatic increase in (senseless)
+GC activity which would effectively stop the program dead.
+
+@findex scm_done_malloc
+@findex scm_done_free
+The functions @code{scm_done_malloc} and @code{scm_done_free} were
+introduced to help restore balance to the force, but existing bugs did
+not magically disappear, of course.
+
+Therefore we decided to force everybody to review their code by
+deprecating the existing functions and introducing new ones in their
+place that are hopefully easier to use correctly.
+
+For every use of @code{scm_must_malloc} you need to decide whether to
+use @code{scm_malloc} or @code{scm_gc_malloc} in its place.  When the
+memory block is not part of a smob or some other Scheme object whose
+lifetime is ultimately managed by the garbage collector, use
+@code{scm_malloc} and @code{free}.  When it is part of a smob, use
+@code{scm_gc_malloc} and change the smob free function to use
+@code{scm_gc_free} instead of @code{scm_must_free} or @code{free} and
+make it return zero.
+
+The important thing is to always pair @code{scm_malloc} with
+@code{free}; and to always pair @code{scm_gc_malloc} with
+@code{scm_gc_free}.
+
+The same reasoning applies to @code{scm_must_realloc} and
+@code{scm_realloc} versus @code{scm_gc_realloc}.
+
+
+@node Weak References
+@subsection Weak References
+
+[FIXME: This chapter is based on Mikael Djurfeldt's answer to a
+question by Michael Livshin. Any mistakes are not theirs, of course. ]
+
+Weak references let you attach bookkeeping information to data so that
+the additional information automatically disappears when the original
+data is no longer in use and gets garbage collected. In a weak key hash,
+the hash entry for that key disappears as soon as the key is no longer
+referenced from anywhere else. For weak value hashes, the same happens
+as soon as the value is no longer in use. Entries in a doubly weak hash
+disappear when either the key or the value are not used anywhere else
+anymore.
+
+Object properties offer the same kind of functionality as weak key
+hashes in many situations. (@pxref{Object Properties})
+
+Here's an example (a little bit strained perhaps, but one of the
+examples is actually used in Guile):
+
+Assume that you're implementing a debugging system where you want to
+associate information about filename and position of source code
+expressions with the expressions themselves.
+
+Hashtables can be used for that, but if you use ordinary hash tables
+it will be impossible for the scheme interpreter to "forget" old
+source when, for example, a file is reloaded.
+
+To implement the mapping from source code expressions to positional
+information it is necessary to use weak-key tables since we don't want
+the expressions to be remembered just because they are in our table.
+
+To implement a mapping from source file line numbers to source code
+expressions you would use a weak-value table.
+
+To implement a mapping from source code expressions to the procedures
+they constitute a doubly-weak table has to be used.
+
+@menu
+* Weak hash tables::
+* Weak vectors::
+@end menu
+
+
+@node Weak hash tables
+@subsubsection Weak hash tables
+
+@deffn {Scheme Procedure} make-weak-key-hash-table size
+@deffnx {Scheme Procedure} make-weak-value-hash-table size
+@deffnx {Scheme Procedure} make-doubly-weak-hash-table size
+@deffnx {C Function} scm_make_weak_key_hash_table (size)
+@deffnx {C Function} scm_make_weak_value_hash_table (size)
+@deffnx {C Function} scm_make_doubly_weak_hash_table (size)
+Return a weak hash table with @var{size} buckets. As with any
+hash table, choosing a good size for the table requires some
+caution.
+
+You can modify weak hash tables in exactly the same way you
+would modify regular hash tables. (@pxref{Hash Tables})
+@end deffn
+
+@deffn {Scheme Procedure} weak-key-hash-table? obj
+@deffnx {Scheme Procedure} weak-value-hash-table? obj
+@deffnx {Scheme Procedure} doubly-weak-hash-table? obj
+@deffnx {C Function} scm_weak_key_hash_table_p (obj)
+@deffnx {C Function} scm_weak_value_hash_table_p (obj)
+@deffnx {C Function} scm_doubly_weak_hash_table_p (obj)
+Return @code{#t} if @var{obj} is the specified weak hash
+table. Note that a doubly weak hash table is neither a weak key
+nor a weak value hash table.
+@end deffn
+
+@node Weak vectors
+@subsubsection Weak vectors
+
+Weak vectors are mainly useful in Guile's implementation of weak hash
+tables.
+
+@deffn {Scheme Procedure} make-weak-vector size [fill]
+@deffnx {C Function} scm_make_weak_vector (size, fill)
+Return a weak vector with @var{size} elements. If the optional
+argument @var{fill} is given, all entries in the vector will be
+set to @var{fill}. The default value for @var{fill} is the
+empty list.
+@end deffn
+
+@deffn {Scheme Procedure} weak-vector . l
+@deffnx {Scheme Procedure} list->weak-vector l
+@deffnx {C Function} scm_weak_vector (l)
+Construct a weak vector from a list: @code{weak-vector} uses
+the list of its arguments while @code{list->weak-vector} uses
+its only argument @var{l} (a list) to construct a weak vector
+the same way @code{list->vector} would.
+@end deffn
+
+@deffn {Scheme Procedure} weak-vector? obj
+@deffnx {C Function} scm_weak_vector_p (obj)
+Return @code{#t} if @var{obj} is a weak vector. Note that all
+weak hashes are also weak vectors.
+@end deffn
+
+
+@node Guardians
+@subsection Guardians
+
+Guardians provide a way to be notified about objects that would
+otherwise be collected as garbage.  Guarding them prevents the objects
+from being collected and cleanup actions can be performed on them, for
+example.
+
+See R. Kent Dybvig, Carl Bruggeman, and David Eby (1993) "Guardians in
+a Generation-Based Garbage Collector".  ACM SIGPLAN Conference on
+Programming Language Design and Implementation, June 1993.
+
+@deffn {Scheme Procedure} make-guardian
+@deffnx {C Function} scm_make_guardian ()
+Create a new guardian.  A guardian protects a set of objects from
+garbage collection, allowing a program to apply cleanup or other
+actions.
+
+@code{make-guardian} returns a procedure representing the guardian.
+Calling the guardian procedure with an argument adds the argument to
+the guardian's set of protected objects.  Calling the guardian
+procedure without an argument returns one of the protected objects
+which are ready for garbage collection, or @code{#f} if no such object
+is available.  Objects which are returned in this way are removed from
+the guardian.
+
+You can put a single object into a guardian more than once and you can
+put a single object into more than one guardian.  The object will then
+be returned multiple times by the guardian procedures.
+
+An object is eligible to be returned from a guardian when it is no
+longer referenced from outside any guardian.
+
+There is no guarantee about the order in which objects are returned
+from a guardian.  If you want to impose an order on finalization
+actions, for example, you can do that by keeping objects alive in some
+global data structure until they are no longer needed for finalizing
+other objects.
+
+Being an element in a weak vector, a key in a hash table with weak
+keys, or a value in a hash table with weak values does not prevent an
+object from being returned by a guardian.  But as long as an object
+can be returned from a guardian it will not be removed from such a
+weak vector or hash table.  In other words, a weak link does not
+prevent an object from being considered collectable, but being inside
+a guardian prevents a weak link from being broken.
+
+A key in a weak key hash table can be thought of as having a strong
+reference to its associated value as long as the key is accessible.
+Consequently, when the key is only accessible from within a guardian,
+the reference from the key to the value is also considered to be
+coming from within a guardian.  Thus, if there is no other reference
+to the value, it is eligible to be returned from a guardian.
+@end deffn
+
+
+@page
+@node Objects
+@section Objects
+
+@deffn {Scheme Procedure} entity? obj
+@deffnx {C Function} scm_entity_p (obj)
+Return @code{#t} if @var{obj} is an entity.
+@end deffn
+
+@deffn {Scheme Procedure} operator? obj
+@deffnx {C Function} scm_operator_p (obj)
+Return @code{#t} if @var{obj} is an operator.
+@end deffn
+
+@deffn {Scheme Procedure} set-object-procedure! obj proc
+@deffnx {C Function} scm_set_object_procedure_x (obj, proc)
+Set the object procedure of @var{obj} to @var{proc}.
+@var{obj} must be either an entity or an operator.
+@end deffn
+
+@deffn {Scheme Procedure} make-class-object metaclass layout
+@deffnx {C Function} scm_make_class_object (metaclass, layout)
+Create a new class object of class @var{metaclass}, with the
+slot layout specified by @var{layout}.
+@end deffn
+
+@deffn {Scheme Procedure} make-subclass-object class layout
+@deffnx {C Function} scm_make_subclass_object (class, layout)
+Create a subclass object of @var{class}, with the slot layout
+specified by @var{layout}.
+@end deffn
+
+
+@c Local Variables:
+@c TeX-master: "guile.texi"
+@c End:

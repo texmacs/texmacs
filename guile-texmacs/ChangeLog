@@ -1,0 +1,17 @@
+-*- text -*-
+
+Starting from September 1st, 2008, the Guile project no longer stores
+change logs in `ChangeLog' files.  Instead, changes are detailed in the
+version control system's logs.  They can be seen by downloading a copy
+of the Git repository:
+
+  $ git clone git://git.sv.gnu.org/guile.git
+  $ git whatchanged
+
+Alternatively, they can be seen on the web, using the Gitweb interface
+at:
+
+  http://git.sv.gnu.org/gitweb/?p=guile.git
+
+Change logs up to September 1st, 2008, are still available in the files
+named `ChangeLog-2008'.

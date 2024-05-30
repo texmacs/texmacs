@@ -1,0 +1,40 @@
+							       -*- outline -*-
+
+* Overview
+
+This directory contains examples illustrating various aspects of Guile
+programming.
+
+If you plan writing Scheme programs, have a look at the `scripts'
+directory.  To learn more about Guile modules, check out the `modules'
+directory, and maybe the `box-module' and `box-dynamic-module'
+directories, if you are into C programming or shared libraries,
+respectively.  The `safe' directory contains examples for evaluation
+Scheme code in controlled environments (sandboxing).  The directories
+`box', `box-module', `box-dynamic' and `box-dynamic-module' are
+interesting if you plan writing Guile extensions.
+
+See the README files in the subdirectories for details.
+
+
+* Included Examples
+
+scripts             Examples for writing simple scripts in Guile Scheme.
+
+box		    Example for extending Guile with a new data type.
+
+box-module	    Similar to `box', but defines new procedures in a
+		    named module.
+box-dynamic	    Implements the box type in a dynamically loadable
+		    library.
+box-dynamic-module  Combination of `box-module' and `box-dynamic': 
+		    Implements the `box' type in a shared library and
+		    defines the procedures in a Guile module.
+
+modules		    Examples for writing and using Guile modules.
+
+safe		    Examples for creating and using safe environments.
+
+compat		    autoconf code for making a Guile extension
+		    compatible with older versions of Guile.
+

@@ -1,0 +1,54 @@
+2004-07-29  Kevin Ryde  <user42@zip.com.au>
+
+	* doc/tutorial/guile-tut.texi (What is libguile): Correction to
+	reference manual "Data representation" cross reference.
+
+2004-06-28  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* Makefile.am: Removed home-grown code for HTML generation.
+	Automake does it for us now.
+
+	* guile-tut.texi (Top): Use @ifnottex instead of @ifinfo for the
+	beneift of makeinfo --html.
+
+2003-09-27  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* guile-tut.texi (Using Guile to program in Scheme): Fix result of
+	`(reverse ls)', and change `squaring function' example to use `(*
+	n n)' instead of `(expt n n)'.  Thanks to Jack Pavlovsky for
+	pointing these out.
+
+2003-05-27  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* guile-tut.texi: Fix example, where a vector constant is used
+	without quoting.
+
+2002-07-16  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* guile-tut.texi (Jump Start): Apply patch from M. Luedde on use
+	of tail recursion to avoid stack overflow (with minor editing).
+
+2001-11-18  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* guile-tut.texi (History of Guile and its motivations): Update
+	Tcl war URLs.
+
+2001-09-19  Thien-Thi Nguyen  <ttn@glug.org>
+
+	* guile-tut.texi: Fix improper `@result' usage.
+	Fix number typo in "Jump Start" section.
+
+2001-08-27  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* Makefile.am (guile_tut_TEXINFOS): Removed.
+	(TEXINFO_TEX): Added; avoids shipping multiple copies of
+	texinfo.tex in a single distribution.
+
+	* guile-tut.texi: Incorporate text previously in separate AUTHORS
+	file.
+
+2001-08-27  Neil Jerram  <neil@ossau.uklinux.net>
+
+	The change log for files in this directory continues backwards
+	from 2001-08-27 in ../ChangeLog, as all the Guile documentation
+	prior to this date was contained in a single directory.

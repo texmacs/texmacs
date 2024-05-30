@@ -1,0 +1,81 @@
+;;;; multilingual.nottest --- tests of multilingual support    -*- scheme -*-
+;;;; Jim Blandy <jimb@red-bean.com> --- September 1999
+;;;; This isn't a test yet, because we don't have multilingual support yet.
+;;;;
+;;;; 	Copyright (C) 1999, 2006 Free Software Foundation, Inc.
+;;;; 
+;;;; This program is free software; you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; either version 2, or (at your option)
+;;;; any later version.
+;;;; 
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;; 
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this software; see the file COPYING.  If not, write to
+;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;;; Boston, MA 02110-1301 USA
+
+(use-modules (test-suite lib))
+
+
+;;; Tests of Emacs 20.4 character encoding.
+
+;;; Check that characters are being encoded correctly.
+
+;;; These tests are specific to the Emacs 20.4 encoding; they'll need
+;;; to be replaced when Guile switches to UTF-8.  See mb.c for a
+;;; description of this encoding.
+
+(define (check-encoding char-number encoding)
+  (let ((singleton (string (integer->char char-number))))
+    (pass-if (string-append "encoding character "
+			    (number->string char-number))
+	     (equal? (string->bytes singleton) encoding))
+    (pass-if (string-append "decoding character "
+			    (number->string char-number))
+	     (catch #t
+		    (lambda ()
+		      (equal? (bytes->string encoding) singleton))
+		    (lambda dummy #f)))))
+		      
+
+;; Check some ASCII characters.
+(check-encoding 0 #y(0))
+(check-encoding 127 #y(127))
+(check-encoding 31 #y(31))
+(check-encoding 32 #y(32))
+(check-encoding 42 #y(42))
+
+;;; Sometimes we mark something as an "end of range", when it's not
+;;; actually the last character that would use that encoding form.
+;;; This is because not all character set numbers are assigned, and we
+;;; can't use unassigned character set numbers.  So the value given is
+;;; the last value which actually corresponds to something in a real
+;;; character set.
+
+;; Check some characters encoded in two bytes.
+(check-encoding 2208 #y(#x81 #xA0)) ; beginning of range
+(check-encoding 3839 #y(#x8d #xFF)) ; end of range
+(check-encoding 2273 #y(#x81 #xE1))
+
+;; Check some big characters encoded in three bytes.
+(check-encoding 20512  #y(#x90 #xA0 #xA0)) ; beginning of range
+(check-encoding 180223 #y(#x99 #xFF #xFF)) ; end of range
+(check-encoding 53931  #y(#x92 #xA5 #xAB))
+
+;; Check some small characters encoded in three bytes --- some from
+;; the #x9A prefix range, and some from the #x9B prefix range.
+(check-encoding 6176   #y(#x9A #xA0 #xA0))  ; start of the #9A prefix range
+(check-encoding 7167   #y(#x9A #xA7 #xFF))  ; end   of the #9A prefix range
+(check-encoding 14368  #y(#x9B #xE0 #xA0))  ; start of the #9B prefix range
+(check-encoding 14591  #y(#x9B #xE1 #xFF))  ; end   of the #9B prefix range
+
+;; Check some characters encoded in four bytes.
+(check-encoding 266272 #y(#x9C #xF0 #xA0 #xA0)) ; start of the #9C prefix range
+(check-encoding 294911 #y(#x9C #xF1 #xFF #xFF)) ; end   of the #9C prefix range
+(check-encoding 348192 #y(#x9D #xF5 #xA0 #xA0)) ; start of the #9D prefix range
+(check-encoding 475135 #y(#x9D #xFC #xFF #xFF)) ; start of the #9D prefix range

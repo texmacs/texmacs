@@ -1,0 +1,76 @@
+2008-02-06  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* goops-tutorial.texi (Next-method): Minor improvements to the
+	text.
+
+2006-09-28  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* goops.texi (Slot Options): Added example from Ludovic Courtès
+	about difference between init-value, -form and -thunk.
+
+2006-04-21  Kevin Ryde  <user42@zip.com.au>
+
+	* hierarchy.pdf: New file, converted from hierarchy.eps using
+	epstopdf, to let "make pdf" work.
+	* Makefile.am: (goops_TEXINFOS): Add it.
+
+2006-03-08  Ludovic Courtès  <ludovic.courtes@laas.fr>
+
+	* goops.texi (Slot Options): Note init-value is shared.
+
+2006-02-06  Marius Vollmer  <mvo@zagadka.de>
+
+	* goops.texi (Basic Generic Function Creation): Added blurb about
+	merge-generics duplicates handler from NEWS.
+
+2004-06-28  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* Makefile.am: Removed home-grown code for HTML generation.
+	Automake does it for us now.
+	(goops_TEXINFOS): Added hierarchy.png
+
+	* hierarchy.png: New file.
+
+2004-05-19  Kevin Ryde  <user42@zip.com.au>
+
+	* Makefile.am (CLEANFILES): Remove, goops.tmp goops.cps cleaned by
+	automake these days.
+
+2003-04-17  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* goops.texi (Object Comparisons): Removed object-eqv? and
+	object-equal? and added eqv?, equal? and =.
+
+2003-01-10  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* goops.texi (Class Redefinition): Clarifications; Removed
+	mentioning of change-object-class.
+
+2002-11-07  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* goops.texi (Top): Say "Indices" before index nodes in main menu.
+	(Index): Removed (it was empty).  Generally remove unnecessary
+	padding text that looks bad in HTML.
+
+2002-04-17  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* Makefile.am (CLEANFILES): Added goops.tmp, goops.cps.
+
+2001-12-03  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* goops.texi: Grammar fix.
+
+2001-08-27  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* Makefile.am (goops_TEXINFOS): Remove ../AUTHORS.
+	(TEXINFO_TEX): Added; avoids shipping multiple copies of
+	texinfo.tex in a single distribution.
+
+	* goops.texi: Incorporate text previously in separate AUTHORS
+	file.
+
+2001-08-27  Neil Jerram  <neil@ossau.uklinux.net>
+
+	The change log for files in this directory continues backwards
+	from 2001-08-27 in ../ChangeLog, as all the Guile documentation
+	prior to this date was contained in a single directory.

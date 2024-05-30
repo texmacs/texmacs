@@ -1,0 +1,1319 @@
+2008-06-28  Ludovic Courtès  <ludo@gnu.org>
+
+	* Makefile.am (INCLUDES): Renamed to...
+	(AM_CPPFLAGS): this, to match current Automake conventions.
+
+	* srfi-19.scm (priv:read-tai-utc-data): Use `eof-object?'
+	instead of comparing LINE with `eof'.
+
+2008-04-28  Ludovic Courtès  <ludo@gnu.org>
+
+	* srfi-1.c (scm_srfi1_partition): Properly type-check LIST.
+	Reported by Julian Graham <joolean@gmail.com>.
+
+2008-04-27  Ludovic Courtès  <ludo@gnu.org>
+
+	* srfi-1.c: Include <config.h>.
+
+2008-04-26  Ludovic Courtès  <ludo@gnu.org>
+
+	* srfi-35.scm: Provide `srfi-35' through `cond-expand-provide'.
+
+2008-04-26  Ludovic Courtès  <ludo@gnu.org>
+
+	* Makefile.am (srfi_DATA): Add `srfi-88.scm'.
+	* srfi-88.scm: New file.
+
+2008-03-12  Ludovic Courtès  <ludo@gnu.org>
+
+	* srfi-37.scm (args-fold)[short-option]: Set ARGS to `(cdr
+	args)' before calling `next-arg'.  This fixes parsing of
+	argument-less options when using short names.
+
+2008-01-22  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* srfi-39.scm: Update copyright statement to LGPL.
+
+2007-12-13  Stephen Compall  <s11@member.fsf.org>
+
+	* srfi-69.scm (without-keyword-args): Use `cdr' instead of
+	`rest'.
+
+2007-12-03  Stephen Compall  <s11@member.fsf.org>
+
+	* srfi-69.scm: New file.
+	* Makefile.am: Add it.
+
+2007-09-10  Ludovic Courtès  <ludo@gnu.org>
+
+	* srfi-35.scm (make-compound-condition-type): When PARENTS
+	contains only one element, return its car.  This improves the
+	output of `print-condition' for non-compound conditions returned
+	by `make-compound-condition'.
+
+2007-08-11  Ludovic Courtès  <ludo@gnu.org>
+
+	* srfi-35.scm: New file.
+	* Makefile.am (srfi_DATA): Added `srfi-35.scm'.
+
+2007-07-18  Stephen Compall  <s11@member.fsf.org>
+
+	* srfi-37.scm: New file.
+	* Makefile.am: Add it.
+
+2007-07-09  Ludovic Courtès  <ludo@gnu.org>
+
+	* srfi-19.scm (date->julian-day): Take OFFSET into account.
+	Patch by Jon Wilson <j85wilson@fastmail.fm>.
+
+2007-05-09  Ludovic Courtès  <ludo@chbouib.org>
+
+	* srfi-19.scm (priv:current-time-process): Removed shadowing
+	definition that returned a list.  Use the right argument order to
+	`make-time'.  Reported by Scott Shedden.
+
+2006-12-02  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-60.c (scm_srfi60_copy_bit): Should be long not int for fixnum
+	bitshift, fixes 64-bit systems setting a bit between 32 and 63.
+	Reported by Aaron M. Ucko, Debian bug 396119.
+
+2006-05-28  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.scm, srfi-1.c, srfi-1.h (append-reverse, append-reverse!):
+	Rewrite in C.
+
+2006-05-20  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.c (scm_srfi1_assoc): Correction to comparison procedure
+	argument order, SRFI-1 specifies given key is first.
+
+2006-02-06  Marius Vollmer  <mvo@zagadka.de>
+
+	* srfi-1.scm, srfi-60.scm: Updated versions in library name to
+	match GUILE-VERSION.
+
+2006-02-04  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.c (scm_srfi1_delete, scm_srfi1_delete_duplicates): Use a
+	count to protect against nasty code in the equality procedure changing
+	the lists we're working on.  The results don't have to be sensible in
+	that case, just not hang or access non-cells.
+
+	* srfi-60.c (booleans->integer): Avoid newline in macro, it breaks the
+	snarfer.
+
+2005-11-24  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.scm, srfi-1.c, srfi-1.h (lset-difference!): Rewrite in C.
+
+2005-08-19  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-19.scm (priv:leap-second-table): Add new 2005 leap second.
+
+2005-08-12  Marius Vollmer  <mvo@zagadka.de>
+
+	* srfi-1.c: Use scm_is_null instead of SCM_NULLP.  Thanks to
+	Peter Gavin!
+
+2005-08-01  Marius Vollmer  <mvo@zagadka.de>
+
+	* srfi-1.c (check_map_args): Move check_map_error label and elt
+	variable outside of loop scope so that we do not jump past the
+	initialization of elt.
+
+2005-06-12  Marius Vollmer  <mvo@zagadka.de>
+
+	* srfi-1.c: Do not use INUM macros, they are deprecated.
+
+2005-05-07  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.scm, srfi-1.c, srfi-1.h (car+cdr, fold, last, list-index,
+	list-tabulate, not-pair, xcons): Rewrite in C.
+
+2005-05-04  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.scm, srfi-1.c, srfi-1.h (break, break!, drop-right!,
+	drop-while, eighth, fifth, lset-adjoin, ninth, reduce, reduce-right,
+	seventh, sixth, span, span!, take!, take-while, take-while!, tenth):
+	Rewrite in C.
+	
+2005-04-23  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.c (scm_srfi1_count, scm_srfi1_filter_map): Don't modify the
+	rest argument, that belongs to the caller when reached from apply.
+	Use a temp vector like scm_srfi1_for_each.
+
+2005-04-04  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.c, srfi-1.h (scm_srfi1_concatenate, scm_srfi1_concatenate_x):
+	Add code to check argument is a list, scm_append and scm_append_x
+	don't do that on their "rest" list (in a normal build).
+
+2005-04-02  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.c (scm_srfi1_count): Use scm_list_copy to make arg list,
+	instead of an inline loop.  Share final list check between all cases
+	to save some code.
+
+	* srfi-1.c (scm_srfi1_filter_map): Have 2-arg case share finalization
+	code of 1-arg case.
+
+	* srfi-1.scm (alist-cons): Define just as acons, not a call to acons.
+
+	* srfi-1.scm, srfi-1.c, srfi-1.h (alist-copy): Rewrite in C.
+
+	* srfi-1.scm (lset-union): Rewrite to accumulate result by consing in
+	the order specified by the SRFI.
+
+2005-03-29  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* srfi-60.c: Replaced SCM_INUMP with SCM_I_INUMP and SCM_INUM with
+	SCM_I_INUM throughout.
+
+2005-03-26  Marius Vollmer  <mvo@zagadka.de>
+
+	* Makefile.am (srfiinclude_HEADERS): Added srfi-60.h.
+
+2005-03-18  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.scm, srfi-1.c, srfi-1.h (filter-map): Rewrite in C.
+
+2005-03-16  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.scm, srfi-1.c, srfi-1.h (drop-right, partition!, remove!,
+	split-at, split-at!, take-right): Rewrite in C.  remove! derived from
+	core filter!.
+
+2005-03-14  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.scm, srfi-1.c, srfi-1.h (find, find-tail): Rewrite in C.
+
+2005-03-13  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.scm (lset-union): Call `=' procedure with args in the order
+	specified by the SRFI.
+
+	* srfi-60.scm, srfi-60.c, srfi-60.h: New files.
+	* Makefile.am: Add them.
+
+2005-03-02  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* srfi-1.c: Use scm_is_pair instead of SCM_CONSP; use scm_is_null
+	instead of SCM_NULLP.
+
+2005-02-18  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.scm (lset-adjoin): Revert change using `list' not `acc', the
+	spec is not quite clear, but reference code uses acc, so do that.
+	
+2005-02-12  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.scm (reduce, reduce-right): Don't call f with ridentity, use
+	it only if lst is empty, per srfi and intended optimization reduce
+	represents over fold.
+
+2005-02-04  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.scm (list=): Correction to arguments passed to given elt=,
+	spec is (elt= e[i] e[i+1]) for lists i and i+1, previously the first
+	arg was always from list 0 not list i.
+
+2005-01-29  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.scm (lset-adjoin): Actually use the given `=' procedure.
+	Test membership only on the given `list', not `acc', as per the spec.
+
+	* srfi-1.c, srfi-1.scm (remove): Rewrite in C, a trivial adaption from
+	scm_filter in the core.
+	* srfi-1.scm (remove!): Use filter!.
+
+2005-01-28  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.scm (lset=): Correction to pred call arg order, srfi spec is
+	(= e[i] e[i+1]), but had some calls the other way around.
+
+2005-01-24  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.c (scm_srfi1_member): Correction to pred call arg order, srfi
+	spec is (PRED X elem).  Update docstring from manual.
+
+	* srfi-1.scm (lset=): Allow no list arguments, per srfi spec example.
+
+2005-01-18  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.scm: Remove (ice-9 session) and (ice-9 receive), not used.
+
+2005-01-12  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-39.scm (current-input-port, current-output-port): Parameter
+	replacements for core functions, per SRFI spec.
+	(current-error-port): The same, for consistency.
+
+2005-01-10  Marius Vollmer  <mvo@zagadka.de>
+
+	* srfi-1.c (check_args): Bugfix to change from 2005-01-02: ARGV is
+	the vector to check, not ARGS.
+
+2005-01-02  Marius Vollmer  <mvo@zagadka.de>
+
+	* srfi-1.c: Use new vector elements API or simple vector API, as
+	appropriate.
+	
+2005-01-02  Kevin Ryde  <user42@zip.com.au>
+
+	* Makefile.am (srfi_DATA): Add srfi-39.scm.
+
+2004-12-20  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* README: Update, document available SRFIs.
+
+2004-12-06  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.scm (alist-copy, alist-delete, break, span): Change to
+	tail-recursive forms.
+
+	* srfi-1.scm (alist-delete): Correction to equality proc call argument
+	order, spec is for given KEY param first.
+
+2004-12-05  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.scm (filter-map): Change to a tail-recursive form.
+	(append-map, append-map!): Rewrite as simple "concatenate map" forms,
+	for tail recursiveness.
+
+2004-10-26  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* srfi-4.scm, srfi-4.h, srfi-4.c: Moved content into core; only
+	the skeletons remains.
+
+2004-10-22  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* srfi-4.c (print_int64, print_uint64): Removed.
+	(uvec_print): Use scm_intprint for signed elemets and
+	scm_uintprint for unsigned ones.  Do not use print_int64 and
+	print_uint64 since scm_intprint and scm_Uintprint can handle 64
+	bits now.
+
+2004-09-03  Stefan Jahn  <stefan@lkcc.org>
+
+	* srfi-1.c, srfi-1.h: Renamed any 'lst1' into 'list1' because
+	lst1 is a #define on Win32 systems.
+
+2004-08-26  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-31.scm (rec): Add missing `error' to else clause.
+
+2004-08-26  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* Makefile.am: Added appropriate @LIBGUILE_*_MAJOR@ substitutions
+	to the library names.
+	* srfi-1.scm, srfi-4.scm: Use the new library names with
+	load-extension.
+	
+2004-08-25  Marius Vollmer  <mvo@zagadka.de>
+
+	SRFI-13 and SRFI-14 have been moved into the core.
+	
+	* srfi-13.scm, srfi-14.scm: Simply re-export the relevant
+	bindings.
+
+	* srfi-13.h, srfi-13.c, srfi-14.h, srfi-14.c: Removed all real
+	content except for the init functions.
+	
+2004-08-19  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* srfi-13.h, srfi-13.c: (scm_substring_shared): Renamed to
+	scm_substring_sharedS.
+
+	* srfi-14.c, srfi-13.c: Adapted to new internal string and symbol
+	API.
+
+	* srfi-13.scm (substring/shared): Export as replacement since we
+	now have a version in the core.
+
+2004-08-15  Marius Vollmer  <mvo@zagadka.de>
+
+	* srfi-39.scm: New, from Jose A Ortega Ruiz.  Thanks!
+
+2004-08-14  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-13.c (scm_string_any, scm_string_every): Add support for char
+	and charset as predicates, per SRFI-13 spec.
+
+2004-08-12  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* srfi-13.c (MY_VALIDATE_SUBSTRING_SPEC_COPY,
+	MY_VALIDATE_STRING_COPY): Modernized clones of the deprecated
+	validation macros.  Replaced every use.
+
+2004-08-05  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-13.c (scm_string_any, scm_string_every): Enhance docstrings as
+	per doc/ref/srfi-modules.texi.
+
+2004-08-02  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* srfi-4.c: Replaced scm_num2* and scm_*2num with scm_to_* and
+	scm_from_*, respectively.
+	(print_int64, print_uint64): Rewritten by just calling scm_iprin1
+	on a SCM.
+
+2004-08-02  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-13.c (scm_string_every): Correction to initial "res" value,
+	return should be #t for an empty string.  Reported by Andreas Vögele.
+
+2004-07-10  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* srfi-13.c, srfi-14.c, srfi-4.c: Changed all uses of
+	SCM_VALIDATE_INUM, SCM_VALIDATE_INUM_COPY, SCM_VALIDATE_BIGINT,
+	SCM_VALIDATE_INUM_MIN, SCM_VALIDATE_INUM_MIN_COPY,
+	SCM_VALIDATE_INUM_MIN_DEF_COPY,SCM_VALIDATE_INUM_DEF,
+	SCM_VALIDATE_INUM_DEF_COPY, SCM_VALIDATE_INUM_RANGE,
+	SCM_VALIDATE_INUM_RANGE_COPY to scm_to_size_t or similar.
+
+2004-07-06  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* srfi-1.c, srfi-13.c, srfi-14.c, srfi-4.c: Replaced all uses of
+	deprecated SCM_FALSEP, SCM_NFALSEP, SCM_BOOL, SCM_NEGATE_BOOL, and
+	SCM_BOOLP with scm_is_false, scm_is_true, scm_from_bool, and
+	scm_is_bool, respectively.
+
+2004-07-05  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-4.c (uvec_sizes): Add "const".
+
+	* srfi-31.scm: Correction to heading comment.
+
+2004-06-20  Rob Browning  <rlb@defaultvalue.org>
+
+	* srfi-4.c: fix #ifdef checks for 64-bit types; should be #if.
+	Add separate symmetric test for SCM_HAVE_T_UINT64 in one case.
+	(uvec_print): rewrite using a union to make more
+	compact, and use static print_uint64 and print_int64 to print
+	64-bit elements.
+	(print_int64): new static function (temporary fix).
+	(print_uint64): new static function (temporary fix).
+
+	* Makefile.am (srfi_DATA): add srfi-31.scm.
+
+	* srfi-31.scm: new file.
+
+2004-04-24  Dirk Herrmann  <dirk@dirk-herrmanns-seiten.de>
+
+	* srfi-17.scm (setter, car, cdr etc.): When within one define
+	expression a new variable in the local module is defined in terms
+	of an equally named variable from some other module, use @ to
+	refer to the variable in the other module.  This is necessary due
+	to section 5.2.1 of R5RS: In a define expression first the new
+	binding is created and then the expression is evaluated.
+
+2004-04-24  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-11.scm (let-values): Use make-symbol rather than gensym, for
+	guaranteed uniqueness of temp variable symbols.
+
+2004-04-15  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-13.c (scm_string_trim, scm_string_trim_right,
+	scm_string_trim_both): Cast to unsigned char for isspace.
+
+2004-04-06  Han-Wen Nienhuys   <hanwen@xs4all.nl>
+
+	* srfi-13.c (s_scm_string_map): convert character to unsigned char
+	before converting to unsigned int. This prevents hi-bit ascii as
+	being converted large integers.
+	(string_upcase_x): change caller for scm_{up,down}case to
+	scm_c_{up,down}case
+
+2004-03-23  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.scm (circular-list): Rewrite using set-cdr!, no need to copy
+	parameter list.
+
+2004-02-08  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* Makefile.am (TAGS_FILES): Use this variable instead of
+	ETAGS_ARGS so that TAGS can be built using separate build
+	directory.
+
+2004-01-24  Marius Vollmer  <mvo@zagadka.de>
+
+	* Makefile.am (srfi_DATA): Added srfi-26.scm.
+
+2004-01-21  Marius Vollmer  <m.vollmer@ping.de>
+
+	* srfi-26.scm: New, from Daniel Skarda.  Thanks!
+
+2003-12-03  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.c, srfi-1.h, srfi-1.scm (count): Rewrite in C, avoiding
+	non-tail recursion.
+
+	* srfi-1.scm (map!): Define as an alias for map, previous definition
+	was not tail-recursive.
+	
+2003-08-23  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.c, srfi-1.h, srfi-1.scm (list-copy): New function, derived
+	from core list-copy but allowing improper lists, per SRFI-1 spec.
+
+	* srfi-19.scm (date-week-number): Correction, day of week starting
+	week applied was off by one.
+
+2003-07-29  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.c, srfi-1.scm (concatenate, concatenate!): Use scm_append and
+	scm_append_x.
+
+	* srfi-1.c, srfi-1.h, srfi-1.scm (length+): Rewrite using scm_ilength.
+
+	* srfi-34.scm: Add cond-expand-provide srfi-34.
+
+2003-07-14  Matthias Koeppe  <mkoeppe@mail.math.uni-magdeburg.de>
+
+	* srfi-1.c, srfi-1.h (scm_srfi1_partition), srfi-1.scm (partition):
+	Re-implement in C to avoid stack overflows for long input lists.
+
+2003-07-08  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.c, srfi-1.h (scm_srfi1_delete, scm_srfi1_delete_x,
+	scm_srfi1_delete_duplicates, scm_srfi1_delete_duplicates_x): New
+	functions.  scm_srfi1_delete_x is derived from scm_delete_x.
+	* srfi-1.scm (delete, delete!, delete-duplicates, delete-duplicates!):
+	Remove.
+
+2003-06-07  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-6.scm: #:re-export open-input-string, open-output-string and
+	get-output-string, for the benefit of applications wanting to use
+	#:select on the module.
+
+2003-05-29  Stefan Jahn  <stefan@lkcc.org>
+
+	* Makefile.am (libguile_srfi_srfi_1_la_LDFLAGS, 
+	libguile_srfi_srfi_4_la_LDFLAGS, 
+	libguile_srfi_srfi_13_14__la_LDFLAGS): Added the -no-undefined
+	option for the mingw32 build.
+
+2003-05-13  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.scm (delete): Fix predicate arg order to match srfi-1 spec.
+
+2003-05-10  Kevin Ryde  <user42@zip.com.au>
+
+	* srfi-1.scm (take): Make this an alias for list-head.
+	(drop): Make this an alias for list-tail.
+
+2003-04-30  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* srfi-34.scm: New file.
+
+2003-04-23  Marius Vollmer  <mvo@zagadka.de>
+
+	* srfi-1.scm: Removed stray "o" from exports list.
+
+2003-04-21  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* srfi-1.c (srfi1_ilength): Prefer !SCM_CONSP over SCM_NCONSP.
+	Now, guile itself does not include any calls to SCM_NCONSP any
+	more.
+
+2003-04-05  Marius Vollmer  <mvo@zagadka.de>
+
+        * Changed license terms to the plain LGPL thru-out.
+
+2003-03-25  Rob Browning  <rlb@defaultvalue.org>
+
+	* srfi-4.c: replace typedefs for basic types with typedefs using
+	new standard int types (i.e. scm_t_uint8, etc.) -- should probably
+	remove typedefs altogether later.
+
+2003-03-24  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* srfi-1.scm: Re-export all srfi-1 bindings implemented by the
+	core.  (Thanks to Kevin Ryde.)
+
+2003-03-12  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* srfi-13.scm: Mark replacements.
+
+	* srfi-17.scm: Mark replacements.
+
+2003-03-11  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* srfi-1.scm (iota, map, for-each, map-in-order, list-index,
+	member, delete, delete!, assoc): Marked as replacements.
+	(filter, filter!): Removed.  (Now implemented in the core.)
+
+2003-03-06  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* srfi-1.c (scm_init_srfi_1): Extend root module map and for-each
+	with the versions in this module using
+	scm_c_extend_primitive_generic.
+
+2003-02-03  Mikael Djurfeldt  <djurfeldt@nada.kth.se>
+
+	* srfi-1.c (srfi1_for_each): Corrected argument checking for the
+	case of two argument lists.  (Thanks to Kevin Ryde.)
+
+2002-12-08  Rob Browning  <rlb@defaultvalue.org>
+
+	* Makefile.am (srfidir): VERSION -> GUILE_EFFECTIVE_VERSION.
+
+2002-12-02  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* Makefile.am (srfiinclude_HEADERS): Added srfi-1.h.
+
+2002-12-01  Mikael Djurfeldt  <mdj@linnaeus>
+
+	* srfi-1.scm: Load srfi-1 extension.
+	(map, map-in-order, for-each, member, assoc): Replaced by
+	primitives in srfi-1.c.
+	(map1): Defined as `map'.
+
+	* Makefile.am: Added rules for srfi-1.c.
+
+	* srfi-1.c, srfi-1.h: New files.
+
+2002-05-06  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* srfi-13.c (scm_string_tokenize): Instead of using "isgraphic" as
+	the subtitute for char-set:graphic when then token-set hsa been
+	defaulted, grab the real char-set:graphic from (srfi srfi-14).
+
+	* srfi-14.h (SCM_CHARSET_GET): Cast IDX to unsigned char so that
+	it works for 8-bit characters.  Thanks to Matthias Koeppe!  No,
+	make that "Köppe".
+
+2002-04-24  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* srfi-13.c (s_scm_string_tokenize): Only take character sets as
+	the second arg.  Collect characters belonging to this set into
+	tokens (as specified by the SRFI), instead of splitting at these
+	characters.  Default to an equivalent of char-set:graphic instead
+	of everything-but-whitespace.  Thanks to Matthias Koeppe!
+
+2002-04-10  Rob Browning  <rlb@defaultvalue.org>
+
+	* .cvsignore: add *.c.clean.c.
+
+2002-03-27  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* srfi-1.scm, srfi-13.scm, srfi-17.scm, srfi-4.scm, srfi-9.scm,
+	srfi-10.scm, srfi-14.scm, srfi-19.scm, srfi-6.scm, srfi-11.scm,
+	srfi-16.scm, srfi-2.scm, srfi-8.scm: Update copyright.
+	Point to manual in commentary; nfc.
+
+2002-03-24  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* Makefile.am (.c.x): Pass "-o $@" to guile-snarf.
+
+2002-03-13  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* srfi-13.c, srfi-14.c, srfi-4.c:
+	Retire inclusion guard macro SCM_MAGIC_SNARFER.
+
+	* Makefile.am (snarfcppopts): New var.
+	(.c.x): Use $(snarfcppopts). Rework guile-snarf usage.
+
+2002-03-11  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* srfi-13.c (string_titlecase_x): Treat characters as unsigned so
+	that 8-bit chars work.  Thanks to David Pirotte!
+
+2002-02-24  Rob Browning  <rlb@defaultvalue.org>
+
+	* Makefile.am (libguile_srfi_srfi_4_la_LDFLAGS): use
+	@LIBGUILE_SRFI_SRFI_4_INTERFACE@.
+	(libguile_srfi_srfi_13_14_la_LDFLAGS): use
+	@LIBGUILE_SRFI_SRFI_13_14_INTERFACE@.
+
+2002-02-23  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* srfi-19.scm (priv:month-assoc): Correct numbers so that they
+	match the expectations of priv:year-day.
+
+2002-02-22  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* srfi-19.scm (priv:year-day): Index into priv:month-assoc using
+	month number, not day number.  (Thanks to Sébastien de Menten de
+	Horne for reporting the problem.)
+
+2002-02-11  Marius Vollmer  <marius.vollmer@uni-dortmund.de>
+
+	* srfi-14.c, srfi-4.c: Use scm_gc_malloc/scm_malloc and
+	scm_gc_free/free instead of scm_must_malloc and scm_must_free, as
+	appropriate.
+
+2002-01-21  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* srfi-1.scm (count1, take-while): Rewrite to be tail-recursive.
+	Thanks to Panagiotis Vossos.
+
+2002-01-20  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* srfi-1.scm (map1): Rewrite to be tail-recursive.
+	Thanks to Panagiotis Vossos for the bug report.
+
+2001-12-16  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* srfi-11.scm (let-values): Use `gensym' instead of `gentemp'.
+
+2001-11-30  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* Makefile.am (ETAGS_ARGS): Added.
+
+2001-11-12  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* srfi-4.c: Use HAVE_LONG_LONG instead of HAVE_LONG_LONGS and test
+	it with `#ifdef' instead of `#if'.
+
+2001-11-07  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* srfi-13.c (scm_string_unfold, scm_string_unfold_right),
+	srfi-14.c (scm_char_set_unfold, scm_char_set_unfold_x): Remove
+	superfluous whitespace at end of docstring lines.
+
+2001-11-06  Thien-Thi Nguyen  <ttn@glug.org>
+
+	* srfi-19.scm (time-monotonic->time-monotonic): Spurious;
+	remove from exports.
+
+2001-11-04  Stefan Jahn  <stefan@lkcc.org>
+
+	* srfi-13.h, srfi-14.h, srfi-4.h: Follow-up patch.  Renamed
+	__FOO__	macros into FOO.
+
+2001-11-03  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* Makefile.am (libguile_srfi_srfi_4_la_LIBADD,
+	libguile_srfi_srfi_13_14_la_LIBADD): Refer to build directory, not
+	the source directory, for libguile.la.  Thanks to Ken Raeburn.
+
+2001-11-02  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	Support for native Win32.  Thanks to Stefan Jahn!
+
+        * Makefile.am:  Put `-no-undefined' into LDFLAGS to support linkers
+        which do not allow unresolved symbols inside shared libraries.
+
+        * srfi-13.h, srfi-14.h: Defined SCM_SRFI1314_API.  Prefixed each
+        exported symbol with SCM_SRFI1314_API.
+
+        * srfi-4.h: Defined SCM_SRFI4_API.  Prefixed each exported
+        symbol with SCM_SRFI4_API.
+
+2001-10-21  Mikael Djurfeldt  <mdj@linnaeus>
+
+	* srfi-2.scm, srfi-4.scm, srfi-8.scm, srfi-9.scm, srfi-10.scm,
+	srfi-11.scm, srfi-14.scm, srfi-16.scm: Move module the system
+	directives `export', `export-syntax', `re-export' and
+	`re-export-syntax' into the `define-module' form.  This is the
+	recommended way of exporting bindings.
+
+2001-09-22  Mikael Djurfeldt  <mdj@linnaeus>
+
+	* srfi-19.scm (priv:split-real): Inserted missing call to
+	inexact->exact.
+
+2001-09-21  Rob Browning  <rlb@defaultvalue.org>
+
+	* srfi-14.h (SCM_CHARSET_GET): need 1L, not just 1 in "<<".
+
+	* srfi-14.c (SCM_CHARSET_SET): need 1L, not just 1 in "<<".
+	(scm_char_set_hash): val needs to be long, not just unsigned.
+	(scm_char_set): need 1L, not just 1 in "<<".
+	(scm_list_to_char_set): need 1L, not just 1 in "<<".
+	(scm_list_to_char_set_x): need 1L, not just 1 in "<<".
+	(scm_list_to_char_set_x): FUNC_NAME was wrong - added a _x.
+	(scm_string_to_char_set): string length var needed to be
+	scm_sizet, not int.
+	(scm_string_to_char_set): need 1L, not just 1 in "<<".
+	(scm_string_to_char_set_x): string length var needed to be
+	scm_sizet, not int.
+	(scm_string_to_char_set_x): need 1L, not just 1 in "<<".
+	(scm_char_set_filter): need 1L, not just 1 in "<<".
+	(scm_char_set_filter_x): need 1L, not just 1 in "<<".
+	(scm_ucs_range_to_char_set): need 1L, not just 1 in "<<".
+	(scm_ucs_range_to_char_set_x): need 1L, not just 1 in "<<".
+	(scm_char_set_adjoin): need 1L, not just 1 in "<<".
+	(scm_char_set_delete): need 1L, not just 1 in "<<".
+	(scm_char_set_adjoin_x): need 1L, not just 1 in "<<".
+	(scm_char_set_delete_x): need 1L, not just 1 in "<<".
+
+2001-09-12  Gary Houston  <ghouston@arglist.com>
+
+	* srfi-1.scm (filter): change "caller" to "filter" in check-arg-type.
+
+2001-08-31  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* srfi-1.scm, srfi-13.scm: Remove the defines that were needed to
+	trick export from the beginning of the files.
+
+2001-08-25  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* srfi-19.scm (add-duration): Fix bug: Call `add-duration!' w/
+	two args.  Thanks to Alex Shinn.
+
+2001-08-25  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* Makefile.am (AUTOMAKE_OPTIONS): Change "foreign" to "gnu".
+
+2001-08-24  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* srfi-13.h (scm_string_map, scm_string_map_x,
+	scm_string_for_each): Reverse order of first two args.
+	(scm_string_for_each_index): New proc.
+
+	* srfi-13.c (scm_string_for_each): Reverse order of first 2 args.
+	(scm_string_for_each_index): New func.
+
+	* srfi-13.scm (string-for-each-index): New exported proc.
+
+	Thanks to Alex Shinn.
+
+2001-08-22  Mikael Djurfeldt  <mdj@linnaeus.mit.edu>
+
+	* srfi-13.c (string-map): Swapped order of string and proc args to
+	conform with the srfi.  (Thanks to Alex Shinn.)
+
+2001-08-05  Gary Houston  <ghouston@arglist.com>
+
+	* srfi-1.scm (check-arg-type, non-negative-integer?): a couple of new
+	internal definitions.
+	(list-tabulate, iota): check for bad arguments that otherwise
+	give weird output.
+	(filter): check for proper list, to avoid infinite recursion on
+	a circular list.
+
+2001-08-04  Gary Houston  <ghouston@arglist.com>
+
+	* srfi-1.scm (filter): replaced with a tail-recursive version.
+	(remove): implement using filter, to make it tail-recursive.
+
+2001-07-31  Gary Houston  <ghouston@arglist.com>
+
+	* srfi-14.c (scm_char_set_diff_plus_intersection): wasn't correctly
+	accounting for the (char-set-union cs2...) in the spec.  i.e.,
+	(char-set-diff+intersection a) -> copy-of-a, empty-set
+	and the following are equivalent:
+	(char-set-diff+intersection a (char-set #\a) (char-set #\b))
+	(char-set-diff+intersection a (char-set #\a #\b))
+
+	(scm_char_set_xor_x): disabled the side-effecting code, since it
+	gives inconsistent results to scm_char_set_xor for the case
+	(char-set-xor! a a a).
+
+	(scm_char_set_diff_plus_intersection_x): added cs2 argument, since
+	two arguments are compulsory in final spec.  also similar changes
+	as for scm_char_set_diff_plus_intersection.
+	* srfi-14.h (scm_char_set_diff_plus_intersection_x): added cs2.
+
+2001-07-22  Gary Houston  <ghouston@arglist.com>
+
+	* srfi-14.c (scm_char_set_intersection, scm_char_set_xor): remove
+	the compulsory cs1 arguments: all args are optional in final spec.
+
+	* srfi-14.h: declarations updated.
+
+2001-07-18  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* srfi-11.scm, srfi-8.scm: Update copyright notice.
+
+2001-07-17  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* srfi-14.c: Okay.  Now I got it.  Really.  This time it's fixed.
+	Guaranteed. (Maybe)
+
+	* srfi-19.scm: Define `current-time' before exporting it.
+
+2001-07-17  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* srfi-14.c: Fix for bug caused by brain-malfunctioning on my
+	side.  Bit sets were handled wrong because I couldn't tell bit
+	counts from byte counts.  Also, the bit array should be 256 / 8
+	bytes long.  Thank you, Gary!
+
+	Removed unnecessary protoype for scm_char_set_copy.
+
+2001-07-16  Gary Houston  <ghouston@arglist.com>
+
+	* srfi-14.scm: export string->char-set!, not string-char-set!.
+
+	* srfi-14.c (scm_char_set_ref, scm_char_set_cursor_next,
+	scm_end_of_char_set_p): reject negative	cursor values.
+	(scm_list_to_char_set, scm_list_to_char_set_x): when reporting
+	type error in list component, omit the position (was always 1).
+
+2001-07-16  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	(scm_char_set_map): Bug-fix: char-set-map was modifying the
+	argument instead of the return value.
+
+2001-07-16  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* srfi-14.c: Allocate correct memory size for charsets (32 bytes),
+	use this value for initializing and comparing charsets.
+	(scm_char_set_hash): Use ``better'' hash algorithm which produces
+	more values.
+
+2001-07-15  Gary Houston  <ghouston@arglist.com>
+
+	* srfi-14.c (scm_char_set_hash): recognise 0 instead of #f in the
+	opt arg to give default bound, as in final spec.  don't allow
+	negative bounds.
+	(scm_char_set_hash): bug fix: was overrunning the buffer and
+	calculating based on garbage.
+	(scm_char_set_eq, scm_char_set_leq): fix argument number in error
+	reporting: wasn't incremented due to macro coding.
+	(scm_char_set): report argument number in error reporting: was
+	hard coded to 1.  remove a couple of local variables.
+
+2001-07-13  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* srfi-2.scm (and-let*): Use `re-export-syntax' instead of
+	`export-syntax'.
+
+2001-07-11  Gary Houston  <ghouston@arglist.com>
+
+	* srfi-14.c (s_scm_char_set_eq): bug fix: (char-set=) should
+	return #t instead of giving wrong-number-of-arguments . take a
+	single "rest" argument.  use memcmp instead of a loop to compare
+	the values.
+	(s_scm_char_set_leq): similarly, (char-set<=) should return #t.
+	take a single "rest" argument.
+	srfi-14.h: update the declarations.
+
+2001-07-09  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* README: Cleanup.
+
+2001-07-06  Gary Houston  <ghouston@arglist.com>
+
+	* srfi-1.scm (iota, map, for-each, list-index, member, delete,
+	delete!, assoc): roll back the previous change.  instead place
+	dummy definitions in a deprecated block at the beginning as in
+	srfi-13.scm.
+
+2001-07-06  Rob Browning  <rlb@defaultvalue.org>
+
+	* srfi-19.scm (priv:locale-reader): don't need open-output-string.
+
+2001-07-03  Gary Houston  <ghouston@arglist.com>
+
+	* srfi-1.scm (iota, map, for-each, list-index, member, delete,
+	delete!, assoc): don't export until the new bindings have been
+	created.  otherwise "export" thinks they are being re-exported and
+	a deprecation warning is produced.
+	(map-in-order): defined and exported, to support lists of unequal
+	length.
+
+2001-07-03  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* srfi-1.scm (list-tabulate): Do not go into infinite loop for
+	invalid arguments.  Same fix for several other procedures (do not
+	use zero?, use <= 0).
+
+2001-07-02  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* srfi-1.scm: Replaced calls to `map' in several procedures to
+	calls to `map1'.
+	(map, for-each): New procedures, extended from R5RS.
+
+2001-06-28  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* srfi-4.c: Minor cleanups.
+
+	* srfi-14.c (scm_char_set_fold, scm_char_set_unfold)
+	(scm_char_set_unfold_x, scm_char_set_for_each)
+	(scm_char_set_map, scm_char_set_filter)
+	(scm_char_set_filter_x, scm_char_set_count)
+	(scm_char_set_every, scm_char_set_any): Replace calls to
+	scm_apply() with the corresponding scm_call_N() functions.
+
+	* srfi-14.c (scm_char_set_ref, scm_char_set_cursor_next)
+	(scm_char_set_unfold, scm_char_set_unfold_x)
+	(scm_char_set_map, scm_char_set_diff_plus_intersection)
+	(scm_char_set_diff_plus_intersection_x): Replace deprecated macros
+	SCM_LISTN with calls to scm_list_N().
+
+	* srfi-13.c (scm_string_tabulate, scm_string_map)
+	(scm_string_map_x, scm_string_unfold)
+	(scm_string_unfold_right): Replace deprecated macros SCM_LISTN
+	with calls to scm_list_N().
+
+	* srfi-13.c (scm_string_any, scm_string_every),
+	(scm_string_tabulate, scm_string_trim),
+	(scm_string_trim_right, scm_string_trim_both),
+	(scm_string_compare, scm_string_compare_ci),
+	(scm_string_indexS, scm_string_index_right),
+	(scm_string_skip, scm_string_skip_right, scm_string_count),
+	(scm_string_map, scm_string_map_x, scm_string_fold),
+	(scm_string_fold_right, scm_string_unfold),
+	(scm_string_unfold_right, scm_string_for_each),
+	(scm_string_filter, scm_string_delete): Replace calls to
+	scm_apply() with the corresponding scm_call_N() functions.
+
+2001-06-27  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* Makefile.am: Added SRFI-4 files in various places.
+
+	* srfi-4.c, srfi-4.h, srfi-4.scm: New files implementing SRFI-4.
+
+2001-06-26  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* srfi-13.c (scm_string_copyS, scm_string_take, scm_string_drop,
+	scm_string_take_right, scm_string_drop_right, scm_string_trim,
+	scm_string_trim_right, scm_string_trim_both, scm_string_tokenize):
+	Use scm_mem2string instead of scm_makfromstr.
+
+	(scm_reverse_list_to_string, string_titlecase_x):  Prefer
+	!SCM_<pred> over SCM_N<pred>.
+
+2001-06-25  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* srfi-8.scm: Use `re-export-syntax' to correctly re-export
+	`receive'.
+
+2001-06-18  Matthias Koeppe  <mkoeppe@mail.math.uni-magdeburg.de>
+
+        The SRFI-19 implementation was completely broken.  Already the
+	reference implementation did not handle DST and time zones
+	properly and relied on non-R5RS-isms like passing reals to
+	`quotient'.  For Guile, some additional fixes were needed because
+	of the incomplete numeric tower implementation.  See also
+	srfi-19.test.
+
+	* srfi-19.scm (date-zone-offset): Fixed typo in export clause.
+	(add-duration): Renamed from priv:add-duration.
+	(priv:time-normalize!): Handle fractional nanoseconds; remove
+	duplicate definition.
+	(priv:current-time-tai): Fixed typo.
+	(time=?, time<=?): Fixed typos.
+	(time-tai->time-utc, time-utc->time-tai,
+	time-utc->time-monotonic): Use make-time-unnormalized instead of
+	make-time when uninitialized time fields are used.
+	(set-date-nanosecond!, set-date-second!, set-date-minute!,
+	set-date-hour!, set-date-day!, set-date-month!, set-date-year!,
+	set-date-zone-offset!): Define.
+	(priv:local-tz-offset): Take an extra argument in order to handle
+	DST effects.
+	(time-utc->date, time-tai->date, time-monotonic->date): Handle the
+	changed signature of priv:local-tz-offset. Don't pass non-integer
+	arguments to quotient (non-R5RS, not supported by Guile).
+	(date->time-utc): Ensure that seconds in a date structure are
+	always exact integers.  Handle DST properly.
+	(current-date, julian-day->date, modified-julian-day->date):
+	Handle the changed signature of priv:local-tz-offset.
+	(julian-day->time-utc): Reverted earlier inexact->exact hack;
+	make-time now handles inexact arguments.
+	(priv:locale-print-time-zone): At least print the numerical time
+	zone.
+	(priv:integer-reader): Fixed named let iteration.
+	(priv:read-directives): Use set-date-month! instead of
+	priv:set-date-month! etc.
+	(string->date): Handle DST properly.
+
+2001-06-14  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* srfi-13.scm: Prevent `export' from re-exporting core bindings.
+
+2001-06-07  Dirk Herrmann  <D.Herrmann@tu-bs.de>
+
+	* srfi-14.c (charset_print): Mark unused parameters with
+	SCM_UNUSED.
+
+2001-06-07  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* srfi-1.scm (fold, fold-pair): Fixed a buggy call to apply.
+	(delete-duplicates): Now the first occurrence of an element is
+	retained, as required.
+	(member, assoc): Fixed wrong order of equality predicate
+	application.
+
+2001-06-06  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* README: Update.
+
+	* srfi-1.scm: New file.
+
+2001-06-04  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	Added exception notice to all files.
+
+2001-05-31  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* srfi-14.scm, srfi-13.scm: Use `load-extension' for loading the
+	shared library.
+
+2001-05-31  Michael Livshin  <mlivshin@bigfoot.com>
+
+	* Makefile.am (MKDEP): copied from libguile/Makefile.am, just in
+	case.
+	(CLEANFILES): added *.x (and removed from DISTCLEANFILES)
+
+2001-05-28  Michael Livshin  <mlivshin@bigfoot.com>
+
+	* srfi-19.scm: removed a stray open parenthesis. (thanks to
+	Matthias Köppe for the report).
+
+2001-05-23  Rob Browning  <rlb@cs.utexas.edu>
+
+	* srfi-19.scm (:optional): renamed to optional to avoid reader
+	keywords conflict.  Time passes... Removed :optional altogether
+	and just handle optional args directly.  Thanks to Matthias Koeppe
+	for the report of this and the two bits below.
+	(priv:decode-julian-day-number): add inexact->exact for truncate
+	result.
+	(time-utc->date): add inexact->exact and floor so quotient will
+	work.
+
+2001-05-22  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* README: Update, document available SRFIs.
+
+2001-05-21  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* srfi-19.scm, srfi-17.scm, srfi-16.scm, srfi-14.scm, srfi-13.scm,
+	srfi-11.scm, srfi-10.scm, srfi-9.scm, srfi-8.scm, srfi-6.scm,
+	srfi-2.scm: Use `cond-expand-provide' for providing features to
+	`cond-expand'.
+
+2001-05-20  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	* srfi-14.c (scm_c_init_srfi_14): Added "int" to declaration of
+	`initialized'.
+
+2001-05-19  Marius Vollmer  <mvo@zagadka.ping.de>
+
+	Avoid using module operations from C.
+
+	* srfi-13.c (scm_init_srfi_13_14): Removed.
+	* srfi-14.h, srfi-14.c (scm_c_init_srfi_14): New.  Contains
+	initializations needed by C clients of srfi-14.
+	(scm_init_srfi_13, scm_init_srfi_14): Call it.
+	* srfi-13.scm: Call "scm_init_srfi_13" instead of
+	"scm_init_srfi_13_14".
+	* srfi-14.scm: Call "scm_init_srfi_14" instead of
+	"scm_init_srfi_13_14".
+
+2001-05-16  Rob Browning  <rlb@cs.utexas.edu>
+
+	* srfi-19.scm (priv:integer-reader-exact): minor cleanups.
+
+2001-05-14  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* Makefile.am (srfi_DATA): Added srfi-16.scm.
+
+	* srfi-16.scm: New file.
+
+2001-05-10  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* srfi-13.c (scm_string_delete): Logic was inversed for charset.
+	Fixed.
+
+2001-05-08  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* srfi-13.c (scm_string_copyS): Fixed nasty bug.
+
+2001-05-05  Rob Browning  <rlb@cs.utexas.edu>
+
+	* Makefile.am (srfi_DATA): added srfi-19.scm.
+
+	* srfi-19.scm: New file - time/date SRFI.  Thanks to Will
+	Fitzgerald.
+
+2001-05-02  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* srfi-14.c, srfi-13.c: Added @bullet to various @itemize lists.
+
+	* srfi-10.scm: Typo fix.
+
+2001-05-02  Rob Browning  <rlb@cs.utexas.edu>
+
+	* srfi-11.scm (let-values): fix (a b c . d) case.  Thanks Martin.
+
+2001-05-02  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* Makefile.am (srfi_DATA): Added srfi-10.scm and srfi-17.scm.
+
+	* srfi-10.scm: New file.
+
+	* srfi-17.scm: New file, contributed by Matthias Koeppe.  Thanks a
+	lot!
+	Added `Commentary:' tag.
+
+	* srfi-9.scm: Added `Commentary:' tag.
+
+2001-04-27  Rob Browning  <rlb@cs.utexas.edu>
+
+	* srfi-13.h
+	(scm_reverse_string_concatenate): renamed to
+	scm_string_concatentate_reverse.
+	(scm_reverse_string_concatenate_shared): renamed to
+	scm_string_concatenate_reverse_shared.
+
+2001-04-27  Gary Houston  <ghouston@arglist.com>
+
+	* srfi-13.c (scm_init_srfi_13), srfi-14.c (scm_init_srfi_14):
+	add "srfi/" to lines including .x files so they can be found
+	when build_dir != src_dir.
+
+2001-04-27  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* Makefile.am (srfi_DATA): Added srfi-9.scm.
+
+	* srfi-9.scm: New file.  Exports `define-record-type'.
+
+2001-04-26  Rob Browning  <rlb@cs.utexas.edu>
+
+	* Makefile.am (srfi_DATA): added srfi-6.scm.
+	(srfi_DATA): added srfi-11.scm.
+	(srfi_DATA): added srfi-8.scm.
+	(srfi_DATA): added srfi-2.scm.
+
+	* srfi-11.scm: new file - exports let-values and let*-values.
+
+	* srfi-6.scm: new file - guile already has srfi-6 procedures
+	loaded by default, so this is a dummy file right now.
+
+	* srfi-8.scm: new file - exports receive.
+
+	* srfi-2.scm: new file - just use/export (ice-9 and-let-star)
+
+2001-04-26  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	Changed two procedure names to match final SRFI document.  Thanks
+	to Rob Browning for spotting this.
+
+	* srfi-13.scm (string-concatenate-reverse),
+	(string-concatenate-reverse/shared): Rename from
+	reverse-string-concatenate[/shared].
+
+	* srfi-13.c (scm_string_concatenate_reverse_shared): Renamed from
+	scm_reverse_string_concatenate_shared.
+	(scm_string_concatenate_reverse): Renamed from
+	scm_reverse_string_concatenate.
+
+2001-04-25  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* configure.in, autogen.sh: Removed.
+
+	* srfi-13.c (scm_string_replace): Take sizeof (char) into account
+	when using memmove().
+
+	* srfi-14.h: Added prototypes for all exported procedures..
+
+	* srfi-13.c: Include srfi-13.h
+
+	* srfi-13.h: New file containing the prototypes.
+
+	* Makefile.am: Removed guile-srfi.texi and info_TEXINFOS variable.
+	(libguile_srfi_srfi_13_14_la_SOURCES): Added srfi-14.h, so it gets
+	distributed.
+	(libguile_srfi_srfi_13_14_la_SOURCES): Added srfi-13.h.
+
+2001-04-24  Neil Jerram  <neil@ossau.uklinux.net>
+
+	* Makefile.am: Fixed "srf-14.x" typo.
+
+2001-04-24  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* guile-srfi.texi: Removed, because merged with the GRM.
+
+	* guile-srfi.texi: The docs are now up to date with the
+	implementation and have new introductory material.
+
+2001-04-23  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	Integrated the guile-srfi package into the Guile distribution.
+
+	* srfi-13.c: All procedures so specified in the SRFI now accept
+	character set arguments.
+
+	* Makefile.am: Snarfed some variables from the guile-readline
+	directory.
+
+	* srfi-14.c, srfi-14.h: Add prefix SCM_ to exported macros.
+
+	* srfi-13.scm, srfi-14.scm, srfi-13.c, srfi-14.c, srfi-14.h,
+	configure.in, Makefile.am: Added FSF copyright and Guile license
+	information.
+
+	* srfi-13.c, srfi-14.c: Include srfi-14.h.
+	(scm_init_srfi_13_14): Initialize the complete module, if not
+	already done so.
+
+	* srfi-14.h: New file.
+
+	* srfi-13.scm, srfi-14.scm: Load new combined library.
+
+	* Makefile.am: Build only one library,
+	`libguile-srfi-srfi-13-14.la'
+
+2001-04-04  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* guile-srfi.texi: Integrated the SRFI-14 documentation.
+
+	* srfi-14.c, srfi-14.scm: Made the procedures and variables
+	compliant to the final SRFI document.
+
+	* Renamed the package to guile-srfi.
+
+2001-04-03  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* NEWS: New section for 0.0.3.
+
+	* configure.in, README, guile-srfi-13.texi: Bumped version number
+	to 0.0.3.
+
+	* Released version 0.0.2.
+
+	* Makefile.am: Added rules for builing the SRFI-14 library.
+
+	* srfi-14.c, srfi-14.scm: New files, implementing SRFI-14
+	(character set library).
+
+2001-03-27  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* README: Updated procedure and incompatibility list.
+
+	* srfi-13.c (string_upcase_x, scm_string_upcase_xS),
+	(scm_string_upcase, string_downcase_x, scm_string_downcase_xS),
+	(scm_string_downcaseS, string_titlecase_x),
+	(scm_string_titlecase_x, scm_string_titlecase),
+	(scm_string_fill_xS, scm_string_copyS, scm_string_to_listS): New
+	procedures.
+
+	* srfi-13.scm: Export new case mapping procedures.
+
+	* guile-srfi-13.texi (What cannot be done): Removed case mapping
+	procedures from incompatibility list.
+	(Case Mapping): New section for case mapping procedures.
+
+2001-03-26  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* NEWS: New section for 0.0.2
+
+	* configure.in, README, guile-srfi-13.texi: Bumbed version number
+	to 0.0.2
+
+	* Released version 0.0.1.
+
+	* README: Made procedure list up-to-date.
+
+	* guile-srfi-13.texi: Fixed typos, completed reference and added
+	introductory blurb.
+
+	* srfi-13.c, srfi-13.scm: Filled in the last missing pieces.
+
+2001-03-22  Martin Grabmueller  <mgrabmue@cs.tu-berlin.de>
+
+	* Started guile-srfi-13 package.  Files are copied from the
+	guile-gdbm and slightly modified.
+
+;; Local Variables:
+;; coding: utf-8
+;; End:

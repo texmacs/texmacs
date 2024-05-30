@@ -1,0 +1,99 @@
+.\" Written by Robert Merkel (rgmerk@mira.net)
+.\" augmented by Rob Browning <rlb@cs.utexas.edu>
+.\" Process this file with
+.\" groff -man -Tascii foo.1
+.\"
+.TH GUILE 1
+.SH NAME
+guile \- a Scheme interpreter
+.SH SYNOPSIS
+.B guile [-q] [-ds] [--help] [--version] [--emacs] [--debug]
+.B [-l FILE] [-e FUNCTION] [\]
+.B [-c EXPR] [-s SCRIPT] [--]
+.SH DESCRIPTION
+GNU Guile is an interpreter for the Scheme programming language.  It
+implements R5RS, providing additional features
+necessary for real-world use.  It is extremely simple to embed guile
+into a C program, calling C from Scheme and Scheme from C.  Guile's
+design makes it very suitable for use as an "extension" or "glue"
+language, but it also works well as a stand-alone scheme development
+environment.
+
+The
+.B guile
+executable itself provides a stand-alone interpreter for scheme
+programs, for either interactive use or executing scripts.
+
+This manpage provides only brief instruction in invoking
+.B guile
+from the command line.  Please consult the guile info documentation
+(type 
+.B info guile
+at a command prompt) for more information.  There is also a tutorial
+.B (info guile-tut) 
+available.
+
+.SH OPTIONS
+.IP -l FILE
+Load scheme source code from file.
+.IP -e FUNCTION
+After reading script, apply FUNCTION to command-line arguments
+.IP -ds
+do -s SCRIPT at this point (note that this argument must be used in
+conjuction with -s)
+.IP --help 
+Describe command line options and exit
+.IP --debug
+Start guile with debugging evaluator and backtraces enabled 
+(useful for debugging guile scripts)
+.IP --version
+Display guile version and exit.
+.IP --emacs
+Enable emacs protocol for use from within emacs (experimental)
+.IP --
+Stop argument processing, start guile in interactive mode.
+.IP -c EXPR
+Stop argument processing, evaluate EXPR as a scheme expression.
+.IP -s SCRIPT-FILE
+Load Scheme source from SCRIPT-FILE and execute as a script.
+
+.SH ENVIRONMENT
+.\".TP \w'MANROFFSEQ\ \ 'u
+.TP
+.B GUILE_LOAD_PATH
+If
+.RB $ GUILE_LOAD_PATH
+is set, its value is used to agument the path to search for scheme
+files when loading.  It should be a colon separated list of
+directories which will be prepended to the default %load-path.
+
+.SH FILES
+.I ~/.guile
+is a guile script that is executed before any other processing occurs.
+For example, the following .guile activates guile's readline
+interface:
+
+.RS 4
+(use-modules (ice-9 readline))
+.RS 0
+(activate-readline)
+
+.SH "SEE ALSO"
+The full documentation for guile is maintained as a Texinfo manual.  If
+the info and guile programs are properly installed at your site, the
+command
+.IP
+.B info guile
+.PP
+should give you access to the complete manual.
+
+http://www.schemers.org provides a general introduction to the
+Scheme language.
+
+.SH AUTHORS
+Robert Merkel <rgmerk@mira.net> wrote this manpage.  
+Rob Browning <rlb@cs.utexas.edu> has added to it.
+
+.B guile 
+is GNU software.  Guile is originally based on Aubrey Jaffer's
+SCM interpreter, and is the work of many individuals.

@@ -1,0 +1,6 @@
+This is the example code for the ``Defining New Types (Smobs)''
+chapter of the Guile manual.
+
+When you try to execute the code, if the system complains that it
+can't find libguile.so, you need to add the directory containing the
+installed Guile libraries to your LD_LIBRARY_PATH environment variable.

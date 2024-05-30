@@ -1,0 +1,6 @@
+(define bignum (1- (expt 2 128)))
+
+(let* ((i 0))
+  (benchmark "bignum" 130000
+    (logand i bignum)
+    (set! i (+ i 1))))
