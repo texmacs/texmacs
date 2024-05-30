@@ -87,27 +87,27 @@ typedef union scm_t_debug_info
   SCM id;
 } scm_t_debug_info;
 
-SCM_API long scm_debug_eframe_size;
+SCM_API ent scm_debug_eframe_size;
 
 typedef struct scm_t_debug_frame
 {
   struct scm_t_debug_frame *prev;
-  long status;
+  ent status;
   scm_t_debug_info *vect;
   scm_t_debug_info *info;
 } scm_t_debug_frame;
 
-#define SCM_EVALFRAME    (0L << 11)
-#define SCM_APPLYFRAME   (1L << 11)
-#define SCM_VOIDFRAME    (3L << 11)
-#define SCM_MACROEXPF    (1L << 10)
-#define SCM_TAILREC      (1L << 9)
-#define SCM_TRACED_FRAME (1L << 8)
-#define SCM_ARGS_READY   (1L << 7)
-#define SCM_DOVERFLOW    (1L << 6)
+#define SCM_EVALFRAME    (((ent) 0L) << 11)
+#define SCM_APPLYFRAME   (((ent) 1L) << 11)
+#define SCM_VOIDFRAME    (((ent) 3L) << 11)
+#define SCM_MACROEXPF    (((ent) 1L) << 10)
+#define SCM_TAILREC      (((ent) 1L) << 9)
+#define SCM_TRACED_FRAME (((ent) 1L) << 8)
+#define SCM_ARGS_READY   (((ent) 1L) << 7)
+#define SCM_DOVERFLOW    (((ent) 1L) << 6)
 #define SCM_MAX_FRAME_SIZE 63
 
-#define SCM_FRAMETYPE    (3L << 11)
+#define SCM_FRAMETYPE    (((ent) 3L) << 11)
 
 #define SCM_EVALFRAMEP(x) (((x).status & SCM_FRAMETYPE) == SCM_EVALFRAME)
 #define SCM_APPLYFRAMEP(x) (((x).status & SCM_FRAMETYPE) == SCM_APPLYFRAME)

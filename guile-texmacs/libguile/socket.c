@@ -64,6 +64,21 @@
 #include <arpa/inet.h>
 #endif
 
+#if defined (__MINGW32__) && ! defined(HAVE_IPV6)
+# ifdef AF_INET6
+#  undef AF_INET6
+# endif
+# ifdef PF_INET6
+#  undef PF_INET6
+# endif
+# ifdef AF_UNIX
+#  undef AF_UNIX
+# endif
+# ifdef PF_UNIX
+#  undef PF_UNIX
+# endif
+#endif
+
 #if defined (HAVE_UNIX_DOMAIN_SOCKETS) && !defined (SUN_LEN)
 #define SUN_LEN(ptr) ((size_t) (((struct sockaddr_un *) 0)->sun_path) \
 		      + strlen ((ptr)->sun_path))
@@ -120,7 +135,7 @@ SCM_DEFINE (scm_htonl, "htonl", 1, 0, 0,
 	    "and returned as a new integer.")
 #define FUNC_NAME s_scm_htonl
 {
-  return scm_from_ulong (htonl (scm_to_uint32 (value)));
+  return scm_from_nat (htonl (scm_to_uint32 (value)));
 }
 #undef FUNC_NAME
 
@@ -131,7 +146,7 @@ SCM_DEFINE (scm_ntohl, "ntohl", 1, 0, 0,
 	    "and returned as a new integer.")
 #define FUNC_NAME s_scm_ntohl
 {
-  return scm_from_ulong (ntohl (scm_to_uint32 (value)));
+  return scm_from_nat (ntohl (scm_to_uint32 (value)));
 }
 #undef FUNC_NAME
 
@@ -158,7 +173,7 @@ SCM_DEFINE (scm_inet_aton, "inet-aton", 1, 0, 0,
   free (c_address);
   if (rv == 0)
     SCM_MISC_ERROR ("bad address", SCM_EOL);
-  return scm_from_ulong (ntohl (soka.s_addr));
+  return scm_from_nat (ntohl (soka.s_addr));
 }
 #undef FUNC_NAME
 
@@ -175,7 +190,7 @@ SCM_DEFINE (scm_inet_ntoa, "inet-ntoa", 1, 0, 0,
   struct in_addr addr;
   char *s;
   SCM answer;
-  addr.s_addr = htonl (SCM_NUM2ULONG (1, inetid));
+  addr.s_addr = htonl (SCM_NUM2NAT (1, inetid));
   s = inet_ntoa (addr);
   answer = scm_from_locale_string (s);
   return answer;
@@ -193,8 +208,8 @@ SCM_DEFINE (scm_inet_netof, "inet-netof", 1, 0, 0,
 #define FUNC_NAME s_scm_inet_netof
 {
   struct in_addr addr;
-  addr.s_addr = htonl (SCM_NUM2ULONG (1, address));
-  return scm_from_ulong (inet_netof (addr));
+  addr.s_addr = htonl (SCM_NUM2NAT (1, address));
+  return scm_from_nat (inet_netof (addr));
 }
 #undef FUNC_NAME
 #endif
@@ -211,8 +226,8 @@ SCM_DEFINE (scm_lnaof, "inet-lnaof", 1, 0, 0,
 #define FUNC_NAME s_scm_lnaof
 {
   struct in_addr addr;
-  addr.s_addr = htonl (SCM_NUM2ULONG (1, address));
-  return scm_from_ulong (inet_lnaof (addr));
+  addr.s_addr = htonl (SCM_NUM2NAT (1, address));
+  return scm_from_nat (inet_lnaof (addr));
 }
 #undef FUNC_NAME
 #endif
@@ -229,13 +244,13 @@ SCM_DEFINE (scm_inet_makeaddr, "inet-makeaddr", 2, 0, 0,
 #define FUNC_NAME s_scm_inet_makeaddr
 {
   struct in_addr addr;
-  unsigned long netnum;
-  unsigned long lnanum;
+  nat netnum;
+  nat lnanum;
 
-  netnum = SCM_NUM2ULONG (1, net);
-  lnanum = SCM_NUM2ULONG (2, lna);
+  netnum = SCM_NUM2NAT (1, net);
+  lnanum = SCM_NUM2NAT (2, lna);
   addr = inet_makeaddr (netnum, lnanum);
-  return scm_from_ulong (ntohl (addr.s_addr));
+  return scm_from_nat (ntohl (addr.s_addr));
 }
 #undef FUNC_NAME
 #endif
@@ -279,12 +294,12 @@ SCM_DEFINE (scm_inet_makeaddr, "inet-makeaddr", 2, 0, 0,
 #error "Assumption that scm_t_bits <= 128 bits has been violated."
 #endif
 
-#if (SIZEOF_UNSIGNED_LONG * SCM_CHAR_BIT) > 128
-#error "Assumption that unsigned long <= 128 bits has been violated."
+#if (SIZEOF_UNSIGNED_ENT * SCM_CHAR_BIT) > 128
+#error "Assumption that nat <= 128 bits has been violated."
 #endif
 
 #if (SIZEOF_UNSIGNED_LONG_LONG * SCM_CHAR_BIT) > 128
-#error "Assumption that unsigned long long <= 128 bits has been violated."
+#error "Assumption that long long <= 128 bits has been violated."
 #endif
 
 /* convert a 128 bit IPv6 address in network order to a host ordered
@@ -381,7 +396,7 @@ SCM_DEFINE (scm_inet_pton, "inet-pton", 2, 0, 0,
   else if (rv == 0)
     SCM_MISC_ERROR ("Bad address", SCM_EOL);
   if (af == AF_INET)
-    return scm_from_ulong (ntohl (*dst));
+    return scm_from_nat (ntohl (*dst));
   else
     return scm_from_ipv6 ((scm_t_uint8 *) dst);
 }
@@ -416,7 +431,7 @@ SCM_DEFINE (scm_inet_ntop, "inet-ntop", 2, 0, 0,
     {
       scm_t_uint32 addr4;
 
-      addr4 = htonl (SCM_NUM2ULONG (2, address));
+      addr4 = htonl (SCM_NUM2NAT (2, address));
       result = inet_ntop (af, &addr4, dst, sizeof (dst));
     }
   else
@@ -573,10 +588,10 @@ SCM_DEFINE (scm_getsockopt, "getsockopt", 3, 0, 0,
 #ifdef HAVE_STRUCT_LINGER
 	  struct linger *ling = (struct linger *) &optval;
 
-	  return scm_cons (scm_from_long (ling->l_onoff),
-			   scm_from_long (ling->l_linger));
+	  return scm_cons (scm_from_ent (ling->l_onoff),
+			   scm_from_ent (ling->l_linger));
 #else
-	  return scm_cons (scm_from_long (*(int *) &optval),
+	  return scm_cons (scm_from_ent (*(int *) &optval),
 			   scm_from_int (0));
 #endif
 	}
@@ -733,8 +748,8 @@ SCM_DEFINE (scm_setsockopt, "setsockopt", 4, 0, 0,
     {
       /* Fourth argument must be a pair of addresses. */
       SCM_ASSERT (scm_is_pair (value), value, SCM_ARG4, FUNC_NAME);
-      opt_mreq.imr_multiaddr.s_addr = htonl (scm_to_ulong (SCM_CAR (value)));
-      opt_mreq.imr_interface.s_addr = htonl (scm_to_ulong (SCM_CDR (value)));
+      opt_mreq.imr_multiaddr.s_addr = htonl (scm_to_nat (SCM_CAR (value)));
+      opt_mreq.imr_interface.s_addr = htonl (scm_to_nat (SCM_CDR (value)));
       optlen = sizeof (opt_mreq);
       optval = &opt_mreq;
     }
@@ -800,10 +815,10 @@ scm_fill_sockaddr (int fam, SCM address, SCM *args, int which_arg,
     case AF_INET:
       {
 	struct sockaddr_in *soka;
-	unsigned long addr;
+	nat addr;
 	int port;
 
-	SCM_VALIDATE_ULONG_COPY (which_arg, address, addr);
+	SCM_VALIDATE_NAT_COPY (which_arg, address, addr);
 	SCM_VALIDATE_CONS (which_arg + 1, *args);
 	port = scm_to_int (SCM_CAR (*args));
 	*args = SCM_CDR (*args);
@@ -824,19 +839,19 @@ scm_fill_sockaddr (int fam, SCM address, SCM *args, int which_arg,
 	/* see RFC2553.  */
 	int port;
 	struct sockaddr_in6 *soka;
-	unsigned long flowinfo = 0;
-	unsigned long scope_id = 0;
+	nat flowinfo = 0;
+	nat scope_id = 0;
 
 	SCM_VALIDATE_CONS (which_arg + 1, *args);
 	port = scm_to_int (SCM_CAR (*args));
 	*args = SCM_CDR (*args);
 	if (scm_is_pair (*args))
 	  {
-	    SCM_VALIDATE_ULONG_COPY (which_arg + 2, SCM_CAR (*args), flowinfo);
+	    SCM_VALIDATE_NAT_COPY (which_arg + 2, SCM_CAR (*args), flowinfo);
 	    *args = SCM_CDR (*args);
 	    if (scm_is_pair (*args))
 	      {
-		SCM_VALIDATE_ULONG_COPY (which_arg + 3, SCM_CAR (*args),
+		SCM_VALIDATE_NAT_COPY (which_arg + 3, SCM_CAR (*args),
 					 scope_id);
 		*args = SCM_CDR (*args);
 	      }
@@ -1056,7 +1071,7 @@ _scm_from_sockaddr (const scm_t_max_sockaddr *address, unsigned addr_size,
 	SCM_SIMPLE_VECTOR_SET(result, 0,
 			      scm_from_short (fam));
 	SCM_SIMPLE_VECTOR_SET(result, 1,
-			      scm_from_ulong (ntohl (nad->sin_addr.s_addr)));
+			      scm_from_nat (ntohl (nad->sin_addr.s_addr)));
 	SCM_SIMPLE_VECTOR_SET(result, 2,
 			      scm_from_ushort (ntohs (nad->sin_port)));
       }
@@ -1072,7 +1087,7 @@ _scm_from_sockaddr (const scm_t_max_sockaddr *address, unsigned addr_size,
 	SCM_SIMPLE_VECTOR_SET(result, 2, scm_from_ushort (ntohs (nad->sin6_port)));
 	SCM_SIMPLE_VECTOR_SET(result, 3, scm_from_uint32 (nad->sin6_flowinfo));
 #ifdef HAVE_SIN6_SCOPE_ID
-	SCM_SIMPLE_VECTOR_SET(result, 4, scm_from_ulong (nad->sin6_scope_id));
+	SCM_SIMPLE_VECTOR_SET(result, 4, scm_from_nat (nad->sin6_scope_id));
 #else
 	SCM_SIMPLE_VECTOR_SET(result, 4, SCM_INUM0);
 #endif
@@ -1144,7 +1159,7 @@ scm_to_sockaddr (SCM address, size_t *address_size)
 	    struct sockaddr_in c_inet;
 
 	    c_inet.sin_addr.s_addr =
-	      htonl (scm_to_ulong (SCM_SIMPLE_VECTOR_REF (address, 1)));
+	      htonl (scm_to_nat (SCM_SIMPLE_VECTOR_REF (address, 1)));
 	    c_inet.sin_port =
 	      htons (scm_to_ushort (SCM_SIMPLE_VECTOR_REF (address, 2)));
 	    c_inet.sin_family = AF_INET;
@@ -1175,7 +1190,7 @@ scm_to_sockaddr (SCM address, size_t *address_size)
 	      scm_to_uint32 (SCM_SIMPLE_VECTOR_REF (address, 3));
 #ifdef HAVE_SIN6_SCOPE_ID
 	    c_inet6.sin6_scope_id =
-	      scm_to_ulong (SCM_SIMPLE_VECTOR_REF (address, 4));
+	      scm_to_nat (SCM_SIMPLE_VECTOR_REF (address, 4));
 #endif
 
 	    c_inet6.sin6_family = AF_INET6;
@@ -1546,7 +1561,7 @@ SCM_DEFINE (scm_recvfrom, "recvfrom!", 2, 3, 0,
   if (SCM_UNBNDP (flags))
     flg = 0;
   else
-    SCM_VALIDATE_ULONG_COPY (3, flags, flg);
+    SCM_VALIDATE_NAT_COPY (3, flags, flg);
 
   /* recvfrom will not necessarily return an address.  usually nothing
      is returned for stream sockets.  */
@@ -1621,7 +1636,7 @@ SCM_DEFINE (scm_sendto, "sendto", 3, 1, 1,
   else
     {
       SCM_VALIDATE_CONS (5, args_and_flags);
-      flg = SCM_NUM2ULONG (5, SCM_CAR (args_and_flags));
+      flg = SCM_NUM2NAT (5, SCM_CAR (args_and_flags));
     }
   SCM_SYSCALL (rv = sendto (fd,
 			    scm_i_string_chars (message),
@@ -1675,16 +1690,16 @@ scm_init_socket ()
 
   /* standard addresses.  */
 #ifdef INADDR_ANY
-  scm_c_define ("INADDR_ANY", scm_from_ulong (INADDR_ANY));
+  scm_c_define ("INADDR_ANY", scm_from_nat (INADDR_ANY));
 #endif
 #ifdef INADDR_BROADCAST
-  scm_c_define ("INADDR_BROADCAST", scm_from_ulong (INADDR_BROADCAST));
+  scm_c_define ("INADDR_BROADCAST", scm_from_nat (INADDR_BROADCAST));
 #endif
 #ifdef INADDR_NONE
-  scm_c_define ("INADDR_NONE", scm_from_ulong (INADDR_NONE));
+  scm_c_define ("INADDR_NONE", scm_from_nat (INADDR_NONE));
 #endif
 #ifdef INADDR_LOOPBACK
-  scm_c_define ("INADDR_LOOPBACK", scm_from_ulong (INADDR_LOOPBACK));
+  scm_c_define ("INADDR_LOOPBACK", scm_from_nat (INADDR_LOOPBACK));
 #endif
 
   /* socket types.

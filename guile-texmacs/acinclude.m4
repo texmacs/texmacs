@@ -1,19 +1,17 @@
-dnl  On the NeXT, #including <utime.h> doesn't give you a definition for
-dnl  struct utime, unless you #define _POSIX_SOURCE.
+#  On the NeXT, #including <utime.h> doesn't give you a definition for
+#  struct utime, unless you #define _POSIX_SOURCE.
 
 AC_DEFUN([GUILE_STRUCT_UTIMBUF], [
   AC_CACHE_CHECK([whether we need POSIX to get struct utimbuf],
     guile_cv_struct_utimbuf_needs_posix,
-    [AC_TRY_CPP([
+    [AC_PREPROC_IFELSE([AC_LANG_SOURCE([[
 #ifdef __EMX__
 #include <sys/utime.h>
 #else
 #include <utime.h>
 #endif
 struct utime blah;
-],
-                guile_cv_struct_utimbuf_needs_posix=no,
-		guile_cv_struct_utimbuf_needs_posix=yes)])
+]])],[guile_cv_struct_utimbuf_needs_posix=no],[guile_cv_struct_utimbuf_needs_posix=yes])])
   if test "$guile_cv_struct_utimbuf_needs_posix" = yes; then
      AC_DEFINE([UTIMBUF_NEEDS_POSIX], 1,
        [Define this if <utime.h> doesn't define struct utimbuf unless
@@ -23,13 +21,13 @@ struct utime blah;
 
 
 
-dnl
-dnl Apparently, at CMU they have a weird version of libc.h that is
-dnl installed in /usr/local/include and conflicts with unistd.h.
-dnl In these situations, we should not #include libc.h.
-dnl This test arranges to #define LIBC_H_WITH_UNISTD_H iff libc.h is
-dnl present on the system, and is safe to #include.
-dnl
+#
+# Apparently, at CMU they have a weird version of libc.h that is
+# installed in /usr/local/include and conflicts with unistd.h.
+# In these situations, we should not #include libc.h.
+# This test arranges to #define LIBC_H_WITH_UNISTD_H iff libc.h is
+# present on the system, and is safe to #include.
+#
 AC_DEFUN([GUILE_HEADER_LIBC_WITH_UNISTD],
   [
     AC_CHECK_HEADERS(libc.h unistd.h)
@@ -42,15 +40,11 @@ AC_DEFUN([GUILE_HEADER_LIBC_WITH_UNISTD],
         elif test "$ac_cv_header_unistd_h" = "no"; then
           guile_cv_header_libc_with_unistd="yes"
         else
-          AC_TRY_COMPILE(
-	    [
+          AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #             include <libc.h>
 #             include <unistd.h>
-	    ],
-	    [],
-	    [guile_cv_header_libc_with_unistd=yes],
-	    [guile_cv_header_libc_with_unistd=no]
-          )
+	    ]], [[]])],[guile_cv_header_libc_with_unistd=yes],[guile_cv_header_libc_with_unistd=no
+          ])
         fi
       ]
     )
@@ -66,19 +60,18 @@ AC_DEFUN([GUILE_HEADER_LIBC_WITH_UNISTD],
 
 
 
-dnl This is needed when we want to check for the same function repeatedly
-dnl with other parameters, such as libraries, varying.
-dnl
-dnl GUILE_NAMED_CHECK_FUNC(FUNCTION, TESTNAME,
-dnl                        [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+# This is needed when we want to check for the same function repeatedly
+# with other parameters, such as libraries, varying.
+#
+# GUILE_NAMED_CHECK_FUNC(FUNCTION, TESTNAME,
+#                        [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 AC_DEFUN([GUILE_NAMED_CHECK_FUNC],
 [AC_MSG_CHECKING([for $1])
 AC_CACHE_VAL(ac_cv_func_$1_$2,
-[AC_TRY_LINK(
-dnl Don't include <ctype.h> because on OSF/1 3.0 it includes <sys/types.h>
-dnl which includes <sys/select.h> which contains a prototype for
-dnl select.  Similarly for bzero.
-[/* System header to define __stub macros and hopefully few prototypes,
+[AC_LINK_IFELSE([AC_LANG_PROGRAM([[/* Don't include <ctype.h> because on OSF/1 3.0 it includes <sys/types.h>
+ which includes <sys/select.h> which contains a prototype for
+ select.  Similarly for bzero.*/
+/* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char $1(); below.  */
 #include <assert.h>
 /* Override any gcc2 internal prototype to avoid an error.  */
@@ -88,7 +81,7 @@ extern "C"
 /* We use char because int might match the return type of a gcc2
     builtin and then its argument prototype would still apply.  */
 char $1();
-], [
+]], [[
 /* The GNU C library defines this for functions which it implements
     to always fail with ENOSYS.  Some functions are actually named
     something starting with __ and the normal name is an alias.  */
@@ -97,27 +90,24 @@ choke me
 #else
 $1();
 #endif
-], eval "ac_cv_func_$1_$2=yes", eval "ac_cv_func_$1_$2=no")])
+]])],[eval "ac_cv_func_$1_$2=yes"],[eval "ac_cv_func_$1_$2=no"])])
 if eval "test \"`echo '$ac_cv_func_'$1'_'$2`\" = yes"; then
   AC_MSG_RESULT(yes)
   ifelse([$3], , :, [$3])
 else
   AC_MSG_RESULT(no)
 ifelse([$4], , , [$4
-])dnl
+])#
 fi
 ])
 
-
-
-
-dnl Available from the Autoconf Macro Archive at:
-dnl http://autoconf-archive.cryp.to/acx_pthread.html
-dnl
+# Available from the Autoconf Macro Archive at:
+# http://autoconf-archive.cryp.to/acx_pthread.html
+#
 AC_DEFUN([ACX_PTHREAD], [
 AC_REQUIRE([AC_CANONICAL_HOST])
 AC_LANG_SAVE
-AC_LANG_C
+AC_LANG([C])
 acx_pthread_ok=no
 
 # We used to check for pthread.h first, but this fails if pthread.h
@@ -230,11 +220,9 @@ for flag in $acx_pthread_flags; do
         # pthread_cleanup_push because it is one of the few pthread
         # functions on Solaris that doesn't have a non-functional libc stub.
         # We try pthread_create on general principles.
-        AC_TRY_LINK([#include <pthread.h>],
-                    [pthread_t th; pthread_join(th, 0);
+        AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <pthread.h>]], [[pthread_t th; pthread_join(th, 0);
                      pthread_attr_init(0); pthread_cleanup_push(0, 0);
-                     pthread_create(0,0,0,0); pthread_cleanup_pop(0); ],
-                    [acx_pthread_ok=yes])
+                     pthread_create(0,0,0,0); pthread_cleanup_pop(0); ]])],[acx_pthread_ok=yes],[])
 
         LIBS="$save_LIBS"
         CFLAGS="$save_CFLAGS"
@@ -260,8 +248,7 @@ if test "x$acx_pthread_ok" = xyes; then
         AC_MSG_CHECKING([for joinable pthread attribute])
         attr_name=unknown
         for attr in PTHREAD_CREATE_JOINABLE PTHREAD_CREATE_UNDETACHED; do
-            AC_TRY_LINK([#include <pthread.h>], [int attr=$attr; return attr;],
-                        [attr_name=$attr; break])
+            AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <pthread.h>]], [[int attr=$attr; return attr;]])],[attr_name=$attr; break],[])
         done
         AC_MSG_RESULT($attr_name)
         if test "$attr_name" != PTHREAD_CREATE_JOINABLE; then
@@ -307,4 +294,4 @@ else
         $2
 fi
 AC_LANG_RESTORE
-])dnl ACX_PTHREAD
+])# ACX_PTHREAD

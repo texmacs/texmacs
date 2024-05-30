@@ -137,7 +137,7 @@ static int signal_pipe[2];
 static SIGRETTYPE
 take_signal (int signum)
 {
-  size_t count;
+  size_t count; (void) count;
   char sigbyte = signum;
 
   count = write (signal_pipe[1], &sigbyte, 1);
@@ -335,9 +335,9 @@ SCM_DEFINE (scm_sigaction_for_thread, "sigaction", 1, 3, 0,
     query_only = 1;
   else if (scm_is_integer (handler))
     {
-      long handler_int = scm_to_long (handler);
+      ent handler_int = scm_to_ent (handler);
 
-      if (handler_int == (long) SIG_DFL || handler_int == (long) SIG_IGN)
+      if (handler_int == (ent) SIG_DFL || handler_int == (ent) SIG_IGN)
 	{
 #ifdef HAVE_SIGACTION
 	  action.sa_handler = (SIGRETTYPE (*) (int)) handler_int;
@@ -434,7 +434,7 @@ SCM_DEFINE (scm_sigaction_for_thread, "sigaction", 1, 3, 0,
 	orig_handlers[csig] = old_action;
     }
   if (old_action.sa_handler == SIG_DFL || old_action.sa_handler == SIG_IGN)
-    old_handler = scm_from_long ((long) old_action.sa_handler);
+    old_handler = scm_from_ent ((ent) old_action.sa_handler);
   SCM_CRITICAL_SECTION_END;
   return scm_cons (old_handler, scm_from_int (old_action.sa_flags));
 #else
@@ -453,7 +453,7 @@ SCM_DEFINE (scm_sigaction_for_thread, "sigaction", 1, 3, 0,
 	orig_handlers[csig] = old_chandler;
     }
   if (old_chandler == SIG_DFL || old_chandler == SIG_IGN)
-    old_handler = scm_from_long ((long) old_chandler);
+    old_handler = scm_from_ent ((ent) old_chandler);
   SCM_CRITICAL_SECTION_END;
   return scm_cons (old_handler, scm_from_int (0));
 #endif
@@ -536,20 +536,20 @@ SCM_DEFINE (scm_setitimer, "setitimer", 5, 0, 0,
   struct itimerval old_timer;
 
   c_which_timer = SCM_NUM2INT(1, which_timer);
-  new_timer.it_interval.tv_sec = SCM_NUM2LONG(2, interval_seconds);
-  new_timer.it_interval.tv_usec = SCM_NUM2LONG(3, interval_microseconds);
-  new_timer.it_value.tv_sec = SCM_NUM2LONG(4, value_seconds);
-  new_timer.it_value.tv_usec = SCM_NUM2LONG(5, value_microseconds);
+  new_timer.it_interval.tv_sec = SCM_NUM2ENT(2, interval_seconds);
+  new_timer.it_interval.tv_usec = SCM_NUM2ENT(3, interval_microseconds);
+  new_timer.it_value.tv_sec = SCM_NUM2ENT(4, value_seconds);
+  new_timer.it_value.tv_usec = SCM_NUM2ENT(5, value_microseconds);
 
   SCM_SYSCALL(rv = setitimer(c_which_timer, &new_timer, &old_timer));
   
   if(rv != 0)
     SCM_SYSERROR;
 
-  return scm_list_2 (scm_cons (scm_from_long (old_timer.it_interval.tv_sec),
-			       scm_from_long (old_timer.it_interval.tv_usec)),
-		     scm_cons (scm_from_long (old_timer.it_value.tv_sec),
-			       scm_from_long (old_timer.it_value.tv_usec)));
+  return scm_list_2 (scm_cons (scm_from_ent (old_timer.it_interval.tv_sec),
+			       scm_from_ent (old_timer.it_interval.tv_usec)),
+		     scm_cons (scm_from_ent (old_timer.it_value.tv_sec),
+			       scm_from_ent (old_timer.it_value.tv_usec)));
 }
 #undef FUNC_NAME
 #endif /* HAVE_SETITIMER */
@@ -582,10 +582,10 @@ SCM_DEFINE (scm_getitimer, "getitimer", 1, 0, 0,
   if(rv != 0)
     SCM_SYSERROR;
   
-  return scm_list_2 (scm_cons (scm_from_long (old_timer.it_interval.tv_sec),
-			       scm_from_long (old_timer.it_interval.tv_usec)),
-		     scm_cons (scm_from_long (old_timer.it_value.tv_sec),
-			       scm_from_long (old_timer.it_value.tv_usec)));
+  return scm_list_2 (scm_cons (scm_from_ent (old_timer.it_interval.tv_sec),
+			       scm_from_ent (old_timer.it_interval.tv_usec)),
+		     scm_cons (scm_from_ent (old_timer.it_value.tv_sec),
+			       scm_from_ent (old_timer.it_value.tv_usec)));
 }
 #undef FUNC_NAME
 #endif /* HAVE_GETITIMER */
@@ -632,7 +632,7 @@ SCM_DEFINE (scm_usleep, "usleep", 1, 0, 0,
 	    "See also @code{sleep}.")
 #define FUNC_NAME s_scm_usleep
 {
-  return scm_from_ulong (scm_std_usleep (scm_to_ulong (i)));
+  return scm_from_nat (scm_std_usleep (scm_to_ulong (i)));
 }
 #undef FUNC_NAME
 
@@ -673,14 +673,14 @@ scm_init_scmsigs ()
 #endif
     }
 
-  scm_c_define ("NSIG", scm_from_long (NSIG));
-  scm_c_define ("SIG_IGN", scm_from_long ((long) SIG_IGN));
-  scm_c_define ("SIG_DFL", scm_from_long ((long) SIG_DFL));
+  scm_c_define ("NSIG", scm_from_ent (NSIG));
+  scm_c_define ("SIG_IGN", scm_from_ent ((ent) SIG_IGN));
+  scm_c_define ("SIG_DFL", scm_from_ent ((ent) SIG_DFL));
 #ifdef SA_NOCLDSTOP
-  scm_c_define ("SA_NOCLDSTOP", scm_from_long (SA_NOCLDSTOP));
+  scm_c_define ("SA_NOCLDSTOP", scm_from_ent (SA_NOCLDSTOP));
 #endif
 #ifdef SA_RESTART
-  scm_c_define ("SA_RESTART", scm_from_long (SA_RESTART));
+  scm_c_define ("SA_RESTART", scm_from_ent (SA_RESTART));
 #endif
 
 #if defined(HAVE_SETITIMER) || defined(HAVE_GETITIMER)

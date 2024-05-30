@@ -93,9 +93,9 @@ display_header (SCM source, SCM port)
       if (scm_is_true (line) && scm_is_true (col))
 	{
 	  scm_putc (':', port);
-	  scm_intprint (scm_to_long (line) + 1, 10, port);
+	  scm_intprint (scm_to_ent (line) + 1, 10, port);
 	  scm_putc (':', port);
-	  scm_intprint (scm_to_long (col) + 1, 10, port);
+	  scm_intprint (scm_to_ent (col) + 1, 10, port);
 	}
     }
   else
@@ -471,11 +471,8 @@ display_backtrace_get_file_line (SCM frame, SCM *file, SCM *line)
 }
 
 static void
-display_backtrace_file (frame, last_file, port, pstate)
-     SCM frame;
-     SCM *last_file;
-     SCM port;
-     scm_print_state *pstate;
+display_backtrace_file (SCM frame, SCM *last_file,
+			SCM port, scm_print_state *pstate)
 {
   SCM file, line;
 

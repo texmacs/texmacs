@@ -57,6 +57,7 @@ SCM_DEFINE (scm_map_free_list, "map-free-list", 0, 0, 0,
 	    "DEPRECATED\n")
 #define FUNC_NAME "s_scm_map_free_list"
 {
+  (void) s_scm_map_free_list;
   scm_c_issue_deprecation_warning ("map-free-list has been removed from GUILE. Doing nothing\n");
   return SCM_UNSPECIFIED;
 }  
@@ -67,6 +68,7 @@ SCM_DEFINE (scm_gc_set_debug_check_freelist_x, "gc-set-debug-check-freelist!", 1
 	    "DEPRECATED.\n")
 #define FUNC_NAME "s_scm_gc_set_debug_check_freelist_x"
 {
+  (void) s_scm_gc_set_debug_check_freelist_x;
   scm_c_issue_deprecation_warning ("gc-set-debug-check-freelist! has been removed from GUILE. Doing nothing\n");
   return SCM_UNSPECIFIED;
 }
@@ -104,12 +106,12 @@ scm_i_adjust_min_yield (scm_t_cell_type_statistics *freelist)
   if (freelist->min_yield_fraction)
     {
       /* Pick largest of last two yields. */
-      long delta = ((SCM_HEAP_SIZE * freelist->min_yield_fraction / 100)
-		   - (long) SCM_MAX (scm_gc_cells_collected_1, scm_gc_cells_collected));
+      ent delta = ((SCM_HEAP_SIZE * freelist->min_yield_fraction / 100)
+		   - (ent) SCM_MAX (scm_gc_cells_collected_1, scm_gc_cells_collected));
 #ifdef DEBUGINFO
       fprintf (stderr, " after GC = %lu, delta = %ld\n",
-	       (unsigned long) scm_cells_allocated,
-	       (long) delta);
+	       (nat) scm_cells_allocated,
+	       (ent) delta);
 #endif
       if (delta > 0)
 	freelist->min_yield += delta;

@@ -31,7 +31,7 @@
 # Example: ../../pre-inst-guile-env ./guile-test-foo
 
 # config
-subdirs_with_ltlibs="srfi guile-readline"       # maintain me
+subdirs_with_ltlibs="srfi @opt_guile_readline@ guile"       # maintain me
 
 # env (set by configure)
 top_srcdir="@top_srcdir_absolute@"
@@ -72,6 +72,12 @@ LTDL_LIBRARY_PATH="${ltdl_prefix}$LTDL_LIBRARY_PATH"
 export LTDL_LIBRARY_PATH
 DYLD_LIBRARY_PATH="${dyld_prefix}${top_builddir}/libguile/.libs:$DYLD_LIBRARY_PATH"
 export DYLD_LIBRARY_PATH
+
+if test "@host@" = "x86_64-w64-mingw32"; then
+    PATH="${top_builddir}/libguile/.libs:${PATH}"
+    PATH="${top_builddir}/libguile/srfi/.libs:${PATH}"
+    export TMPDIR="${top_builddir}"
+fi
 
 # handle PATH (no clobber)
 PATH="${top_builddir}/guile-config:${PATH}"

@@ -569,7 +569,7 @@ scm_module_reverse_lookup (SCM module, SCM variable)
 #define FUNC_NAME "module-reverse-lookup"
 {
   SCM obarray;
-  long i, n;
+  ent i, n;
 
   if (scm_is_false (module))
     obarray = scm_pre_modules_obarray;

@@ -48,7 +48,7 @@
 #include "posix.h"
 
 
-extern int system();
+extern int system(const char *);
 
 
 #ifdef HAVE_SYSTEM
@@ -79,6 +79,9 @@ SCM_DEFINE (scm_system, "system", 0, 1, 0,
   eno = errno; free (c_cmd); errno = eno;
   if (rv == -1 || (rv == 127 && errno != 0))
     SCM_SYSERROR;
+#ifndef __MINGW64__
+  rv = WEXITSTATUS (rv);
+#endif
   return scm_from_int (rv);
 }
 #undef FUNC_NAME
@@ -135,7 +138,7 @@ SCM_DEFINE (scm_system_star, "system*", 0, 0, 1,
 				  SCM_F_WIND_EXPLICITLY);
 
       /* make sure the child can't kill us (as per normal system call) */
-      sig_ign = scm_from_long ((unsigned long) SIG_IGN);
+      sig_ign = scm_from_ent ((nat) SIG_IGN);
       sigint = scm_from_int (SIGINT);
       sigquit = scm_from_int (SIGQUIT);
       oldint = scm_sigaction (sigint, sig_ign, SCM_UNDEFINED);
@@ -166,6 +169,9 @@ SCM_DEFINE (scm_system_star, "system*", 0, 0, 1,
           scm_sigaction (sigquit, SCM_CAR (oldquit), SCM_CDR (oldquit));
 
 	  scm_dynwind_end ();
+#ifndef __MINGW64__
+	  status = WEXITSTATUS (status);
+#endif
           return scm_from_int (status);
         }
     }

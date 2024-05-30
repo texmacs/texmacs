@@ -171,7 +171,7 @@ check_cont (int rewindable)
   SCM res;
   
   res = scm_internal_catch (SCM_BOOL_T,
-			    check_cont_body, (void *)(long)rewindable,
+			    check_cont_body, (void *)(ent)rewindable,
 			    return_tag, NULL);
 
   /* RES is now either the created continuation, the value passed to
@@ -229,7 +229,8 @@ check_ports ()
   strcpy (filename, tmpdir);
   strcat (filename, FILENAME_TEMPLATE);
 
-  if (mktemp (filename) == NULL)
+  int fd= mkstemp (filename);
+  if (fd == -1)
     exit (1);
 
   scm_dynwind_begin (0);

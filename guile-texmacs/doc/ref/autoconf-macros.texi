@@ -1,0 +1,88 @@
+@deffn {Autoconf Macro} GUILE_PROGS
+
+This macro looks for programs @code{guile}, @code{guile-config} and
+@code{guile-tools}, and sets variables @var{GUILE}, @var{GUILE_CONFIG} and
+@var{GUILE_TOOLS}, to their paths, respectively.  If either of the first two
+is not found, signal error.
+
+The variables are marked for substitution, as by @code{AC_SUBST}.
+
+@end deffn
+
+@deffn {Autoconf Macro} GUILE_FLAGS
+
+This macro runs the @code{guile-config} script, installed with Guile, to
+find out where Guile's header files and libraries are installed.  It sets
+two variables, @var{GUILE_CFLAGS} and @var{GUILE_LDFLAGS}.
+
+@var{GUILE_CFLAGS}: flags to pass to a C or C++ compiler to build code that
+uses Guile header files.  This is almost always just a @code{-I} flag.
+
+@var{GUILE_LDFLAGS}: flags to pass to the linker to link a program against
+Guile.  This includes @code{-lguile} for the Guile library itself, any
+libraries that Guile itself requires (like -lqthreads), and so on.  It may
+also include a @code{-L} flag to tell the compiler where to find the
+libraries.
+
+The variables are marked for substitution, as by @code{AC_SUBST}.
+
+@end deffn
+
+@deffn {Autoconf Macro} GUILE_SITE_DIR
+
+This looks for Guile's "site" directory, usually something like
+PREFIX/share/guile/site, and sets var @var{GUILE_SITE} to the path.
+Note that the var name is different from the macro name.
+
+The variable is marked for substitution, as by @code{AC_SUBST}.
+
+@end deffn
+
+@deffn {Autoconf Macro} GUILE_CHECK_RETVAL var check 
+
+@var{var} is a shell variable name to be set to the return value.
+@var{check} is a Guile Scheme expression, evaluated with "$GUILE -c", and
+   returning either 0 or non-#f to indicate the check passed.
+   Non-0 number or #f indicates failure.
+   Avoid using the character "#" since that confuses autoconf.
+
+@end deffn
+
+@deffn {Autoconf Macro} GUILE_MODULE_CHECK var module featuretest description 
+
+@var{var} is a shell variable name to be set to "yes" or "no".
+@var{module} is a list of symbols, like: (ice-9 common-list).
+@var{featuretest} is an expression acceptable to GUILE_CHECK, q.v.
+@var{description} is a present-tense verb phrase (passed to AC_MSG_CHECKING).
+
+@end deffn
+
+@deffn {Autoconf Macro} GUILE_MODULE_AVAILABLE var module 
+
+@var{var} is a shell variable name to be set to "yes" or "no".
+@var{module} is a list of symbols, like: (ice-9 common-list).
+
+@end deffn
+
+@deffn {Autoconf Macro} GUILE_MODULE_REQUIRED symlist 
+
+@var{symlist} is a list of symbols, WITHOUT surrounding parens,
+like: ice-9 common-list.
+
+@end deffn
+
+@deffn {Autoconf Macro} GUILE_MODULE_EXPORTS var module modvar 
+
+@var{var} is a shell variable to be set to "yes" or "no".
+@var{module} is a list of symbols, like: (ice-9 common-list).
+@var{modvar} is the Guile Scheme variable to check.
+
+@end deffn
+
+@deffn {Autoconf Macro} GUILE_MODULE_REQUIRED_EXPORT module modvar 
+
+@var{module} is a list of symbols, like: (ice-9 common-list).
+@var{modvar} is the Guile Scheme variable to check.
+
+@end deffn
+

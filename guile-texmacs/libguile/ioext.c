@@ -276,7 +276,7 @@ SCM_DEFINE (scm_fdes_to_ports, "fdes->ports", 1, 0, 0,
 {
   SCM result = SCM_EOL;
   int int_fd;
-  long i;
+  ent i;
 
   int_fd = scm_to_int (fd);
 

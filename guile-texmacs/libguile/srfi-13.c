@@ -307,7 +307,7 @@ SCM_DEFINE (scm_reverse_list_to_string, "reverse-list->string", 1, 0, 0,
 #define FUNC_NAME s_scm_reverse_list_to_string
 {
   SCM result;
-  long i = scm_ilength (chrs);
+  ent i = scm_ilength (chrs);
   char *data;
 
   if (i < 0)
@@ -383,7 +383,7 @@ SCM_DEFINE (scm_string_join, "string-join", 1, 2, 0,
   size_t del_len = 0;
   size_t len = 0;
   char *p;
-  long strings = scm_ilength (ls);
+  ent strings = scm_ilength (ls);
 
   /* Validate the string list.  */
   if (strings < 0)
@@ -507,7 +507,7 @@ SCM_DEFINE (scm_srfi13_substring_copy, "string-copy", 1, 2, 0,
 	    "@var{str} which is copied.")
 #define FUNC_NAME s_scm_srfi13_substring_copy
 {
-  const char *cstr;
+  const char *cstr; (void) cstr;
   size_t cstart, cend;
 
   MY_VALIDATE_SUBSTRING_SPEC_COPY (1, str, cstr,
@@ -2396,7 +2396,7 @@ SCM_DEFINE (scm_substring_upcase_x, "string-upcase!", 1, 2, 0,
 	    "@end lisp")
 #define FUNC_NAME s_scm_substring_upcase_x
 {
-  const char *cstr;
+  const char *cstr; (void) cstr;
   size_t cstart, cend;
 
   MY_VALIDATE_SUBSTRING_SPEC_COPY (1, str, cstr,
@@ -2417,7 +2417,7 @@ SCM_DEFINE (scm_substring_upcase, "string-upcase", 1, 2, 0,
 	    "Upcase every character in @code{str}.")
 #define FUNC_NAME s_scm_substring_upcase
 {
-  const char *cstr;
+  const char *cstr; (void) cstr;
   size_t cstart, cend;
 
   MY_VALIDATE_SUBSTRING_SPEC_COPY (1, str, cstr,
@@ -2464,7 +2464,7 @@ SCM_DEFINE (scm_substring_downcase_x, "string-downcase!", 1, 2, 0,
 	    "@end lisp")
 #define FUNC_NAME s_scm_substring_downcase_x
 {
-  const char *cstr;
+  const char *cstr; (void) cstr;
   size_t cstart, cend;
 
   MY_VALIDATE_SUBSTRING_SPEC_COPY (1, str, cstr,
@@ -2485,7 +2485,7 @@ SCM_DEFINE (scm_substring_downcase, "string-downcase", 1, 2, 0,
 	    "Downcase every character in @var{str}.")
 #define FUNC_NAME s_scm_substring_downcase
 {
-  const char *cstr;
+  const char *cstr; (void) cstr;
   size_t cstart, cend;
 
   MY_VALIDATE_SUBSTRING_SPEC_COPY (1, str, cstr,
@@ -2541,7 +2541,7 @@ SCM_DEFINE (scm_string_titlecase_x, "string-titlecase!", 1, 2, 0,
 	    "@var{str}.")
 #define FUNC_NAME s_scm_string_titlecase_x
 {
-  const char *cstr;
+  const char *cstr; (void) cstr;
   size_t cstart, cend;
 
   MY_VALIDATE_SUBSTRING_SPEC_COPY (1, str, cstr,
@@ -2557,7 +2557,7 @@ SCM_DEFINE (scm_string_titlecase, "string-titlecase", 1, 2, 0,
 	    "Titlecase every first character in a word in @var{str}.")
 #define FUNC_NAME s_scm_string_titlecase
 {
-  const char *cstr;
+  const char *cstr; (void) cstr;
   size_t cstart, cend;
 
   MY_VALIDATE_SUBSTRING_SPEC_COPY (1, str, cstr,
@@ -2625,7 +2625,7 @@ SCM_DEFINE (scm_string_reverse, "string-reverse", 1, 2, 0,
 	    "operate on.")
 #define FUNC_NAME s_scm_string_reverse
 {
-  const char *cstr;
+  const char *cstr; (void) cstr;
   char *ctarget;
   size_t cstart, cend;
   SCM result;
@@ -3291,7 +3291,7 @@ SCM_DEFINE (scm_string_split, "string-split", 2, 0, 0,
 	    "@end lisp")
 #define FUNC_NAME s_scm_string_split
 {
-  long idx, last_idx;
+  ent idx, last_idx;
   const char * p;
   char ch;
   SCM res = SCM_EOL;

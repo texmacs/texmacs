@@ -3472,7 +3472,7 @@
 
 ;;; Place the user in the guile-user module.
 ;;;
-
+(debug-set! stack 800000)
 (define-module (guile-user))
 
 ;;; boot-9.scm ends here

@@ -26,15 +26,36 @@
 
 
 
-SCM_API unsigned long scm_string_hash (const unsigned char *str, size_t len);
-SCM_API unsigned long scm_hasher (SCM obj, unsigned long n, size_t d);
-SCM_API unsigned long scm_ihashq (SCM obj, unsigned long n);
+SCM_API nat scm_string_hash (const unsigned char *str, size_t len);
+SCM_API nat scm_hasher (SCM obj, nat n, size_t d);
+SCM_API nat scm_ihashq (SCM obj, nat n);
 SCM_API SCM scm_hashq (SCM obj, SCM n);
-SCM_API unsigned long scm_ihashv (SCM obj, unsigned long n);
+SCM_API nat scm_ihashv (SCM obj, nat n);
 SCM_API SCM scm_hashv (SCM obj, SCM n);
-SCM_API unsigned long scm_ihash (SCM obj, unsigned long n);
+SCM_API nat scm_ihash (SCM obj, nat n);
 SCM_API SCM scm_hash (SCM obj, SCM n);
 SCM_API void scm_init_hash (void);
+
+static inline nat
+scm_ihash_var (SCM obj, nat n, void* closure)
+{
+  (void) closure;
+  return scm_ihash (obj, n);
+}
+
+static inline nat
+scm_ihashq_var (SCM obj, nat n, void* closure)
+{
+  (void) closure;
+  return scm_ihashq (obj, n);
+}
+
+static inline nat
+scm_ihashv_var (SCM obj, nat n, void* closure)
+{
+  (void) closure;
+  return scm_ihashv (obj, n);
+}
 
 #endif  /* SCM_HASH_H */
 

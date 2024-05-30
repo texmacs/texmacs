@@ -37,13 +37,13 @@ extern double floor();
 #endif
 
 
-unsigned long 
+nat
 scm_string_hash (const unsigned char *str, size_t len)
 {
   /* from suggestion at: */
   /* http://srfi.schemers.org/srfi-13/mail-archive/msg00112.html */
 
-  unsigned long h = 0;
+  nat h = 0;
   while (len-- > 0)
     h = *str++ + h*37;
   return h;
@@ -54,8 +54,8 @@ scm_string_hash (const unsigned char *str, size_t len)
 /* Dirk:FIXME:: scm_hasher could be made static. */
 
 
-unsigned long
-scm_hasher(SCM obj, unsigned long n, size_t d)
+nat
+scm_hasher(SCM obj, nat n, size_t d)
 {
   switch (SCM_ITAG3 (obj)) {
   case scm_tc3_int_1: 
@@ -94,14 +94,14 @@ scm_hasher(SCM obj, unsigned long n, size_t d)
     case scm_tc7_number:
       switch SCM_TYP16 (obj) {
       case scm_tc16_big:
-        return scm_to_ulong (scm_modulo (obj, scm_from_ulong (n)));
+        return scm_to_nat (scm_modulo (obj, scm_from_nat (n)));
       case scm_tc16_real:
 	{
 	  double r = SCM_REAL_VALUE (obj);
 	  if (floor (r) == r) 
 	    {
 	      obj = scm_inexact_to_exact (obj);
-	      return scm_to_ulong (scm_modulo (obj, scm_from_ulong (n)));
+	      return scm_to_nat (scm_modulo (obj, scm_from_nat (n)));
 	    }
 	}
         /* Fall through */
@@ -113,7 +113,7 @@ scm_hasher(SCM obj, unsigned long n, size_t d)
       /* Fall through */
     case scm_tc7_string:
       {
-	unsigned long hash =
+	nat hash =
 	  scm_string_hash ((const unsigned char *) scm_i_string_chars (obj),
 			   scm_i_string_length (obj)) % n;
 	scm_remember_upto_here_1 (obj);
@@ -128,7 +128,7 @@ scm_hasher(SCM obj, unsigned long n, size_t d)
 	if (len > 5)
 	  {
 	    size_t i = d/2;
-	    unsigned long h = 1;
+	    nat h = 1;
 	    while (i--)
 	      {
 		SCM elt = SCM_SIMPLE_VECTOR_REF (obj, h % len);
@@ -139,7 +139,7 @@ scm_hasher(SCM obj, unsigned long n, size_t d)
 	else
 	  {
 	    size_t i = len;
-	    unsigned long h = (n)-1;
+	    nat h = (n)-1;
 	    while (i--)
 	      {
 		SCM elt = SCM_SIMPLE_VECTOR_REF (obj, h % len);
@@ -166,8 +166,8 @@ scm_hasher(SCM obj, unsigned long n, size_t d)
 
 
 
-unsigned long
-scm_ihashq (SCM obj, unsigned long n)
+nat
+scm_ihashq (SCM obj, nat n)
 {
   return (SCM_UNPACK (obj) >> 1) % n;
 }
@@ -187,8 +187,8 @@ SCM_DEFINE (scm_hashq, "hashq", 2, 0, 0,
 	    "different values, since @code{foo} will be garbage collected.")
 #define FUNC_NAME s_scm_hashq
 {
-  unsigned long sz = scm_to_unsigned_integer (size, 1, ULONG_MAX);
-  return scm_from_ulong (scm_ihashq (key, sz));
+  nat sz = scm_to_unsigned_integer (size, 1, NAT_MAX);
+  return scm_from_nat (scm_ihashq (key, sz));
 }
 #undef FUNC_NAME
 
@@ -196,14 +196,14 @@ SCM_DEFINE (scm_hashq, "hashq", 2, 0, 0,
 
 
 
-unsigned long
-scm_ihashv (SCM obj, unsigned long n)
+nat
+scm_ihashv (SCM obj, nat n)
 {
   if (SCM_CHARP(obj))
-    return ((unsigned long) (scm_c_downcase (SCM_CHAR (obj)))) % n; /* downcase!?!! */
+    return ((nat) (scm_c_downcase (SCM_CHAR (obj)))) % n; /* downcase!?!! */
 
   if (SCM_NUMP(obj))
-    return (unsigned long) scm_hasher(obj, n, 10);
+    return (nat) scm_hasher(obj, n, 10);
   else
     return SCM_UNPACK (obj) % n;
 }
@@ -223,8 +223,8 @@ SCM_DEFINE (scm_hashv, "hashv", 2, 0, 0,
 	    "different values, since @code{foo} will be garbage collected.")
 #define FUNC_NAME s_scm_hashv
 {
-  unsigned long sz = scm_to_unsigned_integer (size, 1, ULONG_MAX);
-  return scm_from_ulong (scm_ihashv (key, sz));
+  nat sz = scm_to_unsigned_integer (size, 1, NAT_MAX);
+  return scm_from_nat (scm_ihashv (key, sz));
 }
 #undef FUNC_NAME
 
@@ -232,10 +232,10 @@ SCM_DEFINE (scm_hashv, "hashv", 2, 0, 0,
 
 
 
-unsigned long
-scm_ihash (SCM obj, unsigned long n)
+nat
+scm_ihash (SCM obj, nat n)
 {
-  return (unsigned long) scm_hasher (obj, n, 10);
+  return (nat) scm_hasher (obj, n, 10);
 }
 
 SCM_DEFINE (scm_hash, "hash", 2, 0, 0,
@@ -246,8 +246,8 @@ SCM_DEFINE (scm_hash, "hash", 2, 0, 0,
 	    "integer in the range 0 to @var{size} - 1.")
 #define FUNC_NAME s_scm_hash
 {
-  unsigned long sz = scm_to_unsigned_integer (size, 1, ULONG_MAX);
-  return scm_from_ulong (scm_ihash (key, sz));
+  nat sz = scm_to_unsigned_integer (size, 1, NAT_MAX);
+  return scm_from_nat (scm_ihash (key, sz));
 }
 #undef FUNC_NAME
 

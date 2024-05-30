@@ -50,6 +50,22 @@
 /* {Errors and Exceptional Conditions}
  */
 
+static void (*scm_abort_callback) (void) = NULL;
+
+void
+scm_abort (void)
+{
+  if (scm_abort_callback != NULL) {
+    (*scm_abort_callback) ();
+  }
+  abort ();
+}
+
+void
+scm_set_abort_callback (void (*callback) (void))
+{
+  scm_abort_callback = callback;
+}
 
 /* Scheme interface to scm_error_scm.  */
 void
@@ -86,7 +102,7 @@ SCM_DEFINE (scm_error_scm, "scm-error", 5, 0, 0,
     {
       /* The error occured during GC --- abort */
       fprintf (stderr, "Guile: error during GC.\n"),
-      abort ();
+      scm_abort ();
     }
 
   scm_ithrow (key, scm_list_4 (subr, message, args, data), 1);
@@ -258,7 +274,7 @@ void
 scm_memory_error (const char *subr)
 {
   fprintf (stderr, "FATAL: memory error in %s\n", subr);
-  abort ();
+  scm_abort ();
 }
 
 SCM_GLOBAL_SYMBOL (scm_misc_error_key, "misc-error");

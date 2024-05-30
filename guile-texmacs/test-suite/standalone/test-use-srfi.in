@@ -16,10 +16,23 @@
 # along with this library; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+case @host@ in
+    x86_64-w64-mingw32)
+    export GUILE_LOAD_PATH="@top_builddir_absolute@"
+    export PATH="@top_builddir_absolute@/libguile:$PATH"
+    export PATH="@top_builddir_absolute@/libguile/.libs:$PATH"
+    export PATH="@top_builddir_absolute@/srfi/.libs:$PATH"
+    alias cmd="@top_builddir_absolute@/libguile/guile -q"
+    ;;
+  *)
+    alias cmd="@top_builddir_absolute@/libguile/guile -q -l @top_builddir_absolute@/libguile/stack-limit-calibration.scm"
+    ;;
+esac
 
 # Test that two srfi numbers on the command line work.
 #
-guile -q -l @top_builddir_absolute@/libguile/stack-limit-calibration.scm --use-srfi=1,10 >/dev/null <<EOF
+
+cmd --use-srfi=1,10 >/dev/null <<EOF
 (if (and (defined? 'partition)
          (defined? 'define-reader-ctor))
     (exit 0)   ;; good
@@ -38,7 +51,7 @@ fi
 # `top-repl' the core bindings got ahead of anything --use-srfi gave.
 #
 
-guile -q -l @top_builddir_absolute@/libguile/stack-limit-calibration.scm --use-srfi=1 >/dev/null <<EOF
+cmd --use-srfi=1 >/dev/null <<EOF
 (catch #t
   (lambda ()
     (iota 2 3 4))
@@ -56,7 +69,7 @@ fi
 # exercises duplicates handling in `top-repl' versus `use-srfis' (in
 # boot-9.scm).
 #
-guile -q -l @top_builddir_absolute@/libguile/stack-limit-calibration.scm --use-srfi=17 >/dev/null <<EOF
+cmd --use-srfi=17 >/dev/null <<EOF
 (if (procedure-with-setter? car)
     (exit 0)   ;; good
     (exit 1))  ;; bad

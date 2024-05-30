@@ -52,7 +52,7 @@
 #endif
 
 
-SCM_API long scm_c_get_internal_run_time (void);
+SCM_API ent scm_c_get_internal_run_time (void);
 SCM_API SCM scm_get_internal_real_time (void);
 SCM_API SCM scm_get_internal_run_time (void);
 SCM_API SCM scm_current_time (void);

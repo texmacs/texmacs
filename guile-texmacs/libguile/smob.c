@@ -46,7 +46,7 @@
  */
 
 #define MAX_SMOB_COUNT 256
-long scm_numsmob;
+ent scm_numsmob;
 scm_smob_descriptor scm_smobs[MAX_SMOB_COUNT];
 
 /* Lower 16 bit of data must be zero. 
@@ -103,7 +103,7 @@ scm_free0 (SCM ptr SCM_UNUSED)
 size_t
 scm_smob_free (SCM obj)
 {
-  long n = SCM_SMOBNUM (obj);
+  ent n = SCM_SMOBNUM (obj);
   if (scm_smobs[n].size > 0)
     scm_gc_free ((void *) SCM_CELL_WORD_1 (obj), 
 		 scm_smobs[n].size, SCM_SMOBNAME (n));
@@ -116,7 +116,7 @@ scm_smob_free (SCM obj)
 int
 scm_smob_print (SCM exp, SCM port, scm_print_state *pstate SCM_UNUSED)
 {
-  long n = SCM_SMOBNUM (exp);
+  ent n = SCM_SMOBNUM (exp);
   scm_puts ("#<", port);
   scm_puts (SCM_SMOBNAME (n) ? SCM_SMOBNAME (n) : "smob", port);
   scm_putc (' ', port);
@@ -132,13 +132,13 @@ scm_smob_print (SCM exp, SCM port, scm_print_state *pstate SCM_UNUSED)
  */
 
 #define SCM_SMOB_APPLY0(SMOB) \
-  SCM_SMOB_DESCRIPTOR (SMOB).apply (SMOB)
+  ((SCM (*) (SCM)) (SCM_SMOB_DESCRIPTOR (SMOB).apply)) (SMOB)
 #define SCM_SMOB_APPLY1(SMOB, A1) \
-  SCM_SMOB_DESCRIPTOR (SMOB).apply (SMOB, A1)
+  ((SCM (*) (SCM, SCM)) (SCM_SMOB_DESCRIPTOR (SMOB).apply)) (SMOB, A1)
 #define SCM_SMOB_APPLY2(SMOB, A1, A2) \
-  SCM_SMOB_DESCRIPTOR (SMOB).apply (SMOB, A1, A2)
+  ((SCM (*) (SCM, SCM, SCM)) (SCM_SMOB_DESCRIPTOR (SMOB).apply)) (SMOB, A1, A2)
 #define SCM_SMOB_APPLY3(SMOB, A1, A2, A3) \
-  SCM_SMOB_DESCRIPTOR (SMOB).apply (SMOB, A1, A2, A3)
+  ((SCM (*) (SCM, SCM, SCM, SCM)) (SCM_SMOB_DESCRIPTOR (SMOB).apply)) (SMOB, A1, A2, A3)
 
 static SCM
 scm_smob_apply_0_010 (SCM smob)
@@ -289,7 +289,7 @@ scm_t_bits
 scm_make_smob_type (char const *name, size_t size)
 #define FUNC_NAME "scm_make_smob_type"
 {
-  long new_smob;
+  ent new_smob;
 
   SCM_CRITICAL_SECTION_START;
   new_smob = scm_numsmob;
@@ -353,7 +353,7 @@ scm_set_smob_apply (scm_t_bits tc, SCM (*apply) (),
   if (rst > 1 || req + opt + rst > 3)
     {
       puts ("Unsupported smob application type");
-      abort ();
+      scm_abort ();
     }
 
   switch (type)
@@ -456,7 +456,7 @@ scm_set_smob_apply (scm_t_bits tc, SCM (*apply) (),
 SCM
 scm_make_smob (scm_t_bits tc)
 {
-  long n = SCM_TC2SMOBNUM (tc);
+  ent n = SCM_TC2SMOBNUM (tc);
   size_t size = scm_smobs[n].size;
   scm_t_bits data = (size > 0
 		     ? (scm_t_bits) scm_gc_malloc (size, SCM_SMOBNAME (n))
@@ -478,7 +478,7 @@ free_print (SCM exp, SCM port, scm_print_state *pstate SCM_UNUSED)
   
 #if (SCM_DEBUG_CELL_ACCESSES == 1)
   if (scm_debug_cell_accesses_p)
-    abort();
+    scm_abort ();
 #endif
   
 
@@ -488,7 +488,7 @@ free_print (SCM exp, SCM port, scm_print_state *pstate SCM_UNUSED)
 void
 scm_smob_prehistory ()
 {
-  long i;
+  ent i;
   scm_t_bits tc;
 
   scm_numsmob = 0;

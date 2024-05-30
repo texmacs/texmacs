@@ -74,7 +74,7 @@ SCM_GLOBAL_SYMBOL (scm_sym_breakpoint, "breakpoint");
 #define SRCPROPBRK(p) (SCM_SMOB_FLAGS (p) & SCM_SOURCE_PROPERTY_FLAG_BREAK)
 #define SRCPROPPOS(p) (SCM_CELL_WORD(p,1))
 #define SRCPROPLINE(p) (SRCPROPPOS(p) >> 12)
-#define SRCPROPCOL(p) (SRCPROPPOS(p) & 0x0fffL)
+#define SRCPROPCOL(p) (SRCPROPPOS(p) & ((ent) 0x0fffL))
 #define SRCPROPCOPY(p) (SCM_CELL_OBJECT(p,2))
 #define SRCPROPPLIST(p) (SCM_CELL_OBJECT_3(p))
 #define SETSRCPROPBRK(p) \
@@ -131,7 +131,7 @@ scm_c_source_property_breakpoint_p (SCM form)
 static SCM scm_last_plist_filename;
 
 SCM
-scm_make_srcprops (long line, int col, SCM filename, SCM copy, SCM plist)
+scm_make_srcprops (ent line, int col, SCM filename, SCM copy, SCM plist)
 {
   if (!SCM_UNBNDP (filename))
     {
@@ -304,15 +304,19 @@ SCM_DEFINE (scm_set_source_property_x, "set-source-property!", 3, 0, 0,
     }
   else if (scm_is_eq (scm_sym_copy, key))
     {
-      if (SRCPROPSP (p))
-	SRCPROPCOPY (p) = datum;
+      if (SRCPROPSP (p)) {
+	SCM* aux= (SCM*) SRCPROPCOPY (p);
+	*aux= datum;
+      }
       else
 	SCM_WHASHSET (scm_source_whash, h, scm_make_srcprops (0, 0, SCM_UNDEFINED, datum, p));
     }
   else
     {
-      if (SRCPROPSP (p))
-	SRCPROPPLIST (p) = scm_acons (key, datum, SRCPROPPLIST (p));
+      if (SRCPROPSP (p)) {
+	SCM* aux= (SCM*) SRCPROPCOPY (p);
+	*aux = scm_acons (key, datum, SRCPROPPLIST (p));
+      }
       else
 	SCM_WHASHSET (scm_source_whash, h, scm_acons (key, datum, p));
     }

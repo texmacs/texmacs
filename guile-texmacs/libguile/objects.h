@@ -53,7 +53,7 @@
 #define SCM_CLASSF_ENTITY	SCM_STRUCTF_ENTITY
 /* Operator classes need to be identified in the evaluator.
    (Entities also have SCM_CLASSF_OPERATOR set in their vtable.) */
-#define SCM_CLASSF_OPERATOR	(1L << 29)
+#define SCM_CLASSF_OPERATOR	(((ent) 1L) << 29)
 
 #define SCM_I_OPERATORP(obj)\
 	((SCM_OBJ_CLASS_FLAGS (obj) & SCM_CLASSF_OPERATOR) != 0)
@@ -157,7 +157,7 @@ struct scm_metaclass_operator {
 
 typedef struct scm_effective_slot_definition {
   SCM name;
-  long location;
+  ent location;
   SCM init_value;
   SCM (*get) (SCM obj, SCM slotdef);
   SCM (*set) (SCM obj, SCM slotdef, SCM value);
@@ -182,7 +182,7 @@ SCM_API SCM scm_metaclass_operator;
 /* Goops functions. */
 SCM_API SCM scm_make_extended_class (char const *type_name, int applicablep);
 SCM_API void scm_i_inherit_applicable (SCM c);
-SCM_API void scm_make_port_classes (long ptobnum, char *type_name);
+SCM_API void scm_make_port_classes (ent ptobnum, char *type_name);
 SCM_API void scm_change_object_class (SCM, SCM, SCM);
 SCM_API SCM scm_memoize_method (SCM x, SCM args);
 
@@ -206,7 +206,7 @@ SCM_API SCM scm_make_class_object (SCM metaclass, SCM layout);
 SCM_API SCM scm_make_subclass_object (SCM c, SCM layout);
 
 SCM_API SCM scm_i_make_class_object (SCM metaclass, SCM layout_string,
-				     unsigned long flags);
+				     nat flags);
 SCM_API void scm_init_objects (void);
 
 #endif  /* SCM_OBJECTS_H */

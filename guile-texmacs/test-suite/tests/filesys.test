@@ -48,7 +48,7 @@
 ;;;
 ;;; lstat
 ;;;
-
+(if (defined? 'lstat)
 (with-test-prefix "lstat"
 
   (pass-if "normal file"
@@ -67,7 +67,7 @@
       (pass-if "symlink"
 	;; not much to test, except that it works
 	(->bool (lstat (test-symlink))))))
-
+)
 ;;;
 ;;; opendir and friends
 ;;;
@@ -126,4 +126,5 @@
 	(eqv? 5 (stat:size st))))))
 
 (delete-file (test-file))
-(delete-file (test-symlink))
+(if (defined? 'lstat)
+    (delete-file (test-symlink)))

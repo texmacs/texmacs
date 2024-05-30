@@ -114,13 +114,13 @@ void *alloca (size_t);
 #endif
 
 
-#if defined (__MINGW32__) || defined (_MSC_VER) || defined (__BORLANDC__)
+#if HAVE_DIRENT_H
+# include <dirent.h>
+# define NAMLEN(dirent) strlen((dirent)->d_name)
+#elif defined (__MINGW32__) || defined (_MSC_VER) || defined (__BORLANDC__)
 # include "win32-dirent.h"
 # define NAMLEN(dirent) strlen((dirent)->d_name)
 /* The following bits are per AC_HEADER_DIRENT doco in the autoconf manual */
-#elif HAVE_DIRENT_H
-# include <dirent.h>
-# define NAMLEN(dirent) strlen((dirent)->d_name)
 #else
 # define dirent direct
 # define NAMLEN(dirent) (dirent)->d_namlen
@@ -300,7 +300,7 @@ SCM_DEFINE (scm_chmod, "chmod", 2, 0, 0,
 #define FUNC_NAME s_scm_chmod
 {
   int rv;
-  int fdes;
+  int fdes; (void) fdes;
 
   object = SCM_COERCE_OUTPORT (object);
 
@@ -490,25 +490,25 @@ scm_stat2scm (struct stat_or_stat64 *stat_temp)
 {
   SCM ans = scm_c_make_vector (15, SCM_UNSPECIFIED);
   
-  SCM_SIMPLE_VECTOR_SET(ans, 0, scm_from_ulong (stat_temp->st_dev));
+  SCM_SIMPLE_VECTOR_SET(ans, 0, scm_from_nat (stat_temp->st_dev));
   SCM_SIMPLE_VECTOR_SET(ans, 1, scm_from_ino_t_or_ino64_t (stat_temp->st_ino));
-  SCM_SIMPLE_VECTOR_SET(ans, 2, scm_from_ulong (stat_temp->st_mode));
-  SCM_SIMPLE_VECTOR_SET(ans, 3, scm_from_ulong (stat_temp->st_nlink));
-  SCM_SIMPLE_VECTOR_SET(ans, 4, scm_from_ulong (stat_temp->st_uid));
-  SCM_SIMPLE_VECTOR_SET(ans, 5, scm_from_ulong (stat_temp->st_gid));
+  SCM_SIMPLE_VECTOR_SET(ans, 2, scm_from_nat (stat_temp->st_mode));
+  SCM_SIMPLE_VECTOR_SET(ans, 3, scm_from_nat (stat_temp->st_nlink));
+  SCM_SIMPLE_VECTOR_SET(ans, 4, scm_from_nat (stat_temp->st_uid));
+  SCM_SIMPLE_VECTOR_SET(ans, 5, scm_from_nat (stat_temp->st_gid));
 #ifdef HAVE_STRUCT_STAT_ST_RDEV
-  SCM_SIMPLE_VECTOR_SET(ans, 6, scm_from_ulong (stat_temp->st_rdev));
+  SCM_SIMPLE_VECTOR_SET(ans, 6, scm_from_nat (stat_temp->st_rdev));
 #else
   SCM_SIMPLE_VECTOR_SET(ans, 6, SCM_BOOL_F);
 #endif
   SCM_SIMPLE_VECTOR_SET(ans, 7, scm_from_off_t_or_off64_t (stat_temp->st_size));
-  SCM_SIMPLE_VECTOR_SET(ans, 8, scm_from_ulong (stat_temp->st_atime));
-  SCM_SIMPLE_VECTOR_SET(ans, 9, scm_from_ulong (stat_temp->st_mtime));
-  SCM_SIMPLE_VECTOR_SET(ans, 10, scm_from_ulong (stat_temp->st_ctime));
+  SCM_SIMPLE_VECTOR_SET(ans, 8, scm_from_nat (stat_temp->st_atime));
+  SCM_SIMPLE_VECTOR_SET(ans, 9, scm_from_nat (stat_temp->st_mtime));
+  SCM_SIMPLE_VECTOR_SET(ans, 10, scm_from_nat (stat_temp->st_ctime));
 #ifdef HAVE_STRUCT_STAT_ST_BLKSIZE
-  SCM_SIMPLE_VECTOR_SET(ans, 11, scm_from_ulong (stat_temp->st_blksize));
+  SCM_SIMPLE_VECTOR_SET(ans, 11, scm_from_nat (stat_temp->st_blksize));
 #else
-  SCM_SIMPLE_VECTOR_SET(ans, 11, scm_from_ulong (4096L));
+  SCM_SIMPLE_VECTOR_SET(ans, 11, scm_from_nat ((nat) 4096UL));
 #endif
 #ifdef HAVE_STRUCT_STAT_ST_BLOCKS
   SCM_SIMPLE_VECTOR_SET(ans, 12, scm_from_blkcnt_t_or_blkcnt64_t (stat_temp->st_blocks));
@@ -904,13 +904,13 @@ SCM_DEFINE (scm_readdir, "readdir", 1, 0, 0,
   {
     struct dirent_or_dirent64 de; /* just for sizeof */
     DIR    *ds = (DIR *) SCM_CELL_WORD_1 (port);
-    size_t namlen;
+    size_t namlen; (void) namlen;
 #ifdef NAME_MAX
     char   buf [SCM_MAX (sizeof (de),
                          sizeof (de) - sizeof (de.d_name) + NAME_MAX + 1)];
 #else
     char   *buf;
-    long   name_max = fpathconf (dirfd (ds), _PC_NAME_MAX);
+    ent   name_max = fpathconf (dirfd (ds), _PC_NAME_MAX);
     if (name_max == -1)
       SCM_SYSERROR;
     buf = alloca (SCM_MAX (sizeof (de),
@@ -1313,13 +1313,13 @@ SCM_DEFINE (scm_select, "select", 3, 2, 0,
     time_ptr = 0;
   else
     {
-      if (scm_is_unsigned_integer (secs, 0, ULONG_MAX))
+      if (scm_is_unsigned_integer (secs, 0, NAT_MAX))
 	{
-	  timeout.tv_sec = scm_to_ulong (secs);
+	  timeout.tv_sec = scm_to_nat (secs);
 	  if (SCM_UNBNDP (usecs))
 	    timeout.tv_usec = 0;
 	  else
-	    timeout.tv_usec = scm_to_long (usecs);
+	    timeout.tv_usec = scm_to_ent (usecs);
 	}
       else
 	{
@@ -1327,10 +1327,10 @@ SCM_DEFINE (scm_select, "select", 3, 2, 0,
 
 	  if (!SCM_UNBNDP (usecs))
 	    SCM_WRONG_TYPE_ARG (4, secs);
-	  if (fl > LONG_MAX)
+	  if (fl > ENT_MAX)
 	    SCM_OUT_OF_RANGE (4, secs);
-	  timeout.tv_sec = (long) fl;
-	  timeout.tv_usec = (long) ((fl - timeout.tv_sec) * 1000000);
+	  timeout.tv_sec = (ent) fl;
+	  timeout.tv_usec = (ent) ((fl - timeout.tv_sec) * 1000000);
 	}
       time_ptr = &timeout;
     }
@@ -1584,8 +1584,8 @@ SCM_DEFINE (scm_dirname, "dirname", 1, 0, 0,
 #define FUNC_NAME s_scm_dirname
 {
   const char *s;
-  long int i;
-  unsigned long int len;
+  ent i;
+  nat len;
 
   SCM_VALIDATE_STRING (1, filename);
 

@@ -37,6 +37,7 @@
       thunk
       restore-signals))
 
+(if (defined? 'primitive-fork) (begin
 
 ;;
 ;; open-input-pipe
@@ -208,3 +209,4 @@
       (and (status:exit-val st)
 	   (= 1 (status:exit-val st))))))
 
+)) ;; defined primitive-fork

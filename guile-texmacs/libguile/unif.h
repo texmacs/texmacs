@@ -142,7 +142,7 @@ SCM_API scm_t_uint32 *scm_bitvector_writable_elements (SCM vec,
 typedef struct scm_i_t_array
 {
   SCM v;  /* the contents of the array, e.g., a vector or uniform vector.  */
-  unsigned long base;
+  nat base;
 } scm_i_t_array;
 
 SCM_API scm_t_bits scm_i_tc16_array;
@@ -170,15 +170,15 @@ SCM_API SCM scm_i_read_array (SCM port, int c);
 
 #if SCM_ENABLE_DEPRECATED
 
-SCM_API SCM scm_make_uve (long k, SCM prot);
+SCM_API SCM scm_make_uve (ent k, SCM prot);
 SCM_API SCM scm_array_prototype (SCM ra);
 SCM_API SCM scm_list_to_uniform_array (SCM ndim, SCM prot, SCM lst);
 SCM_API SCM scm_dimensions_to_uniform_array (SCM dims, SCM prot, SCM fill);
 SCM_API SCM scm_make_ra (int ndim);
 SCM_API SCM scm_shap2ra (SCM args, const char *what);
-SCM_API SCM scm_cvref (SCM v, unsigned long pos, SCM last);
+SCM_API SCM scm_cvref (SCM v, nat pos, SCM last);
 SCM_API void scm_ra_set_contp (SCM ra);
-SCM_API long scm_aind (SCM ra, SCM args, const char *what);
+SCM_API ent scm_aind (SCM ra, SCM args, const char *what);
 SCM_API int scm_raprin1 (SCM exp, SCM port, scm_print_state *pstate);
 
 #endif

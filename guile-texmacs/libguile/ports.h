@@ -47,7 +47,7 @@ typedef enum scm_t_port_rw_active {
 typedef struct 
 {
   SCM port;			/* Link back to the port object.  */
-  long entry;			/* Index in port table. */
+  ent entry;			/* Index in port table. */
   int revealed;			/* 0 not revealed, > 1 revealed.
 				 * Revealed ports do not get GC'd.
 				 */
@@ -55,7 +55,7 @@ typedef struct
   scm_t_bits stream;
 
   SCM file_name;		/* debugging support.  */
-  long line_number;		/* debugging support.  */
+  ent line_number;		/* debugging support.  */
   int column_number;		/* debugging support.  */
 
   /* port buffers.  the buffer(s) are set up for all ports.  
@@ -110,7 +110,7 @@ typedef struct
 } scm_t_port;
 
 SCM_API scm_t_port **scm_i_port_table;
-SCM_API long scm_i_port_table_size; /* Number of ports in scm_i_port_table.  */
+SCM_API ent scm_i_port_table_size; /* Number of ports in scm_i_port_table.  */
 SCM_API scm_i_pthread_mutex_t scm_i_port_table_mutex;
 
 #define SCM_READ_BUFFER_EMPTY_P(c_port) (c_port->read_pos >= c_port->read_end)
@@ -124,11 +124,11 @@ SCM_API scm_i_pthread_mutex_t scm_i_port_table_mutex;
  * Note that we reserve the bits 1 << 24 and above for use by the
  * routines in the port's scm_ptobfuns structure.
  */
-#define SCM_OPN		(1L<<16) /* Is the port open? */
-#define SCM_RDNG	(2L<<16) /* Is it a readable port? */
-#define SCM_WRTNG	(4L<<16) /* Is it writable? */
-#define SCM_BUF0	(8L<<16) /* Is it unbuffered? */
-#define SCM_BUFLINE     (64L<<16) /* Is it line-buffered? */
+#define SCM_OPN		(((ent) 1L)<<16) /* Is the port open? */
+#define SCM_RDNG	(((ent) 2L)<<16) /* Is it a readable port? */
+#define SCM_WRTNG	(((ent) 4L)<<16) /* Is it writable? */
+#define SCM_BUF0	(((ent) 8L)<<16) /* Is it unbuffered? */
+#define SCM_BUFLINE     (((ent) 64L)<<16) /* Is it line-buffered? */
 
 #define SCM_PORTP(x) (!SCM_IMP (x) && (SCM_TYP7 (x) == scm_tc7_port))
 #define SCM_OPPORTP(x) (!SCM_IMP(x) && (((0x7f | SCM_OPN) & SCM_CELL_WORD_0(x))==(scm_tc7_port | SCM_OPN)))
@@ -194,8 +194,8 @@ typedef struct scm_t_ptob_descriptor
 
 
 SCM_API scm_t_ptob_descriptor *scm_ptobs;
-SCM_API long scm_numptob;
-SCM_API long scm_i_port_table_room;
+SCM_API ent scm_numptob;
+SCM_API ent scm_i_port_table_room;
 
 
 
@@ -249,7 +249,7 @@ SCM_API void scm_port_non_buffer (scm_t_port *pt);
 SCM_API int scm_revealed_count (SCM port);
 SCM_API SCM scm_port_revealed (SCM port);
 SCM_API SCM scm_set_port_revealed_x (SCM port, SCM rcount);
-SCM_API long scm_mode_bits (char *modes);
+SCM_API ent scm_mode_bits (char *modes);
 SCM_API SCM scm_port_mode (SCM port);
 SCM_API SCM scm_close_input_port (SCM port);
 SCM_API SCM scm_close_output_port (SCM port);
@@ -302,7 +302,7 @@ SCM_API SCM scm_pt_member (SCM member);
 
 /* internal */
 
-SCM_API long scm_i_mode_bits (SCM modes);
+SCM_API ent scm_i_mode_bits (SCM modes);
 SCM_API void scm_i_dynwind_current_load_port (SCM port);
 
 

@@ -18,6 +18,9 @@
 ;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;;;; Boston, MA 02110-1301 USA
 
+(use-modules (test-suite lib)
+	     (ice-9 documentation))
+
 (define srcdir (cdr (assq 'srcdir %guile-build-info)))
 
 (define (egrep string filename)

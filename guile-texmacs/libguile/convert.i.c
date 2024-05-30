@@ -87,9 +87,9 @@ SCM2CTYPES (SCM obj, CTYPE *data)
 /* Converts a C array into a vector. */
 
 SCM
-CTYPES2SCM (const CTYPE *data, long n)
+CTYPES2SCM (const CTYPE *data, ent n)
 {
-  long i;
+  ent i;
   SCM v;
   
   v = scm_c_make_vector (n, SCM_UNSPECIFIED);
@@ -103,14 +103,14 @@ CTYPES2SCM (const CTYPE *data, long n)
 /* Converts a C array into a uniform vector. */
 
 SCM
-CTYPES2UVECT (const CTYPE *data, long n)
+CTYPES2UVECT (const CTYPE *data, ent n)
 {
   scm_t_array_handle handle;
-  long i;
+  ent i;
   SCM uvec;
   UVEC_CTYPE *uvec_elements;
   
-  uvec = F(scm_make_,UVEC_TAG,vector) (scm_from_long (n), SCM_UNDEFINED);
+  uvec = F(scm_make_,UVEC_TAG,vector) (scm_from_ent (n), SCM_UNDEFINED);
   uvec_elements = F(scm_,UVEC_TAG,vector_writable_elements) (uvec, &handle,
 							     NULL, NULL);
   for (i = 0; i < n; i++)
@@ -124,14 +124,14 @@ CTYPES2UVECT (const CTYPE *data, long n)
 #ifdef CTYPE2UVECT_2
 
 SCM
-CTYPES2UVECT_2 (const CTYPE_2 *data, long n)
+CTYPES2UVECT_2 (const CTYPE_2 *data, ent n)
 {
   scm_t_array_handle handle;
-  long i;
+  ent i;
   SCM uvec;
   UVEC_CTYPE_2 *uvec_elements;
   
-  uvec = F(scm_make_,UVEC_TAG_2,vector) (scm_from_long (n), SCM_UNDEFINED);
+  uvec = F(scm_make_,UVEC_TAG_2,vector) (scm_from_ent (n), SCM_UNDEFINED);
   uvec_elements = F(scm_,UVEC_TAG_2,vector_writable_elements) (uvec, &handle,
 							       NULL, NULL);
 

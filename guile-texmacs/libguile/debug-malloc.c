@@ -50,7 +50,7 @@ static hash_entry_t *malloc_object = 0;
 #define TABLE(table) malloc_ ## table
 #define SIZE(table) malloc_ ## table ## _size
 #define HASH(table, key) \
-  &TABLE (table)[((unsigned long) key >> 4UL) * 2654435761UL % SIZE (table)]
+  &TABLE (table)[(((nat) key) >> 4UL) * ((nat) 2654435761UL) % SIZE (table)]
 
 #define CREATE_HASH_ENTRY_AT(entry, table, h, k, done)	\
 {							\
@@ -150,7 +150,7 @@ scm_malloc_register (void *obj, const char *what)
 {
   hash_entry_t *type;
   GET_CREATE_HASH_ENTRY (type, type, what, l1);
-  type->data = (void *) ((int) type->data + 1);
+  type->data = (void *) ((ent) type->data + 1);
   CREATE_HASH_ENTRY (object, obj, type, l2);
 }
 
@@ -164,9 +164,9 @@ scm_malloc_unregister (void *obj)
     {
       fprintf (stderr,
 	       "scm_gc_free called on object not allocated with scm_gc_malloc\n");
-      abort ();
+      scm_abort ();
     }
-  type->data = (void *) ((int) type->data - 1);
+  type->data = (void *) ((ent) type->data - 1);
   object->key = 0;
 }  
 
@@ -186,7 +186,7 @@ scm_malloc_reregister (void *old, void *new, const char *newwhat)
 	  fprintf (stderr,
 		   "scm_gc_realloc called on object not allocated "
 		   "with scm_gc_malloc\n");
-	  abort ();
+	  scm_abort ();
 	}
       if (strcmp ((char *) type->key, newwhat) != 0)
 	{
@@ -196,7 +196,7 @@ scm_malloc_reregister (void *old, void *new, const char *newwhat)
 		       "scm_gc_realloc called with arg %s, was %s\n",
 		       newwhat,
 		       (char *) type->key);
-	      abort ();
+	      scm_abort ();
 	    }
 	}
       if (new != old)
@@ -221,7 +221,7 @@ SCM_DEFINE (scm_malloc_stats, "malloc-stats", 0, 0, 0,
   for (i = 0; i < malloc_type_size + N_SEEK; ++i)
     if (malloc_type[i].key)
       res = scm_acons (scm_from_locale_string ((char *) malloc_type[i].key),
-		       scm_from_int ((int) malloc_type[i].data),
+		       scm_from_int ((ent) malloc_type[i].data),
 		       res);
   return res;
 }

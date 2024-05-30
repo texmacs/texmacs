@@ -996,8 +996,9 @@ These correspond to the Scheme @code{(cons a b)} and @code{(list l0 l1
 @deftypefun SCM gh_car (SCM @var{obj})
 @deftypefunx SCM gh_cdr (SCM @var{obj})
 @dots{}
+@end deftypefun
 
-@deftypefunx SCM gh_c[ad][ad][ad][ad]r (SCM @var{obj})
+@deftypefun SCM gh_c[ad][ad][ad][ad]r (SCM @var{obj})
 These correspond to the Scheme @code{(caadar ls)} procedures etc @dots{}
 @end deftypefun
 

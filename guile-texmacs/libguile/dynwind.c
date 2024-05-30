@@ -278,13 +278,13 @@ scm_swap_bindings (SCM vars, SCM vals)
 }
 
 void
-scm_dowinds (SCM to, long delta)
+scm_dowinds (SCM to, ent delta)
 {
   scm_i_dowinds (to, delta, NULL, NULL);
 }
 
 void 
-scm_i_dowinds (SCM to, long delta, void (*turn_func) (void *), void *data)
+scm_i_dowinds (SCM to, ent delta, void (*turn_func) (void *), void *data)
 {
  tail:
   if (scm_is_eq (to, scm_i_dynwinds ()))

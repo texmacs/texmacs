@@ -70,8 +70,8 @@ extern unsigned long * __libc_ia64_register_backing_store_base;
 void
 scm_mark_all (void)
 {
-  long j;
-  int loops;
+  ent j;
+  int loops; (void) loops;
 
   scm_i_init_weak_vectors_for_gc ();
   scm_i_init_guardians_for_gc ();
@@ -93,7 +93,7 @@ scm_mark_all (void)
 	SCM l = SCM_HASHTABLE_BUCKET (scm_gc_registered_roots, i);
 	for (; !scm_is_null (l); l = SCM_CDR (l))
 	  {
-	    SCM *p = (SCM *) (scm_to_ulong (SCM_CAAR (l)));
+	    SCM *p = (SCM *) (scm_to_nat (SCM_CAAR (l)));
 	    scm_gc_mark (*p);
 	  }
       }
@@ -197,7 +197,7 @@ void
 scm_gc_mark_dependencies (SCM p)
 #define FUNC_NAME "scm_gc_mark_dependencies"
 {
-  register long i;
+  register ent i;
   register SCM ptr;
   SCM cell_type;
 
@@ -232,7 +232,7 @@ scm_gc_mark_dependencies (SCM p)
 	scm_t_bits word0 = SCM_CELL_WORD_0 (ptr) - scm_tc3_struct;
 	scm_t_bits * vtable_data = (scm_t_bits *) word0;
 	SCM layout = SCM_PACK (vtable_data [scm_vtable_index_layout]);
-	long len = scm_i_symbol_length (layout);
+	ent len = scm_i_symbol_length (layout);
 	const char *fields_desc = scm_i_symbol_chars (layout);
 	scm_t_bits *struct_data = (scm_t_bits *) SCM_STRUCT_DATA (ptr);
 
@@ -243,7 +243,7 @@ scm_gc_mark_dependencies (SCM p)
 	  }
 	if (len)
 	  {
-	    long x;
+	    ent x;
 
 	    for (x = 0; x < len - 2; x += 2, ++struct_data)
 	      if (fields_desc[x] == 'p')
@@ -333,7 +333,7 @@ scm_gc_mark_dependencies (SCM p)
       if (!(i < scm_numptob))
 	{
 	  fprintf (stderr, "undefined port type");
-	  abort();
+	  scm_abort();
 	}
 #endif
       if (SCM_PTAB_ENTRY(ptr))
@@ -360,7 +360,7 @@ scm_gc_mark_dependencies (SCM p)
 	  if (!(i < scm_numsmob))
 	    {
 	      fprintf (stderr, "undefined smob type");
-	      abort();
+	      scm_abort();
 	    }
 #endif
 	  if (scm_smobs[i].mark)
@@ -374,7 +374,7 @@ scm_gc_mark_dependencies (SCM p)
       break;
     default:
       fprintf (stderr, "unknown type");
-      abort();
+      scm_abort();
     }
 
   /*
@@ -405,7 +405,7 @@ scm_gc_mark_dependencies (SCM p)
     if (!valid_cell)
       {
 	fprintf (stderr, "rogue pointer in heap");
-	abort();
+	scm_abort();
       }
   }
   
@@ -426,14 +426,14 @@ scm_gc_mark_dependencies (SCM p)
 
 /* Mark a region conservatively */
 void
-scm_mark_locations (SCM_STACKITEM x[], unsigned long n)
+scm_mark_locations (SCM_STACKITEM x[], nat n)
 {
-  unsigned long m;
+  nat m;
 
   for (m = 0; m < n; ++m)
     {
       SCM obj = * (SCM *) &x[m];
-      long int segment = scm_i_find_heap_segment_containing_object (obj);
+      ent segment = scm_i_find_heap_segment_containing_object (obj);
       if (segment >= 0)
 	scm_gc_mark (obj);
     }
@@ -446,7 +446,7 @@ scm_mark_locations (SCM_STACKITEM x[], unsigned long n)
 int
 scm_in_heap_p (SCM value)
 {
-  long int segment = scm_i_find_heap_segment_containing_object (value);
+  ent segment = scm_i_find_heap_segment_containing_object (value);
   return (segment >= 0);
 }
 
@@ -465,14 +465,14 @@ scm_t_bits scm_tc16_allocated;
 static SCM
 allocated_mark (SCM cell)
 {
-  unsigned long int cell_segment = scm_i_find_heap_segment_containing_object (cell);
+  nat cell_segment = scm_i_find_heap_segment_containing_object (cell);
   unsigned int span = scm_i_heap_segment_table[cell_segment]->span;
   unsigned int i;
 
   for (i = 1; i != span * 2; ++i)
     {
       SCM obj = SCM_CELL_OBJECT (cell, i);
-      long int obj_segment = scm_i_find_heap_segment_containing_object (obj);
+      ent obj_segment = scm_i_find_heap_segment_containing_object (obj);
       if (obj_segment >= 0)
 	scm_gc_mark (obj);
     }

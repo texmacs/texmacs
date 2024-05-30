@@ -45,13 +45,13 @@ SCM_TO_TYPE_PROTO (SCM val)
     {
       if (TYPE_MAX <= SCM_MOST_POSITIVE_FIXNUM)
 	goto out_of_range;
-      else if (TYPE_MAX <= ULONG_MAX)
+      else if (TYPE_MAX <= NAT_MAX)
 	{
-	  if (mpz_fits_ulong_p (SCM_I_BIG_MPZ (val)))
+	  if (mpz_fits_nat_p (SCM_I_BIG_MPZ (val)))
 	    {
-	      unsigned long n = mpz_get_ui (SCM_I_BIG_MPZ (val));
-#if SIZEOF_TYPE != 0 && SIZEOF_TYPE > SCM_SIZEOF_LONG
-	      return n;
+	      nat n = mpz_get_nat (SCM_I_BIG_MPZ (val));
+#if SIZEOF_TYPE != 0 && SIZEOF_TYPE > SCM_SIZEOF_NAT
+	      return (TYPE) n;
 #else
 	      if (n >= TYPE_MIN && n <= TYPE_MAX)
 		return n;
@@ -97,8 +97,8 @@ SCM_FROM_TYPE_PROTO (TYPE val)
 #else
   if (SCM_POSFIXABLE (val))
     return SCM_I_MAKINUM (val);
-  else if (val <= ULONG_MAX)
-    return scm_i_ulong2big (val);
+  else if (val <= NAT_MAX)
+    return scm_i_nat2big (val);
   else
     {
       SCM z = scm_double_cell (scm_tc16_big, 0, 0, 0);

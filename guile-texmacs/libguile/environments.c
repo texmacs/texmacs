@@ -252,7 +252,7 @@ SCM_DEFINE (scm_environment_define, "environment-define", 3, 0, 0,
   else if (scm_is_eq (status, SCM_ENVIRONMENT_BINDING_IMMUTABLE))
     scm_error_environment_immutable_binding (FUNC_NAME, env, sym);
   else
-    abort();
+    scm_abort();
 }
 #undef FUNC_NAME
 
@@ -278,7 +278,7 @@ SCM_DEFINE (scm_environment_undefine, "environment-undefine", 2, 0, 0,
   else if (scm_is_eq (status, SCM_ENVIRONMENT_BINDING_IMMUTABLE))
     scm_error_environment_immutable_binding (FUNC_NAME, env, sym);
   else
-    abort();
+    scm_abort();
 }
 #undef FUNC_NAME
 
@@ -308,7 +308,7 @@ SCM_DEFINE (scm_environment_set_x, "environment-set!", 3, 0, 0,
   else if (scm_is_eq (status, SCM_ENVIRONMENT_LOCATION_IMMUTABLE))
     scm_error_environment_immutable_binding (FUNC_NAME, env, sym);
   else
-    abort();
+    scm_abort();
 }
 #undef FUNC_NAME
 
@@ -1227,7 +1227,7 @@ eval_environment_folder (SCM extended_data, SCM symbol, SCM value, SCM tail)
   if (!SCM_ENVIRONMENT_BOUND_P (local, symbol))
     {
       SCM proc_as_nr = SCM_CADR (extended_data);
-      unsigned long int proc_as_ul = scm_to_ulong (proc_as_nr);
+      nat proc_as_ul = scm_to_nat (proc_as_nr);
       scm_environment_folder proc = (scm_environment_folder) proc_as_ul;
       SCM data = SCM_CDDR (extended_data);
 
@@ -1245,7 +1245,7 @@ eval_environment_fold (SCM env, scm_environment_folder proc, SCM data, SCM init)
 {
   SCM local = EVAL_ENVIRONMENT (env)->local;
   SCM imported = EVAL_ENVIRONMENT (env)->imported;
-  SCM proc_as_nr = scm_from_ulong ((unsigned long) proc);
+  SCM proc_as_nr = scm_from_nat ((nat) proc);
   SCM extended_data = scm_cons2 (local, proc_as_nr, data);
   SCM tmp_result = scm_c_environment_fold (imported, eval_environment_folder, extended_data, init);
 
@@ -1632,7 +1632,7 @@ import_environment_folder (SCM extended_data, SCM symbol, SCM value, SCM tail)
   SCM imported_env = SCM_CADR (extended_data);
   SCM owner = import_environment_lookup (import_env, symbol);
   SCM proc_as_nr = SCM_CADDR (extended_data);
-  unsigned long int proc_as_ul = scm_to_ulong (proc_as_nr);
+  nat proc_as_ul = scm_to_nat (proc_as_nr);
   scm_environment_folder proc = (scm_environment_folder) proc_as_ul;
   SCM data = SCM_CDDDR (extended_data);
 
@@ -1650,7 +1650,7 @@ import_environment_folder (SCM extended_data, SCM symbol, SCM value, SCM tail)
 static SCM
 import_environment_fold (SCM env, scm_environment_folder proc, SCM data, SCM init)
 {
-  SCM proc_as_nr = scm_from_ulong ((unsigned long) proc);
+  SCM proc_as_nr = scm_from_nat ((nat) proc);
   SCM result = init;
   SCM l;
 

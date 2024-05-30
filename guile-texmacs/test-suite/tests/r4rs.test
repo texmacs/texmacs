@@ -985,7 +985,9 @@
   (test '#(dididit dah) list->vector '(dididit dah))
   (test '#() list->vector '())
   (SECTION 6 10 4)
-  (load (data-file-name "tmp1"))
+  (if (defined? 'primitive-fork) ; fix for mingw64
+      (load (data-file-name "tmp1"))
+      (primitive-load (data-file-name "tmp1")))
   (test write-test-obj 'load foo)
   (report-errs))
 

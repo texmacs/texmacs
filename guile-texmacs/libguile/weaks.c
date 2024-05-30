@@ -73,7 +73,7 @@ SCM_DEFINE (scm_weak_vector, "weak-vector", 0, 0, 1,
 {
   scm_t_array_handle handle;
   SCM res, *data;
-  long i;
+  ent i;
 
   i = scm_ilength (l);
   SCM_ASSERT (i >= 0, l, SCM_ARG1, FUNC_NAME);
@@ -207,8 +207,8 @@ scm_i_mark_weak_vector_non_weaks (SCM w)
   if (SCM_IS_WHVEC_ANY (w))
     {
       SCM *ptr;
-      long n = SCM_I_WVECT_LENGTH (w);
-      long j;
+      ent n = SCM_I_WVECT_LENGTH (w);
+      ent j;
       int weak_keys = SCM_IS_WHVEC (w) || SCM_IS_WHVEC_B (w);
       int weak_values = SCM_IS_WHVEC_V (w) || SCM_IS_WHVEC_B (w);
 

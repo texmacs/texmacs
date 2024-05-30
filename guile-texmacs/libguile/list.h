@@ -39,7 +39,7 @@ SCM_API SCM scm_make_list (SCM n, SCM init);
 SCM_API SCM scm_cons_star (SCM arg, SCM objs);
 SCM_API SCM scm_null_p (SCM x);
 SCM_API SCM scm_list_p (SCM x);
-SCM_API long scm_ilength (SCM sx);
+SCM_API ent scm_ilength (SCM sx);
 SCM_API SCM scm_length (SCM x);
 SCM_API SCM scm_append (SCM args);
 SCM_API SCM scm_append_x (SCM args);

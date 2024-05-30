@@ -47,7 +47,7 @@ typedef struct
   SCM dynenv;
 #ifdef __ia64__
   void *backing_store;
-  unsigned long backing_store_size;
+  nat backing_store_size;
 #endif /* __ia64__ */
   size_t num_stack_items;   /* size of the saved stack.  */
   SCM root;                 /* continuation root identifier.  */

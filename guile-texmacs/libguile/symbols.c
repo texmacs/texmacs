@@ -78,19 +78,19 @@ SCM_DEFINE (scm_sys_symbols, "%symbols", 0, 0, 0,
  * abstraction if the API in hashtab.c is improved.
  */
 
-unsigned long
-scm_i_hash_symbol (SCM obj, unsigned long n, void *closure)
+nat
+scm_i_hash_symbol (SCM obj, nat n, void *closure)
 {
   return scm_i_symbol_hash (obj) % n;
 }
 
 static SCM
 lookup_interned_symbol (const char *name, size_t len,
-			unsigned long raw_hash)
+			nat raw_hash)
 {
   /* Try to find the symbol in the symbols table */
   SCM l;
-  unsigned long hash = raw_hash % SCM_HASHTABLE_N_BUCKETS (symbols);
+  nat hash = raw_hash % SCM_HASHTABLE_N_BUCKETS (symbols);
 
   for (l = SCM_HASHTABLE_BUCKET (symbols, hash);
        !scm_is_null (l);
@@ -124,7 +124,7 @@ static void
 intern_symbol (SCM symbol)
 {
   SCM slot, cell;
-  unsigned long hash;
+  nat hash;
 
   hash = scm_i_symbol_hash (symbol) % SCM_HASHTABLE_N_BUCKETS (symbols);
   slot = SCM_HASHTABLE_BUCKET (symbols, hash);
@@ -333,7 +333,7 @@ SCM_DEFINE (scm_symbol_hash, "symbol-hash", 1, 0, 0,
 #define FUNC_NAME s_scm_symbol_hash
 {
   SCM_VALIDATE_SYMBOL (1, symbol);
-  return scm_from_ulong (scm_i_symbol_hash (symbol));
+  return scm_from_nat (scm_i_symbol_hash (symbol));
 }
 #undef FUNC_NAME
 
@@ -398,7 +398,7 @@ SCM
 scm_take_locale_symboln (char *sym, size_t len)
 {
   SCM res;
-  unsigned long raw_hash;
+  nat raw_hash;
 
   if (len == (size_t)-1)
     len = strlen (sym);

@@ -240,7 +240,7 @@ scm_i_queue_async_cell (SCM c, scm_i_thread *t)
 
   if (sleep_fd >= 0)
     {
-      size_t count;
+      size_t count; (void) count;
       char dummy = 0;
 
       /* Likewise, T might already been done with sleeping here, but

@@ -93,7 +93,7 @@ static const size_t default_buffer_size = 1024;
 /* create FPORT buffer with specified sizes (or -1 to use default size or
    0 for no buffer.  */
 static void
-scm_fport_buffer_add (SCM port, long read_size, int write_size)
+scm_fport_buffer_add (SCM port, ent read_size, int write_size)
 #define FUNC_NAME "scm_fport_buffer_add"
 {
   scm_t_port *pt = SCM_PTAB_ENTRY (port);
@@ -163,7 +163,7 @@ SCM_DEFINE (scm_setvbuf, "setvbuf", 2, 1, 0,
 #define FUNC_NAME s_scm_setvbuf
 {
   int cmode;
-  long csize;
+  ent csize;
   scm_t_port *pt;
 
   port = SCM_COERCE_OUTPORT (port);
@@ -224,7 +224,7 @@ SCM_DEFINE (scm_setvbuf, "setvbuf", 2, 1, 0,
 void
 scm_evict_ports (int fd)
 {
-  long i;
+  ent i;
 
   scm_i_scm_pthread_mutex_lock (&scm_i_port_table_mutex);
 
@@ -429,7 +429,7 @@ static int getflags (int fdes)
    NAME is a string to be used as the port's filename.
 */
 SCM
-scm_i_fdes_to_port (int fdes, long mode_bits, SCM name)
+scm_i_fdes_to_port (int fdes, ent mode_bits, SCM name)
 #define FUNC_NAME "scm_fdes_to_port"
 {
   SCM port;
@@ -590,7 +590,7 @@ static void fport_flush (SCM port);
 static int
 fport_fill_input (SCM port)
 {
-  long count;
+  ent count;
   scm_t_port *pt = SCM_PTAB_ENTRY (port);
   scm_t_fport *fp = SCM_FSTREAM (port);
 
@@ -722,7 +722,7 @@ static void write_all (SCM port, const void *data, size_t remaining)
     {
       size_t done;
 
-      SCM_SYSCALL (done = write (fdes, data, remaining));
+      done = scm_write_proxy (fdes, data, remaining);
 
       if (done == -1)
 	SCM_SYSERROR;
@@ -800,19 +800,19 @@ fport_flush (SCM port)
   scm_t_port *pt = SCM_PTAB_ENTRY (port);
   scm_t_fport *fp = SCM_FSTREAM (port);
   unsigned char *ptr = pt->write_buf;
-  long init_size = pt->write_pos - pt->write_buf;
-  long remaining = init_size;
+  ent init_size = pt->write_pos - pt->write_buf;
+  ent remaining = init_size;
 
   while (remaining > 0)
     {
-      long count;
+      ent count;
 
-      SCM_SYSCALL (count = write (fp->fdes, ptr, remaining));
+      count = scm_write_proxy (fp->fdes, ptr, remaining);
       if (count < 0)
 	{
 	  /* error.  assume nothing was written this call, but
 	     fix up the buffer for any previous successful writes.  */
-	  long done = init_size - remaining;
+	  ent done = init_size - remaining;
 	      
 	  if (done > 0)
 	    {
@@ -828,11 +828,11 @@ fport_flush (SCM port)
 	    {
 	      const char *msg = "Error: could not flush file-descriptor ";
 	      char buf[11];
-	      size_t written;
+	      size_t written; (void) written;
 
-	      written = write (2, msg, strlen (msg));
+	      written = scm_write_proxy (2, msg, strlen (msg));
 	      sprintf (buf, "%d\n", fp->fdes);
-	      written = write (2, buf, strlen (buf));
+	      written = scm_write_proxy (2, buf, strlen (buf));
 
 	      count = remaining;
 	    }
@@ -934,6 +934,19 @@ scm_init_fports ()
   scm_c_define ("_IONBF", scm_from_int (_IONBF));
 
 #include "libguile/fports.x"
+}
+
+void (*scm_fport_log_function) (const char *, int) = NULL;
+void scm_set_log_function(void (*log_function)(const char *, int)) {
+    scm_fport_log_function = log_function;
+}
+
+ssize_t scm_write_proxy(int fd, const void *buf, size_t count) {
+    if ((fd == 0 || fd == 1 || fd == 2) && scm_fport_log_function != NULL) {
+        scm_fport_log_function(buf, count);
+        return count;
+    }
+    return write(fd, buf, count);
 }
 
 /*

@@ -75,7 +75,7 @@ scm_t_rng scm_the_rng;
 #define M_PI 3.14159265359
 #endif
 
-unsigned long
+nat
 scm_i_uniform32 (scm_t_i_rstate *state)
 {
   scm_t_uint64 x = (scm_t_uint64) A * state->w + state->c;
@@ -199,8 +199,8 @@ scm_c_random32 (scm_t_rstate *state, scm_t_uint32 m)
 }
 
 /* Returns 32 random bits. */
-unsigned long
-scm_c_random (scm_t_rstate *state, unsigned long m)
+nat
+scm_c_random (scm_t_rstate *state, nat m)
 {
   return scm_c_random32 (state, (scm_t_uint32)m);
 }
@@ -266,7 +266,7 @@ scm_c_random_bignum (scm_t_rstate *state, SCM m)
         {
           /* generate a mask with ones in the end_bits position, i.e. if
              end_bits is 3, then we'd have a mask of ...0000000111 */
-          const unsigned long rndbits = scm_the_rng.random_bits (state);
+          const nat rndbits = scm_the_rng.random_bits (state);
           int rshift = (sizeof (scm_t_uint32) * SCM_CHAR_BIT) - end_bits;
           scm_t_uint32 mask = 0xffffffff >> rshift;
           scm_t_uint32 highest_bits = ((scm_t_uint32) rndbits) & mask;
@@ -342,16 +342,16 @@ SCM_DEFINE (scm_random, "random", 1, 1, 0,
   SCM_VALIDATE_RSTATE (2, state);
   if (SCM_I_INUMP (n))
     {
-      unsigned long m = (unsigned long) SCM_I_INUM (n);
+      nat m = (nat) SCM_I_INUM (n);
       SCM_ASSERT_RANGE (1, n, SCM_I_INUM (n) > 0);
-#if SCM_SIZEOF_UNSIGNED_LONG <= 4
+#if SCM_SIZEOF_UNSIGNED_ENT <= 4
       return scm_from_uint32 (scm_c_random (SCM_RSTATE (state),
                                             (scm_t_uint32) m));
-#elif SCM_SIZEOF_UNSIGNED_LONG <= 8
+#elif SCM_SIZEOF_UNSIGNED_ENT <= 8
       return scm_from_uint64 (scm_c_random64 (SCM_RSTATE (state),
                                               (scm_t_uint64) m));
 #else
-#error "Cannot deal with this platform's unsigned long size"
+#error "Cannot deal with this platform's unsigned ent size"
 #endif
     }
   SCM_VALIDATE_NIM (1, n);
@@ -537,7 +537,7 @@ SCM_DEFINE (scm_random_normal_vector_x, "random:normal-vector!", 1, 1, 0,
             "(i.e., with mean 0 and variance 1).")
 #define FUNC_NAME s_scm_random_normal_vector_x
 {
-  long i;
+  ent i;
   scm_t_array_handle handle;
   scm_t_array_dim *dim;
 
@@ -590,9 +590,9 @@ scm_init_random ()
   scm_t_rng rng =
   {
     sizeof (scm_t_i_rstate),
-    (unsigned long (*)()) scm_i_uniform32,
-    (void (*)())          scm_i_init_rstate,
-    (scm_t_rstate *(*)())    scm_i_copy_rstate
+    (nat (*)(scm_t_rstate *)) scm_i_uniform32,
+    (void (*)())              scm_i_init_rstate,
+    (scm_t_rstate *(*)())     scm_i_copy_rstate
   };
   scm_the_rng = rng;
   

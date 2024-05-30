@@ -73,28 +73,36 @@ SCM_API SCM scm_long2num (long n);
 SCM_API SCM scm_ulong2num (unsigned long n);
 SCM_API SCM scm_size2num (size_t n);
 SCM_API SCM scm_ptrdiff2num (scm_t_ptrdiff n);
-SCM_API short scm_num2short (SCM num, unsigned long int pos,
+SCM_API SCM scm_ent2num (ent n);
+SCM_API SCM scm_nat2num (nat n);
+
+SCM_API short scm_num2short (SCM num, nat pos,
 			     const char *s_caller);
-SCM_API unsigned short scm_num2ushort (SCM num, unsigned long int pos,
+SCM_API unsigned short scm_num2ushort (SCM num, nat pos,
 				       const char *s_caller);
-SCM_API int scm_num2int (SCM num, unsigned long int pos,
+SCM_API int scm_num2int (SCM num, nat pos,
 			 const char *s_caller);
-SCM_API unsigned int scm_num2uint (SCM num, unsigned long int pos,
+SCM_API unsigned int scm_num2uint (SCM num, nat pos,
 				   const char *s_caller);
-SCM_API long scm_num2long (SCM num, unsigned long int pos,
+SCM_API long scm_num2long (SCM num, nat pos,
 			   const char *s_caller);
-SCM_API unsigned long scm_num2ulong (SCM num, unsigned long int pos,
+SCM_API unsigned long scm_num2ulong (SCM num, nat pos,
 				     const char *s_caller);
-SCM_API scm_t_ptrdiff scm_num2ptrdiff (SCM num, unsigned long int pos,
+SCM_API scm_t_ptrdiff scm_num2ptrdiff (SCM num, nat pos,
                                        const char *s_caller);
-SCM_API size_t scm_num2size (SCM num, unsigned long int pos,
+SCM_API size_t scm_num2size (SCM num, nat pos,
 			     const char *s_caller);
+SCM_API ent scm_num2ent (SCM num, nat pos,
+			 const char *s_caller);
+SCM_API nat scm_num2nat (SCM num, nat pos,
+			 const char *s_caller);
+
 #if SCM_SIZEOF_LONG_LONG != 0
 SCM_API SCM scm_long_long2num (long long sl);
 SCM_API SCM scm_ulong_long2num (unsigned long long sl);
-SCM_API long long scm_num2long_long (SCM num, unsigned long int pos,
+SCM_API long long scm_num2long_long (SCM num, nat pos,
 				     const char *s_caller);
-SCM_API unsigned long long scm_num2ulong_long (SCM num, unsigned long int pos,
+SCM_API unsigned long long scm_num2ulong_long (SCM num, nat pos,
 					       const char *s_caller);
 #endif
 
@@ -106,9 +114,9 @@ SCM_API SCM scm_double2num (double n);
 /* The next two are implemented in numbers.c since they use features
    only available there.
 */
-SCM_API float scm_num2float (SCM num, unsigned long int pos,
+SCM_API float scm_num2float (SCM num, nat pos,
 			     const char *s_caller);
-SCM_API double scm_num2double (SCM num, unsigned long int pos,
+SCM_API double scm_num2double (SCM num, nat pos,
 			       const char *s_caller);
 
 SCM_API SCM scm_make_complex (double x, double y);

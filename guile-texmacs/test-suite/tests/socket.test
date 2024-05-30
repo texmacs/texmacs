@@ -176,7 +176,7 @@
 
 (define %tmpdir
   ;; Honor `$TMPDIR', which tmpnam(3) doesn't do.
-  (or (getenv "TMPDIR") "/tmp"))
+  (or (getenv "TMPDIR") (getenv "TEMP") "/tmp"))
 
 (define %curdir
   ;; Remember the current working directory.

@@ -101,7 +101,7 @@ scm_i_input_error (char const *function,
   scm_simple_format (string_port,
 		     scm_from_locale_string ("~A:~S:~S: ~A"),
 		     scm_list_4 (fn,
-				 scm_from_long (SCM_LINUM (port) + 1),
+				 scm_from_ent (SCM_LINUM (port) + 1),
 				 scm_from_int (SCM_COL (port) + 1),
 				 scm_from_locale_string (message)));
     
@@ -312,7 +312,7 @@ flush_ws (SCM port, const char *eoferr)
 static SCM scm_read_expression (SCM port);
 static SCM scm_read_sharp (int chr, SCM port);
 static SCM scm_get_hash_procedure (int c);
-static SCM recsexpr (SCM obj, long line, int column, SCM filename);
+static SCM recsexpr (SCM obj, ent line, int column, SCM filename);
 
 
 static SCM
@@ -326,7 +326,7 @@ scm_read_sexp (int chr, SCM port)
   static const int terminating_char = ')';
 
   /* Need to capture line and column numbers here. */
-  long line = SCM_LINUM (port);
+  ent line = SCM_LINUM (port);
   int column = SCM_COL (port) - 1;
 
 
@@ -680,7 +680,7 @@ static SCM
 scm_read_quote (int chr, SCM port)
 {
   SCM p;
-  long line = SCM_LINUM (port);
+  ent line = SCM_LINUM (port);
   int column = SCM_COL (port) - 1;
 
   switch (chr)
@@ -711,7 +711,7 @@ scm_read_quote (int chr, SCM port)
     default:
       fprintf (stderr, "%s: unhandled quote character (%i)\n",
 	       "scm_read_quote", chr);
-      abort ();
+      scm_abort ();
     }
 
   p = scm_cons2 (p, scm_read_expression (port), SCM_EOL);
@@ -959,7 +959,7 @@ scm_read_sharp_extension (int chr, SCM port)
   proc = scm_get_hash_procedure (chr);
   if (scm_is_true (scm_procedure_p (proc)))
     {
-      long line = SCM_LINUM (port);
+      ent line = SCM_LINUM (port);
       int column = SCM_COL (port) - 2;
       SCM got;
 
@@ -1155,7 +1155,7 @@ SCM_DEFINE (scm_read, "read", 0, 1, 0,
 
 /* Used when recording expressions constructed by `scm_read_sharp ()'.  */
 static SCM
-recsexpr (SCM obj, long line, int column, SCM filename)
+recsexpr (SCM obj, ent line, int column, SCM filename)
 {
   if (!scm_is_pair(obj)) {
     return obj;

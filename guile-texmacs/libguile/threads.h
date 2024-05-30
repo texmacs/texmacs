@@ -215,7 +215,7 @@ SCM_API int scm_pthread_cond_timedwait (pthread_cond_t *cond,
  */
 
 SCM_API unsigned int scm_std_sleep (unsigned int);
-SCM_API unsigned long scm_std_usleep (unsigned long);
+SCM_API nat scm_std_usleep (nat);
 
 #endif  /* SCM_THREADS_H */
 

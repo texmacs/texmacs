@@ -100,8 +100,8 @@ scm_i_expensive_validation_check (SCM cell)
   if (!scm_in_heap_p (cell))
     {
       fprintf (stderr, "scm_assert_cell_valid: this object does not live in the heap: %lux\n",
-	       (unsigned long) SCM_UNPACK (cell));
-      abort ();
+	       (nat) SCM_UNPACK (cell));
+      scm_abort ();
     }
 
   /* If desired, perform additional garbage collections after a user
@@ -150,8 +150,8 @@ scm_assert_cell_valid (SCM cell)
 		   "scm_assert_cell_valid: this object is unmarked. \n"
 		   "It has been garbage-collected in the last GC run: "
 		   "%lux\n",
-                   (unsigned long) SCM_UNPACK (cell));
-	  abort ();
+                   (nat) SCM_UNPACK (cell));
+	  scm_abort ();
 	}
 
       scm_i_cell_validation_already_running = 0;  /* re-enable */
@@ -201,28 +201,28 @@ SCM_DEFINE (scm_set_debug_cell_accesses_x, "set-debug-cell-accesses!", 1, 0, 0,
 /* scm_mtrigger
  * is the number of bytes of malloc allocation needed to trigger gc.
  */
-unsigned long scm_mtrigger;
+nat scm_mtrigger;
 
 /* GC Statistics Keeping
  */
-unsigned long scm_cells_allocated = 0;
-unsigned long scm_last_cells_allocated;
-unsigned long scm_mallocated = 0;
-unsigned long scm_gc_cells_collected;
-unsigned long scm_gc_cells_collected_1 = 0; /* previous GC yield */
-unsigned long scm_gc_malloc_collected;
-unsigned long scm_gc_ports_collected;
-unsigned long scm_gc_time_taken = 0;
-static unsigned long t_before_gc;
-unsigned long scm_gc_mark_time_taken = 0;
-unsigned long scm_gc_times = 0;
-unsigned long scm_gc_cells_swept = 0;
+nat scm_cells_allocated = 0;
+nat scm_last_cells_allocated;
+nat scm_mallocated = 0;
+nat scm_gc_cells_collected;
+nat scm_gc_cells_collected_1 = 0; /* previous GC yield */
+nat scm_gc_malloc_collected;
+nat scm_gc_ports_collected;
+nat scm_gc_time_taken = 0;
+static nat t_before_gc;
+nat scm_gc_mark_time_taken = 0;
+nat scm_gc_times = 0;
+nat scm_gc_cells_swept = 0;
 double scm_gc_cells_marked_acc = 0.;
 double scm_gc_cells_swept_acc = 0.;
 double scm_gc_cells_allocated_acc = 0.;
 int scm_gc_cell_yield_percentage =0;
 int scm_gc_malloc_yield_percentage = 0;
-unsigned long protected_obj_count = 0;
+nat protected_obj_count = 0;
 
 
 SCM_SYMBOL (sym_cells_allocated, "cells-allocated");
@@ -297,23 +297,23 @@ SCM_DEFINE (scm_gc_stats, "gc-stats", 0, 0, 0,
 	    "use of storage.\n")
 #define FUNC_NAME s_scm_gc_stats
 {
-  long i = 0;
+  ent i = 0;
   SCM heap_segs = SCM_EOL ;
-  unsigned long int local_scm_mtrigger;
-  unsigned long int local_scm_mallocated;
-  unsigned long int local_scm_heap_size;
+  nat local_scm_mtrigger;
+  nat local_scm_mallocated;
+  nat local_scm_heap_size;
   int local_scm_gc_cell_yield_percentage;
   int local_scm_gc_malloc_yield_percentage;
-  unsigned long int local_scm_cells_allocated;
-  unsigned long int local_scm_gc_time_taken;
-  unsigned long int local_scm_gc_times;
-  unsigned long int local_scm_gc_mark_time_taken;
-  unsigned long int local_protected_obj_count;
+  nat local_scm_cells_allocated;
+  nat local_scm_gc_time_taken;
+  nat local_scm_gc_times;
+  nat local_scm_gc_mark_time_taken;
+  nat local_protected_obj_count;
   double local_scm_gc_cells_swept;
   double local_scm_gc_cells_marked;
   double local_scm_total_cells_allocated;
   SCM answer;
-  unsigned long *bounds = 0;
+  nat *bounds = 0;
   int table_size = scm_i_heap_segment_table_size;  
   SCM_CRITICAL_SECTION_START;
 
@@ -321,13 +321,13 @@ SCM_DEFINE (scm_gc_stats, "gc-stats", 0, 0, 0,
     temporarily store the numbers, so as not to cause GC.
    */
  
-  bounds = malloc (sizeof (unsigned long)  * table_size * 2);
+  bounds = malloc (sizeof (nat)  * table_size * 2);
   if (!bounds)
-    abort();
+    scm_abort();
   for (i = table_size; i--; )
     {
-      bounds[2*i] = (unsigned long)scm_i_heap_segment_table[i]->bounds[0];
-      bounds[2*i+1] = (unsigned long)scm_i_heap_segment_table[i]->bounds[1];
+      bounds[2*i] = (nat)scm_i_heap_segment_table[i]->bounds[0];
+      bounds[2*i+1] = (nat)scm_i_heap_segment_table[i]->bounds[1];
     }
 
 
@@ -358,39 +358,39 @@ SCM_DEFINE (scm_gc_stats, "gc-stats", 0, 0, 0,
 
   for (i = table_size; i--;)
     {
-      heap_segs = scm_cons (scm_cons (scm_from_ulong (bounds[2*i]),
-				      scm_from_ulong (bounds[2*i+1])),
+      heap_segs = scm_cons (scm_cons (scm_from_nat (bounds[2*i]),
+				      scm_from_nat (bounds[2*i+1])),
 			    heap_segs);
     }
   /* njrev: can any of these scm_cons's or scm_list_n signal a memory
      error?  If so we need a frame here. */
   answer =
     scm_list_n (scm_cons (sym_gc_time_taken,
-			  scm_from_ulong (local_scm_gc_time_taken)),
+			  scm_from_nat (local_scm_gc_time_taken)),
 		scm_cons (sym_cells_allocated,
-			  scm_from_ulong (local_scm_cells_allocated)),
+			  scm_from_nat (local_scm_cells_allocated)),
 		scm_cons (sym_total_cells_allocated,
-			  scm_from_ulong (local_scm_total_cells_allocated)),
+			  scm_from_nat (local_scm_total_cells_allocated)),
 		scm_cons (sym_heap_size,
-			  scm_from_ulong (local_scm_heap_size)),
+			  scm_from_nat (local_scm_heap_size)),
 		scm_cons (sym_mallocated,
-			  scm_from_ulong (local_scm_mallocated)),
+			  scm_from_nat (local_scm_mallocated)),
 		scm_cons (sym_mtrigger,
-			  scm_from_ulong (local_scm_mtrigger)),
+			  scm_from_nat (local_scm_mtrigger)),
 		scm_cons (sym_times,
-			  scm_from_ulong (local_scm_gc_times)),
+			  scm_from_nat (local_scm_gc_times)),
 		scm_cons (sym_gc_mark_time_taken,
-			  scm_from_ulong (local_scm_gc_mark_time_taken)),
+			  scm_from_nat (local_scm_gc_mark_time_taken)),
 		scm_cons (sym_cells_marked,
 			  scm_from_double (local_scm_gc_cells_marked)),
 		scm_cons (sym_cells_swept,
 			  scm_from_double (local_scm_gc_cells_swept)),
 		scm_cons (sym_malloc_yield,
-			  scm_from_long(local_scm_gc_malloc_yield_percentage)),
+			  scm_from_ent(local_scm_gc_malloc_yield_percentage)),
 		scm_cons (sym_cell_yield,
-			  scm_from_long (local_scm_gc_cell_yield_percentage)),
+			  scm_from_ent (local_scm_gc_cell_yield_percentage)),
 		scm_cons (sym_protected_objects,
-			  scm_from_ulong (local_protected_obj_count)),
+			  scm_from_nat (local_protected_obj_count)),
 		scm_cons (sym_heap_segments, heap_segs),
 		SCM_UNDEFINED);
   SCM_CRITICAL_SECTION_END;
@@ -427,7 +427,7 @@ gc_start_stats (const char *what SCM_UNUSED)
 static void
 gc_end_stats ()
 {
-  unsigned long t = scm_c_get_internal_run_time ();
+  nat t = scm_c_get_internal_run_time ();
   scm_gc_time_taken += (t - t_before_gc);
 
   ++scm_gc_times;
@@ -440,7 +440,7 @@ SCM_DEFINE (scm_object_address, "object-address", 1, 0, 0,
 	    "returned by this function for @var{obj}")
 #define FUNC_NAME s_scm_object_address
 {
-  return scm_from_ulong (SCM_UNPACK (obj));
+  return scm_from_nat (SCM_UNPACK (obj));
 }
 #undef FUNC_NAME
 
@@ -519,7 +519,7 @@ scm_gc_for_newcell (scm_t_cell_type_statistics *freelist, SCM *free_cells)
     }
   
   if (*free_cells == SCM_EOL)
-    abort ();
+    scm_abort ();
 
   cell = *free_cells;
 
@@ -585,7 +585,7 @@ scm_i_gc (const char *what)
 	       "scm_gc_sweep: Byte count of allocated objects has underflowed.\n"
 	       "This is probably because the GC hasn't been correctly informed\n"
 	       "about object sizes\n");
-      abort ();
+      scm_abort ();
     }
   scm_mallocated -= scm_i_deprecated_memory_return;
 
@@ -777,7 +777,7 @@ scm_gc_unprotect_object (SCM obj)
   if (scm_gc_running_p)
     {
       fprintf (stderr, "scm_unprotect_object called during GC.\n");
-      abort ();
+      scm_abort ();
     }
  
   handle = scm_hashq_get_handle (scm_protects, obj);
@@ -785,7 +785,7 @@ scm_gc_unprotect_object (SCM obj)
   if (scm_is_false (handle))
     {
       fprintf (stderr, "scm_unprotect_object called on unprotected object\n");
-      abort ();
+      scm_abort ();
     }
   else
     {
@@ -806,7 +806,7 @@ void
 scm_gc_register_root (SCM *p)
 {
   SCM handle;
-  SCM key = scm_from_ulong ((unsigned long) p);
+  SCM key = scm_from_nat ((nat) p);
 
   /* This critical section barrier will be replaced by a mutex. */
   /* njrev: and again. */
@@ -824,7 +824,7 @@ void
 scm_gc_unregister_root (SCM *p)
 {
   SCM handle;
-  SCM key = scm_from_ulong ((unsigned long) p);
+  SCM key = scm_from_nat ((nat) p);
 
   /* This critical section barrier will be replaced by a mutex. */
   /* njrev: and again. */
@@ -835,7 +835,7 @@ scm_gc_unregister_root (SCM *p)
   if (scm_is_false (handle))
     {
       fprintf (stderr, "scm_gc_unregister_root called on unregistered root\n");
-      abort ();
+      scm_abort ();
     }
   else
     {
@@ -850,7 +850,7 @@ scm_gc_unregister_root (SCM *p)
 }
 
 void
-scm_gc_register_roots (SCM *b, unsigned long n)
+scm_gc_register_roots (SCM *b, nat n)
 {
   SCM *p = b;
   for (; p < b + n; ++p)
@@ -858,7 +858,7 @@ scm_gc_register_roots (SCM *b, unsigned long n)
 }
 
 void
-scm_gc_unregister_roots (SCM *b, unsigned long n)
+scm_gc_unregister_roots (SCM *b, nat n)
 {
   SCM *p = b;
   for (; p < b + n; ++p)
@@ -880,7 +880,7 @@ scm_getenv_int (const char *var, int def)
 {
   char *end = 0;
   char *val = getenv (var);
-  long res = def;
+  ent res = def;
   if (!val)
     return def;
   res = strtol (val, &end, 10);
@@ -1035,7 +1035,7 @@ scm_ia64_register_backing_store_base (void)
   while (pstat_getprocvm (&vm_status, sizeof (vm_status), 0, i++) == 1)
     if (vm_status.pst_type == PS_RSESTACK)
       return (void *) vm_status.pst_vaddr;
-  abort ();
+  scm_abort ();
 }
 void *
 scm_ia64_ar_bsp (const void *ctx)

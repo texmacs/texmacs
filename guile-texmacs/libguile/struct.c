@@ -168,7 +168,7 @@ scm_struct_init (SCM handle, SCM layout, scm_t_bits * mem, int tail_elts, SCM in
 	    *mem = 0;
 	  else
 	    {
-	      *mem = scm_to_long (SCM_CAR (inits));
+	      *mem = scm_to_ent (SCM_CAR (inits));
 	      inits = SCM_CDR (inits);
 	    }
 	  break;
@@ -179,7 +179,7 @@ scm_struct_init (SCM handle, SCM layout, scm_t_bits * mem, int tail_elts, SCM in
 	    *mem = 0;
 	  else
 	    {
-	      *mem = scm_to_ulong (SCM_CAR (inits));
+	      *mem = scm_to_nat (SCM_CAR (inits));
 	      inits = SCM_CDR (inits);
 	    }
 	  break;
@@ -686,12 +686,12 @@ SCM_DEFINE (scm_struct_ref, "struct-ref", 2, 0, 0,
   switch (field_type)
     {
     case 'u':
-      answer = scm_from_ulong (data[p]);
+      answer = scm_from_nat (data[p]);
       break;
 
 #if 0
     case 'i':
-      answer = scm_from_long (data[p]);
+      answer = scm_from_ent (data[p]);
       break;
 
     case 'd':
@@ -762,12 +762,12 @@ SCM_DEFINE (scm_struct_set_x, "struct-set!", 3, 0, 0,
   switch (field_type)
     {
     case 'u':
-      data[p] = SCM_NUM2ULONG (3, val);
+      data[p] = SCM_NUM2NAT (3, val);
       break;
 
 #if 0
     case 'i':
-      data[p] = SCM_NUM2LONG (3, val);
+      data[p] = SCM_NUM2ENT (3, val);
       break;
 
     case 'd':
@@ -809,7 +809,7 @@ SCM_DEFINE (scm_struct_vtable_tag, "struct-vtable-tag", 1, 0, 0,
 #define FUNC_NAME s_scm_struct_vtable_tag
 {
   SCM_VALIDATE_VTABLE (1, handle);
-  return scm_from_ulong (((unsigned long)SCM_STRUCT_DATA (handle)) >> 3);
+  return scm_from_nat (((nat)SCM_STRUCT_DATA (handle)) >> 3);
 }
 #undef FUNC_NAME
 
@@ -820,8 +820,8 @@ SCM_DEFINE (scm_struct_vtable_tag, "struct-vtable-tag", 1, 0, 0,
  * how to associate names with vtables.
  */
 
-unsigned long
-scm_struct_ihashq (SCM obj, unsigned long n)
+nat
+scm_struct_ihashq (SCM obj, nat n)
 {
   /* The length of the hash table should be a relative prime it's not
      necessary to shift down the address.  */
@@ -834,8 +834,8 @@ scm_struct_create_handle (SCM obj)
   SCM handle = scm_hash_fn_create_handle_x (scm_struct_table,
 					    obj,
 					    SCM_BOOL_F,
-					    scm_struct_ihashq,
-					    scm_sloppy_assq,
+					    scm_struct_ihashq_var,
+					    scm_sloppy_assq_var,
 					    0);
   if (scm_is_false (SCM_CDR (handle)))
     SCM_SETCDR (handle, scm_cons (SCM_BOOL_F, SCM_BOOL_F));

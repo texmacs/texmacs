@@ -18,6 +18,7 @@
 ;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;;;; Boston, MA 02110-1301 USA
 
+(use-modules (test-suite lib))
 (use-modules (srfi srfi-10))
 
 (define-reader-ctor 'rx make-regexp)

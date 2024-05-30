@@ -50,10 +50,10 @@ are preserved on all copies.
 
 @author Christian Lynbech
 @author @email{chl@@tbit.dk}
-@author
+
 @author Mikael Djurfeldt
 @author @email{djurfeldt@@nada.kth.se}
-@author
+
 @author Neil Jerram
 @author @email{neil@@ossau.uklinux.net}
 
@@ -131,7 +131,7 @@ info (goops.info) and texinfo format.
 @end menu
 
 @node Running GOOPS, Methods, Getting Started, Getting Started
-@subsection Running GOOPS
+@section Running GOOPS
 
 @enumerate
 @item

@@ -46,6 +46,27 @@
 
 #include "libguile/validate.h"
 #include "libguile/print.h"
+
+#if defined(__ANDROID__)
+#include <android/log.h>
+
+int
+__scm_android_fprintf (FILE* stream, const char* format, ...) {
+  int ret;
+  va_list args;
+  va_start(args, format);
+  if (stream == stdout)
+    ret= __android_log_print (ANDROID_LOG_DEFAULT, "libguile",
+			      format, args);
+  else if (stream == stderr)
+    ret= __android_log_print (ANDROID_LOG_ERROR, "libguile",
+			      format, args);
+  else ret= fprintf (stream, format, args);
+  va_end(args);
+  return ret;
+}
+#endif
+
 
 
 /* {Names of immediate symbols}
@@ -78,11 +99,11 @@ scm_t_option scm_print_opts[] = {
     "Hook for printing closures (should handle macros as well)." },
   { SCM_OPTION_BOOLEAN, "source", 0,
     "Print closures with source." },
-  { SCM_OPTION_SCM, "highlight-prefix", (unsigned long)SCM_BOOL_F,
+  { SCM_OPTION_SCM, "highlight-prefix", (nat)SCM_BOOL_F,
     "The string to print before highlighted values." },
-  { SCM_OPTION_SCM, "highlight-suffix", (unsigned long)SCM_BOOL_F,
+  { SCM_OPTION_SCM, "highlight-suffix", (nat)SCM_BOOL_F,
     "The string to print after highlighted values." },
-  { SCM_OPTION_SCM, "quote-keywordish-symbols", (unsigned long)SCM_BOOL_F,
+  { SCM_OPTION_SCM, "quote-keywordish-symbols", (nat)SCM_BOOL_F,
     "How to print symbols that have a colon as their first or last character. "
     "The value '#f' does not quote the colons; '#t' quotes them; "
     "'reader' quotes them when the reader option 'keywords' is not '#f'." 
@@ -127,7 +148,7 @@ do						\
 #define ENTER_NESTED_DATA(pstate, obj, label)			\
 do								\
 {								\
-  register unsigned long i;					\
+  register nat i;					\
   for (i = 0; i < pstate->top; ++i)				\
     if (scm_is_eq (PSTATE_STACK_REF (pstate, i), (obj)))	\
       goto label;						\
@@ -246,7 +267,7 @@ grow_ref_stack (scm_print_state *pstate)
   size_t old_size = SCM_SIMPLE_VECTOR_LENGTH (old_vect);
   size_t new_size = 2 * pstate->ceiling;
   SCM new_vect = scm_c_make_vector (new_size, SCM_UNDEFINED);
-  unsigned long int i;
+  nat i;
 
   for (i = 0; i != old_size; ++i)
     SCM_SIMPLE_VECTOR_SET (new_vect, i, SCM_SIMPLE_VECTOR_REF (old_vect, i));
@@ -261,8 +282,8 @@ grow_ref_stack (scm_print_state *pstate)
 static void
 print_circref (SCM port, scm_print_state *pstate, SCM ref)
 {
-  register long i;
-  long self = pstate->top - 1;
+  register ent i;
+  ent self = pstate->top - 1;
   i = pstate->top - 1;
   if (scm_is_pair (PSTATE_STACK_REF (pstate, i)))
     {
@@ -431,7 +452,7 @@ iprin1 (SCM exp, SCM port, scm_print_state *pstate)
     case scm_tc3_imm24:
       if (SCM_CHARP (exp))
 	{
-	  long i = SCM_CHAR (exp);
+	  ent i = SCM_CHAR (exp);
 
 	  if (SCM_WRITINGP (pstate))
 	    {
@@ -619,8 +640,8 @@ iprin1 (SCM exp, SCM port, scm_print_state *pstate)
 	  scm_puts ("#(", port);
 	common_vector_printer:
 	  {
-	    register long i;
-	    long last = SCM_SIMPLE_VECTOR_LENGTH (exp) - 1;
+	    register ent i;
+	    ent last = SCM_SIMPLE_VECTOR_LENGTH (exp) - 1;
 	    int cutp = 0;
 	    if (pstate->fancyp
 		&& SCM_SIMPLE_VECTOR_LENGTH (exp) > pstate->length)
@@ -691,7 +712,7 @@ iprin1 (SCM exp, SCM port, scm_print_state *pstate)
 	  break;
 	case scm_tc7_port:
 	  {
-	    register long i = SCM_PTOBNUM (exp);
+	    register ent i = SCM_PTOBNUM (exp);
 	    if (i < scm_numptob
 		&& scm_ptobs[i].print
 		&& (scm_ptobs[i].print) (exp, port, pstate))
@@ -814,7 +835,7 @@ void
 scm_iprlist (char *hdr, SCM exp, int tlr, SCM port, scm_print_state *pstate)
 {
   register SCM hare, tortoise;
-  long floor = pstate->top - 2;
+  ent floor = pstate->top - 2;
   scm_puts (hdr, port);
   /* CHECK_INTS; */
   if (pstate->fancyp)
@@ -839,7 +860,7 @@ scm_iprlist (char *hdr, SCM exp, int tlr, SCM port, scm_print_state *pstate)
   scm_iprin1 (SCM_CAR (exp), port, pstate);
   for (exp = SCM_CDR (exp); scm_is_pair (exp); exp = SCM_CDR (exp))
     {
-      register long i;
+      register ent i;
 
       for (i = floor; i >= 0; --i)
 	if (scm_is_eq (PSTATE_STACK_REF(pstate, i), exp))
@@ -862,13 +883,13 @@ end:
   
 fancy_printing:
   {
-    long n = pstate->length;
+    ent n = pstate->length;
     
     scm_iprin1 (SCM_CAR (exp), port, pstate);
     exp = SCM_CDR (exp); --n;
     for (; scm_is_pair (exp); exp = SCM_CDR (exp))
       {
-	register unsigned long i;
+	register nat i;
 
 	for (i = 0; i < pstate->top; ++i)
 	  if (scm_is_eq (PSTATE_STACK_REF(pstate, i), exp))

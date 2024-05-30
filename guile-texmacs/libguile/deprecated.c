@@ -83,7 +83,7 @@ scm_wta (SCM arg, const char *pos, const char *s_subr)
 {
   if (!s_subr || !*s_subr)
     s_subr = NULL;
-  if ((~0x1fL) & (long) pos)
+  if ((~((ent) 0x1fL)) & (ent) pos)
     {
       /* error string supplied.  */
       scm_misc_error (s_subr, pos, scm_list_1 (arg));
@@ -188,7 +188,7 @@ SCM_DEFINE (scm_registered_modules, "c-registered-modules", 0, 0, 0,
   res = SCM_EOL;
   for (md = registered_mods; md; md = md->link)
     res = scm_cons (scm_cons (scm_from_locale_string (md->module_name),
-			      scm_from_ulong ((unsigned long) md->init_func)),
+			      scm_from_nat ((nat) md->init_func)),
 		    res);
   return res;
 }
@@ -564,11 +564,11 @@ scm_make_subr_with_generic (const char *name, int type, SCM (*fcn) (), SCM *gf)
 #ifdef _UNICOS
 typedef int setjmp_type;
 #else
-typedef long setjmp_type;
+typedef ent setjmp_type;
 #endif
 
 struct cce_handler_data {
-  SCM (*err_filter) ();
+  SCM (*err_filter) (SCM, void*);
   void *closure;
 };
 
@@ -596,7 +596,7 @@ scm_call_catching_errors (SCM (*thunk)(), SCM (*err_filter)(), void *closure)
   }
 }
 
-long
+ent
 scm_make_smob_type_mfpe (char *name, size_t size,
                         SCM (*mark) (SCM),
                         size_t (*free) (SCM),
@@ -608,14 +608,14 @@ scm_make_smob_type_mfpe (char *name, size_t size,
      "Use 'scm_make_smob_type' plus 'scm_set_smob_*' instead.");
 
   {
-    long answer = scm_make_smob_type (name, size);
+    ent answer = scm_make_smob_type (name, size);
     scm_set_smob_mfpe (answer, mark, free, print, equalp);
     return answer;
   }
 }
 
 void
-scm_set_smob_mfpe (long tc, 
+scm_set_smob_mfpe (ent tc,
 		   SCM (*mark) (SCM),
 		   size_t (*free) (SCM),
 		   int (*print) (SCM, SCM, scm_print_state *),
@@ -666,10 +666,10 @@ scm_i_object_chars (SCM obj)
     return SCM_STRING_CHARS (obj);
   if (SCM_SYMBOLP (obj))
     return SCM_SYMBOL_CHARS (obj);
-  abort ();
+  scm_abort ();
 }
 
-long
+ent
 scm_i_object_length (SCM obj)
 {
   scm_c_issue_deprecation_warning 
@@ -681,7 +681,7 @@ scm_i_object_length (SCM obj)
     return SCM_SYMBOL_LENGTH (obj);
   if (SCM_VECTORP (obj))
     return SCM_VECTOR_LENGTH (obj);
-  abort ();
+  scm_abort ();
 }
 
 SCM 
@@ -1251,7 +1251,7 @@ scm_i_vectorp (SCM x)
   return SCM_I_IS_VECTOR (x);
 }
 
-unsigned long
+nat
 scm_i_vector_length (SCM x)
 {
   scm_c_issue_deprecation_warning

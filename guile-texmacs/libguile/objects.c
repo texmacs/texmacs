@@ -88,9 +88,9 @@ SCM scm_metaclass_operator;
 SCM
 scm_mcache_lookup_cmethod (SCM cache, SCM args)
 {
-  unsigned long i, mask, n, end;
+  nat i, mask, n, end;
   SCM ls, methods, z = SCM_CDDR (cache);
-  n = scm_to_ulong (SCM_CAR (z)); /* maximum number of specializers */
+  n = scm_to_nat (SCM_CAR (z)); /* maximum number of specializers */
   methods = SCM_CADR (z);
 
   if (scm_is_simple_vector (methods))
@@ -103,10 +103,10 @@ scm_mcache_lookup_cmethod (SCM cache, SCM args)
   else
     {
       /* cache format #2: compute a hash value */
-      unsigned long hashset = scm_to_ulong (methods);
-      long j = n;
+      nat hashset = scm_to_nat (methods);
+      ent j = n;
       z = SCM_CDDR (z);
-      mask = scm_to_ulong (SCM_CAR (z));
+      mask = scm_to_nat (SCM_CAR (z));
       methods = SCM_CADR (z);
       i = 0;
       ls = args;
@@ -125,7 +125,7 @@ scm_mcache_lookup_cmethod (SCM cache, SCM args)
   /* Search for match  */
   do
     {
-      long j = n;
+      ent j = n;
       z = SCM_SIMPLE_VECTOR_REF (methods, i);
       ls = args; /* list of arguments */
       if (!scm_is_null (ls))
@@ -286,7 +286,7 @@ SCM_DEFINE (scm_object_procedure, "object-procedure", 1, 0, 0,
 SCM
 scm_i_make_class_object (SCM meta,
 			 SCM layout_string,
-			 unsigned long flags)
+			 nat flags)
 {
   SCM c;
   SCM layout = scm_make_struct_layout (layout_string);
@@ -303,7 +303,7 @@ SCM_DEFINE (scm_make_class_object, "make-class-object", 2, 0, 0,
 	    "slot layout specified by @var{layout}.")
 #define FUNC_NAME s_scm_make_class_object
 {
-  unsigned long flags = 0;
+  nat flags = 0;
   SCM_VALIDATE_STRUCT (1, metaclass);
   SCM_VALIDATE_STRING (2, layout);
   if (scm_is_eq (metaclass, scm_metaclass_operator))

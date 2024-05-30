@@ -24,8 +24,13 @@
 #
 AUTOMAKE_OPTIONS = 1.10
 
-SUBDIRS = oop libguile ice-9 guile-config guile-readline emacs \
-	  scripts srfi doc examples test-suite benchmark-suite lang am
+if ENABLE_READLINE
+   GUILE_READLINE_OPT = guile-readline
+endif
+
+SUBDIRS = oop libguile ice-9 guile-config $(GUILE_READLINE_OPT) emacs scripts srfi doc examples test-suite benchmark-suite lang am
+
+DIST_SUBDIRS = $(SUBDIRS)
 
 bin_SCRIPTS = guile-tools
 
@@ -34,13 +39,18 @@ include_HEADERS = libguile.h
 EXTRA_DIST = LICENSE HACKING GUILE-VERSION guile-1.8.pc.in	\
 	     ChangeLog-2008 m4/autobuild.m4
 
-TESTS = check-guile
+check-local:
+	$(top_srcdir_absolute)/check-guile
 
 ACLOCAL_AMFLAGS = -I m4
-
-DISTCLEANFILES = check-guile.log
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = guile-1.8.pc
 
+distclean-local:
+	rm -f *~ */*~
+	rm -rf libguile/.deps
+	rm -rf guile-readline/autom4te.cache/
+	rm -rf autom4te.cache/
+	rm -f check-guile.log doc/ref/guile.info-7 guile-procedures.txt
 # Makefile.am ends here

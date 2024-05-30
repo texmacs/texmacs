@@ -56,7 +56,7 @@ static SCM young = SCM_EOL;
 static SCM old = SCM_EOL;
 static SCM undead = SCM_EOL;
 
-static long last_switch;
+static ent last_switch;
 
 #ifdef SCM_FUTURES_DEBUG
 static int n_dead = 0;
@@ -307,7 +307,7 @@ scan_futures (void *dummy1, void *dummy2, void *dummy3)
 {
   SCM next, *nextloc;
   
-  long now = scm_c_get_internal_run_time ();
+  ent now = scm_c_get_internal_run_time ();
   if (now - last_switch > SCM_TIME_UNITS_PER_SECOND)
     {
       /* switch out old (> 1 sec), unused futures */

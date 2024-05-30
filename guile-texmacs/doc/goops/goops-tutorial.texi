@@ -3,7 +3,7 @@
 @c
 @c STk Reference manual (Appendix: An Introduction to STklos)
 @c
-@c Copyright © 1993-1999 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
+@c Copyright (c) 1993-1999 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 @c Permission to use, copy, modify, distribute,and license this
 @c software and its documentation for any purpose is hereby granted,
 @c provided that existing copyright notices are retained in all
@@ -42,7 +42,7 @@ Original attribution:
 
 STk Reference manual (Appendix: An Introduction to STklos)
 
-Copyright © 1993-1999 Erick Gallesio - I3S-CNRS/ESSI <eg@@unice.fr>
+Copyright (c) 1993-1999 Erick Gallesio - I3S-CNRS/ESSI <eg@@unice.fr>
 Permission to use, copy, modify, distribute,and license this
 software and its documentation for any purpose is hereby granted,
 provided that existing copyright notices are retained in all

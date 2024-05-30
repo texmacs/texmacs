@@ -56,7 +56,7 @@
  * which is the same as                (/ (- (expt 2 n) 4) 4)
  */
 
-#define SCM_I_FIXNUM_BIT         (SCM_LONG_BIT - 2)
+#define SCM_I_FIXNUM_BIT         (SCM_ENT_BIT - 2)
 #define SCM_MOST_POSITIVE_FIXNUM ((SCM_T_SIGNED_BITS_MAX-3)/4)
 #define SCM_MOST_NEGATIVE_FIXNUM (-SCM_MOST_POSITIVE_FIXNUM-1)
 
@@ -71,7 +71,7 @@
 #define SCM_I_INUMP(x)	(2 & SCM_UNPACK (x))
 #define SCM_I_NINUMP(x) (!SCM_I_INUMP (x))
 #define SCM_I_MAKINUM(x) \
-  (SCM_PACK ((((scm_t_signed_bits) (x)) << 2) + scm_tc2_int))
+  (SCM_PACK (((scm_t_signed_bits)(((scm_t_bits) (x)) << 2)) + scm_tc2_int))
 #define SCM_I_INUM(x)   (SCM_SRS ((scm_t_signed_bits) SCM_UNPACK (x), 2))
 
 /* SCM_FIXABLE is true if its long argument can be encoded in an SCM_INUM. */
@@ -129,10 +129,10 @@
 
 /* Number subtype 1 to 3 (note the dependency on the predicates SCM_INEXACTP
  * and SCM_NUMP)  */
-#define scm_tc16_big		(scm_tc7_number + 1 * 256L)
-#define scm_tc16_real           (scm_tc7_number + 2 * 256L)
-#define scm_tc16_complex        (scm_tc7_number + 3 * 256L)
-#define scm_tc16_fraction       (scm_tc7_number + 4 * 256L)
+#define scm_tc16_big		(scm_tc7_number + 1 * ((ent) 256L))
+#define scm_tc16_real           (scm_tc7_number + 2 * ((ent) 256L))
+#define scm_tc16_complex        (scm_tc7_number + 3 * ((ent) 256L))
+#define scm_tc16_fraction       (scm_tc7_number + 4 * ((ent) 256L))
 
 #define SCM_INEXACTP(x) \
   (!SCM_IMP (x) && (0xfeff & SCM_CELL_TYPE (x)) == scm_tc16_real)
@@ -269,6 +269,8 @@ SCM_API SCM scm_i_dbl2num (double d);
 SCM_API double scm_i_big2dbl (SCM b);
 SCM_API SCM scm_i_long2big (long n);
 SCM_API SCM scm_i_ulong2big (unsigned long n);
+SCM_API SCM scm_i_ent2big (ent n);
+SCM_API SCM scm_i_nat2big (nat n);
 SCM_API SCM scm_i_clonebig (SCM src_big, int same_sign_p);
 
 /* ratio functions */
@@ -454,6 +456,22 @@ SCM_API SCM  scm_from_mpz (mpz_t rop);
 #define scm_from_size_t   scm_from_uint64
 #else
 #error sizeof(size_t) is not 4 or 8.
+#endif
+#endif
+
+#if SCM_SIZEOF_ENT == 4
+#define scm_to_ent   scm_to_int32
+#define scm_from_ent scm_from_int32
+#define scm_to_nat   scm_to_uint32
+#define scm_from_nat scm_from_uint32
+#else
+#if SCM_SIZEOF_ENT == 8
+#define scm_to_ent   scm_to_int64
+#define scm_from_ent scm_from_int64
+#define scm_to_nat   scm_to_uint64
+#define scm_from_nat scm_from_uint64
+#else
+#error sizeof(ent) is not 4 or 8.
 #endif
 #endif
 

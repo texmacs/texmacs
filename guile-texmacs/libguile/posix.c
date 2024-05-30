@@ -92,14 +92,17 @@ extern char *ttyname();
 # include <sys/wait.h>
 #endif
 #ifndef WEXITSTATUS
-# define WEXITSTATUS(stat_val) ((unsigned)(stat_val) >> 8)
+# define WEXITSTATUS(stat_val) ((unsigned)(stat_val) & 255)
 #endif
 #ifndef WIFEXITED
-# define WIFEXITED(stat_val) (((stat_val) & 255) == 0)
+# define WIFEXITED(stat_val) ((((unsigned) stat_val) & 255) == 0)
 #endif
 
 #include <signal.h>
 
+#if defined(__MINGW64__) && defined (HAVE_MINGW64_UCRT64)
+__declspec (dllimport)
+#endif
 extern char ** environ;
 
 #ifdef HAVE_GRP_H
@@ -274,7 +277,7 @@ SCM_DEFINE (scm_getgroups, "getgroups", 0, 0, 0,
 
   result = scm_c_make_vector (ngroups, SCM_BOOL_F);
   while (--ngroups >= 0) 
-    SCM_SIMPLE_VECTOR_SET (result, ngroups, scm_from_ulong (groups[ngroups]));
+    SCM_SIMPLE_VECTOR_SET (result, ngroups, scm_from_nat (groups[ngroups]));
 
   free (groups);
   return result;
@@ -306,12 +309,12 @@ SCM_DEFINE (scm_setgroups, "setgroups", 1, 0, 0,
   /* validate before allocating, so we don't have to worry about leaks */
   for (i = 0; i < ngroups; i++)
     {
-      unsigned long ulong_gid;
+      nat nat_gid;
       GETGROUPS_T gid;
-      SCM_VALIDATE_ULONG_COPY (1, SCM_SIMPLE_VECTOR_REF (group_vec, i),
-			       ulong_gid);
-      gid = ulong_gid;
-      if (gid != ulong_gid)
+      SCM_VALIDATE_NAT_COPY (1, SCM_SIMPLE_VECTOR_REF (group_vec, i),
+			     nat_gid);
+      gid = nat_gid;
+      if (gid != nat_gid)
 	SCM_OUT_OF_RANGE (1, SCM_SIMPLE_VECTOR_REF (group_vec, i));
     }
 
@@ -320,7 +323,7 @@ SCM_DEFINE (scm_setgroups, "setgroups", 1, 0, 0,
     SCM_OUT_OF_RANGE (SCM_ARG1, scm_from_int (ngroups));
   groups = scm_malloc (size);
   for(i = 0; i < ngroups; i++)
-    groups [i] = SCM_NUM2ULONG (1, SCM_SIMPLE_VECTOR_REF (group_vec, i));
+    groups [i] = SCM_NUM2NAT (1, SCM_SIMPLE_VECTOR_REF (group_vec, i));
 
   result = setgroups (ngroups, groups);
   save_errno = errno; /* don't let free() touch errno */
@@ -366,8 +369,8 @@ SCM_DEFINE (scm_getpwuid, "getpw", 0, 1, 0,
 
   SCM_SIMPLE_VECTOR_SET(result, 0, scm_from_locale_string (entry->pw_name));
   SCM_SIMPLE_VECTOR_SET(result, 1, scm_from_locale_string (entry->pw_passwd));
-  SCM_SIMPLE_VECTOR_SET(result, 2, scm_from_ulong (entry->pw_uid));
-  SCM_SIMPLE_VECTOR_SET(result, 3, scm_from_ulong (entry->pw_gid));
+  SCM_SIMPLE_VECTOR_SET(result, 2, scm_from_nat (entry->pw_uid));
+  SCM_SIMPLE_VECTOR_SET(result, 3, scm_from_nat (entry->pw_gid));
   SCM_SIMPLE_VECTOR_SET(result, 4, scm_from_locale_string (entry->pw_gecos));
   if (!entry->pw_dir)
     SCM_SIMPLE_VECTOR_SET(result, 5, scm_from_locale_string (""));
@@ -431,7 +434,7 @@ SCM_DEFINE (scm_getgrgid, "getgr", 0, 1, 0,
 
   SCM_SIMPLE_VECTOR_SET(result, 0, scm_from_locale_string (entry->gr_name));
   SCM_SIMPLE_VECTOR_SET(result, 1, scm_from_locale_string (entry->gr_passwd));
-  SCM_SIMPLE_VECTOR_SET(result, 2, scm_from_ulong  (entry->gr_gid));
+  SCM_SIMPLE_VECTOR_SET(result, 2, scm_from_nat  (entry->gr_gid));
   SCM_SIMPLE_VECTOR_SET(result, 3, scm_makfromstrs (-1, entry->gr_mem));
   return result;
 }
@@ -565,7 +568,7 @@ SCM_DEFINE (scm_waitpid, "waitpid", 1, 1, 0,
 #undef FUNC_NAME
 #endif /* HAVE_WAITPID */
 
-#ifndef __MINGW32__
+#if !defined(__MINGW32__) || defined(__MINGW64__)
 SCM_DEFINE (scm_status_exit_val, "status:exit-val", 1, 0, 0, 
             (SCM status),
 	    "Return the exit status value, as would be set if a process\n"
@@ -584,7 +587,9 @@ SCM_DEFINE (scm_status_exit_val, "status:exit-val", 1, 0, 0,
     return SCM_BOOL_F;
 }
 #undef FUNC_NAME
+#endif
 
+#ifndef __MINGW32__
 SCM_DEFINE (scm_status_term_sig, "status:term-sig", 1, 0, 0, 
             (SCM status),
 	    "Return the signal number which terminated the process, if any,\n"
@@ -771,8 +776,8 @@ SCM_DEFINE (scm_getpgrp, "getpgrp", 0, 0, 0,
 	    "This is the POSIX definition, not BSD.")
 #define FUNC_NAME s_scm_getpgrp
 {
-  int (*fn)();
-  fn = (int (*) ()) getpgrp;
+  int (*fn)(int);
+  fn = (int (*)(int)) getpgrp;
   return scm_from_int (fn (0));
 }
 #undef FUNC_NAME
@@ -968,9 +973,9 @@ SCM_DEFINE (scm_execl, "execl", 1, 0, 1,
 			    SCM_F_WIND_EXPLICITLY);
 
   execv (exec_file,
-#ifdef __MINGW32__
+#if defined(__MINGW32__) && !defined(__MINGW64__)
          /* extra "const" in mingw formals, provokes warning from gcc */
-         (const char * const *)
+	 (const char * const *)
 #endif
          exec_argv);
   SCM_SYSERROR;
@@ -1004,9 +1009,9 @@ SCM_DEFINE (scm_execlp, "execlp", 1, 0, 1,
 			    SCM_F_WIND_EXPLICITLY);
 
   execvp (exec_file,
-#ifdef __MINGW32__
+#if defined(__MINGW32__) && !defined(__MINGW64__)
           /* extra "const" in mingw formals, provokes warning from gcc */
-          (const char * const *)
+	  (const char * const *)
 #endif
           exec_argv);
   SCM_SYSERROR;
@@ -1048,12 +1053,12 @@ SCM_DEFINE (scm_execle, "execle", 2, 0, 1,
 			    SCM_F_WIND_EXPLICITLY);
 
   execve (exec_file,
-#ifdef __MINGW32__
+#if defined(__MINGW32__) && !defined(__MINGW64__)
           /* extra "const" in mingw formals, provokes warning from gcc */
-          (const char * const *)
+	  (const char * const *)
 #endif
           exec_argv,
-#ifdef __MINGW32__
+#if defined(__MINGW32__) && !defined(__MINGW64__)
           /* extra "const" in mingw formals, provokes warning from gcc */
           (const char * const *)
 #endif
@@ -1148,6 +1153,14 @@ SCM_DEFINE (scm_environ, "environ", 0, 1, 0,
 #undef FUNC_NAME
 
 #ifdef L_tmpnam
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
 
 SCM_DEFINE (scm_tmpnam, "tmpnam", 0, 0, 0,
             (),
@@ -1168,7 +1181,12 @@ SCM_DEFINE (scm_tmpnam, "tmpnam", 0, 0, 0,
   return scm_from_locale_string (name);
 }
 #undef FUNC_NAME
-
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 #endif
 
 #ifndef HAVE_MKSTEMP
@@ -1239,12 +1257,12 @@ SCM_DEFINE (scm_utime, "utime", 1, 2, 0,
   if (SCM_UNBNDP (actime))
     SCM_SYSCALL (time (&utm_tmp.actime));
   else
-    utm_tmp.actime = SCM_NUM2ULONG (2, actime);
+    utm_tmp.actime = SCM_NUM2NAT (2, actime);
 
   if (SCM_UNBNDP (modtime))
     SCM_SYSCALL (time (&utm_tmp.modtime));
   else
-    utm_tmp.modtime = SCM_NUM2ULONG (3, modtime);
+    utm_tmp.modtime = SCM_NUM2NAT (3, modtime);
 
   STRING_SYSCALL (pathname, c_pathname,
 		  rv = utime (c_pathname, &utm_tmp));
@@ -1311,7 +1329,7 @@ SCM_DEFINE (scm_getpid, "getpid", 0, 0, 0,
 	    "Return an integer representing the current process ID.")
 #define FUNC_NAME s_scm_getpid
 {
-  return scm_from_ulong (getpid ());
+  return scm_from_nat (getpid ());
 }
 #undef FUNC_NAME
 
@@ -1543,7 +1561,7 @@ SCM_DEFINE (scm_nice, "nice", 1, 0, 0,
 	    "The return value is unspecified.")
 #define FUNC_NAME s_scm_nice
 {
-  int nice_value;
+  int nice_value; (void) nice_value;
 
   /* nice() returns "prio-NZERO" on success or -1 on error, but -1 can arise
      from "prio-NZERO", so an error must be detected from errno changed */
@@ -1805,7 +1823,7 @@ SCM_DEFINE (scm_getpass, "getpass", 1, 0, 0,
 
 static int flock (int fd, int operation)
 {
-  long pos, len;
+  ent pos, len;
   int ret, err;
 
   /* Disable invalid arguments. */
@@ -1960,8 +1978,8 @@ SCM_DEFINE (scm_gethostname, "gethostname", 0, 0, 0,
    * Must watch out for this existing but giving -1, as happens for instance
    * in gnu/linux glibc 2.3.2.  */
   {
-    const long int n = sysconf (_SC_HOST_NAME_MAX);
-    if (n != -1L)
+    const ent n = sysconf (_SC_HOST_NAME_MAX);
+    if (n != -((ent) 1L))
       len = n;
   }
 
@@ -2077,7 +2095,7 @@ scm_init_posix ()
   scm_c_define ("LC_IDENTIFICATION", scm_from_int (LC_IDENTIFICATION));
 #endif
 #ifdef PIPE_BUF
-  scm_c_define ("PIPE_BUF", scm_from_long (PIPE_BUF));
+  scm_c_define ("PIPE_BUF", scm_from_ent (PIPE_BUF));
 #endif
 
 #ifdef PRIO_PROCESS

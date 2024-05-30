@@ -55,9 +55,12 @@ SCM_API SCM scm_fdes_to_port (int fdes, char *mode, SCM name);
 SCM_API SCM scm_file_port_p (SCM obj);
 SCM_API void scm_init_fports (void);
 
+ssize_t scm_write_proxy(int fd, const void *buf, size_t count);
+void scm_set_log_function(void (*log_function)(const char *, int));
+
 /* internal functions */
 
-SCM_API SCM scm_i_fdes_to_port (int fdes, long mode_bits, SCM name);
+SCM_API SCM scm_i_fdes_to_port (int fdes, ent mode_bits, SCM name);
 SCM_API int scm_i_fport_truncate (SCM, SCM);
 SCM_API SCM scm_i_fport_seek (SCM, SCM, int);
 

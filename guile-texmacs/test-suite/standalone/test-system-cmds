@@ -10,7 +10,7 @@ exec guile -q -s "$0" "$@"
          "test-system-cmds: (system) did not return a boolean\n")
         (exit 1)))
   
-  (let ((rs (status:exit-val (system "guile -c '(exit 42)'"))))
+  (let ((rs (system "guile -c \"(exit 42)\"")))
     (if (not (= 42 rs))
         (begin
           (simple-format
@@ -20,7 +20,7 @@ exec guile -q -s "$0" "$@"
           (exit 1)))))
 
 (define (test-system*-cmd)
-  (let ((rs (status:exit-val (system* "guile" "-c" "(exit 42)"))))
+  (let ((rs (system* "guile" "-c" "(exit 42)")))
     (if (not (= 42 rs))
         (begin
           (simple-format

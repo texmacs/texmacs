@@ -228,7 +228,7 @@ SCM_DEFINE (scm_macro_transformer, "macro-transformer", 1, 0, 0,
 #undef FUNC_NAME
 
 SCM
-scm_make_synt (const char *name, SCM (*macroizer) (), SCM (*fcn)() )
+scm_make_synt (const char *name, SCM (*macroizer) (SCM), SCM (*fcn)() )
 {
   SCM var = scm_c_define (name, SCM_UNDEFINED);
   SCM transformer = scm_c_make_subr (name, scm_tc7_subr_2, fcn);

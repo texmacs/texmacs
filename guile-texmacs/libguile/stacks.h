@@ -41,8 +41,8 @@ typedef struct scm_t_info_frame {
 typedef struct scm_t_stack {
   SCM id;			/* Stack id */
   scm_t_info_frame *frames;	/* Info frames */
-  unsigned long length;		/* Stack length */
-  unsigned long tail_length;
+  nat length;		        /* Stack length */
+  nat tail_length;
   scm_t_info_frame tail[1];
 } scm_t_stack;
 
@@ -73,11 +73,11 @@ SCM_API SCM scm_stack_type;
 #define SCM_FRAME_PREV(frame) scm_frame_previous (frame)
 #define SCM_FRAME_NEXT(frame) scm_frame_next (frame)
 
-#define SCM_FRAMEF_VOID		(1L << 2)
-#define SCM_FRAMEF_REAL		(1L << 3)
-#define SCM_FRAMEF_PROC 	(1L << 4)
-#define SCM_FRAMEF_EVAL_ARGS 	(1L << 5)
-#define SCM_FRAMEF_OVERFLOW	(1L << 6)
+#define SCM_FRAMEF_VOID		(((ent) 1L) << 2)
+#define SCM_FRAMEF_REAL		(((ent) 1L) << 3)
+#define SCM_FRAMEF_PROC 	(((ent) 1L) << 4)
+#define SCM_FRAMEF_EVAL_ARGS 	(((ent) 1L) << 5)
+#define SCM_FRAMEF_OVERFLOW	(((ent) 1L) << 6)
 
 #define SCM_FRAME_VOID_P(f)       (SCM_FRAME_FLAGS (f) & SCM_FRAMEF_VOID)
 #define SCM_FRAME_REAL_P(f)       (SCM_FRAME_FLAGS (f) & SCM_FRAMEF_REAL)

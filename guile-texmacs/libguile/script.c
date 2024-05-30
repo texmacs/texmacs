@@ -49,7 +49,7 @@
    string if file exists; 0 otherwise. */
 
 static char *
-scm_cat_path (char *str1, const char *str2, long n)
+scm_cat_path (char *str1, const char *str2, ent n)
 {
   if (!n)
     n = strlen (str2);
@@ -58,13 +58,13 @@ scm_cat_path (char *str1, const char *str2, long n)
       size_t len = strlen (str1);
       str1 = (char *) realloc (str1, (size_t) (len + n + 1));
       if (!str1)
-	return 0L;
+	return (char*) 0L;
       strncat (str1 + len, str2, n);
       return str1;
     }
   str1 = (char *) scm_malloc ((size_t) (n + 1));
   if (!str1)
-    return 0L;
+    return (char*) 0L;
   str1[0] = 0;
   strncat (str1, str2, n);
   return str1;
@@ -77,7 +77,7 @@ scm_try_path (char *path)
   FILE *f;
   /* fprintf(stderr, "Trying %s\n", path);fflush(stderr); */
   if (!path)
-    return 0L;
+    return ((ent) 0L);
   SCM_SYSCALL (f = fopen (path, "r");
     );
   if (f)
@@ -86,16 +86,16 @@ scm_try_path (char *path)
       return path;
     }
   free (path);
-  return 0L;
+  return ((ent) 0L);
 }
 
 static char *
 scm_sep_init_try (char *path, const char *sep, const char *initname)
 {
   if (path)
-    path = scm_cat_path (path, sep, 0L);
+    path = scm_cat_path (path, sep, (ent) 0L);
   if (path)
-    path = scm_cat_path (path, initname, 0L);
+    path = scm_cat_path (path, initname, (ent) 0L);
   return scm_try_path (path);
 }
 #endif 
@@ -125,10 +125,10 @@ scm_find_executable (const char *name)
 
   /* fprintf(stderr, "s_f_e checking access %s ->%d\n", name, access(name, X_OK)); fflush(stderr); */
   if (access (name, X_OK))
-    return 0L;
+    return (char*) 0L;
   f = fopen (name, "r");
   if (!f)
-    return 0L;
+    return (char*) 0L;
   if ((fgetc (f) == '#') && (fgetc (f) == '!'))
     {
       while (1)
@@ -141,14 +141,14 @@ scm_find_executable (const char *name)
 	  case EOF:
 	    tbuf[i] = 0;
 	    fclose (f);
-	    return scm_cat_path (0L, tbuf, 0L);
+	    return scm_cat_path ((char*) 0L, tbuf, (ent) 0L);
 	  default:
 	    tbuf[i++] = c;
 	    break;
 	  }
     }
   fclose (f);
-  return scm_cat_path (0L, name, 0L);
+  return scm_cat_path ((char*) 0L, name, (ent) 0L);
 }
 
 
@@ -296,9 +296,9 @@ scm_get_meta_args (int argc, char **argv)
   int nargc = argc, argi = 1, nargi = 1;
   char *narg, **nargv;
   if (!(argc > 2 && script_meta_arg_P (argv[1])))
-    return 0L;
+    return (char**) 0L;
   if (!(nargv = (char **) scm_malloc ((1 + nargc) * sizeof (char *))))
-      return 0L;
+    return (char**) 0L;
   nargv[0] = argv[0];
   while (((argi + 1) < argc) && (script_meta_arg_P (argv[argi])))
     {
@@ -310,7 +310,7 @@ scm_get_meta_args (int argc, char **argv)
 	    switch (getc (f))
 	      {
 	      case EOF:
-		return 0L;
+		return (char**) 0L;
 	      default:
 		continue;
 	      case '\n':
@@ -320,7 +320,7 @@ scm_get_meta_args (int argc, char **argv)
 	  while ((narg = script_read_arg (f)))
 	    if (!(nargv = (char **) realloc (nargv,
 					     (1 + ++nargc) * sizeof (char *))))
-	        return 0L;
+	      return (char**) 0L;
 	    else
 	      nargv[nargi++] = narg;
 	  fclose (f);
@@ -593,13 +593,13 @@ scm_compile_shell_switches (int argc, char **argv)
 	  char * p = argv[i] + 11;
 	  while (*p)
 	    {
-	      long num;
+	      ent num;
 	      char * end;
 
 	      num = strtol (p, &end, 10);
 	      if (end - p > 0)
 		{
-		  srfis = scm_cons (scm_from_long (num), srfis);
+		  srfis = scm_cons (scm_from_ent (num), srfis);
 		  if (*end)
 		    {
 		      if (*end == ',')

@@ -27,7 +27,7 @@
 
 #define scm_is_symbol(x)            (!SCM_IMP (x) \
                                      && (SCM_TYP7 (x) == scm_tc7_symbol))
-#define scm_i_symbol_hash(x)        ((unsigned long) SCM_CELL_WORD_2 (x))
+#define scm_i_symbol_hash(x)        ((nat) SCM_CELL_WORD_2 (x))
 #define scm_i_symbol_is_interned(x) \
   (!(SCM_CELL_WORD_0 (x) & SCM_I_F_SYMBOL_UNINTERNED))
 
@@ -61,8 +61,7 @@ SCM_API SCM scm_take_locale_symboln (char *sym, size_t len);
 
 /* internal functions. */
 
-SCM_API unsigned long scm_i_hash_symbol (SCM obj, unsigned long n,
-					 void *closure);
+SCM_API nat scm_i_hash_symbol (SCM obj, nat n, void *closure);
 
 SCM_API void scm_symbols_prehistory (void);
 SCM_API void scm_init_symbols (void);

@@ -116,7 +116,7 @@
   ;; A "hard directory" is a path that denotes a directory and is not a
   ;; symlink.
   (define (file-is-hard-directory? filename)
-    (eq? (stat:type (lstat filename)) 'directory))
+    (eq? (stat:type (stat filename)) 'directory))
 
   (let visit ((root root))
     (let ((should-recur (f root)))

@@ -105,7 +105,6 @@ void *
 scm_realloc (void *mem, size_t size)
 {
   void *ptr;
-
   SCM_SYSCALL (ptr = realloc (mem, size));
   if (ptr)
     return ptr;
@@ -114,7 +113,7 @@ scm_realloc (void *mem, size_t size)
   scm_gc_running_p = 1;
 
   scm_i_sweep_all_segments ("realloc");
-  
+
   SCM_SYSCALL (ptr = realloc (mem, size));
   if (ptr)
     { 
@@ -128,7 +127,7 @@ scm_realloc (void *mem, size_t size)
   
   scm_gc_running_p = 0;
   scm_i_pthread_mutex_unlock (&scm_i_sweep_mutex);
-  
+
   SCM_SYSCALL (ptr = realloc (mem, size));
   if (ptr)
     return ptr;
@@ -191,7 +190,7 @@ decrease_mtrigger (size_t size, const char * what)
 	       "memory was unregistered\n"
 	       "via `scm_gc_unregister_collectable_memory ()' than "
 	       "registered.\n");
-      abort ();
+      scm_abort ();
     }
 
   scm_mallocated -= size;
@@ -206,7 +205,7 @@ increase_mtrigger (size_t size, const char *what)
   int overflow = 0, triggered = 0;
 
   scm_i_pthread_mutex_lock (&scm_i_gc_admin_mutex);
-  if (ULONG_MAX - size < scm_mallocated)
+  if (NAT_MAX - size < scm_mallocated)
     overflow = 1;
   else
     {
@@ -228,7 +227,7 @@ increase_mtrigger (size_t size, const char *what)
    */
   if (triggered)
     {
-      unsigned long prev_alloced;
+      nat prev_alloced;
       float yield;
       
       scm_i_scm_pthread_mutex_lock (&scm_i_sweep_mutex);
@@ -266,10 +265,10 @@ increase_mtrigger (size_t size, const char *what)
 	  no_overflow_trigger /= (float)  (100.0 - scm_i_minyield_malloc);
 
 	  
-	  if (no_overflow_trigger >= (float) ULONG_MAX)
-	    scm_mtrigger = ULONG_MAX;
+	  if (no_overflow_trigger >= (float) NAT_MAX)
+	    scm_mtrigger = NAT_MAX;
 	  else
-	    scm_mtrigger =  (unsigned long) no_overflow_trigger;
+	    scm_mtrigger =  (nat) no_overflow_trigger;
 	  
 #ifdef DEBUGINFO
 	  fprintf (stderr, "Mtrigger sweep: ineffective. New trigger %d\n",
@@ -462,14 +461,14 @@ scm_must_free (void *obj)
   else
     {
       fprintf (stderr,"freeing NULL pointer");
-      abort ();
+      scm_abort ();
     }
 }
 #undef FUNC_NAME
 
 
 void
-scm_done_malloc (long size)
+scm_done_malloc (ent size)
 {
   scm_c_issue_deprecation_warning
     ("scm_done_malloc is deprecated.  "
@@ -482,7 +481,7 @@ scm_done_malloc (long size)
 }
 
 void
-scm_done_free (long size)
+scm_done_free (ent size)
 {
   scm_c_issue_deprecation_warning
     ("scm_done_free is deprecated.  "

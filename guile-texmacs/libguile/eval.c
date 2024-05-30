@@ -344,7 +344,7 @@ syntax_error (const char* const msg, const SCM form, const SCM expr)
 #define SCM_IFRINC		(0x00000100L)
 #define SCM_ICDR		(0x00080000L)
 #define SCM_IDINC		(0x00100000L)
-#define SCM_IFRAME(n) 		((long)((SCM_ICDR-SCM_IFRINC)>>8) \
+#define SCM_IFRAME(n) 		((ent)((SCM_ICDR-SCM_IFRINC)>>8) \
 				 & (SCM_UNPACK (n) >> 8))
 #define SCM_IDIST(n) 		(SCM_UNPACK (n) >> 20)
 #define SCM_ICDRP(n) 		(SCM_ICDR & SCM_UNPACK (n))
@@ -353,18 +353,18 @@ syntax_error (const char* const msg, const SCM form, const SCM expr)
 #define SCM_IDISTMAX            ((1<<12)-1)
 #define SCM_MAKE_ILOC(frame_nr, binding_nr, last_p) \
   SCM_PACK ( \
-    ((frame_nr) << 8) \
-    + ((binding_nr) << 20) \
-    + ((last_p) ? SCM_ICDR : 0) \
-    + scm_tc8_iloc )
+	     (((nat) frame_nr) << 8)		\
+	     + (((nat) binding_nr) << 20)	\
+	     + ((last_p) ? SCM_ICDR : 0)	\
+	     + scm_tc8_iloc )
 
 void
 scm_i_print_iloc (SCM iloc, SCM port)
 {
   scm_puts ("#@", port);
-  scm_intprint ((long) SCM_IFRAME (iloc), 10, port);
+  scm_intprint ((ent) SCM_IFRAME (iloc), 10, port);
   scm_putc (SCM_ICDRP (iloc) ? '-' : '+', port);
-  scm_intprint ((long) SCM_IDIST (iloc), 10, port);
+  scm_intprint ((ent) SCM_IDIST (iloc), 10, port);
 }
 
 #if (SCM_DEBUG_DEBUGGING_SUPPORT == 1)
@@ -548,9 +548,9 @@ unmemoize_expression (const SCM expr, const SCM env)
   if (SCM_ILOCP (expr))
     {
       SCM frame_idx;
-      unsigned long int frame_nr;
+      nat frame_nr;
       SCM symbol_idx;
-      unsigned long int symbol_nr;
+      nat symbol_nr;
 
       for (frame_idx = env, frame_nr = SCM_IFRAME (expr);
            frame_nr != 0; 
@@ -916,7 +916,7 @@ SCM
 scm_m_and (SCM expr, SCM env SCM_UNUSED)
 {
   const SCM cdr_expr = SCM_CDR (expr);
-  const long length = scm_ilength (cdr_expr);
+  const ent length = scm_ilength (cdr_expr);
 
   ASSERT_SYNTAX (length >= 0, s_bad_expression, expr);
 
@@ -1082,7 +1082,7 @@ scm_m_cond (SCM expr, SCM env)
       SCM test;
 
       const SCM clause = SCM_CAR (clause_idx);
-      const long length = scm_ilength (clause);
+      const ent length = scm_ilength (clause);
       ASSERT_SYNTAX_2 (length >= 1, s_bad_cond_clause, clause, expr);
 
       test = SCM_CAR (clause);
@@ -1345,7 +1345,7 @@ scm_m_do (SCM expr, SCM env SCM_UNUSED)
   for (; !scm_is_null (binding_idx); binding_idx = SCM_CDR (binding_idx))
     {
       const SCM binding = SCM_CAR (binding_idx);
-      const long length = scm_ilength (binding);
+      const ent length = scm_ilength (binding);
       ASSERT_SYNTAX_2 (length == 2 || length == 3,
                        s_bad_binding, binding, expr);
 
@@ -1424,7 +1424,7 @@ SCM
 scm_m_if (SCM expr, SCM env SCM_UNUSED)
 {
   const SCM cdr_expr = SCM_CDR (expr);
-  const long length = scm_ilength (cdr_expr);
+  const ent length = scm_ilength (cdr_expr);
   ASSERT_SYNTAX (length == 2 || length == 3, s_expression, expr);
   SCM_SETCAR (expr, SCM_IM_IF);
   return expr;
@@ -1481,7 +1481,7 @@ scm_m_lambda (SCM expr, SCM env SCM_UNUSED)
   SCM new_body;
 
   const SCM cdr_expr = SCM_CDR (expr);
-  const long length = scm_ilength (cdr_expr);
+  const ent length = scm_ilength (cdr_expr);
   ASSERT_SYNTAX (length >= 0, s_bad_expression, expr);
   ASSERT_SYNTAX (length >= 2, s_missing_expression, expr);
 
@@ -1646,7 +1646,7 @@ scm_m_let (SCM expr, SCM env)
   SCM bindings;
 
   const SCM cdr_expr = SCM_CDR (expr);
-  const long length = scm_ilength (cdr_expr);
+  const ent length = scm_ilength (cdr_expr);
   ASSERT_SYNTAX (length >= 0, s_bad_expression, expr);
   ASSERT_SYNTAX (length >= 2, s_missing_expression, expr);
 
@@ -1842,7 +1842,7 @@ SCM
 scm_m_or (SCM expr, SCM env SCM_UNUSED)
 {
   const SCM cdr_expr = SCM_CDR (expr);
-  const long length = scm_ilength (cdr_expr);
+  const ent length = scm_ilength (cdr_expr);
 
   ASSERT_SYNTAX (length >= 0, s_bad_expression, expr);
 
@@ -1875,7 +1875,7 @@ SCM_GLOBAL_SYMBOL (scm_sym_uq_splicing, "unquote-splicing");
  * expressions will be evaluated, and 'depth' is the current quasiquotation
  * nesting level and is known to be greater than zero.  */
 static SCM 
-iqq (SCM form, SCM env, unsigned long int depth)
+iqq (SCM form, SCM env, nat depth)
 {
   if (scm_is_pair (form))
     {
@@ -2282,7 +2282,7 @@ SCM_SYNTAX (s_nil_cond, "nil-cond", scm_i_makbimacro, scm_m_nil_cond);
 SCM
 scm_m_nil_cond (SCM expr, SCM env SCM_UNUSED)
 {
-  const long length = scm_ilength (SCM_CDR (expr));
+  const ent length = scm_ilength (SCM_CDR (expr));
   ASSERT_SYNTAX (length >= 0, s_bad_expression, expr);
   ASSERT_SYNTAX (length >= 1 && (length % 2) == 1, s_expression, expr);
 
@@ -2543,7 +2543,7 @@ scm_unmemocar (SCM form, SCM env)
 	}
       else if (SCM_ILOCP (c))
 	{
-	  unsigned long int ir;
+	  nat ir;
 
 	  for (ir = SCM_IFRAME (c); ir != 0; --ir)
 	    env = SCM_CDR (env);
@@ -2924,7 +2924,7 @@ scm_lookupcar (SCM vloc, SCM genv, int check)
 {
   SCM *loc = scm_lookupcar1 (vloc, genv, check);
   if (loc == NULL)
-    abort ();
+    scm_abort ();
   return loc;
 }
 
@@ -3068,14 +3068,14 @@ do { \
  * stack frames at each real stack frame.
  */
 
-long scm_debug_eframe_size;
+ent scm_debug_eframe_size;
 
 int scm_debug_mode_p;
 int scm_check_entry_p;
 int scm_check_apply_p;
 int scm_check_exit_p;
 
-long scm_eval_stack;
+ent scm_eval_stack;
 
 scm_t_option scm_eval_opts[] = {
   { SCM_OPTION_INTEGER, "stack", 22000, "Size of thread stacks (in machine words)." }
@@ -3100,7 +3100,7 @@ scm_t_option scm_debug_opts[] = {
   { SCM_OPTION_BOOLEAN, "backtrace", 0, "Show backtrace on error." },
   { SCM_OPTION_BOOLEAN, "debug", 0, "Use the debugging evaluator." },
   { SCM_OPTION_INTEGER, "stack", 20000, "Stack size limit (measured in words; 0 = no check)." },
-  { SCM_OPTION_SCM, "show-file-name", (unsigned long)SCM_BOOL_T, "Show file names and line numbers in backtraces when not `#f'.  A value of `base' displays only base names, while `#t' displays full names."},
+  { SCM_OPTION_SCM, "show-file-name", (nat)SCM_BOOL_T, "Show file names and line numbers in backtraces when not `#f'.  A value of `base' displays only base names, while `#t' displays full names."},
   { SCM_OPTION_BOOLEAN, "warn-deprecated", 0, "Warn when deprecated features are used." }
 };
 
@@ -3109,9 +3109,9 @@ scm_t_option scm_evaluator_trap_table[] = {
   { SCM_OPTION_BOOLEAN, "enter-frame", 0, "Trap when eval enters new frame." },
   { SCM_OPTION_BOOLEAN, "apply-frame", 0, "Trap when entering apply." },
   { SCM_OPTION_BOOLEAN, "exit-frame", 0, "Trap when exiting eval or apply." },
-  { SCM_OPTION_SCM, "enter-frame-handler", (unsigned long)SCM_BOOL_F, "Handler for enter-frame traps." },
-  { SCM_OPTION_SCM, "apply-frame-handler", (unsigned long)SCM_BOOL_F, "Handler for apply-frame traps." },
-  { SCM_OPTION_SCM, "exit-frame-handler", (unsigned long)SCM_BOOL_F, "Handler for exit-frame traps." }
+  { SCM_OPTION_SCM, "enter-frame-handler", (nat)SCM_BOOL_F, "Handler for enter-frame traps." },
+  { SCM_OPTION_SCM, "apply-frame-handler", (nat)SCM_BOOL_F, "Handler for apply-frame traps." },
+  { SCM_OPTION_SCM, "exit-frame-handler", (nat)SCM_BOOL_F, "Handler for exit-frame traps." }
 };
 
 SCM_DEFINE (scm_eval_options_interface, "eval-options-interface", 0, 1, 0, 
@@ -3809,16 +3809,16 @@ dispatch:
 	   * full search over all signatures stored with the generic
 	   * function.  */
 	{
-	    unsigned long int specializers;
-	    unsigned long int hash_value;
-	    unsigned long int cache_end_pos;
-	    unsigned long int mask;
+	    nat specializers;
+	    nat hash_value;
+	    nat cache_end_pos;
+	    nat mask;
 	    SCM method_cache;
 
 	    {
 	      SCM z = SCM_CDDR (x);
 	      SCM tmp = SCM_CADR (z);
-	      specializers = scm_to_ulong (SCM_CAR (z));
+	      specializers = scm_to_nat (SCM_CAR (z));
 
 	      /* Compute a hash value for searching the method cache.  There
 	       * are two variants for computing the hash value, a (rather)
@@ -3831,7 +3831,7 @@ dispatch:
 		   * simpler:  Set the hash value to zero and just perform a
 		   * linear search through the method cache.  */
 		  method_cache = tmp;
-		  mask = (unsigned long int) ((long) -1);
+		  mask = (nat) ((ent) -1);
 		  hash_value = 0;
 		  cache_end_pos = SCM_SIMPLE_VECTOR_LENGTH (method_cache);
 		}
@@ -3852,8 +3852,8 @@ dispatch:
 		   * where dispatch is called, such that hopefully the hash
 		   * value that is computed will directly point to the right
 		   * method in the method cache.  */
-		  unsigned long int hashset = scm_to_ulong (tmp);
-		  unsigned long int counter = specializers + 1;
+		  nat hashset = scm_to_nat (tmp);
+		  nat counter = specializers + 1;
 		  SCM tmp_arg = arg1;
 		  hash_value = 0;
 		  while (!scm_is_null (tmp_arg) && counter != 0)
@@ -3865,7 +3865,7 @@ dispatch:
 		    }
 		  z = SCM_CDDR (z);
 		  method_cache = SCM_CADR (z);
-		  mask = scm_to_ulong (SCM_CAR (z));
+		  mask = scm_to_nat (SCM_CAR (z));
 		  hash_value &= mask;
 		  cache_end_pos = hash_value;
 		}
@@ -3919,7 +3919,7 @@ dispatch:
 	  x = SCM_CDR (x);
 	  {
 	    SCM instance = EVALCAR (x, env);
-	    unsigned long int slot = SCM_I_INUM (SCM_CDR (x));
+	    nat slot = SCM_I_INUM (SCM_CDR (x));
 	    RETURN (SCM_PACK (SCM_STRUCT_DATA (instance) [slot]));
 	  }
 
@@ -3928,7 +3928,7 @@ dispatch:
 	  x = SCM_CDR (x);
 	  {
 	    SCM instance = EVALCAR (x, env);
-	    unsigned long int slot = SCM_I_INUM (SCM_CADR (x));
+	    nat slot = SCM_I_INUM (SCM_CADR (x));
 	    SCM value = EVALCAR (SCM_CDDR (x), env);
 	    SCM_STRUCT_DATA (instance) [slot] = SCM_UNPACK (value);
 	    RETURN (SCM_UNSPECIFIED);
@@ -4132,15 +4132,15 @@ dispatch:
     switch (SCM_TYP7 (proc))
       {				/* no arguments given */
       case scm_tc7_subr_0:
-	RETURN (SCM_SUBRF (proc) ());
+	RETURN (SCM_SUBRF_0 (proc) ());
       case scm_tc7_subr_1o:
-	RETURN (SCM_SUBRF (proc) (SCM_UNDEFINED));
+	RETURN (SCM_SUBRF_1 (proc) (SCM_UNDEFINED));
       case scm_tc7_lsubr:
-	RETURN (SCM_SUBRF (proc) (SCM_EOL));
+	RETURN (SCM_SUBRF_1 (proc) (SCM_EOL));
       case scm_tc7_rpsubr:
 	RETURN (SCM_BOOL_T);
       case scm_tc7_asubr:
-	RETURN (SCM_SUBRF (proc) (SCM_UNDEFINED, SCM_UNDEFINED));
+	RETURN (SCM_SUBRF_2 (proc) (SCM_UNDEFINED, SCM_UNDEFINED));
       case scm_tc7_smob:
 	if (!SCM_SMOB_APPLICABLE_P (proc))
 	  goto badfun;
@@ -4226,10 +4226,10 @@ dispatch:
 	switch (SCM_TYP7 (proc))
 	  {				/* have one argument in arg1 */
 	  case scm_tc7_subr_2o:
-	    RETURN (SCM_SUBRF (proc) (arg1, SCM_UNDEFINED));
+	    RETURN (SCM_SUBRF_2 (proc) (arg1, SCM_UNDEFINED));
 	  case scm_tc7_subr_1:
 	  case scm_tc7_subr_1o:
-	    RETURN (SCM_SUBRF (proc) (arg1));
+	    RETURN (SCM_SUBRF_1 (proc) (arg1));
 	  case scm_tc7_dsubr:
             if (SCM_I_INUMP (arg1))
               {
@@ -4255,12 +4255,12 @@ dispatch:
 	  case scm_tc7_rpsubr:
 	    RETURN (SCM_BOOL_T);
 	  case scm_tc7_asubr:
-	    RETURN (SCM_SUBRF (proc) (arg1, SCM_UNDEFINED));
+	    RETURN (SCM_SUBRF_2 (proc) (arg1, SCM_UNDEFINED));
 	  case scm_tc7_lsubr:
 #ifdef DEVAL
-	    RETURN (SCM_SUBRF (proc) (debug.info->a.args));
+	    RETURN (SCM_SUBRF_1 (proc) (debug.info->a.args));
 #else
-	    RETURN (SCM_SUBRF (proc) (scm_list_1 (arg1)));
+	    RETURN (SCM_SUBRF_1 (proc) (scm_list_1 (arg1)));
 #endif
 	  case scm_tc7_smob:
 	    if (!SCM_SMOB_APPLICABLE_P (proc))
@@ -4356,18 +4356,18 @@ dispatch:
 	  {			/* have two arguments */
 	  case scm_tc7_subr_2:
 	  case scm_tc7_subr_2o:
-	    RETURN (SCM_SUBRF (proc) (arg1, arg2));
+	    RETURN (SCM_SUBRF_2 (proc) (arg1, arg2));
 	  case scm_tc7_lsubr:
 #ifdef DEVAL
-	    RETURN (SCM_SUBRF (proc) (debug.info->a.args));
+	    RETURN (SCM_SUBRF_1 (proc) (debug.info->a.args));
 #else
-	    RETURN (SCM_SUBRF (proc) (scm_list_2 (arg1, arg2)));
+	    RETURN (SCM_SUBRF_1 (proc) (scm_list_2 (arg1, arg2)));
 #endif
 	  case scm_tc7_lsubr_2:
-	    RETURN (SCM_SUBRF (proc) (arg1, arg2, SCM_EOL));
+	    RETURN (SCM_SUBRF_3 (proc) (arg1, arg2, SCM_EOL));
 	  case scm_tc7_rpsubr:
 	  case scm_tc7_asubr:
-	    RETURN (SCM_SUBRF (proc) (arg1, arg2));
+	    RETURN (SCM_SUBRF_2 (proc) (arg1, arg2));
 	  case scm_tc7_smob:
 	    if (!SCM_SMOB_APPLICABLE_P (proc))
 	      goto badfun;
@@ -4480,25 +4480,25 @@ dispatch:
 	  if (SCM_UNLIKELY (!scm_is_null (SCM_CDR (x))))
 	    scm_wrong_num_args (proc);
 	  else
-	    RETURN (SCM_SUBRF (proc) (arg1, arg2,
-				      SCM_CADDR (debug.info->a.args)));
+	    RETURN (SCM_SUBRF_3 (proc) (arg1, arg2,
+					SCM_CADDR (debug.info->a.args)));
 	case scm_tc7_asubr:
-	  arg1 = SCM_SUBRF(proc)(arg1, arg2);
+	  arg1 = SCM_SUBRF_2 (proc)(arg1, arg2);
 	  arg2 = SCM_CDDR (debug.info->a.args);
 	  do
 	    {
-	      arg1 = SCM_SUBRF(proc)(arg1, SCM_CAR (arg2));
+	      arg1 = SCM_SUBRF_2 (proc)(arg1, SCM_CAR (arg2));
 	      arg2 = SCM_CDR (arg2);
 	    }
 	  while (SCM_NIMP (arg2));
 	  RETURN (arg1);
 	case scm_tc7_rpsubr:
-	  if (scm_is_false (SCM_SUBRF (proc) (arg1, arg2)))
+	  if (scm_is_false (SCM_SUBRF_2 (proc) (arg1, arg2)))
 	    RETURN (SCM_BOOL_F);
 	  arg1 = SCM_CDDR (debug.info->a.args);
 	  do
 	    {
-	      if (scm_is_false (SCM_SUBRF (proc) (arg2, SCM_CAR (arg1))))
+	      if (scm_is_false (SCM_SUBRF_2 (proc) (arg2, SCM_CAR (arg1))))
 		RETURN (SCM_BOOL_F);
 	      arg2 = SCM_CAR (arg1);
 	      arg1 = SCM_CDR (arg1);
@@ -4506,10 +4506,10 @@ dispatch:
 	  while (SCM_NIMP (arg1));
 	  RETURN (SCM_BOOL_T);
 	case scm_tc7_lsubr_2:
-	  RETURN (SCM_SUBRF (proc) (arg1, arg2,
-				    SCM_CDDR (debug.info->a.args)));
+	  RETURN (SCM_SUBRF_3 (proc) (arg1, arg2,
+				      SCM_CDDR (debug.info->a.args)));
 	case scm_tc7_lsubr:
-	  RETURN (SCM_SUBRF (proc) (debug.info->a.args));
+	  RETURN (SCM_SUBRF_1 (proc) (debug.info->a.args));
 	case scm_tc7_smob:
 	  if (!SCM_SMOB_APPLICABLE_P (proc))
 	    goto badfun;
@@ -4544,23 +4544,23 @@ dispatch:
 	  if (SCM_UNLIKELY (!scm_is_null (SCM_CDR (x))))
 	    scm_wrong_num_args (proc);
 	  else
-	    RETURN (SCM_SUBRF (proc) (arg1, arg2, EVALCAR (x, env)));
+	    RETURN (SCM_SUBRF_3 (proc) (arg1, arg2, EVALCAR (x, env)));
 	case scm_tc7_asubr:
-	  arg1 = SCM_SUBRF (proc) (arg1, arg2);
+	  arg1 = SCM_SUBRF_2 (proc) (arg1, arg2);
 	  do
 	    {
-	      arg1 = SCM_SUBRF(proc)(arg1, EVALCAR(x, env));
+	      arg1 = SCM_SUBRF_2 (proc)(arg1, EVALCAR(x, env));
 	      x = SCM_CDR(x);
 	    }
 	  while (!scm_is_null (x));
 	  RETURN (arg1);
 	case scm_tc7_rpsubr:
-	  if (scm_is_false (SCM_SUBRF (proc) (arg1, arg2)))
+	  if (scm_is_false (SCM_SUBRF_2 (proc) (arg1, arg2)))
 	    RETURN (SCM_BOOL_F);
 	  do
 	    {
 	      arg1 = EVALCAR (x, env);
-	      if (scm_is_false (SCM_SUBRF (proc) (arg2, arg1)))
+	      if (scm_is_false (SCM_SUBRF_2 (proc) (arg2, arg1)))
 		RETURN (SCM_BOOL_F);
 	      arg2 = arg1;
 	      x = SCM_CDR (x);
@@ -4568,11 +4568,11 @@ dispatch:
 	  while (!scm_is_null (x));
 	  RETURN (SCM_BOOL_T);
 	case scm_tc7_lsubr_2:
-	  RETURN (SCM_SUBRF (proc) (arg1, arg2, scm_eval_args (x, env, proc)));
+	  RETURN (SCM_SUBRF_3 (proc) (arg1, arg2, scm_eval_args (x, env, proc)));
 	case scm_tc7_lsubr:
-	  RETURN (SCM_SUBRF (proc) (scm_cons2 (arg1,
-					       arg2,
-					       scm_eval_args (x, env, proc))));
+	  RETURN (SCM_SUBRF_1 (proc) (scm_cons2 (arg1,
+					         arg2,
+					         scm_eval_args (x, env, proc))));
 	case scm_tc7_smob:
 	  if (!SCM_SMOB_APPLICABLE_P (proc))
 	    goto badfun;
@@ -4874,17 +4874,17 @@ tail:
             scm_wrong_num_args (proc);
           args = SCM_CAR (args);
         }
-      RETURN (SCM_SUBRF (proc) (arg1, args));
+      RETURN (SCM_SUBRF_2 (proc) (arg1, args));
     case scm_tc7_subr_2:
       if (SCM_UNLIKELY (scm_is_null (args) || !scm_is_null (SCM_CDR (args))))
 	scm_wrong_num_args (proc);
       args = SCM_CAR (args);
-      RETURN (SCM_SUBRF (proc) (arg1, args));
+      RETURN (SCM_SUBRF_2 (proc) (arg1, args));
     case scm_tc7_subr_0:
       if (SCM_UNLIKELY (!SCM_UNBNDP (arg1)))
 	scm_wrong_num_args (proc);
       else
-	RETURN (SCM_SUBRF (proc) ());
+	RETURN (SCM_SUBRF_0 (proc) ());
     case scm_tc7_subr_1:
       if (SCM_UNLIKELY (SCM_UNBNDP (arg1)))
 	scm_wrong_num_args (proc);
@@ -4892,7 +4892,7 @@ tail:
       if (SCM_UNLIKELY (!scm_is_null (args)))
 	scm_wrong_num_args (proc);
       else
-	RETURN (SCM_SUBRF (proc) (arg1));
+	RETURN (SCM_SUBRF_1 (proc) (arg1));
     case scm_tc7_dsubr:
       if (SCM_UNLIKELY (SCM_UNBNDP (arg1) || !scm_is_null (args)))
 	scm_wrong_num_args (proc);
@@ -4924,25 +4924,25 @@ tail:
 			|| !scm_is_null (SCM_CDDR (args))))
 	scm_wrong_num_args (proc);
       else
-	RETURN (SCM_SUBRF (proc) (arg1, SCM_CAR (args), SCM_CADR (args)));
+	RETURN (SCM_SUBRF_3 (proc) (arg1, SCM_CAR (args), SCM_CADR (args)));
     case scm_tc7_lsubr:
 #ifdef DEVAL
-      RETURN (SCM_SUBRF (proc) (SCM_UNBNDP (arg1) ? SCM_EOL : debug.vect[0].a.args));
+      RETURN (SCM_SUBRF_1 (proc) (SCM_UNBNDP (arg1) ? SCM_EOL : debug.vect[0].a.args));
 #else
-      RETURN (SCM_SUBRF (proc) (SCM_UNBNDP (arg1) ? SCM_EOL : scm_cons (arg1, args)));
+      RETURN (SCM_SUBRF_1 (proc) (SCM_UNBNDP (arg1) ? SCM_EOL : scm_cons (arg1, args)));
 #endif
     case scm_tc7_lsubr_2:
       if (SCM_UNLIKELY (!scm_is_pair (args)))
 	scm_wrong_num_args (proc);
       else
-	RETURN (SCM_SUBRF (proc) (arg1, SCM_CAR (args), SCM_CDR (args)));
+	RETURN (SCM_SUBRF_3 (proc) (arg1, SCM_CAR (args), SCM_CDR (args)));
     case scm_tc7_asubr:
       if (scm_is_null (args))
-	RETURN (SCM_SUBRF (proc) (arg1, SCM_UNDEFINED));
+	RETURN (SCM_SUBRF_2 (proc) (arg1, SCM_UNDEFINED));
       while (SCM_NIMP (args))
 	{
 	  SCM_ASSERT (scm_is_pair (args), args, SCM_ARG2, "apply");
-	  arg1 = SCM_SUBRF (proc) (arg1, SCM_CAR (args));
+	  arg1 = SCM_SUBRF_2 (proc) (arg1, SCM_CAR (args));
 	  args = SCM_CDR (args);
 	}
       RETURN (arg1);
@@ -4952,7 +4952,7 @@ tail:
       while (SCM_NIMP (args))
 	{
 	  SCM_ASSERT (scm_is_pair (args), args, SCM_ARG2, "apply");
-	  if (scm_is_false (SCM_SUBRF (proc) (arg1, SCM_CAR (args))))
+	  if (scm_is_false (SCM_SUBRF_2 (proc) (arg1, SCM_CAR (args))))
 	    RETURN (SCM_BOOL_F);
 	  arg1 = SCM_CAR (args);
 	  args = SCM_CDR (args);
@@ -5125,13 +5125,13 @@ call_subr0_0 (SCM proc)
 static SCM
 call_subr1o_0 (SCM proc)
 {
-  return SCM_SUBRF (proc) (SCM_UNDEFINED);
+  return SCM_SUBRF_1 (proc) (SCM_UNDEFINED);
 }
 
 static SCM
 call_lsubr_0 (SCM proc)
 {
-  return SCM_SUBRF (proc) (SCM_EOL);
+  return SCM_SUBRF_1 (proc) (SCM_EOL);
 }
 
 SCM 
@@ -5208,19 +5208,19 @@ scm_trampoline_0 (SCM proc)
 static SCM
 call_subr1_1 (SCM proc, SCM arg1)
 {
-  return SCM_SUBRF (proc) (arg1);
+  return SCM_SUBRF_1 (proc) (arg1);
 }
 
 static SCM
 call_subr2o_1 (SCM proc, SCM arg1)
 {
-  return SCM_SUBRF (proc) (arg1, SCM_UNDEFINED);
+  return SCM_SUBRF_2 (proc) (arg1, SCM_UNDEFINED);
 }
 
 static SCM
 call_lsubr_1 (SCM proc, SCM arg1)
 {
-  return SCM_SUBRF (proc) (scm_list_1 (arg1));
+  return SCM_SUBRF_1 (proc) (scm_list_1 (arg1));
 }
 
 static SCM
@@ -5334,19 +5334,19 @@ scm_trampoline_1 (SCM proc)
 static SCM
 call_subr2_2 (SCM proc, SCM arg1, SCM arg2)
 {
-  return SCM_SUBRF (proc) (arg1, arg2);
+  return SCM_SUBRF_2 (proc) (arg1, arg2);
 }
 
 static SCM
 call_lsubr2_2 (SCM proc, SCM arg1, SCM arg2)
 {
-  return SCM_SUBRF (proc) (arg1, arg2, SCM_EOL);
+  return SCM_SUBRF_3 (proc) (arg1, arg2, SCM_EOL);
 }
 
 static SCM
 call_lsubr_2 (SCM proc, SCM arg1, SCM arg2)
 {
-  return SCM_SUBRF (proc) (scm_list_2 (arg1, arg2));
+  return SCM_SUBRF_1 (proc) (scm_list_2 (arg1, arg2));
 }
 
 static SCM 
@@ -5432,18 +5432,18 @@ scm_trampoline_2 (SCM proc)
    and claim that the i'th element of ARGV is WHO's i+2'th argument.  */
 static inline void
 check_map_args (SCM argv,
-		long len,
+		ent len,
 		SCM gf,
 		SCM proc,
 		SCM args,
 		const char *who)
 {
-  long i;
+  ent i;
 
   for (i = SCM_SIMPLE_VECTOR_LENGTH (argv) - 1; i >= 1; i--)
     {
       SCM elt = SCM_SIMPLE_VECTOR_REF (argv, i);
-      long elt_len = scm_ilength (elt);
+      ent elt_len = scm_ilength (elt);
 
       if (elt_len < 0)
 	{
@@ -5454,7 +5454,7 @@ check_map_args (SCM argv,
 	}
 
       if (elt_len != len)
-	scm_out_of_range_pos (who, elt, scm_from_long (i + 2));
+	scm_out_of_range_pos (who, elt, scm_from_ent (i + 2));
     }
 }
 
@@ -5472,7 +5472,7 @@ SCM
 scm_map (SCM proc, SCM arg1, SCM args)
 #define FUNC_NAME s_map
 {
-  long i, len;
+  ent i, len;
   SCM res = SCM_EOL;
   SCM *pres = &res;
 
@@ -5539,7 +5539,7 @@ SCM
 scm_for_each (SCM proc, SCM arg1, SCM args)
 #define FUNC_NAME s_for_each
 {
-  long i, len;
+  ent i, len;
   len = scm_ilength (arg1);
   SCM_GASSERTn (len >= 0, g_for_each, scm_cons2 (proc, arg1, args),
 		SCM_ARG2, s_for_each);
@@ -5765,7 +5765,7 @@ copy_tree (
 
           /* Each vector element is copied by recursing into copy_tree, having
            * the tortoise follow the hare into the depths of the stack.  */
-          unsigned long int i;
+          nat i;
           for (i = 0; i < length; ++i)
             {
               SCM new_element;

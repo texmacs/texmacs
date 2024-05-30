@@ -35,8 +35,8 @@
 #endif
 
 /* char *scm_c_scm2chars (SCM obj, char *dst);
-   SCM   scm_c_chars2scm (const char *src, long n);
-   SCM   scm_c_chars2byvect (const char *src, long n);
+   SCM   scm_c_chars2scm (const char *src, ent n);
+   SCM   scm_c_chars2byvect (const char *src, ent n);
 */
 
 #define CTYPE            char
@@ -56,8 +56,8 @@
 #include "libguile/convert.i.c"
 
 /* short *scm_c_scm2shorts (SCM obj, short *dst);
-   SCM scm_c_shorts2scm (const short *src, long n);
-   SCM scm_c_shorts2svect (const short *src, long n);
+   SCM scm_c_shorts2scm (const short *src, ent n);
+   SCM scm_c_shorts2svect (const short *src, ent n);
 */
 
 #define CTYPE            short
@@ -70,9 +70,9 @@
 #include "libguile/convert.i.c"
 
 /* int *scm_c_scm2ints (SCM obj, int *dst);
-   SCM scm_c_ints2scm (const int *src, long n);
-   SCM scm_c_ints2ivect (const int *src, long n);
-   SCM scm_c_uints2uvect (const unsigned int *src, long n);
+   SCM scm_c_ints2scm (const int *src, ent n);
+   SCM scm_c_ints2ivect (const int *src, ent n);
+   SCM scm_c_uints2uvect (const unsigned int *src, ent n);
 */
 
 #define CTYPE            int
@@ -91,9 +91,9 @@
 #include "libguile/convert.i.c"
 
 /* long *scm_c_scm2longs (SCM obj, long *dst);
-   SCM scm_c_longs2scm (const long *src, long n);
-   SCM scm_c_longs2ivect (const long *src, long n);
-   SCM scm_c_ulongs2uvect (const unsigned long *src, long n);
+   SCM scm_c_longs2scm (const long *src, ent n);
+   SCM scm_c_longs2ivect (const long *src, ent n);
+   SCM scm_c_ulongs2uvect (const unsigned long *src, ent n);
 */
 
 #define CTYPE            long
@@ -111,9 +111,24 @@
 
 #include "libguile/convert.i.c"
 
+#define CTYPE            ent
+#define FROM_CTYPE       scm_from_ent
+#define SCM2CTYPES       scm_c_scm2ents
+#define CTYPES2SCM       scm_c_ents2scm
+#define CTYPES2UVECT     scm_c_ents2ivect
+#define UVEC_TAG         s32
+#define UVEC_CTYPE       scm_t_int32
+
+#define CTYPES2UVECT_2   scm_c_nats2uvect
+#define CTYPE_2          unsigned int
+#define UVEC_TAG_2       u32
+#define UVEC_CTYPE_2     scm_t_uint32
+
+#include "libguile/convert.i.c"
+
 /* float *scm_c_scm2floats (SCM obj, float *dst);
-   SCM scm_c_floats2scm (const float *src, long n);
-   SCM scm_c_floats2fvect (const float *src, long n);
+   SCM scm_c_floats2scm (const float *src, ent n);
+   SCM scm_c_floats2fvect (const float *src, ent n);
 */
 
 #define CTYPE            float
@@ -126,8 +141,8 @@
 #include "libguile/convert.i.c"
 
 /* double *scm_c_scm2doubles (SCM obj, double *dst);
-   SCM scm_c_doubles2scm (const double *src, long n);
-   SCM scm_c_doubles2dvect (const double *src, long n);
+   SCM scm_c_doubles2scm (const double *src, ent n);
+   SCM scm_c_doubles2dvect (const double *src, ent n);
 */
 
 #define CTYPE            double

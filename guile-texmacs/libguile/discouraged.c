@@ -76,50 +76,74 @@ scm_ptrdiff2num (ptrdiff_t x)
   return scm_from_ssize_t (x);
 }
 
+SCM
+scm_ent2num (ent x)
+{
+  return scm_from_ent (x);
+}
+
+SCM
+scm_nat2num (nat x)
+{
+  return scm_from_nat (x);
+}
+
 short
-scm_num2short (SCM x, unsigned long pos, const char *s_caller)
+scm_num2short (SCM x, nat pos, const char *s_caller)
 {
   return scm_to_short (x);
 }
 
 unsigned short
-scm_num2ushort (SCM x, unsigned long pos, const char *s_caller)
+scm_num2ushort (SCM x, nat pos, const char *s_caller)
 {
   return scm_to_ushort (x);
 }
 
 int
-scm_num2int (SCM x, unsigned long pos, const char *s_caller)
+scm_num2int (SCM x, nat pos, const char *s_caller)
 {
   return scm_to_int (x);
 }
 
 unsigned int
-scm_num2uint (SCM x, unsigned long pos, const char *s_caller)
+scm_num2uint (SCM x, nat pos, const char *s_caller)
 {
   return scm_to_uint (x);
 }
 
 long
-scm_num2long (SCM x, unsigned long pos, const char *s_caller)
+scm_num2long (SCM x, nat pos, const char *s_caller)
 {
   return scm_to_long (x);
 }
 
 unsigned long
-scm_num2ulong (SCM x, unsigned long pos, const char *s_caller)
+scm_num2ulong (SCM x, nat pos, const char *s_caller)
 {
   return scm_to_ulong (x);
 }
 
+ent
+scm_num2ent (SCM x, nat pos, const char *s_caller)
+{
+  return scm_to_ent (x);
+}
+
+nat
+scm_num2nat (SCM x, nat pos, const char *s_caller)
+{
+  return scm_to_nat (x);
+}
+
 size_t
-scm_num2size (SCM x, unsigned long pos, const char *s_caller)
+scm_num2size (SCM x, nat pos, const char *s_caller)
 {
   return scm_to_size_t (x);
 }
 
 ptrdiff_t
-scm_num2ptrdiff (SCM x, unsigned long pos, const char *s_caller)
+scm_num2ptrdiff (SCM x, nat pos, const char *s_caller)
 {
   return scm_to_ssize_t (x);
 }
@@ -139,13 +163,13 @@ scm_ulong_long2num (unsigned long long x)
 }
 
 long long
-scm_num2long_long (SCM x, unsigned long pos, const char *s_caller)
+scm_num2long_long (SCM x, nat pos, const char *s_caller)
 {
   return scm_to_long_long (x);
 }
 
 unsigned long long
-scm_num2ulong_long (SCM x, unsigned long pos, const char *s_caller)
+scm_num2ulong_long (SCM x, nat pos, const char *s_caller)
 {
   return scm_to_ulong_long (x);
 }

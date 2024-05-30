@@ -149,7 +149,7 @@ uvec_print (SCM uvec, SCM port, scm_print_state *pstate)
     case SCM_UVEC_C32: np.f32 = (float *) uptr; break;
     case SCM_UVEC_C64: np.f64 = (double *) uptr; break;
     default:
-      abort ();			/* Sanity check.  */
+      scm_abort ();			/* Sanity check.  */
       break;
   }
 
@@ -181,7 +181,7 @@ uvec_print (SCM uvec, SCM port, scm_print_state *pstate)
 	  np.f64 += 2;
 	  break;
 	default:
-	  abort ();			/* Sanity check.  */
+	  scm_abort ();			/* Sanity check.  */
 	  break;
 	}
       i++;
@@ -396,7 +396,7 @@ uvec_to_list (int type, SCM uvec)
   scm_t_array_handle handle;
   size_t len;
   ssize_t i, inc;
-  const void *elts;
+  const void *elts; (void) elts;
   SCM res = SCM_EOL;
 
   elts = uvec_elements (type, uvec, &handle, &len, &inc);
@@ -460,8 +460,8 @@ list_to_uvec (int type, SCM list)
 {
   SCM uvec;
   void *base;
-  long idx;
-  long len = scm_ilength (list);
+  ent idx;
+  ent len = scm_ilength (list);
   if (len < 0)
     scm_wrong_type_arg_msg (NULL, 0, list, "proper list");
 

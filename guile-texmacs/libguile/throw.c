@@ -47,11 +47,11 @@ static scm_t_bits tc16_jmpbuffer;
 
 #define SCM_JMPBUFP(OBJ)	SCM_TYP16_PREDICATE (tc16_jmpbuffer, OBJ)
 
-#define JBACTIVE(OBJ)		(SCM_CELL_WORD_0 (OBJ) & (1L << 16L))
+#define JBACTIVE(OBJ)		(SCM_CELL_WORD_0 (OBJ) & (((ent) 1L) << 16L))
 #define ACTIVATEJB(x)	\
-  (SCM_SET_CELL_WORD_0 ((x), (SCM_CELL_WORD_0 (x) | (1L << 16L))))
+  (SCM_SET_CELL_WORD_0 ((x), (SCM_CELL_WORD_0 (x) | (((ent) 1L) << 16L))))
 #define DEACTIVATEJB(x) \
-  (SCM_SET_CELL_WORD_0 ((x), (SCM_CELL_WORD_0 (x) & ~(1L << 16L))))
+  (SCM_SET_CELL_WORD_0 ((x), (SCM_CELL_WORD_0 (x) & ~(((ent) 1L) << 16L))))
 
 #define JBJMPBUF(OBJ)           ((scm_i_jmp_buf *) SCM_CELL_WORD_1 (OBJ))
 #define SETJBJMPBUF(x, v)        (SCM_SET_CELL_WORD_1 ((x), (scm_t_bits) (v)))
@@ -235,8 +235,13 @@ pre_unwind_data_print (SCM closure, SCM port, scm_print_state *pstate SCM_UNUSED
   struct pre_unwind_data *c = (struct pre_unwind_data *) SCM_CELL_WORD_1 (closure);
   char buf[200];
 
+#if SCM_SIZEOF_ENT == SCM_SIZEOF_LONG
   sprintf (buf, "#<pre-unwind-data 0x%lx 0x%lx>",
-	   (long) c->handler, (long) c->handler_data);
+	   (ent) c->handler, (ent) c->handler_data);
+#else
+  sprintf (buf, "#<pre-unwind-data 0x%llx 0x%llx>",
+	   (ent) c->handler, (ent) c->handler_data);
+#endif
   scm_puts (buf, port);
 
   return 1;
@@ -695,7 +700,7 @@ scm_ithrow (SCM key, SCM args, int noreturn SCM_UNUSED)
   if (SCM_I_CURRENT_THREAD->critical_section_level)
     {
       fprintf (stderr, "throw from within critical section.\n");
-      abort ();
+      scm_abort ();
     }
 
  rethrow:
@@ -732,12 +737,12 @@ scm_ithrow (SCM key, SCM args, int noreturn SCM_UNUSED)
   if (scm_is_null (winds))
     {
       scm_handle_by_message (NULL, key, args);
-      abort ();
+      scm_abort ();
     }
 
   /* If the wind list is malformed, bail.  */
   if (!scm_is_pair (winds))
-    abort ();
+    scm_abort ();
   
   for (wind_goal = scm_i_dynwinds ();
        (!scm_is_pair (SCM_CAR (wind_goal))
@@ -752,7 +757,7 @@ scm_ithrow (SCM key, SCM args, int noreturn SCM_UNUSED)
     {
       struct pre_unwind_data *c =
 	(struct pre_unwind_data *) SCM_CELL_WORD_1 (jmpbuf);
-      SCM handle, answer;
+      SCM handle, answer; (void) answer;
 
       /* For old-style lazy-catch behaviour, we unwind the dynamic
 	 context before invoking the handler. */
@@ -826,7 +831,7 @@ scm_ithrow (SCM key, SCM args, int noreturn SCM_UNUSED)
 
   /* Otherwise, it's some random piece of junk.  */
   else
-    abort ();
+    scm_abort ();
 
 #ifdef __ia64__
   /* On IA64, we #define longjmp as setcontext, and GCC appears not to

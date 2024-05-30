@@ -90,6 +90,16 @@
 #define SCM_NUM2ULONG_LONG_DEF(pos, arg, def) \
   (SCM_UNBNDP (arg) ? def : scm_to_ulong_long (arg))
 
+#define SCM_NUM2ENT(pos, arg) (scm_to_ent (arg))
+
+#define SCM_NUM2ENT_DEF(pos, arg, def) \
+  (SCM_UNBNDP (arg) ? def : scm_to_ent (arg))
+
+#define SCM_NUM2NAT(pos, arg) (scm_to_nat (arg))
+
+#define SCM_NUM2NAT_DEF(pos, arg, def) \
+  (SCM_UNBNDP (arg) ? def : scm_to_nat (arg))
+
 #define SCM_NUM2FLOAT(pos, arg) \
   (scm_num2float (arg, pos, FUNC_NAME))
 
@@ -195,6 +205,16 @@
 #define SCM_VALIDATE_LONG_COPY(pos, k, cvar) \
   do { \
     cvar = SCM_NUM2LONG (pos, k); \
+  } while (0)
+
+#define SCM_VALIDATE_NAT_COPY(pos, k, cvar) \
+  do { \
+    cvar = SCM_NUM2NAT (pos, k); \
+  } while (0)
+
+#define SCM_VALIDATE_ENT_COPY(pos, k, cvar) \
+  do { \
+    cvar = SCM_NUM2ENT (pos, k); \
   } while (0)
 
 #define SCM_VALIDATE_FLOAT_COPY(pos, k, cvar) \

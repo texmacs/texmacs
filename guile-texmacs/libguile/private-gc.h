@@ -56,19 +56,19 @@
  */
 #define SCM_DEFAULT_MIN_YIELD_2 40
 
-#define SCM_DEFAULT_MAX_SEGMENT_SIZE  (20*1024*1024L)
+#define SCM_DEFAULT_MAX_SEGMENT_SIZE  (20*1024*((ent) 1024L))
 
 
 
 #define SCM_MIN_HEAP_SEG_SIZE (8 * SCM_GC_SIZEOF_CARD)
-#define SCM_HEAP_SEG_SIZE (16384L * sizeof (scm_t_cell))
+#define SCM_HEAP_SEG_SIZE (((ent) 16384L) * sizeof (scm_t_cell))
 
 
 #define SCM_DOUBLECELL_ALIGNED_P(x)  (((2 * sizeof (scm_t_cell) - 1) & SCM_UNPACK (x)) == 0)
 
 
-#define SCM_GC_CARD_BVEC_SIZE_IN_LONGS \
-    ((SCM_GC_CARD_N_CELLS + SCM_C_BVEC_LONG_BITS - 1) / SCM_C_BVEC_LONG_BITS)
+#define SCM_GC_CARD_BVEC_SIZE_IN_ENTS \
+    ((SCM_GC_CARD_N_CELLS + SCM_C_BVEC_ENT_BITS - 1) / SCM_C_BVEC_ENT_BITS)
 #define SCM_GC_IN_CARD_HEADERP(x) \
   (scm_t_cell *) (x) <  SCM_GC_CELL_CARD (x) + SCM_GC_CARD_N_HEADER_CELLS
 
@@ -94,7 +94,7 @@ typedef struct scm_t_cell_type_statistics {
 
   /* minimum yield on this list in order not to grow the heap
    */
-  long min_yield;
+  ent min_yield;
 
   /* defines min_yield as percent of total heap size
    */
@@ -104,15 +104,15 @@ typedef struct scm_t_cell_type_statistics {
   int span;
 
   /* number of collected cells during last GC */
-  unsigned long collected;
+  nat collected;
 
   /* number of collected cells during penultimate GC */
-  unsigned long collected_1;
+  nat collected_1;
 
   /* total number of cells in heap segments
    * belonging to this list.
    */
-  unsigned long heap_size;
+  nat heap_size;
 
   
 } scm_t_cell_type_statistics;
@@ -120,7 +120,7 @@ typedef struct scm_t_cell_type_statistics {
 
 extern scm_t_cell_type_statistics scm_i_master_freelist;
 extern scm_t_cell_type_statistics scm_i_master_freelist2;
-extern unsigned long scm_gc_cells_collected_1;
+extern nat scm_gc_cells_collected_1;
 
 void scm_i_adjust_min_yield (scm_t_cell_type_statistics *freelist);
 void scm_i_gc_sweep_freelist_reset (scm_t_cell_type_statistics *freelist);
@@ -238,7 +238,7 @@ void scm_i_heap_segment_statistics (scm_t_heap_segment *seg, SCM tab);
 
      
 int scm_i_insert_segment (scm_t_heap_segment * seg);
-long int scm_i_find_heap_segment_containing_object (SCM obj);
+ent scm_i_find_heap_segment_containing_object (SCM obj);
 int scm_i_get_new_heap_segment (scm_t_cell_type_statistics *, policy_on_error);
 void scm_i_clear_mark_space (void);
 void scm_i_sweep_segments (void);
@@ -248,7 +248,7 @@ void scm_i_sweep_all_segments (char const *reason);
 SCM scm_i_all_segments_statistics (SCM hashtab);
 void scm_i_make_initial_segment (int init_heap_size, scm_t_cell_type_statistics *freelist);
 
-extern long int scm_i_deprecated_memory_return;
+extern ent scm_i_deprecated_memory_return;
 
 
 /*

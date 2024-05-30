@@ -138,8 +138,8 @@
 #define stat_or_stat64                  CHOOSE_LARGEFILE(stat,stat64)
 #define truncate_or_truncate64          CHOOSE_LARGEFILE(truncate,truncate64)
 #define scm_from_off_t_or_off64_t       CHOOSE_LARGEFILE(scm_from_off_t,scm_from_int64)
-#define scm_from_ino_t_or_ino64_t       CHOOSE_LARGEFILE(scm_from_ulong,scm_from_uint64)
-#define scm_from_blkcnt_t_or_blkcnt64_t CHOOSE_LARGEFILE(scm_from_ulong,scm_from_uint64)
+#define scm_from_ino_t_or_ino64_t       CHOOSE_LARGEFILE(scm_from_nat,scm_from_uint64)
+#define scm_from_blkcnt_t_or_blkcnt64_t CHOOSE_LARGEFILE(scm_from_nat,scm_from_uint64)
 #define scm_to_off_t_or_off64_t         CHOOSE_LARGEFILE(scm_to_off_t,scm_to_int64)
 
 #if SIZEOF_OFF_T == 4

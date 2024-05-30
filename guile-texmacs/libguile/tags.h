@@ -85,12 +85,12 @@ typedef uintptr_t scm_t_bits;
 
 #else
 
-typedef signed long scm_t_signed_bits;
-#define SCM_T_SIGNED_BITS_MAX LONG_MAX
-#define SCM_T_SIGNED_BITS_MIN LONG_MIN
-typedef unsigned long scm_t_bits;
-#define SIZEOF_SCM_T_BITS SCM_SIZEOF_UNSIGNED_LONG
-#define SCM_T_BITS_MAX ULONG_MAX
+typedef ent scm_t_signed_bits;
+#define SCM_T_SIGNED_BITS_MAX ENT_MAX
+#define SCM_T_SIGNED_BITS_MIN ENT_MIN
+typedef nat scm_t_bits;
+#define SIZEOF_SCM_T_BITS SCM_SIZEOF_NAT
+#define SCM_T_BITS_MAX NAT_MAX
 
 #endif
 
@@ -119,7 +119,7 @@ typedef unsigned long scm_t_bits;
 #if defined __DECC || defined __HP_cc
 #   define SCM_UNPACK(x) ((scm_t_bits) (x))
 #else
-#   define SCM_UNPACK(x) ((scm_t_bits) (0? (*(SCM*)0=(x)): x))
+#   define SCM_UNPACK(x) ((scm_t_bits) (0? (*(volatile SCM*)0=(x)): x))
 #endif
 
 /*
@@ -487,7 +487,7 @@ typedef unsigned long scm_t_bits;
 
 /* scm_tc_free_cell is the 0th smob type.  We place this in free cells to tell
  * the conservative marker not to trace it.  */
-#define scm_tc_free_cell	(scm_tc7_smob + 0 * 256L)
+#define scm_tc_free_cell	(scm_tc7_smob + 0 * ((ent) 256L))
 
 
 

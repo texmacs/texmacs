@@ -232,7 +232,7 @@ SCM_DEFINE (scm_char_to_integer, "char->integer", 1, 0, 0,
 #define FUNC_NAME s_scm_char_to_integer
 {
   SCM_VALIDATE_CHAR (1, chr);
-  return scm_from_ulong (SCM_CHAR(chr));
+  return scm_from_nat (SCM_CHAR(chr));
 }
 #undef FUNC_NAME
 

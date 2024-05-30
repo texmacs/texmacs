@@ -292,7 +292,7 @@ scm_load_startup_files ()
 #ifdef _UNICOS
 typedef int setjmp_type;
 #else
-typedef long setjmp_type;
+typedef ent setjmp_type;
 #endif
 
 /* All the data needed to invoke the main function.  */
@@ -407,7 +407,7 @@ scm_i_init_guile (SCM_STACKITEM *base)
   if (base == NULL)
     {
       fprintf (stderr, "cannot determine stack base!\n");
-      abort ();
+      scm_abort ();
     }
 
   if (sizeof (mpz_t) > (3 * sizeof (scm_t_bits)))
@@ -429,7 +429,7 @@ scm_i_init_guile (SCM_STACKITEM *base)
   if (scm_init_storage ())        /* requires threads_prehistory,
 				     smob_prehistory and
 				     hashtab_prehistory */
-    abort ();
+    scm_abort ();
   
   scm_struct_prehistory ();	  /* requires storage */
   scm_symbols_prehistory ();      /* requires storage */

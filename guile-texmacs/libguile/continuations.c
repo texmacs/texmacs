@@ -105,7 +105,7 @@ scm_make_continuation (int *first)
   scm_i_thread *thread = SCM_I_CURRENT_THREAD;
   SCM cont;
   scm_t_contregs *continuation;
-  long stack_size;
+  ent stack_size;
   SCM_STACKITEM * src;
 
   SCM_FLUSH_REGISTER_WINDOWS;
@@ -213,7 +213,7 @@ static void
 copy_stack_and_call (scm_t_contregs *continuation, SCM val,
 		     SCM_STACKITEM * dst)
 {
-  long delta;
+  ent delta;
   copy_stack_data data;
 
   delta = scm_ilength (scm_i_dynwinds ()) - scm_ilength (continuation->dynenv);
@@ -259,7 +259,7 @@ scm_dynthrow (SCM cont, SCM val)
   if (thread->critical_section_level)
     {
       fprintf (stderr, "continuation invoked from within critical section.\n");
-      abort ();
+      scm_abort ();
     }
 
 #if SCM_STACK_GROWS_UP

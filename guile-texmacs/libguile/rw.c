@@ -103,8 +103,8 @@ SCM_DEFINE (scm_read_string_x_partial, "read-string!/partial", 1, 3, 0,
 {
   char *dest;
   size_t offset;
-  long read_len;
-  long chars_read = 0;
+  ent read_len;
+  ent chars_read = 0;
   int fdes;
 
   {
@@ -157,7 +157,7 @@ SCM_DEFINE (scm_read_string_x_partial, "read-string!/partial", 1, 3, 0,
     }
 
   scm_remember_upto_here_1 (str);
-  return scm_from_long (chars_read);
+  return scm_from_ent (chars_read);
 }
 #undef FUNC_NAME
 
@@ -206,7 +206,7 @@ SCM_DEFINE (scm_write_string_partial, "write-string/partial", 1, 3, 0,
 #define FUNC_NAME s_scm_write_string_partial
 {
   const char *src;
-  long write_len;
+  ent write_len;
   int fdes;
 
   {
@@ -242,14 +242,14 @@ SCM_DEFINE (scm_write_string_partial, "write-string/partial", 1, 3, 0,
 	{
 	  memcpy (pt->write_pos, src, write_len);
 	  pt->write_pos += write_len;
-	  return scm_from_long (write_len);
+	  return scm_from_ent (write_len);
 	}
       if (pt->write_pos > pt->write_buf)
 	scm_flush (port);
       fdes = SCM_FPORT_FDES (port);
     }
   {
-    long rv;
+    ent rv;
 
     SCM_SYSCALL (rv = write (fdes, src, write_len));
     if (rv == -1)
@@ -261,7 +261,7 @@ SCM_DEFINE (scm_write_string_partial, "write-string/partial", 1, 3, 0,
       }
 
     scm_remember_upto_here_1 (str);
-    return scm_from_long (rv);
+    return scm_from_ent (rv);
   }
 }
 #undef FUNC_NAME

@@ -86,6 +86,13 @@ export LTDL_LIBRARY_PATH
 DYLD_LIBRARY_PATH="${dyld_prefix}${top_builddir}/libguile/.libs:$DYLD_LIBRARY_PATH"
 export DYLD_LIBRARY_PATH
 
+case $host in
+  *-*-mingw*)
+    PATH="${dyld_prefix}${top_builddir}/libguile/.libs:$PATH"
+    export PATH
+  ;;
+esac
+
 # set GUILE (clobber)
 GUILE=${top_builddir}/libguile/guile
 export GUILE

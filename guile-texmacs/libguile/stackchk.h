@@ -58,7 +58,7 @@ SCM_API int scm_stack_checking_enabled_p;
 
 
 SCM_API void scm_report_stack_overflow (void);
-SCM_API long scm_stack_size (SCM_STACKITEM *start);
+SCM_API ent scm_stack_size (SCM_STACKITEM *start);
 SCM_API void scm_stack_report (void);
 SCM_API SCM scm_sys_get_stack_size (void);
 SCM_API void scm_init_stackchk (void);

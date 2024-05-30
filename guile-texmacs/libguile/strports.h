@@ -42,7 +42,7 @@ SCM_API scm_t_bits scm_tc16_strport;
 
 
 
-SCM_API SCM scm_mkstrport (SCM pos, SCM str, long modes, const char * caller);
+SCM_API SCM scm_mkstrport (SCM pos, SCM str, ent modes, const char * caller);
 SCM_API SCM scm_strport_to_string (SCM port);
 SCM_API SCM scm_object_to_string (SCM obj, SCM printer);
 SCM_API SCM scm_call_with_output_string (SCM proc);

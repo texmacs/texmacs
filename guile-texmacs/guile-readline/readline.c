@@ -425,7 +425,7 @@ completion_function (char *text, int continuep)
     }
 }
 
-#if HAVE_RL_GET_KEYMAP
+#if HAVE_RL_GET_KEYMAP_NAME
 /*Bouncing parenthesis (reimplemented by GH, 11/23/98, since readline is strict gpl)*/
 
 static int match_paren (int x, int k);
@@ -529,7 +529,7 @@ match_paren (int x, int k)
     }
   return 0;
 }
-#endif /* HAVE_RL_GET_KEYMAP */
+#endif /* HAVE_RL_GET_KEYMAP_NAME */
 
 #endif /* HAVE_RL_GETC_FUNCTION */
 
@@ -555,7 +555,7 @@ scm_init_readline ()
   scm_init_opts (scm_readline_options,
 		 scm_readline_opts,
 		 SCM_N_READLINE_OPTIONS);
-#if HAVE_RL_GET_KEYMAP
+#if HAVE_RL_GET_KEYMAP_NAME
   init_bouncing_parens();
 #endif
   scm_add_feature ("readline");

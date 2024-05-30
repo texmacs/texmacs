@@ -26,7 +26,7 @@ DEFS = @DEFS@ @EXTRA_DEFS@
 ## Check for headers in $(srcdir)/.., so that #include
 ## <libguile/MUMBLE.h> will find MUMBLE.h in this dir when we're
 ## building.
-INCLUDES = -I. -I.. -I$(srcdir)/..
+AM_CPPFLAGS = -I. -I.. -I$(srcdir)/..
 
 GUILE_SNARF = ../libguile/guile-snarf
 
@@ -41,14 +41,14 @@ BUILT_SOURCES = readline.x
 
 pkginclude_HEADERS = readline.h
 
-snarfcppopts = $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
+snarfcppopts = $(DEFS) $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS)
 SUFFIXES = .x
 .c.x:
 	$(GUILE_SNARF) -o $@ $< $(snarfcppopts)
 
 EXTRA_DIST = LIBGUILEREADLINE-VERSION ChangeLog-2008
 
-MKDEP = gcc -M -MG $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
+MKDEP = gcc -M -MG $(DEFS) $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS)
 
 CLEANFILES = *.x
 

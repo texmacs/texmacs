@@ -275,8 +275,8 @@ SCM_DEFINE (scm_regexp_exec, "regexp-exec", 2, 2, 0,
 			 scm_cons (scm_from_int (-1), scm_from_int (-1)));
 	else
 	  SCM_SIMPLE_VECTOR_SET(mvec, i+1,
-			 scm_cons (scm_from_long (matches[i].rm_so + offset),
-				   scm_from_long (matches[i].rm_eo + offset)));
+			 scm_cons (scm_from_ent (matches[i].rm_so + offset),
+				   scm_from_ent (matches[i].rm_eo + offset)));
     }
   free (matches);
 

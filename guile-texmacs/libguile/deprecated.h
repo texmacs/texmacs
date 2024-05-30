@@ -29,9 +29,9 @@
 
 /* From eval.h: Macros for handling ilocs.  These were deprecated in guile
  * 1.7.0 on 2004-04-22.  */
-#define SCM_IFRINC             (0x00000100L)
-#define SCM_ICDR               (0x00080000L)
-#define SCM_IFRAME(n)          ((long)((SCM_ICDR-SCM_IFRINC)>>8) \
+#define SCM_IFRINC             ((ent) 0x00000100L)
+#define SCM_ICDR               ((ent) 0x00080000L)
+#define SCM_IFRAME(n)          ((ent)((SCM_ICDR-SCM_IFRINC)>>8) \
                                 & (SCM_UNPACK (n) >> 8))
 #define SCM_IDIST(n)           (SCM_UNPACK (n) >> 20)
 #define SCM_ICDRP(n)           (SCM_ICDR & SCM_UNPACK (n))
@@ -58,8 +58,8 @@ SCM_API char *scm_isymnames[];
 
 /* From eval.h: Macros for handling ilocs.  These were deprecated in guile
  * 1.7.0 on 2003-06-04.  */
-#define SCM_ILOC00		SCM_MAKE_ITAG8(0L, scm_tc8_iloc)
-#define SCM_IDINC		(0x00100000L)
+#define SCM_ILOC00		SCM_MAKE_ITAG8(((ent) 0L), scm_tc8_iloc)
+#define SCM_IDINC		((ent) 0x00100000L)
 #define SCM_IDSTMSK		(-SCM_IDINC)
 
 
@@ -209,14 +209,14 @@ SCM_API SCM scm_make_subr_opt (const char *name,
 SCM_API SCM scm_call_catching_errors (SCM (*thunk)(), SCM (*err_filter)(),
 				      void * closure);
 
-SCM_API long scm_make_smob_type_mfpe (char *name, size_t size,
-				      SCM (*mark) (SCM),
-				      size_t (*free) (SCM),
-				      int (*print) (SCM, SCM,
-						    scm_print_state*),
-				      SCM (*equalp) (SCM, SCM));
+SCM_API ent scm_make_smob_type_mfpe (char *name, size_t size,
+				     SCM (*mark) (SCM),
+				     size_t (*free) (SCM),
+				     int (*print) (SCM, SCM,
+						   scm_print_state*),
+				     SCM (*equalp) (SCM, SCM));
 
-SCM_API void scm_set_smob_mfpe (long tc, 
+SCM_API void scm_set_smob_mfpe (ent tc,
 				SCM (*mark) (SCM),
 				size_t (*free) (SCM),
 				int (*print) (SCM, SCM, scm_print_state*),
@@ -231,7 +231,7 @@ SCM_API char *scm_i_object_chars (SCM);
 #define SCM_CHARS(x)   scm_i_object_chars(x)
 #define SCM_UCHARS(x)  ((unsigned char *)SCM_CHARS(x))
 
-SCM_API long scm_i_object_length (SCM);
+SCM_API ent scm_i_object_length (SCM);
 
 #define SCM_LENGTH(x) scm_i_object_length(x)
 
@@ -476,10 +476,10 @@ SCM_API SCM scm_i_keywordsym (SCM keyword);
 /* Deprecated because we don't want to hand out unprotected pointers
    to arrays, vectors, etc. */
 
-#define SCM_VECTOR_MAX_LENGTH ((1L << 24) - 1)
+#define SCM_VECTOR_MAX_LENGTH ((((ent) 1L) << 24) - 1)
 
 SCM_API int scm_i_vectorp (SCM x);
-SCM_API unsigned long scm_i_vector_length (SCM x);
+SCM_API nat scm_i_vector_length (SCM x);
 SCM_API const SCM *scm_i_velts (SCM x);
 SCM_API SCM *scm_i_writable_velts (SCM x);
 SCM_API SCM scm_i_vector_ref (SCM x, size_t idx);

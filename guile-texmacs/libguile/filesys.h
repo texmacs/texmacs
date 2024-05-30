@@ -28,7 +28,7 @@
 
 SCM_API scm_t_bits scm_tc16_dir;
 
-#define SCM_DIR_FLAG_OPEN (1L << 16)
+#define SCM_DIR_FLAG_OPEN (((ent) 1L) << 16)
 
 #define SCM_DIRP(x) (!SCM_IMP (x) && (SCM_TYP16 (x) == scm_tc16_dir))
 #define SCM_DIR_OPEN_P(x) (SCM_CELL_WORD_0 (x) & SCM_DIR_FLAG_OPEN)

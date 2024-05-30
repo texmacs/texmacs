@@ -92,7 +92,7 @@
  * tags for smobjects (if you know a tag you can get an index and conversely).
  */
 scm_t_ptob_descriptor *scm_ptobs;
-long scm_numptob;
+ent scm_numptob;
 
 /* GC marker for a port with stream of SCM type.  */
 SCM 
@@ -338,7 +338,7 @@ SCM_DEFINE (scm_drain_input, "drain-input", 1, 0, 0,
   SCM result;
   char *data;
   scm_t_port *pt;
-  long count;
+  ent count;
 
   SCM_VALIDATE_OPINPORT (1, port);
   pt = SCM_PTAB_ENTRY (port);
@@ -488,8 +488,8 @@ scm_i_dynwind_current_load_port (SCM port)
 
 scm_t_port **scm_i_port_table;
 
-long scm_i_port_table_size = 0;	/* Number of ports in scm_i_port_table.  */
-long scm_i_port_table_room = 20;	/* Size of the array.  */
+ent scm_i_port_table_size = 0;	/* Number of ports in scm_i_port_table.  */
+ent scm_i_port_table_room = 20;	/* Size of the array.  */
 
 scm_i_pthread_mutex_t scm_i_port_table_mutex = SCM_I_PTHREAD_MUTEX_INITIALIZER;
 
@@ -558,7 +558,7 @@ scm_remove_from_port_table (SCM port)
 #define FUNC_NAME "scm_remove_from_port_table"
 {
   scm_t_port *p = SCM_PTAB_ENTRY (port);
-  long i = p->entry;
+  ent i = p->entry;
 
   if (i >= scm_i_port_table_size)
     SCM_MISC_ERROR ("Port not in table: ~S", scm_list_1 (port));
@@ -668,7 +668,7 @@ SCM_DEFINE (scm_set_port_revealed_x, "set-port-revealed!", 2, 0, 0,
  * See PORT FLAGS in scm.h
  */
 
-static long
+static ent
 scm_i_mode_bits_n (const char *modes, size_t n)
 {
   return (SCM_OPN
@@ -680,16 +680,16 @@ scm_i_mode_bits_n (const char *modes, size_t n)
 	  | (memchr (modes, 'l', n) ? SCM_BUFLINE : 0));
 }
 
-long
+ent
 scm_mode_bits (char *modes)
 {
   return scm_i_mode_bits_n (modes, strlen (modes));
 }
 
-long
+ent
 scm_i_mode_bits (SCM modes)
 {
-  long bits;
+  ent bits;
 
   if (!scm_is_string (modes))
     scm_wrong_type_arg_msg (NULL, 0, modes, "string");
@@ -804,7 +804,7 @@ SCM_DEFINE (scm_close_output_port, "close-output-port", 1, 0, 0,
 void
 scm_c_port_for_each (void (*proc)(void *data, SCM p), void *data)
 {
-  long i;
+  ent i;
   size_t n;
   SCM ports;
 
@@ -1190,14 +1190,14 @@ scm_c_write (SCM port, const void *ptr, size_t size)
 void 
 scm_flush (SCM port)
 {
-  long i = SCM_PTOBNUM (port);
+  ent i = SCM_PTOBNUM (port);
   (scm_ptobs[i].flush) (port);
 }
 
 void
 scm_end_input (SCM port)
 {
-  long offset;
+  ent offset;
   scm_t_port *pt = SCM_PTAB_ENTRY (port);
 
   if (pt->read_buf == pt->putback_buf)
@@ -1564,7 +1564,7 @@ SCM_DEFINE (scm_port_line, "port-line", 1, 0, 0,
 {
   port = SCM_COERCE_OUTPORT (port);
   SCM_VALIDATE_OPENPORT (1, port);
-  return scm_from_long (SCM_LINUM (port));
+  return scm_from_ent (SCM_LINUM (port));
 }
 #undef FUNC_NAME
 
@@ -1576,7 +1576,7 @@ SCM_DEFINE (scm_set_port_line_x, "set-port-line!", 2, 0, 0,
 {
   port = SCM_COERCE_OUTPORT (port);
   SCM_VALIDATE_OPENPORT (1, port);
-  SCM_PTAB_ENTRY (port)->line_number = scm_to_long (line);
+  SCM_PTAB_ENTRY (port)->line_number = scm_to_ent (line);
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -1697,7 +1697,7 @@ write_void_port (SCM port SCM_UNUSED,
 }
 
 static SCM
-scm_i_void_port (long mode_bits)
+scm_i_void_port (ent mode_bits)
 {
   scm_i_scm_pthread_mutex_lock (&scm_i_port_table_mutex);
   {

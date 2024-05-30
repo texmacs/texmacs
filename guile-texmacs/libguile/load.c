@@ -494,7 +494,7 @@ init_build_info ()
 {
   static struct { char *name; char *value; } info[] = SCM_BUILD_INFO;
   SCM *loc = SCM_VARIABLE_LOC (scm_c_define ("%guile-build-info", SCM_EOL));
-  unsigned long i;
+  nat i;
 
   for (i = 0; i < (sizeof (info) / sizeof (info[0])); i++)
     {

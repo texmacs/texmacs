@@ -77,7 +77,7 @@ create_gsubr (int define, const char *name,
       return subr;
     default:
       {
-	SCM cclo = scm_makcclo (scm_f_gsubr_apply, 3L);
+	SCM cclo = scm_makcclo (scm_f_gsubr_apply, (ent) 3L);
 	SCM subr = scm_c_make_subr (name, scm_tc7_subr_0, fcn);
 	SCM sym = SCM_SUBR_ENTRY(subr).name;
 	if (SCM_GSUBR_MAX < req + opt + rst)
@@ -191,7 +191,7 @@ scm_gsubr_apply (SCM args)
   SCM (*fcn)() = SCM_SUBRF (SCM_GSUBR_PROC (self));
   SCM v[SCM_GSUBR_MAX];
   int typ = scm_to_int (SCM_GSUBR_TYPE (self));
-  long i, n = SCM_GSUBR_REQ (typ) + SCM_GSUBR_OPT (typ) + SCM_GSUBR_REST (typ);
+  ent i, n = SCM_GSUBR_REQ (typ) + SCM_GSUBR_OPT (typ) + SCM_GSUBR_REST (typ);
 #if 0
   if (n > SCM_GSUBR_MAX)
     scm_misc_error (FUNC_NAME,
@@ -218,15 +218,24 @@ scm_gsubr_apply (SCM args)
   else if (!scm_is_null (args))
     scm_wrong_num_args (SCM_SNAME (SCM_GSUBR_PROC (self)));
   switch (n) {
-  case 2: return (*fcn)(v[0], v[1]);
-  case 3: return (*fcn)(v[0], v[1], v[2]);
-  case 4: return (*fcn)(v[0], v[1], v[2], v[3]);
-  case 5: return (*fcn)(v[0], v[1], v[2], v[3], v[4]);
-  case 6: return (*fcn)(v[0], v[1], v[2], v[3], v[4], v[5]);
-  case 7: return (*fcn)(v[0], v[1], v[2], v[3], v[4], v[5], v[6]);
-  case 8: return (*fcn)(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7]);
-  case 9: return (*fcn)(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8]);
-  case 10: return (*fcn)(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9]);
+  case 2: return (*((SCM (*)(SCM,SCM)) fcn))
+      (v[0], v[1]);
+  case 3: return (*((SCM (*)(SCM,SCM,SCM)) fcn))
+      (v[0], v[1], v[2]);
+  case 4: return (*((SCM (*)(SCM,SCM,SCM,SCM)) fcn))
+      (v[0], v[1], v[2], v[3]);
+  case 5: return (*((SCM (*)(SCM,SCM,SCM,SCM,SCM)) fcn))
+      (v[0], v[1], v[2], v[3], v[4]);
+  case 6: return (*((SCM (*)(SCM,SCM,SCM,SCM,SCM,SCM)) fcn))
+      (v[0], v[1], v[2], v[3], v[4], v[5]);
+  case 7: return (*((SCM (*)(SCM,SCM,SCM,SCM,SCM,SCM,SCM)) fcn))
+      (v[0], v[1], v[2], v[3], v[4], v[5], v[6]);
+  case 8: return (*((SCM (*)(SCM,SCM,SCM,SCM,SCM,SCM,SCM,SCM)) fcn))
+      (v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7]);
+  case 9: return (*((SCM (*)(SCM,SCM,SCM,SCM,SCM,SCM,SCM,SCM,SCM)) fcn))
+      (v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8]);
+  case 10: return (*((SCM (*)(SCM,SCM,SCM,SCM,SCM,SCM,SCM,SCM,SCM,SCM)) fcn))
+      (v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9]);
   }
   return SCM_BOOL_F; /* Never reached. */
 }

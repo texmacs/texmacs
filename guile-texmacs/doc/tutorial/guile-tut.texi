@@ -446,7 +446,7 @@ get started, look at the books @cite{Simply Scheme} and @cite{The Little
 Schemer} from that list.}
 
 
-@subsection Hello World
+@section Hello World
 @cindex hello world
 
 Our first program is the typical Scheme "hello world" program.  Put the

@@ -26,9 +26,6 @@
 #  include <config.h>
 #endif
 
-#ifdef __MINGW32__
-# define SCM_IMPORT 1
-#endif
 #include <libguile.h>
 
 #ifdef HAVE_CONFIG_H

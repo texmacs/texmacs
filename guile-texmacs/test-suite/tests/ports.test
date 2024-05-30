@@ -195,6 +195,7 @@
 ;;; non-blocking mode on a port.  create a pipe and set O_NONBLOCK on
 ;;; the reading end.  try to read a byte: should get EAGAIN or
 ;;; EWOULDBLOCK error.
+(if (defined? 'fcntl)
 (let* ((p (pipe))
        (r (car p)))
   (fcntl r F_SETFL (logior (fcntl r F_GETFL) O_NONBLOCK))
@@ -206,18 +207,22 @@
 			 (let ((errno (car (list-ref args 3))))
 			   (or (= errno EAGAIN)
 			       (= errno EWOULDBLOCK))))))))
+)
 
 
 ;;;; Pipe (popen) ports.
 
 ;;; Run a command, and read its output.
+(if (defined? 'primitive-fork)
 (let* ((pipe (open-pipe "echo 'Howdy there, partner!'" "r"))
        (in-string (read-all pipe)))
   (close-pipe pipe)
   (pass-if "pipe: read"
 	   (equal? in-string "Howdy there, partner!\n")))
+)
 
 ;;; Run a command, send some output to it, and see if it worked.
+(if (defined? 'primitive-fork)
 (let* ((filename (test-file))
        (pipe (open-pipe (string-append "grep Mommy > " filename) "w")))
   (display "Now Jimmy lives on a mushroom cloud\n" pipe)
@@ -227,6 +232,7 @@
     (pass-if "pipe: write"
 	     (equal? in-string "Mommy, why does everybody have a bomb?\n")))
   (delete-file filename))
+)
 
 
 ;;;; Void ports.  These are so trivial we don't test them.
@@ -371,6 +377,7 @@
 	(for-each close-port ports)
 	(delete-file port-loop-temp))))
 
+  (if (defined? 'primitive-fork)
   (with-test-prefix "newline"
     (test-line-counter
      (string-append "x\n"
@@ -380,7 +387,9 @@
 		    "  --- Thomas Jefferson\n")
      "He who receives an idea from me, receives instruction"
      0))
+  )
 
+  (if (defined? 'primitive-fork)
   (with-test-prefix "no newline"
     (test-line-counter
      (string-append "x\n"
@@ -391,6 +400,7 @@
 		    "no newline here")
      "He who receives an idea from me, receives instruction"
      15)))
+  )
 
 ;; Test port-line and port-column for output ports
 
@@ -562,14 +572,15 @@
   ;; tricky, but the following code made it happen in 1.8.2.
   (pass-if "passing freed cell"
     (throw 'unresolved)
-    (let ((lst '()))
+    (let ((devnull (if (file-exists? "/dev/null") "/dev/null" "nul"))
+	  (lst '()))
       ;; clear out the heap
       (gc) (gc) (gc)
       ;; allocate cells so the opened ports aren't at the start of the heap
       (make-list 1000)
-      (open-input-file "/dev/null")
+      (open-input-file devnull)
       (make-list 1000)
-      (open-input-file "/dev/null")
+      (open-input-file devnull)
       ;; this gc leaves the above ports unmarked, ie. inaccessible
       (gc)
       ;; but they're still in the port table, so this sees them
@@ -742,4 +753,6 @@
 	    (list read read-char read-line)
 	    '("read" "read-char" "read-line")))
 
-(delete-file (test-file))
+(if (defined? 'primitive-fork)
+    ;; delete-file fails via mingw64 if file hasn't been closed
+    (delete-file (test-file)))

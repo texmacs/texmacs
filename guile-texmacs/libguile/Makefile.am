@@ -304,7 +304,7 @@ if HAVE_MAKEINFO
 
 guile-procedures.txt: guile-procedures.texi
 	rm -f $@
-	makeinfo --force -o $@ guile-procedures.texi || test -f $@
+	makeinfo --force --no-warn --no-validate --paragraph-indent=asis -o $@ guile-procedures.texi || test -f $@
 
 else
 
@@ -330,11 +330,12 @@ endif
 # important thing about stack-limit-calibration.scm is just that it is
 # generated in the first place, so that other tests under test-suite
 # can use it.
-TESTS = stack-limit-calibration.scm
-TESTS_ENVIRONMENT = true
 
 stack-limit-calibration.scm: measure-hwm.scm guile$(EXEEXT)
+	rm -f stack-limit-calibration.scm
 	$(preinstguile) -s $(srcdir)/measure-hwm.scm > $@
+
+check-local: stack-limit-calibration.scm
 
 c-tokenize.c: c-tokenize.lex
 	flex -t $(srcdir)/c-tokenize.lex > $@ || { rm $@; false; }
@@ -392,6 +393,7 @@ MOSTLYCLEANFILES = \
 	version.h version.h.tmp \
 	scmconfig.h scmconfig.h.tmp stack-limit-calibration.scm
 
-CLEANFILES = libpath.h *.x *.doc guile-procedures.txt guile-procedures.texi guile.texi
+CLEANFILES = libpath.h *.x *.doc guile-procedures.txt guile-procedures.texi guile.texi \
+	stack-limit-calibration.scm.trs stack-limit-calibration.scm.log
 
 MAINTAINERCLEANFILES = c-tokenize.c

@@ -44,9 +44,9 @@ typedef struct scm_t_rstate {
 } scm_t_rstate;
 
 typedef struct scm_t_rng {
-  size_t rstate_size;				    /* size of random state */
+  size_t rstate_size; /* size of random state */
   /* Though this returns an unsigned long, it's only 32 bits of randomness. */
-  unsigned long (*random_bits) (scm_t_rstate *state); /* gives 32 random bits */
+  nat (*random_bits) (scm_t_rstate *state); /* gives 32 random bits */
   void (*init_rstate) (scm_t_rstate *state, const char *seed, int n);
   scm_t_rstate *(*copy_rstate) (scm_t_rstate *state);
 } scm_t_rng;
@@ -59,12 +59,12 @@ SCM_API scm_t_rng scm_the_rng;
  */
 typedef struct scm_t_i_rstate {
   scm_t_rstate rstate;
-  unsigned long w;
-  unsigned long c;
+  nat w;
+  nat c;
 } scm_t_i_rstate;
 
 /* Though this returns an unsigned long, it's only 32 bits of randomness. */
-SCM_API unsigned long scm_i_uniform32 (scm_t_i_rstate *);
+SCM_API nat scm_i_uniform32 (scm_t_i_rstate *);
 SCM_API void scm_i_init_rstate (scm_t_i_rstate *, const char *seed, int n);
 SCM_API scm_t_i_rstate *scm_i_copy_rstate (scm_t_i_rstate *);
 
@@ -79,7 +79,7 @@ SCM_API double scm_c_uniform01 (scm_t_rstate *);
 SCM_API double scm_c_normal01 (scm_t_rstate *);
 SCM_API double scm_c_exp1 (scm_t_rstate *);
 /* Though this returns an unsigned long, it's only 32 bits of randomness. */
-SCM_API unsigned long scm_c_random (scm_t_rstate *, unsigned long m);
+SCM_API nat scm_c_random (scm_t_rstate *, nat m);
 /* This one returns 64 bits of randomness. */
 SCM_API scm_t_uint64 scm_c_random64 (scm_t_rstate *state, scm_t_uint64 m);
 SCM_API SCM scm_c_random_bignum (scm_t_rstate *, SCM m);

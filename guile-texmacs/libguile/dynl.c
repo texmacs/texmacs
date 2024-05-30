@@ -232,7 +232,7 @@ SCM_DEFINE (scm_dynamic_func, "dynamic-func", 2, 0, 0,
     func = (void (*) ()) sysdep_dynl_func (chars, DYNL_HANDLE (dobj), 
 					   FUNC_NAME);
     scm_dynwind_end ();
-    return scm_from_ulong ((unsigned long) func);
+    return scm_from_nat ((nat) func);
   }
 }
 #undef FUNC_NAME
@@ -262,7 +262,7 @@ SCM_DEFINE (scm_dynamic_call, "dynamic-call", 2, 0, 0,
   
   if (scm_is_string (func))
     func = scm_dynamic_func (func, dobj);
-  fptr = (void (*) ()) scm_to_ulong (func);
+  fptr = (void (*) ()) scm_to_nat (func);
   fptr ();
   return SCM_UNSPECIFIED;
 }
@@ -299,7 +299,7 @@ SCM_DEFINE (scm_dynamic_args_call, "dynamic-args-call", 3, 0, 0,
   if (scm_is_string (func))
     func = scm_dynamic_func (func, dobj);
 
-  fptr = (int (*) (int, char **)) scm_to_ulong (func);
+  fptr = (int (*) (int, char **)) scm_to_nat (func);
 
   argv = scm_i_allocate_string_pointers (args);
   scm_dynwind_unwind_handler (free_string_pointers, argv,

@@ -56,8 +56,8 @@ typedef char * ptr_t;	/* A generic pointer to which we can add	*/
 /* better choices.  But those appear to have incorrect definitions	*/
 /* on may systems.  Notably "typedef int size_t" seems to be both	*/
 /* frequent and WRONG.							*/
-typedef unsigned long GC_word;
-typedef long GC_signed_word;
+typedef nat GC_word;
+typedef ent GC_signed_word;
 
 typedef GC_word word;
 typedef GC_signed_word signed_word;
@@ -1084,7 +1084,7 @@ scm_get_stack_base ()
 #   define ALIGNMENT 4
 #   define DATASTART ((ptr_t)0x20000000)
     extern int errno;
-#   define STACKBOTTOM ((ptr_t)((ulong)&errno))
+#   define STACKBOTTOM ((ptr_t)((nat)&errno))
 #   define DYNAMIC_LOADING
 	/* For really old versions of AIX, this may have to be removed. */
 # endif
@@ -1561,7 +1561,7 @@ scm_get_stack_base ()
 #ifdef DJGPP
   /* Apparently necessary for djgpp 2.01.  May casuse problems with	*/
   /* other versions.							*/
-  typedef long unsigned int caddr_t;
+  typedef nat caddr_t;
 #endif
 
 #ifdef PCR
@@ -1589,7 +1589,7 @@ scm_get_stack_base ()
 #   define WORD unsigned short
 # endif
 # ifndef DWORD
-#   define DWORD unsigned long
+#   define DWORD nat
 # endif
 
 # define EXE386 1
@@ -1698,12 +1698,12 @@ void *scm_get_stack_base()
 void *scm_get_stack_base()
 {
     extern struct WBStartup *_WBenchMsg;
-    extern long __base;
-    extern long __stack;
+    extern ent __base;
+    extern ent __stack;
     struct Task *task;
     struct Process *proc;
     struct CommandLineInterface *cli;
-    long size;
+    ent size;
 
     if ((task = FindTask(0)) == 0) {
 	GC_err_puts("Cannot find own task structure\n");

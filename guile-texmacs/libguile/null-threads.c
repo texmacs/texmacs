@@ -25,8 +25,16 @@
 #if SCM_USE_NULL_THREADS
 
 #include "libguile/null-threads.h"
+#include "libguile/error.h"
 
 static scm_i_pthread_key_t *all_keys = NULL;
+
+int
+null_thread_cond_wait_abort (void)
+{
+  scm_abort ();
+  return 0;
+}
 
 static void
 destroy_keys (void)

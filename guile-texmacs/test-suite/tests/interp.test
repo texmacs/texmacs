@@ -17,6 +17,8 @@
 ;;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;;;; Boston, MA 02110-1301 USA
 
+(use-modules (test-suite lib))
+
 (pass-if "Internal defines 1"
 	 (letrec ((foo (lambda (arg)
 			 (or arg (and (procedure? foo)

@@ -67,6 +67,450 @@
 
 #include "libguile/discouraged.h"
 
+/* Extension of gmp for long long int for when long and long long
+   have different size. */
+
+#if SCM_SIZEOF_ENT == SCM_SIZEOF_LONG
+
+#  ifdef HAVE___BUILTIN_SMULL_OVERFLOW
+#  define HAVE_BUILTIN_MUL_ENT_OVERFLOW
+static inline int
+builtin_mul_ent_overflow (ent a, ent b, ent *res)
+{
+  long r;
+  int c= __builtin_smull_overflow ((long) a, (long) b, &r);
+  *res= (ent) r;
+  return c;
+}
+#  endif
+
+static inline void
+mpz_set_ent (mpz_t rop, ent op)
+{
+  mpz_set_si (rop, (long) op);
+}
+
+static inline void
+mpz_init_set_ent (mpz_t rop, ent op)
+{
+  mpz_init_set_si (rop, (long) op);
+}
+
+static inline void
+mpz_init_set_nat (mpz_t rop, nat op)
+{
+  mpz_init_set_ui (rop, (unsigned long) op);
+}
+
+static inline int
+mpz_fits_ent_p (const mpz_t op)
+{
+  return mpz_fits_slong_p (op);
+}
+
+static inline int
+mpz_fits_nat_p (const mpz_t op)
+{
+  return mpz_fits_ulong_p (op);
+}
+
+static inline ent
+mpz_get_ent (const mpz_t op)
+{
+  return (ent) mpz_get_si (op);
+}
+
+static inline nat
+mpz_get_nat (const mpz_t op)
+{
+  return (nat) mpz_get_ui (op);
+}
+
+static inline int
+mpz_cmp_nat (const mpz_t op1, nat op2)
+{
+  return mpz_cmp_ui (op1, (unsigned long) op2);
+}
+
+static inline void
+mpz_add_nat (mpz_t rop, const mpz_t op1, nat op2)
+{
+  mpz_add_ui (rop, op1, (unsigned long) op2);
+}
+
+static inline void
+mpz_sub_nat (mpz_t rop, const mpz_t op1, nat op2)
+{
+  mpz_sub_ui (rop, op1, (unsigned long) op2);
+}
+
+static inline void
+mpz_nat_sub (mpz_t rop, nat op1, const mpz_t op2)
+{
+  mpz_ui_sub (rop, (unsigned long) op1, op2);
+}
+
+static inline void
+mpz_mul_ent (mpz_t rop, const mpz_t op1, ent op2)
+{
+  mpz_mul_si (rop, op1, (long) op2);
+}
+
+static inline nat
+mpz_mod_nat (mpz_t R, const mpz_t N, nat D)
+{
+  return mpz_mod_ui (R, N, (unsigned long) D);
+}
+
+static inline int
+mpz_divisible_nat_p (const mpz_t N, nat D)
+{
+  return mpz_divisible_ui_p (N, (unsigned long) D);
+}
+
+static inline void
+mpz_divexact_nat (mpz_t Q, const mpz_t N, nat D)
+{
+  mpz_divexact_ui (Q, N, (unsigned long) D);
+}
+
+static inline nat
+mpz_tdiv_q_nat (mpz_t Q, const mpz_t N, nat D)
+{
+  return mpz_tdiv_q_ui (Q, N, (unsigned long) D);
+}
+
+static inline nat
+mpz_tdiv_r_nat (mpz_t R, const mpz_t N, nat D)
+{
+  return mpz_tdiv_r_ui (R, N, (unsigned long) D);
+}
+
+static inline nat
+mpz_gcd_nat (mpz_t rop, const mpz_t op1, nat op2)
+{
+  return mpz_gcd_ui (rop, op1, (unsigned long) op2);
+}
+
+static inline void
+mpz_lcm_nat (mpz_t rop, const mpz_t op1, nat op2)
+{
+  mpz_lcm_ui (rop, op1, (unsigned long) op2);
+}
+
+#elif 2 * SCM_SIZEOF_LONG == SCM_SIZEOF_ENT
+
+#define SCM_SAFE_LEFT_SHIFT(C,a,n)                          \
+  (((n) >= 8*sizeof(C)) ? ((C) 0) : (((C) a) << ((n)/2)) << ((n)-(n)/2))
+
+#define SCM_SAFE_RIGHT_SHIFT(C,a,n)                         \
+  (((n) >= 8*sizeof(C)) ? ((C) 0) : (((C) a) >> ((n)/2)) >> ((n)-(n)/2))
+
+#  ifdef HAVE___BUILTIN_SMULLL_OVERFLOW
+#  define HAVE_BUILTIN_MUL_ENT_OVERFLOW
+static inline int
+builtin_mul_ent_overflow (ent a, ent b, ent *res)
+{
+  long long r;
+  int c= __builtin_smulll_overflow ((long long) a, (long long) b, &r);
+  *res= (ent) r;
+  return c;
+}
+#  endif
+
+static inline void
+mpz_set_ent (mpz_t rop, ent op)
+{
+  if (op >= SCM_I_LONG_MIN && op <= SCM_I_LONG_MAX)
+    {
+      mpz_set_si (rop, (long) op);
+      return;
+    }
+  static const nat s = 8 * sizeof(long);
+  nat x; int b;
+  if (op >= 0) { b = 0; x = op; }
+  else { b = 1; x = -op; }
+  mpz_set_ui (rop, (unsigned long)
+	      SCM_SAFE_RIGHT_SHIFT (nat, x, s));
+  mpz_mul_2exp (rop, rop, s);
+  mpz_add_ui (rop, rop, (unsigned long) x);
+  if (b) mpz_neg (rop, rop);
+}
+
+static inline void
+mpz_set_nat (mpz_t rop, nat op)
+{
+  if (op <= SCM_I_ULONG_MAX)
+    {
+      mpz_set_ui (rop, (unsigned long) op);
+      return;
+    }
+  static const nat s = 8 * sizeof(long);
+  mpz_set_ui (rop, (unsigned long)
+	      SCM_SAFE_RIGHT_SHIFT (nat, op, s));
+  mpz_mul_2exp (rop, rop, s);
+  mpz_add_ui (rop, rop, (unsigned long) op);
+}
+
+static inline void
+mpz_init_set_ent (mpz_t rop, ent op)
+{
+  if (op >= SCM_I_LONG_MIN && op <= SCM_I_LONG_MAX)
+    {
+      mpz_init_set_si (rop, (long) op);
+      return;
+    }
+  mpz_init (rop);
+  mpz_set_ent (rop, op);
+}
+
+static inline void
+mpz_init_set_nat (mpz_t rop, nat op)
+{
+  if (op <= SCM_I_ULONG_MAX)
+    {
+      mpz_init_set_ui (rop, (unsigned long) op);
+      return;
+    }
+  mpz_init (rop);
+  mpz_set_nat (rop, op);
+}
+
+static inline int
+mpz_fits_ent_p (const mpz_t op)
+{
+  if (mpz_fits_slong_p (op))
+    return 1;
+  static const nat s = 8 * sizeof(long);
+  mpz_t x; mpz_init (x);
+  mpz_div_2exp (x, op, s);
+  int r = mpz_fits_slong_p (x);
+  mpz_clear (x);
+  return r;
+}
+
+static inline int
+mpz_fits_nat_p (const mpz_t op)
+{
+  if (mpz_fits_ulong_p (op))
+    return 1;
+  static const nat s = 8 * sizeof(long);
+  mpz_t x; mpz_init (x);
+  mpz_div_2exp (x, op, s);
+  int r= mpz_fits_ulong_p (x);
+  mpz_clear (x);
+  return r;
+}
+
+static inline ent
+mpz_get_ent (const mpz_t op)
+{
+  if (mpz_fits_slong_p (op))
+    return (ent) mpz_get_si (op);
+  static const nat s = 8 * sizeof(long);
+  mpz_t x; mpz_init (x);
+  mpz_fdiv_q_2exp (x, op, s);
+  ent r = mpz_get_si (x);
+  r = ((nat) r) << s;
+  mpz_fdiv_r_2exp (x, op, s);
+  r = r + mpz_get_ui (x);
+  mpz_clear (x);
+  return r;
+}
+
+static inline nat
+mpz_get_nat (const mpz_t op)
+{
+  if (mpz_fits_ulong_p (op))
+    return (nat) mpz_get_ui (op);
+  static const nat s = 8 * sizeof(long);
+  mpz_t x; mpz_init (x);
+  mpz_fdiv_q_2exp (x, op, s);
+  nat r = mpz_get_ui (x);
+  r = r << s;
+  mpz_fdiv_r_2exp (x, op, s);
+  r = r + mpz_get_ui (x);
+  mpz_clear (x);
+  return r;
+}
+
+static inline int
+mpz_cmp_nat (const mpz_t op1, nat op2)
+{
+  if (op2 <= SCM_I_ULONG_MAX)
+    return mpz_cmp_ui (op1, (unsigned long) op2);
+  mpz_t x;
+  mpz_init_set_nat (x, op2);
+  int r= mpz_cmp (op1, x);
+  mpz_clear (x);
+  return r;
+}
+
+static inline void
+mpz_add_nat (mpz_t rop, const mpz_t op1, nat op2)
+{
+  if (op2 <= SCM_I_ULONG_MAX)
+    {
+      mpz_add_ui (rop, op1, (unsigned long) op2);
+      return;
+    }
+  mpz_t x;
+  mpz_init_set_nat (x, op2);
+  mpz_add (rop, op1, x);
+  mpz_clear (x);
+}
+
+static inline void
+mpz_sub_nat (mpz_t rop, const mpz_t op1, nat op2)
+{
+  if (op2 <= SCM_I_ULONG_MAX)
+    {
+      mpz_sub_ui (rop, op1, (unsigned long) op2);
+      return;
+    }
+  mpz_t x;
+  mpz_init_set_nat (x, op2);
+  mpz_sub (rop, op1, x);
+  mpz_clear (x);
+}
+
+static inline void
+mpz_nat_sub (mpz_t rop, nat op1, const mpz_t op2)
+{
+  if (op1 <= SCM_I_ULONG_MAX)
+    {
+      mpz_ui_sub (rop, (unsigned long) op1, op2);
+      return;
+    }
+  mpz_t x;
+  mpz_init_set_nat (x, op1);
+  mpz_sub (rop, x, op2);
+  mpz_clear (x);
+}
+
+static inline void
+mpz_mul_ent (mpz_t rop, const mpz_t op1, ent op2)
+{
+  if (op2 >= SCM_I_LONG_MIN && op2 <= SCM_I_LONG_MAX)
+    {
+      mpz_mul_si (rop, op1, (long) op2);
+      return;
+    }
+  mpz_t x;
+  mpz_init_set_ent (x, op2);
+  mpz_mul (rop, op1, x);
+  mpz_clear (x);
+}
+
+static inline nat
+mpz_mod_nat (mpz_t R, const mpz_t N, nat D)
+{
+  if (D <= SCM_I_ULONG_MAX)
+    return mpz_mod_ui (R, N, (unsigned long) D);
+  mpz_t x;
+  mpz_init_set_nat (x, D);
+  mpz_mod (R, N, x);
+  mpz_clear (x);
+  return mpz_get_nat (R);
+}
+
+static inline int
+mpz_divisible_nat_p (const mpz_t N, nat D)
+{
+  if (D <= SCM_I_ULONG_MAX)
+    return mpz_divisible_ui_p (N, (unsigned long) D);
+  mpz_t x;
+  mpz_init_set_nat (x, D);
+  int r= mpz_divisible_p (N, x);
+  mpz_clear (x);
+  return r;
+}
+
+static inline void
+mpz_divexact_nat (mpz_t Q, const mpz_t N, nat D)
+{
+  if (D <= SCM_I_ULONG_MAX)
+    {
+      mpz_divexact_ui (Q, N, (unsigned long) D);
+      return;
+    }
+  mpz_t x;
+  mpz_init_set_nat (x, D);
+  mpz_divexact (Q, N, x);
+  mpz_clear (x);
+}
+
+static inline nat
+mpz_tdiv_q_nat (mpz_t Q, const mpz_t N, nat D)
+{
+  if (D <= SCM_I_ULONG_MAX)
+    return mpz_tdiv_q_ui (Q, N, (unsigned long) D);
+  mpz_t x;
+  mpz_init_set_nat (x, D);
+  mpz_tdiv_qr (Q, x, N, x);
+  mpz_abs (x, x);
+  nat r= mpz_get_nat (x);
+  mpz_clear (x);
+  return r;
+}
+
+static inline nat
+mpz_tdiv_r_nat (mpz_t R, const mpz_t N, nat D)
+{
+  if (D <= SCM_I_ULONG_MAX)
+    return mpz_tdiv_r_ui (R, N, (unsigned long) D);
+  mpz_t x;
+  mpz_init_set_nat (x, D);
+  mpz_tdiv_r (R, N, x);
+  mpz_set (x, R);
+  mpz_abs (x, x);
+  nat r= mpz_get_nat (x);
+  mpz_clear (x);
+  return r;
+}
+
+static inline nat
+mpz_gcd_nat (mpz_t rop, const mpz_t op1, nat op2)
+{
+  if (op2 <= SCM_I_ULONG_MAX)
+    return mpz_gcd_ui (rop, op1, (unsigned long) op2);
+  if (rop == NULL)
+    {
+      mpz_t x, y;
+      mpz_init_set_nat (x, op2);
+      mpz_init (y);
+      mpz_gcd (y, op1, x);
+      nat r= mpz_get_nat (y);
+      mpz_clear (x);
+      mpz_clear (y);
+      return r;
+    }
+  mpz_t x;
+  mpz_init_set_nat (x, op2);
+  mpz_gcd (rop, op1, x);
+  nat r= mpz_get_nat (rop);
+  mpz_clear (x);
+  return r;
+}
+
+static inline void
+mpz_lcm_nat (mpz_t rop, const mpz_t op1, nat op2)
+{
+  if (op2 <= SCM_I_ULONG_MAX)
+    {
+      mpz_lcm_ui (rop, op1, (unsigned long) op2);
+      return;
+    }
+  mpz_t x;
+  mpz_init_set_nat (x, op2);
+  mpz_lcm (rop, op1, x);
+  mpz_clear (x);
+}
+
+#else
+#error Plateform is not supported.
+#endif
+
 /* values per glibc, if not already defined */
 #ifndef M_LOG10E
 #define M_LOG10E   0.43429448190325182765
@@ -213,6 +657,24 @@ scm_i_ulong2big (unsigned long x)
 }
 
 SCM
+scm_i_ent2big (ent x)
+{
+  /* Return a newly created bignum initialized to X. */
+  SCM z = scm_double_cell (scm_tc16_big, 0, 0, 0);
+  mpz_init_set_ent (SCM_I_BIG_MPZ (z), x);
+  return z;
+}
+
+SCM
+scm_i_nat2big (nat x)
+{
+  /* Return a newly created bignum initialized to X. */
+  SCM z = scm_double_cell (scm_tc16_big, 0, 0, 0);
+  mpz_init_set_nat (SCM_I_BIG_MPZ (z), x);
+  return z;
+}
+
+SCM
 scm_i_clonebig (SCM src_big, int same_sign_p)
 {
   /* Copy src_big's value, negate it if same_sign_p is false, and return. */
@@ -263,7 +725,7 @@ scm_i_dbl2num (double u)
 
   if (u < (double) (SCM_MOST_POSITIVE_FIXNUM+1)
       && u >= (double) SCM_MOST_NEGATIVE_FIXNUM)
-    return SCM_I_MAKINUM ((long) u);
+    return SCM_I_MAKINUM ((ent) u);
   else
     return scm_i_dbl2big (u);
 }
@@ -328,7 +790,7 @@ scm_i_big2dbl (SCM b)
 
   if (bits > DBL_MANT_DIG)
     {
-      unsigned long  pos = bits - DBL_MANT_DIG - 1;
+      nat  pos = bits - DBL_MANT_DIG - 1;
       /* test bit number "pos" in absolute value */
       if (mpz_getlimbn (SCM_I_BIG_MPZ (b), pos / GMP_NUMB_BITS)
           & ((mp_limb_t) 1 << (pos % GMP_NUMB_BITS)))
@@ -346,9 +808,9 @@ scm_i_normbig (SCM b)
 {
   /* convert a big back to a fixnum if it'll fit */
   /* presume b is a bignum */
-  if (mpz_fits_slong_p (SCM_I_BIG_MPZ (b)))
+  if (mpz_fits_ent_p (SCM_I_BIG_MPZ (b)))
     {
-      long val = mpz_get_si (SCM_I_BIG_MPZ (b));
+      ent val = mpz_get_ent (SCM_I_BIG_MPZ (b));
       if (SCM_FIXABLE (val))
         b = SCM_I_MAKINUM (val);
     }
@@ -359,9 +821,9 @@ static SCM_C_INLINE_KEYWORD SCM
 scm_i_mpz2num (mpz_t b)
 {
   /* convert a mpz number to a SCM number. */
-  if (mpz_fits_slong_p (b))
+  if (mpz_fits_ent_p (b))
     {
-      long val = mpz_get_si (b);
+      ent val = mpz_get_ent (b);
       if (SCM_FIXABLE (val))
         return SCM_I_MAKINUM (val);
     }
@@ -410,12 +872,12 @@ scm_i_make_ratio (SCM numerator, SCM denominator)
   */
   if (SCM_I_INUMP (numerator))
     {
-      long  x = SCM_I_INUM (numerator);
+      ent x = SCM_I_INUM (numerator);
       if (scm_is_eq (numerator, SCM_INUM0))
 	return SCM_INUM0;
       if (SCM_I_INUMP (denominator))
 	{
-	  long y;
+	  ent y;
 	  y = SCM_I_INUM (denominator);
 	  if (x == y)
 	    return SCM_I_MAKINUM(1);
@@ -429,8 +891,8 @@ scm_i_make_ratio (SCM numerator, SCM denominator)
              that case, abs(bignum) > abs(inum) so inum/bignum is not an
              integer.  */
           if (x == SCM_MOST_NEGATIVE_FIXNUM
-              && mpz_cmp_ui (SCM_I_BIG_MPZ (denominator),
-                             - SCM_MOST_NEGATIVE_FIXNUM) == 0)
+              && mpz_cmp_nat (SCM_I_BIG_MPZ (denominator),
+			      - SCM_MOST_NEGATIVE_FIXNUM) == 0)
 	    return SCM_I_MAKINUM(-1);
         }
     }
@@ -438,8 +900,8 @@ scm_i_make_ratio (SCM numerator, SCM denominator)
     {
       if (SCM_I_INUMP (denominator))
 	{
-	  long yy = SCM_I_INUM (denominator);
-	  if (mpz_divisible_ui_p (SCM_I_BIG_MPZ (numerator), yy))
+	  ent yy = SCM_I_INUM (denominator);
+	  if (mpz_divisible_nat_p (SCM_I_BIG_MPZ (numerator), yy))
 	    return scm_divide (numerator, denominator);
 	}
       else
@@ -503,8 +965,8 @@ SCM_DEFINE (scm_odd_p, "odd?", 1, 0, 0,
 {
   if (SCM_I_INUMP (n))
     {
-      long val = SCM_I_INUM (n);
-      return scm_from_bool ((val & 1L) != 0);
+      ent val = SCM_I_INUM (n);
+      return scm_from_bool ((val & ((ent) 1L)) != 0);
     }
   else if (SCM_BIGP (n))
     {
@@ -538,8 +1000,8 @@ SCM_DEFINE (scm_even_p, "even?", 1, 0, 0,
 {
   if (SCM_I_INUMP (n))
     {
-      long val = SCM_I_INUM (n);
-      return scm_from_bool ((val & 1L) == 0);
+      ent val = SCM_I_INUM (n);
+      return scm_from_bool ((val & ((ent) 1L)) == 0);
     }
   else if (SCM_BIGP (n))
     {
@@ -712,13 +1174,13 @@ SCM_PRIMITIVE_GENERIC (scm_abs, "abs", 1, 0, 0,
 {
   if (SCM_I_INUMP (x))
     {
-      long int xx = SCM_I_INUM (x);
+      ent xx = SCM_I_INUM (x);
       if (xx >= 0)
 	return x;
       else if (SCM_POSFIXABLE (-xx))
 	return SCM_I_MAKINUM (-xx);
       else
-	return scm_i_long2big (-xx);
+	return scm_i_ent2big (-xx);
     }
   else if (SCM_BIGP (x))
     {
@@ -742,7 +1204,7 @@ SCM_PRIMITIVE_GENERIC (scm_abs, "abs", 1, 0, 0,
       if (scm_is_false (scm_negative_p (SCM_FRACTION_NUMERATOR (x))))
 	return x;
       return scm_i_make_ratio (scm_difference (SCM_FRACTION_NUMERATOR (x), SCM_UNDEFINED),
-			     SCM_FRACTION_DENOMINATOR (x));
+			       SCM_FRACTION_DENOMINATOR (x));
     }
   else
     SCM_WTA_DISPATCH_1 (g_scm_abs, x, 1, s_scm_abs);
@@ -758,26 +1220,26 @@ scm_quotient (SCM x, SCM y)
 {
   if (SCM_I_INUMP (x))
     {
-      long xx = SCM_I_INUM (x);
+      ent xx = SCM_I_INUM (x);
       if (SCM_I_INUMP (y))
 	{
-	  long yy = SCM_I_INUM (y);
+	  ent yy = SCM_I_INUM (y);
 	  if (yy == 0)
 	    scm_num_overflow (s_quotient);
 	  else
 	    {
-	      long z = xx / yy;
+	      ent z = xx / yy;
 	      if (SCM_FIXABLE (z))
 		return SCM_I_MAKINUM (z);
 	      else
-		return scm_i_long2big (z);
+		return scm_i_ent2big (z);
 	    }
 	}
       else if (SCM_BIGP (y))
 	{
 	  if ((SCM_I_INUM (x) == SCM_MOST_NEGATIVE_FIXNUM)
-	      && (mpz_cmp_ui (SCM_I_BIG_MPZ (y),
-                              - SCM_MOST_NEGATIVE_FIXNUM) == 0))
+	      && (mpz_cmp_nat (SCM_I_BIG_MPZ (y),
+			       - SCM_MOST_NEGATIVE_FIXNUM) == 0))
             {
               /* Special case:  x == fixnum-min && y == abs (fixnum-min) */
 	      scm_remember_upto_here_1 (y);
@@ -793,7 +1255,7 @@ scm_quotient (SCM x, SCM y)
     {
       if (SCM_I_INUMP (y))
 	{
-	  long yy = SCM_I_INUM (y);
+	  ent yy = SCM_I_INUM (y);
 	  if (yy == 0)
 	    scm_num_overflow (s_quotient);
 	  else if (yy == 1)
@@ -803,13 +1265,13 @@ scm_quotient (SCM x, SCM y)
 	      SCM result = scm_i_mkbig ();
 	      if (yy < 0)
 		{
-		  mpz_tdiv_q_ui (SCM_I_BIG_MPZ (result),
-				 SCM_I_BIG_MPZ (x),
-				 - yy);
+		  mpz_tdiv_q_nat (SCM_I_BIG_MPZ (result),
+				  SCM_I_BIG_MPZ (x),
+				  - yy);
 		  mpz_neg (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (result));
 		}
 	      else
-		mpz_tdiv_q_ui (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (x), yy);
+		mpz_tdiv_q_nat (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (x), yy);
 	      scm_remember_upto_here_1 (x);
 	      return scm_i_normbig (result);
 	    }
@@ -844,20 +1306,20 @@ scm_remainder (SCM x, SCM y)
     {
       if (SCM_I_INUMP (y))
 	{
-	  long yy = SCM_I_INUM (y);
+	  ent yy = SCM_I_INUM (y);
 	  if (yy == 0)
 	    scm_num_overflow (s_remainder);
 	  else
 	    {
-	      long z = SCM_I_INUM (x) % yy;
+	      ent z = SCM_I_INUM (x) % yy;
 	      return SCM_I_MAKINUM (z);
 	    }
 	}
       else if (SCM_BIGP (y))
 	{
 	  if ((SCM_I_INUM (x) == SCM_MOST_NEGATIVE_FIXNUM)
-	      && (mpz_cmp_ui (SCM_I_BIG_MPZ (y),
-                              - SCM_MOST_NEGATIVE_FIXNUM) == 0))
+	      && (mpz_cmp_nat (SCM_I_BIG_MPZ (y),
+			       - SCM_MOST_NEGATIVE_FIXNUM) == 0))
             {
               /* Special case:  x == fixnum-min && y == abs (fixnum-min) */
 	      scm_remember_upto_here_1 (y);
@@ -873,7 +1335,7 @@ scm_remainder (SCM x, SCM y)
     {
       if (SCM_I_INUMP (y))
 	{
-	  long yy = SCM_I_INUM (y);
+	  ent yy = SCM_I_INUM (y);
 	  if (yy == 0)
 	    scm_num_overflow (s_remainder);
 	  else
@@ -881,7 +1343,7 @@ scm_remainder (SCM x, SCM y)
 	      SCM result = scm_i_mkbig ();
 	      if (yy < 0)
 		yy = - yy;
-	      mpz_tdiv_r_ui (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ(x), yy);
+	      mpz_tdiv_r_nat (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ(x), yy);
 	      scm_remember_upto_here_1 (x);
 	      return scm_i_normbig (result);
 	    }
@@ -915,10 +1377,10 @@ scm_modulo (SCM x, SCM y)
 {
   if (SCM_I_INUMP (x))
     {
-      long xx = SCM_I_INUM (x);
+      ent xx = SCM_I_INUM (x);
       if (SCM_I_INUMP (y))
 	{
-	  long yy = SCM_I_INUM (y);
+	  ent yy = SCM_I_INUM (y);
 	  if (yy == 0)
 	    scm_num_overflow (s_modulo);
 	  else
@@ -926,8 +1388,8 @@ scm_modulo (SCM x, SCM y)
 	      /* C99 specifies that "%" is the remainder corresponding to a
                  quotient rounded towards zero, and that's also traditional
                  for machine division, so z here should be well defined.  */
-	      long z = xx % yy;
-	      long result;
+	      ent z = xx % yy;
+	      ent result;
 
 	      if (yy < 0)
 		{
@@ -957,7 +1419,7 @@ scm_modulo (SCM x, SCM y)
 		{
 		  SCM pos_y = scm_i_clonebig (y, 0);
 		  /* do this after the last scm_op */
-		  mpz_init_set_si (z_x, xx);
+		  mpz_init_set_ent (z_x, xx);
 		  result = pos_y; /* re-use this bignum */
 		  mpz_mod (SCM_I_BIG_MPZ (result),
 			   z_x,
@@ -968,7 +1430,7 @@ scm_modulo (SCM x, SCM y)
 		{
 		  result = scm_i_mkbig ();
 		  /* do this after the last scm_op */
-		  mpz_init_set_si (z_x, xx);
+		  mpz_init_set_ent (z_x, xx);
 		  mpz_mod (SCM_I_BIG_MPZ (result),
 			   z_x,
 			   SCM_I_BIG_MPZ (y));        
@@ -992,18 +1454,18 @@ scm_modulo (SCM x, SCM y)
     {
       if (SCM_I_INUMP (y))
 	{
-	  long yy = SCM_I_INUM (y);
+	  ent yy = SCM_I_INUM (y);
 	  if (yy == 0)
 	    scm_num_overflow (s_modulo);
 	  else
 	    {
 	      SCM result = scm_i_mkbig ();
-	      mpz_mod_ui (SCM_I_BIG_MPZ (result),
-			  SCM_I_BIG_MPZ (x),
-			  (yy < 0) ? - yy : yy);
+	      mpz_mod_nat (SCM_I_BIG_MPZ (result),
+			   SCM_I_BIG_MPZ (x),
+			   (yy < 0) ? - yy : yy);
 	      scm_remember_upto_here_1 (x);
 	      if ((yy < 0) && (mpz_sgn (SCM_I_BIG_MPZ (result)) != 0))
-		mpz_sub_ui (SCM_I_BIG_MPZ (result),
+		mpz_sub_nat (SCM_I_BIG_MPZ (result),
 			    SCM_I_BIG_MPZ (result),
 			    - yy);
 	      return scm_i_normbig (result);
@@ -1049,19 +1511,19 @@ scm_gcd (SCM x, SCM y)
     {
       if (SCM_I_INUMP (y))
         {
-          long xx = SCM_I_INUM (x);
-          long yy = SCM_I_INUM (y);
-          long u = xx < 0 ? -xx : xx;
-          long v = yy < 0 ? -yy : yy;
-          long result;
+          ent xx = SCM_I_INUM (x);
+          ent yy = SCM_I_INUM (y);
+          ent u = xx < 0 ? -xx : xx;
+          ent v = yy < 0 ? -yy : yy;
+          ent result;
           if (xx == 0)
 	    result = v;
 	  else if (yy == 0)
 	    result = u;
 	  else
 	    {
-	      long k = 1;
-	      long t;
+	      ent k = 1;
+	      ent t;
 	      /* Determine a common factor 2^k */
 	      while (!(1 & (u | v)))
 		{
@@ -1091,7 +1553,7 @@ scm_gcd (SCM x, SCM y)
 	    }
           return (SCM_POSFIXABLE (result)
 		  ? SCM_I_MAKINUM (result)
-		  : scm_i_long2big (result));
+		  : scm_i_ent2big (result));
         }
       else if (SCM_BIGP (y))
         {
@@ -1105,19 +1567,19 @@ scm_gcd (SCM x, SCM y)
     {
       if (SCM_I_INUMP (y))
         {
-          unsigned long result;
-          long yy;
+          nat result;
+          ent yy;
         big_inum:
           yy = SCM_I_INUM (y);
           if (yy == 0)
             return scm_abs (x);
           if (yy < 0)
 	    yy = -yy;
-          result = mpz_gcd_ui (NULL, SCM_I_BIG_MPZ (x), yy);
+          result = mpz_gcd_nat (NULL, SCM_I_BIG_MPZ (x), yy);
           scm_remember_upto_here_1 (x);
           return (SCM_POSFIXABLE (result) 
 		  ? SCM_I_MAKINUM (result)
-		  : scm_from_ulong (result));
+		  : scm_from_nat (result));
         }
       else if (SCM_BIGP (y))
         {
@@ -1145,8 +1607,8 @@ scm_lcm (SCM n1, SCM n2)
   if (SCM_UNBNDP (n2))
     {
       if (SCM_UNBNDP (n1))
-        return SCM_I_MAKINUM (1L);
-      n2 = SCM_I_MAKINUM (1L);
+        return SCM_I_MAKINUM ((ent) 1L);
+      n2 = SCM_I_MAKINUM ((ent) 1L);
     }
 
   SCM_GASSERT2 (SCM_I_INUMP (n1) || SCM_BIGP (n1),
@@ -1170,10 +1632,10 @@ scm_lcm (SCM n1, SCM n2)
         inumbig:
           {
             SCM result = scm_i_mkbig ();
-            long nn1 = SCM_I_INUM (n1);
+            ent nn1 = SCM_I_INUM (n1);
             if (nn1 == 0) return SCM_INUM0;
             if (nn1 < 0) nn1 = - nn1;
-            mpz_lcm_ui (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (n2), nn1);
+            mpz_lcm_nat (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (n2), nn1);
             scm_remember_upto_here_1 (n2);
             return result;
           }
@@ -1246,7 +1708,7 @@ SCM_DEFINE1 (scm_logand, "logand", scm_tc7_asubr,
 	     "@end lisp")
 #define FUNC_NAME s_scm_logand
 {
-  long int nn1;
+  ent nn1;
 
   if (SCM_UNBNDP (n2))
     {
@@ -1265,7 +1727,7 @@ SCM_DEFINE1 (scm_logand, "logand", scm_tc7_asubr,
       nn1 = SCM_I_INUM (n1);
       if (SCM_I_INUMP (n2))
 	{
-	  long nn2 = SCM_I_INUM (n2);
+	  ent nn2 = SCM_I_INUM (n2);
 	  return SCM_I_MAKINUM (nn1 & nn2);
 	}
       else if SCM_BIGP (n2)
@@ -1276,7 +1738,7 @@ SCM_DEFINE1 (scm_logand, "logand", scm_tc7_asubr,
 	  {
 	    SCM result_z = scm_i_mkbig ();
 	    mpz_t nn1_z;
-	    mpz_init_set_si (nn1_z, nn1);
+	    mpz_init_set_ent (nn1_z, nn1);
 	    mpz_and (SCM_I_BIG_MPZ (result_z), nn1_z, SCM_I_BIG_MPZ (n2));
 	    scm_remember_upto_here_1 (n2);
 	    mpz_clear (nn1_z);
@@ -1322,7 +1784,7 @@ SCM_DEFINE1 (scm_logior, "logior", scm_tc7_asubr,
 	    "@end lisp")
 #define FUNC_NAME s_scm_logior
 {
-  long int nn1;
+  ent nn1;
 
   if (SCM_UNBNDP (n2))
     {
@@ -1339,7 +1801,7 @@ SCM_DEFINE1 (scm_logior, "logior", scm_tc7_asubr,
       nn1 = SCM_I_INUM (n1);
       if (SCM_I_INUMP (n2))
 	{
-	  long nn2 = SCM_I_INUM (n2);
+	  ent nn2 = SCM_I_INUM (n2);
 	  return SCM_I_MAKINUM (nn1 | nn2);
 	}
       else if (SCM_BIGP (n2))
@@ -1350,7 +1812,7 @@ SCM_DEFINE1 (scm_logior, "logior", scm_tc7_asubr,
 	  {
 	    SCM result_z = scm_i_mkbig ();
 	    mpz_t nn1_z;
-	    mpz_init_set_si (nn1_z, nn1);
+	    mpz_init_set_ent (nn1_z, nn1);
 	    mpz_ior (SCM_I_BIG_MPZ (result_z), nn1_z, SCM_I_BIG_MPZ (n2));
 	    scm_remember_upto_here_1 (n2);
 	    mpz_clear (nn1_z);
@@ -1398,7 +1860,7 @@ SCM_DEFINE1 (scm_logxor, "logxor", scm_tc7_asubr,
 	    "@end lisp")
 #define FUNC_NAME s_scm_logxor
 {
-  long int nn1;
+  ent nn1;
 
   if (SCM_UNBNDP (n2))
     {
@@ -1415,7 +1877,7 @@ SCM_DEFINE1 (scm_logxor, "logxor", scm_tc7_asubr,
       nn1 = SCM_I_INUM (n1);
       if (SCM_I_INUMP (n2))
 	{
-	  long nn2 = SCM_I_INUM (n2);
+	  ent nn2 = SCM_I_INUM (n2);
 	  return SCM_I_MAKINUM (nn1 ^ nn2);
 	}
       else if (SCM_BIGP (n2))
@@ -1424,7 +1886,7 @@ SCM_DEFINE1 (scm_logxor, "logxor", scm_tc7_asubr,
 	  {
 	    SCM result_z = scm_i_mkbig ();
 	    mpz_t nn1_z;
-	    mpz_init_set_si (nn1_z, nn1);
+	    mpz_init_set_ent (nn1_z, nn1);
 	    mpz_xor (SCM_I_BIG_MPZ (result_z), nn1_z, SCM_I_BIG_MPZ (n2));
 	    scm_remember_upto_here_1 (n2);
 	    mpz_clear (nn1_z);
@@ -1473,14 +1935,14 @@ SCM_DEFINE (scm_logtest, "logtest", 2, 0, 0,
 	    "@end lisp")
 #define FUNC_NAME s_scm_logtest
 {
-  long int nj;
+  ent nj;
 
   if (SCM_I_INUMP (j))
     {
       nj = SCM_I_INUM (j);
       if (SCM_I_INUMP (k))
 	{
-	  long nk = SCM_I_INUM (k);
+	  ent nk = SCM_I_INUM (k);
 	  return scm_from_bool (nj & nk);
 	}
       else if (SCM_BIGP (k))
@@ -1491,7 +1953,7 @@ SCM_DEFINE (scm_logtest, "logtest", 2, 0, 0,
 	  {
 	    SCM result;
 	    mpz_t nj_z;
-	    mpz_init_set_si (nj_z, nj);
+	    mpz_init_set_ent (nj_z, nj);
 	    mpz_and (nj_z, nj_z, SCM_I_BIG_MPZ (k));
 	    scm_remember_upto_here_1 (k);
 	    result = scm_from_bool (mpz_sgn (nj_z) != 0);
@@ -1546,14 +2008,14 @@ SCM_DEFINE (scm_logbit_p, "logbit?", 2, 0, 0,
 	    "@end lisp")
 #define FUNC_NAME s_scm_logbit_p
 {
-  unsigned long int iindex;
-  iindex = scm_to_ulong (index);
+  nat iindex;
+  iindex = scm_to_nat (index);
 
   if (SCM_I_INUMP (j))
     {
       /* bits above what's in an inum follow the sign bit */
-      iindex = min (iindex, SCM_LONG_BIT - 1);
-      return scm_from_bool ((1L << iindex) & SCM_I_INUM (j));
+      iindex = min (iindex, SCM_ENT_BIT - 1);
+      return scm_from_bool ((((ent) 1L) << iindex) & SCM_I_INUM (j));
     }
   else if (SCM_BIGP (j))
     {
@@ -1607,7 +2069,7 @@ coerce_to_big (SCM in, mpz_t out)
   if (SCM_BIGP (in))
     mpz_set (out, SCM_I_BIG_MPZ (in));
   else if (SCM_I_INUMP (in))
-    mpz_set_si (out, SCM_I_INUM (in));
+    mpz_set_ent (out, SCM_I_INUM (in));
   else
     return 0;
 
@@ -1734,15 +2196,15 @@ SCM_DEFINE (scm_integer_expt, "integer-expt", 2, 0, 0,
 	    "@end lisp")
 #define FUNC_NAME s_scm_integer_expt
 {
-  long i2 = 0;
+  ent i2 = 0;
   SCM z_i2 = SCM_BOOL_F;
   int i2_is_big = 0;
-  SCM acc = SCM_I_MAKINUM (1L);
+  SCM acc = SCM_I_MAKINUM ((ent) 1L);
 
   /* 0^0 == 1 according to R5RS */
   if (scm_is_eq (n, SCM_INUM0) || scm_is_eq (n, acc))
     return scm_is_false (scm_zero_p(k)) ? n : acc;
-  else if (scm_is_eq (n, SCM_I_MAKINUM (-1L)))
+  else if (scm_is_eq (n, SCM_I_MAKINUM (-((ent) 1L))))
     return scm_is_false (scm_even_p (k)) ? n : acc;
 
   if (SCM_I_INUMP (k))
@@ -1769,7 +2231,7 @@ SCM_DEFINE (scm_integer_expt, "integer-expt", 2, 0, 0,
             {
               return acc;
             }
-          if (mpz_cmp_ui(SCM_I_BIG_MPZ (z_i2), 1) == 0)
+          if (mpz_cmp_nat(SCM_I_BIG_MPZ (z_i2), 1) == 0)
             {
               return scm_product (acc, n);
             }
@@ -1824,12 +2286,12 @@ SCM_DEFINE (scm_ash, "ash", 2, 0, 0,
 	    "@end lisp")
 #define FUNC_NAME s_scm_ash
 {
-  long bits_to_shift;
-  bits_to_shift = scm_to_long (cnt);
+  ent bits_to_shift;
+  bits_to_shift = scm_to_ent (cnt);
 
   if (SCM_I_INUMP (n))
     {
-      long nn = SCM_I_INUM (n);
+      ent nn = SCM_I_INUM (n);
 
       if (bits_to_shift > 0)
         {
@@ -1844,7 +2306,7 @@ SCM_DEFINE (scm_ash, "ash", 2, 0, 0,
             return n;
 
           if (bits_to_shift < SCM_I_FIXNUM_BIT-1
-              && ((unsigned long)
+              && ((nat)
                   (SCM_SRS (nn, (SCM_I_FIXNUM_BIT-1 - bits_to_shift)) + 1)
                   <= 1))
             {
@@ -1852,7 +2314,7 @@ SCM_DEFINE (scm_ash, "ash", 2, 0, 0,
             }
           else
             {
-              SCM result = scm_i_long2big (nn);
+              SCM result = scm_i_ent2big (nn);
               mpz_mul_2exp (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (result),
                             bits_to_shift);
               return result;
@@ -1861,7 +2323,7 @@ SCM_DEFINE (scm_ash, "ash", 2, 0, 0,
       else
         {
           bits_to_shift = -bits_to_shift;
-          if (bits_to_shift >= SCM_LONG_BIT)
+          if (bits_to_shift >= SCM_ENT_BIT)
             return (nn >= 0 ? SCM_I_MAKINUM (0) : SCM_I_MAKINUM(-1));
           else
             return SCM_I_MAKINUM (SCM_SRS (nn, bits_to_shift));
@@ -1915,9 +2377,9 @@ SCM_DEFINE (scm_bit_extract, "bit-extract", 3, 0, 0,
 	    "@end lisp")
 #define FUNC_NAME s_scm_bit_extract
 {
-  unsigned long int istart, iend, bits;
-  istart = scm_to_ulong (start);
-  iend = scm_to_ulong (end);
+  nat istart, iend, bits;
+  istart = scm_to_nat (start);
+  iend = scm_to_nat (end);
   SCM_ASSERT_RANGE (3, end, (iend >= istart));
 
   /* how many bits to keep */
@@ -1925,7 +2387,7 @@ SCM_DEFINE (scm_bit_extract, "bit-extract", 3, 0, 0,
 
   if (SCM_I_INUMP (n))
     {
-      long int in = SCM_I_INUM (n);
+      ent in = SCM_I_INUM (n);
 
       /* When istart>=SCM_I_FIXNUM_BIT we can just limit the shift to
          SCM_I_FIXNUM_BIT-1 to get either 0 or -1 per the sign of "in". */
@@ -1937,7 +2399,7 @@ SCM_DEFINE (scm_bit_extract, "bit-extract", 3, 0, 0,
 	   * special case requires us to produce a result that has
 	   * more bits than can be stored in a fixnum.
 	   */
-          SCM result = scm_i_long2big (in);
+          SCM result = scm_i_ent2big (in);
           mpz_fdiv_r_2exp (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (result),
                            bits);
           return result;
@@ -1945,7 +2407,7 @@ SCM_DEFINE (scm_bit_extract, "bit-extract", 3, 0, 0,
 
       /* mask down to requisite bits */
       bits = min (bits, SCM_I_FIXNUM_BIT);
-      return SCM_I_MAKINUM (in & ((1L << bits) - 1));
+      return SCM_I_MAKINUM (in & ((((nat) 1L) << bits) - 1));
     }
   else if (SCM_BIGP (n))
     {
@@ -1996,8 +2458,8 @@ SCM_DEFINE (scm_logcount, "logcount", 1, 0, 0,
 {
   if (SCM_I_INUMP (n))
     {
-      unsigned long int c = 0;
-      long int nn = SCM_I_INUM (n);
+      nat c = 0;
+      ent nn = SCM_I_INUM (n);
       if (nn < 0)
         nn = -1 - nn;
       while (nn)
@@ -2009,7 +2471,7 @@ SCM_DEFINE (scm_logcount, "logcount", 1, 0, 0,
     }
   else if (SCM_BIGP (n))
     {
-      unsigned long count;
+      nat count;
       if (mpz_sgn (SCM_I_BIG_MPZ (n)) >= 0)
         count = mpz_popcount (SCM_I_BIG_MPZ (n));
       else
@@ -2044,9 +2506,9 @@ SCM_DEFINE (scm_integer_length, "integer-length", 1, 0, 0,
 {
   if (SCM_I_INUMP (n))
     {
-      unsigned long int c = 0;
+      nat c = 0;
       unsigned int l = 4;
-      long int nn = SCM_I_INUM (n);
+      ent nn = SCM_I_INUM (n);
       if (nn < 0)
 	nn = -1 - nn;
       while (nn)
@@ -2065,7 +2527,7 @@ SCM_DEFINE (scm_integer_length, "integer-length", 1, 0, 0,
       size_t size = mpz_sizeinbase (SCM_I_BIG_MPZ (n), 2);
       if (mpz_sgn (SCM_I_BIG_MPZ (n)) < 0
 	  && mpz_scan0 (SCM_I_BIG_MPZ (n),  /* no 0 bits above the lowest 1 */
-			mpz_scan1 (SCM_I_BIG_MPZ (n), 0)) == ULONG_MAX)
+			mpz_scan1 (SCM_I_BIG_MPZ (n), 0)) == -((mp_bitcnt_t) 1))
 	size--;
       scm_remember_upto_here_1 (n);
       return SCM_I_MAKINUM (size);
@@ -3266,10 +3728,10 @@ scm_num_eq_p (SCM x, SCM y)
  again:
   if (SCM_I_INUMP (x))
     {
-      long xx = SCM_I_INUM (x);
+      ent xx = SCM_I_INUM (x);
       if (SCM_I_INUMP (y))
 	{
-	  long yy = SCM_I_INUM (y);
+	  ent yy = SCM_I_INUM (y);
 	  return scm_from_bool (xx == yy);
 	}
       else if (SCM_BIGP (y))
@@ -3294,7 +3756,7 @@ scm_num_eq_p (SCM x, SCM y)
           double yy = SCM_REAL_VALUE (y);
           return scm_from_bool ((double) xx == yy
 				&& (DBL_MANT_DIG >= SCM_I_FIXNUM_BIT-1
-				    || xx == (long) yy));
+				    || xx == (ent) yy));
         }
       else if (SCM_COMPLEXP (y))
 	return scm_from_bool (((double) xx == SCM_COMPLEX_REAL (y))
@@ -3345,10 +3807,10 @@ scm_num_eq_p (SCM x, SCM y)
       if (SCM_I_INUMP (y))
         {
           /* see comments with inum/real above */
-          long yy = SCM_I_INUM (y);
+          ent yy = SCM_I_INUM (y);
           return scm_from_bool (xx == (double) yy
 				&& (DBL_MANT_DIG >= SCM_I_FIXNUM_BIT-1
-				    || (long) xx == yy));
+				    || (ent) xx == yy));
         }
       else if (SCM_BIGP (y))
 	{
@@ -3470,10 +3932,10 @@ scm_less_p (SCM x, SCM y)
  again:
   if (SCM_I_INUMP (x))
     {
-      long xx = SCM_I_INUM (x);
+      ent xx = SCM_I_INUM (x);
       if (SCM_I_INUMP (y))
 	{
-	  long yy = SCM_I_INUM (y);
+	  ent yy = SCM_I_INUM (y);
 	  return scm_from_bool (xx < yy);
 	}
       else if (SCM_BIGP (y))
@@ -3742,10 +4204,10 @@ scm_max (SCM x, SCM y)
   
   if (SCM_I_INUMP (x))
     {
-      long xx = SCM_I_INUM (x);
+      ent xx = SCM_I_INUM (x);
       if (SCM_I_INUMP (y))
 	{
-	  long yy = SCM_I_INUM (y);
+	  ent yy = SCM_I_INUM (y);
 	  return (xx < yy) ? y : x;
 	}
       else if (SCM_BIGP (y))
@@ -3874,10 +4336,10 @@ scm_min (SCM x, SCM y)
   
   if (SCM_I_INUMP (x))
     {
-      long xx = SCM_I_INUM (x);
+      ent xx = SCM_I_INUM (x);
       if (SCM_I_INUMP (y))
 	{
-	  long yy = SCM_I_INUM (y);
+	  ent yy = SCM_I_INUM (y);
 	  return (xx < yy) ? x : y;
 	}
       else if (SCM_BIGP (y))
@@ -4006,10 +4468,10 @@ scm_sum (SCM x, SCM y)
     {
       if (SCM_LIKELY (SCM_I_INUMP (y)))
         {
-          long xx = SCM_I_INUM (x);
-          long yy = SCM_I_INUM (y);
-          long int z = xx + yy;
-          return SCM_FIXABLE (z) ? SCM_I_MAKINUM (z) : scm_i_long2big (z);
+          ent xx = SCM_I_INUM (x);
+          ent yy = SCM_I_INUM (y);
+          ent z = xx + yy;
+          return SCM_FIXABLE (z) ? SCM_I_MAKINUM (z) : scm_i_ent2big (z);
         }
       else if (SCM_BIGP (y))
         {
@@ -4018,12 +4480,12 @@ scm_sum (SCM x, SCM y)
         }
       else if (SCM_REALP (y))
         {
-          long int xx = SCM_I_INUM (x);
+          ent xx = SCM_I_INUM (x);
           return scm_from_double (xx + SCM_REAL_VALUE (y));
         }
       else if (SCM_COMPLEXP (y))
         {
-          long int xx = SCM_I_INUM (x);
+          ent xx = SCM_I_INUM (x);
           return scm_c_make_rectangular (xx + SCM_COMPLEX_REAL (y),
                                    SCM_COMPLEX_IMAG (y));
         }
@@ -4037,7 +4499,7 @@ scm_sum (SCM x, SCM y)
       {
 	if (SCM_I_INUMP (y))
 	  {
-	    long int inum;
+	    ent inum;
 	    int bigsgn;
 	  add_big_inum:
 	    inum = SCM_I_INUM (y);      
@@ -4047,7 +4509,7 @@ scm_sum (SCM x, SCM y)
 	    if (inum < 0)
 	      {
 		SCM result = scm_i_mkbig ();
-		mpz_sub_ui (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (x), - inum);
+		mpz_sub_nat (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (x), - inum);
 		scm_remember_upto_here_1 (x);
 		/* we know the result will have to be a bignum */
 		if (bigsgn == -1)
@@ -4057,7 +4519,7 @@ scm_sum (SCM x, SCM y)
 	    else
 	      {
 		SCM result = scm_i_mkbig ();
-		mpz_add_ui (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (x), inum);
+		mpz_add_nat (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (x), inum);
 		scm_remember_upto_here_1 (x);
 		/* we know the result will have to be a bignum */
 		if (bigsgn == 1)
@@ -4196,11 +4658,11 @@ scm_difference (SCM x, SCM y)
       else 
         if (SCM_I_INUMP (x))
           {
-            long xx = -SCM_I_INUM (x);
+            ent xx = -SCM_I_INUM (x);
             if (SCM_FIXABLE (xx))
               return SCM_I_MAKINUM (xx);
             else
-              return scm_i_long2big (xx);
+              return scm_i_ent2big (xx);
           }
         else if (SCM_BIGP (x))
           /* Must scm_i_normbig here because -SCM_MOST_NEGATIVE_FIXNUM is a
@@ -4222,18 +4684,18 @@ scm_difference (SCM x, SCM y)
     {
       if (SCM_LIKELY (SCM_I_INUMP (y)))
 	{
-	  long int xx = SCM_I_INUM (x);
-	  long int yy = SCM_I_INUM (y);
-	  long int z = xx - yy;
+	  ent xx = SCM_I_INUM (x);
+	  ent yy = SCM_I_INUM (y);
+	  ent z = xx - yy;
 	  if (SCM_FIXABLE (z))
 	    return SCM_I_MAKINUM (z);
 	  else
-	    return scm_i_long2big (z);
+	    return scm_i_ent2big (z);
 	}
       else if (SCM_BIGP (y))
 	{
 	  /* inum-x - big-y */
-	  long xx = SCM_I_INUM (x);
+	  ent xx = SCM_I_INUM (x);
 
 	  if (xx == 0)
 	    return scm_i_clonebig (y, 0);
@@ -4243,11 +4705,11 @@ scm_difference (SCM x, SCM y)
 	      SCM result = scm_i_mkbig ();
 
 	      if (xx >= 0)
-		mpz_ui_sub (SCM_I_BIG_MPZ (result), xx, SCM_I_BIG_MPZ (y));
+		mpz_nat_sub (SCM_I_BIG_MPZ (result), xx, SCM_I_BIG_MPZ (y));
 	      else
 		{
 		  /* x - y == -(y + -x) */
-		  mpz_add_ui (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (y), -xx);
+		  mpz_add_nat (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (y), -xx);
 		  mpz_neg (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (result));
 		}
 	      scm_remember_upto_here_1 (y);
@@ -4261,12 +4723,12 @@ scm_difference (SCM x, SCM y)
 	}
       else if (SCM_REALP (y))
 	{
-	  long int xx = SCM_I_INUM (x);
+	  ent xx = SCM_I_INUM (x);
 	  return scm_from_double (xx - SCM_REAL_VALUE (y));
 	}
       else if (SCM_COMPLEXP (y))
 	{
-	  long int xx = SCM_I_INUM (x);
+	  ent xx = SCM_I_INUM (x);
 	  return scm_c_make_rectangular (xx - SCM_COMPLEX_REAL (y),
 				   - SCM_COMPLEX_IMAG (y));
 	}
@@ -4283,21 +4745,21 @@ scm_difference (SCM x, SCM y)
       if (SCM_I_INUMP (y))
 	{
 	  /* big-x - inum-y */
-	  long yy = SCM_I_INUM (y);
+	  ent yy = SCM_I_INUM (y);
 	  int sgn_x = mpz_sgn (SCM_I_BIG_MPZ (x));
 
 	  scm_remember_upto_here_1 (x);
 	  if (sgn_x == 0)
 	    return (SCM_FIXABLE (-yy) ?
-		    SCM_I_MAKINUM (-yy) : scm_from_long (-yy));
+		    SCM_I_MAKINUM (-yy) : scm_from_ent (-yy));
 	  else
 	    {
 	      SCM result = scm_i_mkbig ();
 
 	      if (yy >= 0)
-		mpz_sub_ui (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (x), yy);
+		mpz_sub_nat (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (x), yy);
 	      else
-		mpz_add_ui (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (x), -yy);
+		mpz_add_nat (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (x), -yy);
 	      scm_remember_upto_here_1 (x);
 
 	      if ((sgn_x < 0 && (yy > 0)) || ((sgn_x > 0) && yy < 0))
@@ -4436,7 +4898,7 @@ scm_product (SCM x, SCM y)
   if (SCM_UNLIKELY (SCM_UNBNDP (y)))
     {
       if (SCM_UNBNDP (x))
-	return SCM_I_MAKINUM (1L);
+	return SCM_I_MAKINUM ((ent) 1L);
       else if (SCM_NUMBERP (x))
 	return x;
       else
@@ -4445,7 +4907,7 @@ scm_product (SCM x, SCM y)
   
   if (SCM_LIKELY (SCM_I_INUMP (x)))
     {
-      long xx;
+      ent xx;
 
     intbig:
       xx = SCM_I_INUM (x);
@@ -4458,22 +4920,31 @@ scm_product (SCM x, SCM y)
 
       if (SCM_LIKELY (SCM_I_INUMP (y)))
 	{
-	  long yy = SCM_I_INUM (y);
-	  long kk = xx * yy;
+	  ent yy = SCM_I_INUM (y);
+#ifdef HAVE_BUILTIN_MUL_ENT_OVERFLOW
+	  ent kk;
+	  int overflow= builtin_mul_ent_overflow (xx, yy, &kk);
+#else
+	  ent kk = xx * yy;
+#endif
 	  SCM k = SCM_I_MAKINUM (kk);
+#ifdef HAVE_BUILTIN_MUL_ENT_OVERFLOW
+	  if ((!overflow) && (kk == SCM_I_INUM (k)))
+#else
 	  if ((kk == SCM_I_INUM (k)) && (kk / xx == yy))
+#endif
 	    return k;
 	  else
 	    {
-	      SCM result = scm_i_long2big (xx);
-	      mpz_mul_si (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (result), yy);
+	      SCM result = scm_i_ent2big (xx);
+	      mpz_mul_ent (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (result), yy);
 	      return scm_i_normbig (result);
 	    }
 	}
       else if (SCM_BIGP (y))
 	{
 	  SCM result = scm_i_mkbig ();
-	  mpz_mul_si (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (y), xx);
+	  mpz_mul_ent (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (y), xx);
 	  scm_remember_upto_here_1 (y);
 	  return result;
 	}
@@ -4662,7 +5133,7 @@ scm_i_divide (SCM x, SCM y, int inexact)
 	SCM_WTA_DISPATCH_0 (g_divide, s_divide);
       else if (SCM_I_INUMP (x))
 	{
-	  long xx = SCM_I_INUM (x);
+	  ent xx = SCM_I_INUM (x);
 	  if (xx == 1 || xx == -1)
 	    return x;
 #ifndef ALLOW_DIVIDE_BY_EXACT_ZERO
@@ -4718,10 +5189,10 @@ scm_i_divide (SCM x, SCM y, int inexact)
 
   if (SCM_LIKELY (SCM_I_INUMP (x)))
     {
-      long xx = SCM_I_INUM (x);
+      ent xx = SCM_I_INUM (x);
       if (SCM_LIKELY (SCM_I_INUMP (y)))
 	{
-	  long yy = SCM_I_INUM (y);
+	  ent yy = SCM_I_INUM (y);
 	  if (yy == 0)
 	    {
 #ifndef ALLOW_DIVIDE_BY_EXACT_ZERO
@@ -4738,11 +5209,11 @@ scm_i_divide (SCM x, SCM y, int inexact)
 	    }
 	  else
 	    {
-	      long z = xx / yy;
+	      ent z = xx / yy;
 	      if (SCM_FIXABLE (z))
 		return SCM_I_MAKINUM (z);
 	      else
-		return scm_i_long2big (z);
+		return scm_i_ent2big (z);
 	    }
 	}
       else if (SCM_BIGP (y))
@@ -4793,7 +5264,7 @@ scm_i_divide (SCM x, SCM y, int inexact)
     {
       if (SCM_I_INUMP (y))
 	{
-	  long int yy = SCM_I_INUM (y);
+	  ent yy = SCM_I_INUM (y);
 	  if (yy == 0)
 	    {
 #ifndef ALLOW_DIVIDE_BY_EXACT_ZERO
@@ -4816,13 +5287,13 @@ scm_i_divide (SCM x, SCM y, int inexact)
 		 middle ground: test, then if divisible, use the faster div
 		 func. */
 
-	      long abs_yy = yy < 0 ? -yy : yy;
-	      int divisible_p = mpz_divisible_ui_p (SCM_I_BIG_MPZ (x), abs_yy);
+	      ent abs_yy = yy < 0 ? -yy : yy;
+	      int divisible_p = mpz_divisible_nat_p (SCM_I_BIG_MPZ (x), abs_yy);
 
 	      if (divisible_p)
 		{
 		  SCM result = scm_i_mkbig ();
-		  mpz_divexact_ui (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (x), abs_yy);
+		  mpz_divexact_nat (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (x), abs_yy);
 		  scm_remember_upto_here_1 (x);
 		  if (yy < 0)
 		    mpz_neg (SCM_I_BIG_MPZ (result), SCM_I_BIG_MPZ (result));
@@ -4907,7 +5378,7 @@ scm_i_divide (SCM x, SCM y, int inexact)
       double rx = SCM_REAL_VALUE (x);
       if (SCM_I_INUMP (y))
 	{
-	  long int yy = SCM_I_INUM (y);
+	  ent yy = SCM_I_INUM (y);
 #ifndef ALLOW_DIVIDE_BY_EXACT_ZERO
 	  if (yy == 0)
 	    scm_num_overflow (s_divide);
@@ -4947,7 +5418,7 @@ scm_i_divide (SCM x, SCM y, int inexact)
       double ix = SCM_COMPLEX_IMAG (x);
       if (SCM_I_INUMP (y))
 	{
-	  long int yy = SCM_I_INUM (y);
+	  ent yy = SCM_I_INUM (y);
 #ifndef ALLOW_DIVIDE_BY_EXACT_ZERO
 	  if (yy == 0)
 	    scm_num_overflow (s_divide);
@@ -5003,7 +5474,7 @@ scm_i_divide (SCM x, SCM y, int inexact)
     {
       if (SCM_I_INUMP (y)) 
 	{
-	  long int yy = SCM_I_INUM (y);
+	  ent yy = SCM_I_INUM (y);
 #ifndef ALLOW_DIVIDE_BY_EXACT_ZERO
 	  if (yy == 0)
 	    scm_num_overflow (s_divide);
@@ -5508,13 +5979,13 @@ scm_magnitude (SCM z)
 {
   if (SCM_I_INUMP (z))
     {
-      long int zz = SCM_I_INUM (z);
+      ent zz = SCM_I_INUM (z);
       if (zz >= 0)
 	return z;
       else if (SCM_POSFIXABLE (-zz))
 	return SCM_I_MAKINUM (-zz);
       else
-	return scm_i_long2big (-zz);
+	return scm_i_ent2big (-zz);
     }
   else if (SCM_BIGP (z))
     {
@@ -5739,11 +6210,11 @@ scm_is_signed_integer (SCM val, scm_t_intmax min, scm_t_intmax max)
     {
       if (min >= SCM_MOST_NEGATIVE_FIXNUM && max <= SCM_MOST_POSITIVE_FIXNUM)
 	return 0;
-      else if (min >= LONG_MIN && max <= LONG_MAX)
+      else if (min >= ENT_MIN && max <= ENT_MAX)
 	{
-	  if (mpz_fits_slong_p (SCM_I_BIG_MPZ (val)))
+	  if (mpz_fits_ent_p (SCM_I_BIG_MPZ (val)))
 	    {
-	      long n = mpz_get_si (SCM_I_BIG_MPZ (val));
+	      ent n = mpz_get_ent (SCM_I_BIG_MPZ (val));
 	      return n >= min && n <= max;
 	    }
 	  else
@@ -5792,11 +6263,11 @@ scm_is_unsigned_integer (SCM val, scm_t_uintmax min, scm_t_uintmax max)
     {
       if (max <= SCM_MOST_POSITIVE_FIXNUM)
 	return 0;
-      else if (max <= ULONG_MAX)
+      else if (max <= NAT_MAX)
 	{
-	  if (mpz_fits_ulong_p (SCM_I_BIG_MPZ (val)))
+	  if (mpz_fits_nat_p (SCM_I_BIG_MPZ (val)))
 	    {
-	      unsigned long n = mpz_get_ui (SCM_I_BIG_MPZ (val));
+	      nat n = mpz_get_nat (SCM_I_BIG_MPZ (val));
 	      return n >= min && n <= max;
 	    }
 	  else
@@ -5918,7 +6389,7 @@ void
 scm_to_mpz (SCM val, mpz_t rop)
 {
   if (SCM_I_INUMP (val))
-    mpz_set_si (rop, SCM_I_INUM (val));
+    mpz_set_ent (rop, SCM_I_INUM (val));
   else if (SCM_BIGP (val))
     mpz_set (rop, SCM_I_BIG_MPZ (val));
   else
@@ -5969,7 +6440,7 @@ scm_from_double (double val)
 #if SCM_ENABLE_DISCOURAGED == 1
 
 float
-scm_num2float (SCM num, unsigned long int pos, const char *s_caller)
+scm_num2float (SCM num, nat pos, const char *s_caller)
 {
   if (SCM_BIGP (num))
     {
@@ -5984,7 +6455,7 @@ scm_num2float (SCM num, unsigned long int pos, const char *s_caller)
 }
 
 double
-scm_num2double (SCM num, unsigned long int pos, const char *s_caller)
+scm_num2double (SCM num, nat pos, const char *s_caller)
 {
   if (SCM_BIGP (num))
     {
@@ -6194,7 +6665,7 @@ scm_init_numbers ()
 {
   int i;
 
-  mpz_init_set_si (z_negative_one, -1);
+  mpz_init_set_ent (z_negative_one, -((ent) 1));
 
   /* It may be possible to tune the performance of some algorithms by using
    * the following constants to avoid the creation of bignums.  Please, before

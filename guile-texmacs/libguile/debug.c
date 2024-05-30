@@ -486,7 +486,7 @@ static int
 debugobj_print (SCM obj, SCM port, scm_print_state *pstate SCM_UNUSED)
 {
   scm_puts ("#<debug-object ", port);
-  scm_intprint ((long) SCM_DEBUGOBJ_FRAME (obj), 16, port);
+  scm_intprint ((ent) SCM_DEBUGOBJ_FRAME (obj), 16, port);
   scm_putc ('>', port);
   return 1;
 }

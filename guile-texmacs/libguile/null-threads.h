@@ -60,14 +60,15 @@
 
 /* Condition variables
  */
+SCM_API int null_thread_cond_wait_abort (void);
 #define SCM_I_PTHREAD_COND_INITIALIZER      0
 #define scm_i_pthread_cond_t                int
 #define scm_i_pthread_cond_init(c,a)        (*(c) = 0)
 #define scm_i_pthread_cond_destroy(c)       do { (void)(c); } while(0)
 #define scm_i_pthread_cond_signal(c)        (*(c) = 1)
 #define scm_i_pthread_cond_broadcast(c)     (*(c) = 1)
-#define scm_i_pthread_cond_wait(c,m)        (abort(), 0)
-#define scm_i_pthread_cond_timedwait(c,m,t) (abort(), 0)
+#define scm_i_pthread_cond_wait(c,m)        null_thread_cond_wait_abort ()
+#define scm_i_pthread_cond_timedwait(c,m,t) null_thread_cond_wait_abort ()
 
 /* Onces
  */

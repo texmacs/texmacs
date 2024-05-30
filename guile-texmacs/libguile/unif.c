@@ -239,7 +239,7 @@ scm_i_get_old_prototype (SCM uvec)
 }
 
 SCM
-scm_make_uve (long k, SCM prot)
+scm_make_uve (ent k, SCM prot)
 #define FUNC_NAME "scm_make_uve"
 {
   scm_c_issue_deprecation_warning
@@ -712,23 +712,23 @@ scm_i_shap2ra (SCM args)
       spec = SCM_CAR (args);
       if (scm_is_integer (spec))
 	{
-	  if (scm_to_long (spec) < 0)
+	  if (scm_to_ent (spec) < 0)
 	    scm_misc_error (NULL, s_bad_spec, SCM_EOL);
 	  s->lbnd = 0;
-	  s->ubnd = scm_to_long (spec) - 1;
+	  s->ubnd = scm_to_ent (spec) - 1;
 	  s->inc = 1;
 	}
       else
 	{
 	  if (!scm_is_pair (spec) || !scm_is_integer (SCM_CAR (spec)))
 	    scm_misc_error (NULL, s_bad_spec, SCM_EOL);
-	  s->lbnd = scm_to_long (SCM_CAR (spec));
+	  s->lbnd = scm_to_ent (SCM_CAR (spec));
 	  sp = SCM_CDR (spec);
 	  if (!scm_is_pair (sp) 
 	      || !scm_is_integer (SCM_CAR (sp))
 	      || !scm_is_null (SCM_CDR (sp)))
 	    scm_misc_error (NULL, s_bad_spec, SCM_EOL);
-	  s->ubnd = scm_to_long (SCM_CAR (sp));
+	  s->ubnd = scm_to_ent (SCM_CAR (sp));
 	  s->inc = 1;
 	}
     }
@@ -820,7 +820,7 @@ scm_i_ra_set_contp (SCM ra)
   size_t k = SCM_I_ARRAY_NDIM (ra);
   if (k)
     {
-      long inc = SCM_I_ARRAY_DIMS (ra)[k - 1].inc;
+      ent inc = SCM_I_ARRAY_DIMS (ra)[k - 1].inc;
       while (k--)
 	{
 	  if (inc != SCM_I_ARRAY_DIMS (ra)[k].inc)
@@ -861,7 +861,7 @@ SCM_DEFINE (scm_make_shared_array, "make-shared-array", 2, 0, 1,
   SCM imap;
   size_t k;
   ssize_t i;
-  long old_base, old_min, new_min, old_max, new_max;
+  ent old_base, old_min, new_min, old_max, new_max;
   scm_t_array_dim *s;
 
   SCM_VALIDATE_REST_ARGUMENT (dims);
@@ -895,7 +895,7 @@ SCM_DEFINE (scm_make_shared_array, "make-shared-array", 2, 0, 1,
   s = SCM_I_ARRAY_DIMS (ra);
   for (k = 0; k < SCM_I_ARRAY_NDIM (ra); k++)
     {
-      inds = scm_cons (scm_from_long (s[k].lbnd), inds);
+      inds = scm_cons (scm_from_ent (s[k].lbnd), inds);
       if (s[k].ubnd < s[k].lbnd)
 	{
 	  if (1 == SCM_I_ARRAY_NDIM (ra))
@@ -1155,11 +1155,11 @@ SCM_DEFINE (scm_array_in_bounds_p, "array-in-bounds?", 1, 0, 1,
 
       for (k = 0; k < ndim; k++)
 	{
-	  long ind;
+	  ent ind;
 
 	  if (!scm_is_pair (args))
 	    SCM_WRONG_NUM_ARGS ();
-	  ind = scm_to_long (SCM_CAR (args));
+	  ind = scm_to_ent (SCM_CAR (args));
 	  args = SCM_CDR (args);
 
 	  if (ind < s[k].lbnd || ind > s[k].ubnd)
@@ -1178,11 +1178,11 @@ SCM_DEFINE (scm_array_in_bounds_p, "array-in-bounds?", 1, 0, 1,
 	 vectors are guaranteed to be zero-origin here.
       */
 
-      long ind;
+      ent ind;
 
       if (!scm_is_pair (args))
 	SCM_WRONG_NUM_ARGS ();
-      ind = scm_to_long (SCM_CAR (args));
+      ind = scm_to_ent (SCM_CAR (args));
       args = SCM_CDR (args);
       res = scm_from_bool (ind >= 0
 			   && ind < scm_c_generalized_vector_length (v));
@@ -1286,8 +1286,8 @@ SCM_DEFINE (scm_array_contents, "array-contents", 1, 1, 0,
 	  if (scm_is_bitvector (SCM_I_ARRAY_V (ra)))
 	    {
 	      if (len != scm_c_bitvector_length (SCM_I_ARRAY_V (ra)) ||
-		  SCM_I_ARRAY_BASE (ra) % SCM_LONG_BIT ||
-		  len % SCM_LONG_BIT)
+		  SCM_I_ARRAY_BASE (ra) % SCM_ENT_BIT ||
+		  len % SCM_ENT_BIT)
 		return SCM_BOOL_F;
 	    }
 	}
@@ -1319,7 +1319,7 @@ SCM
 scm_ra2contig (SCM ra, int copy)
 {
   SCM ret;
-  long inc = 1;
+  ent inc = 1;
   size_t k, len = 1;
   for (k = SCM_I_ARRAY_NDIM (ra); k--;)
     len *= SCM_I_ARRAY_DIMS (ra)[k].ubnd - SCM_I_ARRAY_DIMS (ra)[k].lbnd + 1;
@@ -1329,8 +1329,8 @@ scm_ra2contig (SCM ra, int copy)
       if (!scm_is_bitvector (SCM_I_ARRAY_V (ra)))
 	return ra;
       if ((len == scm_c_bitvector_length (SCM_I_ARRAY_V (ra)) &&
-	   0 == SCM_I_ARRAY_BASE (ra) % SCM_LONG_BIT &&
-	   0 == len % SCM_LONG_BIT))
+	   0 == SCM_I_ARRAY_BASE (ra) % SCM_ENT_BIT &&
+	   0 == len % SCM_ENT_BIT))
 	return ra;
     }
   ret = scm_i_make_ra (k, 0);
@@ -1652,7 +1652,7 @@ scm_c_bitvector_ref (SCM vec, size_t idx)
       if (idx >= BITVECTOR_LENGTH (vec))
 	scm_out_of_range (NULL, scm_from_size_t (idx));
       bits = BITVECTOR_BITS(vec);
-      return scm_from_bool (bits[idx/32] & (1L << (idx%32)));
+      return scm_from_bool (bits[idx/32] & (((ent) 1L) << (idx%32)));
     }
   else
     {
@@ -1664,7 +1664,7 @@ scm_c_bitvector_ref (SCM vec, size_t idx)
       if (idx >= len)
 	scm_out_of_range (NULL, scm_from_size_t (idx));
       idx = idx*inc + off;
-      res = scm_from_bool (bits[idx/32] & (1L << (idx%32)));
+      res = scm_from_bool (bits[idx/32] & (((ent) 1L) << (idx%32)));
       scm_array_handle_release (&handle);
       return res;
     }
@@ -1703,7 +1703,7 @@ scm_c_bitvector_set_x (SCM vec, size_t idx, SCM val)
       idx = idx*inc + off;
     }
 
-  mask = 1L << (idx%32);
+  mask = ((ent) 1L) << (idx%32);
   if (scm_is_true (val))
     bits[idx/32] |= mask;
   else
@@ -2265,7 +2265,7 @@ scm_istr2bve (SCM str)
       j = len - k * 32;
       if (j > 32)
 	j = 32;
-      for (mask = 1L; j--; mask <<= 1)
+      for (mask = (ent) 1L; j--; mask <<= 1)
 	switch (*c_str++)
 	  {
 	  case '0':
@@ -2288,10 +2288,10 @@ scm_istr2bve (SCM str)
 
 
 static SCM 
-ra2l (SCM ra, unsigned long base, unsigned long k)
+ra2l (SCM ra, nat base, nat k)
 {
   SCM res = SCM_EOL;
-  long inc;
+  ent inc;
   size_t i;
   int enclosed = SCM_I_ENCLOSED_ARRAYP (ra);
   
@@ -2434,7 +2434,7 @@ l2ra (SCM lst, scm_t_array_handle *handle, ssize_t pos, size_t k)
       if (!scm_is_null (lst))
 	errmsg = "too many elements for array dimension ~a, want ~a";
       if (errmsg)
-	scm_misc_error (NULL, errmsg, scm_list_2 (scm_from_ulong (k),
+	scm_misc_error (NULL, errmsg, scm_list_2 (scm_from_nat (k),
 						  scm_from_size_t (len)));
     }
 }
@@ -2469,7 +2469,7 @@ scm_i_print_array_dimension (SCM array, int dim, int base, int enclosed,
 			     SCM port, scm_print_state *pstate)
 {
   scm_t_array_dim *dim_spec = SCM_I_ARRAY_DIMS (array) + dim;
-  long idx;
+  ent idx;
 
   scm_putc ('(', port);
 
@@ -2496,11 +2496,11 @@ scm_i_print_array_dimension (SCM array, int dim, int base, int enclosed,
 static int
 scm_i_print_array (SCM array, SCM port, scm_print_state *pstate)
 {
-  long ndim = SCM_I_ARRAY_NDIM (array);
+  ent ndim = SCM_I_ARRAY_NDIM (array);
   scm_t_array_dim *dim_specs = SCM_I_ARRAY_DIMS (array);
   SCM v = SCM_I_ARRAY_V (array);
-  unsigned long base = SCM_I_ARRAY_BASE (array);
-  long i;
+  nat base = SCM_I_ARRAY_BASE (array);
+  ent i;
   int print_lbnds = 0, zero_size = 0, print_lens = 0;
 
   scm_putc ('#', port);
@@ -2676,7 +2676,7 @@ SCM
 scm_i_read_array (SCM port, int c)
 {
   ssize_t rank;
-  int got_rank;
+  int got_rank; (void) got_rank;
   char tag[80];
   int tag_len;
 
@@ -2877,7 +2877,7 @@ scm_shap2ra (SCM args, const char *what)
 }
 
 SCM
-scm_cvref (SCM v, unsigned long pos, SCM last)
+scm_cvref (SCM v, nat pos, SCM last)
 {
   scm_c_issue_deprecation_warning
     ("scm_cvref is deprecated.  Use scm_c_generalized_vector_ref instead.");
@@ -2892,7 +2892,7 @@ scm_ra_set_contp (SCM ra)
   scm_i_ra_set_contp (ra);
 }
 
-long 
+ent
 scm_aind (SCM ra, SCM args, const char *what)
 {
   scm_t_array_handle handle;

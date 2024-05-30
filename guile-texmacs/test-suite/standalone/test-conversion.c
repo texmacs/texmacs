@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
+#include <stdint.h>
 
 #ifdef HAVE_INTTYPES_H
 # include <inttypes.h>
@@ -730,17 +731,17 @@ test_int_sizes ()
 
   TEST_7S (scm_from_int8, -128, "-128");
   TEST_7S (scm_from_int8,  127,  "127");
-  TEST_7S (scm_from_int8,  128, "-128");
+  TEST_7S (scm_from_int8,  (int8_t) 128, "-128");
   TEST_7U (scm_from_uint8, 255,  "255");
 
   TEST_7S (scm_from_int16, -32768, "-32768");
   TEST_7S (scm_from_int16,  32767,  "32767");
-  TEST_7S (scm_from_int16,  32768, "-32768");
+  TEST_7S (scm_from_int16,  (int16_t) 32768, "-32768");
   TEST_7U (scm_from_uint16, 65535,  "65535");
 
   TEST_7S (scm_from_int32,  SCM_T_INT32_MIN,     "-2147483648");
   TEST_7S (scm_from_int32,  SCM_T_INT32_MAX,      "2147483647");
-  TEST_7S (scm_from_int32,  SCM_T_INT32_MAX+1LL, "-2147483648");
+  TEST_7S (scm_from_int32,  (int32_t) (SCM_T_INT32_MAX+1LL), "-2147483648");
   TEST_7U (scm_from_uint32, SCM_T_UINT32_MAX,     "4294967295");
 
   TEST_7S (scm_from_int64,  SCM_T_INT64_MIN,  "-9223372036854775808");

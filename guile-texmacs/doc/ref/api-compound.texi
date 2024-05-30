@@ -905,7 +905,7 @@ Sets the element at position @var{idx} in the simple vector
 @end deftypefn
 
 @deftypefn {C Function} {const SCM *} scm_vector_elements (SCM vec, scm_t_array_handle *handle, size_t *lenp, ssize_t *incp)
-Acquire a handle for the vector @var{vec} and return a pointer to the
+Acquire a handle for the vector @var{vec} and return a pointer to the
 elements of it.  This pointer can only be used to read the elements of
 @var{vec}.  When @var{vec} is not a vector, an error is signaled.  The
 handle mustr eventually be released with

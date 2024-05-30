@@ -1,5 +1,24 @@
 -*- text -*-
 
+*** Changes of March 2024 for version guile-texmacs-1.8.8
+
+The present version guile-texmacs-1.8.8 is derived from
+
+  https://ftp.gnu.org/gnu/guile/guile-1.8.8.tar.gz
+
+It its intended to be used to cross compile GNU TeXmacs
+(https://www.texmacs.org) for new platforms: Android, Mingw64.
+
+- The build scripts have been updated for autoconf 2.71.
+- The compilation of readline has been droped for Mingw and Android.
+- Changes have been made in the source code in order to support
+  Mingw64 and Android.
+- Various updates have been applied in order to compile the documentation
+  and tests.
+
+*** End of changes of March 2024
+
+
 Starting from September 1st, 2008, the Guile project no longer stores
 change logs in `ChangeLog' files.  Instead, changes are detailed in the
 version control system's logs.  They can be seen by downloading a copy

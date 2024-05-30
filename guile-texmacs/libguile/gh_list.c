@@ -27,10 +27,10 @@
 #if SCM_ENABLE_DEPRECATED
 
 /* returns the length of a list */
-unsigned long 
+nat
 gh_length (SCM l)
 {
-  return gh_scm2ulong (scm_length (l));
+  return gh_scm2nat (scm_length (l));
 }
 
 /* list operations */

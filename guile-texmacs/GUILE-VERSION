@@ -9,7 +9,7 @@ GUILE_VERSION=${GUILE_EFFECTIVE_VERSION}.${GUILE_MICRO_VERSION}
 
 # For automake.
 VERSION=${GUILE_VERSION}
-PACKAGE=guile
+PACKAGE=guile-texmacs
 
 # All of the shared lib versioning info.  Right now, for this to work
 # properly, you'll also need to add AC_SUBST calls to the right place

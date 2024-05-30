@@ -95,10 +95,12 @@ extern char *strptime ();
 #ifdef __STDC__
 # define timet time_t
 #else
-# define timet long
+# define timet ent
 #endif
 
+#if !defined (__MINGW64__)
 extern char ** environ;
+#endif
 
 /* On Apple Darwin in a shared library there's no "environ" to access
    directly, instead the address of that variable must be obtained with
@@ -142,7 +144,7 @@ SCM_DEFINE (scm_get_internal_real_time, "get-internal-real-time", 0, 0, 0,
   SCM tmp;
   ftime (&time_buffer);
   time_buffer.time -= scm_your_base.time;
-  tmp = scm_from_long (time_buffer.millitm - scm_your_base.millitm);
+  tmp = scm_from_ent (time_buffer.millitm - scm_your_base.millitm);
   tmp = scm_sum (tmp,
 		 scm_product (scm_from_int (1000),
 			      scm_from_int (time_buffer.time)));
@@ -150,7 +152,7 @@ SCM_DEFINE (scm_get_internal_real_time, "get-internal-real-time", 0, 0, 0,
 				    scm_from_int (SCM_TIME_UNITS_PER_SECOND)),
 		       scm_from_int (1000));
 #else
-  return scm_from_long ((time((timet*)0) - scm_your_base)
+  return scm_from_ent ((time((timet*)0) - scm_your_base)
 			* (int)SCM_TIME_UNITS_PER_SECOND);
 #endif /* HAVE_FTIME */
 }
@@ -190,19 +192,19 @@ SCM_DEFINE (scm_times, "times", 0, 0, 0,
   rv = times (&t);
   if (rv == -1)
     SCM_SYSERROR;
-  SCM_SIMPLE_VECTOR_SET (result, 0, scm_from_long (rv));
-  SCM_SIMPLE_VECTOR_SET (result, 1, scm_from_long (t.tms_utime));
-  SCM_SIMPLE_VECTOR_SET (result, 2, scm_from_long (t.tms_stime));
-  SCM_SIMPLE_VECTOR_SET (result ,3, scm_from_long (t.tms_cutime));
-  SCM_SIMPLE_VECTOR_SET (result, 4, scm_from_long (t.tms_cstime));
+  SCM_SIMPLE_VECTOR_SET (result, 0, scm_from_ent (rv));
+  SCM_SIMPLE_VECTOR_SET (result, 1, scm_from_ent (t.tms_utime));
+  SCM_SIMPLE_VECTOR_SET (result, 2, scm_from_ent (t.tms_stime));
+  SCM_SIMPLE_VECTOR_SET (result ,3, scm_from_ent (t.tms_cutime));
+  SCM_SIMPLE_VECTOR_SET (result, 4, scm_from_ent (t.tms_cstime));
   return result;
 }
 #undef FUNC_NAME
 #endif /* HAVE_TIMES */
 
-static long scm_my_base = 0;
+static ent scm_my_base = 0;
 
-long
+ent
 scm_c_get_internal_run_time ()
 {
   return mytime () - scm_my_base;
@@ -215,7 +217,7 @@ SCM_DEFINE (scm_get_internal_run_time, "get-internal-run-time", 0, 0, 0,
 	    "included but subprocesses are not.")
 #define FUNC_NAME s_scm_get_internal_run_time
 {
-  return scm_from_long (scm_c_get_internal_run_time ());
+  return scm_from_ent (scm_c_get_internal_run_time ());
 }
 #undef FUNC_NAME
 
@@ -239,7 +241,7 @@ SCM_DEFINE (scm_current_time, "current-time", 0, 0, 0,
   SCM_CRITICAL_SECTION_END;
   if (timv == -1)
     SCM_MISC_ERROR ("current time not available", SCM_EOL);
-  return scm_from_long (timv);
+  return scm_from_ent (timv);
 }
 #undef FUNC_NAME
 
@@ -264,14 +266,14 @@ SCM_DEFINE (scm_gettimeofday, "gettimeofday", 0, 0, 0,
       errno = err;
       SCM_SYSERROR;
     }
-  return scm_cons (scm_from_long (time.tv_sec),
-		   scm_from_long (time.tv_usec));
+  return scm_cons (scm_from_ent (time.tv_sec),
+		   scm_from_ent (time.tv_usec));
 #else
 # ifdef HAVE_FTIME
   struct timeb time;
 
   ftime(&time);
-  return scm_cons (scm_from_long (time.time),
+  return scm_cons (scm_from_ent (time.time),
 		   scm_from_int (time.millitm * 1000));
 # else
   timet timv;
@@ -286,7 +288,7 @@ SCM_DEFINE (scm_gettimeofday, "gettimeofday", 0, 0, 0,
       errno = err;
       SCM_SYSERROR;
     }
-  return scm_cons (scm_from_long (timv), scm_from_int (0));
+  return scm_cons (scm_from_ent (timv), scm_from_int (0));
 # endif
 #endif
 }
@@ -314,6 +316,9 @@ filltime (struct tm *bd_time, int zoff, const char *zname)
 }
 
 static char tzvar[3] = "TZ";
+#if defined (__MINGW64__)
+static char oldtzvar[22] = "GUILE_INTERNAL_OLD_TZ";
+#endif
 
 /* if zone is set, create a temporary environment with only a TZ
    string.  other threads or interrupt handlers shouldn't be allowed
@@ -322,26 +327,53 @@ static char tzvar[3] = "TZ";
 static char **
 setzone (SCM zone, int pos, const char *subr)
 {
+#if !defined (__MINGW64__)
   char **oldenv = 0;
+#endif
 
   if (!SCM_UNBNDP (zone))
     {
+#if !defined (__MINGW64__)
       static char *tmpenv[2];
+#endif
       char *buf;
       size_t zone_len;
-      
+
       zone_len = scm_to_locale_stringbuf (zone, NULL, 0);
       buf = scm_malloc (zone_len + sizeof (tzvar) + 1);
       strcpy (buf, tzvar);
       buf[sizeof(tzvar)-1] = '=';
       scm_to_locale_stringbuf (zone, buf+sizeof(tzvar), zone_len);
       buf[sizeof(tzvar)+zone_len] = '\0';
+#if !defined (__MINGW64__)
       oldenv = environ;
       tmpenv[0] = buf;
       tmpenv[1] = 0;
       environ = tmpenv;
+#else
+      char *oldbuf, *oldzone;
+      size_t oldzone_len;
+
+      oldzone = getenv (tzvar);
+      oldzone_len = oldzone == NULL ? 0 : strlen (oldzone);
+      oldbuf = malloc (oldzone_len + sizeof (oldtzvar) + 1);
+      strcpy (oldbuf, oldtzvar);
+      oldbuf[sizeof(oldtzvar)-1] = '=';
+      if (oldzone != NULL)
+	strcpy (oldbuf+sizeof(oldtzvar), oldzone);
+      oldbuf[sizeof(oldtzvar)+oldzone_len] = '\0';
+      putenv (oldbuf);
+      char *buf_copy = malloc (zone_len + sizeof (tzvar) + 1);
+      strcpy (buf_copy, buf);
+      free (buf);
+      putenv (buf_copy);
+#endif
     }
+#if !defined (__MINGW64__)
   return oldenv;
+#else
+  return environ;
+#endif
 }
 
 static void
@@ -349,8 +381,22 @@ restorezone (SCM zone, char **oldenv, const char *subr SCM_UNUSED)
 {
   if (!SCM_UNBNDP (zone))
     {
+#if !defined (__MINGW64__)
       free (environ[0]);
       environ = oldenv;
+#else
+      char *buf, *oldzone;
+      size_t oldzone_len;
+      oldzone = getenv (oldtzvar);
+      oldzone_len = oldzone == NULL ? 0 : strlen (oldzone);
+      buf = malloc (oldzone_len + sizeof (tzvar) + 1);
+      strcpy (buf, tzvar);
+      buf[sizeof(tzvar)-1] = '=';
+      if (oldzone != NULL)
+	strcpy (buf+sizeof(tzvar), oldzone);
+      buf[sizeof(tzvar)+oldzone_len] = '\0';
+      putenv (buf);
+#endif
 #ifdef HAVE_TZSET
       /* for the possible benefit of user code linked with libguile.  */
       tzset();
@@ -375,7 +421,7 @@ SCM_DEFINE (scm_localtime, "localtime", 1, 1, 0,
   char **oldenv;
   int err;
 
-  itime = SCM_NUM2LONG (1, time);
+  itime = SCM_NUM2ENT (1, time);
 
   /* deferring interupts is essential since a) setzone may install a temporary
      environment b) localtime uses a static buffer.  */
@@ -386,9 +432,14 @@ SCM_DEFINE (scm_localtime, "localtime", 1, 1, 0,
 #endif
   /* POSIX says localtime sets errno, but C99 doesn't say that.
      Give a sensible default value in case localtime doesn't set it.  */
+#if !defined (__MINGW64__)
   errno = EINVAL;
   ltptr = localtime (&itime);
   err = errno;
+#else
+  err = localtime_s (&lt, &itime);
+  ltptr = err == EINVAL ? NULL : &lt;
+#endif
   if (ltptr)
     {
       const char *ptr;
@@ -406,7 +457,9 @@ SCM_DEFINE (scm_localtime, "localtime", 1, 1, 0,
     }
   /* the struct is copied in case localtime and gmtime share a buffer.  */
   if (ltptr)
+#if !defined (__MINGW64__)
     lt = *ltptr;
+#endif
   /* POSIX says gmtime sets errno, but C99 doesn't say that.
      Give a sensible default value in case gmtime doesn't set it.  */
   errno = EINVAL;
@@ -456,7 +509,7 @@ SCM_DEFINE (scm_gmtime, "gmtime", 1, 0, 0,
   struct tm bd_buf, *bd_time;
   const char *zname;
 
-  itime = SCM_NUM2LONG (1, time);
+  itime = SCM_NUM2ENT (1, time);
 
   /* POSIX says gmtime sets errno, but C99 doesn't say that.
      Give a sensible default value in case gmtime doesn't set it.  */
@@ -589,7 +642,7 @@ SCM_DEFINE (scm_mktime, "mktime", 1, 1, 0,
   else if (utc->tm_yday > lt.tm_yday)
     zoff += 24 * 60 * 60;
 
-  result = scm_cons (scm_from_long (itime),
+  result = scm_cons (scm_from_ent (itime),
 		     filltime (&lt, zoff, zname));
   if (zname)
     free (zname);
@@ -661,7 +714,7 @@ SCM_DEFINE (scm_strftime, "strftime", 2, 0, 0,
 
   tbuf = scm_malloc (size);
   {
-#if !defined (HAVE_TM_ZONE)
+#if !defined (HAVE_TM_ZONE) && !defined (__MINGW64__)
     /* it seems the only way to tell non-GNU versions of strftime what
        zone to use (for the %Z format) is to set TZ in the
        environment.  interrupts and thread switching must be deferred
@@ -700,7 +753,7 @@ SCM_DEFINE (scm_strftime, "strftime", 2, 0, 0,
 	tbuf = scm_malloc (size);
       }
 
-#if !defined (HAVE_TM_ZONE)
+#if !defined (HAVE_TM_ZONE ) && !defined (__MINGW64__)
     if (have_zone)
       {
 	restorezone (zone_spec, oldenv, FUNC_NAME);
@@ -736,7 +789,7 @@ SCM_DEFINE (scm_strptime, "strptime", 2, 0, 0,
 {
   struct tm t;
   const char *fmt, *str, *rest;
-  long zoff;
+  ent zoff;
 
   SCM_VALIDATE_STRING (1, format);
   SCM_VALIDATE_STRING (2, string);
@@ -793,7 +846,7 @@ void
 scm_init_stime()
 {
   scm_c_define ("internal-time-units-per-second",
-		scm_from_long (SCM_TIME_UNITS_PER_SECOND));
+		scm_from_ent (SCM_TIME_UNITS_PER_SECOND));
 
 #ifdef HAVE_FTIME
   if (!scm_your_base.time) ftime(&scm_your_base);

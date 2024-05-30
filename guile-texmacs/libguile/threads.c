@@ -150,7 +150,7 @@ thread_print (SCM exp, SCM port, scm_print_state *pstate SCM_UNUSED)
     scm_i_pthread_t p;
     unsigned short us;
     unsigned int   ui;
-    unsigned long  ul;
+    nat  ul;
     scm_t_uintmax  um;
   } u;
   scm_i_thread *t = SCM_I_THREAD_DATA (exp);
@@ -161,7 +161,7 @@ thread_print (SCM exp, SCM port, scm_print_state *pstate SCM_UNUSED)
     id = u.us;
   else if (sizeof (p) == sizeof (unsigned int))
     id = u.ui;
-  else if (sizeof (p) == sizeof (unsigned long))
+  else if (sizeof (p) == sizeof (nat))
     id = u.ul;
   else
     id = u.um;
@@ -452,7 +452,7 @@ guilify_self_1 (SCM_STACKITEM *base)
     /* FIXME: Error conditions during the initialization phase are handled
        gracelessly since public functions such as `scm_init_guile ()'
        currently have type `void'.  */
-    abort ();
+    scm_abort ();
 
   scm_i_pthread_mutex_init (&t->heap_mutex, NULL);
   t->clear_freelists_p = 0;
@@ -1318,12 +1318,12 @@ SCM_DEFINE (scm_timed_wait_condition_variable, "wait-condition-variable", 2, 1, 
     {
       if (scm_is_pair (t))
 	{
-	  waittime.tv_sec = scm_to_ulong (SCM_CAR (t));
-	  waittime.tv_nsec = scm_to_ulong (SCM_CAR (t)) * 1000;
+	  waittime.tv_sec = scm_to_nat (SCM_CAR (t));
+	  waittime.tv_nsec = scm_to_nat (SCM_CAR (t)) * 1000;
 	}
       else
 	{
-	  waittime.tv_sec = scm_to_ulong (t);
+	  waittime.tv_sec = scm_to_nat (t);
 	  waittime.tv_nsec = 0;
 	}
       waitptr = &waittime;
@@ -1455,7 +1455,7 @@ scm_std_select (int nfds,
   if (res > 0 && FD_ISSET (wakeup_fd, readfds))
     {
       char dummy;
-      size_t count;
+      size_t count; (void) count;
 
       count = read (wakeup_fd, &dummy, 1);
 
@@ -1519,8 +1519,8 @@ scm_pthread_cond_timedwait (scm_i_pthread_cond_t *cond,
 
 #endif
 
-unsigned long
-scm_std_usleep (unsigned long usecs)
+nat
+scm_std_usleep (nat usecs)
 {
   struct timeval tv;
   tv.tv_usec = usecs % 1000000;

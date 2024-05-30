@@ -147,7 +147,7 @@ SCM_DEFINE (scm_ngettext, "ngettext", 3, 2, 0,
 {
   char *c_msgid;
   char *c_msgid_plural;
-  unsigned long c_n;
+  nat c_n;
   const char *c_result;
   SCM result;
 
@@ -159,7 +159,7 @@ SCM_DEFINE (scm_ngettext, "ngettext", 3, 2, 0,
   c_msgid_plural = scm_to_locale_string (msgid_plural);
   scm_dynwind_free (c_msgid_plural);
 
-  c_n = scm_to_ulong (n);
+  c_n = scm_to_nat (n);
 
   if (SCM_UNBNDP (domain))
     {

@@ -414,11 +414,11 @@ SCM_DEFINE (scm_with_fluids, "with-fluids*", 3, 0, 0,
 #undef FUNC_NAME
 
 SCM
-scm_c_with_fluids (SCM fluids, SCM values, SCM (*cproc) (), void *cdata)
+scm_c_with_fluids (SCM fluids, SCM values, SCM (*cproc) (void*), void *cdata)
 #define FUNC_NAME "scm_c_with_fluids"
 {
   SCM ans, data;
-  long flen, vlen;
+  ent flen, vlen;
 
   SCM_VALIDATE_LIST_COPYLEN (1, fluids, flen);
   SCM_VALIDATE_LIST_COPYLEN (2, values, vlen);
@@ -453,7 +453,7 @@ SCM_DEFINE (scm_with_fluid, "with-fluid*", 3, 0, 0,
 #undef FUNC_NAME
 
 SCM
-scm_c_with_fluid (SCM fluid, SCM value, SCM (*cproc) (), void *cdata)
+scm_c_with_fluid (SCM fluid, SCM value, SCM (*cproc) (void*), void *cdata)
 #define FUNC_NAME "scm_c_with_fluid"
 {
   SCM ans;

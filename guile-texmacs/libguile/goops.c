@@ -39,6 +39,7 @@
 #include "libguile/dynl.h"
 #include "libguile/dynwind.h"
 #include "libguile/eval.h"
+#include "libguile/hash.h"
 #include "libguile/hashtab.h"
 #include "libguile/keywords.h"
 #include "libguile/macros.h"
@@ -436,7 +437,7 @@ compute_getters_n_setters (SCM slots)
 {
   SCM res = SCM_EOL;
   SCM *cdrloc = &res;
-  long i   = 0;
+  ent i   = 0;
 
   for (  ; !scm_is_null (slots); slots = SCM_CDR (slots))
     {
@@ -473,9 +474,9 @@ compute_getters_n_setters (SCM slots)
 
 /*fixme* Manufacture keywords in advance */
 SCM
-scm_i_get_keyword (SCM key, SCM l, long len, SCM default_value, const char *subr)
+scm_i_get_keyword (SCM key, SCM l, ent len, SCM default_value, const char *subr)
 {
-  long i;
+  ent i;
 
   for (i = 0; i != len; i += 2)
     {
@@ -503,7 +504,7 @@ SCM_DEFINE (scm_get_keyword, "get-keyword", 3, 0, 0,
 	    "@var{default_value} is returned.")
 #define FUNC_NAME s_scm_get_keyword
 {
-  long len;
+  ent len;
 
   SCM_ASSERT (scm_is_keyword (key), key, SCM_ARG1, FUNC_NAME);
   len = scm_ilength (l);
@@ -528,7 +529,7 @@ SCM_DEFINE (scm_sys_initialize_object, "%initialize-object", 2, 0, 0,
 {
   SCM tmp, get_n_set, slots;
   SCM class       = SCM_CLASS_OF (obj);
-  long n_initargs;
+  ent n_initargs;
 
   SCM_VALIDATE_INSTANCE (1, obj);
   n_initargs = scm_ilength (initargs);
@@ -548,7 +549,7 @@ SCM_DEFINE (scm_sys_initialize_object, "%initialize-object", 2, 0, 0,
       if (!scm_is_null (SCM_CDR (slot_name)))
 	{
 	  /* This slot admits (perhaps) to be initialized at creation time */
-	  long n = scm_ilength (SCM_CDR (slot_name));
+	  ent n = scm_ilength (SCM_CDR (slot_name));
 	  if (n & 1) /* odd or -1 */
 	    SCM_MISC_ERROR ("class contains bogus slot definition: ~S",
 			    scm_list_1 (slot_name));
@@ -609,11 +610,11 @@ SCM_DEFINE (scm_sys_initialize_object, "%initialize-object", 2, 0, 0,
 #define SCM_GNS_INDEX(gns)			\
   (SCM_I_INUMP (SCM_CDDR (gns))			\
    ? SCM_I_INUM (SCM_CDDR (gns))		\
-   : scm_to_long (SCM_CAR (SCM_CDDDDR (gns))))
+   : scm_to_ent (SCM_CAR (SCM_CDDDDR (gns))))
 #define SCM_GNS_SIZE(gns)			\
   (SCM_I_INUMP (SCM_CDDR (gns))			\
    ? 1						\
-   : scm_to_long (SCM_CADR (SCM_CDDDDR (gns))))
+   : scm_to_ent (SCM_CADR (SCM_CDDDDR (gns))))
 
 SCM_KEYWORD (k_class, "class");
 SCM_KEYWORD (k_allocation, "allocation");
@@ -625,7 +626,7 @@ SCM_DEFINE (scm_sys_prep_layout_x, "%prep-layout!", 1, 0, 0,
 #define FUNC_NAME s_scm_sys_prep_layout_x
 {
   SCM slots, getters_n_setters, nfields;
-  unsigned long int n, i;
+  nat n, i;
   char *s;
   SCM layout;
 
@@ -724,7 +725,7 @@ SCM_DEFINE (scm_sys_inherit_magic_x, "%inherit-magic!", 2, 0, 0,
 #define FUNC_NAME s_scm_sys_inherit_magic_x
 {
   SCM ls = dsupers;
-  long flags = 0;
+  ent flags = 0;
   SCM_VALIDATE_INSTANCE (1, class);
   while (!scm_is_null (ls))
     {
@@ -741,7 +742,7 @@ SCM_DEFINE (scm_sys_inherit_magic_x, "%inherit-magic!", 2, 0, 0,
     SCM_SET_CLASS_DESTRUCTOR (class, scm_struct_free_entity);
   else
     {
-      long n = SCM_I_INUM (SCM_SLOT (class, scm_si_nfields));
+      ent n = SCM_I_INUM (SCM_SLOT (class, scm_si_nfields));
 #if 0
       /*
        * We could avoid calling scm_gc_malloc in the allocation code
@@ -904,8 +905,8 @@ create_basic_classes (void)
   /* SCM slots_of_class = build_class_class_slots (); */
 
   /**** <scm_class_class> ****/
-  SCM cs = scm_from_locale_string (SCM_CLASS_CLASS_LAYOUT
-				   + 2 * scm_vtable_offset_user);
+  SCM cs = scm_from_locale_string (&(SCM_CLASS_CLASS_LAYOUT
+				     [2 * scm_vtable_offset_user]));
   SCM name = scm_from_locale_symbol ("<class>");
   scm_class_class = scm_permanent_object (scm_make_vtable_vtable (cs,
 								  SCM_INUM0,
@@ -1215,7 +1216,7 @@ SCM_DEFINE (scm_sys_fast_slot_ref, "%fast-slot-ref", 2, 0, 0,
 	    "Return the slot value with index @var{index} from @var{obj}.")
 #define FUNC_NAME s_scm_sys_fast_slot_ref
 {
-  unsigned long int i;
+  nat i;
 
   SCM_VALIDATE_INSTANCE (1, obj);
   i = scm_to_unsigned_integer (index, 0,
@@ -1232,7 +1233,7 @@ SCM_DEFINE (scm_sys_fast_slot_set_x, "%fast-slot-set!", 3, 0, 0,
 	    "@var{value}.")
 #define FUNC_NAME s_scm_sys_fast_slot_set_x
 {
-  unsigned long int i;
+  nat i;
 
   SCM_VALIDATE_INSTANCE (1, obj);
   i = scm_to_unsigned_integer (index, 0,
@@ -1293,7 +1294,7 @@ get_slot_value (SCM class SCM_UNUSED, SCM obj, SCM slotdef)
 
       code = SCM_CAR (access);
       if (!SCM_CLOSUREP (code))
-	return SCM_SUBRF (code) (obj);
+	return SCM_SUBRF_1 (code) (obj);
       env  = SCM_EXTEND_ENV (SCM_CLOSURE_FORMALS (code),
 			     scm_list_1 (obj),
 			     SCM_ENV (code));
@@ -1336,7 +1337,7 @@ set_slot_value (SCM class SCM_UNUSED, SCM obj, SCM slotdef, SCM value)
 
       code = SCM_CADR (access);
       if (!SCM_CLOSUREP (code))
-	SCM_SUBRF (code) (obj, value);
+	SCM_SUBRF_2 (code) (obj, value);
       else
 	{
 	  env  = SCM_EXTEND_ENV (SCM_CLOSURE_FORMALS (code),
@@ -1515,9 +1516,9 @@ SCM_DEFINE (scm_slot_exists_p, "slot-exists?", 2, 0, 0,
 static void clear_method_cache (SCM);
 
 static SCM
-wrap_init (SCM class, SCM *m, long n)
+wrap_init (SCM class, SCM *m, ent n)
 {
-  long i;
+  ent i;
   scm_t_bits slayout = SCM_STRUCT_DATA (class)[scm_vtable_index_layout];
   const char *layout = scm_i_symbol_chars (SCM_PACK (slayout));
 
@@ -1540,7 +1541,7 @@ SCM_DEFINE (scm_sys_allocate_instance, "%allocate-instance", 2, 0, 0,
 #define FUNC_NAME s_scm_sys_allocate_instance
 {
   SCM *m;
-  long n;
+  ent n;
 
   SCM_VALIDATE_CLASS (1, class);
 
@@ -1579,7 +1580,7 @@ SCM_DEFINE (scm_sys_allocate_instance, "%allocate-instance", 2, 0, 0,
   /* Class objects */
   if (SCM_CLASS_FLAGS (class) & SCM_CLASSF_METACLASS)
     {
-      long i;
+      ent i;
 
       /* allocate class object */
       SCM z = scm_make_struct (class, SCM_INUM0, SCM_EOL);
@@ -1697,14 +1698,14 @@ SCM_DEFINE (scm_sys_invalidate_class, "%invalidate-class", 1, 0, 0,
  */
 
 static scm_t_bits **hell;
-static long n_hell = 1;		/* one place for the evil one himself */
-static long hell_size = 4;
+static ent n_hell = 1;		/* one place for the evil one himself */
+static ent hell_size = 4;
 static SCM hell_mutex;
 
-static long
+static ent
 burnin (SCM o)
 {
-  long i;
+  ent i;
   for (i = 1; i < n_hell; ++i)
     if (SCM_STRUCT_DATA (o) == hell[i])
       return i;
@@ -1956,7 +1957,7 @@ static int
 more_specificp (SCM m1, SCM m2, SCM const *targs)
 {
   register SCM s1, s2;
-  register long i;
+  register ent i;
   /*
    * Note:
    *   m1 and m2 can have != length (i.e. one can be one element longer than the
@@ -1994,9 +1995,9 @@ more_specificp (SCM m1, SCM m2, SCM const *targs)
 #define BUFFSIZE 32		/* big enough for most uses */
 
 static SCM
-scm_i_vector2list (SCM l, long len)
+scm_i_vector2list (SCM l, ent len)
 {
-  long j;
+  ent j;
   SCM z = scm_c_make_vector (len, SCM_UNDEFINED);
 
   for (j = 0; j < len; j++, l = SCM_CDR (l)) {
@@ -2006,9 +2007,9 @@ scm_i_vector2list (SCM l, long len)
 }
 
 static SCM
-sort_applicable_methods (SCM method_list, long size, SCM const *targs)
+sort_applicable_methods (SCM method_list, ent size, SCM const *targs)
 {
-  long i, j, incr;
+  ent i, j, incr;
   SCM *v, vector = SCM_EOL;
   SCM buffer[BUFFSIZE];
   SCM save = method_list;
@@ -2073,10 +2074,10 @@ sort_applicable_methods (SCM method_list, long size, SCM const *targs)
 }
 
 SCM
-scm_compute_applicable_methods (SCM gf, SCM args, long len, int find_method_p)
+scm_compute_applicable_methods (SCM gf, SCM args, ent len, int find_method_p)
 {
-  register long i;
-  long count = 0;
+  register ent i;
+  ent count = 0;
   SCM l, fl, applicable = SCM_EOL;
   SCM save = args;
   SCM buffer[BUFFSIZE];
@@ -2155,7 +2156,7 @@ SCM
 scm_sys_compute_applicable_methods (SCM gf, SCM args)
 #define FUNC_NAME s_sys_compute_applicable_methods
 {
-  long n;
+  ent n;
   SCM_VALIDATE_GENERIC (1, gf);
   n = scm_ilength (args);
   SCM_ASSERT (n >= 0, args, SCM_ARG2, FUNC_NAME);
@@ -2232,7 +2233,7 @@ SCM_DEFINE (scm_make, "make",  0, 0, 1,
 #define FUNC_NAME s_scm_make
 {
   SCM class, z;
-  long len = scm_ilength (args);
+  ent len = scm_ilength (args);
 
   if (len <= 0 || (len & 1) == 0)
     SCM_WRONG_NUM_ARGS ();
@@ -2321,7 +2322,7 @@ SCM_DEFINE (scm_find_method, "find-method", 0, 0, 1,
 #define FUNC_NAME s_scm_find_method
 {
   SCM gf;
-  long len = scm_ilength (l);
+  ent len = scm_ilength (l);
 
   if (len == 0)
     SCM_WRONG_NUM_ARGS ();
@@ -2343,7 +2344,7 @@ SCM_DEFINE (scm_sys_method_more_specific_p, "%method-more-specific?", 3, 0, 0,
 {
   SCM l, v, result;
   SCM *v_elts;
-  long i, len, m1_specs, m2_specs;
+  ent i, len, m1_specs, m2_specs;
   scm_t_array_handle handle;
 
   SCM_VALIDATE_METHOD (1, m1);
@@ -2392,7 +2393,7 @@ fix_cpl (SCM c, SCM before, SCM after)
   SCM tail = scm_delq1_x (before, SCM_CDR (ls));
   if (scm_is_false (ls))
     /* if this condition occurs, fix_cpl should not be applied this way */
-    abort ();
+    scm_abort ();
   SCM_SETCAR (ls, before);
   SCM_SETCDR (ls, scm_cons (after, tail));
   {
@@ -2675,7 +2676,7 @@ scm_i_inherit_applicable (SCM c)
       /* patch scm_class_applicable into cpl */
       top = scm_c_memq (scm_class_top, cpl);
       if (scm_is_false (top))
-	abort ();
+	scm_abort ();
       else
 	{
 	  SCM_SETCAR (top, scm_class_applicable);
@@ -2692,7 +2693,7 @@ scm_i_inherit_applicable (SCM c)
 static void
 create_smob_classes (void)
 {
-  long i;
+  ent i;
 
   scm_smob_class = (SCM *) scm_malloc (255 * sizeof (SCM));
   for (i = 0; i < 255; ++i)
@@ -2707,7 +2708,7 @@ create_smob_classes (void)
 }
 
 void
-scm_make_port_classes (long ptobnum, char *type_name)
+scm_make_port_classes (ent ptobnum, char *type_name)
 {
   SCM c, class = make_class_from_template ("<%s-port>",
 					   type_name,
@@ -2737,7 +2738,7 @@ scm_make_port_classes (long ptobnum, char *type_name)
 static void
 create_port_classes (void)
 {
-  long i;
+  ent i;
 
   scm_port_class = (SCM *) scm_malloc (3 * 256 * sizeof (SCM));
   for (i = 0; i < 3 * 256; ++i)
@@ -2920,8 +2921,8 @@ scm_wrap_component (SCM class, SCM container, void *data)
   SCM handle = scm_hash_fn_create_handle_x (scm_components,
 					    obj,
 					    SCM_BOOL_F,
-					    scm_struct_ihashq,
-					    scm_sloppy_assq,
+					    scm_struct_ihashq_var,
+					    scm_sloppy_assq_var,
 					    0);
   SCM_SETCDR (handle, container);
   return obj;

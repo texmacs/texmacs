@@ -34,10 +34,10 @@
  * Please feel free to contribute any new replacements!
  */
 
-static long
+static ent
 srfi1_ilength (SCM sx)
 {
-  long i = 0;
+  ent i = 0;
   SCM tortoise = sx;
   SCM hare = sx;
 
@@ -318,7 +318,7 @@ SCM_DEFINE (scm_srfi1_count, "count", 2, 0, 1,
 	    "At least one list must be non-circular.")
 #define FUNC_NAME s_scm_srfi1_count
 {
-  long  count;
+  ent   count;
   SCM   lst;
   int   argnum;
   SCM_VALIDATE_REST_ARGUMENT (rest);
@@ -401,7 +401,7 @@ SCM_DEFINE (scm_srfi1_count, "count", 2, 0, 1,
 
  check_lst_and_done:
   SCM_ASSERT_TYPE (SCM_NULL_OR_NIL_P (lst), lst, argnum, FUNC_NAME, "list");
-  return scm_from_long (count);
+  return scm_from_ent (count);
 }
 #undef FUNC_NAME
 
@@ -1085,7 +1085,7 @@ SCM_DEFINE (scm_srfi1_length_plus, "length+", 1, 0, 0,
 	    "circular.")
 #define FUNC_NAME s_scm_srfi1_length_plus
 {
-  long len = scm_ilength (lst);
+  ent len = scm_ilength (lst);
   return (len >= 0 ? SCM_I_MAKINUM (len) : SCM_BOOL_F);
 }
 #undef FUNC_NAME
@@ -1108,7 +1108,7 @@ SCM_DEFINE (scm_srfi1_list_index, "list-index", 2, 0, 1,
 	    "@end example")
 #define FUNC_NAME s_scm_srfi1_list_index
 {
-  long  n = 0;
+  ent   n = 0;
   SCM   lst;
   int   argnum;
   SCM_VALIDATE_REST_ARGUMENT (rest);
@@ -1235,15 +1235,15 @@ SCM_DEFINE (scm_srfi1_list_tabulate, "list-tabulate", 2, 0, 0,
 	    "is applied to the indices is not specified.")
 #define FUNC_NAME s_scm_srfi1_list_tabulate
 {
-  long i, nn;
+  ent i, nn;
   scm_t_trampoline_1 proc_tramp = scm_trampoline_1 (proc);
   SCM ret = SCM_EOL;
 
-  nn = scm_to_signed_integer (n, 0, LONG_MAX);
+  nn = scm_to_signed_integer (n, 0, ENT_MAX);
   SCM_ASSERT (proc_tramp, proc, SCM_ARG2, FUNC_NAME);
 
   for (i = nn-1; i >= 0; i--)
-    ret = scm_cons (proc_tramp (proc, scm_from_long (i)), ret);
+    ret = scm_cons (proc_tramp (proc, scm_from_ent (i)), ret);
 
   return ret;
 }
@@ -1370,18 +1370,18 @@ SCM_DEFINE (scm_srfi1_lset_difference_x, "lset-difference!", 2, 0, 1,
    and claim that the i'th element of ARGV is WHO's i+2'th argument.  */
 static inline int
 check_map_args (SCM argv,
-		long len,
+		ent len,
 		SCM gf,
 		SCM proc,
 		SCM args,
 		const char *who)
 {
-  long i;
+  ent i;
   SCM elt;
 
   for (i = SCM_SIMPLE_VECTOR_LENGTH (argv) - 1; i >= 1; i--)
     {
-      long elt_len;
+      ent elt_len;
       elt = SCM_SIMPLE_VECTOR_REF (argv, i);
 
       if (!(scm_is_null (elt) || scm_is_pair (elt)))
@@ -1424,7 +1424,7 @@ SCM
 scm_srfi1_map (SCM proc, SCM arg1, SCM args)
 #define FUNC_NAME s_srfi1_map
 {
-  long i, len;
+  ent i, len;
   SCM res = SCM_EOL;
   SCM *pres = &res;
 
@@ -1498,7 +1498,7 @@ SCM
 scm_srfi1_for_each (SCM proc, SCM arg1, SCM args)
 #define FUNC_NAME s_srfi1_for_each
 {
-  long i, len;
+  ent i, len;
   len = srfi1_ilength (arg1);
   SCM_GASSERTn ((scm_is_null (arg1) || scm_is_pair (arg1)) && len >= -1,
 		g_srfi1_for_each, scm_cons2 (proc, arg1, args),
@@ -1866,7 +1866,7 @@ SCM_DEFINE (scm_srfi1_reduce_right, "reduce-right", 3, 0, 0,
 
   scm_t_trampoline_2 proc_tramp = scm_trampoline_2 (proc);
   SCM  ret, vec;
-  long len, i;
+  ent len, i;
 
   SCM_ASSERT (proc_tramp, proc, SCM_ARG1, FUNC_NAME);
 
@@ -2090,14 +2090,14 @@ SCM_DEFINE (scm_srfi1_take_x, "take!", 2, 0, 0,
 	    "@var{lst}.")
 #define FUNC_NAME s_scm_srfi1_take_x
 {
-  long nn;
+  ent nn;
   SCM pos;
 
-  nn = scm_to_signed_integer (n, 0, LONG_MAX);
+  nn = scm_to_signed_integer (n, 0, ENT_MAX);
   if (nn == 0)
     return SCM_EOL;
 
-  pos = scm_list_tail (lst, scm_from_long (nn - 1));
+  pos = scm_list_tail (lst, scm_from_ent (nn - 1));
 
   /* Must have at least one cell left, mustn't have reached the end of an
      n-1 element list.  SCM_VALIDATE_CONS here gives the same error as

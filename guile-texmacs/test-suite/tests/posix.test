@@ -74,6 +74,7 @@
 	   (str      (string-copy template))
 	   (port     (mkstemp! str))
 	   (result   (not (string=? str template))))
+      (close port)
       (delete-file str)
       result)))
 

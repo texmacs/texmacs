@@ -51,6 +51,17 @@
 /* What did the configure script discover about the outside world?  */
 #include "libguile/scmconfig.h"
 
+#if HAVE_CONFIG_H
+#  include <config.h>
+#endif
+
+#if defined(__ANDROID__)
+#include <android/log.h>
+int __scm_android_fprintf (FILE* stream, const char* format, ...);
+#define printf(...) __android_log_print (ANDROID_LOG_DEFAULT, "libguile", __VA_ARGS__)
+#define fprintf(...) __scm_android_fprintf (__VA_ARGS__)
+#endif
+
 
 
 /* {Compiler hints}
@@ -337,45 +348,184 @@
 # define SCM_LONG_BIT (SCM_CHAR_BIT * sizeof (long) / sizeof (char))
 #endif
 
-#ifdef UCHAR_MAX
-# define SCM_CHAR_CODE_LIMIT (UCHAR_MAX + 1L)
+#ifdef LONG_LONG_BIT
+# define SCM_LONG_LONG_BIT LONG_LONG_BIT
 #else
-# define SCM_CHAR_CODE_LIMIT 256L
+# define SCM_LONG_LONG_BIT (SCM_CHAR_BIT * sizeof (long long) / sizeof (char))
+#endif
+
+#ifdef UCHAR_MAX
+# define SCM_CHAR_CODE_LIMIT (UCHAR_MAX + ((ent) 1L))
+#else
+# define SCM_CHAR_CODE_LIMIT ((ent) 256L)
 #endif
 
 #define SCM_I_UTYPE_MAX(type)      ((type)-1)
 #define SCM_I_TYPE_MAX(type,umax)  ((type)((umax)/2))
 #define SCM_I_TYPE_MIN(type,umax)  (-((type)((umax)/2))-1)
 
+#ifdef UINT8_MAX
+#define SCM_T_UINT8_MAX   UINT8_MAX
+#else
 #define SCM_T_UINT8_MAX   SCM_I_UTYPE_MAX(scm_t_uint8)
-#define SCM_T_INT8_MIN    SCM_I_TYPE_MIN(scm_t_int8,SCM_T_UINT8_MAX)
-#define SCM_T_INT8_MAX    SCM_I_TYPE_MAX(scm_t_int8,SCM_T_UINT8_MAX)
-
-#define SCM_T_UINT16_MAX  SCM_I_UTYPE_MAX(scm_t_uint16)
-#define SCM_T_INT16_MIN   SCM_I_TYPE_MIN(scm_t_int16,SCM_T_UINT16_MAX)
-#define SCM_T_INT16_MAX   SCM_I_TYPE_MAX(scm_t_int16,SCM_T_UINT16_MAX)
-
-#define SCM_T_UINT32_MAX  SCM_I_UTYPE_MAX(scm_t_uint32)
-#define SCM_T_INT32_MIN   SCM_I_TYPE_MIN(scm_t_int32,SCM_T_UINT32_MAX)
-#define SCM_T_INT32_MAX   SCM_I_TYPE_MAX(scm_t_int32,SCM_T_UINT32_MAX)
-
-#define SCM_T_UINT64_MAX  SCM_I_UTYPE_MAX(scm_t_uint64)
-#define SCM_T_INT64_MIN   SCM_I_TYPE_MIN(scm_t_int64,SCM_T_UINT64_MAX)
-#define SCM_T_INT64_MAX   SCM_I_TYPE_MAX(scm_t_int64,SCM_T_UINT64_MAX)
-
-#if SCM_SIZEOF_LONG_LONG
-#define SCM_I_ULLONG_MAX  SCM_I_UTYPE_MAX(unsigned long long)
-#define SCM_I_LLONG_MIN   SCM_I_TYPE_MIN(long long,SCM_I_ULLONG_MAX)
-#define SCM_I_LLONG_MAX   SCM_I_TYPE_MAX(long long,SCM_I_ULLONG_MAX)
 #endif
 
-#define SCM_T_UINTMAX_MAX SCM_I_UTYPE_MAX(scm_t_uintmax)
-#define SCM_T_INTMAX_MIN  SCM_I_TYPE_MIN(scm_t_intmax,SCM_T_UINTMAX_MAX)
-#define SCM_T_INTMAX_MAX  SCM_I_TYPE_MAX(scm_t_intmax,SCM_T_UINTMAX_MAX)
+#ifdef INT8_MIN
+#define SCM_T_INT8_MIN    INT8_MIN
+#else
+#define SCM_T_INT8_MIN    SCM_I_TYPE_MIN(scm_t_int8,SCM_T_UINT8_MAX)
+#endif
 
+#ifdef INT8_MAX
+#define SCM_T_INT8_MAX    INT8_MAX
+#else
+#define SCM_T_INT8_MAX    SCM_I_TYPE_MAX(scm_t_int8,SCM_T_UINT8_MAX)
+#endif
+
+#ifdef UINT16_MAX
+#define SCM_T_UINT16_MAX  UINT16_MAX
+#else
+#define SCM_T_UINT16_MAX  SCM_I_UTYPE_MAX(scm_t_uint16)
+#endif
+
+#ifdef INT16_MIN
+#define SCM_T_INT16_MIN   INT16_MIN
+#else
+#define SCM_T_INT16_MIN   SCM_I_TYPE_MIN(scm_t_int16,SCM_T_UINT16_MAX)
+#endif
+
+#ifdef INT16_MAX
+#define SCM_T_INT16_MAX   INT16_MAX
+#else
+#define SCM_T_INT16_MAX   SCM_I_TYPE_MAX(scm_t_int16,SCM_T_UINT16_MAX)
+#endif
+
+#ifdef UINT32_MAX
+#define SCM_T_UINT32_MAX  UINT32_MAX
+#else
+#define SCM_T_UINT32_MAX  SCM_I_UTYPE_MAX(scm_t_uint32)
+#endif
+
+#ifdef INT32_MIN
+#define SCM_T_INT32_MIN   INT32_MIN
+#else
+#define SCM_T_INT32_MIN   SCM_I_TYPE_MIN(scm_t_int32,SCM_T_UINT32_MAX)
+#endif
+
+#ifdef INT32_MAX
+#define SCM_T_INT32_MAX   INT32_MAX
+#else
+#define SCM_T_INT32_MAX   SCM_I_TYPE_MAX(scm_t_int32,SCM_T_UINT32_MAX)
+#endif
+
+#ifdef UINT64_MAX
+#define SCM_T_UINT64_MAX  UINT64_MAX
+#else
+#define SCM_T_UINT64_MAX  SCM_I_UTYPE_MAX(scm_t_uint64)
+#endif
+
+#ifdef INT64_MIN
+#define SCM_T_INT64_MIN   INT64_MIN
+#else
+#define SCM_T_INT64_MIN   SCM_I_TYPE_MIN(scm_t_int64,SCM_T_UINT64_MAX)
+#endif
+
+#ifdef INT64_MAX
+#define SCM_T_INT64_MAX   INT64_MAX
+#else
+#define SCM_T_INT64_MAX   SCM_I_TYPE_MAX(scm_t_int64,SCM_T_UINT64_MAX)
+#endif
+
+#  ifdef ULONG_MAX
+#  define SCM_I_ULONG_MAX  ULONG_MAX
+#  else
+#  define SCM_I_ULONG_MAX  SCM_I_UTYPE_MAX(unsigned long)
+#  endif
+
+#  ifdef LONG_MIN
+#  define SCM_I_LONG_MIN   LONG_MIN
+#  else
+#  define SCM_I_LONG_MIN   SCM_I_TYPE_MIN(long,SCM_I_ULONG_MAX)
+#  endif
+
+#  ifdef LONG_MAX
+#  define SCM_I_LONG_MAX   LONG_MAX
+#  else
+#  define SCM_I_LONG_MAX   SCM_I_TYPE_MAX(long,SCM_I_ULONG_MAX)
+#  endif
+
+#if SCM_SIZEOF_LONG_LONG
+#  ifdef ULONG_LONG_MAX
+#  define SCM_I_ULLONG_MAX  ULONG_LONG_MAX
+#  else
+#  define SCM_I_ULLONG_MAX  SCM_I_UTYPE_MAX(unsigned long long)
+#  endif
+
+#  ifdef LONG_LONG_MIN
+#  define SCM_I_LLONG_MIN   LONG_LONG_MIN
+#  else
+#  define SCM_I_LLONG_MIN   SCM_I_TYPE_MIN(long long,SCM_I_ULLONG_MAX)
+#  endif
+
+#  ifdef LONG_LONG_MAX
+#  define SCM_I_LLONG_MAX   LONG_LONG_MAX
+#  else
+#  define SCM_I_LLONG_MAX   SCM_I_TYPE_MAX(long long,SCM_I_ULLONG_MAX)
+#  endif
+#endif
+
+#ifdef UINTMAX_MAX
+#define SCM_T_UINTMAX_MAX UINTMAX_MAX
+#else
+#define SCM_T_UINTMAX_MAX SCM_I_UTYPE_MAX(scm_t_uintmax)
+#endif
+
+#ifdef INTMAX_MIN
+#define SCM_T_INTMAX_MIN  INTMAX_MIN
+#else
+#define SCM_T_INTMAX_MIN  SCM_I_TYPE_MIN(scm_t_intmax,SCM_T_UINTMAX_MAX)
+#endif
+
+#ifdef INTMAX_MAX
+#define SCM_T_INTMAX_MAX  INTMAX_MAX
+#else
+#define SCM_T_INTMAX_MAX  SCM_I_TYPE_MAX(scm_t_intmax,SCM_T_UINTMAX_MAX)
+#endif
+
+#ifdef SIZE_MAX
+#define SCM_I_SIZE_MAX    SIZE_MAX
+#else
 #define SCM_I_SIZE_MAX    SCM_I_UTYPE_MAX(size_t)
+#endif
+
 #define SCM_I_SSIZE_MIN   SCM_I_TYPE_MIN(ssize_t,SCM_I_SIZE_MAX)
 #define SCM_I_SSIZE_MAX   SCM_I_TYPE_MAX(ssize_t,SCM_I_SIZE_MAX)
+
+#if defined(SCM_SIZEOF_LONG) && SCM_SIZEOF_LONG == SCM_SIZEOF_SCM_T_PTRDIFF
+typedef long ent;
+typedef unsigned long nat;
+#define SIZEOF_ENT SCM_SIZEOF_LONG
+#define SIZEOF_NAT SCM_SIZEOF_UNSIGNED_LONG
+#define ENT_MIN SCM_I_LONG_MIN
+#define ENT_MAX SCM_I_LONG_MAX
+#define NAT_MIN ((nat) 0)
+#define NAT_MAX SCM_I_ULONG_MAX
+#define SCM_ENT_BIT SCM_LONG_BIT
+#elif defined(SCM_SIZEOF_LONG_LONG) && SCM_SIZEOF_LONG_LONG == SCM_SIZEOF_SCM_T_PTRDIFF
+typedef long long ent;
+typedef unsigned long long nat;
+#define SIZEOF_ENT SCM_SIZEOF_LONG_LONG
+#define SIZEOF_NAT SCM_SIZEOF_UNSIGNED_LONG_LONG
+#define ENT_MIN SCM_I_LLONG_MIN
+#define ENT_MAX SCM_I_LLONG_MAX
+#define NAT_MIN ((nat) 0)
+#define NAT_MAX SCM_I_ULLONG_MAX
+#define SCM_ENT_BIT SCM_LONG_LONG_BIT
+#else
+#error Platform is not supported.
+#endif
+#define SCM_SIZEOF_ENT SIZEOF_ENT
+#define SCM_SIZEOF_NAT SIZEOF_NAT
 
 
 
@@ -425,8 +575,13 @@
    scm_i_jmp_buf to setjmp, longjmp and jmp_buf. */
 #ifndef SCM_I_SETJMP
 #define scm_i_jmp_buf jmp_buf
-#define SCM_I_SETJMP setjmp
-#define SCM_I_LONGJMP longjmp
+#if defined (__MINGW64__)
+#  define SCM_I_SETJMP __builtin_setjmp
+#  define SCM_I_LONGJMP __builtin_longjmp
+#else
+#  define SCM_I_SETJMP setjmp
+#  define SCM_I_LONGJMP longjmp
+#endif
 #endif
 
 /* James Clark came up with this neat one instruction fix for
@@ -457,7 +612,7 @@
 #ifdef SHORT_ALIGN
 typedef short SCM_STACKITEM;
 #else
-typedef long SCM_STACKITEM;
+typedef ent SCM_STACKITEM;
 #endif
 
 /* Cast pointer through (void *) in order to avoid compiler warnings

@@ -37,7 +37,7 @@ SCM_API scm_t_option scm_eval_opts[];
 #define SCM_EVAL_STACK         scm_eval_opts[0].val
 #define SCM_N_EVAL_OPTIONS 1
 
-SCM_API long scm_eval_stack;
+SCM_API ent scm_eval_stack;
 
 SCM_API scm_t_option scm_evaluator_trap_table[];
 
@@ -66,7 +66,7 @@ SCM_API SCM scm_eval_options_interface (SCM setting);
 /* {Promises}
  */
 
-#define SCM_F_PROMISE_COMPUTED (1L << 0)
+#define SCM_F_PROMISE_COMPUTED (((ent) 1L) << 0)
 #define SCM_PROMISE_COMPUTED_P(promise) \
   (SCM_F_PROMISE_COMPUTED & SCM_SMOB_FLAGS (promise))
 #define SCM_SET_PROMISE_COMPUTED(promise) \

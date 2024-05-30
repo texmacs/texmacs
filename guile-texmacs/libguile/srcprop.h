@@ -34,12 +34,12 @@
 
 #define scm_whash_handle SCM
 
-#define scm_whash_get_handle(whash, key) scm_hash_fn_get_handle (whash, key, scm_ihashq, scm_sloppy_assq, 0)
+#define scm_whash_get_handle(whash, key) scm_hash_fn_get_handle (whash, key, scm_ihashq_var, scm_sloppy_assq_var, 0)
 #define SCM_WHASHFOUNDP(h) (scm_is_true (h))
 #define SCM_WHASHREF(whash, handle) SCM_CDR (handle)
 #define SCM_WHASHSET(whash, handle, obj) SCM_SETCDR (handle, obj)
-#define scm_whash_create_handle(whash, key) scm_hash_fn_create_handle_x (whash, key, SCM_UNSPECIFIED, scm_ihashq, scm_sloppy_assq, 0)
-#define scm_whash_lookup(whash, obj) scm_hash_fn_ref (whash, obj, SCM_BOOL_F, scm_ihashq, scm_sloppy_assq, 0)
+#define scm_whash_create_handle(whash, key) scm_hash_fn_create_handle_x (whash, key, SCM_UNSPECIFIED, scm_ihashq_var, scm_sloppy_assq_var, 0)
+#define scm_whash_lookup(whash, obj) scm_hash_fn_ref (whash, obj, SCM_BOOL_F, scm_ihashq_var, scm_sloppy_assq_var, 0)
 #define scm_whash_insert(whash, key, obj) \
 do { \
   register SCM w = (whash); \
@@ -64,7 +64,7 @@ SCM_API SCM scm_sym_breakpoint;
 
 SCM_API int scm_c_source_property_breakpoint_p (SCM form);
 SCM_API SCM scm_srcprops_to_plist (SCM obj);
-SCM_API SCM scm_make_srcprops (long line, int col, SCM fname, SCM copy, SCM plist);
+SCM_API SCM scm_make_srcprops (ent line, int col, SCM fname, SCM copy, SCM plist);
 SCM_API SCM scm_source_property (SCM obj, SCM key);
 SCM_API SCM scm_set_source_property_x (SCM obj, SCM key, SCM datum);
 SCM_API SCM scm_source_properties (SCM obj);

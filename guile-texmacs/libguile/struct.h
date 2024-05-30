@@ -50,8 +50,8 @@
 typedef void (*scm_t_struct_free) (scm_t_bits * vtable, scm_t_bits * data);
 
 #define SCM_STRUCTF_MASK   (0xFFF << 20)
-#define SCM_STRUCTF_ENTITY (1L << 30) /* Indicates presence of proc slots */
-#define SCM_STRUCTF_LIGHT  (1L << 31) /* Light representation
+#define SCM_STRUCTF_ENTITY (((ent) 1L) << 30) /* Indicates presence of proc slots */
+#define SCM_STRUCTF_LIGHT  (((ent) 1L) << 31) /* Light representation
 					 (no hidden words) */
 
 #define SCM_STRUCTP(X)  		(!SCM_IMP(X) && (SCM_TYP3(X) == scm_tc3_struct))
@@ -100,7 +100,7 @@ SCM_API SCM scm_struct_ref (SCM handle, SCM pos);
 SCM_API SCM scm_struct_set_x (SCM handle, SCM pos, SCM val);
 SCM_API SCM scm_struct_vtable (SCM handle);
 SCM_API SCM scm_struct_vtable_tag (SCM handle);
-SCM_API unsigned long scm_struct_ihashq (SCM obj, unsigned long n);
+SCM_API nat scm_struct_ihashq (SCM obj, nat n);
 SCM_API SCM scm_struct_create_handle (SCM obj);
 SCM_API SCM scm_struct_vtable_name (SCM vtable);
 SCM_API SCM scm_set_struct_vtable_name_x (SCM vtable, SCM name);
@@ -108,6 +108,12 @@ SCM_API void scm_print_struct (SCM exp, SCM port, scm_print_state *);
 SCM_API void scm_struct_prehistory (void);
 SCM_API void scm_init_struct (void);
 
+static inline nat
+scm_struct_ihashq_var (SCM obj, nat n, void* closure)
+{
+  (void) closure;
+  return scm_struct_ihashq (obj, n);
+}
 #endif  /* SCM_STRUCT_H */
 
 /*

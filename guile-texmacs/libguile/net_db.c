@@ -173,7 +173,7 @@ SCM_DEFINE (scm_gethost, "gethost", 0, 1, 0,
     }
   else
     {
-      inad.s_addr = htonl (scm_to_ulong (host));
+      inad.s_addr = htonl (scm_to_nat (host));
       entry = gethostbyaddr ((char *) &inad, sizeof (inad), AF_INET);
     }
 
@@ -193,7 +193,7 @@ SCM_DEFINE (scm_gethost, "gethost", 0, 1, 0,
   while (i--)
     {
       inad = *(struct in_addr *) argv[i];
-      lst = scm_cons (scm_from_ulong (ntohl (inad.s_addr)), lst);
+      lst = scm_cons (scm_from_nat (ntohl (inad.s_addr)), lst);
     }
   SCM_SIMPLE_VECTOR_SET(result, 4, lst);
   return result;
@@ -246,7 +246,7 @@ SCM_DEFINE (scm_getnet, "getnet", 0, 1, 0,
     }
   else
     {
-      unsigned long netnum = scm_to_ulong (net);
+      nat netnum = scm_to_nat (net);
       entry = getnetbyaddr (netnum, AF_INET);
       eno = errno;
     }
@@ -257,7 +257,7 @@ SCM_DEFINE (scm_getnet, "getnet", 0, 1, 0,
   SCM_SIMPLE_VECTOR_SET(result, 0, scm_from_locale_string (entry->n_name));
   SCM_SIMPLE_VECTOR_SET(result, 1, scm_makfromstrs (-1, entry->n_aliases));
   SCM_SIMPLE_VECTOR_SET(result, 2, scm_from_int (entry->n_addrtype));
-  SCM_SIMPLE_VECTOR_SET(result, 3, scm_from_ulong (entry->n_net));
+  SCM_SIMPLE_VECTOR_SET(result, 3, scm_from_nat (entry->n_net));
   return result;
 }
 #undef FUNC_NAME
@@ -298,7 +298,7 @@ SCM_DEFINE (scm_getproto, "getproto", 0, 1, 0,
     }
   else
     {
-      unsigned long protonum = scm_to_ulong (protocol);
+      nat protonum = scm_to_nat (protocol);
       entry = getprotobynumber (protonum);
       eno = errno;
     }
