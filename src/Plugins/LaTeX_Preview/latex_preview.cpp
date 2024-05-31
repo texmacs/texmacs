@@ -129,6 +129,7 @@ latex_install_preview (string s, tree t, url wdir, bool dvips) {
 
 tree
 latex_load_image (url image) {
+#if defined(USE_GS)
   string s;
   tree t (IMAGE, 5);
   load_string (image, s, false);
@@ -142,10 +143,15 @@ latex_load_image (url image) {
   t[1]= as_string (width) * "pt";
   t[2]= as_string (height) * "pt";
   return (t);
+#else
+  dbg ("latex_load_image failed because ghostscript is not available");
+  return array<tree> ();
+#endif
 }
 
 array<tree>
 latex_load_preview (url wdir, bool dvips= false) {
+#if defined(USE_GS)
   string cmdln= "cd \"" * as_string (wdir) * "\"; ";
   if (dvips) {
     cmdln << "dvips temp.dvi && "
@@ -177,6 +183,10 @@ latex_load_preview (url wdir, bool dvips= false) {
       stop= true;
   }
   return r;
+#else
+  dbg ("latex_load_preview failed because ghostscript is not available");
+  return array<tree> ();
+#endif
 }
 
 array<tree>
