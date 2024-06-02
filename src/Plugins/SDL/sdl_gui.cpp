@@ -175,7 +175,7 @@ sdl_gui_rep::obtain_mouse_grab (widget wid) {
   SDL_RaiseWindow (win);
   SDL_CaptureMouse (SDL_TRUE);
   // SDL_SetWindowGrab (win, SDL_TRUE);
-  // cout << "---> obtain_mouse_grab: in grab " << wid << "\n";
+  cout << "---> obtain_mouse_grab: in grab " << wid << "\n";
   if (!is_nil (old_widget)) {
     notify_mouse_grab (old_widget, false);
     emulate_leave_enter (old_widget, new_widget);
@@ -1043,13 +1043,14 @@ sdl_gui_rep::process_event (SDL_Event *event) {
     case SDL_MOUSEBUTTONDOWN:
     case SDL_MOUSEBUTTONUP:
     {
+      cout << "mouse button :" << SDL_BUTTON(event->button.button) << LF;
       update_mouse_state ( SDL_BUTTON(event->button.button) );
       // we need to take into account explicitly the current button
-#if 0
+#if 1
       if (event->type == SDL_MOUSEBUTTONDOWN)
-        mouse_state = mouse_state | SDL_BUTTON (event->button.button);
+        mouse_state = mouse_state | (event->button.button);
       else
-        mouse_state = mouse_state & ~SDL_BUTTON (event->button.button);
+        mouse_state = mouse_state & ~(event->button.button);
 #endif
       cout << "new mouse state " << mouse_state << LF;
       sdl_window win= get_window_from_ID (event->button.windowID);
