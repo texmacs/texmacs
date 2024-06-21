@@ -924,6 +924,7 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <gmp.h>]],
 #AC_CHECK_FUNCS([bindtextdomain textdomain])
 AM_GNU_GETTEXT([external], [need-ngettext])
 AM_GNU_GETTEXT_VERSION([0.20])
+LIBS="$LIBINTL $LIBS"
 
 ### Some systems don't declare some functions.  On such systems, we
 ### need to at least provide our own K&R-style declarations.
