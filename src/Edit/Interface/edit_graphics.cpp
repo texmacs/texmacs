@@ -533,7 +533,7 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t,
     if (type == "move")
       call ("graphics-move", sx, sy);
     else if (type == "release-left" || type == "double-left")
-      call ("graphics-release-left", sx, sy);
+      call ("graphics-release-left", sx, sy, (double) t, 1);
     else if (type == "release-middle")
       call ("graphics-release-middle", sx, sy);
     else if (type == "release-right" || type == "double-right")
