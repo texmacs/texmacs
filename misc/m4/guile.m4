@@ -111,7 +111,9 @@ AC_DEFUN([LC_WITH_GUILE],[
       $0_use_embedded_guile=1
       AX_SUBDIRS_CONFIGURE([embedded_guile],
         [[--without-guile-readline]],
-        [--disable-shared],[--prefix=$(pwd)/embedded_guile/build],
+        [--disable-shared],
+	[[--prefix=$(pwd)/embedded_guile/build],
+	 [CPPFLAGS=${CPPFLAGS}],[LDFLAGS=${LDFLAGS}]],
         [--with-tmrepo=])
       GUILE_STATIC='$(shell ../'$GUILE_EMBEDDED_DIR'/guile-config/guile-config link)'
       AC_SUBST([GUILE_STATIC])
