@@ -9,6 +9,7 @@ AC_CONFIG_MACRO_DIR([../m4])
 AC_CONFIG_SRCDIR(readline.c)
 AC_CONFIG_HEADERS([guile-readline-config.h])
 AM_INIT_AUTOMAKE([foreign no-define])
+AM_MAINTAINER_MODE
 
 . $srcdir/../GUILE-VERSION
 
