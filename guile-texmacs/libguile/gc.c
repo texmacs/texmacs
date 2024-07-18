@@ -879,7 +879,7 @@ int
 scm_getenv_int (const char *var, int def)
 {
   char *end = 0;
-  char *val = getenv (var);
+  char *val = guile_getenv (var);
   ent res = def;
   if (!val)
     return def;

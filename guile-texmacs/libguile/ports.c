@@ -1437,9 +1437,9 @@ SCM_DEFINE (scm_seek, "seek", 3, 0, 0,
     }
   else /* file descriptor?.  */
     {
-      off_t_or_off64_t off = scm_to_off_t_or_off64_t (offset);
-      off_t_or_off64_t rv;
-      rv = lseek_or_lseek64 (scm_to_int (fd_port), off, how);
+      guile_off_t off = scm_to_off_t_or_off64_t (offset);
+      guile_off_t rv;
+      rv = guile_lseek (scm_to_int (fd_port), off, how);
       if (rv == -1)
 	SCM_SYSERROR;
       return scm_from_off_t_or_off64_t (rv);
@@ -1511,8 +1511,8 @@ SCM_DEFINE (scm_truncate_file, "truncate-file", 1, 1, 0,
   object = SCM_COERCE_OUTPORT (object);
   if (scm_is_integer (object))
     {
-      off_t_or_off64_t c_length = scm_to_off_t_or_off64_t (length);
-      SCM_SYSCALL (rv = ftruncate_or_ftruncate64 (scm_to_int (object),
+      guile_off_t c_length = scm_to_off_t_or_off64_t (length);
+      SCM_SYSCALL (rv = guile_ftruncate (scm_to_int (object),
                                                   c_length));
     }
   else if (SCM_OPOUTFPORTP (object))
@@ -1538,10 +1538,10 @@ SCM_DEFINE (scm_truncate_file, "truncate-file", 1, 1, 0,
     }
   else
     {
-      off_t_or_off64_t c_length = scm_to_off_t_or_off64_t (length);
+      guile_off_t c_length = scm_to_off_t_or_off64_t (length);
       char *str = scm_to_locale_string (object);
       int eno;
-      SCM_SYSCALL (rv = truncate_or_truncate64 (str, c_length));
+      SCM_SYSCALL (rv = guile_truncate (str, c_length));
       eno = errno;
       free (str);
       errno = eno;

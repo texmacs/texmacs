@@ -113,7 +113,7 @@ libguile_la_SOURCES = alist.c arbiters.c async.c backtrace.c boolean.c	\
     stackchk.c stacks.c stime.c strings.c srfi-4.c srfi-13.c srfi-14.c	\
     strorder.c strports.c struct.c symbols.c threads.c null-threads.c	\
     throw.c values.c variable.c vectors.c version.c vports.c weaks.c	\
-    ramap.c unif.c
+    ramap.c unif.c system.c
 
 DOT_X_FILES = alist.x arbiters.x async.x backtrace.x boolean.x chars.x	\
     continuations.x debug.x deprecation.x deprecated.x discouraged.x	\
@@ -160,7 +160,7 @@ EXTRA_libguile_la_SOURCES = _scm.h		\
     dynl.c regex-posix.c			\
     filesys.c posix.c net_db.c socket.c		\
     debug-malloc.c mkstemp.c	\
-    win32-uname.c win32-dirent.c win32-socket.c
+    win32-uname.c win32-socket.c
 
 ## delete guile-snarf.awk from the installation bindir, in case it's
 ## lingering there due to an earlier guile version not having been
@@ -176,7 +176,7 @@ noinst_HEADERS = convert.i.c					\
                  conv-integer.i.c conv-uinteger.i.c		\
                  srfi-4.i.c					\
                  quicksort.i.c                                  \
-                 win32-uname.h win32-dirent.h win32-socket.h	\
+                 win32-uname.h win32-socket.h	\
 	         private-gc.h
 
 libguile_la_DEPENDENCIES = @LIBLOBJS@
@@ -203,7 +203,7 @@ modinclude_HEADERS = __scm.h alist.h arbiters.h async.h backtrace.h	\
     stackchk.h stacks.h stime.h strings.h srfi-4.h srfi-13.h srfi-14.h	\
     strorder.h strports.h struct.h symbols.h tags.h threads.h		\
     pthread-threads.h null-threads.h throw.h unif.h values.h		\
-    variable.h vectors.h vports.h weaks.h
+    variable.h vectors.h vports.h weaks.h system.h
 
 nodist_modinclude_HEADERS = version.h scmconfig.h
 

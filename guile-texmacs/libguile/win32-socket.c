@@ -26,6 +26,10 @@
 #include "libguile/modules.h"
 #include "libguile/numbers.h"
 
+#ifdef SCM_HAVE_WINSOCK2_H
+# include <winsock2.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

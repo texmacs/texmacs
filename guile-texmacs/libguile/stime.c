@@ -354,7 +354,7 @@ setzone (SCM zone, int pos, const char *subr)
       char *oldbuf, *oldzone;
       size_t oldzone_len;
 
-      oldzone = getenv (tzvar);
+      oldzone = guile_getenv (tzvar);
       oldzone_len = oldzone == NULL ? 0 : strlen (oldzone);
       oldbuf = malloc (oldzone_len + sizeof (oldtzvar) + 1);
       strcpy (oldbuf, oldtzvar);
@@ -387,7 +387,7 @@ restorezone (SCM zone, char **oldenv, const char *subr SCM_UNUSED)
 #else
       char *buf, *oldzone;
       size_t oldzone_len;
-      oldzone = getenv (oldtzvar);
+      oldzone = guile_getenv (oldtzvar);
       oldzone_len = oldzone == NULL ? 0 : strlen (oldzone);
       buf = malloc (oldzone_len + sizeof (tzvar) + 1);
       strcpy (buf, tzvar);

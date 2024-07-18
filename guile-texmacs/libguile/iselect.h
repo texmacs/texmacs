@@ -32,11 +32,10 @@
 #endif
 
 #if SCM_HAVE_WINSOCK2_H
-# include <winsock2.h>
+typedef struct fd_set fd_set;
 #endif
 
-#ifdef FD_SET
-
+#if defined(FD_SET) || SCM_HAVE_WINSOCK2_H
 #define SELECT_TYPE fd_set
 #if defined(__INTERIX) && FD_SETSIZE == 4096
 /* Interix defines FD_SETSIZE 4096 but select rejects that. */

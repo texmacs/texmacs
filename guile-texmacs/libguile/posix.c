@@ -1427,7 +1427,7 @@ SCM_DEFINE (scm_putenv, "putenv", 1, 0, 0,
               }
             /* truncate to just the name */
             c_str[len-1] = '\0';
-            ptr = getenv (c_str);
+            ptr = guile_getenv (c_str);
             if (ptr)
               ptr[0] = '\0';
             return SCM_UNSPECIFIED;

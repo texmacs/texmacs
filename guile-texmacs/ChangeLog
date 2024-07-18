@@ -1,5 +1,12 @@
 -*- text -*-
 
+*** Changes of July 2024 for version guile-texmacs-1.8.8
+
+Adding system.h and system.c: The guile code is old and may not work
+directly on newer systems. To accommodate this, users have the possibility to
+create hooks for the system functions (such as fstat, fopen, ...). The Guile
+functions will always call the corresponding hooks if they are defined.
+
 *** Changes of March 2024 for version guile-texmacs-1.8.8
 
 The present version guile-texmacs-1.8.8 is derived from

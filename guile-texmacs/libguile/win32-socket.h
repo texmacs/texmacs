@@ -23,7 +23,8 @@
 #include "libguile/__scm.h"
 
 #ifdef SCM_HAVE_WINSOCK2_H
-# include <winsock2.h>
+struct servent;
+struct protoent;
 #endif
 
 int scm_i_socket_errno (void);

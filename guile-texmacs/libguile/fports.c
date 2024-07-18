@@ -361,7 +361,7 @@ SCM_DEFINE (scm_open_file, "open-file", 2, 0, 0,
 	}
       ptr++;
     }
-  SCM_SYSCALL (fdes = open_or_open64 (file, flags, 0666));
+  SCM_SYSCALL (fdes = guile_open (file, flags, 0666));
   if (fdes == -1)
     {
       int en = errno;
@@ -610,25 +610,25 @@ fport_fill_input (SCM port)
     }
 }
 
-static off_t_or_off64_t
-fport_seek_or_seek64 (SCM port, off_t_or_off64_t offset, int whence)
+static guile_off_t
+fport_seek_or_seek64 (SCM port, guile_off_t offset, int whence)
 {
   scm_t_port *pt = SCM_PTAB_ENTRY (port);
   scm_t_fport *fp = SCM_FSTREAM (port);
-  off_t_or_off64_t rv;
-  off_t_or_off64_t result;
+  guile_off_t rv;
+  guile_off_t result;
 
   if (pt->rw_active == SCM_PORT_WRITE)
     {
       if (offset != 0 || whence != SEEK_CUR)
 	{
 	  fport_flush (port);
-	  result = rv = lseek_or_lseek64 (fp->fdes, offset, whence);
+	  result = rv = guile_lseek (fp->fdes, offset, whence);
 	}
       else
 	{
 	  /* read current position without disturbing the buffer.  */
-	  rv = lseek_or_lseek64 (fp->fdes, offset, whence);
+	  rv = guile_lseek (fp->fdes, offset, whence);
 	  result = rv + (pt->write_pos - pt->write_buf);
 	}
     }
@@ -638,13 +638,13 @@ fport_seek_or_seek64 (SCM port, off_t_or_off64_t offset, int whence)
 	{
 	  /* could expand to avoid a second seek.  */
 	  scm_end_input (port);
-	  result = rv = lseek_or_lseek64 (fp->fdes, offset, whence);
+	  result = rv = guile_lseek (fp->fdes, offset, whence);
 	}
       else
 	{
 	  /* read current position without disturbing the buffer
 	     (particularly the unread-char buffer).  */
-	  rv = lseek_or_lseek64 (fp->fdes, offset, whence);
+	  rv = guile_lseek (fp->fdes, offset, whence);
 	  result = rv - (pt->read_end - pt->read_pos);
 
 	  if (pt->read_buf == pt->putback_buf)
@@ -653,7 +653,7 @@ fport_seek_or_seek64 (SCM port, off_t_or_off64_t offset, int whence)
     }
   else /* SCM_PORT_NEITHER */
     {
-      result = rv = lseek_or_lseek64 (fp->fdes, offset, whence);
+      result = rv = guile_lseek (fp->fdes, offset, whence);
     }
 
   if (rv == -1)
@@ -708,7 +708,7 @@ int
 scm_i_fport_truncate (SCM port, SCM length)
 {
   scm_t_fport *fp = SCM_FSTREAM (port);
-  return ftruncate_or_ftruncate64 (fp->fdes, scm_to_off_t_or_off64_t (length));
+  return guile_ftruncate (fp->fdes, scm_to_off_t_or_off64_t (length));
 }
 
 /* helper for fport_write: try to write data, using multiple system

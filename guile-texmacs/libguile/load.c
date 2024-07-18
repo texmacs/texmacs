@@ -211,7 +211,7 @@ scm_init_load_path ()
 		     scm_from_locale_string (SCM_PKGDATA_DIR));
 #endif /* SCM_LIBRARY_DIR */
 
-  env = getenv ("GUILE_LOAD_PATH");
+  env = guile_getenv ("GUILE_LOAD_PATH");
   if (env)
     path = scm_parse_path (scm_from_locale_string (env), path);
 
@@ -400,7 +400,7 @@ SCM_DEFINE (scm_search_path, "search-path", 2, 1, 0,
       for (exts = extensions; scm_is_pair (exts); exts = SCM_CDR (exts))
 	{
 	  SCM ext = SCM_CAR (exts);
-	  struct stat mode;
+	  guile_stat_t mode;
 	  
 	  buf.ptr = buf.buf + sans_ext_len;
 	  stringbuf_cat_locale_string (&buf, ext);
@@ -408,7 +408,7 @@ SCM_DEFINE (scm_search_path, "search-path", 2, 1, 0,
 	  /* If the file exists at all, we should return it.  If the
 	     file is inaccessible, then that's an error.  */
 
-	  if (stat (buf.buf, &mode) == 0
+	  if (guile_stat (buf.buf, &mode) == 0
 	      && ! (mode.st_mode & S_IFDIR))
 	    {
 	      result = scm_from_locale_string (buf.buf);

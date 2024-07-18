@@ -403,6 +403,18 @@ main (int argc, char *argv[])
 
   pf ("#define SCM_HAVE_ARRAYS 1 /* always true now */\n");
 
+#if GUILE_USE_64_CALLS
+  pf ("#define SCM_USE_64_CALLS 1 /* always true now */\n");
+#else
+  pf ("#define SCM_USE_64_CALLS 0 /* always false now */\n");
+#endif
+
+#if HAVE_STAT64
+  pf ("#define SCM_HAVE_STAT64 1 /* always true now */\n");
+#else
+  pf ("#define SCM_HAVE_STAT64 0 /* always false now */\n");
+#endif
+
   printf ("#endif\n");
 
   return 0;

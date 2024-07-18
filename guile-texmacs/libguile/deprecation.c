@@ -152,7 +152,7 @@ SCM_DEFINE(scm_include_deprecated_features,
 void
 scm_init_deprecation ()
 {
-  const char *level = getenv ("GUILE_WARN_DEPRECATED");
+  const char *level = guile_getenv ("GUILE_WARN_DEPRECATED");
   if (level == NULL)
     level = SCM_WARN_DEPRECATED_DEFAULT;
   if (!strcmp (level, "detailed"))

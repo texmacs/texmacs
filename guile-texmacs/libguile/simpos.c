@@ -192,7 +192,7 @@ SCM_DEFINE (scm_getenv, "getenv", 1, 0, 0,
 {
   char *val;
   char *var = scm_to_locale_string (nam);
-  val = getenv (var);
+  val = guile_getenv (var);
   free (var);
   return val ? scm_from_locale_string (val) : SCM_BOOL_F;
 }
