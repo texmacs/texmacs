@@ -193,7 +193,8 @@ am_libguile_la_OBJECTS = libguile_la-alist.lo libguile_la-arbiters.lo \
 	libguile_la-throw.lo libguile_la-values.lo \
 	libguile_la-variable.lo libguile_la-vectors.lo \
 	libguile_la-version.lo libguile_la-vports.lo \
-	libguile_la-weaks.lo libguile_la-ramap.lo libguile_la-unif.lo
+	libguile_la-weaks.lo libguile_la-ramap.lo libguile_la-unif.lo \
+	libguile_la-system.lo
 libguile_la_OBJECTS = $(am_libguile_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -333,6 +334,7 @@ am__depfiles_remade = ./$(DEPDIR)/c-tokenize.Po \
 	./$(DEPDIR)/libguile_la-strports.Plo \
 	./$(DEPDIR)/libguile_la-struct.Plo \
 	./$(DEPDIR)/libguile_la-symbols.Plo \
+	./$(DEPDIR)/libguile_la-system.Plo \
 	./$(DEPDIR)/libguile_la-threads.Plo \
 	./$(DEPDIR)/libguile_la-throw.Plo \
 	./$(DEPDIR)/libguile_la-unif.Plo \
@@ -342,7 +344,6 @@ am__depfiles_remade = ./$(DEPDIR)/c-tokenize.Po \
 	./$(DEPDIR)/libguile_la-version.Plo \
 	./$(DEPDIR)/libguile_la-vports.Plo \
 	./$(DEPDIR)/libguile_la-weaks.Plo \
-	./$(DEPDIR)/libguile_la-win32-dirent.Plo \
 	./$(DEPDIR)/libguile_la-win32-socket.Plo \
 	./$(DEPDIR)/libguile_la-win32-uname.Plo
 am__mv = mv -f
@@ -655,7 +656,7 @@ libguile_la_SOURCES = alist.c arbiters.c async.c backtrace.c boolean.c	\
     stackchk.c stacks.c stime.c strings.c srfi-4.c srfi-13.c srfi-14.c	\
     strorder.c strports.c struct.c symbols.c threads.c null-threads.c	\
     throw.c values.c variable.c vectors.c version.c vports.c weaks.c	\
-    ramap.c unif.c
+    ramap.c unif.c system.c
 
 DOT_X_FILES = alist.x arbiters.x async.x backtrace.x boolean.x chars.x	\
     continuations.x debug.x deprecation.x deprecated.x discouraged.x	\
@@ -698,13 +699,13 @@ EXTRA_libguile_la_SOURCES = _scm.h		\
     dynl.c regex-posix.c			\
     filesys.c posix.c net_db.c socket.c		\
     debug-malloc.c mkstemp.c	\
-    win32-uname.c win32-dirent.c win32-socket.c
+    win32-uname.c win32-socket.c
 
 noinst_HEADERS = convert.i.c					\
                  conv-integer.i.c conv-uinteger.i.c		\
                  srfi-4.i.c					\
                  quicksort.i.c                                  \
-                 win32-uname.h win32-dirent.h win32-socket.h	\
+                 win32-uname.h win32-socket.h	\
 	         private-gc.h
 
 libguile_la_DEPENDENCIES = @LIBLOBJS@
@@ -731,7 +732,7 @@ modinclude_HEADERS = __scm.h alist.h arbiters.h async.h backtrace.h	\
     stackchk.h stacks.h stime.h strings.h srfi-4.h srfi-13.h srfi-14.h	\
     strorder.h strports.h struct.h symbols.h tags.h threads.h		\
     pthread-threads.h null-threads.h throw.h unif.h values.h		\
-    variable.h vectors.h vports.h weaks.h
+    variable.h vectors.h vports.h weaks.h system.h
 
 nodist_modinclude_HEADERS = version.h scmconfig.h
 bin_SCRIPTS = guile-snarf
@@ -1057,6 +1058,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libguile_la-strports.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libguile_la-struct.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libguile_la-symbols.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libguile_la-system.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libguile_la-threads.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libguile_la-throw.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libguile_la-unif.Plo@am__quote@ # am--include-marker
@@ -1066,7 +1068,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libguile_la-version.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libguile_la-vports.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libguile_la-weaks.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libguile_la-win32-dirent.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libguile_la-win32-socket.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libguile_la-win32-uname.Plo@am__quote@ # am--include-marker
 
@@ -1783,6 +1784,13 @@ libguile_la-unif.lo: unif.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libguile_la_CFLAGS) $(CFLAGS) -c -o libguile_la-unif.lo `test -f 'unif.c' || echo '$(srcdir)/'`unif.c
 
+libguile_la-system.lo: system.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libguile_la_CFLAGS) $(CFLAGS) -MT libguile_la-system.lo -MD -MP -MF $(DEPDIR)/libguile_la-system.Tpo -c -o libguile_la-system.lo `test -f 'system.c' || echo '$(srcdir)/'`system.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libguile_la-system.Tpo $(DEPDIR)/libguile_la-system.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='system.c' object='libguile_la-system.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libguile_la_CFLAGS) $(CFLAGS) -c -o libguile_la-system.lo `test -f 'system.c' || echo '$(srcdir)/'`system.c
+
 libguile_la-inet_aton.lo: inet_aton.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libguile_la_CFLAGS) $(CFLAGS) -MT libguile_la-inet_aton.lo -MD -MP -MF $(DEPDIR)/libguile_la-inet_aton.Tpo -c -o libguile_la-inet_aton.lo `test -f 'inet_aton.c' || echo '$(srcdir)/'`inet_aton.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libguile_la-inet_aton.Tpo $(DEPDIR)/libguile_la-inet_aton.Plo
@@ -1873,13 +1881,6 @@ libguile_la-win32-uname.lo: win32-uname.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='win32-uname.c' object='libguile_la-win32-uname.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libguile_la_CFLAGS) $(CFLAGS) -c -o libguile_la-win32-uname.lo `test -f 'win32-uname.c' || echo '$(srcdir)/'`win32-uname.c
-
-libguile_la-win32-dirent.lo: win32-dirent.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libguile_la_CFLAGS) $(CFLAGS) -MT libguile_la-win32-dirent.lo -MD -MP -MF $(DEPDIR)/libguile_la-win32-dirent.Tpo -c -o libguile_la-win32-dirent.lo `test -f 'win32-dirent.c' || echo '$(srcdir)/'`win32-dirent.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libguile_la-win32-dirent.Tpo $(DEPDIR)/libguile_la-win32-dirent.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='win32-dirent.c' object='libguile_la-win32-dirent.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libguile_la_CFLAGS) $(CFLAGS) -c -o libguile_la-win32-dirent.lo `test -f 'win32-dirent.c' || echo '$(srcdir)/'`win32-dirent.c
 
 libguile_la-win32-socket.lo: win32-socket.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libguile_la_CFLAGS) $(CFLAGS) -MT libguile_la-win32-socket.lo -MD -MP -MF $(DEPDIR)/libguile_la-win32-socket.Tpo -c -o libguile_la-win32-socket.lo `test -f 'win32-socket.c' || echo '$(srcdir)/'`win32-socket.c
@@ -2234,6 +2235,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/libguile_la-strports.Plo
 	-rm -f ./$(DEPDIR)/libguile_la-struct.Plo
 	-rm -f ./$(DEPDIR)/libguile_la-symbols.Plo
+	-rm -f ./$(DEPDIR)/libguile_la-system.Plo
 	-rm -f ./$(DEPDIR)/libguile_la-threads.Plo
 	-rm -f ./$(DEPDIR)/libguile_la-throw.Plo
 	-rm -f ./$(DEPDIR)/libguile_la-unif.Plo
@@ -2243,7 +2245,6 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/libguile_la-version.Plo
 	-rm -f ./$(DEPDIR)/libguile_la-vports.Plo
 	-rm -f ./$(DEPDIR)/libguile_la-weaks.Plo
-	-rm -f ./$(DEPDIR)/libguile_la-win32-dirent.Plo
 	-rm -f ./$(DEPDIR)/libguile_la-win32-socket.Plo
 	-rm -f ./$(DEPDIR)/libguile_la-win32-uname.Plo
 	-rm -f Makefile
@@ -2399,6 +2400,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/libguile_la-strports.Plo
 	-rm -f ./$(DEPDIR)/libguile_la-struct.Plo
 	-rm -f ./$(DEPDIR)/libguile_la-symbols.Plo
+	-rm -f ./$(DEPDIR)/libguile_la-system.Plo
 	-rm -f ./$(DEPDIR)/libguile_la-threads.Plo
 	-rm -f ./$(DEPDIR)/libguile_la-throw.Plo
 	-rm -f ./$(DEPDIR)/libguile_la-unif.Plo
@@ -2408,7 +2410,6 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/libguile_la-version.Plo
 	-rm -f ./$(DEPDIR)/libguile_la-vports.Plo
 	-rm -f ./$(DEPDIR)/libguile_la-weaks.Plo
-	-rm -f ./$(DEPDIR)/libguile_la-win32-dirent.Plo
 	-rm -f ./$(DEPDIR)/libguile_la-win32-socket.Plo
 	-rm -f ./$(DEPDIR)/libguile_la-win32-uname.Plo
 	-rm -f Makefile
