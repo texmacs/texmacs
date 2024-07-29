@@ -109,18 +109,27 @@ AC_DEFUN([LC_WITH_GUILE],[
       AC_SUBST([CLNGUILE],[CLNGUILE])
       AC_SUBST([GUILE_EMBEDDED_DIR])
       $0_use_embedded_guile=1
-      AX_SUBDIRS_CONFIGURE([embedded_guile],
-        [[--without-guile-readline]],
-        [--disable-shared],
-	[[--prefix=$(pwd)/embedded_guile/build],
-	 [CPPFLAGS=${CPPFLAGS}],[LDFLAGS=${LDFLAGS}]],
+      case "${host}" in
+        *mingw*)
+          GUILE_PREFIX=$(pwd -W)/embedded_guile/build
+          GUILE_STATIC='$(shell '${GUILE_PREFIX}'/bin/guile.exe -e main -s "'${GUILE_PREFIX}'/bin/guile-config" link)'
+        ;;
+        *)
+          GUILE_PREFIX=$(pwd)/embedded_guile/build
+          GUILE_STATIC='$(shell '${GUILE_PREFIX}'/bin/guile-config link)'
+        ;;
+      esac
+      AX_SUBDIRS_CONFIGURE(
+        [embedded_guile],
+        [[--without-guile-readline],[CPPFLAGS=${CPPFLAGS}],[LDFLAGS=${LDFLAGS}]],
+        [[--disable-shared]],
+	      [[--prefix=${GUILE_PREFIX}]],
         [--with-tmrepo=])
-      GUILE_STATIC='$(shell ../'$GUILE_EMBEDDED_DIR'/guile-config/guile-config link)'
       AC_SUBST([GUILE_STATIC])
-      LC_APPEND_FLAG([-I$(pwd)/embedded_guile/build/include],[GUILE_CPPFLAGS])
-      LC_APPEND_FLAG([-I$(pwd)/embedded_guile/build/include/guile],[GUILE_CPPFLAGS])
+      LC_APPEND_FLAG([-I${GUILE_PREFIX}/include],[GUILE_CPPFLAGS])
+      LC_APPEND_FLAG([-I${GUILE_PREFIX}/include/guile],[GUILE_CPPFLAGS])
       GUILE_VERSION=$GUILE_EMBEDDED_VERSION
-      GUILE_DATA_PATH=$(pwd)/embedded_guile/build/share/guile/${GUILE_VERSION}
+      GUILE_DATA_PATH=${GUILE_PREFIX}/share/guile*/${GUILE_VERSION}
     ],[AC_MSG_ERROR([cannot find guile-config; is Guile installed?])
   ])
 ])
