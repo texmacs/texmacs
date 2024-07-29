@@ -111,9 +111,7 @@
 
 (define (get-full-name user)
  (if (os-mingw?)
-     (or (and (url-exists-in-path? "fullname")
-              (var-eval-system (string-append "fullname " user)))
-         "Default User")
+     (getenv "TEXMACS_DISPLAYNAME")
      (safe-getpwnam user)))
 
 (define (create-default-user)

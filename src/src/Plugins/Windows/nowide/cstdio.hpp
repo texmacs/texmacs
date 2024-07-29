@@ -144,7 +144,7 @@ inline DIR* opendir(char const *name)
     return _wopendir (wname.c_str());
 }
 
-inline char* readir_entry(DIR* dir)
+inline bool readir_entry(DIR* dir, std::string &d_name)
 {
   struct _wdirent *wentry;
   wentry = _wreaddir (dir);
@@ -152,14 +152,17 @@ inline char* readir_entry(DIR* dir)
 	     && (0 == wcscmp (wentry->d_name, L".") ||
 		 0 == wcscmp (wentry->d_name, L"..")))
 	     wentry = _wreaddir (dir);
-  if (wentry == NULL) return NULL;
+  if (wentry == NULL) return false;
   else { 
   stackstring entry;
     if(!entry.convert(wentry->d_name) ) {
         errno = EINVAL;
-        return NULL;
+        return false;
     }
-    else return entry.c_str();
+    else {
+        d_name = entry.c_str();
+        return true;
+    }
   }
 } 
 
