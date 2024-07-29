@@ -92,6 +92,21 @@ AC_DEFUN([TM_PLATFORM],[
       CONFIG_BPATH="-Wl,-R,"
       X11_LDFLAGS="$X_LIBS -lXext -lX11 -lsocket"
     ;;
+    *64*w64-mingw32)
+      AC_MSG_RESULT([for mingw64 host])
+      AC_DEFINE([OS_MINGW],[1],[OS type])
+      AC_DEFINE([OS_MINGW64],[1],[OS type])
+      AC_SUBST([CONFIG_BUNDLE],[WINDOWS_BUNDLE])
+      AC_SUBST([CONFIG_PACKAGE],[WINDOWS_PACKAGE])
+      CONFIG_OS=MINGW
+      CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
+      CONFIG_QTPIPES="yes"
+      CONFIG_OS_COMPAT="Windows64"
+      CPPFLAGS="$CPPFLAGS -IPlugins/Windows64 -I."
+      LC_APPEND_FLAG([-Wl,--stack=16777216],[LDFLAGS])
+      LC_APPEND_FLAG([-ldbghelp -lSecur32],[LDFLAGS])
+      CONFIG_CP="cp -f -R -p" #rsync do not work properly on mingw
+    ;;
     *mingw*)
       AC_MSG_RESULT([for mingw host])
       AC_DEFINE([OS_MINGW],[(defined (__MINGW__) || defined (__MINGW32__))],[OS type])
@@ -104,6 +119,8 @@ AC_DEFUN([TM_PLATFORM],[
       CPPFLAGS="$CPPFLAGS -I/usr/local/include -IPlugins/Windows -I."
       GUILE_LDFLAGS="-lmingwex $GUILE_LDFLAGS -lintl" #added mingwex to mask the internal guile readdir function
       LC_APPEND_FLAG([-Wl,--stack=16777216],[LDFLAGS])
+      LC_APPEND_FLAG([-ldbghelp -lSecur32],[LDFLAGS])
+      CONFIG_CP="cp -f -R -p" #rsync do not work properly on mingw
     ;;
     *-*-cygwin)
       AC_MSG_RESULT(cygwin host)
