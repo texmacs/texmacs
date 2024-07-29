@@ -1,4 +1,3 @@
-
 /******************************************************************************
 * MODULE     : stack_trace.cpp
 * DESCRIPTION: Debugging facilities
@@ -10,9 +9,10 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "sys_utils.hpp"
+#include "string.hpp"
 
 #ifdef USE_STACK_TRACE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <execinfo.h>
@@ -126,6 +126,7 @@ get_stacktrace (unsigned int max_frames) {
 
 #else
 
+#warning "Stack trace not implemented for this platform"
 string
 get_stacktrace (unsigned int max_frames) {
   (void) max_frames;

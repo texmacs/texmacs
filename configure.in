@@ -92,6 +92,7 @@ AC_CHECK_TYPES(intptr_t)
 AC_CHECK_TYPES(time_t)
 AC_CHECK_HEADERS(pty.h util.h)
 AC_CHECK_FUNCS(gettimeofday)
+AC_CHECK_FUNCS(snprintf)
 
 TM_REPO
 TM_PLATFORM

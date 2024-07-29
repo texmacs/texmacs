@@ -11,13 +11,15 @@
 
 #include "tm_ostream.hpp"
 #include "tree.hpp"
-#ifdef OS_MINGW
-#include "Windows/win-utf8-compat.hpp"
-#include "Windows/nowide/iostream.hpp"
-#include "Windows/nowide/convert.hpp"
-FILE* fstdout;
-FILE* fstderr; 
+
+#if defined (OS_MINGW64)
+#include "Windows64/windows64_system.hpp"
+#elif defined (OS_MINGW)
+#include "Windows/windows32_system.hpp"
+#else
+#include "Unix/unix_system.hpp"
 #endif
+
 /******************************************************************************
 * Routines for abstract base class
 ******************************************************************************/
@@ -62,10 +64,6 @@ std_ostream_rep::std_ostream_rep (char* fn):
 {
   file= fopen (fn, "w");
   if (file) {
-#ifdef OS_MINGW
-    if (strcmp(fn, "stdout") == 0) fstdout = file; 
-    if (strcmp(fn, "stderr") == 0) fstderr = file;
-#endif
     is_w= true;
     is_mine= true;
   }
@@ -95,25 +93,18 @@ std_ostream_rep::is_writable () const {
 
 void
 std_ostream_rep::write (const char* s) {
-#ifdef OS_MINGW
-  if (file == fstdout) {
-      nowide::cout<<s ;
-      nowide::cout.flush();
-     }
-  else if (file == fstderr) {
-      nowide::cerr<<s ;
-      nowide::cerr.flush();
-     }
-  else
-#endif
-  if (file && is_w) {
-    if (0 <= fprintf (file, "%s", s)) {
-      const char* c= s;
-      while (*c != 0 && *c != '\n') ++c;
-      if (*c == '\n') flush ();
-    }
-    else is_w= false;
+  if (!file || !is_w) {
+    return;
   }
+  int written;
+  written = texmacs_fputs(s, file);
+  if (written == EOF) {
+    is_w = false;
+    return;
+  }
+  const char* c= s;
+  while (*c != 0 && *c != '\n') ++c;
+  if (*c == '\n') flush ();
 }
 
 void
@@ -295,7 +286,7 @@ tm_ostream::operator << (bool b) {
 tm_ostream&
 tm_ostream::operator << (char c) {
   static char _buf[8];
-  sprintf (_buf, "%c", c);
+  snprintf (_buf, 8, "%c", c);
   rep->write (_buf);
   return *this;
 }
@@ -303,7 +294,7 @@ tm_ostream::operator << (char c) {
 tm_ostream&
 tm_ostream::operator << (short sh) {
   static char _buf[32];
-  sprintf (_buf, "%hd", sh);
+  snprintf (_buf, 32, "%hd", sh);
   rep->write (_buf);
   return *this;
 }
@@ -311,7 +302,7 @@ tm_ostream::operator << (short sh) {
 tm_ostream&
 tm_ostream::operator << (unsigned short ush) {
   static char _buf[32];
-  sprintf (_buf, "%hu", ush);
+  snprintf (_buf, 32, "%hu", ush);
   rep->write (_buf);
   return *this;
 }
@@ -319,7 +310,7 @@ tm_ostream::operator << (unsigned short ush) {
 tm_ostream&
 tm_ostream::operator << (int i) {
   static char _buf[64];
-  sprintf (_buf, "%d", i);
+  snprintf (_buf, 64, "%d", i);
   rep->write (_buf);
   return *this;
 }
@@ -327,7 +318,7 @@ tm_ostream::operator << (int i) {
 tm_ostream&
 tm_ostream::operator << (unsigned int ui) {
   static char _buf[64];
-  sprintf (_buf, "%u", ui);
+  snprintf (_buf, 64, "%u", ui);
   rep->write (_buf);
   return *this;
 }
@@ -335,7 +326,7 @@ tm_ostream::operator << (unsigned int ui) {
 tm_ostream&
 tm_ostream::operator << (long l) {
   static char _buf[64];
-  sprintf (_buf, "%ld", l);
+  snprintf (_buf, 64, "%ld", l);
   rep->write (_buf);
   return *this;
 }
@@ -343,7 +334,7 @@ tm_ostream::operator << (long l) {
 tm_ostream&
 tm_ostream::operator << (unsigned long ul) {
   static char _buf[64];
-  sprintf (_buf, "%lu", ul);
+  snprintf (_buf, 64, "%lu", ul);
   rep->write (_buf);
   return *this;
 }
@@ -351,7 +342,7 @@ tm_ostream::operator << (unsigned long ul) {
 tm_ostream&
 tm_ostream::operator << (long long ll) {
   static char _buf[64];
-  sprintf (_buf, "%lld", ll);
+  snprintf (_buf, 64, "%lld", ll);
   rep->write (_buf);
   return *this;
 }
@@ -359,7 +350,7 @@ tm_ostream::operator << (long long ll) {
 tm_ostream&
 tm_ostream::operator << (unsigned long long ull) {
   static char _buf[64];
-  sprintf (_buf, "%llu", ull);
+  snprintf (_buf, 64, "%llu", ull);
   rep->write (_buf);
   return *this;
 }
@@ -367,7 +358,7 @@ tm_ostream::operator << (unsigned long long ull) {
 tm_ostream&
 tm_ostream::operator << (float f) {
   static char _buf[32];
-  sprintf (_buf, "%g", f);
+  snprintf (_buf, 32, "%g", f);
   rep->write (_buf);
   return *this;
 }
@@ -375,7 +366,7 @@ tm_ostream::operator << (float f) {
 tm_ostream&
 tm_ostream::operator << (double d) {
   static char _buf[64];
-  sprintf (_buf, "%g", d);
+  snprintf (_buf, 64, "%g", d);
   rep->write (_buf);
   return *this;
 }
@@ -383,7 +374,7 @@ tm_ostream::operator << (double d) {
 tm_ostream&
 tm_ostream::operator << (long double ld) {
   static char _buf[128];
-  sprintf (_buf, "%Lg", ld);
+  snprintf (_buf, 128, "%Lg", ld);
   rep->write (_buf);
   return *this;
 }

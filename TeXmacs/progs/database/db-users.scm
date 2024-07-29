@@ -95,6 +95,25 @@
 
 (define db-the-default-user #f)
 
+(define (safe-getpwnam id)
+  (catch #t
+	 (lambda () (passwd:gecos (getpwnam id)))
+	 (lambda err
+	   (display* "Error in getpwnam: " err "\n")
+	   "")))
+
+(define (safe-getpwuid id)
+  (catch #t
+	 (lambda () (passwd:name (getpwuid id)))
+	 (lambda err
+	   (display* "Error in getpwuid: " err "\n")
+	   "")))
+
+(define (get-full-name user)
+ (if (os-mingw?)
+     (getenv "TEXMACS_DISPLAYNAME")
+     (safe-getpwnam user)))
+
 (define (create-default-user)
   (let* ((pseudo (get-user-login))
          (name (get-user-name)))

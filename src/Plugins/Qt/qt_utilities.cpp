@@ -743,7 +743,11 @@ qt_translate (const string& s) {
 
 string
 qt_application_directory () {
+#ifdef OS_MINGW64
+  return string (QCoreApplication::applicationDirPath().toUtf8().constData());
+#else
   return string (QCoreApplication::applicationDirPath().toLatin1().constData());
+#endif
   // This is used to set $TEXMACS_PATH
   // in Windows TeXmacs cannot run if this path contains unicode characters
   // apparently because Guile uses standard narrow char api to load its modules => patch Guile?.  
