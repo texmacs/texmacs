@@ -72,6 +72,9 @@
 /* Define if the Qt framework is available. */
 #undef HAVE_QT
 
+/* Define to 1 if you have the `snprintf' function. */
+#undef HAVE_SNPRINTF
+
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 
@@ -158,6 +161,9 @@
 
 /* OS type */
 #undef OS_MINGW
+
+/* OS type */
+#undef OS_MINGW64
 
 /* OS type */
 #undef OS_POWERPC_GNU_LINUX

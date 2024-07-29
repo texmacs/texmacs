@@ -707,6 +707,7 @@ UIC
 MOC
 QT_PATH
 QMAKE
+CV2PDB
 ASPELL_CMD
 XTRA_CMD
 MACOSX_TARGET
@@ -772,6 +773,7 @@ CONFIG_CP
 CONFIG_ARCHS
 CONFIG_DATE
 CONFIG_USER
+CONFIG_HOST_CPU
 CONFIG_HOST_VENDOR
 CONFIG_HOST_OS
 CONFIG_LDRT
@@ -879,6 +881,7 @@ ac_user_opts='
 enable_option_checking
 enable_dumpflags
 with_tmrepo
+with_texmacs_builder
 enable_static
 with_guile
 enable_guile2
@@ -896,6 +899,7 @@ enable_macosx_extensions
 with_sdk
 with_osx
 enable_console
+enable_cv2pdb
 enable_qt
 with_qt_find_method
 with_qt
@@ -1569,6 +1573,7 @@ if test -n "$ac_init_help"; then
                           do not use Mac specific services (spellchecker,
                           image handling, ...)
   --enable-console        enable windows console
+  --enable-windows-pbd    enable windows debug symbols
   --disable-qt            replace Qt by X11 interface
   --enable-qtpipes        replace UNIX pipes by Qt pipes
   --enable-cocoa          replace X11 by Cocoa interface
@@ -1587,6 +1592,8 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-tmrepo[=no]      absolute texmacs sdk path
+  --with-texmacs-builder[=no]
+                          absolute texmacs builder path
   --with-guile[=system]   path to to find guile-config or [embedded] if any
                           tm-guile package included
   --with-iconv[=DIR]      where to find iconv []
@@ -5577,6 +5584,13 @@ then :
 
 fi
 
+ac_fn_cxx_check_func "$LINENO" "snprintf" "ac_cv_func_snprintf"
+if test "x$ac_cv_func_snprintf" = xyes
+then :
+  printf "%s\n" "#define HAVE_SNPRINTF 1" >>confdefs.h
+
+fi
+
 
 
 
@@ -5971,6 +5985,22 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
   fi
 
 
+
+# Check whether --with-texmacs-builder was given.
+if test ${with_texmacs_builder+y}
+then :
+  withval=$with_texmacs_builder; TEXMACSBUILDER=${withval%%/}
+fi
+
+
+  if test -n "$TEXMACSBUILDER" -a "$TEXMACSBUILDER" != no
+  then
+    TMREPO=$TEXMACSBUILDER
+
+  fi
+
+
+
   CONFIG_OS_SUFFIX="${host}"
   CONFIG_OS_COMPAT="Unix"
   CONFIG_MACOS=""
@@ -6357,6 +6387,98 @@ printf "%s\n" "#define OS_SOLARIS 1" >>confdefs.h
       CONFIG_BPATH="-Wl,-R,"
       X11_LDFLAGS="$X_LIBS -lXext -lX11 -lsocket"
     ;;
+    *64*w64-mingw32)
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: for mingw64 host" >&5
+printf "%s\n" "for mingw64 host" >&6; }
+
+printf "%s\n" "#define OS_MINGW 1" >>confdefs.h
+
+
+printf "%s\n" "#define OS_MINGW64 1" >>confdefs.h
+
+      CONFIG_BUNDLE=WINDOWS_BUNDLE
+
+      CONFIG_PACKAGE=WINDOWS_PACKAGE
+
+      CONFIG_OS=MINGW
+      CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
+      CONFIG_QTPIPES="yes"
+      CONFIG_OS_COMPAT="Windows64"
+      CPPFLAGS="$CPPFLAGS -IPlugins/Windows64 -I."
+
+  if [[ "-Wl,--stack=16777216" =~ $(echo '^-Wl,') ]]
+  then LDFLAGS+=" -Wl,--stack=16777216"
+  elif [[ "-Wl,--stack=16777216" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "-Wl,--stack=16777216"
+  do  while [[ $LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then LDFLAGS=
+  else  while test "$LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$LDFLAGS"
+        LDFLAGS="${LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        LDFLAGS="${LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        LDFLAGS="${LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  LDFLAGS=$(echo $LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       LDFLAGS+=" -Wl,--stack=16777216"
+  else
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-Wl,--stack=16777216($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -Wl" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
+    else LDFLAGS+=" -Wl,--stack=16777216"
+    fi
+  fi
+
+
+  if [[ "-ldbghelp -lSecur32" =~ $(echo '^-Wl,') ]]
+  then LDFLAGS+=" -ldbghelp -lSecur32"
+  elif [[ "-ldbghelp -lSecur32" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "-ldbghelp -lSecur32"
+  do  while [[ $LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then LDFLAGS=
+  else  while test "$LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$LDFLAGS"
+        LDFLAGS="${LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        LDFLAGS="${LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        LDFLAGS="${LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  LDFLAGS=$(echo $LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       LDFLAGS+=" -ldbghelp -lSecur32"
+  else
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-ldbghelp -lSecur32($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -ldbghelp -lSecur32" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -ldbghelp -lSecur32" >&2;}
+    else LDFLAGS+=" -ldbghelp -lSecur32"
+    fi
+  fi
+
+      CONFIG_CP="cp -f -R -p" #rsync do not work properly on mingw
+    ;;
     *mingw*)
       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: for mingw host" >&5
 printf "%s\n" "for mingw host" >&6; }
@@ -6409,6 +6531,43 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
     fi
   fi
 
+
+  if [[ "-ldbghelp -lSecur32" =~ $(echo '^-Wl,') ]]
+  then LDFLAGS+=" -ldbghelp -lSecur32"
+  elif [[ "-ldbghelp -lSecur32" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "-ldbghelp -lSecur32"
+  do  while [[ $LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then LDFLAGS=
+  else  while test "$LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$LDFLAGS"
+        LDFLAGS="${LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        LDFLAGS="${LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        LDFLAGS="${LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  LDFLAGS=$(echo $LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       LDFLAGS+=" -ldbghelp -lSecur32"
+  else
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-ldbghelp -lSecur32($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -ldbghelp -lSecur32" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -ldbghelp -lSecur32" >&2;}
+    else LDFLAGS+=" -ldbghelp -lSecur32"
+    fi
+  fi
+
+      CONFIG_CP="cp -f -R -p" #rsync do not work properly on mingw
     ;;
     *-*-cygwin)
       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: cygwin host" >&5
@@ -7967,6 +8126,7 @@ printf "%s\n" "#define OS_GNU_LINUX 1" >>confdefs.h
 
 
 
+
   # Check whether --enable-static was given.
 if test ${enable_static+y}
 then :
@@ -8843,6 +9003,16 @@ printf "%s\n" "$as_me: use embedded guile" >&6;}
 
 
       LC_WITH_GUILE_use_embedded_guile=1
+      case "${host}" in
+        *mingw*)
+          GUILE_PREFIX=$(pwd -W)/tm-guile188/build
+          GUILE_STATIC='$(shell '${GUILE_PREFIX}'/bin/guile.exe -e main -s "'${GUILE_PREFIX}'/bin/guile-config" link)'
+        ;;
+        *)
+          GUILE_PREFIX=$(pwd)/tm-guile188/build
+          GUILE_STATIC='$(shell '${GUILE_PREFIX}'/bin/guile-config link)'
+        ;;
+      esac
 
 
   # Various preliminary checks.
@@ -8933,6 +9103,8 @@ ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
       ax_args="--disable-option-checking $ax_args"
       # Options that must be added as they are provided.
       as_fn_append ax_args " '--without-guile-readline'"
+      as_fn_append ax_args " 'CPPFLAGS=${CPPFLAGS}'"
+      as_fn_append ax_args " 'LDFLAGS=${LDFLAGS}'"
 
       # New options that may need to be merged with existing options.
       ax_candidate="--disable-shared"
@@ -8947,14 +9119,14 @@ ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
            fi
 
       # New options that must replace existing options.
-      ax_candidate="--prefix=$(pwd)/tm-guile188/build"
+      ax_candidate="--prefix=${GUILE_PREFIX}"
            ax_candidate_flag="${ax_candidate%%=*}"
            ax_candidate_content="${ax_candidate#*=}"
            if test "x$ax_candidate" != "x" -a "x$ax_candidate_flag" != "x"; then
              if echo "$ax_args" | grep -- "${ax_candidate_flag}=" >/dev/null 2>&1; then
                ax_args=$(echo $ax_args | sed "s,${ax_candidate_flag}=[^']*,${ax_candidate},")
              else
-               as_fn_append ax_args " '--prefix=$(pwd)/tm-guile188/build'"
+               as_fn_append ax_args " '--prefix=${GUILE_PREFIX}'"
              fi
            fi
 
@@ -8977,15 +9149,14 @@ printf "%s\n" "$as_me: WARNING: could not find source tree for $ax_dir" >&2;}
 
 
 
-      GUILE_STATIC='$(shell ../'$GUILE_EMBEDDED_DIR'/guile-config/guile-config link)'
 
 
-  if [[ "-I$(pwd)/tm-guile188/build/include" =~ $(echo '^-Wl,') ]]
-  then GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile188/build/include"
-  elif [[ "-I$(pwd)/tm-guile188/build/include" =~ $(echo '^-l') ]]
+  if [[ "-I${GUILE_PREFIX}/include" =~ $(echo '^-Wl,') ]]
+  then GUILE_CPPFLAGS+=" -I${GUILE_PREFIX}/include"
+  elif [[ "-I${GUILE_PREFIX}/include" =~ $(echo '^-l') ]]
   then
   unset STRIP_ALL_ARGS_list
-  for STRIP_ALL_ARGS_arg in "-I$(pwd)/tm-guile188/build/include"
+  for STRIP_ALL_ARGS_arg in "-I${GUILE_PREFIX}/include"
   do  while [[ $GUILE_CPPFLAGS != $STRIP_ALL_ARGS_list ]]
       do STRIP_ALL_ARGS_list=$GUILE_CPPFLAGS
 
@@ -9006,22 +9177,22 @@ printf "%s\n" "$as_me: WARNING: could not find source tree for $ax_dir" >&2;}
   done
   unset ${!STRIP_ALL_ARGS_*}
 
-       GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile188/build/include"
+       GUILE_CPPFLAGS+=" -I${GUILE_PREFIX}/include"
   else
-    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])-I$(pwd)/tm-guile188/build/include($|[[:space:]])") ]]
-    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I$(pwd)/tm-guile188/build/include" >&5
-printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$(pwd)/tm-guile188/build/include" >&2;}
-    else GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile188/build/include"
+    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])-I${GUILE_PREFIX}/include($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I${GUILE_PREFIX}/include" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I${GUILE_PREFIX}/include" >&2;}
+    else GUILE_CPPFLAGS+=" -I${GUILE_PREFIX}/include"
     fi
   fi
 
 
-  if [[ "-I$(pwd)/tm-guile188/build/include/guile" =~ $(echo '^-Wl,') ]]
-  then GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile188/build/include/guile"
-  elif [[ "-I$(pwd)/tm-guile188/build/include/guile" =~ $(echo '^-l') ]]
+  if [[ "-I${GUILE_PREFIX}/include/guile" =~ $(echo '^-Wl,') ]]
+  then GUILE_CPPFLAGS+=" -I${GUILE_PREFIX}/include/guile"
+  elif [[ "-I${GUILE_PREFIX}/include/guile" =~ $(echo '^-l') ]]
   then
   unset STRIP_ALL_ARGS_list
-  for STRIP_ALL_ARGS_arg in "-I$(pwd)/tm-guile188/build/include/guile"
+  for STRIP_ALL_ARGS_arg in "-I${GUILE_PREFIX}/include/guile"
   do  while [[ $GUILE_CPPFLAGS != $STRIP_ALL_ARGS_list ]]
       do STRIP_ALL_ARGS_list=$GUILE_CPPFLAGS
 
@@ -9042,17 +9213,17 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$(pwd)/tm-guile188/build/i
   done
   unset ${!STRIP_ALL_ARGS_*}
 
-       GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile188/build/include/guile"
+       GUILE_CPPFLAGS+=" -I${GUILE_PREFIX}/include/guile"
   else
-    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])-I$(pwd)/tm-guile188/build/include/guile($|[[:space:]])") ]]
-    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I$(pwd)/tm-guile188/build/include/guile" >&5
-printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$(pwd)/tm-guile188/build/include/guile" >&2;}
-    else GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile188/build/include/guile"
+    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])-I${GUILE_PREFIX}/include/guile($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I${GUILE_PREFIX}/include/guile" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I${GUILE_PREFIX}/include/guile" >&2;}
+    else GUILE_CPPFLAGS+=" -I${GUILE_PREFIX}/include/guile"
     fi
   fi
 
       GUILE_VERSION=$GUILE_EMBEDDED_VERSION
-      GUILE_DATA_PATH=$(pwd)/tm-guile188/build/share/guile/${GUILE_VERSION}
+      GUILE_DATA_PATH=${GUILE_PREFIX}/share/guile*/${GUILE_VERSION}
 
 else $as_nop
   as_fn_error $? "cannot find guile-config; is Guile installed?" "$LINENO" 5
@@ -19474,7 +19645,9 @@ fi
   test -n "$GS_EXE" && break
 done
 
-        if [[ -x "$GS_EXE" ]]
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: \"$GS_EXE\"" >&5
+printf "%s\n" "$as_me: \"$GS_EXE\"" >&6;}
+        if test -x "$GS_EXE";
         then
           #get needed gs fonts and libs paths
           while read -r l sep p # default path, separator, extra path
@@ -19499,8 +19672,7 @@ printf "%s\n" "#define GS_FONTS \"share/ghostscript/fonts\"" >>confdefs.h
 
           { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Ghostscript found  in TMREPO, it will be embedded in Package for Macos or Windows" >&5
 printf "%s\n" "$as_me: Ghostscript found  in TMREPO, it will be embedded in Package for Macos or Windows" >&6;}
-        else { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Ghostscript not detected in TMREPO, won't be embedded in Package" >&5
-printf "%s\n" "$as_me: WARNING: Ghostscript not detected in TMREPO, won't be embedded in Package" >&2;}
+        else as_fn_error $? "Ghostscript not detected in TMREPO, won't be embedded in Package" "$LINENO" 5
         fi
       fi
 
@@ -24643,7 +24815,68 @@ printf "%s\n" "#define ASPELL \"plugins/aspell\"" >>confdefs.h
 fi
 
 fi
+
+    # Check whether --enable-cv2pdb was given.
+if test ${enable_cv2pdb+y}
+then :
+  enableval=$enable_cv2pdb;
+fi
+
+    if test "$enableval" = yes
+    then  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: enabling cv2pdb" >&5
+printf "%s\n" "enabling cv2pdb" >&6; }
+          # Extract the first word of "cv2pdb", so it can be a program name with args.
+set dummy cv2pdb; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_prog_CV2PDB+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  if test -n "$CV2PDB"; then
+  ac_cv_prog_CV2PDB="$CV2PDB" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_prog_CV2PDB="yes"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
   fi
+done
+  done
+IFS=$as_save_IFS
+
+  test -z "$ac_cv_prog_CV2PDB" && ac_cv_prog_CV2PDB="no"
+fi
+fi
+CV2PDB=$ac_cv_prog_CV2PDB
+if test -n "$CV2PDB"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $CV2PDB" >&5
+printf "%s\n" "$CV2PDB" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+          if test "$CV2PDB" = no
+          then  as_fn_error $? "cv2pdb not found" "$LINENO" 5
+          fi
+    else  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: disabling cv2pdb" >&5
+printf "%s\n" "disabling cv2pdb" >&6; }
+    fi
+
+  fi
+
 
 
 
@@ -35536,7 +35769,16 @@ printf "%s\n" "customizing optimizations, $enable_optimize" >&6; } ;;
     libexecdir='${exec_prefix}/libexec'
   fi
 
-  curdir="`pwd`"
+
+  case "${host}" in
+    *mingw*)
+      curdir="`pwd -W`"
+    ;;
+    *)
+      curdir="`pwd`"
+    ;;
+  esac
+
   tmorig=${curdir}
   tmdir=${PACKAGE}
   tmsrc=${curdir}/${tmdir}
