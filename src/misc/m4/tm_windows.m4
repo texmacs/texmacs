@@ -27,5 +27,18 @@ AC_DEFUN([TM_WINDOWS],[
         AC_SUBST([ASPELL_CMD],[$TMREPO/windows/aspell])
         AC_DEFINE([ASPELL],["plugins/aspell"],[embedded aspell location])])
     ])
+
+    AC_ARG_ENABLE(cv2pdb,
+      AS_HELP_STRING([--enable-windows-pbd], [enable windows debug symbols]))
+    if test "$enableval" = yes
+    then  AC_MSG_RESULT([enabling cv2pdb])
+          AC_CHECK_PROG([CV2PDB], [cv2pdb], [yes], [no])
+          if test "$CV2PDB" = no
+          then  AC_MSG_ERROR([cv2pdb not found])
+          fi
+    else  AC_MSG_RESULT([disabling cv2pdb])
+    fi
+    
   fi
+
 ])
