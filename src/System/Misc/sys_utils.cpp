@@ -14,12 +14,16 @@
 #include "tree.hpp"
 #include "parse_string.hpp"
 
-#ifdef OS_MINGW
+#if defined (OS_MINGW64)
+#include "Qt/qt_sys_utils.hpp"
+#include "Windows64/windows64_system.hpp"
+#elif defined (OS_MINGW)
 #include "Qt/qt_sys_utils.hpp"
 #include "Windows/mingw_sys_utils.hpp"
-#include "Windows/win-utf8-compat.hpp"
+#include "Windows/windows32_system.hpp"
 #else
 #include "Unix/unix_sys_utils.hpp"
+#include "Unix/unix_system.hpp"
 #endif
 
 int script_status = 1;
@@ -83,29 +87,18 @@ var_eval_system (string s) {
 
 string
 get_env (string var) {
-  c_string _var (var);
-  const char* _ret= getenv (_var);
-  if (_ret==NULL) {
+  string ret;
+  bool has_value = texmacs_getenv(var, ret);
+  if (!has_value) {
     if (var == "PWD") return get_env ("HOME");
     return "";
   }
-  string ret (_ret);
   return ret;
-  // do not delete _ret !
 }
 
 void
 set_env (string var, string with) {
-#if defined(STD_SETENV) && !defined(OS_MINGW)
-  c_string _var  (var);
-  c_string _with (with);
-  setenv (_var, _with, 1);
-#else
-  char* _varw= as_charp (var * "=" * with);
-  (void) putenv (_varw);
-  // do not delete _varw !!!
-  // -> known memory leak, but solution more complex than it is worth
-#endif
+  texmacs_setenv(var, with);
 }
 
 url

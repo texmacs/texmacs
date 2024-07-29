@@ -36,10 +36,6 @@ void mac_fix_paths ();
 #include <QDir>
 #endif
 
-#ifdef OS_MINGW
-#include "Windows/win-utf8-compat.hpp"
-#endif
-
 #ifdef MACOSX_EXTENSIONS
 #include "MacOS/mac_utilities.h"
 #endif
@@ -682,8 +678,7 @@ immediate_options (int argc, char** argv) {
 
 #include <cstdio>
 
-int
-main (int argc, char** argv) {
+int texmacs_main(int argc, char** argv) {
 
 #ifdef STACK_SIZE
   struct rlimit limit;
@@ -696,11 +691,6 @@ main (int argc, char** argv) {
     if(setrlimit(RLIMIT_STACK, &limit)) cerr << "Cannot set stack value\n";
   } else cerr << "Cannot get stack value\n";
 #endif
-
-#ifdef OS_MINGW
-	nowide::args a(argc,argv); // Fix arguments - make them UTF-8
-#endif
-
 
   original_path= get_env ("PATH");
   boot_hacks ();
