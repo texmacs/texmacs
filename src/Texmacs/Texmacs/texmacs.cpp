@@ -697,22 +697,6 @@ int texmacs_main(int argc, char** argv) {
   windows_delayed_refresh (1000000000);
   immediate_options (argc, argv);
   load_user_preferences ();
-  string theme= get_user_preference ("gui theme", "default");
-#if defined(OS_MACOS) && !defined(__arm64__)
-  if (theme == "default") theme= "";  
-#else
-#ifdef qt_no_fontconfig
-  if (theme == "default") theme= "native";
-#else
-  if (theme == "default") theme= "light";
-#endif
-#endif
-  if (theme == "light")
-    tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-light.css";
-  else if (theme == "dark")
-    tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-dark.css";
-  else if (theme != "")
-    tm_style_sheet= theme;
 #ifndef OS_MINGW
   set_env ("LC_NUMERIC", "POSIX");
 #ifndef OS_MACOS

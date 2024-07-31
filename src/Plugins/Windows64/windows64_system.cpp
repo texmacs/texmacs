@@ -17,9 +17,15 @@
 #include <vector>
 #include <iostream>
 
+#include "config.h"
 #include "windows64_system.hpp"
 #include "windows64_encoding.hpp"
 #include "windows64_spawn.hpp"
+
+#ifdef QTTEXMACS
+#include <QGuiApplication>
+#include <QStyleHints>
+#endif
 
 // #include "analyze.hpp"
 // todo : FAILED, PATTERN and ERROR are conflicting 
@@ -242,6 +248,50 @@ intptr_t texmacs_spawnvp(int mode, string name, array<string> args) {
   }
 
   return res;
+}
+
+bool IsWindowsDarkMode() {
+  HKEY hKey;
+  DWORD value;
+  DWORD valueSize = sizeof(value);
+  LONG result;
+
+  result = RegOpenKeyExW(
+              HKEY_CURRENT_USER,
+              L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+              0, KEY_READ, &hKey
+  );
+
+  if (result != ERROR_SUCCESS) {
+      return false;
+  }
+
+  // Query the value of the AppsUseLightTheme key
+  result = RegQueryValueExW(hKey, L"AppsUseLightTheme", nullptr,
+                            nullptr, (LPBYTE)&value, &valueSize);
+  RegCloseKey(hKey);
+
+  if (result != ERROR_SUCCESS) {
+      return false;   // Probably windows 7 or below
+  }
+
+  return value == 0;  // If value is 0, dark mode is enabled
+}
+
+
+string get_default_theme() {
+#if defined(QTTEXMACS) && QT_VERSION >= 0x060500
+  if (QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark) {
+    return "dark";
+  } else {
+    return "light";
+  }
+#else
+  if (IsWindowsDarkMode()) {
+    return "dark";
+  }
+  return "light";
+#endif
 }
 
 static void

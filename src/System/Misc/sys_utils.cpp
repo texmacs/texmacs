@@ -14,18 +14,6 @@
 #include "tree.hpp"
 #include "parse_string.hpp"
 
-#if defined (OS_MINGW64)
-#include "Qt/qt_sys_utils.hpp"
-#include "Windows64/windows64_system.hpp"
-#elif defined (OS_MINGW)
-#include "Qt/qt_sys_utils.hpp"
-#include "Windows/mingw_sys_utils.hpp"
-#include "Windows/windows32_system.hpp"
-#else
-#include "Unix/unix_sys_utils.hpp"
-#include "Unix/unix_system.hpp"
-#endif
-
 int script_status = 1;
 
 /******************************************************************************
@@ -35,7 +23,11 @@ int script_status = 1;
 int
 system (string s, string& result, string& error) {
 #if defined (OS_MINGW)
+#ifdef QTTEXMACS
   int r= qt_system (s, result, error);
+#else	
+  int r= mingw_system (s, result, error);
+#endif
 #else
   int r= unix_system (s, result, error);
 #endif
@@ -45,7 +37,11 @@ system (string s, string& result, string& error) {
 int
 system (string s, string& result) {
 #if defined (OS_MINGW)
+#ifdef QTTEXMACS
   int r= qt_system (s, result);
+#else
+  int r= mingw_system (s, result);
+#endif  
 #else
   int r= unix_system (s, result);
 #endif
@@ -64,7 +60,11 @@ system (string s) {
   else {
 #if defined (OS_MINGW)
     // if (starts (s, "convert ")) return 1;
+#ifdef QTTEXMACS
     return qt_system (s);
+#else
+    return mingw_system (s);
+#endif
 #else
     return unix_system (s);
 #endif
