@@ -20,6 +20,10 @@
 #include "Unix/unix_system.hpp"
 #endif
 
+#ifndef HAVE_SNPRINTF
+#warning "security issue: snprintf not available, potential buffer overflows"
+#endif
+
 /******************************************************************************
 * Routines for abstract base class
 ******************************************************************************/
@@ -286,7 +290,11 @@ tm_ostream::operator << (bool b) {
 tm_ostream&
 tm_ostream::operator << (char c) {
   static char _buf[8];
+#ifdef HAVE_SNPRINTF
   snprintf (_buf, 8, "%c", c);
+#else
+  sprintf (_buf, "%c", c);
+#endif
   rep->write (_buf);
   return *this;
 }
@@ -294,7 +302,11 @@ tm_ostream::operator << (char c) {
 tm_ostream&
 tm_ostream::operator << (short sh) {
   static char _buf[32];
+#ifdef HAVE_SNPRINTF
   snprintf (_buf, 32, "%hd", sh);
+#else
+  sprintf (_buf, "%hd", sh);
+#endif
   rep->write (_buf);
   return *this;
 }
@@ -302,7 +314,11 @@ tm_ostream::operator << (short sh) {
 tm_ostream&
 tm_ostream::operator << (unsigned short ush) {
   static char _buf[32];
+#ifdef HAVE_SNPRINTF
   snprintf (_buf, 32, "%hu", ush);
+#else
+  sprintf (_buf, "%hu", ush);
+#endif
   rep->write (_buf);
   return *this;
 }
@@ -310,7 +326,11 @@ tm_ostream::operator << (unsigned short ush) {
 tm_ostream&
 tm_ostream::operator << (int i) {
   static char _buf[64];
+#ifdef HAVE_SNPRINTF
   snprintf (_buf, 64, "%d", i);
+#else
+  sprintf (_buf, "%d", i);
+#endif
   rep->write (_buf);
   return *this;
 }
@@ -318,7 +338,11 @@ tm_ostream::operator << (int i) {
 tm_ostream&
 tm_ostream::operator << (unsigned int ui) {
   static char _buf[64];
+#ifdef HAVE_SNPRINTF
   snprintf (_buf, 64, "%u", ui);
+#else
+  sprintf (_buf, "%u", ui);
+#endif
   rep->write (_buf);
   return *this;
 }
@@ -326,7 +350,11 @@ tm_ostream::operator << (unsigned int ui) {
 tm_ostream&
 tm_ostream::operator << (long l) {
   static char _buf[64];
+#ifdef HAVE_SNPRINTF
   snprintf (_buf, 64, "%ld", l);
+#else
+  sprintf (_buf, "%ld", l);
+#endif
   rep->write (_buf);
   return *this;
 }
@@ -334,7 +362,11 @@ tm_ostream::operator << (long l) {
 tm_ostream&
 tm_ostream::operator << (unsigned long ul) {
   static char _buf[64];
+#ifdef HAVE_SNPRINTF
   snprintf (_buf, 64, "%lu", ul);
+#else
+  sprintf (_buf, "%lu", ul);
+#endif
   rep->write (_buf);
   return *this;
 }
@@ -342,7 +374,11 @@ tm_ostream::operator << (unsigned long ul) {
 tm_ostream&
 tm_ostream::operator << (long long ll) {
   static char _buf[64];
+#ifdef HAVE_SNPRINTF
   snprintf (_buf, 64, "%lld", ll);
+#else
+  sprintf (_buf, "%lld", ll);
+#endif
   rep->write (_buf);
   return *this;
 }
@@ -350,7 +386,11 @@ tm_ostream::operator << (long long ll) {
 tm_ostream&
 tm_ostream::operator << (unsigned long long ull) {
   static char _buf[64];
+#ifdef HAVE_SNPRINTF
   snprintf (_buf, 64, "%llu", ull);
+#else
+  sprintf (_buf, "%llu", ull);
+#endif
   rep->write (_buf);
   return *this;
 }
@@ -358,7 +398,11 @@ tm_ostream::operator << (unsigned long long ull) {
 tm_ostream&
 tm_ostream::operator << (float f) {
   static char _buf[32];
+#ifdef HAVE_SNPRINTF
   snprintf (_buf, 32, "%g", f);
+#else
+  sprintf (_buf, "%g", f);
+#endif
   rep->write (_buf);
   return *this;
 }
@@ -366,7 +410,11 @@ tm_ostream::operator << (float f) {
 tm_ostream&
 tm_ostream::operator << (double d) {
   static char _buf[64];
+#ifdef HAVE_SNPRINTF
   snprintf (_buf, 64, "%g", d);
+#else
+  sprintf (_buf, "%g", d);
+#endif
   rep->write (_buf);
   return *this;
 }
@@ -374,7 +422,11 @@ tm_ostream::operator << (double d) {
 tm_ostream&
 tm_ostream::operator << (long double ld) {
   static char _buf[128];
+#ifdef HAVE_SNPRINTF
   snprintf (_buf, 128, "%Lg", ld);
+#else
+  sprintf (_buf, "%Lg", ld);
+#endif
   rep->write (_buf);
   return *this;
 }
