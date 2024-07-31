@@ -118,3 +118,38 @@ bool texmacs_setenv(string variable_name, string new_value) {
     c_string _new_value = new_value;
     return setenv(_variable_name, _new_value, 1) == 0;
 }
+
+bool IsWindowsDarkMode() {
+  HKEY hKey;
+  DWORD value;
+  DWORD valueSize = sizeof(value);
+  LONG result;
+
+  result = RegOpenKeyExW(
+              HKEY_CURRENT_USER,
+              L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+              0, KEY_READ, &hKey
+  );
+
+  if (result != ERROR_SUCCESS) {
+    return false;
+  }
+
+  // Query the value of the AppsUseLightTheme key
+  result = RegQueryValueExW(hKey, L"AppsUseLightTheme", nullptr,
+                            nullptr, (LPBYTE)&value, &valueSize);
+  RegCloseKey(hKey);
+
+  if (result != ERROR_SUCCESS) {
+    return false;   // Probably windows 7 or below
+  }
+
+  return value == 0;  // If value is 0, dark mode is enabled
+}
+
+string get_default_theme() {
+  if (IsWindowsDarkMode()) {
+    return "dark";
+  }
+  return "light";
+}

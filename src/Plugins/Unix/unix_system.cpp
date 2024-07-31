@@ -9,6 +9,11 @@
 ******************************************************************************/
 
 #include "unix_system.hpp"
+#include "config.h"
+#ifdef QTTEXMACS
+#include <QGuiApplication>
+#include <QStyleHints>
+#endif
 
 inline std::string texmacs_utf8_string_to_system_string(string utf8_string) {
   return std::string(
@@ -124,4 +129,21 @@ bool texmacs_setenv(string variable_name, string new_value) {
       texmacs_utf8_string_to_system_string(variable_name).c_str(),
       texmacs_utf8_string_to_system_string(new_value).c_str(), 1
     ) == 0;
+}
+
+string get_default_theme() {
+#if defined(OS_MACOS) && !defined(__arm64__)
+  return "";
+#endif
+#ifdef qt_no_fontconfig
+  return "native";
+#endif
+#if defined(QTTEXMACS) && QT_VERSION >= 0x060500
+  if (QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark) {
+    return "dark";
+  } else {
+    return "light";
+  }
+#endif
+  return "light";
 }
