@@ -678,7 +678,7 @@ immediate_options (int argc, char** argv) {
 
 #include <cstdio>
 
-int texmacs_main(int argc, char** argv) {
+int texmacs_entrypoint(int argc, char** argv) {
 
 #ifdef STACK_SIZE
   struct rlimit limit;
