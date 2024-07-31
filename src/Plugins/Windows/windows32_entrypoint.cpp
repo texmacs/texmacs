@@ -34,5 +34,5 @@ void texmacs_attach_console() {
 int main(int argc, char** argv) {
   texmacs_attach_console();
   nowide::args a(argc,argv);
-  return texmacs_main(argc, argv);
+  return texmacs_entrypoint(argc, argv);
 }

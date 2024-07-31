@@ -64,7 +64,7 @@ int WINAPI CommonMain() {
     char_argv[i] = as_charp(texmacs_argv[i]);
   }
 
-  int result = texmacs_main(__argc, char_argv);
+  int result = texmacs_entrypoint(__argc, char_argv);
 
   delete[] texmacs_argv;
   delete[] char_argv;
