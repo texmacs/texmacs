@@ -11,5 +11,5 @@
 #include "unix_entrypoint.hpp"
 
 int main(int argc, char** argv) {
-  return texmacs_main(argc, argv);
+  return texmacs_entrypoint(argc, argv);
 }

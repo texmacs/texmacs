@@ -15,10 +15,10 @@
  * @brief The main function of texmacs
  * On Windows, the argc and argv are AINSI encoded or UTF-16 encoded.
  * To make the AINSI to UTF-8 conversion seamless, we rename the texmacs main
- * function to texmacs_main. A new main function is created to convert 
- * the arguments to UTF-8 and call the texmacs_main function.
+ * function to texmacs_entrypoint. A new main function is created to convert 
+ * the arguments to UTF-8 and call the texmacs_entrypoint function.
 */
-int texmacs_main(int argc, char** argv);
+int texmacs_entrypoint(int argc, char** argv);
 
 /*
  * @brief Attach the console to the current process.
