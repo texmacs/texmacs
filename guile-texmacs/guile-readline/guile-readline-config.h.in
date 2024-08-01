@@ -6,25 +6,25 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define to 1 if you have the `readline' library (-lreadline). */
+/* Define to 1 if you have the 'readline' library (-lreadline). */
 #undef HAVE_LIBREADLINE
 
-/* Define to 1 if you have the `rl_cleanup_after_signal' function. */
+/* Define to 1 if you have the 'rl_cleanup_after_signal' function. */
 #undef HAVE_RL_CLEANUP_AFTER_SIGNAL
 
-/* Define to 1 if you have the `rl_clear_signals' function. */
+/* Define to 1 if you have the 'rl_clear_signals' function. */
 #undef HAVE_RL_CLEAR_SIGNALS
 
-/* Define to 1 if you have the `rl_filename_completion_function' function. */
+/* Define to 1 if you have the 'rl_filename_completion_function' function. */
 #undef HAVE_RL_FILENAME_COMPLETION_FUNCTION
 
 /* Define if your readline library has the rl_getc_function variable. */
 #undef HAVE_RL_GETC_FUNCTION
 
-/* Define to 1 if you have the `rl_get_keymap_name' function. */
+/* Define to 1 if you have the 'rl_get_keymap_name' function. */
 #undef HAVE_RL_GET_KEYMAP_NAME
 
-/* Define to 1 if you have the `siginterrupt' function. */
+/* Define to 1 if you have the 'siginterrupt' function. */
 #undef HAVE_SIGINTERRUPT
 
 /* Define to 1 if you have the <stdint.h> header file. */
@@ -36,7 +36,7 @@
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
 
-/* Define to 1 if you have the `strdup' function. */
+/* Define to 1 if you have the 'strdup' function. */
 #undef HAVE_STRDUP
 
 /* Define to 1 if you have the <strings.h> header file. */
@@ -75,7 +75,7 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* Define to 1 if all of the C90 standard headers exist (not just the ones
+/* Define to 1 if all of the C89 standard headers exist (not just the ones
    required in a freestanding environment). This macro is provided for
    backward compatibility; new code need not use it. */
 #undef STDC_HEADERS

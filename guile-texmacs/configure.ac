@@ -595,15 +595,11 @@ else
 fi
 AC_SUBST([SCM_I_GSC_T_UINTMAX])
 
-
 AC_SUBST([SCM_I_GSC_NEEDS_STDINT_H])
 AC_SUBST([SCM_I_GSC_NEEDS_INTTYPES_H])
 
-AC_DEFINE(HAVE___BUILTIN_SMULL_OVERFLOW, 1,
-    [Define if the compiler supports __builtin_smull_overflow])
-
 AC_MSG_CHECKING(whether compiler supports __builtin_smull_overflow)
-AC_COMPILE_IFELSE([AC_LANG_SOURCE(
+AC_LINK_IFELSE([AC_LANG_SOURCE(
 [
 int
 main ()
@@ -613,17 +609,13 @@ main ()
   (void) overflow;
   return 1;
 }])],
-  [HAVE___BUILTIN_SMULL_OVERFLOW=1
+  [AC_DEFINE(HAVE___BUILTIN_SMULL_OVERFLOW, 1,
+             [Define if the compiler supports __builtin_smull_overflow])  
    AC_MSG_RESULT([yes])],
-  [HAVE___BUILTIN_SMULL_OVERFLOW=0
-   AC_MSG_RESULT([no])])
-AC_SUBST([HAVE___BUILTIN_SMULL_OVERFLOW])
-
-AC_DEFINE(HAVE___BUILTIN_SMULLL_OVERFLOW, 1,
-    [Define if the compiler supports __builtin_smulll_overflow])
+  [AC_MSG_RESULT([no])])
 
 AC_MSG_CHECKING(whether compiler supports __builtin_smulll_overflow)
-AC_COMPILE_IFELSE([AC_LANG_SOURCE(
+AC_LINK_IFELSE([AC_LANG_SOURCE(
 [
 int
 main ()
@@ -633,11 +625,10 @@ main ()
   (void) overflow;
   return 1;
 }])],
-  [HAVE___BUILTIN_SMULLL_OVERFLOW=1
+  [AC_DEFINE(HAVE___BUILTIN_SMULLL_OVERFLOW, 1,
+             [Define if the compiler supports __builtin_smulll_overflow])
    AC_MSG_RESULT([yes])],
-  [HAVE___BUILTIN_SMULLL_OVERFLOW=0
-   AC_MSG_RESULT([no])])
-AC_SUBST([HAVE___BUILTIN_SMULLL_OVERFLOW])
+  [AC_MSG_RESULT([no])])
 
 AC_CHECK_INCLUDES_DEFAULT
 AC_PROG_EGREP
