@@ -137,7 +137,8 @@ needing_update (false)
   gui_helper = new QTMGuiHelper (this);
   qApp->installEventFilter (gui_helper);
   
-#ifdef QT_MAC_USE_COCOA
+#if defined(QT_MAC_USE_COCOA) \
+  || (defined(OS_MACOS) && QT_VERSION >= 0x060000)
     //HACK: this filter is needed to overcome a bug in Qt/Cocoa
   extern void mac_install_filter(); // defined in src/Plugins/MacOS/mac_app.mm
   mac_install_filter();
