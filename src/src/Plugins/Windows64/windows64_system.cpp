@@ -22,6 +22,11 @@
 #include "windows64_encoding.hpp"
 #include "windows64_spawn.hpp"
 
+#include "Scheme/Guile/guile_tm.hpp"
+#ifdef SCM_HAVE_HOOKS
+#include "libguile/system.h"
+#endif
+
 #ifdef QTTEXMACS
 #include <QGuiApplication>
 #include <QStyleHints>
@@ -206,16 +211,20 @@ int texmacs_guile_truncate(const char *path, guile_off_t length) {
 }
 
 char *texmacs_guile_getenv(const char *name) {
-  string utf8_string = texmacs_getenv(name);
+  string utf8_string;
+  bool res = texmacs_getenv(name, utf8_string);
+  if (!res) {
+    return nullptr;
+  }
   const size_t current_size = N(utf8_string) + 1;
 
   static size_t c_utf8_string_size = 1024;
-  static char *c_utf8_string = malloc(c_utf8_string_size);
+  static char *c_utf8_string = (char*)malloc(c_utf8_string_size);
   
   if (current_size > c_utf8_string_size) {
     free(c_utf8_string);
     c_utf8_string_size = current_size * 2;
-    c_utf8_string = malloc(c_utf8_string_size);
+    c_utf8_string = (char*)malloc(c_utf8_string_size);
   }
 
   memcpy(c_utf8_string, &utf8_string[0], N(utf8_string));
@@ -223,6 +232,20 @@ char *texmacs_guile_getenv(const char *name) {
   return c_utf8_string;
 }
 #endif
+
+void texmacs_init_guile_hooks() {
+#ifdef SCM_HAVE_HOOKS
+  guile_stat = texmacs_guile_stat;
+  guile_lstat = texmacs_guile_lstat;
+  guile_open = texmacs_guile_open;
+  guile_opendir = texmacs_guile_opendir;
+  guile_readdir = texmacs_guile_readdir;
+  guile_truncate = texmacs_guile_truncate;
+  guile_getenv = texmacs_guile_getenv;
+#else
+  cout << "warning: guile hooks are not available" << LF;
+#endif
+}
 
 intptr_t texmacs_spawnvp(int mode, string name, array<string> args) {
   // convert the arguments to a wide string
