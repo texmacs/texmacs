@@ -101,18 +101,6 @@ void texmacs_attach_console() {
   }
 }
 
-void texmacs_init_guile_hooks() {
-#ifdef SCM_HAVE_HOOKS
-  guile_stat = texmacs_guile_stat;
-  guile_lstat = texmacs_guile_lstat;
-  guile_open = texmacs_guile_open;
-  guile_opendir = texmacs_guile_opendir;
-  guile_readdir = texmacs_guile_readdir;
-  guile_truncate = texmacs_guile_truncate;
-  guile_getenv = texmacs_guile_getenv;
-#endif
-}
-
 void texmacs_initialize_displayname() {
   if (_wgetenv(L"TEXMACS_DISPLAYNAME") != nullptr) {
     return;
