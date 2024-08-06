@@ -11,8 +11,6 @@
 #ifndef SCM_SYSTEM_H
 #define SCM_SYSTEM_H
 
-#define SCM_HAVE_HOOKS 1
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>

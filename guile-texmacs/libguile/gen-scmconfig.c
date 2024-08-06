@@ -415,6 +415,8 @@ main (int argc, char *argv[])
   pf ("#define SCM_HAVE_STAT64 0 /* always false now */\n");
 #endif
 
+  pf ("#define SCM_HAVE_HOOKS 1 /* always true now */\n");
+
   printf ("#endif\n");
 
   return 0;
