@@ -53,19 +53,18 @@ int WINAPI CommonMain() {
 
   string *texmacs_argv = new string[__argc];
   char **char_argv = new char*[__argc];
-  for (int i = 0; i < __argc; i++) {
-    if (__wargv != nullptr) {
-      // in unicode mode, the arguments are already in UTF-16
-      texmacs_argv[i] = texmacs_wide_to_utf8(__wargv[i]);
-    } else {
-      // in ainsi mode, the arguments are in ANSI
-      texmacs_argv[i] = texmacs_ainsi_to_utf8(__argv[i]);
-    }
+
+  int argc = 0;
+  LPWSTR* pArgvW = CommandLineToArgvW(GetCommandLineW(), &argc);
+
+  for (int i = 0; i < argc; i++) {
+    texmacs_argv[i] = texmacs_wide_to_utf8(pArgvW[i]);
     char_argv[i] = as_charp(texmacs_argv[i]);
   }
 
-  int result = texmacs_entrypoint(__argc, char_argv);
+  int result = texmacs_entrypoint(argc, char_argv);
 
+  LocalFree(pArgvW);
   delete[] texmacs_argv;
   delete[] char_argv;
 
