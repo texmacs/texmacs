@@ -38,7 +38,7 @@
   `(set! ,sym (rcons ,sym ,x)))
 
 (define-public (list-concatenate ls)
-  "Append the elements of @ls toghether."
+  "Append the elements of @ls together."
   ;; WARNING: not portable for long lists
   (apply append ls))
 
