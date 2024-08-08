@@ -33,7 +33,7 @@ public:
 	~CharStringType2Flattener(void);
 
 	// will write a font program to another stream, flattening the references to subrs and gsubrs, so that
-	// the charstring becomes independent (with possible references to other charachters through seac-like endchar)
+	// the charstring becomes independent (with possible references to other characters through seac-like endchar)
 	PDFHummus::EStatusCode WriteFlattenedGlyphProgram(unsigned short inFontIndex, unsigned short inGlyphIndex, CFFFileInput* inCFFFileInput, IByteWriter* inWriter);
 
 	// IType2InterpreterImplementation implementation

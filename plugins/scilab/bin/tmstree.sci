@@ -19,7 +19,7 @@ function str= tmstree(a)
   // a: is a Scilab variable
   //
   // Description
-  // Taking a variable, the tmstree function will provide a formated
+  // Taking a variable, the tmstree function will provide a formatted
   // representation of it as a TeXmacs Scheme tree.
   // The following types are handled by this function:
   //  <itemizedlist>

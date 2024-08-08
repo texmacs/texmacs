@@ -371,7 +371,7 @@ t.issue = function( ... ) {
 # the following will allow you to edit a function inside TeXmacs.
 t.edit = structure( function(x) { # Edit an R object inside TeXmacs, with nice formating.
 	### Before TeXmacs had syntax highlighting for R, this function was a way to edit 
-	### an R object formated nicely. 
+	### an R object formatted nicely.
 	### The object is inserted into the input field of TeXmacs, so that it is easy to edit.
     cat( DATA_BEGIN,"input#",sep="")    
     cat( DATA_BEGIN,"texmacs: ",sep="")    

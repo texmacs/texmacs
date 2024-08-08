@@ -95,7 +95,7 @@
 ;; This implementation is partial. 
 ;; Only intended for outputing values toward Coq.
 (define (stree->coqml-stree t)
-  (with (node proc childs)
+  (with (node proc children)
     (cond ((bool? t)         (list #f      bool->xml-stree         #f))
           ((pair? t)         (list #f      pair->xml-stree         #f))
           ((union? t)        (list #f      union->xml-stree        #f))
@@ -108,10 +108,10 @@
           ((unit? t)         (list 'unit   #f                      #f))
           ((list? t)         (list 'list   stree->coqml-stree      #t))
           (else '(#f #f #f)))
-    (cond ((and (not node) proc)        (proc t))
-          ((and node (not proc))        `(,node))
-          ((and node proc (not childs)) `(,node ,(proc t)))
-          ((and node proc childs)       `(,node ,@(map proc t)))
+    (cond ((and (not node) proc)          (proc t))
+          ((and node (not proc))          `(,node))
+          ((and node proc (not children)) `(,node ,(proc t)))
+          ((and node proc children)       `(,node ,@(map proc t)))
           (else
             `(error ,(string-append "stree->coqml: cannot translate "
                                     (object->string t)))))))
