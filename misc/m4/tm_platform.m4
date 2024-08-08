@@ -30,11 +30,16 @@ AC_DEFUN([TM_PLATFORM],[
   CONFIG_HOST_VENDOR="$host_vendor"
   CONFIG_HOST_CPU="$host_cpu"
   CONFIG_USER="$USER"
-  CONFIG_DATE="`date`"
+  CONFIG_DATE_FMT="+%Y%m%dT%H%M%SZ"
+  CONFIG_DATE="`date -u $CONFIG_DATE_FMT`"
   CONFIG_QTPIPES="no"
   type rsync && CONFIG_CP="rsync -a --exclude='.*'" || CONFIG_CP="cp -f -R -p"
   # tweak for XCode project
   CONFIG_ARCHS='$(NATIVE_ARCH)'
+
+  if [[[ "x$SOURCE_DATE_EPOCH" != "x" ]]]
+  then CONFIG_DATE=`date -u -d "@$SOURCE_DATE_EPOCH $CONFIG_DATE_FMT" 2>/dev/null`
+  fi
 
   X11_CFLAGS="$X_CFLAGS"
   X11_LDFLAGS="$X_LIBS -lXext -lX11"
