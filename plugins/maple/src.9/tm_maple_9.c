@@ -108,9 +108,12 @@ static void M_DECL errorCallBack( void *data, M_INT offset, const char *msg )
 * Launching maple
 ******************************************************************************/
 
+#define TMMPL_PI_MAPLEINIT_RELPATH "plugins/maple/maple/init-maple.mpl"
+
 int
 main (int argc, char *argv[]) {
   const char* tm_path=getenv("TEXMACS_PATH");
+  const char* tm_home_path=getenv("TEXMACS_HOME_PATH");
   char in [2148];
   char err[2048];
 	char tmmplinit [2048];
@@ -127,7 +130,7 @@ main (int argc, char *argv[]) {
                            };
   ALGEB r, l;  /* Maple data-structures */
 
-	snprintf(tmmplinit,sizeof(tmmplinit),"%s/plugins/maple/maple/init-maple.mpl",tm_path);
+	snprintf(tmmplinit,sizeof(tmmplinit), "%s/" TMMPL_PI_MAPLEINIT_RELPATH ,tm_path);
 	if (access(tmmplinit,R_OK)) {
 		printf("Fatal error, unable to read `%s`\n",tmmplinit);
 		return( 1 );
@@ -152,6 +155,12 @@ main (int argc, char *argv[]) {
 	snprintf(in,sizeof(in),"read(`%s`);",tmmplinit);
   r= EvalMapleStatement (kv, in);
 
+	snprintf(tmmplinit,sizeof(tmmplinit), "%s/" TMMPL_PI_MAPLEINIT_RELPATH ,tm_home_path);
+	if (!(access(tmmplinit,R_OK))) {
+		snprintf(in,sizeof(in),"read(`%s`);",tmmplinit);
+		r= EvalMapleStatement (kv, in);
+	}
+
   while (1) {
     next_input ();
     printf("\5");
@@ -170,7 +179,7 @@ main (int argc, char *argv[]) {
       MapleHelp (kv, in+1, NULL, writeHelpChar, NULL, 80, NULL);
     else {
       if (in[strlen(in)-1] != ':')
-	strcat (in, ":tmresult:=\%:tmprint(tmresult):tmresult:");
+        strcat (in, ":tmresult:=\%:tmprint(tmresult):tmresult:");
       r = EvalMapleStatement (kv, in);
     }
   }
@@ -179,3 +188,5 @@ main (int argc, char *argv[]) {
 
   return (0);
 }
+
+#undef TMMPL_PI_MAPLEINIT_RELPATH
