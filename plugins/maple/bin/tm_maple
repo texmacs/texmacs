@@ -1,43 +1,39 @@
 #!/bin/sh
+##set -x
 
 TEXMACS_MAPLE_BIN=`which maple`
-TEXMACS_MAPLE_BIN=`realpath "$TEXMACS_MAPLE_BIN"`
-#if [ $? -ne 0 ]
-#then
-#    TEXMACS_MAPLE_BIN=`which maple`
-#    TEXMACS_MAPLE_BIN=`realpath.py "$TEXMACS_MAPLE_BIN"`
-#fi
-if [ $? -ne 0 ]
-then
-    TEXMACS_MAPLE_BIN=`which maple`
-fi
-#TEXMACS_MAPLE_DIR=`echo -n "$TEXMACS_MAPLE_BIN" | sed -e 's%/bin/maple$%%'`
-TEXMACS_MAPLE_DIR=`echo "$TEXMACS_MAPLE_BIN" | sed -e 's%/bin/maple$%%'`
+
+TEXMACS_MAPLE_DIR=`echo "printf(kernelopts(mapledir));" | $TEXMACS_MAPLE_BIN -q`
 export TEXMACS_MAPLE_BIN
 export TEXMACS_MAPLE_DIR
 
-MAPLE_CPPFLAGS="-I$TEXMACS_MAPLE_DIR/extern/include"
-MAPLE_SYS_BIN=""
-if test -e "$TEXMACS_MAPLE_DIR/bin/maple.system.type"; then
-  MAPLE_SYS_BIN=$("$TEXMACS_MAPLE_DIR/bin/maple.system.type")
+if [ -d "$TEXMACS_MAPLE_DIR/extern" ]; then
+	if [ ! -x "$TEXMACS_HOME_PATH/bin/tm_maple_9" -o ! -x "$TEXMACS_HOME_PATH/bin/tm_maple_9.sh" ]; then
+		MAPLE_SYS_BIN=`echo "printf(kernelopts(bindir));" | $TEXMACS_MAPLE_BIN -q`
+		MAPLE_CPPFLAGS="-I$TEXMACS_MAPLE_DIR/extern/include"
+		MAPLE_LDFLAGS="-L$MAPLE_SYS_BIN"
+		MAPLE_LIBADD="-lmaplec"
+		case "${MAPLE_SYS_BIN##*bin.}" in
+			IBM_INTEL_LINUX|X86_64_LINUX)
+				MAPLE_LDFLAGS="$MAPLE_LDFLAGS -Wl,-rpath,$MAPLE_SYS_BIN" ;;
+			*) ;;
+		esac
+		export MAPLE_CPPFLAGS
+		export MAPLE_LDFLAGS
+		export MAPLE_LIBADD
+		make -s -C $TEXMACS_PATH/plugins/maple -f Makefile.9 TEXMACS_HOME_PATH="$TEXMACS_HOME_PATH"
+		if [ $? -ne 0 ]; then
+			echo "cannot build $TEXMACS_HOME_PATH/bin/tm_maple_9*" 1>&2
+			exit 1
+		fi
+		if [ ! -f $TEXMACS_HOME_PATH/bin/tm_maple ]; then
+			{ cd $TEXMACS_HOME_PATH/bin && ln -s tm_maple_9.sh tm_maple ; }
+		fi
+	fi
+	exec "$TEXMACS_HOME_PATH/bin/tm_maple_9.sh"
+elif [ -f "$TEXMACS_MAPLE_DIR/mwshelp" ]; then
+	exec tm_maple_5
+else
+	echo "Maple version not yet supported" 1>&2
 fi
-MAPLE_LDFLAGS="-L$TEXMACS_MAPLE_DIR/$MAPLE_SYS_BIN -lmaplec"
-if [ "$MAPLE_SYS_BIN" -eq "bin.IBM_INTEL_LINUX" ]; then
-  MAPLE_LDFLAGS="-L$TEXMACS_MAPLE_DIR/$MAPLE_SYS_BIN -Wl,-rpath,$(TEXMACS_MAPLE_DIR)/$MAPLE_SYS_BIN -lmaplec"
-fi
-export MAPLE_CPPFLAGS
-export MAPLE_LDFLAGS
-
-if [ -d "$TEXMACS_MAPLE_DIR/extern" ]
-then
-    if [ -f "$TEXMACS_HOME_PATH/bin/tm_maple_9.sh" ]
-    then
-        DUMMY="dummy"
-    else
-        cd $TEXMACS_PATH/plugins/maple; make -f Makefile.9 TEXMACS_HOME_PATH="$TEXMACS_HOME_PATH"
-    fi
-    exec "${HOME}/.TeXmacs/bin/tm_maple_9.sh"
-elif [ -f "$TEXMACS_MAPLE_DIR/mwshelp" ]
-then
-    exec tm_maple_5
-fi
+exit 126
