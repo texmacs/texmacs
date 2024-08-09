@@ -16,6 +16,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <string.h>
+#include <argz.h>
 #include "maplec.h"
 
 #define DATA_BEGIN   ((char) 2)
@@ -105,6 +106,36 @@ static void M_DECL errorCallBack( void *data, M_INT offset, const char *msg )
 }
 
 /******************************************************************************
+* Banner
+******************************************************************************/
+
+static void banner(MKernelVector kv) {
+	const char* kversion=MapleToString(kv,MapleKernelOptions(kv,"version",NULL));
+	char * kversionz=NULL;
+	size_t kversionz_len=0;
+	argz_create_sep(kversion,',',&kversionz,&kversionz_len);
+	char* kversionv[argz_count(kversionz,kversionz_len)+1];
+	argz_extract(kversionz,kversionz_len,kversionv);
+	char* krelease=strrchr(kversionv[0],' '); while (*krelease == ' ') ++krelease;
+	char* kplatform=kversionv[1]; while (*kplatform == ' ') ++kplatform;
+	char* kdate=kversionv[2]; while (*kdate == ' ') ++kdate;
+	char* kvbid=kversionv[3]; while (*kvbid == ' ') ++kvbid;
+	char* kyear=strrchr(kdate,' '); while (*kyear == ' ') ++kyear;
+	char* kbid=strrchr(kvbid,' '); while (*kbid == ' ') ++kbid;
+
+  printf("    |\\^/|     OpenMaple/Maple %s+b%s (%s) %s\n",krelease,kbid,kplatform,kdate);
+  printf("._|\\|   |/|_. Copyright (c) Maplesoft, a division of Waterloo Maple Inc. %s\n",kyear);
+  printf(" \\OPENMAPLE/  All rights reserved. Maple and OpenMaple are trademarks of\n");
+  printf(" <____ ____>  Waterloo Maple Inc.\n");
+  printf("      |       Type ? for help.\n");
+  printf("\nTeXmacs interface by Joris van der Hoeven\n");
+
+	krelease=kplatform=kdate=kvbid=kyear=kbid=NULL;
+	*kversionv=NULL;
+	free(kversionz); kversionz=NULL; kversionz_len=0;
+}
+
+/******************************************************************************
 * Launching maple
 ******************************************************************************/
 
@@ -137,19 +168,16 @@ main (int argc, char *argv[]) {
 	}
 
   signal(SIGINT,catch_intr);
-  printf("\2verbatim:");
-  printf("    |\\^/|     Maple\n");
-  printf("._|\\|   |/|_. Copyright (c) Maplesoft, a division of Waterloo Maple Inc. 2004\n");
-  printf(" \\OPENMAPLE/  All rights reserved. Maple and OpenMaple are trademarks of\n");
-  printf(" <____ ____>  Waterloo Maple Inc.\n");
-  printf("      |       Type ? for help.\n");
-  printf("\nTeXmacs interface by Joris van der Hoeven\n");
 
   /* initialize Maple */
   if( (kv=StartMaple(argc,argv,&cb,in,NULL,err)) == NULL ) {
     printf("Fatal error, %s\n",err);
     return( 1 );
   }
+
+  /* show banner */
+  printf("\2verbatim:");
+  banner(kv);
 
   r= EvalMapleStatement (kv, "tmmaple:=9:protect('tmmaple'):");
 	snprintf(in,sizeof(in),"read(`%s`);",tmmplinit);
