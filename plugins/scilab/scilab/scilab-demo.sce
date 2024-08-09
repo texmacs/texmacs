@@ -21,7 +21,7 @@ sparse (rand(3,3) > 0.5)
 A= [0,1;0,0], B= [1;1]; C= [1,1];
 
 // print linear system
-S1= syslin('c',A,B,C)  
+S1= syslin('c',A,B,C)
 
 // print rational
 s1= ss2tf (S1)

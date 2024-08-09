@@ -17,7 +17,7 @@ if ~%gui then
     t= %t;
   endfunction
 end
-  
+
 global demolist
 if demolist == [] then
   demolist= ..
