@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 error() {
     #echo -e "\002latex:\\red $1\005"
