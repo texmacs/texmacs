@@ -10,7 +10,7 @@
   version>|<cell|<TeXmacs-version>>>|<row|<cell|SVN
   revision>|<cell|<TeXmacs-version-release|revision>>>|<row|<cell|Supported
   systems>|<cell|Most GNU/<name|Linux> systems>>|<row|<cell|Copyright>|<cell|<copyright>
-  1998\U2021 by Joris van der Hoeven >>|<row|<cell|License>|<cell|<hlink|GNU
+  1998\U2024 by Joris van der Hoeven >>|<row|<cell|License>|<cell|<hlink|GNU
   General Public License|$TEXMACS_PATH/LICENSE>>>|<row|<cell|Web
   sites>|<cell|<tabular|<tformat|<twith|table-valign|T>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<table|<row|<cell|<verbatim|https://www.texmacs.org>>>|<row|<cell|<verbatim|http://www.gnu.org/software/texmacs>>>>>>>>|<row|<cell|Contact>|<cell|<verbatim|contact@texmacs.org>>>|<row|<cell|Regular
   mail>|<cell|<tabular|<tformat|<twith|table-valign|T>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<table|<row|<cell|<abbr|Prof.>
