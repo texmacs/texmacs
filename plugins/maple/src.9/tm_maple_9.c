@@ -16,7 +16,6 @@
 #include <time.h>
 #include <unistd.h>
 #include <string.h>
-#include <argz.h>
 #include "maplec.h"
 
 #define DATA_BEGIN   ((char) 2)
@@ -111,15 +110,11 @@ static void M_DECL errorCallBack( void *data, M_INT offset, const char *msg )
 
 static void banner(MKernelVector kv) {
 	const char* kversion=MapleToString(kv,MapleKernelOptions(kv,"version",NULL));
-	char * kversionz=NULL;
-	size_t kversionz_len=0;
-	argz_create_sep(kversion,',',&kversionz,&kversionz_len);
-	char* kversionv[argz_count(kversionz,kversionz_len)+1];
-	argz_extract(kversionz,kversionz_len,kversionv);
-	char* krelease=strrchr(kversionv[0],' '); while (*krelease == ' ') ++krelease;
-	char* kplatform=kversionv[1]; while (*kplatform == ' ') ++kplatform;
-	char* kdate=kversionv[2]; while (*kdate == ' ') ++kdate;
-	char* kvbid=kversionv[3]; while (*kvbid == ' ') ++kvbid;
+	char* kversionv=strdup(kversion);
+	char* kplatform=strchr(kversionv,','); *kplatform='\0'; do ++kplatform; while (*kplatform == ' ');
+	char* krelease=strrchr(kversionv,' '); while (*krelease == ' ') ++krelease;
+	char* kdate=strchr(kplatform,','); *kdate='\0'; do ++kdate; while (*kdate == ' ');
+	char* kvbid=strchr(kdate,','); *kvbid='\0'; do ++kvbid; while (*kvbid == ' ');
 	char* kyear=strrchr(kdate,' '); while (*kyear == ' ') ++kyear;
 	char* kbid=strrchr(kvbid,' '); while (*kbid == ' ') ++kbid;
 
@@ -131,8 +126,7 @@ static void banner(MKernelVector kv) {
   printf("\nTeXmacs interface by Joris van der Hoeven\n");
 
 	krelease=kplatform=kdate=kvbid=kyear=kbid=NULL;
-	*kversionv=NULL;
-	free(kversionz); kversionz=NULL; kversionz_len=0;
+	free(kversionv); kversionv=NULL;
 }
 
 /******************************************************************************
