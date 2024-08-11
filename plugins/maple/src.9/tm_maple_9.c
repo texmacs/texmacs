@@ -88,6 +88,7 @@ static void M_DECL textCallBack( void *data, int tag, const char *output )
 
 static void M_DECL errorCallBack( void *data, M_INT offset, const char *msg )
 {
+  char* in=(char *)data;
   M_INT i;
   /* TODO: too wide (>= 80 characters) user input */
 
@@ -97,7 +98,7 @@ static void M_DECL errorCallBack( void *data, M_INT offset, const char *msg )
     /* put ^^^ under the original input to indicate where
        the syntax error probably was
     */
-    fprintf (stderr, "Syntax Error, %s\n> %s\n", msg, data);
+    fprintf (stderr, "Syntax Error, %s\n> %s\n", msg, in);
     for (i=0; i<offset; ++i)
       fputc (' ', stderr);
     fprintf (stderr, "^\n");
@@ -155,6 +156,9 @@ main (int argc, char *argv[]) {
                            };
   ALGEB r, l;  /* Maple data-structures */
 
+  (void) r;  /* silence unused-but-set-variable warning */
+  (void) l;  /* silence unused-variable warning */
+
 	snprintf(tmmplinit,sizeof(tmmplinit), "%s/" TMMPL_PI_MAPLEINIT_RELPATH ,tm_path);
 	if (access(tmmplinit,R_OK)) {
 		printf("Fatal error, unable to read `%s`\n",tmmplinit);
@@ -164,7 +168,7 @@ main (int argc, char *argv[]) {
   signal(SIGINT,catch_intr);
 
   /* initialize Maple */
-  if( (kv=StartMaple(argc,argv,&cb,in,NULL,err)) == NULL ) {
+  if( (kv=StartMaple(argc,argv,&cb,(void *)in,NULL,err)) == NULL) {
     printf("Fatal error, %s\n",err);
     return( 1 );
   }
