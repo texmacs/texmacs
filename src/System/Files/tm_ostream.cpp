@@ -33,7 +33,7 @@ tm_ostream_rep::~tm_ostream_rep () {}
 void tm_ostream_rep::flush () {}
 void tm_ostream_rep::clear () {}
 bool tm_ostream_rep::is_writable () const { return false; }
-void tm_ostream_rep::write (const char*) {}
+void tm_ostream_rep::write (const char*, size_t n) {}
 void tm_ostream_rep::write (tree t) { (void) t; }
 
 /******************************************************************************
@@ -52,7 +52,7 @@ public:
   ~std_ostream_rep ();
 
   bool is_writable () const;
-  void write (const char*);
+  void write (const char* s, size_t n);
   void flush ();
 };
 
@@ -96,13 +96,16 @@ std_ostream_rep::is_writable () const {
 }
 
 void
-std_ostream_rep::write (const char* s) {
+std_ostream_rep::write (const char* s, size_t n) {
   if (!file || !is_w) {
     return;
   }
+  if (n == 0) {
+    return;
+  }
   int written;
-  written = texmacs_fputs(s, file);
-  if (written == EOF) {
+  written = texmacs_fwrite(s, n, file);
+  if (written != n) {
     is_w = false;
     return;
   }
@@ -129,13 +132,13 @@ public:
   ~string_ostream_rep ();
 
   bool is_writable () const;
-  void write (const char*);
+  void write (const char* s, size_t n);
 };
 
 string_ostream_rep::string_ostream_rep (string* buf2): buf (buf2) {}
 string_ostream_rep::~string_ostream_rep () {}
 bool string_ostream_rep::is_writable () const { return true; }
-void string_ostream_rep::write (const char* s) { (*buf) << s; }
+void string_ostream_rep::write (const char* s, size_t n) { (*buf) << string (s,n); }
 
 
 tm_ostream
@@ -157,7 +160,7 @@ public:
   ~buffered_ostream_rep ();
 
   bool is_writable () const;
-  void write (const char*);
+  void write (const char* s, size_t n);
 };
 
 buffered_ostream_rep::buffered_ostream_rep (tm_ostream_rep* master2):
@@ -171,8 +174,8 @@ buffered_ostream_rep::is_writable () const {
 }
 
 void
-buffered_ostream_rep::write (const char* s) {
-  buf << s;
+buffered_ostream_rep::write (const char* s, size_t n) {
+  buf << string (s, n);
 }
 
 /******************************************************************************
@@ -188,7 +191,7 @@ public:
   ~debug_ostream_rep ();
 
   bool is_writable () const;
-  void write (const char*);
+  void write (const char* s, size_t n);
   void write (tree t);
   void clear ();
 };
@@ -207,8 +210,8 @@ debug_ostream_rep::clear () {
 }
 
 void
-debug_ostream_rep::write (const char* s) {
-  debug_message (channel, s);
+debug_ostream_rep::write (const char* s, size_t n) {
+  debug_message (channel, string (s, n));
 }
 
 void
@@ -291,11 +294,11 @@ tm_ostream&
 tm_ostream::operator << (char c) {
   static char _buf[8];
 #ifdef HAVE_SNPRINTF
-  snprintf (_buf, 8, "%c", c);
+  int n = snprintf (_buf, 8, "%c", c);
 #else
-  sprintf (_buf, "%c", c);
+  int n = sprintf (_buf, "%c", c);
 #endif
-  rep->write (_buf);
+  rep->write (_buf, n);
   return *this;
 }
 
@@ -303,11 +306,11 @@ tm_ostream&
 tm_ostream::operator << (short sh) {
   static char _buf[32];
 #ifdef HAVE_SNPRINTF
-  snprintf (_buf, 32, "%hd", sh);
+  int n = snprintf (_buf, 32, "%hd", sh);
 #else
-  sprintf (_buf, "%hd", sh);
+  int n = sprintf (_buf, "%hd", sh);
 #endif
-  rep->write (_buf);
+  rep->write (_buf, n);
   return *this;
 }
 
@@ -315,11 +318,11 @@ tm_ostream&
 tm_ostream::operator << (unsigned short ush) {
   static char _buf[32];
 #ifdef HAVE_SNPRINTF
-  snprintf (_buf, 32, "%hu", ush);
+  int n = snprintf (_buf, 32, "%hu", ush);
 #else
-  sprintf (_buf, "%hu", ush);
+  int n = sprintf (_buf, "%hu", ush);
 #endif
-  rep->write (_buf);
+  rep->write (_buf, n);
   return *this;
 }
 
@@ -327,11 +330,11 @@ tm_ostream&
 tm_ostream::operator << (int i) {
   static char _buf[64];
 #ifdef HAVE_SNPRINTF
-  snprintf (_buf, 64, "%d", i);
+  int n = snprintf (_buf, 64, "%d", i);
 #else
-  sprintf (_buf, "%d", i);
+  int n = sprintf (_buf, "%d", i);
 #endif
-  rep->write (_buf);
+  rep->write (_buf, n);
   return *this;
 }
 
@@ -339,11 +342,11 @@ tm_ostream&
 tm_ostream::operator << (unsigned int ui) {
   static char _buf[64];
 #ifdef HAVE_SNPRINTF
-  snprintf (_buf, 64, "%u", ui);
+  int n = snprintf (_buf, 64, "%u", ui);
 #else
-  sprintf (_buf, "%u", ui);
+  int n = sprintf (_buf, "%u", ui);
 #endif
-  rep->write (_buf);
+  rep->write (_buf, n);
   return *this;
 }
 
@@ -351,11 +354,11 @@ tm_ostream&
 tm_ostream::operator << (long l) {
   static char _buf[64];
 #ifdef HAVE_SNPRINTF
-  snprintf (_buf, 64, "%ld", l);
+  int n = snprintf (_buf, 64, "%ld", l);
 #else
-  sprintf (_buf, "%ld", l);
+  int n = sprintf (_buf, "%ld", l);
 #endif
-  rep->write (_buf);
+  rep->write (_buf, n);
   return *this;
 }
 
@@ -363,11 +366,11 @@ tm_ostream&
 tm_ostream::operator << (unsigned long ul) {
   static char _buf[64];
 #ifdef HAVE_SNPRINTF
-  snprintf (_buf, 64, "%lu", ul);
+  int n = snprintf (_buf, 64, "%lu", ul);
 #else
-  sprintf (_buf, "%lu", ul);
+  int n = sprintf (_buf, "%lu", ul);
 #endif
-  rep->write (_buf);
+  rep->write (_buf, n);
   return *this;
 }
 
@@ -375,11 +378,11 @@ tm_ostream&
 tm_ostream::operator << (long long ll) {
   static char _buf[64];
 #ifdef HAVE_SNPRINTF
-  snprintf (_buf, 64, "%lld", ll);
+  int n = snprintf (_buf, 64, "%lld", ll);
 #else
-  sprintf (_buf, "%lld", ll);
+  int n = sprintf (_buf, "%lld", ll);
 #endif
-  rep->write (_buf);
+  rep->write (_buf, n);
   return *this;
 }
 
@@ -387,11 +390,11 @@ tm_ostream&
 tm_ostream::operator << (unsigned long long ull) {
   static char _buf[64];
 #ifdef HAVE_SNPRINTF
-  snprintf (_buf, 64, "%llu", ull);
+  int n = snprintf (_buf, 64, "%llu", ull);
 #else
-  sprintf (_buf, "%llu", ull);
+  int n = sprintf (_buf, "%llu", ull);
 #endif
-  rep->write (_buf);
+  rep->write (_buf, n);
   return *this;
 }
 
@@ -399,11 +402,11 @@ tm_ostream&
 tm_ostream::operator << (float f) {
   static char _buf[32];
 #ifdef HAVE_SNPRINTF
-  snprintf (_buf, 32, "%g", f);
+  int n = snprintf (_buf, 32, "%g", f);
 #else
-  sprintf (_buf, "%g", f);
+  int n = sprintf (_buf, "%g", f);
 #endif
-  rep->write (_buf);
+  rep->write (_buf, n);
   return *this;
 }
 
@@ -411,11 +414,11 @@ tm_ostream&
 tm_ostream::operator << (double d) {
   static char _buf[64];
 #ifdef HAVE_SNPRINTF
-  snprintf (_buf, 64, "%g", d);
+  int n = snprintf (_buf, 64, "%g", d);
 #else
-  sprintf (_buf, "%g", d);
+  int n = sprintf (_buf, "%g", d);
 #endif
-  rep->write (_buf);
+  rep->write (_buf, n);
   return *this;
 }
 
@@ -423,17 +426,11 @@ tm_ostream&
 tm_ostream::operator << (long double ld) {
   static char _buf[128];
 #ifdef HAVE_SNPRINTF
-  snprintf (_buf, 128, "%Lg", ld);
+  int n = snprintf (_buf, 128, "%Lg", ld);
 #else
-  sprintf (_buf, "%Lg", ld);
+  int n = sprintf (_buf, "%Lg", ld);
 #endif
-  rep->write (_buf);
-  return *this;
-}
-
-tm_ostream&
-tm_ostream::operator << (const char* s) {
-  rep->write (s);
+  rep->write (_buf, n);
   return *this;
 }
 

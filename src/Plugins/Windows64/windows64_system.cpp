@@ -55,17 +55,17 @@ FILE* texmacs_fopen(string filename, string mode, bool lock) {
   return result;
 }
 
-int texmacs_fputs(const char *string, FILE *stream) {
+int texmacs_fwrite(const char *string, size_t size, FILE *stream) {
   if (stream != stdout && stream != stderr) {
-    return fputs(string, stream);
+    return fwrite(string, size, 1, stream);
   }
-  std::wstring wide_string = texmacs_utf8_to_wide(string);
+  std::wstring wide_string = texmacs_utf8_to_wide(string, size);
   if (stream == stdout) {
     std::wcout << wide_string;
   } else {
     std::wcerr << wide_string;
   }
-  return 0;
+  return size;
 }
 
 void texmacs_fclose(FILE *&file, bool unlock) {
@@ -106,10 +106,16 @@ int texmacs_stat(string filename, struct_stat* buf) {
 
 bool texmacs_getenv(string var_name, string &var_value) {
   std::wstring wide_var_name = texmacs_utf8_to_wide(var_name);
-  wchar_t *value = _wgetenv(wide_var_name.c_str());
-  if (value == nullptr) {
+  size_t required_size;
+  _wgetenv_s(&required_size, nullptr, 0, wide_var_name.c_str());
+
+  if (required_size == 0) {
     return false;
   }
+
+  std::wstring value(required_size, L'\0');
+  _wgetenv_s(&required_size, value.data(), required_size, wide_var_name.c_str());
+
   var_value = texmacs_wide_to_utf8(value);
   return true;
 }
@@ -272,6 +278,7 @@ int texmacs_guile_fprintf(FILE *stream, const char *format, ...) {
   va_end(args);
   return res;
 }
+
 #endif
 
 void texmacs_init_guile_hooks() {

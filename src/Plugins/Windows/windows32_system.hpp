@@ -33,12 +33,12 @@ typedef struct texmacs_dirent {
 FILE* texmacs_fopen(string filename, string mode, bool lock = true);
 
 /*
- * @brief Proxy function to the fputs function.
+ * @brief Proxy function to the fwirte function.
  * If the stream is cout or cerr, the function will do
  * the necessary conversion.
  * Otherwise, it will call the fputs function withou any conversion.
  */
-int texmacs_fputs(const char *string, FILE *stream);
+int texmacs_fwrite(const char *string, size_t size, FILE *stream);
 
 /*
  * @brief Proxy function to the fclose function.
