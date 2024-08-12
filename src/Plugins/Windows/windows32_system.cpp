@@ -65,7 +65,7 @@ void texmacs_closedir(TEXMACS_DIR dir) {
 
 texmacs_dirent texmacs_readdir(TEXMACS_DIR dirp) {
   std::string nextname;
-  bool res = nowide::readir_entry(dirp, nextname);
+  bool res = nowide::readir_entry((DIR*)dirp, nextname);
   if (!res) {
     return {false, ""};
   }
