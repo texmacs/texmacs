@@ -13,11 +13,10 @@
 
 #include "string.hpp"
 #include "array.hpp"
-#include "win-utf8-compat.hpp"
 
 #include <string>
 
-typedef DIR* TEXMACS_DIR;
+typedef void* TEXMACS_DIR;
 typedef struct _stat32 struct_stat;
 
 typedef struct texmacs_dirent {
