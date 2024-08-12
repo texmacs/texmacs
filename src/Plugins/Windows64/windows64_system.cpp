@@ -231,6 +231,47 @@ char *texmacs_guile_getenv(const char *name) {
   c_utf8_string[N(utf8_string)] = 0;
   return c_utf8_string;
 }
+
+int texmacs_guile_printf(const char *format, ...) {
+  // first, use vsnprintf to get the size of the buffer
+  va_list args;
+  va_start(args, format);
+  int size = vsnprintf(nullptr, 0, format, args);
+  va_end(args);
+  
+  if (size == 0) {
+    return 0;
+  }
+
+  // then, allocate the buffer and print the string
+  char *buffer = (char*)malloc(size + 1);
+  va_start(args, format);
+  vsnprintf(buffer, size + 1, format, args);
+  va_end(args);
+
+  // print the string
+  std::wcout << texmacs_utf8_to_wide(buffer, size) << std::endl;
+  
+  // free the buffer
+  free(buffer);
+
+  return size;
+}
+
+int texmacs_guile_fprintf(FILE *stream, const char *format, ...) {
+  if (stream == stdout || stream == stderr) {
+    va_list args;
+    va_start(args, format);
+    int res = texmacs_guile_printf(format, args);
+    va_end(args);
+    return res;
+  }
+  va_list args;
+  va_start(args, format);
+  int res = vfprintf(stream, format, args);
+  va_end(args);
+  return res;
+}
 #endif
 
 void texmacs_init_guile_hooks() {
@@ -242,6 +283,8 @@ void texmacs_init_guile_hooks() {
   guile_readdir = texmacs_guile_readdir;
   guile_truncate = texmacs_guile_truncate;
   guile_getenv = texmacs_guile_getenv;
+  guile_fprintf = texmacs_guile_fprintf;
+  guile_printf = texmacs_guile_printf;
 #else
   cout << "warning: guile hooks are not available" << LF;
 #endif
