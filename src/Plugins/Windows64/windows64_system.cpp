@@ -55,15 +55,15 @@ FILE* texmacs_fopen(string filename, string mode, bool lock) {
   return result;
 }
 
-int texmacs_fwrite(const char *string, size_t size, FILE *stream) {
+int texmacs_fwrite(const char *str, size_t size, FILE *stream) {
   if (stream != stdout && stream != stderr) {
-    return fwrite(string, size, 1, stream);
+    return fwrite(str, size, 1, stream);
   }
-  std::wstring wide_string = texmacs_utf8_to_wide(string, size);
+  std::wstring wide_str = texmacs_utf8_to_wide(string(str, size));
   if (stream == stdout) {
-    std::wcout << wide_string;
+    std::wcout << wide_str;
   } else {
-    std::wcerr << wide_string;
+    std::wcerr << wide_str;
   }
   return size;
 }
@@ -256,7 +256,7 @@ int texmacs_guile_printf(const char *format, ...) {
   va_end(args);
 
   // print the string
-  std::wcout << texmacs_utf8_to_wide(buffer, size) << std::endl;
+  std::wcout << texmacs_utf8_to_wide(string(buffer, size)) << std::endl;
   
   // free the buffer
   free(buffer);
