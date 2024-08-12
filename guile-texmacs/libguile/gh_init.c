@@ -24,6 +24,7 @@
 #include <stdio.h>
 
 #include "libguile/gh.h"
+#include "libguile/system.h"
 
 #if SCM_ENABLE_DEPRECATED
 
