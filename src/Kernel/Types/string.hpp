@@ -35,12 +35,7 @@ class string {
   inline string (int n): rep (tm_new<string_rep> (n)) {}
   string (char c);
   string (char c, int n);
-  constexpr string (const char *s) {
-    size_t n= std::char_traits<char>::length(s);
-    rep= tm_new<string_rep> (n);
-    for (i=0; i<n; i++)
-      rep->a[i]=a[i];
-  }
+  string (const char *s);
   string (const char *s, int n);
   inline char& operator [] (int i) { return rep->a[i]; }
   bool operator == (const char* s);

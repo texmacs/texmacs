@@ -14,6 +14,11 @@
 
 //#include "url.hpp"
 #include <cstdio>
+#if __cplusplus >= 201703L
+#include <string> // for std::char_traits<char>::length
+#else
+#include <cstring> // for strlen
+#endif
 class string;
 class tm_ostream;
 class formatted;
@@ -62,10 +67,22 @@ public:
   string unbuffer ();
   void redirect (tm_ostream x);
   
-  constexpr tm_ostream& operator << (const char* s) {
+#if __cplusplus >= 201703L
+  inline tm_ostream& operator << (const char* s) {
+    /*
+    td::char_traits<char>::length(s) is a constexpr in C++17
+    if the string is a literal, the length is known at compile time
+    if the string is not a literal, the length is computed at runtime
+    */
     rep->write (s, std::char_traits<char>::length(s));
     return *this;
   }
+#else
+  inline tm_ostream& operator << (const char* s) {
+    rep->write (s, strlen(s));
+    return *this;
+  }
+#endif
 
   tm_ostream& operator << (bool);
   tm_ostream& operator << (char);
