@@ -55,12 +55,12 @@ FILE* texmacs_fopen(string filename, string mode, bool lock) {
   return file;
 }
 
-int texmacs_fputs(const char *input_string, FILE *stream) {
+int texmacs_fwrite(const char *string, size_t size, FILE *stream) {
   if (stream != stdout && stream != stderr) {
-      return fputs(input_string, stream);
+      return fwrite(string, size, 1, stream);
   }
-  std::string system_string = texmacs_utf8_string_to_system_string(input_string);
-  return fputs(system_string.c_str(), stream);
+  std::string system_string = texmacs_utf8_string_to_system_string(string);
+  return fwrite(system_string.c_str(), system_string.size(), 1, stream);
 }
 
 void texmacs_fclose(FILE *&file, bool unlock) {

@@ -27,7 +27,7 @@ public:
   virtual ~tm_ostream_rep ();
 
   virtual bool is_writable () const;
-  virtual void write (const char*);
+  virtual void write (const char* s, size_t n);
   virtual void write (tree);
   virtual void flush ();
   virtual void clear ();
@@ -61,6 +61,11 @@ public:
   void buffer ();
   string unbuffer ();
   void redirect (tm_ostream x);
+  
+  constexpr tm_ostream& operator << (const char* s) {
+    rep->write (s, std::char_traits<char>::length(s));
+    return *this;
+  }
 
   tm_ostream& operator << (bool);
   tm_ostream& operator << (char);
@@ -75,7 +80,6 @@ public:
   tm_ostream& operator << (float);
   tm_ostream& operator << (double);
   tm_ostream& operator << (long double);
-  tm_ostream& operator << (const char*);
   tm_ostream& operator << (formatted);
 };
 

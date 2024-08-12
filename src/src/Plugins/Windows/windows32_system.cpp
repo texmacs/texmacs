@@ -31,9 +31,9 @@ FILE* texmacs_fopen(string filename, string mode, bool lock) {
   return file;
 }
 
-int texmacs_fputs(const char *string, FILE *stream) {
+int texmacs_fwrite(const char *string, size_t size, FILE *stream) {
   if (stream != stdout && stream != stderr) {
-    return fputs(string, stream);
+    return fwrite(string, size, 1, stream);
   }
   if (stream == stdout) {
     nowide::cout << string;
@@ -43,7 +43,7 @@ int texmacs_fputs(const char *string, FILE *stream) {
     nowide::cerr << string;
     nowide::cerr.flush();
   }
-  return 0;
+  return size;
 }
 
 
