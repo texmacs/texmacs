@@ -21,6 +21,8 @@
 #include <sspi.h>
 #include <secext.h>
 #include <stdio.h>
+#include <fcntl.h>
+#include <io.h>
 
 #include <QApplication>
 #include <QDebug>
@@ -51,11 +53,14 @@ int WINAPI CommonMain() {
   texmacs_initialize_displayname();
   texmacs_init_guile_hooks();
 
-  string *texmacs_argv = new string[__argc];
-  char **char_argv = new char*[__argc];
+  _setmode(_fileno(stdout), _O_U8TEXT);
+  _setmode(_fileno(stderr), _O_U8TEXT);
 
   int argc = 0;
   LPWSTR* pArgvW = CommandLineToArgvW(GetCommandLineW(), &argc);
+
+  string *texmacs_argv = new string[argc];
+  char **char_argv = new char*[argc];
 
   for (int i = 0; i < argc; i++) {
     texmacs_argv[i] = texmacs_wide_to_utf8(pArgvW[i]);

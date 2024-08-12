@@ -43,7 +43,7 @@ FILE* texmacs_fopen(string filename, string mode, bool lock = true);
  * conversion. Otherwise, it will call the fputs function withou any
  * conversion.
  */
-int texmacs_fputs(const char *string, FILE *stream);
+int texmacs_fwrite(const char *string, size_t size, FILE *stream);
 
 /*
  * @brief Proxy function to the fclose function.
