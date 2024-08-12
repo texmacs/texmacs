@@ -180,7 +180,7 @@ scm_i_sweep_card (scm_t_cell *  p, SCM *free_list, scm_t_heap_segment*seg)
 #if (SCM_DEBUG_CELL_ACCESSES == 1)
 	      if (!(k < scm_numptob))
 		{
-		  fprintf (stderr, "undefined port type");
+		  guile_fprintf (stderr, "undefined port type");
 		  scm_abort();
 		}
 #endif
@@ -227,7 +227,7 @@ scm_i_sweep_card (scm_t_cell *  p, SCM *free_list, scm_t_heap_segment*seg)
 #if (SCM_DEBUG_CELL_ACCESSES == 1)
 		if (!(k < scm_numsmob))
 		  {
-		    fprintf (stderr, "undefined smob type");
+		    guile_fprintf (stderr, "undefined smob type");
 		    scm_abort();
 		  }
 #endif
@@ -255,7 +255,7 @@ scm_i_sweep_card (scm_t_cell *  p, SCM *free_list, scm_t_heap_segment*seg)
 	    }
 	  break;
 	default:
-	  fprintf (stderr, "unknown type");
+	  guile_fprintf (stderr, "unknown type");
 	  scm_abort();
 	}
 

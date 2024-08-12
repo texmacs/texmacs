@@ -84,7 +84,7 @@ scm_c_hook_remove (scm_t_c_hook *hook,
 	}
       loc = &(*loc)->next;
     }
-  fprintf (stderr, "Attempt to remove non-existent hook function\n");
+  guile_fprintf (stderr, "Attempt to remove non-existent hook function\n");
   scm_abort ();
 }
 

@@ -106,14 +106,14 @@ SCM_DEFINE (scm_error_scm, "scm-error", 5, 0, 0,
   if (scm_gc_running_p)
     {
       /* The error occured during GC --- abort */
-      fprintf (stderr, "Guile: error during GC.\n"),
+      guile_fprintf (stderr, "Guile: error during GC.\n"),
       scm_abort ();
     }
 
   scm_ithrow (key, scm_list_4 (subr, message, args, data), 1);
   
   /* No return, but just in case: */
-  fprintf (stderr, "Guile scm_ithrow returned!\n");
+  guile_fprintf (stderr, "Guile scm_ithrow returned!\n");
   exit (1);
 }
 #undef FUNC_NAME
@@ -278,7 +278,7 @@ SCM_GLOBAL_SYMBOL (scm_memory_alloc_key, "memory-allocation-error");
 void
 scm_memory_error (const char *subr)
 {
-  fprintf (stderr, "FATAL: memory error in %s\n", subr);
+  guile_fprintf (stderr, "FATAL: memory error in %s\n", subr);
   scm_abort ();
 }
 

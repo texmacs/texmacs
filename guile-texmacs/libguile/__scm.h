@@ -55,13 +55,6 @@
 #  include <config.h>
 #endif
 
-#if defined(__ANDROID__)
-#include <android/log.h>
-int __scm_android_fprintf (FILE* stream, const char* format, ...);
-#define printf(...) __android_log_print (ANDROID_LOG_DEFAULT, "libguile", __VA_ARGS__)
-#define fprintf(...) __scm_android_fprintf (__VA_ARGS__)
-#endif
-
 
 
 /* {Compiler hints}

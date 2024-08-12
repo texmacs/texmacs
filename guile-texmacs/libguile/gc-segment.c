@@ -41,7 +41,7 @@ scm_i_make_empty_heap_segment (scm_t_cell_type_statistics *fl)
 
   if (!shs)
     {
-      fprintf (stderr, "scm_i_get_new_heap_segment: out of memory.\n");
+      guile_fprintf (stderr, "scm_i_get_new_heap_segment: out of memory.\n");
       scm_abort ();
     }
   
@@ -291,7 +291,7 @@ scm_i_insert_segment (scm_t_heap_segment * seg)
    */
   if (!scm_i_heap_segment_table)
     {
-      fprintf (stderr, "scm_i_get_new_heap_segment: Could not grow heap segment table.\n");
+      guile_fprintf (stderr, "scm_i_get_new_heap_segment: Could not grow heap segment table.\n");
       scm_abort ();
     }
 
@@ -501,7 +501,7 @@ scm_i_get_new_heap_segment (scm_t_cell_type_statistics *freelist,
     /* Make heap grow with factor 1.5 */
     len =  freelist->heap_size / 2;
 #ifdef DEBUGINFO
-    fprintf (stderr, "(%ld < %ld)", (ent) len, (ent) min_cells);
+    guile_fprintf (stderr, "(%ld < %ld)", (ent) len, (ent) min_cells);
 #endif
 
     if (len < min_cells)
@@ -533,7 +533,7 @@ scm_i_get_new_heap_segment (scm_t_cell_type_statistics *freelist,
 
   if (error_policy == abort_on_error)
     {
-      fprintf (stderr, "scm_i_get_new_heap_segment: Could not grow heap.\n");
+      guile_fprintf (stderr, "scm_i_get_new_heap_segment: Could not grow heap.\n");
       scm_abort ();
     }
   return -1;

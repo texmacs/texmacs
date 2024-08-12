@@ -406,13 +406,13 @@ scm_i_init_guile (SCM_STACKITEM *base)
 
   if (base == NULL)
     {
-      fprintf (stderr, "cannot determine stack base!\n");
+      guile_fprintf (stderr, "cannot determine stack base!\n");
       scm_abort ();
     }
 
   if (sizeof (mpz_t) > (3 * sizeof (scm_t_bits)))
     {
-      fprintf (stderr,
+      guile_fprintf (stderr,
                "GMP's mpz_t must fit into a double_cell,"
                "but doesn't seem to here.\n");
     }

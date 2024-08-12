@@ -17,6 +17,8 @@
 # endif
 #endif
 
+#include <stdarg.h>
+
 #define fstat_or_fstat64                CHOOSE_LARGEFILE(fstat,fstat64,_fstat64)
 #define ftruncate_or_ftruncate64        CHOOSE_LARGEFILE(ftruncate,ftruncate64,ftruncate64)
 #define lseek_or_lseek64                CHOOSE_LARGEFILE(lseek,lseek64,lseek64)
@@ -109,6 +111,52 @@ char *guile_default_getenv(const char *name) {
     return guile_system_string_to_utf8_string(getenv(name));
 }
 
+#if defined(__ANDROID__)
+#include <android/log.h>
+int
+guile_default_fprintf (FILE* stream, const char* format, ...) {
+  int ret;
+  va_list args;
+  va_start(args, format);
+  if (stream == stdout)
+    ret= __android_log_print (ANDROID_LOG_DEFAULT, "libguile",
+			      format, args);
+  else if (stream == stderr)
+    ret= __android_log_print (ANDROID_LOG_ERROR, "libguile",
+			      format, args);
+  else ret= fprintf (stream, format, args);
+  va_end(args);
+  return ret;
+}
+
+int
+guile_default_printf (const char* format, ...) {
+    int ret;
+    va_list args;
+    va_start(args, format);
+    ret= __android_log_print (ANDROID_LOG_DEFAULT, "libguile",
+                    format, args);
+    va_end(args);
+    return ret;
+}
+#else
+int guile_default_printf(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    int res = vprintf(format, args);
+    va_end(args);
+    return res;
+}
+
+int guile_default_fprintf(FILE *stream, const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    int res = vfprintf(stream, format, args);
+    va_end(args);
+    return res;
+}
+#endif
+
 /* Function pointers initialization */
 char *(*guile_utf8_string_to_system_string)(const char *utf8_string) = guile_default_utf8_string_to_system_string;
 char *(*guile_system_string_to_utf8_string)(const char *system_string) = guile_default_system_string_to_utf8_string;
@@ -126,3 +174,5 @@ int (*guile_readdir_r)(DIR *dirp, guile_dirent_t *entry, guile_dirent_t **result
 #endif
 int (*guile_truncate)(const char *path, guile_off_t length) = guile_default_truncate;
 char *(*guile_getenv)(const char *name) = guile_default_getenv;
+int (*guile_printf)(const char *format, ...) = guile_default_printf;
+int (*guile_fprintf)(FILE *stream, const char *format, ...) = guile_default_fprintf;

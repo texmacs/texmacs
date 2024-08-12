@@ -109,7 +109,7 @@ scm_i_adjust_min_yield (scm_t_cell_type_statistics *freelist)
       ent delta = ((SCM_HEAP_SIZE * freelist->min_yield_fraction / 100)
 		   - (ent) SCM_MAX (scm_gc_cells_collected_1, scm_gc_cells_collected));
 #ifdef DEBUGINFO
-      fprintf (stderr, " after GC = %lu, delta = %ld\n",
+      guile_fprintf (stderr, " after GC = %lu, delta = %ld\n",
 	       (nat) scm_cells_allocated,
 	       (ent) delta);
 #endif

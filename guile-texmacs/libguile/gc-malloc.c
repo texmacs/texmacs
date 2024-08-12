@@ -186,7 +186,7 @@ decrease_mtrigger (size_t size, const char * what)
 
   if (size > scm_mallocated)
     {
-      fprintf (stderr, "`scm_mallocated' underflow.  This means that more "
+      guile_fprintf (stderr, "`scm_mallocated' underflow.  This means that more "
 	       "memory was unregistered\n"
 	       "via `scm_gc_unregister_collectable_memory ()' than "
 	       "registered.\n");
@@ -243,7 +243,7 @@ increase_mtrigger (size_t size, const char *what)
       scm_gc_malloc_yield_percentage = (int) (100  * yield);
 
 #ifdef DEBUGINFO
-      fprintf (stderr,  "prev %lud , now %lud, yield %4.2lf, want %d",
+      guile_fprintf (stderr,  "prev %lud , now %lud, yield %4.2lf, want %d",
 	       prev_alloced,
 	       scm_mallocated,
 	       100.0 * yield,
@@ -271,7 +271,7 @@ increase_mtrigger (size_t size, const char *what)
 	    scm_mtrigger =  (nat) no_overflow_trigger;
 	  
 #ifdef DEBUGINFO
-	  fprintf (stderr, "Mtrigger sweep: ineffective. New trigger %d\n",
+	  guile_fprintf (stderr, "Mtrigger sweep: ineffective. New trigger %d\n",
 		   scm_mtrigger);
 #endif
 	}
@@ -460,7 +460,7 @@ scm_must_free (void *obj)
     free (obj);
   else
     {
-      fprintf (stderr,"freeing NULL pointer");
+      guile_fprintf (stderr,"freeing NULL pointer");
       scm_abort ();
     }
 }

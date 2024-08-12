@@ -99,7 +99,7 @@ scm_i_expensive_validation_check (SCM cell)
 {
   if (!scm_in_heap_p (cell))
     {
-      fprintf (stderr, "scm_assert_cell_valid: this object does not live in the heap: %lux\n",
+      guile_fprintf (stderr, "scm_assert_cell_valid: this object does not live in the heap: %lux\n",
 	       (nat) SCM_UNPACK (cell));
       scm_abort ();
     }
@@ -146,7 +146,7 @@ scm_assert_cell_valid (SCM cell)
       
       if (!SCM_GC_MARK_P (cell))
 	{
-	  fprintf (stderr,
+	  guile_fprintf (stderr,
 		   "scm_assert_cell_valid: this object is unmarked. \n"
 		   "It has been garbage-collected in the last GC run: "
 		   "%lux\n",
@@ -552,9 +552,9 @@ scm_i_gc (const char *what)
   scm_c_hook_run (&scm_before_gc_c_hook, 0);
 
 #ifdef DEBUGINFO
-  fprintf (stderr,"gc reason %s\n", what);
+  guile_fprintf (stderr,"gc reason %s\n", what);
   
-  fprintf (stderr,
+  guile_fprintf (stderr,
 	   scm_is_null (*SCM_FREELIST_LOC (scm_i_freelist))
 	   ? "*"
 	   : (scm_is_null (*SCM_FREELIST_LOC (scm_i_freelist2)) ? "o" : "m"));
@@ -581,7 +581,7 @@ scm_i_gc (const char *what)
 	 have allocated, by calling scm_done_malloc or some such.  When
 	 the GC freed them, it subtracted their size from
 	 scm_mallocated, which underflowed.  */
-      fprintf (stderr,
+      guile_fprintf (stderr,
 	       "scm_gc_sweep: Byte count of allocated objects has underflowed.\n"
 	       "This is probably because the GC hasn't been correctly informed\n"
 	       "about object sizes\n");
@@ -776,7 +776,7 @@ scm_gc_unprotect_object (SCM obj)
 
   if (scm_gc_running_p)
     {
-      fprintf (stderr, "scm_unprotect_object called during GC.\n");
+      guile_fprintf (stderr, "scm_unprotect_object called during GC.\n");
       scm_abort ();
     }
  
@@ -784,7 +784,7 @@ scm_gc_unprotect_object (SCM obj)
 
   if (scm_is_false (handle))
     {
-      fprintf (stderr, "scm_unprotect_object called on unprotected object\n");
+      guile_fprintf (stderr, "scm_unprotect_object called on unprotected object\n");
       scm_abort ();
     }
   else
@@ -834,7 +834,7 @@ scm_gc_unregister_root (SCM *p)
 
   if (scm_is_false (handle))
     {
-      fprintf (stderr, "scm_gc_unregister_root called on unregistered root\n");
+      guile_fprintf (stderr, "scm_gc_unregister_root called on unregistered root\n");
       scm_abort ();
     }
   else

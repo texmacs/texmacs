@@ -258,7 +258,7 @@ scm_dynthrow (SCM cont, SCM val)
 
   if (thread->critical_section_level)
     {
-      fprintf (stderr, "continuation invoked from within critical section.\n");
+      guile_fprintf (stderr, "continuation invoked from within critical section.\n");
       scm_abort ();
     }
 

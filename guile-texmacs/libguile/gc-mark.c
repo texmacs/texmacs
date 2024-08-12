@@ -139,7 +139,7 @@ scm_mark_all (void)
       break;
     }
 
-  /* fprintf (stderr, "%d loops\n", loops); */
+  /* guile_fprintf (stderr, "%d loops\n", loops); */
 
   /* Remove all unmarked entries from the weak vectors.
    */
@@ -332,7 +332,7 @@ scm_gc_mark_dependencies (SCM p)
 #if (SCM_DEBUG_CELL_ACCESSES == 1) 
       if (!(i < scm_numptob))
 	{
-	  fprintf (stderr, "undefined port type");
+	  guile_fprintf (stderr, "undefined port type");
 	  scm_abort();
 	}
 #endif
@@ -359,7 +359,7 @@ scm_gc_mark_dependencies (SCM p)
 #if (SCM_DEBUG_CELL_ACCESSES == 1)
 	  if (!(i < scm_numsmob))
 	    {
-	      fprintf (stderr, "undefined smob type");
+	      guile_fprintf (stderr, "undefined smob type");
 	      scm_abort();
 	    }
 #endif
@@ -373,7 +373,7 @@ scm_gc_mark_dependencies (SCM p)
 	}
       break;
     default:
-      fprintf (stderr, "unknown type");
+      guile_fprintf (stderr, "unknown type");
       scm_abort();
     }
 
@@ -404,7 +404,7 @@ scm_gc_mark_dependencies (SCM p)
 #endif
     if (!valid_cell)
       {
-	fprintf (stderr, "rogue pointer in heap");
+	guile_fprintf (stderr, "rogue pointer in heap");
 	scm_abort();
       }
   }

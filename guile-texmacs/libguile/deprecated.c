@@ -161,7 +161,7 @@ scm_register_module_xxx (char *module_name, void *init_func)
   md = (struct moddata *) malloc (sizeof (struct moddata));
   if (md == NULL)
     {
-      fprintf (stderr,
+      guile_fprintf (stderr,
 	       "guile: can't register module (%s): not enough memory",
 	       module_name);
       return;

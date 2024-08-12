@@ -709,7 +709,7 @@ scm_read_quote (int chr, SCM port)
       }
 
     default:
-      fprintf (stderr, "%s: unhandled quote character (%i)\n",
+      guile_fprintf (stderr, "%s: unhandled quote character (%i)\n",
 	       "scm_read_quote", chr);
       scm_abort ();
     }

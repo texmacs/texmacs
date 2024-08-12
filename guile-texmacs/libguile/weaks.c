@@ -337,7 +337,7 @@ scm_i_remove_weaks (SCM w)
 	}
 #if 0
       if (delta)
-	fprintf (stderr, "vector %p, delta %d\n", w, delta);
+	guile_fprintf (stderr, "vector %p, delta %d\n", w, delta);
 #endif
       SCM_I_SET_WVECT_DELTA (w, delta);
     }

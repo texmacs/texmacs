@@ -60,7 +60,7 @@ scm_c_issue_deprecation_warning (const char *msg)
 	if (!strcmp (iw->message, msg))
 	  return;
       if (scm_gc_running_p)
-	fprintf (stderr, "%s\n", msg);
+	guile_fprintf (stderr, "%s\n", msg);
       else
 	{
 	  scm_puts (msg, scm_current_error_port ());

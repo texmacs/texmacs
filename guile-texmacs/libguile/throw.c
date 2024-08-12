@@ -699,7 +699,7 @@ scm_ithrow (SCM key, SCM args, int noreturn SCM_UNUSED)
 
   if (SCM_I_CURRENT_THREAD->critical_section_level)
     {
-      fprintf (stderr, "throw from within critical section.\n");
+      guile_fprintf (stderr, "throw from within critical section.\n");
       scm_abort ();
     }
 

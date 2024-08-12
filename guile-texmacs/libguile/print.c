@@ -47,26 +47,6 @@
 #include "libguile/validate.h"
 #include "libguile/print.h"
 
-#if defined(__ANDROID__)
-#include <android/log.h>
-
-int
-__scm_android_fprintf (FILE* stream, const char* format, ...) {
-  int ret;
-  va_list args;
-  va_start(args, format);
-  if (stream == stdout)
-    ret= __android_log_print (ANDROID_LOG_DEFAULT, "libguile",
-			      format, args);
-  else if (stream == stderr)
-    ret= __android_log_print (ANDROID_LOG_ERROR, "libguile",
-			      format, args);
-  else ret= fprintf (stream, format, args);
-  va_end(args);
-  return ret;
-}
-#endif
-
 
 
 /* {Names of immediate symbols}

@@ -82,7 +82,7 @@ create_gsubr (int define, const char *name,
 	SCM sym = SCM_SUBR_ENTRY(subr).name;
 	if (SCM_GSUBR_MAX < req + opt + rst)
 	  {
-            fprintf (stderr,
+            guile_fprintf (stderr,
                      "ERROR in scm_c_make_gsubr: too many args (%d) to %s\n",
                      req + opt + rst, name);
 	    exit (1);

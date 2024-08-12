@@ -75,7 +75,7 @@ static char *
 scm_try_path (char *path)
 {
   FILE *f;
-  /* fprintf(stderr, "Trying %s\n", path);fflush(stderr); */
+  /* guile_fprintf(stderr, "Trying %s\n", path);fflush(stderr); */
   if (!path)
     return ((ent) 0L);
   SCM_SYSCALL (f = fopen (path, "r");
@@ -123,7 +123,7 @@ scm_find_executable (const char *name)
   int i = 0, c;
   FILE *f;
 
-  /* fprintf(stderr, "s_f_e checking access %s ->%d\n", name, access(name, X_OK)); fflush(stderr); */
+  /* guile_fprintf(stderr, "s_f_e checking access %s ->%d\n", name, access(name, X_OK)); fflush(stderr); */
   if (access (name, X_OK))
     return (char*) 0L;
   f = fopen (name, "r");
@@ -351,9 +351,9 @@ scm_shell_usage (int fatal, char *message)
   FILE  *fp = (fatal ? stderr : stdout);
 
   if (message)
-    fprintf (fp, "%s\n", message);
+    guile_fprintf (fp, "%s\n", message);
 
-  fprintf (fp, 
+  guile_fprintf (fp, 
            "Usage: %s OPTION ...\n"
            "Evaluate Scheme code, interactively or from a script.\n"
            "\n"
@@ -632,7 +632,7 @@ scm_compile_shell_switches (int argc, char **argv)
 	       || ! strcmp (argv[i], "--version"))
 	{
 	  /* Print version number.  */
-	  printf ("Guile %s\n"
+	  guile_printf ("Guile %s\n"
 		  "Copyright (c) 1995, 1996, 1997, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Free Software Foundation\n"
 		  "Guile may be distributed under the terms of the GNU General Public Licence;\n"
 		  "certain other uses are permitted as well.  For details, see the file\n"
@@ -644,7 +644,7 @@ scm_compile_shell_switches (int argc, char **argv)
 
       else
 	{
-	  fprintf (stderr, "%s: Unrecognized switch `%s'\n",
+	  guile_fprintf (stderr, "%s: Unrecognized switch `%s'\n",
 		   scm_usage_name, argv[i]);
 	  scm_shell_usage (1, 0);
 	}

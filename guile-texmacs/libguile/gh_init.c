@@ -77,7 +77,7 @@ gh_catch (SCM tag, scm_t_catch_body body, void *body_data,
 SCM 
 gh_standard_handler (void *data SCM_UNUSED, SCM tag, SCM throw_args SCM_UNUSED)
 {
-  fprintf (stderr, "\nJust got an error; tag is\n        ");
+  guile_fprintf (stderr, "\nJust got an error; tag is\n        ");
   scm_display (tag, scm_current_output_port ());
   scm_newline (scm_current_output_port ());
   scm_newline (scm_current_output_port ());

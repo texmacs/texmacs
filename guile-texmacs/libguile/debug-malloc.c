@@ -162,7 +162,7 @@ scm_malloc_unregister (void *obj)
   type = (hash_entry_t *) object->data;
   if (type == 0)
     {
-      fprintf (stderr,
+      guile_fprintf (stderr,
 	       "scm_gc_free called on object not allocated with scm_gc_malloc\n");
       scm_abort ();
     }
@@ -183,7 +183,7 @@ scm_malloc_reregister (void *old, void *new, const char *newwhat)
       type = (hash_entry_t *) object->data;
       if (type == 0)
 	{
-	  fprintf (stderr,
+	  guile_fprintf (stderr,
 		   "scm_gc_realloc called on object not allocated "
 		   "with scm_gc_malloc\n");
 	  scm_abort ();
@@ -192,7 +192,7 @@ scm_malloc_reregister (void *old, void *new, const char *newwhat)
 	{
 	  if (strcmp (newwhat, "vector-set-length!") != 0)
 	    {
-	      fprintf (stderr,
+	      guile_fprintf (stderr,
 		       "scm_gc_realloc called with arg %s, was %s\n",
 		       newwhat,
 		       (char *) type->key);

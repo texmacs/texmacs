@@ -510,22 +510,22 @@ SCM_DEFINE (scm_sys_string_dump, "%string-dump", 1, 0, 0,
 #define FUNC_NAME s_scm_sys_string_dump
 {
   SCM_VALIDATE_STRING (1, str);
-  fprintf (stderr, "%p:\n", str);
-  fprintf (stderr, " start: %u\n", STRING_START (str));
-  fprintf (stderr, " len:   %u\n", STRING_LENGTH (str));
+  guile_fprintf (stderr, "%p:\n", str);
+  guile_fprintf (stderr, " start: %u\n", STRING_START (str));
+  guile_fprintf (stderr, " len:   %u\n", STRING_LENGTH (str));
   if (IS_SH_STRING (str))
     {
-      fprintf (stderr, " string: %p\n", SH_STRING_STRING (str));
-      fprintf (stderr, "\n");
+      guile_fprintf (stderr, " string: %p\n", SH_STRING_STRING (str));
+      guile_fprintf (stderr, "\n");
       scm_sys_string_dump (SH_STRING_STRING (str));
     }
   else
     {
       SCM buf = STRING_STRINGBUF (str);
-      fprintf (stderr, " buf:   %p\n", buf);
-      fprintf (stderr, "  chars:  %p\n", STRINGBUF_CHARS (buf));
-      fprintf (stderr, "  length: %u\n", STRINGBUF_LENGTH (buf));
-      fprintf (stderr, "  flags: %x\n", (SCM_CELL_WORD_0 (buf) & 0x300));
+      guile_fprintf (stderr, " buf:   %p\n", buf);
+      guile_fprintf (stderr, "  chars:  %p\n", STRINGBUF_CHARS (buf));
+      guile_fprintf (stderr, "  length: %u\n", STRINGBUF_LENGTH (buf));
+      guile_fprintf (stderr, "  flags: %x\n", (SCM_CELL_WORD_0 (buf) & 0x300));
     }
   return SCM_UNSPECIFIED;
 }
@@ -537,14 +537,14 @@ SCM_DEFINE (scm_sys_symbol_dump, "%symbol-dump", 1, 0, 0,
 #define FUNC_NAME s_scm_sys_symbol_dump
 {
   SCM_VALIDATE_SYMBOL (1, sym);
-  fprintf (stderr, "%p:\n", sym);
-  fprintf (stderr, " hash: %lu\n", scm_i_symbol_hash (sym));
+  guile_fprintf (stderr, "%p:\n", sym);
+  guile_fprintf (stderr, " hash: %lu\n", scm_i_symbol_hash (sym));
   {
     SCM buf = SYMBOL_STRINGBUF (sym);
-    fprintf (stderr, " buf: %p\n", buf);
-    fprintf (stderr, "  chars:  %p\n", STRINGBUF_CHARS (buf));
-    fprintf (stderr, "  length: %u\n", STRINGBUF_LENGTH (buf));
-    fprintf (stderr, "  shared: %u\n", STRINGBUF_SHARED (buf));
+    guile_fprintf (stderr, " buf: %p\n", buf);
+    guile_fprintf (stderr, "  chars:  %p\n", STRINGBUF_CHARS (buf));
+    guile_fprintf (stderr, "  length: %u\n", STRINGBUF_LENGTH (buf));
+    guile_fprintf (stderr, "  shared: %u\n", STRINGBUF_SHARED (buf));
   }
   return SCM_UNSPECIFIED;
 }
@@ -558,8 +558,8 @@ SCM_DEFINE (scm_sys_stringbuf_hist, "%stringbuf-hist", 0, 0, 0,
   int i;
   for (i = 0; i < 1000; i++)
     if (lenhist[i])
-      fprintf (stderr, " %3d: %u\n", i, lenhist[i]);
-  fprintf (stderr, ">999: %u\n", lenhist[1000]);
+      guile_fprintf (stderr, " %3d: %u\n", i, lenhist[i]);
+  guile_fprintf (stderr, ">999: %u\n", lenhist[1000]);
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
