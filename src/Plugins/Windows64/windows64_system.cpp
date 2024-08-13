@@ -113,10 +113,10 @@ bool texmacs_getenv(string var_name, string &var_value) {
     return false;
   }
 
-  std::wstring value(required_size, L'\0');
+  std::vector<wchar_t> value(required_size);
   _wgetenv_s(&required_size, value.data(), required_size, wide_var_name.c_str());
 
-  var_value = texmacs_wide_to_utf8(value);
+  var_value = texmacs_wide_to_utf8(value.data());
   return true;
 }
 
