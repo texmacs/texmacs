@@ -1,32 +1,58 @@
 #!/bin/sh
 ##set -x
 
+TEXMACS_HOME_PLUGINS_MAPLE_DIR="$TEXMACS_HOME_PATH/plugins/maple"
+if [ ! -d $TEXMACS_HOME_PLUGINS_MAPLE_DIR ]; then
+	mkdir $TEXMACS_HOME_PLUGINS_MAPLE_DIR
+fi
+TEXMACS_HOME_PLUGINS_MAPLE_CONF="$TEXMACS_HOME_PLUGINS_MAPLE_DIR/tm_maple.conf"
+
 TEXMACS_MAPLE_BIN=`which maple`
+TEXMACS_HOME_PLUGINS_MAPLE_DO_SYMLINK="no"
+if [ -r $TEXMACS_HOME_PLUGINS_MAPLE_CONF ]; then
+	. $TEXMACS_HOME_PLUGINS_MAPLE_CONF
+fi
 
 TEXMACS_MAPLE_DIR=`echo "printf(kernelopts(mapledir));" | $TEXMACS_MAPLE_BIN -q`
 export TEXMACS_MAPLE_BIN
 export TEXMACS_MAPLE_DIR
 
 if [ -d "$TEXMACS_MAPLE_DIR/extern" ]; then
-	if [ ! -x "$TEXMACS_HOME_PATH/bin/tm_maple_9" -o ! -x "$TEXMACS_HOME_PATH/bin/tm_maple_9.sh" ]; then
+	TEXMACS_MAPLE_STAMP="$TEXMACS_MAPLE_DIR/license/version.txt"
+	if [ ! -f $TEXMACS_MAPLE_STAMP ]; then
+		TEXMACS_MAPLE_STAMP="$TEXMACS_MAPLE_DIR/license/license.dat"
+		if [ ! -f $TEXMACS_MAPLE_STAMP ]; then
+			TEXMACS_MAPLE_STAMP="$TEXMACS_HOME_PLUGINS_MAPLE_DIR/maple-stamp"
+			MAPLE_KERNEL_BUILD_DATE=`echo "printf(op(3,sscanf(kernelopts(version),\"%[^,],%[^,],%[^,]\")));" | $TEXMACS_MAPLE_BIN -q`
+			touch -d "$MAPLE_KERNEL_BUILD_DATE" $TEXMACS_MAPLE_STAMP
+		fi
+	fi
+	if [ ! -x "$TEXMACS_HOME_PATH/bin/tm_maple_9" -o "$TEXMACS_MAPLE_STAMP" -nt "$TEXMACS_HOME_PATH/bin/tm_maple_9" ] || \
+			[ ! -x "$TEXMACS_HOME_PATH/bin/tm_maple_9.sh" -o "$TEXMACS_MAPLE_STAMP" -nt "$TEXMACS_HOME_PATH/bin/tm_maple_9.sh" ]; then
 		MAPLE_SYS_BIN=`echo "printf(kernelopts(bindir));" | $TEXMACS_MAPLE_BIN -q`
+		MAPLE_LIBRARY_PATH=$MAPLE_SYS_BIN
+		if [ -d "$MAPLE_SYS_BIN/system" -a -x "$MAPLE_SYS_BIN/cppcheck" ]; then
+			if ! ( LD_LIBRARY_PATH=$MAPLE_SYS_BIN $MAPLE_SYS_BIN/cppcheck > /dev/null 2>&1 ; ) then
+				MAPLE_LIBRARY_PATH="$MAPLE_SYS_BIN/system:$MAPLE_LIBRARY_PATH"
+			fi
+		fi
 		MAPLE_CPPFLAGS="-I$TEXMACS_MAPLE_DIR/extern/include"
-		MAPLE_LDFLAGS="-L$MAPLE_SYS_BIN"
+		MAPLE_LDFLAGS="-L$MAPLE_LIBRARY_PATH"
 		MAPLE_LIBADD="-lmaplec"
 		case "${MAPLE_SYS_BIN##*bin.}" in
 			IBM_INTEL_LINUX|X86_64_LINUX)
-				MAPLE_LDFLAGS="$MAPLE_LDFLAGS -Wl,-rpath,$MAPLE_SYS_BIN" ;;
+				MAPLE_LDFLAGS="$MAPLE_LDFLAGS -Wl,-rpath,$MAPLE_LIBRARY_PATH" ;;
 			*) ;;
 		esac
 		export MAPLE_CPPFLAGS
 		export MAPLE_LDFLAGS
 		export MAPLE_LIBADD
-		make -s -C $TEXMACS_PATH/plugins/maple -f Makefile.9 TEXMACS_HOME_PATH="$TEXMACS_HOME_PATH"
+		make -s -C $TEXMACS_PATH/plugins/maple -f Makefile.9 TEXMACS_HOME_PATH="$TEXMACS_HOME_PATH" TEXMACS_MAPLE_STAMP="$TEXMACS_MAPLE_STAMP"
 		if [ $? -ne 0 ]; then
 			echo "cannot build $TEXMACS_HOME_PATH/bin/tm_maple_9*" 1>&2
 			exit 1
 		fi
-		if [ ! -f $TEXMACS_HOME_PATH/bin/tm_maple ]; then
+		if [ "$TEXMACS_HOME_PLUGINS_MAPLE_DO_SYMLINK" != "no" -a ! -f $TEXMACS_HOME_PATH/bin/tm_maple ]; then
 			{ cd $TEXMACS_HOME_PATH/bin && ln -s tm_maple_9.sh tm_maple ; }
 		fi
 	fi

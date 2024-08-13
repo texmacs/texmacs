@@ -13,7 +13,9 @@ CC = gcc
 TEXMACS_HOME_PATH ?= $(HOME)/.TeXmacs
 TEXMACS_MAPLE_BIN ?= $(shell which maple)
 TEXMACS_MAPLE_DIR ?= $(shell echo 'printf(kernelopts(mapledir));' | $(TEXMACS_MAPLE_BIN) -q)
-MAPLE_SYS_BIN     ?= $(shell echo "printf(kernelopts(bindir));" | $(TEXMACS_MAPLE_BIN) -q)
+MAPLE_SYS_BIN     ?= $(shell echo 'printf(kernelopts(bindir));' | $(TEXMACS_MAPLE_BIN) -q)
+
+TEXMACS_MAPLE_STAMP ?= $(TEXMACS_MAPLE_DIR)/license/version.txt
 
 MAPLE_CPPFLAGS ?= -I$(TEXMACS_MAPLE_DIR)/extern/include
 MAPLE_LDFLAGS  ?= -L$(MAPLE_SYS_BIN) -Wl,-rpath,$(MAPLE_SYS_BIN)
@@ -27,7 +29,7 @@ $(TEXMACS_HOME_PATH)/bin/tm_maple_9.sh: $(TEXMACS_MAPLE_DIR)/bin/maple
 			-e 's%$${MAPLE}/$$MAPLE_SYS_BIN/maplew%$(TEXMACS_HOME_PATH)/bin/tm_maple_9%' \
 		$< > $@ && chmod a+x $@
 
-$(TEXMACS_HOME_PATH)/bin/tm_maple_9: src.9/tm_maple_9.c
+$(TEXMACS_HOME_PATH)/bin/tm_maple_9: src.9/tm_maple_9.c $(TEXMACS_MAPLE_STAMP)
 	$(CC) $(MAPLE_LDFLAGS) $(MAPLE_CPPFLAGS) $< -o $@ $(MAPLE_LIBADD)
 
 clean:
