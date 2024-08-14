@@ -1,7 +1,7 @@
 
 ###############################################################################
 # MODULE     : Make file for maple plugin
-# COPYRIGHT  : (C) 1999-2008  Joris van der Hoeven
+# COPYRIGHT  : (C) 1999-2024  Joris van der Hoeven
 ###############################################################################
 # This software falls under the GNU general public license version 3 or later.
 # It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -10,17 +10,27 @@
 
 CC = gcc
 
-#TEXMACS_HOME_PATH = $(HOME)/.TeXmacs
-#TEXMACS_MAPLE_DIR = $(shell realpath `which maple` | sed -e 's%/bin/maple$$%%')
+TEXMACS_HOME_PATH ?= $(HOME)/.TeXmacs
+TEXMACS_MAPLE_BIN ?= $(shell which maple)
+TEXMACS_MAPLE_DIR ?= $(shell echo 'printf(kernelopts(mapledir));' | $(TEXMACS_MAPLE_BIN) -q)
+MAPLE_SYS_BIN     ?= $(shell echo 'printf(kernelopts(bindir));' | $(TEXMACS_MAPLE_BIN) -q)
 
-#MAPLE_CPPFLAGS = -I$(TEXMACS_MAPLE_DIR)/extern/include
-#MAPLE_LDFLAGS = -L$(TEXMACS_MAPLE_DIR)/bin.IBM_INTEL_LINUX -Wl,-rpath,$(TEXMACS_MAPLE_DIR)/bin.IBM_INTEL_LINUX -lmaplec
+TEXMACS_MAPLE_STAMP ?= $(TEXMACS_MAPLE_DIR)/license/version.txt
+
+MAPLE_CPPFLAGS ?= -I$(TEXMACS_MAPLE_DIR)/extern/include
+MAPLE_LDFLAGS  ?= -L$(MAPLE_SYS_BIN) -Wl,-rpath,$(MAPLE_SYS_BIN)
+MAPLE_LIBADD   ?= -lmaplec
 
 all: $(TEXMACS_HOME_PATH)/bin/tm_maple_9.sh $(TEXMACS_HOME_PATH)/bin/tm_maple_9
 
 $(TEXMACS_HOME_PATH)/bin/tm_maple_9.sh: $(TEXMACS_MAPLE_DIR)/bin/maple
-	cat $(TEXMACS_MAPLE_DIR)/bin/maple | sed 's%$${MAPLE}/$$MAPLE_SYS_BIN/cmaple%$${HOME}/.TeXmacs/bin/tm_maple_9%' | sed 's%$${MAPLE}/$$MAPLE_SYS_BIN/maplew%$${HOME}/.TeXmacs/bin/tm_maple_9%' > $(TEXMACS_HOME_PATH)/bin/tm_maple_9.sh
-	chmod a+x $(TEXMACS_HOME_PATH)/bin/tm_maple_9.sh
+	sed \
+			-e 's%$${MAPLE}/$$MAPLE_SYS_BIN/cmaple%$(TEXMACS_HOME_PATH)/bin/tm_maple_9%' \
+			-e 's%$${MAPLE}/$$MAPLE_SYS_BIN/maplew%$(TEXMACS_HOME_PATH)/bin/tm_maple_9%' \
+		$< > $@ && chmod a+x $@
 
-$(TEXMACS_HOME_PATH)/bin/tm_maple_9: src.9/tm_maple_9.c
-	$(CC) $(MAPLE_LDFLAGS) $(MAPLE_CPPFLAGS) src.9/tm_maple_9.c -o $(TEXMACS_HOME_PATH)/bin/tm_maple_9
+$(TEXMACS_HOME_PATH)/bin/tm_maple_9: src.9/tm_maple_9.c $(TEXMACS_MAPLE_STAMP)
+	$(CC) $(MAPLE_LDFLAGS) $(MAPLE_CPPFLAGS) $< -o $@ $(MAPLE_LIBADD)
+
+clean:
+	rm -f $(TEXMACS_HOME_PATH)/bin/tm_maple_9 $(TEXMACS_HOME_PATH)/bin/tm_maple_9.sh

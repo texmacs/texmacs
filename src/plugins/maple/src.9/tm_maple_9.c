@@ -1,8 +1,8 @@
 
 /******************************************************************************
 * MODULE     : tm_maple_9.c
-* DESCRIPTION: Interface with Maple
-* COPYRIGHT  : (C) 2005 Joris van der Hoeven
+* DESCRIPTION: Interface with OpenMaple/Maple
+* COPYRIGHT  : (C) 2005-2024 Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -14,6 +14,8 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <time.h>
+#include <unistd.h>
+#include <string.h>
 #include "maplec.h"
 
 #define DATA_BEGIN   ((char) 2)
@@ -23,16 +25,13 @@
 //#define DATA_END     "[END]"
 //#define DATA_ESCAPE  "[ESCAPE]"
 
-static int counter= 0;
-static char in [2148];
-static char err[2048];
-
 /******************************************************************************
 * Handling maple output
 ******************************************************************************/
 
 void
 next_input () {
+  static int counter = 0;
   counter++;
   printf ("\2channel:prompt\5");
   printf ("\2scheme:(with \"color\" \"brown\" \"");
@@ -81,21 +80,22 @@ static M_BOOL M_DECL writeHelpChar( void *data, int c )
 }
 
 /* callback used for directing result output */
-static void M_DECL textCallBack( void *data, int tag, char *output )
+static void M_DECL textCallBack( void *data, int tag, const char *output )
 {
   if (tag != MAPLE_TEXT_STATUS)
     printf ("%s\n", output);
 }
 
-static void M_DECL errorCallBack( void *data, M_INT offset, char *msg )
+static void M_DECL errorCallBack( void *data, M_INT offset, const char *msg )
 {
+  char* in=(char *)data;
   M_INT i;
   /* TODO: too wide (>= 80 characters) user input */
 
   if (offset < 0)
     fprintf (stderr, "%s\n", msg);
   else {
-    /* put ^^^ under the original input to indicate where 
+    /* put ^^^ under the original input to indicate where
        the syntax error probably was
     */
     fprintf (stderr, "Syntax Error, %s\n> %s\n", msg, in);
@@ -106,45 +106,86 @@ static void M_DECL errorCallBack( void *data, M_INT offset, char *msg )
 }
 
 /******************************************************************************
+* Banner
+******************************************************************************/
+
+static void banner(MKernelVector kv) {
+	const char* kversion=MapleToString(kv,MapleKernelOptions(kv,"version",NULL));
+	char* kversionv=strdup(kversion);
+	char* kplatform=strchr(kversionv,','); *kplatform='\0'; do ++kplatform; while (*kplatform == ' ');
+	char* krelease=strrchr(kversionv,' '); while (*krelease == ' ') ++krelease;
+	char* kdate=strchr(kplatform,','); *kdate='\0'; do ++kdate; while (*kdate == ' ');
+	char* kvbid=strchr(kdate,','); *kvbid='\0'; do ++kvbid; while (*kvbid == ' ');
+	char* kyear=strrchr(kdate,' '); while (*kyear == ' ') ++kyear;
+	char* kbid=strrchr(kvbid,' '); while (*kbid == ' ') ++kbid;
+
+  printf("    |\\^/|     OpenMaple/Maple %s+b%s (%s) %s\n",krelease,kbid,kplatform,kdate);
+  printf("._|\\|   |/|_. Copyright (c) Maplesoft, a division of Waterloo Maple Inc. %s\n",kyear);
+  printf(" \\OPENMAPLE/  All rights reserved. Maple and OpenMaple are trademarks of\n");
+  printf(" <____ ____>  Waterloo Maple Inc.\n");
+  printf("      |       Type ? for help.\n");
+  printf("\nTeXmacs interface by Joris van der Hoeven\n");
+
+	krelease=kplatform=kdate=kvbid=kyear=kbid=NULL;
+	free(kversionv); kversionv=NULL;
+}
+
+/******************************************************************************
 * Launching maple
 ******************************************************************************/
 
+#define TMMPL_PI_MAPLEINIT_RELPATH "plugins/maple/maple/init-maple.mpl"
+
 int
 main (int argc, char *argv[]) {
+  const char* tm_path=getenv("TEXMACS_PATH");
+  const char* tm_home_path=getenv("TEXMACS_HOME_PATH");
+  char in [2148];
+  char err[2048];
+	char tmmplinit [2048];
   MKernelVector kv;  /* Maple kernel handle */
-  MCallBackVectorDesc cb = {  textCallBack, 
+  MCallBackVectorDesc cb = {
+			      textCallBack,
 			      errorCallBack,
 			      0,   /* statusCallBack not used */
 			      0,   /* readLineCallBack not used */
 			      0,   /* redirectCallBack not used */
 			      0,   /* streamCallBack not used */
-			      queryInterrupt, 
+			      queryInterrupt,
 			      0    /* callBackCallBack not used */
                            };
   ALGEB r, l;  /* Maple data-structures */
 
+  (void) r;  /* silence unused-but-set-variable warning */
+  (void) l;  /* silence unused-variable warning */
+
+	snprintf(tmmplinit,sizeof(tmmplinit), "%s/" TMMPL_PI_MAPLEINIT_RELPATH ,tm_path);
+	if (access(tmmplinit,R_OK)) {
+		printf("Fatal error, unable to read `%s`\n",tmmplinit);
+		return( 1 );
+	}
+
   signal(SIGINT,catch_intr);
-  printf("\2verbatim:");
-  printf("    |\\^/|     Maple\n");
-  printf("._|\\|   |/|_. Copyright (c) Maplesoft, a division of Waterloo Maple Inc. 2004\n");
-  printf(" \\OPENMAPLE/  All rights reserved. Maple and OpenMaple are trademarks of\n");
-  printf(" <____ ____>  Waterloo Maple Inc.\n");
-  printf("      |       Type ? for help.\n");
-  printf("\nTeXmacs interface by Joris van der Hoeven\n");
-  
+
   /* initialize Maple */
-  if( (kv=StartMaple(argc,argv,&cb,NULL,NULL,err)) == NULL ) {
+  if( (kv=StartMaple(argc,argv,&cb,(void *)in,NULL,err)) == NULL) {
     printf("Fatal error, %s\n",err);
     return( 1 );
   }
 
-  r= EvalMapleStatement (kv, "tmmaple:=9:");
-  char* tm_path= getenv ("TEXMACS_PATH");
-  char init[1000];
-  strcpy (init, "read (`");
-  strcat (init, tm_path);
-  strcat (init, "/plugins/maple/maple/init-maple.mpl`);");
-  r= EvalMapleStatement (kv, init);
+  /* show banner */
+  printf("\2verbatim:");
+  banner(kv);
+
+  r= EvalMapleStatement (kv, "tmmaple:=9:protect('tmmaple'):");
+	snprintf(in,sizeof(in),"read(`%s`);",tmmplinit);
+  r= EvalMapleStatement (kv, in);
+
+	snprintf(tmmplinit,sizeof(tmmplinit), "%s/" TMMPL_PI_MAPLEINIT_RELPATH ,tm_home_path);
+	if (!(access(tmmplinit,R_OK))) {
+		snprintf(in,sizeof(in),"read(`%s`);",tmmplinit);
+		r= EvalMapleStatement (kv, in);
+	}
 
   while (1) {
     next_input ();
@@ -164,7 +205,7 @@ main (int argc, char *argv[]) {
       MapleHelp (kv, in+1, NULL, writeHelpChar, NULL, 80, NULL);
     else {
       if (in[strlen(in)-1] != ':')
-	strcat (in, ":tmresult:=\%:tmprint(tmresult):tmresult:");
+        strcat (in, ":tmresult:=\%:tmprint(tmresult):tmresult:");
       r = EvalMapleStatement (kv, in);
     }
   }
@@ -173,3 +214,5 @@ main (int argc, char *argv[]) {
 
   return (0);
 }
+
+#undef TMMPL_PI_MAPLEINIT_RELPATH
