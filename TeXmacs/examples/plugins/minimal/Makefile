@@ -10,16 +10,22 @@
 
 CXX = g++
 RM = rm -f
+MKDIR_P = mkdir -p
+RMDIR = rmdir --i
 
 FILES_CPP := $(wildcard src/*.cpp)
 FILES_BIN := $(patsubst src/%.cpp,bin/%.bin,$(FILES_CPP))
 
 all: $(FILES_BIN)
 
-bin/%.bin : src/%.cpp
-	$(CXX) $< -o $@
+bin/%.bin : src/%.cpp | bin
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $< -o $@
+
+bin:
+	$(MKDIR_P) $@
 
 clean:
 	$(RM) *~
 	$(RM) */*~
 	$(RM) bin/*
+	test -d bin && $(RMDIR) bin || true
