@@ -1,4 +1,4 @@
-<TeXmacs|1.99.20>
+<TeXmacs|2.1.4>
 
 <style|<tuple|tmweb|english|old-spacing|old-dots|old-lengths>>
 
@@ -251,7 +251,7 @@
 
       <item>Try reinstalling <TeXmacs>, preferably the latest version that
       used to work for you. Old versions can be found at
-      \ <slink|http://ftp.texmacs.org/pub/TeXmacs/tmftp/>
+      \ <slink|https://ftp.texmacs.org/TeXmacs/tmftp/>
 
       <item>Submit a bug report, report the issue to one of our mailing
       lists, or contact the authors.
