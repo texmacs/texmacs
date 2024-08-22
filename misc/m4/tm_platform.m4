@@ -38,7 +38,7 @@ AC_DEFUN([TM_PLATFORM],[
   CONFIG_ARCHS='$(NATIVE_ARCH)'
 
   if [[[ "x$SOURCE_DATE_EPOCH" != "x" ]]]
-  then CONFIG_DATE=`date -u -d "@$SOURCE_DATE_EPOCH $CONFIG_DATE_FMT" 2>/dev/null`
+  then CONFIG_DATE=`date -u -d @$SOURCE_DATE_EPOCH $CONFIG_DATE_FMT 2>/dev/null`
   fi
 
   X11_CFLAGS="$X_CFLAGS"
