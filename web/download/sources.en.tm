@@ -1,4 +1,4 @@
-<TeXmacs|2.1.1>
+<TeXmacs|2.1.4>
 
 <style|<tuple|tmweb2|old-dots|old-lengths>>
 
@@ -35,7 +35,7 @@
   <hlink|<name|Aspell>|http://aspell.net/>,
   <hlink|<name|Libiconv>|http://www.gnu.org/s/libiconv/index.html>,
   <hlink|<name|Netpbm>|http://netpbm.sourceforge.net/>,
-  <hlink|<name|ImageMagick>|www.imagemagick.org/> and
+  <hlink|<name|ImageMagick>|https://www.imagemagick.org> and
   <hlink|<name|Sparkle>|http://sparkle.andymatuschak.org/> or
   <hlink|<name|WinSparkle>|http://winsparkle.org/>.
 
