@@ -1,6 +1,6 @@
-<TeXmacs|1.99.1>
+<TeXmacs|2.1.4>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing|old-dots|old-lengths|libertine-font>>
 
 <\body>
   <tmdoc-title|Specifying the current font>
@@ -12,12 +12,12 @@
 
   From an abstract point of view, a <em|font> is defined to be a graphically
   consistent way of rendering strings. Fonts are usually made up from glyphs
-  like ``x'', ``ffi'', ``<math|\<alpha\>>'', ``<math|<op|<big|sum>>>'',
+  like \Px\Q, \Pffi\Q, \P<math|\<alpha\>>\Q, \P<math|<op|<big|sum>>>\Q,
   <abbr|etc.> When rendering a string, the string is decomposed into glyphs
   so as to take into account ligatures (like fi, fl, ff, ffi, ffl). Next, the
   individual glyphs are positioned while taking into account kerning
-  information (in ``xo'' the ``o'' character is slightly shifted to the left
-  so as to take profit out of the hole in the ``x''). In the case of
+  information (in \Pxo\Q the \Po\Q character is slightly shifted to the left
+  so as to take profit out of the hole in the \Px\Q). In the case of
   mathematical fonts, <TeXmacs> also provides a coherent rendering for
   resizable characters, like the large brackets in
 
@@ -27,8 +27,8 @@
 
   Similarly, a <em|font family> is a family of fonts with different
   characteristics (like font weight, slant, <abbr|etc.>), but with a globally
-  consistent rendering. One also says that the fonts in a font family ``mix
-  well together''. For instance, the standard computer modern roman font and
+  consistent rendering. One also says that the fonts in a font family \Pmix
+  well together\Q. For instance, the standard computer modern roman font and
   its <with|font-series|bold|bold> and <with|font-shape|italic|italic>
   variants mix well together, but the computer modern roman font and the
   <with|font|avant-garde|Avant Garde> font do not.
@@ -52,8 +52,9 @@
     <em|font family>. For instance:
 
     <\tm-fragment>
-      <with|font|roman|Computer modern roman>, <with|font|pandora|Pandora>,
-      <with|font|chancery|Chancery>, <with|font|palatino|Palatino>
+      <with|font|roman|Computer modern roman>, <with|font|Linux
+      Libertine|Linux Libertine>, <with|font|chancery|Chancery>,
+      <with|font|palatino|Palatino>
     </tm-fragment>
 
     Similarly, <TeXmacs> supports various mathematical fonts:
@@ -188,3 +189,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>
