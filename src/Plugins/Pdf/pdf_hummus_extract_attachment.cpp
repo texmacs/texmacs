@@ -119,7 +119,7 @@ extract_attachments_from_pdf (url pdf_path, list<url>& names) {
         status= PDFHummus::eFailure;
         break;
       }
-      PDFDictionary* dir= stream->QueryStreamDictionary ();
+      PDFDictionary* dir= stream->QueryStreamDictionary (); (void) dir;
 
       IByteReader* streamReader=
           parser.CreateInputStreamReader (stream.GetPtr ());
@@ -385,5 +385,6 @@ url
 get_main_tm (url pdf_path) {
   list<url> attachments_paths;
   bool      ret= extract_attachments_from_pdf (pdf_path, attachments_paths);
+  (void) ret;
   return attachments_paths[0];
 }
