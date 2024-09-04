@@ -57,7 +57,8 @@ FILE* texmacs_fopen(string filename, string mode, bool lock) {
 
 int texmacs_fwrite(const char *str, size_t size, FILE *stream) {
   if (stream != stdout && stream != stderr) {
-    return fwrite(str, size, 1, stream);
+    size_t ret= fwrite(str, size, 1, stream);
+    return ret < 1 ? 0 : size;
   }
   std::wstring wide_str = texmacs_utf8_to_wide(string(str, size));
   if (stream == stdout) {
