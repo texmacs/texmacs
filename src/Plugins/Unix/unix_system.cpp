@@ -1,3 +1,4 @@
+
 /******************************************************************************
 * MODULE     : unix_system.cpp
 * DESCRIPTION: Unix system function proxies
@@ -45,7 +46,8 @@ void texmacs_unlock_file(FILE *&file) {
 
 FILE* texmacs_fopen(string filename, string mode, bool lock) {
   c_string c_mode = mode;
-  FILE *file = fopen(texmacs_utf8_string_to_system_string(filename).c_str(), c_mode);
+  FILE *file = fopen(texmacs_utf8_string_to_system_string(filename).c_str(),
+		     c_mode);
   if (file == nullptr) {
     return nullptr;
   }
@@ -57,10 +59,12 @@ FILE* texmacs_fopen(string filename, string mode, bool lock) {
 
 int texmacs_fwrite(const char *string, size_t size, FILE *stream) {
   if (stream != stdout && stream != stderr) {
-      return fwrite(string, size, 1, stream);
+    size_t ret= fwrite(string, size, 1, stream);
+    return ret < 1 ? 0 : size;
   }
   std::string system_string = texmacs_utf8_string_to_system_string(string);
-  return fwrite(system_string.c_str(), system_string.size(), 1, stream);
+  size_t ret= fwrite(system_string.c_str(), system_string.size(), 1, stream);
+  return ret < 1 ? 0 : size;
 }
 
 void texmacs_fclose(FILE *&file, bool unlock) {
@@ -72,7 +76,8 @@ void texmacs_fclose(FILE *&file, bool unlock) {
 }
 
 TEXMACS_DIR texmacs_opendir(string dirname) {
-  return (TEXMACS_DIR)opendir(texmacs_utf8_string_to_system_string(dirname).c_str());
+  return (TEXMACS_DIR)
+    opendir(texmacs_utf8_string_to_system_string(dirname).c_str());
 }
 
 void texmacs_closedir(TEXMACS_DIR dir) {
