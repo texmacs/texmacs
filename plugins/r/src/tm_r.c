@@ -103,9 +103,6 @@ jmp_buf error_return_env ;
 
 int N_data_begins = 0 ;
 
-char *DEFAULT_TEXMACS_SEND = "source(paste(Sys.getenv(\"TEXMACS_PATH\"),\"/plugins/r/texmacs.r\",sep=\"\"))\n";
-
-
 // Add one more DATA_BEGIN, i.e. open bracket.
 #define B_DATA_BEGIN( TXB )					\
   {								\
@@ -800,7 +797,10 @@ void handle_command( struct my_buffer *B, int nread ) {
 
 int main(int argc, char *argv[])
 {
-  char *name=NULL ;
+  const char* const listof_TEXMACS_PATH_name[]={"TEXMACS_HOME_PATH","TEXMACS_PATH",NULL};
+	const char* const * name_ptr=NULL;
+  const char *name=NULL ;
+	char R_PROFILE[4096];
   
   
   struct my_buffer 
@@ -818,13 +818,10 @@ int main(int argc, char *argv[])
   int last_nl = 0, command_place ;
   
   
-  char *TEXMACS_R, *TEXMACS_SEND_E ;
+  char *TEXMACS_R ;
   struct termios termi ;
   sigset_t sigmask, orig_sigmask;
 
-  name = getenv("TEXMACS_R_SESSION") ;
-  if( argc > 1 ) name = argv[1] ;
-  
 #ifdef USE_DEBUG
   if( DEBUG ) {
     unlink("/tmp/log") ;
@@ -832,9 +829,61 @@ int main(int argc, char *argv[])
   }
 #endif
 
+#if 1
+  // Let spawn a child-process for installing or upgrading, when applicable,
+  // the R TeXmacs package from source. The invoked script `tm_r_install`
+  // might be basically a R script that checks the installation state of the
+  // R TeXmacs package and installs or upgrades it accordingly. Being a R
+  // script might assure its transportability among platforms. Second,
+  // launching a child-process and waiting for its termination instead of
+  // sending R instructions at boot time avoids messing up with the boot
+  // process itself to any extend. This can be crucial as R documents
+  // advise to not play subtle games at boot time.
+  DEBUG_LOG("launch %s",R_PROFILE);
+  system("tm_r_install");
+  // The installation/upgrading statement is set commentable since
+  // system/distribution maintainers may prefer to install the R TeXmacs
+  // for once and system wide.
+#endif
+
+  // Let take the advantage of the R Startup mechanism (?Startup)
+  // to load the R TeXmacs material as follows.
+  // Fisrt, if the environment variable R_PROFILE is defined, register
+  // its value to the environment variable TEXMACS_R_SESSION_ENV_R_PROFILE.
+  if ((name=getenv("R_PROFILE")) != NULL) {
+    unsetenv("R_PROFILE");
+    if (*name != '\0') {
+      DEBUG_LOG("TEXMACS_R_SESSION_ENV_R_PROFILE=%s",name);
+      setenv("TEXMACS_R_SESSION_ENV_R_PROFILE",name,1);
+    }
+	}
+  // Second, set the environment variable R_PROFILE to the absolute path of
+  // a Rprofile file that, for the least, appends to the `defaultPackages` list
+  // the TeXmacs R package and then resumes the R Startup process. If the
+  // R TeXmacs package is already installed, the two lines of the following
+  // Rprofile file executes these two tasks in that order.
+	// =====8><--------------------------------------------------------------------------------------
+  // local({options(defaultPackages=c(getOption("defaultPackages"),"TeXmacs"))})
+	// source(Sys.getenv("TEXMACS_R_SESSION_ENV_R_PROFILE",file.path(R.home("etc"),"Rprofile.site")))
+  // ---------------------------------------------------------------------------><8================
+  for (name_ptr=listof_TEXMACS_PATH_name;*name_ptr!=NULL;++name_ptr) {
+    if (((name=getenv(*name_ptr)) == NULL) || (*name == '\0')) continue;
+    snprintf(R_PROFILE,sizeof(R_PROFILE),"%s/plugins/r/Rprofile",name);
+    if (!(access(R_PROFILE,R_OK))) {
+      DEBUG_LOG("R_PROFILE=%s",R_PROFILE);
+      setenv("R_PROFILE",R_PROFILE,1);
+      break;
+		}
+	}
+  // The above code assumes that at least $TEXMACS_PATH/plugins/r/Rprofile Rprofile
+  // file exists and is readable by end-users.
+  // Third, just forget it and let R source R_PROFILE in due time.
+
+  name = getenv("TEXMACS_R_SESSION") ;
+  if( argc > 1 ) name = argv[1] ;
+  
   setenv( "TERM", "dumb", 1) ;
-  
-  
+
   // Build the command tp execute
   TEXMACS_R = getenv("TEXMACS_CMD") ;
   if( TEXMACS_R == NULL ) {
@@ -845,13 +894,6 @@ int main(int argc, char *argv[])
   } else {
     n_ignore_prompts=0;
   }
-  
-  // Send commands to the process we just started. This is usually to load the TeXmacs library.
-  TEXMACS_SEND_E = getenv("TEXMACS_SEND") ;
-  if( TEXMACS_SEND_E == NULL ) TEXMACS_SEND_E = DEFAULT_TEXMACS_SEND ;
-  DEBUG_LOG( "TEXMACS_SEND=%s",TEXMACS_SEND_E) ;
-
-  
 
   if( (childpid=forkpty( &subprocess, NULL, NULL, NULL ))==0 ) {
     /* I'm the child - I'll run the command */
@@ -907,10 +949,6 @@ int main(int argc, char *argv[])
       copy_to_B( TXB, temp_buf, snprintf( temp_buf,  TEMP_BUF_SIZE, "error: out of memory error in tm_r\n" ) );
       END_VERBATIM( TXB ) ;
     }
-	
-		  
-    // Send initial commands
-    copy_to_B( TO_R_B, temp_buf, snprintf( temp_buf, TEMP_BUF_SIZE, "%s",TEXMACS_SEND_E ) ) ;  
 
     DEBUG_LOG("setting mask\n") ;
     sigemptyset (&sigmask);
@@ -930,10 +968,7 @@ int main(int argc, char *argv[])
     signal (SIGSEGV, something_wrong ) ;
 	
     fcntl(subprocess, F_SETFL, O_NONBLOCK) ;
-	
-    /* send the initial string */
-    write_B( subprocess, TO_R_B ) ;
-	
+
     /* get terminal settings */
     tcgetattr(subprocess, &termi ) ;
 

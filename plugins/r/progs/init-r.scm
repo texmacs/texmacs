@@ -3,7 +3,7 @@
 ;;
 ;; MODULE      : init-r.scm
 ;; DESCRIPTION : Initialize GNU R plugin
-;; COPYRIGHT   : (C) 1999  Michael Lachmann and Joris van der Hoeven
+;; COPYRIGHT   : (C) 1999-2024  Michael Lachmann and Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -18,9 +18,6 @@
 		      (string-replace s "\n" ";;")) "\n"))))
 
 (define (r-launcher)
-  (if (url-exists? "$TEXMACS_HOME_PATH/plugins/r")
-      (system-setenv "TEXMACS_SEND"
-              "source(paste(Sys.getenv(\"TEXMACS_HOME_PATH\"),\"/plugins/r/texmacs.r\",sep=\"\"))\n"))
   "tm_r")
 
 (plugin-configure r

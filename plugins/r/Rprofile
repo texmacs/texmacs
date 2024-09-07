@@ -1,0 +1,2 @@
+local({options(defaultPackages=c(getOption("defaultPackages"),"TeXmacs"))})
+source(Sys.getenv("TEXMACS_R_SESSION_ENV_R_PROFILE",file.path(R.home("etc"),"Rprofile.site")))
