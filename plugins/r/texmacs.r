@@ -1,4 +1,4 @@
-if( is.element("TeXmacs", installed.packages()[,1]) ) {library( TeXmacs); }
+if( is.element("TeXmacs", installed.packages()[,1]) ) {library( TeXmacs, warn.conflicts=FALSE); }
 
 if( !is.element("TeXmacs", installed.packages()[,1]) || 
     !exists("TeXmacsR.version",where = as.environment("package:TeXmacs")) || 
@@ -14,5 +14,5 @@ if( !is.element("TeXmacs", installed.packages()[,1]) ||
     }
     pack=list.files(pattern="TeXmacs.*gz"); 
     install.packages(pack,repos=NULL,type="source");
-    library(TeXmacs)
+    library(TeXmacs,warn.conflicts=FALSE)
 }
