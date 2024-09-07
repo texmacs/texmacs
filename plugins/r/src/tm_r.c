@@ -972,7 +972,7 @@ int main(int argc, char *argv[])
     /* get terminal settings */
     tcgetattr(subprocess, &termi ) ;
 
-//    termi.c_lflag &= ~ECHO  ; /* no echo */
+/**/    termi.c_lflag &= ~ECHO  ; /* no echo */
 //	    termi.c_lflag &= ~CANON  ; /* no echo */
     tcsetattr(subprocess,TCSANOW, &termi ) ;
 	
