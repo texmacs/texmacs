@@ -175,6 +175,9 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_widget _tmwid)
 {
   setObjectName (to_qstring ("QTMWidget" * as_string (QTMWcounter++)));// What is this for? (maybe only debugging?)
   setFocusPolicy (Qt::StrongFocus);
+#if defined (OS_MACOS) && QT_VERSION >= QT_VERSION_CHECK(6,0,0)
+  setAttribute (Qt::WA_AcceptTouchEvents, false);
+#endif 
   setAttribute (Qt::WA_InputMethodEnabled);
   surface ()->setMouseTracking (true);
   surface ()->setAcceptDrops (true);
@@ -685,7 +688,11 @@ tablet_state (QTabletEvent* event, bool flag) {
 
 void
 QTMWidget::tabletEvent (QTabletEvent* event) {
-  if (is_nil (tmwid)) return; 
+#if QT_VERSION >= 0x060000
+  // for testing purposes
+  // cout << "tablet name= " << from_qstring(event->pointingDevice ()->name ()) << "\n";
+#endif
+  if (is_nil (tmwid)) return;
   unsigned int mstate = tablet_state (event, true);
   string s= "move";
   if (event->button() != 0) {
