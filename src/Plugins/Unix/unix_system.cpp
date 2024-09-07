@@ -16,11 +16,10 @@
 #include <QStyleHints>
 #endif
 
-inline std::string texmacs_utf8_string_to_system_string(string utf8_string) {
-  return std::string(
-    &utf8_string[0], 
-    (std::basic_string<char>::size_type)N(utf8_string)
-  );
+inline std::string
+texmacs_utf8_string_to_system_string (string utf8_string) {
+  return std::string (&utf8_string[0], 
+		      (std::basic_string<char>::size_type) N(utf8_string));
 }
 
 inline string texmacs_ainsi_to_utf8(const std::string &local_string) {
@@ -57,14 +56,15 @@ FILE* texmacs_fopen(string filename, string mode, bool lock) {
   return file;
 }
 
-int texmacs_fwrite(const char *string, size_t size, FILE *stream) {
+int
+texmacs_fwrite (const char *s, size_t n, FILE *stream) {
   if (stream != stdout && stream != stderr) {
-    size_t ret= fwrite(string, size, 1, stream);
-    return ret < 1 ? 0 : size;
+    size_t ret= fwrite (s, n, 1, stream);
+    return ret < 1 ? 0 : n;
   }
-  std::string system_string = texmacs_utf8_string_to_system_string(string);
-  size_t ret= fwrite(system_string.c_str(), system_string.size(), 1, stream);
-  return ret < 1 ? 0 : size;
+  std::string system_string= texmacs_utf8_string_to_system_string (string (s, n));
+  size_t ret= fwrite (system_string.c_str(), system_string.size(), 1, stream);
+  return ret < 1 ? 0 : n;
 }
 
 void texmacs_fclose(FILE *&file, bool unlock) {
