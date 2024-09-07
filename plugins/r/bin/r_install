@@ -1,7 +1,0 @@
-#!/bin/sh
-
-if [ -e $TEXMACS_HOME_PATH/plugins/r/r/TeXmacs ];then
-  R CMD INSTALL -l $TEXMACS_HOME_PATH/plugins/r/r/TeXmacs
-elif [ -e $TEXMACS_PATH/plugins/r/r/TeXmacs ];then
-  R CMD INSTALL -l $TEXMACS_PATH/plugins/r/r/TeXmacs
-fi

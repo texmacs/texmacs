@@ -1,7 +1,7 @@
 /******************************************************************************
  * MODULE     : tm_r.c
  * DESCRIPTION: Glue between TeXmacs and R
- * COPYRIGHT  : (C) 2003 Michael Lachmann Tamarlin
+ * COPYRIGHT  : (C) 2003-2024 Michael Lachmann Tamarlin
  *******************************************************************************
  * This software falls under the GNU general public license version 3 or later.
  * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -208,7 +208,6 @@ void add_prompt( char *new_prompt ) {
 term_prompt_entry *prompt_flag; int n_prompt_flag=0, allocated_prompt_flags =0 ;
 
 void add_prompt_flag( term_prompt_entry *new_flag ) {
-  int n ;
 
   // Make sure prompt_string has room for new prompt
   if( n_prompt_flag == allocated_prompt_flags ) {
@@ -326,7 +325,6 @@ void read_config_numbers( char *fname, struct my_buffer *CONF, char *par, int **
 int check_terminal( int f )
 {
   int p_i ;
-  int got_prompt = FALSE ;
   struct termios termi ;
 
   tcgetattr(f, &termi ) ; // get the flags from current terminal
@@ -361,9 +359,6 @@ int check_terminal( int f )
 }
 
 
-
-
-
 int tab_comp_ptr=0;
 
 pid_t childpid ;
@@ -380,7 +375,6 @@ char last_prompt_candidate[1025] ;
 
 void signal_int(int x)
 {
-  char st[4096];
   DEBUG_LOG("got signal\n") ;
   write(subprocess,"",1) ;
   // write(subprocess,"\t\t",2) ;
@@ -701,7 +695,6 @@ int B_replace_inplace( struct my_buffer *B, int len, char *find, char *rep ) {
   int i,j ;
   
   char *str = B->buf + B->put - len ;
-  int d = find_n - rep_n ;
   int found = 0 ;
 
   for( i=0,j=0; i < len- find_n; ) {
@@ -819,18 +812,15 @@ int main(int argc, char *argv[])
   
   
   int i,j ;
-  int got_prompt,  error ;
-  int in_quote, escaped ;
+  int got_prompt, error ;
   int n_ignore_prompts=0 ;
 
   int last_nl = 0, command_place ;
   
   
-  char *TEXMACS_HOME_PATH, *TEXMACS_R, *TEXMACS_SEND_E, *TEXMACS_LIB, *HOME ;
+  char *TEXMACS_R, *TEXMACS_SEND_E ;
   struct termios termi ;
   sigset_t sigmask, orig_sigmask;
-  
-  struct stat stat_buf;
 
   name = getenv("TEXMACS_R_SESSION") ;
   if( argc > 1 ) name = argv[1] ;
@@ -841,22 +831,6 @@ int main(int argc, char *argv[])
     LOG = open("/tmp/log",O_CREAT | O_RDWR,0755) ;
   }
 #endif
-  
-  
-  HOME = getenv("HOME") ;
-  if( HOME == NULL ) HOME = "~" ;
-
-  TEXMACS_HOME_PATH = getenv("TEXMACS_HOME_PATH") ;
-  if( TEXMACS_HOME_PATH == NULL ) {
-    TEXMACS_HOME_PATH = (char *)malloc( 4096 ) ;
-    snprintf( TEXMACS_HOME_PATH, 4096, "%s/.TeXmacs",HOME) ;
-  }
-  
-  /* Lazy installing the TeXmacs package */
-  TEXMACS_LIB = (char *)malloc(4096);
-  snprintf(TEXMACS_LIB,4096,"%s/plugins/r/r",TEXMACS_HOME_PATH);
-  if (stat(TEXMACS_LIB,&stat_buf))
-    system("r_install"); 
 
   setenv( "TERM", "dumb", 1) ;
   
