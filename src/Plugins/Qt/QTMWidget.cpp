@@ -175,9 +175,6 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_widget _tmwid)
 {
   setObjectName (to_qstring ("QTMWidget" * as_string (QTMWcounter++)));// What is this for? (maybe only debugging?)
   setFocusPolicy (Qt::StrongFocus);
-#if defined (OS_MACOS) && QT_VERSION >= QT_VERSION_CHECK(6,0,0)
-  setAttribute (Qt::WA_AcceptTouchEvents, false);
-#endif 
   setAttribute (Qt::WA_InputMethodEnabled);
   surface ()->setMouseTracking (true);
   surface ()->setAcceptDrops (true);
