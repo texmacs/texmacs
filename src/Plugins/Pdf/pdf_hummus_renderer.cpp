@@ -1132,12 +1132,12 @@ t3font_rep::write_char (glyph gl, ObjectIDType inCharID) {
 	  << as_string ((double)(lly)) << " cm\r\n";
     data << "BI\r\n/W " << as_string (cwidth)
 	 << "\r\n/H " << as_string (cheight) << "\r\n";
-    data << "/CS /G /BPC 1 /F /AHx /D [0.0 1.0] /IM true\r\nID\r\n";
+    data << "/BPC 1 /F /AHx /D [0.0 1.0] /IM true\r\nID\r\n";
     static const char* hex_string= "0123456789ABCDEF";
     string hex_code;
     int i, j, count= 0, cur= 0;
     for (j= 0; j < cheight; j++)
-      for ( i= 0; i < ((cwidth+7) & (-8)); i++) {
+      for (i= 0; i < ((cwidth+7) & (-8)); i++) {
 	cur= cur << 1;
 	if ((i < cwidth) && (gl->get_x(i,j) == 0)) cur++;
 	count++;
