@@ -67,9 +67,9 @@ plugin_path (string which) {
 scheme_tree
 plugin_list () {
   bool flag;
-  array<string> a= read_directory ("$TEXMACS_PATH/plugins", flag);
+  array<string> a= read_directory ("$TEXMACS_HOME_PATH/plugins", flag);
   a << read_directory ("/etc/TeXmacs/plugins", flag);
-  a << read_directory ("$TEXMACS_HOME_PATH/plugins", flag);
+  a << read_directory ("$TEXMACS_PATH/plugins", flag);
   a << read_directory ("/usr/share/TeXmacs/plugins", flag);
   merge_sort (a);
   int i, n= N(a);
