@@ -129,7 +129,7 @@
     tm-char-whitespace?)))
 
 (provide-public (string-concatenate ss)	; srfi-13
-  "Append the elements of @ss toghether."
+  "Append the elements of @ss together."
   ;; WARNING: not portable for long lists
   (apply string-append ss))
 

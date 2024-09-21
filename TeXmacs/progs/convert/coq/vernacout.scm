@@ -137,7 +137,7 @@
 	((== (car x) '!linefeed)  (vernacout-linefeed))
 	((== (car x) '!indent)    (vernacout-indent (cadr x)))
 	((== (car x) '!unindent)  (vernacout-unindent (cadr x)))
-	(else (display* "TeXmacs] bad formated stree:\n" x "\n"))))
+	(else (display* "TeXmacs] bad formatted stree:\n" x "\n"))))
 
 (tm-define (serialize-vernac x)
   (vernacout-initialize)
