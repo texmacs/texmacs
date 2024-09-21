@@ -7,6 +7,7 @@
 #               (C) 2012       Adrian Soto
 #               (C) 2014       Miguel de Benito Delgado, mdbenito@texmacs.org
 #               (C) 2018-2020  Darcy Shen
+#               (C) 2021       Jeroen Wouters
 #
 # This software falls under the GNU general public license version 3 or later.
 # It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -15,19 +16,24 @@
 import os
 import sys
 import platform
-from os.path import exists
-tmpy_home_path = os.environ.get("TEXMACS_HOME_PATH") + "/plugins/tmpy"
-if (exists (tmpy_home_path)):
-    sys.path.append(os.environ.get("TEXMACS_HOME_PATH") + "/plugins/")
-else:
-    sys.path.append(os.environ.get("TEXMACS_PATH") + "/plugins/")
-
-
 
 import traceback
 import string
 import ast
 from inspect   import ismodule, getsource, getsourcefile
+
+from os.path import exists
+
+sys.path.append(os.path.join(os.getenv("TEXMACS_HOME_PATH").replace("\\", "/"),
+                "plugins"))
+sys.path.append(os.path.join(os.getenv("TEXMACS_PATH").replace("\\", "/"),
+                "plugins"))
+
+from contextlib import redirect_stdout
+import io
+
+import tmpy
+
 from tmpy.compat import py_ver
 from tmpy.capture import CaptureStdout
 from tmpy.postscript import ps_out, PSOutDummy, pdf_out, FileOutDummy
@@ -41,18 +47,23 @@ if py_ver == 2:
 # import logging as log
 # log.basicConfig(filename='/tmp/tm_python.log',level=log.INFO)
 
-def flush_output (data):
+def flush_output (output,data):
     """Do some parsing on the output according to its type.
     
     Non printable characters in unicode strings are escaped
     and objects of type None are not printed (so that procedure calls,
     as opposed to function calls, don't produce any output)."""
-
+    
+    # wrap stdout output and data output in nested DATA_BEGIN/DATA_END blocks
+    data_begin()
+    os.sys.stdout.write("verbatim:")
+    
+    if output != "":
+        flush_verbatim(output)
+    
     if (data is None):
         flush_verbatim ("")
-        return
-
-    if isinstance (data, PSOutDummy):
+    elif isinstance (data, PSOutDummy):
         flush_ps (data.content)
     elif isinstance (data, FileOutDummy):
         if (data.content is None):
@@ -60,7 +71,9 @@ def flush_output (data):
         else:
             flush_file (data.content)
     else:
-        flush_verbatim (str(data).strip())
+        flush_verbatim (str(data))
+    
+    data_end()
 
 def as_scm_string (text):
     return '"%s"' % text.replace('\\', '\\\\').replace('"', '\\"')
@@ -71,7 +84,7 @@ def compile_help (text):
     out = {"help" : "", "src": "", "file": ""}
 
     try:
-        out["help"] = CaptureStdout.capture (cmd, my_globals, "tm_python");
+        ret, out["help"] = CaptureStdout.capture (cmd, my_globals, "tm_python");
     except Exception as e:
         out ["help"] = 'No help for "%s": %s' % (text, e)
 
@@ -91,22 +104,34 @@ def compile_help (text):
     return dict (map (lambda k_v: (k_v[0], as_scm_string (k_v[1])), out.items()))
 
 
-def my_eval (code, p_globals):
+def eval_code (code, p_globals):
     '''Execute a script and return the value of the last expression'''
 
-    block = ast.parse(code, mode='exec')
-    if len(block.body) > 1 and isinstance(block.body[-1], ast.Expr):
-        last = ast.Expression(block.body.pop().value)
-        exec(compile(block, '<string>', mode='exec'), p_globals)
-        return eval(compile(last, '<string>', mode='eval'), p_globals)
-    else:
-        return eval(code, p_globals)
+    # capture stdout
+    f = io.StringIO()
+    with redirect_stdout(f):
+        # Is it an expression or a statement (e.g. an assignment "a=1"), in 
+        # which case `compile` in raises a SyntaxError  
+        # (https://stackoverflow.com/questions/3876231/python-how-to-tell-if-a-string-represent-a-statement-or-an-expression)
+        try:
+            block = ast.parse(code, mode='exec')
+            if len(block.body) > 1 and isinstance(block.body[-1], ast.Expr):
+                last = ast.Expression(block.body.pop().value)
+                exec(compile(block, '<string>', mode='exec'), p_globals)
+                ret = eval(compile(last, '<string>', mode='eval'), p_globals)
+            else:
+                ret = eval(code, p_globals)
+        except SyntaxError:
+            code= compile (code, '<string>', 'exec')
+            ret = eval(code, p_globals)
+    output = f.getvalue()
+    return ret, output
 
 __version__ = '3.0'
-__author__ = 'Ero Carrera, Adrian Soto, Miguel de Benito Delgado, Darcy Shen'
+__author__ = 'Ero Carrera, Adrian Soto, Miguel de Benito Delgado, Darcy Shen, Jeroen Wouters'
 my_globals   = {}
 
-# We insert into the session's namespace the 'ps_out' method.
+# We insert into the session's namespace the 'ps_out' and 'pdf_out' methods.
 my_globals['ps_out'] = ps_out
 my_globals['pdf_out'] = pdf_out
 
@@ -125,9 +150,11 @@ sys.stdout = os.fdopen (sys.stdout.fileno(), 'w')
 ###############################################################################
 # Session start
 ###############################################################################
-if (exists (tmpy_home_path)):
-    flush_verbatim ("WARNING: You are under develop mode using " + tmpy_home_path)
-    flush_newline (2)
+if os.path.commonpath([os.getenv("TEXMACS_HOME_PATH"),tmpy.__file__])  \
+            == os.getenv("TEXMACS_HOME_PATH"):
+    flush_verbatim ("WARNING: development mode enabled, using " + \
+                os.path.dirname(tmpy.__file__))
+    #flush_newline (2)
 flush_verbatim (f"Python { platform.python_version() } [{ sys.executable }] \n" +
                "Python plugin for TeXmacs.\n" +
                "Please see the documentation in Help -> Plugins -> Python")
@@ -157,8 +184,5 @@ while True:
                 continue
             lines.append (line)
         text = '\n'.join (lines[:-1])
-        try: # Is it an expression?
-            result= my_eval (text, my_globals)
-        except:
-            result= CaptureStdout.capture (text, my_globals, "tm_python")
-        flush_output (result)
+        ret, output= eval_code (text, my_globals)
+        flush_output (output,ret)

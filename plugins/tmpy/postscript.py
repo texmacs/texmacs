@@ -94,7 +94,7 @@ def ps_out (out):
     elif 'read' in dir(out):
         data = out.read()
 
-    return PSOutDummy(texmacs_escape(data).decode())
+    return PSOutDummy(data.decode())
 
 pdf_out_tmp_file = "pdf_out_" + str(os.getpid()) + ".pdf"
 if (platform.system() == "Windows"):
