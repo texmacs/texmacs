@@ -1,6 +1,6 @@
-<TeXmacs|1.99.9>
+<TeXmacs|2.1.4>
 
-<style|tmweb2>
+<style|<tuple|tmweb2|old-dots|old-lengths>>
 
 <\body>
   <tmweb-current|Download|Linux><tmweb-title|Installing <TeXmacs> on
@@ -34,21 +34,26 @@
   the following static binary distributions of GNU <TeXmacs>:
 
   <\enumerate>
-    <item><hlink|<TeXmacs> package for 32 bit GNU/<name|Linux>
-    distributions|<merge|http://www.texmacs.org/Download/ftp/tmftp/generic/|<TeXmacs-version-release|devel>|-B.tar.gz>>.
+    <item><hlink|<TeXmacs> 2.1.2 package for 32 bit GNU/<name|Linux>
+    distributions|<merge|https://www.texmacs.org/Download/ftp/tmftp/generic/2.1.2-B.tar.gz>>.
 
-    <item><hlink|<TeXmacs> package for 64 bit GNU/<name|Linux>
-    distributions|<merge|http://www.texmacs.org/Download/ftp/tmftp/generic/|<TeXmacs-version-release|devel>|-C.tar.gz>>.
+    <item><hlink|<TeXmacs> latest package for 64 bit GNU/<name|Linux>
+    distributions|<merge|https://www.texmacs.org/Download/ftp/tmftp/generic/|<TeXmacs-version-release|devel>|-C.tar.gz>>.
+
+    <item><hlink|<TeXmacs> latest AppImage for 64 bit GNU/<name|Linux>
+    distributions|<merge|https://www.texmacs.org/Download/ftp/tmftp/generic/|<TeXmacs-version-release|devel>|-C.x86_64.AppImage>>.
 
     <item>If the above packages do not work on your computer, then you may
-    try our <hlink|alternate <TeXmacs> package|<merge|http://www.texmacs.org/Download/ftp/tmftp/generic/|<TeXmacs-version-release|devel>|-A.tar.gz>>,
+    try our <hlink|alternate <TeXmacs> package|<merge|https://www.texmacs.org/Download/ftp/tmftp/generic/|<TeXmacs-version-release|devel>|-A.tar.gz>>,
     which should be suitable for older systems.
   </enumerate>
 
   Notice that we only provide static binary packages for Intel or AMD based
   PC's.
 
-  <section|Unpack the package>
+  <section|How to use the packages>
+
+  <subsection|Unpack the package>
 
   In a shell session, <verbatim|cd> into the directory where you wish to
   install <TeXmacs> and type
@@ -64,7 +69,7 @@
   for some older versions). Let <with|font-family|tt|<with|color|brown|[installation
   directory]>> be the full path of this directory.
 
-  <section|Set the environment variables>
+  <subsection|Set the environment variables>
 
   Depending on your shell, either type
 
@@ -86,13 +91,34 @@
   as in step 2. We recommend to put these lines in your personal startup
   script, such as <with|font-family|tt|.bash_profile>.
 
-  <section|Happy <TeXmacs>-ing!>
+  <subsection|Happy <TeXmacs>-ing!>
 
   You should now be able to run the program:
 
   <\code>
     \ \ \ \ texmacs &
   </code>
+
+  <section|How to use the AppImage>
+
+  <subsection|Make the AppImage executable>
+
+  In a shell session, <verbatim|cd> into the directory where you downloaded
+  the AppImage and type
+
+  <\shell-code>
+    chmod +x TeXmacs-<with|color|brown|[version]>.<with|color|brown|[your
+    system]>.AppImage
+  </shell-code>
+
+  <subsection|Enjoy <TeXmacs>-ing!>
+
+  You should now be able to run the program:
+
+  <\shell-code>
+    ./TeXmacs-<with|color|brown|[version]>.<with|color|brown|[your
+    system]>.AppImage
+  </shell-code>
 
   If you like the program, then please consider
   <hlink|donating|../contribute/donations.en.tm> money or services to us. Of
@@ -103,7 +129,7 @@
   <hlink|contact|../contact/contact.en.tm> us, but you might need to be more
   patient.
 
-  <tmdoc-copyright|1999--2019|Joris van der Hoeven>
+  <tmdoc-copyright|1999\U2019|Joris van der Hoeven>
 
   <tmweb-license>
 </body>
