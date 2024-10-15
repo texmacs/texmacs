@@ -899,7 +899,10 @@ qt_gui_rep::update () {
   time_t delay = 0;
   if (!needing_update) {
 	  time_t lapse = texmacs_time();
-		if (delayed_commands.lapse > lapse) delay = min (std_delay, delayed_commands.lapse - lapse);
+		if (delayed_commands.lapse > lapse) {
+			delay = delayed_commands.lapse - lapse;
+			if (std_delay < delay) delay = std_delay;
+		}
   }
   if (postpone_treatment) delay= 9; // NOTE: force occasional display
  
