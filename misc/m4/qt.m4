@@ -112,7 +112,7 @@ AC_DEFUN([LC_WITH_QT],[
   autotroll.6.* | autotrollstatic.6.*)
     AC_MSG_NOTICE([Qt6 found])
     AS_IF([test $CONFIG_OS == MACOS],[],[unset xtraPlug])
-    AT_WITH_QT([$xtralibs +printsupport +svg $xtraPlug],[+exceptions],[
+    AT_WITH_QT([$xtralibs +printsupport +svg +concurrent $xtraPlug],[+exceptions],[
       LIBS += $LDFLAGS
       QTPLUGIN = qjpeg qgif qico qsvg
     ],AC_MSG_ERROR([Cannot find a working Qt library]))
@@ -196,8 +196,18 @@ AC_DEFUN([LC_WITH_QT],[
     AS_IF([test -n "$ABI"],[QT_PKGCONFIG_SUFFIX="_${ABI}"])
     AS_IF([test -n "$ANDROID_ABI"],[QT_PKGCONFIG_SUFFIX="_${ANDROID_ABI}"])
 
-    QT_PACKAGES="Qt${QT_MAJOR}Core$QT_PKGCONFIG_SUFFIX Qt${QT_MAJOR}Gui$QT_PKGCONFIG_SUFFIX Qt${QT_MAJOR}Widgets$QT_PKGCONFIG_SUFFIX Qt${QT_MAJOR}Svg$QT_PKGCONFIG_SUFFIX Qt${QT_MAJOR}PrintSupport$QT_PKGCONFIG_SUFFIX"
-
+    QT_PACKAGES="Qt${QT_MAJOR}Core$QT_PKGCONFIG_SUFFIX "
+    QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Gui$QT_PKGCONFIG_SUFFIX"
+    QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Widgets$QT_PKGCONFIG_SUFFIX"
+    QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Svg$QT_PKGCONFIG_SUFFIX"
+    QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}PrintSupport$QT_PKGCONFIG_SUFFIX"
+    QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Concurrent$QT_PKGCONFIG_SUFFIX"
+    # if CONFIG_OS is GNU_LINUX and QT_VERSION is higher than 6, use wayland
+    AS_IF([test "x$CONFIG_OS" = "xGNU_LINUX"],[
+      AS_IF([test $QT_MAJOR -ge 6],[
+        QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}WaylandClient$QT_PKGCONFIG_SUFFIX"
+      ])
+    ])
     AS_IF([test "x$CONFIG_OS" = "xMACOS"],[QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}MacExtras$QT_PKGCONFIG_SUFFIX"])
 
     # Set QT_DEFINES, QT_CXXFLAGS, QT_INCPATH, QT_LIBS, QT_LDFLAGS and QT_VERSION
