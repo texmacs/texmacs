@@ -70,10 +70,12 @@ initialize_environment (edit_env& env, tree doc, drd_info& drd) {
   // env->write (DPI, "720");
   // env->write (ZOOM_FACTOR, "1.2");
   // env->write (PAGE_TYPE, "a5");
+#if QT_VERSION < 0x060000
   if (retina_zoom == 2) {
     double mag= 2.0 * env->get_double (MAGNIFICATION);
     env->write (MAGNIFICATION, as_string (mag));
   }
+#endif
   env->update ();
 }
 
@@ -222,9 +224,11 @@ widget
 box_widget (box b, bool tr) {
   color col= light_grey;
   double zoom= 5.0/6.0;
+#if QT_VERSION < 0x060000
   if (retina_zoom == 1) {}
   else if (tm_style_sheet == "") zoom *= 2;
   else zoom *= retina_scale;
+#endif
   return widget (tm_new<box_widget_rep> (b, col, tr, zoom, 3*PIXEL, 3*PIXEL));
 }
 
@@ -298,7 +302,11 @@ texmacs_output_widget (tree doc, tree style) {
 #else
     col= light_grey;
 #endif
+#if QT_VERSION >= 0x060000
+  double zoom= 1.0;
+#else
   double zoom= (retina_zoom == 2? 1.0: 1.2);
+#endif
   return widget (tm_new<box_widget_rep> (b, col, false, zoom, 0, 0));
 }
 

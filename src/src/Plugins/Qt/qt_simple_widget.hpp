@@ -95,6 +95,9 @@ protected:
   static hashset<pointer> all_widgets;
   rectangles   invalid_regions;
   QPixmap*     backingPixmap;  
+#if QT_VERSION >= 0x060000
+  qreal oldDpr = 0;
+#endif
   QPoint       backing_pos;
 
 

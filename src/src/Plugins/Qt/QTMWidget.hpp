@@ -17,6 +17,7 @@
 #include <QLabel>
 #include <QGesture>
 #include <QGestureEvent>
+#include <QScreen>
 
 class qt_simple_widget_rep;
 
@@ -54,7 +55,7 @@ protected:
 
   virtual bool event (QEvent *event);
 
-  virtual void paintEvent (QPaintEvent* event);
+  void surfacePaintEvent (QPaintEvent *e, QWidget *surface) override;
   virtual void focusInEvent (QFocusEvent* event);
   virtual void focusOutEvent (QFocusEvent* event);
   virtual void keyPressEvent (QKeyEvent* event);

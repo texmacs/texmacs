@@ -18,6 +18,7 @@
 #include <QMainWindow>
 #include <QMenuBar>
 #include <QLayoutItem>
+#include "QTMApplication.hpp"
 
 #include "config.h"
 #include "analyze.hpp"
@@ -126,6 +127,14 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   QMainWindow* mw= mainwindow ();
   if (tm_style_sheet == "")
     mw->setStyle (qtmstyle ());
+
+#if QT_VERSION >= 0x060000
+  tmapp()->pixmap_manager().getIcon((QString)"TeXmacs")
+    .then([mw](QFuture<QIcon> iconFuture) {
+      QIcon icon = iconFuture.result();
+      mw->setWindowIcon(icon);
+    });
+#endif
  
   // there is a bug in the early implementation of toolbars in Qt 4.6
   // which has been fixed in 4.6.2 (at least)
@@ -163,6 +172,17 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   //    also at minimumSize, didn't notice it first time and spend lot of time
   //    trying to figure this out :)
   
+#if QT_VERSION >= 0x060000
+  bar->setMinimumWidth (2);
+  #ifdef Q_OS_LINUX
+    bar->setMinimumHeight (28);
+  #else
+    if (tm_style_sheet != "") {
+      bar->setMinimumHeight (28);
+    }
+  #endif
+#else
+
   bar->setMinimumWidth (2);
 #ifdef Q_OS_LINUX
   int min_h= (int) floor (28 * retina_scale);
@@ -183,6 +203,8 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   }
 #endif
 #endif
+#endif
+
   mw->setStatusBar (bar);
  
   // toolbars
@@ -214,6 +236,12 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     extraTools->setStyle (qtmstyle ());
   }
   
+#if QT_VERSION >= 0x060000
+  // according to tweak_iconbar_size
+  mainToolBar->setIconSize (QSize (26, 32));
+  modeToolBar->setIconSize (QSize (21, 24));
+  focusToolBar->setIconSize (QSize (16, 20));
+#else
   {
     // set proper sizes for icons
     QImage *pxm = xpm_image ("tm_new.xpm");
@@ -229,6 +257,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     tweak_iconbar_size (sz);
     focusToolBar->setIconSize (sz);
   }
+#endif
 
   // Why we need fixed height:
   // The height of the toolbar is actually determined by the font height.
@@ -238,6 +267,23 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   //
   // NOTICE: setFixedHeight must be after setIconSize
   // TODO: the size of the toolbar should be calculated dynamically
+#if QT_VERSION >= 0x060000
+
+  int toolbarHeight= 30;
+  mainToolBar->setFixedHeight (toolbarHeight + 8);
+  modeToolBar->setFixedHeight (toolbarHeight + 4);
+  focusToolBar->setFixedHeight (toolbarHeight);  
+
+  if (tm_style_sheet != "") {
+    int h1= (int) floor (38);
+    int h2= (int) floor (34 );
+    int h3= (int) floor (30);
+
+    mainToolBar->setFixedHeight (h1);
+    modeToolBar->setFixedHeight (h2);
+    focusToolBar->setFixedHeight (h3);
+  }
+#else
 #if (QT_VERSION >= 0x050000)
 #if defined (Q_OS_MAC) || defined (Q_OS_WIN)
   int toolbarHeight= 30 * retina_icons;
@@ -282,6 +328,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     modeToolBar->setFixedHeight (h2);
     focusToolBar->setFixedHeight (h3);
   }
+#endif
   
   QWidget *cw= new QWidget();
   cw->setObjectName("centralWidget");  // this is important for styling toolbars.
@@ -907,13 +954,21 @@ qt_tm_widget_rep::install_main_menu () {
   if (!use_native_menubar) {
     dest->setNativeMenuBar(false);
     if (tm_style_sheet != "") {
+#if QT_VERSION >= 0x060000
+      int min_h=28;
+#else
       int min_h= (int) floor (28 * retina_scale);
+#endif
       dest->setMinimumHeight (min_h);
     }
   }
 #else
   if (tm_style_sheet != "") {
+#if QT_VERSION >= 0x060000
+    int min_h=28;
+#else
     int min_h= (int) floor (28 * retina_scale);
+#endif
     dest->setMinimumHeight (min_h);
   }
 #endif
