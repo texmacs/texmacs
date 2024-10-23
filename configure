@@ -19611,7 +19611,7 @@ else $as_nop
   ;;
   *)
   as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $TMREPO/bin
+for as_dir in $PATH
 do
   IFS=$as_save_IFS
   case $as_dir in #(((
@@ -19670,9 +19670,9 @@ printf "%s\n" "#define GS_FONTS \"share/ghostscript/fonts\"" >>confdefs.h
 
 
 
-          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Ghostscript found  in TMREPO, it will be embedded in Package for Macos or Windows" >&5
-printf "%s\n" "$as_me: Ghostscript found  in TMREPO, it will be embedded in Package for Macos or Windows" >&6;}
-        else as_fn_error $? "Ghostscript not detected in TMREPO, won't be embedded in Package" "$LINENO" 5
+          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Ghostscript found  in $TMREPO, it will be embedded in Package for Macos or Windows" >&5
+printf "%s\n" "$as_me: Ghostscript found  in $TMREPO, it will be embedded in Package for Macos or Windows" >&6;}
+        else as_fn_error $? "Ghostscript not detected in $TMREPO, won't be embedded in Package" "$LINENO" 5
         fi
       fi
 
@@ -24902,6 +24902,50 @@ fi
   esac
 
 
+  # on linux and android, add -fPIC -pthread -ldl -Wl,--copy-dt-needed-entries
+  case $CONFIG_OS in
+    GNU_LINUX | ANDROID)
+
+  if [[ "-fPIC -pthread -ldl -Wl,--copy-dt-needed-entries" =~ $(echo '^-Wl,') ]]
+  then CXXFLAGS+=" -fPIC -pthread -ldl -Wl,--copy-dt-needed-entries"
+  elif [[ "-fPIC -pthread -ldl -Wl,--copy-dt-needed-entries" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "-fPIC -pthread -ldl -Wl,--copy-dt-needed-entries"
+  do  while [[ $CXXFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$CXXFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$CXXFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then CXXFLAGS=
+  else  while test "$CXXFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$CXXFLAGS"
+        CXXFLAGS="${CXXFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        CXXFLAGS="${CXXFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        CXXFLAGS="${CXXFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  CXXFLAGS=$(echo $CXXFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       CXXFLAGS+=" -fPIC -pthread -ldl -Wl,--copy-dt-needed-entries"
+  else
+    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])-fPIC -pthread -ldl -Wl,--copy-dt-needed-entries($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -fPIC -pthread -ldl -Wl" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -fPIC -pthread -ldl -Wl" >&2;}
+    else CXXFLAGS+=" -fPIC -pthread -ldl -Wl,--copy-dt-needed-entries"
+    fi
+  fi
+
+      ;;
+  esac
+
+
+
 # Check whether --with-qt-find-method was given.
 if test ${with_qt_find_method+y}
 then :
@@ -28721,10 +28765,10 @@ $at_mod"
   echo "$qt_conf" | sed 1d >>"$pro_file"
 
 
- # Tweak the value of QT in the .pro file for $xtralibs +printsupport +svg $xtraPlug.
+ # Tweak the value of QT in the .pro file for $xtralibs +printsupport +svg +concurrent $xtraPlug.
 
   qt_conf=''
-  for at_mod in $xtralibs +printsupport +svg $xtraPlug; do
+  for at_mod in $xtralibs +printsupport +svg +concurrent $xtraPlug; do
     at_mod=`echo "$at_mod" | sed 's/^-//; tough
                                   s/^+//; beef
                                   :ough
@@ -29652,8 +29696,24 @@ then :
   QT_PKGCONFIG_SUFFIX="_${ANDROID_ABI}"
 fi
 
-    QT_PACKAGES="Qt${QT_MAJOR}Core$QT_PKGCONFIG_SUFFIX Qt${QT_MAJOR}Gui$QT_PKGCONFIG_SUFFIX Qt${QT_MAJOR}Widgets$QT_PKGCONFIG_SUFFIX Qt${QT_MAJOR}Svg$QT_PKGCONFIG_SUFFIX Qt${QT_MAJOR}PrintSupport$QT_PKGCONFIG_SUFFIX"
+    QT_PACKAGES="Qt${QT_MAJOR}Core$QT_PKGCONFIG_SUFFIX "
+    QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Gui$QT_PKGCONFIG_SUFFIX"
+    QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Widgets$QT_PKGCONFIG_SUFFIX"
+    QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Svg$QT_PKGCONFIG_SUFFIX"
+    QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}PrintSupport$QT_PKGCONFIG_SUFFIX"
+    QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Concurrent$QT_PKGCONFIG_SUFFIX"
+    # if CONFIG_OS is GNU_LINUX and QT_VERSION is higher than 6, use wayland
+    if test "x$CONFIG_OS" = "xGNU_LINUX"
+then :
 
+      if test $QT_MAJOR -ge 6
+then :
+
+        QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}WaylandClient$QT_PKGCONFIG_SUFFIX"
+
+fi
+
+fi
     if test "x$CONFIG_OS" = "xMACOS"
 then :
   QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}MacExtras$QT_PKGCONFIG_SUFFIX"
@@ -30827,7 +30887,12 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
 
   QT_VERSION=`$QMAKE -query QT_VERSION`
   QT_MAJOR=${QT_VERSION%%.*}
-  test "0$QT_MAJOR" -eq 5 &&
+
+  case $QT_MAJOR in
+    4)
+      ;;
+    5)
+
   if [[ "-std=c++11" =~ $(echo '^-Wl,') ]]
   then QT_CXXFLAGS+=" -std=c++11"
   elif [[ "-std=c++11" =~ $(echo '^-l') ]]
@@ -30863,7 +30928,11 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++11" >&2;}
     fi
   fi
 
-  test "0$QT_MAJOR" -eq 6 &&
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: \"Using Qt5, high DPI scaling not enabled\"" >&5
+printf "%s\n" "$as_me: \"Using Qt5, high DPI scaling not enabled\"" >&6;}
+      ;;
+    6)
+
   if [[ "-std=c++17" =~ $(echo '^-Wl,') ]]
   then QT_CXXFLAGS+=" -std=c++17"
   elif [[ "-std=c++17" =~ $(echo '^-l') ]]
@@ -30899,6 +30968,11 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++17" >&2;}
     fi
   fi
 
+      # Show in the log
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: \"New high DPI scaling enabled\"" >&5
+printf "%s\n" "$as_me: \"New high DPI scaling enabled\"" >&6;}
+      ;;
+  esac
 
 
     if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]]+)-mmacosx-version-min(=?|[[:space:]]*)(.*)$") ]]
