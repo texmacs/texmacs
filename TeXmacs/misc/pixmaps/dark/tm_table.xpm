@@ -1,0 +1,29 @@
+/* XPM */
+static char *tm_table[] = {
+/* columns rows colors chars-per-pixel */
+"20 20 3 1 ",
+"  c #e0e0e0",
+". c #0b0b0b",
+"X c None",
+/* pixels */
+"XXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXX",
+"                   X",
+" ..... ..... ..... X",
+" ..... ..... ..... X",
+" ..... ..... ..... X",
+"                   X",
+" ..... ..... ..... X",
+" ..... ..... ..... X",
+" ..... ..... ..... X",
+"                   X",
+" ..... ..... ..... X",
+" ..... ..... ..... X",
+" ..... ..... ..... X",
+"                   X",
+" ..... ..... ..... X",
+" ..... ..... ..... X",
+" ..... ..... ..... X",
+"                   X",
+"XXXXXXXXXXXXXXXXXXXX"
+};

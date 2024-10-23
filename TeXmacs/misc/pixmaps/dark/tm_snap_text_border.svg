@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg3039" width="16" height="16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <metadata id="metadata3044">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1">
+  <path id="text4130" transform="scale(.99799 1.002)" d="m6.0453 10.549v-5.9353q-0.093562-0.011695-0.19882-0.011695-0.099409-0.00585-0.29238-0.00585-1.0058 0-1.4561 0.3684-0.44442 0.36255-0.59061 1.2865h-0.4795l0.099409-2.3098q0.61985 0.029238 1.3625 0.046781 0.74849 0.011695 1.7601 0.011695 1.4385 0 2.5671-0.011695 1.1344-0.011695 2.0701-0.035086l0.10526 2.2981h-0.46781q-0.14619-0.90638-0.6023-1.2865-0.45027-0.38009-1.3976-0.38009-0.16373 0-0.53213 0.02339h-0.040933v5.9412q0 0.56722 0.25145 0.76604 0.25145 0.19882 0.9824 0.22221v0.48535q-0.47366-0.02339-0.97655-0.03509-0.49705-0.01169-1.035-0.01169-0.4912 0-1.0818 0.01169-0.58476 0.01169-1.2163 0.03509v-0.4912q0.71926-0.03509 0.94146-0.22221 0.22806-0.19297 0.22806-0.76019z" fill="#9f9f9f" aria-label="T"/>
+  <path id="path4172" d="m2 2.5a0.5 0.5 0 1 1-1 0 0.5 0.5 0 1 1 1 0z" fill="none" stroke="#3f3f3f" stroke-linecap="round" stroke-linejoin="round"/>
+  <path id="path4174" d="m7.5 2.5a0.5 0.5 0 1 1-1 0 0.5 0.5 0 1 1 1 0z" fill="none" stroke="#3f3f3f" stroke-linecap="round" stroke-linejoin="round"/>
+  <path id="path4176" d="m13 2.5a0.5 0.5 0 1 1-1 0 0.5 0.5 0 1 1 1 0z" fill="none" stroke="#3f3f3f" stroke-linecap="round" stroke-linejoin="round"/>
+  <path id="path4180" d="m2 13.5a0.5 0.5 0 1 1-1 0 0.5 0.5 0 1 1 1 0z" fill="none" stroke="#3f3f3f" stroke-linecap="round" stroke-linejoin="round"/>
+  <path id="path4182" d="m7.5 13.5a0.5 0.5 0 1 1-1 0 0.5 0.5 0 1 1 1 0z" fill="none" stroke="#3f3f3f" stroke-linecap="round" stroke-linejoin="round"/>
+  <path id="path4184" d="m2 8a0.5 0.5 0 1 1-1 0 0.5 0.5 0 1 1 1 0z" fill="none" stroke="#3f3f3f" stroke-linecap="round" stroke-linejoin="round"/>
+  <path id="path4186" transform="translate(11)" d="m2 8a0.5 0.5 0 1 1-1 0 0.5 0.5 0 1 1 1 0z" fill="none" stroke="#3f3f3f" stroke-linecap="round" stroke-linejoin="round"/>
+  <path id="path3921" d="m12 4.5h1v3h3v1h-3v3h-1v-3h-3v-1h3z" fill="#d27777" stroke="#d27777" stroke-linejoin="round" stroke-width=".5"/>
+  <path id="path4188" transform="translate(11,5.5)" d="m2 8a0.5 0.5 0 1 1-1 0 0.5 0.5 0 1 1 1 0z" fill="none" stroke="#3f3f3f" stroke-linecap="round" stroke-linejoin="round"/>
+ </g>
+</svg>
