@@ -113,6 +113,10 @@ void texmacs_initialize_displayname() {
   wchar_t username[256 + 1];
   DWORD username_size = 256 + 1;
   bool result = GetUserNameExW(NameDisplay, username, &username_size);
+  if (!result) {
+    result = GetUserNameW(username, &username_size);
+  }
+
   if (result) {
     std::wstring full_username = L"TEXMACS_DISPLAYNAME=" 
                                  + std::wstring(username);
