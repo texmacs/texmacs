@@ -1075,10 +1075,26 @@ QTMWidget::wheelEvent(QWheelEvent *event) {
   }
   else if (QApplication::keyboardModifiers() == Qt::ControlModifier) {
 #if QT_VERSION >= 0x060000
-    if (event->pixelDelta().ry() > 0) {
+    QPoint numPixels = event->pixelDelta();
+    QPoint numDegrees = event->angleDelta() / 8;
+    
+    // compute the zoom factor from numPixels or numDegrees
+    double zoomFactor = 0.0;
+    if (!numPixels.isNull()) {
+      if (numPixels.y() > 0) {
+        call ("zoom-in", object (sqrt (sqrt (sqrt (sqrt (numPixels.y()))))));
+      } else {
+        call ("zoom-out", object (sqrt (sqrt (sqrt (sqrt (-numPixels.y()))))));
+      }
+    } else if (!numDegrees.isNull()) {
+      if (numDegrees.y() > 0) {
+        call ("zoom-in", object (sqrt (sqrt (sqrt (sqrt (numDegrees.y()))))));
+      } else {
+        call ("zoom-out", object (sqrt (sqrt (sqrt (sqrt (-numDegrees.y()))))));
+      }
+    }
 #else
     if (event->delta() > 0) {
-#endif
       //double x= exp (((double) event->delta ()) / 500.0);
       //call ("zoom-in", object (x));
       call ("zoom-in", object (sqrt (sqrt (sqrt (sqrt (2.0))))));
@@ -1088,6 +1104,7 @@ QTMWidget::wheelEvent(QWheelEvent *event) {
       //call ("zoom-out", object (x));
       call ("zoom-out", object (sqrt (sqrt (sqrt (sqrt (2.0))))));
     }
+#endif
   }
   else QAbstractScrollArea::wheelEvent (event);
 }
