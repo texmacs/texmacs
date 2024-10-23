@@ -1,0 +1,36 @@
+/* XPM */
+static char *tm_new[] = {
+/* columns rows colors chars-per-pixel */
+"24 24 6 1 ",
+"  c #cfffcf",
+". c #929292",
+"X c #8d8d8d",
+"o c #c0ffc0",
+"O c #060606",
+"+ c None",
+/* pixels */
+"++++++++++++++++   +++++",
+"++.XXXXXXXXXXXXX o X.+++",
+"++XOOOOOOOOOOOOO o OX+++",
+"++XOOOOOOOOOO    o    ++",
+"++XOOOOOOOOOO ooooooo ++",
+"++XOOOOOOOOOO    o    ++",
+"++XOOOOOOOOOOOOO o OX+++",
+"++XOOOOOOOOOOOOO o OX+++",
+"++XOOOOOOOOOOOOO   OX+++",
+"++XOOOOOOOOOOOOOOOOOX+++",
+"++XOOOOOOOOOOOOOOOOOX+++",
+"++XOOOOOOOOOOOOOOOOOX+++",
+"++XOOOOOOOOOOOOOOOOOX+++",
+"++XOOOOOOOOOOOOOOOOOX+++",
+"++XOOOOOOOOOOOOOOOOOX+++",
+"++XOOOOOOOOOOOOOOOOOX+++",
+"++XOOOOOOOOOOOOOOOOOX+++",
+"++XOOOOOOOOOOOOOOOOOX+++",
+"++XOOOOOOOOOOOOOOOOOX+++",
+"++XOOOOOOOOOOOOOOOOOX+++",
+"++XOOOOOOOOOOOOOOOOOX+++",
+"++XOOOOOOOOOOOOOOOOOX+++",
+"++XOOOOOOOOOOOOOOOOOX+++",
+"++.XXXXXXXXXXXXXXXXX.+++"
+};

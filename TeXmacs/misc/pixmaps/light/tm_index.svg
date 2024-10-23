@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg3039" width="20" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <metadata id="metadata3044">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1" transform="translate(0,4)" stroke="#404040" stroke-linecap="round" stroke-width="1.5">
+  <path id="path3802" d="m3-0.5h9" fill="#404040"/>
+  <path id="path3810" d="m1-2.5h9" fill="#404040" stroke-dashoffset=".5" stroke-linejoin="round"/>
+  <path id="path4534" d="m5 1.5h9" fill="none" stroke-dashoffset=".5" stroke-linejoin="round"/>
+  <path id="path4536" d="m5 3.5h7" fill="none" stroke-dashoffset=".5" stroke-linejoin="round"/>
+  <path id="path4538" d="m3 5.5h9" fill="none" stroke-dashoffset=".5" stroke-linejoin="round"/>
+  <path id="path4573" d="m1 7.5h11" fill="none" stroke-dashoffset=".5" stroke-linejoin="round"/>
+  <path id="path4605" d="m17-2.5h2" fill="none" stroke-dashoffset=".5" stroke-linejoin="round"/>
+  <path id="path4607" d="m17-0.5h2" fill="none" stroke-dashoffset=".5" stroke-linejoin="round"/>
+  <path id="path4609" d="m17 1.5h2" fill="none" stroke-dashoffset=".5" stroke-linejoin="round"/>
+  <path id="path4611" d="m17 3.5h2" fill="none" stroke-dashoffset=".5" stroke-linejoin="round"/>
+  <path id="path4613" d="m17 5.5h2" fill="none" stroke-dashoffset=".5" stroke-linejoin="round"/>
+  <path id="path4615" d="m17 7.5h2" fill="none" stroke-dashoffset=".5" stroke-linejoin="round"/>
+  <path id="path4617" d="m17 9.5h2" fill="none" stroke-dashoffset=".5" stroke-linejoin="round"/>
+  <path id="path4619" d="m17 11.5h2" fill="none" stroke-dashoffset=".5" stroke-linejoin="round"/>
+  <path id="path4621" d="m17 13.5h2" fill="none" stroke-dashoffset=".5" stroke-linejoin="round"/>
+  <path id="path4623" d="m3 9.5h11" fill="none" stroke-dashoffset=".5" stroke-linejoin="round"/>
+  <path id="path4625" d="m3 11.5h11" fill="none" stroke-dashoffset=".5" stroke-linejoin="round"/>
+  <path id="path4627" d="m1 13.5h11" fill="none" stroke-dashoffset=".5" stroke-linejoin="round"/>
+ </g>
+</svg>

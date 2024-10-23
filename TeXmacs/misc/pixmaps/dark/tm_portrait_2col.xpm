@@ -1,0 +1,27 @@
+/* XPM */
+static char *tm_portrait_2col[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 5 1 ",
+"  c #e0e0e0",
+". c #6f6f6f",
+"X c gainsboro",
+"o c #0c0c0c",
+"O c None",
+/* pixels */
+"OO            OO",
+"OO oooooooooo OO",
+"OO o...XX...o OO",
+"OO o...XX...o OO",
+"OO o...XX...o OO",
+"OO o...XX...o OO",
+"OO o...XX...o OO",
+"OO o...XX...o OO",
+"OO o...XX...o OO",
+"OO o...XX...o OO",
+"OO o...XX...o OO",
+"OO o...XX...o OO",
+"OO o...XX...o OO",
+"OO o...XX...o OO",
+"OO oooooooooo OO",
+"OO            OO"
+};

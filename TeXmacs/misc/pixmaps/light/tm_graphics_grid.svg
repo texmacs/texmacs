@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg3039" width="20" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <metadata id="metadata3044">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1" transform="translate(0,4)">
+  <path id="path8169" d="m6-4v20h1v-20z" fill="#8080c0" fill-opacity=".50222"/>
+  <path id="path8173" d="m2-4v20h1v-20z" fill="#8080c0" fill-opacity=".50222"/>
+  <path id="path8175" d="m14-4v20h1v-20z" fill="#8080c0" fill-opacity=".50222"/>
+  <path id="path8177" d="m18-4v20h1v-20z" fill="#8080c0" fill-opacity=".50222"/>
+  <path id="path8179" d="m20 10-20-0.021612-0.0011 1 20 0.02161z" fill="#8080c0" fill-opacity=".50222"/>
+  <path id="path8181" d="m20.001 14-20-0.021612-0.0011 1 20 0.02161z" fill="#8080c0" fill-opacity=".50222"/>
+  <path id="path8183" d="m20.001 2-20-0.021612-0.0011 1 20 0.02161z" fill="#8080c0" fill-opacity=".50222"/>
+  <path id="path8185" d="m20-2-20-0.021612-0.0011 1 20 0.02161z" fill="#8080c0" fill-opacity=".50222"/>
+  <path id="path8187" d="m19.999 6-20 0.019828 9.9141e-4 1 20-0.019828z" fill="#808080"/>
+  <path id="path8167" transform="translate(0,-4)" d="m10 0v20h1v-20z" fill="#808080"/>
+ </g>
+</svg>
