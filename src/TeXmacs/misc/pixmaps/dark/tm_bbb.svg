@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg3039" width="20" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <defs id="defs3041">
+  <filter id="filter18434" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
+   <feComposite id="feComposite18438" in2="result1" k1="-1" k2="3.2" k4="-2" operator="arithmetic" result="result3"/>
+   <feColorMatrix id="feColorMatrix18440" result="result2" values="0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 10 0 "/>
+   <feComposite id="feComposite18442" in="SourceGraphic" in2="result2" operator="out" result="fbSourceGraphic"/>
+   <feComposite id="feComposite18446" in="result4" in2="result4" operator="xor" result="result5"/>
+   <feBlend id="feBlend18448" in="result5" in2="result5" mode="darken" result="result6"/>
+   <feBlend id="feBlend18450" in="result6" in2="result6" mode="darken"/>
+  </filter>
+ </defs>
+ <metadata id="metadata3044">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1" transform="translate(0,4)">
+  <path id="text3271" transform="matrix(.8449 0 0 .9149 1.4611 .55664)" d="m1.4072 13.994v-1.0938h2.5134v-13.777h-2.5134v-1.0938h10.1q2.6995 0 4.2355 1.1636 1.5359 1.1403 1.5359 2.8392 0 1.3498-1.0705 2.3272-1.0705 0.97742-2.9555 1.3032 2.0945 0.1629 3.421 1.2567 1.3498 1.0938 1.3498 2.7461 0 1.8152-1.5359 3.0719-1.5127 1.2567-4.282 1.2567zm5.562-1.0938h4.282q0.79124 0 1.3963-0.20945 0.62834-0.20945 0.95415-0.5818 0.34908-0.37235 0.55852-0.72143 0.23272-0.34908 0.30254-0.76797 0.09309-0.44217 0.11636-0.62834 0.02327-0.18618 0.02327-0.34908 0-1.5592-0.76797-2.5366-0.79124-1.0007-2.3505-1.0007h-4.5147zm0-7.6332h3.6304q1.629 0 2.4901-0.9076 0.88433-0.9076 0.88433-2.3272 0-0.46544-0.11636-0.9076-0.11636-0.46544-0.39562-0.93088-0.25599-0.48871-0.83779-0.76797-0.5818-0.30253-1.4196-0.30253h-4.2355z" fill="#bfbfbf" filter="url(#filter18434)" aria-label="B"/>
+ </g>
+</svg>
