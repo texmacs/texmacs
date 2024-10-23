@@ -216,15 +216,21 @@ shrink (glyph gl, int xfactor, int yfactor,
 }
 
 glyph
-shrink (glyph gl, int xfactor, int yfactor, SI& xo, SI& yo) {
+shrink (glyph gl, int xfactor, int yfactor, SI& xo, SI& yo, double dpr) {
+#if QT_VERSION >= 0x060000
+  ASSERT(dpr > 0.0, "Invalid device pixel ratio");
+#else
+  dpr= get_retina_factor ();
+#endif
+
   if ((gl->width==0) || (gl->height==0)) {
     int nr= xfactor*yfactor;
     int new_depth= gl->depth+ log2i (nr);
     return glyph (0, 0, 0, 0, new_depth);
   }
 
-  int tx= ((xfactor/3) * (retina_factor+1)) / 2;
-  int ty= ((yfactor/3) * (retina_factor+1)) / 2;
+  int tx = (((double)xfactor / 3.0) * (dpr + 1.0)) / 2.0;
+  int ty = (((double)yfactor / 3.0) * (dpr + 1.0)) / 2.0;
   int dx=0, dy=0;
   if ((gl->status==0) && (xfactor>1)) dx= get_hor_shift (gl, xfactor, tx);
   // if ((gl->status==0) && (yfactor>1)) dy= get_ver_shift (gl, yfactor, ty);

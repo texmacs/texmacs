@@ -11,6 +11,8 @@
 
 #ifndef BITMAP_FONT_H
 #define BITMAP_FONT_H
+
+#include "config.h"
 #include "resource.hpp"
 
 class frame;
@@ -92,7 +94,7 @@ void  rotate (metric& ey, metric ex, double angle, double ox, double oy);
 frame reslash (metric slash, metric proto);
 void  normalize_borders (glyph& gl, metric& ex);
 
-glyph shrink      (glyph gl, int xf, int yf, SI& xo, SI& yo);
+glyph shrink      (glyph gl, int xf, int yf, SI& xo, SI& yo, double dpr = 0.0);
 glyph join        (glyph gl1, glyph gl2);
 glyph intersect   (glyph gl1, glyph gl2);
 glyph exclude     (glyph gl1, glyph gl2);

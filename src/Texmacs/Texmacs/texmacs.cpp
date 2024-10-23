@@ -310,6 +310,7 @@ TeXmacs_main (int argc, char** argv) {
         my_init_cmds= my_init_cmds * " (quit-TeXmacs)";
       else if ((s == "-r") || (s == "-reverse"))
         set_reverse_colors (true);
+#if QT_VERSION < 0x060000
       else if (s == "-no-retina") {
         retina_manual= true;
         retina_factor= 1;
@@ -338,6 +339,7 @@ TeXmacs_main (int argc, char** argv) {
         retina_iman  = true;
         retina_icons = 2;
       }
+#endif
       else if ((s == "-c") || (s == "-convert") || (s == "-C")) {
         i+=2;
         if (i<argc) {
@@ -422,6 +424,7 @@ TeXmacs_main (int argc, char** argv) {
   if (headless_mode) my_init_cmds= my_init_cmds * " (quit-TeXmacs)";
 
   // Further options via environment variables
+#if QT_VERSION < 0x060000
   if (get_env ("TEXMACS_RETINA") == "off") {
     retina_manual= true;
     retina_factor= 1;
@@ -449,6 +452,7 @@ TeXmacs_main (int argc, char** argv) {
     retina_iman  = true;
     retina_icons = 2;
   }
+#endif
   // End options via environment variables
 
   // Further user preferences
@@ -700,8 +704,10 @@ int texmacs_entrypoint(int argc, char** argv) {
 #ifndef OS_MINGW
   set_env ("LC_NUMERIC", "POSIX");
 #ifndef OS_MACOS
-  set_env ("QT_QPA_PLATFORM", "xcb");
-  set_env ("XDG_SESSION_TYPE", "x11");
+  if (get_env("WAYLAND_DISPLAY") == "") {
+    set_env ("QT_QPA_PLATFORM", "xcb"); // todo : remove ?
+    set_env ("XDG_SESSION_TYPE", "x11");
+  }
 #endif
 #endif
 #ifdef MACOSX_EXTENSIONS
@@ -713,7 +719,8 @@ int texmacs_entrypoint(int argc, char** argv) {
     remove (url ("$TEXMACS_HOME_PATH/system/cache") * url_wildcard ("*"));
     remove (url ("$TEXMACS_HOME_PATH/fonts/error") * url_wildcard ("*"));    
   }
-#endif
+#endif 
+  TeXmacs_init_paths (argc, argv);
 #ifdef QTTEXMACS
   // initialize the Qt application infrastructure
   if (headless_mode)
@@ -721,11 +728,18 @@ int texmacs_entrypoint(int argc, char** argv) {
   else
     qtmapp= new QTMApplication (argc, argv);
 #endif
-  TeXmacs_init_paths (argc, argv);
   TeXmacs_init_font  ();
 #ifdef QTTEXMACS
+#if QT_VERSION >= 0x060000
+  tmapp()->pixmap_manager().getIcon((QString)"TeXmacs")
+  .then([qtmapp](QFuture<QIcon> iconFuture) {
+    QIcon icon = iconFuture.result();
+    tmapp()->setWindowIcon(icon);
+  });
+#else
   if (!headless_mode)
-    qtmapp->set_window_icon("/misc/images/texmacs-512.png");
+    tmapp()->set_window_icon("/misc/images/texmacs-512.png");
+#endif
 #endif
   //cout << "Bench  ] Started TeXmacs\n";
   the_et     = tuple ();

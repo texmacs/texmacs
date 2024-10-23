@@ -39,9 +39,19 @@ public:
     QTMSurface(QWidget* p, QTMScrollView* _sv) : QWidget (p), sv (_sv) { }
     
 protected:
-    virtual bool event(QEvent *event) {
+    bool event(QEvent *event) override {
+        // if this is a paint event, we want to handle it ourselves
+        if (event->type() == QEvent::Paint) {
+            QPaintEvent *pe = static_cast<QPaintEvent*>(event);
+            paintEvent(pe);
+            return true;
+        }
         return sv->surfaceEvent(event) ? true : QWidget::event(event);
     }  
+
+    void paintEvent (QPaintEvent* event) override {
+      sv->surfacePaintEvent (event, this);
+    }
 };
 
 /*! Constructor.

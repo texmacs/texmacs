@@ -66,6 +66,8 @@ protected:
   virtual bool surfaceEvent (QEvent *e);
   virtual bool event (QEvent *e);
 
+  virtual void surfacePaintEvent (QPaintEvent *e, QWidget *surface) = 0;
+
   friend class QTMSurface;
   friend class qt_simple_widget_rep;
 };

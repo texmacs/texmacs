@@ -153,6 +153,7 @@ needing_update (false)
                     gui_helper, SLOT (doUpdate()));
   // (void) default_font ();
 
+#if QT_VERSION < 0x060000
   if (!retina_manual) {
     retina_manual= true;
 #ifdef MACOSX_EXTENSIONS
@@ -199,6 +200,7 @@ needing_update (false)
     retina_icons= get_user_preference ("retina-icons") == "on"? 2: 1;
   if (has_user_preference ("retina-scale"))
     retina_scale= as_double (get_user_preference ("retina-scale"));
+#endif
 }
 
 /* important routines */

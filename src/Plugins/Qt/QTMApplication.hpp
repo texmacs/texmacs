@@ -21,6 +21,7 @@
 #include "url.hpp"
 #include "boot.hpp"
 #include "gui.hpp"
+#include "QTMPixmapManager.hpp"
 
 void init_palette (QApplication* app);
 void init_style_sheet (QApplication* app);
@@ -117,6 +118,9 @@ class QTMApplication: public QApplication {
 public:
   QTMApplication (int& argc, char** argv) :
     QApplication (argc, argv) {
+#if QT_VERSION >= 0x060000
+      pm.loadAll();
+#endif
       init_theme ();
     }
   
@@ -174,7 +178,22 @@ public:
     return false;
   }
 
+#if QT_VERSION >= 0x060000
+  QTMPixmapManager& pixmap_manager() {
+    return pm;
+  }
+#endif
+
+private:
+#if QT_VERSION >= 0x060000
+  QTMPixmapManager pm;
+#endif
+
 };
+
+inline QTMApplication *tmapp() {
+  return dynamic_cast<QTMApplication *>(qApp);
+}
 
 class QTMCoreApplication: public QCoreApplication {
   Q_OBJECT
