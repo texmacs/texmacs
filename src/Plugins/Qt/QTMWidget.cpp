@@ -16,6 +16,9 @@
 #include "converter.hpp"
 #include "boot.hpp"
 #include "scheme.hpp"
+#include "new_view.hpp"
+#include "editor.hpp"
+#include "qt_renderer.hpp"
 
 #include "config.h"
 
@@ -216,7 +219,6 @@ QTMWidget::tm_widget () const {
 void 
 QTMWidget::scrollContentsBy (int dx, int dy) {
   QTMScrollView::scrollContentsBy (dx,dy);
-
   the_gui->force_update();
   // we force an update of the internal state to be in sync with the moving
   // scrollbars
@@ -254,14 +256,32 @@ QTMWidget::resizeEventBis (QResizeEvent *event) {
  CHECK: Maybe just putting onscreen all the region bounding rectangles might 
  be less expensive.
 */
-void
-QTMWidget::paintEvent (QPaintEvent* event) {
-  QPainter p (surface());
 #if QT_VERSION >= 0x060000
-  QVector<QRect> rects (1, event->region().boundingRect());
+void
+QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
+  QPainter p (surface());
+
+  qreal dpr = surface()->devicePixelRatio();
+  if (dpr != tm_widget()->backingPixmap->devicePixelRatio()) {
+    the_gui->force_update();
+    return;
+  }
+
+  // We copy the backing buffer on the widget
+  QRect qr = event->region().boundingRect();
+  p.drawPixmap (QRect (qr.x(), qr.y(), qr.width(), qr.height()),
+                *(tm_widget()->backingPixmap),
+                QRect (dpr * qr.x(),
+                       dpr * qr.y(),
+                       dpr * qr.width(),
+                       dpr * qr.height()));
+  
+}
 #else
+void
+QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
+  QPainter p (surface());
   QVector<QRect> rects = event->region().rects();
-#endif
   for (int i = 0; i < rects.count(); ++i) {
     QRect qr = rects.at (i);
     p.drawPixmap (QRect (qr.x(), qr.y(), qr.width(), qr.height()),
@@ -272,6 +292,7 @@ QTMWidget::paintEvent (QPaintEvent* event) {
                          retina_factor * qr.height()));
   }
 }
+#endif
 
 void
 set_shift_preference (int key_code, char shifted) {

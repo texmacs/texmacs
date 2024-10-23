@@ -140,6 +140,9 @@ tm_window_rep::tm_window_rep (widget wid2, tree geom):
   menu_current (object ()), menu_cache (widget ()),
   text_ptr (NULL)
 {
+#if QT_VERSION >= 0x060000
+  double retina_zoom= 1.0;
+#endif
   zoomf= retina_zoom * get_server () -> get_default_zoom_factor ();
 }
 
@@ -161,6 +164,9 @@ tm_window_rep::tm_window_rep (tree doc, command quit):
   menu_current (object ()), menu_cache (widget ()),
   text_ptr (NULL)
 {
+#if QT_VERSION >= 0x060000
+  double retina_zoom= 1.0;
+#endif
   zoomf= retina_zoom * get_doc_zoom_factor (doc);
   if (zoomf < 0.0)
     zoomf= retina_zoom * get_server () -> get_default_zoom_factor ();
@@ -188,10 +194,12 @@ texmacs_window_widget (widget wid, tree geom) {
     w= as_int (geom[0]);
     h= as_int (geom[1]);
   }
+#if QT_VERSION < 0x060000
   if (w == 800 && h == 600) {
     w *= retina_zoom;
     h *= retina_zoom;
   }
+#endif
   gui_root_extents (W, H); W /= PIXEL; H /= PIXEL;
   if (x < 0) x= W + x + 1 - w;
   if (y < 0) y= H + y + 1 - h;
@@ -304,7 +312,11 @@ enrich_embedded_document (tree body, tree style) {
   //initial (DPI)= "720";
   //initial (ZOOM_FACTOR)= (retina_zoom==1? "1.2": "1.8");
   initial (DPI)= "600";
+#if QT_VERSION >= 0x060000
+  initial (ZOOM_FACTOR)= "1.0";
+#else
   initial (ZOOM_FACTOR)= (retina_zoom==2? "1.0": "1.2");
+#endif
   // TODO: to be carefully checked for all operating systems
   initial ("no-zoom")= "true";
   tree doc (DOCUMENT);
@@ -517,12 +529,18 @@ tm_window_rep::get_bottom_tools_flag (int which) {
 
 void
 tm_window_rep::set_window_zoom_factor (double zoom) {
+#if QT_VERSION >= 0x060000
+  double retina_zoom= 1.0;
+#endif
   zoomf= retina_zoom * zoom;
   ::set_zoom_factor (wid, zoomf);
 }
 
 double
 tm_window_rep::get_window_zoom_factor () {
+#if QT_VERSION >= 0x060000
+  double retina_zoom= 1.0;
+#endif
   return zoomf / retina_zoom;
 }
 

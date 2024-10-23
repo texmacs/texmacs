@@ -24,11 +24,13 @@
 #include "promise.hpp"
 #include "scheme.hpp"
 
+#include "QTMApplication.hpp"
 #include "QTMWindow.hpp"
 #include "QTMGuiHelper.hpp"
 #include "QTMMenuHelper.hpp"
 #include "QTMStyle.hpp"
 #include "QTMTreeModel.hpp"
+#include "QTMPixmapManager.hpp"
 
 #include <QCheckBox>
 #include <QPushButton>
@@ -536,7 +538,15 @@ qt_ui_element_rep::as_qaction () {
     {
       url    image = open_box<url>(load);
       act = new QTMAction (NULL);
+#if QT_VERSION >= 0x060000
+      tmapp()->pixmap_manager().getIcon(image)
+        .then([act](QFuture<QIcon> iconFuture) {
+          QIcon icon = iconFuture.result();
+          act->setIcon(icon);
+        });
+#else
       act->setIcon (QIcon (as_pixmap (*xpm_image (image))));
+#endif
     }
       break;
 
@@ -623,6 +633,9 @@ qt_ui_element_rep::as_qlayoutitem () {
       // FIXME: lpad and rpad ignored.
       SI hsep = y.x1; SI vsep = y.x2; SI lpad = y.x3; SI rpad = y.x4;
       if (tm_style_sheet != "") {
+#if QT_VERSION >= 0x060000
+        int retina_scale = 1;
+#endif
         hsep= (SI) (floor (retina_scale * hsep / 256.0 + 0.5) * PIXEL);
         vsep= (SI) (floor (retina_scale * vsep / 256.0 + 0.5) * PIXEL);
         lpad= (SI) (floor (retina_scale * lpad / 256.0 + 0.5) * PIXEL);
@@ -713,10 +726,12 @@ qt_ui_element_rep::as_qlayoutitem () {
       typedef quartet<bool, bool, SI, SI> T;
       T x = open_box<T> (load);
       SI w= x.x3, h= x.x4;
+#if QT_VERSION < 0x060000
       if (tm_style_sheet != "") {
         w= (SI) floor (retina_scale * w + 0.5);
         h= (SI) floor (retina_scale * h + 0.5);
       }
+#endif
       QSize sz = QSize (w, h);
       QSizePolicy::Policy hpolicy = x.x1 ? QSizePolicy::MinimumExpanding
                                          : QSizePolicy::Minimum;
@@ -819,10 +834,12 @@ qt_ui_element_rep::as_qwidget () {
       typedef quartet<bool, bool, SI, SI> T;
       T x = open_box<T>(load);
       SI w= x.x3, h= x.x4;
+#if QT_VERSION < 0x060000
       if (tm_style_sheet != "") {
         w= (SI) floor (retina_scale * w + 0.5);
         h= (SI) floor (retina_scale * h + 0.5);
       }
+#endif
       QSize sz = QSize (w, h);
       QSizePolicy::Policy hpolicy = x.x1 ? QSizePolicy::MinimumExpanding
                                          : QSizePolicy::Minimum;
@@ -848,7 +865,15 @@ qt_ui_element_rep::as_qwidget () {
         QToolButton* b = new QToolButton();
         
         QTMLazyMenu* lm = new QTMLazyMenu (pw, b, type == pullright_button);
+#if QT_VERSION >= 0x060000
+        tmapp()->pixmap_manager().getIcon(image)
+          .then([b](QFuture<QIcon> iconFuture) {
+            QIcon icon = iconFuture.result();
+            b->setIcon(icon);
+          });
+#else
         b->setIcon (QIcon (as_pixmap (*xpm_image (image))));
+#endif
         b->setPopupMode (QToolButton::InstantPopup);
         b->setAutoRaise (true);
         b->setMenu (lm);
@@ -958,7 +983,15 @@ qt_ui_element_rep::as_qwidget () {
     {
       url image = open_box<url>(load);
       QLabel* l = new QLabel (NULL);
+#if QT_VERSION >= 0x060000
+      tmapp()->pixmap_manager().getIcon(image)
+        .then([l](QFuture<QIcon> iconFuture) {
+          QIcon icon = iconFuture.result();
+          l->setPixmap(icon.pixmap(icon.availableSizes().last()));
+        });
+#else
       l->setPixmap (as_pixmap (*xpm_image (image)));
+#endif
       qwid = l;
     }
       break;
@@ -1174,7 +1207,16 @@ qt_ui_element_rep::as_qwidget () {
         QWidget* prelabel = concrete (tabs[i])->as_qwidget();
         QLabel*     label = qobject_cast<QLabel*> (prelabel);
         QWidget*     body = concrete (bodies[i])->as_qwidget();
+        tw->addTab(body, QIcon(), label ? label->text() : "");
+#if QT_VERSION >= 0x060000
+        tmapp()->pixmap_manager().getIcon(icons[i])
+          .then([=](QFuture<QIcon> iconFuture) {
+            QIcon icon = iconFuture.result();
+            tw->setTabIcon(i, icon);
+          });
+#else
         tw->addTab (body, QIcon (as_pixmap (*img)), label ? label->text() : "");
+#endif
         delete prelabel;
       }
 

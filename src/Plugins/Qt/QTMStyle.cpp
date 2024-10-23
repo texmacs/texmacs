@@ -23,6 +23,9 @@
 
 int
 qt_zoom (int sz) {
+#if QT_VERSION >= 0x060000
+  int retina_scale = 1;
+#endif
   return (int) (retina_scale * ((double) sz));
 }
 

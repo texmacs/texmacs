@@ -985,6 +985,9 @@ QTMComboBox::QTMComboBox (QWidget* parent) : QComboBox (parent) {
   opt.activeSubControls = QStyle::SC_ComboBoxArrow;
   QRect r = style()->subControlRect (QStyle::CC_ComboBox, &opt,
                                      QStyle::SC_ComboBoxArrow, &cb);
+#if QT_VERSION >= 0x060000
+  int retina_scale = 1;
+#endif
   int max_w= (int) floor (40 * retina_scale);
   minSize.setWidth (min (r.width(), max_w));
 }
