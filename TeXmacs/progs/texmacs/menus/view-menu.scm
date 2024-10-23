@@ -118,10 +118,11 @@
   ("Show panorama" (toggle-panorama-mode))
   ("Show all slides" (toggle-slideshow-mode))
   ("Remote control" (toggle-remote-control-mode))
-  (assuming (os-macos?)
-    ("Retina settings" (open-retina-settings)))
-  (assuming (not (os-macos?))
-    ("High resolution settings" (open-retina-settings)))
+  (if (> (get-retina-scale) 0) ;; Retina settings disabled since Qt6
+    (assuming (os-macos?)
+      ("Retina settings" (open-retina-settings)))
+    (assuming (not (os-macos?))
+      ("High resolution settings" (open-retina-settings))))
   ---
   ("Fit to screen" (fit-to-screen))
   ("Fit to screen width" (fit-to-screen-width))
