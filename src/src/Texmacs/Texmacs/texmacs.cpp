@@ -732,7 +732,7 @@ int texmacs_entrypoint(int argc, char** argv) {
 #ifdef QTTEXMACS
 #if QT_VERSION >= 0x060000
   tmapp()->pixmap_manager().getIcon((QString)"TeXmacs")
-  .then([qtmapp](QFuture<QIcon> iconFuture) {
+  .then([](QFuture<QIcon> iconFuture) {
     QIcon icon = iconFuture.result();
     tmapp()->setWindowIcon(icon);
   });
