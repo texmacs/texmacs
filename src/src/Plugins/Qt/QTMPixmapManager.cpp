@@ -23,12 +23,6 @@ QTMPixmapManager::QTMPixmapManager(QString path) : mPath(path) {
     string tmpath = get_env("TEXMACS_PATH");
     mPath = QString::fromUtf8(&tmpath[0], N(tmpath)) + "/misc/pixmaps";
   }
-
-  // Load the Latin Modern Math font that is used in the SVG icons
-  int fontId = QFontDatabase::addApplicationFont(mPath + "/Latin Modern Math.otf");
-  if (fontId < 0) {
-    cerr << "Could not load Latin Modern Math.otf\n";
-  }
 }
 
 void QTMPixmapManager::loadAll() {
