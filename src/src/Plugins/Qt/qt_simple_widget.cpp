@@ -378,12 +378,14 @@ impress (qt_simple_widget_rep* wid) {
   QSize s = to_qsize (width, height);
   QSize phys_s = s; 
 #if QT_VERSION >= 0x060000
-  qreal dpr = wid->canvas()->devicePixelRatio();
+  QScreen *screen = QGuiApplication::screenAt(QCursor::pos());
+  qreal dpr = screen->devicePixelRatio();
   phys_s *= dpr;
 #else
   phys_s *= retina_factor;
 #endif
   QPixmap pxm (phys_s);
+  pxm.setDevicePixelRatio(dpr);
   if (DEBUG_QT)
     debug_qt << "impress (" << s.width() << "," << s.height() << ")\n";
   pxm.fill (Qt::transparent);
