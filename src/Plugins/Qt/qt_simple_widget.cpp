@@ -24,6 +24,7 @@
 #include <algorithm>
 #include <QWindow>
 #include <QScreen>
+#include <QGuiApplication>
 #endif
 
 #ifdef USE_CAIRO
