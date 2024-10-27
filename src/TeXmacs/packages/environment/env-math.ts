@@ -1,4 +1,4 @@
-<TeXmacs|1.99.20>
+<TeXmacs|2.1.4>
 
 <style|source>
 
@@ -68,7 +68,7 @@
 
   <assign|no-number|<macro|>>
 
-  <assign|eqref|<macro|id|(<reference|<arg|id>>)>>
+  <assign|eqref|<macro|id|<with|font-shape|right|(<reference|<arg|id>>)>>>
 
   <\active*>
     <\src-comment>
