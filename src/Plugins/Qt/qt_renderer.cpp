@@ -899,7 +899,7 @@ qt_proxy_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
 
 #if QT_VERSION >= 0x060000
 qt_shadow_renderer_rep::qt_shadow_renderer_rep (QTMPixmapOrImage _px, qt_renderer_rep *_parent)
-: qt_renderer_rep (_parent->painter, _parent), px(_px) { }
+: qt_renderer_rep (new QPainter(), _parent), px(_px) { }
 #else
 qt_shadow_renderer_rep::qt_shadow_renderer_rep (QTMPixmapOrImage _px)
 // : qt_renderer_rep (_px.width(),_px.height()), px(_px) 
