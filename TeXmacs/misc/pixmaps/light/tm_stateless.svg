@@ -1,124 +1,38 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   height="16"
-   id="svg2404"
-   inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   inkscape:version="0.48.0 r9654"
-   sodipodi:docname="tm_stateless.svg"
-   sodipodi:version="0.32"
-   version="1.0"
-   viewBox="0 0 0.3125 0.1875"
-   width="16">
-  <metadata
-     id="metadata5243">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:title></dc:title>
-        <dc:description />
-        <dc:subject>
-          <rdf:Bag>
-            <rdf:li>unsorted</rdf:li>
-          </rdf:Bag>
-        </dc:subject>
-        <dc:publisher>
-          <cc:Agent
-             rdf:about="http://www.openclipart.org/">
-            <dc:title>Open Clip Art Library, Source: Wikimedia Commons, Source: Wikimedia Commons, Source: Wikimedia Commons, Source: Wikimedia Commons</dc:title>
-          </cc:Agent>
-        </dc:publisher>
-        <dc:creator>
-          <cc:Agent>
-            <dc:title />
-          </cc:Agent>
-        </dc:creator>
-        <dc:rights>
-          <cc:Agent>
-            <dc:title />
-          </cc:Agent>
-        </dc:rights>
-        <dc:date />
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <cc:license
-           rdf:resource="http://en.wikipedia.org/wiki/Public_domain" />
-        <dc:language>en</dc:language>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <defs
-     id="defs2412">
-    <inkscape:perspective
-       id="perspective2416"
-       inkscape:persp3d-origin="500 : 200 : 1"
-       inkscape:vp_x="0 : 300 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_z="1000 : 300 : 1"
-       sodipodi:type="inkscape:persp3d" />
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="svg2404" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 17.41357">
+  <defs>
+    <style>
+      .cls-1, .cls-2, .cls-3 {
+        isolation: isolate;
+      }
+
+      .cls-1, .cls-3 {
+        opacity: .75;
+      }
+
+      .cls-4 {
+        fill: none;
+        stroke: #ffc0c0;
+        stroke-width: .00977px;
+      }
+
+      .cls-3 {
+        fill: silver;
+      }
+
+      .cls-5 {
+        fill: #c44040;
+      }
+    </style>
   </defs>
-  <sodipodi:namedview
-     bordercolor="#666666"
-     borderopacity="1.0"
-     gridtolerance="10.0"
-     guidetolerance="10.0"
-     id="base"
-     inkscape:current-layer="svg2404"
-     inkscape:cx="7.2350555"
-     inkscape:cy="7.3119139"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:window-height="938"
-     inkscape:window-width="1497"
-     inkscape:window-x="170"
-     inkscape:window-y="125"
-     inkscape:zoom="35.776"
-     objecttolerance="10.0"
-     pagecolor="#ffffff"
-     showgrid="true"
-     inkscape:window-maximized="0">
-    <inkscape:grid
-       type="xygrid"
-       id="grid5276"
-       empspacing="5"
-       visible="true"
-       enabled="true"
-       snapvisiblegridlinesonly="true" />
-  </sodipodi:namedview>
-  <desc
-     id="desc2406">Flag of Germany</desc>
-  <rect
-     height="0.06647265"
-     id="black_stripe"
-     style="opacity:0.75000000000000000;fill:#c0c0c0;fill-opacity:1"
-     width="0.3125"
-     x="0"
-     y="-0.00390625" />
-  <rect
-     height="0.065104172"
-     id="gold_stripe"
-     style="opacity:0.75000000000000000;fill:#c0c0c0;fill-opacity:1"
-     width="0.3125"
-     x="0"
-     y="0.12630209" />
-  <text
-     xml:space="preserve"
-     style="font-size:0.37020441999999998px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:25%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#c44040;fill-opacity:1;stroke:#ffc0c0;stroke-width:0.00976562000000000;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:Chalkboard;-inkscape-font-specification:Chalkboard;opacity:0.75"
-     x="0.13584219"
-     y="0.22637418"
-     id="text3786"
-     sodipodi:linespacing="25%"
-     transform="scale(1.0955007,0.91282462)"><tspan
-       sodipodi:role="line"
-       id="tspan3788"
-       x="0.13584219"
-       y="0.22637418"
-       style="stroke-width:0.00976562000000000;stroke-miterlimit:4;stroke-dasharray:none;fill:#c44040;fill-opacity:1;stroke:#ffc0c0;stroke-opacity:1">?</tspan></text>
+  <rect id="black_stripe" class="cls-3" y="3.62256" width="16" height="3.4034"/>
+  <rect id="gold_stripe" class="cls-3" y="10.28923" width="16" height="3.33333"/>
+  <g id="text3786" class="cls-1">
+    <g class="cls-2">
+      <path class="cls-5" d="M6.16797,3.3999c.30469-.09229.73389-.13867,1.2876-.13867.56738,0,.98291.04639,1.24609.13867.16602.05762.43896.22461.81982.50146s.61328.479.69531.60547c.06934.104.19434.64014.37402,1.60938v.12109c0,.21924-.05566.50781-.16602.86523s-.23535.65137-.37402.88232c-.12402.20752-.35254.43555-.68555.68311-.33203.24854-.60156.38965-.80908.42432-.37402.05762-.56055.25342-.56055.58789,0,.08105.00684.13867.02051.17285.01367.05859.021.12109.021.19043,0,.10449-.05225.17871-.15576.22559-.104.0459-.33594.12109-.6958.22461-.20752.06836-.38086.10352-.51904.10352-.18018,0-.36035-.12695-.54004-.38086-.13818-.19531-.20752-.39746-.20752-.60498,0-.02295.00342-.06934.01025-.13867s.01074-.12695.01074-.17285c.02734-.27686.06543-.47021.11377-.57959.04834-.10986.1626-.25098.34277-.42383.29102-.28857.62988-.51318,1.01758-.6748.44287-.19629.72314-.36621.84082-.51074.11768-.14404.19043-.41797.21826-.82178v-.24219c0-.35742-.05225-.61426-.15576-.77002-.104-.15576-.2876-.25098-.55029-.28516-.05566-.01172-.15234-.01758-.29053-.01758-.40186,0-.76855.0752-1.10059.2251-.08301.03467-.26318.05176-.54004.05176-.70605,0-1.09375-.05176-1.1626-.15576-.04199-.0459-.0625-.1958-.0625-.44971.01367-.1499.04834-.26807.104-.35498.05518-.08643.19336-.20996.41504-.37158.35986-.25391.70605-.42676,1.03809-.51904ZM6.43799,11.1167c.20752-.17383.4707-.26562.78906-.27734h.18701c.22119,0,.44971.10938.68506.3291.27686.26465.41553.55371.41553.86426,0,.12793-.00732.22559-.021.29492-.02783.0918-.14209.22852-.34229.40625-.20117.17969-.3501.26855-.44678.26855h-.02051c-.09717-.03418-.16602-.02246-.20752.03418-.04199.05859-.11133.08691-.20801.08691-.19385,0-.44287-.09473-.74756-.28613-.30469-.18945-.4707-.3418-.49805-.45801,0-.10352-.01416-.23633-.0415-.39746v-.10352c0-.24316.15186-.49609.45654-.76172Z"/>
+    </g>
+    <g class="cls-2">
+      <path class="cls-4" d="M6.16797,3.3999c.30469-.09229.73389-.13867,1.2876-.13867.56738,0,.98291.04639,1.24609.13867.16602.05762.43896.22461.81982.50146s.61328.479.69531.60547c.06934.104.19434.64014.37402,1.60938v.12109c0,.21924-.05566.50781-.16602.86523s-.23535.65137-.37402.88232c-.12402.20752-.35254.43555-.68555.68311-.33203.24854-.60156.38965-.80908.42432-.37402.05762-.56055.25342-.56055.58789,0,.08105.00684.13867.02051.17285.01367.05859.021.12109.021.19043,0,.10449-.05225.17871-.15576.22559-.104.0459-.33594.12109-.6958.22461-.20752.06836-.38086.10352-.51904.10352-.18018,0-.36035-.12695-.54004-.38086-.13818-.19531-.20752-.39746-.20752-.60498,0-.02295.00342-.06934.01025-.13867s.01074-.12695.01074-.17285c.02734-.27686.06543-.47021.11377-.57959.04834-.10986.1626-.25098.34277-.42383.29102-.28857.62988-.51318,1.01758-.6748.44287-.19629.72314-.36621.84082-.51074.11768-.14404.19043-.41797.21826-.82178v-.24219c0-.35742-.05225-.61426-.15576-.77002-.104-.15576-.2876-.25098-.55029-.28516-.05566-.01172-.15234-.01758-.29053-.01758-.40186,0-.76855.0752-1.10059.2251-.08301.03467-.26318.05176-.54004.05176-.70605,0-1.09375-.05176-1.1626-.15576-.04199-.0459-.0625-.1958-.0625-.44971.01367-.1499.04834-.26807.104-.35498.05518-.08643.19336-.20996.41504-.37158.35986-.25391.70605-.42676,1.03809-.51904ZM6.43799,11.1167c.20752-.17383.4707-.26562.78906-.27734h.18701c.22119,0,.44971.10938.68506.3291.27686.26465.41553.55371.41553.86426,0,.12793-.00732.22559-.021.29492-.02783.0918-.14209.22852-.34229.40625-.20117.17969-.3501.26855-.44678.26855h-.02051c-.09717-.03418-.16602-.02246-.20752.03418-.04199.05859-.11133.08691-.20801.08691-.19385,0-.44287-.09473-.74756-.28613-.30469-.18945-.4707-.3418-.49805-.45801,0-.10352-.01416-.23633-.0415-.39746v-.10352c0-.24316.15186-.49609.45654-.76172Z"/>
+    </g>
+  </g>
 </svg>
