@@ -386,7 +386,9 @@ impress (qt_simple_widget_rep* wid) {
   phys_s *= retina_factor;
 #endif
   QPixmap pxm (phys_s);
+#if QT_VERSION >= 0x060000
   pxm.setDevicePixelRatio(dpr);
+#endif
   if (DEBUG_QT)
     debug_qt << "impress (" << s.width() << "," << s.height() << ")\n";
   pxm.fill (Qt::transparent);
