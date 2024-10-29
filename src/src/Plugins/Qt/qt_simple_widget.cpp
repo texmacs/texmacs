@@ -529,6 +529,12 @@ qt_simple_widget_rep::repaint_invalid_regions () {
   // are not covered by the moved contents.
   QRegion qrgn;
   QPoint origin = canvas()->origin();
+
+  // round the origin to avoid rounding errors with dpi of 1.25 and 1.75
+  if (dpr != 1.0 && dpr != 2.0) {
+    origin = QPoint (32 * (origin.x() / 32), 32 * (origin.y() / 32));
+  }
+
   if (backing_pos != origin) {
     
 #if QT_VERSION >= 0x060000
