@@ -263,7 +263,7 @@ QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
 
   qreal dpr = surface()->devicePixelRatio();
   if (dpr != tm_widget()->backingPixmap->devicePixelRatio()) {
-    the_gui->force_update();
+    QMetaObject::invokeMethod (this, "surfaceDprChanged", Qt::QueuedConnection);
     return;
   }
 
@@ -276,6 +276,12 @@ QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
                        dpr * qr.width(),
                        dpr * qr.height()));
   
+}
+
+void
+QTMWidget::surfaceDprChanged () {
+  tm_widget()->reset_all();
+  the_gui->force_update();
 }
 #else
 void
