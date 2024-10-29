@@ -628,17 +628,6 @@ qt_simple_widget_rep::repaint_invalid_regions () {
   }
 
 #if QT_VERSION >= 0x060000
-#ifdef Q_OS_MAC
-  QScreen *screen = canvas()->window()->windowHandle()->screen();
-  qreal real_dpr = 159.0 / screen->physicalDotsPerInch();
-#else
-  qreal real_dpr = canvas()->devicePixelRatio();
-#endif
-  if (oldDpr != real_dpr) {
-    oldDpr = real_dpr;
-    invalidate_all();
-  }
-
   backingPixmap->setDevicePixelRatio (canvas()->devicePixelRatio());
 #endif
   
