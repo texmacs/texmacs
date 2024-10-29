@@ -146,6 +146,16 @@ qt_renderer_rep::begin (void* handle) {
 #endif
 }
 
+#if QT_VERSION >= 0x060000
+void
+qt_renderer_rep::begin () { 
+  set_dpr (painter->device()->devicePixelRatio());
+  this->w = painter->device()->width();
+  this->h = painter->device()->height();
+  painter->scale(1.0 / get_dpr(), 1.0 / get_dpr());
+}
+#endif
+
 void qt_renderer_rep::end () { painter->end (); }
 
 void 
@@ -160,6 +170,7 @@ qt_renderer_rep::get_extents (int& w2, int& h2) {
 void
 qt_renderer_rep::set_zoom_factor (double zoom) {
 #if QT_VERSION >= 0x060000
+  zoom *= zoom_multiplier;
   renderer_rep::set_zoom_factor (get_dpr() * zoom);
   retina_pixel= (double)pixel * get_dpr();
 #else
