@@ -22,12 +22,10 @@ int script_status = 1;
 
 int
 system (string s, string& result, string& error) {
-#if defined (OS_MINGW)
-#ifdef QTTEXMACS
+#if defined (OS_MINGW64)
+  int r= windows_system (s, result, error);
+#elif defined (OS_MINGW)
   int r= qt_system (s, result, error);
-#else	
-  int r= mingw_system (s, result, error);
-#endif
 #else
   int r= unix_system (s, result, error);
 #endif
@@ -36,12 +34,10 @@ system (string s, string& result, string& error) {
 
 int
 system (string s, string& result) {
-#if defined (OS_MINGW)
-#ifdef QTTEXMACS
+#if defined (OS_MINGW64)
+  int r= windows_system (s, result); 
+#elif defined (OS_MINGW)
   int r= qt_system (s, result);
-#else
-  int r= mingw_system (s, result);
-#endif  
 #else
   int r= unix_system (s, result);
 #endif
@@ -58,13 +54,10 @@ system (string s) {
     return r;
   }
   else {
-#if defined (OS_MINGW)
-    // if (starts (s, "convert ")) return 1;
-#ifdef QTTEXMACS
+#if defined (OS_MINGW64)
+    return windows_system (s);
+#elif defined (OS_MINGW)
     return qt_system (s);
-#else
-    return mingw_system (s);
-#endif
 #else
     return unix_system (s);
 #endif
