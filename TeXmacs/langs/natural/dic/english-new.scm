@@ -7,6 +7,7 @@
 ("abbreviated authors" "")
 ("abbreviation" "")
 ("about" "")
+("apropos" "")
 ("about menu" "")
 ("above" "")
 ("abbreviated authors" "")

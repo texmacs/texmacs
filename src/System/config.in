@@ -72,6 +72,9 @@
 /* Define if the Qt framework is available. */
 #undef HAVE_QT
 
+/* Define to 1 if you have the `snprintf' function. */
+#undef HAVE_SNPRINTF
+
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 
@@ -158,6 +161,9 @@
 
 /* OS type */
 #undef OS_MINGW
+
+/* OS type */
+#undef OS_MINGW64
 
 /* OS type */
 #undef OS_POWERPC_GNU_LINUX
@@ -266,6 +272,9 @@
 /* Guile string size type */
 #undef guile_str_size_t
 
+/* Qt without fontconfig */
+#undef qt_no_fontconfig
+
 /* If there is a static plugin qgif */
 #undef qt_static_plugin_qgif
 
@@ -277,3 +286,6 @@
 
 /* If there is a static plugin qsvg */
 #undef qt_static_plugin_qsvg
+
+/* If Qt is statically linked */
+#undef qt_static_plugin_xcb

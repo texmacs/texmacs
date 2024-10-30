@@ -502,10 +502,13 @@ tmscm_to_symbol (tmscm s) {
  * Blackbox
  ******************************************************************************/
 
+#if defined(SIZEOF_ENT) && SIZEOF_ENT == SCM_SIZEOF_LONG_LONG
+static long long blackbox_tag;
+#define SCM_BLACKBOXP(t) (SCM_NIMP (t) && (((long long) SCM_CAR (t)) == blackbox_tag))
+#else
 static long blackbox_tag;
-
-#define SCM_BLACKBOXP(t) \
-(SCM_NIMP (t) && (((long) SCM_CAR (t)) == blackbox_tag))
+#define SCM_BLACKBOXP(t) (SCM_NIMP (t) && (((long) SCM_CAR (t)) == blackbox_tag))
+#endif
 
 bool
 tmscm_is_blackbox (tmscm t) {

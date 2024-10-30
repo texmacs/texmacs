@@ -707,6 +707,7 @@ UIC
 MOC
 QT_PATH
 QMAKE
+CV2PDB
 ASPELL_CMD
 XTRA_CMD
 MACOSX_TARGET
@@ -762,6 +763,7 @@ GUILE_CFLAGS
 GUILE_CPP
 GUILE_CXX
 GUILE_DATA_PATH
+GUILE_EMBEDDED_DIR
 DIRGUILE
 GUILE_CONFIG
 GUILE_STATIC
@@ -771,6 +773,7 @@ CONFIG_CP
 CONFIG_ARCHS
 CONFIG_DATE
 CONFIG_USER
+CONFIG_HOST_CPU
 CONFIG_HOST_VENDOR
 CONFIG_HOST_OS
 CONFIG_LDRT
@@ -878,6 +881,7 @@ ac_user_opts='
 enable_option_checking
 enable_dumpflags
 with_tmrepo
+with_texmacs_builder
 enable_static
 with_guile
 enable_guile2
@@ -895,7 +899,9 @@ enable_macosx_extensions
 with_sdk
 with_osx
 enable_console
+enable_cv2pdb
 enable_qt
+with_qt_find_method
 with_qt
 with_x
 enable_qtpipes
@@ -1567,6 +1573,7 @@ if test -n "$ac_init_help"; then
                           do not use Mac specific services (spellchecker,
                           image handling, ...)
   --enable-console        enable windows console
+  --enable-windows-pbd    enable windows debug symbols
   --disable-qt            replace Qt by X11 interface
   --enable-qtpipes        replace UNIX pipes by Qt pipes
   --enable-cocoa          replace X11 by Cocoa interface
@@ -1585,6 +1592,8 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-tmrepo[=no]      absolute texmacs sdk path
+  --with-texmacs-builder[=no]
+                          absolute texmacs builder path
   --with-guile[=system]   path to to find guile-config or [embedded] if any
                           tm-guile package included
   --with-iconv[=DIR]      where to find iconv []
@@ -1599,6 +1608,9 @@ Optional Packages:
   --with-appcast[=ARG]    path for the appcast updater file
   --with-sdk[=none]       Apple SDK level (i.e 10.6)
   --with-osx[=none]       targeted configuration (i.e 10.6)
+  --with-qt-find-method=METHOD
+                          Method to find Qt (autotroll, autotrollstatic,
+                          pkgconfig)
   --with-qt[=ARG]         Qt support. ARG can be `yes' (the default), `no', or
                           a path to Qt binaries; if `yes' or empty, use PATH
                           and some default directories to find Qt binaries
@@ -2331,38 +2343,6 @@ fi
   as_fn_set_status $ac_retval
 
 } # ac_fn_cxx_try_cpp
-
-# ac_fn_cxx_check_header_preproc LINENO HEADER VAR
-# ------------------------------------------------
-# Tests whether HEADER exists and can be preprocessed (in isolation), setting
-# the cache variable VAR accordingly.
-ac_fn_cxx_check_header_preproc ()
-{
-  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
-printf %s "checking for $2... " >&6; }
-if eval test \${$3+y}
-then :
-  printf %s "(cached) " >&6
-else $as_nop
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <$2>
-_ACEOF
-if ac_fn_cxx_try_cpp "$LINENO"
-then :
-  eval "$3=yes"
-else $as_nop
-  eval "$3=no"
-fi
-rm -f conftest.err conftest.i conftest.$ac_ext
-fi
-eval ac_res=\$$3
-	       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-printf "%s\n" "$ac_res" >&6; }
-  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
-
-} # ac_fn_cxx_check_header_preproc
 
 # ac_fn_c_try_link LINENO
 # -----------------------
@@ -4599,11 +4579,11 @@ if test x$ac_prog_cxx_stdcxx = xno
 then :
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $CXX option to enable C++11 features" >&5
 printf %s "checking for $CXX option to enable C++11 features... " >&6; }
-if test ${ac_cv_prog_cxx_11+y}
+if test ${ac_cv_prog_cxx_cxx11+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
-  ac_cv_prog_cxx_11=no
+  ac_cv_prog_cxx_cxx11=no
 ac_save_CXX=$CXX
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
@@ -4645,11 +4625,11 @@ if test x$ac_prog_cxx_stdcxx = xno
 then :
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $CXX option to enable C++98 features" >&5
 printf %s "checking for $CXX option to enable C++98 features... " >&6; }
-if test ${ac_cv_prog_cxx_98+y}
+if test ${ac_cv_prog_cxx_cxx98+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
-  ac_cv_prog_cxx_98=no
+  ac_cv_prog_cxx_cxx98=no
 ac_save_CXX=$CXX
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
@@ -5604,6 +5584,13 @@ then :
 
 fi
 
+ac_fn_cxx_check_func "$LINENO" "snprintf" "ac_cv_func_snprintf"
+if test "x$ac_cv_func_snprintf" = xyes
+then :
+  printf "%s\n" "#define HAVE_SNPRINTF 1" >>confdefs.h
+
+fi
+
 
 
 
@@ -5998,6 +5985,22 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
   fi
 
 
+
+# Check whether --with-texmacs-builder was given.
+if test ${with_texmacs_builder+y}
+then :
+  withval=$with_texmacs_builder; TEXMACSBUILDER=${withval%%/}
+fi
+
+
+  if test -n "$TEXMACSBUILDER" -a "$TEXMACSBUILDER" != no
+  then
+    TMREPO=$TEXMACSBUILDER
+
+  fi
+
+
+
   CONFIG_OS_SUFFIX="${host}"
   CONFIG_OS_COMPAT="Unix"
   CONFIG_MACOS=""
@@ -6384,6 +6387,98 @@ printf "%s\n" "#define OS_SOLARIS 1" >>confdefs.h
       CONFIG_BPATH="-Wl,-R,"
       X11_LDFLAGS="$X_LIBS -lXext -lX11 -lsocket"
     ;;
+    *64*w64-mingw32)
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: for mingw64 host" >&5
+printf "%s\n" "for mingw64 host" >&6; }
+
+printf "%s\n" "#define OS_MINGW 1" >>confdefs.h
+
+
+printf "%s\n" "#define OS_MINGW64 1" >>confdefs.h
+
+      CONFIG_BUNDLE=WINDOWS_BUNDLE
+
+      CONFIG_PACKAGE=WINDOWS_PACKAGE
+
+      CONFIG_OS=MINGW
+      CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
+      CONFIG_QTPIPES="yes"
+      CONFIG_OS_COMPAT="Windows64"
+      CPPFLAGS="$CPPFLAGS -IPlugins/Windows64 -I."
+
+  if [[ "-Wl,--stack=16777216" =~ $(echo '^-Wl,') ]]
+  then LDFLAGS+=" -Wl,--stack=16777216"
+  elif [[ "-Wl,--stack=16777216" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "-Wl,--stack=16777216"
+  do  while [[ $LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then LDFLAGS=
+  else  while test "$LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$LDFLAGS"
+        LDFLAGS="${LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        LDFLAGS="${LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        LDFLAGS="${LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  LDFLAGS=$(echo $LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       LDFLAGS+=" -Wl,--stack=16777216"
+  else
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-Wl,--stack=16777216($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -Wl" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
+    else LDFLAGS+=" -Wl,--stack=16777216"
+    fi
+  fi
+
+
+  if [[ "-ldbghelp -lSecur32" =~ $(echo '^-Wl,') ]]
+  then LDFLAGS+=" -ldbghelp -lSecur32"
+  elif [[ "-ldbghelp -lSecur32" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "-ldbghelp -lSecur32"
+  do  while [[ $LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then LDFLAGS=
+  else  while test "$LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$LDFLAGS"
+        LDFLAGS="${LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        LDFLAGS="${LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        LDFLAGS="${LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  LDFLAGS=$(echo $LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       LDFLAGS+=" -ldbghelp -lSecur32"
+  else
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-ldbghelp -lSecur32($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -ldbghelp -lSecur32" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -ldbghelp -lSecur32" >&2;}
+    else LDFLAGS+=" -ldbghelp -lSecur32"
+    fi
+  fi
+
+      CONFIG_CP="cp -f -R -p" #rsync do not work properly on mingw
+    ;;
     *mingw*)
       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: for mingw host" >&5
 printf "%s\n" "for mingw host" >&6; }
@@ -6436,6 +6531,43 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
     fi
   fi
 
+
+  if [[ "-ldbghelp -lSecur32" =~ $(echo '^-Wl,') ]]
+  then LDFLAGS+=" -ldbghelp -lSecur32"
+  elif [[ "-ldbghelp -lSecur32" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "-ldbghelp -lSecur32"
+  do  while [[ $LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then LDFLAGS=
+  else  while test "$LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$LDFLAGS"
+        LDFLAGS="${LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        LDFLAGS="${LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        LDFLAGS="${LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  LDFLAGS=$(echo $LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       LDFLAGS+=" -ldbghelp -lSecur32"
+  else
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-ldbghelp -lSecur32($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -ldbghelp -lSecur32" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -ldbghelp -lSecur32" >&2;}
+    else LDFLAGS+=" -ldbghelp -lSecur32"
+    fi
+  fi
+
+      CONFIG_CP="cp -f -R -p" #rsync do not work properly on mingw
     ;;
     *-*-cygwin)
       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: cygwin host" >&5
@@ -7994,6 +8126,7 @@ printf "%s\n" "#define OS_GNU_LINUX 1" >>confdefs.h
 
 
 
+
   # Check whether --enable-static was given.
 if test ${enable_static+y}
 then :
@@ -8165,7 +8298,19 @@ fi
 
 
 
-  if test "$location" = "embedded"
+  GUILE_EMBEDDED_VERSION="1.6"
+  GUILE_EMBEDDED_DIR="tm-guile168"
+
+  if test "$location" = "embedded18"
+then :
+
+    GUILE_EMBEDDED_VERSION="1.8"
+    GUILE_EMBEDDED_DIR="tm-guile188"
+
+
+fi
+
+  if test "$location" = "embedded" || test "$location" = "embedded18"
 then :
   unset location
 elif test -z $location
@@ -8228,6 +8373,8 @@ fi
   if test -n "$GUILE_CONFIG"
 then :
 
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: using guile-config: $GUILE_CONFIG" >&5
+printf "%s\n" "$as_me: using guile-config: $GUILE_CONFIG" >&6;}
     GUILE_CONFIG=$(type -p $GUILE_CONFIG)
     LC_WITH_GUILE_tmp1="$($GUILE_CONFIG link)"
     LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 $($GUILE_CONFIG compile)"
@@ -8843,18 +8990,29 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$LC_WITH_GUILE_tmp2/$GUILE
 
     unset LC_WITH_GUILE_tmp1 LC_WITH_GUILE_tmp2
 
-elif test -z "$location" -a -d tm-guile168
+elif test -z "$location" -a -d tm-guile188
 then :
 
       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: use embedded guile" >&5
 printf "%s\n" "$as_me: use embedded guile" >&6;}
-      MKGUILE=tm-guile168/build/lib/libguile.a
+      MKGUILE=tm-guile188/build/lib/libguile.a
 
-      DIRGUILE=tm-guile168
+      DIRGUILE=tm-guile188
 
       CLNGUILE=CLNGUILE
 
+
       LC_WITH_GUILE_use_embedded_guile=1
+      case "${host}" in
+        *mingw*)
+          GUILE_PREFIX=$(pwd -W)/tm-guile188/build
+          GUILE_STATIC='$(shell '${GUILE_PREFIX}'/bin/guile.exe -e main -s "'${GUILE_PREFIX}'/bin/guile-config" link)'
+        ;;
+        *)
+          GUILE_PREFIX=$(pwd)/tm-guile188/build
+          GUILE_STATIC='$(shell '${GUILE_PREFIX}'/bin/guile-config link)'
+        ;;
+      esac
 
 
   # Various preliminary checks.
@@ -8863,7 +9021,7 @@ printf "%s\n" "$as_me: use embedded guile" >&6;}
 
 
 
-    ax_dir="tm-guile168"
+    ax_dir="tm-guile188"
 
                     # Do not complain, so a configure script can configure whichever parts of a
     # large source tree are present.
@@ -8945,6 +9103,8 @@ ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
       ax_args="--disable-option-checking $ax_args"
       # Options that must be added as they are provided.
       as_fn_append ax_args " '--without-guile-readline'"
+      as_fn_append ax_args " 'CPPFLAGS=${CPPFLAGS}'"
+      as_fn_append ax_args " 'LDFLAGS=${LDFLAGS}'"
 
       # New options that may need to be merged with existing options.
       ax_candidate="--disable-shared"
@@ -8959,14 +9119,14 @@ ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
            fi
 
       # New options that must replace existing options.
-      ax_candidate="--prefix=$(pwd)/tm-guile168/build"
+      ax_candidate="--prefix=${GUILE_PREFIX}"
            ax_candidate_flag="${ax_candidate%%=*}"
            ax_candidate_content="${ax_candidate#*=}"
            if test "x$ax_candidate" != "x" -a "x$ax_candidate_flag" != "x"; then
              if echo "$ax_args" | grep -- "${ax_candidate_flag}=" >/dev/null 2>&1; then
                ax_args=$(echo $ax_args | sed "s,${ax_candidate_flag}=[^']*,${ax_candidate},")
              else
-               as_fn_append ax_args " '--prefix=$(pwd)/tm-guile168/build'"
+               as_fn_append ax_args " '--prefix=${GUILE_PREFIX}'"
              fi
            fi
 
@@ -8989,15 +9149,14 @@ printf "%s\n" "$as_me: WARNING: could not find source tree for $ax_dir" >&2;}
 
 
 
-      GUILE_STATIC='$(shell ../tm-guile168/guile-config/guile-config link)'
 
 
-  if [[ "-I$(pwd)/tm-guile168/build/include" =~ $(echo '^-Wl,') ]]
-  then GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile168/build/include"
-  elif [[ "-I$(pwd)/tm-guile168/build/include" =~ $(echo '^-l') ]]
+  if [[ "-I${GUILE_PREFIX}/include" =~ $(echo '^-Wl,') ]]
+  then GUILE_CPPFLAGS+=" -I${GUILE_PREFIX}/include"
+  elif [[ "-I${GUILE_PREFIX}/include" =~ $(echo '^-l') ]]
   then
   unset STRIP_ALL_ARGS_list
-  for STRIP_ALL_ARGS_arg in "-I$(pwd)/tm-guile168/build/include"
+  for STRIP_ALL_ARGS_arg in "-I${GUILE_PREFIX}/include"
   do  while [[ $GUILE_CPPFLAGS != $STRIP_ALL_ARGS_list ]]
       do STRIP_ALL_ARGS_list=$GUILE_CPPFLAGS
 
@@ -9018,22 +9177,22 @@ printf "%s\n" "$as_me: WARNING: could not find source tree for $ax_dir" >&2;}
   done
   unset ${!STRIP_ALL_ARGS_*}
 
-       GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile168/build/include"
+       GUILE_CPPFLAGS+=" -I${GUILE_PREFIX}/include"
   else
-    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])-I$(pwd)/tm-guile168/build/include($|[[:space:]])") ]]
-    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I$(pwd)/tm-guile168/build/include" >&5
-printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$(pwd)/tm-guile168/build/include" >&2;}
-    else GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile168/build/include"
+    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])-I${GUILE_PREFIX}/include($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I${GUILE_PREFIX}/include" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I${GUILE_PREFIX}/include" >&2;}
+    else GUILE_CPPFLAGS+=" -I${GUILE_PREFIX}/include"
     fi
   fi
 
 
-  if [[ "-I$(pwd)/tm-guile168/build/include/guile" =~ $(echo '^-Wl,') ]]
-  then GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile168/build/include/guile"
-  elif [[ "-I$(pwd)/tm-guile168/build/include/guile" =~ $(echo '^-l') ]]
+  if [[ "-I${GUILE_PREFIX}/include/guile" =~ $(echo '^-Wl,') ]]
+  then GUILE_CPPFLAGS+=" -I${GUILE_PREFIX}/include/guile"
+  elif [[ "-I${GUILE_PREFIX}/include/guile" =~ $(echo '^-l') ]]
   then
   unset STRIP_ALL_ARGS_list
-  for STRIP_ALL_ARGS_arg in "-I$(pwd)/tm-guile168/build/include/guile"
+  for STRIP_ALL_ARGS_arg in "-I${GUILE_PREFIX}/include/guile"
   do  while [[ $GUILE_CPPFLAGS != $STRIP_ALL_ARGS_list ]]
       do STRIP_ALL_ARGS_list=$GUILE_CPPFLAGS
 
@@ -9054,17 +9213,17 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$(pwd)/tm-guile168/build/i
   done
   unset ${!STRIP_ALL_ARGS_*}
 
-       GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile168/build/include/guile"
+       GUILE_CPPFLAGS+=" -I${GUILE_PREFIX}/include/guile"
   else
-    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])-I$(pwd)/tm-guile168/build/include/guile($|[[:space:]])") ]]
-    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I$(pwd)/tm-guile168/build/include/guile" >&5
-printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$(pwd)/tm-guile168/build/include/guile" >&2;}
-    else GUILE_CPPFLAGS+=" -I$(pwd)/tm-guile168/build/include/guile"
+    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])-I${GUILE_PREFIX}/include/guile($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I${GUILE_PREFIX}/include/guile" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I${GUILE_PREFIX}/include/guile" >&2;}
+    else GUILE_CPPFLAGS+=" -I${GUILE_PREFIX}/include/guile"
     fi
   fi
 
-      GUILE_VERSION=1.6
-      GUILE_DATA_PATH=$(pwd)/tm-guile168/build/share/guile/${GUILE_VERSION}
+      GUILE_VERSION=$GUILE_EMBEDDED_VERSION
+      GUILE_DATA_PATH=${GUILE_PREFIX}/share/guile*/${GUILE_VERSION}
 
 else $as_nop
   as_fn_error $? "cannot find guile-config; is Guile installed?" "$LINENO" 5
@@ -11474,8 +11633,18 @@ then
 
 
   unset ICONV_CFLAGS;unset ICONV_CXXFLAGS;unset ICONV_CPPFLAGS;unset ICONV_LDFLAGS;unset ICONV_LIBS; # no previous iconv definition allowed
-  ac_fn_cxx_check_header_preproc "$LINENO" "iconv.h" "ac_cv_header_iconv_h"
-if test "x$ac_cv_header_iconv_h" = xyes
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include<iconv.h>
+int
+main (void)
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_cpp "$LINENO"
 then :
 
     _LC_ICONV_DEPEND=$(<$_LC_ICONV_TEMP)
@@ -13452,8 +13621,18 @@ printf "%s\n" "$as_me: WARNING: Try to force default location" >&2;}
 
 
   unset ICONV_CFLAGS;unset ICONV_CXXFLAGS;unset ICONV_CPPFLAGS;unset ICONV_LDFLAGS;unset ICONV_LIBS; # no previous iconv definition allowed
-  ac_fn_cxx_check_header_preproc "$LINENO" "iconv.h" "ac_cv_header_iconv_h"
-if test "x$ac_cv_header_iconv_h" = xyes
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include<iconv.h>
+int
+main (void)
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_cpp "$LINENO"
 then :
 
     _LC_ICONV_DEPEND=$(<$_LC_ICONV_TEMP)
@@ -15806,7 +15985,7 @@ else $as_nop
 printf "%s\n" "$as_me: WARNING: Use --with-iconv=iconv_base_path (i.e /usr/local) to specify your icon location" >&2;}
 
 fi
-
+rm -f conftest.err conftest.i conftest.$ac_ext
   unset ${!_LC_ICONV_*}
 
 
@@ -15829,7 +16008,7 @@ else $as_nop
 printf "%s\n" "$as_me: WARNING: Use --with-iconv=iconv_base_path (i.e /usr/local) to specify your icon location" >&2;}
 
 fi
-
+rm -f conftest.err conftest.i conftest.$ac_ext
   unset ${!_LC_ICONV_*}
 
 else { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: absence of iconv may crash HTML import or prevent the build" >&5
@@ -19432,7 +19611,7 @@ else $as_nop
   ;;
   *)
   as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $TMREPO/bin
+for as_dir in $PATH
 do
   IFS=$as_save_IFS
   case $as_dir in #(((
@@ -19466,7 +19645,9 @@ fi
   test -n "$GS_EXE" && break
 done
 
-        if [[ -x "$GS_EXE" ]]
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: \"$GS_EXE\"" >&5
+printf "%s\n" "$as_me: \"$GS_EXE\"" >&6;}
+        if test -x "$GS_EXE";
         then
           #get needed gs fonts and libs paths
           while read -r l sep p # default path, separator, extra path
@@ -19489,10 +19670,9 @@ printf "%s\n" "#define GS_FONTS \"share/ghostscript/fonts\"" >>confdefs.h
 
 
 
-          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Ghostscript found  in TMREPO, it will be embedded in Package for Macos or Windows" >&5
-printf "%s\n" "$as_me: Ghostscript found  in TMREPO, it will be embedded in Package for Macos or Windows" >&6;}
-        else { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Ghostscript not detected in TMREPO, won't be embedded in Package" >&5
-printf "%s\n" "$as_me: WARNING: Ghostscript not detected in TMREPO, won't be embedded in Package" >&2;}
+          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Ghostscript found  in $TMREPO, it will be embedded in Package for Macos or Windows" >&5
+printf "%s\n" "$as_me: Ghostscript found  in $TMREPO, it will be embedded in Package for Macos or Windows" >&6;}
+        else as_fn_error $? "Ghostscript not detected in $TMREPO, won't be embedded in Package" "$LINENO" 5
         fi
       fi
 
@@ -24635,7 +24815,68 @@ printf "%s\n" "#define ASPELL \"plugins/aspell\"" >>confdefs.h
 fi
 
 fi
+
+    # Check whether --enable-cv2pdb was given.
+if test ${enable_cv2pdb+y}
+then :
+  enableval=$enable_cv2pdb;
+fi
+
+    if test "$enableval" = yes
+    then  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: enabling cv2pdb" >&5
+printf "%s\n" "enabling cv2pdb" >&6; }
+          # Extract the first word of "cv2pdb", so it can be a program name with args.
+set dummy cv2pdb; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_prog_CV2PDB+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  if test -n "$CV2PDB"; then
+  ac_cv_prog_CV2PDB="$CV2PDB" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_prog_CV2PDB="yes"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
   fi
+done
+  done
+IFS=$as_save_IFS
+
+  test -z "$ac_cv_prog_CV2PDB" && ac_cv_prog_CV2PDB="no"
+fi
+fi
+CV2PDB=$ac_cv_prog_CV2PDB
+if test -n "$CV2PDB"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $CV2PDB" >&5
+printf "%s\n" "$CV2PDB" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+          if test "$CV2PDB" = no
+          then  as_fn_error $? "cv2pdb not found" "$LINENO" 5
+          fi
+    else  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: disabling cv2pdb" >&5
+printf "%s\n" "disabling cv2pdb" >&6; }
+    fi
+
+  fi
+
 
 
 
@@ -24660,7 +24901,79 @@ fi
     MINGW) xtralibs="+xml";;
   esac
 
-  for ac_prog in qmake qmake-qt4 qmake-qt5
+
+  # on linux and android, add -fPIC -pthread -ldl -Wl,--copy-dt-needed-entries
+  case $CONFIG_OS in
+    GNU_LINUX | ANDROID)
+
+  if [[ "-fPIC -pthread -ldl -Wl,--copy-dt-needed-entries" =~ $(echo '^-Wl,') ]]
+  then CXXFLAGS+=" -fPIC -pthread -ldl -Wl,--copy-dt-needed-entries"
+  elif [[ "-fPIC -pthread -ldl -Wl,--copy-dt-needed-entries" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "-fPIC -pthread -ldl -Wl,--copy-dt-needed-entries"
+  do  while [[ $CXXFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$CXXFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$CXXFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then CXXFLAGS=
+  else  while test "$CXXFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$CXXFLAGS"
+        CXXFLAGS="${CXXFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        CXXFLAGS="${CXXFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        CXXFLAGS="${CXXFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  CXXFLAGS=$(echo $CXXFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       CXXFLAGS+=" -fPIC -pthread -ldl -Wl,--copy-dt-needed-entries"
+  else
+    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])-fPIC -pthread -ldl -Wl,--copy-dt-needed-entries($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -fPIC -pthread -ldl -Wl" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -fPIC -pthread -ldl -Wl" >&2;}
+    else CXXFLAGS+=" -fPIC -pthread -ldl -Wl,--copy-dt-needed-entries"
+    fi
+  fi
+
+      ;;
+  esac
+
+
+
+# Check whether --with-qt-find-method was given.
+if test ${with_qt_find_method+y}
+then :
+  withval=$with_qt_find_method; qt_find_method=$withval
+else $as_nop
+  qt_find_method=autotroll
+fi
+
+
+  case $qt_find_method in
+    autotroll)
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Searching for Qt using autotroll" >&5
+printf "%s\n" "$as_me: Searching for Qt using autotroll" >&6;}
+      ;;
+    pkgconfig)
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Searching for Qt using pkg-config" >&5
+printf "%s\n" "$as_me: Searching for Qt using pkg-config" >&6;}
+      ;;
+    autotrollstatic)
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Searching for Qt using autotroll static" >&5
+printf "%s\n" "$as_me: Searching for Qt using autotroll static" >&6;}
+      ;;
+    *)
+      as_fn_error $? "Unknown method to find Qt: $qt_find_method" "$LINENO" 5
+      ;;
+  esac
+
+  for ac_prog in qmake qmake-qt4 qmake-qt5 qmake-qt6 qmake6
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
@@ -24709,13 +25022,1039 @@ fi
 
   test -n "$QMAKE" && break
 done
-test -n "$QMAKE" || QMAKE="echo"
+test -n "$QMAKE" || QMAKE="missing"
 
-  case $($QMAKE -query QT_VERSION 2>/dev/null) in
-  5.*)
+  if test "x$QMAKE" = "xmissing"; then
+    as_fn_error $? "Cannot find qmake, qmake-qt4, qmake-qt5, qmake-qt6, or qmake6, for using a Qt library" "$LINENO" 5
+  fi
+  case $qt_find_method.$($QMAKE -query QT_VERSION 2>/dev/null) in
+  autotroll.4.* | autotrollstatic.4.*)
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Qt4 found" >&5
+printf "%s\n" "$as_me: Qt4 found" >&6;}
+    echo "$as_me: this is autotroll.m4 serial 10" >&5
+
+  test x"$TROLL" != x && echo 'ViM rox emacs.'
+
+
+# Check whether --with-qt was given.
+if test ${with_qt+y}
+then :
+  withval=$with_qt;
+fi
+
+
+  if test x"$with_qt" = x"no"; then
+    break
+  else
+
+printf "%s\n" "#define HAVE_QT 1" >>confdefs.h
+
+  fi
+
+  if test x"$with_qt" = x"yes"; then
+    QT_PATH=
+  else
+    QT_PATH=$with_qt
+  fi
+
+  # this is a hack to get decent flow control with 'break'
+  for _qt_ignored in once; do
+
+  # Find Qt.
+
+  if test -d /usr/local/Trolltech; then
+    # Try to find the latest version.
+    tmp_qt_paths=`echo /usr/local/Trolltech/*/bin | tr ' ' '\n' | sort -nr \
+                                              | xargs | sed 's/  */:/g'`
+  fi
+  # Path to which recent MacPorts (~v1.7) install Qt4.
+  test -d /opt/local/libexec/qt4-mac/bin \
+    && tmp_qt_paths="$tmp_qt_paths:/opt/local/libexec/qt4-mac/bin"
+
+  # Path to which homebrew (Mac) installs Qt moc executable.
+  test -d /opt/homebrew/share/qt/libexec \
+    && tmp_qt_paths="$tmp_qt_paths:/opt/homebrew/share/qt/libexec"
+
+  # Find qmake.
+
+  for ax_tool in qmake qmake-qt5 qmake-qt4 qmake-qt3; do
+  if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}$ax_tool", so it can be a program name with args.
+set dummy ${ac_tool_prefix}$ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_QMAKE+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $QMAKE in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_QMAKE="$QMAKE" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_DIR:$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_QMAKE="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+QMAKE=$ac_cv_path_QMAKE
+if test -n "$QMAKE"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $QMAKE" >&5
+printf "%s\n" "$QMAKE" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_path_QMAKE"; then
+  ac_pt_QMAKE=$QMAKE
+  # Extract the first word of "$ax_tool", so it can be a program name with args.
+set dummy $ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_ac_pt_QMAKE+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $ac_pt_QMAKE in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_ac_pt_QMAKE="$ac_pt_QMAKE" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_DIR:$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_ac_pt_QMAKE="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+ac_pt_QMAKE=$ac_cv_path_ac_pt_QMAKE
+if test -n "$ac_pt_QMAKE"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_pt_QMAKE" >&5
+printf "%s\n" "$ac_pt_QMAKE" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+  if test "x$ac_pt_QMAKE" = x; then
+    QMAKE=""
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    QMAKE=$ac_pt_QMAKE
+  fi
+else
+  QMAKE="$ac_cv_path_QMAKE"
+fi
+
+  test -n "$QMAKE" && break
+done
+test -n "$QMAKE" || QMAKE="missing"
+
+  if test x"$QMAKE" = xmissing; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Cannot find qmake. Try --with-qt=PATH." >&5
+printf "%s\n" "$as_me: WARNING: Cannot find qmake. Try --with-qt=PATH." >&2;}; as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+    break
+  fi
+
+  # Find moc (Meta Object Compiler).
+
+  for ax_tool in moc moc-qt5 moc-qt4 moc-qt3; do
+  if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}$ax_tool", so it can be a program name with args.
+set dummy ${ac_tool_prefix}$ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_MOC+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $MOC in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_MOC="$MOC" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_MOC="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+MOC=$ac_cv_path_MOC
+if test -n "$MOC"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $MOC" >&5
+printf "%s\n" "$MOC" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_path_MOC"; then
+  ac_pt_MOC=$MOC
+  # Extract the first word of "$ax_tool", so it can be a program name with args.
+set dummy $ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_ac_pt_MOC+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $ac_pt_MOC in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_ac_pt_MOC="$ac_pt_MOC" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_ac_pt_MOC="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+ac_pt_MOC=$ac_cv_path_ac_pt_MOC
+if test -n "$ac_pt_MOC"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_pt_MOC" >&5
+printf "%s\n" "$ac_pt_MOC" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+  if test "x$ac_pt_MOC" = x; then
+    MOC=""
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    MOC=$ac_pt_MOC
+  fi
+else
+  MOC="$ac_cv_path_MOC"
+fi
+
+  test -n "$MOC" && break
+done
+test -n "$MOC" || MOC="missing"
+
+  if test x"$MOC" = xmissing; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Cannot find moc (Meta Object Compiler). Try --with-qt=PATH." >&5
+printf "%s\n" "$as_me: WARNING: Cannot find moc (Meta Object Compiler). Try --with-qt=PATH." >&2;}; as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+    break
+  fi
+
+  # Find uic (User Interface Compiler).
+
+  for ax_tool in uic uic-qt5 uic-qt4 uic-qt3 uic3; do
+  if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}$ax_tool", so it can be a program name with args.
+set dummy ${ac_tool_prefix}$ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_UIC+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $UIC in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_UIC="$UIC" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_UIC="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+UIC=$ac_cv_path_UIC
+if test -n "$UIC"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $UIC" >&5
+printf "%s\n" "$UIC" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_path_UIC"; then
+  ac_pt_UIC=$UIC
+  # Extract the first word of "$ax_tool", so it can be a program name with args.
+set dummy $ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_ac_pt_UIC+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $ac_pt_UIC in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_ac_pt_UIC="$ac_pt_UIC" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_ac_pt_UIC="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+ac_pt_UIC=$ac_cv_path_ac_pt_UIC
+if test -n "$ac_pt_UIC"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_pt_UIC" >&5
+printf "%s\n" "$ac_pt_UIC" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+  if test "x$ac_pt_UIC" = x; then
+    UIC=""
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    UIC=$ac_pt_UIC
+  fi
+else
+  UIC="$ac_cv_path_UIC"
+fi
+
+  test -n "$UIC" && break
+done
+test -n "$UIC" || UIC="missing"
+
+  if test x"$UIC" = xmissing; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Cannot find uic (User Interface Compiler). Try --with-qt=PATH." >&5
+printf "%s\n" "$as_me: WARNING: Cannot find uic (User Interface Compiler). Try --with-qt=PATH." >&2;}; as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+    break
+  fi
+
+  # Find rcc (Qt Resource Compiler).
+
+  for ax_tool in rcc rcc-qt5; do
+  if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}$ax_tool", so it can be a program name with args.
+set dummy ${ac_tool_prefix}$ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_RCC+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $RCC in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_RCC="$RCC" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_RCC="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+RCC=$ac_cv_path_RCC
+if test -n "$RCC"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $RCC" >&5
+printf "%s\n" "$RCC" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_path_RCC"; then
+  ac_pt_RCC=$RCC
+  # Extract the first word of "$ax_tool", so it can be a program name with args.
+set dummy $ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_ac_pt_RCC+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $ac_pt_RCC in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_ac_pt_RCC="$ac_pt_RCC" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_ac_pt_RCC="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+ac_pt_RCC=$ac_cv_path_ac_pt_RCC
+if test -n "$ac_pt_RCC"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_pt_RCC" >&5
+printf "%s\n" "$ac_pt_RCC" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+  if test "x$ac_pt_RCC" = x; then
+    RCC=""
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    RCC=$ac_pt_RCC
+  fi
+else
+  RCC="$ac_cv_path_RCC"
+fi
+
+  test -n "$RCC" && break
+done
+test -n "$RCC" || RCC="false"
+
+  if test x"$UIC" = xfalse; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Cannot find rcc (Qt Resource Compiler). Try --with-qt=PATH." >&5
+printf "%s\n" "$as_me: WARNING: Cannot find rcc (Qt Resource Compiler). Try --with-qt=PATH." >&2;}
+  fi
+
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether host operating system is Darwin" >&5
+printf %s "checking whether host operating system is Darwin... " >&6; }
+  at_darwin=no
+  at_qmake_args=
+  case $host_os in
+    darwin*)
+      at_darwin=yes
+      ;;
+  esac
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $at_darwin" >&5
+printf "%s\n" "$at_darwin" >&6; }
+
+  # If we don't know the path to Qt, guess it from the path to qmake.
+  if test x"$QT_PATH" = x; then
+    QT_PATH=`dirname "$QMAKE"`
+  fi
+  if test x"$QT_PATH" = x; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Cannot find your Qt installation. Try --with-qt=PATH." >&5
+printf "%s\n" "$as_me: WARNING: Cannot find your Qt installation. Try --with-qt=PATH." >&2;}; as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+    break
+  fi
+
+
+  # Get ready to build a test-app with Qt.
+  if mkdir conftest.dir && cd conftest.dir; then :; else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Cannot mkdir conftest.dir or cd to that directory." >&5
+printf "%s\n" "$as_me: WARNING: Cannot mkdir conftest.dir or cd to that directory." >&2;}; as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+    break
+  fi
+
+  cat >conftest.h <<_ASEOF
+#include <QObject>
+
+class Foo: public QObject
+{
+  Q_OBJECT;
+public:
+  Foo();
+  ~Foo() {}
+public Q_SLOTS:
+  void setValue(int value);
+Q_SIGNALS:
+  void valueChanged(int newValue);
+private:
+  int value_;
+};
+_ASEOF
+
+  cat >conftest.cpp <<_ASEOF
+#include "conftest.h"
+Foo::Foo()
+  : value_ (42)
+{
+  connect(this, SIGNAL(valueChanged(int)), this, SLOT(setValue(int)));
+}
+
+void Foo::setValue(int value)
+{
+  value_ = value;
+}
+
+int main()
+{
+  Foo f;
+}
+_ASEOF
+  if $QMAKE -project; then :; else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Calling $QMAKE -project failed." >&5
+printf "%s\n" "$as_me: WARNING: Calling $QMAKE -project failed." >&2;}; as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+    break
+  fi
+
+  # Find the .pro file generated by qmake.
+  pro_file='conftest.dir.pro'
+  test -f $pro_file || pro_file=`echo *.pro`
+  if test -f "$pro_file"; then :; else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Can't find the .pro file generated by Qmake." >&5
+printf "%s\n" "$as_me: WARNING: Can't find the .pro file generated by Qmake." >&2;}; as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+    break
+  fi
+
+ # Tweak the value of QT in the .pro file for +widgets.
+
+  qt_conf=''
+  for at_mod in +widgets; do
+    at_mod=`echo "$at_mod" | sed 's/^-//; tough
+                                  s/^+//; beef
+                                  :ough
+                                  s/^/QT -= /;n
+                                  :eef
+                                  s/^/QT += /'`
+    qt_conf="$qt_conf
+$at_mod"
+  done
+  echo "$qt_conf" | sed 1d >>"$pro_file"
+
+
+ # Tweak the value of QT in the .pro file for $xtralibs +printsupport +svg.
+
+  qt_conf=''
+  for at_mod in $xtralibs +printsupport +svg; do
+    at_mod=`echo "$at_mod" | sed 's/^-//; tough
+                                  s/^+//; beef
+                                  :ough
+                                  s/^/QT -= /;n
+                                  :eef
+                                  s/^/QT += /'`
+    qt_conf="$qt_conf
+$at_mod"
+  done
+  echo "$qt_conf" | sed 1d >>"$pro_file"
+
+
+ # Tweak the value of CONFIG in the .pro file for +exceptions.
+
+  qt_conf=''
+  for at_mod in +exceptions; do
+    at_mod=`echo "$at_mod" | sed 's/^-//; tough
+                                  s/^+//; beef
+                                  :ough
+                                  s/^/CONFIG -= /;n
+                                  :eef
+                                  s/^/CONFIG += /'`
+    qt_conf="$qt_conf
+$at_mod"
+  done
+  echo "$qt_conf" | sed 1d >>"$pro_file"
+
+
+ # Add the extra-settings the user wants to set in the .pro
+  echo "LIBS += $LDFLAGS" >>"$pro_file"
+
+
+  echo "$as_me:$LINENO: Invoking $QMAKE on $pro_file" >&5
+  sed 's/^/| /' "$pro_file" >&5
+
+  if $QMAKE $at_qmake_args; then :; else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Calling $QMAKE $at_qmake_args failed." >&5
+printf "%s\n" "$as_me: WARNING: Calling $QMAKE $at_qmake_args failed." >&2;}; as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+    break
+  fi
+
+  # QMake has a very annoying misfeature: sometimes it generates Makefiles
+  # where all the references to the files from the Qt installation are
+  # relative.  We can't use them as-is because if we take, say, a
+  # -I../../usr/include/Qt from that Makefile, the flag is invalid as soon
+  # as we use it in another (sub) directory.  So what this perl pass does is
+  # that it rewrite all relative paths to absolute paths.  Another problem
+  # when building on Cygwin is that QMake mixes paths with blackslashes and
+  # forward slashes and paths must be handled with extra care because of the
+  # stupid Windows drive letters.
+  echo "$as_me:$LINENO: fixing the Makefiles:" Makefile* >&5
+  cat >fixmk.pl <<\EOF
+use strict;
+use Cwd qw(cwd abs_path);
+# This variable is useful on Cygwin for the following reason: Say that you are
+# in `/' (that is, in fact you are in C:/cygwin, or something like that) if you
+# `cd ..' then obviously you remain in `/' (that is in C:/cygwin).  QMake
+# generates paths that are relative to C:/ (or another driver letter, whatever)
+# so the trick to get the `..' resolved properly is to prepend the absolute
+# path of the current working directory in a Windows-style.  C:/cygwin/../ will
+# properly become C:/.
+my $d = "";
+my $r2a = 0;
+my $b2f = 0;
+
+my $cygwin = 0;
+if ($^O eq "cygwin") {
+  $cygwin = 1;
+  $d = cwd();
+  $d = `cygpath --mixed '$d'`;
+  chomp($d);
+  $d .= "/";
+}
+
+sub rel2abs($)
+{
+  my $p = $d . shift;
+  # print "r2a p=$p";
+  -e $p || return $p;
+  if ($cygwin) {
+    $p = `cygpath --mixed '$p'`;
+    chomp($p);
+  }
+  else {
+    # Do not use abs_path on Cygwin: it incorrectly resolves the paths that are
+    # relative to C:/ rather than `/'.
+    $p = abs_path($p);
+  }
+  # print " -> $p\n";
+  ++$r2a;
+  return $p;
+}
+
+# Only useful on Cygwin.
+sub back2forward($)
+{
+  my $p = shift;
+  # print "b2f p=$p";
+  -e $p || return $p;
+  $p = `cygpath --mixed '$p'`;
+  chomp($p);
+  # print " -> $p\n";
+  ++$b2f;
+  return $p;
+}
+
+foreach my $mk (@ARGV)
+{
+  next if $mk =~ /~$/;
+  open(MK, $mk) or die("open $mk: $!");
+  # print "mk=$mk\n";
+  my $file = join("", <MK>);
+  close(MK) or die("close $mk: $!");
+  rename $mk, $mk . "~" or die("rename $mk: $!");
+  $file =~ s{(?:\.\.[\\/])+(?:[^"'\s:]+)}{rel2abs($&)}gse;
+  $file =~ s{(?:[a-zA-Z]:[\\/])?(?:[^"\s]+\\[^"\s:]+)+}
+            {back2forward($&)}gse if $cygwin;
+  open(MK, ">", $mk) or die("open >$mk: $!");
+  print MK $file;
+  close(MK) or die("close >$mk: $!");
+  print "$mk: updated $r2a relative paths and $b2f backslash-style paths\n";
+  $r2a = 0;
+  $b2f = 0;
+}
+EOF
+
+  perl >&5 -w fixmk.pl Makefile* ||
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: failed to fix the Makefiles generated by $QMAKE" >&5
+printf "%s\n" "$as_me: WARNING: failed to fix the Makefiles generated by $QMAKE" >&2;}
+  rm -f fixmk.pl
+
+  # Try to compile a simple Qt app.
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether we can build a simple Qt app" >&5
+printf %s "checking whether we can build a simple Qt app... " >&6; }
+if test ${at_cv_qt_build+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  at_cv_qt_build=ko
+  : ${MAKE=make}
+
+  if $MAKE >&5 2>&1; then
+    at_cv_qt_build='ok, looks like Qt 4 or Qt 5'
+  else
+    echo "$as_me:$LINENO: Build failed, trying to #include <qobject.h> \
+instead" >&5
+    sed 's/<QObject>/<qobject.h>/' conftest.h > tmp.h && mv tmp.h conftest.h
+    if $MAKE >&5 2>&1; then
+      at_cv_qt_build='ok, looks like Qt 3'
+    else
+      # Sometimes (such as on Debian) build will fail because Qt hasn't been
+      # installed in debug mode and qmake tries (by default) to build apps in
+      # debug mode => Try again in release mode.
+      echo "$as_me:$LINENO: Build failed, trying to enforce release mode" \
+            >&5
+
+       # Tweak the value of CONFIG in the .pro file for +release.
+
+  qt_conf=''
+  for at_mod in +release; do
+    at_mod=`echo "$at_mod" | sed 's/^-//; tough
+                                  s/^+//; beef
+                                  :ough
+                                  s/^/CONFIG -= /;n
+                                  :eef
+                                  s/^/CONFIG += /'`
+    qt_conf="$qt_conf
+$at_mod"
+  done
+  echo "$qt_conf" | sed 1d >>"$pro_file"
+
+
+      sed 's/<qobject.h>/<QObject>/' conftest.h > tmp.h && mv tmp.h conftest.h
+      if $MAKE >&5 2>&1; then
+        at_cv_qt_build='ok, looks like Qt 4 or Qt 5, release mode forced'
+      else
+        echo "$as_me:$LINENO: Build failed, trying to #include <qobject.h> \
+instead" >&5
+        sed 's/<QObject>/<qobject.h>/' conftest.h >tmp.h && mv tmp.h conftest.h
+        if $MAKE >&5 2>&1; then
+          at_cv_qt_build='ok, looks like Qt 3, release mode forced'
+        else
+          at_cv_qt_build=ko
+          echo "$as_me:$LINENO: failed program was:" >&5
+          sed 's/^/| /' conftest.h >&5
+          echo "$as_me:$LINENO: failed program was:" >&5
+          sed 's/^/| /' conftest.cpp >&5
+        fi # if make with Qt3-style #include and release mode forced.
+      fi # if make with Qt4/5-style #include and release mode forced.
+    fi # if make with Qt3-style #include.
+  fi # if make with Qt4/5-style #include.
+
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $at_cv_qt_build" >&5
+printf "%s\n" "$at_cv_qt_build" >&6; }
+  if test x"$at_cv_qt_build" = xko; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Cannot build a test Qt program" >&5
+printf "%s\n" "$as_me: WARNING: Cannot build a test Qt program" >&2;}; as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+    cd ..
+    break
+  fi
+  QT_VERSION_MAJOR=`echo "$at_cv_qt_build" | sed 's/[^0-9]*//g'`
+
+
+  # This sed filter is applied after an expression of the form: /^FOO.*=/!d;
+  # It starts by removing the beginning of the line, removing references to
+  # SUBLIBS, removing unnecessary whitespaces at the beginning, and prefixes
+  # all variable uses by QT_.
+  qt_sed_filter='s///;
+                 s/$(SUBLIBS)//g;
+                 s/^ *//;
+                 s/\$(\([A-Z_][A-Z_]*\))/$(QT_\1)/g'
+
+  # Find the Makefile (qmake happens to generate a fake Makefile which invokes
+  # a Makefile.Debug or Makefile.Release). We we have both, we'll pick the
+  # Makefile.Release. The reason is that the main difference is that release
+  # uses -Os and debug -g. We can override -Os by passing another -O but we
+  # usually don't override -g.
+  if test -f Makefile.Release; then
+    at_mfile='Makefile.Release'
+  else
+    at_mfile='Makefile'
+  fi
+  if test -f $at_mfile; then :; else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Cannot find the Makefile generated by qmake." >&5
+printf "%s\n" "$as_me: WARNING: Cannot find the Makefile generated by qmake." >&2;}; as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+    cd ..
+    break
+  fi
+
+  # Find the DEFINES of Qt (should have been named CPPFLAGS).
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for the DEFINES to use with Qt" >&5
+printf %s "checking for the DEFINES to use with Qt... " >&6; }
+if test ${at_cv_env_QT_DEFINES+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  at_cv_env_QT_DEFINES=`sed "/^DEFINES[^A-Z=]*=/!d;$qt_sed_filter" $at_mfile`
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $at_cv_env_QT_DEFINES" >&5
+printf "%s\n" "$at_cv_env_QT_DEFINES" >&6; }
+  QT_DEFINES=$at_cv_env_QT_DEFINES
+
+
+  # Find the CFLAGS of Qt (We can use Qt in C?!)
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for the CFLAGS to use with Qt" >&5
+printf %s "checking for the CFLAGS to use with Qt... " >&6; }
+if test ${at_cv_env_QT_CFLAGS+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  at_cv_env_QT_CFLAGS=`sed "/^CFLAGS[^A-Z=]*=/!d;$qt_sed_filter" $at_mfile`
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $at_cv_env_QT_CFLAGS" >&5
+printf "%s\n" "$at_cv_env_QT_CFLAGS" >&6; }
+  QT_CFLAGS=$at_cv_env_QT_CFLAGS
+
+
+  DR_MERGE_tmp1=$QT_CFLAGS
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//(/}
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//)/}
+  eval QT_CFLAGS=\"$DR_MERGE_tmp1\"
+  unset ${!DR_MERGE_*}
+
+
+  # Find the CXXFLAGS of Qt.
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for the CXXFLAGS to use with Qt" >&5
+printf %s "checking for the CXXFLAGS to use with Qt... " >&6; }
+if test ${at_cv_env_QT_CXXFLAGS+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  at_cv_env_QT_CXXFLAGS=`sed "/^CXXFLAGS[^A-Z=]*=/!d;$qt_sed_filter" $at_mfile`
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $at_cv_env_QT_CXXFLAGS" >&5
+printf "%s\n" "$at_cv_env_QT_CXXFLAGS" >&6; }
+  QT_CXXFLAGS=$at_cv_env_QT_CXXFLAGS
+
+
+  DR_MERGE_tmp1=$QT_CXXFLAGS
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//(/}
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//)/}
+  eval QT_CXXFLAGS=\"$DR_MERGE_tmp1\"
+  unset ${!DR_MERGE_*}
+
+
+  # Find the INCPATH of Qt.
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for the INCPATH to use with Qt" >&5
+printf %s "checking for the INCPATH to use with Qt... " >&6; }
+if test ${at_cv_env_QT_INCPATH+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  at_cv_env_QT_INCPATH=`sed "/^INCPATH[^A-Z=]*=/!d;$qt_sed_filter" $at_mfile`
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $at_cv_env_QT_INCPATH" >&5
+printf "%s\n" "$at_cv_env_QT_INCPATH" >&6; }
+  QT_INCPATH=$at_cv_env_QT_INCPATH
+
+
+  DR_MERGE_tmp1=$QT_INCPATH
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//(/}
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//)/}
+  eval QT_INCPATH=\"$DR_MERGE_tmp1\"
+  unset ${!DR_MERGE_*}
+
+
+  QT_CPPFLAGS="$at_cv_env_QT_DEFINES $at_cv_env_QT_INCPATH"
+
+
+  DR_MERGE_tmp1=$QT_CPPFLAGS
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//(/}
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//)/}
+  eval QT_CPPFLAGS=\"$DR_MERGE_tmp1\"
+  unset ${!DR_MERGE_*}
+
+
+  # Find the LFLAGS of Qt (Should have been named LDFLAGS)
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for the LDFLAGS to use with Qt" >&5
+printf %s "checking for the LDFLAGS to use with Qt... " >&6; }
+if test ${at_cv_env_QT_LDFLAGS+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  at_cv_env_QT_LDFLAGS=`sed "/^LFLAGS[^A-Z=]*=/!d;$qt_sed_filter" $at_mfile`
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $at_cv_env_QT_LDFLAGS" >&5
+printf "%s\n" "$at_cv_env_QT_LDFLAGS" >&6; }
+  QT_LFLAGS=$at_cv_env_QT_LDFLAGS
+
+  QT_LDFLAGS=$at_cv_env_QT_LDFLAGS
+
+
+  DR_MERGE_tmp1=$QT_LFLAGS
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//(/}
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//)/}
+  eval QT_LFLAGS=\"$DR_MERGE_tmp1\"
+  unset ${!DR_MERGE_*}
+
+
+  DR_MERGE_tmp1=$QT_LDFLAGS
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//(/}
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//)/}
+  eval QT_LDFLAGS=\"$DR_MERGE_tmp1\"
+  unset ${!DR_MERGE_*}
+
+
+  # Find the LIBS of Qt.
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for the LIBS to use with Qt" >&5
+printf %s "checking for the LIBS to use with Qt... " >&6; }
+if test ${at_cv_env_QT_LIBS+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  at_cv_env_QT_LIBS=`sed "/^LIBS[^A-Z]*=/!d;$qt_sed_filter" $at_mfile`
+   if test x$at_darwin = xyes; then
+     # Fix QT_LIBS: as of today Libtool (GNU Libtool 1.5.23a) doesn't handle
+     # -F properly. The "bug" has been fixed on 22 October 2006
+     # by Peter O'Gorman but we provide backward compatibility here.
+     at_cv_env_QT_LIBS=`echo "$at_cv_env_QT_LIBS" \
+                             | sed 's/^-F/-Wl,-F/;s/ -F/ -Wl,-F/g'`
+   fi
+
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $at_cv_env_QT_LIBS" >&5
+printf "%s\n" "$at_cv_env_QT_LIBS" >&6; }
+  QT_LIBS=$at_cv_env_QT_LIBS
+
+
+  DR_MERGE_tmp1=$QT_LIBS
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//(/}
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//)/}
+  eval QT_LIBS=\"$DR_MERGE_tmp1\"
+  unset ${!DR_MERGE_*}
+
+
+  cd .. && rm -rf conftest.dir
+
+  # Run the user code
+
+
+  done  # end hack (useless for to be able to use break)
+
+    ;;
+  autotroll.5.*)
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Qt5 found" >&5
 printf "%s\n" "$as_me: Qt5 found" >&6;}
-    if test $CONFIG_OS == MACOS
+    if test "x$CONFIG_OS" = "xMACOS"
 then :
   xtraPlug=+macextras
 else $as_nop
@@ -24760,6 +26099,10 @@ printf "%s\n" "#define HAVE_QT 1" >>confdefs.h
   # Path to which recent MacPorts (~v1.7) install Qt4.
   test -d /opt/local/libexec/qt4-mac/bin \
     && tmp_qt_paths="$tmp_qt_paths:/opt/local/libexec/qt4-mac/bin"
+
+  # Path to which homebrew (Mac) installs Qt moc executable.
+  test -d /opt/homebrew/share/qt/libexec \
+    && tmp_qt_paths="$tmp_qt_paths:/opt/homebrew/share/qt/libexec"
 
   # Find qmake.
 
@@ -25740,9 +27083,15 @@ printf "%s\n" "$at_cv_env_QT_LIBS" >&6; }
   done  # end hack (useless for to be able to use break)
 
     ;;
-  4.*)
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Qt4 found" >&5
-printf "%s\n" "$as_me: Qt4 found" >&6;}
+  autotrollstatic.5.*)
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Qt5 found" >&5
+printf "%s\n" "$as_me: Qt5 found" >&6;}
+    if test "x$CONFIG_OS" = "xMACOS"
+then :
+  xtraPlug=+macextras
+else $as_nop
+  unset xtraPlug
+fi
     echo "$as_me: this is autotroll.m4 serial 10" >&5
 
   test x"$TROLL" != x && echo 'ViM rox emacs.'
@@ -25782,6 +27131,10 @@ printf "%s\n" "#define HAVE_QT 1" >>confdefs.h
   # Path to which recent MacPorts (~v1.7) install Qt4.
   test -d /opt/local/libexec/qt4-mac/bin \
     && tmp_qt_paths="$tmp_qt_paths:/opt/local/libexec/qt4-mac/bin"
+
+  # Path to which homebrew (Mac) installs Qt moc executable.
+  test -d /opt/homebrew/share/qt/libexec \
+    && tmp_qt_paths="$tmp_qt_paths:/opt/homebrew/share/qt/libexec"
 
   # Find qmake.
 
@@ -26371,10 +27724,10 @@ $at_mod"
   echo "$qt_conf" | sed 1d >>"$pro_file"
 
 
- # Tweak the value of QT in the .pro file for $xtralibs +printsupport +svg.
+ # Tweak the value of QT in the .pro file for $xtralibs +core +gui +printsupport +svg $xtraPlug.
 
   qt_conf=''
-  for at_mod in $xtralibs +printsupport +svg; do
+  for at_mod in $xtralibs +core +gui +printsupport +svg $xtraPlug; do
     at_mod=`echo "$at_mod" | sed 's/^-//; tough
                                   s/^+//; beef
                                   :ough
@@ -26404,7 +27757,1051 @@ $at_mod"
 
 
  # Add the extra-settings the user wants to set in the .pro
-  echo "LIBS += $LDFLAGS" >>"$pro_file"
+  echo "
+      LIBS += $LDFLAGS
+      QTPLUGIN += qjpeg qgif qico qsvg qxcb
+      QTPLUGIN.platforms += qminimal qxcb
+      CONFIG += import_plugins
+      CONFIG += static
+    " >>"$pro_file"
+
+
+  echo "$as_me:$LINENO: Invoking $QMAKE on $pro_file" >&5
+  sed 's/^/| /' "$pro_file" >&5
+
+  if $QMAKE $at_qmake_args; then :; else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Calling $QMAKE $at_qmake_args failed." >&5
+printf "%s\n" "$as_me: WARNING: Calling $QMAKE $at_qmake_args failed." >&2;}; as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+    break
+  fi
+
+  # QMake has a very annoying misfeature: sometimes it generates Makefiles
+  # where all the references to the files from the Qt installation are
+  # relative.  We can't use them as-is because if we take, say, a
+  # -I../../usr/include/Qt from that Makefile, the flag is invalid as soon
+  # as we use it in another (sub) directory.  So what this perl pass does is
+  # that it rewrite all relative paths to absolute paths.  Another problem
+  # when building on Cygwin is that QMake mixes paths with blackslashes and
+  # forward slashes and paths must be handled with extra care because of the
+  # stupid Windows drive letters.
+  echo "$as_me:$LINENO: fixing the Makefiles:" Makefile* >&5
+  cat >fixmk.pl <<\EOF
+use strict;
+use Cwd qw(cwd abs_path);
+# This variable is useful on Cygwin for the following reason: Say that you are
+# in `/' (that is, in fact you are in C:/cygwin, or something like that) if you
+# `cd ..' then obviously you remain in `/' (that is in C:/cygwin).  QMake
+# generates paths that are relative to C:/ (or another driver letter, whatever)
+# so the trick to get the `..' resolved properly is to prepend the absolute
+# path of the current working directory in a Windows-style.  C:/cygwin/../ will
+# properly become C:/.
+my $d = "";
+my $r2a = 0;
+my $b2f = 0;
+
+my $cygwin = 0;
+if ($^O eq "cygwin") {
+  $cygwin = 1;
+  $d = cwd();
+  $d = `cygpath --mixed '$d'`;
+  chomp($d);
+  $d .= "/";
+}
+
+sub rel2abs($)
+{
+  my $p = $d . shift;
+  # print "r2a p=$p";
+  -e $p || return $p;
+  if ($cygwin) {
+    $p = `cygpath --mixed '$p'`;
+    chomp($p);
+  }
+  else {
+    # Do not use abs_path on Cygwin: it incorrectly resolves the paths that are
+    # relative to C:/ rather than `/'.
+    $p = abs_path($p);
+  }
+  # print " -> $p\n";
+  ++$r2a;
+  return $p;
+}
+
+# Only useful on Cygwin.
+sub back2forward($)
+{
+  my $p = shift;
+  # print "b2f p=$p";
+  -e $p || return $p;
+  $p = `cygpath --mixed '$p'`;
+  chomp($p);
+  # print " -> $p\n";
+  ++$b2f;
+  return $p;
+}
+
+foreach my $mk (@ARGV)
+{
+  next if $mk =~ /~$/;
+  open(MK, $mk) or die("open $mk: $!");
+  # print "mk=$mk\n";
+  my $file = join("", <MK>);
+  close(MK) or die("close $mk: $!");
+  rename $mk, $mk . "~" or die("rename $mk: $!");
+  $file =~ s{(?:\.\.[\\/])+(?:[^"'\s:]+)}{rel2abs($&)}gse;
+  $file =~ s{(?:[a-zA-Z]:[\\/])?(?:[^"\s]+\\[^"\s:]+)+}
+            {back2forward($&)}gse if $cygwin;
+  open(MK, ">", $mk) or die("open >$mk: $!");
+  print MK $file;
+  close(MK) or die("close >$mk: $!");
+  print "$mk: updated $r2a relative paths and $b2f backslash-style paths\n";
+  $r2a = 0;
+  $b2f = 0;
+}
+EOF
+
+  perl >&5 -w fixmk.pl Makefile* ||
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: failed to fix the Makefiles generated by $QMAKE" >&5
+printf "%s\n" "$as_me: WARNING: failed to fix the Makefiles generated by $QMAKE" >&2;}
+  rm -f fixmk.pl
+
+  # Try to compile a simple Qt app.
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether we can build a simple Qt app" >&5
+printf %s "checking whether we can build a simple Qt app... " >&6; }
+if test ${at_cv_qt_build+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  at_cv_qt_build=ko
+  : ${MAKE=make}
+
+  if $MAKE >&5 2>&1; then
+    at_cv_qt_build='ok, looks like Qt 4 or Qt 5'
+  else
+    echo "$as_me:$LINENO: Build failed, trying to #include <qobject.h> \
+instead" >&5
+    sed 's/<QObject>/<qobject.h>/' conftest.h > tmp.h && mv tmp.h conftest.h
+    if $MAKE >&5 2>&1; then
+      at_cv_qt_build='ok, looks like Qt 3'
+    else
+      # Sometimes (such as on Debian) build will fail because Qt hasn't been
+      # installed in debug mode and qmake tries (by default) to build apps in
+      # debug mode => Try again in release mode.
+      echo "$as_me:$LINENO: Build failed, trying to enforce release mode" \
+            >&5
+
+       # Tweak the value of CONFIG in the .pro file for +release.
+
+  qt_conf=''
+  for at_mod in +release; do
+    at_mod=`echo "$at_mod" | sed 's/^-//; tough
+                                  s/^+//; beef
+                                  :ough
+                                  s/^/CONFIG -= /;n
+                                  :eef
+                                  s/^/CONFIG += /'`
+    qt_conf="$qt_conf
+$at_mod"
+  done
+  echo "$qt_conf" | sed 1d >>"$pro_file"
+
+
+      sed 's/<qobject.h>/<QObject>/' conftest.h > tmp.h && mv tmp.h conftest.h
+      if $MAKE >&5 2>&1; then
+        at_cv_qt_build='ok, looks like Qt 4 or Qt 5, release mode forced'
+      else
+        echo "$as_me:$LINENO: Build failed, trying to #include <qobject.h> \
+instead" >&5
+        sed 's/<QObject>/<qobject.h>/' conftest.h >tmp.h && mv tmp.h conftest.h
+        if $MAKE >&5 2>&1; then
+          at_cv_qt_build='ok, looks like Qt 3, release mode forced'
+        else
+          at_cv_qt_build=ko
+          echo "$as_me:$LINENO: failed program was:" >&5
+          sed 's/^/| /' conftest.h >&5
+          echo "$as_me:$LINENO: failed program was:" >&5
+          sed 's/^/| /' conftest.cpp >&5
+        fi # if make with Qt3-style #include and release mode forced.
+      fi # if make with Qt4/5-style #include and release mode forced.
+    fi # if make with Qt3-style #include.
+  fi # if make with Qt4/5-style #include.
+
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $at_cv_qt_build" >&5
+printf "%s\n" "$at_cv_qt_build" >&6; }
+  if test x"$at_cv_qt_build" = xko; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Cannot build a test Qt program" >&5
+printf "%s\n" "$as_me: WARNING: Cannot build a test Qt program" >&2;}; as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+    cd ..
+    break
+  fi
+  QT_VERSION_MAJOR=`echo "$at_cv_qt_build" | sed 's/[^0-9]*//g'`
+
+
+  # This sed filter is applied after an expression of the form: /^FOO.*=/!d;
+  # It starts by removing the beginning of the line, removing references to
+  # SUBLIBS, removing unnecessary whitespaces at the beginning, and prefixes
+  # all variable uses by QT_.
+  qt_sed_filter='s///;
+                 s/$(SUBLIBS)//g;
+                 s/^ *//;
+                 s/\$(\([A-Z_][A-Z_]*\))/$(QT_\1)/g'
+
+  # Find the Makefile (qmake happens to generate a fake Makefile which invokes
+  # a Makefile.Debug or Makefile.Release). We we have both, we'll pick the
+  # Makefile.Release. The reason is that the main difference is that release
+  # uses -Os and debug -g. We can override -Os by passing another -O but we
+  # usually don't override -g.
+  if test -f Makefile.Release; then
+    at_mfile='Makefile.Release'
+  else
+    at_mfile='Makefile'
+  fi
+  if test -f $at_mfile; then :; else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Cannot find the Makefile generated by qmake." >&5
+printf "%s\n" "$as_me: WARNING: Cannot find the Makefile generated by qmake." >&2;}; as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+    cd ..
+    break
+  fi
+
+  # Find the DEFINES of Qt (should have been named CPPFLAGS).
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for the DEFINES to use with Qt" >&5
+printf %s "checking for the DEFINES to use with Qt... " >&6; }
+if test ${at_cv_env_QT_DEFINES+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  at_cv_env_QT_DEFINES=`sed "/^DEFINES[^A-Z=]*=/!d;$qt_sed_filter" $at_mfile`
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $at_cv_env_QT_DEFINES" >&5
+printf "%s\n" "$at_cv_env_QT_DEFINES" >&6; }
+  QT_DEFINES=$at_cv_env_QT_DEFINES
+
+
+  # Find the CFLAGS of Qt (We can use Qt in C?!)
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for the CFLAGS to use with Qt" >&5
+printf %s "checking for the CFLAGS to use with Qt... " >&6; }
+if test ${at_cv_env_QT_CFLAGS+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  at_cv_env_QT_CFLAGS=`sed "/^CFLAGS[^A-Z=]*=/!d;$qt_sed_filter" $at_mfile`
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $at_cv_env_QT_CFLAGS" >&5
+printf "%s\n" "$at_cv_env_QT_CFLAGS" >&6; }
+  QT_CFLAGS=$at_cv_env_QT_CFLAGS
+
+
+  DR_MERGE_tmp1=$QT_CFLAGS
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//(/}
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//)/}
+  eval QT_CFLAGS=\"$DR_MERGE_tmp1\"
+  unset ${!DR_MERGE_*}
+
+
+  # Find the CXXFLAGS of Qt.
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for the CXXFLAGS to use with Qt" >&5
+printf %s "checking for the CXXFLAGS to use with Qt... " >&6; }
+if test ${at_cv_env_QT_CXXFLAGS+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  at_cv_env_QT_CXXFLAGS=`sed "/^CXXFLAGS[^A-Z=]*=/!d;$qt_sed_filter" $at_mfile`
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $at_cv_env_QT_CXXFLAGS" >&5
+printf "%s\n" "$at_cv_env_QT_CXXFLAGS" >&6; }
+  QT_CXXFLAGS=$at_cv_env_QT_CXXFLAGS
+
+
+  DR_MERGE_tmp1=$QT_CXXFLAGS
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//(/}
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//)/}
+  eval QT_CXXFLAGS=\"$DR_MERGE_tmp1\"
+  unset ${!DR_MERGE_*}
+
+
+  # Find the INCPATH of Qt.
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for the INCPATH to use with Qt" >&5
+printf %s "checking for the INCPATH to use with Qt... " >&6; }
+if test ${at_cv_env_QT_INCPATH+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  at_cv_env_QT_INCPATH=`sed "/^INCPATH[^A-Z=]*=/!d;$qt_sed_filter" $at_mfile`
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $at_cv_env_QT_INCPATH" >&5
+printf "%s\n" "$at_cv_env_QT_INCPATH" >&6; }
+  QT_INCPATH=$at_cv_env_QT_INCPATH
+
+
+  DR_MERGE_tmp1=$QT_INCPATH
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//(/}
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//)/}
+  eval QT_INCPATH=\"$DR_MERGE_tmp1\"
+  unset ${!DR_MERGE_*}
+
+
+  QT_CPPFLAGS="$at_cv_env_QT_DEFINES $at_cv_env_QT_INCPATH"
+
+
+  DR_MERGE_tmp1=$QT_CPPFLAGS
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//(/}
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//)/}
+  eval QT_CPPFLAGS=\"$DR_MERGE_tmp1\"
+  unset ${!DR_MERGE_*}
+
+
+  # Find the LFLAGS of Qt (Should have been named LDFLAGS)
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for the LDFLAGS to use with Qt" >&5
+printf %s "checking for the LDFLAGS to use with Qt... " >&6; }
+if test ${at_cv_env_QT_LDFLAGS+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  at_cv_env_QT_LDFLAGS=`sed "/^LFLAGS[^A-Z=]*=/!d;$qt_sed_filter" $at_mfile`
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $at_cv_env_QT_LDFLAGS" >&5
+printf "%s\n" "$at_cv_env_QT_LDFLAGS" >&6; }
+  QT_LFLAGS=$at_cv_env_QT_LDFLAGS
+
+  QT_LDFLAGS=$at_cv_env_QT_LDFLAGS
+
+
+  DR_MERGE_tmp1=$QT_LFLAGS
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//(/}
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//)/}
+  eval QT_LFLAGS=\"$DR_MERGE_tmp1\"
+  unset ${!DR_MERGE_*}
+
+
+  DR_MERGE_tmp1=$QT_LDFLAGS
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//(/}
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//)/}
+  eval QT_LDFLAGS=\"$DR_MERGE_tmp1\"
+  unset ${!DR_MERGE_*}
+
+
+  # Find the LIBS of Qt.
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for the LIBS to use with Qt" >&5
+printf %s "checking for the LIBS to use with Qt... " >&6; }
+if test ${at_cv_env_QT_LIBS+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  at_cv_env_QT_LIBS=`sed "/^LIBS[^A-Z]*=/!d;$qt_sed_filter" $at_mfile`
+   if test x$at_darwin = xyes; then
+     # Fix QT_LIBS: as of today Libtool (GNU Libtool 1.5.23a) doesn't handle
+     # -F properly. The "bug" has been fixed on 22 October 2006
+     # by Peter O'Gorman but we provide backward compatibility here.
+     at_cv_env_QT_LIBS=`echo "$at_cv_env_QT_LIBS" \
+                             | sed 's/^-F/-Wl,-F/;s/ -F/ -Wl,-F/g'`
+   fi
+
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $at_cv_env_QT_LIBS" >&5
+printf "%s\n" "$at_cv_env_QT_LIBS" >&6; }
+  QT_LIBS=$at_cv_env_QT_LIBS
+
+
+  DR_MERGE_tmp1=$QT_LIBS
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//(/}
+  DR_MERGE_tmp1=${DR_MERGE_tmp1//)/}
+  eval QT_LIBS=\"$DR_MERGE_tmp1\"
+  unset ${!DR_MERGE_*}
+
+
+  cd .. && rm -rf conftest.dir
+
+  # Run the user code
+
+
+  done  # end hack (useless for to be able to use break)
+
+
+printf "%s\n" "#define qt_static_plugin_xcb 1" >>confdefs.h
+
+
+printf "%s\n" "#define qt_no_fontconfig 1" >>confdefs.h
+
+    ;;
+  autotroll.6.* | autotrollstatic.6.*)
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Qt6 found" >&5
+printf "%s\n" "$as_me: Qt6 found" >&6;}
+    if test $CONFIG_OS == MACOS
+then :
+
+else $as_nop
+  unset xtraPlug
+fi
+    echo "$as_me: this is autotroll.m4 serial 10" >&5
+
+  test x"$TROLL" != x && echo 'ViM rox emacs.'
+
+
+# Check whether --with-qt was given.
+if test ${with_qt+y}
+then :
+  withval=$with_qt;
+fi
+
+
+  if test x"$with_qt" = x"no"; then
+    break
+  else
+
+printf "%s\n" "#define HAVE_QT 1" >>confdefs.h
+
+  fi
+
+  if test x"$with_qt" = x"yes"; then
+    QT_PATH=
+  else
+    QT_PATH=$with_qt
+  fi
+
+  # this is a hack to get decent flow control with 'break'
+  for _qt_ignored in once; do
+
+  # Find Qt.
+
+  if test -d /usr/local/Trolltech; then
+    # Try to find the latest version.
+    tmp_qt_paths=`echo /usr/local/Trolltech/*/bin | tr ' ' '\n' | sort -nr \
+                                              | xargs | sed 's/  */:/g'`
+  fi
+  # Path to which recent MacPorts (~v1.7) install Qt4.
+  test -d /opt/local/libexec/qt4-mac/bin \
+    && tmp_qt_paths="$tmp_qt_paths:/opt/local/libexec/qt4-mac/bin"
+
+  # Path to which homebrew (Mac) installs Qt moc executable.
+  test -d /opt/homebrew/share/qt/libexec \
+    && tmp_qt_paths="$tmp_qt_paths:/opt/homebrew/share/qt/libexec"
+
+  # Find qmake.
+
+  for ax_tool in qmake qmake-qt5 qmake-qt4 qmake-qt3; do
+  if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}$ax_tool", so it can be a program name with args.
+set dummy ${ac_tool_prefix}$ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_QMAKE+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $QMAKE in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_QMAKE="$QMAKE" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_DIR:$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_QMAKE="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+QMAKE=$ac_cv_path_QMAKE
+if test -n "$QMAKE"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $QMAKE" >&5
+printf "%s\n" "$QMAKE" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_path_QMAKE"; then
+  ac_pt_QMAKE=$QMAKE
+  # Extract the first word of "$ax_tool", so it can be a program name with args.
+set dummy $ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_ac_pt_QMAKE+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $ac_pt_QMAKE in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_ac_pt_QMAKE="$ac_pt_QMAKE" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_DIR:$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_ac_pt_QMAKE="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+ac_pt_QMAKE=$ac_cv_path_ac_pt_QMAKE
+if test -n "$ac_pt_QMAKE"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_pt_QMAKE" >&5
+printf "%s\n" "$ac_pt_QMAKE" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+  if test "x$ac_pt_QMAKE" = x; then
+    QMAKE=""
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    QMAKE=$ac_pt_QMAKE
+  fi
+else
+  QMAKE="$ac_cv_path_QMAKE"
+fi
+
+  test -n "$QMAKE" && break
+done
+test -n "$QMAKE" || QMAKE="missing"
+
+  if test x"$QMAKE" = xmissing; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Cannot find qmake. Try --with-qt=PATH." >&5
+printf "%s\n" "$as_me: WARNING: Cannot find qmake. Try --with-qt=PATH." >&2;}; as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+    break
+  fi
+
+  # Find moc (Meta Object Compiler).
+
+  for ax_tool in moc moc-qt5 moc-qt4 moc-qt3; do
+  if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}$ax_tool", so it can be a program name with args.
+set dummy ${ac_tool_prefix}$ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_MOC+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $MOC in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_MOC="$MOC" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_MOC="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+MOC=$ac_cv_path_MOC
+if test -n "$MOC"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $MOC" >&5
+printf "%s\n" "$MOC" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_path_MOC"; then
+  ac_pt_MOC=$MOC
+  # Extract the first word of "$ax_tool", so it can be a program name with args.
+set dummy $ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_ac_pt_MOC+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $ac_pt_MOC in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_ac_pt_MOC="$ac_pt_MOC" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_ac_pt_MOC="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+ac_pt_MOC=$ac_cv_path_ac_pt_MOC
+if test -n "$ac_pt_MOC"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_pt_MOC" >&5
+printf "%s\n" "$ac_pt_MOC" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+  if test "x$ac_pt_MOC" = x; then
+    MOC=""
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    MOC=$ac_pt_MOC
+  fi
+else
+  MOC="$ac_cv_path_MOC"
+fi
+
+  test -n "$MOC" && break
+done
+test -n "$MOC" || MOC="missing"
+
+  if test x"$MOC" = xmissing; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Cannot find moc (Meta Object Compiler). Try --with-qt=PATH." >&5
+printf "%s\n" "$as_me: WARNING: Cannot find moc (Meta Object Compiler). Try --with-qt=PATH." >&2;}; as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+    break
+  fi
+
+  # Find uic (User Interface Compiler).
+
+  for ax_tool in uic uic-qt5 uic-qt4 uic-qt3 uic3; do
+  if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}$ax_tool", so it can be a program name with args.
+set dummy ${ac_tool_prefix}$ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_UIC+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $UIC in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_UIC="$UIC" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_UIC="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+UIC=$ac_cv_path_UIC
+if test -n "$UIC"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $UIC" >&5
+printf "%s\n" "$UIC" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_path_UIC"; then
+  ac_pt_UIC=$UIC
+  # Extract the first word of "$ax_tool", so it can be a program name with args.
+set dummy $ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_ac_pt_UIC+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $ac_pt_UIC in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_ac_pt_UIC="$ac_pt_UIC" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_ac_pt_UIC="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+ac_pt_UIC=$ac_cv_path_ac_pt_UIC
+if test -n "$ac_pt_UIC"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_pt_UIC" >&5
+printf "%s\n" "$ac_pt_UIC" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+  if test "x$ac_pt_UIC" = x; then
+    UIC=""
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    UIC=$ac_pt_UIC
+  fi
+else
+  UIC="$ac_cv_path_UIC"
+fi
+
+  test -n "$UIC" && break
+done
+test -n "$UIC" || UIC="missing"
+
+  if test x"$UIC" = xmissing; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Cannot find uic (User Interface Compiler). Try --with-qt=PATH." >&5
+printf "%s\n" "$as_me: WARNING: Cannot find uic (User Interface Compiler). Try --with-qt=PATH." >&2;}; as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+    break
+  fi
+
+  # Find rcc (Qt Resource Compiler).
+
+  for ax_tool in rcc rcc-qt5; do
+  if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}$ax_tool", so it can be a program name with args.
+set dummy ${ac_tool_prefix}$ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_RCC+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $RCC in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_RCC="$RCC" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_RCC="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+RCC=$ac_cv_path_RCC
+if test -n "$RCC"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $RCC" >&5
+printf "%s\n" "$RCC" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_path_RCC"; then
+  ac_pt_RCC=$RCC
+  # Extract the first word of "$ax_tool", so it can be a program name with args.
+set dummy $ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_ac_pt_RCC+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $ac_pt_RCC in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_ac_pt_RCC="$ac_pt_RCC" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_ac_pt_RCC="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+ac_pt_RCC=$ac_cv_path_ac_pt_RCC
+if test -n "$ac_pt_RCC"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_pt_RCC" >&5
+printf "%s\n" "$ac_pt_RCC" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+  if test "x$ac_pt_RCC" = x; then
+    RCC=""
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    RCC=$ac_pt_RCC
+  fi
+else
+  RCC="$ac_cv_path_RCC"
+fi
+
+  test -n "$RCC" && break
+done
+test -n "$RCC" || RCC="false"
+
+  if test x"$UIC" = xfalse; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Cannot find rcc (Qt Resource Compiler). Try --with-qt=PATH." >&5
+printf "%s\n" "$as_me: WARNING: Cannot find rcc (Qt Resource Compiler). Try --with-qt=PATH." >&2;}
+  fi
+
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether host operating system is Darwin" >&5
+printf %s "checking whether host operating system is Darwin... " >&6; }
+  at_darwin=no
+  at_qmake_args=
+  case $host_os in
+    darwin*)
+      at_darwin=yes
+      ;;
+  esac
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $at_darwin" >&5
+printf "%s\n" "$at_darwin" >&6; }
+
+  # If we don't know the path to Qt, guess it from the path to qmake.
+  if test x"$QT_PATH" = x; then
+    QT_PATH=`dirname "$QMAKE"`
+  fi
+  if test x"$QT_PATH" = x; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Cannot find your Qt installation. Try --with-qt=PATH." >&5
+printf "%s\n" "$as_me: WARNING: Cannot find your Qt installation. Try --with-qt=PATH." >&2;}; as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+    break
+  fi
+
+
+  # Get ready to build a test-app with Qt.
+  if mkdir conftest.dir && cd conftest.dir; then :; else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Cannot mkdir conftest.dir or cd to that directory." >&5
+printf "%s\n" "$as_me: WARNING: Cannot mkdir conftest.dir or cd to that directory." >&2;}; as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+    break
+  fi
+
+  cat >conftest.h <<_ASEOF
+#include <QObject>
+
+class Foo: public QObject
+{
+  Q_OBJECT;
+public:
+  Foo();
+  ~Foo() {}
+public Q_SLOTS:
+  void setValue(int value);
+Q_SIGNALS:
+  void valueChanged(int newValue);
+private:
+  int value_;
+};
+_ASEOF
+
+  cat >conftest.cpp <<_ASEOF
+#include "conftest.h"
+Foo::Foo()
+  : value_ (42)
+{
+  connect(this, SIGNAL(valueChanged(int)), this, SLOT(setValue(int)));
+}
+
+void Foo::setValue(int value)
+{
+  value_ = value;
+}
+
+int main()
+{
+  Foo f;
+}
+_ASEOF
+  if $QMAKE -project; then :; else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Calling $QMAKE -project failed." >&5
+printf "%s\n" "$as_me: WARNING: Calling $QMAKE -project failed." >&2;}; as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+    break
+  fi
+
+  # Find the .pro file generated by qmake.
+  pro_file='conftest.dir.pro'
+  test -f $pro_file || pro_file=`echo *.pro`
+  if test -f "$pro_file"; then :; else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Can't find the .pro file generated by Qmake." >&5
+printf "%s\n" "$as_me: WARNING: Can't find the .pro file generated by Qmake." >&2;}; as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+    break
+  fi
+
+ # Tweak the value of QT in the .pro file for +widgets.
+
+  qt_conf=''
+  for at_mod in +widgets; do
+    at_mod=`echo "$at_mod" | sed 's/^-//; tough
+                                  s/^+//; beef
+                                  :ough
+                                  s/^/QT -= /;n
+                                  :eef
+                                  s/^/QT += /'`
+    qt_conf="$qt_conf
+$at_mod"
+  done
+  echo "$qt_conf" | sed 1d >>"$pro_file"
+
+
+ # Tweak the value of QT in the .pro file for $xtralibs +printsupport +svg +concurrent $xtraPlug.
+
+  qt_conf=''
+  for at_mod in $xtralibs +printsupport +svg +concurrent $xtraPlug; do
+    at_mod=`echo "$at_mod" | sed 's/^-//; tough
+                                  s/^+//; beef
+                                  :ough
+                                  s/^/QT -= /;n
+                                  :eef
+                                  s/^/QT += /'`
+    qt_conf="$qt_conf
+$at_mod"
+  done
+  echo "$qt_conf" | sed 1d >>"$pro_file"
+
+
+ # Tweak the value of CONFIG in the .pro file for +exceptions.
+
+  qt_conf=''
+  for at_mod in +exceptions; do
+    at_mod=`echo "$at_mod" | sed 's/^-//; tough
+                                  s/^+//; beef
+                                  :ough
+                                  s/^/CONFIG -= /;n
+                                  :eef
+                                  s/^/CONFIG += /'`
+    qt_conf="$qt_conf
+$at_mod"
+  done
+  echo "$qt_conf" | sed 1d >>"$pro_file"
+
+
+ # Add the extra-settings the user wants to set in the .pro
+  echo "
+      LIBS += $LDFLAGS
+      QTPLUGIN = qjpeg qgif qico qsvg
+    " >>"$pro_file"
 
 
   echo "$as_me:$LINENO: Invoking $QMAKE on $pro_file" >&5
@@ -26759,9 +29156,592 @@ printf "%s\n" "$at_cv_env_QT_LIBS" >&6; }
   done  # end hack (useless for to be able to use break)
 
     ;;
-  *) as_fn_error $? "Qt not found or Qt version not supported " "$LINENO" 5;;
+  pkgconfig.*)
+    QT_VERSION=`$QMAKE -query QT_VERSION`
+    QT_MAJOR=${QT_VERSION%%.*}
+
+    # Find Qt.
+
+    if test -d /usr/local/Trolltech; then
+      # Try to find the latest version.
+      tmp_qt_paths=`echo /usr/local/Trolltech/*/bin | tr ' ' '\n' | sort -nr \
+                                                | xargs | sed 's/  */:/g'`
+    fi
+
+    # Find qmake.
+
+    for ax_tool in qmake qmake-qt$QT_MAJOR qmake$QT_MAJOR; do
+  if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}$ax_tool", so it can be a program name with args.
+set dummy ${ac_tool_prefix}$ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_QMAKE+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $QMAKE in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_QMAKE="$QMAKE" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_DIR:$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_QMAKE="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+QMAKE=$ac_cv_path_QMAKE
+if test -n "$QMAKE"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $QMAKE" >&5
+printf "%s\n" "$QMAKE" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_path_QMAKE"; then
+  ac_pt_QMAKE=$QMAKE
+  # Extract the first word of "$ax_tool", so it can be a program name with args.
+set dummy $ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_ac_pt_QMAKE+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $ac_pt_QMAKE in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_ac_pt_QMAKE="$ac_pt_QMAKE" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_DIR:$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_ac_pt_QMAKE="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+ac_pt_QMAKE=$ac_cv_path_ac_pt_QMAKE
+if test -n "$ac_pt_QMAKE"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_pt_QMAKE" >&5
+printf "%s\n" "$ac_pt_QMAKE" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+  if test "x$ac_pt_QMAKE" = x; then
+    QMAKE=""
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    QMAKE=$ac_pt_QMAKE
+  fi
+else
+  QMAKE="$ac_cv_path_QMAKE"
+fi
+
+  test -n "$QMAKE" && break
+done
+test -n "$QMAKE" || QMAKE="missing"
+
+    if test "x$QMAKE" = xmissing; then
+      as_fn_error $? "Cannot find qmake. Try --with-qt=PATH." "$LINENO" 5
+      break
+    fi
+
+    # Find moc (Meta Object Compiler).
+
+    for ax_tool in moc moc-qt$QT_MAJOR moc$QT_MAJOR; do
+  if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}$ax_tool", so it can be a program name with args.
+set dummy ${ac_tool_prefix}$ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_MOC+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $MOC in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_MOC="$MOC" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_MOC="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+MOC=$ac_cv_path_MOC
+if test -n "$MOC"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $MOC" >&5
+printf "%s\n" "$MOC" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_path_MOC"; then
+  ac_pt_MOC=$MOC
+  # Extract the first word of "$ax_tool", so it can be a program name with args.
+set dummy $ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_ac_pt_MOC+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $ac_pt_MOC in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_ac_pt_MOC="$ac_pt_MOC" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_ac_pt_MOC="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+ac_pt_MOC=$ac_cv_path_ac_pt_MOC
+if test -n "$ac_pt_MOC"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_pt_MOC" >&5
+printf "%s\n" "$ac_pt_MOC" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+  if test "x$ac_pt_MOC" = x; then
+    MOC=""
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    MOC=$ac_pt_MOC
+  fi
+else
+  MOC="$ac_cv_path_MOC"
+fi
+
+  test -n "$MOC" && break
+done
+test -n "$MOC" || MOC="missing"
+
+    if test "x$MOC" = "xmissing"; then
+      as_fn_error $? "Cannot find moc (Meta Object Compiler). Try --with-qt=PATH." "$LINENO" 5
+      break
+    fi
+
+    # Find uic (User Interface Compiler).
+
+    for ax_tool in uic uic-qt$QT_MAJOR uic$QT_MAJOR; do
+  if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}$ax_tool", so it can be a program name with args.
+set dummy ${ac_tool_prefix}$ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_UIC+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $UIC in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_UIC="$UIC" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_UIC="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+UIC=$ac_cv_path_UIC
+if test -n "$UIC"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $UIC" >&5
+printf "%s\n" "$UIC" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_path_UIC"; then
+  ac_pt_UIC=$UIC
+  # Extract the first word of "$ax_tool", so it can be a program name with args.
+set dummy $ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_ac_pt_UIC+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $ac_pt_UIC in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_ac_pt_UIC="$ac_pt_UIC" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_ac_pt_UIC="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+ac_pt_UIC=$ac_cv_path_ac_pt_UIC
+if test -n "$ac_pt_UIC"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_pt_UIC" >&5
+printf "%s\n" "$ac_pt_UIC" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+  if test "x$ac_pt_UIC" = x; then
+    UIC=""
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    UIC=$ac_pt_UIC
+  fi
+else
+  UIC="$ac_cv_path_UIC"
+fi
+
+  test -n "$UIC" && break
+done
+test -n "$UIC" || UIC="missing"
+
+    if test "x$UIC" = "xmissing"; then
+      as_fn_error $? "Cannot find uic (User Interface Compiler). Try --with-qt=PATH." "$LINENO" 5
+      break
+    fi
+
+    # Find rcc (Qt Resource Compiler).
+
+    for ax_tool in rcc rcc-qt$QT_MAJOR rcc$QT_MAJOR; do
+  if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}$ax_tool", so it can be a program name with args.
+set dummy ${ac_tool_prefix}$ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_RCC+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $RCC in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_RCC="$RCC" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_RCC="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+RCC=$ac_cv_path_RCC
+if test -n "$RCC"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $RCC" >&5
+printf "%s\n" "$RCC" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_path_RCC"; then
+  ac_pt_RCC=$RCC
+  # Extract the first word of "$ax_tool", so it can be a program name with args.
+set dummy $ax_tool; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_ac_pt_RCC+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $ac_pt_RCC in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_ac_pt_RCC="$ac_pt_RCC" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="$QT_PATH:$PATH:$tmp_qt_paths"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_ac_pt_RCC="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+ac_pt_RCC=$ac_cv_path_ac_pt_RCC
+if test -n "$ac_pt_RCC"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_pt_RCC" >&5
+printf "%s\n" "$ac_pt_RCC" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+  if test "x$ac_pt_RCC" = x; then
+    RCC=""
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    RCC=$ac_pt_RCC
+  fi
+else
+  RCC="$ac_cv_path_RCC"
+fi
+
+  test -n "$RCC" && break
+done
+test -n "$RCC" || RCC="missing"
+
+    if test "x$RCC" = "xmissing"; then
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Cannot find rcc (Qt Resource Compiler). Try --with-qt=PATH." >&5
+printf "%s\n" "$as_me: WARNING: Cannot find rcc (Qt Resource Compiler). Try --with-qt=PATH." >&2;}
+    fi
+
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether host operating system is Darwin" >&5
+printf %s "checking whether host operating system is Darwin... " >&6; }
+    at_darwin=no
+    at_qmake_args=
+    case $host_os in
+      darwin*)
+        at_darwin=yes
+        ;;
+    esac
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $at_darwin" >&5
+printf "%s\n" "$at_darwin" >&6; }
+
+    # If we don't know the path to Qt, guess it from the path to qmake.
+    if test "x$QT_PATH" = "x"; then
+      QT_PATH=`dirname "$QMAKE"`
+    fi
+    if test "x$QT_PATH" = "x"; then
+      as_fn_error $? "Cannot find your Qt installation. Try --with-qt=PATH." "$LINENO" 5
+      break
+    fi
+
+
+
+    PKG_CONFIG=`which pkg-config`
+    if test -z "$PKG_CONFIG"
+then :
+  as_fn_error $? "Cannot find pkg-config" "$LINENO" 5
+fi
+
+    QT_PKGCONFIG_SUFFIX=''
+    # if ABI or ANDROID_ABI is set, use it as suffix
+    if test -n "$ABI"
+then :
+  QT_PKGCONFIG_SUFFIX="_${ABI}"
+fi
+    if test -n "$ANDROID_ABI"
+then :
+  QT_PKGCONFIG_SUFFIX="_${ANDROID_ABI}"
+fi
+
+    QT_PACKAGES="Qt${QT_MAJOR}Core$QT_PKGCONFIG_SUFFIX "
+    QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Gui$QT_PKGCONFIG_SUFFIX"
+    QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Widgets$QT_PKGCONFIG_SUFFIX"
+    QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Svg$QT_PKGCONFIG_SUFFIX"
+    QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}PrintSupport$QT_PKGCONFIG_SUFFIX"
+    QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Concurrent$QT_PKGCONFIG_SUFFIX"
+    # if CONFIG_OS is GNU_LINUX and QT_VERSION is higher than 6, use wayland
+    if test "x$CONFIG_OS" = "xGNU_LINUX"
+then :
+
+      if test $QT_MAJOR -ge 6
+then :
+
+        QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}WaylandClient$QT_PKGCONFIG_SUFFIX"
+
+fi
+
+fi
+    if test "x$CONFIG_OS" = "xMACOS"
+then :
+  QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}MacExtras$QT_PKGCONFIG_SUFFIX"
+fi
+
+    # Set QT_DEFINES, QT_CXXFLAGS, QT_INCPATH, QT_LIBS, QT_LDFLAGS and QT_VERSION
+    QT_DEFINES=`$PKG_CONFIG --cflags-only-I $QT_PACKAGES`
+    if test -z "$QT_DEFINES"
+then :
+  as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+fi
+
+    QT_CXXFLAGS=`$PKG_CONFIG --cflags-only-other $QT_PACKAGES`
+    QT_INCPATH=`$PKG_CONFIG --variable=includedir $QT_PACKAGES`
+    QT_LIBS=`$PKG_CONFIG --libs-only-l $QT_PACKAGES`
+    QT_LDFLAGS=`$PKG_CONFIG --libs-only-L $QT_PACKAGES`
+
+    QT_VERSION=`$PKG_CONFIG --modversion $QT_PACKAGES`
+    if test -z "$QT_VERSION"
+then :
+  as_fn_error $? "Cannot find a working Qt library" "$LINENO" 5
+fi
+    ;;
   esac
   # clean and dispatch the collected flags
+
+  case $qt_find_method in
+    autotroll)
 
     TMP_CFLAGS="${QT_CFLAGS}";TMP_CXXFLAGS="${QT_CXXFLAGS}";TMP_CPPFLAGS="${QT_CPPFLAGS}";TMP_LDFLAGS="${QT_LDFLAGS}";TMP_LIBS="${QT_LIBS}";
 
@@ -27310,6 +30290,561 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
   unset ${!LC_SCATTER_FLAGS_*}
 
+      ;;
+    pkgconfig)
+
+    TMP_CFLAGS="${QT_CFLAGS}";TMP_CXXFLAGS="${QT_CXXFLAGS}";TMP_CPPFLAGS="${QT_CPPFLAGS}";TMP_LDFLAGS="${QT_LDFLAGS}";TMP_LIBS="${QT_LIBS}";
+
+
+  unset QT_CFLAGS;unset QT_CXXFLAGS;unset QT_CPPFLAGS;unset QT_LDFLAGS;unset QT_LIBS;
+
+  LC_SCATTER_FLAGS_list="$TMP_CPPFLAGS $TMP_CXXFLAGS $TMP_LDFLAGS $TMP_LIBS $QT_DEFINES"
+
+
+  LC_GETPOP_FLAG_sepa=-
+  LC_GETPOP_FLAG_1=" $(echo $LC_SCATTER_FLAGS_list)" # remove unnecessary spaces and add a heading space
+  LC_SCATTER_FLAGS_list=${LC_GETPOP_FLAG_1%% $LC_GETPOP_FLAG_sepa*} # get heading
+  if test "$LC_SCATTER_FLAGS_list" = "$LC_GETPOP_FLAG_1"
+  then LC_SCATTER_FLAGS_list=${LC_SCATTER_FLAGS_list#}; unset LC_SCATTER_FLAGS_flag     # flag not found
+  else
+    LC_GETPOP_FLAG_tail=${LC_GETPOP_FLAG_1#$LC_SCATTER_FLAGS_list } # strip heading
+    LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
+    if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
+    then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
+    fi
+
+  LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
+  LC_SCATTER_FLAGS_flag=${LC_SCATTER_FLAGS_flag//\/\//\/}   # normalize path separator
+  LC_SCATTER_FLAGS_flag=${LC_SCATTER_FLAGS_flag//\'}   # remove quote
+
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_SCATTER_FLAGS_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+    if [ $LC_GETPOP_FLAG_sepa != - ]    # just return the value
+    then LC_SCATTER_FLAGS_flag=${LC_SCATTER_FLAGS_flag#$LC_GETPOP_FLAG_sepa}
+    fi
+  fi
+
+  unset ${!LC_GETPOP_FLAG_*}
+
+  while test -n "$LC_SCATTER_FLAGS_flag"
+  do
+    case "$LC_SCATTER_FLAGS_flag" in
+      -l*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $LC_SCATTER_FLAGS_LIBS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$LC_SCATTER_FLAGS_LIBS
+
+  unset STRIP_ARG_memo
+  if test "$LC_SCATTER_FLAGS_LIBS" = "$STRIP_ALL_ARGS_arg"
+  then LC_SCATTER_FLAGS_LIBS=
+  else  while test "$LC_SCATTER_FLAGS_LIBS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$LC_SCATTER_FLAGS_LIBS"
+        LC_SCATTER_FLAGS_LIBS="${LC_SCATTER_FLAGS_LIBS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        LC_SCATTER_FLAGS_LIBS="${LC_SCATTER_FLAGS_LIBS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        LC_SCATTER_FLAGS_LIBS="${LC_SCATTER_FLAGS_LIBS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  LC_SCATTER_FLAGS_LIBS=$(echo $LC_SCATTER_FLAGS_LIBS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -L*|-framework*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then QT_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $QT_LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$QT_LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$QT_LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then QT_LDFLAGS=
+  else  while test "$QT_LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$QT_LDFLAGS"
+        QT_LDFLAGS="${QT_LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        QT_LDFLAGS="${QT_LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        QT_LDFLAGS="${QT_LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  QT_LDFLAGS=$(echo $QT_LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       QT_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$QT_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else QT_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -I*|-U*|-D*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then QT_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $QT_CPPFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$QT_CPPFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$QT_CPPFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then QT_CPPFLAGS=
+  else  while test "$QT_CPPFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$QT_CPPFLAGS"
+        QT_CPPFLAGS="${QT_CPPFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        QT_CPPFLAGS="${QT_CPPFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        QT_CPPFLAGS="${QT_CPPFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  QT_CPPFLAGS=$(echo $QT_CPPFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       QT_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$QT_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else QT_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -F*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then QT_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $QT_CPPFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$QT_CPPFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$QT_CPPFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then QT_CPPFLAGS=
+  else  while test "$QT_CPPFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$QT_CPPFLAGS"
+        QT_CPPFLAGS="${QT_CPPFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        QT_CPPFLAGS="${QT_CPPFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        QT_CPPFLAGS="${QT_CPPFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  QT_CPPFLAGS=$(echo $QT_CPPFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       QT_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$QT_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else QT_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+
+
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then QT_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $QT_LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$QT_LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$QT_LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then QT_LDFLAGS=
+  else  while test "$QT_LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$QT_LDFLAGS"
+        QT_LDFLAGS="${QT_LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        QT_LDFLAGS="${QT_LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        QT_LDFLAGS="${QT_LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  QT_LDFLAGS=$(echo $QT_LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       QT_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$QT_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else QT_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+
+      ;;
+      -Wl,-F*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then QT_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $QT_LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$QT_LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$QT_LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then QT_LDFLAGS=
+  else  while test "$QT_LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$QT_LDFLAGS"
+        QT_LDFLAGS="${QT_LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        QT_LDFLAGS="${QT_LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        QT_LDFLAGS="${QT_LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  QT_LDFLAGS=$(echo $QT_LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       QT_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$QT_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else QT_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -Wl,-*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then QT_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $QT_LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$QT_LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$QT_LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then QT_LDFLAGS=
+  else  while test "$QT_LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$QT_LDFLAGS"
+        QT_LDFLAGS="${QT_LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        QT_LDFLAGS="${QT_LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        QT_LDFLAGS="${QT_LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  QT_LDFLAGS=$(echo $QT_LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       QT_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$QT_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else QT_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -Wl,*) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib QT" >&5
+printf "%s\n" "$as_me: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib QT" >&2;};;
+      -*)
+        as_CACHEVAR=`printf "%s\n" "ax_cv_check_cxxflags__$LC_SCATTER_FLAGS_flag" | $as_tr_sh`
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether C++ compiler accepts $LC_SCATTER_FLAGS_flag" >&5
+printf %s "checking whether C++ compiler accepts $LC_SCATTER_FLAGS_flag... " >&6; }
+if eval test \${$as_CACHEVAR+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+
+  ax_check_save_flags=$CXXFLAGS
+  CXXFLAGS="$CXXFLAGS  $LC_SCATTER_FLAGS_flag"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main (void)
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_compile "$LINENO"
+then :
+  eval "$as_CACHEVAR=yes"
+else $as_nop
+  eval "$as_CACHEVAR=no"
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
+  CXXFLAGS=$ax_check_save_flags
+fi
+eval ac_res=\$$as_CACHEVAR
+	       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+printf "%s\n" "$ac_res" >&6; }
+if eval test \"x\$"$as_CACHEVAR"\" = x"yes"
+then :
+
+
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then QT_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $QT_CXXFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$QT_CXXFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$QT_CXXFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then QT_CXXFLAGS=
+  else  while test "$QT_CXXFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$QT_CXXFLAGS"
+        QT_CXXFLAGS="${QT_CXXFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        QT_CXXFLAGS="${QT_CXXFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        QT_CXXFLAGS="${QT_CXXFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  QT_CXXFLAGS=$(echo $QT_CXXFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       QT_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$QT_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else QT_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+
+
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,') ]]
+  then QT_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $QT_CFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$QT_CFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$QT_CFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then QT_CFLAGS=
+  else  while test "$QT_CFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$QT_CFLAGS"
+        QT_CFLAGS="${QT_CFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        QT_CFLAGS="${QT_CFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        QT_CFLAGS="${QT_CFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  QT_CFLAGS=$(echo $QT_CFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       QT_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$QT_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else QT_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+
+
+else $as_nop
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped" >&5
+printf "%s\n" "$as_me: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped" >&2;}
+fi
+;;
+      *) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&5
+printf "%s\n" "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
+    esac
+
+  LC_GETPOP_FLAG_sepa=-
+  LC_GETPOP_FLAG_1=" $(echo $LC_SCATTER_FLAGS_list)" # remove unnecessary spaces and add a heading space
+  LC_SCATTER_FLAGS_list=${LC_GETPOP_FLAG_1%% $LC_GETPOP_FLAG_sepa*} # get heading
+  if test "$LC_SCATTER_FLAGS_list" = "$LC_GETPOP_FLAG_1"
+  then LC_SCATTER_FLAGS_list=${LC_SCATTER_FLAGS_list#}; unset LC_SCATTER_FLAGS_flag     # flag not found
+  else
+    LC_GETPOP_FLAG_tail=${LC_GETPOP_FLAG_1#$LC_SCATTER_FLAGS_list } # strip heading
+    LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
+    if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
+    then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#"$LC_SCATTER_FLAGS_flag"})
+    fi
+
+  LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
+  LC_SCATTER_FLAGS_flag=${LC_SCATTER_FLAGS_flag//\/\//\/}   # normalize path separator
+  LC_SCATTER_FLAGS_flag=${LC_SCATTER_FLAGS_flag//\'}   # remove quote
+
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_SCATTER_FLAGS_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+    if [ $LC_GETPOP_FLAG_sepa != - ]    # just return the value
+    then LC_SCATTER_FLAGS_flag=${LC_SCATTER_FLAGS_flag#$LC_GETPOP_FLAG_sepa}
+    fi
+  fi
+
+  unset ${!LC_GETPOP_FLAG_*}
+
+  done
+
+  LC_PREPEND_LIST_nlist="$LC_SCATTER_FLAGS_LIBS"
+  #pop the old list
+
+  LC_GETPOP_FLAG_sepa=-
+  LC_GETPOP_FLAG_1=" $(echo $QT_LIBS)" # remove unnecessary spaces and add a heading space
+  QT_LIBS=${LC_GETPOP_FLAG_1%% $LC_GETPOP_FLAG_sepa*} # get heading
+  if test "$QT_LIBS" = "$LC_GETPOP_FLAG_1"
+  then QT_LIBS=${QT_LIBS#}; unset LC_PREPEND_LIST_flag     # flag not found
+  else
+    LC_GETPOP_FLAG_tail=${LC_GETPOP_FLAG_1#$QT_LIBS } # strip heading
+    LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
+    if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
+    then QT_LIBS=$(echo $QT_LIBS)
+    else QT_LIBS=$(echo $QT_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
+    fi
+
+  LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}   # normalize path separator
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\'}   # remove quote
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+    if [ $LC_GETPOP_FLAG_sepa != - ]    # just return the value
+    then LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag#$LC_GETPOP_FLAG_sepa}
+    fi
+  fi
+
+  unset ${!LC_GETPOP_FLAG_*}
+
+  while [[ $LC_PREPEND_LIST_flag ]]
+  do
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
+  elif [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_PREPEND_LIST_flag"
+  do  while [[ $LC_PREPEND_LIST_nlist != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$LC_PREPEND_LIST_nlist
+
+  unset STRIP_ARG_memo
+  if test "$LC_PREPEND_LIST_nlist" = "$STRIP_ALL_ARGS_arg"
+  then LC_PREPEND_LIST_nlist=
+  else  while test "$LC_PREPEND_LIST_nlist" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$LC_PREPEND_LIST_nlist"
+        LC_PREPEND_LIST_nlist="${LC_PREPEND_LIST_nlist/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        LC_PREPEND_LIST_nlist="${LC_PREPEND_LIST_nlist/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        LC_PREPEND_LIST_nlist="${LC_PREPEND_LIST_nlist//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  LC_PREPEND_LIST_nlist=$(echo $LC_PREPEND_LIST_nlist)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
+  else
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
+    else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
+    fi
+  fi
+
+
+  LC_GETPOP_FLAG_sepa=-
+  LC_GETPOP_FLAG_1=" $(echo $QT_LIBS)" # remove unnecessary spaces and add a heading space
+  QT_LIBS=${LC_GETPOP_FLAG_1%% $LC_GETPOP_FLAG_sepa*} # get heading
+  if test "$QT_LIBS" = "$LC_GETPOP_FLAG_1"
+  then QT_LIBS=${QT_LIBS#}; unset LC_PREPEND_LIST_flag     # flag not found
+  else
+    LC_GETPOP_FLAG_tail=${LC_GETPOP_FLAG_1#$QT_LIBS } # strip heading
+    LC_PREPEND_LIST_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
+    if test "$LC_PREPEND_LIST_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
+    then QT_LIBS=$(echo $QT_LIBS)
+    else QT_LIBS=$(echo $QT_LIBS${LC_GETPOP_FLAG_tail#"$LC_PREPEND_LIST_flag"})
+    fi
+
+  LC_PREPEND_LIST_flag=$(echo $LC_PREPEND_LIST_flag)    # normalize whitespaces
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}   # normalize path separator
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\'}   # remove quote
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+    if [ $LC_GETPOP_FLAG_sepa != - ]    # just return the value
+    then LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag#$LC_GETPOP_FLAG_sepa}
+    fi
+  fi
+
+  unset ${!LC_GETPOP_FLAG_*}
+
+
+  done
+  QT_LIBS="$LC_PREPEND_LIST_nlist"
+  unset ${!LC_PREPEND_LIST_*}
+
+  unset ${!LC_SCATTER_FLAGS_*}
+
+      ;;
+    autotrollstatic)
+    ;;
+  esac
+
   QT_FRAMEWORKS_PATH=`$QMAKE -query QT_INSTALL_LIBS`
   QT_PLUGINS_PATH=`$QMAKE -query QT_INSTALL_PLUGINS`
   QT_INSTALL_LIBS=`$QMAKE -query QT_INSTALL_LIBS`
@@ -27352,7 +30887,12 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
 
   QT_VERSION=`$QMAKE -query QT_VERSION`
   QT_MAJOR=${QT_VERSION%%.*}
-  test $QT_MAJOR -eq 5 &&
+
+  case $QT_MAJOR in
+    4)
+      ;;
+    5)
+
   if [[ "-std=c++11" =~ $(echo '^-Wl,') ]]
   then QT_CXXFLAGS+=" -std=c++11"
   elif [[ "-std=c++11" =~ $(echo '^-l') ]]
@@ -27388,6 +30928,51 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++11" >&2;}
     fi
   fi
 
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: \"Using Qt5, high DPI scaling not enabled\"" >&5
+printf "%s\n" "$as_me: \"Using Qt5, high DPI scaling not enabled\"" >&6;}
+      ;;
+    6)
+
+  if [[ "-std=c++17" =~ $(echo '^-Wl,') ]]
+  then QT_CXXFLAGS+=" -std=c++17"
+  elif [[ "-std=c++17" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "-std=c++17"
+  do  while [[ $QT_CXXFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$QT_CXXFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$QT_CXXFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then QT_CXXFLAGS=
+  else  while test "$QT_CXXFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$QT_CXXFLAGS"
+        QT_CXXFLAGS="${QT_CXXFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        QT_CXXFLAGS="${QT_CXXFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        QT_CXXFLAGS="${QT_CXXFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  QT_CXXFLAGS=$(echo $QT_CXXFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       QT_CXXFLAGS+=" -std=c++17"
+  else
+    if [[ "$QT_CXXFLAGS" =~ $(echo "(^|[[:space:]])-std=c++17($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -std=c++17" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++17" >&2;}
+    else QT_CXXFLAGS+=" -std=c++17"
+    fi
+  fi
+
+      # Show in the log
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: \"New high DPI scaling enabled\"" >&5
+printf "%s\n" "$as_me: \"New high DPI scaling enabled\"" >&6;}
+      ;;
+  esac
 
 
     if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]]+)-mmacosx-version-min(=?|[[:space:]]*)(.*)$") ]]
@@ -27396,7 +30981,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++11" >&2;}
     else unset CXXMACOSX_VERSION_MIN
     fi
 
-  if test -n $CXXMACOSX_VERSION_MIN
+  if test -n "$CXXMACOSX_VERSION_MIN"
 then :
 
 
@@ -27406,7 +30991,7 @@ then :
     else unset QTMACOSX_VERSION_MIN
     fi
 
-    if test -n $QTMACOSX_VERSION_MIN
+    if test -n "$QTMACOSX_VERSION_MIN"
 then :
 
       if cmp_dot_number $CXXMACOSX_VERSION_MIN $QTMACOSX_VERSION_MIN
@@ -28779,7 +32364,10 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
 
 
-  if test "$cross_compiling" = yes
+
+  case $qt_find_method in
+    autotroll)
+    if test "$cross_compiling" = yes
 then :
   { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 printf "%s\n" "$as_me: error: in \`$ac_pwd':" >&2;}
@@ -28963,6 +32551,10 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
   conftest.$ac_objext conftest.beam conftest.$ac_ext
 fi
 
+      ;;
+    pkgconfig)
+      ;;
+  esac
 
   CFLAGS=$CFLAGS__ax_save_flags
 
@@ -28999,7 +32591,7 @@ printf "%s\n" "enabling Qt port" >&6; }
                CONFIG_MACOS="MacOS"
             fi
             # Qt Plugins list
-            if test $QT_MAJOR -eq 5
+            if test $QT_MAJOR -ge 5
             then QT_PLUGINS_LIST="imageformats,platforms"
             else QT_PLUGINS_LIST="accessible,imageformats"
             fi
@@ -32251,7 +35843,16 @@ printf "%s\n" "customizing optimizations, $enable_optimize" >&6; } ;;
     libexecdir='${exec_prefix}/libexec'
   fi
 
-  curdir="`pwd`"
+
+  case "${host}" in
+    *mingw*)
+      curdir="`pwd -W`"
+    ;;
+    *)
+      curdir="`pwd`"
+    ;;
+  esac
+
   tmorig=${curdir}
   tmdir=${PACKAGE}
   tmsrc=${curdir}/${tmdir}
@@ -32321,7 +35922,7 @@ printf "%s\n" "signing disabled" >&6; }
       if type signtool.exe >/dev/null
       then  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: signing enabled" >&5
 printf "%s\n" "signing enabled" >&6; }
-            SIGNID="signtool.exe sign -a -d "Texmacs" -t http://timestamp.digicert.com"
+            SIGNID="$enable_sign"
 
       else { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: signing disabled" >&5
 printf "%s\n" "signing disabled" >&6; }
@@ -32453,7 +36054,7 @@ LIBOBJS=$ac_libobjs
 LTLIBOBJS=$ac_ltlibobjs
 
 
-      ax_dir="tm-guile168"
+      ax_dir="tm-guile188"
 
       # Convert the path to the subdirectory into a shell variable name.
       ax_var=$(printf "$ax_dir" | tr -c "0-9a-zA-Z_" "_")

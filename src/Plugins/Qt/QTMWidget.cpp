@@ -16,6 +16,9 @@
 #include "converter.hpp"
 #include "boot.hpp"
 #include "scheme.hpp"
+#include "new_view.hpp"
+#include "editor.hpp"
+#include "qt_renderer.hpp"
 
 #include "config.h"
 
@@ -216,7 +219,6 @@ QTMWidget::tm_widget () const {
 void 
 QTMWidget::scrollContentsBy (int dx, int dy) {
   QTMScrollView::scrollContentsBy (dx,dy);
-
   the_gui->force_update();
   // we force an update of the internal state to be in sync with the moving
   // scrollbars
@@ -254,8 +256,36 @@ QTMWidget::resizeEventBis (QResizeEvent *event) {
  CHECK: Maybe just putting onscreen all the region bounding rectangles might 
  be less expensive.
 */
+#if QT_VERSION >= 0x060000
 void
-QTMWidget::paintEvent (QPaintEvent* event) {
+QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
+  QPainter p (surface());
+
+  qreal dpr = surface()->devicePixelRatio();
+  if (dpr != tm_widget()->backingPixmap->devicePixelRatio()) {
+    QMetaObject::invokeMethod (this, "surfaceDprChanged", Qt::QueuedConnection);
+    return;
+  }
+
+  // We copy the backing buffer on the widget
+  QRect qr = event->region().boundingRect();
+  p.drawPixmap (QRect (qr.x(), qr.y(), qr.width(), qr.height()),
+                *(tm_widget()->backingPixmap),
+                QRect (dpr * qr.x(),
+                       dpr * qr.y(),
+                       dpr * qr.width(),
+                       dpr * qr.height()));
+  
+}
+
+void
+QTMWidget::surfaceDprChanged () {
+  tm_widget()->reset_all();
+  the_gui->force_update();
+}
+#else
+void
+QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
   QPainter p (surface());
   QVector<QRect> rects = event->region().rects();
   for (int i = 0; i < rects.count(); ++i) {
@@ -268,6 +298,7 @@ QTMWidget::paintEvent (QPaintEvent* event) {
                          retina_factor * qr.height()));
   }
 }
+#endif
 
 void
 set_shift_preference (int key_code, char shifted) {
@@ -427,7 +458,11 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
                ((int) (unsigned char) r[0]) < 32 ||
                ((int) (unsigned char) r[0]) >= 128) &&
               key >= 32 && key < 128 &&
+#if QT_VERSION >= 0x060000
+              ((mods & (Qt::MetaModifier | Qt::ControlModifier)) == 0)) {
+#else
               ((mods & (Qt::MetaModifier + Qt::ControlModifier)) == 0)) {
+#endif
             if ((mods & Qt::ShiftModifier) == 0 && key >= 65 && key <= 90)
               key += 32;
             qtcomposemap (key)= r;
@@ -464,7 +499,11 @@ mouse_state (QMouseEvent* event, bool flag) {
   Qt::KeyboardModifiers kstate= event->modifiers ();
   if (flag) bstate= bstate | tstate;
   if ((bstate & Qt::LeftButton     ) != 0) i += 1;
-  if ((bstate & Qt::MidButton      ) != 0) i += 2;
+#if QT_VERSION < 0x060000
+    if ((bstate & Qt::MidButton      ) != 0) i += 2;
+#else
+    if ((bstate & Qt::MiddleButton   ) != 0) i += 2;
+#endif
   if ((bstate & Qt::RightButton    ) != 0) i += 4;
   if ((bstate & Qt::XButton1       ) != 0) i += 8;
   if ((bstate & Qt::XButton2       ) != 0) i += 16;
@@ -597,10 +636,20 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
 QVariant 
 QTMWidget::inputMethodQuery (Qt::InputMethodQuery query) const {
   switch (query) {
+#if QT_VERSION < 0x060000
     case Qt::ImMicroFocus : {
       const QPoint &topleft= cursor_pos - tm_widget()->backing_pos + surface()->geometry().topLeft();
       return QVariant (QRect (topleft, QSize (5, 5)));
     }
+#else
+    case Qt::ImEnabled : {
+      return QVariant (true);
+    }
+    case Qt::ImCursorRectangle : {
+      const QPoint &topleft= cursor_pos - tm_widget()->backing_pos + surface()->geometry().topLeft();
+      return QVariant (QRect (topleft, QSize (5, 5)));
+    }
+#endif // TODO : Correctly implement input methods
     default:
       return QWidget::inputMethodQuery (query);
   }
@@ -650,7 +699,11 @@ tablet_state (QTabletEvent* event, bool flag) {
   Qt::MouseButton  tstate= event->button ();
   if (flag) bstate= bstate | tstate;
   if ((bstate & Qt::LeftButton     ) != 0) i += 1;
+#if QT_VERSION < 0x060000
   if ((bstate & Qt::MidButton      ) != 0) i += 2;
+#else
+  if ((bstate & Qt::MiddleButton   ) != 0) i += 2;
+#endif
   if ((bstate & Qt::RightButton    ) != 0) i += 4;
   if ((bstate & Qt::XButton1       ) != 0) i += 8;
   if ((bstate & Qt::XButton2       ) != 0) i += 16;
@@ -659,7 +712,11 @@ tablet_state (QTabletEvent* event, bool flag) {
 
 void
 QTMWidget::tabletEvent (QTabletEvent* event) {
-  if (is_nil (tmwid)) return; 
+#if QT_VERSION >= 0x060000
+  // for testing purposes
+  // cout << "tablet name= " << from_qstring(event->pointingDevice ()->name ()) << "\n";
+#endif
+  if (is_nil (tmwid)) return;
   unsigned int mstate = tablet_state (event, true);
   string s= "move";
   if (event->button() != 0) {
@@ -974,7 +1031,11 @@ wheel_state (QWheelEvent* event) {
   Qt::MouseButtons bstate= event->buttons ();
   Qt::KeyboardModifiers kstate= event->modifiers ();
   if ((bstate & Qt::LeftButton     ) != 0) i += 1;
+#if QT_VERSION < 0x060000
   if ((bstate & Qt::MidButton      ) != 0) i += 2;
+#else
+  if ((bstate & Qt::MiddleButton   ) != 0) i += 2;
+#endif
   if ((bstate & Qt::RightButton    ) != 0) i += 4;
   if ((bstate & Qt::XButton1       ) != 0) i += 8;
   if ((bstate & Qt::XButton2       ) != 0) i += 16;
@@ -1000,7 +1061,7 @@ QTMWidget::wheelEvent(QWheelEvent *event) {
   if (as_bool (call ("wheel-capture?"))) {
 #if (QT_VERSION >= 0x060000)
     QPointF pos  = event->position();
-    QPoint  point= QPointF (pos.x(), pos.y()) + origin();
+    QPoint  point= QPointF (pos.x(), pos.y()).toPoint () + origin();
 #else
     QPoint  point= event->pos() + origin();
 #endif
@@ -1019,6 +1080,26 @@ QTMWidget::wheelEvent(QWheelEvent *event) {
                               mstate, texmacs_time (), data);
   }
   else if (QApplication::keyboardModifiers() == Qt::ControlModifier) {
+#if QT_VERSION >= 0x060000
+    QPoint numPixels = event->pixelDelta();
+    QPoint numDegrees = event->angleDelta() / 8;
+    
+    // compute the zoom factor from numPixels or numDegrees
+    double zoomFactor = 0.0;
+    if (!numPixels.isNull()) {
+      if (numPixels.y() > 0) {
+        call ("zoom-in", object (sqrt (sqrt (sqrt (sqrt (numPixels.y()))))));
+      } else {
+        call ("zoom-out", object (sqrt (sqrt (sqrt (sqrt (-numPixels.y()))))));
+      }
+    } else if (!numDegrees.isNull()) {
+      if (numDegrees.y() > 0) {
+        call ("zoom-in", object (sqrt (sqrt (sqrt (sqrt (numDegrees.y()))))));
+      } else {
+        call ("zoom-out", object (sqrt (sqrt (sqrt (sqrt (-numDegrees.y()))))));
+      }
+    }
+#else
     if (event->delta() > 0) {
       //double x= exp (((double) event->delta ()) / 500.0);
       //call ("zoom-in", object (x));
@@ -1029,6 +1110,11 @@ QTMWidget::wheelEvent(QWheelEvent *event) {
       //call ("zoom-out", object (x));
       call ("zoom-out", object (sqrt (sqrt (sqrt (sqrt (2.0))))));
     }
+#endif
   }
   else QAbstractScrollArea::wheelEvent (event);
+}
+
+void QTMWidget::showEvent (QShowEvent *event) {
+  the_gui->force_update();
 }

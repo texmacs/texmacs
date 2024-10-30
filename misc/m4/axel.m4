@@ -13,12 +13,11 @@ AC_DEFUN([LC_AXEL],[
       LIBS=`axel-config --libs`
       AC_CHECK_HEADER(QGui/Viewer.h,
       AC_MSG_CHECKING(for axel)
-      AC_TRY_LINK(
-  [
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[
   #include <QGui/Viewer.h>
-  ],[
+  ]], [[
       Viewer viewer(0);
-  ],[
+  ]])],[
       AC_MSG_RESULT(yes)
       AC_DEFINE(USE_AXEL, 1, [Use axel library])
       AXEL_CFLAGS="$CPPFLAGS"

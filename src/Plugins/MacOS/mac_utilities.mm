@@ -108,7 +108,11 @@ mac_handler_body (NSEvent *event) {
       unichar key = [nss characterAtIndex:0];
       if ((key == NSTabCharacter) || (key == NSBackTabCharacter) ) {
         NSUInteger nsmods = [event modifierFlags];
+#if QT_VERSION < 0x060000
         Qt::KeyboardModifiers modifs = 0;
+#else
+        Qt::KeyboardModifiers modifs = Qt::NoModifier;
+#endif
         if (key == NSBackTabCharacter) modifs |= Qt::ShiftModifier;
         if (nsmods &  NSControlKeyMask) modifs |= Qt::MetaModifier;
         if (nsmods &  NSAlternateKeyMask) modifs |= Qt::AltModifier;
@@ -133,7 +137,11 @@ mac_handler_body (NSEvent *event) {
       }
       if (key == 0x0051 || key == 0x0071) {
         NSUInteger nsmods = [event modifierFlags];
+#if QT_VERSION < 0x060000
         Qt::KeyboardModifiers modifs = 0;
+#else
+        Qt::KeyboardModifiers modifs = Qt::NoModifier;
+#endif
         if (key == NSBackTabCharacter) modifs |= Qt::ShiftModifier;
         if (nsmods &  NSControlKeyMask) modifs |= Qt::MetaModifier;
         if (nsmods &  NSAlternateKeyMask) modifs |= Qt::AltModifier;

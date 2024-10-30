@@ -29,7 +29,9 @@
 #include "qt_simple_widget.hpp"
 #include "qt_window_widget.hpp"
 
+#if QT_VERSION < 0x060000
 #include <QDesktopWidget>
+#endif
 #include <QClipboard>
 #include <QBuffer>
 #include <QFileOpenEvent>
@@ -45,7 +47,7 @@
 #include <QLibraryInfo>
 #include <QImage>
 #include <QUrl>
-#include <QDesktopWidget>
+//#include <QDesktopWidget>
 #include <QApplication>
 
 #include "QTMGuiHelper.hpp"
@@ -58,6 +60,10 @@
 
 #if (QT_VERSION >= 0x050000)
 #include <QtPlugin>
+
+#ifdef qt_static_plugin_xcb
+Q_IMPORT_PLUGIN(QXcbIntegrationPlugin)
+#endif
 #ifdef qt_static_plugin_qjpeg
 Q_IMPORT_PLUGIN(qjpeg)
 #endif
@@ -130,8 +136,8 @@ qt_gui_rep::qt_gui_rep (int &argc, char **argv):
 
   gui_helper = new QTMGuiHelper (this);
   qApp->installEventFilter (gui_helper);
-
-#ifdef QT_MAC_USE_COCOA
+#if defined(QT_MAC_USE_COCOA) \
+  || (defined(OS_MACOS) && QT_VERSION >= 0x060000)
     //HACK: this filter is needed to overcome a bug in Qt/Cocoa
   extern void mac_install_filter(); // defined in src/Plugins/MacOS/mac_app.mm
   mac_install_filter();
@@ -146,6 +152,7 @@ qt_gui_rep::qt_gui_rep (int &argc, char **argv):
                     gui_helper, SLOT (doUpdate()));
   // (void) default_font ();
 
+#if QT_VERSION < 0x060000
   if (!retina_manual) {
     retina_manual= true;
 #ifdef MACOSX_EXTENSIONS
@@ -192,13 +199,18 @@ qt_gui_rep::qt_gui_rep (int &argc, char **argv):
     retina_icons= get_user_preference ("retina-icons") == "on"? 2: 1;
   if (has_user_preference ("retina-scale"))
     retina_scale= as_double (get_user_preference ("retina-scale"));
+#endif
 }
 
 /* important routines */
 void
 qt_gui_rep::get_extents (SI& width, SI& height) {
   coord2 size = headless_mode ? coord2 (480, 320)
+#if QT_VERSION < 0x060000
     : from_qsize (QApplication::desktop()->size());
+#else
+    : from_qsize (QGuiApplication::primaryScreen()->size()); // todo : improve this
+#endif
   width  = size.x1;
   height = size.x2;
 }
@@ -348,7 +360,7 @@ qt_gui_rep::set_selection (string key, tree t,
   cb->clear (mode);
 
   c_string selection (s);
-  cb->setText (QString::fromLatin1 (selection), mode);
+  cb->setText (QString::fromLatin1 (selection, N(s)), mode);
   QMimeData *md = new QMimeData;
 
   if (format == "verbatim" || format == "default") {
@@ -372,21 +384,21 @@ qt_gui_rep::set_selection (string key, tree t,
       enc = get_locale_charset ();
 
     if (enc == "utf-8" || enc == "UTF-8")
-      md->setText (QString::fromUtf8 (selection));
+      md->setText (QString::fromUtf8 (selection, N(s)));
     else if (enc == "iso-8859-1" || enc == "ISO-8859-1")
-      md->setText (QString::fromLatin1 (selection));
+      md->setText (QString::fromLatin1 (selection, N(s)));
     else
-      md->setText (QString::fromLatin1 (selection));
+      md->setText (QString::fromLatin1 (selection, N(s)));
   }
   else if (format == "latex") {
     string enc = get_preference ("texmacs->latex:encoding");
     if (enc == "utf-8" || enc == "UTF-8" || enc == "cork")
       md->setText (to_qstring (string (selection)));
     else
-      md->setText (QString::fromLatin1 (selection));
+      md->setText (QString::fromLatin1 (selection, N(s)));
   }
   else
-    md->setText (QString::fromLatin1 (selection));
+    md->setText (QString::fromLatin1 (selection, N(s)));
   cb->setMimeData (md, mode);
     // according to the docs, ownership of mimedata is transferred to clipboard
     // so no memory leak here
@@ -491,8 +503,10 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
     waitWindow->close();
   }
   qApp->processEvents();
-  QApplication::flush();
-
+#if QT_VERSION < 0x060000
+	QApplication::flush();
+#endif
+  
   wid->qwid->activateWindow ();
   send_keyboard_focus (wid);
     // next time we do update the dialog will disappear
@@ -803,10 +817,10 @@ qt_gui_rep::add_event (const queued_event& ev) {
 void
 qt_gui_rep::update () {
 #ifdef QT_CPU_FIX
-  int std_delay= 1;
+  time_t std_delay= 1;
   tm_sleep ();
 #else
-  int std_delay= 90 / 6;
+  time_t std_delay= 90 / 6;
 #endif
 
   if (updating) {
@@ -885,7 +899,7 @@ qt_gui_rep::update () {
 
   time_t delay = delayed_commands.lapse - texmacs_time();
   if (needing_update) delay = 0;
-  else                delay = max (0, min (std_delay, delay));
+  else                delay = std::max ((time_t)0, std::min (std_delay, delay));
   if (postpone_treatment) delay= 9; // NOTE: force occasional display
 
   updatetimer->start (delay);

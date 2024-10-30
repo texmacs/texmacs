@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg3039" width="16" height="16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <metadata id="metadata3044">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1">
+  <g id="text5186" transform="translate(-6.2754 1.529)" fill="#404040" filter="url(#filter5320)">
+   <path id="path5227" d="m8.125 8.9688-1.625 0.03125c0.19012 1.9149 0.92185 3.5147 2.0312 4.5625 0.42 0.396 0.4475 0.4375 0.6875 0.4375h0.375c0.18 0 0.21875-0.09625 0.21875-0.15625 0-0.34318-1.4628-1.1804-1.6875-4.875z" fill="#404040"/>
+  </g>
+  <g id="g5230" transform="matrix(-1 0 0 1 22.333 1.529)" fill="#404040" filter="url(#filter5380)">
+   <path id="path5232" d="m8.125 8.9688-1.625 0.03125c0.19012 1.9149 0.92185 3.5147 2.0312 4.5625 0.42 0.396 0.4475 0.4375 0.6875 0.4375h0.375c0.18 0 0.21875-0.09625 0.21875-0.15625 0-0.34318-1.4628-1.1804-1.6875-4.875z" fill="#404040"/>
+  </g>
+  <g id="g5234" transform="matrix(1 0 0 -1 -6.2435 14.432)" fill="#404040" filter="url(#filter5316)">
+   <path id="path5236" d="m8.125 8.9688-1.625 0.03125c0.19012 1.9149 0.92185 3.5147 2.0312 4.5625 0.42 0.396 0.4475 0.4375 0.6875 0.4375h0.375c0.18 0 0.21875-0.09625 0.21875-0.15625 0-0.34318-1.4628-1.1804-1.6875-4.875z" fill="#404040"/>
+  </g>
+  <g id="g5238" transform="matrix(-1 0 0 -1 22.365 14.495)" fill="#404040" filter="url(#filter5376)">
+   <path id="path5240" d="m8.125 8.9688-1.625 0.03125c0.19012 1.9149 0.92185 3.5147 2.0312 4.5625 0.42 0.396 0.4475 0.4375 0.6875 0.4375h0.375c0.18 0 0.21875-0.09625 0.21875-0.15625 0-0.34318-1.4628-1.1804-1.6875-4.875z" fill="#404040"/>
+  </g>
+  <path id="path5242" d="m0.19113 6.9214h1.6565v2.1024h-1.6565z" fill="#404040" filter="url(#filter5312)"/>
+  <path id="path5244" d="m14.207 6.9851 1.6246 2e-7v2.0069l-1.6246 2e-7z" fill="#404040" filter="url(#filter5372)"/>
+  <path id="path5246" d="m4.4597 8.0044h7.1673" fill="none" stroke="#404040" stroke-linecap="round" stroke-width="1.5"/>
+  <path id="path5248" d="m5 2v3h6v-3z" fill="#c0c0c0"/>
+  <path id="path5250" d="m5 11v3h6v-3z" fill="#c0c0c0"/>
+ </g>
+</svg>

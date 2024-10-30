@@ -25,6 +25,11 @@ FT_Error (*ft_new_face)       (FT_Library     library,
 			       const char*    filepathname,
 			       FT_Long        face_index,
 			       FT_Face*       aface);
+FT_Error (*ft_new_memory_face) (FT_Library library,
+            const FT_Byte* file_base,
+            FT_Long        file_size,
+            FT_Long        face_index,
+            FT_Face*       aface);
 FT_Error (*ft_select_charmap) (FT_Face        face,
 			       FT_Encoding    encoding);
 FT_Error (*ft_set_char_size)  (FT_Face        face,
@@ -44,6 +49,7 @@ FT_Error (*ft_get_kerning)    (FT_Face        face,
                                FT_UInt        right_glyph,
                                FT_UInt        kern_mode,
                                FT_Vector      *akerning);
+FT_Error (*ft_done_face)      (FT_Face        face);
 
 typedef FT_Error (*glyph_renderer) (FT_GlyphSlot, FT_Render_Mode);
 
@@ -54,12 +60,14 @@ ft_initialize () {
 #ifdef LINKED_FREETYPE
   ft_init_freetype = FT_Init_FreeType;
   ft_new_face      = FT_New_Face;
+  ft_new_memory_face = FT_New_Memory_Face;
   ft_select_charmap= FT_Select_Charmap;
   ft_set_char_size = FT_Set_Char_Size;
   ft_get_char_index= FT_Get_Char_Index;
   ft_load_glyph    = FT_Load_Glyph;
   ft_render_glyph  = (glyph_renderer) ((void*) FT_Render_Glyph);
   ft_get_kerning   = FT_Get_Kerning;
+  ft_done_face     = FT_Done_Face;
   if (ft_init_freetype (&ft_library)) return true;
   if (DEBUG_AUTO) debug_automatic << "With linked TrueType support\n";
 #else
@@ -70,6 +78,9 @@ ft_initialize () {
   (void) symbol_install ("/usr/lib/libfreetype.so", "FT_New_Face"      ,
 			 (pointer&) ft_new_face);
   if (ft_new_face == NULL) return true;
+  (void) symbol_install ("/usr/lib/libfreetype.so", "FT_New_Memory_Face",
+       (pointer&) ft_new_memory_face);
+  if (ft_new_memory_face == NULL) return true;
   (void) symbol_install ("/usr/lib/libfreetype.so", "FT_Select_Charmap",
 			 (pointer&) ft_select_charmap);
   if (ft_select_charmap == NULL) return true;
@@ -85,6 +96,12 @@ ft_initialize () {
   (void) symbol_install ("/usr/lib/libfreetype.so", "FT_Render_Glyph"  ,
 			 (pointer&) ft_render_glyph);
   if (ft_render_glyph == NULL) return true;
+  (void) symbol_install ("/usr/lib/libfreetype.so", "FT_Get_Kerning"   ,
+       (pointer&) ft_get_kerning);
+  if (ft_get_kerning == NULL) return true;
+  (void) symbol_install ("/usr/lib/libfreetype.so", "FT_Done_Face"     ,
+       (pointer&) ft_done_face);
+  if (ft_done_face == NULL) return true;
   debug_on (status);
   if (ft_init_freetype (&ft_library)) return true;
   if (DEBUG_AUTO) debug_automatic << "Installed TrueType support\n";

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #==============================================================================
 # MODULE     : tm_feynmf
 # VERSION    : 1.0
@@ -79,7 +79,7 @@ while [ 1 ]; do
 	    # Unitlength choosen such that size specification (1,1)
 	    # produces okayish output
 	    # - the linestyles in file feynmf-styles must be tuned to this!
-	    echo -E "\unitlength=20mm"            >> $TEMP_FILE.tex
+	    echo -E "\unitlength=20mm"           >> $TEMP_FILE.tex
 	    echo -E "\begin{document}"           >> $TEMP_FILE.tex
 	    echo -E "\begin{fmffile}{fmftempl}"  >> $TEMP_FILE.tex
 

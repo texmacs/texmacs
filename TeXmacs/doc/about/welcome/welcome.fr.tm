@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.2>
+<TeXmacs|2.1.4>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|french|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|Bienvenue sur GNU <TeXmacs>>
@@ -31,8 +31,9 @@
     documents <TeXmacs> dans le menu <hlink|<menu|Aide|Styles>|../../devel/style/style.fr.tm>.
     On y explique aussi comment créer ses propres styles et préambules.
 
-    <item>Le menu <hlink|<menu|Aide|Sur>|../../about/about.fr.tm> contient
-    des informations sur <TeXmacs> : <hlink|auteurs|../../about/authors/authors.fr.tm>,
+    <item>Le menu <hlink|<menu|Aide|À propos de>|../../about/about.fr.tm>
+    contient des informations sur <TeXmacs> :
+    <hlink|auteurs|../../about/authors/authors.fr.tm>,
     <hlink|contact|../../about/authors/contact.fr.tm> et
     <hlink|changements|../../about/changes/changes.fr.tm> entre les
     différentes versions du programme.
@@ -65,7 +66,7 @@
   est aussi documentée dans <hlink|<menu|Aide|Code
   source>|../../devel/source/source.fr.tm>.
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven, Michèle Garoche>
+  <tmdoc-copyright|1998\U2002|Joris van der Hoeven, Michèle Garoche>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -77,7 +78,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|french>
     <associate|preamble|false>
   </collection>
 </initial>

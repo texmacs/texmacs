@@ -461,9 +461,9 @@ tmscm_is_content (tmscm p) {
   if (tmscm_is_string (p) || tmscm_is_tree (p)) return true;
   else if (!tmscm_is_pair (p) || !tmscm_is_symbol (tmscm_car (p))) return false;
   else {
-    for (p= tmscm_cdr (p); !tmscm_is_null (p); p= tmscm_cdr (p))
+    for (p= tmscm_cdr (p); tmscm_is_pair (p); p= tmscm_cdr (p))
       if (!tmscm_is_content (tmscm_car (p))) return false;
-    return true;
+    return tmscm_is_null (p);
   }
 }
 

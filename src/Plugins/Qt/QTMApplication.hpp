@@ -15,15 +15,19 @@
 #include <QApplication>
 #include <QIcon>
 #include <QStyle>
+#include <QStyleFactory>
 #include "string.hpp"
 #include "sys_utils.hpp"
 #include "url.hpp"
+#include "boot.hpp"
+#include "gui.hpp"
+#include "QTMPixmapManager.hpp"
 
 void init_palette (QApplication* app);
 void init_style_sheet (QApplication* app);
 void set_standard_style_sheet (QWidget *w);
 
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) && QT_VERSION < 0x060000 
 
 #include <QMacPasteboardMime>
 
@@ -106,17 +110,37 @@ public:
  */
 class QTMApplication: public QApplication {
   Q_OBJECT
-  
-#ifdef Q_OS_MAC
+
+#if defined(Q_OS_MAC) && QT_VERSION < 0x060000 
   QMacPasteboardMimePDF mac_pasteboard_mime_pdf;
 #endif
   
 public:
   QTMApplication (int& argc, char** argv) :
     QApplication (argc, argv) {
-      init_palette (this);
-      init_style_sheet (this);
+#if QT_VERSION >= 0x060000
+      pm.loadAll();
+#endif
+      init_theme ();
     }
+  
+  void init_theme () {
+#if defined(OS_MINGW64) && QT_VERSION >= 0x060000
+      setStyle(QStyleFactory::create("Windows"));
+#endif    
+    string theme= get_user_preference ("gui theme", "default");
+    if (theme == "default") 
+      theme = get_default_theme ();
+    if (theme == "light")
+      tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-light.css";
+    else if (theme == "dark")
+      tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-dark.css";
+    else if (theme != "")
+      tm_style_sheet= theme;
+
+    init_palette (this);
+    init_style_sheet (this);
+  }
 
   void set_window_icon (string icon_path) {
     url icon_url= url_system (get_env ("TEXMACS_PATH") * icon_path);
@@ -153,7 +177,23 @@ public:
     }
     return false;
   }
+
+#if QT_VERSION >= 0x060000
+  QTMPixmapManager& pixmap_manager() {
+    return pm;
+  }
+#endif
+
+private:
+#if QT_VERSION >= 0x060000
+  QTMPixmapManager pm;
+#endif
+
 };
+
+inline QTMApplication *tmapp() {
+  return dynamic_cast<QTMApplication *>(qApp);
+}
 
 class QTMCoreApplication: public QCoreApplication {
   Q_OBJECT

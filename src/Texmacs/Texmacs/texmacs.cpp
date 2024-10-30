@@ -36,10 +36,6 @@ void mac_fix_paths ();
 #include <QDir>
 #endif
 
-#ifdef OS_MINGW
-#include "Windows/win-utf8-compat.hpp"
-#endif
-
 #ifdef MACOSX_EXTENSIONS
 #include "MacOS/mac_utilities.h"
 #endif
@@ -99,6 +95,15 @@ clean_exit_on_segfault (int sig_num) {
 /******************************************************************************
 * Texmacs paths
 ******************************************************************************/
+
+void TeXmacs_init_font() {
+#if defined(QTTEXMACS) && defined(qt_no_fontconfig)
+  string default_font_dir = get_env ("TEXMACS_PATH") * "/fonts/truetype/stix";
+  string current_qt_qpa_fontdir = get_env ("QT_QPA_FONTDIR");
+  if (is_empty(current_qt_qpa_fontdir))
+    set_env("QT_QPA_FONTDIR", default_font_dir);
+#endif
+}
 
 void
 TeXmacs_init_paths (int& argc, char** argv) {
@@ -305,6 +310,7 @@ TeXmacs_main (int argc, char** argv) {
         my_init_cmds= my_init_cmds * " (quit-TeXmacs)";
       else if ((s == "-r") || (s == "-reverse"))
         set_reverse_colors (true);
+#if QT_VERSION < 0x060000
       else if (s == "-no-retina") {
         retina_manual= true;
         retina_factor= 1;
@@ -333,6 +339,7 @@ TeXmacs_main (int argc, char** argv) {
         retina_iman  = true;
         retina_icons = 2;
       }
+#endif
       else if ((s == "-c") || (s == "-convert") || (s == "-C")) {
         i+=2;
         if (i<argc) {
@@ -417,6 +424,7 @@ TeXmacs_main (int argc, char** argv) {
   if (headless_mode) my_init_cmds= my_init_cmds * " (quit-TeXmacs)";
 
   // Further options via environment variables
+#if QT_VERSION < 0x060000
   if (get_env ("TEXMACS_RETINA") == "off") {
     retina_manual= true;
     retina_factor= 1;
@@ -444,6 +452,7 @@ TeXmacs_main (int argc, char** argv) {
     retina_iman  = true;
     retina_icons = 2;
   }
+#endif
   // End options via environment variables
 
   // Further user preferences
@@ -451,7 +460,11 @@ TeXmacs_main (int argc, char** argv) {
   string unify = (gui_version () == "qt4"? string ("on"): string ("off"));
   string mini  = (os_macos ()? string ("off"): string ("on"));
   if (tm_style_sheet != "") mini= "off";
-  use_native_menubar = get_preference ("use native menubar", native) == "on";
+  #if (defined(OS_MACOS) && QT_VERSION <= QT_VERSION_CHECK(5, 15, 9)) || defined(qt_no_fontconfig)
+  use_native_menubar = get_preference ("use native menubar", native) == "force";
+  #else
+  use_native_menubar = get_preference ("use native menubar", native) == "on" || get_preference ("use native menubar", native) == "force";
+  #endif
   use_unified_toolbar= get_preference ("use unified toolbar", unify) == "on";
   use_mini_bars      = get_preference ("use minibars",         mini) == "on";
   if (!use_native_menubar) use_unified_toolbar= false;
@@ -670,8 +683,7 @@ immediate_options (int argc, char** argv) {
 #include <cstdio>
 
 int
-main (int argc, char** argv) {
-
+texmacs_entrypoint (int argc, char** argv) {
 #ifdef STACK_SIZE
   struct rlimit limit;
 
@@ -684,33 +696,18 @@ main (int argc, char** argv) {
   } else cerr << "Cannot get stack value\n";
 #endif
 
-#ifdef OS_MINGW
-	nowide::args a(argc,argv); // Fix arguments - make them UTF-8
-#endif
-
-
   original_path= get_env ("PATH");
   boot_hacks ();
   windows_delayed_refresh (1000000000);
   immediate_options (argc, argv);
   load_user_preferences ();
-  string theme= get_user_preference ("gui theme", "default");
-#if defined(OS_MACOS) && !defined(__arm64__)
-  if (theme == "default") theme= "";  
-#else
-  if (theme == "default") theme= "light";
-#endif
-  if (theme == "light")
-    tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-light.css";
-  else if (theme == "dark")
-    tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-dark.css";
-  else if (theme != "")
-    tm_style_sheet= theme;
 #ifndef OS_MINGW
   set_env ("LC_NUMERIC", "POSIX");
 #ifndef OS_MACOS
-  set_env ("QT_QPA_PLATFORM", "xcb");
-  set_env ("XDG_SESSION_TYPE", "x11");
+  if (get_env("WAYLAND_DISPLAY") == "") {
+    set_env ("QT_QPA_PLATFORM", "xcb"); // todo : remove ?
+    set_env ("XDG_SESSION_TYPE", "x11");
+  }
 #endif
 #endif
 #ifdef MACOSX_EXTENSIONS
@@ -722,7 +719,8 @@ main (int argc, char** argv) {
     remove (url ("$TEXMACS_HOME_PATH/system/cache") * url_wildcard ("*"));
     remove (url ("$TEXMACS_HOME_PATH/fonts/error") * url_wildcard ("*"));    
   }
-#endif
+#endif 
+  TeXmacs_init_paths (argc, argv);
 #ifdef QTTEXMACS
   // initialize the Qt application infrastructure
   if (headless_mode)
@@ -730,10 +728,14 @@ main (int argc, char** argv) {
   else
     qtmapp= new QTMApplication (argc, argv);
 #endif
-  TeXmacs_init_paths (argc, argv);
+  TeXmacs_init_font  ();
 #ifdef QTTEXMACS
   if (!headless_mode)
-    qtmapp->set_window_icon("/misc/images/texmacs-512.png");
+#  if QT_VERSION >= 0x060000
+    tmapp()->set_window_icon("/misc/images/texmacs.svg");
+#  else
+    tmapp()->set_window_icon("/misc/images/texmacs-512.png");
+#  endif
 #endif
   //cout << "Bench  ] Started TeXmacs\n";
   the_et     = tuple ();

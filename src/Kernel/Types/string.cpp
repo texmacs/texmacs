@@ -195,9 +195,7 @@ operator <= (string s1, string s2) {
 
 tm_ostream&
 operator << (tm_ostream& out, string a) {
-  int i, n=N(a);
-  if (n==0) return out;
-  for (i=0; i<n; i++) out << a[i];
+  out->write (&a[0], N(a));
   return out;
 }
 

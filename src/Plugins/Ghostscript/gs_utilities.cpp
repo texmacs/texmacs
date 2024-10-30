@@ -496,7 +496,9 @@ gs_check (url doc) {
   array<string> cmd;
   cmd << gs_executable ();
   cmd << string ("-dNOPAUSE"); cmd << string ("-dBATCH");
-  cmd << string ("-dDEBUG"); cmd << string ("-sDEVICE=nullpage");
+  if (gs_version () < 10)
+    cmd << string ("-dDEBUG");
+  cmd << string ("-sDEVICE=nullpage");
   cmd << concretize (doc);
   array<int> out; out << 1; out << 2;
   //cout << "cmd= " << cmd << LF;

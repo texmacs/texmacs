@@ -60,9 +60,15 @@ qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, string name,
 
   if (tm_style_sheet == "") {
     QPalette pal;
-    QColor winbg= pal.color (QPalette::Background);
+#if QT_VERSION >= 0x060000
+    QColor winbg = pal.color (QPalette::Window);
+    if (winbg.red() + winbg.green() + winbg.blue () < 255)
+      pal.setColor (QPalette::Window, QColor (240, 240, 240));
+#else
+    QColor winbg = pal.color (QPalette::Background);
     if (winbg.red() + winbg.green() + winbg.blue () < 255)
       pal.setColor (QPalette::Background, QColor (240, 240, 240));
+#endif
     _wid->setPalette (pal);
   }
 }
@@ -76,12 +82,7 @@ qt_window_widget_rep::~qt_window_widget_rep ()
   if (DEBUG_QT)
     debug_qt << "Deleting qt_window_widget " << id << "\n";
   if (qwid) {
-#if defined(OS_MACOS)
     qwid->deleteLater(); // this caused bug 61884
-#else
-    notify_window_destroy (get_nickname ());
-    delete qwid;
-#endif
   }
 }
 

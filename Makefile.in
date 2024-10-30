@@ -87,7 +87,7 @@ STATIC_TEXMACS: EMPTY_DIRS
 	@echo ----------------------------------------------------
 	@echo static TeXmacs has been successfully compiled
 
-@MKGUILE@: tm-guile168
+@MKGUILE@: @GUILE_EMBEDDED_DIR@
 	cd @DIRGUILE@ && make -j1 && make -j1 install
 	
 DEPS: EMPTY_DIRS
@@ -470,7 +470,7 @@ MACOS_BUNDLE: TEXMACS
 	@echo ----------------------------------------------------
 	@echo TeXmacs has been bundled in $(MACOS_PACKAGE_APP)
 	@if test -n "@SIGNID@";then \
-		codesign --deep -s @SIGNID@ $(MACOS_PACKAGE_APP) &&\
+		codesign --timestamp --deep -s @SIGNID@ $(MACOS_PACKAGE_APP) &&\
 		echo "Bundle successfully signed" || echo "Signing failed"; fi
 
 
@@ -502,7 +502,10 @@ WINDOWS_BUILD_DIR = ../distr/TeXmacs-Windows
 WINDOWS_BUILD_BIN_DIR = $(WINDOWS_BUILD_DIR)/bin
 UN_QT_P = $(shell cygpath -u $(QT_PLUGINS_PATH))
 
-WINDOWS_BUNDLE: TEXMACS
+WINDOWS_PBD: TEXMACS
+	if [test -n "@CV2PDB@"]; then @CV2PDB@ $(WINDOWS_BUILD_BIN_DIR)/texmacs.exe; fi
+
+WINDOWS_BUNDLE: TEXMACS WINDOWS_PBD
 	$(MKDIR) ../distr
 	$(MKDIR) $(WINDOWS_BUILD_DIR)
 	$(RM) -r $(WINDOWS_BUILD_BIN_DIR)/{texmacs,texmacs.bin,texmacs.exe}

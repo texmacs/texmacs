@@ -14,6 +14,7 @@
 #include "tt_face.hpp"
 #include "tt_file.hpp"
 #include "tm_timer.hpp"
+#include "sys_utils.hpp"
 
 #ifdef USE_FREETYPE
 
@@ -43,10 +44,33 @@ tt_face_rep::tt_face_rep (string name): rep<tt_face> (name) {
     debug_fonts << "Loading True Type font " << name << "\n";
   url u= tt_font_find (name);
   if (is_none (u)) return;
-  c_string _name (concretize (u));
-  if (ft_new_face (ft_library, _name, 0, &ft_face)) {  return; }
+
+  FILE *font_file = texmacs_fopen(concretize (u), "r");
+  if (!font_file) {
+    debug_fonts << "Can't load " << name << LF; 
+    return;
+  }
+  fseek(font_file, 0, SEEK_END);
+  long fsize = ftell(font_file);
+  fseek(font_file, 0, SEEK_SET);
+
+  buffer = (FT_Byte*)malloc(fsize);
+  fread(buffer, fsize, 1, font_file);
+  fclose(font_file);
+
+  if (ft_new_memory_face (ft_library, buffer, fsize, 0, &ft_face)) {  
+    debug_fonts << "Can't load freetype " << name << LF;
+    free(buffer);
+    buffer = nullptr;
+    return; 
+  }
   ft_select_charmap (ft_face, ft_encoding_adobe_custom);
   bad_face= false;
+}
+
+tt_face_rep::~tt_face_rep () {
+  if (ft_face) ft_done_face (ft_face);
+  if (buffer) free(buffer);
 }
 
 tt_face

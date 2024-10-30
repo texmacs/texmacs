@@ -174,7 +174,7 @@ edit_incl     := $(scheme_incl) \
   $(call incl_flags,Edit/Editor Edit/Interface Edit/Modify)
 texmacs_incl  := $(scheme_incl)
 pdf_incl      := $(system_incl) \
-  $(call incl_flags,Plugins/Pdf/LibAesgm)
+  $(call incl_flags,Plugins/Pdf/LibAesgm Texmacs/Data)
 freetype_incl := $(system_incl)
 
 ###############################################################################
@@ -211,7 +211,7 @@ Objects/winresource.rc.o:
 	$(WINDRES) $(WINDRESFLAGS) ../packages/windows/resource.rc \
 	-o Objects/winresource.rc.o
 
-ifeq "@CONFIG_OS_COMPAT@" "Windows"
+ifeq "@CONFIG_OS@" "MINGW"
 uses_windowsres = Objects/winresource.rc.o
 else
 uses_windowsres =
@@ -340,7 +340,7 @@ $(plugins_c_obj): Objects/%.o: %.c
 $(x11_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(x11_incl) $(CXXX11) $(CXXGUILE))
 $(os_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(os_incl))
+	$(call cxx_incl,$(os_incl) $(CXXGUILE))
 $(qt_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(qt_incl) $(CXXQT) $(CXXGUILE))
 $(moc_obj): Objects/%.o: ./Plugins/Qt/%.cpp

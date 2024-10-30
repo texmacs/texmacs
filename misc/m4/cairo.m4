@@ -13,13 +13,12 @@ AC_DEFUN([LC_CAIRO],[
       LIBS=`pkg-config --libs cairo`
       AC_CHECK_HEADER(cairo.h,
       AC_MSG_CHECKING(for cairo)
-      AC_TRY_LINK(
-  [
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[
   #include <cairo.h>
-  ],[
+  ]], [[
       cairo_surface_t *surface;
       surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 120, 120);
-  ],[
+  ]])],[
       AC_MSG_RESULT(yes)
       AC_DEFINE(USE_CAIRO, 1, [Use cairo library])
       CAIRO_CFLAGS="$CPPFLAGS"

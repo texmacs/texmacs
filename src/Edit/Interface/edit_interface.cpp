@@ -46,6 +46,9 @@ MODE_LANGUAGE (string mode) {
 
 static double
 get_zoom (editor_rep* ed, tm_buffer buf) {
+#if QT_VERSION >= 0x060000
+  double retina_zoom = 1.0;
+#endif
   if (!is_nil (buf) && buf->data->init->contains ("no-zoom"))
     return as_double (buf->data->init [ZOOM_FACTOR]);
   else return retina_zoom * ed->sv->get_default_zoom_factor ();

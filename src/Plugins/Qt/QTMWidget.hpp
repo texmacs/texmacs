@@ -17,6 +17,7 @@
 #include <QLabel>
 #include <QGesture>
 #include <QGestureEvent>
+#include <QScreen>
 
 class qt_simple_widget_rep;
 
@@ -49,12 +50,17 @@ public:
   qt_simple_widget_rep* tm_widget () const;
   
   bool isPreediting () { return preediting; }
-  
+
+#if QT_VERSION >= 0x060000
+protected slots:
+  void surfaceDprChanged ();
+#endif
+
 protected:
 
   virtual bool event (QEvent *event);
 
-  virtual void paintEvent (QPaintEvent* event);
+  void surfacePaintEvent (QPaintEvent *e, QWidget *surface) override;
   virtual void focusInEvent (QFocusEvent* event);
   virtual void focusOutEvent (QFocusEvent* event);
   virtual void keyPressEvent (QKeyEvent* event);
@@ -75,6 +81,8 @@ protected:
 
   virtual void wheelEvent(QWheelEvent *event);
   virtual QVariant inputMethodQuery (Qt::InputMethodQuery query) const;
+
+  void showEvent (QShowEvent *event) override;
 
 };
 

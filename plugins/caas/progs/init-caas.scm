@@ -24,7 +24,8 @@
   (:serializer ,caas-serialize)
   (:launch "caas --texmacs")
   (:session "Caas")
-  (:scripts "Caas"))
+  (:scripts "Caas")
+  (:tab-completion #t))
 
 (texmacs-modes
   (in-caas% (== (get-env "prog-language") "caas"))
