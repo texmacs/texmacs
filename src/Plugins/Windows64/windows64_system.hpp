@@ -132,4 +132,53 @@ int mingw_system (array<string> arg,
                   array<int> fd_in, array<string> str_in,
                   array<int> fd_out, array<string*> str_out);
 
+
+/* 
+ * @brief Launch an executable with arguments, or open a link, a PDF
+ * file, etc. with the default application.
+ * If not program is associated with the file, the system will ask
+ * the user to choose a program.
+ * 
+ * This version will wait for 
+ * the process to finish before returning.
+ * 
+ * @param cmd: the command to execute
+ * @param cmdout: the output of the command
+ * @param cmderr: the error output of the command
+ * 
+ * @return the exit code of the process
+ */
+int windows_system(string cmd, string &cmdout, string &cmderr);
+
+/* 
+ * @brief Launch an executable with arguments, or open a link, a PDF
+ * file, etc. with the default application.
+ * If not program is associated with the file, the system will ask
+ * the user to choose a program.
+ * 
+ * This version will wait for 
+ * the process to finish before returning.
+ * 
+ * @param cmd: the command to execute
+ * @param cmdout: the output of the command
+ * 
+ * @return the exit code of the process
+ */
+int windows_system(string cmd, string &cmdout);
+
+/* 
+ * @brief Launch an executable with arguments, or open a link, a PDF
+ * file, etc. with the default application.
+ * If not program is associated with the file, the system will ask
+ * the user to choose a program.
+ * 
+ * This version will NOT wait for 
+ * the process to finish before returning.
+ * 
+ * @param cmd: the command to execute
+ * 
+ * @return the exit code of the process
+ */
+int windows_system(string cmd);
+
 #endif
