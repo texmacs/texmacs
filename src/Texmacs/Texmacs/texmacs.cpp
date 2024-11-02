@@ -720,7 +720,7 @@ texmacs_entrypoint (int argc, char** argv) {
     remove (url ("$TEXMACS_HOME_PATH/fonts/error") * url_wildcard ("*"));    
   }
 #endif 
-  TeXmacs_init_paths (argc, argv);
+
 #ifdef QTTEXMACS
   // initialize the Qt application infrastructure
   if (headless_mode)
@@ -728,6 +728,7 @@ texmacs_entrypoint (int argc, char** argv) {
   else
     qtmapp= new QTMApplication (argc, argv);
 #endif
+  TeXmacs_init_paths (argc, argv);
   TeXmacs_init_font  ();
 #ifdef QTTEXMACS
   if (!headless_mode)
