@@ -118,9 +118,6 @@ class QTMApplication: public QApplication {
 public:
   QTMApplication (int& argc, char** argv) :
     QApplication (argc, argv) {
-#if QT_VERSION >= 0x060000
-      pm.loadAll();
-#endif
       init_theme ();
     }
   
@@ -180,6 +177,11 @@ public:
 
 #if QT_VERSION >= 0x060000
   QTMPixmapManager& pixmap_manager() {
+    static bool first_use= true;
+    if (first_use) {
+      pm.loadAll();
+      first_use= false;
+    }
     return pm;
   }
 #endif
