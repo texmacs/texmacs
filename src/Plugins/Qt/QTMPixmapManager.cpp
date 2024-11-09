@@ -17,13 +17,7 @@
 
 #include <QtConcurrent>
 
-QTMPixmapManager::QTMPixmapManager(QString path) : mPath(path) {
-  if (mPath.isEmpty()) {
-    // set the default path to the TeXmacs pixmaps
-    string tmpath = get_env("TEXMACS_PATH");
-    mPath = QString::fromUtf8(&tmpath[0], N(tmpath)) + "/misc/pixmaps";
-  }
-}
+QTMPixmapManager::QTMPixmapManager(QString path) : mPath(path) {}
 
 void QTMPixmapManager::loadAll() {
   // We prefer SVG icons over PNG icons and XPM icons.
@@ -37,6 +31,11 @@ void QTMPixmapManager::loadAll() {
 }
 
 void QTMPixmapManager::loadAll(QStringList filters) {
+  if (mPath.isEmpty()) {
+    // set the default path to the TeXmacs pixmaps
+    string tmpath = get_env("TEXMACS_PATH");
+    mPath = QString::fromUtf8(&tmpath[0], N(tmpath)) + "/misc/pixmaps";
+  }
   QDirIterator it(mPath + "/light", filters, QDir::Files, QDirIterator::Subdirectories);
   while (it.hasNext()) {
     load(it.next(), false);
