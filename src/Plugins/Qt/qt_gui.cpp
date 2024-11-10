@@ -359,11 +359,13 @@ qt_gui_rep::set_selection (string key, tree t,
     mode = QClipboard::Selection;
   else return true;
   cb->clear (mode);
-  
+
   c_string selection (s);
-  cb->setText (QString::fromLatin1 (selection, N(s)), mode);
+  int N_selection= N(s);
+
+  cb->setText (QString::fromLatin1 (selection, N_selection), mode);
   QMimeData *md = new QMimeData;
-  
+
   if (format == "verbatim" || format == "default") {
     if (format == "default") {
       md->setData ("application/x-texmacs-clipboard", (char*)selection);
@@ -378,6 +380,7 @@ qt_gui_rep::set_selection (string key, tree t,
         //tm_delete_array (selection);
       
       selection = c_string (sv);
+      N_selection = N(sv);
     }
     
     string enc = get_preference ("texmacs->verbatim:encoding");
@@ -385,21 +388,21 @@ qt_gui_rep::set_selection (string key, tree t,
       enc = get_locale_charset ();
     
     if (enc == "utf-8" || enc == "UTF-8")
-      md->setText (QString::fromUtf8 (selection, N(s)));
+      md->setText (QString::fromUtf8 (selection, N_selection));
     else if (enc == "iso-8859-1" || enc == "ISO-8859-1")
-      md->setText (QString::fromLatin1 (selection, N(s)));
+      md->setText (QString::fromLatin1 (selection, N_selection));
     else
-      md->setText (QString::fromLatin1 (selection, N(s)));
+      md->setText (QString::fromLatin1 (selection, N_selection));
   }
   else if (format == "latex") {
     string enc = get_preference ("texmacs->latex:encoding"); 
     if (enc == "utf-8" || enc == "UTF-8" || enc == "cork")
-      md->setText (to_qstring (string (selection)));
+      md->setText (to_qstring (string ((char*) selection, N_selection)));
     else
-      md->setText (QString::fromLatin1 (selection, N(s)));
+      md->setText (QString::fromLatin1 (selection, N_selection));
   }
   else
-    md->setText (QString::fromLatin1 (selection, N(s)));
+    md->setText (QString::fromLatin1 (selection, N_selection));
   cb->setMimeData (md, mode);
     // according to the docs, ownership of mimedata is transferred to clipboard
     // so no memory leak here
