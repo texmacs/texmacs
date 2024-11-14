@@ -190,6 +190,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("outline")= d;
   t ("packed")= c;
   t ("parallel")= c;
+  t ("parfor")= c;
   t ("pattern")= c;
   t ("penalty")= c;
   t ("postfix")= "postfix";
