@@ -74,6 +74,9 @@ AC_CHECK_HEADER([ltdl.h], [],
 
 AC_CHECK_PROG(have_makeinfo, makeinfo, yes, no)
 AM_CONDITIONAL(HAVE_MAKEINFO, test "$have_makeinfo" = yes)
+if test "$have_makeinfo" != yes; then
+  AC_MSG_ERROR([makeinfo not found.])
+fi
 
 AM_PATH_LISPDIR
 

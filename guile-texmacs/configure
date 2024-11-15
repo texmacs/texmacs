@@ -14462,6 +14462,9 @@ else
   HAVE_MAKEINFO_FALSE=
 fi
 
+if test "$have_makeinfo" != yes; then
+  as_fn_error $? "makeinfo not found." "$LINENO" 5
+fi
 
  # If set to t, that means we are running in a shell under Emacs.
  # If you have an Emacs named "t", then use the full path.
