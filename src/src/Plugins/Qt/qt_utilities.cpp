@@ -170,6 +170,9 @@ qt_decode_length (string width, string height,
 static string
 conv_sub (const string& ks) {
   string r(ks);
+#if QT_VERSION >= 0x060000
+  r = replace (r, "hat", "^");
+#endif
   r = replace (r, "pageup", "pgup");
   r = replace (r, "pagedown", "pgdown");
   r = replace (r, "S-", "Shift+");
@@ -205,13 +208,11 @@ conv_sub (const string& ks) {
 QKeySequence
 to_qkeysequence (string ks) {
   string r (conv_sub (ks));
-  if (DEBUG_QT && N(r) > 0) {
-    QKeySequence qks (to_qstring (r));
+  QKeySequence qks (to_qstring (r));
+  if (DEBUG_QT && N(r) > 0)
     debug_qt << "ks: " << ks << " --> " << r << " --> "
              << qks.toString (QKeySequence::NativeText).toLatin1().data() << LF;
-    return qks;
-  }
-  return QKeySequence (to_qstring (r));
+  return qks;
 }
 
 
