@@ -327,7 +327,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
 
     if (DEBUG_QT && DEBUG_KEYBOARD) {
       debug_qt << "key  : " << key << LF;
-      debug_qt << "text : " << event->text().toLatin1().data() << LF;
+      debug_qt << "text : " << event->text().toUtf8().data() << LF;
       debug_qt << "count: " << event->text().count() << LF;
       debug_qt << "unic : " << event->text().data()[0].unicode() << LF;
 
@@ -374,7 +374,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
       unsigned short unic= nss.data()[0].unicode();
       /*
       debug_qt << "key  : " << key << LF;
-      debug_qt << "text : " << event->text().toLatin1().data() << LF;
+      debug_qt << "text : " << event->text().toUtf8().data() << LF;
       debug_qt << "count: " << event->text().count() << LF;
       if (mods & Qt::ShiftModifier) debug_qt << "shift\n";
       if (mods & Qt::MetaModifier) debug_qt << "meta\n";
@@ -452,7 +452,9 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
             else if (r == "gtr") r= ">";
         }
 #ifdef Q_OS_MAC
-        if (mods & Qt::AltModifier) {
+        if (mods & Qt::AltModifier &&
+	    (QT_VERSION < 0x060000 ||
+	     QApplication::inputMethod()->locale().country() != QLocale::AnyTerritory)) {
           // Alt produces many symbols in Mac keyboards: []|{} etc.
           if ((N(r) != 1 ||
                ((int) (unsigned char) r[0]) < 32 ||
@@ -476,7 +478,13 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     }
     if (r == "") return;
     if (mods & Qt::ShiftModifier) r= "S-" * r;
+#if defined(Q_OS_MAC) && QT_VERSION >= 0x060000
+    if (QApplication::inputMethod()->locale().country() != QLocale::AnyTerritory) {
+      if (mods & Qt::AltModifier) r= "A-" * r;
+    }
+#else
     if (mods & Qt::AltModifier) r= "A-" * r;
+#endif
     //if (mods & Qt::KeypadModifier) r= "K-" * r;
 #ifdef Q_OS_MAC
     if (mods & Qt::MetaModifier) r= "C-" * r;        // The "Control" key
