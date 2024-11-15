@@ -469,7 +469,21 @@ qt_ui_element_rep::as_qaction () {
          */
       const QKeySequence& qks = to_qkeysequence (ks);
       if (!qks.isEmpty()) {
-        act->setShortcut (qks);
+#if defined (Q_OS_MAC) && QT_VERSION >= 0x060000
+	if (use_native_menubar &&
+	    QApplication::inputMethod()->locale().country()
+	    != QLocale::UnitedStates) {
+	  QString tmp= act->text () + u8" ┊ "
+	    + qks.toString(QKeySequence::NativeText).replace (", ", " ");
+	  tmp.replace ("&", "&&");
+	  act->setText(tmp);
+	  act->setShortcutVisibleInContextMenu(false);
+	}
+	else 
+	  act->setShortcut (qks);
+#else
+	act->setShortcut (qks);
+#endif
         command key_cmd = tm_new<qt_key_command_rep> (ks);
         c= new QTMCommand (act, key_cmd);
       } else {
