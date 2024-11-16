@@ -362,6 +362,11 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
 #endif
     if (qtkeymap->contains (key)) {
       r = qtkeymap[key];
+#if defined(OS_MINGW) && QT_VERSION >= 0x060000
+      // e.g. azerty keyboard: AltGr tilde followed by Space
+      if (key == 32)
+        r= string (event->text().toUtf8().data(), event->text().toUtf8().size());
+#endif
     }
     else if (qtdeadmap->contains (key)) {
       mods &=~ Qt::ShiftModifier;
