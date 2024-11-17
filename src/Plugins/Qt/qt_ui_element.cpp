@@ -138,6 +138,9 @@ qt_glue_widget_rep::render () {
         ren->set_background (c);
         ren->set_pencil (c);
         ren->fill (r->x1, r->y2, r->x2, r->y1);
+#if QT_VERSION >= 0x060000
+	ren->set_shrinking_factor (1);
+#endif
       } else {
         ren->set_shrinking_factor (std_shrinkf);
         brush old_b = ren->get_background ();
