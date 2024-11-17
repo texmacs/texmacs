@@ -30,6 +30,7 @@ void QTMSVGIconEngine::paint(QPainter *painter,
                             QIcon::Mode mode,
                             QIcon::State state) {
   // scale the svg to fit the pixmap, but keep the aspect ratio
+  (void) mode; (void) state;
   qreal scale = qMin(rect.width() / qreal(mSvgRenderer.defaultSize().width()), 
                      rect.height() / qreal(mSvgRenderer.defaultSize().height())
                     );
@@ -44,6 +45,7 @@ void QTMSVGIconEngine::paint(QPainter *painter,
 QPixmap QTMSVGIconEngine::pixmap(const QSize &size,
                                  QIcon::Mode mode, 
                                 QIcon::State state) {
+  (void) mode; (void) state;
   QPixmap pixmap(size);
   pixmap.fill(Qt::transparent);
   QPainter painter(&pixmap);
@@ -66,6 +68,7 @@ QPixmap QTMSVGIconEngine::pixmap(const QSize &size,
 QSize QTMSVGIconEngine::actualSize(const QSize &size, 
                                    QIcon::Mode mode,
                                    QIcon::State state) {
+  (void) mode; (void) state;
   QSize scaled = size;
   //Return a bigger size to avoid scale up later
   QSize defaultSize = mSvgRenderer.defaultSize();
