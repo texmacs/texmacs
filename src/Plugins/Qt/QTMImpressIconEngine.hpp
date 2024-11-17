@@ -69,7 +69,8 @@ public:
    * 
    * @see QIconEngine::actualSize
    */
-  virtual QSize actualSize (const QSize &size, QIcon::Mode mode, QIcon::State state);
+  virtual QSize actualSize (const QSize &size,
+			    QIcon::Mode mode, QIcon::State state) override;
 
   /**
    * @brief Clone the `QTMImpressIconEngine` object
@@ -78,7 +79,7 @@ public:
    * 
    * @see QIconEngine::clone
    */
-  virtual QIconEngine *clone() const;
+  virtual QIconEngine *clone() const override;
 
 private:
   qt_simple_widget_rep *wid;
