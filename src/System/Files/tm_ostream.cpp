@@ -33,7 +33,7 @@ tm_ostream_rep::~tm_ostream_rep () {}
 void tm_ostream_rep::flush () {}
 void tm_ostream_rep::clear () {}
 bool tm_ostream_rep::is_writable () const { return false; }
-void tm_ostream_rep::write (const char*, size_t n) {}
+void tm_ostream_rep::write (const char*, size_t n) { (void) n; }
 void tm_ostream_rep::write (tree t) { (void) t; }
 
 /******************************************************************************
@@ -105,7 +105,7 @@ std_ostream_rep::write (const char* s, size_t n) {
   }
   int written;
   written = texmacs_fwrite(s, n, file);
-  if (written != n) {
+  if (written < 0 || ((size_t) written) != n) {
     is_w = false;
     return;
   }
