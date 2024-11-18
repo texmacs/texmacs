@@ -322,7 +322,8 @@ image_size_sub (url image, int& w, int& h) { // returns w,h in units of pt (1/72
       return;
     }
   }
-#ifdef MACOSX_EXTENSIONS
+#if defined(MACOSX_EXTENSIONS) && \
+  (!defined(QTTEXMACS) || AC_QT_MAJOR_VERSION < 6)
   if (mac_image_size (image, w, h) ) {
     if (DEBUG_CONVERT) debug_convert << "image_size  mac  : " << w << " x " << h << "\n";
     return;
@@ -491,7 +492,8 @@ image_to_png (url image, url png, int w, int h) {// IN PIXEL UNITS!
      std_warning << concretize (png) << " has no .png suffix\n";
      }
   */
-#ifdef MACOSX_EXTENSIONS
+#if defined(MACOSX_EXTENSIONS) && \
+  (!defined(QTTEXMACS) || AC_QT_MAJOR_VERSION < 6)
   //cout << "mac convert " << image << ", " << png << "\n";
   if (mac_supports (image)) {
     if (DEBUG_CONVERT) debug_convert << " using mac_os "<<LF;
