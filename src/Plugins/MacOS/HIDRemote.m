@@ -170,8 +170,11 @@ static HIDRemote *sHIDRemote = nil;
 	kern_return_t	kernResult;
 	io_service_t	matchingService = 0;
 	BOOL isInstalled = NO;
-
+#if MAC_OS_X_VERSION_MIN_ALLOWED >= MAC_OS_X_VERSION_12_0
+	kernResult = IOMainPort(MACH_PORT_NULL, &masterPort);
+#else
 	kernResult = IOMasterPort(MACH_PORT_NULL, &masterPort);
+#endif
 	if ((kernResult!=kIOReturnSuccess) || (masterPort==0)) { return(NO); }
 
 	if ((matchingService = IOServiceGetMatchingService(masterPort, IOServiceMatching("IOSPIRITIRController"))) != 0)
@@ -276,7 +279,12 @@ static void get_system_version(int* major, int* minor, int* bugfix)
 		do
 		{
 			// Get IOKit master port
-			kernReturn = IOMasterPort(bootstrap_port, &_masterPort);
+#if MAC_OS_X_VERSION_MIN_ALLOWED >= MAC_OS_X_VERSION_12_0
+			kernReturn = IOMainPort(bootstrap_port, &_masterPort);
+#else
+			kernResult = IOMasterPort(bootstrap_port, &_masterPort);
+#endif
+
 			if ((kernReturn!=kIOReturnSuccess) || (_masterPort==0)) { break; }
 					
 			// Setup notification port
@@ -1429,12 +1437,16 @@ static void get_system_version(int* major, int* minor, int* bugfix)
 					{
 						if ([(NSString *)ioKitClassName isEqual:@"AppleIRController"])
 						{
-							SInt32 systemVersion;
-							
-							if (Gestalt(gestaltSystemVersion, &systemVersion) == noErr)
-							{
-								if (systemVersion >= 0x1062)
-								{
+#if MAC_OS_X_VERSION_MIN_ALLOWED < MAC_OS_X_VERSION_10_08
+                                                       SInt32 systemVersion;
+						       
+                                                       if (Gestalt(gestaltSystemVersion, &systemVersion) == noErr)
+                                                       {
+                                                               if (systemVersion >= 0x1062)
+                                                               {
+#else
+						       if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){.majorVersion = 10, .minorVersion = 6, .patchVersion = 2}]) { {
+#endif
 									// Support for the Aluminum Remote was added only with OS 10.6.2. Previous versions can not distinguish
 									// between the Center and the new, seperate Play/Pause button. They'll recognize both as presses of the
 									// "Center" button.
@@ -1444,10 +1456,9 @@ static void get_system_version(int* major, int* minor, int* bugfix)
 									// its Virtual Remote can only emulate Aluminum Remote button presses under OS 10.5 and up in order not to
 									// break compatibility with applications whose IR Remote code relies on driver internals. [13-Nov-09]
 									supportLevel = kHIDRemoteAluminumRemoteSupportLevelNative;
-								}
-							}
+							 }
+						       }
 						}
-						
 						CFRelease(ioKitClassName);
 					}
 				}
