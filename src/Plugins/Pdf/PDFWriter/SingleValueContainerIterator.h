@@ -42,7 +42,9 @@ class SingleValueContainerIterator : public ContainerIterator<T>
 public:
 
 	SingleValueContainerIterator(T& inContainer);
+#if defined (__cplusplus) && __cplusplus < 201703L
 	SingleValueContainerIterator(const SingleValueContainerIterator<T>& inOtherIterator);
+#endif
 
 	typename T::value_type GetItem();
 };
@@ -52,10 +54,12 @@ SingleValueContainerIterator<T>::SingleValueContainerIterator(T& inContainer) : 
 {
 }
 
+#if defined (__cplusplus) && __cplusplus < 201703L
 template <class T>
 SingleValueContainerIterator<T>::SingleValueContainerIterator(const SingleValueContainerIterator<T>& inOtherIterator) : ContainerIterator<T>(inOtherIterator)
 {
 }
+#endif
 
 template <class T>
 typename T::value_type SingleValueContainerIterator<T>::GetItem()
