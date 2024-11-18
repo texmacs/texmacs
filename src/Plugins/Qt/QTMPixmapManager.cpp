@@ -15,8 +15,6 @@
 
 #include "sys_utils.hpp"
 
-#include <QtConcurrent>
-
 QTMPixmapManager::QTMPixmapManager(QString path) : mPath(path) {}
 
 void QTMPixmapManager::loadAll() {
@@ -48,7 +46,7 @@ void QTMPixmapManager::loadAll(QStringList filters) {
 
 void QTMPixmapManager::load(QString path, bool is_dark) {
   // Look for the right map
-  QMap<QString, QFuture<QIcon>> *icons = &mIcons;
+  QMap<QString, QIcon> *icons = &mIcons;
   if (is_dark) {
     icons = &mIconsDark;
   }
@@ -58,27 +56,13 @@ void QTMPixmapManager::load(QString path, bool is_dark) {
   name = name.replace(QRegularExpression("_x[24]$"), "");
   name = name.replace(".dark", "");
 
-  // If the future does not exist, create it
+  // If icon does not exist, create it
   if (!icons->contains(name)) {
-    (*icons)[name] = QtConcurrent::run([path]() {
-      if (path.endsWith(".svg")) {
-        return QIcon(new QTMSVGIconEngine(path));
-      } else {
-        return QIcon(QPixmap(path));
-      }
-    });
+    (*icons)[name] = path.endsWith(".svg") ?
+      QIcon(new QTMSVGIconEngine(path)) :
+      QIcon(QPixmap(path));
     return;
   }
-
-  // If the future exists, add the file to the icon
-  if (icons->contains(name)) {
-    (*icons)[name].then([path](QIcon icon) {
-      icon.addPixmap(QPixmap(path));
-      return icon;
-    });
-    return;
-  }
-
 }
 
 #endif // QT_VERSION >= 0x060000

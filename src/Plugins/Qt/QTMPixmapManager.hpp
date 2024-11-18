@@ -22,7 +22,6 @@
 #include <QDirIterator>
 #include <QRegularExpression>
 #include <QFontDatabase>
-#include <QFuture>
 
 #include "gui.hpp"
 #include "url.hpp"
@@ -46,10 +45,7 @@
  * ```
   QTMPixmapManager pixmap_manager("path/to/all/icons");
   QPushButton *b = new QPushButton();
-  pixmap_manager.getIcon("open").then([b](QFuture<QIcon> iconFuture) {
-    QIcon icon = iconFuture.result();
-    b->setIcon(icon); // Set the retrieved icon on the button 'b'
-  });
+  b.setIcon (pixmap_manager.getIcon("open"));
  * ```
  */
 class QTMPixmapManager {
@@ -98,7 +94,7 @@ public:
    * 
    * @return const auto& The icon map
    */
-  inline const QMap<QString, QFuture<QIcon>> &icons() const {
+  inline const QMap<QString, QIcon> &icons() const {
     if (occurs ("dark", tm_style_sheet)) {
       return mIconsDark;
     }
@@ -112,9 +108,9 @@ public:
    * a warning is printed to the console.
    * 
    * @param name The name of the icon
-   * @return QFuture<QIcon> The icon future
+   * @return QIcon The icon future
    */
-  inline QFuture<QIcon> getIcon(QString name) const {
+  inline QIcon getIcon(QString name) const {
     name = name.replace(QRegularExpression("\\.xpm$"), "");
     if (icons().contains(name)) {
       return icons()[name];
@@ -130,9 +126,9 @@ public:
    * a warning is printed to the console.
    * 
    * @param name The name of the icon
-   * @return QFuture<QIcon> The icon future
+   * @return QIcon The icon future
    */
-  inline QFuture<QIcon> getIcon(string name) const {
+  inline QIcon getIcon(string name) const {
     return getIcon(QString::fromUtf8(&name[0], N(name)));
   }
   
@@ -143,15 +139,15 @@ public:
    * a warning is printed to the console.
    * 
    * @param name The name of the icon
-   * @return QFuture<QIcon> The icon future
+   * @return QIcon The icon future
    */
-  inline QFuture<QIcon> getIcon(url name) const {
+  inline QIcon getIcon(url name) const {
     return getIcon(as_string(name));
   }
 
 private:
   QString mPath;
-  QMap<QString, QFuture<QIcon>> mIcons, mIconsDark;
+  QMap<QString, QIcon> mIcons, mIconsDark;
 };
 
 #endif // QT_VERSION >= 0x060000
