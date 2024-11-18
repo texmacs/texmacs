@@ -556,11 +556,7 @@ qt_ui_element_rep::as_qaction () {
       url    image = open_box<url>(load);
       act = new QTMAction (NULL);
 #if QT_VERSION >= 0x060000
-      tmapp()->pixmap_manager().getIcon(image)
-        .then([act](QFuture<QIcon> iconFuture) {
-          QIcon icon = iconFuture.result();
-          act->setIcon(icon);
-        });
+      act->setIcon(tmapp()->pixmap_manager().getIcon(image));
 #else
       act->setIcon (QIcon (as_pixmap (*xpm_image (image))));
 #endif
@@ -883,11 +879,7 @@ qt_ui_element_rep::as_qwidget () {
         
         QTMLazyMenu* lm = new QTMLazyMenu (pw, b, type == pullright_button);
 #if QT_VERSION >= 0x060000
-        tmapp()->pixmap_manager().getIcon(image)
-          .then([b](QFuture<QIcon> iconFuture) {
-            QIcon icon = iconFuture.result();
-            b->setIcon(icon);
-          });
+        b->setIcon (tmapp()->pixmap_manager().getIcon(image));
 #else
         b->setIcon (QIcon (as_pixmap (*xpm_image (image))));
 #endif
@@ -1001,11 +993,8 @@ qt_ui_element_rep::as_qwidget () {
       url image = open_box<url>(load);
       QLabel* l = new QLabel (NULL);
 #if QT_VERSION >= 0x060000
-      tmapp()->pixmap_manager().getIcon(image)
-        .then([l](QFuture<QIcon> iconFuture) {
-          QIcon icon = iconFuture.result();
-          l->setPixmap(icon.pixmap(icon.availableSizes().last()));
-        });
+      QIcon tmp= tmapp()->pixmap_manager().getIcon(image);
+      l->setPixmap (tmp.pixmap(tmp.availableSizes().last()));
 #else
       l->setPixmap (as_pixmap (*xpm_image (image)));
 #endif
@@ -1226,11 +1215,8 @@ qt_ui_element_rep::as_qwidget () {
         QWidget*     body = concrete (bodies[i])->as_qwidget();
         tw->addTab(body, QIcon(), label ? label->text() : "");
 #if QT_VERSION >= 0x060000
-        tmapp()->pixmap_manager().getIcon(icons[i])
-          .then([=](QFuture<QIcon> iconFuture) {
-            QIcon icon = iconFuture.result();
-            tw->setTabIcon(i, icon);
-          });
+	(void) img;
+	tw->setTabIcon(i, tmapp()->pixmap_manager().getIcon (icons[i]));
 #else
         tw->addTab (body, QIcon (as_pixmap (*img)), label ? label->text() : "");
 #endif
