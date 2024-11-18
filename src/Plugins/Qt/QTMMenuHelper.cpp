@@ -1219,10 +1219,10 @@ BEGIN_SLOT
                            : list_object (-1);
     
     // docs state the index is valid, no need to check
-  QVariant d = tmModel()->data (index, QTMTreeModel::CommandRole);
     // If there's no CommandRole, we return the subtree by default
+  QVariant d = tmModel()->data (index, QTMTreeModel::CommandRole);
 #if QT_VERSION >= 0x060000
-  if (!d.isValid() || !d.canConvert (QMetaType::QString))
+  if (!d.isValid() || !d.canConvert (QMetaType(QMetaType::QString)))
 #else
   if (!d.isValid() || !d.canConvert (QVariant::String))
 #endif
@@ -1232,7 +1232,7 @@ BEGIN_SLOT
   int cnt = QTMTreeModel::TMUserRole;
   d = tmModel()->data (index, cnt);
 #if QT_VERSION >= 0x060000
-  while (d.isValid() && d.canConvert (QMetaType::QString)) {
+  while (d.isValid() && d.canConvert (QMetaType(QMetaType::QString))) {
 #else
   while (d.isValid() && d.canConvert (QVariant::String)) {
 #endif
