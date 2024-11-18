@@ -73,7 +73,11 @@ void process_mac_events ()
     
     NSEvent *event =
     [NSApp
+#if MAC_OS_X_VERSION_MIN_ALLOWED >= MAC_OS_X_VERSION_10_12
+     nextEventMatchingMask:NSEventMaskAny
+#else
      nextEventMatchingMask:NSAnyEventMask
+#endif
      untilDate:nil //[NSDate distantFuture]
      inMode:NSDefaultRunLoopMode
      dequeue:YES];
