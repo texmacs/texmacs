@@ -445,7 +445,7 @@ DoubleAndDoublePair PNGImageHandler::ReadImageDimensions(IByteReaderWithPosition
 PNGImageHandler::PNGImageInfo PNGImageHandler::ReadImageInfo(IByteReaderWithPosition* inPNGStream) {
 	// reading as is set by internal reader (meaning, post transformations)
 
-	EStatusCode status = eSuccess;
+        EStatusCode status = eSuccess; (void) status;
 	png_structp png_ptr = NULL;
 	png_infop info_ptr = NULL;
 	PNGImageHandler::PNGImageInfo data;
