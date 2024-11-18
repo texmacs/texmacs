@@ -109,7 +109,7 @@ qt_renderer_rep::qt_renderer_rep (QPainter *_painter, int w2, int h2):
 
 #if QT_VERSION >= 0x060000
 qt_renderer_rep::qt_renderer_rep (QPainter *_painter, qt_renderer_rep *_parent):
-  basic_renderer_rep (true, 0, 0), painter(_painter), parent(_parent), dpr(0.0) {
+  basic_renderer_rep (true, 0, 0), painter(_painter), dpr (0.0), parent(_parent) {
   reset_zoom_factor(); 
 }
 #endif
