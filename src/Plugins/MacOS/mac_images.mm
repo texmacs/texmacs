@@ -9,9 +9,12 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "config.h"
 #include "MacOS/mac_images.h"
-#include "converter.hpp" // hack: remove as soon as possible
 
+#if !defined(QTTEXMACS) || AC_QT_MAJOR_VERSION < 6
+
+#include "converter.hpp" // hack: remove as soon as possible
 #include "Cocoa/mac_cocoa.h"
 #include "ApplicationServices/ApplicationServices.h"
 
@@ -111,3 +114,4 @@ void mac_ps_to_pdf (url ps_file, url pdf_file)
   [pool release];
 }
 
+#endif // not QTTEXMACS
