@@ -60,8 +60,9 @@ class ContainerIterator
 public:
     
 	ContainerIterator(T& inContainer);
+#if defined (__cplusplus) && __cplusplus < 201703L
 	ContainerIterator(const ContainerIterator<T>& inOtherIterator);
-    
+#endif
 	bool MoveNext();
 	bool IsFinished();
     
@@ -81,6 +82,7 @@ ContainerIterator<T>::ContainerIterator(T& inList)
 	mFirstMove = true;
 }
 
+#if defined (__cplusplus) && __cplusplus < 201703L
 template <class T>
 ContainerIterator<T>::ContainerIterator(const ContainerIterator<T>& inOtherIterator)
 {
@@ -88,6 +90,7 @@ ContainerIterator<T>::ContainerIterator(const ContainerIterator<T>& inOtherItera
 	mEndPosition = inOtherIterator.mEndPosition;
 	mFirstMove = inOtherIterator.mFirstMove;
 }
+#endif
 
 template <class T>
 bool ContainerIterator<T>::MoveNext()
