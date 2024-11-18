@@ -37,7 +37,7 @@ Root: HKA; Subkey: "Software\Classes\.tm"; ValueType: string; ValueName: ""; Val
 Root: HKA; Subkey: "Software\Classes\tmfile"; ValueType: string; ValueName: ""; ValueData: "text/tm"; Flags: uninsdeletekey
 Root: HKA; Subkey: "Software\Classes\tmfile\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\TeXmacs.ico"
 Root: HKA; Subkey: "Software\Classes\tmfile\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\texmacs.exe"" ""%1""" 
-Root: HKA; Subkey: "Environment"; ValueType: string; ValueName: "TEXMACS_PATH"; ValueData: "{app}"; Flags: uninsdeletevalue
+Root: HKA; Subkey: "{code:GetEnvironmentKey}"; ValueType: string; ValueName: "TEXMACS_PATH"; ValueData: "{app}"
 
 [Files]
 Source: ..\..\..\distr\TeXmacs-Windows\*; DestDir: {app}; Flags: recursesubdirs createallsubdirs ignoreversion
@@ -72,3 +72,12 @@ begin
   WizardForm.PageDescriptionLabel.Visible := False;
   WizardForm.PageNameLabel.Visible := False;
 end;
+
+function GetEnvironmentKey(Param: string): string;
+begin
+  if IsAdminInstallMode then
+    Result := 'System\CurrentControlSet\Control\Session Manager\Environment'
+  else
+    Result := 'Environment';
+end;
+
