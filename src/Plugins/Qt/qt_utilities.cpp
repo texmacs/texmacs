@@ -115,7 +115,7 @@ em_factor () {
 QSize
 qt_decode_length (string width, string height,
                   const QSize& ref, const QFontMetrics& fm) {
-
+  (void) fm;
 #if QT_VERSION >= 0x060000
   int retina_scale = 1;
   int retina_zoom = 1;
