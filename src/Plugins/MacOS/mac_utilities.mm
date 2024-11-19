@@ -45,6 +45,16 @@
 #include "Qt/qt_utilities.hpp"
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1012
+#define NSKeyDown NSEventTypeKeyDown
+#define NSKeyUp NSEventTypeKeyUp
+#define NSControlKeyMask NSEventModifierFlagControl
+#define NSAlternateKeyMask NSEventModifierFlagOption
+#define NSCommandKeyMask NSEventModifierFlagCommand
+#define NSKeyDownMask NSEventMaskKeyDown
+#define NSKeyUpMask NSEventMaskKeyUp
+#endif
+
 bool 
 mac_alternate_startup () {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
@@ -117,7 +127,7 @@ mac_handler_body (NSEvent *event) {
         if (nsmods &  NSControlKeyMask) modifs |= Qt::MetaModifier;
         if (nsmods &  NSAlternateKeyMask) modifs |= Qt::AltModifier;
         if (nsmods &  NSCommandKeyMask) modifs |= Qt::ControlModifier;
-        
+
 #if 0 // DEBUGGING CODE
         QString str;
         if (key == NSBackTabCharacter) str.append("Shift+");
@@ -354,7 +364,8 @@ fromHardwareWithAttributes:(NSMutableDictionary *)attributes
 		// HID Remote has not been started yet. Start it.
 		HIDRemoteMode remoteMode = kHIDRemoteModeNone;
 		NSString *remoteModeName = nil;
-
+		(void) remoteMode;
+		(void) remoteModeName;
 #ifdef X11TEXMACS
     int mode = 1;
 #else
@@ -378,7 +389,7 @@ fromHardwareWithAttributes:(NSMutableDictionary *)attributes
 				remoteModeName = @"exclusive (auto)";
         break;
 		}
-    
+#if QT_VERSION < 0x060000   
 		// Check whether the installation of Candelair is required to reliably operate in this mode
 		if ([HIDRemote isCandelairInstallationRequiredForRemoteMode:remoteMode])
 		{
@@ -420,6 +431,7 @@ fromHardwareWithAttributes:(NSMutableDictionary *)attributes
 //				[self appendToLog:[NSString stringWithFormat:@"Starting HID Remote in %@ mode failed", remoteModeName]];
 			}
 		}
+#endif
 	}
 }
 
@@ -465,6 +477,7 @@ MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7
 
 #endif  // 10.7
 
+#if QT_VERSION < 0x060000
 double
 mac_screen_scale_factor() {
   CGFloat scale;
@@ -476,6 +489,7 @@ mac_screen_scale_factor() {
       scale = [screen userSpaceScaleFactor];
   return scale;
 }
+#endif
 
 // end scale factor detection
 
