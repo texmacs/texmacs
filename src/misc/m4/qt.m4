@@ -246,7 +246,7 @@ AC_DEFUN([LC_WITH_QT],[
 
   QT_VERSION=`$QMAKE -query QT_VERSION`
   QT_MAJOR=${QT_VERSION%%.*}
-  AC_DEFINE(AC_QT_MAJOR_VERSION, $QT_MAJOR, [Qt major version number])
+  AC_DEFINE_UNQUOTED([AC_QT_MAJOR_VERSION], [$QT_MAJOR], [Qt major version number])
 
   test "0$QT_MAJOR" -eq 5 && LC_APPEND_FLAG([-std=c++11],[QT_CXXFLAGS])
   test "0$QT_MAJOR" -eq 6 && LC_APPEND_FLAG([-std=c++17],[QT_CXXFLAGS])
