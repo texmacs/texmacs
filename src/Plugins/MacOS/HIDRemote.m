@@ -170,7 +170,7 @@ static HIDRemote *sHIDRemote = nil;
 	kern_return_t	kernResult;
 	io_service_t	matchingService = 0;
 	BOOL isInstalled = NO;
-#if MAC_OS_X_VERSION_MIN_ALLOWED >= MAC_OS_X_VERSION_12_0
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_12_0
 	kernResult = IOMainPort(MACH_PORT_NULL, &masterPort);
 #else
 	kernResult = IOMasterPort(MACH_PORT_NULL, &masterPort);
@@ -279,7 +279,7 @@ static void get_system_version(int* major, int* minor, int* bugfix)
 		do
 		{
 			// Get IOKit master port
-#if MAC_OS_X_VERSION_MIN_ALLOWED >= MAC_OS_X_VERSION_12_0
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_12_0
 			kernReturn = IOMainPort(bootstrap_port, &_masterPort);
 #else
 			kernResult = IOMasterPort(bootstrap_port, &_masterPort);
@@ -1437,7 +1437,7 @@ static void get_system_version(int* major, int* minor, int* bugfix)
 					{
 						if ([(NSString *)ioKitClassName isEqual:@"AppleIRController"])
 						{
-#if MAC_OS_X_VERSION_MIN_ALLOWED < MAC_OS_X_VERSION_10_08
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_8
                                                        SInt32 systemVersion;
 						       
                                                        if (Gestalt(gestaltSystemVersion, &systemVersion) == noErr)
