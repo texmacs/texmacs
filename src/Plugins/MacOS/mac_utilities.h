@@ -17,9 +17,10 @@ bool mac_alternate_startup();
 
 void mac_begin_remote();
 void mac_end_remote();
-void mac_remote_button (string button, bool pressed); 
+void mac_remote_button (string button, bool pressed);
+#if QT_VERSION < 0x060000
 double mac_screen_scale_factor();
-
+#endif
 void mac_fix_yosemite_bug();
 
 void mac_begin_server ();
