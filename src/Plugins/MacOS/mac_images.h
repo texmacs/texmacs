@@ -15,7 +15,8 @@
 #include "config.h"
 #include "file.hpp"
 
-#if !defined(QTTEXMACS) || AC_QT_MAJOR_VERSION < 6
+#if !defined(QTTEXMACS) \
+  || !defined(AC_QT_MAJOR_VERSION) || AC_QT_MAJOR_VERSION < 6
 bool mac_supports (url img_file) ;
 bool mac_image_size (url img_file, int& w, int& h) ;
 void mac_image_to_png (url img_file, url png_file, int w, int h) ;
