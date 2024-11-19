@@ -31248,7 +31248,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
   QT_VERSION=`$QMAKE -query QT_VERSION`
   QT_MAJOR=${QT_VERSION%%.*}
 
-printf "%s\n" "#define AC_QT_MAJOR_VERSION \$QT_MAJOR" >>confdefs.h
+printf "%s\n" "#define AC_QT_MAJOR_VERSION $QT_MAJOR" >>confdefs.h
 
 
   test "0$QT_MAJOR" -eq 5 &&
