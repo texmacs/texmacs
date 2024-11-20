@@ -195,7 +195,10 @@ public:
   }
 };
 
+#if !defined(NO_FAST_ALLOC) && \
+  (!defined(AC_QT_MAJOR_VERSION) || AC_QT_MAJOR_VERSION < 6)
 template <> void tm_delete<qt_widget_rep>(qt_widget_rep *);
+#endif
 
 /*! Reference counting mechanism.
 

@@ -38,7 +38,10 @@ protected:
 public:
   widget_rep ();
   virtual ~widget_rep ();
+#if !defined(NO_FAST_ALLOC) && \
+  (!defined(AC_QT_MAJOR_VERSION) || AC_QT_MAJOR_VERSION < 6)
   inline virtual void* derived_this () {return (widget_rep*)this; }
+#endif
   virtual tm_ostream& print (tm_ostream& out);
 
   virtual void send (slot s, blackbox val);
@@ -59,7 +62,10 @@ public:
   friend class widget;
 };
 
+#if !defined(NO_FAST_ALLOC) && \
+  (!defined(AC_QT_MAJOR_VERSION) || AC_QT_MAJOR_VERSION < 6)
 template<> void tm_delete<widget_rep> (widget_rep* ptr);
+#endif
 
 class widget {
 public:
