@@ -45,8 +45,10 @@ private:
 public:
   edit_main_rep (server_rep* sv, tm_buffer buf);
   ~edit_main_rep ();
+#if !defined(NO_FAST_ALLOC) && \
+  (!defined(AC_QT_MAJOR_VERSION) || AC_QT_MAJOR_VERSION < 6)
   virtual inline void* derived_this () {return (edit_main_rep*)this; }
-
+#endif
   void set_property (scheme_tree what, scheme_tree val);
   void set_bool_property (string what, bool val);
   void set_int_property (string what, int val);
