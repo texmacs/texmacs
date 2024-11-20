@@ -53,9 +53,6 @@ int WINAPI CommonMain() {
   texmacs_initialize_displayname();
   texmacs_init_guile_hooks();
 
-  _setmode(_fileno(stdout), _O_U8TEXT);
-  _setmode(_fileno(stderr), _O_U8TEXT);
-
   int argc = 0;
   LPWSTR* pArgvW = CommandLineToArgvW(GetCommandLineW(), &argc);
 
