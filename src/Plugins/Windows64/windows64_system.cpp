@@ -55,7 +55,16 @@ FILE* texmacs_fopen(string filename, string mode, bool lock) {
   return result;
 }
 
-int texmacs_fwrite(const char *str, size_t size, FILE *stream) {
+ssize_t texmacs_fsize(FILE *stream) {
+  int fd = _fileno(stream);
+  return _filelengthi64(fd);
+}
+
+ssize_t texmacs_fread(char *z, size_t n, FILE *stream) {
+  return fread(z, 1, n, stream);
+}
+
+ssize_t texmacs_fwrite(const char *str, size_t size, FILE *stream) {
   if (stream != stdout && stream != stderr) {
     size_t ret= fwrite(str, size, 1, stream);
     return ret < 1 ? 0 : size;

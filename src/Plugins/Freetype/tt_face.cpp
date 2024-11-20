@@ -47,19 +47,29 @@ tt_face_rep::tt_face_rep (string name): rep<tt_face> (name) {
 
   FILE *font_file = texmacs_fopen(concretize (u), "r");
   if (!font_file) {
+    debug_fonts << "Can't load " << name << LF;
+    return;
+  }
+  ssize_t fsize = texmacs_fsize (font_file);
+  if (fsize <= 0) {
+    texmacs_fclose(font_file);
     debug_fonts << "Can't load " << name << LF; 
     return;
   }
-  fseek(font_file, 0, SEEK_END);
-  long fsize = ftell(font_file);
-  fseek(font_file, 0, SEEK_SET);
 
   buffer = (FT_Byte*)malloc(fsize);
-  fread(buffer, fsize, 1, font_file);
-  fclose(font_file);
+  ssize_t readed = texmacs_fread ((char*)buffer, fsize, font_file);
+  if (readed != fsize) {
+    free(buffer);
+    buffer = nullptr;
+    texmacs_fclose(font_file);
+    debug_fonts << "Can't read " << name << LF;
+    return;
+  }
+  texmacs_fclose(font_file);
 
   if (ft_new_memory_face (ft_library, buffer, fsize, 0, &ft_face)) {  
-    debug_fonts << "Can't load freetype " << name << LF;
+    debug_fonts << "Can't load font " << name << LF;
     free(buffer);
     buffer = nullptr;
     return; 
@@ -69,6 +79,7 @@ tt_face_rep::tt_face_rep (string name): rep<tt_face> (name) {
 }
 
 tt_face_rep::~tt_face_rep () {
+  std_warning << "tt_face_rep should not be deleted\n";
   if (ft_face) ft_done_face (ft_face);
   if (buffer) free(buffer);
 }

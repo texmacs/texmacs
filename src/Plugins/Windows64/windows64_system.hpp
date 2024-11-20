@@ -38,12 +38,22 @@ typedef struct texmacs_dirent {
 FILE* texmacs_fopen(string filename, string mode, bool lock = true);
 
 /*
+ * @brief Return the size of a file in bytes
+ */
+ssize_t texmacs_fsize (FILE *stream);
+
+/*
+ * @brief Proxy function to the fread function
+ */
+ssize_t texmacs_fread (char *z, size_t n, FILE *stream);
+
+/*
  * @brief Proxy function to the fputs function.
  * If the stream is cout or cerr, the function will do the necessary
  * conversion. Otherwise, it will call the fputs function withou any
  * conversion.
  */
-int texmacs_fwrite(const char *string, size_t size, FILE *stream);
+ssize_t texmacs_fwrite(const char *string, size_t size, FILE *stream);
 
 /*
  * @brief Proxy function to the fclose function.
