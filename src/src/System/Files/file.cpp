@@ -84,7 +84,7 @@ load_string (url u, string& s, bool fatal) {
     ssize_t size= 0;
     if (!err) {
       size = texmacs_fsize (fin);
-      if (size <= 0) {
+      if (size < 0) {
         err= true;
         std_warning << "Can't get file size for " << name << "\n";
       }
