@@ -56,8 +56,33 @@ FILE* texmacs_fopen(string filename, string mode, bool lock) {
   return file;
 }
 
-int
-texmacs_fwrite (const char *s, size_t n, FILE *stream) {
+ssize_t texmacs_fsize (FILE *stream) {
+  // get the current position of the file pointer
+  long current = ftell(stream);
+  if (current == -1) {
+    return -1;
+  }
+  // seek to the end of the file
+  if (fseek(stream, 0, SEEK_END) != 0) {
+    return -1;
+  }
+  // get the position of the file pointer
+  long size = ftell(stream);
+  if (size == -1) {
+    return -1;
+  }
+  // restore the position of the file pointer
+  if (fseek(stream, current, SEEK_SET) != 0) {
+    return -1;
+  }
+  return size;
+}
+
+ssize_t texmacs_fread (char *z, size_t n, FILE *stream) {
+  return fread(z, 1, n, stream);
+}
+
+ssize_t texmacs_fwrite (const char *s, size_t n, FILE *stream) {
   if (stream != stdout && stream != stderr) {
     size_t ret= fwrite (s, n, 1, stream);
     return ret < 1 ? 0 : n;

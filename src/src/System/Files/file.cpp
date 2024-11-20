@@ -39,6 +39,8 @@
 #include "Windows64/windows64_system.hpp"
 #elif defined (OS_MINGW)
 #include "Windows/windows32_system.hpp"
+#elif defined (OS_ANDROID)
+#include "Android/android_system.hpp"
 #else
 #include "Unix/unix_system.hpp"
 #endif
@@ -79,24 +81,22 @@ load_string (url u, string& s, bool fatal) {
         std_warning << "Load error for " << name << ", "
                     << strerror(errno) << "\n";
     }
-    int size= 0;
+    ssize_t size= 0;
     if (!err) {
-      if (fseek (fin, 0L, SEEK_END) < 0) err= true;
-      else {
-        size= ftell (fin);
-        if (size<0) err= true;
-      }
-      if (err) {
-        std_warning << "Seek failed for " << as_string (u) << "\n";
-        texmacs_fclose (fin);
+      size = texmacs_fsize (fin);
+      if (size <= 0) {
+        err= true;
+        std_warning << "Can't get file size for " << name << "\n";
       }
     }
     if (!err) {
-      rewind (fin);
       s->resize (size);
-      int read= fread (&(s[0]), 1, size, fin);
-      if (read < size) s->resize (read);
+      ssize_t readed= texmacs_fread (&(s[0]), size, fin);
       texmacs_fclose (fin);
+      if (readed != size) {
+        err= true;
+        std_warning << "Can't read " << name << "\n";
+      }
     }
     bench_cumul ("load file");
 
@@ -142,9 +142,12 @@ save_string (url u, string s, bool fatal) {
       }
       if (!err) {
         int i, n= N(s);
-        for (i=0; i<n; i++)
-          fputc (s[i], fout);
+        ssize_t written = texmacs_fwrite (&s[0], n, fout);
         texmacs_fclose (fout);
+        if (written != n) {
+          err= true;
+          std_warning << "Can't write to " << name << "\n";
+        }
       }
     }
     // Cache file contents
@@ -184,8 +187,11 @@ append_string (url u, string s, bool fatal) {
       }
       if (!err) {
         int i, n= N(s);
-        for (i=0; i<n; i++)
-          fputc (s[i], fout);
+        ssize_t written = texmacs_fwrite (&s[0], n, fout);
+        if (written != n) {
+          err= true;
+          std_warning << "Can't append to " << name << "\n";
+        }
         texmacs_fclose (fout);
       }
     }
