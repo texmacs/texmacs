@@ -410,7 +410,7 @@ impress (qt_simple_widget_rep* wid) {
 QAction*
 qt_simple_widget_rep::as_qaction () {
 #if QT_VERSION >= 0x060000
-  QAction* a= new QAction (NULL);
+  QAction* a= new QTMAction (NULL);
   QIcon icon (new QTMImpressIconEngine (this));
   a->setIcon (icon);
   return a;
