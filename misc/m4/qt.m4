@@ -213,9 +213,9 @@ AC_DEFUN([LC_WITH_QT],[
     QT_DEFINES=`$PKG_CONFIG --cflags-only-I $QT_PACKAGES`
     AS_IF([test -z "$QT_DEFINES"],[AC_MSG_ERROR([Cannot find a working Qt library])])
 
-    QT_CXXFLAGS=`$PKG_CONFIG --cflags-only-other $QT_PACKAGES`
+    QT_CXXFLAGS=`$PKG_CONFIG --cflags $QT_PACKAGES`
     QT_INCPATH=`$PKG_CONFIG --variable=includedir $QT_PACKAGES`
-    QT_LIBS=`$PKG_CONFIG --libs-only-l $QT_PACKAGES`
+    QT_LIBS=`$PKG_CONFIG --libs $QT_PACKAGES`
     QT_LDFLAGS=`$PKG_CONFIG --libs-only-L $QT_PACKAGES`
 
     QT_VERSION=`$PKG_CONFIG --modversion $QT_PACKAGES`
