@@ -527,10 +527,8 @@ qt_ui_element_rep::as_qaction () {
         T1 y = open_box<T1> (get_payload (help, text_widget));
         act->setToolTip (to_qstring (y.x1));
         // HACK: force displaying of the tooltip (needed for items in the QMenuBar)
-#if QT_VERSION < 0x060000
         QObject::connect (act, SIGNAL(hovered()),
                           act, SLOT(showToolTip()));
-#endif
       }
     }
       break;
