@@ -141,7 +141,7 @@ save_string (url u, string s, bool fatal) {
                     << strerror(errno) << "\n";
       }
       if (!err) {
-        int i, n= N(s);
+        int n= N(s);
         ssize_t written = texmacs_fwrite (&s[0], n, fout);
         texmacs_fclose (fout);
         if (written != n) {
@@ -186,7 +186,7 @@ append_string (url u, string s, bool fatal) {
                     << strerror(errno) << "\n";
       }
       if (!err) {
-        int i, n= N(s);
+        int n= N(s);
         ssize_t written = texmacs_fwrite (&s[0], n, fout);
         if (written != n) {
           err= true;
