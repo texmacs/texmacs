@@ -28,7 +28,7 @@ simplify (array<point> a, double eps, double thr) {
   array<double> prev_d;
   prev_i << -1;
   prev_d << 0.0;
-  int count= 0;
+  int count= 0; (void) count;
   for (int i=1; i<N(a); i++) {
     prev_i << -1;
     prev_d << 1.0e100;

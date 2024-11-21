@@ -334,13 +334,13 @@ $(scheme_obj): Objects/%.o: %.cpp
 $(graphics_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(graphics_incl))
 $(plugins_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(plugins_incl) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXSQLITE3) $(CXXICONV) $(CXXSPARKLE) $(CXXX11))
+	$(call cxx_incl,$(plugins_incl) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXSQLITE3) $(CXXICONV) $(CXXSPARKLE) $(CXXX11) $(CXXQT) $(CXXGUILE))
 $(plugins_c_obj): Objects/%.o: %.c
 	$(call cc_incl,$(plugins_incl))
 $(x11_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(x11_incl) $(CXXX11) $(CXXGUILE))
 $(os_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(os_incl) $(CXXGUILE))
+	$(call cxx_incl,$(os_incl) $(CXXGUILE) $(CXXQT) $(CXXGUILE))
 $(qt_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(qt_incl) $(CXXQT) $(CXXGUILE))
 $(moc_obj): Objects/%.o: ./Plugins/Qt/%.cpp

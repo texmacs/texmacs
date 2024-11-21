@@ -201,7 +201,6 @@ AC_DEFUN([LC_WITH_QT],[
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Widgets$QT_PKGCONFIG_SUFFIX"
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Svg$QT_PKGCONFIG_SUFFIX"
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}PrintSupport$QT_PKGCONFIG_SUFFIX"
-    QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Concurrent$QT_PKGCONFIG_SUFFIX"
     # if CONFIG_OS is GNU_LINUX and QT_VERSION is higher than 6, use wayland
     AS_IF([test "x$CONFIG_OS" = "xGNU_LINUX"],[
       AS_IF([test $QT_MAJOR -ge 6],[
@@ -214,9 +213,9 @@ AC_DEFUN([LC_WITH_QT],[
     QT_DEFINES=`$PKG_CONFIG --cflags-only-I $QT_PACKAGES`
     AS_IF([test -z "$QT_DEFINES"],[AC_MSG_ERROR([Cannot find a working Qt library])])
 
-    QT_CXXFLAGS=`$PKG_CONFIG --cflags-only-other $QT_PACKAGES`
+    QT_CXXFLAGS=`$PKG_CONFIG --cflags $QT_PACKAGES`
     QT_INCPATH=`$PKG_CONFIG --variable=includedir $QT_PACKAGES`
-    QT_LIBS=`$PKG_CONFIG --libs-only-l $QT_PACKAGES`
+    QT_LIBS=`$PKG_CONFIG --libs $QT_PACKAGES`
     QT_LDFLAGS=`$PKG_CONFIG --libs-only-L $QT_PACKAGES`
 
     QT_VERSION=`$PKG_CONFIG --modversion $QT_PACKAGES`
@@ -227,14 +226,14 @@ AC_DEFUN([LC_WITH_QT],[
 
   case $qt_find_method in
     autotroll)
-    LC_COPY_FLAGS([QT],[TMP])
-    LC_CLEAR_FLAGS([QT])
-    LC_SCATTER_FLAGS([$TMP_CPPFLAGS $TMP_CXXFLAGS $TMP_LDFLAGS $TMP_LIBS $QT_DEFINES],[QT])
+    #LC_COPY_FLAGS([QT],[TMP])
+    #LC_CLEAR_FLAGS([QT])
+    #LC_SCATTER_FLAGS([$TMP_CPPFLAGS $TMP_CXXFLAGS $TMP_LDFLAGS $TMP_LIBS $QT_DEFINES],[QT])
       ;;
     pkgconfig)
-    LC_COPY_FLAGS([QT],[TMP])
-    LC_CLEAR_FLAGS([QT])
-    LC_SCATTER_FLAGS([$TMP_CPPFLAGS $TMP_CXXFLAGS $TMP_LDFLAGS $TMP_LIBS $QT_DEFINES],[QT])
+    #LC_COPY_FLAGS([QT],[TMP])
+    #LC_CLEAR_FLAGS([QT])
+    #LC_SCATTER_FLAGS([$TMP_CPPFLAGS $TMP_CXXFLAGS $TMP_LDFLAGS $TMP_LIBS $QT_DEFINES],[QT])
       ;;
     autotrollstatic)
     ;;
@@ -247,6 +246,8 @@ AC_DEFUN([LC_WITH_QT],[
 
   QT_VERSION=`$QMAKE -query QT_VERSION`
   QT_MAJOR=${QT_VERSION%%.*}
+  AC_DEFINE_UNQUOTED([AC_QT_MAJOR_VERSION], [$QT_MAJOR], [Qt major version number])
+
   test "0$QT_MAJOR" -eq 5 && LC_APPEND_FLAG([-std=c++11],[QT_CXXFLAGS])
   test "0$QT_MAJOR" -eq 6 && LC_APPEND_FLAG([-std=c++17],[QT_CXXFLAGS])
 

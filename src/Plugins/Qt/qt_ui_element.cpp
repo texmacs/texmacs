@@ -138,6 +138,9 @@ qt_glue_widget_rep::render () {
         ren->set_background (c);
         ren->set_pencil (c);
         ren->fill (r->x1, r->y2, r->x2, r->y1);
+#if QT_VERSION >= 0x060000
+	ren->set_shrinking_factor (1);
+#endif
       } else {
         ren->set_shrinking_factor (std_shrinkf);
         brush old_b = ren->get_background ();
@@ -469,7 +472,21 @@ qt_ui_element_rep::as_qaction () {
          */
       const QKeySequence& qks = to_qkeysequence (ks);
       if (!qks.isEmpty()) {
-        act->setShortcut (qks);
+#if defined (Q_OS_MAC) && QT_VERSION >= 0x060000
+	if (use_native_menubar &&
+	    QApplication::inputMethod()->locale().country()
+	    != QLocale::UnitedStates) {
+	  QString tmp= act->text () + u8" ┊ "
+	    + qks.toString(QKeySequence::NativeText).replace (", ", " ");
+	  tmp.replace ("&", "&&");
+	  act->setText(tmp);
+	  act->setShortcutVisibleInContextMenu(false);
+	}
+	else 
+	  act->setShortcut (qks);
+#else
+	act->setShortcut (qks);
+#endif
         command key_cmd = tm_new<qt_key_command_rep> (ks);
         c= new QTMCommand (act, key_cmd);
       } else {
@@ -539,11 +556,7 @@ qt_ui_element_rep::as_qaction () {
       url    image = open_box<url>(load);
       act = new QTMAction (NULL);
 #if QT_VERSION >= 0x060000
-      tmapp()->pixmap_manager().getIcon(image)
-        .then([act](QFuture<QIcon> iconFuture) {
-          QIcon icon = iconFuture.result();
-          act->setIcon(icon);
-        });
+      act->setIcon(tmapp()->pixmap_manager().getIcon(image));
 #else
       act->setIcon (QIcon (as_pixmap (*xpm_image (image))));
 #endif
@@ -866,11 +879,7 @@ qt_ui_element_rep::as_qwidget () {
         
         QTMLazyMenu* lm = new QTMLazyMenu (pw, b, type == pullright_button);
 #if QT_VERSION >= 0x060000
-        tmapp()->pixmap_manager().getIcon(image)
-          .then([b](QFuture<QIcon> iconFuture) {
-            QIcon icon = iconFuture.result();
-            b->setIcon(icon);
-          });
+        b->setIcon (tmapp()->pixmap_manager().getIcon(image));
 #else
         b->setIcon (QIcon (as_pixmap (*xpm_image (image))));
 #endif
@@ -984,11 +993,8 @@ qt_ui_element_rep::as_qwidget () {
       url image = open_box<url>(load);
       QLabel* l = new QLabel (NULL);
 #if QT_VERSION >= 0x060000
-      tmapp()->pixmap_manager().getIcon(image)
-        .then([l](QFuture<QIcon> iconFuture) {
-          QIcon icon = iconFuture.result();
-          l->setPixmap(icon.pixmap(icon.availableSizes().last()));
-        });
+      QIcon tmp= tmapp()->pixmap_manager().getIcon(image);
+      l->setPixmap (tmp.pixmap(tmp.availableSizes().last()));
 #else
       l->setPixmap (as_pixmap (*xpm_image (image)));
 #endif
@@ -1209,11 +1215,8 @@ qt_ui_element_rep::as_qwidget () {
         QWidget*     body = concrete (bodies[i])->as_qwidget();
         tw->addTab(body, QIcon(), label ? label->text() : "");
 #if QT_VERSION >= 0x060000
-        tmapp()->pixmap_manager().getIcon(icons[i])
-          .then([=](QFuture<QIcon> iconFuture) {
-            QIcon icon = iconFuture.result();
-            tw->setTabIcon(i, icon);
-          });
+	(void) img;
+	tw->setTabIcon(i, tmapp()->pixmap_manager().getIcon (icons[i]));
 #else
         tw->addTab (body, QIcon (as_pixmap (*img)), label ? label->text() : "");
 #endif

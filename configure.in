@@ -131,6 +131,21 @@ TM_SIGN
 # final adjustement for Texmacs compile and run
 #--------------------------------------------------------------------
 
+if [[[ "0$QT_MAJOR" -ge 6 ]]]; then
+  case "${host}" in
+    *darwin*)
+      if [[[ "${CC}" =~ "clang" ]]]; then
+        A=(${CC// / })
+        CC=${A[[0]]}
+      fi
+      if [[[ "${CXX}" =~ "clang" ]]]; then
+        A=(${CXX// / })
+        CXX="${A[[0]]} -std=c++17"
+      fi
+    ;;
+  esac
+fi
+
 CPPFLAGS="$CPPFLAGS -include config.h"
 
 #--------------------------------------------------------------------

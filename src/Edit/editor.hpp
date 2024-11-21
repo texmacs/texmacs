@@ -632,7 +632,10 @@ public:
   friend void   delete_view (url u);
 };
 
+#if !defined(NO_FAST_ALLOC) && \
+  (!defined(AC_QT_MAJOR_VERSION) || AC_QT_MAJOR_VERSION < 6)
 template<> void tm_delete<editor_rep> (editor_rep* ptr);
+#endif
 
 class editor {
 EXTEND_NULL(widget,editor);

@@ -259,6 +259,7 @@ QTMWidget::resizeEventBis (QResizeEvent *event) {
 #if QT_VERSION >= 0x060000
 void
 QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
+  (void) surfaceWidget;
   QPainter p (surface());
 
   qreal dpr = surface()->devicePixelRatio();
@@ -327,8 +328,12 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
 
     if (DEBUG_QT && DEBUG_KEYBOARD) {
       debug_qt << "key  : " << key << LF;
-      debug_qt << "text : " << event->text().toLatin1().data() << LF;
+      debug_qt << "text : " << event->text().toUtf8().data() << LF;
+#if QT_VERSION >= 0x060000      
+      debug_qt << "count: " << event->text().size() << LF;
+#else
       debug_qt << "count: " << event->text().count() << LF;
+#endif
       debug_qt << "unic : " << event->text().data()[0].unicode() << LF;
 
 #ifdef OS_MINGW
@@ -362,6 +367,11 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
 #endif
     if (qtkeymap->contains (key)) {
       r = qtkeymap[key];
+#if defined(OS_MINGW) && QT_VERSION >= 0x060000
+      // e.g. azerty keyboard: AltGr tilde followed by Space
+      if (key == 32)
+        r= string (event->text().toUtf8().data(), event->text().toUtf8().size());
+#endif
     }
     else if (qtdeadmap->contains (key)) {
       mods &=~ Qt::ShiftModifier;
@@ -374,7 +384,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
       unsigned short unic= nss.data()[0].unicode();
       /*
       debug_qt << "key  : " << key << LF;
-      debug_qt << "text : " << event->text().toLatin1().data() << LF;
+      debug_qt << "text : " << event->text().toUtf8().data() << LF;
       debug_qt << "count: " << event->text().count() << LF;
       if (mods & Qt::ShiftModifier) debug_qt << "shift\n";
       if (mods & Qt::MetaModifier) debug_qt << "meta\n";
@@ -452,7 +462,9 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
             else if (r == "gtr") r= ">";
         }
 #ifdef Q_OS_MAC
-        if (mods & Qt::AltModifier) {
+        if (mods & Qt::AltModifier &&
+	    (QT_VERSION < 0x060000 ||
+	     QApplication::inputMethod()->locale().country() != QLocale::AnyTerritory)) {
           // Alt produces many symbols in Mac keyboards: []|{} etc.
           if ((N(r) != 1 ||
                ((int) (unsigned char) r[0]) < 32 ||
@@ -476,7 +488,13 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     }
     if (r == "") return;
     if (mods & Qt::ShiftModifier) r= "S-" * r;
+#if defined(Q_OS_MAC) && QT_VERSION >= 0x060000
+    if (QApplication::inputMethod()->locale().country() != QLocale::AnyTerritory) {
+      if (mods & Qt::AltModifier) r= "A-" * r;
+    }
+#else
     if (mods & Qt::AltModifier) r= "A-" * r;
+#endif
     //if (mods & Qt::KeypadModifier) r= "K-" * r;
 #ifdef Q_OS_MAC
     if (mods & Qt::MetaModifier) r= "C-" * r;        // The "Control" key
@@ -607,8 +625,12 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     // find selection in the preedit string
     int sel_start = 0;
     int sel_length = 0;
+#if QT_VERSION >= 0x060000
+    if (pos <  preedit_string.size()) {
+#else	
     if (pos <  preedit_string.count()) {
-      for (int i=0; i< attrs.count(); i++) 
+#endif
+      for (int i=0; i< attrs.count(); i++)
         if ((attrs[i].type == QInputMethodEvent::TextFormat) &&
             (attrs[i].start <= pos) &&
             (pos < attrs[i].start + attrs[i].length)) {
@@ -724,9 +746,15 @@ QTMWidget::tabletEvent (QTabletEvent* event) {
     else s= "press-" * mouse_decode (mstate);
   }
   if ((mstate & 4) == 0 || s == "press-right") {
+#if QT_VERSION >= 0x060000
+    QPoint point = event->position().toPoint() + origin() - surface()->pos();
+    double x= point.x();
+    double y= point.y();
+#else
     QPoint point = event->pos() + origin() - surface()->pos();
     double x= point.x() + event->hiResGlobalX() - event->globalX();
     double y= point.y() + event->hiResGlobalY() - event->globalY();
+#endif
     coord2 pt= coord2 ((SI) (x * PIXEL), (SI) (-y * PIXEL));
     array<double> data;
     data << ((double) event->pressure())
@@ -942,8 +970,12 @@ hashmap<int, tree> payloads;
 void
 QTMWidget::dropEvent (QDropEvent *event) {
   if (is_nil (tmwid)) return;
-  
+
+#if QT_VERSION >= 0x060000
+  QPoint point = event->position ().toPoint () + origin ();
+#else
   QPoint point = event->pos () + origin ();
+#endif
   coord2 pt= from_qpoint (point);
 
   tree doc (CONCAT);
@@ -1085,7 +1117,7 @@ QTMWidget::wheelEvent(QWheelEvent *event) {
     QPoint numDegrees = event->angleDelta() / 8;
     
     // compute the zoom factor from numPixels or numDegrees
-    double zoomFactor = 0.0;
+    double zoomFactor = 0.0; (void) zoomFactor;
     if (!numPixels.isNull()) {
       if (numPixels.y() > 0) {
         call ("zoom-in", object (sqrt (sqrt (sqrt (sqrt (numPixels.y()))))));
@@ -1116,5 +1148,6 @@ QTMWidget::wheelEvent(QWheelEvent *event) {
 }
 
 void QTMWidget::showEvent (QShowEvent *event) {
+  (void) event;
   the_gui->force_update();
 }

@@ -38,12 +38,22 @@ typedef struct texmacs_dirent {
 FILE* texmacs_fopen(string filename, string mode, bool lock = true);
 
 /*
+ * @brief Return the size of a file in bytes
+ */
+ssize_t texmacs_fsize (FILE *stream);
+
+/*
+ * @brief Proxy function to the fread function
+ */
+ssize_t texmacs_fread (char *z, size_t n, FILE *stream);
+
+/*
  * @brief Proxy function to the fputs function.
  * If the stream is cout or cerr, the function will do the necessary
  * conversion. Otherwise, it will call the fputs function withou any
  * conversion.
  */
-int texmacs_fwrite(const char *string, size_t size, FILE *stream);
+ssize_t texmacs_fwrite(const char *string, size_t size, FILE *stream);
 
 /*
  * @brief Proxy function to the fclose function.
@@ -131,5 +141,54 @@ string get_default_theme();
 int mingw_system (array<string> arg,
                   array<int> fd_in, array<string> str_in,
                   array<int> fd_out, array<string*> str_out);
+
+
+/* 
+ * @brief Launch an executable with arguments, or open a link, a PDF
+ * file, etc. with the default application.
+ * If not program is associated with the file, the system will ask
+ * the user to choose a program.
+ * 
+ * This version will wait for 
+ * the process to finish before returning.
+ * 
+ * @param cmd: the command to execute
+ * @param cmdout: the output of the command
+ * @param cmderr: the error output of the command
+ * 
+ * @return the exit code of the process
+ */
+int windows_system(string cmd, string &cmdout, string &cmderr);
+
+/* 
+ * @brief Launch an executable with arguments, or open a link, a PDF
+ * file, etc. with the default application.
+ * If not program is associated with the file, the system will ask
+ * the user to choose a program.
+ * 
+ * This version will wait for 
+ * the process to finish before returning.
+ * 
+ * @param cmd: the command to execute
+ * @param cmdout: the output of the command
+ * 
+ * @return the exit code of the process
+ */
+int windows_system(string cmd, string &cmdout);
+
+/* 
+ * @brief Launch an executable with arguments, or open a link, a PDF
+ * file, etc. with the default application.
+ * If not program is associated with the file, the system will ask
+ * the user to choose a program.
+ * 
+ * This version will NOT wait for 
+ * the process to finish before returning.
+ * 
+ * @param cmd: the command to execute
+ * 
+ * @return the exit code of the process
+ */
+int windows_system(string cmd);
 
 #endif

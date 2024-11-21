@@ -410,7 +410,7 @@ impress (qt_simple_widget_rep* wid) {
 QAction*
 qt_simple_widget_rep::as_qaction () {
 #if QT_VERSION >= 0x060000
-  QAction* a= new QAction (NULL);
+  QAction* a= new QTMAction (NULL);
   QIcon icon (new QTMImpressIconEngine (this));
   a->setIcon (icon);
   return a;
@@ -530,10 +530,12 @@ qt_simple_widget_rep::repaint_invalid_regions () {
   QRegion qrgn;
   QPoint origin = canvas()->origin();
 
+#if QT_VERSION >= 0x060000
   // round the origin to avoid rounding errors with dpi of 1.25 and 1.75
   if (dpr != 1.0 && dpr != 2.0) {
     origin = QPoint (32 * (origin.x() / 32), 32 * (origin.y() / 32));
   }
+#endif
 
   if (backing_pos != origin) {
     

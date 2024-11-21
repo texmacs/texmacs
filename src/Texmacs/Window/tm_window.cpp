@@ -149,11 +149,14 @@ tm_window_rep::tm_window_rep (widget wid2, tree geom):
 double
 get_doc_zoom_factor (tree doc) {
   if (is_compound (doc))
-    for (int i=0; i<N(doc); i++)
+    for (int i=0; i<N(doc); i++) {
       if (is_compound (doc[i], "initial") || is_func (doc[i], COLLECTION))
         return get_doc_zoom_factor (doc[i]);
-      else if (is_func (doc[i], ASSOCIATE, 2) && doc[i][0] == ZOOM_FACTOR)
-        return as_double (doc[i][1]);
+      else {
+	if (is_func (doc[i], ASSOCIATE, 2) && doc[i][0] == ZOOM_FACTOR)
+	  return as_double (doc[i][1]);
+      };
+    }
   return -1.0;
 }
 

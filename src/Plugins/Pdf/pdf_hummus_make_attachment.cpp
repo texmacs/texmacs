@@ -208,7 +208,8 @@ PDFAttachmentWriter::OnCatalogWrite (
     DictionaryContext*  inCatalogDictionaryContext,
     ObjectsContext*     inPDFWriterObjectContext,
     DocumentContext*    inPDFWriterDocumentContext) {
-
+  (void) inCatalogInformation;
+  (void) inPDFWriterDocumentContext;
   if (DEBUG_CONVERT)
     debug_convert << "Populating the EmbeddedFiles dictionary" << LF;
 

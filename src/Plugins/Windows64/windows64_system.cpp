@@ -55,7 +55,16 @@ FILE* texmacs_fopen(string filename, string mode, bool lock) {
   return result;
 }
 
-int texmacs_fwrite(const char *str, size_t size, FILE *stream) {
+ssize_t texmacs_fsize(FILE *stream) {
+  int fd = _fileno(stream);
+  return _filelengthi64(fd);
+}
+
+ssize_t texmacs_fread(char *z, size_t n, FILE *stream) {
+  return fread(z, 1, n, stream);
+}
+
+ssize_t texmacs_fwrite(const char *str, size_t size, FILE *stream) {
   if (stream != stdout && stream != stderr) {
     size_t ret= fwrite(str, size, 1, stream);
     return ret < 1 ? 0 : size;
@@ -279,7 +288,6 @@ int texmacs_guile_fprintf(FILE *stream, const char *format, ...) {
   va_end(args);
   return res;
 }
-
 #endif
 
 void texmacs_init_guile_hooks() {
@@ -366,6 +374,140 @@ string get_default_theme() {
   }
   return "light";
 #endif
+}
+
+/* ScopedHandle is a class to automatically close a handle in windows_system function,
+ * simplifying the code and avoiding resource leaks.
+ */
+class ScopedHandle {
+
+public:
+  ~ScopedHandle() {
+    if (h) {
+      CloseHandle(h);
+    }
+  }
+
+  HANDLE h = 0;
+};
+
+int windows_system(string cmd, string *cmdout, string *cmderr) {
+
+  SECURITY_ATTRIBUTES sa;
+  sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+  sa.bInheritHandle = TRUE;
+  sa.lpSecurityDescriptor = NULL;
+
+  ScopedHandle hOutRead, hOutWrite;
+  ScopedHandle hErrRead, hErrWrite;
+
+  bool res = CreatePipe(&hOutRead.h, &hOutWrite.h, &sa, 0);
+  if (!res) {
+    std_warning << "failed to create pipe" << LF;
+    return 1;
+  }
+
+  res = CreatePipe(&hErrRead.h, &hErrWrite.h, &sa, 0);
+  if (!res) {
+    std_warning << "failed to create pipe"  << LF;
+    return 1;
+  }
+
+  res = SetHandleInformation(hOutRead.h, HANDLE_FLAG_INHERIT, 0);
+  if (!res) {
+    std_warning << "failed to set handle information"  << LF;
+    return 1;
+  }
+
+  res = SetHandleInformation(hErrRead.h, HANDLE_FLAG_INHERIT, 0);
+  if (!res) {
+    std_warning << "failed to set handle information"  << LF;
+    return 1;
+  }
+
+  PROCESS_INFORMATION pi;
+  STARTUPINFOW si;
+  ZeroMemory(&pi, sizeof(PROCESS_INFORMATION));
+  ZeroMemory(&si, sizeof(STARTUPINFOW));
+  si.cb = sizeof(STARTUPINFOW);
+  si.hStdOutput = hOutWrite.h;
+  si.hStdError = hErrWrite.h;
+  si.dwFlags |= STARTF_USESTDHANDLES;
+
+  std::wstring wide_cmd = texmacs_utf8_to_wide(cmd);
+
+  // CreateProcessW will work only on executable files.
+  // It will not work to open PDF, links, etc.
+  res = CreateProcessW(NULL, (LPWSTR)wide_cmd.c_str(), NULL, NULL, 
+                       TRUE, 0, NULL, NULL, &si, &pi);
+  if (!res) {
+    // If we are here, it means that windows_system is trying to
+    // open a file, like a PDF, or a link.
+    if (stdout == nullptr && stderr == nullptr) {
+      res = (uintptr_t)ShellExecuteW(NULL, NULL, wide_cmd.c_str(), 
+                                     NULL, NULL, SW_SHOW) >= 32;
+    }
+
+    if (!res) {
+      std_warning << "failed to launch command '" << cmd << "'" << LF;
+      return 1;
+    }
+
+    // in the case of PDF or link, we don't want (and have)
+    // to read stdout and stderr, so we immediately.
+    return 0;
+  }
+
+  if (cmdout == nullptr && cmderr == nullptr) {
+    // If we are here, we launched a command, and we don't want to read
+    // the output, so we immediately return.
+    return 0;
+  }
+
+  // We wait for the application to finish before reading the output
+  // todo : this should be done asynchronously, 
+  // because it can freeze the application
+  WaitForSingleObject(pi.hProcess, 30000);
+  
+  DWORD bytesRead;
+  std::wstring wide_cmdout, wide_cmderr;
+  WCHAR buffer[4096];
+
+  while (ReadFile(hOutRead.h, buffer, sizeof(buffer), &bytesRead, NULL) && bytesRead > 0) {
+    wide_cmdout += std::wstring(buffer, bytesRead);
+  }
+
+  while (ReadFile(hErrRead.h, buffer, sizeof(buffer), &bytesRead, NULL) && bytesRead > 0) {
+    wide_cmderr += std::wstring(buffer, bytesRead);
+  }
+
+  if (cmdout != nullptr) {
+    *cmdout = texmacs_wide_to_utf8(wide_cmdout);
+  }
+  if (cmderr != nullptr) {
+    *cmderr = texmacs_wide_to_utf8(wide_cmderr);
+  }
+
+  DWORD exitCode;
+  GetExitCodeProcess(pi.hProcess, &exitCode);
+  CloseHandle(pi.hProcess);
+  CloseHandle(pi.hThread);
+
+  return exitCode;
+}
+
+int windows_system(string cmd, string &cmdout, string &cmderr) {
+  return windows_system(cmd, &cmdout, &cmderr);
+}
+
+int windows_system(string cmd, string &cmdout) {
+  return windows_system(cmd, &cmdout, nullptr);
+}
+
+int windows_system(string cmd) {
+  std::wstring wide_cmd = texmacs_utf8_to_wide(cmd);
+  HINSTANCE res = ShellExecuteW(NULL, NULL, wide_cmd.c_str(), NULL, NULL, SW_SHOW );
+  return (int)0;
 }
 
 static void

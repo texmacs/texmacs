@@ -185,7 +185,7 @@
     (cond ((!= preview-command "default")
            (shell (string-append preview-command " " s " &")))
           ((or (os-mingw?) (os-win32?))
-           (shell (string-append "cmd /c start " s)))
+           (shell s))
           ((os-macos?)
            (shell (string-append "open " s)))
           ((url-exists-in-path? "xdg-open")
