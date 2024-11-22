@@ -1,23 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg id="svg5375" width="24" height="24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
- <metadata id="metadata5380">
-  <rdf:RDF>
-   <cc:Work rdf:about="">
-    <dc:format>image/svg+xml</dc:format>
-    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:title/>
-   </cc:Work>
-  </rdf:RDF>
- </metadata>
- <g id="layer1">
-  <path id="path9719" d="m5 4v11h13v-11z" fill-opacity=".87843" stroke-width="0"/>
-  <path id="path8471" d="m3 4v19h17v-19h-2v11h-13v-11z" fill-opacity=".87843" stroke-width="0"/>
-  <path id="path8349" d="m2.5 0.5v23h18v-23z" fill="none" stroke="#7f7f7f" stroke-width="1px"/>
-  <path id="path8377" d="m5 4v11h13v-11z" fill="none" stroke-width="0"/>
-  <path id="path8381" d="m5.5 4.5v10h12v-10z" fill="none" stroke="#bfbfbf" stroke-dasharray="1, 1" stroke-dashoffset=".5"/>
-  <path id="path8383" d="m5 4v1h1v-1z" fill="#bfbfbf" stroke-width="0"/>
-  <path id="path8473" d="m3 1v3h17v-3z" fill-opacity=".87843" stroke-width="0"/>
-  <image id="image8515" x="10" y="7" width="13" height="11" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAALCAYAAACksgdhAAAABHNCSVQICAgIfAhkiAAAACxJREFU KJHtjaERADAMhNJO9uw/FJ3hVUwxKI5JomrjozolF6gCYP5p79T4AavhQ4rrmV14AAAAAElFTkSu QmCC "/>
- </g>
+<svg id="svg5375" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <defs>
+    <style>
+      .cls-1 {
+        stroke: #e0e0e0;
+        stroke-dasharray: 1 1;
+        stroke-dashoffset: .5px;
+      }
+
+      .cls-1, .cls-2, .cls-3 {
+        fill: #000000;
+      }
+
+      .cls-2 {
+        stroke: #959595;
+      }
+
+      .cls-3 {
+        stroke: #000000;
+      }
+    </style>
+  </defs>
+  <!-- Bottom Document -->
+  <rect class="cls-2" x="3.5" y=".5" width="18" height="23"/>
+
+  <!-- Top Left Rectangle -->
+  <rect class="cls-1" x="6" y="4" width="12" height="12"/>
+
+  <!-- Bottom Right Rectangle -->
+  <rect class="cls-3" x="11" y="7" width="12" height="12"/>
+
+  <!-- Bottom Right Stroke -->
+  <rect class="cls-1" x="11" y="7" width="12" height="12"/>
 </svg>

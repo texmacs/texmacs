@@ -16,13 +16,14 @@ import os
 import sys
 import platform
 from os.path import exists
-tmpy_home_path = os.environ.get("TEXMACS_HOME_PATH") + "/plugins/tmpy"
-if (exists (tmpy_home_path)):
-    sys.path.append(os.environ.get("TEXMACS_HOME_PATH") + "/plugins/")
-else:
-    sys.path.append(os.environ.get("TEXMACS_PATH") + "/plugins/")
 
+tmpy_home_path= os.environ.get("TEXMACS_HOME_PATH")
+tmpy_path= os.environ.get("TEXMACS_PATH")
 
+if not (tmpy_home_path is None) and exists (tmpy_home_path + "/plugins/tmpy"):
+  sys.path.append(tmpy_home_path + "/plugins/")
+elif not (tmpy_path is None) and exists (tmpy_path):
+  sys.path.append(tmpy_path + "/plugins/")
 
 import traceback
 import string
@@ -125,7 +126,7 @@ sys.stdout = os.fdopen (sys.stdout.fileno(), 'w')
 ###############################################################################
 # Session start
 ###############################################################################
-if (exists (tmpy_home_path)):
+if (not (tmpy_home_path is None) and exists (tmpy_home_path)):
     flush_verbatim ("WARNING: You are under develop mode using " + tmpy_home_path)
     flush_newline (2)
 flush_verbatim (f"Python { platform.python_version() } [{ sys.executable }] \n" +
