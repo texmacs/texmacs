@@ -32,6 +32,7 @@ AC_DEFUN([TM_PLATFORM],[
   CONFIG_USER="$USER"
   CONFIG_DATE="`date`"
   CONFIG_QTPIPES="no"
+  CONFIG_FASTALLOC="yes"
   type rsync && CONFIG_CP="rsync -a --exclude='.*'" || CONFIG_CP="cp -f -R -p"
   # tweak for XCode project
   CONFIG_ARCHS='$(NATIVE_ARCH)'
@@ -66,11 +67,59 @@ AC_DEFUN([TM_PLATFORM],[
       AC_CHECK_LIB(xcb,xcb_disconnect,[CONFIG_BSTATIC="-lxcb $CONFIG_BSTATIC";CONFIG_STYPE=B])
   ])
 
-  AC_MSG_CHECKING(final adjustments for)
+  AC_MSG_CHECKING(final adjustments for ${host})
   case "${host}" in
     x86_64-*-linux*)
       CONFIG_OS_SUFFIX="x86_64-pc-linux-gnu"
       LINUX_COMMON
+    ;;
+    armv7a-*-linux-androideabi)
+      AC_MSG_RESULT(an ARMV7A EABI Android host)
+      AC_DEFINE([OS_ANDROID],[1],[OS type])
+      CONFIG_OS="ANDROID"
+      CONFIG_OS_COMPAT="Android"
+      CONFIG_CXXOPTIMIZE="-O3"
+      CONFIG_QTPIPES="yes"
+      CONFIG_CXXFLAGS="-fPIC"
+      CONFIG_BSHARED="-shared -fPIC"
+      CONFIG_FASTALLOC="no"
+      AC_DEFINE([STACK_SIZE], 0x1000000, [If not set during link])
+      if test -z "${QT_ANDROID_PATH}"; then
+          AC_MSG_ERROR([Required environment variable QT_ANDROID_PATH is not set])
+      fi
+      if test -z "${ANDROID_SDK_ROOT}"; then
+          AC_MSG_ERROR([Required environment variable ANDROID_SDK_ROOT is not set])
+      fi
+      if test -z "${ANDROID_NDK_ROOT}"; then
+          AC_MSG_ERROR([Required environment variable ANDROID_NDK_ROOT is not set])
+      fi
+      AC_DEFINE(LINKED_FREETYPE, 1, [Freetype library available])
+      AC_DEFINE(USE_FREETYPE, 2, [Freetype library available])
+      AC_SUBST([CONFIG_HOST_CPU], ["$TARGET"])
+    ;;
+    aarch64-*-linux-android)
+      AC_MSG_RESULT(an ARM64 Android host)
+      AC_DEFINE([OS_ANDROID],[1],[OS type])
+      CONFIG_OS="ANDROID"
+      CONFIG_OS_COMPAT="Android"
+      CONFIG_CXXOPTIMIZE="-O3"
+      CONFIG_QTPIPES="yes"
+      CONFIG_CXXFLAGS="-fPIC"
+      CONFIG_BSHARED="-shared -fPIC"
+      CONFIG_FASTALLOC="no"
+      AC_DEFINE([STACK_SIZE], 0x1000000, [If not set during link])
+      if test -z "${QT_ANDROID_PATH}"; then
+          AC_MSG_ERROR([Required environment variable QT_ANDROID_PATH is not set])
+      fi
+      if test -z "${ANDROID_SDK_ROOT}"; then
+          AC_MSG_ERROR([Required environment variable ANDROID_SDK_ROOT is not set])
+      fi
+      if test -z "${ANDROID_NDK_ROOT}"; then
+          AC_MSG_ERROR([Required environment variable ANDROID_NDK_ROOT is not set])
+      fi
+      AC_DEFINE(LINKED_FREETYPE, 1, [Freetype library available])
+      AC_DEFINE(USE_FREETYPE, 2, [Freetype library available])
+      AC_SUBST([CONFIG_HOST_CPU], ["$TARGET"])
     ;;
     i*86-*-linux*)
       CONFIG_OS_SUFFIX="i386-pc-linux-gnu"
@@ -315,4 +364,3 @@ AC_DEFUN([TM_PLATFORM],[
   AC_SUBST(CONFIG_ARCHS)
   AC_SUBST(CONFIG_CP)
 ])
-B

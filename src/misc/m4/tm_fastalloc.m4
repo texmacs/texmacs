@@ -14,7 +14,7 @@
 AC_DEFUN([TM_FASTALLOC],[
   AC_ARG_ENABLE(fastalloc,
   [  --disable-fastalloc     omit fast allocator for small objects],
-      [], [enable_fastalloc="yes"])
+      [], [enable_fastalloc=$CONFIG_FASTALLOC])
   case "$enable_fastalloc" in
       yes)
 	  ;;

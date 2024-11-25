@@ -192,9 +192,6 @@ AC_DEFUN([LC_WITH_QT],[
     AS_IF([test -z "$PKG_CONFIG"],[AC_MSG_ERROR([Cannot find pkg-config])])
 
     QT_PKGCONFIG_SUFFIX=''
-    # if ABI or ANDROID_ABI is set, use it as suffix
-    AS_IF([test -n "$ABI"],[QT_PKGCONFIG_SUFFIX="_${ABI}"])
-    AS_IF([test -n "$ANDROID_ABI"],[QT_PKGCONFIG_SUFFIX="_${ANDROID_ABI}"])
 
     QT_PACKAGES="Qt${QT_MAJOR}Core$QT_PKGCONFIG_SUFFIX "
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Gui$QT_PKGCONFIG_SUFFIX"

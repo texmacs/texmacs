@@ -120,6 +120,7 @@ LC_SPARKLE
 TM_FASTALLOC
 TM_MACOS
 TM_WINDOWS
+TM_ANDROID
 TM_GUI
 LC_HUMMUS
 TM_DEBUG
@@ -172,6 +173,8 @@ packages/windows/TeXmacs.iss:packages/windows/TeXmacs.iss.in
 packages/windows/resource.rc:packages/windows/resource.rc.in 
 packages/debian/changelog:packages/debian/changelog.in 
 packages/debian/control:packages/debian/control.in
+packages/android/res/values/libs.xml:packages/android/libs.xml.in
+packages/android/AndroidManifest.xml:packages/android/AndroidManifest.xml.in
 src/System/tm_configure.hpp:src/System/tm_configure.in
 ])
 AC_OUTPUT
