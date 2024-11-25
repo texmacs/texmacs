@@ -2,6 +2,7 @@
 ###############################################################################
 # MODULE     : main TeXmacs make file
 # COPYRIGHT  : (C) 1999-2008  Joris van der Hoeven
+
 ###############################################################################
 # This software falls under the GNU general public license version 3 or later.
 # It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -528,6 +529,48 @@ WINDOWS_PACKAGE: WINDOWS_BUNDLE
 
 .PHONY: WINDOWS_BUNDLE WINDOWS_PACKAGE
 
+###############################################################################
+# Make an Android package
+###############################################################################
+
+ANDROID_PACKAGE_SRC = packages/android
+ANDROID_PACKAGE_DIR = ../distr/android
+
+ANDROID_BUILD_DIR = ../distr/TeXmacs-Android
+
+ANDROID_LIBTEXMACS: @MKGUILE@ EMPTY_DIRS
+	if test "$(TEXMACS_DEPS)" != "no"; then \
+		cd src; $(MAKE) -f makefile deps; \
+	fi
+	cd src; $(MAKE) -r -f makefile link=static Objects/libtexmacs.a
+	$(CP) plugins $(tmdir)
+	$(RM) $(tmdir)/plugins/*/Makefile
+	$(RM) -r $(tmdir)/plugins/*/src
+	$(RM) -r $(tmdir)/plugins/*/bin
+	$(RM) -r $(tmdir)/plugins/*/lib
+	@echo ----------------------------------------------------------
+	@echo TeXmacs library has been successfully compiled for Android
+
+ANDROID_BUNDLE: ANDROID_LIBTEXMACS
+	$(MKDIR) ../distr
+	$(RM) -r $(ANDROID_BUILD_DIR)/sources
+	$(MKDIR) $(ANDROID_BUILD_DIR)/sources
+	$(RM) -r $(ANDROID_BUILD_DIR)/build
+	$(MKDIR) $(ANDROID_BUILD_DIR)/build
+	$(CP) $(ANDROID_PACKAGE_SRC)/res $(ANDROID_BUILD_DIR)/sources/.
+	$(CP) $(ANDROID_PACKAGE_SRC)/AndroidManifest.xml $(ANDROID_BUILD_DIR)/sources/.
+	$(ANDROID_PACKAGE_SRC)/collect_assets.sh TeXmacs $(ANDROID_BUILD_DIR)/sources/assets/raw
+	$(MKDIR) $(ANDROID_BUILD_DIR)/build/libs/${ANDROID_ABI}
+
+.PHONY: ANDROID_BUNDLE
+
+###############################################################################
+# Make an AppImage
+###############################################################################
+
+APPIMAGE: TEXMACS
+	$(MKDIR) ../distr
+	
 ###############################################################################
 # Cleaning and backups
 ###############################################################################

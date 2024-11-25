@@ -138,7 +138,7 @@ AC_DEFUN([LC_WITH_GUILE],[
 # For autodetection of flags required to link statically with Guile
 #-------------------------------------------------------------------
 
-AC_DEFUN([LC_GUILE],[
+AC_DEFUN([_LC_GUILE],[
   AC_ARG_WITH(guile,
     AS_HELP_STRING([--with-guile@<:@=system@:>@],[path to to find guile-config or [embedded] if any tm-guile package included]), 
     [AS_IF(test "$withval" == no,[AC_MSG_ERROR([cannot work without Guile])],test "$withval" = yes,[unset withval])],[unset withval])
@@ -214,4 +214,24 @@ AC_DEFUN([LC_GUILE],[
   LC_COMBINE_FLAGS([GUILE])
   LC_SUBST([GUILE])
   unset ${![$0]_*}
+])
+
+AC_DEFUN([LC_GUILE],[
+  # configure enters cross-compilation mode if and only if --host is passed.
+  if test $cross_compiling = "yes"; then
+    AC_MSG_NOTICE(Guile version $GUILE_VERSION)
+    case "$GUILE_VERSION" in
+      (1.0 | 1.1 | 1.2 | 1.3 | 1.4 | 1.5) AC_DEFINE([GUILE_A],[1],[Guile version]) ;;
+      (1.6 | 1.7) AC_DEFINE(GUILE_B,[1],[Guile version]) ;;
+      (1.8 | 1.9) AC_DEFINE(GUILE_C,[1],[Guile version]) ;;
+      (2.*) AC_DEFINE(GUILE_D,[1],[Guile version]) ;;
+      (0) AC_MSG_ERROR([Please set $GUILE_VERSION for cross compiling]) ;;
+      (*) AC_MSG_ERROR([Guile version unmanaged.]) ;;
+    esac
+    AC_DEFINE_UNQUOTED([GUILE_VERSION], [$GUILE_VERSION], [Guile version])
+    AC_DEFINE_UNQUOTED(guile_str_size_t, [$GUILE_STR_SIZE_T], [Guile string size type])
+    LC_COMBINE_FLAGS([GUILE])
+  else
+    _LC_GUILE
+  fi
 ])
