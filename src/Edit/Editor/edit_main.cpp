@@ -227,11 +227,10 @@ edit_main_rep::nr_pages () {
 
 void
 edit_main_rep::print_doc (url name, bool conform, int first, int last) {
+#ifdef USE_GS
   bool ps  = (suffix (name) == "ps");
   bool pdf = (suffix (name) == "pdf");
   url  orig= resolve (name, "");
-
-#ifdef USE_GS
   if (!use_pdf () && pdf)
     name= url_temp (".ps");
   if (!use_ps () && ps)
