@@ -96,6 +96,7 @@ AC_DEFUN([TM_PLATFORM],[
       AC_DEFINE(LINKED_FREETYPE, 1, [Freetype library available])
       AC_DEFINE(USE_FREETYPE, 2, [Freetype library available])
       AC_SUBST([CONFIG_HOST_CPU], ["$TARGET"])
+      TM_ANDROID
     ;;
     aarch64-*-linux-android)
       AC_MSG_RESULT(an ARM64 Android host)
@@ -120,6 +121,7 @@ AC_DEFUN([TM_PLATFORM],[
       AC_DEFINE(LINKED_FREETYPE, 1, [Freetype library available])
       AC_DEFINE(USE_FREETYPE, 2, [Freetype library available])
       AC_SUBST([CONFIG_HOST_CPU], ["$TARGET"])
+      TM_ANDROID
     ;;
     i*86-*-linux*)
       CONFIG_OS_SUFFIX="i386-pc-linux-gnu"
