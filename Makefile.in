@@ -582,10 +582,31 @@ ANDROID_BUNDLE: ANDROID_LIBTEXMACS
 	$(MKDIR) $(ANDROID_BUILD_DIR)/sources
 	$(RM) -r $(ANDROID_BUILD_DIR)/build
 	$(MKDIR) $(ANDROID_BUILD_DIR)/build
-	$(CP) $(ANDROID_PACKAGE_SRC)/res $(ANDROID_BUILD_DIR)/sources/.
-	$(CP) $(ANDROID_PACKAGE_SRC)/AndroidManifest.xml $(ANDROID_BUILD_DIR)/sources/.
-	$(ANDROID_PACKAGE_SRC)/collect_assets.sh TeXmacs $(ANDROID_BUILD_DIR)/sources/assets/raw
+	$(CP) -r packages/android/launcher/* $(ANDROID_BUILD_DIR)/sources/
+	$(CP) $(ANDROID_PACKAGE_SRC)/res/* $(ANDROID_BUILD_DIR)/sources/android/res/
+	$(CP) $(ANDROID_PACKAGE_SRC)/AndroidManifest.xml $(ANDROID_BUILD_DIR)/sources/android/AndroidManifest.xml
+	$(ANDROID_PACKAGE_SRC)/collect_assets.sh TeXmacs $(ANDROID_BUILD_DIR)/sources/android/assets/raw
 	$(MKDIR) $(ANDROID_BUILD_DIR)/build/libs/${ANDROID_ABI}
+
+ANDROID_APK: ANDROID_BUNDLE
+	cd $(ANDROID_BUILD_DIR)/build; cmake -DANDROID_NDK:PATH=@NDK@ \
+	                                     -DCMAKE_FIND_ROOT_PATH:PATH=%{Qt:QT_INSTALL_PREFIX} \
+										 -DANDROID_SDK_ROOT:PATH=@SDK@ \
+										 -DANDROID_STL:STRING=c++_shared \
+										 -DCMAKE_GENERATOR:STRING=Ninja \
+										 -DANDROID_ABI:STRING=@ANDROID_ABI@ \
+										 -DQT_HOST_PATH:PATH=@QT_HOST_PATH@ \
+										 -DCMAKE_BUILD_TYPE:STRING=Debug \
+										 -DANDROID_PLATFORM:STRING=android-33 \
+										 -DQT_USE_TARGET_ANDROID_BUILD_DIR:BOOL=ON \
+										 -DQT_NO_GLOBAL_APK_TARGET_PART_OF_ALL:BOOL=ON \
+										 -DCMAKE_TOOLCHAIN_FILE:FILEPATH=@NDK@/build/cmake/android.toolchain.cmake \
+										 -DANDROID_USE_LEGACY_TOOLCHAIN_FILE:BOOL=OFF \
+										 -DCMAKE_FIND_ROOT_PATH=@QT_PATH@ \
+										 -DCMAKE_PREFIX_PATH=@QT_PATH@ \
+										 -DQT_DIR=@QT_PATH@/lib/cmake/Qt6 ../sources
+	cd $(ANDROID_BUILD_DIR)/build; cmake --build . --target apk
+
 
 .PHONY: ANDROID_BUNDLE
 
