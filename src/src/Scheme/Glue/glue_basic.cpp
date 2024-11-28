@@ -134,6 +134,15 @@ tmg_os_macosP () {
 }
 
 tmscm
+tmg_os_androidP () {
+  // TMSCM_DEFER_INTS;
+  bool out= os_android ();
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_has_printing_cmdP () {
   // TMSCM_DEFER_INTS;
   bool out= has_printing_cmd ();
@@ -10271,6 +10280,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("os-win32?",  tmg_os_win32P, 0, 0, 0);
   tmscm_install_procedure ("os-mingw?",  tmg_os_mingwP, 0, 0, 0);
   tmscm_install_procedure ("os-macos?",  tmg_os_macosP, 0, 0, 0);
+  tmscm_install_procedure ("os-android?",  tmg_os_androidP, 0, 0, 0);
   tmscm_install_procedure ("has-printing-cmd?",  tmg_has_printing_cmdP, 0, 0, 0);
   tmscm_install_procedure ("x-gui?",  tmg_x_guiP, 0, 0, 0);
   tmscm_install_procedure ("qt-gui?",  tmg_qt_guiP, 0, 0, 0);

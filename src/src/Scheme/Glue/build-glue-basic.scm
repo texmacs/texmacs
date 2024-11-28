@@ -29,6 +29,7 @@
   (os-win32? os_win32 (bool))
   (os-mingw? os_mingw (bool))
   (os-macos? os_macos (bool))
+  (os-android? os_android (bool))
   (has-printing-cmd? has_printing_cmd (bool))
   (x-gui? gui_is_x (bool))
   (qt-gui? gui_is_qt (bool))
