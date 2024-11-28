@@ -39,6 +39,7 @@
 "os-win32?"
 "os-mingw?"
 "os-macos?"
+"os-android?"
 "has-printing-cmd?"
 "x-gui?"
 "qt-gui?"
