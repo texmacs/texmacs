@@ -16,6 +16,8 @@
 #include "Windows64/windows64_system.hpp"
 #elif defined (OS_MINGW)
 #include "Windows/windows32_system.hpp"
+#elif defined (OS_ANDROID)
+#include "Android/android_system.hpp"
 #else
 #include "Unix/unix_system.hpp"
 #endif
@@ -103,8 +105,7 @@ std_ostream_rep::write (const char* s, size_t n) {
   if (n == 0) {
     return;
   }
-  int written;
-  written = texmacs_fwrite(s, n, file);
+  ssize_t written= texmacs_fwrite(s, n, file);
   if (written < 0 || ((size_t) written) != n) {
     is_w = false;
     return;
