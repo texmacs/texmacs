@@ -216,6 +216,41 @@ AC_DEFUN([_LC_GUILE],[
   unset ${![$0]_*}
 ])
 
+# Function to require gui hooks
+AC_DEFUN([LC_GUILE_NEED_HOOKS],[
+  AX_SAVE_FLAGS
+  LC_SET_FLAGS([GUILE])
+
+  if test -n "$GUILE_EMBEDDED_VERSION"; then
+    LC_APPEND_FLAG([-I$GUILE_EMBEDDED_DIR], [CXXFLAGS])
+  fi
+
+  AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+    #include <cstdio>
+    #include <libguile/system.h>
+
+    int test_the_existance_of_guile_hooks() {
+      guile_fstat;
+      guile_ftruncate;
+      guile_lseek;
+      guile_stat;
+      guile_lstat;
+      guile_open;
+      guile_opendir;
+      guile_readdir;
+      guile_truncate;
+      guile_getenv;
+      guile_printf;
+    }
+  ]])], [
+    AC_MSG_NOTICE([Guile hooks are available])
+  ], [
+    AC_MSG_ERROR([Guile hooks are required. See https://www.texmacs.org/tmweb/download/sources.en.html])
+  ])
+
+  AX_RESTORE_FLAGS
+])
+
 AC_DEFUN([LC_GUILE],[
   # configure enters cross-compilation mode if and only if --host is passed.
   if test $cross_compiling = "yes"; then
@@ -234,4 +269,14 @@ AC_DEFUN([LC_GUILE],[
   else
     _LC_GUILE
   fi
+
+  # on windows 64 bits and any android, we need to have guile hooks
+  case "${host}" in
+    *64*w64-mingw32)
+      LC_GUILE_NEED_HOOKS
+    ;;
+    *android*)
+      LC_GUILE_NEED_HOOKS
+    ;;
+  esac
 ])
