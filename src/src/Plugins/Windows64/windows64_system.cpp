@@ -325,7 +325,7 @@ intptr_t texmacs_spawnvp(int mode, string name, array<string> args) {
                            (wchar_t* const*)wide_args.data());
 
   // free the memory
-  for (int i = 0; i < wide_args.size(); i++) {
+  for (size_t i = 0; i < wide_args.size(); i++) {
     free(wide_args[i]);
   }
 
@@ -507,7 +507,7 @@ int windows_system(string cmd, string &cmdout) {
 int windows_system(string cmd) {
   std::wstring wide_cmd = texmacs_utf8_to_wide(cmd);
   HINSTANCE res = ShellExecuteW(NULL, NULL, wide_cmd.c_str(), NULL, NULL, SW_SHOW );
-  return (int)0;
+  return (uintptr_t)res >= 32 ? 0 : -1;
 }
 
 static void
