@@ -474,7 +474,11 @@ qt_ui_element_rep::as_qaction () {
       if (!qks.isEmpty()) {
 #if defined (Q_OS_MAC) && QT_VERSION >= 0x060000
 	if (use_native_menubar &&
+#  if QT_VERSION >= 0x060600
+	    QApplication::inputMethod()->locale().territory()
+#  else
 	    QApplication::inputMethod()->locale().country()
+#  endif
 	    != QLocale::UnitedStates) {
 	  QString tmp= act->text () + u8" ┊ "
 	    + qks.toString(QKeySequence::NativeText).replace (", ", " ");
