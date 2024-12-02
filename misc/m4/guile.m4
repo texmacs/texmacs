@@ -225,6 +225,10 @@ AC_DEFUN([LC_GUILE_NEED_HOOKS],[
     LC_APPEND_FLAG([-I$GUILE_EMBEDDED_DIR], [CXXFLAGS])
   fi
 
+  if test -n "$TMREPO"; then
+    LC_APPEND_FLAG([-I$TMREPO/include], [CXXFLAGS])
+  fi
+
   AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
     #include <cstdio>
     #include <libguile/system.h>
