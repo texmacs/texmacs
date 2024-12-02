@@ -958,6 +958,8 @@ qt_tm_widget_rep::install_main_menu () {
       dest->setMinimumHeight (min_h);
     }
   }
+#elif defined (Q_OS_ANDROID)
+  dest->setNativeMenuBar(false);
 #else
   if (tm_style_sheet != "") {
 #if QT_VERSION >= 0x060000
