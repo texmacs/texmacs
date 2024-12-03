@@ -84,6 +84,14 @@ protected:
 
   void showEvent (QShowEvent *event) override;
 
+#if defined(OS_ANDROID) && QT_VERSION >= 0x060000
+  /*
+   * @brief Show the android virtual keyboard
+   */
+  void showKeyboard ();
+#endif
+
+
 };
 
 #endif // QTMWIDGET_HPP

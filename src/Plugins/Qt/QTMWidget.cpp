@@ -679,6 +679,9 @@ QTMWidget::inputMethodQuery (Qt::InputMethodQuery query) const {
 
 void
 QTMWidget::mousePressEvent (QMouseEvent* event) {
+#if defined(OS_ANDROID) && QT_VERSION >= 0x060000
+  showKeyboard();
+#endif
   if (is_nil (tmwid)) return;
   QPoint point = event->pos() + origin();
   coord2 pt = from_qpoint(point);
@@ -1151,3 +1154,9 @@ void QTMWidget::showEvent (QShowEvent *event) {
   (void) event;
   the_gui->force_update();
 }
+
+#ifdef OS_ANDROID && QT_VERSION >= 0x060000
+void QTMWidget::showKeyboard() {
+  qApp->inputMethod()->show();
+}
+#endif
