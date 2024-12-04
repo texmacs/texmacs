@@ -23,12 +23,10 @@
 #include <QDebug>
 #include <QDateTime>
 
-#include "Scheme/Guile/guile_tm.hpp"
-#ifdef SCM_HAVE_HOOKS
+extern "C" {
 #include "libguile/system.h"
-#else
-#error "SCM_HAVE_HOOKS is not defined"
-#endif
+#include "libguile/fports.h"
+}
 
 inline QString texmacs_string_to_qstring(string utf8_string) {
   return QString::fromUtf8(&utf8_string[0], N(utf8_string));
@@ -78,7 +76,6 @@ FILE* texmacs_fopen(string filename, string mode, bool lock) {
         // do nothing
         break;
       default:
-        qDebug() << "Warning : invalid mode";
         break;
     }
   }
@@ -261,12 +258,22 @@ int texmacs_guile_fprintf(FILE *stream, const char *format, ...) {
     qDebug() << output;
   } else if (stream == stderr) {
     qWarning() << output;
+    string s = texmacs_qstring_to_string(output);
+    std_warning << s << "\n";
   }
   
   return output.size();
 }
-
+void texmacs_guile_log(const char *cmsg, int len)
+{
+    QString msg = QString::fromStdString(std::string(cmsg, len));
+    qDebug().noquote() << msg;
+    
+    string s = string(cmsg, len);
+    std_warning << s << "\n";
+}
 void texmacs_init_guile_hooks() {
   guile_fprintf = texmacs_guile_fprintf;
   guile_printf = texmacs_guile_printf;
+  scm_set_log_function(texmacs_guile_log);
 }
