@@ -589,6 +589,7 @@ ANDROID_BUNDLE: ANDROID_LIBTEXMACS
 	$(MKDIR) $(ANDROID_BUILD_DIR)/build/libs/${ANDROID_ABI}
 
 ANDROID_APK: ANDROID_BUNDLE
+	$(CP) src/Objects/libtexmacs.a $(ANDROID_BUILD_DIR)/sources
 	cd $(ANDROID_BUILD_DIR)/build; cmake -DANDROID_NDK:PATH=@NDK@ \
 	                                     -DCMAKE_FIND_ROOT_PATH:PATH=%{Qt:QT_INSTALL_PREFIX} \
 										 -DANDROID_SDK_ROOT:PATH=@SDK@ \
@@ -604,6 +605,7 @@ ANDROID_APK: ANDROID_BUNDLE
 										 -DANDROID_USE_LEGACY_TOOLCHAIN_FILE:BOOL=OFF \
 										 -DCMAKE_FIND_ROOT_PATH=@QT_PATH@ \
 										 -DCMAKE_PREFIX_PATH=@QT_PATH@ \
+										 -DTEXMACS_LIBS:STRING="@LIBS@" \
 										 -DQT_DIR=@QT_PATH@/lib/cmake/Qt6 ../sources
 	cd $(ANDROID_BUILD_DIR)/build; cmake --build . --target apk
 

@@ -39,7 +39,13 @@ endif()
 
 set_property(TARGET TeXmacsLauncher PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
 
-target_link_libraries(TeXmacsLauncher PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Svg Qt${QT_VERSION_MAJOR}::PrintSupport Qt${QT_VERSION_MAJOR}::Concurrent -lfreetype -lguile -lgmp -lm -lltdl -llog -ltexmacs)
+target_link_libraries(TeXmacsLauncher PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Svg Qt${QT_VERSION_MAJOR}::PrintSupport Qt${QT_VERSION_MAJOR}::Concurrent)
+
+if(TEXMACS_LIBS)
+  target_link_libraries(TeXmacsLauncher PRIVATE ${TEXMACS_LIBS})
+endif()
+
+target_link_libraries(TeXmacsLauncher PRIVATE ${CMAKE_SOURCE_DIR}/libtexmacs.a)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
