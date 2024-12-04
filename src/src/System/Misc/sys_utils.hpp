@@ -26,6 +26,9 @@
 #endif
 #include "Windows/mingw_sys_utils.hpp"
 #include "Windows/windows32_system.hpp"
+#elif defined (OS_ANDROID)
+#include "Android/android_system.hpp"
+#include "Qt/qt_sys_utils.hpp"
 #else
 #include "Unix/unix_sys_utils.hpp"
 #include "Unix/unix_system.hpp"
