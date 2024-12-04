@@ -44,5 +44,11 @@ void setup_texmacs_path() {
 
 int main(int argc, char** argv) {
   setup_texmacs_path();
+#if !defined(OS_MAC) && QT_VERSION < 0x060000
+  if (get_env("WAYLAND_DISPLAY") == "") {
+    set_env ("QT_QPA_PLATFORM", "xcb"); // todo : remove ?
+    set_env ("XDG_SESSION_TYPE", "x11");
+  }
+#endif
   return texmacs_entrypoint(argc, argv);
 }
