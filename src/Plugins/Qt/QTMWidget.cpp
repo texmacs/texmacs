@@ -1155,7 +1155,7 @@ void QTMWidget::showEvent (QShowEvent *event) {
   the_gui->force_update();
 }
 
-#ifdef OS_ANDROID && QT_VERSION >= 0x060000
+#if defined(OS_ANDROID) && QT_VERSION >= 0x060000
 void QTMWidget::showKeyboard() {
   qApp->inputMethod()->show();
 }
