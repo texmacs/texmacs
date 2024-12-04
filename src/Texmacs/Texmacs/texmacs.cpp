@@ -17,6 +17,9 @@
 #include <signal.h>
 #ifdef STACK_SIZE
 #include <sys/resource.h>
+#ifdef OS_ANDROID
+#include "Android/android.hpp"
+#endif
 #endif
 
 #include "tm_ostream.hpp"
@@ -727,6 +730,9 @@ texmacs_entrypoint (int argc, char** argv) {
     qtmcoreapp= new QTMCoreApplication (argc, argv);
   else
     qtmapp= new QTMApplication (argc, argv);
+#endif
+#ifdef OS_ANDROID
+  init_android();
 #endif
   TeXmacs_init_paths (argc, argv);
   TeXmacs_init_font  ();
