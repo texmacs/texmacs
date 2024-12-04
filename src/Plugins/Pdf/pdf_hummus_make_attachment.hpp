@@ -18,6 +18,7 @@
 #include "tm_ostream.hpp"
 #include "url.hpp"
 
+#ifdef PDF_RENDERER
 /**
 
 Embed attachments into pdf in Embedded File Streams format
@@ -29,5 +30,15 @@ embedded.
 */
 bool pdf_hummus_make_attachments (url pdf_path, array<url> attachment_path,
                                   url out_path);
+#else
+/*
+ * when the pdf plugin is not enabled, you can still include the pdf headers files.
+ * in that case the pdf functions will alaways return an error.
+ */
+inline bool pdf_hummus_make_attachments (url pdf_path, array<url> attachment_path,
+                                         url out_path) {
+  return false;
+}
+#endif
 
 #endif // ifdef PDF_HUMMUS_MAKE_ATTACHMENT_H
