@@ -17,6 +17,7 @@
 #include "tree.hpp"
 #include "url.hpp"
 
+#ifdef PDF_RENDERER
 /**
 
 @brief Extracts attachments from a PDF file.
@@ -77,5 +78,31 @@ considered as the main TM file, due to the mechanism of embedding TM documents
 in Mogan.
 */
 url get_main_tm (url pdf_path);
+
+#else
+/*
+ * when the pdf plugin is not enabled, you can still include the pdf headers files.
+ * in that case the pdf functions will alaways return an error.
+ */
+inline bool extract_attachments_from_pdf (url pdf_path, list<url>& names) {
+    return false;
+}
+
+inline bool scm_extract_attachments (url pdf_path) {
+    return false;
+}
+
+inline array<url> get_linked_file_paths (tree t, url path) {
+    return array<url>();
+}
+
+inline tree replace_with_relative_path (tree t, url path) {
+    return t;
+}
+
+inline url get_main_tm (url pdf_path) {
+    return url_none();
+}
+#endif // ifdef PDF_RENDERER
 
 #endif // ifdef PDF_HUMMUS_MAKE_ATTACHMENT_H
