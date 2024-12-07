@@ -307,7 +307,11 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
 
   EStatusCode status;
   ePDFVersion= ePDFVersion14; // PDF 1.4 for alpha
+#ifdef USE_GS
   string version= pdf_version ();
+#else
+  string version= "1.4";
+#endif
   if (version == "1.5") ePDFVersion= ePDFVersion15;
   if (version == "1.6") ePDFVersion= ePDFVersion16;
   if (version == "1.7") ePDFVersion= ePDFVersion17;
@@ -1730,10 +1734,12 @@ pdf_image_rep::flush (PDFWriter& pdfw)
     // 		      << " (see the preference menu)." << LF;
     if (get_preference ("texmacs->pdf:distill inclusion") == "on") {
       temp= url_temp (".pdf");
+#ifdef USE_GS
       if (!gs_PDF_EmbedAllFonts (name, temp)) {
 	temp= name;
 	name= url_none ();
       }
+#endif
     }
     else {
       temp= name;

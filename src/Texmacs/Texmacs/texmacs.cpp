@@ -17,6 +17,9 @@
 #include <signal.h>
 #ifdef STACK_SIZE
 #include <sys/resource.h>
+#ifdef OS_ANDROID
+#include "Android/android.hpp"
+#endif
 #endif
 
 #include "tm_ostream.hpp"
@@ -703,12 +706,6 @@ texmacs_entrypoint (int argc, char** argv) {
   load_user_preferences ();
 #ifndef OS_MINGW
   set_env ("LC_NUMERIC", "POSIX");
-#ifndef OS_MACOS
-  if (get_env("WAYLAND_DISPLAY") == "") {
-    set_env ("QT_QPA_PLATFORM", "xcb"); // todo : remove ?
-    set_env ("XDG_SESSION_TYPE", "x11");
-  }
-#endif
 #endif
 #ifdef MACOSX_EXTENSIONS
   // Reset TeXmacs if Alt is pressed during startup
@@ -727,6 +724,9 @@ texmacs_entrypoint (int argc, char** argv) {
     qtmcoreapp= new QTMCoreApplication (argc, argv);
   else
     qtmapp= new QTMApplication (argc, argv);
+#endif
+#ifdef OS_ANDROID
+  init_android();
 #endif
   TeXmacs_init_paths (argc, argv);
   TeXmacs_init_font  ();

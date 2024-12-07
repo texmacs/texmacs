@@ -19,6 +19,7 @@
 #include <string>
 
 #include "string.hpp"
+#include "url.hpp"
 #include "unix_system.hpp"
 
 typedef DIR* TEXMACS_DIR;
@@ -130,5 +131,11 @@ bool texmacs_setenv(string variable_name, string new_value);
  * has been compiled, and the system configuration
  */
 string get_default_theme();
+
+/*
+ * @brief A function to get the directory where the texmacs application
+ * runs from
+ */
+url texmacs_get_application_directory();
 
 #endif // TEXMACS_UNIX_SYSTEM_HPP

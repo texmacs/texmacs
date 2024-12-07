@@ -441,7 +441,13 @@ Objects/texmacs-$(link).bin: Objects/texmacs.o Objects/tm_ostream.o Objects/fast
 
 all: $(tmsrc)/bin/texmacs.bin
 
-.PHONY: all $(tmsrc)/bin/texmacs.bin
+Objects/libtexmacs.$(SO_SUFFIX): Objects/texmacs.o Objects/tm_ostream.o Objects/fast_alloc.o Objects/tree.o $(TEXMACS_objects)
+	$(LD) $^ $(link_options) $(LDFLAGS) $(LDSHARED) $(LIBS) -o $@
+
+Objects/libtexmacs.a: Objects/texmacs.o Objects/tm_ostream.o Objects/fast_alloc.o Objects/tree.o $(TEXMACS_objects)
+	$(AR) $(ARFLAGS) $@ $^
+
+.PHONY: all liball $(tmsrc)/bin/texmacs.bin
 
 ###############################################################################
 # Interface for Guile
