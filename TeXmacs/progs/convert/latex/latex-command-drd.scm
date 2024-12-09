@@ -95,7 +95,8 @@
   ,(string->symbol "."))
 
 (logic-group latex-command-2%
-  binom tbinom dbinom cfrac tfrac equal href
+  cfrac dfrac tfrac sfrac
+  binom tbinom dbinom equal href
   sideset stackrel underaccent
   setcounter addtocounter setlength addtolength
   colorbox scalebox texorpdfstring raisebox foreignlanguage
