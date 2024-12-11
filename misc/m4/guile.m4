@@ -64,7 +64,8 @@ AC_DEFUN([LC_WITH_GUILE],[
   GUILE_EMBEDDED_VERSION="1.6"
   GUILE_EMBEDDED_DIR="tm-guile168"
   
-  AS_IF(test "$location" = "embedded18", [
+  AS_IF(test "$location" = "embedded18" || test -d "tm-guile188", [
+    location="embedded18"
     GUILE_EMBEDDED_VERSION="1.8"
     GUILE_EMBEDDED_DIR="tm-guile188"
     m4_define([embedded_guile],[tm-guile188])
