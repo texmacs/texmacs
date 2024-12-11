@@ -3,7 +3,7 @@
 /* Qt major version number */
 #undef AC_QT_MAJOR_VERSION
 
-/* The normal alignment of `void *', in bytes. */
+/* The normal alignment of 'void *', in bytes. */
 #undef ALIGNOF_VOID_P
 
 /* Enable experimental Cocoa port */
@@ -57,13 +57,13 @@
 /* Guile version */
 #undef GUILE_VERSION
 
-/* Define to 1 if the system has the type `FILE'. */
+/* Define to 1 if the system has the type 'FILE'. */
 #undef HAVE_FILE
 
-/* Define to 1 if you have the `gettimeofday' function. */
+/* Define to 1 if you have the 'gettimeofday' function. */
 #undef HAVE_GETTIMEOFDAY
 
-/* Define to 1 if the system has the type `intptr_t'. */
+/* Define to 1 if the system has the type 'intptr_t'. */
 #undef HAVE_INTPTR_T
 
 /* Define to 1 if you have the <inttypes.h> header file. */
@@ -75,7 +75,7 @@
 /* Define if the Qt framework is available. */
 #undef HAVE_QT
 
-/* Define to 1 if you have the `snprintf' function. */
+/* Define to 1 if you have the 'snprintf' function. */
 #undef HAVE_SNPRINTF
 
 /* Define to 1 if you have the <stdint.h> header file. */
@@ -99,7 +99,7 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
-/* Define to 1 if the system has the type `time_t'. */
+/* Define to 1 if the system has the type 'time_t'. */
 #undef HAVE_TIME_T
 
 /* Define to 1 if you have the <unistd.h> header file. */
@@ -216,13 +216,13 @@
 /* Enable checks style rewriting code */
 #undef SANITY_CHECKS
 
-/* The size of `void *', as computed by sizeof. */
+/* The size of 'void *', as computed by sizeof. */
 #undef SIZEOF_VOID_P
 
 /* If not set during link */
 #undef STACK_SIZE
 
-/* Define to 1 if all of the C90 standard headers exist (not just the ones
+/* Define to 1 if all of the C89 standard headers exist (not just the ones
    required in a freestanding environment). This macro is provided for
    backward compatibility; new code need not use it. */
 #undef STDC_HEADERS
