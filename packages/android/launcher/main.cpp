@@ -3,6 +3,36 @@
 
 #define STACK_SIZE 0x1000000
 
+#include <QCoreApplication>
+#include <QtCore/private/qandroidextras_p.h>
+
+bool checkPermission() {
+  QList<bool> permissions;
+
+  auto r = QtAndroidPrivate::checkPermission("android.permission.READ_EXTERNAL_STORAGE").result();
+  if (r != QtAndroidPrivate::Authorized)
+  {
+      r = QtAndroidPrivate::requestPermission("android.permission.READ_EXTERNAL_STORAGE").result();
+      if (r == QtAndroidPrivate::Denied)
+          permissions.append(false);
+  }
+  r = QtAndroidPrivate::checkPermission("android.permission.WRITE_EXTERNAL_STORAGE").result();
+  if (r != QtAndroidPrivate::Authorized)
+  {
+      r = QtAndroidPrivate::requestPermission("android.permission.WRITE_EXTERNAL_STORAGE").result();
+      if (r == QtAndroidPrivate::Denied)
+          permissions.append(false);
+  }
+  r = QtAndroidPrivate::checkPermission("android.permission.READ_MEDIA_IMAGES").result();
+  if (r != QtAndroidPrivate::Authorized)
+  {
+      r = QtAndroidPrivate::requestPermission("android.permission.READ_MEDIA_IMAGES").result();
+      if (r == QtAndroidPrivate::Denied)
+          permissions.append(false);
+  }
+  return (permissions.count() != 3);
+}
+
 void texmacs_init_guile_hooks();
 int texmacs_entrypoint(int argc, char** argv);
 
@@ -17,6 +47,8 @@ void *main_thread (void* args) {
   char **argv = a->argv;
   qDebug() << "Initializing Guile hooks...";
   texmacs_init_guile_hooks();
+  qDebug() << "Checking permissions...";
+  checkPermission();
   qDebug() << "Starting TeXmacs...";
   texmacs_entrypoint(argc, argv);
   return NULL;

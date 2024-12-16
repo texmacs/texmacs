@@ -39,7 +39,7 @@ endif()
 
 set_property(TARGET TeXmacsLauncher PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
 
-target_link_libraries(TeXmacsLauncher PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Svg Qt${QT_VERSION_MAJOR}::PrintSupport Qt${QT_VERSION_MAJOR}::Concurrent)
+target_link_libraries(TeXmacsLauncher PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Svg Qt${QT_VERSION_MAJOR}::PrintSupport Qt${QT_VERSION_MAJOR}::Concurrent Qt${QT_VERSION_MAJOR}::CorePrivate)
 
 if(TEXMACS_LIBS)
   target_link_libraries(TeXmacsLauncher PRIVATE ${TEXMACS_LIBS})
