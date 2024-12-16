@@ -45,6 +45,7 @@ public:
   
   bool set_type (const string& _type);
   void perform_dialog();
+  void perform_dialog_with_qfiledialog();
 };
 
 #endif  // QT_CHOOSER_WIDGET_HPP
