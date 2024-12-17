@@ -122,7 +122,7 @@ qt_glue_widget_rep::render () {
   QPaintDevice *pd;
   pd = static_cast<QPaintDevice*>(pxm.rep);
   if (pd && !pxm.isNull()) {
-    qt_renderer_rep* ren = the_qt_renderer();
+    qt_renderer_rep* ren = the_qt_renderer(1.0);
     ren->begin (pd);
     rectangle r = rectangle (0, 0, s.width(), s.height());
     ren->set_origin (0,0);
