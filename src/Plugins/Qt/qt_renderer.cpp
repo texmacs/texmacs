@@ -682,13 +682,13 @@ qt_renderer_rep::draw (const QFont& qfn, const QString& qs,
 
 
 qt_renderer_rep*
-the_qt_renderer () {
+the_qt_renderer (double dpr) {
   static QPainter *the_painter = NULL;
   static qt_renderer_rep* the_renderer= NULL;
   if (!the_renderer) {
     the_painter = new QPainter();
 #if QT_VERSION >= 0x060000
-    the_renderer= tm_new<qt_renderer_rep> (the_painter, 1.0, 0, 0);
+    the_renderer= tm_new<qt_renderer_rep> (the_painter, dpr, 0, 0);
 #else
     the_renderer= tm_new<qt_renderer_rep> (the_painter);
 #endif

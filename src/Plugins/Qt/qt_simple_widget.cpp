@@ -183,7 +183,12 @@ qt_simple_widget_rep::send (slot s, blackbox val) {
       coord4 p= open_box<coord4> (val);
       
       {
-        qt_renderer_rep* ren = the_qt_renderer();
+#if QT_VERSION >= 0x060000
+        double dpr = canvas()->devicePixelRatio();
+        qt_renderer_rep* ren = the_qt_renderer(dpr);
+#else
+        qt_renderer_rep* ren = the_qt_renderer(retina_factor);
+#endif
         {
           coord2 pt_or = from_qpoint(backing_pos);
           SI ox = -pt_or.x1;
@@ -388,7 +393,7 @@ impress (qt_simple_widget_rep* wid) {
     debug_qt << "impress (" << s.width() << "," << s.height() << ")\n";
   pxm.fill (Qt::transparent);
   {
-    qt_renderer_rep *ren = the_qt_renderer();
+    qt_renderer_rep *ren = the_qt_renderer(1.0);
     ren->begin (static_cast<QPaintDevice*>(&pxm));
     rectangle r = rectangle (0, 0,  phys_s.width(), phys_s.height());
     ren->set_origin (0, 0);
@@ -494,11 +499,12 @@ qt_simple_widget_rep::get_renderer() {
   tm_cairo_surface_destroy (surf);
   tm_cairo_destroy (ct);
 #else
-  qt_renderer_rep * ren = the_qt_renderer();
 #if QT_VERSION >= 0x060000
+  qt_renderer_rep * ren = the_qt_renderer(canvas()->devicePixelRatio());
   ren->set_dpr (canvas()->devicePixelRatio());
   ren->begin ((void*) backingPixmap);
 #else
+  qt_renderer_rep * ren = the_qt_renderer(retina_factor);
   ren->begin ((void*) backingPixmap);
 #endif
 #endif
