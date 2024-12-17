@@ -11,6 +11,7 @@
 #include "unix_entrypoint.hpp"
 #include "unix_system.hpp"
 #include "boot.hpp"
+#include "sys_utils.hpp"
 
 #include <QCoreApplication>
 #include <QDebug>
