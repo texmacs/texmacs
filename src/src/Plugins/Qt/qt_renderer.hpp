@@ -91,7 +91,7 @@ private:
 
 };
 
-qt_renderer_rep* the_qt_renderer();
+qt_renderer_rep* the_qt_renderer(double dpr);
 QImage* get_image (url u, int w, int h, tree eff, SI pixel);
 
 class qt_shadow_renderer_rep: public qt_renderer_rep {
