@@ -15,7 +15,7 @@
 (define (gnuplot-serialize lan t)
   (with u (pre-serialize lan t)
     (with s (texmacs->code (stree->tree u) "SourceCode")
-      (string-append s "\n<EOF>\n"))))
+      (string-append (string-replace s "^" "**") "\n<EOF>\n"))))
 
 (define (gnuplot-entry)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
