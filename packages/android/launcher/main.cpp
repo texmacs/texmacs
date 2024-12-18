@@ -1,5 +1,6 @@
 #include <pthread.h>
 #include <QDebug>
+#include <QDir>
 
 #define STACK_SIZE 0x1000000
 
@@ -49,6 +50,17 @@ void *main_thread (void* args) {
   texmacs_init_guile_hooks();
   qDebug() << "Checking permissions...";
   checkPermission();
+  qDebug() << "Setting environment variables...";
+  QString homePath = QDir::homePath() + "/.TeXmacs";
+  QString path = QDir::homePath() + "/TeXmacs";
+  QString progsPath = QDir::homePath() + "/TeXmacs/progs";
+  QString pluginsPath = QDir::homePath() + "/TeXmacs/plugins";
+
+  qputenv("TEXMACS_HOME_PATH", homePath.toUtf8());
+  qputenv("TEXMACS_PATH", path.toUtf8());
+  qputenv("TEXMACS_PROGS_PATH", progsPath.toUtf8());
+  qputenv("TEXMACS_PLUGINS_PATH", pluginsPath.toUtf8());
+  qputenv("GUILE_LOAD_PATH", QDir::homePath().toUtf8());
   qDebug() << "Starting TeXmacs...";
   texmacs_entrypoint(argc, argv);
   return NULL;
