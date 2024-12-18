@@ -5,6 +5,10 @@
 \usepackage{latexsym}
 \usepackage{amsfonts}
 \usepackage{amssymb}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+
 
 %% fonts 
 \usepackage{times, exscale}
@@ -13,18 +17,27 @@
 
 
 %%%%%%%%%% Start TeXmacs macros
-\newcommand{\nocomma}{}
-\newcommand{\tmmathbf}[1]{\ensuremath{\boldsymbol{#1}}}
-\newcommand{\tmop}[1]{\ensuremath{\operatorname{#1}}}
-\newcommand{\tmtextbf}[1]{{\bfseries{#1}}}
-\newcommand{\tmtextit}[1]{{\itshape{#1}}}
-\newcommand{\mathe}{\mathrm{e}}
+\newcommand{\tmcolor}[2]{{\color{#1}{#2}}}
 \renewcommand{\section}[1]{\medskip\bigskip\noindent\textbf{\LARGE #1}}
 \newcommand{\tmaction}[2]{{\color{blue} #1}}
 \newenvironment{itemizedot}{\begin{itemize} \renewcommand{\labelitemi}{$\bullet$}\renewcommand{\labelitemii}{$\bullet$}\renewcommand{\labelitemiii}{$\bullet$}\renewcommand{\labelitemiv}{$\bullet$}}{\end{itemize}}
-\definecolor{grey}{rgb}{0.75,0.75,0.75}
-\definecolor{orange}{rgb}{1.0,0.5,0.5}
-\definecolor{brown}{rgb}{0.5,0.25,0.0}
-\definecolor{pink}{rgb}{1.0,0.5,0.5}
+
+\newcommand{\mathe}{\mathrm{e}}
+\newcommand{\mathd}{\mathrm{d}}
+\newcommand{\nobracket}{}
+\newcommand{\nocomma}{}
+\newcommand{\textdots}{...}
+\newcommand{\tmdetailed}[2]{\trivlist{\item[$\circ$]\mbox{}#2}}
+\newcommand{\tmem}[1]{{\em #1\/}}
+\newcommand{\tmop}[1]{\ensuremath{\operatorname{#1}}}
+\newcommand{\tmrsub}[1]{\ensuremath{_{\textrm{#1}}}}
+\newcommand{\tmmathbf}[1]{\ensuremath{\boldsymbol{#1}}}
+\newcommand{\tmtextbf}[1]{\text{{\bfseries{#1}}}}
+\newcommand{\tmtextit}[1]{\text{{\itshape{#1}}}}
+\newcommand{\tmscript}[1]{\text{\scriptsize{$#1$}}}
+\newcommand{\tmverbatim}[1]{\text{{\ttfamily{#1}}}}
+
+\newcommand{\TeXmacs}{T\kern-.1667em\lower.5ex\hbox{E}\kern-.125emX\kern-.1em\lower.5ex\hbox{\textsc{m\kern-.05ema\kern-.125emc\kern-.05ems}}}
+\newcommand{\tmstrong}[1]{\textbf{#1}}
 %%%%%%%%%% End TeXmacs macros
 
