@@ -71,7 +71,6 @@ QTMScrollView::QTMScrollView (QWidget *_parent):
   editor_flag (false),
   p_extents (QRect(0,0,0,0))
 {
-#if QT_VERSION < 0x060000
   QWidget *_viewport = QAbstractScrollArea::viewport();
   _viewport->setBackgroundRole(QPalette::Mid);
   _viewport->setAutoFillBackground(true);
@@ -80,7 +79,9 @@ QTMScrollView::QTMScrollView (QWidget *_parent):
   p_surface = new QTMSurface (_viewport, this);
   p_surface->setAttribute(Qt::WA_NoSystemBackground);
   p_surface->setAttribute(Qt::WA_StaticContents); 
+#if QT_VERSION < 0x060000
   p_surface->setAttribute(Qt::WA_MacNoClickThrough);
+#endif
   p_surface->setAutoFillBackground(false);
   p_surface->setBackgroundRole(QPalette::NoRole);
   p_surface->setAttribute(Qt::WA_OpaquePaintEvent);
@@ -90,13 +91,6 @@ QTMScrollView::QTMScrollView (QWidget *_parent):
   layout->addWidget(p_surface, 0, Qt::AlignHCenter | Qt::AlignVCenter);
   layout->setContentsMargins(0,0,0,0);
   _viewport->setLayout(layout);
-#else
-  p_surface = new QTMSurface (this, this);
-  setViewport(p_surface);
-  p_surface->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-  setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-#endif
 }
 
 void 
