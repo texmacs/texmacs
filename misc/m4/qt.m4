@@ -111,6 +111,8 @@ AC_DEFUN([LC_WITH_QT],[
     ;;
   autotroll.6.* | autotrollstatic.6.*)
     AC_MSG_NOTICE([Qt6 found])
+    QT_LIBEXECS=`$QMAKE -query QT_INSTALL_LIBEXECS`
+    PATH="$QT_LIBEXECS:$PATH"
     AS_IF([test $CONFIG_OS == MACOS],[],[unset xtraPlug])
     AT_WITH_QT([$xtralibs +printsupport +svg +concurrent $xtraPlug],[+exceptions],[
       LIBS += $LDFLAGS
