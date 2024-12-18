@@ -7,6 +7,7 @@
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
+#define WINDOWS_HEADERS_FIX
 
 // SECURITY_WIN32 is needed to include the security headers and to get 
 // the user name using GetUserNameExW
