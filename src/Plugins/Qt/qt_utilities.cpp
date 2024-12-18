@@ -172,6 +172,7 @@ conv_sub (const string& ks) {
   string r(ks);
 #if QT_VERSION >= 0x060000
   r = replace (r, "hat", "^");
+  r = replace (r, "&", u8"﹠");
 #endif
   r = replace (r, "pageup", "pgup");
   r = replace (r, "pagedown", "pgdown");
