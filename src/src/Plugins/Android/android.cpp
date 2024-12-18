@@ -83,16 +83,5 @@ void android_extract_from_asset(QString asset_path)
 
 void init_android()
 {
-  QString homePath = QDir::homePath() + "/.TeXmacs";
-  QString path = QDir::homePath() + "/TeXmacs";
-  QString progsPath = QDir::homePath() + "/TeXmacs/progs";
-  QString pluginsPath = QDir::homePath() + "/TeXmacs/plugins";
-
-  qputenv("TEXMACS_HOME_PATH", homePath.toUtf8());
-  qputenv("TEXMACS_PATH", path.toUtf8());
-  qputenv("TEXMACS_PROGS_PATH", progsPath.toUtf8());
-  qputenv("TEXMACS_PLUGINS_PATH", pluginsPath.toUtf8());
-  qputenv("GUILE_LOAD_PATH", QDir::homePath().toUtf8());
-
   android_extract_from_asset(QDir::homePath());
 }
