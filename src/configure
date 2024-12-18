@@ -29837,6 +29837,8 @@ printf "%s\n" "#define qt_no_fontconfig 1" >>confdefs.h
   autotroll.6.* | autotrollstatic.6.*)
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Qt6 found" >&5
 printf "%s\n" "$as_me: Qt6 found" >&6;}
+    QT_LIBEXECS=`$QMAKE -query QT_INSTALL_LIBEXECS`
+    PATH="$QT_LIBEXECS:$PATH"
     if test $CONFIG_OS == MACOS
 then :
 
