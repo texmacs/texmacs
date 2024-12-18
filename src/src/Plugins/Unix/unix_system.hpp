@@ -20,7 +20,6 @@
 
 #include "string.hpp"
 #include "url.hpp"
-#include "unix_system.hpp"
 
 typedef DIR* TEXMACS_DIR;
 typedef struct stat struct_stat;

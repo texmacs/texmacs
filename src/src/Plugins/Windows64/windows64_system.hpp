@@ -13,7 +13,12 @@
 
 #include "string.hpp"
 #include "array.hpp"
+#ifndef WINDOWS_HEADERS_FIX
+#include "url.hpp"
+#endif
+
 #include <string>
+
 #include "windows64_encoding.hpp"
 
 typedef struct _stat64 struct_stat;
@@ -190,5 +195,21 @@ int windows_system(string cmd, string &cmdout);
  * @return the exit code of the process
  */
 int windows_system(string cmd);
+
+/*
+ * @brief A function to get the directory string where the texmacs
+ * executable is located
+ */
+string texmacs_get_application_directory_str();
+
+#ifndef WINDOWS_HEADERS_FIX
+/*
+ * @brief A function to get the directory where the texmacs executable is
+ * located
+ */
+inline url texmacs_get_application_directory() {
+    return url_system(texmacs_get_application_directory_str());
+}
+#endif
 
 #endif
