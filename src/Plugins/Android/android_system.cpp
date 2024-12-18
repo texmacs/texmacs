@@ -264,6 +264,7 @@ int texmacs_guile_fprintf(FILE *stream, const char *format, ...) {
   
   return output.size();
 }
+
 void texmacs_guile_log(const char *cmsg, int len)
 {
     QString msg = QString::fromStdString(std::string(cmsg, len));
@@ -272,8 +273,14 @@ void texmacs_guile_log(const char *cmsg, int len)
     string s = string(cmsg, len);
     std_warning << s << "\n";
 }
+
 void texmacs_init_guile_hooks() {
   guile_fprintf = texmacs_guile_fprintf;
   guile_printf = texmacs_guile_printf;
   scm_set_log_function(texmacs_guile_log);
+}
+
+url texmacs_get_application_directory() {
+  QString home = QDir::homePath();
+  return url_system(texmacs_qstring_to_string(home));
 }

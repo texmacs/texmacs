@@ -19,6 +19,7 @@
 #include <string>
 
 #include "string.hpp"
+#include "url.hpp"
 
 typedef void* TEXMACS_DIR;
 typedef struct stat struct_stat;
@@ -129,5 +130,11 @@ bool texmacs_setenv(string variable_name, string new_value);
  * has been compiled, and the system configuration
  */
 string get_default_theme();
+
+/*
+ * @brief A function to get the directory where the texmacs executable is
+ * located
+ */
+url texmacs_get_application_directory();
 
 #endif // TEXMACS_ANDROID_SYSTEM_HPP

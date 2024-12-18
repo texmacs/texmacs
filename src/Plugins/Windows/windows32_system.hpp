@@ -13,6 +13,7 @@
 
 #include "string.hpp"
 #include "array.hpp"
+#include "url.hpp"
 
 #include <string>
 
@@ -126,5 +127,11 @@ bool texmacs_remove(string filename);
  * has been compiled, and the system configuration
  */
 string get_default_theme();
+
+/*
+ * @brief A function to get the directory where the texmacs executable is
+ * located
+ */
+url texmacs_get_application_directory();
 
 #endif

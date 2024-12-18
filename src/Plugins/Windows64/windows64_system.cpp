@@ -8,6 +8,13 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#define WINDOWS_HEADERS_FIX
+// #include "analyze.hpp"
+// todo : FAILED, PATTERN and ERROR are conflicting 
+// between windows and texmacs. We can't include 
+// headers such as analyze.hpp and url.hpp until 
+// we resolve the conflict.
+
 #include <windows.h>
 #include <io.h>
 #include <fcntl.h>
@@ -32,10 +39,6 @@
 #include <QStyleHints>
 #endif
 
-// #include "analyze.hpp"
-// todo : FAILED, PATTERN and ERROR are conflicting 
-// between windows and texmacs. We can't include analyze.hpp until 
-// we resolve the conflict.
 string recompose (array<string> a, string sep);
 string replace (string s, string what, string by);
 
@@ -374,6 +377,18 @@ string get_default_theme() {
   }
   return "light";
 #endif
+}
+
+string texmacs_get_application_directory_str() {
+  std::wstring wide_path(MAX_PATH, 0);
+  GetModuleFileNameW(nullptr, &wide_path[0], MAX_PATH);
+  size_t pos = wide_path.find_last_of(L"\\");
+  pos = std::max(pos, wide_path.find_last_of(L"/"));
+  if (pos == std::wstring::npos) {
+    return "";
+  }
+  wide_path = wide_path.substr(0, pos);
+  return texmacs_wide_to_utf8(wide_path);
 }
 
 /* ScopedHandle is a class to automatically close a handle in windows_system function,

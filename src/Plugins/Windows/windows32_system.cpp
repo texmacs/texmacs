@@ -180,3 +180,8 @@ string get_default_theme() {
   }
   return "light";
 }
+
+url texmacs_get_application_directory() {
+  return url_system (qt_application_directory ()); // todo : what if no qt ?
+}
+
