@@ -111,13 +111,10 @@ void TeXmacs_init_font() {
 void
 TeXmacs_init_paths (int& argc, char** argv) {
   (void) argc; (void) argv;
-#ifdef QTTEXMACS
+#ifdef QTTEXMACS && QT_VERSION < 0x060000
   url exedir = url_system (qt_application_directory ());
 #else
-  url exedir = url_system(argv[0]) * ".." ;
-  if (! is_rooted(exedir)) {
-    exedir = url_pwd() * exedir ;
-  }
+  url exedir = texmacs_get_application_directory();
 #endif
 
   string current_texmacs_path = get_env ("TEXMACS_PATH");
@@ -703,6 +700,7 @@ texmacs_entrypoint (int argc, char** argv) {
   boot_hacks ();
   windows_delayed_refresh (1000000000);
   immediate_options (argc, argv);
+  TeXmacs_init_paths (argc, argv);
   load_user_preferences ();
 #ifndef OS_MINGW
   set_env ("LC_NUMERIC", "POSIX");
@@ -728,7 +726,6 @@ texmacs_entrypoint (int argc, char** argv) {
 #ifdef OS_ANDROID
   init_android();
 #endif
-  TeXmacs_init_paths (argc, argv);
   TeXmacs_init_font  ();
 #ifdef QTTEXMACS
   if (!headless_mode)
