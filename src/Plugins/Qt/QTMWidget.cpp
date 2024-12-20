@@ -475,11 +475,11 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
           if ((N(r) != 1 ||
                ((int) (unsigned char) r[0]) < 32 ||
                ((int) (unsigned char) r[0]) >= 128) &&
-              key >= 32 && key < 128 &&
+              key >= 32 && key < 128
 #if QT_VERSION >= 0x060000
-              ((mods & (Qt::MetaModifier | Qt::ControlModifier)) == 0)) {
+              ) {
 #else
-              ((mods & (Qt::MetaModifier + Qt::ControlModifier)) == 0)) {
+              && ((mods & (Qt::MetaModifier + Qt::ControlModifier)) == 0)) {
 #endif
             if ((mods & Qt::ShiftModifier) == 0 && key >= 65 && key <= 90)
               key += 32;
