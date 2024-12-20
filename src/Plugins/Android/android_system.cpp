@@ -127,8 +127,7 @@ typedef struct texmacs_android_dir_t {
 TEXMACS_DIR texmacs_opendir(string dirname) {
   QDirIterator *iterator = new QDirIterator(
     texmacs_string_to_qstring(dirname),
-    QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot,
-    QDirIterator::Subdirectories
+    QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot
   );
   if (!iterator->hasNext()) {
     delete iterator;
@@ -160,21 +159,41 @@ int texmacs_stat(string filename, struct stat *buf) {
     if (!info.exists()) {
         return -1;
     }
+
+    // File type
+    buf->st_mode = (info.isDir() ? S_IFDIR : S_IFREG);
+    buf->st_mode |= (info.isExecutable() ? S_IXUSR : 0);
+
+    // get permissions
+    QFile::Permissions perms = info.permissions();
     
-    buf->st_mode = (info.isDir() ? S_IFDIR : S_IFREG) 
-                 | (info.isReadable() ? S_IRUSR : 0) 
-                 | (info.isWritable() ? S_IWUSR : 0) 
-                 | (info.isExecutable() ? S_IXUSR : 0);
-    buf->st_size = info.size();
-#if QT_VERSION >= 0x060000
+    buf->st_mode |= (perms & QFile::ReadOwner) ? S_IRUSR : 0;
+    buf->st_mode |= (perms & QFile::WriteOwner) ? S_IWUSR : 0;
+    buf->st_mode |= (perms & QFile::ExeOwner) ? S_IXUSR : 0;
+
+    buf->st_mode |= (perms & QFile::ReadGroup) ? S_IRGRP : 0;
+    buf->st_mode |= (perms & QFile::WriteGroup) ? S_IWGRP : 0;
+    buf->st_mode |= (perms & QFile::ExeGroup) ? S_IXGRP : 0;
+
+    buf->st_mode |= (perms & QFile::ReadOther) ? S_IROTH : 0;
+    buf->st_mode |= (perms & QFile::WriteOther) ? S_IWOTH : 0;
+    buf->st_mode |= (perms & QFile::ExeOther) ? S_IXOTH : 0;
+
+    if (!info.isDir()) {
+      buf->st_size = info.size();
+    } else {
+      buf->st_size = 4096;
+    }
+
+  #if QT_VERSION >= 0x060000
     buf->st_mtime = info.lastModified().toSecsSinceEpoch();
     buf->st_atime = info.lastRead().toSecsSinceEpoch();
     buf->st_ctime = info.birthTime().toSecsSinceEpoch();
-#else
+  #else
     buf->st_mtime = info.lastModified().toTime_t();
     buf->st_atime = info.lastRead().toTime_t();
     buf->st_ctime = info.created().toTime_t();
-#endif
+  #endif
     return 0;
 }
 
