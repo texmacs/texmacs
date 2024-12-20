@@ -1012,7 +1012,6 @@ complete (url u, string filter) {
 url
 resolve (url u, string filter) {
 #ifdef OS_ANDROID
-  // dirty hack by liza snif
   if (is_content (u)) {
     if (is_of_type (u, filter)) {
       return u;
