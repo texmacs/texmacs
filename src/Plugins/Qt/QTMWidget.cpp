@@ -31,6 +31,8 @@
 #include <QFocusEvent>
 #include <QPainter>
 #include <QApplication>
+#include <QScrollBar>
+#include <QScroller>
 
 #include <QBuffer>
 #include <QMimeData>
@@ -181,6 +183,10 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_widget _tmwid)
   setAttribute (Qt::WA_InputMethodEnabled);
   surface ()->setMouseTracking (true);
   surface ()->setAcceptDrops (true);
+#ifdef OS_ANDROID
+  // enable scroll with finger on android
+  QScroller::grabGesture(this, QScroller::LeftMouseButtonGesture);
+#endif
   grabGesture (Qt::PanGesture);
   grabGesture (Qt::PinchGesture);
   grabGesture (Qt::SwipeGesture);
