@@ -116,6 +116,9 @@ bool is_rooted_blank (url u);
 bool is_name (url u);
 bool is_rooted_name (url u);
 bool is_ramdisc (url u);
+#ifdef OS_ANDROID
+bool is_content (url u);
+#endif
 
 /******************************************************************************
 * operations on urls
