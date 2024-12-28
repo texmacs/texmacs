@@ -13,6 +13,7 @@
 #define TT_FACE_H
 #include "bitmap_font.hpp"
 #include "Freetype/free_type.hpp"
+#include "Freetype/tt_tools.hpp"
 #include "hashmap.hpp"
 
 #ifdef USE_FREETYPE
@@ -23,8 +24,10 @@ struct tt_face_rep: rep<tt_face> {
   bool bad_face = true;
   FT_Face ft_face = nullptr;
   FT_Byte *buffer = nullptr;
+  ot_mathtable math_table;
+
   tt_face_rep (string name);
-  ~tt_face_rep () override;
+  ~tt_face_rep ();
 };
 
 struct tt_font_metric_rep: font_metric_rep {

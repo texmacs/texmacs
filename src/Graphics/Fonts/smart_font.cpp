@@ -15,6 +15,7 @@
 #include "Freetype/tt_tools.hpp"
 #include "translator.hpp"
 #include "iterator.hpp"
+#include "analyze.hpp" // contains
 
 bool virtually_defined (string c, string name);
 font smart_font_bis (string f, string v, string s, string sh, int sz,
@@ -718,6 +719,8 @@ struct smart_font_rep: font_rep {
   void   initialize_font (int nr);
   int    adjusted_dpi (string fam, string var, string ser, string sh, int att);
 
+  font make_rubber_font (font base);
+
   bool   supports (string c);
   void   get_extents (string s, metric& ex);
   void   get_xpositions (string s, SI* xpos);
@@ -1168,6 +1171,15 @@ smart_font_rep::resolve_rubber (string c, string fam, int attempt) {
       return sm->add_char (key, c);
   }
   return -1;
+}
+
+font
+smart_font_rep::make_rubber_font (font base) {
+  if (occurs ("mathlarge=", res_name) || occurs ("mathrubber=", res_name))
+    return this;
+  else if (fn[SUBFONT_MAIN]->math_type == MATH_TYPE_OPENTYPE)
+    return fn[SUBFONT_MAIN]->make_rubber_font (base);
+  return font_rep::make_rubber_font (base);
 }
 
 static bool

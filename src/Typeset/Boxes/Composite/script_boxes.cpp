@@ -87,12 +87,20 @@ lim_box_rep::lim_box_rep (path ip, box r2, box lo, box hi, font fn2, bool gl):
   SI X, Y;
   insert (ref, 0, 0);
   type= 0;
+  bool use_opentype= (fn->math_type == MATH_TYPE_OPENTYPE) &&
+                     (fn->lower_limit_gap_min > 0) &&
+                     (fn->lower_limit_baseline_drop_min > 0);
+
   if (!is_nil (lo)) type += 1;
   if (!is_nil (hi)) type += 2;
   if (!is_nil (lo)) {
     SI top= max (lo->y2, fn->y2 * script (fn->size, 1) / fn->size) + sep_lo;
     Y= ref->y1;
     X= ((SI) (ref->right_slope ()* (Y+top-lo->y1))) + ((ref->x1+ref->x2)>>1);
+    if (use_opentype) {
+      top= lo->y2 + fn->lower_limit_gap_min;
+      top= max (top, fn->lower_limit_baseline_drop_min);
+    }
     insert (lo, X- (lo->x2 >> 1), Y-top);
     italic_correct (lo);
   }
@@ -100,6 +108,10 @@ lim_box_rep::lim_box_rep (path ip, box r2, box lo, box hi, font fn2, bool gl):
     SI bot= min (hi->y1, fn->y1 * script (fn->size, 1) / fn->size) - sep_hi;
     Y= ref->y2;
     X= ((SI) (ref->right_slope ()*(Y+hi->y2-bot))) + ((ref->x1+ref->x2)>>1);
+    if (use_opentype) {
+      bot= hi->y1 - fn->upper_limit_gap_min;
+      bot= min (bot, -fn->upper_limit_baseline_rise_min);
+    }
     insert (hi, X- (hi->x2 >> 1), Y-bot);
     italic_correct (hi);
   }

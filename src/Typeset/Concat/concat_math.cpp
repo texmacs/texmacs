@@ -381,7 +381,7 @@ concater_rep::typeset_frac (tree t, path ip) {
   if (disp) env->local_end (MATH_DISPLAY, old);
   else env->local_end_script (old);
   if (num->w() <= env->frac_max && den->w () <= env->frac_max)
-    print (frac_box (ip, num, den, env->fn, sfn, env->pen));
+    print (frac_box (ip, num, den, env->fn, sfn, env->pen, disp));
   else typeset_wide_frac (t, ip);
 }
 
@@ -436,8 +436,8 @@ concater_rep::typeset_sqrt (tree t, path ip) {
   box b= typeset_as_concat (env, t[0], descend (ip, 0));
   if (b->w () > env->frac_max) { typeset_wide_sqrt (t, ip); return; }
   box ind;
+  bool disp= env->display_style;
   if (N(t)==2) {
-    bool disp= env->display_style;
     tree old;
     if (disp) old= env->local_begin (MATH_DISPLAY, "false");
     tree old_il= env->local_begin_script ();
@@ -449,8 +449,15 @@ concater_rep::typeset_sqrt (tree t, path ip) {
   font lfn= env->fn;
   bool stix= starts (lfn->res_name, "stix-");
   if (stix) lfn= rubber_font (lfn);
+  SI   gap= (3 * sep >> 1);
+  bool use_opentype=
+      (lfn->math_type == MATH_TYPE_OPENTYPE) && (lfn->sqrt_ver_gap > 0);
+  if (use_opentype) {
+    gap=
+        (disp ? lfn->sqrt_ver_disp_gap : lfn->sqrt_ver_gap) + (lfn->wline >> 1);
+  }
   box sqrtb= delimiter_box (decorate_left (ip), "<large-sqrt>",
-                            lfn, env->pen, b->y1, b->y2 + (3*sep >> 1));
+                            lfn, env->pen, b->y1, b->y2 + gap);
   if (stix) sqrtb= shift_box (decorate_left (ip), sqrtb,
                               -env->fn->wline/2, -env->fn->wline/3,
                               false, true);

@@ -156,7 +156,7 @@ box highlight_box (path ip, box b, box xb, ornament_parameters ps);
 box highlight_box (path ip, box b, SI w, brush col, brush sunc, brush shad);
 box art_box (path ip, box b, art_box_parameters ps);
 
-box frac_box (path ip, box b1, box b2, font fn, font sfn, pencil pen);
+box frac_box (path ip, box b1, box b2, font fn, font sfn, pencil pen, bool disp= false);
 box sqrt_box (path ip, box b1, box b2, box sqrtb, font fn, pencil pen);
 box neg_box (path ip, box b, font fn, pencil pen);
 box tree_box (path ip, array<box> bs, font fn, pencil pen);
