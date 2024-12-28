@@ -147,16 +147,13 @@ parse_variant (string s, string& head, string& root) {
   // cout << "parse_variant for " << s << LF;
   int var= 0;
   if (!starts (s, "<") || !ends (s, ">") || N (s) < 3) return 0;
-
-  root           = s (1, N (s) - 1);
+  root = s (1, N(s) - 1);
   array<string> v= tokenize (root, "-");
-
   if (N (v) == 3 && is_int (v[2])) {
     var = as_int (v[2]);
     root= v[1];
     head= v[0];
   }
-
   return var;
 }
 
