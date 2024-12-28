@@ -141,7 +141,7 @@ struct unicode_font_rep: font_rep {
   tt_face      math_face;
   ot_mathtable math_table;
 
-  font         make_rubber_font (font base);
+  font make_rubber_font (font base);
   bool get_ot_kerning (string s, SI height, bool top, bool left, SI& kerning);
   bool get_ot_italic_correction (string s, SI& r);
   bool is_ot_integral (string s);
@@ -1146,12 +1146,13 @@ unicode_font_rep::get_ot_italic_correction (string s, SI& r) {
 
   auto italics_correction= math_table->italics_correction;
   // italic correction is only available for right side of the glyph
-  string       ss     = get_right (s);
+  string ss     = get_right (s);
   unsigned int glyphID= get_glyphID (ss);
 
   if (italics_correction->contains (glyphID)) {
     int correction= italics_correction[glyphID].value;
-    r             = design_unit_to_metric (correction);
+    r= design_unit_to_metric (correction);
+    cout << "ot_italic_corr [" << s << "] [" << correction << "] [" << r << "]" << LF;
     return true;
   }
   return false;

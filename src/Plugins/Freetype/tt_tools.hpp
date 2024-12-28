@@ -113,22 +113,23 @@ struct MathValueRecord {
   MathValueRecord () : hasDevice (false) {}
 
   // cast to int
-  operator int () const { return value; }
+//  operator int () const { return value; }
 };
 
 struct MathConstantsTable {
+  array<MathValueRecord> records;
   int                    scriptPercentScaleDown;
   int                    scriptScriptPercentScaleDown;
   unsigned int           delimitedSubFormulaMinHeight;
   unsigned int           displayOperatorMinHeight;
-  array<MathValueRecord> records;
   int                    radicalDegreeBottomRaisePercent;
+
   MathConstantsTable ()
       : records (MathConstantRecordEnum::otmathConstantsRecordsEnd){};
 
   int operator[] (int i) {
     if (i >= 0 && i < MathConstantRecordEnum::otmathConstantsRecordsEnd)
-      return records[i];
+      return records[i].value;
     switch (i) {
     case MathConstantRecordEnum::scriptPercentScaleDown:
       return scriptPercentScaleDown;
@@ -168,8 +169,8 @@ struct MathKernInfoRecord {
       : hasTopRight (false), hasTopLeft (false), hasBottomRight (false),
         hasBottomLeft (false) {}
 
-  bool has_kerning (bool top, bool left);
-  int  get_kerning (int height, bool top, bool left);
+//  bool has_kerning (bool top, bool left);
+//  int  get_kerning (int height, bool top, bool left);
 };
 
 struct GlyphPartRecord {
@@ -185,7 +186,7 @@ struct GlyphAssembly {
   array<GlyphPartRecord> partRecords;
   int                    partCount;
 
-  const GlyphPartRecord& operator[] (int i) { return partRecords[i]; }
+//  const GlyphPartRecord& operator[] (int i) { return partRecords[i]; }
 };
 
 struct ot_mathtable_rep : concrete_struct {

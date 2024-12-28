@@ -429,57 +429,44 @@ ot_mathtable_rep::get_init_glyphID (unsigned int glyphID) {
 }
 
 bool
-MathKernInfoRecord::has_kerning (bool top, bool left) {
-  return (top ? (left ? hasTopLeft : hasTopRight)
-              : (left ? hasBottomLeft : hasBottomRight));
-}
-
-// get the kerning value of a glyphID with a given height
-// should be called after has_kerning
-int
-MathKernInfoRecord::get_kerning (int height, bool top, bool left) {
-  MathKernTable& kt=
-      top ? (left ? topLeft : topRight) : (left ? bottomLeft : bottomRight);
-
-  int idx= 0, n= (int) kt.heightCount;
-
-  // only one kerning value
-  if (n == 0) {
-    return kt.kernValues[0];
-  }
-
-  // find the kerning value
-  if (height < kt.correctionHeight[0]) {
-    idx= 0; // below the first height entry
-  }
-  else if (height >= kt.correctionHeight[n - 1]) {
-    idx= n; // above the last height entry
-  }
-  else {
-    for (idx= 1; idx <= n - 1; idx++) {
-      if (height >= kt.correctionHeight[idx - 1] &&
-          height < kt.correctionHeight[idx]) {
-        break;
-      }
-    }
-  }
-  // cout << "get_kerning : height " << height << " -> " << idx << " -> "
-  //  << kt.kernValues[idx] << LF;
-  return kt.kernValues[idx];
-}
-
-bool
 ot_mathtable_rep::has_kerning (unsigned int glyphID, bool top, bool left) {
-  return math_kern_info->contains (glyphID) &&
-         math_kern_info (glyphID).has_kerning (top, left);
+  if (!math_kern_info->contains (glyphID)) return false;
+  auto ki= math_kern_info (glyphID);
+  return (top ? (left ? ki.hasTopLeft : ki.hasTopRight)
+              : (left ? ki.hasBottomLeft : ki.hasBottomRight));
 }
 
 int
 ot_mathtable_rep::get_kerning (unsigned int glyphID, int height, bool top,
                                bool left) {
   // should be called after has_kerning
-  auto& record= math_kern_info (glyphID);
-  return record.get_kerning (height, top, left);
+  auto& ki= math_kern_info (glyphID);
+  MathKernTable& kt=
+      top ? (left ? ki.topLeft : ki.topRight) 
+          : (left ? ki.bottomLeft : ki.bottomRight);
+  int idx= 0, n= (int) kt.heightCount;
+  // only one kerning value
+  if (n == 0) {
+    return kt.kernValues[0].value;
+  }
+  // find the kerning value
+  if (height < kt.correctionHeight[0].value) {
+    idx= 0; // below the first height entry
+  }
+  else if (height >= kt.correctionHeight[n - 1].value) {
+    idx= n; // above the last height entry
+  }
+  else {
+    for (idx= 1; idx <= n - 1; idx++) {
+      if (height >= kt.correctionHeight[idx - 1].value &&
+          height < kt.correctionHeight[idx].value) {
+        break;
+      }
+    }
+  }
+  // cout << "get_kerning : height " << height << " -> " << idx << " -> "
+  //  << kt.kernValues[idx] << LF;
+  return kt.kernValues[idx].value;
 }
 
 // a helper function to parse the coverage table
