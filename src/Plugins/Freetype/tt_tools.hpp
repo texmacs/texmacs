@@ -35,7 +35,7 @@ double get_up_pen_height (array<string> a);
 /******************************************************************************
  * OpenType MATH table
  ******************************************************************************/
-// e OpenType MATH table is not implemented.
+// for the specification
 // see https://docs.microsoft.com/en-gb/typography/opentype/spec/math
 
 // index of the MathConstantsTable.records
@@ -220,5 +220,6 @@ CONCRETE_NULL_CODE (ot_mathtable);
 
 ot_mathtable parse_mathtable (const string& buf);
 ot_mathtable parse_mathtable (url u);
+void dump_mathtable (tm_ostream& str, ot_mathtable table);
 
 #endif // TT_TOOLS_H

@@ -86,8 +86,10 @@ tt_face_rep::tt_face_rep (string name): rep<tt_face> (name) {
     if (!load_string (u, buf, false)) {
       math_table= parse_mathtable (buf);
     }
-    if (!is_nil (math_table) && DEBUG_STD) {
-      debug_fonts << "Math table loaded for " << name << "\n";
+    if (!is_nil (math_table)) {
+      // we have a MATH table
+      debug_fonts << "Found MATH table for font " << name << "\n";
+      dump_mathtable (debug_fonts, math_table);
     }
   }
 }

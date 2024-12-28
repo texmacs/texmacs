@@ -299,6 +299,7 @@ tt_dump (string tt) {
            << ", " << name_record_platform_id (nt, k) << "]"
            << " -> " << name_record_string (nt, k) << LF;
   }
+  dump_mathtable (cout, parse_mathtable (tt));
 }
 
 void
@@ -485,7 +486,7 @@ ot_mathtable_rep::get_kerning (unsigned int glyphID, int height, bool top,
 // return an array of glyphID
 static array<unsigned int>
 parse_coverage_table (const string& tt, int offset) {
-  int                 format= get_U16 (tt, offset);
+  int format= get_U16 (tt, offset);
   array<unsigned int> coverage;
   if (format == 1) {
     unsigned int glyphCount= get_U16 (tt, offset + 2);
@@ -498,7 +499,7 @@ parse_coverage_table (const string& tt, int offset) {
     unsigned int rangeCount= get_U16 (tt, offset + 2);
     for (unsigned int i= 0; i < rangeCount; i++) {
       unsigned int startGlyphID= get_U16 (tt, offset + 4 + 6 * i);
-      unsigned int endGlyphID  = get_U16 (tt, offset + 4 + 6 * i + 2);
+      unsigned int endGlyphID= get_U16 (tt, offset + 4 + 6 * i + 2);
       for (unsigned int glyphID= startGlyphID; glyphID <= endGlyphID;
            glyphID++) {
         coverage << glyphID;
@@ -517,16 +518,16 @@ static MathValueRecord
 parse_math_record (const string& tt, int parent_table_offset,
                    int record_offset) {
   MathValueRecord record;
-  int             value= get_S16 (tt, parent_table_offset + record_offset);
-  unsigned int    deviceOffset=
+  int value= get_S16 (tt, parent_table_offset + record_offset);
+  unsigned int deviceOffset=
       get_U16 (tt, parent_table_offset + record_offset + 2);
   if (deviceOffset > 0) {
-    int          deviceAbsOffset= parent_table_offset + deviceOffset;
-    unsigned int startSize      = get_U16 (tt, deviceAbsOffset);
-    unsigned int endSize        = get_U16 (tt, deviceAbsOffset + 2);
-    unsigned int deltaFormat    = get_U16 (tt, deviceAbsOffset + 4);
-    unsigned int deltaValues    = get_U16 (tt, deviceAbsOffset + 6);
-    record.hasDevice            = true;
+    int deviceAbsOffset= parent_table_offset + deviceOffset;
+    unsigned int startSize= get_U16 (tt, deviceAbsOffset);
+    unsigned int endSize= get_U16 (tt, deviceAbsOffset + 2);
+    unsigned int deltaFormat= get_U16 (tt, deviceAbsOffset + 4);
+    unsigned int deltaValues= get_U16 (tt, deviceAbsOffset + 6);
+    record.hasDevice= true;
     record.deviceTable= {startSize, endSize, deltaFormat, deltaValues};
   }
   record.value= value;
@@ -539,16 +540,16 @@ static bool
 parse_construction (const string& tt, unsigned int construction_offset,
                     array<unsigned int>& variantGlyph,
                     array<unsigned int>& advanceMeasurement,
-                    GlyphAssembly&       assembly) {
+                    GlyphAssembly& assembly) {
   unsigned int glyphAssemblyOffset= get_U16 (tt, construction_offset);
-  unsigned int variantCount       = get_U16 (tt, construction_offset + 2);
+  unsigned int variantCount= get_U16 (tt, construction_offset + 2);
 
   // MathGlyphVariantRecord
   for (unsigned int i= 0; i < variantCount; i++) {
     unsigned int mathGlyphVariantGlyph=
-        get_U16 (tt, construction_offset + 4 + 4 * i);
+        get_U16 (tt, construction_offset + 4 + 4*i);
     unsigned int mathGlyphVariantAdvanceMeasurement=
-        get_U16 (tt, construction_offset + 4 + 4 * i + 2);
+        get_U16 (tt, construction_offset + 4 + 4*i + 2);
     variantGlyph << mathGlyphVariantGlyph;
     advanceMeasurement << mathGlyphVariantAdvanceMeasurement;
   }
@@ -583,7 +584,7 @@ parse_variants (const string& tt, int var_offset, int coverage_offset,
                 hashmap<unsigned int, array<unsigned int>>& glyph_variants_adv,
                 hashmap<unsigned int, GlyphAssembly>& glyph_assembly) {
 
-  auto coverage  = parse_coverage_table (tt, coverage_offset);
+  auto coverage= parse_coverage_table (tt, coverage_offset);
   int  coverage_N= N (coverage);
   for (unsigned int i= 0; i < coverage_N; i++) {
     unsigned int glyph= coverage[i];
@@ -623,12 +624,12 @@ parse_math_kern_info_table (const string& tt, int offset,
                             hashmap<unsigned int, MathKernInfoRecord>& table) {
   unsigned int mathKernCoverageOffset= get_U16 (tt, offset);
   // unsigned int mathKernCount          = get_U16 (tt, offset + 2);
-  auto coverage  = parse_coverage_table (tt, offset + mathKernCoverageOffset);
+  auto coverage= parse_coverage_table (tt, offset + mathKernCoverageOffset);
   int  coverage_N= N (coverage);
   for (unsigned int i= 0; i < coverage_N; i++) {
-    unsigned int       glyphID= coverage[i];
+    unsigned int glyphID= coverage[i];
     MathKernInfoRecord record;
-    unsigned int       topRightMathKernOffset= get_U16 (tt, offset + 4 + 8 * i);
+    unsigned int topRightMathKernOffset= get_U16 (tt, offset + 4 + 8 * i);
     unsigned int topLeftMathKernOffset= get_U16 (tt, offset + 4 + 8 * i + 2);
     unsigned int bottomRightMathKernOffset=
         get_U16 (tt, offset + 4 + 8 * i + 4);
@@ -678,19 +679,19 @@ parse_record_with_coverage (
 // parse the OpenType MATH constants table.
 static void
 parse_constant (const string& tt, int offset, MathConstantsTable& table) {
-  int          scriptPercentScaleDown      = get_S16 (tt, offset);
-  int          scriptScriptPercentScaleDown= get_S16 (tt, offset + 2);
+  int scriptPercentScaleDown= get_S16 (tt, offset);
+  int scriptScriptPercentScaleDown= get_S16 (tt, offset + 2);
   unsigned int delimitedSubFormulaMinHeight= get_U16 (tt, offset + 4);
-  unsigned int displayOperatorMinHeight    = get_U16 (tt, offset + 6);
+  unsigned int displayOperatorMinHeight= get_U16 (tt, offset + 6);
   for (int i= 0; i < otmathConstantsRecordsEnd; i++) {
     table.records[i]= parse_math_record (tt, offset, 8 + 4 * i);
   }
   int radicalDegreeBottomRaisePercent=
       get_S16 (tt, offset + 8 + 4 * otmathConstantsRecordsEnd);
-  table.scriptPercentScaleDown         = scriptPercentScaleDown;
-  table.scriptScriptPercentScaleDown   = scriptScriptPercentScaleDown;
-  table.delimitedSubFormulaMinHeight   = delimitedSubFormulaMinHeight;
-  table.displayOperatorMinHeight       = displayOperatorMinHeight;
+  table.scriptPercentScaleDown= scriptPercentScaleDown;
+  table.scriptScriptPercentScaleDown= scriptScriptPercentScaleDown;
+  table.delimitedSubFormulaMinHeight= delimitedSubFormulaMinHeight;
+  table.displayOperatorMinHeight= displayOperatorMinHeight;
   table.radicalDegreeBottomRaisePercent= radicalDegreeBottomRaisePercent;
 }
 
@@ -706,11 +707,11 @@ parse_mathtable (const string& buf) {
   ot_mathtable table (tm_new<ot_mathtable_rep> ());
 
   // MATH Header
-  table->majorVersion    = get_U16 (tt, 0);
-  table->minorVersion    = get_U16 (tt, 2);
+  table->majorVersion= get_U16 (tt, 0);
+  table->minorVersion= get_U16 (tt, 2);
   int mathConstantsOffset= get_U16 (tt, 4);
   int mathGlyphInfoOffset= get_U16 (tt, 6);
-  int mathVariantsOffset = get_U16 (tt, 8);
+  int mathVariantsOffset= get_U16 (tt, 8);
 
   // version check
   if ((table->majorVersion != 1) || (table->minorVersion != 0)) return {};
@@ -720,11 +721,12 @@ parse_mathtable (const string& buf) {
 
   // MathGlyphInfo table
   int mathItalicsCorrectionInfoOffset= get_U16 (tt, mathGlyphInfoOffset + 0);
-  int mathTopAccentAttachmentOffset  = get_U16 (tt, mathGlyphInfoOffset + 2);
-  int extendedShapeCoverageOffset    = get_U16 (tt, mathGlyphInfoOffset + 4);
-  int mathKernInfoOffset             = get_U16 (tt, mathGlyphInfoOffset + 6);
+  int mathTopAccentAttachmentOffset= get_U16 (tt, mathGlyphInfoOffset + 2);
+  int extendedShapeCoverageOffset= get_U16 (tt, mathGlyphInfoOffset + 4);
+  int mathKernInfoOffset= get_U16 (tt, mathGlyphInfoOffset + 6);
 
   // MathItalicsCorrectionInfo table
+  //cout << "parse MathItalicsCorrectionInfo\n";
   int mathItalicsCorrectionInfoAbsOffset=
       mathGlyphInfoOffset + mathItalicsCorrectionInfoOffset;
   int italicsCorrectionCoverageOffset=
@@ -736,6 +738,7 @@ parse_mathtable (const string& buf) {
                               table->italics_correction);
 
   // MathTopAccentAttachment table
+  //cout << "parse MathTopAccentAttachment\n";
   int mathTopAccentAttachmentAbsOffset=
       mathGlyphInfoOffset + mathTopAccentAttachmentOffset;
   int topAccentCoverageOffset=
@@ -746,6 +749,7 @@ parse_mathtable (const string& buf) {
                               topAccentCoverageOffset, 4, table->top_accent);
 
   // ExtendedShapeCoverage table (may be NULL)
+  //cout << "parse ExtendedShapeCoverage\n";
   if (extendedShapeCoverageOffset > 0) {
     auto extendedShapeCoverage= parse_coverage_table (
         tt, mathGlyphInfoOffset + extendedShapeCoverageOffset);
@@ -754,7 +758,9 @@ parse_mathtable (const string& buf) {
     }
   }
 
+
   // MathKernInfo table
+  //cout << "parse MathKernInfo\n";
   parse_math_kern_info_table (tt, mathGlyphInfoOffset + mathKernInfoOffset,
                               table->math_kern_info);
 
@@ -764,21 +770,25 @@ parse_mathtable (const string& buf) {
       mathVariantsOffset + get_U16 (tt, mathVariantsOffset + 2);
   int horizGlyphCoverageOffset=
       mathVariantsOffset + get_U16 (tt, mathVariantsOffset + 4);
-  int vertGlyphCount = get_U16 (tt, mathVariantsOffset + 6);
-  int horizGlyphCount= get_U16 (tt, mathVariantsOffset + 8);
+  int vertGlyphCount= get_U16 (tt, mathVariantsOffset + 6);
+  //int horizGlyphCount= get_U16 (tt, mathVariantsOffset + 8); // unused
+
+  // (tt-dump "/Users/mgubi/t/svn-src/TeXmacs/fonts/truetype/texgyre/texgyrepagella-math.otf")
+
 
   // parse vertical variants
+  // cout << "parse vertical variants\n";
   parse_variants (tt, mathVariantsOffset, vertGlyphCoverageOffset,
                   mathVariantsOffset + 10, table->ver_glyph_variants,
                   table->ver_glyph_variants_adv, table->ver_glyph_assembly);
 
   // parse horizontal variants
+  // cout << "parse horizontal variants\n";
   parse_variants (tt, mathVariantsOffset, horizGlyphCoverageOffset,
                   mathVariantsOffset + 10 + 2 * vertGlyphCount,
                   table->hor_glyph_variants, table->hor_glyph_variants_adv,
                   table->hor_glyph_assembly);
 
-  (void)horizGlyphCount; // avoid warning for unused local variable
   return table;
 }
 
@@ -787,4 +797,71 @@ parse_mathtable (url u) {
   string tt;
   if (!load_string (u, tt, false)) return parse_mathtable (tt);
   else return {};
+}
+
+array<string>
+as_hexadecimal (array<unsigned int> a) {
+  array<string> as = array<string> ();
+  for (int i=0; i<N(a); i++) {
+    as << as_hexadecimal (a [i]);
+  }
+  return as;
+}
+
+void
+dump_mathtable (tm_ostream& str, ot_mathtable table) {
+  if (is_nil(table)) return;
+  
+  str << "MATH table " << table->majorVersion << " "
+       << table->minorVersion << LF;
+  {
+    str << "Vertical variants" << LF;
+    iterator<unsigned int> it= iterate (table->ver_glyph_variants);
+    while (it->busy())
+    {
+      int glyph= it->next();
+      str << "glyph: " << as_hexadecimal (glyph) << " variants ("
+           << N(table->ver_glyph_variants[glyph])
+           << ") : " << as_hexadecimal (table->ver_glyph_variants[glyph]) << LF;
+    }
+    str << "Vertical assembly" << LF;
+    it= iterate (table->ver_glyph_assembly);
+    while (it->busy())
+    {
+      int glyph= it->next();
+      str << "glyph: " << as_hexadecimal (glyph) << " assembly ("
+           << table->ver_glyph_assembly[glyph].partCount
+           << ") : ";
+      auto v= table->ver_glyph_assembly[glyph].partRecords;
+      for (int j= 0; j<N(v); j++) {
+        str << as_hexadecimal (v[j].glyphID) << " ";
+      }
+      str << LF;
+    }
+  }
+  {
+    str << "Horizontal variants" << LF;
+    iterator<unsigned int> it= iterate (table->hor_glyph_variants);
+    while (it->busy())
+    {
+      int glyph= it->next();
+      str << "glyph: " << as_hexadecimal (glyph) << " variants ("
+           << N(table->hor_glyph_variants[glyph])
+           << ") : " << as_hexadecimal (table->hor_glyph_variants[glyph]) << LF;
+    }
+    str << "Horizontal assembly" << LF;
+    it= iterate (table->hor_glyph_assembly);
+    while (it->busy())
+    {
+      int glyph= it->next();
+      str << "glyph: " << as_hexadecimal (glyph) << " assembly ("
+           << table->hor_glyph_assembly[glyph].partCount
+           << ") : ";
+      auto v= table->hor_glyph_assembly[glyph].partRecords;
+      for (int j= 0; j<N(v); j++) {
+        str << as_hexadecimal (v[j].glyphID) << " ";
+      }
+      str << LF;
+    }
+  }
 }
