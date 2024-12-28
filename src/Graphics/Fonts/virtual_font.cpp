@@ -932,6 +932,22 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     return hor_extend (gl, pos, by);
   }
 
+  if (is_tuple (t, "hor-take", 3) || is_tuple (t, "hor-take", 4)) {
+    glyph gl = compile (t[1], ex);
+    int   pos= (int) (as_double (t[2]) * gl->width);
+    SI    add= (SI) (as_double (t[3]) * (ex->x2 - ex->x1));
+    if (is_tuple (t, "hor-take", 4))
+      add= (SI) (as_double (t[3]) * as_double (t[4]) * (ex->x2 - ex->x1));
+    int nr= add / PIXEL;
+    if (pos < 0) pos= 0;
+    if (pos >= gl->width) pos= gl->width - 1;
+    ex->x1= 0;
+    ex->x2= add;
+    ex->x3= 0;
+    ex->x4= nr * PIXEL;
+    return hor_take (gl, pos, nr);
+  }
+
   if (is_tuple (t, "ver-extend", 3) || is_tuple (t, "ver-extend", 4)) {
     glyph gl= compile (t[1], ex);
     int pos= (int) ((1.0 - as_double (t[2])) * gl->height);
@@ -1526,6 +1542,25 @@ virtual_font_rep::draw_tree (renderer ren, scheme_tree t, SI x, SI y) {
     return;
   }
 
+  if (is_tuple (t, "hor-take", 3) || is_tuple (t, "hor-take", 4)) {
+    metric ex;
+    get_metric (t[1], ex);
+    SI pos= (SI) (as_double (t[2]) * (ex->x2 - ex->x1));
+    SI add= (SI) (as_double (t[3]) * (ex->x2 - ex->x1));
+    if (is_tuple (t, "hor-take", 4))
+      add= (SI) (as_double (t[3]) * as_double (t[4]) * (ex->x2 - ex->x1));
+    if (add > 0 && ex->x2 > ex->x1) {
+      SI  w = ex->x2 - ex->x1;
+      int n = (int) ((20 * add + w - 1) / w);
+      SI  dx= (add + n - 1) / n;
+      SI  hx= (add + 2 * n - 1) / (2 * n);
+      for (int i= 0; i < n; i++)
+        draw_clipped (ren, t[1], x + i * dx - (ex->x3 + pos), y,
+                      ex->x3 + pos - hx, ex->y3, ex->x3 + pos + hx, ex->y4);
+    }
+    return;
+  }
+  
   if (is_tuple (t, "ver-extend", 3) || is_tuple (t, "ver-extend", 4)) {
     metric ex;
     get_metric (t[1], ex);

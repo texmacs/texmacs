@@ -122,6 +122,28 @@ font_rep::copy_math_pars (font fn) {
   wfn          = fn->wfn;
   wline        = fn->wline;
   wquad        = fn->wquad;
+
+ // opentype math parameters
+  upper_limit_gap_min          = fn->upper_limit_gap_min;
+  upper_limit_baseline_rise_min= fn->upper_limit_baseline_rise_min;
+  lower_limit_gap_min          = fn->lower_limit_gap_min;
+  lower_limit_baseline_drop_min= fn->lower_limit_baseline_drop_min;
+  frac_rule_thickness          = fn->frac_rule_thickness;
+  frac_num_shift_up            = fn->frac_num_shift_up;
+  frac_num_disp_shift_up       = fn->frac_num_disp_shift_up;
+  frac_num_gap_min             = fn->frac_num_gap_min;
+  frac_num_disp_gap_min        = fn->frac_num_disp_gap_min;
+  frac_denom_shift_down        = fn->frac_denom_shift_down;
+  frac_denom_disp_shift_down   = fn->frac_denom_disp_shift_down;
+  frac_denom_gap_min           = fn->frac_denom_gap_min;
+  frac_denom_disp_gap_min      = fn->frac_denom_disp_gap_min;
+  sqrt_ver_gap                 = fn->sqrt_ver_gap;
+  sqrt_ver_disp_gap            = fn->sqrt_ver_disp_gap;
+  sqrt_rule_thickness          = fn->sqrt_rule_thickness;
+  sqrt_extra_ascender          = fn->sqrt_extra_ascender;
+  sqrt_degree_rise_percent     = fn->sqrt_degree_rise_percent;
+  sqrt_kern_before_degree      = fn->sqrt_kern_before_degree;
+  sqrt_kern_after_degree       = fn->sqrt_kern_after_degree;
 }
 
 void
@@ -535,8 +557,8 @@ use_poor_rubber (font fn) {
     !starts (fn->res_name, "stix-");
 }
 
-static font
-make_rubber_font (font fn) {
+font
+font_rep::make_rubber_font (font fn) {
   string name= locase_all (fn->res_name);
   if (starts (name, "stix-") ||
       starts (name, "stix,") ||
@@ -559,7 +581,7 @@ font
 rubber_font (font base) {
   if (larger_font_table->contains (base->res_name))
     return larger_font_table (base->res_name);
-  font larger= make_rubber_font (base);
+  font larger= base->make_rubber_font (base);
   larger_font_table (base->res_name)= larger;
   return larger;
 }

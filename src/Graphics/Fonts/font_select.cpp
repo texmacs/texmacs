@@ -592,7 +592,7 @@ distance (string s1, string s2, bool asym) {
   return D_HUGE;
 }
 
-bool
+static bool
 contains (array<string> a, bool (*pred) (string)) {
   for (int i=0; i<N(a); i++)
     if (pred (a[i])) return true;

@@ -30,6 +30,7 @@ struct font_glyphs;
 #define MATH_TYPE_NORMAL      0
 #define MATH_TYPE_STIX        1
 #define MATH_TYPE_TEX_GYRE    2
+#define MATH_TYPE_OPENTYPE    3
 
 #define START_OF_LINE         1
 #define END_OF_LINE           2
@@ -94,9 +95,33 @@ struct font_rep: rep<font> {
   array<array<space> >   normal_spacing;   // normal spacing table
   array<array<space> >   wide_spacing;     // wide spacing table
 
+  // math measurements for opentype fonts
+  SI  upper_limit_gap_min;
+  SI  upper_limit_baseline_rise_min;
+  SI  lower_limit_gap_min;
+  SI  lower_limit_baseline_drop_min;
+  SI  frac_rule_thickness;
+  SI  frac_num_shift_up;
+  SI  frac_num_disp_shift_up;
+  SI  frac_num_gap_min;
+  SI  frac_num_disp_gap_min;
+  SI  frac_denom_shift_down;
+  SI  frac_denom_disp_shift_down;
+  SI  frac_denom_gap_min;
+  SI  frac_denom_disp_gap_min;
+  SI  sqrt_ver_gap;
+  SI  sqrt_ver_disp_gap;
+  SI  sqrt_rule_thickness;
+  SI  sqrt_extra_ascender;
+  int sqrt_degree_rise_percent;
+  SI  sqrt_kern_before_degree;
+  SI  sqrt_kern_after_degree;
+
   font_rep (string name);
   font_rep (string name, font fn);
   void copy_math_pars (font fn);
+
+  virtual font make_rubber_font (font base);
 
   virtual bool   supports (string c) = 0;
   virtual void   get_extents (string s, metric& ex) = 0;
