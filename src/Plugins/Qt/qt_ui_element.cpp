@@ -59,7 +59,12 @@ public:
       QTMWidget *w = qobject_cast<QTMWidget*>(qApp->focusWidget());
       if (w && w->tm_widget()) {
         if (DEBUG_QT) debug_qt << "shortcut: " << ks << LF;
-        the_gui->process_keypress (w->tm_widget(), ks, texmacs_time());
+	array<string> v= tokenize (ks, " ");
+	for (int i= 0; i < N(v); i++) {
+	  string tmp= trim_spaces (v[i]);
+	  if (N(tmp) > 0)
+	    the_gui->process_keypress (w->tm_widget(), tmp, texmacs_time());
+	}
       }
     }
   }
