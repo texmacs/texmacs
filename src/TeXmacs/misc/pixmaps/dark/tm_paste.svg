@@ -25,10 +25,10 @@
     </style>
   </defs>
   <!-- Gray rectangle -->
-  <rect class="cls-3" x="4" y="7" width="14" height="12"/>
+  <rect class="cls-3" x="4" y="7" width="12" height="12"/>
 
   <!-- Bottom Document -->
-  <rect class="cls-2" x="6" y=".5" width="18" height="23"/>
+  <rect class="cls-2" x="3.5" y=".5" width="18" height="23"/>
 
   <!-- Top Rectangle -->
   <rect class="cls-4" x="2" y="4" width="12" height="12"/>
