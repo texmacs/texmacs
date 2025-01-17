@@ -185,9 +185,10 @@ QTMKeyboardEvent::handleKeyboardByTexmacs() {
   nss = mEvent.text();
   kc  = mEvent.nativeVirtualKey();
   if (nss.size() == 0) {
-    return;
+    unic = 0;
+  } else {
+    unic= nss.data()[0].unicode();
   }
-  unic= nss.data()[0].unicode();
 
   if (unic > 32 && unic < 255 && 
       isShift() && !isControl() && !isAlt() && !isMeta()) {
