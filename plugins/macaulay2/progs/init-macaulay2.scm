@@ -2,7 +2,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; MODULE      : init-macaulay2.scm
-;; DESCRIPTION : Initialize Macaulay 2 plugin
+;; DESCRIPTION : Initialize Macaulay2 plugin
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
@@ -15,7 +15,7 @@
   (:macpath "Macaulay2*" "bin")
   (:require (url-exists-in-path? "M2"))
   (:launch "M2 --texmacs")
-  (:session "Macaulay 2"))
+  (:session "Macaulay2"))
 
 (when (supports-macaulay2?)
   (import-from (doc help-funcs))
