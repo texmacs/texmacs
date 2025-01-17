@@ -1,6 +1,6 @@
 .TH texmacs 1 "12Sep2005" @PACKAGE@-@DEVEL_VERSION@
 .SH NAME
-GNU TeXmacs - a WYSIWYG mathematical text editor
+texmacs - The GNU TeXmacs WYSIWYG scientific text editor
 .PP
 .SH SYNOPSIS
 texmacs [\fIOPTION\fR]... [\fISOURCE\fR]...
@@ -8,7 +8,7 @@ texmacs [\fIOPTION\fR]... [\fISOURCE\fR]...
 .SH INTRODUCTION
 GNU TeXmacs is a free scientific text editor, which was both inspired
 by TeX and GNU Emacs. The editor allows you to write structured documents
-via a wysiwyg (what-you-see-is-what-you-get) and user friendly interface.
+via a WYSIWYG (what-you-see-is-what-you-get) and user friendly interface.
 New styles may be created by the user. The program implements high-quality
 typesetting algorithms and TeX fonts, which help you to produce
 professionally looking documents.
