@@ -5,7 +5,7 @@
 <\body>
   <tmdoc-title|The <name|Macaulay2> system>
 
-  <hlink|<name|Macaulay2>|http://www.math.uiuc.edu/Macaulay2> is a new
+  <hlink|<name|Macaulay2>|https://macaulay2.com/> is a new
   software system devoted to supporting research in algebraic geometry and
   commutative algebra. The software is available now in source code for
   porting, and in compiled form for <name|Linux>, <name|SunOS>,

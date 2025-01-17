@@ -14,7 +14,7 @@
   unix. Lo si può scaricare da
 
   <\verbatim>
-    \ \ \ \ http://www.math.uiuc.edu/Macaulay2
+    \ \ \ \ https://macaulay2.com/
   </verbatim>
 
   Qui di seguito vi è un esempio di una sessione, che si può iniziare usando
