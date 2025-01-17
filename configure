@@ -21356,7 +21356,6 @@ printf "%s\n" "#define GS_FONTS \"share/ghostscript/fonts\"" >>confdefs.h
 
           { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Ghostscript found  in TMREPO, it will be embedded in Package for Macos or Windows" >&5
 printf "%s\n" "$as_me: Ghostscript found  in TMREPO, it will be embedded in Package for Macos or Windows" >&6;}
-        else as_fn_error $? "Ghostscript not detected in TMREPO, won't be embedded in Package" "$LINENO" 5
         fi
       fi
 

@@ -21,6 +21,7 @@
 #include "url.hpp"
 #include "boot.hpp"
 #include "gui.hpp"
+#include "QTMKeyboard.hpp"
 #include "QTMPixmapManager.hpp"
 
 void init_palette (QApplication* app);
@@ -59,11 +60,16 @@ public:
   }
 #endif
 
+  inline QTMKeyboard &keyboard() {
+    return mKeyboard;
+  }
+
 private:
 #if QT_VERSION >= 0x060000
   bool mPixmapManagerInitialized;
   QTMPixmapManager pm;
 #endif
+  QTMKeyboard mKeyboard;
 
 };
 
