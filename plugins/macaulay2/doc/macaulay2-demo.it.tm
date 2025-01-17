@@ -4,10 +4,10 @@
 
 <\body>
   <\tmdoc-title>
-    Usare sessioni di Macaulay 2 in <TeXmacs>
+    Usare sessioni di Macaulay2 in <TeXmacs>
   </tmdoc-title>
 
-  <name|Macaulay 2> è un software dedicato al supporto della ricerca in
+  <name|Macaulay2> è un software dedicato al supporto della ricerca in
   geometria algebrica e algebra commutativa. Questo software è ora
   disponibile come codice sorgente e in forme compilate per <name|Linux>,
   <name|Sun OS>, <name|Solaris>, <name|Windows>, e per alcune altre macchine
@@ -18,7 +18,7 @@
   </verbatim>
 
   Qui di seguito vi è un esempio di una sessione, che si può iniziare usando
-  <menu|Insert|Session|Macaulay 2>:
+  <menu|Insert|Session|Macaulay2>:
 
   <\session|macaulay2|default>
     <\output>
