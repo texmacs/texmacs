@@ -184,7 +184,9 @@ QTMKeyboardEvent::handleKeyboardByTexmacs() {
     // We need to use text(): Alt-{5,6,7,8,9} are []|{} under MacOS, etc.
   nss = mEvent.text();
   kc  = mEvent.nativeVirtualKey();
-  ASSERT(nss.size() > 0, "nss.data() must be non-empty");
+  if (nss.size() == 0) {
+    return;
+  }
   unic= nss.data()[0].unicode();
 
   if (unic > 32 && unic < 255 && 

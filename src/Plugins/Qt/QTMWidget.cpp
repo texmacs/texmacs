@@ -203,7 +203,11 @@ void
 QTMWidget::keyPressEvent (QKeyEvent* event) {
   QTMKeyboardEvent ke (tmapp()->keyboard(), *event);
   string r = ke.texmacsKeyCombination();
-  debug_qt << "key press: " << r << LF;
+  if (r == "") {
+    if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "key press: unhandled key" << LF;
+    return;
+  }
+  if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "key press: " << r << LF;
   the_gui->process_keypress (tm_widget(), r, texmacs_time());
 
 }
