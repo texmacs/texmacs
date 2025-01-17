@@ -69,7 +69,9 @@ protected:
 QTMScrollView::QTMScrollView (QWidget *_parent):
   QAbstractScrollArea (_parent),
   editor_flag (false),
-  p_extents (QRect(0,0,0,0))
+  p_extents (QRect(0,0,0,0)),
+  wanted_origin(0,0),
+  have_wanted_origin(false)
 {
   QWidget *_viewport = QAbstractScrollArea::viewport();
   _viewport->setBackgroundRole(QPalette::Mid);
@@ -95,7 +97,13 @@ QTMScrollView::QTMScrollView (QWidget *_parent):
 
 void 
 QTMScrollView::setOrigin ( QPoint newOrigin ) {
-  if (!isVisible()) return;
+  if (!isVisible()) {
+#if QT_VERSION >= 0x060000
+    have_wanted_origin = true;
+    wanted_origin = newOrigin;
+#endif
+    return;
+  }
   if (newOrigin.x() != p_origin.x())
     QAbstractScrollArea::horizontalScrollBar()->setSliderPosition(newOrigin.x());
   if (newOrigin.y() != p_origin.y())
@@ -201,6 +209,13 @@ QTMScrollView::scrollContentsBy ( int dx, int dy ) {
 bool 
 QTMScrollView::viewportEvent(QEvent *e)
 {
+#if QT_VERSION >= 0x060000
+  if (have_wanted_origin && isVisible()) {
+    QAbstractScrollArea::horizontalScrollBar()->setSliderPosition(wanted_origin.x());
+    QAbstractScrollArea::verticalScrollBar()->setSliderPosition(wanted_origin.y());
+    have_wanted_origin = false;
+  }
+#endif
   switch (e->type()) {
     case QEvent::Resize:
     case QEvent::Paint:
@@ -229,6 +244,8 @@ QTMScrollView::viewportEvent(QEvent *e)
       return event(e);
 #endif
 #endif
+    case QEvent::Show:
+      
     default:
       break;
   }

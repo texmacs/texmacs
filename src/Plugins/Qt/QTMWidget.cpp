@@ -19,6 +19,8 @@
 #include "new_view.hpp"
 #include "editor.hpp"
 #include "qt_renderer.hpp"
+#include "QTMApplication.hpp"
+#include "QTMKeyboardEvent.hpp"
 
 #include "config.h"
 
@@ -42,131 +44,6 @@
 #include <QFileInfo>
 
 
-hashmap<int,string> qtkeymap (0);
-hashmap<int,string> qtdeadmap (0);
-hashmap<int,string> qtcomposemap (0);
-
-inline void
-map (int code, string name) {
-  qtkeymap (code) = name;
-}
-
-inline void
-deadmap (int code, string name) {
-  qtdeadmap (code) = name;
-}
-
-void
-initkeymap () {
-  static bool fInit= false;
-  if (fInit) return;
-  fInit= true;
-  if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "Initializing keymap\n";
-  map (Qt::Key_Space     , "space");
-  map (Qt::Key_Tab       , "tab");
-  map (Qt::Key_Backtab   , "tab");
-  map (Qt::Key_Return    , "return");
-  map (Qt::Key_Enter     , "enter");
-  map (Qt::Key_Escape    , "escape");
-  map (Qt::Key_Backspace , "backspace");
-  map (Qt::Key_Up        , "up" );
-  map (Qt::Key_Down      , "down" );
-  map (Qt::Key_Left      , "left" );
-  map (Qt::Key_Right     , "right" );
-  map (Qt::Key_F1        , "F1" );
-  map (Qt::Key_F2        , "F2" );
-  map (Qt::Key_F3        , "F3" );
-  map (Qt::Key_F4        , "F4" );
-  map (Qt::Key_F5        , "F5" );
-  map (Qt::Key_F6        , "F6" );
-  map (Qt::Key_F7        , "F7" );
-  map (Qt::Key_F8        , "F8" );
-  map (Qt::Key_F9        , "F9" );
-  map (Qt::Key_F10       , "F10" );
-  map (Qt::Key_F11       , "F11" );
-  map (Qt::Key_F12       , "F12" );
-  map (Qt::Key_F13       , "F13" );
-  map (Qt::Key_F14       , "F14" );
-  map (Qt::Key_F15       , "F15" );
-  map (Qt::Key_F16       , "F16" );
-  map (Qt::Key_F17       , "F17" );
-  map (Qt::Key_F18       , "F18" );
-  map (Qt::Key_F19       , "F19" );
-  map (Qt::Key_F20       , "F20" );
-  map (Qt::Key_F21       , "F21" );
-  map (Qt::Key_F22       , "F22" );
-  map (Qt::Key_F23       , "F23" );
-  map (Qt::Key_F24       , "F24" );
-  map (Qt::Key_F25       , "F25" );
-  map (Qt::Key_F26       , "F26" );
-  map (Qt::Key_F27       , "F27" );
-  map (Qt::Key_F28       , "F28" );
-  map (Qt::Key_F29       , "F29" );
-  map (Qt::Key_F30       , "F30" );
-  map (Qt::Key_F31       , "F31" );
-  map (Qt::Key_F32       , "F32" );
-  map (Qt::Key_F33       , "F33" );
-  map (Qt::Key_F34       , "F34" );
-  map (Qt::Key_F35       , "F35" );
-  map (Qt::Key_Insert    , "insert" );
-  map (Qt::Key_Delete    , "delete" );
-  map (Qt::Key_Home      , "home" );
-  map (Qt::Key_End       , "end" );
-  map (Qt::Key_PageUp    , "pageup" );
-  map (Qt::Key_PageDown  , "pagedown" );
-  map (Qt::Key_ScrollLock, "scrolllock" );
-  map (Qt::Key_Pause     , "pause" );
-  map (Qt::Key_SysReq    , "sysreq" );
-  map (Qt::Key_Stop      , "stop" );
-  map (Qt::Key_Menu      , "menu" );
-  map (Qt::Key_Print     , "print" );
-  map (Qt::Key_Select    , "select" );
-  map (Qt::Key_Execute   , "execute" );
-  map (Qt::Key_Help      , "help" );
-  map (Qt::Key_section   , "section" );
-
-  deadmap (Qt::Key_Dead_Acute     , "acute");
-  deadmap (Qt::Key_Dead_Grave     , "grave");
-  deadmap (Qt::Key_Dead_Diaeresis , "umlaut");
-  deadmap (Qt::Key_Dead_Circumflex, "hat");
-  deadmap (Qt::Key_Dead_Tilde     , "tilde");
-
-  // map (0x0003              , "K-enter");
-  // map (Qt::Key_Begin       , "begin" );
-  // map (Qt::Key_PrintScreen , "printscreen" );
-  // map (Qt::Key_Break       , "break" );
-  // map (Qt::Key_User        , "user" );
-  // map (Qt::Key_System      , "system" );
-  // map (Qt::Key_Reset       , "reset" );
-  // map (Qt::Key_ClearLine   , "clear" );
-  // map (Qt::Key_ClearDisplay, "cleardisplay" );
-  // map (Qt::Key_InsertLine  , "insertline" );
-  // map (Qt::Key_DeleteLine  , "deleteline" );
-  // map (Qt::Key_InsertChar  , "insert" );
-  // map (Qt::Key_DeleteChar  , "delete" );
-  // map (Qt::Key_Prev        , "prev" );
-  // map (Qt::Key_Next        , "next" );
-  // map (Qt::Key_Undo        , "undo" );
-  // map (Qt::Key_Redo        , "redo" );
-  // map (Qt::Key_Find        , "find" );
-  // map (Qt::Key_ModeSwitchFunctionKey, "modeswitch" );
-}
-#ifdef OS_MINGW
-enum WindowsNativeModifiers {
-    ShiftLeft            = 0x00000001,
-    ControlLeft          = 0x00000002,
-    AltLeft              = 0x00000004,
-    MetaLeft             = 0x00000008,
-    ShiftRight           = 0x00000010,
-    ControlRight         = 0x00000020,
-    AltRight             = 0x00000040,
-    MetaRight            = 0x00000080,
-    CapsLock             = 0x00000100,
-    NumLock              = 0x00000200,
-    ScrollLock           = 0x00000400,
-    ExtendedKey          = 0x01000000,
-};
-#endif
 static long int QTMWcounter = 0; // debugging hack
 
 /*! Constructor.
@@ -308,211 +185,27 @@ QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
 #endif
 
 void
-set_shift_preference (int key_code, char shifted) {
+setShiftPreference (int key_code, char shifted) {
   set_user_preference ("shift-" * as_string (key_code), string (shifted));
 }
 
 bool
-has_shift_preference (int key_code) {
+hasShiftPreference (int key_code) {
   return has_user_preference ("shift-" * as_string (key_code));
 }
 
 string
-get_shift_preference (char key_code) {
+getShiftPreference (char key_code) {
   return get_user_preference ("shift-" * as_string (key_code));
 }
 
 void
 QTMWidget::keyPressEvent (QKeyEvent* event) {
-  if (is_nil (tmwid)) return;
-  initkeymap();
+  QTMKeyboardEvent ke (tmapp()->keyboard(), *event);
+  string r = ke.texmacsKeyCombination();
+  debug_qt << "key press: " << r << LF;
+  the_gui->process_keypress (tm_widget(), r, texmacs_time());
 
-  if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "keypressed\n";
-  {
-    int key = event->key();
-    Qt::KeyboardModifiers mods = event->modifiers();
-
-    if (DEBUG_QT && DEBUG_KEYBOARD) {
-      debug_qt << "key  : " << key << LF;
-      debug_qt << "text : " << event->text().toUtf8().data() << LF;
-#if QT_VERSION >= 0x060000      
-      debug_qt << "count: " << event->text().size() << LF;
-#else
-      debug_qt << "count: " << event->text().count() << LF;
-#endif
-      debug_qt << "unic : " << event->text().data()[0].unicode() << LF;
-
-#ifdef OS_MINGW
-      debug_qt << "nativeScanCode: " << event->nativeScanCode() << LF; 
-      debug_qt << "nativeVirtualKey: " << event->nativeVirtualKey() << LF;
-      debug_qt << "nativeModifiers: " << event->nativeModifiers() << LF;
-#endif
-      if (mods & Qt::ShiftModifier) debug_qt << "shift\n";
-      if (mods & Qt::MetaModifier) debug_qt << "meta\n";
-      if (mods & Qt::ControlModifier) debug_qt << "control\n";
-      if (mods & Qt::KeypadModifier) debug_qt << "keypad\n";
-      if (mods & Qt::AltModifier) debug_qt << "alt\n";
-    }
-
-    string r;
-#ifdef OS_MINGW 
-/* "Qt::Key_AltGr On Windows, when the KeyDown event for this key is sent,
-* the Ctrl+Alt modifiers are also set." (excerpt from Qt doc)
-* However the AltGr key is used to obtain many symbols 
-* which should not be regarded as C-A- shortcuts.
-* (e.g. \ or @ on a French keyboard) 
-* 
-* Hence, when "native modifiers" are (ControlLeft | AltRight) 
-* we clear Qt's Ctrl+Alt modifiers
-*/
-    if ((event->nativeModifiers() & (ControlLeft | AltRight)) == (ControlLeft | AltRight)) {
-      if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "assuming it's an AltGr key code"<<LF;
-      mods &= ~Qt::AltModifier;
-      mods &= ~Qt::ControlModifier;
-    }
-#endif
-    if (qtkeymap->contains (key)) {
-      r = qtkeymap[key];
-#if defined(OS_MINGW) && QT_VERSION >= 0x060000
-      // e.g. azerty keyboard: AltGr tilde followed by Space
-      if (key == 32)
-        r= string (event->text().toUtf8().data(), event->text().toUtf8().size());
-#endif
-    }
-    else if (qtdeadmap->contains (key)) {
-      mods &=~ Qt::ShiftModifier;
-      r = qtdeadmap[key];
-    }
-    else {
-        // We need to use text(): Alt-{5,6,7,8,9} are []|{} under MacOS, etc.
-      QString nss = event->text();
-      unsigned int   kc  = event->nativeVirtualKey();
-      unsigned short unic= nss.data()[0].unicode();
-      /*
-      debug_qt << "key  : " << key << LF;
-      debug_qt << "text : " << event->text().toUtf8().data() << LF;
-      debug_qt << "count: " << event->text().count() << LF;
-      if (mods & Qt::ShiftModifier) debug_qt << "shift\n";
-      if (mods & Qt::MetaModifier) debug_qt << "meta\n";
-      if (mods & Qt::ControlModifier) debug_qt << "control\n";
-      if (mods & Qt::KeypadModifier) debug_qt << "keypad\n";
-      if (mods & Qt::AltModifier) debug_qt << "alt\n";
-      cout << kc << ", " << ((mods & Qt::ShiftModifier) != 0)
-           << " -> " << unic << LF;
-      */
-      if (unic > 32 && unic < 255 &&
-          (mods & Qt::ShiftModifier) != 0 &&
-          (mods & Qt::ControlModifier) == 0 &&
-          (mods & Qt::AltModifier) == 0 &&
-          (mods & Qt::MetaModifier) == 0)
-        set_shift_preference (kc, (char) unic);
-#ifdef Q_OS_WIN
-      if ((unic > 0 && unic < 32 && key > 0 && key < 128) ||
-          (unic > 0 && unic < 255 && key > 32 &&
-           (mods & Qt::ShiftModifier) != 0 &&
-           (mods & Qt::ControlModifier) != 0)) {
-#else
-      if (unic < 32 && key > 0 && key < 128) {
-#endif
-        // NOTE: For some reason, the 'shift' modifier key is not applied
-        // to 'key' when 'control' is pressed as well.  We perform some
-        // dirty hacking to figure out the right shifted variant of a key
-        // by ourselves...
-        if (is_upcase ((char) key)) {
-          if ((mods & Qt::ShiftModifier) == 0)
-            key= (int) locase ((char) key);
-        }
-        else if (has_shift_preference (kc) &&
-                 (mods & Qt::ShiftModifier) != 0 &&
-                 (mods & Qt::ControlModifier) != 0) {
-          string pref= get_shift_preference (kc);
-          if (N(pref) > 0) key= (int) (unsigned char) pref [0];
-          if (DEBUG_QT && DEBUG_KEYBOARD)
-            debug_qt << "Control+Shift " << kc << " -> " << key << LF;
-        }
-        mods &=~ Qt::ShiftModifier;
-        r= string ((char) key);
-      }
-      else {
-        switch (unic) {
-          case 96:   r= "`"; 
-            // unicode to cork conversion not appropriate for this case...
-#ifdef Q_OS_MAC
-            // CHECKME: are these two MAC exceptions really needed?
-            if (mods & Qt::AltModifier) r= "grave";
-#endif
-            break;
-          case 168:  r= "umlaut"; break;
-          case 180:  r= "acute"; break;
-            // the following combining characters should be caught by qtdeadmap
-          case 0x300: r= "grave"; break;
-          case 0x301: r= "acute"; break;
-          case 0x302: r= "hat"; break;
-          case 0x308: r= "umlaut"; break;
-          case 0x33e: r= "tilde"; break;
-          default:
-            QByteArray buf= nss.toUtf8();
-            string rr (buf.constData(), buf.size());
-            string tstr= utf8_to_cork (rr);
-            // HACK! The encodings defined in langs/encoding and which
-            // utf8_to_cork uses (via the converters loaded in
-            // converter_rep::load()), enclose the texmacs symbols in "< >", 
-            // but this format is not used for keypresses, so we must remove
-            // them.
-            int len= N (tstr);
-            if (len >= 1 && tstr[0] == '<' && tstr[1] != '#' && tstr[len-1] == '>')
-              r= tstr (1, len-1);
-            else
-              r= tstr;
-            if (r == "less") r= "<";
-            else if (r == "gtr") r= ">";
-        }
-#ifdef Q_OS_MAC
-        if (mods & Qt::AltModifier &&
-	    (QT_VERSION < 0x060000 ||
-	     QApplication::inputMethod()->locale().country() != QLocale::AnyTerritory)) {
-          // Alt produces many symbols in Mac keyboards: []|{} etc.
-          if ((N(r) != 1 ||
-               ((int) (unsigned char) r[0]) < 32 ||
-               ((int) (unsigned char) r[0]) >= 128) &&
-              key >= 32 && key < 128
-#if QT_VERSION >= 0x060000
-              ) {
-#else
-              && ((mods & (Qt::MetaModifier + Qt::ControlModifier)) == 0)) {
-#endif
-            if ((mods & Qt::ShiftModifier) == 0 && key >= 65 && key <= 90)
-              key += 32;
-            qtcomposemap (key)= r;
-            r= string ((char) key);
-          }
-          else mods &= ~Qt::AltModifier; //unset Alt
-        }
-#endif
-        mods &= ~Qt::ShiftModifier;
-      }
-    }
-    if (r == "") return;
-    if (mods & Qt::ShiftModifier) r= "S-" * r;
-#if defined(Q_OS_MAC) && QT_VERSION >= 0x060000
-    if (QApplication::inputMethod()->locale().country() != QLocale::AnyTerritory) {
-      if (mods & Qt::AltModifier) r= "A-" * r;
-    }
-#else
-    if (mods & Qt::AltModifier) r= "A-" * r;
-#endif
-    //if (mods & Qt::KeypadModifier) r= "K-" * r;
-#ifdef Q_OS_MAC
-    if (mods & Qt::MetaModifier) r= "C-" * r;        // The "Control" key
-    if (mods & Qt::ControlModifier) r= "M-" * r;  // The "Command" key
-#else
-    if (mods & Qt::ControlModifier) r= "C-" * r;
-    if (mods & Qt::MetaModifier) r= "M-" * r;     // The "Windows" key
-#endif
-
-    if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "key press: " << r << LF;
-    the_gui->process_keypress (tm_widget(), r, texmacs_time());
-  }
 }
 
 static unsigned int
