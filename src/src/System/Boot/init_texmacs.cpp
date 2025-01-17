@@ -412,7 +412,7 @@ init_misc () {
 static void
 init_deprecated () {
 #ifndef OS_WIN32
-  // Check for Macaulay 2
+  // Check for Macaulay2
   if (get_env ("M2HOME") == "")
     if (exists_in_path ("M2")) {
       string where= concretize (resolve_in_path ("M2"));

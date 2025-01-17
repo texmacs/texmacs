@@ -10,7 +10,7 @@
   strutturati. Tenete in considerazione la possibilità di scrivere
   un'interfaccia tra <apply|TeXmacs> e i vostri programmi scientifici
   preferiti. <apply|TeXmacs> è già interfacciato con numerosi altri programmi
-  scientifici come Giac, Macaulay 2, Maxima, GNU Octave, Pari, Qcl, gTybalt,
+  scientifici come Giac, Macaulay2, Maxima, GNU Octave, Pari, Qcl, gTybalt,
   Yacas. La documentazione dettagliata su come realizzare nuove interfacceè
   disponibile nel menu <apply|hyper-link|<apply|menu|Help|Interfacing>|../../../devel/plugin/plugin.en.tm>.
 

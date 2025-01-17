@@ -7,7 +7,7 @@
     <src-package|macaulay2|1.0>
 
     <\src-purpose>
-      Markup for Macaulay 2 sessions.
+      Markup for Macaulay2 sessions.
     </src-purpose>
 
     <src-copyright|2002--2004|Joris van der Hoeven>

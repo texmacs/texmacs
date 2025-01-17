@@ -3,7 +3,7 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|The <name|Macaulay 2> plug-in>
+  <tmdoc-title|The <name|Macaulay2> plug-in>
 
   <\traverse>
     <branch|Short description|macaulay2-abstract.en.tm>

@@ -2,7 +2,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; MODULE      : m2-input.scm
-;; DESCRIPTION : Macaulay 2 input converters
+;; DESCRIPTION : Macaulay2 input converters
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
