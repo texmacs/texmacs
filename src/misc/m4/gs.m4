@@ -41,7 +41,7 @@ AC_DEFUN([LC_GS],[
           AC_SUBST([GS_LIB])
           AC_SUBST([GS_FONTS])
           AC_MSG_NOTICE([Ghostscript found  in TMREPO, it will be embedded in Package for Macos or Windows])
-        else AC_MSG_NOTICE([Ghostscript not detected in TMREPO, won't be embedded in Package])
+        else AC_MSG_ERROR([Ghostscript not detected in TMREPO, won't be embedded in Package])
         fi
       fi
     ]
