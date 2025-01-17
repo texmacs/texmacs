@@ -18,7 +18,7 @@
 
     <item*|GTybalt>Stefan Weinzierl.
 
-    <item*|Macaulay 2>Dan Grayson.
+    <item*|Macaulay2>Dan Grayson.
 
     <item*|Maple>Christian Even.
 
