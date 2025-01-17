@@ -58,9 +58,21 @@ void QTMPixmapManager::load(QString path, bool is_dark) {
 
   // If icon does not exist, create it
   if (!icons->contains(name)) {
-    (*icons)[name] = path.endsWith(".svg") ?
-      QIcon(new QTMSVGIconEngine(path)) :
-      QIcon(QPixmap(path));
+    QIcon icon;
+    if (path.endsWith(".svg")) {
+      icon = QIcon(new QTMSVGIconEngine(path));
+      icon.addPixmap(icon.pixmap(64, QIcon::Normal, QIcon::On));
+      icon.addPixmap(icon.pixmap(64, QIcon::Disabled, QIcon::On));
+      icon.addPixmap(icon.pixmap(64, QIcon::Active, QIcon::On));
+      icon.addPixmap(icon.pixmap(64, QIcon::Selected, QIcon::On));
+    } else {
+      QPixmap pixmap(path);
+      icon = QIcon(pixmap);
+      icon.addPixmap(pixmap, QIcon::Disabled);
+      icon.addPixmap(pixmap, QIcon::Active);
+      icon.addPixmap(pixmap, QIcon::Selected);
+    }
+    (*icons)[name] = icon;
     return;
   }
 }
