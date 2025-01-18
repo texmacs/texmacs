@@ -34,7 +34,7 @@ public:
 		eType = ePDFObjectName
 	};
 
-	// value must be the already interpreted name - no initial slash, and all special charachters (with # definition) interpreted
+	// value must be the already interpreted name - no initial slash, and all special characters (with # definition) interpreted
 	PDFName(const std::string& inValue);
 	virtual ~PDFName(void);
 

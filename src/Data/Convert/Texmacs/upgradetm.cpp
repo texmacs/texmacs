@@ -3562,7 +3562,7 @@ upgrade_cyrillic_encoding (tree t, bool cyrillic) {
 }
 
 array<tree>
-get_childs_by_name (tree t, string s) {
+get_children_by_name (tree t, string s) {
   array<tree> r = array<tree>();
   if (!is_atomic (t))
     for (int i = 0 ; i < N(t) ; i++) {
@@ -3575,11 +3575,11 @@ static tree
 upgrade_cyrillic (tree t) {
   bool cyrillic = false;
   array<tree> initial, collection, associate;
-  initial = get_childs_by_name (t, "initial");
+  initial = get_children_by_name (t, "initial");
   for (int i = 0 ; i < N(initial) ; i++){
-    collection = get_childs_by_name (initial[i], "collection");
+    collection = get_children_by_name (initial[i], "collection");
     for (int j = 0 ; j < N(collection) ; j++){
-      associate = get_childs_by_name (collection[j], "associate");
+      associate = get_children_by_name (collection[j], "associate");
       for (int k = 0 ; k < N(associate) ; k++) {
         if (is_func(associate[k], ASSOCIATE, 2) && associate[k][0] == "font")
           cyrillic = (associate[k][1] == "cyrillic");

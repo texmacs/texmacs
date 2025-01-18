@@ -120,7 +120,7 @@ BoolAndString PDFParserTokenizer::GetNextToken()
 
 			case '(':
 			{
-				// for a literal string, the token goes on until the balanced-closing right paranthesis
+				// for a literal string, the token goes on until the balanced-closing right parenthesis
 				int balanceLevel = 1;
 				bool backSlashEncountered = false;
 				while(balanceLevel > 0 && mStream->NotEnded())
