@@ -307,6 +307,10 @@ TeXmacs_main (int argc, char** argv) {
         cout << get_env ("TEXMACS_PATH") << "\n";
         exit (0);
       }
+      else if ((s == "-hp") || (s == "-homepath")) {
+        cout << get_env ("TEXMACS_HOME_PATH") << "\n";
+        exit (0);
+      }
       else if ((s == "-bp") || (s == "-binpath")) {
         cout << get_env ("TEXMACS_BIN_PATH") << "\n";
         exit (0);
