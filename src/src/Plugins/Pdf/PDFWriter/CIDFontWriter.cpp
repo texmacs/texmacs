@@ -103,7 +103,7 @@ EStatusCode CIDFontWriter::WriteFont(FreeTypeFaceWrapper& inFontInfo,
 		mObjectsContext->WriteNewIndirectObjectReference(descendantFontID);
 		mObjectsContext->EndArray(eTokenSeparatorEndLine);
 
-		CalculateCharacterEncodingArray(); // put the charachter in the order of encoding, for the ToUnicode map
+		CalculateCharacterEncodingArray(); // put the character in the order of encoding, for the ToUnicode map
 
 		// ToUnicode
 		if (mCharactersVector.size() > 1) {
@@ -156,7 +156,7 @@ static bool sUShortSort(const UIntAndGlyphEncodingInfo& inLeft, const UIntAndGly
 
 void CIDFontWriter::CalculateCharacterEncodingArray()
 {
-	// first we need to sort the fonts charachters by character code
+	// first we need to sort the fonts characters by character code
 	UIntToGlyphEncodingInfoMap::iterator it = mFontOccurrence->mGlyphIDToEncodedChar.begin();
 
 	for(; it != mFontOccurrence->mGlyphIDToEncodedChar.end();++it)

@@ -280,7 +280,7 @@ BoolAndString InputPFBDecodeStream::GetNextToken()
 		}
 
 		// now read token until it's done. there are some special cases detemining when a token is done
-		// based on the first charachter of the token [literal string, hex string , comment]
+		// based on the first character of the token [literal string, hex string , comment]
 		
 		if(GetNextByteForToken(buffer) != PDFHummus::eSuccess)
 		{
@@ -311,7 +311,7 @@ BoolAndString InputPFBDecodeStream::GetNextToken()
 
 			case '(':
 			{
-				// for a string, the token goes on until the balanced-closing right paranthesis
+				// for a string, the token goes on until the balanced-closing right parenthesis
 				int balanceLevel = 1;
 				bool backSlashEncountered = false;
 				while(balanceLevel > 0 && IsSegmentNotEnded())

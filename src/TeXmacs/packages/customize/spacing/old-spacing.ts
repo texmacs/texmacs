@@ -7,7 +7,7 @@
     <src-package-dtd|old-spacing|1.0|old-spacing|1.0>
 
     <\src-purpose>
-      Mimick spacing of TeXmacs version 1.99.6 and below.
+      Mimic spacing of TeXmacs version 1.99.6 and below.
     </src-purpose>
 
     <src-copyright|2018|Joris van der Hoeven>

@@ -438,7 +438,7 @@ bool FreeTypeFaceWrapper::IsDefiningCharsNotInAdobeStandardLatin()
 {
 	if(mFace)
 	{
-		// loop charachters in font, till you find a non Adobe Standard Latin. hmm. seems like this method marks all as symbol...
+		// loop characters in font, till you find a non Adobe Standard Latin. hmm. seems like this method marks all as symbol...
 		// need to think about this...
 		bool hasOnlyAdobeStandard = true;
 		FT_ULong characterCode;
@@ -460,7 +460,7 @@ bool FreeTypeFaceWrapper::IsDefiningCharsNotInAdobeStandardLatin()
 bool FreeTypeFaceWrapper::IsCharachterCodeAdobeStandard(FT_ULong inCharacterCode)
 {
 	// Comparing character code to unicode value of codes in Adobe Standard Latin
-	if(inCharacterCode < 0x20) // ignore control charachters
+	if(inCharacterCode < 0x20) // ignore control characters
 		return true;
 
 	if(betweenIncluding<FT_ULong>(inCharacterCode,0x20,0x7E))
@@ -603,7 +603,7 @@ EStatusCode FreeTypeFaceWrapper::GetGlyphsForUnicodeText(const ULongList& inUnic
 				glyphIndex =  FT_Get_Char_Index(mFace,charCode);
 				if(0 == glyphIndex)
 				{
-					TRACE_LOG1("FreeTypeFaceWrapper::GetGlyphsForUnicodeText, failed to find glyph for charachter 0x%04x",*it);
+					TRACE_LOG1("FreeTypeFaceWrapper::GetGlyphsForUnicodeText, failed to find glyph for character 0x%04x",*it);
 					status = PDFHummus::eFailure;
 				}
 			}

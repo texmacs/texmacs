@@ -135,7 +135,7 @@
           ((== type "module")
            (if (== what "") (replace "Help - Browse all modules")
                (replace "Help - Documentation for module %1" what)))
-          (else (replace "Help - Unknow request")))))
+          (else (replace "Help - Unknown request")))))
 
 (tmfs-permission-handler (apidoc name type) #t)
 
