@@ -1917,7 +1917,7 @@ EStatusCodeAndObjectIDType DocumentContext::WriteAnnotationAndLinkForURL(const s
 		BoolAndString encodedResult = encoding.Encode(inURL);
 		if(!encodedResult.first)
 		{
-			TRACE_LOG1("DocumentContext::WriteAnnotationAndLinkForURL, unable to encode string to Ascii7. make sure that all charachters are valid URLs [should be ascii 7 compatible]. URL - %s",inURL.c_str());
+			TRACE_LOG1("DocumentContext::WriteAnnotationAndLinkForURL, unable to encode string to Ascii7. make sure that all characters are valid URLs [should be ascii 7 compatible]. URL - %s",inURL.c_str());
 			break;
 		}
 

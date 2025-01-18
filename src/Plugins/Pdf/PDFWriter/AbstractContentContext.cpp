@@ -1101,7 +1101,7 @@ EStatusCode AbstractContentContext::WriteTextCommandWithDirectGlyphSelection(con
 
 	if(currentFont->EncodeStringForShowing(inText,fontObjectID,encodedCharactersList,writeAsCID) != PDFHummus::eSuccess)
 	{
-		TRACE_LOG("AbstractcontextContext::WriteTextCommandWithDirectGlyphSelection, Unexepcted failure, Cannot encode characters");
+		TRACE_LOG("AbstractcontextContext::WriteTextCommandWithDirectGlyphSelection, Unexpected failure, Cannot encode characters");
 		return PDFHummus::eFailure;
 	}
 	
@@ -1186,7 +1186,7 @@ EStatusCode AbstractContentContext::TJ(const GlyphUnicodeMappingListOrDoubleList
 
 	if(currentFont->EncodeStringsForShowing(stringsList,fontObjectID,encodedCharachtersListsList,writeAsCID)!= PDFHummus::eSuccess)
 	{
-		TRACE_LOG("AbstractContentContext::TJ, Unexepcted failure, cannot include characters for writing final representation");
+		TRACE_LOG("AbstractContentContext::TJ, Unexpected failure, cannot include characters for writing final representation");
 		return PDFHummus::eFailure;
 	}
 	

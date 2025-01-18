@@ -113,7 +113,7 @@ void PrimitiveObjectsWriter::WriteUnsafeLiteralString(const std::string& inStrin
 void PrimitiveObjectsWriter::WriteLiteralString(const std::string& inString,ETokenSeparator inSeparate)
 {
 	mStreamForWriting->Write(scLeftParanthesis,1);
-	// doing some string conversion, so that charachters are written as safe ones.
+	// doing some string conversion, so that characters are written as safe ones.
 	IOBasicTypes::Byte buffer[5];
 	std::string::const_iterator it = inString.begin();
 	for(;it != inString.end();++it)

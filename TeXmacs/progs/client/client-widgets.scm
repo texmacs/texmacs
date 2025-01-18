@@ -74,7 +74,7 @@
 	(aligned
 	  (item (toggle (set-password? answer) use-password?)
 	    (hlist
-	      // (text "Allow authentification through password"))))
+	      // (text "Allow authentication through password"))))
 	===
 	(refreshable "password-info"
 	  (when use-password?
@@ -88,7 +88,7 @@
 	  (aligned
 	    (item (toggle (set-key? answer) use-key?)
 	      (hlist
-		// (text "Allow authentification through cryptographic key")))))
+		// (text "Allow authentication through cryptographic key")))))
 	===
 	(refreshable "key-info"
 	  (when use-key?
@@ -101,7 +101,7 @@
 	     (for-each (cut ahash-set! t <> <>) (form-fields) (form-values))
 	     (cond ((not (or use-password? use-key?))
 		    (open-error
-		     "Please enable at least one authentification method"))
+		     "Please enable at least one authentication method"))
 		   ((and use-password? (!= (ahash-ref t "password")
 					   (ahash-ref t "repeat")))
 		    (open-error "Passwords do not match"))

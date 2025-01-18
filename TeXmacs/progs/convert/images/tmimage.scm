@@ -104,7 +104,7 @@
 ;; - the tm code of equation
 ;; - style info from the original document (style, fonts, layout, ...)
 ;; - A latex fragment for compatibility with 'textext' inkscape extension
-;; - the relative position of the baseline to enable vertical alignement
+;; - the relative position of the baseline to enable vertical alignment
 ;;   in an external application
 ;; FIXME : no error checking, no return value...
 
@@ -310,8 +310,8 @@
              (tree-insert tfmt 0 '((twith "table-hmode" "min")))
              tm-fragment)
           tm-fragment))
-;because of bug #63404 we can't simply always use document-at for formating 
-      (tm-fragment-formated
+;because of bug #63404 we can't simply always use document-at for formatting 
+      (tm-fragment-formatted
         (if needbaseline
           ;; if needbaseline insert fragment in table having a background
 
@@ -342,7 +342,7 @@
 
 ;; step 2 generate output according to desired output format
 
-    (extents (print-snippet myurl (stree->tree tm-fragment-formated) #t)); scale))
+    (extents (print-snippet myurl (stree->tree tm-fragment-formatted) #t)); scale))
 ;; compute relative position of baseline from returned box dimensions  see tmhtml.scm
     (height (- (fourth extents) (second extents)))
     (relbaseline (if needbaseline (number->string (exact->inexact (/ (- (sixth extents)) height))) "0.0"))
