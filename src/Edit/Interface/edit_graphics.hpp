@@ -32,6 +32,7 @@ public:
 
   path   graphics_path ();
   bool   inside_graphics (bool b);
+  bool   inside_graphics (bool b, tree& t);
   bool   inside_active_graphics (bool b);
   bool   over_graphics (SI x, SI y);
   tree   get_graphics ();

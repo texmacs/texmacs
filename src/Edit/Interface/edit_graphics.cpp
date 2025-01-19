@@ -180,9 +180,15 @@ edit_graphics_rep::graphics_path () {
 
 bool
 edit_graphics_rep::inside_graphics (bool b) {
+  tree aux;
+  return inside_graphics (b, aux);
+}
+
+bool
+edit_graphics_rep::inside_graphics (bool b, tree& st) {
   path p   = path_up (tp);
   bool flag= false;
-  tree st  = et;
+  st  = et;
   while (!is_nil (p)) {
     if (is_func (st, GRAPHICS)) flag= true;
     if (b && is_graphical_text (st)) flag= false;
