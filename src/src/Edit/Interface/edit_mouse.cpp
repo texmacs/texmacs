@@ -555,7 +555,12 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t,
 
   //if (inside_graphics (false)) {
   //if (inside_graphics ()) {
-  if (inside_graphics (type != "release-left")) {
+  tree current_graphics_tree;
+  if (inside_graphics (type != "release-left", current_graphics_tree)) {
+    if (current_graphics_tree != gt) {
+      gt= current_graphics_tree;
+      eval ("(graphics-exit-right)");
+    }
     if (mouse_graphics (type, x, y, mods, t, data)) return;
     if (!over_graphics (x, y))
       eval ("(graphics-reset-context 'text-cursor)");
