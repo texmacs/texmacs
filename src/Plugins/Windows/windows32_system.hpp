@@ -13,7 +13,9 @@
 
 #include "string.hpp"
 #include "array.hpp"
+#ifndef WINDOWS_HEADERS_FIX
 #include "url.hpp"
+#endif
 
 #include <string>
 
@@ -129,9 +131,19 @@ bool texmacs_remove(string filename);
 string get_default_theme();
 
 /*
+ * @brief A function to get the directory string where the texmacs
+ * executable is located
+ */
+string texmacs_get_application_directory_str();
+
+#ifndef WINDOWS_HEADERS_FIX
+/*
  * @brief A function to get the directory where the texmacs executable is
  * located
  */
-url texmacs_get_application_directory();
+inline url texmacs_get_application_directory() {
+    return url_system(texmacs_get_application_directory_str());
+}
+#endif
 
 #endif
