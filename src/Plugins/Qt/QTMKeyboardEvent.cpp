@@ -16,7 +16,11 @@
 #include "analyze.hpp"
 #include "basic.hpp"
 
-#if QT_VERSION < 0x060000
+#if QT_VERSION < 0x050000
+inline bool inputMethodIsNotAnyTerritory() {
+  return QLocale::system().country() != QLocale::AnyCountry;
+}
+#elif QT_VERSION < 0x060000
 inline bool inputMethodIsNotAnyTerritory() {
   return QApplication::inputMethod()->locale().country() 
          != QLocale::AnyCountry;
