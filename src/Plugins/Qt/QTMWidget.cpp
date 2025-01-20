@@ -33,8 +33,11 @@
 #include <QFocusEvent>
 #include <QPainter>
 #include <QApplication>
+
+#ifdef OS_ANDROID
 #include <QScrollBar>
 #include <QScroller>
+#endif
 
 #include <QBuffer>
 #include <QMimeData>
