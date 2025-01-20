@@ -12,18 +12,19 @@
 #include "QTMKeyboardEvent.hpp"
 
 #include <QApplication>
+#include <QLocale>
 #include "analyze.hpp"
 #include "basic.hpp"
 
 #if QT_VERSION < 0x060000
 inline bool inputMethodIsNotAnyTerritory() {
   return QApplication::inputMethod()->locale().country() 
-         != QLocale::AnyTerritory;
+         != QLocale::AnyCountry;
 }
 #else
 inline bool inputMethodIsNotAnyTerritory() {
   return QApplication::inputMethod()->locale().territory()
-         != QLocale::AnyCountry;
+         != QLocale::AnyTerritory;
 }
 #endif
 
