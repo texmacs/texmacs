@@ -101,7 +101,7 @@ int guile_default_readdir_r(DIR *dirp, guile_dirent_t *entry, guile_dirent_t **r
 }
 #endif
 
-int guile_default_truncate(const char *path, off_t length) {
+int guile_default_truncate(const char *path, guile_off_t length) {
     path = guile_utf8_string_to_system_string(path);
     return truncate_or_truncate64(path, length);
 }
