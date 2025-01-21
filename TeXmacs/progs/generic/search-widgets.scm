@@ -267,19 +267,71 @@
            (set! by (tm-ref by 0)))
          by)))
 
-(define (get-wildcards what match)
+(define (get-positions-in-string-rec what match b)
+  ;; Return the list of positions of the strings in what,
+  ;; from position b in the string match.
+  (if (null? what) (list)
+      (with w (car what)
+	(with pos (string-search-forwards w b match)
+	  (if (< pos b) (list)
+	      (with pos1 (+ pos (string-length w))
+		(cons (list pos pos1)
+		      (get-positions-in-string-rec
+		       (cdr what) match pos1))))))))
+
+(define (get-positions-in-string what match)
+  ;; Return the list of positions of the strings
+  ;; in what in the string match.
+  (with l (get-positions-in-string-rec what match 0)
+    (if (!= (length l) (length what)) (list) l)))
+
+(define (get-wildcards-in-string-rec what l match b)
+  (if (null? what) (list)
+      (with w (car what)
+	(cond ((tm-func? w `wildcard 1)
+	       (if (null? l) `((:wildcard ,(tm->stree (tm-ref w 0))
+					  ,(string-tail match b)))
+		   (with pos (car l)
+		     (cons `(:wildcard ,(tm->stree (tm-ref w 0))
+				       ,(substring match b (first pos)))
+			   (get-wildcards-in-string-rec
+			    (cdr what) l match (first pos))))))
+	      ((tm-atomic? w)
+	       (if (null? l) (list)
+		   (with pos (car l)
+		     (get-wildcards-in-string-rec
+		      (cdr what) (cdr l) match (second pos)))))
+	      (else (list))))))
+
+(define (get-wildcards-in-string what match)
+  (with l (get-positions-in-string
+	   (map tm->string (list-filter what tm-atomic?)) match)
+    (if (null? l) (list)
+	(get-wildcards-in-string-rec what l match 0))))
+
+(define (get-wildcards-var what match)
   (cond ((tm-equal? what match) (list))
         ((tm-func? what 'wildcard 1)
          (list `(:wildcard ,(tm->stree (tm-ref what 0)) ,(tm->stree match))))
         ((tm-equal? what "")
          (list `(:empty ,(tm->stree match))))
+	((and (tm-atomic? match)
+	      (tm-func? what 'concat))
+	 (get-wildcards-in-string (tm-children what) (tm->string match)))
         ((and (tm-compound? what) (tm-compound? match)
               (== (tm-label what) (tm-label match))
               (== (tm-arity what) (tm-arity match)))
          (append-map get-wildcards (tm-children what) (tm-children match)))
         (else (list))))
 
+(define (get-wildcards what match)
+  ;;(display* "-> get-wildcards " what " " match "\n")
+  (with ret (get-wildcards-var what match)
+    ;;(display* "<- " ret "\n")
+    ret))
+
 (define (find-wildcard wc which)
+  ;;(display* "find-wildcard " wc " " which "\n")
   (cond ((null? wc) "")
         ((and (tm-func? (car wc) :wildcard 2)
               (== (cadr (car wc)) which))
@@ -295,12 +347,14 @@
                 (cons (car r) (cons (car wc) (cdr r)))))))
 
 (define (replace-wildcards-list l wc)
+  ;;(display* "replace-wildcards-list " l " " wc "\n")
   (if (null? l) (cons l wc)
       (let* ((h (replace-wildcards (car l) wc))
              (t (replace-wildcards-list (cdr l) (cdr h))))
         (cons (cons (car h) (car t)) (cdr t)))))
 
 (define (replace-wildcards by wc)
+  ;;(display* "replace-wildcards " by " " wc "\n")
   (cond ((null? wc)
          (cons by wc))
         ((tm-func? by 'wildcard 1)
@@ -336,6 +390,7 @@
           (else (car (replace-wildcards by wc))))))
 
 (define (replace-next* by)
+  ;;(display* "replace-next* " by "\n")
   (let* ((sels (get-alt-selection "alternate"))
          (cur (get-search-reference #t)))
     (and (nnull? sels)
