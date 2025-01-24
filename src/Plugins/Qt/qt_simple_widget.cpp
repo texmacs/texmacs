@@ -698,6 +698,7 @@ qt_simple_widget_rep::repaint_invalid_regions () {
   // propagate immediately the changes to the screen
 #if QT_VERSION >= 0x060000
 #ifdef OS_ANDROID
+  canvas()->surface()->repaint (QRect (0,0,canvas()->width(),canvas()->height()));
   canvas()->window()->update();
 #else
   canvas()->surface()->repaint (QRect (0,0,canvas()->width(),canvas()->height()));
