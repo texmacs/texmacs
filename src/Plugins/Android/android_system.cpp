@@ -217,6 +217,11 @@ bool texmacs_chmod(string filename, int mode) {
 }
 
 bool texmacs_remove(string filename) {
+  QString homePath = QDir::homePath();
+  if (!texmacs_string_to_qstring(filename).startsWith(homePath)) {
+    qWarning() << "Refusing to delete file not in home directory";
+    return false;
+  }
   return QFile::remove(texmacs_string_to_qstring(filename));
 }
 
