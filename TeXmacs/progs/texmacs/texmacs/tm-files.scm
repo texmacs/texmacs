@@ -266,7 +266,9 @@
 
 (define (save-buffer-as-check-permissions new-name name opts)
   ;;(display* "save-buffer-as-check-permissions " new-name ", " name "\n")
-  (cond ((cannot-write? new-name "Save file")
+  (cond ((os-android?)
+         (save-buffer-as-check-other new-name name opts))
+        ((cannot-write? new-name "Save file")
          (noop))
         ((and (url-test? new-name "f") (nin? :overwrite opts))
          (user-confirm "File already exists. Really overwrite?" #f
