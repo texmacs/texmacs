@@ -22,6 +22,10 @@ AC_DEFUN([LC_GS],[
       if @<:@@<:@ -n $TMREPO @:>@@:>@ 
       then # it is comming from tm SDK
         AC_PATH_PROGS([GS_EXE],gs.exe gs, [], [$TMREPO/bin])
+        # if AC_PATH_PROGS fails, try without giving TMREPO/bin as default path
+        if test -z "$GS_EXE"; then
+          AC_PATH_PROGS([GS_EXE],gs.exe gs)
+        fi
         AC_MSG_NOTICE(["$GS_EXE"])
         if test -x "$GS_EXE";
         then
