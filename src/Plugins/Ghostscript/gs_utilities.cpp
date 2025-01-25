@@ -56,6 +56,11 @@ gs_executable () {
   return cmd;
 }
 
+bool
+has_gs () {
+  return exists_in_path (gs_executable ());
+}
+
 string
 gs_prefix () {
   return string ("\"") * gs_executable () * string ("\"") * string (" ");
