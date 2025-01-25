@@ -403,7 +403,7 @@ qt_supports (url u) {
   string suf=suffix (u);
 // as of 2023, even if qt claims it can handle pdf, do not use it as it produces blurry pngs
 // see http://forum.texmacs.cn/t/how-are-graphics-supposed-to-look-like/963/12
-  if (suf == "pdf")
+  if (suf == "pdf" || suf == "ps" || suf == "eps")
     return false; 
   bool ans= (bool) formats.contains((QByteArray) as_charp(suf));
   //if (DEBUG_CONVERT) {debug_convert <<"QT valid format:"<<((ans)?"yes":"no")<<LF;}
