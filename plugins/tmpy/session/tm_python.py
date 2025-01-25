@@ -128,15 +128,19 @@ def eval_code (code, p_globals):
                 ret = eval(code, p_globals)
             except Exception as e: # invalid statement or genuine syntax error
                 ret = None
-                output = ''.join(traceback.format_exception_only(e))
+                output = ""
+                error = ''.join(traceback.format_exception_only(e))
             else:
                 output = out_io.getvalue()
-        except Exception as e:
+                error = None
+        except Exception as e: # exception thrown in code or other exc.
             ret = None
-            output = ''.join(traceback.format_exception_only(e))
+            output = ""
+            error = ''.join(traceback.format_exception_only(e))
         else:
             output = out_io.getvalue()
-    return ret, output
+            error = None
+    return ret, output, error
 
 __version__ = '3.0'
 __author__ = 'Ero Carrera, Adrian Soto, Miguel de Benito Delgado, Darcy Shen, Jeroen Wouters'
@@ -195,5 +199,7 @@ while True:
                 continue
             lines.append (line)
         text = '\n'.join (lines[:-1])
-        ret, output= eval_code (text, my_globals)
+        ret, output, error = eval_code (text, my_globals)
         flush_output (output,ret)
+        if error != None:
+            flush_err(error)
