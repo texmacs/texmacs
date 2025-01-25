@@ -110,12 +110,11 @@ def eval_code (code, p_globals):
     '''Execute a script and return the value of the last expression'''
 
     # capture stdout
-    f = io.StringIO()
-    with redirect_stdout(f):
+    with redirect_stdout(io.StringIO()) as out_io:
         # Is it an expression or a statement (e.g. an assignment "a=1"), in 
         # which case `compile` in raises a SyntaxError  
         # (https://stackoverflow.com/questions/3876231/python-how-to-tell-if-a-string-represent-a-statement-or-an-expression)
-        try:
+        try: # valid expression?
             block = ast.parse(code, mode='exec')
             if len(block.body) > 1 and isinstance(block.body[-1], ast.Expr):
                 last = ast.Expression(block.body.pop().value)
@@ -124,9 +123,19 @@ def eval_code (code, p_globals):
             else:
                 ret = eval(code, p_globals)
         except SyntaxError:
-            code= compile (code, '<string>', 'exec')
-            ret = eval(code, p_globals)
-    output = f.getvalue()
+            try: # valid statement?
+                code= compile (code, '<string>', 'exec')
+                ret = eval(code, p_globals)
+            except Exception as e: # invalid statement or genuine syntax error
+                ret = None
+                output = ''.join(traceback.format_exception_only(e))
+            else:
+                output = out_io.getvalue()
+        except Exception as e:
+            ret = None
+            output = ''.join(traceback.format_exception_only(e))
+        else:
+            output = out_io.getvalue()
     return ret, output
 
 __version__ = '3.0'
