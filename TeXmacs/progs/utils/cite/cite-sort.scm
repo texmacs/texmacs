@@ -3,6 +3,7 @@
 ;; MODULE      : cite-sort.scm
 ;; DESCRIPTION : support utilities for sorting citations
 ;; COPYRIGHT   : (C) 2013 François Poulain, Joris van der Hoeven
+;;                   2023 hammerfunctor, jingkaimori
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -35,17 +36,20 @@
     (with ret (tree->stree (texmacs-exec key))
       (if (!= ret '(uninit)) ret ""))))
 
+
 (define (merge-contiguous new old present)
   (let* 
-    ((get-write (lambda (item) (car (cdadr item))))
-     (flush 
+      ((get-write (lambda (item) (car (cdadr item))))
+       (flush 
         (lambda ()
           (if (> (length present) 2)
               (list (list 
-                (caar present)
-                `(concat 
-                  ,@(map get-write present)
-                  ,@(cddar (cdar present)) "-" ,@(cddar (cdAr present)))))
+                     (caar present)
+                     `(concat 
+                       ,@(map get-write present)
+                       ,@(cddar (cdar present))  
+                       ""  ;; the endash caracter (copied verbatim even if would be better to find a nicer representation for it)
+                       ,@(cddar (cdAr present)))))
               present))))
     (if (null? old)
         (if (null? present)
@@ -59,7 +63,7 @@
 
 (tm-define (indice-sort tup)
   (let* ((sorted-tup 
-           (list-sort tup (lambda (s1 s2) (compare-cite-keys s1 s2 compare-string))))
+          (list-sort tup (lambda (s1 s2) (compare-cite-keys s1 s2 compare-string))))
          (merged-tup (merge-contiguous '() sorted-tup '()))
          (merged-args (map cadr merged-tup)))
     merged-args))

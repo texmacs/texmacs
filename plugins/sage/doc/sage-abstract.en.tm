@@ -11,7 +11,7 @@
   mathematical computations. It is written in
   <hlink|<name|Python>|http://python.org/> and provides interfaces for a wide
   variety of other systems, such as <name|Axiom>, <name|Gap>, <name|Pari GP>,
-  <name|Macaulay<nbsp>2>, <name|Maxima>, <name|Octave>, and <name|Singular>.
+  <name|Macaulay2>, <name|Maxima>, <name|Octave>, and <name|Singular>.
   The system was started by <hlink|<name|William
   Stein>|https://www.wstein.org/>.
 

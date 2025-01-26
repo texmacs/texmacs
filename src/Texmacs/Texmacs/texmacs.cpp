@@ -111,13 +111,10 @@ void TeXmacs_init_font() {
 void
 TeXmacs_init_paths (int& argc, char** argv) {
   (void) argc; (void) argv;
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) && QT_VERSION < 0x060000
   url exedir = url_system (qt_application_directory ());
 #else
-  url exedir = url_system(argv[0]) * ".." ;
-  if (! is_rooted(exedir)) {
-    exedir = url_pwd() * exedir ;
-  }
+  url exedir = texmacs_get_application_directory();
 #endif
 
   string current_texmacs_path = get_env ("TEXMACS_PATH");
@@ -131,7 +128,12 @@ TeXmacs_init_paths (int& argc, char** argv) {
   // so just allow everything that is reachable.
         
   // plugins need to be installed in TeXmacs.app/Contents/Plugins        
+#if QT_VERSION < 0x060000
   QCoreApplication::addLibraryPath( QDir::cleanPath(QCoreApplication::applicationDirPath().append("/../Plugins")) );
+#else
+  string plugins_path = concretize (exedir * "../Plugins");
+  QCoreApplication::addLibraryPath(QString::fromUtf8(&plugins_path[0], N(plugins_path)));
+#endif
   // cout << from_qstring ( QCoreApplication::libraryPaths () .join("\n") ) << LF;
   {
     // ensure that private versions of the Qt frameworks have priority on
@@ -303,6 +305,10 @@ TeXmacs_main (int argc, char** argv) {
       }
       else if ((s == "-p") || (s == "-path")) {
         cout << get_env ("TEXMACS_PATH") << "\n";
+        exit (0);
+      }
+      else if ((s == "-hp") || (s == "-homepath")) {
+        cout << get_env ("TEXMACS_HOME_PATH") << "\n";
         exit (0);
       }
       else if ((s == "-bp") || (s == "-binpath")) {
@@ -703,6 +709,7 @@ texmacs_entrypoint (int argc, char** argv) {
   boot_hacks ();
   windows_delayed_refresh (1000000000);
   immediate_options (argc, argv);
+  TeXmacs_init_paths (argc, argv);
   load_user_preferences ();
 #ifndef OS_MINGW
   set_env ("LC_NUMERIC", "POSIX");
@@ -728,7 +735,6 @@ texmacs_entrypoint (int argc, char** argv) {
 #ifdef OS_ANDROID
   init_android();
 #endif
-  TeXmacs_init_paths (argc, argv);
   TeXmacs_init_font  ();
 #ifdef QTTEXMACS
   if (!headless_mode)

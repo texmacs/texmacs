@@ -8,6 +8,8 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#define WINDOWS_HEADERS_FIX
+
 /* We use nowide to keep the same behavior of TeXmacs on Windows 32 bits.    */
 
 #include <windows.h>
@@ -179,4 +181,10 @@ string get_default_theme() {
     return "dark";
   }
   return "light";
+}
+
+string qt_application_directory ();
+
+string texmacs_get_application_directory_str() {
+  return qt_application_directory ();
 }

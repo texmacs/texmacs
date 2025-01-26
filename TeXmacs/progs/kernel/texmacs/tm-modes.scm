@@ -240,7 +240,7 @@
   (in-japanese% (== (get-env "language") "japanese") in-oriental%)
   (in-korean% (== (get-env "language") "korean") in-oriental%)
   (in-polish% (== (get-env "language") "polish") in-text%)
-  (in-portugese% (== (get-env "language") "portugese") in-text%)
+  (in-portuguese% (== (get-env "language") "portuguese") in-text%)
   (in-romanian% (== (get-env "language") "romanian") in-text%)
   (in-russian% (== (get-env "language") "russian") in-cyrillic%)
   (in-slovak% (== (get-env "language") "slovak") in-text%)

@@ -682,13 +682,13 @@ qt_renderer_rep::draw (const QFont& qfn, const QString& qs,
 
 
 qt_renderer_rep*
-the_qt_renderer () {
+the_qt_renderer (double dpr) {
   static QPainter *the_painter = NULL;
   static qt_renderer_rep* the_renderer= NULL;
   if (!the_renderer) {
     the_painter = new QPainter();
 #if QT_VERSION >= 0x060000
-    the_renderer= tm_new<qt_renderer_rep> (the_painter, 1.0, 0, 0);
+    the_renderer= tm_new<qt_renderer_rep> (the_painter, dpr, 0, 0);
 #else
     the_renderer= tm_new<qt_renderer_rep> (the_painter);
 #endif
@@ -760,7 +760,11 @@ qt_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   ASSERT (ren != NULL, "invalid renderer");
   if (ren->is_printer ()) return;
   qt_renderer_rep* shadow= static_cast<qt_renderer_rep*>(ren);
+#if QT_VERSION >= 0x060000  
+  ren->outer_round (x1, y1, x2, y2);
+#else
   outer_round (x1, y1, x2, y2);
+#endif
   x1= max (x1, cx1- ox);
   y1= max (y1, cy1- oy);
   x2= min (x2, cx2- ox);
@@ -772,9 +776,14 @@ qt_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   shadow->cy1= y1+ oy;
   shadow->cx2= x2+ ox;
   shadow->cy2= y2+ oy;
-  
+
+#if QT_VERSION >= 0x060000  
+  ren->decode (x1, y1);
+  ren->decode (x2, y2);
+#else
   decode (x1, y1);
   decode (x2, y2);
+#endif
   if (x1<x2 && y2<y1) {
     QRect rect = QRect(x1, y2, x2-x1, y1-y2);
     //    shadow->painter->setCompositionMode(QPainter::CompositionMode_Source);  

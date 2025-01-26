@@ -536,7 +536,7 @@
 (lazy-keyboard (link link-kbd) with-linking-tool?)
 (lazy-define (link link-edit) create-unique-id)
 (lazy-define (link link-navigate) link-active-upwards link-active-ids
-             link-follow-ids)
+             link-follow-ids link-mouse-ids)
 (lazy-define (link link-extern) get-constellation
              get-link-locations register-link-locations)
 (lazy-menu (link ref-menu) ref-menu)

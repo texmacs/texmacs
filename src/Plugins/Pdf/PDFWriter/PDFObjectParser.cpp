@@ -285,12 +285,12 @@ PDFObject* PDFObjectParser::ParseLiteralString(const std::string& inToken)
 	Byte buffer;
 	std::string::const_iterator it = inToken.begin();
 	size_t i=1;
-	++it; // skip first paranthesis
+	++it; // skip first parenthesis
 	
 	// verify that last character is ')'
 	if(inToken.at(inToken.size()-1) != scRightParanthesis)
 	{
-		TRACE_LOG1("PDFObjectParser::ParseLiteralString, exception in parsing literal string, no closing paranthesis, Expression: %s",inToken.substr(0, MAX_TRACE_SIZE - 200).c_str());
+		TRACE_LOG1("PDFObjectParser::ParseLiteralString, exception in parsing literal string, no closing parenthesis, Expression: %s",inToken.substr(0, MAX_TRACE_SIZE - 200).c_str());
 		return NULL;
 	}
 

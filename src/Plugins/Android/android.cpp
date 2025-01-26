@@ -53,10 +53,11 @@ void android_extract_from_asset(QString asset_path)
     }
     // split the line in two parts
     QStringList parts = line.split(" ");
-    if (parts.size() != 2)
+    if (parts.size() != 3)
       continue;
     QString id = parts[0];
-    QString filename = asset_path + "/" + parts[1];
+    QString filename = parts[1];
+    QString md5 = parts[2];
     qDebug() << "Extracting " << id << " to " << filename;
 
     // Read the file from the assets into the memory
@@ -82,16 +83,5 @@ void android_extract_from_asset(QString asset_path)
 
 void init_android()
 {
-  QString homePath = QDir::homePath() + "/.TeXmacs";
-  QString path = QDir::homePath() + "/TeXmacs";
-  QString progsPath = QDir::homePath() + "/TeXmacs/progs";
-  QString pluginsPath = QDir::homePath() + "/TeXmacs/plugins";
-
-  qputenv("TEXMACS_HOME_PATH", homePath.toUtf8());
-  qputenv("TEXMACS_PATH", path.toUtf8());
-  qputenv("TEXMACS_PROGS_PATH", progsPath.toUtf8());
-  qputenv("TEXMACS_PLUGINS_PATH", pluginsPath.toUtf8());
-  qputenv("GUILE_LOAD_PATH", QDir::homePath().toUtf8());
-
   android_extract_from_asset(QDir::homePath());
 }

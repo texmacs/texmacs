@@ -21,6 +21,7 @@
 #include "QTMGuiHelper.hpp"
 #include "QTMStyle.hpp"
 #include "QTMTreeModel.hpp"
+#include "QTMApplication.hpp"
 
 #include <QToolTip>
 #include <QCompleter>
@@ -540,7 +541,6 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
             : ev->key();
 
   if (continuous ()) {
-    initkeymap ();
     if ((last_key != Qt::Key_Tab || type == "replace-what") &&
         (last_key != Qt::Key_Backtab || type == "replace-by") &&
         last_key != Qt::Key_Down &&
@@ -561,7 +561,7 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
         if ((ev->modifiers() & Qt::ShiftModifier) == 0)
           key[0]= (int) (key[0] + ((int) 'a') - ((int) 'A'));
     }
-    if (qtkeymap->contains (last_key)) key= qtkeymap[last_key];
+    tmapp()->keyboard().getMappingIfExist (last_key, key);
     if ((ev->modifiers() & Qt::ShiftModifier) && N(key) > 1) key= "S-" * key;
 #ifdef Q_OS_MAC
     if (ev->modifiers() & Qt::ControlModifier) key= "C-" * key;

@@ -8953,9 +8953,10 @@ fi
   GUILE_EMBEDDED_VERSION="1.6"
   GUILE_EMBEDDED_DIR="tm-guile168"
 
-  if test "$location" = "embedded18"
+  if test "$location" = "embedded18" || test -d "tm-guile188"
 then :
 
+    location="embedded18"
     GUILE_EMBEDDED_VERSION="1.8"
     GUILE_EMBEDDED_DIR="tm-guile188"
 
@@ -12176,6 +12177,45 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$GUILE_EMBEDDED_DIR" >&2;}
 
   fi
 
+  if test -n "$TMREPO"; then
+
+  if [[ "-I$TMREPO/include" =~ $(echo '^-Wl,') ]]
+  then CXXFLAGS+=" -I$TMREPO/include"
+  elif [[ "-I$TMREPO/include" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "-I$TMREPO/include"
+  do  while [[ $CXXFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$CXXFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$CXXFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then CXXFLAGS=
+  else  while test "$CXXFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$CXXFLAGS"
+        CXXFLAGS="${CXXFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        CXXFLAGS="${CXXFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        CXXFLAGS="${CXXFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  CXXFLAGS=$(echo $CXXFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       CXXFLAGS+=" -I$TMREPO/include"
+  else
+    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])-I$TMREPO/include($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I$TMREPO/include" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$TMREPO/include" >&2;}
+    else CXXFLAGS+=" -I$TMREPO/include"
+    fi
+  fi
+
+  fi
+
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -12491,6 +12531,45 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I$GUILE_EMBEDDED_DIR" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$GUILE_EMBEDDED_DIR" >&2;}
     else CXXFLAGS+=" -I$GUILE_EMBEDDED_DIR"
+    fi
+  fi
+
+  fi
+
+  if test -n "$TMREPO"; then
+
+  if [[ "-I$TMREPO/include" =~ $(echo '^-Wl,') ]]
+  then CXXFLAGS+=" -I$TMREPO/include"
+  elif [[ "-I$TMREPO/include" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "-I$TMREPO/include"
+  do  while [[ $CXXFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$CXXFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$CXXFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then CXXFLAGS=
+  else  while test "$CXXFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$CXXFLAGS"
+        CXXFLAGS="${CXXFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        CXXFLAGS="${CXXFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        CXXFLAGS="${CXXFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  CXXFLAGS=$(echo $CXXFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       CXXFLAGS+=" -I$TMREPO/include"
+  else
+    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])-I$TMREPO/include($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I$TMREPO/include" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$TMREPO/include" >&2;}
+    else CXXFLAGS+=" -I$TMREPO/include"
     fi
   fi
 
@@ -20943,6 +21022,59 @@ fi
   test -n "$GS_EXE" && break
 done
 
+        # if AC_PATH_PROGS fails, try without giving TMREPO/bin as default path
+        if test -z "$GS_EXE"; then
+          for ac_prog in gs.exe gs
+do
+  # Extract the first word of "$ac_prog", so it can be a program name with args.
+set dummy $ac_prog; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_GS_EXE+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $GS_EXE in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_GS_EXE="$GS_EXE" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_GS_EXE="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+GS_EXE=$ac_cv_path_GS_EXE
+if test -n "$GS_EXE"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $GS_EXE" >&5
+printf "%s\n" "$GS_EXE" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+  test -n "$GS_EXE" && break
+done
+
+        fi
         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: \"$GS_EXE\"" >&5
 printf "%s\n" "$as_me: \"$GS_EXE\"" >&6;}
         if test -x "$GS_EXE";
@@ -29381,6 +29513,8 @@ printf "%s\n" "#define qt_no_fontconfig 1" >>confdefs.h
   autotroll.6.* | autotrollstatic.6.*)
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Qt6 found" >&5
 printf "%s\n" "$as_me: Qt6 found" >&6;}
+    QT_LIBEXECS=`$QMAKE -query QT_INSTALL_LIBEXECS`
+    PATH="$QT_LIBEXECS:$PATH"
     if test $CONFIG_OS == MACOS
 then :
 

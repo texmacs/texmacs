@@ -37,6 +37,10 @@ class QTMScrollView : public QAbstractScrollArea {
   QRect    p_extents;   // The size of the virtual area where things are drawn.
   QPoint    p_origin;   // The offset into that area
   QWidget* p_surface;   // Actual drawing area, centered (or not) in the scrollarea
+#if QT_VERSION >= 0x060000
+  QPoint wanted_origin;
+  bool have_wanted_origin;
+#endif
   
 public:
   

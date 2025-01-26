@@ -904,7 +904,7 @@ std::string Type1Input::FromPSString(const std::string& inPSString)
 	Byte buffer;
 	std::string::const_iterator it = inPSString.begin();
 	size_t i=1;
-	++it; // skip first paranthesis
+	++it; // skip first parenthesis
 	
 	for(; i < inPSString.size()-1;++it,++i)
 	{

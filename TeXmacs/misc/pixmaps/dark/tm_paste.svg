@@ -22,8 +22,15 @@
       .cls-3 {
         fill: #4a4a4a;
       }
+
+      .cls-5 {
+        fill: #000000;
+      }
     </style>
   </defs>
+  <!-- Bottom Document -->
+  <rect class="cls-5" x="6" y=".5" width="18" height="23"/>
+
   <!-- Gray rectangle -->
   <rect class="cls-3" x="4" y="7" width="14" height="12"/>
 

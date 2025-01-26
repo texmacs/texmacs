@@ -46,7 +46,7 @@ my_globals['ps_out'] = ps_out
 my_globals['__doc__'] = """A SymPy plugin for TeXmacs."""
 
 def flush_output (data):
-    if isinstance (data, Basic) or isinstance (data, MatrixBase):
+    if isinstance (data, Basic) or isinstance (data, MatrixBase) or (isinstance(data, (list, tuple)) and all(isinstance(item, (Basic, MatrixBase)) for item in data)):
         flush_latex (latex (data))
     else:
         flush_verbatim (str(data).strip())
