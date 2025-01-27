@@ -80,15 +80,13 @@ new_editor (server_rep* sv, tm_buffer buf) {
   return tm_new<edit_main_rep> (sv, buf);
 }
 
-#if !defined(NO_FAST_ALLOC) && \
-  (!defined(AC_QT_MAJOR_VERSION) || AC_QT_MAJOR_VERSION < 6)
 template<> void
 tm_delete<editor_rep> (editor_rep* ptr) {
+  if (ptr == NULL) return;
   void *mem= ptr->derived_this ();
   ptr -> ~editor_rep ();
   fast_delete (mem);
 }
-#endif
 
 /******************************************************************************
 * Properties
