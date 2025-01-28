@@ -120,14 +120,14 @@ bool
 operator == (tree t, tree u) {
   if (strong_equal (t, u)) return true;
   return (L(t)==L(u)) &&
-    (L(t)==STRING? (t->label==u->label): (A(t)==A(u)));
+    (L(t)==TMSTRING? (t->label==u->label): (A(t)==A(u)));
 }
 
 bool
 operator != (tree t, tree u) {
   if (strong_equal (t, u)) return false;
   return (L(t)!=L(u)) ||
-    (L(t)==STRING? (t->label!=u->label): (A(t)!=A(u)));
+    (L(t)==TMSTRING? (t->label!=u->label): (A(t)!=A(u)));
 }
 
 tree

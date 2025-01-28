@@ -89,7 +89,7 @@ bool tm_sparkle::checkInBackground ()
 {
   if (isRunning()) {
     if (DEBUG_STD)
-      debug_updater << "ERROR: an update is already in progress.\n";
+      debug_updater << "TMERROR: an update is already in progress.\n";
       return false;
   }
 
@@ -104,7 +104,7 @@ bool tm_sparkle::checkInForeground ()
 {
   if (isRunning()) {
     if (DEBUG_STD)
-      debug_updater << "ERROR: an update is already in progress.\n";
+      debug_updater << "TMERROR: an update is already in progress.\n";
     return false;
   }
 
