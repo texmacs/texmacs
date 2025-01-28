@@ -110,7 +110,7 @@ public:
 class atomic_rep: public tree_rep {
 public:
   string label;
-  inline atomic_rep (string l): tree_rep (STRING), label (l) {}
+  inline atomic_rep (string l): tree_rep (TMSTRING), label (l) {}
   friend class tree;
 };
 
@@ -137,12 +137,12 @@ typedef tree scheme_tree;
 
 #ifdef debug_trees
 #define CHECK_ATOMIC(t) \
-  if (((t).rep)->op != STRING) { \
+  if (((t).rep)->op != TMSTRING) { \
     failed_error << "The tree : " << (t) << "\n"; \
     FAILED ("atomic tree expected"); \
   }
 #define CHECK_COMPOUND(t) \
-  if (((t).rep)->op == STRING) { \
+  if (((t).rep)->op == TMSTRING) { \
     failed_error << "The tree : " << (t) << "\n"; \
     FAILED ("compound tree expected"); \
   }
@@ -186,7 +186,7 @@ inline int N (tree t) {
   CHECK_COMPOUND (t);
   return N ((static_cast<compound_rep*> (t.rep))->a); }
 inline int arity (tree t) {
-  if (t.rep->op == STRING) return 0;
+  if (t.rep->op == TMSTRING) return 0;
   else return N ((static_cast<compound_rep*> (t.rep))->a); }
 inline int right_index (tree t) {
   return is_atomic (t)? N(t->label): 1; }
@@ -202,7 +202,7 @@ inline array<tree>& AR (tree t) {
   return (static_cast<compound_rep*> (t.rep))->a; }
 
 inline bool is_atomic (tree t) { return (((int) t.rep->op) == 0); }
-inline bool is_compound (tree t) { return (((int) t.rep->op) > STRING); }
+inline bool is_compound (tree t) { return (((int) t.rep->op) > TMSTRING); }
 inline bool is_generic (tree t) { return ((int) t.rep->op) < 0; }
 inline string get_label (tree t) {
   return is_atomic (t)? t->label: copy (as_string (L(t))); }
@@ -211,13 +211,13 @@ inline bool operator == (tree t, tree_label lab) {
 inline bool operator != (tree t, tree_label lab) {
   return (t.rep->op != lab) || (N(t)!=0); }
 inline bool operator == (tree t, string s) {
-  return (t.rep->op == STRING) && (t->label == s); }
+  return (t.rep->op == TMSTRING) && (t->label == s); }
 inline bool operator != (tree t, string s) {
-  return (t.rep->op != STRING) || (t->label != s); }
+  return (t.rep->op != TMSTRING) || (t->label != s); }
 inline bool operator == (tree t, const char* s) {
-  return (t.rep->op == STRING) && (t->label == s); }
+  return (t.rep->op == TMSTRING) && (t->label == s); }
 inline bool operator != (tree t, const char* s) {
-  return (t.rep->op != STRING) || (t->label != s); }
+  return (t.rep->op != TMSTRING) || (t->label != s); }
 inline tree_rep* inside (tree t) {
   return t.rep; }
 inline bool strong_equal (tree t, tree u) {

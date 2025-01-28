@@ -804,13 +804,13 @@ scm_unquote (string s) {
 
 string
 raw_quote (string s) {
-  // Mark the label of a STRING tree as representing a string and not a symbol.
+  // Mark the label of a TMSTRING tree as representing a string and not a symbol.
   return "\"" * s * "\"";
 }
 
 string
 raw_unquote (string s) {
-  // Get the string value of a STRING tree label representing a string.
+  // Get the string value of a TMSTRING tree label representing a string.
   if (is_quoted (s))
     return s (1, N(s)-1);
   else return s;
@@ -1423,13 +1423,13 @@ static bool
 find_bracket_valid (tree t, int pos) {
   if (pos < 0 || pos >= N(t))
     return false;
-  if (L(t) == STRING || L(t) == DOCUMENT)
+  if (L(t) == TMSTRING || L(t) == DOCUMENT)
     return true;
   if (L(t) == CONCAT)
-    return L(t[pos]) == STRING || L(t[pos]) == CONCAT || L(t[pos]) == WITH;
+    return L(t[pos]) == TMSTRING || L(t[pos]) == CONCAT || L(t[pos]) == WITH;
   if (L(t) == WITH)
     return pos == N(t)-1 &&
-           (L(t[pos]) == STRING || L(t[pos]) == CONCAT || L(t[pos]) == WITH ||
+           (L(t[pos]) == TMSTRING || L(t[pos]) == CONCAT || L(t[pos]) == WITH ||
             L(t[pos]) == DOCUMENT);
   else
     return false;
