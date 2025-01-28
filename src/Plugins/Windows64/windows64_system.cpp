@@ -475,6 +475,11 @@ int windows_system(string cmd, string *cmdout, string *cmderr) {
   // because it can freeze the application
   WaitForSingleObject(pi.hProcess, 30000);
   
+  // Close the write pipe handle so the child process stops reading
+  // and we can read the output
+  CloseHandle(hOutWrite.h);
+  CloseHandle(hErrWrite.h);
+
   DWORD bytesRead;
   std::wstring wide_cmdout, wide_cmderr;
   WCHAR buffer[4096];
