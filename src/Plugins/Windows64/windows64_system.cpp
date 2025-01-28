@@ -445,7 +445,7 @@ int windows_system(string cmd, string *cmdout, string *cmderr) {
   // CreateProcessW will work only on executable files.
   // It will not work to open PDF, links, etc.
   res = CreateProcessW(NULL, (LPWSTR)wide_cmd.c_str(), NULL, NULL, 
-                       TRUE, 0, NULL, NULL, &si, &pi);
+                       TRUE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
   if (!res) {
     // If we are here, it means that windows_system is trying to
     // open a file, like a PDF, or a link.
