@@ -402,7 +402,7 @@ bib_list (string s, int& pos, tree& t) {
   }
 //  convert_error << "ENTRIES: " << tentry << "\n";
 //  convert_error << "PREAMBLE: " << tpreamble << "\n";
-//  convert_error << "TMSTRING: " << tstring << "\n";
+//  convert_error << "STRING: " << tstring << "\n";
 //  if (N(tpreamble) != 0) t << compound ("bib-preamble", tpreamble);
 //  if (N(tstring) != 0) t << compound ("bib-string", tstring);
 //  t << A(tentry);
