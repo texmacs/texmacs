@@ -22,7 +22,11 @@ string
 gs_system () {
 #ifdef OS_MINGW
   url gs= url_system ("C:\\") * url_wildcard ("Program Files*") * url_system ("gs") * url_wildcard ("gs*")* url_system ("bin") * url_wildcard ("gswin*c.exe");
-  return materialize (gs);
+  gs = resolve (gs, "fr");
+  if (!(is_rooted (gs) || is_here (gs) || is_parent (gs))) {
+    return "xxx";
+  }
+  return concretize (gs);
 #else
    return "gs";
 #endif
