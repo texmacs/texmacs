@@ -872,7 +872,7 @@ count_math_formula_errors (tree t, int mode) {
   if (mode == 1) return 1;
   if (packrat_correct ("std-math", "Main", t)) return 0;
   else {
-    if (mode == 2) cout << "  TMERROR> " << t << "\n";
+    if (mode == 2) cout << "  ERROR> " << t << "\n";
     return 1;
   }
 }
@@ -885,7 +885,7 @@ count_math_table_errors (tree t, int mode) {
     if (mode == 1) return 1;
     if (packrat_correct ("std-math", "Cell", t[0])) return 0;
     else {
-      if (mode == 2) cout << "  TMERROR> " << t << "\n";
+      if (mode == 2) cout << "  ERROR> " << t << "\n";
       return 1;
     }
   }
