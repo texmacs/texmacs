@@ -64,7 +64,7 @@ protected:
   box          eb;   // box translation of tree
   path         rp;   // path to the root of the document in et
   path         tp;   // path of cursor in tree
-  tree         gt;   // current graphics tree
+  path         previous_gp; // previous graphics path
 #ifdef EXPERIMENTAL
   environment  ste;  // environment for style rewriting
   tree         cct;  // clean copy of the document tree
@@ -246,7 +246,6 @@ public:
 
   /* public routines from edit_graphics */
   virtual bool   inside_graphics (bool b=true) = 0;
-  virtual bool   inside_graphics (bool b, tree& t) = 0;
   virtual bool   inside_active_graphics (bool b=true) = 0;
   virtual bool   over_graphics (SI x, SI y) = 0;
   virtual tree   get_graphics () = 0;
