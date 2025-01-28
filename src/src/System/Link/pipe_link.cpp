@@ -21,11 +21,7 @@
 #include "tm_timer.hpp"
 #include <stdio.h>
 #include <string.h>
-#ifdef OS_MINGW
-//#define PATTERN WIN_PATTERN
-//#include <winsock.h>
-//#undef PATTERN
-#else
+#ifndef OS_MINGW
 #include <unistd.h>
 #include <signal.h>
 #include <sys/wait.h>

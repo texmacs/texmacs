@@ -8,13 +8,6 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#define WINDOWS_HEADERS_FIX
-// #include "analyze.hpp"
-// todo : FAILED, PATTERN and ERROR are conflicting 
-// between windows and texmacs. We can't include 
-// headers such as analyze.hpp and url.hpp until 
-// we resolve the conflict.
-
 #include <windows.h>
 #include <io.h>
 #include <fcntl.h>
@@ -39,9 +32,7 @@
 #include <QStyleHints>
 #endif
 
-string recompose (array<string> a, string sep);
-string replace (string s, string what, string by);
-
+#include "analyze.hpp"
 #include "tm_timer.hpp"
 
 typedef struct texmacs_dir_t {

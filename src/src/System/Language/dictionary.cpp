@@ -240,7 +240,7 @@ tree_translate (tree t, string from, string to) {
     return translate (t->label, from, to);
   else if (is_compound (t, "replace")) {
     if (!is_atomic (t[0])) {
-        //cout << "tree_translate() ERROR: first child should be a string\n";
+        //cout << "tree_translate() TMERROR: first child should be a string\n";
       return t;
     }
     t[0]->label= translate_as_is (t[0]->label, from, to);

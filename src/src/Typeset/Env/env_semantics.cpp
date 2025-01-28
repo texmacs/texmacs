@@ -602,12 +602,12 @@ edit_env_rep::update_color () {
   tree fc= env [FILL_COLOR];
   if (pc == "none") pen= pencil (false);
   else {
-    if (L(pc) == PATTERN) pc= exec (pc);
+    if (L(pc) == TMPATTERN) pc= exec (pc);
     pen= pencil (pc, alpha, get_length (LINE_WIDTH));
   }
   if (fc == "none") fill_brush= brush (false);
   else {
-    if (L(fc) == PATTERN) fc= exec (fc);
+    if (L(fc) == TMPATTERN) fc= exec (fc);
     fill_brush= brush (fc, alpha);
   }
 }
@@ -617,15 +617,15 @@ edit_env_rep::update_pattern_mode () {
   no_patterns= (get_string (NO_PATTERNS) == "true");
   if (no_patterns) {
     tree c= env[COLOR];
-    if (is_func (c, PATTERN, 4)) env (COLOR)= exec (c);
+    if (is_func (c, TMPATTERN, 4)) env (COLOR)= exec (c);
     c= env[BG_COLOR];
-    if (is_func (c, PATTERN, 4)) env (BG_COLOR)= exec (c);
+    if (is_func (c, TMPATTERN, 4)) env (BG_COLOR)= exec (c);
     c= env[FILL_COLOR];
-    if (is_func (c, PATTERN, 4)) env (FILL_COLOR)= exec (c);
+    if (is_func (c, TMPATTERN, 4)) env (FILL_COLOR)= exec (c);
     c= env[ORNAMENT_COLOR];
-    if (is_func (c, PATTERN, 4)) env (ORNAMENT_COLOR)= exec (c);
+    if (is_func (c, TMPATTERN, 4)) env (ORNAMENT_COLOR)= exec (c);
     c= env[ORNAMENT_EXTRA_COLOR];
-    if (is_func (c, PATTERN, 4)) env (ORNAMENT_EXTRA_COLOR)= exec (c);
+    if (is_func (c, TMPATTERN, 4)) env (ORNAMENT_EXTRA_COLOR)= exec (c);
     update_color ();
   }
 }

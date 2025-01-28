@@ -2012,7 +2012,7 @@ static void atom2str(scheme *sc, cell_ptr l, int f, char **pp, int *plen) {
      } else if (is_blackbox(l)) {
 		 p = "#<BLACKBOX>";
      } else {
-          p = "#<ERROR>";
+          p = "#<TMERROR>";
      }
      *pp=p;
      *plen=strlen(p);

@@ -18,7 +18,7 @@
 ******************************************************************************/
 
 enum tree_label {
-  STRING= 0, UNKNOWN, UNINIT, ERROR, RAW_DATA,
+  TMSTRING= 0, UNKNOWN, UNINIT, TMERROR, RAW_DATA,
 
   // basic formatting tags
   DOCUMENT, PARA, SURROUND, CONCAT,
@@ -101,7 +101,7 @@ enum tree_label {
   GET_ATTACHMENT, WRITE, TOC_NOTIFY,
 
   // various other tags
-  TUPLE, ATTR, TMLEN, COLLECTION, ASSOCIATE, BACKUP, PATTERN, GRADIENT,
+  TUPLE, ATTR, TMLEN, COLLECTION, ASSOCIATE, BACKUP, TMPATTERN, GRADIENT,
   SPECIFIC, FLAG, HYPHENATE_AS,
 
   // animations
