@@ -80,6 +80,13 @@ new_editor (server_rep* sv, tm_buffer buf) {
   return tm_new<edit_main_rep> (sv, buf);
 }
 
+#ifdef NO_FAST_ALLOC
+template<> void
+tm_delete<editor_rep> (editor_rep* ptr) {
+  if (ptr == NULL) return;
+  delete ptr;
+}
+#else
 template<> void
 tm_delete<editor_rep> (editor_rep* ptr) {
   if (ptr == NULL) return;
@@ -87,6 +94,7 @@ tm_delete<editor_rep> (editor_rep* ptr) {
   ptr -> ~editor_rep ();
   fast_delete (mem);
 }
+#endif
 
 /******************************************************************************
 * Properties

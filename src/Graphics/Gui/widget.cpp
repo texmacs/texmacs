@@ -249,6 +249,13 @@ bool use_unified_toolbar= true;
 string tm_style_sheet;
 bool use_mini_bars= false;
 
+#ifdef NO_FAST_ALLOC
+template<> void
+tm_delete<widget_rep> (widget_rep* ptr) {
+  if (ptr == NULL) return;
+  delete ptr;
+}
+#else
 template<> void
 tm_delete<widget_rep> (widget_rep* ptr) {
   if (ptr == NULL) return;
@@ -256,3 +263,4 @@ tm_delete<widget_rep> (widget_rep* ptr) {
   ptr -> ~widget_rep ();
   fast_delete (mem);
 }
+#endif
