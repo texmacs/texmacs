@@ -9,6 +9,10 @@ QTMApplication::QTMApplication (int& argc, char** argv) :
 #endif
 
   init_theme ();
+
+#ifdef TEXMACS_EXPERIMENTAL_TABWINDOW
+  mMainTabWindow = new QTMMainTabWindow();
+#endif
 }
   
 
