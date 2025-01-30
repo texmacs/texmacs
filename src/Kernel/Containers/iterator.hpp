@@ -18,8 +18,8 @@ extern int iterator_count;
 
 template<class T> class iterator_rep: public abstract_struct {
 public:
-  inline iterator_rep<T> () { TM_DEBUG(iterator_count++); }
-  inline virtual ~iterator_rep<T> () { TM_DEBUG(iterator_count--); }
+  inline iterator_rep () { TM_DEBUG(iterator_count++); }
+  inline virtual ~iterator_rep () { TM_DEBUG(iterator_count--); }
   virtual bool busy () = 0;
   virtual T next () = 0;
   virtual int remains ();
