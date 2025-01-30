@@ -10,6 +10,7 @@
 
 #include "QTMPixmapManager.hpp"
 #include "QTMSVGIconEngine.hpp"
+#include "qt_picture.hpp"
 
 #if QT_VERSION >= 0x060000
 
@@ -22,10 +23,13 @@ void QTMPixmapManager::loadAll() {
   // However we use XPM icons as fallback in case 
   // the SVG icons are not available.
   loadAll(QStringList() << "*.svg");
-  //loadAll(QStringList() << "*_x4.png");
-  //loadAll(QStringList() << "*_x2.png");
-  //loadAll(QStringList() << "*.png");
   loadAll(QStringList() << "*.xpm");
+
+  // Compatibility with old icons (for some plugins to work)
+  loadAllOld(QStringList() << "*_x4.png");
+  loadAllOld(QStringList() << "*_x2.png");
+  loadAllOld(QStringList() << "*.png");
+  loadAllOld(QStringList() << "*.xpm");
 }
 
 void QTMPixmapManager::loadAll(QStringList filters) {
@@ -44,7 +48,30 @@ void QTMPixmapManager::loadAll(QStringList filters) {
   }
 }
 
-void QTMPixmapManager::load(QString path, bool is_dark) {
+void QTMPixmapManager::loadAllOld(QStringList filters) {
+  if (mPath.isEmpty()) {
+    // set the default path to the TeXmacs pixmaps
+    string tmpath = get_env("TEXMACS_PATH");
+    mPath = QString::fromUtf8(&tmpath[0], N(tmpath)) + "/misc/pixmaps";
+  }
+  QDirIterator it(mPath + "/modern", filters, QDir::Files, QDirIterator::Subdirectories);
+  while (it.hasNext()) {
+    QString res = load(it.next(), false);
+    if (!res.isEmpty()) {
+      computeDarkVersion(res);
+    }
+  }
+  QDirIterator it_dark(mPath + "/traditional", filters, QDir::Files, QDirIterator::Subdirectories);
+  while (it_dark.hasNext()) {
+    load(it_dark.next(), false);
+    QString res = load(it_dark.next(), true);
+    if (!res.isEmpty()) {
+      computeDarkVersion(res);
+    }
+  }
+}
+
+QString QTMPixmapManager::load(QString path, bool is_dark) {
   // Look for the right map
   QMap<QString, QIcon> *icons = &mIcons;
   if (is_dark) {
@@ -67,14 +94,56 @@ void QTMPixmapManager::load(QString path, bool is_dark) {
       icon.addPixmap(icon.pixmap(64, QIcon::Selected, QIcon::On));
     } else {
       QPixmap pixmap(path);
+      if (pixmap.isNull()) {
+        return "";
+      }
       icon = QIcon(pixmap);
       icon.addPixmap(pixmap, QIcon::Disabled);
       icon.addPixmap(pixmap, QIcon::Active);
       icon.addPixmap(pixmap, QIcon::Selected);
     }
     (*icons)[name] = icon;
+    return name;
+  }
+  return "";
+}
+
+void QTMPixmapManager::computeDarkVersion(QString name) {
+  if (mIconsDark.contains(name)) {
     return;
   }
+  if (!mIcons.contains(name)) {
+    return;
+  }
+  if (mIcons[name].availableSizes().isEmpty()) {
+    std_warning << "Icon seems to be corrupted: " << name.toUtf8().constData() << LF;
+    return;
+  }
+
+  // get the maximum size of the icon
+  int maxSizeIndex = 0;
+  int maxSizeSquare = 0;
+  for (int i = 0; i < mIcons[name].availableSizes().size(); i++) {
+    QSize size = mIcons[name].availableSizes()[i];
+    int sizeSquare = size.width() * size.height();
+    if (sizeSquare > maxSizeSquare) {
+      maxSizeSquare = sizeSquare;
+      maxSizeIndex = i;
+    }
+  }
+
+  // create the dark version of the icon
+  QImage image = mIcons[name].pixmap(mIcons[name].availableSizes()[maxSizeIndex]).toImage();
+  invert_colors (image);
+  saturate (image);
+
+  // create the icon
+  QPixmap pixmap = QPixmap::fromImage(image);
+  QIcon icon = QIcon(pixmap);
+  icon.addPixmap(pixmap, QIcon::Disabled);
+  icon.addPixmap(pixmap, QIcon::Active);
+  icon.addPixmap(pixmap, QIcon::Selected);
+  mIconsDark[name] = icon;
 }
 
 #endif // QT_VERSION >= 0x060000
