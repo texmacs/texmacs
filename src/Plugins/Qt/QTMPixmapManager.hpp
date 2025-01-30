@@ -76,6 +76,16 @@ public:
    * @param filters The list of filters to match the icons
    */
   void loadAll(QStringList filters);
+
+  /**
+   * @brief Load all old icons from the directory matching the given filters
+   * 
+   * This method loads all old icons from the directory specified in the 
+   * constructor that match the given filters.
+   * 
+   * @param filters The list of filters to match the icons
+   */
+  void loadAllOld(QStringList filters);
   
   /**
    * @brief Load an icon from the given path
@@ -85,7 +95,16 @@ public:
    * 
    * @param path The path to the icon file
    */
-  void load(QString path, bool is_dark=false);
+  QString load(QString path, bool is_dark=false);
+
+  /**
+   * @brief Compute the dark version of an icon
+   * 
+   * This method computes the dark version of a light icon.
+   * 
+   * @param name The name of the icon
+   */
+  void computeDarkVersion(QString name);
   
   /**
    * @brief Get the icon map
