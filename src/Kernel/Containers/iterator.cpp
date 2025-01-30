@@ -51,7 +51,7 @@ class hashset_iterator_rep: public iterator_rep<T> {
   void spool ();
 
 public:
-  hashset_iterator_rep<T> (hashset<T> h);
+  hashset_iterator_rep (hashset<T> h);
   bool busy ();
   T next ();
 };
