@@ -15,9 +15,9 @@
 
 template<class T> struct rep {
   string res_name;
-  inline rep<T> (string res_name2):res_name (res_name2) {
+  inline rep (string res_name2):res_name (res_name2) {
     T::instances (res_name)= static_cast<pointer>(this); }
-  inline virtual ~rep<T> () {
+  inline virtual ~rep () {
     T::instances -> reset (res_name); }
 };
 

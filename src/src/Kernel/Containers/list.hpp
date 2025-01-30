@@ -41,9 +41,9 @@ public:
   T       item;
   list<T> next;
 
-  inline list_rep<T> (T item2, list<T> next2): item(item2), next(next2) {
+  inline list_rep (T item2, list<T> next2): item(item2), next(next2) {
     TM_DEBUG(list_count++); }
-  inline ~list_rep<T> () { TM_DEBUG(list_count--); }
+  inline ~list_rep () { TM_DEBUG(list_count--); }
   friend class list<T>;
 };
 
