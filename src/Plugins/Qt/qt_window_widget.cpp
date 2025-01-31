@@ -79,6 +79,7 @@ qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, string name,
  */
 qt_window_widget_rep::~qt_window_widget_rep ()
 {
+  qwid->setProperty ("texmacs_window_widget", QVariant());
   if (!fake) nr_windows--;
   if (DEBUG_QT)
     debug_qt << "Deleting qt_window_widget " << id << "\n";
