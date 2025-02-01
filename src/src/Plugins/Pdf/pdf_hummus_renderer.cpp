@@ -2099,6 +2099,7 @@ pdf_hummus_renderer_rep::image (
 		      0, ((double)h) / ((double)im->h),
 		      to_x (x), to_y (y));
   std::string pdfFormName = page->GetResourcesDictionary().AddFormXObjectMapping(im->id);
+  contentContext->RG(0, 0, 0);
   select_alpha((1000 * alpha) / 255);
   contentContext->Do(pdfFormName);
   //contentContext->re(0,0,im->w,im->h);
