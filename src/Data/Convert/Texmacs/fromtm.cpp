@@ -357,7 +357,7 @@ is_expand (tree t, string s, int n) {
 
 tree
 texmacs_document_to_tree (string s) {
-  tree error (ERROR, "bad format or data");
+  tree error (TMERROR, "bad format or data");
   if (starts (s, "edit") ||
       starts (s, "TeXmacs") ||
       starts (s, "\\(\\)(TeXmacs"))
@@ -450,7 +450,7 @@ extract (tree doc, string attr) {
 
 tree
 extract_document (tree doc) {
-  if (is_func (doc, ERROR)) return doc;
+  if (is_func (doc, TMERROR)) return doc;
   bool prj = (extract (doc, "project") != "");
   tree body= extract (doc, "body");
   tree init= extract (doc, "initial");

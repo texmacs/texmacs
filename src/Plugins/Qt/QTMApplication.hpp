@@ -23,6 +23,7 @@
 #include "gui.hpp"
 #include "QTMKeyboard.hpp"
 #include "QTMPixmapManager.hpp"
+#include "QTMMainTabWindow.hpp"
 
 void init_palette (QApplication* app);
 void init_style_sheet (QApplication* app);
@@ -64,12 +65,21 @@ public:
     return mKeyboard;
   }
 
+#ifdef TEXMACS_EXPERIMENTAL_TABWINDOW
+  inline QTMMainTabWindow &mainTabWindow() {
+    return *mMainTabWindow;
+  }
+#endif
+
 private:
 #if QT_VERSION >= 0x060000
   bool mPixmapManagerInitialized;
   QTMPixmapManager pm;
 #endif
   QTMKeyboard mKeyboard;
+#ifdef TEXMACS_EXPERIMENTAL_TABWINDOW
+  QTMMainTabWindow *mMainTabWindow;
+#endif
 
 };
 

@@ -16,6 +16,7 @@
 #include "QTMWindow.hpp"
 #include "QTMGuiHelper.hpp"
 #include "QTMMenuHelper.hpp"
+#include "QTMApplication.hpp"
 
 #include "message.hpp"
 #include "analyze.hpp"
@@ -78,6 +79,7 @@ qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, string name,
  */
 qt_window_widget_rep::~qt_window_widget_rep ()
 {
+  qwid->setProperty ("texmacs_window_widget", QVariant());
   if (!fake) nr_windows--;
   if (DEBUG_QT)
     debug_qt << "Deleting qt_window_widget " << id << "\n";
@@ -169,6 +171,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       check_type<bool> (val, s);
       bool flag = open_box<bool> (val);
       if (qwid) {
+#ifndef TEXMACS_EXPERIMENTAL_TABWINDOW
         if (flag) {
           //QWidget* master = QApplication::activeWindow ();
           qwid->show();
@@ -179,6 +182,13 @@ qt_window_widget_rep::send (slot s, blackbox val) {
           //QApplication::setActiveWindow (master);
         }
         else qwid->hide();
+#else
+        if (flag) {
+          tmapp()->mainTabWindow().showWidget(qwid);
+        } else {
+          tmapp()->mainTabWindow().removeWidget(qwid);
+        }
+#endif
       }
     }
       break;
@@ -198,7 +208,11 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       check_type<string> (val, s);
       string name = open_box<string> (val);
         // The [*] is for QWidget::setWindowModified()
+#ifndef TEXMACS_EXPERIMENTAL_TABWINDOW
       if (qwid) qwid->setWindowTitle (to_qstring (name * "[*]"));
+#else
+      if (qwid) tmapp()->mainTabWindow().tabTitleChanged (qwid, to_qstring (name));
+#endif
     }
       break;
     case SLOT_MODIFIED:

@@ -184,13 +184,13 @@ bridge_compound_rep::my_typeset (int desired_status) {
     if (is_atomic (f)) {
       string var= f->label;
       if (env->provides (var)) f= env->read (var);
-      else f= tree (ERROR, st);
+      else f= tree (TMERROR, st);
     }
   }
   else {
     string var= as_string (L(st));
     if (env->provides (var)) f= env->read (var);
-    else f= tree (ERROR, st);
+    else f= tree (TMERROR, st);
     d= 0;
   }
 

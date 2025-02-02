@@ -8,13 +8,6 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#define WINDOWS_HEADERS_FIX
-// #include "analyze.hpp"
-// todo : FAILED, PATTERN and ERROR are conflicting 
-// between windows and texmacs. We can't include 
-// headers such as analyze.hpp and url.hpp until 
-// we resolve the conflict.
-
 #include <windows.h>
 #include <io.h>
 #include <fcntl.h>
@@ -39,9 +32,7 @@
 #include <QStyleHints>
 #endif
 
-string recompose (array<string> a, string sep);
-string replace (string s, string what, string by);
-
+#include "analyze.hpp"
 #include "tm_timer.hpp"
 
 typedef struct texmacs_dir_t {
@@ -454,7 +445,7 @@ int windows_system(string cmd, string *cmdout, string *cmderr) {
   // CreateProcessW will work only on executable files.
   // It will not work to open PDF, links, etc.
   res = CreateProcessW(NULL, (LPWSTR)wide_cmd.c_str(), NULL, NULL, 
-                       TRUE, 0, NULL, NULL, &si, &pi);
+                       TRUE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
   if (!res) {
     // If we are here, it means that windows_system is trying to
     // open a file, like a PDF, or a link.
@@ -484,6 +475,11 @@ int windows_system(string cmd, string *cmdout, string *cmderr) {
   // because it can freeze the application
   WaitForSingleObject(pi.hProcess, 30000);
   
+  // Close the write pipe handle so the child process stops reading
+  // and we can read the output
+  CloseHandle(hOutWrite.h);
+  CloseHandle(hErrWrite.h);
+
   DWORD bytesRead;
   std::wstring wide_cmdout, wide_cmderr;
   WCHAR buffer[4096];

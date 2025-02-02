@@ -249,10 +249,16 @@ bool use_unified_toolbar= true;
 string tm_style_sheet;
 bool use_mini_bars= false;
 
-#if !defined(NO_FAST_ALLOC) && \
-  (!defined(AC_QT_MAJOR_VERSION) || AC_QT_MAJOR_VERSION < 6)
+#ifdef NO_FAST_ALLOC
 template<> void
 tm_delete<widget_rep> (widget_rep* ptr) {
+  if (ptr == NULL) return;
+  delete ptr;
+}
+#else
+template<> void
+tm_delete<widget_rep> (widget_rep* ptr) {
+  if (ptr == NULL) return;
   void *mem= ptr->derived_this ();
   ptr -> ~widget_rep ();
   fast_delete (mem);

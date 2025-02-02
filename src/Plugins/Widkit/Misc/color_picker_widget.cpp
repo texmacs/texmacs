@@ -97,7 +97,7 @@ direct_color_picker (command cmd, bool bg, array<tree> proposals) {
     for (int i=0; i<N(all); i++)
       if (ends (all[i], ".png")) {
 	url image= resolve (relative (pattern_dir, all[i]));
-	cols3 << tree (PATTERN, as_string (pattern_dir * all[i]), "", "");
+	cols3 << tree (TMPATTERN, as_string (pattern_dir * all[i]), "", "");
       }
     picker[4]= tile_color_picker (cols3, cmd, 8);
   }
