@@ -19,7 +19,7 @@
 
 tree
 edit_env_rep::exec_anim_static (tree t) {
-  if (N(t) < 3) return tree (TMERROR, "bad anim-static");
+  if (N(t) < 3) return tree (_ERROR, "bad anim-static");
   int tot= max (as_length (exec (t[1])), 1);
   int inc= max (as_length (exec (t[2])), 1);
   int cur= 0;

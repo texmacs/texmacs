@@ -385,17 +385,17 @@ evaluate_impl (tree t) {
 
 tree
 evaluate_error (string error) {
-  return tree (TMERROR, error);
+  return tree (_ERROR, error);
 }
 
 tree
 evaluate_error (string error, tree arg) {
-  return tree (TMERROR, error, arg);
+  return tree (_ERROR, error, arg);
 }
 
 tree
 evaluate_error (string error, array<tree> args) {
-  tree r= tree (TMERROR, error);
+  tree r= tree (_ERROR, error);
   r << args;
   return r;
 }
