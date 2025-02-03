@@ -186,7 +186,7 @@ concater_rep::typeset (tree t, path ip) {
 
   switch (L (t)) {
   case UNINIT:
-  case TMERROR:
+  case _ERROR:
     typeset_error (t, ip);
     break;
   case RAW_DATA:
@@ -1077,8 +1077,8 @@ box_info (edit_env env, tree t, string what) {
     case 'H': r << as_string (b->y4 - b->y3); break;
     case '.':
       if (N(r)==1) return as_string (r[0]) * "tmpt";
-      else if (N(r)==0) return tree (TMERROR, "No query for box-info");
-      else return tree (TMERROR, "More than one query for box-info");
+      else if (N(r)==0) return tree (_ERROR, "No query for box-info");
+      else return tree (_ERROR, "More than one query for box-info");
     }
   }
   return r;

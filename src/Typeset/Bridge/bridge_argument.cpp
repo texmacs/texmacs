@@ -135,7 +135,7 @@ bridge_argument_rep::my_typeset (int desired_status) {
   path   valip= decorate_right (ip);
 
   tree r= st[0];
-  if (is_compound (r)) value= tree (TMERROR, "arg");
+  if (is_compound (r)) value= tree (_ERROR, "arg");
   else {
     name = r->label;
     if ((!is_nil (env->macro_arg)) && env->macro_arg->item->contains (r->label)) {
@@ -155,14 +155,14 @@ bridge_argument_rep::my_typeset (int desired_status) {
       tree r= env->exec (st[i]);
       if (!is_int (r)) {
         prefix= path ();
-        value= tree (TMERROR, "arg " * name);
+        value= tree (_ERROR, "arg " * name);
         valip= decorate_right (ip);
         break;
       }
       int nr= as_int (r);
       if ((!is_compound (value)) || (nr<0) || (nr>=N(value))) {
         prefix= path ();
-        value= tree (TMERROR, "arg " * name);
+        value= tree (_ERROR, "arg " * name);
         valip= decorate_right (ip);
         break;
       }
