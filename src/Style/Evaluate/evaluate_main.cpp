@@ -349,7 +349,7 @@ evaluate_impl (tree t) {
     return evaluate_get_binding (t);
 
   /* Graphical primitives */
-  case TMPATTERN:
+  case _PATTERN:
     return evaluate_pattern (t);
   case _POINT:
     return evaluate_point (t);
