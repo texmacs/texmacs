@@ -155,7 +155,7 @@ get_doc_zoom_factor (tree doc) {
       else {
 	if (is_func (doc[i], ASSOCIATE, 2) && doc[i][0] == ZOOM_FACTOR)
 	  return as_double (doc[i][1]);
-      };
+      }
     }
   return -1.0;
 }
