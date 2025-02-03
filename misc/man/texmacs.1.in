@@ -1,31 +1,31 @@
 .TH texmacs 1 "12Sep2005" @PACKAGE@-@DEVEL_VERSION@
 .SH NAME
-texmacs - The GNU TeXmacs WYSIWYG scientific text editor
+texmacs - The GNU TeXmacs scientific office suite
 .PP
 .SH SYNOPSIS
 texmacs [\fIOPTION\fR]... [\fISOURCE\fR]...
 .PP
 .SH INTRODUCTION
-GNU TeXmacs is a free scientific text editor, which was both inspired
-by TeX and GNU Emacs. The editor allows you to write structured documents
-via a WYSIWYG (what-you-see-is-what-you-get) and user friendly interface.
-New styles may be created by the user. The program implements high-quality
-typesetting algorithms and TeX fonts, which help you to produce
+GNU TeXmacs is a free scientific office suite.  Its core consists of
+a text editor for scientists, with support for mathematical formulas,
+technical pictures, dynamic educational content, etc.
+The editor allows you to write complex structured documents via
+a WYSIWYG (what-you-see-is-what-you-get) and user friendly interface.
+New styles may be created by the user. The program implements
+high-quality typesetting algorithms, which help you to produce
 professionally looking documents.
 .PP
 The high typesetting quality still goes through for automatically
 generated formulas, which makes TeXmacs suitable as an interface
 for computer algebra systems. TeXmacs also supports the Guile/Scheme
 extension language, so that you may customize the interface and
-write your own extensions to the editor.
+write your own extensions to the editor. More recently,
+TeXmacs has evolved towards a complete scientific office suite,
+with integrated tools for laptop presentations, animations,
+bibliography management, version control, etc.
 .PP
-TeXmacs currently runs on PC's and PPC's under Gnu/linux
-(a >200MHz processor and >32Mb of memory are recommended)
-and on sun computers. Converters exist for TeX/LaTeX and
-they are under development for Html/Mathml/Xml.
-In the future, TeXmacs is planned to evoluate towards
-a complete scientific office suite, with spreadsheet capacities,
-a technical drawing editor and a presentation mode.
+TeXmacs currently runs under GNU/Linux, Windows, and MacOS.
+Converters exist for TeX/LaTeX and Html/Mathml/Xml.
 .PP
 .SH DESCRIPTION
 .TP
