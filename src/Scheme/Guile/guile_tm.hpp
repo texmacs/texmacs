@@ -19,8 +19,6 @@
 
 #ifdef OS_MINGW
 // we redefine some symbols to avoid name clashes with Windows headers (included by Guile)
-#define PATTERN WIN_PATTERN
-#define STRING WIN_STRING
 #define GROUP WIN_GROUP
 #ifdef IN
 #define MY_IN IN
@@ -51,10 +49,6 @@
 #endif
 
 #ifdef OS_MINGW
-// put things back
-#undef STRING
-#undef ERROR
-#undef PATTERN
 #undef GROUP
 #undef IN
 #undef OUT

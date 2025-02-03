@@ -19,10 +19,14 @@
 // if QTMPIXMAPS is defined we use QPixmap for characters
 // otherwise we use QImage (which supports alpha also under X11)
 
+#if QT_VERSION >= 0x060000
+#undef QTMPIXMAPS
+#else
 #ifdef Q_OS_MAC
 #define QTMPIXMAPS
 #else
 #undef QTMPIXMAPS
+#endif
 #endif
 
 struct QTMPixmapOrImage {

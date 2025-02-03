@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="svg5375" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <defs>
+    <style>
+      .cls-1 {
+        stroke: #404040;
+        stroke-dasharray: 1 1;
+        stroke-dashoffset: .5px;
+      }
+
+      .cls-1, .cls-2, .cls-3 {
+        fill: #ffffff;
+      }
+
+      .cls-2 {
+        stroke: #808080;
+      }
+
+      .cls-3 {
+        stroke: #ffffff;
+      }
+
+      .cls-4 {
+        fill: #c0c0c0;
+        stroke: #c0c0c0;
+      }
+
+      .cls-5 {
+        fill: transparent;
+        stroke: #404040;
+        stroke-dasharray: 1 1;
+        stroke-dashoffset: .5px;
+      }
+    </style>
+  </defs>
+  <!-- Bottom Document -->
+  <rect class="cls-2" x="3.5" y=".5" width="18" height="23"/>
+
+  <!-- Top Left Rectangle -->
+  <rect class="cls-4" x="6" y="4" width="12" height="12"/>
+
+  <!-- Top Left Stroke -->
+  <rect class="cls-5" x="6" y="4" width="12" height="12"/>
+
+  <!-- Bottom Right Rectangle -->
+  <rect class="cls-3" x="11" y="7" width="12" height="12"/>
+
+  <!-- Bottom Right Stroke -->
+  <rect class="cls-1" x="11" y="7" width="12" height="12"/>
+</svg>

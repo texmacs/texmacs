@@ -167,13 +167,13 @@ stretched (glyph gl, double xf, double yf) {
     int i1= ((int) floor (X / xf)) - x1;
     int i2= ((int) ceil  ((X + 1) / xf)) - x1;
     i1= max (min (i1, ww-1), 0);
-    i2= max (min (i2, ww-1), 0);
+    i2= max (min (i2, ww), 0);
     for (J=0; J<HH; J++) {
       int Y = J + Y1;
       int j1= ((int) floor (Y / yf)) - y1;
       int j2= ((int) ceil  ((Y + 1) / yf)) - y1;
       j1= max (min (j1, hh-1), 0);
-      j2= max (min (j2, hh-1), 0);
+      j2= max (min (j2, hh), 0);
       double sum= 0.0;
       for (i= i1; i<i2; i++)
         for (j= j1; j<j2; j++)

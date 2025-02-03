@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 cd $TEXMACS_PATH/plugins/lush
 echo -ne "\002verbatim:"
 cat << EOF

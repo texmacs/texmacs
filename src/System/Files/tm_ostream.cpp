@@ -11,13 +11,21 @@
 
 #include "tm_ostream.hpp"
 #include "tree.hpp"
-#ifdef OS_MINGW
-#include "Windows/win-utf8-compat.hpp"
-#include "Windows/nowide/iostream.hpp"
-#include "Windows/nowide/convert.hpp"
-FILE* fstdout;
-FILE* fstderr; 
+
+#if defined (OS_MINGW64)
+#include "Windows64/windows64_system.hpp"
+#elif defined (OS_MINGW)
+#include "Windows/windows32_system.hpp"
+#elif defined (OS_ANDROID)
+#include "Android/android_system.hpp"
+#else
+#include "Unix/unix_system.hpp"
 #endif
+
+#ifndef HAVE_SNPRINTF
+#warning "security issue: snprintf not available, potential buffer overflows"
+#endif
+
 /******************************************************************************
 * Routines for abstract base class
 ******************************************************************************/
@@ -27,7 +35,7 @@ tm_ostream_rep::~tm_ostream_rep () {}
 void tm_ostream_rep::flush () {}
 void tm_ostream_rep::clear () {}
 bool tm_ostream_rep::is_writable () const { return false; }
-void tm_ostream_rep::write (const char*) {}
+void tm_ostream_rep::write (const char*, size_t n) { (void) n; }
 void tm_ostream_rep::write (tree t) { (void) t; }
 
 /******************************************************************************
@@ -46,7 +54,7 @@ public:
   ~std_ostream_rep ();
 
   bool is_writable () const;
-  void write (const char*);
+  void write (const char* s, size_t n);
   void flush ();
 };
 
@@ -62,10 +70,6 @@ std_ostream_rep::std_ostream_rep (char* fn):
 {
   file= fopen (fn, "w");
   if (file) {
-#ifdef OS_MINGW
-    if (strcmp(fn, "stdout") == 0) fstdout = file; 
-    if (strcmp(fn, "stderr") == 0) fstderr = file;
-#endif
     is_w= true;
     is_mine= true;
   }
@@ -94,31 +98,53 @@ std_ostream_rep::is_writable () const {
 }
 
 void
-std_ostream_rep::write (const char* s) {
-#ifdef OS_MINGW
-  if (file == fstdout) {
-      nowide::cout<<s ;
-      nowide::cout.flush();
-     }
-  else if (file == fstderr) {
-      nowide::cerr<<s ;
-      nowide::cerr.flush();
-     }
-  else
-#endif
-  if (file && is_w) {
-    if (0 <= fprintf (file, "%s", s)) {
-      const char* c= s;
-      while (*c != 0 && *c != '\n') ++c;
-      if (*c == '\n') flush ();
-    }
-    else is_w= false;
+std_ostream_rep::write (const char* s, size_t n) {
+  if (!file || !is_w) {
+    return;
   }
+  if (n == 0) {
+    return;
+  }
+  ssize_t written= texmacs_fwrite(s, n, file);
+  if (written < 0 || ((size_t) written) != n) {
+    is_w = false;
+    return;
+  }
+  const char* c= s;
+  while (*c != 0 && *c != '\n') ++c;
+  if (*c == '\n') flush ();
 }
 
 void
 std_ostream_rep::flush () {
   if (file && is_w) fflush (file);
+}
+
+/******************************************************************************
+* String streams
+******************************************************************************/
+
+class string_ostream_rep: public tm_ostream_rep {
+public:
+  string* buf;
+
+public:
+  string_ostream_rep (string* buf);
+  ~string_ostream_rep ();
+
+  bool is_writable () const;
+  void write (const char* s, size_t n);
+};
+
+string_ostream_rep::string_ostream_rep (string* buf2): buf (buf2) {}
+string_ostream_rep::~string_ostream_rep () {}
+bool string_ostream_rep::is_writable () const { return true; }
+void string_ostream_rep::write (const char* s, size_t n) { (*buf) << string (s,n); }
+
+
+tm_ostream
+string_ostream (string& buf) {
+  return (tm_ostream_rep*) tm_new<string_ostream_rep> (&buf);
 }
 
 /******************************************************************************
@@ -135,7 +161,7 @@ public:
   ~buffered_ostream_rep ();
 
   bool is_writable () const;
-  void write (const char*);
+  void write (const char* s, size_t n);
 };
 
 buffered_ostream_rep::buffered_ostream_rep (tm_ostream_rep* master2):
@@ -149,8 +175,8 @@ buffered_ostream_rep::is_writable () const {
 }
 
 void
-buffered_ostream_rep::write (const char* s) {
-  buf << s;
+buffered_ostream_rep::write (const char* s, size_t n) {
+  buf << string (s, n);
 }
 
 /******************************************************************************
@@ -166,7 +192,7 @@ public:
   ~debug_ostream_rep ();
 
   bool is_writable () const;
-  void write (const char*);
+  void write (const char* s, size_t n);
   void write (tree t);
   void clear ();
 };
@@ -185,8 +211,8 @@ debug_ostream_rep::clear () {
 }
 
 void
-debug_ostream_rep::write (const char* s) {
-  debug_message (channel, s);
+debug_ostream_rep::write (const char* s, size_t n) {
+  debug_message (channel, string (s, n));
 }
 
 void
@@ -268,102 +294,144 @@ tm_ostream::operator << (bool b) {
 tm_ostream&
 tm_ostream::operator << (char c) {
   static char _buf[8];
-  sprintf (_buf, "%c", c);
-  rep->write (_buf);
+#ifdef HAVE_SNPRINTF
+  int n = snprintf (_buf, 8, "%c", c);
+#else
+  int n = sprintf (_buf, "%c", c);
+#endif
+  rep->write (_buf, n);
   return *this;
 }
 
 tm_ostream&
 tm_ostream::operator << (short sh) {
   static char _buf[32];
-  sprintf (_buf, "%hd", sh);
-  rep->write (_buf);
+#ifdef HAVE_SNPRINTF
+  int n = snprintf (_buf, 32, "%hd", sh);
+#else
+  int n = sprintf (_buf, "%hd", sh);
+#endif
+  rep->write (_buf, n);
   return *this;
 }
 
 tm_ostream&
 tm_ostream::operator << (unsigned short ush) {
   static char _buf[32];
-  sprintf (_buf, "%hu", ush);
-  rep->write (_buf);
+#ifdef HAVE_SNPRINTF
+  int n = snprintf (_buf, 32, "%hu", ush);
+#else
+  int n = sprintf (_buf, "%hu", ush);
+#endif
+  rep->write (_buf, n);
   return *this;
 }
 
 tm_ostream&
 tm_ostream::operator << (int i) {
   static char _buf[64];
-  sprintf (_buf, "%d", i);
-  rep->write (_buf);
+#ifdef HAVE_SNPRINTF
+  int n = snprintf (_buf, 64, "%d", i);
+#else
+  int n = sprintf (_buf, "%d", i);
+#endif
+  rep->write (_buf, n);
   return *this;
 }
 
 tm_ostream&
 tm_ostream::operator << (unsigned int ui) {
   static char _buf[64];
-  sprintf (_buf, "%u", ui);
-  rep->write (_buf);
+#ifdef HAVE_SNPRINTF
+  int n = snprintf (_buf, 64, "%u", ui);
+#else
+  int n = sprintf (_buf, "%u", ui);
+#endif
+  rep->write (_buf, n);
   return *this;
 }
 
 tm_ostream&
 tm_ostream::operator << (long l) {
   static char _buf[64];
-  sprintf (_buf, "%ld", l);
-  rep->write (_buf);
+#ifdef HAVE_SNPRINTF
+  int n = snprintf (_buf, 64, "%ld", l);
+#else
+  int n = sprintf (_buf, "%ld", l);
+#endif
+  rep->write (_buf, n);
   return *this;
 }
 
 tm_ostream&
 tm_ostream::operator << (unsigned long ul) {
   static char _buf[64];
-  sprintf (_buf, "%lu", ul);
-  rep->write (_buf);
+#ifdef HAVE_SNPRINTF
+  int n = snprintf (_buf, 64, "%lu", ul);
+#else
+  int n = sprintf (_buf, "%lu", ul);
+#endif
+  rep->write (_buf, n);
   return *this;
 }
 
 tm_ostream&
 tm_ostream::operator << (long long ll) {
   static char _buf[64];
-  sprintf (_buf, "%lld", ll);
-  rep->write (_buf);
+#ifdef HAVE_SNPRINTF
+  int n = snprintf (_buf, 64, "%lld", ll);
+#else
+  int n = sprintf (_buf, "%lld", ll);
+#endif
+  rep->write (_buf, n);
   return *this;
 }
 
 tm_ostream&
 tm_ostream::operator << (unsigned long long ull) {
   static char _buf[64];
-  sprintf (_buf, "%llu", ull);
-  rep->write (_buf);
+#ifdef HAVE_SNPRINTF
+  int n = snprintf (_buf, 64, "%llu", ull);
+#else
+  int n = sprintf (_buf, "%llu", ull);
+#endif
+  rep->write (_buf, n);
   return *this;
 }
 
 tm_ostream&
 tm_ostream::operator << (float f) {
   static char _buf[32];
-  sprintf (_buf, "%g", f);
-  rep->write (_buf);
+#ifdef HAVE_SNPRINTF
+  int n = snprintf (_buf, 32, "%g", f);
+#else
+  int n = sprintf (_buf, "%g", f);
+#endif
+  rep->write (_buf, n);
   return *this;
 }
 
 tm_ostream&
 tm_ostream::operator << (double d) {
   static char _buf[64];
-  sprintf (_buf, "%g", d);
-  rep->write (_buf);
+#ifdef HAVE_SNPRINTF
+  int n = snprintf (_buf, 64, "%g", d);
+#else
+  int n = sprintf (_buf, "%g", d);
+#endif
+  rep->write (_buf, n);
   return *this;
 }
 
 tm_ostream&
 tm_ostream::operator << (long double ld) {
   static char _buf[128];
-  sprintf (_buf, "%Lg", ld);
-  rep->write (_buf);
-  return *this;
-}
-
-tm_ostream&
-tm_ostream::operator << (const char* s) {
-  rep->write (s);
+#ifdef HAVE_SNPRINTF
+  int n = snprintf (_buf, 128, "%Lg", ld);
+#else
+  int n = sprintf (_buf, "%Lg", ld);
+#endif
+  rep->write (_buf, n);
   return *this;
 }
 

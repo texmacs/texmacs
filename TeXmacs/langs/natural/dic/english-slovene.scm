@@ -1,6 +1,7 @@
 ("abbreviation" "okraj²ava")
 ("about menu" "o programu")
 ("about" "o programu")
+("apropos" "o programu")
 ("above" "nad")
 ("abstract" "povzetek")
 ("accent" "akcent")

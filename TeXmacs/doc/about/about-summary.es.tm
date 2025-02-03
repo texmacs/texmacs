@@ -8,7 +8,7 @@
   <big-table|<descriptive-table|<tformat|<cwith|1|1|1|1|cell-row-span|1>|<cwith|1|1|1|1|cell-col-span|2>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|GNU
   <TeXmacs>>|<cell|>>|<row|<cell|Versión>|<cell|<TeXmacs-version>>>|<row|<cell|Sistemas
   soportados>|<cell|La mayoría de los sistemas
-  GNU/<name|Linux>>>|<row|<cell|Copyright>|<cell|<copyright> 1998--2002 por
+  GNU/<name|Linux>>>|<row|<cell|Copyright>|<cell|<copyright> 1998--2024 por
   Joris van der Hoeven >>|<row|<cell|Licencia>|<cell|<hlink|Licencia Pública
   General GNU|$TEXMACS_PATH/LICENSE>>>|<row|<cell|Sitios
   web>|<cell|<tabular|<tformat|<twith|table-valign|T>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<table|<row|<cell|<verbatim|https://www.texmacs.org>>>|<row|<cell|<verbatim|http://www.gnu.org/software/texmacs>>>>>>>>|<row|<cell|Contacto>|<cell|<verbatim|contact@texmacs.org>>>|<row|<cell|Correo

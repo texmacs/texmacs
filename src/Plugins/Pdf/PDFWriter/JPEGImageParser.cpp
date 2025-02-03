@@ -287,6 +287,7 @@ EStatusCode JPEGImageParser::ReadPhotoshopData(JPEGImageInformation& outImageInf
 	// error in the former should cause complete break. error in the latter is fine on the read level
 	// and simply means the data is logically corrupt and should simply be skipped
 
+        (void) outPhotoshopDataOK;
 	TwoLevelStatus twoLevelStatus(eSuccess,eSuccess);
 	unsigned int intSkip;
 	unsigned long toSkip;

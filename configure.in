@@ -36,7 +36,7 @@ AC_PROG_CC([clang gcc])
 AC_PROG_CXX([clang++ g++])
 AC_PROG_OBJC([clang gcc])
 AC_PROG_OBJCXX([clang++ g++])
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
 AH_TEMPLATE([OLD_GNU_COMPILER],[Use g++ strictly prior to g++ 3.0])
 AC_MSG_CHECKING(whether GNU C++ compiler is default)
 case "$GXX" in
@@ -92,6 +92,7 @@ AC_CHECK_TYPES(intptr_t)
 AC_CHECK_TYPES(time_t)
 AC_CHECK_HEADERS(pty.h util.h)
 AC_CHECK_FUNCS(gettimeofday)
+AC_CHECK_FUNCS(snprintf)
 
 TM_REPO
 TM_PLATFORM
@@ -130,13 +131,28 @@ TM_SIGN
 # final adjustement for Texmacs compile and run
 #--------------------------------------------------------------------
 
+if [[[ "0$QT_MAJOR" -ge 6 ]]]; then
+  case "${host}" in
+    *darwin*)
+      if [[[ "${CC}" =~ "clang" ]]]; then
+        A=(${CC// / })
+        CC=${A[[0]]}
+      fi
+      if [[[ "${CXX}" =~ "clang" ]]]; then
+        A=(${CXX// / })
+        CXX="${A[[0]]} -std=c++17"
+      fi
+    ;;
+  esac
+fi
+
 CPPFLAGS="$CPPFLAGS -include config.h"
 
 #--------------------------------------------------------------------
 # Done
 #--------------------------------------------------------------------
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
 src/makefile
 misc/admin/admin.makefile
@@ -156,5 +172,8 @@ packages/windows/TeXmacs.iss:packages/windows/TeXmacs.iss.in
 packages/windows/resource.rc:packages/windows/resource.rc.in 
 packages/debian/changelog:packages/debian/changelog.in 
 packages/debian/control:packages/debian/control.in
-src/System/tm_configure.hpp:src/System/tm_configure.in 
+packages/android/res/values/libs.xml:packages/android/libs.xml.in
+packages/android/AndroidManifest.xml:packages/android/AndroidManifest.xml.in
+src/System/tm_configure.hpp:src/System/tm_configure.in
 ])
+AC_OUTPUT

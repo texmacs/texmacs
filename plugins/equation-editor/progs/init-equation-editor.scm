@@ -314,10 +314,10 @@
         (former)
         ---
         (if (use-popups?) 
-          ("Equ. Editor plugin"
+          ("Equation editor plugin"
             (open-equation-editor-widget)))
         (if (use-menus?)
-          (-> "Equ. Editor plugin"
+          (-> "Equation editor plugin"
             (link equation-editor-menu)))
       ))
   

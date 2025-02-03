@@ -28,13 +28,13 @@
 
 (tm-define (script-keep-input?) script-keep-input-flag?)
 (tm-define (toggle-keep-input)
-  (:synopsis "Toggle whether we keep the input of evaluations.")
+  (:synopsis "Toggle whether we keep the input of evaluations")
   (:check-mark "v" script-keep-input?)
   (toggle! script-keep-input-flag?))
 
 (tm-define (script-eval-math?) script-eval-math-flag?)
 (tm-define (toggle-eval-math)
-  (:synopsis "Toggle whether we evaluate the innermost non-selected formulas.")
+  (:synopsis "Toggle whether we evaluate the innermost non-selected formulas")
   (:check-mark "v" script-eval-math?)
   (toggle! script-eval-math-flag?))
 
@@ -120,8 +120,7 @@
 	 (ses (get-env "prog-session")))
     (make-script-input* lan ses)))
 
-(tm-define (alternate-toggle t)
-  (:require (tree-is? t 'script-input))
+(tm-define (alternate-force-eval t)
   (let* ((lan (tree->string (tree-ref t 0)))
          (session (tree->string (tree-ref t 1)))
          (in (tree->stree (tree-ref t 2)))
@@ -129,6 +128,10 @@
     (script-eval-at out lan session in :math-input :simplify-output)
     (tree-assign-node! t 'script-output)
     (tree-go-to t 3 :end)))
+
+(tm-define (alternate-toggle t)
+  (:require (tree-is? t 'script-input))
+  (alternate-force-eval t))
 
 (tm-define (alternate-toggle t)
   (:require (tree-is? t 'script-output))
@@ -411,3 +414,25 @@
                  (tm-ref t 1)
                  (tree-empty? (tree-ref t 1))))
   (remove-structure-upwards))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; External Edit, edit and re-evaluation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (external-edit t)
+  (let ((temp (url-temp))
+        (editor (if (and (defined? 'external-editor) (not (string-null? external-editor)))
+                    external-editor (getenv "EDITOR"))))
+    (unless (string-null? editor)
+      (tree-export t temp "verbatim")
+      (shell (string-join (list editor (url->system temp))))
+      (tree-set t (verbatim-snippet->texmacs
+                   (string-load temp)
+                   (acons "verbatim->texmacs:encoding" "SourceCode" '()))))))
+
+(tm-define (external-edit-alternate-eval)
+  (let* ((t1 (tree-search-upwards (focus-tree) '(script-input script-output))) ; tree of fold
+         (t2 (if t1 (tree-ref t1 2) #f))) ; tree of input
+    (when t2
+      (external-edit t2)
+      (alternate-force-eval t1))))

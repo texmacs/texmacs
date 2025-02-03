@@ -50,7 +50,7 @@
 
 (menu-bind compressed-prog-format-menu
   (if (new-fonts?)
-      ("Font" (interactive open-font-selector)))
+      ("Font" (open-font-selector)))
   (if (not (new-fonts?))
       (-> "Font" (link prog-font-menu)))
   ("Paragraph" (open-paragraph-format))

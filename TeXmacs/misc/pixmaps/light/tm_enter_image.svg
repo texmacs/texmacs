@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg3039" width="16" height="16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <metadata id="metadata3044">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1">
+  <path id="path5628" d="m1 1.1098h14v14h-14z" fill="#e9f5f4"/>
+  <path id="path5630" d="m1 13.57 14 0.039613v-7.5l-14.025-0.052063z" fill="#becfbc"/>
+  <path id="path5626" d="m1 15.11h14v-4.5s-2.6428 0.34053-8-0.77027c-5.3572-1.1108-6-1.8653-6-1.8653z" fill="#e6eecc"/>
+  <path id="path5632" d="m3 15.11h2l1.1905-9.0009h-1.1905z" fill="#81553a"/>
+  <path id="path5634" d="m5 6.1089s0.5-2.4871 2-3.1089 4.7452-0.96626 4.7452-0.96626-3.1481 1.519-4.1593 2.2098c-1.0112 0.69077-1.6496 3.0813-1.6496 3.0813z" fill="#465901"/>
+  <path id="path8607" d="m15.5 3.6098v-3h-15v15h15v-3" fill="none" stroke="#808080" stroke-linecap="round" stroke-width="1.4"/>
+  <path id="path5636" d="m5 6.1089h1.1905s-0.75527-2.2021-1.7857-2.9608c-1.0304-0.75873-4.1667-0.74021-4.1667-0.74021s2.6048 1.5049 3.5389 2.1406c0.93409 0.63574 1.223 1.5605 1.223 1.5605z" fill="#465901"/>
+  <path id="path5638" d="m5 6.1089 0.94564 0.89866s1.5891-0.50081 2.5302-0.34408c0.94112 0.15673 3.2729 1.2427 3.2729 1.2427s-1.6632-2.5305-2.7314-2.8544c-1.0682-0.32391-4.0174 1.0571-4.0174 1.0571z" fill="#465901"/>
+  <path id="path5640" d="m5.723 6.9167 0.46749-0.80781s-2.1923-0.91609-3.3903-0.62137-3.0618 3.1193-3.0618 3.1193 2.5691-1.4465 3.5801-1.6505 2.4044-0.039615 2.4044-0.039615z" fill="#465901"/>
+  <path id="path8859" d="m16 8.1098h-5.5" fill="none" stroke="#c04040" stroke-width="1.7"/>
+  <path id="path8861" d="m12.5 5.6098-2 2.5 2 2.5" fill="none" stroke="#c04040" stroke-linecap="round" stroke-width="1.5"/>
+ </g>
+</svg>

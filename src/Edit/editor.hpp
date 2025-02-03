@@ -29,7 +29,7 @@
 #  include "../Style/Memorizer/memorizer.hpp"
 #endif
 #include "new_data.hpp"
-#define TEXMACS_COPYRIGHT (string("(c) 1999-2020 by Joris van der Hoeven and others"))
+#define TEXMACS_COPYRIGHT (string("(c) 1999-2024 by Joris van der Hoeven and others"))
 
 #define THE_CURSOR 1
 #define THE_FOCUS 2
@@ -64,6 +64,7 @@ protected:
   box          eb;   // box translation of tree
   path         rp;   // path to the root of the document in et
   path         tp;   // path of cursor in tree
+  path         previous_gp; // previous graphics path
 #ifdef EXPERIMENTAL
   environment  ste;  // environment for style rewriting
   tree         cct;  // clean copy of the document tree
@@ -609,6 +610,7 @@ public:
   virtual path the_shifted_path () = 0;
   virtual path the_buffer_path () = 0;
   virtual void show_tree () = 0;
+  virtual void show_box () = 0;
   virtual void show_env () = 0;
   virtual void show_path () = 0;
   virtual void show_cursor () = 0;

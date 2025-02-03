@@ -206,7 +206,7 @@
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; TODO: cell attributes: nowrap, width, height, id, bgcolor, align, char,
   ;;   charoff, valign.
-  ;; TODO: row and column attributes (beware of alignement inheritance rules).
+  ;; TODO: row and column attributes (beware of alignment inheritance rules).
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   (cond ((eq? msg :cell)
 	 (let ((attrs (sxml-attr-list kar)))
@@ -664,5 +664,5 @@
 
 (tm-define (html->texmacs html)
   (:type (-> stree stree))
-  (:synopsis "Convert a parsed HTML stree @t into a TeXmacs stree.")
+  (:synopsis "Convert a parsed HTML stree @t into a TeXmacs stree")
   (tree->stree (clean-html (convert-html-texmacs html))))

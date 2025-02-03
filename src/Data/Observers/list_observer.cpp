@@ -166,25 +166,25 @@ list_observer_rep::notify_detach (tree& ref, tree closest, bool right) {
 
 bool
 list_observer_rep::get_ip (path& ip) {
-  return (!is_nil (o1) && o1->get_ip (ip)) |
+  return (!is_nil (o1) && o1->get_ip (ip)) ||
          (!is_nil (o2) && o2->get_ip (ip));
 }
 
 bool
 list_observer_rep::set_ip (path ip) {
-  return (!is_nil (o1) && o1->set_ip (ip)) |
+  return (!is_nil (o1) && o1->set_ip (ip)) ||
          (!is_nil (o2) && o2->set_ip (ip));
 }
 
 bool
 list_observer_rep::get_position (tree& t, int& index) {
-  return (!is_nil (o1) && o1->get_position (t, index)) |
+  return (!is_nil (o1) && o1->get_position (t, index)) ||
          (!is_nil (o2) && o2->get_position (t, index));
 }
 
 bool
 list_observer_rep::set_position (tree t, int index) {
-  return (!is_nil (o1) && o1->set_position (t, index)) |
+  return (!is_nil (o1) && o1->set_position (t, index)) ||
          (!is_nil (o2) && o2->set_position (t, index));
 }
 
@@ -204,25 +204,25 @@ list_observer_rep::get_tree_pointers () {
 
 bool
 list_observer_rep::get_tree (tree& t) {
-  return (!is_nil (o1) && o1->get_tree (t)) |
+  return (!is_nil (o1) && o1->get_tree (t)) ||
          (!is_nil (o2) && o2->get_tree (t));
 }
 
 bool
 list_observer_rep::get_contents (int kind, blackbox& bb) {
-  return (!is_nil (o1) && o1->get_contents (kind, bb)) |
+  return (!is_nil (o1) && o1->get_contents (kind, bb)) ||
          (!is_nil (o2) && o2->get_contents (kind, bb));
 }
 
 bool
 list_observer_rep::set_highlight (int lan, int col, int start, int end) {
-  return (!is_nil (o1) && o1->set_highlight (lan, col, start, end)) |
+  return (!is_nil (o1) && o1->set_highlight (lan, col, start, end)) ||
          (!is_nil (o2) && o2->set_highlight (lan, col, start, end));
 }
 
 bool
 list_observer_rep::get_highlight (int lan, array<int>& cols) {
-  return (!is_nil (o1) && o1->get_highlight (lan, cols)) |
+  return (!is_nil (o1) && o1->get_highlight (lan, cols)) ||
          (!is_nil (o2) && o2->get_highlight (lan, cols));
 }
 

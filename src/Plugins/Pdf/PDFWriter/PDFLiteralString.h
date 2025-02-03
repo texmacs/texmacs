@@ -35,7 +35,7 @@ public:
 		eType = ePDFObjectLiteralString
 	};
 
-	// Value is the interpreted string (no enclosing paranthesis and escaped sequances as the result values)
+	// Value is the interpreted string (no enclosing parenthesis and escaped sequances as the result values)
 	PDFLiteralString(const std::string& inValue);
 	virtual ~PDFLiteralString(void);
 

@@ -21,6 +21,7 @@
 #include "QTMGuiHelper.hpp"
 #include "QTMStyle.hpp"
 #include "QTMTreeModel.hpp"
+#include "QTMApplication.hpp"
 
 #include <QToolTip>
 #include <QCompleter>
@@ -173,9 +174,15 @@ QTMTileAction::createWidget (QWidget* parent)
     // wid->setBackgroundRole (QPalette::Base);
   wid->setLayout (l);
   l->setSizeConstraint (QLayout::SetFixedSize);
+#if QT_VERSION >= 0x060000
+  l->setHorizontalSpacing (0);
+  l->setVerticalSpacing (0);
+  l->setContentsMargins (0, 0, 0, 0);
+#else
   l->setHorizontalSpacing (2);
   l->setVerticalSpacing (2);
   l->setContentsMargins (4, 0, 4, 0);
+#endif
   int row = 0, col = 0;
   for (int    i = 0; i < actions.count(); i++) {
     QAction* sa = actions[i];
@@ -259,7 +266,14 @@ QTMMinibarAction::createWidget (QWidget* parent) {
  ******************************************************************************/
 
 QTMMenuButton::QTMMenuButton (QWidget* parent) : QToolButton (parent) {
+#if QT_VERSION >= 0x060000
+  setIconSize (QSize (28, 28));
+  setToolButtonStyle (Qt::ToolButtonIconOnly);
+  setStyleSheet ("QToolButton { border: none; }"
+                 "QToolButton:hover { background-color: transparent; }");
+#else
   setAttribute (Qt::WA_Hover);
+#endif
 }
 
 void
@@ -298,8 +312,12 @@ QTMMenuButton::paintEvent (QPaintEvent* e) {
     // draw the control background as a menu item
   style()->drawControl (QStyle::CE_MenuItem, &option, &p, this);
     // draw the icon with a bit of inset.
+#if QT_VERSION >= 0x060000
+  QToolButton::paintEvent (e);
+#else
   r.adjust (2, 2, -2, -2);
   defaultAction()->icon().paint (&p, r);
+#endif
 }
 
 /******************************************************************************
@@ -523,7 +541,6 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
             : ev->key();
 
   if (continuous ()) {
-    initkeymap ();
     if ((last_key != Qt::Key_Tab || type == "replace-what") &&
         (last_key != Qt::Key_Backtab || type == "replace-by") &&
         last_key != Qt::Key_Down &&
@@ -544,7 +561,7 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
         if ((ev->modifiers() & Qt::ShiftModifier) == 0)
           key[0]= (int) (key[0] + ((int) 'a') - ((int) 'A'));
     }
-    if (qtkeymap->contains (last_key)) key= qtkeymap[last_key];
+    tmapp()->keyboard().getMappingIfExist (last_key, key);
     if ((ev->modifiers() & Qt::ShiftModifier) && N(key) > 1) key= "S-" * key;
 #ifdef Q_OS_MAC
     if (ev->modifiers() & Qt::ControlModifier) key= "C-" * key;
@@ -809,7 +826,9 @@ QTMRefreshWidget::QTMRefreshWidget (qt_widget _tmwid, string _strwid, string _ki
                    this, SLOT (doRefresh (string)));
   QVBoxLayout* l = new QVBoxLayout (this);
   l->setContentsMargins (0, 0, 0, 0);
+#if QT_VERSION < 0x060000
   l->setMargin (0);
+#endif
   setLayout (l);
   
   doRefresh ("init");
@@ -897,7 +916,9 @@ QTMRefreshableWidget::QTMRefreshableWidget (qt_widget _tmwid, object _prom, stri
                    this, SLOT (doRefresh (string)));
   QVBoxLayout* l = new QVBoxLayout (this);
   l->setContentsMargins (0, 0, 0, 0);
+#if QT_VERSION < 0x060000
   l->setMargin (0);
+#endif
   setLayout (l);
   
   doRefresh ("init");
@@ -981,6 +1002,9 @@ QTMComboBox::QTMComboBox (QWidget* parent) : QComboBox (parent) {
   opt.activeSubControls = QStyle::SC_ComboBoxArrow;
   QRect r = style()->subControlRect (QStyle::CC_ComboBox, &opt,
                                      QStyle::SC_ComboBoxArrow, &cb);
+#if QT_VERSION >= 0x060000
+  int retina_scale = 1;
+#endif
   int max_w= (int) floor (40 * retina_scale);
   minSize.setWidth (min (r.width(), max_w));
 }
@@ -998,7 +1022,11 @@ QTMComboBox::addItemsAndResize (const QStringList& texts, string ww, string hh) 
   QComboBox::addItems (texts);
   
     ///// Calculate the minimal contents size:
+#if QT_VERSION >= 0x060000
+  calcSize = sizeHint ();
+#else
   calcSize = QApplication::globalStrut ();
+#endif
   const QFontMetrics& fm = fontMetrics ();
   
   for (int i = 0; i < count(); ++i) {
@@ -1191,15 +1219,23 @@ BEGIN_SLOT
                            : list_object (-1);
     
     // docs state the index is valid, no need to check
-  QVariant d = tmModel()->data (index, QTMTreeModel::CommandRole);
     // If there's no CommandRole, we return the subtree by default
+  QVariant d = tmModel()->data (index, QTMTreeModel::CommandRole);
+#if QT_VERSION >= 0x060000
+  if (!d.isValid() || !d.canConvert (QMetaType(QMetaType::QString)))
+#else
   if (!d.isValid() || !d.canConvert (QVariant::String))
+#endif
     arguments = cons (tmModel()->item_from_index (index), arguments);
   else
     arguments = cons (from_qstring (d.toString()), arguments);
   int cnt = QTMTreeModel::TMUserRole;
   d = tmModel()->data (index, cnt);
+#if QT_VERSION >= 0x060000
+  while (d.isValid() && d.canConvert (QMetaType(QMetaType::QString))) {
+#else
   while (d.isValid() && d.canConvert (QVariant::String)) {
+#endif
     arguments = cons (from_qstring (d.toString()), arguments);
     d = tmModel()->data (index, ++cnt);
   }

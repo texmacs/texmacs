@@ -18,14 +18,16 @@
   (define temp-value #f))
 
 (cond-expand
-  (guile-2
-    (use-modules (ice-9 rdelim) (ice-9 pretty-print)))
-  (else
-    (define (guile-a?) (equal? (scheme-dialect) "guile-a"))
-    (define (guile-b?) (equal? (scheme-dialect) "guile-b"))
-    (define (guile-c?) (equal? (scheme-dialect) "guile-c"))
-    (define (guile-b-c?) (or (guile-b?) (guile-c?)))
-    (if (guile-c?) (use-modules (ice-9 rdelim) (ice-9 pretty-print)))))
+ (guile-2
+  (use-modules (ice-9 rdelim) (ice-9 pretty-print)))
+ (guile-3
+  (use-modules (ice-9 copy-tree)))
+ (else
+  (define (guile-a?) (equal? (scheme-dialect) "guile-a"))
+  (define (guile-b?) (equal? (scheme-dialect) "guile-b"))
+  (define (guile-c?) (equal? (scheme-dialect) "guile-c"))
+  (define (guile-b-c?) (or (guile-b?) (guile-c?)))
+  (if (guile-c?) (use-modules (ice-9 rdelim) (ice-9 pretty-print)))))
 
 (define has-look-and-feel? (lambda (x) (equal? x "emacs")))
 

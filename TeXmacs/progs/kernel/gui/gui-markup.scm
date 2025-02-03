@@ -211,7 +211,7 @@
 
 (tm-define-macro ($resize w h . l)
   (:synopsis "Resize the widget")
-  `(cons* 'resize ',w ',h ($list ,@l)))
+  `(cons* 'resize (lambda () ,w) (lambda () ,h) ($list ,@l)))
 
 (tm-define-macro ($hsplit l r)
   (:synopsis "Widget which is split horizontally into two parts")

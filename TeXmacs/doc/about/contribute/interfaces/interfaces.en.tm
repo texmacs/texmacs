@@ -9,7 +9,7 @@
   systems or other scientific programs with structured output. Please
   consider writing interfaces between <TeXmacs> and your favorite system(s).
   <TeXmacs> has already been interfaced with several other free systems, like
-  Giac, Macaulay 2, Maxima, GNU Octave, Pari, Qcl, gTybalt, Yacas. Detailed
+  Giac, Macaulay2, Maxima, GNU Octave, Pari, Qcl, gTybalt, Yacas. Detailed
   documentation on how to add new interfaces is available in the
   <hyper-link|<menu|Help|Interfacing>|../../../devel/plugin/plugin.en.tm>
   menu.

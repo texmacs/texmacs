@@ -32,6 +32,7 @@ AC_DEFUN([TM_PLATFORM],[
   CONFIG_USER="$USER"
   CONFIG_DATE="`date`"
   CONFIG_QTPIPES="no"
+  CONFIG_FASTALLOC="yes"
   type rsync && CONFIG_CP="rsync -a --exclude='.*'" || CONFIG_CP="cp -f -R -p"
   # tweak for XCode project
   CONFIG_ARCHS='$(NATIVE_ARCH)'
@@ -66,11 +67,61 @@ AC_DEFUN([TM_PLATFORM],[
       AC_CHECK_LIB(xcb,xcb_disconnect,[CONFIG_BSTATIC="-lxcb $CONFIG_BSTATIC";CONFIG_STYPE=B])
   ])
 
-  AC_MSG_CHECKING(final adjustments for)
+  AC_MSG_CHECKING(final adjustments for ${host})
   case "${host}" in
     x86_64-*-linux*)
       CONFIG_OS_SUFFIX="x86_64-pc-linux-gnu"
       LINUX_COMMON
+    ;;
+    armv7a-*-linux-androideabi)
+      AC_MSG_RESULT(an ARMV7A EABI Android host)
+      AC_DEFINE([OS_ANDROID],[1],[OS type])
+      CONFIG_OS="ANDROID"
+      CONFIG_OS_COMPAT="Android"
+      CONFIG_CXXOPTIMIZE="-O3"
+      CONFIG_QTPIPES="yes"
+      CONFIG_CXXFLAGS="-fPIC"
+      CONFIG_BSHARED="-shared -fPIC"
+      CONFIG_FASTALLOC="no"
+      AC_DEFINE([STACK_SIZE], 0x1000000, [If not set during link])
+      if test -z "${QT_ANDROID_PATH}"; then
+          AC_MSG_ERROR([Required environment variable QT_ANDROID_PATH is not set])
+      fi
+      if test -z "${ANDROID_SDK_ROOT}"; then
+          AC_MSG_ERROR([Required environment variable ANDROID_SDK_ROOT is not set])
+      fi
+      if test -z "${ANDROID_NDK_ROOT}"; then
+          AC_MSG_ERROR([Required environment variable ANDROID_NDK_ROOT is not set])
+      fi
+      AC_DEFINE(LINKED_FREETYPE, 1, [Freetype library available])
+      AC_DEFINE(USE_FREETYPE, 2, [Freetype library available])
+      AC_SUBST([CONFIG_HOST_CPU], ["$TARGET"])
+      TM_ANDROID
+    ;;
+    aarch64-*-linux-android)
+      AC_MSG_RESULT(an ARM64 Android host)
+      AC_DEFINE([OS_ANDROID],[1],[OS type])
+      CONFIG_OS="ANDROID"
+      CONFIG_OS_COMPAT="Android"
+      CONFIG_CXXOPTIMIZE="-O3"
+      CONFIG_QTPIPES="yes"
+      CONFIG_CXXFLAGS="-fPIC"
+      CONFIG_BSHARED="-shared -fPIC"
+      CONFIG_FASTALLOC="no"
+      AC_DEFINE([STACK_SIZE], 0x1000000, [If not set during link])
+      if test -z "${QT_ANDROID_PATH}"; then
+          AC_MSG_ERROR([Required environment variable QT_ANDROID_PATH is not set])
+      fi
+      if test -z "${ANDROID_SDK_ROOT}"; then
+          AC_MSG_ERROR([Required environment variable ANDROID_SDK_ROOT is not set])
+      fi
+      if test -z "${ANDROID_NDK_ROOT}"; then
+          AC_MSG_ERROR([Required environment variable ANDROID_NDK_ROOT is not set])
+      fi
+      AC_DEFINE(LINKED_FREETYPE, 1, [Freetype library available])
+      AC_DEFINE(USE_FREETYPE, 2, [Freetype library available])
+      AC_SUBST([CONFIG_HOST_CPU], ["$TARGET"])
+      TM_ANDROID
     ;;
     i*86-*-linux*)
       CONFIG_OS_SUFFIX="i386-pc-linux-gnu"
@@ -92,6 +143,21 @@ AC_DEFUN([TM_PLATFORM],[
       CONFIG_BPATH="-Wl,-R,"
       X11_LDFLAGS="$X_LIBS -lXext -lX11 -lsocket"
     ;;
+    *64*w64-mingw32)
+      AC_MSG_RESULT([for mingw64 host])
+      AC_DEFINE([OS_MINGW],[1],[OS type])
+      AC_DEFINE([OS_MINGW64],[1],[OS type])
+      AC_SUBST([CONFIG_BUNDLE],[WINDOWS_BUNDLE])
+      AC_SUBST([CONFIG_PACKAGE],[WINDOWS_PACKAGE])
+      CONFIG_OS=MINGW
+      CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
+      CONFIG_QTPIPES="yes"
+      CONFIG_OS_COMPAT="Windows64"
+      CPPFLAGS="$CPPFLAGS -IPlugins/Windows64 -I."
+      LC_APPEND_FLAG([-Wl,--stack=16777216],[LDFLAGS])
+      LC_APPEND_FLAG([-ldbghelp -lSecur32],[LDFLAGS])
+      CONFIG_CP="cp -f -R -p" #rsync do not work properly on mingw
+    ;;
     *mingw*)
       AC_MSG_RESULT([for mingw host])
       AC_DEFINE([OS_MINGW],[(defined (__MINGW__) || defined (__MINGW32__))],[OS type])
@@ -104,6 +170,8 @@ AC_DEFUN([TM_PLATFORM],[
       CPPFLAGS="$CPPFLAGS -I/usr/local/include -IPlugins/Windows -I."
       GUILE_LDFLAGS="-lmingwex $GUILE_LDFLAGS -lintl" #added mingwex to mask the internal guile readdir function
       LC_APPEND_FLAG([-Wl,--stack=16777216],[LDFLAGS])
+      LC_APPEND_FLAG([-ldbghelp -lSecur32],[LDFLAGS])
+      CONFIG_CP="cp -f -R -p" #rsync do not work properly on mingw
     ;;
     *-*-cygwin)
       AC_MSG_RESULT(cygwin host)
@@ -235,11 +303,13 @@ AC_DEFUN([TM_PLATFORM],[
       AC_MSG_RESULT(a supported GNU/Linux host)
       AC_DEFINE([OS_GNU_LINUX],[1],[OS type])
       CONFIG_OS="GNU_LINUX"
+      LINUX_COMMON
     ;;
     *-linux*)
       AC_MSG_RESULT(a generic GNU/Linux host)
       AC_DEFINE([OS_GNU_LINUX],[1],[OS type])
       CONFIG_OS="GNU_LINUX"
+      LINUX_COMMON
     ;;
     *)
       AC_MSG_RESULT(a generic host)
@@ -290,6 +360,7 @@ AC_DEFUN([TM_PLATFORM],[
   AC_SUBST(CONFIG_LDRT)
   AC_SUBST(CONFIG_HOST_OS)
   AC_SUBST(CONFIG_HOST_VENDOR)
+  AC_SUBST(CONFIG_HOST_CPU)
   AC_SUBST(CONFIG_USER)
   AC_SUBST(CONFIG_DATE)
   AC_SUBST(CONFIG_ARCHS)

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 ###############################################################################
 ##
 ## MODULE      : xypic.py
@@ -29,7 +29,7 @@ class XYpic(LaTeX):
 \\usepackage{amssymb}
 \\begin{document}
 """
-        self.post_code = "\end{document}"
+        self.post_code = "\\end{document}"
         self.message = "TeXmacs interface to XYpic (high level 2-dimensional graphics)"
 
     def evaluate(self, code):

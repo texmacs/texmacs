@@ -34,6 +34,13 @@
  * qt_widget_rep: the base widget for the Qt port.
  ******************************************************************************/
 
+#ifdef NO_FAST_ALLOC
+template<> void
+tm_delete<qt_widget_rep> (qt_widget_rep* ptr) {
+  if (ptr == NULL) return;
+  delete ptr;
+}
+#else
 template<> void
 tm_delete<qt_widget_rep> (qt_widget_rep* ptr) {
   if (ptr == NULL) return;
@@ -41,6 +48,7 @@ tm_delete<qt_widget_rep> (qt_widget_rep* ptr) {
   ptr -> ~qt_widget_rep ();
   fast_delete (mem);
 }
+#endif
 
 static long widget_counter = 0;
 

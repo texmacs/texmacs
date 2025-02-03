@@ -2644,7 +2644,8 @@
   '(!nbhyph))
 
 (define (tmtex-frac* s l)
-  (tex-concat (list (tmtex (car l)) "/" (tmtex (cadr l)))))
+  ;;(tex-concat (list (tmtex (car l)) "/" (tmtex (cadr l)))))
+  (list 'sfrac (tmtex (car l)) (tmtex (cadr l))))
 
 (define (tmtex-ornament-shape s)
   (if (== s "rounded") "1.7ex" "0pt"))

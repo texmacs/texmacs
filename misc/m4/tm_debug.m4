@@ -80,7 +80,7 @@ AC_DEFUN([TM_DEBUG],[
   #    STD_DEBUG_FLAGS="-fno-exceptions"
   #fi
 
-  STD_DEBUG_FLAGS="-fno-rtti"
+  #STD_DEBUG_FLAGS="-fno-rtti"  #disabling because of bug 60931
   if test "$enable_cocoa" = "yes"; then
       STD_DEBUG_FLAGS=""
   fi
@@ -88,10 +88,10 @@ AC_DEFUN([TM_DEBUG],[
   AC_MSG_CHECKING(if compiler supports $STD_DEBUG_FLAGS)
   AX_SAVE_FLAGS
   CXXFLAGS=$STD_DEBUG_FLAGS
-  AC_TRY_COMPILE([
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
     int some_variable = 0;
-  ],[
-  ],[
+  ]], [[
+  ]])],[
       CONFIG_CXXDIALECT="$STD_DEBUG_FLAGS"
       AC_MSG_RESULT(yes)
   ],[

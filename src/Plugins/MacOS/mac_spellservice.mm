@@ -129,7 +129,7 @@ mac_spell_check (string lan, string s) {
     if (r.length == 0) 
       t = "ok";
     else {
-#if MAC_OS_X_VERSION_MIN_ALLOWED < MAC_OS_X_VERSION_10_6
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
       NSArray *arr = [[NSSpellChecker sharedSpellChecker]
 		      guessesForWord: nss];
 #else

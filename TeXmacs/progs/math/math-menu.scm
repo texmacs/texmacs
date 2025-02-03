@@ -81,7 +81,7 @@
 
 (menu-bind compressed-math-format-menu
   (if (new-fonts?)
-      ("Font" (interactive open-font-selector)))
+      ("Font" (open-font-selector)))
   (if (not (new-fonts?))
       (-> "Font" (link math-font-menu)))
   (when (inside? 'table)

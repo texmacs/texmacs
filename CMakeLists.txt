@@ -22,7 +22,7 @@
 
 cmake_minimum_required (VERSION 3.13)
 
-set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD 17)
 set (CMAKE_AUTOMOC ON)
 set (CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -53,7 +53,7 @@ set (CMAKE_MODULE_PATH ${TEXMACS_SOURCE_DIR}/cmake)
 
 set (VERSION_MAJOR "2")
 set (VERSION_MINOR "1")
-set (VERSION_BUILD "2")
+set (VERSION_BUILD "4")
 set (TEXMACS_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BUILD})
 
 set (DEVEL_VERSION ${TEXMACS_VERSION})
@@ -556,6 +556,10 @@ set (TeXmacs_MacOS_SRCS
 ### Determine TeXmacs_Libraries
 ### --------------------------------------------------------------------
 
+if (APPLE AND EXISTS /opt/homebrew/lib)
+  link_directories (/opt/homebrew/lib)
+endif ()
+
 set (TeXmacs_Libraries
   ${Guile_LIBRARIES}
   ${ZLIB_LIBRARIES}
@@ -598,6 +602,10 @@ if (TEXMACS_GUI MATCHES "Qt.*")
       list (APPEND CMAKE_PREFIX_PATH "/usr/local/opt/qt5")
     endif ()
 
+    if (APPLE AND EXISTS /opt/homebrew/opt/qt5/)
+      list (APPEND CMAKE_PREFIX_PATH "/opt/homebrew/opt/qt5/")
+    endif ()
+
     if (WIN32 AND EXISTS ${QT_CMAKE_DIR})
       set (Qt5Core_DIR "${QT_CMAKE_DIR}/Qt5Core")
       set (Qt5Gui_DIR "${QT_CMAKE_DIR}/Qt5Gui")
@@ -615,22 +623,24 @@ if (TEXMACS_GUI MATCHES "Qt.*")
     if (APPLE)
       find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport Svg MacExtras REQUIRED)
     else (APPLE)
-      find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport Svg REQUIRED)
+      find_package (Qt6 COMPONENTS Core Gui Widgets PrintSupport Svg Concurrent REQUIRED)
     endif ()
 
     if (APPLE)
       set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport Qt5::Svg Qt5::MacExtras)
     else (APPLE)
-      set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport Qt5::Svg)
+      set (QT_LIBRARIES Qt6::Core Qt6::Gui Qt6::Widgets Qt6::PrintSupport Qt6::Svg Qt6::Concurrent)
+      set (CMAKE_POSITION_INDEPENDENT_CODE ON) # needed by Qt6
     endif (APPLE)
 
     set (TeXmacs_Include_Dirs
       ${TeXmacs_Include_Dirs}
-      ${Qt5Core_INCLUDE_DIRS}
-      ${Qt5Gui_INCLUDE_DIRS}
-      ${Qt5Widgets_INCLUDE_DIRS}
-      ${Qt5PrintSupport_INCLUDE_DIRS}
-      ${Qt5Svg_INCLUDE_DIRS}
+      ${Qt6Core_INCLUDE_DIRS}
+      ${Qt6Gui_INCLUDE_DIRS}
+      ${Qt6Widgets_INCLUDE_DIRS}
+      ${Qt6PrintSupport_INCLUDE_DIRS}
+      ${Qt6Svg_INCLUDE_DIRS}
+      ${Qt6Concurrent_INCLUDE_DIRS}
       ${Qt5MacExtras_INCLUDE_DIRS}
     )
 

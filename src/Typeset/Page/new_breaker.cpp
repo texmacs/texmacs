@@ -402,6 +402,18 @@ new_breaker_rep::find_page_breaks () {
       }
       if (best_start == path (N(l))) break;
       find_page_breaks (best_start);
+      while (N(todo_list) == 0 && !best_prev->contains (N(l))) {
+        // Fix for bug #62844
+        path best (0);
+        for (iterator<path> it= iterate (best_prev); it->busy (); ) {
+          path next= it->next ();
+          if (path_inf (best, next))
+            if (!done_list->contains (next) ||
+                (temp_list->contains (next) && next != best_start))
+              best= next;
+        }
+        find_page_breaks (best);
+      }
     }
   }
   //cout << "Found page breaks" << LF;

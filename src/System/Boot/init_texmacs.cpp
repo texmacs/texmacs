@@ -412,7 +412,7 @@ init_misc () {
 static void
 init_deprecated () {
 #ifndef OS_WIN32
-  // Check for Macaulay 2
+  // Check for Macaulay2
   if (get_env ("M2HOME") == "")
     if (exists_in_path ("M2")) {
       string where= concretize (resolve_in_path ("M2"));
@@ -534,4 +534,27 @@ init_plugins () {
     install_status= exists (ch)? 2: 0;
   }
   init_tex ();
+}
+
+bool
+test_texmacs_path (url path, bool set_environment) {
+  if (!exists (path)) {
+    return false;
+  }
+  if (!exists (path * "doc")) {
+    return false;
+  }
+  if (!exists (path * "fonts")) {
+    return false;
+  }
+  if (!exists (path * "progs")) {
+    return false;
+  }
+  if (!exists (path * "styles")) {
+    return false;
+  }
+  if (set_environment) {
+    set_env_path ("TEXMACS_PATH", path);
+  }
+  return true;
 }

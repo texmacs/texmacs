@@ -72,10 +72,7 @@
   ;;    ("Create web site" (tmweb-interactive-build))
   ;;    ("Update web site" (tmweb-interactive-update)))
   (-> "Fonts"
-      ("Look for more fonts"
-       (system-wait "Full search for more fonts on your system"
-                    "(can be long)")
-       (font-database-build-local))
+      ("Scan disk for fonts" (scan-disk-for-fonts))
       ("Clear font cache" (clear-font-cache)))
   (-> "Miscellaneous"
       ("Clear undo history" (clear-undo-history))

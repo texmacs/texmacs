@@ -63,7 +63,7 @@ array<double> tmscm_to_array_double (tmscm obj);
 modification tmscm_to_modification (tmscm obj);
 patch tmscm_to_patch (tmscm obj);
 scheme_tree tmscm_to_scheme_tree (tmscm obj);
-widget tmscm_to_widget (tmscm  widget_smob);
+widget tmscm_to_widget (tmscm widget_smob);
+command tmscm_to_command (tmscm obj);
 
 #endif // defined GLUE_H
-

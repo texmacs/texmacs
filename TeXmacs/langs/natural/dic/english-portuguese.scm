@@ -6,6 +6,7 @@
 ("TeX" "TeX")
 ("abbreviation" "abreviação")
 ("about" "sobre TeXmacs")
+("apropos" "sobre TeXmacs")
 ("about menu" "menu sobre")
 ("above" "acima")
 ("abstract" "resumo")

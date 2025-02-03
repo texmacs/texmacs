@@ -995,12 +995,44 @@
 ("<natural>"		"#266E")
 ("<sharp>"		"#266F")
 
+;; Die faces
+("<dieface-1>"		"#2680")
+("<dieface-2>"		"#2681")
+("<dieface-3>"		"#2682")
+("<dieface-4>"		"#2683")
+("<dieface-5>"		"#2684")
+("<dieface-6>"		"#2685")
+
+;; others
+("<warning-sign>"	"#26AO")
 
 ;;; Dingbats					2710--27BF
 
 ("<checkmark>"		"#2713")
 ("<maltese>"		"#2720")
 ; black diamond minus white x	"#2756"
+
+;; circled numbers
+("<circled-1>"		"#2780")
+("<circled-2>"		"#2781")
+("<circled-3>"		"#2782")
+("<circled-4>"		"#2783")
+("<circled-5>"		"#2784")
+("<circled-6>"		"#2785")
+("<circled-7>"		"#2786")
+("<circled-8>"		"#2787")
+("<circled-9>"		"#2788")
+("<circled-10>"		"#2789")
+("<blackcircled-1>" "#278A")
+("<blackcircled-2>" "#278B")
+("<blackcircled-3>" "#278C")
+("<blackcircled-4>" "#278D")
+("<blackcircled-5>" "#278E")
+("<blackcircled-6>" "#278F")
+("<blackcircled-7>" "#2790")
+("<blackcircled-8>" "#2791")
+("<blackcircled-9>" "#2792")
+("<blackcircled-10>" "#2793")
 
 
 ;;; Supplemental Arrows-B
@@ -1623,6 +1655,19 @@
 ("<b-7>"	"#1D7D5")
 ("<b-8>"	"#1D7D6")
 ("<b-9>"	"#1D7D7")
+
+;; Double-struck digits
+("<bbb-0>"	"#1D7D8")
+("<bbb-1>"	"#1D7D9")
+("<bbb-2>"	"#1D7DA")
+("<bbb-3>"	"#1D7DB")
+("<bbb-4>"	"#1D7DC")
+("<bbb-5>"	"#1D7DD")
+("<bbb-6>"	"#1D7DE")
+("<bbb-7>"	"#1D7DF")
+("<bbb-8>"	"#1D7E0")
+("<bbb-9>"	"#1D7E1")
+
 
 ;;; Musical Symbols					1D100--1D1FF
 ("<fullnote>"	"#1D15D")

@@ -19,7 +19,6 @@
 #include <QCoreApplication>
 #include <QLocale>
 #include <QDateTime>
-#include <QTextCodec>
 #include <QHash>
 #include <QStringList>
 #include <QKeySequence>
@@ -116,6 +115,12 @@ em_factor () {
 QSize
 qt_decode_length (string width, string height,
                   const QSize& ref, const QFontMetrics& fm) {
+  (void) fm;
+#if QT_VERSION >= 0x060000
+  int retina_scale = 1;
+  int retina_zoom = 1;
+#endif
+
   QSize size= ref;
 
   string w_unit, h_unit;
@@ -165,6 +170,10 @@ qt_decode_length (string width, string height,
 static string
 conv_sub (const string& ks) {
   string r(ks);
+#if QT_VERSION >= 0x060000
+  r = replace (r, "hat", "^");
+  r = replace (r, "&", u8"﹠");
+#endif
   r = replace (r, "pageup", "pgup");
   r = replace (r, "pagedown", "pgdown");
   r = replace (r, "S-", "Shift+");
@@ -200,13 +209,11 @@ conv_sub (const string& ks) {
 QKeySequence
 to_qkeysequence (string ks) {
   string r (conv_sub (ks));
-  if (DEBUG_QT && N(r) > 0) {
-    QKeySequence qks (to_qstring (r));
+  QKeySequence qks (to_qstring (r));
+  if (DEBUG_QT && N(r) > 0)
     debug_qt << "ks: " << ks << " --> " << r << " --> "
              << qks.toString (QKeySequence::NativeText).toLatin1().data() << LF;
-    return qks;
-  }
-  return QKeySequence (to_qstring (r));
+  return qks;
 }
 
 
@@ -394,6 +401,10 @@ qt_supports (url u) {
 	  debug_convert <<LF;
   }	*/  
   string suf=suffix (u);
+// as of 2023, even if qt claims it can handle pdf, do not use it as it produces blurry pngs
+// see http://forum.texmacs.cn/t/how-are-graphics-supposed-to-look-like/963/12
+  if (suf == "pdf" || suf == "ps" || suf == "eps")
+    return false; 
   bool ans= (bool) formats.contains((QByteArray) as_charp(suf));
   //if (DEBUG_CONVERT) {debug_convert <<"QT valid format:"<<((ans)?"yes":"no")<<LF;}
   return ans;
@@ -477,10 +488,14 @@ void
 qt_image_to_pdf (url image, url outfile, int w_pt, int h_pt, int dpi) {
 // use a QPrinter to output raster images to eps or pdf
 // dpi is the maximum dpi : the image will either be dowsampled to that dpi
-// or the actual dpi will be lower  
+// or the actual dpi will be lower
   if (DEBUG_CONVERT) debug_convert << "qt_image_to_eps_or_pdf " << image << " -> "<<outfile<<LF;
   QPrinter printer;
+#if QT_VERSION < 0x060000
   printer.setOrientation(QPrinter::Portrait);
+#else
+  printer.setPageOrientation(QPageLayout::Portrait);
+#endif
   if (suffix(outfile)=="eps") {
 #if (QT_VERSION >= 0x050000)
     //note that PostScriptFormat is gone in Qt5. a substitute?: http://soft.proindependent.com/eps/
@@ -507,7 +522,12 @@ qt_image_to_pdf (url image, url outfile, int w_pt, int h_pt, int dpi) {
   << "dpi set: " << printer.resolution() <<LF;
 */
     if (dpi > 0 && w_pt > 0 && h_pt > 0) {
+
+#if QT_VERSION < 0x060000
 	    printer.setPaperSize(QSizeF(w_pt, h_pt), QPrinter::Point); // in points
+#else
+      printer.setPageSize(QPageSize(QSizeF(w_pt, h_pt), QPageSize::Point));
+#endif
 
       // w_pt and h_pt are dimensions in points (and there are 72 points per inch)
       int ww = w_pt * dpi / 72;
@@ -518,7 +538,11 @@ qt_image_to_pdf (url image, url outfile, int w_pt, int h_pt, int dpi) {
         printer.setResolution((int) (dpi*im.width())/(double)ww);
       if (DEBUG_CONVERT) debug_convert << "dpi asked: "<< dpi <<" ; actual dpi set: " << printer.resolution() <<LF;
 	  }
+#if QT_VERSION < 0x060000
 	  else printer.setPaperSize(QSizeF(im.width (), im.height ()), QPrinter::DevicePixel);
+#else
+    else printer.setPageSize(QPageSize(QSizeF(im.width (), im.height ()), QPageSize::Point));
+#endif
     QPainter p;
     p.begin(&printer);
     p.drawImage(0, 0, im);
@@ -727,7 +751,7 @@ qt_translate (const string& s) {
 
 string
 qt_application_directory () {
-  return string (QCoreApplication::applicationDirPath().toLatin1().constData());
+  return string (QCoreApplication::applicationDirPath().toUtf8().constData());
   // This is used to set $TEXMACS_PATH
   // in Windows TeXmacs cannot run if this path contains unicode characters
   // apparently because Guile uses standard narrow char api to load its modules => patch Guile?.  
@@ -772,13 +796,49 @@ qt_get_date (string lan, string fm) {
 
 string
 qt_pretty_time (int t) {
+#if QT_VERSION >= 0x060000
+  QDateTime dt= QDateTime::fromSecsSinceEpoch (t);
+#else
   QDateTime dt= QDateTime::fromTime_t (t);
+#endif
   QString s= dt.toString ();
   return from_qstring (s);
 }
 
 #ifndef _MBD_EXPERIMENTAL_PRINTER_WIDGET  // this is in qt_printer_widget
 
+#if QT_VERSION >= 0x060000
+#define PAPER(fmt)  case QPageSize::fmt : return "fmt"
+static string 
+qt_papersize_to_string (QPageSize::PageSizeId sz) {
+    switch (sz) {
+      PAPER (A0) ;
+      PAPER (A1) ;
+      PAPER (A2) ;
+      PAPER (A3) ;
+      PAPER (A4) ;
+      PAPER (A5) ;
+      PAPER (A6) ;
+      PAPER (A7) ;
+      PAPER (A8) ;
+      PAPER (A9) ;
+      PAPER (B0) ;
+      PAPER (B1) ;
+      PAPER (B2) ;
+      PAPER (B3) ;
+      PAPER (B4) ;
+      PAPER (B5) ;
+      PAPER (B6) ;
+      PAPER (B7) ;
+      PAPER (B8) ;
+      PAPER (B9) ;
+      PAPER (B10) ;      
+      PAPER (Letter) ;
+    default:
+      return "A4";
+  }
+}
+#else
 #define PAPER(fmt)  case QPrinter::fmt : return "fmt"
 static string 
 qt_papersize_to_string (QPrinter::PaperSize sz) {
@@ -809,6 +869,7 @@ qt_papersize_to_string (QPrinter::PaperSize sz) {
       return "A4";
   }
 }
+#endif
 #undef PAPER
 
 bool 
@@ -823,8 +884,13 @@ qt_print (bool& to_file, bool& landscape, string& pname, url& filename,
     to_file = !(qprinter->outputFileName().isNull());
     pname = from_qstring( qprinter->printerName() );
     filename = from_qstring( qprinter->outputFileName() );
+#if QT_VERSION >= 0x060000
+    landscape = (qprinter->pageLayout().orientation() == QPageLayout::Landscape);
+    paper_type = qt_papersize_to_string(qprinter->pageLayout().pageSize().id());
+#else
     landscape = (qprinter->orientation() == QPrinter::Landscape);
     paper_type = qt_papersize_to_string(qprinter->paperSize());
+#endif
     if (qprinter->printRange() == QPrinter::PageRange) {
       first = qprinter->fromPage(); 
       last = qprinter->toPage(); 
@@ -944,6 +1010,9 @@ init_palette (QApplication* app) {
 
 string
 scale_px (string s) {
+#if QT_VERSION >= 0x060000
+  double retina_scale = 1.0;
+#endif
   string r;
   for (int i=0; i<N(s); )
     if (s[i] == ':') {

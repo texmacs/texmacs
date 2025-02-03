@@ -39,9 +39,19 @@ public:
     QTMSurface(QWidget* p, QTMScrollView* _sv) : QWidget (p), sv (_sv) { }
     
 protected:
-    virtual bool event(QEvent *event) {
+    bool event(QEvent *event) override {
+        // if this is a paint event, we want to handle it ourselves
+        if (event->type() == QEvent::Paint) {
+            QPaintEvent *pe = static_cast<QPaintEvent*>(event);
+            paintEvent(pe);
+            return true;
+        }
         return sv->surfaceEvent(event) ? true : QWidget::event(event);
     }  
+
+    void paintEvent (QPaintEvent* event) override {
+      sv->surfacePaintEvent (event, this);
+    }
 };
 
 /*! Constructor.
@@ -59,6 +69,10 @@ protected:
 QTMScrollView::QTMScrollView (QWidget *_parent):
   QAbstractScrollArea (_parent),
   editor_flag (false),
+#if QT_VERSION >= 0x060000
+  wanted_origin(0,0),
+  have_wanted_origin(false),
+#endif
   p_extents (QRect(0,0,0,0))
 {
   QWidget *_viewport = QAbstractScrollArea::viewport();
@@ -69,7 +83,9 @@ QTMScrollView::QTMScrollView (QWidget *_parent):
   p_surface = new QTMSurface (_viewport, this);
   p_surface->setAttribute(Qt::WA_NoSystemBackground);
   p_surface->setAttribute(Qt::WA_StaticContents); 
+#if QT_VERSION < 0x060000
   p_surface->setAttribute(Qt::WA_MacNoClickThrough);
+#endif
   p_surface->setAutoFillBackground(false);
   p_surface->setBackgroundRole(QPalette::NoRole);
   p_surface->setAttribute(Qt::WA_OpaquePaintEvent);
@@ -83,6 +99,13 @@ QTMScrollView::QTMScrollView (QWidget *_parent):
 
 void 
 QTMScrollView::setOrigin ( QPoint newOrigin ) {
+  if (!isVisible()) {
+#if QT_VERSION >= 0x060000
+    have_wanted_origin = true;
+    wanted_origin = newOrigin;
+#endif
+    return;
+  }
   if (newOrigin.x() != p_origin.x())
     QAbstractScrollArea::horizontalScrollBar()->setSliderPosition(newOrigin.x());
   if (newOrigin.y() != p_origin.y())
@@ -188,6 +211,13 @@ QTMScrollView::scrollContentsBy ( int dx, int dy ) {
 bool 
 QTMScrollView::viewportEvent(QEvent *e)
 {
+#if QT_VERSION >= 0x060000
+  if (have_wanted_origin && isVisible()) {
+    QAbstractScrollArea::horizontalScrollBar()->setSliderPosition(wanted_origin.x());
+    QAbstractScrollArea::verticalScrollBar()->setSliderPosition(wanted_origin.y());
+    have_wanted_origin = false;
+  }
+#endif
   switch (e->type()) {
     case QEvent::Resize:
     case QEvent::Paint:
@@ -216,6 +246,8 @@ QTMScrollView::viewportEvent(QEvent *e)
       return event(e);
 #endif
 #endif
+    case QEvent::Show:
+      
     default:
       break;
   }

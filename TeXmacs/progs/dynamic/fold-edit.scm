@@ -700,10 +700,17 @@
            (dynamic-operate (tree-ref t 0) mode))
           (else (dynamic-operate-sub t mode)))))
 
+(tm-define (dynamic-operate* t mode)
+  (dynamic-operate t mode)
+  (if (in? mode '(:first :var-first)) (tree-go-to t :start))
+  (if (in? mode '(:last :var-last)) (tree-go-to t :end)))
+
 (tm-define (dynamic-operate-on-buffer mode)
-  (dynamic-operate (buffer-tree) mode)
-  (if (in? mode '(:first :var-first)) (tree-go-to (buffer-tree) :start))
-  (if (in? mode '(:last :var-last)) (tree-go-to (buffer-tree) :end)))
+  (dynamic-operate* (buffer-tree) mode))
+
+(tm-define (dynamic-operate-on-buffer mode)
+  (:require (and (inside? 'slide) (in? mode '(:first :last))))
+  (dynamic-operate* (tree-innermost 'slide) mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Transform presentation into slides
@@ -974,6 +981,10 @@
 (tm-define (dynamic-traverse-buffer mode)
   (dynamic-traverse (buffer-tree) mode))
 
+(tm-define (dynamic-traverse-buffer mode)
+  (:require (and (inside? 'slide) (in? mode '(:previous :next))))
+  (dynamic-traverse (tree-innermost 'slide) mode))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Specific behaviour for switches inside list environments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1064,7 +1075,7 @@
 	  (tree-assign-node! c (if (cursor-inside? c) 'shown 'hidden)))))))
 
 (define (expand-slides? s)
-  (in? s (list "paper" "book" "panorama")))
+  (in? s (list "paper" "book" "panorama" "slideshow")))
 
 (tm-define (init-page-rendering s)
   (:require (or (inside? 'screens) (inside? 'slideshow)))
@@ -1275,7 +1286,7 @@
               (>= (tree-arity t) 1))
          `(document ,(extract-slide-template (tree-ref t 0))))
         ((tree-is? t 'tit)
-         `(tit ""))
+         (cons `tit (make-list (tree-arity t) "")))
         ((tree-func? t 'gr-screen 1)
          `(gr-screen ,(extract-slide-template (tree-ref t 0))))
         ((tree-func? t 'gr-overlays 3)

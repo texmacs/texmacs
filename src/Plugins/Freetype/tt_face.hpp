@@ -20,9 +20,11 @@
 RESOURCE(tt_face);
 
 struct tt_face_rep: rep<tt_face> {
-  bool bad_face;
-  FT_Face ft_face;
+  bool bad_face = true;
+  FT_Face ft_face = nullptr;
+  FT_Byte *buffer = nullptr;
   tt_face_rep (string name);
+  ~tt_face_rep () override;
 };
 
 struct tt_font_metric_rep: font_metric_rep {

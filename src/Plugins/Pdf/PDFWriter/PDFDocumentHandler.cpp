@@ -1011,7 +1011,7 @@ EStatusCode PDFDocumentHandler::StartCopyingContext(IByteReaderWithPosition* inP
 		status = mParser->StartPDFParsing(inPDFStream, inOptions);
 		if(status != PDFHummus::eSuccess)
 		{
-			TRACE_LOG("PDFDocumentHandler::StartCopyingContext, failure occured while parsing PDF file.");
+			TRACE_LOG("PDFDocumentHandler::StartCopyingContext, failure occurred while parsing PDF file.");
 			break;
 		}
 

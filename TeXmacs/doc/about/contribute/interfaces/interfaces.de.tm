@@ -9,7 +9,7 @@
   zu schreiben. Bitte überlegen Sie, ob eine solche Schnittstelle für die von
   Ihnen verwendeten Programme in Frage kommt und ob Sie eine solche
   Schnitt-Stelle programmieren möchten. <TeXmacs> hat bereits Schnittstellen
-  zu andren freien Systemen wie Giac, Macaulay 2, Maxima, GNU Octave, Pari,
+  zu andren freien Systemen wie Giac, Macaulay2, Maxima, GNU Octave, Pari,
   Qcl, gTybalt und Yacas. Detaillierte Informationen, wie man vorgeht, finden
   Sie unter <hyper-link|<menu|Help|Interfacing>|../../../devel/plugin/plugins.de.tm>.
 

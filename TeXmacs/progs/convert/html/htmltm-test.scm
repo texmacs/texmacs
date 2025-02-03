@@ -116,7 +116,7 @@
    "htmltm, preformatted text" "pre"
    shtml->stm code
    (test "empty" '(pre) '(""))
-   (test "emtpy, newlines" '(pre "\n\n") '(""))
+   (test "empty, newlines" '(pre "\n\n") '(""))
    (test "one line" '(pre "hello") '("hello"))
    (test "one line, whitespace" '(pre " hello ") '(" hello "))
    (test "one line, newlines" '(pre "\n hello \n") '(" hello "))
@@ -174,7 +174,7 @@
    shtml->stm make-description
    (test "empty list" '(dl) '(""))
    (test "empty dt" '(dl (dt)) '((item* "")))
-   (test "emtpy dd" '(dl (dd)) '(""))
+   (test "empty dd" '(dl (dd)) '(""))
    (test "empty dt, dd" '(dl (dt) (dd)) '((item* "")))
    (test "empty dd, dt" '(dl (dd) (dt)) '("" (item* "")))
    (test "empty dt, dt, dd, dd"
@@ -529,9 +529,9 @@
          '(img (@ (src "foo") (width "50%")))
          (image "foo" "1/2par" ""))))
 
-(define (regtest-htmltm-alignement)
+(define (regtest-htmltm-alignment)
   (regression-test-group
-   "htmltm, alignement" "alignement"
+   "htmltm, alignment" "alignment"
    shtml->stm :none
    ))
 
@@ -845,7 +845,7 @@
               ;(regtest-htmltm-table)
               (regtest-htmltm-links)
               (regtest-htmltm-objects)
-              (regtest-htmltm-alignement)
+              (regtest-htmltm-alignment)
               (regtest-htmltm-style)
               (regtest-htmltm-font)
               (regtest-htmltm-rules)

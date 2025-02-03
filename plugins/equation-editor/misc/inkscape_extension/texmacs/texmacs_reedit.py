@@ -1,9 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 *******************************************************************************
 * Texmacs extension for Inkscape
-* COPYRIGHT  : (C) 2012-2022 Philippe JOYEZ
+* COPYRIGHT  : (C) 2012-2024 Philippe JOYEZ
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -49,9 +49,9 @@ Part of the code was directly copied from textext.py. Thank you Pauli!
 
 import os, glob, platform, time, shutil
 import inkex, tempfile, subprocess
-#from xml.etree import ElementTree as etree
+from inkex import load_svg
 from lxml import etree
-
+import math, uuid
 import socket
 
 IS_WINDOWS = (platform.system() == "Windows")
@@ -114,6 +114,7 @@ TEXTEXT_NS = u"http://www.iki.fi/pav/software/textext/"
 TEXMACS_NS = u"https://www.texmacs.org/"
 TEXMACS_OLD_NS = u"http://www.texmacs.org/"
 SVG_NS = u"http://www.w3.org/2000/svg"
+XLINK_NS = u"http://www.w3.org/1999/xlink"
 
 
 tm_file="<TeXmacs|1.99.5>\n\n<style|%s>\n\n<\\body>\n %s \n\n</body>\n\n<\\initial>\n %s \n\n</initial>"
@@ -130,9 +131,9 @@ tm_no_style=""
 # Inkscape plugin functionality
 #------------------------------------------------------------------------------
 
-class Texmacs(inkex.Effect):
+class Texmacs(inkex.EffectExtension):
     def __init__(self):
-        inkex.Effect.__init__(self)
+        inkex.EffectExtension.__init__(self)
         self.tmp_path = tempfile.mkdtemp()
         self.tmp_base = 'inkscape_edit_tmp.tm'
         self.tmp_name = os.path.join(self.tmp_path,self.tmp_base)
@@ -155,16 +156,14 @@ class Texmacs(inkex.Effect):
 
         svg_name = self.tmp_name + ".svg" #if successful texmacs creates that svg file
         if os.path.isfile(svg_name):
-           f = open(svg_name, 'r')
-           tree = etree.parse(f)
-           f.close()
-           #inkex.debug("file read  "+svg_name)
-           root = tree.getroot()
-           new_node = root.find('{%s}g' % SVG_NS)
+            with open(svg_name, "r") as fhl:
+                #svgroot: inkex.SvgDocumentElement = load_svg(fhl).getroot()
+                svgroot = etree.parse(fhl).getroot()
+                new_node = svgroot.find('{%s}g' % SVG_NS)
 
-           # -- Replace
-           self.replace_node(old_node, new_node)
-
+                # -- Replace
+                self.replace_node(old_node, new_node)
+    
         #finish : cleanup
         self.remove_temp_files()
 
@@ -214,9 +213,9 @@ class Texmacs(inkex.Effect):
                         node = root
                     else :
                         node = root.find('.//{%s}g[@{%s}text]' % (SVG_NS, TEXTEXT_NS)) 
-                        if node : #implements Textext conversion to TeXmacs
-                            latex_code = node.attrib.get('{%s}text' % TEXTEXT_NS, '')
-                            return (latex_code, tm_no_equation, tm_no_style, 'generic')
+                    if node is not None : #implements Textext conversion to TeXmacs
+                        latex_code = node.attrib.get('{%s}text' % TEXTEXT_NS, '')
+                        return (node, latex_code, tm_no_equation, tm_no_style, 'generic')
         
         # if we arrive here no editable equation was in
         # selection (including no selection): launch TeXmacs with dummy equation.
@@ -368,12 +367,60 @@ class Texmacs(inkex.Effect):
                 #except :
                 #    inkex.utils.debug("launching texmacs failed   ")
                     
+    def random_id(self,blacklist,prefix="tm") :
+        """create new random id string not already used"""
+        size = math.ceil(math.log(max(len(blacklist),100))/math.log(16)) + 1
+        new_id = None
+        while (
+            new_id is None
+            or new_id in blacklist
+        ):
+            new_id = prefix + str(uuid.uuid4().hex)[:size]
+        blacklist += [new_id]
+        return new_id
+
 
     def replace_node(self, old_node, new_node):
         """
         Replace an XML node old_node with new_node
         in self.document.
         """
+        # before updating the inkscape's drawing we need to make internal links ids unique
+        # otherwise rendering of equations breaks when ids coincides with existing ones in the drawing
+        # If we do nothing, this happens as soon as we have two equations.
+        #defs = new_node.find("{%s}defs" % SVG_NS)
+        blacklist = list(self.svg.get_ids()) #ids already used
+        old_new_dic = {}
+        for e in new_node.iterfind(".//*[@{%s}href]" %XLINK_NS) : #for "use" elements
+            oldid = e.attrib["{%s}href" %XLINK_NS][1:]
+            if oldid in old_new_dic.keys() :
+                newid = old_new_dic[oldid]
+            else :
+                newid = self.random_id(blacklist)
+                old_new_dic[oldid] = newid
+            e.attrib["{%s}href" %XLINK_NS] = "#"+newid
+        for e in new_node.iterfind(".//*[@href]") : #same as above but no xlink namespace (no longer mandatory)
+            oldid = e.attrib["href"][1:]
+            if oldid in old_new_dic.keys() :
+                newid = old_new_dic[oldid]
+            else :
+                newid = self.random_id(blacklist)
+                old_new_dic[oldid] = newid
+            e.attrib["href"] = "#"+newid
+        for e in new_node.iterfind(".//*[@clip-path]") : #same would apply for mask (and filter...), but I've not seen it so far
+            attr = e.attrib['clip-path']
+            #svg syntax is clip-path="url(#id_of_the_ClipPath_element)", so we extract the id as: 
+            oldid = attr[5:-1]
+            if oldid in old_new_dic.keys() :
+                newid = old_new_dic[oldid]
+            else :
+                newid = self.random_id(blacklist)
+                old_new_dic[oldid] = newid
+            e.attrib['clip-path'] = attr.replace(oldid, newid)
+        for oldid in old_new_dic.keys() :
+            e = new_node.find(".//*[@id='"+oldid+"']")
+            e.set('id', old_new_dic[oldid])
+
         if old_node is None:
             new_node.attrib['transform'] = "scale(0.264583333)" 
             # 0.35277779 is 25.4/72 and this scaling is applied when inkscape *imports* an svg (or pdf) file

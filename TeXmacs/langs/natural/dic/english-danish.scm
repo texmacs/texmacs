@@ -6,6 +6,7 @@
 ("TeX" "TeX")
 ("abbreviation" "forkortelse")
 ("about" "om")
+("apropos" "om")
 ("about menu" "om menu")
 ("above" "over")
 ("abstract" "abstract")

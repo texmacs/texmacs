@@ -23,7 +23,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (set-manual-path p)
-  (:argument p "Path to plug-in binaries")
+  (:synopsis* "Set path to plug-in binaries")
+  (:argument p "Path")
   (:proposals p (if (cpp-has-preference? "manual path")
                     (list (get-preference "manual path"))
                     (list)))
@@ -62,7 +63,7 @@
     (ahash-ref session-math-input key)))
 
 (tm-define (toggle-session-math-input)
-  (:synopsis "Toggle mathematical input in sessions.")
+  (:synopsis "Toggle mathematical input in sessions")
   (:check-mark "v" session-math-input?)
   (ahash-set! session-math-input (session-key) (not (session-math-input?)))
   (with-innermost t field-context?
@@ -77,7 +78,7 @@
   (ahash-set! session-multiline-input (cons lan ses) set?))
 
 (tm-define (toggle-session-multiline-input)
-  (:synopsis "Toggle multi-line input in sessions.")
+  (:synopsis "Toggle multi-line input in sessions")
   (:check-mark "v" session-multiline-input?)
   (ahash-set! session-multiline-input (session-key)
               (not (session-multiline-input?))))
@@ -88,7 +89,7 @@
   (ahash-ref session-output-timings (session-key)))
 
 (tm-define (toggle-session-output-timings)
-  (:synopsis "Toggle output of evaluation timings.")
+  (:synopsis "Toggle output of evaluation timings")
   (:check-mark "v" session-output-timings?)
   (ahash-set! session-output-timings (session-key)
               (not (session-output-timings?))))
@@ -103,7 +104,7 @@
   session-scheme-trees)
 
 (tm-define (toggle-session-scheme-trees)
-  (:synopsis "Toggle pretty tree output in scheme sessions.")
+  (:synopsis "Toggle pretty tree output in scheme sessions")
   (:check-mark "v" session-scheme-trees?)
   (set! session-scheme-trees (not session-scheme-trees)))
 
@@ -113,7 +114,7 @@
   session-scheme-strees)
 
 (tm-define (toggle-session-scheme-strees)
-  (:synopsis "Toggle pretty scheme tree output in scheme sessions.")
+  (:synopsis "Toggle pretty scheme tree output in scheme sessions")
   (:check-mark "v" session-scheme-strees?)
   (set! session-scheme-strees (not session-scheme-strees)))
 
@@ -123,7 +124,7 @@
   session-scheme-math)
 
 (tm-define (toggle-session-scheme-math)
-  (:synopsis "Toggle pretty math output in scheme sessions.")
+  (:synopsis "Toggle pretty math output in scheme sessions")
   (:check-mark "v" session-scheme-math?)
   (set! session-scheme-math (not session-scheme-math)))
 
@@ -476,6 +477,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (make-session lan ses)
+  (:synopsis "Insert session")
+  (:argument lan "Language")
+  (:argument ses "Session identifier")
   (let* ((ban `(output (document "")))
 	 (l (if (session-math-input? lan ses) 'input-math 'input))
 	 (p (plugin-prompt lan ses))

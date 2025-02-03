@@ -37,6 +37,7 @@
 (define tmhtml-image-root-url (unix->url "image"))
 (define tmhtml-image-root-string "image")
 (define tmhtml-site-version #f)
+(define tmhtml-web-formats (list "gif" "jpg" "jpeg" "png" "bmp" "svg"))
 
 (tm-define (tmhtml-initialize opts)
   (set! tmhtml-env (make-ahash-table))
@@ -51,7 +52,7 @@
   (set! tmhtml-image-cache (make-ahash-table))
   (let* ((suffix (url-suffix current-save-target))
 	 (n (+ (string-length suffix) 1)))
-    (if (in? suffix '("html" "xhtml"))
+    (if (in? suffix '("html" "xhtml" "htm"))
 	(begin
 	  (set! tmhtml-image-serial 0)
 	  (set! tmhtml-image-root-url (url-unglue current-save-target n))
@@ -171,7 +172,12 @@
 	  ".ornament { border-width: 1px; border-style: solid;"
 	  " border-color: black; display: inline-block; padding: 0.2em; } "
 	  ".right-tab { float: right; position: relative; top: -1em; } "
-	  ".no-breaks { white-space: nowrap; } "))
+	  ".no-breaks { white-space: nowrap; } "
+	  ".underline { text-decoration: underline; } "
+	  ".overline { text-decoration: overline; } "
+	  ".strike-through { text-decoration: line-through; } "
+	  "del { text-decoration: line-through wavy red; } "
+	  ".fill-out { text-decoration: underline dotted; } "))
 	(mathml "math { font-family: cmr, times, verdana } "))
     (if tmhtml-mathml? (string-append html mathml) html)))
 
@@ -277,7 +283,7 @@
     `(h:html
       (h:head
        (h:title ,@(tmhtml title))
-       (h:meta (@ (name "generator")
+       (h:meta (@ (charset "utf-8") (name "generator") 
 		  (content ,(string-append "TeXmacs " (texmacs-version)))))
        ,css
        ,@xhead)
@@ -690,6 +696,24 @@
 
 (define (tmhtml-repeat l)
   (tmhtml (car l)))
+
+(define (tmhtml-underline l)
+   `((h:span (@ (class "underline")) ,@(tmhtml (cAr l)) )))
+
+(define (tmhtml-overline l)
+   `((h:span (@ (class "overline")) ,@(tmhtml (cAr l)) )))
+
+(define (tmhtml-strike-through l)
+   `((h:span (@ (class "strike-through")) ,@(tmhtml (cAr l)) )))
+   
+(define (tmhtml-deleted l)
+   `((h:del ,@(tmhtml (cAr l)) )))
+
+(define (tmhtml-marked l)
+   `((h:mark ,@(tmhtml (cAr l)) )))
+   
+(define (tmhtml-fill-out l)
+   `((h:span (@ (class "fill-out")) ,@(tmhtml (cAr l)) )))
 
 (define (tmhtml-datoms l)
   (tmhtml (cAr l)))
@@ -1193,14 +1217,14 @@
 	(else (tmhtml-width-part (cdr attrl)))))
 
 (define (tmhtml-width-replace attrl sum)
-  (with part (tmhtml-width-part attrl)
+  (with part (tmhtml-width-part (reverse attrl))
     (if (== part 0) attrl
 	(with l (list-filter attrl (lambda (x) (!= (car x) "cell-width")))
 	  (with w (number->htmlstring (/ part sum))
 	    (cons (list "cell-width" (string-append w "par")) l))))))
 
 (define (tmhtml-make-cells l cellf)
-  (let* ((partl (map tmhtml-width-part cellf))
+  (let* ((partl (map tmhtml-width-part (map reverse cellf)))
 	 (sum (apply + partl)))
     (if (!= sum 0) (set! cellf (map (cut tmhtml-width-replace <> sum) cellf)))
     (tmhtml-make-cells-bis l cellf)))
@@ -1280,6 +1304,7 @@
     (if (string-starts? s "web-") 19000.0 20625.0)))
 
 (define (tmhtml-png y)
+  ;; converts generic markup that can be displayed on screen to png format
   (let* ((mag (ahash-ref tmhtml-env :mag))
 	 (x (if (or tmhtml-css? (nstring? mag) (== mag "1")) y
                 (with nmag `(times (value "magnification") ,mag)
@@ -1305,7 +1330,7 @@
                    (bmar (number->htmlstring (- y3 y1)))
                    (rmar (number->htmlstring (- x2 x4)))
                    (tmar (number->htmlstring (- y2 y4)))
-		   (valign (number->htmlstring (- y3 (- y3 y1))))
+		   (valign (number->htmlstring y1))
 		   (height (number->htmlstring (- y4 y3)))
 		   (style (string-append "margin-left: " lmar "em; "
                                          "margin-bottom: " bmar "em; "
@@ -1339,37 +1364,42 @@
          (if (== (url-suffix (caddr name)) "") name (url-suffix (caddr name))))
         (else "")))
 
-(define (tmhtml-image-name name)
+(define (tmhtml-web-image-name name)
+  ;; make sure image is accessible from html
   ;; FIXME: we should replace ~, environment variables, etc.
-  (with u (url-relative current-save-target (unix->url name))
-    (if (and (or (string-ends? name ".ps")
-                 (string-ends? name ".eps")
-                 (string-ends? name ".pdf"))
-	     (url-exists? u))
-	(receive (name-url name-string) (tmhtml-image-names "png")
-	  (system-2 "convert" u name-url)
-	  name-string)
-	name)))
+  (let* ((un  (unix->url name))
+         (u (url-relative current-save-target un))
+         (suf (url-suffix un)))
+    (if (url-exists? u)
+        name
+      (with u1 (url-relative (current-buffer-url) un)
+        (if (url-exists? u1)
+          (receive (name-url name-string) (tmhtml-image-names suf)
+            (system-copy u1 name-url)
+            name-string)
+           name))))) ;; image does not exist, can't do much
 
 (define (tmhtml-image l)
   ;; FIXME: Should also test that width and height are not magnifications.
   ;; Currently, magnifications make tmlength->htmllength return #f.
-  (cond ((in? (tmhtml-image-suffix (car l)) (list "ps" "eps" "pdf" "tif"))
+  (cond ((nin? (tmhtml-image-suffix (car l)) tmhtml-web-formats)
+         ;; linked or embedded non-web image: convert & save to png  
          (tmhtml-png (cons 'image l)))
         ((and (func? (car l) 'tuple 2)
               (func? (cadar l) 'raw-data 1)
               (string? (cadr (cadar l)))
               (string? (caddar l)))
-         (receive (name-url name-string) (tmhtml-image-names (caddar l))
-           (when (in? (url-suffix name-url)
-                      (list "ps" "eps" "pdf" "tif"))
-             (set! name-string (url->string name-url)))
+         ;; embedded web image, extract it    
+         (receive (name-url name-string)
+                  (tmhtml-image-names (url-suffix (cork->utf8 (caddar l))))
            (string-save (cadr (cadar l)) name-url)
            (tmhtml-image (cons name-string (cdr l)))))
         ((nstring? (first l))
+         ;; treat complex images as generic markup
          (tmhtml-png (cons 'image l)))
         (else
-          (let* ((s (tmhtml-image-name (cork->html (first l))))
+          ;; web images
+          (let* ((s (tmhtml-web-image-name (first l)))
                  (w (tmlength->htmllength (second l) #f))
                  (h (tmlength->htmllength (third l) #f)))
             `((h:img (@ (class "image")
@@ -1877,6 +1907,12 @@
   (repeat tmhtml-repeat)
   (repeat* tmhtml-repeat)
   (float tmhtml-float)
+  (underline tmhtml-underline)
+  (overline tmhtml-overline)
+  (strike-through tmhtml-strike-through)
+  (deleted tmhtml-deleted)
+  (marked tmhtml-marked)
+  (fill-out tmhtml-fill-out)
   (datoms tmhtml-datoms)
   (dlines tmhtml-datoms)
   (dpages tmhtml-datoms)
@@ -1981,7 +2017,9 @@
 
   (vgroup tmhtml-id)
   ((:or switch fold exclusive progressive superposed) tmhtml-noop)
-  ((:or mouse-over-balloon mouse-over-balloon*) tmhtml-balloon)
+  ((:or mouse-over-balloon mouse-over-balloon*
+        hover-balloon hover-balloon*
+        popup-balloon popup-balloon*) tmhtml-balloon)
   
   (!file tmhtml-file))
 

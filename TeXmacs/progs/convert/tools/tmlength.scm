@@ -36,7 +36,7 @@
 
 (tm-define tmlength
   ;; (:type ... how to write that?
-  (:synopsis "Create a tmlength object given its value and unit components.")
+  (:synopsis "Create a tmlength object given its value and unit components")
   (case-lambda
     (() '())
     ((n unit)
@@ -58,22 +58,22 @@
 
 (tm-define (tmlength-zero? tmlen)
   (:type (-> tmlength number))
-  (:synopsis "Get the value part of @tmlen.")
+  (:synopsis "Get the value part of @tmlen")
   (or (tmlength-null? tmlen) (= (first tmlen) 0)))
 
 (tm-define (tmlength-value tmlen)
   (:type (-> tmlength number))
-  (:synopsis "Get the value part of @tmlen.")
+  (:synopsis "Get the value part of @tmlen")
   (if (tmlength-null? tmlen) 0 (first tmlen)))
 
 (tm-define (tmlength-unit tmlen)
   (:type (-> tmlength symbol))
-  (:synopsis "Get the unit part of @tmlen.")
+  (:synopsis "Get the unit part of @tmlen")
   (if (tmlength-null? tmlen) #f (second tmlen)))
 
 (tm-define (tmlength-value+unit tmlen)
   (:type (-> tmlength (cross tmlength-value tmlength-unit)))
-  (:synopsis "Fundamental tmlength deconstructor.")
+  (:synopsis "Fundamental tmlength deconstructor")
   (:returns (1 "value part of @tmlen")
 	    (2 "unit part of @tmlen"))
   (if (tmlength-null? tmlen)
@@ -92,7 +92,7 @@
 
 (tm-define (string->tmlength s)
   (:type (-> string tmlength))
-  (:synopsis "Create a tmlength object from its string representation.")
+  (:synopsis "Create a tmlength object from its string representation")
   (receive
       (value-str unit-str)
       (string-span (do ((ss s (string-tail ss 2)))
@@ -109,7 +109,7 @@
 
 (tm-define (tmlength->string tmlen)
   (:type (-> tmlength string))
-  (:synopsis "Produce the string representation of a tmlength object.")
+  (:synopsis "Produce the string representation of a tmlength object")
   (if (tmlength-null? tmlen) ""
       (receive (value unit) (tmlength-value+unit tmlen)
         (string-append (number->string value) (symbol->string unit)))))

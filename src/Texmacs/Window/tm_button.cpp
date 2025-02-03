@@ -65,13 +65,17 @@ initialize_environment (edit_env& env, tree doc, drd_info& drd) {
   for (int i=0; i<N(init); i++)
     if (is_func (init[i], ASSOCIATE, 2) && is_atomic (init[i][0]))
       env->write (init[i][0]->label, init[i][1]);
+  // env->write (PAGE_WIDTH_MARGIN, "true");
+  // env->write (PAR_WIDTH, "400px");
   // env->write (DPI, "720");
   // env->write (ZOOM_FACTOR, "1.2");
   // env->write (PAGE_TYPE, "a5");
+#if QT_VERSION < 0x060000
   if (retina_zoom == 2) {
     double mag= 2.0 * env->get_double (MAGNIFICATION);
     env->write (MAGNIFICATION, as_string (mag));
   }
+#endif
   env->update ();
 }
 
@@ -108,13 +112,18 @@ class box_widget_rep: public simple_widget_rep {
   double zoomf;
   double magf;
   SI     dw, dh;
+  SI     last_x, last_y;
+  bool   lpressed;
 
 public:
   box_widget_rep (box b, color bg, bool trans, double zoom, SI dw, SI dh);
   operator tree ();
+  bool is_embedded_widget ();
 
   void handle_get_size_hint (SI& w, SI& h);
   void handle_repaint (renderer ren, SI x1, SI y1, SI x2, SI y2);
+  void handle_mouse (string kind, SI x, SI y, int m, time_t t,
+                     array<double> data);
 };
 
 box_widget_rep::box_widget_rep
@@ -122,10 +131,16 @@ box_widget_rep::box_widget_rep
     simple_widget_rep (), b (b2),
     bg (bg2), transparent (trans2),
     zoomf (zoom), magf (zoom / std_shrinkf),
-    dw (dw2+2*PIXEL), dh (dh2+2*PIXEL) {}
+    dw (dw2+2*PIXEL), dh (dh2+2*PIXEL),
+    last_x (0), last_y (0), lpressed (false) {}
 
 box_widget_rep::operator tree () {
   return tree (TUPLE, "box", (tree) b);
+}
+
+bool
+box_widget_rep::is_embedded_widget () {
+  return true;
 }
 
 void
@@ -154,6 +169,53 @@ box_widget_rep::handle_repaint (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   ren->reset_zoom_factor ();
 }
 
+void
+box_widget_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t,
+                              array<double> data) {
+  (void) m; (void) t; (void) data;
+  //cout << "Mouse  : " << kind << ", "
+  //     << (x/PIXEL) << ", " << (y/PIXEL) << "\n";
+  //cout << "Extents: "
+  //     << b->x1/PIXEL << ", " << b->y1/PIXEL << "; "
+  //     << b->x2/PIXEL << ", " << b->y2/PIXEL << "\n";
+  SI ox=  b->x1;
+  SI oy= -b->y2;
+  SI xx= ((SI) (4.15 * x)) - ox;
+  SI yy= ((SI) (4.15 * y)) - oy;
+  //cout << "Point  : " << xx/PIXEL << ", " << yy/PIXEL << LF;
+
+  rectangles rs;
+  bool found_flag= false;
+  path old_p= b->find_box_path (last_x, last_y, 0, false, found_flag);
+  found_flag= false;
+  path new_p= b->find_box_path (xx, yy, 0, false, found_flag);
+  if (path_up (old_p) != path_up (new_p)) {
+    b->message ("leave", last_x, last_y, rs);
+    b->message ("enter", xx, yy, rs);
+  }
+  last_x= xx; last_y= yy;
+
+  if (kind == "move" && lpressed)
+    b->message ("drag", xx, yy, rs);
+  if (kind == "press-left") {
+    lpressed= true;
+    b->message ("click", xx, yy, rs);
+  }
+  if (kind == "release-left") {
+    lpressed= false;
+    b->message ("select", xx, yy, rs);
+  }
+
+  if (N(rs) > 0) {
+    send_invalidate_all (this);
+    //while (!is_nil (rs)) {
+    //  send_invalidate (rs->item->x1-pixel, rs->item->y1-pixel,
+    //                   rs->item->x2+pixel, rs->item->y2+pixel);
+    //  rs= rs->next;
+    //}
+  }
+}
+
 /******************************************************************************
 * Interface
 ******************************************************************************/
@@ -162,9 +224,11 @@ widget
 box_widget (box b, bool tr) {
   color col= light_grey;
   double zoom= 5.0/6.0;
+#if QT_VERSION < 0x060000
   if (retina_zoom == 1) {}
   else if (tm_style_sheet == "") zoom *= 2;
   else zoom *= retina_scale;
+#endif
   return widget (tm_new<box_widget_rep> (b, col, tr, zoom, 3*PIXEL, 3*PIXEL));
 }
 
@@ -238,7 +302,11 @@ texmacs_output_widget (tree doc, tree style) {
 #else
     col= light_grey;
 #endif
+#if QT_VERSION >= 0x060000
+  double zoom= 1.0;
+#else
   double zoom= (retina_zoom == 2? 1.0: 1.2);
+#endif
   return widget (tm_new<box_widget_rep> (b, col, false, zoom, 0, 0));
 }
 

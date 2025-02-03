@@ -369,9 +369,9 @@ t.issue = function( ... ) {
     }
 
 # the following will allow you to edit a function inside TeXmacs.
-t.edit = structure( function(x) { # Edit an R object inside TeXmacs, with nice formating.
+t.edit = structure( function(x) { # Edit an R object inside TeXmacs, with nice formatting.
 	### Before TeXmacs had syntax highlighting for R, this function was a way to edit 
-	### an R object formated nicely. 
+	### an R object formatted nicely. 
 	### The object is inserted into the input field of TeXmacs, so that it is easy to edit.
     cat( DATA_BEGIN,"input#",sep="")    
     cat( DATA_BEGIN,"texmacs: ",sep="")    
@@ -400,7 +400,7 @@ structure(
 function( 
 	### A matrix can be converted to an object of type texmacs.matrix, which
 	### then is printed as a table into TeXmacs, instead of as text.
-	### Notice that most of the formating options are usually set via
+	### Notice that most of the formatting options are usually set via
 	### \code{options()}, instead of as arguments to this function.
 	x,
 	row.names=T, ##<< Should rownames be printed on the left

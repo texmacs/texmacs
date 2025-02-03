@@ -15,7 +15,8 @@
   (:use (source macro-edit)
 	(version version-edit) ;; FIXME: for selection-trees
 	(generic format-edit)
-        (generic document-part)))
+        (generic document-part)
+        (utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Major operation mode
@@ -191,6 +192,26 @@
         ("Ok" (macro-apply u) (quit))))
     ===))
 
+(tm-tool* (macro-tool win u packs doc mode)
+  (:name "Edit macro")
+  (:quit (terminate-macro-editor))
+  ===
+  (horizontal
+    //
+    (vertical
+      (resize "400px" "200px"
+        (texmacs-input doc `(style (tuple ,@packs)) u))
+      ======
+      (division "plain"
+        (hlist
+          (refreshable "macro-editor-mode"
+            (enum (set-macro-mode u answer)
+                  '("Text" "Source" "Mathematics")
+                  (get-macro-mode) "8em"))
+          >>
+          ("Apply" (macro-apply u)))))
+    //))
+
 (tm-define (editable-macro? l)
   (if (symbol? l) (set! l (symbol->string l)))
   (and (tree-label-extension? (string->symbol l))
@@ -203,15 +224,18 @@
   (initialize-macro-editor l mode)
   (let* ((b (current-buffer-url))
          (u (string->url (string-append "tmfs://aux/edit-" l)))
-         (packs (get-style-list))
-         (styps (list-remove-duplicates (append packs (list "macro-editor"))))
-         (macro-mode (if (in-math?) "Mathematics" "Text")))
+         (styps (embedded-style-list "macro-editor"))
+         (macro-mode (if (in-math?) "Mathematics" "Text"))
+         (doc (build-macro-document l))
+         (tool (list 'macro-tool u styps doc mode)))
     (set! macro-current-mode macro-mode)
-    (and-with doc (build-macro-document l)
-      (dialogue-window (macro-editor u styps doc macro-mode)
-                       (lambda x (terminate-macro-editor))
-                       "Macro editor" u)
-      (buffer-set-master u b))))
+    (when doc
+      (buffer-set-master u b)
+      (if (side-tools?)
+          (tool-focus :right tool u)
+          (dialogue-window (macro-editor u styps doc macro-mode)
+                           (lambda x (terminate-macro-editor))
+                           "Macro editor" u)))))
 
 (tm-define (edit-focus-macro)
   (:interactive #t)
@@ -262,19 +286,21 @@
   (:interactive #t)
   (when (can-create-context-macro?)
     (if (symbol? l) (set! l (symbol->string l)))
+    (set! macro-current-mode "Source")
     (let* ((b (current-buffer-url))
 	   (u (string-append "tmfs://aux/edit-" l))
-	   (packs (get-style-list))
-	   (styps (list-remove-duplicates
-		   (append packs (list "macro-editor"))))
+	   (styps (embedded-style-list "macro-editor"))
            (body (add-context (tree-up (cursor-tree)) `(arg "body")))
-	   (def `(assign ,l (inactive* (macro "body" ,body)))))
-      (set! macro-current-mode "Source")
-      (and-with doc (build-macro-document* l def)
-	(dialogue-window (macro-editor u styps doc "Source")
-			 (lambda x (noop))
-			 "Macro editor")
-	(buffer-set-master u b)))))
+	   (def `(assign ,l (inactive* (macro "body" ,body))))
+           (doc (build-macro-document* l def))
+           (tool (list 'macro-tool u styps doc "Source")))
+      (when doc
+	(buffer-set-master u b)
+        (if (side-tools?)
+            (tool-focus :right tool u)
+            (dialogue-window (macro-editor u styps doc "Source")
+                             (lambda x (noop))
+                             "Macro editor"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Table macros
@@ -314,24 +340,26 @@
   (when (can-create-table-macro?)
     (position-inside-table)
     (if (symbol? l) (set! l (symbol->string l)))
+    (set! macro-current-mode "Source")
     (let* ((b (current-buffer-url))
 	   (u (string-append "tmfs://aux/edit-" l))
-	   (packs (get-style-list))
-	   (styps (list-remove-duplicates
-		   (append packs (list "macro-editor"))))
+	   (styps (embedded-style-list "macro-editor"))
 	   (fm (table-get-format-all))
 	   (tf `(tformat ,@(tree-children fm) (arg "body")))
 	   (body (if (selection-active-any?)
 		     (with sel (tm->stree (selection-tree))
 		       (tformat-subst-selection sel tf))
 		     tf))
-	   (def `(assign ,l (inactive* (macro "body" ,body)))))
-      (set! macro-current-mode "Source")
-      (and-with doc (build-macro-document* l def)
-	(dialogue-window (macro-editor u styps doc "Source")
-			 (lambda x (noop))
-			 "Macro editor")
-	(buffer-set-master u b)))))
+	   (def `(assign ,l (inactive* (macro "body" ,body))))
+           (doc (build-macro-document* l def))
+           (tool (list 'macro-tool u styps doc "Source")))
+      (when doc
+	(buffer-set-master u b)
+        (if (side-tools?)
+            (tool-focus :right tool u)
+            (dialogue-window (macro-editor u styps doc "Source")
+                             (lambda x (noop))
+                             "Macro editor"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Editing a macro chosen from the list of all defined macros
@@ -343,6 +371,13 @@
   (tree-set (buffer-get-body u)
             (build-macro-document macro-current-macro))
   (refresh-now "macros-editor-documentation"))
+
+(tm-define (macros-editor-select* win u macro filter)
+  (macros-editor-select u macro filter)
+  (with-window win (update-menus)))
+
+(tm-define (macros-editor-has-help?)
+  (tmdoc-search-tag (string->symbol macro-current-macro)))
 
 (tm-define (macros-editor-current-help)
   (with doc (tmdoc-search-tag (string->symbol macro-current-macro))
@@ -372,8 +407,8 @@
         === ===
         (horizontal
           (glue #t #f 0 0)
-          (resize "500px" "220px"
-            (refreshable "macros-editor-documentation"
+          (refreshable "macros-editor-documentation"
+            (resize "500px" "220px"
               (texmacs-output
                `(document
                   (mini-paragraph "476guipx" ,(macros-editor-current-help)))
@@ -397,6 +432,41 @@
 	// //
 	("Ok" (macro-apply u) (quit))))))
 
+(tm-tool* (macros-tool win u packs l)
+  (:name "Macro selector")
+  (:quit (terminate-macro-editor))
+  (centered
+    (resize "250px" "150px"
+      (filtered-choice (macros-editor-select* win u answer filter) l
+                       macro-current-macro macro-current-filter)))
+  === ======
+  (division "title"
+    (text "Macro editor"))
+  (centered
+    (resize "400px" "200px"
+      (texmacs-input (build-macro-document macro-current-macro)
+                     `(style (tuple ,@packs)) u))
+    ======
+    (division "plain"
+      (hlist
+        (refreshable "macro-editor-mode"
+          (enum (set-macro-mode u answer)
+                '("Text" "Source" "Mathematics")
+                (get-macro-mode) "8em"))
+        >>
+        ("Apply" (macro-apply u)))))
+  (refreshable "macros-editor-documentation"
+    (assuming (macros-editor-has-help?)
+      ====== ======
+      (division "title"
+        (text "Documentation"))
+      (centered
+        (resize "400px" "300px"
+          (texmacs-output
+           `(document
+              (mini-paragraph "376guipx" ,(macros-editor-current-help)))
+           '(style (tuple "tmdoc" "side-tools"))))))))
+  
 (define (get-key key-val)
   (tree->string (tree-ref key-val 0)))
 
@@ -417,10 +487,12 @@
   (let* ((b (current-buffer-url))
 	 (u (string->url "tmfs://aux/macro-editor"))
 	 (names (all-defined-macros))
-         (packs (get-style-list))
-         (styps (list-remove-duplicates (append packs (list "macro-editor")))))
+         (styps (embedded-style-list "macro-editor"))
+         (tool (list 'macros-tool u styps names)))
     (set! macro-current-mode "Text")
-    (dialogue-window (macros-editor u styps names)
-		     (lambda x (terminate-macro-editor))
-		     "Macros editor" u)
-    (buffer-set-master u b)))
+    (buffer-set-master u b)
+    (if (side-tools?)
+        (tool-focus :right tool u)
+        (dialogue-window (macros-editor u styps names)
+                         (lambda x (terminate-macro-editor))
+                         "Macros editor" u))))

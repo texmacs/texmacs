@@ -26,8 +26,11 @@
 #include <map>
 
 
-
+#if __cplusplus >= 201703L
+class PDFNameLess
+#else
 class PDFNameLess : public std::binary_function<const PDFName*,const PDFName*,bool>
+#endif
 {
 public:
 	bool operator( ) (const PDFName* left, 

@@ -44,7 +44,7 @@ public:
         ePDFObjectDictionary,
         ePDFObjectIndirectObjectReference,
         ePDFObjectStream,
-        ePDFObjectSymbol // symbol is parallel to unkown. mostly be a keyword, or simply a mistake in the file
+        ePDFObjectSymbol // symbol is parallel to unknown. mostly be a keyword, or simply a mistake in the file
     };    
     
 	PDFObject(EPDFObjectType inType); 

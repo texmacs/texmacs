@@ -13,6 +13,9 @@
 #ifndef CG_RENDERER_HPP
 #define CG_RENDERER_HPP
 
+#include "config.h"
+#ifndef QTTEXMACS
+
 #include "basic_renderer.hpp"
 
 #define ID OTHER_ID
@@ -55,4 +58,5 @@ public:
 
 cg_renderer_rep* the_cg_renderer();
 
+#endif // not QTTEXMACS
 #endif // defined CG_RENDERER_HPP

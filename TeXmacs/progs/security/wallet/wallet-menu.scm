@@ -233,7 +233,7 @@
 (tm-widget (wallet-widget-delete cmd)
   (with tbl (make-ahash-table)
     (padded
-      (resize ("550px" "550px" "9999px") ("250px" "250px" "9999px")
+      (resize '("550px" "550px" "9999px") '("250px" "250px" "9999px")
         (refreshable "wallet-widget-delete"
           (scrollable
             (padded

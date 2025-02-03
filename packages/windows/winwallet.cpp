@@ -39,7 +39,7 @@ int _return(int err) {
 	char *msg = NULL;
 	switch(err) {
 	case ERR_OK: break;
-	case ERR_CMD:		msg= "Unknow command\n";break;
+	case ERR_CMD:		msg= "Unknown command\n";break;
 	case ERR_ARG:		msg= "Bad arguments count\nusage: winwallet CMD Application [user] ";break;
 	case ERR_TOOLONG:	msg= "Password too long\n";break;
 	case ERR_CRED:	msg= "Credential interface error\n";break;

@@ -7,6 +7,7 @@
 ("abbreviated authors" "συντομογραφημένοι συγγραφείς")
 ("abbreviation" "συντομογραφία")
 ("about" "σχετικά με το TeXmacs")
+("apropos" "σχετικά με το TeXmacs")
 ("about menu" "σχετικά με το μενού")
 ("above" "πάνω")
 ("abreviated authors" "συντομογραφημένοι συγγραφείς")

@@ -36,7 +36,7 @@ AC_DEFUN([_LC_ICONV],[
   CPPFLAGS="${[$0]_PATH//-L/-I} -I$withval/include -I/opt/local/include -I/sw/include -[$1] -MF $[$0]_TEMP"
 
   LC_CLEAR_FLAGS([ICONV]) # no previous iconv definition allowed
-  AC_CHECK_HEADER(iconv.h, [
+  AC_PREPROC_IFELSE([AC_LANG_PROGRAM([[#include<iconv.h>]])], [
     [$0]_DEPEND=$(<$[$0]_TEMP)
     [$0]_ICONV=${[$0]_DEPEND%/include/iconv.h*}
     if  @<:@@<:@ "$[$0]_DEPEND" == "$[$0]_ICONV" @:>@@:>@
@@ -83,6 +83,6 @@ AC_DEFUN([_LC_ICONV],[
   ],[
     rm $[$0]_TEMP
     AC_MSG_WARN([Use --with-iconv=iconv_base_path (i.e /usr/local) to specify your icon location])
-  ],[-])
+  ])
   unset ${![$0]_*}
 ])

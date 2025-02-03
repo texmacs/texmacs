@@ -32,7 +32,7 @@
 
     <item*|Lush>Michael Graffam.
 
-    <item*|Macaulay 2>Dan Grayson.
+    <item*|Macaulay2>Dan Grayson.
 
     <item*|Maple>Joris van der Hoeven.
 

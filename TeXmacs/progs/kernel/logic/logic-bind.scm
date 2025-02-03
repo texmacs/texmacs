@@ -13,6 +13,9 @@
 
 (texmacs-module (kernel logic logic-bind))
 
+(cond-expand
+ (guile-3
+  (use-modules (ice-9 copy-tree))))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Is an expression a free variable?
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

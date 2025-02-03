@@ -34,7 +34,7 @@
   (ahash-ref program-math-input (program-key)))
 
 (tm-define (toggle-program-math-input)
-  (:synopsis "Toggle mathematical input in programs.")
+  (:synopsis "Toggle mathematical input in programs")
   (:check-mark "v" program-math-input?)
   (ahash-set! program-math-input (program-key) (not (program-math-input?)))
   (with-innermost t prog-field-context?
@@ -49,7 +49,7 @@
   (ahash-set! program-multiline-input (cons lan ses) set?))
 
 (tm-define (toggle-program-multiline-input)
-  (:synopsis "Toggle multi-line input in programs.")
+  (:synopsis "Toggle multi-line input in programs")
   (:check-mark "v" program-multiline-input?)
   (ahash-set! program-multiline-input (program-key)
               (not (program-multiline-input?))))
@@ -60,7 +60,7 @@
   (ahash-ref program-output-timings (program-key)))
 
 (tm-define (toggle-program-output-timings)
-  (:synopsis "Toggle output of evaluation timings.")
+  (:synopsis "Toggle output of evaluation timings")
   (:check-mark "v" program-output-timings?)
   (ahash-set! program-output-timings (program-key)
               (not (program-output-timings?))))
@@ -111,7 +111,7 @@
   (ahash-ref program-session-mode (program-key)))
 
 (tm-define (toggle-session-program)
-  (:synopsis "Toggle evaluation mode.")
+  (:synopsis "Toggle evaluation mode")
   (:check-mark "v" program-session-mode?)
   (with t (tree-innermost '(program session))
     (when t
@@ -129,7 +129,7 @@
   program-scheme-trees)
 
 (tm-define (toggle-program-scheme-trees)
-  (:synopsis "Toggle pretty tree output in scheme programs.")
+  (:synopsis "Toggle pretty tree output in scheme programs")
   (:check-mark "v" program-scheme-trees?)
   (set! program-scheme-trees (not program-scheme-trees)))
 
@@ -139,7 +139,7 @@
   program-scheme-strees)
 
 (tm-define (toggle-program-scheme-strees)
-  (:synopsis "Toggle pretty scheme tree output in scheme programs.")
+  (:synopsis "Toggle pretty scheme tree output in scheme programs")
   (:check-mark "v" program-scheme-strees?)
   (set! program-scheme-strees (not program-scheme-strees)))
 
@@ -149,7 +149,7 @@
   program-scheme-math)
 
 (tm-define (toggle-program-scheme-math)
-  (:synopsis "Toggle pretty math output in scheme programs.")
+  (:synopsis "Toggle pretty math output in scheme programs")
   (:check-mark "v" program-scheme-math?)
   (set! program-scheme-math (not program-scheme-math)))
 

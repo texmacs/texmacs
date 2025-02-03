@@ -13,9 +13,13 @@
 
 (texmacs-module (kernel texmacs tm-states))
 
+(cond-expand
+ (guile-3
+  (use-modules (ice-9 copy-tree))))
+
 ;; Low-level API
 (define-public (state-create slotlist)
-;; slotlist === ((<SLOT-DESCR>*) (<PROP-DESCR>*) (<COMPILED-PROP>*))
+  ;; slotlist === ((<SLOT-DESCR>*) (<PROP-DESCR>*) (<COMPILED-PROP>*))
   slotlist)
 
 (define (state-slots sr)

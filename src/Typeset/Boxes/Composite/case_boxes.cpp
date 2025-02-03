@@ -12,6 +12,7 @@
 
 #include "Boxes/composite.hpp"
 #include "Boxes/construct.hpp"
+#include "analyze.hpp"
 
 /******************************************************************************
 * Case boxes
@@ -97,6 +98,12 @@ case_box_rep::switch_to (int i, rectangles& rs) {
 
 bool
 case_box_rep::satisfies (tree t, tree cond) {
+  if (is_atomic (cond) && occurs (",", cond->label)) {
+    array<string> a= tokenize (cond->label, ",");
+    for (int i=0; i<N(a); i++)
+      if (satisfies (t, a[i])) return true;
+    return false;
+  }
   if (t == cond) return true;
   if (cond == "mouse-over") return entered;
   return false;

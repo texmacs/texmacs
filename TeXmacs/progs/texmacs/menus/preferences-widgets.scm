@@ -907,6 +907,12 @@
         (centered
           (dynamic (other-preferences-widget)))))))
 
-(tm-define (open-preferences)
+(tm-define (open-preferences-window)
   (:interactive #t)
   (top-window preferences-widget "User preferences"))
+
+(tm-define (open-preferences)
+  (:interactive #t)
+  (if (side-tools?)
+      (tool-select :right 'preferences-tool)
+      (open-preferences-window)))

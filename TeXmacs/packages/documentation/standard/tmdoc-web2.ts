@@ -157,8 +157,7 @@
       <hlink|Free Software Foundation|http://www.fsf.org/fsf/fsf.html>, Inc.,
       51 Franklin Street, Fifth Floor, Boston, MA 02111, USA.
 
-      With the support of <hlink|CNRS|http://www.cnrs.fr/>; hosted by
-      <hlink|INRIA|https://www.inria.fr/en/>.
+      With the support of <hlink|CNRS|http://www.cnrs.fr/>.
     </active*>
   </macro>>
 

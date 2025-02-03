@@ -208,8 +208,8 @@
   (when (not (inside-graphical-text?))
     (edit_move (car (graphics-mode)) x y)))
 
-(tm-define (graphics-release-left x y)
-  ;;(display* "Graphics] Release-left " x ", " y "\n")
+(tm-define (graphics-release-left x y t* p*)
+  ;;(display* "Graphics] Release-left " x ", " y ", " t* ", " p* "\n")
   (if (inside-graphical-text?)
       (with-innermost t graphical-text-context?
         (let* ((ps (select-first (s2f x) (s2f y)))
@@ -217,7 +217,13 @@
           (if (and p (list-starts? p (tree->path t)))
               (go-to p)
               (tree-go-to t :start))))
-      (edit_left-button (car (graphics-mode)) x y)))
+      (with gr-mode (graphics-mode)
+	(if (== gr-mode `(hand-edit calligraphy))
+	    (begin
+	      (graphics-start-drag-left x y t* p*)
+	      (graphics-dragging-left x y t* p*)
+	      (graphics-end-drag-left x y t* p*))
+	    (edit_left-button (car gr-mode) x y)))))
 
 (tm-define (graphics-release-middle x y)
   ;;(display* "Graphics] Release-middle " x ", " y "\n")

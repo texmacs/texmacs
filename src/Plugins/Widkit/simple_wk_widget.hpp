@@ -19,6 +19,7 @@ public:
   simple_widget_rep ();
 
   virtual bool is_editor_widget ();
+  virtual bool is_embedded_widget ();
   virtual void handle_get_size_hint (SI& w, SI& h);
   virtual void handle_notify_resize (SI w, SI h);
   virtual void handle_keypress (string key, time_t t);

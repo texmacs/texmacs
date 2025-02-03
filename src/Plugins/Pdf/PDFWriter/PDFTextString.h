@@ -24,7 +24,7 @@
 	encodes a double byte Unicode text to a PDF text string, 
 	either using PDFDocEncoded or UTF-16BE encoded string with a leading byte order marker. 
 	if possible, the string is encoded using PDFDocEncoded. otherwise UTF16BE is used.
-	when encoding, it is made sure that all charachters that require escaping, get escaped.
+	when encoding, it is made sure that all characters that require escaping, get escaped.
 */
 
 #include "OutputStringBufferStream.h"

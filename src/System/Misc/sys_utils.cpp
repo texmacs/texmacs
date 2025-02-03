@@ -14,14 +14,6 @@
 #include "tree.hpp"
 #include "parse_string.hpp"
 
-#ifdef OS_MINGW
-#include "Qt/qt_sys_utils.hpp"
-#include "Windows/mingw_sys_utils.hpp"
-#include "Windows/win-utf8-compat.hpp"
-#else
-#include "Unix/unix_sys_utils.hpp"
-#endif
-
 int script_status = 1;
 
 /******************************************************************************
@@ -30,9 +22,13 @@ int script_status = 1;
 
 int
 system (string s, string& result, string& error) {
-#if defined (OS_MINGW)
+#if defined (OS_MINGW64)
+  int r= windows_system (s, result, error);
+#elif defined (OS_MINGW)
   int r= qt_system (s, result, error);
-#else
+#elif defined (OS_ANDROID)
+  int r= qt_system (s, result, error);
+#else 
   int r= unix_system (s, result, error);
 #endif
   return r;
@@ -40,7 +36,11 @@ system (string s, string& result, string& error) {
 
 int
 system (string s, string& result) {
-#if defined (OS_MINGW)
+#if defined (OS_MINGW64)
+  int r= windows_system (s, result); 
+#elif defined (OS_MINGW)
+  int r= qt_system (s, result);
+#elif defined (OS_ANDROID)
   int r= qt_system (s, result);
 #else
   int r= unix_system (s, result);
@@ -58,8 +58,11 @@ system (string s) {
     return r;
   }
   else {
-#if defined (OS_MINGW)
-    // if (starts (s, "convert ")) return 1;
+#if defined (OS_MINGW64)
+    return windows_system (s);
+#elif defined (OS_MINGW)
+    return qt_system (s);
+#elif defined (OS_ANDROID)
     return qt_system (s);
 #else
     return unix_system (s);
@@ -83,29 +86,18 @@ var_eval_system (string s) {
 
 string
 get_env (string var) {
-  c_string _var (var);
-  const char* _ret= getenv (_var);
-  if (_ret==NULL) {
+  string ret;
+  bool has_value = texmacs_getenv(var, ret);
+  if (!has_value) {
     if (var == "PWD") return get_env ("HOME");
     return "";
   }
-  string ret (_ret);
   return ret;
-  // do not delete _ret !
 }
 
 void
 set_env (string var, string with) {
-#if defined(STD_SETENV) && !defined(OS_MINGW)
-  c_string _var  (var);
-  c_string _with (with);
-  setenv (_var, _with, 1);
-#else
-  char* _varw= as_charp (var * "=" * with);
-  (void) putenv (_varw);
-  // do not delete _varw !!!
-  // -> known memory leak, but solution more complex than it is worth
-#endif
+  texmacs_setenv(var, with);
 }
 
 url
@@ -134,6 +126,9 @@ evaluate_system (array<string> arg,
   for (int i= 0; i < N(fd_out); i++) ptr[i]= &(out[i]);
 #ifdef OS_MINGW
   int ret= mingw_system (arg, fd_in, in, fd_out, ptr);
+#elif defined (OS_ANDROID)
+  int ret = -1;
+  //int ret= qt_system (arg, fd_in, in, fd_out, ptr);
 #else
   int ret= unix_system (arg, fd_in, in, fd_out, ptr);
 #endif

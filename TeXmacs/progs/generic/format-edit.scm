@@ -305,23 +305,29 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-property (make-hspace spc)
+  (:synopsis "Insert stretchable space")
   (:argument spc "Horizontal space"))
 
 (tm-property (make-space spc)
+  (:synopsis "Insert rigid space")
   (:argument spc "Horizontal space"))
 
 (tm-property (make-var-space spc base top)
+  (:synopsis "Insert rigid space")
   (:argument spc "Horizontal space")
   (:argument base "Base level")
   (:argument top "Top level"))
 
 (tm-property (make-htab spc)
+  (:synopsis "Insert horizontal tab")
   (:argument spc "Minimal space"))
 
 (tm-property (make-vspace-before spc)
+  (:synopsis "Insert space before")
   (:argument spc "Vertical space"))
 
 (tm-property (make-vspace-after spc)
+  (:synopsis "Insert space after")
   (:argument spc "Vertical space"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

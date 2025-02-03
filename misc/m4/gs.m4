@@ -22,7 +22,12 @@ AC_DEFUN([LC_GS],[
       if @<:@@<:@ -n $TMREPO @:>@@:>@ 
       then # it is comming from tm SDK
         AC_PATH_PROGS([GS_EXE],gs.exe gs, [], [$TMREPO/bin])
-        if @<:@@<:@ -x "$GS_EXE" @:>@@:>@ 
+        # if AC_PATH_PROGS fails, try without giving TMREPO/bin as default path
+        if test -z "$GS_EXE"; then
+          AC_PATH_PROGS([GS_EXE],gs.exe gs)
+        fi
+        AC_MSG_NOTICE(["$GS_EXE"])
+        if test -x "$GS_EXE";
         then
           #get needed gs fonts and libs paths
           while read -r l sep p # default path, separator, extra path
@@ -40,7 +45,7 @@ AC_DEFUN([LC_GS],[
           AC_SUBST([GS_LIB])
           AC_SUBST([GS_FONTS])
           AC_MSG_NOTICE([Ghostscript found  in TMREPO, it will be embedded in Package for Macos or Windows])
-        else AC_MSG_WARN([Ghostscript not detected in TMREPO, won't be embedded in Package])
+        else AC_MSG_ERROR([Ghostscript not detected in TMREPO, won't be embedded in Package])
         fi
       fi
     ]

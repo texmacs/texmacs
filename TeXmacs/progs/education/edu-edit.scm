@@ -68,6 +68,12 @@
 (tm-define (mc-context? t)
   (mc-tag? (tree-label t)))
 
+(tm-define (mc-exposed-context? t)
+  (mc-exposed-tag? (tree-label t)))
+
+(tm-define (mc-popup-context? t)
+  (mc-popup-tag? (tree-label t)))
+
 (tm-define (mc-exclusive-context? t)
   (mc-exclusive-tag? (tree-label t)))
 
@@ -79,6 +85,10 @@
 
 (tm-define (gap-context? t)
   (gap-tag? (tree-label t)))
+
+(tm-define (gap-non-long-context? t)
+  (or (gap-short-tag? (tree-label t))
+      (gap-wide-tag? (tree-label t))))
 
 (tm-define (gap-long-context? t)
   (gap-long-tag? (tree-label t)))
@@ -138,41 +148,35 @@
       (with c (tree-ref t 0)
         (cond ((not (tree-in? c '(hide-simple show-simple)))
                (if (== mode :question)
-                   (tree-set! c `(hide-simple "false" ,c))
-                   (tree-set! c `(show-simple "false" ,c))))
+                   (tree-set! c `(hide-simple "false" ,c))))
               ((== mode :question)
                (when (not (tree-is? c 'hide-simple))
                  (variant-set c 'hide-simple))
                (tree-set (tree-ref c 0) "false"))
               ((!= mode :question)
-               (when (not (tree-is? c 'show-simple))
-                 (variant-set c 'show-simple))))))
+               (tree-set! c (tree-ref c 1))))))
     (when (gap-long-context? t)
       (with c (tree-ref t 0)
         (cond ((not (tree-in? c '(hide-simple show-simple)))
                (if (== mode :question)
-                   (tree-set! c `(hide-simple ,(empty c) ,c))
-                   (tree-set! c `(show-simple ,(empty c) ,c))))
+                   (tree-set! c `(hide-simple ,(empty c) ,c))))
               ((== mode :question)
                (when (not (tree-is? c 'hide-simple))
                  (variant-set c 'hide-simple))
                (tree-set (tree-ref c 0) (empty (tree-ref c 1))))
               ((!= mode :question)
-               (when (not (tree-is? c 'show-simple))
-                 (variant-set c 'show-simple))))))
+               (tree-set! c (tree-ref c 1))))))
     (when (and (gap-context? t) (not (gap-long-context? t)))
       (with c (tree-ref t 0)
         (cond ((not (tree-in? c '(hide-reply show-reply)))
                (if (== mode :question)
-                   (tree-set! c `(hide-reply "" ,c))
-                   (tree-set! c `(show-reply "" ,c))))
+                   (tree-set! c `(hide-reply "" ,c))))
               ((== mode :question)
                (when (not (tree-is? c 'hide-reply))
                  (variant-set c 'hide-reply))
                (tree-set (tree-ref c 0) ""))
               ((!= mode :question)
-               (when (not (tree-is? c 'show-reply))
-                 (variant-set c 'show-reply))))))))
+               (tree-set! c (tree-ref c 1))))))))
 
 (tm-define (edu-set-mode mode)
   (edu-operate (buffer-tree) mode))
@@ -281,6 +285,14 @@
            (with-innermost mc mc-context?
              (tree-set! mc `(,th ,mc)))))))
 
+(tm-define (customizable-parameters t)
+  (:require (mc-popup-context? t))
+  (list (list "button-popup-activate" "Activate")))
+
+(tm-define (parameter-choice-list var)
+  (:require (in? var (list "button-popup-activate")))
+  (list "click" "mouse-over" "focus"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Editing entries of multiple choice lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -297,11 +309,50 @@
   (:require (mc-context? t))
   #t)
 
+(tm-define (mc-field-active? h)
+  (and (tm-func? h 'mc-field 2)
+       (or (tm-equal? (tm-ref h 0) "true")
+           (and (tm-func? (tm-ref h 0) 'hide-simple 2)
+                (tm-equal? (tm-ref h 0 0) "true")))))
+
+(tm-define (mc-field-set h val)
+  (when (tm-func? h 'mc-field 2)
+    (perform-set (tm-ref h 0) val)))
+
+(tm-define (mc-switch t i)
+  (when (mc-context? t)
+    (let* ((p (tree->path t))
+           (c (tree-down-index t)))
+      (if (== i :first) (set! i 0))
+      (if (== i :previous) (set! i (max 0 (- c 1))))
+      (if (== i :this) (set! i c))
+      (if (== i :next) (set! i (min (+ c 1) (- (tm-arity t) 1))))
+      (if (== i :last) (set! i (- (tm-arity t) 1)))
+      (when (tm-ref t i)
+        (clear-buttons t)
+        (mc-field-set (tm-ref t i) "true")
+        (tree-go-to t i 1 :end)))))
+
+(define (mc-visible-sub l)
+  (cond ((null? l) (noop))
+        ((mc-field-active? (car l))
+         (when (not (cursor-inside? (tm-ref (car l) 1)))
+           (tree-go-to (car l) 1 :end)))
+        (else (mc-visible-sub (cdr l)))))
+
+(define (mc-visible-cursor)
+  (and-with t (tree-innermost mc-popup-context?)
+    (mc-visible-sub (tree-children t))))
+
 (define (insert-mc-field t forwards?)
   (let* ((p (tree->path t))
 	 (i (tree-down-index t))
 	 (d (if forwards? 1 0)))
-    (tree-insert! t (+ i d) '((mc-field "false" "")))
+    (cond ((mc-popup-context? t)
+           (mc-field-set (tm-ref t i) "false")
+           (tree-insert! t (+ i d) '((mc-field "true" ""))))
+          (else
+           (tree-insert! t (+ i d) '((mc-field "false" "")))))
     (go-to (append p (list (+ i d) 1 0)))))
 
 (tm-define (kbd-enter t shift?)
@@ -330,7 +381,9 @@
 		  (tree-go-to t (- i 1) :end))
 		 ((and (not forwards?) (== i 0))
 		  (tree-go-to t (+ i 1) :start)))
-	   (tree-remove t i 1))
+	   (tree-remove t i 1)
+           (when (mc-popup-context? t)
+             (mc-switch t :this)))
 	  ((with-button-context? (tree-up t))
 	   (tree-cut (tree-up t)))
 	  (else (tree-cut t)))))
@@ -355,17 +408,54 @@
   (:require (mc-context? t))
   (remove-mc-field t forwards? #t))
 
+(tm-define (kbd-incremental t down?)
+  (:require (mc-context? t))
+  (mc-switch t (if down? :next :previous)))
+
+(tm-define (kbd-extremal t last?)
+  (:require (mc-context? t))
+  (mc-switch t (if last? :last :first)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Scripts attached to input fields
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (edu-exec val cmd)
+  (and-let* ((cmd-t (tm? cmd))
+             (cmd-s (tm->stree cmd))
+             (cmd-b (string? cmd-s))
+             (cmd-o (string->object cmd-s)))
+    (delayed
+      (:idle 1)
+      (secure-eval `(with answer ',val ,cmd-o)))))
+
+(define (mc-exec t cmd)
+  (let* ((c (tm-children t))
+         (f (list-filter c mc-field-active?))
+         (v (map (lambda (x) (tm->stree (tm-ref x 1))) f)))
+    (when (mc-exclusive-context? t)
+      (set! v (and (nnull? v) (car v))))
+    (edu-exec v cmd)))
+
+(define (button-exec t cmd)
+  (if (and-with p (tm-ref t :up)
+        (and-with pp (tm-ref p :up)
+          (and (tm-is? p 'mc-field)
+               (mc-context? pp))))
+      (mc-exec (tm-ref t :up :up) cmd)
+      (edu-exec (not (tm-equal? t "false")) cmd)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Toggling buttons
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (perform-clear t)
-  (cond ((tree-is? t 'hide-simple) (perform-clear (tree-ref t 0)))
-        ((tree-is? t 'show-simple) (perform-clear (tree-ref t 1)))
-        (else (tree-set t (tree "false")))))
+(define (perform-set t val)
+  (cond ((tree-is? t 'hide-simple) (perform-set (tree-ref t 0) val))
+        ((tree-is? t 'show-simple) (perform-set (tree-ref t 1) val))
+        (else (tree-set t (tree val)))))
 
 (define (clear-buttons t)
-  (cond ((tree-func? t 'mc-field 2) (perform-clear (tree-ref t 0)))
+  (cond ((tree-func? t 'mc-field 2) (perform-set (tree-ref t 0) "false"))
 	((tree-atomic? t) (noop))
 	(else (for-each clear-buttons (tree-children t)))))
 
@@ -380,14 +470,43 @@
 	     (for-each clear-buttons x))))))
 
 (define (perform-toggle t)
-  (cond ((tree-is? t 'hide-simple) (perform-toggle (tree-ref t 0)))
-        ((tree-is? t 'show-simple) (perform-toggle (tree-ref t 1)))
-        ((tm-equal? t "true" ) (tree-set! t "false"))
-	((tm-equal? t "false") (tree-set! t "true" ))))
+  (cond ((tree-is? t 'hide-simple) (perform-toggle (tree-ref t 0)) t)
+        ((tree-is? t 'show-simple) (perform-toggle (tree-ref t 1)) t)
+        ((tm-equal? t "true" ) (tree-set! t "false") t)
+	((tm-equal? t "false") (tree-set! t "true" ) t)
+        (else t)))
 
-(tm-define (mouse-toggle-button t)
+(tm-define (mouse-toggle-button t cmd)
   (:type (-> void))
   (:synopsis "Toggle a button using the mouse")
   (:secure #t)
   (if (tree->path t) (handle-exclusive (tree->path t) #f))
-  (perform-toggle t))
+  (set! t (perform-toggle t))
+  (mc-visible-cursor)
+  (button-exec t cmd))
+
+(tm-define (popup-toggle-button type x y t cmd)
+  (:secure #t)
+  (when (== (tm->stree type) "select")
+    (mouse-toggle-button t cmd)
+    (close-tooltip)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Confirming gap input
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (gap-exec t)
+  (and-let* ((p (tree->path t :start))
+             (cmd (get-env-tree-at "attached-script" p))
+             (c (tm-ref t 0)))
+    (when (tm-func? c 'hide-simple 2)
+      (set! c (tm-ref c 1)))
+    (edu-exec (tm->stree c) cmd)))
+
+(tm-define (kbd-enter t shift?)
+  (:require (gap-non-long-context? t))
+  (gap-exec t))
+
+(tm-define (kbd-control-enter t shift?)
+  (:require (gap-context? t))
+  (gap-exec t))

@@ -91,7 +91,16 @@ AC_DEFUN([TM_INSTALL],[
     libexecdir='${exec_prefix}/libexec'
   fi
 
-  curdir="`pwd`"
+
+  case "${host}" in
+    *mingw*)
+      curdir="`pwd -W`"
+    ;;
+    *)
+      curdir="`pwd`"
+    ;;
+  esac
+
   tmorig=${curdir}
   tmdir=${PACKAGE}
   tmsrc=${curdir}/${tmdir}

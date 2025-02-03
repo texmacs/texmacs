@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg378"
+   sodipodi:docname="tm_slovak.svg"
+   viewBox="0 0 16 16.000001"
+   sodipodi:version="0.32"
+   version="1"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   y="0"
+   x="0"
+   inkscape:version="1.0.1 (c497b03c, 2020-09-10)"
+   width="16"
+   height="16">
+  <defs
+     id="defs979" />
+  <sodipodi:namedview
+     id="base"
+     bordercolor="#666666"
+     inkscape:pageshadow="2"
+     guidetolerance="10.0"
+     pagecolor="#ffffff"
+     gridtolerance="10.0"
+     inkscape:zoom="16.376448"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     inkscape:current-layer="svg378"
+     inkscape:cx="15.967561"
+     inkscape:cy="10.860475"
+     inkscape:window-y="99"
+     inkscape:window-x="260"
+     inkscape:window-height="1009"
+     showgrid="true"
+     inkscape:pageopacity="0.0"
+     inkscape:window-width="1413"
+     inkscape:document-rotation="0"
+     inkscape:window-maximized="0"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid1560"
+       originx="0"
+       originy="0" />
+  </sodipodi:namedview>
+  <g
+     id="g1569"
+     transform="matrix(0.01505174,0,0,0.01411114,0,3)"
+     style="opacity:0.75">
+    <rect
+       id="rect171"
+       style="fill:#ffffff;fill-rule:evenodd;stroke-width:1pt"
+       height="708.65997"
+       width="1063"
+       y="0"
+       x="0" />
+    <rect
+       id="rect403"
+       style="fill:#01017e;fill-rule:evenodd;stroke-width:1pt"
+       height="472.44"
+       width="1063"
+       y="236.22"
+       x="0" />
+    <rect
+       id="rect135"
+       style="fill:#fe0101;fill-rule:evenodd;stroke-width:1pt"
+       height="236.22"
+       width="1063"
+       y="472.44"
+       x="0" />
+    <path
+       id="path150"
+       style="fill:#ffffff;fill-rule:evenodd;stroke-width:1pt"
+       d="m 185.1,160.83 v 198.72 c 13.62,77.58 49.68,156.52 171.5,196.67 C 477.73,516.07 516.52,440.53 530.82,358.19 V 160.83 Z" />
+    <path
+       id="path140"
+       style="fill:#fe0101;fill-rule:evenodd;stroke-width:1pt"
+       d="M 198.72,176.48 V 350.02 C 210.96,413.31 234.78,499.74 356.6,539.89 477.73,499.74 505.64,413.31 516.52,350.02 V 176.48 Z" />
+    <path
+       id="path153"
+       style="fill:#ffffff;fill-rule:evenodd;stroke-width:1pt"
+       d="m 375.65,281.29 v 27.9 h 55.81 c 7.48,0 14.52,-3.63 21.78,-5.45 v 52.4 c -7.49,-1.58 -14.81,-4.76 -22.46,-4.76 h -54.44 v 63.97 l -37.44,-1.36 v -62.61 h -53.08 c -7.97,0 -15.42,4.08 -23.13,6.13 V 301.7 c 7.25,2.27 14.17,6.81 21.77,6.81 h 54.44 v -27.9 h -40.15 c -7.03,0 -13.15,4.99 -19.73,7.48 v -53.08 c 7.48,3.18 14.32,9.53 22.46,9.53 h 38.11 v -23.82 c 0,-11.13 -6.36,-21.32 -9.53,-31.99 h 53.76 c -2.72,10.89 -8.17,21.45 -8.17,32.67 v 23.14 h 36.07 c 9.41,0 18.15,-4.99 27.22,-7.49 v 52.4 c -8.16,-2.72 -15.89,-8.16 -24.5,-8.16 z" />
+    <path
+       id="path152"
+       style="fill:#01017e;fill-rule:evenodd;stroke-width:1pt"
+       d="m 306.92,422.84 c -31.99,-16 -62.54,-7.06 -77.16,18.54 22.72,43.39 65.93,78.43 126.84,98.51 60.57,-20.08 104.63,-55.12 128.79,-96.47 -18.82,-35.9 -54.61,-31.13 -77.75,-19.9 -16.33,-40.15 -83.03,-38.11 -100.72,-0.68 z" />
+  </g>
+  <metadata
+     id="metadata976">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title></dc:title>
+        <dc:date>2008-07-12T12:24:53</dc:date>
+        <dc:description />
+        <dc:source>https://openclipart.org/detail/17752/flag-of-slovakia-by-tobias</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>tobias</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>country</rdf:li>
+            <rdf:li>europe</rdf:li>
+            <rdf:li>european union</rdf:li>
+            <rdf:li>flag</rdf:li>
+            <rdf:li>nation</rdf:li>
+            <rdf:li>sign</rdf:li>
+            <rdf:li>slovakia</rdf:li>
+            <rdf:li>united nations member</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

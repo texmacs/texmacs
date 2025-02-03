@@ -80,12 +80,21 @@ new_editor (server_rep* sv, tm_buffer buf) {
   return tm_new<edit_main_rep> (sv, buf);
 }
 
+#ifdef NO_FAST_ALLOC
 template<> void
 tm_delete<editor_rep> (editor_rep* ptr) {
+  if (ptr == NULL) return;
+  delete ptr;
+}
+#else
+template<> void
+tm_delete<editor_rep> (editor_rep* ptr) {
+  if (ptr == NULL) return;
   void *mem= ptr->derived_this ();
   ptr -> ~editor_rep ();
   fast_delete (mem);
 }
+#endif
 
 /******************************************************************************
 * Properties
@@ -224,11 +233,10 @@ edit_main_rep::nr_pages () {
 
 void
 edit_main_rep::print_doc (url name, bool conform, int first, int last) {
+#ifdef USE_GS
   bool ps  = (suffix (name) == "ps");
   bool pdf = (suffix (name) == "pdf");
   url  orig= resolve (name, "");
-
-#ifdef USE_GS
   if (!use_pdf () && pdf)
     name= url_temp (".ps");
   if (!use_ps () && ps)
@@ -250,7 +258,7 @@ edit_main_rep::print_doc (url name, bool conform, int first, int last) {
   env->write (PAGE_SHOW_HF, "true");
   env->write (PAGE_SCREEN_MARGIN, "false");
   env->write (PAGE_BORDER, "none");
-  if (is_func (env->read (BG_COLOR), PATTERN))
+  if (is_func (env->read (BG_COLOR), TMPATTERN))
     env->write (BG_COLOR, env->exec (env->read (BG_COLOR)));
   if (!conform) {
     env->write (PAGE_MEDIUM, "paper");
@@ -491,9 +499,27 @@ edit_main_rep::the_shifted_path () {
 ******************************************************************************/
 
 void
+stretched_print (box b) {
+  if (N(b) == 0) cout << b << " " << reverse (b->ip) << LF;
+  else {
+    tree t= (tree) b;
+    if (is_tuple (t) && N(t) > 0) t= t[0];
+    cout << t << " " << reverse (b->ip) << LF << INDENT;
+    for (int i=0; i<N(b); i++)
+      stretched_print (b[i]);
+    cout << UNINDENT;
+  }
+}
+
+void
 edit_main_rep::show_tree () {
   stretched_print (et, true);
   // cout << et << "\n";
+}
+
+void
+edit_main_rep::show_box () {
+  stretched_print (eb);
 }
 
 void
