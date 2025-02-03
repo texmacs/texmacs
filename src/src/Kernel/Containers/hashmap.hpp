@@ -45,7 +45,7 @@ template<class T, class U> class hashmap_rep: concrete_struct {
   list<hashentry<T,U> >* a;  // the array of entries
 
 public:
-  inline hashmap_rep(U init2, int n2=1, int max2=1):
+  inline hashmap_rep (U init2, int n2=1, int max2=1):
     size(0), n(n2), max(max2), init(init2),
     a(tm_new_array<list<hashentry<T,U> > > (n)) {}
   inline ~hashmap_rep () { tm_delete_array (a); }
