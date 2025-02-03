@@ -715,7 +715,7 @@ concater_rep::typeset (tree t, path ip) {
   case BACKUP:
     typeset_inactive (t, ip);
     break;
-  case TMPATTERN:
+  case _PATTERN:
   case GRADIENT:
     marker (descend (ip, 0));
     typeset_inactive (env->exec (t), decorate (ip));
