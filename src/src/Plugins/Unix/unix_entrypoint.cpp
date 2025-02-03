@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
     url usr_local_bin = url(get_env("APPDIR")) * "usr/local/bin";
     set_env("PATH", get_env("PATH") * ":" * as_string(usr_bin) * ":" * as_string(usr_local_bin));
   }
-#if !defined(OS_MAC) && QT_VERSION < 0x060000
+#if !defined(OS_MACOS) && QT_VERSION < 0x060000
   if (get_env("WAYLAND_DISPLAY") == "") {
     set_env ("QT_QPA_PLATFORM", "xcb"); // todo : remove ?
     set_env ("XDG_SESSION_TYPE", "x11");
