@@ -139,7 +139,7 @@ AC_DEFUN([LC_WITH_GUILE],[
 # For autodetection of flags required to link statically with Guile
 #-------------------------------------------------------------------
 
-AC_DEFUN([_LC_GUILE],[
+AC_DEFUN([LC_GUILE_LOCAL],[
   AC_ARG_WITH(guile,
     AS_HELP_STRING([--with-guile@<:@=system@:>@],[path to to find guile-config or [embedded] if any tm-guile package included]), 
     [AS_IF(test "$withval" == no,[AC_MSG_ERROR([cannot work without Guile])],test "$withval" = yes,[unset withval])],[unset withval])
@@ -272,7 +272,7 @@ AC_DEFUN([LC_GUILE],[
     AC_DEFINE_UNQUOTED(guile_str_size_t, [$GUILE_STR_SIZE_T], [Guile string size type])
     LC_COMBINE_FLAGS([GUILE])
   else
-    _LC_GUILE
+    LC_GUILE_LOCAL
   fi
 
   # on windows 64 bits and any android, we need to have guile hooks
