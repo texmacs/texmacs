@@ -1,3 +1,4 @@
+
 /******************************************************************************
 * MODULE     : unix_entrypoint.cpp
 * DESCRIPTION: Unix entry point for Unix
@@ -17,44 +18,32 @@
 #include <QDebug>
 #include <QDir>
 
-void setup_texmacs_path() {
+void setup_texmacs_path () {
   string environment_texmacs_path;
-  if (texmacs_getenv("TEXMACS_PATH", environment_texmacs_path)) {
+  if (texmacs_getenv ("TEXMACS_PATH", environment_texmacs_path)) return;
+  url exedir = texmacs_get_application_directory ();
+    if (test_texmacs_path (exedir * "TeXmacs")) {
     return;
   }
-  url exedir = texmacs_get_application_directory();
-    if (test_texmacs_path(exedir * "TeXmacs")) {
-    return;
-  }
-  if (test_texmacs_path(exedir * "usr/share/TeXmacs")) {
-    return;
-  }
-  if (test_texmacs_path(exedir * "usr/local/share/TeXmacs")) {
-    return;
-  }
-  if (test_texmacs_path(exedir * "../usr/share/TeXmacs")) {
-    return;
-  }
-  if (test_texmacs_path("/usr/share/TeXmacs")) {
-    return;
-  }
-  if (test_texmacs_path("/usr/local/share/TeXmacs")) {
-    return;
-  }
+  if (test_texmacs_path (exedir * "usr/share/TeXmacs")) return;
+  if (test_texmacs_path (exedir * "usr/local/share/TeXmacs")) return;
+  if (test_texmacs_path (exedir * "../usr/share/TeXmacs")) return;
+  if (test_texmacs_path ("/usr/share/TeXmacs")) return;
+  if (test_texmacs_path ("/usr/local/share/TeXmacs")) return;
 }
 
-int main(int argc, char** argv) {
-  setup_texmacs_path();
-  if (get_env("APPIMAGE") != "") {
-    url usr_bin = url(get_env("APPDIR")) * "usr/bin";
-    url usr_local_bin = url(get_env("APPDIR")) * "usr/local/bin";
-    set_env("PATH", get_env("PATH") * ":" * as_string(usr_bin) * ":" * as_string(usr_local_bin));
+int main (int argc, char** argv) {
+  setup_texmacs_path ();
+  if (get_env ("APPIMAGE") != "") {
+    url usr_bin = url (get_env ("APPDIR")) * "usr/bin";
+    url usr_local_bin = url (get_env ("APPDIR")) * "usr/local/bin";
+    set_env ("PATH", get_env ("PATH") * ":" * as_string (usr_bin) * ":" * as_string (usr_local_bin));
   }
-#if !defined(OS_MACOS) && QT_VERSION < 0x060000
-  if (get_env("WAYLAND_DISPLAY") == "") {
+#if !defined (OS_MACOS) && QT_VERSION < 0x060000
+  if (get_env ("WAYLAND_DISPLAY") == "") {
     set_env ("QT_QPA_PLATFORM", "xcb"); // todo : remove ?
     set_env ("XDG_SESSION_TYPE", "x11");
   }
 #endif
-  return texmacs_entrypoint(argc, argv);
+  return texmacs_entrypoint (argc, argv);
 }
