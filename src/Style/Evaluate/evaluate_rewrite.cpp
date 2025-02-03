@@ -93,7 +93,7 @@ rewrite_impl (tree t) {
       bool secure= as_bool (std_env ["secure"]);
       if (!secure && script_status < 2) {
 	if (!as_bool (call ("secure?", expr)))
-	  return tree (TMERROR, "insecure script");
+	  return tree (_ERROR, "insecure script");
       }
       environment old_env= reenter_rewrite_env;
       reenter_rewrite_env= std_env;

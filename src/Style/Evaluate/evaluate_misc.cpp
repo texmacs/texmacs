@@ -65,7 +65,7 @@ evaluate_hard_id (tree t) {
 
 tree
 evaluate_script (tree t) {
-  if (N(t) != 1 && N(t) != 2) return tree (TMERROR, "bad script");
+  if (N(t) != 1 && N(t) != 2) return tree (_ERROR, "bad script");
   if (N(t) == 1) return tree (SCRIPT, evaluate (t[0]));
   else return tree (SCRIPT, evaluate (t[0]), expand (t[1], true));
 }
@@ -76,10 +76,10 @@ evaluate_set_binding (tree t) {
   if (N(t) == 1) {
     keys= std_env ["the-tags"];
     if (!is_tuple (keys))
-      return tree (TMERROR, "bad set binding");
+      return tree (_ERROR, "bad set binding");
     for (int i=0; i<N(keys); i++)
       if (!is_atomic (keys[i]))
-	return tree (TMERROR, "bad set binding");
+	return tree (_ERROR, "bad set binding");
     value= evaluate (t[0]);
     assoc_environment local (2);
     local->raw_write (0, string ("the-tags"), tree (TUPLE));
@@ -89,11 +89,11 @@ evaluate_set_binding (tree t) {
   else if (N(t) >= 2) {
     tree key= evaluate (t[0]);
     if (!is_atomic (key)) 
-      return tree (TMERROR, "bad set binding");
+      return tree (_ERROR, "bad set binding");
     keys= tuple (key);
     value= evaluate (t[1]);
   }
-  else return tree (TMERROR, "bad set binding");
+  else return tree (_ERROR, "bad set binding");
 
   for (int i=0; i<N(keys); i++) {
     string key= keys[i]->label;
@@ -129,7 +129,7 @@ evaluate_set_binding (tree t) {
 
 tree
 evaluate_get_binding (tree t) {
-  if (N(t) != 1 && N(t) != 2) return tree (TMERROR, "bad get binding");
+  if (N(t) != 1 && N(t) != 2) return tree (_ERROR, "bad get binding");
   string key= evaluate_string (t[0]);
   tree value= local_ref->contains (key)? local_ref [key]: global_ref [key];
   int type= (N(t) == 1? 0: as_int (evaluate_string (t[1])));
@@ -206,7 +206,7 @@ evaluate_box_info (tree t) {
   tree t1= t[0];
   tree t2= t[1];
   if (!is_string (t2))
-    return tree (TMERROR, "bad box info");
+    return tree (_ERROR, "bad box info");
   return box_info (edit_env (this), t1, as_string (t2));
 }
 

@@ -63,7 +63,7 @@ make_bridge (typesetter ttt, tree st, path ip) {
   if (ttt->env->preamble)
     return make_inactive_bridge (ttt, st, ip);
   switch (L(st)) {
-  case TMERROR:
+  case _ERROR:
     return bridge_auto (ttt, st, ip, error_m, true);
   case DOCUMENT:
     return bridge_document (ttt, st, ip);
