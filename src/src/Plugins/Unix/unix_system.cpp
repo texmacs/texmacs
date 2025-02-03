@@ -185,21 +185,17 @@ string get_default_theme() {
 url texmacs_get_application_directory() {
 #ifdef OS_GNU_LINUX
   // use proc self exe to get the path of the executable
-  char path[PATH_MAX];
-  ssize_t len = readlink("/proc/self/exe", path, sizeof(path) - 1);
-  if (len == -1) {
-    return url();
-  }
+  char path[PATH_MAX+1];
+  ssize_t len = readlink("/proc/self/exe", path, sizeof (path) - 1);
+  if (len == -1) return url ();
   path[len] = '\0';
   string exe_path = path;
-  return url_system(exe_path) * "..";
+  return url_system (exe_path) * "..";
 #elif defined(OS_MACOS)
   char path[PATH_MAX];
-  uint32_t size = sizeof(path);
-  if (_NSGetExecutablePath(path, &size) != 0) {
-    return url();
-  }
+  uint32_t size = sizeof (path);
+  if (_NSGetExecutablePath (path, &size) != 0) return url ();
   string exe_path = path;
-  return url_system(exe_path) * "..";
+  return url_system (exe_path) * "..";
 #endif
 }
