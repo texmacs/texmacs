@@ -55,7 +55,7 @@ load_string (url u, string& s, bool fatal) {
   url r= u;
   if (!is_rooted_name (r)) r= resolve (r);
   // cout << "Resolved " << r << LF;
-  bool err= !is_rooted_name (r);
+  bool err= !is_rooted_name (r) || is_directory (r);
   if (!err) {
     string name= concretize (r);
     // cout << "Concrete :" << name << LF;
