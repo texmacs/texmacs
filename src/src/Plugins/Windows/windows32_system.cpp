@@ -117,6 +117,7 @@ bool texmacs_rmdir(string dirname) {
 bool texmacs_rename(string oldname, string newname) {
   c_string c_oldname = oldname;
   c_string c_newname = newname;
+  texmacs_remove(newname);
   return rename(c_oldname, c_newname) == 0;
 }
 
