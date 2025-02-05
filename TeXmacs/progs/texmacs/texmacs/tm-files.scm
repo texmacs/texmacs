@@ -422,6 +422,7 @@
   (or (and (url-rooted-web? u)
            ;; FIXME: Use HTTP HEADERS to determine the real file format
            (!= (file-format u) "texmacs-file"))
+      (url-directory? u) ; we want to open links to directory via the default OS handler 
       (file-of-format? u "image")
       (file-of-format? u "pdf")
       (file-of-format? u "postscript")
