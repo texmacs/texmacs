@@ -183,7 +183,7 @@ edit_main_rep::get_metadata (string kind) {
   if (val != "") return val;
   val= search_metadata (subtree (et, rp), kind);
   if (val != "") return val;
-  if (kind == "title") return as_string (tail (get_name ()));
+  if (kind == "title") return utf8_to_cork (as_string (tail (get_name ())));
 #ifndef OS_MINGW
   if (kind == "author" &&
       !is_none (resolve_in_path ("finger")) &&
@@ -410,7 +410,11 @@ edit_main_rep::print_snippet (url name, tree t, bool conserve_preamble) {
   env->update ();
   
   if (b->x4 - b->x3 >= 5*PIXEL && b->y4 - b->y3 >= 5*PIXEL) {
-    if (bitmap) make_raster_image (name, b, 5.0);
+    if (bitmap) {
+      int out_dpi = as_int(get_preference ("texmacs->image:raster-resolution"));
+      double zoomf= (double) 5.0*out_dpi/dpi ; //5 hard coded in make_raster_image
+      make_raster_image (name, b, zoomf);
+    }
     else if (ps) make_eps (name, b, dpi);
     else {
       url temp= url_temp (use_pdf ()? ".pdf": ".eps");
