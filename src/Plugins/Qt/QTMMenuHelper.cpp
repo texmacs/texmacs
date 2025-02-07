@@ -54,11 +54,21 @@ END_SLOT
  ******************************************************************************/
 
 QTMAction::QTMAction (QObject *parent) : QAction (parent) {
+#if QT_VERSION < 0x060000
   QObject::connect (the_gui->gui_helper, SIGNAL (refresh()),
                     this,                  SLOT (doRefresh()));
+#else
+  QObject::connect (the_gui->gui_helper, &QTMGuiHelper::refresh,
+                    this,                  &QTMAction::doRefresh);
+#endif
   _timer = new QTimer (this);
+#if QT_VERSION < 0x060000
   QObject::connect (_timer, SIGNAL (timeout()),
                     this,     SLOT (doShowToolTip()));
+#else
+  QObject::connect (_timer, &QTimer::timeout,
+                    this,     &QTMAction::doShowToolTip);
+#endif
   if (tm_style_sheet == "" && !use_mini_bars) {
     int sz= 14;
     //int sz= (int) floor (14 * retina_scale + 0.5);
@@ -136,8 +146,13 @@ END_SLOT
 
 QTMWidgetAction::QTMWidgetAction (widget _wid, QObject *parent)
 : QWidgetAction (parent), wid (_wid) {
+#if QT_VERSION < 0x060000
   QObject::connect (the_gui->gui_helper, SIGNAL (refresh()),
                     this,                  SLOT (doRefresh()));
+#else
+  QObject::connect (the_gui->gui_helper, &QTMGuiHelper::refresh,
+                    this,                  &QTMWidgetAction::doRefresh);
+#endif
 }
 
 QWidget *
@@ -188,7 +203,11 @@ QTMTileAction::createWidget (QWidget* parent)
     QAction* sa = actions[i];
     QToolButton* tb= new QTMMenuButton (wid);
     tb->setDefaultAction (sa);
+#if QT_VERSION < 0x060000
     QObject::connect (tb, SIGNAL (released()), this, SLOT (trigger()));
+#else
+    QObject::connect (tb, &QToolButton::released, this, &QTMTileAction::trigger);
+#endif
     if (tm_style_sheet == "")
       tb->setStyle (qtmstyle ());
     l->addWidget (tb, row, col);
@@ -342,7 +361,11 @@ QTMMenuWidget::paintEvent(QPaintEvent* e) {
 
 QTMLazyMenu::QTMLazyMenu (promise<widget> _pm, QWidget* p, bool right)
 : QMenu (p), promise_widget (_pm), show_right (right) {
+#if QT_VERSION < 0x060000
   QObject::connect (this, SIGNAL (aboutToShow ()), this, SLOT (force ()));
+#else
+  QObject::connect (this, &QMenu::aboutToShow, this, &QTMLazyMenu::force);
+#endif
 }
 
 void
@@ -361,8 +384,13 @@ QTMLazyMenu::showEvent (QShowEvent* e)
  depend on that of the latter. */
 void
 QTMLazyMenu::attachTo (QAction* a) {
+#if QT_VERSION < 0x060000
   QObject::connect (a,  SIGNAL (destroyed (QObject*)),
                     this, SLOT (destroy (QObject*)));
+#else
+  QObject::connect (a,  &QAction::destroyed,
+                    this, &QTMLazyMenu::destroy);
+#endif
   a->setMenu (this);
 }
 
@@ -404,9 +432,14 @@ QTMInputTextWidgetHelper::QTMInputTextWidgetHelper (qt_widget _wid, bool _cac): 
   QTMLineEdit* le = qobject_cast<QTMLineEdit*>(wid()->qwid);
   setParent(le);
   ASSERT (le != NULL, "QTMInputTextWidgetHelper: expecting valid QTMLineEdit");
+#if QT_VERSION < 0x060000
   QObject::connect (le, SIGNAL (returnPressed ()), this, SLOT (commit ()));
   QObject::connect (le, SIGNAL (focusOut (Qt::FocusReason)),
                     this, SLOT (leave (Qt::FocusReason)));
+#else
+  QObject::connect (le, &QTMLineEdit::returnPressed, this, &QTMInputTextWidgetHelper::commit);
+  QObject::connect (le, &QTMLineEdit::focusOut, this, &QTMInputTextWidgetHelper::leave);
+#endif
 }
 
 /*! Executed when the enter key is pressed. */
@@ -435,14 +468,24 @@ END_SLOT
 QTMFieldWidgetHelper::QTMFieldWidgetHelper (qt_widget _wid, QComboBox* cb)
 : QObject (cb), wid (_wid), done (false) {
   ASSERT (cb != NULL, "QTMFieldWidgetHelper: expecting valid QComboBox");
+#if QT_VERSION < 0x060000
   QObject::connect (cb, SIGNAL (editTextChanged (const QString&)),
                     this, SLOT (commit (const QString&)));
+#else
+  QObject::connect (cb, &QComboBox::editTextChanged,
+                    this, &QTMFieldWidgetHelper::commit);
+#endif
 }
 QTMFieldWidgetHelper::QTMFieldWidgetHelper (qt_widget _wid, QLineEdit* cb)
 : QObject (cb), wid (_wid), done (false) {
   ASSERT (cb != NULL, "QTMFieldWidgetHelper: expecting valid QLineEdit");
+#if QT_VERSION < 0x060000
   QObject::connect (cb, SIGNAL (textChanged (const QString&)),
                     this, SLOT (commit (const QString&)));
+#else
+  QObject::connect (cb, &QLineEdit::textChanged,
+                    this, &QTMFieldWidgetHelper::commit);
+#endif
 }
 
 void
@@ -777,7 +820,11 @@ QTMLineEdit::focusOutEvent (QFocusEvent* ev)
  ******************************************************************************/
 
 QTMTabWidget::QTMTabWidget (QWidget *p) : QTabWidget(p) {
+#if QT_VERSION < 0x060000
   QObject::connect (this, SIGNAL (currentChanged (int)), this, SLOT (resizeOthers (int)));
+#else
+  QObject::connect (this, &QTabWidget::currentChanged, this, &QTMTabWidget::resizeOthers);
+#endif
 }
 
 /*! Resizes the widget to the size of the tab given by the index.
@@ -822,8 +869,13 @@ QTMRefreshWidget::QTMRefreshWidget (qt_widget _tmwid, string _strwid, string _ki
 : QWidget (), strwid (_strwid), kind (_kind),
   curobj (false), cur (), tmwid (_tmwid), qwid (NULL), cache (widget ())
 {   
+#if QT_VERSION < 0x060000
   QObject::connect (the_gui->gui_helper, SIGNAL (tmSlotRefresh (string)),
                    this, SLOT (doRefresh (string)));
+#else
+  QObject::connect (the_gui->gui_helper, &QTMGuiHelper::tmSlotRefresh,
+                   this, &QTMRefreshWidget::doRefresh);
+#endif
   QVBoxLayout* l = new QVBoxLayout (this);
   l->setContentsMargins (0, 0, 0, 0);
 #if QT_VERSION < 0x060000
@@ -911,9 +963,14 @@ END_SLOT
 QTMRefreshableWidget::QTMRefreshableWidget (qt_widget _tmwid, object _prom, string _kind)
 : QWidget (), prom (_prom), kind (_kind),
   curobj (false), cur (), tmwid (_tmwid), qwid (NULL)
-{   
+{
+#if QT_VERSION < 0x060000   
   QObject::connect (the_gui->gui_helper, SIGNAL (tmSlotRefresh (string)),
                    this, SLOT (doRefresh (string)));
+#else
+  QObject::connect (the_gui->gui_helper, &QTMGuiHelper::tmSlotRefresh,
+                   this, &QTMRefreshableWidget::doRefresh);
+#endif
   QVBoxLayout* l = new QVBoxLayout (this);
   l->setContentsMargins (0, 0, 0, 0);
 #if QT_VERSION < 0x060000
@@ -1084,8 +1141,13 @@ QTMScrollArea::setWidgetAndConnect (QWidget* w) {
   listViews = w->findChildren<QTMListView*>();
   for (ListViewsIterator it = listViews.begin(); it != listViews.end(); ++it) {
     if (! (*it)->isScrollable())
-      QObject::connect (*it, SIGNAL (selectionChanged (const QItemSelection&)),
+#if QT_VERSION < 0x060000
+      QObject::connect (*it, SIGNAL (selectionHasChanged (const QItemSelection&)),
                         this,  SLOT (scrollToSelection (const QItemSelection&)));
+#else
+      QObject::connect (*it, &QTMListView::selectionHasChanged,
+                        this, &QTMScrollArea::scrollToSelection);
+#endif
   }
 }
 
@@ -1173,10 +1235,17 @@ QTMListView::QTMListView (const command& cmd,
 
   command     ecmd = tm_new<qt_choice_command_rep> (this, cmd, multiple, filtered);
   QTMCommand* qcmd = new QTMCommand (this, ecmd);
+#if QT_VERSION < 0x060000
   QObject::connect (selectionModel(),
                     SIGNAL (selectionChanged (const QItemSelection&, const QItemSelection&)),
                     qcmd,
                     SLOT (apply()));
+#else
+  QObject::connect (selectionModel(),
+                    &QItemSelectionModel::selectionChanged,
+                    qcmd,
+                    &QTMCommand::apply);
+#endif
 }
 
 /*! Reimplemented from QListView.
@@ -1188,7 +1257,7 @@ void
 QTMListView::selectionChanged (const QItemSelection& c, const QItemSelection& p) {
 BEGIN_SLOT
   QListView::selectionChanged (c, p);
-  emit selectionChanged (c);
+  emit selectionHasChanged (c);
 END_SLOT
 }
 
@@ -1201,8 +1270,13 @@ QTMTreeView::QTMTreeView (command cmd, tree data, const tree& roles, QWidget* p)
   setModel (QTMTreeModel::instance (_t, roles));
   setUniformRowHeights (true);  // assuming we display only text.
   setHeaderHidden (true);       // for now...
+#if QT_VERSION < 0x060000
   QObject::connect (this, SIGNAL (pressed (const QModelIndex&)),
-                    this,   SLOT (callOnChange (const QModelIndex&)));
+                    this,   SLOT (callOnChangeWithMouse (const QModelIndex&)));
+#else
+  QObject::connect (this, &QTreeView::pressed,
+                    this, &QTMTreeView::callOnChangeWithMouse);
+#endif
 }
 
 void
