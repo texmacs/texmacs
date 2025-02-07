@@ -333,8 +333,13 @@ qt_inputs_list_widget_rep::perform_dialog() {
     QDialogButtonBox* buttonBox =
           new QDialogButtonBox (QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
                                 Qt::Horizontal, &d);
+#if QT_VERSION < 0x060000
     QObject::connect (buttonBox, SIGNAL (accepted()), &d, SLOT (accept()));
     QObject::connect (buttonBox, SIGNAL (rejected()), &d, SLOT (reject()));
+#else
+    QObject::connect (buttonBox, &QDialogButtonBox::accepted, &d, &QDialog::accept);
+    QObject::connect (buttonBox, &QDialogButtonBox::rejected, &d, &QDialog::reject);
+#endif
     vl->addWidget (buttonBox);
     
     d.setWindowTitle (to_qstring (win_title)); 

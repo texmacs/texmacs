@@ -306,7 +306,11 @@ qt_popup_widget_rep::qt_popup_widget_rep (widget wid, command _quit)
   if (qwid->metaObject() ->
       indexOfSignal (QMetaObject::normalizedSignature ("closed()").constData ()) != -1) {
   QTMCommand* qtmcmd = new QTMCommand(qwid, quit);
-  QObject::connect(qwid, SIGNAL (closed()), qtmcmd, SLOT (apply()));
+#if QT_VERSION < 0x060000
+  QObject::connect(qobject_cast<QTMPopupWidget*>(qwid), SIGNAL (closed()), qtmcmd, SLOT (apply()));
+#else
+  QObject::connect(qobject_cast<QTMPopupWidget*>(qwid), &QTMPopupWidget::closed, qtmcmd, &QTMCommand::apply);
+#endif
   }
 }
 

@@ -149,8 +149,13 @@ needing_update (false)
   
   updatetimer = new QTimer (gui_helper);
   updatetimer->setSingleShot (true);
+#if QT_VERSION < 0x060000
   QObject::connect (updatetimer, SIGNAL (timeout()),
                     gui_helper, SLOT (doUpdate()));
+#else
+  QObject::connect (updatetimer, &QTimer::timeout,
+                    gui_helper, &QTMGuiHelper::doUpdate);
+#endif
   // (void) default_font ();
 
 #if QT_VERSION < 0x060000

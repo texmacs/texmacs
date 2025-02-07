@@ -121,10 +121,17 @@ socket_link::socket_link (int s, SOCKADDR_STORAGE* addr) {
   qsnr= tm_new<QSocketNotifier> (s, QSocketNotifier::Read);
   qsnw= tm_new<QSocketNotifier> (s, QSocketNotifier::Write);
   if (!qsnr || !qsnw) { err= ERRNO; st= ST_NOTIF; return; }
+#if QT_VERSION < 0x060000
   QObject::connect (qsnr, SIGNAL(activated(int)),
 		    this, SLOT(data_set_ready(int)));
   QObject::connect (qsnw, SIGNAL(activated(int)),
 		    this, SLOT(ready_to_send(int)));
+#else
+  QObject::connect (qsnr, &QSocketNotifier::activated,
+        this, &socket_link::data_set_ready);
+  QObject::connect (qsnw, &QSocketNotifier::activated,
+        this, &socket_link::ready_to_send);
+#endif
   DBG_IO ("Socket created with fd= " << sock);
   st= ST_OK;
 }
@@ -174,11 +181,21 @@ socket_link::socket_link (string host, unsigned short port) {
   qsnr= tm_new<QSocketNotifier> (sock, QSocketNotifier::Read);
   qsnw= tm_new<QSocketNotifier> (sock, QSocketNotifier::Write);
   if (!qsnr || !qsnw) { err= ERRNO; st= ST_NOTIF; return; }
+#if QT_VERSION < 0x060000
   QObject::connect (qsnr, SIGNAL (activated(int)),
 		    this, SLOT (data_set_ready(int)));
+#else
+  QObject::connect (qsnr, &QSocketNotifier::activated,
+        this, &socket_link::data_set_ready);
+#endif
   qsnw->setEnabled (false);
+#if QT_VERSION < 0x060000
   QObject::connect (qsnw, SIGNAL (activated(int)),
 		    this, SLOT (ready_to_send(int)));
+#else
+  QObject::connect (qsnw, &QSocketNotifier::activated,
+        this, &socket_link::ready_to_send);
+#endif
   DBG_IO ("Socket created with fd= " << sock);
   st= ST_OK;
 }
@@ -378,7 +395,11 @@ socket_server::socket_server (string host, unsigned short port) {
     return;
   }
   qsnc= tm_new<QSocketNotifier> (sock, QSocketNotifier::Read);
+#if QT_VERSION < 0x060000
   QObject::connect (qsnc, SIGNAL (activated(int)), this, SLOT (connection(int)));
+#else
+  QObject::connect (qsnc, &QSocketNotifier::activated, this, &socket_server::connection);
+#endif
   DBG_IO ("Wait for connection");
 }
 
