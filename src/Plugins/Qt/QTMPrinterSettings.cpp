@@ -35,8 +35,13 @@ QTMPrinterSettings::QTMPrinterSettings()
   configProgram = new QProcess(this);
 
   // See the class documentation for an explanation of the connected signal
+#if QT_VERSION < 0x060000
   QObject::connect(configProgram, SIGNAL(finished(int, QProcess::ExitStatus)),
                    this, SLOT(systemCommandFinished(int, QProcess::ExitStatus)));
+#else
+  QObject::connect(configProgram, &QProcess::finished,
+                   this, &QTMPrinterSettings::systemCommandFinished);
+#endif
 }
 
 /*!
