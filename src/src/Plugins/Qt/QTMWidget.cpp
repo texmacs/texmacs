@@ -691,33 +691,48 @@ QTMWidget::dropEvent (QDropEvent *event) {
   const QMimeData *md= event->mimeData ();
   QByteArray buf;
 
+  if (DEBUG_QT) debug_qt << "DropEvent formats :" << from_qstring(md->formats().join(",")) << LF;
+
   if (md->hasUrls ()) {
     QList<QUrl> l= md->urls ();
     for (int i=0; i<l.size (); i++) {
-      string name;
+
+      string url = from_qstring(l[i].toString ());
+      if (DEBUG_QT) debug_qt << "DropEvent URL [" << i << "] : " << url << LF;
+
+      if (l[i].isLocalFile()) {
+        string name;
 #ifdef OS_MACOS
-      name= from_qstring (fromNSUrl (l[i]));
+        name= from_qstring (fromNSUrl (l[i]));
 #else
-      name= from_qstring (l[i].toLocalFile ());
+        name= from_qstring (l[i].toLocalFile ());
 #endif
-      string orig_name= name;
+        string orig_name= name;
 #ifdef OS_MINGW
-      if (N(name) >=2 && is_alpha (name[0]) && name[1] == ':')
-        name= "/" * locase_all (name (0, 1)) * name (2, N(name));
+        if (N(name) >=2 && is_alpha (name[0]) && name[1] == ':')
+          name= "/" * locase_all (name (0, 1)) * name (2, N(name));
 #endif
-      string extension = suffix (name);
-      if ((extension == "eps") || (extension == "ps")   ||
+        string extension = suffix (name);
+        if ((extension == "eps") || (extension == "ps")   ||
 #if (QT_VERSION >= 0x050000)
-          (extension == "svg") ||
+            (extension == "svg") ||
 #endif
-          (extension == "pdf") || (extension == "png")  ||
-          (extension == "jpg") || (extension == "jpeg")) {
-        string w, h;
-        qt_pretty_image_size (url_system (orig_name), w, h);
-        tree im (IMAGE, name, w, h, "", "");
-        doc << im;
+            (extension == "pdf") || (extension == "png")  ||
+            (extension == "jpg") || (extension == "jpeg")) {
+          string w, h;
+          qt_pretty_image_size (url_system (orig_name), w, h);
+          tree im (IMAGE, name, w, h, "", "");
+          doc << im;
+        } else {
+          doc << name;
+        }
       } else {
-        doc << name;
+        // not a local file, drop an slink to the document
+        tree ln (HLINK, url, url);
+        doc << ln;
+        //FIXME: this is still not very nice as clicking on HLINK only works for a limited group
+        //of schemas (http, https, ftp). For unrecognized schemas one would like to use the default OS behaviour
+        //(e.g. the "message:" schema identify local email messages)
       }
     }
   } else if (md->hasImage ()) {
