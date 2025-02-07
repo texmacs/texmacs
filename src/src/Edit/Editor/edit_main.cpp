@@ -410,11 +410,7 @@ edit_main_rep::print_snippet (url name, tree t, bool conserve_preamble) {
   env->update ();
   
   if (b->x4 - b->x3 >= 5*PIXEL && b->y4 - b->y3 >= 5*PIXEL) {
-    if (bitmap) {
-      int out_dpi = as_int(get_preference ("texmacs->image:raster-resolution"));
-      double zoomf= (double) 5.0*out_dpi/dpi ; //5 hard coded in make_raster_image
-      make_raster_image (name, b, zoomf);
-    }
+    if (bitmap) make_raster_image (name, b, 5.0);
     else if (ps) make_eps (name, b, dpi);
     else {
       url temp= url_temp (use_pdf ()? ".pdf": ".eps");
