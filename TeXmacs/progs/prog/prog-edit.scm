@@ -313,3 +313,30 @@
   (:mode in-prog?)
   (insert-raw-return)
   (program-indent #f))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Generic copy and paste for programming mode 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (textual? x)
+  (or (tm-atomic? x)
+    (and (tm-in? x '(concat document))
+      (forall? textual? (tm-children x)))))
+
+(tm-define (kbd-copy)
+  (:mode in-prog?)
+  (:require (textual? (selection-tree)))
+  (clipboard-copy-export (get-env "prog-language") "primary"))
+
+(tm-define (kbd-cut)
+  (:mode in-prog?)
+  (:require (textual? (selection-tree)))
+  (clipboard-cut-export (get-env "prog-language") "primary"))
+
+(tm-define (kbd-paste)
+  (:mode in-prog?)
+  (:require (textual? (tm-ref (clipboard-get "primary") 1)))
+  (clipboard-paste-import (get-env "prog-language") "primary"))
+  
+
