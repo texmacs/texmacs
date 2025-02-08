@@ -22,6 +22,3 @@
   (:mode in-prog-java?)
   (get-tabstop))
 
-(tm-define (kbd-paste)
-  (:mode in-prog-java?)
-  (clipboard-paste-import "java" "primary"))
