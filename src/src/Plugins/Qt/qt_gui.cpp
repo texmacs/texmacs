@@ -278,6 +278,10 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
     return true;
   }
   
+  if (DEBUG_QT)
+    debug_qt << "get_selection format: ["  << format << "] mime-types: [" 
+             << from_qstring(md->formats().join(",")) << "]" << LF;
+
   if (format == "default") {
     if (md->hasFormat ("application/x-texmacs-clipboard")) {
       buf = md->data ("application/x-texmacs-clipboard");
@@ -348,6 +352,10 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
     s= as_string (call ("convert", im, "texmacs-tree", "texmacs-snippet"));
   }
   t = tuple ("extern", s);
+
+  if (DEBUG_QT)
+    debug_qt << "get_selection t: " << t << LF;
+
   return true;
 }
 
