@@ -158,6 +158,10 @@ void FontDescriptorWriter::WriteFontDescriptor(	ObjectIDType inFontDescriptorObj
 unsigned int FontDescriptorWriter::CalculateFlags(	FreeTypeFaceWrapper* inFontInfo,
 													const UIntAndGlyphEncodingInfoVector& inEncodedGlyphs)
 {
+  std::size_t found = (inFontInfo-> GetFontFilePath ()).find ("HelveticaNeue.0.ttf");
+  if (found != std::string::npos)
+    return 4;
+  
 	unsigned int flags = 0;
 
 	// see FreeTypeFaceWrapper::GetFontFlags for explanation, if you must
