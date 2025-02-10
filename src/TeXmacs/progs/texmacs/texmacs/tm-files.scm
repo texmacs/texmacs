@@ -439,6 +439,8 @@
     (set! u (url-relative (current-buffer) u)))
   (cond ((not (url-rooted-web? u))
          (system-1 (default-open) u))
+        ((os-mingw64?)
+         (eval-system (url->system u)))
         ((or (os-mingw?) (os-win32?))
          (system (string-append (default-open) " " (url->system u))))
         (else

@@ -107,10 +107,26 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(os-mingw64?)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|os_mingw64> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
     <scm|(os-macos?)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|os_macos> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
+    <scm|(os-android?)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|os_android> which returns
     <scm|bool>.
   </explain>
 
