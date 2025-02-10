@@ -38,6 +38,7 @@
 "get-original-path"
 "os-win32?"
 "os-mingw?"
+"os-mingw64?"
 "os-macos?"
 "os-android?"
 "has-printing-cmd?"

@@ -28,6 +28,7 @@
   (get-original-path get_original_path (string))
   (os-win32? os_win32 (bool))
   (os-mingw? os_mingw (bool))
+  (os-mingw64? os_mingw64 (bool))
   (os-macos? os_macos (bool))
   (os-android? os_android (bool))
   (has-printing-cmd? has_printing_cmd (bool))
