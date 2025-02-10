@@ -183,7 +183,7 @@ edit_main_rep::get_metadata (string kind) {
   if (val != "") return val;
   val= search_metadata (subtree (et, rp), kind);
   if (val != "") return val;
-  if (kind == "title") return as_string (tail (get_name ()));
+  if (kind == "title") return utf8_to_cork (as_string (tail (get_name ())));
 #ifndef OS_MINGW
   if (kind == "author" &&
       !is_none (resolve_in_path ("finger")) &&
@@ -258,7 +258,7 @@ edit_main_rep::print_doc (url name, bool conform, int first, int last) {
   env->write (PAGE_SHOW_HF, "true");
   env->write (PAGE_SCREEN_MARGIN, "false");
   env->write (PAGE_BORDER, "none");
-  if (is_func (env->read (BG_COLOR), TMPATTERN))
+  if (is_func (env->read (BG_COLOR), _PATTERN))
     env->write (BG_COLOR, env->exec (env->read (BG_COLOR)));
   if (!conform) {
     env->write (PAGE_MEDIUM, "paper");

@@ -364,7 +364,7 @@ renderer_rep::clear_pattern (SI mx1, SI my1, SI mx2, SI my2,
   if (kind == brush_none);
   else if (kind == brush_color)
     clear (x1, y1, x2, y2);
-  else if (kind == brush_pattern && is_func (b->get_pattern (), TMPATTERN)) {
+  else if (kind == brush_pattern && is_func (b->get_pattern (), _PATTERN)) {
     tree pattern= b->get_pattern ();
     int pattern_alpha= b->get_alpha ();
     outer_round (x1, y1, x2, y2);

@@ -847,11 +847,8 @@ static url
 complete (url base, url sub, url u, string filter, bool flag) {
 #ifdef OS_ANDROID
   if (is_content (u)) {
-    if (is_of_type (u, filter)) {
-      return u;
-    } else {
-      return url_none ();
-    }
+    if (is_of_type (u, filter)) return u;
+    else return url_none ();
   }
 #endif
   if (is_or (sub)) {
@@ -870,11 +867,8 @@ url
 complete (url base, url u, string filter, bool flag) {
 #ifdef OS_ANDROID
   if (is_content (u)) {
-    if (is_of_type (u, filter)) {
-      return u;
-    } else {
-      return url_none ();
-    }
+    if (is_of_type (u, filter)) return u;
+    else return url_none ();
   }
 #endif
   // cout << "complete " << base << " |||| " << u << LF;
@@ -979,11 +973,8 @@ url
 complete (url u, string filter, bool flag) {
 #ifdef OS_ANDROID
   if (is_content (u)) {
-    if (is_of_type (u, filter)) {
-      return u;
-    } else {
-      return url_none ();
-    }
+    if (is_of_type (u, filter)) return u;
+    else return url_none ();
   }
 #endif
   url home= url_pwd ();
@@ -994,11 +985,8 @@ url
 complete (url u, string filter) {
 #ifdef OS_ANDROID
   if (is_content (u)) {
-    if (is_of_type (u, filter)) {
-      return u;
-    } else {
-      return url_none ();
-    }
+    if (is_of_type (u, filter)) return u;
+    else return url_none ();
   }
 #endif
   // This routine can be used in order to find all possible matches
@@ -1013,11 +1001,8 @@ url
 resolve (url u, string filter) {
 #ifdef OS_ANDROID
   if (is_content (u)) {
-    if (is_of_type (u, filter)) {
-      return u;
-    } else {
-      return url_none ();
-    }
+    if (is_of_type (u, filter)) return u;
+    else return url_none ();
   }
 #endif
   // This routine does the same thing as complete, but it stops at
@@ -1135,7 +1120,7 @@ concretize (url u) {
   // This routine transforms a resolved url into a system file name.
   // In the case of distant files from the web, a local copy is created.
 #ifdef OS_ANDROID
-  if (is_content(u)) return as_string(u);
+  if (is_content (u)) return as_string (u);
 #endif
   url c= concretize_url (u);
   if (!is_none (c)) return as_string (c);

@@ -980,10 +980,17 @@ qt_tm_widget_rep::install_main_menu () {
       // this is the reason we add a dummy action before inserting the menu
       a->menu()->addAction("native menubar trick");
       dest->addAction(a->menu()->menuAction());
+#if QT_VERSION < 0x060000
       QObject::connect (a->menu(),         SIGNAL (aboutToShow()),
                         the_gui->gui_helper, SLOT (aboutToShowMainMenu()));
       QObject::connect (a->menu(),         SIGNAL (aboutToHide()),
                         the_gui->gui_helper, SLOT (aboutToHideMainMenu()));
+#else
+      QObject::connect (a->menu(), &QMenu::aboutToShow,
+                        the_gui->gui_helper, &QTMGuiHelper::aboutToShowMainMenu);
+      QObject::connect (a->menu(), &QMenu::aboutToHide,
+                        the_gui->gui_helper, &QTMGuiHelper::aboutToHideMainMenu);
+#endif
     }
   }
 }

@@ -96,83 +96,83 @@ ssize_t texmacs_fwrite (const char *s, size_t n, FILE *stream) {
   return ret < 1 ? 0 : n;
 }
 
-void texmacs_fclose(FILE *&file, bool unlock) {
+void texmacs_fclose (FILE *&file, bool unlock) {
   if (unlock) {
-    texmacs_unlock_file(file);
+    texmacs_unlock_file (file);
   }
-  fclose(file);
+  fclose (file);
   file = nullptr;
 }
 
-TEXMACS_DIR texmacs_opendir(string dirname) {
+TEXMACS_DIR texmacs_opendir (string dirname) {
   return (TEXMACS_DIR)
-    opendir(texmacs_utf8_string_to_system_string(dirname).c_str());
+    opendir (texmacs_utf8_string_to_system_string (dirname).c_str());
 }
 
-void texmacs_closedir(TEXMACS_DIR dir) {
-  closedir((DIR*)dir);
+void texmacs_closedir (TEXMACS_DIR dir) {
+  closedir ((DIR*)dir);
   dir = nullptr;
 }
 
-texmacs_dirent texmacs_readdir(TEXMACS_DIR dirp) {
-  struct dirent* entry = readdir(dirp);
+texmacs_dirent texmacs_readdir (TEXMACS_DIR dirp) {
+  struct dirent* entry = readdir (dirp);
   if (entry == NULL) {
     return {false, ""};
   }
-  return {true, texmacs_ainsi_to_utf8(entry->d_name)};
+  return {true, texmacs_ainsi_to_utf8 (entry->d_name)};
 }
 
-int texmacs_stat(string filename, struct_stat* buf) {
-  return stat(texmacs_utf8_string_to_system_string(filename).c_str(), buf);
+int texmacs_stat (string filename, struct_stat* buf) {
+  return stat (texmacs_utf8_string_to_system_string (filename).c_str(), buf);
 }
 
-bool texmacs_mkdir(string dirname, int mode) {
-  return mkdir(texmacs_utf8_string_to_system_string(dirname).c_str(), mode) == 0;
+bool texmacs_mkdir (string dirname, int mode) {
+  return mkdir (texmacs_utf8_string_to_system_string (dirname).c_str(), mode) == 0;
 }
 
-bool texmacs_rmdir(string dirname) {
-  return rmdir(texmacs_utf8_string_to_system_string(dirname).c_str()) == 0;
+bool texmacs_rmdir (string dirname) {
+  return rmdir (texmacs_utf8_string_to_system_string (dirname).c_str()) == 0;
 }
 
-bool texmacs_rename(string oldname, string newname) {
-  return rename(
-    texmacs_utf8_string_to_system_string(oldname).c_str(),
-    texmacs_utf8_string_to_system_string(newname).c_str()
+bool texmacs_rename (string oldname, string newname) {
+  return rename (
+    texmacs_utf8_string_to_system_string (oldname).c_str(),
+    texmacs_utf8_string_to_system_string (newname).c_str()
   ) == 0;
 }
 
-bool texmacs_chmod(string filename, int mode) {
-  return chmod(texmacs_utf8_string_to_system_string(filename).c_str(), mode) == 0;
+bool texmacs_chmod (string filename, int mode) {
+  return chmod (texmacs_utf8_string_to_system_string (filename).c_str(), mode) == 0;
 }
 
-bool texmacs_remove(string filename) {
-  return remove(texmacs_utf8_string_to_system_string(filename).c_str()) == 0;
+bool texmacs_remove (string filename) {
+  return remove (texmacs_utf8_string_to_system_string (filename).c_str()) == 0;
 }
 
-bool texmacs_getenv(string variable_name, string &variable_value) {
-    char *value = getenv(texmacs_utf8_string_to_system_string(variable_name).c_str());
+bool texmacs_getenv (string variable_name, string &variable_value) {
+    char *value = getenv (texmacs_utf8_string_to_system_string (variable_name).c_str());
     if (value == nullptr) {
         return false;
     }
-    variable_value = texmacs_ainsi_to_utf8(value);
+    variable_value = texmacs_ainsi_to_utf8 (value);
     return true;
 }
 
-bool texmacs_setenv(string variable_name, string new_value) {
-    return setenv(
-      texmacs_utf8_string_to_system_string(variable_name).c_str(),
-      texmacs_utf8_string_to_system_string(new_value).c_str(), 1
+bool texmacs_setenv (string variable_name, string new_value) {
+    return setenv (
+      texmacs_utf8_string_to_system_string (variable_name).c_str(),
+      texmacs_utf8_string_to_system_string (new_value).c_str(), 1
     ) == 0;
 }
 
-string get_default_theme() {
-#if defined(OS_MACOS) && !defined(__arm64__)
+string get_default_theme () {
+#if defined (OS_MACOS) && !defined (__arm64__)
   return "";
 #endif
 #ifdef qt_no_fontconfig
   return "native";
 #endif
-#if defined(QTTEXMACS) && QT_VERSION >= 0x060500
+#if defined (QTTEXMACS) && QT_VERSION >= 0x060500
   if (QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark) {
     return "dark";
   } else {
@@ -182,24 +182,20 @@ string get_default_theme() {
   return "light";
 }
 
-url texmacs_get_application_directory() {
+url texmacs_get_application_directory () {
 #ifdef OS_GNU_LINUX
   // use proc self exe to get the path of the executable
-  char path[PATH_MAX];
-  ssize_t len = readlink("/proc/self/exe", path, sizeof(path) - 1);
-  if (len == -1) {
-    return url();
-  }
+  char path[PATH_MAX+1];
+  ssize_t len = readlink ("/proc/self/exe", path, sizeof (path) - 1);
+  if (len == -1) return url ();
   path[len] = '\0';
   string exe_path = path;
-  return url_system(exe_path) * "..";
-#elif defined(OS_MACOS)
+  return url_system (exe_path) * "..";
+#elif defined (OS_MACOS)
   char path[PATH_MAX];
-  uint32_t size = sizeof(path);
-  if (_NSGetExecutablePath(path, &size) != 0) {
-    return url();
-  }
+  uint32_t size = sizeof (path);
+  if (_NSGetExecutablePath (path, &size) != 0) return url ();
   string exe_path = path;
-  return url_system(exe_path) * "..";
+  return url_system (exe_path) * "..";
 #endif
 }

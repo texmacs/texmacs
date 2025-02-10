@@ -148,8 +148,13 @@ qt_gui_rep::qt_gui_rep (int &argc, char **argv):
 
   updatetimer = new QTimer (gui_helper);
   updatetimer->setSingleShot (true);
+#if QT_VERSION < 0x060000
   QObject::connect (updatetimer, SIGNAL (timeout()),
                     gui_helper, SLOT (doUpdate()));
+#else
+  QObject::connect (updatetimer, &QTimer::timeout,
+                    gui_helper, &QTMGuiHelper::doUpdate);
+#endif
   // (void) default_font ();
 
 #if QT_VERSION < 0x060000
@@ -271,6 +276,10 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
     s = copy (selection_s [key]);
     return true;
   }
+  
+  if (DEBUG_QT)
+    debug_qt << "get_selection format: ["  << format << "] mime-types: [" 
+             << from_qstring(md->formats().join(",")) << "]" << LF;
 
   if (format == "default") {
     if (md->hasFormat ("application/x-texmacs-clipboard")) {
@@ -342,6 +351,10 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
     s= as_string (call ("convert", im, "texmacs-tree", "texmacs-snippet"));
   }
   t = tuple ("extern", s);
+
+  if (DEBUG_QT)
+    debug_qt << "get_selection t: " << t << LF;
+
   return true;
 }
 

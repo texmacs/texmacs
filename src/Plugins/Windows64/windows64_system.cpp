@@ -147,6 +147,7 @@ bool texmacs_rmdir(string dirname) {
 }
 
 bool texmacs_rename(string oldname, string newname) {
+  texmacs_remove(newname);
   return MoveFileW(
     texmacs_utf8_to_wide(oldname).c_str(), 
     texmacs_utf8_to_wide(newname).c_str()
@@ -449,10 +450,8 @@ int windows_system(string cmd, string *cmdout, string *cmderr) {
   if (!res) {
     // If we are here, it means that windows_system is trying to
     // open a file, like a PDF, or a link.
-    if (stdout == nullptr && stderr == nullptr) {
-      res = (uintptr_t)ShellExecuteW(NULL, NULL, wide_cmd.c_str(), 
-                                     NULL, NULL, SW_SHOW) >= 32;
-    }
+    res = (uintptr_t)ShellExecuteW(NULL, NULL, wide_cmd.c_str(), 
+                                   NULL, NULL, SW_SHOW) >= 32;
 
     if (!res) {
       std_warning << "failed to launch command '" << cmd << "'" << LF;

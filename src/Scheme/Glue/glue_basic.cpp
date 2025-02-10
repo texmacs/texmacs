@@ -125,6 +125,15 @@ tmg_os_mingwP () {
 }
 
 tmscm
+tmg_os_mingw64P () {
+  // TMSCM_DEFER_INTS;
+  bool out= os_mingw64 ();
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_os_macosP () {
   // TMSCM_DEFER_INTS;
   bool out= os_macos ();
@@ -10279,6 +10288,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("get-original-path",  tmg_get_original_path, 0, 0, 0);
   tmscm_install_procedure ("os-win32?",  tmg_os_win32P, 0, 0, 0);
   tmscm_install_procedure ("os-mingw?",  tmg_os_mingwP, 0, 0, 0);
+  tmscm_install_procedure ("os-mingw64?",  tmg_os_mingw64P, 0, 0, 0);
   tmscm_install_procedure ("os-macos?",  tmg_os_macosP, 0, 0, 0);
   tmscm_install_procedure ("os-android?",  tmg_os_androidP, 0, 0, 0);
   tmscm_install_procedure ("has-printing-cmd?",  tmg_has_printing_cmdP, 0, 0, 0);

@@ -297,13 +297,13 @@ make_lazy_compound (edit_env env, tree t, path ip) {
     if (is_atomic (f)) {
       string var= f->label;
       if (env->provides (var)) f= env->read (var);
-      else f= tree (TMERROR, "compound " * var);
+      else f= tree (_ERROR, "compound " * var);
     }
   }
   else {
     string var= as_string (L(t));
     if (env->provides (var)) f= env->read (var);
-    else f= tree (TMERROR, "compound " * var);
+    else f= tree (_ERROR, "compound " * var);
     d= 0;
   }
 
@@ -418,7 +418,7 @@ make_lazy_argument (edit_env env, tree t, path ip) {
   path   valip= decorate_right (ip);
 
   tree r= t[0];
-  if (is_compound (r)) value= tree (TMERROR, "bad arg");
+  if (is_compound (r)) value= tree (_ERROR, "bad arg");
   else {
     name = r->label;
     if ((!is_nil (env->macro_arg)) && env->macro_arg->item->contains (r->label)) {
@@ -443,13 +443,13 @@ make_lazy_argument (edit_env env, tree t, path ip) {
     for (i=1; i<n; i++) {
       tree r= env->exec (t[i]);
       if (!is_int (r)) {
-        value= tree (TMERROR, "arg " * name);
+        value= tree (_ERROR, "arg " * name);
         valip= decorate_right (ip);
         break;
       }
       int nr= as_int (r);
       if ((!is_compound (value)) || (nr<0) || (nr>=N(value))) {
-        value= tree (TMERROR, "arg " * name);
+        value= tree (_ERROR, "arg " * name);
         valip= decorate_right (ip);
         break;
       }
