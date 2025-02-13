@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : mathemagix-format.scm
+;; MODULE      : caas-format.scm
 ;; DESCRIPTION : Mathemagix file format
 ;; COPYRIGHT   : (C) 2022  Darcy Shen, Joris van der Hoeven
 ;;
@@ -11,33 +11,33 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (mathemagix-format))
+(texmacs-module (caas-format)
+  (:use (mathemagix-format)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Mathemagix source files
+;; Caas source files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-format mathemagix
-  (:name "Mathemagix source code")
-  (:suffix "mmx" "mmh"))
+(define-format caas
+  (:name "Caas source code"))
 
-(tm-define (texmacs->mathemagix x . opts)
-  (texmacs->verbatim x (acons "texmacs->verbatim:encoding" "SourceCode" '())))
+(tm-define (texmacs->caas x . opts)
+  (apply texmacs->mathemagix (cons x opts)))
 
-(tm-define (mathemagix->texmacs x . opts)
-  (code->texmacs x))
+(tm-define (caas->texmacs x . opts)
+  (apply mathemagix->texmacs (cons x opts)))
 
-(tm-define (mathemagix-snippet->texmacs x . opts)
-  (code-snippet->texmacs x))
+(tm-define (caas-snippet->texmacs x . opts)
+  (apply mathemagix-snippet->texmacs (cons x opts)))
 
-(converter texmacs-tree mathemagix-document
+(converter texmacs-tree caas-document
   (:function texmacs->mathemagix))
 
-(converter mathemagix-document texmacs-tree
+(converter caas-document texmacs-tree
   (:function mathemagix->texmacs))
   
-(converter texmacs-tree mathemagix-snippet
+(converter texmacs-tree caas-snippet
   (:function texmacs->mathemagix))
 
-(converter mathemagix-snippet texmacs-tree
+(converter caas-snippet texmacs-tree
   (:function mathemagix-snippet->texmacs))
