@@ -72,15 +72,6 @@ scmconfig.h: ${top_builddir}/config.h gen-scmconfig$(EXEEXT)
 
 guile_filter_doc_snarfage_SOURCES = c-tokenize.c
 
-## Override default rule; this should be compiled for BUILD host.
-## For some reason, OBJEXT does not include the dot
-c-tokenize.$(OBJEXT): c-tokenize.c
-	if [ "$(cross_compiling)" = "yes" ]; then \
-		$(CC_FOR_BUILD) $(DEFS) $(AM_CPPFLAGS) -c -o $@ $<; \
-	else \
-		$(COMPILE) -c -o $@ $<; \
-	fi
-
 ## Override default rule; this should run on BUILD host.
 guile_filter_doc_snarfage$(EXEEXT): $(guile_filter_doc_snarfage_OBJECTS) $(guile_filter_doc_snarfage_DEPENDENCIES) 
 	@rm -f guile_filter_doc_snarfage$(EXEEXT)
@@ -113,7 +104,7 @@ libguile_la_SOURCES = alist.c arbiters.c async.c backtrace.c boolean.c	\
     stackchk.c stacks.c stime.c strings.c srfi-4.c srfi-13.c srfi-14.c	\
     strorder.c strports.c struct.c symbols.c threads.c null-threads.c	\
     throw.c values.c variable.c vectors.c version.c vports.c weaks.c	\
-    ramap.c unif.c system.c
+    ramap.c unif.c system.c c-tokenize.c
 
 DOT_X_FILES = alist.x arbiters.x async.x backtrace.x boolean.x chars.x	\
     continuations.x debug.x deprecation.x deprecated.x discouraged.x	\
@@ -396,4 +387,4 @@ MOSTLYCLEANFILES = \
 CLEANFILES = libpath.h *.x *.doc guile-procedures.txt guile-procedures.texi guile.texi \
 	stack-limit-calibration.scm.trs stack-limit-calibration.scm.log
 
-MAINTAINERCLEANFILES = c-tokenize.c
+
