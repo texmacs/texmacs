@@ -8,18 +8,16 @@
 # in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ###############################################################################
 
-CC = gcc
-CXX = g++
-RM = rm -f
+CC ?= gcc
+CXX ?= g++
+RM ?= rm -f
 
 all: bin/tm_maple_5
 
-bin/tm_maple_5: src/tm_maple_5.cpp
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) src/tm_maple_5.cpp -o bin/tm_maple_5
+bin/% : src/%.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $< -o $@ $(LDFLAGS) $(LDADD)
 
 clean:
 	$(RM) *~
 	$(RM) */*~
 	$(RM) bin/tm_maple_5
-	$(RM) $(HOME)/.TeXmacs/bin/tm_maple_9.sh
-	$(RM) $(HOME)/.TeXmacs/bin/tm_maple_9
