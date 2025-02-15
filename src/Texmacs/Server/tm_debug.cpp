@@ -38,7 +38,7 @@ get_system_information () {
   r << "  Processor        : "
     << HOST_CPU << "\n";
   r << "  Crash date       : "
-    << var_eval_system ("date") << "\n";
+    << var_eval_system ("date -u +%Y%m%dT%H%M%SZ") << "\n";
   return r;
 }
 
