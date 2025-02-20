@@ -67,7 +67,7 @@ public:
 
 #ifdef TEXMACS_EXPERIMENTAL_TABWINDOW
   inline QTMMainTabWindow &mainTabWindow() {
-    return *mMainTabWindow;
+    return *QTMMainTabWindow::topTabWindow();
   }
 #endif
 
@@ -77,10 +77,6 @@ private:
   QTMPixmapManager pm;
 #endif
   QTMKeyboard mKeyboard;
-#ifdef TEXMACS_EXPERIMENTAL_TABWINDOW
-  QTMMainTabWindow *mMainTabWindow;
-#endif
-
 };
 
 inline QTMApplication *tmapp() {
