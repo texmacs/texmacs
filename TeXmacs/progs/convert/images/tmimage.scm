@@ -2,7 +2,7 @@
 ;;
 ;; MODULE      : tmimage.scm
 ;; DESCRIPTION : convert texmacs fragment (selection) to image formats.
-;; COPYRIGHT   : (C) 2012-2022  Philippe Joyez
+;; COPYRIGHT   : (C) 2012-2025  Philippe Joyez
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -18,7 +18,7 @@
 
 (texmacs-module (convert images tmimage)
   (:use (convert tmml tmmlout)
-        (convert tmml tmtmml)))
+        (convert tmml tmtmml) (utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Handling of image convertion preferences
@@ -196,6 +196,20 @@
             
             )))
 
+(define (embbed-tm-selection-in-pdf tm-fragment fname)
+  (let ((mybuf (buffer-new)))
+         (buffer-copy (current-buffer) mybuf) ;;preserve styling of the selection
+         (buffer-set-body mybuf tm-fragment)
+         (initial-default mybuf "global-title" "global-author" "global-subject") ;anonymize
+         (with-buffer mybuf 
+           (if (== (get-env "save-aux") "true") (init-env "save-aux" "false")))
+         (buffer-save mybuf)
+         (buffer-close mybuf)
+         (pdf-make-attachments fname `(,mybuf) fname)
+         ;(display mybuf)
+         (system-remove mybuf)
+        ))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; public interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -354,6 +368,9 @@
          (debug "relbaseline= " relbaseline "\n")
          (refactor-svg myurl tm-fragment relbaseline))
          ;; modify svg, embedding texmacs code
+        )
+      (if (== suffix "pdf")
+        (embbed-tm-selection-in-pdf tm-fragment myurl)
         )
 
     ))))
