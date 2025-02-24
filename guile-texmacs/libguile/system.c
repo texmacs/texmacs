@@ -157,6 +157,10 @@ int guile_default_fprintf(FILE *stream, const char *format, ...) {
 }
 #endif
 
+void guile_default_process_event(void) {
+    // do nothing
+}
+
 /* Function pointers initialization */
 char *(*guile_utf8_string_to_system_string)(const char *utf8_string) = guile_default_utf8_string_to_system_string;
 char *(*guile_system_string_to_utf8_string)(const char *system_string) = guile_default_system_string_to_utf8_string;
@@ -176,3 +180,4 @@ int (*guile_truncate)(const char *path, guile_off_t length) = guile_default_trun
 char *(*guile_getenv)(const char *name) = guile_default_getenv;
 int (*guile_printf)(const char *format, ...) = guile_default_printf;
 int (*guile_fprintf)(FILE *stream, const char *format, ...) = guile_default_fprintf;
+void (*guile_process_event)(void) = guile_default_process_event;

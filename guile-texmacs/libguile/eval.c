@@ -3247,6 +3247,7 @@ eval_letrec_inits (SCM env, SCM init_forms, SCM **init_values_eol)
 static SCM
 CEVAL (SCM x, SCM env)
 {
+  guile_process_event ();
   SCM proc, arg1;
 #ifdef DEVAL
   scm_t_debug_frame debug;

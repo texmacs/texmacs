@@ -76,5 +76,6 @@ extern int (*guile_truncate)(const char *path, guile_off_t length);
 extern char *(*guile_getenv)(const char *name);
 extern int (*guile_printf)(const char *format, ...);
 extern int (*guile_fprintf)(FILE *stream, const char *format, ...);
+extern void (*guile_process_event)(void);
 
 #endif /* SCM_SYSTEM_H */
