@@ -296,9 +296,7 @@ qt_chooser_widget_rep::perform_dialog () {
     if (ends (text, ":")) text= text (0, N(text) - 1);
     if (ends (text, " as")) text= text (0, N(text) - 3);
     dialog->setDefaultSuffix (defaultSuffix);
-#if (QT_VERSION < 0x060000)
     dialog->setAcceptMode (QFileDialog::AcceptSave);
-#endif
     dialog->setLabelText (QFileDialog::Accept, to_qstring (translate (text)));
   }
 
