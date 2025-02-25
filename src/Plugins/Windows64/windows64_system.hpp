@@ -212,4 +212,17 @@ inline url texmacs_get_application_directory() {
 }
 #endif
 
+/*
+ * @brief Tell TeXmacs system that a long task is starting. This will
+ * allow TeXmacs to process the essential user events, and make TeXmacs
+ * responsive while the task is running.
+ */
+void texmacs_system_start_long_task();
+
+/*
+ * @brief Tell TeXmacs system that a long task is ending.
+ * @see texmacs_system_start_long_task
+ */
+void texmacs_system_end_long_task();
+
 #endif

@@ -33,6 +33,7 @@ void setup_texmacs_path () {
 }
 
 int main (int argc, char** argv) {
+  texmacs_init_guile_hooks ();
   setup_texmacs_path ();
   if (get_env ("APPIMAGE") != "") {
     url usr_bin = url (get_env ("APPDIR")) * "usr/bin";

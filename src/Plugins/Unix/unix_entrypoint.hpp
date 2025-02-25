@@ -12,6 +12,11 @@
 #define TEXMACS_WINDOWS_ENTRYPOINT_HPP
 
 /*
+ * @brief Initialize the guile hooks
+ */
+void texmacs_init_guile_hooks();
+
+/*
  * @brief The main function of texmacs
  * On Windows, the argc and argv are AINSI encoded or UTF-16 encoded.
  * To make the AINSI to UTF-8 conversion seamless, we rename the texmacs main 
