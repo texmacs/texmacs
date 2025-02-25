@@ -308,3 +308,11 @@ url texmacs_get_application_directory() {
   QString home = QDir::homePath();
   return url_system(texmacs_qstring_to_string(home));
 }
+
+void texmacs_system_start_long_task() {
+  // do nothing
+}
+
+void texmacs_system_end_long_task() {
+  // do nothing
+}
