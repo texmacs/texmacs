@@ -104,7 +104,7 @@ private:
   QVBoxLayout *layout;
   QLabel *waitMessage;
   QLabel *defaultMessage;
-  bool active = false;
+  bool active;
   QPixmap originalPixmap;
 };
 
