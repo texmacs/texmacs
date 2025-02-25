@@ -22,7 +22,7 @@
 #include <QIcon>
 
 
-QTMWaitDialog::QTMWaitDialog() : QDialog() {
+QTMWaitDialog::QTMWaitDialog() : QDialog(), active(false) {
   setModal(true);
 
   layout = new QVBoxLayout(this);
