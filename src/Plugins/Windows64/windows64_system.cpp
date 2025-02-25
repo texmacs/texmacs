@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <chrono>
 
 #include "config.h"
 #include "windows64_system.hpp"
@@ -29,6 +30,7 @@
 
 #ifdef QTTEXMACS
 #include <QGuiApplication>
+#include <QCoreApplication>
 #include <QStyleHints>
 #endif
 
@@ -283,6 +285,33 @@ int texmacs_guile_fprintf(FILE *stream, const char *format, ...) {
   va_end(args);
   return res;
 }
+
+#endif
+
+bool is_doing_long_task = false;
+using time_point = std::chrono::time_point<std::chrono::system_clock>;
+using duration = std::chrono::duration<double>;
+
+void texmacs_system_start_long_task() {
+  is_doing_long_task = true;
+}
+void texmacs_system_end_long_task() {
+  is_doing_long_task = false;
+}
+
+#ifdef SCM_HAVE_HOOKS
+
+void texmacs_process_event() {
+  if (!is_doing_long_task) return;
+  static time_point last_time = std::chrono::system_clock::now();
+  time_point current_time = std::chrono::system_clock::now();
+  duration elapsed_seconds = current_time - last_time;
+  if (elapsed_seconds.count() < 0.1) return;
+  last_time = current_time;
+#ifdef QTTEXMACS
+  QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+#endif
+}
 #endif
 
 void texmacs_init_guile_hooks() {
@@ -296,6 +325,7 @@ void texmacs_init_guile_hooks() {
   guile_getenv = texmacs_guile_getenv;
   guile_fprintf = texmacs_guile_fprintf;
   guile_printf = texmacs_guile_printf;
+  guile_process_event = texmacs_process_event;
 #else
   cout << "warning: guile hooks are not available" << LF;
 #endif
