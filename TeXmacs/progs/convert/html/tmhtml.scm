@@ -220,9 +220,9 @@
 		((not title) "No title")
 		((or (in? "tmdoc" styles)
                      (in? "tmweb" styles) (in? "tmweb2" styles))
-		 `(concat ,(tmhtml-force-string title)
-			  " (FSF GNU project)"))
-		(else (tmhtml-force-string title))))
+		 `(concat ,(utf8->cork (tmhtml-force-string title))
+                          " (FSF GNU project)"))
+		(else (utf8->cork (tmhtml-force-string title)))))
     (set! css
 	  (cond ((with-extract doc "html-css")
 		 `(h:link (@ (rel "stylesheet")
