@@ -652,6 +652,16 @@
 ;; Printing buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (printer-file-suffix)
+  (if (and (supports-native-pdf?)
+	   (get-boolean-preference "native pdf"))
+      "pdf" "ps"))
+
+(tm-define (printer-file-format)
+  (if (and (supports-native-pdf?)
+	   (get-boolean-preference "native pdf"))
+      "pdf" "postscript"))
+
 (tm-define (interactive-page-setup)
   (:synopsis "Specify the page setup")
   (:interactive #t)
@@ -664,8 +674,10 @@
 (tm-define (interactive-print-buffer)
   (:synopsis "Print the current buffer")
   (:interactive #t)
-  (print-to-file "$TEXMACS_HOME_PATH/system/tmp/tmpprint.ps")
-  (interactive-print '() "$TEXMACS_HOME_PATH/system/tmp/tmpprint.ps"))
+  (with file (string-append "$TEXMACS_HOME_PATH/system/tmp/tmpprint."
+			    (printer-file-suffix))
+    (print-to-file file)
+    (interactive-print '() file)))
 
 (tm-define (print-buffer)
   (:synopsis "Print the current buffer")
