@@ -70,6 +70,7 @@ font_rep::font_rep (string s):
   rsup_correct = rsup_guessed_table ();
   above_correct= above_guessed_table ();
   below_correct= below_guessed_table ();
+  double_bracket_correct= 0;
 }
 
 font_rep::font_rep (string s, font fn):
@@ -122,6 +123,8 @@ font_rep::copy_math_pars (font fn) {
   wfn          = fn->wfn;
   wline        = fn->wline;
   wquad        = fn->wquad;
+
+  double_bracket_correct= fn->double_bracket_correct;
 }
 
 void
