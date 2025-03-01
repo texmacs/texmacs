@@ -363,8 +363,10 @@ unicode_font_rep::unicode_font_rep (string name,
         above_correct= above_bonum_italic_table ();
       }
     }
-    if (starts (family, "texgyrepagella-"))
+    if (starts (family, "texgyrepagella-")) {
       mspc= spc + 0.5 * space (spc->def);
+      double_bracket_correct= -wquad >> 3;
+    }
   }
 
   else if (starts (family, "Papyrus")) {
