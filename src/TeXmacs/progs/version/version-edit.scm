@@ -134,17 +134,20 @@
 	      (else (tree-set t '(document)))))
       (tree-set t new)))
 
+(define (version-retain-version* where which)
+  (tree-replace where version-context?
+                (lambda (t)
+                  (cond ((number? which)
+                         (retain-version t (tree-ref t which)))
+                        ((tree-is? t 'version-old)
+                         (retain-version t (tree-ref t 0)))
+                        (else
+                          (retain-version t (tree-ref t 1)))))))
+
 (define (version-retain-version where which)
-  (with p (if (version-context? where) (tree-up where) where)
-    (tree-replace where version-context?
-		  (lambda (t)
-		    (cond ((number? which)
-			   (retain-version t (tree-ref t which)))
-			  ((tree-is? t 'version-old)
-			   (retain-version t (tree-ref t 0)))
-			  (else
-			   (retain-version t (tree-ref t 1))))))
-    (tree-normalize p)))
+  (with w (if (version-context? where) (tree-up where) where)
+    (version-retain-version* where which)
+    (tree-normalize w)))
 
 (define (tree-go-to-start t p)
   (if (and (nnull? p) (< (car p) (tree-arity t)))
@@ -153,8 +156,17 @@
 
 (tm-define (version-retain which)
   (cond ((selection-active-any?)
-	 (for-each (lambda (u) (version-retain-version u which))
-		   (selection-trees)))
+         (let* ((sels (selection-trees))
+                (pars* (map (lambda (t)
+                             (if (version-context? t) (tree-up t) t)) sels))
+                (ps* (list-remove-duplicates (map tree->path pars*)))
+                (ps (list-filter ps* identity))
+                (pars (map path->tree ps)))
+           (for-each (lambda (u) (version-retain-version* u which)) sels)
+           (with qs (map tree->path pars)
+             (for-each (lambda (par p q)
+                         (when (== p q) (tree-normalize par)))
+                       pars ps qs))))
 	((inside-version?)
 	 (with-innermost t version-context?
 	   (with p (tree->path t)
