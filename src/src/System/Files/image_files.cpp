@@ -213,7 +213,7 @@ ps_load (url image, bool conv) {
 
   string s = "", suf= suffix (image);
   if (suf == "ps" || suf == "eps") 
-    load_string (image, s, false);
+    load_string (concretize (image), s, false);
   else 
     if (conv) s= image_to_psdoc (image); // call converters, then load resulting ps
     
@@ -404,7 +404,7 @@ pdf_image_size (url image, int& w, int& h) {
 void
 svg_image_size (url image, int& w, int& h) {
   string content;
-  bool err= load_string (image, content, false);
+  bool err= load_string (concretize (image), content, false);
   if (!err) {
     tree t= parse_xml (content);
     tree result= find_first_element_by_name (t, "svg");
