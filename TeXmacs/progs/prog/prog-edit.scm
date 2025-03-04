@@ -324,19 +324,29 @@
     (and (tm-in? x '(concat document))
       (forall? textual? (tm-children x)))))
 
+(define (can-convert from to)
+  (converter-search (string-append from "-snippet") 
+                    (string-append to "-snippet")))
+
 (tm-define (kbd-copy)
   (:mode in-prog?)
   (:require (textual? (selection-tree)))
-  (clipboard-copy-export (get-env "prog-language") "primary"))
+  (let* ((lan (get-env "prog-language") )
+         (fmt (if (can-convert lan "texmacs") lan "verbatim")))
+    (clipboard-copy-export fmt "primary")))
 
 (tm-define (kbd-cut)
   (:mode in-prog?)
   (:require (textual? (selection-tree)))
-  (clipboard-cut-export (get-env "prog-language") "primary"))
+  (let* ((lan (get-env "prog-language") )
+         (fmt (if (can-convert lan "texmacs") lan "verbatim")))
+  (clipboard-cut-export fmt "primary")))
 
 (tm-define (kbd-paste)
   (:mode in-prog?)
   (:require (textual? (tm-ref (clipboard-get "primary") 1)))
-  (clipboard-paste-import (get-env "prog-language") "primary"))
+  (let* ((lan (get-env "prog-language") )
+         (fmt (if (can-convert "texmacs" lan) lan "verbatim")))
+    (clipboard-paste-import fmt "primary")))
   
 
