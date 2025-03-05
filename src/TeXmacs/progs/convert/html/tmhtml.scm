@@ -312,7 +312,7 @@
 (define (tmhtml-finalize-selection l)
   ;; @l is a nodeset produced by any handler _but_ tmhtml-file
   "Prepare a HTML node-set for serialization."
-  `(*TOP* ,@(map (cut sxml-strip-ns-prefix "h" <>) l)))
+  `(*TOP* ,@(map (cut sxml-strip-ns-prefix "h" <>) (map (cut sxml-strip-ns-prefix "m" <>) l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Block structures
