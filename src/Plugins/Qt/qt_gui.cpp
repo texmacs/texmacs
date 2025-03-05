@@ -388,9 +388,6 @@ qt_gui_rep::set_selection (string key, tree t,
       md->setData ("application/x-texmacs-pid", pid_str.toLatin1());
       
       (void) sh;
-        //selection = c_string (sh);
-        //md->setHtml (selection);
-        //tm_delete_array (selection);
       
       selection = c_string (sv);
       N_selection = N(sv);
@@ -407,6 +404,8 @@ qt_gui_rep::set_selection (string key, tree t,
     else
       md->setText (QString::fromLatin1 (selection, N_selection));
   }
+  else if (format == "html") 
+      md->setHtml (QString::fromUtf8 (selection, N_selection));
   else if (format == "latex") {
     string enc = get_preference ("texmacs->latex:encoding"); 
     if (enc == "utf-8" || enc == "UTF-8" || enc == "cork")
