@@ -25,8 +25,8 @@
       <item*|<hlink|Windows|windows.en.tm>>The native <name|Windows> port of
       <TeXmacs>.
 
-      <item*|<hlink|Old|ftp://ftp.texmacs.org/pub/TeXmacs/tmftp/>>Browse
-      <hlink|our repository|ftp://ftp.texmacs.org/pub/TeXmacs/tmftp/> for
+      <item*|<hlink|Old|https://ftp.texmacs.org/TeXmacs/tmftp/>>Browse
+      <hlink|our repository|https://ftp.texmacs.org/TeXmacs/tmftp/> for
       older versions of <TeXmacs>.
 
       <item*|Vintage>Very old versions of <TeXmacs> are available here:
