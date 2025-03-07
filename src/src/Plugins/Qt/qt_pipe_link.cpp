@@ -159,6 +159,7 @@ qt_pipe_link_rep::interrupt () {
   }
 #else
   uint64_t pid = PipeLink.processId ();
+  if (pid == 0) return;
   int ret =  ::kill (pid, SIGINT);
   if (ret == -1) {
     qt_error << "Interrupt not successful, pid: " << pid << " return code: " << errno << "\n";
