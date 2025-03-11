@@ -150,4 +150,10 @@ url texmacs_get_application_directory();
   */
  void texmacs_system_end_long_task();
 
+/*
+ * @brief Process the essential user events. This function should be called
+ * in long tasks to keep TeXmacs responsive.
+ */
+void texmacs_process_event();
+
 #endif // TEXMACS_ANDROID_SYSTEM_HPP
