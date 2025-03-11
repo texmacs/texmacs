@@ -294,9 +294,9 @@
 
 (tm-define (tmdoc-expand-help-manual* root next)
   (system-wait "Generating manual" "(can be long)")
-  (tmdoc-expand-help root "book")
   (user-delayed
     (lambda ()
+      (tmdoc-expand-help root "book")
       (delayed-update "(pass 1/3)"
         (lambda ()
           (delayed-update "(pass 2/3)"
