@@ -17,8 +17,6 @@
 #define TEXMACS_EXPERIMENTAL_TABWINDOW
 #endif
 
-#ifdef TEXMACS_EXPERIMENTAL_TABWINDOW
-
 #include <QTabWidget>
 
 /**
@@ -166,7 +164,5 @@ private:
   static QTMMainTabWindow *gTopTabWindow;
    
 };
-
-#endif // TEXMACS_EXPERIMENTAL_TABWINDOW
 
 #endif // QTMMAINTABWINDOW_HPP
