@@ -4,6 +4,8 @@
 QTMApplication::QTMApplication (int& argc, char** argv) :
   QApplication (argc, argv) {
 
+  mWaitDialog = new QTMWaitDialog ();
+
 #if QT_VERSION >= 0x060000
   mPixmapManagerInitialized = false;
 #endif
@@ -57,4 +59,19 @@ bool QTMApplication::notify (QObject* receiver, QEvent* event)
     the_exception= s;
   }
   return false;
+}
+
+void
+texmacs_qt_wait_handler (string message, string arg, int level) {
+  tmapp()->waitDialog().setActive(true);
+  if (N(message)) {
+    if (arg != "") message = message * " " * arg * "...";
+    tmapp()->waitDialog().pushMessage (message);
+  } else {
+    tmapp()->waitDialog().popMessage ();
+  }
+}
+
+void QTMApplication::installWaitHandler() {
+  set_wait_handler (texmacs_qt_wait_handler);
 }
