@@ -146,4 +146,12 @@ inline url texmacs_get_application_directory() {
 }
 #endif
 
+inline void texmacs_system_start_long_task() {
+  // do nothing
+}
+
+inline void texmacs_system_end_long_task() {
+  // do nothing
+}
+
 #endif
