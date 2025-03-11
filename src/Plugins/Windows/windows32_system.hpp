@@ -154,4 +154,10 @@ inline void texmacs_system_end_long_task() {
   // do nothing
 }
 
+/*
+ * @brief Process the essential user events. This function should be called
+ * in long tasks to keep TeXmacs responsive.
+ */
+void texmacs_process_event();
+
 #endif
