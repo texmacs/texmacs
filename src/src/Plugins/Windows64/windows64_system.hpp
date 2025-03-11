@@ -225,4 +225,10 @@ void texmacs_system_start_long_task();
  */
 void texmacs_system_end_long_task();
 
+/*
+ * @brief Process the essential user events. This function should be called
+ * in long tasks to keep TeXmacs responsive.
+ */
+void texmacs_process_event();
+
 #endif
