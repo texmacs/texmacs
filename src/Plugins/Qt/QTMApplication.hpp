@@ -24,6 +24,7 @@
 #include "QTMKeyboard.hpp"
 #include "QTMPixmapManager.hpp"
 #include "QTMMainTabWindow.hpp"
+#include "QTMWaitDialog.hpp"
 
 void init_palette (QApplication* app);
 void init_style_sheet (QApplication* app);
@@ -65,11 +66,17 @@ public:
     return mKeyboard;
   }
 
+  inline QTMWaitDialog &waitDialog() {
+    return *mWaitDialog;
+  }
+
 #ifdef TEXMACS_EXPERIMENTAL_TABWINDOW
   inline QTMMainTabWindow &mainTabWindow() {
     return *QTMMainTabWindow::topTabWindow();
   }
 #endif
+
+  void installWaitHandler();
 
 private:
 #if QT_VERSION >= 0x060000
@@ -77,6 +84,7 @@ private:
   QTMPixmapManager pm;
 #endif
   QTMKeyboard mKeyboard;
+  QTMWaitDialog *mWaitDialog;
 };
 
 inline QTMApplication *tmapp() {
