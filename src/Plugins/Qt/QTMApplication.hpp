@@ -70,11 +70,13 @@ public:
     return *mWaitDialog;
   }
 
-#ifdef TEXMACS_EXPERIMENTAL_TABWINDOW
+  inline bool useTabWindow() {
+    return mUseTabWindow;
+  }
+
   inline QTMMainTabWindow &mainTabWindow() {
     return *QTMMainTabWindow::topTabWindow();
   }
-#endif
 
   void installWaitHandler();
 
@@ -85,6 +87,7 @@ private:
 #endif
   QTMKeyboard mKeyboard;
   QTMWaitDialog *mWaitDialog;
+  bool mUseTabWindow;
 };
 
 inline QTMApplication *tmapp() {
