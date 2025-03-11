@@ -61,7 +61,7 @@ unix_system (string cmd, string& result, string& error) {
 * Evaluation via specified file descriptors
 ******************************************************************************/
 
-#if !defined(OS_MINGW) && !defined(X11TEXMACS)
+#if !defined(OS_MINGW) && !defined(X11TEXMACS) && !defined(OS_ANDROID)
 
 extern char **environ;
 
