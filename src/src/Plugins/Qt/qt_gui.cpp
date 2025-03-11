@@ -28,6 +28,7 @@
 #include "qt_renderer.hpp" // for the_qt_renderer
 #include "qt_simple_widget.hpp"
 #include "qt_window_widget.hpp"
+#include "QTMApplication.hpp"
 
 #if QT_VERSION < 0x060000
 #include <QDesktopWidget>
@@ -120,7 +121,7 @@ tm_sleep () {
 ******************************************************************************/
 
 qt_gui_rep::qt_gui_rep (int &argc, char **argv):
-interrupted (false), waitWindow (NULL), popup_wid_time (0), q_translator (0),
+interrupted (false), popup_wid_time (0), q_translator (0),
 time_credit (100), do_check_events (false), updating (false), 
 needing_update (false)
 {
@@ -229,15 +230,6 @@ qt_gui_rep::get_max_size (SI& width, SI& height) {
 
 qt_gui_rep::~qt_gui_rep()  {
   delete gui_helper;
-  
-  while (waitDialogs.count()) {
-    waitDialogs.last()->deleteLater();
-    waitDialogs.removeLast();
-  }
-  if (waitWindow) delete waitWindow;
-  
-    // delete updatetimer; we do not need this given that gui_helper is the
-    // parent of updatetimer
 }
 
 
@@ -388,6 +380,9 @@ qt_gui_rep::set_selection (string key, tree t,
       md->setData ("application/x-texmacs-pid", pid_str.toLatin1());
       
       (void) sh;
+        //selection = c_string (sh);
+        //md->setHtml (selection);
+        //tm_delete_array (selection);
       
       selection = c_string (sv);
       N_selection = N(sv);
@@ -404,8 +399,6 @@ qt_gui_rep::set_selection (string key, tree t,
     else
       md->setText (QString::fromLatin1 (selection, N_selection));
   }
-  else if (format == "html") 
-      md->setHtml (QString::fromUtf8 (selection, N_selection));
   else if (format == "latex") {
     string enc = get_preference ("texmacs->latex:encoding"); 
     if (enc == "utf-8" || enc == "UTF-8" || enc == "cork")
@@ -451,83 +444,6 @@ void qt_gui_rep::set_mouse_pointer (string curs_name, string mask_name)
 /******************************************************************************
  * Main loop
  ******************************************************************************/
-
-void
-qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
-  if (headless_mode) return;
-  if (DEBUG_QT)
-    debug_qt << "show_wait_indicator \"" << message << "\"\"" << arg << "\"\n";
-  
-  qt_window_widget_rep* wid = static_cast<qt_window_widget_rep*> (w.rep);
-  
-    // we move the texmacs window during an operation.
-    // We need to disable updates of the window to avoid erasure of the canvas
-    // area
-    //  wid->wid->setUpdatesEnabled (false);
-  
-    //FIXME: we must center the wait widget wrt the current active window
-  
-  if (!waitWindow) {
-    waitWindow = new QWidget (wid->qwid->window());
-    waitWindow->setWindowFlags (Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-    QStackedLayout *layout = new QStackedLayout();
-    layout->setSizeConstraint (QLayout::SetFixedSize);
-    waitWindow->setLayout (layout);
-  }
-  
-  if (waitDialogs.count()) {
-    waitWindow->layout()->removeWidget (waitDialogs.last());
-  }
-  
-  if (N(message)) {
-      // push a new wait message in the list
-    
-    if (arg != "") message = message * " " * arg * "...";
-    
-    QLabel* lab = new  QLabel();
-    lab->setFocusPolicy (Qt::NoFocus);
-    lab->setMargin (15);
-    lab->setText (to_qstring (message));
-    waitDialogs << lab;
-  } else {
-      // pop the next wait message from the list
-    if (waitDialogs.count()) {
-      waitDialogs.last()->deleteLater();
-      waitDialogs.removeLast();
-    }
-  }
-  
-  if (waitDialogs.count()) {
-    waitWindow->layout()->addWidget (waitDialogs.last());
-    waitWindow->updateGeometry();
-    {
-      QSize sz = waitWindow->geometry().size();
-      QRect rect = QRect (QPoint (0,0),sz);
-        //HACK:
-        // processEvents is needed to let Qt update windows coordinates in the case
-      qApp->processEvents (QEventLoop::ExcludeUserInputEvents);
-        //ENDHACK
-      QPoint pt = wid->qwid->window()->geometry().center();
-      rect.moveCenter (pt);
-      waitWindow->move (rect.topLeft());
-      
-    }
-    waitWindow->show();
-    qApp->processEvents (QEventLoop::ExcludeUserInputEvents);
-    waitWindow->repaint();
-  } else {
-    waitWindow->close();
-  }
-  qApp->processEvents();
-#if QT_VERSION < 0x060000
-	QApplication::flush();
-#endif
-  
-  wid->qwid->activateWindow ();
-  send_keyboard_focus (wid);
-    // next time we do update the dialog will disappear
-  need_update();
-}
 
 void (*the_interpose_handler) (void) = NULL;
 
@@ -579,7 +495,8 @@ gui_open (int& argc, char** argv) {
 
 void
 gui_start_loop () {
-    // start the main loop
+  // start the main loop
+  tmapp()->installWaitHandler();
   the_gui->event_loop ();
 }
 
@@ -844,6 +761,11 @@ qt_gui_rep::update () {
     need_update();
     return;
   }
+
+  if (tmapp()->waitDialog().isActive() && !tmapp()->waitDialog().isVisible()) {
+    cout << "Waiting for splash screen to be visible" << LF;
+    return;
+  }
   
     // cout << "<" << texmacs_time() << " " << N(delayed_queue) << " ";
   
@@ -852,24 +774,16 @@ qt_gui_rep::update () {
   
   static int count_events    = 0;
   static int max_proc_events = 40;
+
+  if (tmapp()->waitDialog().isActive()) {
+    max_proc_events = 1000;
+    texmacs_system_start_long_task();
+  }
   
   time_t     now = texmacs_time();
   needing_update = false;
   time_credit    = 9 / (waiting_events.size() + 1);
-  
-    // 1.
-    // Check if a wait dialog is active and in that case remove it.
-    // If we are here then the long operation has finished.
-  
-  if (waitDialogs.count()) {
-    waitWindow->layout()->removeWidget (waitDialogs.last());
-    waitWindow->close();
-    while (waitDialogs.count()) {
-      waitDialogs.last()->deleteLater();
-      waitDialogs.removeLast();
-    }
-  }
-  
+    
   if (popup_wid_time > 0 && now > popup_wid_time) {
     popup_wid_time = 0;
     _popup_wid->send (SLOT_VISIBILITY, close_box<bool> (true));
@@ -889,6 +803,10 @@ qt_gui_rep::update () {
   if (waiting_events.size() == 0) {
       // If there are no waiting events call the interpose handler at least once
     //if (the_interpose_handler) the_interpose_handler();
+    if (tmapp()->waitDialog().isActive()) {
+      tmapp()->waitDialog().setActive(false);
+      texmacs_system_end_long_task();
+    }
   }
   else while (waiting_events.size() > 0 && count_events < max_proc_events) {
     process_queued_events (1);
@@ -1116,15 +1034,6 @@ show_help_balloon (widget balloon, SI x, SI y) {
     // Display a help balloon at position (x, y); the help balloon should
     // disappear as soon as the user presses a key or moves the mouse
   the_gui->show_help_balloon (balloon, x, y);
-}
-
-void
-show_wait_indicator (widget base, string message, string argument) {
-    // Display a wait indicator with a message and an optional argument
-    // The indicator might for instance be displayed at the center of
-    // the base widget which triggered the lengthy operation;
-    // the indicator should be removed if the message is empty
-  the_gui->show_wait_indicator (base, message, argument);
 }
 
 void
