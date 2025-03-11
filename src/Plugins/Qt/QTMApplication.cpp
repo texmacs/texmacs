@@ -4,6 +4,7 @@
 QTMApplication::QTMApplication (int& argc, char** argv) :
   QApplication (argc, argv) {
 
+  mUseTabWindow = get_user_preference ("enable tab") == "on";
   mWaitDialog = new QTMWaitDialog ();
 
 #if QT_VERSION >= 0x060000
@@ -12,9 +13,7 @@ QTMApplication::QTMApplication (int& argc, char** argv) :
 
   init_theme ();
 
-#ifdef TEXMACS_EXPERIMENTAL_TABWINDOW
-  new QTMMainTabWindow();
-#endif
+  if (mUseTabWindow) new QTMMainTabWindow();
 }
   
 

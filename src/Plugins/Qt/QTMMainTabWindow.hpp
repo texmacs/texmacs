@@ -13,10 +13,6 @@
 
 #include "config.h"
 
-#ifdef OS_ANDROID
-#define TEXMACS_EXPERIMENTAL_TABWINDOW
-#endif
-
 #include <QTabWidget>
 
 /**
