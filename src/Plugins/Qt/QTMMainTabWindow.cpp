@@ -48,12 +48,12 @@ QTMMainTabWindow::QTMMainTabWindow() {
   show();
 
   // move the tab window to the center of the screen
-#if !defined(OS_ANDROID) && QT_VERSION >= 0x050000
+#if !defined(OS_ANDROID) && QT_VERSION >= 0x060000
   QRect screenGeometry = QApplication::screens().at(0)->geometry();
   move(screenGeometry.center() - rect().center());
 #endif
 
-#if !defined(OS_ANDROID) && QT_VERSION >= 0x050000
+#if !defined(OS_ANDROID) && QT_VERSION >= 0x060000
   installEventFilter(this);
   tabBar()->installEventFilter(this);
 #endif
@@ -70,7 +70,7 @@ void QTMMainTabWindow::onDoubleClickOnEmptyTabBarSpace() {
 }
 
 bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= 0x060000
   // if the window is a top level window
   if (event->type() == QEvent::WindowActivate) {
     if (DEBUG_QT_WIDGETS) cout << "TabWindow: WindowActivated" << LF;
@@ -99,7 +99,7 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
 }
 
 bool QTMMainTabWindow::eventFilterTabBar(QObject *obj, QEvent *event) {
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= 0x060000
   if (event->type() == QEvent::MouseButtonPress) {
     /* 
       The user pressed the mouse button on the single tab button.
