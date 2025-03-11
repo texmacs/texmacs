@@ -19,7 +19,10 @@
 
 #ifdef QTTEXMACS
 #include <QGuiApplication>
+#include <QApplication>
 #include <QStyleHints>
+#include <QCursor>
+#include <QWidget>
 #endif
 
 #ifdef OS_MACOS
@@ -172,9 +175,6 @@ bool texmacs_setenv (string variable_name, string new_value) {
 }
 
 string get_default_theme () {
-#if defined (OS_MACOS) && !defined (__arm64__)
-  return "";
-#endif
 #ifdef qt_no_fontconfig
   return "native";
 #endif
@@ -211,10 +211,20 @@ using time_point = std::chrono::time_point<std::chrono::system_clock>;
 using duration = std::chrono::duration<double>;
 
 void texmacs_system_start_long_task() {
+  if (is_doing_long_task) return;
   is_doing_long_task = true;
+#ifdef QTTEXMACS
+  QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+#endif
 }
 void texmacs_system_end_long_task() {
+  if (!is_doing_long_task) return;
   is_doing_long_task = false;
+#ifdef QTTEXMACS
+  
+  QGuiApplication::restoreOverrideCursor();  
+  QApplication::alert(QApplication::topLevelWidgets().first());
+#endif
 }
 
 void texmacs_process_event() {
