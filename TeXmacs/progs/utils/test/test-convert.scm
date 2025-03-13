@@ -166,6 +166,8 @@
                       (string-append "main/man-reference." lan ".tm"))
                      ((== name "texmacs-scheme-manual")
                       (string-append "devel/scheme/scheme." lan ".tm"))
+                     ((== name "texmacs-source-manual")
+                      (string-append "devel/source/source." lan ".tm"))
                      (else "unknown.en.tm")))
          (doc-dir "$TEXMACS_DOC_PATH"))
     (if (url-exists? (url-unix doc-dir root))
