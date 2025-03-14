@@ -101,7 +101,7 @@ public:
 
 private:
   QList<QString> messages;
-  QVBoxLayout *layout;
+  QHBoxLayout *layout;
   QLabel *waitMessage;
   QLabel *defaultMessage;
   bool active;
