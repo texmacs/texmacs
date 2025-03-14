@@ -26,7 +26,7 @@ QTMWaitDialog::QTMWaitDialog() : QDialog(), active(false) {
 
   setWindowTitle("TeXmacs");
 
-  layout = new QVBoxLayout(this);
+  layout = new QHBoxLayout(this);
   setLayout(layout);
 
   defaultMessage = new QLabel(this);
