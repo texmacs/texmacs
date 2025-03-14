@@ -8,13 +8,13 @@
 # in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ###############################################################################
 
-CC = gcc
-RM = rm -f
+CC ?= gcc
+RM ?= rm -f
 
 all: bin/tm_axiom
 
-bin/tm_axiom: src/tm_axiom.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) src/tm_axiom.c -o bin/tm_axiom
+bin/% : src/%.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) $< -o $@ $(LDFLAGS) $(LDADD)
 
 clean:
 	$(RM) bin/tm_axiom
