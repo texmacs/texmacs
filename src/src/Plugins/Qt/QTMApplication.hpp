@@ -91,6 +91,7 @@ private:
 };
 
 inline QTMApplication *tmapp() {
+  ASSERT (!headless_mode, "invalid call of tmapp() in headless mode");
   return dynamic_cast<QTMApplication *>(qApp);
 }
 
