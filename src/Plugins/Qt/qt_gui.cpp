@@ -495,7 +495,8 @@ gui_open (int& argc, char** argv) {
 void
 gui_start_loop () {
   // start the main loop
-  tmapp()->installWaitHandler();
+  if (!headless_mode)
+    tmapp()->installWaitHandler();
   the_gui->event_loop ();
 }
 
@@ -761,7 +762,9 @@ qt_gui_rep::update () {
     return;
   }
 
-  if (tmapp()->waitDialog().isActive() && !tmapp()->waitDialog().isVisible()) {
+  if (!headless_mode
+      && tmapp()->waitDialog().isActive()
+      && !tmapp()->waitDialog().isVisible()) {
     cout << "Waiting for splash screen to be visible" << LF;
     return;
   }
@@ -774,7 +777,7 @@ qt_gui_rep::update () {
   static int count_events    = 0;
   static int max_proc_events = 40;
 
-  if (tmapp()->waitDialog().isActive()) {
+  if (!headless_mode && tmapp()->waitDialog().isActive()) {
     max_proc_events = 1000;
     texmacs_system_start_long_task();
   }
@@ -802,7 +805,7 @@ qt_gui_rep::update () {
   if (waiting_events.size() == 0) {
       // If there are no waiting events call the interpose handler at least once
     //if (the_interpose_handler) the_interpose_handler();
-    if (tmapp()->waitDialog().isActive()) {
+    if (!headless_mode && tmapp()->waitDialog().isActive()) {
       tmapp()->waitDialog().setActive(false);
       texmacs_system_end_long_task();
     }
