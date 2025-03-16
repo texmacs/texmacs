@@ -129,7 +129,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     mw->setStyle (qtmstyle ());
 
 #if QT_VERSION >= 0x060000
-  mw->setWindowIcon(tmapp()->pixmap_manager().getIcon((QString)"TeXmacs"));
+  mw->setWindowIcon(tmapp()->icon_manager().getIcon("TeXmacs"));
 #endif
  
   // there is a bug in the early implementation of toolbars in Qt 4.6
