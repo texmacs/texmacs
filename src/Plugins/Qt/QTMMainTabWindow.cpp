@@ -84,8 +84,7 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
     int y = mouseEvent->position().toPoint().y();
     int tabBarWidth = tabBar()->width();
     int tabBarHeight = tabBar()->height();
-    if(mouseEvent->position().toPoint().x() > tabBar()->width() && 
-       mouseEvent->position().toPoint().y() < tabBar()->height())
+    if(x > tabBarWidth && y < tabBarHeight)
     {
       if (DEBUG_QT_WIDGETS) cout << "Mouse on an empty tab bar space" << LF;
       onDoubleClickOnEmptyTabBarSpace();
@@ -157,8 +156,8 @@ bool QTMMainTabWindow::eventFilterTabBar(QObject *obj, QEvent *event) {
         For that, we put isMovingWindow to true.
       */
       newTabWindow = new QTMMainTabWindow();
-      int globalX = mapToGlobal(movingTabStartPos).x();
-      int globalY = mapToGlobal(movingTabStartPos).y();
+      //int globalX = mapToGlobal(movingTabStartPos).x();
+      //int globalY = mapToGlobal(movingTabStartPos).y();
       QWidget *widgetToMove = widget(movingTabIndex);
       removeTab(movingTabIndex);
       newTabWindow->showWidget(widgetToMove);
