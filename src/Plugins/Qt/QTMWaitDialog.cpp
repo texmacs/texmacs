@@ -36,7 +36,7 @@ QTMWaitDialog::QTMWaitDialog() : QDialog(), active(false) {
   layout->addWidget(waitMessage);
 
 #if QT_VERSION >= 0x060000
-  QIcon icon = tmapp()->pixmap_manager().getIcon((QString)"TeXmacs");
+  QIcon icon= tmapp()->icon_manager().getIcon("TeXmacs");
   originalPixmap = icon.pixmap(256, 256);
   defaultMessage->setPixmap(originalPixmap);
   defaultMessage->setAlignment(Qt::AlignCenter);
@@ -49,6 +49,7 @@ QTMWaitDialog::QTMWaitDialog() : QDialog(), active(false) {
 
 void QTMWaitDialog::timerEvent(QTimerEvent *event) {
 #if QT_VERSION >= 0x060000
+    (void) event;
     static qreal angle = 0;
     static qreal direction = 1;
     angle += direction;
