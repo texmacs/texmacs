@@ -69,11 +69,11 @@ protected:
 QTMScrollView::QTMScrollView (QWidget *_parent):
   QAbstractScrollArea (_parent),
   editor_flag (false),
-#if QT_VERSION >= 0x060000
-  wanted_origin(0,0),
-  have_wanted_origin(false),
-#endif
   p_extents (QRect(0,0,0,0))
+#if QT_VERSION >= 0x060000
+  ,wanted_origin(0,0),
+  have_wanted_origin(false)
+#endif
 {
   QWidget *_viewport = QAbstractScrollArea::viewport();
   _viewport->setBackgroundRole(QPalette::Mid);
