@@ -22,7 +22,7 @@
 #include "boot.hpp"
 #include "gui.hpp"
 #include "QTMKeyboard.hpp"
-#include "QTMPixmapManager.hpp"
+#include "QTMIconManager.hpp"
 #include "QTMMainTabWindow.hpp"
 #include "QTMWaitDialog.hpp"
 
@@ -52,13 +52,8 @@ public:
   virtual bool notify (QObject* receiver, QEvent* event);
 
 #if QT_VERSION >= 0x060000
-  QTMPixmapManager& pixmap_manager() {
-    static bool first_use= true;
-    if (first_use) {
-      pm.loadAll();
-      first_use= false;
-    }
-    return pm;
+  QTMIconManager& icon_manager() {
+    return mIconManager;
   }
 #endif
 
@@ -83,7 +78,7 @@ public:
 private:
 #if QT_VERSION >= 0x060000
   bool mPixmapManagerInitialized;
-  QTMPixmapManager pm;
+  QTMIconManager mIconManager;
 #endif
   QTMKeyboard mKeyboard;
   QTMWaitDialog *mWaitDialog;

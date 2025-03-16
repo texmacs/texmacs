@@ -30,7 +30,7 @@
 #include "QTMMenuHelper.hpp"
 #include "QTMStyle.hpp"
 #include "QTMTreeModel.hpp"
-#include "QTMPixmapManager.hpp"
+#include "QTMIconManager.hpp"
 
 #include <QCheckBox>
 #include <QPushButton>
@@ -574,7 +574,7 @@ qt_ui_element_rep::as_qaction () {
       url    image = open_box<url>(load);
       act = new QTMAction (NULL);
 #if QT_VERSION >= 0x060000
-      act->setIcon(tmapp()->pixmap_manager().getIcon(image));
+      act->setIcon(tmapp()->icon_manager().getIcon(image));
 #else
       act->setIcon (QIcon (as_pixmap (*xpm_image (image))));
 #endif
@@ -897,7 +897,7 @@ qt_ui_element_rep::as_qwidget () {
         
         QTMLazyMenu* lm = new QTMLazyMenu (pw, b, type == pullright_button);
 #if QT_VERSION >= 0x060000
-        b->setIcon (tmapp()->pixmap_manager().getIcon(image));
+        b->setIcon (tmapp()->icon_manager().getIcon(image));
 #else
         b->setIcon (QIcon (as_pixmap (*xpm_image (image))));
 #endif
@@ -1015,7 +1015,7 @@ qt_ui_element_rep::as_qwidget () {
       url image = open_box<url>(load);
       QLabel* l = new QLabel (NULL);
 #if QT_VERSION >= 0x060000
-      QIcon tmp= tmapp()->pixmap_manager().getIcon(image);
+      QIcon tmp= tmapp()->icon_manager().getIcon(image);
       l->setPixmap (tmp.pixmap(tmp.availableSizes().last()));
 #else
       l->setPixmap (as_pixmap (*xpm_image (image)));
@@ -1252,7 +1252,7 @@ qt_ui_element_rep::as_qwidget () {
         tw->addTab(body, QIcon(), label ? label->text() : "");
 #if QT_VERSION >= 0x060000
 	(void) img;
-	tw->setTabIcon(i, tmapp()->pixmap_manager().getIcon (icons[i]));
+	tw->setTabIcon(i, tmapp()->icon_manager().getIcon (icons[i]));
 #else
         tw->addTab (body, QIcon (as_pixmap (*img)), label ? label->text() : "");
 #endif
