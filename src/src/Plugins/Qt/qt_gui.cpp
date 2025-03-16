@@ -401,7 +401,7 @@ qt_gui_rep::set_selection (string key, tree t,
   else if (format == "latex") {
     string enc = get_preference ("texmacs->latex:encoding"); 
     if (enc == "utf-8" || enc == "UTF-8" || enc == "cork")
-      md->setText (to_qstring (string ((char*) selection, N_selection)));
+      md->setText (utf8_to_qstring (string ((char*) selection, N_selection)));
     else
       md->setText (QString::fromLatin1 (selection, N_selection));
   }
