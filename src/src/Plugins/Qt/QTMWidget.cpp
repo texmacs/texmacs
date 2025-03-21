@@ -728,7 +728,12 @@ QTMWidget::dropEvent (QDropEvent *event) {
         }
       } else {
         // not a local file, drop an slink to the document
-        tree ln (HLINK, url, url);
+        string label= url;
+        if (md->hasText ()) {
+          buf= md->text ().toUtf8 ().split('\n')[0];
+          label= string (buf.constData (), buf.size ());
+        }
+        tree ln (HLINK, label, url);
         doc << ln;
         //FIXME: this is still not very nice as clicking on HLINK only works for a limited group
         //of schemas (http, https, ftp). For unrecognized schemas one would like to use the default OS behaviour
