@@ -199,8 +199,10 @@ latex_preview (string s, tree t) {
     dbg ("LaTeX preview: ghostscript not found");
     return array<tree>();
   }
-  // FIXME: ./Texmacs/Window/tm_frame.cpp:191 seems to crash here if we launch
-  // system_wait ("LaTeX: compiling document, ", "please wait");
+#if QT_VERSION >= 0x060000
+  // FIXME: otherwise ./Texmacs/Window/tm_frame.cpp:191 seems to crash here if we launch
+  system_wait ("LaTeX: compiling document, ", "please wait");
+#endif
   url wdir= url_temp ("_latex_preview");
   mkdir (wdir);
   bool dvips= false;
