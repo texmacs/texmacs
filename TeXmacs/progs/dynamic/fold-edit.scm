@@ -793,7 +793,8 @@
 (define (screens->slides t)
   (if (not (tm-func? t 'screens)) (tree 'document "")
       (with f (lambda (scr) (list->tree 'document (process-screen scr)))
-        ;; (system-wait "Generating slides" "please wait") ;crashes if printing
+	(when (qt6-or-later-gui?) ;crashes if showing otherwise
+	  (system-wait "Generating slides" "please wait"))
         ;; Insert fake screen at the end
         (tree-insert! t (tree-arity t) 
                       (list (tree 'hidden '(document ""))))
@@ -821,7 +822,8 @@
         (when (and (tm-func? t 'document) (switch-context? (cAr c)))
           (tree-assign-node (cAr c) 'document)
           (tree-set! t `(document ,@(cDr c) ,@(tree-children (cAr c))))
-          ;; (system-wait "Generating slides" "please wait") ;crashes if printing
+	  (when (qt6-or-later-gui?) ;crashes if showing otherwise
+	    (system-wait "Generating slides" "please wait"))
           (for-each dynamic-make-slide (tree-children t))
 	  (transform-last-slide t)))
       (with l (select (buffer-tree) '(screens))
