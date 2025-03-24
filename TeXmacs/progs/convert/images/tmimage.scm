@@ -39,9 +39,10 @@
 ;; temporary files with extensions
   (url-glue (url-temp) (string-append "." ext)))
 
-(if (not (defined? 'string-contains)) ; for s7
-    (define (string-contains ss s)
-       (string-position s ss)))
+;; definition inside expression is disallowed
+;;(if (not (defined? 'string-contains)) ; for s7
+;;    (define (string-contains ss s)
+;;       (string-position s ss)))
        
 (define (debug . args)
   (when (debug-get "convert")
