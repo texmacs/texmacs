@@ -10,13 +10,12 @@
 
 #include "QTMMainTabWindow.hpp"
 
-#ifdef TEXMACS_EXPERIMENTAL_TABWINDOW
-
 #include "scheme.hpp"
 
 #include <QMouseEvent>
 #include <QTabBar>
 #include <QApplication>
+#include <QMouseEvent>
 
 QTMMainTabWindow *QTMMainTabWindow::gTopTabWindow = nullptr;
 
@@ -32,7 +31,9 @@ QTMMainTabWindow::QTMMainTabWindow() {
   setMovable(true);
 
   // todo : keep the tab window size and position in the user preferences
+#ifndef OS_ANDROID
   setMinimumSize(800, 600);
+#endif
 
   /*
     We do not delete the tab window ourselves.
@@ -47,11 +48,15 @@ QTMMainTabWindow::QTMMainTabWindow() {
   show();
 
   // move the tab window to the center of the screen
+#if !defined(OS_ANDROID) && QT_VERSION >= 0x060000
   QRect screenGeometry = QApplication::screens().at(0)->geometry();
   move(screenGeometry.center() - rect().center());
+#endif
 
+#if !defined(OS_ANDROID) && QT_VERSION >= 0x060000
   installEventFilter(this);
   tabBar()->installEventFilter(this);
+#endif
 
   gTopTabWindow = this;
 }
@@ -65,7 +70,7 @@ void QTMMainTabWindow::onDoubleClickOnEmptyTabBarSpace() {
 }
 
 bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
-
+#if QT_VERSION >= 0x060000
   // if the window is a top level window
   if (event->type() == QEvent::WindowActivate) {
     if (DEBUG_QT_WIDGETS) cout << "TabWindow: WindowActivated" << LF;
@@ -79,8 +84,7 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
     int y = mouseEvent->position().toPoint().y();
     int tabBarWidth = tabBar()->width();
     int tabBarHeight = tabBar()->height();
-    if(mouseEvent->position().toPoint().x() > tabBar()->width() && 
-       mouseEvent->position().toPoint().y() < tabBar()->height())
+    if(x > tabBarWidth && y < tabBarHeight)
     {
       if (DEBUG_QT_WIDGETS) cout << "Mouse on an empty tab bar space" << LF;
       onDoubleClickOnEmptyTabBarSpace();
@@ -88,9 +92,13 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
   }
 
   return QTabWidget::eventFilter(obj, event);
+#else
+  return false;
+#endif
 }
 
 bool QTMMainTabWindow::eventFilterTabBar(QObject *obj, QEvent *event) {
+#if QT_VERSION >= 0x060000
   if (event->type() == QEvent::MouseButtonPress) {
     /* 
       The user pressed the mouse button on the single tab button.
@@ -148,8 +156,8 @@ bool QTMMainTabWindow::eventFilterTabBar(QObject *obj, QEvent *event) {
         For that, we put isMovingWindow to true.
       */
       newTabWindow = new QTMMainTabWindow();
-      int globalX = mapToGlobal(movingTabStartPos).x();
-      int globalY = mapToGlobal(movingTabStartPos).y();
+      //int globalX = mapToGlobal(movingTabStartPos).x();
+      //int globalY = mapToGlobal(movingTabStartPos).y();
       QWidget *widgetToMove = widget(movingTabIndex);
       removeTab(movingTabIndex);
       newTabWindow->showWidget(widgetToMove);
@@ -221,6 +229,9 @@ bool QTMMainTabWindow::eventFilterTabBar(QObject *obj, QEvent *event) {
     }
   }
   return QTabWidget::eventFilter(obj, event);
+#else
+  return false;
+#endif
 }
 
 bool QTMMainTabWindow::eventFilter(QObject *obj, QEvent *event) {
@@ -297,5 +308,3 @@ void QTMMainTabWindow::setHoverStyle() {
     "}"
   );
 }
-
-#endif // TEXMACS_EXPERIMENTAL_TABWINDOW

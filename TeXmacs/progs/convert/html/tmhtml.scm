@@ -220,9 +220,9 @@
 		((not title) "No title")
 		((or (in? "tmdoc" styles)
                      (in? "tmweb" styles) (in? "tmweb2" styles))
-		 `(concat ,(tmhtml-force-string title)
-			  " (FSF GNU project)"))
-		(else (tmhtml-force-string title))))
+		 `(concat ,(utf8->cork (tmhtml-force-string title))
+                          " (FSF GNU project)"))
+		(else (utf8->cork (tmhtml-force-string title)))))
     (set! css
 	  (cond ((with-extract doc "html-css")
 		 `(h:link (@ (rel "stylesheet")
@@ -312,7 +312,7 @@
 (define (tmhtml-finalize-selection l)
   ;; @l is a nodeset produced by any handler _but_ tmhtml-file
   "Prepare a HTML node-set for serialization."
-  `(*TOP* ,@(map (cut sxml-strip-ns-prefix "h" <>) l)))
+  `(*TOP* ,@(map (cut sxml-strip-ns-prefix "h" <>) (map (cut sxml-strip-ns-prefix "m" <>) l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Block structures

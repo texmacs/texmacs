@@ -11,9 +11,18 @@
 
 #include "unix_system.hpp"
 #include "config.h"
+
+#include "Guile/guile_tm.hpp"
+#ifdef SCM_HAVE_HOOKS
+#include "libguile/system.h"
+#endif
+
 #ifdef QTTEXMACS
 #include <QGuiApplication>
+#include <QApplication>
 #include <QStyleHints>
+#include <QCursor>
+#include <QWidget>
 #endif
 
 #ifdef OS_MACOS
@@ -166,9 +175,6 @@ bool texmacs_setenv (string variable_name, string new_value) {
 }
 
 string get_default_theme () {
-#if defined (OS_MACOS) && !defined (__arm64__)
-  return "";
-#endif
 #ifdef qt_no_fontconfig
   return "native";
 #endif
@@ -197,5 +203,46 @@ url texmacs_get_application_directory () {
   if (_NSGetExecutablePath (path, &size) != 0) return url ();
   string exe_path = path;
   return url_system (exe_path) * "..";
+#endif
+}
+
+bool is_doing_long_task = false;
+using time_point = std::chrono::time_point<std::chrono::system_clock>;
+using duration = std::chrono::duration<double>;
+
+void texmacs_system_start_long_task() {
+  if (is_doing_long_task) return;
+  is_doing_long_task = true;
+#ifdef QTTEXMACS
+  QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+#endif
+}
+void texmacs_system_end_long_task() {
+  if (!is_doing_long_task) return;
+  is_doing_long_task = false;
+#ifdef QTTEXMACS
+  
+  QGuiApplication::restoreOverrideCursor();  
+  QApplication::alert(QApplication::topLevelWidgets().first());
+#endif
+}
+
+void texmacs_process_event() {
+  if (!is_doing_long_task) return;
+  static time_point last_time = std::chrono::system_clock::now();
+  time_point current_time = std::chrono::system_clock::now();
+  duration elapsed_seconds = current_time - last_time;
+  if (elapsed_seconds.count() < 0.1) return;
+  last_time = current_time;
+#ifdef QTTEXMACS
+  QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+#endif
+}
+
+void texmacs_init_guile_hooks() {
+#ifdef SCM_HAVE_HOOKS
+  guile_process_event = texmacs_process_event;
+#else
+  cout << "warning: guile hooks are not available" << LF;
 #endif
 }

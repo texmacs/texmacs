@@ -153,6 +153,10 @@
   (display "^")
   (plugin-input-arg (car args)))
 
+(define (plugin-input-rprime args)
+  (when (and (= (length args) 1) (string? (car args)))
+    (plugin-input (car args))))
+
 (define (plugin-input-around args)
   (plugin-input (tree-downgrade-brackets (cons 'around args) #f #t)))
 
@@ -297,6 +301,7 @@
   (sqrt plugin-input-sqrt)
   (rsub plugin-input-rsub)
   (rsup plugin-input-rsup)
+  (rprime plugin-input-rprime)
   (around plugin-input-around)
   (around* plugin-input-around*)
   (big-around plugin-input-big-around)

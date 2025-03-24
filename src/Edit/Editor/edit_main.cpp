@@ -324,8 +324,10 @@ edit_main_rep::print_doc (url name, bool conform, int first, int last) {
   }
   if (ps || pdf)
     if (get_preference ("texmacs->pdf:check", "off") == "on") {
-      //system_wait ("Checking exported file for correctness", "please wait");
-      // FIXME: the wait message often causes a crash, currently
+# if QT_VERSION >= 0x060000
+      system_wait ("Checking exported file for correctness", "please wait");
+      // FIXME: the wait message often causes a crash, otherwise
+# endif
       gs_check (orig);
     }
 #endif
@@ -340,11 +342,7 @@ edit_main_rep::print_to_file (url name, string first, string last) {
 void
 edit_main_rep::print_buffer (string first, string last) {
   url target;
-#ifdef OS_MINGW
   target= use_pdf ()? url_temp (".pdf"): url_temp (".ps");
-#else
-  target= url_temp (".ps");
-#endif
   print_doc (target, false, as_int (first), as_int (last));
   system (get_printing_cmd (), target);  // Send the document to the printer
   set_message ("Done printing", "print buffer");

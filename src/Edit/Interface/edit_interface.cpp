@@ -140,11 +140,6 @@ edit_interface_rep::resume () {
     tp= new_tp;
   }
   the_drd= old_drd;
-#ifdef QTTEXMACS
-  // FIXME: dirty hack in order to correct a bug introduced
-  // after a bugfix by Massimiliano during summer 2016
-  eval ("(delayed (:idle 1) (refresh-window))");
-#endif
 }
 
 void

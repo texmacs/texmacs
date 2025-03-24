@@ -155,16 +155,17 @@
 ;; Printing commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (propose-postscript-name)
-  (with name (propose-name-buffer)
+(define (propose-print-file-name)
+  (let ((name (propose-name-buffer))
+	(suf (printer-file-suffix)))
     (if (string-ends? name ".tm")
-	(string-append (string-drop-right name 3) ".ps")
+	(string-append (string-drop-right name 3) "." suf)
 	name)))
 
 (tm-property (print-to-file name)
   (:synopsis "Print to file")
   (:argument name print-file "File name")
-  (:default  name (propose-postscript-name)))
+  (:default  name (propose-print-file-name)))
 
 (tm-property (print-pages first last)
   (:synopsis "Print page selection")
@@ -176,7 +177,7 @@
 (tm-property (print-pages-to-file name first last)
   (:synopsis "Print page selection to file")
   (:argument  name print-file "File name")
-  (:default   name (propose-postscript-name))
+  (:default   name (propose-print-file-name))
   (:argument  first "First page")
   (:proposals first (list "1" ""))
   (:argument  last "Last page")
@@ -207,7 +208,7 @@
                     (let* ((p (getenv "TEXMACS_HOME_PATH"))
                            (f (string-append p "\\system\\tmp\\preview.pdf")))
                       (system->url f)))
-                   ((or (os-macos?) (get-boolean-preference "native pdf"))
+                   ((or (os-macos?) (== (printer-file-format) "pdf"))
                     "$TEXMACS_HOME_PATH/system/tmp/preview.pdf")
                    (else "$TEXMACS_HOME_PATH/system/tmp/preview.ps"))
     (print-to-file file)
@@ -219,4 +220,5 @@
   (:argument  end "Last page")
   (:proposals end (list (number->string (get-page-count)) ""))
   (choose-file (lambda (name) (print-pages-to-file name start end))
-	       "Print page selection to file" "postscript"))
+	       "Print page selection to file" (printer-file-format)
+	       "Print:"))

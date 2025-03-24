@@ -14,6 +14,7 @@
 #include "analyze.hpp"
 #include "converter.hpp"
 #include "universal.hpp"
+#include "sys_utils.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -158,6 +159,8 @@ get_hyphens (string s,
              hashmap<string,string> patterns,
              hashmap<string,string> hyphenations, bool utf8) {
   ASSERT (N(s) != 0, "hyphenation of empty string");
+
+  texmacs_process_event();
 
   if (utf8) s= cork_to_utf8 (uni_locase_all(s));
   else s= uni_locase_all(s);

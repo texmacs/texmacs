@@ -175,9 +175,7 @@
     (set! console-warnings? #t))
   (when (not console-updating?)
     (set! console-updating? #t)
-    (delayed
-      (:idle 1)
-      (update-consoles))))
+    (update-consoles)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User interface

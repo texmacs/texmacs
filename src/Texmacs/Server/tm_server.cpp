@@ -173,9 +173,11 @@ tm_server_rep::interpose_handler () {
 
 void
 tm_server_rep::wait_handler (string message, string arg) {
+#ifndef QTTEXMACS
   if (has_current_window ())
     show_wait_indicator (concrete_window () -> win, translate (message), arg);
   else
+#endif
     cout << "TeXmacs] Please wait: " << message << " " << arg << "\n";
 }
 

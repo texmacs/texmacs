@@ -358,7 +358,8 @@ init_env_vars () {
                        url ("$TEXMACS_PATH/misc/pictures") |
                        plugin_path ("misc/patterns"));
   (void) get_env_path ("TEXMACS_PIXMAP_PATH",
-                       "$TEXMACS_HOME_PATH/misc/pixmaps" |
+		       url ("$TEXMACS_PATH/misc/pixmaps") |
+                       url ("$TEXMACS_HOME_PATH/misc/pixmaps") |
                        url ("$TEXMACS_PATH/misc/pixmaps/modern/32x32/settings") |
                        url ("$TEXMACS_PATH/misc/pixmaps/modern/32x32/table") |
                        url ("$TEXMACS_PATH/misc/pixmaps/modern/24x24/main") |

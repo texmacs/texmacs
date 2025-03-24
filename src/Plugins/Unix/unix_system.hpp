@@ -137,4 +137,23 @@ string get_default_theme();
  */
 url texmacs_get_application_directory();
 
+/*
+ * @brief Tell TeXmacs system that a long task is starting. This will
+ * allow TeXmacs to process the essential user events, and make TeXmacs
+ * responsive while the task is running.
+ */
+ void texmacs_system_start_long_task();
+
+ /*
+  * @brief Tell TeXmacs system that a long task is ending.
+  * @see texmacs_system_start_long_task
+  */
+ void texmacs_system_end_long_task();
+ 
+/*
+ * @brief Process the essential user events. This function should be called
+ * in long tasks to keep TeXmacs responsive.
+ */
+void texmacs_process_event();
+
 #endif // TEXMACS_UNIX_SYSTEM_HPP

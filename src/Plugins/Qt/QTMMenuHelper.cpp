@@ -577,6 +577,13 @@ void initkeymap ();
 void
 QTMLineEdit::keyPressEvent (QKeyEvent* ev)
 {
+  if (ev == QKeySequence::Copy ||
+      ev == QKeySequence::Paste ||
+      ev == QKeySequence::Cut) {
+    QLineEdit::keyPressEvent (ev);
+    return;
+  }
+ 
   QCompleter* c = completer();
   
   last_key = (ev->key() == Qt::Key_Tab && ev->modifiers() & Qt::ShiftModifier)

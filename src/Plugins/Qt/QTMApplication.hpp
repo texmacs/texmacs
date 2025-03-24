@@ -22,8 +22,9 @@
 #include "boot.hpp"
 #include "gui.hpp"
 #include "QTMKeyboard.hpp"
-#include "QTMPixmapManager.hpp"
+#include "QTMIconManager.hpp"
 #include "QTMMainTabWindow.hpp"
+#include "QTMWaitDialog.hpp"
 
 void init_palette (QApplication* app);
 void init_style_sheet (QApplication* app);
@@ -51,13 +52,8 @@ public:
   virtual bool notify (QObject* receiver, QEvent* event);
 
 #if QT_VERSION >= 0x060000
-  QTMPixmapManager& pixmap_manager() {
-    static bool first_use= true;
-    if (first_use) {
-      pm.loadAll();
-      first_use= false;
-    }
-    return pm;
+  QTMIconManager& icon_manager() {
+    return mIconManager;
   }
 #endif
 
@@ -65,21 +61,32 @@ public:
     return mKeyboard;
   }
 
-#ifdef TEXMACS_EXPERIMENTAL_TABWINDOW
+  inline QTMWaitDialog &waitDialog() {
+    return *mWaitDialog;
+  }
+
+  inline bool useTabWindow() {
+    return mUseTabWindow;
+  }
+
   inline QTMMainTabWindow &mainTabWindow() {
     return *QTMMainTabWindow::topTabWindow();
   }
-#endif
+
+  void installWaitHandler();
 
 private:
 #if QT_VERSION >= 0x060000
   bool mPixmapManagerInitialized;
-  QTMPixmapManager pm;
+  QTMIconManager mIconManager;
 #endif
   QTMKeyboard mKeyboard;
+  QTMWaitDialog *mWaitDialog;
+  bool mUseTabWindow;
 };
 
 inline QTMApplication *tmapp() {
+  ASSERT (!headless_mode, "invalid call of tmapp() in headless mode");
   return dynamic_cast<QTMApplication *>(qApp);
 }
 
