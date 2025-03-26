@@ -19,7 +19,10 @@
 #include <QPaintEvent>
 #include <QStyle>
 #include <QApplication>
-
+#if QT_VERSION >= 0x050000
+#include <QScroller>
+#include <QScrollerProperties>
+#endif
 
 /*! Provide automatic centering of the working area inside the viewport.
  
@@ -95,6 +98,13 @@ QTMScrollView::QTMScrollView (QWidget *_parent):
   layout->addWidget(p_surface, 0, Qt::AlignHCenter | Qt::AlignVCenter);
   layout->setContentsMargins(0,0,0,0);
   _viewport->setLayout(layout);
+
+#if QT_VERSION >= 0x050000
+  QScrollerProperties properties = QScroller::scroller(this)->scrollerProperties();
+  properties.setScrollMetric(QScrollerProperties::VerticalOvershootPolicy, QScrollerProperties::OvershootAlwaysOff);
+  properties.setScrollMetric(QScrollerProperties::HorizontalOvershootPolicy, QScrollerProperties::OvershootAlwaysOff);
+  QScroller::scroller(this)->setScrollerProperties(properties);
+#endif
 }
 
 void 
