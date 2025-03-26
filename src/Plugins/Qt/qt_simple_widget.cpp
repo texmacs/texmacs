@@ -536,7 +536,7 @@ qt_simple_widget_rep::repaint_invalid_regions () {
   QRegion qrgn;
   QPoint origin = canvas()->origin();
 
-#if QT_VERSION >= 0x060000
+#if QT_VERSION >= 0x060000 && !defined(OS_ANDROID)
   // round the origin to avoid rounding errors with dpi of 1.25 and 1.75
   if (dpr != 1.0 && dpr != 2.0) {
     origin = QPoint (32 * (origin.x() / 32), 32 * (origin.y() / 32));
@@ -697,12 +697,7 @@ qt_simple_widget_rep::repaint_invalid_regions () {
   
   // propagate immediately the changes to the screen
 #if QT_VERSION >= 0x060000
-#ifdef OS_ANDROID
   canvas()->surface()->repaint (QRect (0,0,canvas()->width(),canvas()->height()));
-  canvas()->window()->update();
-#else
-  canvas()->surface()->repaint (QRect (0,0,canvas()->width(),canvas()->height()));
-#endif
 #else
   canvas()->surface()->repaint (qrgn);
 #endif
