@@ -5,6 +5,7 @@
 #define STACK_SIZE 0x1000000
 
 #include <QCoreApplication>
+#include <QGuiApplication>
 #include <QtCore/private/qandroidextras_p.h>
 
 bool checkPermission() {
@@ -62,6 +63,9 @@ void *main_thread (void* args) {
   qputenv("TEXMACS_PLUGINS_PATH", pluginsPath.toUtf8());
   qputenv("GUILE_LOAD_PATH", QDir::homePath().toUtf8());
   qDebug() << "Starting TeXmacs...";
+
+  QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::Ceil);
+
   texmacs_entrypoint(argc, argv);
   return NULL;
 }
