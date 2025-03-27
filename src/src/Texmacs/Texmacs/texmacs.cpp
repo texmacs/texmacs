@@ -693,6 +693,13 @@ immediate_options (int argc, char** argv) {
 
 int
 texmacs_entrypoint (int argc, char** argv) {
+#ifdef QTTEXMACS
+  if (!headless_mode) qtmapp= new QTMApplication (argc, argv);
+#endif
+#ifdef OS_ANDROID
+  init_android();
+#endif
+
 #ifdef STACK_SIZE
   struct rlimit limit;
 
@@ -730,11 +737,9 @@ texmacs_entrypoint (int argc, char** argv) {
   if (headless_mode)
     qtmcoreapp= new QTMCoreApplication (argc, argv);
   else
-    qtmapp= new QTMApplication (argc, argv);
+    ((QTMApplication*)qtmapp)->load();
 #endif
-#ifdef OS_ANDROID
-  init_android();
-#endif
+
   TeXmacs_init_font  ();
 #ifdef QTTEXMACS
   if (!headless_mode)
