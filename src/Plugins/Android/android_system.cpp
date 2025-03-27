@@ -151,7 +151,8 @@ texmacs_dirent texmacs_readdir(TEXMACS_DIR dirp) {
   if (!dir->iterator->hasNext()) {
     return {false, ""};
   }
-  return {true, texmacs_qstring_to_string(dir->iterator->next())};
+  dir->iterator->next();
+  return {true, texmacs_qstring_to_string(dir->iterator->fileName())};
 }
 
 int texmacs_stat(string filename, struct stat *buf) {
