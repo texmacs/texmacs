@@ -11,6 +11,7 @@
 
 #include "QTMWidget.hpp"
 #include "qt_gui.hpp"
+#include "tm_window.hpp"
 #include "qt_utilities.hpp"
 #include "qt_simple_widget.hpp"
 #include "converter.hpp"
@@ -18,6 +19,7 @@
 #include "scheme.hpp"
 #include "new_view.hpp"
 #include "editor.hpp"
+#include "Interface/edit_graphics.hpp"
 #include "qt_renderer.hpp"
 #include "QTMApplication.hpp"
 #include "QTMKeyboardEvent.hpp"
@@ -56,16 +58,21 @@ static long int QTMWcounter = 0; // debugging hack
  */
 QTMWidget::QTMWidget (QWidget* _parent, qt_widget _tmwid)
 : QTMScrollView (_parent), tmwid (_tmwid),  imwidget (NULL),
-  preediting (false)
+  preediting (false), hasMousePress (false), haveFirstTouchPoint (false),
+  ignoreNextTouchEvents (false)
 {
   setObjectName (to_qstring ("QTMWidget" * as_string (QTMWcounter++)));// What is this for? (maybe only debugging?)
   setFocusPolicy (Qt::StrongFocus);
   setAttribute (Qt::WA_InputMethodEnabled);
+#ifdef OS_ANDROID
+  setAttribute(Qt::WA_AcceptTouchEvents);
+  setAttribute(Qt::WA_TouchPadAcceptSingleTouchEvents);
+#endif
   surface ()->setMouseTracking (true);
   surface ()->setAcceptDrops (true);
+
 #ifdef OS_ANDROID
-  // enable scroll with finger on android
-  QScroller::grabGesture(this, QScroller::LeftMouseButtonGesture);
+  QScroller::grabGesture(this, QScroller::TouchGesture);
 #endif
   grabGesture (Qt::PanGesture);
   grabGesture (Qt::PinchGesture);
@@ -385,9 +392,6 @@ QTMWidget::inputMethodQuery (Qt::InputMethodQuery query) const {
 
 void
 QTMWidget::mousePressEvent (QMouseEvent* event) {
-#if defined(OS_ANDROID) && QT_VERSION >= 0x060000
-  showKeyboard();
-#endif
   if (is_nil (tmwid)) return;
   QPoint point = event->pos() + origin();
   coord2 pt = from_qpoint(point);
@@ -502,6 +506,36 @@ QTMWidget::tabletEvent (QTabletEvent* event) {
 void
 QTMWidget::gestureEvent (QGestureEvent* event) {
   if (is_nil (tmwid)) return;
+
+#ifdef OS_ANDROID
+  static QTime lastPinchTime = QTime::currentTime();
+  static float totalScaleFactor = 1.0;
+  if (!get_current_editor()->inside_graphics ()) {
+    if (QGesture *pinch_gesture = event->gesture(Qt::PinchGesture)) {
+      
+      QPinchGesture *pinch= static_cast<QPinchGesture *> (pinch_gesture);
+      totalScaleFactor *= pinch->scaleFactor();
+
+      if (pinch->state() == Qt::GestureStarted) {
+        lastPinchTime = QTime::currentTime();
+        return;
+      }
+      
+      // Qt send too many pinch event, and do not let the scheme code the time
+      // to process the zoom-in event. This causes to freeze the interface temporarily.
+      // We accumulate the pinch event in a short time window to empty the event queue.
+      if (lastPinchTime.msecsTo(QTime::currentTime()) > 10
+          || pinch->state() == Qt::GestureFinished) {
+        call ("zoom-in", object(totalScaleFactor));
+        lastPinchTime = QTime::currentTime();
+        totalScaleFactor = 1.0;
+      }
+    
+      return;
+    }
+  }
+#endif
+
   string s= "gesture";
   array<double> data;
   QPointF hotspot;
@@ -603,6 +637,103 @@ QTMWidget::gestureEvent (QGestureEvent* event) {
  
 bool
 QTMWidget::event (QEvent* event) {
+#ifdef OS_ANDROID
+  if ((event->type() == QEvent::TouchBegin 
+      || event->type() == QEvent::TouchUpdate 
+      || event->type() == QEvent::TouchEnd)) {
+    cout << "Detected touch event" << LF;
+    QTouchEvent *touchEvent = static_cast<QTouchEvent *>(event);
+    if (ignoreNextTouchEvents) {
+      if (event->type() == QEvent::TouchEnd) {
+        cout << "The touch event has been ignored" << LF;
+        ignoreNextTouchEvents = false;
+      }
+      event->ignore();
+      return false;
+    }
+    if (touchEvent->touchPoints().size() > 1) {
+      cout << "More than one touch points, ignore the touch event" << LF;
+      event->ignore();
+      ignoreNextTouchEvents = true;
+      return false;
+    }
+  }
+
+  if (event->type() == QEvent::TouchBegin) {
+    cout << "Begin of the touch event" << LF;
+    hasMousePress = false;
+    QTouchEvent *touchEvent = static_cast<QTouchEvent *>(event);
+    if (touchEvent->touchPoints().size() > 0) {
+      firstTouchPoint = touchEvent->touchPoints().first();
+      haveFirstTouchPoint = true;
+    } else {
+      haveFirstTouchPoint = false;
+    }
+    firstTouchTime = QTime::currentTime();
+    return true;
+  }
+
+  if (event->type() == QEvent::TouchUpdate 
+      && firstTouchTime.msecsTo(QTime::currentTime()) < 200) {
+    cout << "Within 200ms of the touch event" << LF;
+    if (QScroller::scroller (this)->state() == QScroller::Dragging) {
+      cout << "QScroller::State is Dragging, ignore the touch event" << LF;
+      ignoreNextTouchEvents = true;
+    }
+    event->ignore();
+    return false;
+  }
+
+  if ((event->type() == QEvent::TouchUpdate || event->type() == QEvent::TouchEnd)
+      && !hasMousePress) {
+    cout << "Simulate mouse press event" << LF;
+    QTouchEvent *touchEvent = static_cast<QTouchEvent *>(event);
+    if (haveFirstTouchPoint) {
+      if (firstTouchPoint.state() == Qt::TouchPointPressed) {
+        QPoint point = firstTouchPoint.pos().toPoint() + origin();
+        coord2 pt = from_qpoint(point);
+        unsigned int mstate = 1;
+        string s = "press-left";
+        the_gui->process_mouse(tm_widget(), s, pt.x1, pt.x2, mstate, texmacs_time());
+        hasMousePress = true;
+      }
+    }
+  }
+
+  if (event->type() == QEvent::TouchUpdate) {
+    QTouchEvent *touchEvent = static_cast<QTouchEvent *>(event);
+    QList<QTouchEvent::TouchPoint> touchPoints = touchEvent->touchPoints();
+    if (touchPoints.size() > 0) {
+      QTouchEvent::TouchPoint touchPoint = touchPoints.first();
+      QPoint point = touchPoint.pos().toPoint() + origin();
+      coord2 pt = from_qpoint(point);
+      unsigned int mstate = 1;
+      string s = "move";
+      the_gui->process_mouse(tm_widget(), s, pt.x1, pt.x2, mstate, texmacs_time());
+    }
+    QScroller::scroller (this)->stop ();
+    event->accept();
+    return true;
+  }
+
+  if (event->type() == QEvent::TouchEnd) {
+    cout << "Touch end event" << LF;
+    QTouchEvent *touchEvent = static_cast<QTouchEvent *>(event);
+    QList<QTouchEvent::TouchPoint> touchPoints = touchEvent->touchPoints();
+    if (touchPoints.size() > 0) {
+      QTouchEvent::TouchPoint touchPoint = touchPoints.first();
+      QPoint point = touchPoint.pos().toPoint() + origin();
+      coord2 pt = from_qpoint(point);
+      unsigned int mstate = 1;
+      string s = "release-left";
+      the_gui->process_mouse(tm_widget(), s, pt.x1, pt.x2, mstate, texmacs_time());
+    }
+    showKeyboard();
+    event->accept();
+    return true;
+  }
+#endif
+
     // Catch Keypresses to avoid default handling of (Shift+)Tab keys
   if (event->type() == QEvent::KeyPress) {
     QKeyEvent *ke = static_cast<QKeyEvent*> (event);
