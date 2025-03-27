@@ -91,6 +91,12 @@ protected:
   void showKeyboard ();
 #endif
 
+private:
+  bool hasMousePress;
+  QTouchEvent::TouchPoint firstTouchPoint;
+  bool haveFirstTouchPoint;
+  QTime firstTouchTime;
+  bool ignoreNextTouchEvents;
 
 };
 
