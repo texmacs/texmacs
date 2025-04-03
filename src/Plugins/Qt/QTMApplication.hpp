@@ -44,6 +44,8 @@ class QTMApplication: public QApplication {
 public:
   
   QTMApplication (int& argc, char** argv);
+
+  void load();
   
   void init_theme ();
 

@@ -9,7 +9,7 @@
  * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
  ******************************************************************************/
 
-#include <QToolBar>
+#include "QTMToolbar.hpp"
 #include <QToolButton>
 #include <QDialog>
 #include <QComboBox>
@@ -42,47 +42,6 @@
 
 int menu_count = 0;  // zero if no menu is currently being displayed
 list<qt_tm_widget_rep*> waiting_widgets;
-
-static void
-replaceActions (QWidget* dest,  QList<QAction*>* src) {
-  //NOTE: the parent hierarchy of the actions is not modified while installing
-  //      the menu in the GUI (see qt_menu.hpp for this memory management
-  //      policy)
-  if (src == NULL || dest == NULL)
-    FAILED ("replaceActions expects valid objects");
-  dest->setUpdatesEnabled (false);
-  QList<QAction *> list = dest->actions();
-  for (int i = 0; i < list.count(); i++) {
-    QAction* a = list[i];
-    dest->removeAction (a);
-  }
-  for (int i = 0; i < src->count(); i++) {
-    QAction* a = (*src)[i];
-    dest->addAction(a);
-  }
-  dest->setUpdatesEnabled (true);
-}
-
-static void
-replaceButtons (QToolBar* dest, QList<QAction*>* src) {
-  if (src == NULL || dest == NULL)
-    FAILED ("replaceButtons expects valid objects");
-  dest->setUpdatesEnabled (false);
-  bool visible = dest->isVisible();
-  if (visible) dest->hide(); //TRICK: to avoid flicker of the dest widget
-  replaceActions (dest, src);
-  QList<QObject*> list = dest->children();
-  for (int i = 0; i < list.count(); ++i) {
-    QToolButton* button = qobject_cast<QToolButton*> (list[i]);
-    if (button) {
-      button->setPopupMode (QToolButton::InstantPopup);
-      if (tm_style_sheet == "")
-        button->setStyle (qtmstyle());
-    }
-  }
-  if (visible) dest->show(); //TRICK: see above
-  dest->setUpdatesEnabled (true);
-}
 
 void
 QTMInteractiveInputHelper::commit (int result) {
@@ -204,11 +163,14 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   mw->setStatusBar (bar);
  
   // toolbars
+#ifdef OS_ANDROID
+  menuToolBar   = new QTMToolbar ("menu toolbar", QSize (), mw);
+#endif
   
-  mainToolBar   = new QToolBar ("main toolbar", mw);
-  modeToolBar   = new QToolBar ("mode toolbar", mw);
-  focusToolBar  = new QToolBar ("focus toolbar", mw);
-  userToolBar   = new QToolBar ("user toolbar", mw);
+  mainToolBar   = new QTMToolbar ("main toolbar", QSize (26, 32), mw);
+  modeToolBar   = new QTMToolbar ("mode toolbar", QSize (21, 24), mw);
+  focusToolBar  = new QTMToolbar ("focus toolbar", QSize (16, 20), mw);
+  userToolBar   = new QTMToolbar ("user toolbar", QSize(), mw);
   
   bottomTools   = new QDockWidget ("bottom tools", mw);
   extraTools    = new QDockWidget ("extra tools", mw);
@@ -222,22 +184,13 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
                                                      command(), true);
   
   if (tm_style_sheet == "") {
-    mainToolBar->setStyle (qtmstyle ());
-    modeToolBar->setStyle (qtmstyle ());
-    focusToolBar->setStyle (qtmstyle ());
-    userToolBar->setStyle (qtmstyle ());
     sideTools->setStyle (qtmstyle ());
     leftTools->setStyle (qtmstyle ());
     bottomTools->setStyle (qtmstyle ());
     extraTools->setStyle (qtmstyle ());
   }
-  
-#if QT_VERSION >= 0x060000
-  // according to tweak_iconbar_size
-  mainToolBar->setIconSize (QSize (26, 32));
-  modeToolBar->setIconSize (QSize (21, 24));
-  focusToolBar->setIconSize (QSize (16, 20));
-#else
+    
+#if QT_VERSION < 0x060000
   {
     // set proper sizes for icons
     QImage *pxm = xpm_image ("tm_new.xpm");
@@ -263,23 +216,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   //
   // NOTICE: setFixedHeight must be after setIconSize
   // TODO: the size of the toolbar should be calculated dynamically
-#if QT_VERSION >= 0x060000
-
-  int toolbarHeight= 30;
-  mainToolBar->setFixedHeight (toolbarHeight + 8);
-  modeToolBar->setFixedHeight (toolbarHeight + 4);
-  focusToolBar->setFixedHeight (toolbarHeight);  
-
-  if (tm_style_sheet != "") {
-    int h1= (int) floor (38);
-    int h2= (int) floor (34 );
-    int h3= (int) floor (30);
-
-    mainToolBar->setFixedHeight (h1);
-    modeToolBar->setFixedHeight (h2);
-    focusToolBar->setFixedHeight (h3);
-  }
-#else
+#if QT_VERSION < 0x060000
 #if (QT_VERSION >= 0x050000)
 #if defined (Q_OS_MAC) || defined (Q_OS_WIN)
   int toolbarHeight= 30 * retina_icons;
@@ -349,6 +286,13 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   extraTools->setObjectName ("extraTools");
   sideTools->setObjectName ("sideTools");
   leftTools->setObjectName ("leftTools");
+
+#ifdef OS_ANDROID
+  menuToolBar->setObjectName ("menuToolBar");
+  mw->addToolBar (menuToolBar);
+  mw->addToolBarBreak ();
+  menuToolBar->setMovable (false);
+#endif
 
 #ifdef UNIFIED_TOOLBAR
 
@@ -935,6 +879,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
   }
 }
 
+#ifndef OS_ANDROID
 void
 qt_tm_widget_rep::install_main_menu () {
   if (main_menu_widget == waiting_main_menu_widget) return;
@@ -958,8 +903,6 @@ qt_tm_widget_rep::install_main_menu () {
       dest->setMinimumHeight (min_h);
     }
   }
-#elif defined (Q_OS_ANDROID)
-  dest->setNativeMenuBar(false);
 #else
   if (tm_style_sheet != "") {
 #if QT_VERSION >= 0x060000
@@ -994,6 +937,44 @@ qt_tm_widget_rep::install_main_menu () {
     }
   }
 }
+#else
+// on android, we use the menuToolBar instead of the qt menu bar
+void
+qt_tm_widget_rep::install_main_menu () {
+  if (main_menu_widget == waiting_main_menu_widget) return;
+  main_menu_widget = waiting_main_menu_widget;
+  QList<QAction*>* src = main_menu_widget->get_qactionlist();
+  if (!src) return;
+  QTMToolbar* dest = menuToolBar;
+
+  if (tm_style_sheet == "")
+    dest->setStyle (qtmstyle ());
+
+  dest->clear();
+  for (int i = 0; i < src->count(); i++) {
+    QAction* a = (*src)[i];
+    if (a->menu()) {
+      //TRICK: Mac native QMenuBar accepts only menus which are already populated
+      // this will cause a problem for us, since menus are lazy and populated only after triggering
+      // this is the reason we add a dummy action before inserting the menu
+      a->menu()->addAction("native menubar trick");
+      dest->addAction(a->menu()->menuAction());
+#if QT_VERSION < 0x060000
+      QObject::connect (a->menu(),         SIGNAL (aboutToShow()),
+                        the_gui->gui_helper, SLOT (aboutToShowMainMenu()));
+      QObject::connect (a->menu(),         SIGNAL (aboutToHide()),
+                        the_gui->gui_helper, SLOT (aboutToHideMainMenu()));
+#else
+      QObject::connect (a->menu(), &QMenu::aboutToShow,
+                        the_gui->gui_helper, &QTMGuiHelper::aboutToShowMainMenu);
+      QObject::connect (a->menu(), &QMenu::aboutToHide,
+                        the_gui->gui_helper, &QTMGuiHelper::aboutToHideMainMenu);
+#endif
+    }
+  }
+}
+#endif
+
 
 void
 qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
@@ -1048,7 +1029,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       main_icons_widget = concrete (w);
       QList<QAction*>* list = main_icons_widget->get_qactionlist();
       if (list) {
-        replaceButtons (mainToolBar, list);
+        mainToolBar->replaceButtons (list);
         update_visibility();
       }
     }
@@ -1060,7 +1041,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       mode_icons_widget = concrete (w);
       QList<QAction*>* list = mode_icons_widget->get_qactionlist();
       if (list) {
-        replaceButtons (modeToolBar, list);
+        modeToolBar->replaceButtons (list);
         update_visibility();
       }
     }
@@ -1088,7 +1069,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
         focus_icons_widget = concrete (w);
         QList<QAction*>* list = focus_icons_widget->get_qactionlist();
         if (list) {
-          replaceButtons (focusToolBar, list);
+          focusToolBar->replaceButtons (list);
           update_visibility();
         }
       }
@@ -1101,7 +1082,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       user_icons_widget = concrete (w);
       QList<QAction*>* list = user_icons_widget->get_qactionlist();
       if (list) {
-        replaceButtons (userToolBar, list);
+        userToolBar->replaceButtons (list);
         update_visibility();
       }
     }

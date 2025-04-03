@@ -27,7 +27,7 @@
 #include <QLayout>
 
 class QLabel; 
-class QToolBar;
+class QTMToolbar;
 class QTMInteractivePrompt;
 
 /*! Models one main window with toolbars, an associated view, etc.
@@ -54,10 +54,13 @@ class qt_tm_widget_rep: public qt_window_widget_rep {
    */
   QLabel*       rightLabel;
   QLabel*        leftLabel;
-  QToolBar*    mainToolBar;
-  QToolBar*    modeToolBar;
-  QToolBar*   focusToolBar;
-  QToolBar*    userToolBar;
+#ifdef OS_ANDROID
+  QTMToolbar*    menuToolBar;
+#endif
+  QTMToolbar*    mainToolBar;
+  QTMToolbar*    modeToolBar;
+  QTMToolbar*   focusToolBar;
+  QTMToolbar*    userToolBar;
   QDockWidget*   sideTools;
   QDockWidget*   leftTools;
   QDockWidget* bottomTools;
