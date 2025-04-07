@@ -585,11 +585,11 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
 ******************************************************************************/
 
 void
-edit_interface_rep::notify_change (int change) {
-  env_change= env_change | change;
+edit_interface_rep::notify_change (int env_set, int env_unset) {
+  env_change= (env_change | env_set) & (~env_unset);
   needs_update ();
-  if ((change & (THE_TREE | THE_SELECTION | THE_CURSOR)) != 0)
-    manual_focus_set (path (), (change & THE_TREE) != 0);
+  if ((env_set & (THE_TREE | THE_SELECTION | THE_CURSOR)) != 0)
+    manual_focus_set (path (), (env_set & THE_TREE) != 0);
 }
 
 bool

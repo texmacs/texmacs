@@ -127,7 +127,7 @@ public:
   void draw_with_stored (renderer win, rectangle r);
 
   /* handle changes */
-  void notify_change (int changed);
+  void notify_change (int env_set, int env_unset = 0);
   bool has_changed (int question);
   int  idle_time (int event_type= ANY_EVENT);
   int  change_time ();
