@@ -22,6 +22,7 @@
 #include "QTMStyle.hpp"
 #include "QTMTreeModel.hpp"
 #include "QTMApplication.hpp"
+#include "QTMMainTabWindow.hpp"
 
 #include <QToolTip>
 #include <QCompleter>
@@ -830,7 +831,9 @@ QTMTabWidget::QTMTabWidget (QWidget *p) : QTabWidget(p) {
 #if QT_VERSION < 0x060000
   QObject::connect (this, SIGNAL (currentChanged (int)), this, SLOT (resizeOthers (int)));
 #else
+#ifndef OS_ANDROID
   QObject::connect (this, &QTabWidget::currentChanged, this, &QTMTabWidget::resizeOthers);
+#endif
 #endif
 }
 
@@ -844,6 +847,10 @@ QTMTabWidget::QTMTabWidget (QWidget *p) : QTabWidget(p) {
 void
 QTMTabWidget::resizeOthers (int current) {
 BEGIN_SLOT
+  if (qobject_cast<QTMMainTabWindow*>(window())) {
+    return;
+  }
+
   for (int i = 0; i < count(); ++i) {
     if (i != current)
       widget(i)->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Ignored);
