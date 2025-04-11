@@ -22,8 +22,8 @@ AC_DEFUN([LC_IMLIB2],[
   if test "$with_imlib2" = "no" -o "$with_imlib2" = "" ; then
       AC_MSG_RESULT([disabling imlib2 support])
   else
-      CPPFLAGS=`imlib2-config --cflags`
-      LIBS=`imlib2-config --libs`
+      CPPFLAGS=`pkg-config --cflags imlib2`
+      LIBS=`pkg-config --libs imlib2`
       AC_CHECK_HEADER(Imlib2.h,
       AC_MSG_CHECKING(for imlib2)
       AC_LINK_IFELSE([AC_LANG_PROGRAM([[
