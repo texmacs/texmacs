@@ -42,6 +42,9 @@ QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
   w->setLayout (mLayout);
   mScrollArea->setWidget (w);
 
+  // don't expand the layout to fill the scroll area
+  mLayout->setSizeConstraint (QLayout::SetMinimumSize);
+
   mScrollArea->setWidgetResizable (true);
   mScrollArea->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
   mScrollArea->verticalScrollBar()->setDisabled (true);
@@ -68,11 +71,15 @@ void QTMToolbar::replaceActions (QList<QAction*>* src) {
   if (src == NULL)
     FAILED ("replaceActions expects valid objects");
   setUpdatesEnabled (false);
-  QList<QAction *> list = actions();
-  for (int i = 0; i < list.count(); i++) {
-    QAction* a = list[i];
-    removeAction (a);
+#ifdef OS_ANDROID
+  while (mLayout->count() > 0) {
+    QWidget* w = mLayout->itemAt(0)->widget();
+    mLayout->removeWidget(w);
+    delete w;
   }
+#else
+  clear ();
+#endif
   for (int i = 0; i < src->count(); i++) {
     QAction* a = (*src)[i];
     addAction(a);
@@ -84,11 +91,15 @@ void QTMToolbar::replaceButtons (QList<QAction*>* src) {
   if (src == NULL)
     FAILED ("replaceButtons expects valid objects");
   setUpdatesEnabled (false);
-  QList<QAction *> list = actions();
-  for (int i = 0; i < list.count(); i++) {
-    QAction* a = list[i];
-    removeAction (a);
+  #ifdef OS_ANDROID
+  while (mLayout->count() > 0) {
+    QWidget* w = mLayout->itemAt(0)->widget();
+    mLayout->removeWidget(w);
+    delete w;
   }
+#else
+  clear ();
+#endif
   for (int i = 0; i < src->count(); i++) {
     QAction* a = (*src)[i];
     addAction(a);
