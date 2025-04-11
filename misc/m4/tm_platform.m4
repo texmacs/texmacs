@@ -37,6 +37,10 @@ AC_DEFUN([TM_PLATFORM],[
   # tweak for XCode project
   CONFIG_ARCHS='$(NATIVE_ARCH)'
 
+  if [[[ "x$CONFIG_USER" == "x" ]]]
+  then CONFIG_USER=`lsb_release -is 2> /dev/null` || CONFIG_USER=`dpkg-vendor --query vendor` || CONFIG_USER="UNKNOWN"
+	fi
+
   X11_CFLAGS="$X_CFLAGS"
   X11_LDFLAGS="$X_LIBS -lXext -lX11"
 
