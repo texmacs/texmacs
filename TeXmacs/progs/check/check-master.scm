@@ -20,7 +20,8 @@
         (convert tools environment-test)
         (convert mathml mathtm-test)
         (convert tmml tmmltm-test)
-        (prog prog-format-test)))
+        (prog prog-format-test))
+        (utils cite cite-sort-test))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Test LaTeX export
@@ -73,7 +74,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (check-all u)
-  (:synopsis "Run all regression tests in directory @u.")
+  (:synopsis "Run all regression tests in directory @u")
   (check-latex-export u))
 
 (tm-define (run-checks)
@@ -88,4 +89,5 @@
   (regtest-tmhtml)
   (regtest-tmmltm)
   (regtest-prog-format)
+  (regtest-cite-sort)
 )

@@ -56,9 +56,33 @@
 #include "Pdf/pdf_hummus_renderer.hpp"
 #endif
 
+/******************************************************************************
+* Inform about missing dependencies
+******************************************************************************/
+
+static bool informed_about_dependencies= false;
+
+static void
+inform_about_dependencies () {
+  if (informed_about_dependencies) return;
+#ifdef USE_GS
+  if (!has_gs ())
+    convert_warning << "The installation of the Ghostscript software is "
+		    << "recommended for handling PS, EPS, and PDF files.\n";
+#endif
+  if (!has_image_magick ())
+    convert_warning << "The installation of the ImageMagick software "
+		    << "is recommended for handling image files.\n";
+  informed_about_dependencies= true;
+}
+
+/******************************************************************************
+* Cache for storing image sizes
+******************************************************************************/
+
 typedef struct { int w; int h; int xmin; int ymin;} imgbox ;
-hashmap<tree,imgbox> img_box;
-// cache for storing image sizes
+static hashmap<tree,imgbox> img_box;
+
 // (for ps/eps we also store the image offset so that we have the full bbox info)
 
 /******************************************************************************
@@ -189,7 +213,7 @@ ps_load (url image, bool conv) {
 
   string s = "", suf= suffix (image);
   if (suf == "ps" || suf == "eps") 
-    load_string (image, s, false);
+    load_string (concretize (image), s, false);
   else 
     if (conv) s= image_to_psdoc (image); // call converters, then load resulting ps
     
@@ -260,6 +284,11 @@ void
 clear_imgbox_cache(tree t){
     img_box->reset (t);
 }
+
+void
+clearall_imgbox_cache() {
+  img_box = hashmap<tree,imgbox> ();
+}
 /******************************************************************************
 * Getting the original size of an image, using internal plug-ins if possible
 ******************************************************************************/
@@ -314,7 +343,9 @@ image_size_sub (url image, int& w, int& h) { // returns w,h in units of pt (1/72
       return;
     }
   }
-#ifdef MACOSX_EXTENSIONS
+#if defined(MACOSX_EXTENSIONS) && \
+  (!defined(QTTEXMACS) || \
+   !defined(AC_QT_MAJOR_VERSION) || AC_QT_MAJOR_VERSION < 6)
   if (mac_image_size (image, w, h) ) {
     if (DEBUG_CONVERT) debug_convert << "image_size  mac  : " << w << " x " << h << "\n";
     return;
@@ -345,10 +376,12 @@ image_size_sub (url image, int& w, int& h) { // returns w,h in units of pt (1/72
   }
 
   convert_error << "could not determine size of '"<< concretize(image) <<"'\n"
-  << "you may consider :\n"
+  << "you may consider:\n"
   << " - checking the file is valid,\n"
   << " - converting to a more standard format,\n"
   << " - defining an appropriate converter (see documentation).\n";
+
+  inform_about_dependencies ();
 }
 
 void
@@ -371,7 +404,7 @@ pdf_image_size (url image, int& w, int& h) {
 void
 svg_image_size (url image, int& w, int& h) {
   string content;
-  bool err= load_string (image, content, false);
+  bool err= load_string (concretize (image), content, false);
   if (!err) {
     tree t= parse_xml (content);
     tree result= find_first_element_by_name (t, "svg");
@@ -423,17 +456,23 @@ image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
 #endif
   //converters below will yield only raster images.
 #ifdef QTTEXMACS 
-  if (qt_supports (image)) {
+  if (qt_supports (image) && qt_supports (eps)) {
     if (DEBUG_CONVERT) debug_convert << " using qt" << LF;
     qt_image_to_eps (image, eps, w_pt, h_pt, dpi);
     return;
   }
-  if ((s != "svg") && (s != "pnm") && call_scm_converter(image, eps)) return;
+  // if ((s != "svg") && (s != "pnm") && call_scm_converter(image, eps)) return;
   // if s is in {"jpg","jpeg","tif","gif","png","pnm"} then scheme converters
   // would return the call here (see init_images.scm) causing an infinite loop.
-  // Except pnm,the others are treated by qt.
+  // Except pnm,the others are treated by qt. NO LONGER TRUE with QT5 (depends on qt plugins) -- disabling this dangerous call
 #endif
   call_imagemagick_convert (image, eps, w_pt, h_pt, dpi);
+
+  if (!exists (eps)) {
+    convert_error << image << " could not be converted to eps" << LF;
+    copy ("$TEXMACS_PATH/misc/pixmaps/unknown.eps", eps);
+    inform_about_dependencies ();
+  }
 }
 
 string
@@ -465,7 +504,7 @@ image_to_pdf (url image, url pdf, int w_pt, int h_pt, int dpi) {
 #endif
   //converters below will yield only raster images.
 #ifdef QTTEXMACS
-  if (qt_supports (image)) {
+  if (qt_supports (image) && qt_supports (pdf)) {
     if (DEBUG_CONVERT) debug_convert << " using qt "<<LF;
     qt_image_to_pdf (image, pdf, w_pt, h_pt, dpi);
     return;
@@ -473,6 +512,12 @@ image_to_pdf (url image, url pdf, int w_pt, int h_pt, int dpi) {
 #endif
   if ((s != "svg") && call_scm_converter (image, pdf)) return;
   call_imagemagick_convert(image, pdf, w_pt, h_pt, dpi);
+
+  if (!exists (pdf)) {
+    convert_error << image << " could not be converted to pdf" << LF;
+    copy ("$TEXMACS_PATH/misc/pixmaps/unknown.pdf", pdf);
+    inform_about_dependencies ();
+  }
 }
 
 void
@@ -483,7 +528,9 @@ image_to_png (url image, url png, int w, int h) {// IN PIXEL UNITS!
      std_warning << concretize (png) << " has no .png suffix\n";
      }
   */
-#ifdef MACOSX_EXTENSIONS
+#if defined(MACOSX_EXTENSIONS) && \
+  (!defined(QTTEXMACS) || \
+   !defined(AC_QT_MAJOR_VERSION) || AC_QT_MAJOR_VERSION < 6)
   //cout << "mac convert " << image << ", " << png << "\n";
   if (mac_supports (image)) {
     if (DEBUG_CONVERT) debug_convert << " using mac_os "<<LF;
@@ -586,7 +633,7 @@ imagemagick_image_size(url image, int& w, int& h, bool pt_units) {
 #ifdef OS_MINGW
     cmd = sys_concretize(resolve_in_path(cmd));
 #endif
-    cmd << " -ping -format \"%w %h %x\\n%y\""; 
+    cmd << " -ping -format \"%w %h %x %U\\n%y\"";
     string sz= eval_system (cmd, image);
     int w_px, h_px, ok= true, pos= 0;
     string unit;

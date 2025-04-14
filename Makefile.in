@@ -2,6 +2,7 @@
 ###############################################################################
 # MODULE     : main TeXmacs make file
 # COPYRIGHT  : (C) 1999-2008  Joris van der Hoeven
+
 ###############################################################################
 # This software falls under the GNU general public license version 3 or later.
 # It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -29,12 +30,13 @@ tm_stable_release = @tm_stable_release@
 tm_underscore_stable = @tm_underscore_stable@
 tm_suffix = @CONFIG_OS_SUFFIX@
 so = @CONFIG_SO@
+TMREPO = @TMREPO@
 
 #new path and pkg location if tmsdk is used
 @REPOPATH@
 @PKGPATH@
 
-DESTDIR =
+DESTDIR ?= 
 
 MKDIR = mkdir -p
 RM = rm -f
@@ -87,7 +89,7 @@ STATIC_TEXMACS: EMPTY_DIRS
 	@echo ----------------------------------------------------
 	@echo static TeXmacs has been successfully compiled
 
-@MKGUILE@: tm-guile168
+@MKGUILE@: @GUILE_EMBEDDED_DIR@
 	cd @DIRGUILE@ && make -j1 && make -j1 install
 	
 DEPS: EMPTY_DIRS
@@ -105,8 +107,6 @@ GLUE:
 .PHONY: TEXMACS STATIC_TEXMACS DEPS GLUE EXPERIMENTAL
 
 deps: DEPS
-install: INSTALL
-uninstall: UNINSTALL
 clean: CLEAN
 distclean: DISTCLEAN
 
@@ -149,63 +149,87 @@ EX_PLUGINS: $(EX_PLUGINS_BIN)
 # Installing and removing TeXmacs (for system administrators)
 ###############################################################################
 
-INSTALL:
-	$(MKDIR) $(DESTDIR)$(tmbin)
-	$(MKDIR) $(DESTDIR)$(tmbin)/bin
-	$(MKDIR) $(DESTDIR)$(tmbin)/lib
-	$(CP) $(tmdir)/bin/texmacs.bin $(DESTDIR)$(tmbin)/bin
-	$(CP) $(tmdir)/bin/tm_gs $(DESTDIR)$(tmbin)/bin
-	$(CP) $(tmdir)/plugins/*/bin/* $(DESTDIR)$(tmbin)/bin
+INSTALL_EXECUTABLES:
+	$(MKDIR) $(DESTDIR)
+	$(MKDIR) $(DESTDIR)/bin
+	$(MKDIR) $(DESTDIR)/lib
+	$(CP) $(tmdir)/bin/texmacs.bin $(DESTDIR)/bin
+	$(CP) $(tmdir)/bin/tm_gs $(DESTDIR)/bin
+	$(CP) $(tmdir)/plugins/*/bin/* $(DESTDIR)/bin
 	$(CP) $(tmdir)/plugins/*/lib/*.$(so) \
-	$(DESTDIR)$(tmbin)/lib 2>/dev/null || :
-	$(CP) $(tmdir)/lib/*.$(so) $(DESTDIR)$(tmbin)/lib 2>/dev/null || :
-	$(CHMOD) 755 $(DESTDIR)$(tmbin)/bin/*
-	$(CHMOD) 755 $(DESTDIR)$(tmbin)/lib/*.$(so) 2>/dev/null || :
-	$(RM) $(DESTDIR)$(tmbin)/lib/*.a
-	@echo installed TeXmacs executables in $(DESTDIR)$(tmbin)
-	$(MKDIR) $(DESTDIR)$(tmdata)
-	$(CP) $(tmdir)/LICENSE $(DESTDIR)$(tmdata)
-	$(CP) $(tmdir)/doc $(DESTDIR)$(tmdata)
-	$(CP) $(tmdir)/examples $(DESTDIR)$(tmdata)
-	$(CP) $(tmdir)/fonts $(DESTDIR)$(tmdata)
-	$(CP) $(tmdir)/langs $(DESTDIR)$(tmdata)
-	$(CP) $(tmdir)/misc $(DESTDIR)$(tmdata)
-	$(CP) $(tmdir)/packages $(DESTDIR)$(tmdata)
-	$(CP) $(tmdir)/progs $(DESTDIR)$(tmdata)
-	$(CP) $(tmdir)/styles $(DESTDIR)$(tmdata)
-	$(CP) $(tmdir)/texts $(DESTDIR)$(tmdata)
-	$(CHMOD) -R go=rX $(DESTDIR)$(tmdata)
-	@echo installed TeXmacs data in $(DESTDIR)$(tmdata)
-	$(CP) plugins $(DESTDIR)$(tmdata)
-	$(RM) $(DESTDIR)$(tmdata)/plugins/*/Makefile
-	$(RM) -r $(DESTDIR)$(tmdata)/plugins/*/src
-	$(RM) -r $(DESTDIR)$(tmdata)/plugins/*/bin
-	$(RM) -r $(DESTDIR)$(tmdata)/plugins/*/lib
-	@echo installed TeXmacs plugins data in $(DESTDIR)$(tmdata)/plugins
-	$(MKDIR) $(DESTDIR)$(datadir)/pixmaps
-	$(CP) $(tmdir)/misc/pixmaps/TeXmacs.xpm $(DESTDIR)$(datadir)/pixmaps
+	$(DESTDIR)/lib 2>/dev/null || :
+	$(CP) $(tmdir)/lib/*.$(so) $(DESTDIR)/lib 2>/dev/null || :
+	$(CHMOD) 755 $(DESTDIR)/bin/*
+	$(CHMOD) 755 $(DESTDIR)/lib/*.$(so) 2>/dev/null || :
+	$(RM) $(DESTDIR)/lib/*.a
+	@echo installed TeXmacs executables in $(DESTDIR)
+
+INSTALL_DATA:
+	$(MKDIR) $(DESTDIR)
+	$(CP) $(tmdir)/LICENSE $(DESTDIR)
+	$(CP) $(tmdir)/doc $(DESTDIR)
+	$(CP) $(tmdir)/examples $(DESTDIR)
+	$(CP) $(tmdir)/fonts $(DESTDIR)
+	$(CP) $(tmdir)/langs $(DESTDIR)
+	$(CP) $(tmdir)/misc $(DESTDIR)
+	$(CP) $(tmdir)/packages $(DESTDIR)
+	$(CP) $(tmdir)/progs $(DESTDIR)
+	$(CP) $(tmdir)/styles $(DESTDIR)
+	$(CP) $(tmdir)/texts $(DESTDIR)
+	$(CHMOD) -R go=rX $(DESTDIR)
+	@echo installed TeXmacs data in $(DESTDIR)
+
+INSTALL_PLUGINS:
+	$(CP) plugins $(DESTDIR)
+	$(RM) $(DESTDIR)/plugins/*/Makefile
+	$(RM) -r $(DESTDIR)/plugins/*/src
+	$(RM) -r $(DESTDIR)/plugins/*/bin
+	$(RM) -r $(DESTDIR)/plugins/*/lib
+	@echo installed TeXmacs plugins data in $(DESTDIR)/plugins
+
+INSTALL_ICONS:
+	$(MKDIR) $(DESTDIR)/pixmaps
+	$(CP) $(tmdir)/misc/pixmaps/TeXmacs.xpm $(DESTDIR)/pixmaps
 	packages/linux/icons.sh install $(tmdir)/misc/images texmacs text-x-texmacs
 	packages/linux/mime.sh install $(tmdir)/misc/mime
-	$(MKDIR) $(DESTDIR)$(bindir)
+	@echo installed TeXmacs icons in $(DESTDIR)/pixmaps
+
+INSTALL_STARTUP:
+	$(MKDIR) $(DESTDIR)
 	$(CHMOD) 755 $(tmdir)/bin/*
-	$(CP) $(tmdir)/bin/fig2ps $(DESTDIR)$(bindir)
-	$(CP) $(tmdir)/bin/texmacs $(DESTDIR)$(bindir)
-	@echo installed TeXmacs startup scripts in $(DESTDIR)$(bindir)
-	$(MKDIR) $(DESTDIR)$(includedir)
-	$(CP) $(tmdir)/include/TeXmacs.h $(DESTDIR)$(includedir)
-	$(CHMOD) go=rX $(DESTDIR)$(includedir)/TeXmacs.h
-	@echo installed TeXmacs include files in $(DESTDIR)$(includedir)
-	$(MKDIR) $(DESTDIR)$(mandir)
-	$(MKDIR) $(DESTDIR)$(mandir)/man1
-	$(CP) misc/man/fig2ps.1 $(DESTDIR)$(mandir)/man1
-	$(CP) misc/man/texmacs.1 $(DESTDIR)$(mandir)/man1
-	$(GZIP) $(DESTDIR)$(mandir)/man1/fig2ps.1
-	$(GZIP) $(DESTDIR)$(mandir)/man1/texmacs.1
-	$(CHMOD) go=rX $(DESTDIR)$(mandir)/man1/fig2ps.1.gz
-	$(CHMOD) go=rX $(DESTDIR)$(mandir)/man1/texmacs.1.gz
-	@echo installed TeXmacs manual pages in $(DESTDIR)$(mandir)
+	$(CP) $(tmdir)/bin/fig2ps $(DESTDIR)
+	$(CP) $(tmdir)/bin/texmacs $(DESTDIR)
+	@echo installed TeXmacs startup scripts in $(DESTDIR)
+
+INSTALL_INCLUDE:
+	$(MKDIR) $(DESTDIR)
+	$(CP) $(tmdir)/include/TeXmacs.h $(DESTDIR)
+	$(CHMOD) go=rX $(DESTDIR)/TeXmacs.h
+	@echo installed TeXmacs include files in $(DESTDIR)
+
+INSTALL_MANUALS:
+	$(MKDIR) $(DESTDIR)
+	$(MKDIR) $(DESTDIR)/man1
+	$(CP) misc/man/fig2ps.1 $(DESTDIR)/man1
+	$(CP) misc/man/texmacs.1 $(DESTDIR)/man1
+	$(GZIP) $(DESTDIR)/man1/fig2ps.1
+	$(GZIP) $(DESTDIR)/man1/texmacs.1
+	$(CHMOD) go=rX $(DESTDIR)/man1/fig2ps.1.gz
+	$(CHMOD) go=rX $(DESTDIR)/man1/texmacs.1.gz
+	@echo installed TeXmacs manual pages in $(DESTDIR)
+
+INSTALL:
+	make INSTALL_EXECUTABLES DESTDIR=$(DESTDIR)$(tmbin)
+	make INSTALL_DATA DESTDIR=$(DESTDIR)$(tmdata)
+	make INSTALL_PLUGINS DESTDIR=$(DESTDIR)$(tmdata)
+	make INSTALL_ICONS DESTDIR=$(DESTDIR)$(datadir)
+	make INSTALL_STARTUP DESTDIR=$(DESTDIR)$(bindir)
+	make INSTALL_INCLUDE DESTDIR=$(DESTDIR)$(includedir)
+	make INSTALL_MANUALS DESTDIR=$(DESTDIR)$(mandir)
 	@echo ----------------------------------------------------
 	@echo TeXmacs has been successfully installed
+
+install: INSTALL
 
 UNINSTALL:
 	$(RM) -r $(tmbin)
@@ -225,6 +249,8 @@ UNINSTALL:
 	@echo removed TeXmacs manual pages from $(mandir)
 	@echo ----------------------------------------------------
 	@echo TeXmacs has been successfully removed
+
+unistall: UNINSTALL
 
 .PHONY: INSTALL UNINSTALL
 
@@ -470,7 +496,7 @@ MACOS_BUNDLE: TEXMACS
 	@echo ----------------------------------------------------
 	@echo TeXmacs has been bundled in $(MACOS_PACKAGE_APP)
 	@if test -n "@SIGNID@";then \
-		codesign --deep -s @SIGNID@ $(MACOS_PACKAGE_APP) &&\
+		codesign --timestamp --deep -s @SIGNID@ $(MACOS_PACKAGE_APP) &&\
 		echo "Bundle successfully signed" || echo "Signing failed"; fi
 
 
@@ -502,7 +528,10 @@ WINDOWS_BUILD_DIR = ../distr/TeXmacs-Windows
 WINDOWS_BUILD_BIN_DIR = $(WINDOWS_BUILD_DIR)/bin
 UN_QT_P = $(shell cygpath -u $(QT_PLUGINS_PATH))
 
-WINDOWS_BUNDLE: TEXMACS
+WINDOWS_PBD: TEXMACS
+	if [test -n "@CV2PDB@"]; then @CV2PDB@ $(WINDOWS_BUILD_BIN_DIR)/texmacs.exe; fi
+
+WINDOWS_BUNDLE: TEXMACS WINDOWS_PBD
 	$(MKDIR) ../distr
 	$(MKDIR) $(WINDOWS_BUILD_DIR)
 	$(RM) -r $(WINDOWS_BUILD_BIN_DIR)/{texmacs,texmacs.bin,texmacs.exe}
@@ -524,6 +553,126 @@ WINDOWS_PACKAGE: WINDOWS_BUNDLE
 	if test -n "@SIGNID@"; then @SIGNID@ $(WINDOWS_PACKAGE_DIR)/*-installer.exe; fi
 
 .PHONY: WINDOWS_BUNDLE WINDOWS_PACKAGE
+
+###############################################################################
+# Make an Android package
+###############################################################################
+
+ANDROID_PACKAGE_SRC = packages/android
+ANDROID_PACKAGE_DIR = ../distr/android
+
+ANDROID_BUILD_DIR = ../distr/TeXmacs-Android
+
+ANDROID_LIBTEXMACS: @MKGUILE@ EMPTY_DIRS
+	if test "$(TEXMACS_DEPS)" != "no"; then \
+		cd src; $(MAKE) -f makefile deps; \
+	fi
+	cd src; $(MAKE) -r -f makefile link=static Objects/libtexmacs.a
+	$(CP) plugins $(tmdir)
+	$(RM) $(tmdir)/plugins/*/Makefile
+	$(RM) -r $(tmdir)/plugins/*/src
+	$(RM) -r $(tmdir)/plugins/*/bin
+	$(RM) -r $(tmdir)/plugins/*/lib
+	@echo ----------------------------------------------------------
+	@echo TeXmacs library has been successfully compiled for Android
+
+ANDROID_BUNDLE: ANDROID_LIBTEXMACS
+	$(MKDIR) ../distr
+	$(RM) -r $(ANDROID_BUILD_DIR)/sources
+	$(MKDIR) $(ANDROID_BUILD_DIR)/sources
+	$(RM) -r $(ANDROID_BUILD_DIR)/build
+	$(MKDIR) $(ANDROID_BUILD_DIR)/build
+	$(CP) -r packages/android/launcher/* $(ANDROID_BUILD_DIR)/sources/
+	$(CP) $(ANDROID_PACKAGE_SRC)/res/* $(ANDROID_BUILD_DIR)/sources/android/res/
+	$(CP) $(ANDROID_PACKAGE_SRC)/AndroidManifest.xml $(ANDROID_BUILD_DIR)/sources/android/AndroidManifest.xml
+	$(ANDROID_PACKAGE_SRC)/collect_assets.sh TeXmacs $(ANDROID_BUILD_DIR)/sources/android/assets/raw
+	$(MKDIR) $(ANDROID_BUILD_DIR)/build/libs/${ANDROID_ABI}
+
+ANDROID_APK: ANDROID_BUNDLE
+	$(CP) src/Objects/libtexmacs.a $(ANDROID_BUILD_DIR)/sources
+	cd $(ANDROID_BUILD_DIR)/build; cmake -DANDROID_NDK:PATH=@NDK@ \
+	                                     -DCMAKE_FIND_ROOT_PATH:PATH=%{Qt:QT_INSTALL_PREFIX} \
+										 -DANDROID_SDK_ROOT:PATH=@SDK@ \
+										 -DANDROID_STL:STRING=c++_shared \
+										 -DCMAKE_GENERATOR:STRING=Ninja \
+										 -DANDROID_ABI:STRING=@ANDROID_ABI@ \
+										 -DQT_HOST_PATH:PATH=@QT_HOST_PATH@ \
+										 -DCMAKE_BUILD_TYPE:STRING=Debug \
+										 -DANDROID_PLATFORM:STRING=android-33 \
+										 -DQT_USE_TARGET_ANDROID_BUILD_DIR:BOOL=ON \
+										 -DQT_NO_GLOBAL_APK_TARGET_PART_OF_ALL:BOOL=ON \
+										 -DCMAKE_TOOLCHAIN_FILE:FILEPATH=@NDK@/build/cmake/android.toolchain.cmake \
+										 -DANDROID_USE_LEGACY_TOOLCHAIN_FILE:BOOL=OFF \
+										 -DCMAKE_FIND_ROOT_PATH=@QT_PATH@ \
+										 -DCMAKE_PREFIX_PATH=@QT_PATH@ \
+										 -DTEXMACS_LIBS:STRING="@LIBS@" \
+										 -DQT_DIR=@QT_PATH@/lib/cmake/Qt6 ../sources
+	cd $(ANDROID_BUILD_DIR)/build; cmake --build . --target apk
+
+
+.PHONY: ANDROID_BUNDLE
+
+###############################################################################
+# Make an AppImage
+###############################################################################
+
+APPIMAGE: TEXMACS
+	# If TMREPO is empty, throw an error
+	if [ -z "$(TMREPO)" ]; then \
+		echo "TMREPO is empty. AppImage can only be built with TeXmacs builder."; \
+		echo "See https://www.texmacs.org/tmweb/download/sources.en.html"; \
+		exit 1; \
+	fi
+
+	# Create the AppDir folder structure
+	$(MKDIR) ../distr
+	$(MKDIR) ../distr/TeXmacs.AppDir
+	$(RM) -r ../distr/TeXmacs.AppDir/*
+	$(MKDIR) ../distr/TeXmacs.AppDir/usr
+	$(MKDIR) ../distr/TeXmacs.AppDir/usr/bin
+	$(MKDIR) ../distr/TeXmacs.AppDir/usr/lib
+	$(MKDIR) ../distr/TeXmacs.AppDir/usr/share
+	$(MKDIR) ../distr/TeXmacs.AppDir/usr/plugins
+	$(MKDIR) ../distr/TeXmacs.AppDir/usr/share/metainfo	
+	$(MKDIR) ../distr/TeXmacs.AppDir/usr/share/applications
+
+	
+	# Install TeXmacs inside the AppDir
+	$(MAKE) INSTALL_EXECUTABLES DESTDIR=../distr/TeXmacs.AppDir/usr
+	$(MAKE) INSTALL_DATA DESTDIR=../distr/TeXmacs.AppDir/usr/share/TeXmacs
+	$(MAKE) INSTALL_PLUGINS DESTDIR=../distr/TeXmacs.AppDir/usr/share/TeXmacs
+	$(MAKE) INSTALL_ICONS DESTDIR=../distr/TeXmacs.AppDir/usr/share/TeXmacs/misc
+	$(MAKE) INSTALL_STARTUP DESTDIR=../distr/TeXmacs.AppDir/usr/bin
+	$(MAKE) INSTALL_INCLUDE DESTDIR=../distr/TeXmacs.AppDir/usr/include
+	
+	# Copy ice-9 files inside the TeXmacs progs folder
+	$(CP) -r `find @GUILE_DATA_PATH@ -type d | grep ice-9` ../distr/TeXmacs.AppDir/usr/share/TeXmacs/progs
+	
+	# Copy the AppImage specific files
+	$(CP) packages/appimage/org.texmacs.texmacs.metainfo.xml ../distr/TeXmacs.AppDir/usr/share/metainfo/org.texmacs.texmacs.metainfo.xml
+	$(CP) packages/appimage/org.texmacs.texmacs.desktop ../distr/TeXmacs.AppDir/usr/share/applications/org.texmacs.texmacs.desktop
+	$(CP) packages/appimage/org.texmacs.texmacs.desktop ../distr/TeXmacs.AppDir/org.texmacs.texmacs.desktop	
+	$(CP) ../distr/TeXmacs.AppDir/usr/share/TeXmacs/misc/images/texmacs.svg ../distr/TeXmacs.AppDir/texmacs.svg
+	$(CP) ../distr/TeXmacs.AppDir/usr/share/TeXmacs/misc/images/texmacs.svg ../distr/TeXmacs.AppDir/.DirIcon
+
+	# Remove the bash executable of TeXmacs
+	$(RM) ../distr/TeXmacs.AppDir/usr/bin/texmacs
+
+	# Move the texmacs binary to AppRun
+	$(MV) ../distr/TeXmacs.AppDir/usr/bin/texmacs.bin ../distr/TeXmacs.AppDir/AppRun
+
+	# Use patchelf to fix the rpath
+	patchelf --force-rpath --set-rpath '$$ORIGIN:$$ORIGIN/../lib:$$ORIGIN/usr/lib:../lib:usr/lib' ../distr/TeXmacs.AppDir/AppRun
+
+	# Install dependencies from the TeXmacs builder
+	$(CP) -Lr $(TMREPO)/lib/*.so* ../distr/TeXmacs.AppDir/usr/lib
+	$(CP) -Lr $(TMREPO)/plugins ../distr/TeXmacs.AppDir/usr
+	$(CP) -Lr $(TMREPO)/translations ../distr/TeXmacs.AppDir/usr
+
+	# Pack the AppImage
+	appimagetool ../distr/TeXmacs.AppDir ../distr/TeXmacs.AppImage
+
+
 
 ###############################################################################
 # Cleaning and backups

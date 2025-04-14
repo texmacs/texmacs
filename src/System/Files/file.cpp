@@ -29,15 +29,20 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <string.h>  // strerror
-#if defined (OS_MINGW)
-#include "Windows/win-utf8-compat.hpp"
-#else
 #include <dirent.h>
-#define struct_stat struct stat
-#endif
 
 #ifdef MACOSX_EXTENSIONS
 #include "MacOS/mac_images.h"
+#endif
+
+#if defined (OS_MINGW64)
+#include "Windows64/windows64_system.hpp"
+#elif defined (OS_MINGW)
+#include "Windows/windows32_system.hpp"
+#elif defined (OS_ANDROID)
+#include "Android/android_system.hpp"
+#else
+#include "Unix/unix_system.hpp"
 #endif
 
 /******************************************************************************
@@ -50,7 +55,7 @@ load_string (url u, string& s, bool fatal) {
   url r= u;
   if (!is_rooted_name (r)) r= resolve (r);
   // cout << "Resolved " << r << LF;
-  bool err= !is_rooted_name (r);
+  bool err= !is_rooted_name (r) || is_directory (r);
   if (!err) {
     string name= concretize (r);
     // cout << "Concrete :" << name << LF;
@@ -67,53 +72,31 @@ load_string (url u, string& s, bool fatal) {
     // End caching
 
     bench_start ("load file");
-    c_string _name (name);
-    // cout << "OPEN :" << _name << LF;
-#ifdef OS_MINGW
-    FILE* fin= fopen (_name, "rb");
-#else
-    FILE* fin= fopen (_name, "r");
-    int fd= -1;
-    if (fin != NULL) {
-      fd= fileno (fin);
-      if (flock (fd, LOCK_SH) == -1) {
-        fclose (fin);
-        fin= NULL;
-      }
-    }
-#endif
+
+    FILE* fin= texmacs_fopen (name, "r");
+
     if (fin == NULL) {
       err= true;
       if (!occurs ("system", name))
         std_warning << "Load error for " << name << ", "
                     << strerror(errno) << "\n";
     }
-    int size= 0;
+    ssize_t size= 0;
     if (!err) {
-      if (fseek (fin, 0L, SEEK_END) < 0) err= true;
-      else {
-        size= ftell (fin);
-        if (size<0) err= true;
-      }
-      if (err) {
-        std_warning << "Seek failed for " << as_string (u) << "\n";
-#ifdef OS_MINGW
-#else
-        flock (fd, LOCK_UN);
-#endif
-        fclose (fin);
+      size = texmacs_fsize (fin);
+      if (size < 0) {
+        err= true;
+        std_warning << "Can't get file size for " << name << "\n";
       }
     }
     if (!err) {
-      rewind (fin);
       s->resize (size);
-      int read= fread (&(s[0]), 1, size, fin);
-      if (read < size) s->resize (read);
-#ifdef OS_MINGW
-#else
-      flock (fd, LOCK_UN);
-#endif
-      fclose (fin);
+      ssize_t readed= texmacs_fread (&(s[0]), size, fin);
+      texmacs_fclose (fin);
+      if (readed != size) {
+        err= true;
+        std_warning << "Can't read " << name << "\n";
+      }
     }
     bench_cumul ("load file");
 
@@ -145,44 +128,26 @@ save_string (url u, string s, bool fatal) {
     return err;
   }
 
-  // cout << "Save " << u << LF;
   url r= u;
   if (!is_rooted_name (r)) r= resolve (r, "");
   bool err= !is_rooted_name (r);
   if (!err) {
     string name= concretize (r);
     {
-      c_string _name (name);
-#ifdef OS_MINGW
-      FILE* fout= fopen (_name, "wb");
-#else
-      FILE* fout= fopen (_name, "r+");
-      bool rw= (fout != NULL);
-      if (!rw) fout= fopen (_name, "w");
-      int fd= -1;
-      if (fout != NULL) {
-        fd= fileno (fout);
-        if (flock (fd, LOCK_EX) == -1) {
-          fclose (fout);
-          fout= NULL;
-        }
-        else if (rw) ftruncate (fd, 0);
-      }
-#endif
+      FILE* fout = texmacs_fopen (name, "w");
       if (fout == NULL) {
         err= true;
         std_warning << "Save error for " << name << ", "
                     << strerror(errno) << "\n";
       }
       if (!err) {
-        int i, n= N(s);
-        for (i=0; i<n; i++)
-          fputc (s[i], fout);
-#ifdef OS_MINGW
-#else
-        flock (fd, LOCK_UN);
-#endif
-        fclose (fout);
+        int n= N(s);
+        ssize_t written = texmacs_fwrite (&s[0], n, fout);
+        texmacs_fclose (fout);
+        if (written != n) {
+          err= true;
+          std_warning << "Can't write to " << name << "\n";
+        }
       }
     }
     // Cache file contents
@@ -214,34 +179,20 @@ append_string (url u, string s, bool fatal) {
   if (!err) {
     string name= concretize (r);
     {
-      c_string _name (name);
-#ifdef OS_MINGW
-      FILE* fout= fopen (_name, "ab");
-#else
-      FILE* fout= fopen (_name, "a");
-      int fd= -1;
-      if (fout != NULL) {
-        fd= fileno (fout);
-        if (flock (fd, LOCK_EX) == -1) {
-          fclose (fout);
-          fout= NULL;
-        }
-      }
-#endif
+      FILE* fout= texmacs_fopen (name, "a");
       if (fout == NULL) {
         err= true;
         std_warning << "Append error for " << name << ", "
                     << strerror(errno) << "\n";
       }
       if (!err) {
-        int i, n= N(s);
-        for (i=0; i<n; i++)
-          fputc (s[i], fout);
-#ifdef OS_MINGW
-#else
-        flock (fd, LOCK_UN);
-#endif
-        fclose (fout);
+        int n= N(s);
+        ssize_t written = texmacs_fwrite (&s[0], n, fout);
+        if (written != n) {
+          err= true;
+          std_warning << "Can't append to " << name << "\n";
+        }
+        texmacs_fclose (fout);
       }
     }
     // Cache file contents
@@ -292,12 +243,8 @@ get_attributes (url name, struct_stat* buf,
   //cout << "No cache" << LF;
 
   bench_start ("stat");
-  bool flag;
-  c_string temp (name_s);
-  flag= stat (temp, buf);
+  bool flag = texmacs_stat (name_s, buf);
   (void) link_flag;
-  // FIXME: configure should test whether lstat works
-  // flag= (link_flag? lstat (temp, buf): stat (temp, buf));
   bench_cumul ("stat");
 
   // Cache stat results
@@ -389,9 +336,11 @@ is_of_type (url name, string filter) {
     case 'd':
       if (err || !S_ISDIR (buf.st_mode)) return false;
       break;
+#ifndef OS_MINGW
     case 'l':
       if (err || !S_ISLNK (buf.st_mode)) return false;
       break;
+#endif
     case 'r':
       if (err) return false;
       if ((buf.st_mode & (S_IRUSR | S_IRGRP | S_IROTH)) == 0) return false;
@@ -527,27 +476,20 @@ read_directory (url u, bool& error_flag) {
   bench_start ("read directory");
   // End caching
 
-  DIR* dp;
-  c_string temp (name);
-  dp= opendir (temp);
+  TEXMACS_DIR dp;
+  dp = texmacs_opendir (name);
+
   error_flag= (dp==NULL);
   if (error_flag) return array<string> ();
 
   array<string> dir;
-  #ifdef OS_MINGW
+  texmacs_dirent ep;
   while (true) {
-    const char* nextname =  nowide::readir_entry (dp);
-    if (nextname==NULL) break;
-    dir << string (nextname);
-  #else
-  struct dirent* ep;
-  while (true) {
-    ep= readdir (dp);
-    if (ep==NULL) break;
-    dir << string (ep->d_name);
-  #endif
+    ep = texmacs_readdir (dp);
+    if (!ep.is_valid) break;
+    dir << ep.d_name;
   }
-  (void) closedir (dp);
+  texmacs_closedir (dp);
   merge_sort (dir);
 
   // Caching of directory contents
@@ -565,9 +507,9 @@ read_directory (url u, bool& error_flag) {
 
 void
 move (url u1, url u2) {
-  c_string _u1 (concretize (u1));
-  c_string _u2 (concretize (u2));
-  (void) rename (_u1, _u2);
+  string _u1 = concretize (u1);
+  string _u2 = concretize (u2);
+  (void) texmacs_rename (_u1, _u2);
 }
 
 void
@@ -579,21 +521,18 @@ copy (url u1, url u2) {
 
 void
 remove_sub (url u) {
-  if (is_none (u));
-  else if (is_or (u)) {
+  if (is_none (u)) {
+    return;
+  }
+  if (is_or (u)) {
     remove_sub (u[1]);
     remove_sub (u[2]);
+    return;
   }
-  else {
-    c_string _u (concretize (u));
-#ifdef OS_MINGW
-    if (nowide::remove (_u) && DEBUG_AUTO) {
-#else
-    if (::remove (_u) && DEBUG_AUTO) {
-#endif
-      std_warning << "Remove failed: " << strerror (errno) << LF;
-      std_warning << "File was: " << u << LF;
-    }
+  string _u = concretize (u);
+  if (!texmacs_remove (_u) && DEBUG_AUTO) {
+    std_warning << "Remove failed: " << strerror (errno) << LF;
+    std_warning << "File was: " << u << LF;
   }
 }
 
@@ -617,33 +556,25 @@ rmdir (url u) {
 
 void
 mkdir (url u) {
-#if defined (HAVE_SYS_TYPES_H) && defined (HAVE_SYS_STAT_H)
-  if (!exists (u)) {
-    if (!is_atomic (u) && !is_root (u)) mkdir (head (u));
-    c_string _u (concretize (u));
-    (void) ::mkdir (_u, S_IRWXU + S_IRGRP + S_IROTH);
+  // if the directory already exists, we do nothing
+  if (exists (u)) {
+    return;
   }
-#else
-#ifdef OS_MINGW
-  system ("mkdir", u);
-#else
-  system ("mkdir -p", u);
-#endif
-#endif
+  
+  // if the parent directory does not exist, we create it
+  if (!is_atomic (u) && !is_root (u)) {
+    mkdir (head (u));
+  }
+  
+  // call the system mkdir
+  string _u = concretize (u);
+  (void) texmacs_mkdir (_u, S_IRWXU + S_IRGRP + S_IROTH);
 }
 
 void
 change_mode (url u, int mode) {
-#if defined (HAVE_SYS_TYPES_H) && defined (HAVE_SYS_STAT_H)
-  c_string _u (concretize (u));
-  (void) ::chmod (_u, mode);
-#else
-  string m0= as_string ((mode >> 9) & 7);
-  string m1= as_string ((mode >> 6) & 7);
-  string m2= as_string ((mode >> 3) & 7);
-  string m3= as_string (mode & 7);
-  system ("chmod -f " * m0 * m1 * m2 * m3, u);
-#endif
+  string _u = concretize (u);
+  (void) texmacs_chmod (_u, mode);
 }
 
 /******************************************************************************

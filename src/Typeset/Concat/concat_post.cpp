@@ -184,7 +184,9 @@ concater_rep::handle_scripts (int start, int end) {
         (a[i]->type == GLUE_LSUBS_ITEM) ||
         (a[i]->type == RSUB_ITEM) ||
         (a[i]->type == RSUP_ITEM) ||
-        (a[i]->type == GLUE_RSUBS_ITEM)) { i++; continue; }
+        (a[i]->type == GLUE_RSUBS_ITEM) ||
+	(a[i]->type == CONTROL_ITEM && L(a[i]->t) == DATOMS)) {
+      i++; continue; }
 
     path sip;
     int l= prec (i);

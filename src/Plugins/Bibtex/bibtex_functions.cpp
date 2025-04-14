@@ -693,7 +693,7 @@ bib_tree_length (tree t) {
   if (is_atomic (t)) return N(t->label);
   else if (L(t) == WITH) return bib_tree_length (t[N(t)-1]);
   else if (L(t) == CONCAT || L(t) == DOCUMENT) {
-    int s= 0;
+    int s= 0; (void) s;
     for (int i= 0; i<N(t); i++) s += bib_tree_length (t[i]);
   }
   return 0;

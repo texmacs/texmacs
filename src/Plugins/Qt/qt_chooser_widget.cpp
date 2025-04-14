@@ -28,6 +28,10 @@
 #include <QFileDialog>
 #include <QByteArray>
 
+#ifdef OS_ANDROID
+#include "android.hpp"
+#endif
+
 /*!
   \param _cmd  Scheme closure to execute after the dialog is closed.
   \param _type What kind of dialog to show. Can be one of "image", "directory",
@@ -197,6 +201,59 @@ qt_chooser_widget_rep::set_type (const string& _type)
   return true;
 }
 
+void
+qt_chooser_widget_rep::perform_dialog_with_qfiledialog() {
+  QString caption = to_qstring (win_title);
+  c_string tmp (directory * "/" * file);
+  QString path = QString::fromUtf8 (&tmp[0]);
+  QString filter = nameFilter;
+  if (type == "image")
+    filter = to_qstring (translate ("Image file")) + " (*.png *.jpg *.jpeg *.bmp *.gif *.pdf)";
+  else if (type == "directory")
+    filter = "";
+  else if (type == "generic")
+    filter = to_qstring (translate ("All files (*)"));
+  else
+    filter = to_qstring (translate (as_string (call ("format-get-name", type))
+                                    * " file")) + " (" + filter + ")";
+  if (prompt != "") {
+    string text= prompt;
+    if (ends (text, ":")) text= text (0, N(text) - 1);
+    if (ends (text, " as")) text= text (0, N(text) - 3);
+    filter = to_qstring (translate (text)) + " (" + filter + ")";
+  }
+  //QString imqstring = QFileDialog::getSaveFileName (NULL, caption, path, filter);
+  // if save dialog, then use getSaveFileName, otherwise use getOpenFileName
+  QString imqstring;
+  if (prompt != "")
+    imqstring = QFileDialog::getSaveFileName (NULL, caption, path, filter);
+  else
+    imqstring = QFileDialog::getOpenFileName (NULL, caption, path, filter);
+  if (imqstring.isEmpty()) {
+    file = "#f";
+    return;
+  }
+
+  QByteArray imqstringutf8 = imqstring.toUtf8();
+  string imname(imqstringutf8.data(), imqstringutf8.size());
+
+  file = "(system->url " * scm_quote (imname) * ")";
+  if (type == "image") {
+    url u= url_system (imname);
+    string w, h;
+    qt_pretty_image_size (u, w, h);
+    string params;
+    params << "\"" << w << "\" "
+           << "\"" << h << "\" "
+           << "\"" << "" << "\" "  // xps ??
+           << "\"" << "" << "\"";   // yps ??
+    file = "(list " * file * " " * params * ")";
+  }
+
+  cmd ();
+  if (!is_nil (quit)) quit ();
+
+}
 
 
 /*! Actually displays the dialog with all the options set.
@@ -205,9 +262,13 @@ qt_chooser_widget_rep::set_type (const string& _type)
  */
 void
 qt_chooser_widget_rep::perform_dialog () {
+#if QT_VERSION >= 0x060000 && defined(OS_ANDROID)
+  return perform_dialog_with_qfiledialog();
+#endif
+  
   QString caption = to_qstring (win_title);
   c_string tmp (directory * "/" * file);
-  QString path = QString::fromUtf8 (tmp);
+  QString path = QString::fromUtf8 (&tmp[0]);
   
 #if (defined(Q_OS_MAC) )// || defined(Q_WS_WIN)) //at least windows Xp and 7 lack image preview, switch to custom dialog
   QFileDialog* dialog = new QFileDialog (NULL, caption, path);
@@ -220,7 +281,7 @@ qt_chooser_widget_rep::perform_dialog () {
   else
     dialog = new QTMFileDialog (NULL, caption, path);
 #endif
-  
+
   dialog->setViewMode (QFileDialog::Detail);
   if (type == "directory")
     dialog->setFileMode (QFileDialog::Directory);

@@ -26,7 +26,7 @@
 #include <QtCore/QLocale>
 #include <QtCore/QVariant>
 #if (QT_VERSION >= 0x050000)
-#include <QtWidgets/QAction>
+//#include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QCheckBox>
@@ -375,8 +375,13 @@ public:
     QWidget::setTabOrder(blackWhiteCheck, buttonBox);
     
     retranslateUi(QTMPrintDialog);
+#if QT_VERSION < 0x060000
     QObject::connect(buttonBox, SIGNAL(accepted()), QTMPrintDialog, SLOT(accept()));
     QObject::connect(buttonBox, SIGNAL(rejected()), QTMPrintDialog, SLOT(reject()));
+#else
+    QObject::connect(buttonBox, &QDialogButtonBox::accepted, QTMPrintDialog, &QDialog::accept);
+    QObject::connect(buttonBox, &QDialogButtonBox::rejected, QTMPrintDialog, &QDialog::reject);
+#endif
     
     QMetaObject::connectSlotsByName(QTMPrintDialog);
   } // setupUi

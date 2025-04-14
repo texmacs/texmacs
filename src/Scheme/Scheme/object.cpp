@@ -58,7 +58,10 @@ operator << (tm_ostream& out, object obj) {
   out.flush ();
   if (out == cout) call ("write", obj);
   else if (out == cerr) call ("write-err", obj);
-  else FAILED ("not yet implemented");
+  else {
+    object ret= call ("object->string", obj);
+    return out << as_string (ret);
+  }
   call ("force-output");
   return out;
 }
@@ -94,6 +97,10 @@ object list_object (object obj1, object obj2) {
   return cons (obj1, cons (obj2, null_object ())); }
 object list_object (object obj1, object obj2, object obj3) {
   return cons (obj1, cons (obj2, cons (obj3, null_object ()))); }
+object as_list_object (array<object> objs) {
+  object r= null_object ();
+  for (int i=N(objs)-1; i>=0; i--) r= cons (objs[i], r);
+  return r; }
 object symbol_object (string s) {
   return tmscm_to_object ( symbol_to_tmscm (s) ); }
 object car (object obj) {
@@ -346,7 +353,9 @@ public:
   void apply (object args) {
     (void) call_scheme (object_to_tmscm (obj),
                         array_lookup (as_array_object (args))); }
-  tm_ostream& print (tm_ostream& out) { return out << obj; }
+  tm_ostream& print (tm_ostream& out) {
+    object bis= call ("sourcify", obj);
+    return out << "<command " << bis << ">"; }
 };
 
 command

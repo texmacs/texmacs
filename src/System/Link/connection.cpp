@@ -93,6 +93,10 @@ connection_rep::start (bool again) {
   tm_in ->bof ();
   tm_err->bof ();
   ln->set_command (command (connection_callback, this));
+  if (name == "dynlink") {
+    this->listen ();
+    status = WAITING_FOR_OUTPUT;
+  }
   return message;
 }
 

@@ -29,6 +29,10 @@ hashmap<string,double> lsub_ecrm_table ();
 hashmap<string,double> lsup_ecrm_table ();
 hashmap<string,double> rsub_ecrm_table ();
 hashmap<string,double> rsup_ecrm_table ();
+hashmap<string,double> lsub_ecss_table ();
+hashmap<string,double> lsup_ecss_table ();
+hashmap<string,double> rsub_ecss_table ();
+hashmap<string,double> rsup_ecss_table ();
 hashmap<string,double> lsub_cmr_table ();
 hashmap<string,double> lsup_cmr_table ();
 hashmap<string,double> rsub_cmr_table ();
@@ -164,6 +168,13 @@ tex_font_rep::tex_font_rep (string name, int status2,
     lsup_correct= lsup_ecrm_table ();
     rsub_correct= rsub_ecrm_table ();
     rsup_correct= rsup_ecrm_table ();
+    above_correct= hashmap<string,double> (0.0);
+  }
+  else if (family == "ecss" || family == "ecsx") {
+    lsub_correct= lsub_ecss_table ();
+    lsup_correct= lsup_ecss_table ();
+    rsub_correct= rsub_ecss_table ();
+    rsup_correct= rsup_ecss_table ();
     above_correct= hashmap<string,double> (0.0);
   }
   else if (family == "cmr" || family == "cmbx") {

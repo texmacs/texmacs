@@ -41,8 +41,8 @@ function rmicon {
 }
 
 if test -w /usr/share -o "$XDG_UTILS_INSTALL_MODE" == "system"
-then    export XDG_DATA_DIRS="$DESTDIR/usr/share/"
-	export svgdst=$DESTDIR/usr/share/icons/hicolor/scalable
+then    export XDG_DATA_DIRS="$DESTDIR"
+	export svgdst=$DESTDIR/icons/hicolor/scalable
 	export XDG_UTILS_INSTALL_MODE=system
 else 	export svgdst=$HOME/.local/share/icons/hicolor/scalable
 	export XDG_UTILS_INSTALL_MODE=user

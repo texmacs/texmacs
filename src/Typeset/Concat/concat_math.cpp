@@ -530,9 +530,18 @@ concater_rep::typeset_around (tree t, path ip, bool colored) {
     switch (L(t)) {
     case AROUND:
       if (N(t) == 3) {
+        SI adjust= env->fn->double_bracket_correct;
         box br1= typeset_as_concat (env, t[0], descend (ip, 0));
         print (STD_ITEM, OP_OPENING_BRACKET, br1);
-        typeset (t[1], descend (ip, 1));
+        if (adjust != 0 && (is_func (t[1], AROUND, 3) ||
+                            is_func (t[1], VAR_AROUND, 3))) {
+          print (empty_box (decorate_middle (descend (ip, 0)),
+                            0, 0, adjust, env->fn->yx));
+          typeset (t[1], descend (ip, 1));
+          print (empty_box (decorate_middle (descend (ip, 2)),
+                            0, 0, adjust, env->fn->yx));
+        }
+        else typeset (t[1], descend (ip, 1));
         box br2= typeset_as_concat (env, t[2], descend (ip, 2));
         print (STD_ITEM, OP_CLOSING_BRACKET, br2);
       }
@@ -540,6 +549,7 @@ concater_rep::typeset_around (tree t, path ip, bool colored) {
       break;
     case VAR_AROUND:
       if (N(t) == 3) {
+        SI adjust= env->fn->double_bracket_correct;
         font old_fn= env->fn;
         font new_fn= env->fn;
         if (starts (new_fn->res_name, "stix-"))
@@ -549,7 +559,15 @@ concater_rep::typeset_around (tree t, path ip, bool colored) {
         typeset (make_large (LEFT, t[0]),
                  decorate_middle (descend (ip, 0)));
         env->fn= old_fn;
-        typeset (t[1], descend (ip, 1));
+        if (adjust != 0 && (is_func (t[1], AROUND, 3) ||
+                            is_func (t[1], VAR_AROUND, 3))) {
+          print (empty_box (decorate_middle (descend (ip, 0)),
+                            0, 0, adjust, env->fn->yx));
+          typeset (t[1], descend (ip, 1));
+          print (empty_box (decorate_middle (descend (ip, 2)),
+                            0, 0, adjust, env->fn->yx));
+        }
+        else typeset (t[1], descend (ip, 1));
         env->fn= new_fn;
         typeset (make_large (RIGHT, t[2]),
                  decorate_middle (descend (ip, 2)));

@@ -511,7 +511,6 @@ text_language (string s) {
   if (s == "taiwanese")  return make_oriental_language (s);
   if (s == "ukrainian")  return make_ucs_text_language (s, "ukrainian");
   if (s == "verbatim")   return tm_new<verb_language_rep> ("verbatim");
-  failed_error << "The language was " << s << "\n";
-  FAILED ("unknown language");
+  std_warning << "Unkown language : " << s << "\n";
   return tm_new<verb_language_rep> ("verbatim");
 }

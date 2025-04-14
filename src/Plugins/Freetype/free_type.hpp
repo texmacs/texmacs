@@ -26,6 +26,11 @@ extern FT_Error (*ft_new_face)       (FT_Library     library,
 				      const char*    filepathname,
 				      FT_Long        face_index,
 				      FT_Face*       aface);
+extern FT_Error (*ft_new_memory_face) (FT_Library library,
+            const FT_Byte* file_base,
+            FT_Long        file_size,
+            FT_Long        face_index,
+            FT_Face*       aface);
 extern FT_Error (*ft_select_charmap) (FT_Face        face,
 				      FT_Encoding    encoding);
 extern FT_Error (*ft_set_char_size)  (FT_Face        face,
@@ -45,6 +50,7 @@ extern FT_Error (*ft_get_kerning)    (FT_Face        face,
                                       FT_UInt        right_glyph,
                                       FT_UInt        kern_mode,
                                       FT_Vector      *akerning);
+extern FT_Error (*ft_done_face)      (FT_Face        face);
 
 #endif
 

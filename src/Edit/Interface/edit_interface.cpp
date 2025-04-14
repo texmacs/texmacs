@@ -46,6 +46,9 @@ MODE_LANGUAGE (string mode) {
 
 static double
 get_zoom (editor_rep* ed, tm_buffer buf) {
+#if QT_VERSION >= 0x060000
+  double retina_zoom = 1.0;
+#endif
   if (!is_nil (buf) && buf->data->init->contains ("no-zoom"))
     return as_double (buf->data->init [ZOOM_FACTOR]);
   else return retina_zoom * ed->sv->get_default_zoom_factor ();
@@ -116,11 +119,16 @@ edit_interface_rep::resume () {
   SERVER (menu_icons (3, "(horizontal (link texmacs-extra-icons))"));
   array<url> a= buffer_to_windows (buf->buf->name);
   if (N(a) > 0) {
-    string win= "(string->url \"" * as_string (a[0]) * "\")";
-    string dyn= "(dynamic (texmacs-side-tools " * win * "))";
-    SERVER (side_tools (0, "(vertical " * dyn * ")"));
+    string win = "(string->url \"" * as_string (a[0]) * "\")";
+    string ldyn= "(dynamic (texmacs-left-tools " * win * "))";
+    string rdyn= "(dynamic (texmacs-side-tools " * win * "))";
+    string bdyn= "(dynamic (texmacs-bottom-tools " * win * "))";
+    string xdyn= "(dynamic (texmacs-extra-tools " * win * "))";
+    SERVER (side_tools (1, "(vertical " * ldyn * ")"));
+    SERVER (side_tools (0, "(vertical " * rdyn * ")"));
+    SERVER (bottom_tools (0, "(vertical " * bdyn * ")"));
+    SERVER (bottom_tools (1, "(vertical " * xdyn * ")"));
   }
-  SERVER (bottom_tools (0, "(vertical (link texmacs-bottom-tools))"));
   cur_sb= 2;
   env_change= env_change & (~THE_FREEZE);
   notify_change (THE_FOCUS + THE_EXTENTS);
@@ -132,11 +140,6 @@ edit_interface_rep::resume () {
     tp= new_tp;
   }
   the_drd= old_drd;
-#ifdef QTTEXMACS
-  // FIXME: dirty hack in order to correct a bug introduced
-  // after a bugfix by Massimiliano during summer 2016
-  eval ("(delayed (:idle 1) (refresh-window))");
-#endif
 }
 
 void
@@ -582,11 +585,11 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
 ******************************************************************************/
 
 void
-edit_interface_rep::notify_change (int change) {
-  env_change= env_change | change;
+edit_interface_rep::notify_change (int env_set, int env_unset) {
+  env_change= (env_change | env_set) & (~env_unset);
   needs_update ();
-  if ((change & (THE_TREE | THE_SELECTION | THE_CURSOR)) != 0)
-    manual_focus_set (path (), (change & THE_TREE) != 0);
+  if ((env_set & (THE_TREE | THE_SELECTION | THE_CURSOR)) != 0)
+    manual_focus_set (path (), (env_set & THE_TREE) != 0);
 }
 
 bool
@@ -618,11 +621,16 @@ edit_interface_rep::update_menus () {
   SERVER (menu_icons (3, "(horizontal (link texmacs-extra-icons))"));
   array<url> a= buffer_to_windows (buf->buf->name);
   if (N(a) > 0) {
-    string win= "(string->url \"" * as_string (a[0]) * "\")";
-    string dyn= "(dynamic (texmacs-side-tools " * win * "))";
-    SERVER (side_tools (0, "(vertical " * dyn * ")"));
+    string win = "(string->url \"" * as_string (a[0]) * "\")";
+    string ldyn= "(dynamic (texmacs-left-tools " * win * "))";
+    string rdyn= "(dynamic (texmacs-side-tools " * win * "))";
+    string bdyn= "(dynamic (texmacs-bottom-tools " * win * "))";
+    string xdyn= "(dynamic (texmacs-extra-tools " * win * "))";
+    SERVER (side_tools (1, "(vertical " * ldyn * ")"));
+    SERVER (side_tools (0, "(vertical " * rdyn * ")"));
+    SERVER (bottom_tools (0, "(vertical " * bdyn * ")"));
+    SERVER (bottom_tools (1, "(vertical " * xdyn * ")"));
   }
-  SERVER (bottom_tools (0, "(vertical (link texmacs-bottom-tools))"));
   set_footer ();
   if (has_current_window ()) {
     array<url> ws= buffer_to_windows (
@@ -991,6 +999,14 @@ edit_interface_rep::apply_changes () {
   if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS)) {
     update_mouse_loci ();
     update_focus_loci ();
+    if (!is_nil (focus_ids) && got_focus)
+      call ("link-follow-ids", object (focus_ids), object ("focus"));
+  }
+  else if (env_change & THE_SELECTION) {
+    update_focus_loci ();
+    call ("close-tooltip");
+    if (!is_nil (focus_ids) && got_focus)
+      call ("link-follow-ids", object (focus_ids), object ("focus"));
   }
   if (env_change & THE_LOCUS) {
     if (locus_new_rects != locus_rects) {
@@ -1103,9 +1119,8 @@ edit_interface_rep::search_cursor (path p) {
 
 selection
 edit_interface_rep::search_selection (path start, path end) {
-  selection sel= eb->find_check_selection (start, end);
-  rectangle r= least_upper_bound (sel->rs) / std_shrinkf;
-  return sel;
+  return eb->find_check_selection (start, end);
+  //rectangle r= least_upper_bound (sel->rs) / std_shrinkf;
 }
 
 /******************************************************************************
@@ -1115,6 +1130,14 @@ edit_interface_rep::search_selection (path start, path end) {
 bool
 edit_interface_rep::is_editor_widget () {
   return true;
+}
+
+bool
+edit_interface_rep::is_embedded_widget () {
+  if (!has_subtree (et, rp) || subtree (et, rp) == tree (UNINIT)) return false;
+  string name= as_string (buf->buf->name);
+  return starts (name, "tmfs://aux/");
+  // FIXME: could be made more robust: test should not be based on file name
 }
 
 void

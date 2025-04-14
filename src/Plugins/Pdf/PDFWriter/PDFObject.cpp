@@ -55,7 +55,7 @@ PDFObject::~PDFObject(void)
 {
 	StringToVoidP::iterator it = mMetadata.begin();
 	for (; it != mMetadata.end(); ++it) {
-		delete it->second;
+	  free (it->second);
 	}
 	mMetadata.clear();
 }
@@ -95,5 +95,5 @@ void* PDFObject::DetachMetadata(const std::string& inKey) {
 
 void PDFObject::DeleteMetadata(const std::string& inKey) {
 	void* result = DetachMetadata(inKey);
-	delete result;
+	free (result);
 }

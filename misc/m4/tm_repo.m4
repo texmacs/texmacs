@@ -40,4 +40,16 @@ AC_DEFUN([TM_REPO],[
     AC_SUBST(REPOPATH, ["export PATH=$PATH"])
     AC_SUBST(PKGPATH, ["export PKG_CONFIG_PATH=$PKG_CONFIG_PATH"])
   fi
+
+
+  AC_ARG_WITH(texmacs-builder,
+    AS_HELP_STRING([--with-texmacs-builder@<:@=no@:>@],[absolute texmacs builder path]),
+    [TEXMACSBUILDER=${withval%%/}])
+  
+  if test -n "$TEXMACSBUILDER" -a "$TEXMACSBUILDER" != no
+  then
+    TMREPO=$TEXMACSBUILDER
+    AC_SUBST(TMREPO)
+  fi
+
 ])

@@ -17,6 +17,7 @@
 #include <QLabel>
 #include <QGesture>
 #include <QGestureEvent>
+#include <QScreen>
 
 class qt_simple_widget_rep;
 
@@ -40,40 +41,62 @@ public:
   
   QTMWidget (QWidget* _parent=0, qt_widget _tmwid=0);
   virtual ~QTMWidget ();
+  virtual bool isEmbedded () const;
   
-  virtual QSize	sizeHint () const;
-  virtual void scrollContentsBy (int dx, int dy);
+  virtual QSize	sizeHint () const override;
+  virtual void scrollContentsBy (int dx, int dy) override;
 
   void setCursorPos (QPoint pos) { cursor_pos = pos; }
   qt_simple_widget_rep* tm_widget () const;
   
   bool isPreediting () { return preediting; }
-  
+
+#if QT_VERSION >= 0x060000
+protected slots:
+  void surfaceDprChanged ();
+#endif
+
 protected:
 
-  virtual bool event (QEvent *event);
+  virtual bool event (QEvent *event) override;
 
-  virtual void paintEvent (QPaintEvent* event);
-  virtual void focusInEvent (QFocusEvent* event);
-  virtual void focusOutEvent (QFocusEvent* event);
-  virtual void keyPressEvent (QKeyEvent* event);
+  void surfacePaintEvent (QPaintEvent *e, QWidget *surface) override;
+  virtual void focusInEvent (QFocusEvent* event) override;
+  virtual void focusOutEvent (QFocusEvent* event) override;
+  virtual void keyPressEvent (QKeyEvent* event) override;
   virtual void kbdEvent (int key, Qt::KeyboardModifiers mods, const QString& s);
-  virtual void inputMethodEvent (QInputMethodEvent* event);
-  virtual void mousePressEvent (QMouseEvent* event);
-  virtual void mouseReleaseEvent (QMouseEvent* event);
-  virtual void mouseMoveEvent (QMouseEvent* event);
+  virtual void inputMethodEvent (QInputMethodEvent* event) override;
+  virtual void mousePressEvent (QMouseEvent* event) override;
+  virtual void mouseReleaseEvent (QMouseEvent* event) override;
+  virtual void mouseMoveEvent (QMouseEvent* event) override;
 #if (QT_VERSION >= 0x050000)
-  virtual void tabletEvent (QTabletEvent* event);
+  virtual void tabletEvent (QTabletEvent* event) override;
 #endif
   virtual void gestureEvent (QGestureEvent* event);
-  virtual void resizeEvent (QResizeEvent *event);
-  virtual void resizeEventBis (QResizeEvent *e);
-  virtual void dragEnterEvent(QDragEnterEvent *event);
-  //virtual void dragMoveEvent (QDragMoveEvent *event);
-  virtual void dropEvent(QDropEvent *event);
+  virtual void resizeEvent (QResizeEvent *event) override;
+  virtual void resizeEventBis (QResizeEvent *e) override;
+  virtual void dragEnterEvent(QDragEnterEvent *event) override;
+  //virtual void dragMoveEvent (QDragMoveEvent *event) override;
+  virtual void dropEvent(QDropEvent *event) override;
 
-  virtual void wheelEvent(QWheelEvent *event);
-  virtual QVariant inputMethodQuery (Qt::InputMethodQuery query) const;
+  virtual void wheelEvent(QWheelEvent *event) override;
+  virtual QVariant inputMethodQuery (Qt::InputMethodQuery query) const override;
+
+  void showEvent (QShowEvent *event) override;
+
+#if defined(OS_ANDROID) && QT_VERSION >= 0x060000
+  /*
+   * @brief Show the android virtual keyboard
+   */
+  void showKeyboard ();
+#endif
+
+private:
+  bool hasMousePress;
+  QTouchEvent::TouchPoint firstTouchPoint;
+  bool haveFirstTouchPoint;
+  QTime firstTouchTime;
+  bool ignoreNextTouchEvents;
 
 };
 

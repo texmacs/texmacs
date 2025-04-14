@@ -362,7 +362,7 @@
      ($when s
        ($tmfs-title "Git Status")
        ($description-long
-         ($describe-item "Changes to be commited"
+         ($describe-item "Changes to be committed"
            ($for (x s)
              ($with (status file) x
                ($staged-file status file))))

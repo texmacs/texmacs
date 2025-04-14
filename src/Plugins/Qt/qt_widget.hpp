@@ -266,10 +266,33 @@ public:
     static int id= 1;
     switch (s) {
     case SLOT_IDENTIFIER:
-    {
-      check_type_id<int> (type_id, s);
-      return close_box<int> (id++);
-    }
+      {
+	check_type_id<int> (type_id, s);
+	return close_box<int> (id++);
+      }
+    case SLOT_SCROLL_POSITION:
+      return close_box<coord2> (coord2 (0, 0));
+    case SLOT_EXTENTS:
+    case SLOT_VISIBLE_PART:
+      return close_box<coord4> (coord4 (0, 0, 640, 400));
+    case SLOT_ZOOM_FACTOR:
+      return close_box<double> (1.0);
+    case SLOT_POSITION:
+      return close_box<coord2> (coord2 (0, 0));
+    case SLOT_SIZE:
+      return close_box<coord2> (coord2 (640, 400));
+    case SLOT_HEADER_VISIBILITY:
+    case SLOT_MAIN_ICONS_VISIBILITY:
+    case SLOT_MODE_ICONS_VISIBILITY:
+    case SLOT_FOCUS_ICONS_VISIBILITY:
+    case SLOT_USER_ICONS_VISIBILITY:
+    case SLOT_FOOTER_VISIBILITY:
+    case SLOT_SIDE_TOOLS_VISIBILITY:
+    case SLOT_LEFT_TOOLS_VISIBILITY:
+    case SLOT_BOTTOM_TOOLS_VISIBILITY:
+    case SLOT_EXTRA_TOOLS_VISIBILITY:
+      check_type_id<bool> (type_id, s);
+      return close_box<bool> (false);
     default:
       return qt_widget_rep::query (s, type_id);
     }
@@ -286,7 +309,6 @@ public:
   virtual void notify (slot s, blackbox new_val) {
     (void) s; (void) new_val;
     qt_widget_rep::notify (s, new_val);
-
   }
 };
 

@@ -60,10 +60,3 @@
   (:mode in-prog-python?)
   (select-brackets-after-movement "([{" ")]}" "\\"))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Copy and Paste
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (kbd-paste)
-  (:mode in-prog-python?)
-  (clipboard-paste-import "python" "primary"))

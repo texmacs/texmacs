@@ -14,6 +14,10 @@
 #include "formatter.hpp"
 #include "Format/line_item.hpp"
 
+/******************************************************************************
+* lazy_document
+******************************************************************************/
+
 struct lazy_document_rep: public lazy_rep {
   array<lazy> par;   // the paragraphs
 
@@ -30,6 +34,10 @@ struct lazy_document {
     rep (tm_new<lazy_document_rep> (env, t, ip)) { rep->ref_count= 1; }
 };
 EXTEND_NULL_CODE(lazy,lazy_document);
+
+/******************************************************************************
+* lazy_surround
+******************************************************************************/
 
 struct lazy_surround_rep: public lazy_rep {
   array<line_item> a;    // left surrounding
@@ -53,5 +61,71 @@ struct lazy_surround {
     rep (tm_new<lazy_surround_rep> (a, b, par, ip)) { rep->ref_count= 1; }
 };
 EXTEND_NULL_CODE(lazy,lazy_surround);
+
+/******************************************************************************
+* lazy_hidden
+******************************************************************************/
+
+struct lazy_hidden_rep: public lazy_rep {
+  edit_env env;
+  tree t;
+  path ip;
+  lazy_hidden_rep (edit_env env, tree t, path ip);
+  inline operator tree () { return "Hidden"; }
+  lazy produce (lazy_type request, format fm);
+  format query (lazy_type request, format fm);
+  void propagate ();
+};
+
+struct lazy_hidden {
+  EXTEND_NULL(lazy,lazy_hidden);
+  inline lazy_hidden (edit_env env, tree t, path ip):
+    rep (tm_new<lazy_hidden_rep> (env, t, ip)) { rep->ref_count= 1; }
+};
+EXTEND_NULL_CODE(lazy,lazy_hidden);
+
+/******************************************************************************
+* lazy_dynamic_case
+******************************************************************************/
+
+struct lazy_dynamic_case_rep: public lazy_rep {
+  array<tree> conds;  // the conditions
+  array<lazy> par;    // the paragraphs
+
+  lazy_dynamic_case_rep (edit_env env, tree t, path ip);
+  inline operator tree () { return "Dynamic_case"; }
+  lazy produce (lazy_type request, format fm);
+  format query (lazy_type request, format fm);
+  void propagate ();
+};
+
+struct lazy_dynamic_case {
+  EXTEND_NULL(lazy,lazy_dynamic_case);
+  inline lazy_dynamic_case (edit_env env, tree t, path ip):
+    rep (tm_new<lazy_dynamic_case_rep> (env, t, ip)) { rep->ref_count= 1; }
+};
+EXTEND_NULL_CODE(lazy,lazy_dynamic_case);
+
+/******************************************************************************
+* lazy_relay
+******************************************************************************/
+
+struct lazy_relay_rep: public lazy_rep {
+  array<tree> args;  // the arguments
+  lazy par;          // the relayed paragraph
+
+  lazy_relay_rep (edit_env env, tree t, path ip);
+  inline operator tree () { return "Relay"; }
+  lazy produce (lazy_type request, format fm);
+  format query (lazy_type request, format fm);
+  void propagate ();
+};
+
+struct lazy_relay {
+  EXTEND_NULL(lazy,lazy_relay);
+  inline lazy_relay (edit_env env, tree t, path ip):
+    rep (tm_new<lazy_relay_rep> (env, t, ip)) { rep->ref_count= 1; }
+};
+EXTEND_NULL_CODE(lazy,lazy_relay);
 
 #endif // defined LAZY_TYPESET_H

@@ -10,7 +10,7 @@
   sorties sont structurées. N'hésitez pas à vous lancer dans l'écriture
   d'interfaces entre <apply|TeXmacs> et votre(vos) système(s) préféré(s).
   <apply|TeXmacs> a déjà été interfacé avec plusieurs systèmes gratuits,
-  comme Giac, Macaulay 2, Maxima, GNU Octave, Pari, Qcl, gTybaly, Yacas. Pour
+  comme Giac, Macaulay2, Maxima, GNU Octave, Pari, Qcl, gTybaly, Yacas. Pour
   de plus amples détails sur la façon d'ajouter de nouvelles interfaces, voir
   \ <apply|hyper-link|<apply|menu|Help|Interfacing>|../../../devel/plugin/plugin.fr.tm>.
 

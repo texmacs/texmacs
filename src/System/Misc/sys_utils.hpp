@@ -15,6 +15,25 @@
 #include "url.hpp"
 #include "array.hpp"
 
+#if defined (OS_MINGW64)
+#ifdef QTTEXMACS
+#include "Qt/qt_sys_utils.hpp"
+#endif
+#include "Windows64/windows64_system.hpp"
+#elif defined (OS_MINGW)
+#ifdef QTTEXMACS
+#include "Qt/qt_sys_utils.hpp"
+#endif
+#include "Windows/mingw_sys_utils.hpp"
+#include "Windows/windows32_system.hpp"
+#elif defined (OS_ANDROID)
+#include "Android/android_system.hpp"
+#include "Qt/qt_sys_utils.hpp"
+#else
+#include "Unix/unix_sys_utils.hpp"
+#include "Unix/unix_system.hpp"
+#endif
+
 extern int script_status; // 0: never accept, 1: prompt, 2: always accept
 
 int    system (string s);

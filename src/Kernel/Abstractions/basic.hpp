@@ -146,7 +146,9 @@ bool gui_is_x ();
 bool gui_is_qt ();
 bool os_win32 ();
 bool os_mingw ();
+bool os_mingw64 ();
 bool os_macos ();
+bool os_android ();
 bool use_macos_fonts ();
 const char* default_look_and_feel ();
 

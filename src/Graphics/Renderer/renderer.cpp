@@ -16,6 +16,16 @@
 #include "frame.hpp"
 
 int    std_shrinkf  = 5;
+#if QT_VERSION >= 0x060000
+int    get_retina_factor () { return -1; }
+int    get_retina_zoom () { return -1; }
+int    get_retina_icons () { return -1; }
+double get_retina_scale () { return -1.0; }
+void   set_retina_factor (int f) { (void) f; }
+void   set_retina_zoom (int z) { (void) z; }
+void   set_retina_icons (int i) { (void) i; }
+void   set_retina_scale (double s) { (void) s; }
+#else
 bool   retina_manual= false;
 bool   retina_iman  = false;
 int    retina_factor= 1;
@@ -31,6 +41,7 @@ void   set_retina_factor (int f) { retina_factor= f; }
 void   set_retina_zoom (int z) { retina_zoom= z; }
 void   set_retina_icons (int i) { retina_icons= i; }
 void   set_retina_scale (double s) { retina_scale= s; }
+#endif
 
 /******************************************************************************
 * Constructors and handles
@@ -353,7 +364,7 @@ renderer_rep::clear_pattern (SI mx1, SI my1, SI mx2, SI my2,
   if (kind == brush_none);
   else if (kind == brush_color)
     clear (x1, y1, x2, y2);
-  else if (kind == brush_pattern && is_func (b->get_pattern (), PATTERN)) {
+  else if (kind == brush_pattern && is_func (b->get_pattern (), _PATTERN)) {
     tree pattern= b->get_pattern ();
     int pattern_alpha= b->get_alpha ();
     outer_round (x1, y1, x2, y2);

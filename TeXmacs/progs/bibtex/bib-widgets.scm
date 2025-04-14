@@ -82,7 +82,7 @@
   (bibwid-set-filename bibwid-url))
 
 (tm-widget (bibwid-preview)
-  (resize ("520px" "520px" "9999px") ("100px" "100px" "9999px")
+  (resize '("520px" "520px" "9999px") '("100px" "100px" "9999px")
     (scrollable 
       (refreshable "bibwid-preview"
         (texmacs-output
@@ -130,6 +130,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (open-bibliography-inserter)
+  (:interactive #t)
   (set! bibwid-buffer (current-buffer))
   (let ((u (current-bib-file #f))
         (s (current-bib-style #f))

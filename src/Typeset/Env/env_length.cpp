@@ -41,7 +41,7 @@ edit_env_rep::tmlen_plus (tree t1, tree t2) {
     return tree (TMLEN, as_string (as_double (t1[0]) + as_double (t2[0])));
   if (N(t1) == 1) t1= tree (TMLEN, t1[0], t1[0], t1[0]);
   if (N(t2) == 1) t2= tree (TMLEN, t2[0], t2[0], t2[0]);
-  if (N(t1) < 3 || N(t2) < 3) return tree (ERROR, "invalid tmlen-plus");
+  if (N(t1) < 3 || N(t2) < 3) return tree (_ERROR, "invalid tmlen-plus");
   tree _min= as_string (as_double (t1[0]) + as_double (t2[0]));
   tree _def= as_string (as_double (t1[1]) + as_double (t2[1]));
   tree _max= as_string (as_double (t1[2]) + as_double (t2[2]));
@@ -54,7 +54,7 @@ edit_env_rep::tmlen_min (tree t1, tree t2) {
     return tree (TMLEN, as_string (min (as_double(t1[0]), as_double(t2[0]))));
   if (N(t1) == 1) t1= tree (TMLEN, t1[0], t1[0], t1[0]);
   if (N(t2) == 1) t2= tree (TMLEN, t2[0], t2[0], t2[0]);
-  if (N(t1) < 3 || N(t2) < 3) return tree (ERROR, "invalid tmlen-plus");
+  if (N(t1) < 3 || N(t2) < 3) return tree (_ERROR, "invalid tmlen-plus");
   tree _min= as_string (min (as_double (t1[0]), as_double (t2[0])));
   tree _def= as_string (min (as_double (t1[1]), as_double (t2[1])));
   tree _max= as_string (min (as_double (t1[2]), as_double (t2[2])));
@@ -67,7 +67,7 @@ edit_env_rep::tmlen_max (tree t1, tree t2) {
     return tree (TMLEN, as_string (max (as_double(t1[0]), as_double(t2[0]))));
   if (N(t1) == 1) t1= tree (TMLEN, t1[0], t1[0], t1[0]);
   if (N(t2) == 1) t2= tree (TMLEN, t2[0], t2[0], t2[0]);
-  if (N(t1) < 3 || N(t2) < 3) return tree (ERROR, "invalid tmlen-plus");
+  if (N(t1) < 3 || N(t2) < 3) return tree (_ERROR, "invalid tmlen-plus");
   tree _min= as_string (max (as_double (t1[0]), as_double (t2[0])));
   tree _def= as_string (max (as_double (t1[1]), as_double (t2[1])));
   tree _max= as_string (max (as_double (t1[2]), as_double (t2[2])));
@@ -77,7 +77,7 @@ edit_env_rep::tmlen_max (tree t1, tree t2) {
 tree
 edit_env_rep::tmlen_times (double sc, tree t) {
   if (N(t) == 1) return tree (TMLEN, as_string (sc * as_double (t[0])));
-  if (N(t) < 3) return tree (ERROR, "invalid tmlen-times");
+  if (N(t) < 3) return tree (_ERROR, "invalid tmlen-times");
   tree _min= as_string (sc * as_double (t[0]));
   tree _def= as_string (sc * as_double (t[1]));
   tree _max= as_string (sc * as_double (t[2]));
@@ -485,14 +485,21 @@ tree edit_env_rep::exec_tmpt_length () {
 }
 
 tree edit_env_rep::exec_px_length () {
+#if QT_VERSION >= 0x060000
+  return tree (TMLEN, as_string (pixel));
+#else
 #ifndef OS_MACOS
   return tree (TMLEN, as_string ((int) (retina_zoom * pixel)));
 #else
   return tree (TMLEN, as_string (pixel));
 #endif
+#endif
 }
 
 tree edit_env_rep::exec_guipx_length () {
+#if QT_VERSION >= 0x060000
+  return tree (TMLEN, as_string (pixel));
+#else
   double scale;
   if (retina_zoom == 1) scale= retina_scale;
   else if (tm_style_sheet == "") scale= 2.0;
@@ -503,6 +510,7 @@ tree edit_env_rep::exec_guipx_length () {
   else scale= 1.8 * retina_scale;
 #endif
   return tree (TMLEN, as_string ((int) floor (scale * pixel + 0.5)));
+#endif
 }
 
 tree edit_env_rep::exec_lcorner_length () {

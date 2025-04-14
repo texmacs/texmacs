@@ -11,11 +11,18 @@
 
 #include "QTMWidget.hpp"
 #include "qt_gui.hpp"
+#include "tm_window.hpp"
 #include "qt_utilities.hpp"
 #include "qt_simple_widget.hpp"
 #include "converter.hpp"
 #include "boot.hpp"
 #include "scheme.hpp"
+#include "new_view.hpp"
+#include "editor.hpp"
+#include "Interface/edit_graphics.hpp"
+#include "qt_renderer.hpp"
+#include "QTMApplication.hpp"
+#include "QTMKeyboardEvent.hpp"
 
 #include "config.h"
 
@@ -29,6 +36,11 @@
 #include <QPainter>
 #include <QApplication>
 
+#ifdef OS_ANDROID
+#include <QScrollBar>
+#include <QScroller>
+#endif
+
 #include <QBuffer>
 #include <QMimeData>
 #include <QByteArray>
@@ -37,131 +49,6 @@
 #include <QFileInfo>
 
 
-hashmap<int,string> qtkeymap (0);
-hashmap<int,string> qtdeadmap (0);
-hashmap<int,string> qtcomposemap (0);
-
-inline void
-map (int code, string name) {
-  qtkeymap (code) = name;
-}
-
-inline void
-deadmap (int code, string name) {
-  qtdeadmap (code) = name;
-}
-
-void
-initkeymap () {
-  static bool fInit= false;
-  if (fInit) return;
-  fInit= true;
-  if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "Initializing keymap\n";
-  map (Qt::Key_Space     , "space");
-  map (Qt::Key_Tab       , "tab");
-  map (Qt::Key_Backtab   , "tab");
-  map (Qt::Key_Return    , "return");
-  map (Qt::Key_Enter     , "enter");
-  map (Qt::Key_Escape    , "escape");
-  map (Qt::Key_Backspace , "backspace");
-  map (Qt::Key_Up        , "up" );
-  map (Qt::Key_Down      , "down" );
-  map (Qt::Key_Left      , "left" );
-  map (Qt::Key_Right     , "right" );
-  map (Qt::Key_F1        , "F1" );
-  map (Qt::Key_F2        , "F2" );
-  map (Qt::Key_F3        , "F3" );
-  map (Qt::Key_F4        , "F4" );
-  map (Qt::Key_F5        , "F5" );
-  map (Qt::Key_F6        , "F6" );
-  map (Qt::Key_F7        , "F7" );
-  map (Qt::Key_F8        , "F8" );
-  map (Qt::Key_F9        , "F9" );
-  map (Qt::Key_F10       , "F10" );
-  map (Qt::Key_F11       , "F11" );
-  map (Qt::Key_F12       , "F12" );
-  map (Qt::Key_F13       , "F13" );
-  map (Qt::Key_F14       , "F14" );
-  map (Qt::Key_F15       , "F15" );
-  map (Qt::Key_F16       , "F16" );
-  map (Qt::Key_F17       , "F17" );
-  map (Qt::Key_F18       , "F18" );
-  map (Qt::Key_F19       , "F19" );
-  map (Qt::Key_F20       , "F20" );
-  map (Qt::Key_F21       , "F21" );
-  map (Qt::Key_F22       , "F22" );
-  map (Qt::Key_F23       , "F23" );
-  map (Qt::Key_F24       , "F24" );
-  map (Qt::Key_F25       , "F25" );
-  map (Qt::Key_F26       , "F26" );
-  map (Qt::Key_F27       , "F27" );
-  map (Qt::Key_F28       , "F28" );
-  map (Qt::Key_F29       , "F29" );
-  map (Qt::Key_F30       , "F30" );
-  map (Qt::Key_F31       , "F31" );
-  map (Qt::Key_F32       , "F32" );
-  map (Qt::Key_F33       , "F33" );
-  map (Qt::Key_F34       , "F34" );
-  map (Qt::Key_F35       , "F35" );
-  map (Qt::Key_Insert    , "insert" );
-  map (Qt::Key_Delete    , "delete" );
-  map (Qt::Key_Home      , "home" );
-  map (Qt::Key_End       , "end" );
-  map (Qt::Key_PageUp    , "pageup" );
-  map (Qt::Key_PageDown  , "pagedown" );
-  map (Qt::Key_ScrollLock, "scrolllock" );
-  map (Qt::Key_Pause     , "pause" );
-  map (Qt::Key_SysReq    , "sysreq" );
-  map (Qt::Key_Stop      , "stop" );
-  map (Qt::Key_Menu      , "menu" );
-  map (Qt::Key_Print     , "print" );
-  map (Qt::Key_Select    , "select" );
-  map (Qt::Key_Execute   , "execute" );
-  map (Qt::Key_Help      , "help" );
-  map (Qt::Key_section   , "section" );
-
-  deadmap (Qt::Key_Dead_Acute     , "acute");
-  deadmap (Qt::Key_Dead_Grave     , "grave");
-  deadmap (Qt::Key_Dead_Diaeresis , "umlaut");
-  deadmap (Qt::Key_Dead_Circumflex, "hat");
-  deadmap (Qt::Key_Dead_Tilde     , "tilde");
-
-  // map (0x0003              , "K-enter");
-  // map (Qt::Key_Begin       , "begin" );
-  // map (Qt::Key_PrintScreen , "printscreen" );
-  // map (Qt::Key_Break       , "break" );
-  // map (Qt::Key_User        , "user" );
-  // map (Qt::Key_System      , "system" );
-  // map (Qt::Key_Reset       , "reset" );
-  // map (Qt::Key_ClearLine   , "clear" );
-  // map (Qt::Key_ClearDisplay, "cleardisplay" );
-  // map (Qt::Key_InsertLine  , "insertline" );
-  // map (Qt::Key_DeleteLine  , "deleteline" );
-  // map (Qt::Key_InsertChar  , "insert" );
-  // map (Qt::Key_DeleteChar  , "delete" );
-  // map (Qt::Key_Prev        , "prev" );
-  // map (Qt::Key_Next        , "next" );
-  // map (Qt::Key_Undo        , "undo" );
-  // map (Qt::Key_Redo        , "redo" );
-  // map (Qt::Key_Find        , "find" );
-  // map (Qt::Key_ModeSwitchFunctionKey, "modeswitch" );
-}
-#ifdef OS_MINGW
-enum WindowsNativeModifiers {
-    ShiftLeft            = 0x00000001,
-    ControlLeft          = 0x00000002,
-    AltLeft              = 0x00000004,
-    MetaLeft             = 0x00000008,
-    ShiftRight           = 0x00000010,
-    ControlRight         = 0x00000020,
-    AltRight             = 0x00000040,
-    MetaRight            = 0x00000080,
-    CapsLock             = 0x00000100,
-    NumLock              = 0x00000200,
-    ScrollLock           = 0x00000400,
-    ExtendedKey          = 0x01000000,
-};
-#endif
 static long int QTMWcounter = 0; // debugging hack
 
 /*! Constructor.
@@ -171,13 +58,22 @@ static long int QTMWcounter = 0; // debugging hack
  */
 QTMWidget::QTMWidget (QWidget* _parent, qt_widget _tmwid)
 : QTMScrollView (_parent), tmwid (_tmwid),  imwidget (NULL),
-  preediting (false)
+  preediting (false), hasMousePress (false), haveFirstTouchPoint (false),
+  ignoreNextTouchEvents (false)
 {
   setObjectName (to_qstring ("QTMWidget" * as_string (QTMWcounter++)));// What is this for? (maybe only debugging?)
   setFocusPolicy (Qt::StrongFocus);
   setAttribute (Qt::WA_InputMethodEnabled);
+#ifdef OS_ANDROID
+  setAttribute(Qt::WA_AcceptTouchEvents);
+  setAttribute(Qt::WA_TouchPadAcceptSingleTouchEvents);
+#endif
   surface ()->setMouseTracking (true);
   surface ()->setAcceptDrops (true);
+
+#ifdef OS_ANDROID
+  QScroller::grabGesture(this, QScroller::TouchGesture);
+#endif
   grabGesture (Qt::PanGesture);
   grabGesture (Qt::PinchGesture);
   grabGesture (Qt::SwipeGesture);
@@ -192,12 +88,20 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_widget _tmwid)
   if (DEBUG_QT)
     debug_qt << "Creating " << from_qstring(objectName()) << " of widget "
              << (tm_widget() ? tm_widget()->type_as_string() : "NULL") << LF;
+  //part 1/2 of the fix for 43373
+  if (!isEmbedded ())
+    QApplication::postEvent(this, new QFocusEvent(QEvent::FocusIn, Qt::OtherFocusReason));
 }
 
 QTMWidget::~QTMWidget () {
   if (DEBUG_QT)
     debug_qt << "Destroying " << from_qstring(objectName()) << " of widget "
              << (tm_widget() ? tm_widget()->type_as_string() : "NULL") << LF;
+}
+
+bool
+QTMWidget::isEmbedded () const {
+  return tm_widget() -> is_embedded_widget ();
 }
 
 qt_simple_widget_rep*
@@ -208,7 +112,6 @@ QTMWidget::tm_widget () const {
 void 
 QTMWidget::scrollContentsBy (int dx, int dy) {
   QTMScrollView::scrollContentsBy (dx,dy);
-
   the_gui->force_update();
   // we force an update of the internal state to be in sync with the moving
   // scrollbars
@@ -246,8 +149,37 @@ QTMWidget::resizeEventBis (QResizeEvent *event) {
  CHECK: Maybe just putting onscreen all the region bounding rectangles might 
  be less expensive.
 */
+#if QT_VERSION >= 0x060000
 void
-QTMWidget::paintEvent (QPaintEvent* event) {
+QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
+  (void) surfaceWidget;
+  QPainter p (surface());
+
+  qreal dpr = surface()->devicePixelRatio();
+  if (dpr != tm_widget()->backingPixmap->devicePixelRatio()) {
+    QMetaObject::invokeMethod (this, "surfaceDprChanged", Qt::QueuedConnection);
+    return;
+  }
+
+  // We copy the backing buffer on the widget
+  QRect qr = event->region().boundingRect();
+  p.drawPixmap (QRect (qr.x(), qr.y(), qr.width(), qr.height()),
+                *(tm_widget()->backingPixmap),
+                QRect (dpr * qr.x(),
+                       dpr * qr.y(),
+                       dpr * qr.width(),
+                       dpr * qr.height()));
+  
+}
+
+void
+QTMWidget::surfaceDprChanged () {
+  tm_widget()->reset_all();
+  the_gui->force_update();
+}
+#else
+void
+QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
   QPainter p (surface());
   QVector<QRect> rects = event->region().rects();
   for (int i = 0; i < rects.count(); ++i) {
@@ -260,192 +192,34 @@ QTMWidget::paintEvent (QPaintEvent* event) {
                          retina_factor * qr.height()));
   }
 }
+#endif
 
 void
-set_shift_preference (int key_code, char shifted) {
+setShiftPreference (int key_code, char shifted) {
   set_user_preference ("shift-" * as_string (key_code), string (shifted));
 }
 
 bool
-has_shift_preference (int key_code) {
+hasShiftPreference (int key_code) {
   return has_user_preference ("shift-" * as_string (key_code));
 }
 
 string
-get_shift_preference (char key_code) {
+getShiftPreference (char key_code) {
   return get_user_preference ("shift-" * as_string (key_code));
 }
 
 void
 QTMWidget::keyPressEvent (QKeyEvent* event) {
-  if (is_nil (tmwid)) return;
-  initkeymap();
-
-  if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "keypressed\n";
-  {
-    int key = event->key();
-    Qt::KeyboardModifiers mods = event->modifiers();
-
-    if (DEBUG_QT && DEBUG_KEYBOARD) {
-      debug_qt << "key  : " << key << LF;
-      debug_qt << "text : " << event->text().toLatin1().data() << LF;
-      debug_qt << "count: " << event->text().count() << LF;
-      debug_qt << "unic : " << event->text().data()[0].unicode() << LF;
-
-#ifdef OS_MINGW
-      debug_qt << "nativeScanCode: " << event->nativeScanCode() << LF; 
-      debug_qt << "nativeVirtualKey: " << event->nativeVirtualKey() << LF;
-      debug_qt << "nativeModifiers: " << event->nativeModifiers() << LF;
-#endif
-      if (mods & Qt::ShiftModifier) debug_qt << "shift\n";
-      if (mods & Qt::MetaModifier) debug_qt << "meta\n";
-      if (mods & Qt::ControlModifier) debug_qt << "control\n";
-      if (mods & Qt::KeypadModifier) debug_qt << "keypad\n";
-      if (mods & Qt::AltModifier) debug_qt << "alt\n";
-    }
-
-    string r;
-#ifdef OS_MINGW 
-/* "Qt::Key_AltGr On Windows, when the KeyDown event for this key is sent,
-* the Ctrl+Alt modifiers are also set." (excerpt from Qt doc)
-* However the AltGr key is used to obtain many symbols 
-* which should not be regarded as C-A- shortcuts.
-* (e.g. \ or @ on a French keyboard) 
-* 
-* Hence, when "native modifiers" are (ControlLeft | AltRight) 
-* we clear Qt's Ctrl+Alt modifiers
-*/
-    if ((event->nativeModifiers() & (ControlLeft | AltRight)) == (ControlLeft | AltRight)) {
-      if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "assuming it's an AltGr key code"<<LF;
-      mods &= ~Qt::AltModifier;
-      mods &= ~Qt::ControlModifier;
-    }
-#endif
-    if (qtkeymap->contains (key)) {
-      r = qtkeymap[key];
-    }
-    else if (qtdeadmap->contains (key)) {
-      mods &=~ Qt::ShiftModifier;
-      r = qtdeadmap[key];
-    }
-    else {
-        // We need to use text(): Alt-{5,6,7,8,9} are []|{} under MacOS, etc.
-      QString nss = event->text();
-      unsigned int   kc  = event->nativeVirtualKey();
-      unsigned short unic= nss.data()[0].unicode();
-      /*
-      debug_qt << "key  : " << key << LF;
-      debug_qt << "text : " << event->text().toLatin1().data() << LF;
-      debug_qt << "count: " << event->text().count() << LF;
-      if (mods & Qt::ShiftModifier) debug_qt << "shift\n";
-      if (mods & Qt::MetaModifier) debug_qt << "meta\n";
-      if (mods & Qt::ControlModifier) debug_qt << "control\n";
-      if (mods & Qt::KeypadModifier) debug_qt << "keypad\n";
-      if (mods & Qt::AltModifier) debug_qt << "alt\n";
-      cout << kc << ", " << ((mods & Qt::ShiftModifier) != 0)
-           << " -> " << unic << LF;
-      */
-      if (unic > 32 && unic < 255 &&
-          (mods & Qt::ShiftModifier) != 0 &&
-          (mods & Qt::ControlModifier) == 0 &&
-          (mods & Qt::AltModifier) == 0 &&
-          (mods & Qt::MetaModifier) == 0)
-        set_shift_preference (kc, (char) unic);
-#ifdef Q_OS_WIN
-      if ((unic > 0 && unic < 32 && key > 0 && key < 128) ||
-          (unic > 0 && unic < 255 && key > 32 &&
-           (mods & Qt::ShiftModifier) != 0 &&
-           (mods & Qt::ControlModifier) != 0)) {
-#else
-      if (unic < 32 && key > 0 && key < 128) {
-#endif
-        // NOTE: For some reason, the 'shift' modifier key is not applied
-        // to 'key' when 'control' is pressed as well.  We perform some
-        // dirty hacking to figure out the right shifted variant of a key
-        // by ourselves...
-        if (is_upcase ((char) key)) {
-          if ((mods & Qt::ShiftModifier) == 0)
-            key= (int) locase ((char) key);
-        }
-        else if (has_shift_preference (kc) &&
-                 (mods & Qt::ShiftModifier) != 0 &&
-                 (mods & Qt::ControlModifier) != 0) {
-          string pref= get_shift_preference (kc);
-          if (N(pref) > 0) key= (int) (unsigned char) pref [0];
-          if (DEBUG_QT && DEBUG_KEYBOARD)
-            debug_qt << "Control+Shift " << kc << " -> " << key << LF;
-        }
-        mods &=~ Qt::ShiftModifier;
-        r= string ((char) key);
-      }
-      else {
-        switch (unic) {
-          case 96:   r= "`"; 
-            // unicode to cork conversion not appropriate for this case...
-#ifdef Q_OS_MAC
-            // CHECKME: are these two MAC exceptions really needed?
-            if (mods & Qt::AltModifier) r= "grave";
-#endif
-            break;
-          case 168:  r= "umlaut"; break;
-          case 180:  r= "acute"; break;
-            // the following combining characters should be caught by qtdeadmap
-          case 0x300: r= "grave"; break;
-          case 0x301: r= "acute"; break;
-          case 0x302: r= "hat"; break;
-          case 0x308: r= "umlaut"; break;
-          case 0x33e: r= "tilde"; break;
-          default:
-            QByteArray buf= nss.toUtf8();
-            string rr (buf.constData(), buf.size());
-            string tstr= utf8_to_cork (rr);
-            // HACK! The encodings defined in langs/encoding and which
-            // utf8_to_cork uses (via the converters loaded in
-            // converter_rep::load()), enclose the texmacs symbols in "< >", 
-            // but this format is not used for keypresses, so we must remove
-            // them.
-            int len= N (tstr);
-            if (len >= 1 && tstr[0] == '<' && tstr[1] != '#' && tstr[len-1] == '>')
-              r= tstr (1, len-1);
-            else
-              r= tstr;
-            if (r == "less") r= "<";
-            else if (r == "gtr") r= ">";
-        }
-#ifdef Q_OS_MAC
-        if (mods & Qt::AltModifier) {
-          // Alt produces many symbols in Mac keyboards: []|{} etc.
-          if ((N(r) != 1 ||
-               ((int) (unsigned char) r[0]) < 32 ||
-               ((int) (unsigned char) r[0]) >= 128) &&
-              key >= 32 && key < 128 &&
-              ((mods & (Qt::MetaModifier + Qt::ControlModifier)) == 0)) {
-            if ((mods & Qt::ShiftModifier) == 0 && key >= 65 && key <= 90)
-              key += 32;
-            qtcomposemap (key)= r;
-            r= string ((char) key);
-          }
-          else mods &= ~Qt::AltModifier; //unset Alt
-        }
-#endif
-        mods &= ~Qt::ShiftModifier;
-      }
-    }
-    if (r == "") return;
-    if (mods & Qt::ShiftModifier) r= "S-" * r;
-    if (mods & Qt::AltModifier) r= "A-" * r;
-    //if (mods & Qt::KeypadModifier) r= "K-" * r;
-#ifdef Q_OS_MAC
-    if (mods & Qt::MetaModifier) r= "C-" * r;        // The "Control" key
-    if (mods & Qt::ControlModifier) r= "M-" * r;  // The "Command" key
-#else
-    if (mods & Qt::ControlModifier) r= "C-" * r;
-    if (mods & Qt::MetaModifier) r= "M-" * r;     // The "Windows" key
-#endif
-
-    if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "key press: " << r << LF;
-    the_gui->process_keypress (tm_widget(), r, texmacs_time());
+  QTMKeyboardEvent ke (tmapp()->keyboard(), *event);
+  string r = ke.texmacsKeyCombination();
+  if (r == "") {
+    if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "key press: unhandled key" << LF;
+    return;
   }
+  if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "key press: " << r << LF;
+  the_gui->process_keypress (tm_widget(), r, texmacs_time());
+
 }
 
 static unsigned int
@@ -456,7 +230,11 @@ mouse_state (QMouseEvent* event, bool flag) {
   Qt::KeyboardModifiers kstate= event->modifiers ();
   if (flag) bstate= bstate | tstate;
   if ((bstate & Qt::LeftButton     ) != 0) i += 1;
-  if ((bstate & Qt::MidButton      ) != 0) i += 2;
+#if QT_VERSION < 0x060000
+    if ((bstate & Qt::MidButton      ) != 0) i += 2;
+#else
+    if ((bstate & Qt::MiddleButton   ) != 0) i += 2;
+#endif
   if ((bstate & Qt::RightButton    ) != 0) i += 4;
   if ((bstate & Qt::XButton1       ) != 0) i += 8;
   if ((bstate & Qt::XButton2       ) != 0) i += 16;
@@ -529,7 +307,7 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     if (!done) {
       if (DEBUG_QT)
         debug_qt << "IM committing: " << commit_string.toUtf8().data() << LF;
-      if (preediting && get_preference ("speech", "off") == "off")
+      if (preediting || get_preference ("speech", "off") == "off")
         for (int i = 0; i < commit_string.size(); ++i)
           kbdEvent (0, Qt::NoModifier, commit_string[i]);
       else {
@@ -560,8 +338,12 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     // find selection in the preedit string
     int sel_start = 0;
     int sel_length = 0;
+#if QT_VERSION >= 0x060000
+    if (pos <  preedit_string.size()) {
+#else	
     if (pos <  preedit_string.count()) {
-      for (int i=0; i< attrs.count(); i++) 
+#endif
+      for (int i=0; i< attrs.count(); i++)
         if ((attrs[i].type == QInputMethodEvent::TextFormat) &&
             (attrs[i].start <= pos) &&
             (pos < attrs[i].start + attrs[i].length)) {
@@ -589,10 +371,20 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
 QVariant 
 QTMWidget::inputMethodQuery (Qt::InputMethodQuery query) const {
   switch (query) {
+#if QT_VERSION < 0x060000
     case Qt::ImMicroFocus : {
       const QPoint &topleft= cursor_pos - tm_widget()->backing_pos + surface()->geometry().topLeft();
       return QVariant (QRect (topleft, QSize (5, 5)));
     }
+#else
+    case Qt::ImEnabled : {
+      return QVariant (true);
+    }
+    case Qt::ImCursorRectangle : {
+      const QPoint &topleft= cursor_pos - tm_widget()->backing_pos + surface()->geometry().topLeft();
+      return QVariant (QRect (topleft, QSize (5, 5)));
+    }
+#endif // TODO : Correctly implement input methods
     default:
       return QWidget::inputMethodQuery (query);
   }
@@ -642,7 +434,11 @@ tablet_state (QTabletEvent* event, bool flag) {
   Qt::MouseButton  tstate= event->button ();
   if (flag) bstate= bstate | tstate;
   if ((bstate & Qt::LeftButton     ) != 0) i += 1;
+#if QT_VERSION < 0x060000
   if ((bstate & Qt::MidButton      ) != 0) i += 2;
+#else
+  if ((bstate & Qt::MiddleButton   ) != 0) i += 2;
+#endif
   if ((bstate & Qt::RightButton    ) != 0) i += 4;
   if ((bstate & Qt::XButton1       ) != 0) i += 8;
   if ((bstate & Qt::XButton2       ) != 0) i += 16;
@@ -651,7 +447,11 @@ tablet_state (QTabletEvent* event, bool flag) {
 
 void
 QTMWidget::tabletEvent (QTabletEvent* event) {
-  if (is_nil (tmwid)) return; 
+#if QT_VERSION >= 0x060000
+  // for testing purposes
+  // cout << "tablet name= " << from_qstring(event->pointingDevice ()->name ()) << "\n";
+#endif
+  if (is_nil (tmwid)) return;
   unsigned int mstate = tablet_state (event, true);
   string s= "move";
   if (event->button() != 0) {
@@ -659,9 +459,15 @@ QTMWidget::tabletEvent (QTabletEvent* event) {
     else s= "press-" * mouse_decode (mstate);
   }
   if ((mstate & 4) == 0 || s == "press-right") {
+#if QT_VERSION >= 0x060000
+    QPoint point = event->position().toPoint() + origin() - surface()->pos();
+    double x= point.x();
+    double y= point.y();
+#else
     QPoint point = event->pos() + origin() - surface()->pos();
     double x= point.x() + event->hiResGlobalX() - event->globalX();
     double y= point.y() + event->hiResGlobalY() - event->globalY();
+#endif
     coord2 pt= coord2 ((SI) (x * PIXEL), (SI) (-y * PIXEL));
     array<double> data;
     data << ((double) event->pressure())
@@ -700,6 +506,36 @@ QTMWidget::tabletEvent (QTabletEvent* event) {
 void
 QTMWidget::gestureEvent (QGestureEvent* event) {
   if (is_nil (tmwid)) return;
+
+#ifdef OS_ANDROID
+  static QTime lastPinchTime = QTime::currentTime();
+  static float totalScaleFactor = 1.0;
+  if (!get_current_editor()->inside_graphics ()) {
+    if (QGesture *pinch_gesture = event->gesture(Qt::PinchGesture)) {
+      
+      QPinchGesture *pinch= static_cast<QPinchGesture *> (pinch_gesture);
+      totalScaleFactor *= pinch->scaleFactor();
+
+      if (pinch->state() == Qt::GestureStarted) {
+        lastPinchTime = QTime::currentTime();
+        return;
+      }
+      
+      // Qt send too many pinch event, and do not let the scheme code the time
+      // to process the zoom-in event. This causes to freeze the interface temporarily.
+      // We accumulate the pinch event in a short time window to empty the event queue.
+      if (lastPinchTime.msecsTo(QTime::currentTime()) > 10
+          || pinch->state() == Qt::GestureFinished) {
+        call ("zoom-in", object(totalScaleFactor));
+        lastPinchTime = QTime::currentTime();
+        totalScaleFactor = 1.0;
+      }
+    
+      return;
+    }
+  }
+#endif
+
   string s= "gesture";
   array<double> data;
   QPointF hotspot;
@@ -801,6 +637,103 @@ QTMWidget::gestureEvent (QGestureEvent* event) {
  
 bool
 QTMWidget::event (QEvent* event) {
+#ifdef OS_ANDROID
+  if ((event->type() == QEvent::TouchBegin 
+      || event->type() == QEvent::TouchUpdate 
+      || event->type() == QEvent::TouchEnd)) {
+    cout << "Detected touch event" << LF;
+    QTouchEvent *touchEvent = static_cast<QTouchEvent *>(event);
+    if (ignoreNextTouchEvents) {
+      if (event->type() == QEvent::TouchEnd) {
+        cout << "The touch event has been ignored" << LF;
+        ignoreNextTouchEvents = false;
+      }
+      event->ignore();
+      return false;
+    }
+    if (touchEvent->touchPoints().size() > 1) {
+      cout << "More than one touch points, ignore the touch event" << LF;
+      event->ignore();
+      ignoreNextTouchEvents = true;
+      return false;
+    }
+  }
+
+  if (event->type() == QEvent::TouchBegin) {
+    cout << "Begin of the touch event" << LF;
+    hasMousePress = false;
+    QTouchEvent *touchEvent = static_cast<QTouchEvent *>(event);
+    if (touchEvent->touchPoints().size() > 0) {
+      firstTouchPoint = touchEvent->touchPoints().first();
+      haveFirstTouchPoint = true;
+    } else {
+      haveFirstTouchPoint = false;
+    }
+    firstTouchTime = QTime::currentTime();
+    return true;
+  }
+
+  if (event->type() == QEvent::TouchUpdate 
+      && firstTouchTime.msecsTo(QTime::currentTime()) < 200) {
+    cout << "Within 200ms of the touch event" << LF;
+    if (QScroller::scroller (this)->state() == QScroller::Dragging) {
+      cout << "QScroller::State is Dragging, ignore the touch event" << LF;
+      ignoreNextTouchEvents = true;
+    }
+    event->ignore();
+    return false;
+  }
+
+  if ((event->type() == QEvent::TouchUpdate || event->type() == QEvent::TouchEnd)
+      && !hasMousePress) {
+    cout << "Simulate mouse press event" << LF;
+    QTouchEvent *touchEvent = static_cast<QTouchEvent *>(event);
+    if (haveFirstTouchPoint) {
+      if (firstTouchPoint.state() == Qt::TouchPointPressed) {
+        QPoint point = firstTouchPoint.pos().toPoint() + origin();
+        coord2 pt = from_qpoint(point);
+        unsigned int mstate = 1;
+        string s = "press-left";
+        the_gui->process_mouse(tm_widget(), s, pt.x1, pt.x2, mstate, texmacs_time());
+        hasMousePress = true;
+      }
+    }
+  }
+
+  if (event->type() == QEvent::TouchUpdate) {
+    QTouchEvent *touchEvent = static_cast<QTouchEvent *>(event);
+    QList<QTouchEvent::TouchPoint> touchPoints = touchEvent->touchPoints();
+    if (touchPoints.size() > 0) {
+      QTouchEvent::TouchPoint touchPoint = touchPoints.first();
+      QPoint point = touchPoint.pos().toPoint() + origin();
+      coord2 pt = from_qpoint(point);
+      unsigned int mstate = 1;
+      string s = "move";
+      the_gui->process_mouse(tm_widget(), s, pt.x1, pt.x2, mstate, texmacs_time());
+    }
+    QScroller::scroller (this)->stop ();
+    event->accept();
+    return true;
+  }
+
+  if (event->type() == QEvent::TouchEnd) {
+    cout << "Touch end event" << LF;
+    QTouchEvent *touchEvent = static_cast<QTouchEvent *>(event);
+    QList<QTouchEvent::TouchPoint> touchPoints = touchEvent->touchPoints();
+    if (touchPoints.size() > 0) {
+      QTouchEvent::TouchPoint touchPoint = touchPoints.first();
+      QPoint point = touchPoint.pos().toPoint() + origin();
+      coord2 pt = from_qpoint(point);
+      unsigned int mstate = 1;
+      string s = "release-left";
+      the_gui->process_mouse(tm_widget(), s, pt.x1, pt.x2, mstate, texmacs_time());
+    }
+    showKeyboard();
+    event->accept();
+    return true;
+  }
+#endif
+
     // Catch Keypresses to avoid default handling of (Shift+)Tab keys
   if (event->type() == QEvent::KeyPress) {
     QKeyEvent *ke = static_cast<QKeyEvent*> (event);
@@ -828,6 +761,13 @@ QTMWidget::focusInEvent (QFocusEvent * event) {
     the_gui->process_keyboard_focus (tm_widget(), true, texmacs_time());
   }
   QTMScrollView::focusInEvent (event);
+  // part 2/2 of the fix for bug 43373.
+  if (!isEmbedded ()) {
+    if (!isActiveWindow()) activateWindow();
+    if (isActiveWindow() && !hasFocus()) setFocus (Qt::OtherFocusReason);
+    //=> this will send us back here...
+    //This redundancy is weird but definitely needed to properly get focus with Qt >= 5.15. Qt bug?
+  }
 }
 
 void
@@ -870,41 +810,65 @@ hashmap<int, tree> payloads;
 void
 QTMWidget::dropEvent (QDropEvent *event) {
   if (is_nil (tmwid)) return;
-  
+
+#if QT_VERSION >= 0x060000
+  QPoint point = event->position ().toPoint () + origin ();
+#else
   QPoint point = event->pos () + origin ();
+#endif
   coord2 pt= from_qpoint (point);
 
   tree doc (CONCAT);
   const QMimeData *md= event->mimeData ();
   QByteArray buf;
 
+  if (DEBUG_QT) debug_qt << "DropEvent formats :" << from_qstring(md->formats().join(",")) << LF;
+
   if (md->hasUrls ()) {
     QList<QUrl> l= md->urls ();
     for (int i=0; i<l.size (); i++) {
-      string name;
+
+      string url = from_qstring(l[i].toString ());
+      if (DEBUG_QT) debug_qt << "DropEvent URL [" << i << "] : " << url << LF;
+
+      if (l[i].isLocalFile()) {
+        string name;
 #ifdef OS_MACOS
-      name= from_qstring (fromNSUrl (l[i]));
+        name= from_qstring (fromNSUrl (l[i]));
 #else
-      name= from_qstring (l[i].toLocalFile ());
+        name= from_qstring (l[i].toLocalFile ());
 #endif
-      string orig_name= name;
+        string orig_name= name;
 #ifdef OS_MINGW
-      if (N(name) >=2 && is_alpha (name[0]) && name[1] == ':')
-        name= "/" * locase_all (name (0, 1)) * name (2, N(name));
+        if (N(name) >=2 && is_alpha (name[0]) && name[1] == ':')
+          name= "/" * locase_all (name (0, 1)) * name (2, N(name));
 #endif
-      string extension = suffix (name);
-      if ((extension == "eps") || (extension == "ps")   ||
+        string extension = suffix (name);
+        if ((extension == "eps") || (extension == "ps")   ||
 #if (QT_VERSION >= 0x050000)
-          (extension == "svg") ||
+            (extension == "svg") ||
 #endif
-          (extension == "pdf") || (extension == "png")  ||
-          (extension == "jpg") || (extension == "jpeg")) {
-        string w, h;
-        qt_pretty_image_size (url_system (orig_name), w, h);
-        tree im (IMAGE, name, w, h, "", "");
-        doc << im;
+            (extension == "pdf") || (extension == "png")  ||
+            (extension == "jpg") || (extension == "jpeg")) {
+          string w, h;
+          qt_pretty_image_size (url_system (orig_name), w, h);
+          tree im (IMAGE, name, w, h, "", "");
+          doc << im;
+        } else {
+          doc << name;
+        }
       } else {
-        doc << name;
+        // not a local file, drop an slink to the document
+        string label= url;
+        if (md->hasText ()) {
+          buf= md->text ().toUtf8 ().split('\n')[0];
+          label= string (buf.constData (), buf.size ());
+        }
+        tree ln (HLINK, label, url);
+        doc << ln;
+        //FIXME: this is still not very nice as clicking on HLINK only works for a limited group
+        //of schemas (http, https, ftp). For unrecognized schemas one would like to use the default OS behaviour
+        //(e.g. the "message:" schema identify local email messages)
       }
     }
   } else if (md->hasImage ()) {
@@ -959,7 +923,11 @@ wheel_state (QWheelEvent* event) {
   Qt::MouseButtons bstate= event->buttons ();
   Qt::KeyboardModifiers kstate= event->modifiers ();
   if ((bstate & Qt::LeftButton     ) != 0) i += 1;
+#if QT_VERSION < 0x060000
   if ((bstate & Qt::MidButton      ) != 0) i += 2;
+#else
+  if ((bstate & Qt::MiddleButton   ) != 0) i += 2;
+#endif
   if ((bstate & Qt::RightButton    ) != 0) i += 4;
   if ((bstate & Qt::XButton1       ) != 0) i += 8;
   if ((bstate & Qt::XButton2       ) != 0) i += 16;
@@ -985,7 +953,7 @@ QTMWidget::wheelEvent(QWheelEvent *event) {
   if (as_bool (call ("wheel-capture?"))) {
 #if (QT_VERSION >= 0x060000)
     QPointF pos  = event->position();
-    QPoint  point= QPointF (pos.x(), pos.y()) + origin();
+    QPoint  point= QPointF (pos.x(), pos.y()).toPoint () + origin();
 #else
     QPoint  point= event->pos() + origin();
 #endif
@@ -1004,10 +972,48 @@ QTMWidget::wheelEvent(QWheelEvent *event) {
                               mstate, texmacs_time (), data);
   }
   else if (QApplication::keyboardModifiers() == Qt::ControlModifier) {
-    if (event->delta() > 0)
-      call ("zoom-in", object (sqrt (sqrt (2.0))));
-    else
-      call ("zoom-out", object (sqrt (sqrt (2.0))));
+#if QT_VERSION >= 0x060000
+    QPoint numPixels = event->pixelDelta();
+    QPoint numDegrees = event->angleDelta() / 8;
+    
+    // compute the zoom factor from numPixels or numDegrees
+    double zoomFactor = 0.0; (void) zoomFactor;
+    if (!numPixels.isNull()) {
+      if (numPixels.y() > 0) {
+        call ("zoom-in", object (sqrt (sqrt (sqrt (sqrt (numPixels.y()))))));
+      } else {
+        call ("zoom-out", object (sqrt (sqrt (sqrt (sqrt (-numPixels.y()))))));
+      }
+    } else if (!numDegrees.isNull()) {
+      if (numDegrees.y() > 0) {
+        call ("zoom-in", object (sqrt (sqrt (sqrt (sqrt (numDegrees.y()))))));
+      } else {
+        call ("zoom-out", object (sqrt (sqrt (sqrt (sqrt (-numDegrees.y()))))));
+      }
+    }
+#else
+    if (event->delta() > 0) {
+      //double x= exp (((double) event->delta ()) / 500.0);
+      //call ("zoom-in", object (x));
+      call ("zoom-in", object (sqrt (sqrt (sqrt (sqrt (2.0))))));
+    }
+    else {
+      //double x= exp (-((double) event->delta ()) / 500.0);
+      //call ("zoom-out", object (x));
+      call ("zoom-out", object (sqrt (sqrt (sqrt (sqrt (2.0))))));
+    }
+#endif
   }
   else QAbstractScrollArea::wheelEvent (event);
 }
+
+void QTMWidget::showEvent (QShowEvent *event) {
+  (void) event;
+  the_gui->force_update();
+}
+
+#if defined(OS_ANDROID) && QT_VERSION >= 0x060000
+void QTMWidget::showKeyboard() {
+  qApp->inputMethod()->show();
+}
+#endif

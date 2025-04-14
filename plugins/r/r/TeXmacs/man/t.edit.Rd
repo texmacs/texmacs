@@ -1,8 +1,8 @@
 \name{t.edit}
 \alias{t.edit}
-\title{Edit an R object inside TeXmacs, with nice formating.}
+\title{Edit an R object inside TeXmacs, with nice formatting.}
 \description{Before TeXmacs had syntax highlighting for R, this function was a way to edit 
-an R object formated nicely. 
+an R object formatted nicely. 
 The object is inserted into the input field of TeXmacs, so that it is easy to edit.}
 \usage{\method{t}{edit}(x)}
 \arguments{

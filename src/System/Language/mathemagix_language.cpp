@@ -101,6 +101,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("alias")= c;
   t ("and")= c;
   t ("assume")= d;
+  t ("assuming")= d;
   t ("autofold")= d;
   t ("automap")= c;
   t ("begin")= c;
@@ -189,6 +190,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("outline")= d;
   t ("packed")= c;
   t ("parallel")= c;
+  t ("parfor")= c;
   t ("pattern")= c;
   t ("penalty")= c;
   t ("postfix")= "postfix";
@@ -205,6 +207,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("recurse")= c;
   t ("rem")= c ;
   t ("require")= c;
+  t ("restrict")= c;
   t ("return")= c ;
   t ("sequel")= c;
   t ("spawn")= c;

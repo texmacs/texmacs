@@ -16,6 +16,7 @@
 #include "QTMWindow.hpp"
 #include "QTMGuiHelper.hpp"
 #include "QTMMenuHelper.hpp"
+#include "QTMApplication.hpp"
 
 #include "message.hpp"
 #include "analyze.hpp"
@@ -60,9 +61,15 @@ qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, string name,
 
   if (tm_style_sheet == "") {
     QPalette pal;
-    QColor winbg= pal.color (QPalette::Background);
+#if QT_VERSION >= 0x060000
+    QColor winbg = pal.color (QPalette::Window);
+    if (winbg.red() + winbg.green() + winbg.blue () < 255)
+      pal.setColor (QPalette::Window, QColor (240, 240, 240));
+#else
+    QColor winbg = pal.color (QPalette::Background);
     if (winbg.red() + winbg.green() + winbg.blue () < 255)
       pal.setColor (QPalette::Background, QColor (240, 240, 240));
+#endif
     _wid->setPalette (pal);
   }
 }
@@ -72,13 +79,12 @@ qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, string name,
  */
 qt_window_widget_rep::~qt_window_widget_rep ()
 {
+  qwid->setProperty ("texmacs_window_widget", QVariant());
   if (!fake) nr_windows--;
   if (DEBUG_QT)
     debug_qt << "Deleting qt_window_widget " << id << "\n";
-  //if (qwid) qwid->deleteLater(); // this caused bug 61844
   if (qwid) {
-    notify_window_destroy (get_nickname ());
-    delete qwid;
+    qwid->deleteLater(); // this caused bug 61884
   }
 }
 
@@ -165,16 +171,24 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       check_type<bool> (val, s);
       bool flag = open_box<bool> (val);
       if (qwid) {
-        if (flag) {
-          //QWidget* master = QApplication::activeWindow ();
-          qwid->show();
-          //qwid->activateWindow();
-          //WEIRD: in Ubuntu uncommenting the above line causes the main window 
-          //to be opened in the background.
-          qwid->raise();
-          //QApplication::setActiveWindow (master);
+        if (!tmapp()->useTabWindow()) {
+          if (flag) {
+            //QWidget* master = QApplication::activeWindow ();
+            qwid->show();
+            //qwid->activateWindow();
+            //WEIRD: in Ubuntu uncommenting the above line causes the main window 
+            //to be opened in the background.
+            qwid->raise();
+            //QApplication::setActiveWindow (master);
+          }
+          else qwid->hide();
+        } else {
+          if (flag) {
+            tmapp()->mainTabWindow().showWidget(qwid);
+          } else {
+            tmapp()->mainTabWindow().removeWidget(qwid);
+          }
         }
-        else qwid->hide();
       }
     }
       break;
@@ -194,7 +208,11 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       check_type<string> (val, s);
       string name = open_box<string> (val);
         // The [*] is for QWidget::setWindowModified()
-      if (qwid) qwid->setWindowTitle (to_qstring (name * "[*]"));
+      if (!tmapp()->useTabWindow()) {
+        if (qwid) qwid->setWindowTitle (to_qstring (name * "[*]"));
+      } else {
+        if (qwid) tmapp()->mainTabWindow().tabTitleChanged (qwid, to_qstring (name));
+      }
     }
       break;
     case SLOT_MODIFIED:
@@ -288,7 +306,11 @@ qt_popup_widget_rep::qt_popup_widget_rep (widget wid, command _quit)
   if (qwid->metaObject() ->
       indexOfSignal (QMetaObject::normalizedSignature ("closed()").constData ()) != -1) {
   QTMCommand* qtmcmd = new QTMCommand(qwid, quit);
-  QObject::connect(qwid, SIGNAL (closed()), qtmcmd, SLOT (apply()));
+#if QT_VERSION < 0x060000
+  QObject::connect(qobject_cast<QTMPopupWidget*>(qwid), SIGNAL (closed()), qtmcmd, SLOT (apply()));
+#else
+  QObject::connect(qobject_cast<QTMPopupWidget*>(qwid), &QTMPopupWidget::closed, qtmcmd, &QTMCommand::apply);
+#endif
   }
 }
 

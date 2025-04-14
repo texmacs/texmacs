@@ -31,7 +31,7 @@
     \ \ \ \ $TEXMACS_PATH/examples/plugins/minimal
   </verbatim>
 
-  in <verbatim|$TEXMACS_PATH/progs> o in <verbatim|$TEXMACS_HOME_PATH/progs>.
+  in <verbatim|$TEXMACS_PATH/plugins> o in <verbatim|$TEXMACS_HOME_PATH/plugins>.
   Quindi si esegue <verbatim|Makefile> utilizzando
 
   <\verbatim>

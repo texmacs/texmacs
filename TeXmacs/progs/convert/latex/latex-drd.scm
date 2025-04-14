@@ -91,6 +91,9 @@
   (begin-split "amsmath")
 
   (text "amsmath")
+  (cfrac "amsmath")
+  (dfrac "amsmath")
+  (tfrac "amsmath")
   (binom "amsmath")
   (dbinom "amsmath")
   (tbinom "amsmath")
@@ -107,6 +110,8 @@
   (underleftarrow "amsmath")
   (underrightarrow "amsmath")
   (underleftrightarrow "amsmath")
+
+  (sfrac "xfrac")
 
   (underaccent "accents")
   (ring "accents")

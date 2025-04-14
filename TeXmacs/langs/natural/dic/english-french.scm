@@ -11,6 +11,7 @@
 ("abbreviated authors" "noms d'auteurs abrégés")
 ("abbreviation" "abréviation")
 ("about" "à propos de")
+("apropos" "à propos de")
 ("about menu" "à propos de")
 ("above" "en haut")
 ("abbreviated authors" "auteurs abrégés")

@@ -317,7 +317,7 @@ public:
 	// Low level setting of font. for the high level version, see below
 	void TfLow(const std::string& inFontName,double inFontSize); 
 
-	// first version of Tj writes the string in literal string paranthesis, 
+	// first version of Tj writes the string in literal string parenthesis,
 	// second version of Tj writes the string in hex string angle brackets
 	void TjLow(const std::string& inText);
 	void TjHexLow(const std::string& inText); 

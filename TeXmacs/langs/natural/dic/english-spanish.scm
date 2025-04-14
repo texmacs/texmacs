@@ -8,6 +8,7 @@
 ("TeX" "TeX")
 ("abbreviation" "abreviatura")
 ("about" "acerca de")
+("apropos" "acerca de")
 ("about menu" "menú acerca de")
 ("above" "encima")
 ("abstract" "resumen")

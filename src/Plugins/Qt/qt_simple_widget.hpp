@@ -42,8 +42,10 @@ class qt_simple_widget_rep: public qt_widget_rep {
     slot_id id;
     blackbox val;
     t_slot_entry() : seq(-1), id (slot_id__LAST), val (blackbox()) { }
+#if defined (__cplusplus) && __cplusplus < 201703L
     t_slot_entry(const t_slot_entry& other)
     : seq (other.seq), id (other.id), val (other.val) { };
+#endif
     bool operator< (const t_slot_entry& b) const { return this->seq < b.seq; }
   } t_slot_entry;
   
@@ -57,6 +59,7 @@ public:
   ~qt_simple_widget_rep ();
   
   virtual bool is_editor_widget ();
+  virtual bool is_embedded_widget ();
   virtual void handle_get_size_hint (SI& w, SI& h);
   virtual void handle_notify_resize (SI w, SI h);
   virtual void handle_keypress (string key, time_t t);
@@ -89,11 +92,20 @@ public:
 
   static void repaint_all (); // called by qt_gui_rep::update()
 
+  void reset_all() {
+    backing_pos = QPoint(); // reset the origin
+    *backingPixmap = QPixmap(); // reset the backing store
+    invalidate_all(); // invalidate the whole canvas
+  }
+
 protected:
   
   static hashset<pointer> all_widgets;
   rectangles   invalid_regions;
   QPixmap*     backingPixmap;  
+#if QT_VERSION >= 0x060000
+  qreal oldDpr = 0;
+#endif
   QPoint       backing_pos;
 
 

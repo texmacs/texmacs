@@ -21,13 +21,13 @@
   (:name "Mathemagix source code")
   (:suffix "mmx" "mmh"))
 
-(define (texmacs->mathemagix x . opts)
+(tm-define (texmacs->mathemagix x . opts)
   (texmacs->verbatim x (acons "texmacs->verbatim:encoding" "SourceCode" '())))
 
-(define (mathemagix->texmacs x . opts)
+(tm-define (mathemagix->texmacs x . opts)
   (code->texmacs x))
 
-(define (mathemagix-snippet->texmacs x . opts)
+(tm-define (mathemagix-snippet->texmacs x . opts)
   (code-snippet->texmacs x))
 
 (converter texmacs-tree mathemagix-document

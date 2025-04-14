@@ -27,6 +27,7 @@ void   init_texmacs ();
 void   init_plugins ();
 void   setup_texmacs ();
 void   release_boot_lock ();
+bool   test_texmacs_path (url path, bool set_environment = true);
 
 scheme_tree plugin_list ();
 

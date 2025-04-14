@@ -12,6 +12,7 @@
 ("abbreviated authors" "autori abbreviati")
 ("abbreviation" "abbreviazione")
 ("about" "informazioni su TeXmacs")
+("apropos" "informazioni su TeXmacs")
 ("about menu" "menu informazioni")
 ("above" "sopra")
 ("abstract" "riassunto")

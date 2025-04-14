@@ -7,6 +7,7 @@
 ("a modifier" "модификатор a")
 ("abbreviation" "сокращение")
 ("about" "о")
+("apropos" "о")
 ("about menu" "меню о")
 ("above" "сверху")
 ("abstract" "аннотация")

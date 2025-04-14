@@ -10,6 +10,7 @@
 ("a modifier" "A Modifikator")
 ("abbreviation" "Abkürzung")
 ("about" "über TeXmacs")
+("apropos" "über TeXmacs")
 ("about menu" "über Menü finden")
 ("above" "oben")
 ("abstract" "Zusammenfassung")

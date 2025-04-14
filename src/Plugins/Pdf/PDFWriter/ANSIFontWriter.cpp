@@ -90,7 +90,7 @@ EStatusCode ANSIFontWriter::WriteFont(	FreeTypeFaceWrapper& inFontInfo,
 
 		/*
 			as for widths.
-			i have to create a list/array of the characters ordered from lowest encoded value to highest, and fill it up with the charachters mapped
+			i have to create a list/array of the characters ordered from lowest encoded value to highest, and fill it up with the characters mapped
 			to glyphs. this will allow me to later write the highest and lowest char codes, as well as loop the list and 
 			write the widths.
 		*/
@@ -144,7 +144,7 @@ static bool sUShortSort(const UIntAndGlyphEncodingInfo& inLeft, const UIntAndGly
 
 void ANSIFontWriter::CalculateCharacterEncodingArray()
 {
-	// first we need to sort the fonts charachters by character code
+	// first we need to sort the fonts characters by character code
 	UIntToGlyphEncodingInfoMap::iterator it = mFontOccurrence->mGlyphIDToEncodedChar.begin();
 
 	for(; it != mFontOccurrence->mGlyphIDToEncodedChar.end();++it)
@@ -193,7 +193,7 @@ void ANSIFontWriter::WriteWidths(DictionaryContext* inFontContext)
 
 void ANSIFontWriter::CalculateDifferences()
 {
-	// go over the encoded charachters. find differences from WinAnsiEncoding.
+	// go over the encoded characters. find differences from WinAnsiEncoding.
 	// whenever glyph name is different, add to differences array
 	WinAnsiEncoding winAnsiEncoding;
 

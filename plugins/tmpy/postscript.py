@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 ###############################################################################
 ##
 ## MODULE      : postscript.py
@@ -11,6 +11,7 @@
 
 import os
 import platform
+import tempfile
 from io import BytesIO
 from io import open
 from .protocol import *
@@ -97,11 +98,16 @@ def ps_out (out):
     return PSOutDummy(texmacs_escape(data).decode())
 
 pdf_out_tmp_file = "pdf_out_" + str(os.getpid()) + ".pdf"
-if (platform.system() == "Windows"):
-    pdf_out_tmp_file = os.getenv("TEXMACS_HOME_PATH") + "\\system\\tmp\\" + pdf_out_tmp_file
-else:
-    pdf_out_tmp_file = os.getenv("TEXMACS_HOME_PATH") + "/system/tmp/" +  pdf_out_tmp_file
 
+tmpy_home_path= os.environ.get("TEXMACS_HOME_PATH")
+if tmpy_home_path is None:
+    tmpy_home_path= tempfile.gettempdir()
+    pdf_out_tmp_file = os.path.join (tmpy_home_path, pdf_out_tmp_file)
+else:
+    if (platform.system() == "Windows"):
+        pdf_out_tmp_file = tmpy_home_path + "\\system\\tmp\\" + pdf_out_tmp_file
+    else:
+        pdf_out_tmp_file = tmpy_home_path + "/system/tmp/" +  pdf_out_tmp_file
 
 def pdf_out (out):
     """Outputs PDF within TeXmacs.

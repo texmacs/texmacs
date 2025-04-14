@@ -291,8 +291,25 @@ os_mingw () {
 }
 
 bool
+os_mingw64 () {
+#ifdef OS_MINGW64
+  return true;
+#else
+  return false;
+#endif
+}
+
+bool
 os_macos () {
 #if defined (OS_MACOS)
+  return true;
+#else
+  return false;
+#endif
+}
+
+bool os_android () {
+#if defined (OS_ANDROID)
   return true;
 #else
   return false;

@@ -136,6 +136,7 @@ box control_box (path ip, tree t, font fn);
 box control_box (path ip, box b, font fn);
 box control_box (path ip, lazy lz, font fn);
 
+box concat_box (path ip, array<box> bs);
 box concat_box (path ip, array<box> bs, array<SI> spc, bool indent= false);
 box phrase_box (path ip, array<box> bs, array<SI> spc);
 box stack_box (path ip, array<box> bs, array<SI> spc);
@@ -198,6 +199,7 @@ box macro_box (path ip, box b, font big_fn= font (), int btype= STD_BOX);
 box macro_delimiter_box (path ip, box b, font fn, SI dy);
 box tag_box (path ip, path tip, box b, tree keys);
 box note_box (path ip, box b, box note, SI nx, SI ny);
+box relay_box (path ip, box b, array<tree> args);
 
 box anim_compose_box (path ip, array<box> b, player pl);
 box anim_repeat_box (path ip, box b, player pl);
