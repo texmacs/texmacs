@@ -1,0 +1,275 @@
+version 0.0 03/14/2002
+
+# Skeleton for Greek phonetic equivs
+#
+# 03/14/2002 Evripidis Papakostas <evris@source.gr>
+#
+# *******************************************************
+# Evripidis Papakostas phonetic rules for Greek
+# strict version
+# the following is a somehow strict phonetic ruleset
+# but Greek is completely phonetic as there are
+# rules for pronnouncing with unique way anything 
+# that is written
+# and it does not narrow suggestions too much 
+# *******************************************************
+
+# all the following double letters are pronounced as one
+ÂÂ-                        _
+Â                          Â
+ÃÃ                         ÃÊ
+Ã                          Ã
+ÄÄ-                        _
+Ä                          Ä
+ÆÆ-                        _
+Æ                          Æ
+ÈÈ-                        _
+È                          È
+ÊÊ-                        _
+ÊÓ                         Î
+Ê                          Ê
+ËË-                        _
+Ë                          Ë
+ÌÌ-                        _
+Ì                          Ì
+ÍÍ-                        _
+Í                          Í
+ÐÐ-                        _
+ÐÓ                         Ø
+Ð                          Ð
+ÑÑ-                        _
+Ñ                          Ñ
+ÓÓ-                        _
+Ó                          Ó
+ÔÔ-                        _
+Ô                          Ô
+ÖÖ-                        _
+Ö                          Ö
+××-                        _ 
+×                          ×
+
+# alpha + (ypsilon or ypsilon tonos) becomes alpha + beta
+Á¾<			   ÁÕ
+ÁÕÍÔ--                     ÁÂ
+ÁÕÃÊ--                     ÁÂ
+ÁÕÔÆ--                     ÁÂ
+ÁÕ(ÃÄÆËÌÍÑ)-               ÁÂ
+ÁÕÂ                        ÁÂ
+ÁÕ(ÁÅÇÉÏÙÕ¶¸¹º¼¿¾)-        ÁÂ
+
+# alpha + (ypsilon or ypsilon tonos) becomes alpha + phi
+ÁÕÖ                        ÁÖ
+ÁÕÔÓ--                     ÁÖ
+ÁÕ(ÈÊÐÓÔ×)-		   ÁÖ
+ÁÕÎ-                       ÁÖ
+ÁÕØ-                       ÁÖ
+
+# alpha + (iota or iota tonos) becomes epsilon
+Á(Éº)                      Å
+
+# alpha is alpha
+Á                          Á
+
+# epsilon + (ypsilon or ypsilon tonos) becomes epsilon + vita
+Å¾<			   Õ
+ÅÕÍÔ--                     ÅÂ
+ÅÕÃÊ--                     ÅÂ
+ÅÕÔÆ--                     ÅÂ
+ÅÕ(ÃÄÆËÌÍÑ)-               ÅÂ
+ÅÕÂ                        ÅÂ
+ÅÕ(ÁÅÇÉÏÙÕ¶¸¹º¼¿¾)-        ÅÂ
+
+# epsilon + (ypsilon or ypsilon tonos) becomes epsilon + phi
+ÅÕÖ                        ÅÖ
+ÅÕÔÓ--
+ÅÕ(ÈÊÐÓÔ×)-		   ÅÖ
+ÅÕÎ-                       ÅÖ
+ÅÕØ-                       ÅÖ
+
+# epsilon + (iota or iota tonos) becomes iota
+Å(Éº)                      É
+
+# epsilon is epsilon
+Å                          Å
+
+
+# omikron + (iota or iota tonos) becomes iota
+Ï(Éº)                      É
+
+# omikron + (ypsilon or ypsilon tonos) becomes u
+Ï(Õ¾)                      ÏÕ
+
+# omikron is omikron
+Ï                          Ï
+
+# wmega becomes omikron
+Ù                          Ï
+
+# ita becomes iota
+Ç                          É
+
+# ypsilon + iota becomes iota
+ÕÉ                         É
+
+# ypsilon becomes iota
+Õ                          É
+
+# iota is iota
+É                          É
+
+# double ksi becomes ksi 
+ÎÎ-                         _
+
+# ksi + sigma becomes ksi 
+ÎÓ		           Î
+
+# ksi is ksi
+Î                          Î
+
+# psi + psi becomes psi
+ØØ-                        _
+
+# psi + sigma becomes psi
+ØÓ                         Ø
+
+# psi is psi
+Ø                          Ø
+
+
+# iota dialitika becomes iota 
+Ú                          É
+
+# ypsilon dialitika becomes I
+Û                          É
+
+# alpha tonos becomes alpha
+¶                          Á
+
+# omikron tonos becomes omikron
+¼                          Ï
+
+# iota tonos becomes iota
+º                          É
+
+# epsilon tonos becomes epsilon
+¸                          Å
+
+# ypsilon tonos becomes ypsilon
+¾                          Õ
+
+# wmega tonos becomes omikron
+¿                          Ï
+
+# ita tonos becomes iota
+¹                          É
+
+# *******************************************************
+# Evripidis Papakostas phonetic rules for Greek
+# loose version
+# the following is a somehow loose phonetic ruleset
+# all vowels have been extinguished
+# it brings too many suggestions (personal opinion)
+# without really finding any good words that
+# the strict ruleset couldn't find
+# comment all of the above and uncomment the following
+# if you don't believe me...
+# *******************************************************
+#   ÂÂ-                       _
+#   Â                         Â
+#   ÃÃ                        ÃÊ
+#   Ã                         Ã
+#   ÄÄ-                       _
+#   Ä                         Ä
+#   ÆÆ-                       _
+#   Æ                         Æ
+#   ÈÈ-                       _
+#   È                         È
+#   ÊÊ-                       _
+#   ÊÓ                        Î
+#   Ê                         Ê
+#   ËË-                       _
+#   Ë                         Ë
+#   ÌÌ-                       _
+#   Ì                         Ì
+#   ÍÍ-                       _
+#   Í                         Í
+#   ÐÐ-                       _
+#   ÐÓ                        Ø
+#   Ð                         Ð
+#   ÑÑ-                       _
+#   Ñ                         Ñ
+#   ÓÓ-                       _
+#   Ó                         Ó
+#   ÔÔ-                       _
+#   Ô                         Ô
+#   ÖÖ-                       _
+#   Ö                         Ö
+#   ××-                       _
+#   ×                         ×  
+#   
+#   
+#   ¾<                        Õ
+#   
+#   ÁÕÍÔ                      ÂÍÔ
+#   ÁÕÃÊ                      ÂÃÊ
+#   ÁÕÔÆ                      ÂÔÆ
+#   ÁÕÃ                       ÂÃ
+#   ÁÕÄ                       ÂÄ
+#   ÁÕÆ                       ÂÆ
+#   ÁÕË                       ÂË
+#   ÁÕÌ                       ÂÌ
+#   ÁÕÍ                       ÂÍ
+#   ÁÕÑ                       ÂÑ
+#   ÁÕÂ                       Â
+#   ÁÕ(ÁÅÇÉÏÙÕ¶¸¹º¼¿¾)        Â
+#   
+#   
+#   ÁÕÖ                       Ö
+#   ÁÕÔÓ                      ÖÔÓ
+#   ÁÕÈ                       ÖÈ
+#   ÁÕÊ                       ÖÊ
+#   ÁÕÐ                       ÖÐ
+#   ÁÕÓ                       ÖÓ
+#   ÁÕÔ                       ÖÔ
+#   Á×                        Ö×
+#   ÁÕÎ                       ÖÎ
+#   ÁÕØ                       ÖØ
+#   
+#   Å¾<                       Õ
+#   ÅÕÍÔ                      ÂÍÔ
+#   ÅÕÃÊ                      ÂÃÊ
+#   ÅÕÔÆ                      ÂÔÆ
+#   ÅÕÃ                       ÂÃ
+#   ÅÕÄ                       ÂÄ
+#   ÅÕÆ                       ÂÆ
+#   ÅÕË                       ÂË
+#   ÅÕÌ                       ÂÌ
+#   ÅÕÍ                       ÂÍ
+#   ÅÕÑ                       ÂÑ
+#   ÅÕÂ                       Â
+#   ÅÕ(ÁÅÇÉÏÙÕ¶¸¹º¼¿¾)        Â
+#   
+#   
+#   
+#   ÅÕÖ                       Ö
+#   ÅÕÔÓ                      ÖÔÓ
+#   ÅÕÈ                       ÖÈ
+#   ÅÕÊ                       ÖÊ
+#   ÅÕÐ                       ÖÐ
+#   ÅÕÓ                       ÖÓ
+#   ÅÕÔ                       ÖÔ
+#   ÅÕ×                       Ö×
+#   ÅÕÎ                       ÖÎ
+#   ÅÕØ                       ÖØ 
+#   
+#   ÎÎ-                       _
+#   ÎÓ                        Î
+#   Î                         Î
+#   ØØ-                       _
+#   ØÓ                        Ø
+#   Ø                         Ø
+
+
+# finally if you feel like being much stricter you can go to the
+# greek.dat file and comment out the soundslike line
+# This will disable phonetic rulss completely

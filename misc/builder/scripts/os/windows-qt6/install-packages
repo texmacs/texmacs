@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -e
+
+# Detect MSYS2 environment prefix
+case "$MSYSTEM" in
+  MINGW64) prefix="mingw-w64-x86_64" ;;
+  MINGW32) prefix="mingw-w64-i686" ;;
+  UCRT64)  prefix="mingw-w64-ucrt-x86_64" ;;
+  CLANGARM64) prefix="mingw-w64-clang-aarch64" ;;
+  *) echo "Unknown MSYS2 environment: $MSYSTEM" && exit 1 ;;
+esac
+
+# List of package suffixes
+pkgs=(
+  clang
+  clang-analyzer
+  clang-libs
+  clang-tools-extra
+  cmake
+  compiler-rt
+  crt-git
+  headers-git
+  libc++
+  libmangle-git
+  libunwind
+  libwinpthread-git
+  lld
+  lldb
+  llvm
+  llvm-libs
+  llvm-openmp
+  make
+  pkgconf
+  tools-git
+  winpthreads-git
+  winstorecompat-git
+)
+
+# Install packages if not installed
+for pkg in autoconf-wrapper git rsync subversion texinfo unzip; do
+  echo "Installing $pkg..."
+  pacman -Qi "$pkg" &>/dev/null || pacman -S --noconfirm "$pkg"
+done
+
+for suffix in "${pkgs[@]}"; do
+  full_pkg="${prefix}-${suffix}"
+    echo "Installing $full_pkg..."
+  pacman -Qi "$full_pkg" &>/dev/null || pacman -S --noconfirm "$full_pkg"
+done

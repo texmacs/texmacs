@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+set -e
+
+SCRIPT=$(realpath "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+OSPATH=$(dirname "$SCRIPT")/os
+
+# Detect the option --os=???
+os=$(echo $* | grep -o -- '--os=[^ ]*' | cut -d= -f2)
+if [ -z $os ]; then
+    if [ "$OSTYPE" = "msys" ] || [ "$OSTYPE" = "cygwin" ]; then
+        os=windows-qt6
+    else
+        echo "Option --os=??? is required."
+        echo ""
+        echo "Available os are: "
+        ls $SCRIPTPATH
+        exit 1
+    fi
+fi
+
+# Check that scripts/$os/Makefile exists
+if [ ! -f $OSPATH/$os/Makefile ]; then
+    echo "$OSPATH/$os/Makefile does not exist."
+    exit 1
+fi
+
+# Check that scripts/$os/set-devel-paths exists
+if [ ! -f $OSPATH/$os/set-devel-paths ]; then
+    echo "$OSPATH/$os/set-devel-paths does not exist."
+    exit 1
+fi
+
+# Check that scripts/$os/archive-urls.txt exists
+if [ ! -f $OSPATH/$os/archives-urls.txt ]; then
+    echo "$OSPATH/$os/archives-urls.txt does not exist."
+    exit 1
+fi
+
+# Check if a 'install-packages' script exists
+if [ -f $OSPATH/$os/install-packages ]; then
+    # Check if the script is executable
+    if [ ! -x $OSPATH/$os/install-packages ]; then
+        echo "$OSPATH/$os/install-packages is not executable."
+        exit 1
+    fi
+    # Run the script
+    $OSPATH/$os/install-packages
+fi
+
+
+# Copy the required file
+if [ "$OSTYPE" = "msys" ] || [ "$OSTYPE" = "cygwin" ]; then
+    # Install required packages
+    for pkg in autoconf-wrapper base filesystem git mingw-w64-clang-aarch64-clang mingw-w64-clang-aarch64-clang-analyzer mingw-w64-clang-aarch64-clang-libs mingw-w64-clang-aarch64-clang-tools-extra mingw-w64-clang-aarch64-cmake mingw-w64-clang-aarch64-compiler-rt mingw-w64-clang-aarch64-crt-git mingw-w64-clang-aarch64-headers-git mingw-w64-clang-aarch64-libc++ mingw-w64-clang-aarch64-libmangle-git mingw-w64-clang-aarch64-libunwind mingw-w64-clang-aarch64-libwinpthread-git mingw-w64-clang-aarch64-lld mingw-w64-clang-aarch64-lldb mingw-w64-clang-aarch64-llvm mingw-w64-clang-aarch64-llvm-libs mingw-w64-clang-aarch64-llvm-openmp mingw-w64-clang-aarch64-make mingw-w64-clang-aarch64-pkgconf mingw-w64-clang-aarch64-tools-git mingw-w64-clang-aarch64-winpthreads-git mingw-w64-clang-aarch64-winstorecompat-git msys2-runtime rsync subversion texinfo unzip; do
+        pacman -Qi "$pkg" &>/dev/null || sudo pacman -S --noconfirm "$pkg"
+    done
+    # Windows path limit fix
+    rm -rf /$os
+    cp -R $OSPATH/$os /$os
+    cd /$os
+else
+    arch=$(arch)
+    rm -rf ./$os-$arch
+    cp -R $OSPATH/$os ./$os-$arch
+    cd ./$os-$arch
+fi
+
+# Download the archives
+$SCRIPTPATH/download-archives
+$SCRIPTPATH/rename-folders
+mkdir texmacs
+svn co svn://svn.savannah.gnu.org/texmacs/trunk/src texmacs/src
+svn co svn://svn.savannah.gnu.org/texmacs/trunk/guile-texmacs texmacs/src/tm-guile188
+
+# Make
+source set-devel-paths
+if [ "$OSTYPE" = "msys" ] || [ "$OSTYPE" = "cygwin" ]; then
+    mingw32-make
+else
+    make
+fi

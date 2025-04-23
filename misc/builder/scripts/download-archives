@@ -1,0 +1,124 @@
+#!/usr/bin/env python3
+
+import urllib.request
+import os
+import tarfile
+import zipfile
+import lzma
+
+def download_url(url):
+    print("Downloading " + url)
+    if url.endswith('.git'):
+        clone_git_repo(url)
+        return
+    # check if the file already exists
+    filename = url.split('/')[-1]
+    filename_without_extension = filename.split('.')[0]
+    if os.path.isfile(filename) or os.path.isdir(filename_without_extension):
+        print(f"File {filename} already exists")
+        return filename
+
+    response = urllib.request.urlopen(url)
+    if response.status == 200:
+        content = response.read()
+        filename = url.split('/')[-1]
+        with open(filename, 'wb') as f:
+            f.write(content)
+        print(f"Downloaded {filename}")
+        return filename
+    else:
+        print(f"Failed to download {url}")
+
+def clone_git_repo(url):
+    # check if the directory already exists
+    directory = url.split('/')[-1].split('.')[0]
+    if os.path.isdir(directory):
+        print(f"Directory {directory} already exists")
+        return
+    try:
+        os.system(f"git clone {url}")
+        print(f"Cloned {url}")
+    except Exception as e:
+        print(f"Error cloning {url}: {e}")
+
+def apply_patch_for_url(url):
+    # get the filename from the url
+    filename = url.split('/')[-1]
+    # get the filename without the extension
+    filename_without_extension = filename.split('.')[0]
+    # get the patch file name
+    patch_file = filename_without_extension + '.patch'
+    # check if the patch file exists
+    if os.path.isfile(patch_file):
+        # go into the directory filename_without_extension
+        os.chdir(filename_without_extension)
+        # apply the patch
+        os.system(f"git apply ../{patch_file}")
+        # go back to the parent directory
+        os.chdir('..')
+
+def extract_archive(archive_file):
+    # check if the file already extracted
+    filename = archive_file.split('/')[-1]
+    filename_without_extension = filename.split('.')[0]
+    if os.path.isdir(filename_without_extension):
+        print(f"File {filename} already extracted")
+        return
+    try:
+        with open(archive_file, 'rb') as f:
+            first_bytes = f.read(5)  # Read more bytes for format detection
+            f.seek(0)
+
+            if first_bytes.startswith(b'\x1f\x8b\x08\x00'):  # tar.gz
+                with tarfile.open(archive_file, 'r:gz') as tar:
+                    tar.extractall()
+                print(f"Extracted {archive_file}")
+            elif first_bytes.startswith(b'\xfd7zXZ\x00'):  # tar.xz
+                with tarfile.open(archive_file, 'r:xz') as tar:
+                    tar.extractall()
+                print(f"Extracted {archive_file}")
+            elif first_bytes.startswith(b'PK\x03\x04'):  # zip
+                with zipfile.ZipFile(archive_file, 'r') as zip_ref:
+                    zip_ref.extractall()
+                print(f"Extracted {archive_file}")
+            elif first_bytes.startswith(b'\xfd7zXZ'):  # tar.xz (without null byte)
+                with lzma.open(archive_file, 'rb') as lzma_file:
+                    with tarfile.open(fileobj=lzma_file, mode='r') as tar:
+                        tar.extractall()
+                print(f"Extracted {archive_file}")
+            elif first_bytes.startswith(b'\x5d\x00\x00\x00'):  # tar.lz
+                with lzma.open(archive_file, 'rb') as lzma_file:
+                    with tarfile.open(fileobj=lzma_file, mode='r') as tar:
+                        tar.extractall()
+                print(f"Extracted {archive_file}")
+            else:
+                print(f"Unsupported archive format for {archive_file}")
+                os.system("tar -xvf " + archive_file)
+    except Exception as e:
+        print(f"Error extracting {archive_file}: {e}")
+
+def main():
+    with open('archives-urls.txt', 'r') as f:
+        urls = f.read().splitlines()
+
+    # remove lines starting with # or empty lines
+    urls = [url for url in urls if not url.startswith('#') and url != '']
+
+    downloaded_files = []
+    for url in urls:
+        try:
+            downloaded_file = download_url(url)
+            downloaded_files.append(downloaded_file)
+        except Exception as e:
+            print(f"Error downloading {url}: {e}")
+
+    for downloaded_file in downloaded_files:
+        extract_archive(downloaded_file)
+        # apply_patch_for_url(downloaded_file)
+    
+    # clean
+    # for downloaded_file in downloaded_files:
+    #     os.remove(downloaded_file)
+
+if __name__ == '__main__':
+    main()

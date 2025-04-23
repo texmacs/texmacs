@@ -1,0 +1,113 @@
+#   Copyright (C) 2000 Rémi Vanicat
+#
+#   This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#    Vanicat Rémi may be reached by email at vanicat@labri.u-bordeaux.fr
+#
+#    If you want to modify this file, try using grep on the list of word
+#    to see if you modification is valide
+#
+#    Si vous voulez modifier ce fichier, essayer d'utiliser grep sur la
+#    liste des mots pour voir si cette modification est valide
+
+version francais 0.000000001
+
+#EMME ~ AME 
+AIX$               E
+AI                 E
+AN(AEUIO)-         AM
+AN                 A
+AMM                AM
+AM(AEUIO)-         AM
+AM                 A
+AUD$               O
+AUX$		   O
+AU                 O
+A                  A
+Â                  A
+À                  A
+BB                 P
+B                  P
+Ç                  S
+C(EI)-             S
+CU(EI)-            K
+CC(EI)-            X
+CC                 K
+CH                 CH
+C                  K
+DD                 T
+D                  T
+EMMENTAL           EMATAL
+EMMENTHAL          EMATAL
+EM(AEIOU)-         EM
+EM                 A
+ET$                E
+EUX$               E
+EU                 E
+EN(AEUIO)-         EM
+EN                 A
+ER$                E
+EO                 O
+EAUX$		   O
+EAU                O
+E                  E
+È                  E
+É                  E
+Ê                  E
+F                  F
+G(EIY)-            J
+GU(EIY)-           G
+G                  G
+H                  _
+I                  I
+Î                  I
+J                  J
+KS                 X
+K                  K
+LL                 L
+L                  L
+MM                 M
+M                  M
+NN                 M
+N                  M
+OEU                E
+OUX$               U
+OU                 U
+OÙ                 U
+O                  O
+Ô                  O
+PP                 P
+PH                 F
+P                  P
+QU                 K
+Q                  K
+RIX$               RI
+RR                 R
+R                  R
+S$                 _
+SS                 S
+S                  S
+TT                 T
+T                  T
+U                  U
+Ù                  U
+Û                  U
+V                  V
+W                  W
+X                  X
+Y(AEOU)-           IL
+Y                  I
+ZZ                 S
+Z                  S
+

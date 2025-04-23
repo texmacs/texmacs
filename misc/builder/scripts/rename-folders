@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+
+# a script to remove the suffix (remove the version after '-') from the folder names in the current directory
+import os
+import re
+import sys
+import shutil
+
+if __name__ == "__main__":
+    
+    # check if the script is run with a directory argument
+    if len(sys.argv) > 1:
+        directory = sys.argv[1]
+    else:
+        directory = '.'
+
+    # check if the directory exists
+    if not os.path.isdir(directory):
+        print(f"Directory {directory} does not exist")
+        sys.exit(1)
+
+    # change to the directory
+    os.chdir(directory)
+
+    # get the list of folders in the directory
+    folders = [f for f in os.listdir('.') if os.path.isdir(f)]
+
+    # loop through the folders and rename them
+    for folder in folders:
+        # check if the folder name contains a '-'
+        if '-' in folder:
+            # remove the version after '-'
+            new_folder_name = re.sub(r'-.*', '', folder)
+            # rename the folder
+            shutil.move(folder, new_folder_name)
+            print(f"Renamed {folder} to {new_folder_name}")
