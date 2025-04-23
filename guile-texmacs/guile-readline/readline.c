@@ -46,6 +46,10 @@
 #include "libguile/validate.h"
 #include "guile-readline/readline.h"
 
+#if defined(__MINGW32__) || defined(__MINGW64__)
+#include <windows.h>
+#endif
+
 scm_t_option scm_readline_opts[] = {
   { SCM_OPTION_BOOLEAN, "history-file", 1,
     "Use history file." },

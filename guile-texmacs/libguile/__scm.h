@@ -568,7 +568,7 @@ typedef unsigned long long nat;
    scm_i_jmp_buf to setjmp, longjmp and jmp_buf. */
 #ifndef SCM_I_SETJMP
 #define scm_i_jmp_buf jmp_buf
-#if defined (__MINGW64__)
+#if defined (__MINGW64__) && !defined (_M_ARM64)
 #  define SCM_I_SETJMP __builtin_setjmp
 #  define SCM_I_LONGJMP __builtin_longjmp
 #else
