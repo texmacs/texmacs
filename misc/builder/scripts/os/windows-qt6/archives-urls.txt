@@ -2,7 +2,9 @@ https://download-mirror.savannah.gnu.org/releases/freetype/freetype-2.13.3.tar.x
 https://ftp.gnu.org/gnu/gmp/gmp-6.3.0.tar.xz
 https://sourceforge.net/projects/libpng/files/libpng16/1.6.47/libpng-1.6.47.tar.xz
 https://ftp.gnu.org/gnu/libtool/libtool-2.5.4.tar.gz
-http://pulsar.lix.polytechnique.fr/files/archives/ghostscript-liza-9.54.0.zip
+https://ftp.texmacs.org/TeXmacs/misc/ghostscript-liza-9.54.0.zip
 https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.18.tar.gz
 https://ftp.gnu.org/pub/gnu/gettext/gettext-0.24.tar.gz
 https://download.qt.io/archive/qt/6.8/6.8.3/single/qt-everywhere-src-6.8.3.tar.xz
+svn://svn.savannah.gnu.org/texmacs/trunk/src texmacs/src
+svn://svn.savannah.gnu.org/texmacs/trunk/guile-texmacs texmacs/src/tm-guile188

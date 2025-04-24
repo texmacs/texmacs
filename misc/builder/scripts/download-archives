@@ -11,6 +11,9 @@ def download_url(url):
     if url.endswith('.git'):
         clone_git_repo(url)
         return
+    if url.startswith('svn'):
+        clone_svn_repo(url)
+        return
     # check if the file already exists
     filename = url.split('/')[-1]
     filename_without_extension = filename.split('.')[0]
@@ -40,6 +43,9 @@ def clone_git_repo(url):
         print(f"Cloned {url}")
     except Exception as e:
         print(f"Error cloning {url}: {e}")
+
+def clone_svn_repo(url):
+    os.system(f"svn co {url}")
 
 def apply_patch_for_url(url):
     # get the filename from the url
@@ -108,11 +114,13 @@ def main():
     for url in urls:
         try:
             downloaded_file = download_url(url)
-            downloaded_files.append(downloaded_file)
+            if downloaded_file is not None:
+                downloaded_files.append(downloaded_file)
         except Exception as e:
             print(f"Error downloading {url}: {e}")
 
     for downloaded_file in downloaded_files:
+        print(f"Extracting {downloaded_file}")
         extract_archive(downloaded_file)
         # apply_patch_for_url(downloaded_file)
     
