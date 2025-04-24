@@ -15,3 +15,9 @@ cd /windows-qt6
 source set-devel-path
 mingw32-make
 ```
+
+## Android on Ubuntu/Debian
+
+1. Open a terminal
+2. Run `./scripts/build --os=android-host-tools`
+3. Then, run `./scripts/build --os=android-qt6-armv7`
