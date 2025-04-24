@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -e
+
+# Detect the OS (Windows, Linux, or macOS)
+case "$OSTYPE" in
+    linux*)
+        if command -v apt &>/dev/null; then
+            sudo apt update
+            sudo apt install -y \
+                autoconf \
+                automake \
+                build-essential \
+                cmake \
+                git \
+                libtool \
+                pkg-config \
+                rsync \
+                subversion \
+                texinfo \
+                unzip \
+                freeglut3 \
+                freeglut3-dev \
+                binutils-gold \
+                libglew-dev \
+                mesa-common-dev \
+                libglew1.5-dev \
+                libglm-dev \
+                libgles2-mesa-dev \
+                xorg-dev \
+                libgl1-mesa-dev \
+                libegl1-mesa-dev \
+                openjdk-17-jdk \
+                libgmp-dev \
+                flex
+        else
+            echo "Unsupported Linux distribution."
+            exit 1
+        fi
+
+        wget https://dl.google.com/android/repository/commandlinetools-linux-13114758_latest.zip
+        mkdir Android
+        mkdir Android/cmdline-tools
+        unzip commandlinetools-linux-13114758_latest.zip -d Android/cmdline-tools
+        mv Android/cmdline-tools/cmdline-tools Android/cmdline-tools/latest
+        rm commandlinetools-linux-13114758_latest.zip
+        ;;
+    *)
+        echo "Unsupported OS: $OSTYPE"
+        exit 1
+        ;;
+esac
+
+./Android/cmdline-tools/latest/bin/sdkmanager "build-tools;33.0.0" "build-tools;34.0.0" "build-tools;35.0.0" "ndk;26.1.10909125" "platform-tools" "platforms;android-33" "platforms;android-34"
