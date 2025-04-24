@@ -18,12 +18,9 @@ case "$OSTYPE" in
                 subversion \
                 texinfo \
                 unzip \
-                freeglut3 \
-                freeglut3-dev \
                 binutils-gold \
                 libglew-dev \
                 mesa-common-dev \
-                libglew1.5-dev \
                 libglm-dev \
                 libgles2-mesa-dev \
                 xorg-dev \
