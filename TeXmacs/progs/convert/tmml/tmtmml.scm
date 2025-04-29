@@ -60,12 +60,16 @@
 	   (cons* tag (tmtmml-attrs (cdar l)) (tmtmml-args (cdr l))))
 	  (else (cons tag (tmtmml-args l))))))
 
+(define (tmtmml-raw-data x)
+  `(raw-data (tm-arg ,(encode-base64 x))))
+
 (tm-define (tmtmml x)
   (cond ((string? x) (tm->xml-cdata x))
 	((func? x '!file) (tmtmml-file (cadr x)))
 	((func? x 'document) (tmtmml-document (cdr x)))
 	((func? x 'concat) (tmtmml-concat (cdr x)))
 	((func? x 'with) (tmtmml-with (cdr x)))
+	((func? x 'raw-data) (tmtmml-raw-data (second x)))
 	((and (func? x 'compound) (string? (cadr x)))
 	 (tmtmml-apply (symbol->string (car x))
 		       (string->symbol (cadr x))
