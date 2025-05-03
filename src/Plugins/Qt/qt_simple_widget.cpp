@@ -346,7 +346,8 @@ qt_simple_widget_rep::query (slot s, int type_id) {
     {
       check_type_id<coord4> (type_id, s);
       if (canvas()) {
-        QSize sz = canvas()->surface()->size();     // sz.setWidth(sz.width()-2);
+	double dpr= canvas()->devicePixelRatio ();
+        QSize sz = backingPixmap->size() / dpr;     // sz.setWidth(sz.width()-2);
         QPoint pos = backing_pos;
         return close_box<coord4> (from_qrect(QRect(pos, sz)));
       } else {
