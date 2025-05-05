@@ -1473,7 +1473,7 @@ if test "$cross_compiling" = "yes"; then
   AC_MSG_CHECKING(cc for build)
   ## /usr/bin/cc still uses wrong assembler
   ## CC_FOR_BUILD="${CC_FOR_BUILD-/usr/bincc}"
-  CC_FOR_BUILD="${CC_FOR_BUILD-PATH=/usr/bin:$PATH cc}"
+  CC_FOR_BUILD="${CC_FOR_BUILD-PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin cc}"
 else
   CC_FOR_BUILD="${CC_FOR_BUILD-$CC}"
 fi   
