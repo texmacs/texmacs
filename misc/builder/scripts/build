@@ -14,7 +14,7 @@ if [ -z $os ]; then
         echo "Option --os=??? is required."
         echo ""
         echo "Available os are: "
-        ls $SCRIPTPATH
+        ls $OSPATH
         exit 1
     fi
 fi

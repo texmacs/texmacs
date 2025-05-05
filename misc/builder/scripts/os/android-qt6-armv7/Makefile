@@ -42,14 +42,12 @@ local/lib/libgmp.a: gmp/build/.libs/libgmp.a
 	cd gmp/build; $(MAKE) install
 
 guile/Makefile: local/lib/libgmp.a
-	cd guile; ./configure --host=$$TARGET --prefix=$$WORKING_DIR/local --enable-static --disable-shared --disable-error-on-warning --disable-networking --disable-nls --enable-debug-freelist --enable-debug-malloc --enable-guile-debug --with-threads=no --with-gnu-ld=yes
+	cd guile; autoreconf; ./configure --host=$$TARGET --prefix=$$WORKING_DIR/local --enable-static --disable-shared --disable-error-on-warning --disable-networking --disable-nls --enable-debug-freelist --enable-debug-malloc --enable-guile-debug --with-threads=no --with-gnu-ld=yes
 
 guile/libguile/.libs/libguile.a: guile/Makefile
-	cd guile; $(MAKE)
+	-cd guile; $(MAKE)
 
 local/lib/libguile.a: guile/libguile/.libs/libguile.a
-	touch guile/libguile/guile_filter_doc_snarfage
-	chmod +x guile/libguile/guile_filter_doc_snarfage
 	cd guile; $(MAKE) install
 
 local/bin/qmake:

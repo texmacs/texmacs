@@ -50,7 +50,7 @@ export PATH=${NDK}/toolchains/llvm/prebuilt/$ANDROID_NDK_HOST/bin:$PATH
 # export PATH=${NDK}/simpleperf/bin/darwin/x86_64:$PATH
 export PATH=${NDK}/simpleperf:$PATH
 export PATH=${WORKING_DIR}/../android-host-tools-x86_64/guile:$PATH
-export PATH=${WORKING_DIR}/../android-host-tools-x86_64/guile/libguile:$PATH
+export PATH=${WORKING_DIR}/../android-host-tools-x86_64/local/bin:$PATH
 
 export CFLAGS="-fPIC -g -O3 -I$WORKING_DIR/local/include"
 export CPPFLAGS=-I$WORKING_DIR/local/include

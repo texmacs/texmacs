@@ -28,7 +28,8 @@ case "$OSTYPE" in
                 libegl1-mesa-dev \
                 openjdk-17-jdk \
                 libgmp-dev \
-                flex
+                flex \
+                ninja-build
         else
             echo "Unsupported Linux distribution."
             exit 1
