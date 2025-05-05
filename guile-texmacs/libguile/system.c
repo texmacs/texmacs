@@ -111,35 +111,6 @@ char *guile_default_getenv(const char *name) {
     return guile_system_string_to_utf8_string(getenv(name));
 }
 
-#if defined(__ANDROID__)
-#include <android/log.h>
-int
-guile_default_fprintf (FILE* stream, const char* format, ...) {
-  int ret;
-  va_list args;
-  va_start(args, format);
-  if (stream == stdout)
-    ret= __android_log_print (ANDROID_LOG_DEFAULT, "libguile",
-			      format, args);
-  else if (stream == stderr)
-    ret= __android_log_print (ANDROID_LOG_ERROR, "libguile",
-			      format, args);
-  else ret= fprintf (stream, format, args);
-  va_end(args);
-  return ret;
-}
-
-int
-guile_default_printf (const char* format, ...) {
-    int ret;
-    va_list args;
-    va_start(args, format);
-    ret= __android_log_print (ANDROID_LOG_DEFAULT, "libguile",
-                    format, args);
-    va_end(args);
-    return ret;
-}
-#else
 int guile_default_printf(const char *format, ...) {
     va_list args;
     va_start(args, format);
@@ -155,7 +126,6 @@ int guile_default_fprintf(FILE *stream, const char *format, ...) {
     va_end(args);
     return res;
 }
-#endif
 
 void guile_default_process_event(void) {
     // do nothing
