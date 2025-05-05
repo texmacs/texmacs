@@ -76,7 +76,7 @@ guile_filter_doc_snarfage_SOURCES = c-tokenize.c
 guile_filter_doc_snarfage$(EXEEXT): $(guile_filter_doc_snarfage_OBJECTS) $(guile_filter_doc_snarfage_DEPENDENCIES) 
 	@rm -f guile_filter_doc_snarfage$(EXEEXT)
 	if [ "$(cross_compiling)" = "yes" ]; then \
-		$(CCLD_FOR_BUILD) -o $@ $(guile_filter_doc_snarfage_OBJECTS); \
+		$(CCLD_FOR_BUILD) -o $@ $(guile_filter_doc_snarfage_SOURCES); \
 	else \
 		$(LINK) $(guile_filter_doc_snarfage_OBJECTS) $(LDADD) $(LIBS); \
 	fi
