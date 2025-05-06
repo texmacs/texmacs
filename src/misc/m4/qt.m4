@@ -180,7 +180,7 @@ AC_DEFUN([LC_WITH_QT],[
 
     # If we don't know the path to Qt, guess it from the path to qmake.
     if test "x$QT_PATH" = "x"; then
-      QT_PATH=`dirname "$QMAKE"`
+      QT_PATH=`dirname "$QMAKE"`/..
     fi
     if test "x$QT_PATH" = "x"; then
       AX_INSTEAD_IF([$4],
