@@ -69,59 +69,34 @@ AC_DEFUN([TM_PLATFORM],[
 
   AC_MSG_CHECKING(final adjustments for ${host})
   case "${host}" in
+    *-linux-androi*)
+      AC_MSG_RESULT(an Android host)
+      AC_DEFINE([OS_ANDROID],[1],[OS type])
+      CONFIG_OS="ANDROID"
+      CONFIG_OS_COMPAT="Android"
+      CONFIG_CXXOPTIMIZE="-O3"
+      CONFIG_QTPIPES="yes"
+      CONFIG_CXXFLAGS="-fPIC"
+      CONFIG_BSHARED="-shared -fPIC"
+      CONFIG_FASTALLOC="no"
+      AC_DEFINE([STACK_SIZE], 0x1000000, [If not set during link])
+      if test -z "${QT_ANDROID_PATH}"; then
+          AC_MSG_ERROR([Required environment variable QT_ANDROID_PATH is not set])
+      fi
+      if test -z "${ANDROID_SDK_ROOT}"; then
+          AC_MSG_ERROR([Required environment variable ANDROID_SDK_ROOT is not set])
+      fi
+      if test -z "${ANDROID_NDK_ROOT}"; then
+          AC_MSG_ERROR([Required environment variable ANDROID_NDK_ROOT is not set])
+      fi
+      AC_DEFINE(LINKED_FREETYPE, 1, [Freetype library available])
+      AC_DEFINE(USE_FREETYPE, 2, [Freetype library available])
+      AC_SUBST([CONFIG_HOST_CPU], ["$TARGET"])
+      TM_ANDROID
+    ;;
     x86_64-*-linux*)
       CONFIG_OS_SUFFIX="x86_64-pc-linux-gnu"
       LINUX_COMMON
-    ;;
-    armv7a-*-linux-androideabi)
-      AC_MSG_RESULT(an ARMV7A EABI Android host)
-      AC_DEFINE([OS_ANDROID],[1],[OS type])
-      CONFIG_OS="ANDROID"
-      CONFIG_OS_COMPAT="Android"
-      CONFIG_CXXOPTIMIZE="-O3"
-      CONFIG_QTPIPES="yes"
-      CONFIG_CXXFLAGS="-fPIC"
-      CONFIG_BSHARED="-shared -fPIC"
-      CONFIG_FASTALLOC="no"
-      AC_DEFINE([STACK_SIZE], 0x1000000, [If not set during link])
-      if test -z "${QT_ANDROID_PATH}"; then
-          AC_MSG_ERROR([Required environment variable QT_ANDROID_PATH is not set])
-      fi
-      if test -z "${ANDROID_SDK_ROOT}"; then
-          AC_MSG_ERROR([Required environment variable ANDROID_SDK_ROOT is not set])
-      fi
-      if test -z "${ANDROID_NDK_ROOT}"; then
-          AC_MSG_ERROR([Required environment variable ANDROID_NDK_ROOT is not set])
-      fi
-      AC_DEFINE(LINKED_FREETYPE, 1, [Freetype library available])
-      AC_DEFINE(USE_FREETYPE, 2, [Freetype library available])
-      AC_SUBST([CONFIG_HOST_CPU], ["$TARGET"])
-      TM_ANDROID
-    ;;
-    aarch64-*-linux-android)
-      AC_MSG_RESULT(an ARM64 Android host)
-      AC_DEFINE([OS_ANDROID],[1],[OS type])
-      CONFIG_OS="ANDROID"
-      CONFIG_OS_COMPAT="Android"
-      CONFIG_CXXOPTIMIZE="-O3"
-      CONFIG_QTPIPES="yes"
-      CONFIG_CXXFLAGS="-fPIC"
-      CONFIG_BSHARED="-shared -fPIC"
-      CONFIG_FASTALLOC="no"
-      AC_DEFINE([STACK_SIZE], 0x1000000, [If not set during link])
-      if test -z "${QT_ANDROID_PATH}"; then
-          AC_MSG_ERROR([Required environment variable QT_ANDROID_PATH is not set])
-      fi
-      if test -z "${ANDROID_SDK_ROOT}"; then
-          AC_MSG_ERROR([Required environment variable ANDROID_SDK_ROOT is not set])
-      fi
-      if test -z "${ANDROID_NDK_ROOT}"; then
-          AC_MSG_ERROR([Required environment variable ANDROID_NDK_ROOT is not set])
-      fi
-      AC_DEFINE(LINKED_FREETYPE, 1, [Freetype library available])
-      AC_DEFINE(USE_FREETYPE, 2, [Freetype library available])
-      AC_SUBST([CONFIG_HOST_CPU], ["$TARGET"])
-      TM_ANDROID
     ;;
     i*86-*-linux*)
       CONFIG_OS_SUFFIX="i386-pc-linux-gnu"

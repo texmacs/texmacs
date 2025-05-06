@@ -588,27 +588,62 @@ ANDROID_BUNDLE: ANDROID_LIBTEXMACS
 	$(ANDROID_PACKAGE_SRC)/collect_assets.sh TeXmacs $(ANDROID_BUILD_DIR)/sources/android/assets/raw
 	$(MKDIR) $(ANDROID_BUILD_DIR)/build/libs/${ANDROID_ABI}
 
-ANDROID_APK: ANDROID_BUNDLE
+ANDROID_AAB: ANDROID_BUNDLE
 	$(CP) src/Objects/libtexmacs.a $(ANDROID_BUILD_DIR)/sources
 	cd $(ANDROID_BUILD_DIR)/build; cmake -DANDROID_NDK:PATH=@NDK@ \
-	                                     -DCMAKE_FIND_ROOT_PATH:PATH=%{Qt:QT_INSTALL_PREFIX} \
+										 -DANDROID_SDK_ROOT:PATH=@SDK@ \
+										 -DANDROID_STL:STRING=c++_shared \
+										 -DCMAKE_GENERATOR:STRING=Ninja \
+										 -DANDROID_ABI:STRING=@ANDROID_ABI@ \
+										 -DQT_HOST_PATH:PATH=@QT_HOST_PATH@ \
+										 -DCMAKE_BUILD_TYPE:STRING=Release \
+										 -DANDROID_PLATFORM:STRING=android-34 \
+										 -DQT_USE_TARGET_ANDROID_BUILD_DIR:BOOL=ON \
+										 -DQT_NO_GLOBAL_APK_TARGET_PART_OF_ALL:BOOL=ON \
+										 -DCMAKE_TOOLCHAIN_FILE:FILEPATH=@NDK@/build/cmake/android.toolchain.cmake \
+										 -DANDROID_USE_LEGACY_TOOLCHAIN_FILE:BOOL=OFF \
+										 -DANDROID_TARGET_SDK_VERSION=34 \
+										 -DCMAKE_FIND_ROOT_PATH=@QT_PATH@ \
+										 -DCMAKE_PREFIX_PATH=@QT_PATH@ \
+										 -DTEXMACS_LIBS:STRING="@LIBS@" \
+										 -DQT_DIR=@QT_PATH@/lib/cmake/Qt6 ../sources \
+										 -DQt6Core_DIR=@QT_PATH@/lib/cmake/Qt6Core \
+										 -DQt6Gui_DIR=@QT_PATH@/lib/cmake/Qt6Gui \
+										 -DQt6Widgets_DIR=@QT_PATH@/lib/cmake/Qt6Widgets \
+										 -DQt6Svg_DIR=@QT_PATH@/lib/cmake/Qt6Svg \
+										 -DQt6PrintSupport_DIR=@QT_PATH@/lib/cmake/Qt6PrintSupport \
+										 -DQt6Concurrent_DIR=@QT_PATH@/lib/cmake/Qt6Concurrent
+	cd $(ANDROID_BUILD_DIR)/build; cmake --build . --config Release --target aab
+
+ANDROID_DEV_APK: ANDROID_BUNDLE
+	$(CP) src/Objects/libtexmacs.a $(ANDROID_BUILD_DIR)/sources
+	cd $(ANDROID_BUILD_DIR)/build; cmake -DANDROID_NDK:PATH=@NDK@ \
 										 -DANDROID_SDK_ROOT:PATH=@SDK@ \
 										 -DANDROID_STL:STRING=c++_shared \
 										 -DCMAKE_GENERATOR:STRING=Ninja \
 										 -DANDROID_ABI:STRING=@ANDROID_ABI@ \
 										 -DQT_HOST_PATH:PATH=@QT_HOST_PATH@ \
 										 -DCMAKE_BUILD_TYPE:STRING=Debug \
-										 -DANDROID_PLATFORM:STRING=android-33 \
+										 -DANDROID_PLATFORM:STRING=android-34 \
 										 -DQT_USE_TARGET_ANDROID_BUILD_DIR:BOOL=ON \
 										 -DQT_NO_GLOBAL_APK_TARGET_PART_OF_ALL:BOOL=ON \
 										 -DCMAKE_TOOLCHAIN_FILE:FILEPATH=@NDK@/build/cmake/android.toolchain.cmake \
 										 -DANDROID_USE_LEGACY_TOOLCHAIN_FILE:BOOL=OFF \
+										 -DANDROID_TARGET_SDK_VERSION=34 \
 										 -DCMAKE_FIND_ROOT_PATH=@QT_PATH@ \
 										 -DCMAKE_PREFIX_PATH=@QT_PATH@ \
 										 -DTEXMACS_LIBS:STRING="@LIBS@" \
-										 -DQT_DIR=@QT_PATH@/lib/cmake/Qt6 ../sources
-	cd $(ANDROID_BUILD_DIR)/build; cmake --build . --target apk
+										 -DQT_DIR=@QT_PATH@/lib/cmake/Qt6 ../sources \
+										 -DQt6Core_DIR=@QT_PATH@/lib/cmake/Qt6Core \
+										 -DQt6Gui_DIR=@QT_PATH@/lib/cmake/Qt6Gui \
+										 -DQt6Widgets_DIR=@QT_PATH@/lib/cmake/Qt6Widgets \
+										 -DQt6Svg_DIR=@QT_PATH@/lib/cmake/Qt6Svg \
+										 -DQt6PrintSupport_DIR=@QT_PATH@/lib/cmake/Qt6PrintSupport \
+										 -DQt6Concurrent_DIR=@QT_PATH@/lib/cmake/Qt6Concurrent
+	cd $(ANDROID_BUILD_DIR)/build; cmake --build . --config Debug --target apk
 
+ANDROID_ALL: ANDROID_DEV_APK ANDROID_AAB
+	echo "Android APK and AAB have been built successfully"
 
 .PHONY: ANDROID_BUNDLE
 
