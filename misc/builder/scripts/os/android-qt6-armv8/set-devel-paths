@@ -1,0 +1,103 @@
+#!/bin/sh
+
+export LD_LIBRARY_PATH=/usr/local/bin/
+
+# For guile
+if test "x$GUILE_FOR_BUILD" = "x"; then
+  export GUILE_FOR_BUILD=`which guile`
+fi
+
+export ANDROID_NDK_HOST="linux-x86_64"
+export ANDROID_ABI=arm64-v8a
+export ANDROID_ARCH_ABI=arm64-v8a
+export TARGET=aarch64-linux-android
+
+export WORKING_DIR=$PWD
+export SDK="${WORKING_DIR}/../android-host-tools-x86_64/Android"
+export BUILD_TOOLS_REVISION=33.0.0
+export BUILD_TOOLS="$SDK/build-tools/$BUILD_TOOLS_REVISION"
+export ANDROID_API=33
+export PLATFORM="$SDK/platforms/android-$ANDROID_API"
+export NDK="${SDK}/ndk/26.1.10909125"
+export QT_ANDROID_TARGET_SDK_VERSION=33
+
+export ANDROID_TARGET=$TARGET
+
+if test $ANDROID_ABI = armeabi-v7a; then
+  export ANDROID_ARCH_SYSROOT_TAG=arm-linux-androideabi
+elif test $ANDROID_ABI = arm64-v8a; then
+  export ANDROID_ARCH_SYSROOT_TAG=aarch64-linux-android
+else
+  export ANDROID_ARCH_SYSROOT_TAG=$TARGET
+fi
+
+export ANDROID_TOOLCHAIN="$NDK/toolchains/llvm/prebuilt/$ANDROID_NDK_HOST/bin/$TARGET$ANDROID_API-clang"
+export ANDROID_TOOLCHAIN_LD="$NDK/toolchains/llvm/prebuilt/$ANDROID_NDK_HOST/bin/$TARGET-ld"
+export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/$ANDROID_NDK_HOST
+
+export AR=$TOOLCHAIN/bin/llvm-ar
+export CC=$TOOLCHAIN/bin/$TARGET$ANDROID_API-clang
+export AS=$CC
+export CXX=$TOOLCHAIN/bin/$TARGET$ANDROID_API-clang++
+export LD=$TOOLCHAIN/bin/ld
+export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
+export STRIP=$TOOLCHAIN/bin/llvm-strip
+
+
+export PATH=$HOME/Library/Android/platform-tools:$PATH
+export PATH=$HOME/Library/Android/emulator:$PATH
+export PATH=${NDK}/toolchains/llvm/prebuilt/$ANDROID_NDK_HOST/bin:$PATH
+# export PATH=${NDK}/simpleperf/bin/darwin/x86_64:$PATH
+export PATH=${NDK}/simpleperf:$PATH
+export PATH=${WORKING_DIR}/../android-host-tools-x86_64/guile:$PATH
+export PATH=${WORKING_DIR}/../android-host-tools-x86_64/local/bin:$PATH
+
+export CFLAGS="-fPIC -g -O3 -I$WORKING_DIR/local/include"
+export CPPFLAGS=-I$WORKING_DIR/local/include
+export CXXFLAGS="-fPIC -g -O3 -I$WORKING_DIR/local/include"
+export LDFLAGS="-fPIC -L$WORKING_DIR/local/lib"
+export PATH=$WORKING_DIR/local/bin:$PATH
+
+# For qt
+export ANDROID_SDK_ROOT=$SDK
+export ANDROID_NDK_ROOT=$NDK
+export ANDROID_BUILD_TOOLS_REVISION=$BUILD_TOOLS_REVISION
+export ANDROID_NDK_PLATFORM=android-$ANDROID_API
+export Qt5_DIR=$WORKING_DIR/local/lib/cmake/Qt5
+
+# For libpng
+export LIBPNG_CFLAGS=-I$WORKING_DIR/local/include
+export LIBPNG_LIBS="-L$WORKING_DIR/local/lib -lpng"
+
+# For freetype
+export ZLIB_CFLAGS="-I$NDK/toolchains/llvm/prebuilt/$ANDROID_NDK_HOST/sysroot/usr/include/"
+export ZLIB_LIBS="-L$NDK/toolchains/llvm/prebuilt/$ANDROID_NDK_HOST/sysroot/usr/lib/$TARGET/$ANDROID_API -lz"
+
+# For TeXmacs
+export QMAKE=$WORKING_DIR/local/bin/qmake
+export MOC=$WORKING_DIR/local/bin/moc
+export UIC=$WORKING_DIR/local/bin/uic
+export RCC=$WORKING_DIR/local/bin/rcc
+
+export FREETYPE_CFLAGS=" -I$WORKING_DIR/local/include/freetype2"
+export FREETYPE_CPP="$FREETYPE_CFLAGS"
+export FREETYPE_CXX=""
+export FREETYPE_LDFLAGS=""
+export FREETYPE_LIBS=" -lfreetype"
+
+export GUILE_VERSION="1.8"
+export GUILE_CFLAGS=" -D_THREAD_SAFE"
+export GUILE_CPP="$GUILE_CFLAGS"
+export GUILE_CXX=""
+export GUILE_DATA_PATH=""
+export GUILE_LDFLAGS=""
+export GUILE_LIBS=" -lguile -lgmp -lm -lltdl -llog"
+export GUILE_STR_SIZE_T="size_t"
+
+export QT_ANDROID_PATH=$WORKING_DIR/local
+
+# Fix for Guile which does not like spaces in PATH
+export PATH=$(echo "$PATH" | sed 's/ //g')
+
+export PKG_CONFIG_PATH="$WORKING_DIR/local/lib/pkgconfig"
+export QT_HOST_PATH=$WORKING_DIR/../android-host-tools-x86_64/qt-build
