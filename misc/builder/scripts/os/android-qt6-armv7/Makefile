@@ -42,6 +42,7 @@ local/lib/libgmp.a: gmp/build/.libs/libgmp.a
 	cd gmp/build; $(MAKE) install
 
 guile/Makefile: local/lib/libgmp.a
+	cd guile; rm ./doc/r5rs/r5rs.texi; touch ./doc/r5rs/r5rs.texi;
 	cd guile; autoreconf; ./configure --host=$$TARGET --prefix=$$WORKING_DIR/local --enable-static --disable-shared --disable-error-on-warning --disable-networking --disable-nls --enable-debug-freelist --enable-debug-malloc --enable-guile-debug --with-threads=no --with-gnu-ld=yes
 
 guile/libguile/.libs/libguile.a: guile/Makefile
@@ -64,4 +65,4 @@ texmacs:
 	-cd texmacs/src; make -i distclean
 	-rm -rf texmacs/distr;
 	cp -R local/share/guile-texmacs/1.8/* texmacs/src/TeXmacs/progs/
-	cd texmacs/src; autoreconf; ./configure --host=$$TARGET --with-texmacs-builder=$$WORKING_DIR/local --prefix=$$WORKING_DIR/local --disable-gs --with-gnu-ld=yes --with-qt-find-method=pkgconfig --disable-gs; $(MAKE) ANDROID_APK
+	cd texmacs/src; autoreconf; ./configure --host=$$TARGET --with-texmacs-builder=$$WORKING_DIR/local --prefix=$$WORKING_DIR/local --disable-gs --with-gnu-ld=yes --with-qt-find-method=pkgconfig --disable-gs; $(MAKE) ANDROID_DEV_APK

@@ -11,4 +11,5 @@ qt:
 	cp qt-build/qtbase/bin/qmake qt-build/qtbase/bin/qmake6
 
 guile:
+	cd guile; rm ./doc/r5rs/r5rs.texi; touch ./doc/r5rs/r5rs.texi;
 	cd guile; ./configure --prefix=$$HOST_WORKING_DIR/local; make; make install
