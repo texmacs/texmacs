@@ -608,8 +608,11 @@ ANDROID_AAB: ANDROID_BUNDLE
 										 -DTEXMACS_LIBS:STRING="@LIBS@" \
 										 -DQT_DIR=@QT_PATH@/lib/cmake/Qt6 ../sources \
 										 -DQt6Core_DIR=@QT_PATH@/lib/cmake/Qt6Core \
+										 -DQt6CoreTools_DIR=@QT_HOST_PATH@/qtbase/lib/cmake/Qt6CoreTools \
 										 -DQt6Gui_DIR=@QT_PATH@/lib/cmake/Qt6Gui \
+										 -DQt6GuiTools_DIR=@QT_HOST_PATH@/qtbase/lib/cmake/Qt6GuiTools \
 										 -DQt6Widgets_DIR=@QT_PATH@/lib/cmake/Qt6Widgets \
+										 -DQt6WidgetsTools_DIR=@QT_HOST_PATH@/qtbase/lib/cmake/Qt6WidgetsTools \
 										 -DQt6Svg_DIR=@QT_PATH@/lib/cmake/Qt6Svg \
 										 -DQt6PrintSupport_DIR=@QT_PATH@/lib/cmake/Qt6PrintSupport \
 										 -DQt6Concurrent_DIR=@QT_PATH@/lib/cmake/Qt6Concurrent
