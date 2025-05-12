@@ -1,6 +1,6 @@
 
 ###############################################################################
-# MODULE     : Make file for plugin example with dynamic links
+# MODULE     : Make file for plugin example
 # COPYRIGHT  : (C) 1999-2008  Joris van der Hoeven
 ###############################################################################
 # This software falls under the GNU general public license version 3 or later.
@@ -8,17 +8,29 @@
 # in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ###############################################################################
 
-tmsrc = @tmsrc@
-CXX = g++
-LD  = g++
-RM  = rm -f
+tmsrc ?= @tmsrc@
 
-lib/libtmdynlink.so: src/dynlink.cpp
-	$(CXX) -I$(tmsrc)/include -c src/dynlink.cpp -o src/dynlink.o
-	$(LD) -shared -o lib/libtmdynlink.so src/dynlink.o
+CXX = g++
+LD = g++
+RM = rm -f
+MKDIR_P = mkdir -p
+RMDIR = rmdir --i
+
+CPPFLAGS += -I$(tmsrc)/include
+
+FILES_CPP := $(wildcard src/*.cpp)
+FILES_LIB := $(patsubst src/%.cpp,lib/libtm%.so,$(FILES_CPP))
+
+all: $(FILES_LIB)
+
+lib/libtm%.so : src/%.cpp | lib
+	$(LD) -shared $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $< -o $@ $(LIBADD)
+
+lib:
+	$(MKDIR_P) $@
 
 clean:
 	$(RM) *~
 	$(RM) */*~
-	$(RM) */*.o
 	$(RM) lib/*
+	test -d lib && $(RMDIR) lib || true
