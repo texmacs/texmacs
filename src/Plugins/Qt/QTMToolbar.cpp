@@ -14,6 +14,7 @@
 
 #include <QToolButton>
 #include <QMenu>
+#include <QWidgetAction>
 #ifdef OS_ANDROID
 #include <QScroller>
 #include <QScrollBar>
@@ -108,40 +109,65 @@ void QTMToolbar::replaceButtons (QList<QAction*>* src) {
 }
 
 void QTMToolbar::addAction (QAction* action) {
-  // create the tool button
-  QToolButton* button = new QToolButton (this);
-  if (tm_style_sheet == "") {
-    button->setStyle (qtmstyle ());
+  if (action->isSeparator()) {
+#ifdef OS_ANDROID
+    actionWidget = new QWidget (this);
+    actionWidget->setMinimumWidth (QTMTOOLBAR_MARGIN);
+    actionWidget->setMinimumHeight (iconSize().height() + QTMTOOLBAR_MARGIN * 2);
+#else
+    QToolBar::addSeparator();
+    return;
+#endif
   }
-  button->setDefaultAction (action);
 
-  // if the action contains a icon, set a fixed icon size
-  if (!action->icon().isNull()) {
-    button->setIconSize (iconSize());
-  }
   
-  // if the action is a menu, the tool button should be a menu button
-  if (action->menu()) {
-    button->setPopupMode (QToolButton::InstantPopup);
-  }
+  // create the tool button
+  QWidget *actionWidget = nullptr;
   
-  // if the action contains only text, add a margin to the button
-  if (action->icon().isNull()) {
-    button->setToolButtonStyle (Qt::ToolButtonTextOnly);
-    button->setContentsMargins (QTMTOOLBAR_MARGIN, QTMTOOLBAR_MARGIN, QTMTOOLBAR_MARGIN, QTMTOOLBAR_MARGIN);
+  if (qobject_cast<QWidgetAction*> (action)) {
+    actionWidget = qobject_cast<QWidgetAction*> (action)->requestWidget(this);
   }
-  
-  // if the fixed height is lower than the required height, set the fixed height
-  int requiredHeight = button->sizeHint().height() + QTMTOOLBAR_MARGIN * 2;
-  if (height() < requiredHeight) {
-    setFixedHeight (requiredHeight);
+
+  if (!actionWidget) {
+    actionWidget = new QToolButton (this);
+    if (tm_style_sheet == "") {
+      actionWidget->setStyle (qtmstyle ());
+    }
+    ((QToolButton*)actionWidget)->setDefaultAction (action);
+  }
+
+  QToolButton* button = qobject_cast<QToolButton*> (actionWidget);
+  if (button) {
+
+    // if the action contains a icon, set a fixed icon size
+    if (!action->icon().isNull()) {
+      button->setIconSize (iconSize());
+    }
+    
+    // if the action is a menu, the tool button should be a menu button
+    if (action->menu()) {
+      button->setPopupMode (QToolButton::InstantPopup);
+    }
+    
+    // if the action contains only text, add a margin to the button
+    if (action->icon().isNull()) {
+      button->setToolButtonStyle (Qt::ToolButtonTextOnly);
+      button->setContentsMargins (QTMTOOLBAR_MARGIN, QTMTOOLBAR_MARGIN, QTMTOOLBAR_MARGIN, QTMTOOLBAR_MARGIN);
+    }
+    
+    // if the fixed height is lower than the required height, set the fixed height
+    int requiredHeight = button->sizeHint().height() + QTMTOOLBAR_MARGIN * 2;
+    if (height() < requiredHeight) {
+      setFixedHeight (requiredHeight);
+    }
+
   }
 
   // add the button to the toolbar, and on Android to the scrollable layout
 #ifdef OS_ANDROID
   mLayout->addWidget (button);
 #else
-  QToolBar::addWidget (button);
+  QToolBar::addWidget (actionWidget);
 #endif
 }
 
