@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# use SVN revision number
+export TEXMACS_ANDROID_VERSION_CODE=14117
+
+export WORKING_DIR=`pwd`
+
+export CFLAGS="-O3 -I$WORKING_DIR/local/include -fPIC"
+export CPPFLAGS="-O3 -I$WORKING_DIR/local/include -fPIC"
+export CXXFLAGS="-O3 -I$WORKING_DIR/local/include -fPIC"
+export LDFLAGS="-L$WORKING_DIR/local/lib  -fPIC"
+export PATH=$WORKING_DIR/local/bin:$WORKING_DIR/local/libexec:$PATH
+export LD_LIBRARY_PATH=$WORKING_DIR/local/lib:$LD_LIBRARY_PATH
+
+# For guile
+# if test "x$GUILE_FOR_BUILD" = "x"; then
+#   export GUILE_FOR_BUILD=`which guile`
+# fi
+export GUILE_VERSION="1.8"
+export GUILE_LOAD_PATH="$WORKING_DIR/local/share/guile/1.8"
+export TEXMACS_PATH=$WORKING_DIR/texmacs/src/TeXmacs
+
+# Fix for Guile which does not like spaces in PATH
+export PATH=$(echo "$PATH" | sed 's/ //g')
+
+export PKG_CONFIG_PATH=$WORKING_DIR/local/lib/pkgconfig:$WORKING_DIR/local/share/pkgconfig

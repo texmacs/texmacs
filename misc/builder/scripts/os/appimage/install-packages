@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+set -e
+
+# Detect the OS (Windows, Linux, or macOS)
+case "$OSTYPE" in
+    linux*)
+        if command -v apt &>/dev/null; then
+            sudo apt update
+            sudo apt install -y \
+                autoconf \
+                automake \
+                build-essential \
+                cmake \
+                git \
+                libtool \
+                pkg-config \
+                rsync \
+                subversion \
+                texinfo \
+                unzip \
+                binutils-gold \
+                libglew-dev \
+                mesa-common-dev \
+                libglm-dev \
+                libgles2-mesa-dev \
+                xorg-dev \
+                libgl1-mesa-dev \
+                libegl1-mesa-dev \
+                openjdk-17-jdk \
+                libgmp-dev \
+                flex \
+                ninja-build \
+		bison \
+		pipx \
+		graphviz \
+		xsltproc \
+		xmlto \
+		doxygen \
+		libxcb1-dev \
+		libwayland-dev \
+		libx11-xcb-dev \
+		xdg-utils \
+		perl \
+		python3 \
+		libx11-dev \
+		libxext-dev \
+		libxfixes-dev \
+		libxi-dev \
+		libxrender-dev \
+		libxcb-glx0-dev \
+		libxcb-keysyms1-dev \
+		libxcb-image0-dev \
+		libxcb-shm0-dev \
+		libxcb-icccm4-dev \
+		libxcb-sync-dev \
+		libxcb-xfixes0-dev \
+		libxcb-shape0-dev \
+		libxcb-randr0-dev \
+		libxcb-render-util0-dev \
+		libxcb-util-dev \
+		libxcb-xinerama0-dev \
+		libxkbcommon-dev \
+		libxkbcommon-x11-dev \
+		zlib1g-dev \
+		libglib2.0-dev \
+		libpng-dev \
+		libjpeg-dev \
+		libfreetype6-dev \
+		libssl-dev \
+		libsqlite3-dev \
+		libdouble-conversion-dev \
+		libicu-dev \
+		libinput-dev \
+		libwayland-egl1-mesa \
+		libxcomposite-dev \
+		libxrandr-dev \
+		libfontconfig1-dev \
+		libdbus-1-dev \
+		libudev-dev \
+		patchelf
+        else
+            echo "Unsupported Linux distribution."
+            exit 1
+        fi
+        ;;
+    *)
+        echo "Unsupported OS: $OSTYPE"
+        exit 1
+        ;;
+esac
+
+pipx install meson
