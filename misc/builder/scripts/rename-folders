@@ -28,7 +28,7 @@ if __name__ == "__main__":
     # loop through the folders and rename them
     for folder in folders:
         # check if the folder name contains a '-'
-        if '-' in folder:
+        if '-' in folder and '.' in folder:
             # remove the version after '-'
             new_folder_name = re.sub(r'-.*', '', folder)
             # rename the folder
