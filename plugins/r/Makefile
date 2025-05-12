@@ -8,13 +8,16 @@
 # in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ###############################################################################
 
-CC = gcc
-RM = rm -f
+CC ?= gcc
+RM ?= rm -f
+
+CPPFLAGS += -I../../src/System
+LDADD += -lutil
 
 all: bin/tm_r
 
-bin/tm_r: src/tm_r.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -I../../src/System src/tm_r.c -o bin/tm_r -lutil
+bin/% : src/%.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) $< -o $@ $(LDFLAGS) $(LDADD)
 
 clean:
 	$(RM) bin/tm_r
