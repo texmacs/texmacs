@@ -832,10 +832,15 @@ qt_gui_rep::update () {
   if (waiting_events.size() > 0) needing_update = true;
   if (interrupted)               needing_update = true;
   if (!headless_mode && nr_windows == 0) qApp->quit();
-  
-  time_t delay = delayed_commands.lapse - texmacs_time();
-  if (needing_update) delay = 0;
-  else                delay = std::max ((time_t)0, std::min (std_delay, delay));
+ 
+  time_t delay = 0;
+  if (!needing_update) {
+	  time_t lapse = texmacs_time();
+		if (delayed_commands.lapse > lapse) {
+			delay = delayed_commands.lapse - lapse;
+			if (std_delay < delay) delay = std_delay;
+		}
+  }
   if (postpone_treatment) delay= 9; // NOTE: force occasional display
  
   updatetimer->start (delay);
