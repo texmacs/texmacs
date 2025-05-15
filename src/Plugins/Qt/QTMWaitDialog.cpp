@@ -42,20 +42,6 @@ QTMWaitDialog::QTMWaitDialog() : QDialog(), active(false) {
   defaultMessage->setAlignment(Qt::AlignCenter);
   defaultMessage->setFixedSize(32, 32);
   defaultMessage->setScaledContents(true);
-
-  startTimer(1000 / 30);
-#endif
-}
-
-void QTMWaitDialog::timerEvent(QTimerEvent *event) {
-#if QT_VERSION >= 0x060000
-    (void) event;
-    static qreal angle = 0;
-    static qreal direction = 1;
-    angle += direction;
-    if (angle == 20 || angle == -20) direction = -direction;
-    QPixmap pixmap = originalPixmap.transformed(QTransform().rotate(angle));
-    defaultMessage->setPixmap(pixmap);
 #endif
 }
 
