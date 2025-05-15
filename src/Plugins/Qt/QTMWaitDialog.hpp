@@ -90,15 +90,6 @@ public:
     }
   }
 
-  /**
-   * @brief Handles timer events.
-   * 
-   * Updates the loading animation.
-   * 
-   * @param event The timer event.
-   */
-  void timerEvent(QTimerEvent *event) override;
-
 private:
   QList<QString> messages;
   QHBoxLayout *layout;
