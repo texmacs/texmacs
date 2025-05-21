@@ -54,9 +54,9 @@ local/lib/libgmp.a: check gmp/build/.libs/libgmp.a
 	cd gmp/build; $(MAKE) install
 
 local/bin/qmake: check
-	cp patched/QtPkgConfigHelpers.cmake qt/qtbase/cmake/QtPkgConfigHelpers.cmake 
+#	cp patched/QtPkgConfigHelpers.cmake qt/qtbase/cmake/QtPkgConfigHelpers.cmake 
 	-mkdir qt-build
-	cd qt-build; ../qt/configure -opensource -confirm-license -prefix $$WORKING_DIR/local -release -pkg-config -no-warnings-are-errors
+	cd qt-build; ../qt/configure -opensource -confirm-license -prefix $$WORKING_DIR/local -release -pkg-config -no-warnings-are-errors -skip qtwebengine
 	cd qt-build; cmake --build . --parallel
 	cd qt-build; cmake --build . --target install --parallel
 
