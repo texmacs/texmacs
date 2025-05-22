@@ -1,4 +1,4 @@
-all: check local/lib/libltdl.a local/lib/libiconv.a local/lib/libpng16.a local/lib/libfreetype.a local/lib/libgmp.a local/bin/qmake ghostscript texmacs
+all: check local/lib/libltdl.a local/lib/libiconv.a local/lib/libpng16.a local/lib/libfreetype.a local/lib/libgmp.a local/bin/qmake local/windows/aspell/bin/aspell.exe ghostscript texmacs
 
 .PHONY: check texmacs
 
@@ -68,6 +68,19 @@ ghostscript/Makefile: check local/bin/qmake local/lib/libfreetype.a
 ghostscript: check ghostscript/Makefile
 	cd ghostscript; $(MAKE) -j1; $(MAKE) install
 	cp local/bin/gs.exe local/windows/bin
+
+aspell/Makefile:
+	cp patched/file_util.cpp aspell/common/file_util.cpp
+	cp patched/ostream.hpp aspell/common/ostream.hpp
+	cp patched/language.cpp aspell/modules/speller/default/language.cpp
+	cp patched/vector_hash-t.hpp aspell/modules/speller/default/vector_hash-t.hpp
+	cd aspell; ./configure --prefix=$$WORKING_DIR/local/windows/aspell --enable-static --disable-shared
+
+aspell/aspell.exe: aspell/Makefile
+	cd aspell; $(MAKE)
+
+local/windows/aspell/bin/aspell.exe: aspell/aspell.exe
+	cd aspell; $(MAKE) install
 
 texmacs: check
 	cd texmacs/src; autoreconf; PKG_CONFIG_PATH=$$WORKING_DIR/local/lib/pkgconfig ./configure --with-texmacs-builder=$$WORKING_DIR/local --prefix=$$WORKING_DIR/local --with-guile=embedded18 --with-qt-find-method=pkgconfig; mingw32-make; mingw32-make PACKAGE

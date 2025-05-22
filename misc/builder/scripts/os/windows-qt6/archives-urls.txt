@@ -8,3 +8,4 @@ https://ftp.gnu.org/pub/gnu/gettext/gettext-0.24.tar.gz
 https://download.qt.io/archive/qt/6.9/6.9.0/single/qt-everywhere-src-6.9.0.tar.xz
 svn://svn.savannah.gnu.org/texmacs/trunk/src texmacs/src
 svn://svn.savannah.gnu.org/texmacs/trunk/guile-texmacs texmacs/src/tm-guile188
+https://github.com/GNUAspell/aspell/releases/download/rel-0.60.8.1/aspell-0.60.8.1.tar.gz
