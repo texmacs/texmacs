@@ -16,6 +16,10 @@
 #include "hashmap.hpp"
 #include "scheme.hpp"
 
+#ifdef QTTEXMACS
+#include "../Plugins/Qt/qt_utilities.hpp"
+#endif
+
 #define MAX_CACHED 25
 static int web_nr=0;
 static array<tree> web_cache (MAX_CACHED);
@@ -87,6 +91,13 @@ get_from_web (url name) {
   url res= get_cache (name);
   if (!is_none (res)) return res;
 
+#ifdef QTTEXMACS
+  url tmp= url_temp ();
+  string tmp_s= concretize (tmp);
+  string name_s= as_string (name);
+  cout << "Downloading " << name_s << " to " << tmp_s << LF;
+  qt_download_file(name_s, tmp_s);
+#else
   string tool= fetch_tool ();
   if (tool == "") return url_none ();
   
@@ -109,6 +120,7 @@ get_from_web (url name) {
   //cout << cmd << LF;
   system (cmd);
   //cout << "got " << name << " as " << tmp << LF;
+#endif // QTTEXMACS
 
   if (file_size (url_system (tmp_s)) <= 0) {
     remove (tmp);

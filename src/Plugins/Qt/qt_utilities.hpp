@@ -163,4 +163,6 @@ tm_ostream& operator << (tm_ostream& out, coord2 c);
 #define NOT_IMPLEMENTED(x) \
 { if (DEBUG_QT) debug_qt << x << " not implemented yet.\n"; }
 
+int qt_download_file(string _urlStr, string _outputFile);
+
 #endif  // QT_UTILITIES_HPP
