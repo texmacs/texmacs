@@ -564,7 +564,15 @@ static patch
 remove_marker_bis (patch archive, double m) {
   ASSERT (nr_undo (archive) != 0, "marker not found");
   if (is_marker (car (get_undo (archive)), m, false)) {
+#ifdef ADVANCED_DEVELOPER_MODE
     ASSERT (nr_redo (archive) == 0, "cannot remove marker");
+#else
+    if (nr_redo (archive) != 0) {
+      // NOTE: temporary fix: turn fatal error into warning
+      cout << "TeXmacs] warning, cannot remove marker\n";
+      return make_compound (0);
+    }
+#endif
     return cdr (get_undo (archive));
   }
   else {
