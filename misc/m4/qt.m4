@@ -114,7 +114,7 @@ AC_DEFUN([LC_WITH_QT],[
     QT_LIBEXECS=`$QMAKE -query QT_INSTALL_LIBEXECS`
     PATH="$QT_LIBEXECS:$PATH"
     AS_IF([test $CONFIG_OS == MACOS],[],[unset xtraPlug])
-    AT_WITH_QT([$xtralibs +printsupport +svg +concurrent $xtraPlug],[+exceptions],[
+    AT_WITH_QT([$xtralibs +printsupport +svg +concurrent +network $xtraPlug],[+exceptions],[
       LIBS += $LDFLAGS
       QTPLUGIN = qjpeg qgif qico qsvg
     ],AC_MSG_ERROR([Cannot find a working Qt library]))
