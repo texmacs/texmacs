@@ -623,7 +623,7 @@ if (TEXMACS_GUI MATCHES "Qt.*")
     if (APPLE)
       find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport Svg MacExtras REQUIRED)
     else (APPLE)
-      find_package (Qt6 COMPONENTS Core Gui Widgets PrintSupport Svg Concurrent REQUIRED)
+      find_package (Qt6 COMPONENTS Core Gui Widgets PrintSupport Svg Concurrent Network REQUIRED)
     endif ()
 
     if (APPLE)
