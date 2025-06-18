@@ -60,6 +60,8 @@
         ((in? key (list "Ẁ" "Ŵ")) "W")
         ((in? key (list "Ỳ" "Ý" "Ŷ" "Ỹ" "Ÿ")) "Y")
         ((in? key (list "Ẑ")) "Z")
+	((and (os-macos?) (qt6-or-later-gui?) (disable-pre-edit? key)) "")
+	((== (string-length key) 1) key)
         (else "")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

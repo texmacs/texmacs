@@ -11,6 +11,8 @@
 ******************************************************************************/
 
 #include "cg_renderer.hpp"
+#ifndef QTTEXMACS
+
 #include "analyze.hpp"
 #include "image_files.hpp"
 #include "file.hpp"
@@ -559,3 +561,4 @@ the_cg_renderer () {
   if (!the_renderer) the_renderer= tm_new <cg_renderer_rep> ();
   return the_renderer;
 }
+#endif // not QTTEXMACS

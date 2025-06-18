@@ -129,7 +129,7 @@
     tm-char-whitespace?)))
 
 (provide-public (string-concatenate ss)	; srfi-13
-  "Append the elements of @ss toghether."
+  "Append the elements of @ss together."
   ;; WARNING: not portable for long lists
   (apply string-append ss))
 
@@ -240,9 +240,12 @@
 ;; Functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (compose g f)
-  "Compose the functions @f and @g"
-  (lambda x (g (apply f x))))
+
+(cond-expand (guile-3)
+  (else
+    (define-public (compose g f)
+      "Compose the functions @f and @g"
+      (lambda x (g (apply f x))))))
 
 (define-public (non pred?)
   "Return the negation of @pred?."
@@ -325,7 +328,7 @@
   (url->unix u))
 
 (define-public (first-in-path . l)
-  (cond ((null? l) #f)
+  (cond ((null? l) "")
         ((url-exists-in-path? (car l)) (car l))
         (else (apply first-in-path (cdr l)))))
 

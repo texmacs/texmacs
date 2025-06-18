@@ -65,8 +65,12 @@ slot_name (const slot s) {
     "SLOT_USER_ICONS",
     "SLOT_SIDE_TOOLS_VISIBILITY",
     "SLOT_SIDE_TOOLS",
+    "SLOT_LEFT_TOOLS_VISIBILITY",
+    "SLOT_LEFT_TOOLS",
     "SLOT_BOTTOM_TOOLS_VISIBILITY",
     "SLOT_BOTTOM_TOOLS",
+    "SLOT_EXTRA_TOOLS_VISIBILITY",
+    "SLOT_EXTRA_TOOLS",
     "SLOT_FOOTER_VISIBILITY",
     "SLOT_LEFT_FOOTER",
     "SLOT_RIGHT_FOOTER",
@@ -226,8 +230,10 @@ get_default_styled_font (int style) {
 
 #ifdef QTTEXMACS
 bool use_side_tools= false;
+bool use_left_tools= false;
 #else
 bool use_side_tools= false;
+bool use_left_tools= false;
 #endif
 
 array<SI>
@@ -243,10 +249,18 @@ bool use_unified_toolbar= true;
 string tm_style_sheet;
 bool use_mini_bars= false;
 
+#ifdef NO_FAST_ALLOC
 template<> void
 tm_delete<widget_rep> (widget_rep* ptr) {
+  if (ptr == NULL) return;
+  delete ptr;
+}
+#else
+template<> void
+tm_delete<widget_rep> (widget_rep* ptr) {
+  if (ptr == NULL) return;
   void *mem= ptr->derived_this ();
   ptr -> ~widget_rep ();
   fast_delete (mem);
 }
-
+#endif

@@ -428,24 +428,24 @@ contains_unicode_char (string s) {
 * Roman and alpha numbers
 ******************************************************************************/
 
-static string ones[10]= {
-  "", "i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix" };
-static string tens[10]= {
-  "", "x", "xx", "xxx", "xl", "l", "lx", "lxx", "lxxx", "xc" };
-static string hundreds[10]= {
-  "", "c", "cc", "ccc", "cd", "d", "dc", "dcc", "dccc", "cm" };
+static string ones[10]    = {"",  "i",  "ii",  "iii",  "iv",
+                             "v", "vi", "vii", "viii", "ix"};
+static string tens[10]    = {"",  "x",  "xx",  "xxx",  "xl",
+                             "l", "lx", "lxx", "lxxx", "xc"};
+static string hundreds[10]= {"",  "c",  "cc",  "ccc",  "cd",
+                             "d", "dc", "dcc", "dccc", "cm"};
+static string thousands[4]= {"", "m", "mm", "mmm"};
 
 string
-roman_nr (int nr) {
-  if (nr<0) return "-" * roman_nr (-nr);
-  if (nr==0) return "o";
-  if (nr>1000) return "m" * roman_nr (nr-1000);
-  if (nr==1000) return "m";
-  if (nr==999) return "im";
-  if (nr==499) return "id";
-  if ((nr%100)==99) return hundreds[nr/100] * "ic";
-  if ((nr%100)==49) return hundreds[nr/100] * "il";
-  return hundreds[nr/100] * tens[(nr%100)/10] * ones[nr%10];
+roman_nr (int32_t nr) {
+  if (nr > 3999) return "?";
+  if (nr < -3999) return "-?";
+  if (nr < 0) return "-" * roman_nr (-nr);
+  if (nr == 0) return "o";
+  return thousands[(nr / 1000) % 10] *
+         hundreds [(nr / 100) % 10] *
+         tens     [(nr / 10) % 10] *
+         ones     [nr % 10];
 }
 
 string
@@ -804,13 +804,13 @@ scm_unquote (string s) {
 
 string
 raw_quote (string s) {
-  // Mark the label of a STRING tree as representing a string and not a symbol.
+  // Mark the label of a TMSTRING tree as representing a string and not a symbol.
   return "\"" * s * "\"";
 }
 
 string
 raw_unquote (string s) {
-  // Get the string value of a STRING tree label representing a string.
+  // Get the string value of a TMSTRING tree label representing a string.
   if (is_quoted (s))
     return s (1, N(s)-1);
   else return s;
@@ -1423,13 +1423,13 @@ static bool
 find_bracket_valid (tree t, int pos) {
   if (pos < 0 || pos >= N(t))
     return false;
-  if (L(t) == STRING || L(t) == DOCUMENT)
+  if (L(t) == TMSTRING || L(t) == DOCUMENT)
     return true;
   if (L(t) == CONCAT)
-    return L(t[pos]) == STRING || L(t[pos]) == CONCAT || L(t[pos]) == WITH;
+    return L(t[pos]) == TMSTRING || L(t[pos]) == CONCAT || L(t[pos]) == WITH;
   if (L(t) == WITH)
     return pos == N(t)-1 &&
-           (L(t[pos]) == STRING || L(t[pos]) == CONCAT || L(t[pos]) == WITH ||
+           (L(t[pos]) == TMSTRING || L(t[pos]) == CONCAT || L(t[pos]) == WITH ||
             L(t[pos]) == DOCUMENT);
   else
     return false;

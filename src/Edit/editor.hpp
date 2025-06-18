@@ -29,18 +29,18 @@
 #  include "../Style/Memorizer/memorizer.hpp"
 #endif
 #include "new_data.hpp"
-#define TEXMACS_COPYRIGHT (string("(c) 1999-2020 by Joris van der Hoeven and others"))
+#define TEXMACS_COPYRIGHT (string("(c) 1999-2024 by Joris van der Hoeven and others"))
 
-#define THE_CURSOR 1
-#define THE_FOCUS 2
-#define THE_TREE 4
-#define THE_ENVIRONMENT 8
-#define THE_SELECTION 16
-#define THE_DECORATIONS 32
-#define THE_EXTENTS 64
-#define THE_LOCUS 128
-#define THE_MENUS 256
-#define THE_FREEZE 512
+#define THE_CURSOR ((int) 1)
+#define THE_FOCUS ((int) 2)
+#define THE_TREE ((int) 4)
+#define THE_ENVIRONMENT ((int) 8)
+#define THE_SELECTION ((int) 16)
+#define THE_DECORATIONS ((int) 32)
+#define THE_EXTENTS ((int) 64)
+#define THE_LOCUS ((int) 128)
+#define THE_MENUS ((int) 256)
+#define THE_FREEZE ((int) 512)
 
 class tm_buffer_rep;
 class tm_view_rep;
@@ -64,6 +64,7 @@ protected:
   box          eb;   // box translation of tree
   path         rp;   // path to the root of the document in et
   path         tp;   // path of cursor in tree
+  path         previous_gp; // previous graphics path
 #ifdef EXPERIMENTAL
   environment  ste;  // environment for style rewriting
   tree         cct;  // clean copy of the document tree
@@ -164,7 +165,7 @@ public:
   virtual void invalidate (SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void invalidate (rectangles rs) = 0;
   virtual void invalidate_all () = 0;
-  virtual void notify_change (int changed) = 0;
+  virtual void notify_change (int env_set, int env_unset = 0) = 0;
   virtual bool has_changed (int question) = 0;
   virtual int  idle_time (int event_type= ANY_EVENT) = 0;
   virtual int  change_time () = 0;
@@ -609,6 +610,7 @@ public:
   virtual path the_shifted_path () = 0;
   virtual path the_buffer_path () = 0;
   virtual void show_tree () = 0;
+  virtual void show_box () = 0;
   virtual void show_env () = 0;
   virtual void show_path () = 0;
   virtual void show_cursor () = 0;

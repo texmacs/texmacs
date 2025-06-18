@@ -174,7 +174,7 @@ edit_incl     := $(scheme_incl) \
   $(call incl_flags,Edit/Editor Edit/Interface Edit/Modify)
 texmacs_incl  := $(scheme_incl)
 pdf_incl      := $(system_incl) \
-  $(call incl_flags,Plugins/Pdf/LibAesgm)
+  $(call incl_flags,Plugins/Pdf/LibAesgm Texmacs/Data)
 freetype_incl := $(system_incl)
 
 ###############################################################################
@@ -191,7 +191,8 @@ qt_moc := QTMStyle.hpp QTMGuiHelper.hpp QTMInteractiveInputHelper.hpp \
   QTMMenuHelper.hpp QTMWidget.hpp  QTMWindow.hpp QTMScrollView.hpp \
   QTMPipeLink.hpp QTMInteractivePrompt.hpp QTMFileDialog.hpp \
   QTMPrintDialog.hpp QTMPrinterSettings.hpp QTMApplication.hpp \
-  QTMTreeModel.hpp QTMSockets.hpp
+  QTMTreeModel.hpp QTMSockets.hpp QTMMainTabWindow.hpp QTMWaitDialog.hpp \
+  QTMToolbar.hpp
 endif
 
 qt_moc_src = $(patsubst %.hpp, moc_%.cpp,$(qt_moc))
@@ -211,7 +212,7 @@ Objects/winresource.rc.o:
 	$(WINDRES) $(WINDRESFLAGS) ../packages/windows/resource.rc \
 	-o Objects/winresource.rc.o
 
-ifeq "@CONFIG_OS_COMPAT@" "Windows"
+ifeq "@CONFIG_OS@" "MINGW"
 uses_windowsres = Objects/winresource.rc.o
 else
 uses_windowsres =
@@ -334,13 +335,13 @@ $(scheme_obj): Objects/%.o: %.cpp
 $(graphics_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(graphics_incl))
 $(plugins_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(plugins_incl) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXSQLITE3) $(CXXICONV) $(CXXSPARKLE) $(CXXX11))
+	$(call cxx_incl,$(plugins_incl) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXSQLITE3) $(CXXICONV) $(CXXSPARKLE) $(CXXX11) $(CXXQT) $(CXXGUILE))
 $(plugins_c_obj): Objects/%.o: %.c
 	$(call cc_incl,$(plugins_incl))
 $(x11_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(x11_incl) $(CXXX11) $(CXXGUILE))
 $(os_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(os_incl))
+	$(call cxx_incl,$(os_incl) $(CXXQT) $(CXXGUILE))
 $(qt_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(qt_incl) $(CXXQT) $(CXXGUILE))
 $(moc_obj): Objects/%.o: ./Plugins/Qt/%.cpp
@@ -441,7 +442,13 @@ Objects/texmacs-$(link).bin: Objects/texmacs.o Objects/tm_ostream.o Objects/fast
 
 all: $(tmsrc)/bin/texmacs.bin
 
-.PHONY: all $(tmsrc)/bin/texmacs.bin
+Objects/libtexmacs.$(SO_SUFFIX): Objects/texmacs.o Objects/tm_ostream.o Objects/fast_alloc.o Objects/tree.o $(TEXMACS_objects)
+	$(LD) $^ $(link_options) $(LDFLAGS) $(LDSHARED) $(LIBS) -o $@
+
+Objects/libtexmacs.a: Objects/texmacs.o Objects/tm_ostream.o Objects/fast_alloc.o Objects/tree.o $(TEXMACS_objects)
+	$(AR) $(ARFLAGS) $@ $^
+
+.PHONY: all liball $(tmsrc)/bin/texmacs.bin
 
 ###############################################################################
 # Interface for Guile

@@ -2,6 +2,7 @@
 ("a series" "")
 ("abbreviation" "簡寫")
 ("about" "關於")
+("apropos" "關於")
 ("about menu" "關於功能表")
 ("above" "以上")
 ("abstract" "摘要")

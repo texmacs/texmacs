@@ -77,7 +77,8 @@
   ---
   ("Monospaced" (make-mc 'mc-monospaced))
   ("Horizontal" (make-mc 'mc-horizontal))
-  ("Vertical" (make-mc 'mc-vertical)))
+  ("Vertical" (make-mc 'mc-vertical))
+  ("Popup menu" (make-mc 'mc-popup)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main menus for inserting and manipulating educational content
@@ -186,13 +187,18 @@
   ---
   ("Wide colored"  (mc-set-button-theme 'with-button-ornament)))
 
+(menu-bind mc-popup-button-theme-menu
+  ("Click" (mc-set-popup-button-activate "default"))
+  ("Hover" (mc-set-popup-button-activate "mouse-over"))
+  ("Focus" (mc-set-popup-button-activate "keyboard")))
+
 (tm-menu (focus-toggle-menu t)
   (:require (mc-context? t)))
 
 (tm-menu (focus-extra-menu t)
   (:require (mc-context? t))
   ---
-  (if (mc-exclusive-context? t)
+  (if (mc-exposed-context? t)
       (-> "Exclusive" (link mc-select-menu)))
   (if (mc-plural-context? t)
       (-> "Plural" (link mc-select-menu)))
@@ -203,10 +209,10 @@
   (:require (mc-context? t)))
 
 (tm-menu (focus-extra-icons t)
-  (:require (mc-context? t))
+  (:require (or (mc-exposed-context? t) (mc-plural-context? t)))
   //
   (mini #t
-    (if (mc-exclusive-context? t)
+    (if (mc-exposed-context? t)
 	(=> "Exclusive" (link mc-select-menu)))
     (if (mc-plural-context? t)
 	(=> "Plural" (link mc-select-menu))))

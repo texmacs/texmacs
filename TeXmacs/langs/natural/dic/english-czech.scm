@@ -6,6 +6,7 @@
 ("TeX" "TeX")
 ("abbreviation" "zkratka")
 ("about" "o programu")
+("apropos" "o programu")
 ("about menu" "o programu")
 ("above" "nad")
 ("abstract" "abstrakt")

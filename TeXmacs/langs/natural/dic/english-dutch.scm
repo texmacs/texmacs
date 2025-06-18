@@ -10,6 +10,7 @@
 ("abbreviated authors" "afgekorte auteurs")
 ("abbreviation" "afkorting")
 ("about" "over")
+("apropos" "over")
 ("about menu" "over menu")
 ("above" "boven")
 ("abbreviated authors" "afgekorte auteurs")

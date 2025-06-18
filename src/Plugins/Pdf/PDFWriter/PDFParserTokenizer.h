@@ -45,7 +45,7 @@ public:
 
 	// Get the next avialable PDF token. return result returns whether
 	// token retreive was successful and the token. Token retrieval may be unsuccesful if
-	// the end of file was reached and no token was recorded, or if read failure occured.
+	// the end of file was reached and no token was recorded, or if read failure occurred.
 	// tokens may be:
 	// 1. Comments
 	// 2. Strings (hex or literal)

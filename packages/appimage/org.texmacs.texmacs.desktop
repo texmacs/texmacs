@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+
+Name=GNU TeXmacs
+Comment=A structured wysiwyg scientific text editor
+Categories=Science;Math;
+
+Icon=texmacs
+Exec=texmacs %f
+Terminal=false
+
+MimeType=text/x-texmacs;text/plain;text/x-tex;
+

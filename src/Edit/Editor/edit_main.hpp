@@ -83,6 +83,7 @@ public:
   path the_shifted_path ();
 
   void show_tree ();
+  void show_box ();
   void show_env ();
   void show_path ();
   void show_cursor ();

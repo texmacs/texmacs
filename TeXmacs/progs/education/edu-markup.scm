@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (education edu-markup)
-  (:use (database title-markup)))
+  (:use (database title-markup)
+        (education edu-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customization of titles
@@ -96,3 +97,34 @@
     (cwith "1" "-1" "1" "-1" "cell-tsep" "-0.2ln")
     (cwith "2" "-1" "1" "-1" "cell-tborder" ,inn)
     (table ,@(map ext-vertical-item (tree-children t)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Popups
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (mc-popup-first l)
+  (and (nnull? l)
+       (with (h . t) l
+         (if (tm-func? h 'mc-field 2)
+             (tm-ref h 1)
+             (mc-popup-first t)))))
+
+(define (mc-popup-selected l)
+  (and (nnull? l)
+       (with (h . t) l
+         (if (mc-field-active? h)
+             (tm-ref h 1)
+             (mc-popup-selected t)))))
+
+(tm-define (ext-mc-popup t)
+  (:secure #t)
+  (let* ((ch    (tm-children t))
+         (first (mc-popup-first ch))
+         (sel   (mc-popup-selected ch))
+         (text  (or (and sel `(mc-selected-field ,sel))
+                    (and first `(mc-selected-none ,first))
+                    `(mc-selected-none "---")))
+         (text* (or sel first "---")))
+    `(button-popup
+      ,text ,t (with "button-nr" "0" (vertical-items* ,@ch))
+      "left" "Bottom" "default")))

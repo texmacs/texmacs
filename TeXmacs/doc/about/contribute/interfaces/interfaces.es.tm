@@ -9,7 +9,7 @@
   álgebra computacional u otros programas científicos con salida
   estructurada. Por favor considere escribir interfaces entre <apply|TeXmacs>
   y su(s) sistema(s) favorito(s). Ya \ ha sido hechas interfaces entre
-  <apply|TeXmacs> con varios otros sistemas libres, como Giac, Macaulay 2,
+  <apply|TeXmacs> con varios otros sistemas libres, como Giac, Macaulay2,
   Maxima, GNU Octave, Pari, Qcl, gTybalt, Yacas. Documentación detallada
   sobre cómo adicionar nuevas interfaces está disponible en el menu
   <apply|hyper-link|<apply|menu|Help|Interfacing>|../../../devel/plugin/plugin.en.tm>.

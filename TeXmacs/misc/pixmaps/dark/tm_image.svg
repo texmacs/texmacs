@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg3039" width="20" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <metadata id="metadata3044">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1" transform="translate(0,4)">
+  <path id="path5624" d="m0.9875 13.93h17.966v-14.895h-17.998z" stroke="#000" stroke-dashoffset=".5" stroke-linecap="square" stroke-linejoin="round" stroke-width="2.2303"/>
+  <path id="path5628" d="m1.975 0.26391 16.023 0.039613 0.031855 12.399-16.055-0.039614z" fill="#0a1312"/>
+  <path id="path5630" d="m2 11.46 15.966-0.065175 0.03186-7.4077-16.023-0.039613z" fill="#335130"/>
+  <path id="path5626" d="m2.0069 12.742 15.991 0.039608 0.002032-5.0519s-4.6428 1.1108-10 0c-5.3572-1.1108-6-1.8653-6-1.8653z" fill="#232911"/>
+  <path id="path5632" d="m4.2143 12.882h1.7857l1.1905-8.8825h-1.1905z" fill="#c5a18b"/>
+  <path id="path5634" d="m6 3.9991s0.5-2.4871 2-3.1089c1.5-0.62178 4.7452-0.96626 4.7452-0.96626s-3.1481 1.519-4.1593 2.2098c-1.0112 0.69077-1.6496 3.0813-1.6496 3.0813z" fill="#e3fe7f"/>
+  <path id="path5636" d="m6 3.9991h1.1905s-0.75527-2.2021-1.7857-2.9608c-1.0304-0.75873-4.1667-0.74021-4.1667-0.74021s2.6048 1.5049 3.5389 2.1406c0.93409 0.63574 1.223 1.5605 1.223 1.5605z" fill="#e3fe7f"/>
+  <path id="path5638" d="m6 3.9991 0.94564 0.89866s1.5891-0.50081 2.5302-0.34408c0.94112 0.15673 3.2729 1.2427 3.2729 1.2427s-1.6632-2.5305-2.7314-2.8544c-1.0682-0.32391-4.0174 1.0571-4.0174 1.0571z" fill="#e3fe7f"/>
+  <path id="path5640" d="m6.723 4.8069 0.46749-0.80781s-2.1923-0.91609-3.3903-0.62137-3.0618 3.1193-3.0618 3.1193 2.5691-1.4465 3.5801-1.6505 2.4044-0.039615 2.4044-0.039615z" fill="#e3fe7f"/>
+  <path id="path5642" d="m0.5 14.5h19v-15.96h-19z" fill="none" stroke="#7f7f7f" stroke-width="1.108"/>
+ </g>
+</svg>

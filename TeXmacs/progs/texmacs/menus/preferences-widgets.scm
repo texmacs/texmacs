@@ -96,6 +96,9 @@
               "Multiple documents share window")
             (get-pretty-preference "buffer management")
             "18em"))
+    (item (text "(Experimental) Enable tab:")
+      (toggle (set-boolean-preference "enable tab" answer)
+              (get-boolean-preference "enable tab")))
     (item (text "User interface theme:")
       (enum (set-pretty-preference* "gui theme" answer)
             '("Default" "Bright" "Dark" "Native" "Legacy" "")
@@ -907,6 +910,12 @@
         (centered
           (dynamic (other-preferences-widget)))))))
 
-(tm-define (open-preferences)
+(tm-define (open-preferences-window)
   (:interactive #t)
   (top-window preferences-widget "User preferences"))
+
+(tm-define (open-preferences)
+  (:interactive #t)
+  (if (side-tools?)
+      (tool-select :right 'preferences-tool)
+      (open-preferences-window)))

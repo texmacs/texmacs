@@ -37,7 +37,7 @@
 (menu-bind eukleides-figures-menu
 
 ;  (->"Figures"
-	  (->"Detailled examples"
+	  (->"Detailed examples"
 		(group "Triangles")
 
 		("Triangle" 

@@ -22,9 +22,10 @@ class bridge_ornamented_rep: public bridge_rep {
 protected:
   bridge body;
   tree   with;
+  int    idx;
 
 public:
-  bridge_ornamented_rep (typesetter ttt, tree st, path ip);
+  bridge_ornamented_rep (typesetter ttt, tree st, path ip, int idx);
   void initialize ();
 
   void notify_assign (path p, tree u);
@@ -40,16 +41,16 @@ public:
 };
 
 bridge_ornamented_rep::bridge_ornamented_rep (
-  typesetter ttt, tree st, path ip):
-    bridge_rep (ttt, st, ip), with (tree (TUPLE))
+  typesetter ttt, tree st, path ip, int idx2):
+  bridge_rep (ttt, st, ip), with (tree (TUPLE)), idx (idx2)
 {
   initialize ();
 }
 
 void
 bridge_ornamented_rep::initialize () {
-  if (is_nil(body)) body= make_bridge (ttt, st[0], descend (ip, 0));
-  else replace_bridge (body, st[0], descend (ip, 0));
+  if (is_nil(body)) body= make_bridge (ttt, st[idx], descend (ip, idx));
+  else replace_bridge (body, st[idx], descend (ip, idx));
 }
 
 /******************************************************************************
@@ -65,8 +66,8 @@ bridge_ornamented_rep::notify_assign (path p, tree u) {
   }
   else {
     bool mp_flag= is_multi_paragraph (st);
-    if (p->item == 0) {
-      if (is_atom (p)) body= make_bridge (ttt, u, descend (ip, 0));
+    if (p->item == idx) {
+      if (is_atom (p)) body= make_bridge (ttt, u, descend (ip, idx));
       else body->notify_assign (p->next, u);
       st= substitute (st, p->item, body->st);
     }
@@ -83,11 +84,11 @@ void
 bridge_ornamented_rep::notify_insert (path p, tree u) {
   // cout << "Insert " << p << ", " << u << " in " << st << "\n";
   ASSERT (!is_nil (p), "nil path");
-  if (is_atom (p) || (p->item != 0)) bridge_rep::notify_insert (p, u);
+  if (is_atom (p) || (p->item != idx)) bridge_rep::notify_insert (p, u);
   else {
     bool mp_flag= is_multi_paragraph (st);
     body->notify_insert (p->next, u);
-    st= substitute (st, 0, body->st);
+    st= substitute (st, idx, body->st);
     if (mp_flag != is_multi_paragraph (st)) initialize ();
   }
   status= CORRUPTED;
@@ -97,11 +98,11 @@ void
 bridge_ornamented_rep::notify_remove (path p, int nr) {
   // cout << "Remove " << p << ", " << nr << " in " << st << "\n";
   ASSERT (!is_nil (p), "nil path");
-  if (is_atom (p) || (p->item != 0)) bridge_rep::notify_remove (p, nr);
+  if (is_atom (p) || (p->item != idx)) bridge_rep::notify_remove (p, nr);
   else {
     bool mp_flag= is_multi_paragraph (st);
     body->notify_remove (p->next, nr);
-    st= substitute (st, 0, body->st);
+    st= substitute (st, idx, body->st);
     if (mp_flag != is_multi_paragraph (st)) initialize ();
   }
   status= CORRUPTED;
@@ -202,7 +203,7 @@ bridge_ornamented_rep::insert_ornament (box b) {
 class bridge_canvas_rep: public bridge_ornamented_rep {
 public:
   bridge_canvas_rep (typesetter ttt, tree st, path ip):
-    bridge_ornamented_rep (ttt, st, ip) {}
+    bridge_ornamented_rep (ttt, st, ip, N(st) - 1) {}
   void my_typeset (int desired_status);
 };
 
@@ -250,7 +251,7 @@ bridge_canvas_rep::my_typeset (int desired_status) {
 class bridge_ornament_rep: public bridge_ornamented_rep {
 public:
   bridge_ornament_rep (typesetter ttt, tree st, path ip):
-    bridge_ornamented_rep (ttt, st, ip) {}
+    bridge_ornamented_rep (ttt, st, ip, 0) {}
   void my_typeset (int desired_status);
 };
 
@@ -281,7 +282,7 @@ bridge_ornament_rep::my_typeset (int desired_status) {
 class bridge_art_box_rep: public bridge_ornamented_rep {
 public:
   bridge_art_box_rep (typesetter ttt, tree st, path ip):
-    bridge_ornamented_rep (ttt, st, ip) {}
+    bridge_ornamented_rep (ttt, st, ip, 0) {}
   void my_typeset (int desired_status);
 };
 

@@ -24,11 +24,13 @@
 #include "promise.hpp"
 #include "scheme.hpp"
 
+#include "QTMApplication.hpp"
 #include "QTMWindow.hpp"
 #include "QTMGuiHelper.hpp"
 #include "QTMMenuHelper.hpp"
 #include "QTMStyle.hpp"
 #include "QTMTreeModel.hpp"
+#include "QTMIconManager.hpp"
 
 #include <QCheckBox>
 #include <QPushButton>
@@ -57,12 +59,17 @@ public:
       QTMWidget *w = qobject_cast<QTMWidget*>(qApp->focusWidget());
       if (w && w->tm_widget()) {
         if (DEBUG_QT) debug_qt << "shortcut: " << ks << LF;
-        the_gui->process_keypress (w->tm_widget(), ks, texmacs_time());
+	array<string> v= tokenize (ks, " ");
+	for (int i= 0; i < N(v); i++) {
+	  string tmp= trim_spaces (v[i]);
+	  if (N(tmp) > 0)
+	    the_gui->process_keypress (w->tm_widget(), tmp, texmacs_time());
+	}
       }
     }
   }
   
-  tm_ostream& print (tm_ostream& out) { return out << "qt_key_command_rep"; }
+  tm_ostream& print (tm_ostream& out) { return out << "<command qt_key>"; }
 };
 
 
@@ -83,7 +90,7 @@ public:
   qt_toggle_command_rep(QCheckBox* w, command c) : qwid(w), cmd(c) { }
   void apply () { if (qwid) cmd (list_object (object (qwid->isChecked()))); }
 
-  tm_ostream& print (tm_ostream& out) { return out << "Toggle"; }
+  tm_ostream& print (tm_ostream& out) { return out << "<command qt_toggle>"; }
 };
 
 /*! Ad-hoc command to be used with enum widgets.
@@ -103,7 +110,7 @@ public:
       cmd (list_object (object (from_qstring(qwid->currentText()))));
   }
   
-  tm_ostream& print (tm_ostream& out) { return out << "Enum"; }
+  tm_ostream& print (tm_ostream& out) { return out << "<command qt_enum>"; }
 };
 
 
@@ -120,7 +127,7 @@ qt_glue_widget_rep::render () {
   QPaintDevice *pd;
   pd = static_cast<QPaintDevice*>(pxm.rep);
   if (pd && !pxm.isNull()) {
-    qt_renderer_rep* ren = the_qt_renderer();
+    qt_renderer_rep* ren = the_qt_renderer(1.0);
     ren->begin (pd);
     rectangle r = rectangle (0, 0, s.width(), s.height());
     ren->set_origin (0,0);
@@ -136,6 +143,9 @@ qt_glue_widget_rep::render () {
         ren->set_background (c);
         ren->set_pencil (c);
         ren->fill (r->x1, r->y2, r->x2, r->y1);
+#if QT_VERSION >= 0x060000
+	ren->set_shrinking_factor (1);
+#endif
       } else {
         ren->set_shrinking_factor (std_shrinkf);
         brush old_b = ren->get_background ();
@@ -467,7 +477,25 @@ qt_ui_element_rep::as_qaction () {
          */
       const QKeySequence& qks = to_qkeysequence (ks);
       if (!qks.isEmpty()) {
-        act->setShortcut (qks);
+#if defined (Q_OS_MAC) && QT_VERSION >= 0x060000
+	if (use_native_menubar &&
+#  if QT_VERSION >= 0x060600
+	    QApplication::inputMethod()->locale().territory()
+#  else
+	    QApplication::inputMethod()->locale().country()
+#  endif
+	    != QLocale::UnitedStates) {
+	  QString tmp= act->text () + u8" ┊ "
+	    + qks.toString(QKeySequence::NativeText).replace (", ", " ");
+	  tmp.replace ("&", "&&");
+	  act->setText(tmp);
+	  act->setShortcutVisibleInContextMenu(false);
+	}
+	else 
+	  act->setShortcut (qks);
+#else
+	act->setShortcut (qks);
+#endif
         command key_cmd = tm_new<qt_key_command_rep> (ks);
         c= new QTMCommand (act, key_cmd);
       } else {
@@ -476,7 +504,11 @@ qt_ui_element_rep::as_qaction () {
         
       // NOTE: this used to be a Qt::QueuedConnection, but the slot would not
       // be called if in a contextual menu
-      QObject::connect (act, SIGNAL (triggered()), c, SLOT (apply()));    
+#if QT_VERSION < 0x060000
+      QObject::connect (act, SIGNAL (triggered()), c, SLOT (apply()));
+#else
+      QObject::connect (act, &QAction::triggered, c, &QTMCommand::apply);
+#endif
   
       bool ok = (style & WIDGET_STYLE_INERT) == 0;
       act->setEnabled (ok? true: false);
@@ -508,8 +540,13 @@ qt_ui_element_rep::as_qaction () {
         T1 y = open_box<T1> (get_payload (help, text_widget));
         act->setToolTip (to_qstring (y.x1));
         // HACK: force displaying of the tooltip (needed for items in the QMenuBar)
+#if QT_VERSION < 0x060000
         QObject::connect (act, SIGNAL(hovered()),
-                          act, SLOT(showToolTip()));
+                          (QTMAction*)act, SLOT(showToolTip()));
+#else
+        QObject::connect (act, &QAction::hovered,
+                          (QTMAction*)act, &QTMAction::showToolTip);
+#endif
       }
     }
       break;
@@ -536,7 +573,11 @@ qt_ui_element_rep::as_qaction () {
     {
       url    image = open_box<url>(load);
       act = new QTMAction (NULL);
+#if QT_VERSION >= 0x060000
+      act->setIcon(tmapp()->icon_manager().getIcon(image));
+#else
       act->setIcon (QIcon (as_pixmap (*xpm_image (image))));
+#endif
     }
       break;
 
@@ -623,6 +664,9 @@ qt_ui_element_rep::as_qlayoutitem () {
       // FIXME: lpad and rpad ignored.
       SI hsep = y.x1; SI vsep = y.x2; SI lpad = y.x3; SI rpad = y.x4;
       if (tm_style_sheet != "") {
+#if QT_VERSION >= 0x060000
+        int retina_scale = 1;
+#endif
         hsep= (SI) (floor (retina_scale * hsep / 256.0 + 0.5) * PIXEL);
         vsep= (SI) (floor (retina_scale * vsep / 256.0 + 0.5) * PIXEL);
         lpad= (SI) (floor (retina_scale * lpad / 256.0 + 0.5) * PIXEL);
@@ -713,10 +757,12 @@ qt_ui_element_rep::as_qlayoutitem () {
       typedef quartet<bool, bool, SI, SI> T;
       T x = open_box<T> (load);
       SI w= x.x3, h= x.x4;
+#if QT_VERSION < 0x060000
       if (tm_style_sheet != "") {
         w= (SI) floor (retina_scale * w + 0.5);
         h= (SI) floor (retina_scale * h + 0.5);
       }
+#endif
       QSize sz = QSize (w, h);
       QSizePolicy::Policy hpolicy = x.x1 ? QSizePolicy::MinimumExpanding
                                          : QSizePolicy::Minimum;
@@ -819,10 +865,12 @@ qt_ui_element_rep::as_qwidget () {
       typedef quartet<bool, bool, SI, SI> T;
       T x = open_box<T>(load);
       SI w= x.x3, h= x.x4;
+#if QT_VERSION < 0x060000
       if (tm_style_sheet != "") {
         w= (SI) floor (retina_scale * w + 0.5);
         h= (SI) floor (retina_scale * h + 0.5);
       }
+#endif
       QSize sz = QSize (w, h);
       QSizePolicy::Policy hpolicy = x.x1 ? QSizePolicy::MinimumExpanding
                                          : QSizePolicy::Minimum;
@@ -848,7 +896,11 @@ qt_ui_element_rep::as_qwidget () {
         QToolButton* b = new QToolButton();
         
         QTMLazyMenu* lm = new QTMLazyMenu (pw, b, type == pullright_button);
+#if QT_VERSION >= 0x060000
+        b->setIcon (tmapp()->icon_manager().getIcon(image));
+#else
         b->setIcon (QIcon (as_pixmap (*xpm_image (image))));
+#endif
         b->setPopupMode (QToolButton::InstantPopup);
         b->setAutoRaise (true);
         b->setMenu (lm);
@@ -894,7 +946,11 @@ qt_ui_element_rep::as_qwidget () {
       } else { // text_widget
         QPushButton*     b = new QPushButton();
         QTMCommand* qtmcmd = new QTMCommand (b, cmd);
+#if QT_VERSION < 0x060000
         QObject::connect (b, SIGNAL (clicked ()), qtmcmd, SLOT (apply ()));
+#else
+        QObject::connect (b, &QPushButton::clicked, qtmcmd, &QTMCommand::apply);
+#endif
         if (qtw->type == text_widget) {
           typedef quartet<string, int, color, bool> T1;
           b->setText (to_qstring (open_box<T1> (get_payload (qtw)).x1));
@@ -958,7 +1014,12 @@ qt_ui_element_rep::as_qwidget () {
     {
       url image = open_box<url>(load);
       QLabel* l = new QLabel (NULL);
+#if QT_VERSION >= 0x060000
+      QIcon tmp= tmapp()->icon_manager().getIcon(image);
+      l->setPixmap (tmp.pixmap(tmp.availableSizes().last()));
+#else
       l->setPixmap (as_pixmap (*xpm_image (image)));
+#endif
       qwid = l;
     }
       break;
@@ -978,7 +1039,11 @@ qt_ui_element_rep::as_qwidget () {
       
       command tcmd = tm_new<qt_toggle_command_rep> (w, cmd);
       QTMCommand* c = new QTMCommand (w, tcmd);
+#if QT_VERSION < 0x060000
       QObject::connect (w, SIGNAL (stateChanged(int)), c, SLOT (apply()));
+#else
+      QObject::connect (w, &QCheckBox::stateChanged, c, &QTMCommand::apply);
+#endif
 
       qwid = w;
     }
@@ -1011,7 +1076,12 @@ qt_ui_element_rep::as_qwidget () {
       command  ecmd = tm_new<qt_enum_command_rep> (w, cmd);
       QTMCommand* c = new QTMCommand (w, ecmd);
       // NOTE: with QueuedConnections, the slots are sometimes not invoked.
+#if QT_VERSION < 0x060000
       QObject::connect (w, SIGNAL (currentIndexChanged(int)), c, SLOT (apply()));
+#else
+      QObject::connect (w, QOverload<int>::of(&QComboBox::currentIndexChanged),
+                        c, &QTMCommand::apply);
+#endif
       
       qwid = w;
     }
@@ -1037,8 +1107,13 @@ qt_ui_element_rep::as_qwidget () {
                                                    false, true, true);
 
       QTMLineEdit* lineEdit = new QTMLineEdit (0, "string", "1w");
+#if QT_VERSION < 0x060000
       QObject::connect (lineEdit, SIGNAL (textChanged (const QString&)),
-                        choiceWidget->filter(), SLOT (setFilterRegExp (const QString&)));
+                        choiceWidget, SLOT (setFilterRegularExpression (const QString&)));
+#else
+      QObject::connect (lineEdit, &QLineEdit::textChanged,
+                        choiceWidget, &QTMListView::setFilterRegularExpression);
+#endif
       lineEdit->setText (to_qstring (filter));
       lineEdit->setFocusPolicy (Qt::StrongFocus);
 
@@ -1174,7 +1249,13 @@ qt_ui_element_rep::as_qwidget () {
         QWidget* prelabel = concrete (tabs[i])->as_qwidget();
         QLabel*     label = qobject_cast<QLabel*> (prelabel);
         QWidget*     body = concrete (bodies[i])->as_qwidget();
+        tw->addTab(body, QIcon(), label ? label->text() : "");
+#if QT_VERSION >= 0x060000
+	(void) img;
+	tw->setTabIcon(i, tmapp()->icon_manager().getIcon (icons[i]));
+#else
         tw->addTab (body, QIcon (as_pixmap (*img)), label ? label->text() : "");
+#endif
         delete prelabel;
       }
 

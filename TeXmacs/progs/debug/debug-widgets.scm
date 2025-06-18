@@ -102,7 +102,7 @@
       (vertical
         (bold (text "Categories"))
         === ===
-        (resize ("100px" "100px" "100px") ("300px" "600px" "1000px")
+        (resize '("100px" "100px" "100px") '("300px" "600px" "1000px")
           (refreshable "console-widget-categories"
             (choices (begin
                        (ahash-set! console-selected kind answer)
@@ -113,8 +113,8 @@
       (vertical
         (bold (text "Messages"))
         === ===
-        (resize ("500px" "800px" "1200px" "left")
-            ("300px" "600px" "1000px" "bottom")
+        (resize '("500px" "800px" "1200px" "left")
+                '("300px" "600px" "1000px" "bottom")
           (refreshable "console-widget-messages"
             (texmacs-output
               (messages->document kind (ahash-ref console-selected kind))
@@ -175,9 +175,7 @@
     (set! console-warnings? #t))
   (when (not console-updating?)
     (set! console-updating? #t)
-    (delayed
-      (:idle 1)
-      (update-consoles))))
+    (update-consoles)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User interface

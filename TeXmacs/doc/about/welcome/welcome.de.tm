@@ -1,12 +1,12 @@
-<TeXmacs|1.0.4.5>
+<TeXmacs|2.1.4>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|german|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|Willkommen zu GNU <TeXmacs>>
 
   <\itemize>
-    <item>Im Menü <menu|Help|Manual><hyper-link||../../main/man-manual.de.tm>,
+    <item>Im Menü <menu|Help|Manual><hlink||../../main/man-manual.de.tm>,
     finden Sie ein Handbuch mit den wesentlichen Informationen zur Benutzung
     von <TeXmacs>.
 
@@ -18,12 +18,12 @@
     <item>Im Menü <menu|Help|Manual|Writing your own style files> sind die
     verschiedenen <TeXmacs>-Dokument-Stile erläutert.\ 
 
-    <item>Das Menü <menu|Help |About> enthält weitere Informationen über
+    <item>Das Menü <menu|Help |Apropos> enthält weitere Informationen über
     <TeXmacs>, wie beispielsweise über seine
     <hlink|Autoren|../../about/authors/authors.de.tm>, deren
-    <hyper-link|Kontaktadressen|../../about/authors/contact.de.tm>, und
-    <hyper-link|Änderungen|../../about/changes/changes.de.tm> in den
-    verschiedenen Versionen des Programms.\ 
+    <hlink|Kontaktadressen|../../about/authors/contact.de.tm>, und
+    <hlink|Änderungen|../../about/changes/changes.de.tm> in den verschiedenen
+    Versionen des Programms.\ 
 
     <item>Man kann immer neuere Dokumentationen über das Internet mit
     <menu|Help|Online help> erhalten. Dokumentationen in Form ganzer Bücher
@@ -63,7 +63,7 @@
     Schriftsatz steuert. Die wörtliche Übersetzung, Umgebung, wird zur
     Kennzeichnung der Betriebssystem-Umgebung benutzt. Dementsprechend sind
     \ die <em|environment variables> auf Deutsch die
-    <strong|Kontextvariablen<strong|>>.
+    <strong|Kontextvariablen>.
 
     <item>Die linearisierte Darstellung der logischen Baumstrukturen führt zu
     Darstellungen, die wie in HTML aus Marken, <em|tags>, bestehen. Diese
@@ -103,20 +103,20 @@
   beteiligen. Vielleicht wollen Sie das ja auch - und es ist leichter, als
   Sie sich das vorstellen. Mehr Information darüber, wie Sie selbst zum
   <TeXmacs>-Projekt beitragen können, finden Sie
-  \ <hyper-link|hier|../../about/contribute/contribute.en.tm>. Natürlich sind
-  wir auch für eine <hyper-link|Spende|../../about/contribute/material/donations.en.tm>
+  \ <hlink|hier|../../about/contribute/contribute.en.tm>. Natürlich sind wir
+  auch für eine <hlink|Spende|../../about/contribute/material/donations.en.tm>
   dankbar.
 
   Wenn Sie also einen Beitrag zu<TeXmacs> leisten wollen, oder wenn Sie das
   Programm speziell anpassen wollen, dann finden Sie wichtige Informationen
-  im <menu|Help>-Menü. <hyper-link|<menu|Help|Document
+  im <menu|Help>-Menü. <hlink|<menu|Help|Document
   format>|../../devel/format/format.en.tm> gibt Informationen über das
-  <TeXmacs> Dokumentenformat und unter <hyper-link|<menu|Help|Interfacing>|../../devel/plugin/plugin.en.tm>
+  <TeXmacs> Dokumentenformat und unter <hlink|<menu|Help|Interfacing>|../../devel/plugin/plugin.en.tm>
   wird \ erklärt, wie<TeXmacs> mit anderen Programmen zusammenarbeiten kann.
-  Ein Teil des Quellcodes ist unter <hyper-link|<menu|Help|Source
+  Ein Teil des Quellcodes ist unter <hlink|<menu|Help|Source
   code>|../../devel/source/source.en.tm> dokumentiert.
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2002|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -128,7 +128,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|german>
     <associate|preamble|false>
   </collection>
 </initial>

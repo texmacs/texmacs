@@ -106,10 +106,10 @@ init_std_drd () {
   if (std_drd_initialized) return;
   std_drd_initialized=true;
 
-  init (STRING, "string", fixed (0) -> returns_string ());
+  init (TMSTRING, "string", fixed (0) -> returns_string ());
   init (UNKNOWN, "unknown", fixed (0));
   init (UNINIT, "uninit", fixed (0));
-  init (ERROR, "error", fixed (1));
+  init (_ERROR, "error", fixed (1));
   init (RAW_DATA, "raw-data", fixed (1) -> raw (0));
 
   init (DOCUMENT, "document",
@@ -329,7 +329,8 @@ init_std_drd () {
   init (COPY_THEME, "copy-theme", repeat (1, 1) -> variable (0));
   init (APPLY_THEME, "apply-theme", fixed (1) -> variable (0));
   init (SELECT_THEME, "select-theme", repeat (1, 1) -> variable (0));
-  init (MARK, "mark", fixed (2));
+  init (MARK, "mark", fixed (1, 1, BIFORM) -> accessible (1));
+  init (VAR_MARK, "mark*", fixed (1, 1, BIFORM) -> accessible (1));
   init (EXPAND_AS, "expand-as", fixed (2));
   init (EVAL, "eval", fixed (1) -> name ("evaluate"));
   init (QUOTE, "quote", fixed (1) -> regular (0));
@@ -552,6 +553,8 @@ init_std_drd () {
         accessible (0) -> name (0, "text") ->
         code (1) -> name (1, "function") ->
         regular (2) -> name (2, "arguments"));
+  init (RELAY, "relay",
+        repeat (1, 1) -> accessible (0));
   init (SET_BINDING, "set-binding",
         options (1, 2));                      // see env_exec.cpp
   init (GET_BINDING, "get-binding",
@@ -599,7 +602,7 @@ init_std_drd () {
         fixed (2) -> binding (0));
   init (BACKUP, "backup",
         fixed (2) -> regular (0));
-  init (PATTERN, "pattern",
+  init (_PATTERN, "pattern",
         options (3, 1, DETAILED) -> returns_color () ->
         url_type (0));
   init (GRADIENT, "gradient",

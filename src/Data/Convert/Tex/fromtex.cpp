@@ -2322,6 +2322,7 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\mod", 1)) return tree (APPLY, "modulo", l2e (t[1]));
   if (is_tuple (t, "\\prime", 1)) return tree (RPRIME, string_arg (t[1]));
   if (is_tuple (t, "\\frac", 2)) return tree (FRAC, l2e (t[1]), l2e (t[2]));
+  if (is_tuple (t, "\\boxed", 1)) return tree (ORNAMENT, l2e(t[1]));
   if (is_tuple (t, "\\choose", 2))
     return compound ("choose", l2e (t[1]), l2e (t[2]));
   if (is_tuple (t, "\\atop", 2))

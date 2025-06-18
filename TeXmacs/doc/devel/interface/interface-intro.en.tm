@@ -7,7 +7,7 @@
 
   In this chapter we describe how to interface <TeXmacs> with an extern
   application. Such interfaces should be distributed in the form of
-  <hyper-link|plugins|../plugin/plugins.en.tm>. The plug-in may either
+  <hyper-link|plugins|../plugins/plugins.en.tm>. The plug-in may either
   contain the extern application, or provide the ``glue'' between <TeXmacs>
   and the application. Usually, interfaces are used interactively in shell
   sessions (see <menu|Insert|Session>). But they may also be designed for

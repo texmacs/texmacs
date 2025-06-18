@@ -170,46 +170,79 @@ MacosQWidget#centralWidget {
 * Side tools
 ****************************************************************************/
 
+QDockWidget#bottomTools::title,
+QDockWidget#leftTools::title,
 QDockWidget#sideTools::title {
     background: #D4D4D4;
     text-align: center;
 }
 
+QDockWidget#bottomTools QWidget#title,
+QDockWidget#leftTools QWidget#title,
 QDockWidget#sideTools QWidget#title {
     background: #D4D4D4;
     font-weight: bold;
 }
 
+QDockWidget#bottomTools QWidget#title *,
+QDockWidget#leftTools QWidget#title *,
 QDockWidget#sideTools QWidget#title * {
     background: #D4D4D4;
     font-weight: bold;
     margin: 5px;
 }
 
+QDockWidget#bottomTools QWidget#subtitle,
+QDockWidget#leftTools QWidget#subtitle,
 QDockWidget#sideTools QWidget#subtitle {
     font-weight: bold;
 }
 
+QDockWidget#bottomTools QWidget#subtitle *,
+QDockWidget#leftTools QWidget#subtitle *,
 QDockWidget#sideTools QWidget#subtitle * {
     font-weight: bold;
     margin: 5px;
 }
 
+QDockWidget#bottomTools QWidget#discrete *,
+QDockWidget#leftTools QWidget#discrete *,
 QDockWidget#sideTools QWidget#discrete * {
     color: #505050;
     font-size: 12px;
 }
 
+QDockWidget#bottomTools QWidget#plain QPushButton,
+QDockWidget#leftTools QWidget#plain QPushButton,
+QDockWidget#sideTools QWidget#plain QPushButton {
+    text-align: left;
+}
+
+QDockWidget#bottomTools QWidget#plain QPushButton,
+QDockWidget#leftTools QWidget#plain QPushButton,
+QDockWidget#sideTools QWidget#plain QPushButton,
+QDockWidget#bottomTools QWidget#discrete QPushButton,
+QDockWidget#leftTools QWidget#discrete QPushButton,
 QDockWidget#sideTools QWidget#discrete QPushButton {
     background: none;
     border: none;
 }
 
+QDockWidget#bottomTools QWidget#plain QPushButton:hover,
+QDockWidget#leftTools QWidget#plain QPushButton:hover,
+QDockWidget#sideTools QWidget#plain QPushButton:hover,
+QDockWidget#bottomTools QWidget#discrete QPushButton:hover,
+QDockWidget#leftTools QWidget#discrete QPushButton:hover,
 QDockWidget#sideTools QWidget#discrete QPushButton:hover {
     background: #F8F8F8;
     border: none;
 }
 
+QDockWidget#bottomTools QWidget#plain QPushButton:pressed,
+QDockWidget#leftTools QWidget#plain QPushButton:pressed,
+QDockWidget#sideTools QWidget#plain QPushButton:pressed,
+QDockWidget#bottomTools QWidget#discrete QPushButton:pressed,
+QDockWidget#leftTools QWidget#discrete QPushButton:pressed,
 QDockWidget#sideTools QWidget#discrete QPushButton:pressed {
     background: #D0D0D0;
     border: none;

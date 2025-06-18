@@ -95,19 +95,20 @@
     (go-to-next-inside-sub fun l)
     (if (not (innermost-pattern (cursor-path) l)) (go-to p))))
 
-(define (go-to-next-such-that fun pred?)
-  (do ((p (cursor-path) (cursor-path))
-       (q (begin (fun) (cursor-path)) (begin (fun) (cursor-path))))
-      ((or (== p q) (pred? (path->tree (cDr q))))
-       ;;(display* "End " q ", " (path->tree (cDr q)) "\n")
-       q)
-    ;;(display* "Next " q ", " (path->tree (cDr q)) "\n")
-    (noop)))
+(define (go-to-next-such-that-sub fun pred?)
+  (with visited (make-ahash-table)
+    (do ((p (cursor-path) (cursor-path))
+	 (q (begin (fun) (cursor-path)) (begin (fun) (cursor-path))))
+	((or (== q p) (ahash-ref visited q) (pred? (path->tree (cDr q))))
+	 ;;(display* "End " q ", " (path->tree (cDr q)) "\n")
+	 q)
+      ;;(display* "Next " q ", " (path->tree (cDr q)) "\n")
+      (ahash-set! visited q #t))))
 
 (tm-define (go-to-next-such-that fun pred?)
   (with p (cursor-path)
     ;;(display* "First " p ", " (path->tree (cDr p)) ", " (procedure-source fun) ", " pred? "\n")
-    (go-to-next-such-that fun pred?)
+    (go-to-next-such-that-sub fun pred?)
     (if (not (pred? (path->tree (cDr (cursor-path))))) (go-to p))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -270,6 +271,11 @@
     `(with ,buf (window-to-buffer ,name)
        (and (not (url-none? ,buf))
             (with-buffer ,buf ,@body)))))
+
+
+(tm-define (refresh-now* win what)
+  (refresh-now what)
+  (with-window win (update-menus)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search and replace

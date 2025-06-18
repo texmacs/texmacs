@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="16"
+   id="svg2761"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:version="0.48.0 r9654"
+   sodipodi:docname="flag-us.svg"
+   sodipodi:version="0.32"
+   version="1.0"
+   width="16">
+  <metadata
+     id="metadata5782">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title></dc:title>
+        <dc:description />
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>unsorted</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://www.openclipart.org/">
+            <dc:title>Open Clip Art Library, Source: Wikimedia Commons, Source: Wikimedia Commons, Source: Wikimedia Commons, Source: Wikimedia Commons</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title />
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title />
+          </cc:Agent>
+        </dc:rights>
+        <dc:date />
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://en.wikipedia.org/wiki/Public_domain" />
+        <dc:language>en</dc:language>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     bordercolor="#666666"
+     borderopacity="1.0"
+     gridtolerance="10.0"
+     guidetolerance="10.0"
+     id="base"
+     inkscape:current-layer="svg2761"
+     inkscape:cx="4.1420115"
+     inkscape:cy="10.059931"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:window-height="700"
+     inkscape:window-width="937"
+     inkscape:window-x="282"
+     inkscape:window-y="46"
+     inkscape:zoom="10.241883"
+     objecttolerance="10.0"
+     pagecolor="#ffffff"
+     showgrid="true"
+     inkscape:window-maximized="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid5835"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2763">
+    <inkscape:perspective
+       id="perspective2833"
+       inkscape:persp3d-origin="617.5 : 216.66667 : 1"
+       inkscape:vp_x="0 : 325 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1235 : 325 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <polygon
+       id="pt"
+       points="-0.16245985,0 0,-0.5 0.16245985,0 -0.16245985,0 "
+       style="fill:#ffffff"
+       transform="scale(0.0616,0.0616)" />
+    <g
+       id="star">
+      <use
+         height="650"
+         id="use2767"
+         transform="matrix(-0.809017,-0.5877853,0.5877853,-0.809017,0,0)"
+         width="1235"
+         x="0"
+         xlink:href="#pt"
+         y="0" />
+      <use
+         height="650"
+         id="use2769"
+         transform="matrix(0.309017,-0.9510565,0.9510565,0.309017,0,0)"
+         width="1235"
+         x="0"
+         xlink:href="#pt"
+         y="0" />
+      <use
+         height="650"
+         id="use2771"
+         width="1235"
+         x="0"
+         xlink:href="#pt"
+         y="0" />
+      <use
+         height="650"
+         id="use2773"
+         transform="matrix(0.309017,0.9510565,-0.9510565,0.309017,0,0)"
+         width="1235"
+         x="0"
+         xlink:href="#pt"
+         y="0" />
+      <use
+         height="650"
+         id="use2775"
+         transform="matrix(-0.809017,0.5877853,-0.5877853,-0.809017,0,0)"
+         width="1235"
+         x="0"
+         xlink:href="#pt"
+         y="0" />
+    </g>
+    <g
+       id="s5">
+      <use
+         height="650"
+         id="use2778"
+         width="1235"
+         x="-0.252"
+         xlink:href="#star"
+         y="0" />
+      <use
+         height="650"
+         id="use2780"
+         width="1235"
+         x="-0.126"
+         xlink:href="#star"
+         y="0" />
+      <use
+         height="650"
+         id="use2782"
+         width="1235"
+         x="0"
+         xlink:href="#star"
+         y="0" />
+      <use
+         height="650"
+         id="use2784"
+         width="1235"
+         x="0.126"
+         xlink:href="#star"
+         y="0" />
+      <use
+         height="650"
+         id="use2786"
+         width="1235"
+         x="0.252"
+         xlink:href="#star"
+         y="0" />
+    </g>
+    <g
+       id="s6">
+      <use
+         height="650"
+         id="use2789"
+         width="1235"
+         x="-0.063000001"
+         xlink:href="#s5"
+         y="0" />
+      <use
+         height="650"
+         id="use2791"
+         width="1235"
+         x="0.315"
+         xlink:href="#star"
+         y="0" />
+    </g>
+    <g
+       id="x4">
+      <use
+         height="650"
+         id="use2794"
+         width="1235"
+         x="0"
+         xlink:href="#s6"
+         y="0" />
+      <use
+         height="650"
+         id="use2796"
+         width="1235"
+         x="0"
+         xlink:href="#s5"
+         y="0.054000001" />
+      <use
+         height="650"
+         id="use2798"
+         width="1235"
+         x="0"
+         xlink:href="#s6"
+         y="0.108" />
+      <use
+         height="650"
+         id="use2800"
+         width="1235"
+         x="0"
+         xlink:href="#s5"
+         y="0.162" />
+    </g>
+    <g
+       id="u">
+      <use
+         height="650"
+         id="use2803"
+         width="1235"
+         x="0"
+         xlink:href="#x4"
+         y="-0.21600001" />
+      <use
+         height="650"
+         id="use2805"
+         width="1235"
+         x="0"
+         xlink:href="#x4"
+         y="0" />
+      <use
+         height="650"
+         id="use2807"
+         width="1235"
+         x="0"
+         xlink:href="#s6"
+         y="0.21600001" />
+    </g>
+    <rect
+       height="50"
+       id="stripe"
+       style="fill:#bb133e"
+       width="1235"
+       x="0"
+       y="0" />
+  </defs>
+  <g
+     id="g5823"
+     transform="matrix(1,0,0,1.1874985,0,66.43744)"
+     style="opacity:0.75">
+    <rect
+       y="-53.421066"
+       x="0"
+       width="16"
+       style="fill:#ffffff"
+       id="rect2810"
+       height="8.4210606" />
+    <use
+       y="0"
+       xlink:href="#stripe"
+       x="0"
+       width="1235"
+       transform="matrix(0.01295546,0,0,0.01295548,0,-53.42107)"
+       id="use2812"
+       height="650" />
+    <use
+       y="100"
+       xlink:href="#stripe"
+       x="0"
+       width="1235"
+       transform="matrix(0.01295546,0,0,0.01295548,0,-53.42107)"
+       id="use2814"
+       height="650" />
+    <use
+       y="200"
+       xlink:href="#stripe"
+       x="0"
+       width="1235"
+       transform="matrix(0.01295546,0,0,0.01295548,0,-53.42107)"
+       id="use2816"
+       height="650" />
+    <use
+       y="300"
+       xlink:href="#stripe"
+       x="0"
+       width="1235"
+       transform="matrix(0.01295546,0,0,0.01295548,0,-53.42107)"
+       id="use2818"
+       height="650" />
+    <use
+       y="400"
+       xlink:href="#stripe"
+       x="0"
+       width="1235"
+       transform="matrix(0.01295546,0,0,0.01295548,0,-53.42107)"
+       id="use2820"
+       height="650" />
+    <use
+       y="500"
+       xlink:href="#stripe"
+       x="0"
+       width="1235"
+       transform="matrix(0.01295546,0,0,0.01295548,0,-53.42107)"
+       id="use2822"
+       height="650" />
+    <use
+       y="600"
+       xlink:href="#stripe"
+       x="0"
+       width="1235"
+       transform="matrix(0.01295546,0,0,0.01295548,0,-53.42107)"
+       id="use2824"
+       height="650" />
+    <rect
+       y="-53.421066"
+       x="0"
+       width="6.4000001"
+       style="fill:#002664"
+       id="rect2826"
+       height="4.5344172" />
+    <use
+       y="0"
+       xlink:href="#u"
+       x="0"
+       width="1235"
+       transform="matrix(8.4210525,0,0,8.4210606,3.2,-51.15386)"
+       id="use2828"
+       height="650" />
+  </g>
+</svg>

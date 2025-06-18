@@ -64,6 +64,7 @@ protected:
   SI            tab_sep;     // separation between columns in tabular
   int           nr_cols;     // number of columns
   array<SI>     swell;       // swell properties for lines with large height
+  tree          init_decs;   // initial decorations
 
   void line_print (line_item item);
   void line_print (line_item item, path start, path end);
@@ -102,6 +103,10 @@ public:
   lazy produce (lazy_type request, format fm);
   format query (lazy_type request, format fm);
   void propagate ();
+
+  friend array<page_item>
+  typeset_stack (edit_env env, tree t, path ip, SI width,
+                 array<line_item> a, array<line_item> b, stack_border& sb);
 };
 
 struct lazy_paragraph {

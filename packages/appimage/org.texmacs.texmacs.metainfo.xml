@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.texmacs.texmacs</id>
+  
+  <name>TeXmacs</name>
+  <summary>A structured wysiwyg scientific text editor</summary>
+  
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  
+  <recommends>
+    <display_length compare="ge">1024</display_length>
+  </recommends>
+  
+  <description>
+    <p>
+      GNU TeXmacs is a scientific word processor of the GNU project with WYSIWYW (what you see is what you want) user interface and top-quality typesetting algorithms. It was inspired by TeX and GNU Emacs, though it shares no code with those programs.
+    </p>
+  </description>
+  
+  <launchable type="desktop-id">org.texmacs.texmacs.desktop</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://www.texmacs.org/tmweb/images/texmacs-ffnlogn.png</image>
+    </screenshot>
+  </screenshots>
+</component>
+

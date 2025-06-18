@@ -14,7 +14,7 @@
 tree
 tmml_upgrade (tree doc) {
   if ((!is_tuple (doc, "document")) || (N(doc)<2))
-    return tree (ERROR, "bad format or data");
+    return tree (_ERROR, "bad format or data");
   string version= "1.0.1.24";
   if (is_tuple (doc[1], "TeXmacs", 1) && is_atomic (doc[1][1]))
     version= doc[1][1]->label;

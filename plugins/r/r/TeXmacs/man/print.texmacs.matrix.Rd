@@ -3,7 +3,7 @@
 \title{print texmacs matrix}
 \description{A matrix can be converted to an object of type texmacs.matrix, which
 then is printed as a table into TeXmacs, instead of as text.
-Notice that most of the formating options are usually set via
+Notice that most of the formatting options are usually set via
 \code{options()}, instead of as arguments to this function.}
 \usage{\method{print}{texmacs.matrix}(x, row.names = T, col.names = T, left.border = options("texmacs.table.borders")[[1]], 
     right.border = options("texmacs.table.borders")[[1]], top.border = options("texmacs.table.borders")[[1]], 

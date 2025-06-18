@@ -2,6 +2,7 @@
 ("a series" "")
 ("abbreviation" "rövidítés")
 ("about" "névjegy")
+("apropos" "névjegy")
 ("about menu" "névjegy menü")
 ("above" "felülre")
 ("abstract" "kivonat")

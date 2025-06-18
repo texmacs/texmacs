@@ -31,7 +31,7 @@ public:
   hashmap<T,U>     item;
   rel_hashmap<T,U> next;
 
-  inline rel_hashmap_rep<T,U> (hashmap<T,U> item2, rel_hashmap<T,U> next2):
+  inline rel_hashmap_rep (hashmap<T,U> item2, rel_hashmap<T,U> next2):
     item(item2), next(next2) {}
   bool contains (T x);
   void extend ();

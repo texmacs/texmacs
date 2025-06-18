@@ -112,7 +112,7 @@
        r)))
 
 (tm-define (buffer-copy buf u)
-  (:synopsis "Creates a copy of @buf in @u and return @u.")
+  (:synopsis "Creates a copy of @buf in @u and return @u")
   (with-buffer buf
     (let* ((styles (get-style-list))
            (init (get-all-inits))
@@ -266,7 +266,9 @@
 
 (define (save-buffer-as-check-permissions new-name name opts)
   ;;(display* "save-buffer-as-check-permissions " new-name ", " name "\n")
-  (cond ((cannot-write? new-name "Save file")
+  (cond ((os-android?)
+         (save-buffer-as-check-other new-name name opts))
+        ((cannot-write? new-name "Save file")
          (noop))
         ((and (url-test? new-name "f") (nin? :overwrite opts))
          (user-confirm "File already exists. Really overwrite?" #f
@@ -283,6 +285,9 @@
 (tm-define (save-buffer-as new-name . args)
   (:argument new-name texmacs-file "Save as")
   (:default  new-name (propose-name-buffer))
+  (when (string? new-name)
+    (set! new-name (string-replace new-name ":" "-"))
+    (set! new-name (string-replace new-name ";" "-")))
   (with opts (if (x-gui?) args (cons :overwrite args))
     (apply save-buffer-as-main (cons new-name opts))))
 
@@ -309,7 +314,10 @@
 
 (tm-define (export-buffer-main name to fm opts)
   ;;(display* "export-buffer-main " name ", " to ", " fm "\n")
-  (if (string? to) (set! to (url-relative (buffer-get-master name) to)))
+  (when (string? to)
+    (set! to (string-replace to ":" "-"))
+    (set! to (string-replace to ";" "-"))
+    (set! to (url-relative (buffer-get-master name) to)))
   (if (url? name) (set! current-save-source name))
   (if (url? to) (set! current-save-target to))
   (export-buffer-check-permissions name to fm opts))
@@ -414,6 +422,8 @@
   (or (and (url-rooted-web? u)
            ;; FIXME: Use HTTP HEADERS to determine the real file format
            (!= (file-format u) "texmacs-file"))
+      (url-directory? u)
+      ;; we want to open links to directories via the default OS handler 
       (file-of-format? u "image")
       (file-of-format? u "pdf")
       (file-of-format? u "postscript")
@@ -429,6 +439,8 @@
     (set! u (url-relative (current-buffer) u)))
   (cond ((not (url-rooted-web? u))
          (system-1 (default-open) u))
+        ((os-mingw64?)
+         (eval-system (url->system u)))
         ((or (os-mingw?) (os-win32?))
          (system (string-append (default-open) " " (url->system u))))
         (else
@@ -640,6 +652,16 @@
 ;; Printing buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (printer-file-suffix)
+  (if (and (supports-native-pdf?)
+	   (get-boolean-preference "native pdf"))
+      "pdf" "ps"))
+
+(tm-define (printer-file-format)
+  (if (and (supports-native-pdf?)
+	   (get-boolean-preference "native pdf"))
+      "pdf" "postscript"))
+
 (tm-define (interactive-page-setup)
   (:synopsis "Specify the page setup")
   (:interactive #t)
@@ -652,8 +674,10 @@
 (tm-define (interactive-print-buffer)
   (:synopsis "Print the current buffer")
   (:interactive #t)
-  (print-to-file "$TEXMACS_HOME_PATH/system/tmp/tmpprint.ps")
-  (interactive-print '() "$TEXMACS_HOME_PATH/system/tmp/tmpprint.ps"))
+  (with file (string-append "$TEXMACS_HOME_PATH/system/tmp/tmpprint."
+			    (printer-file-suffix))
+    (print-to-file file)
+    (interactive-print '() file)))
 
 (tm-define (print-buffer)
   (:synopsis "Print the current buffer")

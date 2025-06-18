@@ -143,6 +143,15 @@ bridge_formatting_rep::my_typeset (int desired_status) {
   tree new_format= env->read (v) * st (0, last);
   tree old_format= env->local_begin (v, new_format);
   if (v != CELL_FORMAT) ttt->insert_marker (st, ip);
+  if (is_func (st, DATOMS)) {
+    array<line_item> a, b;
+    box ab= empty_box (decorate (ip), 0, 0, 0, env->fn->yx);
+    box bb= empty_box (decorate (ip), 0, 0, 0, env->fn->yx);
+    a << line_item (CONTROL_ITEM, OP_SKIP, ab, HYPH_INVALID, st (0, N(st)-1));
+    b << line_item (CONTROL_ITEM, OP_SKIP, bb, HYPH_INVALID, tree (L(st)));
+    if (v != CELL_FORMAT) ttt->insert_marker (st, ip);
+    ttt->insert_surround (a, b);
+  }
   body->typeset (desired_status);
   env->local_end (v, old_format);
 }

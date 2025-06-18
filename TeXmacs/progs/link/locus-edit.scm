@@ -62,7 +62,7 @@
 		  (cons 1 (path-end t '())))))
 
 (tm-define (locus-id t)
-  (:synopsis "Return the unique identifier of the locus @t or #f.")
+  (:synopsis "Return the unique identifier of the locus @t or #f")
   (and (tm-func? t 'locus)
        (>= (tm-length t) 2)
        (tm-func? (tm-ref t 0) 'id 1)
@@ -70,7 +70,7 @@
        (tree->string (tm-ref t 0 0))))
 
 (tm-define (locus-set id t)
-  (:synopsis "Replace the contents of all loci with identifier @id by @t.")
+  (:synopsis "Replace the contents of all loci with identifier @id by @t")
   (for-each (lambda (l) (tree-assign! l t)) (id->trees id)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -33,7 +33,7 @@
   (== (get-env "preamble") "true"))
 
 (tm-define (toggle-source-mode)
-  (:synopsis "Toggle source code editing mode.")
+  (:synopsis "Toggle source code editing mode")
   (:check-mark "v" in-source-mode?)
   (let ((new (if (string=? (get-env "preamble") "true") "false" "true")))
     (init-env "preamble" new)))
@@ -88,15 +88,18 @@
       (when (!= new (get-init-env var))
         (set-init-env var new)))))
 
-(define (init-multi* l)
-  (when (and (nnull? l) (nnull? (cdr l)))
-    (init-env (car l) (cadr l))
-    (init-multi* (cddr l))))
-
 (tm-define (init-multi l)
-  (if (and (list-2? l) (== (car l) "font"))
-      (init-font (cadr l))
-      (init-multi* l)))
+  (when (and (nnull? l) (nnull? (cdr l)))
+    (cond ((and (== (car l) "font") (== (cadr l) :default))
+           (remove-font-packages)
+           (init-default "font"))
+          ((== (car l) "font")
+           (init-font (cadr l)))
+          ((== (cadr l) :default)
+           (init-default (car l)))
+          (else
+           (init-env (car l) (cadr l))))
+    (init-multi (cddr l))))
 
 (tm-define (test-init-font? val . opts)
   (== (font-family-main (get-init "font")) val))
@@ -315,6 +318,8 @@
 (tm-define (get-init-page-rendering)
   (cond ((== (get-init "page-border") "attached") "book")
         ((!= (get-init "page-packet") "1") "panorama")
+        ((and (== (get-init "page-medium") "paper")
+              (nnot (tree-innermost 'slideshow))) "slideshow")
         (else (get-init "page-medium"))))
 
 (define (test-page-rendering? s) (== (get-init-page-rendering) s))
@@ -337,13 +342,20 @@
          (init-default "page-offset")
 	 (notify-page-change)
 	 (delayed (:idle 25) (fit-all-to-screen)))
+        ((== s "slideshow")
+         (init-env "page-medium" "paper")
+         (init-default "page-packet")
+         (init-default "page-border")
+         (init-default "page-offset")
+	 (notify-page-change)
+	 (delayed (:idle 25) (restore-zoom "slideshow")))
         (else
-          (init-env "page-medium" s)
-          (init-default "page-border")
-          (init-default "page-packet")
-          (init-default "page-offset")
-	  (notify-page-change)
-	  (delayed (:idle 25) (restore-zoom s)))))
+         (init-env "page-medium" s)
+         (init-default "page-border")
+         (init-default "page-packet")
+         (init-default "page-offset")
+         (notify-page-change)
+         (delayed (:idle 25) (restore-zoom s)))))
 
 (tm-define (initial-get-page-rendering u)
   (with-buffer u
@@ -361,7 +373,7 @@
   (== (get-env "page-show-hf") "true"))
 
 (tm-define (toggle-visible-header-and-footer)
-  (:synopsis "Toggle visibility of headers and footers in 'page' paper mode.")
+  (:synopsis "Toggle visibility of headers and footers in 'page' paper mode")
   (:check-mark "v" visible-header-and-footer?)
   (init-env "page-show-hf"
             (if (== (get-env "page-show-hf") "true") "false" "true")))
@@ -370,7 +382,7 @@
   (== (get-env "page-width-margin") "true"))
 
 (tm-define (toggle-page-width-margin)
-  (:synopsis "Toggle mode for determining margins from paragraph width.")
+  (:synopsis "Toggle mode for determining margins from paragraph width")
   (:check-mark "v" page-width-margin?)
   (init-env "page-width-margin" (if (page-width-margin?) "false" "true")))
 
@@ -378,7 +390,7 @@
   (== (get-env "page-screen-margin") "false"))
 
 (tm-define (toggle-page-screen-margin)
-  (:synopsis "Toggle mode for using special margins for screen editing.")
+  (:synopsis "Toggle mode for using special margins for screen editing")
   (:check-mark "v" not-page-screen-margin?)
   (init-env "page-screen-margin"
             (if (not-page-screen-margin?) "true" "false")))
@@ -387,7 +399,7 @@
   (test-init? "page-odd" "1cm"))
 
 (tm-define (toggle-reduced-margins)
-  (:synopsis "Toggle mode for using reduced margins to save paper.")
+  (:synopsis "Toggle mode for using reduced margins to save paper")
   (:check-mark "v" reduced-margins?)
   (cond ((has-style-package? "reduced-margins")
          (remove-style-package "reduced-margins"))
@@ -576,7 +588,7 @@
       (:idle 1)
       (cursor-after
        (cond ((== what "all") 
-              (generate-all-aux) (inclusions-gc) (wait-update-current-buffer))
+              (generate-all-aux) (inclusions-gc) (picture-gc) (wait-update-current-buffer))
              ((== what "bibliography")
               (generate-all-aux) (wait-update-current-buffer))
              ((== what "buffer") 

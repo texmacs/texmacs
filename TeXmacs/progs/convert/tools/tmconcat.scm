@@ -79,7 +79,7 @@
 
 (tm-define (tmconcat-tokenize-math s)
   (:type (-> string (list string)))
-  (:synopsis "Decompose mathematical string @s into list of tokens.")
+  (:synopsis "Decompose mathematical string @s into list of tokens")
   (tmconcat-math-sub s 0))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -130,7 +130,7 @@
 
 (tm-define (tmconcat-simplify-tabs l)
   (:type (forall T (-> (list T) (list T))))
-  (:synopsis "Rewrite weak left and write tabs in concatenation @l.")
+  (:synopsis "Rewrite weak left and write tabs in concatenation @l")
   (with c (cons 'concat l)
     (cdr (simplify-tabs c (list) c))))
 
@@ -153,7 +153,7 @@
 
 (tm-define (tmconcat-structure-tabs l)
   (:type (forall T (-> (list T) (list T))))
-  (:synopsis "Structure tabs in concatenation @l.")
+  (:synopsis "Structure tabs in concatenation @l")
   ;;(display* "**** l << " l "\n")
   (set! l (tmconcat-simplify-tabs l))
   ;;(display* "**** l << " l "\n")
@@ -188,7 +188,7 @@
 
 (tm-define (tmconcat-structure-brackets l)
   (:type (forall T (-> (list T) (list T))))
-  (:synopsis "Recursively group matching brackets in concatenation @l.")
+  (:synopsis "Recursively group matching brackets in concatenation @l")
   (receive (r tail) (tmconcat-brackets-sub l)
     (if (null? tail) r
 	(append r (tmconcat-structure-brackets tail)))))
@@ -247,5 +247,5 @@
 (tm-define (tmconcat-structure-scripts l)
   ;; used for instance in MathML generation
   (:type (forall T (-> (list T) (list T))))
-  (:synopsis "Group scripts in @l.")
+  (:synopsis "Group scripts in @l")
   (tmconcat-structure-scripts-sub (tmconcat-simplify-scripts l)))

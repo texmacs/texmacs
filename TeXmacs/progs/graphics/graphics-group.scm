@@ -19,6 +19,9 @@
         (kernel gui kbd-handlers)
         (dynamic animate-edit)))
 
+(cond-expand
+ (guile-3
+  (use-modules (ice-9 copy-tree))))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Group edit mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

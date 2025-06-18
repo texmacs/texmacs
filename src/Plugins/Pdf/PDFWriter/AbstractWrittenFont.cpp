@@ -58,7 +58,7 @@ void AbstractWrittenFont::AppendGlyphs(
 	// so here the story goes:
 
 	// if all strings glyphs exist in CID representation, use it. CID gets preference, being the one that should be
-	// used at all times, once the first usage of it occured. if all included...no glyphs added, good.
+	// used at all times, once the first usage of it occurred. if all included...no glyphs added, good.
 	if(mCIDRepresentation && CanEncodeWithIncludedChars(mCIDRepresentation,inGlyphsList,outEncodedCharacters))
 	{
 		outFontObjectID = mCIDRepresentation->mWrittenObjectID;

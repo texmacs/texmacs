@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg3039" width="16" height="16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <metadata id="metadata3044">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1">
+  <path id="path4044" d="m-1.5 2s4.1789 0.4452 6.5 1.5c2.4886 1.1309 5.3159 3.3468 7 5.5 1.7932 2.2927 4 7.5 4 7.5" fill="none" stroke="#7f7f7f" stroke-width="1px"/>
+  <path id="path4067" d="m-3.5 4.5s4.1789 0.4452 6.5 1.5c2.4886 1.1309 5.3159 3.3468 7 5.5 1.7932 2.2927 4 7.5 4 7.5" fill="none" stroke="#3f3f3f" stroke-width="1px"/>
+  <path id="path4069" d="m0.5-0.5s4.1789 0.4452 6.5 1.5c2.4886 1.1309 5.3159 3.3468 7 5.5 1.7932 2.2927 4 7.5 4 7.5" fill="none" stroke="#3f3f3f" stroke-width="1px"/>
+  <path id="path3921" d="m5 4h1v3h3v1h-3v3h-1v-3h-3v-1h3z" fill="#d27777" stroke="#d27777" stroke-linejoin="round" stroke-width=".5"/>
+ </g>
+</svg>

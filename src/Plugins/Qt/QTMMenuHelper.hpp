@@ -402,8 +402,17 @@ public:
            (horizontalScrollBarPolicy() != Qt::ScrollBarAlwaysOff);
   }
 
+public slots:
+  inline void setFilterRegularExpression (const QString& pattern) {
+#if QT_VERSION < 0x060000
+    filterModel->setFilterRegExp (pattern);
+#else
+    filterModel->setFilterRegularExpression (pattern);
+#endif
+  }
+
 signals:
-  void selectionChanged (const QItemSelection& c);
+  void selectionHasChanged (const QItemSelection& c);
 
 protected slots:
   virtual void selectionChanged (const QItemSelection& c, const QItemSelection& p);
@@ -436,6 +445,9 @@ protected:
   virtual void currentChanged (const QModelIndex& cur, const QModelIndex& pre);
   
 private slots:
+  inline void callOnChangeWithMouse (const QModelIndex& index) {
+    callOnChange (index, true);
+  }
   void callOnChange (const QModelIndex& index, bool mouse=true);
 };
 

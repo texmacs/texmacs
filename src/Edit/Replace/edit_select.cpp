@@ -416,7 +416,7 @@ edit_select_rep::compute_selection (path p1, path p2) {
         if (sel->valid) {
           rectangles rs= sel->rs;
           if (r != rectangle (0, 0, 0, 0)) rs= rectangles (r, rs);
-          r= least_upper_bound (rs);
+          if (!is_nil (rs)) r= least_upper_bound (rs);
         }
       }
     return selection (rectangles (r), fp * 0, fp * 1);
@@ -595,7 +595,12 @@ edit_select_rep::selection_set (string key, tree t, bool persistant) {
   string s, sh, sv;
   if (key == "primary" || key == "mouse") {
     if (selection_export == "verbatim") t= exec_verbatim (t, tp);
-    if (selection_export == "html") t= exec_html (t, tp);
+    if (selection_export == "html") {
+        if (mode == "math") 
+            t= exec_html (compound ("math", t));
+        else 
+            t= exec_html (t, tp);
+    }
     if (selection_export == "latex") t= exec_latex (t, tp);
     if ((selection_export == "latex") && (mode == "math"))
       t= compound ("math", t);

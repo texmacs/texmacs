@@ -51,11 +51,11 @@ private:
 
 class spawn_system {
 public:
-  spawn_system(array<Channel> &ch, char *name, const char *const *args);
+  spawn_system(::array<Channel> &ch, char *name, const char *const *args);
   inline int getpid() { return (pid); }
   int wait();
   inline bool isRunning() { return (pid?true:false); }
 private:
   intptr_t pid;
-  array<Channel> &channel;
+  ::array<Channel> &channel;
 };

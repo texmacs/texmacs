@@ -102,7 +102,8 @@ void TrueTypeANSIFontWriter::WriteCharSet(	DictionaryContext* inDescriptorContex
 										FreeTypeFaceWrapper* inFontInfo,
 										const UIntAndGlyphEncodingInfoVector& inEncodedGlyphs)
 {
-	(void) inObjectsContext;
+        (void) inDescriptorContext;
+        (void) inObjectsContext;
 	(void) inFontInfo;
 	(void) inEncodedGlyphs;
 	// do nothing. no charset writing for true types

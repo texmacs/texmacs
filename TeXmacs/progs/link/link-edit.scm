@@ -89,7 +89,7 @@
                 (else "o"))))))
 
 (tm-define (link-set-locus nr)
-  (:synopsis "Set locus number @nr of a link.")
+  (:synopsis "Set locus number @nr of a link")
   (:check-mark "auto" link-on-locus?)
   (with-innermost t 'locus
     (ahash-set! link-participants nr (tree->tree-pointer t))))
@@ -97,28 +97,28 @@
 (define (link-component-is-url? nr . args)
   (func? (ahash-ref link-participants nr) 'url))
 (tm-define (link-set-url nr name)
-  (:synopsis "Set component @nr of a link to an url @name.")
+  (:synopsis "Set component @nr of a link to an url @name")
   (:check-mark "o" link-component-is-url?)
   (ahash-set! link-participants nr `(url ,name)))
 
 (tm-define (link-target-is-url? . args)
   (func? (ahash-ref link-participants 1) 'url))
 (tm-define (link-set-target-url url)
-  (:synopsis "Set target of link to an @url.")
+  (:synopsis "Set target of link to an @url")
   (:check-mark "o" link-target-is-url?)
   (ahash-set! link-participants 1 `(url ,url)))
 
 (define (link-component-is-script? nr . args)
   (func? (ahash-ref link-participants nr) 'script))
 (tm-define (link-set-script nr script)
-  (:synopsis "Set component @nr of a link to a @script.")
+  (:synopsis "Set component @nr of a link to a @script")
   (:check-mark "o" link-component-is-script?)
   (ahash-set! link-participants nr `(script ,script)))
 
 (tm-define (link-target-is-script? . args)
   (func? (ahash-ref link-participants 1) 'script))
 (tm-define (link-set-target-script script)
-  (:synopsis "Set target of link to a @script.")
+  (:synopsis "Set target of link to a @script")
   (:check-mark "o" link-target-is-script?)
   (ahash-set! link-participants 1 `(script ,script)))
 
@@ -181,7 +181,7 @@
             (else (set-message "Unsupported link mode" "Make link"))))))
 
 (tm-define (make-link type)
-  (:synopsis "Make a link of type @type.")
+  (:synopsis "Make a typed link")
   (:argument type "Link type")
   (when (link-completed?)
     (for-each link-build (string-tokenize-comma type))
@@ -203,7 +203,7 @@
 		 (else #f)))))
 
 (tm-define (locus-link-types check-mode?)
-  (:synopsis "Get all link types occurring in the current locus.")
+  (:synopsis "Get all link types occurring in the current locus")
   (:argument check-mode? "Filter according to the current link mode?")
   (if (not (inside? 'locus)) '()
       (with-innermost t 'locus
@@ -234,11 +234,11 @@
 	      (reverse (cDr (tree-children t))))))
 
 (tm-define (remove-link-of-types type)
-  (:synopsis "Remove all links of type @type.")
+  (:synopsis "Remove all links of a given type")
   (:argument type "Link type")
   (:proposals type (locus-link-types #t))
   (for-each remove-link-of-type (string-tokenize-comma type)))
 
 (tm-define (remove-all-links)
-  (:synopsis "Remove all links from the current locus.")
+  (:synopsis "Remove all links from the current locus")
   (for-each remove-link-of-type (locus-link-types #t)))

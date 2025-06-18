@@ -148,6 +148,9 @@
 			     (tmmltm-args (cdr args))))
 	  (else (cons tag (tmmltm-args args))))))
 
+(define (tmmltm-raw-data x)
+  `(raw-data ,(decode-base64 (second x))))
+
 (tm-define (tmmltm x)
   ;(display* "[tmmltm] ") (write x) (display* "\n")
   (cond ((string? x) (tmmltm-string x))
@@ -159,6 +162,7 @@
 	((func? x '!document) (tmmltm-document (cdr x)))
 	((func? x '!concat) (tmmltm-concat (cdr x)))
 	((func? x 'with) (tmmltm-with x))
+	((func? x 'raw-data) (tmmltm-raw-data (second x)))
 	((and (func? x 'tm-sym 1) (string? (cadr x)))
 	 (string-append "<" (cadr x) ">"))
 	(else (tmmltm-regular (car x) (cdr x)))))
@@ -169,14 +173,14 @@
 
 (tm-define (parse-tmml s)
   (:type (-> string stree))
-  (:synopsis "Parse a TeXmacs XML document @s.")
+  (:synopsis "Parse a TeXmacs XML document @s")
   (with raw-xml (parse-xml s)
     ;(display* "raw= " raw-xml "\n")
     (xmlin raw-xml)))
 
 (tm-define (tmml->texmacs tmml)
   (:type (-> stree stree))
-  (:synopsis "Convert an TeXmacs XML stree @s into TeXmacs.")
+  (:synopsis "Convert an TeXmacs XML stree @s into TeXmacs")
   (with doc (tmmltm tmml)
     (if (func? doc '!file 1)
 	(tree->stree (upgrade-tmml (cadr doc)))

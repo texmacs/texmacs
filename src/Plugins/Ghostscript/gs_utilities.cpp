@@ -22,7 +22,11 @@ string
 gs_system () {
 #ifdef OS_MINGW
   url gs= url_system ("C:\\") * url_wildcard ("Program Files*") * url_system ("gs") * url_wildcard ("gs*")* url_system ("bin") * url_wildcard ("gswin*c.exe");
-  return materialize (gs);
+  gs = resolve (gs, "fr");
+  if (!(is_rooted (gs) || is_here (gs) || is_parent (gs))) {
+    return "xxx";
+  }
+  return concretize (gs);
 #else
    return "gs";
 #endif
@@ -54,6 +58,11 @@ gs_executable () {
   static string cmd= gs_system ();
 #endif
   return cmd;
+}
+
+bool
+has_gs () {
+  return exists_in_path (gs_executable ());
 }
 
 string
@@ -496,7 +505,9 @@ gs_check (url doc) {
   array<string> cmd;
   cmd << gs_executable ();
   cmd << string ("-dNOPAUSE"); cmd << string ("-dBATCH");
-  cmd << string ("-dDEBUG"); cmd << string ("-sDEVICE=nullpage");
+  if (gs_version () < 10)
+    cmd << string ("-dDEBUG");
+  cmd << string ("-sDEVICE=nullpage");
   cmd << concretize (doc);
   array<int> out; out << 1; out << 2;
   //cout << "cmd= " << cmd << LF;

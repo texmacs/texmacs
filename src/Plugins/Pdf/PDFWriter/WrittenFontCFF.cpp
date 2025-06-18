@@ -96,7 +96,7 @@ unsigned short WrittenFontCFF::EncodeGlyph(unsigned int inGlyph,const ULongVecto
 
 	if(it == mANSIRepresentation->mGlyphIDToEncodedChar.end())
 	{
-		// as a default position, i'm grabbing the ansi bits. this should display nice charachters, when possible
+		// as a default position, i'm grabbing the ansi bits. this should display nice characters, when possible
 		unsigned char encoding;
 		if(inCharacters.size() > 0)
 			encoding = (unsigned char)(inCharacters.back() & 0xff);

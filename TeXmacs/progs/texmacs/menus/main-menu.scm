@@ -89,6 +89,7 @@
 (menu-bind presentation-popup-menu
   ("Presentation mode" (toggle-full-screen-mode))
   ("Show panorama" (toggle-panorama-mode))
+  ("Show all slides" (toggle-slideshow-mode))
   ("Remote control" (toggle-remote-control-mode)))
 
 (menu-bind texmacs-popup-menu
@@ -208,11 +209,45 @@
 ;; The TeXmacs side tools
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (texmacs-side-tools win)
-  (for (tool (window->tools win))
-    (dynamic (texmacs-side-tool win tool)))
+(tm-widget (texmacs-left-tools win)
+  (for (tool (window->tools win :transient-left :left))
+    (dynamic (texmacs-side-tool win tool :title)))
   ===
-  (glue #t #t 300 1))
+  (glue #t #t 300 1)
+  (for (tool (window->tools win :bottom-left))
+    (dynamic (texmacs-side-tool win tool :title))))
+
+(tm-widget (texmacs-side-tools win)
+  (for (tool (window->tools win :transient-right :right))
+    (dynamic (texmacs-side-tool win tool :title)))
+  ===
+  (glue #t #t 300 1)
+  (for (tool (window->tools win :bottom-right))
+    (dynamic (texmacs-side-tool win tool :title))))
+
+(tm-widget (texmacs-bottom-tools win)
+  (with tools (window->tools win :transient-bottom :bottom)
+    (if (not (qt-gui?)) (glue #f #f 0 2))
+    (link texmacs-bottom-toolbars)
+    (for (tool tools)
+      (dynamic (texmacs-side-tool win tool :title)))
+    (if (with-keyboard-tool?)
+        (if (or (extra-bottom-tools?) (nnull? tools)) ---)
+        (dynamic (custom-keyboard-toolbar)))
+    (if (not (qt-gui?)) (glue #f #f 0 1) ---)))
+
+(tm-widget (texmacs-extra-tools win)
+  (text "Deprecated"))
+
+(tm-tool* (buffer-tool win)
+  (:name "Open documents")
+  (hlist
+    ===
+    (vertical
+      (division "plain"
+        (link buffer-go-menu)))
+    === ===
+    >>))
 
 (tm-define (upward-context-trees t)
   (cond ((tree-is-buffer? t) (list t))
@@ -226,20 +261,6 @@
     (horizontal
       ((eval (symbol->string (tree-label t)))
        (tree-select t)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The TeXmacs bottom tools
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-widget (texmacs-bottom-tools)
-  (if (qt-gui?)
-      (link texmacs-bottom-toolbars))
-  (if (not (qt-gui?))
-      (glue #f #f 0 2)
-      (horizontal
-        (link texmacs-bottom-toolbars))
-      (glue #f #f 0 1)
-      ---))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The mode dependent icon bar

@@ -22,7 +22,11 @@
 #include <QUrl>
 
 
+#if QT_VERSION >= 0x060000
+#include <QStringList>
+#else
 class QStringList;
+#endif
 class QKeySequence;
 
 typedef quartet<SI,SI,SI,SI> coord4;
@@ -158,5 +162,7 @@ tm_ostream& operator << (tm_ostream& out, coord2 c);
 
 #define NOT_IMPLEMENTED(x) \
 { if (DEBUG_QT) debug_qt << x << " not implemented yet.\n"; }
+
+int qt_download_file(string _urlStr, string _outputFile);
 
 #endif  // QT_UTILITIES_HPP

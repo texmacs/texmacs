@@ -38,7 +38,8 @@
 	     description description-compact description-dash
 	     description-aligned description-long description-paragraphs item*
 	     strong em dfn code* samp kbd var abbr acronym
-	     verbatim code tt
+	     verbatim code tt underline overline strike-through
+	     deleted marked fill-out
 	     hidden-title doc-title-block
 	     equation* equation-lab equations-base
              wide-float draw-over draw-under
@@ -47,7 +48,10 @@
              html-javascript html-javascript-src html-video
 	     web-title tmdoc-title tmdoc-flag tmdoc-license
 	     tmdoc-title* tmdoc-title** tmdoc-copyright
-	     hlink action hyper-link mouse-over-balloon mouse-over-balloon*))
+	     hlink action hyper-link
+             mouse-over-balloon mouse-over-balloon*
+             hover-balloon hover-balloon*
+             popup-balloon popup-balloon*))
     ;; FIXME: should apply 'filter_style' to the environment
     ;; in an appropriate way to avoid adding the primitives below
     ,@(map tmhtml-env-macro

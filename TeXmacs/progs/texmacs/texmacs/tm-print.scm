@@ -14,7 +14,8 @@
 (texmacs-module (texmacs texmacs tm-print)
   (:use (ice-9 rdelim)
         (texmacs texmacs tm-files)
-        (dynamic fold-edit)))
+        (dynamic fold-edit)
+        (utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Try to obtain the papersize in this order from
@@ -44,7 +45,9 @@
   (with psize (getenv "PAPERSIZE")
     (if (and psize (!= psize "")) psize
         (with papersizefile (or (getenv "PAPERCONF") "/etc/papersize")
-          (and (url-test? papersizefile "r")
+          (and (not (and (os-mingw?)
+                         (== papersizefile "/etc/papersize")))
+               (url-test? papersizefile "r")
                (with pps-port (open-input-file papersizefile)
                  (with size (read-line pps-port)
                    (close-input-port pps-port)
@@ -85,7 +88,7 @@
   ("preview command" "default" notify-preview-command)
   ("printing command" (get-default-printing-command) notify-printing-command)
   ("paper type" (get-default-paper-size) notify-paper-type)
-  ("printer dpi" "600" notify-printer-dpi))
+  ("printer dpi" "1200" notify-printer-dpi))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Printing wrapper for slides
@@ -105,29 +108,76 @@
         (buffer-close buf))
       (print-to-file fname)))
 
+(tm-define (wrapped-print-to-pdf-embeded-with-tm fname)
+    (unless (string=? (url-suffix fname) "pdf")
+      (texmacs-error "Wrapped-print-to-pdf-embeded-with-tm" "fname is not a pdf"))
+    (if (screens-buffer?)
+      (let* ((cur (current-buffer))
+             (buf (buffer-new)))
+        (buffer-copy cur buf)
+        (buffer-set-master buf cur)
+        (switch-to-buffer buf)
+        (set-drd cur)
+        (dynamic-make-slides)
+        (print-to-file fname)
+        (unless (attach-doc-to-exported-pdf fname)
+          (notify-now "Fail to attach tm to pdf"))
+        (switch-to-buffer cur)
+        (buffer-close buf))
+      (begin
+      (print-to-file fname)
+      (unless (attach-doc-to-exported-pdf fname)
+          (notify-now "Fail to attach tm to pdf")))))
+
+(tm-define (attach-doc-to-exported-pdf fname)
+  (let* ((tem-url (buffer-new))
+         (new-url (url-relative tem-url (string-append (url-basename fname) ".tm")))
+         (cur-url (current-buffer-url))
+         (cur-tree (buffer-get cur-url))
+         (linked-file (pdf-get-linked-file-paths cur-tree cur-url))
+         (linked-file-with-main (array-url-append new-url linked-file))
+         (new-tree (pdf-replace-linked-path cur-tree cur-url)))
+    (buffer-rename tem-url new-url)
+    (buffer-copy cur-url new-url)
+    ;; copy also attachments and auxiliary data
+    (with-buffer cur-url
+      (let* ((attl (list-attachments)) 
+             (atts (map get-attachment attl))
+             (auxl (list-auxiliaries))
+             (auxs (map get-auxiliary auxl)))
+        (with-buffer new-url
+          (for-each set-attachment attl atts)
+          (for-each set-auxiliary auxl auxs))))
+    (buffer-save new-url)
+    (pdf-make-attachments fname linked-file-with-main fname)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Printing commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (propose-postscript-name)
-  (with name (propose-name-buffer)
+(define (propose-print-file-name)
+  (let ((name (propose-name-buffer))
+	(suf (printer-file-suffix)))
     (if (string-ends? name ".tm")
-	(string-append (string-drop-right name 3) ".ps")
+	(string-append (string-drop-right name 3) "." suf)
 	name)))
 
 (tm-property (print-to-file name)
+  (:synopsis "Print to file")
   (:argument name print-file "File name")
-  (:default  name (propose-postscript-name)))
+  (:default  name (propose-print-file-name)))
 
 (tm-property (print-pages first last)
+  (:synopsis "Print page selection")
   (:argument  first "First page")
   (:proposals first (list "1" ""))
   (:argument  last "Last page")
   (:proposals last  (list (number->string (get-page-count)) "")))
 
 (tm-property (print-pages-to-file name first last)
+  (:synopsis "Print page selection to file")
   (:argument  name print-file "File name")
-  (:default   name (propose-postscript-name))
+  (:default   name (propose-print-file-name))
   (:argument  first "First page")
   (:proposals first (list "1" ""))
   (:argument  last "Last page")
@@ -138,7 +188,7 @@
     (cond ((!= preview-command "default")
            (shell (string-append preview-command " " s " &")))
           ((or (os-mingw?) (os-win32?))
-           (shell (string-append "cmd /c start " s)))
+           (shell s))
           ((os-macos?)
            (shell (string-append "open " s)))
           ((url-exists-in-path? "xdg-open")
@@ -158,7 +208,7 @@
                     (let* ((p (getenv "TEXMACS_HOME_PATH"))
                            (f (string-append p "\\system\\tmp\\preview.pdf")))
                       (system->url f)))
-                   ((or (os-macos?) (get-boolean-preference "native pdf"))
+                   ((or (os-macos?) (== (printer-file-format) "pdf"))
                     "$TEXMACS_HOME_PATH/system/tmp/preview.pdf")
                    (else "$TEXMACS_HOME_PATH/system/tmp/preview.ps"))
     (print-to-file file)
@@ -170,4 +220,5 @@
   (:argument  end "Last page")
   (:proposals end (list (number->string (get-page-count)) ""))
   (choose-file (lambda (name) (print-pages-to-file name start end))
-	       "Print page selection to file" "postscript"))
+	       "Print page selection to file" (printer-file-format)
+	       "Print:"))

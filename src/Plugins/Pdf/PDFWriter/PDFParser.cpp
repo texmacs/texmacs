@@ -729,7 +729,7 @@ PDFObject* PDFParser::ParseExistingInDirectObject(ObjectIDType inObjectID)
 
 		if((ObjectIDType)idObject->GetValue() != inObjectID)
 		{
-			TRACE_LOG2("PDFParser::ParseExistingInDirectObject, failed to read object declaration, exepected ID = %ld, found %ld",
+			TRACE_LOG2("PDFParser::ParseExistingInDirectObject, failed to read object declaration, expected ID = %ld, found %ld",
 				inObjectID,idObject->GetValue());
 			break;
 		}
@@ -745,7 +745,7 @@ PDFObject* PDFParser::ParseExistingInDirectObject(ObjectIDType inObjectID)
 
 		if((unsigned long)versionObject->GetValue() != mXrefTable[inObjectID].mRivision)
 		{
-			TRACE_LOG2("PDFParser::ParseExistingInDirectObject, failed to read object declaration, exepected version = %ld, found %ld",
+			TRACE_LOG2("PDFParser::ParseExistingInDirectObject, failed to read object declaration, expected version = %ld, found %ld",
 				mXrefTable[inObjectID].mRivision,versionObject->GetValue());
 			break;
 		}
@@ -1889,7 +1889,7 @@ IByteReader* PDFParser::CreateInputStreamReader(PDFStreamInput* inStream)
 		}
 		else
 		{
-			TRACE_LOG("PDFParser::CreateInputStreamReader, filter parameter is of unkown type. only array and name are supported.");
+			TRACE_LOG("PDFParser::CreateInputStreamReader, filter parameter is of unknown type. only array and name are supported.");
 			status = PDFHummus::eFailure;
 			break;
 		}

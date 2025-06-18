@@ -63,7 +63,7 @@ make_bridge (typesetter ttt, tree st, path ip) {
   if (ttt->env->preamble)
     return make_inactive_bridge (ttt, st, ip);
   switch (L(st)) {
-  case ERROR:
+  case _ERROR:
     return bridge_auto (ttt, st, ip, error_m, true);
   case DOCUMENT:
     return bridge_document (ttt, st, ip);
@@ -91,6 +91,7 @@ make_bridge (typesetter ttt, tree st, path ip) {
     // but bridge_eval leads to better locality of updates for 'screens'
     return bridge_eval (ttt, st, ip);
   case MARK:
+  case VAR_MARK:
     return bridge_mark (ttt, st, ip);
   case EXPAND_AS:
     return bridge_expand_as (ttt, st, ip);

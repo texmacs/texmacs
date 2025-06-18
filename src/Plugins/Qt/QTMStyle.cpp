@@ -23,6 +23,9 @@
 
 int
 qt_zoom (int sz) {
+#if QT_VERSION >= 0x060000
+  int retina_scale = 1;
+#endif
   return (int) (retina_scale * ((double) sz));
 }
 
@@ -283,8 +286,10 @@ void
 QTMStyle::drawPrimitive (PrimitiveElement element, const QStyleOption *opt, QPainter *p, const QWidget *widget) const {
   //  if (element == QStyle::PE_FrameStatusBarItem) return;
   switch (element) {
+#if QT_VERSION < 0x060000
     case PE_FrameStatusBar : 
       return;
+#endif
     case PE_PanelButtonTool:
       if ((opt->state & (State_Sunken | State_On))) {
         qtmDrawShadeRoundPanel(p, opt->rect,  QPalette(opt->palette.color(QPalette::Mid)),//opt->palette,

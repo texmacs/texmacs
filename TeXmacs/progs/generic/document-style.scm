@@ -55,6 +55,12 @@
           ((and (pair? t) (== (car t) 'tuple)) (cdr t))
           (else (texmacs-error "get-style-list ""invalid style ~S" t)))))
 
+(tm-define (embedded-style-list . xpacks)
+  (when (side-tools?)
+    (set! xpacks (rcons xpacks "side-tools")))
+  (with l (get-style-list)
+    (list-remove-duplicates (append l xpacks))))
+
 (define (normalize-style-list* l)
   (cond ((null? l) l)
         ((list-find (cdr l) (cut style-overrides? <> (car l)))
@@ -104,7 +110,8 @@
   (noop))
 
 (tm-define (set-main-style style)
-  (:argument style "Main document style")
+  (:synopsis* "Set main document style")
+  (:argument style "Style")
   (:default  style "generic")
   (:check-mark "v" has-main-style?)
   (:balloon style-get-documentation)
@@ -124,7 +131,8 @@
   (not (has-style-package? pack)))
 
 (tm-define (add-style-package pack)
-  (:argument pack "Add package")
+  (:synopsis* "Add style package")
+  (:argument pack "Package")
   (:check-mark "v" has-style-package?)
   (:balloon style-get-documentation)
   (set-style-list (append (get-style-list) (list pack))))
@@ -152,7 +160,8 @@
   (let* ((style-name  (string-append name ".ts"))
          (style-url   (url-append "$TEXMACS_STYLE_PATH" style-name))
          (style-local (url-relative (current-buffer) style-name)))
-    (url-resolve (url-or style-url style-local) "r")))
+    ;; we give precedence to the local style file to a global style with same name     
+    (url-resolve (url-or style-local style-url) "r")))
 
 (tm-define (edit-package-source name)
   (with file-name (url-resolve-package name)
@@ -303,7 +312,7 @@
 
   ("centered-program"   "Use a centered rendering style for algorithms")
   ("framed-program"     "Display algorithms inside frames and center")
-  ("cite-author-year"   "Mimick 'natbib' package from LaTeX")
+  ("cite-author-year"   "Mimic 'natbib' package from LaTeX")
   ("cite-sort"          "Package for sorting lists of citations")
   ("two-columns"        "Markup and adjustments for two column documents")
   ("compact-list"       "Less indentation and vertical spacing for lists")

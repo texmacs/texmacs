@@ -2,7 +2,7 @@
 ;;
 ;; MODULE      : tmimage.scm
 ;; DESCRIPTION : convert texmacs fragment (selection) to image formats.
-;; COPYRIGHT   : (C) 2012-2022  Philippe Joyez
+;; COPYRIGHT   : (C) 2012-2025  Philippe Joyez
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -18,7 +18,7 @@
 
 (texmacs-module (convert images tmimage)
   (:use (convert tmml tmmlout)
-        (convert tmml tmtmml)))
+        (convert tmml tmtmml) (utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Handling of image convertion preferences
@@ -39,9 +39,10 @@
 ;; temporary files with extensions
   (url-glue (url-temp) (string-append "." ext)))
 
-(if (not (defined? 'string-contains)) ; for s7
-    (define (string-contains ss s)
-       (string-position s ss)))
+;; definition inside expression is disallowed
+;;(if (not (defined? 'string-contains)) ; for s7
+;;    (define (string-contains ss s)
+;;       (string-position s ss)))
        
 (define (debug . args)
   (when (debug-get "convert")
@@ -104,7 +105,7 @@
 ;; - the tm code of equation
 ;; - style info from the original document (style, fonts, layout, ...)
 ;; - A latex fragment for compatibility with 'textext' inkscape extension
-;; - the relative position of the baseline to enable vertical alignement
+;; - the relative position of the baseline to enable vertical alignment
 ;;   in an external application
 ;; FIXME : no error checking, no return value...
 
@@ -195,6 +196,20 @@
       ;      (system-move tu dest)))
             
             )))
+
+(define (embbed-tm-selection-in-pdf tm-fragment fname)
+  (let ((mybuf (buffer-new)))
+         (buffer-copy (current-buffer) mybuf) ;;preserve styling of the selection
+         (buffer-set-body mybuf tm-fragment)
+         (initial-default mybuf "global-title" "global-author" "global-subject") ;anonymize
+         (with-buffer mybuf 
+           (if (== (get-env "save-aux") "true") (init-env "save-aux" "false")))
+         (buffer-save mybuf)
+         (buffer-close mybuf)
+         (pdf-make-attachments fname `(,mybuf) fname)
+         ;(display mybuf)
+         (system-remove mybuf)
+        ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; public interface
@@ -310,8 +325,8 @@
              (tree-insert tfmt 0 '((twith "table-hmode" "min")))
              tm-fragment)
           tm-fragment))
-;because of bug #63404 we can't simply always use document-at for formating 
-      (tm-fragment-formated
+;because of bug #63404 we can't simply always use document-at for formatting 
+      (tm-fragment-formatted
         (if needbaseline
           ;; if needbaseline insert fragment in table having a background
 
@@ -342,7 +357,7 @@
 
 ;; step 2 generate output according to desired output format
 
-    (extents (print-snippet myurl (stree->tree tm-fragment-formated) #t)); scale))
+    (extents (print-snippet myurl (stree->tree tm-fragment-formatted) #t)); scale))
 ;; compute relative position of baseline from returned box dimensions  see tmhtml.scm
     (height (- (fourth extents) (second extents)))
     (relbaseline (if needbaseline (number->string (exact->inexact (/ (- (sixth extents)) height))) "0.0"))
@@ -354,6 +369,9 @@
          (debug "relbaseline= " relbaseline "\n")
          (refactor-svg myurl tm-fragment relbaseline))
          ;; modify svg, embedding texmacs code
+        )
+      (if (== suffix "pdf")
+        (embbed-tm-selection-in-pdf tm-fragment myurl)
         )
 
     ))))

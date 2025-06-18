@@ -112,8 +112,11 @@ get_bounding_rectangle (tree t) {
   selection sel= ed->search_selection (p * start (t), p * end (t));
   SI sz= ed->get_pixel_size ();
   double sf= ((double) sz) / 256.0;
-  rectangle selr= least_upper_bound (sel->rs) / sf;
-  rectangle r= translate (selr, wr->x1, wr->y2);
+  rectangle r (0, 0, 0, 0);
+  if (!is_nil (sel->rs)) {
+    rectangle selr= least_upper_bound (sel->rs) / sf;
+    r= translate (selr, wr->x1, wr->y2);
+  }
   array<int> ret;
   ret << (r->x1) << (r->y1) << (r->x2) << (r->y2);
   //ret << (r->x1/PIXEL) << (r->y1/PIXEL) << (r->x2/PIXEL) << (r->y2/PIXEL);
@@ -458,9 +461,9 @@ tmscm_is_content (tmscm p) {
   if (tmscm_is_string (p) || tmscm_is_tree (p)) return true;
   else if (!tmscm_is_pair (p) || !tmscm_is_symbol (tmscm_car (p))) return false;
   else {
-    for (p= tmscm_cdr (p); !tmscm_is_null (p); p= tmscm_cdr (p))
+    for (p= tmscm_cdr (p); tmscm_is_pair (p); p= tmscm_cdr (p))
       if (!tmscm_is_content (tmscm_car (p))) return false;
-    return true;
+    return tmscm_is_null (p);
   }
 }
 
@@ -593,7 +596,7 @@ command_to_tmscm (command o) {
   return blackbox_to_tmscm (close_box<command> (o));
 }
 
-static command
+command
 tmscm_to_command (tmscm o) {
   return open_box<command> (tmscm_to_blackbox (o));
 }
@@ -1204,6 +1207,9 @@ tmscm_to_list_tree (tmscm p) {
 #include "packrat.hpp"
 #include "new_style.hpp"
 #include "persistent.hpp"
+
+#include "Pdf/pdf_hummus_extract_attachment.hpp"
+#include "Pdf/pdf_hummus_make_attachment.hpp"
 
 #include "../Glue/glue_basic.cpp"
 #include "../Glue/glue_editor.cpp"

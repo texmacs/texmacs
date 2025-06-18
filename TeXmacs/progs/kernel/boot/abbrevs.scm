@@ -91,6 +91,9 @@
   (and (persistent-has? dir key)
        (persistent-get dir key)))
 
+(define-public (sourcify x)
+  (if (and (procedure? x) (procedure-source x)) (procedure-source x) x))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Common programming constructs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -104,7 +107,7 @@
 ))
 
 (define-public-macro (with var val . body)
-  (if (pair? var)
+  (if (or (pair? var) (null? var))
       `(apply (lambda ,var ,@body) ,val)
       `(let ((,var ,val)) ,@body)))
 

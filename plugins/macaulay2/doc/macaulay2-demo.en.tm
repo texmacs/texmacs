@@ -4,11 +4,11 @@
 
 <\body>
   <\tmdoc-title>
-    Example <name|Macaulay 2> session
+    Example <name|Macaulay2> session
   </tmdoc-title>
 
-  Using <menu|Insert|Session|Macaulay2>, you may insert a new <name|Macaulay
-  2> session. Here follows a sample session.
+  Using <menu|Insert|Session|Macaulay2>, you may insert a new <name|Macaulay2>
+  session. Here follows a sample session.
 
   <\session|macaulay2|default>
     <\output>

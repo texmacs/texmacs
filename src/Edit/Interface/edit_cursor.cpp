@@ -445,6 +445,7 @@ edit_cursor_rep::go_to_here () {
 
 void
 edit_cursor_rep::go_to (path p) {
+  bool must_move= tp != p;
   if (rp <= p) {
     //if (tp != p) cout << "Go to " << p << "\n";
     tp= p;
@@ -459,7 +460,10 @@ edit_cursor_rep::go_to (path p) {
         mv->delta = 0;
       }
     }
-    notify_change (THE_CURSOR);
+    if (must_move)
+      notify_change (THE_CURSOR, THE_FREEZE);
+    else
+      notify_change (THE_CURSOR);
     if (cu->valid) call ("notify-cursor-moved", object (DIRECT));
   }
 }

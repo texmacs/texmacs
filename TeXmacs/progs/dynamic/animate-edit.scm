@@ -142,49 +142,68 @@
                       '(anim-constant anim-translate anim-progressive))))
 
 (tm-define (make-anim-constant duration)
+  (:synopsis "Insert fixed animation")
   (:argument duration "Duration")
+  (:proposals duration (list "1s" "2s" "5s" ""))
   (insert-go-to `(anim-constant "" ,duration) '(0 0)))
 
 (define (make-anim-translate duration start)
   (insert-go-to `(anim-translate "" ,duration ,start "") '(0 0)))
 
 (tm-define (make-anim-translate-right duration)
+  (:synopsis "Insert rightward translation")
   (:argument duration "Duration")
+  (:proposals duration (list "1s" "2s" "5s" ""))
   (make-anim-translate duration '(tuple "-1.0" "0.0")))
 
 (tm-define (make-anim-translate-left duration)
+  (:synopsis "Insert leftward translation")
   (:argument duration "Duration")
+  (:proposals duration (list "1s" "2s" "5s" ""))
   (make-anim-translate duration '(tuple "1.0" "0.0")))
 
 (tm-define (make-anim-translate-up duration)
+  (:synopsis "Insert upward translation")
   (:argument duration "Duration")
+  (:proposals duration (list "1s" "2s" "5s" ""))
   (make-anim-translate duration '(tuple "0.0" "-1.0")))
 
 (tm-define (make-anim-translate-down duration)
+  (:synopsis "Insert downward translation")
   (:argument duration "Duration")
+  (:proposals duration (list "1s" "2s" "5s" ""))
   (make-anim-translate duration '(tuple "0.0" "1.0")))
 
 (define (make-anim-progressive duration start)
   (insert-go-to `(anim-progressive "" ,duration ,start "") '(0 0)))
 
 (tm-define (make-anim-progressive-right duration)
+  (:synopsis "Progressive rightward appearance")
   (:argument duration "Duration")
+  (:proposals duration (list "1s" "2s" "5s" ""))
   (make-anim-progressive duration '(tuple "0.0" "0.0" "0.0" "1.0")))
 
 (tm-define (make-anim-progressive-left duration)
+  (:synopsis "Progressive leftward appearance")
   (:argument duration "Duration")
+  (:proposals duration (list "1s" "2s" "5s" ""))
   (make-anim-progressive duration '(tuple "1.0" "0.0" "1.0" "1.0")))
 
 (tm-define (make-anim-progressive-up duration)
+  (:synopsis "Progressive upward appearance")
   (:argument duration "Duration")
+  (:proposals duration (list "1s" "2s" "5s" ""))
   (make-anim-progressive duration '(tuple "0.0" "0.0" "1.0" "0.0")))
 
 (tm-define (make-anim-progressive-down duration)
+  (:synopsis "Progressive downward appearance")
   (:argument duration "Duration")
+  (:proposals duration (list "1s" "2s" "5s" ""))
   (make-anim-progressive duration '(tuple "0.0" "1.0" "1.0" "1.0")))
 
 (tm-define (make-anim-progressive-center duration)
-  (:argument duration "Duration")
+  (:synopsis "Progressive outward appearance")
+  (:proposals duration (list "1s" "2s" "5s" ""))
   (make-anim-progressive duration '(tuple "0.5" "0.5" "0.5" "0.5")))
 
 (tm-define (geometry-speed t inc?)

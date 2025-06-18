@@ -190,7 +190,7 @@
     (horizontal
       (vertical
         (refreshable "plots-list"
-          (resize ("100px" "100px" "100px") ("400px" "400px" "400px")
+          (resize '("100px" "100px" "100px") '("400px" "400px" "400px")
             (choice (when (string? answer)
                       (set! name answer)
                       (set-plot-name u lan ses gt name)
@@ -248,8 +248,7 @@
   (:interactive #t)
   (let* ((b (current-buffer-url))
 	 (u (string->url "tmfs://aux/plot-source"))
-         (ps (get-style-list))
-         (packs (list-remove-duplicates (append ps (list "plot-editor"))))
+         (packs (embedded-style-list "plot-editor"))
          (gt (tree-innermost 'graphics #t))
          (wt (if (and gt (tree-is? (tree-up gt) 'with)) (tree-up gt) gt)))
     (when (== name "") (set! name (new-plot-name gt)))

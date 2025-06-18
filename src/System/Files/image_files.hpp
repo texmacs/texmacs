@@ -21,6 +21,7 @@ bool          ps_bounding_box (url image, int& x1, int& y1, int& x2, int& y2, bo
 bool          ps_read_bbox (string buf, int& x1, int& y1, int& x2, int& y2 );
 void          set_imgbox_cache(tree t, int w,  int h, int xmin=0, int ymin=0);
 void          clear_imgbox_cache(tree t);
+void          clearall_imgbox_cache();
 string 	      ps_load (url image, bool conv=true);
 void          image_size (url image, int& w, int& h);
 void          pdf_image_size (url image, int& w, int& h);
