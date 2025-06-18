@@ -114,7 +114,7 @@ AC_DEFUN([LC_WITH_QT],[
     QT_LIBEXECS=`$QMAKE -query QT_INSTALL_LIBEXECS`
     PATH="$QT_LIBEXECS:$PATH"
     AS_IF([test $CONFIG_OS == MACOS],[],[unset xtraPlug])
-    AT_WITH_QT([$xtralibs +printsupport +svg +concurrent $xtraPlug],[+exceptions],[
+    AT_WITH_QT([$xtralibs +printsupport +svg +concurrent +network $xtraPlug],[+exceptions],[
       LIBS += $LDFLAGS
       QTPLUGIN = qjpeg qgif qico qsvg
     ],AC_MSG_ERROR([Cannot find a working Qt library]))
@@ -180,7 +180,7 @@ AC_DEFUN([LC_WITH_QT],[
 
     # If we don't know the path to Qt, guess it from the path to qmake.
     if test "x$QT_PATH" = "x"; then
-      QT_PATH=`dirname "$QMAKE"`
+      QT_PATH=`dirname "$QMAKE"`/..
     fi
     if test "x$QT_PATH" = "x"; then
       AX_INSTEAD_IF([$4],
@@ -200,6 +200,7 @@ AC_DEFUN([LC_WITH_QT],[
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Widgets$QT_PKGCONFIG_SUFFIX"
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Svg$QT_PKGCONFIG_SUFFIX"
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}PrintSupport$QT_PKGCONFIG_SUFFIX"
+    QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Network$QT_PKGCONFIG_SUFFIX"
     # if CONFIG_OS is GNU_LINUX and QT_VERSION is higher than 6, use wayland
     AS_IF([test "x$CONFIG_OS" = "xGNU_LINUX"],[
       AS_IF([test $QT_MAJOR -ge 6],[

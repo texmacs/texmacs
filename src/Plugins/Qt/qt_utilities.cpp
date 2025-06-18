@@ -28,6 +28,11 @@
 #include <QImageReader>
 #include <QApplication>
 
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QFile>
+
 #include "colors.hpp"
 
 #include "dictionary.hpp"
@@ -1081,4 +1086,47 @@ void
 set_standard_style_sheet (QWidget* w) {
   if (current_style_sheet != "")
     w->setStyleSheet (to_qstring (current_style_sheet));
+}
+
+int
+qt_download_file(string _urlStr, string _outputFile) {
+
+  QString urlStr = utf8_to_qstring(_urlStr);
+  QString outputFile = utf8_to_qstring(_outputFile);
+  
+  QNetworkAccessManager manager;
+  QEventLoop loop;
+
+  QUrl url(urlStr);
+  if (!url.isValid()) {
+    cout << "Invalid URL: " << _urlStr << LF;
+    return 1;
+  }
+
+  QNetworkRequest request(url);
+  QNetworkReply* reply = manager.get(request);
+
+  QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+  loop.exec();
+
+  if (reply->error() != QNetworkReply::NoError) {
+    std_warning << "Error downloading file: " 
+      << from_qstring(reply->errorString()) << LF;
+    reply->deleteLater();
+    return 1;
+  }
+
+  QFile file(outputFile);
+  if (!file.open(QIODevice::WriteOnly)) {
+    std_warning << "Cannot open file for writing: " 
+      << _outputFile << LF;
+    reply->deleteLater();
+    return 1;
+  }
+
+  file.write(reply->readAll());
+  file.close();
+
+  reply->deleteLater();
+  return 0;
 }
