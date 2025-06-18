@@ -629,7 +629,7 @@ if (TEXMACS_GUI MATCHES "Qt.*")
     if (APPLE)
       set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport Qt5::Svg Qt5::MacExtras)
     else (APPLE)
-      set (QT_LIBRARIES Qt6::Core Qt6::Gui Qt6::Widgets Qt6::PrintSupport Qt6::Svg Qt6::Concurrent)
+      set (QT_LIBRARIES Qt6::Core Qt6::Gui Qt6::Widgets Qt6::PrintSupport Qt6::Svg Qt6::Concurrent Qt6::Network)
       set (CMAKE_POSITION_INDEPENDENT_CODE ON) # needed by Qt6
     endif (APPLE)
 
@@ -641,6 +641,7 @@ if (TEXMACS_GUI MATCHES "Qt.*")
       ${Qt6PrintSupport_INCLUDE_DIRS}
       ${Qt6Svg_INCLUDE_DIRS}
       ${Qt6Concurrent_INCLUDE_DIRS}
+      ${Qt6Network_INCLUDE_DIRS}
       ${Qt5MacExtras_INCLUDE_DIRS}
     )
 
