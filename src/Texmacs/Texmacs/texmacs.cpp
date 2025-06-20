@@ -693,6 +693,7 @@ immediate_options (int argc, char** argv) {
 
 int
 texmacs_entrypoint (int argc, char** argv) {
+  immediate_options (argc, argv);
 #ifdef QTTEXMACS
   if (!headless_mode) qtmapp= new QTMApplication (argc, argv);
 #endif
@@ -715,7 +716,6 @@ texmacs_entrypoint (int argc, char** argv) {
   original_path= get_env ("PATH");
   boot_hacks ();
   windows_delayed_refresh (1000000000);
-  immediate_options (argc, argv);
   TeXmacs_init_paths (argc, argv);
   load_user_preferences ();
 #ifndef OS_MINGW
