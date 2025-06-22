@@ -698,8 +698,14 @@ qt_simple_widget_rep::repaint_invalid_regions () {
   
   // propagate immediately the changes to the screen
   // if qrgn is empty, qt will not repaint
-  canvas()->surface()->repaint (qrgn);
-
+#if QT_VERSION >= 0x060000
+  if (!qrgn.isEmpty ())
+    canvas()->surface()->repaint
+      (QRect (0,0,canvas()->width(),canvas()->height()));
+    // repainting qrgn is sometimes buggy
+#else
+   canvas()->surface()->repaint (qrgn);
+#endif
 }
 
 hashset<pointer> qt_simple_widget_rep::all_widgets;
