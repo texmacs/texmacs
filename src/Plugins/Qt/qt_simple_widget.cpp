@@ -68,7 +68,7 @@ qt_simple_widget_rep::as_qwidget () {
   
   all_widgets->insert((pointer) this);
   backing_pos = canvas()->origin ();
-
+  backing_valid = false;
   return qwid;
 }
 
@@ -524,7 +524,7 @@ qt_simple_widget_rep::get_renderer() {
  */
 void
 qt_simple_widget_rep::repaint_invalid_regions () {
-  
+
 #if QT_VERSION >= 0x060000
   qreal dpr = canvas()->devicePixelRatio();
   backingPixmap->setDevicePixelRatio (1);
@@ -581,17 +581,20 @@ qt_simple_widget_rep::repaint_invalid_regions () {
     
     invalid_regions= invalid & rectangles (rectangle (0,0,
                                                       sz.width(),sz.height()));
-    
-    if (dy<0)
-      invalidate_rect (0,0,sz.width(),min (sz.height(),-dy));
-    else if (dy>0)
-      invalidate_rect (0,max (0,sz.height()-dy),sz.width(),sz.height());
-    
-    if (dx<0)
-      invalidate_rect (0,0,min (-dx,sz.width()),sz.height());
-    else if (dx>0)
-      invalidate_rect (max (0,sz.width()-dx),0,sz.width(),sz.height());
-    
+
+    if (!backing_valid) {
+      invalidate_rect (0, 0, sz.width(), sz.height());
+    } else {
+      if (dy<0)
+	invalidate_rect (0,0,sz.width(),min (sz.height(),-dy));
+      else if (dy>0)
+	invalidate_rect (0,max (0,sz.height()-dy),sz.width(),sz.height());
+      
+      if (dx<0)
+	invalidate_rect (0,0,min (-dx,sz.width()),sz.height());
+      else if (dx>0)
+	invalidate_rect (max (0,sz.width()-dx),0,sz.width(),sz.height());
+    }
     // we call update now to allow repainting of invalid regions
     // this cannot be done directly since interpose_handler needs
     // to be run at least once in some situations
@@ -706,6 +709,7 @@ qt_simple_widget_rep::repaint_invalid_regions () {
 #else
    canvas()->surface()->repaint (qrgn);
 #endif
+   backing_valid= true;
 }
 
 hashset<pointer> qt_simple_widget_rep::all_widgets;
