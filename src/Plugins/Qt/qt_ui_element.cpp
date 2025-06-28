@@ -461,13 +461,11 @@ qt_ui_element_rep::as_qaction () {
     {
       typedef quintuple<widget, command, string, string, int> T;
       T x = open_box<T> (load);
-
       qt_widget qtw = concrete (x.x1);
       command   cmd = x.x2;
       string   pre  = x.x3;
       string   ks   = x.x4;
       int   style   = x.x5;
-      
       QTMCommand* c;
       act = qtw->as_qaction();
         /* NOTE: we install shortcuts but in QTMWidget::event() we also handle
@@ -512,15 +510,15 @@ qt_ui_element_rep::as_qaction () {
   
       bool ok = (style & WIDGET_STYLE_INERT) == 0;
       act->setEnabled (ok? true: false);
-      
         // FIXME: implement complete prefix handling
       bool check = (pre != "") || (style & WIDGET_STYLE_PRESSED);
-      act->setCheckable (check? true: false);
-      act->setChecked (check? true: false);
-      if (pre == "v") {}
-      else if (pre == "*") {}
-      // [mi setOnStateImage:[NSImage imageNamed:@"TMStarMenuBullet"]];
-      else if (pre == "o") {}
+      if (check) {
+	act->setCheckable (true);
+	if (pre == "v") { act->setChecked (true); }
+	else if (pre == "*") { act->setChecked (true); }
+	// [mi setOnStateImage:[NSImage imageNamed:@"TMStarMenuBullet"]];
+	else if (pre == "o") { act->setChecked (true); }
+      }
     }
       break;
       
@@ -539,13 +537,13 @@ qt_ui_element_rep::as_qaction () {
         typedef quartet<string, int, color, bool> T1;
         T1 y = open_box<T1> (get_payload (help, text_widget));
         act->setToolTip (to_qstring (y.x1));
-        // HACK: force displaying of the tooltip (needed for items in the QMenuBar)
+       // HACK: force displaying of the tooltip (needed for items in the QMenuBar)
 #if QT_VERSION < 0x060000
         QObject::connect (act, SIGNAL(hovered()),
                           (QTMAction*)act, SLOT(showToolTip()));
 #else
         QObject::connect (act, &QAction::hovered,
-                          (QTMAction*)act, &QTMAction::showToolTip);
+	                 (QTMAction*)act, &QTMAction::showToolTip);
 #endif
       }
     }
@@ -918,7 +916,6 @@ qt_ui_element_rep::as_qwidget () {
         qwid = b;
       }
       qwid->setStyle (qtmstyle());
-
     }
       break;
       
