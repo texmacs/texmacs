@@ -348,11 +348,13 @@
                     (with txt (synopsis-substitute (car prop) source)
                       (and (string? txt) txt))))))))
 
-(define (add-menu-entry-balloon but style action)
-  (with txt (search-balloon-help action)
+(define (add-menu-entry-balloon but style action label)
+  (with txt (if (tuple? label 'balloon 2)
+		(translate (third label))
+		(search-balloon-help action))
     (if (not txt) but
-        (with bal (widget-text txt style (color "black") #t)
-          (widget-balloon but bal)))))
+	(with bal (widget-text txt style (color "black") #t)
+	  (widget-balloon but bal)))))
 
 (define (make-menu-entry-button style bar? bal? check label short action)
   (let* ((command (make-menu-command (if (active? style) (apply action '()))))
@@ -362,7 +364,7 @@
     (with but (if bar?
                   (widget-menu-button l command "" "" new-style)
                   (widget-menu-button l command check short style))
-      (if bal? but (add-menu-entry-balloon but style action)))))
+      (if bal? but (add-menu-entry-balloon but style action label)))))
 
 (define-public (promise-source action)
   "Helper routines for menu-widget and kbd-define"
@@ -380,9 +382,11 @@
                 (if source (kbd-find-shortcut source #t) "")))))
 
 (define (make-menu-entry-check-sub result propose)
-  (cond ((string? result) result)
-        (result propose)
-        (else "")))
+  (if (qt-gui?)
+      (if (string? propose) (if result propose " ") "")
+      (cond ((string? result) result)
+            (result propose)
+            (else ""))))
 
 (define (make-menu-entry-check opt-check action)
   (if opt-check
