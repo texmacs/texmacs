@@ -173,8 +173,12 @@ view_to_editor (url u) {
   tm_view vw= concrete_view (u);
   if (vw == NULL) {
     notify_delete_view (u); // HACK: returns to valid (?) state.
+#ifdef ADVANCED_DEVELOPER_MODE
     failed_error << "View is " << u << "\n";
     FAILED ("View admits no editor");
+#else
+    return editor ();
+#endif
   }
   return vw->ed;
 }
