@@ -254,9 +254,16 @@ void QTMMainTabWindow::removeWidget(QWidget *widget) {
 
 void QTMMainTabWindow::closeTab(int index) {
   // send the close window signal to the widget
-  QWidget *w = this->widget(index);
-  emit w->close();
-  if (count() == 0) closeAndSetTopTabWindow();
+#ifdef OS_MACOS
+  if (count() > 1) {
+    QWidget *w = this->widget(index);
+    emit w->close();
+  }
+#else
+    QWidget *w = this->widget(index);
+    emit w->close();
+    if (count() == 0) closeAndSetTopTabWindow();
+#endif
 }
 
 void QTMMainTabWindow::tabTitleChanged(QWidget *widget, QString title) {
