@@ -65,7 +65,10 @@
     (assuming (os-macos?)
       (meti (hlist // (text "Use unified toolbars"))
         (toggle (set-boolean-preference "use unified toolbar" answer)
-                (get-boolean-preference "use unified toolbar"))))))
+                (get-boolean-preference "use unified toolbar"))))
+    (meti (hlist // (text "Use multi-tabs"))
+      (toggle (set-boolean-preference "enable tab" answer)
+              (get-boolean-preference "enable tab")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences tool
