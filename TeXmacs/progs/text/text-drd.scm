@@ -81,7 +81,7 @@
 ;; Lists
 
 (define-group list-tag
-  (itemize-tag) (enumerate-tag) (description-tag))
+  (itemize-tag) (enumerate-tag) (description-tag) (new-list-tag))
 
 (define-group itemize-tag
   itemize itemize-minus itemize-dot itemize-arrow)
@@ -93,6 +93,22 @@
 (define-group description-tag
   description description-compact description-aligned
   description-dash description-long description-paragraphs)
+
+;; Support for new-list
+
+(define-group new-list-tag)
+
+(tm-define (tm-reset-new-list-tag)
+  (:secure #t)
+  (ahash-remove! group-table 'new-list-tag)
+  (eval `(define-group new-list-tag))) 
+
+(tm-define (tm-register-new-list-tag x)
+  (:secure #t)
+  (when (string? (tree->stree x))
+    (with t (tree->symbol x)
+      (when (not (group-find t 'list-tag)) 
+	(eval `(define-group new-list-tag ,t))))))
 
 ;; Document titles
 
