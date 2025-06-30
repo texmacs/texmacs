@@ -106,6 +106,7 @@ qt_pipe_link_rep::watch (int channel) {
 
 string
 qt_pipe_link_rep::read (int channel) {
+  listen (0);
   if (channel == LINK_OUT) {
     string r= PipeLink.getOutbuf ();
     PipeLink.setOutbuf ("");
