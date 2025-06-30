@@ -78,8 +78,16 @@
       (flush-all-ports)))
 
 (define-public (load-object file)
-  (let ((r (read (open-file (url-materialize file "r") OPEN_READ))))
-        (if (eof-object? r) '() r)))
+  (let ((r (catch #t
+    (lambda () (read (open-file (url-materialize file "r") OPEN_READ)))
+    (lambda (key msg . err-msg)
+      (let* ((msg (car err-msg))
+	     (args (cadr err-msg))
+	     (err-msg 
+	      (if (list? args) (eval (apply format #f msg args)) msg)))
+	(display* "Error, cannot load file " file ": " err-msg "\n")
+	'())))))
+    (if (eof-object? r) '() r)))
 
 (define-public (persistent-ref dir key)
   (and (persistent-has? dir key)
