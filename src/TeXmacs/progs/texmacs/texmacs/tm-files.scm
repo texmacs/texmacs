@@ -203,8 +203,9 @@
   (with vname `(verbatim ,(url->system name))
     (cond ((url-scratch? name)
            (choose-file
-             (lambda (x) (apply save-buffer-as-main (cons x opts)))
-             "Save TeXmacs file" "texmacs"))
+	    (lambda (x) (apply save-buffer-as-main
+		(cons x (if (x-gui?) opts (cons :overwrite opts)))))
+	      "Save TeXmacs file" "texmacs"))
           ((not (buffer-exists? name))
            (with msg `(concat "The buffer " ,vname " does not exist")
              (set-message msg "Save file")))
