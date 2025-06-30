@@ -52,6 +52,7 @@ dialogue_command_rep::apply () {
       exec_delayed (scheme_cmd ("(dialogue-end)"));
       return;
     }
+    if (N(s_arg) == 0) s_arg = "\"\"";
     object arg= string_to_object (s_arg);
     cmd= cons (arg, cmd);
     if (!is_empty (p) && get_type (p, i) == "password")
