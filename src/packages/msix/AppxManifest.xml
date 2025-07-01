@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities">
+
+  <Identity Name="org.texmacs.TeXmacs"
+            ProcessorArchitecture="arm64"
+            Publisher="CN=Centre national de la recherche scientifique, O=Centre national de la recherche scientifique, S=Paris, C=FR"
+            Version="1.0.0.0" />
+
+  <Properties>
+    <DisplayName>TeXmacs</DisplayName>
+    <Description>TeXmacs is a free scientific text editor and typesetting system.</Description>
+    <PublisherDisplayName>Liza Belos</PublisherDisplayName>
+    <Logo>misc/images/texmacs-128.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17134.0" MaxVersionTested="10.0.19041.0"/>
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="en-us"/>
+  </Resources>
+
+  <Applications>
+    <Application Id="TeXmacs"
+                 Executable="bin/texmacs.exe"
+                 EntryPoint="Windows.FullTrustApplication">
+
+      <uap:VisualElements DisplayName="TeXmacs"
+                          Description="A free scientific text editor and typesetting system."
+                          BackgroundColor="transparent"
+                          Square150x150Logo="misc/images/texmacs-128.png"
+                          Square44x44Logo="misc/images/texmacs-32.png">
+        <uap:SplashScreen Image="misc/images/texmacs-128.png"/>
+      </uap:VisualElements>
+
+      <Extensions>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="texmacsfile">
+            <uap:DisplayName>TeXmacs File</uap:DisplayName>
+            <uap:Logo>misc/images/texmacs-128.png</uap:Logo>
+            <uap:SupportedFileTypes>
+              <uap:FileType>.tm</uap:FileType>
+            </uap:SupportedFileTypes>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+      </Extensions>
+
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust"/>
+  </Capabilities>
+
+</Package>

@@ -552,6 +552,10 @@ WINDOWS_PACKAGE: WINDOWS_BUNDLE
 	iscc $(WINDOWS_PACKAGE_SRC)/TeXmacs.iss
 	if test -n "@SIGNID@"; then @SIGNID@ $(WINDOWS_PACKAGE_DIR)/*-installer.exe; fi
 
+WINDOWS_APPX: WINDOWS_BUNDLE
+	$(CP) packages/msix/AppxManifest.xml $(WINDOWS_BUILD_DIR)/AppxManifest.xml
+	cd $(WINDOWS_BUILD_DIR); powershell.exe -Command "& '@MAKEAPPX@' pack /d . /p TeXmacs.msix"
+
 .PHONY: WINDOWS_BUNDLE WINDOWS_PACKAGE
 
 ###############################################################################

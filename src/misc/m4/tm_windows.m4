@@ -38,6 +38,26 @@ AC_DEFUN([TM_WINDOWS],[
           fi
     else  AC_MSG_RESULT([disabling cv2pdb])
     fi
+
+    case "$MSYSTEM" in
+      CLANGARM64) WIN_ARCH="arm64" ;;
+      *) WIN_ARCH="x64" ;;
+    esac
+
+    MAKEAPPX_PATH=$(find "C:/Program Files (x86)/Windows Kits/10/bin/" -type f -iname makeappx.exe | grep "/$WIN_ARCH/" | head -n 1)
+    SIGNTOOL_PATH=$(find "C:/Program Files (x86)/Windows Kits/10/bin/" -type f -iname signtool.exe | grep "/$WIN_ARCH/" | head -n 1)
+
+    if test -n "$MAKEAPPX_PATH"; then
+      AC_SUBST([MAKEAPPX],[$MAKEAPPX_PATH])
+      AC_DEFINE([MAKEAPPX],["$MAKEAPPX_PATH"],[makeappx location])
+      AC_MSG_RESULT([makeappx found at $MAKEAPPX_PATH])
+    fi
+
+    if test -n "$SIGNTOOL_PATH"; then
+      AC_SUBST([SIGNTOOL],[$SIGNTOOL_PATH])
+      AC_DEFINE([SIGNTOOL],["$SIGNTOOL_PATH"],[signtool location])
+      AC_MSG_RESULT([signtool found at $SIGNTOOL_PATH])
+    fi
     
   fi
 

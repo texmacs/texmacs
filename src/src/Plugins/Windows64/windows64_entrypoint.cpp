@@ -16,6 +16,8 @@
 #include "windows64_system.hpp"
 #include "windows64_encoding.hpp"
 
+#include "boot.hpp"
+
 #include <windows.h>
 #include <shellapi.h>
 #include <sspi.h>
@@ -23,6 +25,12 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <io.h>
+
+#ifdef PACKAGE_VERSION
+#undef PACKAGE_VERSION
+#endif
+#include <appmodel.h>
+#include <shlobj.h>
 
 #include <QApplication>
 #include <QDebug>
@@ -44,6 +52,35 @@
         it is the default behavior."
 #endif
 
+void setup_texmacs_path () {
+  string environment_texmacs_path;
+  if (texmacs_getenv ("TEXMACS_PATH", environment_texmacs_path)) {
+    cout << "TEXMACS_PATH is set to: " 
+         << environment_texmacs_path << LF;
+    return;
+  }
+  url exedir = texmacs_get_application_directory ();
+  cout << "Executable directory is: " 
+       << exedir << LF;
+    if (test_texmacs_path (exedir * "TeXmacs")) {
+      cout << "TEXMACS_PATH is autoset to: " 
+           << exedir * "TeXmacs" << LF;
+    return;
+  }
+  if (test_texmacs_path (exedir * "..")) {
+    cout << "TEXMACS_PATH is autoset to: " 
+         << exedir * ".." << LF;
+    return;
+  }
+  cout << "TEXMACS_PATH is not set" << LF;
+}
+
+bool is_running_in_msix() {
+    UINT32 length = 0;
+    LONG result = GetCurrentPackageFullName(&length, NULL);
+    return result != APPMODEL_ERROR_NO_PACKAGE;
+}
+
 /*
  * @brief The entry point of the program that will make sure that texmacs 
  * run seemlessly on Windows.
@@ -51,6 +88,7 @@
 int WINAPI CommonMain() {
   texmacs_attach_console();
   texmacs_initialize_displayname();
+  setup_texmacs_path();
   texmacs_init_guile_hooks();
 
   int argc = 0;
