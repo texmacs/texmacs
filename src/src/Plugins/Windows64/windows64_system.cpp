@@ -403,12 +403,22 @@ string get_default_theme() {
 
 string texmacs_get_application_directory_str() {
   std::wstring wide_path(MAX_PATH, 0);
-  GetModuleFileNameW(nullptr, &wide_path[0], MAX_PATH);
-  size_t pos = wide_path.find_last_of(L"\\");
-  pos = std::max(pos, wide_path.find_last_of(L"/"));
-  if (pos == std::wstring::npos) {
+  DWORD len = GetModuleFileNameW(nullptr, &wide_path[0], MAX_PATH);
+  DWORD error = GetLastError();
+  if (error != ERROR_SUCCESS)
     return "";
+  wide_path.resize(len);
+  size_t pos = wide_path.find_last_of(L"\\");
+  if (pos == std::wstring::npos) {
+    pos = wide_path.find_last_of(L"/");
+  } else {
+    size_t pos2 = wide_path.find_last_of(L"/");
+    if (pos2 != std::wstring::npos && pos2 > pos)
+      pos = std::max(pos, pos2);
   }
+
+  if (pos == std::wstring::npos)
+    return "";
   wide_path = wide_path.substr(0, pos);
   return texmacs_wide_to_utf8(wide_path);
 }
