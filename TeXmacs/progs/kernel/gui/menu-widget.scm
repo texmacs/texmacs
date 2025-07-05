@@ -382,11 +382,9 @@
                 (if source (kbd-find-shortcut source #t) "")))))
 
 (define (make-menu-entry-check-sub result propose)
-  (if (qt-gui?)
-      (if (string? propose) (if result propose " ") "")
-      (cond ((string? result) result)
-            (result propose)
-            (else ""))))
+  (cond ((string? result) result)
+	(result propose)
+	(else "")))
 
 (define (make-menu-entry-check opt-check action)
   (if opt-check
