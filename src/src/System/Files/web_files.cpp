@@ -91,7 +91,7 @@ get_from_web (url name) {
   url res= get_cache (name);
   if (!is_none (res)) return res;
 
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) && QT_VERSION >= 0x060000
   url tmp= url_temp ();
   string tmp_s= concretize (tmp);
   string name_s= as_string (name);
@@ -120,7 +120,7 @@ get_from_web (url name) {
   //cout << cmd << LF;
   system (cmd);
   //cout << "got " << name << " as " << tmp << LF;
-#endif // QTTEXMACS
+#endif // QTTEXMACS, Qt >= 6.0
 
   if (file_size (url_system (tmp_s)) <= 0) {
     remove (tmp);

@@ -28,10 +28,12 @@
 #include <QImageReader>
 #include <QApplication>
 
+#if QT_VERSION >= 0x060000
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QFile>
+#endif
 
 #include "colors.hpp"
 
@@ -1088,6 +1090,7 @@ set_standard_style_sheet (QWidget* w) {
     w->setStyleSheet (to_qstring (current_style_sheet));
 }
 
+#if QT_VERSION >= 0x060000
 int
 qt_download_file(string _urlStr, string _outputFile) {
 
@@ -1130,3 +1133,5 @@ qt_download_file(string _urlStr, string _outputFile) {
   reply->deleteLater();
   return 0;
 }
+#endif
+
