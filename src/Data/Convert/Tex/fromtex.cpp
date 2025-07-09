@@ -2027,7 +2027,7 @@ latex_command_to_tree (tree t) {
   }
   
   if (is_tuple (t, "\\boxed", 1))
-    return tree (ORNAMENT, l2e (t[1]));
+    return tree (APPLY, "frame", l2e (t[1]));
 
   if (is_tuple (t, "\\marginpar", 1))
     return tree (APPLY, "marginal-note", "normal", "", l2e (t[1]));
