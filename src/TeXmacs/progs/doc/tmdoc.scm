@@ -336,8 +336,14 @@
 	(else (cons (tmdoc-remove-hyper-links (car l))
 		    (tmdoc-remove-hyper-links (cdr l))))))
 
+(define (non-chapter-line? x)
+  (not (or (func? x 'chapter)
+           (and (func? x 'concat)
+                (nnull? (cdr x))
+                (func? (cadr x) 'chapter)))))
+
 (tm-define (tmdoc-include incl)
   (let* ((root (tree->string incl))
          (body (tmdoc-expand root root 'chapter))
-	 (filt (list-filter body (lambda (x) (not (func? x 'chapter))))))
+	 (filt (list-filter body non-chapter-line?)))
     (stree->tree (tmdoc-remove-hyper-links filt))))
