@@ -132,6 +132,9 @@
 /* Enabling Mac OSX extensions */
 #undef MACOSX_EXTENSIONS
 
+/* makeappx location */
+#undef MAKEAPPX
+
 /* Max fast alloc // WORD_LENGTH more than power of 2 */
 #undef MAX_FAST
 
@@ -215,6 +218,9 @@
 
 /* Enable checks style rewriting code */
 #undef SANITY_CHECKS
+
+/* signtool location */
+#undef SIGNTOOL
 
 /* The size of `void *', as computed by sizeof. */
 #undef SIZEOF_VOID_P
