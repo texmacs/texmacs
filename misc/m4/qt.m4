@@ -91,7 +91,7 @@ AC_DEFUN([LC_WITH_QT],[
   autotroll.5.*)
     AC_MSG_NOTICE([Qt5 found])
     AS_IF([test "x$CONFIG_OS" = "xMACOS"],[xtraPlug=+macextras],[unset xtraPlug])
-    AT_WITH_QT([$xtralibs +printsupport +svg $xtraPlug],[+exceptions],[
+    AT_WITH_QT([$xtralibs +printsupport +svg +network $xtraPlug],[+exceptions],[
       LIBS += $LDFLAGS
       QTPLUGIN = qjpeg qgif qico qsvg
     ],AC_MSG_ERROR([Cannot find a working Qt library]))
@@ -99,7 +99,7 @@ AC_DEFUN([LC_WITH_QT],[
   autotrollstatic.5.*)
     AC_MSG_NOTICE([Qt5 found])
     AS_IF([test "x$CONFIG_OS" = "xMACOS"],[xtraPlug=+macextras],[unset xtraPlug])
-    AT_WITH_QT([$xtralibs +core +gui +printsupport +svg $xtraPlug],[+exceptions],[
+    AT_WITH_QT([$xtralibs +core +gui +printsupport +svg +network $xtraPlug],[+exceptions],[
       LIBS += $LDFLAGS
       QTPLUGIN += qjpeg qgif qico qsvg qxcb
       QTPLUGIN.platforms += qminimal qxcb
