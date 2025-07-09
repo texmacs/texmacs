@@ -126,8 +126,6 @@
     </with>
   </macro>>
 
-  <extern|tm-reset-new-list-tag>
-
   <assign|new-list|<\macro|name|item-render|item-transform>
     <quasi|<style-with|||src-compact|none|||||<extern|tm-register-new-list-tag|<arg|name>><assign|<merge|prefix-|<arg|name>>|false><assign|<arg|name>|<\macro|body>
       <compound|<if|<and|<value|<merge|prefix-|<unquote|<arg|name>>>>|<unequal|<value|last-item-nr>|0>>|list*|list>|<unquote|<arg|item-render>>|<unquote|<arg|item-transform>>|<arg|body>>

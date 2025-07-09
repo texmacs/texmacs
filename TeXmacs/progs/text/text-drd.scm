@@ -94,14 +94,9 @@
   description description-compact description-aligned
   description-dash description-long description-paragraphs)
 
-;; Support for new-list
+;; List tags that are created dynamically (fragile)
 
 (define-group new-list-tag)
-
-(tm-define (tm-reset-new-list-tag)
-  (:secure #t)
-  (ahash-remove! group-table 'new-list-tag)
-  (eval `(define-group new-list-tag))) 
 
 (tm-define (tm-register-new-list-tag x)
   (:secure #t)
