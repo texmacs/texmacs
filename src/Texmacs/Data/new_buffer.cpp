@@ -453,11 +453,15 @@ import_loaded_tree (string s, url u, string fm) {
 
 tree
 import_tree (url u, string fm) {
-  u= resolve (u, "fr");
-  set_file_focus (u);
+  url r= resolve (u, "fr");
+  if (is_none (r)) {
+    url b= get_current_buffer ();
+    r= resolve (b * url_parent () * u);
+  }
   string s;
-  if (is_none (u) || load_string (u, s, false)) return "error";
-  return import_loaded_tree (s, u, fm);
+  if (is_none (r) || load_string (r, s, false)) return "error";
+  set_file_focus (r);
+  return import_loaded_tree (s, r, fm);
 }
 
 bool
