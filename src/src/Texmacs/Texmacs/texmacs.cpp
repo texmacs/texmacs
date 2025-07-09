@@ -146,6 +146,7 @@ TeXmacs_init_paths (int& argc, char** argv) {
     set_env ("DYLD_FRAMEWORK_PATH", buf);    
     buf = as_string(exedir * "../Resources/lib");
     if (get_env("DYLD_LIBRARY_PATH") != "") buf = buf * ":" * get_env("DYLD_LIBRARY_PATH");    
+    if (get_env("TMLD_LIBRARY_PATH") != "") buf = buf * ":" * get_env("TMLD_LIBRARY_PATH");    
     set_env ("DYLD_LIBRARY_PATH", buf);    
   }
 #endif
