@@ -34,14 +34,15 @@
   the following static binary distributions of GNU <TeXmacs>:
 
   <\enumerate>
-    <item><hlink|<TeXmacs> 2.1.2 package for 32 bit GNU/<name|Linux>
-    distributions|<merge|https://www.texmacs.org/Download/ftp/tmftp/generic/2.1.2-B.tar.gz>>.
+    <item><hlink|Latest <TeXmacs> AppImage for 64 bit GNU/<name|Linux>
+    distributions|<merge|https://www.texmacs.org/Download/ftp/tmftp/generic/|<TeXmacs-version-release|devel>|-C.x86_64.AppImage>>.
 
-    <item><hlink|<TeXmacs> latest package for 64 bit GNU/<name|Linux>
+    <item><hlink|Latest <TeXmacs> package for 64 bit GNU/<name|Linux>
     distributions|<merge|https://www.texmacs.org/Download/ftp/tmftp/generic/|<TeXmacs-version-release|devel>|-C.tar.gz>>.
 
-    <item><hlink|<TeXmacs> latest AppImage for 64 bit GNU/<name|Linux>
-    distributions|<merge|https://www.texmacs.org/Download/ftp/tmftp/generic/|<TeXmacs-version-release|devel>|-C.x86_64.AppImage>>.
+    <item><hlink|<TeXmacs> package for 32 bit GNU/<name|Linux>
+    distributions|<merge|https://www.texmacs.org/Download/ftp/tmftp/generic/2.1.2-B.tar.gz>>
+    (latest supported version 2.1.2 only).
 
     <item>If the above packages do not work on your computer, then you may
     try our <hlink|alternate <TeXmacs> package|<merge|https://www.texmacs.org/Download/ftp/tmftp/generic/|<TeXmacs-version-release|devel>|-A.tar.gz>>,

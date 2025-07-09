@@ -1,6 +1,6 @@
-<TeXmacs|1.99.9>
+<TeXmacs|2.1.4>
 
-<style|tmweb2>
+<style|<tuple|tmweb2|old-dots|old-lengths>>
 
 <\body>
   <tmweb-current|Plug-ins|Graphics><tmweb-title|Visualization software and
@@ -40,7 +40,7 @@
 
   <tmdoc-include|other/xfig/xfig-abstract.en.tm>
 
-  <tmdoc-copyright|1999--2019|Joris van der Hoeven|Darcy Shen>
+  <tmdoc-copyright|1999\U2019|Joris van der Hoeven|Darcy Shen>
 
   <tmweb-license>
 </body>
