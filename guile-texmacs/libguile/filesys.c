@@ -583,11 +583,11 @@ scm_stat2scm (guile_stat_t *stat_temp)
  * under Windows. It differentiates between file, pipe and socket 
  * descriptors.
  */
-static int fstat_Win32 (int fdes, struct stat *buf)
+static int fstat_Win32 (int fdes, guile_stat_t *buf)
 {
   int error, optlen = sizeof (int);
 
-  memset (buf, 0, sizeof (struct stat));
+  memset (buf, 0, sizeof (guile_stat_t));
 
   /* Is this a socket ? */
   if (getsockopt (fdes, SOL_SOCKET, SO_ERROR, (void *) &error, &optlen) >= 0)
