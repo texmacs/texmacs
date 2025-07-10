@@ -45,25 +45,66 @@ local/lib/libfreetype.a: check freetype/build/libfreetype.a
 	if [ -f "local/lib/libfreetype.a" ]; then echo "libfreetype.a has been installed"; else echo "error on libfreetype"; exit; fi;
 
 gmp/build/Makefile: check local/lib/libltdl.a
-	cd gmp; mkdir -p build; cd build; ../configure --prefix=$$WORKING_DIR/local --enable-static --disable-shared --with-gnu-ld=yes --enable-assembly=no
+	cd gmp; mkdir -p build; cd build; CC=clang CXX=clang++ ../configure --prefix=$$WORKING_DIR/local --enable-static --disable-shared --with-gnu-ld=yes --enable-assembly=no
 
 gmp/build/.libs/libgmp.a: check gmp/build/Makefile
-	cd gmp/build; $(MAKE)
+	cd gmp/build; CC=clang CXX=clang++ $(MAKE)
 
 local/lib/libgmp.a: check gmp/build/.libs/libgmp.a
-	cd gmp/build; $(MAKE) install
+	cd gmp/build; CC=clang CXX=clang++ $(MAKE) install
 
 local/bin/qmake: check
 #	cp patched/QtPkgConfigHelpers.cmake qt/qtbase/cmake/QtPkgConfigHelpers.cmake 
 	-mkdir qt-build
-	cd qt-build; ../qt/configure -opensource -confirm-license -prefix $$WORKING_DIR/local -release -pkg-config -no-warnings-are-errors -skip qtwebengine
+	cd qt-build; ../qt/configure -opensource -confirm-license -prefix $$WORKING_DIR/local -release -pkg-config -no-warnings-are-errors \
+				-skip qt3d \
+				-skip qtactiveqt \
+				-skip qtcharts \
+				-skip qtcoap \
+				-skip qtdatavis3d \
+				-skip qtdeclarative \
+				-skip qtdoc \
+				-skip qtgamepad \
+				-skip qtgraphicaleffects \
+				-skip qtimageformats \
+				-skip qtlocation \
+				-skip qtlottie \
+				-skip qtmultimedia \
+				-skip qtnetworkauth \
+				-skip qtopcua \
+				-skip qtpositioning \
+				-skip qtquick3d \
+				-skip qtquickcontrols \
+				-skip qtquickcontrols2 \
+				-skip qtremoteobjects \
+				-skip qtscript \
+				-skip qtscxml \
+				-skip qtsensors \
+				-skip qtserialbus \
+				-skip qtserialport \
+				-skip qtspeech \
+				-skip qttools \
+				-skip qttranslations \
+				-skip qtvirtualkeyboard \
+				-skip qtwayland \
+				-skip qtwebchannel \
+				-skip qtwebengine \
+				-skip qtwebsockets \
+				-skip qtwebview \
+				-skip qtx11extras \
+				-skip qtxmlpatterns \
+				-skip qtgraphs \
+				-skip qtmqtt \
+				-skip qtquick3dphysics \
+				-skip qtquickeffectmaker \
+				-skip qtquicktimeline
 	cd qt-build; cmake --build . --parallel
 	cd qt-build; cmake --build . --target install --parallel
 
 ghostscript/Makefile: check local/bin/qmake local/lib/libfreetype.a
 	chmod +x ghostscript/configure
 	chmod +x ghostscript/base/instcopy
-	cd ghostscript; LIBS=$$LDFLAGS CFLAGS="$$CFLAGS -Wno-implicit-int -Wno-implicit-function-declaration -D__CRT__NO_INLINE" CPPFLAGS="$$CPPFLAGS -DOPJ_EXPORTS" ./configure --prefix=$$WORKING_DIR/local --without-x --with-drivers=FILES --disable-cups --disable-gtk --without-tesseract --with-libiconv=gnu --disable-threading --disable-byteswap-h --disable-fontconfig --disable-dbus --with-libtiff
+	cd ghostscript; CC=clang CXX=clang++ LIBS=$$LDFLAGS CFLAGS="$$CFLAGS -std=c99 -Wno-implicit-int -Wno-implicit-function-declaration -D__CRT__NO_INLINE" CPPFLAGS="$$CPPFLAGS -DOPJ_EXPORTS" ./configure --prefix=$$WORKING_DIR/local --without-x --with-drivers=FILES --disable-cups --disable-gtk --without-tesseract --with-libiconv=gnu --disable-threading --disable-byteswap-h --disable-fontconfig --disable-dbus --with-libtiff
 
 ghostscript: check ghostscript/Makefile
 	cd ghostscript; $(MAKE) -j1; $(MAKE) install
@@ -83,4 +124,4 @@ local/windows/aspell/bin/aspell.exe: aspell/aspell.exe
 	cd aspell; $(MAKE) install
 
 texmacs: check
-	cd texmacs/src; autoreconf; PKG_CONFIG_PATH=$$WORKING_DIR/local/lib/pkgconfig ./configure --with-texmacs-builder=$$WORKING_DIR/local --prefix=$$WORKING_DIR/local --with-guile=embedded18 --with-qt-find-method=pkgconfig; mingw32-make; mingw32-make WINDOWS_APPX
+	cd texmacs/src; autoreconf; CFLAGS="$$CFLAGS -std=c99" PKG_CONFIG_PATH=$$WORKING_DIR/local/lib/pkgconfig ./configure --with-texmacs-builder=$$WORKING_DIR/local --prefix=$$WORKING_DIR/local --with-guile=embedded18 --with-qt-find-method=pkgconfig; mingw32-make; mingw32-make WINDOWS_APPX

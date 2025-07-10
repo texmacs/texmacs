@@ -14,8 +14,12 @@ def download_url(url):
     if url.startswith('svn'):
         clone_svn_repo(url)
         return
+    if url.startswith('http://harry.medicis.polytechnique.fr/texmacs/'):
+        clone_svn_repo(url)
+        return
     # check if the file already exists
     filename = url.split('/')[-1]
+    filename = url.split('?')[0].split('#')[0]  # Remove query and fragment parts
     filename_without_extension = filename.split('.')[0]
     if os.path.isfile(filename) or os.path.isdir(filename_without_extension):
         print(f"File {filename} already exists")

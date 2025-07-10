@@ -7,6 +7,7 @@ case "$MSYSTEM" in
   MINGW32) prefix="mingw-w64-i686" ;;
   UCRT64)  prefix="mingw-w64-ucrt-x86_64" ;;
   CLANGARM64) prefix="mingw-w64-clang-aarch64" ;;
+  CLANG64) prefix="mingw-w64-clang-x86_64" ;;
   *) echo "Unknown MSYS2 environment: $MSYSTEM" && exit 1 ;;
 esac
 
