@@ -380,7 +380,7 @@ $(texmacs_c_deps):   Objects/%.o: %.c
 # binaries and the prerequisites are the object files being linked in
 # the target.
 
-ifeq "$(link)" "shared"
+ifeq "$(link)" ""
 ifeq "$(CONFIG_OS)" "DEC"
 link_bin = $(strip $(LD) $(LDFLAGS) -lstdc++ $(LDSHARED) $^ $(1) $(LIBS) -o $@)
 else ifeq "$(CONFIG_OS)" "FREEBSD"
@@ -434,10 +434,10 @@ link_options:=-L$(tmsrc)/lib -lm $(LDPATH) $(LDGUI) $(LDICONV) $(CXXFLAGS)\
    $(LDAXEL) $(LDCAIRO) $(LDSQLITE3) @SPARKLE_LDFLAGS@
 
 
-$(tmsrc)/bin/texmacs.bin: Objects/texmacs-$(link).bin
+$(tmsrc)/bin/texmacs.bin: Objects/texmacs.bin
 	$(CP) $^ $@
 
-Objects/texmacs-$(link).bin: Objects/texmacs.o Objects/tm_ostream.o Objects/fast_alloc.o Objects/tree.o $(TEXMACS_objects)
+Objects/texmacs.bin: Objects/texmacs.o Objects/tm_ostream.o Objects/fast_alloc.o Objects/tree.o $(TEXMACS_objects)
 	$(call link_bin,$(link_options))
 
 all: $(tmsrc)/bin/texmacs.bin

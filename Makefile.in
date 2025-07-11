@@ -59,7 +59,7 @@ TEXMACS: EMPTY_DIRS @MKGUILE@
 	if test "$(TEXMACS_DEPS)" != "no"; then \
 		cd src; $(MAKE) -f makefile deps; \
 	fi
-	cd src; $(MAKE) -r -f makefile link=shared
+	cd src; $(MAKE) -r -f makefile
 	$(MAKE) -f Makefile PLUGINS
 	$(MAKE) -f Makefile EX_PLUGINS
 	$(CP) misc/scripts/fig2ps $(tmdir)/bin
