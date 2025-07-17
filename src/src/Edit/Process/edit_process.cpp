@@ -19,6 +19,11 @@
 #include "file.hpp"
 #include "convert.hpp"
 #include "scheme.hpp"
+#if __cplusplus >= 201103L
+#  include "Editor/edit_typeset.hpp"
+#  include "locale.hpp"
+#  include <locale>
+#endif
 
 /******************************************************************************
 * Constructors and destructors
@@ -238,6 +243,17 @@ edit_process_rep::generate_table_of_contents (string toc) {
 
 static hashmap<string,tree> followup (TUPLE);
 
+struct locale_less_eq_operator {
+  static std::locale le;
+  static inline bool leq (string& a, string& b) {
+    if (a == b) return true;
+    string A= cork_to_utf8 (a), B= cork_to_utf8 (b);
+    c_string a8 (A), b8 (B);    
+    return le (std::string (a8), std::string (b8));
+  }
+};
+std::locale locale_less_eq_operator::le;
+
 static string
 index_name_sub (tree t, bool all) {
   if (is_atomic (t)) {
@@ -429,7 +445,15 @@ edit_process_rep::generate_index (string idx) {
     array<string> entry (n);
     for (i=0; i<n; i++)
       entry[i]= index_name (I[i]);
+#if __cplusplus >= 201103L
+    string loc= language_to_locale
+      (get_init_string ("language")) * ".UTF-8";
+    c_string _loc (loc);
+    locale_less_eq_operator::le= std::locale (_loc);
+    merge_sort_leq<string,locale_less_eq_operator> (entry);
+#else
     merge_sort (entry);
+#endif
 
     hashmap<string,tree> h (TUPLE);
     for (i=0; i<n; i++) {
