@@ -62,7 +62,55 @@ local/lib/libgmp.a: gmp/build/.libs/libgmp.a
 local/bin/qmake:
 	-rm -rf qt-build
 	-mkdir qt-build
-	cd qt-build; ../qt/configure -opensource -confirm-license -prefix $$WORKING_DIR/local -release -nomake tests -nomake examples -no-warnings-are-errors -pkg-config -skip qtwebengine -- -G Ninja -DCMAKE_OSX_DEPLOYMENT_TARGET=$$OSX_TARGET && cmake --build . --parallel && cmake --build . --target install --parallel
+	cd qt-build && ../qt/configure \
+		-opensource -confirm-license -prefix $$WORKING_DIR/local -release \
+		-nomake tests -nomake examples -no-warnings-are-errors -pkg-config \
+		-skip qt3d \
+		-skip qtactiveqt \
+		-skip qtcharts \
+		-skip qtcoap \
+		-skip qtdatavis3d \
+		-skip qtdeclarative \
+		-skip qtdoc \
+		-skip qtgamepad \
+		-skip qtgraphicaleffects \
+		-skip qtimageformats \
+		-skip qtlocation \
+		-skip qtlottie \
+		-skip qtmultimedia \
+		-skip qtnetworkauth \
+		-skip qtopcua \
+		-skip qtpositioning \
+		-skip qtquick3d \
+		-skip qtquickcontrols \
+		-skip qtquickcontrols2 \
+		-skip qtremoteobjects \
+		-skip qtscript \
+		-skip qtscxml \
+		-skip qtsensors \
+		-skip qtserialbus \
+		-skip qtserialport \
+		-skip qtspeech \
+		-skip qttools \
+		-skip qttranslations \
+		-skip qtvirtualkeyboard \
+		-skip qtwayland \
+		-skip qtwebchannel \
+		-skip qtwebengine \
+		-skip qtwebsockets \
+		-skip qtwebview \
+		-skip qtx11extras \
+		-skip qtxmlpatterns \
+		-skip qtgraphs \
+		-skip qtmqtt \
+		-skip qtquick3dphysics \
+		-skip qtquickeffectmaker \
+		-skip qtquicktimeline \
+		-- \
+		-G Ninja \
+		-DCMAKE_OSX_DEPLOYMENT_TARGET=$$OSX_TARGET && \
+		cmake --build . --parallel && \
+		cmake --build . --target install --parallel
 
 ghostscript/Makefile: local/bin/qmake local/lib/libfreetype.a
 	chmod +x ghostscript/configure
