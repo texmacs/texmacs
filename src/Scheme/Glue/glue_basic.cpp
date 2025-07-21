@@ -6435,6 +6435,58 @@ tmg_compute_index_url (tmscm arg1) {
 }
 
 tmscm
+tmg_compress_tree (tmscm arg1) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "compress-tree");
+
+  content in1= tmscm_to_content (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree out= compress_tree (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
+tmg_decompress_tree (tmscm arg1) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "decompress-tree");
+
+  content in1= tmscm_to_content (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree out= decompress_tree (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
+tmg_compress_html (tmscm arg1) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "compress-html");
+
+  content in1= tmscm_to_content (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= compress_html (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_decompress_html (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "decompress-html");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree out= decompress_html (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
 tmg_url_2url (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url->url");
 
@@ -10752,6 +10804,10 @@ initialize_glue_basic () {
   tmscm_install_procedure ("compute-index-string",  tmg_compute_index_string, 2, 0, 0);
   tmscm_install_procedure ("compute-index-tree",  tmg_compute_index_tree, 2, 0, 0);
   tmscm_install_procedure ("compute-index-url",  tmg_compute_index_url, 1, 0, 0);
+  tmscm_install_procedure ("compress-tree",  tmg_compress_tree, 1, 0, 0);
+  tmscm_install_procedure ("decompress-tree",  tmg_decompress_tree, 1, 0, 0);
+  tmscm_install_procedure ("compress-html",  tmg_compress_html, 1, 0, 0);
+  tmscm_install_procedure ("decompress-html",  tmg_decompress_html, 1, 0, 0);
   tmscm_install_procedure ("url->url",  tmg_url_2url, 1, 0, 0);
   tmscm_install_procedure ("root->url",  tmg_root_2url, 1, 0, 0);
   tmscm_install_procedure ("string->url",  tmg_string_2url, 1, 0, 0);

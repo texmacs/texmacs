@@ -3819,6 +3819,38 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(compress-tree <scm-arg|content>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|compress_tree> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
+    <scm|(decompress-tree <scm-arg|content>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|decompress_tree> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
+    <scm|(compress-html <scm-arg|content>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|compress_html> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
+    <scm|(decompress-html <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|decompress_html> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
     <scm|(url-\<gtr\>url <scm-arg|url>)>
 <explain-synopsis|no synopsis>
   <|explain>

@@ -241,6 +241,8 @@ bool
 qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
   QClipboard *cb = QApplication::clipboard ();
   QClipboard::Mode mode = QClipboard::Clipboard;
+  bool direct_selection= (key == "extern");
+  if (direct_selection) key= "primary";
   if (key == "primary" || (key == "mouse" && cb->supportsSelection ()))
     if (key == "mouse") mode = QClipboard::Selection;
   
@@ -323,7 +325,8 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
     s = correct_buggy_paste (s);
   if (input_format != "" &&
       input_format != "picture" &&
-      input_format != "linked-picture")
+      input_format != "linked-picture" &&
+      !direct_selection)
     s = as_string (call ("convert", s, input_format, "texmacs-snippet"));
   if (input_format == "html-snippet") {
     tree t = as_tree (call ("convert", s, "texmacs-snippet", "texmacs-tree"));
