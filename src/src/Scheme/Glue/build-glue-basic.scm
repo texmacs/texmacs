@@ -537,6 +537,10 @@
   (compute-index-string compute_index (scheme_tree string string))
   (compute-index-tree compute_index (scheme_tree content string))
   (compute-index-url compute_index (scheme_tree url))
+  (compress-tree compress_tree (tree content))
+  (decompress-tree decompress_tree (tree content))
+  (compress-html compress_html (string content))
+  (decompress-html decompress_html (tree string))
 
   ;; routines for urls
   (url->url url (url url))
