@@ -10,6 +10,7 @@
  ******************************************************************************/
 
 #include "message.hpp"
+#include "scheme.hpp"
 
 #include "QTMScrollView.hpp"
 
@@ -226,6 +227,7 @@ QTMScrollView::viewportEvent(QEvent *e)
     QAbstractScrollArea::horizontalScrollBar()->setSliderPosition(wanted_origin.x());
     QAbstractScrollArea::verticalScrollBar()->setSliderPosition(wanted_origin.y());
     have_wanted_origin = false;
+    eval ("(refresh-window)");
   }
 #endif
   switch (e->type()) {
