@@ -3851,26 +3851,26 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(call-llama <scm-arg|string>)>
+    <scm|(llama-chat <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
-    Calls the <c++> function <cpp|call_llama> which returns
+    Calls the <c++> function <cpp|llama_chat> which returns
     <scm|string>.
   </explain>
 
   <\explain>
-    <scm|(translate-llama <scm-arg|string> <scm-arg|string> <scm-arg|string>)>
+    <scm|(llama-correct <scm-arg|content> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
-    Calls the <c++> function <cpp|translate_llama> which returns
-    <scm|string>.
+    Calls the <c++> function <cpp|llama_correct> which returns
+    <scm|tree>.
   </explain>
 
   <\explain>
-    <scm|(translate-llama-tree <scm-arg|content> <scm-arg|string> <scm-arg|string>)>
+    <scm|(llama-translate <scm-arg|content> <scm-arg|string> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
-    Calls the <c++> function <cpp|translate_llama> which returns
+    Calls the <c++> function <cpp|llama_translate> which returns
     <scm|tree>.
   </explain>
 

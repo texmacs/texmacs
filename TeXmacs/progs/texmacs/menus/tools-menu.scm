@@ -15,7 +15,7 @@
   (:use (texmacs texmacs tm-tools)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Dynamic menus for formats
+;; Dynamic menus for formats and languages
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-menu (clipboard-preference-menu cvs fun)
@@ -28,6 +28,11 @@
   (clipboard-preference-menu converters-to-special clipboard-set-import))
 (tm-define (clipboard-export-preference-menu)
   (clipboard-preference-menu converters-from-special clipboard-set-export))
+
+(menu-bind ia-translate-menu
+  (for (lan supported-languages)
+    ((eval (upcase-first lan))
+     (ia-translate lan))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Tools menu
@@ -83,6 +88,12 @@
           (link clipboard-import-preference-menu))
       (-> "Export selections as"
           (link clipboard-export-preference-menu)))
+  (if (supports-ia?)
+      ---
+      (when (selection-active-any?)
+        ("Correct" (ia-correct))
+        (-> "Translate"
+            (link ia-translate-menu))))
   ---
   ("Database tool" (toggle-preference "database tool"))
   ("Debugging tool" (toggle-preference "debugging tool"))

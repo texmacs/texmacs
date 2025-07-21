@@ -541,9 +541,9 @@
   (decompress-tree decompress_tree (tree content))
   (compress-html compress_html (string content))
   (decompress-html decompress_html (tree string))
-  (call-llama call_llama (string string))
-  (translate-llama translate_llama (string string string string))
-  (translate-llama-tree translate_llama (tree content string string))
+  (llama-chat llama_chat (string string))
+  (llama-correct llama_correct (tree content string))
+  (llama-translate llama_translate (tree content string string))
 
   ;; routines for urls
   (url->url url (url url))
