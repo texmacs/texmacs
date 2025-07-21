@@ -69,12 +69,6 @@ string tree_to_verbatim (tree t, bool wrap= false, string enc= "default");
 tree   verbatim_to_tree (string s, bool wrap= false, string enc= "default");
 tree   verbatim_document_to_tree (string s, bool w= false, string e= "default");
 
-/*** Compression ***/
-tree compress_tree (tree t);
-tree decompress_tree (tree t);
-string compress_html (tree t);
-tree decompress_html (string s);
-
 /*** Latex ***/
 tree   parse_latex (string s, bool change= false, bool as_pic= false);
 tree   parse_latex_document (string s, bool change= false, bool as_pic= false);
@@ -135,5 +129,14 @@ tree   default_with_simplify (tree t);
 /*** Coq ***/
 tree vernac_to_tree (string s);
 tree vernac_document_to_tree (string s);
+
+/*** AI tools ***/
+tree compress_tree (tree t);
+tree decompress_tree (tree t);
+string compress_html (tree t, int mode= 0);
+tree decompress_html (string s, int mode= 0);
+string call_llama (string s);
+string translate_llama (string s, string from, string into);
+tree translate_llama (tree t, string from, string into);
 
 #endif // defined CONVERT_H

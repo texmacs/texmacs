@@ -3851,6 +3851,30 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(call-llama <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|call_llama> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
+    <scm|(translate-llama <scm-arg|string> <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|translate_llama> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
+    <scm|(translate-llama-tree <scm-arg|content> <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|translate_llama> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
     <scm|(url-\<gtr\>url <scm-arg|url>)>
 <explain-synopsis|no synopsis>
   <|explain>
