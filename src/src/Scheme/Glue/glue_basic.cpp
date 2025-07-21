@@ -6487,6 +6487,53 @@ tmg_decompress_html (tmscm arg1) {
 }
 
 tmscm
+tmg_call_llama (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "call-llama");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= call_llama (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_translate_llama (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "translate-llama");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "translate-llama");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "translate-llama");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+  string in3= tmscm_to_string (arg3);
+
+  // TMSCM_DEFER_INTS;
+  string out= translate_llama (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_translate_llama_tree (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "translate-llama-tree");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "translate-llama-tree");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "translate-llama-tree");
+
+  content in1= tmscm_to_content (arg1);
+  string in2= tmscm_to_string (arg2);
+  string in3= tmscm_to_string (arg3);
+
+  // TMSCM_DEFER_INTS;
+  tree out= translate_llama (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
 tmg_url_2url (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url->url");
 
@@ -10808,6 +10855,9 @@ initialize_glue_basic () {
   tmscm_install_procedure ("decompress-tree",  tmg_decompress_tree, 1, 0, 0);
   tmscm_install_procedure ("compress-html",  tmg_compress_html, 1, 0, 0);
   tmscm_install_procedure ("decompress-html",  tmg_decompress_html, 1, 0, 0);
+  tmscm_install_procedure ("call-llama",  tmg_call_llama, 1, 0, 0);
+  tmscm_install_procedure ("translate-llama",  tmg_translate_llama, 3, 0, 0);
+  tmscm_install_procedure ("translate-llama-tree",  tmg_translate_llama_tree, 3, 0, 0);
   tmscm_install_procedure ("url->url",  tmg_url_2url, 1, 0, 0);
   tmscm_install_procedure ("root->url",  tmg_root_2url, 1, 0, 0);
   tmscm_install_procedure ("string->url",  tmg_string_2url, 1, 0, 0);
