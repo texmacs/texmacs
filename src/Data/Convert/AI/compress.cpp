@@ -175,6 +175,11 @@ parse_html_tag (string s, int& pos, string& var, string& val) {
   return tag;
 }
 
+string
+html_post_correct (string s) {
+  return replace ("<varspace>", " ", s);
+}
+
 tree
 html_as_compressed (string s, int& pos, int mode) {
   //cout << "convert " << pos << "\n";
@@ -187,6 +192,8 @@ html_as_compressed (string s, int& pos, int mode) {
     r= replace (r, "&lt;", "<");
     r= replace (r, "&gt;", ">");
     r= replace (r, "&amp;", "&");
+    r= replace (r, "<varspace>", " ");
+    r= html_to_utf8 (r);
     return utf8_to_cork (r);
   }
   string var, val;

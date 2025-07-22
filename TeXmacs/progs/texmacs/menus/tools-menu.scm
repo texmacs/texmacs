@@ -88,12 +88,16 @@
           (link clipboard-import-preference-menu))
       (-> "Export selections as"
           (link clipboard-export-preference-menu)))
-  (if (supports-ia?)
-      ---
+  ---
+  (when (and (supports-ia?) (selection-active-any?))
+    ("Correct" (ia-correct))
+    (-> "Translate"
+        (link ia-translate-menu)))
+  (-> "Language"
       (when (selection-active-any?)
-        ("Correct" (ia-correct))
-        (-> "Translate"
-            (link ia-translate-menu))))
+        ("Copy" (ia-copy))
+        ("Cut" (ia-cut)))
+      ("Paste" (ia-paste)))
   ---
   ("Database tool" (toggle-preference "database tool"))
   ("Debugging tool" (toggle-preference "debugging tool"))

@@ -36,3 +36,30 @@
         (clipboard-cut "primary")
         (with r (llama-translate t from into)
           (insert r))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Copy and paste while compressing non natural language text
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (ia-copy)
+  (when (selection-active-any?)
+    (clipboard-set "primary" (compress-html (selection-tree) 1))))
+
+(tm-define (ia-cut)
+  (when (selection-active-any?)
+    (ia-copy)
+    (clipboard-cut "dummy")))
+
+(define (clipboard-get* key)
+  (with t (clipboard-get key)
+    (cond ((not (tm-func? t 'tuple)) t)
+          ((< (tm-arity t) 2) t)
+          ((tm-equal? (tm-ref t 0) "texmacs")
+           (tm->string (tm-ref t 1)))
+          ((tm-equal? (tm-ref t 0) "extern")
+           (tm->string (tm-ref t 1)))
+          (else t))))
+
+(tm-define (ia-paste)
+  (with t (decompress-html (clipboard-get* "extern") 1)
+    (insert t)))

@@ -5168,6 +5168,19 @@ tmg_utf8_2html (tmscm arg1) {
 }
 
 tmscm
+tmg_html_2utf8 (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "html->utf8");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= html_to_utf8 (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_guess_wencoding (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "guess-wencoding");
 
@@ -6461,26 +6474,30 @@ tmg_decompress_tree (tmscm arg1) {
 }
 
 tmscm
-tmg_compress_html (tmscm arg1) {
+tmg_compress_html (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "compress-html");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "compress-html");
 
   content in1= tmscm_to_content (arg1);
+  int in2= tmscm_to_int (arg2);
 
   // TMSCM_DEFER_INTS;
-  string out= compress_html (in1);
+  string out= compress_html (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return string_to_tmscm (out);
 }
 
 tmscm
-tmg_decompress_html (tmscm arg1) {
+tmg_decompress_html (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "decompress-html");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "decompress-html");
 
   string in1= tmscm_to_string (arg1);
+  int in2= tmscm_to_int (arg2);
 
   // TMSCM_DEFER_INTS;
-  tree out= decompress_html (in1);
+  tree out= decompress_html (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return tree_to_tmscm (out);
@@ -10760,6 +10777,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("utf8->t2a",  tmg_utf8_2t2a, 1, 0, 0);
   tmscm_install_procedure ("t2a->utf8",  tmg_t2a_2utf8, 1, 0, 0);
   tmscm_install_procedure ("utf8->html",  tmg_utf8_2html, 1, 0, 0);
+  tmscm_install_procedure ("html->utf8",  tmg_html_2utf8, 1, 0, 0);
   tmscm_install_procedure ("guess-wencoding",  tmg_guess_wencoding, 1, 0, 0);
   tmscm_install_procedure ("tm->xml-name",  tmg_tm_2xml_name, 1, 0, 0);
   tmscm_install_procedure ("old-tm->xml-cdata",  tmg_old_tm_2xml_cdata, 1, 0, 0);
@@ -10851,8 +10869,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("compute-index-url",  tmg_compute_index_url, 1, 0, 0);
   tmscm_install_procedure ("compress-tree",  tmg_compress_tree, 1, 0, 0);
   tmscm_install_procedure ("decompress-tree",  tmg_decompress_tree, 1, 0, 0);
-  tmscm_install_procedure ("compress-html",  tmg_compress_html, 1, 0, 0);
-  tmscm_install_procedure ("decompress-html",  tmg_decompress_html, 1, 0, 0);
+  tmscm_install_procedure ("compress-html",  tmg_compress_html, 2, 0, 0);
+  tmscm_install_procedure ("decompress-html",  tmg_decompress_html, 2, 0, 0);
   tmscm_install_procedure ("llama-chat",  tmg_llama_chat, 1, 0, 0);
   tmscm_install_procedure ("llama-correct",  tmg_llama_correct, 2, 0, 0);
   tmscm_install_procedure ("llama-translate",  tmg_llama_translate, 3, 0, 0);
