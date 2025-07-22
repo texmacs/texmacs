@@ -82,6 +82,18 @@ llama_chat (string s) {
   return r;
 }
 
+string
+llama_chat (string s, string& pre, string& post) {
+  string r= llama_chat (s);
+  int start= search_forwards ("<body>", r);
+  if (start < 0) { pre= ""; post= ""; return r; }
+  int end= search_forwards ("</body>", start, r);
+  if (end < 0) { pre= ""; post= ""; return r; }
+  pre= r (0, start);
+  post= r (end, N(r));
+  return r (start, end);
+}
+
 /******************************************************************************
 * Automatic correction of spelling and grammar
 ******************************************************************************/
@@ -89,19 +101,16 @@ llama_chat (string s) {
 string
 llama_correct (string s, string lan) {
   string q= "If necessary, then please correct the spelling and grammar of the following " * lan * " text, and show me just the result, without further explanations or justifications: " * s;
-  string r= llama_chat (q);
-  //cout << "\n";
-  int lf= search_forwards ("\\n\\n", 0, r);
-  if (lf >= 0) lf += 4;
-  else {
-    lf= search_forwards ("\n\n", 0, r);
-    if (lf >= 0) lf += 2;
-  }
-  if (lf >= 0)
-    if (search_forwards ("corrected", r (0, lf)) >= 0)
-      r= r (lf, N(r));
-  //cout << "r= " << r << "\n";
-  return r;
+  string pre, post;
+  return llama_chat (q, pre, post);
+}
+
+tree
+llama_post (tree t, tree u) {
+  while (is_document (t) && is_document (u) && N(t) > 0 && N(u) > 1 &&
+         u[N(u)-1] == "" && t[N(t)-1] != "")
+    u= u (0, N(u) - 1);
+  return u;
 }
 
 tree
@@ -111,11 +120,8 @@ llama_correct (tree t, string lan) {
   string r= llama_correct (s, lan);
   //cout << "r= " << r << "\n";
   tree u= decompress_html (r);
-  while (is_document (t) && is_document (u) && N(t) > 0 && N(u) > 1 &&
-         u[N(u)-1] == "" && t[N(t)-1] != "")
-    u= u (0, N(u) - 1);
   //cout << "u = " << u << "\n";
-  return u;
+  return llama_post (r, u);
 }
 
 /******************************************************************************
@@ -126,20 +132,8 @@ string
 llama_translate (string s, string from, string into) {
   string q= "Please translate the following HTML snippet from ";
   q << from << " into " << into << ", without explanations: " << s;
-  string r= llama_chat (q);
-  //cout << "\n";
-  int lf= search_forwards ("\\n\\n", 0, r);
-  if (lf >= 0) lf += 4;
-  else {
-    lf= search_forwards ("\n\n", 0, r);
-    if (lf >= 0) lf += 2;
-  }
-  if (lf >= 0)
-    if (search_forwards ("translation", r (0, lf)) >= 0 ||
-        search_forwards ("traduction", r (0, lf)) >= 0)
-      r= r (lf, N(r));
-  //cout << "r= " << r << "\n";
-  return r;
+  string pre, post;
+  return llama_chat (q, pre, post);
 }
 
 tree
@@ -149,9 +143,6 @@ llama_translate (tree t, string from, string into) {
   string r= llama_translate (s, from, into);
   //cout << "r= " << r << "\n";
   tree u= decompress_html (r);
-  while (is_document (t) && is_document (u) && N(t) > 0 && N(u) > 1 &&
-         u[N(u)-1] == "" && t[N(t)-1] != "")
-    u= u (0, N(u) - 1);
   //cout << "u = " << u << "\n";
-  return u;
+  return llama_post (r, u);
 }
