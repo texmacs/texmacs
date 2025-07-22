@@ -56,6 +56,7 @@ compress_tree (tree t) {
     //cout << code << ", " << N(compressed) << " -> " << val << "\n";
     compressed (code)= val;
     compressed_code (val)= code;
+    //cout << "Compress " << code << " <- " << val << "\n";
   }
   return r;
 }
@@ -78,12 +79,15 @@ decompress_tree (tree t) {
     string code= t[0]->label;
     if (compressed->contains (code)) {
       tree val= copy (compressed[code]);
+      //cout << "Decompress " << code << " -> " << val << "\n";
       int j=0, k=N(val);
       for (i=1; i<n; i++) {
         while (j<k && !is_compound (val[j], "decompressed", 0)) j++;
         if (j<k) val[j]= decompress_tree (t[i]);
-        else val[j]= "";
       }
+      for (; j<k; j++)
+        if (is_compound (val[j], "decompressed", 0))
+          val[j]= "";
       return val;
     }
   }
@@ -135,7 +139,7 @@ compress_html (tree t, int mode) {
   string r;
   tree c= compress_tree (t);
   compressed_as_html (r, c, mode);
-  return r;
+  return "<body>" * r * "</body>";
 }
 
 /******************************************************************************
@@ -175,11 +179,6 @@ parse_html_tag (string s, int& pos, string& var, string& val) {
   return tag;
 }
 
-string
-html_post_correct (string s) {
-  return replace ("<varspace>", " ", s);
-}
-
 tree
 html_as_compressed (string s, int& pos, int mode) {
   //cout << "convert " << pos << "\n";
@@ -192,13 +191,16 @@ html_as_compressed (string s, int& pos, int mode) {
     r= replace (r, "&lt;", "<");
     r= replace (r, "&gt;", ">");
     r= replace (r, "&amp;", "&");
-    r= replace (r, "<varspace>", " ");
     r= html_to_utf8 (r);
-    return utf8_to_cork (r);
+    r= utf8_to_cork (r);
+    r= replace (r, "<varspace>", " ");
+    return r;
   }
   string var, val;
   string tag= parse_html_tag (s, pos, var, val);
   //cout << "tag = " << tag << ", " << var << ", " << val << "\n";
+  if (tag == "body")
+    return html_as_compressed (s, pos, "</body>", mode);
   if (tag == "p") {
     tree doc (DOCUMENT);
     doc << html_as_compressed (s, pos, "</p>", mode);
@@ -243,7 +245,7 @@ html_as_compressed (string s, int& pos, string close, int mode) {
 tree
 decompress_html (string s, int mode) {
   int pos= 0;
-  tree t= html_as_compressed (s, pos, "<never>", mode);
+  tree t= html_as_compressed (s, pos, mode);
   //cout << "t= " << t << "\n";
   return decompress_tree (t);
 }
