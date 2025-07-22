@@ -93,7 +93,7 @@
     ("Correct" (ai-correct))
     (-> "Translate"
         (link ai-translate-menu)))
-  (-> "Language"
+  (-> "External AI"
       (when (selection-active-any?)
         ("Copy" (ai-copy))
         ("Cut" (ai-cut)))

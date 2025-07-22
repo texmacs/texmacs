@@ -23,7 +23,7 @@
       (with t (selection-tree)
         (clipboard-cut "primary")
         (with r
-            (llama-correct t lan)
+            (cpp-ai-correct t lan "llama3")
             ;;(cpp-ai-correct t lan "open-mistral-7b")
           (insert r))))))
 
@@ -37,7 +37,7 @@
       (with t (selection-tree)
         (clipboard-cut "primary")
         (with r
-            (llama-translate t from into)
+            (cpp-ai-translate t from into "llama3")
             ;;(cpp-ai-translate t from into "open-mistral-7b")
           (insert r))))))
 

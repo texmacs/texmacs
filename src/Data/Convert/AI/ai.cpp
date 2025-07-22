@@ -18,7 +18,18 @@
 #include "analyze.hpp"
 
 /******************************************************************************
-* Quoting and unquoting
+* Various engines
+******************************************************************************/
+
+string
+ai_engine (string model) {
+  if (starts (model, "llama3")) return "llama";
+  if (starts (model, "open-mistral")) return "mistral";
+  return "unknown";
+}
+
+/******************************************************************************
+* Useful syntactic subroutines
 ******************************************************************************/
 
 string
@@ -51,12 +62,22 @@ ai_unquote (string s) {
 }
 
 /******************************************************************************
-* Chat with ai
+* Producing the query command for various engines
 ******************************************************************************/
 
 string
-ai_chat (string s, string model) {
-  string key= get_env ("AI_KEY");
+llama_command (string s, string model) {
+  string cmd= "curl http://localhost:11434/api/generate -d '{\n";
+  cmd << "\"model\": \"" << model << "\",\n"
+      << "\"prompt\": \"" << ai_quote (s) << "\",\n"
+      << "\"stream\": false\n"
+      << "}'";
+  return cmd;
+}
+
+string
+mistral_command (string s, string model) {
+  string key= get_env ("MISTRAL_KEY");
   string cmd= "curl -X POST \\\n";
   cmd << "  -H \"Authorization: Bearer " << key << "\" \\\n"
       << "  -H \"Content-Type: application/json\" \\\n"
@@ -68,24 +89,69 @@ ai_chat (string s, string model) {
       << "    } ]\n"
       << "  }' \\\n"
       << "  https://api.mistral.ai/v1/chat/completions";
-  string val= eval_system (cmd);
-  if (DEBUG_IO) {
-    debug_io << "ai input, " << cmd << LF;
-    debug_io << "ai output, " << val << LF;
-  } 
-  int pos= search_forwards ("\"content\":\"", val);
+  return cmd;
+}
+
+string
+ai_command (string s, string model) {
+  string engine= ai_engine (model);
+  if (engine == "llama") return llama_command (s, model);
+  if (engine == "mistral") return mistral_command (s, model);
+  return "";
+}
+
+/******************************************************************************
+* Extracting the output for various engines
+******************************************************************************/
+
+string
+llama_output (string val, string model) {
+  int pos= search_forwards ("\"response\":\"", val);
   if (pos < 0) return "";
-  pos += 11;
-  int end= search_forwards ("\"}}]", pos, val);
+  pos += 12;
+  int end= search_forwards ("\",\"done\":", pos, val);
   if (end < 0) return "";
-  //cout << "in = " << ai_quote (s) << "\n";
-  //cout << "out= " << ai_unquote (val (pos, end)) << "\n";
   string r= ai_unquote (val (pos, end));
   r= replace (r, "`\\u003c", "<");
   r= replace (r, "\\u003e`", ">");
   r= replace (r, "\\u0026", "&");
   r= replace (r, "\\u003c", "<");
   r= replace (r, "\\u003e", ">");
+  return r;
+}
+
+string
+mistral_output (string val, string model) {
+  int pos= search_forwards ("\"content\":\"", val);
+  if (pos < 0) return "";
+  pos += 11;
+  int end= search_forwards ("\"}}]", pos, val);
+  if (end < 0) return "";
+  string r= ai_unquote (val (pos, end));
+  return r;
+}
+
+string
+ai_output (string s, string model) {
+  string engine= ai_engine (model);
+  if (engine == "llama") return llama_output (s, model);
+  if (engine == "mistral") return mistral_output (s, model);
+  return "";
+}
+
+/******************************************************************************
+* Chat with ai
+******************************************************************************/
+
+string
+ai_chat (string s, string model) {
+  string cmd= ai_command (s, model);
+  string val= eval_system (cmd);
+  //if (DEBUG_IO) {
+  //  debug_io << "ai input, " << cmd << LF;
+  //  debug_io << "ai output, " << val << LF;
+  //}
+  string r= ai_output (val, model);
   if (DEBUG_IO) {
     debug_io << "ai input, " << s << LF;
     debug_io << "ai output, " << r << LF;
