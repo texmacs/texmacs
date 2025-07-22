@@ -29,10 +29,10 @@
 (tm-define (clipboard-export-preference-menu)
   (clipboard-preference-menu converters-from-special clipboard-set-export))
 
-(menu-bind ia-translate-menu
+(menu-bind ai-translate-menu
   (for (lan supported-languages)
     ((eval (upcase-first lan))
-     (ia-translate lan))))
+     (ai-translate lan))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Tools menu
@@ -89,15 +89,15 @@
       (-> "Export selections as"
           (link clipboard-export-preference-menu)))
   ---
-  (when (and (supports-ia?) (selection-active-any?))
-    ("Correct" (ia-correct))
+  (when (and (supports-ai?) (selection-active-any?))
+    ("Correct" (ai-correct))
     (-> "Translate"
-        (link ia-translate-menu)))
+        (link ai-translate-menu)))
   (-> "Language"
       (when (selection-active-any?)
-        ("Copy" (ia-copy))
-        ("Cut" (ia-cut)))
-      ("Paste" (ia-paste)))
+        ("Copy" (ai-copy))
+        ("Cut" (ai-cut)))
+      ("Paste" (ai-paste)))
   ---
   ("Database tool" (toggle-preference "database tool"))
   ("Debugging tool" (toggle-preference "debugging tool"))

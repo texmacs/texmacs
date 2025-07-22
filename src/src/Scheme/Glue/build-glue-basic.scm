@@ -545,6 +545,9 @@
   (llama-chat llama_chat (string string))
   (llama-correct llama_correct (tree content string))
   (llama-translate llama_translate (tree content string string))
+  (ai-chat ai_chat (string string string))
+  (cpp-ai-correct ai_correct (tree content string string))
+  (cpp-ai-translate ai_translate (tree content string string string))
 
   ;; routines for urls
   (url->url url (url url))

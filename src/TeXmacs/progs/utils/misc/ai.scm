@@ -1,8 +1,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : ia.scm
-;; DESCRIPTION : IA tools
+;; MODULE      : ai.scm
+;; DESCRIPTION : AI tools
 ;; COPYRIGHT   : (C) 2025  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
@@ -11,43 +11,47 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (utils misc ia))
+(texmacs-module (utils misc ai))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Automatic correction
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (ia-correct)
+(tm-define (ai-correct)
   (when (selection-active-any?)
     (with lan (get-env "language")
       (with t (selection-tree)
         (clipboard-cut "primary")
-        (with r (llama-correct t lan)
+        (with r
+            (llama-correct t lan)
+            ;;(cpp-ai-correct t lan "open-mistral-7b")
           (insert r))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Automatic translation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (ia-translate into)
+(tm-define (ai-translate into)
   (when (selection-active-any?)
     (with from (get-env "language")
       (with t (selection-tree)
         (clipboard-cut "primary")
-        (with r (llama-translate t from into)
+        (with r
+            (llama-translate t from into)
+            ;;(cpp-ai-translate t from into "open-mistral-7b")
           (insert r))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Copy and paste while compressing non natural language text
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (ia-copy)
+(tm-define (ai-copy)
   (when (selection-active-any?)
     (clipboard-set "primary" (compress-html (selection-tree) 1))))
 
-(tm-define (ia-cut)
+(tm-define (ai-cut)
   (when (selection-active-any?)
-    (ia-copy)
+    (ai-copy)
     (clipboard-cut "dummy")))
 
 (define (clipboard-get* key)
@@ -60,6 +64,6 @@
            (tm->string (tm-ref t 1)))
           (else t))))
 
-(tm-define (ia-paste)
+(tm-define (ai-paste)
   (with t (decompress-html (clipboard-get* "extern") 1)
     (insert t)))

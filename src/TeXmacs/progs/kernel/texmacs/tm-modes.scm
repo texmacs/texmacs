@@ -116,8 +116,8 @@
   (and (== (get-preference "markup gui") "on")
        (== (get-preference "developer tool") "on")))
 
-(define has-ia? (url-exists-in-path? "ollama"))
-(define-public (supports-ia?) has-ia?)
+(define has-ai? (url-exists-in-path? "ollama"))
+(define-public (supports-ai?) has-ai?)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mode related

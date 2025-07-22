@@ -179,6 +179,16 @@ parse_html_tag (string s, int& pos, string& var, string& val) {
   return tag;
 }
 
+void
+skip_html_space (string s, int& pos) {
+  while (true) {
+    if (test (s, pos, "\n")) pos++;
+    else if (test (s, pos, " ")) pos++;
+    else if (test (s, pos, "\\n")) pos+=2;
+    else break;
+  }
+}
+
 tree
 html_as_compressed (string s, int& pos, int mode) {
   //cout << "convert " << pos << "\n";
@@ -194,21 +204,27 @@ html_as_compressed (string s, int& pos, int mode) {
     r= html_to_utf8 (r);
     r= utf8_to_cork (r);
     r= replace (r, "<varspace>", " ");
+    r= replace (r, "<#202F>", " ");
     return r;
   }
   string var, val;
   string tag= parse_html_tag (s, pos, var, val);
   //cout << "tag = " << tag << ", " << var << ", " << val << "\n";
-  if (tag == "body")
-    return html_as_compressed (s, pos, "</body>", mode);
+  if (tag == "body") {
+    skip_html_space (s, pos);
+    tree r= html_as_compressed (s, pos, "</body>", mode);
+    skip_html_space (s, pos);
+    return r;
+  }    
   if (tag == "p") {
     tree doc (DOCUMENT);
     doc << html_as_compressed (s, pos, "</p>", mode);
-    while (test (s, pos, "\n")) pos++;
+    skip_html_space (s, pos);
     while (test (s, pos, "<p>")) {
       pos += 3;
+      if (test (s, pos, "\\n")) skip_html_space (s, pos);
       doc << html_as_compressed (s, pos, "</p>", mode);
-      while (test (s, pos, "\n")) pos++;
+      skip_html_space (s, pos);
     }
     return doc;
   }
