@@ -6504,51 +6504,6 @@ tmg_decompress_html (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
-tmg_llama_chat (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "llama-chat");
-
-  string in1= tmscm_to_string (arg1);
-
-  // TMSCM_DEFER_INTS;
-  string out= llama_chat (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return string_to_tmscm (out);
-}
-
-tmscm
-tmg_llama_correct (tmscm arg1, tmscm arg2) {
-  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "llama-correct");
-  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "llama-correct");
-
-  content in1= tmscm_to_content (arg1);
-  string in2= tmscm_to_string (arg2);
-
-  // TMSCM_DEFER_INTS;
-  tree out= llama_correct (in1, in2);
-  // TMSCM_ALLOW_INTS;
-
-  return tree_to_tmscm (out);
-}
-
-tmscm
-tmg_llama_translate (tmscm arg1, tmscm arg2, tmscm arg3) {
-  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "llama-translate");
-  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "llama-translate");
-  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "llama-translate");
-
-  content in1= tmscm_to_content (arg1);
-  string in2= tmscm_to_string (arg2);
-  string in3= tmscm_to_string (arg3);
-
-  // TMSCM_DEFER_INTS;
-  tree out= llama_translate (in1, in2, in3);
-  // TMSCM_ALLOW_INTS;
-
-  return tree_to_tmscm (out);
-}
-
-tmscm
 tmg_ai_chat (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "ai-chat");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "ai-chat");
@@ -10922,9 +10877,6 @@ initialize_glue_basic () {
   tmscm_install_procedure ("decompress-tree",  tmg_decompress_tree, 1, 0, 0);
   tmscm_install_procedure ("compress-html",  tmg_compress_html, 2, 0, 0);
   tmscm_install_procedure ("decompress-html",  tmg_decompress_html, 2, 0, 0);
-  tmscm_install_procedure ("llama-chat",  tmg_llama_chat, 1, 0, 0);
-  tmscm_install_procedure ("llama-correct",  tmg_llama_correct, 2, 0, 0);
-  tmscm_install_procedure ("llama-translate",  tmg_llama_translate, 3, 0, 0);
   tmscm_install_procedure ("ai-chat",  tmg_ai_chat, 2, 0, 0);
   tmscm_install_procedure ("cpp-ai-correct",  tmg_cpp_ai_correct, 3, 0, 0);
   tmscm_install_procedure ("cpp-ai-translate",  tmg_cpp_ai_translate, 4, 0, 0);
