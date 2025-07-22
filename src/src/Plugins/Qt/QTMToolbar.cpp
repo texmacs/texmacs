@@ -111,6 +111,10 @@ void QTMToolbar::replaceButtons (QList<QAction*>* src) {
 }
 
 void QTMToolbar::addAction (QAction* action) {
+  
+  // create the tool button
+  QWidget *actionWidget = nullptr;
+  
   if (action->isSeparator()) {
 #ifdef OS_ANDROID
     actionWidget = new QWidget (this);
@@ -122,10 +126,6 @@ void QTMToolbar::addAction (QAction* action) {
 #endif
   }
 
-  
-  // create the tool button
-  QWidget *actionWidget = nullptr;
-  
   if (qobject_cast<QWidgetAction*> (action)) {
     actionWidget = qobject_cast<QWidgetAction*> (action)->requestWidget(this);
   }
