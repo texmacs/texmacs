@@ -137,6 +137,13 @@ converter_rep::load () {
     hashtree_from_dictionary (dic, "HTMLsymbol" , CHAR_ENTITY, ENTITY_NAME, true);
     ht = dic;
   }
+  else if (from=="HTML" && to=="UTF-8") {
+    hashtree<char,string> dic;
+    hashtree_from_dictionary (dic, "HTMLlat1"   , ENTITY_NAME, CHAR_ENTITY, false);
+    hashtree_from_dictionary (dic, "HTMLspecial", ENTITY_NAME, CHAR_ENTITY, false);
+    hashtree_from_dictionary (dic, "HTMLsymbol" , ENTITY_NAME, CHAR_ENTITY, false);
+    ht = dic;
+  }
   else if (from=="T2A" && to=="UTF-8" ) {
     hashtree<char,string> dic;
     hashtree_from_dictionary (dic,"corktounicode", BIT2BIT, UTF8, false);
@@ -477,6 +484,13 @@ utf8_to_html (string input) {
 }
 
 string
+html_to_utf8 (string input) {
+  converter conv = load_converter ("HTML", "UTF-8");
+  string s = apply (conv, input);
+  return hex_entities_to_utf8 (s);
+}
+
+string
 cork_to_ascii (string input) {
   converter conv = load_converter ("Cork", "ASCII");
   return apply (conv, input);
@@ -656,10 +670,14 @@ hashtree_from_dictionary (
           key_string = convert_escapes (key_string, true);
         else if (key_escape == CHAR_ENTITY)
           key_string = convert_char_entities (key_string);
+        else if (key_escape == ENTITY_NAME)
+          key_string = "&" * key_string * ";";
         if (val_escape == BIT2BIT)
           val_string = convert_escapes (val_string, false);
         else if (val_escape == UTF8)
           val_string = convert_escapes (val_string, true);
+        else if (val_escape == CHAR_ENTITY)
+          val_string = convert_char_entities (val_string);
         else if (val_escape == ENTITY_NAME)
           val_string = "&" * val_string * ";";
         //cout << "key: " << key_string << " val: " << val_string << "\n";
@@ -877,6 +895,26 @@ utf8_to_hex_entities (string s) {
   return result;
 }
 
+string
+hex_entities_to_utf8 (string s) {
+  string result;
+  int i, n= N(s);
+  for (i=0; i<n; )
+    if (test (s, i, "&#x")) {
+      int j= search_forwards (";", i, s);
+      if (j > i) {
+        unsigned int code= from_hexadecimal (s (i+3, j));
+        if (code >= 0x80 && code <= 0xff) {
+          result << encode_as_utf8 (code);
+          i= j + 1;
+        }
+        else result << s[i++];
+      }
+      else result << s[i++];
+    }
+    else result << s[i++];
+  return result;
+}
 
 string
 utf8_to_utf16be_string (string s) {

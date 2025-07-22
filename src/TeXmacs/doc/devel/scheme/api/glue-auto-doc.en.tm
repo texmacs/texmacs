@@ -3107,6 +3107,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(html-\<gtr\>utf8 <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|html_to_utf8> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
     <scm|(guess-wencoding <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
@@ -3835,7 +3843,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(compress-html <scm-arg|content>)>
+    <scm|(compress-html <scm-arg|content> <scm-arg|int>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|compress_html> which returns
@@ -3843,7 +3851,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(decompress-html <scm-arg|string>)>
+    <scm|(decompress-html <scm-arg|string> <scm-arg|int>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|decompress_html> which returns

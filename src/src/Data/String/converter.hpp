@@ -83,6 +83,7 @@ string sourcecode_to_cork (string input);
 string convert_utf8_to_LaTeX (string input);
 string convert_LaTeX_to_utf8 (string input);
 string utf8_to_html (string input);
+string html_to_utf8 (string input);
 string utf8_to_t2a (string input);
 string t2a_to_utf8 (string input);
 string cyrillic_subset_in_t2a_to_code_point (string input);
@@ -121,6 +122,7 @@ string convert_escapes (string in, bool utf8);
 string convert_char_entities (string s);
 string convert_char_entity (string s, int& start, bool& success);
 string utf8_to_hex_entities (string s);
+string hex_entities_to_utf8 (string s);
 string utf8_to_pdf_hex_string (string s);
 
 #endif // CONVERTER_H

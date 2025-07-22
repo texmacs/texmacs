@@ -413,6 +413,7 @@
 "utf8->t2a"
 "t2a->utf8"
 "utf8->html"
+"html->utf8"
 "guess-wencoding"
 "tm->xml-name"
 "old-tm->xml-cdata"
