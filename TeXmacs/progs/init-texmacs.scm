@@ -141,8 +141,8 @@
 (lazy-tmfs-handler (utils automate auto-tmfs) automate)
 (lazy-define (utils automate auto-tmfs) auto-load-help)
 (lazy-define (utils misc gui-keyboard) get-keyboard)
-(lazy-define (utils misc ia) ia-correct ia-translate
-             ia-copy ia-cut ia-paste)
+(lazy-define (utils misc ai) ai-correct ai-translate
+             ai-copy ai-cut ai-paste)
 (lazy-keyboard (utils automate auto-kbd) in-auto?)
 (define supports-email? (url-exists-in-path? "mmail"))
 (if supports-email? (use-modules (utils email email-tmfs)))

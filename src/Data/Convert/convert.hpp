@@ -138,5 +138,8 @@ tree decompress_html (string s, int mode= 0);
 string llama_chat (string s);
 tree llama_translate (tree t, string from, string into);
 tree llama_correct (tree t, string lan);
+string ai_chat (string s, string model);
+tree ai_translate (tree t, string from, string into, string model);
+tree ai_correct (tree t, string lan, string model);
 
 #endif // defined CONVERT_H

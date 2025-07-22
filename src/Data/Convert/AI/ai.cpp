@@ -1,0 +1,159 @@
+
+/******************************************************************************
+* MODULE     : ai.cpp
+* DESCRIPTION: interface for AI big language model
+* COPYRIGHT  : (C) 2025  Joris van der Hoeven
+*******************************************************************************
+* This software falls under the GNU general public license version 3 or later.
+* It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+* in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+******************************************************************************/
+
+#include "convert.hpp"
+#include "converter.hpp"
+#include "locale.hpp"
+#include "wencoding.hpp"
+#include "vars.hpp"
+#include "drd_std.hpp"
+#include "analyze.hpp"
+
+/******************************************************************************
+* Quoting and unquoting
+******************************************************************************/
+
+string
+ai_quote (string s) {
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++)
+    switch (s[i]) {
+    case '\"':
+    case '\'':
+    case '\\':
+      r << '\\' << s[i];
+      break;
+    default:
+      r << s[i];
+    }
+  return r;
+}
+
+string
+ai_unquote (string s) {
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++)
+    if (s[i] == '\\' && (i+1 < n) &&
+        (s[i+1] == '\\' || s[i+1] == '\"' || s[i+1] == '\''))
+      r << s[++i];
+    else r << s[i];
+  return r;
+}
+
+/******************************************************************************
+* Chat with ai
+******************************************************************************/
+
+string
+ai_chat (string s, string model) {
+  string key= get_env ("AI_KEY");
+  string cmd= "curl -X POST \\\n";
+  cmd << "  -H \"Authorization: Bearer " << key << "\" \\\n"
+      << "  -H \"Content-Type: application/json\" \\\n"
+      << "  -d '{\n"
+      << "    \"model\": \"" << model << "\",\n"
+      << "    \"messages\": [ {\n"
+      << "      \"role\": \"user\",\n"
+      << "      \"content\": \"" << ai_quote (s) << "\"\n"
+      << "    } ]\n"
+      << "  }' \\\n"
+      << "  https://api.mistral.ai/v1/chat/completions";
+  string val= eval_system (cmd);
+  if (DEBUG_IO) {
+    debug_io << "ai input, " << cmd << LF;
+    debug_io << "ai output, " << val << LF;
+  } 
+  int pos= search_forwards ("\"content\":\"", val);
+  if (pos < 0) return "";
+  pos += 11;
+  int end= search_forwards ("\"}}]", pos, val);
+  if (end < 0) return "";
+  //cout << "in = " << ai_quote (s) << "\n";
+  //cout << "out= " << ai_unquote (val (pos, end)) << "\n";
+  string r= ai_unquote (val (pos, end));
+  r= replace (r, "`\\u003c", "<");
+  r= replace (r, "\\u003e`", ">");
+  r= replace (r, "\\u0026", "&");
+  r= replace (r, "\\u003c", "<");
+  r= replace (r, "\\u003e", ">");
+  if (DEBUG_IO) {
+    debug_io << "ai input, " << s << LF;
+    debug_io << "ai output, " << r << LF;
+  }
+  return r;
+}
+
+string
+ai_chat (string s, string model, string& pre, string& post) {
+  string r= ai_chat (s, model);
+  int start= search_forwards ("<body>", r);
+  if (start < 0) { pre= ""; post= ""; return r; }
+  int end= search_forwards ("</body>", start, r);
+  if (end < 0) { pre= ""; post= ""; return r; }
+  pre= r (0, start);
+  post= r (end, N(r));
+  return r (start, end);
+}
+
+/******************************************************************************
+* Automatic correction of spelling and grammar
+******************************************************************************/
+
+string
+ai_correct (string s, string lan, string model) {
+  string q= "If necessary, then please correct the spelling and grammar of the following " * lan * " text, and show me just the result, without further explanations or justifications: " * s;
+  string pre, post;
+  return ai_chat (q, model, pre, post);
+}
+
+tree
+ai_post (tree t, tree u) {
+  while (is_document (t) && is_document (u) && N(t) > 0 && N(u) > 1 &&
+         u[N(u)-1] == "" && t[N(t)-1] != "")
+    u= u (0, N(u) - 1);
+  return u;
+}
+
+tree
+ai_correct (tree t, string lan, string model) {
+  string s= compress_html (t);
+  //cout << "s= " << s << "\n";
+  string r= ai_correct (s, lan, model);
+  //cout << "r= " << r << "\n";
+  tree u= decompress_html (r);
+  //cout << "u = " << u << "\n";
+  return ai_post (r, u);
+}
+
+/******************************************************************************
+* Automatic translation
+******************************************************************************/
+
+string
+ai_translate (string s, string from, string into, string model) {
+  string q= "Please translate the following HTML snippet from ";
+  q << from << " into " << into << ", without explanations: " << s;
+  string pre, post;
+  return ai_chat (q, model, pre, post);
+}
+
+tree
+ai_translate (tree t, string from, string into, string model) {
+  string s= compress_html (t);
+  //cout << "s= " << s << "\n";
+  string r= ai_translate (s, from, into, model);
+  //cout << "r= " << r << "\n";
+  tree u= decompress_html (r);
+  //cout << "u = " << u << "\n";
+  return ai_post (r, u);
+}
