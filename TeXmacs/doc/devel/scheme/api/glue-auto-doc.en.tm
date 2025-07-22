@@ -3859,30 +3859,6 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(llama-chat <scm-arg|string>)>
-<explain-synopsis|no synopsis>
-  <|explain>
-    Calls the <c++> function <cpp|llama_chat> which returns
-    <scm|string>.
-  </explain>
-
-  <\explain>
-    <scm|(llama-correct <scm-arg|content> <scm-arg|string>)>
-<explain-synopsis|no synopsis>
-  <|explain>
-    Calls the <c++> function <cpp|llama_correct> which returns
-    <scm|tree>.
-  </explain>
-
-  <\explain>
-    <scm|(llama-translate <scm-arg|content> <scm-arg|string> <scm-arg|string>)>
-<explain-synopsis|no synopsis>
-  <|explain>
-    Calls the <c++> function <cpp|llama_translate> which returns
-    <scm|tree>.
-  </explain>
-
-  <\explain>
     <scm|(ai-chat <scm-arg|string> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
