@@ -76,11 +76,12 @@
 (tm-define (db-show-toolbar)
   (delayed
     (:idle 100)
-    (set! toolbar-db-active? #t)
-    (update-bottom-tools)
-    (delayed
-      (:idle 250)
-      (keyboard-focus-on "db-search"))))
+    (when (db-url? (current-buffer))
+      (set! toolbar-db-active? #t)
+      (update-bottom-tools)
+      (delayed
+	(:idle 250)
+	(keyboard-focus-on "db-search")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The database toolbar

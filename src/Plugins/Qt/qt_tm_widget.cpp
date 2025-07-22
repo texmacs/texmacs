@@ -590,6 +590,8 @@ qt_tm_widget_rep::update_visibility () {
     leftLabel->setFont(f);
     rightLabel->setFont(f);
   }
+  if (as_bool (call ("defined?", symbol_object ("db-show-toolbar"))))
+    call ("db-show-toolbar");
 }
 
 widget
