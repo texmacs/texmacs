@@ -1,6 +1,6 @@
 all: local/lib/libltdl.a local/lib/libiconv.a local/lib/libintl.a local/lib/libpng16.a local/lib/libfreetype.a local/lib/libgmp.a local/bin/qmake ghostscript texmacs
 
-.PHONY: texmacs
+.PHONY: texmacs texmacs-server
 
 libtool/Makefile:
 	cd libtool; ./configure --prefix=$$WORKING_DIR/local --disable-silent-rules --enable-static --disable-shared --with-gnu-ld=yes
@@ -121,4 +121,7 @@ ghostscript: ghostscript/Makefile
 	cd ghostscript; $(MAKE) -j1; $(MAKE) install
 
 texmacs: local/bin/qmake local/lib/libfreetype.a
-	rm -rf texmacs/distr; cd texmacs/src; autoreconf; PKG_CONFIG_PATH=$$WORKING_DIR/local/lib/pkgconfig LIBS="-L/opt/homebrew/lib" TMREPO=$$WORKING_DIR/local ./configure --with-tmrepo=$$WORKING_DIR/local --prefix=$$WORKING_DIR/local --with-gnutls=yes --with-guile=embedded18 --disable-fastalloc; $(MAKE); $(MAKE) PACKAGE
+	rm -rf texmacs/distr; cd texmacs/src; autoreconf; PKG_CONFIG_PATH=$$WORKING_DIR/local/lib/pkgconfig LIBS="-L/opt/homebrew/lib" TMREPO=$$WORKING_DIR/local ./configure --with-tmrepo=$$WORKING_DIR/local --prefix=$$WORKING_DIR/local --with-guile=embedded18 --disable-fastalloc; $(MAKE); $(MAKE) PACKAGE
+
+texmacs-server: local/bin/qmake local/lib/libfreetype.a
+	rm -rf texmacs-server/distr; cd texmacs-server; autoreconf; PKG_CONFIG_PATH=$$WORKING_DIR/local/lib/pkgconfig LIBS="-L/opt/homebrew/lib" TMREPO=$$WORKING_DIR/local ./configure --with-tmrepo=$$WORKING_DIR/local --prefix=$$WORKING_DIR/local --with-gnutls=yes  --with-guile=embedded18 --disable-fastalloc; $(MAKE); $(MAKE) PACKAGE
