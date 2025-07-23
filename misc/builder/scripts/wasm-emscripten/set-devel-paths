@@ -1,0 +1,13 @@
+#!/bin/sh
+
+export WORKING_DIR=$PWD
+export HOST_WORKING_DIR="$PWD/../macos-qt6-arm64"
+
+export PKG_CONFIG_PATH="$WORKING_DIR/local/lib/pkgconfig"
+
+export CFLAGS="-fPIC -g -O3 -I$WORKING_DIR/local/include"
+export CPPFLAGS=-I$WORKING_DIR/local/include
+export CXXFLAGS="-fPIC -g -O3 -I$WORKING_DIR/local/include"
+export LDFLAGS="-fPIC -L$WORKING_DIR/local/lib"
+export PATH=$WORKING_DIR/local/bin:$PATH
+
