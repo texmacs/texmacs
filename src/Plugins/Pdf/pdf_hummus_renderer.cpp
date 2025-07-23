@@ -848,10 +848,10 @@ pdf_hummus_renderer_rep::set_brush (brush br) {
   // debug_convert << "set_brush\n";
   fgb= br;
   pen= pencil (br);
-  set_pencil (pen);  // FIXME ???
+  //set_pencil (pen);  // FIXME ???
   if (is_nil (br)) return;
   if (br->get_type () == brush_none) {
-    pen = pencil ();
+    //pen = pencil ();
     fgb = brush ();
   }
   else {
