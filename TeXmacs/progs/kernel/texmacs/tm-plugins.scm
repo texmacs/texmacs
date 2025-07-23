@@ -324,6 +324,8 @@
   (reinit-connection)
   (set! reconfigure-flag? #t)
   (with plugins (plugin-list)
+    (when (in? "jupyter" plugins)
+      (set! plugins (cons "jupyter" (list-remove plugins "jupyter"))))
     (for-each (cut ahash-set! plugin-initialize-todo <> #t) plugins)
     (for-each (cut plugin-initialize <>) plugins)))
 
@@ -436,19 +438,30 @@
 ;; Configuration of plugins
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-public (alt-launcher name) #f)
+(define-public alt-launched (make-ahash-table))
+
 (define (plugin-configure-cmd name cmd)
   (cond ((func? cmd :require 1)
          (when reconfigure-flag?
-           (ahash-set! plugin-data-table name ((second cmd)))))
+           (if (alt-launcher name)
+               (ahash-set! plugin-data-table name #t)
+               (ahash-set! plugin-data-table name ((second cmd))))))
         ((func? cmd :versions 1)
          (when reconfigure-flag?
-           (ahash-set! plugin-data-table name ((second cmd)))))
+           (if (alt-launcher name)
+               (ahash-set! plugin-data-table name #t)
+               (ahash-set! plugin-data-table name ((second cmd))))))
         ((func? cmd :setup 1)
          (if reconfigure-flag? ((second cmd))))
         ((func? cmd :prioritary 1)
          (ahash-set! plugin-data-table (list name :prioritary) (cadr cmd)))
         ((func? cmd :initialize 1)
          ((second cmd)))
+        ((and (func? cmd :launch) (alt-launcher name))
+         (when (not (ahash-ref alt-launched name))
+           (connection-setup name `(tuple "pipe" ,(alt-launcher name)))
+           (ahash-set! alt-launched name #t)))
         ((func? cmd :launch 1)
          (connection-setup name `(tuple "pipe" ,(second cmd))))
         ((func? cmd :launch 2)
