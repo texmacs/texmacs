@@ -112,63 +112,6 @@ local/bin/qmake:
 		cmake --build . --parallel && \
 		cmake --build . --target install --parallel
 
-local-wasm/bin/qmake:
-# build the wasm version of Qt and put it in $WORKING_DIR/local-wasm
-# - need to have Qt 6.9 sources in $WORKING_DIR/qt
-# - needs emscripten version 3.1.70, see here for instructions: https://emscripten.org/docs/getting_started/downloads.html
-# - reset the devel paths with set-devel-paths-wasm
-	-rm -rf qt-wasm-build
-	-mkdir qt-wasm-build
-	cd qt-wasm-build && ../qt/configure \
-		-opensource -confirm-license -prefix $WORKING_DIR/local-wasm -release \
-		-qt-host-path $WORKING_DIR/local -platform wasm-emscripten \
-		-nomake tests -nomake examples -no-warnings-are-errors -pkg-config \
-		-skip qt3d \
-		-skip qtactiveqt \
-		-skip qtcharts \
-		-skip qtcoap \
-		-skip qtdatavis3d \
-		-skip qtdeclarative \
-		-skip qtdoc \
-		-skip qtgamepad \
-		-skip qtgraphicaleffects \
-		-skip qtimageformats \
-		-skip qtlocation \
-		-skip qtlottie \
-		-skip qtmultimedia \
-		-skip qtnetworkauth \
-		-skip qtopcua \
-		-skip qtpositioning \
-		-skip qtquick3d \
-		-skip qtquickcontrols \
-		-skip qtquickcontrols2 \
-		-skip qtremoteobjects \
-		-skip qtscript \
-		-skip qtscxml \
-		-skip qtsensors \
-		-skip qtserialbus \
-		-skip qtserialport \
-		-skip qtspeech \
-		-skip qttools \
-		-skip qttranslations \
-		-skip qtvirtualkeyboard \
-		-skip qtwayland \
-		-skip qtwebchannel \
-		-skip qtwebengine \
-		-skip qtwebsockets \
-		-skip qtwebview \
-		-skip qtx11extras \
-		-skip qtxmlpatterns \
-		-skip qtgraphs \
-		-skip qtmqtt \
-		-skip qtquick3dphysics \
-		-skip qtquickeffectmaker \
-		-skip qtquicktimeline \
-		-- \
-		-G Ninja && \
-		cmake --build . --parallel && \
-		cmake --build . --target install --parallel
-
 ghostscript/Makefile: local/bin/qmake local/lib/libfreetype.a
 	chmod +x ghostscript/configure
 	chmod +x ghostscript/base/instcopy
