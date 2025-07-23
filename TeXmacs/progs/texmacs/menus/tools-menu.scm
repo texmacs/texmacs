@@ -32,7 +32,7 @@
 (menu-bind ai-translate-menu
   (for (lan supported-languages)
     ((eval (upcase-first lan))
-     (ai-translate lan))))
+     (ai-translate lan (get-preference "ai")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Tools menu
@@ -89,8 +89,18 @@
       (-> "Export selections as"
           (link clipboard-export-preference-menu)))
   ---
-  (when (and (supports-ai?) (selection-active-any?))
-    ("Correct" (ai-correct))
+  (-> "AI model"
+      ("Off" (reset-preference "ai"))
+      ---
+      (when (url-exists-in-path? "openai")
+        ("Chat GPT" (set-preference "ai" "chatgpt")))
+      (when (url-exists-in-path? "ollama")
+        ("Llama 3" (set-preference "ai" "llama3")))
+      (when (!= (getenv "MISTRAL_API_KEY") "")
+        ("Mistral 7B" (set-preference "ai" "open-mistral-7b"))))
+  (when (and (cpp-has-preference? "ai")
+             (selection-active-any?))
+    ("Correct" (ai-correct (get-preference "ai")))
     (-> "Translate"
         (link ai-translate-menu)))
   (-> "External AI"

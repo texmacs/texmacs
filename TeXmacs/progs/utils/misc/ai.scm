@@ -17,28 +17,24 @@
 ;; Automatic correction
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (ai-correct)
+(tm-define (ai-correct model)
   (when (selection-active-any?)
     (with lan (get-env "language")
       (with t (selection-tree)
         (clipboard-cut "primary")
-        (with r
-            (cpp-ai-correct t lan "llama3")
-            ;;(cpp-ai-correct t lan "open-mistral-7b")
+        (with r (cpp-ai-correct t lan model)
           (insert r))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Automatic translation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (ai-translate into)
+(tm-define (ai-translate into model)
   (when (selection-active-any?)
     (with from (get-env "language")
       (with t (selection-tree)
         (clipboard-cut "primary")
-        (with r
-            (cpp-ai-translate t from into "llama3")
-            ;;(cpp-ai-translate t from into "open-mistral-7b")
+        (with r (cpp-ai-translate t from into model)
           (insert r))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

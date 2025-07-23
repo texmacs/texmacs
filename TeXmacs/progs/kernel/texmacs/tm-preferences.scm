@@ -56,8 +56,12 @@
       (notify-preference which)
       (save-preferences))))
 
+(define (test-no-preference? which)
+  (not (cpp-has-preference? which)))
+
 (tm-define (reset-preference which)
   (:synopsis "Revert preference @which to default setting")
+  (:check-mark "*" test-no-preference?)
   ;;(display* "reset-preference " which "\n")
   (when (cpp-has-preference? which)
     (cpp-reset-preference which)

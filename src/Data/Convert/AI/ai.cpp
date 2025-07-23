@@ -16,6 +16,7 @@
 #include "vars.hpp"
 #include "drd_std.hpp"
 #include "analyze.hpp"
+#include "file.hpp"
 
 /******************************************************************************
 * Various engines
@@ -23,6 +24,7 @@
 
 string
 ai_engine (string model) {
+  if (starts (model, "chatgpt")) return "chatgpt";
   if (starts (model, "llama3")) return "llama";
   if (starts (model, "open-mistral")) return "mistral";
   return "unknown";
@@ -66,6 +68,16 @@ ai_unquote (string s) {
 ******************************************************************************/
 
 string
+chatgpt_command (string s, string model) {
+  url u ("$TEXMACS_HOME_PATH/system/tmp/chatgpt.txt");
+  cout << u << ", " << as_string (u) << "\n";
+  if (save_string (u, s)) return "";
+  string cmd= "openai -k 5000 complete " * as_string (u);
+  cout << "cmd= " << cmd << "\n";
+  return cmd;
+}
+
+string
 llama_command (string s, string model) {
   string cmd= "curl http://localhost:11434/api/generate -d '{\n";
   cmd << "\"model\": \"" << model << "\",\n"
@@ -77,7 +89,7 @@ llama_command (string s, string model) {
 
 string
 mistral_command (string s, string model) {
-  string key= get_env ("MISTRAL_KEY");
+  string key= get_env ("MISTRAL_API_KEY");
   string cmd= "curl -X POST \\\n";
   cmd << "  -H \"Authorization: Bearer " << key << "\" \\\n"
       << "  -H \"Content-Type: application/json\" \\\n"
@@ -95,6 +107,7 @@ mistral_command (string s, string model) {
 string
 ai_command (string s, string model) {
   string engine= ai_engine (model);
+  if (engine == "chatgpt") return chatgpt_command (s, model);
   if (engine == "llama") return llama_command (s, model);
   if (engine == "mistral") return mistral_command (s, model);
   return "";
@@ -103,6 +116,12 @@ ai_command (string s, string model) {
 /******************************************************************************
 * Extracting the output for various engines
 ******************************************************************************/
+
+string
+chatgpt_output (string val, string model) {
+  (void) model;
+  return val;
+}
 
 string
 llama_output (string val, string model) {
@@ -134,6 +153,7 @@ mistral_output (string val, string model) {
 string
 ai_output (string s, string model) {
   string engine= ai_engine (model);
+  if (engine == "chatgpt") return chatgpt_output (s, model);
   if (engine == "llama") return llama_output (s, model);
   if (engine == "mistral") return mistral_output (s, model);
   return "";
