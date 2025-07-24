@@ -137,6 +137,8 @@ string compress_html (tree t, int mode= 0);
 tree decompress_html (string s, int mode= 0);
 string ai_command (string s, string model);
 string ai_output (string s, string model);
+string ai_latex_command (string s, string model);
+tree   ai_latex_output (string s, string model);
 string ai_chat (string s, string model);
 tree ai_translate (tree t, string from, string into, string model);
 tree ai_correct (tree t, string lan, string model);
