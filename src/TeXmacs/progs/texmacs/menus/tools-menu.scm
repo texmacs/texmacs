@@ -15,7 +15,7 @@
   (:use (texmacs texmacs tm-tools)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Dynamic menus for formats and languages
+;; Dynamic menus for formats, languages, and AI
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-menu (clipboard-preference-menu cvs fun)
@@ -29,45 +29,10 @@
 (tm-define (clipboard-export-preference-menu)
   (clipboard-preference-menu converters-from-special clipboard-set-export))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Dynamic menus and extras for AI tools
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (menu-bind ai-translate-menu
   (for (lan supported-languages)
     ((eval (upcase-first lan))
      (ai-translate lan (get-preference "ai")))))
-
-(tm-define (ai-cmdline name cmd)
-  (cpp-ai-latex-command cmd name))
-
-(tm-define (ai-result name res)
-  (cpp-ai-latex-output res name))
-
-(tm-define (has-chatgpt?)
-  (and (url-exists-in-path? "openai")
-       (!= (getenv "OPENAI_API_KEY") "")))
-
-(tm-define (has-llama3?)
-  (url-exists-in-path? "ollama"))
-
-(tm-define (has-open-mistral-7b?)
-  (!= (getenv "MISTRAL_API_KEY") ""))
-
-(plugin-configure chatgpt
-  (:require (has-chatgpt?))
-  (:cmdline ,ai-cmdline ,ai-result)
-  (:session "ChatGPT"))
-
-(plugin-configure llama3
-  (:require (has-llama3?))
-  (:cmdline ,ai-cmdline ,ai-result)
-  (:session "Llama 3"))
-
-(plugin-configure open-mistral-7b
-  (:require (has-open-mistral-7b?))
-  (:cmdline ,ai-cmdline ,ai-result)
-  (:session "Mistral 7B"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Tools menu
@@ -124,7 +89,7 @@
       (-> "Export selections as"
           (link clipboard-export-preference-menu)))
   ---
-  (-> "AI model"
+  (-> "AI engine"
       ("Off" (reset-preference "ai"))
       ---
       (when (has-chatgpt?)
