@@ -44,21 +44,30 @@
 (tm-define (ai-result name res)
   (cpp-ai-latex-output res name))
 
+(tm-define (has-chatgpt?)
+  (and (url-exists-in-path? "openai")
+       (!= (getenv "OPENAI_API_KEY") "")))
+
+(tm-define (has-llama3?)
+  (url-exists-in-path? "ollama"))
+
+(tm-define (has-open-mistral-7b?)
+  (!= (getenv "MISTRAL_API_KEY") ""))
+
 (plugin-configure chatgpt
-  (:require (and (url-exists-in-path? "openai")
-                 (!= (getenv "OPENAI_API_KEY") "")))
+  (:require (has-chatgpt?))
   (:cmdline ,ai-cmdline ,ai-result)
   (:session "ChatGPT"))
 
 (plugin-configure llama3
-  (:require (url-exists-in-path? "ollama"))
+  (:require (has-llama3?))
   (:cmdline ,ai-cmdline ,ai-result)
-  (:session "Llama"))
+  (:session "Llama 3"))
 
 (plugin-configure open-mistral-7b
-  (:require (!= (getenv "MISTRAL_API_KEY") ""))
+  (:require (has-open-mistral-7b?))
   (:cmdline ,ai-cmdline ,ai-result)
-  (:session "Mistral"))
+  (:session "Mistral 7B"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Tools menu
@@ -118,11 +127,11 @@
   (-> "AI model"
       ("Off" (reset-preference "ai"))
       ---
-      (when (url-exists-in-path? "openai")
+      (when (has-chatgpt?)
         ("Chat GPT" (set-preference "ai" "chatgpt")))
-      (when (url-exists-in-path? "ollama")
+      (when (has-llama3?)
         ("Llama 3" (set-preference "ai" "llama3")))
-      (when (!= (getenv "MISTRAL_API_KEY") "")
+      (when (has-open-mistral-7b?)
         ("Mistral 7B" (set-preference "ai" "open-mistral-7b"))))
   (when (and (cpp-has-preference? "ai")
              (selection-active-any?))
