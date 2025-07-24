@@ -13,6 +13,7 @@
 #include "unix_system.hpp"
 #include "boot.hpp"
 #include "sys_utils.hpp"
+#include "analyze.hpp"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -40,11 +41,17 @@ int main (int argc, char** argv) {
     url usr_local_bin = url (get_env ("APPDIR")) * "usr/local/bin";
     set_env ("PATH", get_env ("PATH") * ":" * as_string (usr_bin) * ":" * as_string (usr_local_bin));
   }
-#if !defined (OS_MACOS) && QT_VERSION < 0x060000
+#if !defined (OS_MACOS) 
+#if QT_VERSION < 0x060000
   if (get_env ("WAYLAND_DISPLAY") == "") {
     set_env ("QT_QPA_PLATFORM", "xcb"); // todo : remove ?
     set_env ("XDG_SESSION_TYPE", "x11");
   }
+#endif
+  // workaround for bug #66718 (Copy/paste not functioning in GNOME (Wayland))
+  if (get_env ("WAYLAND_DISPLAY") != ""
+      && occurs(get_env ("XDG_CURRENT_DESKTOP"), string("GNOME")))
+    set_env ("QT_QPA_PLATFORM", "xcb");
 #endif
   return texmacs_entrypoint (argc, argv);
 }
