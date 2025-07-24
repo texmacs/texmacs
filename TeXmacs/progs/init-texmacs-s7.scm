@@ -58,6 +58,8 @@
 (define boot-start (texmacs-time))
 (define remote-client-list (list))
 
+(define tm-interactive-hook tm-interactive)
+
 (display "Booting TeXmacs kernel functionality\n")
 (load (url-concretize "$TEXMACS_PATH/progs/kernel/boot/boot-s7.scm"))
 
@@ -102,6 +104,7 @@
 (use-modules (utils handwriting handwriting))
 (lazy-tmfs-handler (utils automate auto-tmfs) automate)
 (lazy-define (utils automate auto-tmfs) auto-load-help)
+(lazy-define (utils misc gui-keyboard) get-keyboard)
 (lazy-keyboard (utils automate auto-kbd) in-auto?)
 (define supports-email? (url-exists-in-path? "mmail"))
 (if supports-email? (use-modules (utils email email-tmfs)))
@@ -420,7 +423,8 @@
 
 ;;(display "Booting debugging and developer facilities\n")
 (lazy-menu (debug debug-menu) debug-menu)
-(lazy-menu (texmacs menus developer-menu) developer-menu)
+(lazy-menu (texmacs menus developer-menu)
+           developer-menu custom-keyboard-toolbar)
 (lazy-define (debug debug-widgets) notify-debug-message
              open-debug-console open-error-messages)
 ;;(display* "time: " (- (texmacs-time) boot-start) "\n")
