@@ -78,6 +78,7 @@ ABSTRACT_NULL_CODE(tm_link);
 inline bool tm_link::operator == (tm_link l) { return rep == l.rep; }
 inline bool tm_link::operator != (tm_link l) { return rep != l.rep; }
 
+tm_link make_cmdline_link (string name);
 tm_link make_pipe_link (string cmd);
 tm_link make_dynamic_link (string lib, string symb, string init, string ses);
 tm_link make_socket_link (string h, int p, int t= SOCKET_DEFAULT, int fd= -1);

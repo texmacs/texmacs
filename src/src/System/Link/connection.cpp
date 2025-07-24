@@ -39,7 +39,8 @@ struct connection_rep: rep<connection> {
   int     status;        // status of the connection
   int     prev_status;   // last notified status
   bool    forced_eval;   // forced input evaluation without call backs
-  texmacs_input tm_in;   // texmacs input handler for data from child
+  bool    cmdline_eval;  // command line style evaluation
+  texmacs_input tm_out;  // texmacs input handler for output from child
   texmacs_input tm_err;  // texmacs input handler for errors from child
 
 public:
@@ -52,6 +53,9 @@ public:
   void   listen ();
 };
 RESOURCE_CODE(connection);
+
+void connection_notify (connection con, string ch, tree t);
+void connection_notify_status (connection con);
 
 /******************************************************************************
 * Routines for connections
@@ -70,8 +74,8 @@ connection_rep::connection_rep (string name2, string session2, tm_link ln2):
   rep<connection> (name2 * "-" * session2),
   name (name2), session (session2), ln (ln2),
   status (CONNECTION_DEAD), prev_status (CONNECTION_DEAD),
-  forced_eval (false),
-  tm_in ("output"), tm_err ("error") {}
+  forced_eval (false), cmdline_eval (false),
+  tm_out ("output"), tm_err ("error") {}
 
 string
 connection_rep::start (bool again) {
@@ -82,7 +86,7 @@ connection_rep::start (bool again) {
   }
   else {
     message= ln->start ();
-    tm_in  = texmacs_input ("output");
+    tm_out = texmacs_input ("output");
     tm_err = texmacs_input ("error");
     status = WAITING_FOR_OUTPUT;
     if (again && (message == "ok")) {
@@ -90,12 +94,18 @@ connection_rep::start (bool again) {
       (void) connection_retrieve (name, session);
     }
   }
-  tm_in ->bof ();
+  tm_out->bof ();
   tm_err->bof ();
   ln->set_command (command (connection_callback, this));
   if (name == "dynlink") {
     this->listen ();
     status = WAITING_FOR_OUTPUT;
+  }
+  if (message == "cmdline") {
+    tm_out->format= "cmdline-" * name;
+    tm_out->mode  = tm_out->get_mode (tm_out->format);
+    status= WAITING_FOR_INPUT;
+    connection_notify_status (this);
   }
   return message;
 }
@@ -103,7 +113,7 @@ connection_rep::start (bool again) {
 void
 connection_rep::write (string s) {
   ln->write (s, LINK_IN);
-  tm_in ->bof ();
+  tm_out->bof ();
   tm_err->bof ();
   status= WAITING_FOR_OUTPUT;
 }
@@ -114,7 +124,7 @@ connection_rep::read (int channel) {
     string s= ln->read (LINK_OUT);
     int i, n= N(s);
     for (i=0; i<n; i++)
-      if (tm_in->put (s[i])) {
+      if (tm_out->put (s[i])) {
         status= WAITING_FOR_INPUT;
         if (DEBUG_IO) debug_io << LF << HRULE;
       }
@@ -126,7 +136,7 @@ connection_rep::read (int channel) {
       (void) tm_err->put (s[i]);
   }
   if (!ln->alive) {
-    tm_in ->eof ();
+    tm_out->eof ();
     tm_err->eof ();
     status= CONNECTION_DEAD;
   }
@@ -136,7 +146,7 @@ void
 connection_rep::stop () {
   if (ln->alive) {
     ln->stop ();
-    tm_in ->eof ();
+    tm_out->eof ();
     tm_err->eof ();
     if (status == WAITING_FOR_OUTPUT)
       status= CONNECTION_DYING;
@@ -183,16 +193,17 @@ connection_rep::listen () {
   if (forced_eval) return;
   connection_notify_status (this);
   if (status != CONNECTION_DEAD) {
+    if (cmdline_eval) ln->listen (1);
     read (LINK_ERR);
     connection_notify (this, "error", tm_err->get ("error"));
     read (LINK_OUT);
-    connection_notify (this, "output", tm_in->get ("output"));
-    connection_notify (this, "prompt", tm_in->get ("prompt"));
-    connection_notify (this, "input", tm_in->get ("input"));
+    connection_notify (this, "output", tm_out->get ("output"));
+    connection_notify (this, "prompt", tm_out->get ("prompt"));
+    connection_notify (this, "input", tm_out->get ("input"));
     tree t= connection_handlers (name);
     int i, n= N(t);
     for (i=0; i<n; i++) {
-      tree doc= tm_in->get (t[i][0]->label);
+      tree doc= tm_out->get (t[i][0]->label);
       if (doc != "") call (t[i][1]->label, doc);
       doc= tm_err->get (t[i][0]->label);
       if (doc != "") call (t[i][1]->label, doc);
@@ -238,6 +249,11 @@ connection_start (string name, string session, bool again) {
     if (DEBUG_VERBOSE)
       debug_io << "Starting session '" << session << "'\n";
     tree t= connection_info (name, session);
+    if (is_tuple (t, "cmdline")) {
+      tm_link ln= make_cmdline_link (name);
+      con= tm_new<connection_rep> (name, session, ln);
+      con->cmdline_eval= true;
+    }
     if (is_tuple (t, "pipe", 1)) {
       tm_link ln= make_pipe_link (t[1]->label);
       con= tm_new<connection_rep> (name, session, ln);
@@ -282,7 +298,7 @@ connection_read (string name, string session, string channel) {
   tree t= con->tm_err->get (channel);
   if (t == "") {
     con->read (LINK_OUT);
-    t= con->tm_in->get (channel);
+    t= con->tm_out->get (channel);
   }
   // cout << "Result " << t << "\n";
   return t;

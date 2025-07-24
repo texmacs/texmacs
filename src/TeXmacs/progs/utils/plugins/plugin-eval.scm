@@ -118,6 +118,8 @@
                (if (== status 0)
                    (plugin-start lan ses)
                    (plugin-next lan ses)))
+              ((connection-cmdline? lan)
+               ((first (caar l)) lan ses))
               ((== status 0)
                (with author 0
                  (when (!= lan "scheme")
@@ -198,12 +200,14 @@
 (tm-define (connection-notify-status lan ses st)
   ;;(display* "Notify status " lan ", " ses ", " st "\n")
   (with-author (ahash-ref plugin-author (list lan ses))
-    (when (== st 0)
-      (ahash-remove! plugin-started (list lan ses))
-      (ahash-remove! plugin-prompts (list lan ses))
-      (plugin-cancel lan ses #t))
-    (when (== st 2)
-      (plugin-next lan ses))))
+    (cond ((and (connection-cmdline? lan) (== st 0))
+           (plugin-next lan ses))
+          ((== st 0)
+           (ahash-remove! plugin-started (list lan ses))
+           (ahash-remove! plugin-prompts (list lan ses))
+           (plugin-cancel lan ses #t))
+          ((== st 2)
+           (plugin-next lan ses)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Silent evaluation
