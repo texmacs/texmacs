@@ -542,7 +542,9 @@
   (decompress-tree decompress_tree (tree content))
   (compress-html compress_html (string content int))
   (decompress-html decompress_html (tree string int))
-  (ai-chat ai_chat (string string string))
+  (cpp-ai-command ai_command (string string string))
+  (cpp-ai-output ai_output (string string string))
+  (cpp-ai-chat ai_chat (string string string))
   (cpp-ai-correct ai_correct (tree content string string))
   (cpp-ai-translate ai_translate (tree content string string string))
 

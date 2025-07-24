@@ -29,10 +29,36 @@
 (tm-define (clipboard-export-preference-menu)
   (clipboard-preference-menu converters-from-special clipboard-set-export))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Dynamic menus and extras for AI tools
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (menu-bind ai-translate-menu
   (for (lan supported-languages)
     ((eval (upcase-first lan))
      (ai-translate lan (get-preference "ai")))))
+
+(tm-define (ai-cmdline name cmd)
+  (cpp-ai-command cmd name))
+
+(tm-define (ai-result name res)
+  (tm->tree (cpp-ai-output res name)))
+
+(plugin-configure chatgpt
+  (:require (and (url-exists-in-path? "openai")
+                 (!= (getenv "OPENAI_API_KEY") "")))
+  (:cmdline ,ai-cmdline ,ai-result)
+  (:session "ChatGPT"))
+
+(plugin-configure llama3
+  (:require (url-exists-in-path? "ollama"))
+  (:cmdline ,ai-cmdline ,ai-result)
+  (:session "Llama"))
+
+(plugin-configure open-mistral-7b
+  (:require (!= (getenv "MISTRAL_API_KEY") ""))
+  (:cmdline ,ai-cmdline ,ai-result)
+  (:session "Mistral"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Tools menu
