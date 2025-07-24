@@ -328,13 +328,6 @@
   (converter-search (string-append from "-snippet") 
                     (string-append to "-snippet")))
 
-(tm-define (kbd-copy)
-  (:mode in-prog?)
-  (:require (textual? (selection-tree)))
-  (let* ((lan (get-env "prog-language") )
-         (fmt (if (can-convert lan "texmacs") lan "verbatim")))
-    (clipboard-copy-export fmt "primary")))
-
 (tm-define (kbd-cut)
   (:mode in-prog?)
   (:require (textual? (selection-tree)))
