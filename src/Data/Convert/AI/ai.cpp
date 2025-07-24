@@ -165,9 +165,26 @@ ai_output (string s, string model) {
   return "";
 }
 
+string
+un_escape_cr (string s) {
+  int i, n= N(s);
+  string r;
+  for (i=0; i<n; )
+    if (test (s, i, "\\neq")) r << s[i++];
+    else if (test (s, i, "\\n")) { r << '\n'; i += 2; }
+    else r << s[i++];
+  return r;
+}
+
 tree
 ai_latex_output (string s, string model) {
   string r= ai_output (s, model);
+  if (DEBUG_IO) {
+    cout << r << "\n";
+    string x= un_escape_cr (r);
+    x= "] " * replace (x, "\n", "\n] ");
+    debug_io << x << "\n";
+  }
   string pre, post;
   int start= search_forwards ("\\begin{document}", r);
   if (start < 0) { pre= ""; post= ""; return r; }
@@ -178,7 +195,7 @@ ai_latex_output (string s, string model) {
   post= r (end, N(r));
   r= r (start, end);
   r= replace (r, "\\maketitle", "");
-  r= replace (r, "\\n", "\n");
+  r= un_escape_cr (r);
   tree t= generic_to_tree (r, "latex-snippet");
   return tree (WITH, MODE, "text", t);
 }
