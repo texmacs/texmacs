@@ -549,7 +549,7 @@
     `(begin
        (texmacs-modes (,in-name (== (get-env "prog-language") ,name)))
        (texmacs-modes (,name-scripts (== (get-env "prog-scripts") ,name)))
-       (define (,supports-name?)
+       (tm-define (,supports-name?)
          (or (ahash-ref plugin-data-table ,name)
              (remote-connection-defined? ,name)))
        (if reconfigure-flag? (ahash-set! plugin-data-table ,name #t))
