@@ -121,10 +121,8 @@ process_all_cmdlines () {
   while (it->busy()) {
     cmdline_link_rep* con= (cmdline_link_rep*) it->next();
     //cout << con->name << " ~> " << (con->alive? "true": "false") << "\n";
-    if (con->alive) {
-      usleep (250000);
+    if (con->alive)
       con->apply_command ();
-    }
   }
 }
 

@@ -14,6 +14,16 @@
 (texmacs-module (utils misc ai))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Pre- and post-processing
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (ai-cmdline name cmd)
+  (cpp-ai-latex-command cmd name))
+
+(tm-define (ai-result name res)
+  (cpp-ai-latex-output res name))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Automatic correction
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -63,3 +73,32 @@
 (tm-define (ai-paste)
   (with t (decompress-html (clipboard-get* "extern") 1)
     (insert t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Currently supported models
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (has-chatgpt?)
+  (and (url-exists-in-path? "openai")
+       (!= (getenv "OPENAI_API_KEY") "")))
+
+(plugin-configure chatgpt
+  (:require (has-chatgpt?))
+  (:cmdline ,ai-cmdline ,ai-result)
+  (:session "ChatGPT"))
+
+(tm-define (has-llama3?)
+  (url-exists-in-path? "ollama"))
+
+(plugin-configure llama3
+  (:require (has-llama3?))
+  (:cmdline ,ai-cmdline ,ai-result)
+  (:session "Llama 3"))
+
+(tm-define (has-open-mistral-7b?)
+  (!= (getenv "MISTRAL_API_KEY") ""))
+
+(plugin-configure open-mistral-7b
+  (:require (has-open-mistral-7b?))
+  (:cmdline ,ai-cmdline ,ai-result)
+  (:session "Mistral 7B"))
