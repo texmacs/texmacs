@@ -509,6 +509,8 @@
 "decompress-html"
 "cpp-ai-command"
 "cpp-ai-output"
+"cpp-ai-latex-command"
+"cpp-ai-latex-output"
 "cpp-ai-chat"
 "cpp-ai-correct"
 "cpp-ai-translate"

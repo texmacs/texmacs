@@ -113,6 +113,12 @@ ai_command (string s, string model) {
   return "";
 }
 
+string
+ai_latex_command (string s, string model) {
+  string pre= "Please provide your answer in the form of an untitled LaTeX document.";
+  return ai_command (pre * " " * s, model);
+}
+
 /******************************************************************************
 * Extracting the output for various engines
 ******************************************************************************/
@@ -157,6 +163,24 @@ ai_output (string s, string model) {
   if (engine == "llama") return llama_output (s, model);
   if (engine == "mistral") return mistral_output (s, model);
   return "";
+}
+
+tree
+ai_latex_output (string s, string model) {
+  string r= ai_output (s, model);
+  string pre, post;
+  int start= search_forwards ("\\begin{document}", r);
+  if (start < 0) { pre= ""; post= ""; return r; }
+  int end= search_forwards ("\\end{document}", start, r);
+  if (end < 0) { pre= ""; post= ""; return r; }
+  start += 16;
+  pre= r (0, start);
+  post= r (end, N(r));
+  r= r (start, end);
+  r= replace (r, "\\maketitle", "");
+  r= replace (r, "\\n", "\n");
+  tree t= generic_to_tree (r, "latex-snippet");
+  return tree (WITH, MODE, "text", t);
 }
 
 /******************************************************************************

@@ -39,10 +39,10 @@
      (ai-translate lan (get-preference "ai")))))
 
 (tm-define (ai-cmdline name cmd)
-  (cpp-ai-command cmd name))
+  (cpp-ai-latex-command cmd name))
 
 (tm-define (ai-result name res)
-  (tm->tree (cpp-ai-output res name)))
+  (cpp-ai-latex-output res name))
 
 (plugin-configure chatgpt
   (:require (and (url-exists-in-path? "openai")
