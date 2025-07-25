@@ -861,6 +861,8 @@ QTMWidget::dropEvent (QDropEvent *event) {
         // not a local file, drop an slink to the document
         string label= url;
         if (md->hasText ()) {
+          // retrieve a meaningful string for the label if available
+          // and only the first line as it can be multiline
           buf= md->text ().toUtf8 ().split('\n')[0];
           label= string (buf.constData (), buf.size ());
         }
