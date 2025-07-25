@@ -26,6 +26,36 @@
 #include <QVariant>
 #include <QDockWidget>
 
+/* Windows are created at their previous position, which is saved in
+   user preferences.
+   When this position no longer exists (e.g. after disconnecting an
+   auxiliary screen) the window is not visible for some plateforms.
+   So we force widgets to be created on the same screen as the main
+   TeXmacs window. */
+
+#if QT_VERSION >= 0x060000
+static QPoint
+ensure_visible_position (const QPoint& p, const QSize& s) {
+  QScreen* screen= QGuiApplication::primaryScreen();
+  if (screen == NULL) return p;
+  QRect r (p, s);
+  QRect g= screen->availableGeometry();
+  if (r.left () > g.right ()) r.translate (g.right () - r.right (), 0);
+  if (r.left () < g.left ()) r.translate (g.left () - r.left (), 0);
+  if (r.top () > g.bottom ()) r.translate (0, g.bottom () - r.bottom ());
+  if (r.top () < g.top ()) r.translate (0, g.top () - r.top ());
+  //qDebug () << "ensure_visible_position of" << p << "and" << s
+  //	    << "within" << g << "returns" << r;
+  return r.topLeft ();
+}
+#else
+static inline QPoint
+ensure_visible_position (const QPoint& p, const QSize& s) {
+  (void) s;
+  return p;
+}
+#endif
+
 /*! Construct a qt_window_widget_rep around an already compiled widget.
  
  This means that the QWidget passed as an argument already represents a fully 
@@ -162,6 +192,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
           // to avoid window under menu bar on MAC when moving at (0,0)
           // FIXME: use the real menu bar height.
 #endif
+	pt= ensure_visible_position (pt, qwid->size ());
         qwid->move (pt);
       }
     }
@@ -352,7 +383,9 @@ qt_popup_widget_rep::send (slot s, blackbox val) {
     case SLOT_POSITION:
     {
       check_type<coord2>(val, s);
-      qwid->move (to_qpoint (open_box<coord2> (val)));
+      QPoint pos= to_qpoint (open_box<coord2> (val));
+      pos= ensure_visible_position (pos, qwid->size());
+      qwid->move (pos);
     }
       break;
       
