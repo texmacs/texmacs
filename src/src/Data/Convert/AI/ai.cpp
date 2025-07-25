@@ -41,7 +41,11 @@ ai_quote (string s) {
   for (i=0; i<n; i++)
     switch (s[i]) {
     case '\"':
+      r << '\\' << s[i];
+      break;
     case '\'':
+      r << "'\\''";
+      break;
     case '\\':
       r << '\\' << s[i];
       break;
@@ -70,10 +74,8 @@ ai_unquote (string s) {
 string
 chatgpt_command (string s, string model) {
   url u ("$TEXMACS_HOME_PATH/system/tmp/chatgpt.txt");
-  cout << u << ", " << as_string (u) << "\n";
   if (save_string (u, s)) return "";
   string cmd= "openai -k 5000 complete " * as_string (u);
-  cout << "cmd= " << cmd << "\n";
   return cmd;
 }
 
@@ -171,6 +173,7 @@ un_escape_cr (string s) {
   string r;
   for (i=0; i<n; )
     if (test (s, i, "\\neq")) r << s[i++];
+    else if (test (s, i, "\\nearrow")) r << s[i++];
     else if (test (s, i, "\\n")) { r << '\n'; i += 2; }
     else r << s[i++];
   return r;
@@ -209,8 +212,8 @@ ai_chat (string s, string model) {
   string cmd= ai_command (s, model);
   string val= eval_system (cmd);
   //if (DEBUG_IO) {
-  //  debug_io << "ai input, " << cmd << LF;
-  //  debug_io << "ai output, " << val << LF;
+  //  debug_io << "input, " << cmd << LF;
+  //  debug_io << "output, " << val << LF;
   //}
   string r= ai_output (val, model);
   if (DEBUG_IO) {

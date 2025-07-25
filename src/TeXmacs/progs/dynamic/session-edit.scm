@@ -50,6 +50,7 @@
 ;; Switches
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define session-text-input (make-ahash-table))
 (define session-math-input (make-ahash-table))
 
 (define (session-key)
@@ -57,14 +58,28 @@
 	 (ses (get-env "prog-session")))
     (cons lan ses)))
 
+(tm-define (session-text-input? . opts)
+  (with key (if (< (length opts) 2) (session-key)
+                (cons (car opts) (cadr opts)))
+    (ahash-ref session-text-input key)))
+
 (tm-define (session-math-input? . opts)
   (with key (if (< (length opts) 2) (session-key)
                 (cons (car opts) (cadr opts)))
     (ahash-ref session-math-input key)))
 
+(tm-define (toggle-session-text-input)
+  (:synopsis "Toggle mathematical input in sessions")
+  (:check-mark "v" session-text-input?)
+  (ahash-set! session-math-input (session-key) #f)
+  (ahash-set! session-text-input (session-key) (not (session-text-input?)))
+  (with-innermost t field-context?
+    (field-update-text t)))
+
 (tm-define (toggle-session-math-input)
   (:synopsis "Toggle mathematical input in sessions")
   (:check-mark "v" session-math-input?)
+  (ahash-set! session-text-input (session-key) #f)
   (ahash-set! session-math-input (session-key) (not (session-math-input?)))
   (with-innermost t field-context?
     (field-update-math t)))
@@ -298,7 +313,9 @@
 	   (== (tree-index t) 1))))
 
 (tm-define field-tags
-  '(input unfolded-io folded-io input-math unfolded-io-math folded-io-math))
+  '(input unfolded-io folded-io
+          input-text unfolded-io-text folded-io-text
+          input-math unfolded-io-math folded-io-math))
 
 (tm-define (field-context? t)
   (and (tm? t)
@@ -311,15 +328,19 @@
        (tm-func? (tree-ref t :up) 'document)))
 
 (tm-define (field-folded-context? t)
-  (and (tree-in? t '(folded-io folded-io-math))
+  (and (tree-in? t '(folded-io folded-io-text folded-io-math))
        (tm-func? (tree-ref t :up) 'document)))
 
 (tm-define (field-unfolded-context? t)
-  (and (tree-in? t '(unfolded-io unfolded-io-math))
+  (and (tree-in? t '(unfolded-io unfolded-io-text unfolded-io-math))
        (tm-func? (tree-ref t :up) 'document)))
 
 (tm-define (field-prog-context? t)
   (and (tree-in? t '(input folded-io unfolded-io))
+       (tm-func? (tree-ref t :up) 'document)))
+
+(tm-define (field-text-context? t)
+  (and (tree-in? t '(input-text folded-io-text unfolded-io-text))
        (tm-func? (tree-ref t :up) 'document)))
 
 (tm-define (field-math-context? t)
@@ -421,6 +442,9 @@
   (cond ((tm-func? t 'input)
 	 (tree-insert! t 2 (list '(document)))
 	 (tree-assign-node! t 'unfolded-io))
+	((tm-func? t 'input-text)
+	 (tree-insert! t 2 (list '(document)))
+	 (tree-assign-node! t 'unfolded-io-text))
 	((tm-func? t 'input-math)
 	 (tree-insert! t 2 (list '(document)))
 	 (tree-assign-node! t 'unfolded-io-math))))
@@ -428,6 +452,9 @@
 (define (field-remove-output t)
   (cond ((or (tm-func? t 'folded-io) (tm-func? t 'unfolded-io))
 	 (tree-assign-node! t 'input)
+	 (tree-remove! t 2 1))
+	((or (tm-func? t 'folded-io-text) (tm-func? t 'unfolded-io-text))
+	 (tree-assign-node! t 'input-text)
 	 (tree-remove! t 2 1))
 	((or (tm-func? t 'folded-io-math) (tm-func? t 'unfolded-io-math))
 	 (tree-assign-node! t 'input-math)
@@ -437,10 +464,25 @@
 	   (when (tree-is? p 'document)
 	     (tree-remove! p (tree-index t) 1))))))
 
+(define (field-update-text t)
+  (if (session-text-input?)
+      (when (or (field-prog-context? t) (field-math-context? t))
+	(if (or (tm-func? t 'input) (tm-func? t 'input-math))
+	    (tree-assign-node! t 'input-text)
+	    (begin
+	      (tree-assign-node! t 'folded-io-text)
+	      (tree-assign (tree-ref t 1) '(document "")))))
+      (when (field-text-context? t)
+	(if (tm-func? t 'input-text)
+	    (tree-assign-node! t 'input)
+	    (begin
+	      (tree-assign-node! t 'folded-io)
+	      (tree-assign (tree-ref t 1) '(document "")))))))
+
 (define (field-update-math t)
   (if (session-math-input?)
-      (when (field-prog-context? t)
-	(if (tm-func? t 'input)
+      (when (or (field-prog-context? t) (field-text-context? t))
+	(if (or (tm-func? t 'input) (tm-func? t 'input-text))
 	    (tree-assign-node! t 'input-math)
 	    (begin
 	      (tree-assign-node! t 'folded-io-math)
@@ -455,7 +497,9 @@
 (define (field-create t p forward?)
   (let* ((d (tree-ref t :up))
 	 (i (+ (tree-index t) (if forward? 1 0)))
-	 (l (if (session-math-input?) 'input-math 'input))
+	 (l (cond ((session-text-input?) 'input-text)
+                  ((session-math-input?) 'input-math)
+                  (else 'input)))
 	 (b `(,l ,p (document ""))))
     (tree-insert d i (list b))
     (tree-ref d i)))
@@ -481,7 +525,9 @@
   (:argument lan "Language")
   (:argument ses "Session identifier")
   (let* ((ban `(output (document "")))
-	 (l (if (session-math-input? lan ses) 'input-math 'input))
+	 (l (cond ((session-text-input? lan ses) 'input-text)
+                  ((session-math-input? lan ses) 'input-math)
+                  (else 'input)))
 	 (p (plugin-prompt lan ses))
 	 (in `(,l (document ,p) (document "")))
 	 (s `(session ,lan ,ses (document ,ban ,in))))
@@ -504,6 +550,8 @@
     (field-insert-output t)
     (cond ((tm-func? t 'folded-io)
 	   (tree-assign-node! t 'unfolded-io))
+	  ((tm-func? t 'folded-io-text)
+	   (tree-assign-node! t 'unfolded-io-text))
 	  ((tm-func? t 'folded-io-math)
 	   (tree-assign-node! t 'unfolded-io-math)))
     (let* ((lan (get-env "prog-language"))

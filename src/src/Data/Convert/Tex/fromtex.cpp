@@ -2824,6 +2824,13 @@ latex_command_to_tree (tree t) {
         l2e (t[1]), "default", l2e (t[3]), l2e (t[4]));
   if (is_tuple (t, "\\tmsession", 3))
     return compound ("session", l2e (t[1]), l2e (t[2]), l2e (t[3]));
+  if (is_tuple (t, "\\tminputtext", 2)) {
+    string old= command_type ["!mode"];
+    command_type ("!mode") = "text";
+    tree arg= l2e (t[2]);
+    command_type ("!mode") = old;
+    return document (compound ("input-text", l2e (t[1]), old));
+  }
   if (is_tuple (t, "\\tminputmath", 2)) {
     string old= command_type ["!mode"];
     command_type ("!mode") = "math";
@@ -2865,6 +2872,8 @@ latex_command_to_tree (tree t) {
     tag= tag (3, N(tag));
     if (tag == "foldedio")       tag= "folded-io";
     if (tag == "unfoldedio")     tag= "unfolded-io";
+    if (tag == "foldediotext")   tag= "folded-io-text";
+    if (tag == "unfoldediotext") tag= "unfolded-io-text";
     if (tag == "foldediomath")   tag= "folded-io-math";
     if (tag == "unfoldediomath") tag= "unfolded-io-math";
     string old= command_type ["!mode"];

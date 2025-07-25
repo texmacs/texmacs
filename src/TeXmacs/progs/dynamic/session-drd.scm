@@ -17,4 +17,5 @@
 ;; fold <-> unfold toggles
 
 (define-toggle folded-io unfolded-io)
+(define-toggle folded-io-text unfolded-io-text)
 (define-toggle folded-io-math unfolded-io-math)
