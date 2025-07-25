@@ -187,10 +187,9 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       coord2 p = open_box<coord2> (val);
       if (qwid) {
         QPoint pt = to_qpoint (p);
-#ifdef OS_MACOS
+#if defined(OS_MACOS) && QT_VERSION < 0x060000
+	// to avoid window under menu bar on MAC when moving at (0,0)
         pt.ry() = (pt.y() <= 40) ? 40 : pt.y();
-          // to avoid window under menu bar on MAC when moving at (0,0)
-          // FIXME: use the real menu bar height.
 #endif
 	pt= ensure_visible_position (pt, qwid->size ());
         qwid->move (pt);
