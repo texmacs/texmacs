@@ -17,6 +17,17 @@
 ;; Pre- and post-processing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (ia-serialize lan t)
+  (when (tm-func? t 'document 1)
+    (set! t (tm-ref t 0)))
+  (if (tm-atomic? t)
+      (with s (tm->string t)
+        (cork->utf8 s))
+      (with s (convert (tm->stree t) "texmacs-stree" "latex-snippet"
+                       (cons "texmacs->latex:encoding" "utf-8"))
+        ;;(display* "s = " s "\n")
+        s)))
+
 (tm-define (ai-cmdline name cmd)
   (cpp-ai-latex-command cmd name))
 
@@ -85,7 +96,8 @@
 (plugin-configure chatgpt
   (:require (has-chatgpt?))
   (:cmdline ,ai-cmdline ,ai-result)
-  (:session "ChatGPT"))
+  (:session "ChatGPT")
+  (:serializer ,ia-serialize))
 
 (tm-define (has-llama3?)
   (url-exists-in-path? "ollama"))
@@ -93,7 +105,8 @@
 (plugin-configure llama3
   (:require (has-llama3?))
   (:cmdline ,ai-cmdline ,ai-result)
-  (:session "Llama 3"))
+  (:session "Llama 3")
+  (:serializer ,ia-serialize))
 
 (tm-define (has-open-mistral-7b?)
   (!= (getenv "MISTRAL_API_KEY") ""))
@@ -101,4 +114,5 @@
 (plugin-configure open-mistral-7b
   (:require (has-open-mistral-7b?))
   (:cmdline ,ai-cmdline ,ai-result)
-  (:session "Mistral 7B"))
+  (:session "Mistral 7B")
+  (:serializer ,ia-serialize))

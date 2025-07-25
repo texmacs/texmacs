@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|2.1.4>
 
 <style|source>
 
@@ -64,7 +64,11 @@
     </src-comment>
   </active*>
 
-  <assign|input|<macro|prompt|body|<with|font-family|rm|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<provides|<merge|<value|prog-language>|-input>>|<merge|<value|prog-language>|-input>|generic-input>>|<with|mode|prog|<arg|prompt>>|<with|mode|prog|<arg|body>>>>>>>
+  <assign|input|<macro|prompt|body|<with|font-family|rm|mode|prog|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<provides|<merge|<value|prog-language>|-input>>|<merge|<value|prog-language>|-input>|generic-input>>|<arg|prompt>|<arg|body>>>>>>
+
+  <assign|input-text|<\macro|prompt|in>
+    <input|<arg|prompt>|<text|<arg|in>>>
+  </macro>>
 
   <assign|input-math|<\macro|prompt|in>
     <input|<arg|prompt>|<math|<arg|in>>>
@@ -149,6 +153,14 @@
     <\input|<with|locus-color|preserve|<action|<arg|prompt>|mouse-unfold|<arg|in>>>>
       <arg|in>
     </input>
+  </macro>>
+
+  <assign|unfolded-prog-io-text|<\macro|prompt|in|out|id>
+    <unfolded-prog-io|<arg|prompt>|<text|<arg|in>>|<arg|out>>
+  </macro>>
+
+  <assign|folded-prog-io-text|<\macro|prompt|in|out|id>
+    <folded-prog-io|<arg|prompt>|<text|<arg|in>>|<arg|out>>
   </macro>>
 
   <assign|unfolded-prog-io-math|<\macro|prompt|in|out|id>

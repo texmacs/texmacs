@@ -1,4 +1,4 @@
-<TeXmacs|1.99.19>
+<TeXmacs|2.1.4>
 
 <style|source>
 
@@ -66,7 +66,7 @@
     </src-comment>
   </active*>
 
-  <assign|input|<macro|prompt|body|<with|font-family|rm|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<provides|<merge|<value|prog-language>|-input>>|<merge|<value|prog-language>|-input>|generic-input>>|<with|mode|prog|<arg|prompt>>|<with|mode|prog|<arg|body>>>>>>>
+  <assign|input|<macro|prompt|body|<with|font-family|rm|mode|prog|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<provides|<merge|<value|prog-language>|-input>>|<merge|<value|prog-language>|-input>|generic-input>>|<arg|prompt>|<arg|body>>>>>>
 
   <assign|input-math|<\macro|prompt|in>
     <input|<arg|prompt>|<math|<arg|in>>>
@@ -159,6 +159,14 @@
     </input>
   </macro>>
 
+  <assign|unfolded-io-text|<\macro|prompt|in|out>
+    <unfolded-io|<arg|prompt>|<text|<arg|in>>|<arg|out>>
+  </macro>>
+
+  <assign|folded-io-text|<\macro|prompt|in|out>
+    <folded-io|<arg|prompt>|<text|<arg|in>>|<arg|out>>
+  </macro>>
+
   <assign|unfolded-io-math|<\macro|prompt|in|out>
     <unfolded-io|<arg|prompt>|<math|<arg|in>>|<arg|out>>
   </macro>>
@@ -180,6 +188,8 @@
 
 <\initial>
   <\collection>
+    <associate|info-flag|minimal>
+    <associate|page-medium|papyrus>
     <associate|preamble|true>
   </collection>
 </initial>

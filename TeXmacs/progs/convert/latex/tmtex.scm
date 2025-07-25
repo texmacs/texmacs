@@ -2697,6 +2697,15 @@
   (with tag (string->symbol (string-append "tm" (string-replace s "-" "")))
   `(,tag ,@(map tmtex l))))
 
+(define (tmtex-input-text s l)
+  (let ((tag (string->symbol (string-append "tm" (string-replace s "-" ""))))
+        (a1  (tmtex (car l)))
+        (a2  (with r (begin
+                       (tmtex-env-set "mode" "text")
+                       (tmtex (cadr l)))
+               (tmtex-env-reset "mode") r)))
+  (list tag a1 a2)))
+
 (define (tmtex-input-math s l)
   (let ((tag (string->symbol (string-append "tm" (string-replace s "-" ""))))
         (a1  (tmtex (car l)))
@@ -2705,6 +2714,16 @@
                        (tmtex (cadr l)))
                (tmtex-env-reset "mode") r)))
   (list tag a1 a2)))
+
+(define (tmtex-fold-io-text s l)
+  (let ((tag (string->symbol (string-append "tm" (string-replace s "-" ""))))
+        (a1  (tmtex (car l)))
+        (a2  (with r (begin
+                       (tmtex-env-set "mode" "text")
+                       (tmtex (cadr l)))
+               (tmtex-env-reset "mode") r))
+        (a3  (tmtex (caddr l))))
+  (list tag a1 a2 a3)))
 
 (define (tmtex-fold-io-math s l)
   (let ((tag (string->symbol (string-append "tm" (string-replace s "-" ""))))
@@ -3152,7 +3171,9 @@
    (,tmtex-tm -1))
   ((:or padded underlined overlined bothlined framed ornamented)
    (,tmtex-ornamented 1))
+  ((:or folded-io-text unfolded-io-text) (,tmtex-fold-io-text 3))
   ((:or folded-io-math unfolded-io-math) (,tmtex-fold-io-math 3))
+  (input-text (,tmtex-input-text 2))
   (input-math (,tmtex-input-math 2))
   (session (,tmtex-session 3))
   ((:or converter-input converter-output) (,tmtex-converter 3))

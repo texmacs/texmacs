@@ -23,12 +23,23 @@
 ;; Switches
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define program-text-input (make-ahash-table))
 (define program-math-input (make-ahash-table))
 
 (define (program-key)
   (let* ((lan (get-env "prog-language"))
 	 (ses (get-env "prog-session")))
     (cons lan ses)))
+
+(tm-define (program-text-input?)
+  (ahash-ref program-text-input (program-key)))
+
+(tm-define (toggle-program-text-input)
+  (:synopsis "Toggle textual input in programs")
+  (:check-mark "v" program-text-input?)
+  (ahash-set! program-text-input (program-key) (not (program-text-input?)))
+  (with-innermost t prog-field-context?
+    (prog-field-update-text t)))
 
 (tm-define (program-math-input?)
   (ahash-ref program-math-input (program-key)))
@@ -75,7 +86,9 @@
   (session          program)
   (folded-io        folded-prog-io)
   (unfolded-io      unfolded-prog-io)
+  (folded-io-text   folded-prog-io-text)
   (folded-io-math   folded-prog-io-math)
+  (unfolded-io-text unfolded-prog-io-text)
   (unfolded-io-math unfolded-prog-io-math))
 
 (define (session-node->program-node u)
@@ -325,7 +338,8 @@
 
 (tm-define prog-field-tags
   '(input unfolded-prog-io folded-prog-io
-    input-math unfolded-prog-io-math folded-prog-io-math))
+          input-text unfolded-prog-io-text folded-prog-io-text
+          input-math unfolded-prog-io-math folded-prog-io-math))
 
 (tm-define (prog-field-context? t)
   (and (tm? t)
@@ -349,6 +363,10 @@
 
 (tm-define (prog-field-prog-context? t)
   (and (tree-in? t '(input folded-prog-io unfolded-prog-io))
+       (tm-func? (tree-ref t :up) 'document)))
+
+(tm-define (prog-field-text-context? t)
+  (and (tree-in? t '(input-text folded-prog-io-text unfolded-prog-io-text))
        (tm-func? (tree-ref t :up) 'document)))
 
 (tm-define (prog-field-math-context? t)
@@ -450,6 +468,9 @@
   (cond ((tm-func? t 'input)
 	 (tree-insert! t 2 (list '(document) ""))
 	 (tree-assign-node! t 'unfolded-prog-io))
+	((tm-func? t 'input-text)
+	 (tree-insert! t 2 (list '(document) ""))
+	 (tree-assign-node! t 'unfolded-prog-io-text))
 	((tm-func? t 'input-math)
 	 (tree-insert! t 2 (list '(document) ""))
 	 (tree-assign-node! t 'unfolded-prog-io-math))))
@@ -458,13 +479,33 @@
   (cond ((or (tm-func? t 'folded-prog-io) (tm-func? t 'unfolded-prog-io))
 	 (tree-assign-node! t 'input)
 	 (tree-remove! t 2 2))
-	((or (tm-func? t 'folded-prog-io-math) (tm-func? t 'unfolded-prog-io-math))
+	((or (tm-func? t 'folded-prog-io-text)
+             (tm-func? t 'unfolded-prog-io-text))
+	 (tree-assign-node! t 'input-text)
+	 (tree-remove! t 2 2))
+	((or (tm-func? t 'folded-prog-io-math)
+             (tm-func? t 'unfolded-prog-io-math))
 	 (tree-assign-node! t 'input-math)
 	 (tree-remove! t 2 2))
 	((tm-func? t 'output)
 	 (with p (tree-ref t :up)
 	   (when (tree-is? p 'document)
 	     (tree-remove! p (tree-index t) 1))))))
+
+(define (prog-field-update-text t)
+  (if (program-text-input?)
+      (when (prog-field-prog-context? t)
+	(if (tm-func? t 'input)
+	    (tree-assign-node! t 'input-text)
+	    (begin
+	      (tree-assign-node! t 'folded-prog-io-text)
+	      (tree-assign (tree-ref t 1) '(document "")))))
+      (when (prog-field-text-context? t)
+	(if (tm-func? t 'input-text)
+	    (tree-assign-node! t 'input)
+	    (begin
+	      (tree-assign-node! t 'folded-prog-io)
+	      (tree-assign (tree-ref t 1) '(document "")))))))
 
 (define (prog-field-update-math t)
   (if (program-math-input?)
@@ -484,7 +525,9 @@
 (define (prog-field-create t p forward?)
   (let* ((d (tree-ref t :up))
 	 (i (+ (tree-index t) (if forward? 1 0)))
-	 (l (if (program-math-input?) 'input-math 'input))
+	 (l (cond ((program-text-input?) 'input-text)
+                  ((program-math-input?) 'input-math)
+                  (else 'input)))
 	 (b `(,l ,p (document ""))))
     (tree-insert d i (list b))
     (tree-ref d i)))
@@ -507,7 +550,9 @@
 
 (tm-define (make-program lan ses)
   (let* ((ban `(output (document "")))
-	 (l (if (program-math-input?) 'input-math 'input))
+	 (l (cond ((program-text-input?) 'input-text)
+                  ((program-math-input?) 'input-math)
+                  (else 'input)))
 	 (p (plugin-prompt lan ses))
 	 (in `(,l (document ,p) (document "")))
 	 (s `(program ,lan ,ses (document ,ban ,in))))
