@@ -208,6 +208,18 @@ url_ftp (string name) {
 }
 
 static url
+url_doi (string name) {
+  url u= url_get_name (name);
+  return url_root ("doi") * u;
+}
+
+static url
+url_mailto (string name) {
+  url u= url_get_name (name);
+  return url_root ("mailto") * u;
+}
+
+static url
 url_tmfs (string name) {
   url u= url_get_name (name);
   return url_root ("tmfs") * u;
@@ -286,6 +298,8 @@ url_general (string name, int type= URL_SYSTEM) {
   if (starts (name, "http://")) return url_http (name (7, N (name)));
   if (starts (name, "https://")) return url_https (name (8, N (name)));
   if (starts (name, "ftp://")) return url_ftp (name (6, N (name)));
+  if (starts (name, "doi:")) return url_doi (name (4, N (name)));
+  if (starts (name, "mailto:")) return url_mailto (name (7, N (name)));
   if (starts (name, "tmfs://")) return url_tmfs (name (7, N (name)));
   if (starts (name, "//")) return url_blank (name (2, N (name)));
   #ifdef OS_ANDROID
@@ -525,7 +539,11 @@ as_string (url u, int type) {
   if (is_atomic (u)) return u->t->label;
   if (is_concat (u)) {
     int stype= type;
-    if (is_root (u[1]) && (!is_root (u[1], "default"))) stype= URL_STANDARD;
+    if (is_root (u[1])) {
+      if (!is_root (u[1], "default")) stype= URL_STANDARD;
+      if (is_root (u[1], "doi")) return "doi:" * as_string (u[2], stype);
+      if (is_root (u[1], "mailto")) return "mailto:" * as_string (u[2], stype);
+    }
     string sep= (stype==URL_SYSTEM? string (URL_CONCATER): string ("/"));
     string s1 = as_string (u[1], type);
     string s2 = as_string (u[2], stype);
@@ -888,7 +906,8 @@ complete (url base, url u, string filter, bool flag) {
       if (is_of_type (comp, filter)) return reroot (u, "default");
       return url_none ();
     }
-    if (is_rooted_web (comp) || is_rooted_tmfs (comp) || is_ramdisc (comp)) {
+    if (is_rooted_web (comp) || is_rooted_tmfs (comp) ||
+        is_ramdisc (comp) || is_rooted (comp, "mailto")) {
       if (is_of_type (comp, filter)) return u;
       return url_none ();
     }

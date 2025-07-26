@@ -88,6 +88,10 @@ fetch_tool () {
 url
 get_from_web (url name) {
   if (!is_rooted_web (name)) return url_none ();
+  if (is_concat (name) && is_root (name[1], "doi")) {
+    url u= url_root ("https") * (url ("www.doi.org") * name[2]);
+    return get_from_web (u);
+  }
   url res= get_cache (name);
   if (!is_none (res)) return res;
 
