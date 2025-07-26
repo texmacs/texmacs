@@ -559,7 +559,7 @@ qt_simple_widget_rep::repaint_invalid_regions () {
 #if QT_VERSION >= 0x060000
     newBackingPixmap.setDevicePixelRatio (backingPixmap->devicePixelRatio());
 #endif
-    newBackingPixmap.fill (Qt::red);
+    //newBackingPixmap.fill (Qt::red); // don't do that for backgrounds with transparency
     QPainter p (&newBackingPixmap);
     p.drawPixmap (-dx,-dy,*backingPixmap);
     p.end();
