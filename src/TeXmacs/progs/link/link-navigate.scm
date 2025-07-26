@@ -499,8 +499,10 @@
            (list tmfs-root-handler (lambda (x) (noop))))
           ((== root "file") ;; TODO: to be refined
            (list http-root-handler http-post-handler))
-          ((or (== root "http") (== root "https"))
+          ((or (== root "http") (== root "https") (== root "doi"))
            (list http-root-handler http-post-handler))
+          ((== root "mailto")
+           (list default-root-handler (lambda (x) (noop))))
           (else (display* "Unhandled url root: " root "\n")
                 (list default-root-handler default-post-handler)))))
 
