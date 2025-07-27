@@ -91,6 +91,7 @@
 
 (tm-define (has-chatgpt?)
   (and (url-exists-in-path? "openai")
+       (getenv "OPENAI_API_KEY")
        (!= (getenv "OPENAI_API_KEY") "")))
 
 (plugin-configure chatgpt
@@ -109,7 +110,8 @@
   (:serializer ,ia-serialize))
 
 (tm-define (has-open-mistral-7b?)
-  (!= (getenv "MISTRAL_API_KEY") ""))
+  (and (getenv "MISTRAL_API_KEY")
+       (!= (getenv "MISTRAL_API_KEY") "")))
 
 (plugin-configure open-mistral-7b
   (:require (has-open-mistral-7b?))
