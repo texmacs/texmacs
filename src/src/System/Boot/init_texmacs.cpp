@@ -75,7 +75,8 @@ plugin_list () {
   int i, n= N(a);
   tree t (TUPLE);
   for (i=0; i<n; i++)
-    if ((a[i] != ".") && (a[i] != "..") && ((i==0) || (a[i] != a[i-1])))
+    if ((a[i] != ".") && (a[i] != "..") && ((i==0) || (a[i] != a[i-1])) &&
+        !ends (a[i], ".txt") && !ends (a[i], ".md"))
       t << a[i];
   return t;
 }
