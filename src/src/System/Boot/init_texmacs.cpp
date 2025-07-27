@@ -319,9 +319,9 @@ init_env_vars () {
   url bin_path= get_env_path ("PATH") | plugin_path ("bin");
 #if defined (OS_MINGW) || defined (OS_MACOS)
   bin_path= bin_path | url ("$TEXMACS_PATH/bin");
+#endif
   if (has_user_preference ("manual path"))
     bin_path= url_system (get_user_preference ("manual path")) | bin_path;
-#endif
 
   set_env_path ("PATH", bin_path);
   url lib_path= get_env_path ("LD_LIBRARY_PATH") | plugin_path ("lib");
