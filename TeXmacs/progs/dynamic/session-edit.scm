@@ -28,10 +28,19 @@
   (:proposals p (if (cpp-has-preference? "manual path")
                     (list (get-preference "manual path"))
                     (list)))
-  (if (== p "")
-      (reset-preference "manual path")
-      (set-preference "manual path" p))
-  (restart-message))
+  (with old (get-preference "manual path")
+    (if (== old "default") (set! old ""))
+    (when (!= p (or old ""))
+      (when (cpp-has-preference? "manual path")
+        (with cur (getenv "PATH")
+          (when (string-starts? cur (string-append old ":"))
+            (setenv "PATH" (string-drop cur (+ (string-length old) 1))))))
+      (if (== p "")
+          (reset-preference "manual path")
+          (begin
+            (set-preference "manual path" p)
+            (setenv "PATH" (string-append p ":" (getenv "PATH")))))
+      (reinit-plugin-cache))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Style package rules for sessions
