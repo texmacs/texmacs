@@ -34,6 +34,9 @@
     ((eval (upcase-first lan))
      (ai-translate lan (get-preference "ai")))))
 
+(tm-menu (tools-equation-editor-menu)
+  ("Enable" (toggle-preference "equation-editor")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Tools menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -72,23 +75,6 @@
       ("Count words" (show-word-count))
       ("Count lines" (show-line-count)))
   ---
-  ("Create web site" (open-website-builder))
-  ;;(-> "Web"
-  ;;    ("Create web site" (tmweb-interactive-build))
-  ;;    ("Update web site" (tmweb-interactive-update)))
-  (-> "Fonts"
-      ("Scan disk for fonts" (scan-disk-for-fonts))
-      ("Clear font cache" (clear-font-cache)))
-  (-> "Miscellaneous"
-      ("Clear undo history" (clear-undo-history))
-      ("Save auxiliary data" (toggle-save-aux))
-      ("Show key presses" (toggle-show-kbd))
-      ---
-      (-> "Import selections as"
-          (link clipboard-import-preference-menu))
-      (-> "Export selections as"
-          (link clipboard-export-preference-menu)))
-  ---
   (-> "AI engine"
       ("Off" (reset-preference "ai"))
       ---
@@ -109,9 +95,28 @@
         ("Cut" (ai-cut)))
       ("Paste" (ai-paste)))
   ---
+  ("Create web site" (open-website-builder))
+  ;;(-> "Web"
+  ;;    ("Create web site" (tmweb-interactive-build))
+  ;;    ("Update web site" (tmweb-interactive-update)))
+  (-> "Fonts"
+      ("Scan disk for fonts" (scan-disk-for-fonts))
+      ("Clear font cache" (clear-font-cache)))
+  (-> "Equation editor" (link tools-equation-editor-menu))
+  (-> "Miscellaneous"
+      ("Clear undo history" (clear-undo-history))
+      ("Save auxiliary data" (toggle-save-aux))
+      ("Show key presses" (toggle-show-kbd))
+      ---
+      (-> "Import selections as"
+          (link clipboard-import-preference-menu))
+      (-> "Export selections as"
+          (link clipboard-export-preference-menu)))
+  ---
   ("Database tool" (toggle-preference "database tool"))
   ("Debugging tool" (toggle-preference "debugging tool"))
   ("Developer tool" (toggle-preference "developer tool"))
+  ("Equation editor tool" (toggle-preference "equation editor tool"))
   ("Linking tool" (toggle-preference "linking tool"))
   ("Presentation tool" (toggle-preference "presentation tool"))
   ("Remote tool" (toggle-preference "remote tool"))
