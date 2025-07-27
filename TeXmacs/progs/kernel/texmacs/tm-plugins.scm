@@ -346,8 +346,6 @@
   (reinit-connection)
   (set! reconfigure-flag? #t)
   (with plugins (plugin-list)
-    (when (in? "jupyter" plugins)
-      (set! plugins (cons "jupyter" (list-remove plugins "jupyter"))))
     (for-each (cut ahash-set! plugin-initialize-todo <> #t) plugins)
     (for-each (cut plugin-initialize <>) plugins)))
 
