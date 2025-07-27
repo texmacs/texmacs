@@ -74,10 +74,14 @@ plugin_list () {
   merge_sort (a);
   int i, n= N(a);
   tree t (TUPLE);
+  bool jupyter= false;
   for (i=0; i<n; i++)
-    if ((a[i] != ".") && (a[i] != "..") && ((i==0) || (a[i] != a[i-1])) &&
-        !ends (a[i], ".txt") && !ends (a[i], ".md"))
+    if (a[i] == "jupyter") jupyter= true;
+    else if ((a[i] != ".") && (a[i] != "..") &&
+             ((i==0) || (a[i] != a[i-1])) &&
+             !ends (a[i], ".txt") && !ends (a[i], ".md"))
       t << a[i];
+  if (jupyter) t= tree (TUPLE, "jupyter") * t;
   return t;
 }
 
