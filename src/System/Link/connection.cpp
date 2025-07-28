@@ -35,6 +35,7 @@ RESOURCE(connection);
 struct connection_rep: rep<connection> {
   string  name;          // name of the pipe type
   string  session;       // name of the session
+  tree    info;          // startup information tree
   tm_link ln;            // the underlying link
   int     status;        // status of the connection
   int     prev_status;   // last notified status
@@ -245,10 +246,10 @@ connection_start (string name, string session, bool again) {
     return "Error: connection " * name * " has not been declared";
 
   connection con= connection (name * "-" * session);
-  if (is_nil (con)) {
+  tree t= connection_info (name, session);
+  if (is_nil (con) || con->info != t) {
     if (DEBUG_VERBOSE)
       debug_io << "Starting session '" << session << "'\n";
-    tree t= connection_info (name, session);
     if (is_tuple (t, "cmdline")) {
       tm_link ln= make_cmdline_link (name);
       con= tm_new<connection_rep> (name, session, ln);
@@ -269,6 +270,7 @@ connection_start (string name, string session, bool again) {
         make_dynamic_link (t[1]->label, t[2]->label, t[3]->label, session);
       con= tm_new<connection_rep> (name, session, ln);
     }
+    con->info= t;
   }
 
   return con->start (again);

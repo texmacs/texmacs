@@ -15,7 +15,7 @@
   (:use (kernel texmacs tm-define) (kernel texmacs tm-modes)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Lazy exports from other modules
+;; Lazy exports from other modules and other overridable routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (lazy-define (utils plugins plugin-convert) plugin-supports-math-input-ref)
@@ -26,6 +26,10 @@
 (lazy-define (utils plugins plugin-cmd) plugin-supports-completions-set!)
 (lazy-define (utils plugins plugin-cmd) plugin-supports-input-done?)
 (lazy-define (utils plugins plugin-cmd) plugin-supports-input-done-set!)
+
+(define-public (supports-jupyter?) #f)
+(define-public (run-via-jupyter? lan) #f)
+(define-public (run-via-jupyter? lan enable?) (noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Connection types for plugins
@@ -349,6 +353,22 @@
     (for-each (cut ahash-set! plugin-initialize-todo <> #t) plugins)
     (for-each (cut plugin-initialize <>) plugins)))
 
+(define (reinit-connection-single name)
+  (ahash-remove! connection-defined name)
+  (ahash-remove! connection-default name)
+  (ahash-remove! connection-variant name)
+  (ahash-remove! connection-varlist name)
+  (ahash-remove! connection-handler name)
+  (ahash-remove! connection-session name)
+  (ahash-remove! connection-scripts name))
+
+(define-public (reinit-plugin-single name)
+  (when (string? name) (set! name (string->symbol name)))
+  (reinit-connection-single name)
+  (set! reconfigure-flag? #t)
+  (ahash-set! plugin-initialize-todo name #t)
+  (plugin-initialize name))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Cache plugin settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -485,7 +505,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-public (alt-launcher name) #f)
-(define-public alt-launched (make-ahash-table))
 
 (define (plugin-configure-cmd name cmd)
   (cond ((func? cmd :require 1)
@@ -509,10 +528,10 @@
         ((func? cmd :cmdline 2)
          (connection-setup name `(tuple "cmdline" ,(second cmd) ,(third cmd))))
         ((and (func? cmd :launch) (alt-launcher name))
-         (when (not (ahash-ref alt-launched name))
-           (connection-setup name `(tuple "pipe" ,(alt-launcher name)))
-           (ahash-set! alt-launched name #t)))
+         ;;(display* "alt launcher " name " -> " (alt-launcher name) "\n")
+         (connection-setup name `(tuple "pipe" ,(alt-launcher name))))
         ((func? cmd :launch 1)
+         ;;(display* "normal launcher " name " -> " (second cmd) "\n")
          (connection-setup name `(tuple "pipe" ,(second cmd))))
         ((func? cmd :launch 2)
          (connection-setup name `(tuple "pipe" ,(third cmd)) (cadr cmd)))
