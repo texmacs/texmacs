@@ -25,7 +25,7 @@
 string
 ai_engine (string model) {
   if (starts (model, "chatgpt")) return "chatgpt";
-  if (starts (model, "llama3")) return "llama";
+  if (starts (model, "llama")) return "llama";
   if (starts (model, "open-mistral")) return "mistral";
   return "unknown";
 }
@@ -68,11 +68,44 @@ ai_unquote (string s) {
 }
 
 /******************************************************************************
+* History management
+******************************************************************************/
+
+hashmap<string,string> ia_last_id ("");
+
+void
+ai_get_continuation (string& s, string model, string chat) {
+  if (chat == "") return;
+  if (starts (model, "llama")) {
+    string key= model * "-" * chat;
+    if (ia_last_id->contains (key)) {
+      string id= ia_last_id[key];
+      s= "Please follow up on your last answer with ID " * id * ". " * s;
+    }
+  }
+}
+
+void
+ai_set_continuation (string s, string model, string chat) {
+  if (chat == "") return;
+  if (starts (model, "llama")) {
+    int pos= search_forwards ("\"id\":\"", s);
+    if (pos < 0) return;
+    pos += 6;
+    int end= search_forwards ("\"", pos, s);
+    if (end < 0) return;
+    string key= model * "-" * chat;
+    ia_last_id (key)= s (pos, end);
+  }
+}
+
+/******************************************************************************
 * Producing the query command for various engines
 ******************************************************************************/
 
 string
-chatgpt_command (string s, string model) {
+chatgpt_command (string s, string model, string chat) {
+  (void) chat;
   url u ("$TEXMACS_HOME_PATH/system/tmp/chatgpt.txt");
   if (save_string (u, s)) return "";
   string cmd= "openai -k 5000 complete " * as_string (u);
@@ -80,7 +113,8 @@ chatgpt_command (string s, string model) {
 }
 
 string
-llama_command (string s, string model) {
+llama_command (string s, string model, string chat) {
+  (void) chat;
   string cmd= "curl http://localhost:11434/api/generate -d '{\n";
   cmd << "\"model\": \"" << model << "\",\n"
       << "\"prompt\": \"" << ai_quote (s) << "\",\n"
@@ -90,7 +124,8 @@ llama_command (string s, string model) {
 }
 
 string
-mistral_command (string s, string model) {
+mistral_command (string s, string model, string chat) {
+  (void) chat;
   string key= get_env ("MISTRAL_API_KEY");
   string cmd= "curl -X POST \\\n";
   cmd << "  -H \"Authorization: Bearer " << key << "\" \\\n"
@@ -107,18 +142,19 @@ mistral_command (string s, string model) {
 }
 
 string
-ai_command (string s, string model) {
+ai_command (string s, string model, string chat) {
+  ai_get_continuation (s, model, chat);
   string engine= ai_engine (model);
-  if (engine == "chatgpt") return chatgpt_command (s, model);
-  if (engine == "llama") return llama_command (s, model);
-  if (engine == "mistral") return mistral_command (s, model);
+  if (engine == "chatgpt") return chatgpt_command (s, model, chat);
+  if (engine == "llama") return llama_command (s, model, chat);
+  if (engine == "mistral") return mistral_command (s, model, chat);
   return "";
 }
 
 string
-ai_latex_command (string s, string model) {
+ai_latex_command (string s, string model, string chat) {
   string pre= "Please provide your answer in the form of an untitled LaTeX document.";
-  return ai_command (pre * " " * s, model);
+  return ai_command (pre * " " * s, model, chat);
 }
 
 /******************************************************************************
@@ -126,13 +162,14 @@ ai_latex_command (string s, string model) {
 ******************************************************************************/
 
 string
-chatgpt_output (string val, string model) {
-  (void) model;
+chatgpt_output (string val, string model, string chat) {
+  (void) model; (void) chat;
   return val;
 }
 
 string
-llama_output (string val, string model) {
+llama_output (string val, string model, string chat) {
+  (void) chat;
   int pos= search_forwards ("\"response\":\"", val);
   if (pos < 0) return "";
   pos += 12;
@@ -148,7 +185,8 @@ llama_output (string val, string model) {
 }
 
 string
-mistral_output (string val, string model) {
+mistral_output (string val, string model, string chat) {
+  (void) chat;
   int pos= search_forwards ("\"content\":\"", val);
   if (pos < 0) return "";
   pos += 11;
@@ -159,11 +197,12 @@ mistral_output (string val, string model) {
 }
 
 string
-ai_output (string s, string model) {
+ai_output (string s, string model, string chat) {
+  ai_set_continuation (s, model, chat);
   string engine= ai_engine (model);
-  if (engine == "chatgpt") return chatgpt_output (s, model);
-  if (engine == "llama") return llama_output (s, model);
-  if (engine == "mistral") return mistral_output (s, model);
+  if (engine == "chatgpt") return chatgpt_output (s, model, chat);
+  if (engine == "llama") return llama_output (s, model, chat);
+  if (engine == "mistral") return mistral_output (s, model, chat);
   return "";
 }
 
@@ -180,8 +219,8 @@ un_escape_cr (string s) {
 }
 
 tree
-ai_latex_output (string s, string model) {
-  string r= ai_output (s, model);
+ai_latex_output (string s, string model, string chat) {
+  string r= ai_output (s, model, chat);
   if (DEBUG_IO) {
     cout << r << "\n";
     string x= un_escape_cr (r);
@@ -208,14 +247,14 @@ ai_latex_output (string s, string model) {
 ******************************************************************************/
 
 string
-ai_chat (string s, string model) {
-  string cmd= ai_command (s, model);
+ai_chat (string s, string model, string chat) {
+  string cmd= ai_command (s, model, chat);
   string val= eval_system (cmd);
   //if (DEBUG_IO) {
   //  debug_io << "input, " << cmd << LF;
   //  debug_io << "output, " << val << LF;
   //}
-  string r= ai_output (val, model);
+  string r= ai_output (val, model, chat);
   if (DEBUG_IO) {
     debug_io << "ai input, " << s << LF;
     debug_io << "ai output, " << r << LF;
@@ -224,8 +263,8 @@ ai_chat (string s, string model) {
 }
 
 string
-ai_chat (string s, string model, string& pre, string& post) {
-  string r= ai_chat (s, model);
+ai_chat (string s, string model, string chat, string& pre, string& post) {
+  string r= ai_chat (s, model, chat);
   int start= search_forwards ("<body>", r);
   if (start < 0) { pre= ""; post= ""; return r; }
   int end= search_forwards ("</body>", start, r);
@@ -240,10 +279,10 @@ ai_chat (string s, string model, string& pre, string& post) {
 ******************************************************************************/
 
 string
-ai_correct (string s, string lan, string model) {
+ai_correct (string s, string lan, string model, string chat) {
   string q= "If necessary, then please correct the spelling and grammar of the following " * lan * " text, and show me just the result, without further explanations or justifications: " * s;
   string pre, post;
-  return ai_chat (q, model, pre, post);
+  return ai_chat (q, model, chat, pre, post);
 }
 
 tree
@@ -255,10 +294,10 @@ ai_post (tree t, tree u) {
 }
 
 tree
-ai_correct (tree t, string lan, string model) {
+ai_correct (tree t, string lan, string model, string chat) {
   string s= compress_html (t);
   //cout << "s= " << s << "\n";
-  string r= ai_correct (s, lan, model);
+  string r= ai_correct (s, lan, model, chat);
   //cout << "r= " << r << "\n";
   tree u= decompress_html (r);
   //cout << "u = " << u << "\n";
@@ -270,18 +309,18 @@ ai_correct (tree t, string lan, string model) {
 ******************************************************************************/
 
 string
-ai_translate (string s, string from, string into, string model) {
+ai_translate (string s, string from, string into, string model, string chat) {
   string q= "Please translate the following HTML snippet from ";
   q << from << " into " << into << ", without explanations: " << s;
   string pre, post;
-  return ai_chat (q, model, pre, post);
+  return ai_chat (q, model, chat, pre, post);
 }
 
 tree
-ai_translate (tree t, string from, string into, string model) {
+ai_translate (tree t, string from, string into, string model, string chat) {
   string s= compress_html (t);
   //cout << "s= " << s << "\n";
-  string r= ai_translate (s, from, into, model);
+  string r= ai_translate (s, from, into, model, chat);
   //cout << "r= " << r << "\n";
   tree u= decompress_html (r);
   //cout << "u = " << u << "\n";

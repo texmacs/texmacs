@@ -28,11 +28,11 @@
         ;;(display* "s = " s "\n")
         s)))
 
-(tm-define (ai-cmdline name cmd)
-  (cpp-ai-latex-command cmd name))
+(tm-define (ai-cmdline name chat cmd)
+  (cpp-ai-latex-command cmd name chat))
 
-(tm-define (ai-result name res)
-  (cpp-ai-latex-output res name))
+(tm-define (ai-result name chat res)
+  (cpp-ai-latex-output res name chat))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Automatic correction
@@ -92,10 +92,11 @@
 (define-preferences
   ("chatgpt-text-input" "on" noop)
   ("llama3-text-input" "on" noop)
+  ("llama4-text-input" "on" noop)
   ("open-mistral-7b-text-input" "on" noop))
 
 (tm-widget (plugin-preferences-widget name)
-  (:require (in? name (list "chatgpt" "llama3" "open-mistral-7b")))
+  (:require (in? name (list "chatgpt" "llama3" "llama4" "open-mistral-7b")))
   (with textual-input (string-append name "-text-input")
     (aligned
       (meti (hlist // (text "Textual input"))
@@ -122,6 +123,16 @@
   (:cmdline ,ai-cmdline ,ai-result)
   (:preferences #t)
   (:session "Llama 3")
+  (:serializer ,ia-serialize))
+
+(tm-define (has-llama4?)
+  (url-exists-in-path? "ollama"))
+
+(plugin-configure llama4
+  (:require (has-llama4?))
+  (:cmdline ,ai-cmdline ,ai-result)
+  (:preferences #t)
+  (:session "Llama 4")
   (:serializer ,ia-serialize))
 
 (tm-define (has-open-mistral-7b?)

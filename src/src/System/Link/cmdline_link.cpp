@@ -175,7 +175,7 @@ cmdline_link_rep::write (string s, int channel) {
   //cout << "Write[" << name << "] " << s << "\n";
 #ifndef OS_MINGW
   if (alive || (channel != LINK_IN)) return;
-  string cmd= as_string (call ("connection-cmdline", name, s));
+  string cmd= as_string (call ("connection-cmdline", name, "default", s));
   cmd= cmd * " 2> /dev/null";
   //cout << "Command[" << name << "," << s << "] = " << cmd << "\n";
   if (cmd == "") return;

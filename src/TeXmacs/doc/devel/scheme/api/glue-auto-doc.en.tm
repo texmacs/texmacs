@@ -3875,7 +3875,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(cpp-ai-latex-command <scm-arg|string> <scm-arg|string>)>
+    <scm|(cpp-ai-latex-command <scm-arg|string> <scm-arg|string> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|ai_latex_command> which returns
@@ -3883,7 +3883,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(cpp-ai-latex-output <scm-arg|string> <scm-arg|string>)>
+    <scm|(cpp-ai-latex-output <scm-arg|string> <scm-arg|string> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|ai_latex_output> which returns
