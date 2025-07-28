@@ -1,6 +1,7 @@
 # Plugins Implemented in Python
 Here is a list of plugins implemented in Python:
 + Python
++ Jupyter
 + SageMath
 + SymPy
 + Graph
