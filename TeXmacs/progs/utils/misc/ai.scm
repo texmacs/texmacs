@@ -89,6 +89,19 @@
 ;; Currently supported models
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-preferences
+  ("chatgpt-text-input" "on" noop)
+  ("llama3-text-input" "on" noop)
+  ("open-mistral-7b-text-input" "on" noop))
+
+(tm-widget (plugin-preferences-widget name)
+  (:require (in? name (list "chatgpt" "llama3" "open-mistral-7b")))
+  (with textual-input (string-append name "-text-input")
+    (aligned
+      (meti (hlist // (text "Textual input"))
+        (toggle (set-boolean-preference textual-input answer)
+                (get-boolean-preference textual-input))))))
+
 (tm-define (has-chatgpt?)
   (and (url-exists-in-path? "openai")
        (getenv "OPENAI_API_KEY")
@@ -97,6 +110,7 @@
 (plugin-configure chatgpt
   (:require (has-chatgpt?))
   (:cmdline ,ai-cmdline ,ai-result)
+  (:preferences #t)
   (:session "ChatGPT")
   (:serializer ,ia-serialize))
 
@@ -106,6 +120,7 @@
 (plugin-configure llama3
   (:require (has-llama3?))
   (:cmdline ,ai-cmdline ,ai-result)
+  (:preferences #t)
   (:session "Llama 3")
   (:serializer ,ia-serialize))
 
@@ -116,5 +131,6 @@
 (plugin-configure open-mistral-7b
   (:require (has-open-mistral-7b?))
   (:cmdline ,ai-cmdline ,ai-result)
+  (:preferences #t)
   (:session "Mistral 7B")
   (:serializer ,ia-serialize))

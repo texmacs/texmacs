@@ -455,6 +455,32 @@
     ok?))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Plugin preferences and names
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public plugin-declared-table (make-ahash-table))
+(define-public plugin-prefs-table (make-ahash-table))
+
+(define-public (plugin-has-preferences? name)
+  (ahash-ref plugin-prefs-table name))
+
+(define-public (declared-plugins)
+  (sort (map car (ahash-table->list plugin-declared-table)) string<=?))
+
+(define-public (plugins-with-preferences)
+  (list-filter (declared-plugins) plugin-has-preferences?))
+
+(define-public (plugin->name name)
+  (if (symbol? name) (set! name (symbol->string name)))
+  (session-name name))
+
+(define-public (name->plugin name)
+  (with t (make-ahash-table)
+    (for (p (declared-plugins))
+      (ahash-set! t (plugin->name p) p))
+    (or (ahash-ref t name) (locase-first name))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Configuration of plugins
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -472,6 +498,8 @@
            (if (alt-launcher name)
                (ahash-set! plugin-data-table name #t)
                (ahash-set! plugin-data-table name ((second cmd))))))
+        ((func? cmd :preferences 1)
+         (ahash-set! plugin-prefs-table name ((second cmd))))
         ((func? cmd :setup 1)
          (if reconfigure-flag? ((second cmd))))
         ((func? cmd :prioritary 1)
@@ -522,9 +550,13 @@
         ((func? cmd :tab-completion 1)
          (if (second cmd) (plugin-supports-completions-set! name)))
         ((func? cmd :test-input-done 1)
-         (if (second cmd) (plugin-supports-input-done-set! name))))
+         (if (second cmd) (plugin-supports-input-done-set! name)))
+        (else
+          (display* "warning: unsupported tm-configure option, " cmd "\n"
+                    "for plugin '" name "'\n")))
 
-   (ahash-ref plugin-data-table name))
+  (ahash-set! plugin-declared-table name #t)
+  (ahash-ref plugin-data-table name))
 
 (define-public (plugin-configure-cmds name cmds)
   "Helper function for plugin-configure"
@@ -534,7 +566,8 @@
 (define-public (plugin-configure-sub cmd)
   "Helper function for plugin-configure"
   (if (and (list? cmd) (= (length cmd) 2)
-           (in? (car cmd) '(:require :versions :setup :initialize)))
+           (in? (car cmd) '(:require :versions :preferences
+                            :setup :initialize)))
       (list (car cmd) (list 'unquote `(lambda () ,(cadr cmd))))
       cmd))
 

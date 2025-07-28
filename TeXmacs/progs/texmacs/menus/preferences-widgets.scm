@@ -882,6 +882,79 @@
     (dynamic (experimental-preferences-widget))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Plugin preferences widget
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define prefs-plugin-table (make-ahash-table))
+
+(tm-define (prefs-plugin-get)
+  (or (ahash-ref prefs-plugin-table :current) "scheme"))
+
+(tm-define (prefs-plugin-set name)
+  (ahash-set! prefs-plugin-table :current name)
+  (refresh-now "plugin-prefs")
+  (update-menus))
+
+(tm-widget (plugin-preferences-list)
+  (resize "150px" "300px"
+    (scrollable
+      (choice (prefs-plugin-set (name->plugin answer))
+              (map plugin->name (plugins-with-preferences))
+              (plugin->name (prefs-plugin-get))))))
+
+(tm-widget (plugin-preferences-widget*)
+  (centered
+    (dynamic (plugin-preferences-widget (prefs-plugin-get)))))
+
+(tm-widget (plugins-preferences-widget)
+  (padded
+    (horizontal
+      (vertical
+        (dynamic (plugin-preferences-list))
+        (glue #f #t 0 0))
+      ///
+      (vertical
+        (refreshable "plugin-prefs"
+          (promise (menu-dynamic
+                     (dynamic (plugin-preferences-widget (prefs-plugin-get))))))
+        (glue #f #t 400 0)))))
+
+(tm-tool* (plugin-preferences-tool win)
+  (:name (string-append (plugin->name (prefs-plugin-get)) " preferences"))
+  (centered
+    (dynamic (plugin-preferences-widget (prefs-plugin-get)))))
+
+(tm-widget (plugin-titled-preferences-widget name)
+  (division "title"
+    (text (string-append (plugin->name name) " preferences")) >>)
+  (padded
+    (dynamic (plugin-preferences-widget name))))
+
+(tm-tool* (plugins-preferences-tool win)
+  (:name "Plugin preferences")
+  (centered
+    (dynamic (plugin-preferences-list)))
+  === ===
+  (refreshable "plugin-prefs"
+    (dynamic (plugin-titled-preferences-widget (prefs-plugin-get)))))
+
+(tm-define (open-plugin-preferences name)
+  (:interactive #t)
+  (prefs-plugin-set name)
+  (if (side-tools?)
+      (tool-select :right 'plugin-preferences-tool)
+      (top-window plugin-preferences-widget*
+                  (string-append (plugin->name name) " preferences"))))
+
+(tm-define (open-plugins-preferences)
+  (:interactive #t)
+  (and-with l (plugins-with-preferences)
+    (prefs-plugin-set (car l)))
+  (if (side-tools?)
+      (tool-select :right 'plugins-preferences-tool)
+      (top-window plugins-preferences-widget "Plugin preferences")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences widget
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

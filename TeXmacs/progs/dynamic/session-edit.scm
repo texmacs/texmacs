@@ -70,12 +70,16 @@
 (tm-define (session-text-input? . opts)
   (with key (if (< (length opts) 2) (session-key)
                 (cons (car opts) (cadr opts)))
-    (ahash-ref session-text-input key)))
+    (if (ahash-get-handle session-text-input key)
+        (ahash-ref session-text-input key)
+        (get-boolean-preference (string-append (car key) "-text-input")))))
 
 (tm-define (session-math-input? . opts)
   (with key (if (< (length opts) 2) (session-key)
                 (cons (car opts) (cadr opts)))
-    (ahash-ref session-math-input key)))
+    (if (ahash-get-handle session-math-input key)
+        (ahash-ref session-math-input key)
+        (get-boolean-preference (string-append (car key) "-math-input")))))
 
 (tm-define (toggle-session-text-input)
   (:synopsis "Toggle mathematical input in sessions")

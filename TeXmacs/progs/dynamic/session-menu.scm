@@ -116,7 +116,9 @@
                (lambda (x) (apply make-session x))))
     ("Other" (interactive make-session))
     (assuming (or (os-mingw?) (os-win32?) (os-macos?))
-      ("Manual path" (interactive set-manual-path)))))
+      ("Manual path" (interactive set-manual-path)))
+    (assuming (nnull? (plugins-with-preferences))
+      ("Preferences" (open-plugins-preferences)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Submenus of the Sessions menu
