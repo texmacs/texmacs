@@ -381,7 +381,7 @@
 (define check-dir-table (make-ahash-table))
 (define-public plugin-data-table (make-ahash-table))
 
-(define (plugin-load-setup)
+(define-public (plugin-load-setup)
   (when (not plugin-loaded-setup?)
     (set! plugin-loaded-setup? #t)
     (when (url-exists? plugin-cache)
@@ -509,6 +509,7 @@
 (define (plugin-configure-cmd name cmd)
   (cond ((func? cmd :require 1)
          (when reconfigure-flag?
+           (display* "detect " name "\n")
            (if (alt-launcher name)
                (ahash-set! plugin-data-table name #t)
                (ahash-set! plugin-data-table name ((second cmd))))))
@@ -526,6 +527,7 @@
         ((func? cmd :initialize 1)
          ((second cmd)))
         ((func? cmd :cmdline 2)
+         ;;(display* "cmdline " name "\n")
          (connection-setup name `(tuple "cmdline" ,(second cmd) ,(third cmd))))
         ((and (func? cmd :launch) (alt-launcher name))
          ;;(display* "alt launcher " name " -> " (alt-launcher name) "\n")
