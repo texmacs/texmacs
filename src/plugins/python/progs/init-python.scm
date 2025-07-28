@@ -42,12 +42,20 @@
                      (getenv "TEXMACS_PATH")
                      "/plugins/tmpy/session/tm_python.py\"")))
 
+(tm-widget (plugin-preferences-widget name)
+  (:require (== name "python"))
+  (aligned
+    (meti (hlist // (text "Run via Jupyter"))
+      (toggle (run-via-jupyter "python" answer)
+              (run-via-jupyter? "python")))))
+
 (plugin-configure python
   (:winpath "python*" ".")
   (:winpath "Python*" ".")
   (:winpath "Python/Python*" ".")
   (:require (python-command))
   (:launch ,(python-launcher))
+  (:preferences (supports-jupyter?))
   (:tab-completion #t)
   (:serializer ,python-serialize)
   (:session "Python")
