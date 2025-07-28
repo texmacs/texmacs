@@ -82,6 +82,8 @@
         ("Chat GPT" (set-preference "ai" "chatgpt")))
       (when (has-llama3?)
         ("Llama 3" (set-preference "ai" "llama3")))
+      (when (has-llama4?)
+        ("Llama 4" (set-preference "ai" "llama4")))
       (when (has-open-mistral-7b?)
         ("Mistral 7B" (set-preference "ai" "open-mistral-7b"))))
   (when (and (cpp-has-preference? "ai")

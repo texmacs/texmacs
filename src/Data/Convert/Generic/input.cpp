@@ -469,7 +469,7 @@ void
 texmacs_input_rep::cmdline_flush (bool force) {
   if (force) {
     string name= format (8, N(format));
-    tree r= as_tree (call ("connection-result", name, buf));
+    tree r= as_tree (call ("connection-result", name, "default", buf));
     write (r);
     buf= "";
   }
