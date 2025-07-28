@@ -76,7 +76,7 @@ hashmap<string,string> ia_last_id ("");
 void
 ai_get_continuation (string& s, string model, string chat) {
   if (chat == "") return;
-  if (starts (model, "llama")) {
+  if (starts (model, "none")) {
     string key= model * "-" * chat;
     if (ia_last_id->contains (key)) {
       string id= ia_last_id[key];
@@ -88,7 +88,7 @@ ai_get_continuation (string& s, string model, string chat) {
 void
 ai_set_continuation (string s, string model, string chat) {
   if (chat == "") return;
-  if (starts (model, "llama")) {
+  if (starts (model, "none")) {
     int pos= search_forwards ("\"id\":\"", s);
     if (pos < 0) return;
     pos += 6;
