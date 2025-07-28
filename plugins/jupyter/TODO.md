@@ -1,0 +1,2 @@
+- completion
+- highlighting
