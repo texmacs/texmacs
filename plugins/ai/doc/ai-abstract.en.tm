@@ -37,16 +37,16 @@
   use an unsupported service, then we provide one final possibility to
   interact with structured <TeXmacs> documents. Assume for instance that we
   wish to translate a piece of <TeXmacs> text from English into French using
-  <name|DeepL>:
+  <name|Google Translate>:
 
   <\enumerate>
     <item>irst copy this piece of text using <menu|Tools|External AI|Copy>.
-    Now paste the text into <name|DeepL>. (This results your text to be
-    pasted as an HTML document, while replacing all non-textual content by
-    unique codes for internal use by <TeXmacs>.)
+    Now paste the text into <name|Google Translate>. (This results your text
+    to be pasted as an HTML document, while replacing all non-textual content
+    by unique codes for internal use by <TeXmacs>.)
 
-    <item>Next use <name|DeepL> to translate the selected text into a
-    language of your choosing.
+    <item>Next use <name|Google Translate> to translate the selected text
+    into a language of your choosing.
 
     <item>Finally paste the translation back into <TeXmacs> using
     <menu|Tools|External AI|Paste>. The structure of the original selection
