@@ -18,12 +18,14 @@
 
 (define-preferences
   ("chatgpt-text-input" "on" noop)
+  ("gemini-text-input" "on" noop)
   ("llama3-text-input" "on" noop)
   ("llama4-text-input" "on" noop)
   ("open-mistral-7b-text-input" "on" noop))
 
 (tm-widget (plugin-preferences-widget name)
-  (:require (in? name (list "chatgpt" "llama3" "llama4" "open-mistral-7b")))
+  (:require (in? name (list "chatgpt" "gemini" "llama3" "llama4"
+                            "open-mistral-7b")))
   (with textual-input (string-append name "-text-input")
     (aligned
       (meti (hlist // (text "Textual input"))
@@ -44,6 +46,21 @@
   (:cmdline ,ai-cmdline ,ai-result)
   (:preferences #t)
   (:session "ChatGPT")
+  (:serializer ,ia-serialize))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Gemini
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (has-gemini?)
+  (and (getenv "GEMINI_API_KEY")
+       (!= (getenv "GEMINI_API_KEY") "")))
+
+(plugin-configure gemini
+  (:require (has-gemini?))
+  (:cmdline ,ai-cmdline ,ai-result)
+  (:preferences #t)
+  (:session "Gemini")
   (:serializer ,ia-serialize))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -25,6 +25,7 @@
 string
 ai_engine (string model) {
   if (starts (model, "chatgpt")) return "chatgpt";
+  if (starts (model, "gemini")) return "gemini";
   if (starts (model, "llama")) return "llama";
   if (starts (model, "open-mistral")) return "mistral";
   return "unknown";
@@ -113,6 +114,25 @@ chatgpt_command (string s, string model, string chat) {
 }
 
 string
+gemini_command (string s, string model, string chat) {
+  (void) chat;
+  string key= get_env ("GEMINI_API_KEY");
+  string gem= "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+  string cmd= "curl \"" * gem * "\" \\\n";
+  cmd << "  -H 'Content-Type: application/json' \\\n"
+      << "  -H 'X-goog-api-key: " << key << "' \\\n"
+      << "  -X POST \\"
+      << "  -d '{\n"
+      << "    \"contents\": [ {\n"
+      << "      \"parts\": [ {\n"
+      << "        \"text\": \"" << ai_quote (s) << "\"\n"
+      << "      } ]\n"
+      << "    } ]\n"
+      << "  }'";
+  return cmd;
+}
+
+string
 llama_command (string s, string model, string chat) {
   (void) chat;
   string cmd= "curl http://localhost:11434/api/generate -d '{\n";
@@ -146,6 +166,7 @@ ai_command (string s, string model, string chat) {
   ai_get_continuation (s, model, chat);
   string engine= ai_engine (model);
   if (engine == "chatgpt") return chatgpt_command (s, model, chat);
+  if (engine == "gemini") return gemini_command (s, model, chat);
   if (engine == "llama") return llama_command (s, model, chat);
   if (engine == "mistral") return mistral_command (s, model, chat);
   return "";
@@ -165,6 +186,31 @@ string
 chatgpt_output (string val, string model, string chat) {
   (void) model; (void) chat;
   return val;
+}
+
+string
+gemini_output (string val, string model, string chat) {
+  //string x= val;
+  //x= "> " * replace (x, "\n", "\n> ");
+  //cout << x << "\n";
+  (void) chat;
+  int pos= search_forwards ("\"text\": \"", val);
+  if (pos < 0) return "";
+  pos += 9;
+  int end= pos;
+  while (true) {
+    end= search_forwards ("\"\n", end, val);
+    if (end < 0) return "";
+    int next= end + 2;
+    while (next < N(val) && val[next] == ' ') next++;
+    if (val[next] == '}') break;
+    end= next;
+  }
+  string r= ai_unquote (val (pos, end));
+  r= replace (r, "\\u0026", "&");
+  r= replace (r, "\\u003c", "<");
+  r= replace (r, "\\u003e", ">");
+  return r;
 }
 
 string
@@ -201,6 +247,7 @@ ai_output (string s, string model, string chat) {
   ai_set_continuation (s, model, chat);
   string engine= ai_engine (model);
   if (engine == "chatgpt") return chatgpt_output (s, model, chat);
+  if (engine == "gemini") return gemini_output (s, model, chat);
   if (engine == "llama") return llama_output (s, model, chat);
   if (engine == "mistral") return mistral_output (s, model, chat);
   return "";

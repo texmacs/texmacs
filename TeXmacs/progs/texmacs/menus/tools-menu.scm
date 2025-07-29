@@ -80,6 +80,8 @@
       ---
       (when (has-chatgpt?)
         ("Chat GPT" (set-preference "ai" "chatgpt")))
+      (when (has-gemini?)
+        ("Gemini" (set-preference "ai" "gemini")))
       (when (has-llama3?)
         ("Llama 3" (set-preference "ai" "llama3")))
       (when (has-llama4?)
