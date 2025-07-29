@@ -306,6 +306,7 @@
 
   ;; miscellaneous routines
   (keyboard-focus-on keyboard_focus_on (void string))
+  (broadcast-message broadcast_message (void string))
   (view-set-property set_property (void scheme_tree scheme_tree))
   (view-get-property get_property (scheme_tree scheme_tree))
   (get-window-width get_window_width (int))

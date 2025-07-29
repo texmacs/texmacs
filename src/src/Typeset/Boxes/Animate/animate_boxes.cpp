@@ -92,6 +92,7 @@ public:
   box        subbox (int i) { (void) i; return bs[current]; }
   void       display (renderer ren) { (void) ren; }
   operator   tree () { return tree ("composed animation"); }
+  void       broadcast (tree t, rectangles& rs);
   tree       message (tree t, SI x, SI y, rectangles& rs);
   void       loci (SI x, SI y, SI delta, list<string>& ids, rectangles& rs);
   void       collect_page_numbers (hashmap<string,tree>& h, tree page);
@@ -149,6 +150,11 @@ anim_compose_box_rep::anim_compose_box_rep (path ip, array<box> b2, player pl):
 }
 
 anim_compose_box_rep::~anim_compose_box_rep () {}
+
+void
+anim_compose_box_rep::broadcast (tree t, rectangles& rs) {
+  return bs[current]->broadcast (t, rs);
+}
 
 tree
 anim_compose_box_rep::message (tree t, SI x, SI y, rectangles& rs) {

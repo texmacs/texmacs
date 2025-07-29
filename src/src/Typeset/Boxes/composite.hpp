@@ -49,6 +49,7 @@ struct composite_box_rep: public box_rep {
   virtual gr_selections   graphical_select (SI x, SI y, SI dist);
   virtual gr_selections   graphical_select (SI x1, SI y1, SI x2, SI y2);
 
+  virtual void broadcast (tree t, rectangles& rs);
   virtual tree message (tree t, SI x, SI y, rectangles& rs);
   virtual void loci (SI x, SI y, SI delta, list<string>& ids, rectangles& rs);
   virtual bool access_allowed ();

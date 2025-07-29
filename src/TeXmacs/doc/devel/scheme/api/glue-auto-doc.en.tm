@@ -8523,6 +8523,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(broadcast-message <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|broadcast_message> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(view-set-property <scm-arg|scheme_tree> <scm-arg|scheme_tree>)>
 <explain-synopsis|no synopsis>
   <|explain>

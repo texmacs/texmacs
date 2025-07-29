@@ -807,9 +807,15 @@ box_rep::anim_invalid () {
 * Miscellaneous routines
 ******************************************************************************/
 
+void
+box_rep::broadcast (tree t, rectangles& rs) {
+  (void) t; (void) rs;
+  return "";
+}
+
 tree
 box_rep::message (tree t, SI x, SI y, rectangles& rs) {
-  (void) x; (void) y; (void) delta; (void) t; (void) rs;
+  (void) x; (void) y; (void) t; (void) rs;
   return "";
 }
 

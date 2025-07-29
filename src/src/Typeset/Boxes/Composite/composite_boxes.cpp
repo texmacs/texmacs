@@ -112,6 +112,16 @@ composite_box_rep::subbox (int i) {
   return bs[i];
 }
 
+void
+composite_box_rep::broadcast (tree t, rectangles& rs) {
+  int m, n= N(bs);
+  for (m=0; m<n; m++) {
+    rectangles xtra;
+    bs[m]->broadcast (t, xtra);
+    rs << translate (xtra, sx(m), sy(m));
+  }
+}
+
 tree
 composite_box_rep::message (tree t, SI x, SI y, rectangles& rs) {
   int m= find_child (x, y, 0, true);
