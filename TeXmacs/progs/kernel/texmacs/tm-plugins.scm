@@ -509,7 +509,7 @@
 (define (plugin-configure-cmd name cmd)
   (cond ((func? cmd :require 1)
          (when reconfigure-flag?
-           (display* "detect " name "\n")
+           ;;(display* "try to detect " name "\n")
            (if (alt-launcher name)
                (ahash-set! plugin-data-table name #t)
                (ahash-set! plugin-data-table name ((second cmd))))))
