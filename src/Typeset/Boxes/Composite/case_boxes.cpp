@@ -34,6 +34,7 @@ public:
   
   bool satisfies (tree t, tree cond);
   void switch_to (int i, rectangles& rs);
+  void broadcast (tree t, rectangles& rs);
   tree message (tree t, SI x, SI y, rectangles& rs);
   void loci (SI x, SI y, SI delta, list<string>& ids, rectangles& rs);
   void collect_page_numbers (hashmap<string,tree>& h, tree page);
@@ -107,6 +108,18 @@ case_box_rep::satisfies (tree t, tree cond) {
   if (t == cond) return true;
   if (cond == "mouse-over") return entered;
   return false;
+}
+
+void
+case_box_rep::broadcast (tree t, rectangles& rs) {
+  for (int i=0; i < min (N(conds), N(bs)); i++)
+    if (satisfies (t, conds[i])) {
+      switch_to (i, rs);
+      return bs[current]->broadcast (t, rs);
+    }
+  if (t == "reset")
+    switch_to (N(bs) - 1, rs);
+  return bs[current]->broadcast (t, rs);
 }
 
 tree

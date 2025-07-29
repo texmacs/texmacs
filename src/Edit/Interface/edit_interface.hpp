@@ -89,6 +89,7 @@ public:
   void suspend ();
   void resume ();
   void keyboard_focus_on (string field);
+  void broadcast_message (string message);
   void get_size (SI& wx, SI& wy);
 
   /* routines for dealing with shrinked coordinates */

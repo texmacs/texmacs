@@ -143,6 +143,7 @@ public:
 				      int i, int i1, int i2);
   virtual int  subnr ();
   virtual box  subbox (int i);
+  virtual void broadcast (tree t, rectangles& rs);
   virtual tree message (tree t, SI x, SI y, rectangles& rs);
   virtual void loci (SI x, SI y, SI d, list<string>& ids, rectangles& rs);
   virtual void display_links (renderer ren);

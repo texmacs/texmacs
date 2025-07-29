@@ -44,6 +44,11 @@ modifier_box_rep::display (renderer ren) {
   (void) ren;
 }
 
+void
+modifier_box_rep::broadcast (tree t, rectangles& rs) {
+  return b->broadcast (t, rs);
+}
+
 tree
 modifier_box_rep::message (tree t, SI x, SI y, rectangles& rs) {
   return b->message (t, x, y, rs);

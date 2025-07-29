@@ -1090,6 +1090,7 @@
 "session-complete-command"
 "custom-complete"
 "keyboard-focus-on"
+"broadcast-message"
 "view-set-property"
 "view-get-property"
 "get-window-width"

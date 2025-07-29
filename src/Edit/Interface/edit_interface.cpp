@@ -151,6 +151,13 @@ edit_interface_rep::keyboard_focus_on (string field) {
   }
 }
 
+void
+edit_interface_rep::broadcast_message (string message) {
+  rectangles rs;
+  eb->broadcast (message, rs);
+  if (N(rs) != 0) invalidate (rs);
+}
+
 /******************************************************************************
 * Routines for dealing with shrinked coordinates
 ******************************************************************************/
