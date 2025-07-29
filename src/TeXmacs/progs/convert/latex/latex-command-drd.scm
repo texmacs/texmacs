@@ -187,7 +187,7 @@
   begin-tabbing begin-thebibliography begin-multicols)
 
 (logic-group latex-environment-1*%
-  begin-array begin-tabular begin-minipage)
+  begin-array begin-tabular begin-longtable begin-minipage)
 
 (logic-group latex-environment-2*%
   begin-tabular* begin-tabularx)

@@ -57,6 +57,7 @@
   (begin-alltt "alltt")
 
   (begin-tabularx "tabularx")
+  (begin-longtable "longtable")
 
   (geometry "geometry")
   (epsfig "epsfig")
