@@ -23,12 +23,20 @@
               "source(paste(Sys.getenv(\"TEXMACS_HOME_PATH\"),\"/plugins/r/texmacs.r\",sep=\"\"))\n"))
   "tm_r")
 
+(tm-widget (plugin-preferences-widget name)
+  (:require (== name "r"))
+  (aligned
+    (meti (hlist // (text "Run via Jupyter"))
+      (toggle (run-via-jupyter "r" answer)
+              (run-via-jupyter? "r")))))
+
 (plugin-configure r
   (:winpath "R-*" "bin")
   (:winpath "R/R*" "bin")
   (:require (url-exists-in-path? "R"))
   (:serializer ,r-serialize)
   (:launch ,(r-launcher))
+  (:preferences (supports-jupyter?))
   (:tab-completion #t)
   (:session "R")
   (:scripts "R"))
