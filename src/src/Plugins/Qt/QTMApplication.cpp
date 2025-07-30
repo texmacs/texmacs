@@ -67,6 +67,7 @@ bool QTMApplication::notify (QObject* receiver, QEvent* event)
 
 void
 texmacs_qt_wait_handler (string message, string arg, int level) {
+  (void) level;
   tmapp()->waitDialog().setActive(true);
   if (N(message)) {
     if (arg != "") message = message * " " * arg * "...";

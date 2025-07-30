@@ -93,6 +93,7 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
 
   return QTabWidget::eventFilter(obj, event);
 #else
+  (void) obj; (void) event;
   return false;
 #endif
 }
@@ -230,6 +231,7 @@ bool QTMMainTabWindow::eventFilterTabBar(QObject *obj, QEvent *event) {
   }
   return QTabWidget::eventFilter(obj, event);
 #else
+  (void) obj; (void) event;
   return false;
 #endif
 }

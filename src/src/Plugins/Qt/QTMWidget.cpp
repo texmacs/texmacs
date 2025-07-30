@@ -180,6 +180,7 @@ QTMWidget::surfaceDprChanged () {
 #else
 void
 QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
+  (void) surfaceWidget;
   QPainter p (surface());
   QVector<QRect> rects = event->region().rects();
   for (int i = 0; i < rects.count(); ++i) {
