@@ -336,7 +336,7 @@
   (print-pages-to-file print_to_file (void url string string))
   (print print_buffer (void))
   (print-pages print_buffer (void string string))
-  (print-snippet print_snippet (array_int url content bool))
+  (print-snippet print_snippet (array_SI url content bool))
   (graphics-file-to-clipboard graphics_file_to_clipboard (bool url))
   (export-postscript export_ps (void url))
   (export-pages-postscript export_ps (void url string string))

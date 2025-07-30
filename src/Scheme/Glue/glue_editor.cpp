@@ -3337,10 +3337,10 @@ tmg_print_snippet (tmscm arg1, tmscm arg2, tmscm arg3) {
   bool in3= tmscm_to_bool (arg3);
 
   // TMSCM_DEFER_INTS;
-  array_int out= get_current_editor()->print_snippet (in1, in2, in3);
+  array_SI out= get_current_editor()->print_snippet (in1, in2, in3);
   // TMSCM_ALLOW_INTS;
 
-  return array_int_to_tmscm (out);
+  return array_SI_to_tmscm (out);
 }
 
 tmscm
