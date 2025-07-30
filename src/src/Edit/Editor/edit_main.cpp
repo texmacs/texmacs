@@ -376,7 +376,7 @@ edit_main_rep::export_ps (url name, string first, string last) {
   print_doc (name, true, as_int (first), as_int (last));
 }
 
-array<int>
+array<SI>
 edit_main_rep::print_snippet (url name, tree t, bool conserve_preamble) {
   tree buft= subtree (et, rp);
   if (conserve_preamble)
@@ -423,7 +423,7 @@ edit_main_rep::print_snippet (url name, tree t, bool conserve_preamble) {
       ::remove (temp);
     }
   }
-  array<int> a;
+  array<SI> a;
   a << b->x3 << b->y3 << b->x4 << b->y4 << b->x1 << b->y1 << b->x2 << b->y2;
   a << env->get_int (FONT_BASE_SIZE) << dpi;
   return a;
