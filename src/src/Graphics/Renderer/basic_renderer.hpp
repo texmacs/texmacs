@@ -61,7 +61,7 @@ public:
     pen (black), fg_brush (black), bg_brush (white) {}
   virtual ~basic_renderer_rep () {}
   
-  virtual void get_extents (int& w, int& h);
+  virtual void get_extents (SI& w, SI& h);
   
   /***** routines from renderer.hpp ******************************************/
 

@@ -159,7 +159,7 @@ qt_renderer_rep::begin () {
 void qt_renderer_rep::end () { painter->end (); }
 
 void 
-qt_renderer_rep::get_extents (int& w2, int& h2) {
+qt_renderer_rep::get_extents (SI& w2, SI& h2) {
   if (painter->device()) {
     w2 = painter->device()->width(); h2 = painter->device()->height();
   } else {
@@ -501,7 +501,7 @@ qt_renderer_rep::draw_triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3) {
 void
 qt_renderer_rep::draw_clipped (QImage *im, int w, int h, SI x, SI y) {
   (void) w; (void) h;
-  int x1=cx1-ox, y1=cy2-oy, x2= cx2-ox, y2= cy1-oy;
+  SI x1=cx1-ox, y1=cy2-oy, x2= cx2-ox, y2= cy1-oy;
   decode (x , y );
   decode (x1, y1);
   decode (x2, y2);
@@ -690,6 +690,7 @@ the_qt_renderer (double dpr) {
 #if QT_VERSION >= 0x060000
     the_renderer= tm_new<qt_renderer_rep> (the_painter, dpr, 0, 0);
 #else
+    (void) dpr;
     the_renderer= tm_new<qt_renderer_rep> (the_painter);
 #endif
   }

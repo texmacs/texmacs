@@ -77,7 +77,7 @@ public:
 
   /* reencoding and rounding */
   virtual void decode (SI& x, SI& y);
-  virtual void encode (int& x, int& y);
+  virtual void encode (SI& x, SI& y);
   virtual void decode (SI x, SI y, double& rx, double& ry);
   virtual void encode (double x, double y, SI& rx, SI& ry);
   void round (SI& x, SI& y);
@@ -130,7 +130,7 @@ public:
 
   /* special routines for printers */
   virtual bool is_printer ();
-  virtual void get_extents (int& w, int& h);
+  virtual void get_extents (SI& w, SI& h);
   virtual void set_page_nr (int nr);
   virtual void next_page ();
   virtual void anchor (string label, SI x1, SI y1, SI x2, SI y2);

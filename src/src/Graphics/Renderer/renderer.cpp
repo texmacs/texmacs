@@ -82,8 +82,8 @@ renderer_rep::is_printer () {
 }
 
 void
-renderer_rep::get_extents (int& w, int& h) {
-  w= h= 0;
+renderer_rep::get_extents (SI& w, SI& h) {
+  w= h= (SI) 0;
 }
 
 void

@@ -48,8 +48,8 @@ public:
 #endif
   void end ();
 
-  //void set_extent (int _w, int _h) { w = _w; h = _h; }
-  void get_extents (int& w, int& h);
+  //void set_extent (SI _w, SI _h) { w = _w; h = _h; }
+  void get_extents (SI& w, SI& h);
 
   void set_transformation (frame fr);
   void reset_transformation ();
