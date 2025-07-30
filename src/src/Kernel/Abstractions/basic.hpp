@@ -38,6 +38,8 @@ typedef long long int DI;
 typedef unsigned long long int DN;
 typedef void* pointer;
 typedef unsigned int color;
+#define MAX_INT 0x7fffffff
+#define MIN_INT 0x80000000
 #define MAX_SI 0x7fffffff
 #define MIN_SI 0x80000000
 
