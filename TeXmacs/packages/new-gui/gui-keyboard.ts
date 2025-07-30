@@ -1,4 +1,4 @@
-<TeXmacs|2.1.2>
+<TeXmacs|2.1.4>
 
 <style|<tuple|source|english>>
 
@@ -80,7 +80,7 @@
 
   <assign|key-button-pressed|<macro|x|<with-key|<with|ornament-shadow-color|<value|key-pressed-sunny-color>|ornament-sunny-color|<value|key-pressed-shadow-color>|ornament-color|<value|key-pressed-color>|<render-key-button|<arg|x>>>>>>
 
-  <assign|std-key|<macro|x|cmd|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<key-button-pressed|<arg|x>>|gui-on-select|<arg|cmd>>|mouse-over|<relay|<key-button-hover|<arg|x>>|gui-on-select|<arg|cmd>>|<relay|<key-button-normal|<arg|x>>|gui-on-select|<arg|cmd>>>>>>
+  <assign|std-key|<macro|x|cmd|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<key-button-pressed|<arg|x>>|gui-on-select|<arg|cmd>>|mouse-over|<relay|<key-button-hover|<arg|x>>|gui-on-select|<arg|cmd>>|any|<relay|<key-button-normal|<arg|x>>|gui-on-select|<arg|cmd>>>>>>
 
   <drd-props|std-key|arity|2|accessible|0>
 
@@ -91,7 +91,9 @@
 
   <assign|pressed-key|<macro|x|pressed|<if|<arg|pressed>|<with|save-color|<value|key-pressed-color>|save-shadow-color|<value|key-pressed-shadow-color>|save-sunny-color|<value|key-pressed-sunny-color>|<with|key-pressed-color|<value|key-color>|key-pressed-shadow-color|<value|key-sunny-color>|key-pressed-sunny-color|<value|key-shadow-color>|key-color|<value|save-color>|key-shadow-color|<value|save-sunny-color>|key-sunny-color|<value|save-shadow-color>|<arg|x>>>|<arg|x>>>>
 
-  <assign|modifier-key|<macro|x|cmd|width|pressed|<with|key-halign|l|<pressed-key|<extended-key|<very-small|<arg|x>>|<arg|cmd>|<arg|width>>|<arg|pressed>>>>>
+  <assign|mod-key|<macro|x|width|<with|key-halign|l|key-width|<times|<arg|width>|<value|key-width>>|<style-with|src-compact|none|<dynamic-case|<arg|x>|<pressed-key|<std-key|<very-small|<arg|x>>|<merge|(emu-toggle-modifier
+  "|<arg|x>|")>>|true>|<merge|no-|<arg|x>>|<std-key|<very-small|<arg|x>>|<merge|(emu-toggle-modifier
+  "|<arg|x>|")>>>>>>>
 
   \;
 </body>

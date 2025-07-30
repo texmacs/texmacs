@@ -151,11 +151,14 @@ edit_interface_rep::keyboard_focus_on (string field) {
   }
 }
 
+void box_broadcast (string msg);
+
 void
 edit_interface_rep::broadcast_message (string message) {
   rectangles rs;
   eb->broadcast (message, rs);
   if (N(rs) != 0) invalidate (rs);
+  box_broadcast (message);
 }
 
 /******************************************************************************
