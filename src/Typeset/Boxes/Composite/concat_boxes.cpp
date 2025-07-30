@@ -438,14 +438,14 @@ concat_box_rep::find_accessible_child (SI x, SI y, SI delta, SI& delta_out) {
 
 int
 concat_box_rep::find_child (SI x, SI y, SI delta, bool force) {
-  int delta_out;
+  SI delta_out;
   if (force) return find_any_child (x, y, delta, delta_out);
   else return find_accessible_child (x, y, delta, delta_out);
 }
 
 path
 concat_box_rep::find_box_path (SI x, SI y, SI delta, bool force, bool& found) {
-  int delta_out, m;
+  SI delta_out; int m;
   if (force) m= find_any_child (x, y, delta, delta_out);
   else m= find_accessible_child (x, y, delta, delta_out);
   int i, n= subnr();
@@ -562,7 +562,8 @@ concat_box_rep::find_selection (path lbp, path rbp) {
 
 tree
 concat_box_rep::message (tree t, SI x, SI y, rectangles& rs) {
-  int delta_out, m= find_any_child (x, y, 0, delta_out);
+  SI delta_out;
+  int m= find_any_child (x, y, 0, delta_out);
   if (m == -1) return "";
   SI xx= x- sx(m), yy= y- sy(m);
   rectangles xtra;
@@ -575,7 +576,8 @@ void
 concat_box_rep::loci (SI x, SI y, SI delta,
 		      list<string>& ids, rectangles& rs)
 {
-  int delta_out, m= find_any_child (x, y, delta, delta_out);
+  SI delta_out;
+  int m= find_any_child (x, y, delta, delta_out);
   if (m == -1) box_rep::loci (x, y, delta, ids, rs);
   else {
     SI xx= x- sx(m), yy= y- sy(m);
@@ -662,7 +664,7 @@ phrase_box_rep::display (renderer ren) {
 box
 concat_box (path ip, array<box> bs) {
   array<SI> spc;
-  for (int i=0; i<N(bs); i++) spc << 0;
+  for (int i=0; i<N(bs); i++) spc << ((SI) 0);
   return tm_new<concat_box_rep> (ip, bs, spc, false);
 }
 

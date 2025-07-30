@@ -157,7 +157,7 @@ pager_rep::pages_format (pagelet pg) {
     if (fnote_y != MAX_SI) {
       pencil pen= env->pen->set_width (env->fn->wline);
       bs << line_box (decorate(), 0, 0, fnote_bl, 0, pen);
-      bx << 0;
+      bx << ((SI) 0);
       by << (fnote_y + env->fn->sep);
     }
     // cout << UNINDENT << "Formatted pagelet " << (N(pages)+1) << LF << LF;
