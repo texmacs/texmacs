@@ -215,7 +215,8 @@ composite_box_rep::finalize () {
 int
 composite_box_rep::find_child (SI x, SI y, SI delta, bool force) {
   if (outside (x, delta, x1, x2) && (is_accessible (ip) || force)) return -1;
-  int i, n= subnr(), d= MAX_SI, m= -1;
+  int i, n= subnr(), m= -1;
+  SI d= MAX_SI;
   for (i=0; i<n; i++)
     if (distance (i, x, y, delta)< d)
       if (bs[i]->accessible () || force) {
@@ -390,7 +391,8 @@ concrete_composite_box_rep::find_child (SI x, SI y, SI delta, bool force) {
   if (border_flag &&
       outside (x, delta, x1, x2) &&
       (is_accessible (ip) || force)) return -1;
-  int i, n= subnr(), d= MAX_SI, m= -1;
+  int i, n= subnr(), m= -1;
+  SI d= MAX_SI;
   for (i=0; i<n; i++)
     if (distance (i, x, y, delta)< d)
       if (bs[i]->accessible () || force) {

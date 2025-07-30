@@ -443,8 +443,8 @@ title_box (path ip, box b, box xb, ornament_parameters ps) {
   array<box> bs;
   array<SI>  x, y;
   bs << bb << tit;
-  x << 0 << tx;
-  y << 0 << ty;
+  x << ((SI) 0) << tx;
+  y << ((SI) 0) << ty;
   return composite_box (ip, bs, x, y, false);
   // FIXME: we should force redrawing the title box,
   // whenever redrawing the body box.

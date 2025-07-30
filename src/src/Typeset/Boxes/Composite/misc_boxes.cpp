@@ -56,7 +56,8 @@ scatter_box_rep::operator tree () {
 
 int
 scatter_box_rep::find_child (SI x, SI y, SI delta, bool force) {
-  int i, n= subnr(), d= MAX_SI, m= -1;
+  int i, n= subnr(), m= -1;
+  SI d= MAX_SI;
   for (i=0; i<n; i++)
     if (distance (i, x, y, delta)< d)
       if (bs[i]->accessible () || force) {
@@ -175,7 +176,8 @@ page_box_rep::operator tree () {
 
 int
 page_box_rep::find_child (SI x, SI y, SI delta, bool force) {
-  int i, n= subnr(), d= MAX_SI, m= -1;
+  int i, n= subnr(), m= -1;
+  SI d= MAX_SI;
   for (i=0; i<n; i++)
     if (distance (i, x, y, delta)< d)
       if (bs[i]->accessible () || force) {

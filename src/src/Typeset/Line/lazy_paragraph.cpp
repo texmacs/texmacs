@@ -663,7 +663,7 @@ lazy_paragraph_rep::line_end (space spc, int penalty) {
       box sb  = move_box (note->ip, note, x, y);
       box nb  = resize_box (note->ip, sb, 0, 0, 0, 0);
       items= ::append (nb, items);
-      items_sp= ::append (0, items_sp);
+      items_sp= ::append ((SI) 0, items_sp);
     }
   }
   box b= phrase_box (sss->ip, items, items_sp);

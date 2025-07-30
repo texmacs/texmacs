@@ -288,7 +288,8 @@ tree_box_rep::tree_box_rep (path ip, array<box> bs, font fn2, pencil pen2):
   SI vsep  = 4*fn->spc->def;
   SI line_w= fn->wline;
 
-  int i, n= N(bs), cw, w= 0, h= MIN_SI, x, x_0, up;
+  int i, n= N(bs);
+  SI w= 0, h= MIN_SI, cw, x, x_0, up;
   for (i=1; i<n; i++) w += bs[i]->w();
   for (i=1; i<n; i++) h  = max (h, max (bs[i]->y2, fn->y2) + sep);
   w += (n-2)*hsep;
@@ -346,7 +347,8 @@ tree_box_rep::find_child (SI x, SI y, SI delta, bool force) {
   if (outside (x, delta, x1, x2) && (is_accessible (ip) || force)) return -1;
   int i=0;
   if (y < border) {
-    int j, d=MAX_SI;
+    int j;
+    SI d= MAX_SI;
     for (j=1; j<((N(bs)+1)>>1); j++)
       if (distance (j, x, y, delta)< d)
 	if (bs[j]->accessible () || force) {
