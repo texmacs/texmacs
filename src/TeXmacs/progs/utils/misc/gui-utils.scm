@@ -42,7 +42,8 @@
   (set! cmd (tm->stree cmd))
   (or (and (in? type (list "click" "drag")) "done")
       (and (== type "select") (string? cmd)
-           (string-starts? cmd "(emu-toggle-modifier ")
+           (or (string-starts? cmd "(emu-toggle-modifier ")
+               (string-starts? cmd "(emu-key "))
            (secure-eval (string->object cmd)))
       (and (== type "select")
            (begin
