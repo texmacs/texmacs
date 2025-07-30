@@ -66,32 +66,32 @@ tex_font_metric_rep::~tex_font_metric_rep () {
 #define byte2x(i) (((i)>>10)&63)
 #define word1x(i) ((i)&32767)
 
-int tex_font_metric_rep::w (QN c) {
+SI tex_font_metric_rep::w (QN c) {
   if ((c<bc) || (c>ec)) return 0;
   return width [byte0 (char_info[c-bc])]; }
-int tex_font_metric_rep::h (QN c) {
+SI tex_font_metric_rep::h (QN c) {
   if ((c<bc) || (c>ec)) return 0;
   return height [byte1a (char_info[c-bc])]; }
-int tex_font_metric_rep::d (QN c) {
+SI tex_font_metric_rep::d (QN c) {
   if ((c<bc) || (c>ec)) return 0;
   return depth [byte1b (char_info[c-bc])]; }
-int tex_font_metric_rep::i (QN c) {
+SI tex_font_metric_rep::i (QN c) {
   if ((c<bc) || (c>ec)) return 0;
   return italic [byte2x (char_info[c-bc])]; }
-int tex_font_metric_rep::tag (QN c) { return (char_info [c-bc]>>8)&3; }
-int tex_font_metric_rep::rem (QN c) { return char_info  [c-bc] & 255; }
-QN  tex_font_metric_rep::top (QN c) { return (QN) byte0 (exten [rem (c)]); }
-QN  tex_font_metric_rep::mid (QN c) { return (QN) byte1 (exten [rem (c)]); }
-QN  tex_font_metric_rep::bot (QN c) { return (QN) byte2 (exten [rem (c)]); }
-QN  tex_font_metric_rep::rep (QN c) { return (QN) byte3 (exten [rem (c)]); }
-int tex_font_metric_rep::design_size () { return header[1]; }
-int tex_font_metric_rep::parameter (int i) { return (i<np)? param [i]: 0; }
-int tex_font_metric_rep::spc () { return parameter (1); }
-int tex_font_metric_rep::spc_stretch () { return parameter (2); }
-int tex_font_metric_rep::spc_shrink () { return parameter (3); }
-int tex_font_metric_rep::x_height () { return parameter (4); }
-int tex_font_metric_rep::spc_quad () { return parameter (5); }
-int tex_font_metric_rep::spc_extra () { return parameter (6); }
+SI tex_font_metric_rep::tag (QN c) { return (char_info [c-bc]>>8)&3; }
+SI tex_font_metric_rep::rem (QN c) { return char_info  [c-bc] & 255; }
+QN tex_font_metric_rep::top (QN c) { return (QN) byte0 (exten [rem (c)]); }
+QN tex_font_metric_rep::mid (QN c) { return (QN) byte1 (exten [rem (c)]); }
+QN tex_font_metric_rep::bot (QN c) { return (QN) byte2 (exten [rem (c)]); }
+QN tex_font_metric_rep::rep (QN c) { return (QN) byte3 (exten [rem (c)]); }
+SI tex_font_metric_rep::design_size () { return header[1]; }
+SI tex_font_metric_rep::parameter (int i) { return i<((int)np)? param[i]: 0; }
+SI tex_font_metric_rep::spc () { return parameter (1); }
+SI tex_font_metric_rep::spc_stretch () { return parameter (2); }
+SI tex_font_metric_rep::spc_shrink () { return parameter (3); }
+SI tex_font_metric_rep::x_height () { return parameter (4); }
+SI tex_font_metric_rep::spc_quad () { return parameter (5); }
+SI tex_font_metric_rep::spc_extra () { return parameter (6); }
 
 int
 tex_font_metric_rep::list_len (QN c) {
@@ -124,7 +124,7 @@ tex_font_metric_rep::slope () {
 ******************************************************************************/
 
 void
-tex_font_metric_rep::execute (int* s, int n, int* buf, int* ker, int& m) {
+tex_font_metric_rep::execute (SI* s, int n, SI* buf, SI* ker, int& m) {
   STACK_NEW_ARRAY (stack, int, m);
   int bp, sp=0, i;
 
@@ -136,7 +136,7 @@ tex_font_metric_rep::execute (int* s, int n, int* buf, int* ker, int& m) {
     // cout << "Processing " << (char) cur_char << "\n";
 
     /***************** the ligature-kerning program ******************/
-    if ((cur_char<bc) || (cur_char>ec)) sp--;
+    if ((cur_char<((int) bc)) || (cur_char>((int) ec))) sp--;
     else if ((tag (cur_char)==1) && (sp>0)) {
       int next_char= stack [sp-1]& 255;
       int pc= rem (cur_char);
@@ -253,7 +253,7 @@ tex_font_metric_rep::get_xpositions (int* s, int n, double unit,
     int cur_char= stack [sp]& 255;
 
     /***************** the ligature-kerning program ******************/
-    if ((cur_char<bc) || (cur_char>ec)) { SKIP; }
+    if ((cur_char<((int) bc)) || (cur_char>((int) ec))) { SKIP; }
     else if ((tag (cur_char)==1) && (sp>0)) {
       int next_char= stack [sp-1]& 255;
       int pc= rem (cur_char);
@@ -319,7 +319,7 @@ print (tex_font_metric tfm) {
   cout << "design size: " << fixed (tfm->header[1]) << "\n";
 
   cout << HOR_RULE;
-  for (i=tfm->bc; i<=tfm->ec; i++) {
+  for (i=tfm->bc; i<=((int) tfm->ec); i++) {
     cout << "character ";
     if ((i&127)<32) cout << i << ":\t";
     else cout << ((char) i) << ":\t";
@@ -362,7 +362,7 @@ print (tex_font_metric tfm) {
   cout << "Extra space:   " << fixed (tfm->spc_extra ()) << "\n";
 
   cout << HOR_RULE;
-  for (i=7; i<tfm->np; i++)
+  for (i=7; i<((int) tfm->np); i++)
     cout << "Parameter " << i << ": " << fixed (tfm->parameter (i)) << "\n";
 
   cout << HOR_RULE;
