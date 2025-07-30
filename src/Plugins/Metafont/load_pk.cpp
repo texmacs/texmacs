@@ -241,12 +241,13 @@ pk_loader::unpack (glyph& gl) {
       bit_out.write (turnon? 1: 0, count, repeatcount);
 
       while (count != 0) {
-	if ((count < wordweight) && (count < hbit)) {
+	if ((count < wordweight) && (((int) count) < ((int) hbit))) {
 	  hbit -= count;
 	  wordweight -= count; 
 	  count = 0; 
 	} 
-	else if ((count >= hbit) && (hbit <= wordweight)) {
+	else if ((((int) count) >= ((int) hbit)) &&
+                 (((int) hbit) <= ((int) wordweight))) {
 	  rowsleft -= repeatcount + 1; 
 	  repeatcount = 0; 
 	  count -= hbit; 

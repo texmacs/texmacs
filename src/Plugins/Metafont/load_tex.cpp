@@ -287,7 +287,7 @@ rubber_fix (tex_font_metric tfm, font_glyphs& pk) {
   // This routine is used so as to correct the anti-aliasing of
   // rubber TeX characters (in the vertical direction).
   int c;
-  for (c=tfm->bc; c<=tfm->ec; c++) {
+  for (c=tfm->bc; c<=((int) tfm->ec); c++) {
     if (tfm->tag (c)==3) {
       if (tfm->bot(c)!=0) rubber_status (pk->get (tfm->bot (c)), 1);
       if (tfm->top(c)!=0) rubber_status (pk->get (tfm->top (c)), 2);
