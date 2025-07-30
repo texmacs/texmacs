@@ -185,9 +185,9 @@ tm_window_rep::~tm_window_rep () {
 
 widget
 texmacs_window_widget (widget wid, tree geom) {
-  int W, H;
-  int w= geometry_w, h= geometry_h;
-  int x= geometry_x, y= geometry_y;
+  SI W, H;
+  SI w= geometry_w, h= geometry_h;
+  SI x= geometry_x, y= geometry_y;
   bool custom= is_tuple (geom) && N (geom) >= 2;
 #ifndef QTTEXMACS
   if (use_side_tools) { w += 200; h += 100; }
@@ -735,8 +735,8 @@ scheme_tree
 window_get_size (int win) {
   ASSERT (window_table->contains (win), "window does not exist");
   widget pww= window_table [win];
-  int w, h;
-  get_size(pww, w, h);
+  SI w, h;
+  get_size (pww, w, h);
   return tuple (as_string (w/PIXEL), as_string (h/PIXEL));
 }
 
@@ -751,8 +751,8 @@ scheme_tree
 window_get_position (int win) {
   ASSERT (window_table->contains (win), "window does not exist");
   widget pww= window_table [win];
-  int x, y;
-  get_position(pww, x, y);
+  SI x, y;
+  get_position (pww, x, y);
   return tuple (as_string (x/PIXEL), as_string (y/PIXEL));
 }
 

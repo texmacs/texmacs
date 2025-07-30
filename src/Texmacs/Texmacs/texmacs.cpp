@@ -590,7 +590,7 @@ boot_hacks () {
 // Our current hack is to allow for at least 4096 open file descriptors.
   rlimit lims;
   getrlimit (RLIMIT_NOFILE, &lims);
-  lims.rlim_cur= max (lims.rlim_cur, 4096);
+  lims.rlim_cur= max ((int) lims.rlim_cur, (int) 4096);
   setrlimit (RLIMIT_NOFILE, &lims);
   //getrlimit (RLIMIT_NOFILE, &lims);
   //printf ("cur: %i\n", lims.rlim_cur);
