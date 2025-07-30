@@ -55,7 +55,7 @@ new_breaker_rep::new_breaker_rep (
     fn (fn2), first_page (fp2), quality (quality2), last_page_flag (true),
     body_ht (), body_cor (), foot_ht (), foot_tot (),
     float_ht (), float_tot (), ins_list (),
-    best_prev (path (-1)), best_pens (MAX_SI),
+    best_prev (path (-1)), best_pens (vpenalty (MAX_INT)),
     todo_list (false), done_list (false),
     cache_uniform (array<path> ()),
     cache_colbreaks (array<path> ())
