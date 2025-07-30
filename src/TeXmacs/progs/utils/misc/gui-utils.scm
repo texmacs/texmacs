@@ -41,6 +41,9 @@
   (set! type (tm->stree type))
   (set! cmd (tm->stree cmd))
   (or (and (in? type (list "click" "drag")) "done")
+      (and (== type "select") (string? cmd)
+           (string-starts? cmd "(emu-toggle-modifier ")
+           (secure-eval (string->object cmd)))
       (and (== type "select")
            (begin
              (focus-on-canvas)
@@ -71,28 +74,46 @@
 
 (define emu-modifier-table (make-ahash-table))
 
+(tm-define (emu-active-modifier? key)
+  (ahash-ref emu-modifier-table key))
+
+(define (emu-update-modifier key)
+  (if (emu-active-modifier? key)
+      (broadcast-message key)
+      (broadcast-message (string-append "no-" key))))
+
+(define (emu-update-modifiers)
+  (emu-update-modifier "fn")
+  (emu-update-modifier "shift")
+  (emu-update-modifier "fn")
+  (emu-update-modifier "ctrl")
+  (emu-update-modifier "alt")
+  (emu-update-modifier "cmd")
+  (emu-update-modifier "lock"))
+
 (tm-define (emu-toggle-modifier t)
   (:secure #t)
-  (ahash-set! emu-modifier-table t
-              (not (ahash-ref emu-modifier-table t)))
-  (refresh-now "custom-keyboard"))
-
-(tm-define (emu-active-modifier? t)
-  (ahash-ref emu-modifier-table t))
+  (with s (tm->stree t)
+    (when (string? s)
+      (ahash-set! emu-modifier-table s
+                  (not (ahash-ref emu-modifier-table s)))
+      ;;(display* "Toggle " (emu-active-modifier? s) "\n")
+      (emu-update-modifiers))))
 
 (tm-define (emu-key t)
   (:secure #t)
   (with s (tm->stree t)
     (when (string? s)
-      (if (emu-active-modifier? "Control")
+      (if (emu-active-modifier? "ctrl")
           (set! s (string-append "C-" s)))
-      (if (emu-active-modifier? "Alt")
+      (if (emu-active-modifier? "alt")
           (set! s (string-append "A-" s)))
-      (if (emu-active-modifier? "Meta")
+      (if (emu-active-modifier? "cmd")
           (set! s (string-append "M-" s)))
       (key-press s)
-      (if (not (emu-active-modifier? "Lock"))
-          (set! emu-modifier-table (make-ahash-table))))))
+      (when (not (emu-active-modifier? "lock"))
+        (set! emu-modifier-table (make-ahash-table))
+        (emu-update-modifiers)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Lists via tables

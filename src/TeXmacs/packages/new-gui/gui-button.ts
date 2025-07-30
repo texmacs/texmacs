@@ -1,4 +1,4 @@
-<TeXmacs|2.1.2>
+<TeXmacs|2.1.4>
 
 <style|<tuple|source|english>>
 
@@ -100,7 +100,7 @@
 
   \;
 
-  <assign|action-button*|<macro|x|cmd|<mark*|<arg|x>|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<action-button-pressed*|<arg|x>>|gui-on-select|<arg|cmd>>|mouse-over|<relay|<action-button-hover*|<arg|x>>|gui-on-select|<arg|cmd>>|<relay|<action-button-normal*|<arg|x>>|gui-on-select|<arg|cmd>>>>>>>
+  <assign|action-button*|<macro|x|cmd|<mark*|<arg|x>|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<action-button-pressed*|<arg|x>>|gui-on-select|<arg|cmd>>|mouse-over|<relay|<action-button-hover*|<arg|x>>|gui-on-select|<arg|cmd>>|any|<relay|<action-button-normal*|<arg|x>>|gui-on-select|<arg|cmd>>>>>>>
 
   <drd-props|action-button*|arity|2|accessible|0>
 
@@ -128,7 +128,7 @@
 
   \;
 
-  <assign|menu-button*|<macro|x|cmd|<mark*|<arg|x>|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<menu-button-pressed*|<arg|x>>|gui-on-select|<arg|cmd>>|mouse-over|<relay|<menu-button-hover*|<arg|x>>|gui-on-select|<arg|cmd>>|<relay|<menu-button-normal*|<arg|x>>|gui-on-select|<arg|cmd>>>>>>>
+  <assign|menu-button*|<macro|x|cmd|<mark*|<arg|x>|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<menu-button-pressed*|<arg|x>>|gui-on-select|<arg|cmd>>|mouse-over|<relay|<menu-button-hover*|<arg|x>>|gui-on-select|<arg|cmd>>|any|<relay|<menu-button-normal*|<arg|x>>|gui-on-select|<arg|cmd>>>>>>>
 
   <drd-props|menu-button*|arity|2|accessible|0>
 
@@ -174,9 +174,9 @@
 
   <assign|toggle-on-hover|<gui-contour*|<toggle-on>>>
 
-  <assign|toggle-on-button|<macro|on|cmd|<mark*|<arg|x>|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<toggle-off-hover>|gui-on-toggle|<arg|cmd>>|mouse-over|<relay|<toggle-on-hover>|gui-on-toggle|<arg|cmd>>|<relay|<toggle-on>|gui-on-toggle|<arg|cmd>>>>>>>
+  <assign|toggle-on-button|<macro|on|cmd|<mark*|<arg|x>|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<toggle-off-hover>|gui-on-toggle|<arg|cmd>>|mouse-over|<relay|<toggle-on-hover>|gui-on-toggle|<arg|cmd>>|any|<relay|<toggle-on>|gui-on-toggle|<arg|cmd>>>>>>>
 
-  <assign|toggle-off-button|<macro|on|cmd|<mark*|<arg|x>|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<toggle-on-hover>|gui-on-toggle|<arg|cmd>>|mouse-over|<relay|<toggle-off-hover>|gui-on-toggle|<arg|cmd>>|<relay|<toggle-off>|gui-on-toggle|<arg|cmd>>>>>>>
+  <assign|toggle-off-button|<macro|on|cmd|<mark*|<arg|x>|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<toggle-on-hover>|gui-on-toggle|<arg|cmd>>|mouse-over|<relay|<toggle-off-hover>|gui-on-toggle|<arg|cmd>>|any|<relay|<toggle-off>|gui-on-toggle|<arg|cmd>>>>>>>
 
   <assign|toggle-button|<macro|on|cmd|<compound|<if|<arg|on>|<value|toggle-on-button>|<value|toggle-off-button>>|<arg|on>|<arg|cmd>>>>
 

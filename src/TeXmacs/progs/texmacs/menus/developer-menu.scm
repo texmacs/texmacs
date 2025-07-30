@@ -53,13 +53,11 @@
         (get-keyboard))))
 
 (tm-menu (custom-keyboard-toolbar)
-  (hlist (glue #f #f 0 248)
+  (hlist (glue #f #f 0 200)
     >>
-    (refreshable "custom-keyboard"
-      (invisible (get-the-keyboard))
-      (texmacs-output
-       `(with "bg-color" "#404040" ,(get-the-keyboard))
-       '(style "new-gui")))
+    (texmacs-output
+     `(with "bg-color" "#404040" ,(get-the-keyboard))
+     '(style "new-gui"))
     >>))
 
 (tm-define (has-custom-keyboard?)

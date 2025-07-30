@@ -105,25 +105,31 @@ tree_extents (tree doc) {
 * Typesetted boxes as widgets
 ******************************************************************************/
 
+class box_widget_rep;
+static box_widget_rep* current_box_widget= NULL;
+
 class box_widget_rep: public simple_widget_rep {
-  box    b;
-  color  bg;
-  bool   transparent;
-  double zoomf;
-  double magf;
-  SI     dw, dh;
-  SI     last_x, last_y;
-  bool   lpressed;
+  box        b;
+  color      bg;
+  bool       transparent;
+  double     zoomf;
+  double     magf;
+  SI         dw, dh;
+  SI         last_x, last_y;
+  bool       lpressed;
+  rectangles rs;
 
 public:
   box_widget_rep (box b, color bg, bool trans, double zoom, SI dw, SI dh);
   operator tree ();
   bool is_embedded_widget ();
+  ~box_widget_rep () { current_box_widget= NULL; }
 
   void handle_get_size_hint (SI& w, SI& h);
   void handle_repaint (renderer ren, SI x1, SI y1, SI x2, SI y2);
   void handle_mouse (string kind, SI x, SI y, int m, time_t t,
                      array<double> data);
+  friend void box_broadcast (string msg);
 };
 
 box_widget_rep::box_widget_rep
@@ -170,6 +176,15 @@ box_widget_rep::handle_repaint (renderer ren, SI x1, SI y1, SI x2, SI y2) {
 }
 
 void
+box_broadcast (string msg) {
+  if (current_box_widget != NULL) {
+    current_box_widget->b->broadcast (msg, current_box_widget->rs);
+    if (N(current_box_widget->rs) > 0)
+      send_invalidate_all (current_box_widget);
+  }
+}
+
+void
 box_widget_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t,
                               array<double> data) {
   (void) m; (void) t; (void) data;
@@ -184,7 +199,8 @@ box_widget_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t,
   SI yy= ((SI) (y / magf)) - oy;
   //cout << "Point  : " << xx/PIXEL << ", " << yy/PIXEL << LF;
 
-  rectangles rs;
+  current_box_widget= this;
+  rs= rectangles ();
   bool found_flag= false;
   path old_p= b->find_box_path (last_x, last_y, 0, false, found_flag);
   found_flag= false;

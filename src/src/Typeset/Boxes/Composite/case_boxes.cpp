@@ -105,7 +105,7 @@ case_box_rep::satisfies (tree t, tree cond) {
       if (satisfies (t, a[i])) return true;
     return false;
   }
-  if (t == cond) return true;
+  if (t == cond || cond == "any") return true;
   if (cond == "mouse-over") return entered;
   return false;
 }
@@ -117,7 +117,7 @@ case_box_rep::broadcast (tree t, rectangles& rs) {
       switch_to (i, rs);
       return bs[current]->broadcast (t, rs);
     }
-  if (t == "reset")
+  if (N(conds) < N(bs))
     switch_to (N(bs) - 1, rs);
   return bs[current]->broadcast (t, rs);
 }
@@ -131,7 +131,8 @@ case_box_rep::message (tree t, SI x, SI y, rectangles& rs) {
       switch_to (i, rs);
       return bs[current]->message (t, x, y, rs);
     }
-  switch_to (N(bs) - 1, rs);
+  if (N(conds) < N(bs))
+    switch_to (N(bs) - 1, rs);
   return bs[current]->message (t, x, y, rs);
 }
 
