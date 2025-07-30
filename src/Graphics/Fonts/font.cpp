@@ -287,7 +287,7 @@ font_rep::get_wide_correction (string s, int mode) {
 void
 font_rep::get_extents (string s, metric& ex, bool ligf) {
   if (ligf) get_extents (s, ex);
-  else get_extents (s, ex, 0);
+  else get_extents (s, ex, (SI) 0);
 }
 
 void

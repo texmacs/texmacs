@@ -121,7 +121,7 @@ font_glyphs
 distorted (font_glyphs fng, tree kind, SI em) {
   string ks= functional_to_string (kind);
   string ems= as_string (em);
-  string name= "distorted[" * fng->res_name * "," * ks * "," * em * "]";
+  string name= "distorted[" * fng->res_name * "," * ks * "," * ems * "]";
   return make (font_glyphs, name,
                tm_new<distorted_font_glyphs_rep> (name, fng, kind, em));
 }
