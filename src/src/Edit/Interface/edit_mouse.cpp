@@ -639,7 +639,8 @@ call_drop_event (string kind, SI x, SI y, SI ticket, time_t t, url base) {
   tree doc = payloads [ticket];
   payloads->reset (ticket);
   array<object> args;
-  args << object (x) << object (y) << object (relativize (doc, base));
+  args << object ((int) x) << object ((int) y)
+       << object (relativize (doc, base));
   call ("mouse-drop-event", args);
   //eval (list_object (symbol_object ("insert"), relativize (doc, base)));
   //array<object> args;
@@ -654,8 +655,8 @@ call_drop_event (string kind, SI x, SI y, SI ticket, time_t t, url base) {
 static void
 call_mouse_event (string kind, SI x, SI y, SI m, time_t t, array<double> d) {
   array<object> args;
-  args << object (kind) << object (x) << object (y)
-       << object (m) << object ((double) t) << object (d);
+  args << object (kind) << object ((int) x) << object ((int) y)
+       << object ((int) m) << object ((double) t) << object (d);
   call ("mouse-event", args);
 }
 
