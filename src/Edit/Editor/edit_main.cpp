@@ -425,7 +425,7 @@ edit_main_rep::print_snippet (url name, tree t, bool conserve_preamble) {
   }
   array<SI> a;
   a << b->x3 << b->y3 << b->x4 << b->y4 << b->x1 << b->y1 << b->x2 << b->y2;
-  a << env->get_int (FONT_BASE_SIZE) << dpi;
+  a << ((SI) env->get_int (FONT_BASE_SIZE)) << ((SI) dpi);
   return a;
 }
 
