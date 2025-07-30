@@ -9004,10 +9004,10 @@ tmg_widget_size (tmscm arg1) {
   widget in1= tmscm_to_widget (arg1);
 
   // TMSCM_DEFER_INTS;
-  array_int out= get_widget_size (in1);
+  array_SI out= get_widget_size (in1);
   // TMSCM_ALLOW_INTS;
 
-  return array_int_to_tmscm (out);
+  return array_SI_to_tmscm (out);
 }
 
 tmscm
@@ -9017,10 +9017,10 @@ tmg_texmacs_widget_size (tmscm arg1) {
   widget in1= tmscm_to_widget (arg1);
 
   // TMSCM_DEFER_INTS;
-  array_int out= get_texmacs_widget_size (in1);
+  array_SI out= get_texmacs_widget_size (in1);
   // TMSCM_ALLOW_INTS;
 
-  return array_int_to_tmscm (out);
+  return array_SI_to_tmscm (out);
 }
 
 tmscm
@@ -9105,10 +9105,10 @@ tmg_refresh_now (tmscm arg1) {
 tmscm
 tmg_get_screen_size () {
   // TMSCM_DEFER_INTS;
-  array_int out= get_screen_size ();
+  array_SI out= get_screen_size ();
   // TMSCM_ALLOW_INTS;
 
-  return array_int_to_tmscm (out);
+  return array_SI_to_tmscm (out);
 }
 
 tmscm

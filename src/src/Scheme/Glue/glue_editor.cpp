@@ -1857,10 +1857,10 @@ tmg_mouse_any (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4, tmscm arg5, tmscm
 tmscm
 tmg_get_mouse_position () {
   // TMSCM_DEFER_INTS;
-  array_int out= get_current_editor()->get_mouse_position ();
+  array_SI out= get_current_editor()->get_mouse_position ();
   // TMSCM_ALLOW_INTS;
 
-  return array_int_to_tmscm (out);
+  return array_SI_to_tmscm (out);
 }
 
 tmscm

@@ -118,7 +118,7 @@ get_bounding_rectangle (tree t) {
     r= translate (selr, wr->x1, wr->y2);
   }
   array<int> ret;
-  ret << (r->x1) << (r->y1) << (r->x2) << (r->y2);
+  ret << ((int) r->x1) << ((int) r->y1) << ((int) r->x2) << ((int) r->y2);
   //ret << (r->x1/PIXEL) << (r->y1/PIXEL) << (r->x2/PIXEL) << (r->y2/PIXEL);
   return ret;
 }
@@ -804,6 +804,7 @@ TMSCM_ASSERT (tmscm_is_solution(p), p, arg, rout)
 ******************************************************************************/
 
 typedef array<int> array_int;
+typedef array<SI> array_SI;
 typedef array<string> array_string;
 typedef array<tree> array_tree;
 typedef array<url> array_url;
@@ -838,6 +839,42 @@ tmscm_to_array_int (tmscm p) {
   array<int> a;
   while (!tmscm_is_null (p)) {
     a << ((int) tmscm_to_int (tmscm_car (p)));
+    p= tmscm_cdr (p);
+  }
+  return a;
+}
+
+// FIXME: we also should introduce separate converters for SI
+#define tmscm_is_SI tmscm_is_int
+#define tmscm_to_SI tmscm_to_int
+#define SI_to_tmscm int_to_tmscm
+
+/* NOTE: not yet needed
+static bool
+tmscm_is_array_SI (tmscm p) {
+  if (tmscm_is_null (p)) return true;
+  else return tmscm_is_pair (p) &&
+    tmscm_is_SI (tmscm_car (p)) &&
+    tmscm_is_array_SI (tmscm_cdr (p));
+}
+
+#define TMSCM_ASSERT_ARRAY_SI(p,arg,rout) \
+TMSCM_ASSERT (tmscm_is_array_SI (p), p, arg, rout)
+*/
+
+/* static */ tmscm 
+array_SI_to_tmscm (array<SI> a) {
+  int i, n= N(a);
+  tmscm p= tmscm_null ();
+  for (i=n-1; i>=0; i--) p= tmscm_cons (SI_to_tmscm (a[i]), p);
+  return p;
+}
+
+/* static */ array<SI>
+tmscm_to_array_SI (tmscm p) {
+  array<SI> a;
+  while (!tmscm_is_null (p)) {
+    a << ((SI) tmscm_to_SI (tmscm_car (p)));
     p= tmscm_cdr (p);
   }
   return a;
