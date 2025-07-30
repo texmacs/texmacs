@@ -286,7 +286,7 @@ plain_window_widget (widget w, string name, command q) {
   if (headless_mode) return headless_widget ();
   widget win= concrete(w)->plain_window_widget (name, q);
   if (name != "popup") {
-    int xx, yy, ww, hh;
+    SI xx, yy, ww, hh;
     xx = yy = ww = hh = -1;
     get_preferred_position (name, xx, yy);
     get_preferred_size (name, ww, hh);
