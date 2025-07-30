@@ -415,8 +415,10 @@ void
 edit_interface_rep::handle_keyboard_focus (bool has_focus, time_t t) {
   if (is_nil (buf)) return;
   if (DEBUG_KEYBOARD) {
-    if (has_focus) debug_keyboard << "Got focus at " << t << "\n";
-    else debug_keyboard << "Lost focus at " << t << "\n";
+    if (has_focus)
+      debug_keyboard << "Got focus at " << t << ", "<< buf->buf->name << "\n";
+    else
+      debug_keyboard << "Lost focus at " << t << ", "<< buf->buf->name << "\n";
   }
   if (got_focus != has_focus) {
     drag_left_reset ();
@@ -430,4 +432,7 @@ edit_interface_rep::handle_keyboard_focus (bool has_focus, time_t t) {
     notify_change (THE_DECORATIONS);
   }
   call ("keyboard-focus", object (has_focus), object ((double) t));
+  if (has_focus)
+    if (as_bool (call ("defined?", symbol_object ("db-show-toolbar"))))
+      call ("db-show-toolbar");
 }

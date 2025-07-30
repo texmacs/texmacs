@@ -77,11 +77,13 @@
   (delayed
     (:idle 100)
     (when (db-url? (current-buffer))
-      (set! toolbar-db-active? #t)
-      (update-bottom-tools)
-      (delayed
-	(:idle 250)
-	(keyboard-focus-on "db-search")))))
+      (with change-focus? (not toolbar-db-active?)
+        (set! toolbar-db-active? #t)
+        (update-bottom-tools)
+        (when change-focus?
+          (delayed
+            (:idle 250)
+            (keyboard-focus-on "db-search")))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The database toolbar
