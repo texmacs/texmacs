@@ -5239,7 +5239,7 @@ source code.
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|get_widget_size> which returns
-    <scm|array_int>.
+    <scm|array_SI>.
   </explain>
 
   <\explain>
@@ -5247,7 +5247,7 @@ source code.
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|get_texmacs_widget_size> which returns
-    <scm|array_int>.
+    <scm|array_SI>.
   </explain>
 
   <\explain>
@@ -5311,7 +5311,7 @@ source code.
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|get_screen_size> which returns
-    <scm|array_int>.
+    <scm|array_SI>.
   </explain>
 
   <\explain>
@@ -7679,7 +7679,7 @@ source code.
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|get_mouse_position> which returns
-    <scm|array_int>.
+    <scm|array_SI>.
   </explain>
 
   <\explain>
