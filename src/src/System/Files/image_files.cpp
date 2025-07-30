@@ -189,8 +189,8 @@ xpm_hotspot (tree t) {
   skip_spaces (s, i);
   ok= read_int (s, i, y) && ok;
   if (ok) {
-    res<<x;
-    res<<y;
+    res << ((SI) x);
+    res << ((SI) y);
   }
   return res;
 }
