@@ -43,7 +43,7 @@ public:
   ~x_drawable_rep ();
   void* get_handle ();
 
-  void get_extents (int& w, int& h);
+  void get_extents (SI& w, SI& h);
 
   /**************** subroutines for drawing text and xpms ********************/
 

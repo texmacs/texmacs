@@ -55,7 +55,7 @@ hash (basic_character xc) {
 ******************************************************************************/
 
 void
-basic_renderer_rep::get_extents (int& w2, int& h2) {
+basic_renderer_rep::get_extents (SI& w2, SI& h2) {
   w2 = w; h2 = h;
 }
 

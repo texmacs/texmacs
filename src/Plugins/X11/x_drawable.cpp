@@ -69,7 +69,7 @@ x_drawable_rep::get_handle () {
 }
 
 void
-x_drawable_rep::get_extents (int& w2, int& h2) {
+x_drawable_rep::get_extents (SI& w2, SI& h2) {
   if (x_win != NULL) return x_win->get_extents (w2, h2);
   else {
     w2= w;
