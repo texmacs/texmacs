@@ -733,8 +733,8 @@
   (widget-refreshable refreshable_widget (widget object string))
   (object->promise-widget as_promise_widget (promise_widget object))
   (tree-bounding-rectangle get_bounding_rectangle (array_int tree))
-  (widget-size get_widget_size (array_int widget))
-  (texmacs-widget-size get_texmacs_widget_size (array_int widget))
+  (widget-size get_widget_size (array_SI widget))
+  (texmacs-widget-size get_texmacs_widget_size (array_SI widget))
   (show-balloon show_help_balloon (void widget int int))
   (get-style-menu get_style_menu (object))
   (hidden-package? hidden_package (bool string))
@@ -742,7 +742,7 @@
   (get-remove-package-menu get_remove_package_menu (object))
   (get-toggle-package-menu get_toggle_package_menu (object))
   (refresh-now windows_refresh (void string))
-  (get-screen-size get_screen_size (array_int))
+  (get-screen-size get_screen_size (array_SI))
 
   ;; buffers
   (buffer-list get_all_buffers (array_url))
