@@ -130,7 +130,46 @@ local/lib/libfontconfig.a: local/lib/libxkbcommon.a
 
 local/bin/qmake: local/lib/libfontconfig.a
 	-mkdir qt-build
-	cd qt-build; ../qt/configure -opensource -pkg-config -confirm-license -prefix $$WORKING_DIR/local -release -nomake tests -nomake examples -no-warnings-are-errors -- -G Ninja
+	cd qt-build; ../qt/configure \
+		-opensource -pkg-config -confirm-license -prefix $$WORKING_DIR/local -release -nomake tests -nomake examples \
+		-skip qt3d \
+		-skip qtactiveqt \
+		-skip qtcharts \
+		-skip qtcoap \
+		-skip qtdatavis3d \
+		-skip qtdeclarative \
+		-skip qtdoc \
+		-skip qtgamepad \
+		-skip qtgraphicaleffects \
+		-skip qtimageformats \
+		-skip qtlocation \
+		-skip qtlottie \
+		-skip qtmultimedia \
+		-skip qtnetworkauth \
+		-skip qtopcua \
+		-skip qtpositioning \
+		-skip qtquick3d \
+		-skip qtquickcontrols \
+		-skip qtquickcontrols2 \
+		-skip qtremoteobjects \
+		-skip qtscript \
+		-skip qtscxml \
+		-skip qtsensors \
+		-skip qtserialbus \
+		-skip qtserialport \
+		-skip qtspeech \
+		-skip qtvirtualkeyboard \
+		-skip qtwebchannel \
+		-skip qtwebengine \
+		-skip qtwebsockets \
+		-skip qtwebview \
+		-skip qtxmlpatterns \
+		-skip qtgraphs \
+		-skip qtmqtt \
+		-skip qtquick3dphysics \
+		-skip qtquickeffectmaker \
+		-skip qtquicktimeline \
+		-no-warnings-are-errors -- -G Ninja
 	cd qt-build; cmake --build . --parallel
 	cd qt-build; cmake --build . --target install --parallel
 
