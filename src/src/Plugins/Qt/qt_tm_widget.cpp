@@ -176,6 +176,19 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   extraTools    = new QDockWidget ("extra tools", mw);
   sideTools     = new QDockWidget ("side tools", 0);
   leftTools     = new QDockWidget ("left tools", 0);
+
+  {
+    // scrollable side tools
+    QScrollArea *sa = new QScrollArea();
+	  sa->setObjectName (QStringLiteral("SideToolScrollArea"));
+	  sa->setWidgetResizable (true);
+	  sa->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+	  sa->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+	  sa->setFrameStyle (QFrame::NoFrame);
+	  sa->show ();
+    sideTools->setWidget (sa);
+  }
+
     // HACK: Wrap the dock in a "fake" window widget (last parameter = true) to
     // have clicks report the right position.
   static int cnt=0;
@@ -1093,9 +1106,9 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     {
       side_tools_widget = concrete (w);
       QWidget* new_qwidget = side_tools_widget->as_qwidget();
-      QWidget* old_qwidget = sideTools->widget();
+      QWidget* old_qwidget = dynamic_cast<QScrollArea*>(sideTools->widget())->widget();
       if (old_qwidget) old_qwidget->deleteLater();
-      sideTools->setWidget (new_qwidget);
+      dynamic_cast<QScrollArea*>(sideTools->widget())->setWidget (new_qwidget);
       update_visibility();
 #if (QT_VERSION >= 0x050000)
       QList<QDockWidget*> l1;
