@@ -1892,13 +1892,13 @@ virtual_font_rep::get_extents (string s, metric& ex) {
 
 void
 virtual_font_rep::get_xpositions (string s, SI* xpos) {
-  get_xpositions (s, xpos, 0);
+  get_xpositions (s, xpos, (SI) 0);
 }
 
 void
 virtual_font_rep::get_xpositions (string s, SI* xpos, bool lit) {
   (void) lit;
-  get_xpositions (s, xpos, 0);
+  get_xpositions (s, xpos, (SI) 0);
 }
 
 void
