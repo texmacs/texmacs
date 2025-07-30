@@ -369,7 +369,7 @@ width_trace (font_metric fnm, array<int> cs) {
   array<int> a;
   for (int i= 0; i < N(cs); i++) {
     metric_struct* m= fnm->get (cs[i]);
-    a << (m->x4 - m->x3);
+    a << (int) (m->x4 - m->x3);
   }
   return array_trace (a);
 }
@@ -379,7 +379,7 @@ height_trace (font_metric fnm, array<int> cs) {
   array<int> a;
   for (int i= 0; i < N(cs); i++) {
     metric_struct* m= fnm->get (cs[i]);
-    a << (m->y4 - m->y3);
+    a << (int) (m->y4 - m->y3);
   }
   return array_trace (a);
 }
