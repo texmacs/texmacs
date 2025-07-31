@@ -165,7 +165,7 @@ tex_rubber_font_rep::get_extents (string s, metric& ex) {
   for (i=N(s)-1; i>0; i--) if (s[i]=='-') break;
   if (i>0 && s[i-1]=='-') i--;
   string r= s (0, i) * ">";
-  QN pre_c= ext->dict[r];
+  N8 pre_c= ext->dict[r];
   int n= max (as_int (s (i+1, N(s)-1)), 0);
   if ((pre_c<tfm->bc) || (pre_c>tfm->ec)) {
     ex->x1= ex->y1= ex->x2= ex->y2= ex->x3= ex->y3= ex->x4= ex->y4= 0;
@@ -173,7 +173,7 @@ tex_rubber_font_rep::get_extents (string s, metric& ex) {
   }
 
   // get extents
-  QN c= tfm->nth_in_list (pre_c, n);
+  N8 c= tfm->nth_in_list (pre_c, n);
   if (tfm->tag (c) != 3) get_raw_extents (c, ex);
   else {
     int i, nr_rep= n - tfm->list_len (pre_c);
@@ -246,12 +246,12 @@ tex_rubber_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   for (i=N(s)-1; i>0; i--) if (s[i]=='-') break;
   if (i>0 && s[i-1]=='-') i--;
   string r= s (0, i) * ">";
-  QN pre_c= ext->dict[r];
+  N8 pre_c= ext->dict[r];
   int n= max (as_int (s (i+1, N(s)-1)), 0);
 
   // draw the character
   if ((pre_c<tfm->bc) || (pre_c>tfm->ec)) return;
-  QN c = tfm->nth_in_list (pre_c, n);
+  N8 c = tfm->nth_in_list (pre_c, n);
 
   if (tfm->tag (c) != 3) ren->draw (c, pk, x, y);
   else {
@@ -292,10 +292,10 @@ tex_rubber_font_rep::get_glyph (string s) {
   for (i=N(s)-1; i>0; i--) if (s[i]=='-') break;
   if (i>0 && s[i-1]=='-') i--;
   string r= s (0, i) * ">";
-  QN pre_c= ext->dict[r];
+  N8 pre_c= ext->dict[r];
   int n= max (as_int (s (i+1, N(s)-1)), 0);
   if ((pre_c<tfm->bc) || (pre_c>tfm->ec)) return font_rep::get_glyph (s);
-  QN c = tfm->nth_in_list (pre_c, n);
+  N8 c = tfm->nth_in_list (pre_c, n);
   if (tfm->tag (c) == 3) return font_rep::get_glyph (s);
   glyph gl= pk->get (c);
   if (is_nil (gl)) return font_rep::get_glyph (s);
@@ -308,10 +308,10 @@ tex_rubber_font_rep::index_glyph (string s, font_metric& rm, font_glyphs& rg) {
   for (i=N(s)-1; i>0; i--) if (s[i]=='-') break;
   if (i>0 && s[i-1]=='-') i--;
   string r= s (0, i) * ">";
-  QN pre_c= ext->dict[r];
+  N8 pre_c= ext->dict[r];
   int n= max (as_int (s (i+1, N(s)-1)), 0);
   if ((pre_c<tfm->bc) || (pre_c>tfm->ec)) return -1;
-  QN c = tfm->nth_in_list (pre_c, n);
+  N8 c = tfm->nth_in_list (pre_c, n);
   if (tfm->tag (c) == 3) return -1;
   glyph gl= pk->get (c);
   if (is_nil (gl)) return -1;
@@ -349,9 +349,9 @@ tex_rubber_font_rep::get_right_correction (string s) {
     for (i=N(s)-1; i>0; i--) if (s[i]=='-') break;
     if (i>0 && s[i-1]=='-') i--;
     string r= s (0, i) * ">";
-    QN  pre_c= ext->dict[r];
+    N8  pre_c= ext->dict[r];
     int n    = max (as_int (s (i+1, N(s)-1)), 0);
-    QN  c    = tfm->nth_in_list (pre_c, n);
+    N8  c    = tfm->nth_in_list (pre_c, n);
     if (N(s) >= 7 && s(5,7) == "up" && s(N(s)-3,N(s)) == "-1>")
       return conv (tfm->i (c)) / 4;
     return conv (tfm->i (c));
