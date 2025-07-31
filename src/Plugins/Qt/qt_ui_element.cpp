@@ -543,9 +543,6 @@ qt_ui_element_rep::as_qaction () {
 #if QT_VERSION < 0x060000
         QObject::connect (act, SIGNAL(hovered()),
                           (QTMAction*)act, SLOT(showToolTip()));
-#else
-        QObject::connect (act, &QAction::hovered,
-                          (QTMAction*)act, &QTMAction::showToolTip);
 #endif
       }
     }
