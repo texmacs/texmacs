@@ -1,12 +1,13 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|2.1.4>
 
-<style|tmweb2>
+<style|<tuple|tmweb2|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmweb-current|Plug-ins|All><tmweb-title|Plug-ins for GNU
   <TeXmacs>|<tmweb-plugin-links>>
 
-  Many plug-ins for external software exist for GNU <TeXmacs>. On our
+  Many plug-ins for external software exist for GNU <TeXmacs>;
+  see<nbsp><slink|https://github.com/texmacs/plugins> for instance. On our
   web-pages, we only list those projects which are
   <hlink|free|http://www.gnu.org/philosophy/free-sw.html> in the sense of the
   <acronym|FSF>.
@@ -49,14 +50,13 @@
     <item><hlink|Yacas|cas.en.tm#yacas>
   </enumerate>
 
-  <tmdoc-copyright|1999--2003|Joris van der Hoeven>
+  <tmdoc-copyright|1999\U2003|Joris van der Hoeven>
 
   <tmweb-license>
 </body>
 
 <\initial>
   <\collection>
-    <associate|language|english>
     <associate|preamble|false>
   </collection>
 </initial>
