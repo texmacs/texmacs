@@ -492,7 +492,7 @@ logarithmic (array<SI> subd, array<string> col, point o, double step, SI base) {
 
 grid
 as_grid (tree t) {
-  array<SI> subd (0, 1);
+  array<SI> subd ((SI) 0, (SI) 1);
   array<string> col ("black", "black");
   grid gr= empty_grid ();
   double step= 1.0;
