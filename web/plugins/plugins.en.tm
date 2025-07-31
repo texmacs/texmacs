@@ -6,11 +6,9 @@
   <tmweb-current|Plug-ins|All><tmweb-title|Plug-ins for GNU
   <TeXmacs>|<tmweb-plugin-links>>
 
-  Many plug-ins for external software exist for GNU <TeXmacs>;
-  see<nbsp><slink|https://github.com/texmacs/plugins> for instance. On our
-  web-pages, we only list those projects which are
-  <hlink|free|http://www.gnu.org/philosophy/free-sw.html> in the sense of the
-  <acronym|FSF>.
+  Many plug-ins for external software exist for GNU <TeXmacs>. Some native
+  plugins that are <hlink|free|http://www.gnu.org/philosophy/free-sw.html> in
+  the sense of the <acronym|FSF> are as follows:
 
   <\enumerate>
     <item><hlink|Asymptote|graphics.en.tm#asymtote>
@@ -49,6 +47,9 @@
 
     <item><hlink|Yacas|cas.en.tm#yacas>
   </enumerate>
+
+  We refer to<nbsp><slink|https://github.com/texmacs/plugins> for a more
+  complete list of both internally and externally maintained plugins.
 
   <tmdoc-copyright|1999\U2003|Joris van der Hoeven>
 
