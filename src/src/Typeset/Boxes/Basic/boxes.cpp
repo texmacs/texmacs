@@ -810,7 +810,6 @@ box_rep::anim_invalid () {
 void
 box_rep::broadcast (tree t, rectangles& rs) {
   (void) t; (void) rs;
-  return "";
 }
 
 tree
