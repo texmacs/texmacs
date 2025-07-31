@@ -659,9 +659,9 @@ tex_font_rep::get_extents (string s, metric& ex) {
 
   int n= N(s);
   int m= (n+16) << 1;
-  STACK_NEW_ARRAY (s_copy, SI, n);
-  STACK_NEW_ARRAY (buf, SI, m);
-  STACK_NEW_ARRAY (ker, SI, m);
+  STACK_NEW_ARRAY (s_copy, Z32, n);
+  STACK_NEW_ARRAY (buf, Z32, m);
+  STACK_NEW_ARRAY (ker, Z32, m);
 
   if (exec) {
     for (i=0; i<n; i++) s_copy[i]= ((QN) s[i]);
@@ -798,9 +798,9 @@ tex_font_rep::draw_fixed (renderer ren, string s, SI ox, SI y) {
   SI  x= ox;
   int n= N(s);
   int m= (n+16) << 1;
-  STACK_NEW_ARRAY (str, SI, n);
-  STACK_NEW_ARRAY (buf, SI, m);
-  STACK_NEW_ARRAY (ker, SI, m);
+  STACK_NEW_ARRAY (str, Z32, n);
+  STACK_NEW_ARRAY (buf, Z32, m);
+  STACK_NEW_ARRAY (ker, Z32, m);
 
   if (exec) {
     for (i=0; i<n; i++) str[i]= ((QN) s[i]);
@@ -955,9 +955,9 @@ tex_font_rep::advance_glyph (string s, int& pos, bool ligf) {
 
       int n= N(r);
       int m= (n+16) << 1;
-      STACK_NEW_ARRAY (str, SI, n);
-      STACK_NEW_ARRAY (buf, SI, m);
-      STACK_NEW_ARRAY (ker, SI, m);
+      STACK_NEW_ARRAY (str, Z32, n);
+      STACK_NEW_ARRAY (buf, Z32, m);
+      STACK_NEW_ARRAY (ker, Z32, m);
       for (int i=0; i<n; i++) str[i]= ((QN) r[i]);
       tfm->execute (str, n, buf, ker, m);
       bool done= (m > 0 && buf[0] == c);
@@ -1045,9 +1045,9 @@ int
 tex_font_rep::get_ligature_code (string s) {
   int n= N(s);
   int m= (n+16) << 1;
-  STACK_NEW_ARRAY (str, SI, n);
-  STACK_NEW_ARRAY (buf, SI, m);
-  STACK_NEW_ARRAY (ker, SI, m);
+  STACK_NEW_ARRAY (str, Z32, n);
+  STACK_NEW_ARRAY (buf, Z32, m);
+  STACK_NEW_ARRAY (ker, Z32, m);
   for (int i=0; i<n; i++) str[i]= ((QN) s[i]);
   tfm->execute (str, n, buf, ker, m);
   STACK_DELETE_ARRAY (str);

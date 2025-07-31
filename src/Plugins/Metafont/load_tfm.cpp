@@ -66,41 +66,41 @@ tex_font_metric_rep::~tex_font_metric_rep () {
 #define byte2x(i) (((i)>>10)&63)
 #define word1x(i) ((i)&32767)
 
-SI tex_font_metric_rep::w (QN c) {
+Z32 tex_font_metric_rep::w (N8 c) {
   if ((c<bc) || (c>ec)) return 0;
   return width [byte0 (char_info[c-bc])]; }
-SI tex_font_metric_rep::h (QN c) {
+Z32 tex_font_metric_rep::h (N8 c) {
   if ((c<bc) || (c>ec)) return 0;
   return height [byte1a (char_info[c-bc])]; }
-SI tex_font_metric_rep::d (QN c) {
+Z32 tex_font_metric_rep::d (N8 c) {
   if ((c<bc) || (c>ec)) return 0;
   return depth [byte1b (char_info[c-bc])]; }
-SI tex_font_metric_rep::i (QN c) {
+Z32 tex_font_metric_rep::i (N8 c) {
   if ((c<bc) || (c>ec)) return 0;
   return italic [byte2x (char_info[c-bc])]; }
-SI tex_font_metric_rep::tag (QN c) { return (char_info [c-bc]>>8)&3; }
-SI tex_font_metric_rep::rem (QN c) { return char_info  [c-bc] & 255; }
-QN tex_font_metric_rep::top (QN c) { return (QN) byte0 (exten [rem (c)]); }
-QN tex_font_metric_rep::mid (QN c) { return (QN) byte1 (exten [rem (c)]); }
-QN tex_font_metric_rep::bot (QN c) { return (QN) byte2 (exten [rem (c)]); }
-QN tex_font_metric_rep::rep (QN c) { return (QN) byte3 (exten [rem (c)]); }
-SI tex_font_metric_rep::design_size () { return header[1]; }
-SI tex_font_metric_rep::parameter (int i) { return i<((int)np)? param[i]: 0; }
-SI tex_font_metric_rep::spc () { return parameter (1); }
-SI tex_font_metric_rep::spc_stretch () { return parameter (2); }
-SI tex_font_metric_rep::spc_shrink () { return parameter (3); }
-SI tex_font_metric_rep::x_height () { return parameter (4); }
-SI tex_font_metric_rep::spc_quad () { return parameter (5); }
-SI tex_font_metric_rep::spc_extra () { return parameter (6); }
+Z32 tex_font_metric_rep::tag (N8 c) { return (char_info [c-bc]>>8)&3; }
+Z32 tex_font_metric_rep::rem (N8 c) { return char_info  [c-bc] & 255; }
+N8  tex_font_metric_rep::top (N8 c) { return (N8) byte0 (exten [rem (c)]); }
+N8  tex_font_metric_rep::mid (N8 c) { return (N8) byte1 (exten [rem (c)]); }
+N8  tex_font_metric_rep::bot (N8 c) { return (N8) byte2 (exten [rem (c)]); }
+N8  tex_font_metric_rep::rep (N8 c) { return (N8) byte3 (exten [rem (c)]); }
+Z32 tex_font_metric_rep::design_size () { return header[1]; }
+Z32 tex_font_metric_rep::parameter (int i) { return i<((int)np)? param[i]: 0; }
+Z32 tex_font_metric_rep::spc () { return parameter (1); }
+Z32 tex_font_metric_rep::spc_stretch () { return parameter (2); }
+Z32 tex_font_metric_rep::spc_shrink () { return parameter (3); }
+Z32 tex_font_metric_rep::x_height () { return parameter (4); }
+Z32 tex_font_metric_rep::spc_quad () { return parameter (5); }
+Z32 tex_font_metric_rep::spc_extra () { return parameter (6); }
 
 int
-tex_font_metric_rep::list_len (QN c) {
+tex_font_metric_rep::list_len (N8 c) {
   if (tag(c)!=2) return 1;
   return list_len (rem (c)) + 1;
 }
 
-QN
-tex_font_metric_rep::nth_in_list (QN c, int n) {
+N8
+tex_font_metric_rep::nth_in_list (N8 c, int n) {
   if ((n==1) || (tag(c)!=2)) return c;
   return nth_in_list (rem (c), n-1);
 }
@@ -124,7 +124,7 @@ tex_font_metric_rep::slope () {
 ******************************************************************************/
 
 void
-tex_font_metric_rep::execute (SI* s, int n, SI* buf, SI* ker, int& m) {
+tex_font_metric_rep::execute (Z32* s, int n, Z32* buf, Z32* ker, int& m) {
   STACK_NEW_ARRAY (stack, int, m);
   int bp, sp=0, i;
 
@@ -220,7 +220,7 @@ tex_font_metric_rep::execute (SI* s, int n, SI* buf, SI* ker, int& m) {
 * Get the individual horzontal offsets of characters
 ******************************************************************************/
 
-#define conv(x) ((SI) (((double) (x))*unit))
+#define conv(x) ((Z32) (((double) (x))*unit))
 
 #define ADVANCE(k)                         \
   x += conv (w(stack[sp--]) + k);          \
@@ -238,8 +238,8 @@ void
 tex_font_metric_rep::get_xpositions (int* s, int n, double unit,
                                      SI* xpos, bool ligf) {
   (void) ligf;
-  SI  x    = 0;
-  SI  x_bis= 0;
+  Z32 x    = 0;
+  Z32 x_bis= 0;
   int pos  = 1;
 
   int m= n + 16;
@@ -398,8 +398,10 @@ load_tfm (url file_name, string family, int size) {
   if ((tfm->lf-6) !=
       (tfm->lh + (tfm->ec + 1 - tfm->bc) +
        tfm->nw + tfm->nh + tfm->nd + tfm->ni +
-       tfm->nl + tfm->nk + tfm->ne + tfm->np))
+       tfm->nl + tfm->nk + tfm->ne + tfm->np)) {
+    cout << "invalid tfm file\n";
     FAILED ("invalid tfm file");
+  }
   
   parse (s, i, tfm->header, tfm->lh);
   parse (s, i, tfm->char_info, tfm->ec+1- tfm->bc);
