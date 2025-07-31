@@ -27,6 +27,10 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/wait.h>
+#else
+namespace wsoc {
+#include <winsock2.h>
+}
 #endif
 #if !defined(__APPLE__) && !defined(__FreeBSD__)
 #include <malloc.h>
@@ -283,6 +287,9 @@ cmdline_link_rep::read (int channel) {
 void
 cmdline_link_rep::listen (int msecs) {
   //cout << "Listen " << msecs << "\n";
+#ifdef OS_MINGW
+  using namespace wsoc;
+#endif
   if (!alive) return;
   time_t wait_until= texmacs_time () + msecs;
   while (true) {

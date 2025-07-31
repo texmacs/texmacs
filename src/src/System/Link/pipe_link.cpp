@@ -288,6 +288,9 @@ pipe_link_rep::read (int channel) {
 
 void
 pipe_link_rep::listen (int msecs) {
+#ifdef OS_MINGW
+  using namespace wsoc;
+#endif
   if (!alive) return;
   time_t wait_until= texmacs_time () + msecs;
   while ((outbuf == "") && (errbuf == "")) {
