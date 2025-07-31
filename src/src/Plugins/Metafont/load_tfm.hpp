@@ -19,23 +19,23 @@
 RESOURCE(tex_font_metric);
 
 struct tex_font_metric_rep: rep<tex_font_metric> {
-  HN      lf, lh, bc, ec;
-  HN      nw, nh, nd, ni;
-  HN      nl, nk, ne, np;
+  N16     lf, lh, bc, ec;
+  N16     nw, nh, nd, ni;
+  N16     nl, nk, ne, np;
 
-  SI*     header;
-  SI*     char_info;
-  SI*     width;
-  SI*     height;
-  SI*     depth;
-  SI*     italic;
-  SI*     lig_kern;
-  SI*     kern;
-  SI*     exten;
-  SI*     param;
+  Z32*    header;
+  Z32*    char_info;
+  Z32*    width;
+  Z32*    height;
+  Z32*    depth;
+  Z32*    italic;
+  Z32*    lig_kern;
+  Z32*    kern;
+  Z32*    exten;
+  Z32*    param;
 
-  SI      left     , right;
-  SI      left_prog, right_prog;
+  Z32     left     , right;
+  Z32     left_prog, right_prog;
 
   int     size; // original size (needed to compute magnification of pk font)
 
@@ -44,30 +44,30 @@ struct tex_font_metric_rep: rep<tex_font_metric> {
   tex_font_metric_rep (string name);
   ~tex_font_metric_rep ();
 
-  SI      w (QN c);
-  SI      h (QN c);
-  SI      d (QN c);
-  SI      i (QN c);
-  SI      tag (QN c);
-  SI      rem (QN c);
-  int     list_len (QN c);
-  QN      nth_in_list (QN c, int n);
-  QN      top (QN c);
-  QN      mid (QN c);
-  QN      bot (QN c);
-  QN      rep (QN c);
+  Z32     w (N8 c);
+  Z32     h (N8 c);
+  Z32     d (N8 c);
+  Z32     i (N8 c);
+  Z32     tag (N8 c);
+  Z32     rem (N8 c);
+  int     list_len (N8 c);
+  N8      nth_in_list (N8 c, int n);
+  N8      top (N8 c);
+  N8      mid (N8 c);
+  N8      bot (N8 c);
+  N8      rep (N8 c);
 
-  SI      design_size ();
+  Z32     design_size ();
   double  slope ();
-  SI      spc ();
-  SI      spc_stretch ();
-  SI      spc_shrink ();
-  SI      x_height ();
-  SI      spc_quad ();
-  SI      spc_extra ();
-  SI      parameter (int i);
+  Z32     spc ();
+  Z32     spc_stretch ();
+  Z32     spc_shrink ();
+  Z32     x_height ();
+  Z32     spc_quad ();
+  Z32     spc_extra ();
+  Z32     parameter (int i);
 
-  void    execute (SI* s, int n, SI* buf, SI* ker, int& m);
+  void    execute (Z32* s, int n, Z32* buf, Z32* ker, int& m);
   void    get_xpositions (int* s, int n, double unit, SI* xpos, bool ligf);
 };
 
