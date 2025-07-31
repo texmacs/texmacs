@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include <iostream>
+#include <cstring>
 using namespace std;
 
 #define DATA_BEGIN   ((char) 2)
