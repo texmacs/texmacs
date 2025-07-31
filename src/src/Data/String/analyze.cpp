@@ -1148,47 +1148,44 @@ downgrade_math_letters (string s) {
 ******************************************************************************/
 
 void
-parse (string s, int& pos, QI& ret) {
-  ret= (QI) s[pos++];
+parse (string s, int& pos, Z8& ret) {
+  ret= (Z8) s[pos++];
 }
 
 void
-parse (string s, int& pos, QN& ret) {
-  ret= (QN) s[pos++];
+parse (string s, int& pos, N8& ret) {
+  ret= (N8) s[pos++];
 }
 
 void
-parse (string s, int& pos, HI& ret) {
-  QI c1= (QI) s[pos++];
-  QN c2= (QN) s[pos++];
-  ret= (((HI) c1)<<8)+ c2;
+parse (string s, int& pos, Z16& ret) {
+  Z8 c1= (Z8) s[pos++];
+  N8 c2= (N8) s[pos++];
+  ret= (((short) c1)<<8)+ c2;
 }
 
 void
-parse (string s, int& pos, HN& ret) {
-  QN c1= (QN) s[pos++];
-  QN c2= (QN) s[pos++];
-  ret= (((HN) c1)<<8)+ c2;
+parse (string s, int& pos, N16& ret) {
+  N8 c1= (N8) s[pos++];
+  N8 c2= (N8) s[pos++];
+  ret= (((ushort) c1)<<8)+ c2;
 }
 
 void
-parse (string s, int& pos, SI& ret) {
-  QI c1= (QI) s[pos++];
-  QN c2= (QN) s[pos++];
-  QN c3= (QN) s[pos++];
-  QN c4= (QN) s[pos++];
-  ret= (((((((SI) c1)<<8)+ ((SI) c2))<<8)+ ((SI) c3))<<8)+ c4;
+parse (string s, int& pos, Z32& ret) {
+  Z8 c1= (Z8) s[pos++];
+  N8 c2= (N8) s[pos++];
+  N8 c3= (N8) s[pos++];
+  N8 c4= (N8) s[pos++];
+  ret= (((((((Z32) c1)<<8)+ ((Z32) c2))<<8)+ ((Z32) c3))<<8)+ c4;
 }
 
 void
-parse (string s, int& pos, SI*& a, int len) {
+parse (string s, int& pos, Z32*& a, int len) {
   int i;
-  a= tm_new_array<SI> (len);
+  a= tm_new_array<Z32> (len);
   for (i=0; i<len; i++) parse (s, pos, a[i]);
 }
-
-
-
 
 /******************************************************************************
 * Searching, replacing and pattern matching

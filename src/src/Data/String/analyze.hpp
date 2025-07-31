@@ -136,12 +136,12 @@ void skip_whitespace (string s, int& i);
 void skip_line (string s, int& i);
 void skip_symbol (string s, int& i);
 
-void parse (string s, int& pos, QI& ret);
-void parse (string s, int& pos, QN& ret);
-void parse (string s, int& pos, HI& ret);
-void parse (string s, int& pos, HN& ret);
-void parse (string s, int& pos, SI& ret);
-void parse (string s, int& pos, SI*& a, int len);
+void parse (string s, int& pos, Z8& ret);
+void parse (string s, int& pos, N8& ret);
+void parse (string s, int& pos, Z16& ret);
+void parse (string s, int& pos, N16& ret);
+void parse (string s, int& pos, Z32& ret);
+void parse (string s, int& pos, Z32*& a, int len);
 
 int    search_forwards (string what, string in);
 int    search_forwards (string what, int pos, string in);

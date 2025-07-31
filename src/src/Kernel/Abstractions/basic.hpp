@@ -26,22 +26,35 @@ typedef long intptr_t;
 #endif
 
 #define LESSGTR <>
-
 #define TM_DEBUG(x)
-typedef int SI;
-typedef unsigned int SN;
-typedef short HI;
-typedef unsigned short HN;
+
+typedef char Z8;
+typedef short Z16;
+typedef int Z32;
+typedef long Z64;
+typedef unsigned char N8;
+typedef unsigned short N16;
+typedef unsigned int N32;
+typedef unsigned long N64;
+
 typedef char QI;
-typedef unsigned char QN;
+typedef short HI;
+typedef int SI;
 typedef long long int DI;
+typedef unsigned char QN;
+typedef unsigned short HN;
+typedef unsigned int SN;
 typedef unsigned long long int DN;
+
 typedef void* pointer;
 typedef unsigned int color;
+
 #define MAX_INT 0x7fffffff
 #define MIN_INT 0x80000000
 #define MAX_SI 0x7fffffff
 #define MIN_SI 0x80000000
+#define PLUS_INFINITY  ((SI) 0x3fffffff)
+#define MINUS_INFINITY ((SI) 0xc0000000)
 
 /******************************************************************************
 * debugging

@@ -20,8 +20,6 @@
 #include "spacial.hpp"
 
 #define PIXEL          256
-#define PLUS_INFINITY  ((SI) 0x3fffffff)
-#define MINUS_INFINITY ((SI) 0xc0000000)
 #define PICTURE_ZOOM   1.0
 
 /******************************************************************************
