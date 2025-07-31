@@ -72,7 +72,7 @@
     <\unfolded-io>
       --\<gtr\>
     <|unfolded-io>
-      demo_run (texmacs_path + '/plugins/scilab/bin/scilab-demo.sce')
+      demo_run (texmacs_path + '/plugins/scilab/scilab/scilab-demo.sce')
     <|unfolded-io>
       \;
     </unfolded-io>
