@@ -21,35 +21,35 @@
 ;; Encode/decode properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (decode-mode m)
+(tm-define (table-decode-mode m)
   (cond ((== m "auto") "Auto")
 	((== m "exact") "Exact")
 	((== m "min") "Maximal")
 	((== m "max") "Minimal")
 	(else "Auto")))
 
-(define (encode-mode m)
+(tm-define (table-encode-mode m)
   (cond ((== m "Auto") "auto")
 	((== m "Exact") "exact")
 	((== m "Minimal") "max")
 	((== m "Maximal") "min")
 	(else "auto")))
 
-(define (decode-vcorrect m)
+(tm-define (table-decode-vcorrect m)
   (cond ((== m "n") "Off")
 	((== m "b") "Bottom")
 	((== m "t") "Top")
 	((== m "a") "Both")
 	(else "Both")))
 
-(define (encode-vcorrect m)
+(tm-define (table-encode-vcorrect m)
   (cond ((== m "Off") "n")
 	((== m "Bottom") "b")
 	((== m "Top") "t")
 	((== m "Both") "a")
 	(else "a")))
 
-(define (decode-halign m)
+(tm-define (table-decode-halign m)
   (cond ((== m "l") "Left")
 	((== m "c") "Center")
 	((== m "r") "Right")
@@ -57,7 +57,7 @@
 	((== m "L,") "Decimal comma")
 	(else "Left")))
 
-(define (encode-halign m)
+(tm-define (table-encode-halign m)
   (cond ((== m "Left") "l")
 	((== m "Center") "c")
 	((== m "Right") "r")
@@ -65,21 +65,21 @@
 	((== m "Decimal comma") "L,")
 	(else "l")))
 
-(define (decode-valign m)
+(tm-define (table-decode-valign m)
   (cond ((== m "t") "Top")
 	((== m "c") "Center")
 	((== m "b") "Bottom")
 	((== m "B") "Baseline")
 	(else "Baseline")))
 
-(define (encode-valign m)
+(tm-define (table-encode-valign m)
   (cond ((== m "Top") "t")
 	((== m "Center") "c")
 	((== m "Bottom") "b")
 	((== m "Baseline") "B")
 	(else "B")))
 
-(define (decode-valign* m)
+(tm-define (table-decode-valign* m)
   (cond ((== m "f") "Axis")
 	((== m "t") "Top")
 	((== m "c") "Center")
@@ -89,7 +89,7 @@
 	((== m "B") "Bottom baseline")
 	(else "Axis")))
 
-(define (encode-valign* m)
+(tm-define (table-encode-valign* m)
   (cond ((== m "Axis") "f")
 	((== m "Top") "t")
 	((== m "Center") "c")
@@ -99,31 +99,46 @@
 	((== m "Bottom baseline") "B")
 	(else "f")))
 
-(define (decode-hyphen m)
+(tm-define (table-decode-hyphen m)
   (cond ((== m "t") "Top")
 	((== m "c") "Center")
 	((== m "b") "Bottom")
 	((== m "n") "Off")
 	(else "Off")))
 
-(define (encode-hyphen m)
+(tm-define (table-encode-hyphen m)
   (cond ((== m "Top") "t")
 	((== m "Center") "c")
 	((== m "Bottom") "b")
 	((== m "Off") "n")
 	(else "n")))
 
-(define (decode-block m)
+(tm-define (table-decode-block m)
   (cond ((== m "no") "Never")
 	((== m "auto") "When wrapping")
 	((== m "yes") "Always")
 	(else "When wrapping")))
 
-(define (encode-block m)
+(tm-define (table-encode-block m)
   (cond ((== m "Never") "no")
 	((== m "When wrapping") "auto")
 	((== m "Always") "yes")
 	(else "auto")))
+
+(define encode-mode table-encode-mode)
+(define decode-mode table-decode-mode)
+(define encode-vcorrect table-encode-vcorrect)
+(define decode-vcorrect table-decode-vcorrect)
+(define encode-halign table-encode-halign)
+(define decode-halign table-decode-halign)
+(define encode-valign table-encode-valign)
+(define decode-valign table-decode-valign)
+(define encode-valign* table-encode-valign*)
+(define decode-valign* table-decode-valign*)
+(define encode-hyphen table-encode-hyphen)
+(define decode-hyphen table-decode-hyphen)
+(define encode-block table-encode-block)
+(define decode-block table-decode-block)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Cell properties
@@ -276,7 +291,9 @@
 
 (tm-define (open-cell-properties)
   (:interactive #t)
-  (dialogue-window cell-properties-widget noop "Cell properties"))
+  (if (side-tools?)
+      (tool-select :right 'cell-properties-tool)
+      (dialogue-window cell-properties-widget noop "Cell properties")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Table properties

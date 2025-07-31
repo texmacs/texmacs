@@ -312,6 +312,7 @@
 (lazy-menu (table table-menu) insert-table-menu)
 (lazy-define (table table-edit) table-resize-notify)
 (lazy-define (table table-widgets) open-cell-properties open-table-properties)
+(lazy-tool (table table-tools) cell-properties-tool)
 (tm-property (open-cell-properties) (:interactive #t))
 (tm-property (open-table-properties) (:interactive #t))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
