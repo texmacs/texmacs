@@ -30,12 +30,11 @@ typedef long intptr_t;
 
 typedef char Z8;
 typedef short Z16;
-typedef int Z32;
-typedef long Z64;
 typedef unsigned char N8;
 typedef unsigned short N16;
+static_assert (sizeof(int) == 4, "int type should be 4 bytes long");
+typedef int Z32;
 typedef unsigned int N32;
-typedef unsigned long N64;
 
 typedef int SI;
 typedef long long int DI;
