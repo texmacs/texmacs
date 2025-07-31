@@ -406,20 +406,20 @@ find_ps_font_name (string name, string s) {
 
 #define HEX_PER_LINE 30
 
-static SI parse_length (string pfb, int& pos) {
-  QN c4= (QN) pfb[pos++];
-  QN c3= (QN) pfb[pos++];
-  QN c2= (QN) pfb[pos++];
-  QI c1= (QI) pfb[pos++];
-  return (((((((SI) c1)<<8)+ ((SI) c2))<<8)+ ((SI) c3))<<8)+ c4;
+static Z32 parse_length (string pfb, int& pos) {
+  N8 c4= (N8) pfb[pos++];
+  N8 c3= (N8) pfb[pos++];
+  N8 c2= (N8) pfb[pos++];
+  Z8 c1= (Z8) pfb[pos++];
+  return (((((((Z32) c1)<<8)+ ((Z32) c2))<<8)+ ((Z32) c3))<<8)+ c4;
 }
 
 static string pfb_to_pfa (url file) {
   //cout << "pfb_to_pfa :" << file << LF;
   string pfb, pfa;
-  QN magic, type = 0;
-  SI length;
-  
+  N8 magic, type = 0;
+  Z32 length;
+
   (void) load_string (file, pfb, true);
   int pos = 0, size = N(pfb);
   while ((pos < size) && (type != 3)) {
@@ -437,8 +437,8 @@ static string pfb_to_pfa (url file) {
         length = parse_length (pfb, pos);
         // parse (pfb, pos, length);
         //cout << "plain text of size " << length << LF;
-        for (int i=0; i <length; i++) {
-          QI ch;
+        for (int i=0; i < ((int) length); i++) {
+          Z8 ch;
           parse(pfb, pos, ch);
           if (ch == '\r') pfa << "\n";
           else pfa << ch;
@@ -450,8 +450,8 @@ static string pfb_to_pfa (url file) {
         length = parse_length (pfb, pos);
         //        parse (pfb, pos, length);
         //cout << "binary data of size " << length << LF;
-        for (int i=0; i <length; i++) {
-          QI ch;
+        for (int i=0; i < ((int) length); i++) {
+          Z8 ch;
           parse(pfb, pos, ch);
           pfa << as_hexadecimal (ch, 2);
           if ((i+1) % HEX_PER_LINE == 0) pfa << "\n"; 

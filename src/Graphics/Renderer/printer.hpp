@@ -73,7 +73,7 @@ public:
 
   /********************* subroutines for drawing text ************************/
 
-  void make_tex_char (string name, QN c, glyph gl);
+  void make_tex_char (string name, N8 c, glyph gl);
   void select_tex_font (string name);
   void generate_tex_fonts ();
 

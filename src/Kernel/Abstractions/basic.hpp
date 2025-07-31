@@ -37,10 +37,8 @@ typedef unsigned short N16;
 typedef unsigned int N32;
 typedef unsigned long N64;
 
-typedef char QI;
 typedef int SI;
 typedef long long int DI;
-typedef unsigned char QN;
 typedef void* pointer;
 typedef unsigned int color;
 
