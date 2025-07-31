@@ -513,6 +513,27 @@ qt_simple_widget_rep::get_renderer() {
 }
 
 /*
+  This function adds a default background to contrast with user
+  backgrounds which have transparency.
+*/
+#if QT_VERSION >= 0x060000
+static void
+qt_fill_default_background (QPainter* p, const QRect& r) {
+  static bool first_time= true;
+  static QBrush br (Qt::lightGray, Qt::CrossPattern);
+  if (first_time) {
+    url neutral_pattern= resolve_pattern ("neutral-pattern.png");
+    if (!is_none (neutral_pattern)) {
+      QImage im (utf8_to_qstring (concretize (neutral_pattern)));
+      if (!im.isNull ()) br= QBrush (im);
+    }
+    first_time= false;
+  }
+  if (p != NULL) p->fillRect (r, br);
+}
+#endif
+
+/*
  This function is called by the qt_gui::update method (via repaint_all) to keep
  the backing store in sync and propagate the changes to the surface on screen.
  First we check that the backing store geometry is right and then we
@@ -559,7 +580,6 @@ qt_simple_widget_rep::repaint_invalid_regions () {
 #if QT_VERSION >= 0x060000
     newBackingPixmap.setDevicePixelRatio (backingPixmap->devicePixelRatio());
 #endif
-    //newBackingPixmap.fill (Qt::red); // don't do that for backgrounds with transparency
     QPainter p (&newBackingPixmap);
     p.drawPixmap (-dx,-dy,*backingPixmap);
     p.end();
@@ -673,6 +693,9 @@ qt_simple_widget_rep::repaint_invalid_regions () {
         QRect qr = QRect (r0->x1 / dpr, r0->y1 / dpr,
                           (r0->x2 - r0->x1) / dpr,
                           (r0->y2 - r0->y1) / dpr);
+        QRect qr0 = QRect (r0->x1, r0->y1,
+			   r0->x2 - r0->x1,
+			   r0->y2 - r0->y1);
 #else
         QRect qr = QRect (r0->x1 / retina_factor, r0->y1 / retina_factor,
                           (r0->x2 - r0->x1) / retina_factor,
@@ -683,6 +706,9 @@ qt_simple_widget_rep::repaint_invalid_regions () {
         ren->encode (r->x1, r->y1);
         ren->encode (r->x2, r->y2);
         ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
+#if QT_VERSION >= 0x060000
+	qt_fill_default_background (((qt_renderer_rep*) ren)->painter, qr0);
+#endif
         handle_repaint (ren, r->x1, r->y2, r->x2, r->y1);
         if (gui_interrupted ()) {
           //cout << "interrupted repainting of  " << r0 << "\n";
