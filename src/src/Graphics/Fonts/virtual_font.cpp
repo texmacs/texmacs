@@ -1804,7 +1804,7 @@ virtual_font_rep::get_char (string s, font_metric& cfnm, font_glyphs& cfng) {
   int n= N(s);
   if (n == 0) return -1;
   if (n == 1) {
-    int c= ((QN) s[0]);
+    int c= ((N8) s[0]);
     if ((c<0) || (c>=last)) return -1;
     cfnm= fnm;
     cfng= fng;
@@ -1832,7 +1832,7 @@ virtual_font_rep::get_char (string s, font_metric& cfnm, font_glyphs& cfng) {
     return c2;
   }
   else {
-    int c= ((QN) s[0]);
+    int c= ((N8) s[0]);
     if ((c<0) || (c>=last)) return -1;
     string sub= "[" * as_string (c) * "," * s(1,n) * "]";
     make_char_font (res_name * sub, cfnm, cfng);
@@ -1846,7 +1846,7 @@ virtual_font_rep::get_char (string s, font_metric& cfnm, font_glyphs& cfng) {
 tree
 virtual_font_rep::get_tree (string s) {
   if (s == "") return "";
-  int c= ((QN) s[0]), n= N(s);
+  int c= ((N8) s[0]), n= N(s);
   if (s[0] == '<' && s[n-1] == '>') {
     if (!virt->dict->contains (s)) {
       if (!is_digit (s[n-2])) return "";

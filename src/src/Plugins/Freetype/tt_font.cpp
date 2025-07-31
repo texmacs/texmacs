@@ -134,7 +134,7 @@ tt_font_rep::get_extents (string s, metric& ex) {
     ex->y3= ex->y1= 0; ex->y4= ex->y2= yx;
   }
   else {
-    QN c= s[0];
+    N8 c= s[0];
     metric_struct* first= fnm->get (c);
     ex->x1= ROUND (first->x1);
     ex->y1= ROUND (first->y1);
@@ -148,8 +148,8 @@ tt_font_rep::get_extents (string s, metric& ex) {
 
     int i;
     for (i=1; i<N(s); i++) {
-      if (i>0) x += ROUND (fnm->kerning ((QN) s[i-1], (QN) s[i]));
-      QN c= s[i];
+      if (i>0) x += ROUND (fnm->kerning ((N8) s[i-1], (N8) s[i]));
+      N8 c= s[i];
       metric_struct* next= fnm->get (c);
       ex->x1= min (ex->x1, x+ ROUND (next->x1));
       ex->y1= min (ex->y1, ROUND (next->y1));
@@ -171,8 +171,8 @@ tt_font_rep::get_xpositions (string s, SI* xpos) {
   
   SI x= 0;
   for (i=0; i<N(s); i++) {
-    if (i>0) x += ROUND (fnm->kerning ((QN) s[i-1], (QN) s[i]));
-    metric_struct* next= fnm->get ((QN) s[i]);
+    if (i>0) x += ROUND (fnm->kerning ((N8) s[i-1], (N8) s[i]));
+    metric_struct* next= fnm->get ((N8) s[i]);
     x += ROUND (next->x2);
     xpos[i+1]= x;
   }
@@ -183,8 +183,8 @@ tt_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   if (N(s)!=0) {
     int i;
     for (i=0; i<N(s); i++) {
-      if (i>0) x += ROUND (fnm->kerning ((QN) s[i-1], (QN) s[i]));
-      QN c= s[i];
+      if (i>0) x += ROUND (fnm->kerning ((N8) s[i-1], (N8) s[i]));
+      N8 c= s[i];
       ren->draw (c, fng, x, y);
       metric_struct* ex= fnm->get (c);
       x += ROUND (ex->x2);
@@ -208,7 +208,7 @@ tt_font_rep::advance_glyph (string s, int& pos, bool ligf) {
 glyph
 tt_font_rep::get_glyph (string s) {
   if (N(s)!=1) return font_rep::get_glyph (s);
-  int c= ((QN) s[0]);
+  int c= ((N8) s[0]);
   glyph gl= fng->get (c);
   if (is_nil (gl)) return font_rep::get_glyph (s);
   return gl;
@@ -217,7 +217,7 @@ tt_font_rep::get_glyph (string s) {
 int
 tt_font_rep::index_glyph (string s, font_metric& rm, font_glyphs& rg) {
   if (N(s)!=1) return font_rep::index_glyph (s, rm, rg);
-  int c= ((QN) s[0]);
+  int c= ((N8) s[0]);
   glyph gl= fng->get (c);
   if (is_nil (gl)) return font_rep::index_glyph (s, rm, rg);
   rm= fnm;

@@ -20,8 +20,6 @@ class frame;
 RESOURCE(font_metric);
 RESOURCE(font_glyphs);
 
-typedef unsigned char QN;
-
 struct metric_struct {
   SI x1, y1;
   SI x2, y2;
@@ -43,7 +41,7 @@ struct glyph_rep: concrete_struct {
   short lwidth;              // logical width of character
   short status;              // status for extensible characters
   short artistic;            // result of applying an artistic effect
-  QN*   raster;              // character definition
+  N8*   raster;              // character definition
 
   glyph_rep (int w, int h, int xoff, int yoff, int depth, int status=0);
   ~glyph_rep ();

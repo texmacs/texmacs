@@ -381,7 +381,7 @@ x_font_rep::get_extents (string s, metric& ex) {
     ex->y3= ex->y1= 0; ex->y4= ex->y2= yx;
   }
   else {
-    QN c= s[0];
+    N8 c= s[0];
     metric_struct* first= fnm->get (c);
     ex->x1= first->x1; ex->y1= first->y1;
     ex->x2= first->x2; ex->y2= first->y2;
@@ -391,7 +391,7 @@ x_font_rep::get_extents (string s, metric& ex) {
 
     int i;
     for (i=1; i<N(s); i++) {
-      QN c= s[i];
+      N8 c= s[i];
       metric_struct* next= fnm->get (c);
       ex->x1= min (ex->x1, x+ next->x1); ex->y1= min (ex->y1, next->y1);
       ex->x2= max (ex->x2, x+ next->x2); ex->y2= max (ex->y2, next->y2);
@@ -409,7 +409,7 @@ x_font_rep::get_xpositions (string s, SI* xpos) {
   
   SI x= 0;
   for (i=0; i<N(s); i++) {
-    metric_struct* next= fnm->get ((QN) s[i]);
+    metric_struct* next= fnm->get ((N8) s[i]);
     x += next->x2;
     xpos[i+1]= x;
   }
@@ -420,7 +420,7 @@ x_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   if (N(s)!=0) {
     int i;
     for (i=0; i<N(s); i++) {
-      QN c= s[i];
+      N8 c= s[i];
       ren->draw (c, fng, x, y);
       metric_struct* ex= fnm->get (c);
       x += ex->x2;
@@ -437,7 +437,7 @@ x_font_rep::magnify (double zoomx, double zoomy) {
 glyph
 x_font_rep::get_glyph (string s) {
   if (N(s)!=1) return font_rep::get_glyph (s);
-  int c= ((QN) s[0]);
+  int c= ((N8) s[0]);
   glyph gl= fng->get (c);
   if (is_nil (gl)) return font_rep::get_glyph (s);
   return gl;
@@ -446,7 +446,7 @@ x_font_rep::get_glyph (string s) {
 int
 x_font_rep::index_glyph (string s, font_metric& rm, font_glyphs& rg) {
   if (N(s)!=1) return font_rep::index_glyph (s, rm, rg);
-  int c= ((QN) s[0]);
+  int c= ((N8) s[0]);
   glyph gl= fng->get (c);
   if (is_nil (gl)) return font_rep::index_glyph (s, rm, rg);
   rm= fnm;
