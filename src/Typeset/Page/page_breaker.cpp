@@ -169,7 +169,7 @@ fast_find (array<path> a, path p) {
   int n= N(a), step= n, i= n>>1;
   while (step>1) {
     step= (step+1)>>1;
-    if (var_path_inf_eq (p, a[i])) i= max (0, i-step);
+    if (var_path_inf_eq (p, a[i])) i= max (i-step, 0);
     else i= min (n-1, i+step);
   }
   if (!var_path_inf_eq (p, a[i])) i= i+1;
@@ -278,9 +278,9 @@ page_breaker_rep::init_flows (
     }
     int  id= flow_id (fl);
     int  nr= N (flow_tot [id]);
-    SI   bot_cor= max (0, l[i]->b->y1- fn->y1);
+    SI   bot_cor= max (l[i]->b->y1- fn->y1, 0);
     SI   bod_cor= l[i]->b->h ();
-    SI   top_cor= max (0, fn->y2- l[i]->b->y2);
+    SI   top_cor= max (fn->y2- l[i]->b->y2, 0);
     bool cont= (nr>0) && (path_up (flow[id][nr-1]) == p);
     flow     [id] << (p * i);
     flow_ht  [id] << (space (l[i]->b->h()) + l[i]->spc);

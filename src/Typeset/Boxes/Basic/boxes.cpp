@@ -29,8 +29,8 @@ box box::operator [] (path p) {
   if (is_nil (p)) return *this; else return rep->subbox(p->item)[p->next]; }
 double box_rep::left_slope () { return 0.0; }
 double box_rep::right_slope () { return 0.0; }
-SI box_rep::left_correction () { return (SI) (-min (0, y1) * left_slope ()); }
-SI box_rep::right_correction () { return (SI) (max (0, y2) * right_slope ()); }
+SI box_rep::left_correction () { return (SI) (-min (y1, 0) * left_slope ()); }
+SI box_rep::right_correction () { return (SI) (max (y2, 0) * right_slope ()); }
 SI box_rep::lsub_correction () { return 0; }
 SI box_rep::lsup_correction () { return 0; }
 SI box_rep::rsub_correction () { return 0; }

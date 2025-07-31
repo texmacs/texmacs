@@ -319,9 +319,9 @@ struct side_box_rep: public composite_box_rep {
   double right_slope () {
     return bs[id_right]->right_slope (); }
   SI left_correction () {
-    return max (0, x1 - sx1(id_left) + bs[id_left]->left_correction ()); }
+    return max (x1 - sx1(id_left) + bs[id_left]->left_correction (), 0); }
   SI right_correction () {
-    return max (0, sx2(id_right) + bs[id_right]->right_correction () - x2); }
+    return max (sx2(id_right) + bs[id_right]->right_correction () - x2, 0); }
   SI lsub_correction () {
     return nr_left==0? bs[0]->lsub_correction (): left_correction (); }
   SI lsup_correction () {
