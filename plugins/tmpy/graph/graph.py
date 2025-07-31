@@ -126,6 +126,9 @@ class Graph(object):
     def get_png_path(self):
         return self.get_tmp_dir() + self.name + ".png"
 
+    def get_eps_path_prefix(self):
+        return self.get_tmp_dir() + self.name
+
     def get_eps_path(self):
         return self.get_tmp_dir() + self.name + ".eps"
 

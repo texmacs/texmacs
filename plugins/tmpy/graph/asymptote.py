@@ -37,7 +37,7 @@ class Asymptote(Graph):
         with open(code_path, 'w') as code_file:
             code_file.write(code)
 
-        cmd = [self.name, "-quiet", "-feps", "-o", self.get_eps_path(), code_path]
+        cmd = [self.name, "-quiet", "-feps", "-o", self.get_eps_path_prefix(), code_path]
         p = Popen(cmd, stderr=PIPE)
         out, err = p.communicate()
         if (p.returncode == 0):
