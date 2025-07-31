@@ -38,21 +38,16 @@ typedef unsigned int N32;
 typedef unsigned long N64;
 
 typedef char QI;
-typedef short HI;
 typedef int SI;
 typedef long long int DI;
 typedef unsigned char QN;
-typedef unsigned short HN;
-typedef unsigned int SN;
-typedef unsigned long long int DN;
-
 typedef void* pointer;
 typedef unsigned int color;
 
-#define MAX_INT 0x7fffffff
-#define MIN_INT 0x80000000
-#define MAX_SI 0x7fffffff
-#define MIN_SI 0x80000000
+#define MAX_INT ((int) 0x7fffffff)
+#define MIN_INT ((int) 0x80000000)
+#define MAX_SI ((SI) 0x7fffffff)
+#define MIN_SI ((SI) 0x80000000)
 #define PLUS_INFINITY  ((SI) 0x3fffffff)
 #define MINUS_INFINITY ((SI) 0xc0000000)
 
@@ -138,10 +133,10 @@ inline double min (double i, double j) { if (i<j) return i; else return j; }
 inline double max (double i, double j) { if (i>j) return i; else return j; }
 inline int hash (int i) { return i; }
 inline int hash (long int i) { return (int) i; }
-inline int hash (DI i) { return (int) i; }
+inline int hash (long long int i) { return (int) i; }
 inline int hash (unsigned int i) { return i; }
 inline int hash (unsigned long int i) { return (int) i; }
-inline int hash (DN i) { return (int) i; }
+inline int hash (unsigned long long int i) { return (int) i; }
 inline int hash (pointer ptr) {
   return ((int) ((intptr_t) ptr)) + (((int) ((intptr_t) ptr)) % 19); }
 inline int hash (float x) {
