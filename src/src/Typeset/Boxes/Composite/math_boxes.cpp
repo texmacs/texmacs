@@ -82,8 +82,8 @@ frac_box_rep::frac_box_rep (
   position ();
   italic_restore (b1);
   italic_restore (b2);
-  x1= min (0, x1);
-  x2= max (w, x2);
+  x1= min (x1, 0);
+  x2= max (x2, w);
   left_justify ();
   finalize ();
 }

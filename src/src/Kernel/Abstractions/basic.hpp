@@ -36,17 +36,28 @@ static_assert (sizeof(int) == 4, "int type should be 4 bytes long");
 typedef int Z32;
 typedef unsigned int N32;
 
-typedef int SI;
-typedef long long int DI;
 typedef void* pointer;
 typedef unsigned int color;
 
 #define MAX_INT ((int) 0x7fffffff)
 #define MIN_INT ((int) 0x80000000)
+
+#define SI_32
+#ifdef SI_32
+typedef int SI;
+typedef long long int DI;
 #define MAX_SI ((SI) 0x7fffffff)
 #define MIN_SI ((SI) 0x80000000)
 #define PLUS_INFINITY  ((SI) 0x3fffffff)
 #define MINUS_INFINITY ((SI) 0xc0000000)
+#else
+typedef long int SI;
+typedef long long int DI;
+#define MAX_SI ((SI) 0x7fffffffffffffff)
+#define MIN_SI ((SI) 0x8000000000000000)
+#define PLUS_INFINITY  ((SI) 0x3fffffffffffffff)
+#define MINUS_INFINITY ((SI) 0xc000000000000000)
+#endif
 
 /******************************************************************************
 * debugging
@@ -122,10 +133,20 @@ void clear_debug_messages (string channel);
 * miscellaneous routines
 ******************************************************************************/
 
-inline SI min (SI i, SI j) { if (i<j) return i; else return j; }
-inline SI max (SI i, SI j) { if (i>j) return i; else return j; }
-inline DI min (DI i, DI j) { if (i<j) return i; else return j; }
-inline DI max (DI i, DI j) { if (i>j) return i; else return j; }
+inline int min (int i, int j) { if (i<j) return i; else return j; }
+inline int max (int i, int j) { if (i>j) return i; else return j; }
+inline long int min (long int i, long int j) {
+  if (i<j) return i; else return j; }
+inline long int max (long int i, long int j) {
+  if (i>j) return i; else return j; }
+inline long int min (long int i, int j) {
+  if (i<j) return i; else return j; }
+inline long int max (long int i, int j) {
+  if (i>j) return i; else return j; }
+inline long long int min (long long int i, long long int j) {
+  if (i<j) return i; else return j; }
+inline long long int max (long long int i, long long int j) {
+  if (i>j) return i; else return j; }
 inline double min (double i, double j) { if (i<j) return i; else return j; }
 inline double max (double i, double j) { if (i>j) return i; else return j; }
 inline int hash (int i) { return i; }

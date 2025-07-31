@@ -72,7 +72,7 @@ lazy_canvas_rep::query (lazy_type request, format fm) {
       SI pad = props->bar_padding;
       SI bor = props->border;
       if (ends (type, "w") || ends (type, "e"))
-	delta= max (0, w + pad);
+	delta= max (w + pad, 0);
       delta += 2 * bor + 2 * hpad;
     }
     return make_format_width (x2 - x1 + delta);
@@ -92,7 +92,7 @@ lazy_canvas_rep::produce (lazy_type request, format fm) {
       SI pad = props->bar_padding;
       SI bor = props->border;
       if (ends (type, "w") || ends (type, "e"))
-	delta= max (0, w + pad);
+	delta= max (w + pad, 0);
       delta += 2 * bor + 2 * hpad;
     }
     format bfm= fm;

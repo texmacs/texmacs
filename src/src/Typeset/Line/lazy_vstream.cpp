@@ -62,8 +62,8 @@ format_vstream_as_box (
     if (vpos>0) dy= b->sy (0);
     else if (vpos<0) dy= b->sy (n-1);
     else dy= (b->sy (n>>1) + b->sy ((n-1)>>1)) >> 1;
-    if (depth  > 0) bot= max (0, depth + b[n-1]->y1);
-    if (height > 0) top= max (0, height- b[0  ]->y2);
+    if (depth  > 0) bot= max (depth + b[n-1]->y1, 0);
+    if (height > 0) top= max (height- b[0  ]->y2, 0);
   }
   if (dy != 0) b= move_box (ip, b, 0, -dy);
   if ((top != 0) || (bot != 0))
