@@ -16,8 +16,6 @@
 #include "tm_timer.hpp"
 #include "renderer.hpp" // for PIXEL
 
-typedef short HI;
-
 /******************************************************************************
 * Initialize the pk_loader
 ******************************************************************************/
@@ -37,18 +35,18 @@ pk_loader::pk_loader (url pk_file_name, tex_font_metric tfm2, int dpi2):
 * File handling
 ******************************************************************************/
 
-HI
+Z16
 pk_loader::pkbyte () {
   if (input_pos == N(input_s)) {
     failed_error << "pk file= " << file_name << "\n";
     FAILED ("unexpected eof in pk file");
   }
-  return (HI) ((QN) input_s [input_pos++]);
+  return (Z16) ((N8) input_s [input_pos++]);
 }
 
-SI
+Z32
 pk_loader::pkduo () {
-  SI i;
+  Z32 i;
 
   i = pkbyte ();
   if (i > 127) i -= 256;
@@ -56,9 +54,9 @@ pk_loader::pkduo () {
   return i;
 }
 
-SI
+Z32
 pk_loader::pktrio () {
-  SI i;
+  Z32 i;
 
   i = pkbyte ();
   i = i * 256 + pkbyte ();
@@ -66,9 +64,9 @@ pk_loader::pktrio () {
   return i;
 }
 
-SI
+Z32
 pk_loader::pkquad () {
-  SI i;
+  Z32 i;
 
   i = pkbyte ();
   if (i > 127) i -= 256;
@@ -82,9 +80,9 @@ pk_loader::pkquad () {
 * Get a nybble, bit, and packed word from the packed data structure.
 ******************************************************************************/
 
-HI
+Z16
 pk_loader::getnyb () {
-  HN temp;
+  N16 temp;
   if (bitweight == 0) {
     bitweight = 16; 
     inputbyte = pkbyte ();
@@ -107,9 +105,9 @@ pk_loader::getbit ()
   return (inputbyte & bitweight);
 }
 
-HN
+N16
 pk_loader::pkpackednum () {
-  HN i, j; 
+  N16 i, j; 
   i = getnyb (); 
   if (i == 0) {
     do { j = getnyb (); i++; } while (! (j != 0)); 
@@ -129,9 +127,9 @@ pk_loader::pkpackednum () {
   } 
 } 
 
-HN
+N16
 pk_loader::rest () {
-  HN i;
+  N16 i;
 
   if (remainder < 0) {
     remainder = - remainder;
@@ -151,8 +149,8 @@ pk_loader::rest () {
   return 0;
 }
 
-HN
-pk_loader::handlehuge (HN i , HN k) {
+N16
+pk_loader::handlehuge (N16 i , N16 k) {
   long j = k;
   
   while (i) {
@@ -164,7 +162,7 @@ pk_loader::handlehuge (HN i , HN k) {
   return (rest ());
 }
 
-HN
+N16
 pk_loader::realfunc () {
   if (real_func_flag) return pkpackednum ();
   else return rest ();
@@ -177,7 +175,7 @@ pk_loader::realfunc () {
 struct char_bitstream {
   glyph& gl;
   int x, y;
-  QN* pos;
+  N8* pos;
   int bit;
 
   char_bitstream (glyph& gl2):
@@ -211,12 +209,12 @@ struct char_bitstream {
 
 void
 pk_loader::unpack (glyph& gl) { 
-  SI i, j;
-  HN wordweight;
-  HI rowsleft; 
+  Z32  i, j;
+  N16  wordweight;
+  Z16  rowsleft; 
   bool turnon;
-  HI hbit;
-  HN count; 
+  Z16  hbit;
+  N16  count; 
   char_bitstream bit_out (gl);
 
   real_func_flag = true;
@@ -275,21 +273,21 @@ pk_loader::unpack (glyph& gl) {
 
 glyph*
 pk_loader::load_pk () {
-  HI i;
-  SI k;
-  SI length = 0, startpos = 0;
+  Z16 i;
+  Z32 k;
+  Z32 length = 0, startpos = 0;
 
-  HI charcode= 0;
-  SI cwidth;
-  SI cheight;
-  SI xoff;
-  SI yoff;
+  Z16 charcode= 0;
+  Z32 cwidth;
+  Z32 cheight;
+  Z32 xoff;
+  Z32 yoff;
   
   bench_start ("decode pk");
   glyph* fng= tm_new_array<glyph> (ec+1-bc);
   char_pos = tm_new_array<int> (ec+1-bc);
   unpacked = tm_new_array<bool> (ec+1-bc);
-  char_flag = tm_new_array<HN> (ec+1-bc);
+  char_flag = tm_new_array<N16> (ec+1-bc);
   for(i=0;i<ec+1-bc;i++) {
     char_pos[i] = 0;
     char_flag[i] = 0;
@@ -379,22 +377,22 @@ pk_loader::load_pk () {
 	if (yoff > 127) yoff -= 256;
       }
       if ((cwidth > 0) && (cheight > 0) &&
-	  (((QN) charcode) >= bc) && (((QN) charcode) <= ec)) {
+	  (((N8) charcode) >= bc) && (((N8) charcode) <= ec)) {
 	// cout << "---> unpacking " << charcode
 	//     << " at " << input_pos 
 	//     << " (start " << startpos << ", length " << length << ")!\n";
 	glyph gl (cwidth, cheight, xoff, yoff);
 
 	/* needed for lazy unpacking */
-	char_pos[((QN) charcode)- bc] = input_pos;
-	char_flag[((QN) charcode)- bc] = flagbyte;
-	unpacked[((QN) charcode)- bc] = false;
+	char_pos[((N8) charcode)- bc] = input_pos;
+	char_flag[((N8) charcode)- bc] = flagbyte;
+	unpacked[((N8) charcode)- bc] = false;
 	/* skip packed bitmap */
 	input_pos = startpos + length;
 
-	fng [((QN) charcode)- bc]= gl;
+	fng [((N8) charcode)- bc]= gl;
 	// cout << "---> " << charcode << " done !\n";
-	// cout << fng [((QN) charcode)- bc] << "\n";
+	// cout << fng [((N8) charcode)- bc] << "\n";
       }
     }
 
@@ -421,10 +419,10 @@ pk_loader::load_pk () {
   int c;
   for (c=0; c<=ec-bc; c++)
     if (!is_nil (fng[c])) {
-      SI design_size = tfm->design_size () >> 12;
-      SI display_size= (((design_size*dpi)/72)*PIXEL) >> 8;
-      double unit    = ((double) display_size) / ((double) (1<<20));
-      SI lwidth= (SI) (((double) (tfm->w(c+bc))) * unit);
+      Z32 design_size = tfm->design_size () >> 12;
+      Z32 display_size= (((design_size*dpi)/72)*PIXEL) >> 8;
+      double unit     = ((double) display_size) / ((double) (1<<20));
+      Z32 lwidth= (Z32) (((double) (tfm->w(c+bc))) * unit);
       fng[c]->lwidth= ((lwidth+(PIXEL>>1)) / PIXEL);
     }
 

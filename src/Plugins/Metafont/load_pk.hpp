@@ -23,11 +23,11 @@ struct pk_loader {
   tex_font_metric tfm;
   int             dpi;
 
-  HN   inputbyte;
-  HN   flagbyte; 
-  HN   bitweight; 
-  HN   dynf;
-  HN   repeatcount;
+  N16  inputbyte;
+  N16  flagbyte; 
+  N16  bitweight; 
+  N16  dynf;
+  N16  repeatcount;
   long remainder;
   bool real_func_flag;
   int  bc;
@@ -35,20 +35,20 @@ struct pk_loader {
   
   /* for lazy unpacking */
   int*  char_pos;
-  HN*   char_flag;
+  N16*  char_flag;
   bool* unpacked;
-  
+
   pk_loader (url pk_file_name, tex_font_metric tfm, int dpi);
-  HI pkbyte ();
-  SI pkquad ();
-  SI pktrio ();
-  SI pkduo  ();
-  HI getnyb ();
+  Z16 pkbyte ();
+  Z32 pkquad ();
+  Z32 pktrio ();
+  Z32 pkduo  ();
+  Z16 getnyb ();
   bool getbit ();
-  HN pkpackednum ();  
-  HN rest ();
-  HN realfunc ();
-  HN handlehuge (HN i, HN k);
+  N16 pkpackednum ();  
+  N16 rest ();
+  N16 realfunc ();
+  N16 handlehuge (N16 i, N16 k);
   void unpack (glyph& gl);
   glyph* load_pk ();
 };
