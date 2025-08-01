@@ -896,11 +896,10 @@
   (update-menus))
 
 (tm-widget (plugin-preferences-list)
-  (resize "150px" "300px"
-    (scrollable
-      (choice (prefs-plugin-set (name->plugin answer))
-              (map plugin->name (plugins-with-preferences))
-              (plugin->name (prefs-plugin-get))))))
+  (scrollable
+    (choice (prefs-plugin-set (name->plugin answer))
+            (map plugin->name (plugins-with-preferences))
+            (plugin->name (prefs-plugin-get)))))
 
 (tm-widget (plugin-preferences-widget*)
   (centered
@@ -910,7 +909,8 @@
   (padded
     (horizontal
       (vertical
-        (dynamic (plugin-preferences-list))
+        (resize "150px" "300px"
+          (dynamic (plugin-preferences-list)))
         (glue #f #t 0 0))
       ///
       (vertical
@@ -933,7 +933,8 @@
 (tm-tool* (plugins-preferences-tool win)
   (:name "Plugin preferences")
   (centered
-    (dynamic (plugin-preferences-list)))
+    (resize "250px" "200px"
+      (dynamic (plugin-preferences-list))))
   === ===
   (refreshable "plugin-prefs"
     (dynamic (plugin-titled-preferences-widget (prefs-plugin-get)))))

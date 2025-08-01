@@ -29,7 +29,7 @@
 
 (define-public (supports-jupyter?) #f)
 (define-public (run-via-jupyter? lan) #f)
-(define-public (run-via-jupyter? lan enable?) (noop))
+(define-public (run-via-jupyter lan enable?) (noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Connection types for plugins

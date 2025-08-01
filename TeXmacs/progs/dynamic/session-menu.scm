@@ -115,10 +115,12 @@
                "Start remote session"
                (lambda (x) (apply make-session x))))
     ("Other" (interactive make-session))
+    ---
+    (assuming (nnull? (plugins-with-preferences))
+      ("Preferences" (open-plugins-preferences)))
     (assuming (or (os-mingw?) (os-win32?) (os-macos?))
       ("Manual path" (interactive set-manual-path)))
-    (assuming (nnull? (plugins-with-preferences))
-      ("Preferences" (open-plugins-preferences)))))
+    ("Redetect" (reinit-plugin-cache))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Submenus of the Sessions menu
