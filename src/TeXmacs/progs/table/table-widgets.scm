@@ -459,4 +459,6 @@
 
 (tm-define (open-table-properties)
   (:interactive #t)
-  (dialogue-window table-properties-widget noop "Table properties"))
+  (if (side-tools?)
+      (tool-select :right 'table-properties-tool)
+      (dialogue-window table-properties-widget noop "Table properties")))
