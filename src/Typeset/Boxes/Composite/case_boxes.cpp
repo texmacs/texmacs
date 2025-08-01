@@ -116,6 +116,7 @@ case_box_rep::broadcast (tree t, rectangles& rs) {
     if (satisfies (t, conds[i])) {
       switch_to (i, rs);
       bs[current]->broadcast (t, rs);
+      return;
     }
   if (N(conds) < N(bs))
     switch_to (N(bs) - 1, rs);
