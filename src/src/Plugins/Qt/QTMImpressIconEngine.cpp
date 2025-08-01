@@ -21,7 +21,7 @@
 
 QTMImpressIconEngine::QTMImpressIconEngine(qt_simple_widget_rep* w) : wid (w) {
   // get a size hint from the widget that will be used to center the icon
-  int sizeHintW, sizeHintH;
+  SI sizeHintW, sizeHintH;
   w->handle_get_size_hint (sizeHintW, sizeHintH);
   iconSize = to_qsize (sizeHintW, sizeHintH);
 }
@@ -49,9 +49,9 @@ void QTMImpressIconEngine::paint(QPainter *painter, const QRect &rect,
   // center the icon inside the rectDpr
   QSize iconSizeScaled = QSize(iconSize.width() * scale,
 			       iconSize.height() * scale);
-  int shiftX = (rectDpr.width() - iconSizeScaled.width())
+  SI shiftX = (rectDpr.width() - iconSizeScaled.width())
     / (2 * painter->device()->devicePixelRatio());
-  int shiftY = (rectDpr.height() - iconSizeScaled.height())
+  SI shiftY = (rectDpr.height() - iconSizeScaled.height())
     / (2 * painter->device()->devicePixelRatio());
 
   ren.encode (shiftX, shiftY);  
