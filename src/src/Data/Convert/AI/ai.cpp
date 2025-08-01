@@ -174,6 +174,8 @@ ai_command (string s, string model, string chat) {
 
 string
 ai_latex_command (string s, string model, string chat) {
+  //string pre= "I would like to perform an editing operation on a LaTeX document. In the input LaTeX document, I indicated the current cursor position using \\cursor. Please provide the result after the editing operation in the form of an untitled LaTeX document as well.";
+  //return ai_command (pre * " " * s, model, chat);
   string pre= "Please provide your answer in the form of an untitled LaTeX document.";
   return ai_command (pre * " " * s, model, chat);
 }
@@ -258,8 +260,9 @@ un_escape_cr (string s) {
   int i, n= N(s);
   string r;
   for (i=0; i<n; )
-    if (test (s, i, "\\neq")) r << s[i++];
-    else if (test (s, i, "\\nearrow")) r << s[i++];
+    if (test (s, i, "\\nearrow")) r << s[i++];
+    else if (test (s, i, "\\neq")) r << s[i++];
+    else if (test (s, i, "\\noindent")) r << s[i++];
     else if (test (s, i, "\\n")) { r << '\n'; i += 2; }
     else r << s[i++];
   return r;
