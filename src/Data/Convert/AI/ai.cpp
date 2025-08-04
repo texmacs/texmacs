@@ -138,8 +138,9 @@ llama_command (string s, string model, string chat) {
   (void) chat;
   string server= get_preference ("ollama server", "localhost");
   string port  = get_preference ("ollama port", "11434");
+  string model_= get_preference (model * " model", model);
   string cmd= "curl http://" * server * ":" * port * "/api/generate -d '{\n";
-  cmd << "\"model\": \"" << model << "\",\n"
+  cmd << "\"model\": \"" << model_ << "\",\n"
       << "\"prompt\": \"" << ai_quote (s) << "\",\n"
       << "\"stream\": false\n"
       << "}'";
