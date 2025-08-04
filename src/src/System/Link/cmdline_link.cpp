@@ -183,7 +183,7 @@ cmdline_link_rep::write (string s, int channel) {
   cmd= cmd * " 2> /dev/null";
   //cout << "Command[" << name << "," << s << "] = " << cmd << "\n";
   if (cmd == "") return;
-  if (DEBUG_AUTO) debug_io << "Launching '" << cmd << "'\n";
+  if (DEBUG_IO) debug_io << "Launching '" << cmd << "'\n";
   int e1= pipe (pp_in ); (void) e1;
   int e2= pipe (pp_out); (void) e2;
   int e3= pipe (pp_err); (void) e3;
