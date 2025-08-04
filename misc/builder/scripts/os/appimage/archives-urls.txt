@@ -16,3 +16,5 @@ https://gitlab.freedesktop.org/wayland/wayland.git
 https://gitlab.freedesktop.org/wayland/wayland-protocols.git
 https://gitlab.freedesktop.org/fontconfig/fontconfig.git
 https://github.com/besser82/libxcrypt.git
+https://ftp.texmacs.org/TeXmacs/misc/nettle-3.10.2.tar.gz
+https://ftp.texmacs.org/TeXmacs/misc/gnutls-3.7.11.tar.xz

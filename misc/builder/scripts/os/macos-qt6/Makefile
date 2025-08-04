@@ -59,6 +59,26 @@ gmp/build/.libs/libgmp.a: gmp/build/Makefile
 local/lib/libgmp.a: gmp/build/.libs/libgmp.a
 	cd gmp/build; $(MAKE) install
 
+nettle/Makefile: check local/lib/libltdl.a local/lib/libgmp.a
+	cd nettle; ./configure --prefix=$$WORKING_DIR/local --enable-static --disable-shared
+
+nettle/lib/.libs/libnettle.a: check nettle/Makefile
+	cd nettle; $(MAKE)
+
+local/lib/libnettle.a: check nettle/lib/.libs/libnettle.a
+	cd nettle; $(MAKE) install
+	if [ -f "local/lib/libnettle.a" ]; then echo "libnettle.a has been installed"; else echo "error on libnettle"; exit; fi;
+
+gnutls/Makefile: check local/lib/libltdl.a local/lib/libgmp.a local/lib/libnettle.a
+	cd gnutls; ./configure --prefix=$$WORKING_DIR/local --enable-static --disable-shared
+
+gnutls/lib/.libs/libgnutls.a: check gnutls/Makefile
+	cd gnutls; $(MAKE)
+
+local/lib/libgnutls.a: check gnutls/lib/.libs/libgnutls.a
+	cd gnutls; $(MAKE) install
+	if [ -f "local/lib/libgnutls.a" ]; then echo "libgnutls.a has been installed"; else echo "error on libgnutls"; exit; fi;
+
 local/bin/qmake:
 	-rm -rf qt-build
 	-mkdir qt-build
