@@ -722,6 +722,11 @@ SPARKLE_CXX
 WINSPARKLE_PATH
 WINSPARKLE_DLL
 CONFIG_SPARKLE
+GNUTLS_LIBS
+GNUTLS_LDFLAGS
+GNUTLS_CFLAGS
+GNUTLS_CPP
+GNUTLS_CXX
 SQLITE3_LIBS
 SQLITE3_LDFLAGS
 SQLITE3_CFLAGS
@@ -919,6 +924,7 @@ with_imlib2
 with_axel
 enable_gs
 with_sqlite3
+with_gnutls
 with_sparkle
 with_appcast
 enable_fastalloc
@@ -1629,6 +1635,7 @@ Optional Packages:
   --with-imlib2[=ARG]     with imlib2 support [ARG=no]
   --with-axel[=ARG]       with axel support [ARG=no]
   --with-sqlite3[=ARG]    with sqlite3 support [ARG=no]
+  --with-gnutls[=ARG]     with GnuTLS support [ARG=no]
   --with-sparkle[=ARG]    with Sparkle autoupdater [ARG=no or path for
                           winSparkle or yes for mac (framework should be in
                           the standard user frameworks location)]
@@ -21087,7 +21094,110 @@ printf "%s\n" "$as_me: SQLITE3_LDFLAGS:$SQLITE3_LDFLAGS" >&6;}
 
 
 
-LC_GNUTLS
+
+
+# Check whether --with-gnutls was given.
+if test ${with_gnutls+y}
+then :
+  withval=$with_gnutls; with_gnutls=$withval
+else $as_nop
+  with_gnutls="no"
+fi
+
+  SAVE_CPPFLAGS="$CPPFLAGS"
+  SAVE_LDFLAGS="$LDFLAGS"
+  SAVE_LIBS="$LIBS"
+  if test "$with_gnutls" = "no"; then
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: disabling GnuTLS support" >&5
+printf "%s\n" "disabling GnuTLS support" >&6; }
+  else
+      CPPFLAGS=`pkg-config --cflags gnutls hogweed nettle`
+      LIBS=`pkg-config --libs gnutls hogweed nettle`
+      if test "$TMREPO" != "" -a "$TMREPO" != "no" -a "$CONFIG_OS" = "MINGW"; then
+          LIBS="$LIBS -lintl -liconv -lcrypt32 -lws2_32"
+
+printf "%s\n" "#define TEXMACS_FIX_1_GNUTLS 1" >>confdefs.h
+
+      fi
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for GnuTLS version >= 3 (https://www.gnutls.org)" >&5
+printf %s "checking for GnuTLS version >= 3 (https://www.gnutls.org)... " >&6; }
+      cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <gnutls/gnutls.h>
+int
+main (void)
+{
+
+    gnutls_global_init ();
+    gnutls_global_deinit ();
+#if GNUTLS_VERSION_NUMBER >= 0x030000
+    exit (0);
+#else
+    __dummy_error;
+#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"
+then :
+
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: enabling GnuTLS support" >&5
+printf "%s\n" "enabling GnuTLS support" >&6; }
+
+printf "%s\n" "#define USE_GNUTLS 1" >>confdefs.h
+
+        GNUTLS_CPPFLAGS="$CPPFLAGS"
+        GNUTLS_LDFLAGS="$LIBS"
+
+else $as_nop
+
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+	as_fn_error $? "Cannot find a GnuTLS library version >=3 (https://www.gnutls.org)" "$LINENO" 5
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext
+  fi
+
+  CPPFLAGS="$SAVE_CPPFLAGS"
+  LDFLAGS="$SAVE_LDFLAGS"
+  LIBS="$SAVE_LIBS"
+
+
+  GNUTLS_CXX=$GNUTLS_CXXFLAGS
+
+  GNUTLS_CPP=$GNUTLS_CPPFLAGS
+
+  if [[ $enable_dumpflags =~ $(echo "(^|[[:space:]])(GNUTLS|ALL)($|[[:space:]])") ]]
+  then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: GNUTLS_CFLAGS:$GNUTLS_CFLAGS" >&5
+printf "%s\n" "$as_me: GNUTLS_CFLAGS:$GNUTLS_CFLAGS" >&6;}
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: GNUTLS_CXXFLAGS:$GNUTLS_CXXFLAGS" >&5
+printf "%s\n" "$as_me: GNUTLS_CXXFLAGS:$GNUTLS_CXXFLAGS" >&6;}
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: GNUTLS_CPPFLAGS:$GNUTLS_CPPFLAGS" >&5
+printf "%s\n" "$as_me: GNUTLS_CPPFLAGS:$GNUTLS_CPPFLAGS" >&6;}
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: GNUTLS_LIBS:$GNUTLS_LIBS" >&5
+printf "%s\n" "$as_me: GNUTLS_LIBS:$GNUTLS_LIBS" >&6;}
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: GNUTLS_LDFLAGS:$GNUTLS_LDFLAGS" >&5
+printf "%s\n" "$as_me: GNUTLS_LDFLAGS:$GNUTLS_LDFLAGS" >&6;}
+
+
+  fi
+# adaptation layer remove when finished
+  GNUTLS_CFLAGS="$GNUTLS_CXXFLAGS $GNUTLS_CPPFLAGS"
+
+
+
+
+
 
 
 
