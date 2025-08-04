@@ -107,6 +107,7 @@
 @author K. M. P@sc{ITMAN} 
 @author M. W@sc{AND} 
 @author 
+@end titlepage
 
 
 @c  {\it Dedicated to the Memory of ALGOL 60}
@@ -177,7 +178,6 @@ expand the summary so that it fills up the column.
 
 @page
 
-@end titlepage
 
 @c INFO first page
 @ifnottex
