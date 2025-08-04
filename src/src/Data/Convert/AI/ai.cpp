@@ -17,6 +17,7 @@
 #include "drd_std.hpp"
 #include "analyze.hpp"
 #include "file.hpp"
+#include "scheme.hpp"
 
 /******************************************************************************
 * Various engines
@@ -135,7 +136,9 @@ gemini_command (string s, string model, string chat) {
 string
 llama_command (string s, string model, string chat) {
   (void) chat;
-  string cmd= "curl http://localhost:11434/api/generate -d '{\n";
+  string server= get_preference ("ollama server", "localhost");
+  string port  = get_preference ("ollama port", "11434");
+  string cmd= "curl http://" * server * ":" * port * "/api/generate -d '{\n";
   cmd << "\"model\": \"" << model << "\",\n"
       << "\"prompt\": \"" << ai_quote (s) << "\",\n"
       << "\"stream\": false\n"

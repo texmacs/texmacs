@@ -17,15 +17,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-preferences
+  ("ollama server" "localhost" noop)
+  ("ollama port" "11434" noop)
   ("chatgpt-text-input" "on" noop)
   ("gemini-text-input" "on" noop)
   ("llama3-text-input" "on" noop)
   ("llama4-text-input" "on" noop)
   ("open-mistral-7b-text-input" "on" noop))
 
+(tm-define (ollama-models)
+  (list "llama3" "llama4"))
+
+(tm-define (ia-models)
+  (append (ollama-models) (list "chatgpt" "gemini" "open-mistral-7b")))
+
 (tm-widget (plugin-preferences-widget name)
-  (:require (in? name (list "chatgpt" "gemini" "llama3" "llama4"
-                            "open-mistral-7b")))
+  (:require (in? name (ia-models)))
+  (assuming (in? name (ollama-models))
+    (aligned
+      (item (text "Ollama server")
+        (enum (set-preference "ollama server" answer) '("localhost" "")
+              (get-preference "ollama server") "8em"))
+      (item (text "Ollama port")
+        (enum (set-preference "ollama port" answer) '("11434" "")
+              (get-preference "ollama port") "8em")))
+    === === ===)
   (with textual-input (string-append name "-text-input")
     (aligned
       (meti (hlist // (text "Textual input"))
