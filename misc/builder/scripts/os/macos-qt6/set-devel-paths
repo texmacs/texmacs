@@ -5,7 +5,7 @@ export TEXMACS_ANDROID_VERSION_CODE=14117
 
 export WORKING_DIR=`pwd`
 
-export MACOSX_DEPLOYMENT_TARGET=14.0
+export MACOSX_DEPLOYMENT_TARGET=12.0
 
 export CFLAGS="-O3 -I$WORKING_DIR/local/include -mmacosx-version-min=$MACOSX_DEPLOYMENT_TARGET"
 export CPPFLAGS="-I$WORKING_DIR/local/include -mmacosx-version-min=$MACOSX_DEPLOYMENT_TARGET"

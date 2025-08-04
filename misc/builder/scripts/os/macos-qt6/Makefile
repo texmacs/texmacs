@@ -1,4 +1,4 @@
-all: local/lib/libltdl.a local/lib/libiconv.a local/lib/libintl.a local/lib/libpng16.a local/lib/libfreetype.a local/lib/libgmp.a local/bin/qmake ghostscript texmacs
+all: local/lib/libltdl.a local/lib/libiconv.a local/lib/libintl.a local/lib/libpng16.a local/lib/libfreetype.a local/lib/libgmp.a local/bin/qmake ghostscript local/lib/libgnutls.a texmacs
 
 .PHONY: texmacs texmacs-server
 
@@ -59,24 +59,25 @@ gmp/build/.libs/libgmp.a: gmp/build/Makefile
 local/lib/libgmp.a: gmp/build/.libs/libgmp.a
 	cd gmp/build; $(MAKE) install
 
-nettle/Makefile: check local/lib/libltdl.a local/lib/libgmp.a
+nettle/Makefile: local/lib/libltdl.a local/lib/libgmp.a
 	cd nettle; ./configure --prefix=$$WORKING_DIR/local --enable-static --disable-shared
 
-nettle/lib/.libs/libnettle.a: check nettle/Makefile
+nettle/lib/.libs/libnettle.a: nettle/Makefile
 	cd nettle; $(MAKE)
 
-local/lib/libnettle.a: check nettle/lib/.libs/libnettle.a
+local/lib/libnettle.a: nettle/lib/.libs/libnettle.a
 	cd nettle; $(MAKE) install
 	if [ -f "local/lib/libnettle.a" ]; then echo "libnettle.a has been installed"; else echo "error on libnettle"; exit; fi;
 
-gnutls/Makefile: check local/lib/libltdl.a local/lib/libgmp.a local/lib/libnettle.a
-	cd gnutls; ./configure --prefix=$$WORKING_DIR/local --enable-static --disable-shared
+gnutls/Makefile: local/lib/libltdl.a local/lib/libgmp.a local/lib/libnettle.a
+	cp certs.c gnutls/lib/system/certs.c 
+	cd gnutls; CFLAGS="$$CFLAGS -std=c99" ./configure --prefix=$$WORKING_DIR/local --enable-static --disable-shared --with-included-libtasn1 --with-included-unistring --without-p11-kit
 
-gnutls/lib/.libs/libgnutls.a: check gnutls/Makefile
-	cd gnutls; $(MAKE)
+gnutls/lib/.libs/libgnutls.a: gnutls/Makefile
+	cd gnutls; CFLAGS="$$CFLAGS -std=c99" $(MAKE)
 
-local/lib/libgnutls.a: check gnutls/lib/.libs/libgnutls.a
-	cd gnutls; $(MAKE) install
+local/lib/libgnutls.a: gnutls/lib/.libs/libgnutls.a
+	cd gnutls; CFLAGS="$$CFLAGS -std=c99" $(MAKE) install
 	if [ -f "local/lib/libgnutls.a" ]; then echo "libgnutls.a has been installed"; else echo "error on libgnutls"; exit; fi;
 
 local/bin/qmake:
@@ -141,7 +142,7 @@ ghostscript: ghostscript/Makefile
 	cd ghostscript; $(MAKE) -j1; $(MAKE) install
 
 texmacs: local/bin/qmake local/lib/libfreetype.a
-	rm -rf texmacs/distr; cd texmacs/src; autoreconf; PKG_CONFIG_PATH=$$WORKING_DIR/local/lib/pkgconfig LIBS="-L/opt/homebrew/lib" TMREPO=$$WORKING_DIR/local ./configure --with-tmrepo=$$WORKING_DIR/local --prefix=$$WORKING_DIR/local --with-guile=embedded18 --disable-fastalloc; $(MAKE); $(MAKE) PACKAGE
+	rm -rf texmacs/distr; cd texmacs/src; autoreconf; PKG_CONFIG_PATH=$$WORKING_DIR/local/lib/pkgconfig LIBS="-L/opt/homebrew/lib" TMREPO=$$WORKING_DIR/local ./configure --with-tmrepo=$$WORKING_DIR/local --prefix=$$WORKING_DIR/local --with-guile=embedded18 --disable-fastalloc --with-osx=$$OSX_TARGET; $(MAKE); $(MAKE) PACKAGE
 
 texmacs-server: local/bin/qmake local/lib/libfreetype.a
 	rm -rf texmacs-server/distr; cd texmacs-server; autoreconf; PKG_CONFIG_PATH=$$WORKING_DIR/local/lib/pkgconfig LIBS="-L/opt/homebrew/lib" TMREPO=$$WORKING_DIR/local ./configure --with-tmrepo=$$WORKING_DIR/local --prefix=$$WORKING_DIR/local --with-gnutls=yes  --with-guile=embedded18 --disable-fastalloc; $(MAKE); $(MAKE) PACKAGE
