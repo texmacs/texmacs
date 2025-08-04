@@ -19,6 +19,8 @@
 (define-preferences
   ("ollama server" "localhost" noop)
   ("ollama port" "11434" noop)
+  ("llama3 model" "llama3" noop)
+  ("llama4 model" "llama4" noop)
   ("chatgpt-text-input" "on" noop)
   ("gemini-text-input" "on" noop)
   ("llama3-text-input" "on" noop)
@@ -31,16 +33,28 @@
 (tm-define (ia-models)
   (append (ollama-models) (list "chatgpt" "gemini" "open-mistral-7b")))
 
+(tm-define (ollama-variants model)
+  (cond ((== model "llama3")
+         (list "llama3" "llama3.1" "llama3.1" "llama3.1:405b"
+               "llama3.2" "llama3.2:1b" "llama3.3" ""))
+        ((== model "llama4")
+         (list "llama4" "llama4:scout" "llama4:maverick" ""))
+        (else (list model ""))))
+
 (tm-widget (plugin-preferences-widget name)
   (:require (in? name (ia-models)))
   (assuming (in? name (ollama-models))
-    (aligned
-      (item (text "Ollama server")
-        (enum (set-preference "ollama server" answer) '("localhost" "")
-              (get-preference "ollama server") "8em"))
-      (item (text "Ollama port")
-        (enum (set-preference "ollama port" answer) '("11434" "")
-              (get-preference "ollama port") "8em")))
+    (with model (string-append name " model")
+      (aligned
+        (item (text "Ollama server")
+          (enum (set-preference "ollama server" answer) '("localhost" "")
+                (get-preference "ollama server") "8em"))
+        (item (text "Ollama port")
+          (enum (set-preference "ollama port" answer) '("11434" "")
+                (get-preference "ollama port") "8em"))
+        (item (text (upcase-first model))
+          (enum (set-preference model answer) (ollama-variants name)
+                (get-preference model) "8em"))))
     === === ===)
   (with textual-input (string-append name "-text-input")
     (aligned
