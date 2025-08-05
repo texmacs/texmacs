@@ -132,7 +132,9 @@ public:
   virtual QWidget*         as_qwidget ();
   virtual QLayoutItem*     as_qlayoutitem ();
   virtual QList<QAction*>* get_qactionlist();
-
+#if QT_VERSION >= 0x060000
+  double get_dpr ();
+#endif
 
   ////////////////////// Debugging
   

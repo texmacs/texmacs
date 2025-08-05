@@ -39,7 +39,6 @@ public:
 #if QT_VERSION >= 0x060000
   inline qreal get_dpr () { if (parent) return parent->get_dpr(); else return dpr; }
   inline void set_dpr (qreal _dpr) { dpr = _dpr; }
-  inline void set_zoom_multiplier (qreal _zoom_multiplier) { zoom_multiplier = _zoom_multiplier; }
 #endif
 
   void begin (void* handle);
@@ -85,7 +84,6 @@ public:
 private:
 #if QT_VERSION >= 0x060000
   qreal dpr;
-  qreal zoom_multiplier = 1.0;
   qt_renderer_rep *parent;
 #endif
 

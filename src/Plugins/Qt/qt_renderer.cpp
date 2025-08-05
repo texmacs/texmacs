@@ -170,7 +170,6 @@ qt_renderer_rep::get_extents (SI& w2, SI& h2) {
 void
 qt_renderer_rep::set_zoom_factor (double zoom) {
 #if QT_VERSION >= 0x060000
-  zoom *= zoom_multiplier;
   renderer_rep::set_zoom_factor (get_dpr() * zoom);
   retina_pixel= (double)pixel * get_dpr();
 #else

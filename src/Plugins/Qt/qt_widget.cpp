@@ -23,7 +23,9 @@
 
 #include "boot.hpp"
 #include "window.hpp"
-
+#if QT_VERSION >= 0x060000
+#  include <QGuiApplication>
+#endif
 #include <QWidget>
 #include <QWidgetItem>
 #include "QTMMenuHelper.hpp"
@@ -179,6 +181,18 @@ qt_widget_rep::get_qactionlist() {
   return NULL;
 }
 
+#if QT_VERSION >= 0x060000
+double
+qt_widget_rep::get_dpr () {
+  if (!qwid.isNull ()) return qwid->devicePixelRatio ();
+  double dpr= 1;
+  QList<QScreen*> screens= QGuiApplication::screens ();
+  QList<QScreen*>::ConstIterator it= screens.constBegin ();
+  for (; it != screens.constEnd (); ++it)
+    dpr= max (dpr, (*it)->devicePixelRatio ());
+  return dpr;
+}
+#endif
 
 /*! Returns the widget as a window.
  
