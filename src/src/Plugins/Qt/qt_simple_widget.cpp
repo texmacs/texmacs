@@ -21,15 +21,6 @@
 #include <QPixmap>
 #include <QLayout>
 
-#if QT_VERSION >= 0x060000
-#include "QTMImpressIconEngine.hpp"
-
-#include <algorithm>
-#include <QWindow>
-#include <QScreen>
-#include <QIcon>
-#endif
-
 #ifdef USE_CAIRO
 #include "Cairo/cairo_renderer.hpp"
 #include "Cairo/tm_cairo.hpp"
@@ -381,20 +372,31 @@ qt_simple_widget_rep::read (slot s, blackbox index) {
 ******************************************************************************/
 
 // Prints the current contents of the canvas onto a QPixmap
-#if QT_VERSION < 0x060000
-QPixmap
+static QPixmap
 impress (qt_simple_widget_rep* wid) {
   SI width, height;
   wid->handle_get_size_hint (width, height);
   QSize s = to_qsize (width, height);
-  QSize phys_s = s; 
+  QSize phys_s = s;
+#if QT_VERSION >= 0x060000
+  double dpr= 2 * wid->get_dpr (); // dpr is increased for sharper rendering
+  phys_s *= dpr;
+#else
   phys_s *= retina_factor;
+#endif
   QPixmap pxm (phys_s);
+#if QT_VERSION >= 0x060000
+  pxm.setDevicePixelRatio (dpr);
+#endif
   if (DEBUG_QT)
     debug_qt << "impress (" << s.width() << "," << s.height() << ")\n";
   pxm.fill (Qt::transparent);
   {
-    qt_renderer_rep *ren = the_qt_renderer(1.0);
+#if QT_VERSION >= 0x060000
+    qt_renderer_rep *ren = the_qt_renderer(dpr);
+#else
+    qt_renderer_rep *ren = the_qt_renderer(1);
+#endif    
     ren->begin (static_cast<QPaintDevice*>(&pxm));
     rectangle r = rectangle (0, 0,  phys_s.width(), phys_s.height());
     ren->set_origin (0, 0);
@@ -411,22 +413,14 @@ impress (qt_simple_widget_rep* wid) {
   }
   return pxm;
 }
-#endif
 
 QAction*
 qt_simple_widget_rep::as_qaction () {
-#if QT_VERSION >= 0x060000
-  QAction* a= new QTMAction (NULL);
-  QIcon icon (new QTMImpressIconEngine (this));
-  a->setIcon (icon);
-  return a;
-#else
   QAction* a= new QTMAction (NULL);
   QPixmap pxm (impress (this));
   QIcon icon (pxm);
   a->setIcon (icon);
   return a;
-#endif
 }
 
 /******************************************************************************
