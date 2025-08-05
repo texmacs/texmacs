@@ -120,44 +120,43 @@ public:
 
 QTMPixmapOrImage 
 qt_glue_widget_rep::render () {
-  QSize s = to_qsize (w, h);
-  QTMPixmapOrImage pxm (s);
-    //cout << "glue (" << s.width() << "," << s.height() << ")\n";
-  pxm.fill (Qt::transparent);
-  QPaintDevice *pd;
-  pd = static_cast<QPaintDevice*>(pxm.rep);
-  if (pd && !pxm.isNull()) {
-    qt_renderer_rep* ren = the_qt_renderer(1.0);
-    ren->begin (pd);
-    rectangle r = rectangle (0, 0, s.width(), s.height());
-    ren->set_origin (0,0);
-    ren->encode (r->x1, r->y1);
-    ren->encode (r->x2, r->y2);
-    ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
-    
-    if (col == "") {
-        // do nothing
-    } else {
-      if (is_atomic (col)) {
-        color c = named_color (col->label);
-        ren->set_background (c);
-        ren->set_pencil (c);
-        ren->fill (r->x1, r->y2, r->x2, r->y1);
+  static QPainter painter;
 #if QT_VERSION >= 0x060000
-	ren->set_shrinking_factor (1);
+  static qt_renderer_rep ren (&painter, 1, 0, 0);
+  double dpr = get_dpr ();
+  QSize s = to_qsize (dpr*w, dpr*h);
+  QPixmap pxm (s);
+  pxm.setDevicePixelRatio (dpr);
+#else
+  static qt_renderer_rep ren (&painter);
+  QSize s = to_qsize (w, h);
+  QPixmap pxm (s);
 #endif
-      } else {
-        ren->set_shrinking_factor (std_shrinkf);
-        brush old_b = ren->get_background ();
-        ren->set_background (col);
-        ren->clear_pattern (5*r->x1, 5*r->y2, 5*r->x2, 5*r->y1);
-        ren->set_background (old_b);
-        ren->set_shrinking_factor (1);
-      }
+  //cout << "glue (" << s.width() << "," << s.height() << ")\n";
+  pxm.fill (Qt::transparent);
+  QPaintDevice *pd = static_cast<QPaintDevice*>(&pxm);
+  ren.begin (pd);
+  ren.set_shrinking_factor (1);
+  rectangle r = rectangle (0, 0, s.width(), s.height());
+  ren.set_origin (0,0);
+  ren.encode (r->x1, r->y1);
+  ren.encode (r->x2, r->y2);
+  ren.set_clipping (r->x1, r->y2, r->x2, r->y1);
+  if (col == "") {
+    // do nothing
+  } else {
+    if (is_atomic (col)) {
+      color c = named_color (col->label);
+      ren.set_background (c);
+      ren.set_pencil (c);
+      ren.fill (r->x1, r->y2, r->x2, r->y1);
+    } else {
+      ren.set_shrinking_factor (std_shrinkf); 
+      ren.set_background (col);
+      ren.clear_pattern (5*r->x1, 5*r->y2, 5*r->x2, 5*r->y1);
     }
-    ren->end();
   }
-  
+  ren.end();
   return pxm;
 }
 
