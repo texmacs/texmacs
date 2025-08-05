@@ -516,60 +516,59 @@ TeXmacs_main (int argc, char** argv) {
   
   gui_open (argc, argv);
   set_default_font (the_default_font);
-  if (DEBUG_STD) debug_boot << "Starting server...\n";
-  { // opening scope for server sv
-  server sv;
   
-
+  { // opening scope for server sv
+    if (DEBUG_STD) debug_boot << "Starting server...\n";
+    server sv;
+  
     // append commands to open standard welcome messages if needed
-  if (install_status == 1) {
-    if (DEBUG_STD) debug_boot << "Loading welcome message...\n";
-    string cmd= "(load-help-article \"about/welcome/new-welcome\")";
-    // FIXME: force to load welcome message into new window
-    extra_init_cmd << cmd;
-  }
-  else if (install_status == 2) {
-    if (DEBUG_STD) debug_boot << "Loading upgrade message...\n";
-    url u= "tmfs://help/plain/tm/doc/about/changes/changes-recent.en.tm";
-    string b= scm_quote (as_string (u));
-    string cmd= "(load-buffer " * b * " " * where * ")";
-    where= " :new-window";
-    extra_init_cmd << cmd;
-  }
-
-
-
-  if (number_buffers () == 0) {
-    //FIMXE: the above test is always true since there is no window open yet
-    // maybe just remove the test
-    if (DEBUG_STD) debug_boot << "Creating 'no name' buffer...\n";
-    open_window ();
-  }
-
-  bench_print ();
-  bench_reset ("initialize texmacs");
-  bench_reset ("initialize plugins");
-  bench_reset ("initialize scheme");
-
-  if (DEBUG_STD) debug_boot << "Starting event loop...\n";
-  texmacs_started= true;
-  if (!disable_error_recovery) signal (SIGSEGV, clean_exit_on_segfault);
-  if (start_server_flag) server_start ();
-  release_boot_lock ();
-  cout << "XXXXXXXXXX: " << extra_init_cmd << LF;
-  if (N(extra_init_cmd) > 0) exec_delayed (scheme_cmd (extra_init_cmd));
-  gui_start_loop ();
-
-  if (DEBUG_STD) debug_boot << "Stopping server...\n";
+    if (install_status == 1) {
+      if (DEBUG_STD) debug_boot << "Loading welcome message...\n";
+      string cmd= "(load-help-article \"about/welcome/new-welcome\")";
+      // FIXME: force to load welcome message into new window
+      extra_init_cmd << cmd;
+    }
+    else if (install_status == 2) {
+      if (DEBUG_STD) debug_boot << "Loading upgrade message...\n";
+      url u= "tmfs://help/plain/tm/doc/about/changes/changes-recent.en.tm";
+      string b= scm_quote (as_string (u));
+      string cmd= "(load-buffer " * b * " " * where * ")";
+      where= " :new-window";
+      extra_init_cmd << cmd;
+    }
+  
+    if (number_buffers () == 0) {
+      //FIMXE: the above test is always true since there is no window open yet
+      // maybe just remove the test
+      if (DEBUG_STD) debug_boot << "Creating 'no name' buffer...\n";
+      open_window ();
+    }
+  
+    bench_print ();
+    bench_reset ("initialize texmacs");
+    bench_reset ("initialize plugins");
+    bench_reset ("initialize scheme");
+  
+    if (DEBUG_STD) debug_boot << "Starting event loop...\n";
+    texmacs_started= true;
+    if (!disable_error_recovery) signal (SIGSEGV, clean_exit_on_segfault);
+    if (start_server_flag) server_start ();
+    release_boot_lock ();
+    
+    // inject scheme commands 
+    if (N(extra_init_cmd) > 0) exec_delayed (scheme_cmd (extra_init_cmd));
+    gui_start_loop ();
+  
+    if (DEBUG_STD) debug_boot << "Stopping server...\n";
   } // ending scope for server sv
-
+  
   if (DEBUG_STD) debug_boot << "Closing display...\n";
   gui_close ();
-    
+      
   if (DEBUG_STD) debug_boot << "Good bye...\n";
-}
-
-/******************************************************************************
+}  
+  
+/*  *****************************************************************************
 * Main program
 ******************************************************************************/
 
