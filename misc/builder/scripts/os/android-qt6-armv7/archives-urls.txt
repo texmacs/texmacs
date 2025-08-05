@@ -7,5 +7,6 @@ https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.18.tar.gz
 https://ftp.gnu.org/pub/gnu/gettext/gettext-0.24.tar.gz
 https://ftp.texmacs.org/TeXmacs/misc/nettle-3.10.2.tar.gz
 https://ftp.texmacs.org/TeXmacs/misc/gnutls-3.7.11.tar.xz
+https://github.com/google/brotli.git
 svn://svn.savannah.gnu.org/texmacs/trunk/src texmacs/src
 svn://svn.savannah.gnu.org/texmacs/trunk/guile-texmacs guile

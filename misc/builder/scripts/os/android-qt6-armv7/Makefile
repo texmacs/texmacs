@@ -1,4 +1,4 @@
-all: local/lib/libltdl.a local/lib/libpng16.a local/lib/libfreetype.a local/lib/libgmp.a local/lib/libguile.a local/bin/qmake texmacs
+all: local/lib/libltdl.a local/lib/libpng16.a local/lib/libfreetype.a local/lib/libgmp.a local/lib/libguile.a local/bin/qmake local/lib/libgnutls.a texmacs
 
 .PHONY: texmacs local/bin/qmake
 
@@ -41,23 +41,44 @@ gmp/build/.libs/libgmp.a: gmp/build/Makefile
 local/lib/libgmp.a: gmp/build/.libs/libgmp.a
 	cd gmp/build; $(MAKE) install
 
-nettle/Makefile: check local/lib/libltdl.a local/lib/libgmp.a
-	cd nettle; ./configure --prefix=$$WORKING_DIR/local --enable-static --disable-shared
+nettle/Makefile: local/lib/libltdl.a local/lib/libgmp.a
+	cd nettle; ./configure --host=$$TARGET --prefix=$$WORKING_DIR/local --enable-static --disable-shared
 
-nettle/lib/.libs/libnettle.a: check nettle/Makefile
+nettle/lib/.libs/libnettle.a: nettle/Makefile
 	cd nettle; $(MAKE)
 
-local/lib/libnettle.a: check nettle/lib/.libs/libnettle.a
+local/lib/libnettle.a: nettle/lib/.libs/libnettle.a
 	cd nettle; $(MAKE) install
 	if [ -f "local/lib/libnettle.a" ]; then echo "libnettle.a has been installed"; else echo "error on libnettle"; exit; fi;
 
-gnutls/Makefile: check local/lib/libltdl.a local/lib/libgmp.a local/lib/libnettle.a
-	cd gnutls; ./configure --prefix=$$WORKING_DIR/local --enable-static --disable-shared
+brotli/build/Makefile:
+	mkdir -p brotli/build
+	cd brotli/build && \
+	cmake .. \
+		-DCMAKE_TOOLCHAIN_FILE=$$NDK/build/cmake/android.toolchain.cmake \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DCMAKE_INSTALL_PREFIX=$$WORKING_DIR/local \
+		-DCMAKE_SYSTEM_NAME=Android \
+		-DCMAKE_SYSTEM_VERSION=$$ANDROID_API \
+		-DCMAKE_ANDROID_ARCH_ABI=$$ANDROID_ABI \
+		-DCMAKE_ANDROID_NDK=$$NDK \
+		-DBUILD_SHARED_LIBS=OFF \
+		-DCMAKE_POSITION_INDEPENDENT_CODE=ON
 
-gnutls/lib/.libs/libgnutls.a: check gnutls/Makefile
+brotli/build/libbrotlicommon.a: brotli/build/Makefile
+	cd brotli/build; $(MAKE)
+
+local/lib/libbrotlicommon.a: brotli/build/libbrotlicommon.a
+	cd brotli/build; $(MAKE) install
+	if [ -f "local/lib/libbrotlicommon.a" ]; then echo "brotli has been installed"; else echo "error on brotli"; exit; fi;
+
+gnutls/Makefile: local/lib/libltdl.a local/lib/libgmp.a local/lib/libnettle.a
+	cd gnutls; ./configure --host=$$TARGET --prefix=$$WORKING_DIR/local --enable-static --disable-shared --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-guile --without-brotli
+
+gnutls/lib/.libs/libgnutls.a: gnutls/Makefile
 	cd gnutls; $(MAKE)
 
-local/lib/libgnutls.a: check gnutls/lib/.libs/libgnutls.a
+local/lib/libgnutls.a: gnutls/lib/.libs/libgnutls.a
 	cd gnutls; $(MAKE) install
 	if [ -f "local/lib/libgnutls.a" ]; then echo "libgnutls.a has been installed"; else echo "error on libgnutls"; exit; fi;
 
