@@ -719,6 +719,10 @@ void
 gui_open (int& argc2, char** argv2) {
   ASSERT (the_gui == NULL, "gui already open");
   the_gui= tm_new<x_gui_rep> (argc2, argv2);
+
+#if defined(MACOSX_EXTENSIONS)
+  init_mac_application ();
+#endif
 }
 
 void
@@ -731,6 +735,10 @@ gui_close () {
   ASSERT (the_gui != NULL, "gui not yet open");
   tm_delete (the_gui);
   the_gui= NULL;
+
+#if defined(MACOSX_EXTENSIONS)
+  finalize_mac_application ();
+#endif
 }
 
 void
