@@ -374,14 +374,17 @@ qt_simple_widget_rep::read (slot s, blackbox index) {
 // Prints the current contents of the canvas onto a QPixmap
 static QPixmap
 impress (qt_simple_widget_rep* wid) {
+  static QPainter painter;
   SI width, height;
   wid->handle_get_size_hint (width, height);
   QSize s = to_qsize (width, height);
   QSize phys_s = s;
 #if QT_VERSION >= 0x060000
   double dpr= 2 * wid->get_dpr (); // dpr is increased for sharper rendering
+  static qt_renderer_rep ren (&painter, dpr, 0, 0);
   phys_s *= dpr;
 #else
+  static qt_renderer_rep ren (&painter);
   phys_s *= retina_factor;
 #endif
   QPixmap pxm (phys_s);
@@ -391,26 +394,17 @@ impress (qt_simple_widget_rep* wid) {
   if (DEBUG_QT)
     debug_qt << "impress (" << s.width() << "," << s.height() << ")\n";
   pxm.fill (Qt::transparent);
-  {
-#if QT_VERSION >= 0x060000
-    qt_renderer_rep *ren = the_qt_renderer(dpr);
-#else
-    qt_renderer_rep *ren = the_qt_renderer(1);
-#endif    
-    ren->begin (static_cast<QPaintDevice*>(&pxm));
-    rectangle r = rectangle (0, 0,  phys_s.width(), phys_s.height());
-    ren->set_origin (0, 0);
-    ren->encode (r->x1, r->y1);
-    ren->encode (r->x2, r->y2);
-    ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
-    {
-        // we do not want to be interrupted here...
-      the_gui->set_check_events (false);
-      wid->handle_repaint (ren, r->x1, r->y2, r->x2, r->y1);
-      the_gui->set_check_events (true);
-    }
-    ren->end();
-  }
+  ren.begin (static_cast<QPaintDevice*>(&pxm));
+  rectangle r = rectangle (0, 0,  phys_s.width(), phys_s.height());
+  ren.set_origin (0, 0);
+  ren.encode (r->x1, r->y1);
+  ren.encode (r->x2, r->y2);
+  ren.set_clipping (r->x1, r->y2, r->x2, r->y1);
+  // we do not want to be interrupted here...
+  the_gui->set_check_events (false);
+  wid->handle_repaint (&ren, r->x1, r->y2, r->x2, r->y1);
+  the_gui->set_check_events (true);
+  ren.end();
   return pxm;
 }
 
