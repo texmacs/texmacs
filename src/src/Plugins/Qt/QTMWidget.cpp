@@ -149,49 +149,36 @@ QTMWidget::resizeEventBis (QResizeEvent *event) {
  CHECK: Maybe just putting onscreen all the region bounding rectangles might 
  be less expensive.
 */
-#if QT_VERSION >= 0x060000
 void
 QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
   (void) surfaceWidget;
   QPainter p (surface());
-
+#if QT_VERSION >= 0x060000
   qreal dpr = surface()->devicePixelRatio();
   if (dpr != tm_widget()->backingPixmap->devicePixelRatio()) {
     QMetaObject::invokeMethod (this, "surfaceDprChanged", Qt::QueuedConnection);
     return;
   }
-
-  // We copy the backing buffer on the widget
-  QRect qr = event->region().boundingRect();
-  p.drawPixmap (QRect (qr.x(), qr.y(), qr.width(), qr.height()),
-                *(tm_widget()->backingPixmap),
-                QRect (dpr * qr.x(),
-                       dpr * qr.y(),
-                       dpr * qr.width(),
-                       dpr * qr.height()));
-  
+#else
+  qreal dpr= retina_factor;
+#endif
+  QRegion reg= event->region();
+  QRegion::const_iterator it;
+  QRect qr;
+  for (it= reg.begin (); it != reg.end (); ++it) {
+    qr= *it;
+    p.drawPixmap (QRect (qr.x(), qr.y(), qr.width(), qr.height()),
+                  *(tm_widget()->backingPixmap),
+		  QRect (dpr * qr.x(), dpr * qr.y(),
+			 dpr * qr.width(), dpr * qr.height()));
+  }
 }
 
+#if QT_VERSION >= 0x060000
 void
 QTMWidget::surfaceDprChanged () {
   tm_widget()->reset_all();
   the_gui->force_update();
-}
-#else
-void
-QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
-  (void) surfaceWidget;
-  QPainter p (surface());
-  QVector<QRect> rects = event->region().rects();
-  for (int i = 0; i < rects.count(); ++i) {
-    QRect qr = rects.at (i);
-    p.drawPixmap (QRect (qr.x(), qr.y(), qr.width(), qr.height()),
-                  *(tm_widget()->backingPixmap),
-                  QRect (retina_factor * qr.x(),
-                         retina_factor * qr.y(),
-                         retina_factor * qr.width(),
-                         retina_factor * qr.height()));
-  }
 }
 #endif
 
