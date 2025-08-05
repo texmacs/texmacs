@@ -26,7 +26,7 @@ const int log_debug= 7;
 // temporary definition
 bool is_server_started();
 
-bool is_server() { return is_server_started(); }
+inline bool is_server() { return is_server_started(); }
 
 void server_log_start ();
 void server_log_stop ();
