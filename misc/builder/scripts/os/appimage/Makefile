@@ -1,4 +1,4 @@
-all: local/lib/libcrypt.so local/lib/libltdl.a local/lib/libintl.a local/lib/libpng16.a local/lib/libfreetype.a local/lib/libgmp.a local/bin/qmake ghostscript texmacs
+all: local/lib/libcrypt.so local/lib/libltdl.a local/lib/libintl.a local/lib/libpng16.a local/lib/libfreetype.a local/lib/libgmp.a local/bin/qmake ghostscript local/lib/libgnutls.a texmacs
 
 .PHONY: texmacs
 
@@ -62,23 +62,23 @@ gmp/build/.libs/libgmp.a: gmp/build/Makefile
 local/lib/libgmp.a: gmp/build/.libs/libgmp.a
 	cd gmp/build; $(MAKE) install
 
-nettle/Makefile: check local/lib/libltdl.a local/lib/libgmp.a
+nettle/Makefile: local/lib/libltdl.a local/lib/libgmp.a
 	cd nettle; ./configure --prefix=$$WORKING_DIR/local --enable-static --disable-shared
 
-nettle/lib/.libs/libnettle.a: check nettle/Makefile
+nettle/lib/.libs/libnettle.a: nettle/Makefile
 	cd nettle; $(MAKE)
 
-local/lib/libnettle.a: check nettle/lib/.libs/libnettle.a
+local/lib/libnettle.a: nettle/lib/.libs/libnettle.a
 	cd nettle; $(MAKE) install
 	if [ -f "local/lib/libnettle.a" ]; then echo "libnettle.a has been installed"; else echo "error on libnettle"; exit; fi;
 
-gnutls/Makefile: check local/lib/libltdl.a local/lib/libgmp.a local/lib/libnettle.a
-	cd gnutls; ./configure --prefix=$$WORKING_DIR/local --enable-static --disable-shared
+gnutls/Makefile: local/lib/libltdl.a local/lib/libgmp.a local/lib/libnettle.a
+	cd gnutls; ./configure --prefix=$$WORKING_DIR/local --enable-static --disable-shared --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-guile --without-brotli
 
-gnutls/lib/.libs/libgnutls.a: check gnutls/Makefile
+gnutls/lib/.libs/libgnutls.a: gnutls/Makefile
 	cd gnutls; $(MAKE)
 
-local/lib/libgnutls.a: check gnutls/lib/.libs/libgnutls.a
+local/lib/libgnutls.a: gnutls/lib/.libs/libgnutls.a
 	cd gnutls; $(MAKE) install
 	if [ -f "local/lib/libgnutls.a" ]; then echo "libgnutls.a has been installed"; else echo "error on libgnutls"; exit; fi;
 

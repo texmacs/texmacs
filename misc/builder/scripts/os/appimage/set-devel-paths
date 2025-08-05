@@ -23,4 +23,4 @@ export TEXMACS_PATH=$WORKING_DIR/texmacs/src/TeXmacs
 # Fix for Guile which does not like spaces in PATH
 export PATH=$(echo "$PATH" | sed 's/ //g')
 
-export PKG_CONFIG_PATH=$WORKING_DIR/local/lib/pkgconfig:$WORKING_DIR/local/share/pkgconfig
+export PKG_CONFIG_PATH=$WORKING_DIR/local/lib/pkgconfig:$WORKING_DIR/local/lib64/pkgconfig:$WORKING_DIR/local/share/pkgconfig
