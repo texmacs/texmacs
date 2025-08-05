@@ -1168,7 +1168,7 @@ void
 parse (string s, int& pos, N16& ret) {
   N8 c1= (N8) s[pos++];
   N8 c2= (N8) s[pos++];
-  ret= (((ushort) c1)<<8)+ c2;
+  ret= (((unsigned short) c1)<<8)+ c2;
 }
 
 void
