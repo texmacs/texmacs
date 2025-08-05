@@ -41,6 +41,7 @@ CXXAXEL = @AXEL_CXX@
 CXXCAIRO = @CAIRO_CXX@
 CXXIMLIB2 = @IMLIB2_CXX@
 CXXSQLITE3 = @SQLITE3_CXX@
+CXXGNUTLS = @GNUTLS_CFLAGS@
 CXXFREETYPE = @FREETYPE_CFLAGS@
 CXXICONV = @ICONV_CXX@
 CXXGUILE = @GUILE_CFLAGS@
@@ -57,6 +58,7 @@ LDX11 =
 LDCOCOA = @COCOA_LDFLAGS@
 LDQT = @QT_LIBS@
 LDGUI = $(LD@CONFIG_GUI@)
+LDGNUTLS= @GNUTLS_LDFLAGS@
 
 AR = ar
 ARFLAGS = -r
@@ -116,6 +118,7 @@ scheme_src   := $(call findsrc_in,Scheme,Scheme Guile)
 pdf_src      := $(call findsrc_in,Plugins,@CONFIG_PDF@)
 pdf_c_src    := $(call findc_in,Plugins,@CONFIG_PDF@/LibAesgm)
 freetype_src := $(call findsrc_in,Plugins,Freetype)
+gnutls_src   := $(call findsrc_in,Plugins,Gnutls)
 
 # Each makefile will have its own Deps directory. Okay that is a bit
 # inefficient, but that is much simpler to maintain.
@@ -133,7 +136,7 @@ texmacs_cpp_deps := $(call make_cpp_deps,$(system_src) $(kernel_src) $(data_src)
  $(edit_src) $(scheme_src) $(graphics_src)\
  $(plugins_src) $(x11_src) $(texmacs_src)\
  $(typeset_src) $(style_src) $(qt_src) $(gs_src) $(os_src)\
- $(pdf_src) $(freetype_src))
+ $(pdf_src) $(freetype_src) $(gnutls_src))
 texmacs_m_deps += $(call make_m_deps,$(cocoa_m_src))
 texmacs_mm_deps += $(call make_mm_deps,$(cocoa_mm_src))
 texmacs_c_deps := $(call make_c_deps, $(call findc_in,System,Misc))
@@ -154,7 +157,8 @@ system_incl   := $(call incl_flags,System System/Boot System/Classes \
   Data/Parser Scheme \
   Graphics/Bitmap_fonts Graphics/Fonts Graphics/Gui Graphics/Mathematics \
   Graphics/Renderer Graphics/Handwriting Graphics/Types Graphics/Pictures \
-  Graphics/Spacial Graphics/Colors Plugins Plugins/@CONFIG_OS_COMPAT@)
+  Graphics/Spacial Graphics/Colors Plugins Plugins/@CONFIG_OS_COMPAT@ \
+  Plugins/Gnutls)
 kernel_incl   := $(system_incl)
 data_incl     := $(system_incl)
 graphics_incl := $(system_incl)
@@ -163,7 +167,7 @@ x11_incl      := $(system_incl)
 cocoa_incl    := $(system_incl)
 os_incl       := $(system_incl)
 qt_incl       := $(system_incl) \
-	$(call incl_flags,Texmacs Texmacs/Data Edit Typeset)
+	$(call incl_flags,Texmacs Texmacs/Data Edit Typeset Plugins/Gnutls)
 gs_incl       := $(system_incl)
 style_incl    := $(system_incl) \
   $(call incl_flags,Style/Memorizer Style/Environment Style/Evaluate)
@@ -176,6 +180,7 @@ texmacs_incl  := $(scheme_incl)
 pdf_incl      := $(system_incl) \
   $(call incl_flags,Plugins/Pdf/LibAesgm Texmacs/Data)
 freetype_incl := $(system_incl)
+gnutls_incl   := $(system_incl)
 
 ###############################################################################
 # MOC files
@@ -236,7 +241,7 @@ deps_incl = $(call incl_flags,System System/Boot System/Classes System/Files \
 
 deps_flags = $(deps_incl) \
  $(CPPFLAGS) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXSQLITE3) $(CXXFREETYPE) \
- $(CXXICONV) $(CXXGUILE) -I$(tmsrc)/include $(CXXGUI)
+ $(CXXICONV) $(CXXGUILE) $(CXXGNUTLS) -I$(tmsrc)/include $(CXXGUI)
 # we should use -I- to separate local includes from system includes, but
 # headers of guile 1.6.0 use includes in quotes with names relative to the
 # current directory, and that feature is disable by -I-.
@@ -292,6 +297,7 @@ typeset_obj  := $(call makeobj,$(typeset_src))
 style_obj    := $(call makeobj,$(style_src))
 pdf_obj      := $(call makeobj,$(pdf_src))
 freetype_obj := $(call makeobj,$(freetype_src))
+gnutls_obj   := $(call makeobj,$(gnutls_src))
 
 # To enforce some degree of modularity, each object file must be
 # compiled with only a specific set of include flags. To achieve that,
@@ -335,7 +341,7 @@ $(scheme_obj): Objects/%.o: %.cpp
 $(graphics_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(graphics_incl))
 $(plugins_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(plugins_incl) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXSQLITE3) $(CXXICONV) $(CXXSPARKLE) $(CXXX11) $(CXXQT) $(CXXGUILE))
+	$(call cxx_incl,$(plugins_incl) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXSQLITE3) $(CXXGNUTLS) $(CXXICONV) $(CXXSPARKLE) $(CXXX11) $(CXXQT) $(CXXGUILE))
 $(plugins_c_obj): Objects/%.o: %.c
 	$(call cc_incl,$(plugins_incl))
 $(x11_obj): Objects/%.o: %.cpp
@@ -362,6 +368,8 @@ $(pdf_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(pdf_incl) $(CXXFREETYPE) $(CXXPDF) $(CXXGUI))
 $(freetype_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(freetype_incl) $(CXXFREETYPE))
+$(gnutls_obj): Objects/%.o: %.cpp
+	$(call cxx_incl,$(gnutls_incl) $(CXXGNUTLS) $(CXXQT))
 $(texmacs_c_deps):   Objects/%.o: %.c
 	$(call cc_flags, $(CFLAGS))
 
@@ -422,16 +430,17 @@ uses_scheme   := $(scheme_obj)
 uses_texmacs  := $(texmacs_obj)
 uses_pdf      := $(pdf_obj)
 uses_freetype := $(freetype_obj)
+uses_gnutls   := $(gnutls_obj)
 #"uses_windowsres" is defined above
 
 # Compilation rules
 
 TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
  plugins x11 os qt gs cocoa style typeset edit scheme texmacs pdf\
- freetype windowsres)) $(texmacs_c_deps)
+ freetype gnutls windowsres)) $(texmacs_c_deps)
 
 link_options:=-L$(tmsrc)/lib -lm $(LDPATH) $(LDGUI) $(LDICONV) $(CXXFLAGS)\
-   $(LDAXEL) $(LDCAIRO) $(LDSQLITE3) @SPARKLE_LDFLAGS@
+   $(LDAXEL) $(LDCAIRO) $(LDSQLITE3) $(LDGNUTLS) @SPARKLE_LDFLAGS@
 
 
 $(tmsrc)/bin/texmacs.bin: Objects/texmacs.bin
