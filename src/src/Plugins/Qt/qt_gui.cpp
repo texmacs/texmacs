@@ -493,6 +493,9 @@ gui_open (int& argc, char** argv) {
   // QApplication, QGuiApplication or QCoreApplication to reset the locale
   // that is used for number formatting to "C"-locale.
   // See https://doc.qt.io/qt-5/qcoreapplication.html#locale-settings
+
+  if (!headless_mode)
+    init_style_sheet (tmapp());
 }
 
 void

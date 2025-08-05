@@ -215,23 +215,28 @@ TeXmacs_init_paths (int& argc, char** argv) {
 }
 
 /******************************************************************************
-* Real main program for encaptulation of guile
+* Parse command line options and set other global variables via preferences
 ******************************************************************************/
 
-void
-TeXmacs_main (int argc, char** argv) {
-  int i;
+string the_default_font;
+string where= "";
+
+void 
+set_global_options  (int argc, char** argv)  {
+
+  // parse command line options
   bool flag= true;
-  string the_default_font;
-  for (i=1; i<argc; i++)
+
+  for (int i=1; i<argc; i++) {
     if (argv[i][0] == '\0') argc= i;
-    else if (((argv[i][0] == '-') ||
-              (argv[i][0] == '+')) && (argv[i][1] != '\0'))
+    else if ((argv[i][0] == '-') || (argv[i][0] == '+'))
     {
+      if (argv[i][1] == '\0') continue;
+      // process -x, +x or --xxx option (with optional arguments)
       string s= argv[i];
       if ((N(s)>=2) && (s(0,2)=="--")) s= s (1, N(s));
       if ((s == "-s") || (s == "-silent")) flag= false;
-      else if ((s == "-V") || (s == "-verbose"))
+      else if ((s == "-V") || (s == "-verbose")) 
         debug (DEBUG_FLAG_VERBOSE, true);
       else if ((s == "-d") || (s == "-debug")) debug (DEBUG_FLAG_STD, true);
       else if (s == "-debug-events") debug (DEBUG_FLAG_EVENTS, true);
@@ -429,8 +434,21 @@ TeXmacs_main (int argc, char** argv) {
         cout << "\n";
         exit (0);
       }
+    } else {
+      string s=argv[i];
+      if (DEBUG_STD) debug_boot << "Loading " << s << "...\n";
+      url u= url_system (s);
+      if (!is_rooted (u)) u= resolve (url_pwd (), "") * u;
+      string b= scm_quote (as_string (u));
+      string cmd= "(load-buffer " * b * " " * where * ")";
+      where= " :new-window";
+      extra_init_cmd << cmd;
     }
+  } // for (int i...)
   if (flag) debug (DEBUG_FLAG_AUTO, true);
+  // End parse command line options
+
+  // in headless mode quit after processing of the command line
   if (headless_mode) my_init_cmds= my_init_cmds * " (quit-TeXmacs)";
 
   // Further options via environment variables
@@ -479,6 +497,16 @@ TeXmacs_main (int argc, char** argv) {
   use_mini_bars      = get_preference ("use minibars",         mini) == "on";
   if (!use_native_menubar) use_unified_toolbar= false;
   // End user preferences
+}
+ 
+/******************************************************************************
+* Real main program for encaptulation of guile
+******************************************************************************/
+
+void
+TeXmacs_main (int argc, char** argv) {
+
+  set_global_options (argc, argv);
 
   if (DEBUG_STD) debug_boot << "Installing internal plug-ins...\n";
   bench_start ("initialize plugins");
@@ -486,47 +514,19 @@ TeXmacs_main (int argc, char** argv) {
   bench_cumul ("initialize plugins");
   if (DEBUG_STD) debug_boot << "Opening display...\n";
   
-#if defined(X11TEXMACS) && defined(MACOSX_EXTENSIONS)
- // init_mac_application ();
-#endif
-
   gui_open (argc, argv);
   set_default_font (the_default_font);
   if (DEBUG_STD) debug_boot << "Starting server...\n";
   { // opening scope for server sv
   server sv;
-    
-  string where= "";
-  for (i=1; i<argc; i++) {
-    if (argv[i] == NULL) break;
-    string s= argv[i];
-    if ((N(s)>=2) && (s(0,2)=="--")) s= s (1, N(s));
-    if ((s[0] != '-') && (s[0] != '+')) {
-      if (DEBUG_STD) debug_boot << "Loading " << s << "...\n";
-      url u= url_system (s);
-      if (!is_rooted (u)) u= resolve (url_pwd (), "") * u;
-      string b= scm_quote (as_string (u));
-      string cmd= "(load-buffer " * b * " " * where * ")";
-      where= " :new-window";
-      exec_delayed (scheme_cmd (cmd));
-    }
-    if      ((s == "-c") || (s == "-convert") || (s == "-C") ||
-	     (s == "-W") || (s == "-build-website") ||
-	     (s == "-U") || (s == "-update-website")) i+=2;
-    else if ((s == "-b") || (s == "-initialize-buffer") ||
-             (s == "-fn") || (s == "-font") ||
-             (s == "-i") || (s == "-initialize") ||
-             (s == "-g") || (s == "-geometry") ||
-             (s == "-x") || (s == "-execute") ||
-             (s == "-log-file") ||
-             (s == "-build-manual") ||
-             (s == "-reference-suite") || (s == "-test-suite")) {i++;}
-  }
+  
+
+    // append commands to open standard welcome messages if needed
   if (install_status == 1) {
     if (DEBUG_STD) debug_boot << "Loading welcome message...\n";
     string cmd= "(load-help-article \"about/welcome/new-welcome\")";
     // FIXME: force to load welcome message into new window
-    exec_delayed (scheme_cmd (cmd));
+    extra_init_cmd << cmd;
   }
   else if (install_status == 2) {
     if (DEBUG_STD) debug_boot << "Loading upgrade message...\n";
@@ -534,9 +534,14 @@ TeXmacs_main (int argc, char** argv) {
     string b= scm_quote (as_string (u));
     string cmd= "(load-buffer " * b * " " * where * ")";
     where= " :new-window";
-    exec_delayed (scheme_cmd (cmd));
+    extra_init_cmd << cmd;
   }
+
+
+
   if (number_buffers () == 0) {
+    //FIMXE: the above test is always true since there is no window open yet
+    // maybe just remove the test
     if (DEBUG_STD) debug_boot << "Creating 'no name' buffer...\n";
     open_window ();
   }
@@ -546,16 +551,12 @@ TeXmacs_main (int argc, char** argv) {
   bench_reset ("initialize plugins");
   bench_reset ("initialize scheme");
 
-#ifdef QTTEXMACS
-  if (!headless_mode)
-    init_style_sheet (qtmapp);
-#endif
-
   if (DEBUG_STD) debug_boot << "Starting event loop...\n";
   texmacs_started= true;
   if (!disable_error_recovery) signal (SIGSEGV, clean_exit_on_segfault);
   if (start_server_flag) server_start ();
   release_boot_lock ();
+  cout << "XXXXXXXXXX: " << extra_init_cmd << LF;
   if (N(extra_init_cmd) > 0) exec_delayed (scheme_cmd (extra_init_cmd));
   gui_start_loop ();
 
@@ -564,11 +565,7 @@ TeXmacs_main (int argc, char** argv) {
 
   if (DEBUG_STD) debug_boot << "Closing display...\n";
   gui_close ();
-  
-#if defined(X11TEXMACS) && defined(MACOSX_EXTENSIONS)
-  finalize_mac_application ();
-#endif
-  
+    
   if (DEBUG_STD) debug_boot << "Good bye...\n";
 }
 
