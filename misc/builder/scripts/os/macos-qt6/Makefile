@@ -142,7 +142,7 @@ ghostscript: ghostscript/Makefile
 	cd ghostscript; $(MAKE) -j1; $(MAKE) install
 
 texmacs: local/bin/qmake local/lib/libfreetype.a
-	rm -rf texmacs/distr; cd texmacs/src; autoreconf; PKG_CONFIG_PATH=$$WORKING_DIR/local/lib/pkgconfig LIBS="-L/opt/homebrew/lib" TMREPO=$$WORKING_DIR/local ./configure --with-tmrepo=$$WORKING_DIR/local --prefix=$$WORKING_DIR/local --with-guile=embedded18 --disable-fastalloc --with-osx=$$OSX_TARGET; $(MAKE); $(MAKE) PACKAGE
+	rm -rf texmacs/distr; cd texmacs/src; autoreconf; PKG_CONFIG_PATH=$$WORKING_DIR/local/lib/pkgconfig LIBS="-L/opt/homebrew/lib" TMREPO=$$WORKING_DIR/local ./configure --with-tmrepo=$$WORKING_DIR/local --prefix=$$WORKING_DIR/local --with-guile=embedded18 --disable-fastalloc --with-osx=$$OSX_TARGET --with-gnutls=yes; $(MAKE); $(MAKE) PACKAGE
 
 texmacs-server: local/bin/qmake local/lib/libfreetype.a
 	rm -rf texmacs-server/distr; cd texmacs-server; autoreconf; PKG_CONFIG_PATH=$$WORKING_DIR/local/lib/pkgconfig LIBS="-L/opt/homebrew/lib" TMREPO=$$WORKING_DIR/local ./configure --with-tmrepo=$$WORKING_DIR/local --prefix=$$WORKING_DIR/local --with-gnutls=yes  --with-guile=embedded18 --disable-fastalloc; $(MAKE); $(MAKE) PACKAGE
