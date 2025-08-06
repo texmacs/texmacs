@@ -47,6 +47,9 @@ AC_DEFUN([LC_GNUTLS],[
       if test "$TMREPO" != "" -a "$TMREPO" != "no" -a "$CONFIG_OS" = "GNU_LINUX"; then
           LIBS="$LIBS -lz"
       fi
+      if test "$TMREPO" != "" -a "$TMREPO" != "no" -a "$CONFIG_OS" = "ANDROID"; then
+          LIBS="$LIBS -lz"
+      fi
       AC_MSG_CHECKING(for GnuTLS version >= 3 (https://www.gnutls.org))
       AC_LINK_IFELSE([LM_GNUTLS_3],[
         AC_MSG_RESULT(yes)
