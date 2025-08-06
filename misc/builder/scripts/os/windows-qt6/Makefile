@@ -65,6 +65,7 @@ local/lib/libnettle.a: check nettle/lib/.libs/libnettle.a
 	if [ -f "local/lib/libnettle.a" ]; then echo "libnettle.a has been installed"; else echo "error on libnettle"; exit; fi;
 
 gnutls/Makefile: check local/lib/libltdl.a local/lib/libgmp.a local/lib/libnettle.a
+	cp -r patched/gnutls/* gnutls/
 	cd gnutls; ./configure --prefix=$$WORKING_DIR/local --enable-static --disable-shared
 
 gnutls/lib/.libs/libgnutls.a: check gnutls/Makefile
