@@ -204,7 +204,7 @@ ghostscript: ghostscript/Makefile
 texmacs: ghostscript local/bin/qmake local/lib/libfreetype.a
 	-rm -rf texmacs/distr
 	mkdir texmacs/distr
-	cd texmacs/src; autoreconf; PKG_CONFIG_PATH=$$WORKING_DIR/local/lib/pkgconfig TMREPO=$$WORKING_DIR/local ./configure --with-tmrepo=$$WORKING_DIR/local; $(MAKE) APPIMAGE
+	cd texmacs/src; autoreconf; PKG_CONFIG_PATH=$$WORKING_DIR/local/lib/pkgconfig TMREPO=$$WORKING_DIR/local ./configure --with-tmrepo=$$WORKING_DIR/local --with-gnutls=yes; $(MAKE) APPIMAGE
 
 texmacs-server: ghostscript local/bin/qmake local/lib/libfreetype.a
 	cd texmacs-server; autoreconf; PKG_CONFIG_PATH=$$WORKING_DIR/local/lib/pkgconfig TMREPO=$$WORKING_DIR/local ./configure --with-tmrepo=$$WORKING_DIR/local --with-gnutls=yes; $(MAKE) APPIMAGE
