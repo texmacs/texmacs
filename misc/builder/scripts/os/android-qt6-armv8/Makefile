@@ -106,4 +106,4 @@ texmacs:
 	-cd texmacs/src; make -i distclean
 	-rm -rf texmacs/distr;
 	cp -R local/share/guile-texmacs/1.8/* texmacs/src/TeXmacs/progs/
-	cd texmacs/src; autoreconf; ./configure --host=$$TARGET --with-texmacs-builder=$$WORKING_DIR/local --prefix=$$WORKING_DIR/local --disable-gs --with-gnu-ld=yes --with-qt-find-method=pkgconfig --disable-gs; $(MAKE) ANDROID_DEV_APK
+	cd texmacs/src; autoreconf; ./configure --host=$$TARGET --with-texmacs-builder=$$WORKING_DIR/local --prefix=$$WORKING_DIR/local --disable-gs --with-gnu-ld=yes --with-qt-find-method=pkgconfig --disable-gs --with-gnutls=yes; $(MAKE) ANDROID_DEV_APK
