@@ -41,6 +41,9 @@ AC_DEFUN([LC_GNUTLS],[
           LIBS="$LIBS -lintl -liconv -lcrypt32 -lws2_32"
           AC_DEFINE(TEXMACS_FIX_1_GNUTLS, 1, [Special fix])
       fi
+      if test "$TMREPO" != "" -a "$TMREPO" != "no" -a "$CONFIG_OS" = "MACOS"; then
+          LIBS="$LIBS -framework CoreFoundation -framework Security -lz"
+      fi
       AC_MSG_CHECKING(for GnuTLS version >= 3 (https://www.gnutls.org))
       AC_LINK_IFELSE([LM_GNUTLS_3],[
         AC_MSG_RESULT(yes)

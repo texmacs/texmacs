@@ -233,6 +233,9 @@
    backward compatibility; new code need not use it. */
 #undef STDC_HEADERS
 
+/* Special fix */
+#undef TEXMACS_FIX_1_GNUTLS
+
 /* Svn build revision */
 #undef TEXMACS_REVISION
 
@@ -247,6 +250,9 @@
 
 /* Use freetype library */
 #undef USE_FREETYPE
+
+/* Use GnuTLS library version >= 3 */
+#undef USE_GNUTLS
 
 /* Use ghostscript */
 #undef USE_GS
