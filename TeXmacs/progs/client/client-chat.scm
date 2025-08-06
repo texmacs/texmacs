@@ -226,9 +226,10 @@
 (tmfs-permission-handler (shared sname type)
   (in? type (list "read")))
 
-(define (list-shared? msg)
+(define (list-shared? t msg)
   (with (action pseudo full-name date doc) msg
-    (== action "share")))
+    (and (== action "share")
+         (and (not (ahash-ref t doc)) (ahash-set! t doc #t)))))
 
 (define (list-shared-name msg)
   (with (action pseudo full-name date doc) msg
@@ -244,7 +245,8 @@
              f))))
 
 (define (list-shared-document l)
-  (let* ((f (list-filter l list-shared?))
+  (let* ((doc-table (make-ahash-table))
+         (f (list-filter l (cut list-shared? doc-table <>)))
          (names (list-remove-duplicates (map list-shared-name f))))
     `(document
        (section* "Shared resources")
