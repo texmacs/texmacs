@@ -177,7 +177,7 @@ QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
 #if QT_VERSION >= 0x060000
 void
 QTMWidget::surfaceDprChanged () {
-  tm_widget()->reset_all();
+  tm_widget()->invalidate_all();
   the_gui->force_update();
 }
 #endif
@@ -998,8 +998,8 @@ QTMWidget::wheelEvent(QWheelEvent *event) {
 }
 
 void QTMWidget::showEvent (QShowEvent *event) {
-  (void) event;
   the_gui->force_update();
+  QTMScrollView::showEvent (event);
 }
 
 #if defined(OS_ANDROID) && QT_VERSION >= 0x060000
