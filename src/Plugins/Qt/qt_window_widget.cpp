@@ -35,8 +35,8 @@
 
 #if QT_VERSION >= 0x060000
 static QPoint
-ensure_visible_position (const QPoint& p, const QSize& s) {
-  QScreen* screen= QGuiApplication::primaryScreen();
+ensure_visible_position (const QPoint& p,
+			 const QScreen* screen, const QSize& s) {
   if (screen == NULL) return p;
   QRect r (p, s);
   QRect g= screen->availableGeometry();
@@ -50,8 +50,9 @@ ensure_visible_position (const QPoint& p, const QSize& s) {
 }
 #else
 static inline QPoint
-ensure_visible_position (const QPoint& p, const QSize& s) {
-  (void) s;
+ensure_visible_position (const QPoint& p,
+			 const QScreen* screen, const QSize& s) {
+  (void) screen; (void) s;
   return p;
 }
 #endif
@@ -191,7 +192,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
 	// to avoid window under menu bar on MAC when moving at (0,0)
         pt.ry() = (pt.y() <= 40) ? 40 : pt.y();
 #endif
-	pt= ensure_visible_position (pt, qwid->size ());
+	pt= ensure_visible_position (pt, qwid->screen (), qwid->size ());
         qwid->move (pt);
       }
     }
@@ -383,7 +384,7 @@ qt_popup_widget_rep::send (slot s, blackbox val) {
     {
       check_type<coord2>(val, s);
       QPoint pos= to_qpoint (open_box<coord2> (val));
-      pos= ensure_visible_position (pos, qwid->size());
+      pos= ensure_visible_position (pos, qwid->screen (), qwid->size());
       qwid->move (pos);
     }
       break;
