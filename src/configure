@@ -6597,12 +6597,12 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
   fi
 
 
-  if [[ "-ldbghelp -lSecur32 -lshell32 -lole32" =~ $(echo '^-Wl,') ]]
-  then LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32"
-  elif [[ "-ldbghelp -lSecur32 -lshell32 -lole32" =~ $(echo '^-l') ]]
+  if [[ "-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32" =~ $(echo '^-Wl,') ]]
+  then LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32"
+  elif [[ "-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32" =~ $(echo '^-l') ]]
   then
   unset STRIP_ALL_ARGS_list
-  for STRIP_ALL_ARGS_arg in "-ldbghelp -lSecur32 -lshell32 -lole32"
+  for STRIP_ALL_ARGS_arg in "-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32"
   do  while [[ $LDFLAGS != $STRIP_ALL_ARGS_list ]]
       do STRIP_ALL_ARGS_list=$LDFLAGS
 
@@ -6623,12 +6623,12 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
   done
   unset ${!STRIP_ALL_ARGS_*}
 
-       LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32"
+       LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-ldbghelp -lSecur32 -lshell32 -lole32($|[[:space:]])") ]]
-    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -ldbghelp -lSecur32 -lshell32 -lole32" >&5
-printf "%s\n" "$as_me: WARNING: Drop duplicate flag -ldbghelp -lSecur32 -lshell32 -lole32" >&2;}
-    else LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32"
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32" >&2;}
+    else LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32"
     fi
   fi
 
@@ -21113,7 +21113,7 @@ printf "%s\n" "disabling GnuTLS support" >&6; }
       CPPFLAGS=`pkg-config --cflags gnutls hogweed nettle`
       LIBS=`pkg-config --libs gnutls hogweed nettle`
       if test "$TMREPO" != "" -a "$TMREPO" != "no" -a "$CONFIG_OS" = "MINGW"; then
-          LIBS="$LIBS -lintl -liconv -lcrypt32 -lws2_32"
+          LIBS="$LIBS -lgnutls -ltasn1 -lp11-kit -lunistring -lidn2 -lz -lbrotlienc -lbrotlidec -lzstd -lbcrypt -lwindowsapp -lws2_32 -pthread -lintl -liconv -lcrypt32"
 
 printf "%s\n" "#define TEXMACS_FIX_1_GNUTLS 1" >>confdefs.h
 
