@@ -66,7 +66,7 @@ local/lib/libnettle.a: check nettle/lib/.libs/libnettle.a
 
 gnutls/Makefile: check local/lib/libltdl.a local/lib/libgmp.a local/lib/libnettle.a
 	cp -r patched/gnutls/* gnutls/
-	cd gnutls; ./configure --prefix=$$WORKING_DIR/local --enable-static --disable-shared
+	cd gnutls; ./configure --prefix=$$WORKING_DIR/local --enable-static --disable-shared --disable-hardware-acceleration --disable-doc
 
 gnutls/lib/.libs/libgnutls.a: check gnutls/Makefile
 	cd gnutls; $(MAKE)
@@ -146,7 +146,7 @@ local/windows/aspell/bin/aspell.exe: aspell/aspell.exe
 	cd aspell; $(MAKE) install
 
 texmacs: check
-	cd texmacs/src; autoreconf; CFLAGS="$$CFLAGS -std=c99" PKG_CONFIG_PATH=$$WORKING_DIR/local/lib/pkgconfig ./configure --with-texmacs-builder=$$WORKING_DIR/local --prefix=$$WORKING_DIR/local --with-guile=embedded18 --with-qt-find-method=pkgconfig; mingw32-make; mingw32-make WINDOWS_APPX
+	cd texmacs/src; autoreconf; CFLAGS="$$CFLAGS -std=c99" PKG_CONFIG_PATH=$$WORKING_DIR/local/lib/pkgconfig ./configure --with-texmacs-builder=$$WORKING_DIR/local --prefix=$$WORKING_DIR/local --with-guile=embedded18 --with-qt-find-method=pkgconfig --with-gnutls=yes; mingw32-make; mingw32-make WINDOWS_APPX
 
 texmacs-server: check
 	cd texmacs-server; autoreconf; CFLAGS="$$CFLAGS -std=c99" PKG_CONFIG_PATH=$$WORKING_DIR/local/lib/pkgconfig ./configure --with-texmacs-builder=$$WORKING_DIR/local --with-gnutls=yes --prefix=$$WORKING_DIR/local --with-guile=embedded18 --with-qt-find-method=pkgconfig; mingw32-make; mingw32-make WINDOWS_APPX
