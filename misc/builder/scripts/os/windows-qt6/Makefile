@@ -1,4 +1,4 @@
-all: check local/lib/libltdl.a local/lib/libiconv.a local/lib/libpng16.a local/lib/libfreetype.a local/lib/libgmp.a local/bin/qmake local/windows/aspell/bin/aspell.exe ghostscript texmacs
+all: check local/lib/libltdl.a local/lib/libiconv.a local/lib/libpng16.a local/lib/libfreetype.a local/lib/libgmp.a local/bin/qmake local/windows/aspell/bin/aspell.exe ghostscript gnutls/lib/.libs/libgnutls.a texmacs
 
 .PHONY: check texmacs
 
