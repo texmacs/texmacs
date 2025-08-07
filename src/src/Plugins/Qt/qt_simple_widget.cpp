@@ -215,7 +215,7 @@ qt_simple_widget_rep::send (slot s, blackbox val) {
     {
       check_type<coord2>(val, s);
       coord2 p = open_box<coord2> (val);
-      canvas()->resize (to_qsize(p));   // FIXME?
+      canvas()->resize (to_qsize(p));
     }
       break;
       
@@ -337,8 +337,7 @@ qt_simple_widget_rep::query (slot s, int type_id) {
     {
       check_type_id<coord4> (type_id, s);
       if (canvas()) {
-	double dpr= canvas()->devicePixelRatio ();
-        QSize sz = backingPixmap->size() / dpr;     // sz.setWidth(sz.width()-2);
+        QSize sz = canvas()->size ();
         QPoint pos = backing_pos;
         return close_box<coord4> (from_qrect(QRect(pos, sz)));
       } else {
@@ -395,7 +394,7 @@ impress (qt_simple_widget_rep* wid) {
     debug_qt << "impress (" << s.width() << "," << s.height() << ")\n";
   pxm.fill (Qt::transparent);
   ren.begin (static_cast<QPaintDevice*>(&pxm));
-  rectangle r = rectangle (0, 0,  phys_s.width(), phys_s.height());
+  rectangle r = rectangle (0, 0, phys_s.width(), phys_s.height());
   ren.set_origin (0, 0);
   ren.encode (r->x1, r->y1);
   ren.encode (r->x2, r->y2);
@@ -441,7 +440,7 @@ qt_simple_widget_rep::invalidate_rect (int x1, int y1, int x2, int y2) {
 
 void
 qt_simple_widget_rep::invalidate_all () {
-  QSize sz = canvas()->surface()->size();
+  QSize sz = canvas()->size();
   // QPoint pt = QAbstractScrollArea::viewport()->pos();
   //cout << "invalidate all " << LF;
   invalid_regions = rectangles();
@@ -500,6 +499,8 @@ qt_simple_widget_rep::get_renderer() {
   return ren;
 }
 
+#if 0
+// to be moved into the renderer
 /*
   This function adds a default background to contrast with user
   backgrounds which have transparency.
@@ -530,7 +531,7 @@ qt_fill_default_background (QPainter* p, const QRect& r,
   }
 }
 #endif
-
+#endif
 /*
  This function is called by the qt_gui::update method (via repaint_all) to keep
  the backing store in sync and propagate the changes to the surface on screen.
@@ -705,8 +706,9 @@ qt_simple_widget_rep::repaint_invalid_regions () {
         ren->encode (r->x2, r->y2);
         ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
 #if QT_VERSION >= 0x060000
-	qt_fill_default_background (((qt_renderer_rep*) ren)->painter, qr0,
-				    dpr*origin.x (), dpr*origin.y ());
+	// to be moved into the renderer
+	//qt_fill_default_background (((qt_renderer_rep*) ren)->painter, qr0,
+	//				    dpr*origin.x (), dpr*origin.y ());
 #endif
         handle_repaint (ren, r->x1, r->y2, r->x2, r->y1);
         if (gui_interrupted ()) {
