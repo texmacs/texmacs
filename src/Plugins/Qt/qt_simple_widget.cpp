@@ -172,22 +172,16 @@ qt_simple_widget_rep::send (slot s, blackbox val) {
     {
       check_type<coord4>(val, s);
       coord4 p= open_box<coord4> (val);
-      
-      {
-        qt_renderer_rep* ren = the_qt_renderer ();
-        {
-          coord2 pt_or = from_qpoint(backing_pos);
-          SI ox = -pt_or.x1;
-          SI oy = -pt_or.x2;
-          ren->set_origin(ox,oy);
-        }
-        
-        SI x1 = p.x1, y1 = p.x2, x2 = p.x3, y2 = p.x4;
-        ren->outer_round (x1, y1, x2, y2);
-        ren->decode (x1, y1);
-        ren->decode (x2, y2);
-        invalidate_rect (x1, y2, x2, y1);
-      }
+      qt_renderer_rep* ren = the_qt_renderer ();
+      coord2 pt_or = from_qpoint(backing_pos);
+      SI ox = -pt_or.x1;
+      SI oy = -pt_or.x2;
+      ren->set_origin(ox,oy);
+      SI x1 = p.x1, y1 = p.x2, x2 = p.x3, y2 = p.x4;
+      ren->outer_round (x1, y1, x2, y2);
+      ren->decode (x1, y1);
+      ren->decode (x2, y2);
+      invalidate_rect (x1, y2, x2, y1);
     }
       break;
       
@@ -331,9 +325,13 @@ qt_simple_widget_rep::query (slot s, int type_id) {
     case SLOT_VISIBLE_PART:
     {
       check_type_id<coord4> (type_id, s);
-      if (canvas()) {
-        double dpr= canvas()->devicePixelRatio ();
-        QSize sz = backingPixmap->size() / dpr;     // sz.setWidth(sz.width()-2);
+      if (backingPixmap) {
+#if QT_VERSION >= 0x060000
+        double dpr= backingPixmap->devicePixelRatio ();
+        QSize sz = backingPixmap->size() / dpr;
+#else
+        QSize sz = backingPixmap->size() / retina_factor;
+#endif
         QPoint pos = backing_pos;
         return close_box<coord4> (from_qrect(QRect(pos, sz)));
       } else {
