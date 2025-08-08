@@ -3,6 +3,8 @@
 * MODULE     : QTMSockets.hpp
 * DESCRIPTION: QT TeXmacs sockets manager - Header
 * COPYRIGHT  : (C) 2015 Denis RAUX
+*                  2022 Gregoire LECERF
+*                  2025 Robin WILS
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -16,8 +18,10 @@
 #include <QSocketNotifier>
 
 #include "hashset.hpp"
+#include "hashmap.hpp"
 #include "string.hpp"
 #include "tm_link.hpp"
+#include "socket_contact.hpp"
 
 #ifndef OS_MINGW
 
@@ -45,48 +49,31 @@ typedef int socklen_t;
 
 #endif
 
-// Common structures fors sockets
+/******************************************************************************
+* Socket utilities
+******************************************************************************/
 
-extern unsigned qtmsocket_debug_count;
+extern unsigned long long int qtmsocket_debug_counter;
 
-string debug_io_string (string s);
+string socket_debug_io_string (string s, int max);
 
-#define DBG_IO(a) \
+#define DEBUG_SOCKET(a) \
   if (DEBUG_IO) debug_io << "TeXmacs " \
-	<< qtmsocket_debug_count++ << "] " << a << "\n"
+	<< qtmsocket_debug_counter++ << "] " << a << "\n"
 
-#define DBG_IOS(a,s) \
-   if(N(s)) DBG_IO (a << debug_io_string (s))
+#define DEBUG_SOCKET_DATA(a,s) \
+   if (N(s)) DEBUG_SOCKET (a << socket_debug_io_string (s, 2048))
 
-enum state { ST_OK, ST_WSA, ST_SOCKET, ST_FCNTL, ST_BIND,
-	     ST_LISTEN, ST_CONNECTION, ST_GETHOST, ST_NOTIF,
-	     ST_VOID, ST_HALTED, ST_CLOSED };
+/******************************************************************************
+* Socket link
+******************************************************************************/
 
-class socket_basic {
-public:
-  bool alive () { return st == ST_OK; }
-protected:
-  socket_basic(void);
-  ~socket_basic();
-  int sock;
-  int err;
-  enum state st;
-private:
-  static int count;
-#ifdef OS_MINGW
-  static wsoc::WSADATA wsadata;
-#endif
-};
-
-// Socket for clients
-
-class socket_link: public QObject, public socket_basic, public tm_link_rep {
+class socket_link_rep: public QObject, public tm_link_rep {
   Q_OBJECT
-
 public:
-  socket_link (int s, SOCKADDR_STORAGE* addr);
-  socket_link (string host, unsigned short port=6561);
-  ~socket_link ();
+  socket_link_rep (int io, SOCKADDR_STORAGE* addr, tm_contact contact);
+  socket_link_rep (string host2, unsigned short port2, tm_contact contact);
+  ~socket_link_rep ();
   string  start ();
   void    write (string s, int channel=LINK_OUT);
   string& watch (int channel);
@@ -94,40 +81,52 @@ public:
   void    listen (int msecs);
   void    interrupt () {}
   void    stop ();
-  bool    alive () { return socket_basic::alive(); }
-  int     getid () { return id; }
+  int     get_socket_id () { return socket_id; }
+  string  get_host_name () { return host; }
 
 public slots:
   void data_set_ready (int);
   void ready_to_send (int);
 signals:
-  void disconnection (socket_link* clt);
-private :
-  int id;
-  string inbuf;
-  string outbuf;
-  QSocketNotifier *qsnr,*qsnw;
-  SOCKADDR_STORAGE add; 
+  void disconnection (socket_link_rep* clt);
+private:
+  string host;
+  unsigned short port;
+  int socket_id;
+  tm_contact contact;
+  string input_buffer;
+  string output_buffer;
+  QSocketNotifier *read_notifier_ptr, *write_notifier_ptr;
+  SOCKADDR_STORAGE address;
+  inline bool used_by_server () { return port == 0; }
 };
 
-// Socket for servers
+/******************************************************************************
+* Server
+******************************************************************************/
 
-class socket_server: public QObject, public socket_basic {
+class socket_server_rep: public QObject {
   Q_OBJECT
-
 public:
-  socket_server (string host, unsigned short port=6561);
-  ~socket_server();
-  string read (int clt);
-  void write (int clt, string s);
-  enum state st;
-  int err;
-  int srv_count() { return N(clts); }
+  string host, hostname;
+  unsigned short port;
+  hashmap<int,string> address_from_id;
+  socket_server_rep (string host2, unsigned short port2= 6561);
+  ~socket_server_rep ();
+  string start ();
+  void stop ();
+  string read (int client);
+  void write (int client, string s);
+  int number_of_connections () {
+    return N(connections); }
+  void listen_connections (int msecs);
 public slots:
-  void connection (int);
-  void disconnection (socket_link* clt);
-private :
-  socket_link* find_client (int id);
-  hashset<pointer> clts;
-  QSocketNotifier *qsnc;
+  void connection (int client);
+  void disconnection (socket_link_rep* client_ptr);
+private:
+  int socket_id;
+  hashset<pointer> connections;
+  QSocketNotifier* notifier_ptr;
+  hashmap<int,pointer> socket_ptr_from_id;
+  socket_link_rep* find_connection_ptr (int id);
 };

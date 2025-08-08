@@ -8118,7 +8118,7 @@ tmg_client_start (tmscm arg1) {
   string in1= tmscm_to_string (arg1);
 
   // TMSCM_DEFER_INTS;
-  int out= client_start (in1);
+  int out= legacy_client_start (in1);
   // TMSCM_ALLOW_INTS;
 
   return int_to_tmscm (out);

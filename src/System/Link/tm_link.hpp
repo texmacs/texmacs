@@ -13,6 +13,7 @@
 #define TM_LINK_H
 #include "tree.hpp"
 #include "command.hpp"
+#include "socket_contact.hpp"
 
 #define CONNECTION_DEAD    0
 #define CONNECTION_DYING   1
@@ -29,10 +30,6 @@
 #define LINK_OUT  0
 #define LINK_ERR  1
 
-#define SOCKET_DEFAULT  0
-#define SOCKET_CLIENT   1
-#define SOCKET_SERVER   2
-
 /******************************************************************************
 * The tm_link class
 ******************************************************************************/
@@ -40,7 +37,6 @@
 struct tm_link_rep: abstract_struct {
   bool   alive;   // link is alive
   string secret;  // empty string or secret key for encrypted connections
-
   command feed_cmd; // called when async data available
   
 public:
@@ -81,7 +77,8 @@ inline bool tm_link::operator != (tm_link l) { return rep != l.rep; }
 tm_link make_cmdline_link (string name);
 tm_link make_pipe_link (string cmd);
 tm_link make_dynamic_link (string lib, string symb, string init, string ses);
-tm_link make_socket_link (string h, int p, int t= SOCKET_DEFAULT, int fd= -1);
+tm_link make_socket_link (string h, int p, int t,
+			  int fd, tm_contact contact);
 tm_link make_socket_server (int port);
 tm_link find_socket_link (int fd);
 
