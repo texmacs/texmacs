@@ -3,6 +3,8 @@
 * MODULE     : client_server.hpp
 * DESCRIPTION: TeXmacs clients and servers
 * COPYRIGHT  : (C) 2007  Joris van der Hoeven
+*                  2022  Grégoire Lecerf
+*                  2025  Robin Wils
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -12,18 +14,38 @@
 #ifndef CLIENT_SERVER_H
 #define CLIENT_SERVER_H
 #include "string.hpp"
+#include "scheme.hpp"
+#include "server_log.hpp"
+#include "gnutls.hpp"
 
+// TeXmacs server and client
 void   server_start ();
 void   server_stop ();
 string server_read (int fd);
 void   server_write (int fd, string s);
 bool   server_started ();
+void   server_listen_connections (int msecs);
 
-int    client_start (string host);
+int        legacy_client_start (string host, int port);
+inline int legacy_client_start (string host) {
+  return legacy_client_start(host, 6561);
+}
+
+int    tls_client_start (string host, int port, scheme_tree args);
 void   client_stop (int fd);
 string client_read (int fd);
-void   client_write (int fd, string s);
+int    client_write (int fd, string s);
+string server_client_address (int fd);
+void   client_listen_connections (int msecs);
 
 void   enter_secure_mode (int fd);
+
+// Tells if TeXmacs is running a server
+bool is_server ();
+void set_server ();
+void unset_server ();
+int get_server_port ();
+void set_server_port (int port);
+int  server_port_in_use ();
 
 #endif // defined CLIENT_SERVER_H

@@ -22,12 +22,6 @@ const int log_notice= 5;
 const int log_info= 6;
 const int log_debug= 7;
 
-
-// temporary definition
-bool is_server_started();
-
-inline bool is_server() { return is_server_started(); }
-
 void server_log_start ();
 void server_log_stop ();
 void server_log_write (int level, string msg);

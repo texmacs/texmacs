@@ -4790,7 +4790,7 @@ source code.
     <scm|(client-start <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
-    Calls the <c++> function <cpp|client_start> which returns
+    Calls the <c++> function <cpp|legacy_client_start> which returns
     <scm|int>.
   </explain>
 

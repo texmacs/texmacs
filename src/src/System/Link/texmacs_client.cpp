@@ -2,7 +2,8 @@
 /******************************************************************************
 * MODULE     : texmacs_client.cpp
 * DESCRIPTION: clients of TeXmacs servers
-* COPYRIGHT  : (C) 2007  Joris van der Hoeven 
+* COPYRIGHT  : (C) 2007  Joris van der Hoeven
+*                  2022  Gregoire Lecerf
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -10,151 +11,215 @@
 ******************************************************************************/
 
 #include "client_server.hpp"
-#include "socket_server.hpp"
-#include "socket_link.hpp"
 #include "scheme.hpp"
+#include "iterator.hpp"
+#include "analyze.hpp"
+#include "hashmap.hpp"
+#include "Gnutls/gnutls.hpp"
 
 #ifdef QTTEXMACS
 #include "Qt/QTMSockets.hpp"
 
-#define CLT_KO(c) (c == NULL || !c->alive())
+#define CLT_KO(c) (c == NULL || !c->alive)
 
-static array<socket_link*> the_clients;
+static hashset<pointer> the_clients;
+static hashmap<int,pointer> client_from_fd; 
 static bool clients_started= false;
+
+/******************************************************************************
+* Utilities
+******************************************************************************/
+
+static bool
+is_tuple_string (scheme_tree o) {
+  if (!is_tuple (o)) return false;
+  for (int i= 0; i < N(o); i++)
+    if (!is_string (o[i])) return false;
+  return true;
+}
+
+static array<string>
+as_array_string (scheme_tree o) {
+  ASSERT (is_tuple_string (o), "wrong argument");
+  array<string> ret;
+  for (int i= 0; i < N(o); i++)
+    ret << scm_unquote (as_string (o[i]));
+  return ret;
+}
+
+static bool
+is_tuple_tuple_string (scheme_tree o) {
+  if (!is_tuple (o)) return false;
+  for (int i= 0; i < N(o); i++)
+    if (!is_tuple_string (o[i])) return false;
+  return true;
+}
+
+static array<array<string> >
+as_array_array_string (scheme_tree o) {
+  ASSERT (is_tuple_tuple_string (o), "wrong argument");
+  array<array<string> > ret;
+  for (int i= 0; i < N(o); i++)
+    ret << as_array_string (o[i]);
+  return ret;
+}
 
 /******************************************************************************
 * Client side
 ******************************************************************************/
 
-int
-client_start (string host) {
+static int
+_client_start (string host, int port, tm_contact contact) {
+  if (port < 0 || port > 65535) {
+    io_error << "invalid port number " << port << "\n";
+    return -11;
+  }
   if (!clients_started) {
     (void) eval ("(use-modules (client client-base))");
     clients_started= true;
   }
-  socket_link *client= tm_new<socket_link> (host, 6561);
-  if(client) {
-    string err = client->start ();
-    if (client->alive () && !N (err)) {
-      int cltid= N (the_clients);
-      DBG_IO ("Client started Id:" << cltid);
-      the_clients << client;
-      call ("client-add", object (cltid));
-      return (cltid);
-    }
-    DBG_IO ("Client Error : " << err);
-    tm_delete (client);
-  } else DBG_IO ("Can't allocate memory for client");
+  socket_link_rep* client=
+    tm_new<socket_link_rep> (host, port, contact);
+  if (client == NULL)
+    return -20;
+  string status= client->start ();
+   if (DEBUG_IO)
+     debug_io << "client started, its status is now '" << status << "'\n";
+  if (status == "" && client->alive) {
+    int fd= client->get_socket_id ();
+    the_clients->insert (client);
+    client_from_fd(fd)= client;
+    return fd;
+  }
+  client->stop ();
+  if (status == "contact has not started")
+    return -60;
+  tm_delete (client);
+  return -120;
+}
+
+int
+legacy_client_start (string host, int port) {
+  return _client_start (host, port, make_socket_client_contact ());
+}
+
+int
+tls_client_start (string host, int port, scheme_tree args) {
+  if (!gnutls_present ())
+    return -100;
+  if (!is_tuple_tuple_string (args)) {
+    if (DEBUG_IO)
+      debug_io << "wrong arguments in 'tls_client_start': " << args << "\n";
     return -1;
+  }
+  //cout << "tls_client_start, " << args << LF;
+  return _client_start (host, port,
+    make_tls_client_contact (as_array_array_string (args)));
+}
+
+static socket_link_rep*
+find_client (int fd) {
+  if (client_from_fd->contains (fd))
+    return (socket_link_rep*) client_from_fd[fd];
+  return (socket_link_rep*) NULL;
 }
 
 void
 client_stop (int fd) {
+  //cout << "--> client_stop, " << fd << LF;
+  //cout << client_from_fd << LF;
+  //cout << the_clients << LF;
+  if (!clients_started) {
+    (void) eval ("(use-modules (client client-base))");
+    clients_started= true;
+  }
   call ("client-remove", object (fd));
-  socket_link *client= the_clients[fd];
-  the_clients[fd]= NULL;
-  client->stop ();
-  tm_delete (client);
+  socket_link_rep *client= find_client (fd);
+  if (client) {
+    client_from_fd->reset (fd);
+    if (the_clients->contains (client))
+      the_clients->remove (client);
+    client->stop ();
+    tm_delete (client);
+  }
 }
 
 string
 client_read (int fd) {
-  socket_link *client= the_clients[fd];
+  socket_link_rep *client= find_client (fd);
   if (CLT_KO (client)) return "";
+  if (!client->complete_packet (LINK_OUT)) return "";
   bool success;
   string back= client->read_packet (LINK_OUT, 0, success);
-  DBG_IOS ("Client in:", back);
+  DEBUG_SOCKET_DATA ("Client in: ", back);
   return back;
 }
 
-void
+int
 client_write (int fd, string s) {
-  socket_link *client= the_clients[fd];
-  if (CLT_KO (client)) return;
-  DBG_IOS ("Client out:", s);
+  socket_link_rep *client= find_client (fd);
+  if (CLT_KO (client)) return -1;
+  DEBUG_SOCKET_DATA ("client output: ", s);
   client->write_packet (s, LINK_IN);
+  if (client->alive)
+    return 0;
+  return -1;
 }
 
 void
 enter_secure_mode (int fd) {
-  socket_link *client= the_clients[fd];
-  if (client == NULL || !client->alive ()) return;
+  socket_link_rep *client= find_client (fd);
+  if (client == NULL || !client->alive) return;
   client->secure_client ();
+}
+
+void
+client_listen_connections (int msecs) {
+  //cout << "client_listen_connections " << N(the_clients) << "\n";
+  iterator<pointer> it= iterate (the_clients);
+  while (it->busy ()) {
+    socket_link_rep* c= (socket_link_rep*) it->next ();
+    if (c != NULL)
+      c->listen (msecs);
+  }
 }
 
 #else // Non QT part
 
-typedef socket_link_rep* weak_socket_link;
-static array<weak_socket_link> the_clients;
-static bool clients_started= false;
-socket_link_rep* make_weak_socket_link (string h, int p, int t, int f);
-
-/******************************************************************************
-* Client side
-******************************************************************************/
-
 int
 client_start (string host) {
-  if (!clients_started) {
-    (void) eval ("(use-modules (client client-base))");
-    clients_started= true;
-  }
-  weak_socket_link client=
-    make_weak_socket_link (host, 6561, SOCKET_CLIENT, -1);
-  if (!client->alive)
-    cout << "TeXmacs] Starting client... " << client->start () << "\n";
-  if (client->alive) {
-    call ("client-add", object (client->io));
-    the_clients << client;
-    return client->io;
-  }
-  else return -1;
+  io_error << "sockets are not implemented";
+  return -1;
 }
 
+int
+tls_client_start (string host, scheme_tree args) {
+  io_error << "sockets are not implemented";
+  return -1;
+}
 void
 client_stop (int fd) {
-  for (int i=0; i<N(the_clients); i++)
-    if (the_clients[i]->io == fd) {
-      weak_socket_link client= the_clients[i];
-      client->stop ();
-      tm_delete (client);
-      client= NULL;
-      the_clients= append (range (the_clients, 0, i),
-                           range (the_clients, i+1, N(the_clients)));
-    }
-}
-
-static weak_socket_link
-find_client (int fd) {
-  for (int i=0; i<N(the_clients); i++)
-    if (the_clients[i]->io == fd)
-      return the_clients[i];
-  return NULL;
+  io_error << "sockets are not implemented";
 }
 
 string
 client_read (int fd) {
-  weak_socket_link client= find_client (fd);
-  if (client == NULL || !client->alive) return "";
-  if (!client->complete_packet (LINK_OUT)) return "";
-  bool success;
-  string back= client->read_packet (LINK_OUT, 0, success);
-  //cout << "Server read " << back << "\n";
-  return back;
+  io_error << "sockets are not implemented";
+  return "";
 }
 
 void
 client_write (int fd, string s) {
-  weak_socket_link client= find_client (fd);
-  if (client == NULL || !client->alive) return;
-  //cout << "Client write " << s << "\n";
-  client->write_packet (s, LINK_IN);
+  io_error << "sockets are not implemented";
 }
 
 void
 enter_secure_mode (int fd) {
-  weak_socket_link client= find_client (fd);
-  if (client == NULL || !client->alive) return;
-  client->secure_client ();
+  io_error << "sockets are not implemented";
+}
+
+void
+client_listen_connections (int msecs) {
+  io_error << "sockets are not implemented";
 }
 #endif
