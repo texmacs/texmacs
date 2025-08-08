@@ -112,6 +112,9 @@ bool qt_print (bool&, bool&, string&, url&, string&, string&, string&);
 
 QPixmap as_pixmap (const QImage& im);
 
+// Returns the maximum device pixel ratio (dpr) of the current screens. 
+double qt_max_available_dpr ();
+
 /******************************************************************************
  * Type checking
  ******************************************************************************/
