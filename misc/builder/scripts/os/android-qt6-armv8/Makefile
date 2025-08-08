@@ -73,7 +73,7 @@ local/lib/libbrotlicommon.a: brotli/build/libbrotlicommon.a
 	if [ -f "local/lib/libbrotlicommon.a" ]; then echo "brotli has been installed"; else echo "error on brotli"; exit; fi;
 
 gnutls/Makefile: local/lib/libltdl.a local/lib/libgmp.a local/lib/libnettle.a
-	cd gnutls; ./configure --host=$$TARGET --prefix=$$WORKING_DIR/local --enable-static --disable-shared --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-guile --without-brotli
+	cd gnutls; ./configure --host=$$TARGET --prefix=$$WORKING_DIR/local --enable-static --disable-shared --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-guile --without-brotli --disable-hardware-acceleration
 
 gnutls/lib/.libs/libgnutls.a: gnutls/Makefile
 	cd gnutls; $(MAKE)
