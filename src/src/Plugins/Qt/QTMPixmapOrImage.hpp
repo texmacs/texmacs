@@ -73,6 +73,20 @@ struct QTMPixmapOrImage {
     else
       ((QPixmap*) rep)->fill (c);
   }
+#if QT_VERSION >= 0x060000
+  double devicePixelratio () {
+    if (headless_mode)
+      return ((QImage*) rep)->devicePixelRatio ();
+    else
+      return ((QPixmap*) rep)->devicePixelRatio ();
+  }
+  void setDevicePixelRatio (const double dpr) {
+    if (headless_mode)
+      ((QImage*) rep)->setDevicePixelRatio (dpr);
+    else
+      ((QPixmap*) rep)->setDevicePixelRatio (dpr);
+  }
+#endif
   bool isNull () {
     return headless_mode ?
       ((QImage*) rep)->isNull () : ((QPixmap*) rep)->isNull ();

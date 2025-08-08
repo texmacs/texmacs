@@ -121,14 +121,13 @@ public:
 QTMPixmapOrImage 
 qt_glue_widget_rep::render () {
   static QPainter painter;
+  static qt_renderer_rep ren (&painter);
 #if QT_VERSION >= 0x060000
-  static qt_renderer_rep ren (&painter, 1, 0, 0);
   double dpr = get_dpr ();
   QSize s = to_qsize (dpr*w, dpr*h);
   QPixmap pxm (s);
   pxm.setDevicePixelRatio (dpr);
 #else
-  static qt_renderer_rep ren (&painter);
   QSize s = to_qsize (w, h);
   QPixmap pxm (s);
 #endif
