@@ -93,26 +93,10 @@ void del_obj_qt_renderer(void)  {
 * qt_renderer
 ******************************************************************************/
 
-#if QT_VERSION >= 0x060000
-qt_renderer_rep::qt_renderer_rep (QPainter *_painter, qreal dpr, int w2, int h2):
-  basic_renderer_rep (true, w2, h2), painter(_painter), dpr(dpr), parent(nullptr) 
-{
-  reset_zoom_factor(); 
-}
-#else
 qt_renderer_rep::qt_renderer_rep (QPainter *_painter, int w2, int h2):
-  basic_renderer_rep (true, w2, h2), painter(_painter)
-{
+  basic_renderer_rep (true, w2, h2), painter(_painter) {
   reset_zoom_factor(); 
 }
-#endif
-
-#if QT_VERSION >= 0x060000
-qt_renderer_rep::qt_renderer_rep (QPainter *_painter, qt_renderer_rep *_parent):
-  basic_renderer_rep (true, 0, 0), painter(_painter), dpr (0.0), parent(_parent) {
-  reset_zoom_factor(); 
-}
-#endif
 
 qt_renderer_rep::~qt_renderer_rep () {}
 
@@ -134,29 +118,19 @@ qt_renderer_rep::begin (void* handle) {
 	       << ((QPixmap*) handle)->width() << " x "
 	       << ((QPixmap*) handle)->height() << LF;
   }
-#if QT_VERSION >= 0x060000
-  set_dpr (device->devicePixelRatio());
-#endif
   w = painter->device()->width();
   h = painter->device()->height();
 #if QT_VERSION >= 0x060000
+  double dpr= device->devicePixelRatio();
   painter->resetTransform();
-  painter->scale(1.0 / painter->device()->devicePixelRatio(),
-                 1.0 / painter->device()->devicePixelRatio());
+  painter->scale (1.0 / dpr, 1.0 / dpr);
 #endif
 }
 
-#if QT_VERSION >= 0x060000
 void
-qt_renderer_rep::begin () { 
-  set_dpr (painter->device()->devicePixelRatio());
-  this->w = painter->device()->width();
-  this->h = painter->device()->height();
-  painter->scale(1.0 / get_dpr(), 1.0 / get_dpr());
+qt_renderer_rep::end () {
+  painter->end ();
 }
-#endif
-
-void qt_renderer_rep::end () { painter->end (); }
 
 void 
 qt_renderer_rep::get_extents (SI& w2, SI& h2) {
@@ -177,6 +151,14 @@ qt_renderer_rep::set_zoom_factor (double zoom) {
   retina_pixel= pixel * retina_factor;
 #endif
 }
+
+#if QT_VERSION >= 0x060000
+double qt_renderer_rep::get_dpr () {
+  if (painter->device ())
+    return painter->device ()->devicePixelRatio ();
+  return qt_max_available_dpr ();
+}
+#endif
 
 /******************************************************************************
 * Transformations
@@ -679,23 +661,16 @@ qt_renderer_rep::draw (const QFont& qfn, const QString& qs,
  * main qt renderer
  ******************************************************************************/
 
-
 qt_renderer_rep*
-the_qt_renderer (double dpr) {
+the_qt_renderer () {
   static QPainter *the_painter = NULL;
   static qt_renderer_rep* the_renderer= NULL;
   if (!the_renderer) {
     the_painter = new QPainter();
-#if QT_VERSION >= 0x060000
-    the_renderer= tm_new<qt_renderer_rep> (the_painter, dpr, 0, 0);
-#else
-    (void) dpr;
     the_renderer= tm_new<qt_renderer_rep> (the_painter);
-#endif
   }
   return the_renderer;
 }
-
 
 /******************************************************************************
  * Shadow management methods 
@@ -760,30 +735,20 @@ qt_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   ASSERT (ren != NULL, "invalid renderer");
   if (ren->is_printer ()) return;
   qt_renderer_rep* shadow= static_cast<qt_renderer_rep*>(ren);
-#if QT_VERSION >= 0x060000  
-  ren->outer_round (x1, y1, x2, y2);
-#else
+  shadow->master= this;
   outer_round (x1, y1, x2, y2);
-#endif
   x1= max (x1, cx1- ox);
   y1= max (y1, cy1- oy);
   x2= min (x2, cx2- ox);
   y2= min (y2, cy2- oy);
   shadow->ox= ox;
   shadow->oy= oy;
-  shadow->master= this;
   shadow->cx1= x1+ ox;
   shadow->cy1= y1+ oy;
   shadow->cx2= x2+ ox;
   shadow->cy2= y2+ oy;
-
-#if QT_VERSION >= 0x060000  
-  ren->decode (x1, y1);
-  ren->decode (x2, y2);
-#else
   decode (x1, y1);
   decode (x2, y2);
-#endif
   if (x1<x2 && y2<y1) {
     QRect rect = QRect(x1, y2, x2-x1, y1-y2);
     //    shadow->painter->setCompositionMode(QPainter::CompositionMode_Source);  
@@ -856,13 +821,11 @@ qt_proxy_renderer_rep::new_shadow (renderer& ren) {
       static_cast<qt_shadow_renderer_rep*>(ren)->end();
     // cout << "Old: " << sw << ", " << sh << "\n";
   }
-#if QT_VERSION >= 0x060000
-  if (ren == NULL)
-    ren= (renderer) tm_new<qt_shadow_renderer_rep> (QTMPixmapOrImage (mw, mh), this);
-#else
-  if (ren == NULL)
-    ren= (renderer) tm_new<qt_shadow_renderer_rep> (QTMPixmapOrImage (mw, mh));
-#endif
+  if (ren == NULL) {
+    QTMPixmapOrImage px (mw, mh);
+    px.setDevicePixelRatio (get_dpr ());
+    ren= (renderer) tm_new<qt_shadow_renderer_rep> (px);
+  }
   // cout << "Create " << mw << ", " << mh << "\n";
   static_cast<qt_shadow_renderer_rep*>(ren)->begin(
           static_cast<qt_shadow_renderer_rep*>(ren)->px.rep);
@@ -874,6 +837,7 @@ qt_proxy_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   ASSERT (ren != NULL, "invalid renderer");
   if (ren->is_printer ()) return;
   qt_renderer_rep* shadow= static_cast<qt_renderer_rep*>(ren);
+  shadow->master= this;
   outer_round (x1, y1, x2, y2);
   x1= max (x1, cx1- ox);
   y1= max (y1, cy1- oy);
@@ -885,7 +849,6 @@ qt_proxy_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   shadow->cy1= y1+ oy;
   shadow->cx2= x2+ ox;
   shadow->cy2= y2+ oy;
-  shadow->master= this;
   decode (x1, y1);
   decode (x2, y2);
   if (x1<x2 && y2<y1) {
@@ -917,21 +880,10 @@ qt_proxy_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
  * shadow qt renderer
  ******************************************************************************/
 
-#if QT_VERSION >= 0x060000
-qt_shadow_renderer_rep::qt_shadow_renderer_rep (QTMPixmapOrImage _px, qt_renderer_rep *_parent)
-: qt_renderer_rep (new QPainter(), _parent), px(_px) { }
-#else
 qt_shadow_renderer_rep::qt_shadow_renderer_rep (QTMPixmapOrImage _px)
-// : qt_renderer_rep (_px.width(),_px.height()), px(_px) 
-: qt_renderer_rep (new QPainter()), px(_px)
-{
-  //cout << px.width() << "," << px.height() << " " << LF;
-  //painter->begin(&px);
-}
-#endif
+: qt_renderer_rep (new QPainter()), px(_px) {}
 
-qt_shadow_renderer_rep::~qt_shadow_renderer_rep () 
-{ 
+qt_shadow_renderer_rep::~qt_shadow_renderer_rep () { 
   painter->end(); 
   delete painter;
   painter = NULL;
@@ -943,6 +895,7 @@ qt_shadow_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   ASSERT (ren != NULL, "invalid renderer");
   if (ren->is_printer ()) return;
   qt_shadow_renderer_rep* shadow= static_cast<qt_shadow_renderer_rep*>(ren);
+  shadow->master= this;
   outer_round (x1, y1, x2, y2);
   x1= max (x1, cx1- ox);
   y1= max (y1, cy1- oy);
@@ -954,7 +907,6 @@ qt_shadow_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   shadow->cy1= y1+ oy;
   shadow->cx2= x2+ ox;
   shadow->cy2= y2+ oy;
-  shadow->master= this;
   decode (x1, y1);
   decode (x2, y2);
   if (x1<x2 && y2<y1) {

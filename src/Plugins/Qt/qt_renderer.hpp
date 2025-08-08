@@ -25,26 +25,16 @@ public:
   QPainter *painter; // FIXME: painter needs begin/end
 
 public:
-#if QT_VERSION >= 0x060000
-  qt_renderer_rep (QPainter *_painter, qreal dpr, int w, int h);
-  qt_renderer_rep (QPainter *_painter, qt_renderer_rep *parent);
-#else
   qt_renderer_rep (QPainter *_painter, int w = 0, int h = 0);
-#endif
   ~qt_renderer_rep ();
   void* get_handle ();
 
   void set_zoom_factor (double zoom);
-
 #if QT_VERSION >= 0x060000
-  inline qreal get_dpr () { if (parent) return parent->get_dpr(); else return dpr; }
-  inline void set_dpr (qreal _dpr) { dpr = _dpr; }
+  double get_dpr ();
 #endif
 
   void begin (void* handle);
-#if QT_VERSION >= 0x060000
-  void begin ();
-#endif
   void end ();
 
   //void set_extent (SI _w, SI _h) { w = _w; h = _h; }
@@ -80,16 +70,9 @@ public:
   void apply_shadow (SI x1, SI y1, SI x2, SI y2);
 
   void draw_picture (picture pict, SI x, SI y, int alpha);
-
-private:
-#if QT_VERSION >= 0x060000
-  qreal dpr;
-  qt_renderer_rep *parent;
-#endif
-
 };
 
-qt_renderer_rep* the_qt_renderer(double dpr);
+qt_renderer_rep* the_qt_renderer ();
 QImage* get_image (url u, int w, int h, tree eff, SI pixel);
 
 class qt_shadow_renderer_rep: public qt_renderer_rep {
@@ -98,13 +81,9 @@ public:
   qt_renderer_rep *master;
   
 public:
-#if QT_VERSION >= 0x060000
-  qt_shadow_renderer_rep (QTMPixmapOrImage _px, qt_renderer_rep *parent);
-#else
-  qt_shadow_renderer_rep (QTMPixmapOrImage _px= QTMPixmapOrImage ());
-#endif
+  qt_shadow_renderer_rep (QTMPixmapOrImage _px);
   ~qt_shadow_renderer_rep ();
-  
+  inline double get_dpr () { master->get_dpr (); }
   void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
 };
 
@@ -113,15 +92,10 @@ public:
   qt_renderer_rep *base;
   
 public:
-#if QT_VERSION >= 0x060000
-  qt_proxy_renderer_rep (qt_renderer_rep *_base) 
-  : qt_renderer_rep(_base->painter, _base) {};
-#else
   qt_proxy_renderer_rep (qt_renderer_rep *_base)
   : qt_renderer_rep(_base->painter), base(_base) {};
-#endif
   ~qt_proxy_renderer_rep () {};
-  
+  inline double get_dpr () { return base->get_dpr (); }  
   void new_shadow (renderer& ren);
   void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
 };

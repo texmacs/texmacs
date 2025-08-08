@@ -104,11 +104,7 @@ qt_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
 ******************************************************************************/
 
 qt_image_renderer_rep::qt_image_renderer_rep (picture p, double zoom):
-#if QT_VERSION >= 0x060000
-  qt_renderer_rep (new QPainter (), 1, 0, 0), pict (p)
-#else
   qt_renderer_rep (new QPainter ()), pict (p)
-#endif
 {
   zoomf  = zoom;
   shrinkf= (int) tm_round (std_shrinkf / zoomf);
