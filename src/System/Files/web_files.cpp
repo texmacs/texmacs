@@ -69,6 +69,8 @@ web_cache_invalidate (url name) {
 * Web files
 ******************************************************************************/
 
+#if 0
+// not used
 static string
 web_encode (string s) {
   return tm_decode (s);
@@ -84,6 +86,7 @@ fetch_tool () {
   done= true;
   return tool;
 }
+#endif
 
 url
 get_from_web (url name) {
