@@ -531,28 +531,32 @@ qt_fill_default_background (QPainter* p, const QRect& r,
  */
 void
 qt_simple_widget_rep::repaint_invalid_regions () {
-
 #if QT_VERSION >= 0x060000
+  // complete redrawing whenever the dpr changes
   qreal dpr = canvas()->devicePixelRatio();
+  qreal old_dpr= backingPixmap->devicePixelRatio();
+  if (old_dpr == 0) old_dpr= 1;
+  if (dpr != old_dpr) {
+    QPixmap newBackingPixmap (0, 0);
+    newBackingPixmap.setDevicePixelRatio (dpr);
+    *backingPixmap= newBackingPixmap;
+    backing_pos = (backing_pos * dpr) / old_dpr;
+  }
   backingPixmap->setDevicePixelRatio (1);
 #endif
-
   // Look if the scroll position has changed. backing_pos is the old position, 
   // while origin is the new one. Instead of repainting the whole backing store,
   // we move the contents of the backing store, and invalidate the regions that
   // are not covered by the moved contents.
   QRegion qrgn;
   QPoint origin = canvas()->origin();
-
 #if QT_VERSION >= 0x060000 && !defined(OS_ANDROID)
   // round the origin to avoid rounding errors with dpi of 1.25 and 1.75
   if (dpr != 1.0 && dpr != 2.0) {
     origin = QPoint (32 * (origin.x() / 32), 32 * (origin.y() / 32));
   }
 #endif
-
-  if (backing_pos != origin) {
-    
+  if (backing_pos != origin && !(backingPixmap->size().isNull())) {
 #if QT_VERSION >= 0x060000
     int dx =  dpr * (origin.x() - backing_pos.x());
     int dy =  dpr * (origin.y() - backing_pos.y());
