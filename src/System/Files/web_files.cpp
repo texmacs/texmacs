@@ -69,7 +69,7 @@ web_cache_invalidate (url name) {
 * Web files
 ******************************************************************************/
 
-#if 0
+#if !defined(QTTEXMACS) || QT_VERSION < 0x060000
 // not used
 static string
 web_encode (string s) {
