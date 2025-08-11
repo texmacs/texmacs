@@ -823,7 +823,9 @@ qt_proxy_renderer_rep::new_shadow (renderer& ren) {
   }
   if (ren == NULL) {
     QTMPixmapOrImage px (mw, mh);
+#if QT_VERSION >= 0x060000
     px.setDevicePixelRatio (get_dpr ());
+#endif
     ren= (renderer) tm_new<qt_shadow_renderer_rep> (px);
   }
   // cout << "Create " << mw << ", " << mh << "\n";
