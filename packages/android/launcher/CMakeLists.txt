@@ -11,6 +11,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets Svg PrintSupport Concurrent)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Svg PrintSupport Concurrent)
+find_package(GnuTLS REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(Nettle REQUIRED nettle IMPORTED_TARGET)
+pkg_check_modules(hogweed REQUIRED hogweed IMPORTED_TARGET)
 
 set(PROJECT_SOURCES main.cpp)
 
@@ -39,7 +43,20 @@ endif()
 
 set_property(TARGET TeXmacsLauncher PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
 
-target_link_libraries(TeXmacsLauncher PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Svg Qt${QT_VERSION_MAJOR}::PrintSupport Qt${QT_VERSION_MAJOR}::Concurrent Qt${QT_VERSION_MAJOR}::CorePrivate)
+target_link_libraries(
+    TeXmacsLauncher
+    PRIVATE
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Gui
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::Svg
+        Qt${QT_VERSION_MAJOR}::PrintSupport
+        Qt${QT_VERSION_MAJOR}::Concurrent
+        Qt${QT_VERSION_MAJOR}::CorePrivate
+        GnuTLS::GnuTLS
+        PkgConfig::Nettle
+        PkgConfig::hogweed
+)
 
 if(TEXMACS_LIBS)
   target_link_libraries(TeXmacsLauncher PRIVATE ${TEXMACS_LIBS})
