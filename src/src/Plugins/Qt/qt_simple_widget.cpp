@@ -53,9 +53,9 @@ qt_simple_widget_rep::as_qwidget () {
   handle_get_size_hint (width, height);
   QSize sz = to_qsize (width, height);
   scrollarea()->editor_flag= is_editor_widget ();
-  if (sz.isNull ()) {
-    scrollarea()->setExtents (QRect (QPoint(0,0), sz));
+  if (!is_editor_widget ()) {
     canvas()->resize (sz);
+    scrollarea()->setExtents (QRect (QPoint(0,0), sz));
   }
   all_widgets->insert((pointer) this);
   backing_pos = canvas()->origin ();
@@ -325,14 +325,9 @@ qt_simple_widget_rep::query (slot s, int type_id) {
     case SLOT_VISIBLE_PART:
     {
       check_type_id<coord4> (type_id, s);
-      if (backingPixmap) {
-#if QT_VERSION >= 0x060000
-        double dpr= backingPixmap->devicePixelRatio ();
-        QSize sz = backingPixmap->size() / dpr;
-#else
-        QSize sz = backingPixmap->size() / retina_factor;
-#endif
-        QPoint pos = backing_pos;
+      if (scrollarea()) {
+	QSize sz = scrollarea()->QAbstractScrollArea::viewport()->size();
+	QPoint pos= scrollarea()->origin();
         return close_box<coord4> (from_qrect(QRect(pos, sz)));
       } else {
         return close_box<coord4>(coord4(0,0,0,0));
