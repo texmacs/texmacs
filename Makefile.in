@@ -711,8 +711,13 @@ APPIMAGE: TEXMACS
 	$(CP) -Lr $(TMREPO)/plugins ../distr/TeXmacs.AppDir/usr
 	$(CP) -Lr $(TMREPO)/translations ../distr/TeXmacs.AppDir/usr
 
-	# Pack the AppImage
-	appimagetool ../distr/TeXmacs.AppDir ../distr/TeXmacs.AppImage
+	# Pack the AppImage (offline if APPIMAGE_RUNTIME is provided)
+	@if [ -n "$$APPIMAGE_RUNTIME" ]; then \
+		echo "Using custom AppImage runtime: $$APPIMAGE_RUNTIME"; \
+		appimagetool --runtime-file "$$APPIMAGE_RUNTIME" ../distr/TeXmacs.AppDir ../distr/TeXmacs.AppImage; \
+	else \
+		appimagetool ../distr/TeXmacs.AppDir ../distr/TeXmacs.AppImage; \
+	fi
 
 
 
