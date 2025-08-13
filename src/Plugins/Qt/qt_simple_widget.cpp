@@ -53,10 +53,10 @@ qt_simple_widget_rep::as_qwidget () {
   handle_get_size_hint (width, height);
   QSize sz = to_qsize (width, height);
   scrollarea()->editor_flag= is_editor_widget ();
-  scrollarea()->setExtents (QRect (QPoint(0,0), sz));
-  canvas()->resize (sz);
-  
-  
+  if (sz.isNull ()) {
+    scrollarea()->setExtents (QRect (QPoint(0,0), sz));
+    canvas()->resize (sz);
+  }
   all_widgets->insert((pointer) this);
   backing_pos = canvas()->origin ();
   backing_valid = false;
