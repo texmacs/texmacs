@@ -162,10 +162,13 @@
   padded-center padded-left-aligned padded-right-aligned)
 
 (define-group frame-tag
-  padded overlined underlined bothlined framed ornamented)
+  padded overlined underlined bothlined
+  leftlined rightlined verticallined
+  framed ornamented)
 
 (define-group frame-titled-tag
   padded-titled overlined-titled underlined-titled bothlined-titled
+  leftlined-titled rightlined-titled verticallined-titled
   framed-titled ornamented-titled)
 
 ;; Textual markup tags

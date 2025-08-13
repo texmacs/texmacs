@@ -269,6 +269,7 @@
 
 (logic-group latex-texmacs-env-preamble-environment%
   "tmpadded" "tmoverlined" "tmunderlined" "tmbothlined"
+  "tmleftlined" "tmrightlined" "tmverticallined"
   "tmframed" "tmornamented")
 
 (logic-group latex-texmacs-theorem-environment%

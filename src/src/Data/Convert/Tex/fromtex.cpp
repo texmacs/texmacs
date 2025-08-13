@@ -1958,6 +1958,9 @@ latex_command_to_tree (tree t) {
       is_tuple (t, "\\begin-tmunderlined*", 1) ||
       is_tuple (t, "\\begin-tmoverlined*", 1)  ||
       is_tuple (t, "\\begin-tmbothlined*", 1)  ||
+      is_tuple (t, "\\begin-tmleftlined*", 1) ||
+      is_tuple (t, "\\begin-tmrightlined*", 1)  ||
+      is_tuple (t, "\\begin-tmverticallined*", 1)  ||
       is_tuple (t, "\\begin-tmornamented*", 1) ||
       is_tuple (t, "\\begin-tmframed*", 1)) {
         string env= as_string (t[0]);
@@ -1973,6 +1976,11 @@ latex_command_to_tree (tree t) {
                  env == "tmoverlined*") {
           dic("innerbottommargin")=  "underlined-sep";
           dic("innertopmargin")=     "overlined-sep";
+        }
+        else if (env == "tmleftlined*" || env == "tmrightlined*" ||
+                 env == "tmverticallined*") {
+          dic("innerleftmargin")=    "leftlined-sep";
+          dic("innerrightmargin")=   "rightlined-sep";
         }
         else if (env == "tmframed*") {
           dic("innertopmargin")=     "framed-vsep";

@@ -2682,6 +2682,8 @@
   ("padding-below"     ("skipbelow" ,tmtex-decode-length))
   ("overlined-sep"     ("innertopmargin" ,tmtex-decode-length))
   ("underlined-sep"    ("innerbottommargin" ,tmtex-decode-length))
+  ("leftlined-sep"     ("innerleftmargin" ,tmtex-decode-length))
+  ("rightlined-sep"    ("innerrightmargin" ,tmtex-decode-length))
   ("framed-hsep"       ("innerleftmargin" "innerrightmargin"
                         ,tmtex-decode-length))
   ("framed-vsep"       ("innertopmargin"  "innerbottommargin"
@@ -3169,7 +3171,9 @@
         unfolded-subsession folded-subsession folded-io unfolded-io
         input output errput timing)
    (,tmtex-tm -1))
-  ((:or padded underlined overlined bothlined framed ornamented)
+  ((:or padded underlined overlined bothlined
+	leftlined rightlined verticallined
+	framed ornamented)
    (,tmtex-ornamented 1))
   ((:or folded-io-text unfolded-io-text) (,tmtex-fold-io-text 3))
   ((:or folded-io-math unfolded-io-math) (,tmtex-fold-io-math 3))

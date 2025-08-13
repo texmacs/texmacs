@@ -1,4 +1,4 @@
-<TeXmacs|1.99.19>
+<TeXmacs|2.1.4>
 
 <style|<tuple|source|std>>
 
@@ -162,6 +162,81 @@
 
   <assign|bothlined-titled|<\macro|body|title>
     <padded|<wide-std-bothlined-titled|<arg|body>|<arg|title>>>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
+      Helper macros for leftlined/rightlined block environments (work also
+      for inline content, like page headers).
+    </src-comment>
+  </active*>
+
+  <assign|leftlined-width|1ln>
+
+  <assign|leftlined-sep|1sep>
+
+  <assign|rightlined-width|1ln>
+
+  <assign|rightlined-sep|1sep>
+
+  <assign|wide-verticallined|<macro|left-border|right-border|left-sep|right-sep|body|<surround|<no-indent>||<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-width|1par>|<cwith|1|1|1|1|cell-lsep|<arg|left-sep>>|<cwith|1|1|1|1|cell-rsep|<arg|right-sep>>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-lborder|<arg|left-border>>|<cwith|1|1|1|1|cell-rborder|<arg|right-border>>|<cwith|1|1|1|1|cell-tsep|0pt>|<cwith|1|1|1|1|cell-bsep|0pt>|<table|<row|<cell|<arg|body>>>>>>>>>
+
+  <assign|wide-verticallined-titled|<macro|left-border|right-border|left-sep|right-sep|body|title|<surround|<no-indent>||<tabular|<tformat|<twith|table-width|1par>|<cwith|1|2|1|1|cell-width|1par>|<cwith|1|2|1|1|cell-lsep|<arg|left-sep>>|<cwith|1|2|1|1|cell-rsep|<arg|right-sep>>|<cwith|2|2|1|1|cell-hyphen|t>|<cwith|1|2|1|1|cell-lborder|<arg|left-border>>|<cwith|1|2|1|1|cell-rborder|<arg|right-border>>|<cwith|1|2|1|1|cell-tsep|0pt>|<cwith|1|2|1|1|cell-bsep|0pt>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
+    <arg|title>
+  </cell>>|<row|<\cell>
+    <arg|body>
+  </cell>>>>>>>>
+
+  <assign|wide-verticallined-titled*|<macro|left-border|right-border|left-sep|right-sep|body|title|<surround|<no-indent>||<tabular|<tformat|<twith|table-width|1par>|<cwith|1|2|1|1|cell-width|1par>|<cwith|1|2|1|1|cell-lsep|<arg|left-sep>>|<cwith|1|2|1|1|cell-rsep|<arg|right-sep>>|<cwith|2|2|1|1|cell-hyphen|t>|<cwith|1|2|1|1|cell-lborder|<arg|left-border>>|<cwith|1|2|1|1|cell-rborder|<arg|right-border>>|<cwith|1|2|1|1|cell-tsep|0pt>|<cwith|1|2|1|1|cell-bsep|0pt>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
+    <arg|title>
+  </cell>>|<row|<\cell>
+    <arg|body>
+  </cell>>>>>>>>
+
+  <assign|wide-std-verticallined|<macro|body|<wide-verticallined|<value|leftlined-width>|<value|rightlined-width>|<value|leftlined-sep>|<value|rightlined-sep>|<arg|body>>>>
+
+  <assign|wide-std-verticallined-titled|<macro|body|title|<wide-verticallined-titled|<value|leftlined-width>|<value|rightlined-width>|<value|leftlined-sep>|<value|rightlined-sep>|<arg|body>|<arg|title>>>>
+
+  <assign|padded-verticallined|<macro|before|after|left-border|right-border|left-sep|right-sep|body|<surround|<vspace*|<arg|before>>|<vspace|<arg|after>>|<wide-verticallined|<arg|left-border>|<arg|right-border>|<arg|left-sep>|<arg|right-sep>|<arg|body>>>>>
+
+  <assign|padded-std-verticallined|<\macro|before|after|body>
+    <padded-verticallined|<arg|before>|<arg|after>|<value|leftlined-width>|<value|rightlined-width>|<value|leftlined-sep>|<value|rightlined-sep>|<arg|body>>
+  </macro>>
+
+  <assign|wide-leftlined|<macro|lborder|lsep|body|<wide-verticallined|<arg|lborder>|0pt|<arg|lsep>|0pt|<arg|body>>>>
+
+  <assign|wide-std-leftlined|<macro|body|<wide-leftlined|<value|leftlined-width>|<value|leftlined-sep>|<arg|body>>>>
+
+  <assign|wide-std-leftlined-titled|<macro|body|title|<wide-verticallined-titled|<value|leftlined-width>|0pt|<value|leftlined-sep>|0pt|<arg|body>|<arg|title>>>>
+
+  <assign|wide-rightlined|<macro|rborder|rsep|body|<wide-verticallined|0pt|<arg|rborder>|0pt|<arg|rsep>|<arg|body>>>>
+
+  <assign|wide-std-rightlined|<macro|body|<wide-rightlined|<value|rightlined-width>|<value|rightlined-sep>|<arg|body>>>>
+
+  <assign|wide-std-rightlined-titled|<macro|body|title|<wide-verticallined-titled*|0pt|<value|rightlined-width>|0pt|<value|rightlined-sep>|<arg|body>|<arg|title>>>>
+
+  <assign|leftlined|<\macro|body>
+    <padded|<wide-std-leftlined|<arg|body>>>
+  </macro>>
+
+  <assign|rightlined|<\macro|body>
+    <padded|<wide-std-rightlined|<arg|body>>>
+  </macro>>
+
+  <assign|verticallined|<\macro|body>
+    <padded|<wide-std-verticallined|<arg|body>>>
+  </macro>>
+
+  <assign|leftlined-titled|<\macro|body|title>
+    <padded|<wide-std-leftlined-titled|<arg|body>|<arg|title>>>
+  </macro>>
+
+  <assign|rightlined-titled|<\macro|body|title>
+    <padded|<wide-std-rightlined-titled|<arg|body>|<arg|title>>>
+  </macro>>
+
+  <assign|verticallined-titled|<\macro|body|title>
+    <padded|<wide-std-verticallined-titled|<arg|body>|<arg|title>>>
   </macro>>
 
   <\active*>
