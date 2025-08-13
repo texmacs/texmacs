@@ -806,6 +806,29 @@
         (list "overlined-sep" "Top")
         (list "underlined-sep" "Bottom")))
 
+(tm-define (parameter-choice-list var)
+  (:require (in? var (list "leftlined-sep" "rightlined-sep")))
+  (list "0sep" "0.5sep" "1sep" "1.5sep" "2sep" :other))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-in? t '(leftlined leftlined-titled)))
+  (list (list "padding-above" "Above")
+        (list "padding-below" "Below")
+        (list "leftlined-sep" "Inner")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-in? t '(rightlined rightlined-titled)))
+  (list (list "padding-above" "Above")
+        (list "padding-below" "Below")
+        (list "rightlined-sep" "Inner")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-in? t '(verticallined verticallined-titled)))
+  (list (list "padding-above" "Above")
+        (list "padding-below" "Below")
+        (list "leftlined-sep" "Left")
+        (list "rightlined-sep" "Right")))
+
 (tm-define (customizable-parameters t)
   (:require (tree-in? t '(framed framed-titled)))
   (list (list "padding-above" "Above")

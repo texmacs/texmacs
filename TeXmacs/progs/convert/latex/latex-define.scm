@@ -856,6 +856,15 @@
   ("tmbothlined"
    (!append (newmdenv (!option "topline=true,bottomline=true,innertopmargin=1ex,innerbottommargin=1ex")
                       "tmbothlined") "\n"))
+  ("tmleftlined"
+   (!append (newmdenv (!option "leftline=true,innerleftmargin=1ex")
+                      "tmleftlined") "\n"))
+  ("tmrightlined"
+   (!append (newmdenv (!option "rightline=true,innerrightmargin=1ex")
+                      "tmrightlined") "\n"))
+  ("tmverticallined"
+   (!append (newmdenv (!option "leftline=true,rightline=true,innerleftmargin=1ex,innerrightmargin=1ex")
+                      "tmverticallined") "\n"))
   ("tmframed"
    (!append (newmdenv (!option "hidealllines=false,innertopmargin=1ex,innerbottommargin=1ex,innerleftmargin=1ex,innerrightmargin=1ex")
                       "tmframed") "\n"))

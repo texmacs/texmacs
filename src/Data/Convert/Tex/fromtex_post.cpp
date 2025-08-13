@@ -544,6 +544,9 @@ finalize_layout (tree t) {
            v[0] == "tmunderlined" || v[0] == "tmunderlined*"  ||
            v[0] == "tmoverlined"  || v[0] == "tmoverlined*"   ||
            v[0] == "tmbothlined"  || v[0] == "tmbothlined*"   ||
+           v[0] == "tmleftlined"  || v[0] == "tmleftlined*"  ||
+           v[0] == "tmrightlined" || v[0] == "tmrightlined*" ||
+           v[0] == "tmverticallined" || v[0] == "tmverticallined*"  ||
            v[0] == "tmornamented" || v[0] == "tmornamented*" )) {
         string env= as_string (v[0]);
         if (env[N(env)-1] == '*' && N(v) > 1) {
