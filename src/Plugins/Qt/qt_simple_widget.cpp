@@ -482,39 +482,6 @@ qt_simple_widget_rep::get_renderer() {
   return ren;
 }
 
-#if 0
-// to be moved into the renderer
-/*
-  This function adds a default background to contrast with user
-  backgrounds which have transparency.
-*/
-#if QT_VERSION >= 0x060000
-static void
-qt_fill_default_background (QPainter* p, const QRect& r,
-			    int dx, int dy) {
-  static bool first_time= true;
-  static QBrush br (Qt::lightGray, Qt::CrossPattern);
-  static int w= 8, h= 8;
-  if (first_time) {
-    url neutral_pattern= resolve_pattern ("neutral-pattern.png");
-    if (!is_none (neutral_pattern)) {
-      QImage im (utf8_to_qstring (concretize (neutral_pattern)));
-      if (!im.isNull ()) {
-	br= QBrush (im);
-	w= im.width (); h= im.height ();
-	if (w == 0) w = 32; if (h == 0) h = 32;
-      }
-    }
-    first_time= false;
-  }
-  if (p != NULL) {
-    p->fillRect (r, QBrush (Qt::white));
-    br.setTransform (QTransform (1, 0, 0, 1, -dx % w, -dy % h));
-    p->fillRect (r, br);
-  }
-}
-#endif
-#endif
 /*
  This function is called by the qt_gui::update method (via repaint_all) to keep
  the backing store in sync and propagate the changes to the surface on screen.
@@ -692,11 +659,6 @@ qt_simple_widget_rep::repaint_invalid_regions () {
         ren->encode (r->x1, r->y1);
         ren->encode (r->x2, r->y2);
         ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
-#if QT_VERSION >= 0x060000
-	// to be moved into the renderer
-	//qt_fill_default_background (((qt_renderer_rep*) ren)->painter, qr0,
-	//				    dpr*origin.x (), dpr*origin.y ());
-#endif
         handle_repaint (ren, r->x1, r->y2, r->x2, r->y1);
         if (gui_interrupted ()) {
           //cout << "interrupted repainting of  " << r0 << "\n";
