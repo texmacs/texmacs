@@ -173,11 +173,11 @@
 
   <assign|leftlined-width|1ln>
 
-  <assign|leftlined-sep|1sep>
+  <assign|leftlined-sep|1spc>
 
   <assign|rightlined-width|1ln>
 
-  <assign|rightlined-sep|1sep>
+  <assign|rightlined-sep|1spc>
 
   <assign|wide-verticallined|<macro|left-border|right-border|left-sep|right-sep|body|<surround|<no-indent>||<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-width|1par>|<cwith|1|1|1|1|cell-lsep|<arg|left-sep>>|<cwith|1|1|1|1|cell-rsep|<arg|right-sep>>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-lborder|<arg|left-border>>|<cwith|1|1|1|1|cell-rborder|<arg|right-border>>|<cwith|1|1|1|1|cell-tsep|0pt>|<cwith|1|1|1|1|cell-bsep|0pt>|<table|<row|<cell|<arg|body>>>>>>>>>
 
