@@ -182,9 +182,9 @@
   ("Overlined" (make 'overlined))
   ("Underlined" (make 'underlined))
   ("Lines around" (make 'bothlined))
-  ("Leftlined" (make 'leftlined))
-  ("Rightlined" (make 'rightlined))
-  ("Verticallined" (make 'verticallined))
+  ("Left bar" (make 'leftlined))
+  ;;("Right bar" (make 'rightlined))
+  ;;("Bars around" (make 'verticallined))
   ("Framed" (make 'framed))
   ("Ornamented" (make 'ornamented))
   ---
