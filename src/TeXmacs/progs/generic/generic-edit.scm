@@ -741,6 +741,10 @@
 ;; Extra editing functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (recenter-window)
+  (set-scroll (get-cursor-x) (get-cursor-y))
+  (refresh-window))
+
 (tm-define (kill-paragraph)
   (selection-set-start)
   (go-end-paragraph)
