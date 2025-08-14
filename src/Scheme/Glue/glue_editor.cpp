@@ -3112,6 +3112,39 @@ tmg_get_scroll_y () {
 }
 
 tmscm
+tmg_set_scroll (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "set-scroll");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "set-scroll");
+
+  int in1= tmscm_to_int (arg1);
+  int in2= tmscm_to_int (arg2);
+
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->scroll_to (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_get_cursor_x () {
+  // TMSCM_DEFER_INTS;
+  int out= get_current_editor()->get_cursor_x ();
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_get_cursor_y () {
+  // TMSCM_DEFER_INTS;
+  int out= get_current_editor()->get_cursor_y ();
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
 tmg_clear_buffer () {
   // TMSCM_DEFER_INTS;
   get_current_editor()->clear_buffer ();
@@ -3897,6 +3930,9 @@ initialize_glue_editor () {
   tmscm_install_procedure ("get-canvas-y",  tmg_get_canvas_y, 0, 0, 0);
   tmscm_install_procedure ("get-scroll-x",  tmg_get_scroll_x, 0, 0, 0);
   tmscm_install_procedure ("get-scroll-y",  tmg_get_scroll_y, 0, 0, 0);
+  tmscm_install_procedure ("set-scroll",  tmg_set_scroll, 2, 0, 0);
+  tmscm_install_procedure ("get-cursor-x",  tmg_get_cursor_x, 0, 0, 0);
+  tmscm_install_procedure ("get-cursor-y",  tmg_get_cursor_y, 0, 0, 0);
   tmscm_install_procedure ("clear-buffer",  tmg_clear_buffer, 0, 0, 0);
   tmscm_install_procedure ("tex-buffer",  tmg_tex_buffer, 0, 0, 0);
   tmscm_install_procedure ("clear-local-info",  tmg_clear_local_info, 0, 0, 0);

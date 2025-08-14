@@ -280,7 +280,7 @@
   ("emacs g" (selection-cancel))
   ("emacs j" (insert-return))
   ("emacs k" (kill-paragraph))
-  ("emacs l" (refresh-window))
+  ("emacs l" (recenter-window))
   ("emacs m" (insert-return))
   ("emacs n" (kbd-down))
   ("emacs p" (kbd-up))
@@ -528,7 +528,7 @@
 
   ;; further shortcuts for Gnome look and feel
   ("gnome g" (selection-cancel))
-  ("gnome l" (refresh-window))
+  ("gnome l" (recenter-window))
   ("gnome F" (interactive-search))
 
   ("altcmd g" (kbd-cancel))
@@ -592,7 +592,7 @@
 
   ;; further shortcuts for KDE look and feel
   ("kde g" (selection-cancel))
-  ("kde l" (refresh-window))
+  ("kde l" (recenter-window))
   ("kde F" (interactive-search))
 
   ("altcmd g" (kbd-cancel))
@@ -684,7 +684,7 @@
   ;("C-e" (kbd-end-line))   ; conflict with ("text e" (make-tmlist 'enumerate))
   ("C-g" (selection-cancel))
   ("C-k" (kill-paragraph))
-  ("C-l" (refresh-window))
+  ("C-l" (recenter-window))
   ("C-y" (yank-paragraph))
   ("C-q" (make 'symbol))
   ("C-!" (make-label))
@@ -752,7 +752,7 @@
 
   ;; not yet implemented
   ;;("F4" (go-to-different-folder))
-  ;;("F5" (refresh-window))
+  ;;("F5" (recenter-window))
   ;;("F6" (switch-to-next-pane))
   ;;("F8" (kbd-select-enlarge))
   ;;("F9" (refresh-web-page))
@@ -816,7 +816,7 @@
 
   ;; further shortcuts for Windows look and feel
   ("windows g" (selection-cancel))
-  ("windows l" (refresh-window))
+  ("windows l" (recenter-window))
   ("windows =" (change-zoom-factor 1.0))
 
   ("altcmd g" (kbd-cancel))

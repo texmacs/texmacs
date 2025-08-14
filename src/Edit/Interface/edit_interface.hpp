@@ -104,12 +104,14 @@ public:
   SI   get_canvas_y ();
   SI   get_scroll_x ();
   SI   get_scroll_y ();
+  SI   get_cursor_x ();
+  SI   get_cursor_y ();
   void set_zoom_factor (double zoom);
   void invalidate (SI x1, SI y1, SI x2, SI y2);
   void invalidate (rectangles rs);
   void invalidate_all ();
   void update_visible ();
-  void scroll_to (SI x, SI y1);
+  void scroll_to (SI x, SI y);
   void set_extents (SI x1, SI y1, SI x2, SI y2);
 
   /* repainting the window */

@@ -8611,6 +8611,30 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(set-scroll <scm-arg|int> <scm-arg|int>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|scroll_to> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(get-cursor-x)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_cursor_x> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
+    <scm|(get-cursor-y)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_cursor_y> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
     <scm|(clear-buffer)>
 <explain-synopsis|no synopsis>
   <|explain>

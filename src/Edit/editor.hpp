@@ -163,9 +163,12 @@ public:
   virtual SI   get_canvas_y () = 0;
   virtual SI   get_scroll_x () = 0;
   virtual SI   get_scroll_y () = 0;
+  virtual SI   get_cursor_x () = 0;
+  virtual SI   get_cursor_y () = 0;
   virtual void invalidate (SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void invalidate (rectangles rs) = 0;
   virtual void invalidate_all () = 0;
+  virtual void scroll_to (SI x, SI y) = 0;
   virtual void notify_change (int env_set, int env_unset = 0) = 0;
   virtual bool has_changed (int question) = 0;
   virtual int  idle_time (int event_type= ANY_EVENT) = 0;

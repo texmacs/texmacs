@@ -315,6 +315,18 @@ edit_interface_rep::scroll_to (SI x, SI y) {
   SERVER (scroll_to ((SI) (x * magf), ((SI) (y * magf))));
 }
 
+SI
+edit_interface_rep::get_cursor_x () {
+  cursor cu= get_cursor ();
+  return cu->ox;
+}
+
+SI
+edit_interface_rep::get_cursor_y () {
+  cursor cu= get_cursor ();
+  return cu->oy;
+}
+
 void
 edit_interface_rep::set_extents (SI x1, SI y1, SI x2, SI y2) {
   stored_rects= rectangles ();
