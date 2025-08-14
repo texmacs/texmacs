@@ -182,7 +182,8 @@ qt_widget_rep::get_qactionlist() {
 double
 qt_widget_rep::get_dpr () {
   if (!qwid.isNull ()) return qwid->devicePixelRatio ();
-  return qt_max_available_dpr ();;
+  //cout << "Warning: unexpected call of qt_widget_rep::get_dpr ()" << LF;
+  return 1;
 }
 #endif
 

@@ -177,6 +177,7 @@ QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
 #if QT_VERSION >= 0x060000
 void
 QTMWidget::surfaceDprChanged () {
+  the_gui->force_update();
   tm_widget()->invalidate_all();
   the_gui->force_update();
 }

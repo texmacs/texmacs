@@ -156,7 +156,8 @@ qt_renderer_rep::set_zoom_factor (double zoom) {
 double qt_renderer_rep::get_dpr () {
   if (painter->device ())
     return painter->device ()->devicePixelRatio ();
-  return qt_max_available_dpr ();
+  //std_warning << "Warning: unexpected call of qt_renderer_rep::get_dpr ()\n";
+  return 1;
 }
 #endif
 
