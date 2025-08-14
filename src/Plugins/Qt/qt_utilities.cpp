@@ -683,16 +683,6 @@ as_pixmap (const QImage& im) {
   return pm;
 }
 
-double
-qt_max_available_dpr () {
-  double dpr= 1;
-  QList<QScreen*> screens= QGuiApplication::screens ();
-  QList<QScreen*>::ConstIterator it= screens.constBegin ();
-  for (; it != screens.constEnd (); ++it)
-    dpr= max (dpr, (*it)->devicePixelRatio ());
-  return dpr;
-}
-
 /******************************************************************************
  * Stuff related to widgets
  ******************************************************************************/
