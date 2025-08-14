@@ -238,7 +238,8 @@
   (if (window-per-buffer?) (new-buffer) (open-window)))
 
 (tm-define (close-document)
-  (if (window-per-buffer?) (safely-kill-window) (safely-kill-buffer)))
+  (delayed (:idle 1)
+    (if (window-per-buffer?) (safely-kill-window) (safely-kill-buffer))))
 
 (tm-define (close-document*)
   (if (window-per-buffer?) (safely-kill-buffer) (safely-kill-window)))
