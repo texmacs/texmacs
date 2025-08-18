@@ -44,6 +44,8 @@ AC_DEFUN([TM_WINDOWS],[
       *) WIN_ARCH="x64" ;;
     esac
 
+    AC_SUBST([WIN_ARCH])
+
     MAKEAPPX_PATH=$(find "C:/Program Files (x86)/Windows Kits/10/bin/" -type f -iname makeappx.exe | grep "/$WIN_ARCH/" | head -n 1)
     SIGNTOOL_PATH=$(find "C:/Program Files (x86)/Windows Kits/10/bin/" -type f -iname signtool.exe | grep "/$WIN_ARCH/" | head -n 1)
 
