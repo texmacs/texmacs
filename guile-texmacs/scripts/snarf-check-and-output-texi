@@ -41,10 +41,34 @@ exec "${GUILE:-guile}" -l "$0" -c "(apply $main (cdr (command-line)))" "$@"
 
 (define *manual-flag* #f)
 
-(define (snarf-check-and-output-texi . flags)
-  (if (member "--manual" flags)
-      (set! *manual-flag* #t))
-  (process-stream (current-input-port)))
+(define (snarf-check-and-output-texi . args)
+  ;; keep --manual behavior
+  (when (member "--manual" args)
+    (set! *manual-flag* #t))
+
+  ;; first non-flag argument is treated as the input file
+  ;; if no file or "-" is given, read from stdin
+  (let loop ((xs args) (file #f))
+    (cond
+      ((null? xs)
+       (let ((port (if (and file (not (string=? file "-")))
+                       (open-input-file file)
+                       (current-input-port))))
+         (dynamic-wind
+           (lambda () #t)
+           (lambda () (process-stream port))
+           (lambda ()
+             (when (and file (not (string=? file "-")))
+               (close-port port))))))
+
+      ((string=? (car xs) "--manual")
+       (loop (cdr xs) file))
+
+      ((and (not file) (not (flag? (car xs))))
+       (loop (cdr xs) (car xs)))  ; first non-flag becomes file
+
+      (else
+       (loop (cdr xs) file)))))
 
 (define (process-stream port)
   (let loop ((input (stream-map (match-lambda
@@ -320,5 +344,9 @@ exec "${GUILE:-guile}" -l "$0" -c "(apply $main (cdr (command-line)))" "$@"
 
   (when *function-name*
     (do-command l)))
+
+(define (flag? s)
+  (and (> (string-length s) 0)
+       (char=? (string-ref s 0) #\-)))
 
 (define main snarf-check-and-output-texi)
