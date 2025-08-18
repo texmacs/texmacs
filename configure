@@ -708,6 +708,7 @@ MOC
 QMAKE
 SIGNTOOL
 MAKEAPPX
+WIN_ARCH
 CV2PDB
 ASPELL_CMD
 XTRA_CMD
@@ -26309,6 +26310,8 @@ printf "%s\n" "disabling cv2pdb" >&6; }
       *) WIN_ARCH="x64" ;;
     esac
 
+
+
     MAKEAPPX_PATH=$(find "C:/Program Files (x86)/Windows Kits/10/bin/" -type f -iname makeappx.exe | grep "/$WIN_ARCH/" | head -n 1)
     SIGNTOOL_PATH=$(find "C:/Program Files (x86)/Windows Kits/10/bin/" -type f -iname signtool.exe | grep "/$WIN_ARCH/" | head -n 1)
 
@@ -36264,7 +36267,7 @@ CPPFLAGS="$CPPFLAGS -include config.h"
 # Done
 #--------------------------------------------------------------------
 
-ac_config_files="$ac_config_files Makefile src/makefile misc/admin/admin.makefile misc/doxygen/Doxyfile:misc/doxygen/Doxyfile.in misc/man/texmacs.1:misc/man/texmacs.1.in packages/redhat/TeXmacs.spec:packages/redhat/TeXmacs.spec.in misc/scripts/fig2ps:misc/scripts/fig2ps.in misc/scripts/texmacs:misc/scripts/texmacs.in TeXmacs/examples/plugins/dynlink/Makefile:TeXmacs/examples/plugins/dynlink/Makefile.in packages/macos/Base.xcconfig:packages/macos/Base.xcconfig.in packages/macos/Info-Xcode.plist:packages/macos/Info-Xcode.plist.in packages/macos/Info.plist:packages/macos/Info.plist.in packages/fedora/TeXmacs.spec:packages/fedora/TeXmacs.spec.in packages/mandriva/TeXmacs.spec:packages/mandriva/TeXmacs.spec.in packages/centos/TeXmacs.spec:packages/centos/TeXmacs.spec.in packages/windows/TeXmacs.iss:packages/windows/TeXmacs.iss.in packages/windows/resource.rc:packages/windows/resource.rc.in packages/debian/changelog:packages/debian/changelog.in packages/debian/control:packages/debian/control.in packages/android/res/values/libs.xml:packages/android/libs.xml.in packages/android/AndroidManifest.xml:packages/android/AndroidManifest.xml.in src/System/tm_configure.hpp:src/System/tm_configure.in"
+ac_config_files="$ac_config_files Makefile src/makefile misc/admin/admin.makefile misc/doxygen/Doxyfile:misc/doxygen/Doxyfile.in misc/man/texmacs.1:misc/man/texmacs.1.in packages/redhat/TeXmacs.spec:packages/redhat/TeXmacs.spec.in misc/scripts/fig2ps:misc/scripts/fig2ps.in misc/scripts/texmacs:misc/scripts/texmacs.in TeXmacs/examples/plugins/dynlink/Makefile:TeXmacs/examples/plugins/dynlink/Makefile.in packages/macos/Base.xcconfig:packages/macos/Base.xcconfig.in packages/macos/Info-Xcode.plist:packages/macos/Info-Xcode.plist.in packages/macos/Info.plist:packages/macos/Info.plist.in packages/fedora/TeXmacs.spec:packages/fedora/TeXmacs.spec.in packages/mandriva/TeXmacs.spec:packages/mandriva/TeXmacs.spec.in packages/centos/TeXmacs.spec:packages/centos/TeXmacs.spec.in packages/windows/TeXmacs.iss:packages/windows/TeXmacs.iss.in packages/windows/resource.rc:packages/windows/resource.rc.in packages/msix/AppxManifest.xml:packages/msix/AppxManifest.xml.in packages/debian/changelog:packages/debian/changelog.in packages/debian/control:packages/debian/control.in packages/android/res/values/libs.xml:packages/android/libs.xml.in packages/android/AndroidManifest.xml:packages/android/AndroidManifest.xml.in src/System/tm_configure.hpp:src/System/tm_configure.in"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -37060,6 +37063,7 @@ do
     "packages/centos/TeXmacs.spec") CONFIG_FILES="$CONFIG_FILES packages/centos/TeXmacs.spec:packages/centos/TeXmacs.spec.in" ;;
     "packages/windows/TeXmacs.iss") CONFIG_FILES="$CONFIG_FILES packages/windows/TeXmacs.iss:packages/windows/TeXmacs.iss.in" ;;
     "packages/windows/resource.rc") CONFIG_FILES="$CONFIG_FILES packages/windows/resource.rc:packages/windows/resource.rc.in" ;;
+    "packages/msix/AppxManifest.xml") CONFIG_FILES="$CONFIG_FILES packages/msix/AppxManifest.xml:packages/msix/AppxManifest.xml.in" ;;
     "packages/debian/changelog") CONFIG_FILES="$CONFIG_FILES packages/debian/changelog:packages/debian/changelog.in" ;;
     "packages/debian/control") CONFIG_FILES="$CONFIG_FILES packages/debian/control:packages/debian/control.in" ;;
     "packages/android/res/values/libs.xml") CONFIG_FILES="$CONFIG_FILES packages/android/res/values/libs.xml:packages/android/libs.xml.in" ;;

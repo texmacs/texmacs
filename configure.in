@@ -170,7 +170,8 @@ packages/fedora/TeXmacs.spec:packages/fedora/TeXmacs.spec.in
 packages/mandriva/TeXmacs.spec:packages/mandriva/TeXmacs.spec.in 
 packages/centos/TeXmacs.spec:packages/centos/TeXmacs.spec.in 
 packages/windows/TeXmacs.iss:packages/windows/TeXmacs.iss.in 
-packages/windows/resource.rc:packages/windows/resource.rc.in 
+packages/windows/resource.rc:packages/windows/resource.rc.in
+packages/msix/AppxManifest.xml:packages/msix/AppxManifest.xml.in
 packages/debian/changelog:packages/debian/changelog.in 
 packages/debian/control:packages/debian/control.in
 packages/android/res/values/libs.xml:packages/android/libs.xml.in
