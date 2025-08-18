@@ -283,12 +283,15 @@ include $(top_srcdir)/am/pre-inst-guile
 
 alldotdocfiles    = $(DOT_DOC_FILES) $(EXTRA_DOT_DOC_FILES)
 snarf2checkedtexi = GUILE="$(GUILE_FOR_BUILD)" $(top_srcdir)/scripts/snarf-check-and-output-texi
-dotdoc2texi       = cat $(alldotdocfiles) | $(snarf2checkedtexi)
+dotdoc2texi       = $(snarf2checkedtexi) all.doc
 
-guile.texi: $(alldotdocfiles) guile$(EXEEXT)
+all.doc: $(alldotdocfiles)
+	cat $(alldotdocfiles) > all.doc
+
+guile.texi: all.doc guile$(EXEEXT)
 	$(dotdoc2texi) --manual > $@ || { rm $@; false; }
 
-guile-procedures.texi: $(alldotdocfiles) guile$(EXEEXT)
+guile-procedures.texi: all.doc guile$(EXEEXT)
 	$(dotdoc2texi)          > $@ || { rm $@; false; }
 
 if HAVE_MAKEINFO

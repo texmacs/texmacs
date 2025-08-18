@@ -755,7 +755,7 @@ preinstguile = $(top_builddir_absolute)/pre-inst-guile
 preinstguiletool = GUILE="$(preinstguile)" $(top_srcdir)/scripts
 alldotdocfiles = $(DOT_DOC_FILES) $(EXTRA_DOT_DOC_FILES)
 snarf2checkedtexi = GUILE="$(GUILE_FOR_BUILD)" $(top_srcdir)/scripts/snarf-check-and-output-texi
-dotdoc2texi = cat $(alldotdocfiles) | $(snarf2checkedtexi)
+dotdoc2texi = $(snarf2checkedtexi) all.doc
 schemelibdir = $(pkgdatadir)/$(GUILE_EFFECTIVE_VERSION)
 schemelib_DATA = guile-procedures.txt
 MKDEP = gcc -M -MG $(DEFS) $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS)
@@ -2485,7 +2485,7 @@ scmconfig.h: ${top_builddir}/config.h gen-scmconfig$(EXEEXT)
 guile_filter_doc_snarfage$(EXEEXT): $(guile_filter_doc_snarfage_OBJECTS) $(guile_filter_doc_snarfage_DEPENDENCIES) 
 	@rm -f guile_filter_doc_snarfage$(EXEEXT)
 	if [ "$(cross_compiling)" = "yes" ]; then \
-		$(CCLD_FOR_BUILD) -o $@ $(guile_filter_doc_snarfage_OBJECTS); \
+		$(CCLD_FOR_BUILD) -o $@ $(guile_filter_doc_snarfage_SOURCES); \
 	else \
 		$(LINK) $(guile_filter_doc_snarfage_OBJECTS) $(LDADD) $(LIBS); \
 	fi
@@ -2552,10 +2552,13 @@ error.x: cpp_err_symbols.c
 posix.x: cpp_sig_symbols.c
 load.x: libpath.h
 
-guile.texi: $(alldotdocfiles) guile$(EXEEXT)
+all.doc: $(alldotdocfiles)
+	cat $(alldotdocfiles) > all.doc
+
+guile.texi: all.doc guile$(EXEEXT)
 	$(dotdoc2texi) --manual > $@ || { rm $@; false; }
 
-guile-procedures.texi: $(alldotdocfiles) guile$(EXEEXT)
+guile-procedures.texi: all.doc guile$(EXEEXT)
 	$(dotdoc2texi)          > $@ || { rm $@; false; }
 
 @HAVE_MAKEINFO_TRUE@guile-procedures.txt: guile-procedures.texi
