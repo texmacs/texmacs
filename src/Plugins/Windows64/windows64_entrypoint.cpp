@@ -53,12 +53,12 @@
 #endif
 
 void setup_texmacs_path () {
-  string environment_texmacs_path;
+  /*string environment_texmacs_path;
   if (texmacs_getenv ("TEXMACS_PATH", environment_texmacs_path)) {
     cout << "TEXMACS_PATH is set to: " 
          << environment_texmacs_path << LF;
     return;
-  }
+  }*/
   url exedir = texmacs_get_application_directory ();
   cout << "Executable directory is: " 
        << exedir << LF;
