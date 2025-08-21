@@ -528,10 +528,10 @@ WINDOWS_BUILD_DIR = ../distr/TeXmacs-Windows
 WINDOWS_BUILD_BIN_DIR = $(WINDOWS_BUILD_DIR)/bin
 UN_QT_P = $(shell cygpath -u $(QT_PLUGINS_PATH))
 
-WINDOWS_PBD: TEXMACS
-	if [test -n "@CV2PDB@"]; then @CV2PDB@ $(WINDOWS_BUILD_BIN_DIR)/texmacs.exe; fi
+WINDOWS_PDB: TEXMACS
+	@if [ -n "@CV2PDB@" ]; then "@CV2PDB@" "$(WINDOWS_BUILD_BIN_DIR)/texmacs.exe"; fi
 
-WINDOWS_BUNDLE: TEXMACS WINDOWS_PBD
+WINDOWS_BUNDLE: TEXMACS WINDOWS_PDB
 	$(MKDIR) ../distr
 	$(MKDIR) $(WINDOWS_BUILD_DIR)
 	$(RM) -r $(WINDOWS_BUILD_BIN_DIR)/{texmacs,texmacs.bin,texmacs.exe}
