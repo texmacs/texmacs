@@ -201,7 +201,12 @@ ghostscript/Makefile: local/bin/qmake local/lib/libfreetype.a
 ghostscript: ghostscript/Makefile
 	cd ghostscript; $(MAKE) -j1; $(MAKE) install
 
-texmacs: ghostscript local/bin/qmake local/lib/libfreetype.a
+local/usr/optional/exec.so:
+	cd execso; $(MAKE)
+	mkdir -p $$WORKING_DIR/local/usr/optional
+	cp execso/exec.so $$WORKING_DIR/local/usr/optional
+
+texmacs: ghostscript local/bin/qmake local/lib/libfreetype.a local/usr/optional/exec.so
 	-rm -rf texmacs/distr
 	mkdir texmacs/distr
 	cd texmacs/src; autoreconf; PKG_CONFIG_PATH=$$WORKING_DIR/local/lib/pkgconfig TMREPO=$$WORKING_DIR/local ./configure --with-tmrepo=$$WORKING_DIR/local --with-gnutls=yes; $(MAKE) APPIMAGE
