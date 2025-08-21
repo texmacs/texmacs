@@ -26,6 +26,7 @@ AC_DEFUN([TM_SUBVERSION],[
   AC_SUBST(SVNREV)
   SVNINT=${SVNREV#*:}
   SVNINT=$(echo ${SVNINT%%@<:@^@<:@:digit:@:>@@:>@*})
+  AC_SUBST(SVNINT)
 
 #Naming package strategy
 #   if test "$SVNREV" != $DEVEL_REVISION
