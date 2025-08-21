@@ -701,7 +701,9 @@ APPIMAGE: TEXMACS
 	$(RM) ../distr/TeXmacs.AppDir/usr/bin/texmacs
 
 	# Move the texmacs binary to AppRun
-	$(MV) ../distr/TeXmacs.AppDir/usr/bin/texmacs.bin ../distr/TeXmacs.AppDir/AppRun
+	# $(MV) ../distr/TeXmacs.AppDir/usr/bin/texmacs.bin ../distr/TeXmacs.AppDir/AppRun
+	$(CP) packages/appimage/AppRun ../distr/TeXmacs.AppDir/AppRun
+	chmod +x ../distr/TeXmacs.AppDir/AppRun
 
 	# Use patchelf to fix the rpath
 	patchelf --force-rpath --set-rpath '$$ORIGIN:$$ORIGIN/../lib:$$ORIGIN/usr/lib:../lib:usr/lib' ../distr/TeXmacs.AppDir/AppRun
@@ -710,6 +712,7 @@ APPIMAGE: TEXMACS
 	$(CP) -Lr $(TMREPO)/lib/*.so* ../distr/TeXmacs.AppDir/usr/lib
 	$(CP) -Lr $(TMREPO)/plugins ../distr/TeXmacs.AppDir/usr
 	$(CP) -Lr $(TMREPO)/translations ../distr/TeXmacs.AppDir/usr
+	$(CP) -Lr $(TMREPO)/usr/optional ../distr/TeXmacs.AppDir/usr
 
 	# Pack the AppImage (offline if APPIMAGE_RUNTIME is provided)
 	@if [ -n "$$APPIMAGE_RUNTIME" ]; then \
