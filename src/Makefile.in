@@ -706,7 +706,7 @@ APPIMAGE: TEXMACS
 	chmod +x ../distr/TeXmacs.AppDir/AppRun
 
 	# Use patchelf to fix the rpath
-	patchelf --force-rpath --set-rpath '$$ORIGIN:$$ORIGIN/../lib:$$ORIGIN/usr/lib:../lib:usr/lib' ../distr/TeXmacs.AppDir/AppRun
+	patchelf --force-rpath --set-rpath '$$ORIGIN:$$ORIGIN/../lib:$$ORIGIN/usr/lib:../lib:usr/lib' ../distr/TeXmacs.AppDir/usr/bin/texmacs.bin
 
 	# Install dependencies from the TeXmacs builder
 	$(CP) -Lr $(TMREPO)/lib/*.so* ../distr/TeXmacs.AppDir/usr/lib
