@@ -853,6 +853,7 @@ CFLAGS
 CC
 SVNPATCH
 REVISION
+SVNINT
 SVNREV
 VERSION_BUILD
 VERSION_MINOR
@@ -3612,6 +3613,7 @@ printf "%s\n" "$SVNREV" >&6; }
 
   SVNINT=${SVNREV#*:}
   SVNINT=$(echo ${SVNINT%%[^[:digit:]]*})
+
 
 #Naming package strategy
 #   if test "$SVNREV" != $DEVEL_REVISION

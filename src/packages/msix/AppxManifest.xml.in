@@ -7,7 +7,7 @@
   <Identity Name="org.texmacs.TeXmacs"
             ProcessorArchitecture="@WIN_ARCH@"
             Publisher="CN=Centre national de la recherche scientifique, O=Centre national de la recherche scientifique, S=Paris, C=FR"
-            Version="@STABLE_VERSION@.0@TEXMACS_ANDROID_VERSION_CODE@" />
+            Version="@STABLE_VERSION@.0@SVNINT@" />
 
   <Properties>
     <DisplayName>TeXmacs</DisplayName>
