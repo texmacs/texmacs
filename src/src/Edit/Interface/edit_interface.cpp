@@ -140,7 +140,8 @@ edit_interface_rep::resume () {
     tp= new_tp;
   }
   the_drd= old_drd;
-  invalidate_all ();
+  if (!headless_mode)
+    invalidate_all ();
 }
 
 void
