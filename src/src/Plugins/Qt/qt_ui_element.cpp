@@ -1036,8 +1036,10 @@ qt_ui_element_rep::as_qwidget () {
       QTMCommand* c = new QTMCommand (w, tcmd);
 #if QT_VERSION < 0x060000
       QObject::connect (w, SIGNAL (stateChanged(int)), c, SLOT (apply()));
-#else
+#elif QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
       QObject::connect (w, &QCheckBox::checkStateChanged, c, &QTMCommand::apply);
+#else
+      QObject::connect (w, &QCheckBox::stateChanged, c, &QTMCommand::apply);
 #endif
 
       qwid = w;

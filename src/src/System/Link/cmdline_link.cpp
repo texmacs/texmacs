@@ -42,7 +42,10 @@ namespace wsoc {
 
 hashset<pointer> cmdline_link_set;
 void cmdline_callback (void *obj, void *info);
+
+#ifndef OS_MINGW
 extern char **environ;
+#endif
 
 #define STDIN 0
 #define STDOUT 1
