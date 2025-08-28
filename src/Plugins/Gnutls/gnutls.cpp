@@ -269,7 +269,7 @@ tm_get_cert (const gnutls_datum_t* cert_data) {
   return NULL;
 }
 
-static int
+__attribute__((unused)) static int
 tm_trust_cert () {
   if (!server_certificate) {
     return GNUTLS_E_CERTIFICATE_ERROR;

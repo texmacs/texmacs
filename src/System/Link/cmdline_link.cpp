@@ -23,28 +23,32 @@
 #include "scheme.hpp"
 #include <stdio.h>
 #include <string.h>
+
 #ifndef OS_MINGW
 #include <unistd.h>
 #include <signal.h>
 #include <sys/wait.h>
+#define TM_FD_SET(fd, set) FD_SET(fd, set)
 #else
 namespace wsoc {
 #include <winsock2.h>
 }
-#endif
+#define TM_FD_SET(fd, set) FD_SET((u_int) fd, set)
+#endif // OS_MINGW
+
 #if !defined(__APPLE__) && !defined(__FreeBSD__)
 #include <malloc.h>
 #endif
 
 hashset<pointer> cmdline_link_set;
 void cmdline_callback (void *obj, void *info);
-extern char **environ;
+//extern char **environ;
 
 #define STDIN 0
 #define STDOUT 1
 #define STDERR 2
-#define IN 0
-#define OUT 1
+#define CMDIN 0
+#define CMDOUT 1
 #define TERMCHAR '\1'
 
 /******************************************************************************
@@ -177,7 +181,9 @@ cmdline_link_rep::write (string s, int channel) {
   while (ends (s, "\n")) s= s (0, N(s)-1);
   s= replace (s, "\n", " ");
   //cout << "Write[" << name << "] " << s << "\n";
-#ifndef OS_MINGW
+#ifdef OS_MINGW
+  (void) channel;
+#else
   if (alive || (channel != LINK_IN)) return;
   string cmd= as_string (call ("connection-cmdline", name, "default", s));
   cmd= cmd * " 2> /dev/null";
@@ -190,27 +196,27 @@ cmdline_link_rep::write (string s, int channel) {
   pid= fork ();
   if (pid==0) { // the child
     setsid();
-    close (pp_in  [OUT]);
-    close (pp_out [IN ]);
-    close (pp_err [IN ]);
-    dup2  (pp_in  [IN ], STDIN );
-    close (pp_in  [IN ]);
-    dup2  (pp_out [OUT], STDOUT);
-    close (pp_out [OUT]);
-    dup2  (pp_err [OUT], STDERR);
-    close (pp_err [OUT]);
+    close (pp_in  [CMDOUT]);
+    close (pp_out [CMDIN ]);
+    close (pp_err [CMDIN ]);
+    dup2  (pp_in  [CMDIN ], STDIN );
+    close (pp_in  [CMDIN ]);
+    dup2  (pp_out [CMDOUT], STDOUT);
+    close (pp_out [CMDOUT]);
+    dup2  (pp_err [CMDOUT], STDERR);
+    close (pp_err [CMDOUT]);
 
     execute_shell (cmd);
     exit (127);
     // exit (system (cmd) != 0);
   }
   else { // the main process
-    in = pp_in  [OUT];
-    close (pp_in [IN]);
-    out= pp_out [IN ];
-    close (pp_out [OUT]);
-    err= pp_err [IN ];
-    close (pp_err [OUT]);
+    in = pp_in  [CMDOUT];
+    close (pp_in [CMDIN]);
+    out= pp_out [CMDIN ];
+    close (pp_out [CMDOUT]);
+    err= pp_err [CMDIN ];
+    close (pp_err [CMDOUT]);
 
     alive= true;
     //cout << "Alive = true\n";
@@ -225,7 +231,9 @@ cmdline_link_rep::write (string s, int channel) {
 void
 cmdline_link_rep::feed (int channel) {
   //cout << "Feed " << channel << "\n";
-#ifndef OS_MINGW
+#ifdef OS_MINGW
+  (void) channel;
+#else
   if ((!alive) || ((channel != LINK_OUT) && (channel != LINK_ERR))) return;
   int r;
   char tempout[1024];
@@ -296,8 +304,8 @@ cmdline_link_rep::listen (int msecs) {
     int nout= N(outbuf), nerr= N(errbuf);
     fd_set rfds;
     FD_ZERO (&rfds);
-    FD_SET (out, &rfds);
-    FD_SET (err, &rfds);
+    TM_FD_SET (out, &rfds);
+    TM_FD_SET (err, &rfds);
     struct timeval tv;
     tv.tv_sec  = msecs / 1000;
     tv.tv_usec = 1000 * (msecs % 1000);
@@ -343,7 +351,10 @@ cmdline_link_rep::stop () {
 
 void cmdline_callback (void *obj, void *info) {
   //cout << "Cmd_line_callback\n";
-#ifndef OS_MINGW
+#ifdef OS_MINGW
+  (void) obj;
+  (void) info;
+#else
   (void) info;
   cmdline_link_rep* con= (cmdline_link_rep*) obj;  
   bool busy= true;
@@ -352,8 +363,8 @@ void cmdline_callback (void *obj, void *info) {
     fd_set rfds;
     FD_ZERO (&rfds);
     int max_fd= max (con->err, con->out) + 1;
-    FD_SET (con->out, &rfds);
-    FD_SET (con->err, &rfds);
+    TM_FD_SET (con->out, &rfds);
+    TM_FD_SET (con->err, &rfds);
   
     struct timeval tv;
     tv.tv_sec  = 0;

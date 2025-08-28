@@ -62,6 +62,7 @@ symbol_install (string lib, string symb, pointer& f) {
   if (DEBUG_AUTO) debug_automatic << out << "\n";
   return out;
 #else
+  (void) lib; (void) symb; (void) f;
   return "Dynamic linking not implemented";
 #endif
 }
@@ -77,6 +78,7 @@ symbols_install (string lib, string* symb, pointer* f, int n) {
   }
   return "Symbols installed for library '" * lib * "'";
 #else
+  (void) lib; (void) symb; (void) f; (void) n;
   return "Dynamic linking not implemented";
 #endif
 }
@@ -100,10 +102,12 @@ make_dynamic_link (string lib, string symb, string init, string session) {
   return tm_new<dyn_link_rep> (lib, symb, init, session);
 }
 
+#ifndef OS_MINGW
 static TeXmacs_exports_1 TeXmacs= {
   const_cast<char*> ("TeXmacs communication protocol 1"),
   const_cast<char*> ("TeXmacs " TEXMACS_VERSION),
 };
+#endif
 
 string
 dyn_link_rep::start () {
@@ -155,6 +159,8 @@ dyn_link_rep::write (string s, int channel) {
   char* _r= pack->evaluate (_s, _session, &_errors);
   ret= string (_r==NULL? (_errors==NULL? ((char*) "Error"): _errors): _r);
   if (!is_nil (this->feed_cmd)) this->feed_cmd->apply ();
+#else
+  (void) s; (void) channel;
 #endif
 }
 

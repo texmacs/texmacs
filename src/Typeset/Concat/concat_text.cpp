@@ -36,6 +36,7 @@ void
 concater_rep::typeset_math_macro
   (string s, tree_label m, path ip, int p1, int p2, int otype)
 {
+  (void) otype;
   // NOTE: start dirty hack to get spacing of ,..., right
   static tree_label LOW_DOTS= make_tree_label ("low-dots");
   static tree_label VAR_LOW_DOTS= make_tree_label ("low-dots*");

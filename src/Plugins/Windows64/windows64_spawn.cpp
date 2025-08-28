@@ -10,6 +10,7 @@
 ******************************************************************************/
 #include <errno.h>
 #include <windows.h>
+#undef FAILED
 #include "array.hpp"
 #include "windows64_spawn.hpp"
 #include "windows64_system.hpp"

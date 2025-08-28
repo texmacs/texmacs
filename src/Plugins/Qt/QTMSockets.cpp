@@ -49,6 +49,7 @@
 #define LISTEN listen
 #define ACCEPT accept
 #define INET_NTOP inet_ntop
+#define TM_FD_SET(fd, set) FD_SET(fd, set)
 
 #else
 
@@ -66,7 +67,9 @@
 #define LISTEN wsoc::listen
 #define ACCEPT wsoc::accept
 #define INET_NTOP wsoc::inet_ntop
+#undef FD_ISSET
 #define FD_ISSET __WSAFDIsSet
+#define TM_FD_SET(fd, set) FD_SET((u_int) fd, set)
 
 #endif
 
@@ -493,9 +496,9 @@ socket_link_rep::listen (int msecs) {
   FD_ZERO(&rfds);
   FD_ZERO(&wfds);
   FD_ZERO(&efds);
-  FD_SET(socket_id, &rfds);
-  FD_SET(socket_id, &wfds);
-  FD_SET(socket_id, &efds);
+  TM_FD_SET(socket_id, &rfds);
+  TM_FD_SET(socket_id, &wfds);
+  TM_FD_SET(socket_id, &efds);
   struct timeval tv;
   tv.tv_sec = msecs / 1000;
   tv.tv_usec= 1000 * (msecs % 1000);
@@ -778,9 +781,9 @@ socket_server_rep::listen_connections (int msecs) {
     socket_link_rep* c= (socket_link_rep*) it->next ();
     int io= c->get_socket_id ();
     max_io= max (max_io, io);
-    FD_SET(io, &rfds);
-    FD_SET(io, &wfds);
-    FD_SET(io, &efds);
+    TM_FD_SET(io, &rfds);
+    TM_FD_SET(io, &wfds);
+    TM_FD_SET(io, &efds);
   }
   struct timeval tv;
   tv.tv_sec = msecs / 1000;

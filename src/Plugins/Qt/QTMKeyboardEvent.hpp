@@ -79,7 +79,7 @@ public:
         return mKey >= 'A' && mKey <= 'Z';
     }
 
-    inline bool toLower() {
+    inline void toLower() {
         mKey += 32;
     }
 

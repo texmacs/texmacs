@@ -18,6 +18,8 @@
 #include <iostream>
 #include <chrono>
 
+#undef FAILED
+
 #include "config.h"
 #include "windows64_system.hpp"
 #include "windows64_encoding.hpp"

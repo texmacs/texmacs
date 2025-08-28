@@ -85,7 +85,7 @@ public:
   qt_shadow_renderer_rep (QTMPixmapOrImage _px);
   ~qt_shadow_renderer_rep ();
 #if QT_VERSION >= 0x060000
-  inline double get_dpr () { master->get_dpr (); }
+  inline double get_dpr () { return master->get_dpr (); }
 #endif
   void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
 };
