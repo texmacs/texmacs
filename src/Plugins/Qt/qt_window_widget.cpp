@@ -48,13 +48,6 @@ ensure_visible_position (const QPoint& p,
   //	    << "within" << g << "returns" << r;
   return r.topLeft ();
 }
-#else
-static inline QPoint
-ensure_visible_position (const QPoint& p,
-			 const QScreen* screen, const QSize& s) {
-  (void) screen; (void) s;
-  return p;
-}
 #endif
 
 /*! Construct a qt_window_widget_rep around an already compiled widget.
@@ -192,7 +185,9 @@ qt_window_widget_rep::send (slot s, blackbox val) {
 	// to avoid window under menu bar on MAC when moving at (0,0)
         pt.ry() = (pt.y() <= 40) ? 40 : pt.y();
 #endif
+#if QT_VERSION >= 0x060000
 	pt= ensure_visible_position (pt, qwid->screen (), qwid->size ());
+#endif
         qwid->move (pt);
       }
     }
