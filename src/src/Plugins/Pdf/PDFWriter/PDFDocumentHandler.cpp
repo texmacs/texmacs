@@ -413,7 +413,9 @@ EStatusCode PDFDocumentHandler::WritePageContentToSingleStream(IByteWriter* inTa
     
     // for empty page, simply return
     if(!pageContent)
+	{
         return status;
+	}
     
 	if(pageContent->GetType() == PDFObject::ePDFObjectStream)
 	{
@@ -891,8 +893,9 @@ EStatusCode PDFDocumentHandler::CopyPageContentToTargetPageRecoded(PDFPage* inPa
 	RefCountPtr<PDFObject> pageContent(mParser->QueryDictionaryObject(inPageObject,"Contents"));
     
     // for empty page, do nothing
-    if(!pageContent)
+    if(!pageContent) {
         return status;
+	}
     
 	PageContentContext* pageContentContext = mDocumentContext->StartPageContentContext(inPage);
 	if(pageContent->GetType() == PDFObject::ePDFObjectStream)
@@ -1578,8 +1581,9 @@ EStatusCode PDFDocumentHandler::MergePageContentToTargetPage(PDFPage* inTargetPa
 	RefCountPtr<PDFObject> pageContent(mParser->QueryDictionaryObject(inSourcePage,"Contents"));
     
     // for empty page, return now
-    if(!pageContent)
+    if(!pageContent) {
         return status;
+	}
 
 	bool hasAlreadyAContentContext = mDocumentContext->HasContentContext(inTargetPage);
 	PageContentContext* pageContentContext = mDocumentContext->StartPageContentContext(inTargetPage);

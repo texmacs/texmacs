@@ -509,9 +509,11 @@ EStatusCode PDFWriter::ContinuePDFForStream(IByteWriterWithPosition* inOutputStr
 {
 	SetupLog(inLogConfiguration);
     
-    if(inModifiedSourceStream)
-        if(mModifiedFileParser.StartPDFParsing(inModifiedSourceStream) != eSuccess)
+    if(inModifiedSourceStream) {
+        if(mModifiedFileParser.StartPDFParsing(inModifiedSourceStream) != eSuccess) {
             return eFailure;
+		}
+	}
  
 	mObjectsContext.SetOutputStream(inOutputStream);
 

@@ -218,6 +218,13 @@ AC_DEFUN([LC_WITH_QT],[
     QT_LIBS=`$PKG_CONFIG --libs $QT_PACKAGES`
     QT_LDFLAGS=`$PKG_CONFIG --libs-only-L $QT_PACKAGES`
 
+    #QT_CXXFLAGS=`printf '%s\n' "$QT_CXXFLAGS" | sed -E 's/(^|[ \t])-I([^ \t]+)/\1-isystem \2/g'`
+    #QT_DEFINES=`printf '%s\n' "$QT_DEFINES" | sed -E 's/(^|[ \t])-I([^ \t]+)/\1-isystem \2/g'`
+
+    # out=`printf '%s\n' "$out" | sed -e 's/ -I/ -isystem /g'`
+    QT_CXXFLAGS=`printf '%s\n' "$QT_CXXFLAGS" | sed -e 's/ -I/ -isystem /g'`
+    QT_DEFINES=`printf '%s\n' "$QT_DEFINES" | sed -e 's/ -I/ -isystem /g'`
+
     QT_VERSION=`$PKG_CONFIG --modversion $QT_PACKAGES`
     AS_IF([test -z "$QT_VERSION"],[AC_MSG_ERROR([Cannot find a working Qt library])])
     ;;

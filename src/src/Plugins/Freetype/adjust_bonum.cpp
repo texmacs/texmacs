@@ -443,6 +443,7 @@ above_bonum_table () {
 
 void
 lsub_adjust_bonum_italic (hashmap<string,double>& t) {
+  (void)t;
 }
 
 void

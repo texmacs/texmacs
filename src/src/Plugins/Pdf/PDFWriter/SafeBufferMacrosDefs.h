@@ -25,7 +25,7 @@
 	#include "UnicodeString.h"
 	#include <string>
 	#include <sstream>
-	static std::wstring UTF8ToUTF16Wide(const std::string& inUTF8String);
+	__attribute__((unused)) static std::wstring UTF8ToUTF16Wide(const std::string& inUTF8String);
 
 	std::wstring UTF8ToUTF16Wide(const std::string& inUTF8String)
 	{

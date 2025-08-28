@@ -172,7 +172,7 @@ void PDFStream::FlushStreamContentForDirectExtentStream()
     OutputStreamTraits streamCopier(mOutputStream);
     streamCopier.CopyToOutputStream(&inputStreamForWrite);
     
-    mTemporaryStream.str();
+    mTemporaryStream.str({});
     mOutputStream = NULL;
 }
 

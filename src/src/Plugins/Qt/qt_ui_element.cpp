@@ -1037,7 +1037,7 @@ qt_ui_element_rep::as_qwidget () {
 #if QT_VERSION < 0x060000
       QObject::connect (w, SIGNAL (stateChanged(int)), c, SLOT (apply()));
 #else
-      QObject::connect (w, &QCheckBox::stateChanged, c, &QTMCommand::apply);
+      QObject::connect (w, &QCheckBox::checkStateChanged, c, &QTMCommand::apply);
 #endif
 
       qwid = w;

@@ -108,6 +108,7 @@ ai_set_continuation (string s, string model, string chat) {
 string
 chatgpt_command (string s, string model, string chat) {
   (void) chat;
+  (void) model;
   url u ("$TEXMACS_HOME_PATH/system/tmp/chatgpt.txt");
   if (save_string (u, s)) return "";
   string cmd= "openai -k 5000 complete " * as_string (u);
@@ -117,6 +118,7 @@ chatgpt_command (string s, string model, string chat) {
 string
 gemini_command (string s, string model, string chat) {
   (void) chat;
+  (void) model;
   string key= get_env ("GEMINI_API_KEY");
   string gem= "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
   string cmd= "curl \"" * gem * "\" \\\n";
@@ -200,6 +202,7 @@ gemini_output (string val, string model, string chat) {
   //x= "> " * replace (x, "\n", "\n> ");
   //cout << x << "\n";
   (void) chat;
+  (void) model;
   int pos= search_forwards ("\"text\": \"", val);
   if (pos < 0) return "";
   pos += 9;
@@ -222,6 +225,7 @@ gemini_output (string val, string model, string chat) {
 string
 llama_output (string val, string model, string chat) {
   (void) chat;
+  (void) model;
   int pos= search_forwards ("\"response\":\"", val);
   if (pos < 0) return "";
   pos += 12;
@@ -239,6 +243,7 @@ llama_output (string val, string model, string chat) {
 string
 mistral_output (string val, string model, string chat) {
   (void) chat;
+  (void) model;
   int pos= search_forwards ("\"content\":\"", val);
   if (pos < 0) return "";
   pos += 11;

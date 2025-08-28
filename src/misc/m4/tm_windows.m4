@@ -13,14 +13,14 @@
 
 AC_DEFUN([TM_WINDOWS],[
   if test "$CONFIG_OS" = MINGW; then
-    AC_ARG_ENABLE(console,
-      AS_HELP_STRING([--enable-console], [enable windows console]))
-    if test "$enableval" = yes
-    then  AC_MSG_RESULT([enabling Windows console])
-          LC_SCATTER_FLAGS([-mconsole])
-    else  AC_MSG_RESULT([disabling Windows console])
-          LC_SCATTER_FLAGS([-mwindows])
-    fi
+    #AC_ARG_ENABLE(console,
+    #  AS_HELP_STRING([--enable-console], [enable windows console]))
+    #if test "$enableval" = yes
+    #then  AC_MSG_RESULT([enabling Windows console])
+    #      LC_SCATTER_FLAGS([-mconsole])
+    #else  AC_MSG_RESULT([disabling Windows console])
+    #      LC_SCATTER_FLAGS([-mwindows])
+    #fi
     AS_IF([test -n "$TMREPO"],[
       AC_SUBST([XTRA_CMD],[$TMREPO/windows/bin])
       AS_IF([test -d $TMREPO/windows/aspell],[
