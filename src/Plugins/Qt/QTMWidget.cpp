@@ -159,9 +159,6 @@ QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
     QMetaObject::invokeMethod (this, "surfaceDprChanged", Qt::QueuedConnection);
     return;
   }
-#else
-  qreal dpr= retina_factor;
-#endif
   QRegion reg= event->region();
   QRegion::const_iterator it;
   QRect qr;
@@ -172,6 +169,18 @@ QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
 		  QRect (dpr * qr.x(), dpr * qr.y(),
 			 dpr * qr.width(), dpr * qr.height()));
   }
+#else
+  QVector<QRect> rects = event->region().rects();
+  for (int i = 0; i < rects.count(); ++i) {
+    QRect qr = rects.at (i);
+    p.drawPixmap (QRect (qr.x(), qr.y(), qr.width(), qr.height()),
+                  *(tm_widget()->backingPixmap),
+                  QRect (retina_factor * qr.x(),
+                         retina_factor * qr.y(),
+                         retina_factor * qr.width(),
+                         retina_factor * qr.height()));
+  }
+#endif
 }
 
 #if QT_VERSION >= 0x060000
