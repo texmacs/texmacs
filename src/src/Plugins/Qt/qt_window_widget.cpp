@@ -379,7 +379,9 @@ qt_popup_widget_rep::send (slot s, blackbox val) {
     {
       check_type<coord2>(val, s);
       QPoint pos= to_qpoint (open_box<coord2> (val));
+#if QT_VERSION >= 0x060000
       pos= ensure_visible_position (pos, qwid->screen (), qwid->size());
+#endif
       qwid->move (pos);
     }
       break;
