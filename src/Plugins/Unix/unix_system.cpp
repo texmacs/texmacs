@@ -12,6 +12,8 @@
 #include "unix_system.hpp"
 #include "config.h"
 
+#include <chrono>
+
 #include "Guile/guile_tm.hpp"
 #ifdef SCM_HAVE_HOOKS
 #include "libguile/system.h"
