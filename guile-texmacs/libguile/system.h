@@ -57,6 +57,26 @@ typedef off_t guile_off_t;
 #define scm_to_off_t_or_off64_t         CHOOSE_LARGEFILE(scm_to_off_t,scm_to_int64,scm_to_int64)
 
 
+char *guile_default_utf8_string_to_system_string(const char *utf8_string);
+char *guile_default_system_string_to_utf8_string(const char *system_string);
+void guile_default_utf8_string_to_system_string_path(char *utf8_string);
+int guile_default_fstat(int fd, guile_stat_t *buf);
+int guile_default_ftruncate(int fd, guile_off_t length);
+guile_off_t guile_default_lseek(int fd, guile_off_t offset, int whence);
+int guile_default_stat(const char *path, guile_stat_t *buf);
+int guile_default_lstat(const char *path, guile_stat_t *buf);
+int guile_default_open(const char *pathname, int flags, mode_t mode);
+DIR *guile_default_opendir(const char *name);
+guile_dirent_t *guile_default_readdir(DIR *dirp);
+#if HAVE_READDIR_R
+int guile_default_readdir_r(DIR *dirp, guile_dirent_t *entry, guile_dirent_t **result);
+#endif
+int guile_default_truncate(const char *path, guile_off_t length);
+char *guile_default_getenv(const char *name);
+int guile_default_printf(const char *format, ...);
+int guile_default_fprintf(FILE *stream, const char *format, ...);
+void guile_default_process_event(void);
+
 extern char *(*guile_utf8_string_to_system_string)(const char *utf8_string);
 extern char *(*guile_system_string_to_utf8_string)(const char *system_string);
 extern void (*guile_utf8_string_to_system_string_path)(char *utf8_string);
