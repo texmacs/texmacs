@@ -52,7 +52,7 @@ void
 QTMPrinterSettings::getFromQPrinter(const QPrinter& from) {
   printerName   = from.printerName ();
   fileName      = from.outputFileName ();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+#if QT_VERSION >= 0x060000
   orientation   = (from.pageLayout().orientation() == QPageLayout::Landscape) 
                   ? Landscape : Portrait;
   paperSize     = qtPaperSizeToQString(from.pageLayout().pageSize().id());
@@ -80,7 +80,7 @@ void
 QTMPrinterSettings::setToQPrinter(QPrinter& to) const {
   to.setResolution(dpi);
   to.setFromTo(firstPage, lastPage);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+#if QT_VERSION >= 0x060000
   to.setPageOrientation((orientation == Landscape) ?
                     QPageLayout::Landscape : QPageLayout::Portrait);
   to.setOutputFileName(fileName);
@@ -102,7 +102,7 @@ QTMPrinterSettings::setToQPrinter(QPrinter& to) const {
  * Just for internal use, converts QPrinter::PaperSize to a string 
  * representation. Massimiliano's code.
  */
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+#if QT_VERSION >= 0x060000
 
 QString
 QTMPrinterSettings::qtPaperSizeToQString(const QPageSize::PageSizeId &_size) {  
