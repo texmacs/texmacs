@@ -461,7 +461,7 @@ QTMWidget::tabletEvent (QTabletEvent* event) {
     QPoint point = event->position().toPoint() + origin() - surface()->pos();
     double x= point.x();
     double y= point.y();
-#elif QT_VERSION >= QT_VERSION_CHECK(5, 15)
+#elif QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
     QPoint point = event->pos() + origin() - surface()->pos();
     double x= point.x() + event->globalPosF().x() - event->globalX();
     double y= point.y() + event->globalPosF().y() - event->globalY();
@@ -955,7 +955,7 @@ void
 QTMWidget::wheelEvent(QWheelEvent *event) {
   if (is_nil (tmwid)) return; 
   if (as_bool (call ("wheel-capture?"))) {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
     QPointF pos  = event->position();
     QPoint  point= QPointF (pos.x(), pos.y()).toPoint () + origin();
 #else

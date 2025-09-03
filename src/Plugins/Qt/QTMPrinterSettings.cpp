@@ -52,7 +52,7 @@ void
 QTMPrinterSettings::getFromQPrinter(const QPrinter& from) {
   printerName   = from.printerName ();
   fileName      = from.outputFileName ();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
   orientation   = (from.pageLayout().orientation() == QPageLayout::Landscape) 
                   ? Landscape : Portrait;
   paperSize     = qtPaperSizeToQString(from.pageLayout().pageSize().id());
@@ -80,7 +80,7 @@ void
 QTMPrinterSettings::setToQPrinter(QPrinter& to) const {
   to.setResolution(dpi);
   to.setFromTo(firstPage, lastPage);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
   to.setPageOrientation((orientation == Landscape) ?
                     QPageLayout::Landscape : QPageLayout::Portrait);
   to.setOutputFileName(fileName);

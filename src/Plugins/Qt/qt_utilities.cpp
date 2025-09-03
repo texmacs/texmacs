@@ -531,7 +531,7 @@ qt_image_to_pdf (url image, url outfile, int w_pt, int h_pt, int dpi) {
 */
     if (dpi > 0 && w_pt > 0 && h_pt > 0) {
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 15)
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 	    printer.setPaperSize(QSizeF(w_pt, h_pt), QPrinter::Point); // in points
 #else
       printer.setPageSize(QPageSize(QSizeF(w_pt, h_pt), QPageSize::Point));
@@ -546,7 +546,7 @@ qt_image_to_pdf (url image, url outfile, int w_pt, int h_pt, int dpi) {
         printer.setResolution((int) (dpi*im.width())/(double)ww);
       if (DEBUG_CONVERT) debug_convert << "dpi asked: "<< dpi <<" ; actual dpi set: " << printer.resolution() <<LF;
 	  }
-#if QT_VERSION < QT_VERSION_CHECK(5, 15)
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 	  else printer.setPaperSize(QSizeF(im.width (), im.height ()), QPrinter::DevicePixel);
 #else
     else printer.setPageSize(QPageSize(QSizeF(im.width (), im.height ()), QPageSize::Point));
