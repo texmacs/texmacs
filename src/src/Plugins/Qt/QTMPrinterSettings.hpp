@@ -99,7 +99,7 @@ public:
    */
   virtual QList<QPair<QString,QString> > availablePrinters() = 0;
   
-#if QT_VERSION >= 0x060000
+#if QT_VERSION_CHECK(5, 15, 0)
   static QString qtPaperSizeToQString (const QPageSize::PageSizeId&);
   static QPageSize::PageSizeId qStringToQtPaperSize(const QString&);
 #else

@@ -102,7 +102,7 @@ QTMPrinterSettings::setToQPrinter(QPrinter& to) const {
  * Just for internal use, converts QPrinter::PaperSize to a string 
  * representation. Massimiliano's code.
  */
-#if QT_VERSION >= 0x060000
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
 
 QString
 QTMPrinterSettings::qtPaperSizeToQString(const QPageSize::PageSizeId &_size) {  
