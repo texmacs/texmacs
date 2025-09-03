@@ -335,7 +335,7 @@ EStatusCode CFFFileInput::ReadNameIndex()
 {
 	mNameIndexPosition = mPrimitivesReader.GetCurrentPosition();
 	
-	unsigned long* offsets;
+	unsigned long* offsets = nullptr;
 	EStatusCode status = ReadIndexHeader(&offsets,mFontsCount);
 	Byte* buffer;
 	
@@ -466,7 +466,7 @@ EStatusCode CFFFileInput::ReadStringIndex()
 
 		mStrings = new char*[mStringsCount];
 
-		unsigned long i;
+		long i;
 		for(i = 0; i < mStringsCount && (PDFHummus::eSuccess == status); ++i)
 		{
 			mStrings[i] = new char[offsets[i+1] - offsets[i]+1];

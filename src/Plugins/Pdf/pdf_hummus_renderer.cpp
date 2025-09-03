@@ -1191,7 +1191,7 @@ t3font_rep::write_definition (int& registry_id) {
     charIds << temp;
     write_char (gl, temp);
   }
-  ObjectIDType tounicodeId;
+  ObjectIDType tounicodeId = 0;
   // create font dictionary
   string dict;
   dict << "<<\r\n";

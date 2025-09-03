@@ -424,7 +424,7 @@ smoothen (array<point> a, int width) {
   array<point> r;
   int cached_w= -1;
   array<double> coeffs;
-  double weight;
+  double weight= 0.0;
   for (int i=0; i<N(a); i++) {
     int w= min (i, min (N(a)-1-i, width));
     if (w != cached_w) {
