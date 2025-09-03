@@ -677,7 +677,7 @@ edit_interface_rep::find_alt_selection_index
   if (e - b <= 2) return b;
   int half= ((b + e) >> 2) << 1;
   int h= half;
-  SI sy;
+  SI sy= 0;
   while (h < e) {
     range_set sub_sel= simple_range (alt_sel[h], alt_sel[h+1]);
     selection sel= compute_selection (sub_sel);

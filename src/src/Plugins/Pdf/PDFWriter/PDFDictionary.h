@@ -26,13 +26,13 @@
 #include <map>
 
 
-#if __cplusplus >= 201703L
-class PDFNameLess
-#else
-class PDFNameLess : public std::binary_function<const PDFName*,const PDFName*,bool>
-#endif
+struct PDFNameLess
 {
-public:
+	// typedefs for legacy support (std::binary_function)
+	using first_argument_type  = const PDFName*;
+    using second_argument_type = const PDFName*;
+    using result_type          = bool;
+
 	bool operator( ) (const PDFName* left, 
 						const PDFName* right ) const
 	{
