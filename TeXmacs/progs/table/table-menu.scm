@@ -447,18 +447,29 @@
 	    "Align table at the base of origin row")
    (table-set-valign "O")))
 
+;; wrong rendering with Qt versions
+;; (menu-bind cell-mode-icons
+;;   ((balloon (icon "tm_cell_by_cell.xpm")
+;; 	    "Perform operations on cells")
+;;    (set-cell-mode "cell"))
+;;   ((balloon (icon "tm_cell_by_row.xpm")
+;; 	    "Perform operations on rows")
+;;    (set-cell-mode "row"))
+;;   ((balloon (icon "tm_cell_by_column.xpm")
+;; 	    "Perform operations on columns")
+;;    (set-cell-mode "column"))
+;;   ((balloon (icon "tm_cell_by_table.xpm")
+;; 	    "Perform operations on entire table")
+;;    (set-cell-mode "table")))
+
 (menu-bind cell-mode-icons
-  ((balloon (icon "tm_cell_by_cell.xpm")
-	    "Perform operations on cells")
+  ((balloon "Cells" "Perform operations on cells")
    (set-cell-mode "cell"))
-  ((balloon (icon "tm_cell_by_row.xpm")
-	    "Perform operations on rows")
+  ((balloon "Rows" "Perform operations on rows")
    (set-cell-mode "row"))
-  ((balloon (icon "tm_cell_by_column.xpm")
-	    "Perform operations on columns")
+  ((balloon "Columns" "Perform operations on columns")
    (set-cell-mode "column"))
-  ((balloon (icon "tm_cell_by_table.xpm")
-	    "Perform operations on entire table")
+  ((balloon "Entire table" "Perform operations on entire table")
    (set-cell-mode "table")))
 
 (menu-bind cell-pos-icons
