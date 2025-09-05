@@ -325,12 +325,20 @@ qt_simple_widget_rep::query (slot s, int type_id) {
     case SLOT_VISIBLE_PART:
     {
       check_type_id<coord4> (type_id, s);
+#if QT_VERSION >= 0x060000
       if (backingPixmap) {
 	double dpr= backingPixmap->devicePixelRatio ();
 	QSize sz = backingPixmap->size() / dpr;
 	QPoint pos= backing_pos;
 	return close_box<coord4> (from_qrect(QRect(pos, sz)));
       }
+#else
+      if (scrollarea()) {
+	QSize sz = scrollarea()->QAbstractScrollArea::viewport()->size();
+	QPoint pos= scrollarea()->origin();
+	return close_box<coord4> (from_qrect(QRect(pos, sz)));
+      }
+#endif
       else
         return close_box<coord4>(coord4(0,0,0,0));
     }
