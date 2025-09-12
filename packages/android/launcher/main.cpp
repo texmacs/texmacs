@@ -4,8 +4,13 @@
 
 #define STACK_SIZE 0x1000000
 
+#define USE_QT_CORE_PRIVATE 0
+#define USE_HIGH_DPI_ROUNDING 0
+
 #include <QCoreApplication>
 #include <QGuiApplication>
+
+#if USE_QT_CORE_PRIVATE
 #include <QtCore/private/qandroidextras_p.h>
 
 bool checkPermission() {
@@ -33,6 +38,10 @@ bool checkPermission() {
           permissions.append(false);
   }
   return (permissions.count() != 3);
+}
+#else
+bool checkPermission() {
+    return true;
 }
 
 void texmacs_init_guile_hooks();
@@ -64,7 +73,9 @@ void *main_thread (void* args) {
   qputenv("GUILE_LOAD_PATH", QDir::homePath().toUtf8());
   qDebug() << "Starting TeXmacs...";
 
+#if USE_HIGH_DPI_ROUNDING
   QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::Ceil);
+#endif
 
   texmacs_entrypoint(argc, argv);
   return NULL;
