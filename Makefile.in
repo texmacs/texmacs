@@ -619,7 +619,8 @@ ANDROID_AAB: ANDROID_BUNDLE
 										 -DQt6WidgetsTools_DIR=@QT_HOST_PATH@/qtbase/lib/cmake/Qt6WidgetsTools \
 										 -DQt6Svg_DIR=@QT_PATH@/lib/cmake/Qt6Svg \
 										 -DQt6PrintSupport_DIR=@QT_PATH@/lib/cmake/Qt6PrintSupport \
-										 -DQt6Concurrent_DIR=@QT_PATH@/lib/cmake/Qt6Concurrent
+										 -DQt6Concurrent_DIR=@QT_PATH@/lib/cmake/Qt6Concurrent \
+										 -DQt6Network_DIR=@QT_PATH@/lib/cmake/Qt6Network
 	cd $(ANDROID_BUILD_DIR)/build; cmake --build . --config Release --target aab
 
 ANDROID_DEV_APK: ANDROID_BUNDLE
@@ -649,7 +650,8 @@ ANDROID_DEV_APK: ANDROID_BUNDLE
 										 -DQt6WidgetsTools_DIR=@QT_HOST_PATH@/qtbase/lib/cmake/Qt6WidgetsTools \
 										 -DQt6Svg_DIR=@QT_PATH@/lib/cmake/Qt6Svg \
 										 -DQt6PrintSupport_DIR=@QT_PATH@/lib/cmake/Qt6PrintSupport \
-										 -DQt6Concurrent_DIR=@QT_PATH@/lib/cmake/Qt6Concurrent
+										 -DQt6Concurrent_DIR=@QT_PATH@/lib/cmake/Qt6Concurrent \
+										 -DQt6Network_DIR=@QT_PATH@/lib/cmake/Qt6Network
 	cd $(ANDROID_BUILD_DIR)/build; cmake --build . --config Debug --target apk
 
 ANDROID_ALL: ANDROID_DEV_APK ANDROID_AAB
