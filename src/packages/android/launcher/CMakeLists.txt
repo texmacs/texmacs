@@ -52,6 +52,7 @@ target_link_libraries(
         Qt${QT_VERSION_MAJOR}::Svg
         Qt${QT_VERSION_MAJOR}::PrintSupport
         Qt${QT_VERSION_MAJOR}::Concurrent
+        Qt${QT_VERSION_MAJOR}::Network
         # Qt${QT_VERSION_MAJOR}::CorePrivate
         GnuTLS::GnuTLS
         PkgConfig::Nettle
