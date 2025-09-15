@@ -43,6 +43,7 @@ bool checkPermission() {
 bool checkPermission() {
     return true;
 }
+#endif
 
 void texmacs_init_guile_hooks();
 int texmacs_entrypoint(int argc, char** argv);
