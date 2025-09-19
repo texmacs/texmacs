@@ -352,9 +352,12 @@ remove_entry (url u, string id, db_time t) {
 }
 
 strings
-query (url u, tree q, db_time t, int limit) {
+query (url u, tree q, db_time t, int limit, int offset) {
   database db= get_database (u);
-  db_atoms _ids= db->query (q, t, limit);
+  query_args qargs;
+  qargs.limit = limit;
+  qargs.offset = offset;
+  db_atoms _ids= db->query (q, t, qargs);
   return db->from_atoms (_ids);
 }
 
