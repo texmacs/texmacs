@@ -335,15 +335,15 @@ set_global_options  (int argc, char** argv)  {
       }
       else if ((s == "-R") || (s == "-retina")) {
         retina_manual= true;
-#ifdef MACOSX_EXTENSIONS
+#  ifdef MACOSX_EXTENSIONS
         retina_factor= 2;
         retina_zoom  = 1;
         retina_scale = 1.4;
-#else
+#  else
         retina_factor= 1;
         retina_zoom  = 2;
         retina_scale = (tm_style_sheet == ""? 1.0: 1.6666);
-#endif
+#  endif
         retina_icons = 2;
       }
       else if (s == "-no-retina-icons") {
@@ -568,7 +568,7 @@ TeXmacs_main (int argc, char** argv) {
   if (DEBUG_STD) debug_boot << "Good bye...\n";
 }  
   
-/*  *****************************************************************************
+/******************************************************************************
 * Main program
 ******************************************************************************/
 
