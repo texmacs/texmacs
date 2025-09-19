@@ -84,8 +84,32 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   // general setup for main window
 
   QMainWindow* mw= mainwindow ();
-  if (tm_style_sheet == "")
+  if (tm_style_sheet == "") {
     mw->setStyle (qtmstyle ());
+#ifndef OS_ANDROID
+    mw->menuBar()->setStyle (qtmstyle ());
+#endif
+  }
+
+#if QT_VERSION >= 0x060000
+  int retina_scale = 1;
+  int retina_icons = 1;
+#endif
+
+#ifdef Q_OS_MAC
+  if (!use_native_menubar) {
+    mw->menuBar()->setNativeMenuBar(false);
+    if (tm_style_sheet != "") {
+      int min_h= (int) floor (28 * retina_scale);
+      mw->menuBar()->setMinimumHeight (min_h);
+    }
+  }
+#else
+  if (tm_style_sheet != "") {
+    int min_h= (int) floor (28 * retina_scale);
+    mw->menuBar()->setMinimumHeight (min_h);
+  }
+#endif
 
 #if QT_VERSION >= 0x060000
   mw->setWindowIcon(tmapp()->icon_manager().getIcon("TeXmacs"));
@@ -203,7 +227,6 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     extraTools->setStyle (qtmstyle ());
   }
     
-#if QT_VERSION < 0x060000
   {
     // set proper sizes for icons
     QImage *pxm = xpm_image ("tm_new.xpm");
@@ -219,7 +242,6 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     tweak_iconbar_size (sz);
     focusToolBar->setIconSize (sz);
   }
-#endif
 
   // Why we need fixed height:
   // The height of the toolbar is actually determined by the font height.
@@ -229,7 +251,6 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   //
   // NOTICE: setFixedHeight must be after setIconSize
   // TODO: the size of the toolbar should be calculated dynamically
-#if QT_VERSION < 0x060000
 #if (QT_VERSION >= 0x050000)
 #if defined (Q_OS_MAC) || defined (Q_OS_WIN)
   int toolbarHeight= 30 * retina_icons;
@@ -274,7 +295,6 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     modeToolBar->setFixedHeight (h2);
     focusToolBar->setFixedHeight (h3);
   }
-#endif
   
   QWidget *cw= new QWidget();
   cw->setObjectName("centralWidget");  // this is important for styling toolbars.
@@ -900,33 +920,6 @@ qt_tm_widget_rep::install_main_menu () {
   QList<QAction*>* src = main_menu_widget->get_qactionlist();
   if (!src) return;
   QMenuBar* dest = mainwindow()->menuBar();
-
-  if (tm_style_sheet == "")
-    dest->setStyle (qtmstyle ());
-
-#ifdef Q_OS_MAC
-  if (!use_native_menubar) {
-    dest->setNativeMenuBar(false);
-    if (tm_style_sheet != "") {
-#if QT_VERSION >= 0x060000
-      int min_h=28;
-#else
-      int min_h= (int) floor (28 * retina_scale);
-#endif
-      dest->setMinimumHeight (min_h);
-    }
-  }
-#else
-  if (tm_style_sheet != "") {
-#if QT_VERSION >= 0x060000
-    int min_h=28;
-#else
-    int min_h= (int) floor (28 * retina_scale);
-#endif
-    dest->setMinimumHeight (min_h);
-  }
-#endif
-
   dest->clear();
   for (int i = 0; i < src->count(); i++) {
     QAction* a = (*src)[i];
