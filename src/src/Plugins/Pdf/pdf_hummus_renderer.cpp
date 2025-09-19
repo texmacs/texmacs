@@ -232,7 +232,8 @@ public:
   void  set_brush (brush b2);
   void  set_background (brush b2);
 
-  void  clear_device (SI x1, SI y1, SI x2, SI y2) {};
+  void  clear_device (SI x1, SI y1, SI x2, SI y2) {
+    (void) x1; (void) y1; (void) x2; (void) y2; };
 
   void  draw (int char_code, font_glyphs fn, SI x, SI y);
   void  line (SI x1, SI y1, SI x2, SI y2);
