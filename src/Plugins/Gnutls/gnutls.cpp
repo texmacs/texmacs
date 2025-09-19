@@ -993,21 +993,25 @@ bool gnutls_present () {
 
 tm_contact
 make_tls_server_contact (array<array<string> > args) {
+  (void) args;
   return tm_contact ();
 }
 
 tm_contact
 make_tls_client_contact (array<array<string> > args) {
+  (void) args;
   return tm_contact ();
 }
 
 list<string>
 srp_verifier_and_salt (string pseudo, string passwd) {
+  (void) pseudo; (void) passwd;
   return list<string> ();
 }
 
 string hash_password_pbkdf2 (string passwd, string salt) {
-    return string("");
+  (void) passwd; (void) salt;
+  return string("");
 }
 
 #endif // USE_GNUTLS
