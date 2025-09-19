@@ -162,14 +162,14 @@ needing_update (false)
 #if QT_VERSION < 0x060000
   if (!retina_manual) {
     retina_manual= true;
-#ifdef MACOSX_EXTENSIONS
+#  ifdef MACOSX_EXTENSIONS
     double mac_hidpi = mac_screen_scale_factor();
     if (DEBUG_STD)
       debug_boot << "Mac Screen scaleFfactor: " << mac_hidpi <<  "\n";
           
     if (mac_hidpi == 2) {
       if (DEBUG_STD) debug_boot << "Setting up HiDPI mode\n";
-#if (QT_VERSION < 0x050000)
+#   if (QT_VERSION < 0x050000)
       retina_factor= 2;
       if (tm_style_sheet == "") retina_scale = 1.4;
       else retina_scale = 1.0;
@@ -179,11 +179,11 @@ needing_update (false)
         // retina_icons = 1;
         // retina_icons = 2;  // FIXME: why is this not better?
       }
-#else
+#   else
       retina_factor= 2;      
-#endif
+#   endif
     }
-#else
+#  else
     SI w, h;
     get_extents (w, h);
     if (DEBUG_STD)
@@ -196,7 +196,7 @@ needing_update (false)
         retina_icons = 2;
       }
     }
-#endif
+#  endif
   }
   if (has_user_preference ("retina-factor"))
     retina_factor= get_user_preference ("retina-factor") == "on"? 2: 1;
