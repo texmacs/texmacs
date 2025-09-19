@@ -50,6 +50,14 @@ CONCRETE_CODE(db_line);
 * Databases
 ******************************************************************************/
 
+struct query {
+  int limit= 0;
+  int offset= 0;
+  bool sort_flag= false;
+};
+
+typedef struct query query_args;
+
 typedef int db_line_nr;
 typedef array<db_line_nr> db_line_nrs;
 typedef array<string> strings;
@@ -105,7 +113,7 @@ private:
   bool id_satisfies (db_atom id, db_constraints cs, db_time t);
   db_constraint encode_constraint (tree q);
   db_constraints encode_constraints (tree q);
-  db_atoms filter (db_atoms ids, tree qt, db_time t, int limit);
+  db_atoms filter (db_atoms ids, tree qt, db_time t, query_args qargs);
   int compute_complexity (tree q);
   int ansatz_index (tree q);
   db_atoms ansatz (tree ql, db_time t);
@@ -146,7 +154,7 @@ public:
   void set_entry (db_atom id, db_atoms pairs, db_time t);
   db_atoms get_entry (db_atom id, db_time t);
   void remove_entry (db_atom id, db_time t);
-  db_atoms query (tree qt, db_time t, int limit);
+  db_atoms query (tree qt, db_time t, query_args qargs);
   void inspect_history (db_atom name);
 
   friend void keep_history (url u, bool flag);
@@ -171,7 +179,7 @@ strings get_attributes (url u, string id, db_time t);
 void set_entry (url u, string id, tree e, db_time t);
 tree get_entry (url u, string id, db_time t);
 void remove_entry (url u, string id, db_time t);
-strings query (url u, tree q, db_time t, int limit);
+strings query (url u, tree q, db_time t, int limit, int offset);
 void inspect_history (url u, string name);
 strings get_completions (url u, string s);
 strings get_name_completions (url u, string s);

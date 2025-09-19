@@ -4691,7 +4691,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(tmdb-query <scm-arg|url> <scm-arg|scheme_tree> <scm-arg|double> <scm-arg|int>)>
+    <scm|(tmdb-query <scm-arg|url> <scm-arg|scheme_tree> <scm-arg|double> <scm-arg|int> <scm-arg|int>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|query> which returns

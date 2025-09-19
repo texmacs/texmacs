@@ -7956,19 +7956,21 @@ tmg_tmdb_remove_entry (tmscm arg1, tmscm arg2, tmscm arg3) {
 }
 
 tmscm
-tmg_tmdb_query (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
+tmg_tmdb_query (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4, tmscm arg5) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "tmdb-query");
   TMSCM_ASSERT_SCHEME_TREE (arg2, TMSCM_ARG2, "tmdb-query");
   TMSCM_ASSERT_DOUBLE (arg3, TMSCM_ARG3, "tmdb-query");
   TMSCM_ASSERT_INT (arg4, TMSCM_ARG4, "tmdb-query");
+  TMSCM_ASSERT_INT (arg5, TMSCM_ARG5, "tmdb-query");
 
   url in1= tmscm_to_url (arg1);
   scheme_tree in2= tmscm_to_scheme_tree (arg2);
   double in3= tmscm_to_double (arg3);
   int in4= tmscm_to_int (arg4);
+  int in5= tmscm_to_int (arg5);
 
   // TMSCM_DEFER_INTS;
-  array_string out= query (in1, in2, in3, in4);
+  array_string out= query (in1, in2, in3, in4, in5);
   // TMSCM_ALLOW_INTS;
 
   return array_string_to_tmscm (out);
@@ -11045,7 +11047,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tmdb-set-entry",  tmg_tmdb_set_entry, 4, 0, 0);
   tmscm_install_procedure ("tmdb-get-entry",  tmg_tmdb_get_entry, 3, 0, 0);
   tmscm_install_procedure ("tmdb-remove-entry",  tmg_tmdb_remove_entry, 3, 0, 0);
-  tmscm_install_procedure ("tmdb-query",  tmg_tmdb_query, 4, 0, 0);
+  tmscm_install_procedure ("tmdb-query",  tmg_tmdb_query, 5, 0, 0);
   tmscm_install_procedure ("tmdb-inspect-history",  tmg_tmdb_inspect_history, 2, 0, 0);
   tmscm_install_procedure ("tmdb-get-completions",  tmg_tmdb_get_completions, 2, 0, 0);
   tmscm_install_procedure ("tmdb-get-name-completions",  tmg_tmdb_get_name_completions, 2, 0, 0);
