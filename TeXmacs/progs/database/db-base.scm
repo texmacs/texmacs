@@ -145,7 +145,11 @@
 
 (tm-define (db-search l*)
   (with l (map rewrite-query l*)
-    (tmdb-query (db-get-db) l (db-get-time) (or db-limit 1000000))))
+    (tmdb-query (db-get-db) l (db-get-time) (or db-limit 1000000) 0)))
+
+(tm-define (db-search-paginate l* limit offset)
+  (with l (map rewrite-query l*)
+    (tmdb-query (db-get-db) l (db-get-time) limit offset)))
 
 (tm-define (db-search-name name)
   (db-search (list (list "name" name))))

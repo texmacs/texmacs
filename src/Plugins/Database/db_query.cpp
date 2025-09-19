@@ -89,16 +89,16 @@ database_rep::encode_constraints (tree ql) {
 }
 
 db_atoms
-database_rep::filter (db_atoms ids, tree qt, db_time t, int limit) {
-  //cout << "Query " << qt << "\n";
+database_rep::filter (db_atoms ids, tree qt, db_time t, query_args qargs) {
+  //cout << "Query " << qt << ", limit= " << qargs.limit << ", offset= "<< qargs.offset << LF;
   db_constraints cs= encode_constraints (qt);
   //cout << "Encoded as " << cs << "\n";
   if (N(cs) == 1 && N(cs) == 0) return db_atoms ();
   db_atoms r;
-  for (int i=0; i<N(ids); i++)
+  for (int i=qargs.offset; i<N(ids); i++)
     if (id_satisfies (ids[i], cs, t)) {
       r << ids[i];
-      if (N(r) >= limit) break;
+      if (N(r) >= qargs.limit) break;
     }
   return r;
 }
@@ -194,18 +194,23 @@ database_rep::filter_modified (db_atoms ids, db_time t1, db_time t2) {
 ******************************************************************************/
 
 db_atoms
-database_rep::query (tree ql, db_time t, int limit) {
-  //cout << "query " << ql << ", " << t << ", " << limit << LF;
+database_rep::query (tree ql, db_time t, query_args qargs) {
+  //cout << "query " << ql << ", " << t << ", " << qargs.limit << LF;
   ql= normalize_query (ql);
-  //cout << "normalized query " << ql << ", " << t << ", " << limit << LF;
+  //cout << "normalized query " << ql << ", " << t << ", " << qargs.limit << LF;
   db_atoms ids= ansatz (ql, t);
   //cout << "ansatz ids= " << ids << LF;
-  bool sort_flag= false;
   if (is_tuple (ql))
-    for (int i=0; i<N(ql); i++)
-      sort_flag= sort_flag || is_tuple (ql[i], "order", 2);
-  ids= filter (ids, ql, t, max (limit, sort_flag? 1000: 0));
   //cout << "filtered ids= " << ids << LF;
+    for (int i=0; i<N(ql); i++) {
+      qargs.sort_flag= qargs.sort_flag || is_tuple (ql[i], "order", 2);
+    }
+
+  qargs.limit= max (qargs.limit, qargs.sort_flag? 1000: 0);
+  //cout << "limit= " << qargs.limit << ", offset= " << qargs.offset << LF;
+  ids= filter (ids, ql, t, qargs);
+  //cout << "filtered ids= " << ids << LF;
+
   for (int i=0; i<N(ql); i++) {
     if (is_tuple (ql[i], "modified", 2) &&
         is_atomic (ql[i][1]) && is_atomic (ql[i][2]) &&
@@ -220,6 +225,5 @@ database_rep::query (tree ql, db_time t, int limit) {
   //cout << "filtered on modified ids= " << ids << LF;
   ids= sort_results (ids, ql, t);
   //cout << "sorted ids= " << ids << LF;
-  if (N(ids) > limit) ids= range (ids, 0, limit);
   return ids;
 }
