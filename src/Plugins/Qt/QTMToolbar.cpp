@@ -93,7 +93,7 @@ void QTMToolbar::replaceButtons (QList<QAction*>* src) {
   if (src == NULL)
     FAILED ("replaceButtons expects valid objects");
   setUpdatesEnabled (false);
-  #ifdef OS_ANDROID
+#ifdef OS_ANDROID
   while (mLayout->count() > 0) {
     QWidget* w = mLayout->itemAt(0)->widget();
     mLayout->removeWidget(w);
@@ -164,7 +164,6 @@ void QTMToolbar::addAction (QAction* action) {
     }
 
   }
-
   actionWidget->setStyle (qtmstyle ());
 
   // add the button to the toolbar, and on Android to the scrollable layout
