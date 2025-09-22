@@ -1617,6 +1617,13 @@
 
 (define basic-load load)
 
+(define dirname-absolute?
+  (lambda (dirname)
+	(or (and (> (string-length dirname) 0)
+	     (char=? (string-ref dirname 0) #\/))
+	(and (> (string-length dirname) 1)
+	     (char=? (string-ref dirname 1) #\:)))))
+
 (define (load-module filename . reader)
   (save-module-excursion
    (lambda ()
@@ -1625,7 +1632,7 @@
        (apply basic-load
 	      (if (and oldname
 		       (> (string-length filename) 0)
-		       (not (char=? (string-ref filename 0) #\/))
+		       (not (dirname-absolute? filename))
 		       (not (string=? (dirname oldname) ".")))
 		  (string-append (dirname oldname) "/" filename)
 		  filename)
