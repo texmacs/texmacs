@@ -1617,12 +1617,16 @@
 
 (define basic-load load)
 
+(define is-windows-os?
+  (if (defined? 'SIGBUS) #f #t))
+
 (define dirname-absolute?
   (lambda (dirname)
 	(or (and (> (string-length dirname) 0)
 	     (char=? (string-ref dirname 0) #\/))
 	(and (> (string-length dirname) 1)
-	     (char=? (string-ref dirname 1) #\:)))))
+	     (char=? (string-ref dirname 1) #\:)
+		 (is-windows-os?)))))
 
 (define (load-module filename . reader)
   (save-module-excursion
