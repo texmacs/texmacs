@@ -1617,8 +1617,8 @@
 
 (define basic-load load)
 
-(define is-windows-os?
-  (if (defined? 'SIGBUS) #f #t))
+(define (is-windows-os?)
+  (not (defined? 'SIGBUS)))
 
 (define dirname-absolute?
   (lambda (dirname)
