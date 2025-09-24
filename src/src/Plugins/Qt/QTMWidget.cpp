@@ -756,8 +756,28 @@ QTMWidget::event (QEvent* event) {
   return QTMScrollView::event (event);
 }
 
+#if QT_VERSION >= 0x060000
+QTMWidget *last_focused_widget = nullptr;
+
+void QTMWidget::setFocusToLast() {
+  if (last_focused_widget) {
+    last_focused_widget->setFocus();
+    if (!is_nil (last_focused_widget->tmwid)) {
+      if (DEBUG_QT)
+	debug_qt << "FOCUSIN: "
+		 << last_focused_widget->tm_widget()->type_as_string() << LF;
+      the_gui->process_keyboard_focus (last_focused_widget->tm_widget(),
+				       true, texmacs_time());
+    }
+  }
+}
+#endif
+
 void
 QTMWidget::focusInEvent (QFocusEvent * event) {
+#if QT_VERSION >= 0x060000
+  last_focused_widget = this;
+#endif
   if (!is_nil (tmwid)) {
     if (DEBUG_QT) debug_qt << "FOCUSIN: " << tm_widget()->type_as_string() << LF;
     the_gui->process_keyboard_focus (tm_widget(), true, texmacs_time());
