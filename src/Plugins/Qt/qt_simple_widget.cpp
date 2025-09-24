@@ -54,9 +54,9 @@ qt_simple_widget_rep::as_qwidget () {
   QSize sz = to_qsize (width, height);
   scrollarea()->editor_flag= is_editor_widget ();
   if (!is_editor_widget ()) {
+    canvas()->resize (sz);
     scrollarea()->setExtents (QRect (QPoint(0,0), sz));
   }
-  canvas()->resize (sz);
   all_widgets->insert((pointer) this);
   backing_pos = canvas()->origin ();
   backing_valid = false;
