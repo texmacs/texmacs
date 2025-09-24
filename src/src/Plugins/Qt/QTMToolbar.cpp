@@ -164,7 +164,8 @@ void QTMToolbar::addAction (QAction* action) {
     }
 
   }
-
+  actionWidget->setStyle (qtmstyle ());
+  
   // add the button to the toolbar, and on Android to the scrollable layout
 #ifdef OS_ANDROID
   mLayout->addWidget (button);
