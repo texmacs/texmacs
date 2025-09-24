@@ -50,8 +50,9 @@ public:
   qt_simple_widget_rep* tm_widget () const;
   
   bool isPreediting () { return preediting; }
-
 #if QT_VERSION >= 0x060000
+  static void setFocusToLast();
+
 protected slots:
   void surfaceDprChanged ();
 #endif

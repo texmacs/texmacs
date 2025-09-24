@@ -68,6 +68,10 @@ BEGIN_SLOT
   if (menu_count <= 0) {
     menu_count = 0;
     QTimer::singleShot (0, the_gui->gui_helper, SLOT (doPopWaitingWidgets ()));
+#if QT_VERSION >= 0x060000
+    // get the active widget and process_keyboard_focus
+    QTMWidget::setFocusToLast();
+#endif
   }
 END_SLOT
 }
