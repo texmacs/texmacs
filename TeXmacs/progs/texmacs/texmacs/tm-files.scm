@@ -423,8 +423,9 @@
   (or (and (url-rooted-web? u)
            ;; FIXME: Use HTTP HEADERS to determine the real file format
            (!= (file-format u) "texmacs-file"))
-      (url-directory? u)
-      ;; we want to open links to directories via the default OS handler 
+      ;; (url-directory? u)
+      ;; we want to open links to directories via the default OS handler,
+      ;; but we need a silent test which does not call concretize
       (url-rooted-protocol? u "mailto")
       (file-of-format? u "image")
       (file-of-format? u "pdf")
