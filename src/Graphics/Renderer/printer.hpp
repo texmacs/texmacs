@@ -97,7 +97,6 @@ public:
   brush  get_background ();
   void   set_pencil (pencil p);
   void   set_background (brush b);
-  void   clear_device (SI, SI, SI, SI) {}
   void   draw (int char_code, font_glyphs fn, SI x, SI y);
   void   line (SI x1, SI y1, SI x2, SI y2);
   void   lines (array<SI> x, array<SI> y);

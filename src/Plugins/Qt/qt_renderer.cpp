@@ -230,31 +230,6 @@ get_pattern_image (brush br, SI pixel) {
 }
 
 void
-qt_renderer_rep::clear_device (SI x1, SI y1, SI x2, SI y2) {
-  static bool first_time= true;
-  static QBrush br (Qt::lightGray, Qt::CrossPattern);
-  static int w= 8, h= 8;
-  if (first_time) {
-    url neutral_pattern= resolve_pattern ("neutral-pattern.png");
-    if (!is_none (neutral_pattern)) {
-      QImage im (utf8_to_qstring (concretize (neutral_pattern)));
-      if (!im.isNull ()) {
-	br= QBrush (im);
-	w= im.width (); h= im.height ();
-	if (w == 0) w = 32; if (h == 0) h = 32;
-      }
-    }
-    first_time= false;
-  }
-  decode (x1, y1);
-  decode (x2, y2);
-  QRect r (QPoint (x1, y2), QSize (x2 - x1, y1- y2));
-  painter->fillRect (r, QBrush (Qt::white));
-  br.setTransform (QTransform (1, 0, 0, 1, x1 % w, y2 % h));
-  painter->fillRect (r, br);
-}
-
-void
 qt_renderer_rep::set_pencil (pencil np) {
   painter->setOpacity (qreal (1.0));
   basic_renderer_rep::set_pencil (np);
