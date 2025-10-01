@@ -96,6 +96,7 @@ public:
   virtual void set_background (brush b) = 0;
 
   /* drawing */
+  virtual void clear_device (SI x1, SI y1, SI x2, SI y2) = 0; // device background
   virtual void draw (int char_code, font_glyphs fn, SI x, SI y) = 0;
   virtual void line (SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void lines (array<SI> x, array<SI> y) = 0;
