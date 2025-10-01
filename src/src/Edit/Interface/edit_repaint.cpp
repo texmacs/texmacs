@@ -26,13 +26,16 @@ edit_interface_rep::draw_background (renderer ren,
                                      SI x1, SI y1, SI x2, SI y2) {
   tree bg= get_init_value (BG_COLOR);
   ren->set_background (bg);
-  if (get_init_value (PAGE_MEDIUM) == "paper")
+  if (get_init_value (PAGE_MEDIUM) == "paper") {
+    ren->clear_device (x1, y1, x2, y2);
     eb->clear (ren, x1, y1, x2, y2);
+  }
   else {
     rectangle m (eb->x1, eb->y1, eb->x2, eb->y2);
     rectangle r (x1, y1, x2, y2);
     rectangle tm= translate (m, ren->ox, ren->oy);
     rectangle tr= translate (r, ren->ox, ren->oy);
+    ren->clear_device (x1, y1, x2, y2);
     clear_pattern_rectangles (ren, tm, tr);
   }
 }

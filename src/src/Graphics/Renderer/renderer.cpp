@@ -330,6 +330,9 @@ abs_outer_round (SI& x1, SI& y1, SI& x2, SI& y2) {
 ******************************************************************************/
 
 void
+renderer_rep::clear_device (SI x1, SI y1, SI x2, SI y2) {}
+
+void
 renderer_rep::draw_triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3) {
   array<SI> x (3), y (3);
   x[0]= x1; y[0]= y1;
