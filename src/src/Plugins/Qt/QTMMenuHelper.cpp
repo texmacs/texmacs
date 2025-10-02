@@ -1035,8 +1035,10 @@ void
 QTMRefreshableWidget::doRefresh (string kind) {
 BEGIN_SLOT
   if (recompute (kind)) {
-    if (qwid) qwid->setParent (NULL);
-    delete qwid;
+    if (qwid) {
+      qwid->setParent (NULL);
+      delete qwid;
+    }
     qwid = concrete (cur)->as_qwidget();
     qwid->setParent (this);
 
