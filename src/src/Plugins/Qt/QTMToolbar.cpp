@@ -10,12 +10,14 @@
 
 #include "QTMToolbar.hpp"
 #include "QTMStyle.hpp"
+#include "QTMWidget.hpp"
 #include "gui.hpp"
 
 #include <QToolButton>
 #include <QMenu>
 #include <QWidgetAction>
-#ifdef OS_ANDROID
+
+#ifdef ENABLE_EXPERIMENTAL_TOOLBAR
 #include <QScroller>
 #include <QScrollBar>
 #endif
@@ -34,12 +36,12 @@ QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
 
   setMovable (false);
 
-#ifdef OS_ANDROID
+#ifdef ENABLE_EXPERIMENTAL_TOOLBAR
   mScrollArea = new QScrollArea (this);
   addWidget (mScrollArea);
 
   mLayout = new QHBoxLayout (mScrollArea);
-  QWidget* w = new QWidget ();
+  QWidget* w = new QWidget (mScrollArea);
   w->setLayout (mLayout);
   mScrollArea->setWidget (w);
 
@@ -62,6 +64,8 @@ QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
   QScroller::scroller(mScrollArea)->setScrollerProperties(properties);
 
   QScroller::grabGesture (mScrollArea, QScroller::LeftMouseButtonGesture);
+
+
 #endif
 }
 
@@ -72,7 +76,7 @@ void QTMToolbar::replaceActions (QList<QAction*>* src) {
   if (src == NULL)
     FAILED ("replaceActions expects valid objects");
   setUpdatesEnabled (false);
-#ifdef OS_ANDROID
+#ifdef ENABLE_EXPERIMENTAL_TOOLBAR
   while (mLayout->count() > 0) {
     QWidget* w = mLayout->itemAt(0)->widget();
     mLayout->removeWidget(w);
@@ -80,20 +84,23 @@ void QTMToolbar::replaceActions (QList<QAction*>* src) {
   }
 #else
   clear ();
-  addSeparator();
 #endif
+  addSeparator();
   for (int i = 0; i < src->count(); i++) {
     QAction* a = (*src)[i];
     addAction(a);
   }
   setUpdatesEnabled (true);
+#ifdef ENABLE_EXPERIMENTAL_TOOLBAR
+  addRightSpacer();
+#endif
 }
 
 void QTMToolbar::replaceButtons (QList<QAction*>* src) {
   if (src == NULL)
     FAILED ("replaceButtons expects valid objects");
   setUpdatesEnabled (false);
-#ifdef OS_ANDROID
+#ifdef ENABLE_EXPERIMENTAL_TOOLBAR
   while (mLayout->count() > 0) {
     QWidget* w = mLayout->itemAt(0)->widget();
     mLayout->removeWidget(w);
@@ -101,14 +108,34 @@ void QTMToolbar::replaceButtons (QList<QAction*>* src) {
   }
 #else
   clear ();
-  addSeparator();
 #endif
+  addSeparator();
   for (int i = 0; i < src->count(); i++) {
     QAction* a = (*src)[i];
     addAction(a);
   }
   setUpdatesEnabled (true);
+#ifdef ENABLE_EXPERIMENTAL_TOOLBAR
+  addRightSpacer();
+#endif
 }
+
+#ifdef ENABLE_EXPERIMENTAL_TOOLBAR
+void QTMToolbar::addSeparator () {
+  QWidget* spacer = new QWidget (this);
+  spacer->setStyleSheet ("background: transparent;");
+  spacer->setFixedWidth (10);
+  mLayout->addWidget (spacer);
+}
+
+void QTMToolbar::addRightSpacer () {
+  // a a spacer that will push the buttons to the left
+  QWidget* spacer = new QWidget (this);
+  spacer->setStyleSheet ("background: transparent;");
+  spacer->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Preferred);
+  mLayout->addWidget (spacer);
+}
+#endif
 
 void QTMToolbar::addAction (QAction* action) {
   
@@ -116,14 +143,8 @@ void QTMToolbar::addAction (QAction* action) {
   QWidget *actionWidget = nullptr;
   
   if (action->isSeparator()) {
-#ifdef OS_ANDROID
-    actionWidget = new QWidget (this);
-    actionWidget->setMinimumWidth (QTMTOOLBAR_MARGIN);
-    actionWidget->setMinimumHeight (iconSize().height() + QTMTOOLBAR_MARGIN * 2);
-#else
-    QToolBar::addSeparator();
+    addSeparator();
     return;
-#endif
   }
 
   if (qobject_cast<QWidgetAction*> (action)) {
@@ -133,7 +154,11 @@ void QTMToolbar::addAction (QAction* action) {
   if (!actionWidget) {
     actionWidget = new QToolButton (this);
     if (tm_style_sheet == "") {
+      cout << "Setting style for action widget" << LF;
       actionWidget->setStyle (qtmstyle ());
+    } else {
+      // the background should be transparent when not hovered
+      //actionWidget->setStyleSheet ("QToolButton:not(:hover) { background: transparent; }");
     }
     ((QToolButton*)actionWidget)->setDefaultAction (action);
   }
@@ -146,9 +171,17 @@ void QTMToolbar::addAction (QAction* action) {
       button->setIconSize (iconSize());
     }
     
+    // on click finish, set the focus to the last focused widget
+    connect (button, &QToolButton::clicked, []() {
+      QTMWidget::setFocusToLast();
+    });
+
     // if the action is a menu, the tool button should be a menu button
     if (action->menu()) {
       button->setPopupMode (QToolButton::InstantPopup);
+      connect (action->menu(), &QMenu::aboutToHide, [button]() {
+        QTMWidget::setFocusToLast();
+      });
     }
     
     // if the action contains only text, add a margin to the button
@@ -164,17 +197,16 @@ void QTMToolbar::addAction (QAction* action) {
     }
 
   }
-  actionWidget->setStyle (qtmstyle ());
   
   // add the button to the toolbar, and on Android to the scrollable layout
-#ifdef OS_ANDROID
+#ifdef ENABLE_EXPERIMENTAL_TOOLBAR
   mLayout->addWidget (button);
 #else
   QToolBar::addWidget (actionWidget);
 #endif
 }
 
-#ifdef OS_ANDROID
+#ifdef ENABLE_EXPERIMENTAL_TOOLBAR
 void QTMToolbar::removeAction (QAction* action) {
   for (int i = 0; i < mLayout->count(); i++) {
     QToolButton* button = qobject_cast<QToolButton*> (mLayout->itemAt(i)->widget());

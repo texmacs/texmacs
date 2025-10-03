@@ -11,6 +11,10 @@
 #ifndef QTMTOOLBAR_HPP
 #define QTMTOOLBAR_HPP
 
+#ifdef OS_ANDROID
+#define ENABLE_EXPERIMENTAL_TOOLBAR
+#endif
+
 #include "basic.hpp"
 
 #include <QToolBar>
@@ -29,13 +33,15 @@ public:
   void replaceButtons (QList<QAction*>* src);
 
   void addAction (QAction* action);
-#ifdef OS_ANDROID
+#ifdef ENABLE_EXPERIMENTAL_TOOLBAR
   void removeAction (QAction* action);
   void clear ();
+  void addSeparator ();
+  void addRightSpacer ();
 #endif
 
 private:
-#ifdef OS_ANDROID
+#ifdef ENABLE_EXPERIMENTAL_TOOLBAR
   QScrollArea* mScrollArea;
   QHBoxLayout* mLayout;
 #endif

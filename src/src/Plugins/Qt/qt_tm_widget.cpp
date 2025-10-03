@@ -86,7 +86,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   QMainWindow* mw= mainwindow ();
   if (tm_style_sheet == "") {
     mw->setStyle (qtmstyle ());
-#ifndef OS_ANDROID
+#ifndef ENABLE_EXPERIMENTAL_TOOLBAR
     mw->menuBar()->setStyle (qtmstyle ());
 #endif
   }
@@ -96,6 +96,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   int retina_icons = 1;
 #endif
 
+#ifndef ENABLE_EXPERIMENTAL_TOOLBAR
 #ifdef Q_OS_MAC
   if (!use_native_menubar) {
     mw->menuBar()->setNativeMenuBar(false);
@@ -109,6 +110,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     int min_h= (int) floor (28 * retina_scale);
     mw->menuBar()->setMinimumHeight (min_h);
   }
+#endif
 #endif
 
 #if QT_VERSION >= 0x060000
@@ -187,7 +189,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   mw->setStatusBar (bar);
  
   // toolbars
-#ifdef OS_ANDROID
+#ifdef ENABLE_EXPERIMENTAL_TOOLBAR
   menuToolBar   = new QTMToolbar ("menu toolbar", QSize (), mw);
 #endif
   
@@ -320,7 +322,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   sideTools->setObjectName ("sideTools");
   leftTools->setObjectName ("leftTools");
 
-#ifdef OS_ANDROID
+#ifdef ENABLE_EXPERIMENTAL_TOOLBAR
   menuToolBar->setObjectName ("menuToolBar");
   mw->addToolBar (menuToolBar);
   mw->addToolBarBreak ();
@@ -446,7 +448,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   bottomTools->setVisible (false);
   extraTools->setVisible (false);
   mainwindow()->statusBar()->setVisible (true);
-#ifndef Q_OS_MAC
+#if !defined(Q_OS_MAC) && !defined(ENABLE_EXPERIMENTAL_TOOLBAR)
   mainwindow()->menuBar()->setVisible (false);
 #endif
   QPalette pal;
@@ -548,7 +550,7 @@ qt_tm_widget_rep::update_visibility () {
   if ( XOR(old_statusVisibility,  new_statusVisibility) )
     mainwindow()->statusBar()->setVisible (new_statusVisibility);
 
-#ifndef Q_OS_MAC
+#if !defined(Q_OS_MAC) && !defined(ENABLE_EXPERIMENTAL_TOOLBAR)
   bool old_menuVisibility = mainwindow()->menuBar()->isVisible();
   bool new_menuVisibility = visibility[0];
 
@@ -608,11 +610,13 @@ qt_tm_widget_rep::update_visibility () {
     }
   }
   else {
+#ifndef ENABLE_EXPERIMENTAL_TOOLBAR
     bool old_menuVisibility = mainwindow()->menuBar()->isVisible();
     bool new_menuVisibility = visibility[0];
 
     if ( XOR(old_menuVisibility,  new_menuVisibility) )
       mainwindow()->menuBar()->setVisible (new_menuVisibility);
+#endif
   }
 #endif // UNIFIED_TOOLBAR
 #undef XOR
@@ -912,7 +916,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
   }
 }
 
-#ifndef OS_ANDROID
+#ifndef ENABLE_EXPERIMENTAL_TOOLBAR
 void
 qt_tm_widget_rep::install_main_menu () {
   if (main_menu_widget == waiting_main_menu_widget) return;
@@ -957,6 +961,7 @@ qt_tm_widget_rep::install_main_menu () {
     dest->setStyle (qtmstyle ());
 
   dest->clear();
+  dest->addSeparator();
   for (int i = 0; i < src->count(); i++) {
     QAction* a = (*src)[i];
     if (a->menu()) {
@@ -978,6 +983,7 @@ qt_tm_widget_rep::install_main_menu () {
 #endif
     }
   }
+  dest->addRightSpacer();
 }
 #endif
 
