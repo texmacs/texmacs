@@ -63,8 +63,8 @@ public:
   virtual widget make_popup_widget ();
   
   virtual QAction*         as_qaction ();
-  virtual QWidget*         as_qwidget ();
-  virtual QLayoutItem*     as_qlayoutitem ();
+  virtual QWidget*         as_qwidget (QWidget* parent_widget);
+  virtual QLayoutItem*     as_qlayoutitem (QWidget* parent_widget);
   virtual QList<QAction*>* get_qactionlist();
 
   operator tree ();
@@ -117,7 +117,7 @@ public:
   QTMPixmapOrImage render ();
   
   virtual QAction* as_qaction ();
-  virtual QWidget* as_qwidget ();
+  virtual QWidget* as_qwidget (QWidget* parent_widget);
 };
 
 /*! A wrapper widget executing a quit command upon SLOT_DESTROY. */
@@ -129,7 +129,7 @@ public:
     : tmwid (_tmwid), quit (_quit) {
     add_child (tmwid);
   }
-  QWidget* as_qwidget () { return concrete(tmwid)->as_qwidget(); }
+  QWidget* as_qwidget (QWidget* parent_widget) { return concrete(tmwid)->as_qwidget(parent_widget); }
   void send (slot s, blackbox val) {
     switch (s) {
       case SLOT_DESTROY:

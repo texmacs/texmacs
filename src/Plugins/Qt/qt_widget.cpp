@@ -143,10 +143,12 @@ qt_widget_rep::send (slot s, blackbox val) {
 
  */
 inline QWidget*
-qt_widget_rep::as_qwidget () {
+qt_widget_rep::as_qwidget (QWidget* parent_widget) {
   if (DEBUG_QT_WIDGETS)
     debug_widgets << "qt_widget_rep::as_qwidget() for "
                   << type_as_string() << LF;
+  // throw an error?
+  throw "qt_widget_rep::as_qwidget() called on base class";
   return qwid;
 }
 
@@ -168,8 +170,8 @@ qt_widget_rep::as_qaction() {
  The policy is to give ownership of the object to the caller.
 */
 inline QLayoutItem*
-qt_widget_rep::as_qlayoutitem () {
-  return new QWidgetItem (as_qwidget ()); 
+qt_widget_rep::as_qlayoutitem (QWidget* parent_widget) {
+  return new QWidgetItem (as_qwidget (parent_widget)); 
 }
 
 
@@ -210,8 +212,8 @@ qt_widget_rep::plain_window_widget (string name, command quit, int border) {
     debug_widgets << "qt_widget_rep::plain_window_widget() around a "
                   << type_as_string() << LF;
 
-  QTMPlainWindow* win = new QTMPlainWindow (0);
-  QLayoutItem*     li = as_qlayoutitem();
+  QTMPlainWindow* win = new QTMPlainWindow (nullptr);
+  QLayoutItem*     li = as_qlayoutitem(win);
   if (li) {
     QLayout* l = li->layout();
     if (! l) {
@@ -220,7 +222,7 @@ qt_widget_rep::plain_window_widget (string name, command quit, int border) {
     }
     win->setLayout (l);// Transfers ownership of QWidgets in QLayoutItems to win
   } else {
-    QWidget* qw = as_qwidget();
+    QWidget* qw = as_qwidget(win);
     if (qw) {
       QLayout* l = new QVBoxLayout (win);
       win->setLayout (l); // And the QLayout to the QTMPlainWindow.

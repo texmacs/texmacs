@@ -180,8 +180,8 @@ qt_glue_widget_rep::as_qaction() {
 }
 
 QWidget *
-qt_glue_widget_rep::as_qwidget() {
-  QLabel* qw = new QLabel();
+qt_glue_widget_rep::as_qwidget(QWidget* parent_widget) {
+  QLabel* qw = new QLabel(parent_widget);
   qw->setText (to_qstring (as_string (col)));
   if (!headless_mode)
     qw->setPixmap (*(render ().QPixmap_ptr ()));
@@ -584,7 +584,7 @@ qt_ui_element_rep::as_qaction () {
 
 
 QLayoutItem *
-qt_ui_element_rep::as_qlayoutitem () {
+qt_ui_element_rep::as_qlayoutitem (QWidget* parent_widget) {
   if (DEBUG_QT_WIDGETS)
     debug_widgets << "as_qlayoutitem: " << type_as_string() << LF;
 
@@ -614,7 +614,7 @@ qt_ui_element_rep::as_qlayoutitem () {
 
       for (int i = 0; i < N(arr); i++) {
         if (is_nil (arr[i])) break;
-        QLayoutItem* li = concrete (arr[i])->as_qlayoutitem ();
+        QLayoutItem* li = concrete (arr[i])->as_qlayoutitem (parent_widget);
         if (li) l->addItem(li); // ownership transferred
       }
 
@@ -636,7 +636,7 @@ qt_ui_element_rep::as_qlayoutitem () {
       l->setContentsMargins (4, 0, 4, 0);
       int row= 0, col= 0;
       for (int i=0; i < N(a); i++) {
-        QLayoutItem* li = concrete(a[i])->as_qlayoutitem();
+        QLayoutItem* li = concrete(a[i])->as_qlayoutitem(parent_widget);
         l->addItem(li, row, col);
         col++;
         if (col >= cols) { col = 0; row++; }
@@ -680,8 +680,8 @@ qt_ui_element_rep::as_qlayoutitem () {
       l->setHorizontalSpacing (6+hsep/PIXEL);
       l->setVerticalSpacing (6+vsep/PIXEL);
       for (int i=0; i < N(lhs); i++) {
-        QLayoutItem* lli = concrete(lhs[i])->as_qlayoutitem();
-        QLayoutItem* rli = concrete(rhs[i])->as_qlayoutitem();
+        QLayoutItem* lli = concrete(lhs[i])->as_qlayoutitem(parent_widget);
+        QLayoutItem* rli = concrete(rhs[i])->as_qlayoutitem(parent_widget);
         if (lli) l->addItem (lli, i, 0, 1, 1, Qt::AlignRight | Qt::AlignVCenter);
         if (rli) l->addItem (rli, i, 1, 1, 1, Qt::AlignLeft | Qt::AlignVCenter);
       }
@@ -696,7 +696,7 @@ qt_ui_element_rep::as_qlayoutitem () {
       l->setContentsMargins (0, 0, 0, 0);
       l->setSpacing (0);
       for (int i = 0; i < N(arr); i++) {
-        QLayoutItem* li = concrete(arr[i])->as_qlayoutitem();
+        QLayoutItem* li = concrete(arr[i])->as_qlayoutitem(parent_widget);
         l->addItem(li);
       }
       return l;
@@ -739,7 +739,7 @@ qt_ui_element_rep::as_qlayoutitem () {
     case balloon_widget:
     case division_widget:
     {
-      QWidgetItem* wi = new QWidgetItem (this->as_qwidget());
+      QWidgetItem* wi = new QWidgetItem (this->as_qwidget(parent_widget));
       return wi;
     }
       break;
@@ -778,7 +778,7 @@ qt_ui_element_rep::as_qlayoutitem () {
  QWidget as parent.
 */
 QWidget *
-qt_ui_element_rep::as_qwidget () {
+qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
   if (DEBUG_QT_WIDGETS)
     debug_widgets << "as_qwidget: " << type_as_string() << LF;
 
@@ -797,8 +797,8 @@ qt_ui_element_rep::as_qwidget () {
     {
         // note that the QLayout is the same object as the QLayoutItem 
         // so no need to free the layoutitem
-      QLayout* l = this->as_qlayoutitem()->layout();
-      QWidget* w = new QWidget();
+      QLayout* l = this->as_qlayoutitem(parent_widget)->layout();
+      QWidget* w = new QWidget(parent_widget);
       if (l)
         w->setLayout(l);
       else if (DEBUG_QT_WIDGETS)
@@ -820,7 +820,7 @@ qt_ui_element_rep::as_qwidget () {
       T1     widths = x.x3;
       T1    heights = x.x4;
       
-      qwid = wid->as_qwidget();
+      qwid = wid->as_qwidget(parent_widget);
       qt_apply_tm_style (qwid, style);
       
       QSize minSize = qt_decode_length (widths.x1, heights.x1,
@@ -848,7 +848,7 @@ qt_ui_element_rep::as_qwidget () {
     case menu_separator: 
     case menu_group:
     {
-      qwid = new QWidget();
+      qwid = new QWidget(parent_widget);
     }
       break;
       
@@ -869,7 +869,7 @@ qt_ui_element_rep::as_qwidget () {
                                          : QSizePolicy::Minimum;
       QSizePolicy::Policy vpolicy = x.x2 ? QSizePolicy::MinimumExpanding
                                          : QSizePolicy::Minimum;
-      qwid = new QWidget();
+      qwid = new QWidget(parent_widget);
       qwid->setMinimumSize (sz);
       qwid->setSizePolicy (hpolicy, vpolicy);
     }
@@ -886,7 +886,7 @@ qt_ui_element_rep::as_qwidget () {
       
       if (qtw->type == xpm_widget) {
         url image = open_box<url> (get_payload (qtw));
-        QToolButton* b = new QToolButton();
+        QToolButton* b = new QToolButton(parent_widget);
         
         QTMLazyMenu* lm = new QTMLazyMenu (pw, b, type == pullright_button);
 #if QT_VERSION >= 0x060000
@@ -901,7 +901,7 @@ qt_ui_element_rep::as_qwidget () {
       } else if (qtw->type == text_widget) {
         typedef quartet<string, int, color, bool> T1;
         T1 y = open_box<T1> (get_payload (qtw));
-        QPushButton* b  = new QPushButton();
+        QPushButton* b  = new QPushButton(parent_widget);
         QTMLazyMenu* lm = new QTMLazyMenu (pw, b, type == pullright_button);
         b->setMenu (lm);
         b->setAutoDefault (false);
@@ -929,7 +929,7 @@ qt_ui_element_rep::as_qwidget () {
       
       if (qtw->type == xpm_widget) {  // Toolbar button
         QAction*     a = as_qaction();        // Create key shortcuts and actions
-        QToolButton* b = new QToolButton ();
+        QToolButton* b = new QToolButton (parent_widget);
         b->setIcon (a->icon());
         b->setPopupMode (QToolButton::InstantPopup);
         b->setAutoRaise (true);
@@ -937,7 +937,7 @@ qt_ui_element_rep::as_qwidget () {
         a->setParent (b);
         qwid = b;
       } else { // text_widget
-        QPushButton*     b = new QPushButton();
+        QPushButton*     b = new QPushButton(parent_widget);
         QTMCommand* qtmcmd = new QTMCommand (b, cmd);
 #if QT_VERSION < 0x060000
         QObject::connect (b, SIGNAL (clicked ()), qtmcmd, SLOT (apply ()));
@@ -969,7 +969,7 @@ qt_ui_element_rep::as_qwidget () {
       
       typedef quartet<string, int, color, bool> T1;
       T1 y = open_box<T1>(get_payload (help, text_widget));
-      QWidget* w = qtw->as_qwidget();
+      QWidget* w = qtw->as_qwidget(parent_widget);
       w->setToolTip (to_qstring (y.x1));
       qwid = w;
     }
@@ -985,7 +985,7 @@ qt_ui_element_rep::as_qwidget () {
       color    c = x.x3;
         //bool      tsp = x.x4;  // FIXME: add transparency support
       
-      QLabel* w = new QLabel();
+      QLabel* w = new QLabel(parent_widget);
       /*
       //FIXME: implement refresh when changing language
       QTMAction* a= new QTMAction (NULL);
@@ -1006,7 +1006,7 @@ qt_ui_element_rep::as_qwidget () {
     case xpm_widget:
     {
       url image = open_box<url>(load);
-      QLabel* l = new QLabel (NULL);
+      QLabel* l = new QLabel (parent_widget);
 #if QT_VERSION >= 0x060000
       QIcon tmp= tmapp()->icon_manager().getIcon(image);
       l->setPixmap (tmp.pixmap(tmp.availableSizes().last()));
@@ -1025,7 +1025,7 @@ qt_ui_element_rep::as_qwidget () {
       bool  check = x.x2;
       int   style = x.x3;
       
-      QCheckBox* w  = new QCheckBox (NULL);  
+      QCheckBox* w  = new QCheckBox (parent_widget);  
       w->setCheckState (check ? Qt::Checked : Qt::Unchecked);
       qt_apply_tm_style (w, style);
       w->setFocusPolicy (Qt::StrongFocus);
@@ -1053,7 +1053,7 @@ qt_ui_element_rep::as_qwidget () {
       QString      value = to_qstring (x.x3);
       int          style = x.x4;
             
-      QTMComboBox* w = new QTMComboBox (NULL);
+      QTMComboBox* w = new QTMComboBox (parent_widget);
       if (values.isEmpty())
         values << QString("");  // safeguard
 
@@ -1088,7 +1088,7 @@ qt_ui_element_rep::as_qwidget () {
       typedef quartet<command, array<string>, array<string>, bool> T;
       T  x = open_box<T>(load);
       qwid = new QTMListView (x.x1, to_qstringlist(x.x2), to_qstringlist(x.x3),
-                              x.x4);
+                              x.x4, false, false, parent_widget);
     }
       break;
 
@@ -1097,11 +1097,16 @@ qt_ui_element_rep::as_qwidget () {
       typedef quartet<command, array<string>, string, string> T;
       T           x = open_box<T>(load);
       string filter = x.x4;
+
+      qwid = new QWidget(parent_widget);
+      QVBoxLayout* layout = new QVBoxLayout ();
+      qwid->setLayout (layout);
+
       QTMListView* choiceWidget = new QTMListView (x.x1, to_qstringlist (x.x2),
                                                    QStringList (to_qstring (x.x3)),
-                                                   false, true, true);
+                                                   false, true, true, qwid);
 
-      QTMLineEdit* lineEdit = new QTMLineEdit (0, "string", "1w");
+      QTMLineEdit* lineEdit = new QTMLineEdit (qwid, "string", "1w");
 #if QT_VERSION < 0x060000
       QObject::connect (lineEdit, SIGNAL (textChanged (const QString&)),
                         choiceWidget, SLOT (setFilterRegularExpression (const QString&)));
@@ -1112,14 +1117,12 @@ qt_ui_element_rep::as_qwidget () {
       lineEdit->setText (to_qstring (filter));
       lineEdit->setFocusPolicy (Qt::StrongFocus);
 
-      QVBoxLayout* layout = new QVBoxLayout ();
       layout->addWidget (lineEdit);
       layout->addWidget (choiceWidget);
       layout->setSpacing (0);
       layout->setContentsMargins (0, 0, 0, 0);
       
-      qwid = new QWidget();
-      qwid->setLayout (layout);
+      
     }
       break;
       
@@ -1139,7 +1142,7 @@ qt_ui_element_rep::as_qwidget () {
       int     style = x.x2;
       
       QTMScrollArea* w = new QTMScrollArea();
-      w->setWidgetAndConnect (wid->as_qwidget());
+      w->setWidgetAndConnect (wid->as_qwidget(parent_widget));
       w->setWidgetResizable (true);
 
       qt_apply_tm_style (w, style);
@@ -1161,9 +1164,9 @@ qt_ui_element_rep::as_qwidget () {
       qt_widget w1 = concrete(x.x1);
       qt_widget w2 = concrete(x.x2);
       
-      QWidget* qw1 = w1->as_qwidget();
-      QWidget* qw2 = w2->as_qwidget();
-      QSplitter* split = new QSplitter();
+      QSplitter* split = new QSplitter(parent_widget);
+      QWidget* qw1 = w1->as_qwidget(split);
+      QWidget* qw2 = w2->as_qwidget(split);
       split->setOrientation(type == hsplit_widget ? Qt::Horizontal 
                                                   : Qt::Vertical);
       split->addWidget (qw1);
@@ -1194,7 +1197,7 @@ qt_ui_element_rep::as_qwidget () {
       qwid->setObjectName (to_qstring (name));
       */
 
-      QWidget* qw = w->as_qwidget();
+      QWidget* qw = w->as_qwidget(parent_widget);
       qwid = qw;
       qwid->setObjectName (to_qstring (name));
     }
@@ -1208,14 +1211,14 @@ qt_ui_element_rep::as_qwidget () {
       T1   tabs = x.x1;
       T1 bodies = x.x2;
       
-      QTMTabWidget* tw = new QTMTabWidget ();
+      QTMTabWidget* tw = new QTMTabWidget (parent_widget);
       
       int i;
       for (i = 0; i < N(tabs); i++) {
         if (is_nil (tabs[i])) break;
-        QWidget* prelabel = concrete (tabs[i])->as_qwidget();
+        QWidget* prelabel = concrete (tabs[i])->as_qwidget(tw);
         QLabel*     label = qobject_cast<QLabel*> (prelabel);
-        QWidget*     body = concrete (bodies[i])->as_qwidget();
+        QWidget*     body = concrete (bodies[i])->as_qwidget(tw);
         tw->addTab (body, label ? label->text() : "");
         delete prelabel;
       }
@@ -1236,14 +1239,14 @@ qt_ui_element_rep::as_qwidget () {
       T1   tabs = x.x2;
       T1 bodies = x.x3;
 
-      QTMTabWidget* tw = new QTMTabWidget ();
+      QTMTabWidget* tw = new QTMTabWidget (parent_widget);
       int i;
       for (i = 0; i < N(tabs); i++) {
         if (is_nil (tabs[i])) break;
         QImage*       img = xpm_image (icons[i]);
-        QWidget* prelabel = concrete (tabs[i])->as_qwidget();
+        QWidget* prelabel = concrete (tabs[i])->as_qwidget(tw);
         QLabel*     label = qobject_cast<QLabel*> (prelabel);
-        QWidget*     body = concrete (bodies[i])->as_qwidget();
+        QWidget*     body = concrete (bodies[i])->as_qwidget(tw);
         tw->addTab(body, QIcon(), label ? label->text() : "");
 #if QT_VERSION >= 0x060000
 	(void) img;

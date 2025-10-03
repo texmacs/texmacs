@@ -89,8 +89,8 @@ qt_field_widget_rep::query (slot s, int type_id) {
 }
 
 QWidget*
-qt_field_widget_rep::as_qwidget () {
-  qwid = new QWidget ();
+qt_field_widget_rep::as_qwidget (QWidget* parent_widget) {
+  qwid = new QWidget (parent_widget);
   
   QHBoxLayout* hl = new QHBoxLayout (qwid);
   QLabel*     lab = new QLabel (to_qstring (prompt), qwid);
@@ -101,7 +101,7 @@ qt_field_widget_rep::as_qwidget () {
   if (ends (type, "file") || type == "directory") {
     widget wid    = input_text_widget (command(), type,
                                        array<string>(0), 0, "20em");
-    QLineEdit* le = qobject_cast<QTMLineEdit*> (concrete(wid)->as_qwidget());
+    QLineEdit* le = qobject_cast<QTMLineEdit*> (concrete(wid)->as_qwidget(qwid));
     ASSERT (le != NULL, "qt_field_widget_rep: expecting QTMLineEdit");
     le->setObjectName (to_qstring (type));
     lab->setBuddy (le);
@@ -324,7 +324,7 @@ qt_inputs_list_widget_rep::perform_dialog() {
     QVBoxLayout* vl = new QVBoxLayout(&d);
     QVector<QWidget*> widgets;
     for(int i = 0; i < N(children); ++i) {
-      widgets.push_back (field(i)->as_qwidget());
+      widgets.push_back (field(i)->as_qwidget(&d));
       vl->addWidget(widgets[i]);
     }
     for (int i = 0; i < N(children) - 1; ++i)
@@ -386,8 +386,8 @@ qt_input_text_widget_rep::as_qaction () {
  keep it in sync with us.
  */
 QWidget*
-qt_input_text_widget_rep::as_qwidget () {
-  QTMLineEdit* le = new QTMLineEdit (NULL, type, width, style, cmd);
+qt_input_text_widget_rep::as_qwidget (QWidget* parent_widget) {
+  QTMLineEdit* le = new QTMLineEdit (parent_widget, type, width, style, cmd);
   qwid = le;
   bool can_autocommit= !(ends (type, "search") ||
                          ends (type, "replace") ||
