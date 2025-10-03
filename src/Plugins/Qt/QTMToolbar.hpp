@@ -21,6 +21,7 @@
 #include <QAction>
 #include <QScrollArea>
 #include <QHBoxLayout>
+#include <QToolButton>
 
 class QTMToolbar : public QToolBar {
   Q_OBJECT
@@ -40,12 +41,24 @@ public:
   void addRightSpacer ();
 #endif
 
+protected:
+#ifdef ENABLE_EXPERIMENTAL_TOOLBAR
+  bool eventFilter (QObject* watched, QEvent* event) override;
+#endif
+
 private:
 #ifdef ENABLE_EXPERIMENTAL_TOOLBAR
   QScrollArea* mScrollArea;
   QHBoxLayout* mLayout;
-#endif
+  QToolButton* mLeftBtn;
+  QToolButton* mRightBtn;
+  QAction*     mLeftAct;
+  QAction*     mRightAct;
 
+  void scrollBy (int dx);
+  void updateNavButtons ();
+  int scrollStep () const;
+#endif
 };
 
 #endif // QTMTOOLBAR_HPP

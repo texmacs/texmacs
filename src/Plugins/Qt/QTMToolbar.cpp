@@ -16,17 +16,26 @@
 #include <QToolButton>
 #include <QMenu>
 #include <QWidgetAction>
+#include <QFrame>
+#include <QScrollBar>
+#include <QEvent>
 
 #ifdef ENABLE_EXPERIMENTAL_TOOLBAR
 #include <QScroller>
-#include <QScrollBar>
+#include <QScrollerProperties>
 #endif
 
 #define QTMTOOLBAR_MARGIN 2
 
 QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
-  : QToolBar (title, parent) {
-
+  : QToolBar (title, parent)
+#ifdef ENABLE_EXPERIMENTAL_TOOLBAR
+  , mScrollArea(nullptr)
+  , mLayout(nullptr)
+  , mLeftBtn(nullptr)
+  , mRightBtn(nullptr)
+#endif
+{
   if (tm_style_sheet == "") setStyle (qtmstyle ());
   
   if (!iconSize.isNull()) {
@@ -37,35 +46,51 @@ QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
   setMovable (false);
 
 #ifdef ENABLE_EXPERIMENTAL_TOOLBAR
-  mScrollArea = new QScrollArea (this);
-  addWidget (mScrollArea);
+  mLeftBtn = new QToolButton (this);
+  mLeftBtn->setText (QString::fromUtf8("<"));
+  mLeftBtn->setToolTip (tr("Scroll left"));
+  mLeftBtn->setAutoRepeat (true);
+  mLeftBtn->setAutoRepeatDelay (250);
+  mLeftBtn->setAutoRepeatInterval (50);
+  connect (mLeftBtn, &QToolButton::clicked, [this]() { scrollBy (-scrollStep()); });
+  mLeftAct = addWidget (mLeftBtn);
 
-  mLayout = new QHBoxLayout (mScrollArea);
+  mScrollArea = new QScrollArea (this);
+  mScrollArea->setFrameShape (QFrame::NoFrame);
+  mScrollArea->setWidgetResizable (true);
+  mScrollArea->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+  mScrollArea->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+
   QWidget* w = new QWidget (mScrollArea);
+  mLayout = new QHBoxLayout (w);
+  mLayout->setSizeConstraint (QLayout::SetMinimumSize);
+  mLayout->setContentsMargins (0, 0, 0, 0);
+  mLayout->setSpacing (0);
   w->setLayout (mLayout);
   mScrollArea->setWidget (w);
 
-  // don't expand the layout to fill the scroll area
-  mLayout->setSizeConstraint (QLayout::SetMinimumSize);
+  QScrollerProperties props = QScroller::scroller(mScrollArea->viewport())->scrollerProperties();
+  props.setScrollMetric(QScrollerProperties::VerticalOvershootPolicy,   QScrollerProperties::OvershootAlwaysOff);
+  props.setScrollMetric(QScrollerProperties::HorizontalOvershootPolicy, QScrollerProperties::OvershootAlwaysOff);
+  QScroller::scroller(mScrollArea->viewport())->setScrollerProperties(props);
+  QScroller::grabGesture (mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
 
-  mScrollArea->setWidgetResizable (true);
-  mScrollArea->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
-  mScrollArea->verticalScrollBar()->setDisabled (true);
-  mScrollArea->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
-  mScrollArea->horizontalScrollBar()->setDisabled (true);
-  mScrollArea->setFrameShape (QFrame::NoFrame);
+  addWidget (mScrollArea);
+
+  mRightBtn = new QToolButton (this);
+  mRightBtn->setText (QString::fromUtf8(">"));
+  mRightBtn->setToolTip (tr("Scroll right"));
+  mRightBtn->setAutoRepeat (true);
+  mRightBtn->setAutoRepeatDelay (250);
+  mRightBtn->setAutoRepeatInterval (50);
+  connect (mRightBtn, &QToolButton::clicked, [this]() { scrollBy (+scrollStep()); });
+  mRightAct = addWidget (mRightBtn);
+
+  mScrollArea->viewport()->installEventFilter (this);
+  w->installEventFilter (this);
+  connect (mScrollArea->horizontalScrollBar(), &QScrollBar::valueChanged, this, &QTMToolbar::updateNavButtons);
   
-  mLayout->setContentsMargins (0, 0, 0, 0);
-  mLayout->setSpacing (0);
-
-  QScrollerProperties properties = QScroller::scroller(mScrollArea)->scrollerProperties();
-  properties.setScrollMetric(QScrollerProperties::VerticalOvershootPolicy, QScrollerProperties::OvershootAlwaysOff);
-  properties.setScrollMetric(QScrollerProperties::HorizontalOvershootPolicy, QScrollerProperties::OvershootAlwaysOff);
-  QScroller::scroller(mScrollArea)->setScrollerProperties(properties);
-
-  QScroller::grabGesture (mScrollArea, QScroller::LeftMouseButtonGesture);
-
-
+  updateNavButtons();
 #endif
 }
 
@@ -93,6 +118,7 @@ void QTMToolbar::replaceActions (QList<QAction*>* src) {
   setUpdatesEnabled (true);
 #ifdef ENABLE_EXPERIMENTAL_TOOLBAR
   addRightSpacer();
+  updateNavButtons();
 #endif
 }
 
@@ -117,6 +143,7 @@ void QTMToolbar::replaceButtons (QList<QAction*>* src) {
   setUpdatesEnabled (true);
 #ifdef ENABLE_EXPERIMENTAL_TOOLBAR
   addRightSpacer();
+  updateNavButtons();
 #endif
 }
 
@@ -156,9 +183,6 @@ void QTMToolbar::addAction (QAction* action) {
     if (tm_style_sheet == "") {
       cout << "Setting style for action widget" << LF;
       actionWidget->setStyle (qtmstyle ());
-    } else {
-      // the background should be transparent when not hovered
-      //actionWidget->setStyleSheet ("QToolButton:not(:hover) { background: transparent; }");
     }
     ((QToolButton*)actionWidget)->setDefaultAction (action);
   }
@@ -195,12 +219,12 @@ void QTMToolbar::addAction (QAction* action) {
     if (height() < requiredHeight) {
       setFixedHeight (requiredHeight);
     }
-
   }
   
   // add the button to the toolbar, and on Android to the scrollable layout
 #ifdef ENABLE_EXPERIMENTAL_TOOLBAR
-  mLayout->addWidget (button);
+  mLayout->addWidget (actionWidget);
+  updateNavButtons();
 #else
   QToolBar::addWidget (actionWidget);
 #endif
@@ -216,6 +240,7 @@ void QTMToolbar::removeAction (QAction* action) {
       break;
     }
   }
+  updateNavButtons();
 }
 
 void QTMToolbar::clear () {
@@ -224,5 +249,65 @@ void QTMToolbar::clear () {
     mLayout->removeWidget(w);
     delete w;
   }
+  updateNavButtons();
+}
+
+int QTMToolbar::scrollStep () const {
+  int byIcon = iconSize().isValid() ? iconSize().width() : 64;
+  return byIcon;
+}
+
+void QTMToolbar::scrollBy (int dx) {
+  if (!mScrollArea) return;
+  QScrollBar* h = mScrollArea->horizontalScrollBar();
+  if (!h) return;
+  int v = h->value();
+  int nv = qBound(h->minimum(), v + dx, h->maximum());
+  if (nv != v) h->setValue(nv);
+}
+
+void QTMToolbar::updateNavButtons () {
+  if (!mScrollArea || !mLeftBtn || !mRightBtn || !mLeftAct || !mRightAct) return;
+
+  QWidget* content = mScrollArea->widget();
+  if (!content) {
+    mLeftBtn->setVisible(false);
+    mRightBtn->setVisible(false);
+    return;
+  }
+
+  const int contentW  = content->sizeHint().width();
+  const int viewportW = mScrollArea->viewport()->width();
+
+  cout << "Toolbar contentW=" << contentW << " viewportW=" << viewportW << LF;
+
+  const bool needScroll = contentW > viewportW;
+
+  if (!needScroll) {
+    cout << "Toolbar fits, no scrolling needed" << LF;
+    mLeftAct->setVisible(false);
+    mRightAct->setVisible(false);
+    return;
+  }
+  
+  cout << "Toolbar needs scrolling" << LF;
+
+  QScrollBar* h = mScrollArea->horizontalScrollBar();
+  const bool atLeft  = (h->value() <= h->minimum());
+  const bool atRight = (h->value() >= h->maximum());
+
+  mLeftAct->setVisible(!atLeft);
+  mRightAct->setVisible(!atRight);
+}
+
+bool QTMToolbar::eventFilter (QObject* watched, QEvent* event) {
+  if (!mScrollArea) return false;
+  if (watched == mScrollArea->viewport() || watched == mScrollArea->widget()) {
+    if (event->type() == QEvent::Resize) {
+      cout << "Toolbar resize event" << LF;
+      updateNavButtons();
+    }
+  }
+  return false;
 }
 #endif
