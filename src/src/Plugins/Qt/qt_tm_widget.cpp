@@ -198,12 +198,12 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   
   bottomTools   = new QDockWidget ("bottom tools", mw);
   extraTools    = new QDockWidget ("extra tools", mw);
-  sideTools     = new QDockWidget ("side tools", 0);
-  leftTools     = new QDockWidget ("left tools", 0);
+  sideTools     = new QDockWidget ("side tools", mw);
+  leftTools     = new QDockWidget ("left tools", mw);
 
   {
     // scrollable side tools
-    QScrollArea *sa = new QScrollArea();
+    QScrollArea *sa = new QScrollArea(mw);
 	  sa->setObjectName (QStringLiteral("SideToolScrollArea"));
 	  sa->setWidgetResizable (true);
 	  sa->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
@@ -296,7 +296,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     focusToolBar->setFixedHeight (h3);
   }
   
-  QWidget *cw= new QWidget();
+  QWidget *cw= new QWidget(mw);
   cw->setObjectName("centralWidget");  // this is important for styling toolbars.
   
     // The main layout
@@ -305,7 +305,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   bl->setContentsMargins (0, 1, 0, 0);
   bl->setSpacing (0);
   cw->setLayout (bl);
-  QWidget* q = main_widget->as_qwidget(); // force creation of QWidget
+  QWidget* q = main_widget->as_qwidget(mw); // force creation of QWidget
   q->setParent (qwid); // q->layout()->removeWidget(q) will reset the parent to this
   bl->addWidget (q);
   
@@ -762,7 +762,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       check_type<bool>(val, s);
 
       if (open_box<bool> (val) == true) {
-        prompt = new QTMInteractivePrompt (int_prompt, int_input);
+        prompt = new QTMInteractivePrompt (int_prompt, int_input, mainwindow());
         mainwindow()->statusBar()->removeWidget (leftLabel);
         mainwindow()->statusBar()->removeWidget (rightLabel);
         mainwindow()->statusBar()->addWidget (prompt, 1);
@@ -1000,8 +1000,8 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       q->hide();
       QLayout* l = centralwidget()->layout();
       l->removeWidget(q);
-      
-      q = concrete(w)->as_qwidget();   // force creation of the new QWidget
+
+      q = concrete(w)->as_qwidget(mainwindow());   // force creation of the new QWidget
       l->addWidget(q);
       /* " When you use a layout, you do not need to pass a parent when
        constructing the child widgets. The layout will automatically reparent
@@ -1098,7 +1098,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       check_type_void (index, s);
     {
       side_tools_widget = concrete (w);
-      QWidget* new_qwidget = side_tools_widget->as_qwidget();
+      QWidget* new_qwidget = side_tools_widget->as_qwidget(mainwindow());
       QWidget* old_qwidget = dynamic_cast<QScrollArea*>(sideTools->widget())->widget();
       if (old_qwidget) old_qwidget->deleteLater();
       dynamic_cast<QScrollArea*>(sideTools->widget())->setWidget (new_qwidget);
@@ -1118,7 +1118,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       check_type_void (index, s);
     {
       left_tools_widget = concrete (w);
-      QWidget* new_qwidget = left_tools_widget->as_qwidget();
+      QWidget* new_qwidget = left_tools_widget->as_qwidget(mainwindow());
       QWidget* old_qwidget = leftTools->widget();
       if (old_qwidget) old_qwidget->deleteLater();
       leftTools->setWidget (new_qwidget);
@@ -1138,7 +1138,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       check_type_void (index, s);
     {
       bottom_tools_widget = concrete (w);
-      QWidget* new_qwidget = bottom_tools_widget->as_qwidget();
+      QWidget* new_qwidget = bottom_tools_widget->as_qwidget(mainwindow());
       QWidget* old_qwidget = bottomTools->widget();
       if (old_qwidget) old_qwidget->deleteLater();
       bottomTools->setWidget (new_qwidget);
@@ -1158,7 +1158,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       check_type_void (index, s);
     {
       extra_tools_widget = concrete (w);
-      QWidget* new_qwidget = extra_tools_widget->as_qwidget();
+      QWidget* new_qwidget = extra_tools_widget->as_qwidget(mainwindow());
       QWidget* old_qwidget = extraTools->widget();
       if (old_qwidget) old_qwidget->deleteLater();
       extraTools->setWidget (new_qwidget);
@@ -1399,16 +1399,16 @@ qt_tm_embedded_widget_rep::write (slot s, blackbox index, widget w) {
 }
 
 QWidget*
-qt_tm_embedded_widget_rep::as_qwidget() {
-  qwid = new QWidget();
+qt_tm_embedded_widget_rep::as_qwidget(QWidget* parent_widget) {
+  qwid = new QWidget(parent_widget);
   QVBoxLayout* l = new QVBoxLayout();
   l->setContentsMargins (0,0,0,0);
   qwid->setLayout (l);
-  l->addWidget (concrete(main_widget)->as_qwidget());
+  l->addWidget (concrete(main_widget)->as_qwidget(qwid));
   return qwid;
 }
 
 QLayoutItem*
-qt_tm_embedded_widget_rep::as_qlayoutitem () {
-  return new QWidgetItem(as_qwidget());
+qt_tm_embedded_widget_rep::as_qlayoutitem (QWidget* parent_widget) {
+  return new QWidgetItem(as_qwidget(parent_widget));
 }

@@ -81,7 +81,7 @@ public:
     ////////////////////// Qt semantics of abstract texmacs widgets
 
   virtual QAction* as_qaction();
-  virtual QWidget* as_qwidget();
+  virtual QWidget* as_qwidget(QWidget* parent_widget);
   
     ////////////////////// Qt widget counterparts
 

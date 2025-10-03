@@ -38,7 +38,7 @@ public:
                             int _style, string _width);
 
   virtual QAction*  as_qaction ();
-  virtual QWidget*  as_qwidget ();
+  virtual QWidget*  as_qwidget (QWidget* parent_widget);
   
   void commit(bool ok);
   
@@ -99,7 +99,7 @@ public:
   virtual void      send (slot s, blackbox val);
   virtual blackbox query (slot s, int type_id);
 
-  virtual QWidget* as_qwidget ();
+  virtual QWidget* as_qwidget (QWidget* parent_widget);
 
   friend class qt_inputs_list_widget_rep;
   friend class QTMFieldWidgetHelper;
