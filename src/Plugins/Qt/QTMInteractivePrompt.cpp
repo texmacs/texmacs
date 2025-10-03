@@ -23,8 +23,8 @@ QTMInteractivePrompt::QTMInteractivePrompt(qt_widget int_prompt,
                                            QWidget* parent)
 : QWidget (parent), active (false)
 {
-  QLayoutItem*  li = int_prompt->as_qlayoutitem ();
-  QLayoutItem* li2 = int_input->as_qlayoutitem ();
+  QLayoutItem*  li = int_prompt->as_qlayoutitem (this);
+  QLayoutItem* li2 = int_input->as_qlayoutitem (this);
   QHBoxLayout* _hl = new QHBoxLayout ();
   
   setStyle (qtmstyle ());

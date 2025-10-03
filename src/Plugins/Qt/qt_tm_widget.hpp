@@ -159,8 +159,8 @@ public:
   virtual widget    read (slot s, blackbox index);
   virtual void     write (slot s, blackbox index, widget w);
   
-  virtual QWidget*         as_qwidget ();
-  virtual QLayoutItem* as_qlayoutitem ();
+  virtual QWidget*         as_qwidget (QWidget* parent_widget);
+  virtual QLayoutItem* as_qlayoutitem (QWidget* parent_widget);
 };
 
 #endif // QT_TM_WIDGET_HPP

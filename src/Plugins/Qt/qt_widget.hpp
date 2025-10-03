@@ -129,8 +129,8 @@ public:
   ////////////////////// Qt semantics of abstract texmacs widgets  
   
   virtual QAction*         as_qaction ();
-  virtual QWidget*         as_qwidget ();
-  virtual QLayoutItem*     as_qlayoutitem ();
+  virtual QWidget*         as_qwidget (QWidget* parent_widget);
+  virtual QLayoutItem*     as_qlayoutitem (QWidget* parent_widget);
   virtual QList<QAction*>* get_qactionlist();
 #if QT_VERSION >= 0x060000
   double get_dpr ();
@@ -257,8 +257,8 @@ public:
   }
 
   virtual QAction*         as_qaction () { return NULL; }
-  virtual QWidget*         as_qwidget () { return NULL; }
-  virtual QLayoutItem*     as_qlayoutitem () { return NULL; }
+  virtual QWidget*         as_qwidget (QWidget* parent_widget) { return NULL; }
+  virtual QLayoutItem*     as_qlayoutitem (QWidget* parent_widget) { return NULL; }
   virtual QList<QAction*>* get_qactionlist() { return NULL; }
 
   virtual void send (slot s, blackbox val) {

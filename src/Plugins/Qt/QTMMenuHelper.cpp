@@ -158,8 +158,7 @@ QTMWidgetAction::QTMWidgetAction (widget _wid, QObject *parent)
 
 QWidget *
 QTMWidgetAction::createWidget (QWidget * parent) {
-  QWidget* qw = concrete (wid)->as_qwidget();
-  qw->setParent (parent);
+  QWidget* qw = concrete (wid)->as_qwidget(parent);
   return qw;
 }
 
@@ -949,10 +948,11 @@ void
 QTMRefreshWidget::doRefresh (string kind) {
 BEGIN_SLOT
   if (recompute (kind)) {
-    if (qwid) qwid->setParent (NULL);
-    delete qwid;
-    qwid = concrete (cur)->as_qwidget();
-    qwid->setParent (this);
+    if (qwid) {
+      qwid->setParent (NULL);
+      delete qwid;
+    }
+    qwid = concrete (cur)->as_qwidget(this);
 
     delete layout()->takeAt(0);
     layout()->addWidget (qwid);
@@ -1039,8 +1039,7 @@ BEGIN_SLOT
       qwid->setParent (NULL);
       delete qwid;
     }
-    qwid = concrete (cur)->as_qwidget();
-    qwid->setParent (this);
+    qwid = concrete (cur)->as_qwidget(this);
 
     delete layout()->takeAt(0);
     layout()->addWidget (qwid);

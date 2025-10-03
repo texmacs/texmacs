@@ -327,7 +327,7 @@ qt_window_widget_rep::notify (slot s, blackbox new_val) {
 qt_popup_widget_rep::qt_popup_widget_rep (widget wid, command _quit)
 : qt_widget_rep(qt_widget_rep::popup_widget, 0), quit(_quit) {
   
-  qwid = new QTMPopupWidget(concrete(wid)->as_qwidget());
+  qwid = new QTMPopupWidget(concrete(wid)->as_qwidget(nullptr));
 
   if (qwid->metaObject() ->
       indexOfSignal (QMetaObject::normalizedSignature ("closed()").constData ()) != -1) {

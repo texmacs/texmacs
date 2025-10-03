@@ -46,8 +46,8 @@ qt_simple_widget_rep::~qt_simple_widget_rep () {
 }
 
 QWidget*
-qt_simple_widget_rep::as_qwidget () {
-  qwid = new QTMWidget (0, this);
+qt_simple_widget_rep::as_qwidget (QWidget* parent_widget) {
+  qwid = new QTMWidget (parent_widget, this);
   reapply_sent_slots();
   SI width, height;
   handle_get_size_hint (width, height);
