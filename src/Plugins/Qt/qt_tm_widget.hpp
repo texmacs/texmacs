@@ -21,13 +21,13 @@
 #include "QTMInteractiveInputHelper.hpp"
 #include "QTMWidget.hpp"
 #include "QTMScrollView.hpp"
+#include "QTMToolbar.hpp"
 
 #include <QMainWindow>
 #include <QStackedWidget>
 #include <QLayout>
 
 class QLabel; 
-class QTMToolbar;
 class QTMInteractivePrompt;
 
 /*! Models one main window with toolbars, an associated view, etc.
@@ -54,7 +54,7 @@ class qt_tm_widget_rep: public qt_window_widget_rep {
    */
   QLabel*       rightLabel;
   QLabel*        leftLabel;
-#ifdef OS_ANDROID
+#ifdef ENABLE_EXPERIMENTAL_TOOLBAR
   QTMToolbar*    menuToolBar;
 #endif
   QTMToolbar*    mainToolBar;
