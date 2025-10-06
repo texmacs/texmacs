@@ -38,6 +38,7 @@ public:
   void removeAction (QAction* action);
   void clear ();
   void addSeparator ();
+  void addSmallSeparator ();
   void addRightSpacer ();
 #endif
 
