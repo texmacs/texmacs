@@ -185,7 +185,9 @@ void QTMToolbar::addAction (QAction* action) {
     addSeparator();
     return;
   } else {
+#ifdef ENABLE_EXPERIMENTAL_TOOLBAR
     addSmallSeparator();
+#endif
   }
 
   if (qobject_cast<QWidgetAction*> (action)) {
