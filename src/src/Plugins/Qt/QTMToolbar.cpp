@@ -35,9 +35,7 @@ QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
   , mLeftBtn(nullptr)
   , mRightBtn(nullptr)
 #endif
-{
-  if (tm_style_sheet == "") setStyle (qtmstyle ());
-  
+{  
   if (!iconSize.isNull()) {
     setIconSize (iconSize);
     setFixedHeight (iconSize.height() + QTMTOOLBAR_MARGIN * 2);
@@ -68,6 +66,8 @@ QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
   mLayout->setSpacing (0);
   w->setLayout (mLayout);
   mScrollArea->setWidget (w);
+  //w->setStyleSheet ("background: transparent;");
+  w->setAttribute (Qt::WA_TranslucentBackground);
 
   QScrollerProperties props = QScroller::scroller(mScrollArea->viewport())->scrollerProperties();
   props.setScrollMetric(QScrollerProperties::VerticalOvershootPolicy,   QScrollerProperties::OvershootAlwaysOff);
@@ -110,7 +110,6 @@ void QTMToolbar::replaceActions (QList<QAction*>* src) {
 #else
   clear ();
 #endif
-  addSeparator();
   for (int i = 0; i < src->count(); i++) {
     QAction* a = (*src)[i];
     addAction(a);
@@ -135,7 +134,6 @@ void QTMToolbar::replaceButtons (QList<QAction*>* src) {
 #else
   clear ();
 #endif
-  addSeparator();
   for (int i = 0; i < src->count(); i++) {
     QAction* a = (*src)[i];
     addAction(a);
@@ -150,15 +148,29 @@ void QTMToolbar::replaceButtons (QList<QAction*>* src) {
 #ifdef ENABLE_EXPERIMENTAL_TOOLBAR
 void QTMToolbar::addSeparator () {
   QWidget* spacer = new QWidget (this);
-  spacer->setStyleSheet ("background: transparent;");
   spacer->setFixedWidth (10);
+  mLayout->addWidget (spacer);
+
+  spacer = new QWidget (this);
+  spacer->setFixedWidth (1);
+  spacer->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Preferred);
+  spacer->setStyleSheet ("background: rgba(128,128,128,10%);");
+  mLayout->addWidget (spacer);
+
+  spacer = new QWidget (this);
+  spacer->setFixedWidth (10);
+  mLayout->addWidget (spacer);
+}
+
+void QTMToolbar::addSmallSeparator () {
+  QWidget* spacer = new QWidget (this);
+  spacer->setFixedWidth (3);
   mLayout->addWidget (spacer);
 }
 
 void QTMToolbar::addRightSpacer () {
   // a a spacer that will push the buttons to the left
   QWidget* spacer = new QWidget (this);
-  spacer->setStyleSheet ("background: transparent;");
   spacer->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Preferred);
   mLayout->addWidget (spacer);
 }
@@ -172,6 +184,8 @@ void QTMToolbar::addAction (QAction* action) {
   if (action->isSeparator()) {
     addSeparator();
     return;
+  } else {
+    addSmallSeparator();
   }
 
   if (qobject_cast<QWidgetAction*> (action)) {
@@ -180,10 +194,6 @@ void QTMToolbar::addAction (QAction* action) {
 
   if (!actionWidget) {
     actionWidget = new QToolButton (this);
-    if (tm_style_sheet == "") {
-      cout << "Setting style for action widget" << LF;
-      actionWidget->setStyle (qtmstyle ());
-    }
     ((QToolButton*)actionWidget)->setDefaultAction (action);
   }
 
@@ -281,19 +291,14 @@ void QTMToolbar::updateNavButtons () {
   const int contentW  = content->sizeHint().width();
   const int viewportW = mScrollArea->viewport()->width();
 
-  cout << "Toolbar contentW=" << contentW << " viewportW=" << viewportW << LF;
-
   const bool needScroll = contentW > viewportW;
 
   if (!needScroll) {
-    cout << "Toolbar fits, no scrolling needed" << LF;
     mLeftAct->setVisible(false);
     mRightAct->setVisible(false);
     return;
   }
   
-  cout << "Toolbar needs scrolling" << LF;
-
   QScrollBar* h = mScrollArea->horizontalScrollBar();
   const bool atLeft  = (h->value() <= h->minimum());
   const bool atRight = (h->value() >= h->maximum());
@@ -306,8 +311,24 @@ bool QTMToolbar::eventFilter (QObject* watched, QEvent* event) {
   if (!mScrollArea) return false;
   if (watched == mScrollArea->viewport() || watched == mScrollArea->widget()) {
     if (event->type() == QEvent::Resize) {
-      cout << "Toolbar resize event" << LF;
       updateNavButtons();
+    }
+    else if (event->type() == QEvent::Wheel) {
+      // use vertical wheel to scroll horizontally
+      QWheelEvent* we = static_cast<QWheelEvent*> (event);
+      QPoint pixelDelta = we->pixelDelta();
+      QPoint angleDelta = we->angleDelta();
+      
+      if (pixelDelta.y() != 0) {
+        int dx = -pixelDelta.y();
+        scrollBy (dx);
+        return true;
+      }
+      if (angleDelta.y() != 0) {
+        int dx = -angleDelta.y() / 120 * scrollStep();
+        scrollBy (dx);
+        return true;
+      }
     }
   }
   return false;
