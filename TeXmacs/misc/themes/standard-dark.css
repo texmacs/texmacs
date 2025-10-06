@@ -34,11 +34,11 @@ QToolTip {
 * Toolbars
 ****************************************************************************/
 
-QMenuBar, QMenuBar QWidget {
+QMenuBar, QMenuBar QWidget, #menuToolBar, #menuToolBar QWidget {
     background: #2C2C2C;
 }
 
-QMenuBar {
+QMenuBar, #menuToolBar {
     padding-top: 5px;
     spacing: 10px;
 }
@@ -61,19 +61,19 @@ QToolBar {
     border-bottom: 1px solid #505050;
 }
 
-QToolBar, QToolBar#mainToolBar QWidget {
+QToolBar, #mainToolBar QWidget {
     background: #2C2C2C;
 }
 
-QToolBar#modeToolBar, QToolBar#modeToolBar QWidget {
+#modeToolBar, #modeToolBar QWidget {
     background: #363636;
 }
 
-QToolBar#focusToolBar, QToolBar#focusToolbar QWidget {
+#focusToolBar, #focusToolBar QWidget {
     background: #404040;
 }
 
-QToolBar#userToolBar, QToolBar#userToolbar QWidget {
+#userToolBar, #userToolBar QWidget {
     background: #4A4A4A;
 }
 
@@ -147,7 +147,7 @@ QMenu::separator {
 * Line edit
 ****************************************************************************/
 
-QLineEdit, QStatusBar QWidget QLineEdit, QToolBar#focusToolbar QWidget QLineEdit, QToolBar#userToolbar QWidget QLineEdit {
+QLineEdit, QStatusBar QWidget QLineEdit, #focusToolBar QWidget QLineEdit, #userToolBar QWidget QLineEdit {
     background: #606060;
     selection-color: #E0E0E0;
     selection-background-color: #004080;
@@ -156,7 +156,7 @@ QLineEdit, QStatusBar QWidget QLineEdit, QToolBar#focusToolbar QWidget QLineEdit
     padding-right: 2px;
 }
 
-QLineEdit:focus, QStatusBar QWidget QLineEdit:focus, QToolBar#focusToolbar QWidget QLineEdit:focus, QToolBar#userToolbar QWidget QLineEdit:focus {
+QLineEdit:focus, QStatusBar QWidget QLineEdit:focus, #focusToolBar QWidget QLineEdit:focus, #userToolBar QWidget QLineEdit:focus {
     border: 1px solid #A0C0E0;
 }
 
@@ -311,8 +311,8 @@ QPushButton:focus {
 }
 
 QToolButton,
-QToolBar#mainToolBar QToolButton,
-QToolBar#modeToolBar QToolButton {
+#mainToolBar QToolButton,
+#modeToolBar QToolButton {
     background: none;
     padding-left: 0px;
     padding-right: 0px;
@@ -323,9 +323,9 @@ Qt4QToolButton {
 }
 
 QToolButton:hover,
-QToolBar#mainToolBar QToolButton:hover,
-QToolBar#modeToolBar QToolButton:hover,
-QToolBar#focusToolBar QToolButton:hover {
+#mainToolBar QToolButton:hover,
+#modeToolBar QToolButton:hover,
+#focusToolBar QToolButton:hover {
     background: none;
     /* FIXME: bug under MacOS when using a color */
 }
@@ -337,7 +337,8 @@ Qt4QToolBar#focusToolBar QToolButton:hover,
 NomacQToolButton:hover,
 NomacQToolBar#mainToolBar QToolButton:hover,
 NomacQToolBar#modeToolBar QToolButton:hover,
-NomacQToolBar#focusToolBar QToolButton:hover {
+NomacQToolBar#focusToolBar QToolButton:hover,
+#menuToolBar QToolButton:hover {
     background: #585858;
     border: 0px;
     border-radius: 3px;
@@ -345,28 +346,31 @@ NomacQToolBar#focusToolBar QToolButton:hover {
 
 QToolButton:pressed,
 QToolButton:checked,
-QToolBar#mainToolBar QToolButton:pressed,
-QToolBar#mainToolBar QToolButton:checked,
-QToolBar#modeToolBar QToolButton:pressed,
-QToolBar#modeToolBar QToolButton:checked,
-QToolBar#focusToolBar QToolButton:pressed,
-QToolBar#focusToolBar QToolButton:checked {
+#mainToolBar QToolButton:pressed,
+#mainToolBar QToolButton:checked,
+#modeToolBar QToolButton:pressed,
+#modeToolBar QToolButton:checked,
+#focusToolBar QToolButton:pressed,
+#focusToolBar QToolButton:checked,
+#menuToolBar QToolButton:pressed,
+#menuToolBar QToolButton:checked
+{
     background: #808080;
     border: 0px;
     border-radius: 3px;
 }
 
 QToolButton::menu-indicator,
-QToolBar#mainToolBar QToolButton::menu-indicator,
-QToolBar#modeToolBar QToolButton::menu-indicator {
+#mainToolBar QToolButton::menu-indicator,
+#modeToolBar QToolButton::menu-indicator {
     border: none;
     background: none;
     image: none;
 }
 
 QToolButton::disabled,
-QToolBar#mainToolBar QToolButton:disabled,
-QToolBar#modeToolBar QToolButton:disabled {
+#mainToolBar QToolButton:disabled,
+#modeToolBar QToolButton:disabled {
     color: #909090;
 }
 
