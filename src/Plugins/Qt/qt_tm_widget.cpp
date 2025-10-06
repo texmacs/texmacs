@@ -961,14 +961,9 @@ qt_tm_widget_rep::install_main_menu () {
     dest->setStyle (qtmstyle ());
 
   dest->clear();
-  dest->addSeparator();
   for (int i = 0; i < src->count(); i++) {
     QAction* a = (*src)[i];
     if (a->menu()) {
-      //TRICK: Mac native QMenuBar accepts only menus which are already populated
-      // this will cause a problem for us, since menus are lazy and populated only after triggering
-      // this is the reason we add a dummy action before inserting the menu
-      a->menu()->addAction("native menubar trick");
       dest->addAction(a->menu()->menuAction());
 #if QT_VERSION < 0x060000
       QObject::connect (a->menu(),         SIGNAL (aboutToShow()),
