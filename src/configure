@@ -30166,73 +30166,73 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++11" >&2;}
 
   test "0$QT_MAJOR" -eq 5 &&
   if [[ "-std=c++11" =~ $(echo '^-Wl,') ]]
-  then CXXFLAGS+=" -std=c++11"
+  then QT_CXXFLAGS+=" -std=c++11"
   elif [[ "-std=c++11" =~ $(echo '^-l') ]]
   then
   unset STRIP_ALL_ARGS_list
   for STRIP_ALL_ARGS_arg in "-std=c++11"
-  do  while [[ $CXXFLAGS != $STRIP_ALL_ARGS_list ]]
-      do STRIP_ALL_ARGS_list=$CXXFLAGS
+  do  while [[ $QT_CXXFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$QT_CXXFLAGS
 
   unset STRIP_ARG_memo
-  if test "$CXXFLAGS" = "$STRIP_ALL_ARGS_arg"
-  then CXXFLAGS=
-  else  while test "$CXXFLAGS" != "$STRIP_ARG_memo"
-      do STRIP_ARG_memo="$CXXFLAGS"
-        CXXFLAGS="${CXXFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
-        CXXFLAGS="${CXXFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
-        CXXFLAGS="${CXXFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+  if test "$QT_CXXFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then QT_CXXFLAGS=
+  else  while test "$QT_CXXFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$QT_CXXFLAGS"
+        QT_CXXFLAGS="${QT_CXXFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        QT_CXXFLAGS="${QT_CXXFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        QT_CXXFLAGS="${QT_CXXFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
       done
     fi
-  CXXFLAGS=$(echo $CXXFLAGS)  # wipe extra blank if any
+  QT_CXXFLAGS=$(echo $QT_CXXFLAGS)  # wipe extra blank if any
   unset ${!STRIP_ARG_*}
 
       done
   done
   unset ${!STRIP_ALL_ARGS_*}
 
-       CXXFLAGS+=" -std=c++11"
+       QT_CXXFLAGS+=" -std=c++11"
   else
-    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])-std=c++11($|[[:space:]])") ]]
+    if [[ "$QT_CXXFLAGS" =~ $(echo "(^|[[:space:]])-std=c++11($|[[:space:]])") ]]
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -std=c++11" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++11" >&2;}
-    else CXXFLAGS+=" -std=c++11"
+    else QT_CXXFLAGS+=" -std=c++11"
     fi
   fi
 
   test "0$QT_MAJOR" -eq 6 &&
   if [[ "-std=c++17" =~ $(echo '^-Wl,') ]]
-  then CXXFLAGS+=" -std=c++17"
+  then QT_CXXFLAGS+=" -std=c++17"
   elif [[ "-std=c++17" =~ $(echo '^-l') ]]
   then
   unset STRIP_ALL_ARGS_list
   for STRIP_ALL_ARGS_arg in "-std=c++17"
-  do  while [[ $CXXFLAGS != $STRIP_ALL_ARGS_list ]]
-      do STRIP_ALL_ARGS_list=$CXXFLAGS
+  do  while [[ $QT_CXXFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$QT_CXXFLAGS
 
   unset STRIP_ARG_memo
-  if test "$CXXFLAGS" = "$STRIP_ALL_ARGS_arg"
-  then CXXFLAGS=
-  else  while test "$CXXFLAGS" != "$STRIP_ARG_memo"
-      do STRIP_ARG_memo="$CXXFLAGS"
-        CXXFLAGS="${CXXFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
-        CXXFLAGS="${CXXFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
-        CXXFLAGS="${CXXFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+  if test "$QT_CXXFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then QT_CXXFLAGS=
+  else  while test "$QT_CXXFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$QT_CXXFLAGS"
+        QT_CXXFLAGS="${QT_CXXFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        QT_CXXFLAGS="${QT_CXXFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        QT_CXXFLAGS="${QT_CXXFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
       done
     fi
-  CXXFLAGS=$(echo $CXXFLAGS)  # wipe extra blank if any
+  QT_CXXFLAGS=$(echo $QT_CXXFLAGS)  # wipe extra blank if any
   unset ${!STRIP_ARG_*}
 
       done
   done
   unset ${!STRIP_ALL_ARGS_*}
 
-       CXXFLAGS+=" -std=c++17"
+       QT_CXXFLAGS+=" -std=c++17"
   else
-    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])-std=c++17($|[[:space:]])") ]]
+    if [[ "$QT_CXXFLAGS" =~ $(echo "(^|[[:space:]])-std=c++17($|[[:space:]])") ]]
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -std=c++17" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++17" >&2;}
-    else CXXFLAGS+=" -std=c++17"
+    else QT_CXXFLAGS+=" -std=c++17"
     fi
   fi
 
