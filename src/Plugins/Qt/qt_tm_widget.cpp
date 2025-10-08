@@ -206,7 +206,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   {
     // scrollable side tools
     QScrollArea *sa = new QScrollArea(mw);
-	  sa->setObjectName (QStringLiteral("SideToolScrollArea"));
+	  sa->setObjectName ("SideToolScrollArea");
 	  sa->setWidgetResizable (true);
 	  sa->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
 	  sa->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
