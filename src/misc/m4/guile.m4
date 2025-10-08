@@ -122,7 +122,7 @@ AC_DEFUN([LC_WITH_GUILE],[
       esac
       AX_SUBDIRS_CONFIGURE(
         [embedded_guile],
-        [[--without-guile-readline],[CPPFLAGS=${CPPFLAGS}],[LDFLAGS=${LDFLAGS}]],
+        [[--without-guile-readline],[CPPFLAGS=${CPPFLAGS}],[LDFLAGS=${LDFLAGS}],[CFLAGS=-std=c99]],
         [[--disable-shared]],
 	      [[--prefix=${GUILE_PREFIX}]],
         [--with-tmrepo=])
