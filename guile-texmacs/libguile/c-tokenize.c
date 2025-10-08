@@ -21,6 +21,8 @@
 #include <errno.h>
 #include <stdlib.h>
 
+int fileno(FILE *stream);
+
 /* end standard C headers. */
 
 /* flex integer type definitions */
