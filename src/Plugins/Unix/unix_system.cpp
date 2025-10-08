@@ -21,13 +21,13 @@
 
 #ifdef QTTEXMACS
 #include <QApplication>
-#include <QStyleHints>
-#include <QCursor>
 #include <QWidget>
 #endif
 
 #if QT_VERSION >= 0x050000
 #include <QGuiApplication>
+#include <QCursor>
+#include <QStyleHints>
 #endif
 
 #ifdef OS_MACOS
