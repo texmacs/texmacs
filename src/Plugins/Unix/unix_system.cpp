@@ -20,11 +20,14 @@
 #endif
 
 #ifdef QTTEXMACS
-#include <QGuiApplication>
 #include <QApplication>
 #include <QStyleHints>
 #include <QCursor>
 #include <QWidget>
+#endif
+
+#if QT_VERSION >= 0x050000
+#include <QGuiApplication>
 #endif
 
 #ifdef OS_MACOS
@@ -215,15 +218,14 @@ using duration = std::chrono::duration<double>;
 void texmacs_system_start_long_task() {
   if (is_doing_long_task) return;
   is_doing_long_task = true;
-#ifdef QTTEXMACS
+#if defined(QTTEXMACS) && QT_VERSION >= 0x050000
   QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 #endif
 }
 void texmacs_system_end_long_task() {
   if (!is_doing_long_task) return;
   is_doing_long_task = false;
-#ifdef QTTEXMACS
-  
+#if defined(QTTEXMACS) && QT_VERSION >= 0x050000
   QGuiApplication::restoreOverrideCursor();  
   QApplication::alert(QApplication::topLevelWidgets().first());
 #endif
