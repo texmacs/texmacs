@@ -23,17 +23,14 @@
 class qt_renderer_rep:  public basic_renderer_rep {
 public:
   QPainter *painter; // FIXME: painter needs begin/end
+  double zoom_multiplier; // adjustements for QTMImpressIconEngine
 
-public:
-  qt_renderer_rep (QPainter *_painter, int w = 0, int h = 0);
+  qt_renderer_rep (QPainter *_painter, double pixel_ratio,
+		   int w = 0, int h = 0);
   ~qt_renderer_rep ();
   void* get_handle ();
 
   void set_zoom_factor (double zoom);
-#if QT_VERSION >= 0x060000
-  double get_dpr ();
-#endif
-
   void begin (void* handle);
   void end ();
 
@@ -45,7 +42,11 @@ public:
 
   void set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore = false);
 
+#if QT_VERSION >= 0x060000
   void  clear_device (SI x1, SI y1, SI x2, SI y2);
+#else
+  inline void  clear_device (SI x1, SI y1, SI x2, SI y2) { (void)x1; (void)y1; (void)x2; (void)y2; }
+#endif
   void  draw_bis (int char_code, font_glyphs fn, SI x, SI y);
   void  draw (int char_code, font_glyphs fn, SI x, SI y);
   void  draw (const QFont& qfn, const QString& s, SI x, SI y, double zoom);
@@ -73,7 +74,7 @@ public:
   void draw_picture (picture pict, SI x, SI y, int alpha);
 };
 
-qt_renderer_rep* the_qt_renderer ();
+qt_renderer_rep* the_qt_renderer (double pixel_ratio = 1.0);
 QImage* get_image (url u, int w, int h, tree eff, SI pixel);
 
 class qt_shadow_renderer_rep: public qt_renderer_rep {
@@ -82,11 +83,8 @@ public:
   qt_renderer_rep *master;
   
 public:
-  qt_shadow_renderer_rep (QTMPixmapOrImage _px);
+  qt_shadow_renderer_rep (QTMPixmapOrImage _px, double pixel_ratio);
   ~qt_shadow_renderer_rep ();
-#if QT_VERSION >= 0x060000
-  inline double get_dpr () { return master->get_dpr (); }
-#endif
   void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
 };
 
@@ -96,11 +94,8 @@ public:
   
 public:
   qt_proxy_renderer_rep (qt_renderer_rep *_base)
-  : qt_renderer_rep(_base->painter), base(_base) {};
+    : qt_renderer_rep(_base->painter, _base->pixel_ratio), base(_base) {}
   ~qt_proxy_renderer_rep () {};
-#if QT_VERSION >= 0x060000
-  inline double get_dpr () { return base->get_dpr (); }  
-#endif
   void new_shadow (renderer& ren);
   void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
 };

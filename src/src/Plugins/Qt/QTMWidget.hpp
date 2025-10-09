@@ -54,14 +54,18 @@ public:
   static void setFocusToLast();
 
 protected slots:
-  void surfaceDprChanged ();
+  void devicePixelRatioChanged ();
 #endif
 
 protected:
 
   virtual bool event (QEvent *event) override;
 
+#if QT_VERSION >= 0x060000
   void surfacePaintEvent (QPaintEvent *e, QWidget *surface) override;
+#else
+  virtual void paintEvent (QPaintEvent* event) override;
+#endif
   virtual void focusInEvent (QFocusEvent* event) override;
   virtual void focusOutEvent (QFocusEvent* event) override;
   virtual void keyPressEvent (QKeyEvent* event) override;

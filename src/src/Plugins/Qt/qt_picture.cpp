@@ -104,7 +104,7 @@ qt_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
 ******************************************************************************/
 
 qt_image_renderer_rep::qt_image_renderer_rep (picture p, double zoom):
-  qt_renderer_rep (new QPainter ()), pict (p)
+  qt_renderer_rep (new QPainter (), 1), pict (p)
 {
   zoomf  = zoom;
   shrinkf= (int) tm_round (std_shrinkf / zoomf);
@@ -313,11 +313,7 @@ picture
 new_qt_load_xpm (url file_name) {
   string sss;
   double f= 1.0;
-#if QT_VERSION >= 0x060000
-  double scale= 1.0;
-#else
   double scale= max (retina_scale, (double) retina_icons);
-#endif
   if (suffix (file_name) == "xpm" || suffix (file_name) == "png") {
     string suf= ".png";
     if (scale == 1.0) {}
@@ -369,12 +365,10 @@ picture
 qt_load_xpm (url file_name) {
   if (tm_style_sheet != "") return new_qt_load_xpm (file_name);
   string sss;
-#if QT_VERSION < 0x060000
   if (retina_icons > 1 && suffix (file_name) == "xpm") {
     url png_equiv= glue (unglue (file_name, 4), "_x2.png");
     load_string ("$TEXMACS_PIXMAP_PATH" * png_equiv, sss, false);
   }
-#endif
   if (sss == "" && suffix (file_name) == "xpm") {
     url png_equiv= glue (unglue (file_name, 3), "png");
     load_string ("$TEXMACS_PIXMAP_PATH" * png_equiv, sss, false);

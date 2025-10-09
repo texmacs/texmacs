@@ -114,7 +114,7 @@ public:
   
   qt_glue_widget_rep () { }
   
-  QTMPixmapOrImage render ();
+  QTMPixmapOrImage render (double pixel_ratio);
   
   virtual QAction* as_qaction ();
   virtual QWidget* as_qwidget (QWidget* parent_widget);

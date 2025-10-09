@@ -43,6 +43,49 @@
 int menu_count = 0;  // zero if no menu is currently being displayed
 list<qt_tm_widget_rep*> waiting_widgets;
 
+#if QT_VERSION < 0x060000
+static void
+replaceActions (QWidget* dest,  QList<QAction*>* src) {
+  //NOTE: the parent hierarchy of the actions is not modified while installing
+  //      the menu in the GUI (see qt_menu.hpp for this memory management
+  //      policy)
+  if (src == NULL || dest == NULL)
+    FAILED ("replaceActions expects valid objects");
+  dest->setUpdatesEnabled (false);
+  QList<QAction *> list = dest->actions();
+  for (int i = 0; i < list.count(); i++) {
+    QAction* a = list[i];
+    dest->removeAction (a);
+  }
+  for (int i = 0; i < src->count(); i++) {
+    QAction* a = (*src)[i];
+    dest->addAction(a);
+  }
+  dest->setUpdatesEnabled (true);
+}
+
+static void
+replaceButtons (QToolBar* dest, QList<QAction*>* src) {
+  if (src == NULL || dest == NULL)
+    FAILED ("replaceButtons expects valid objects");
+  dest->setUpdatesEnabled (false);
+  bool visible = dest->isVisible();
+  if (visible) dest->hide(); //TRICK: to avoid flicker of the dest widget
+  replaceActions (dest, src);
+  QList<QObject*> list = dest->children();
+  for (int i = 0; i < list.count(); ++i) {
+    QToolButton* button = qobject_cast<QToolButton*> (list[i]);
+    if (button) {
+      button->setPopupMode (QToolButton::InstantPopup);
+      if (tm_style_sheet == "")
+        button->setStyle (qtmstyle());
+    }
+  }
+  if (visible) dest->show(); //TRICK: see above
+  dest->setUpdatesEnabled (true);
+}
+#endif
+
 void
 QTMInteractiveInputHelper::commit (int result) {
   if (wid && result == QDialog::Accepted) {
@@ -153,17 +196,6 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   //    also at minimumSize, didn't notice it first time and spend lot of time
   //    trying to figure this out :)
   
-#if QT_VERSION >= 0x060000
-  bar->setMinimumWidth (2);
-  #ifdef Q_OS_LINUX
-    bar->setMinimumHeight (28);
-  #else
-    if (tm_style_sheet != "") {
-      bar->setMinimumHeight (28);
-    }
-  #endif
-#else
-
   bar->setMinimumWidth (2);
 #ifdef Q_OS_LINUX
   int min_h= (int) floor (28 * retina_scale);
@@ -184,7 +216,6 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   }
 #endif
 #endif
-#endif
 
   mw->setStatusBar (bar);
  
@@ -197,12 +228,13 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   modeToolBar   = new QTMToolbar ("mode toolbar", QSize (21, 24), mw);
   focusToolBar  = new QTMToolbar ("focus toolbar", QSize (16, 20), mw);
   userToolBar   = new QTMToolbar ("user toolbar", QSize(), mw);
-  
+
   bottomTools   = new QDockWidget ("bottom tools", mw);
   extraTools    = new QDockWidget ("extra tools", mw);
   sideTools     = new QDockWidget ("side tools", mw);
   leftTools     = new QDockWidget ("left tools", mw);
 
+#if QT_VERSION >= 0x060000
   {
     // scrollable side tools
     QScrollArea *sa = new QScrollArea(mw);
@@ -214,6 +246,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 	  sa->show ();
     sideTools->setWidget (sa);
   }
+#endif
 
     // HACK: Wrap the dock in a "fake" window widget (last parameter = true) to
     // have clicks report the right position.
@@ -223,6 +256,10 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
                                                      command(), true);
   
   if (tm_style_sheet == "") {
+    mainToolBar->setStyle (qtmstyle ());
+    modeToolBar->setStyle (qtmstyle ());
+    focusToolBar->setStyle (qtmstyle ());
+    userToolBar->setStyle (qtmstyle ());
     sideTools->setStyle (qtmstyle ());
     leftTools->setStyle (qtmstyle ());
     bottomTools->setStyle (qtmstyle ());
@@ -259,14 +296,14 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   mainToolBar->setFixedHeight (toolbarHeight + 8 * retina_icons);
   modeToolBar->setFixedHeight (toolbarHeight + 4 * retina_icons);
   focusToolBar->setFixedHeight (toolbarHeight);
-#else
+#  else
   int toolbarHeight= 30;
   mainToolBar->setFixedHeight (toolbarHeight + 8);
   modeToolBar->setFixedHeight (toolbarHeight + 4);
   focusToolBar->setFixedHeight (toolbarHeight);
-#endif
+#  endif
 #else
-#ifdef Q_OS_MAC
+#  ifdef Q_OS_MAC
   if (retina_icons > 1) {
     int toolbarHeight= 30;
     if (!use_unified_toolbar)
@@ -274,22 +311,22 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     modeToolBar->setFixedHeight (toolbarHeight + 4);
     focusToolBar->setFixedHeight (toolbarHeight);
   }
-#else
+#  else
   int toolbarHeight= 30 * retina_icons;
   mainToolBar->setFixedHeight (toolbarHeight + 8);
   modeToolBar->setFixedHeight (toolbarHeight + 4);
   focusToolBar->setFixedHeight (toolbarHeight);  
-#endif
+#  endif
 #endif
   if (tm_style_sheet != "") {
     double scale= retina_scale;
-#if ((QT_VERSION < 0x050000) && defined (Q_OS_MAC))
+#if (QT_VERSION < 0x050000 && defined (Q_OS_MAC))
     scale= max (scale, 0.6 * ((double) retina_icons));
 #endif
     int h1= (int) floor (38 * scale + 0.5);
     int h2= (int) floor (34 * scale + 0.5);
     int h3= (int) floor (30 * scale + 0.5);
-#if ((QT_VERSION < 0x050000) && defined (Q_OS_MAC))
+#if (QT_VERSION < 0x050000 && defined (Q_OS_MAC))
     if (use_unified_toolbar && retina_icons == 2 && scale == 1.2) {
       h1= 34; h2= 36; h3= 32; }
 #endif
@@ -1036,7 +1073,11 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       main_icons_widget = concrete (w);
       QList<QAction*>* list = main_icons_widget->get_qactionlist();
       if (list) {
+#if QT_VERSION >= 0x060000
         mainToolBar->replaceButtons (list);
+#else
+        replaceButtons (mainToolBar, list);
+#endif
         update_visibility();
       }
     }
@@ -1048,7 +1089,11 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       mode_icons_widget = concrete (w);
       QList<QAction*>* list = mode_icons_widget->get_qactionlist();
       if (list) {
+#if QT_VERSION >= 0x060000
         modeToolBar->replaceButtons (list);
+#else
+        replaceButtons (modeToolBar, list);
+#endif
         update_visibility();
       }
     }
@@ -1076,7 +1121,11 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
         focus_icons_widget = concrete (w);
         QList<QAction*>* list = focus_icons_widget->get_qactionlist();
         if (list) {
+#if QT_VERSION >= 0x060000
           focusToolBar->replaceButtons (list);
+#else
+          replaceButtons (focusToolBar, list);
+#endif
           update_visibility();
         }
       }
@@ -1089,7 +1138,11 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       user_icons_widget = concrete (w);
       QList<QAction*>* list = user_icons_widget->get_qactionlist();
       if (list) {
+#if QT_VERSION >= 0x060000
         userToolBar->replaceButtons (list);
+#else
+        replaceButtons (userToolBar, list);
+#endif
         update_visibility();
       }
     }
@@ -1098,6 +1151,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     case SLOT_SIDE_TOOLS:
       check_type_void (index, s);
     {
+#if QT_VERSION >= 0x060000
       side_tools_widget = concrete (w);
       QWidget* new_qwidget = side_tools_widget->as_qwidget(mainwindow());
       QWidget* old_qwidget = dynamic_cast<QScrollArea*>(sideTools->widget())->widget();
@@ -1112,6 +1166,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       mainwindow()->resizeDocks (l1, l2, Qt::Horizontal);
 #endif
       new_qwidget->show();
+#endif
     }
       break;
 

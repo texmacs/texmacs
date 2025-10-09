@@ -180,15 +180,6 @@ qt_widget_rep::get_qactionlist() {
   return NULL;
 }
 
-#if QT_VERSION >= 0x060000
-double
-qt_widget_rep::get_dpr () {
-  if (!qwid.isNull ()) return qwid->devicePixelRatio ();
-  //cout << "Warning: unexpected call of qt_widget_rep::get_dpr ()" << LF;
-  return 1;
-}
-#endif
-
 /*! Returns the widget as a window.
  
  Each TeXmacs widget can at some point be asked to present itself into a window.
