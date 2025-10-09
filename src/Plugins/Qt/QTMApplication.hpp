@@ -63,9 +63,11 @@ public:
     return mKeyboard;
   }
 
+#if QT_VERSION >= 0x060000
   inline QTMWaitDialog &waitDialog() {
     return *mWaitDialog;
   }
+#endif
 
   inline bool useTabWindow() {
     return mUseTabWindow;
@@ -81,9 +83,9 @@ private:
 #if QT_VERSION >= 0x060000
   bool mPixmapManagerInitialized;
   QTMIconManager mIconManager;
+  QTMWaitDialog *mWaitDialog;
 #endif
   QTMKeyboard mKeyboard;
-  QTMWaitDialog *mWaitDialog;
   bool mUseTabWindow;
 };
 

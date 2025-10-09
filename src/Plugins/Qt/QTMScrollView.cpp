@@ -43,6 +43,7 @@ public:
     QTMSurface(QWidget* p, QTMScrollView* _sv) : QWidget (p), sv (_sv) { }
     
 protected:
+#if QT_VERSION >= 0x060000
     bool event(QEvent *event) override {
         // if this is a paint event, we want to handle it ourselves
         if (event->type() == QEvent::Paint) {
@@ -56,6 +57,11 @@ protected:
     void paintEvent (QPaintEvent* event) override {
       sv->surfacePaintEvent (event, this);
     }
+#else
+    virtual bool event(QEvent *event) {
+        return sv->surfaceEvent(event) ? true : QWidget::event(event);
+    }  
+#endif
 };
 
 /*! Constructor.
@@ -239,7 +245,9 @@ QTMScrollView::viewportEvent(QEvent *e)
       return event(e);
 #endif
 #endif
+#if QT_VERSION < 0x060000
     case QEvent::Show:
+#endif
       
     default:
       break;

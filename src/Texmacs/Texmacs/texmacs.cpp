@@ -488,7 +488,7 @@ set_global_options  (int argc, char** argv)  {
   string unify = (gui_version () == "qt4"? string ("on"): string ("off"));
   string mini  = (os_macos ()? string ("off"): string ("on"));
   if (tm_style_sheet != "") mini= "off";
-  #if (defined(OS_MACOS) && QT_VERSION <= QT_VERSION_CHECK(5, 15, 9)) || defined(qt_no_fontconfig)
+  #if (defined(OS_MACOS) && QT_VERSION <= 0x060000) || defined(qt_no_fontconfig)
   use_native_menubar = get_preference ("use native menubar", native) == "force";
   #else
   use_native_menubar = get_preference ("use native menubar", native) == "on" || get_preference ("use native menubar", native) == "force";
@@ -692,7 +692,11 @@ int
 texmacs_entrypoint (int argc, char** argv) {
   immediate_options (argc, argv);
 #ifdef QTTEXMACS
-  if (!headless_mode) qtmapp= new QTMApplication (argc, argv);
+  if (!headless_mode) {
+    QGuiApplication::setHighDpiScaleFactorRoundingPolicy
+      (Qt::HighDpiScaleFactorRoundingPolicy::Round);
+    qtmapp= new QTMApplication (argc, argv);
+  }
 #endif
 #ifdef OS_ANDROID
   init_android();

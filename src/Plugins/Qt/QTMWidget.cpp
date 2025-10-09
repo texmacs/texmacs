@@ -149,27 +149,52 @@ QTMWidget::resizeEventBis (QResizeEvent *event) {
  CHECK: Maybe just putting onscreen all the region bounding rectangles might 
  be less expensive.
 */
+#if QT_VERSION >= 0x060000
 void
 QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
   (void) surfaceWidget;
   QPainter p (surface());
-#if QT_VERSION >= 0x060000
-  qreal dpr = surface()->devicePixelRatio();
-  if (dpr != tm_widget()->backingPixmap->devicePixelRatio()) {
-    QMetaObject::invokeMethod (this, "surfaceDprChanged", Qt::QueuedConnection);
-    return;
-  }
+  qreal pixel_ratio= surface()->devicePixelRatio();
+  QSize sz= tm_widget()->backingPixmap->size();
+  if (pixel_ratio * surface()->size () != sz) {
+    QMetaObject::invokeMethod (this, "devicePixelRatioChanged",
+			       Qt::QueuedConnection);
+     return;
+   }
   QRegion reg= event->region();
   QRegion::const_iterator it;
-  QRect qr;
+  QRectF qr;
   for (it= reg.begin (); it != reg.end (); ++it) {
     qr= *it;
-    p.drawPixmap (QRect (qr.x(), qr.y(), qr.width(), qr.height()),
-                  *(tm_widget()->backingPixmap),
-		  QRect (dpr * qr.x(), dpr * qr.y(),
-			 dpr * qr.width(), dpr * qr.height()));
+    p.drawPixmap (qr, *(tm_widget()->backingPixmap),
+		  QRectF (pixel_ratio * qr.x(),
+			  pixel_ratio * qr.y(),
+			  pixel_ratio * qr.width(),
+			  pixel_ratio * qr.height()));
   }
+}
+
+void
+QTMWidget::devicePixelRatioChanged () {
+  array<url> v= get_all_views ();
+  for (int i= 0; i < N(v); i++) {
+    editor ed= view_to_editor (v[i]);
+    if (!is_nil (ed) &&
+	(qt_simple_widget_rep*) (ed.operator->()) == tm_widget()) {
+      ed->suspend ();
+      tm_widget()->invalidate_all();
+      ed->resume ();
+      the_gui->force_update();
+      break;
+    }
+  }
+}
+
 #else
+
+void
+QTMWidget::paintEvent (QPaintEvent* event) {
+  QPainter p (surface());
   QVector<QRect> rects = event->region().rects();
   for (int i = 0; i < rects.count(); ++i) {
     QRect qr = rects.at (i);
@@ -180,16 +205,8 @@ QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
                          retina_factor * qr.width(),
                          retina_factor * qr.height()));
   }
-#endif
 }
 
-#if QT_VERSION >= 0x060000
-void
-QTMWidget::surfaceDprChanged () {
-  the_gui->force_update();
-  tm_widget()->invalidate_all();
-  the_gui->force_update();
-}
 #endif
 
 void

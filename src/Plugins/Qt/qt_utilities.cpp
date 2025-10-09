@@ -124,11 +124,6 @@ QSize
 qt_decode_length (string width, string height,
                   const QSize& ref, const QFontMetrics& fm) {
   (void) fm;
-#if QT_VERSION >= 0x060000
-  int retina_scale = 1;
-  int retina_zoom = 1;
-#endif
-
   QSize size= ref;
 
   string w_unit, h_unit;
@@ -1017,9 +1012,6 @@ init_palette (QApplication* app) {
 
 string
 scale_px (string s) {
-#if QT_VERSION >= 0x060000
-  double retina_scale = 1.0;
-#endif
   string r;
   for (int i=0; i<N(s); )
     if (s[i] == ':') {

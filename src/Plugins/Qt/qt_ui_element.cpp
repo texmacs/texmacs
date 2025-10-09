@@ -59,12 +59,16 @@ public:
       QTMWidget *w = qobject_cast<QTMWidget*>(qApp->focusWidget());
       if (w && w->tm_widget()) {
         if (DEBUG_QT) debug_qt << "shortcut: " << ks << LF;
+#if QT_VERSION >= 0x060000
 	array<string> v= tokenize (ks, " ");
 	for (int i= 0; i < N(v); i++) {
 	  string tmp= trim_spaces (v[i]);
 	  if (N(tmp) > 0)
 	    the_gui->process_keypress (w->tm_widget(), tmp, texmacs_time());
 	}
+#else
+        the_gui->process_keypress (w->tm_widget(), ks, texmacs_time());
+#endif
       }
     }
   }
@@ -119,18 +123,11 @@ public:
  ******************************************************************************/
 
 QTMPixmapOrImage 
-qt_glue_widget_rep::render () {
+qt_glue_widget_rep::render (double pixel_ratio) {
   static QPainter painter;
-  static qt_renderer_rep ren (&painter);
-#if QT_VERSION >= 0x060000
-  double dpr = get_dpr ();
-  QSize s = to_qsize (dpr*w, dpr*h);
+  static qt_renderer_rep ren (&painter, pixel_ratio);
+  QSize s = to_qsize (pixel_ratio*w, pixel_ratio*h);
   QPixmap pxm (s);
-  pxm.setDevicePixelRatio (dpr);
-#else
-  QSize s = to_qsize (w, h);
-  QPixmap pxm (s);
-#endif
   //cout << "glue (" << s.width() << "," << s.height() << ")\n";
   pxm.fill (Qt::transparent);
   QPaintDevice *pd = static_cast<QPaintDevice*>(&pxm);
@@ -162,18 +159,11 @@ qt_glue_widget_rep::render () {
 QAction *
 qt_glue_widget_rep::as_qaction() {
   QAction* a = new QTMAction();
+  double pixel_ratio= device_pixel_ratio ();
   a->setText (to_qstring (as_string (col)));
   QIcon icon;
-#if 0
-  tree old_col = col;
-  icon.addPixmap (render(), QIcon::Active, QIcon::On);
-  col = "";
-  icon.addPixmap (render(), QIcon::Normal, QIcon::On);
-  col = old_col;
-#else
   if (!headless_mode)
-    icon.addPixmap (*(render ().QPixmap_ptr ()));
-#endif
+    icon.addPixmap (*(render (pixel_ratio).QPixmap_ptr ()));
   a->setIcon (icon);  
   a->setEnabled (false);
   return a;
@@ -182,9 +172,10 @@ qt_glue_widget_rep::as_qaction() {
 QWidget *
 qt_glue_widget_rep::as_qwidget(QWidget* parent_widget) {
   QLabel* qw = new QLabel(parent_widget);
+  double pixel_ratio= device_pixel_ratio ();
   qw->setText (to_qstring (as_string (col)));
   if (!headless_mode)
-    qw->setPixmap (*(render ().QPixmap_ptr ()));
+    qw->setPixmap (*(render (pixel_ratio).QPixmap_ptr ()));
   qw->setMinimumSize (to_qsize (w, h));
     //  w->setEnabled(false);
   qwid = qw;
@@ -477,11 +468,7 @@ qt_ui_element_rep::as_qaction () {
       if (!qks.isEmpty()) {
 #if defined (Q_OS_MAC) && QT_VERSION >= 0x060000
 	if (use_native_menubar &&
-#  if QT_VERSION >= 0x060600
 	    QApplication::inputMethod()->locale().territory()
-#  else
-	    QApplication::inputMethod()->locale().country()
-#  endif
 	    != QLocale::UnitedStates) {
 	  QString tmp= act->text () + u8" ┊ "
 	    + qks.toString(QKeySequence::NativeText).replace (", ", " ");
@@ -657,9 +644,6 @@ qt_ui_element_rep::as_qlayoutitem (QWidget* parent_widget) {
       // FIXME: lpad and rpad ignored.
       SI hsep = y.x1; SI vsep = y.x2; SI lpad = y.x3; SI rpad = y.x4;
       if (tm_style_sheet != "") {
-#if QT_VERSION >= 0x060000
-        int retina_scale = 1;
-#endif
         hsep= (SI) (floor (retina_scale * hsep / 256.0 + 0.5) * PIXEL);
         vsep= (SI) (floor (retina_scale * vsep / 256.0 + 0.5) * PIXEL);
         lpad= (SI) (floor (retina_scale * lpad / 256.0 + 0.5) * PIXEL);
@@ -750,12 +734,10 @@ qt_ui_element_rep::as_qlayoutitem (QWidget* parent_widget) {
       typedef quartet<bool, bool, SI, SI> T;
       T x = open_box<T> (load);
       SI w= x.x3, h= x.x4;
-#if QT_VERSION < 0x060000
       if (tm_style_sheet != "") {
         w= (SI) floor (retina_scale * w + 0.5);
         h= (SI) floor (retina_scale * h + 0.5);
       }
-#endif
       QSize sz = QSize (w, h);
       QSizePolicy::Policy hpolicy = x.x1 ? QSizePolicy::MinimumExpanding
                                          : QSizePolicy::Minimum;
@@ -858,12 +840,10 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
       typedef quartet<bool, bool, SI, SI> T;
       T x = open_box<T>(load);
       SI w= x.x3, h= x.x4;
-#if QT_VERSION < 0x060000
       if (tm_style_sheet != "") {
         w= (SI) floor (retina_scale * w + 0.5);
         h= (SI) floor (retina_scale * h + 0.5);
       }
-#endif
       QSize sz = QSize (w, h);
       QSizePolicy::Policy hpolicy = x.x1 ? QSizePolicy::MinimumExpanding
                                          : QSizePolicy::Minimum;
@@ -1247,10 +1227,10 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
         QWidget* prelabel = concrete (tabs[i])->as_qwidget(tw);
         QLabel*     label = qobject_cast<QLabel*> (prelabel);
         QWidget*     body = concrete (bodies[i])->as_qwidget(tw);
-        tw->addTab(body, QIcon(), label ? label->text() : "");
 #if QT_VERSION >= 0x060000
-	(void) img;
-	tw->setTabIcon(i, tmapp()->icon_manager().getIcon (icons[i]));
+        tw->addTab(body, QIcon(), label ? label->text() : "");
+	      (void) img;
+	      tw->setTabIcon(i, tmapp()->icon_manager().getIcon (icons[i]));
 #else
         tw->addTab (body, QIcon (as_pixmap (*img)), label ? label->text() : "");
 #endif

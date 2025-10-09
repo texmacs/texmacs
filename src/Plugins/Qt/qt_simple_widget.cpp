@@ -21,6 +21,10 @@
 #include <QPixmap>
 #include <QLayout>
 
+#if QT_VERSION >= 0x060000
+#include "QTMImpressIconEngine.hpp"
+#endif
+
 #ifdef USE_CAIRO
 #include "Cairo/cairo_renderer.hpp"
 #include "Cairo/tm_cairo.hpp"
@@ -175,8 +179,8 @@ qt_simple_widget_rep::send (slot s, blackbox val) {
     case SLOT_INVALIDATE:
     {
       check_type<coord4>(val, s);
-      coord4 p= open_box<coord4> (val);
-      qt_renderer_rep* ren = the_qt_renderer ();
+      coord4 p= open_box<coord4> (val);      
+      qt_renderer_rep* ren = the_qt_renderer (device_pixel_ratio ());
       coord2 pt_or = from_qpoint(backing_pos);
       SI ox = -pt_or.x1;
       SI oy = -pt_or.x2;
@@ -330,21 +334,22 @@ qt_simple_widget_rep::query (slot s, int type_id) {
     {
       check_type_id<coord4> (type_id, s);
 #if QT_VERSION >= 0x060000
-      if (backingPixmap) {
-	double dpr= backingPixmap->devicePixelRatio ();
-	QSize sz = backingPixmap->size() / dpr;
-	QPoint pos= backing_pos;
-	return close_box<coord4> (from_qrect(QRect(pos, sz)));
+       if (scrollarea()) {
+ 	      QSize sz = scrollarea()->QAbstractScrollArea::viewport()->size();
+ 	      QPoint pos= scrollarea()->origin();
+ 	      return close_box<coord4> (from_qrect(QRect(pos, sz)));
+      } else {
+        return close_box<coord4>(coord4(0,0,0,0));
       }
 #else
-      if (scrollarea()) {
-	QSize sz = scrollarea()->QAbstractScrollArea::viewport()->size();
-	QPoint pos= scrollarea()->origin();
-	return close_box<coord4> (from_qrect(QRect(pos, sz)));
+      if (canvas()) {
+        QSize sz = canvas()->surface()->size();     // sz.setWidth(sz.width()-2);
+        QPoint pos = backing_pos;
+        return close_box<coord4> (from_qrect(QRect(pos, sz)));
+      } else {
+        return close_box<coord4>(coord4(0,0,0,0));
       }
 #endif
-      else
-        return close_box<coord4>(coord4(0,0,0,0));
     }
       
     default:
@@ -373,24 +378,17 @@ qt_simple_widget_rep::read (slot s, blackbox index) {
 ******************************************************************************/
 
 // Prints the current contents of the canvas onto a QPixmap
+#if QT_VERSION >= 0x060000
 static QPixmap
 impress (qt_simple_widget_rep* wid) {
   static QPainter painter;
-  static qt_renderer_rep ren (&painter);
+  static qt_renderer_rep ren (&painter, retina_factor);
   SI width, height;
   wid->handle_get_size_hint (width, height);
   QSize s = to_qsize (width, height);
   QSize phys_s = s;
-#if QT_VERSION >= 0x060000
-  double dpr= 4 * wid->get_dpr (); // dpr is increased for sharper rendering
-  phys_s *= dpr;
-#else
   phys_s *= retina_factor;
-#endif
   QPixmap pxm (phys_s);
-#if QT_VERSION >= 0x060000
-  pxm.setDevicePixelRatio (dpr);
-#endif
   if (DEBUG_QT)
     debug_qt << "impress (" << s.width() << "," << s.height() << ")\n";
   pxm.fill (Qt::transparent);
@@ -407,47 +405,94 @@ impress (qt_simple_widget_rep* wid) {
   ren.end();
   return pxm;
 }
+#else
+QPixmap
+impress (qt_simple_widget_rep* wid) {
+  int width, height;
+  wid->handle_get_size_hint (width, height);
+  QSize s = to_qsize (width, height);
+  QSize phys_s = s; phys_s *= retina_factor;
+  QPixmap pxm (phys_s);
+  if (DEBUG_QT)
+    debug_qt << "impress (" << s.width() << "," << s.height() << ")\n";
+  pxm.fill (Qt::transparent);
+  {
+    qt_renderer_rep *ren = the_qt_renderer();
+    ren->begin (static_cast<QPaintDevice*>(&pxm));
+    rectangle r = rectangle (0, 0,  phys_s.width(), phys_s.height());
+    ren->set_origin (0, 0);
+    ren->encode (r->x1, r->y1);
+    ren->encode (r->x2, r->y2);
+    ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
+    {
+        // we do not want to be interrupted here...
+      the_gui->set_check_events (false);
+      wid->handle_repaint (ren, r->x1, r->y2, r->x2, r->y1);
+      the_gui->set_check_events (true);
+    }
+    ren->end();
+  }
+  return pxm;
+}
+#endif
 
 QAction*
 qt_simple_widget_rep::as_qaction () {
+#if QT_VERSION >= 0x060000
+  QAction* a= new QTMAction (NULL);
+  QIcon icon (new QTMImpressIconEngine (this));
+  a->setIcon (icon);
+  return a;
+#else
   QAction* a= new QTMAction (NULL);
   QPixmap pxm (impress (this));
   QIcon icon (pxm);
   a->setIcon (icon);
   return a;
+#endif
 }
 
 /******************************************************************************
  * Backing store management
  ******************************************************************************/
 
+#if QT_VERSION >= 0x060000
 void
 qt_simple_widget_rep::invalidate_rect (int x1, int y1, int x2, int y2) {
   // Because of accumulated rounding error on screen with a dpr > 1, 
   // we enlarge the invalid rect by a few pixels.
   // todo : the solution would be to use a float for the coordinates
   // and sizes in the whole code.
-#if QT_VERSION >= 0x060000
   qreal dpr = canvas()->devicePixelRatio();
   int padding = dpr * 8;
-#elif defined (Q_OS_MAC)
-  int padding = 10;
-#else
-  int padding = 0;
-#endif
   rectangle r = rectangle (x1-padding, y1-padding, x2+padding, y2+padding);
   invalid_regions = invalid_regions | rectangles (r);  
 }
+#else
+void
+qt_simple_widget_rep::invalidate_rect (int x1, int y1, int x2, int y2) {
+#ifdef Q_OS_MAC
+  //HACK: for unknown reasons we need to enlarge the invalid rect to prevent
+  //artifacts while moving the cursor (for example at the end of a formula like
+  // $a+f$. These artifacts seems present only on 64 bit Macs.
+  rectangle r = rectangle (x1-10, y1-10, x2+10, y2+10);
+#else
+  rectangle r = rectangle (x1, y1, x2, y2);
+#endif
+  // cout << "invalidating " << r << LF;
+  invalid_regions = invalid_regions | rectangles (r);  
+}
+#endif
 
 void
 qt_simple_widget_rep::invalidate_all () {
-  QSize sz = canvas()->size();
+  QSize sz = canvas()->surface()->size();
   // QPoint pt = QAbstractScrollArea::viewport()->pos();
   //cout << "invalidate all " << LF;
   invalid_regions = rectangles();
 #if QT_VERSION >= 0x060000
-  qreal dpr = canvas()->devicePixelRatio();
-  invalidate_rect (0, 0, dpr * sz.width(), dpr * sz.height());
+  double pixel_ratio = canvas()->surface()->devicePixelRatio();
+  invalidate_rect (0, 0, pixel_ratio * sz.width(), pixel_ratio * sz.height());
 #else
   invalidate_rect (0, 0, retina_factor * sz.width(),
                    retina_factor * sz.height());
@@ -459,8 +504,6 @@ qt_simple_widget_rep::is_invalid () {
   return !is_nil (invalid_regions);
 }
 
-
-
 basic_renderer
 qt_simple_widget_rep::get_renderer() {
   ASSERT (backingPixmap != NULL,
@@ -468,7 +511,7 @@ qt_simple_widget_rep::get_renderer() {
 #ifdef USE_CAIRO
   cairo_renderer_rep *ren = the_cairo_renderer ();
   cairo_surface_t *surf;
-#ifdef Q_OS_LINUX
+#  ifdef Q_OS_LINUX
   //const QX11Info & info = x11Info();//qt_x11Info (this);
   //    Display *dpy = x11Info().display();
   //*backingPixmap = QPixmap (width(),height());
@@ -479,16 +522,16 @@ qt_simple_widget_rep::get_renderer() {
   surf = tm_cairo_xlib_surface_create (dpy, drawable, visual,
                                        backingPixmap->width (),
 				       backingPixmap->height ());
-#elif defined (Q_OS_MAC)
+#  elif defined (Q_OS_MAC)
   surf = tm_cairo_quartz_surface_create_for_cg_context
     ((CGContextRef)(this->macCGHandle()), width(), height());
-#endif
+#  endif
   cairo_t *ct = tm_cairo_create (surf);
   ren->begin (ct);
   tm_cairo_surface_destroy (surf);
   tm_cairo_destroy (ct);
 #else
-  qt_renderer_rep * ren = the_qt_renderer ();
+  qt_renderer_rep * ren = the_qt_renderer (device_pixel_ratio ());
   ren->begin ((void*) backingPixmap);
 #endif
   return ren;
@@ -507,17 +550,21 @@ qt_simple_widget_rep::get_renderer() {
 void
 qt_simple_widget_rep::repaint_invalid_regions () {
 #if QT_VERSION >= 0x060000
-  // complete redrawing whenever the dpr changes
-  qreal dpr = canvas()->devicePixelRatio();
-  qreal old_dpr= backingPixmap->devicePixelRatio();
-  if (old_dpr == 0) old_dpr= 1;
-  if (dpr != old_dpr) {
+  double pixel_ratio= canvas()->surface()->devicePixelRatio();
+#else
+  double pixel_ratio= retina_factor;
+#endif    
+#if QT_VERSION >= 0x060000
+  // complete redrawing whenever the pixel ratio changes
+  QSize canvas_physical_size (pixel_ratio * canvas()->surface()->size());
+  if (canvas_physical_size != backingPixmap->size() || backing_valid==false) {
+    // cout << "repaint_invalid_regions after change of dpr" << LF;
     QPixmap newBackingPixmap (0, 0);
-    newBackingPixmap.setDevicePixelRatio (dpr);
+    long h= backingPixmap->height();
+    backing_pos = h == 0 ? QPoint (0, 0)
+      : (backing_pos * pixel_ratio * canvas_physical_size.height()) / h;
     *backingPixmap= newBackingPixmap;
-    backing_pos = (backing_pos * dpr) / old_dpr;
   }
-  backingPixmap->setDevicePixelRatio (1);
 #endif
   // Look if the scroll position has changed. backing_pos is the old position, 
   // while origin is the new one. Instead of repainting the whole backing store,
@@ -525,32 +572,20 @@ qt_simple_widget_rep::repaint_invalid_regions () {
   // are not covered by the moved contents.
   QRegion qrgn;
   QPoint origin = canvas()->origin();
-#if QT_VERSION >= 0x060000 && !defined(OS_ANDROID)
-  // round the origin to avoid rounding errors with dpi of 1.25 and 1.75
-  if (dpr != 1.0 && dpr != 2.0) {
-    origin = QPoint (32 * (origin.x() / 32), 32 * (origin.y() / 32));
-  }
-#endif
   if (backing_pos != origin && !(backingPixmap->size().isNull())) {
-#if QT_VERSION >= 0x060000
-    int dx =  dpr * (origin.x() - backing_pos.x());
-    int dy =  dpr * (origin.y() - backing_pos.y());
-#else
-    int dx =  retina_factor * (origin.x() - backing_pos.x());
-    int dy =  retina_factor * (origin.y() - backing_pos.y());
-#endif
+    int dx =  pixel_ratio * (origin.x() - backing_pos.x());
+    int dy =  pixel_ratio * (origin.y() - backing_pos.y());
     backing_pos = origin;
 
     QPixmap newBackingPixmap (backingPixmap->size());
-#if QT_VERSION >= 0x060000
-    newBackingPixmap.setDevicePixelRatio (backingPixmap->devicePixelRatio());
-#endif
     QPainter p (&newBackingPixmap);
+    //p.fillRect(0, 0, backingPixmap->size().width(),
+    //           backingPixmap->size().height(),Qt::red);
+ 
     p.drawPixmap (-dx,-dy,*backingPixmap);
     p.end();
     *backingPixmap = newBackingPixmap;
     //cout << "SCROLL CONTENTS BY " << dx << " " << dy << LF;
-    
     
     rectangles invalid;
     while (!is_nil (invalid_regions)) {
@@ -598,22 +633,13 @@ qt_simple_widget_rep::repaint_invalid_regions () {
     QSize _oldSize = backingPixmap->size();
     QSize _new_logical_Size = canvas()->surface()->size();
     QSize _newSize = _new_logical_Size;
-#if QT_VERSION >= 0x060000
-    _newSize *= dpr;
-#else
-    _newSize *= retina_factor;
-#endif
-    
+    _newSize *= pixel_ratio;
     //cout << "      surface size of " << _newSize.width() << " x "
     // << _newSize.height() << LF;
     
-    
     if (_newSize != _oldSize) {
-      // cout << "RESIZING BITMAP"<< LF;
+      // qDebug () << "RESIZING BITMAP to " << _newSize << LF;
       QPixmap newBackingPixmap (_newSize);
-#if QT_VERSION >= 0x060000
-      newBackingPixmap.setDevicePixelRatio (backingPixmap->devicePixelRatio());
-#endif
       QPainter p (&newBackingPixmap);
       p.drawPixmap (0,0,*backingPixmap);
       //p.fillRect (0, 0, _newSize.width(), _newSize.height(), Qt::red);
@@ -629,10 +655,6 @@ qt_simple_widget_rep::repaint_invalid_regions () {
       *backingPixmap = newBackingPixmap;
     }
   }
-
-#if QT_VERSION >= 0x060000
-  backingPixmap->setDevicePixelRatio (canvas()->devicePixelRatio());
-#endif
   
   // repaint invalid rectangles
   {
@@ -650,22 +672,14 @@ qt_simple_widget_rep::repaint_invalid_regions () {
       
       rectangles rects = invalid_regions;
       invalid_regions = rectangles();
-      
+
       while (!is_nil (rects)) {
         rectangle r = copy (rects->item);
         rectangle r0 = rects->item;
-#if QT_VERSION >= 0x060000
-        QRect qr = QRect (r0->x1 / dpr, r0->y1 / dpr,
-                          (r0->x2 - r0->x1) / dpr,
-                          (r0->y2 - r0->y1) / dpr);
-        QRect qr0 = QRect (r0->x1, r0->y1,
-			   r0->x2 - r0->x1,
-			   r0->y2 - r0->y1);
-#else
-        QRect qr = QRect (r0->x1 / retina_factor, r0->y1 / retina_factor,
-                          (r0->x2 - r0->x1) / retina_factor,
-                          (r0->y2 - r0->y1) / retina_factor);
-#endif
+	QRect qr = QRect (r->x1 / pixel_ratio,
+			  r->y1 / pixel_ratio,
+                          (r->x2 - r->x1) / pixel_ratio,
+                          (r->y2 - r->y1) / pixel_ratio);
         //cout << "repainting " << r0 << "\n";
         ren->set_origin (ox, oy);
         ren->encode (r->x1, r->y1);
@@ -682,7 +696,6 @@ qt_simple_widget_rep::repaint_invalid_regions () {
         qrgn += qr;
         rects = rects->next;
       }
-      
       ren->end();
     } // !is_nil (invalid_regions)
   }
