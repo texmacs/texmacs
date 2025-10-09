@@ -256,9 +256,15 @@ public:
     return headless_widget ();
   }
 
-  virtual QAction*         as_qaction () { return NULL; }
-  virtual QWidget*         as_qwidget (QWidget* parent_widget) { return NULL; }
-  virtual QLayoutItem*     as_qlayoutitem (QWidget* parent_widget) { return NULL; }
+  virtual QAction* as_qaction () { return NULL; }
+  virtual QWidget* as_qwidget (QWidget* parent_widget) {
+    (void) parent_widget;
+    return NULL;
+  }
+  virtual QLayoutItem* as_qlayoutitem (QWidget* parent_widget) {
+    (void) parent_widget;
+    return NULL;
+  }
   virtual QList<QAction*>* get_qactionlist() { return NULL; }
 
   virtual void send (slot s, blackbox val) {

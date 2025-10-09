@@ -47,6 +47,7 @@ qt_simple_widget_rep::~qt_simple_widget_rep () {
 
 QWidget*
 qt_simple_widget_rep::as_qwidget (QWidget* parent_widget) {
+  (void) parent_widget;
   // todo : fixme, when passing parent_widget,
   // qt_simple_widget_rep::send: canvas size is wrong
   // causing the scrollbar to be at the wrong position
