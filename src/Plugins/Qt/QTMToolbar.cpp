@@ -220,6 +220,10 @@ void QTMToolbar::addAction (QAction* action) {
         QTMWidget::setFocusToLast();
       });
     }
+#else
+    if (action->menu()) {
+      button->setPopupMode (QToolButton::InstantPopup);
+    }
 #endif
     
     // if the action contains only text, add a margin to the button
