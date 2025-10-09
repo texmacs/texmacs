@@ -221,6 +221,7 @@ void QTMToolbar::addAction (QAction* action) {
       });
     }
 #else
+    (void) button;
     if (action->menu()) {
       button->setPopupMode (QToolButton::InstantPopup);
     }
