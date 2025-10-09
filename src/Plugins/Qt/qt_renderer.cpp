@@ -93,9 +93,13 @@ void del_obj_qt_renderer(void)  {
 * qt_renderer
 ******************************************************************************/
 
-qt_renderer_rep::qt_renderer_rep (QPainter *_painter, int w2, int h2):
-  basic_renderer_rep (true, w2, h2), painter(_painter) {
-  reset_zoom_factor(); 
+qt_renderer_rep::qt_renderer_rep (QPainter *_painter, double pixel_ratio2,
+				  int w2, int h2):
+  basic_renderer_rep (true, pixel_ratio2, w2, h2), painter(_painter),
+  zoom_multiplier (1) {
+#if QT_VERSION < 0x060000
+  reset_zoom_factor();
+#endif
 }
 
 qt_renderer_rep::~qt_renderer_rep () {}
@@ -107,6 +111,9 @@ qt_renderer_rep::get_handle () {
 
 void
 qt_renderer_rep::begin (void* handle) {
+#if QT_VERSION >= 0x060000
+  basic_renderer_rep::begin (handle);
+#endif
   QPaintDevice *device = static_cast<QPaintDevice*>(handle);
   if (!painter->begin (device) && DEBUG_QT) {
     if (headless_mode)
@@ -120,16 +127,14 @@ qt_renderer_rep::begin (void* handle) {
   }
   w = painter->device()->width();
   h = painter->device()->height();
-#if QT_VERSION >= 0x060000
-  double dpr= device->devicePixelRatio();
-  painter->resetTransform();
-  painter->scale (1.0 / dpr, 1.0 / dpr);
-#endif
 }
 
 void
 qt_renderer_rep::end () {
   painter->end ();
+#if QT_VERSION >= 0x060000
+  basic_renderer_rep::end ();
+#endif
 }
 
 void 
@@ -144,22 +149,12 @@ qt_renderer_rep::get_extents (SI& w2, SI& h2) {
 void
 qt_renderer_rep::set_zoom_factor (double zoom) {
 #if QT_VERSION >= 0x060000
-  renderer_rep::set_zoom_factor (get_dpr() * zoom);
-  retina_pixel= (double)pixel * get_dpr();
+  basic_renderer_rep::set_zoom_factor (zoom_multiplier * zoom);
 #else
   renderer_rep::set_zoom_factor (retina_factor * zoom);
   retina_pixel= pixel * retina_factor;
 #endif
 }
-
-#if QT_VERSION >= 0x060000
-double qt_renderer_rep::get_dpr () {
-  if (painter->device ())
-    return painter->device ()->devicePixelRatio ();
-  //std_warning << "Warning: unexpected call of qt_renderer_rep::get_dpr ()\n";
-  return 1;
-}
-#endif
 
 /******************************************************************************
 * Transformations
@@ -229,6 +224,7 @@ get_pattern_image (brush br, SI pixel) {
   return pm;
 }
 
+#if QT_VERSION >= 0x060000
 void
 qt_renderer_rep::clear_device (SI x1, SI y1, SI x2, SI y2) {
   static bool first_time= true;
@@ -253,6 +249,7 @@ qt_renderer_rep::clear_device (SI x1, SI y1, SI x2, SI y2) {
   br.setTransform (QTransform (1, 0, 0, 1, x1 % w, y2 % h));
   painter->fillRect (r, br);
 }
+#endif
 
 void
 qt_renderer_rep::set_pencil (pencil np) {
@@ -287,9 +284,6 @@ qt_renderer_rep::set_pencil (pencil np) {
   p.setStyle (Qt::SolidLine);
   p.setCapStyle (pen->get_cap () == cap_round? Qt::RoundCap: Qt::SquareCap);
   p.setJoinStyle (Qt::RoundJoin);
-#if QT_VERSION >= 0x060000
-  p.setCosmetic(true);
-#endif
   painter->setPen (p);
   painter->setBrush (b);
 }
@@ -307,9 +301,6 @@ qt_renderer_rep::set_brush (brush br) {
     QColor col= to_qcolor (pen->get_color ());
     p.setColor (col);
     b.setColor (col);
-#if QT_VERSION >= 0x060000
-    p.setCosmetic(true);
-#endif
     painter->setPen (p);
     painter->setBrush (b);
   }
@@ -362,9 +353,6 @@ qt_renderer_rep::lines (array<SI> x, array<SI> y) {
   p.setCapStyle (pen->get_cap () == cap_round? Qt::RoundCap: Qt::SquareCap);
   if (x[N(x)-1] == x[0] && y[N(y)-1] == y[0]) p.setCapStyle (Qt::RoundCap);
   p.setJoinStyle (Qt::RoundJoin);
-#if QT_VERSION >= 0x060000
-  p.setCosmetic(true);
-#endif
   painter->setPen (p);
 
   painter->setRenderHints (QPainter::Antialiasing);
@@ -376,7 +364,6 @@ void
 qt_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   x1= max (x1, cx1-ox); y1= max (y1, cy1-oy);
   x2= min (x2, cx2-ox); y2= min (y2, cy2-oy);
-  // outer_round (x1, y1, x2, y2); might still be needed somewhere
   decode (x1, y1);
   decode (x2, y2);
   if ((x1>=x2) || (y1<=y2)) return;
@@ -404,7 +391,6 @@ qt_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
 
   x1= max (x1, cx1-ox); y1= max (y1, cy1-oy);
   x2= min (x2, cx2-ox); y2= min (y2, cy2-oy);
-  // outer_round (x1, y1, x2, y2); might still be needed somewhere
   if ((x1>=x2) || (y1>=y2)) return;
 
   decode (x1, y1);
@@ -544,11 +530,7 @@ qt_renderer_rep::draw_bis (int c, font_glyphs fng, SI x, SI y) {
   // draw with background pattern
   SI xo, yo;
   glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;
-#if QT_VERSION >= 0x060000
-  glyph gl= shrink (pre_gl, std_shrinkf, std_shrinkf, xo, yo, get_dpr());
-#else
-  glyph gl= shrink (pre_gl, std_shrinkf, std_shrinkf, xo, yo);
-#endif
+  glyph gl= shrink (pre_gl, std_shrinkf, std_shrinkf, xo, yo, pixel_ratio);
   int w= gl->width, h= gl->height;
   QImage *im= new QImage (w, h, QImage::Format_ARGB32);
   im->fill (Qt::transparent);
@@ -604,11 +586,7 @@ qt_renderer_rep::draw (int c, font_glyphs fng, SI x, SI y) {
     if (get_reverse_colors ()) reverse (r, g, b);
     SI xo, yo;
     glyph pre_gl= fng->get (c); if (is_nil (pre_gl)) return;
-#if QT_VERSION >= 0x060000
-    glyph gl= shrink (pre_gl, std_shrinkf, std_shrinkf, xo, yo, get_dpr());
-#else
-    glyph gl= shrink (pre_gl, std_shrinkf, std_shrinkf, xo, yo);
-#endif
+    glyph gl= shrink (pre_gl, std_shrinkf, std_shrinkf, xo, yo, pixel_ratio);
     int i, j, w= gl->width, h= gl->height;
 #ifdef QTMPIXMAPS
     QTMPixmapOrImage* im= new QTMPixmapOrImage (w, h);
@@ -688,14 +666,29 @@ qt_renderer_rep::draw (const QFont& qfn, const QString& qs,
  ******************************************************************************/
 
 qt_renderer_rep*
-the_qt_renderer () {
+the_qt_renderer (double pixel_ratio) {
+#if QT_VERSION < 0x060000
   static QPainter *the_painter = NULL;
   static qt_renderer_rep* the_renderer= NULL;
   if (!the_renderer) {
     the_painter = new QPainter();
-    the_renderer= tm_new<qt_renderer_rep> (the_painter);
+    the_renderer= tm_new<qt_renderer_rep> (the_painter, 1.0);
   }
   return the_renderer;
+#else
+  static QPainter *the_painter = NULL;
+  static qt_renderer_rep* the_renderer= NULL;
+  if (!the_renderer) {
+    the_painter = new QPainter();
+    the_renderer= tm_new<qt_renderer_rep> (the_painter, pixel_ratio);
+  }
+  double old_pixel_ratio= the_renderer->pixel_ratio;
+  if (old_pixel_ratio != pixel_ratio) {
+    the_renderer->pixel_ratio= pixel_ratio;
+    the_renderer->set_zoom_factor (the_renderer->zoomf / old_pixel_ratio);
+  }
+  return the_renderer;
+#endif
 }
 
 /******************************************************************************
@@ -736,7 +729,7 @@ qt_renderer_rep::new_shadow (renderer& ren) {
   get_extents (mw, mh);
   if (ren != NULL) {
     ren->get_extents (sw, sh);
-    if (sw != mw || sh != mh) {
+    if (sw != mw || sh != mh || ren->pixel_ratio != pixel_ratio) {
       delete_shadow (ren);
       ren= NULL;
     }
@@ -839,7 +832,7 @@ qt_proxy_renderer_rep::new_shadow (renderer& ren) {
   get_extents (mw, mh);
   if (ren != NULL) {
     ren->get_extents (sw, sh);
-    if (sw != mw || sh != mh) {
+    if (sw != mw || sh != mh || ren->pixel_ratio != pixel_ratio) {
       delete_shadow (ren);
       ren= NULL;
     }
@@ -849,14 +842,11 @@ qt_proxy_renderer_rep::new_shadow (renderer& ren) {
   }
   if (ren == NULL) {
     QTMPixmapOrImage px (mw, mh);
-#if QT_VERSION >= 0x060000
-    px.setDevicePixelRatio (get_dpr ());
-#endif
-    ren= (renderer) tm_new<qt_shadow_renderer_rep> (px);
+    ren= (renderer) tm_new<qt_shadow_renderer_rep> (px, pixel_ratio);
   }
   // cout << "Create " << mw << ", " << mh << "\n";
   static_cast<qt_shadow_renderer_rep*>(ren)->begin(
-          static_cast<qt_shadow_renderer_rep*>(ren)->px.rep);
+    static_cast<qt_shadow_renderer_rep*>(ren)->px.rep);
 }
 
 void 
@@ -908,8 +898,9 @@ qt_proxy_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
  * shadow qt renderer
  ******************************************************************************/
 
-qt_shadow_renderer_rep::qt_shadow_renderer_rep (QTMPixmapOrImage _px)
-: qt_renderer_rep (new QPainter()), px(_px) {}
+qt_shadow_renderer_rep::qt_shadow_renderer_rep (QTMPixmapOrImage _px,
+						double pixel_ratio)
+  : qt_renderer_rep (new QPainter(), pixel_ratio), px(_px) {}
 
 qt_shadow_renderer_rep::~qt_shadow_renderer_rep () { 
   painter->end(); 

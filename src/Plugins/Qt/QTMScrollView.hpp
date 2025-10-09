@@ -66,7 +66,9 @@ protected:
   virtual bool surfaceEvent (QEvent *e);
   virtual bool event (QEvent *e);
 
+#if QT_VERSION >= 0x060000
   virtual void surfacePaintEvent (QPaintEvent *e, QWidget *surface) = 0;
+#endif
 
   friend class QTMSurface;
   friend class qt_simple_widget_rep;

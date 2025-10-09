@@ -5,12 +5,14 @@ QTMApplication::QTMApplication (int& argc, char** argv) :
   QApplication (argc, argv) { }
 
 void QTMApplication::load() {
-  #ifdef OS_ANDROID
+#ifdef OS_ANDROID
   mUseTabWindow = true;
 #else
   mUseTabWindow = get_user_preference ("enable tab") == "on";
 #endif
+#if QT_VERSION >= 0x060000
   mWaitDialog = new QTMWaitDialog ();
+#endif
 
 #if QT_VERSION >= 0x060000
   mPixmapManagerInitialized = false;
@@ -65,6 +67,7 @@ bool QTMApplication::notify (QObject* receiver, QEvent* event)
   return false;
 }
 
+#if QT_VERSION >= 0x060000
 void
 texmacs_qt_wait_handler (string message, string arg, int level) {
   (void) level;
@@ -76,7 +79,10 @@ texmacs_qt_wait_handler (string message, string arg, int level) {
     tmapp()->waitDialog().popMessage ();
   }
 }
+#endif
 
 void QTMApplication::installWaitHandler() {
+#if QT_VERSION >= 0x060000
   set_wait_handler (texmacs_qt_wait_handler);
+#endif
 }

@@ -17,6 +17,9 @@
 #include "message.hpp"
 #include "qt_utilities.hpp"
 #include <QPointer>
+#if QT_VERSION >= 0x060000
+#  include <QWidget>
+#endif
 
 class QWidget;
 class QLayoutItem;
@@ -117,7 +120,14 @@ public:
   qt_widget_rep (types _type=none, QWidget* _qwid=0);
   virtual ~qt_widget_rep ();
   virtual inline string get_nickname () { return "popup"; }
-  
+  double device_pixel_ratio () {
+#if QT_VERSION >= 0x060000
+    if (qwid.isNull ()) return retina_factor;
+    return qwid->devicePixelRatio ();
+#else
+    return retina_factor;
+#endif
+  }
   virtual widget plain_window_widget (string name, command quit, int b= 3);
   virtual widget make_popup_widget ();
   virtual widget popup_window_widget (string s);
@@ -132,9 +142,6 @@ public:
   virtual QWidget*         as_qwidget (QWidget* parent_widget);
   virtual QLayoutItem*     as_qlayoutitem (QWidget* parent_widget);
   virtual QList<QAction*>* get_qactionlist();
-#if QT_VERSION >= 0x060000
-  double get_dpr ();
-#endif
 
   ////////////////////// Debugging
   
