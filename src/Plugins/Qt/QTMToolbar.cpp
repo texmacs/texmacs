@@ -109,6 +109,7 @@ void QTMToolbar::replaceActions (QList<QAction*>* src) {
   }
 #else
   clear ();
+  addSeparator ();
 #endif
   for (int i = 0; i < src->count(); i++) {
     QAction* a = (*src)[i];
@@ -133,6 +134,7 @@ void QTMToolbar::replaceButtons (QList<QAction*>* src) {
   }
 #else
   clear ();
+  addSeparator ();
 #endif
   for (int i = 0; i < src->count(); i++) {
     QAction* a = (*src)[i];
