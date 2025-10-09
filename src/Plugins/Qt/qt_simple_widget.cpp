@@ -47,7 +47,10 @@ qt_simple_widget_rep::~qt_simple_widget_rep () {
 
 QWidget*
 qt_simple_widget_rep::as_qwidget (QWidget* parent_widget) {
-  qwid = new QTMWidget (parent_widget, this);
+  // todo : fixme, when passing parent_widget,
+  // qt_simple_widget_rep::send: canvas size is wrong
+  // causing the scrollbar to be at the wrong position
+  qwid = new QTMWidget (nullptr, this);
   reapply_sent_slots();
   SI width, height;
   handle_get_size_hint (width, height);
