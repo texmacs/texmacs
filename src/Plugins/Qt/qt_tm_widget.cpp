@@ -129,9 +129,8 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   QMainWindow* mw= mainwindow ();
   if (tm_style_sheet == "") {
     mw->setStyle (qtmstyle ());
-#ifndef ENABLE_EXPERIMENTAL_TOOLBAR
-    mw->menuBar()->setStyle (qtmstyle ());
-#endif
+    if (!ENABLE_EXPERIMENTAL_TOOLBAR)
+      mw->menuBar()->setStyle (qtmstyle ());
   }
 
 #if QT_VERSION >= 0x060000
@@ -139,22 +138,22 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   int retina_icons = 1;
 #endif
 
-#ifndef ENABLE_EXPERIMENTAL_TOOLBAR
+  if (!ENABLE_EXPERIMENTAL_TOOLBAR) {
 #ifdef Q_OS_MAC
-  if (!use_native_menubar) {
-    mw->menuBar()->setNativeMenuBar(false);
+    if (!use_native_menubar) {
+      mw->menuBar()->setNativeMenuBar(false);
+      if (tm_style_sheet != "") {
+        int min_h= (int) floor (28 * retina_scale);
+        mw->menuBar()->setMinimumHeight (min_h);
+      }
+    }
+#else
     if (tm_style_sheet != "") {
       int min_h= (int) floor (28 * retina_scale);
       mw->menuBar()->setMinimumHeight (min_h);
     }
-  }
-#else
-  if (tm_style_sheet != "") {
-    int min_h= (int) floor (28 * retina_scale);
-    mw->menuBar()->setMinimumHeight (min_h);
-  }
 #endif
-#endif
+  }
 
 #if QT_VERSION >= 0x060000
   mw->setWindowIcon(tmapp()->icon_manager().getIcon("TeXmacs"));
@@ -220,10 +219,10 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   mw->setStatusBar (bar);
  
   // toolbars
-#ifdef ENABLE_EXPERIMENTAL_TOOLBAR
-  menuToolBar   = new QTMToolbar ("menu toolbar", QSize (), mw);
-#endif
-  
+  if (ENABLE_EXPERIMENTAL_TOOLBAR) {
+    menuToolBar   = new QTMToolbar ("menu toolbar", QSize (), mw);
+  }
+
   mainToolBar   = new QTMToolbar ("main toolbar", QSize (26, 32), mw);
   modeToolBar   = new QTMToolbar ("mode toolbar", QSize (21, 24), mw);
   focusToolBar  = new QTMToolbar ("focus toolbar", QSize (16, 20), mw);
@@ -359,12 +358,12 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   sideTools->setObjectName ("sideTools");
   leftTools->setObjectName ("leftTools");
 
-#ifdef ENABLE_EXPERIMENTAL_TOOLBAR
-  menuToolBar->setObjectName ("menuToolBar");
-  mw->addToolBar (menuToolBar);
-  mw->addToolBarBreak ();
-  menuToolBar->setMovable (false);
-#endif
+  if (ENABLE_EXPERIMENTAL_TOOLBAR) {
+    menuToolBar->setObjectName ("menuToolBar");
+    mw->addToolBar (menuToolBar);
+    mw->addToolBarBreak ();
+    menuToolBar->setMovable (false);
+  }
 
 #ifdef UNIFIED_TOOLBAR
 
@@ -646,14 +645,12 @@ qt_tm_widget_rep::update_visibility () {
       }
     }
   }
-  else {
-#ifndef ENABLE_EXPERIMENTAL_TOOLBAR
+  else if (!ENABLE_EXPERIMENTAL_TOOLBAR) {
     bool old_menuVisibility = mainwindow()->menuBar()->isVisible();
     bool new_menuVisibility = visibility[0];
 
     if ( XOR(old_menuVisibility,  new_menuVisibility) )
       mainwindow()->menuBar()->setVisible (new_menuVisibility);
-#endif
   }
 #endif // UNIFIED_TOOLBAR
 #undef XOR
@@ -953,71 +950,71 @@ qt_tm_widget_rep::query (slot s, int type_id) {
   }
 }
 
-#ifndef ENABLE_EXPERIMENTAL_TOOLBAR
 void
 qt_tm_widget_rep::install_main_menu () {
-  if (main_menu_widget == waiting_main_menu_widget) return;
-  main_menu_widget = waiting_main_menu_widget;
-  QList<QAction*>* src = main_menu_widget->get_qactionlist();
-  if (!src) return;
-  QMenuBar* dest = mainwindow()->menuBar();
-  dest->clear();
-  for (int i = 0; i < src->count(); i++) {
-    QAction* a = (*src)[i];
-    if (a->menu()) {
-      //TRICK: Mac native QMenuBar accepts only menus which are already populated
-      // this will cause a problem for us, since menus are lazy and populated only after triggering
-      // this is the reason we add a dummy action before inserting the menu
-      a->menu()->addAction("native menubar trick");
-      dest->addAction(a->menu()->menuAction());
-#if QT_VERSION < 0x060000
-      QObject::connect (a->menu(),         SIGNAL (aboutToShow()),
-                        the_gui->gui_helper, SLOT (aboutToShowMainMenu()));
-      QObject::connect (a->menu(),         SIGNAL (aboutToHide()),
-                        the_gui->gui_helper, SLOT (aboutToHideMainMenu()));
-#else
-      QObject::connect (a->menu(), &QMenu::aboutToShow,
-                        the_gui->gui_helper, &QTMGuiHelper::aboutToShowMainMenu);
-      QObject::connect (a->menu(), &QMenu::aboutToHide,
-                        the_gui->gui_helper, &QTMGuiHelper::aboutToHideMainMenu);
-#endif
-    }
-  }
-}
-#else
-// on android, we use the menuToolBar instead of the qt menu bar
-void
-qt_tm_widget_rep::install_main_menu () {
-  if (main_menu_widget == waiting_main_menu_widget) return;
-  main_menu_widget = waiting_main_menu_widget;
-  QList<QAction*>* src = main_menu_widget->get_qactionlist();
-  if (!src) return;
-  QTMToolbar* dest = menuToolBar;
+  if (!ENABLE_EXPERIMENTAL_TOOLBAR) {
 
-  if (tm_style_sheet == "")
-    dest->setStyle (qtmstyle ());
-
-  dest->clear();
-  for (int i = 0; i < src->count(); i++) {
-    QAction* a = (*src)[i];
-    if (a->menu()) {
-      dest->addAction(a->menu()->menuAction());
-#if QT_VERSION < 0x060000
-      QObject::connect (a->menu(),         SIGNAL (aboutToShow()),
-                        the_gui->gui_helper, SLOT (aboutToShowMainMenu()));
-      QObject::connect (a->menu(),         SIGNAL (aboutToHide()),
-                        the_gui->gui_helper, SLOT (aboutToHideMainMenu()));
-#else
-      QObject::connect (a->menu(), &QMenu::aboutToShow,
-                        the_gui->gui_helper, &QTMGuiHelper::aboutToShowMainMenu);
-      QObject::connect (a->menu(), &QMenu::aboutToHide,
-                        the_gui->gui_helper, &QTMGuiHelper::aboutToHideMainMenu);
-#endif
+    if (main_menu_widget == waiting_main_menu_widget) return;
+    main_menu_widget = waiting_main_menu_widget;
+    QList<QAction*>* src = main_menu_widget->get_qactionlist();
+    if (!src) return;
+    QMenuBar* dest = mainwindow()->menuBar();
+    dest->clear();
+    for (int i = 0; i < src->count(); i++) {
+      QAction* a = (*src)[i];
+      if (a->menu()) {
+        //TRICK: Mac native QMenuBar accepts only menus which are already populated
+        // this will cause a problem for us, since menus are lazy and populated only after triggering
+        // this is the reason we add a dummy action before inserting the menu
+        a->menu()->addAction("native menubar trick");
+        dest->addAction(a->menu()->menuAction());
+  #if QT_VERSION < 0x060000
+        QObject::connect (a->menu(),         SIGNAL (aboutToShow()),
+                          the_gui->gui_helper, SLOT (aboutToShowMainMenu()));
+        QObject::connect (a->menu(),         SIGNAL (aboutToHide()),
+                          the_gui->gui_helper, SLOT (aboutToHideMainMenu()));
+  #else
+        QObject::connect (a->menu(), &QMenu::aboutToShow,
+                          the_gui->gui_helper, &QTMGuiHelper::aboutToShowMainMenu);
+        QObject::connect (a->menu(), &QMenu::aboutToHide,
+                          the_gui->gui_helper, &QTMGuiHelper::aboutToHideMainMenu);
+  #endif
+      }
     }
-  }
-  dest->addRightSpacer();
+
+  } else { // ENABLE_EXPERIMENTAL_TOOLBAR
+
+    if (main_menu_widget == waiting_main_menu_widget) return;
+    main_menu_widget = waiting_main_menu_widget;
+    QList<QAction*>* src = main_menu_widget->get_qactionlist();
+    if (!src) return;
+    QTMToolbar* dest = menuToolBar;
+
+    if (tm_style_sheet == "")
+      dest->setStyle (qtmstyle ());
+
+    dest->clear();
+    for (int i = 0; i < src->count(); i++) {
+      QAction* a = (*src)[i];
+      if (a->menu()) {
+        dest->addAction(a->menu()->menuAction());
+  #if QT_VERSION < 0x060000
+        QObject::connect (a->menu(),         SIGNAL (aboutToShow()),
+                          the_gui->gui_helper, SLOT (aboutToShowMainMenu()));
+        QObject::connect (a->menu(),         SIGNAL (aboutToHide()),
+                          the_gui->gui_helper, SLOT (aboutToHideMainMenu()));
+  #else
+        QObject::connect (a->menu(), &QMenu::aboutToShow,
+                          the_gui->gui_helper, &QTMGuiHelper::aboutToShowMainMenu);
+        QObject::connect (a->menu(), &QMenu::aboutToHide,
+                          the_gui->gui_helper, &QTMGuiHelper::aboutToHideMainMenu);
+  #endif
+      }
+    }
+    dest->addRightSpacer();
+    
+  } // ENABLE_EXPERIMENTAL_TOOLBAR
 }
-#endif
 
 
 void

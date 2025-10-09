@@ -54,9 +54,7 @@ class qt_tm_widget_rep: public qt_window_widget_rep {
    */
   QLabel*       rightLabel;
   QLabel*        leftLabel;
-#ifdef ENABLE_EXPERIMENTAL_TOOLBAR
   QTMToolbar*    menuToolBar;
-#endif
   QTMToolbar*    mainToolBar;
   QTMToolbar*    modeToolBar;
   QTMToolbar*   focusToolBar;
