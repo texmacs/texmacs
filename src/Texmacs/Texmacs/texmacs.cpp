@@ -693,8 +693,10 @@ texmacs_entrypoint (int argc, char** argv) {
   immediate_options (argc, argv);
 #ifdef QTTEXMACS
   if (!headless_mode) {
+#if QT_VERSION >= 0x060000
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy
       (Qt::HighDpiScaleFactorRoundingPolicy::Round);
+#endif
     qtmapp= new QTMApplication (argc, argv);
   }
 #endif
