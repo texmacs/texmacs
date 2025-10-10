@@ -157,7 +157,7 @@ QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
   qreal pixel_ratio= surface()->devicePixelRatio();
   QSize sz= tm_widget()->backingPixmap->size();
   if (pixel_ratio * surface()->size () != sz) {
-    QMetaObject::invokeMethod (this, "devicePixelRatioChanged",
+    QMetaObject::invokeMethod (this, &QTMWidget::devicePixelRatioChanged,
 			       Qt::QueuedConnection);
      return;
    }
