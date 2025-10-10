@@ -147,11 +147,11 @@ qt_renderer_rep::get_extents (SI& w2, SI& h2) {
 }
 
 void
-qt_renderer_rep::set_zoom_factor (double zoom) {
+qt_renderer_rep::set_zoom_factor (double zoom, bool safe) {
 #if QT_VERSION >= 0x060000
-  basic_renderer_rep::set_zoom_factor (zoom_multiplier * zoom);
+  basic_renderer_rep::set_zoom_factor (zoom_multiplier * zoom, safe);
 #else
-  renderer_rep::set_zoom_factor (retina_factor * zoom);
+  renderer_rep::set_zoom_factor (retina_factor * zoom, safe);
   retina_pixel= pixel * retina_factor;
 #endif
 }
@@ -685,7 +685,8 @@ the_qt_renderer (double pixel_ratio) {
   double old_pixel_ratio= the_renderer->pixel_ratio;
   if (old_pixel_ratio != pixel_ratio) {
     the_renderer->pixel_ratio= pixel_ratio;
-    the_renderer->set_zoom_factor (the_renderer->zoomf / old_pixel_ratio);
+    the_renderer->set_zoom_factor (the_renderer->zoomf / old_pixel_ratio,
+				   false);
   }
   return the_renderer;
 #endif

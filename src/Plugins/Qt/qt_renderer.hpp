@@ -30,7 +30,7 @@ public:
   ~qt_renderer_rep ();
   void* get_handle ();
 
-  void set_zoom_factor (double zoom);
+  void set_zoom_factor (double zoom, bool safe= true);
   void begin (void* handle);
   void end ();
 

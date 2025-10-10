@@ -152,9 +152,13 @@ normal_zoom (double zoom) {
 }
 
 void
-renderer_rep::set_zoom_factor (double zoom) {
-  if (shrinkf != ((int) tm_round (pixel_ratio * std_shrinkf / zoomf)))
-    cout << "Invalid zoom " << zoomf << ", " << shrinkf << LF;
+renderer_rep::set_zoom_factor (double zoom, bool safe) {
+  if (safe &&
+      shrinkf != ((int) tm_round (pixel_ratio * std_shrinkf / zoomf)))
+    cerr << "Invalid zoom: zoomf= " << zoomf
+	 << ", shrinkf= " << shrinkf
+      	 << ", std_shrinkf= " << std_shrinkf
+	 << ", pixel_ratio= " << pixel_ratio << LF;
   ox = (SI) tm_round (ox  * zoomf);
   oy = (SI) tm_round (oy  * zoomf);
   //cx1= (SI) ::floor (cx1 * zoomf);

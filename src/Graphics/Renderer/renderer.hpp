@@ -61,7 +61,7 @@ public:
   /* coordinate system */
   void set_origin (SI x, SI y);
   void move_origin (SI dx, SI dy);
-  virtual void set_zoom_factor (double zoom);
+  virtual void set_zoom_factor (double zoom, bool safe= true);
   void reset_zoom_factor ();
   void set_shrinking_factor (int sf);
   virtual void set_transformation (frame fr);
