@@ -73,6 +73,10 @@ public:
     return mUseTabWindow;
   }
 
+  inline bool useNewToolbar() {
+    return mUseNewToolbar;
+  }
+
   inline QTMMainTabWindow &mainTabWindow() {
     return *QTMMainTabWindow::topTabWindow();
   }
@@ -87,6 +91,7 @@ private:
 #endif
   QTMKeyboard mKeyboard;
   bool mUseTabWindow;
+  bool mUseNewToolbar;
 };
 
 inline QTMApplication *tmapp() {

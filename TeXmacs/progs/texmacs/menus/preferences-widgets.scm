@@ -820,9 +820,13 @@
           (meti (hlist // (text "Use unified toolbars"))
             (toggle (set-boolean-preference "use unified toolbar" answer)
                     (get-boolean-preference "use unified toolbar"))))
-	(meti (hlist // (text "Use multi-tabs"))
-	  (toggle (set-boolean-preference "enable tab" answer)
-		  (get-boolean-preference "enable tab"))))
+        (meti (hlist // (text "Use multi-tabs"))
+          (toggle (set-boolean-preference "enable tab" answer)
+            (get-boolean-preference "enable tab")))
+        (meti (hlist // (text "Use new toolbar"))
+          (toggle (set-boolean-preference "new toolbar" answer)
+            (get-boolean-preference "new toolbar")))
+      ) ; aligned
       (glue #f #t 0 0))))
 
 (tm-widget (experimental-preferences-widget*)

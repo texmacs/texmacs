@@ -5,11 +5,9 @@ QTMApplication::QTMApplication (int& argc, char** argv) :
   QApplication (argc, argv) { }
 
 void QTMApplication::load() {
-#ifdef OS_ANDROID
-  mUseTabWindow = true;
-#else
   mUseTabWindow = get_user_preference ("enable tab") == "on";
-#endif
+  mUseNewToolbar = get_user_preference ("new toolbar") != "off";
+
 #if QT_VERSION >= 0x060000
   mWaitDialog = new QTMWaitDialog ();
 #endif
