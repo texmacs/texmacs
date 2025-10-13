@@ -12,12 +12,7 @@
 #define QTMTOOLBAR_HPP
 
 #include "basic.hpp"
-
-#if defined(OS_ANDROID)
-#define ENABLE_EXPERIMENTAL_TOOLBAR 1
-#else
-#define ENABLE_EXPERIMENTAL_TOOLBAR 0
-#endif
+#include "QTMApplication.hpp"
 
 #include <QToolBar>
 #include <QAction>
@@ -44,6 +39,9 @@ public:
 
 protected:
   bool eventFilter (QObject* watched, QEvent* event) override;
+
+  void setRightActVisible (bool v);
+  void setLeftActVisible (bool v);
 
 private:
   QScrollArea* mScrollArea;

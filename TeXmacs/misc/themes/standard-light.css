@@ -57,8 +57,12 @@ QMenuBar::item:selected {
     color: #FFFFFF;
 }
 
-QToolBar {
+#mainToolBar, #modeToolBar, #focusToolBar, #userToolBar, #menuToolBar {
     border-bottom: 1px solid #B0B0B0;
+}
+
+#toolbarSeparator {
+    border-left: 1px solid #B0B0B0;
 }
 
 QToolBar, #mainToolBar QWidget, QStatusBar QWidget {
