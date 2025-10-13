@@ -57,8 +57,12 @@ QMenuBar::item:selected {
 
 }
 
-QToolBar {
+#mainToolBar, #modeToolBar, #focusToolBar, #userToolBar, #menuToolBar {
     border-bottom: 1px solid #505050;
+}
+
+#toolbarSeparator {
+    border-left: 1px solid #505050;
 }
 
 QToolBar, #mainToolBar QWidget {

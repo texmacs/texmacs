@@ -129,7 +129,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   QMainWindow* mw= mainwindow ();
   if (tm_style_sheet == "") {
     mw->setStyle (qtmstyle ());
-    if (!ENABLE_EXPERIMENTAL_TOOLBAR)
+    if (!tmapp()->useNewToolbar())
       mw->menuBar()->setStyle (qtmstyle ());
   }
 
@@ -138,7 +138,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   int retina_icons = 1;
 #endif
 
-  if (!ENABLE_EXPERIMENTAL_TOOLBAR) {
+  if (!tmapp()->useNewToolbar()) {
 #ifdef Q_OS_MAC
     if (!use_native_menubar) {
       mw->menuBar()->setNativeMenuBar(false);
@@ -219,7 +219,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   mw->setStatusBar (bar);
  
   // toolbars
-  if (ENABLE_EXPERIMENTAL_TOOLBAR) {
+  if (tmapp()->useNewToolbar()) {
     menuToolBar   = new QTMToolbar ("menu toolbar", QSize (), mw);
   }
 
@@ -358,7 +358,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   sideTools->setObjectName ("sideTools");
   leftTools->setObjectName ("leftTools");
 
-  if (ENABLE_EXPERIMENTAL_TOOLBAR) {
+  if (tmapp()->useNewToolbar()) {
     menuToolBar->setObjectName ("menuToolBar");
     mw->addToolBar (menuToolBar);
     mw->addToolBarBreak ();
@@ -484,8 +484,9 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   bottomTools->setVisible (false);
   extraTools->setVisible (false);
   mainwindow()->statusBar()->setVisible (true);
-#if !defined(Q_OS_MAC) && !defined(ENABLE_EXPERIMENTAL_TOOLBAR)
-  mainwindow()->menuBar()->setVisible (false);
+#if !defined(Q_OS_MAC)
+  if (!tmapp()->useNewToolbar())
+    mainwindow()->menuBar()->setVisible (false);
 #endif
   QPalette pal;
   QColor bgcol= to_qcolor (tm_background);
@@ -586,12 +587,14 @@ qt_tm_widget_rep::update_visibility () {
   if ( XOR(old_statusVisibility,  new_statusVisibility) )
     mainwindow()->statusBar()->setVisible (new_statusVisibility);
 
-#if !defined(Q_OS_MAC) && !defined(ENABLE_EXPERIMENTAL_TOOLBAR)
-  bool old_menuVisibility = mainwindow()->menuBar()->isVisible();
-  bool new_menuVisibility = visibility[0];
+#if !defined(Q_OS_MAC)
+  if (!tmapp()->useNewToolbar()) {
+    bool old_menuVisibility = mainwindow()->menuBar()->isVisible();
+    bool new_menuVisibility = visibility[0];
 
-  if ( XOR(old_menuVisibility,  new_menuVisibility) )
-    mainwindow()->menuBar()->setVisible (new_menuVisibility);
+    if ( XOR(old_menuVisibility,  new_menuVisibility) )
+      mainwindow()->menuBar()->setVisible (new_menuVisibility);
+  }
 #endif
 
 //#if 0
@@ -645,7 +648,7 @@ qt_tm_widget_rep::update_visibility () {
       }
     }
   }
-  else if (!ENABLE_EXPERIMENTAL_TOOLBAR) {
+  else if (!tmapp()->useNewToolbar()) {
     bool old_menuVisibility = mainwindow()->menuBar()->isVisible();
     bool new_menuVisibility = visibility[0];
 
@@ -952,7 +955,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
 
 void
 qt_tm_widget_rep::install_main_menu () {
-  if (!ENABLE_EXPERIMENTAL_TOOLBAR) {
+  if (!tmapp()->useNewToolbar()) {
 
     if (main_menu_widget == waiting_main_menu_widget) return;
     main_menu_widget = waiting_main_menu_widget;
@@ -982,7 +985,7 @@ qt_tm_widget_rep::install_main_menu () {
       }
     }
 
-  } else { // ENABLE_EXPERIMENTAL_TOOLBAR
+  } else {
 
     if (main_menu_widget == waiting_main_menu_widget) return;
     main_menu_widget = waiting_main_menu_widget;
@@ -1013,7 +1016,7 @@ qt_tm_widget_rep::install_main_menu () {
     }
     dest->addRightSpacer();
     
-  } // ENABLE_EXPERIMENTAL_TOOLBAR
+  }
 }
 
 

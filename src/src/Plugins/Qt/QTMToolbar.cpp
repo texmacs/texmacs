@@ -38,7 +38,7 @@ QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
 
   setMovable (false);
 
-  if (ENABLE_EXPERIMENTAL_TOOLBAR) {
+  if (tmapp()->useNewToolbar()) {
     mLeftBtn = new QToolButton (this);
     mLeftBtn->setText (QString::fromUtf8("<"));
     mLeftBtn->setToolTip (tr("Scroll left"));
@@ -97,7 +97,7 @@ void QTMToolbar::replaceActions (QList<QAction*>* src) {
     FAILED ("replaceActions expects valid objects");
   setUpdatesEnabled (false);
 
-  if (ENABLE_EXPERIMENTAL_TOOLBAR) {
+  if (tmapp()->useNewToolbar()) {
     while (mLayout->count() > 0) {
       QWidget* w = mLayout->itemAt(0)->widget();
       mLayout->removeWidget(w);
@@ -112,7 +112,7 @@ void QTMToolbar::replaceActions (QList<QAction*>* src) {
     addAction(a);
   }
   setUpdatesEnabled (true);
-  if (ENABLE_EXPERIMENTAL_TOOLBAR) {
+  if (tmapp()->useNewToolbar()) {
     addRightSpacer();
     updateNavButtons();
   }
@@ -122,7 +122,7 @@ void QTMToolbar::replaceButtons (QList<QAction*>* src) {
   if (src == NULL)
     FAILED ("replaceButtons expects valid objects");
   setUpdatesEnabled (false);
-  if (ENABLE_EXPERIMENTAL_TOOLBAR) {
+  if (tmapp()->useNewToolbar()) {
     while (mLayout->count() > 0) {
       QWidget* w = mLayout->itemAt(0)->widget();
       mLayout->removeWidget(w);
@@ -137,14 +137,14 @@ void QTMToolbar::replaceButtons (QList<QAction*>* src) {
     addAction(a);
   }
   setUpdatesEnabled (true);
-  if (ENABLE_EXPERIMENTAL_TOOLBAR) {
+  if (tmapp()->useNewToolbar()) {
     addRightSpacer();
     updateNavButtons();
   }
 }
 
 void QTMToolbar::addSeparator () {
-  if (!ENABLE_EXPERIMENTAL_TOOLBAR) {
+  if (!tmapp()->useNewToolbar()) {
     QToolBar::addSeparator();
     return;
   }
@@ -155,7 +155,7 @@ void QTMToolbar::addSeparator () {
   spacer = new QWidget (this);
   spacer->setFixedWidth (1);
   spacer->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Preferred);
-  spacer->setStyleSheet ("background: rgba(128,128,128,10%);");
+  spacer->setObjectName ("toolbarSeparator");
   mLayout->addWidget (spacer);
 
   spacer = new QWidget (this);
@@ -184,7 +184,7 @@ void QTMToolbar::addAction (QAction* action) {
   if (action->isSeparator()) {
     addSeparator();
     return;
-  } else if (ENABLE_EXPERIMENTAL_TOOLBAR) {
+  } else if (tmapp()->useNewToolbar()) {
     addSmallSeparator();
   }
 
@@ -239,7 +239,7 @@ void QTMToolbar::addAction (QAction* action) {
   }
   
   // add the button to the toolbar, and on Android to the scrollable layout
-  if (ENABLE_EXPERIMENTAL_TOOLBAR) {
+  if (tmapp()->useNewToolbar()) {
     mLayout->addWidget (actionWidget);
     updateNavButtons();
   } else {
@@ -248,7 +248,7 @@ void QTMToolbar::addAction (QAction* action) {
 }
 
 void QTMToolbar::removeAction (QAction* action) {
-  if (!ENABLE_EXPERIMENTAL_TOOLBAR) {
+  if (!tmapp()->useNewToolbar()) {
     QToolBar::removeAction(action);
     return;
   }
@@ -264,7 +264,7 @@ void QTMToolbar::removeAction (QAction* action) {
 }
 
 void QTMToolbar::clear () {
-  if (!ENABLE_EXPERIMENTAL_TOOLBAR) {
+  if (!tmapp()->useNewToolbar()) {
     QToolBar::clear();
     return;
   }
@@ -290,13 +290,37 @@ void QTMToolbar::scrollBy (int dx) {
   if (nv != v) h->setValue(nv);
 }
 
+void QTMToolbar::setRightActVisible (bool v) {
+  if (v) {
+    mRightAct->setEnabled(true);
+    //mRightBtn->setText (QString::fromUtf8(">"));
+    mRightBtn->setStyleSheet ("");
+  } else {
+    mRightAct->setEnabled(false);
+    //mRightBtn->setText (QString::fromUtf8(""));
+    mRightBtn->setStyleSheet ("color: transparent;");
+  }
+}
+
+void QTMToolbar::setLeftActVisible (bool v) {
+  if (v) {
+    mLeftAct->setEnabled(true);
+    //mLeftBtn->setText (QString::fromUtf8("<"));
+    mLeftBtn->setStyleSheet ("");
+  } else {
+    mLeftAct->setEnabled(false);
+    //mLeftBtn->setText (QString::fromUtf8(""));
+    mLeftBtn->setStyleSheet ("color: transparent;");
+  }
+}
+
 void QTMToolbar::updateNavButtons () {
   if (!mScrollArea || !mLeftBtn || !mRightBtn || !mLeftAct || !mRightAct) return;
 
   QWidget* content = mScrollArea->widget();
   if (!content) {
-    mLeftBtn->setVisible(false);
-    mRightBtn->setVisible(false);
+    setLeftActVisible(false);
+    setRightActVisible(false);
     return;
   }
 
@@ -306,8 +330,8 @@ void QTMToolbar::updateNavButtons () {
   const bool needScroll = contentW > viewportW;
 
   if (!needScroll) {
-    mLeftAct->setVisible(false);
-    mRightAct->setVisible(false);
+    setLeftActVisible(false);
+    setRightActVisible(false);
     return;
   }
   
@@ -315,12 +339,12 @@ void QTMToolbar::updateNavButtons () {
   const bool atLeft  = (h->value() <= h->minimum());
   const bool atRight = (h->value() >= h->maximum());
 
-  mLeftAct->setVisible(!atLeft);
-  mRightAct->setVisible(!atRight);
+  setLeftActVisible(!atLeft);
+  setRightActVisible(!atRight);
 }
 
 bool QTMToolbar::eventFilter (QObject* watched, QEvent* event) {
-  if (!ENABLE_EXPERIMENTAL_TOOLBAR) return false;
+  if (!tmapp()->useNewToolbar()) return false;
   if (!mScrollArea) return false;
   if (watched == mScrollArea->viewport() || watched == mScrollArea->widget()) {
     if (event->type() == QEvent::Resize) {

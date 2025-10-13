@@ -86,13 +86,18 @@
 (define (get-default-unified-toolbar)
   (if (qt4-gui?) "on" "off"))
 
+(define (notify-restart var val)
+  (set-message "Restart in order to let the new setting take effect"
+               "configure graphical interface"))
+
 (define-preferences
   ("profile" "beginner" (lambda args (noop)))
   ("look and feel" "default" notify-look-and-feel)
   ("case sensitive shortcuts" "default" noop)
   ("detailed menus" "detailed" noop)
   ("buffer management" (get-default-buffer-management) notify-buffer-management)
-  ("enable tab" (get-default-enable-tab) noop)
+  ("enable tab" (get-default-enable-tab) notify-restart)
+  ("new toolbar" "on" notify-restart)
   ("complex actions" "popups" noop)
   ("interactive questions" (get-default-interactive-questions) noop)
   ("language" (get-locale-language) notify-language)
