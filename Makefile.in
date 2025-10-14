@@ -219,13 +219,13 @@ INSTALL_MANUALS:
 	@echo installed TeXmacs manual pages in $(DESTDIR)
 
 INSTALL:
-	make INSTALL_EXECUTABLES DESTDIR=$(DESTDIR)$(tmbin)
-	make INSTALL_DATA DESTDIR=$(DESTDIR)$(tmdata)
-	make INSTALL_PLUGINS DESTDIR=$(DESTDIR)$(tmdata)
-	make INSTALL_ICONS DESTDIR=$(DESTDIR)$(datadir)
-	make INSTALL_STARTUP DESTDIR=$(DESTDIR)$(bindir)
-	make INSTALL_INCLUDE DESTDIR=$(DESTDIR)$(includedir)
-	make INSTALL_MANUALS DESTDIR=$(DESTDIR)$(mandir)
+	$(MAKE) INSTALL_EXECUTABLES DESTDIR=$(DESTDIR)$(tmbin)
+	$(MAKE) INSTALL_DATA DESTDIR=$(DESTDIR)$(tmdata)
+	$(MAKE) INSTALL_PLUGINS DESTDIR=$(DESTDIR)$(tmdata)
+	$(MAKE) INSTALL_ICONS DESTDIR=$(DESTDIR)$(datadir)
+	$(MAKE) INSTALL_STARTUP DESTDIR=$(DESTDIR)$(bindir)
+	$(MAKE) INSTALL_INCLUDE DESTDIR=$(DESTDIR)$(includedir)
+	$(MAKE) INSTALL_MANUALS DESTDIR=$(DESTDIR)$(mandir)
 	@echo ----------------------------------------------------
 	@echo TeXmacs has been successfully installed
 
@@ -267,8 +267,8 @@ COPY_SOURCES:
 	$(MKDIR) ../distr/build
 	$(MKDIR) $(BUILD_DIR)
 	$(CP) * $(BUILD_DIR)/.
-	cd $(BUILD_DIR); make ACCESS_FLAGS
-	cd $(BUILD_DIR); make DISTR_CLEAN
+	cd $(BUILD_DIR); $(MAKE) ACCESS_FLAGS
+	cd $(BUILD_DIR); $(MAKE) DISTR_CLEAN
 
 COPY_SOURCES_TGZ: COPY_SOURCES COPY_GUILE
 	cd ../distr/build; tar -czf $(tm_devel).tar.gz $(tm_devel) 
@@ -318,8 +318,8 @@ GENERIC_PACKAGE: TEXMACS STRIP
 
 GENERIC_X11_PACKAGE: COPY_SOURCES COPY_GUILE
 	cd $(BUILD_DIR); ./configure --disable-qt --disable-pdf-renderer
-	cd $(BUILD_DIR); make STATIC_TEXMACS
-	cd $(BUILD_DIR); make ACCESS_FLAGS
+	cd $(BUILD_DIR); $(MAKE) STATIC_TEXMACS
+	cd $(BUILD_DIR); $(MAKE) ACCESS_FLAGS
 	$(MV) $(BUILD_DIR)/TeXmacs $(BUILD_DIR)/$(STATIC_X11)
 	cd $(BUILD_DIR); tar -czf $(STATIC_X11).tar.gz $(STATIC_X11)
 	$(MKDIR) $(GENERIC_PACKAGE_DIR)
@@ -787,8 +787,8 @@ DISTR_CLEAN: DISTCLEAN SVN_CLEAN
 .PHONY: CLEAN_DOC RDISTR DISTR RCLEAN SCLEAN DISTCLEAN SVN_CLEAN DISTR_CLEAN
 
 CLNGUILE:
-	-cd @DIRGUILE@ && make uninstall
-	-cd @DIRGUILE@ && make distclean
+	-cd @DIRGUILE@ && $(MAKE) uninstall
+	-cd @DIRGUILE@ && $(MAKE) distclean
 	-cd @DIRGUILE@ && rm -rf build
 
 ###############################################################################
