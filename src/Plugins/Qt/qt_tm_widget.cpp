@@ -219,7 +219,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   mw->setStatusBar (bar);
  
   // toolbars
-  if (tmapp()->useNewToolbar()) {
+  if (tmapp()->useNewToolbar() && !use_native_menubar) {
     menuToolBar   = new QTMToolbar ("menu toolbar", QSize (), mw);
   }
 
@@ -358,7 +358,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   sideTools->setObjectName ("sideTools");
   leftTools->setObjectName ("leftTools");
 
-  if (tmapp()->useNewToolbar()) {
+  if (tmapp()->useNewToolbar() && !use_native_menubar) {
     menuToolBar->setObjectName ("menuToolBar");
     mw->addToolBar (menuToolBar);
     mw->addToolBarBreak ();
@@ -955,7 +955,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
 
 void
 qt_tm_widget_rep::install_main_menu () {
-  if (!tmapp()->useNewToolbar()) {
+  if (!tmapp()->useNewToolbar() || use_native_menubar) {
 
     if (main_menu_widget == waiting_main_menu_widget) return;
     main_menu_widget = waiting_main_menu_widget;
