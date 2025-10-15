@@ -98,6 +98,7 @@
   ("buffer management" (get-default-buffer-management) notify-buffer-management)
   ("enable tab" (get-default-enable-tab) notify-restart)
   ("new toolbar" "on" notify-restart)
+  ("disable texmacs window positioning" "off" noop)
   ("complex actions" "popups" noop)
   ("interactive questions" (get-default-interactive-questions) noop)
   ("language" (get-locale-language) notify-language)
