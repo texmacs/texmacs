@@ -63,6 +63,7 @@ protected:
 
 #if QT_VERSION >= 0x060000
   void surfacePaintEvent (QPaintEvent *e, QWidget *surface) override;
+  bool checkDprChange();
 #else
   virtual void paintEvent (QPaintEvent* event) override;
 #endif
@@ -102,6 +103,7 @@ private:
   bool haveFirstTouchPoint;
   QTime firstTouchTime;
   bool ignoreNextTouchEvents;
+  qreal lastPixelRatio = 0.0;
 
 };
 
