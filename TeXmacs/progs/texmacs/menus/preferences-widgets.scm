@@ -826,6 +826,9 @@
         (meti (hlist // (text "Use new toolbar"))
           (toggle (set-boolean-preference "new toolbar" answer)
             (get-boolean-preference "new toolbar")))
+        (meti (hlist // (text "Disable texmacs window positioning") )
+          (toggle (set-boolean-preference "disable texmacs window positioning" answer)
+            (get-boolean-preference "disable texmacs window positioning")))
       ) ; aligned
       (glue #f #t 0 0))))
 
