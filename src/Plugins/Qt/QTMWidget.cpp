@@ -120,7 +120,9 @@ QTMWidget::scrollContentsBy (int dx, int dy) {
 void 
 QTMWidget::resizeEvent (QResizeEvent* event) {
   (void) event;
+#if QT_VERSION >= 0x060000
   checkDprChange();
+#endif
   // Is this ok?
   //coord2 s = from_qsize (event->size());
   //the_gui -> process_resize (tm_widget(), s.x1, s.x2);
