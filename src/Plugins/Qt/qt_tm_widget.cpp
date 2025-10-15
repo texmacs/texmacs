@@ -833,6 +833,9 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     case SLOT_POSITION:
     {
       check_type<coord2>(val, s);
+      if (get_user_preference("disable texmacs window positioning") == "on") {
+        break;
+      }
       coord2 p= open_box<coord2> (val);
       mainwindow()->move (to_qpoint (p));
     }

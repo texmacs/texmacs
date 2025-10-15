@@ -178,6 +178,9 @@ qt_window_widget_rep::send (slot s, blackbox val) {
     case SLOT_POSITION:
     {
       check_type<coord2>(val, s);
+      if (get_user_preference("disable texmacs window positioning") == "on") {
+        break;
+      }
       coord2 p = open_box<coord2> (val);
       if (qwid) {
         QPoint pt = to_qpoint (p);
@@ -378,6 +381,9 @@ qt_popup_widget_rep::send (slot s, blackbox val) {
     case SLOT_POSITION:
     {
       check_type<coord2>(val, s);
+      if (get_user_preference("disable texmacs window positioning") == "on") {
+        break;
+      }
       QPoint pos= to_qpoint (open_box<coord2> (val));
 #if QT_VERSION >= 0x060000
       pos= ensure_visible_position (pos, qwid->screen (), qwid->size());
