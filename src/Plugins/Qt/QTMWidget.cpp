@@ -120,6 +120,7 @@ QTMWidget::scrollContentsBy (int dx, int dy) {
 void 
 QTMWidget::resizeEvent (QResizeEvent* event) {
   (void) event;
+  checkDprChange();
   // Is this ok?
   //coord2 s = from_qsize (event->size());
   //the_gui -> process_resize (tm_widget(), s.x1, s.x2);
@@ -153,14 +154,10 @@ QTMWidget::resizeEventBis (QResizeEvent *event) {
 void
 QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
   (void) surfaceWidget;
+  if (checkDprChange()) return;
   QPainter p (surface());
   qreal pixel_ratio= surface()->devicePixelRatio();
   QSize sz= tm_widget()->backingPixmap->size();
-  if (pixel_ratio * surface()->size () != sz) {
-    QMetaObject::invokeMethod (this, &QTMWidget::devicePixelRatioChanged,
-			       Qt::QueuedConnection);
-     return;
-   }
   QRegion reg= event->region();
   QRegion::const_iterator it;
   QRectF qr;
@@ -172,6 +169,21 @@ QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
 			  pixel_ratio * qr.width(),
 			  pixel_ratio * qr.height()));
   }
+}
+
+bool
+QTMWidget::checkDprChange() {
+  if (lastPixelRatio == 0.0) {
+    lastPixelRatio = surface()->devicePixelRatio();
+    return false;
+  }
+  if (lastPixelRatio == surface()->devicePixelRatio()) {
+    return false;
+  }
+  lastPixelRatio = surface()->devicePixelRatio();
+  cout << "Device pixel ratio changed to " << lastPixelRatio << LF;
+  devicePixelRatioChanged();
+  return true;
 }
 
 void
