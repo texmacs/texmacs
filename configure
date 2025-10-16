@@ -9646,7 +9646,7 @@ ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
       as_fn_append ax_args " '--without-guile-readline'"
       as_fn_append ax_args " 'CPPFLAGS=${CPPFLAGS}'"
       as_fn_append ax_args " 'LDFLAGS=${LDFLAGS}'"
-      as_fn_append ax_args " 'CFLAGS=-std=c99 -Wno-error'"
+      as_fn_append ax_args " 'CFLAGS=-std=gnu99 -Wno-error'"
 
       # New options that may need to be merged with existing options.
       ax_candidate="--disable-shared"
