@@ -194,6 +194,10 @@ string get_default_theme () {
 }
 
 url texmacs_get_application_directory () {
+  // sometimes, the bin path is set in TEXMACS_BIN_PATH
+  string bin_path;
+  if (texmacs_getenv ("TEXMACS_BIN_PATH", bin_path))
+    return url (bin_path) * "..";
 #ifdef OS_GNU_LINUX
   // use proc self exe to get the path of the executable
   char path[PATH_MAX+1];
