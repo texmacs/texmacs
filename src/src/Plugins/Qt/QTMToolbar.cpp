@@ -30,7 +30,12 @@ QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
   , mLayout(nullptr)
   , mLeftBtn(nullptr)
   , mRightBtn(nullptr)
+  , mCurrentMenu(nullptr)
 {  
+
+  // strong focus
+  setFocusPolicy (Qt::StrongFocus);
+
   if (!iconSize.isNull()) {
     setIconSize (iconSize);
     setFixedHeight (iconSize.height() + QTMTOOLBAR_MARGIN * 2);
@@ -214,9 +219,17 @@ void QTMToolbar::addAction (QAction* action) {
     // if the action is a menu, the tool button should be a menu button
     if (action->menu()) {
       button->setPopupMode (QToolButton::InstantPopup);
-      connect (action->menu(), &QMenu::aboutToHide, [button]() {
-        QTMWidget::setFocusToLast();
+      QMenu *actionMenu = action->menu();
+      connect (actionMenu, &QMenu::aboutToShow, [this, actionMenu]() {
+        mCurrentMenu = actionMenu;
       });
+      connect (actionMenu, &QMenu::aboutToHide, [this, actionMenu]() {
+        if (mCurrentMenu == actionMenu) {
+          mCurrentMenu = nullptr;
+          QTMWidget::setFocusToLast();
+        }
+      });
+      actionMenu->installEventFilter (this);
     }
 #else
     (void) button;
@@ -346,6 +359,60 @@ void QTMToolbar::updateNavButtons () {
 bool QTMToolbar::eventFilter (QObject* watched, QEvent* event) {
   if (!tmapp()->useNewToolbar()) return false;
   if (!mScrollArea) return false;
+
+  QMenu *menu = qobject_cast<QMenu*> (watched);
+  if (menu && mCurrentMenu && mCurrentMenu == menu && event->type() == QEvent::MouseMove) {
+
+    QToolButton *currentButton = nullptr;
+    // look for the button that opened the menu
+    for (int i = 0; i < mLayout->count(); i++) {
+      QToolButton* button = qobject_cast<QToolButton*>(mLayout->itemAt(i)->widget());
+      if (!button) continue;
+      QAction* action = button->defaultAction();
+      if (!action) continue;
+      if (action->menu() == menu) {
+        currentButton = button;
+        break;
+      }
+    }
+
+    if (!currentButton) return false;
+
+    // look if the mouse is hovering a QToolButton. for that, get all the children of the QTMToolbar
+    QPoint globalPos = QCursor::pos();
+    for (int i = 0; i < mLayout->count(); i++) {
+      QToolButton* button = qobject_cast<QToolButton*>(mLayout->itemAt(i)->widget());
+      if (!button) continue;
+      // get the action of the button
+      QAction* action = button->defaultAction();
+      if (!action) continue;
+      if (!action->menu()) continue;
+      if (action->menu() == menu) continue;
+      // if the mouse is hovering the button
+      QPoint buttonPos = button->mapFromGlobal(globalPos);
+      if (button->rect().contains(buttonPos)) {
+        qDebug() << "QTMToolbar: hovering button with menu, closing current menu";
+        
+        // send a mouse click event outside to close the current menu
+        QPoint outsidePos = menu->mapToGlobal(QPoint(-9999, -9999));
+        QMouseEvent mePress (QEvent::MouseButtonPress, QPoint(-9999, -9999), outsidePos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+        QCoreApplication::sendEvent (menu, &mePress);
+        QMouseEvent meRelease (QEvent::MouseButtonRelease, QPoint(-9999, -9999), outsidePos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+        QCoreApplication::sendEvent (menu, &meRelease);
+
+        // send a mouse click event to the hovered button (with globalPos)
+        QPoint buttonLocalPos = button->mapFromGlobal(globalPos);
+        QMouseEvent bePress (QEvent::MouseButtonPress, buttonLocalPos, globalPos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+        QCoreApplication::sendEvent (button, &bePress);
+        QMouseEvent beRelease (QEvent::MouseButtonRelease, buttonLocalPos, globalPos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+        QCoreApplication::sendEvent (button, &beRelease);
+
+        mCurrentMenu = action->menu();
+        return true;
+      }
+    }
+  }
+
   if (watched == mScrollArea->viewport() || watched == mScrollArea->widget()) {
     if (event->type() == QEvent::Resize) {
       updateNavButtons();
