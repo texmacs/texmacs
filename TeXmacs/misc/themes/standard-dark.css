@@ -329,19 +329,7 @@ Qt4QToolButton {
 QToolButton:hover,
 #mainToolBar QToolButton:hover,
 #modeToolBar QToolButton:hover,
-#focusToolBar QToolButton:hover {
-    background: none;
-    /* FIXME: bug under MacOS when using a color */
-}
-
-Qt4QToolButton:hover,
-Qt4QToolBar#mainToolBar QToolButton:hover,
-Qt4QToolBar#modeToolBar QToolButton:hover,
-Qt4QToolBar#focusToolBar QToolButton:hover,
-NomacQToolButton:hover,
-NomacQToolBar#mainToolBar QToolButton:hover,
-NomacQToolBar#modeToolBar QToolButton:hover,
-NomacQToolBar#focusToolBar QToolButton:hover,
+#focusToolBar QToolButton:hover,
 #menuToolBar QToolButton:hover {
     background: #585858;
     border: 0px;
