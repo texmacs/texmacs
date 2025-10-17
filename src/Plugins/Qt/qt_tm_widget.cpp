@@ -255,10 +255,12 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
                                                      command(), true);
   
   if (tm_style_sheet == "") {
-    mainToolBar->setStyle (qtmstyle ());
-    modeToolBar->setStyle (qtmstyle ());
-    focusToolBar->setStyle (qtmstyle ());
-    userToolBar->setStyle (qtmstyle ());
+    if (!tmapp()->useNewToolbar()) {
+      mainToolBar->setStyle (qtmstyle ());
+      modeToolBar->setStyle (qtmstyle ());
+      focusToolBar->setStyle (qtmstyle ());
+      userToolBar->setStyle (qtmstyle ());
+    }
     sideTools->setStyle (qtmstyle ());
     leftTools->setStyle (qtmstyle ());
     bottomTools->setStyle (qtmstyle ());
