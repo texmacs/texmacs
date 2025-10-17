@@ -391,7 +391,6 @@ bool QTMToolbar::eventFilter (QObject* watched, QEvent* event) {
       // if the mouse is hovering the button
       QPoint buttonPos = button->mapFromGlobal(globalPos);
       if (button->rect().contains(buttonPos)) {
-        qDebug() << "QTMToolbar: hovering button with menu, closing current menu";
         
         // send a mouse click event outside to close the current menu
         QPoint outsidePos = menu->mapToGlobal(QPoint(-9999, -9999));
