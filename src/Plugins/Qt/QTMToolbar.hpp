@@ -39,7 +39,6 @@ public:
 
 protected:
   bool eventFilter (QObject* watched, QEvent* event) override;
-
   void setRightActVisible (bool v);
   void setLeftActVisible (bool v);
 
@@ -50,6 +49,7 @@ private:
   QToolButton* mRightBtn;
   QAction*     mLeftAct;
   QAction*     mRightAct;
+  QMenu*       mCurrentMenu;
 
   void scrollBy (int dx);
   void updateNavButtons ();
