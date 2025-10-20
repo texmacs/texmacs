@@ -12,10 +12,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (r-serialize lan t)
-  (with u (pre-serialize lan t)
-    (with s (texmacs->code u)
-      (string-append (escape-verbatim 
-		      (string-replace s "\n" ";;")) "\n"))))
+  (if (run-via-jupyter? "r")
+    (jupyter-serialize lan t)
+    (with u (pre-serialize lan t)
+        (with s (texmacs->code u)
+        (string-append (escape-verbatim
+    		      (string-replace s "\n" ";;")) "\n")))))
 
 (define (r-launcher)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/r")
