@@ -30129,12 +30129,12 @@ printf "%s\n" "#define AC_QT_MAJOR_VERSION $QT_MAJOR" >>confdefs.h
 
 
   test "0$QT_MAJOR" -eq 4 &&
-  if [[ "-std=c++11" =~ $(echo '^-Wl,') ]]
-  then CXXFLAGS+=" -std=c++11"
-  elif [[ "-std=c++11" =~ $(echo '^-l') ]]
+  if [[ "-std=c++0x" =~ $(echo '^-Wl,') ]]
+  then CXXFLAGS+=" -std=c++0x"
+  elif [[ "-std=c++0x" =~ $(echo '^-l') ]]
   then
   unset STRIP_ALL_ARGS_list
-  for STRIP_ALL_ARGS_arg in "-std=c++11"
+  for STRIP_ALL_ARGS_arg in "-std=c++0x"
   do  while [[ $CXXFLAGS != $STRIP_ALL_ARGS_list ]]
       do STRIP_ALL_ARGS_list=$CXXFLAGS
 
@@ -30155,12 +30155,12 @@ printf "%s\n" "#define AC_QT_MAJOR_VERSION $QT_MAJOR" >>confdefs.h
   done
   unset ${!STRIP_ALL_ARGS_*}
 
-       CXXFLAGS+=" -std=c++11"
+       CXXFLAGS+=" -std=c++0x"
   else
-    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])-std=c++11($|[[:space:]])") ]]
-    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -std=c++11" >&5
-printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++11" >&2;}
-    else CXXFLAGS+=" -std=c++11"
+    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])-std=c++0x($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -std=c++0x" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++0x" >&2;}
+    else CXXFLAGS+=" -std=c++0x"
     fi
   fi
 
