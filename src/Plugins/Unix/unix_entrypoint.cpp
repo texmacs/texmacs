@@ -238,7 +238,7 @@ int main (int argc, char** argv) {
 #endif
   // workaround for bug #66718 (Copy/paste not functioning in GNOME (Wayland))
   if (get_env ("WAYLAND_DISPLAY") != ""
-      && occurs(get_env ("XDG_CURRENT_DESKTOP"), string("GNOME")))
+      && occurs("GNOME",get_env ("XDG_CURRENT_DESKTOP")))
     set_env ("QT_QPA_PLATFORM", "xcb");
 #endif
   return texmacs_entrypoint (argc, argv);
