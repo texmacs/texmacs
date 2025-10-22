@@ -28,8 +28,15 @@
   When sufficient funding is available, then we also organize meetings of the
   <TeXmacs> team. The <hlink|first international <TeXmacs>
   workshop|http://magix.lix.polytechnique.fr/magix/workshop/workshop.en.html>
-  was organized during February 2012 at Albufeira, Portugal. We may also have
-  funding for individual visits at École polytechnique.
+  was organized during February 2012 at Albufeira, Portugal. The second one
+  was organized on July 2025 in Great Missenden, UK and <hlink|the
+  third|../workshops/frejus2026.en.tm> will be organized in Fréjus, France on
+  July 2026.
+
+  Please visit the <hlink|Workshops page|../workshops/workshops.en.tm> for
+  more information.
+
+  We may also have funding for individual visits at École polytechnique.
 
   <section*|Current members of the team>
 
