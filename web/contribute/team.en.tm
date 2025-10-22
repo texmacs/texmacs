@@ -37,14 +37,17 @@
     <tabular*|<tformat|<table|<row|<cell|<hlink|<image|team-miguel.jpg||150px||>|team-miguel.en.tm>>|<cell|<hlink|<image|team-joris.jpg||150px||>|team-joris.en.tm>>|<cell|<hlink|<image|team-vincent.jpg||150px||>|team-vincent.en.tm>>>|<row|<cell|<hlink|Miguel
     de Benito Delgado|team-miguel.en.tm>>|<cell|<hlink|Joris van der
     Hoeven|team-joris.en.tm>>|<cell|<hlink|Vincent
-    Douce|team-vincent.en.tm>>>>>>
+    Douce|team-vincent.en.tm>>>|<row|<cell|<hlink|<image|team-massimiliano.jpg||150px||>|team-massimiliano.en.tm>>|<cell|<image|team-sadhen.jpg||150px||>>|<cell|<image|team-robin.jpg||150px||>>>|<row|<cell|<hlink|Massimiliano
+    Gubinelli|team-massimiliano.en.tm>>|<cell|<hlink|Darcy
+    Shen|team-sadhen.en.tm>>|<cell|<hlink|Robin Wils|team-robin.en.tm>>>>>>
   </center>
 
+  <section*|Former members>
+
   <\center>
-    <tabular*|<tformat|<table|<row|<cell|<hlink|<image|team-massimiliano.jpg||150px||>|team-massimiliano.en.tm>>|<cell|<hlink|<image|team-francois.jpg||150px||>|team-francois.en.tm>>|<cell|<hlink|<image|team-denis.jpg||150px||>|team-denis.en.tm>>|<cell|<hlink|<image|team-sadhen.jpg||150px||>|team-sadhen.en.tm>>>|<row|<cell|<hlink|Massimiliano
-    Gubinelli|team-massimiliano.en.tm>>|<cell|<hlink|François
-    Poulain|team-francois.en.tm>>|<cell|<hlink|Denis
-    Raux|team-denis.en.tm>>|<cell|<hlink|Darcy Shen|team-sadhen.en.tm>>>>>>
+    <tabular*|<tformat|<table|<row|<cell|<hlink|<image|team-denis.jpg||150px||>|team-denis.en.tm>>|<cell|<hlink|<image|team-francois.jpg||150px||>|team-francois.en.tm>>>|<row|<cell|<hlink|Denis
+    Raux|team-denis.en.tm>>|<cell|<hlink|François
+    Poulain|team-francois.en.tm>>>>>>
   </center>
 
   <tmdoc-copyright|2018|Joris van der Hoeven>
