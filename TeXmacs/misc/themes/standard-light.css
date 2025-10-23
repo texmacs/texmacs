@@ -65,19 +65,19 @@ QMenuBar::item:selected {
     border-left: 1px solid #B0B0B0;
 }
 
-QToolBar, #mainToolBar QWidget, QStatusBar QWidget {
+QToolBar, #mainToolBar QWidget, QStatusBar QWidget, #mainToolBar QToolButton {
     background: #C0C0C0;
 }
 
-#modeToolBar, #modeToolBar QWidget {
+#modeToolBar, #modeToolBar QWidget, #modeToolBar QToolButton {
     background: #D4D4D4;
 }
 
-#focusToolBar, #focusToolBar QWidget {
+#focusToolBar, #focusToolBar QWidget, #focusToolBar QToolButton {
     background: #E8E8E8;
 }
 
-#userToolBar, #userToolBar QWidget {
+#userToolBar, #userToolBar QWidget, #userToolBar QToolButton {
     background: #F8F8F8;
 }
 
@@ -317,7 +317,6 @@ QPushButton:focus {
 QToolButton,
 #mainToolBar QToolButton,
 #modeToolBar QToolButton {
-    background: none;
     padding-left: 0px;
     padding-right: 0px;
 }

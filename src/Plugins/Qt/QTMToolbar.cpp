@@ -48,7 +48,8 @@ QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
   if (tmapp()->useNewToolbar()) {
     mLeftBtn = new QToolButton (this);
     mLeftBtn->setText (QString::fromUtf8("<"));
-    mLeftBtn->setToolTip (tr("Scroll left"));
+    mLeftBtn->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Expanding);
+    mLeftBtn->setFixedWidth (16);
     mLeftBtn->setAutoRepeat (true);
     mLeftBtn->setAutoRepeatDelay (250);
     mLeftBtn->setAutoRepeatInterval (50);
@@ -81,7 +82,8 @@ QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
 
     mRightBtn = new QToolButton (this);
     mRightBtn->setText (QString::fromUtf8(">"));
-    mRightBtn->setToolTip (tr("Scroll right"));
+    mRightBtn->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Expanding);
+    mRightBtn->setFixedWidth (16);
     mRightBtn->setAutoRepeat (true);
     mRightBtn->setAutoRepeatDelay (250);
     mRightBtn->setAutoRepeatInterval (50);
@@ -268,6 +270,7 @@ void QTMToolbar::addAction (QAction* action) {
   
   // add the button to the toolbar, and on Android to the scrollable layout
   if (tmapp()->useNewToolbar()) {
+    actionWidget->setSizePolicy (QSizePolicy::Preferred, QSizePolicy::Expanding);
     mLayout->addWidget (actionWidget);
     updateNavButtons();
   } else {
