@@ -28,7 +28,7 @@
 
   <\center>
     <tabular*|<tformat|<table|<row|<cell|<hlink|<image|missenden.jpg||150px||>|>>|<cell|<hlink|<image|falesia.jpg||150px||>|http://www.falesia.com/en/hotel-overview.html><hlink||team-francois.en.tm>>>|<row|<cell|<hlink|Great
-    Missenden, England, 2025|https://www.lix.polytechnique.fr/max/max-web/max/events/2025/texmacs-workshop-2025/workshop.en.html>>|<cell|<hlink|Albufeira,
+    Missenden, England, 2025|missenden2025.en.tm>>|<cell|<hlink|Albufeira,
     Portugal, 2012|https://magix.lix.polytechnique.fr/magix/workshop/workshop.en.html>>>>>>
   </center>
 
