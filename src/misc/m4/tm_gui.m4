@@ -36,7 +36,7 @@ AC_DEFUN([TM_GUI],[
             fi
             # Qt Plugins list
             if test $QT_MAJOR -ge 5 
-            then QT_PLUGINS_LIST="imageformats,platforms"
+            then QT_PLUGINS_LIST="imageformats,platforms,iconengines"
             else QT_PLUGINS_LIST="accessible,imageformats"
             fi
          fi
