@@ -57,9 +57,11 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 def main():
-    # According to doc, SIGINT is sent, but QProcess.terminate sends SIGTERM
-    # Doesn't seem to work anyhow
-    signal.signal(signal.SIGINT, signal_handler)
+    # According to the documentation (Help->Interfacing->Miscellaneous features), SIGINT is sent
+    # when pressing the "stop" icon to "Interrupt execution".
+    # Upon pressing "Close session" (scissors icon), `QProcess.terminate` is called to send SIGTERM.
+    # However, no time is given to the plugin process to catch this signal (bug #66840).
+    #signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
     
     # TeXmacs seems to only accept one data block at plugin startup:
