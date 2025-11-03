@@ -22,8 +22,8 @@
 #if defined(_WIN32) && defined (TEXMACS_FIX_1_GNUTLS)
 #define GNUTLS_INTERNAL_BUILD
 #endif
-#include <gnutls/gnutls.h>
 #include <gnutls/x509.h>
+#include <gnutls/abstract.h>
 #include <gnutls/crypto.h>
 #include "client_server.hpp"
 
@@ -254,138 +254,147 @@ as_string_gnutls_crt (const gnutls_x509_crt_t crt) {
  * deinit by the user
  */
 static gnutls_x509_crt_t
-tm_get_cert (const gnutls_datum_t* cert_data) {
-	string cert_info;
+tm_get_cert (const gnutls_datum_t* cert_data, gnutls_x509_crt_fmt_t fmt) {
   gnutls_x509_crt_t cert = NULL;
 
-  if (gnutls_x509_crt_init(&cert) == 0 &&
-      gnutls_x509_crt_import(cert, cert_data,
-        GNUTLS_X509_FMT_DER) ==
-      0) {
+  if (gnutls_x509_crt_init (&cert) == 0 &&
+      gnutls_x509_crt_import (cert, cert_data, fmt) == 0) {
     return cert;
   }
   return NULL;
 }
 
-__attribute__((unused)) static int
-tm_trust_cert () {
-  if (!server_certificate) {
+static gnutls_x509_crt_t
+tm_get_cert (const string cert_str, gnutls_x509_crt_fmt_t fmt) {
+	c_string _cert_str (cert_str);
+
+  gnutls_datum_t cert_data {
+    .data= reinterpret_cast<unsigned char*> ((char *) _cert_str),
+    .size= (unsigned int) N (cert_str),
+  };
+
+  return tm_get_cert (&cert_data, fmt);
+}
+
+static string
+tm_cert_as_pem_string (gnutls_x509_crt_t cert) {
+  gnutls_datum_t out= {NULL, 0};
+  string pem;
+  int ret;
+
+  ret = gnutls_x509_crt_export2 (cert, GNUTLS_X509_FMT_PEM, &out);
+  if (ret < 0) {
+    return "";
+  }
+
+  pem = as_string_gnutls_datum (out);
+  gnutls_free (out.data);
+
+  return pem;
+}
+
+static int
+trust_certificate (gnutls_x509_crt_t crt, string crt_pem) {
+  bool deinit_cert= false;
+
+  if (!crt) {
+    if (N (crt_pem) == 0) {
+      return GNUTLS_E_CERTIFICATE_ERROR;
+    }
+
+    crt = tm_get_cert (crt_pem, GNUTLS_X509_FMT_PEM);
+    deinit_cert = true;
+  }
+
+  if (!crt) {
     return GNUTLS_E_CERTIFICATE_ERROR;
   }
 
   int ret = gnutls_certificate_set_x509_trust (tm_x509_client_credentials,
-      &server_certificate, 1);
+      &crt, 1);
   if (ret < 0) {
     return ret;
   }
 
-  // write to our custome trust store
-  gnutls_datum_t out;
-  ret = gnutls_x509_crt_export2(server_certificate, GNUTLS_X509_FMT_PEM, &out);
-  if (ret < 0) {
-    return ret;
-  }
-
-  if (!append_string(tm_x509_trusted_cas_path, as_string_gnutls_datum (out))) {
-    return ret;
-  }
-
-  gnutls_free(out.data);
-
-  // cert is trusted, we can safely remove local reference
-  gnutls_x509_crt_deinit(server_certificate);
-  server_certificate = NULL;
-}
-
-static bool
-tm_trust_cert (const string& cert_serial) {
-  char serial[128] = {0};
-  size_t serial_size = sizeof (serial);
-
-  int ret = gnutls_x509_crt_get_serial (server_certificate, serial, &serial_size);
-  if (ret < 0) {
-    io_warning << "cannot get server cert " << gnutls_strerror (ret);
-    return false;
-  }
-
-  string server_cert_serial (serial);
-  GNUTLS_LOG("trusting cert " * cert_serial * " and last server cert is"
-      * server_cert_serial);
-
-  if (server_cert_serial != cert_serial) {
-    io_warning << "cannot trust cert " << cert_serial <<
-      ", server cert remembered was " << server_cert_serial;
-    return false;
-  }
-
-  ret = tm_trust_cert();
-  if (ret < 0) {
-    io_warning << "cannot trust cert " << cert_serial <<
-      gnutls_strerror (ret);
-    return false;
-  }
-
-  return true;
-}
-
-static int
-certificate_client_verification_callback (gnutls_session_t session) {
-  unsigned int status;
-  int ret;
-  unsigned int cert_list_size = 0;
-
-  if (gnutls_certificate_type_get (session) != GNUTLS_CRT_X509) {
-    return GNUTLS_E_CERTIFICATE_ERROR;
-  }
-
-  /* This verification function uses the trusted CAs in the credentials
-   * structure. So you must have installed one or more CA certificates.
-   * 
-   * TODO: use gnutls_certificate_verify_peers3 to check hostname, but
-   * we need access to it here, through user pointer for example:
-   * gnutls_session_get_ptr(session), set with gnutls_transport_set_ptr
-   * ret = gnutls_certificate_verify_peers3 (session, s->hostname, &status);
-   */
-  ret = gnutls_certificate_verify_peers2 (session, &status);
-  if (ret < 0) {
-      GNUTLS_LOG("Could not verify peer certificate due to an error");
-    return GNUTLS_E_CERTIFICATE_ERROR;
-  }
-
-  const gnutls_datum_t* cert_list =
-    gnutls_certificate_get_peers (session, &cert_list_size);
-  if (cert_list_size < 1) {
-    GNUTLS_LOG("Could not get peer certificate info");
-    return GNUTLS_E_CERTIFICATE_ERROR;
-  }
-
-  gnutls_x509_crt_t crt = tm_get_cert (&cert_list[0]);
-  gnutls_datum_t info;
-
-  ret = gnutls_x509_crt_print (crt,
-      GNUTLS_CRT_PRINT_ONELINE,
-      &info);
-  GNUTLS_LOG("Server certificate: " * as_string_gnutls_datum (info));
-  gnutls_free(info.data);
-
-  if (status) {
-    gnutls_datum_t txt;
-    ret = gnutls_certificate_verification_status_print (status,
-        GNUTLS_CRT_X509, &txt, 0);
-    if (ret >= 0) {
-      GNUTLS_LOG("verification error (" * as_string (status) * "): " 
-        * as_string_gnutls_datum (txt, true));
-
-      server_certificate = crt;
-
-      gnutls_free (txt.data);
+  // write to our custom trust store
+  if (N (crt_pem) == 0) {
+    gnutls_datum_t out;
+    ret = gnutls_x509_crt_export2 (crt, GNUTLS_X509_FMT_PEM, &out);
+    if (ret < 0) {
+      return ret;
     }
-    return GNUTLS_E_CERTIFICATE_ERROR;
+
+    crt_pem = as_string_gnutls_datum (out);
+    gnutls_free (out.data);
   }
 
-  GNUTLS_LOG("Peer passed certificate verification");
+  if (!append_string (tm_x509_trusted_cas_path, crt_pem)) {
+    return ret;
+  }
 
-  /* notify gnutls to continue handshake normally */
+  if (deinit_cert) gnutls_x509_crt_deinit (crt);
+
+  return 0;
+}
+
+bool
+trust_certificate (const string& crt_pem) {
+  return trust_certificate (NULL, crt_pem) == 0;
+}
+
+static int cert_out_callback (gnutls_x509_crt_t cert,
+    gnutls_x509_crt_t issuer,
+    gnutls_x509_crl_t crl,
+    unsigned int verification_output)
+{
+  (void) crl;
+  gnutls_datum_t tmp= {NULL,0}, txt= {NULL,0};
+  int ret;
+
+  GNUTLS_LOG ("Printing full certificate path validation to trust root.");
+
+  GNUTLS_LOG ("\tCertificate:\n" * as_string_gnutls_crt (cert));
+
+  if (issuer != NULL) {
+    GNUTLS_LOG ("\tIssuer Certificate:\n" * as_string_gnutls_crt (issuer));
+  }
+
+  if (verification_output) {
+    GNUTLS_LOG ("\tNot Verified");
+  } else {
+    GNUTLS_LOG ("\tVerified");
+  }
+
+  ret = gnutls_certificate_verification_status_print (verification_output,
+      GNUTLS_CRT_X509, &txt, 0);
+  if (ret < 0) {
+    GNUTLS_ERR_LOGE (ret, "gnutls_certificate_verification_status_print");
+    return 1;
+  }
+
+  GNUTLS_LOG ("verification status (" * as_string (verification_output) * "): "
+      * as_string_gnutls_datum (txt));
+
+  ret = gnutls_x509_crt_export2 (cert, GNUTLS_X509_FMT_DER, &tmp);
+  if (ret < 0) {
+    gnutls_free (txt.data);
+    GNUTLS_ERR_LOGW (ret, "gnutls cert copy (export der)");
+    return 1;
+  }
+
+  ret = gnutls_x509_crt_init (&server_certificate);
+  if (ret < 0) {
+    gnutls_free (txt.data);
+    GNUTLS_ERR_LOGW (ret, "gnutls cert copy (init)");
+    return 1;
+  }
+
+  ret = gnutls_x509_crt_import (server_certificate, &tmp ,GNUTLS_X509_FMT_DER);
+  if (ret < 0) {
+    GNUTLS_ERR_LOGW (ret, "gnutls cert copy (import der)");
+  }
+
+  gnutls_free (txt.data);
   return 0;
 }
 
@@ -782,7 +791,7 @@ tls_client_contact_rep::handshake (gnutls_session_t s) {
     int ret = msgBox.exec();
     switch (ret) {
       case QMessageBox::Yes:
-        ret = tm_trust_cert();
+        ret = trust_certificate (server_certificate, GNUTLS_X509_FMT_PEM);
         if (ret < 0) {
           io_warning << "cannot get server cert " << gnutls_strerror (ret);
           break;
@@ -835,8 +844,8 @@ tls_client_contact_rep::start (int io2) {
         << " for GnuTLS session of client " << io << "\n";
   }
 
-  gnutls_session_set_verify_function(s,
-      certificate_client_verification_callback);
+  gnutls_session_set_verify_cert (s, NULL, 0);
+  gnutls_session_set_verify_output_function (s, cert_out_callback);
   gnutls_credentials_set (s, GNUTLS_CRD_CERTIFICATE,
       tm_x509_client_credentials);
 
@@ -1006,6 +1015,21 @@ srp_verifier_and_salt (string pseudo, string passwd) {
 string hash_password_pbkdf2 (string passwd, string salt) {
   (void) passwd; (void) salt;
   return string("");
+}
+
+string
+certificate_path () {
+  return "";
+}
+
+bool
+certificate_present () {
+  return true;
+}
+
+bool
+trust_certificate (const string& crt_pem) {
+  return true;
 }
 
 #endif // USE_GNUTLS

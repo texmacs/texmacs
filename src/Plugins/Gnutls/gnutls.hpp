@@ -12,6 +12,7 @@
 
 #ifndef GNUTLS_HPP
 #define GNUTLS_HPP
+#include "hashmap.hpp"
 #include "tm_contact.hpp"
 
 #include <gnutls/gnutls.h>
@@ -58,11 +59,22 @@
 #define MAC_SHA256_ITER_COUNT 600000
 #define MAC_SHA256_BYTE_SIZE 32
 
+#define PRIVKEY_ALGO GNUTLS_PK_EDDSA_ED25519
+#define PRIVKEY_SEC_PARAM GNUTLS_SEC_PARAM_HIGH
+#define PRIVKEY_OUTPUT_BUFSIZE 65536
+
+#define CRT_SERIAL_SIZE 20
+
 /******************************************************************************
 * Test if GnuTLS is present
 ******************************************************************************/
 
 bool gnutls_present ();
+
+/******************************************************************************
+ * X.509 authentication
+ ******************************************************************************/
+bool trust_certificate (const string& crt_pem);
 
 /******************************************************************************
 * TLS contacts
