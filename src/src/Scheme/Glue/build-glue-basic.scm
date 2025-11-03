@@ -672,7 +672,7 @@
   (client-start legacy_client_start (int string))
   (client-stop client_stop (void int))
   (client-read client_read (string int))
-  (client-write client_write (void int string))
+  (client-write client_write (int int string))
   (enter-secure-mode enter_secure_mode (void int))
 
   ;; connections to extern systems

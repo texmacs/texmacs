@@ -208,9 +208,10 @@ client_read (int fd) {
   return "";
 }
 
-void
+int
 client_write (int fd, string s) {
   io_error << "sockets are not implemented";
+  return -1;
 }
 
 void

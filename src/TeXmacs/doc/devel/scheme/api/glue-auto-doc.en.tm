@@ -4815,7 +4815,7 @@ source code.
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|client_write> which returns
-    <scm|void>.
+    <scm|int>.
   </explain>
 
   <\explain>
