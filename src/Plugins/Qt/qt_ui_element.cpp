@@ -1068,7 +1068,7 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
       typedef quartet<command, array<string>, array<string>, bool> T;
       T  x = open_box<T>(load);
       qwid = new QTMListView (x.x1, to_qstringlist(x.x2), to_qstringlist(x.x3),
-                              x.x4, false, false, parent_widget);
+                              x.x4, true, false, parent_widget);
     }
       break;
 
