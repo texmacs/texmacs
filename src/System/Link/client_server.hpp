@@ -18,7 +18,21 @@
 #include "server_log.hpp"
 #include "gnutls.hpp"
 
+// Error codes
+const int TM_NET_SUCCESS = 0;
+const int TM_NET_WRONG_ARGUMENTS = -1;
+const int TM_NET_INVALID_HOST = -10;
+const int TM_NET_INVALID_PORT = -11;
+const int TM_NET_INTERNAL_ERROR = -20;
+const int TM_NET_CONTACT_DEAD = -60;
+const int TM_NET_WRONG_PROTOCOL = -70;
+const int TM_NET_NO_GNUTLS = -100;
+const int TM_NET_CONNECTION_FAILED = -120;
+const int TM_NET_SESSION_INACTIVE = -1024;
+
 // TeXmacs server and client
+
+void   server_define_error_codes ();
 void   server_start ();
 void   server_stop ();
 string server_read (int fd);
