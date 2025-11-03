@@ -50,11 +50,13 @@ server_log_write (int level, string m) {
   static const string uid= as_string ((int) getuid ());
   static const string prefix= "pid=" * pid * ", uid=" * uid * ", ";
   string msg= prefix * m;
-  if (!is_server ())
+  string date= get_date (get_locale_language (), "yyyy-MM-dd, HH:mm:ss");
+  if (!is_server ()) {
+    server_get_stream (level) << date << ", " << msg << "\n";
     return;
+  }
   static syslog_handler handler;
   server_log_ensure_initialized ();
-  string date= get_date (get_locale_language (), "yyyy-MM-dd, HH:mm:ss");
   c_string s (msg);
   c_string d (date);
   static bool warned= false;
@@ -62,9 +64,10 @@ server_log_write (int level, string m) {
     io_warning << "server log is not active";
     warned= true;
   }
-  if (server_log_active)
+  if (server_log_active && !isatty (fileno (stdout)))
     syslog (level, "%s", (char*) s);
-  debug_io << "server, " << date << ", " << msg << "\n";
+  else
+    server_get_stream (level) << date << ", " << msg << "\n";
 }
 #endif
 
@@ -98,22 +101,25 @@ server_log_write (int level, string m) {
   static const string uid= as_string ((int) getuid ());
   static const string prefix= "pid=" * pid * ", uid=" * uid * ", ";
   string msg= prefix * m;
-  if (!is_server ())
+  string date= get_date (get_locale_language (), "yyyy-MM-dd, HH:mm:ss");
+  if (!is_server ()) {
+    server_get_stream (level) << date << ", " << msg << "\n";
     return;
+  }
   bool warned= false;
   if (!server_log_active && !warned) {
     io_warning << "server log is not active";
     warned= true;
   }
-  string date= get_date (get_locale_language (), "yyyy-MM-dd, HH:mm:ss");
   c_string s (msg);
   c_string d (date);
-  if (server_log_active) {
+  if (server_log_active && !isatty (fileno (stdout))) {
     if (level >= 5)
-      os_log (_os_log, "%s", (char*) s);
+      os_log (_os_log, "%{public}s", (char*) s);
     else
-      os_log_error (_os_log, "%s", (char*) s);
+      os_log_error (_os_log, "%{public}s", (char*) s);
+  } else {
+    server_get_stream (level) << date << ", " << msg << "\n";
   }
-  debug_io << "server, " << date << ", " << msg << "\n";
 }
 #endif
