@@ -120,6 +120,12 @@ extern tm_ostream io_warning;
 extern tm_ostream widkit_warning;
 extern tm_ostream bibtex_warning;
 
+extern tm_ostream io_emergency;
+extern tm_ostream io_alert;
+extern tm_ostream io_critical;
+extern tm_ostream io_notice;
+extern tm_ostream io_info;
+
 extern tm_ostream debug_std;
 extern tm_ostream debug_qt;
 extern tm_ostream debug_aqua;
