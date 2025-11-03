@@ -469,6 +469,12 @@ tm_ostream io_warning      = debug_ostream ("io-warning");
 tm_ostream widkit_warning  = debug_ostream ("widkit-warning");
 tm_ostream bibtex_warning  = debug_ostream ("bibtex-warning");
 
+tm_ostream io_emergency     = debug_ostream ("io-emergency");
+tm_ostream io_alert         = debug_ostream ("io-alert");
+tm_ostream io_critical      = debug_ostream ("io-critical");
+tm_ostream io_notice        = debug_ostream ("io-notice");
+tm_ostream io_info          = debug_ostream ("io-info");
+
 tm_ostream debug_std       = debug_ostream ("debug-std");
 tm_ostream debug_qt        = debug_ostream ("debug-qt");
 tm_ostream debug_aqua      = debug_ostream ("debug-aqua");
