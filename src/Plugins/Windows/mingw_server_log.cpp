@@ -51,9 +51,11 @@ server_log_write (int level, string m) {
 	uid= "";
   static const string prefix= "pid=" * pid * ", uid=" * uid * ", ";
   string msg= prefix * m;
-  if (!is_server ())
-    return;
   string date= get_date (get_locale_language (), "yyyy-MM-dd, HH:mm:ss");
+  if (!is_server ()) {
+    server_get_stream (level) << date << ", " << msg << "\n";
+    return;
+  }
   static bool warned= false;
   if (tmlog == NULL) {
     if (!warned) {
@@ -75,6 +77,6 @@ server_log_write (int level, string m) {
       io_warning << "server log failed for message, "
                  << date << ", " << msg << "\n";
   }
-  debug_io << "server, " << date << ", " << msg << "\n";
+  server_get_stream (level) << "server, " << date << ", " << msg << "\n";
 }
 #endif
