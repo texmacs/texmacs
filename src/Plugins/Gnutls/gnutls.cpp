@@ -48,7 +48,7 @@ static int tm_gnutls_log_level= 0;
 
 void tm_gnutls_log_callback (int level, const char* msg) {
   (void) level;
-  server_log_write (log_info, msg);
+  GNUTLS_LOGI (msg);
 }
 
 /******************************************************************************
@@ -78,55 +78,54 @@ tm_initialize_tls () {
   int ret = 0;
 
   /* for backwards compatibility with gnutls < 3.3.0 */
-  CHECK_GNUTLS_INIT(ret, gnutls_global_init ());
+  CHECK_GNUTLS_INIT (ret, gnutls_global_init ());
   if (DEBUG_GNUTLS) tm_gnutls_log_level= 4;
   gnutls_global_set_log_level (tm_gnutls_log_level);
   gnutls_global_set_log_function (tm_gnutls_log_callback);
 
-  CHECK_GNUTLS_INIT(ret,
+  CHECK_GNUTLS_INIT (ret,
     gnutls_anon_allocate_server_credentials (&tm_anon_server_credentials));
-  CHECK_GNUTLS_INIT(ret,
+  CHECK_GNUTLS_INIT (ret,
     gnutls_anon_allocate_client_credentials (&tm_anon_client_credentials));
 
   // X509 server
   url cert_path (tm_x509_cert_path);
   url key_path (tm_x509_key_path);
 
-  GNUTLS_LOG("x509 Certificate Path: " * as_string (cert_path));
-  GNUTLS_LOG("x509 Key Path: " * as_string (key_path));
+  GNUTLS_LOG ("x509 Certificate Path: " * as_string (cert_path));
+  GNUTLS_LOG ("x509 Key Path: " * as_string (key_path));
 
-  CHECK_GNUTLS_INIT(ret,
+  CHECK_GNUTLS_INIT (ret,
     gnutls_certificate_allocate_credentials (&tm_x509_server_credentials));
   if (exists (cert_path) && exists (key_path)) {
     c_string _cert_path (as_string (cert_path));
-    c_string _key_path (as_string (cert_path));
-    CHECK_GNUTLS_INIT(ret,
-        gnutls_certificate_set_x509_key_file (tm_x509_server_credentials,
-          _cert_path,
-          _key_path,
-          GNUTLS_X509_FMT_PEM));
+    c_string _key_path (as_string (key_path));
+    CHECK_GNUTLS_INIT (ret,
+        gnutls_certificate_set_x509_key_file
+	  (tm_x509_server_credentials, _cert_path,
+	   _key_path,GNUTLS_X509_FMT_PEM));
   } else if (!exists (cert_path)) {
-    GNUTLS_LOG("Certificate file not found: " * as_string (cert_path));
+    GNUTLS_LOG ("Certificate file not found: " * as_string (cert_path));
   } else {
-    GNUTLS_LOG("Key file not found: " * as_string (key_path));
+    GNUTLS_LOG ("Key file not found: " * as_string (key_path));
   }
 
   // X509 client
-  CHECK_GNUTLS_INIT(ret,
+  CHECK_GNUTLS_INIT (ret,
     gnutls_certificate_allocate_credentials (&tm_x509_client_credentials));
-  CHECK_GNUTLS_INIT(ret,
+  CHECK_GNUTLS_INIT (ret,
     gnutls_certificate_set_x509_system_trust (tm_x509_client_credentials));
 
   url trusted_path (tm_x509_trusted_cas_path);
   if (exists (trusted_path)) {
     c_string _trusted_path (as_string (trusted_path));
-    CHECK_GNUTLS_INIT(ret,
+    CHECK_GNUTLS_INIT (ret,
       gnutls_certificate_set_x509_trust_file (tm_x509_client_credentials,
         _trusted_path, GNUTLS_X509_FMT_PEM));
   }
 
-  CHECK_GNUTLS_INIT(ret, gnutls_dh_params_init (&tm_dh_parameters));
-  CHECK_GNUTLS_INIT(ret,
+  CHECK_GNUTLS_INIT (ret, gnutls_dh_params_init (&tm_dh_parameters));
+  CHECK_GNUTLS_INIT (ret,
     gnutls_dh_params_generate2 (tm_dh_parameters, tm_dh_bitsize));
 
 #if GNUTLS_VERSION_NUMBER >= 0x030506
@@ -140,7 +139,7 @@ tm_initialize_tls () {
     tm_dh_parameters);
 
   tm_gnutls_initialized= true;
-  GNUTLS_LOG("GnuTLS initialization succeeded");
+  GNUTLS_LOG ("GnuTLS initialization succeeded");
 }
 
 static void
@@ -148,11 +147,11 @@ tm_deinitialize_tls () {
   if (!tm_gnutls_initialized) return;
   gnutls_anon_free_server_credentials (tm_anon_server_credentials);
   gnutls_anon_free_client_credentials (tm_anon_client_credentials);
-  gnutls_certificate_free_credentials(tm_x509_client_credentials);
-  gnutls_certificate_free_credentials(tm_x509_server_credentials);
+  gnutls_certificate_free_credentials (tm_x509_client_credentials);
+  gnutls_certificate_free_credentials (tm_x509_server_credentials);
   gnutls_global_deinit ();
   tm_gnutls_initialized= false;
-  GNUTLS_LOG("GnuTLS deinitialization succeeded");
+  GNUTLS_LOG ("GnuTLS deinitialization succeeded");
 }
 
 // Lazy initialization
@@ -175,7 +174,7 @@ tls_ensure_initialization () {
 
 static string
 as_string_gnutls_datum (gnutls_datum_t data, bool full = false) {
-  string str(reinterpret_cast<char*>(data.data));
+  string str (reinterpret_cast<char*> (data.data));
   if (!full) {
     return str;
   }
@@ -194,7 +193,7 @@ as_string_gnutls_crt (const gnutls_x509_crt_t crt) {
     return "";
   }
 
-  string crt_info = as_string_gnutls_datum(info);
+  string crt_info = as_string_gnutls_datum (info);
 
   string line;
   int i = 0;
@@ -212,10 +211,9 @@ as_string_gnutls_crt (const gnutls_x509_crt_t crt) {
       for (int next_field = 0;
           next_field >= 0 ;
           pos = next_field + 1) {
-        next_field = tm_search_forwards(",", pos, line);
+        next_field = tm_search_forwards (",", pos, line);
         int value_delim = tm_search_forwards ("=", pos, line);
         string field = line (pos, value_delim);
-        GNUTLS_LOG(as_string (value_delim) * ", " * next_field * " field '" * field * "'");
         string value;
         if (next_field == -1) {
           value = line (value_delim+1, N (line));
@@ -223,7 +221,6 @@ as_string_gnutls_crt (const gnutls_x509_crt_t crt) {
           value = line (value_delim+1, next_field);
           pos = next_field + 1;
         }
-        GNUTLS_LOG("value '" * value * "'");
         if (field == "CN") CN = value;
         else if (field == "OU") OU = value;
         else if (field == "O") O = value;
@@ -237,7 +234,7 @@ as_string_gnutls_crt (const gnutls_x509_crt_t crt) {
     }
   }
 
-  gnutls_free(info.data);
+  gnutls_free (info.data);
 
   return "Common Name: " * CN * "\n"
     * "Organization Unit: " * OU * "\n"
@@ -414,104 +411,103 @@ as_string_gnutls_error (int e) {
 
 static string
 tm_session_info (gnutls_session_t session) {
-  string info("- Session:");
+  string info ("- Session:");
   gnutls_credentials_type_t cred;
-	gnutls_kx_algorithm_t kx;
-	int dhe, ecdh;
+  gnutls_kx_algorithm_t kx;
+  int dhe, ecdh;
   gnutls_group_t group;
-	char *desc;
+  char *desc;
 
-	/* get a description of the session connection, protocol,
-	 * cipher/key exchange */
-	desc = gnutls_session_get_desc (session);
-	if (desc != NULL) {
-		info << desc << "\n";
-	} else {
-		info << "(Unknown)\n";
+  /* get a description of the session connection, protocol,
+   * cipher/key exchange */
+  desc = gnutls_session_get_desc (session);
+  if (desc != NULL) {
+    info << desc << "\n";
+  } else {
+    info << "(Unknown)\n";
   }
 
-	dhe = ecdh = 0;
+  dhe = ecdh = 0;
 
-	kx = gnutls_kx_get (session);
+  kx = gnutls_kx_get (session);
 
-	/* Check the authentication type used and switch
-	 * to the appropriate.
-	 */
-	cred = gnutls_auth_get_type (session);
-	switch (cred) {
-	case GNUTLS_CRD_SRP: {
-    const char* srp_username = gnutls_srp_server_get_username (session);
-		info << "- SRP session";
-    if (srp_username) {
-      info << " with user name " << srp_username;
-    } 
-		break;
-  }
+  /* Check the authentication type used and switch
+   * to the appropriate.
+   */
+  cred = gnutls_auth_get_type (session);
+  switch (cred) {
+    case GNUTLS_CRD_SRP:
+      {
+        const char* srp_username = gnutls_srp_server_get_username (session);
+        info << "- SRP session";
+        if (srp_username) {
+          info << " with user name " << srp_username;
+        }
+        break;
+      }
 
-	case GNUTLS_CRD_PSK:
-		/* This returns NULL in server side.
-		 */
-		if (gnutls_psk_client_get_hint (session) != NULL)
-			info << "- PSK authentication. PSK hint '"
-        << gnutls_psk_client_get_hint (session) << "'\n";
-		/* This returns NULL in client side.
-		 */
-		if (gnutls_psk_server_get_username (session) != NULL)
-      info << "- PSK authentication. Connected as '"
-        << gnutls_psk_server_get_username (session) << "'\n";
+    case GNUTLS_CRD_PSK:
+      if (gnutls_psk_client_get_hint (session) != NULL)
+        info << "- PSK authentication. PSK hint '"
+          << gnutls_psk_client_get_hint (session) << "'\n";
 
-		if (kx == GNUTLS_KX_ECDHE_PSK)
-			ecdh = 1;
-		else if (kx == GNUTLS_KX_DHE_PSK)
-			dhe = 1;
-		break;
+      if (gnutls_psk_server_get_username (session) != NULL)
+        info << "- PSK authentication. Connected as '"
+          << gnutls_psk_server_get_username (session) << "'\n";
 
-	case GNUTLS_CRD_ANON: /* anonymous authentication */
+      if (kx == GNUTLS_KX_ECDHE_PSK)
+        ecdh = 1;
+      else if (kx == GNUTLS_KX_DHE_PSK)
+        dhe = 1;
+      break;
 
-		info << "- Anonymous authentication.\n";
-		if (kx == GNUTLS_KX_ANON_ECDH)
-			ecdh = 1;
-		else if (kx == GNUTLS_KX_ANON_DH)
-			dhe = 1;
-		break;
+    case GNUTLS_CRD_ANON: /* anonymous authentication */
 
-	case GNUTLS_CRD_CERTIFICATE: /* certificate authentication */
+      info << "- Anonymous authentication.\n";
+      if (kx == GNUTLS_KX_ANON_ECDH)
+        ecdh = 1;
+      else if (kx == GNUTLS_KX_ANON_DH)
+        dhe = 1;
+      break;
 
-		/* Check if we have been using ephemeral Diffie-Hellman.
-		 */
-		if (kx == GNUTLS_KX_DHE_RSA || kx == GNUTLS_KX_DHE_DSS)
-			dhe = 1;
-		else if (kx == GNUTLS_KX_ECDHE_RSA ||
-			 kx == GNUTLS_KX_ECDHE_ECDSA)
-			ecdh = 1;
-    info << "- X.509 Auth\n";
+    case GNUTLS_CRD_CERTIFICATE: /* certificate authentication */
 
-		/* if the certificate list is available, then
-		 * print some information about it.
-		 * print_ 509_certificate_info(session);
-		 */
-		break;
-  case GNUTLS_CRD_IA:
-    info << "- IA credential\n";
-	default:
-    info << "- Wrong credential type" << as_string (cred) << "\n";
-		break;
-	} /* switch */
+      /* Check if we have been using ephemeral Diffie-Hellman.
+      */
+      if (kx == GNUTLS_KX_DHE_RSA || kx == GNUTLS_KX_DHE_DSS)
+        dhe = 1;
+      else if (kx == GNUTLS_KX_ECDHE_RSA ||
+          kx == GNUTLS_KX_ECDHE_ECDSA)
+        ecdh = 1;
+      info << "- X.509 Auth\n";
 
-	/* read the negotiated group - if any */
-	group = gnutls_group_get (session);
-	if (group != 0) {
-		info << "- Negotiated group " << gnutls_group_get_name (group);
-	} else {
-		if (ecdh != 0)
+      /* if the certificate list is available, then
+       * print some information about it.
+       * print_ 509_certificate_info(session);
+       */
+      break;
+    case GNUTLS_CRD_IA:
+      info << "- IA credential\n";
+      break;
+    default:
+      info << "- Wrong credential type " << as_string (cred) << "\n";
+      break;
+  } /* switch */
+
+  /* read the negotiated group - if any */
+  group = gnutls_group_get (session);
+  if (group != 0) {
+    info << "- Negotiated group " << gnutls_group_get_name (group);
+  } else {
+    if (ecdh != 0)
       info << "- Ephemeral ECDH using curve "
         << gnutls_ecc_curve_get_name (gnutls_ecc_curve_get (session));
-		else if (dhe != 0)
+    else if (dhe != 0)
       info << "- Ephemeral DH using prime of " <<
         gnutls_dh_get_prime_bits (session) << " bitsn";
-	}
+  }
 
-	return info;
+  return info;
 }
 
 struct tls_server_contact_rep: tm_contact_rep {
@@ -618,14 +614,10 @@ tls_server_contact_rep::start (int io2) {
     ptr= (pointer) NULL;
     return;
   }
-  server_log_write (log_info, "GnuTLS session started for client " *
-      as_string (io));
-  server_log_write (log_info, "\n" * tm_session_info (s));
 
   gnutls_credentials_type_t cred_type= gnutls_auth_server_get_type (s);
   if (cred_type == GNUTLS_CRD_ANON)
-    server_log_write (log_info, "client " * as_string (io) *
-        " authenticated anonymously");
+    GNUTLS_LOGI ("client " * as_string (io) * " authenticated anonymously");
 }
 
 void
@@ -633,16 +625,14 @@ tls_server_contact_rep::stop () {
   if (!active ()) return;
   gnutls_credentials_type_t cred_type=
     gnutls_auth_server_get_type ((gnutls_session_t) ptr);
-  if (cred_type != GNUTLS_CRD_ANON)
-    server_log_write (log_warning, "unknown credential type for client "
-        * as_string (io));
+  if (cred_type != GNUTLS_CRD_ANON && cred_type != GNUTLS_CRD_CERTIFICATE)
+    GNUTLS_LOGW ("unknown credential type for client " * as_string (io));
 
   gnutls_bye ((gnutls_session_t) ptr, GNUTLS_SHUT_WR);
   gnutls_deinit ((gnutls_session_t) ptr);
   io= -1;
   ptr= (pointer) NULL;
-  server_log_write (log_info, "GnuTLS closed session for client " *
-      as_string (io));
+  GNUTLS_LOGI ("GnuTLS closed session for client " * as_string (io));
 }
 
 int
@@ -758,7 +748,7 @@ tls_client_contact_rep::handshake (gnutls_session_t s) {
 
       int ret = gnutls_x509_crt_get_serial (server_certificate, serial, &serial_size);
       if (ret < 0) {
-        io_warning << "cannot get server cert " << gnutls_strerror (ret);
+        GNUTLS_ERR_LOGE (ret, "cert get serial");
         gnutls_deinit (s);
         io= -1;
         ptr= (pointer) NULL;
@@ -768,8 +758,6 @@ tls_client_contact_rep::handshake (gnutls_session_t s) {
     } else {
       msg = crt_str;
     }
-    GNUTLS_LOG("Untrusted certificate:" * as_string (io));
-    GNUTLS_LOG(msg);
 
 #ifdef QTTEXMACS
     QMessageBox msgBox;
@@ -779,6 +767,8 @@ tls_client_contact_rep::handshake (gnutls_session_t s) {
     int ret_full = gnutls_x509_crt_print(server_certificate,
         GNUTLS_CRT_PRINT_FULL,
         &info_full);
+    GNUTLS_LOGW ("Untrusted certificate");
+    GNUTLS_LOGW (msg);
 
     msgBox.setText(q_msg);
     if (ret_full == 0) {
@@ -890,8 +880,8 @@ tls_client_contact_rep::stop () {
     ptr= (pointer) NULL;
   }
   if (io >= 0) {
-    GNUTLS_LOG("GnuTLS closed session for client " * as_string (io));
     io= -1;
+    GNUTLS_LOG ("GnuTLS closed session for client " * as_string (io));
   }
 }
 
@@ -907,7 +897,7 @@ tls_client_contact_rep::send (const void* buffer, size_t length) {
   if (r < 0 &&
       r != GNUTLS_E_SUCCESS &&
       r != GNUTLS_E_AGAIN &&
-      r != GNUTLS_E_INTERRUPTED ) stop ();
+      r != GNUTLS_E_INTERRUPTED) stop ();
   return r;
 }
 
@@ -923,13 +913,16 @@ tls_client_contact_rep::receive (void* buffer, size_t length) {
   if (r < 0 &&
       r != GNUTLS_E_SUCCESS &&
       r != GNUTLS_E_AGAIN &&
-      r != GNUTLS_E_INTERRUPTED ) stop ();
+      r != GNUTLS_E_INTERRUPTED) stop ();
   return r;
 }
 
 string
 tls_client_contact_rep::last_error () {
-  return as_string_gnutls_error (error_number);
+  string errstr= as_string_gnutls_error (error_number);
+
+  return error_number == GNUTLS_E_PREMATURE_TERMINATION ?
+    errstr * " Is TeXmacs server up ?" : errstr;
 }
 
 bool
