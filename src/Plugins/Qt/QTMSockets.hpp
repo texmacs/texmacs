@@ -58,7 +58,7 @@ extern unsigned long long int qtmsocket_debug_counter;
 string socket_debug_io_string (string s, int max);
 
 #define DEBUG_SOCKET(a) \
-  if (DEBUG_IO) debug_io << "TeXmacs " \
+  if (DEBUG_SOCKETS) debug_io << "TeXmacs " \
 	<< qtmsocket_debug_counter++ << "] " << a << "\n"
 
 #define DEBUG_SOCKET_DATA(a,s) \

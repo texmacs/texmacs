@@ -97,6 +97,8 @@
   ("events" (debug-toggle "events"))
   ("std" (debug-toggle "std"))
   ("io" (debug-toggle "io"))
+  ("sockets" (debug-toggle "sockets"))
+  ("gnutls" (debug-toggle "gnutls"))
   ("bench" (debug-toggle "bench"))
   ("history" (debug-toggle "history"))
   ("qt" (debug-toggle "qt"))
