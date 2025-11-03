@@ -398,6 +398,158 @@ static int cert_out_callback (gnutls_x509_crt_t cert,
   return 0;
 }
 
+static inline string
+as_unquoted_string (tree t) { return scm_unquote (as_string (t)); }
+
+static crt_cfg
+crt_cfg_from_tree (tree cfg) {
+  std::string s;
+  crt_cfg h ("");
+
+  for (int i=0; i<N (cfg); i++) {
+    if (is_tuple (cfg[i])) {
+      h (as_unquoted_string (cfg[i][0])) = as_unquoted_string (cfg[i][1]);
+    }
+  }
+
+  return h;
+}
+
+string certificate_path ()    { return concretize (tm_x509_cert_path); }
+bool   certificate_present () { return exists (tm_x509_cert_path); }
+
+bool
+generate_self_signed (tree cfg_tree, url cert_path, url key_path)
+{
+  gnutls_privkey_t pkey;
+  gnutls_x509_privkey_t x509_pkey;
+  gnutls_pubkey_t pubkey;
+  gnutls_digest_algorithm_t dig;
+  gnutls_x509_crt_t crt;
+  gnutls_datum_t crt_out;
+  char key_out[PRIVKEY_OUTPUT_BUFSIZE];
+  size_t key_out_size = PRIVKEY_OUTPUT_BUFSIZE;
+  int ret;
+  unsigned char serial[CRT_SERIAL_SIZE];
+  time_t secs;
+
+  if (!is_tuple (cfg_tree)) {
+    GNUTLS_LOGE ("wrong certificate config given");
+    return false;
+  }
+
+  crt_cfg cfg = crt_cfg_from_tree (cfg_tree);
+
+  CHECK_GNUTLS_BRETURN (ret, gnutls_privkey_init (&pkey));
+  CHECK_GNUTLS_BRETURN (ret, gnutls_privkey_generate (pkey, PRIVKEY_ALGO,
+        gnutls_sec_param_to_pk_bits (PRIVKEY_ALGO, PRIVKEY_SEC_PARAM),
+        0));
+  CHECK_GNUTLS_BRETURN (ret, gnutls_privkey_verify_params (pkey));
+
+  CHECK_GNUTLS_BRETURN (ret, gnutls_pubkey_init (&pubkey));
+  CHECK_GNUTLS_BRETURN (ret, gnutls_pubkey_import_privkey (pubkey, pkey, 0, 0));
+  CHECK_GNUTLS_BRETURN (ret,
+      gnutls_pubkey_get_preferred_hash_algorithm (pubkey, &dig, NULL));
+
+  GNUTLS_LOG ("Generating a self signed certificate...");
+
+  CHECK_GNUTLS_BRETURN (ret,
+      gnutls_rnd (GNUTLS_RND_NONCE, serial, CRT_SERIAL_SIZE));
+
+  // serial must be positive and max 20 octets
+  // so we must zero the most significant bit (with MSB set, the DER encoding
+  // would be 21 octets long). See RFC 5280, section 4.1.2.2.
+  serial[0] &= 0x7F;
+
+  CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_init (&crt));
+
+  if (cfg->contains ("country")) {
+    c_string _country (cfg["country"]);
+    CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_dn_by_oid (crt,
+          GNUTLS_OID_X520_COUNTRY_NAME, 0, _country, N (cfg["country"])));
+  }
+
+  if (cfg->contains ("locality")) {
+    c_string _loc (cfg["locality"]);
+    CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_dn_by_oid (crt,
+          GNUTLS_OID_X520_LOCALITY_NAME, 0, _loc, N (cfg["locality"])));
+  }
+
+  if (cfg->contains ("state")) {
+    c_string _st (cfg["state"]);
+    CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_dn_by_oid (crt,
+          GNUTLS_OID_X520_STATE_OR_PROVINCE_NAME, 0, _st, N (cfg["state"])));
+  }
+
+  if (cfg->contains ("organization")) {
+    c_string _org (cfg["organization"]);
+    CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_dn_by_oid (crt,
+          GNUTLS_OID_X520_ORGANIZATION_NAME, 0, _org, N (cfg["organization"])));
+  }
+
+  if (cfg->contains ("unit")) {
+    c_string _unit (cfg["unit"]);
+    CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_dn_by_oid (crt,
+          GNUTLS_OID_X520_ORGANIZATIONAL_UNIT_NAME, 0, _unit, N (cfg["unit"])));
+  }
+
+  if (cfg->contains ("cn")) {
+    c_string _cn (cfg["cn"]);
+    CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_dn_by_oid (crt,
+          GNUTLS_OID_X520_COMMON_NAME, 0, _cn, N (cfg["cn"])));
+  }
+
+  CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_pubkey (crt, pubkey));
+  gnutls_pubkey_deinit (pubkey);
+
+  CHECK_GNUTLS_BRETURN (ret,
+      gnutls_x509_crt_set_serial (crt, serial, CRT_SERIAL_SIZE));
+
+  secs = time (NULL);
+  CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_activation_time (crt, secs));
+
+  secs += 730 * 24 * 60 * 60;
+  CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_expiration_time (crt, secs));
+
+  CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_basic_constraints (crt, 0, -1));
+
+  if (cfg->contains ("uri")) {
+    c_string _uri (cfg["uri"]);
+    CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_subject_alt_name (crt,
+          GNUTLS_SAN_RFC822NAME, _uri, N (cfg["uri"]), GNUTLS_FSAN_APPEND));
+  }
+
+  CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_key_purpose_oid (crt,
+        GNUTLS_KP_TLS_WWW_SERVER, 0));
+  CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_key_usage (crt,
+        GNUTLS_KEY_DIGITAL_SIGNATURE));
+
+  CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_version (crt, 3));
+
+  CHECK_GNUTLS_BRETURN (ret,
+      gnutls_x509_crt_privkey_sign (crt, crt, pkey, dig, 0));
+
+  CHECK_GNUTLS_BRETURN (ret, gnutls_privkey_export_x509 (pkey, &x509_pkey));
+  CHECK_GNUTLS_BRETURN (ret, gnutls_x509_privkey_export_pkcs8 (x509_pkey,
+        GNUTLS_X509_FMT_PEM, NULL, GNUTLS_PKCS_NULL_PASSWORD,
+        key_out, &key_out_size));
+
+  string _key_out (key_out, key_out_size);
+  save_string (key_path, _key_out);
+
+  CHECK_GNUTLS_BRETURN (ret,
+      gnutls_x509_crt_export2 (crt, GNUTLS_X509_FMT_PEM, &crt_out));
+
+  save_string (cert_path, as_string_gnutls_datum (crt_out));
+  gnutls_free (crt_out.data);
+
+  gnutls_x509_crt_deinit (crt);
+  gnutls_x509_privkey_deinit (x509_pkey);
+  gnutls_privkey_deinit (pkey);
+
+  return true;
+}
+
 /******************************************************************************
  * Error messages for sockets
  ******************************************************************************/
@@ -1029,6 +1181,11 @@ certificate_present () {
 
 bool
 trust_certificate (const string& crt_pem) {
+  return true;
+}
+
+bool
+generate_self_signed (tree cfg_tree, url cert_path, url key_path) {
   return true;
 }
 
