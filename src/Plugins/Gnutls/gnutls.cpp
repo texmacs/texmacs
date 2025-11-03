@@ -44,7 +44,7 @@ gnutls_present () {
  * TLS log facilities
  ******************************************************************************/
 
-static const int tm_gnutls_log_level= 0;
+static int tm_gnutls_log_level= 0;
 
 void tm_gnutls_log_callback (int level, const char* msg) {
   (void) level;
@@ -79,6 +79,7 @@ tm_initialize_tls () {
 
   /* for backwards compatibility with gnutls < 3.3.0 */
   CHECK_GNUTLS_INIT(ret, gnutls_global_init ());
+  if (DEBUG_GNUTLS) tm_gnutls_log_level= 4;
   gnutls_global_set_log_level (tm_gnutls_log_level);
   gnutls_global_set_log_function (tm_gnutls_log_callback);
 
