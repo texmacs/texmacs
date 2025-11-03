@@ -69,6 +69,29 @@ server_port_in_use () {
 ******************************************************************************/
 
 void
+server_define_error_codes () {
+  (void) eval ("(define tm_net_success " * as_string (TM_NET_SUCCESS) * ")");
+  (void) eval ("(define tm_net_wrong_arguments "
+      * as_string (TM_NET_WRONG_ARGUMENTS) * ")");
+  (void) eval ("(define tm_net_invalid_host "
+      * as_string (TM_NET_INVALID_HOST) * ")");
+  (void) eval ("(define tm_net_invalid_port "
+      * as_string (TM_NET_INVALID_PORT) * ")");
+  (void) eval ("(define tm_net_internal_error "
+      * as_string (TM_NET_INTERNAL_ERROR) * ")");
+  (void) eval ("(define tm_net_contact_dead "
+      * as_string (TM_NET_CONTACT_DEAD) * ")");
+  (void) eval ("(define tm_net_wrong_protocol "
+      * as_string (TM_NET_WRONG_PROTOCOL) * ")");
+  (void) eval ("(define tm_net_no_gnutls "
+      * as_string (TM_NET_NO_GNUTLS) * ")");
+  (void) eval ("(define tm_net_connection_failed "
+      * as_string (TM_NET_CONNECTION_FAILED) * ")");
+  (void) eval ("(define tm_net_session_inactive "
+      * as_string (TM_NET_SESSION_INACTIVE) * ")");
+}
+
+void
 server_start () {
   if (net_server != NULL) {
     io_warning << "Cannot start server because it is already running." << LF;
