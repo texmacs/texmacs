@@ -74,6 +74,13 @@ bool gnutls_present ();
 /******************************************************************************
  * X.509 authentication
  ******************************************************************************/
+
+typedef hashmap<string, string> crt_cfg;
+
+string certificate_path ();
+bool   certificate_present ();
+
+bool generate_self_signed (tree cfg, url cert_path, url key_path);
 bool trust_certificate (const string& crt_pem);
 
 /******************************************************************************
