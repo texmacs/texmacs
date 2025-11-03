@@ -139,6 +139,7 @@ debug_message_sub (string channel, string msg) {
       cout << msg;
     }
   }
+  cout.flush ();
 }
 
 void
