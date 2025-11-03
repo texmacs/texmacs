@@ -8161,10 +8161,10 @@ tmg_client_write (tmscm arg1, tmscm arg2) {
   string in2= tmscm_to_string (arg2);
 
   // TMSCM_DEFER_INTS;
-  client_write (in1, in2);
+  int out= client_write (in1, in2);
   // TMSCM_ALLOW_INTS;
 
-  return TMSCM_UNSPECIFIED;
+  return int_to_tmscm (out);
 }
 
 tmscm
