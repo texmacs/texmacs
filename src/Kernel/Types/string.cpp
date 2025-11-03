@@ -366,6 +366,11 @@ as_string (const char* s) {
   return string (s);
 }
 
+string
+as_string (const unsigned char* s) {
+    return string(reinterpret_cast<const char*>(s));
+}
+
 bool
 is_empty (string s) {
   return N(s) == 0;
