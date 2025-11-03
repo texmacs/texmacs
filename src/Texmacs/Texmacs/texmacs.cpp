@@ -72,6 +72,11 @@ static QTMApplication* qtmapp= NULL;
 static QTMCoreApplication* qtmcoreapp= NULL;
 #endif
 
+bool
+is_headless () {
+  return headless_mode;
+}
+
 /******************************************************************************
 * For testing
 ******************************************************************************/
