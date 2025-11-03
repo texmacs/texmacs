@@ -29,6 +29,8 @@
 #include "tm_timer.hpp"
 #include "data_cache.hpp"
 #include "tm_window.hpp"
+#include "client_server.hpp"
+
 #ifdef AQUATEXMACS
 void mac_fix_paths ();
 #endif
@@ -376,6 +378,20 @@ set_global_options  (int argc, char** argv)  {
         i++;
         if (i<argc) my_init_cmds= (my_init_cmds * " ") * argv[i];
       }
+      else if (s == "-server") set_server ();
+      else if (s == "-port") {
+        i++;
+        if (i<argc) {
+          string port_str = argv[i];
+          set_server_port (as_int (port_str));
+        }
+      }
+      else if (s == "-reset-server-preferences") {
+        set_reset_preferences (true);
+      }
+      else if (s == "-reset-admin-password") {
+        set_reset_admin_password (true);
+      }
       else if (s == "-W" || s == "-build-website" ||
 	       s == "-U" || s == "-update-website") {
         i+=2;
@@ -389,7 +405,6 @@ set_global_options  (int argc, char** argv)  {
             " " * scm_quote (as_string (out)) * ")";
         }
       }
-      else if (s == "-server") start_server_flag= true;
       else if (s == "-log-file") i++;
       else if ((s == "-Oc") || (s == "-no-char-clipping")) char_clip= false;
       else if ((s == "+Oc") || (s == "-char-clipping")) char_clip= true;
@@ -456,7 +471,7 @@ set_global_options  (int argc, char** argv)  {
   // End parse command line options
 
   // in headless mode quit after processing of the command line
-  if (headless_mode) my_init_cmds= my_init_cmds * " (quit-TeXmacs)";
+  if (headless_mode && !is_server ()) my_init_cmds= my_init_cmds * " (quit-TeXmacs)";
 
   // Further options via environment variables
 #if QT_VERSION < 0x060000
