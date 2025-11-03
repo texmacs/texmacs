@@ -54,12 +54,12 @@ set_server_port (int port) { server_port= port; }
 * Server currently active?
 ******************************************************************************/
 
-static socket_server_rep* the_server= NULL;
+static socket_server_rep* net_server= NULL;
 
 int
 server_port_in_use () {
-  if (the_server == NULL) return 0;
-  return the_server->port;
+  if (net_server == NULL) return 0;
+  return net_server->port;
 }
 
 /******************************************************************************
@@ -68,7 +68,7 @@ server_port_in_use () {
 
 void
 server_start () {
-  if (the_server != NULL) {
+  if (net_server != NULL) {
     io_warning << "Cannot start server because it is already running." << LF;
     return;
   }
@@ -77,64 +77,66 @@ server_start () {
   (void) eval ("(use-modules (server server-tmfs))");
   (void) eval ("(use-modules (server server-menu))");
   (void) eval ("(use-modules (server server-live))");
-  the_server= tm_new<socket_server_rep> ("", get_server_port ());
-  string status= the_server->start ();
+  net_server= tm_new<socket_server_rep> ("", get_server_port ());
+  string status= net_server->start ();
   if (status != "") {
     io_error << "cannot start the server: " << status << LF;
     io_error << "see details in the server log file." << LF;
-    the_server->stop ();
-    tm_delete (the_server);
-    the_server= NULL;
+    net_server->stop ();
+    tm_delete (net_server);
+    net_server= NULL;
   }
 }
 
 void
 server_stop () {
-  if (the_server == NULL) {
+  if (net_server == NULL) {
     io_warning << "cannot stop server because it isn't running." << LF;
     return;
   }
-  the_server->stop ();
-  tm_delete (the_server);
-  the_server= NULL;
+  net_server->stop ();
+  tm_delete (net_server);
+  net_server= NULL;
   server_log_stop ();
 }
 
 bool
 server_started () {
-  return the_server != NULL;
+  return net_server != NULL;
 }
 
 string
 server_read (int fd) {
-  string s (the_server->read (fd));
+  if (net_server == NULL) return "";
+  string s (net_server->read (fd));
   return s;
 }
 
 void
 server_write (int fd, string s) {
+  if (net_server == NULL) return;
   DEBUG_SOCKET_DATA ("server output:", s);
-  the_server->write (fd, s);
+  net_server->write (fd, s);
 }
 
 int
 number_of_servers () {
-  return the_server == NULL ? 0 : the_server->number_of_connections ();
+  return net_server == NULL ? 0 : net_server->number_of_connections ();
 }
 
 string
 server_client_address (int fd) {
-  if (the_server == NULL)
+  if (net_server == NULL)
     return "";
-  if (!the_server->address_from_id->contains (fd))
+  if (!net_server->address_from_id->contains (fd))
     return "";
-  return the_server->address_from_id (fd);
+  return net_server->address_from_id (fd);
 }
 
 void
 server_listen_connections (int msecs) {
-  if (the_server != NULL)
-    the_server->listen_connections (msecs);
+  if (net_server != NULL)
+    net_server->listen_connections (msecs);
 }
 
 #else
