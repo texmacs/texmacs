@@ -14,38 +14,43 @@
 #define GNUTLS_HPP
 #include "tm_contact.hpp"
 
-#define GNUTLS_ERROR(ret) \
-  "GnuTLS ERROR (" * ret * "): " \
-  * __func__ * ":" * __LINE__ * " " \
-  * gnutls_strerror (ret)
+#include <gnutls/gnutls.h>
 
-#define GNUTLS_ERROR_CALL(ret, call) \
-  "GnuTLS ERROR (" * as_string (ret) * "): " \
-  * __func__ * ":" * __LINE__ * " " \
-  * #call * " " * gnutls_strerror (ret)
+#define GNUTLS_ERROR_FMT(ret, opname) \
+  ("GnuTLS ERROR (" * as_string (ret) * ") during " *  opname * ": " \
+  * gnutls_strerror (ret))
 
-#define GNUTLS_LOG(msg) \
-    if (is_server()) { \
-      server_log_write (log_error, msg); \
-    } else if (DEBUG_IO) { \
-      debug_io << msg << LF; \
-    }
+#define GNUTLS_ERROR(ret, op) GNUTLS_ERROR_FMT (ret, op)
+#define GNUTLS_ERROR_CALL(ret, op) GNUTLS_ERROR_FMT (ret, #op)
 
-#define GNUTLS_LOG_CALL(ret, call) \
-  do { \
-    string msg = GNUTLS_ERROR_CALL(ret, call); \
-    GNUTLS_LOG(msg); \
-  } while (0)
+#define GNUTLS_LOG  SLOG
+#define GNUTLS_LOGI SLOGI
+#define GNUTLS_LOGW SLOGW
+#define GNUTLS_LOGE SLOGE
+
+#define GNUTLS_ERR_LOG(ret, op)  SLOG  (GNUTLS_ERROR (ret, op))
+#define GNUTLS_ERR_LOGI(ret, op) SLOGI (GNUTLS_ERROR (ret, op))
+#define GNUTLS_ERR_LOGW(ret, op) SLOGW (GNUTLS_ERROR (ret, op))
+#define GNUTLS_ERR_LOGE(ret, op) SLOGE (GNUTLS_ERROR (ret, op))
 
 #define CHECK_GNUTLS_INIT(ret, call) \
   do { \
     ret = (call); \
     if (ret <= 0 && ret != GNUTLS_E_SUCCESS) { \
-      GNUTLS_LOG_CALL(ret, call); \
+      GNUTLS_LOGE (GNUTLS_ERROR_CALL (ret, call)); \
       if (DEBUG_IO) { \
         debug_io << "GnuTLS initialization failed" << LF; \
       } \
       return; \
+    } \
+  } while (0)
+
+#define CHECK_GNUTLS_BRETURN(ret, call) \
+  do { \
+    ret = (call); \
+    if (ret <= 0 && ret != GNUTLS_E_SUCCESS) { \
+      GNUTLS_LOGE (GNUTLS_ERROR_CALL (ret, call)); \
+      return false; \
     } \
   } while (0)
 
