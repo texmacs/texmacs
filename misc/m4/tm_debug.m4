@@ -244,5 +244,25 @@ AC_DEFUN([TM_DEBUG],[
   AC_ARG_ENABLE(preproc,
   AS_HELP_STRING([--enable-prepoc],[generate preprocessing listing]),
       [AC_SUBST(PREPROC,$enableval)], [AC_SUBST(PREPROC,"NO")])  
-  
+
+  #--- Sanitizers
+
+  AC_ARG_ENABLE(sanitizers,
+  AS_HELP_STRING([--enable-sanitizers@<:@=ARG@:>@],
+  [compile and link with sanitizers [-fsanitize=address,undefined,...]]),
+  [], [enable_sanitizers="no"])
+
+  if test "$enable_sanitizers" != "no"; then
+      sanitizers_flags="-fsanitize=$enable_sanitizers"
+  fi
+
+  if test "$enable_sanitizers" = "no"; then
+      AC_MSG_RESULT([disabling sanitizers])
+      CONFIG_CXXSANITIZERS=""
+  else
+      AC_MSG_RESULT([enabling sanitizers: $enable_sanitizers])
+      CONFIG_CXXSANITIZERS="$sanitizers_flags"
+      AC_DEFINE([SANITIZERS_ON], 1, [sanitizers linked])
+  fi
+
 ])

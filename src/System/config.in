@@ -216,6 +216,9 @@
 /* Enable experimental Qt port */
 #undef QTTEXMACS
 
+/* sanitizers linked */
+#undef SANITIZERS_ON
+
 /* Enable checks style rewriting code */
 #undef SANITY_CHECKS
 
