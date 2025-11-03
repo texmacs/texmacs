@@ -1102,38 +1102,40 @@ make_tls_client_contact (array<array<string> > args) {
 ******************************************************************************/
 
 string hash_password_pbkdf2 (string passwd, string salt) {
-	c_string _passwd(passwd), _salt(salt);
-	gnutls_datum_t key_data = {
-      .data = (unsigned char*)((char *)_passwd),
-      .size = static_cast<unsigned int>(N (passwd)),
-    };
-    gnutls_datum_t salt_data = {
-      .data = (unsigned char *)((char *)_salt),
-      .size = static_cast<unsigned int>(N (salt)),
-    };
-    uint8_t output_raw[4096] = {0};
-    gnutls_datum_t out_data, out_b64, salt_b64;
+  c_string _pwd(passwd);
+  c_string _salt(salt);
 
-    int ret = gnutls_pbkdf2(GNUTLS_MAC_SHA256 , &key_data, &salt_data,
-        MAC_SHA256_ITER_COUNT, output_raw, MAC_SHA256_BYTE_SIZE);
-    if (ret < 0) {
-      return "";
-    }
+  gnutls_datum_t key_data = {
+    .data = (unsigned char *)(char *)_pwd,
+    .size = static_cast<unsigned int> (N (passwd)),
+  };
+  gnutls_datum_t salt_data = {
+    .data = (unsigned char *)(char *)_salt,
+    .size = static_cast<unsigned int> (N (salt)),
+  };
+  uint8_t output_raw[4096] = {0};
+  gnutls_datum_t out_data, out_b64, salt_b64;
 
-    out_data.data = output_raw;
-    out_data.size = MAC_SHA256_BYTE_SIZE;
+  int ret = gnutls_pbkdf2 (GNUTLS_MAC_SHA256 , &key_data, &salt_data,
+      MAC_SHA256_ITER_COUNT, output_raw, MAC_SHA256_BYTE_SIZE);
+  if (ret < 0) {
+    return "";
+  }
 
-    if (GNUTLS_E_SUCCESS != gnutls_base64_encode2(&out_data, &out_b64)) {
-      return "";
-    }
+  out_data.data = output_raw;
+  out_data.size = MAC_SHA256_BYTE_SIZE;
 
-    if (GNUTLS_E_SUCCESS != gnutls_base64_encode2(&salt_data, &salt_b64)) {
-      return "";
-    }
+  if (GNUTLS_E_SUCCESS != gnutls_base64_encode2 (&out_data, &out_b64)) {
+    return "";
+  }
 
-    return string("$7$") * as_string (MAC_SHA256_ITER_COUNT)
-      * "$" * as_string (reinterpret_cast<const char *>(salt_b64.data))
-      * "$" * as_string (reinterpret_cast<const char *>(out_b64.data));
+  if (GNUTLS_E_SUCCESS != gnutls_base64_encode2 (&salt_data, &salt_b64)) {
+    return "";
+  }
+
+  return string ("$7$") * as_string (MAC_SHA256_ITER_COUNT)
+    * "$" * as_string (salt_b64.data)
+    * "$" * as_string (out_b64.data);
 }
 
 #else // USE_GNUTLS
