@@ -129,10 +129,9 @@ static int
 safe_server_close (int fd) {
   int ret= CLOSE (fd);
   if (ret != 0) {
-    server_log_write (log_error, string ("server socket, close error: ")
-                      * strerror (errno));
-    server_log_write (log_error, "cannot close server socket. Please exit TeXmacs in order to stop the server completely");
-    io_error << "cannot close server socket. Please exit TeXmacs in order to stop the server completely" << LF;
+    SERRNO_LOGE ("server socket close");
+    SLOGE ("cannot close server socket. Please exit TeXmacs in order to stop "
+        "the server completely");
   }
   return ret;
 }
@@ -161,8 +160,8 @@ struct __WSA_initializer {
     if (e == 0)
       __socket_present= true;
     else {
-      io_error << "disabling sockets because 'WSAStartup' failed: "
-	       << strerror (e) << LF; }
+      SERRNO_LOGE ("WSAStartup failed, disabling sockets");
+    }
   }
   ~__WSA_initializer () {
     wsoc::WSACleanup ();
@@ -217,7 +216,7 @@ socket_link_rep::start () {
     if (!is_active (contact)) {
       string msg= string ("unexpected closed contact for socket") *
         as_string (socket_id);
-      server_log_write (log_error, msg);
+      SLOGE (msg);
       return msg;
     }
   }
@@ -253,13 +252,13 @@ socket_link_rep::start () {
     FREEADDRINFO(result);
 #ifndef OS_MINGW
     if (fcntl (socket_id, F_SETFL, O_NONBLOCK) == -1)
-      return string ("'fnctl' error: ") * strerror (errno);
+      return SERRNO_FMT("set socket non block");
 #else
     {
       using namespace wsoc;
       u_long flags = -1;
       if (ioctlsocket (socket_id, FIONBIO, &flags) == SOCKET_ERROR)
-        return string ("'ioctlsocket' error: ") * strerror (errno);
+        return SERRNO_FMT("ioctlsocket");
     }
 #endif
     DEBUG_SOCKET("'socket_link_rep::start' created socket with id "
@@ -270,10 +269,8 @@ socket_link_rep::start () {
       socket_id= -1;
       return "contact has not started";
     }
-    else {
-      if (DEBUG_IO)
-        debug_io << "contact started for socket " << socket_id << "\n";
-    }
+
+    SLOG ("contact started for socket " * as_string (socket_id));
     call ("client-add", object (socket_id));
   }
   read_notifier_ptr=
@@ -335,8 +332,7 @@ socket_link_rep::stop () {
   ::stop (contact);
   if (socket_id >= 0) {
     if (CLOSE(socket_id) && used_by_server ())
-      server_log_write (log_error, string ("cannot close socket ")
-        * as_string (socket_id));
+      SLOGE ("cannot close socket " * as_string (socket_id));
   }
   if (used_by_server ()) // socket created by the server
     emit disconnection (this);
@@ -421,8 +417,8 @@ socket_link_rep::data_set_ready (int s) {
              s[i] != '\n' && s[i] != '\t'))
           ok= false;
       if (ok) {
-        DEBUG_SOCKET("'socket_link_rep::data_set_ready', received data: "
-          << s);
+        DEBUG_SOCKET_DATA(
+            "'socket_link_rep::data_set_ready', received data: ", s);
       }
       else {
         DEBUG_SOCKET("'socket_link_rep::data_set_ready', received size "
@@ -534,7 +530,7 @@ socket_server_rep::start () {
 #endif
   socket_id = -1;
   if (!socket_present ()) {
-    server_log_write (log_error, "cannot use sockets");
+    SLOGE ("cannot use sockets");
     return "cannot use sockets";
   }
   c_string _port (as_string (port));
@@ -552,37 +548,31 @@ socket_server_rep::start () {
   int x = GETADDRINFO(host == "" ? (char*) NULL : (char*) _host,
     (char*) _port, &hints, &result);
   if (x != 0)  {
-    server_log_write (log_error, "'getaddrinfo' failed for " * host *
-      string (" via port ") * as_string (port) *
-      string (": " ) * string (GAI_STRERROR(x)));
+    SLOGE ("'getaddrinfo' failed for " * host * " via port " * as_string (port)
+        * ": "  * as_string (GAI_STRERROR(x)));
     return "'getaddrinfo' failed";
   }
   for (rp = result; rp != NULL; rp = rp->ai_next) {
     hostname= string_from_socket_address ((SOCKADDR_STORAGE*) rp->ai_addr);
-    server_log_write (log_info, "trying to serve at " * hostname
-      * " via port " * as_string (port));
+    SLOGI ("trying to serve at " * hostname * ":" * as_string (port));
     socket_id= SOCKET(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
     if (socket_id < 0) {
-      server_log_write (log_info, string ("server socket creation failed: ")
-        * strerror (errno));
+      SERRNO_LOGE ("server socket creation");
       socket_id = -1;
       continue;
     }
 #ifndef OS_MINGW
     if (fcntl (socket_id, F_SETFL, O_NONBLOCK) == -1)  {
-      server_log_write (log_info,
-        string ("'fcntl' failed: ") * strerror (errno));
+      SERRNO_LOGE ("cannot set socket as non blocking");
       safe_server_close (socket_id);
       socket_id = -1;
       continue;
     }
-#else 
+#else
     { using namespace wsoc;
       u_long flags = -1;
       if (ioctlsocket (socket_id, FIONBIO, &flags) == SOCKET_ERROR) {
-        server_log_write (log_info,
-          string ("'ioctlsocket' failed: ") *
-          strerror (errno));
+        SERRNO_LOGI ("cannot set socket as non blocking");
         safe_server_close (socket_id);
         socket_id = -1;
         continue;
@@ -591,23 +581,17 @@ socket_server_rep::start () {
 #endif
     if (BIND(socket_id, rp->ai_addr, rp->ai_addrlen) == 0)
       break;
-    server_log_write (log_info,
-      string ("'bind' failed: ") * strerror (errno));
+    SERRNO_LOGE ("bind");
     safe_server_close (socket_id);
     socket_id = -1;
   }
   FREEADDRINFO(result); 
   if (socket_id < 0) {
-    server_log_write (log_error,
-      string ("cannot start server at ") *
-      host * " via " * as_string (port));
+    SLOGE ("cannot start server at " * host * " via " * as_string (port));
     return "cannot create server socket";
   }
   if (LISTEN(socket_id, 10) != 0) {
-    server_log_write (log_error,
-      string ("'listen' failed at ") *
-      host * " via " * as_string (port) * ": " *
-      strerror (errno));
+    SERRNO_LOGE ("listen on " * host * ":" * as_string (port));
     return "'listen' failed";
   }
   notifier_ptr= tm_new<QSocketNotifier> (socket_id, QSocketNotifier::Read);
@@ -618,17 +602,14 @@ socket_server_rep::start () {
   QObject::connect (notifier_ptr, &QSocketNotifier::activated,
     this, &socket_server_rep::connection);
 #endif
-  server_log_write (log_info,
-    string ("waiting for connections at ") *
-    host * " via " * as_string (port));
+  SLOGI ("waiting for connections at " * host * ":" * as_string (port));
   call ("server-create-default-admin-account");
   return "";
 }
 
 void
 socket_server_rep::stop () {
-  server_log_write (log_info, string ("stopping server at ") *
-    host * " via port " * as_string (port));
+  SLOGI ("stopping server at " * host * ":" * as_string (port));
   iterator<pointer> it= iterate (connections);
   while (it->busy ()) {
     socket_link_rep* c= (socket_link_rep*) it->next ();
@@ -646,14 +627,12 @@ socket_server_rep::stop () {
 #if defined(OS_MACOS)
   mac_end_server ();
 #endif
-  server_log_write (log_info, string ("server stopped at ") *
-    host * " via port " * as_string (port));
+  SLOGI ("server stopped at " * host * ":" * as_string (port));
 }
 
 void
 socket_server_rep::connection (int s) {
-  server_log_write (log_info,
-    string ("new connection received from ") * as_string (s));
+  SLOGI ("new connection received from " * as_string (s));
   int client; socket_link_rep* clt;
   SOCKADDR_STORAGE cltadd;
   socklen_t sz= sizeof (cltadd);
@@ -663,18 +642,19 @@ socket_server_rep::connection (int s) {
     switch (ERRNO) {
     case ERRSOC(EWOULDBLOCK):
     case ERRSOC(ECONNABORTED): break;
-    default: notifier_ptr->setEnabled (false);
+    default: {
+      notifier_ptr->setEnabled (false);
+      SLOGE ("server socket aborted");
+      stop (); }
     }
-    server_log_write (log_error,
-      "connection failed from "
-      * string_from_socket_address (&cltadd));
+    SLOGE ("connection failed from " * string_from_socket_address (&cltadd));
     return;
   }
   string address= string_from_socket_address (&cltadd);
   address_from_id (client)= address;
-  server_log_write (log_info,
-    string ("connection accepted from " ) *
-    address * string (" at socket ") * as_string (client));
+  SLOGI ("connection accepted from " * address
+      * " at socket " * as_string (client));
+
   array<array<string> > authentications;
   array<string> _anonymous; _anonymous << string ("anonymous");
   if (get_preference ("tls-server") == string ("on")) {
@@ -689,23 +669,20 @@ socket_server_rep::connection (int s) {
     make_socket_server_contact (authentications);
   ::start (contact, client);
   if (!is_active (contact)) {
-    server_log_write (log_error,
-      "contact failed from "
-      * string_from_socket_address (&cltadd)
+
+    SLOGE ("contact failed from " * string_from_socket_address (&cltadd)
       * " at socket " * as_string (client));
     ::stop (contact);
     CLOSE(client);
     return;
-  }
-  server_log_write (log_info,
-    "contact started from "
-    * string_from_socket_address (&cltadd)
+  } 
+
+  SLOGI ("contact started from " * string_from_socket_address (&cltadd)
     * " at socket " * as_string (client));
   clt= tm_new<socket_link_rep> (client, &cltadd, contact);
   string st= clt->start ();
   if (st != "") {
-    server_log_write (log_error,
-      "'socket_link_rep' failed from "
+    SLOGE ("'socket_link_rep' failed from "
       * string_from_socket_address (&cltadd)
       * " at socket " * as_string (client) * ": " * st);
     clt->stop ();
@@ -716,20 +693,16 @@ socket_server_rep::connection (int s) {
   connections->insert ((pointer) clt);
   socket_ptr_from_id (clt->get_socket_id ())= (pointer) clt;
   call ("server-add", object (clt->get_socket_id ()));
-  server_log_write (log_info,
-    "'socket_link_rep' started from "
+  SLOGI ("'socket_link_rep' started from "
     * string_from_socket_address (&cltadd)
     * " at socket " * as_string (client));
 }
 
 void 
 socket_server_rep::disconnection (class socket_link_rep* clt) {
-  //cout << "socket_server_rep::disconnection" << LF;
   int io= clt->get_socket_id ();
-  server_log_write (log_info,
-    string ("disconnection of ")
-    * clt->get_host_name ()
-    * " from socket " * as_string (io));
+  SLOGI ("disconnection of " * clt->get_host_name ()
+      * " from socket " * as_string (io));
   connections->remove ((pointer) clt);
   socket_ptr_from_id->reset (io);
   address_from_id->reset (io);
@@ -759,9 +732,8 @@ socket_server_rep::find_connection_ptr (int id) {
   pointer ptr= socket_ptr_from_id[id];
   if (ptr)
     return (socket_link_rep*) ptr;
-  server_log_write (log_error,
-    string ("'socket_server_rep::find_connection_ptr', ")
-    * "cannot find socket " * as_string (id));
+  SLOGE ("'socket_server_rep::find_connection_ptr', cannot find socket "
+      * as_string (id));
   return NULL;
 }
 
