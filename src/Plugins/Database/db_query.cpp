@@ -98,7 +98,7 @@ database_rep::filter (db_atoms ids, tree qt, db_time t, query_args qargs) {
   for (int i=qargs.offset; i<N(ids); i++)
     if (id_satisfies (ids[i], cs, t)) {
       r << ids[i];
-      if (N(r) >= qargs.limit) break;
+      if (qargs.limit > 0 && N(r) >= qargs.limit) break;
     }
   return r;
 }
