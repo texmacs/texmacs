@@ -19,6 +19,7 @@ extern bool use_which;
 extern bool use_locate;
 extern bool headless_mode;
 
+bool   is_headless ();
 string get_setting (string var, string def= "");
 void   set_setting (string var, string val);
 void   get_old_settings (string s);
