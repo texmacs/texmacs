@@ -48,4 +48,9 @@ int get_server_port ();
 void set_server_port (int port);
 int  server_port_in_use ();
 
+bool should_reset_preferences ();
+bool should_reset_admin_password ();
+void set_reset_preferences (bool value);
+void set_reset_admin_password (bool value);
+
 #endif // defined CLIENT_SERVER_H

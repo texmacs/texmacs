@@ -24,6 +24,8 @@
 ******************************************************************************/
 
 static bool server_mode= false;
+static bool reset_preferences= false;
+static bool reset_admin_password= false;
 
 // CLI arg port override
 static int server_port= -1;
@@ -139,6 +141,22 @@ server_listen_connections (int msecs) {
     net_server->listen_connections (msecs);
 }
 
+bool should_reset_preferences () {
+  return reset_preferences;
+}
+
+bool should_reset_admin_password () {
+  return reset_admin_password;
+}
+
+void set_reset_preferences (bool value) {
+  reset_preferences = value;
+}
+
+void set_reset_admin_password (bool value) {
+  reset_admin_password = value;
+}
+
 #else
 
 /******************************************************************************
@@ -196,5 +214,37 @@ number_of_servers () {
 
 void
 server_listen_connections (int msecs) {}
+
+int
+get_server_port () {
+  io_error << "server is not implemented.";
+  return 0;
+}
+
+void
+set_server_port (int port) {
+  io_error << "server is not implemented.";
+  (void) port;
+}
+
+bool should_reset_preferences () {
+  io_error << "server is not implemented.";
+  return false;
+}
+
+bool should_reset_admin_password () {
+  io_error << "server is not implemented.";
+  return false;
+}
+
+void set_reset_preferences (bool value) {
+  io_error << "server is not implemented.";
+  (void) value;
+}
+
+void set_reset_admin_password (bool value) {
+  io_error << "server is not implemented.";
+  (void) value;
+}
 
 #endif
