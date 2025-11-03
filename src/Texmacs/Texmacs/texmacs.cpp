@@ -241,6 +241,8 @@ set_global_options  (int argc, char** argv)  {
       else if ((s == "-d") || (s == "-debug")) debug (DEBUG_FLAG_STD, true);
       else if (s == "-debug-events") debug (DEBUG_FLAG_EVENTS, true);
       else if (s == "-debug-io") debug (DEBUG_FLAG_IO, true);
+      else if (s == "-debug-sockets") debug (DEBUG_FLAG_SOCKETS, true);
+      else if (s == "-debug-gnutls") debug (DEBUG_FLAG_GNUTLS, true);
       else if (s == "-debug-bench") debug (DEBUG_FLAG_BENCH, true);
       else if (s == "-debug-history") debug (DEBUG_FLAG_HISTORY, true);
       else if (s == "-debug-qt") debug (DEBUG_FLAG_QT, true);

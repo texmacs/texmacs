@@ -9,6 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "basic.hpp"
 #include "string.hpp"
 #include "analyze.hpp"
 #include "scheme.hpp"
@@ -57,6 +58,8 @@ debug_set (string s, bool on) {
   else if (s == "events") debug_set (DEBUG_FLAG_EVENTS, on);
   else if (s == "std") debug_set (DEBUG_FLAG_STD, on);
   else if (s == "io") debug_set (DEBUG_FLAG_IO, on);
+  else if (s == "sockets") debug_set (DEBUG_FLAG_SOCKETS, on);
+  else if (s == "gnutls") debug_set (DEBUG_FLAG_GNUTLS, on);
   else if (s == "bench") debug_set (DEBUG_FLAG_BENCH, on);
   else if (s == "history") debug_set (DEBUG_FLAG_HISTORY, on);
   else if (s == "qt") debug_set (DEBUG_FLAG_QT, on);
@@ -83,6 +86,8 @@ debug_get (string s) {
   else if (s == "events") return debug_get (DEBUG_FLAG_EVENTS);
   else if (s == "std") return debug_get (DEBUG_FLAG_STD);
   else if (s == "io") return debug_get (DEBUG_FLAG_IO);
+  else if (s == "sockets") return debug_get (DEBUG_FLAG_SOCKETS);
+  else if (s == "gnutls") return debug_get (DEBUG_FLAG_GNUTLS);
   else if (s == "bench") return debug_get (DEBUG_FLAG_BENCH);
   else if (s == "history") return debug_get (DEBUG_FLAG_HISTORY);
   else if (s == "qt") return debug_get (DEBUG_FLAG_QT);
