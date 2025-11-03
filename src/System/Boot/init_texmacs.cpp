@@ -216,6 +216,7 @@ init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH/system");
   make_dir ("$TEXMACS_HOME_PATH/system/bib");
   make_dir ("$TEXMACS_HOME_PATH/system/cache");
+  make_dir ("$TEXMACS_HOME_PATH/system/certificates");
   make_dir ("$TEXMACS_HOME_PATH/system/database");
   make_dir ("$TEXMACS_HOME_PATH/system/database/bib");
   make_dir ("$TEXMACS_HOME_PATH/system/make");
