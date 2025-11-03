@@ -13,6 +13,7 @@
 
 (texmacs-module (generic document-edit)
   (:use (utils base environment)
+	(texmacs texmacs tm-tools)
         (utils library length)
         (utils library cursor)
         (generic generic-edit)
