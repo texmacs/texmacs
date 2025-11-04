@@ -50,8 +50,8 @@ public:
 public:
   qt_image_renderer_rep (picture pict, double zoom);
   ~qt_image_renderer_rep ();
-  void set_zoom_factor (double zoom);
-  void* get_data_handle ();
+  void set_zoom_factor (double zoom, bool safe) override;
+  void* get_data_handle () override;
 };
 
 #endif // defined QT_PICTURE_HPP

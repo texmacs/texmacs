@@ -146,8 +146,8 @@ qt_image_renderer_rep::~qt_image_renderer_rep () {
 }
 
 void
-qt_image_renderer_rep::set_zoom_factor (double zoom) {
-  renderer_rep::set_zoom_factor (zoom);
+qt_image_renderer_rep::set_zoom_factor (double zoom, bool safe) {
+  renderer_rep::set_zoom_factor (zoom, safe);
 }
 
 void*
