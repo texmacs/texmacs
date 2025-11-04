@@ -113,24 +113,6 @@ tree_to_scheme_tree (tree t) {
       u[i]= tree_to_scheme_tree (t[i]);
     return u;    
   }
-  else if (is_func (t, RAW_DATA, 1) && is_atomic (t[0])) {
-    static const char hex[16]= { '0', '1', '2', '3', '4', '5', '6', '7',
-				 '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
-    uint8_t* s= (uint8_t*)as_charp (t[0]->label);
-    int l= N(t[0]->label);
-    char* aux= tm_new_array<char> (4 + 2*l);
-    aux[0]= '%'; aux[1]= 'X'; aux[2]= 'X'; aux[3]= '-';
-    for (int i= 0; i < l; i++) {
-      aux[4 + 2*i]  = hex [s[i] >> 4];
-      aux[4 + 2*i+1]= hex [s[i] & 15];
-    }
-    tree u (TUPLE, 2);
-    u[0]= copy (as_string (L(t)));
-    u[1]= string (aux, 4 + 2*l);
-    tm_delete_array (s);
-    tm_delete_array (aux);
-    return u;
-  }
   else {
     int i, n= N(t);
     tree u (TUPLE, n+1);
