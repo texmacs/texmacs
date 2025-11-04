@@ -642,6 +642,12 @@ socket_server_rep::start () {
 #endif
     if (BIND(socket_id, rp->ai_addr, rp->ai_addrlen) == 0)
       break;
+    else if (errno == EADDRINUSE) {
+      SERRNO_LOGE ("bind");
+      safe_server_close (socket_id);
+      socket_id = -1;
+      break;
+    }
     SERRNO_LOGE ("bind");
     safe_server_close (socket_id);
     socket_id = -1;
