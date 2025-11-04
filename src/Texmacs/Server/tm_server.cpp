@@ -147,6 +147,8 @@ tm_server_rep::interpose_handler () {
 #ifdef QTTEXMACS
   // TeXmacs/Qt handles delayed messages and socket notification
   // in its own runloop
+  //server_listen_connections (0);
+  //client_listen_connections (0);
 #ifndef QTPIPES
   perform_select ();
 #endif
