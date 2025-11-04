@@ -1,0 +1,7 @@
+("server account confirmation delay" "3600")
+("server failed login limit" "12")
+("server mail command" "cat $FILE_NAME | mail $USER_EMAIL -s \"TeXmacs server Account information\" -r 'texmacs-server@cloud\.texmacs\.org'")
+("server service admin preferences" "on")
+("server service login" "on")
+("server service reset-credentials" "on")
+("server service new-account" "on")
