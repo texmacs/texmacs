@@ -1,0 +1,4 @@
+# /etc/mail.rc
+set sendmail=smtp://mailpit:1025
+set from="my-app@example.com"
+set noninteractive
