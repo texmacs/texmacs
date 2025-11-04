@@ -33,6 +33,7 @@ const int TM_NET_SESSION_INACTIVE = -1024;
 // TeXmacs server and client
 
 void   server_define_error_codes ();
+bool   server_can_start ();
 void   server_start ();
 void   server_stop ();
 string server_read (int fd);
