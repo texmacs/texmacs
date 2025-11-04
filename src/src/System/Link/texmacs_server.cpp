@@ -15,6 +15,7 @@
 #include "client_server.hpp"
 #include "server_log.hpp"
 #include "scheme.hpp"
+#include "boot.hpp"
 
 #ifdef QTTEXMACS
 #include "Qt/QTMSockets.hpp"
@@ -68,6 +69,16 @@ server_port_in_use () {
 * Server side
 ******************************************************************************/
 
+bool
+server_can_start () {
+  if (gnutls_present() && !certificate_present ()) {
+    io_error << "cannot start the server, missing certificate: "
+        << certificate_path ();
+    return false;
+  }
+  return true;
+}
+
 void
 server_define_error_codes () {
   (void) eval ("(define tm_net_success " * as_string (TM_NET_SUCCESS) * ")");
@@ -102,6 +113,15 @@ server_start () {
   (void) eval ("(use-modules (server server-tmfs))");
   (void) eval ("(use-modules (server server-menu))");
   (void) eval ("(use-modules (server server-live))");
+
+  if (should_reset_preferences ()) {
+    call ("server-reset-preferences");
+  }
+
+  if (should_reset_admin_password ()) {
+    call ("server-reset-admin-password");
+  }
+
   net_server= tm_new<socket_server_rep> ("", get_server_port ());
   string status= net_server->start ();
   if (status != "") {

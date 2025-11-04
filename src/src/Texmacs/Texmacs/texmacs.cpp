@@ -574,7 +574,9 @@ TeXmacs_main (int argc, char** argv) {
     if (DEBUG_STD) debug_boot << "Starting event loop...\n";
     texmacs_started= true;
     if (!disable_error_recovery) signal (SIGSEGV, clean_exit_on_segfault);
-    if (start_server_flag) server_start ();
+    if (is_server () && server_can_start ()) {
+      server_start ();
+    }
     release_boot_lock ();
     
     // inject scheme commands 
