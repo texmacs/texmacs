@@ -131,6 +131,7 @@
   (players-set-elapsed players_set_elapsed (void tree double))
   (players-set-speed players_set_speed (void tree double))
   (apply-effect apply_effect (void content array_url url int int))
+  (headless? is_headless (bool))
   
   ;; routines for the font database
   (tt-exists? tt_font_exists (bool string))
@@ -664,16 +665,31 @@
   (sql-quote sql_quote (string string))
 
   ;; TeXmacs servers and clients
+  (server-define-error-codes server_define_error_codes (void))
   (server-start server_start (void))
   (server-stop server_stop (void))
   (server-read server_read (string int))
   (server-write server_write (void int string))
   (server-started? server_started (bool))
   (client-start legacy_client_start (int string))
+  (server-port-in-use server_port_in_use (int))
   (client-stop client_stop (void int))
   (client-read client_read (string int))
   (client-write client_write (int int string))
   (enter-secure-mode enter_secure_mode (void int))
+  (server-client-address server_client_address (string int))
+
+  ;; TeXmacs servers logs
+  (server-log-write-int server_log_write (void int string))
+
+  ;; TeXmacs secure clients
+  (supports-gnutls? gnutls_present (bool))
+  (tls-client-start tls_client_start (int string int scheme_tree))
+  (hash-password-pbkdf2 hash_password_pbkdf2 (string string string))
+
+  ;; Certificates
+  (generate-self-signed-certificate generate_self_signed (bool scheme_tree url url))
+  (trust-certificate trust_certificate (bool string))
 
   ;; connections to extern systems
   (connection-start connection_start (string string string))
