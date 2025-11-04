@@ -123,10 +123,8 @@ class qt_gui_rep {
   bool           interrupted;
   time_t      interrupt_time;
   QTimer*        updatetimer;
-#if QT_VERSION < 0x060000
   QList<QLabel*> waitDialogs;
   QWidget*        waitWindow;
-#endif
   widget          _popup_wid;
   time_t      popup_wid_time; //!< 0 means not to show _popup_wid
   

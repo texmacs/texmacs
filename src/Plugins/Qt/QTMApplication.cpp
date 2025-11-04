@@ -9,10 +9,6 @@ void QTMApplication::load() {
   mUseNewToolbar = get_user_preference ("new toolbar") != "off";
 
 #if QT_VERSION >= 0x060000
-  mWaitDialog = new QTMWaitDialog ();
-#endif
-
-#if QT_VERSION >= 0x060000
   mPixmapManagerInitialized = false;
 #endif
 
@@ -63,24 +59,4 @@ bool QTMApplication::notify (QObject* receiver, QEvent* event)
     the_exception= s;
   }
   return false;
-}
-
-#if QT_VERSION >= 0x060000
-void
-texmacs_qt_wait_handler (string message, string arg, int level) {
-  (void) level;
-  tmapp()->waitDialog().setActive(true);
-  if (N(message)) {
-    if (arg != "") message = message * " " * arg * "...";
-    tmapp()->waitDialog().pushMessage (message);
-  } else {
-    tmapp()->waitDialog().popMessage ();
-  }
-}
-#endif
-
-void QTMApplication::installWaitHandler() {
-#if QT_VERSION >= 0x060000
-  set_wait_handler (texmacs_qt_wait_handler);
-#endif
 }
