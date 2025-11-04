@@ -159,7 +159,6 @@ QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
   if (checkDprChange()) return;
   QPainter p (surface());
   qreal pixel_ratio= surface()->devicePixelRatio();
-  QSize sz= tm_widget()->backingPixmap->size();
   QRegion reg= event->region();
   QRegion::const_iterator it;
   QRectF qr;
