@@ -44,6 +44,27 @@
   "Write all objects in @l to the error port."
   (for-each write-err l))
 
+(define-public (format-err key . args)
+  (let* ((header (format #f "[~S]:" key))
+         (msg (call-with-output-string
+                (lambda (p)
+                  (if (>= (length args) 3)
+                    (display-error #f
+                                   p
+                                   (car args)
+                                   (cadr args)
+                                   (caddr args)
+                                   (if (= (length args) 4)
+                                     (cadddr args)
+                                     '()))
+                    (begin
+                      (display "uncaught throw " p)
+                      (display ": " p)
+                      (display args p)
+                      (newline p)))
+                  ))))
+    (format #f "~A ~A" header msg)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Various tools
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
