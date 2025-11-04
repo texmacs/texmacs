@@ -27,9 +27,6 @@
 #include <gnutls/crypto.h>
 #include "client_server.hpp"
 
-#ifdef QTTEXMACS
-#include <QMessageBox>
-#endif
 
 /******************************************************************************
  * Functionality provided by the plug-in
@@ -938,46 +935,14 @@ tls_client_contact_rep::handshake (gnutls_session_t s) {
       msg = crt_str;
     }
 
-#ifdef QTTEXMACS
-    QMessageBox msgBox;
-    c_string _msg("The server certificate issuer is unknown\n\n" * msg);
-    QString q_msg(_msg);
-    gnutls_datum_t info_full;
-    int ret_full = gnutls_x509_crt_print(server_certificate,
-        GNUTLS_CRT_PRINT_FULL,
-        &info_full);
     GNUTLS_LOGW ("Untrusted certificate");
     GNUTLS_LOGW (msg);
 
-    msgBox.setText(q_msg);
-    if (ret_full == 0) {
-      c_string detailed(as_string_gnutls_datum (info_full));
-      msgBox.setDetailedText((char *)detailed);
-    }
-    msgBox.setInformativeText("Do you still want to trust it ?");
-    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No
-        | QMessageBox::Cancel);
-    msgBox.setDefaultButton(QMessageBox::Save);
-    int ret = msgBox.exec();
-    switch (ret) {
-      case QMessageBox::Yes:
-        ret = trust_certificate (server_certificate, GNUTLS_X509_FMT_PEM);
-        if (ret < 0) {
-          io_warning << "cannot get server cert " << gnutls_strerror (ret);
-          break;
-        }
-        // retry handshake
-        return 2;
-      default:
-        break;
-    }
-#else
-    eval ("(trust-certificate-interactive \"" *
-        scm_quote (as_string_gnutls_datum (info)) * "\")");
-#endif
-    if (ret_full) {
-      gnutls_free(info_full.data);
-    }
+    call ("trust-certificate-interactive",
+        object (msg),
+        object (tm_cert_as_pem_string (server_certificate)));
+    gnutls_x509_crt_deinit (server_certificate);
+    server_certificate = NULL;
   }
   return ret;
 }
