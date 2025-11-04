@@ -174,9 +174,9 @@
 
   <assign|toggle-on-hover|<gui-contour*|<toggle-on>>>
 
-  <assign|toggle-on-button|<macro|on|cmd|<mark*|<arg|x>|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<toggle-off-hover>|gui-on-toggle|<arg|cmd>>|mouse-over|<relay|<toggle-on-hover>|gui-on-toggle|<arg|cmd>>|any|<relay|<toggle-on>|gui-on-toggle|<arg|cmd>>>>>>>
+  <assign|toggle-on-button|<macro|on|cmd|<mark*|<arg|x>|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<toggle-off-hover>|gui-on-toggle-go-to|<arg|cmd>|dummy>|mouse-over|<relay|<toggle-on-hover>|gui-on-toggle|<arg|cmd>>|any|<relay|<toggle-on>|gui-on-toggle|<arg|cmd>>>>>>>
 
-  <assign|toggle-off-button|<macro|on|cmd|<mark*|<arg|x>|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<toggle-on-hover>|gui-on-toggle|<arg|cmd>>|mouse-over|<relay|<toggle-off-hover>|gui-on-toggle|<arg|cmd>>|any|<relay|<toggle-off>|gui-on-toggle|<arg|cmd>>>>>>>
+  <assign|toggle-off-button|<macro|on|cmd|<mark*|<arg|x>|<style-with|src-compact|none|<dynamic-case|click,drag|<relay|<toggle-on-hover>|gui-on-toggle-go-to|<arg|cmd>|dummy>|mouse-over|<relay|<toggle-off-hover>|gui-on-toggle|<arg|cmd>>|any|<relay|<toggle-off>|gui-on-toggle|<arg|cmd>>>>>>>
 
   <assign|toggle-button|<macro|on|cmd|<compound|<if|<arg|on>|<value|toggle-on-button>|<value|toggle-off-button>>|<arg|on>|<arg|cmd>>>>
 
@@ -338,7 +338,34 @@
 
   <assign|minipar*|<macro|body|w|h|<clipped|<minipar|<arg|body>|<arg|w>|<arg|h>>||<minus|1t|<arg|h>>|<plus|1l|<arg|w>>|>>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Forms
+    </src-comment>
+  </active*>
+
+  <assign|form-input-text|<macro|name|type|cmd|width|x|<with|ornament-corner|30%|ornament-color|<value|gui-input-color>|ornament-shadow-color|<value|gui-input-shadow-color>|ornament-sunny-color|<value|gui-input-sunny-color>|<ornament|<if|<equal|<arg|width>|>|<inflate|<arg|x>>|<clipped|<inflate|<arg|x>>|||<arg|width>|>>>>>>
+
+  <\active*>
+    <\src-comment>
+      using same arguments even though some are unused so that we can share
+      behavior with form-input-text
+    </src-comment>
+  </active*>
+
+  <assign|form-text-area|<\macro|name|type|cmd|width|body>
+    <\padded*>
+      <surround||<htab|5mm>|<with|font-family|tt|language|verbatim|par-first|0fn|par-par-sep|0fn|<arg|body>>>
+    </padded*>
+  </macro>>
+
+  <assign|form-checkbox|<macro|name|on|cmd|<compound|<if|<arg|on>|<value|toggle-on-button>|<value|toggle-off-button>>|<arg|on>|<arg|cmd>>>>
+
+  <drd-props|form-input-text|arity|5|accessible|4>
+
+  <drd-props|form-text-area|arity|5|accessible|4>
+
+  <drd-props|form-checkbox|arity|3|accessible|2>
 
   \;
 </body>
