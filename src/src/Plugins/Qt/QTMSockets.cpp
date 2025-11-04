@@ -183,6 +183,23 @@ socket_present () {
 * Socket link
 ******************************************************************************/
 
+static hashset<pointer> all_connections;
+
+static inline bool
+exists (socket_link_rep* s) {
+  return all_connections->contains ((pointer) s);
+}
+
+static inline void
+checkin (socket_link_rep* s) {
+  all_connections->insert ((pointer) s);
+}
+
+static inline void
+checkout (socket_link_rep* s) {
+  all_connections->remove ((pointer) s);
+}
+
 // to be created by the server
 socket_link_rep::socket_link_rep (int fd, SOCKADDR_STORAGE* addr,
     tm_contact contact2):
@@ -217,6 +234,7 @@ socket_link_rep::start () {
     if (!is_alive (contact)) {
       string msg= string ("unexpected closed contact for socket ") *
         as_string (socket_id);
+      checkin (this);
       SLOGE (msg);
       return msg;
     }
@@ -283,6 +301,7 @@ socket_link_rep::start () {
     SLOG ("contact started for socket " * as_string (socket_id));
     call ("client-add", object (socket_id));
   }
+  checkin (this);
   read_notifier_ptr= new QSocketNotifier (socket_id, QSocketNotifier::Read);
   write_notifier_ptr= new QSocketNotifier (socket_id, QSocketNotifier::Write);
   if (!read_notifier_ptr || !write_notifier_ptr)
@@ -342,6 +361,7 @@ void
 socket_link_rep::stop () {
   DEBUG_SOCKET("'socket_link_rep::stop' is closing socket " << socket_id);
   if (!alive) {
+    checkout (this);
     return;
   }
   if (read_notifier_ptr) {
@@ -371,6 +391,7 @@ socket_link_rep::stop () {
     emit disconnection (this);
   else
     socket_id= -1;
+  checkout (this);
 }
 
 string&
@@ -403,6 +424,7 @@ socket_link_rep::write (string s, int channel) {
 
 void
 socket_link_rep::resume_start (int s) {
+  if (!exists (this)) return;
   if (!is_alive (contact)) {
     DEBUG_SOCKET ("contact is dead for socket " * as_string (s));
     stop ();
@@ -429,6 +451,7 @@ socket_link_rep::resume_start (int s) {
 
 void
 socket_link_rep::data_set_ready (int s) {
+  if (!exists (this)) return;
   read_notifier_ptr->setEnabled (false);
   if (!alive)
     return;
@@ -489,6 +512,7 @@ socket_link_rep::data_set_ready (int s) {
 
 void
 socket_link_rep::ready_to_send (int s) {
+  if (!exists (this)) return;
 #ifdef OS_MINGW
   using namespace wsoc;
 #endif
@@ -542,41 +566,30 @@ socket_link_rep::ready_to_send (int s) {
 
 void
 socket_link_rep::listen (int msecs) {
-  //cout << "socket_link_rep::listen" << LF;
-  ASSERT (!used_by_server (), "unexpected call of 'listen'");
-#ifdef OS_MINGW
-  using namespace wsoc;
-#endif
-  if (!alive) return;
-  //ready_to_send (socket_id);
-  fd_set rfds, wfds, efds;
-  FD_ZERO(&rfds);
-  FD_ZERO(&wfds);
-  FD_ZERO(&efds);
-  TM_FD_SET(socket_id, &rfds);
-  TM_FD_SET(socket_id, &wfds);
-  TM_FD_SET(socket_id, &efds);
-  struct timeval tv;
-  tv.tv_sec = msecs / 1000;
-  tv.tv_usec= 1000 * (msecs % 1000);
-  int nr= select (socket_id+1, &rfds, &wfds, &efds, &tv);
-  DEBUG_SOCKET("'socket_link_rep::listen', 'select' returned " << nr);
-  if (nr == -1) {
-    io_error << "connection to server '" << host << "' aborted" << LF;
-    stop ();
-    return;
-  }
-  if (nr >= 1 && !FD_ISSET (socket_id, &efds)) {
-    if (FD_ISSET (socket_id, &rfds))
-      emit data_set_ready (socket_id);
-    //if (FD_ISSET (socket_id, &wfds))
-    //  emit ready_to_send (socket_id);
-  }
+  (void) msecs;
+  FAILED ("not implemented");
 }
 
 /******************************************************************************
 * Server
 ******************************************************************************/
+
+static hashset<pointer> all_servers;
+
+static inline bool
+exists (socket_server_rep* s) {
+  return all_servers->contains ((pointer) s);
+}
+
+static inline void
+checkin (socket_server_rep* s) {
+  all_servers->insert ((pointer) s);
+}
+
+static inline void
+checkout (socket_server_rep* s) {
+  all_servers->remove ((pointer) s);
+}
 
 socket_server_rep::socket_server_rep (string host2, unsigned short port2):
   host (host2), port (port2), socket_id (-1), notifier_ptr (NULL),
@@ -661,6 +674,7 @@ socket_server_rep::start () {
     SERRNO_LOGE ("listen on " * host * ":" * as_string (port));
     return "'listen' failed";
   }
+  checkin (this);
   notifier_ptr= tm_new<QSocketNotifier> (socket_id, QSocketNotifier::Read);
 #if QT_VERSION < 0x060000
   QObject::connect (notifier_ptr, SIGNAL(activated(int)),
@@ -694,11 +708,13 @@ socket_server_rep::stop () {
 #if defined(OS_MACOS)
   mac_end_server ();
 #endif
+  checkout (this);
   SLOGI ("server stopped at " * host * ":" * as_string (port));
 }
 
 void
 socket_server_rep::connection (int s) {
+  if (!exists (this)) return;
   SLOGI ("new connection received from " * as_string (s));
   int client; socket_link_rep* clt;
   SOCKADDR_STORAGE cltadd;
@@ -784,6 +800,7 @@ socket_server_rep::connection (int s) {
 
 void
 socket_server_rep::disconnection (class socket_link_rep* clt) {
+  if (!exists (this)) return;
   int io= clt->get_socket_id ();
   SLOGI ("disconnection of " * clt->get_host_name ()
       * " from socket " * as_string (io));
@@ -824,39 +841,6 @@ socket_server_rep::find_connection_ptr (int id) {
 
 void
 socket_server_rep::listen_connections (int msecs) {
-  //cout << "socket_server_rep::listen_connections" << LF;
-#ifdef OS_MINGW
-  using namespace wsoc;
-#endif
-  fd_set rfds, wfds, efds;
-  FD_ZERO(&rfds);
-  FD_ZERO(&wfds);
-  FD_ZERO(&efds);
-  int max_io= 0;
-  iterator<pointer> it= iterate (connections);
-  while (it->busy ()) {
-    socket_link_rep* c= (socket_link_rep*) it->next ();
-    int io= c->get_socket_id ();
-    max_io= max (max_io, io);
-    TM_FD_SET(io, &rfds);
-    TM_FD_SET(io, &wfds);
-    TM_FD_SET(io, &efds);
-  }
-  struct timeval tv;
-  tv.tv_sec = msecs / 1000;
-  tv.tv_usec= 1000 * (msecs % 1000);
-  int nr= select (max_io+1, &rfds, &wfds, &efds, &tv);
-  if (nr >= 1) {
-    it= iterate (connections);
-    while (it->busy ()) {
-      socket_link_rep* c= (socket_link_rep*) it->next ();
-      int io= c->get_socket_id ();
-      if (FD_ISSET (io, &efds))
-        continue;
-      if (FD_ISSET (io, &rfds))
-        emit c->data_set_ready (io);
-      if (FD_ISSET (io, &wfds))
-        emit c->ready_to_send (io);
-    }
-  }
+  (void) msecs;
+  FAILED ("not implemented");
 }
