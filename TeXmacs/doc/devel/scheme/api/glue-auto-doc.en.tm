@@ -4803,18 +4803,18 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(client-start <scm-arg|string>)>
-<explain-synopsis|no synopsis>
-  <|explain>
-    Calls the <c++> function <cpp|legacy_client_start> which returns
-    <scm|int>.
-  </explain>
-
-  <\explain>
     <scm|(server-port-in-use)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|server_port_in_use> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
+    <scm|(legacy-client-start <scm-arg|string> <scm-arg|int>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|legacy_client_start> which returns
     <scm|int>.
   </explain>
 

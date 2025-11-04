@@ -41,11 +41,7 @@ void   server_write (int fd, string s);
 bool   server_started ();
 void   server_listen_connections (int msecs);
 
-int        legacy_client_start (string host, int port);
-inline int legacy_client_start (string host) {
-  return legacy_client_start(host, 6561);
-}
-
+int    legacy_client_start (string host, int port);
 int    tls_client_start (string host, int port, scheme_tree args);
 void   client_stop (int fd);
 string client_read (int fd);
