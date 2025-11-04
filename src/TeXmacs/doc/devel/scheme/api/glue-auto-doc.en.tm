@@ -923,6 +923,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(headless?)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|is_headless> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
     <scm|(tt-exists? <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
@@ -4747,6 +4755,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(server-define-error-codes)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|server_define_error_codes> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(server-start)>
 <explain-synopsis|no synopsis>
   <|explain>
@@ -4795,6 +4811,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(server-port-in-use)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|server_port_in_use> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
     <scm|(client-stop <scm-arg|int>)>
 <explain-synopsis|no synopsis>
   <|explain>
@@ -4824,6 +4848,62 @@ source code.
   <|explain>
     Calls the <c++> function <cpp|enter_secure_mode> which returns
     <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(server-client-address <scm-arg|int>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|server_client_address> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
+    <scm|(server-log-write-int <scm-arg|int> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|server_log_write> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(supports-gnutls?)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|gnutls_present> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
+    <scm|(tls-client-start <scm-arg|string> <scm-arg|int> <scm-arg|scheme_tree>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|tls_client_start> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
+    <scm|(hash-password-pbkdf2 <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|hash_password_pbkdf2> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
+    <scm|(generate-self-signed-certificate <scm-arg|scheme_tree> <scm-arg|url> <scm-arg|url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|generate_self_signed> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
+    <scm|(trust-certificate <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|trust_certificate> which returns
+    <scm|bool>.
   </explain>
 
   <\explain>
