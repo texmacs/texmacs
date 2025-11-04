@@ -378,35 +378,8 @@ qt_simple_widget_rep::read (slot s, blackbox index) {
 ******************************************************************************/
 
 // Prints the current contents of the canvas onto a QPixmap
-#if QT_VERSION >= 0x060000
+#if QT_VERSION < 0x060000
 static QPixmap
-impress (qt_simple_widget_rep* wid) {
-  static QPainter painter;
-  static qt_renderer_rep ren (&painter, retina_factor);
-  SI width, height;
-  wid->handle_get_size_hint (width, height);
-  QSize s = to_qsize (width, height);
-  QSize phys_s = s;
-  phys_s *= retina_factor;
-  QPixmap pxm (phys_s);
-  if (DEBUG_QT)
-    debug_qt << "impress (" << s.width() << "," << s.height() << ")\n";
-  pxm.fill (Qt::transparent);
-  ren.begin (static_cast<QPaintDevice*>(&pxm));
-  rectangle r = rectangle (0, 0, phys_s.width(), phys_s.height());
-  ren.set_origin (0, 0);
-  ren.encode (r->x1, r->y1);
-  ren.encode (r->x2, r->y2);
-  ren.set_clipping (r->x1, r->y2, r->x2, r->y1);
-  // we do not want to be interrupted here...
-  the_gui->set_check_events (false);
-  wid->handle_repaint (&ren, r->x1, r->y2, r->x2, r->y1);
-  the_gui->set_check_events (true);
-  ren.end();
-  return pxm;
-}
-#else
-QPixmap
 impress (qt_simple_widget_rep* wid) {
   int width, height;
   wid->handle_get_size_hint (width, height);
