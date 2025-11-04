@@ -121,14 +121,6 @@ block_to_scheme_tree (string s) {
 * Converting scheme trees to trees
 ******************************************************************************/
 
-static inline int
-from_hex_digit (scheme_tree t, char c) {
-  if (c >= '0' && c <= '9') return c - '0';
-  if (c >= 'A' && c <= 'F') return c - 'A' + 10;
-  convert_error << "Invalid raw-data format " << t << "\n";
-  return -1;
-}
-
 tree
 scheme_tree_to_tree (scheme_tree t, hashmap<string,int> codes, bool flag) {
   if (is_atomic (t)) return scm_unquote (t->label);
@@ -147,19 +139,6 @@ scheme_tree_to_tree (scheme_tree t, hashmap<string,int> codes, bool flag) {
       u[0]= copy (t[0]);
       for (i=1; i<n; i++)
         u[i]= scheme_tree_to_tree (t[i], codes, flag);
-      return u;
-    }
-    else if (code == RAW_DATA && n == 2 && is_atomic (t[1]) &&
-	     starts (t[1]->label, "%XX-")) {
-      tree u (code, 1);
-      string s= t[1]->label;
-      int l= N(s) - 4;
-      char* aux= tm_new_array<char> (l/2);
-      for (int i= 0; i < l/2; i++)
-	aux[i]= (from_hex_digit (t, s[4 + 2*i]) << 4)
-	       + from_hex_digit (t, s[4 + 2*i+1]);
-      u[0]= string (aux, l/2);
-      tm_delete_array (aux);
       return u;
     }
     else {
