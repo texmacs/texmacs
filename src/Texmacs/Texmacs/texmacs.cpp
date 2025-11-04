@@ -103,7 +103,7 @@ clean_exit_on_segfault (int sig_num) {
 }
 
 void
-clean_exit (int sig_num) {
+clean_exit_on_sigterm (int sig_num) {
   (void) sig_num;
 #ifdef ADVANCED_DEVELOPER_MODE
   exit (0);
@@ -586,7 +586,7 @@ TeXmacs_main (int argc, char** argv) {
     if (!disable_error_recovery) signal (SIGSEGV, clean_exit_on_segfault);
 
     // allow docker stop to work
-    signal (SIGTERM, clean_exit);
+    signal (SIGTERM, clean_exit_on_sigterm);
     if (is_server () && server_can_start ()) {
       server_start ();
     }
