@@ -8132,22 +8132,24 @@ tmg_server_startedP () {
 }
 
 tmscm
-tmg_client_start (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "client-start");
-
-  string in1= tmscm_to_string (arg1);
-
+tmg_server_port_in_use () {
   // TMSCM_DEFER_INTS;
-  int out= legacy_client_start (in1);
+  int out= server_port_in_use ();
   // TMSCM_ALLOW_INTS;
 
   return int_to_tmscm (out);
 }
 
 tmscm
-tmg_server_port_in_use () {
+tmg_legacy_client_start (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "legacy-client-start");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "legacy-client-start");
+
+  string in1= tmscm_to_string (arg1);
+  int in2= tmscm_to_int (arg2);
+
   // TMSCM_DEFER_INTS;
-  int out= server_port_in_use ();
+  int out= legacy_client_start (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return int_to_tmscm (out);
@@ -11187,8 +11189,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("server-read",  tmg_server_read, 1, 0, 0);
   tmscm_install_procedure ("server-write",  tmg_server_write, 2, 0, 0);
   tmscm_install_procedure ("server-started?",  tmg_server_startedP, 0, 0, 0);
-  tmscm_install_procedure ("client-start",  tmg_client_start, 1, 0, 0);
   tmscm_install_procedure ("server-port-in-use",  tmg_server_port_in_use, 0, 0, 0);
+  tmscm_install_procedure ("legacy-client-start",  tmg_legacy_client_start, 2, 0, 0);
   tmscm_install_procedure ("client-stop",  tmg_client_stop, 1, 0, 0);
   tmscm_install_procedure ("client-read",  tmg_client_read, 1, 0, 0);
   tmscm_install_procedure ("client-write",  tmg_client_write, 2, 0, 0);
