@@ -558,8 +558,8 @@ static string
 as_string_gnutls_error (int e) {
   if (e == GNUTLS_E_SUCCESS)
     return string ("");
-  if (e == -1024)
-    return string ("unexpected inactive GnuTLS session");
+  if (e == TM_NET_SESSION_INACTIVE)
+    return string ("unexpected dead GnuTLS session");
   const char* msg= gnutls_strerror (e);
   if (msg == NULL)
     return string ("unknown GnuTLS error");
@@ -675,7 +675,8 @@ struct tls_server_contact_rep: tm_contact_rep {
   int io;
   pointer ptr;
   int error_number;
-  public:
+  bool handshake_in_progress;
+
   tls_server_contact_rep (array<array<string> > auths=
       array<array<string> > ());
   ~tls_server_contact_rep ();
@@ -683,13 +684,17 @@ struct tls_server_contact_rep: tm_contact_rep {
   void stop ();
   int send (const void* buffer, size_t length);
   int receive (void* buffer, size_t length);
+  bool alive ();
   bool active ();
   string last_error ();
+
+private:
+  void reset () { io=-1; ptr=(pointer) NULL; handshake_in_progress= false; }
 };
 
 tls_server_contact_rep::tls_server_contact_rep (array<array<string> > auths):
   tm_contact_rep (auths), io (-1), ptr (NULL),
-  error_number (GNUTLS_E_SUCCESS)
+  error_number (GNUTLS_E_SUCCESS), handshake_in_progress (false)
 {
   tls_ensure_initialization ();
   type= SOCKET_SERVER;
@@ -702,77 +707,75 @@ tls_server_contact_rep::~tls_server_contact_rep () {
 void
 tls_server_contact_rep::start (int io2) {
   ASSERT (!active (), "contact already active");
-  error_number= GNUTLS_E_SUCCESS;
-  if (N(args) == 0) {
-    server_log_write (log_warning,
-        string ("Missing credentials for starting TLS session ")
-        * string ("for client ") * as_string (io2));
-    io= -1;
-    return;
-  }
-  io= io2;
-  server_log_write (log_info,
-      string ("GnuTLS session starting for client ")
-      * as_string (io));
-
+  int e;
   gnutls_session_t s;
-  int e= gnutls_init (&s, GNUTLS_SERVER);
-  if (e != GNUTLS_E_SUCCESS && e < 0) {
-    server_log_write (log_error, "cannot initialize GnuTLS server: "
-        * as_string (gnutls_strerror (e)));
-    io= -1;
-    return;
-  }
-
-  ptr= (pointer) s;
-
-  string priority= "NORMAL";
-  for (int i= 0; i < N(args); i++) {
-    if (N(args[i]) == 0) continue;
-    else if (args[i][0] == string ("anonymous")) {
-      gnutls_credentials_set (s, GNUTLS_CRD_ANON,
-          tm_anon_server_credentials);
-      priority = priority * ":+ANON-DH";
+  if (!handshake_in_progress) {
+    error_number= GNUTLS_E_SUCCESS;
+    if (N (args) == 0) {
+      GNUTLS_LOGW ("Missing credentials for starting TLS session for client "
+          * as_string (io2));
+      io= -1;
+      return;
     }
-    else
-      server_log_write (log_warning,
-          "Unknown GnuTLS credential type " *
-          as_string (args[i]));
-  }
-  // do not request any certificate from the client.
-  gnutls_certificate_server_set_request (s, GNUTLS_CERT_IGNORE);
-  gnutls_credentials_set (s, GNUTLS_CRD_CERTIFICATE,
+    io= io2;
+    GNUTLS_LOGI ("GnuTLS session starting for client " * as_string (io));
+
+    e= gnutls_init (&s, GNUTLS_SERVER|GNUTLS_NONBLOCK);
+    if (e != GNUTLS_E_SUCCESS && e < 0) {
+      GNUTLS_ERR_LOGE (e, "server init");
+      reset ();
+      return;
+    }
+
+    ptr= (pointer) s;
+
+    string priority= "NORMAL";
+    for (int i= 0; i < N (args); i++) {
+      if (N (args[i]) == 0) continue;
+      else if (args[i][0] == string ("anonymous")) {
+        gnutls_credentials_set (s, GNUTLS_CRD_ANON,
+            tm_anon_server_credentials);
+        priority = priority * ":+ANON-DH";
+      }
+      else
+        GNUTLS_LOGW ("Unknown GnuTLS credential type " * as_string (args[i]));
+    }
+    // do not request any certificate from the client.
+    gnutls_certificate_server_set_request (s, GNUTLS_CERT_IGNORE);
+    gnutls_credentials_set (s, GNUTLS_CRD_CERTIFICATE,
         tm_x509_server_credentials);
-  c_string _priority (priority);
-  e= gnutls_priority_set_direct (s, _priority, NULL);
-  if (e != GNUTLS_E_SUCCESS && e < 0) {
-    server_log_write (log_error, "cannot set priority '" * priority * "': "
-        * as_string (gnutls_strerror (e)));
-    gnutls_deinit (s);
-    io= -1;
-    ptr= (pointer) NULL;
-    return;
+    c_string _priority (priority);
+    e= gnutls_priority_set_direct (s, _priority, NULL);
+    if (e != GNUTLS_E_SUCCESS && e < 0) {
+      GNUTLS_ERR_LOGE (e, priority * " priority set ");
+      gnutls_deinit (s);
+      reset ();
+      return;
+    }
+    gnutls_dh_set_prime_bits (s, tm_dh_bitsize);
+    gnutls_transport_set_int2 (s, io, io);
+    string _timeout= get_preference ("server contact timeout");
+    int timeout= is_int (_timeout) ? as_int (_timeout) : 0;
+    if (timeout == 0)
+      GNUTLS_LOGW ("server connection timeout is disabled");
+    gnutls_handshake_set_timeout (s, timeout);
+  } else {
+    s= (gnutls_session_t) ptr;
   }
-  gnutls_dh_set_prime_bits (s, tm_dh_bitsize);
-  gnutls_transport_set_int2 (s, io, io);
-  string _timeout= get_preference ("server contact timeout");
-  int timeout= is_int (_timeout) ? as_int (_timeout) : 0;
-  if (timeout == 0)
-    io_warning << "server connection timeout is disabled" << LF; 
-  gnutls_handshake_set_timeout (s, timeout);
 
   e= gnutls_handshake (s);
-  server_log_write (log_info, "GnuTLS handshake with client " *
-      as_string (io) * string (" returned (")
-      * as_string (e) * string (") '") *
-      gnutls_strerror (e) * "'");
-  if (e != GNUTLS_E_SUCCESS && e < 0) {
-    server_log_write (log_info, "GnuTLS session failed for client " *
-        as_string (io));
-    server_log_write (log_error, "\n" * tm_session_info (s));
+  if (e == GNUTLS_E_SUCCESS) {
+    GNUTLS_LOGI ("GnuTLS session started for client " * as_string (io));
+    GNUTLS_LOGI (tm_session_info (s));
+    handshake_in_progress= false;
+  } else if (e == GNUTLS_E_AGAIN || e == GNUTLS_E_INTERRUPTED) {
+    GNUTLS_LOG ("GnuTLS handshake in progress for client " * as_string (io));
+    handshake_in_progress= true;
+  } else if (e < 0) {
+    GNUTLS_ERR_LOGE (e, "session handshake for client " * as_string (io));
+    GNUTLS_LOGE (tm_session_info (s));
     gnutls_deinit (s);
-    io= -1;
-    ptr= (pointer) NULL;
+    reset ();
     return;
   }
 
@@ -783,7 +786,7 @@ tls_server_contact_rep::start (int io2) {
 
 void
 tls_server_contact_rep::stop () {
-  if (!active ()) return;
+  if (!alive ()) return;
   gnutls_credentials_type_t cred_type=
     gnutls_auth_server_get_type ((gnutls_session_t) ptr);
   if (cred_type != GNUTLS_CRD_ANON && cred_type != GNUTLS_CRD_CERTIFICATE)
@@ -791,18 +794,16 @@ tls_server_contact_rep::stop () {
 
   gnutls_bye ((gnutls_session_t) ptr, GNUTLS_SHUT_WR);
   gnutls_deinit ((gnutls_session_t) ptr);
-  io= -1;
-  ptr= (pointer) NULL;
   GNUTLS_LOGI ("GnuTLS closed session for client " * as_string (io));
+  reset ();
 }
 
 int
 tls_server_contact_rep::send (const void* buffer, size_t length) {
   if (!active ()) {
-    server_log_write (log_error,
-        "unexpected inactive GnuTLS session while sending"
-        * string (" to client ") * as_string (io));
-    return -1024;
+    GNUTLS_LOGE ("unexpected inactive GnuTLS session while sending to client "
+        * as_string (io));
+    return TM_NET_SESSION_INACTIVE;
   }
   int r= gnutls_record_send ((gnutls_session_t) ptr, buffer, length);
   error_number= r < 0 ? r : GNUTLS_E_SUCCESS;
@@ -816,10 +817,9 @@ tls_server_contact_rep::send (const void* buffer, size_t length) {
 int
 tls_server_contact_rep::receive (void* buffer, size_t length) {
   if (!active ()) {
-    server_log_write (log_error,
-        "unexpected inactive GnuTLS session while receiving"
-        * string (" from client ") * as_string (io));
-    return -1024;
+    GNUTLS_LOGE ("unexpected inactive GnuTLS session while receiving "
+        "from client " * as_string (io));
+    return TM_NET_SESSION_INACTIVE;
   }
   int r= gnutls_record_recv ((gnutls_session_t) ptr, buffer, length);
   error_number= r < 0 ? r : GNUTLS_E_SUCCESS;
@@ -836,9 +836,15 @@ tls_server_contact_rep::last_error () {
 }
 
 bool
+tls_server_contact_rep::alive () {
+  // Cannot be alive if GnuTLS is not present
+  return ptr != (pointer) NULL;
+}
+
+bool
 tls_server_contact_rep::active () {
   // Cannot be active if GnuTLS is not present
-  return ptr != (pointer) NULL;
+  return alive () && !handshake_in_progress;
 }
 
 tm_contact 
@@ -854,6 +860,7 @@ struct tls_client_contact_rep: tm_contact_rep {
   int io;
   pointer ptr;
   int error_number;
+  bool handshake_in_progress;
   tls_client_contact_rep (array<array<string> > args=
       array<array<string> > ());
   ~tls_client_contact_rep ();
@@ -861,6 +868,7 @@ struct tls_client_contact_rep: tm_contact_rep {
   void stop ();
   int send (const void* buffer, size_t length);
   int receive (void* buffer, size_t length);
+  bool alive ();
   bool active ();
   string last_error ();
 
@@ -873,11 +881,12 @@ private:
    */
   int handshake (gnutls_session_t s);
   int verify ();
+  void reset () { io=-1; ptr=(pointer) NULL; handshake_in_progress= false; }
 };
 
 tls_client_contact_rep::tls_client_contact_rep (array<array<string> > creds):
   tm_contact_rep (creds), io (-1), ptr (NULL),
-  error_number (GNUTLS_E_SUCCESS)
+  error_number (GNUTLS_E_SUCCESS), handshake_in_progress (false)
 {
   tls_ensure_initialization ();
   type= SOCKET_CLIENT;
@@ -890,30 +899,39 @@ tls_client_contact_rep::~tls_client_contact_rep () {
 int
 tls_client_contact_rep::handshake (gnutls_session_t s) {
   int ret= gnutls_handshake (s);
-  GNUTLS_LOG("GnuTLS handshake for client " * as_string (io)
-      * " returned '" * gnutls_strerror (ret));
   if (ret == GNUTLS_E_SUCCESS) {
-    GNUTLS_LOG("GnuTLS session started for client " * as_string  (io));
-    GNUTLS_LOG(tm_session_info (s));
-    return 0;
+    GNUTLS_LOGI ("GnuTLS session started for client " * as_string (io));
+    GNUTLS_LOG (tm_session_info (s));
+    handshake_in_progress= false;
+    return ret;
+  } else if (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED) {
+    GNUTLS_LOG ("GnuTLS handshake in progress for " * as_string (io));
+    handshake_in_progress = true;
+    error_number= ret;
+    return ret;
+  } else if (ret < 0) {
+    error_number= ret;
+    GNUTLS_ERR_LOGE (ret, "handshake for client " * as_string (io));
+    reset ();
   }
-  else if (ret == GNUTLS_E_CERTIFICATE_ERROR && server_certificate != NULL) {
+
+  if ((ret == GNUTLS_E_CERTIFICATE_ERROR ||
+       ret == GNUTLS_E_CERTIFICATE_VERIFICATION_ERROR) &&
+      server_certificate != NULL) {
     // ask user for server cert confirmation if it isn't a trusted cert
-    gnutls_datum_t info_short;
     string msg;
 
     string crt_str = as_string_gnutls_crt (server_certificate);
     if (crt_str == "") {
       char serial[128] = {0};
       size_t serial_size = sizeof (serial);
-
-      int ret = gnutls_x509_crt_get_serial (server_certificate, serial, &serial_size);
+      int ret = gnutls_x509_crt_get_serial
+	(server_certificate, serial, &serial_size);
       if (ret < 0) {
         GNUTLS_ERR_LOGE (ret, "cert get serial");
         gnutls_deinit (s);
-        io= -1;
-        ptr= (pointer) NULL;
-        return 1;
+        reset ();
+        return ret;
       }
       msg = string (serial);
     } else {
@@ -960,98 +978,106 @@ tls_client_contact_rep::handshake (gnutls_session_t s) {
     if (ret_full) {
       gnutls_free(info_full.data);
     }
-    gnutls_free(info_short.data);
   }
-  return 1;
+  return ret;
 }
 
 void
 tls_client_contact_rep::start (int io2) {
   ASSERT (!active (), "contact already active");
-  GNUTLS_LOG("tls_client_contact_rep::start");
-  error_number= GNUTLS_E_SUCCESS;
-  if (!tm_gnutls_initialized) return;
-  if (N(args) == 0) {
-    GNUTLS_LOG("Missing credentials for starting TLS session for client "
-        * as_string (io));
-    io= -1;
-    return;
-  }
-  io= io2;
-  GNUTLS_LOG("GnuTLS session starting for client " * as_string (io) * "...");
+
+  int ret;
   gnutls_session_t s;
-  gnutls_init (&s, GNUTLS_CLIENT);
-  ptr= (pointer) s;
-  string priority = "NORMAL";
-  for (int i= 0; i < N(args); i++) {
-    array<string> cred= args[i];
-    if (N(cred) == 0) continue;
-    if (N(cred) == 1 && cred[0] == "anonymous") {
-      gnutls_credentials_set (s, GNUTLS_CRD_ANON,
-          tm_anon_client_credentials);
-      priority << ":+ANON-DH";
+
+  ret= error_number= GNUTLS_E_SUCCESS;
+  if (!handshake_in_progress) {
+    if (!tm_gnutls_initialized) return;
+    if (N (args) == 0) {
+      GNUTLS_LOGE ("Missing credentials for starting TLS session for client "
+          * as_string (io));
+      reset ();
+      return;
     }
-    else
-      io_warning << "Unknown credentials " << cred
-        << " for GnuTLS session of client " << io << "\n";
-  }
 
-  gnutls_session_set_verify_cert (s, NULL, 0);
-  gnutls_session_set_verify_output_function (s, cert_out_callback);
-  gnutls_credentials_set (s, GNUTLS_CRD_CERTIFICATE,
-      tm_x509_client_credentials);
+    io= io2;
+    GNUTLS_LOG ("GnuTLS session starting for client " * as_string (io) * "...");
 
-  c_string _priority (priority);
-  if (gnutls_priority_set_direct (s, _priority, NULL) != GNUTLS_E_SUCCESS) {
-    io_warning << "GnuTLS failed setting priorities " << priority
-      << " for client " << io << "\n";
-    gnutls_deinit (s);
-    io= -1;
-    ptr= (pointer) NULL;
-    return;
-  }
-  gnutls_transport_set_int2 (s, io, io);
-  string _timeout= get_preference ("client contact timeout");
-  int timeout= is_int (_timeout) ? as_int (_timeout) : 0;
-  if (timeout == 0)
-    io_warning << "client connection timeout is disabled" << LF;
-  gnutls_handshake_set_timeout (s, timeout);
-
-  int ret = 0;
-  do {
-    if (ret == 2) {
-      GNUTLS_LOG("Retrying GnuTLS handshake...");
+    ret = gnutls_init (&s, GNUTLS_CLIENT|GNUTLS_NONBLOCK);
+    ptr= (pointer) s;
+    string priority = "NORMAL";
+    for (int i= 0; i < N (args); i++) {
+      array<string> cred= args[i];
+      if (N (cred) == 0) continue;
+      if (N (cred) == 1 && cred[0] == "anonymous") {
+        gnutls_credentials_set (s, GNUTLS_CRD_ANON,
+            tm_anon_client_credentials);
+        priority << ":+ANON-DH";
+      }
+      else {
+        GNUTLS_LOGW ("Unknown credentials " * print_to_string (cred)
+            * " for GnuTLS session of client " * as_string (io));
+      }
     }
-    ret = handshake(s);
-  } while (ret == 2);
 
-  if (ret == 1) {
-    GNUTLS_LOG("GnuTLS session aborted for client " * as_string (io));
+    // TODO: get hostname into tls_client_contact struct
+    gnutls_session_set_verify_cert (s, NULL, 0);
+    gnutls_session_set_verify_output_function (s, cert_out_callback);
+
+    ret = gnutls_credentials_set (s, GNUTLS_CRD_CERTIFICATE,
+        tm_x509_client_credentials);
+    if (ret != GNUTLS_E_SUCCESS) {
+      GNUTLS_ERR_LOGE (ret, "x509 credentials set");
+      gnutls_deinit (s);
+      reset ();
+      return;
+    }
+
+    c_string _priority (priority);
+    ret = gnutls_priority_set_direct (s, _priority, NULL);
+    if (ret != GNUTLS_E_SUCCESS) {
+      GNUTLS_ERR_LOGE (ret, "setting priorities " * priority
+          * " for client " * as_string (io));
+      gnutls_deinit (s);
+      reset ();
+      return;
+    }
+    gnutls_transport_set_int2 (s, io, io);
+    string _timeout= get_preference ("client contact timeout");
+    int timeout= is_int (_timeout) ? as_int (_timeout) : 0;
+    if (timeout == 0)
+      GNUTLS_LOGW ("client connection timeout is disabled");
+    gnutls_handshake_set_timeout (s, timeout);
+  } else {
+    s= (gnutls_session_t) ptr;
+  }
+  ret = handshake (s);
+  if (ret < 0 && ret != GNUTLS_E_AGAIN && ret != GNUTLS_E_INTERRUPTED) {
+    GNUTLS_LOGE ("GnuTLS session aborted for client " * as_string (io));
     gnutls_deinit (s);
-    io= -1;
-    ptr= (pointer) NULL;
+    reset ();
   }
 }
 
 void
 tls_client_contact_rep::stop () {
-  if (active ()) {
+  if (alive ()) {
     gnutls_bye ((gnutls_session_t) ptr, GNUTLS_SHUT_RDWR);
     gnutls_deinit ((gnutls_session_t) ptr);
     ptr= (pointer) NULL;
+    handshake_in_progress= false;
   }
   if (io >= 0) {
-    io= -1;
     GNUTLS_LOG ("GnuTLS closed session for client " * as_string (io));
+    reset ();
   }
 }
 
 int
 tls_client_contact_rep::send (const void* buffer, size_t length) {
   if (!active ()) {
-    io_error << "Unexpected inactive GnuTLS session while sending"
-      << " to client " << io << "\n";
-    return -1024;
+    GNUTLS_LOGE ("Unexpected inactive GnuTLS session while sending to client "
+      * as_string (io));
+    return TM_NET_SESSION_INACTIVE;
   }
   int r= gnutls_record_send ((gnutls_session_t) ptr, buffer, length);
   error_number= r < 0 ? r : GNUTLS_E_SUCCESS;
@@ -1065,9 +1091,9 @@ tls_client_contact_rep::send (const void* buffer, size_t length) {
 int
 tls_client_contact_rep::receive (void* buffer, size_t length) {
   if (!active ()) {
-    io_error << "Unexpected inactive GnuTLS session while receiving"
-      << " from client " << io << "\n";
-    return -1024;
+    GNUTLS_LOGE ("Unexpected dead GnuTLS session while receiving "
+        "from client " * as_string (io));
+    return TM_NET_SESSION_INACTIVE;
   }
   int r= gnutls_record_recv ((gnutls_session_t) ptr, buffer, length);
   error_number= r < 0 ? r : GNUTLS_E_SUCCESS;
@@ -1087,9 +1113,15 @@ tls_client_contact_rep::last_error () {
 }
 
 bool
+tls_client_contact_rep::alive () {
+  // Cannot be alive if GnuTLS is not present
+  return ptr != (pointer) NULL;
+}
+
+bool
 tls_client_contact_rep::active () {
   // Cannot be active if GnuTLS is not present
-  return ptr != (pointer) NULL;
+  return alive () && !handshake_in_progress;
 }
 
 tm_contact 

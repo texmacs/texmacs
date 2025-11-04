@@ -28,6 +28,7 @@ public:
   void stop () { io= -1; }
   int send (const void* buffer, size_t length);
   int receive (void* buffer, size_t length);
+  bool alive () { return io > 0; };
   bool active () { return io > 0; };
   string last_error ();
 };
@@ -53,6 +54,7 @@ public:
   void stop () { io= -1; }
   int send (const void* buffer, size_t length);
   int receive (void* buffer, size_t length);
+  bool alive () { return io > 0; };
   bool active () { return io > 0; }
   string last_error ();
 };

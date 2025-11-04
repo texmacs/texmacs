@@ -87,6 +87,7 @@ public:
 public slots:
   void data_set_ready (int);
   void ready_to_send (int);
+  void resume_start (int);
 signals:
   void disconnection (socket_link_rep* clt);
 private:
@@ -99,6 +100,9 @@ private:
   QSocketNotifier *read_notifier_ptr, *write_notifier_ptr;
   SOCKADDR_STORAGE address;
   inline bool used_by_server () { return port == 0; }
+
+  void connect_data_notifiers ();
+  void connect_handshake_notifiers ();
 };
 
 /******************************************************************************
