@@ -187,7 +187,3 @@ string qt_application_directory ();
 string texmacs_get_application_directory_str() {
   return qt_application_directory ();
 }
-
-void texmacs_process_event() {
-  
-}

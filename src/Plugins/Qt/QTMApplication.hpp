@@ -24,7 +24,6 @@
 #include "QTMKeyboard.hpp"
 #include "QTMIconManager.hpp"
 #include "QTMMainTabWindow.hpp"
-#include "QTMWaitDialog.hpp"
 
 void init_palette (QApplication* app);
 void init_style_sheet (QApplication* app);
@@ -63,12 +62,6 @@ public:
     return mKeyboard;
   }
 
-#if QT_VERSION >= 0x060000
-  inline QTMWaitDialog &waitDialog() {
-    return *mWaitDialog;
-  }
-#endif
-
   inline bool useTabWindow() {
     return mUseTabWindow;
   }
@@ -81,13 +74,10 @@ public:
     return *QTMMainTabWindow::topTabWindow();
   }
 
-  void installWaitHandler();
-
 private:
 #if QT_VERSION >= 0x060000
   bool mPixmapManagerInitialized;
   QTMIconManager mIconManager;
-  QTMWaitDialog *mWaitDialog;
 #endif
   QTMKeyboard mKeyboard;
   bool mUseTabWindow;

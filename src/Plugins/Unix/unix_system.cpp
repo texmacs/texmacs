@@ -215,42 +215,8 @@ url texmacs_get_application_directory () {
 #endif
 }
 
-bool is_doing_long_task = false;
-using time_point = std::chrono::time_point<std::chrono::system_clock>;
-using duration = std::chrono::duration<double>;
-
-void texmacs_system_start_long_task() {
-  if (is_doing_long_task) return;
-  is_doing_long_task = true;
-#if defined(QTTEXMACS) && QT_VERSION >= 0x050000
-  QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-#endif
-}
-void texmacs_system_end_long_task() {
-  if (!is_doing_long_task) return;
-  is_doing_long_task = false;
-#if defined(QTTEXMACS) && QT_VERSION >= 0x050000
-  QGuiApplication::restoreOverrideCursor();  
-  QApplication::alert(QApplication::topLevelWidgets().first());
-#endif
-}
-
-void texmacs_process_event() {
-  if (!is_doing_long_task) return;
-  static time_point last_time = std::chrono::system_clock::now();
-  time_point current_time = std::chrono::system_clock::now();
-  duration elapsed_seconds = current_time - last_time;
-  if (elapsed_seconds.count() < 0.1) return;
-  last_time = current_time;
-#ifdef QTTEXMACS
-  QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
-#endif
-}
-
 void texmacs_init_guile_hooks() {
-#ifdef SCM_HAVE_HOOKS
-  guile_process_event = texmacs_process_event;
-#else
+#ifndef SCM_HAVE_HOOKS
   cout << "warning: guile hooks are not available" << LF;
 #endif
 }
