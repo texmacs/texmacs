@@ -38,6 +38,7 @@ public:
   virtual void stop () = 0;
   virtual int send (const void* buffer, size_t length) = 0;
   virtual int receive (void* buffer, size_t length) = 0;
+  virtual bool alive () = 0;
   virtual bool active () = 0;
   virtual string last_error () = 0;
 };
@@ -67,6 +68,9 @@ inline int send (tm_contact contact, const void* buffer, size_t length) {
 
 inline int receive (tm_contact contact, void* buffer, size_t length) {
   return contact.rep -> receive (buffer, length); }
+
+inline bool is_alive (tm_contact contact) {
+  return contact.rep -> alive (); }
 
 inline bool is_active (tm_contact contact) {
   return contact.rep -> active (); }

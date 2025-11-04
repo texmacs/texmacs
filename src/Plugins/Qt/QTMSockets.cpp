@@ -15,6 +15,7 @@
 #include "scheme.hpp"
 #include "iterator.hpp"
 #include "analyze.hpp"
+#include "boot.hpp"
 #include "server_log.hpp"
 #include "gnutls.hpp"
 #include <cctype>
@@ -213,8 +214,8 @@ socket_link_rep::start () {
   if (!socket_present ())
     return "cannot use sockets";
   if (socket_id >= 0) { // used by the server
-    if (!is_active (contact)) {
-      string msg= string ("unexpected closed contact for socket") *
+    if (!is_alive (contact)) {
+      string msg= string ("unexpected closed contact for socket ") *
         as_string (socket_id);
       SLOGE (msg);
       return msg;
@@ -239,9 +240,18 @@ socket_link_rep::start () {
     if (x)
       return string ("'getaddrinfo' error: ") * string (GAI_STRERROR(x));
     for (rp = result; rp != NULL; rp = rp->ai_next) {
+      DEBUG_SOCKET("'socket_link_rep::start' trying socket for addr");
       socket_id= SOCKET(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
       if (socket_id < 0)
         continue;
+
+      // TODO: this call is blocking, the socket is put non blocking further
+      // down after the connection succeeded. This blocks the UI if we
+      // connect to a valid domain name that isn't a texmacs server.
+      // We should put the socket as non blocking before the connect, just
+      // like we did for the gnutls handshake, and then resume the connection
+      // in resume_start. We would need to try all the results from
+      // getaddrinfo one after the other (keep addrinfo struct as class attr)
       if (CONNECT(socket_id, rp->ai_addr, rp->ai_addrlen) != -1)
         break;
       CLOSE(socket_id);
@@ -264,7 +274,7 @@ socket_link_rep::start () {
     DEBUG_SOCKET("'socket_link_rep::start' created socket with id "
       << socket_id);
     ::start (contact, socket_id);
-    if (!is_active (contact)) {
+    if (!is_alive (contact)) {
       CLOSE(socket_id);
       socket_id= -1;
       return "contact has not started";
@@ -273,53 +283,76 @@ socket_link_rep::start () {
     SLOG ("contact started for socket " * as_string (socket_id));
     call ("client-add", object (socket_id));
   }
-  read_notifier_ptr=
-    tm_new<QSocketNotifier> (socket_id, QSocketNotifier::Read);
-  write_notifier_ptr=
-    tm_new<QSocketNotifier> (socket_id, QSocketNotifier::Write);
+  read_notifier_ptr= new QSocketNotifier (socket_id, QSocketNotifier::Read);
+  write_notifier_ptr= new QSocketNotifier (socket_id, QSocketNotifier::Write);
   if (!read_notifier_ptr || !write_notifier_ptr)
     return "cannot create socket notifiers";
 
-  write_notifier_ptr->setEnabled (false);
-#if QT_VERSION < 0x060000
-  QObject::connect (read_notifier_ptr, SIGNAL (activated(int)),
-    this, SLOT (data_set_ready(int)));
-#else
-  QObject::connect (read_notifier_ptr, &QSocketNotifier::activated,
-    this, &socket_link_rep::data_set_ready);
-#endif
-  write_notifier_ptr->setEnabled (false);
-#if QT_VERSION < 0x060000
-  QObject::connect (write_notifier_ptr, SIGNAL (activated(int)),
-    this, SLOT (ready_to_send(int)));
-#else
-  QObject::connect (write_notifier_ptr,&QSocketNotifier::activated,
-    this, &socket_link_rep::ready_to_send);
-#endif
+  if (is_active (contact)) {
+    connect_data_notifiers ();
+  } else {
+    connect_handshake_notifiers ();
+  }
+  read_notifier_ptr->setEnabled (true);
+  write_notifier_ptr->setEnabled (true);
   alive= true;
   return "";
 }
 
+void socket_link_rep::connect_data_notifiers () {
+  ASSERT (read_notifier_ptr && write_notifier_ptr,
+	  "socket notifiers are NULL");
+  ASSERT (is_active(contact), "inactive contact");
+  SLOG ("connecting data notifiers for socket " * as_string (socket_id));
+  read_notifier_ptr->disconnect();
+  write_notifier_ptr->disconnect();
+
+#if QT_VERSION < 0x060000
+  QObject::connect (read_notifier_ptr, SIGNAL (activated(int)),
+    this, SLOT (data_set_ready(int)));
+  QObject::connect (write_notifier_ptr, SIGNAL (activated(int)),
+    this, SLOT (ready_to_send(int)));
+#else
+  QObject::connect (read_notifier_ptr, &QSocketNotifier::activated,
+    this, &socket_link_rep::data_set_ready);
+  QObject::connect (write_notifier_ptr, &QSocketNotifier::activated,
+    this, &socket_link_rep::ready_to_send);
+#endif
+}
+
+void socket_link_rep::connect_handshake_notifiers () {
+  ASSERT (read_notifier_ptr && write_notifier_ptr,
+	  "socket notifiers are NULL");
+  SLOG ("connecting handshake resume notifier for socket "
+	* as_string (socket_id));
+#if QT_VERSION < 0x060000
+  QObject::connect (read_notifier_ptr, SIGNAL (activated(int)),
+    this, SLOT (resume_start(int)));
+  QObject::connect (write_notifier_ptr, SIGNAL (activated(int)),
+    this, SLOT (resume_start(int)));
+#else
+  QObject::connect (read_notifier_ptr, &QSocketNotifier::activated,
+    this, &socket_link_rep::resume_start);
+  QObject::connect (write_notifier_ptr, &QSocketNotifier::activated,
+    this, &socket_link_rep::resume_start);
+#endif
+}
+
 void
 socket_link_rep::stop () {
-  // cout << "socket_link_rep::stop, port= " << port << LF;
-  if (used_by_server ())
-    server_log_write (log_info, string ("closing socket ") *
-      as_string (socket_id));
   DEBUG_SOCKET("'socket_link_rep::stop' is closing socket " << socket_id);
-  if (!alive)
+  if (!alive) {
     return;
+  }
   if (read_notifier_ptr) {
     read_notifier_ptr->setEnabled (false);
-    read_notifier_ptr->disconnect (SIGNAL(activated(int)));
-    tm_delete (read_notifier_ptr);
-    read_notifier_ptr= NULL;
+    read_notifier_ptr->disconnect ();
+    read_notifier_ptr->deleteLater ();
   }
   if (write_notifier_ptr) {
     write_notifier_ptr->setEnabled (false);
-    write_notifier_ptr->disconnect (SIGNAL(activated(int)));
-    tm_delete (write_notifier_ptr);
-    write_notifier_ptr= NULL;
+    write_notifier_ptr->disconnect ();
+    write_notifier_ptr->deleteLater ();
   }
   if (used_by_server ()) { // socket created by the server
     call ("server-logout-client", object (socket_id));
@@ -369,18 +402,43 @@ socket_link_rep::write (string s, int channel) {
 }
 
 void
+socket_link_rep::resume_start (int s) {
+  if (!is_alive (contact)) {
+    DEBUG_SOCKET ("contact is dead for socket " * as_string (s));
+    stop ();
+    if (!is_headless ())
+      call ("client-open-error", contact->last_error());
+    return;
+  }
+  // Get the notifier that sent the signal
+  QSocketNotifier* notifier = qobject_cast<QSocketNotifier*> (sender ());
+  if (!is_active (contact)) {
+    notifier->setEnabled (false);
+    ::start (contact, s);
+    if (!is_alive (contact)) {
+      stop ();
+      if (!is_headless ())
+        call ("client-open-error", contact->last_error());
+      return;
+    }
+  }
+  if (is_active (contact))
+    connect_data_notifiers();
+  notifier->setEnabled (true);
+}
+
+void
 socket_link_rep::data_set_ready (int s) {
-  (void) s;
+  read_notifier_ptr->setEnabled (false);
+  if (!alive)
+    return;
+  if (!is_active (contact)) {
+    stop ();
+    return;
+  }
   DEBUG_SOCKET("'socket_link_rep::data_set_ready', socket "
     << socket_id << ", s= " << s);
   char data[16384];
-  if (!alive) {
-    read_notifier_ptr->setEnabled (false);
-    return;
-  }
-  //if (!read_notifier_ptr->isEnabled ())
-  //  return;
-  read_notifier_ptr->setEnabled (false);
   int n= receive (contact, (void*) data, 16384);
   DEBUG_SOCKET("'socket_link_rep::data_set_ready', socket "
     << socket_id << " 'receive' returned " << n);
@@ -392,16 +450,14 @@ socket_link_rep::data_set_ready (int s) {
     stop ();
   }
   else if (n < 0) {
-    if (is_active (contact)) {
-      //if (!used_by_server ())
-      // io_warning << "retrying connection to server '"
-      //	    << host << "': "<< last_error (contact) << LF;
+    if (is_alive (contact))
       read_notifier_ptr->setEnabled (true);
-    }
     else {
       DEBUG_SOCKET("'socket_link_rep::data_set_ready', 'receive' failed: "
         << last_error (contact));
-      if (!used_by_server ())
+      if (used_by_server ())
+	io_error << "connection to client " << s << " aborted" << LF;
+      else
         io_error << "connection to server '" << host << "' aborted" << LF;
       stop ();
     }
@@ -427,22 +483,22 @@ socket_link_rep::data_set_ready (int s) {
     }
     if (!is_nil (feed_cmd))
       feed_cmd->apply ();
-    if (!used_by_server ())
-      emit data_set_ready (s);
     read_notifier_ptr->setEnabled (true);
   }
 }
 
 void
 socket_link_rep::ready_to_send (int s) {
-  (void) s;
-  //cout  << "socket_link_rep::ready_to_send, s= " << s << LF;
 #ifdef OS_MINGW
   using namespace wsoc;
 #endif
-  if (!alive) // || !write_notifier_ptr->isEnabled ())
-    return;
   write_notifier_ptr->setEnabled (false);
+  if (!alive)
+    return;
+  if (!is_active (contact)) {
+    stop ();
+    return;
+  }
   int n= N(output_buffer);
   if (n > 0) {
     c_string buf (output_buffer);
@@ -456,20 +512,25 @@ socket_link_rep::ready_to_send (int s) {
         output_buffer= output_buffer (ret, n);
       n -= ret;
       if (n > 0) write_notifier_ptr->setEnabled (true);
-      if (!used_by_server ())
-        emit ready_to_send (s);
     }
-    else if (ret < 0) {
+    else if (ret < 0 && ret != EAGAIN && ret != GNUTLS_E_AGAIN &&
+        ret != GNUTLS_E_INTERRUPTED) {
       DEBUG_SOCKET("'socket_link_rep::ready_to_send', error: "
         << last_error (contact));
       if (is_active (contact)) {
-        if (!used_by_server ())
-          io_warning << "retrying connection to server '"
+        if (used_by_server ())
+          io_warning << "retrying connection to client "
+	    << as_string (s) << ": " << last_error (contact);
+	else
+	  io_warning << "retrying connection to server '"
             << host << "': " << last_error (contact);
         write_notifier_ptr->setEnabled (true);
       }
       else {
-        if (!used_by_server ())
+        if (used_by_server ())
+          io_error << "connection to client "
+	    << as_string (s) << " aborted: " << last_error (contact);
+	else
           io_error << "connection to server '"
             << host << "' aborted: " << last_error (contact);
         stop ();
@@ -655,6 +716,21 @@ socket_server_rep::connection (int s) {
   SLOGI ("connection accepted from " * address
       * " at socket " * as_string (client));
 
+#ifndef OS_MINGW
+  if (fcntl (client, F_SETFL, O_NONBLOCK) == -1) {
+    SERRNO_LOGE ("cannot set socket as non blocking");
+    return;
+  }
+#else
+  {
+    using namespace wsoc;
+    u_long flags = -1;
+    if (ioctlsocket (client, FIONBIO, &flags) == SOCKET_ERROR)
+      SERRNO_LOGE ("cannot set socket as non blocking");
+      return;
+  }
+#endif
+
   array<array<string> > authentications;
   array<string> _anonymous; _anonymous << string ("anonymous");
   if (get_preference ("tls-server") == string ("on")) {
@@ -664,12 +740,13 @@ socket_server_rep::connection (int s) {
   }
   else
     authentications << _anonymous;
+
   tm_contact contact= (get_preference ("tls-server") == string ("on")) ?
     make_tls_server_contact (authentications) :
     make_socket_server_contact (authentications);
   ::start (contact, client);
-  if (!is_active (contact)) {
 
+  if (!is_alive (contact)) {
     SLOGE ("contact failed from " * string_from_socket_address (&cltadd)
       * " at socket " * as_string (client));
     ::stop (contact);
@@ -679,26 +756,27 @@ socket_server_rep::connection (int s) {
 
   SLOGI ("contact started from " * string_from_socket_address (&cltadd)
     * " at socket " * as_string (client));
-  clt= tm_new<socket_link_rep> (client, &cltadd, contact);
+
+  clt= new socket_link_rep (client, &cltadd, contact);
   string st= clt->start ();
   if (st != "") {
     SLOGE ("'socket_link_rep' failed from "
       * string_from_socket_address (&cltadd)
       * " at socket " * as_string (client) * ": " * st);
     clt->stop ();
-    tm_delete (clt);
+    clt->deleteLater ();
   }
-  connect (clt, SIGNAL (disconnection(socket_link_rep*)), this,
-    SLOT (disconnection (socket_link_rep*)));
-  connections->insert ((pointer) clt);
   socket_ptr_from_id (clt->get_socket_id ())= (pointer) clt;
+  connections->insert ((pointer) clt);
   call ("server-add", object (clt->get_socket_id ()));
+  connect (clt, SIGNAL (disconnection(socket_link_rep*)), this,
+	   SLOT (disconnection (socket_link_rep*)));
   SLOGI ("'socket_link_rep' started from "
     * string_from_socket_address (&cltadd)
     * " at socket " * as_string (client));
 }
 
-void 
+void
 socket_server_rep::disconnection (class socket_link_rep* clt) {
   int io= clt->get_socket_id ();
   SLOGI ("disconnection of " * clt->get_host_name ()
@@ -706,7 +784,8 @@ socket_server_rep::disconnection (class socket_link_rep* clt) {
   connections->remove ((pointer) clt);
   socket_ptr_from_id->reset (io);
   address_from_id->reset (io);
-  tm_delete (clt);
+  clt->stop ();
+  clt->deleteLater();
 }
 
 string
@@ -716,15 +795,15 @@ socket_server_rep::read (int id) {
     return "";
   if (!clt->complete_packet (LINK_OUT)) return "";
   bool success;
-  string back= clt->read_packet (LINK_OUT, 0, success);
-  return back;
+  string ret= clt->read_packet (LINK_OUT, 0, success);
+  return ret;
 }
 
 void
 socket_server_rep::write (int id, string s) {
   socket_link_rep* clt= find_connection_ptr (id);
   if (clt)
-    clt->write_packet(s, LINK_IN);
+    clt->write_packet (s, LINK_IN);
 }
 
 socket_link_rep*
