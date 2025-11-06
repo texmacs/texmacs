@@ -33,6 +33,11 @@
 #if QT_VERSION < 0x060000
 #include <QDesktopWidget>
 #endif
+
+#if QT_VERSION >= 0x060000
+#include <QDialog>
+#endif
+
 #include <QClipboard>
 #include <QBuffer>
 #include <QFileOpenEvent>
@@ -48,7 +53,6 @@
 #include <QLibraryInfo>
 #include <QImage>
 #include <QUrl>
-//#include <QDesktopWidget>
 #include <QApplication>
 
 #include "QTMGuiHelper.hpp"
@@ -125,6 +129,10 @@ interrupted (false), waitWindow (NULL), popup_wid_time (0), q_translator (0),
 time_credit (100), do_check_events (false), updating (false), 
 needing_update (false)
 {
+#if QT_VERSION >= 0x060000
+  waitLabel= NULL;
+#endif
+
   (void) argc; (void) argv;
   timeout_time = texmacs_time () + time_credit;
   
@@ -223,6 +231,9 @@ qt_gui_rep::get_max_size (SI& width, SI& height) {
 
 qt_gui_rep::~qt_gui_rep()  {
   delete gui_helper;
+#if QT_VERSION >= 0x060000
+  if (waitWindow) waitWindow->deleteLater();  
+#else
   while (waitDialogs.count()) {
     waitDialogs.last()->deleteLater();
     waitDialogs.removeLast();
@@ -230,6 +241,7 @@ qt_gui_rep::~qt_gui_rep()  {
   if (waitWindow) delete waitWindow;  
     // delete updatetimer; we do not need this given that gui_helper is the
     // parent of updatetimer
+#endif
 }
 
 
@@ -447,6 +459,67 @@ void qt_gui_rep::set_mouse_pointer (string curs_name, string mask_name)
  * Main loop
  ******************************************************************************/
 
+#if QT_VERSION >= 0x060000
+static void
+center_waitWindow (widget w, QDialog* waitWindow) {
+  qt_window_widget_rep* wid = static_cast<qt_window_widget_rep*> (w.rep);
+  QSize sz = waitWindow->geometry ().size ();
+  QRect rect = QRect (QPoint (0,0), sz);
+  qApp->processEvents (QEventLoop::ExcludeUserInputEvents);
+  QPoint pt = wid->qwid->window ()->geometry ().center ();
+  rect.moveCenter (pt);
+  waitWindow->move (rect.topLeft ());
+}
+
+void
+qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
+  if (headless_mode) return;
+  if (DEBUG_QT)
+    debug_qt << "show_wait_indicator \"" << message << "\"\"" << arg << "\"\n";
+  if (!waitWindow) {
+    waitWindow = new QDialog ();
+    waitWindow->setModal(true);
+    waitWindow->setWindowFlags (Qt::Window | Qt::FramelessWindowHint
+    				| Qt::WindowStaysOnTopHint);
+    QHBoxLayout *layout = new QHBoxLayout (waitWindow);
+    waitWindow->setLayout (layout);
+    QLabel* iconLabel = new QLabel (waitWindow);
+    layout->addWidget (iconLabel);
+    QIcon icon = tmapp ()->icon_manager ().getIcon ("TeXmacs");
+    QPixmap pm = icon.pixmap (256, 256);
+    iconLabel->setPixmap (pm);
+    iconLabel->setAlignment (Qt::AlignCenter);
+    iconLabel->setFixedSize (32, 32);
+    iconLabel->setScaledContents (true);
+    waitLabel = new QLabel (waitWindow);
+    layout->addWidget (waitLabel);
+  }
+  if (N(message)) {
+    // push a new wait message in the list
+    string tmp= message;
+    if (arg != "") tmp = tmp * " " * arg * "...";
+    waitDialogs << to_qstring (tmp);
+  } else {
+    // pop the next wait message from the list
+    if (waitDialogs.count())
+      waitDialogs.removeLast();
+  }
+  if (waitDialogs.count()) {
+    QString msg= waitDialogs.first();
+    if (waitDialogs.count() >= 2)
+      msg= msg + QString ("\n") + waitDialogs.last ();
+    waitLabel->setText (msg);
+    center_waitWindow (w, waitWindow);
+    waitWindow->updateGeometry ();
+    waitWindow->show ();
+  } else {
+    waitLabel->setText ("");
+    waitWindow->close ();
+  }
+  qApp->processEvents ();
+  need_update ();
+}
+#else
 void
 qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
   if (headless_mode) return;
@@ -515,14 +588,13 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
     waitWindow->close();
   }
   qApp->processEvents();
-#if QT_VERSION < 0x060000
   QApplication::flush();
-#endif
   wid->qwid->activateWindow ();
   send_keyboard_focus (wid);
     // next time we do update the dialog will disappear
   need_update();
 }
+#endif
 
 void (*the_interpose_handler) (void) = NULL;
 
@@ -857,12 +929,18 @@ qt_gui_rep::update () {
   time_credit    = 9 / (waiting_events.size() + 1);
 
   if (waitDialogs.count()) {
+#if QT_VERSION >= 0x060000
+    waitWindow->close();
+    waitLabel->setText ("");
+    waitDialogs.clear ();
+#else
     waitWindow->layout()->removeWidget (waitDialogs.last());
     waitWindow->close();
     while (waitDialogs.count()) {
       waitDialogs.last()->deleteLater();
       waitDialogs.removeLast();
     }
+#endif
   }
     
   if (popup_wid_time > 0 && now > popup_wid_time) {
