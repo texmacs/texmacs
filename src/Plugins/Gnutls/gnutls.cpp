@@ -64,6 +64,7 @@ static const string tm_x509_key_path= "$TEXMACS_HOME_PATH/server/key.pem";
 static const string tm_x509_trusted_cas_path=
   "$TEXMACS_HOME_PATH/system/certificates/trusted-certificates.crt";
 static gnutls_x509_crt_t server_certificate = NULL;
+static unsigned int cert_verify_flags = 0;
 
 static void
 tm_initialize_tls () {
@@ -339,6 +340,12 @@ trust_certificate (const string& crt_pem) {
   return trust_certificate (NULL, crt_pem) == 0;
 }
 
+void
+disable_certificate_time_checks () {
+  cert_verify_flags |= GNUTLS_VERIFY_DISABLE_TRUSTED_TIME_CHECKS |
+      GNUTLS_VERIFY_DISABLE_TIME_CHECKS;
+}
+
 static int cert_out_callback (gnutls_x509_crt_t cert,
     gnutls_x509_crt_t issuer,
     gnutls_x509_crl_t crl,
@@ -393,6 +400,13 @@ static int cert_out_callback (gnutls_x509_crt_t cert,
 
   gnutls_free (txt.data);
   return 0;
+}
+
+static inline bool
+handle_cert_error_interactive (unsigned int status) {
+  return status & GNUTLS_CERT_SIGNER_NOT_FOUND ||
+    status & GNUTLS_CERT_NOT_ACTIVATED ||
+    status & GNUTLS_CERT_EXPIRED;
 }
 
 static inline string
@@ -552,11 +566,24 @@ generate_self_signed (tree cfg_tree, url cert_path, url key_path)
  ******************************************************************************/
 
 static string
-as_string_gnutls_error (int e) {
+as_string_gnutls_error (int e, int cert_verification) {
   if (e == GNUTLS_E_SUCCESS)
     return string ("");
   if (e == TM_NET_SESSION_INACTIVE)
     return string ("unexpected dead GnuTLS session");
+  if (e == GNUTLS_E_CERTIFICATE_VERIFICATION_ERROR &&
+      handle_cert_error_interactive (cert_verification))
+    return string ("certificate verify interactive");
+  if (e == GNUTLS_E_CERTIFICATE_VERIFICATION_ERROR) {
+    gnutls_datum_t txt= {NULL,0};
+    int ret = gnutls_certificate_verification_status_print (cert_verification,
+        GNUTLS_CRT_X509, &txt, 0);
+    if (ret < 0) {
+      GNUTLS_ERR_LOGE (ret, "gnutls_certificate_verification_status_print");
+      return string("cannot get certificate verification status text");
+    }
+    return as_string_gnutls_datum (txt);
+  }
   const char* msg= gnutls_strerror (e);
   if (msg == NULL)
     return string ("unknown GnuTLS error");
@@ -829,7 +856,7 @@ tls_server_contact_rep::receive (void* buffer, size_t length) {
 
 string
 tls_server_contact_rep::last_error () {
-  return as_string_gnutls_error (error_number);
+  return as_string_gnutls_error (error_number, 0);
 }
 
 bool
@@ -857,6 +884,7 @@ struct tls_client_contact_rep: tm_contact_rep {
   int io;
   pointer ptr;
   int error_number;
+  unsigned int cert_verif_status;
   bool handshake_in_progress;
   tls_client_contact_rep (array<array<string> > args=
       array<array<string> > ());
@@ -912,18 +940,23 @@ tls_client_contact_rep::handshake (gnutls_session_t s) {
     reset ();
   }
 
-  if ((ret == GNUTLS_E_CERTIFICATE_ERROR ||
-       ret == GNUTLS_E_CERTIFICATE_VERIFICATION_ERROR) &&
+  if (ret == GNUTLS_E_CERTIFICATE_VERIFICATION_ERROR &&
       server_certificate != NULL) {
+    cert_verif_status= gnutls_session_get_verify_cert_status(s);
+
     // ask user for server cert confirmation if it isn't a trusted cert
+    // or expired/not active
+    if (!handle_cert_error_interactive (cert_verif_status))
+      return ret;
+
     string msg;
 
     string crt_str = as_string_gnutls_crt (server_certificate);
     if (crt_str == "") {
       char serial[128] = {0};
       size_t serial_size = sizeof (serial);
-      int ret = gnutls_x509_crt_get_serial
-	(server_certificate, serial, &serial_size);
+      int ret =
+        gnutls_x509_crt_get_serial (server_certificate, serial, &serial_size);
       if (ret < 0) {
         GNUTLS_ERR_LOGE (ret, "cert get serial");
         gnutls_deinit (s);
@@ -935,12 +968,16 @@ tls_client_contact_rep::handshake (gnutls_session_t s) {
       msg = crt_str;
     }
 
-    GNUTLS_LOGW ("Untrusted certificate");
     GNUTLS_LOGW (msg);
 
-    call ("trust-certificate-interactive",
-        object (msg),
-        object (tm_cert_as_pem_string (server_certificate)));
+    if (cert_verif_status & GNUTLS_CERT_SIGNER_NOT_FOUND) {
+      call ("trust-certificate-interactive",
+          object (msg),
+          object (tm_cert_as_pem_string (server_certificate)));
+    } else {
+      call ("disable-certificate-time-checks-interactive", object (msg));
+    }
+
     gnutls_x509_crt_deinit (server_certificate);
     server_certificate = NULL;
   }
@@ -984,8 +1021,7 @@ tls_client_contact_rep::start (int io2) {
       }
     }
 
-    // TODO: get hostname into tls_client_contact struct
-    gnutls_session_set_verify_cert (s, NULL, 0);
+    gnutls_session_set_verify_cert (s, NULL, cert_verify_flags);
     gnutls_session_set_verify_output_function (s, cert_out_callback);
 
     ret = gnutls_credentials_set (s, GNUTLS_CRD_CERTIFICATE,
@@ -1071,7 +1107,7 @@ tls_client_contact_rep::receive (void* buffer, size_t length) {
 
 string
 tls_client_contact_rep::last_error () {
-  string errstr= as_string_gnutls_error (error_number);
+  string errstr= as_string_gnutls_error (error_number, cert_verif_status);
 
   return error_number == GNUTLS_E_PREMATURE_TERMINATION ?
     errstr * " Is TeXmacs server up ?" : errstr;
