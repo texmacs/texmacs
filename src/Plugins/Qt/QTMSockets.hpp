@@ -17,12 +17,6 @@
 #include <QThread>
 #include <QSocketNotifier>
 
-#include "hashset.hpp"
-#include "hashmap.hpp"
-#include "string.hpp"
-#include "tm_link.hpp"
-#include "socket_contact.hpp"
-
 #ifndef OS_MINGW
 
 #include <sys/types.h>
@@ -46,8 +40,15 @@ typedef int socklen_t;
 #define SOCKADDR_IN6 wsoc::sockaddr_in6
 #define SOCKADDR wsoc::sockaddr
 #define SOCKADDR_STORAGE wsoc::sockaddr_storage
-
+#undef FAILED
 #endif
+
+#include "hashset.hpp"
+#include "hashmap.hpp"
+#include "string.hpp"
+#include "tm_link.hpp"
+#include "socket_contact.hpp"
+
 
 /******************************************************************************
 * Socket utilities
