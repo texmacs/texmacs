@@ -4907,6 +4907,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(disable-certificate-time-checks)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|disable_certificate_time_checks> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(connection-start <scm-arg|string> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
