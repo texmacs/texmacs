@@ -4,6 +4,8 @@
 ;; MODULE      : client-widgets.scm
 ;; DESCRIPTION : widgets for remote clients
 ;; COPYRIGHT   : (C) 2015  Joris van der Hoeven
+;;                   2022  Gregoire Lecerf
+;;                   2025  Robin Wils
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -18,22 +20,124 @@
         (client client-live)))
 
 (tm-define (tm-servers)
-  (list "server.texmacs.org" "texmacs.math.unc.edu" "localhost"))
+  ;(list "server.texmacs.org" "texmacs.math.unc.edu" "localhost"))
+  (list "localhost")) ;; todo, for testing purpose
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Client preferences
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget (client-preferences-widget quit)
+  (padded
+  (aligned
+   (item
+    (text "Contact timeout in milliseconds:") (hlist //
+    (input (when answer (client-set-contact-timeout answer))
+          "string"
+          (list (number->string (client-get-contact-timeout)))
+          "7em")))
+   (item
+    (text "Connection timeout in seconds:") (hlist //
+    (input (when answer (client-set-connection-timeout answer))
+          "string"
+          (list (number->string (client-get-connection-timeout)))
+          "7em"))))))
+;; todo << prevent from setting timeouts to 0
+
+(tm-define (open-client-preferences)
+  (dialogue-window client-preferences-widget noop
+                   "Client preferences"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Server preferences
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define ((save-license-as doc) f)
+  (with s (convert doc "texmacs-stree" "texmacs-document")
+    (string-save s f)))
+
+(define (client-server-license server-preferences)
+  (cond ((null? server-preferences) #f)
+        ((== (first (car server-preferences)) "server license")
+         (second (car server-preferences)))
+        (else (client-server-license (cdr server-preferences)))))
+
+(tm-widget ((client-public-preferences-widget prefs license) quit)
+  (padded
+    (for (x prefs)
+      (if (and (list? x) (== (length x) 2))
+          (text (string-append (first x) ": " (second x)))))
+    (if license
+        (vlist
+          ======
+          (resize "410px" "200px"
+            (scrollable
+              (texmacs-output `(with "bg-color" "#fff"
+                                 ,(tmfile-extract license 'body))
+                              `(style ,(tmfile-extract license 'style)))))
+          ======
+          (bottom-buttons
+            >>
+            ("Save license"
+             (choose-file (save-license-as license)
+                          "Save license" "texmacs")) // // //
+            ("Close" (quit)))))))
+
+(tm-define (open-public-preferences server)
+  (with cb (lambda (ret)
+    (let* ((license (client-server-license ret))
+           (others (filter (lambda (x) (!= (car x) "server license")) ret)))
+      (dialogue-window (client-public-preferences-widget others license)
+                       noop "Remote server preferences")))
+    (client-public-preferences-then server cb)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Confirm pending account
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (client-confirm-pending-account
+             server server-name port pseudo credentials code)
+  (with cb (lambda (ret)
+             (client-stop server)
+             (if (== ret "done")
+               (begin (client-notify-account server-name port pseudo
+                                             (map car credentials) #f)
+                      (client-open-success "account created"))
+               (client-open-error
+                 (string-append "account confirmation failed, " ret))))
+        (client-remote-eval*
+          server `(confirm-pending-account ,pseudo ,code) cb)))
+
+(tm-widget ((remote-confirm-pending-account-widget
+	     server server-name port pseudo credentials) quit)
+  (padded
+    (form "remote-confirm-pending-account"
+      ======
+      (centered (text "A confirmation email has been sent to your address."))
+      (centered (text "Please check your inbox and spam folder for the email."))
+      (aligned
+        (item (text "Enter the confirmation code:")
+          (form-input "code" "string"
+                      (list "") "100px")))
+      ======
+      (bottom-buttons
+        >>
+        ("Cancel" (quit))
+	// //
+	("Ok"
+	 (client-confirm-pending-account
+	  server server-name port pseudo credentials (first (form-values)))
+	 (quit))))))
+
+(tm-define (open-remote-confirm-pending-account
+             server server-name port pseudo creds)
+  (dialogue-window (remote-confirm-pending-account-widget
+		    server server-name port pseudo creds)
+		   noop "Confirm pending account"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Account creation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-widget ((error-widget s) quit)
-  (padded
-    (centered (text s))
-    ======
-    (bottom-buttons
-      >> ("Ok" (quit)) >>)))
-
-(tm-define (open-error s)
-  (:interactive #t)
-  (dialogue-window (error-widget s) noop "Error"))
 
 (define (first-incomplete-field t pw? key?)
   (cond ((== (ahash-ref t "server") "") "Server")
@@ -44,204 +148,594 @@
 	((and pw? (== (ahash-ref t "repeat") "")) "Repeat")
 	(else #f)))
 
-(tm-widget (remote-account-widget quit)
-  (let* ((use-password? #t)
-	 (use-key? #f)
-	 (set-password?
-	  (lambda (flag?)
-	    (set! use-password? flag?)
-	    (refresh-now "password-info")))
-	 (set-key?
-	  (lambda (flag?)
-	    (set! use-key? flag?)
-	    (refresh-now "key-info"))))
+(define (client-matched-authentications server-preferences)
+  (append
+   (if (and (supports-gnutls?)
+            (in? `("tls-server" "on") server-preferences)
+            (in? `("tls-server authentication anonymous" "on")
+                 server-preferences))
+       (list "Password via TLS") '())
+   (if (in? `("server service login" "on") server-preferences)
+       (list "Password") '())))
+
+(define (on-account-creation-done server server-name port pseudo credentials)
+  ; this is called from client account creation, always set admin to #f
+  (client-notify-account server-name port pseudo
+                         (map car credentials) #f)
+  (with-wallet
+    (for (credential credentials)
+         (wallet-set (list "remote" server-name port
+                           pseudo (car credential))
+                     credential)))
+  (client-open-success "Remote account creation successful")
+  (client-stop server))
+
+(tm-widget (remote-account-server-widget cb)
+  (let* ((protocol `tls))
+  (padded
+    (form "account-server-info"
+      ======
+      (aligned
+      (item (text "Server:")
+             (form-input "server" "string"
+                         (list "cloud.texmacs.org" "localhost") "300px"))
+      (item (text "Port:")
+             (form-input "port" "string"
+                         (list "6561") "300px"))
+      (item (text "Protocol:")
+	(enum (set! protocol (string->object (string-downcase answer)))
+	      (list "TLS" "legacy") "TLS" "280px")))
+      ======
+      (bottom-buttons >>
+        ("Continue"
+	 (and-with server-name (first (form-values))
+	   (and-with port (second (form-values))
+	     (with server (anonymous-client-start
+			   server-name port protocol)
+	       (if (< server 0)
+		   (client-open-error "Connection to server failed")
+		   (client-public-preferences-then
+		    server
+		    (lambda (prefs)
+		      (cb server server-name port prefs)))))))))))))
+
+(tm-widget ((remote-account-widget server server-name port server-preferences cb-pending cb-done cb-err)
+	    quit)
+  (let* ((dummy (begin
+                  (form-named-set "account-info" "password" "")
+                  (form-named-set "account-info" "repeat" "")))
+         (matched-authentications
+          (client-matched-authentications server-preferences))
+         (auth (if (null? matched-authentications)
+                   "" (car matched-authentications)))
+         (use-password? #f)
+         (use-key? #f)
+         (license (client-server-license server-preferences))
+         (agreed? (not license)))
     (padded
       (form "account-info"
-	(aligned
-	  (item (text "Server:")
-	    (form-enum "server" (rcons (tm-servers) "")
-                       (car (tm-servers)) "280px"))
-	  (item (text "Pseudo:")
-	    (form-input "pseudo" "string"
-			(list (get-user-info "pseudo")) "280px"))
-	  (item (text "Full name:")
-	    (form-input "name" "string"
-			(list (get-user-info "name")) "280px"))
-	  (item (text "Email:")
-	    (form-input "email" "string"
-			(list (get-user-info "email")) "280px")))
-	====== ======
-	(aligned
-	  (item (toggle (set-password? answer) use-password?)
-	    (hlist
-	      // (text "Allow authentication through password"))))
-	===
-	(refreshable "password-info"
-	  (when use-password?
-	    (aligned
-	      (item (text "Password:")
-		(form-input "password" "password" (list "") "280px"))
-	      (item (text "Repeat:")
-		(form-input "repeat" "password" (list "") "280px")))))
-	====== ======
-	(when #f
-	  (aligned
-	    (item (toggle (set-key? answer) use-key?)
-	      (hlist
-		// (text "Allow authentication through cryptographic key")))))
-	===
-	(refreshable "key-info"
-	  (when use-key?
-	    (text "Not yet implemented")))
-	======
-	(bottom-buttons
-	  >>
-	  ("Proceed"
-	   (with t (make-ahash-table)
-	     (for-each (cut ahash-set! t <> <>) (form-fields) (form-values))
-	     (cond ((not (or use-password? use-key?))
-		    (open-error
-		     "Please enable at least one authentication method"))
-		   ((and use-password? (!= (ahash-ref t "password")
-					   (ahash-ref t "repeat")))
-		    (open-error "Passwords do not match"))
-		   ((first-incomplete-field t use-password? use-key?) =>
-		    (lambda (s)
-		      (open-error (string-append "Missing '" s "'"))))
-		   (else
-		     (client-create-account (ahash-ref t "server")
-					    (ahash-ref t "pseudo")
-					    (ahash-ref t "name")
-					    (ahash-ref t "password")
-					    (ahash-ref t "email"))
-		     (quit))))))))))
-
-(tm-tool* (remote-account-tool win)
-  (:name "Create remote account")
-  (with quit (lambda () (tool-close :any 'remote-account-tool noop win))
-    (dynamic (remote-account-widget quit))))
+        (hlist >> (aligned
+          (item (text "Server:")
+            (text server-name))
+          (item (text "Port:")
+            (text port))
+          (item (text "Pseudo:")
+            (form-input "pseudo" "string"
+                        (list (get-user-info "pseudo")) "280px"))
+          (item (text "Full name:")
+            (form-input "name" "string"
+                        (list (get-user-info "name")) "280px"))
+          (item (text "Email:")
+            (form-input "email" "string"
+                        (list (get-user-info "email")) "280px"))))
+        ===
+        (hlist >> (aligned (item (text "Authentication method:")
+          (enum (begin (set! auth answer)
+                       (refresh-now "auth-info"))
+                matched-authentications auth "280px"))))
+        ===
+        (refreshable "auth-info"
+            (hlist >> (aligned
+              (item (text "Password:")
+                (form-input "password" "password"
+                            (list (fourth (form-values))) "280px"))
+              (item (text "Repeat password:")
+                (form-input "repeat" "password"
+                            (list (fifth (form-values))) "280px")))))
+        (if license
+            ======
+            (hlist >> (resize "410px" "200px"
+              (scrollable
+                (texmacs-output `(with "bg-color" "#fff"
+                                   ,(tmfile-extract license 'body))
+                                `(style ,(tmfile-extract license 'style))))))
+            ===
+            (hlist >>
+              (toggle (set! agreed? answer) agreed?) // // //
+              (vlist (text "I declare having read and agreed with")
+                     (text "the above license agreement")) >>))
+        ======
+        (bottom-buttons
+          >>
+          ("Cancel" (quit)) // // //
+          (if license
+              ("Save license"
+               (choose-file (save-license-as license)
+                            "Save license" "texmacs")) // // //)
+          ("Proceed"
+           (with t (make-ahash-table)
+             (for-each (cut ahash-set! t <> <>) (form-fields) (form-values))
+             (ahash-set! t "server-name" server-name)
+             (ahash-set! t "port" port)
+	     (set! use-password? #t)
+             (cond ((not (or use-password? use-key?))
+                    (client-open-error
+                     "Please enable at least one authentification method"))
+                   ((and use-password? (!= (ahash-ref t "password")
+                                           (ahash-ref t "repeat")))
+                    (client-open-error "Passwords do not match"))
+                   ((not agreed?)
+                    (client-open-error
+                     (string-append "You must agree with the license "
+                                    "in order to proceed")))
+                   ((first-incomplete-field t use-password? use-key?) =>
+                    (lambda (s)
+                      (client-open-error (string-append "Missing '" s "'"))))
+                   (else
+                     (when (== auth "Password")
+                       (ahash-set! t "creds"
+                                   `((password ,(ahash-ref t "password")))))
+                     (when (== auth "Password via TLS")
+                       (ahash-set! t "creds"
+                                   `((tls-password ,(ahash-ref t "password")))))
+                     (ahash-set! t "agreed" (if agreed? "yes" "no"))
+                     (with uid (pseudo->user (ahash-ref t "pseudo"))
+                       (when (== uid (get-default-user))
+                         (when (== (get-user-info "name") "")
+                           (set-user-info "name" (ahash-ref t "name")))
+                         (when (== (get-user-info "email") "")
+                           (set-user-info "email" (ahash-ref t "email")))))
+                       (client-new-account server t
+                                           cb-pending
+                                           cb-done
+                                           cb-err)
+                       (quit))))))))))
 
 (tm-define (open-remote-account-creator)
   (:interactive #t)
-  (if (side-tools?)
-      (tool-select :right (list 'remote-account-tool))
-      (dialogue-window remote-account-widget noop "Create remote account")))
+  (dialogue-window remote-account-server-widget
+    (lambda (server server-name port prefs)
+      (if (null? (client-matched-authentications prefs))
+          (client-open-error "No authentication methods")
+          (dialogue-window
+           (remote-account-widget server server-name port prefs
+                                  open-remote-confirm-pending-account
+                                  on-account-creation-done
+                                  (lambda (msg)
+                                    (client-open-error msg)
+                                    (client-stop server)))
+           noop
+           "Create remote account")))
+    "Create remote account"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Create account after licence agreement
+;; Pending login widget
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define ((save-licence-as doc) f)
-  (with s (convert doc "texmacs-stree" "texmacs-document")
-    (string-save s f)))
+(tm-define (client-pending-login-home
+	    server server-name port pseudo credential code)
+  (with cb (lambda (ret)
+	     (client-stop server)
+	     (if (== ret "done")
+               (client-notify-account server-name port pseudo
+                                      (map car credentials) #f)
+               (client-login-home server-name port pseudo credential noop)
+               (client-open-error
+                 (string-append "account confirmation failed: " ret))))
+    (client-remote-eval*
+     server `(confirm-pending-account ,pseudo ,code) cb)))
 
-(tm-widget ((accept-licence-widget doc) cmd)
-  (let* ((ok? #f)
-	 (decl (string-append "I declare having read and agreed with "
-			      "the above licence agreement"))
-	 (msg (string-append "You must agree with the licence "
-			     "in order to proceed")))
-    (padded
+(tm-widget ((remote-pending-login-widget
+	     server server-name port pseudo credential) quit)
+  (padded
+    (form "pending-login-info"
       ======
-      (resize "720px" "480px"
-	(texmacs-output `(with "bg-color" "#fff" ,(tmfile-extract doc 'body))
-			`(style ,(tmfile-extract doc 'style))))
-      ======
-      (hlist
-	(toggle (set! ok? answer) ok?) // // //
-	(text decl) >>)
+      (aligned
+        (item (text "Confirmation code:")
+          (form-input "code" "string"
+                      (list "") "100px")))
       ======
       (bottom-buttons
-	>>
-	("Save" (choose-file (save-licence-as doc) "Save licence" "texmacs"))
-	// // //
-	("Cancel" (cmd #f))
-	// // //
-	("Ok" (if ok? (cmd #t) (open-error msg)))))))
+        >>
+        ("Cancel"
+	 (when server (client-logout server))
+	 (quit))
+	// //
+	("Ok"
+	 (client-pending-login-home
+	  server server-name port pseudo credential (first (form-values)))
+	 (quit))))))
 
-(tm-define (client-create-account server-name pseudo name passwd email)
-  (with cmd (lambda ()
-	      (client-new-account server-name pseudo name passwd email ""))
-    (with server (client-start server-name)
-      (when (!= server -1)
-	(client-remote-eval server `(server-licence)
-	  (lambda (doc)
-	    (client-stop server)
-	    (if (not doc) (cmd)
-		(dialogue-window (accept-licence-widget doc)
-				 (lambda (accept?)
-				   (if accept? (cmd)))
-				 "Server licence agreement"))))))))
+(tm-define (open-remote-pending-login
+	    server server-name port pseudo credential)
+  (dialogue-window (remote-pending-login-widget
+		    server server-name port pseudo credential)
+		   noop "Remote pending login"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Login widgets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (client-login-home server-name pseudo passwd)
-  (client-login-then
-   server-name pseudo passwd
-   (lambda (ret)
-     (when (== ret "ready")
-       (with-wallet
-         (wallet-set (list "remote" server-name pseudo) passwd))
-       (and-let* ((server (client-find-server server-name))
-                  (dir (remote-home-directory server)))
-         (load-document dir)))
-     (when (== ret "invalid password")
-       (with server (client-find-server server-name)
-         (client-logout server))
-       (open-remote-login* server-name pseudo #t)))))
+(tm-define (client-login-home server-name port pseudo credential cb-done)
+  (with authentication (car credential)
+    (client-login-then server-name port pseudo credential
+      (lambda (server ret)
+        (cond ((== ret "ready")
+               (begin
+                 (add-active-connection server server-name port pseudo)
+                 (set! remote-client-list (client-active-servers))
+                 (client-get-account-then
+                   server #f
+                   (lambda (ret)
+                     (client-notify-account
+                       server-name port pseudo `(,authentication)
+                       (car (ahash-ref (list->ahash-table ret) "admin")))
+                     (with-wallet
+                       (wallet-set (list "remote" server-name port
+                                         pseudo authentication)
+                                   credential))
+                     (load-buffer (remote-home-directory server))
+                     (cb-done)))))
+              ((== ret "pending")
+               (add-active-connection server server-name port pseudo)
+               (set! remote-client-list (client-active-servers))
+               (open-remote-pending-login
+                 server server-name port pseudo credential))
+              (else
+                (when server (client-logout server))
+                (client-open-error
+                  (string-append "Remote login error, " ret))))))))
 
-(tm-widget ((remote-login-widget server-name pseudo retry?) quit)
+(tm-widget ((remote-login-widget server-name port pseudo authentication)
+	    quit)
+  (let* ((auth authentication))
   (padded
     (form "login-info"
-      (if retry?
-          ===
-          (centered (bold (text "Incorrect password; please try again."))))
       ======
       (aligned
-	(item (text "Server:")
-	  (verb
-            (form-enum "server"
-                       (if (== server-name "")
-                           (rcons (tm-servers) "")
-                           (cons server-name (rcons (tm-servers) "")))
-                       (if (== server-name "")
-                           (car (tm-servers))
-                           server-name)
-                       "280px")))
-	(item (text "Pseudo:")
-	  (form-input "pseudo" "string"
-		      (list pseudo) "280px"))
-	(item (text "Password:")
-	  (form-input "name" "password"
-		      (list "") "280px")))
+        (item (text "Server:")
+          (form-input "server" "string"
+                      (if (== server-name "")
+			  (list "cloud.texmacs.org" "localhost")
+			  (list server-name)) "300px"))
+        (item (text "Port:")
+          (form-input "port" "string"
+                      (list port) "300px"))
+        (item (text "Pseudo:")
+          (form-input "pseudo" "string"
+                      (list pseudo) "300px"))
+       (item (text "Authentication:")
+          (enum (set! auth (client-string->authentication answer))
+                (append
+                  (if (supports-gnutls?) (list "Password via TLS") '())
+                  (list "Password via legacy server"))
+            (client-authentication->string auth) "280px"))
+        (item (text "Password:")
+          (form-input "password" "password"
+                      (list "") "300px")))
       ======
       (bottom-buttons
-	>>
-        (assuming (not (side-tools?))
-          ("Cancel" (quit)) // //)
-	("Ok" (apply client-login-home (form-values)) (quit))))))
+        >>
+	("Reset credentials"
+	 (open-remote-notify-reset-credentials
+	  (first (form-values))
+	  (second (form-values))
+	  (third (form-values))
+	  (client-authentication->protocol auth))
+	 (quit)) // //
+        ("Cancel" (quit)) // //
+        ("Login" (cond ((in? auth `(legacy-password tls-password))
+		     (client-login-home
+		      (first (form-values))
+		      (second (form-values))
+		      (third (form-values))
+		      `(,auth ,(fourth (form-values)))
+                      (lambda () (quit))))
+		    (else (client-open-error "Unexpected authentication type")))))))))
+;; toto << add (quit)
 
-(tm-tool* (remote-login-tool win server-name pseudo retry?)
-  (:name "Remote login")
-  (with quit (lambda () (tool-close :any 'remote-login-tool noop win))
-    (dynamic ((remote-login-widget server-name pseudo retry?) quit))))
+(tm-define (open-remote-login server-name port pseudo authentications)
+  (if (or (nlist? authentications) (null? authentications))
+      (dialogue-window (remote-login-widget server-name port pseudo `tls-password)
+		       noop "Remote login")
+      (with authentication (car authentications)
+	(with-wallet
+	  (with credential (wallet-get (list "remote" server-name port
+					     pseudo authentication))
+	    (if credential
+		(client-login-home server-name port pseudo credential (lambda () (quit)))
+		(dialogue-window (remote-login-widget server-name port pseudo
+						      authentication)
+				 noop "Remote login")))))))
 
-(tm-define (open-remote-login* server-name pseudo retry?)
-  (if (side-tools?)
-      (tool-select :right (list 'remote-login-tool
-                                server-name pseudo retry?))
-      (dialogue-window (remote-login-widget server-name pseudo retry?)
-                       noop "Remote login")))
+(define (line-feed-universal s)
+  (string-replace s "\n" "<#0A>"))
 
-(tm-define (open-remote-login server-name pseudo)
+(tm-define (trust-certificate-interactive crt-desc crt-pem)
   (:interactive #t)
-  (with-wallet
-    (with passwd (wallet-get (list "remote" server-name pseudo))
-      (if passwd
-          (client-login-home server-name pseudo passwd)
-          (open-remote-login* server-name pseudo #f)))))
+  (with msg (line-feed-universal
+              (string-append "The server certificate issuer is unknown\n"
+                             "Do you still want to trust it ?\n\n" crt-desc))
+    (user-confirm msg #f
+      (lambda (answ) (when answ (trust-certificate crt-pem))))))
+
+(tm-define (disable-certificate-time-checks-interactive crt-desc)
+  (:interactive #t)
+  (with msg (line-feed-universal
+              (string-append "The certificate presented is either expired or"
+                             " not yet active.  By disabling time verification"
+                             " checks, you will allow all certificates"
+                             " to bypass time validations, which may expose"
+                             " your connection to security risks.\n\n"
+                             "Do you want to proceed with disabling time"
+                             " verification for all trusted certificates?\n\n"
+                             crt-desc))
+    (user-confirm msg #f
+      (lambda (answ) (when answ (disable-certificate-time-checks))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Account edition
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget ((client-edit-account-widget server uid info admin?) quit)
+  (let* ((dummy (form-named-set "client-edit-account-form" "password" ""))
+	 (w (list->ahash-table info))
+         (get (lambda (key) (with x (ahash-ref w key)
+                              (and (list? x) (nnull? x) (car x)))))
+         (pseudo (get "pseudo"))
+         (name (get "name"))
+         (email (get "email"))
+         (admin (get "admin"))
+         (authentications (get "authentications"))
+         (credentials `())
+         (edit-password? #f)
+         (password (in? `password authentications)))
+    (padded
+      (refreshable "client-edit-account-refreshable"
+	(form "client-edit-account-form"
+	  (aligned
+	    (item (text "Pseudo:") (text pseudo))
+	    (item (text "Full name:")
+	      (form-input "name" "string" (list name) "300px"))
+	    (item (text "Email:")
+	      (form-input "email" "string" (list email) "300px"))
+	    (item (text "Administrator:") (text (if admin "yes" "no")))
+	    (item (text "Password:")
+	      (hlist
+		(if edit-password?
+		    (form-input "password" "password"
+				(list (third (form-values))) "300px"))
+		(explicit-buttons
+		  (if (and (not edit-password?) (not password))
+		      ("Add"
+		       (set! edit-password? #t)
+		       (refresh-now "client-edit-account-refreshable"))
+		      // // //)
+		  (if (and (not edit-password?) password)
+		      ("Delete"
+		       (set! password #f)
+		       (refresh-now "client-edit-account-refreshable"))
+		      // // //
+		      ("Change"
+		       (set! edit-password? #t)
+		       (refresh-now "client-edit-account-refreshable"))))
+		>> )))
+	  === ===
+	  (hlist
+	    >>
+	    (explicit-buttons
+	      ("Cancel"
+	       (quit))
+	      // // //
+	      ("Apply"
+	       (with t (make-ahash-table)
+		 (for-each (cut ahash-set! t <> <>)
+			   (form-fields) (form-values))
+		 (set! name (ahash-ref t "name"))
+		 (set! email (or (ahash-ref t "email") ""))
+		 (if (== name "")
+		     (client-open-error "Missing 'name'")
+		     (if (== email "") (client-open-error "Missing 'email'")))
+		 (when (and (!= name "") (!= email ""))
+		   (when edit-password?
+		     (set! password
+			   (client-hide-credential
+			    `(password ,(or (ahash-ref t "password") "")))))
+		   (when (== password #f)
+		     (set! credentials (cons `(password) credentials)))
+		   (when (func? password `password)
+		     (set! credentials (cons password credentials)))
+		   (if admin? 
+                     (client-admin-set-account server
+                       `(("name" ,name)
+                         ("email" ,email)
+                         ("credentials" ,credentials))
+                       uid)
+                     (client-set-account server
+                      `(("name" ,name)
+                        ("email" ,email)
+                        ("credentials" ,credentials))))
+		   (quit)))))))))))
+
+(tm-define (open-account-editor server)
+  (with cb (lambda (ret)
+    (dialogue-window (client-edit-account-widget server #f ret #f)
+		     noop "Remote account information"))
+    (client-get-account-then server #f cb)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Remote Admin User Management
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (open-admin-account-editor server uid)
+  (with cb
+    (lambda (ret)
+      (dialogue-window
+        (client-edit-account-widget server uid ret #t)
+        noop "Edit server account"))
+    (client-get-account-then server uid cb)))
+
+(define (client-get-accounts server limit offset)
+  (client-get-accounts-then 
+    server limit offset
+    (lambda (ret)
+      (dialogue-window
+        (admin-remote-accounts-widget server ret) noop "Server accounts"))))
+
+(tm-widget ((admin-remote-accounts-widget server users) quit)
+  (let ((uid "")
+        (cb-done (lambda (server server-name port pseudo creds)
+                   (client-open-success
+                     "Remote account creation successful"))))
+    (padded
+      (resize '("450px" "450px" "9999px") '("250px" "250px" "9999px")
+	(refreshable "remote-accounts-choice-refreshable"
+	  (scrollable
+	    (choice (begin
+		      (set! uid answer)
+		      (refresh-now "remote-accounts-buttons-refreshable"))   
+                    users
+		    uid))))
+      ===
+      (refreshable "remote-accounts-buttons-refreshable"
+	(hlist >> (explicit-buttons
+		    ("Cancel" (quit))  // // //       
+		    (when (!= uid "")
+		      ("Edit"
+		       (open-admin-account-editor server uid)) // // //
+		       ("Delete"
+		       (server-open-error "not implemented")) // // //)
+		    ("Add"
+                     (client-public-preferences-then
+                       server
+                       (lambda (prefs)
+                         (dialogue-window
+                           (remote-account-widget
+                             server
+                             (client-find-server-name server)
+                             (client-find-server-port server)
+                             prefs
+                             cb-done
+                             cb-done
+                             (lambda (msg)
+                               (client-open-error msg)))
+                           (lambda ()
+                             (refresh-now "remote-accounts-choice-refreshable"))
+                           "Create server account"))))))))))
+
+(tm-define (open-admin-accounts-editor server)
+  (:interactive #t)
+  (client-get-accounts server 0 0))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Reset credentials
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget ((remote-notify-reset-credentials-widget
+	     server-name port pseudo protocol) quit)
+  (padded
+    (form "account-server-info"
+      ======
+      (aligned
+      (item (text "Server:")
+             (form-input "server" "string"
+               (list server-name "cloud.texmacs.org" "localhost") "300px"))
+      (item (text "Port:")
+             (form-input "port" "string"
+                         (list port) "300px"))
+      (item (text "Pseudo:")
+	 (form-input "pseudo" "string"
+		     (list pseudo) "300px"))
+      (item (text "Protocol:")
+	(enum (set! protocol (string->object (string-downcase answer)))
+	      (list "TLS" "legacy") (string-upcase (object->string protocol)) "280px")))
+      ======
+      (bottom-buttons >>
+	("Cancel" (quit)) >>
+        ("Continue"
+	 (let* ((server-name (first (form-values)))
+		(port (second (form-values)))
+		(pseudo (third (form-values)))
+		(server (anonymous-client-start server-name port protocol)))
+	       (if (< server 0)
+		   (client-open-error "Connection to server failed")
+		   (client-remote-eval*
+		    server `(remote-reset-credentials ,pseudo)
+		    (lambda (ret)
+		      (if (== ret "done")
+			  ;(client-open-success "an email has been sent to you")
+			  (open-remote-login-code server-name port pseudo protocol)
+			  (client-open-error ret))))))
+	 (quit))))))
+
+(tm-define (open-remote-notify-reset-credentials
+	    server-name port pseudo protocol)
+  (when (not protocol) (set! protocol `tls))
+  (dialogue-window (remote-notify-reset-credentials-widget
+		    server-name port pseudo protocol)
+		   noop "Notify forgotten credentials"))
+
+(tm-define (client-login-home-code server-name port pseudo protocol code)
+  (client-login-code-then server-name port protocol pseudo code
+     (lambda (server ret)
+       (cond ((== ret "ready")
+                (add-active-connection server server-name port pseudo)
+                (set! remote-client-list (client-active-servers))
+                (load-buffer (remote-home-directory server))
+                (open-account-editor server))
+             (else
+               (when server (client-logout server))
+               (client-open-error
+                 (string-append "Remote login error, " ret)))))))
+
+(tm-widget ((remote-login-code-widget
+	     server-name port pseudo protocol) quit)
+  (padded
+    (form "remote-login-code-info"
+      ======
+      (aligned
+      (item (text "Server:")
+             (form-input "server" "string"
+                         (list server-name) "300px"))
+      (item (text "Port:")
+             (form-input "port" "string"
+                         (list port) "300px"))
+      (item (text "Pseudo:")
+	 (form-input "pseudo" "string"
+		     (list pseudo) "300px"))
+      (item (text "Protocol:")
+	(enum (set! protocol (string->object (string-downcase answer)))
+	      (list "TLS" "legacy") (string-upcase (object->string protocol)) "280px"))
+      (item (text "Code:")
+	 (form-input "code" "string"
+		     (list "") "300px")))
+      ======
+      (bottom-buttons >>
+	("Cancel" (quit)) >>
+        ("Continue"
+	 (let* ((server-name (first (form-values)))
+		(port (second (form-values)))
+		(pseudo (third (form-values)))
+		(code (fourth (form-values))))
+	   (client-login-home-code
+	    server-name port pseudo protocol code)))))))
+
+(tm-define (open-remote-login-code
+	    server-name port pseudo protocol)
+  (when (not protocol) (set! protocol `tls))
+  (dialogue-window (remote-login-code-widget
+		    server-name port pseudo protocol)
+		   noop "Login with confirmation code"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; File browser
@@ -961,10 +1455,13 @@
   (let* ((name (current-buffer))
          (type (if (remote-directory? name) "directory" "generic"))
          (tail (if (remote-home-directory? name) "Home" (url-tail name)))
-         (prop (url-append (system->url "$PWD") tail)))
+         (prop (url-append (system->url "$PWD") tail))
+         (title (string-append
+                  "Synchronize with current "
+                  (if (== type "directory") "directory" "file"))))
     (choose-file (lambda (local-name)
                    (simple-synchronize server name local-name))
-                 "Synchronize file or directory" type "Synchronize" prop)))
+                 title type "Synchronize" prop)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Message widgets
