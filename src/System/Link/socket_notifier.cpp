@@ -12,6 +12,9 @@
 // NOTE: commented out after creation of cmdline_link.cpp
 // #ifndef QTTEXMACS
 
+#include "socket_notifier.hpp"
+#include "list.hpp"
+#include "iterator.hpp"
 #include "config.h"
 
 #ifndef OS_MINGW
@@ -24,11 +27,6 @@
 #include <netdb.h>
 #endif
 #include <errno.h>
-
-
-#include "socket_notifier.hpp"
-#include "list.hpp"
-#include "iterator.hpp"
 
 static hashset<socket_notifier> notifiers;
 
@@ -52,7 +50,6 @@ remove_notifier (socket_notifier sn)  {
 void 
 perform_select () {
 #ifndef OS_MINGW
-  //FIXME: this can be optimizied
   while (true) {
     fd_set rfds;
     FD_ZERO (&rfds);
@@ -76,7 +73,9 @@ perform_select () {
       socket_notifier sn=  it->next ();
       if (FD_ISSET (sn->fd, &rfds)) sn->notify ();
     }
-  }  
+  }
+#else
+  io_error << "perform_select is not implemented";
 #endif  
 }
 
