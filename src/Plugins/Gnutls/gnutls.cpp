@@ -181,66 +181,115 @@ as_string_gnutls_datum (gnutls_datum_t data, bool full = false) {
 
 static string
 as_string_gnutls_crt (const gnutls_x509_crt_t crt) {
-  gnutls_datum_t info;
-  int ret = 0;
+  string info;
 
-  ret = gnutls_x509_crt_print (crt,
-      GNUTLS_CRT_PRINT_FULL,
-      &info);
-  if (ret < 0) {
-    return "";
-  }
+  {
+    uint8_t serial[128] = {0};
+    size_t serial_size = sizeof(serial);
+    int err;
 
-  string crt_info = as_string_gnutls_datum (info);
-
-  string line;
-  int i = 0;
-  string CN, OU, O, ST, C;
-  string start_date, end_date;
-  while (read_line (crt_info, i, line)) {
-    int start;
-    for (start=0;
-        start<N (line) && (is_space (line[start]) || line[start] == '\t');
-        start++) ;
-    line = line (start, N (line));
-
-    if (starts (line, "Issuer")) {
-      int pos = tm_search_forwards (" ", 0, line) + 1;
-      for (int next_field = 0;
-          next_field >= 0 ;
-          pos = next_field + 1) {
-        next_field = tm_search_forwards (",", pos, line);
-        int value_delim = tm_search_forwards ("=", pos, line);
-        string field = line (pos, value_delim);
-        string value;
-        if (next_field == -1) {
-          value = line (value_delim+1, N (line));
-        } else {
-          value = line (value_delim+1, next_field);
-          pos = next_field + 1;
-        }
-        if (field == "CN") CN = value;
-        else if (field == "OU") OU = value;
-        else if (field == "O") O = value;
-        else if (field == "ST") ST = value;
-        else if (field == "C") C = value;
+    err =
+      gnutls_x509_crt_get_serial(crt, serial, &serial_size);
+    if (err < 0)
+      info << "Serial error: " << gnutls_strerror (err) << "\n";
+    else {
+      info << "Serial: ";
+      for (size_t i = 0; i < serial_size; i++) {
+        info << as_hexadecimal (serial[i]);
       }
-    } else if (starts (line, "Not Before")) {
-      start_date = line (tm_search_forwards (":", 0, line) + 1, N (line));
-    } else if (starts (line, "Not After")) {
-      end_date = line (tm_search_forwards (":", 0, line) + 1, N (line));
+      info << "\n";
     }
   }
 
-  gnutls_free (info.data);
+  {
+    size_t len;
+    int err;
 
-  return "Common Name: " * CN * "\n"
-    * "Organization Unit: " * OU * "\n"
-    * "Organization: " * O * "\n"
-    * "State: " * ST * "\n"
-    * "Country Name: " * C * "\n"
-    * "Start Date: " * start_date * "\n"
-    * "End Date: " * end_date * "\n";
+#define GNUTLS_X509_COMMON_NAME_SIZE 256
+#define GNUTLS_X509_COUNTRY_NAME_SIZE 3
+#define GNUTLS_X509_ORGANIZATION_NAME_SIZE 256
+#define GNUTLS_X509_ORGANIZATIONAL_UNIT_NAME_SIZE 256
+#define GNUTLS_X509_LOCALITY_NAME_SIZE 256
+#define GNUTLS_X509_STATE_OR_PROVINCE_NAME_SIZE 256
+#define _GET_DN_OID(name, print) \
+    do { \
+      char name[GNUTLS_X509_ ## name ## _SIZE] = {0}; \
+      len = GNUTLS_X509_ ## name ## _SIZE; \
+      err = gnutls_x509_crt_get_dn_by_oid (crt, \
+          GNUTLS_OID_X520_ ## name, 0, 0, name, &len); \
+      if (err == GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE) { \
+        info << print ":\n"; \
+      } else if (err < 0) { \
+        info << print " error: " << gnutls_strerror (err) << "\n"; \
+      } else { \
+        info << print ": " << name << "\n"; \
+      } \
+    } while (0)
+
+    _GET_DN_OID (COMMON_NAME, "Common Name");
+    _GET_DN_OID (ORGANIZATION_NAME, "Organization");
+    _GET_DN_OID (ORGANIZATIONAL_UNIT_NAME, "Unit");
+    _GET_DN_OID (COUNTRY_NAME, "Country");
+    _GET_DN_OID (STATE_OR_PROVINCE_NAME, "State");
+    _GET_DN_OID (LOCALITY_NAME, "City");
+  }
+
+  {
+    time_t tim;
+
+    tim = gnutls_x509_crt_get_activation_time(crt);
+    if (tim != -1) {
+      char s[42];
+      size_t max = sizeof(s);
+      struct tm t;
+
+      if (gmtime_r(&tim, &t) == NULL)
+        info << "Not Before error: gmtime_r (" << (unsigned long) tim
+          << ")\n";
+      else if (strftime (s, max, "%a %b %d %H:%M:%S UTC %Y", &t) == 0)
+        info << "Not Before error: strftime (" << (unsigned long) tim
+          << ")\n";
+      else
+        info << "Not Before: " << s << "\n";
+    } else {
+      info << "Not Before: unknown\n";
+    }
+
+    tim = gnutls_x509_crt_get_expiration_time(crt);
+    if (tim != -1) {
+      char s[42];
+      size_t max = sizeof(s);
+      struct tm t;
+
+      if (gmtime_r(&tim, &t) == NULL)
+        info << "Not After error: gmtime_r (" << (unsigned long) tim
+          << ")\n";
+      else if (strftime (s, max, "%a %b %d %H:%M:%S UTC %Y", &t) == 0)
+        info << "Not After error: strftime (" << (unsigned long) tim
+          << ")\n";
+      else
+        info << "Not After: " << s << "\n";
+    } else {
+      info << "Not After: unknown\n";
+    }
+  }
+
+  {
+    gnutls_datum_t dn;
+    int err;
+
+    err = gnutls_x509_crt_get_issuer_dn3(crt, &dn, 0);
+    if (err == GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE) {
+      info << "Issuer:\n";
+    } else if (err < 0) {
+      info << "Issuer error: " << gnutls_strerror (err) << "\n";
+    } else {
+      info << "Issuer: " << as_string (dn.data) << "\n";
+      gnutls_free(dn.data);
+    }
+  }
+
+  return info;
 }
 
 
