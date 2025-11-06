@@ -1,0 +1,20 @@
+From: ___@___
+Subject: TeXmacs server confirmation code for your account request at ___
+
+Dear $USER_NAME,
+
+You have recently signed in for a new account at the TeXmacs server ___
+
+Your user pseudo / login is: $USER_PSEUDO
+
+Your email is: $USER_EMAIL
+
+At your first login the following confirmation code will be asked to
+you: $USER_CODE
+
+This confirmation code along with your account request will expire
+after __ hours.
+
+Best regards,
+
+___

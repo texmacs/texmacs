@@ -4,6 +4,8 @@
 ;; MODULE      : client-menu.scm
 ;; DESCRIPTION : menus for remote TeXmacs services
 ;; COPYRIGHT   : (C) 2013  Joris van der Hoeven
+;;                   2025  Gregoire Lecerf
+;;                   2025  Robin Wils
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -14,23 +16,57 @@
 (texmacs-module (client client-menu)
   (:use (client client-base)
         (client client-db)
+        (client client-remote-config)
         (client client-widgets)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote client submenus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind start-client-menu
+(define (server->string server)
+  (if (client-find-server-port server)
+      (with port (client-find-server-port server)
+	(string-append (client-find-server-pseudo server) "@"
+		       (client-find-server-name server)
+		       (if (== port "6561") ""
+			   (string-append ":" port))
+		       "(" (number->string server) ")"))
+      "Inactive connection"))
+
+(define (account->string server-name port pseudo)
+  (if (== server-name "")
+      (account->string "localhost" port pseudo)
+      (with x (string-append pseudo "@" server-name)
+	(if (== port "6561") x
+	    (string-append x ":" port)))))
+
+(menu-bind client-remove-account-menu
+  (for (x (client-accounts))
+    (with (server-name port pseudo authentications) x
+      ((eval (account->string server-name port pseudo))
+       (client-remove-account server-name port pseudo)))))
+
+(menu-bind client-reset-credentials-menu
+  ("Notify forgotten credentials"
+   (open-remote-notify-reset-credentials "" "6561" "" `tls))
+  ("Reset credentials from secret code"
+   (open-remote-login-code "" "6561" "" `tls)))
+
+(menu-bind client-start-menu
   (with l (client-accounts)
     (if (null? l)
-	("Login" (open-remote-login "" "")))
+	("Login" (open-remote-login "" "6561" "" `())))
     (if (nnull? l)
 	(for (x l)
-	  (with (server-name pseudo) x
-	    ((eval (string-append "Login as " pseudo "@" server-name))
-	     (open-remote-login server-name pseudo))))
-	("Other login" (open-remote-login "" "")))
-    ("New account" (open-remote-account-creator))))
+	  (with (server-name port pseudo authentications) x
+	    ((eval (string-append
+		    "Login as " (account->string server-name port pseudo)))
+	     (open-remote-login server-name port pseudo authentications))))
+	("Other login" (open-remote-login "" "6561" "" `())))
+    ("New account" (open-remote-account-creator))
+    (-> "Reset credentials" (link client-reset-credentials-menu))
+    (if (nnull? l)
+        (-> "Remove account" (link client-remove-account-menu)))))
 
 (tm-menu (remote-home-menu server sep?)
   (when (remote-home-directory server)
@@ -42,7 +78,7 @@
   (assuming sep? ---)
   (when (list-shared server)
     ("Shared resources" (load-document (list-shared server))))
-  ("Synchronize" (remote-interactive-sync server)))
+  ("Synchronize resources" (remote-interactive-sync server)))
 
 (tm-menu (remote-file-menu server sep?)
   ("Rename" (remote-rename-interactive server))
@@ -114,73 +150,111 @@
       (dynamic (remote-live-list-menu server)))
   ---
   (dynamic (remote-mail-menu server))
+  (assuming (server-connection-admin? server)
+    ---
+    (group "Server administration")
+    ("Edit Server Preferences" (load-remote-config-form server))
+    ("User Management" (open-admin-accounts-editor server)))
+  ---
+  ("Server infos" (open-public-preferences server))
+  ("Edit account" (open-account-editor server))
   ---
   ("Logout" (client-logout server)))
 
 (menu-bind client-menu
   (invisible (client-active-servers))
+  (link client-start-menu)
   (with l (client-active-servers)
-    (assuming (null? l)
-      (link start-client-menu))
+    ---
     (assuming (== (length l) 1)
-      (dynamic (remote-submenu (car l))))
-    (assuming (> (length l) 1)
+     (dynamic (remote-submenu (car l))))
+    (assuming (>= (length l) 2)
       (for (server l)
-        (-> (eval (client-find-server-name server))
-            (dynamic (remote-submenu server)))))))
+	(-> (eval (server->string server))
+	    (dynamic (remote-submenu server)))))))
 
 (menu-bind remote-menu
-  (if (and (null? remote-client-list) (not (server-started?)))
-      (link start-client-menu)
-      ;;---
-      ;;(link start-server-menu)
-      )
-  (if (and (null? remote-client-list) (server-started?))
-      (link server-menu))
-  (if (nnull? remote-client-list)
-      (link client-menu)))
+  (invisible (client-active-servers))
+  (link client-menu)
+  ---
+  ("Client Preferences" (open-client-preferences))
+  ---
+  (assuming (not (server-started?))
+    (link server-start-menu))
+  (assuming (server-started?)
+    (link server-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main remote icon menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define current-server #f)
+
+(define (get-current-server)
+  (with l (client-active-servers)
+    (if (or (not current-server) (not (in? current-server l)))
+	(if (null? l)
+	    (set! current-server #f)
+	    (set! current-server (car l)))))
+  current-server)
+
+(define (set-current-server s) (set! current-server s))
+
+(menu-bind client-set-current-server-menu
+  (invisible (client-active-servers))
+  (with l (list-remove (client-active-servers) current-server)
+    (for (server l)
+      ((eval (server->string server)) (set-current-server server)))))
+
 (tm-menu (remote-subicons server)
-  (=> (balloon (icon "tm_cloud.xpm") "Connection with server")
-      ("Logout" (client-logout server)))
+  (invisible (client-active-servers))
+  (assuming (not (server-connection-admin? server))
+    (=> (balloon (icon "tm_cloud.xpm") "Connection with server")
+	("Edit account" (open-account-editor server))
+	("Logout" (client-logout server))))
+  (assuming (server-connection-admin? server)
+    (=> (balloon (icon "tm_cloud_admin.xpm") "Connection with server")
+	("Edit Server Preferences" (load-remote-config-form server))
+	("User Management" (open-admin-accounts-editor server))
+	("Edit account" (open-account-editor server))
+	("Logout" (client-logout server))))
   (=> (balloon (icon "tm_cloud_home.xpm") "My resources on the server")
       (dynamic (remote-home-menu server #t)))
   (if (and (remote-file-name (current-buffer))
            (not (remote-directory? (current-buffer))))
       (=> (balloon (icon "tm_cloud_file.xpm") "Remote file")
-          (dynamic (remote-file-menu server #t))))
+	  (dynamic (remote-file-menu server #t))))
   (if (and (remote-file-name (current-buffer))
            (remote-directory? (current-buffer)))
       (=> (balloon (icon "tm_cloud_dir.xpm") "Remote directory")
-          (dynamic (remote-dir-menu server #t))))
+	  (dynamic (remote-dir-menu server #t))))
   (if (and (chat-room-url? (current-buffer))
            (not (mail-box-url? (current-buffer))))
       (=> (balloon (icon "tm_cloud_file.xpm") "Chat room")
-          (dynamic (remote-chat-menu server))))
+	  (dynamic (remote-chat-menu server))))
   (if (chat-rooms-url? (current-buffer))
       (=> (balloon (icon "tm_cloud_dir.xpm") "Chat rooms")
-          (dynamic (remote-chat-list-menu server))))
+	  (dynamic (remote-chat-list-menu server))))
   (if (live-url? (current-buffer))
       (=> (balloon (icon "tm_cloud_file.xpm") "Live document")
-          (dynamic (remote-live-menu server))))
+	  (dynamic (remote-live-menu server))))
   (if (live-list-url? (current-buffer))
       (=> (balloon (icon "tm_cloud_dir.xpm") "Live documents")
-          (dynamic (remote-live-list-menu server))))
+	  (dynamic (remote-live-list-menu server))))
   (=> (balloon (icon "tm_cloud_mail.xpm") "Messages")
       (dynamic (remote-mail-menu server))))
 
 (menu-bind remote-icons
   (invisible (client-active-servers))
-  (assuming (and (null? remote-client-list) (not (server-started?)))
+  (invisible (get-current-server))
+  (assuming (null? (client-active-servers))
     (=> (balloon (icon "tm_cloud.xpm") "Connect with server")
-        (link start-client-menu)))
-  (assuming (and (null? remote-client-list) (server-started?))
-    (=> (balloon (icon "tm_cloud.xpm") "Server menu")
-        (link server-menu)))
-  (assuming (and (nnull? remote-client-list)
-                 (nnull? (client-active-servers)))
-    (dynamic (remote-subicons (car (client-active-servers))))))
+        (link client-start-menu)))
+  (assuming (get-current-server)
+    (dynamic (remote-subicons (get-current-server))))
+  (assuming (>= (length (client-active-servers)) 2)
+    (=> (balloon (eval (server->string (get-current-server))) "Connection")
+	(link client-set-current-server-menu)))
+  (assuming (server-started?)
+    (=> (balloon (icon "tm_cloud_server.xpm") "Local server")
+        (link server-menu))))

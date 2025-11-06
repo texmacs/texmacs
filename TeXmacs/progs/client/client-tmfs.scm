@@ -150,7 +150,7 @@
       (lambda (name)
         (and-with fname (prepend-dir server name "remote-file")
           (remote-create-file server fname (empty-document))))
-    (list "Name" "string" '())))
+    (list "Name" "string")))
 
 (tmfs-permission-handler (remote-file name type)
   ;; FIXME: asynchroneous retrieval of file permissions
@@ -193,7 +193,8 @@
          (fname (string-append "tmfs://remote-file/" name)))
     (if (not server)
         ;; FIXME: better error handling
-        (texmacs-error "remote-file" "invalid server")
+	(std-client-error (string-append "remote file " name
+					 " is not accessible"))
         (begin
           (client-remote-eval server `(remote-file-load ,name)
             (lambda (tm)
@@ -241,7 +242,7 @@
       (lambda (name)
         (and-with fname (prepend-dir server name "remote-dir")
           (remote-create-dir server fname)))
-    (list "Name" "string" '())))
+    (list "Name" "string")))
 
 (define (dir-line sname entry)
   (with (short-name full-name dir? props) entry

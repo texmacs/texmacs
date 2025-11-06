@@ -4,6 +4,7 @@
 ;; MODULE      : client-chat.scm
 ;; DESCRIPTION : Sending messages and chatting, client side
 ;; COPYRIGHT   : (C) 2020  Joris van der Hoeven
+;;                   2025  Robin Wils
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE

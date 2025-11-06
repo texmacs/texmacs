@@ -463,8 +463,8 @@
 
 ;(display "Booting remote facilities\n")
 (lazy-define (client client-tmfs) remote-home-directory)
-(lazy-menu (server server-menu) start-server-menu server-menu)
-(lazy-menu (client client-menu) start-client-menu client-menu
+(lazy-menu (server server-menu) server-start-menu server-menu)
+(lazy-menu (client client-menu) client-start-menu client-menu
            remote-menu remote-icons)
 (lazy-tmfs-handler (client client-tmfs) remote-file)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
