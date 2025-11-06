@@ -66,6 +66,7 @@ bool disable_error_recovery= false;
 bool start_server_flag= false;
 bool headless_mode= false;
 string extra_init_cmd;
+bool exec_exit= true;
 void server_start ();
 
 #ifdef QTTEXMACS
@@ -388,6 +389,9 @@ set_global_options  (int argc, char** argv)  {
         i++;
         if (i<argc) my_init_cmds= (my_init_cmds * " ") * argv[i];
       }
+      else if ((s == "-X")) {
+        exec_exit= false;
+      }
       else if (s == "-server") set_server ();
       else if (s == "-port") {
         i++;
@@ -481,7 +485,7 @@ set_global_options  (int argc, char** argv)  {
   // End parse command line options
 
   // in headless mode quit after processing of the command line
-  if (headless_mode && !is_server ()) my_init_cmds= my_init_cmds * " (quit-TeXmacs)";
+  if (headless_mode && exec_exit && !is_server ()) my_init_cmds= my_init_cmds * " (quit-TeXmacs)";
 
   // Further options via environment variables
 #if QT_VERSION < 0x060000
