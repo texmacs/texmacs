@@ -8309,6 +8309,15 @@ tmg_trust_certificate (tmscm arg1) {
 }
 
 tmscm
+tmg_disable_certificate_time_checks () {
+  // TMSCM_DEFER_INTS;
+  disable_certificate_time_checks ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_connection_start (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "connection-start");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "connection-start");
@@ -11202,6 +11211,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("hash-password-pbkdf2",  tmg_hash_password_pbkdf2, 2, 0, 0);
   tmscm_install_procedure ("generate-self-signed-certificate",  tmg_generate_self_signed_certificate, 3, 0, 0);
   tmscm_install_procedure ("trust-certificate",  tmg_trust_certificate, 1, 0, 0);
+  tmscm_install_procedure ("disable-certificate-time-checks",  tmg_disable_certificate_time_checks, 0, 0, 0);
   tmscm_install_procedure ("connection-start",  tmg_connection_start, 2, 0, 0);
   tmscm_install_procedure ("connection-status",  tmg_connection_status, 2, 0, 0);
   tmscm_install_procedure ("connection-write-string",  tmg_connection_write_string, 3, 0, 0);

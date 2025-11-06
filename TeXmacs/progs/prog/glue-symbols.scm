@@ -638,6 +638,7 @@
 "hash-password-pbkdf2"
 "generate-self-signed-certificate"
 "trust-certificate"
+"disable-certificate-time-checks"
 "connection-start"
 "connection-status"
 "connection-write-string"
