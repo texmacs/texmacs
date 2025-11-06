@@ -428,7 +428,10 @@ socket_link_rep::resume_start (int s) {
   if (!is_alive (contact)) {
     DEBUG_SOCKET ("contact is dead for socket " * as_string (s));
     stop ();
-    if (!is_headless ())
+    // on cert error an interactive trust-certificate widget is spawned
+    if (!is_headless ()
+        && contact->last_error() != ""
+        && contact->last_error() != "certificate verify interactive")
       call ("client-open-error", contact->last_error());
     return;
   }
@@ -439,7 +442,9 @@ socket_link_rep::resume_start (int s) {
     ::start (contact, s);
     if (!is_alive (contact)) {
       stop ();
-      if (!is_headless ())
+      if (!is_headless ()
+          && contact->last_error() != ""
+          && contact->last_error() != "certificate verify interactive")
         call ("client-open-error", contact->last_error());
       return;
     }

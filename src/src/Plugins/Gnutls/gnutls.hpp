@@ -83,6 +83,8 @@ bool   certificate_present ();
 bool generate_self_signed (tree cfg, url cert_path, url key_path);
 bool trust_certificate (const string& crt_pem);
 
+void disable_certificate_time_checks ();
+
 /******************************************************************************
 * TLS contacts
 ******************************************************************************/

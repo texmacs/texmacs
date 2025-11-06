@@ -688,8 +688,11 @@
   (hash-password-pbkdf2 hash_password_pbkdf2 (string string string))
 
   ;; Certificates
-  (generate-self-signed-certificate generate_self_signed (bool scheme_tree url url))
+  (generate-self-signed-certificate generate_self_signed
+                                    (bool scheme_tree url url))
   (trust-certificate trust_certificate (bool string))
+  (disable-certificate-time-checks
+    disable_certificate_time_checks (void))
 
   ;; connections to extern systems
   (connection-start connection_start (string string string))
