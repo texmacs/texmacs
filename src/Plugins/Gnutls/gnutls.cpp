@@ -1265,12 +1265,18 @@ certificate_present () {
 
 bool
 trust_certificate (const string& crt_pem) {
+  (void) crt_pem;
   return true;
 }
 
 bool
 generate_self_signed (tree cfg_tree, url cert_path, url key_path) {
+  (void) cfg_tree; (void) cert_path; (void) key_path;
   return true;
+}
+
+void
+disable_certificate_time_checks () {
 }
 
 #endif // USE_GNUTLS
