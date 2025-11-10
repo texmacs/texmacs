@@ -164,6 +164,8 @@
 
 #cmakedefine USE_SQLITE3 1
 
+#cmakedefine USE_GNUTLS 1
+
 #cmakedefine USE_STACK_TRACE 1
 
 /* Define to 1 if the X Window System is missing or not being used. */
