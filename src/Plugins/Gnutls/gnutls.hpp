@@ -90,7 +90,7 @@ void disable_certificate_time_checks ();
 ******************************************************************************/
 
 tm_contact make_tls_server_contact (array<array<string> > args);
-tm_contact make_tls_client_contact (array<array<string> > args);
+tm_contact make_tls_client_contact (string host, array<array<string> > args);
 
 /******************************************************************************
 * PBKDF2 password hash

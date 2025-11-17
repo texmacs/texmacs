@@ -935,7 +935,8 @@ struct tls_client_contact_rep: tm_contact_rep {
   int error_number;
   unsigned int cert_verif_status;
   bool handshake_in_progress;
-  tls_client_contact_rep (array<array<string> > args=
+  char* host;
+  tls_client_contact_rep (string host, array<array<string> > args=
       array<array<string> > ());
   ~tls_client_contact_rep ();
   void start (int io);
@@ -954,13 +955,12 @@ private:
    * @return 0 on success, 1 on error, 2 on retry
    */
   int handshake (gnutls_session_t s);
-  int verify ();
   void reset () { io=-1; ptr=(pointer) NULL; handshake_in_progress= false; }
 };
 
-tls_client_contact_rep::tls_client_contact_rep (array<array<string> > creds):
+tls_client_contact_rep::tls_client_contact_rep (string host, array<array<string> > creds):
   tm_contact_rep (creds), io (-1), ptr (NULL),
-  error_number (GNUTLS_E_SUCCESS), handshake_in_progress (false)
+  error_number (GNUTLS_E_SUCCESS), handshake_in_progress (false), host (as_charp (host))
 {
   tls_ensure_initialization ();
   type= SOCKET_CLIENT;
@@ -1070,7 +1070,7 @@ tls_client_contact_rep::start (int io2) {
       }
     }
 
-    gnutls_session_set_verify_cert (s, NULL, cert_verify_flags);
+    gnutls_session_set_verify_cert (s, host, cert_verify_flags);
     gnutls_session_set_verify_output_function (s, cert_out_callback);
 
     ret = gnutls_credentials_set (s, GNUTLS_CRD_CERTIFICATE,
@@ -1120,6 +1120,8 @@ tls_client_contact_rep::stop () {
     GNUTLS_LOG ("GnuTLS closed session for client " * as_string (io));
     reset ();
   }
+  if (host)
+    tm_delete_array (host);
 }
 
 int
@@ -1175,8 +1177,8 @@ tls_client_contact_rep::active () {
 }
 
 tm_contact 
-make_tls_client_contact (array<array<string> > args) {
-  return (tm_contact_rep*) tm_new<tls_client_contact_rep> (args);
+make_tls_client_contact (string host, array<array<string> > args) {
+  return (tm_contact_rep*) tm_new<tls_client_contact_rep> (host, args);
 }
 
 /******************************************************************************
@@ -1237,7 +1239,8 @@ make_tls_server_contact (array<array<string> > args) {
 }
 
 tm_contact
-make_tls_client_contact (array<array<string> > args) {
+make_tls_client_contact (string host, array<array<string> > args) {
+  (void) host;
   (void) args;
   return tm_contact ();
 }
