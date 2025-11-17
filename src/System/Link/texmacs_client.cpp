@@ -114,7 +114,7 @@ tls_client_start (string host, int port, scheme_tree args) {
   }
   //cout << "tls_client_start, " << args << LF;
   return _client_start (host, port,
-    make_tls_client_contact (as_array_array_string (args)));
+    make_tls_client_contact (host, as_array_array_string (args)));
 }
 
 static socket_link_rep*
