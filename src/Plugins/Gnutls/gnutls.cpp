@@ -63,7 +63,7 @@ static const string tm_x509_cert_path= "$TEXMACS_HOME_PATH/server/cert.pem";
 static const string tm_x509_key_path= "$TEXMACS_HOME_PATH/server/key.pem";
 static const string tm_x509_trusted_cas_path=
   "$TEXMACS_HOME_PATH/system/certificates/trusted-certificates.crt";
-static gnutls_x509_crt_t server_certificate = NULL;
+
 static unsigned int cert_verify_flags = 0;
 
 static void
@@ -170,6 +170,34 @@ tls_ensure_initialization () {
  * X.509 authentication
  ******************************************************************************/
 
+static gnutls_x509_crt_t
+crt_cpy (gnutls_x509_crt_t src)
+{
+  gnutls_datum_t tmp= {NULL,0};
+  gnutls_x509_crt_t dst;
+  int ret;
+
+  ret = gnutls_x509_crt_export2 (src, GNUTLS_X509_FMT_DER, &tmp);
+  if (ret < 0) {
+    GNUTLS_ERR_LOGW (ret, "gnutls cert copy (export der)");
+    return NULL;
+  }
+
+  ret = gnutls_x509_crt_init (&dst);
+  if (ret < 0) {
+    GNUTLS_ERR_LOGW (ret, "gnutls cert copy (init)");
+    return NULL;
+  }
+
+  ret = gnutls_x509_crt_import (dst, &tmp ,GNUTLS_X509_FMT_DER);
+  if (ret < 0) {
+    GNUTLS_ERR_LOGW (ret, "gnutls cert copy (import der)");
+    return NULL;
+  }
+
+  return dst;
+}
+
 static string
 as_string_gnutls_datum (gnutls_datum_t data, bool full = false) {
   string str (reinterpret_cast<char*> (data.data));
@@ -177,6 +205,25 @@ as_string_gnutls_datum (gnutls_datum_t data, bool full = false) {
     return str;
   }
   return "data: '" * str * "', size = " * as_string (data.size);
+}
+
+static string
+as_string_cert_serial (const gnutls_x509_crt_t crt)
+{
+  uint8_t serial[128] = {0};
+  size_t serial_size = sizeof(serial);
+  string serial_str;
+
+  int err =
+    gnutls_x509_crt_get_serial(crt, serial, &serial_size);
+  if (err < 0)
+    return "";
+  else {
+    for (size_t i = 0; i < serial_size; i++) {
+      serial_str << as_hexadecimal (serial[i]);
+    }
+    return serial_str;
+  }
 }
 
 static string
@@ -205,12 +252,6 @@ as_string_gnutls_crt (const gnutls_x509_crt_t crt) {
     size_t len;
     int err;
 
-#define GNUTLS_X509_COMMON_NAME_SIZE 256
-#define GNUTLS_X509_COUNTRY_NAME_SIZE 3
-#define GNUTLS_X509_ORGANIZATION_NAME_SIZE 256
-#define GNUTLS_X509_ORGANIZATIONAL_UNIT_NAME_SIZE 256
-#define GNUTLS_X509_LOCALITY_NAME_SIZE 256
-#define GNUTLS_X509_STATE_OR_PROVINCE_NAME_SIZE 256
 #define _GET_DN_OID(name, print) \
     do { \
       char name[GNUTLS_X509_ ## name ## _SIZE] = {0}; \
@@ -395,6 +436,22 @@ disable_certificate_time_checks () {
       GNUTLS_VERIFY_DISABLE_TIME_CHECKS;
 }
 
+static gnutls_x509_crt_t crt_cpy (gnutls_x509_crt_t src);
+
+struct x509_certificate {
+  gnutls_x509_crt_t cert;
+  unsigned int status;
+
+  x509_certificate(gnutls_x509_crt_t crt, unsigned int status)
+    : cert (crt_cpy(crt)), status (status) {}
+
+  inline bool valid () { return cert != NULL; }
+};
+
+static hashmap<string,pointer> certificates_verified;
+
+static string server_certificate_serial = "";
+
 static int cert_out_callback (gnutls_x509_crt_t cert,
     gnutls_x509_crt_t issuer,
     gnutls_x509_crl_t crl,
@@ -403,8 +460,10 @@ static int cert_out_callback (gnutls_x509_crt_t cert,
   (void) crl;
   gnutls_datum_t tmp= {NULL,0}, txt= {NULL,0};
   int ret;
-
-  GNUTLS_LOG ("Printing full certificate path validation to trust root.");
+  string serial = as_string_cert_serial (cert);
+  string issuer_serial = issuer ? as_string_cert_serial (issuer) : "";
+	char dnsname[GNUTLS_X509_COMMON_NAME_SIZE] = {0};
+	size_t dnsnamesize;
 
   GNUTLS_LOG ("\tCertificate:\n" * as_string_gnutls_crt (cert));
 
@@ -418,6 +477,9 @@ static int cert_out_callback (gnutls_x509_crt_t cert,
     GNUTLS_LOG ("\tVerified");
   }
 
+  if (serial == "" || certificates_verified->contains (serial))
+    return 0;
+
   ret = gnutls_certificate_verification_status_print (verification_output,
       GNUTLS_CRT_X509, &txt, 0);
   if (ret < 0) {
@@ -427,27 +489,16 @@ static int cert_out_callback (gnutls_x509_crt_t cert,
 
   GNUTLS_LOG ("verification status (" * as_string (verification_output) * "): "
       * as_string_gnutls_datum (txt));
-
-  ret = gnutls_x509_crt_export2 (cert, GNUTLS_X509_FMT_DER, &tmp);
-  if (ret < 0) {
-    gnutls_free (txt.data);
-    GNUTLS_ERR_LOGW (ret, "gnutls cert copy (export der)");
-    return 1;
-  }
-
-  ret = gnutls_x509_crt_init (&server_certificate);
-  if (ret < 0) {
-    gnutls_free (txt.data);
-    GNUTLS_ERR_LOGW (ret, "gnutls cert copy (init)");
-    return 1;
-  }
-
-  ret = gnutls_x509_crt_import (server_certificate, &tmp ,GNUTLS_X509_FMT_DER);
-  if (ret < 0) {
-    GNUTLS_ERR_LOGW (ret, "gnutls cert copy (import der)");
-  }
-
   gnutls_free (txt.data);
+
+  ret = gnutls_x509_crt_get_dn_by_oid
+    (cert, GNUTLS_OID_X520_COMMON_NAME, 0, 0, dnsname,
+     &dnsnamesize);
+
+  certificates_verified (serial)=
+    new x509_certificate(cert, verification_output);
+  server_certificate_serial = serial;
+
   return 0;
 }
 
@@ -832,6 +883,8 @@ tls_server_contact_rep::start (int io2) {
     if (timeout == 0)
       GNUTLS_LOGW ("server connection timeout is disabled");
     gnutls_handshake_set_timeout (s, timeout);
+    certificates_verified->~hashmap_rep();
+    certificates_verified = hashmap<string,pointer>();
   } else {
     s= (gnutls_session_t) ptr;
   }
@@ -990,29 +1043,37 @@ tls_client_contact_rep::handshake (gnutls_session_t s) {
   }
 
   if (ret == GNUTLS_E_CERTIFICATE_VERIFICATION_ERROR &&
-      server_certificate != NULL) {
-    cert_verif_status= gnutls_session_get_verify_cert_status(s);
+      gnutls_session_get_verify_cert_status (s) != 0) {
+    cert_verif_status= gnutls_session_get_verify_cert_status (s);
+    GNUTLS_LOGW (string("got verify cert status for session: ") * as_string (cert_verif_status));
+
+    gnutls_datum_t txt;
+    ret = gnutls_certificate_verification_status_print (cert_verif_status,
+        GNUTLS_CRT_X509, &txt, 0);
+    if (ret >= 0) {
+      GNUTLS_LOGW (as_string_gnutls_datum (txt));
+    }
 
     // ask user for server cert confirmation if it isn't a trusted cert
     // or expired/not active
-    if (!handle_cert_error_interactive (cert_verif_status))
+    if (!handle_cert_error_interactive (cert_verif_status) ||
+        !certificates_verified->contains (server_certificate_serial))
       return ret;
 
     string msg;
 
-    string crt_str = as_string_gnutls_crt (server_certificate);
+    x509_certificate* server_certificate= (x509_certificate*)
+      certificates_verified (server_certificate_serial);
+
+    if (!server_certificate->valid ()) {
+      GNUTLS_LOGW (string ("certificate ") * server_certificate_serial
+         * " is invalid");
+      return ret;
+    }
+
+    string crt_str = as_string_gnutls_crt (server_certificate->cert);
     if (crt_str == "") {
-      char serial[128] = {0};
-      size_t serial_size = sizeof (serial);
-      int ret =
-        gnutls_x509_crt_get_serial (server_certificate, serial, &serial_size);
-      if (ret < 0) {
-        GNUTLS_ERR_LOGE (ret, "cert get serial");
-        gnutls_deinit (s);
-        reset ();
-        return ret;
-      }
-      msg = string (serial);
+      msg = as_string_cert_serial (server_certificate->cert);
     } else {
       msg = crt_str;
     }
@@ -1022,14 +1083,12 @@ tls_client_contact_rep::handshake (gnutls_session_t s) {
     if (cert_verif_status & GNUTLS_CERT_SIGNER_NOT_FOUND) {
       call ("trust-certificate-interactive",
           object (msg),
-          object (tm_cert_as_pem_string (server_certificate)));
+          object (tm_cert_as_pem_string (server_certificate->cert)));
     } else {
       call ("disable-certificate-time-checks-interactive", object (msg));
     }
-
-    gnutls_x509_crt_deinit (server_certificate);
-    server_certificate = NULL;
   }
+
   return ret;
 }
 
@@ -1097,6 +1156,8 @@ tls_client_contact_rep::start (int io2) {
     if (timeout == 0)
       GNUTLS_LOGW ("client connection timeout is disabled");
     gnutls_handshake_set_timeout (s, timeout);
+    certificates_verified->~hashmap_rep();
+    certificates_verified = hashmap<string,pointer>();
   } else {
     s= (gnutls_session_t) ptr;
   }

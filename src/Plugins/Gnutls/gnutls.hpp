@@ -65,6 +65,13 @@
 
 #define CRT_SERIAL_SIZE 20
 
+#define GNUTLS_X509_COMMON_NAME_SIZE 256
+#define GNUTLS_X509_COUNTRY_NAME_SIZE 3
+#define GNUTLS_X509_ORGANIZATION_NAME_SIZE 256
+#define GNUTLS_X509_ORGANIZATIONAL_UNIT_NAME_SIZE 256
+#define GNUTLS_X509_LOCALITY_NAME_SIZE 256
+#define GNUTLS_X509_STATE_OR_PROVINCE_NAME_SIZE 256
+
 /******************************************************************************
 * Test if GnuTLS is present
 ******************************************************************************/
