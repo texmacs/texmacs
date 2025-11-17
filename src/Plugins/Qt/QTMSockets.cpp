@@ -422,6 +422,16 @@ socket_link_rep::write (string s, int channel) {
   write_notifier_ptr->setEnabled (true);
 }
 
+inline bool
+socket_link_rep::retry (int err) {
+#ifdef USE_GNUTLS
+  return err < 0 && err != EAGAIN && err != GNUTLS_E_AGAIN &&
+    err != GNUTLS_E_INTERRUPTED;
+#else
+  return err < 0 && err != EAGAIN;
+#endif
+}
+
 void
 socket_link_rep::resume_start (int s) {
   if (!exists (this)) return;
@@ -542,24 +552,23 @@ socket_link_rep::ready_to_send (int s) {
       n -= ret;
       if (n > 0) write_notifier_ptr->setEnabled (true);
     }
-    else if (ret < 0 && ret != EAGAIN && ret != GNUTLS_E_AGAIN &&
-        ret != GNUTLS_E_INTERRUPTED) {
+    else if (retry (ret)) {
       DEBUG_SOCKET("'socket_link_rep::ready_to_send', error: "
         << last_error (contact));
       if (is_active (contact)) {
         if (used_by_server ())
           io_warning << "retrying connection to client "
-	    << as_string (s) << ": " << last_error (contact);
-	else
-	  io_warning << "retrying connection to server '"
+            << as_string (s) << ": " << last_error (contact);
+        else
+          io_warning << "retrying connection to server '"
             << host << "': " << last_error (contact);
         write_notifier_ptr->setEnabled (true);
       }
       else {
         if (used_by_server ())
           io_error << "connection to client "
-	    << as_string (s) << " aborted: " << last_error (contact);
-	else
+            << as_string (s) << " aborted: " << last_error (contact);
+        else
           io_error << "connection to server '"
             << host << "' aborted: " << last_error (contact);
         stop ();

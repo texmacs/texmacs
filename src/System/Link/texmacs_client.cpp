@@ -15,7 +15,6 @@
 #include "iterator.hpp"
 #include "analyze.hpp"
 #include "hashmap.hpp"
-#include "Gnutls/gnutls.hpp"
 
 #ifdef QTTEXMACS
 #include "Qt/QTMSockets.hpp"

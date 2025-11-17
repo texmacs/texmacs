@@ -84,6 +84,7 @@ public:
   void    stop ();
   int     get_socket_id () { return socket_id; }
   string  get_host_name () { return host; }
+  bool    retry (int err);
 
 public slots:
   void data_set_ready (int);
