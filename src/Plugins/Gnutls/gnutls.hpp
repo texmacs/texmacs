@@ -15,7 +15,11 @@
 #include "hashmap.hpp"
 #include "tm_contact.hpp"
 
+#include "config.h"
+
+#ifdef USE_GNUTLS
 #include <gnutls/gnutls.h>
+#endif
 
 #define GNUTLS_ERROR_FMT(ret, opname) \
   ("GnuTLS ERROR (" * as_string (ret) * ") during " *  opname * ": " \

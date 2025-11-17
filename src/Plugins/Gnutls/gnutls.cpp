@@ -458,7 +458,7 @@ static int cert_out_callback (gnutls_x509_crt_t cert,
     unsigned int verification_output)
 {
   (void) crl;
-  gnutls_datum_t tmp= {NULL,0}, txt= {NULL,0};
+  gnutls_datum_t txt= {NULL,0};
   int ret;
   string serial = as_string_cert_serial (cert);
   string issuer_serial = issuer ? as_string_cert_serial (issuer) : "";
