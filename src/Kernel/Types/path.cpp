@@ -81,7 +81,11 @@ path_add (path p, int plus, int pos) {
 
 path
 path_up (path p) {
+#ifdef ADVANCED_DEVELOPER_MODE
   ASSERT (!is_nil (p), "path is too short");
+#else
+  if (is_nil (p)) return path ();
+#endif
   if (is_nil (p->next)) return path ();
   return path (p->item, path_up (p->next));
 }
