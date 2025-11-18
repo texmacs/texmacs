@@ -466,6 +466,9 @@ qt_ui_element_rep::as_qaction () {
          */
       const QKeySequence& qks = to_qkeysequence (ks);
       if (!qks.isEmpty()) {
+#if QT_VERSION >= 0x060000 and !defined(OS_ANDROID)
+	act->setShortcutVisibleInContextMenu(true);
+#endif
 #if defined (Q_OS_MAC) && QT_VERSION >= 0x060000
 	if (use_native_menubar &&
 	    QApplication::inputMethod()->locale().territory()
