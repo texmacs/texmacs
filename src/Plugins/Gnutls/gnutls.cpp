@@ -13,6 +13,7 @@
 #include "Gnutls/gnutls.hpp"
 #include "analyze.hpp"
 #include "list.hpp"
+#include "locale.hpp"
 #include "string.hpp"
 
 #ifdef USE_GNUTLS
@@ -280,38 +281,14 @@ as_string_gnutls_crt (const gnutls_x509_crt_t crt) {
 
     tim = gnutls_x509_crt_get_activation_time(crt);
     if (tim != -1) {
-      char s[42];
-      size_t max = sizeof(s);
-      struct tm t;
-
-      if (gmtime_r(&tim, &t) == NULL)
-        info << "Not Before error: gmtime_r (" << (unsigned long) tim
-          << ")\n";
-      else if (strftime (s, max, "%a %b %d %H:%M:%S UTC %Y", &t) == 0)
-        info << "Not Before error: strftime (" << (unsigned long) tim
-          << ")\n";
-      else
-        info << "Not Before: " << s << "\n";
-    } else {
-      info << "Not Before: unknown\n";
+      string s= pretty_time(tim);
+      info << "Not Before: " << s << "\n";
     }
 
     tim = gnutls_x509_crt_get_expiration_time(crt);
     if (tim != -1) {
-      char s[42];
-      size_t max = sizeof(s);
-      struct tm t;
-
-      if (gmtime_r(&tim, &t) == NULL)
-        info << "Not After error: gmtime_r (" << (unsigned long) tim
-          << ")\n";
-      else if (strftime (s, max, "%a %b %d %H:%M:%S UTC %Y", &t) == 0)
-        info << "Not After error: strftime (" << (unsigned long) tim
-          << ")\n";
-      else
-        info << "Not After: " << s << "\n";
-    } else {
-      info << "Not After: unknown\n";
+      string s= pretty_time(tim);
+      info << "Not After: " << s << "\n";
     }
   }
 
