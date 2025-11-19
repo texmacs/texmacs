@@ -27,6 +27,7 @@ unslash (string s) {
       switch (s[++i]) {
       case '0': r << ((char) 0); break;
       case 'n': r << '\n'; break;
+      case 'r': r << '\r'; break;
       case 't': r << '\t'; break;
       default: r << s[i];
       }
@@ -40,7 +41,7 @@ unslash (string s) {
 
 static bool
 is_spc (char c) {
-  return (c==' ') || (c=='\t') || (c=='\n');
+  return (c==' ') || (c=='\t') || (c=='\n') || (c=='\r');
 }
 
 static scheme_tree
@@ -51,6 +52,7 @@ string_to_scheme_tree (string s, int& i) {
     case ' ':
     case '\t':
     case '\n':
+    case '\r':
       break;
       case '(':
       {
@@ -100,7 +102,6 @@ string_to_scheme_tree (string s, int& i) {
 
 scheme_tree
 string_to_scheme_tree (string s) {
-  s= replace (s, "\015", "");
   int i=0;
   return string_to_scheme_tree (s, i);
 }

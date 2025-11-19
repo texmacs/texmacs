@@ -48,6 +48,9 @@ slash (string s) {
     case '\n':
       r << "\\n";
       break;
+    case '\r':
+      r << "\\r";
+      break;
     default:
       r << s[i];
     }
