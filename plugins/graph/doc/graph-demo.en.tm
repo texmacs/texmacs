@@ -75,7 +75,7 @@
 
       \\xymatrix {
 
-      \ 1\\ar[rd] & 2\\ar[rd] \\ar[d] & 3 \\ar[d] \\\\\ 
+      \ 1\\ar[rd] & 2\\ar[rd] \\ar[d] & 3 \\ar[d] \\\\ 
 
       \ 1 & 3 & 5 \\\\
 
