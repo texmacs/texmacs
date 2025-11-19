@@ -3613,7 +3613,7 @@ function cmp_dot_number {
   VERSION_BUILD="4"
 
   # the svn revision of this version
-  DEVEL_REVISION="$Rev: 13867 $:"
+  DEVEL_REVISION="$Rev$:"
 
   if test -n "$VERSION_BUILD"
   then DEVEL_VERSION="$VERSION_MAJOR.$VERSION_MINOR.$VERSION_BUILD"
@@ -32415,7 +32415,7 @@ printf "%s\n" "enabling Qt port" >&6; }
             fi
             # Qt Plugins list
             if test $QT_MAJOR -ge 5
-            then QT_PLUGINS_LIST="imageformats,platforms"
+            then QT_PLUGINS_LIST="imageformats,platforms,iconengines"
             else QT_PLUGINS_LIST="accessible,imageformats"
             fi
          fi
@@ -35595,7 +35595,7 @@ fi
 
 
   if test "$enable_sanitizers" != "no"; then
-	 sanitizers_flags="-fsanitize=$enable_sanitizers"
+      sanitizers_flags="-fsanitize=$enable_sanitizers"
   fi
 
   if test "$enable_sanitizers" = "no"; then
