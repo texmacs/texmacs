@@ -6,7 +6,7 @@
         stroke: #e0e0e0;
         stroke-dasharray: 1 1;
         stroke-dashoffset: .5px;
-        fill: transparent;
+        fill: #000000;
       }
 
       .cls-4 {
@@ -16,7 +16,7 @@
 
       .cls-2 {
         stroke: #959595;
-        fill: transparent;
+        fill: #000000;
       }
 
       .cls-3 {
