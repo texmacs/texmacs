@@ -17,6 +17,8 @@
 
 #ifdef OS_MINGW
 #include <windows.h>
+#else
+#include <wordexp.h>
 #endif
 
 static string
@@ -75,11 +77,31 @@ QTMPipeLink::launchCmd () {
   LocalFree(argv);
 
 #else
+  wordexp_t exp;
+  memset(&exp, 0, sizeof(exp));
+
+  int status = wordexp(raw.toUtf8().constData(), &exp, 0);
+
+  if (status != 0) {
+    wordfree(&exp);
+    qWarning() << "wordexp() failed with status:" << status;
+    return false;
+  }
+
+  if (exp.we_wordc > 0) {
+    program = QString::fromUtf8(exp.we_wordv[0]);
+    for (size_t i = 1; i < exp.we_wordc; ++i)
+    args << QString::fromUtf8(exp.we_wordv[i]);
+  }
+
+  wordfree(&exp);
+/*
+#else // if wordexp is not available
   QStringList list = QProcess::splitCommand(raw);
   if (!list.isEmpty()) {
     program = list.takeFirst();
     args = list;
-  }
+*/
 #endif
 
   // qDebug() << "Launching process:" << program << args;
