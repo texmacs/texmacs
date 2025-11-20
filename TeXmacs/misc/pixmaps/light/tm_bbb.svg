@@ -12,7 +12,7 @@
     <style
        id="style1">
       .cls-1 {
-        fill: transparent;
+        fill: #ffffff;
         stroke: #404040;
       }
 

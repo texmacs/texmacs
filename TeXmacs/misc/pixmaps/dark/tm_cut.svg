@@ -26,7 +26,7 @@
       }
 
       .cls-5 {
-        fill: transparent;
+        fill: #000000;
         stroke: #e0e0e0;
         stroke-dasharray: 1 1;
         stroke-dashoffset: .5px;
