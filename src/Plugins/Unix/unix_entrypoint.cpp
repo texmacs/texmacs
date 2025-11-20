@@ -34,9 +34,9 @@ void setup_texmacs_path () {
   string environment_texmacs_path;
   if (texmacs_getenv ("TEXMACS_PATH", environment_texmacs_path)) return;
   url exedir = texmacs_get_application_directory ();
-    if (test_texmacs_path (exedir * "TeXmacs")) {
-    return;
-  }
+  if (test_texmacs_path (exedir * "TeXmacs")) return;
+  if (test_texmacs_path (exedir * "..")) return;
+  
   if (test_texmacs_path (exedir * "usr/share/TeXmacs")) return;
   if (test_texmacs_path (exedir * "usr/local/share/TeXmacs")) return;
   if (test_texmacs_path (exedir * "../usr/share/TeXmacs")) return;
