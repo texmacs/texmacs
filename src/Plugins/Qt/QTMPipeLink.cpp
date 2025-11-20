@@ -15,6 +15,10 @@
 #include "QTMPipeLink.hpp"
 #include <QByteArray>
 
+#ifdef OS_MINGW
+#include <windows.h>
+#endif
+
 static string
 debug_io_string (QByteArray s) {
   int i, n= s.size ();
@@ -48,18 +52,48 @@ QTMPipeLink::~QTMPipeLink () {
 bool
 QTMPipeLink::launchCmd () {
   if (state () != QProcess::NotRunning) killProcess (1000);
-  //FIXME: is UTF8 the right encoding here?
-#if QT_VERSION >= 0x060000
-  QProcess::startCommand(utf8_to_qstring(cmd));
-#else
-  QProcess::start(utf8_to_qstring(cmd));
-#endif
-  bool r= waitForStarted ();
-  if (r) {
-    connect (this, SIGNAL(readyReadStandardOutput ()), SLOT(readErrOut ()));
-    connect (this, SIGNAL(readyReadStandardError ()), SLOT(readErrOut ()));
+
+  QString raw = utf8_to_qstring(cmd);
+  QString program;
+  QStringList args;
+
+#if defined(Q_OS_WIN)
+  int argc = 0;
+  LPWSTR *argv = CommandLineToArgvW((LPCWSTR)raw.utf16(), &argc);
+
+  if (!argv) {
+    qWarning() << "CommandLineToArgvW failed";
+    return false;
   }
-  return r;
+
+  if (argc > 0) {
+    program = QString::fromWCharArray(argv[0]);
+    for (int i = 1; i < argc; ++i)
+        args << QString::fromWCharArray(argv[i]);
+  }
+
+  LocalFree(argv);
+
+#else
+  QStringList list = QProcess::splitCommand(raw);
+  if (!list.isEmpty()) {
+    program = list.takeFirst();
+    args = list;
+  }
+#endif
+
+  // qDebug() << "Launching process:" << program << args;
+  // qDebug() << "Full command line:" << raw;
+  // qDebug() << "Arguments:" << args;
+
+  this->start(program, args);
+
+  bool ok = waitForStarted();
+  if (ok) {
+    connect(this, SIGNAL(readyReadStandardOutput()), SLOT(readErrOut()));
+    connect(this, SIGNAL(readyReadStandardError()), SLOT(readErrOut()));
+  }
+  return ok;
 }
 
 int
