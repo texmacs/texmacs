@@ -75,7 +75,7 @@ QTMPipeLink::launchCmd () {
 
   LocalFree(argv);
 
-#else
+#elif !defined(OS_ANDROID)
   wordexp_t exp;
   memset(&exp, 0, sizeof(exp));
 
@@ -93,13 +93,12 @@ QTMPipeLink::launchCmd () {
   }
 
   wordfree(&exp);
-/*
-#else // if wordexp is not available
+#else
   QStringList list = QProcess::splitCommand(raw);
   if (!list.isEmpty()) {
     program = list.takeFirst();
-    args = list;
-*/
+  }
+  args = list;
 #endif
 
   this->start(program, args);
