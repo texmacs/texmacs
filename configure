@@ -6780,12 +6780,12 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
   fi
 
 
-  if [[ "-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32" =~ $(echo '^-Wl,') ]]
-  then LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32"
-  elif [[ "-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32" =~ $(echo '^-l') ]]
+  if [[ "-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -Wl,-subsystem,windows" =~ $(echo '^-Wl,') ]]
+  then LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -Wl,-subsystem,windows"
+  elif [[ "-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -Wl,-subsystem,windows" =~ $(echo '^-l') ]]
   then
   unset STRIP_ALL_ARGS_list
-  for STRIP_ALL_ARGS_arg in "-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32"
+  for STRIP_ALL_ARGS_arg in "-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -Wl,-subsystem,windows"
   do  while [[ $LDFLAGS != $STRIP_ALL_ARGS_list ]]
       do STRIP_ALL_ARGS_list=$LDFLAGS
 
@@ -6806,12 +6806,12 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
   done
   unset ${!STRIP_ALL_ARGS_*}
 
-       LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32"
+       LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -Wl,-subsystem,windows"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32($|[[:space:]])") ]]
-    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32" >&5
-printf "%s\n" "$as_me: WARNING: Drop duplicate flag -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32" >&2;}
-    else LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32"
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -Wl,-subsystem,windows($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -Wl" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -Wl" >&2;}
+    else LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -Wl,-subsystem,windows"
     fi
   fi
 
