@@ -1158,8 +1158,10 @@ tls_client_contact_rep::stop () {
     GNUTLS_LOG ("GnuTLS closed session for client " * as_string (io));
     reset ();
   }
-  if (host)
+  if (host) {
     tm_delete_array (host);
+    host = NULL;
+  }
 }
 
 int
