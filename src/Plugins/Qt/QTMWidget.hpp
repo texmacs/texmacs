@@ -51,6 +51,7 @@ public:
   
   bool isPreediting () { return preediting; }
 #if QT_VERSION >= 0x060000
+  static QTMWidget *getLastFocusedWidget();
   static void setFocusToLast();
 
 protected slots:
