@@ -1106,7 +1106,14 @@ tls_client_contact_rep::start (int io2) {
       }
     }
 
-    gnutls_session_set_verify_cert (s, host, cert_verify_flags);
+    /* we could set the hostname to ask gnutls to verify that the cert's CN
+     * corresponds to the host we are connecting to but it is too much
+     * bureaucracy for now, we would need to implement an override button.
+     *
+     * gnutls_session_set_verify_cert (s, host, cert_verify_flags);
+     */
+
+    gnutls_session_set_verify_cert (s, NULL, cert_verify_flags);
     gnutls_session_set_verify_output_function (s, cert_out_callback);
 
     ret = gnutls_credentials_set (s, GNUTLS_CRD_CERTIFICATE,
