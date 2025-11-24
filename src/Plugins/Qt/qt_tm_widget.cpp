@@ -218,7 +218,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 
   mw->setStatusBar (bar);
  
-  // toolbars
+#if QT_VERSION >= 0x060000
   if (tmapp()->useNewToolbar() && !use_native_menubar) {
     menuToolBar   = new QTMToolbar ("menu toolbar", QSize (), mw);
   }
@@ -227,6 +227,12 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   modeToolBar   = new QTMToolbar ("mode toolbar", QSize (21, 24), mw);
   focusToolBar  = new QTMToolbar ("focus toolbar", QSize (16, 20), mw);
   userToolBar   = new QTMToolbar ("user toolbar", QSize(), mw);
+#else
+  mainToolBar   = new QToolBar ("main toolbar", mw);
+  modeToolBar   = new QToolBar ("mode toolbar", mw);
+  focusToolBar  = new QToolBar ("focus toolbar", mw);
+  userToolBar   = new QToolBar ("user toolbar", mw);
+#endif
 
   bottomTools   = new QDockWidget ("bottom tools", mw);
   extraTools    = new QDockWidget ("extra tools", mw);
@@ -960,7 +966,9 @@ qt_tm_widget_rep::query (slot s, int type_id) {
 
 void
 qt_tm_widget_rep::install_main_menu () {
+#if QT_VERSION >= 0x060000
   if (!tmapp()->useNewToolbar() || use_native_menubar) {
+#endif
 
     if (main_menu_widget == waiting_main_menu_widget) return;
     main_menu_widget = waiting_main_menu_widget;
@@ -990,6 +998,7 @@ qt_tm_widget_rep::install_main_menu () {
       }
     }
 
+#if QT_VERSION >= 0x060000
   } else {
 
     if (main_menu_widget == waiting_main_menu_widget) return;
@@ -1022,6 +1031,7 @@ qt_tm_widget_rep::install_main_menu () {
     dest->addRightSpacer();
     
   }
+#endif
 }
 
 

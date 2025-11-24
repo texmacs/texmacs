@@ -14,7 +14,7 @@ RM = rm -f
 all: bin/tm_shell
 
 bin/tm_shell: src/tm_shell.cpp
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -I../../src/System src/tm_shell.cpp -o bin/tm_shell -lutil
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -I../../src/System src/tm_shell.cpp src/termiWin.c -o bin/tm_shell -lws2_32
 
 clean:
 	$(RM) bin/tm_shell
