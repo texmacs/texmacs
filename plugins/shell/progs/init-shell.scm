@@ -12,6 +12,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (plugin-configure shell
-  ;(:require (url-exists-in-path? "sh"))
-  (:launch "tm_shell.exe")
+  (:require (url-exists-in-path? "sh"))
+  (:launch "tm_shell")
   (:session "Shell"))
