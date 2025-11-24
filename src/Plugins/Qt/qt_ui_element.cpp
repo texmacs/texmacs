@@ -55,10 +55,24 @@ public:
   qt_key_command_rep(string ks_) : ks(ks_) { }
   
   void apply () {
-    if (N(ks)) { 
-      QTMWidget *w = qobject_cast<QTMWidget*>(qApp->focusWidget());
-      if (w && w->tm_widget()) {
-        if (DEBUG_QT) debug_qt << "shortcut: " << ks << LF;
+    if (!N(ks)) {
+      std_warning << "qt_key_command_rep::apply(): empty key sequence" << LF;
+      return;
+    }
+#if QT_VERSION >= 0x060000
+    QTMWidget *w = QTMWidget::getLastFocusedWidget();
+#else
+    QTMWidget *w = qobject_cast<QTMWidget*>(qApp->focusWidget());
+#endif
+    if (!w) {
+      std_warning << "qt_key_command_rep::apply(): no focus widget" << LF;
+      return;
+    }
+    if (!w->tm_widget()) {
+      std_warning << "qt_key_command_rep::apply(): focus widget has no tm_widget" << LF;
+      return;
+    }
+    if (DEBUG_QT) debug_qt << "shortcut: " << ks << LF;
 #if QT_VERSION >= 0x060000
 	array<string> v= tokenize (ks, " ");
 	for (int i= 0; i < N(v); i++) {
@@ -67,10 +81,8 @@ public:
 	    the_gui->process_keypress (w->tm_widget(), tmp, texmacs_time());
 	}
 #else
-        the_gui->process_keypress (w->tm_widget(), ks, texmacs_time());
-#endif
-      }
-    }
+    the_gui->process_keypress (w->tm_widget(), ks, texmacs_time());
+#endif    
   }
   
   tm_ostream& print (tm_ostream& out) { return out << "<command qt_key>"; }
