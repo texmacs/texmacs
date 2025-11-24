@@ -27,6 +27,8 @@
 #include <QStackedWidget>
 #include <QLayout>
 
+#define DISABLE_QTMTOOLBAR 1
+
 class QLabel; 
 class QTMInteractivePrompt;
 
@@ -54,11 +56,18 @@ class qt_tm_widget_rep: public qt_window_widget_rep {
    */
   QLabel*       rightLabel;
   QLabel*        leftLabel;
+#if QT_VERSION >= 0x060000
   QTMToolbar*    menuToolBar;
   QTMToolbar*    mainToolBar;
   QTMToolbar*    modeToolBar;
   QTMToolbar*   focusToolBar;
   QTMToolbar*    userToolBar;
+#else
+  QToolBar*      mainToolBar;
+  QToolBar*      modeToolBar;
+  QToolBar*     focusToolBar;
+  QToolBar*      userToolBar;
+#endif
   QDockWidget*   sideTools;
   QDockWidget*   leftTools;
   QDockWidget* bottomTools;
