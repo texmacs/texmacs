@@ -12,7 +12,7 @@
     <style
        id="style1">
       .cls-1 {
-	fill-opacity: 0;
+        fill: transparent; fill-opacity: 0;
         stroke: #404040;
       }
 
