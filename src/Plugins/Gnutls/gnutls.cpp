@@ -965,7 +965,7 @@ struct tls_client_contact_rep: tm_contact_rep {
   int error_number;
   unsigned int cert_verif_status;
   bool handshake_in_progress;
-  string host;
+  char* host;
   tls_client_contact_rep (string host, array<array<string> > args=
       array<array<string> > ());
   ~tls_client_contact_rep ();
@@ -988,11 +988,9 @@ private:
   void reset () { io=-1; ptr=(pointer) NULL; handshake_in_progress= false; }
 };
 
-tls_client_contact_rep::tls_client_contact_rep (string host2,
-						array<array<string> > creds):
+tls_client_contact_rep::tls_client_contact_rep (string host, array<array<string> > creds):
   tm_contact_rep (creds), io (-1), ptr (NULL),
-  error_number (GNUTLS_E_SUCCESS), handshake_in_progress (false),
-  host (host2)
+  error_number (GNUTLS_E_SUCCESS), handshake_in_progress (false), host (as_charp (host))
 {
   tls_ensure_initialization ();
   type= SOCKET_CLIENT;
@@ -1107,8 +1105,8 @@ tls_client_contact_rep::start (int io2) {
             * " for GnuTLS session of client " * as_string (io));
       }
     }
-    c_string _host (host);
-    gnutls_session_set_verify_cert (s, _host, cert_verify_flags);
+
+    gnutls_session_set_verify_cert (s, host, cert_verify_flags);
     gnutls_session_set_verify_output_function (s, cert_out_callback);
 
     ret = gnutls_credentials_set (s, GNUTLS_CRD_CERTIFICATE,
@@ -1160,6 +1158,8 @@ tls_client_contact_rep::stop () {
     GNUTLS_LOG ("GnuTLS closed session for client " * as_string (io));
     reset ();
   }
+  if (host)
+    tm_delete_array (host);
 }
 
 int
