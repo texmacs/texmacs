@@ -64,7 +64,6 @@ QTMPipeLink::launchCmd () {
   LPWSTR *argv = CommandLineToArgvW((LPCWSTR)raw.utf16(), &argc);
 
   if (!argv) {
-    qWarning() << "CommandLineToArgvW failed";
     return false;
   }
 
@@ -84,7 +83,6 @@ QTMPipeLink::launchCmd () {
 
   if (status != 0) {
     wordfree(&exp);
-    qWarning() << "wordexp() failed with status:" << status;
     return false;
   }
 
@@ -103,10 +101,6 @@ QTMPipeLink::launchCmd () {
     args = list;
 */
 #endif
-
-  // qDebug() << "Launching process:" << program << args;
-  // qDebug() << "Full command line:" << raw;
-  // qDebug() << "Arguments:" << args;
 
   this->start(program, args);
 
