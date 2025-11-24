@@ -674,9 +674,10 @@ qt_simple_widget_rep::repaint_invalid_regions () {
   }
   
   // propagate immediately the changes to the screen
-  // if qrgn is empty, qt will not repaint
-   canvas()->surface()->repaint (qrgn);
-   backing_valid= true;
+  if (!qrgn.isEmpty ()) {
+    canvas()->surface()->repaint (qrgn);
+    backing_valid= true;
+  }
 }
 
 hashset<pointer> qt_simple_widget_rep::all_widgets;
