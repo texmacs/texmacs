@@ -158,7 +158,7 @@ QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
   (void) surfaceWidget;
   if (checkDprChange()) return;
   QPainter p (surface());
-  qreal pixel_ratio= surface()->devicePixelRatio();
+  qreal pixel_ratio= lastPixelRatio;
   QRegion reg= event->region();
   QRegion::const_iterator it;
   QRectF qr;
@@ -174,15 +174,17 @@ QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
 
 bool
 QTMWidget::checkDprChange() {
+  double currentPixelRatio= surface()->devicePixelRatio();
   if (lastPixelRatio == 0.0) {
-    lastPixelRatio = surface()->devicePixelRatio();
+    lastPixelRatio = currentPixelRatio;;
     return false;
   }
-  if (lastPixelRatio == surface()->devicePixelRatio()) {
+  if (lastPixelRatio == currentPixelRatio) {
     return false;
   }
-  lastPixelRatio = surface()->devicePixelRatio();
-  cout << "Device pixel ratio changed to " << lastPixelRatio << LF;
+  lastPixelRatio = currentPixelRatio;
+  //cout << "QTMWidget " << (long) this
+  //     << ", device pixel ratio changed to " << lastPixelRatio << LF;
   devicePixelRatioChanged();
   return true;
 }
@@ -197,7 +199,7 @@ QTMWidget::devicePixelRatioChanged () {
       ed->suspend ();
       tm_widget()->invalidate_all();
       ed->resume ();
-      the_gui->force_update();
+      needs_update();
       break;
     }
   }
