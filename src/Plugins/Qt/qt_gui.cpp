@@ -512,11 +512,11 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
     center_waitWindow (w, waitWindow);
     waitWindow->updateGeometry ();
     waitWindow->show ();
+    qApp->processEvents (QEventLoop::ExcludeUserInputEvents);
   } else {
     waitLabel->setText ("");
     waitWindow->close ();
   }
-  qApp->processEvents ();
   need_update ();
 }
 #else
