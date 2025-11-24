@@ -140,6 +140,7 @@ edit_process_rep::generate_bibliography (
             std_error << "Could not load BibTeX file " << fname << LF;
             set_message ("Could not find bibliography file",
                          "compile bibliography");
+	    system_wait ("");
             return;
           }
         t= as_tree (call (string ("bib-compile"),
@@ -222,6 +223,7 @@ edit_process_rep::generate_bibliography (
   if (is_atomic (t) && starts (t->label, "Error:"))
     set_message (t->label, "compile bibliography");
   else if (is_compound (t) && N(t) > 0) insert_tree (t);
+  system_wait ("");
 }
 
 /******************************************************************************
@@ -478,6 +480,7 @@ edit_process_rep::generate_index (string idx) {
       make_entry (D, h (entry[i]), R, rec);
     insert_tree (remove_labels (D));
   }
+  system_wait ("");
 }
 
 /******************************************************************************
@@ -524,6 +527,7 @@ edit_process_rep::generate_glossary (string gly) {
       }
     insert_tree (remove_labels (D));
   }
+  system_wait ("");
 }
 
 /******************************************************************************
