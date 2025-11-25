@@ -366,16 +366,14 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   sideTools->setObjectName ("sideTools");
   leftTools->setObjectName ("leftTools");
 
-  if (tmapp()->useNewToolbar() && !use_native_menubar) {
 #if QT_VERSION >= 0x060000
+  if (tmapp()->useNewToolbar() && !use_native_menubar) {
     menuToolBar->setObjectName ("menuToolBar");
-#endif
     mw->addToolBar (menuToolBar);
     mw->addToolBarBreak ();
-#if QT_VERSION >= 0x060000
     menuToolBar->setMovable (false);
-#endif
   }
+#endif
 
 #ifdef UNIFIED_TOOLBAR
 
