@@ -17,7 +17,7 @@
 
 #ifdef OS_MINGW
 #include <windows.h>
-#else
+#elif !defined(OS_ANDROID)
 #include <wordexp.h>
 #endif
 
