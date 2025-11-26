@@ -6780,12 +6780,12 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
   fi
 
 
-  if [[ "-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -Wl,-subsystem,windows" =~ $(echo '^-Wl,') ]]
-  then LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -Wl,-subsystem,windows"
-  elif [[ "-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -Wl,-subsystem,windows" =~ $(echo '^-l') ]]
+  if [[ "-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32" =~ $(echo '^-Wl,') ]]
+  then LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32"
+  elif [[ "-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32" =~ $(echo '^-l') ]]
   then
   unset STRIP_ALL_ARGS_list
-  for STRIP_ALL_ARGS_arg in "-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -Wl,-subsystem,windows"
+  for STRIP_ALL_ARGS_arg in "-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32"
   do  while [[ $LDFLAGS != $STRIP_ALL_ARGS_list ]]
       do STRIP_ALL_ARGS_list=$LDFLAGS
 
@@ -6806,12 +6806,12 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
   done
   unset ${!STRIP_ALL_ARGS_*}
 
-       LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -Wl,-subsystem,windows"
+       LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -Wl,-subsystem,windows($|[[:space:]])") ]]
-    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -Wl" >&5
-printf "%s\n" "$as_me: WARNING: Drop duplicate flag -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -Wl" >&2;}
-    else LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -Wl,-subsystem,windows"
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32" >&2;}
+    else LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32"
     fi
   fi
 
@@ -30677,7 +30677,9 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
 printf "%s\n" "#define AC_QT_MAJOR_VERSION $QT_MAJOR" >>confdefs.h
 
 
-  test "0$QT_MAJOR" -eq 4 &&
+  case $QT_MAJOR in
+    4)
+
   if [[ "-std=c++0x" =~ $(echo '^-Wl,') ]]
   then CXXFLAGS+=" -std=c++0x"
   elif [[ "-std=c++0x" =~ $(echo '^-l') ]]
@@ -30713,7 +30715,9 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++0x" >&2;}
     fi
   fi
 
-  test "0$QT_MAJOR" -eq 5 &&
+      ;;
+    5)
+
   if [[ "-std=c++11" =~ $(echo '^-Wl,') ]]
   then QT_CXXFLAGS+=" -std=c++11"
   elif [[ "-std=c++11" =~ $(echo '^-l') ]]
@@ -30749,7 +30753,9 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++11" >&2;}
     fi
   fi
 
-  test "0$QT_MAJOR" -eq 6 &&
+      ;;
+    6)
+
   if [[ "-std=c++17" =~ $(echo '^-Wl,') ]]
   then QT_CXXFLAGS+=" -std=c++17"
   elif [[ "-std=c++17" =~ $(echo '^-l') ]]
@@ -30785,6 +30791,49 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++17" >&2;}
     fi
   fi
 
+      ;;
+  esac
+
+  case "${host}" in
+    *mingw*)
+
+  if [[ "-Wl,-subsystem,windows" =~ $(echo '^-Wl,') ]]
+  then QT_LDFLAGS+=" -Wl,-subsystem,windows"
+  elif [[ "-Wl,-subsystem,windows" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "-Wl,-subsystem,windows"
+  do  while [[ $QT_LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$QT_LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$QT_LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then QT_LDFLAGS=
+  else  while test "$QT_LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$QT_LDFLAGS"
+        QT_LDFLAGS="${QT_LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        QT_LDFLAGS="${QT_LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        QT_LDFLAGS="${QT_LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  QT_LDFLAGS=$(echo $QT_LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       QT_LDFLAGS+=" -Wl,-subsystem,windows"
+  else
+    if [[ "$QT_LDFLAGS" =~ $(echo "(^|[[:space:]])-Wl,-subsystem,windows($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -Wl" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
+    else QT_LDFLAGS+=" -Wl,-subsystem,windows"
+    fi
+  fi
+
+      ;;
+  esac
 
 
     if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]]+)-mmacosx-version-min(=?|[[:space:]]*)(.*)$") ]]
