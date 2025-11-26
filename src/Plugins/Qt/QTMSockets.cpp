@@ -760,10 +760,11 @@ socket_server_rep::connection (int s) {
 #else
   {
     using namespace wsoc;
-    u_long flags = -1;
-    if (ioctlsocket (client, FIONBIO, &flags) == SOCKET_ERROR)
+    u_long flags = 1;
+    if (ioctlsocket (client, FIONBIO, &flags) == SOCKET_ERROR) {
       SERRNO_LOGE ("cannot set socket as non blocking");
       return;
+    }
   }
 #endif
 
