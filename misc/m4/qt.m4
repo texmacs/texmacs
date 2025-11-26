@@ -255,9 +255,23 @@ AC_DEFUN([LC_WITH_QT],[
   QT_MAJOR=${QT_VERSION%%.*}
   AC_DEFINE_UNQUOTED([AC_QT_MAJOR_VERSION], [$QT_MAJOR], [Qt major version number])
 
-  test "0$QT_MAJOR" -eq 4 && LC_APPEND_FLAG([-std=c++0x],[CXXFLAGS])
-  test "0$QT_MAJOR" -eq 5 && LC_APPEND_FLAG([-std=c++11],[QT_CXXFLAGS])
-  test "0$QT_MAJOR" -eq 6 && LC_APPEND_FLAG([-std=c++17],[QT_CXXFLAGS])
+  case $QT_MAJOR in
+    4)
+      LC_APPEND_FLAG([-std=c++0x],[CXXFLAGS])
+      ;;
+    5)
+      LC_APPEND_FLAG([-std=c++11],[QT_CXXFLAGS])
+      ;;
+    6)
+      LC_APPEND_FLAG([-std=c++17],[QT_CXXFLAGS])
+      ;;
+  esac
+
+  case "${host}" in
+    *mingw*)
+      LC_APPEND_FLAG([-Wl,-subsystem,windows],[QT_LDFLAGS])      
+      ;;
+  esac
 
   LC_GET_ARG_VALUE([CXXFLAGS], [-mmacosx-version-min], [CXXMACOSX_VERSION_MIN])
   AS_IF([test -n "$CXXMACOSX_VERSION_MIN"],[

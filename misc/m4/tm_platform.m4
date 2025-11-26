@@ -131,7 +131,7 @@ AC_DEFUN([TM_PLATFORM],[
       CONFIG_OS_COMPAT="Windows64"
       CPPFLAGS="$CPPFLAGS -IPlugins/Windows64 -I."
       LC_APPEND_FLAG([-Wl,--stack=16777216],[LDFLAGS])
-      LC_APPEND_FLAG([-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -Wl,-subsystem,windows],[LDFLAGS])
+      LC_APPEND_FLAG([-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32],[LDFLAGS])
       CONFIG_CP="cp -f -R -p" #rsync do not work properly on mingw
     ;;
     *mingw*)
