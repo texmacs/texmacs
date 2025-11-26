@@ -22,26 +22,36 @@ Channel::Channel (int s):sz(s) {
 void
 Channel::Init (Direction d) {
   int pp[2];
-  if (_pipe (pp, sz,O_NOINHERIT|_O_BINARY) == 0) {
-    int pr[2];
-    if (_pipe (pr, sz,_O_BINARY) == 0) {
-      _close (pr[d]);
-      _dup2 (pp[otherDirection(d)], pr[otherDirection(d)]);
-      _close (pp[otherDirection(d)]);
-      fd= pp[d];
-      toBeClosed=  pr[otherDirection(d)];
-    } else _close (pp[d]);_close (pp[otherDirection(d)]);
+  
+  if (_pipe(pp, sz, _O_BINARY) == 0) {
+    
+    fd = pp[d]; // for texmacs
+    toBeClosed = pp[otherDirection(d)]; // for child
+
+    HANDLE hParent = (HANDLE)_get_osfhandle(fd);
+    if (hParent != INVALID_HANDLE_VALUE) {
+        SetHandleInformation(hParent, HANDLE_FLAG_INHERIT, 0);
+    }
+    
   }
 }
 
 void
 Channel::Init (int _fd, Direction d) {
   int pp[2];
-  origin= _fd;
-  if (_pipe (pp, sz, O_NOINHERIT|_O_BINARY) == 0) {
-    fd= pp[d];
-    toBeClosed= pp[otherDirection(d)];
-  } else origin= -1;
+  origin = _fd;
+
+  if (_pipe(pp, sz, _O_BINARY) == 0) {
+    fd = pp[d];
+    toBeClosed = pp[otherDirection(d)];
+
+    HANDLE hParent = (HANDLE)_get_osfhandle(fd);
+    if (hParent != INVALID_HANDLE_VALUE) {
+        SetHandleInformation(hParent, HANDLE_FLAG_INHERIT, 0);
+    }
+  } else {
+    origin = -1;
+  }
 }
 
 void
@@ -70,8 +80,11 @@ Channel::closeUnused () {
 
 void
 Channel::wait () {
-  if (tid && WaitForSingleObject ((HANDLE)tid, 5000) == 0 &&
-    CloseHandle ((HANDLE)tid)) tid= 0;
+  if (tid) {
+      WaitForSingleObject ((HANDLE)tid, 5000);
+      CloseHandle ((HANDLE)tid);
+      tid = 0;
+  }
 }
   
 void
@@ -95,9 +108,11 @@ bkgread (void *thatv) {
   Channel *that= (Channel *)thatv;
   do {
     cnt= _read (that->fd, buf, sizeof(buf));
+    if (cnt < 0) cnt = 0;
     if (cnt > 0) *(that->str)+= std::basic_string<char> (buf, cnt);
     else if (cnt == 0) that->close ();
   } while (cnt > 0);
+
   return (cnt);
 }
 
