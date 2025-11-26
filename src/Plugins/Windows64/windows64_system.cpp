@@ -17,6 +17,7 @@
 #include <vector>
 #include <iostream>
 #include <chrono>
+#include <vector>
 
 #undef FAILED
 
@@ -413,6 +414,14 @@ public:
   HANDLE h = 0;
 };
 
+std::wstring ConsoleOutputToWide(const std::string& str) {
+    if (str.empty()) return std::wstring();
+    int size_needed = MultiByteToWideChar(CP_OEMCP, 0, &str[0], (int)str.size(), NULL, 0);
+    std::wstring wstrTo(size_needed, 0);
+    MultiByteToWideChar(CP_OEMCP, 0, &str[0], (int)str.size(), &wstrTo[0], size_needed);
+    return wstrTo;
+}
+
 int windows_system(string cmd, string *cmdout, string *cmderr) {
 
   SECURITY_ATTRIBUTES sa;
@@ -458,9 +467,12 @@ int windows_system(string cmd, string *cmdout, string *cmderr) {
 
   std::wstring wide_cmd = texmacs_utf8_to_wide(cmd);
 
+  std::vector<wchar_t> cmdBuffer(wide_cmd.begin(), wide_cmd.end());
+  cmdBuffer.push_back(0);
+
   // CreateProcessW will work only on executable files.
   // It will not work to open PDF, links, etc.
-  res = CreateProcessW(NULL, (LPWSTR)wide_cmd.c_str(), NULL, NULL, 
+  res = CreateProcessW(NULL, cmdBuffer.data(), NULL, NULL,
                        TRUE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
   if (!res) {
     // If we are here, it means that windows_system is trying to
@@ -481,6 +493,8 @@ int windows_system(string cmd, string *cmdout, string *cmderr) {
   if (cmdout == nullptr && cmderr == nullptr) {
     // If we are here, we launched a command, and we don't want to read
     // the output, so we immediately return.
+    CloseHandle(hOutWrite.h);
+    CloseHandle(hErrWrite.h);
     return 0;
   }
 
@@ -488,35 +502,40 @@ int windows_system(string cmd, string *cmdout, string *cmderr) {
   // todo : this should be done asynchronously, 
   // because it can freeze the application
   WaitForSingleObject(pi.hProcess, 30000);
-  
+
   // Close the write pipe handle so the child process stops reading
   // and we can read the output
   CloseHandle(hOutWrite.h);
   CloseHandle(hErrWrite.h);
 
   DWORD bytesRead;
-  std::wstring wide_cmdout, wide_cmderr;
-  WCHAR buffer[4096];
+  CHAR buffer[4096];
+  std::string raw_stdout, raw_stderr;
 
   while (ReadFile(hOutRead.h, buffer, sizeof(buffer), &bytesRead, NULL) && bytesRead > 0) {
-    wide_cmdout += std::wstring(buffer, bytesRead);
+    raw_stdout.append(buffer, bytesRead);
   }
-
+    
   while (ReadFile(hErrRead.h, buffer, sizeof(buffer), &bytesRead, NULL) && bytesRead > 0) {
-    wide_cmderr += std::wstring(buffer, bytesRead);
+    raw_stderr.append(buffer, bytesRead);
   }
 
-  if (cmdout != nullptr) {
-    *cmdout = texmacs_wide_to_utf8(wide_cmdout);
-  }
-  if (cmderr != nullptr) {
-    *cmderr = texmacs_wide_to_utf8(wide_cmderr);
-  }
+  WaitForSingleObject(pi.hProcess, 30000);
 
   DWORD exitCode;
   GetExitCodeProcess(pi.hProcess, &exitCode);
   CloseHandle(pi.hProcess);
   CloseHandle(pi.hThread);
+
+  if (cmdout != nullptr) {
+      std::wstring wout = ConsoleOutputToWide(raw_stdout);
+      *cmdout = texmacs_wide_to_utf8(wout); 
+  }
+
+  if (cmderr != nullptr) {
+      std::wstring werr = ConsoleOutputToWide(raw_stderr);
+      *cmderr = texmacs_wide_to_utf8(werr); 
+  }
 
   return exitCode;
 }
