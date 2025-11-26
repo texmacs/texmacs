@@ -318,6 +318,8 @@ intptr_t texmacs_spawnvp(int mode, string name, array<string> args) {
     wide_args.push_back(c_wide_arg);
   }
 
+  wide_args.push_back(nullptr);
+
   // convert the name to a wide string
   std::wstring wide_name = texmacs_utf8_to_wide(name);
 
@@ -629,6 +631,10 @@ mingw_system (::array< ::string> arg,
         if (o >= 0) { 
           pos_in[i] += o;
           if (N(str_in[i]) == pos_in[i]) ch[i].close (); else busy= true;
+        } else {
+          debug_io << "unix_system, pid " << process.getpid ()
+               << ", warning: write error on fd " 
+               << ch[i].getPipe () << "\n";
         } 
       }
     }
@@ -638,7 +644,8 @@ mingw_system (::array< ::string> arg,
   int wret= process.wait();
   debug_io << "unix_system, pid " << process.getpid ()
            << " terminated with code" << wret << "\n"; 
-  for (int i= 0; i < n_out; ++i)
+  for (int i= 0; i < n_out; ++i) {
     (*(str_out[i])) << ::string(str[i].data (), str[i].length ()); 
+  }
   return (wret);
 }
