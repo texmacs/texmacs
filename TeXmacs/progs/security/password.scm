@@ -53,15 +53,14 @@
 
 (define (generate-random-data method n)
   (cond ((== method `openssl)
-         (with (ret out err)
-               (evaluate-system
-                 `("openssl" "rand" ,(object->string  n)) '() '() '(1 2))
-               (if (== ret "0") out #f)))
+         (with out
+               (eval-system (string-append "openssl rand " (object->string n)))
+               (if (== (string-length out) n) out #f)))
         ((== method `gpg)
-         (with (ret out err)
-               (evaluate-system
-                 `("gpg" "--gen-random" "2" ,(object->string n)) '() '() '(1 2))
-               (if (== ret "0") out #f)))
+         (with out
+               (eval-system
+                 (string-append "gpg --gen-random 2 " (object->string n)))
+               (if (== (string-length out) n) out #f)))
         (else (generate-chars all-charset n))))
 
 (define (generate-external method n)
