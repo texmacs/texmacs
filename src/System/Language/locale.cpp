@@ -20,6 +20,7 @@
 #include <winnls.h>
 #endif
 
+#include <iostream>
 
 #define outline Core_outline
 #define extend Core_extends
@@ -225,6 +226,36 @@ get_locale_charset () {
   std::locale::global (previous);
   return charset;
 #endif
+}
+
+std::locale
+get_std_locale (string language) {
+  {
+    string loc= language_to_locale(language) * ".UTF-8";
+    c_string _loc (loc);
+    try {
+      return std::locale (_loc);
+    } catch (std::runtime_error&) {
+      std_warning << "locale " << loc << " not found\n";
+    }
+  }
+
+  {
+    string loc= language_to_locale(language);
+    loc[2] = '-';
+    c_string _loc (loc);
+    try {
+      return std::locale (_loc);
+    } catch (std::runtime_error&) {
+      std_warning << "locale " << loc << " not found\n";
+    }
+  }
+
+  std::locale loc= std::locale::classic(); 
+  std::wcout.imbue(loc);
+  string loc_name(loc.name().c_str());
+  std_warning << "falling back to locale " << loc_name << "\n";
+  return loc;
 }
 
 /******************************************************************************
