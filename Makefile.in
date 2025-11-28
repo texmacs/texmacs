@@ -552,9 +552,30 @@ WINDOWS_PACKAGE: WINDOWS_BUNDLE
 	iscc $(WINDOWS_PACKAGE_SRC)/TeXmacs.iss
 	if test -n "@SIGNID@"; then @SIGNID@ $(WINDOWS_PACKAGE_DIR)/*-installer.exe; fi
 
-WINDOWS_APPX: WINDOWS_BUNDLE
-	$(CP) packages/msix/AppxManifest.xml $(WINDOWS_BUILD_DIR)/AppxManifest.xml
-	cd $(WINDOWS_BUILD_DIR); powershell.exe -Command "& '@MAKEAPPX@' pack /d . /p TeXmacs.msix"
+WINDOWS_APPX_CNRS: WINDOWS_BUNDLE
+	@if [ -z "@MAKEAPPX@" ]; then \
+		echo "MAKEAPPX not found, skipping Windows AppX CNRS package creation."; \
+	else { \
+		$(MKDIR) $(WINDOWS_BUILD_DIR); \
+		$(RM) $(WINDOWS_BUILD_DIR)/AppxManifest.xml; \
+		$(RM) $(WINDOWS_BUILD_DIR)/TeXmacs.msix; \
+		$(CP) packages/msix/AppxManifest.xml $(WINDOWS_BUILD_DIR)/AppxManifest.xml; \
+		cd $(WINDOWS_BUILD_DIR); powershell.exe -Command "& '@MAKEAPPX@' pack /d . /p ../windows/TeXmacs.msix"; \
+	}; fi
+
+WINDOWS_APPX_STORE:
+	@if [ -z "@MAKEAPPX@" ]; then \
+		echo "MAKEAPPX not found, skipping Windows AppX Store package creation."; \
+	else { \
+		$(MKDIR) $(WINDOWS_BUILD_DIR); \
+		$(RM) $(WINDOWS_BUILD_DIR)/AppxManifest.xml; \
+		$(RM) $(WINDOWS_BUILD_DIR)/TeXmacsStore.msix; \
+		$(CP) packages/msix/AppxManifestStore.xml $(WINDOWS_BUILD_DIR)/AppxManifest.xml; \
+		cd $(WINDOWS_BUILD_DIR); powershell.exe -Command "& '@MAKEAPPX@' pack /d . /p ../windows/TeXmacsStore.msix"; \
+	}; fi
+
+WINDOWS_APPX: WINDOWS_BUNDLE WINDOWS_PACKAGE WINDOWS_APPX_CNRS WINDOWS_APPX_STORE
+	echo Windows AppX packages have been created in $(WINDOWS_BUILD_DIR)
 
 .PHONY: WINDOWS_BUNDLE WINDOWS_PACKAGE
 
