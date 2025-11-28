@@ -172,6 +172,7 @@ packages/centos/TeXmacs.spec:packages/centos/TeXmacs.spec.in
 packages/windows/TeXmacs.iss:packages/windows/TeXmacs.iss.in 
 packages/windows/resource.rc:packages/windows/resource.rc.in
 packages/msix/AppxManifest.xml:packages/msix/AppxManifest.xml.in
+packages/msix/AppxManifestStore.xml:packages/msix/AppxManifestStore.xml.in
 packages/debian/changelog:packages/debian/changelog.in 
 packages/debian/control:packages/debian/control.in
 packages/android/res/values/libs.xml:packages/android/libs.xml.in
