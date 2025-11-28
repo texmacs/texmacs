@@ -25,6 +25,10 @@
 #  include <locale>
 #endif
 
+#ifdef OS_MINGW
+#include <winnls.h>
+#endif
+
 /******************************************************************************
 * Constructors and destructors
 ******************************************************************************/
@@ -245,28 +249,41 @@ edit_process_rep::generate_table_of_contents (string toc) {
 
 static hashmap<string,tree> followup (TUPLE);
 
+#ifndef OS_MINGW
 struct locale_less_eq_operator {
   static std::locale le;
-#ifndef OS_MINGW
   static inline bool leq (string& a, string& b) {
     if (a == b) return true;
     string A= cork_to_utf8 (a), B= cork_to_utf8 (b);
     c_string a8 (A), b8 (B);    
     return le (std::string (a8), std::string (b8));
   }
+};
+std::locale locale_less_eq_operator::le;
 #else
+// use CompareStringEx function on Windows
+struct locale_less_eq_operator {
+  static string locale_name;
   static inline bool leq (string& a, string& b) {
     if (a == b) return true;
     string A= cork_to_utf8 (a), B= cork_to_utf8 (b);
     std::wstring wa= texmacs_utf8_to_wide (A);
     std::wstring wb= texmacs_utf8_to_wide (B);
-    return std::use_facet<std::collate<wchar_t>>(le).compare(
-      wa.data(), wa.data() + wa.size(),
-      wb.data(), wb.data() + wb.size()) < 0;
+    int result = CompareStringEx(
+      texmacs_utf8_to_wide(locale_name).c_str(),
+      SORT_STRINGSORT,
+      wa.c_str(),
+      static_cast<int>(wa.size()),
+      wb.c_str(),
+      static_cast<int>(wb.size()),
+      NULL,
+      NULL,
+      0);
+    return result == CSTR_LESS_THAN;
   }
-#endif
 };
-std::locale locale_less_eq_operator::le;
+string locale_less_eq_operator::locale_name = "en-US";
+#endif
 
 static string
 index_name_sub (tree t, bool all) {
@@ -460,7 +477,12 @@ edit_process_rep::generate_index (string idx) {
     for (i=0; i<n; i++)
       entry[i]= index_name (I[i]);
 #if __cplusplus >= 201103L
+#ifndef OS_MINGW
     locale_less_eq_operator::le= get_std_locale (get_init_string ("language"));
+#else
+    locale_less_eq_operator::locale_name = language_to_locale (get_init_string ("language"));
+    locale_less_eq_operator::locale_name[2] = '-';
+#endif
     merge_sort_leq<string,locale_less_eq_operator> (entry);
 #else
     merge_sort (entry);
