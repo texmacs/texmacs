@@ -448,11 +448,16 @@ edit_process_rep::generate_index (string idx) {
     for (i=0; i<n; i++)
       entry[i]= index_name (I[i]);
 #if __cplusplus >= 201103L
-    string loc= language_to_locale
-      (get_init_string ("language")) * ".UTF-8";
-    c_string _loc (loc);
-    locale_less_eq_operator::le= std::locale (_loc);
-    merge_sort_leq<string,locale_less_eq_operator> (entry);
+      string loc= language_to_locale
+        (get_init_string ("language")) * ".UTF-8";
+      c_string _loc (loc);
+    try {
+      locale_less_eq_operator::le= std::locale (_loc);
+      merge_sort_leq<string,locale_less_eq_operator> (entry);
+    } catch (std::runtime_error&) {
+      std_warning << "Warning: locale " << loc << " not found\n";
+      merge_sort (entry);
+    }
 #else
     merge_sort (entry);
 #endif
