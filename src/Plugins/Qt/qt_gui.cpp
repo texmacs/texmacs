@@ -587,8 +587,7 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
   } else {
     waitWindow->close();
   }
-  qApp->processEvents();
-  QApplication::flush();
+
   wid->qwid->activateWindow ();
   send_keyboard_focus (wid);
     // next time we do update the dialog will disappear
@@ -968,6 +967,11 @@ qt_gui_rep::update () {
     count_events++;
     //if (the_interpose_handler) the_interpose_handler();
   }
+
+  if (waiting_events.size() > 0) {
+    cout << "warning: too many pending events in qt_gui_rep::update()" << LF;
+  }
+
   // Repaint invalid regions and redraw
   bool postpone_treatment= (keyboard_events > 0 && keyboard_special == 0);
   keyboard_events = 0;
