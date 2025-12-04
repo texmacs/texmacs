@@ -66,6 +66,7 @@ static const string tm_x509_trusted_cas_path=
   "$TEXMACS_HOME_PATH/system/certificates/trusted-certificates.crt";
 
 static unsigned int cert_verify_flags = 0;
+static gnutls_rnd_level_t rnd_level= GNUTLS_RND_NONCE;
 
 static void
 tm_initialize_tls () {
@@ -165,6 +166,33 @@ tls_ensure_initialization () {
   // Deinitialization is done at exit
   static tls_global_session _tls_global_session;
   if (!tm_gnutls_initialized) tm_initialize_tls ();
+}
+
+/******************************************************************************
+ * GnuTLS utilities
+ ******************************************************************************/
+
+int
+gnutls_random_int (uint32_t limit)
+{
+  ASSERT (limit <= UINT_MAX, "random number limit too big");
+
+  if (limit == 0) return 0;
+
+  uint32_t rnd;
+
+  // See https://www.pcg-random.org/posts/bounded-rands.html
+  // Debiased Modulo (Twice) — OpenBSD's Method
+  const uint32_t ceil = UINT_MAX - (UINT_MAX % limit) - 1;
+
+  do {
+    if (gnutls_rnd (rnd_level, &rnd, 4) < 0) {
+      GNUTLS_LOGE ("cannot generate random number");
+      return 0;
+    }
+  } while (rnd > ceil);
+
+  return (rnd % limit);
 }
 
 /******************************************************************************
@@ -1232,6 +1260,22 @@ make_tls_client_contact (string host, array<array<string> > args) {
 * PBKDF2 password hash
 ******************************************************************************/
 
+string gnutls_generate_salt () {
+  unsigned char salt[SALT_SIZE] = {0};
+  gnutls_datum_t salt_data= {salt,SALT_SIZE};
+  gnutls_datum_t salt_b64=  {NULL,0};
+
+  if (gnutls_rnd (rnd_level, &salt, SALT_SIZE) < 0) {
+    return "";
+  }
+
+  if (gnutls_base64_encode2 (&salt_data, &salt_b64) < 0) {
+    return "";
+  }
+
+  return as_string_gnutls_datum (salt_b64);
+}
+
 string hash_password_pbkdf2 (string passwd, string salt) {
   c_string _pwd(passwd);
   c_string _salt(salt);
@@ -1327,6 +1371,17 @@ generate_self_signed (tree cfg_tree, url cert_path, url key_path) {
 
 void
 disable_certificate_time_checks () {
+}
+
+int
+gnutls_random_int (uint32_t limit)
+{
+  (void) limit;
+  return 0;
+}
+
+string gnutls_generate_salt () {
+  return "";
 }
 
 #endif // USE_GNUTLS
