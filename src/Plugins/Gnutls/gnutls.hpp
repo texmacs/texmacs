@@ -116,6 +116,13 @@ tm_contact make_tls_client_contact (string host, array<array<string> > args);
 
 string gnutls_generate_salt ();
 
+/**
+ * @brief generates a password hash using GnuTLS' PBKDF2 utility
+ *
+ * @param passwd the password to hash
+ * @param salt the b64 encoded salt data
+ * @return the hashed password
+ */
 string hash_password_pbkdf2 (string passwd, string salt);
 
 #endif // GNUTLS_HPP
