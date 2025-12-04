@@ -8247,6 +8247,19 @@ tmg_supports_gnutlsP () {
 }
 
 tmscm
+tmg_gnutls_random_number (tmscm arg1) {
+  TMSCM_ASSERT_UINT (arg1, TMSCM_ARG1, "gnutls-random-number");
+
+  uint in1= tmscm_to_uint (arg1);
+
+  // TMSCM_DEFER_INTS;
+  int out= gnutls_random_int (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
 tmg_tls_client_start (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tls-client-start");
   TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "tls-client-start");
@@ -8261,6 +8274,15 @@ tmg_tls_client_start (tmscm arg1, tmscm arg2, tmscm arg3) {
   // TMSCM_ALLOW_INTS;
 
   return int_to_tmscm (out);
+}
+
+tmscm
+tmg_gnutls_generate_salt () {
+  // TMSCM_DEFER_INTS;
+  string out= gnutls_generate_salt ();
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
 }
 
 tmscm
@@ -11207,7 +11229,9 @@ initialize_glue_basic () {
   tmscm_install_procedure ("server-client-address",  tmg_server_client_address, 1, 0, 0);
   tmscm_install_procedure ("server-log-write-int",  tmg_server_log_write_int, 2, 0, 0);
   tmscm_install_procedure ("supports-gnutls?",  tmg_supports_gnutlsP, 0, 0, 0);
+  tmscm_install_procedure ("gnutls-random-number",  tmg_gnutls_random_number, 1, 0, 0);
   tmscm_install_procedure ("tls-client-start",  tmg_tls_client_start, 3, 0, 0);
+  tmscm_install_procedure ("gnutls-generate-salt",  tmg_gnutls_generate_salt, 0, 0, 0);
   tmscm_install_procedure ("hash-password-pbkdf2",  tmg_hash_password_pbkdf2, 2, 0, 0);
   tmscm_install_procedure ("generate-self-signed-certificate",  tmg_generate_self_signed_certificate, 3, 0, 0);
   tmscm_install_procedure ("trust-certificate",  tmg_trust_certificate, 1, 0, 0);

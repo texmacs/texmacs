@@ -4875,11 +4875,27 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(gnutls-random-number <scm-arg|uint>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|gnutls_random_int> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
     <scm|(tls-client-start <scm-arg|string> <scm-arg|int> <scm-arg|scheme_tree>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|tls_client_start> which returns
     <scm|int>.
+  </explain>
+
+  <\explain>
+    <scm|(gnutls-generate-salt)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|gnutls_generate_salt> which returns
+    <scm|string>.
   </explain>
 
   <\explain>
