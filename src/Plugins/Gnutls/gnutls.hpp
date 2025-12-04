@@ -62,6 +62,7 @@
 // see Password Storage/PBKDF2 in https://cheatsheetseries.owasp.org
 #define MAC_SHA256_ITER_COUNT 600000
 #define MAC_SHA256_BYTE_SIZE 32
+#define SALT_SIZE 32
 
 #define PRIVKEY_ALGO GNUTLS_PK_EDDSA_ED25519
 #define PRIVKEY_SEC_PARAM GNUTLS_SEC_PARAM_HIGH
@@ -81,6 +82,12 @@
 ******************************************************************************/
 
 bool gnutls_present ();
+
+/******************************************************************************
+ * GnuTLS utilities
+ ******************************************************************************/
+
+int gnutls_random_int (uint32_t limit);
 
 /******************************************************************************
  * X.509 authentication
@@ -106,6 +113,8 @@ tm_contact make_tls_client_contact (string host, array<array<string> > args);
 /******************************************************************************
 * PBKDF2 password hash
 ******************************************************************************/
+
+string gnutls_generate_salt ();
 
 string hash_password_pbkdf2 (string passwd, string salt);
 

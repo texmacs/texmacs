@@ -255,6 +255,7 @@ tmscm symbol_to_tmscm (string s);
 
 inline bool tmscm_to_bool (tmscm obj) { return scm_to_bool (obj); }
 inline int tmscm_to_int (tmscm obj) { return scm_to_int (obj); }
+inline int tmscm_to_uint (tmscm obj) { return scm_to_uint (obj); }
 inline double tmscm_to_double (tmscm obj) { return scm_to_double (obj); }
 string tmscm_to_string (tmscm obj);
 string tmscm_to_symbol (tmscm obj);
