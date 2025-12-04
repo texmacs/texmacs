@@ -373,14 +373,16 @@
     (with out (hash-password-pbkdf2 p salt) (password-parse-crypt-style out))))
 
 (define (password-correct-pbkdf2? p hidden)
-  (let* ((salt (decode-base64 (third hidden)))
+  (let* ((salt (third hidden))
          (enc  (fourth hidden)))
     (with l (password-encode-pbkdf2 p salt)
           ; (display* "pwd to check: " p ", hash to check: " l ", hidden: " hidden "\n")
           (and (>= (length l) 4) (== (fourth l) enc)))))
 
 (define (password-supports-pbkdf2?)
-  (and (not (os-mingw?)) (password-encode-pbkdf2 "foo" "bar")))
+  (and (password-encode-pbkdf2
+         "foo"
+         "YWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWE=")))
 
 ;; List all supported password encodings
 (tm-define (server-supported-password-encodings)

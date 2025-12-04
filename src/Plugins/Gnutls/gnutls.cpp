@@ -1289,13 +1289,23 @@ string hash_password_pbkdf2 (string passwd, string salt) {
     .size = static_cast<unsigned int> (N (salt)),
   };
   uint8_t output_raw[4096] = {0};
-  gnutls_datum_t out_data, out_b64, salt_b64;
+  gnutls_datum_t out_data={NULL,0}, out_b64={NULL,0}, salt_raw={NULL,0};
 
-  int ret = gnutls_pbkdf2 (GNUTLS_MAC_SHA256 , &key_data, &salt_data,
-      MAC_SHA256_ITER_COUNT, output_raw, MAC_SHA256_BYTE_SIZE);
-  if (ret < 0) {
+  if (GNUTLS_E_SUCCESS != gnutls_base64_decode2 (&salt_data, &salt_raw)) {
     return "";
   }
+
+  if (SALT_SIZE > salt_raw.size) {
+    return "";
+  }
+
+  if (GNUTLS_E_SUCCESS !=
+      gnutls_pbkdf2 (GNUTLS_MAC_SHA256, &key_data, &salt_raw,
+        MAC_SHA256_ITER_COUNT, output_raw, MAC_SHA256_BYTE_SIZE)) {
+    return "";
+  }
+
+  gnutls_free (salt_raw.data);
 
   out_data.data = output_raw;
   out_data.size = MAC_SHA256_BYTE_SIZE;
@@ -1304,12 +1314,8 @@ string hash_password_pbkdf2 (string passwd, string salt) {
     return "";
   }
 
-  if (GNUTLS_E_SUCCESS != gnutls_base64_encode2 (&salt_data, &salt_b64)) {
-    return "";
-  }
-
   return string ("$7$") * as_string (MAC_SHA256_ITER_COUNT)
-    * "$" * as_string (salt_b64.data)
+    * "$" * as_string (salt_data.data)
     * "$" * as_string (out_b64.data);
 }
 

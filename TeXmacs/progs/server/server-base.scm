@@ -340,7 +340,7 @@
   (let* ((info (server-get-user-info "admin"))
          (passwd (generate-password 20))
          (credentials (server-add-salt (cons `(tls-password ,passwd) '())
-                                       (generate-salt 128)))
+                                       (generate-salt)))
          (hiddens (server-hide-credentials credentials)))
     (when info
       (server-set-user-info #f "admin" "admin" hiddens (fourth info) #t)
@@ -360,7 +360,7 @@
   (when (== (ahash-size server-users) 0)
     (let* ((passwd (generate-password 20))
            (credentials (server-add-salt (cons `(tls-password ,passwd) '())
-                                         (generate-salt 128)))
+                                         (generate-salt)))
            (hiddens (server-hide-credentials credentials)))
       (server-set-user-info #f "admin" "admin" hiddens "admin" #t)
       (server-log-write `warning
@@ -386,7 +386,7 @@
 	  (if (or (server-pseudo-exists? pseudo)
 		  (server-pending-pseudo-exists? pseudo))
 	      (server-return envelope "user already exists")
-	      (let* ((salt (generate-salt 128))
+	      (let* ((salt (generate-salt))
 		            (credentials (server-add-salt credentials salt))
 		            (hiddens (server-hide-credentials credentials)))
                 ;(display* "hiddens: " hiddens "\n")
@@ -775,32 +775,37 @@
   (and-with uid (server-find-user pseudo)
     (== (ahash-ref server-logged-table client) uid)))
 
+;; detect 128 byte salt (old, wrong standard)
+(define (server-salt-update salt)
+  (if (> (string-length salt) 128) (generate-salt) salt))
+
 (tm-define (server-password-update pseudo passwd)
   (when (server-password-update?)
     (and-with uid (server-find-user pseudo)
       (with (pseudo2 name2 credentials2 email2 admin2)
-         (ahash-ref server-users uid)
-        (let* ((encoding (server-password-encoding))
-               (credentials (server-credentials-normalize credentials2))
-               (credential-passwords
-                (filter server-credential-password? credentials)))
-          ;; (display* "server-password-update for " pseudo ", encoding: "
-          ;;           encoding ", credentials: " credentials ", cred pwds:  "
-          ;;           credential-passwords "\n")
-          (when (and (nnull? credential-passwords)
-                     (!= (second (car credential-passwords)) encoding))
-            (let* ((hidden (server-password-encode passwd encoding))
-                   (credentials-other
-                    (filter (lambda (x) (not (server-credential-password? x)))
-                            credentials)))
-	      (when hidden
-		(server-set-user-info uid pseudo2 name2
-				      (cons hidden credentials-other)
-				      email2 admin2)
-		(server-log-write
-		 `log-notice
-		 (string-append "user " pseudo
-				" updaded password encoding"))))))))))
+            (ahash-ref server-users uid)
+            (let* ((encoding (server-password-encoding))
+                   (credentials (server-credentials-normalize credentials2))
+                   (credential-passwords
+                     (filter server-credential-password? credentials))
+                   (salt (third (car credential-passwords)))
+                   (new-salt (server-salt-update salt)))
+              (when (or (and (nnull? credential-passwords)
+                             (!= (second (car credential-passwords)) encoding))
+                        (!= new-salt salt))
+                (let* ((hidden (server-password-encode passwd new-salt encoding))
+                       (credentials-other
+                         (filter
+                           (lambda (x) (not (server-credential-password? x)))
+                           credentials)))
+                  (when hidden
+                    (server-set-user-info uid pseudo2 name2
+                                          (cons hidden credentials-other)
+                                          email2 admin2)
+                    (server-log-write
+                      `notice
+                      (string-append "user " pseudo
+                                     " updaded password encoding"))))))))))
 
 (tm-service (remote-login pseudo passwd)
   (if (!= (get-preference "server service login") "on")
@@ -927,7 +932,7 @@
 			     (server-credentials-update
 			      credentials (server-add-salt
                                             (second x)
-                                            (generate-salt 128))))))))))
+                                            (generate-salt))))))))))
 	  (if credentials
 	      (begin
 		(server-set-user-information

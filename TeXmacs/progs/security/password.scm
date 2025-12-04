@@ -59,4 +59,4 @@
     pwd))
 
 (tm-define (generate-password n) (generate-password-default n))
-(tm-define (generate-salt n)     (generate-password-default n))
+(tm-define (generate-salt)       (gnutls-generate-salt))
