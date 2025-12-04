@@ -316,7 +316,7 @@
                        (server-set-user-information
 			(ahash-ref t "pseudo")
 			(ahash-ref t "name")
-			(server-hide-credentials (server-add-salt creds (generate-salt 128)))
+			(server-hide-credentials (server-add-salt creds (generate-salt)))
 			(ahash-ref t "email")
 			(if (ahash-ref t "admin") "yes" "no"))
                        (quit))))))))))))
