@@ -23,88 +23,40 @@
 (define symbols-charset "!@#$%^&*()_+-=[]{}|;:,.?")
 (define all-charset (string-append lower-charset upper-charset digits-charset symbols-charset))
 
-(define (list-shuffle l)
-  "Shuffle list in place using Fisher-Yates algorithm"
-  (let ((len (length l)))
-    (do ((i 0 (+ i 1)))
-      ((= i (- len 1)))
-      (let* ((j (+ i (random (- len i))))  ; Pick random remaining element
-             (tmp (list-ref l i)))
-        (list-set! l i (list-ref l j))
-        (list-set! l j tmp))))
-  l)
+(define (rnd n) (if (supports-gnutls?) (gnutls-random-number n) (random n)))
 
-(define (generate-char charset)
+(define (string-shuffle! s)
+  (let ((n (string-length s)))
+    (let loop ((i (- n 1)))
+      (if (<= i 0)
+          s
+          (let* ((j (random (+ i 1)))     ; j in [0..i]
+                 (ci (string-ref s i))
+                 (cj (string-ref s j)))
+            (string-set! s i cj)
+            (string-set! s j ci)
+            (loop (- i 1)))))))
+
+(define (random-char charset)
   (let* ((n (string-length charset))
-         (i (random n)))
+         (i (rnd n)))
     (string-ref charset i)))
 
-(define (generate-chars charset n)
-  (list->string
-    (map (lambda (_) (generate-char charset)) (iota n))))
-
-(define (filter-invalid-chars s charset)
-  (list->string (filter (lambda (c) (char-in-string? c charset))
-                        (string->list s))))
-
-(define (clean-data data)
-        (filter-invalid-chars (string-trim-both data)
-                              all-charset))
-
-(define (generate-random-data method n)
-  (cond ((== method `openssl)
-         (with (ret out err)
-               (evaluate-system
-                 `("openssl" "rand" ,(object->string  n)) '() '() '(1 2))
-               (if (== ret "0") out #f)))
-        ((== method `gpg)
-         (with (ret out err)
-               (evaluate-system
-                 `("gpg" "--gen-random" "2" ,(object->string n)) '() '() '(1 2))
-               (if (== ret "0") out #f)))
-        (else (generate-chars all-charset n))))
-
-(define (generate-external method n)
-  "Generate data using an external tool if available"
-  (with data (generate-random-data method (* 8 n))
-        (if data
-          (with pwd (clean-data data)
-                (string-take pwd (min n (string-length pwd))))
-          #f)))
-
 (define (generate-password-default n)
-  "Generate password fallback in pure Scheme"
-  (let* (
-         ;; Ensure at least one of each required type
-         (pwd (string-append
-                (string (generate-char lower-charset))
-                (string (generate-char upper-charset))
-                (string (generate-char digits-charset))
-                (string (generate-char symbols-charset))
-                ;; Add n-4 more random chars to reach desired length
-                (with s ""
-                  (do ((i 0 (+ i 1)))
-                      ((= i (- n 4)) s)
-                    (set! s (string-append s (string (generate-char
-                                                       all-charset))))))))
-         ;; Convert to list, shuffle, and convert back
-         (chars (list-shuffle (string->list pwd))))
-    (list->string chars)))
+  "Generate password with at least 1 lower & upper char + digit + symbol"
+  (let* ((pwd
+           (string-append
+             (string (random-char lower-charset))
+             (string (random-char upper-charset))
+             (string (random-char digits-charset))
+             (string (random-char symbols-charset))
+             (with s ""
+                   (do ((i 0 (+ i 1)))
+                     ((= i (- n 4)) s)
+                     (set! s (string-append
+                               s (string (random-char all-charset)))))))))
+    (string-shuffle! pwd)
+    pwd))
 
-(tm-define (generate-password n)
-  "Generate secure password using available system tools"
-  (or (generate-external 'openssl n)
-      (generate-external 'gpg n)
-      (generate-password-default n)
-      (begin
-        (display-err* "No suitable password generation tools found\n")
-        #f)))
-
-(tm-define (generate-salt n)
-  "Generate salt using available system tools"
-  (or (generate-external 'openssl n)
-      (generate-external 'gpg n)
-      (generate-random-data 'default n)
-      (begin
-        (display-err* "No suitable salt generation tools found\n")
-        #f)))
+(tm-define (generate-password n) (generate-password-default n))
+(tm-define (generate-salt n)     (generate-password-default n))
