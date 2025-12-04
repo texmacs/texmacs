@@ -300,16 +300,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (password-parse-crypt-style hash)
-  (let* ((purified (car (string-decompose hash "\n")))
-         (fields (cdr (string-decompose purified "$")))
-         (algo (car fields)))
-    ;(display* "parsed crypt style: " fields " from " purified "\n")
-    (cond ((== algo "5") `(password "sha256" . ,(cdr fields)))
-          ((== algo "6") `(password "sha512" . ,(cdr fields)))
-          ; define 7 as pbkdf2, put the iteration (third field) at the end
-          ((== algo "7")
-           `(password "pbkdf2" . ,(append (cddr fields) (list (cadr fields)))))
-          (else #f))))
+  (if (< (string-count hash #\$) 2) #f
+    (let* ((purified (car (string-decompose hash "\n")))
+           (fields (cdr (string-decompose purified "$")))
+           (algo (car fields)))
+      ;(display* "parsed crypt style: " fields " from " purified "\n")
+      (cond ((== algo "5") `(password "sha256" . ,(cdr fields)))
+            ((== algo "6") `(password "sha512" . ,(cdr fields)))
+            ; define 7 as pbkdf2, put the iteration (third field) at the end
+            ((== algo "7")
+             `(password "pbkdf2" . ,(append (cddr fields)
+                                            (list (cadr fields)))))
+            (else #f)))))
 
 ;; Clear text
 (define (password-supports-clear?)
@@ -370,7 +372,8 @@
 ;; so we put the iter at the end of this password encoding
 (define (password-encode-pbkdf2 p salt)
   (if (not (supports-gnutls?)) #f
-    (with out (hash-password-pbkdf2 p salt) (password-parse-crypt-style out))))
+    (with out (hash-password-pbkdf2 p salt)
+          (password-parse-crypt-style out))))
 
 (define (password-correct-pbkdf2? p hidden)
   (let* ((salt (third hidden))
