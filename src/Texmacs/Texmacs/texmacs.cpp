@@ -786,15 +786,16 @@ texmacs_entrypoint (int argc, char** argv) {
 
   TeXmacs_init_font  ();
 #ifdef QTTEXMACS
-  if (!headless_mode)
-#if QT_VERSION >= 0x060000
-#ifndef OS_MACOS
+  if (!headless_mode) {
+#  if QT_VERSION >= 0x060000
+#    ifndef OS_MACOS
     tmapp()->set_window_icon("/misc/images/texmacs.svg");
-#endif
-#else
+#    endif
+#  else
     tmapp()->set_window_icon("/misc/images/texmacs-512.png");
+#  endif
 #endif
-#endif
+  }
   //cout << "Bench  ] Started TeXmacs\n";
   the_et     = tuple ();
   the_et->obs= ip_observer (path ());
