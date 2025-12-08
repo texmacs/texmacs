@@ -72,9 +72,8 @@
           ======
           (resize "410px" "200px"
             (scrollable
-              (texmacs-output `(with "bg-color" "#fff"
-                                 ,(tmfile-extract license 'body))
-                              `(style ,(tmfile-extract license 'style)))))
+              (texmacs-output `(with "bg-color" "#fff" ,license)
+                              `(style "generic"))))
           ======
           (bottom-buttons
             >>
@@ -246,9 +245,8 @@
             ======
             (hlist >> (resize "410px" "200px"
               (scrollable
-                (texmacs-output `(with "bg-color" "#fff"
-                                   ,(tmfile-extract license 'body))
-                                `(style ,(tmfile-extract license 'style))))))
+                (texmacs-output `(with "bg-color" "#fff" ,license)
+                                `(style "generic")))))
             ===
             (hlist >>
               (toggle (set! agreed? answer) agreed?) // // //
