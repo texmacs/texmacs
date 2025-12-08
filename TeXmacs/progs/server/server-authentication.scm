@@ -268,7 +268,7 @@
     (for (x server-all-preferences)
       (when (== (get-preference (string-append "server public: " x)) "on")
 	(set! ret (cons (list x (get-preference x)) ret))))
-    (and-with doc (server-get-license)
+    (and-with doc (tree->stree (server-get-license-body))
       (set! ret (cons (list "server license" doc) ret)))
     ret))
 
