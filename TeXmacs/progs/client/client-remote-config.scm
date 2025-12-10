@@ -72,19 +72,22 @@
 (tm-define (submit-preferences)
   (:secure #t)
   (with current-server (ahash-ref preference-buffers (current-buffer-url))
-    (let* ((remote-prefs (ahash-ref remote-server-preferences current-server))
-           (wcb (lambda (ret)
-                  (display* "Preference submit result: " ret "\n"))))
-      (if remote-prefs
-        (client-remote-eval* current-server
-                             `(remote-set-preferences
-                                ,(ahash-table->list remote-prefs))
-                             wcb)
-        (client-open-error (format #f "No preferences for server ~A (~A:~A)"
-                                   current-server
-                                   (client-find-server-name current-server)
-                                   (client-find-server-port current-server)))))
-    (client-open-error "No server set")))
+    (if current-server
+      (let* ((remote-prefs (ahash-ref remote-server-preferences
+                                      current-server))
+             (wcb (lambda (ret)
+                    (display* "Preference submit result: " ret "\n"))))
+        (if remote-prefs
+          (client-remote-eval* current-server
+                               `(remote-set-preferences
+                                  ,(ahash-table->list remote-prefs))
+                               wcb)
+          (client-open-error (format #f "No preferences for server ~A (~A:~A)"
+                                     current-server
+                                     (client-find-server-name current-server)
+                                     (client-find-server-port
+                                       current-server)))))
+      (client-open-error "No server set"))))
 
 (tm-define (client-public-preferences-then server cb)
   (client-remote-then server `(remote-public-preferences) cb
