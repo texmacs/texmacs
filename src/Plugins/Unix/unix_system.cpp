@@ -47,6 +47,18 @@ inline string texmacs_ainsi_to_utf8(const std::string &local_string) {
   );
 }
 
+void texmacs_reset_last_error() {
+  errno = 0;
+}
+
+int64_t texmacs_get_last_error() {
+  return errno;
+}
+
+string texmacs_get_last_error_str() {
+  return strerror(errno);
+}
+
 void texmacs_lock_file(FILE *&file) {
   int file_descriptor = fileno(file);
   if (flock(file_descriptor, LOCK_EX) == -1) {
