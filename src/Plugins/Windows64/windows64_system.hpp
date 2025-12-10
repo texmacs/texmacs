@@ -37,6 +37,21 @@ typedef struct texmacs_dirent {
 
 
 /*
+ * @brief Reset the last error code
+ */
+void texmacs_reset_last_error();
+
+/*
+ * @brief Get the last error code (from posix errno or windows GetLastError)
+ */
+int64_t texmacs_get_last_error();
+
+/*
+ * @brief Get the last error string (from posix strerror or windows FormatMessage)
+ */
+string texmacs_get_last_error_str();
+
+/*
  * @brief Proxy function to call the fopen function with UTF-8 encoded strings
  * The lock parameter is used to lock the file when it is opened.
  */

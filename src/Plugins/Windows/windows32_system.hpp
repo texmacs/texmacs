@@ -28,6 +28,21 @@ typedef struct texmacs_dirent {
 } texmacs_dirent;
 
 /*
+ * @brief Reset the last error code
+ */
+void texmacs_reset_last_error();
+
+/*
+ * @brief Get the last error code (from posix errno)
+ */
+int64_t texmacs_get_last_error();
+
+/*
+ * @brief Get the last error string (from posix strerror)
+ */
+string texmacs_get_last_error_str();
+
+/*
  * @brief Proxy function to call the fopen function 
  * with UTF-8 encoded strings
  * @param lock: not used on Windows

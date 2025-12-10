@@ -73,13 +73,14 @@ load_string (url u, string& s, bool fatal) {
 
     bench_start ("load file");
 
+    texmacs_reset_last_error();
     FILE* fin= texmacs_fopen (name, "r");
 
     if (fin == NULL) {
       err= true;
       if (!occurs ("system", name))
         std_warning << "Load error for " << name << ", "
-                    << strerror(errno) << "\n";
+                    << texmacs_get_last_error_str() << "\n";
     }
     ssize_t size= 0;
     if (!err) {
@@ -134,11 +135,12 @@ save_string (url u, string s, bool fatal) {
   if (!err) {
     string name= concretize (r);
     {
+      texmacs_reset_last_error();
       FILE* fout = texmacs_fopen (name, "w");
       if (fout == NULL) {
         err= true;
         std_warning << "Save error for " << name << ", "
-                    << strerror(errno) << "\n";
+                    << texmacs_get_last_error_str() << "\n";
       }
       if (!err) {
         int n= N(s);
@@ -179,11 +181,12 @@ append_string (url u, string s, bool fatal) {
   if (!err) {
     string name= concretize (r);
     {
+      texmacs_reset_last_error();
       FILE* fout= texmacs_fopen (name, "a");
       if (fout == NULL) {
         err= true;
         std_warning << "Append error for " << name << ", "
-                    << strerror(errno) << "\n";
+                    << texmacs_get_last_error_str() << "\n";
       }
       if (!err) {
         int n= N(s);
