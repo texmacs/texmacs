@@ -888,8 +888,6 @@ tls_server_contact_rep::start (int io2) {
     if (timeout == 0)
       GNUTLS_LOGW ("server connection timeout is disabled");
     gnutls_handshake_set_timeout (s, timeout);
-    certificates_verified->~hashmap_rep();
-    certificates_verified = hashmap<string,pointer>();
   } else {
     s= (gnutls_session_t) ptr;
   }
